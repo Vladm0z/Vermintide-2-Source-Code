@@ -3,106 +3,115 @@
 require("scripts/managers/backend_playfab/playfab_mirror_dedicated")
 require("scripts/managers/backend_playfab/script_backend_playfab")
 
-local var_0_0 = require("PlayFab.IPlayFabHttps")
-local var_0_1 = require("scripts/managers/backend/playfab_https_curl")
+local IPlayFabHttps = require("PlayFab.IPlayFabHttps")
+local scripts_managers_backend_playfab_https_curl = require("scripts/managers/backend/playfab_https_curl")
 
-var_0_0.SetHttp(var_0_1)
+IPlayFabHttps.SetHttp(scripts_managers_backend_playfab_https_curl)
 
-local var_0_2 = require("PlayFab.PlayFabClientApi")
+local PlayFabClientApi = require("PlayFab.PlayFabClientApi")
 
-var_0_2.settings.titleId = GameSettingsDevelopment.backend_settings.title_id
+PlayFabClientApi.settings.titleId = GameSettingsDevelopment.backend_settings.title_id
 ScriptBackendPlayFabDedicated = class(ScriptBackendPlayFabDedicated, ScriptBackendPlayFab)
 
-function ScriptBackendPlayFabDedicated.init(arg_1_0)
-	local var_1_0 = arg_1_0._generate_unique_id()
+ScriptBackendPlayFabDedicated.init = function (self)
+	-- function 1
+	local _generate_unique_id = self._generate_unique_id()
 
-	arg_1_0._metadata = Managers.backend:get_metadata()
+	self._metadata = Managers.backend:get_metadata()
 
-	local var_1_1 = {
+	local tbl = {
 		CreateAccount = true,
-		CustomId = var_1_0,
+		CustomId = _generate_unique_id,
 		InfoRequestParameters = {
 			GetUserReadOnlyData = true,
 			GetTitleData = true
 		},
-		TitleId = var_0_2.settings.titleId
+		TitleId = PlayFabClientApi.settings.titleId
 	}
 
-	arg_1_0._signed_in = false
+	self._signed_in = false
 
 	print("Logging in to Playfab using custom ID")
 
-	local var_1_2 = callback(arg_1_0, "login_request_cb")
+	local var_1_2 = callback(self, "login_request_cb")
 
-	var_0_2.LoginWithCustomID(var_1_1, var_1_2)
+	PlayFabClientApi.LoginWithCustomID(tbl, var_1_2)
 end
 
-function ScriptBackendPlayFabDedicated.login_request_cb(arg_2_0, arg_2_1)
-	arg_2_0._signin_result = arg_2_1
+ScriptBackendPlayFabDedicated.login_request_cb = function (self, arg_2_1)
+	-- function 2
+	self._signin_result = arg_2_1
 
-	local var_2_0 = arg_2_1.InfoResultPayload.UserReadOnlyData
-	local var_2_1 = arg_2_1.PlayFabId
+	local UserReadOnlyData = arg_2_1.InfoResultPayload.UserReadOnlyData
+	local PlayFabId = arg_2_1.PlayFabId
 
-	arg_2_0:_update_telemetry_settings()
-	Crashify.print_property("playfab_id", var_2_1)
+	self:_update_telemetry_settings()
+	Crashify.print_property("playfab_id", PlayFabId)
 	cprint("[ScriptBackendPlayFabDedicated] Backend Sign-In Success")
-	cprintf("[ScriptBackendPlayFabDedicated] PlayFabId: %s", var_2_1)
+	cprintf("[ScriptBackendPlayFabDedicated] PlayFabId: %s", PlayFabId)
 
-	arg_2_0._signed_in = true
+	self._signed_in = true
 
-	arg_2_0:_validate_version()
+	self:_validate_version()
 end
 
-function ScriptBackendPlayFabDedicated._validate_version(arg_3_0)
-	local var_3_0 = {
+ScriptBackendPlayFabDedicated._validate_version = function (self)
+	-- function 3
+	local tbl = {
 		FunctionName = "validateVersion",
 		FunctionParameter = {
 			Version = VersionSettings.version,
-			metadata = arg_3_0._metadata
+			metadata = self._metadata
 		}
 	}
-	local var_3_1 = callback(arg_3_0, "_validate_version_cb")
+	local var_3_1 = callback(self, "_validate_version_cb")
 
-	var_0_2.ExecuteCloudScript(var_3_0, var_3_1)
+	PlayFabClientApi.ExecuteCloudScript(tbl, var_3_1)
 
-	arg_3_0._validating_version = true
+	self._validating_version = true
 end
 
-function ScriptBackendPlayFabDedicated._validate_version_cb(arg_4_0, arg_4_1)
-	local var_4_0 = arg_4_1.FunctionResult and arg_4_1.FunctionResult.valid_version
+ScriptBackendPlayFabDedicated._validate_version_cb = function (self, arg_4_1)
+	-- function 4
+	local FunctionResult = arg_4_1.FunctionResult
 
-	arg_4_0._validating_version = nil
+	FunctionResult = not FunctionResult and arg_4_1.FunctionResult.valid_version
+	self._validating_version = nil
 
-	if var_4_0 ~= true then
-		arg_4_0._signed_in = false
-		arg_4_0._signin_result_error = {
+	if FunctionResult ~= true then
+		self._signed_in = false
+		self._signin_result_error = {
 			errorCode = BACKEND_PLAYFAB_ERRORS.ERR_PLAYFAB_UNSUPPORTED_VERSION_ERROR
 		}
 	end
 end
 
-function ScriptBackendPlayFabDedicated.update_signin(arg_5_0)
-	local var_5_0 = arg_5_0._signin_result_error
+ScriptBackendPlayFabDedicated.update_signin = function (self)
+	-- function 5
+	local _signin_result_error = self._signin_result_error
 
-	if var_5_0 then
-		local var_5_1 = var_5_0.errorCode
-		local var_5_2 = var_5_0.errorMessage
+	if not _signin_result_error then
+		local errorCode = _signin_result_error.errorCode
+		local errorMessage = _signin_result_error.errorMessage
 
 		return {
-			reason = var_5_1,
-			details = var_5_2
+			reason = errorCode,
+			details = errorMessage
 		}
 	end
 end
 
-function ScriptBackendPlayFabDedicated._generate_unique_id()
-	local var_6_0 = Application.machine_id()
-	local var_6_1 = Network.default_network_address()
-	local var_6_2 = script_data.server_port or script_data.settings.server_port
+ScriptBackendPlayFabDedicated._generate_unique_id = function ()
+	-- function 6
+	local machine_id = Application.machine_id()
+	local default_network_address = Network.default_network_address()
+	local server_port = script_data.server_port
 
-	if var_6_0 == nil then
-		var_6_0 = Application.guid()
+	server_port = server_port or script_data.settings.server_port
+
+	if machine_id == nil then
+		machine_id = Application.guid()
 	end
 
-	return Application.make_hash(var_6_0, var_6_1, var_6_2)
+	return Application.make_hash(machine_id, default_network_address, server_port)
 end

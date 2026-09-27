@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/hit_effects/hit_effects_ratling_gunner.lua
 
-local var_0_0 = {
+local tbl = {
 	"light_stab_fencer",
 	"light_stab_smiter",
 	"stab_fencer",
@@ -13,7 +13,7 @@ local var_0_0 = {
 	"heavy_slashing_fencer",
 	"heavy_slashing_smiter"
 }
-local var_0_1 = {
+local tbl_2 = {
 	angles = {
 		{
 			to = math.pi / 18,
@@ -2110,7 +2110,7 @@ HitEffectsRatlingGunner = {
 		armour_type = "metal_hollow",
 		extra_conditions = {
 			death = false,
-			damage_type = var_0_0
+			damage_type = tbl
 		}
 	},
 	wound_back = {
@@ -2173,7 +2173,7 @@ HitEffectsRatlingGunner = {
 				"shot_repeating_handgun"
 			}
 		},
-		animations = var_0_1
+		animations = tbl_2
 	},
 	arrow_default_shooting_back = {
 		husk_hit_effect_name = "fx/impact_blood_02",
@@ -2197,7 +2197,7 @@ HitEffectsRatlingGunner = {
 				"shot_repeating_handgun"
 			}
 		},
-		animations = var_0_1
+		animations = tbl_2
 	},
 	arrow_default_shooting_front_no_damage = {
 		husk_hit_effect_name = "fx/impact_blood_02",
@@ -2221,7 +2221,7 @@ HitEffectsRatlingGunner = {
 				"shot_repeating_handgun"
 			}
 		},
-		animations = var_0_1
+		animations = tbl_2
 	},
 	arrow_default_shooting_back_no_damage = {
 		armour_type = "metal_hollow",
@@ -2244,7 +2244,7 @@ HitEffectsRatlingGunner = {
 				"shot_repeating_handgun"
 			}
 		},
-		animations = var_0_1
+		animations = tbl_2
 	}
 }
 HitEffectsRatlingGunner = table.create_copy(HitEffectsRatlingGunner, HitEffectsRatlingGunner)

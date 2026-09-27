@@ -1,10 +1,10 @@
 -- chunkname: @scripts/settings/mutators/mutator_curse_monophobia.lua
 
-local var_0_0 = require("scripts/settings/mutators/mutator_leash")
-local var_0_1 = table.clone(var_0_0)
+local scripts_settings_mutators_mutator_leash = require("scripts/settings/mutators/mutator_leash")
+local clone = table.clone(scripts_settings_mutators_mutator_leash)
 
-var_0_1.display_name = "curse_monophobia_name"
-var_0_1.description = "curse_monophobia_desc"
-var_0_1.icon = "deus_curse_slaanesh_01"
+clone.display_name = "curse_monophobia_name"
+clone.description = "curse_monophobia_desc"
+clone.icon = "deus_curse_slaanesh_01"
 
-return var_0_1
+return clone

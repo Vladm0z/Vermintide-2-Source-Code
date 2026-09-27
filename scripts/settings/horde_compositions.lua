@@ -28528,8 +28528,8 @@ HordeCompositions.event_strom_boss = {
 	}
 }
 
-local var_0_0 = 36
-local var_0_1 = {
+local num = 36
+local tbl = {
 	legend = 2,
 	cataclysm = 2.5,
 	cataclysm_2 = 3,
@@ -28539,228 +28539,230 @@ local var_0_1 = {
 	champion = 1.3
 }
 
-local function var_0_2(arg_1_0, arg_1_1)
-	local var_1_0 = arg_1_0 * arg_1_1
-	local var_1_1 = 1
-	local var_1_2 = {}
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
+	local num_2 = arg_1_0 * arg_1_1
+	local num_3 = 1
+	local tbl = {}
 
-	for iter_1_0 = 1, var_1_1 do
-		var_1_2[iter_1_0] = {
+	for i = 1, num_3 do
+		tbl[i] = {
 			weight = 4,
-			name = "wave_adds_" .. iter_1_0,
+			name = "wave_adds_" .. i,
 			breeds = {
 				"chaos_fanatic",
-				math.min(var_0_0, math.floor(8 * var_1_0)),
+				math.min(num, math.floor(8 * num_2)),
 				"chaos_marauder",
-				math.min(var_0_0, math.floor(4 * var_1_0)),
+				math.min(num, math.floor(4 * num_2)),
 				"chaos_marauder_with_shield",
-				math.min(var_0_0, math.floor(1.6 * var_1_0)),
+				math.min(num, math.floor(1.6 * num_2)),
 				"chaos_warrior",
-				math.min(var_0_0, math.floor(0.8 * var_1_0)),
+				math.min(num, math.floor(0.8 * num_2)),
 				"chaos_raider",
-				math.min(var_0_0, math.floor(1.4 * var_1_0)),
+				math.min(num, math.floor(1.4 * num_2)),
 				"chaos_berzerker",
-				math.min(var_0_0, math.floor(1 * var_1_0))
+				math.min(num, math.floor(1 * num_2))
 			}
 		}
 	end
 
-	return var_1_2
+	return tbl
 end
 
-local function var_0_3(arg_2_0, arg_2_1)
-	local var_2_0 = arg_2_0 * arg_2_1
-	local var_2_1 = math.ceil(arg_2_0)
-	local var_2_2 = 2
-	local var_2_3 = {
+local function fn_2(arg_2_0, arg_2_1)
+	-- function 2
+	local num_2 = arg_2_0 * arg_2_1
+	local ceil = math.ceil(arg_2_0)
+	local num_3 = 2
+	local tbl = {
 		{
 			"skaven_warpfire_thrower",
-			math.clamp(var_2_1 - 0, 0, var_2_2),
+			math.clamp(ceil - 0, 0, num_3),
 			"skaven_warpfire_thrower",
-			math.clamp(var_2_1 - 2, 0, var_2_2),
+			math.clamp(ceil - 2, 0, num_3),
 			"skaven_ratling_gunner",
-			math.clamp(var_2_1 - 3, 0, var_2_2)
+			math.clamp(ceil - 3, 0, num_3)
 		},
 		{
 			"skaven_gutter_runner",
-			math.clamp(var_2_1 - 0, 0, var_2_2),
+			math.clamp(ceil - 0, 0, num_3),
 			"skaven_poison_wind_globadier",
-			math.clamp(var_2_1 - 2, 0, var_2_2),
+			math.clamp(ceil - 2, 0, num_3),
 			"skaven_gutter_runner",
-			math.clamp(var_2_1 - 3, 0, var_2_2)
+			math.clamp(ceil - 3, 0, num_3)
 		},
 		{
 			"skaven_ratling_gunner",
-			math.clamp(var_2_1 - 0, 0, var_2_2),
+			math.clamp(ceil - 0, 0, num_3),
 			"skaven_ratling_gunner",
-			math.clamp(var_2_1 - 2, 0, var_2_2),
+			math.clamp(ceil - 2, 0, num_3),
 			"skaven_pack_master",
-			math.clamp(var_2_1 - 3, 0, var_2_2)
+			math.clamp(ceil - 3, 0, num_3)
 		},
 		{
 			"chaos_vortex_sorcerer",
-			math.clamp(var_2_1 - 0, 0, var_2_2),
+			math.clamp(ceil - 0, 0, num_3),
 			"chaos_corruptor_sorcerer",
-			math.clamp(var_2_1 - 2, 0, var_2_2),
+			math.clamp(ceil - 2, 0, num_3),
 			"chaos_vortex_sorcerer",
-			math.clamp(var_2_1 - 3, 0, var_2_2)
+			math.clamp(ceil - 3, 0, num_3)
 		}
 	}
-	local var_2_4 = {}
+	local tbl_2 = {}
 
-	for iter_2_0 = 1, #var_2_3 do
-		var_2_4[iter_2_0] = {
+	for i = 1, #tbl do
+		tbl_2[i] = {
 			weight = 4,
-			name = "wave_adds_" .. iter_2_0,
+			name = "wave_adds_" .. i,
 			breeds = {
 				"chaos_fanatic",
-				math.min(var_0_0, math.floor(6 * var_2_0)),
+				math.min(num, math.floor(6 * num_2)),
 				"chaos_marauder",
-				math.min(var_0_0, math.floor(4 * var_2_0)),
+				math.min(num, math.floor(4 * num_2)),
 				"chaos_marauder_with_shield",
-				math.min(var_0_0, math.floor(1 * var_2_0)),
-				unpack(var_2_3[iter_2_0])
+				math.min(num, math.floor(1 * num_2)),
+				unpack(tbl[i])
 			}
 		}
 	end
 
-	return var_2_4
+	return tbl_2
 end
 
 HordeCompositions.troll_chief_defensive_1 = {
 	{
 		start_time = 3,
-		unpack(var_0_2(var_0_1.recruit, 0.6))
+		unpack(fn(tbl.recruit, 0.6))
 	},
 	{
 		start_time = 3,
-		unpack(var_0_2(var_0_1.veteran, 0.6))
+		unpack(fn(tbl.veteran, 0.6))
 	},
 	{
 		start_time = 3,
-		unpack(var_0_2(var_0_1.champion, 0.6))
+		unpack(fn(tbl.champion, 0.6))
 	},
 	{
 		start_time = 3,
-		unpack(var_0_2(var_0_1.legend, 0.6))
+		unpack(fn(tbl.legend, 0.6))
 	},
 	{
 		start_time = 3,
-		unpack(var_0_2(var_0_1.cataclysm, 0.6))
+		unpack(fn(tbl.cataclysm, 0.6))
 	},
 	{
 		start_time = 3,
-		unpack(var_0_2(var_0_1.cataclysm_2, 0.6))
+		unpack(fn(tbl.cataclysm_2, 0.6))
 	},
 	{
 		start_time = 3,
-		unpack(var_0_2(var_0_1.cataclysm_3, 0.6))
+		unpack(fn(tbl.cataclysm_3, 0.6))
 	},
 	{
 		start_time = 3,
-		unpack(var_0_2(var_0_1.recruit, 0.6))
+		unpack(fn(tbl.recruit, 0.6))
 	}
 }
 HordeCompositions.troll_chief_defensive_2 = {
 	{
 		start_time = 3,
-		unpack(var_0_2(var_0_1.recruit, 1))
+		unpack(fn(tbl.recruit, 1))
 	},
 	{
 		start_time = 3,
-		unpack(var_0_2(var_0_1.veteran, 1))
+		unpack(fn(tbl.veteran, 1))
 	},
 	{
 		start_time = 3,
-		unpack(var_0_2(var_0_1.champion, 1))
+		unpack(fn(tbl.champion, 1))
 	},
 	{
 		start_time = 3,
-		unpack(var_0_2(var_0_1.legend, 1))
+		unpack(fn(tbl.legend, 1))
 	},
 	{
 		start_time = 3,
-		unpack(var_0_2(var_0_1.cataclysm, 1))
+		unpack(fn(tbl.cataclysm, 1))
 	},
 	{
 		start_time = 3,
-		unpack(var_0_2(var_0_1.cataclysm_2, 1))
+		unpack(fn(tbl.cataclysm_2, 1))
 	},
 	{
 		start_time = 3,
-		unpack(var_0_2(var_0_1.cataclysm_3, 1))
+		unpack(fn(tbl.cataclysm_3, 1))
 	},
 	{
 		start_time = 3,
-		unpack(var_0_2(var_0_1.recruit, 1))
+		unpack(fn(tbl.recruit, 1))
 	}
 }
 HordeCompositions.troll_chief_rage_1 = {
 	{
 		start_time = 12,
-		unpack(var_0_3(var_0_1.recruit, 0.6))
+		unpack(fn_2(tbl.recruit, 0.6))
 	},
 	{
 		start_time = 12,
-		unpack(var_0_3(var_0_1.veteran, 0.6))
+		unpack(fn_2(tbl.veteran, 0.6))
 	},
 	{
 		start_time = 12,
-		unpack(var_0_3(var_0_1.champion, 0.6))
+		unpack(fn_2(tbl.champion, 0.6))
 	},
 	{
 		start_time = 12,
-		unpack(var_0_3(var_0_1.legend, 0.6))
+		unpack(fn_2(tbl.legend, 0.6))
 	},
 	{
 		start_time = 12,
-		unpack(var_0_3(var_0_1.cataclysm, 0.6))
+		unpack(fn_2(tbl.cataclysm, 0.6))
 	},
 	{
 		start_time = 12,
-		unpack(var_0_3(var_0_1.cataclysm_2, 0.6))
+		unpack(fn_2(tbl.cataclysm_2, 0.6))
 	},
 	{
 		start_time = 12,
-		unpack(var_0_3(var_0_1.cataclysm_3, 0.6))
+		unpack(fn_2(tbl.cataclysm_3, 0.6))
 	},
 	{
 		start_time = 12,
-		unpack(var_0_3(var_0_1.recruit, 0.6))
+		unpack(fn_2(tbl.recruit, 0.6))
 	}
 }
 HordeCompositions.troll_chief_rage_2 = {
 	{
 		start_time = 12,
-		unpack(var_0_3(var_0_1.recruit, 1))
+		unpack(fn_2(tbl.recruit, 1))
 	},
 	{
 		start_time = 12,
-		unpack(var_0_3(var_0_1.veteran, 1))
+		unpack(fn_2(tbl.veteran, 1))
 	},
 	{
 		start_time = 12,
-		unpack(var_0_3(var_0_1.champion, 1))
+		unpack(fn_2(tbl.champion, 1))
 	},
 	{
 		start_time = 12,
-		unpack(var_0_3(var_0_1.legend, 1))
+		unpack(fn_2(tbl.legend, 1))
 	},
 	{
 		start_time = 12,
-		unpack(var_0_3(var_0_1.cataclysm, 1))
+		unpack(fn_2(tbl.cataclysm, 1))
 	},
 	{
 		start_time = 12,
-		unpack(var_0_3(var_0_1.cataclysm_2, 1))
+		unpack(fn_2(tbl.cataclysm_2, 1))
 	},
 	{
 		start_time = 12,
-		unpack(var_0_3(var_0_1.cataclysm_3, 1))
+		unpack(fn_2(tbl.cataclysm_3, 1))
 	},
 	{
 		start_time = 12,
-		unpack(var_0_3(var_0_1.recruit, 1))
+		unpack(fn_2(tbl.recruit, 1))
 	}
 }
 HordeCompositions.pathfind_test_light = {
@@ -29574,31 +29576,31 @@ HordeCompositions.versus_horde_ability_beastmen = {
 DLCUtils.require("horde_composition_file")
 
 local var_0_4
-local var_0_5 = #Difficulties
-local var_0_6 = table.index_of(Difficulties, "cataclysm")
+local count = #Difficulties
+local index_of = table.index_of(Difficulties, "cataclysm")
 
-for iter_0_0, iter_0_1 in pairs(HordeCompositions) do
+for k, v in pairs(HordeCompositions) do
 	local var_0_7
-	local var_0_8 = false
+	local flag = false
 
-	for iter_0_2 = 1, var_0_5 do
-		local var_0_9 = iter_0_1[iter_0_2]
+	for k_2 = 1, count do
+		local var_0_9 = v[k_2]
 
-		if var_0_9 then
+		if not var_0_9 then
 			var_0_7 = var_0_9
 		else
-			fassert(var_0_7, "%s does not define any composition for any difficulty", iter_0_0)
+			fassert(var_0_7, "%s does not define any composition for any difficulty", k)
 
-			if not var_0_8 and (not IS_CONSOLE or not (iter_0_2 <= var_0_6) or true) then
-				var_0_8 = true
+			if (flag or not IS_CONSOLE) and not (k_2 <= index_of) then
+				flag = true
 				var_0_4 = (var_0_4 or 0) + 1
 			end
 
-			iter_0_1[iter_0_2] = var_0_7
+			v[k_2] = var_0_7
 		end
 	end
 end
 
-if var_0_4 and not IS_CONSOLE then
+if not (not var_0_4 and IS_CONSOLE) then
 	ferror("[HordeCompisitions] %s Horde Compositions missing setting for certain difficulties -^", var_0_4)
 end

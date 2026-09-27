@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/morris/pat_tower/generated/slaanesh_path1/world_smartobjects.lua
 
-local var_0_0 = {
+local tbl = {
 	["b813b50f-2b25-4210-b586-4b72a8358a65"] = {
 		{
 			smart_object_index = 187,
@@ -10608,13 +10608,13 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = 439
-local var_0_2 = "v1"
-local var_0_3 = "2017.MAY.05.05"
+local num = 439
+local str = "v1"
+local str_2 = "2017.MAY.05.05"
 
 return {
-	smart_objects = var_0_0,
-	smart_object_count = var_0_1,
-	version = var_0_2,
-	ledgelator_version = var_0_3
+	smart_objects = tbl,
+	smart_object_count = num,
+	version = str,
+	ledgelator_version = str_2
 }

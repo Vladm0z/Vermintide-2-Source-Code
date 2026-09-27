@@ -1,9 +1,9 @@
 -- chunkname: @scripts/ui/hud_ui/dark_pact_ability_ui_definitions.lua
 
-local var_0_0 = 1920
-local var_0_1 = 1080
-local var_0_2 = false
-local var_0_3 = {
+local num = 1920
+local num_2 = 1080
+local flag = false
+local tbl = {
 	screen = {
 		scale = "hud_scale_fit",
 		position = {
@@ -12,8 +12,8 @@ local var_0_3 = {
 			UILayer.hud
 		},
 		size = {
-			var_0_0,
-			var_0_1
+			num,
+			num_2
 		}
 	},
 	ability_root = {
@@ -101,7 +101,7 @@ local var_0_3 = {
 		}
 	}
 }
-local var_0_4 = {
+local tbl_2 = {
 	abilities_detail_left = UIWidgets.create_simple_texture("health_bar_addon", "ability_pivot", nil, nil, {
 		255,
 		255,
@@ -131,7 +131,8 @@ local var_0_4 = {
 	})
 }
 
-local function var_0_5()
+local function fn()
+	-- function 1
 	return {
 		scenegraph_id = "crosshair_root",
 		element = {
@@ -140,71 +141,78 @@ local function var_0_5()
 					pass_type = "texture",
 					style_id = "background",
 					texture_id = "background",
-					content_check_function = function(arg_2_0)
-						return arg_2_0.progress > 0
+					content_check_function = function (self)
+						-- function 2
+						return self.progress > 0
 					end
 				},
 				{
 					style_id = "progress_1",
 					pass_type = "texture_uv",
 					content_id = "progress_1",
-					content_check_function = function(arg_3_0)
-						return arg_3_0.parent.progress > 0
+					content_check_function = function (self)
+						-- function 3
+						return self.parent.progress > 0
 					end,
-					content_change_function = function(arg_4_0, arg_4_1)
-						arg_4_0.uvs = {
+					content_change_function = function (self, arg_4_1)
+						-- function 4
+						self.uvs = {
 							{
 								0,
-								1 - arg_4_0.parent.progress
+								1 - self.parent.progress
 							},
 							{
 								1,
 								1
 							}
 						}
-						arg_4_1.texture_size[2] = 84 * arg_4_0.parent.progress
+						arg_4_1.texture_size[2] = 84 * self.parent.progress
 					end
 				},
 				{
 					style_id = "progress_2",
 					pass_type = "texture_uv",
 					content_id = "progress_2",
-					content_check_function = function(arg_5_0)
-						return arg_5_0.parent.progress > 0
+					content_check_function = function (self)
+						-- function 5
+						return self.parent.progress > 0
 					end,
-					content_change_function = function(arg_6_0, arg_6_1)
-						arg_6_0.uvs = {
+					content_change_function = function (self, arg_6_1)
+						-- function 6
+						self.uvs = {
 							{
 								0,
-								1 - arg_6_0.parent.progress
+								1 - self.parent.progress
 							},
 							{
 								1,
 								1
 							}
 						}
-						arg_6_1.texture_size[2] = 84 * arg_6_0.parent.progress
+						arg_6_1.texture_size[2] = 84 * self.parent.progress
 					end
 				},
 				{
 					style_id = "progress_3",
 					pass_type = "texture_uv",
 					content_id = "progress_3",
-					content_check_function = function(arg_7_0)
-						return arg_7_0.parent.progress > 0
+					content_check_function = function (self)
+						-- function 7
+						return self.parent.progress > 0
 					end,
-					content_change_function = function(arg_8_0, arg_8_1)
-						arg_8_0.uvs = {
+					content_change_function = function (self, arg_8_1)
+						-- function 8
+						self.uvs = {
 							{
 								0,
-								1 - arg_8_0.parent.progress
+								1 - self.parent.progress
 							},
 							{
 								1,
 								1
 							}
 						}
-						arg_8_1.texture_size[2] = 84 * arg_8_0.parent.progress
+						arg_8_1.texture_size[2] = 84 * self.parent.progress
 					end
 				}
 			}
@@ -310,7 +318,8 @@ local function var_0_5()
 	}
 end
 
-local function var_0_6()
+local function fn_2()
+	-- function 9
 	return {
 		scenegraph_id = "crosshair_root",
 		element = {
@@ -329,18 +338,20 @@ local function var_0_6()
 					pass_type = "texture",
 					style_id = "background",
 					texture_id = "background",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_10_0)
-						return arg_10_0.progress > 0
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 10
+						return self.progress > 0
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "ring",
 					texture_id = "ring",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_11_0)
-						return arg_11_0.progress > 0
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 11
+						return self.progress > 0
 					end
 				}
 			}
@@ -439,7 +450,8 @@ local function var_0_6()
 	}
 end
 
-local function var_0_7()
+local function fn_3()
+	-- function 12
 	return {
 		scenegraph_id = "crosshair_root",
 		element = {
@@ -448,25 +460,25 @@ local function var_0_7()
 					style_id = "cooldown",
 					pass_type = "texture_uv",
 					content_id = "cooldown",
-					retained_mode = var_0_2
+					retained_mode = flag
 				},
 				{
 					pass_type = "texture",
 					style_id = "background",
 					texture_id = "background",
-					retained_mode = var_0_2
+					retained_mode = flag
 				},
 				{
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					retained_mode = var_0_2
+					retained_mode = flag
 				},
 				{
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "text",
-					retained_mode = var_0_2
+					retained_mode = flag
 				}
 			}
 		},
@@ -580,7 +592,8 @@ local function var_0_7()
 	}
 end
 
-local function var_0_8()
+local function fn_4()
+	-- function 13
 	return {
 		scenegraph_id = "bottom_root",
 		element = {
@@ -588,12 +601,12 @@ local function var_0_8()
 				{
 					style_id = "background",
 					pass_type = "rect",
-					retained_mode = var_0_2
+					retained_mode = flag
 				},
 				{
 					style_id = "progress",
 					pass_type = "rect",
-					retained_mode = var_0_2
+					retained_mode = flag
 				}
 			}
 		},
@@ -652,7 +665,8 @@ local function var_0_8()
 	}
 end
 
-local function var_0_9()
+local function fn_5()
+	-- function 14
 	return {
 		scenegraph_id = "horde_ability_root",
 		element = {
@@ -671,24 +685,27 @@ local function var_0_9()
 					pass_type = "texture",
 					style_id = "ability_effect",
 					texture_id = "ability_effect",
-					content_check_function = function(arg_15_0)
-						return arg_15_0.ready
+					content_check_function = function (self)
+						-- function 15
+						return self.ready
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "ability_effect_top",
 					texture_id = "ability_effect_top",
-					content_check_function = function(arg_16_0)
-						return arg_16_0.ready
+					content_check_function = function (self)
+						-- function 16
+						return self.ready
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "ability_effect_halo",
 					texture_id = "ability_effect_halo",
-					content_check_function = function(arg_17_0)
-						return arg_17_0.ready
+					content_check_function = function (self)
+						-- function 17
+						return self.ready
 					end
 				},
 				{
@@ -822,7 +839,8 @@ local function var_0_9()
 	}
 end
 
-local function var_0_10()
+local function fn_6()
+	-- function 18
 	return {
 		scenegraph_id = "ammo_parent",
 		element = {
@@ -929,301 +947,356 @@ local function var_0_10()
 	}
 end
 
-local var_0_11 = {
+local tbl_3 = {
 	packmaster_reload = {
-		definition = var_0_7(),
-		update_function = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6)
-			local var_19_0, var_19_1 = arg_19_3:current_ability_cooldown(arg_19_4)
-			local var_19_2 = arg_19_3:uses_cooldown(arg_19_4)
-			local var_19_3 = arg_19_3:ability_by_id(arg_19_4)
-			local var_19_4 = var_19_3:ability_available()
-			local var_19_5 = var_19_3:startup_delay_time()
+		definition = fn_3(),
+		update_function = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6)
+			-- function 19
+			local current_ability_cooldown, var_19_1 = arg_19_3:current_ability_cooldown(arg_19_4)
+			local uses_cooldown = arg_19_3:uses_cooldown(arg_19_4)
+			local ability_by_id = arg_19_3:ability_by_id(arg_19_4)
+			local ability_available = ability_by_id:ability_available()
+			local startup_delay_time = ability_by_id:startup_delay_time()
 			local var_19_6
-			local var_19_7 = false
+			local flag = false
 
-			if var_19_4 then
-				var_19_6 = var_19_3:startup_delay_fraction()
-				var_19_7 = var_19_6 ~= nil
+			if not ability_available then
+				var_19_6 = ability_by_id:startup_delay_fraction()
+				flag = var_19_6 ~= nil
 			end
 
-			local var_19_8 = arg_19_5.content
-			local var_19_9 = arg_19_5.style
+			local content = arg_19_5.content
+			local style = arg_19_5.style
 
-			var_19_8.visible = var_19_7
+			content.visible = flag
 
-			if var_19_6 then
-				local var_19_10 = var_19_9.cooldown.default_size
-				local var_19_11 = var_19_9.cooldown.texture_size
+			if not var_19_6 then
+				local default_size = style.cooldown.default_size
+				local texture_size = style.cooldown.texture_size
 
-				var_19_8.cooldown.uvs[2][1] = var_19_6
-				var_19_11[1] = var_19_10[1] * var_19_6
+				content.cooldown.uvs[2][1] = var_19_6
+				texture_size[1] = default_size[1] * var_19_6
 			end
 
 			UIRenderer.draw_widget(arg_19_2, arg_19_5)
 		end
 	},
 	ratling_gunner_reload = {
-		definition = var_0_7(),
-		update_function = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6, arg_20_7)
-			if arg_20_6 then
+		definition = fn_3(),
+		update_function = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6, arg_20_7)
+			-- function 20
+			if not arg_20_6 then
 				return
 			end
 
-			local var_20_0 = arg_20_5.content
-			local var_20_1 = ScriptUnit.extension(arg_20_7, "inventory_system"):get_weapon_unit()
-			local var_20_2 = ScriptUnit.extension(var_20_1, "weapon_system"):get_custom_data("reload_progress")
+			local content = arg_20_5.content
+			local get_weapon_unit = ScriptUnit.extension(arg_20_7, "inventory_system"):get_weapon_unit()
+			local get_custom_data = ScriptUnit.extension(get_weapon_unit, "weapon_system"):get_custom_data("reload_progress")
 
-			var_20_0.visible = var_20_2 > 0
+			content.visible = get_custom_data > 0
 
-			if not var_20_0.visible then
+			if not content.visible then
 				return
 			end
 
-			local var_20_3 = arg_20_5.style
-			local var_20_4 = 1 - var_20_2
+			local style = arg_20_5.style
+			local num = 1 - get_custom_data
 
-			if var_20_4 then
-				local var_20_5 = var_20_3.cooldown.default_size
-				local var_20_6 = var_20_3.cooldown.texture_size
-				local var_20_7 = math.remap(0, 1, 0.05, 0.95, var_20_4)
+			if not num then
+				local default_size = style.cooldown.default_size
+				local texture_size = style.cooldown.texture_size
+				local remap = math.remap(0, 1, 0.05, 0.95, num)
 
-				var_20_0.cooldown.uvs[2][1] = var_20_7
-				var_20_6[1] = var_20_5[1] * var_20_7
+				content.cooldown.uvs[2][1] = remap
+				texture_size[1] = default_size[1] * remap
 			end
 
 			UIRenderer.draw_widget(arg_20_2, arg_20_5)
 		end
 	},
 	reload = {
-		definition = var_0_7(),
-		update_function = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6)
-			if arg_21_6 then
+		definition = fn_3(),
+		update_function = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6)
+			-- function 21
+			if not arg_21_6 then
 				return
 			end
 
-			local var_21_0, var_21_1 = arg_21_3:current_ability_cooldown(arg_21_4)
-			local var_21_2 = arg_21_3:uses_cooldown(arg_21_4)
-			local var_21_3, var_21_4 = arg_21_3:get_extra_ability_uses()
-			local var_21_5 = 1 + var_21_4
-			local var_21_6 = var_21_3
+			local current_ability_cooldown, var_21_1 = arg_21_3:current_ability_cooldown(arg_21_4)
+			local uses_cooldown = arg_21_3:uses_cooldown(arg_21_4)
+			local get_extra_ability_uses, var_21_4 = arg_21_3:get_extra_ability_uses()
+			local num = 1 + var_21_4
+			local var_21_6 = get_extra_ability_uses
 
-			if var_21_0 <= 0 then
+			if current_ability_cooldown <= 0 then
 				var_21_6 = var_21_6 + 1
 
 				if var_21_4 > 0 then
 					local var_21_7
 
-					var_21_0, var_21_7 = arg_21_3:get_extra_ability_charge()
-					var_21_0 = var_21_7 - var_21_0
+					current_ability_cooldown, var_21_7 = arg_21_3:get_extra_ability_charge()
+					current_ability_cooldown = var_21_7 - current_ability_cooldown
 				end
 			end
 
-			local var_21_8 = false
-			local var_21_9 = arg_21_5.content
-			local var_21_10 = arg_21_5.style
-			local var_21_11 = var_21_9.ability_cooldown or 0
-			local var_21_12 = 0
+			local flag = false
+			local content = arg_21_5.content
+			local style = arg_21_5.style
+			local ability_cooldown = content.ability_cooldown
 
-			if var_21_2 then
-				if var_21_0 < var_21_11 then
-					var_21_8 = true
-					var_21_12 = var_21_0 / var_21_11
+			ability_cooldown = ability_cooldown or 0
+
+			local num_2 = 0
+
+			if not uses_cooldown then
+				if current_ability_cooldown < ability_cooldown then
+					flag = true
+					num_2 = current_ability_cooldown / ability_cooldown
 				else
-					var_21_9.ability_cooldown = var_21_0
+					content.ability_cooldown = current_ability_cooldown
 				end
 
-				if not var_21_0 or var_21_0 <= 0 then
-					var_21_9.ability_cooldown = 0
+				if not (not current_ability_cooldown and not (current_ability_cooldown <= 0)) then
+					content.ability_cooldown = 0
 				end
 			end
 
-			local var_21_13 = var_21_10.cooldown.default_size
-			local var_21_14 = var_21_10.cooldown.texture_size
+			local default_size = style.cooldown.default_size
+			local texture_size = style.cooldown.texture_size
 
-			var_21_9.cooldown.uvs[2][1] = var_21_12
-			var_21_14[1] = var_21_13[1] * var_21_12
-			var_21_9.visible = var_21_8
+			content.cooldown.uvs[2][1] = num_2
+			texture_size[1] = default_size[1] * num_2
+			content.visible = flag
 
-			if var_21_5 > 1 then
-				local var_21_15 = var_21_9.orig_text
+			if num > 1 then
+				local orig_text = content.orig_text
 
-				if not var_21_15 then
-					var_21_9.orig_text = var_21_9.text
+				if not orig_text then
+					content.orig_text = content.text
 				end
 
-				var_21_9.text = string.format("%s (%d/%d)", var_21_15, var_21_6, var_21_5)
+				content.text = string.format("%s (%d/%d)", orig_text, var_21_6, num)
 			end
 
 			UIRenderer.draw_widget(arg_21_2, arg_21_5)
 		end
 	},
 	priming = {
-		definition = var_0_5(),
-		update_function = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6)
-			if arg_22_6 then
+		definition = fn(),
+		update_function = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6)
+			-- function 22
+			if not arg_22_6 then
 				return
 			end
 
-			local var_22_0, var_22_1 = arg_22_3:current_ability_cooldown(arg_22_4)
-			local var_22_2 = arg_22_3:get_activated_ability_data(arg_22_4)
-			local var_22_3 = arg_22_3:uses_cooldown(arg_22_4)
-			local var_22_4 = var_22_2.priming_progress or 0
-			local var_22_5 = arg_22_5.content
-			local var_22_6 = arg_22_5.style
-			local var_22_7 = var_22_5.ability_cooldown or 0
+			local current_ability_cooldown, var_22_1 = arg_22_3:current_ability_cooldown(arg_22_4)
+			local get_activated_ability_data = arg_22_3:get_activated_ability_data(arg_22_4)
+			local uses_cooldown = arg_22_3:uses_cooldown(arg_22_4)
+			local priming_progress = get_activated_ability_data.priming_progress
 
-			var_22_5.progress = var_22_4
+			priming_progress = priming_progress or 0
 
-			if var_22_3 and var_22_7 <= var_22_0 then
-				var_22_5.ability_cooldown = var_22_0
+			local content = arg_22_5.content
+			local style = arg_22_5.style
+			local ability_cooldown = content.ability_cooldown
+
+			ability_cooldown = ability_cooldown or 0
+			content.progress = priming_progress
+
+			if not (not uses_cooldown and not (ability_cooldown <= current_ability_cooldown)) then
+				content.ability_cooldown = current_ability_cooldown
 			end
 
-			if not var_22_0 or var_22_0 <= 0 then
-				var_22_5.ability_cooldown = 0
+			if not (not current_ability_cooldown and not (current_ability_cooldown <= 0)) then
+				content.ability_cooldown = 0
 			end
 
 			UIRenderer.draw_widget(arg_22_2, arg_22_5)
 		end
 	},
 	recharge = {
-		definition = var_0_6(),
-		update_function = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6)
-			if arg_23_6 then
+		definition = fn_2(),
+		update_function = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6)
+			-- function 23
+			if not arg_23_6 then
 				return
 			end
 
-			local var_23_0, var_23_1 = arg_23_3:current_ability_cooldown(arg_23_4)
-			local var_23_2 = arg_23_3:can_use_activated_ability(arg_23_4)
-			local var_23_3 = arg_23_3:uses_cooldown(arg_23_4)
-			local var_23_4 = 0
+			local current_ability_cooldown, var_23_1 = arg_23_3:current_ability_cooldown(arg_23_4)
+			local can_use_activated_ability = arg_23_3:can_use_activated_ability(arg_23_4)
+			local uses_cooldown = arg_23_3:uses_cooldown(arg_23_4)
+			local num = 0
 
-			if var_23_3 then
-				var_23_4 = var_23_0 / var_23_1
+			if not uses_cooldown then
+				num = current_ability_cooldown / var_23_1
 			else
-				var_23_4 = var_23_2 and 0 or 1
+				num = not can_use_activated_ability and 0 and 1
 			end
 
-			local var_23_5 = arg_23_5.content
-			local var_23_6
+			local content = arg_23_5.content
+			local flag
 
-			var_23_6 = var_23_4 ~= var_23_5.current_cooldown_fraction
+			flag = num ~= content.current_cooldown_fraction
 
-			local var_23_7 = var_23_4 ~= 0
+			local flag_2 = num ~= 0
 
-			arg_23_5.style.cooldown_mask.color[1] = 255 * var_23_4
-			var_23_5.on_cooldown = var_23_7
-			var_23_5.progress = var_23_4
+			arg_23_5.style.cooldown_mask.color[1] = 255 * num
+			content.on_cooldown = flag_2
+			content.progress = num
 
 			UIRenderer.draw_widget(arg_23_2, arg_23_5)
 		end
 	},
 	throw_charge = {
-		definition = var_0_6(),
-		update_function = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6)
-			if arg_24_6 then
+		definition = fn_2(),
+		update_function = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6)
+			-- function 24
+			if not arg_24_6 then
 				return
 			end
 
-			local var_24_0, var_24_1 = arg_24_3:current_ability_cooldown(arg_24_4)
-			local var_24_2 = arg_24_3:get_activated_ability_data(arg_24_4)
-			local var_24_3 = arg_24_3:uses_cooldown(arg_24_4)
-			local var_24_4 = var_24_2.priming_progress or 0
-			local var_24_5 = arg_24_5.content
-			local var_24_6 = arg_24_5.style
-			local var_24_7 = var_24_4 > (var_24_5.progress or 0)
+			local current_ability_cooldown, var_24_1 = arg_24_3:current_ability_cooldown(arg_24_4)
+			local get_activated_ability_data = arg_24_3:get_activated_ability_data(arg_24_4)
+			local uses_cooldown = arg_24_3:uses_cooldown(arg_24_4)
+			local priming_progress = get_activated_ability_data.priming_progress
 
-			var_24_6.cooldown_mask.color[1] = var_24_7 and 255 * var_24_4 or 0
+			priming_progress = priming_progress or 0
 
-			local var_24_8 = var_24_5.ability_cooldown or 0
+			local content = arg_24_5.content
+			local style = arg_24_5.style
+			local progress = content.progress
 
-			var_24_5.visible = var_24_4 > 0 and var_24_4 < 1
-			var_24_5.progress = var_24_4
+			progress = progress or 0
 
-			if var_24_3 and var_24_8 <= var_24_0 then
-				var_24_5.ability_cooldown = var_24_0
+			local flag = progress < priming_progress
+			local color = style.cooldown_mask.color
+			local num
+
+			if not flag then
+				num = 255 * priming_progress
+
+				if not num then
+					-- Nothing
+				end
 			end
 
-			if not var_24_0 or var_24_0 <= 0 then
-				var_24_5.ability_cooldown = 0
+			num = 0
+
+			::label_24_0::
+
+			color[1] = num
+
+			local ability_cooldown = content.ability_cooldown
+
+			ability_cooldown = ability_cooldown or 0
+			content.visible = not (priming_progress > 0) or priming_progress < 1
+			content.progress = priming_progress
+
+			if not (not uses_cooldown and not (ability_cooldown <= current_ability_cooldown)) then
+				content.ability_cooldown = current_ability_cooldown
+			end
+
+			if not (not current_ability_cooldown and not (current_ability_cooldown <= 0)) then
+				content.ability_cooldown = 0
 			end
 
 			UIRenderer.draw_widget(arg_24_2, arg_24_5)
 		end
 	},
 	ammo = {
-		definition = var_0_10(),
-		update_function = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6)
+		definition = fn_6(),
+		update_function = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6)
+			-- function 25
 			UIRenderer.draw_widget(arg_25_2, arg_25_5)
 		end
 	},
 	duration = {
-		definition = var_0_8(),
-		update_function = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6)
+		definition = fn_4(),
+		update_function = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6)
+			-- function 26
 			if not arg_26_3:get_activated_ability_data(arg_26_4).duration_progress then
-				local var_26_0 = 0
+				local num = 0
 			end
 
-			local var_26_1 = "vs_gutter_runner_smoke_bomb_invisible"
-			local var_26_2 = Managers.player:local_player(1).player_unit
+			local str = "vs_gutter_runner_smoke_bomb_invisible"
+			local player_unit = Managers.player:local_player(1).player_unit
 
-			if not Unit.alive(var_26_2) then
+			if not Unit.alive(player_unit) then
 				return
 			end
 
-			local var_26_3 = ScriptUnit.extension(var_26_2, "buff_system"):get_non_stacking_buff(var_26_1)
+			local get_non_stacking_buff = ScriptUnit.extension(player_unit, "buff_system"):get_non_stacking_buff(str)
 
-			if not var_26_3 then
+			if not get_non_stacking_buff then
 				return
 			end
 
-			local var_26_4 = var_26_3.duration
-			local var_26_5 = var_26_3.start_time
-			local var_26_6 = Managers.time:time("game")
-			local var_26_7 = var_26_4 and var_26_5 + var_26_4 or 0
-			local var_26_8 = var_26_7 and math.max(var_26_7 - var_26_6, 0)
-			local var_26_9 = arg_26_5.style
-			local var_26_10 = var_26_9.progress.default_size
-			local var_26_11 = var_26_9.progress.texture_size
-			local var_26_12 = var_26_8 / var_26_4
+			local duration = get_non_stacking_buff.duration
+			local start_time = get_non_stacking_buff.start_time
+			local time = Managers.time:time("game")
+			local num_2
 
-			var_26_11[1] = var_26_10[1] * var_26_12
+			if not duration then
+				num_2 = start_time + duration
+
+				if not num_2 then
+					-- Nothing
+				end
+			end
+
+			num_2 = 0
+
+			::label_26_0::
+
+			local flag = not num_2 and math.max(num_2 - time, 0)
+			local style = arg_26_5.style
+			local default_size = style.progress.default_size
+			local texture_size = style.progress.texture_size
+			local num_3 = flag / duration
+
+			texture_size[1] = default_size[1] * num_3
 
 			UIRenderer.draw_widget(arg_26_2, arg_26_5)
 		end
 	},
 	ability = {
-		definition = var_0_9(),
-		update_function = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6, arg_27_7, arg_27_8)
-			if arg_27_6 then
+		definition = fn_5(),
+		update_function = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6, arg_27_7, arg_27_8)
+			-- function 27
+			if not arg_27_6 then
 				return
 			end
 
-			local var_27_0 = arg_27_8:cooldown()
-			local var_27_1 = Managers.time:time("game")
-			local var_27_2 = arg_27_8:get_ability_charge(var_27_1)
-			local var_27_3 = math.clamp(var_27_0 - var_27_2, 0, var_27_0)
-			local var_27_4 = arg_27_5.content
-			local var_27_5 = 1 - (var_27_3 == 0 and 0 or var_27_3 / var_27_0)
-			local var_27_6 = arg_27_5.content.ability_progress
-			local var_27_7 = Gui.material(arg_27_2.gui, var_27_6)
+			local cooldown = arg_27_8:cooldown()
+			local time = Managers.time:time("game")
+			local get_ability_charge = arg_27_8:get_ability_charge(time)
+			local clamp = math.clamp(cooldown - get_ability_charge, 0, cooldown)
+			local content = arg_27_5.content
+			local flag
 
-			Material.set_scalar(var_27_7, "gradient_threshold", var_27_5)
+			flag = clamp ~= 0 or not 0 or clamp / cooldown
 
-			var_27_4.ready = var_27_5 == 1
-			var_27_4.actual_cooldown = var_27_5
+			local num = 1 - flag
+			local ability_progress = arg_27_5.content.ability_progress
+			local material = Gui.material(arg_27_2.gui, ability_progress)
 
-			local var_27_8 = Managers.input:is_device_active("gamepad")
-			local var_27_9 = "versus_horde_ability"
-			local var_27_10 = Managers.input:get_service("Player")
-			local var_27_11, var_27_12 = UISettings.get_gamepad_input_texture_data(var_27_10, var_27_9, var_27_8)
+			Material.set_scalar(material, "gradient_threshold", num)
 
-			if var_27_4.current_input_text ~= var_27_12 then
-				var_27_4.current_input_text = var_27_12
+			content.ready = num == 1
+			content.actual_cooldown = num
 
-				if var_27_8 then
-					var_27_4.input_text = "$KEY;Player__" .. var_27_9 .. ":"
+			local is_device_active = Managers.input:is_device_active("gamepad")
+			local str = "versus_horde_ability"
+			local get_service = Managers.input:get_service("Player")
+			local get_gamepad_input_texture_data, var_27_13 = UISettings.get_gamepad_input_texture_data(get_service, str, is_device_active)
+
+			if content.current_input_text ~= var_27_13 then
+				content.current_input_text = var_27_13
+
+				if not is_device_active then
+					content.input_text = "$KEY;Player__" .. str .. ":"
 				else
-					var_27_4.input_text = "[" .. var_27_12 .. "]"
+					content.input_text = "[" .. var_27_13 .. "]"
 				end
 			end
 
@@ -1232,7 +1305,8 @@ local var_0_11 = {
 	}
 }
 
-local function var_0_12()
+local function fn_7()
+	-- function 28
 	return {
 		scenegraph_id = "ability_pivot",
 		element = {
@@ -1241,9 +1315,10 @@ local function var_0_12()
 					style_id = "texture_icon_bg",
 					texture_id = "texture_icon",
 					pass_type = "texture",
-					content_change_function = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
-						if arg_29_0.texture_icon == "icons_placeholder" and arg_29_0.settings then
-							arg_29_0.texture_icon = arg_29_0.settings.icon
+					content_change_function = function (self, arg_29_1, arg_29_2, arg_29_3)
+						-- function 29
+						if self.texture_icon ~= "icons_placeholder" or not self.settings then
+							self.texture_icon = self.settings.icon
 						end
 					end
 				},
@@ -1251,16 +1326,18 @@ local function var_0_12()
 					pass_type = "texture",
 					style_id = "texture_icon",
 					texture_id = "texture_icon",
-					content_check_function = function(arg_30_0)
-						return arg_30_0.is_cooldown
+					content_check_function = function (self)
+						-- function 30
+						return self.is_cooldown
 					end
 				},
 				{
 					style_id = "icon_mask",
 					texture_id = "icon_mask",
 					pass_type = "texture",
-					content_change_function = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
-						arg_31_1.color[1] = 255 * (1 - arg_31_0.progress)
+					content_change_function = function (self, arg_31_1, arg_31_2, arg_31_3)
+						-- function 31
+						arg_31_1.color[1] = 255 * (1 - self.progress)
 					end
 				},
 				{
@@ -1272,56 +1349,74 @@ local function var_0_12()
 					style_id = "texture_cooldown",
 					texture_id = "texture_cooldown",
 					pass_type = "gradient_mask_texture",
-					content_check_function = function(arg_32_0)
-						return arg_32_0.is_cooldown
+					content_check_function = function (self)
+						-- function 32
+						return self.is_cooldown
 					end,
-					content_change_function = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
-						arg_33_1.color[1] = 255 * (1 - arg_33_0.progress)
+					content_change_function = function (self, arg_33_1, arg_33_2, arg_33_3)
+						-- function 33
+						arg_33_1.color[1] = 255 * (1 - self.progress)
 					end
 				},
 				{
 					style_id = "input",
 					pass_type = "text",
 					text_id = "input",
-					content_change_function = function(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
-						if not arg_34_0.settings then
+					content_change_function = function (self, arg_34_1, arg_34_2, arg_34_3)
+						-- function 34
+						if not self.settings then
 							return
 						end
 
-						local var_34_0 = Managers.input:is_device_active("gamepad")
-						local var_34_1 = var_34_0 and arg_34_0.settings.gamepad_input or arg_34_0.settings.input_action
-						local var_34_2 = Managers.input:get_service("Player")
-						local var_34_3, var_34_4, var_34_5 = UISettings.get_gamepad_input_texture_data(var_34_2, var_34_1, var_34_0)
+						local is_device_active = Managers.input:is_device_active("gamepad")
+						local gamepad_input
 
-						if arg_34_0.current_input_text ~= var_34_4 then
-							arg_34_0.current_input_text = var_34_4
+						if not is_device_active then
+							gamepad_input = self.settings.gamepad_input
 
-							if var_34_5 and var_34_5[1] == "mouse" or var_34_0 then
-								arg_34_0.input = string.format("$KEY;Player__%s:", var_34_1)
+							if not gamepad_input then
+								-- Nothing
+							end
+						end
+
+						gamepad_input = self.settings.input_action
+
+						::label_34_0::
+
+						local get_service = Managers.input:get_service("Player")
+						local get_gamepad_input_texture_data, var_34_4, var_34_5 = UISettings.get_gamepad_input_texture_data(get_service, gamepad_input, is_device_active)
+
+						if self.current_input_text ~= var_34_4 then
+							self.current_input_text = var_34_4
+
+							if not var_34_5 and var_34_5[1] == "mouse" and not is_device_active then
+								self.input = string.format("$KEY;Player__%s:", gamepad_input)
 								arg_34_1.offset[1] = 68
 							else
-								arg_34_0.input = var_34_4
+								self.input = var_34_4
 								arg_34_1.offset[1] = 40
 							end
 						end
 
-						local var_34_6 = Managers.ui:get_hud_component("SubtitleGui")
+						local get_hud_component = Managers.ui:get_hud_component("SubtitleGui")
 
-						if var_34_6 then
-							local var_34_7 = var_34_6:is_displaying_subtitle()
+						if not get_hud_component then
+							local is_displaying_subtitle = get_hud_component:is_displaying_subtitle()
 
-							arg_34_0.has_subtitles = var_34_7
+							self.has_subtitles = is_displaying_subtitle
 
-							local var_34_8 = arg_34_0.fade_progress or 0
+							local fade_progress = self.fade_progress
 
-							if var_34_7 then
-								var_34_8 = math.max(var_34_8 - arg_34_3 * 5, 0)
+							fade_progress = fade_progress or 0
+
+							if not is_displaying_subtitle then
+								fade_progress = math.max(fade_progress - arg_34_3 * 5, 0)
 							else
-								var_34_8 = math.min(var_34_8 + arg_34_3 * 5, 1)
+								fade_progress = math.min(fade_progress + arg_34_3 * 5, 1)
 							end
 
-							arg_34_1.text_color[1] = 55 + 200 * var_34_8
-							arg_34_0.fade_progress = var_34_8
+							arg_34_1.text_color[1] = 55 + 200 * fade_progress
+							self.fade_progress = fade_progress
 						end
 					end
 				}
@@ -1459,80 +1554,96 @@ local function var_0_12()
 	}
 end
 
-local function var_0_13(arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4, arg_35_5, arg_35_6, arg_35_7, arg_35_8)
-	if arg_35_6 then
+local function fn_8(arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4, arg_35_5, arg_35_6, arg_35_7, arg_35_8)
+	-- function 35
+	if not arg_35_6 then
 		return
 	end
 
-	local var_35_0 = arg_35_5.content
-	local var_35_1 = ScriptUnit.extension(arg_35_7, "inventory_system"):get_weapon_unit()
-	local var_35_2 = ScriptUnit.extension(var_35_1, "weapon_system"):get_custom_data("reload_progress")
+	local content = arg_35_5.content
+	local get_weapon_unit = ScriptUnit.extension(arg_35_7, "inventory_system"):get_weapon_unit()
+	local get_custom_data = ScriptUnit.extension(get_weapon_unit, "weapon_system"):get_custom_data("reload_progress")
 
-	var_35_0.is_cooldown = var_35_2 > 0
-	var_35_0.progress = var_35_2
+	content.is_cooldown = get_custom_data > 0
+	content.progress = get_custom_data
 
 	UIRenderer.draw_widget(arg_35_2, arg_35_5)
 end
 
-local function var_0_14(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4, arg_36_5, arg_36_6, arg_36_7, arg_36_8)
-	if arg_36_6 then
+local function fn_9(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4, arg_36_5, arg_36_6, arg_36_7, arg_36_8)
+	-- function 36
+	if not arg_36_6 then
 		return
 	end
 
-	local var_36_0, var_36_1 = arg_36_3:current_ability_cooldown(arg_36_4)
-	local var_36_2 = arg_36_3:get_activated_ability_data(arg_36_4)
-	local var_36_3 = arg_36_3:uses_cooldown(arg_36_4)
-	local var_36_4 = arg_36_5.content
-	local var_36_5 = arg_36_5.style
-	local var_36_6 = var_36_0 ~= 0
+	local current_ability_cooldown, var_36_1 = arg_36_3:current_ability_cooldown(arg_36_4)
+	local get_activated_ability_data = arg_36_3:get_activated_ability_data(arg_36_4)
+	local uses_cooldown = arg_36_3:uses_cooldown(arg_36_4)
+	local content = arg_36_5.content
+	local style = arg_36_5.style
+	local flag = current_ability_cooldown ~= 0
 
-	var_36_4.is_cooldown = var_36_6
+	content.is_cooldown = flag
 
-	if var_36_6 then
-		var_36_4.progress = 1 - math.clamp(var_36_0 / var_36_1, 0, var_36_4.current_progress or 1)
+	if not flag then
+		local clamp = math.clamp
+		local num = current_ability_cooldown / var_36_1
+		local num_2 = 0
+		local current_progress = content.current_progress
+
+		current_progress = current_progress or 1
+		content.progress = 1 - clamp(num, num_2, current_progress)
 	end
 
 	UIRenderer.draw_widget(arg_36_2, arg_36_5)
 end
 
-local function var_0_15(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5, arg_37_6, arg_37_7, arg_37_8)
-	if arg_37_6 then
+local function fn_10(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5, arg_37_6, arg_37_7, arg_37_8)
+	-- function 37
+	if not arg_37_6 then
 		return
 	end
 
-	local var_37_0, var_37_1 = arg_37_3:current_ability_cooldown(arg_37_4)
-	local var_37_2 = arg_37_3:get_activated_ability_data(arg_37_4)
-	local var_37_3 = arg_37_3:uses_cooldown(arg_37_4)
-	local var_37_4 = arg_37_5.content
-	local var_37_5 = arg_37_5.style
-	local var_37_6 = var_37_0 ~= 0
+	local current_ability_cooldown, var_37_1 = arg_37_3:current_ability_cooldown(arg_37_4)
+	local get_activated_ability_data = arg_37_3:get_activated_ability_data(arg_37_4)
+	local uses_cooldown = arg_37_3:uses_cooldown(arg_37_4)
+	local content = arg_37_5.content
+	local style = arg_37_5.style
+	local flag = current_ability_cooldown ~= 0
 
-	var_37_4.is_cooldown = var_37_6
+	content.is_cooldown = flag
 
-	if var_37_6 then
-		var_37_4.progress = 1 - math.clamp(var_37_0 / var_37_1, 0, var_37_4.current_progress or 1)
+	if not flag then
+		local clamp = math.clamp
+		local num = current_ability_cooldown / var_37_1
+		local num_2 = 0
+		local current_progress = content.current_progress
+
+		current_progress = current_progress or 1
+		content.progress = 1 - clamp(num, num_2, current_progress)
 	end
 
 	UIRenderer.draw_widget(arg_37_2, arg_37_5)
 end
 
-local function var_0_16(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4, arg_38_5, arg_38_6, arg_38_7, arg_38_8)
-	if arg_38_6 then
+local function fn_11(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4, arg_38_5, arg_38_6, arg_38_7, arg_38_8)
+	-- function 38
+	if not arg_38_6 then
 		return
 	end
 
 	if not arg_38_3:get_activated_ability_data(arg_38_4).duration_progress then
-		local var_38_0 = 0
+		local num = 0
 	end
 
-	local var_38_1 = arg_38_3:can_use_activated_ability(arg_38_4)
-	local var_38_2 = arg_38_5.content
-	local var_38_3 = 0
-	local var_38_4 = false
+	local can_use_activated_ability = arg_38_3:can_use_activated_ability(arg_38_4)
+	local content = arg_38_5.content
+	local num_2 = 0
+	local flag = false
 
-	if not var_38_1 then
-		var_38_4 = true
-		var_38_3 = 0
+	if not can_use_activated_ability then
+		flag = true
+		num_2 = 0
 		arg_38_5.style.texture_icon.color = {
 			255,
 			100,
@@ -1541,127 +1652,143 @@ local function var_0_16(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4, arg_38
 		}
 	end
 
-	local var_38_5 = "vs_gutter_runner_smoke_bomb_invisible"
-	local var_38_6 = Managers.player:local_player(1).player_unit
+	local str = "vs_gutter_runner_smoke_bomb_invisible"
+	local player_unit = Managers.player:local_player(1).player_unit
 
-	if not Unit.alive(var_38_6) then
+	if not Unit.alive(player_unit) then
 		return
 	end
 
-	local var_38_7 = ScriptUnit.extension(var_38_6, "buff_system"):get_non_stacking_buff(var_38_5)
+	local get_non_stacking_buff = ScriptUnit.extension(player_unit, "buff_system"):get_non_stacking_buff(str)
 
-	if var_38_7 then
-		local var_38_8 = var_38_7.duration
-		local var_38_9 = var_38_7.start_time
-		local var_38_10 = Managers.time:time("game")
-		local var_38_11 = var_38_8 and var_38_9 + var_38_8 or 0
+	if not get_non_stacking_buff then
+		local duration = get_non_stacking_buff.duration
+		local start_time = get_non_stacking_buff.start_time
+		local time = Managers.time:time("game")
+		local num_3
 
-		var_38_4 = (var_38_11 and math.max(var_38_11 - var_38_10, 0)) / var_38_8 ~= 1
+		if not duration then
+			num_3 = start_time + duration
+
+			if not num_3 then
+				-- Nothing
+			end
+		end
+
+		num_3 = 0
+
+		::label_38_0::
+
+		flag = (not num_3 and math.max(num_3 - time, 0)) / duration ~= 1
 	end
 
-	var_38_2.is_cooldown = var_38_4
-	var_38_2.progress = var_38_3
+	content.is_cooldown = flag
+	content.progress = num_2
 
 	UIRenderer.draw_widget(arg_38_2, arg_38_5)
 end
 
-local function var_0_17(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5, arg_39_6, arg_39_7, arg_39_8)
-	if arg_39_6 then
+local function fn_12(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5, arg_39_6, arg_39_7, arg_39_8)
+	-- function 39
+	if not arg_39_6 then
 		return
 	end
 
-	local var_39_0, var_39_1 = arg_39_3:current_ability_cooldown(arg_39_4)
-	local var_39_2 = arg_39_3:uses_cooldown(arg_39_4)
-	local var_39_3, var_39_4 = arg_39_3:get_extra_ability_uses()
-	local var_39_5 = 1 + var_39_4
-	local var_39_6 = var_39_3
+	local current_ability_cooldown, var_39_1 = arg_39_3:current_ability_cooldown(arg_39_4)
+	local uses_cooldown = arg_39_3:uses_cooldown(arg_39_4)
+	local get_extra_ability_uses, var_39_4 = arg_39_3:get_extra_ability_uses()
+	local num = 1 + var_39_4
+	local var_39_6 = get_extra_ability_uses
 
-	if var_39_0 <= 0 then
-		local var_39_7 = var_39_6 + 1
+	if current_ability_cooldown <= 0 then
+		local num_2 = var_39_6 + 1
 
 		if var_39_4 > 0 then
 			local var_39_8
 
-			var_39_0, var_39_8 = arg_39_3:get_extra_ability_charge()
-			var_39_0 = var_39_8 - var_39_0
+			current_ability_cooldown, var_39_8 = arg_39_3:get_extra_ability_charge()
+			current_ability_cooldown = var_39_8 - current_ability_cooldown
 		end
 	end
 
-	local var_39_9 = false
-	local var_39_10 = arg_39_5.content
-	local var_39_11 = arg_39_5.style
-	local var_39_12 = var_39_10.ability_cooldown or 0
-	local var_39_13 = 0
+	local flag = false
+	local content = arg_39_5.content
+	local style = arg_39_5.style
+	local ability_cooldown = content.ability_cooldown
 
-	if var_39_2 then
-		if var_39_0 < var_39_12 then
-			var_39_9 = true
-			var_39_13 = var_39_0 / var_39_12
+	ability_cooldown = ability_cooldown or 0
+
+	local num_3 = 0
+
+	if not uses_cooldown then
+		if current_ability_cooldown < ability_cooldown then
+			flag = true
+			num_3 = current_ability_cooldown / ability_cooldown
 		else
-			var_39_10.ability_cooldown = var_39_0
+			content.ability_cooldown = current_ability_cooldown
 		end
 
-		if not var_39_0 or var_39_0 <= 0 then
-			var_39_10.ability_cooldown = 0
+		if not (not current_ability_cooldown and not (current_ability_cooldown <= 0)) then
+			content.ability_cooldown = 0
 		end
 	end
 
-	var_39_10.is_cooldown = var_39_9
-	var_39_10.progress = 1 - var_39_13
+	content.is_cooldown = flag
+	content.progress = 1 - num_3
 
 	UIRenderer.draw_widget(arg_39_2, arg_39_5)
 end
 
-local var_0_18 = {
+local tbl_4 = {
 	vs_chaos_troll = {
 		{
 			widget_definitions = {
-				ability_icon = var_0_12()
+				ability_icon = fn_7()
 			}
 		},
 		{
 			ability_name = "vomit",
 			widget_definitions = {
-				ability_icon = var_0_12()
+				ability_icon = fn_7()
 			},
 			update_functions = {
-				ability_icon = var_0_14
+				ability_icon = fn_9
 			}
 		},
 		{
 			ability_name = "horde_ability",
 			widget_definitions = {
-				ability = var_0_11.ability.definition
+				ability = tbl_3.ability.definition
 			},
 			update_functions = {
-				ability = var_0_11.ability.update_function
+				ability = tbl_3.ability.update_function
 			}
 		}
 	},
 	vs_rat_ogre = {
 		{
 			widget_definitions = {
-				ability_icon = var_0_12()
+				ability_icon = fn_7()
 			}
 		},
 		{
 			ability_name = "ogre_jump",
 			widget_definitions = {
-				ability_icon = var_0_12(),
-				priming = var_0_11.priming.definition
+				ability_icon = fn_7(),
+				priming = tbl_3.priming.definition
 			},
 			update_functions = {
-				priming = var_0_11.priming.update_function,
-				ability_icon = var_0_15
+				priming = tbl_3.priming.update_function,
+				ability_icon = fn_10
 			}
 		},
 		{
 			ability_name = "horde_ability",
 			widget_definitions = {
-				ability = var_0_11.ability.definition
+				ability = tbl_3.ability.definition
 			},
 			update_functions = {
-				ability = var_0_11.ability.update_function
+				ability = tbl_3.ability.update_function
 			}
 		}
 	},
@@ -1669,49 +1796,49 @@ local var_0_18 = {
 		{
 			ability_name = "pounce",
 			widget_definitions = {
-				ability_icon = var_0_12(),
-				priming = var_0_11.priming.definition
+				ability_icon = fn_7(),
+				priming = tbl_3.priming.definition
 			},
 			update_functions = {
-				priming = var_0_11.priming.update_function
+				priming = tbl_3.priming.update_function
 			}
 		},
 		{
 			ability_name = "foff",
 			widget_definitions = {
-				ability_icon = var_0_12()
+				ability_icon = fn_7()
 			},
 			update_functions = {
-				ability_icon = var_0_16
+				ability_icon = fn_11
 			}
 		},
 		{
 			ability_name = "horde_ability",
 			widget_definitions = {
-				ability = var_0_11.ability.definition
+				ability = tbl_3.ability.definition
 			},
 			update_functions = {
-				ability = var_0_11.ability.update_function
+				ability = tbl_3.ability.update_function
 			}
 		}
 	},
 	vs_ratling_gunner = {
 		{
 			widget_definitions = {
-				ability_icon = var_0_12()
+				ability_icon = fn_7()
 			}
 		},
 		{
 			ability_name = "fire",
 			widget_definitions = {
-				ability_icon = var_0_12(),
-				reload = var_0_11.ratling_gunner_reload.definition,
-				ammo = var_0_11.ammo.definition
+				ability_icon = fn_7(),
+				reload = tbl_3.ratling_gunner_reload.definition,
+				ammo = tbl_3.ammo.definition
 			},
 			update_functions = {
-				ability_icon = var_0_13,
-				reload = var_0_11.ratling_gunner_reload.update_function,
-				ammo = var_0_11.ammo.update_function
+				ability_icon = fn_8,
+				reload = tbl_3.ratling_gunner_reload.update_function,
+				ammo = tbl_3.ammo.update_function
 			},
 			events = {
 				on_dark_pact_ammo_changed = "event_on_dark_pact_ammo_changed"
@@ -1720,10 +1847,10 @@ local var_0_18 = {
 		{
 			ability_name = "horde_ability",
 			widget_definitions = {
-				ability = var_0_11.ability.definition
+				ability = tbl_3.ability.definition
 			},
 			update_functions = {
-				ability = var_0_11.ability.update_function
+				ability = tbl_3.ability.update_function
 			}
 		}
 	},
@@ -1731,17 +1858,17 @@ local var_0_18 = {
 		{
 			ability_name = "fire",
 			widget_definitions = {
-				ability_icon = var_0_12()
+				ability_icon = fn_7()
 			},
 			update_functions = {}
 		},
 		{
 			ability_name = "horde_ability",
 			widget_definitions = {
-				ability = var_0_11.ability.definition
+				ability = tbl_3.ability.definition
 			},
 			update_functions = {
-				ability = var_0_11.ability.update_function
+				ability = tbl_3.ability.update_function
 			}
 		}
 	},
@@ -1749,21 +1876,21 @@ local var_0_18 = {
 		{
 			ability_name = "gas",
 			widget_definitions = {
-				ability_icon = var_0_12(),
-				throw_charge = var_0_11.throw_charge.definition
+				ability_icon = fn_7(),
+				throw_charge = tbl_3.throw_charge.definition
 			},
 			update_functions = {
-				ability_icon = var_0_17,
-				throw_charge = var_0_11.throw_charge.update_function
+				ability_icon = fn_12,
+				throw_charge = tbl_3.throw_charge.update_function
 			}
 		},
 		{
 			ability_name = "horde_ability",
 			widget_definitions = {
-				ability = var_0_11.ability.definition
+				ability = tbl_3.ability.definition
 			},
 			update_functions = {
-				ability = var_0_11.ability.update_function
+				ability = tbl_3.ability.update_function
 			}
 		}
 	},
@@ -1771,27 +1898,27 @@ local var_0_18 = {
 		{
 			ability_name = "equip",
 			widget_definitions = {
-				ability_icon = var_0_12(),
-				reload = var_0_11.packmaster_reload.definition
+				ability_icon = fn_7(),
+				reload = tbl_3.packmaster_reload.definition
 			},
 			update_functions = {
-				reload = var_0_11.packmaster_reload.update_function
+				reload = tbl_3.packmaster_reload.update_function
 			}
 		},
 		{
 			ability_name = "horde_ability",
 			widget_definitions = {
-				ability_charge = var_0_11.ability.definition
+				ability_charge = tbl_3.ability.definition
 			},
 			update_functions = {
-				ability_charge = var_0_11.ability.update_function
+				ability_charge = tbl_3.ability.update_function
 			}
 		}
 	}
 }
 
 return {
-	profile_ability_templates = var_0_18,
-	scenegraph_definition = var_0_3,
-	widget_definitions = var_0_4
+	profile_ability_templates = tbl_4,
+	scenegraph_definition = tbl,
+	widget_definitions = tbl_2
 }

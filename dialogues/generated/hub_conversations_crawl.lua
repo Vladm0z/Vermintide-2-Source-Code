@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/hub_conversations_crawl.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		response = "nik_crawl_keep_level_complete_fail",
 		name = "nik_crawl_keep_level_complete_fail",

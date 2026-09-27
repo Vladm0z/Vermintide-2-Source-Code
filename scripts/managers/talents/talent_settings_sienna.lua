@@ -2,8 +2,8 @@
 
 require("scripts/settings/profiles/career_constants")
 
-local var_0_0 = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
-local var_0_1 = {
+local scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
+local tbl = {
 	sienna_scholar_ability_cooldown_on_hit = {
 		bonus = 0.25
 	},
@@ -217,8 +217,10 @@ local var_0_1 = {
 		duration = 15
 	}
 }
+local TalentBuffTemplates = TalentBuffTemplates
 
 TalentBuffTemplates = TalentBuffTemplates or {}
+TalentBuffTemplates = TalentBuffTemplates
 TalentBuffTemplates.bright_wizard = {
 	sienna_scholar_ability_cooldown_on_hit = {
 		buffs = {
@@ -273,7 +275,7 @@ TalentBuffTemplates.bright_wizard = {
 		buffs = {
 			{
 				perks = {
-					var_0_0.overcharge_no_slow
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.overcharge_no_slow
 				}
 			}
 		}
@@ -288,7 +290,7 @@ TalentBuffTemplates.bright_wizard = {
 				max_targets = 5,
 				bonus = 0.25,
 				perks = {
-					var_0_0.linesman_healing
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.linesman_healing
 				}
 			}
 		}
@@ -302,7 +304,7 @@ TalentBuffTemplates.bright_wizard = {
 				buff_func = "heal_percentage_of_enemy_hp_on_melee_kill",
 				event = "on_kill",
 				perks = {
-					var_0_0.smiter_healing
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.smiter_healing
 				}
 			}
 		}
@@ -481,7 +483,7 @@ TalentBuffTemplates.bright_wizard = {
 				icon = "sienna_scholar_overcharge_no_slow",
 				priority_buff = true,
 				perks = {
-					var_0_0.no_overcharge_explosion
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.no_overcharge_explosion
 				}
 			}
 		}
@@ -593,7 +595,7 @@ TalentBuffTemplates.bright_wizard = {
 				buff_func = "heal_stagger_targets_on_melee",
 				event = "on_stagger",
 				perks = {
-					var_0_0.tank_healing
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.tank_healing
 				}
 			}
 		}
@@ -607,7 +609,7 @@ TalentBuffTemplates.bright_wizard = {
 				buff_func = "heal_percentage_of_enemy_hp_on_melee_kill",
 				event = "on_kill",
 				perks = {
-					var_0_0.smiter_healing
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.smiter_healing
 				}
 			}
 		}
@@ -631,7 +633,7 @@ TalentBuffTemplates.bright_wizard = {
 				buff_func = "add_buff",
 				event = "on_full_charge",
 				perks = {
-					var_0_0.full_charge_boost
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.full_charge_boost
 				}
 			}
 		}
@@ -751,7 +753,7 @@ TalentBuffTemplates.bright_wizard = {
 				max_stacks = 1,
 				remove_buff_func = "sienna_adept_double_trail_talent_start_ability_cooldown_add",
 				perks = {
-					var_0_0.free_ability
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.free_ability
 				}
 			}
 		}
@@ -793,7 +795,7 @@ TalentBuffTemplates.bright_wizard = {
 			{
 				stat_buff = "damage_taken_to_overcharge",
 				perks = {
-					var_0_0.sienna_unchained
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.sienna_unchained
 				}
 			}
 		}
@@ -802,7 +804,7 @@ TalentBuffTemplates.bright_wizard = {
 		buffs = {
 			{
 				perks = {
-					var_0_0.overcharged_block
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.overcharged_block
 				}
 			}
 		}
@@ -839,7 +841,7 @@ TalentBuffTemplates.bright_wizard = {
 				buff_func = "heal_stagger_targets_on_melee",
 				event = "on_stagger",
 				perks = {
-					var_0_0.tank_healing
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.tank_healing
 				}
 			}
 		}
@@ -854,7 +856,7 @@ TalentBuffTemplates.bright_wizard = {
 				max_targets = 5,
 				bonus = 0.25,
 				perks = {
-					var_0_0.linesman_healing
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.linesman_healing
 				}
 			}
 		}
@@ -896,7 +898,7 @@ TalentBuffTemplates.bright_wizard = {
 				buff_to_add = "sienna_unchained_push_arc_buff",
 				buff_func = "sienna_burn_push_on_charged_attacks",
 				perks = {
-					var_0_0.sienna_unchained_burn_push
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.sienna_unchained_burn_push
 				}
 			}
 		}
@@ -1029,7 +1031,11 @@ TalentBuffTemplates.bright_wizard = {
 		}
 	}
 }
+
+local TalentTrees = TalentTrees
+
 TalentTrees = TalentTrees or {}
+TalentTrees = TalentTrees
 TalentTrees.bright_wizard = {
 	{
 		{
@@ -1220,7 +1226,7 @@ Talents.bright_wizard = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.sienna_scholar_increased_attack_speed.multiplier
+				value = tbl.sienna_scholar_increased_attack_speed.multiplier
 			}
 		},
 		buffs = {
@@ -1236,11 +1242,11 @@ Talents.bright_wizard = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.sienna_scholar_crit_chance_above_health_threshold_buff.bonus
+				value = tbl.sienna_scholar_crit_chance_above_health_threshold_buff.bonus
 			},
 			{
 				value_type = "percent",
-				value = var_0_1.sienna_scholar_crit_chance_above_health_threshold.activation_health
+				value = tbl.sienna_scholar_crit_chance_above_health_threshold.activation_health
 			}
 		},
 		buffs = {
@@ -1256,13 +1262,13 @@ Talents.bright_wizard = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.sienna_scholar_ranged_power_ascending_descending_buff.multiplier
+				value = tbl.sienna_scholar_ranged_power_ascending_descending_buff.multiplier
 			},
 			{
-				value = var_0_1.sienna_scholar_ranged_power_ascending_descending.update_frequency
+				value = tbl.sienna_scholar_ranged_power_ascending_descending.update_frequency
 			},
 			{
-				value = var_0_1.sienna_scholar_ranged_power_ascending_descending.max_sub_buff_stacks
+				value = tbl.sienna_scholar_ranged_power_ascending_descending.max_sub_buff_stacks
 			}
 		},
 		buffs = {
@@ -1277,13 +1283,13 @@ Talents.bright_wizard = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.sienna_scholar_passive_increased_attack_speed.multiplier
+				value = tbl.sienna_scholar_passive_increased_attack_speed.multiplier
 			},
 			{
-				value = var_0_1.sienna_scholar_passive_increased_attack_speed_from_overcharge.chunk_size
+				value = tbl.sienna_scholar_passive_increased_attack_speed_from_overcharge.chunk_size
 			},
 			{
-				value = var_0_1.sienna_scholar_passive_increased_attack_speed.max_stacks
+				value = tbl.sienna_scholar_passive_increased_attack_speed.max_stacks
 			}
 		},
 		buffs = {
@@ -1299,7 +1305,7 @@ Talents.bright_wizard = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.sienna_scholar_passive_increased_power_level_on_high_overcharge_buff.multiplier
+				value = tbl.sienna_scholar_passive_increased_power_level_on_high_overcharge_buff.multiplier
 			}
 		},
 		buffs = {
@@ -1313,7 +1319,7 @@ Talents.bright_wizard = {
 		icon = "sienna_scholar_passive_overcharge_pause_on_special_kill",
 		description_values = {
 			{
-				value = var_0_1.sienna_scholar_passive_overcharge_pause_on_special_kill_buff.duration
+				value = tbl.sienna_scholar_passive_overcharge_pause_on_special_kill_buff.duration
 			}
 		},
 		buffs = {
@@ -1329,10 +1335,10 @@ Talents.bright_wizard = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.sienna_scholar_damage_taken_on_elite_or_special_kill_buff.multiplier
+				value = tbl.sienna_scholar_damage_taken_on_elite_or_special_kill_buff.multiplier
 			},
 			{
-				value = var_0_1.sienna_scholar_damage_taken_on_elite_or_special_kill_buff.duration
+				value = tbl.sienna_scholar_damage_taken_on_elite_or_special_kill_buff.duration
 			}
 		},
 		buffs = {
@@ -1347,11 +1353,11 @@ Talents.bright_wizard = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = -var_0_1.sienna_scholar_vent_zone.multiplier
+				value = -tbl.sienna_scholar_vent_zone.multiplier
 			},
 			{
 				value_type = "percent",
-				value = -var_0_1.sienna_scholar_vent_zone_buff.multiplier
+				value = -tbl.sienna_scholar_vent_zone_buff.multiplier
 			}
 		},
 		buffs = {
@@ -1366,13 +1372,13 @@ Talents.bright_wizard = {
 		description_values = {
 			{
 				value_type = "baked_percent",
-				value = var_0_1.sienna_scholar_move_speed_on_critical_hit_buff.multiplier
+				value = tbl.sienna_scholar_move_speed_on_critical_hit_buff.multiplier
 			},
 			{
-				value = var_0_1.sienna_scholar_move_speed_on_critical_hit_buff.duration
+				value = tbl.sienna_scholar_move_speed_on_critical_hit_buff.duration
 			},
 			{
-				value = var_0_1.sienna_scholar_move_speed_on_critical_hit_buff.max_stacks
+				value = tbl.sienna_scholar_move_speed_on_critical_hit_buff.max_stacks
 			}
 		},
 		buffs = {
@@ -1387,10 +1393,10 @@ Talents.bright_wizard = {
 		description_values = {
 			{
 				value_type = "baked_percent",
-				value = 1 + var_0_1.sienna_scholar_activated_ability_no_overcharge.multiplier
+				value = 1 + tbl.sienna_scholar_activated_ability_no_overcharge.multiplier
 			},
 			{
-				value = var_0_1.sienna_scholar_activated_ability_no_overcharge.duration
+				value = tbl.sienna_scholar_activated_ability_no_overcharge.duration
 			}
 		},
 		buffs = {}
@@ -1402,7 +1408,7 @@ Talents.bright_wizard = {
 		icon = "sienna_scholar_activated_ability_heal",
 		description_values = {
 			{
-				value = var_0_1.sienna_scholar_activated_ability_heal.bonus
+				value = tbl.sienna_scholar_activated_ability_heal.bonus
 			}
 		},
 		buffs = {}
@@ -1567,7 +1573,7 @@ Talents.bright_wizard = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.sienna_adept_power_level_on_full_charge.multiplier
+				value = tbl.sienna_adept_power_level_on_full_charge.multiplier
 			}
 		},
 		buffs = {
@@ -1581,14 +1587,14 @@ Talents.bright_wizard = {
 		icon = "sienna_adept_attack_speed_on_enemies_hit",
 		description_values = {
 			{
-				value = var_0_1.sienna_adept_attack_speed_on_enemies_hit.required_targets
+				value = tbl.sienna_adept_attack_speed_on_enemies_hit.required_targets
 			},
 			{
 				value_type = "percent",
-				value = var_0_1.sienna_adept_attack_speed_on_enemies_hit_buff.multiplier
+				value = tbl.sienna_adept_attack_speed_on_enemies_hit_buff.multiplier
 			},
 			{
-				value = var_0_1.sienna_adept_attack_speed_on_enemies_hit_buff.duration
+				value = tbl.sienna_adept_attack_speed_on_enemies_hit_buff.duration
 			}
 		},
 		buffs = {
@@ -1603,7 +1609,7 @@ Talents.bright_wizard = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.sienna_adept_passive_charge_speed_increased_buff.multiplier
+				value = tbl.sienna_adept_passive_charge_speed_increased_buff.multiplier
 			}
 		},
 		buffs = {
@@ -1618,7 +1624,7 @@ Talents.bright_wizard = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.sienna_adept_improved_tranquility.multiplier
+				value = tbl.sienna_adept_improved_tranquility.multiplier
 			}
 		},
 		buffs = {
@@ -1632,7 +1638,7 @@ Talents.bright_wizard = {
 		icon = "sienna_adept_passive_cooldown",
 		description_values = {
 			{
-				value = var_0_1.sienna_adept_passive_cooldown.duration
+				value = tbl.sienna_adept_passive_cooldown.duration
 			}
 		},
 		buffs = {}
@@ -1646,13 +1652,13 @@ Talents.bright_wizard = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.sienna_adept_damage_reduction_on_ignited_enemy_buff.multiplier
+				value = tbl.sienna_adept_damage_reduction_on_ignited_enemy_buff.multiplier
 			},
 			{
-				value = var_0_1.sienna_adept_damage_reduction_on_ignited_enemy_buff.duration
+				value = tbl.sienna_adept_damage_reduction_on_ignited_enemy_buff.duration
 			},
 			{
-				value = var_0_1.sienna_adept_damage_reduction_on_ignited_enemy_buff.max_stacks
+				value = tbl.sienna_adept_damage_reduction_on_ignited_enemy_buff.max_stacks
 			}
 		},
 		buffs = {
@@ -1667,7 +1673,7 @@ Talents.bright_wizard = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.sienna_adept_cooldown_reduction_on_burning_enemy_killed.cooldown_reduction
+				value = tbl.sienna_adept_cooldown_reduction_on_burning_enemy_killed.cooldown_reduction
 			}
 		},
 		buffs = {
@@ -1683,11 +1689,11 @@ Talents.bright_wizard = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.sienna_adept_increased_burn_damage.multiplier
+				value = tbl.sienna_adept_increased_burn_damage.multiplier
 			},
 			{
 				value_type = "percent",
-				value = var_0_1.sienna_adept_reduced_non_burn_damage.multiplier
+				value = tbl.sienna_adept_reduced_non_burn_damage.multiplier
 			}
 		},
 		buffs = {
@@ -1702,7 +1708,7 @@ Talents.bright_wizard = {
 		icon = "sienna_adept_activated_ability_dump_overcharge",
 		description_values = {
 			{
-				value = var_0_1.sienna_adept_ability_trail_double.duration
+				value = tbl.sienna_adept_ability_trail_double.duration
 			}
 		},
 		buffs = {}
@@ -1723,7 +1729,7 @@ Talents.bright_wizard = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.sienna_adept_activated_ability_distance.display_multiplier
+				value = tbl.sienna_adept_activated_ability_distance.display_multiplier
 			}
 		},
 		buffs = {}
@@ -1736,7 +1742,7 @@ Talents.bright_wizard = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.sienna_adept_activated_ability_cooldown.multiplier
+				value = tbl.sienna_adept_activated_ability_cooldown.multiplier
 			}
 		},
 		buffs = {
@@ -1892,7 +1898,7 @@ Talents.bright_wizard = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.sienna_unchained_attack_speed_on_high_overcharge_buff.multiplier
+				value = tbl.sienna_unchained_attack_speed_on_high_overcharge_buff.multiplier
 			}
 		},
 		buffs = {
@@ -1908,7 +1914,7 @@ Talents.bright_wizard = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.sienna_unchained_push_arc_buff.multiplier
+				value = tbl.sienna_unchained_push_arc_buff.multiplier
 			}
 		},
 		buffs = {
@@ -1935,7 +1941,7 @@ Talents.bright_wizard = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.sienna_unchained_passive_overcharged_blocks.multiplier
+				value = tbl.sienna_unchained_passive_overcharged_blocks.multiplier
 			}
 		},
 		buffs = {
@@ -1950,11 +1956,11 @@ Talents.bright_wizard = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.sienna_unchained_increased_vent_speed.multiplier
+				value = tbl.sienna_unchained_increased_vent_speed.multiplier
 			},
 			{
 				value_type = "percent",
-				value = var_0_1.sienna_unchained_reduced_vent_damage.multiplier
+				value = tbl.sienna_unchained_reduced_vent_damage.multiplier
 			}
 		},
 		buffs = {
@@ -1971,17 +1977,17 @@ Talents.bright_wizard = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.sienna_unchained_reduced_damage_taken_after_venting_buff.multiplier
+				value = tbl.sienna_unchained_reduced_damage_taken_after_venting_buff.multiplier
 			},
 			{
 				value_type = "percent",
-				value = var_0_1.sienna_unchained_reduced_passive_overcharge_after_venting_buff.multiplier
+				value = tbl.sienna_unchained_reduced_passive_overcharge_after_venting_buff.multiplier
 			},
 			{
-				value = var_0_1.sienna_unchained_reduced_damage_taken_after_venting_buff.duration
+				value = tbl.sienna_unchained_reduced_damage_taken_after_venting_buff.duration
 			},
 			{
-				value = var_0_1.sienna_unchained_reduced_damage_taken_after_venting_buff.max_stacks
+				value = tbl.sienna_unchained_reduced_damage_taken_after_venting_buff.max_stacks
 			}
 		},
 		buffs = {
@@ -1997,7 +2003,7 @@ Talents.bright_wizard = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.sienna_unchained_burning_enemies_reduced_damage.multiplier
+				value = tbl.sienna_unchained_burning_enemies_reduced_damage.multiplier
 			}
 		},
 		buffs = {}
@@ -2021,7 +2027,7 @@ Talents.bright_wizard = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.sienna_unchained_reduced_overcharge.multiplier
+				value = tbl.sienna_unchained_reduced_overcharge.multiplier
 			}
 		},
 		buffs = {
@@ -2037,13 +2043,13 @@ Talents.bright_wizard = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.sienna_unchained_activated_ability_power_on_enemies_hit_buff.multiplier
+				value = tbl.sienna_unchained_activated_ability_power_on_enemies_hit_buff.multiplier
 			},
 			{
-				value = var_0_1.sienna_unchained_activated_ability_power_on_enemies_hit_buff.duration
+				value = tbl.sienna_unchained_activated_ability_power_on_enemies_hit_buff.duration
 			},
 			{
-				value = var_0_1.sienna_unchained_activated_ability_power_on_enemies_hit_buff.max_stacks
+				value = tbl.sienna_unchained_activated_ability_power_on_enemies_hit_buff.max_stacks
 			}
 		},
 		buffs = {
@@ -2058,7 +2064,7 @@ Talents.bright_wizard = {
 		icon = "sienna_unchained_activated_ability_power_on_enemies_hit",
 		description_values = {
 			{
-				value = var_0_1.sienna_unchained_activated_ability_pulse.duration
+				value = tbl.sienna_unchained_activated_ability_pulse.duration
 			}
 		},
 		buffs = {}
@@ -2070,22 +2076,22 @@ Talents.bright_wizard = {
 		icon = "sienna_unchained_activated_ability_temp_health",
 		description_values = {
 			{
-				value = var_0_1.sienna_unchained_activated_ability_temp_health.heal_amount
+				value = tbl.sienna_unchained_activated_ability_temp_health.heal_amount
 			}
 		},
 		buffs = {},
 		attributes = {
-			heal_amount = var_0_1.sienna_unchained_activated_ability_temp_health.heal_amount
+			heal_amount = tbl.sienna_unchained_activated_ability_temp_health.heal_amount
 		},
 		mechanism_overrides = {
 			versus = {
 				description_values = {
 					{
-						value = var_0_1.sienna_unchained_activated_ability_temp_health.heal_amount_versus
+						value = tbl.sienna_unchained_activated_ability_temp_health.heal_amount_versus
 					}
 				},
 				attributes = {
-					heal_amount = var_0_1.sienna_unchained_activated_ability_temp_health.heal_amount_versus
+					heal_amount = tbl.sienna_unchained_activated_ability_temp_health.heal_amount_versus
 				}
 			}
 		}
@@ -2160,4 +2166,4 @@ Talents.bright_wizard = {
 }
 
 BuffUtils.copy_talent_buff_names(TalentBuffTemplates.bright_wizard)
-BuffUtils.apply_buff_tweak_data(TalentBuffTemplates.bright_wizard, var_0_1)
+BuffUtils.apply_buff_tweak_data(TalentBuffTemplates.bright_wizard, tbl)

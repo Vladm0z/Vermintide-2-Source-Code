@@ -1,23 +1,23 @@
 -- chunkname: @scripts/settings/mutators/mutator_curse_blood_storm.lua
 
 local var_0_0
-local var_0_1 = require("scripts/settings/mutators/mutator_curse_blood_storm_v2")
+local scripts_settings_mutators_mutator_curse_blood_storm_v2 = require("scripts/settings/mutators/mutator_curse_blood_storm_v2")
 
-if var_0_1 then
-	return var_0_1
+if not scripts_settings_mutators_mutator_curse_blood_storm_v2 then
+	return scripts_settings_mutators_mutator_curse_blood_storm_v2
 end
 
-local var_0_2 = require("scripts/settings/mutators/mutator_nurgle_storm")
-local var_0_3 = table.clone(var_0_2)
+local scripts_settings_mutators_mutator_nurgle_storm = require("scripts/settings/mutators/mutator_nurgle_storm")
+local clone = table.clone(scripts_settings_mutators_mutator_nurgle_storm)
 
-var_0_3.packages = {
+clone.packages = {
 	"resource_packages/mutators/mutator_curse_blood_storm"
 }
-var_0_3.display_name = "curse_blood_storm_name"
-var_0_3.description = "curse_blood_storm_desc"
-var_0_3.icon = "deus_curse_khorne_01"
+clone.display_name = "curse_blood_storm_name"
+clone.description = "curse_blood_storm_desc"
+clone.icon = "deus_curse_khorne_01"
 
-local var_0_4 = {
+local tbl = {
 	harder = 60,
 	hard = 45,
 	normal = 30,
@@ -28,7 +28,8 @@ local var_0_4 = {
 	easy = 20
 }
 
-function var_0_3.server_start_function(arg_1_0, arg_1_1)
+clone.server_start_function = function (arg_1_0, arg_1_1)
+	-- function 1
 	arg_1_1.spawn_nurgle_storm_at = Managers.time:time("game") + 30
 	arg_1_1.next_bleed_time = 0
 	arg_1_1.bleed_rate = 0.2
@@ -45,10 +46,11 @@ function var_0_3.server_start_function(arg_1_0, arg_1_1)
 	arg_1_1.astar = GwNavAStar.create()
 end
 
-local var_0_5 = var_0_3.server_pre_update_function
+local server_pre_update_function = clone.server_pre_update_function
 
-function var_0_3.server_update_function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
-	var_0_5(arg_2_0, arg_2_1)
+clone.server_update_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	-- function 2
+	server_pre_update_function(arg_2_0, arg_2_1)
 
 	if arg_2_3 < arg_2_1.next_bleed_time then
 		return
@@ -56,40 +58,55 @@ function var_0_3.server_update_function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 		arg_2_1.next_bleed_time = arg_2_3 + arg_2_1.bleed_rate
 	end
 
-	local var_2_0 = arg_2_1.summoned_vortex_unit
-	local var_2_1 = ALIVE[var_2_0] and ScriptUnit.has_extension(var_2_0, "ai_supplementary_system")
+	local summoned_vortex_unit = arg_2_1.summoned_vortex_unit
+	local var_2_1 = ALIVE[summoned_vortex_unit]
+
+	var_2_1 = not var_2_1 and ScriptUnit.has_extension(summoned_vortex_unit, "ai_supplementary_system")
 
 	if not var_2_1 then
 		return
 	end
 
-	local var_2_2 = Managers.player:players()
+	local players = Managers.player:players()
 
-	for iter_2_0, iter_2_1 in pairs(var_2_2) do
-		local var_2_3 = iter_2_1.player_unit
+	for k, v in pairs(players) do
+		local player_unit = v.player_unit
 
-		if ALIVE[var_2_3] then
-			local var_2_4 = POSITION_LOOKUP[var_2_3]
+		if not ALIVE[player_unit] then
+			local var_2_4 = POSITION_LOOKUP[player_unit]
 
-			if var_2_1:is_position_inside(var_2_4) then
-				local var_2_5 = Managers.state.entity:system("buff_system")
-				local var_2_6 = Managers.state.difficulty:get_difficulty()
-				local var_2_7 = var_0_4[var_2_6]
-				local var_2_8 = iter_2_1.bot_player and arg_2_1.bleed_buff_bots or arg_2_1.bleed_buff
+			if not var_2_1:is_position_inside(var_2_4) then
+				local system = Managers.state.entity:system("buff_system")
+				local get_difficulty = Managers.state.difficulty:get_difficulty()
+				local var_2_7 = tbl[get_difficulty]
+				local bleed_buff_bots
 
-				var_2_5:add_buff(var_2_3, var_2_8, var_2_0, false, var_2_7)
+				if not v.bot_player then
+					bleed_buff_bots = arg_2_1.bleed_buff_bots
+
+					if not bleed_buff_bots then
+						-- Nothing
+					end
+				end
+
+				bleed_buff_bots = arg_2_1.bleed_buff
+
+				::label_2_0::
+
+				system:add_buff(player_unit, bleed_buff_bots, summoned_vortex_unit, false, var_2_7)
 			end
 		end
 	end
 end
 
-function var_0_3.server_player_hit_function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+clone.server_player_hit_function = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	-- function 3
 	if arg_3_4[2] == "blood_storm" then
-		local var_3_0 = ScriptUnit.extension_input(arg_3_2, "dialogue_system")
-		local var_3_1 = FrameTable.alloc_table()
+		local extension_input = ScriptUnit.extension_input(arg_3_2, "dialogue_system")
+		local alloc_table = FrameTable.alloc_table()
 
-		var_3_0:trigger_dialogue_event("curse_damage_taken", var_3_1)
+		extension_input:trigger_dialogue_event("curse_damage_taken", alloc_table)
 	end
 end
 
-return var_0_3
+return clone

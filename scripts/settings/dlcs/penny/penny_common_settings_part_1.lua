@@ -1,16 +1,16 @@
 -- chunkname: @scripts/settings/dlcs/penny/penny_common_settings_part_1.lua
 
-local var_0_0 = DLCSettings.penny_part_1
+local penny_part_1 = DLCSettings.penny_part_1
 
-var_0_0.statistics_definitions = {
+penny_part_1.statistics_definitions = {
 	"scripts/managers/backend/statistics_definitions_penny_part_1"
 }
-var_0_0.unlock_settings_xb1 = {
+penny_part_1.unlock_settings_xb1 = {
 	penny = {
 		class = "AlwaysUnlocked"
 	}
 }
-var_0_0.unlock_settings_ps4 = {
+penny_part_1.unlock_settings_ps4 = {
 	CUSA13595_00 = {
 		penny = {
 			class = "AlwaysUnlocked"

@@ -1,12 +1,20 @@
 -- chunkname: @scripts/unit_extensions/generic/generic_volume_templates.lua
 
+local VolumeFilters = VolumeFilters
+
 VolumeFilters = VolumeFilters or {}
+VolumeFilters = VolumeFilters
+
+local GenericVolumeTemplates = GenericVolumeTemplates
+
 GenericVolumeTemplates = GenericVolumeTemplates or {}
+GenericVolumeTemplates = GenericVolumeTemplates
 GenericVolumeTemplates.functions = {
 	damage_volume = {
 		generic_dot = {
-			on_enter = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-				local var_1_0 = {
+			on_enter = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+				-- function 1
+				local tbl = {
 					t = arg_1_2,
 					attacker_unit = arg_1_0,
 					external_optional_bonus = {
@@ -15,41 +23,47 @@ GenericVolumeTemplates.functions = {
 					}
 				}
 
-				arg_1_3[arg_1_0] = ScriptUnit.extension(arg_1_0, "buff_system"):add_buff("damage_volume_generic_dot", var_1_0)
+				arg_1_3[arg_1_0] = ScriptUnit.extension(arg_1_0, "buff_system"):add_buff("damage_volume_generic_dot", tbl)
 			end,
-			on_exit = function(arg_2_0, arg_2_1)
+			on_exit = function (arg_2_0, arg_2_1)
+				-- function 2
 				ScriptUnit.extension(arg_2_0, "buff_system"):remove_buff(arg_2_1[arg_2_0])
 
 				arg_2_1[arg_2_0] = nil
 			end
 		},
 		generic_insta_kill = {
-			on_enter = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+				-- function 3
 				ScriptUnit.extension(arg_3_0, "health_system"):entered_kill_volume(arg_3_2)
 			end
 		},
 		heroes_insta_kill = {
-			on_enter = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
-				if Managers.state.side:versus_is_hero(arg_4_0) then
+			on_enter = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				-- function 4
+				if not Managers.state.side:versus_is_hero(arg_4_0) then
 					ScriptUnit.extension(arg_4_0, "health_system"):entered_kill_volume(arg_4_2)
 				end
 			end
 		},
 		dark_pact_insta_kill = {
-			on_enter = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
-				if Managers.state.side:versus_is_dark_pact(arg_5_0) then
+			on_enter = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+				-- function 5
+				if not Managers.state.side:versus_is_dark_pact(arg_5_0) then
 					ScriptUnit.extension(arg_5_0, "health_system"):entered_kill_volume(arg_5_2)
 				end
 			end
 		},
 		catacombs_corpse_pit = {
-			on_enter = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
-				local var_6_0 = Managers.state.entity:system("buff_system")
-				local var_6_1 = true
+			on_enter = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+				-- function 6
+				local system = Managers.state.entity:system("buff_system")
+				local flag = true
 
-				arg_6_3[arg_6_0] = var_6_0:add_buff(arg_6_0, "catacombs_corpse_pit", arg_6_0, var_6_1)
+				arg_6_3[arg_6_0] = system:add_buff(arg_6_0, "catacombs_corpse_pit", arg_6_0, flag)
 			end,
-			on_exit = function(arg_7_0, arg_7_1)
+			on_exit = function (arg_7_0, arg_7_1)
+				-- function 7
 				local var_7_0 = arg_7_1[arg_7_0]
 
 				if var_7_0 == nil then
@@ -62,13 +76,15 @@ GenericVolumeTemplates.functions = {
 			end
 		},
 		cemetery_plague_floor = {
-			on_enter = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
-				local var_8_0 = Managers.state.entity:system("buff_system")
-				local var_8_1 = true
+			on_enter = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+				-- function 8
+				local system = Managers.state.entity:system("buff_system")
+				local flag = true
 
-				arg_8_3[arg_8_0] = var_8_0:add_buff(arg_8_0, "cemetery_plague_floor", arg_8_0, var_8_1)
+				arg_8_3[arg_8_0] = system:add_buff(arg_8_0, "cemetery_plague_floor", arg_8_0, flag)
 			end,
-			on_exit = function(arg_9_0, arg_9_1)
+			on_exit = function (arg_9_0, arg_9_1)
+				-- function 9
 				local var_9_0 = arg_9_1[arg_9_0]
 
 				if var_9_0 == nil then
@@ -83,208 +99,222 @@ GenericVolumeTemplates.functions = {
 	},
 	movement_volume = {
 		generic_slowdown = {
-			on_enter = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
-				local var_10_0 = Managers.state.entity:system("buff_system")
-				local var_10_1 = arg_10_3.settings.speed_multiplier
+			on_enter = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+				-- function 10
+				local system = Managers.state.entity:system("buff_system")
+				local speed_multiplier = arg_10_3.settings.speed_multiplier
 
-				var_10_0:add_volume_buff_multiplier(arg_10_0, "movement_volume_generic_slowdown", var_10_1)
+				system:add_volume_buff_multiplier(arg_10_0, "movement_volume_generic_slowdown", speed_multiplier)
 			end,
-			on_exit = function(arg_11_0, arg_11_1)
+			on_exit = function (arg_11_0, arg_11_1)
+				-- function 11
 				Managers.state.entity:system("buff_system"):remove_volume_buff_multiplier(arg_11_0, "movement_volume_generic_slowdown")
 			end
 		}
 	},
 	location_volume = {
 		area_indication = {
-			on_enter = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
-				local var_12_0 = Managers.player:owner(arg_12_0)
-				local var_12_1 = arg_12_3.params.location
+			on_enter = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+				-- function 12
+				local owner = Managers.player:owner(arg_12_0)
+				local location = arg_12_3.params.location
 
-				if var_12_0.local_player then
-					ScriptUnit.extension(arg_12_0, "hud_system"):set_current_location(var_12_1)
-				elseif var_12_0.remote then
-					local var_12_2 = Managers.state.unit_storage:go_id(arg_12_0)
-					local var_12_3 = NetworkLookup.locations[var_12_1]
-					local var_12_4 = PEER_ID_TO_CHANNEL[var_12_0.peer_id]
+				if not owner.local_player then
+					ScriptUnit.extension(arg_12_0, "hud_system"):set_current_location(location)
+				elseif not owner.remote then
+					local go_id = Managers.state.unit_storage:go_id(arg_12_0)
+					local var_12_3 = NetworkLookup.locations[location]
+					local var_12_4 = PEER_ID_TO_CHANNEL[owner.peer_id]
 
-					RPC.rpc_set_current_location(var_12_4, var_12_2, var_12_3)
+					RPC.rpc_set_current_location(var_12_4, go_id, var_12_3)
 				end
 			end
 		}
 	},
 	trigger_volume = {
 		all_alive_humans_outside = {
-			on_exit = function(arg_13_0, arg_13_1)
+			on_exit = function (arg_13_0, arg_13_1)
+				-- function 13
 				if not Managers.state.entity:system("volume_system"):volume_has_units_inside(arg_13_1.volume_name) then
-					local var_13_0 = arg_13_1.params.event_on_triggered
+					local event_on_triggered = arg_13_1.params.event_on_triggered
 
-					if var_13_0 then
-						Level.trigger_event(arg_13_1.level, var_13_0)
+					if not event_on_triggered then
+						Level.trigger_event(arg_13_1.level, event_on_triggered)
 					end
 
-					local var_13_1 = arg_13_1.params.on_triggered
+					local on_triggered = arg_13_1.params.on_triggered
 
-					if var_13_1 then
-						var_13_1()
+					if not on_triggered then
+						on_triggered()
 					end
 				end
 			end
 		},
 		local_player_inside = {
-			on_enter = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			on_enter = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+				-- function 14
 				if arg_14_0 == Managers.player:local_player().player_unit then
-					local var_14_0 = arg_14_3.params.event_on_triggered
+					local event_on_triggered = arg_14_3.params.event_on_triggered
 
-					if not var_14_0 then
+					if not event_on_triggered then
 						return
 					end
 
-					Level.trigger_event(arg_14_3.level, var_14_0)
+					Level.trigger_event(arg_14_3.level, event_on_triggered)
 				end
 			end,
-			on_exit = function(arg_15_0, arg_15_1)
+			on_exit = function (arg_15_0, arg_15_1)
+				-- function 15
 				if arg_15_0 == Managers.player:local_player().player_unit then
-					local var_15_0 = arg_15_1.params.event_on_exit
+					local event_on_exit = arg_15_1.params.event_on_exit
 
-					if not var_15_0 then
+					if not event_on_exit then
 						return
 					end
 
-					Level.trigger_event(arg_15_1.level, var_15_0)
+					Level.trigger_event(arg_15_1.level, event_on_exit)
 				end
 			end
 		},
 		all_alive_players_outside = {
-			on_exit = function(arg_16_0, arg_16_1)
+			on_exit = function (arg_16_0, arg_16_1)
+				-- function 16
 				if not Managers.state.entity:system("volume_system"):volume_has_units_inside(arg_16_1.volume_name) then
-					local var_16_0 = arg_16_1.params.event_on_triggered
+					local event_on_triggered = arg_16_1.params.event_on_triggered
 
-					if var_16_0 then
-						Level.trigger_event(arg_16_1.level, var_16_0)
+					if not event_on_triggered then
+						Level.trigger_event(arg_16_1.level, event_on_triggered)
 					end
 
-					local var_16_1 = arg_16_1.params.on_triggered
+					local on_triggered = arg_16_1.params.on_triggered
 
-					if var_16_1 then
-						var_16_1()
+					if not on_triggered then
+						on_triggered()
 					end
 				end
 			end
 		},
 		all_alive_players_outside_no_alive_inside = {
-			on_exit = function(arg_17_0, arg_17_1)
+			on_exit = function (arg_17_0, arg_17_1)
+				-- function 17
 				if not Managers.state.entity:system("volume_system"):volume_has_units_inside(arg_17_1.volume_name) then
-					local var_17_0 = arg_17_1.params.event_on_triggered
+					local event_on_triggered = arg_17_1.params.event_on_triggered
 
-					if var_17_0 then
-						Level.trigger_event(arg_17_1.level, var_17_0)
+					if not event_on_triggered then
+						Level.trigger_event(arg_17_1.level, event_on_triggered)
 					end
 
-					local var_17_1 = arg_17_1.params.on_triggered
+					local on_triggered = arg_17_1.params.on_triggered
 
-					if var_17_1 then
-						var_17_1()
+					if not on_triggered then
+						on_triggered()
 					end
 				end
 			end
 		},
 		all_alive_players_inside = {
-			on_enter = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
-				local var_18_0 = arg_18_3.params.event_on_triggered
-				local var_18_1 = not arg_18_3.all_players_inside
+			on_enter = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+				-- function 18
+				local event_on_triggered = arg_18_3.params.event_on_triggered
+				local flag = not arg_18_3.all_players_inside
 
-				if var_18_0 and var_18_1 then
-					Level.trigger_event(arg_18_3.level, var_18_0)
+				if not event_on_triggered and not flag then
+					Level.trigger_event(arg_18_3.level, event_on_triggered)
 
 					arg_18_3.all_players_inside = true
 				end
 
-				local var_18_2 = arg_18_3.params.on_triggered
+				local on_triggered = arg_18_3.params.on_triggered
 
-				if var_18_1 and var_18_2 then
-					var_18_2()
+				if not flag and not on_triggered then
+					on_triggered()
 				end
 			end,
-			on_exit = function(arg_19_0, arg_19_1)
-				local var_19_0 = arg_19_1.params.event_on_exit
-				local var_19_1 = arg_19_1.all_players_inside
+			on_exit = function (arg_19_0, arg_19_1)
+				-- function 19
+				local event_on_exit = arg_19_1.params.event_on_exit
+				local all_players_inside = arg_19_1.all_players_inside
 
-				if var_19_0 and var_19_1 then
-					Level.trigger_event(arg_19_1.level, var_19_0)
+				if not event_on_exit and not all_players_inside then
+					Level.trigger_event(arg_19_1.level, event_on_exit)
 
 					arg_19_1.all_players_inside = false
 				end
 
-				local var_19_2 = arg_19_1.params.callback_on_exit
+				local callback_on_exit = arg_19_1.params.callback_on_exit
 
-				if var_19_1 and var_19_2 then
-					var_19_2()
+				if not all_players_inside and not callback_on_exit then
+					callback_on_exit()
 				end
 			end
 		},
 		all_non_disabled_players_inside = {
-			on_enter = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
-				local var_20_0 = arg_20_3.params.event_on_triggered
-				local var_20_1 = not arg_20_3.all_players_inside
+			on_enter = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+				-- function 20
+				local event_on_triggered = arg_20_3.params.event_on_triggered
+				local flag = not arg_20_3.all_players_inside
 
-				if var_20_0 and var_20_1 then
-					Level.trigger_event(arg_20_3.level, var_20_0)
+				if not event_on_triggered and not flag then
+					Level.trigger_event(arg_20_3.level, event_on_triggered)
 
 					arg_20_3.all_players_inside = true
 				end
 
-				local var_20_2 = arg_20_3.params.on_triggered
+				local on_triggered = arg_20_3.params.on_triggered
 
-				if var_20_1 and var_20_2 then
-					var_20_2()
+				if not flag and not on_triggered then
+					on_triggered()
 				end
 			end,
-			on_exit = function(arg_21_0, arg_21_1)
-				local var_21_0 = arg_21_1.params.event_on_exit
-				local var_21_1 = arg_21_1.all_players_inside
+			on_exit = function (arg_21_0, arg_21_1)
+				-- function 21
+				local event_on_exit = arg_21_1.params.event_on_exit
+				local all_players_inside = arg_21_1.all_players_inside
 
-				if var_21_0 and var_21_1 then
-					Level.trigger_event(arg_21_1.level, var_21_0)
+				if not event_on_exit and not all_players_inside then
+					Level.trigger_event(arg_21_1.level, event_on_exit)
 
 					arg_21_1.all_players_inside = false
 				end
 
-				local var_21_2 = arg_21_1.params.on_exit
+				local on_exit = arg_21_1.params.on_exit
 
-				if var_21_1 and var_21_2 then
-					var_21_2()
+				if not all_players_inside and not on_exit then
+					on_exit()
 				end
 			end
 		},
 		non_disabled_players_inside = {
-			on_enter = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
-				local var_22_0 = arg_22_3.params.event_on_triggered
-				local var_22_1 = not arg_22_3.params.player_entered
+			on_enter = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+				-- function 22
+				local event_on_triggered = arg_22_3.params.event_on_triggered
+				local flag = not arg_22_3.params.player_entered
 
-				if var_22_0 and var_22_1 then
-					Level.trigger_event(arg_22_3.level, var_22_0)
+				if not event_on_triggered and not flag then
+					Level.trigger_event(arg_22_3.level, event_on_triggered)
 
 					arg_22_3.params.player_entered = true
 				end
 
-				local var_22_2 = arg_22_3.params.on_triggered
+				local on_triggered = arg_22_3.params.on_triggered
 
-				if var_22_1 and var_22_2 then
-					var_22_2()
+				if not flag and not on_triggered then
+					on_triggered()
 				end
 			end,
-			on_exit = function(arg_23_0, arg_23_1)
+			on_exit = function (arg_23_0, arg_23_1)
+				-- function 23
 				if not Managers.state.entity:system("volume_system"):volume_has_units_inside(arg_23_1.volume_name) then
-					local var_23_0 = arg_23_1.params.event_on_exit
+					local event_on_exit = arg_23_1.params.event_on_exit
 
-					if var_23_0 then
-						Level.trigger_event(arg_23_1.level, var_23_0)
+					if not event_on_exit then
+						Level.trigger_event(arg_23_1.level, event_on_exit)
 					end
 
-					local var_23_1 = arg_23_1.params.on_exit
+					local on_exit = arg_23_1.params.on_exit
 
-					if var_23_1 then
-						var_23_1()
+					if not on_exit then
+						on_exit()
 					end
 
 					arg_23_1.params.player_entered = false
@@ -292,72 +322,77 @@ GenericVolumeTemplates.functions = {
 			end
 		},
 		ai_inside = {
-			on_enter = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
-				local var_24_0 = arg_24_3.params.event_on_triggered
+			on_enter = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+				-- function 24
+				local event_on_triggered = arg_24_3.params.event_on_triggered
 
-				if var_24_0 then
-					Level.trigger_event(arg_24_3.level, var_24_0)
+				if not event_on_triggered then
+					Level.trigger_event(arg_24_3.level, event_on_triggered)
 				end
 
-				local var_24_1 = arg_24_3.params.on_triggered
+				local on_triggered = arg_24_3.params.on_triggered
 
-				if var_24_1 then
-					var_24_1()
+				if not on_triggered then
+					on_triggered()
 				end
 
-				local function var_24_2()
+				local function fn()
+					-- function 25
 					GenericVolumeTemplates.functions.trigger_volume.ai_inside.on_exit(arg_24_0, arg_24_3)
 				end
 
-				Managers.state.entity:system("volume_system"):register_track_unit_dead(arg_24_0, var_24_2)
+				Managers.state.entity:system("volume_system"):register_track_unit_dead(arg_24_0, fn)
 			end,
-			on_exit = function(arg_26_0, arg_26_1)
-				local var_26_0 = arg_26_1.params.event_on_exit
+			on_exit = function (arg_26_0, arg_26_1)
+				-- function 26
+				local event_on_exit = arg_26_1.params.event_on_exit
 
-				if var_26_0 then
-					Level.trigger_event(arg_26_1.level, var_26_0)
+				if not event_on_exit then
+					Level.trigger_event(arg_26_1.level, event_on_exit)
 				end
 
-				local var_26_1 = arg_26_1.params.on_exit
+				local on_exit = arg_26_1.params.on_exit
 
-				if var_26_1 then
-					var_26_1()
+				if not on_exit then
+					on_exit()
 				end
 
 				Managers.state.entity:system("volume_system"):unregister_track_unit_dead(arg_26_0)
 			end
 		},
 		players_inside = {
-			on_enter = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
-				local var_27_0 = arg_27_3.params.event_on_triggered
-				local var_27_1 = not arg_27_3.params.player_entered
+			on_enter = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+				-- function 27
+				local event_on_triggered = arg_27_3.params.event_on_triggered
+				local flag = not arg_27_3.params.player_entered
 
-				if var_27_0 and var_27_1 then
-					Level.trigger_event(arg_27_3.level, var_27_0)
+				if not event_on_triggered and not flag then
+					Level.trigger_event(arg_27_3.level, event_on_triggered)
 
 					arg_27_3.params.player_entered = true
 				end
 
-				local var_27_2 = arg_27_3.params.on_triggered
+				local on_triggered = arg_27_3.params.on_triggered
 
-				if var_27_1 and var_27_2 then
-					var_27_2()
+				if not flag and not on_triggered then
+					on_triggered()
 				end
 			end,
-			on_exit = function(arg_28_0, arg_28_1)
+			on_exit = function (arg_28_0, arg_28_1)
+				-- function 28
 				if not Managers.state.entity:system("volume_system"):volume_has_units_inside(arg_28_1.volume_name) then
-					local var_28_0 = arg_28_1.params.event_on_exit
+					local event_on_exit = arg_28_1.params.event_on_exit
 
-					if var_28_0 then
-						Level.trigger_event(arg_28_1.level, var_28_0)
+					if not event_on_exit then
+						Level.trigger_event(arg_28_1.level, event_on_exit)
 					end
 
 					arg_28_1.params.player_entered = false
 
-					local var_28_1 = arg_28_1.params.on_exit
+					local on_exit = arg_28_1.params.on_exit
 
-					if var_28_1 then
-						var_28_1()
+					if not on_exit then
+						on_exit()
 					end
 				end
 			end
@@ -365,16 +400,17 @@ GenericVolumeTemplates.functions = {
 	},
 	despawn_volume = {
 		pickup_projectiles = {
-			on_enter = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
-				local var_29_0 = arg_29_3.params.event_on_triggered
+			on_enter = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+				-- function 29
+				local event_on_triggered = arg_29_3.params.event_on_triggered
 
-				if var_29_0 then
-					Level.trigger_event(arg_29_3.level, var_29_0)
+				if not event_on_triggered then
+					Level.trigger_event(arg_29_3.level, event_on_triggered)
 				end
 
-				local var_29_1 = ScriptUnit.has_extension(arg_29_0, "kill_volume_handler_system")
+				local has_extension = ScriptUnit.has_extension(arg_29_0, "kill_volume_handler_system")
 
-				if var_29_1 and var_29_1:on_hit_kill_volume() then
+				if not has_extension and not has_extension:on_hit_kill_volume() then
 					return
 				end
 
@@ -396,34 +432,39 @@ GenericVolumeTemplates.functions.damage_volume.ai_kill_dot = GenericVolumeTempla
 GenericVolumeTemplates.functions.damage_volume.ai_kill_dot_no_cost = GenericVolumeTemplates.functions.damage_volume.generic_dot
 GenericVolumeTemplates.functions.damage_volume.skaven_molten_steel = GenericVolumeTemplates.functions.damage_volume.generic_dot
 GenericVolumeTemplates.filters = {
-	unit_not_disabled = function(arg_30_0, arg_30_1)
+	unit_not_disabled = function (arg_30_0, arg_30_1)
+		-- function 30
 		return not ScriptUnit.extension(arg_30_0, "status_system"):is_disabled()
 	end,
-	unit_not_disabled_outside_or_disabled_inside_and_not_all_disabled_inside = function(arg_31_0, arg_31_1)
-		local var_31_0 = ScriptUnit.extension(arg_31_0, "status_system"):is_disabled()
-		local var_31_1 = Managers.state.entity:system("volume_system")
-		local var_31_2 = var_31_1:player_inside(arg_31_1.volume_name, arg_31_0)
-		local var_31_3 = var_31_1:all_human_players_inside_disabled(arg_31_1.volume_name)
-		local var_31_4 = var_31_0 and var_31_2
-		local var_31_5 = not var_31_2 and not var_31_0
+	unit_not_disabled_outside_or_disabled_inside_and_not_all_disabled_inside = function (arg_31_0, arg_31_1)
+		-- function 31
+		local is_disabled = ScriptUnit.extension(arg_31_0, "status_system"):is_disabled()
+		local system = Managers.state.entity:system("volume_system")
+		local player_inside = system:player_inside(arg_31_1.volume_name, arg_31_0)
+		local all_human_players_inside_disabled = system:all_human_players_inside_disabled(arg_31_1.volume_name)
+		local flag = not is_disabled and player_inside
+		local flag_2 = not not player_inside or not is_disabled
 
-		return not var_31_4 and not var_31_5 or not not var_31_3
+		return (flag or not flag_2) and not not all_human_players_inside_disabled
 	end,
-	all_alive_players_inside = function(arg_32_0, arg_32_1)
+	all_alive_players_inside = function (arg_32_0, arg_32_1)
+		-- function 32
 		return Managers.state.entity:system("volume_system"):all_alive_or_respawned_human_players_inside(arg_32_1.volume_name)
 	end,
-	all_non_disabled_players_inside = function(arg_33_0, arg_33_1)
+	all_non_disabled_players_inside = function (arg_33_0, arg_33_1)
+		-- function 33
 		return Managers.state.entity:system("volume_system"):all_alive_human_players_inside(arg_33_1.volume_name)
 	end,
-	is_alive_default_enemy = function(arg_34_0, arg_34_1)
+	is_alive_default_enemy = function (arg_34_0, arg_34_1)
+		-- function 34
 		if not HEALTH_ALIVE[arg_34_0] then
 			return false
 		end
 
-		local var_34_0 = Managers.state.conflict
-		local var_34_1 = Managers.state.side
-		local var_34_2 = var_34_1 and var_34_1.side_by_unit[arg_34_0]
+		local conflict = Managers.state.conflict
+		local side = Managers.state.side
+		local flag = not side and side.side_by_unit[arg_34_0]
 
-		return (var_34_0 and var_34_0.default_enemy_side_id) == (var_34_2 and var_34_2.side_id)
+		return (not conflict and conflict.default_enemy_side_id) == (not flag and flag.side_id)
 	end
 }

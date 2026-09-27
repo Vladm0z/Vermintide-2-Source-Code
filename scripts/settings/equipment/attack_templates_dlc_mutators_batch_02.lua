@@ -1,6 +1,9 @@
 -- chunkname: @scripts/settings/equipment/attack_templates_dlc_mutators_batch_02.lua
 
+local AttackTemplates = AttackTemplates
+
 AttackTemplates = AttackTemplates or {}
+AttackTemplates = AttackTemplates
 AttackTemplates.loot_rat_explosion = {
 	sound_type = "heavy",
 	stagger_value = 6,

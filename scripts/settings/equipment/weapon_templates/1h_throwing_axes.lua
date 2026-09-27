@@ -1,9 +1,9 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/1h_throwing_axes.lua
 
-local var_0_0 = "throwing_axe"
-local var_0_1 = 4
-local var_0_2 = 2
-local var_0_3 = {
+local str = "throwing_axe"
+local num = 4
+local num_2 = 2
+local tbl = {
 	actions = {
 		action_one = {
 			default = {
@@ -23,7 +23,8 @@ local var_0_3 = {
 				anim_event = "attack_throw",
 				no_out_of_ammo_vo = true,
 				total_time = 0.85,
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
+					-- function 1
 					return arg_1_1 ~= "new_interupting_action"
 				end,
 				buff_data = {
@@ -63,12 +64,13 @@ local var_0_3 = {
 						end_time = math.huge
 					}
 				},
-				enter_function = function(arg_2_0, arg_2_1)
+				enter_function = function (arg_2_0, arg_2_1)
+					-- function 2
 					arg_2_1:clear_input_buffer()
 
 					return arg_2_1:reset_release_input()
 				end,
-				hit_effect = var_0_0,
+				hit_effect = str,
 				projectile_info = Projectiles.throwing_axe,
 				impact_data = {
 					depth = 0.2,
@@ -87,8 +89,8 @@ local var_0_3 = {
 						}
 					}
 				},
-				alert_sound_range_fire = var_0_1,
-				alert_sound_range_hit = var_0_2,
+				alert_sound_range_fire = num,
+				alert_sound_range_hit = num_2,
 				recoil_settings = {
 					horizontal_climb = -0.5,
 					restore_duration = 0.2,
@@ -115,7 +117,8 @@ local var_0_3 = {
 				anim_event = "attack_throw",
 				no_out_of_ammo_vo = true,
 				total_time = 0.9,
-				anim_end_event_condition_func = function(arg_3_0, arg_3_1)
+				anim_end_event_condition_func = function (arg_3_0, arg_3_1)
+					-- function 3
 					return arg_3_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {
@@ -146,12 +149,13 @@ local var_0_3 = {
 						end_time = math.huge
 					}
 				},
-				enter_function = function(arg_4_0, arg_4_1)
+				enter_function = function (arg_4_0, arg_4_1)
+					-- function 4
 					arg_4_1:clear_input_buffer()
 
 					return arg_4_1:reset_release_input()
 				end,
-				hit_effect = var_0_0,
+				hit_effect = str,
 				projectile_info = Projectiles.throwing_axe,
 				impact_data = {
 					depth = 0.2,
@@ -170,8 +174,8 @@ local var_0_3 = {
 						}
 					}
 				},
-				alert_sound_range_fire = var_0_1,
-				alert_sound_range_hit = var_0_2,
+				alert_sound_range_fire = num,
+				alert_sound_range_hit = num_2,
 				recoil_settings = {
 					horizontal_climb = -0.5,
 					restore_duration = 0.2,
@@ -191,7 +195,8 @@ local var_0_3 = {
 				hold_input = "action_two_hold",
 				anim_event = "throw_charge",
 				minimum_hold_time = 0.2,
-				anim_end_event_condition_func = function(arg_5_0, arg_5_1)
+				anim_end_event_condition_func = function (arg_5_0, arg_5_1)
+					-- function 5
 					return arg_5_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -232,8 +237,9 @@ local var_0_3 = {
 						end_time = math.huge
 					}
 				},
-				condition_func = function(arg_6_0, arg_6_1, arg_6_2)
-					if arg_6_2 and (arg_6_2:total_remaining_ammo() <= 0 or arg_6_2:is_reloading()) then
+				condition_func = function (arg_6_0, arg_6_1, arg_6_2)
+					-- function 6
+					if not arg_6_2 and arg_6_2:total_remaining_ammo() <= 0 and not arg_6_2:is_reloading() then
 						return false
 					end
 
@@ -253,7 +259,8 @@ local var_0_3 = {
 				one_ammo_catch_time = 1.1,
 				anim_event = "reload",
 				minimum_hold_time = 0.5,
-				anim_end_event_condition_func = function(arg_7_0, arg_7_1)
+				anim_end_event_condition_func = function (arg_7_0, arg_7_1)
+					-- function 7
 					return arg_7_1 ~= "new_interupting_action"
 				end,
 				buff_data = {
@@ -264,7 +271,8 @@ local var_0_3 = {
 						end_time = math.huge
 					}
 				},
-				enter_function = function(arg_8_0, arg_8_1)
+				enter_function = function (arg_8_0, arg_8_1)
+					-- function 8
 					arg_8_1:reset_release_input()
 					arg_8_1:clear_input_buffer()
 				end,
@@ -282,8 +290,9 @@ local var_0_3 = {
 						auto_chain = true
 					}
 				},
-				condition_func = function(arg_9_0, arg_9_1, arg_9_2)
-					if arg_9_2 and arg_9_2:total_remaining_ammo() < arg_9_2:max_ammo() then
+				condition_func = function (arg_9_0, arg_9_1, arg_9_2)
+					-- function 9
+					if not (not arg_9_2 and not (arg_9_2:total_remaining_ammo() < arg_9_2:max_ammo())) then
 						return true
 					end
 
@@ -299,7 +308,8 @@ local var_0_3 = {
 				hold_input = "weapon_reload_hold",
 				anim_event = "reload_last",
 				minimum_hold_time = 0.2,
-				anim_end_event_condition_func = function(arg_10_0, arg_10_1)
+				anim_end_event_condition_func = function (arg_10_0, arg_10_1)
+					-- function 10
 					return arg_10_1 ~= "new_interupting_action"
 				end,
 				buff_data = {
@@ -310,7 +320,8 @@ local var_0_3 = {
 						end_time = math.huge
 					}
 				},
-				enter_function = function(arg_11_0, arg_11_1)
+				enter_function = function (arg_11_0, arg_11_1)
+					-- function 11
 					arg_11_1:reset_release_input()
 					arg_11_1:clear_input_buffer()
 				end,
@@ -328,8 +339,9 @@ local var_0_3 = {
 						input = "weapon_reload_hold"
 					}
 				},
-				chain_condition_func = function(arg_12_0, arg_12_1, arg_12_2)
-					if arg_12_2 and arg_12_2:total_remaining_ammo() < arg_12_2:max_ammo() then
+				chain_condition_func = function (arg_12_0, arg_12_1, arg_12_2)
+					-- function 12
+					if not (not arg_12_2 and not (arg_12_2:total_remaining_ammo() < arg_12_2:max_ammo())) then
 						return true
 					end
 
@@ -369,30 +381,30 @@ local var_0_3 = {
 		effective_against_charged = bit.bor(BreedCategory.Berserker, BreedCategory.Special, BreedCategory.Armored)
 	}
 }
-local var_0_4 = var_0_3.actions.action_one.default
+local default = tbl.actions.action_one.default
 
-var_0_3.default_loaded_projectile_settings = {
+tbl.default_loaded_projectile_settings = {
 	drop_multiplier = 0.03,
-	speed = var_0_4.speed,
-	gravity = ProjectileGravitySettings[var_0_4.projectile_info.gravity_settings]
+	speed = default.speed,
+	gravity = ProjectileGravitySettings[default.projectile_info.gravity_settings]
 }
-var_0_3.default_spread_template = "throwing_axe"
-var_0_3.right_hand_unit = "units/weapons/player/wpn_dw_thrown_axe_01_t1/wpn_dw_thrown_axe_01_t1"
-var_0_3.right_hand_attachment_node_linking = AttachmentNodeLinking.one_handed_melee_weapon.right
-var_0_3.display_unit = "units/weapons/weapon_display/display_1h_throwing_axes"
-var_0_3.wield_anim_not_loaded = "to_throwing_axe"
-var_0_3.wield_anim = "to_throwing_axe"
-var_0_3.wield_anim_no_ammo = "to_throwing_axe_noammo"
-var_0_3.state_machine = "units/beings/player/first_person_base/state_machines/ranged/throwing_axes"
-var_0_3.crosshair_style = "projectile"
-var_0_3.no_ammo_reload_event = "to_ammo"
-var_0_3.reload_event = "to_ammo"
-var_0_3.buff_type = "RANGED"
-var_0_3.weapon_type = "THROWING_AXE"
-var_0_3.default_projectile_action = var_0_3.actions.action_one.default
-var_0_3.dodge_count = 6
-var_0_3.destroy_indexed_projectiles = true
-var_0_3.buffs = {
+tbl.default_spread_template = "throwing_axe"
+tbl.right_hand_unit = "units/weapons/player/wpn_dw_thrown_axe_01_t1/wpn_dw_thrown_axe_01_t1"
+tbl.right_hand_attachment_node_linking = AttachmentNodeLinking.one_handed_melee_weapon.right
+tbl.display_unit = "units/weapons/weapon_display/display_1h_throwing_axes"
+tbl.wield_anim_not_loaded = "to_throwing_axe"
+tbl.wield_anim = "to_throwing_axe"
+tbl.wield_anim_no_ammo = "to_throwing_axe_noammo"
+tbl.state_machine = "units/beings/player/first_person_base/state_machines/ranged/throwing_axes"
+tbl.crosshair_style = "projectile"
+tbl.no_ammo_reload_event = "to_ammo"
+tbl.reload_event = "to_ammo"
+tbl.buff_type = "RANGED"
+tbl.weapon_type = "THROWING_AXE"
+tbl.default_projectile_action = tbl.actions.action_one.default
+tbl.dodge_count = 6
+tbl.destroy_indexed_projectiles = true
+tbl.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1.2
 	},
@@ -400,10 +412,10 @@ var_0_3.buffs = {
 		external_optional_multiplier = 1.2
 	}
 }
-var_0_3.wwise_dep_ammo = {
+tbl.wwise_dep_ammo = {
 	"wwise/throwing_axe"
 }
-var_0_3.aim_assist_settings = {
+tbl.aim_assist_settings = {
 	max_range = 50,
 	no_aim_input_multiplier = 0,
 	always_auto_aim = true,
@@ -416,7 +428,7 @@ var_0_3.aim_assist_settings = {
 		skaven_slave = 1
 	}
 }
-var_0_3.weapon_diagram = {
+tbl.weapon_diagram = {
 	light_attack = {
 		[DamageTypes.ARMOR_PIERCING] = 6,
 		[DamageTypes.CLEAVE] = 0,
@@ -432,12 +444,12 @@ var_0_3.weapon_diagram = {
 		[DamageTypes.DAMAGE] = 6
 	}
 }
-var_0_3.tooltip_keywords = {
+tbl.tooltip_keywords = {
 	"weapon_keyword_armour_piercing",
 	"weapon_keyword_sniper",
 	"weapon_keyword_versatile"
 }
-var_0_3.tooltip_compare = {
+tbl.tooltip_compare = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -447,7 +459,7 @@ var_0_3.tooltip_compare = {
 		sub_action_name = "throw_charged"
 	}
 }
-var_0_3.tooltip_detail = {
+tbl.tooltip_detail = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -467,9 +479,9 @@ var_0_3.tooltip_detail = {
 	}
 }
 
-local var_0_5 = table.clone(var_0_3)
+local clone = table.clone(tbl)
 
-var_0_5.actions.weapon_reload.default.allowed_chain_actions = {
+clone.actions.weapon_reload.default.allowed_chain_actions = {
 	{
 		sub_action = "default",
 		start_time = 0.2,
@@ -485,6 +497,6 @@ var_0_5.actions.weapon_reload.default.allowed_chain_actions = {
 }
 
 return {
-	one_handed_throwing_axes_template = var_0_3,
-	one_handed_throwing_axes_template_vs = var_0_5
+	one_handed_throwing_axes_template = tbl,
+	one_handed_throwing_axes_template_vs = clone
 }

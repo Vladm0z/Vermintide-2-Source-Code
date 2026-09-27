@@ -2,10 +2,10 @@
 
 ImguiUIAssetCheck = class(ImguiUIAssetCheck)
 
-local var_0_0 = Gui
-local var_0_1 = Imgui
-local var_0_2 = true
-local var_0_3 = {
+local Gui = Gui
+local Imgui = Imgui
+local flag = true
+local tbl = {
 	frame = true,
 	weapon_skin = true,
 	bundle = true,
@@ -17,187 +17,207 @@ local var_0_3 = {
 	charm = true
 }
 
-function ImguiUIAssetCheck.init(arg_1_0)
-	arg_1_0._active = false
-	arg_1_0._first_launch = true
-	arg_1_0._missing_asset_items_list = {}
-	arg_1_0._show_test_items = false
-	arg_1_0._show_bundles = true
-	arg_1_0._show_frames = true
-	arg_1_0._show_weapon_skin = true
-	arg_1_0._show_skin = true
-	arg_1_0._show_ranged = true
-	arg_1_0._show_hat = true
-	arg_1_0._show_trinket = true
-	arg_1_0._show_charm = true
-	arg_1_0._show_melee = true
+ImguiUIAssetCheck.init = function (self)
+	-- function 1
+	self._active = false
+	self._first_launch = true
+	self._missing_asset_items_list = {}
+	self._show_test_items = false
+	self._show_bundles = true
+	self._show_frames = true
+	self._show_weapon_skin = true
+	self._show_skin = true
+	self._show_ranged = true
+	self._show_hat = true
+	self._show_trinket = true
+	self._show_charm = true
+	self._show_melee = true
 end
 
-function ImguiUIAssetCheck.update(arg_2_0)
-	if var_0_2 then
-		arg_2_0:init()
+ImguiUIAssetCheck.update = function (self)
+	-- function 2
+	if not flag then
+		self:init()
 
-		var_0_2 = false
+		flag = false
 	end
 end
 
-function ImguiUIAssetCheck.on_show(arg_3_0)
-	arg_3_0._active = true
+ImguiUIAssetCheck.on_show = function (self)
+	-- function 3
+	self._active = true
 end
 
-function ImguiUIAssetCheck.on_hide(arg_4_0)
-	arg_4_0._active = false
+ImguiUIAssetCheck.on_hide = function (self)
+	-- function 4
+	self._active = false
 end
 
-function ImguiUIAssetCheck.draw(arg_5_0, arg_5_1)
-	local var_5_0 = arg_5_0:_do_main_window()
+ImguiUIAssetCheck.draw = function (self, arg_5_1)
+	-- function 5
+	local _do_main_window = self:_do_main_window()
 
-	arg_5_0:_do_preview_window()
+	self:_do_preview_window()
 
-	return var_5_0
+	return _do_main_window
 end
 
-function ImguiUIAssetCheck.is_persistent(arg_6_0)
+ImguiUIAssetCheck.is_persistent = function (arg_6_0)
+	-- function 6
 	return true
 end
 
-function ImguiUIAssetCheck._do_main_window(arg_7_0)
-	if arg_7_0._first_launch then
-		local var_7_0, var_7_1 = Application.resolution()
+ImguiUIAssetCheck._do_main_window = function (self)
+	-- function 7
+	if not self._first_launch then
+		local resolution, var_7_1 = Application.resolution()
 
-		var_0_1.set_next_window_size(var_7_0 * 0.4, var_7_1 * 0.7)
+		Imgui.set_next_window_size(resolution * 0.4, var_7_1 * 0.7)
 	end
 
-	local var_7_2 = var_0_1.begin_window("UI Items Asset Ckeck", "menu_bar")
+	local begin_window = Imgui.begin_window("UI Items Asset Ckeck", "menu_bar")
 
-	var_0_1.separator()
-	var_0_1.dummy(2, 5)
-	var_0_1.text_colored("Check Items", 245, 245, 207, 255)
-	arg_7_0:_do_filter_settings()
+	Imgui.separator()
+	Imgui.dummy(2, 5)
+	Imgui.text_colored("Check Items", 245, 245, 207, 255)
+	self:_do_filter_settings()
 
-	if var_0_1.button("Do Check", 250, 35) then
-		arg_7_0:_do_asset_check()
+	if not Imgui.button("Do Check", 250, 35) then
+		self:_do_asset_check()
 	end
 
-	var_0_1:end_window()
+	Imgui:end_window()
 
-	return var_7_2
+	return begin_window
 end
 
-function ImguiUIAssetCheck._do_preview_window(arg_8_0)
-	if arg_8_0._first_launch then
-		local var_8_0, var_8_1 = Application.resolution()
+ImguiUIAssetCheck._do_preview_window = function (self)
+	-- function 8
+	if not self._first_launch then
+		local resolution, var_8_1 = Application.resolution()
 
-		var_0_1.set_next_window_size(var_8_0 * 0.4, var_8_1 * 0.7)
+		Imgui.set_next_window_size(resolution * 0.4, var_8_1 * 0.7)
 
-		local var_8_2, var_8_3 = var_0_1.get_window_pos()
+		local get_window_pos, var_8_3 = Imgui.get_window_pos()
 
-		var_0_1.set_next_window_pos(var_8_2 + var_8_0 * 0.4 + 20, var_8_3)
+		Imgui.set_next_window_pos(get_window_pos + resolution * 0.4 + 20, var_8_3)
 
-		arg_8_0._first_launch = false
+		self._first_launch = false
 	end
 
-	local var_8_4, var_8_5 = var_0_1.begin_window("UI Asset Check Preview", "menu_bar")
+	local begin_window, var_8_5 = Imgui.begin_window("UI Asset Check Preview", "menu_bar")
 
-	var_0_1.separator()
-	var_0_1.dummy(2, 5)
-	var_0_1.text_colored("Items Preview", 245, 245, 207, 255)
+	Imgui.separator()
+	Imgui.dummy(2, 5)
+	Imgui.text_colored("Items Preview", 245, 245, 207, 255)
 
-	if not table.is_empty(arg_8_0._missing_asset_items_list) then
-		arg_8_0:_do_preview()
+	if not table.is_empty(self._missing_asset_items_list) then
+		self:_do_preview()
 	end
 
-	var_0_1:end_window()
+	Imgui:end_window()
 end
 
-function ImguiUIAssetCheck._do_filter_settings(arg_9_0)
-	arg_9_0._show_test_items = var_0_1.checkbox("Show Test Items", arg_9_0._show_test_items)
-	arg_9_0._show_bundles = var_0_1.checkbox("Show Bundles", arg_9_0._show_bundles)
-	arg_9_0._show_frames = var_0_1.checkbox("show Frames", arg_9_0._show_frames)
-	arg_9_0._show_weapon_skin = var_0_1.checkbox("show Weapon Skin", arg_9_0._show_weapon_skin)
-	arg_9_0._show_skin = var_0_1.checkbox("show Skin", arg_9_0._show_skin)
-	arg_9_0._show_ranged = var_0_1.checkbox("show Ranged", arg_9_0._show_ranged)
-	arg_9_0._show_hat = var_0_1.checkbox("show Hat", arg_9_0._show_hat)
-	arg_9_0._show_trinket = var_0_1.checkbox("show Trinket", arg_9_0._show_trinket)
-	arg_9_0._show_charm = var_0_1.checkbox("show Charm", arg_9_0._show_charm)
-	arg_9_0._show_melee = var_0_1.checkbox("show Melee", arg_9_0._show_melee)
-	var_0_3.bundle = arg_9_0._ignore_bundles
-	var_0_3.frame = arg_9_0._show_frames
-	var_0_3.weapon_skin = arg_9_0._show_weapon_skin
-	var_0_3.skin = arg_9_0._show_skin
-	var_0_3.ranged = arg_9_0._show_ranged
-	var_0_3.trinket = arg_9_0._show_trinket
-	var_0_3.hat = arg_9_0._show_hat
-	var_0_3.charm = arg_9_0._show_charm
-	var_0_3.melee = arg_9_0._show_melee
+ImguiUIAssetCheck._do_filter_settings = function (self)
+	-- function 9
+	self._show_test_items = Imgui.checkbox("Show Test Items", self._show_test_items)
+	self._show_bundles = Imgui.checkbox("Show Bundles", self._show_bundles)
+	self._show_frames = Imgui.checkbox("show Frames", self._show_frames)
+	self._show_weapon_skin = Imgui.checkbox("show Weapon Skin", self._show_weapon_skin)
+	self._show_skin = Imgui.checkbox("show Skin", self._show_skin)
+	self._show_ranged = Imgui.checkbox("show Ranged", self._show_ranged)
+	self._show_hat = Imgui.checkbox("show Hat", self._show_hat)
+	self._show_trinket = Imgui.checkbox("show Trinket", self._show_trinket)
+	self._show_charm = Imgui.checkbox("show Charm", self._show_charm)
+	self._show_melee = Imgui.checkbox("show Melee", self._show_melee)
+	tbl.bundle = self._ignore_bundles
+	tbl.frame = self._show_frames
+	tbl.weapon_skin = self._show_weapon_skin
+	tbl.skin = self._show_skin
+	tbl.ranged = self._show_ranged
+	tbl.trinket = self._show_trinket
+	tbl.hat = self._show_hat
+	tbl.charm = self._show_charm
+	tbl.melee = self._show_melee
 
-	var_0_1.dummy(2, 25)
+	Imgui.dummy(2, 25)
 end
 
-function ImguiUIAssetCheck._do_asset_check(arg_10_0)
-	table.clear(arg_10_0._missing_asset_items_list)
+ImguiUIAssetCheck._do_asset_check = function (self)
+	-- function 10
+	table.clear(self._missing_asset_items_list)
 
-	for iter_10_0, iter_10_1 in pairs(ItemMasterList) do
-		if iter_10_1.slot_type and var_0_3[iter_10_1.slot_type] then
-			local var_10_0 = iter_10_1.inventory_icon
-			local var_10_1 = iter_10_1.description
-			local var_10_2 = iter_10_1.display_name
-			local var_10_3 = var_10_0 ~= nil and (var_10_0 ~= "icons_placeholder" or UIAtlasHelper.has_texture_by_name(var_10_0))
-			local var_10_4 = var_10_1 and Managers.localizer:_base_lookup(var_10_1)
-			local var_10_5 = var_10_2 and Managers.localizer:_base_lookup(var_10_2)
+	for k, v in pairs(ItemMasterList) do
+		if not v.slot_type and not tbl[v.slot_type] then
+			local inventory_icon = v.inventory_icon
+			local description = v.description
+			local display_name = v.display_name
+			local flag = inventory_icon == nil or inventory_icon ~= "icons_placeholder" or UIAtlasHelper.has_texture_by_name(inventory_icon)
+			local flag_2 = not description and Managers.localizer:_base_lookup(description)
+			local flag_3 = not display_name and Managers.localizer:_base_lookup(display_name)
 
-			if not var_10_3 and not iter_10_1.slot_type == "bundle" or not var_10_4 or not var_10_5 then
-				if string.find(iter_10_0, "test") and arg_10_0._show_test_items then
-					arg_10_0._missing_asset_items_list[iter_10_0] = iter_10_1
-				elseif string.find(iter_10_0, "test") and not arg_10_0._show_test_items then
-					-- block empty
+			if not ((flag or not v.slot_type ~= "bundle" or not flag_2) and flag_3) then
+				if not string.find(k, "test") and not self._show_test_items then
+					self._missing_asset_items_list[k] = v
+				elseif not (not string.find(k, "test") and self._show_test_items) then
+					-- Nothing
 				else
-					arg_10_0._missing_asset_items_list[iter_10_0] = iter_10_1
+					self._missing_asset_items_list[k] = v
 				end
 			end
 		end
 	end
 end
 
-function ImguiUIAssetCheck._should_add_item(arg_11_0, arg_11_1)
+ImguiUIAssetCheck._should_add_item = function (arg_11_0, arg_11_1)
+	-- function 11
 	return
 end
 
-function ImguiUIAssetCheck._do_preview(arg_12_0)
-	for iter_12_0, iter_12_1 in pairs(arg_12_0._missing_asset_items_list) do
-		var_0_1.text_colored(iter_12_0 .. " : ", 0, 186, 112, 255)
-		var_0_1.dummy(2, 4)
-		var_0_1.text_colored("Icon", 0, 193, 212, 255)
-		var_0_1.same_line()
+ImguiUIAssetCheck._do_preview = function (self)
+	-- function 12
+	for k, v in pairs(self._missing_asset_items_list) do
+		Imgui.text_colored(k .. " : ", 0, 186, 112, 255)
+		Imgui.dummy(2, 4)
+		Imgui.text_colored("Icon", 0, 193, 212, 255)
+		Imgui.same_line()
 
-		if iter_12_1.inventory_icon ~= nil and (iter_12_1.inventory_icon ~= "icons_placeholder" or UIAtlasHelper.has_texture_by_name(iter_12_1.inventory_icon)) then
-			var_0_1.text_colored(tostring(iter_12_1.inventory_icon), 245, 245, 207, 255)
+		if not (v.inventory_icon == nil or v.inventory_icon ~= "icons_placeholder" or UIAtlasHelper.has_texture_by_name(v.inventory_icon)) then
+			Imgui.text_colored(tostring(v.inventory_icon), 245, 245, 207, 255)
 		else
-			var_0_1.text_colored(tostring(iter_12_1.inventory_icon), 220, 20, 60, 255)
+			Imgui.text_colored(tostring(v.inventory_icon), 220, 20, 60, 255)
 		end
 
-		var_0_1.text_colored("Description", 0, 193, 212, 255)
-		var_0_1.same_line()
+		Imgui.text_colored("Description", 0, 193, 212, 255)
+		Imgui.same_line()
 
-		if iter_12_1.description and Managers.localizer:_base_lookup(iter_12_1.description) then
-			var_0_1.text_colored(Localize(iter_12_1.description), 245, 245, 207, 255)
+		local description = v.description
+
+		description = not description and Managers.localizer:_base_lookup(v.description)
+
+		if not description then
+			Imgui.text_colored(Localize(v.description), 245, 245, 207, 255)
 		else
-			var_0_1.text_colored(tostring(iter_12_1.description), 220, 20, 60, 255)
+			Imgui.text_colored(tostring(v.description), 220, 20, 60, 255)
 		end
 
-		var_0_1.text_colored("Display Name", 0, 193, 212, 255)
-		var_0_1.same_line()
+		Imgui.text_colored("Display Name", 0, 193, 212, 255)
+		Imgui.same_line()
 
-		if iter_12_1.display_name and Managers.localizer:_base_lookup(iter_12_1.display_name) then
-			var_0_1.text_colored(Localize(iter_12_1.display_name), 245, 245, 207, 255)
+		local display_name = v.display_name
+
+		display_name = not display_name and Managers.localizer:_base_lookup(v.display_name)
+
+		if not display_name then
+			Imgui.text_colored(Localize(v.display_name), 245, 245, 207, 255)
 		else
-			var_0_1.text_colored(tostring(iter_12_1.display_name), 220, 20, 60, 255)
+			Imgui.text_colored(tostring(v.display_name), 220, 20, 60, 255)
 		end
 
-		if var_0_1.button("Save Item Name to Clipboard", 400, 20) then
-			Clipboard.put(iter_12_0)
+		if not Imgui.button("Save Item Name to Clipboard", 400, 20) then
+			Clipboard.put(k)
 		end
 
-		var_0_1.dummy(2, 4)
+		Imgui.dummy(2, 4)
 	end
 end

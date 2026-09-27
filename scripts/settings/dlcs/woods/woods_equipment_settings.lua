@@ -1,22 +1,22 @@
 -- chunkname: @scripts/settings/dlcs/woods/woods_equipment_settings.lua
 
-local var_0_0 = DLCSettings.woods
+local woods = DLCSettings.woods
 
-var_0_0.item_master_list_file_names = {
+woods.item_master_list_file_names = {
 	"scripts/settings/dlcs/woods/item_master_list_woods"
 }
-var_0_0.weapon_skins_file_names = {
+woods.weapon_skins_file_names = {
 	"scripts/settings/dlcs/woods/weapon_skins_woods"
 }
-var_0_0.cosmetics_files = {
+woods.cosmetics_files = {
 	"scripts/settings/dlcs/woods/cosmetics_woods"
 }
-var_0_0.weapon_template_file_names = {
+woods.weapon_template_file_names = {
 	"scripts/settings/equipment/weapon_templates/we_thornsister_career_skill",
 	"scripts/settings/equipment/weapon_templates/javelin",
 	"scripts/settings/equipment/weapon_templates/staff_life"
 }
-var_0_0.default_items = {
+woods.default_items = {
 	we_javelin = {
 		display_name = "we_javelin_blacksmith_name",
 		description = "description_default_witch_hunter_wh_1h_falchions"
@@ -26,13 +26,13 @@ var_0_0.default_items = {
 		description = "description_default_witch_hunter_wh_1h_falchions"
 	}
 }
-var_0_0.damage_profile_template_files_names = {
+woods.damage_profile_template_files_names = {
 	"scripts/settings/equipment/damage_profile_templates_dlc_woods"
 }
-var_0_0.attack_template_files_names = {
+woods.attack_template_files_names = {
 	"scripts/settings/equipment/attack_templates_dlc_woods"
 }
-var_0_0.action_template_file_names = {
+woods.action_template_file_names = {
 	"scripts/settings/dlcs/woods/action_career_we_thornsister_wall",
 	"scripts/settings/dlcs/woods/action_career_we_thornsister_stagger",
 	"scripts/settings/dlcs/woods/action_career_we_thornsister_target_wall",
@@ -40,7 +40,7 @@ var_0_0.action_template_file_names = {
 	"scripts/settings/dlcs/woods/action_rail_gun",
 	"scripts/settings/dlcs/woods/action_spirit_storm"
 }
-var_0_0.action_classes_lookup = {
+woods.action_classes_lookup = {
 	rail_gun = "ActionRailGun",
 	career_we_thornsister_target_stagger = "ActionCareerWEThornsisterTargetStagger",
 	career_we_thornsister_stagger = "ActionCareerWEThornsisterStagger",
@@ -48,7 +48,7 @@ var_0_0.action_classes_lookup = {
 	spirit_storm = "ActionSpiritStorm",
 	career_we_thornsister_wall = "ActionCareerWEThornsisterWall"
 }
-var_0_0.inventory_package_list = {
+woods.inventory_package_list = {
 	"resource_packages/careers/we_thornsister",
 	"units/beings/player/way_watcher_thornsister/first_person_base/chr_first_person_mesh",
 	"units/beings/player/way_watcher_thornsister/third_person_base/chr_third_person_mesh",
@@ -92,7 +92,7 @@ var_0_0.inventory_package_list = {
 	"units/beings/player/way_watcher_thornsister/abilities/ww_thornsister_thorn_wall_01_bleed",
 	"units/beings/player/way_watcher_thornsister/abilities/ww_thornsister_thorn_wave_01"
 }
-var_0_0.husk_lookup = {
+woods.husk_lookup = {
 	"units/weapons/player/wpn_we_javelin_01/wpn_we_javelin_01",
 	"units/weapons/player/wpn_we_javelin_01/wpn_we_javelin_01_3p",
 	"units/weapons/player/wpn_we_javelin_01/prj_we_javelin_01_3ps",
@@ -113,7 +113,7 @@ var_0_0.husk_lookup = {
 	"units/beings/player/way_watcher_thornsister/abilities/ww_thornsister_thorn_wall_01_bleed",
 	"units/beings/player/way_watcher_thornsister/abilities/ww_thornsister_thorn_wave_01"
 }
-var_0_0.projectile_units = {
+woods.projectile_units = {
 	javelin = {
 		dummy_linker_unit_name = "units/weapons/player/wpn_we_javelin_01/prj_we_javelin_01_3ps",
 		projectile_unit_name = "units/weapons/player/wpn_we_javelin_01/prj_we_javelin_01_3ps"
@@ -139,10 +139,10 @@ var_0_0.projectile_units = {
 		projectile_unit_name = "units/weapons/player/wpn_we_life_staff_01/prj_we_life_staff_01_3ps"
 	}
 }
-var_0_0.projectile_gravity_settings = {
+woods.projectile_gravity_settings = {
 	javelin = -9.82
 }
-var_0_0.projectiles = {
+woods.projectiles = {
 	javelin = {
 		use_weapon_skin = true,
 		static_impact_type = "raycast",
@@ -178,7 +178,7 @@ var_0_0.projectiles = {
 		}
 	}
 }
-var_0_0.explosion_templates = {
+woods.explosion_templates = {
 	we_thornsister_career_skill_wall_explosion = {
 		explosion = {
 			use_attacker_power_level = true,
@@ -291,18 +291,21 @@ var_0_0.explosion_templates = {
 		}
 	}
 }
-var_0_0.area_damage_templates = {
+woods.area_damage_templates = {
 	we_thornsister_thorn_wall = {
 		server = {
-			update = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8, arg_1_9, arg_1_10)
+			update = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8, arg_1_9, arg_1_10)
+				-- function 1
 				return false
 			end,
-			do_damage = function(arg_2_0, arg_2_1)
+			do_damage = function (arg_2_0, arg_2_1)
+				-- function 2
 				return
 			end
 		},
 		client = {
-			update = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+			update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+				-- function 3
 				local var_3_0 = Managers.state.side.side_by_unit[arg_3_2]
 
 				if not var_3_0 then
@@ -315,39 +318,40 @@ var_0_0.area_damage_templates = {
 					return
 				end
 
-				local var_3_2 = var_3_0.PLAYER_AND_BOT_UNITS
+				local PLAYER_AND_BOT_UNITS = var_3_0.PLAYER_AND_BOT_UNITS
 
-				for iter_3_0, iter_3_1 in pairs(var_3_2) do
-					local var_3_3 = POSITION_LOOKUP[iter_3_1]
+				for k, v in pairs(PLAYER_AND_BOT_UNITS) do
+					local var_3_3 = POSITION_LOOKUP[v]
 
-					if var_3_3 and Vector3.distance_squared(var_3_3, var_3_1) < arg_3_1 * arg_3_1 then
-						local var_3_4 = ScriptUnit.has_extension(iter_3_1, "buff_system")
+					if not var_3_3 and not (Vector3.distance_squared(var_3_3, var_3_1) < arg_3_1 * arg_3_1) then
+						local has_extension = ScriptUnit.has_extension(v, "buff_system")
 
-						if var_3_4 then
-							var_3_4:add_buff("thorn_sister_wall_slow")
+						if not has_extension then
+							has_extension:add_buff("thorn_sister_wall_slow")
 						end
 					end
 				end
 			end,
-			spawn_effect = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
-				local var_4_0 = Unit.local_position(arg_4_1, 0)
-				local var_4_1 = World.create_particles(arg_4_0, arg_4_2, var_4_0)
+			spawn_effect = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				-- function 4
+				local local_position = Unit.local_position(arg_4_1, 0)
+				local create_particles = World.create_particles(arg_4_0, arg_4_2, local_position)
 
 				if arg_4_3 ~= nil then
-					for iter_4_0, iter_4_1 in pairs(arg_4_3) do
-						local var_4_2 = World.find_particles_variable(arg_4_0, arg_4_2, iter_4_1.particle_variable)
+					for k, v in pairs(arg_4_3) do
+						local find_particles_variable = World.find_particles_variable(arg_4_0, arg_4_2, v.particle_variable)
 
-						World.set_particles_variable(arg_4_0, var_4_1, var_4_2, iter_4_1.value)
+						World.set_particles_variable(arg_4_0, create_particles, find_particles_variable, v.value)
 					end
 				end
 
-				return var_4_1
+				return create_particles
 			end,
 			destroy = NOP
 		}
 	}
 }
-var_0_0.vortex_templates = {
+woods.vortex_templates = {
 	spirit_storm = {
 		outer_fx_z_scale_multiplier = 0.3,
 		max_height_player_target = 1.5,

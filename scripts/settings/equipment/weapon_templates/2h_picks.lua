@@ -1,9 +1,9 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/2h_picks.lua
 
-local var_0_0 = 2.5
-local var_0_1 = 1.1
-local var_0_2 = 0.9
-local var_0_3 = {
+local num = 2.5
+local num_2 = 1.1
+local num_3 = 0.9
+local tbl = {
 	actions = {
 		action_one = {
 			default = {
@@ -12,8 +12,9 @@ local var_0_3 = {
 				attack_hold_input = "action_one_hold",
 				uninterruptible = true,
 				anim_event = "attack_swing_charge_left_down",
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
-					return arg_1_1 ~= "new_interupting_action" and arg_1_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
+					-- function 1
+					return arg_1_1 == "new_interupting_action" or arg_1_1 ~= "action_complete"
 				end,
 				total_time = math.huge,
 				buff_data = {
@@ -87,8 +88,9 @@ local var_0_3 = {
 				kind = "melee_start",
 				uninterruptible = true,
 				anim_event = "attack_swing_charge_right_down",
-				anim_end_event_condition_func = function(arg_2_0, arg_2_1)
-					return arg_2_1 ~= "new_interupting_action" and arg_2_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_2_0, arg_2_1)
+					-- function 2
+					return arg_2_1 == "new_interupting_action" or arg_2_1 ~= "action_complete"
 				end,
 				total_time = math.huge,
 				buff_data = {
@@ -162,8 +164,9 @@ local var_0_3 = {
 				kind = "melee_start",
 				uninterruptible = true,
 				anim_event = "attack_swing_charge_left_down_pose",
-				anim_end_event_condition_func = function(arg_3_0, arg_3_1)
-					return arg_3_1 ~= "new_interupting_action" and arg_3_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_3_0, arg_3_1)
+					-- function 3
+					return arg_3_1 == "new_interupting_action" or arg_3_1 ~= "action_complete"
 				end,
 				total_time = math.huge,
 				buff_data = {
@@ -237,8 +240,9 @@ local var_0_3 = {
 				kind = "melee_start",
 				uninterruptible = true,
 				anim_event = "attack_swing_charge_left_down_pose",
-				anim_end_event_condition_func = function(arg_4_0, arg_4_1)
-					return arg_4_1 ~= "new_interupting_action" and arg_4_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_4_0, arg_4_1)
+					-- function 4
+					return arg_4_1 == "new_interupting_action" or arg_4_1 ~= "action_complete"
 				end,
 				total_time = math.huge,
 				buff_data = {
@@ -320,11 +324,12 @@ local var_0_3 = {
 				anim_event = "attack_swing_right_diagonal",
 				hit_stop_anim = "attack_hit",
 				total_time = 2.25,
-				anim_end_event_condition_func = function(arg_5_0, arg_5_1)
-					return arg_5_1 ~= "new_interupting_action" and arg_5_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_5_0, arg_5_1)
+					-- function 5
+					return arg_5_1 == "new_interupting_action" or arg_5_1 ~= "action_complete"
 				end,
-				anim_time_scale = var_0_2 * 0.95,
-				range_mod = var_0_1 * 1.4,
+				anim_time_scale = num_3 * 0.95,
+				range_mod = num_2 * 1.4,
 				buff_data = {
 					{
 						start_time = 0.2,
@@ -473,11 +478,12 @@ local var_0_3 = {
 				anim_event = "attack_swing_left_diagonal",
 				hit_stop_anim = "attack_hit",
 				total_time = 2.25,
-				anim_end_event_condition_func = function(arg_6_0, arg_6_1)
-					return arg_6_1 ~= "new_interupting_action" and arg_6_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_6_0, arg_6_1)
+					-- function 6
+					return arg_6_1 == "new_interupting_action" or arg_6_1 ~= "action_complete"
 				end,
-				anim_time_scale = var_0_2 * 0.95,
-				range_mod = var_0_1 * 1.4,
+				anim_time_scale = num_3 * 0.95,
+				range_mod = num_2 * 1.4,
 				buff_data = {
 					{
 						start_time = 0.2,
@@ -533,7 +539,8 @@ local var_0_3 = {
 						input = "action_wield"
 					}
 				},
-				enter_function = function(arg_7_0, arg_7_1)
+				enter_function = function (arg_7_0, arg_7_1)
+					-- function 7
 					return arg_7_1:reset_release_input()
 				end,
 				critical_strike = {},
@@ -631,10 +638,11 @@ local var_0_3 = {
 				uninterruptible = true,
 				anim_event = "attack_swing_down_left_axe",
 				total_time = 2.5,
-				anim_end_event_condition_func = function(arg_8_0, arg_8_1)
-					return arg_8_1 ~= "new_interupting_action" and arg_8_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_8_0, arg_8_1)
+					-- function 8
+					return arg_8_1 == "new_interupting_action" or arg_8_1 ~= "action_complete"
 				end,
-				anim_time_scale = var_0_2 * 1,
+				anim_time_scale = num_3 * 1,
 				buff_data = {
 					{
 						start_time = 0,
@@ -780,10 +788,11 @@ local var_0_3 = {
 				dedicated_target_range = 3,
 				anim_event = "attack_swing_down_left",
 				total_time = 2.5,
-				anim_end_event_condition_func = function(arg_9_0, arg_9_1)
-					return arg_9_1 ~= "new_interupting_action" and arg_9_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_9_0, arg_9_1)
+					-- function 9
+					return arg_9_1 == "new_interupting_action" or arg_9_1 ~= "action_complete"
 				end,
-				anim_time_scale = var_0_2 * 1,
+				anim_time_scale = num_3 * 1,
 				buff_data = {
 					{
 						start_time = 0,
@@ -931,10 +940,11 @@ local var_0_3 = {
 				uninterruptible = true,
 				anim_event = "attack_swing_down_right_axe",
 				total_time = 2.5,
-				anim_end_event_condition_func = function(arg_10_0, arg_10_1)
-					return arg_10_1 ~= "new_interupting_action" and arg_10_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_10_0, arg_10_1)
+					-- function 10
+					return arg_10_1 == "new_interupting_action" or arg_10_1 ~= "action_complete"
 				end,
-				anim_time_scale = var_0_2 * 1,
+				anim_time_scale = num_3 * 1,
 				buff_data = {
 					{
 						start_time = 0,
@@ -1080,10 +1090,11 @@ local var_0_3 = {
 				dedicated_target_range = 3,
 				anim_event = "attack_swing_down_right",
 				total_time = 2.5,
-				anim_end_event_condition_func = function(arg_11_0, arg_11_1)
-					return arg_11_1 ~= "new_interupting_action" and arg_11_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_11_0, arg_11_1)
+					-- function 11
+					return arg_11_1 == "new_interupting_action" or arg_11_1 ~= "action_complete"
 				end,
-				anim_time_scale = var_0_2 * 1,
+				anim_time_scale = num_3 * 1,
 				buff_data = {
 					{
 						start_time = 0,
@@ -1230,11 +1241,12 @@ local var_0_3 = {
 				anim_event = "attack_swing_left",
 				hit_stop_anim = "attack_hit",
 				total_time = 2.5,
-				anim_end_event_condition_func = function(arg_12_0, arg_12_1)
-					return arg_12_1 ~= "new_interupting_action" and arg_12_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_12_0, arg_12_1)
+					-- function 12
+					return arg_12_1 == "new_interupting_action" or arg_12_1 ~= "action_complete"
 				end,
-				anim_time_scale = var_0_2 * 1.2,
-				range_mod = var_0_1 * 1.3,
+				anim_time_scale = num_3 * 1.2,
+				range_mod = num_2 * 1.3,
 				buff_data = {
 					{
 						start_time = 0,
@@ -1291,7 +1303,8 @@ local var_0_3 = {
 						input = "action_wield"
 					}
 				},
-				enter_function = function(arg_13_0, arg_13_1)
+				enter_function = function (arg_13_0, arg_13_1)
+					-- function 13
 					return arg_13_1:reset_release_input()
 				end,
 				hit_mass_count = TANK_HIT_MASS_COUNT,
@@ -1381,11 +1394,12 @@ local var_0_3 = {
 				dedicated_target_range = 3,
 				anim_event = "attack_swing_left",
 				total_time = 2.5,
-				anim_end_event_condition_func = function(arg_14_0, arg_14_1)
-					return arg_14_1 ~= "new_interupting_action" and arg_14_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_14_0, arg_14_1)
+					-- function 14
+					return arg_14_1 == "new_interupting_action" or arg_14_1 ~= "action_complete"
 				end,
-				anim_time_scale = var_0_2 * 1.4,
-				range_mod = var_0_1 * 1.3,
+				anim_time_scale = num_3 * 1.4,
+				range_mod = num_2 * 1.3,
 				buff_data = {
 					{
 						start_time = 0,
@@ -1442,7 +1456,8 @@ local var_0_3 = {
 						input = "action_wield"
 					}
 				},
-				enter_function = function(arg_15_0, arg_15_1)
+				enter_function = function (arg_15_0, arg_15_1)
+					-- function 15
 					return arg_15_1:reset_release_input()
 				end,
 				baked_sweep = {
@@ -1535,8 +1550,9 @@ local var_0_3 = {
 				anim_event = "attack_push",
 				damage_profile_inner = "medium_push",
 				total_time = 0.8,
-				anim_end_event_condition_func = function(arg_16_0, arg_16_1)
-					return arg_16_1 ~= "new_interupting_action" and arg_16_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_16_0, arg_16_1)
+					-- function 16
+					return arg_16_1 == "new_interupting_action" or arg_16_1 ~= "action_complete"
 				end,
 				buff_data = {
 					{
@@ -1588,8 +1604,9 @@ local var_0_3 = {
 						input = "action_wield"
 					}
 				},
-				push_radius = var_0_0,
-				chain_condition_func = function(arg_17_0, arg_17_1)
+				push_radius = num,
+				chain_condition_func = function (arg_17_0, arg_17_1)
+					-- function 17
 					return not ScriptUnit.extension(arg_17_0, "status_system"):fatigued()
 				end
 			}
@@ -1602,11 +1619,13 @@ local var_0_3 = {
 				kind = "block",
 				hold_input = "action_two_hold",
 				anim_event = "parry_pose",
-				anim_end_event_condition_func = function(arg_18_0, arg_18_1)
+				anim_end_event_condition_func = function (arg_18_0, arg_18_1)
+					-- function 18
 					return arg_18_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
-				enter_function = function(arg_19_0, arg_19_1, arg_19_2)
+				enter_function = function (arg_19_0, arg_19_1, arg_19_2)
+					-- function 19
 					return arg_19_1:reset_release_input_with_delay(arg_19_2)
 				end,
 				buff_data = {
@@ -1649,20 +1668,20 @@ local var_0_3 = {
 	}
 }
 
-var_0_3.right_hand_unit = "units/weapons/player/wpn_empire_short_sword/wpn_empire_short_sword"
-var_0_3.right_hand_attachment_node_linking = AttachmentNodeLinking.two_handed_melee_weapon
-var_0_3.display_unit = "units/weapons/weapon_display/display_2h_picks"
-var_0_3.wield_anim = "to_2h_picks"
-var_0_3.state_machine = "units/beings/player/first_person_base/state_machines/melee/2h_picks"
-var_0_3.buff_type = "MELEE_2H"
-var_0_3.weapon_type = "PICK_2H"
-var_0_3.max_fatigue_points = 6
-var_0_3.dodge_count = 2
-var_0_3.block_angle = 90
-var_0_3.outer_block_angle = 360
-var_0_3.block_fatigue_point_multiplier = 0.5
-var_0_3.outer_block_fatigue_point_multiplier = 2
-var_0_3.buffs = {
+tbl.right_hand_unit = "units/weapons/player/wpn_empire_short_sword/wpn_empire_short_sword"
+tbl.right_hand_attachment_node_linking = AttachmentNodeLinking.two_handed_melee_weapon
+tbl.display_unit = "units/weapons/weapon_display/display_2h_picks"
+tbl.wield_anim = "to_2h_picks"
+tbl.state_machine = "units/beings/player/first_person_base/state_machines/melee/2h_picks"
+tbl.buff_type = "MELEE_2H"
+tbl.weapon_type = "PICK_2H"
+tbl.max_fatigue_points = 6
+tbl.dodge_count = 2
+tbl.block_angle = 90
+tbl.outer_block_angle = 360
+tbl.block_fatigue_point_multiplier = 0.5
+tbl.outer_block_fatigue_point_multiplier = 2
+tbl.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1
 	},
@@ -1670,7 +1689,7 @@ var_0_3.buffs = {
 		external_optional_multiplier = 1
 	}
 }
-var_0_3.attack_meta_data = {
+tbl.attack_meta_data = {
 	tap_attack = {
 		arc = 2
 	},
@@ -1678,7 +1697,7 @@ var_0_3.attack_meta_data = {
 		arc = 0
 	}
 }
-var_0_3.weapon_diagram = {
+tbl.weapon_diagram = {
 	light_attack = {
 		[DamageTypes.ARMOR_PIERCING] = 2,
 		[DamageTypes.CLEAVE] = 6,
@@ -1694,12 +1713,12 @@ var_0_3.weapon_diagram = {
 		[DamageTypes.DAMAGE] = 7
 	}
 }
-var_0_3.tooltip_keywords = {
+tbl.tooltip_keywords = {
 	"weapon_keyword_wide_sweeps",
 	"weapon_keyword_crowd_control",
 	"weapon_keyword_heavy_charge"
 }
-var_0_3.tooltip_compare = {
+tbl.tooltip_compare = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "light_attack_left"
@@ -1709,7 +1728,7 @@ var_0_3.tooltip_compare = {
 		sub_action_name = "heavy_attack_left"
 	}
 }
-var_0_3.tooltip_detail = {
+tbl.tooltip_detail = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -1723,10 +1742,10 @@ var_0_3.tooltip_detail = {
 		sub_action_name = "push"
 	}
 }
-var_0_3.wwise_dep_right_hand = {
+tbl.wwise_dep_right_hand = {
 	"wwise/two_handed_axes"
 }
 
 return {
-	two_handed_picks_template_1 = table.clone(var_0_3)
+	two_handed_picks_template_1 = table.clone(tbl)
 }

@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/winds_intro_heavens.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pbw_celestial_weave_conversation_three_01",

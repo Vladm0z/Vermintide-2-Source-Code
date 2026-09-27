@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/credits_view_definitions.lua
 
-local var_0_0 = {
+local tbl = {
 	root = {
 		is_root = true,
 		position = {
@@ -32,7 +32,7 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	scenegraph_id = "text_position",
 	offset = {
 		0,
@@ -61,12 +61,12 @@ local var_0_1 = {
 		}
 	}
 }
-local var_0_2 = {
-	credits = var_0_1,
+local tbl_3 = {
+	credits = tbl_2,
 	back_button = UIWidgets.create_layout_button("back_button", "layout_button_back", "layout_button_back_glow")
 }
 
 return {
-	scenegraph_definition = var_0_0,
-	widget_definitions = var_0_2
+	scenegraph_definition = tbl,
+	widget_definitions = tbl_3
 }

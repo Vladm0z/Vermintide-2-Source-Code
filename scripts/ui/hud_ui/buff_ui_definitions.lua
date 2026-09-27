@@ -1,9 +1,9 @@
 -- chunkname: @scripts/ui/hud_ui/buff_ui_definitions.lua
 
-local var_0_0 = 1920
-local var_0_1 = 1080
-local var_0_2 = true
-local var_0_3 = {
+local num = 1920
+local num_2 = 1080
+local flag = true
+local tbl = {
 	root = {
 		scale = "hud_scale_fit",
 		position = {
@@ -12,8 +12,8 @@ local var_0_3 = {
 			UILayer.hud
 		},
 		size = {
-			var_0_0,
-			var_0_1
+			num,
+			num_2
 		}
 	},
 	pivot_root = {
@@ -89,16 +89,16 @@ local var_0_3 = {
 }
 
 if not IS_WINDOWS then
-	var_0_3.root.scale = "hud_fit"
-	var_0_3.root.is_root = false
+	tbl.root.scale = "hud_fit"
+	tbl.root.is_root = false
 end
 
-local var_0_4 = {
+local tbl_2 = {
 	66,
 	66
 }
-local var_0_5 = 8
-local var_0_6 = {
+local num_3 = 8
+local tbl_3 = {
 	scenegraph_id = "buff_pivot",
 	element = {
 		passes = {
@@ -106,72 +106,80 @@ local var_0_6 = {
 				pass_type = "texture",
 				style_id = "texture_icon_bg",
 				texture_id = "texture_icon",
-				retained_mode = var_0_2
+				retained_mode = flag
 			},
 			{
 				pass_type = "texture",
 				style_id = "texture_icon",
 				texture_id = "texture_icon",
-				retained_mode = var_0_2,
-				content_check_function = function(arg_1_0)
-					return arg_1_0.is_cooldown
+				retained_mode = flag,
+				content_check_function = function (self)
+					-- function 1
+					return self.is_cooldown
 				end
 			},
 			{
 				style_id = "icon_mask",
 				texture_id = "icon_mask",
 				pass_type = "texture",
-				retained_mode = var_0_2,
-				content_change_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
-					arg_2_1.color[1] = 255 * (1 - arg_2_0.progress)
+				retained_mode = flag,
+				content_change_function = function (self, arg_2_1, arg_2_2, arg_2_3)
+					-- function 2
+					arg_2_1.color[1] = 255 * (1 - self.progress)
 				end
 			},
 			{
 				pass_type = "texture",
 				style_id = "texture_frame",
 				texture_id = "texture_frame",
-				retained_mode = var_0_2
+				retained_mode = flag
 			},
 			{
 				style_id = "stack_count",
 				pass_type = "text",
 				text_id = "stack_count",
-				retained_mode = var_0_2,
-				content_check_function = function(arg_3_0)
-					return arg_3_0.stack_count > 1
+				retained_mode = flag,
+				content_check_function = function (self)
+					-- function 3
+					return self.stack_count > 1
 				end
 			},
 			{
 				style_id = "stack_count_shadow",
 				pass_type = "text",
 				text_id = "stack_count",
-				retained_mode = var_0_2,
-				content_check_function = function(arg_4_0)
-					return arg_4_0.stack_count > 1
+				retained_mode = flag,
+				content_check_function = function (self)
+					-- function 4
+					return self.stack_count > 1
 				end
 			},
 			{
 				style_id = "texture_cooldown",
 				texture_id = "texture_cooldown",
 				pass_type = "gradient_mask_texture",
-				retained_mode = var_0_2,
-				content_check_function = function(arg_5_0)
-					return arg_5_0.is_cooldown
+				retained_mode = flag,
+				content_check_function = function (self)
+					-- function 5
+					return self.is_cooldown
 				end,
-				content_change_function = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
-					arg_6_1.color[1] = 255 * (1 - arg_6_0.progress)
+				content_change_function = function (self, arg_6_1, arg_6_2, arg_6_3)
+					-- function 6
+					arg_6_1.color[1] = 255 * (1 - self.progress)
 				end
 			},
 			{
 				style_id = "texture_duration",
 				texture_id = "texture_duration",
 				pass_type = "gradient_mask_texture",
-				retained_mode = var_0_2,
-				content_check_function = function(arg_7_0)
-					return not arg_7_0.is_cooldown
+				retained_mode = flag,
+				content_check_function = function (self)
+					-- function 7
+					return not self.is_cooldown
 				end,
-				content_change_function = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
-					arg_8_1.color[1] = 255 * (1 - arg_8_0.progress)
+				content_change_function = function (self, arg_8_1, arg_8_2, arg_8_3)
+					-- function 8
+					arg_8_1.color[1] = 255 * (1 - self.progress)
 				end
 			}
 		}
@@ -262,7 +270,7 @@ local var_0_6 = {
 			}
 		},
 		texture_frame = {
-			size = var_0_4,
+			size = tbl_2,
 			color = {
 				255,
 				255,
@@ -337,16 +345,16 @@ local var_0_6 = {
 		0
 	}
 }
-local var_0_7 = 3
-local var_0_8 = 5
-local var_0_9 = var_0_7 * var_0_8
+local num_4 = 3
+local num_5 = 5
+local num_6 = num_4 * num_5
 
 return {
-	BUFF_SIZE = var_0_4,
-	BUFF_SPACING = var_0_5,
-	MAX_NUMBER_OF_BUFFS = var_0_9,
-	MAX_BUFF_ROWS = var_0_7,
-	MAX_BUFF_COLUMNS = var_0_8,
-	scenegraph_definition = var_0_3,
-	buff_widget_definition = var_0_6
+	BUFF_SIZE = tbl_2,
+	BUFF_SPACING = num_3,
+	MAX_NUMBER_OF_BUFFS = num_6,
+	MAX_BUFF_ROWS = num_4,
+	MAX_BUFF_COLUMNS = num_5,
+	scenegraph_definition = tbl,
+	buff_widget_definition = tbl_3
 }

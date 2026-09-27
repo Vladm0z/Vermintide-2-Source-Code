@@ -1,34 +1,36 @@
 -- chunkname: @PlayFab/IPlayFabHttps.lua
 
-local var_0_0 = require("PlayFab.PlayFabSettings")
-local var_0_1 = {
+local PlayFabSettings = require("PlayFab.PlayFabSettings")
+local tbl = {
 	_defaultHttpsFile = "PlayFab.PlayFabHttps_LuaSec"
 }
 
-function var_0_1.SetHttp(arg_1_0)
-	if arg_1_0 then
-		var_0_1._internalHttp = arg_1_0
+tbl.SetHttp = function (arg_1_0)
+	-- function 1
+	if not arg_1_0 then
+		tbl._internalHttp = arg_1_0
 
 		return
 	end
 
-	if var_0_1._defaultHttpsFile then
-		var_0_1._internalHttp = require(var_0_1._defaultHttpsFile)
+	if not tbl._defaultHttpsFile then
+		tbl._internalHttp = require(tbl._defaultHttpsFile)
 
 		return
 	end
 end
 
-function var_0_1.MakePlayFabApiCall(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
-	if var_0_1._internalHttp == nil then
-		var_0_1.SetHttp(nil)
+tbl.MakePlayFabApiCall = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	-- function 2
+	if tbl._internalHttp == nil then
+		tbl.SetHttp(nil)
 	end
 
-	if var_0_0.settings.titleId == nil then
+	if PlayFabSettings.settings.titleId == nil then
 		error("PlayFabSettings.settings.titleId must be set before making API calls")
 	end
 
-	var_0_1._internalHttp.MakePlayFabApiCall(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	tbl._internalHttp.MakePlayFabApiCall(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 end
 
-return var_0_1
+return tbl

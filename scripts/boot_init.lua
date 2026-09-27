@@ -1,6 +1,6 @@
 -- chunkname: @scripts/boot_init.lua
 
-if rawget(_G, "jit") then
+if not rawget(_G, "jit") then
 	jit.off()
 end
 
@@ -10,31 +10,44 @@ if not LEVEL_EDITOR_TEST then
 	LEVEL_EDITOR_TEST = false
 end
 
-local function var_0_0(arg_1_0)
-	for iter_1_0, iter_1_1 in pairs(arg_1_0) do
-		rawset(_G, iter_1_0, iter_1_1)
+local function fn(arg_1_0)
+	-- function 1
+	for k, v in pairs(arg_1_0) do
+		rawset(_G, k, v)
 	end
 end
 
-if s3d then
-	var_0_0(s3d)
+if not s3d then
+	fn(s3d)
 end
 
 GLOBAL_MUSIC_WORLD = true
 
-local var_0_1 = {
-	stop_all = function()
+local tbl = {
+	stop_all = function ()
+		-- function 2
 		return
 	end
 }
 
-if GLOBAL_MUSIC_WORLD then
+if not GLOBAL_MUSIC_WORLD then
 	MUSIC_WORLD = Application.new_world("music_world", Application.DISABLE_PHYSICS, Application.DISABLE_RENDERING)
-	MUSIC_WWISE_WORLD = Wwise.wwise_world(MUSIC_WORLD) or Application.platform() == "ps4" and var_0_1 or "dedicated_server_no_wwise_dummy"
+
+	local wwise_world = Wwise.wwise_world(MUSIC_WORLD)
+
+	wwise_world = wwise_world or Application.platform() ~= "ps4" or not tbl or "dedicated_server_no_wwise_dummy"
+	MUSIC_WWISE_WORLD = wwise_world
 end
 
+local BUILD = BUILD
+
 BUILD = BUILD or Application.build()
+BUILD = BUILD
+
+local PLATFORM = PLATFORM
+
 PLATFORM = PLATFORM or Application.platform()
+PLATFORM = PLATFORM
 IS_CONSOLE = PLATFORM == "ps4" or PLATFORM == "xb1"
 IS_WINDOWS = PLATFORM == "win32"
 IS_LINUX = PLATFORM == "linux"
@@ -46,42 +59,53 @@ IS_NOT_LINUX = not IS_LINUX
 IS_NOT_XB1 = not IS_XB1
 IS_NOT_PS4 = not IS_PS4
 LAUNCH_MODE = "game"
-HAS_STEAM = HAS_STEAM ~= false and not not rawget(_G, "Steam")
+HAS_STEAM = HAS_STEAM == false or not not rawget(_G, "Steam")
 DEDICATED_SERVER = Application.is_dedicated_server()
 
-local var_0_2 = {
+local tbl_2 = {
 	Application.argv()
 }
 
-for iter_0_0, iter_0_1 in pairs(var_0_2) do
-	if iter_0_1 == "-attract-mode" then
+for k, v in pairs(tbl_2) do
+	if v == "-attract-mode" then
 		LAUNCH_MODE = "attract"
 
 		break
 	end
 
-	if iter_0_1 == "-benchmark-mode" then
+	if v == "-benchmark-mode" then
 		LAUNCH_MODE = "attract_benchmark"
 
 		break
 	end
 end
 
-function Application.build()
+Application.build = function ()
+	-- function 3
 	error("Trying to use Application.build, use global variable BUILD instead.")
 end
 
-function Application.platform()
+Application.platform = function ()
+	-- function 4
 	error("Trying to use Application.platform(), use global variable PLATFORM instead.")
 end
 
+local GLOBAL_FRAME_INDEX = GLOBAL_FRAME_INDEX
+
 GLOBAL_FRAME_INDEX = GLOBAL_FRAME_INDEX or 0
+GLOBAL_FRAME_INDEX = GLOBAL_FRAME_INDEX
+
+local script_data = script_data
+
 script_data = script_data or {
 	settings = Application.settings(),
 	build_identifier = Application.build_identifier()
 }
+script_data = script_data
 
-if LEVEL_EDITOR_TEST then
+if not LEVEL_EDITOR_TEST then
+	local GlobalResources = GlobalResources
+
 	GlobalResources = GlobalResources or {
 		"resource_packages/menu_assets_common",
 		"resource_packages/ingame_light",
@@ -95,8 +119,11 @@ if LEVEL_EDITOR_TEST then
 		"resource_packages/breeds_common_resources",
 		"resource_packages/dialogues/auto_load_files"
 	}
-elseif IS_PS4 then
-	GlobalResources = GlobalResources or {
+	GlobalResources = GlobalResources
+elseif not IS_PS4 then
+	local GlobalResources_2 = GlobalResources
+
+	GlobalResources_2 = GlobalResources_2 or {
 		"resource_packages/menu_assets_common",
 		"resource_packages/ingame_sounds_one",
 		"resource_packages/ingame_sounds_two",
@@ -118,8 +145,11 @@ elseif IS_PS4 then
 		"resource_packages/breeds_common_resources",
 		"resource_packages/dialogues/auto_load_files"
 	}
-elseif IS_XB1 then
-	GlobalResources = GlobalResources or {
+	GlobalResources = GlobalResources_2
+elseif not IS_XB1 then
+	local GlobalResources_3 = GlobalResources
+
+	GlobalResources_3 = GlobalResources_3 or {
 		"resource_packages/menu_assets_common",
 		"resource_packages/ingame_sounds_one",
 		"resource_packages/ingame_sounds_two",
@@ -141,8 +171,11 @@ elseif IS_XB1 then
 		"resource_packages/breeds_common_resources",
 		"resource_packages/dialogues/auto_load_files"
 	}
+	GlobalResources = GlobalResources_3
 else
-	GlobalResources = GlobalResources or {
+	local GlobalResources_4 = GlobalResources
+
+	GlobalResources_4 = GlobalResources_4 or {
 		"resource_packages/menu_assets_common",
 		"resource_packages/ingame_sounds_one",
 		"resource_packages/ingame_sounds_two",
@@ -165,52 +198,55 @@ else
 		"resource_packages/breeds_common_resources",
 		"resource_packages/dialogues/auto_load_files"
 	}
+	GlobalResources = GlobalResources_4
 end
 
 GlobalResources.unload = {}
 GlobalResources.handle_and_remove_on_load = {
-	["resource_packages/dialogues/auto_load_files"] = function(arg_5_0, arg_5_1)
+	["resource_packages/dialogues/auto_load_files"] = function (arg_5_0, arg_5_1)
+		-- function 5
 		DialogueSettings.cached_auto_load_files = {}
 
-		local var_5_0 = DialogueSettings.auto_load_files
+		local auto_load_files = DialogueSettings.auto_load_files
 
-		for iter_5_0, iter_5_1 in ipairs(var_5_0) do
-			if Application.can_get("lua", iter_5_1) then
-				DialogueSettings.cached_auto_load_files[iter_5_1] = require(iter_5_1)
+		for i, v in ipairs(auto_load_files) do
+			if not Application.can_get("lua", v) then
+				DialogueSettings.cached_auto_load_files[v] = require(v)
 			end
 
-			if Application.can_get("lua", iter_5_1 .. "_markers") then
-				DialogueSettings.cached_auto_load_files[iter_5_1 .. "_markers"] = dofile(iter_5_1 .. "_markers")
+			if not Application.can_get("lua", v .. "_markers") then
+				DialogueSettings.cached_auto_load_files[v .. "_markers"] = dofile(v .. "_markers")
 			end
 		end
 	end
 }
 
-function GlobalResources.update_loading()
+GlobalResources.update_loading = function ()
+	-- function 6
 	if not GlobalResources.loaded then
-		local var_6_0 = true
-		local var_6_1 = Managers.package
+		local flag = true
+		local package = Managers.package
 
-		for iter_6_0, iter_6_1 in ipairs(GlobalResources) do
-			if var_6_1:is_loading(iter_6_1, "global") then
-				var_6_0 = false
-			elseif not var_6_1:has_loaded(iter_6_1, "global") then
-				var_6_1:load(iter_6_1, "global", nil, true)
+		for i, v in ipairs(GlobalResources) do
+			if not package:is_loading(v, "global") then
+				flag = false
+			elseif not package:has_loaded(v, "global") then
+				package:load(v, "global", nil, true)
 
-				var_6_0 = false
-			elseif GlobalResources.handle_and_remove_on_load[iter_6_1] then
-				GlobalResources.handle_and_remove_on_load[iter_6_1](iter_6_1, "global")
+				flag = false
+			elseif not GlobalResources.handle_and_remove_on_load[v] then
+				GlobalResources.handle_and_remove_on_load[v](v, "global")
 				table.insert(GlobalResources.unload, {
 					reference_name = "global",
-					name = iter_6_1
+					name = v
 				})
 			end
 		end
 
-		GlobalResources.loaded = var_6_0
+		GlobalResources.loaded = flag
 
-		for iter_6_2 = 1, #GlobalResources.unload do
-			local var_6_2 = GlobalResources.unload[iter_6_2]
+		for k = 1, #GlobalResources.unload do
+			local var_6_2 = GlobalResources.unload[k]
 
 			Managers.package:unload(var_6_2.name, var_6_2.reference_name)
 			table.remove(GlobalResources, table.index_of(GlobalResources, var_6_2.name))
@@ -220,18 +256,19 @@ function GlobalResources.update_loading()
 	return GlobalResources.loaded
 end
 
-if BUILD ~= "dev" and BUILD ~= "debug" and LAUNCH_MODE ~= "attract_benchmark" then
-	local function var_0_3(arg_7_0)
+if not (BUILD == "dev" or BUILD == "debug" or LAUNCH_MODE == "attract_benchmark") then
+	local function fn_2(arg_7_0)
+		-- function 7
 		rawset(_G, arg_7_0, nil)
 
 		package.loaded[arg_7_0] = nil
 		package.preload[arg_7_0] = nil
 	end
 
-	var_0_3("ffi")
-	var_0_3("io")
+	fn_2("ffi")
+	fn_2("io")
 
-	if rawget(_G, "jit") then
+	if not rawget(_G, "jit") then
 		jit.on = nil
 		jit.off = nil
 		jit.flush = nil

@@ -59,25 +59,27 @@ BelakorBalancing = {
 		120,
 		120
 	},
-	spawn_crystal_func = function(arg_1_0)
-		local var_1_0 = Managers.state.entity:system("pickup_system")
-		local var_1_1 = true
-		local var_1_2 = Quaternion.identity()
-		local var_1_3 = "dropped"
-		local var_1_4 = "belakor_crystal"
-		local var_1_5 = "belakor_crystal_throw"
+	spawn_crystal_func = function (arg_1_0)
+		-- function 1
+		local system = Managers.state.entity:system("pickup_system")
+		local flag = true
+		local identity = Quaternion.identity()
+		local str = "dropped"
+		local str_2 = "belakor_crystal"
+		local str_3 = "belakor_crystal_throw"
 
-		for iter_1_0 = 1, BelakorBalancing.totem_crystal_count do
+		for i = 1, BelakorBalancing.totem_crystal_count do
 			local var_1_6 = Vector3(2 * math.random() - 1, 2 * math.random() - 1, 1)
 
-			var_1_0:spawn_pickup(var_1_4, arg_1_0 + Vector3.up() * 2, var_1_2, var_1_1, var_1_3, var_1_6, var_1_5)
+			system:spawn_pickup(str_2, arg_1_0 + Vector3.up() * 2, identity, flag, str, var_1_6, str_3)
 		end
 	end,
 	homing_skulls_min_pitch = math.pi * 0.1,
 	homing_skulls_max_pitch = math.pi * 0.25,
 	homing_skulls_pitch_delta = math.pi * 0.05,
 	homing_skulls_yaw_delta = 2 * math.pi / 10,
-	homing_skulls_speed_multiplier_curve_func = function(arg_2_0)
+	homing_skulls_speed_multiplier_curve_func = function (arg_2_0)
+		-- function 2
 		return -(1 / (math.min(arg_2_0 + 2, 4) / 4)) + 2
 	end
 }

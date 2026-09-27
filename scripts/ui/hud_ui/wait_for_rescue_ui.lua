@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/hud_ui/wait_for_rescue_ui.lua
 
-local var_0_0 = {
+local tbl = {
 	root = {
 		is_root = true,
 		position = {
@@ -28,7 +28,7 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	scenegraph_id = "waiting_for_rescue_text",
 	element = {
 		passes = {
@@ -53,54 +53,58 @@ local var_0_1 = {
 		text_color = Colors.get_color_table_with_alpha("white", 255)
 	}
 }
-local var_0_2 = true
+local flag = true
 
 WaitForRescueUI = class(WaitForRescueUI)
 
-function WaitForRescueUI.init(arg_1_0, arg_1_1, arg_1_2)
-	arg_1_0._parent = arg_1_1
-	arg_1_0.ui_renderer = arg_1_2.ui_renderer
-	arg_1_0.ingame_ui = arg_1_2.ingame_ui
-	arg_1_0.input_manager = arg_1_2.input_manager
-	arg_1_0.local_player = Managers.player:local_player()
+WaitForRescueUI.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	self._parent = arg_1_1
+	self.ui_renderer = arg_1_2.ui_renderer
+	self.ingame_ui = arg_1_2.ingame_ui
+	self.input_manager = arg_1_2.input_manager
+	self.local_player = Managers.player:local_player()
 
-	arg_1_0:create_ui_elements()
+	self:create_ui_elements()
 end
 
-function WaitForRescueUI.create_ui_elements(arg_2_0)
-	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0)
-	arg_2_0.waiting_for_rescue_text = UIWidget.init(var_0_1)
-	var_0_2 = false
+WaitForRescueUI.create_ui_elements = function (self)
+	-- function 2
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(tbl)
+	self.waiting_for_rescue_text = UIWidget.init(tbl_2)
+	flag = false
 end
 
-function WaitForRescueUI.destroy(arg_3_0)
+WaitForRescueUI.destroy = function (arg_3_0)
+	-- function 3
 	return
 end
 
-function WaitForRescueUI.update(arg_4_0, arg_4_1, arg_4_2)
-	if var_0_2 then
-		arg_4_0:create_ui_elements()
+WaitForRescueUI.update = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	if not flag then
+		self:create_ui_elements()
 	end
 
-	local var_4_0 = arg_4_0.local_player.player_unit
+	local player_unit = self.local_player.player_unit
 
-	if not Unit.alive(var_4_0) then
+	if not Unit.alive(player_unit) then
 		return
 	end
 
-	if not ScriptUnit.extension(var_4_0, "status_system"):is_ready_for_assisted_respawn(var_4_0) then
+	if not ScriptUnit.extension(player_unit, "status_system"):is_ready_for_assisted_respawn(player_unit) then
 		return
 	end
 
-	local var_4_1 = math.sirp(0, 255, arg_4_2)
+	local sirp = math.sirp(0, 255, arg_4_2)
 
-	arg_4_0.waiting_for_rescue_text.style.text_color[1] = var_4_1
+	self.waiting_for_rescue_text.style.text_color[1] = sirp
 
-	local var_4_2 = arg_4_0.ui_renderer
-	local var_4_3 = arg_4_0.ui_scenegraph
-	local var_4_4 = arg_4_0.input_manager:get_service("Player")
+	local ui_renderer = self.ui_renderer
+	local ui_scenegraph = self.ui_scenegraph
+	local get_service = self.input_manager:get_service("Player")
 
-	UIRenderer.begin_pass(var_4_2, var_4_3, var_4_4, arg_4_1)
-	UIRenderer.draw_widget(var_4_2, arg_4_0.waiting_for_rescue_text)
-	UIRenderer.end_pass(var_4_2)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, get_service, arg_4_1)
+	UIRenderer.draw_widget(ui_renderer, self.waiting_for_rescue_text)
+	UIRenderer.end_pass(ui_renderer)
 end

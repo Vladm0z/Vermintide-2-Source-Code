@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/hit_effects/hit_effects_training_dummy.lua
 
-local var_0_0 = {
+local tbl = {
 	"light_stab_fencer",
 	"light_stab_smiter",
 	"stab_fencer",
@@ -17,7 +17,7 @@ local var_0_0 = {
 	"slashing_linesman",
 	"heavy_slashing_linesman"
 }
-local var_0_1 = {
+local tbl_2 = {
 	"heavy_stab_smiter",
 	"light_slashing_smiter",
 	"slashing_smiter",

@@ -1,24 +1,39 @@
 -- chunkname: @scripts/settings/dlcs/carousel/end_screen_award_settings.lua
 
-local var_0_0 = {}
+local tbl = {}
 
-local function var_0_1(arg_1_0, arg_1_1)
-	table.clear(var_0_0)
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
+	table.clear(tbl)
 
-	for iter_1_0, iter_1_1 in pairs(arg_1_0) do
-		var_0_0[#var_0_0 + 1] = iter_1_1
+	for k, v in pairs(arg_1_0) do
+		tbl[#tbl + 1] = v
 	end
 
-	local function var_1_0(arg_2_0, arg_2_1)
-		return arg_2_0.scores[arg_1_1] > arg_2_1.scores[arg_1_1]
+	local function fn(self, arg_2_1)
+		-- function 2
+		return self.scores[arg_1_1] > arg_2_1.scores[arg_1_1]
 	end
 
-	table.sort(var_0_0, var_1_0)
+	table.sort(tbl, fn)
 
 	local var_1_1
-	local var_1_2 = var_0_0[1]
+	local var_1_2 = tbl[1]
+	local stats_id
 
-	return var_1_2 and var_1_2.scores[arg_1_1] > 0 and var_1_2.stats_id or var_1_1, var_1_2 and var_1_2.scores[arg_1_1]
+	if not (not var_1_2 and not (var_1_2.scores[arg_1_1] > 0)) then
+		stats_id = var_1_2.stats_id
+
+		if not stats_id then
+			-- Nothing
+		end
+	end
+
+	stats_id = var_1_1
+
+	::label_1_0::
+
+	return stats_id, not var_1_2 and var_1_2.scores[arg_1_1]
 end
 
 EndScreenAwardSettings = {}
@@ -29,7 +44,8 @@ EndScreenAwardSettings[#EndScreenAwardSettings + 1] = {
 	award_mask_material = "mvp_award_mask",
 	award_material = "mvp_award",
 	name = Localize("vs_award_mvp_name"),
-	evaluate = function(arg_3_0)
+	evaluate = function (arg_3_0)
+		-- function 3
 		return false
 	end
 }
@@ -49,8 +65,9 @@ EndScreenAwardSettings[#EndScreenAwardSettings + 1] = {
 	name = Localize("vs_award_hero_killer_name"),
 	sub_header = Localize("vs_award_hero_killer_description"),
 	screen_sub_header = Localize("vs_award_hero_killer_sub_header"),
-	evaluate = function(arg_4_0)
-		return var_0_1(arg_4_0, "kills_heroes")
+	evaluate = function (arg_4_0)
+		-- function 4
+		return fn(arg_4_0, "kills_heroes")
 	end
 }
 EndScreenAwardSettings[#EndScreenAwardSettings + 1] = {
@@ -62,8 +79,9 @@ EndScreenAwardSettings[#EndScreenAwardSettings + 1] = {
 	name = Localize("vs_award_slayer_name"),
 	sub_header = Localize("vs_award_slayer_description"),
 	screen_sub_header = Localize("vs_award_slayer_sub_header"),
-	evaluate = function(arg_5_0)
-		return var_0_1(arg_5_0, "kills_specials")
+	evaluate = function (arg_5_0)
+		-- function 5
+		return fn(arg_5_0, "kills_specials")
 	end
 }
 EndScreenAwardSettings[#EndScreenAwardSettings + 1] = {
@@ -75,8 +93,9 @@ EndScreenAwardSettings[#EndScreenAwardSettings + 1] = {
 	name = Localize("vs_award_smiter_name"),
 	sub_header = Localize("vs_award_smiter_description"),
 	screen_sub_header = Localize("vs_award_smiter_sub_header"),
-	evaluate = function(arg_6_0)
-		return var_0_1(arg_6_0, "vs_damage_dealt_to_pactsworn")
+	evaluate = function (arg_6_0)
+		-- function 6
+		return fn(arg_6_0, "vs_damage_dealt_to_pactsworn")
 	end
 }
 EndScreenAwardSettings[#EndScreenAwardSettings + 1] = {
@@ -95,8 +114,9 @@ EndScreenAwardSettings[#EndScreenAwardSettings + 1] = {
 	name = Localize("vs_award_damage_dealer_name"),
 	sub_header = Localize("vs_award_damage_dealer_description"),
 	screen_sub_header = Localize("vs_award_damage_dealer_sub_header"),
-	evaluate = function(arg_7_0)
-		return var_0_1(arg_7_0, "damage_dealt_heroes")
+	evaluate = function (arg_7_0)
+		-- function 7
+		return fn(arg_7_0, "damage_dealt_heroes")
 	end
 }
 EndScreenAwardSettings[#EndScreenAwardSettings + 1] = {
@@ -108,8 +128,9 @@ EndScreenAwardSettings[#EndScreenAwardSettings + 1] = {
 	name = Localize("vs_award_saviour_name"),
 	sub_header = Localize("vs_award_saviour_description"),
 	screen_sub_header = Localize("vs_award_saviour_sub_header"),
-	evaluate = function(arg_8_0)
-		return var_0_1(arg_8_0, "saves")
+	evaluate = function (arg_8_0)
+		-- function 8
+		return fn(arg_8_0, "saves")
 	end
 }
 EndScreenAwardSettings[#EndScreenAwardSettings + 1] = {
@@ -124,8 +145,9 @@ EndScreenAwardSettings[#EndScreenAwardSettings + 1] = {
 	name = Localize("vs_award_hero_napper_name"),
 	sub_header = Localize("vs_award_hero_napper_description"),
 	screen_sub_header = Localize("vs_award_hero_napper_sub_header"),
-	evaluate = function(arg_9_0)
-		return var_0_1(arg_9_0, "packmaster_disables")
+	evaluate = function (arg_9_0)
+		-- function 9
+		return fn(arg_9_0, "packmaster_disables")
 	end
 }
 EndScreenAwardSettings[#EndScreenAwardSettings + 1] = {
@@ -140,8 +162,9 @@ EndScreenAwardSettings[#EndScreenAwardSettings + 1] = {
 	name = Localize("vs_award_assassin_name"),
 	sub_header = Localize("vs_award_assassin_description"),
 	screen_sub_header = Localize("vs_award_assassin_sub_header"),
-	evaluate = function(arg_10_0)
-		return var_0_1(arg_10_0, "gutter_runner_disables")
+	evaluate = function (arg_10_0)
+		-- function 10
+		return fn(arg_10_0, "gutter_runner_disables")
 	end
 }
 EndScreenAwardSettings[#EndScreenAwardSettings + 1] = {
@@ -153,8 +176,9 @@ EndScreenAwardSettings[#EndScreenAwardSettings + 1] = {
 	name = Localize("vs_award_horde_killer_name"),
 	sub_header = Localize("vs_award_horde_killer_description"),
 	screen_sub_header = Localize("vs_award_horde_killer_sub_header"),
-	evaluate = function(arg_11_0)
-		return var_0_1(arg_11_0, "kills_total")
+	evaluate = function (arg_11_0)
+		-- function 11
+		return fn(arg_11_0, "kills_total")
 	end
 }
 EndScreenAwardSettings[#EndScreenAwardSettings + 1] = {
@@ -169,8 +193,9 @@ EndScreenAwardSettings[#EndScreenAwardSettings + 1] = {
 	name = Localize("vs_award_troll_name"),
 	sub_header = Localize("vs_award_troll_description"),
 	screen_sub_header = Localize("vs_award_troll_sub_header"),
-	evaluate = function(arg_12_0)
-		return var_0_1(arg_12_0, "troll_damage")
+	evaluate = function (arg_12_0)
+		-- function 12
+		return fn(arg_12_0, "troll_damage")
 	end
 }
 EndScreenAwardSettings[#EndScreenAwardSettings + 1] = {
@@ -185,8 +210,9 @@ EndScreenAwardSettings[#EndScreenAwardSettings + 1] = {
 	name = Localize("vs_award_rat_ogre_name"),
 	sub_header = Localize("vs_award_rat_ogre_description"),
 	screen_sub_header = Localize("vs_award_rat_ogre_sub_header"),
-	evaluate = function(arg_13_0)
-		return var_0_1(arg_13_0, "rat_ogre_damage")
+	evaluate = function (arg_13_0)
+		-- function 13
+		return fn(arg_13_0, "rat_ogre_damage")
 	end
 }
 EndScreenAwardSettings[#EndScreenAwardSettings + 1] = {
@@ -198,12 +224,17 @@ EndScreenAwardSettings[#EndScreenAwardSettings + 1] = {
 	name = Localize("vs_award_monster_killer_name"),
 	sub_header = Localize("vs_award_monster_killer_description"),
 	screen_sub_header = Localize("vs_award_monster_killer_sub_header"),
-	evaluate = function(arg_14_0)
-		return var_0_1(arg_14_0, "damage_to_monster")
+	evaluate = function (arg_14_0)
+		-- function 14
+		return fn(arg_14_0, "damage_to_monster")
 	end
 }
-EndScreenAwardSettingsLookup = EndScreenAwardSettingsLookup or {}
 
-for iter_0_0, iter_0_1 in ipairs(EndScreenAwardSettings) do
-	EndScreenAwardSettingsLookup[iter_0_1.stat_key] = iter_0_1
+local EndScreenAwardSettingsLookup = EndScreenAwardSettingsLookup
+
+EndScreenAwardSettingsLookup = EndScreenAwardSettingsLookup or {}
+EndScreenAwardSettingsLookup = EndScreenAwardSettingsLookup
+
+for i, v in ipairs(EndScreenAwardSettings) do
+	EndScreenAwardSettingsLookup[v.stat_key] = v
 end

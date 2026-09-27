@@ -5,14 +5,16 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 BTSwarmAction = class(BTSwarmAction, BTNode)
 BTSwarmAction.name = "BTSwarmAction"
 
-function BTSwarmAction.init(arg_1_0, ...)
+BTSwarmAction.init = function (arg_1_0, ...)
+	-- function 1
 	BTSwarmAction.super.init(arg_1_0, ...)
 end
 
-function BTSwarmAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
-	arg_2_2.action = arg_2_0._tree_node.action_data
+BTSwarmAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+	-- function 2
+	arg_2_2.action = self._tree_node.action_data
 	arg_2_2.active_node = BTSwarmAction
-	arg_2_2.abort_action = not arg_2_0:_calculate_swarm_targets(arg_2_1, arg_2_2)
+	arg_2_2.abort_action = not self:_calculate_swarm_targets(arg_2_1, arg_2_2)
 
 	arg_2_2.navigation_extension:stop()
 
@@ -21,29 +23,30 @@ function BTSwarmAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.attack_finished = false
 end
 
-function BTSwarmAction._calculate_swarm_targets(arg_3_0, arg_3_1, arg_3_2)
+BTSwarmAction._calculate_swarm_targets = function (arg_3_0, arg_3_1, arg_3_2)
+	-- function 3
 	arg_3_2.valid_swarm_targets = {}
 
-	local var_3_0 = arg_3_2.side.ENEMY_PLAYER_AND_BOT_UNITS
-	local var_3_1 = {}
-	local var_3_2 = {}
+	local ENEMY_PLAYER_AND_BOT_UNITS = arg_3_2.side.ENEMY_PLAYER_AND_BOT_UNITS
+	local tbl = {}
+	local tbl_2 = {}
 
-	for iter_3_0, iter_3_1 in pairs(var_3_0) do
-		local var_3_3 = ScriptUnit.extension(iter_3_1, "status_system")
+	for k, v in pairs(ENEMY_PLAYER_AND_BOT_UNITS) do
+		local extension = ScriptUnit.extension(v, "status_system")
 
-		if var_3_3 and not var_3_3:is_invisible() and not var_3_3:is_disabled() then
-			if not Managers.player:owner(iter_3_1).bot_player then
-				var_3_1[#var_3_1 + 1] = iter_3_1
+		if not (not extension and not not extension:is_invisible() or not extension:is_disabled()) then
+			if not Managers.player:owner(v).bot_player then
+				tbl[#tbl + 1] = v
 			else
-				var_3_2[#var_3_2 + 1] = iter_3_1
+				tbl_2[#tbl_2 + 1] = v
 			end
 		end
 	end
 
-	if #var_3_1 > 1 then
-		arg_3_2.valid_swarm_targets = var_3_1
+	if #tbl > 1 then
+		arg_3_2.valid_swarm_targets = tbl
 	else
-		arg_3_2.valid_swarm_targets = var_3_2
+		arg_3_2.valid_swarm_targets = tbl_2
 	end
 
 	if #arg_3_2.valid_swarm_targets < 2 then
@@ -53,7 +56,8 @@ function BTSwarmAction._calculate_swarm_targets(arg_3_0, arg_3_1, arg_3_2)
 	return true
 end
 
-function BTSwarmAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTSwarmAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	-- function 4
 	arg_4_2.active_node = nil
 	arg_4_2.summoning = nil
 	arg_4_2.ready_to_summon = false
@@ -61,41 +65,44 @@ function BTSwarmAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_
 	arg_4_2.attack_finished = nil
 end
 
-function BTSwarmAction.anim_cb_damage(arg_5_0, arg_5_1, arg_5_2)
-	local var_5_0 = arg_5_2.action
-	local var_5_1 = AiUtils.spawn_overpowering_blob(Managers.state.network, arg_5_2.target_unit, var_5_0.health, var_5_0.duration)
-	local var_5_2 = "slow_bomb"
+BTSwarmAction.anim_cb_damage = function (arg_5_0, arg_5_1, arg_5_2)
+	-- function 5
+	local action = arg_5_2.action
+	local spawn_overpowering_blob = AiUtils.spawn_overpowering_blob(Managers.state.network, arg_5_2.target_unit, action.health, action.duration)
+	local str = "slow_bomb"
 
-	StatusUtils.set_overpowered_network(arg_5_2.target_unit, true, var_5_2, var_5_1)
+	StatusUtils.set_overpowered_network(arg_5_2.target_unit, true, str, spawn_overpowering_blob)
 end
 
-function BTSwarmAction.anim_cb_attack_finished(arg_6_0, arg_6_1, arg_6_2)
+BTSwarmAction.anim_cb_attack_finished = function (arg_6_0, arg_6_1, arg_6_2)
+	-- function 6
 	arg_6_2.attack_finished = true
 end
 
-function BTSwarmAction.run(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
-	if arg_7_2.abort_action or arg_7_2.attack_finished then
+BTSwarmAction.run = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	-- function 7
+	if arg_7_2.abort_action or not arg_7_2.attack_finished then
 		return "done"
 	end
 
-	local var_7_0 = arg_7_2.action
+	local action = arg_7_2.action
 
-	if arg_7_2.swarm_start then
-		Managers.state.network:anim_event(arg_7_1, var_7_0.cast_anim)
+	if not arg_7_2.swarm_start then
+		Managers.state.network:anim_event(arg_7_1, action.cast_anim)
 
 		arg_7_2.swarm_start = nil
 	end
 
-	local var_7_1 = ScriptUnit.extension(arg_7_2.target_unit, "status_system")
+	local extension = ScriptUnit.extension(arg_7_2.target_unit, "status_system")
 
-	if not (var_7_1 and not var_7_1:is_invisible() and not var_7_1:is_disabled()) then
-		if not arg_7_0:_calculate_swarm_targets(arg_7_1, arg_7_2) then
+	if not (not extension and not not extension:is_invisible() or not extension:is_disabled()) then
+		if not self:_calculate_swarm_targets(arg_7_1, arg_7_2) then
 			return "done"
 		end
 
 		local var_7_2
 
-		while not var_7_2 or var_7_2 == arg_7_2.target_unit do
+		while not (not var_7_2 and var_7_2 ~= arg_7_2.target_unit) do
 			var_7_2 = arg_7_2.valid_swarm_targets[math.random(#arg_7_2.valid_swarm_targets)]
 		end
 

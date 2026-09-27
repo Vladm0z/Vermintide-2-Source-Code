@@ -2,61 +2,66 @@
 
 CareerAbilityChaosTrollVomit = class(CareerAbilityChaosTrollVomit)
 
-function CareerAbilityChaosTrollVomit.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
-	arg_1_0._owner_unit = arg_1_2
-	arg_1_0._world = arg_1_1.world
-	arg_1_0._wwise_world = Managers.world:wwise_world(arg_1_0._world)
-	arg_1_0._physics_world = World.physics_world(arg_1_0._world)
-	arg_1_0._ability_data = arg_1_4
+CareerAbilityChaosTrollVomit.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	-- function 1
+	self._owner_unit = arg_1_2
+	self._world = arg_1_1.world
+	self._wwise_world = Managers.world:wwise_world(self._world)
+	self._physics_world = World.physics_world(self._world)
+	self._ability_data = arg_1_4
 
-	local var_1_0 = arg_1_3.player
+	local player = arg_1_3.player
 
-	arg_1_0._player = var_1_0
-	arg_1_0._is_server = var_1_0.is_server
-	arg_1_0._local_player = var_1_0.local_player
-	arg_1_0._bot_player = var_1_0.bot_player
-	arg_1_0._network_manager = Managers.state.network
-	arg_1_0._input_manager = Managers.input
+	self._player = player
+	self._is_server = player.is_server
+	self._local_player = player.local_player
+	self._bot_player = player.bot_player
+	self._network_manager = Managers.state.network
+	self._input_manager = Managers.input
 end
 
-function CareerAbilityChaosTrollVomit.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
-	arg_2_0._first_person_extension = ScriptUnit.has_extension(arg_2_2, "first_person_system")
-	arg_2_0._status_extension = ScriptUnit.extension(arg_2_2, "status_system")
-	arg_2_0._career_extension = ScriptUnit.extension(arg_2_2, "career_system")
-	arg_2_0._buff_extension = ScriptUnit.extension(arg_2_2, "buff_system")
-	arg_2_0._locomotion_extension = ScriptUnit.extension(arg_2_2, "locomotion_system")
-	arg_2_0._input_extension = ScriptUnit.has_extension(arg_2_2, "input_system")
-	arg_2_0._inventory_extension = ScriptUnit.extension(arg_2_2, "inventory_system")
-	arg_2_0._ghost_mode_extension = ScriptUnit.has_extension(arg_2_2, "ghost_mode_system")
-	arg_2_0._ability_input = arg_2_0._ability_data.input_action
+CareerAbilityChaosTrollVomit.extensions_ready = function (self, arg_2_1, arg_2_2)
+	-- function 2
+	self._first_person_extension = ScriptUnit.has_extension(arg_2_2, "first_person_system")
+	self._status_extension = ScriptUnit.extension(arg_2_2, "status_system")
+	self._career_extension = ScriptUnit.extension(arg_2_2, "career_system")
+	self._buff_extension = ScriptUnit.extension(arg_2_2, "buff_system")
+	self._locomotion_extension = ScriptUnit.extension(arg_2_2, "locomotion_system")
+	self._input_extension = ScriptUnit.has_extension(arg_2_2, "input_system")
+	self._inventory_extension = ScriptUnit.extension(arg_2_2, "inventory_system")
+	self._ghost_mode_extension = ScriptUnit.has_extension(arg_2_2, "ghost_mode_system")
+	self._ability_input = self._ability_data.input_action
 
-	if arg_2_0._first_person_extension then
-		arg_2_0._first_person_unit = arg_2_0._first_person_extension:get_first_person_unit()
+	if not self._first_person_extension then
+		self._first_person_unit = self._first_person_extension:get_first_person_unit()
 	end
 end
 
-function CareerAbilityChaosTrollVomit.destroy(arg_3_0)
+CareerAbilityChaosTrollVomit.destroy = function (arg_3_0)
+	-- function 3
 	return
 end
 
-function CareerAbilityChaosTrollVomit.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+CareerAbilityChaosTrollVomit.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	-- function 4
 	return
 end
 
-function CareerAbilityChaosTrollVomit.was_triggered(arg_5_0)
-	local var_5_0 = arg_5_0._input_extension
+CareerAbilityChaosTrollVomit.was_triggered = function (self)
+	-- function 5
+	local _input_extension = self._input_extension
 
-	if not var_5_0 then
+	if not _input_extension then
 		return false
 	end
 
-	if not arg_5_0._is_priming then
-		if not arg_5_0:_ability_available() then
+	if not self._is_priming then
+		if not self:_ability_available() then
 			return false
 		end
 
-		if var_5_0:get(arg_5_0._ability_input) then
-			arg_5_0:_start()
+		if not _input_extension:get(self._ability_input) then
+			self:_start()
 
 			return true
 		end
@@ -65,27 +70,49 @@ function CareerAbilityChaosTrollVomit.was_triggered(arg_5_0)
 	return false
 end
 
-function CareerAbilityChaosTrollVomit._ability_available(arg_6_0)
-	local var_6_0 = arg_6_0._career_extension
-	local var_6_1 = arg_6_0._status_extension
-	local var_6_2 = arg_6_0._locomotion_extension
-	local var_6_3 = arg_6_0._ghost_mode_extension:is_in_ghost_mode()
+CareerAbilityChaosTrollVomit._ability_available = function (self)
+	-- function 6
+	local _career_extension = self._career_extension
+	local _status_extension = self._status_extension
+	local _locomotion_extension = self._locomotion_extension
+	local is_in_ghost_mode = self._ghost_mode_extension:is_in_ghost_mode()
+	local can_use_activated_ability = _career_extension:can_use_activated_ability(self._ability_data.ability_id)
 
-	return var_6_0:can_use_activated_ability(arg_6_0._ability_data.ability_id) and not var_6_1:is_disabled() and var_6_2:is_on_ground() and not var_6_3
+	if not can_use_activated_ability then
+		if not _status_extension:is_disabled() then
+			can_use_activated_ability = _locomotion_extension:is_on_ground()
+
+			if not can_use_activated_ability then
+				can_use_activated_ability = not is_in_ghost_mode
+			end
+		else
+			can_use_activated_ability = false
+		end
+	end
+
+	if false then
+		can_use_activated_ability = true
+	end
+
+	return can_use_activated_ability
 end
 
-function CareerAbilityChaosTrollVomit.finish(arg_7_0, arg_7_1)
+CareerAbilityChaosTrollVomit.finish = function (arg_7_0, arg_7_1)
+	-- function 7
 	return
 end
 
-function CareerAbilityChaosTrollVomit.stop(arg_8_0, arg_8_1)
+CareerAbilityChaosTrollVomit.stop = function (arg_8_0, arg_8_1)
+	-- function 8
 	return
 end
 
-function CareerAbilityChaosTrollVomit._start(arg_9_0)
-	arg_9_0:_play_vo()
+CareerAbilityChaosTrollVomit._start = function (self)
+	-- function 9
+	self:_play_vo()
 end
 
-function CareerAbilityChaosTrollVomit._play_vo(arg_10_0)
+CareerAbilityChaosTrollVomit._play_vo = function (arg_10_0)
+	-- function 10
 	return
 end

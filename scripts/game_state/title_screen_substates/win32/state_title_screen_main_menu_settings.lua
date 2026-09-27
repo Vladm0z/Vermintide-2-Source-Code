@@ -1,6 +1,7 @@
 -- chunkname: @scripts/game_state/title_screen_substates/win32/state_title_screen_main_menu_settings.lua
 
-local function var_0_0(arg_1_0)
+local function fn(arg_1_0)
+	-- function 1
 	return {
 		{
 			text = "start_game_menu_button_name",
@@ -12,12 +13,13 @@ local function var_0_0(arg_1_0)
 					text = "tutorial_intro_adventure",
 					info_slate = "start_menu_recommended_tag",
 					tag = "start_menu_adventure_tag",
-					callback = function()
+					callback = function ()
+						-- function 2
 						Managers.music:trigger_event("Play_console_menu_start_game")
 
-						local var_2_0 = AdventureMechanism.get_starting_level()
+						local get_starting_level = AdventureMechanism.get_starting_level()
 
-						arg_1_0:_start_game(var_2_0)
+						arg_1_0:_start_game(get_starting_level)
 					end
 				},
 				{
@@ -26,12 +28,13 @@ local function var_0_0(arg_1_0)
 					tag = "start_menu_cw_tag",
 					logo_texture = "chaos_wastes_logo",
 					text = "area_selection_morris_name",
-					callback = function()
+					callback = function ()
+						-- function 3
 						Managers.music:trigger_event("Play_console_menu_start_game")
 
-						local var_3_0 = DeusMechanism.get_starting_level()
+						local get_starting_level = DeusMechanism.get_starting_level()
 
-						arg_1_0:_start_game(var_3_0)
+						arg_1_0:_start_game(get_starting_level)
 					end
 				},
 				{
@@ -40,34 +43,38 @@ local function var_0_0(arg_1_0)
 					tag = "start_menu_vs_tag",
 					logo_texture = "versus_logo",
 					text = "vs_ui_versus_tag",
-					conditional_func = function()
+					conditional_func = function ()
+						-- function 4
 						if not GameSettingsDevelopment.use_backend then
 							return true
 						end
 
-						local var_4_0 = Managers.backend:get_title_settings().versus
+						local versus = Managers.backend:get_title_settings().versus
 
-						return var_4_0 and var_4_0.active
+						return not versus and versus.active
 					end,
-					callback = function()
+					callback = function ()
+						-- function 5
 						Managers.music:trigger_event("Play_console_menu_start_game")
 
-						local var_5_0 = VersusMechanism.get_starting_level()
+						local get_starting_level = VersusMechanism.get_starting_level()
 
-						arg_1_0:_start_game(var_5_0)
+						arg_1_0:_start_game(get_starting_level)
 					end
 				}
 			}
 		},
 		{
 			text = "start_menu_options",
-			callback = function()
+			callback = function ()
+				-- function 6
 				arg_1_0:_activate_view("options_view")
 			end
 		},
 		{
 			text = "start_menu_cinematics",
-			callback = function()
+			callback = function ()
+				-- function 7
 				Managers.music:trigger_event("Play_console_menu_select")
 				Managers.music:trigger_event("play_gui_start_menu_generic_whoosh")
 				arg_1_0:_activate_view("cinematics_view")
@@ -75,14 +82,16 @@ local function var_0_0(arg_1_0)
 		},
 		{
 			text = "start_menu_tutorial",
-			callback = function()
+			callback = function ()
+				-- function 8
 				Managers.music:trigger_event("Play_console_menu_start_game")
 				arg_1_0:_start_game("prologue")
 			end
 		},
 		{
 			text = "start_menu_credits",
-			callback = function()
+			callback = function ()
+				-- function 9
 				Managers.music:trigger_event("Play_console_menu_select")
 				arg_1_0:_activate_view("credits_view")
 			end
@@ -95,5 +104,5 @@ local function var_0_0(arg_1_0)
 end
 
 return {
-	create_menu_layout = var_0_0
+	create_menu_layout = fn
 }

@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/morris/player_unit_status_settings_morris.lua
 
-local var_0_0 = {
+local tbl = {
 	overcharge_values = {
 		magma_charged_2 = 11,
 		magma_basic = 6,
@@ -8,4 +8,4 @@ local var_0_0 = {
 	}
 }
 
-table.merge_recursive(PlayerUnitStatusSettings, var_0_0)
+table.merge_recursive(PlayerUnitStatusSettings, tbl)

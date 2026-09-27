@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/holly/holly_achievements_settings.lua
 
-local var_0_0 = DLCSettings.holly
+local holly = DLCSettings.holly
 
-var_0_0.achievement_outline = {
+holly.achievement_outline = {
 	levels = {
 		entries = {
 			"holly_complete_recruit",
@@ -40,6 +40,6 @@ var_0_0.achievement_outline = {
 		}
 	}
 }
-var_0_0.achievement_template_file_names = {
+holly.achievement_template_file_names = {
 	"scripts/managers/achievements/achievement_templates_holly"
 }

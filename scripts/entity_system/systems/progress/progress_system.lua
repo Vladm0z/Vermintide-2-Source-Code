@@ -2,62 +2,68 @@
 
 ProgressSystem = class(ProgressSystem, ExtensionSystemBase)
 
-local var_0_0 = {
+local tbl = {
 	"PlayerInZoneExtension"
 }
-local var_0_1 = {
+local tbl_2 = {
 	"rpc_player_in_zone_set_active",
 	"rpc_player_in_zone_end_event"
 }
 
-function ProgressSystem.init(arg_1_0, arg_1_1, arg_1_2)
-	ProgressSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_0)
+ProgressSystem.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	ProgressSystem.super.init(self, arg_1_1, arg_1_2, tbl)
 
-	arg_1_0._world = arg_1_1.world
-	arg_1_0._network_event_delegate = arg_1_1.network_event_delegate
+	self._world = arg_1_1.world
+	self._network_event_delegate = arg_1_1.network_event_delegate
 
-	arg_1_0._network_event_delegate:register(arg_1_0, unpack(var_0_1))
+	self._network_event_delegate:register(self, unpack(tbl_2))
 
-	arg_1_0._existing_units = {}
+	self._existing_units = {}
 end
 
-function ProgressSystem.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
-	local var_2_0 = ProgressSystem.super.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+ProgressSystem.on_add_extension = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	-- function 2
+	local on_add_extension = ProgressSystem.super.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 
-	arg_2_0._existing_units[arg_2_2] = var_2_0
+	arg_2_0._existing_units[arg_2_2] = on_add_extension
 
-	return var_2_0
+	return on_add_extension
 end
 
-function ProgressSystem.on_remove_extension(arg_3_0, arg_3_1, arg_3_2)
+ProgressSystem.on_remove_extension = function (arg_3_0, arg_3_1, arg_3_2)
+	-- function 3
 	arg_3_0._existing_units[arg_3_1] = nil
 
 	ProgressSystem.super.on_remove_extension(arg_3_0, arg_3_1, arg_3_2)
 end
 
-function ProgressSystem.destroy(arg_4_0)
-	arg_4_0._network_event_delegate:unregister(arg_4_0)
+ProgressSystem.destroy = function (self)
+	-- function 4
+	self._network_event_delegate:unregister(self)
 end
 
-function ProgressSystem.rpc_player_in_zone_end_event(arg_5_0, arg_5_1, arg_5_2)
-	local var_5_0 = LevelHelper:unit_by_index(arg_5_0._world, arg_5_2)
+ProgressSystem.rpc_player_in_zone_end_event = function (self, arg_5_1, arg_5_2)
+	-- function 5
+	local unit_by_index = LevelHelper:unit_by_index(self._world, arg_5_2)
 
-	if arg_5_0._existing_units[var_5_0] then
-		arg_5_0._existing_units[var_5_0]:end_event()
+	if not self._existing_units[unit_by_index] then
+		self._existing_units[unit_by_index]:end_event()
 	end
 end
 
-function ProgressSystem.rpc_player_in_zone_set_active(arg_6_0, arg_6_1, arg_6_2)
-	if arg_6_0._is_server then
-		local var_6_0 = Managers.state.network
+ProgressSystem.rpc_player_in_zone_set_active = function (self, arg_6_1, arg_6_2)
+	-- function 6
+	if not self._is_server then
+		local network = Managers.state.network
 		local var_6_1 = CHANNEL_TO_PEER_ID[arg_6_1]
 
-		var_6_0.network_transmit:send_rpc_clients_except("rpc_player_in_zone_set_active", var_6_1, arg_6_2)
+		network.network_transmit:send_rpc_clients_except("rpc_player_in_zone_set_active", var_6_1, arg_6_2)
 	end
 
-	local var_6_2 = LevelHelper:unit_by_index(arg_6_0._world, arg_6_2)
+	local unit_by_index = LevelHelper:unit_by_index(self._world, arg_6_2)
 
-	if arg_6_0._existing_units[var_6_2] then
-		arg_6_0._existing_units[var_6_2]:set_active_rpc()
+	if not self._existing_units[unit_by_index] then
+		self._existing_units[unit_by_index]:set_active_rpc()
 	end
 end

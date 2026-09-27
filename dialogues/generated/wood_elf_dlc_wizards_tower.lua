@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/wood_elf_dlc_wizards_tower.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pwe_enchantment_dummy_trigger",

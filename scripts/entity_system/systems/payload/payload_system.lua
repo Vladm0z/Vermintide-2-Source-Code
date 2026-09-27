@@ -4,48 +4,51 @@ require("scripts/unit_extensions/level/payload_extension")
 
 PayloadSystem = class(PayloadSystem, ExtensionSystemBase)
 
-local var_0_0 = {
+local tbl = {
 	"rpc_payload_flow_event"
 }
-local var_0_1 = {
+local tbl_2 = {
 	"PayloadExtension",
 	"PayloadGizmoExtension"
 }
 
-function PayloadSystem.init(arg_1_0, arg_1_1, arg_1_2)
-	PayloadSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
+PayloadSystem.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	PayloadSystem.super.init(self, arg_1_1, arg_1_2, tbl_2)
 
-	local var_1_0 = arg_1_1.network_event_delegate
+	local network_event_delegate = arg_1_1.network_event_delegate
 
-	arg_1_0.network_event_delegate = var_1_0
+	self.network_event_delegate = network_event_delegate
 
-	var_1_0:register(arg_1_0, unpack(var_0_0))
+	network_event_delegate:register(self, unpack(tbl))
 
-	arg_1_0._payloads = {}
-	arg_1_0._payload_gizmos = {}
+	self._payloads = {}
+	self._payload_gizmos = {}
 end
 
-function PayloadSystem.destroy(arg_2_0)
-	arg_2_0.network_event_delegate:unregister(arg_2_0)
+PayloadSystem.destroy = function (self)
+	-- function 2
+	self.network_event_delegate:unregister(self)
 end
 
-function PayloadSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, ...)
-	local var_3_0 = arg_3_0._payload_gizmos
+PayloadSystem.on_add_extension = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, ...)
+	-- function 3
+	local _payload_gizmos = self._payload_gizmos
 	local var_3_1
 
 	if arg_3_3 == "PayloadExtension" then
-		arg_3_0._payloads[#arg_3_0._payloads + 1] = arg_3_2
-		var_3_1 = PickupSystem.super.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, ...)
+		self._payloads[#self._payloads + 1] = arg_3_2
+		var_3_1 = PickupSystem.super.on_add_extension(self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, ...)
 	elseif arg_3_3 == "PayloadGizmoExtension" then
-		local var_3_2 = Unit.get_data(arg_3_2, "spline_name")
+		local get_data = Unit.get_data(arg_3_2, "spline_name")
 
-		fassert(var_3_2 ~= "", "Spline Gizmo added to level without spline name at position %s", Unit.world_position(arg_3_2, 0))
+		fassert(get_data ~= "", "Spline Gizmo added to level without spline name at position %s", Unit.world_position(arg_3_2, 0))
 
-		if not var_3_0[var_3_2] then
-			var_3_0[var_3_2] = {}
+		if not _payload_gizmos[get_data] then
+			_payload_gizmos[get_data] = {}
 		end
 
-		local var_3_3 = var_3_0[var_3_2]
+		local var_3_3 = _payload_gizmos[get_data]
 
 		var_3_3[#var_3_3 + 1] = arg_3_2
 		var_3_1 = {}
@@ -54,28 +57,31 @@ function PayloadSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_
 	return var_3_1
 end
 
-function PayloadSystem.init_payloads(arg_4_0)
-	local var_4_0 = arg_4_0._payloads
-	local var_4_1 = #var_4_0
-	local var_4_2 = arg_4_0._payload_gizmos
+PayloadSystem.init_payloads = function (self)
+	-- function 4
+	local _payloads = self._payloads
+	local count = #_payloads
+	local _payload_gizmos = self._payload_gizmos
 
-	for iter_4_0 = 1, var_4_1 do
-		local var_4_3 = var_4_0[iter_4_0]
-		local var_4_4 = Unit.get_data(var_4_3, "spline_name")
-		local var_4_5 = ScriptUnit.extension(var_4_3, "payload_system")
-		local var_4_6 = var_4_2[var_4_4]
+	for i = 1, count do
+		local var_4_3 = _payloads[i]
+		local get_data = Unit.get_data(var_4_3, "spline_name")
+		local extension = ScriptUnit.extension(var_4_3, "payload_system")
+		local var_4_6 = _payload_gizmos[get_data]
 
-		var_4_5:init_payload(var_4_6)
+		extension:init_payload(var_4_6)
 	end
 end
 
-function PayloadSystem.rpc_payload_flow_event(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
-	local var_5_0 = LevelHelper:current_level(arg_5_0.world)
-	local var_5_1 = Level.unit_by_index(var_5_0, arg_5_2)
+PayloadSystem.rpc_payload_flow_event = function (self, arg_5_1, arg_5_2, arg_5_3)
+	-- function 5
+	local current_level = LevelHelper:current_level(self.world)
+	local unit_by_index = Level.unit_by_index(current_level, arg_5_2)
 
-	ScriptUnit.extension(var_5_1, "payload_system"):payload_flow_event(arg_5_3)
+	ScriptUnit.extension(unit_by_index, "payload_system"):payload_flow_event(arg_5_3)
 end
 
-function PayloadSystem.hot_join_sync(arg_6_0)
+PayloadSystem.hot_join_sync = function (arg_6_0)
+	-- function 6
 	return
 end

@@ -1,19 +1,19 @@
 -- chunkname: @scripts/ui/views/hero_view/craft_pages/definitions/craft_page_convert_dust_definitions.lua
 
-local var_0_0 = UISettings.game_start_windows
-local var_0_1 = var_0_0.background
-local var_0_2 = var_0_0.frame
-local var_0_3 = var_0_0.size
-local var_0_4 = var_0_0.spacing
-local var_0_5 = UIFrameSettings[var_0_2].texture_sizes.vertical[1]
-local var_0_6 = UIFrameSettings[var_0_2].texture_sizes.horizontal[2]
-local var_0_7 = var_0_3[1] - (var_0_5 * 2 + 60)
+local game_start_windows = UISettings.game_start_windows
+local background = game_start_windows.background
+local frame = game_start_windows.frame
+local size = game_start_windows.size
+local spacing = game_start_windows.spacing
+local var_0_5 = UIFrameSettings[frame].texture_sizes.vertical[1]
+local var_0_6 = UIFrameSettings[frame].texture_sizes.horizontal[2]
+local num = size[1] - (var_0_5 * 2 + 60)
 
 NUM_CRAFT_SLOTS_X = 1
 NUM_CRAFT_SLOTS_Y = 1
 NUM_CRAFT_SLOTS = NUM_CRAFT_SLOTS_X * NUM_CRAFT_SLOTS_Y
 
-local var_0_8 = {
+local tbl = {
 	root = {
 		is_root = true,
 		size = {
@@ -56,7 +56,7 @@ local var_0_8 = {
 		vertical_alignment = "center",
 		parent = "menu_root",
 		horizontal_alignment = "center",
-		size = var_0_3,
+		size = size,
 		position = {
 			0,
 			0,
@@ -138,7 +138,7 @@ local var_0_8 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_3[1] - 100,
+			size[1] - 100,
 			60
 		},
 		position = {
@@ -191,7 +191,8 @@ local var_0_8 = {
 	}
 }
 
-local function var_0_9(arg_1_0)
+local function fn(arg_1_0)
+	-- function 1
 	return {
 		element = {
 			passes = {
@@ -213,16 +214,18 @@ local function var_0_9(arg_1_0)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_2_0)
-						return not arg_2_0.warning
+					content_check_function = function (self)
+						-- function 2
+						return not self.warning
 					end
 				},
 				{
 					style_id = "text_warning",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_3_0)
-						return arg_3_0.warning
+					content_check_function = function (self)
+						-- function 3
+						return self.warning
 					end
 				},
 				{
@@ -233,22 +236,29 @@ local function var_0_9(arg_1_0)
 				{
 					style_id = "text_bg",
 					pass_type = "rect",
-					content_check_function = function(arg_4_0)
-						return arg_4_0.draw_background
+					content_check_function = function (self)
+						-- function 4
+						return self.draw_background
 					end
 				},
 				{
 					style_id = "text_bg_2",
 					pass_type = "rect",
-					content_check_function = function(arg_5_0)
-						return arg_5_0.draw_background
+					content_check_function = function (self)
+						-- function 5
+						return self.draw_background
 					end
 				},
 				{
 					item_id = "item",
 					pass_type = "item_tooltip",
-					content_check_function = function(arg_6_0)
-						return arg_6_0.button_hotspot.is_hover and arg_6_0.item
+					content_check_function = function (self)
+						-- function 6
+						local is_hover = self.button_hotspot.is_hover
+
+						is_hover = not is_hover and self.item
+
+						return is_hover
 					end
 				}
 			}
@@ -390,12 +400,12 @@ local function var_0_9(arg_1_0)
 	}
 end
 
-local var_0_10 = true
-local var_0_11 = {
+local flag = true
+local tbl_2 = {
 	item_grid_bg = UIWidgets.create_simple_texture("crafting_bg_02", "item_grid", nil, nil, nil, -1),
-	item_grid = UIWidgets.create_grid("item_grid", var_0_8.item_grid.size, NUM_CRAFT_SLOTS_Y, NUM_CRAFT_SLOTS_X, 20, 20),
+	item_grid = UIWidgets.create_grid("item_grid", tbl.item_grid.size, NUM_CRAFT_SLOTS_Y, NUM_CRAFT_SLOTS_X, 20, 20),
 	item_grid_icon = UIWidgets.create_simple_texture("crafting_icon_dust", "item_grid_icon"),
-	craft_button = UIWidgets.create_default_button("craft_button", var_0_8.craft_button.size, nil, nil, Localize("hero_view_crafting_convert"), 24, nil, "button_detail_02", nil, var_0_10),
+	craft_button = UIWidgets.create_default_button("craft_button", tbl.craft_button.size, nil, nil, Localize("hero_view_crafting_convert"), 24, nil, "button_detail_02", nil, flag),
 	craft_bar_fg = UIWidgets.create_simple_texture("crafting_bar_fg", "craft_bar_fg"),
 	craft_bar_bg = UIWidgets.create_simple_rect("craft_bar_bg", {
 		255,
@@ -404,25 +414,28 @@ local var_0_11 = {
 		0
 	}),
 	craft_bar = UIWidgets.create_simple_texture("crafting_bar", "craft_bar", nil, nil, nil, 2),
-	material_text_1 = var_0_9("material_text_1"),
-	material_text_2 = var_0_9("material_text_2"),
+	material_text_1 = fn("material_text_1"),
+	material_text_2 = fn("material_text_2"),
 	material_bg = UIWidgets.create_simple_texture("crafting_bg_conversion", "material_bg")
 }
-local var_0_12 = {
+local tbl_3 = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			init = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+				-- function 7
 				arg_7_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
-				local var_8_0 = math.easeOutCubic(arg_8_3)
+			update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+				-- function 8
+				local easeOutCubic = math.easeOutCubic(arg_8_3)
 
-				arg_8_4.render_settings.alpha_multiplier = var_8_0
+				arg_8_4.render_settings.alpha_multiplier = easeOutCubic
 			end,
-			on_complete = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			on_complete = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+				-- function 9
 				return
 			end
 		}
@@ -432,15 +445,18 @@ local var_0_12 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+				-- function 10
 				arg_10_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
-				local var_11_0 = math.easeOutCubic(arg_11_3)
+			update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+				-- function 11
+				local easeOutCubic = math.easeOutCubic(arg_11_3)
 
-				arg_11_4.render_settings.alpha_multiplier = 1 - var_11_0
+				arg_11_4.render_settings.alpha_multiplier = 1 - easeOutCubic
 			end,
-			on_complete = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			on_complete = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+				-- function 12
 				return
 			end
 		}
@@ -448,7 +464,7 @@ local var_0_12 = {
 }
 
 return {
-	widgets = var_0_11,
-	scenegraph_definition = var_0_8,
-	animation_definitions = var_0_12
+	widgets = tbl_2,
+	scenegraph_definition = tbl,
+	animation_definitions = tbl_3
 }

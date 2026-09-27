@@ -1,30 +1,33 @@
 -- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_mutator_grid_console_definitions.lua
 
-local var_0_0 = UISettings.game_start_windows
-local var_0_1 = var_0_0.frame
-local var_0_2 = var_0_0.size
-local var_0_3 = UIFrameSettings[var_0_1].texture_sizes.vertical[1]
-local var_0_4 = var_0_2[1] - (var_0_3 * 2 + 60)
-local var_0_5 = {
-	var_0_2[1],
-	var_0_2[2]
+local game_start_windows = UISettings.game_start_windows
+local frame = game_start_windows.frame
+local size = game_start_windows.size
+local var_0_3 = UIFrameSettings[frame].texture_sizes.vertical[1]
+local num = size[1] - (var_0_3 * 2 + 60)
+local tbl = {
+	size[1],
+	size[2]
 }
-local var_0_6 = {
+local tbl_2 = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+				-- function 1
 				arg_1_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
-				local var_2_0 = math.easeOutCubic(arg_2_3)
+			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+				-- function 2
+				local easeOutCubic = math.easeOutCubic(arg_2_3)
 
-				arg_2_4.render_settings.alpha_multiplier = var_2_0
-				arg_2_0.actual_window.local_position[2] = arg_2_1.actual_window.position[2] + math.floor(-100 * (1 - var_2_0))
+				arg_2_4.render_settings.alpha_multiplier = easeOutCubic
+				arg_2_0.actual_window.local_position[2] = arg_2_1.actual_window.position[2] + math.floor(-100 * (1 - easeOutCubic))
 			end,
-			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+				-- function 3
 				return
 			end
 		}
@@ -34,21 +37,24 @@ local var_0_6 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				-- function 4
 				arg_4_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
-				local var_5_0 = math.easeOutCubic(arg_5_3)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+				-- function 5
+				local easeOutCubic = math.easeOutCubic(arg_5_3)
 
-				arg_5_4.render_settings.alpha_multiplier = 1 - var_5_0
+				arg_5_4.render_settings.alpha_multiplier = 1 - easeOutCubic
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+				-- function 6
 				return
 			end
 		}
 	}
 }
-local var_0_7 = {
+local tbl_3 = {
 	root = {
 		is_root = true,
 		size = {
@@ -91,7 +97,7 @@ local var_0_7 = {
 		vertical_alignment = "center",
 		parent = "menu_root",
 		horizontal_alignment = "left",
-		size = var_0_2,
+		size = size,
 		position = {
 			220,
 			0,
@@ -131,7 +137,7 @@ local var_0_7 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_2[1] + 90,
+			size[1] + 90,
 			100
 		},
 		position = {
@@ -145,7 +151,7 @@ local var_0_7 = {
 		parent = "heroic_deed_background",
 		horizontal_alignment = "center",
 		size = {
-			var_0_2[1],
+			size[1],
 			50
 		},
 		position = {
@@ -172,7 +178,7 @@ local var_0_7 = {
 		vertical_alignment = "center",
 		parent = "window",
 		horizontal_alignment = "left",
-		size = var_0_5,
+		size = tbl,
 		position = {
 			0,
 			0,
@@ -183,7 +189,7 @@ local var_0_7 = {
 		vertical_alignment = "center",
 		parent = "actual_window",
 		horizontal_alignment = "center",
-		size = var_0_5,
+		size = tbl,
 		position = {
 			0,
 			50,
@@ -223,7 +229,7 @@ local var_0_7 = {
 		parent = "title_text_detail",
 		horizontal_alignment = "center",
 		size = {
-			var_0_2[1],
+			size[1],
 			50
 		},
 		position = {
@@ -237,8 +243,8 @@ local var_0_7 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_4,
-			var_0_2[2] / 2
+			num,
+			size[2] / 2
 		},
 		position = {
 			0,
@@ -359,7 +365,7 @@ local var_0_7 = {
 		}
 	}
 }
-local var_0_8 = {
+local tbl_4 = {
 	word_wrap = true,
 	font_size = 26,
 	localize = false,
@@ -374,7 +380,7 @@ local var_0_8 = {
 		2
 	}
 }
-local var_0_9 = {
+local tbl_5 = {
 	word_wrap = true,
 	font_size = 26,
 	localize = false,
@@ -389,7 +395,7 @@ local var_0_9 = {
 		2
 	}
 }
-local var_0_10 = {
+local tbl_6 = {
 	word_wrap = true,
 	font_size = 26,
 	localize = false,
@@ -404,7 +410,7 @@ local var_0_10 = {
 		2
 	}
 }
-local var_0_11 = {
+local tbl_7 = {
 	font_size = 50,
 	upper_case = true,
 	localize = false,
@@ -421,7 +427,7 @@ local var_0_11 = {
 		2
 	}
 }
-local var_0_12 = {
+local tbl_8 = {
 	font_size = 28,
 	upper_case = false,
 	localize = false,
@@ -436,16 +442,16 @@ local var_0_12 = {
 		2
 	}
 }
-local var_0_13 = 5
-local var_0_14 = 7
-local var_0_15 = 12
-local var_0_16 = 12
-local var_0_17 = false
-local var_0_18 = {
-	heroic_deed_description_background = UIWidgets.create_rect_with_outer_frame("heroic_deed_background", var_0_7.heroic_deed_background.size, "frame_outer_fade_02", nil, UISettings.console_start_game_menu_rect_color),
-	heroic_deed_title = UIWidgets.create_simple_text(Localize("start_game_window_mutator_title"), "heroic_deed_title", nil, nil, var_0_11),
+local num_2 = 5
+local num_3 = 7
+local num_4 = 12
+local num_5 = 12
+local flag = false
+local tbl_9 = {
+	heroic_deed_description_background = UIWidgets.create_rect_with_outer_frame("heroic_deed_background", tbl_3.heroic_deed_background.size, "frame_outer_fade_02", nil, UISettings.console_start_game_menu_rect_color),
+	heroic_deed_title = UIWidgets.create_simple_text(Localize("start_game_window_mutator_title"), "heroic_deed_title", nil, nil, tbl_7),
 	heroic_deed_divider = UIWidgets.create_simple_texture("divider_01_top", "heroic_deed_divider"),
-	item_grid = UIWidgets.create_grid("item_grid", var_0_7.item_grid.size, var_0_13, var_0_14, var_0_15, var_0_16, var_0_17, nil, true),
+	item_grid = UIWidgets.create_grid("item_grid", tbl_3.item_grid.size, num_2, num_3, num_4, num_5, flag, nil, true),
 	input_icon_next = UIWidgets.create_simple_texture("xbone_button_icon_a", "input_icon_next"),
 	input_icon_previous = UIWidgets.create_simple_texture("xbone_button_icon_a", "input_icon_previous"),
 	input_arrow_next = UIWidgets.create_simple_uv_texture("settings_arrow_normal", {
@@ -461,12 +467,12 @@ local var_0_18 = {
 	input_arrow_previous = UIWidgets.create_simple_texture("settings_arrow_normal", "page_button_previous"),
 	page_button_next = UIWidgets.create_arrow_button("page_button_next", math.pi),
 	page_button_previous = UIWidgets.create_arrow_button("page_button_previous"),
-	page_text_center = UIWidgets.create_simple_text("/", "page_text_area", nil, nil, var_0_10),
-	page_text_left = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, var_0_8),
-	page_text_right = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, var_0_9),
+	page_text_center = UIWidgets.create_simple_text("/", "page_text_area", nil, nil, tbl_6),
+	page_text_left = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, tbl_4),
+	page_text_right = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, tbl_5),
 	page_text_area = UIWidgets.create_simple_texture("tab_menu_bg_03", "page_text_area")
 }
-local var_0_19 = {
+local tbl_10 = {
 	claim_overlay = UIWidgets.create_simple_rect("deletion_overlay_background", {
 		220,
 		12,
@@ -477,19 +483,19 @@ local var_0_19 = {
 	claim_overlay_loading_glow = UIWidgets.create_simple_texture("loading_title_divider", "deletion_overlay", nil, nil, nil, 1),
 	claim_overlay_loading_frame = UIWidgets.create_simple_texture("loading_title_divider_background", "deletion_overlay")
 }
-local var_0_20 = {
+local tbl_11 = {
 	mark_deeds_text = UIWidgets.create_simple_text(string.format(Localize("mark_deeds_text"), "$KEY;start_game_view__mouse_middle_press:"), "mark_deeds_text_anchor", {
 		600,
 		100
-	}, nil, var_0_12, nil, false, true),
-	button_clear = UIWidgets.create_default_button("clear_bottons_anchor", var_0_7.clear_bottons_anchor.size, nil, nil, Localize("button_clear_all"), 21, nil, nil, nil, true, true),
-	button_delete = UIWidgets.create_default_button("delete_bottons_anchor", var_0_7.delete_bottons_anchor.size, nil, nil, Localize("button_delete_selected"), 21, nil, nil, nil, true, true)
+	}, nil, tbl_8, nil, false, true),
+	button_clear = UIWidgets.create_default_button("clear_bottons_anchor", tbl_3.clear_bottons_anchor.size, nil, nil, Localize("button_clear_all"), 21, nil, nil, nil, true, true),
+	button_delete = UIWidgets.create_default_button("delete_bottons_anchor", tbl_3.delete_bottons_anchor.size, nil, nil, Localize("button_delete_selected"), 21, nil, nil, nil, true, true)
 }
 
 return {
-	widgets = var_0_18,
-	scenegraph_definition = var_0_7,
-	animation_definitions = var_0_6,
-	delete_deeds_button_widgets = var_0_20,
-	overlay_widgets = var_0_19
+	widgets = tbl_9,
+	scenegraph_definition = tbl_3,
+	animation_definitions = tbl_2,
+	delete_deeds_button_widgets = tbl_11,
+	overlay_widgets = tbl_10
 }

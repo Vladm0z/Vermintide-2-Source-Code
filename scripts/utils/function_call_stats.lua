@@ -1,57 +1,61 @@
 -- chunkname: @scripts/utils/function_call_stats.lua
 
-local var_0_0 = {}
-local var_0_1 = 0
-local var_0_2 = {}
+local tbl = {}
+local num = 0
+local tbl_2 = {}
 
-local function var_0_3(arg_1_0)
-	local var_1_0 = debug.getinfo(2)
+local function fn(arg_1_0)
+	-- function 1
+	local getinfo = debug.getinfo(2)
 
-	if var_1_0 then
-		var_0_1 = var_0_1 + 1
+	if not getinfo then
+		num = num + 1
 
-		local var_1_1 = tostring(var_1_0.name)
-		local var_1_2 = var_1_0.currentline
+		local var_1_1 = tostring(getinfo.name)
+		local currentline = getinfo.currentline
 		local var_1_3
 
-		if var_1_2 ~= -1 then
-			var_1_3 = var_1_0.short_src .. ":" .. tostring(var_1_2) .. " " .. var_1_1 .. "()"
+		if currentline ~= -1 then
+			var_1_3 = getinfo.short_src .. ":" .. tostring(currentline) .. " " .. var_1_1 .. "()"
 		else
-			var_1_3 = var_1_0.short_src .. " " .. var_1_1 .. "()"
+			var_1_3 = getinfo.short_src .. " " .. var_1_1 .. "()"
 		end
 
-		local var_1_4 = var_0_0[var_1_3]
+		local var_1_4 = tbl[var_1_3]
 
 		if not var_1_4 then
-			var_1_4 = #var_0_0 + 1
-			var_0_0[var_1_4] = var_1_3
-			var_0_0[var_1_3] = var_1_4
-			var_0_2[var_1_4] = {
+			var_1_4 = #tbl + 1
+			tbl[var_1_4] = var_1_3
+			tbl[var_1_3] = var_1_4
+			tbl_2[var_1_4] = {
 				num = 1,
 				position = var_1_3
 			}
 		end
 
-		var_0_2[var_1_4].num = var_0_2[var_1_4].num + 1
+		tbl_2[var_1_4].num = tbl_2[var_1_4].num + 1
 	end
 end
 
-local function var_0_4(arg_2_0, arg_2_1)
-	return arg_2_0.num > arg_2_1.num
+local function fn_2(self, arg_2_1)
+	-- function 2
+	return self.num > arg_2_1.num
 end
 
 function start_function_call_collection()
-	debug.sethook(var_0_3, "c")
+	-- function 3
+	debug.sethook(fn, "c")
 end
 
 function end_function_call_collection()
-	if var_0_1 > 0 then
+	-- function 4
+	if num > 0 then
 		debug.sethook()
-		print("Counter", var_0_1)
-		table.sort(var_0_2, var_0_4)
+		print("Counter", num)
+		table.sort(tbl_2, fn_2)
 
-		for iter_4_0 = 1, 100 do
-			local var_4_0 = var_0_2[iter_4_0]
+		for i = 1, 100 do
+			local var_4_0 = tbl_2[i]
 
 			if not var_4_0 then
 				break
@@ -60,8 +64,8 @@ function end_function_call_collection()
 			print(var_4_0.num, var_4_0.position)
 		end
 
-		var_0_0 = {}
-		var_0_1 = 0
-		var_0_2 = {}
+		tbl = {}
+		num = 0
+		tbl_2 = {}
 	end
 end

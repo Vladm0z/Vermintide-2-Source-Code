@@ -1,59 +1,73 @@
 -- chunkname: @scripts/helpers/debug_helper.lua
 
+local DebugHelper = DebugHelper
+
 DebugHelper = DebugHelper or {}
+DebugHelper = DebugHelper
 
-function DebugHelper.remove_debug_stuff()
-	function Commands.script()
+DebugHelper.remove_debug_stuff = function ()
+	-- function 1
+	Commands.script = function ()
+		-- function 2
 		return
 	end
 
-	function Commands.console()
+	Commands.console = function ()
+		-- function 3
 		return
 	end
 
-	function Commands.game_speed()
+	Commands.game_speed = function ()
+		-- function 4
 		return
 	end
 
-	function Commands.fov()
+	Commands.fov = function ()
+		-- function 5
 		return
 	end
 
-	function Commands.free_flight_settings()
+	Commands.free_flight_settings = function ()
+		-- function 6
 		return
 	end
 
-	function Commands.lag()
+	Commands.lag = function ()
+		-- function 7
 		return
 	end
 
-	function Commands.location()
+	Commands.location = function ()
+		-- function 8
 		return
 	end
 
-	function Commands.next_level()
+	Commands.next_level = function ()
+		-- function 9
 		return
 	end
 end
 
-function DebugHelper.enable_physics_dump()
-	local var_10_0 = {
+DebugHelper.enable_physics_dump = function ()
+	-- function 10
+	local tbl = {
 		"PhysicsWorld",
 		"Actor",
 		"Mover"
 	}
 
-	for iter_10_0, iter_10_1 in pairs(var_10_0) do
-		local var_10_1 = _G[iter_10_1]
+	for k, v in pairs(tbl) do
+		local var_10_1 = _G[v]
 
-		for iter_10_2, iter_10_3 in pairs(var_10_1) do
-			if type(iter_10_3) == "function" then
-				var_10_1[iter_10_2] = function(...)
-					local var_11_0 = string.format("%s.%s() : ", iter_10_1, iter_10_2)
+		for k_2, v_2 in pairs(var_10_1) do
+			if type(v_2) == "function" then
+				var_10_1[k_2] = function (...)
+					-- function 11
+					local format = string.format("%s.%s() : ", v, k_2)
 
-					print(var_11_0, select(2, ...))
+					print(format, select(2, ...))
 
-					return iter_10_3(...)
+					return v_2(...)
 				end
 			end
 		end

@@ -2,54 +2,73 @@
 
 ActionWheelSelector = class(ActionWheelSelector, ActionBase)
 
-local var_0_0 = 0.125
-local var_0_1 = 0.25
-local var_0_2 = 0.01
-local var_0_3 = 0.125
+local num = 0.125
+local num_2 = 0.25
+local num_3 = 0.01
+local num_4 = 0.125
 
-function ActionWheelSelector.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
-	ActionWheelSelector.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionWheelSelector.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	-- function 1
+	ActionWheelSelector.super.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
-	arg_1_0.weapon_unit = arg_1_7
-	arg_1_0.weapon_extension = ScriptUnit.extension(arg_1_7, "weapon_system")
+	self.weapon_unit = arg_1_7
+	self.weapon_extension = ScriptUnit.extension(arg_1_7, "weapon_system")
 end
 
-function ActionWheelSelector.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
-	ActionWheelSelector.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ActionWheelSelector.client_owner_start_action = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	-- function 2
+	ActionWheelSelector.super.client_owner_start_action(self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 
-	arg_2_0.timer_per_seg = arg_2_1.timer_per_seg
-	arg_2_0.num_seg = arg_2_1.num_seg
-	arg_2_0._timer = arg_2_2 + arg_2_0.timer_per_seg
-	arg_2_0.current_seg = arg_2_0.current_seg and arg_2_0.current_seg + 1 or 1
+	self.timer_per_seg = arg_2_1.timer_per_seg
+	self.num_seg = arg_2_1.num_seg
+	self._timer = arg_2_2 + self.timer_per_seg
 
-	if arg_2_0.current_seg > arg_2_0.num_seg then
-		arg_2_0.current_seg = 1
+	local num
+
+	if not self.current_seg then
+		num = self.current_seg + 1
+
+		if not num then
+			-- Nothing
+		end
 	end
 
-	arg_2_0.shader_info = arg_2_1.shader_info
+	num = 1
+
+	::label_2_0::
+
+	self.current_seg = num
+
+	if self.current_seg > self.num_seg then
+		self.current_seg = 1
+	end
+
+	self.shader_info = arg_2_1.shader_info
 end
 
-function ActionWheelSelector.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
-	if arg_3_2 > arg_3_0._timer then
-		arg_3_0.current_seg = arg_3_0.current_seg + 1
+ActionWheelSelector.client_owner_post_update = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	-- function 3
+	if arg_3_2 > self._timer then
+		self.current_seg = self.current_seg + 1
 
-		if arg_3_0.current_seg > arg_3_0.num_seg then
-			arg_3_0.current_seg = 1
+		if self.current_seg > self.num_seg then
+			self.current_seg = 1
 		end
 
-		arg_3_0._timer = arg_3_2 + arg_3_0.timer_per_seg
+		self._timer = arg_3_2 + self.timer_per_seg
 	end
 
-	arg_3_0.weapon_extension:set_mode(arg_3_0.current_seg)
+	self.weapon_extension:set_mode(self.current_seg)
 
-	if arg_3_0.shader_info then
-		local var_3_0 = arg_3_0.shader_info.material_slot
-		local var_3_1 = arg_3_0.shader_info.variable_name
+	if not self.shader_info then
+		local material_slot = self.shader_info.material_slot
+		local variable_name = self.shader_info.variable_name
 
-		Unit.set_scalar_for_material(arg_3_0.weapon_unit, var_3_0, var_3_1, arg_3_0.current_seg - 1)
+		Unit.set_scalar_for_material(self.weapon_unit, material_slot, variable_name, self.current_seg - 1)
 	end
 end
 
-function ActionWheelSelector.finish(arg_4_0, arg_4_1, arg_4_2)
+ActionWheelSelector.finish = function (arg_4_0, arg_4_1, arg_4_2)
+	-- function 4
 	ActionChangeMode.super.finish(arg_4_0, arg_4_1)
 end

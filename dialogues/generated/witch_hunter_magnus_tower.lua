@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/witch_hunter_magnus_tower.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pwh_magnus_tower_intro",

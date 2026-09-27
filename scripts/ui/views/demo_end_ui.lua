@@ -1,100 +1,106 @@
 -- chunkname: @scripts/ui/views/demo_end_ui.lua
 
 local var_0_0 = local_require("scripts/ui/views/demo_end_ui_definitions")
-local var_0_1 = var_0_0.scenegraph_definition
-local var_0_2 = var_0_0.background_widget_definitions
-local var_0_3 = var_0_0.widget_definitions
-local var_0_4 = var_0_0.demo_video
-local var_0_5 = false
-local var_0_6 = "DemoEndUI"
+local scenegraph_definition = var_0_0.scenegraph_definition
+local background_widget_definitions = var_0_0.background_widget_definitions
+local widget_definitions = var_0_0.widget_definitions
+local demo_video = var_0_0.demo_video
+local flag = false
+local str = "DemoEndUI"
 
 DemoEndUI = class(DemoEndUI)
 
-function DemoEndUI.init(arg_1_0, arg_1_1)
-	arg_1_0._world = arg_1_1
-	arg_1_0.platform = PLATFORM
-	arg_1_0.render_settings = {
+DemoEndUI.init = function (self, arg_1_1)
+	-- function 1
+	self._world = arg_1_1
+	self.platform = PLATFORM
+	self.render_settings = {
 		snap_pixel_positions = true
 	}
-	arg_1_0._ui_renderer = UIRenderer.create(arg_1_1, "material", "materials/fonts/gw_fonts", "material", "materials/ui/ui_1080p_common", "material", "materials/ui/ui_1080p_versus_available_common", "material", var_0_4.video_name)
+	self._ui_renderer = UIRenderer.create(arg_1_1, "material", "materials/fonts/gw_fonts", "material", "materials/ui/ui_1080p_common", "material", "materials/ui/ui_1080p_versus_available_common", "material", demo_video.video_name)
 
-	UISetupFontHeights(arg_1_0._ui_renderer.gui)
+	UISetupFontHeights(self._ui_renderer.gui)
 
-	arg_1_0.input_manager = Managers.input
+	self.input_manager = Managers.input
 
-	arg_1_0.input_manager:create_input_service("demo", "DemoUIKeyMaps", "DemoUIFilters")
-	arg_1_0.input_manager:map_device_to_service("demo", "gamepad")
-	arg_1_0.input_manager:map_device_to_service("demo", "keyboard")
-	arg_1_0.input_manager:map_device_to_service("demo", "mouse")
-	arg_1_0:_create_ui_elements()
+	self.input_manager:create_input_service("demo", "DemoUIKeyMaps", "DemoUIFilters")
+	self.input_manager:map_device_to_service("demo", "gamepad")
+	self.input_manager:map_device_to_service("demo", "keyboard")
+	self.input_manager:map_device_to_service("demo", "mouse")
+	self:_create_ui_elements()
 end
 
-function DemoEndUI._create_ui_elements(arg_2_0)
-	arg_2_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
-	arg_2_0._demo_video = UIWidget.init(UIWidgets.create_splash_video(var_0_4, var_0_6))
-	arg_2_0._widgets = {}
+DemoEndUI._create_ui_elements = function (self)
+	-- function 2
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+	self._demo_video = UIWidget.init(UIWidgets.create_splash_video(demo_video, str))
+	self._widgets = {}
 
-	for iter_2_0, iter_2_1 in pairs(var_0_3) do
-		arg_2_0._widgets[iter_2_0] = UIWidget.init(iter_2_1)
+	for k, v in pairs(widget_definitions) do
+		self._widgets[k] = UIWidget.init(v)
 	end
 
-	arg_2_0._background_widgets = {}
+	self._background_widgets = {}
 
-	for iter_2_2, iter_2_3 in pairs(var_0_2) do
-		arg_2_0._background_widgets[iter_2_2] = UIWidget.init(iter_2_3)
+	for k_2, v_2 in pairs(background_widget_definitions) do
+		self._background_widgets[k_2] = UIWidget.init(v_2)
 	end
 end
 
-function DemoEndUI.update(arg_3_0, arg_3_1, arg_3_2)
-	arg_3_0:_draw(arg_3_1, arg_3_2)
+DemoEndUI.update = function (self, arg_3_1, arg_3_2)
+	-- function 3
+	self:_draw(arg_3_1, arg_3_2)
 end
 
-function DemoEndUI._draw(arg_4_0, arg_4_1, arg_4_2)
-	local var_4_0 = arg_4_0._ui_renderer
-	local var_4_1 = arg_4_0._ui_scenegraph
-	local var_4_2 = arg_4_0.input_manager:get_service("demo")
+DemoEndUI._draw = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	local _ui_renderer = self._ui_renderer
+	local _ui_scenegraph = self._ui_scenegraph
+	local get_service = self.input_manager:get_service("demo")
 
-	UIRenderer.begin_pass(var_4_0, var_4_1, var_4_2, arg_4_1, nil, arg_4_0.render_settings)
+	UIRenderer.begin_pass(_ui_renderer, _ui_scenegraph, get_service, arg_4_1, nil, self.render_settings)
 
-	if not arg_4_0._demo_video.content.video_content.video_completed then
-		if not var_4_0.video_players[var_0_6] then
-			UIRenderer.create_video_player(var_4_0, var_0_6, arg_4_0._world, var_0_4.video_name, var_0_4.loop)
+	if not self._demo_video.content.video_content.video_completed then
+		if not _ui_renderer.video_players[str] then
+			UIRenderer.create_video_player(_ui_renderer, str, self._world, demo_video.video_name, demo_video.loop)
 		else
-			if not arg_4_0._sound_started then
-				if var_0_4.sound_start then
-					Managers.music:trigger_event(var_0_4.sound_start)
+			if not self._sound_started then
+				if not demo_video.sound_start then
+					Managers.music:trigger_event(demo_video.sound_start)
 				end
 
-				arg_4_0._sound_started = true
+				self._sound_started = true
 			end
 
-			UIRenderer.draw_widget(var_4_0, arg_4_0._demo_video)
+			UIRenderer.draw_widget(_ui_renderer, self._demo_video)
 		end
-	elseif var_4_0.video_players[var_0_6] then
-		UIRenderer.destroy_video_player(var_4_0, var_0_6)
+	elseif not _ui_renderer.video_players[str] then
+		UIRenderer.destroy_video_player(_ui_renderer, str)
 
-		arg_4_0._sound_started = false
+		self._sound_started = false
 
-		if var_0_4.sound_stop then
-			Managers.music:trigger_event(var_0_4.sound_stop)
+		if not demo_video.sound_stop then
+			Managers.music:trigger_event(demo_video.sound_stop)
 		end
 	end
 
-	for iter_4_0, iter_4_1 in pairs(arg_4_0._widgets) do
-		UIRenderer.draw_widget(var_4_0, iter_4_1)
+	for k, v in pairs(self._widgets) do
+		UIRenderer.draw_widget(_ui_renderer, v)
 	end
 
-	for iter_4_2, iter_4_3 in pairs(arg_4_0._background_widgets) do
-		UIRenderer.draw_widget(var_4_0, iter_4_3)
+	for k_2, v_2 in pairs(self._background_widgets) do
+		UIRenderer.draw_widget(_ui_renderer, v_2)
 	end
 
-	UIRenderer.end_pass(var_4_0)
+	UIRenderer.end_pass(_ui_renderer)
 end
 
-function DemoEndUI.completed(arg_5_0)
-	return arg_5_0._demo_video.content.video_content.video_completed
+DemoEndUI.completed = function (self)
+	-- function 5
+	return self._demo_video.content.video_content.video_completed
 end
 
-function DemoEndUI.destroy(arg_6_0)
-	UIRenderer.destroy(arg_6_0._ui_renderer, arg_6_0._world)
+DemoEndUI.destroy = function (self)
+	-- function 6
+	UIRenderer.destroy(self._ui_renderer, self._world)
 end

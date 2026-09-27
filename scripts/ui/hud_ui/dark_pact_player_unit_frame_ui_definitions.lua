@@ -1,23 +1,23 @@
 -- chunkname: @scripts/ui/hud_ui/dark_pact_player_unit_frame_ui_definitions.lua
 
-local var_0_0 = 1920
-local var_0_1 = 1080
-local var_0_2 = true
-local var_0_3 = 1
-local var_0_4 = {
+local num = 1920
+local num_2 = 1080
+local flag = true
+local num_3 = 1
+local tbl = {
 	412,
 	18
 }
-local var_0_5 = {
+local tbl_2 = {
 	464,
 	80
 }
-local var_0_6 = {
+local tbl_3 = {
 	z = 8,
 	y = 18,
-	x = -(var_0_4[1] * 0.5)
+	x = -(tbl[1] * 0.5)
 }
-local var_0_7 = {
+local tbl_4 = {
 	root = {
 		scale = "hud_scale_fit",
 		position = {
@@ -26,8 +26,8 @@ local var_0_7 = {
 			UILayer.hud
 		},
 		size = {
-			var_0_0,
-			var_0_1
+			num,
+			num_2
 		}
 	},
 	pivot = {
@@ -101,7 +101,7 @@ local var_0_7 = {
 		}
 	}
 }
-local var_0_8 = {
+local tbl_5 = {
 	"hud_inventory_icon_heal_01",
 	"hud_inventory_icon_bomb",
 	"hud_inventory_icon_potion",
@@ -120,19 +120,20 @@ local var_0_8 = {
 	potion_damage_boost_01 = "hud_inventory_icon_potion_strength",
 	healthkit_first_aid_kit_01 = "hud_inventory_icon_heal_01"
 }
-local var_0_9 = {
+local tbl_6 = {
 	slot_potion = 3,
 	slot_grenade = 2,
 	slot_healthkit = 1
 }
-local var_0_10 = {
+local tbl_7 = {
 	ammo_fields = {
 		slot_ranged = "ammo_text_weapon_slot_2",
 		slot_melee = "ammo_text_weapon_slot_1"
 	}
 }
 
-local function var_0_11()
+local function fn()
+	-- function 1
 	return {
 		scenegraph_id = "portrait_pivot",
 		element = {
@@ -141,30 +142,32 @@ local function var_0_11()
 					pass_type = "texture",
 					style_id = "character_portrait",
 					texture_id = "character_portrait",
-					retained_mode = var_0_2
+					retained_mode = flag
 				},
 				{
 					style_id = "player_level",
 					pass_type = "text",
 					text_id = "player_level",
-					retained_mode = var_0_2
+					retained_mode = flag
 				},
 				{
 					pass_type = "texture",
 					style_id = "host_icon",
 					texture_id = "host_icon",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_2_0)
-						return arg_2_0.is_host
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 2
+						return self.is_host
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "hp_bar_frame",
 					texture_id = "hp_bar_frame",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_3_0, arg_3_1)
-						return arg_3_0.show_health_bar
+					retained_mode = flag,
+					content_check_function = function (self, arg_3_1)
+						-- function 3
+						return self.show_health_bar
 					end
 				}
 			}
@@ -228,7 +231,7 @@ local function var_0_11()
 			},
 			hp_bar_frame = {
 				scenegraph_id = "pivot",
-				size = var_0_5,
+				size = tbl_2,
 				color = {
 					255,
 					255,
@@ -236,7 +239,7 @@ local function var_0_11()
 					255
 				},
 				offset = {
-					-(var_0_5[1] * 0.5),
+					-(tbl_2[1] * 0.5),
 					-1,
 					1
 				}
@@ -250,7 +253,8 @@ local function var_0_11()
 	}
 end
 
-local function var_0_12()
+local function fn_2()
+	-- function 4
 	return {
 		scenegraph_id = "respawn_countdown_pivot",
 		element = {
@@ -312,7 +316,8 @@ local function var_0_12()
 	}
 end
 
-local function var_0_13()
+local function fn_3()
+	-- function 5
 	return {
 		scenegraph_id = "pivot",
 		element = {
@@ -321,42 +326,44 @@ local function var_0_13()
 					pass_type = "texture",
 					style_id = "portrait_icon",
 					texture_id = "portrait_icon",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_6_0)
-						return arg_6_0.display_portrait_icon
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 6
+						return self.display_portrait_icon
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "talk_indicator",
 					texture_id = "talk_indicator",
-					retained_mode = var_0_2
+					retained_mode = flag
 				},
 				{
 					pass_type = "texture",
 					style_id = "talk_indicator_glow",
 					texture_id = "talk_indicator_glow",
-					retained_mode = var_0_2
+					retained_mode = flag
 				},
 				{
 					pass_type = "texture",
 					style_id = "talk_indicator_highlight",
 					texture_id = "talk_indicator_highlight",
-					retained_mode = var_0_2
+					retained_mode = flag
 				},
 				{
 					pass_type = "texture",
 					style_id = "talk_indicator_highlight_glow",
 					texture_id = "talk_indicator_highlight_glow",
-					retained_mode = var_0_2
+					retained_mode = flag
 				},
 				{
 					pass_type = "rotated_texture",
 					style_id = "connecting_icon",
 					texture_id = "connecting_icon",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_7_0)
-						return arg_7_0.connecting
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 7
+						return self.connecting
 					end
 				}
 			}
@@ -499,7 +506,8 @@ local function var_0_13()
 	}
 end
 
-local function var_0_14()
+local function fn_4()
+	-- function 8
 	return {
 		scenegraph_id = "pivot",
 		element = {
@@ -508,28 +516,36 @@ local function var_0_14()
 					pass_type = "texture",
 					style_id = "hp_bar_highlight",
 					texture_id = "hp_bar_highlight",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_9_0, arg_9_1)
-						return not arg_9_0.has_shield
+					retained_mode = flag,
+					content_check_function = function (self, arg_9_1)
+						-- function 9
+						return not self.has_shield
 					end
 				},
 				{
 					style_id = "grimoire_debuff_divider",
 					texture_id = "grimoire_debuff_divider",
 					pass_type = "texture",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_10_0)
-						local var_10_0 = arg_10_0.hp_bar.internal_bar_value
-						local var_10_1 = arg_10_0.actual_active_percentage or 1
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 10
+						local internal_bar_value = self.hp_bar.internal_bar_value
+						local actual_active_percentage = self.actual_active_percentage
 
-						return math.max(var_10_0, var_10_1) < 1
+						actual_active_percentage = actual_active_percentage or 1
+
+						return math.max(internal_bar_value, actual_active_percentage) < 1
 					end,
-					content_change_function = function(arg_11_0, arg_11_1)
-						local var_11_0 = arg_11_0.hp_bar.internal_bar_value
-						local var_11_1 = arg_11_0.actual_active_percentage or 1
-						local var_11_2 = math.max(var_11_0, var_11_1)
+					content_change_function = function (self, arg_11_1)
+						-- function 11
+						local internal_bar_value = self.hp_bar.internal_bar_value
+						local actual_active_percentage = self.actual_active_percentage
 
-						arg_11_1.offset[1] = var_0_6.x - 7 + 553 * var_11_2
+						actual_active_percentage = actual_active_percentage or 1
+
+						local max = math.max(internal_bar_value, actual_active_percentage)
+
+						arg_11_1.offset[1] = tbl_3.x - 7 + 553 * max
 					end
 				},
 				{
@@ -537,9 +553,10 @@ local function var_0_14()
 					style_id = "hp_bar",
 					texture_id = "texture_id",
 					content_id = "hp_bar",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_12_0)
-						return arg_12_0.draw_health_bar
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 12
+						return self.draw_health_bar
 					end
 				},
 				{
@@ -547,29 +564,34 @@ local function var_0_14()
 					style_id = "total_health_bar",
 					texture_id = "texture_id",
 					content_id = "total_health_bar",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_13_0)
-						return arg_13_0.draw_health_bar
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 13
+						return self.draw_health_bar
 					end
 				},
 				{
 					style_id = "grimoire_bar",
 					pass_type = "texture_uv",
 					content_id = "grimoire_bar",
-					retained_mode = var_0_2,
-					content_change_function = function(arg_14_0, arg_14_1)
-						local var_14_0 = arg_14_0.parent
-						local var_14_1 = var_14_0.hp_bar.internal_bar_value
-						local var_14_2 = var_14_0.actual_active_percentage or 1
-						local var_14_3 = math.max(var_14_1, var_14_2)
-						local var_14_4 = arg_14_1.size
-						local var_14_5 = arg_14_0.uvs
-						local var_14_6 = arg_14_1.offset
-						local var_14_7 = 553
+					retained_mode = flag,
+					content_change_function = function (self, arg_14_1)
+						-- function 14
+						local parent = self.parent
+						local internal_bar_value = parent.hp_bar.internal_bar_value
+						local actual_active_percentage = parent.actual_active_percentage
 
-						var_14_5[1][1] = var_14_3
-						var_14_4[1] = var_14_7 * (1 - var_14_3)
-						var_14_6[1] = 2 + var_0_6.x + var_14_7 * var_14_3
+						actual_active_percentage = actual_active_percentage or 1
+
+						local max = math.max(internal_bar_value, actual_active_percentage)
+						local size = arg_14_1.size
+						local uvs = self.uvs
+						local offset = arg_14_1.offset
+						local num = 553
+
+						uvs[1][1] = max
+						size[1] = num * (1 - max)
+						offset[1] = 2 + tbl_3.x + num * max
 					end
 				}
 			}
@@ -608,7 +630,7 @@ local function var_0_14()
 		style = {
 			total_health_bar = {
 				gradient_threshold = 1,
-				size = var_0_4,
+				size = tbl,
 				color = {
 					255,
 					255,
@@ -616,14 +638,14 @@ local function var_0_14()
 					255
 				},
 				offset = {
-					var_0_6.x + 1,
-					var_0_6.y,
-					var_0_6.z + 2
+					tbl_3.x + 1,
+					tbl_3.y,
+					tbl_3.z + 2
 				}
 			},
 			hp_bar = {
 				gradient_threshold = 1,
-				size = var_0_4,
+				size = tbl,
 				color = {
 					255,
 					255,
@@ -631,9 +653,9 @@ local function var_0_14()
 					255
 				},
 				offset = {
-					var_0_6.x + 1,
-					var_0_6.y,
-					var_0_6.z + 3
+					tbl_3.x + 1,
+					tbl_3.y,
+					tbl_3.z + 3
 				}
 			},
 			grimoire_bar = {
@@ -648,9 +670,9 @@ local function var_0_14()
 					255
 				},
 				offset = {
-					var_0_6.x,
-					var_0_6.y,
-					var_0_6.z + 4
+					tbl_3.x,
+					tbl_3.y,
+					tbl_3.z + 4
 				}
 			},
 			grimoire_debuff_divider = {
@@ -665,9 +687,9 @@ local function var_0_14()
 					255
 				},
 				offset = {
-					var_0_6.x + 10,
-					var_0_6.y - 8,
-					var_0_6.z + 20
+					tbl_3.x + 10,
+					tbl_3.y - 8,
+					tbl_3.z + 20
 				}
 			},
 			hp_bar_highlight = {
@@ -676,9 +698,9 @@ local function var_0_14()
 					16
 				},
 				offset = {
-					var_0_6.x + 1,
-					var_0_6.y + 27 - 2,
-					var_0_6.z + 5
+					tbl_3.x + 1,
+					tbl_3.y + 27 - 2,
+					tbl_3.z + 5
 				},
 				color = {
 					0,
@@ -696,23 +718,23 @@ local function var_0_14()
 	}
 end
 
-local var_0_15 = {
-	portrait_static = UIWidgets.create_portrait_frame("portrait_pivot", "default", "-", var_0_3, var_0_2),
-	default_dynamic = var_0_13(),
-	default_static = var_0_11(),
-	health_dynamic = var_0_14(),
-	respawn_dynamic = var_0_12(),
-	versus_insignia_static = UIWidgets.create_small_insignia("insignia_pivot", 1, nil, nil, nil, var_0_2)
+local tbl_8 = {
+	portrait_static = UIWidgets.create_portrait_frame("portrait_pivot", "default", "-", num_3, flag),
+	default_dynamic = fn_3(),
+	default_static = fn(),
+	health_dynamic = fn_4(),
+	respawn_dynamic = fn_2(),
+	versus_insignia_static = UIWidgets.create_small_insignia("insignia_pivot", 1, nil, nil, nil, flag)
 }
-local var_0_16 = UnitFramesUiUtils.create_damage_widget("player", 4)
-local var_0_17 = {
+local create_damage_widget = UnitFramesUiUtils.create_damage_widget("player", 4)
+local tbl_9 = {
 	ability = false,
 	weapons = false,
 	damage = true,
 	equipment = false,
 	respawn = true
 }
-local var_0_18 = {
+local tbl_10 = {
 	static = {
 		default = "default_static",
 		level = "default_static",
@@ -729,12 +751,12 @@ local var_0_18 = {
 }
 
 return {
-	weapon_slot_widget_settings = var_0_10,
-	inventory_index_by_slot = var_0_9,
-	inventory_consumable_icons = var_0_8,
-	features_list = var_0_17,
-	widget_name_by_feature = var_0_18,
-	scenegraph_definition = var_0_7,
-	widget_definitions = var_0_15,
-	damage_widget_definitions = var_0_16
+	weapon_slot_widget_settings = tbl_7,
+	inventory_index_by_slot = tbl_6,
+	inventory_consumable_icons = tbl_5,
+	features_list = tbl_9,
+	widget_name_by_feature = tbl_10,
+	scenegraph_definition = tbl_4,
+	widget_definitions = tbl_8,
+	damage_widget_definitions = create_damage_widget
 }

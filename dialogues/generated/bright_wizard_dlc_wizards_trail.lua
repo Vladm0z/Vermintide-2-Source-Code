@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/bright_wizard_dlc_wizards_trail.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pbw_wizard_trail_bridge_down",

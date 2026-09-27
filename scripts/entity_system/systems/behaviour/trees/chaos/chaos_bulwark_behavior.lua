@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/chaos/chaos_bulwark_behavior.lua
 
-local var_0_0 = BreedActions.chaos_bulwark
+local chaos_bulwark = BreedActions.chaos_bulwark
 
 BreedBehaviors.chaos_bulwark = {
 	"BTSelector",
@@ -25,13 +25,13 @@ BreedBehaviors.chaos_bulwark = {
 		leave_hook = "bulwark_stagger_leave",
 		name = "stagger",
 		condition = "stagger_activated",
-		action_data = var_0_0.stagger
+		action_data = chaos_bulwark.stagger
 	},
 	{
 		"BTBlockedAction",
 		name = "blocked",
 		condition = "blocked",
-		action_data = var_0_0.blocked
+		action_data = chaos_bulwark.blocked
 	},
 	{
 		"BTSelector",
@@ -49,7 +49,7 @@ BreedBehaviors.chaos_bulwark = {
 			"BTSmashDoorAction",
 			name = "smash_door",
 			condition = "at_door_smartobject",
-			action_data = var_0_0.smash_door
+			action_data = chaos_bulwark.smash_door
 		},
 		{
 			"BTJumpAcrossAction",
@@ -64,36 +64,36 @@ BreedBehaviors.chaos_bulwark = {
 		{
 			"BTTargetRageAction",
 			name = "target_changed",
-			action_data = var_0_0.target_changed
+			action_data = chaos_bulwark.target_changed
 		},
 		{
 			"BTStormVerminAttackAction",
 			name = "special_attack_quick",
 			condition = "ask_target_before_attacking",
-			action_data = var_0_0.special_attack_quick
+			action_data = chaos_bulwark.special_attack_quick
 		},
 		{
 			"BTMeleeOverlapAttackAction",
 			name = "running_attack_charging",
 			condition = "ask_target_before_attacking",
-			action_data = var_0_0.running_attack_charging
+			action_data = chaos_bulwark.running_attack_charging
 		},
 		{
 			"BTMeleeOverlapAttackAction",
 			name = "running_attack_right",
 			condition = "ask_target_before_attacking",
-			action_data = var_0_0.running_attack_right
+			action_data = chaos_bulwark.running_attack_right
 		},
 		{
 			"BTStormVerminAttackAction",
 			name = "special_attack_sweep",
 			condition = "ask_target_before_attacking",
-			action_data = var_0_0.special_attack_sweep
+			action_data = chaos_bulwark.special_attack_sweep
 		},
 		{
 			"BTBulwarkFollowAction",
 			name = "follow",
-			action_data = var_0_0.follow
+			action_data = chaos_bulwark.follow
 		},
 		condition = "confirmed_player_sighting",
 		name = "in_combat"
@@ -102,20 +102,20 @@ BreedBehaviors.chaos_bulwark = {
 		"BTAlertedAction",
 		name = "alerted",
 		condition = "player_spotted",
-		action_data = var_0_0.alerted
+		action_data = chaos_bulwark.alerted
 	},
 	{
 		"BTMoveToGoalAction",
 		leave_hook = "remove_goal_destination",
 		name = "move_to_goal",
 		condition = "has_goal_destination",
-		action_data = var_0_0.follow
+		action_data = chaos_bulwark.follow
 	},
 	{
 		"BTIdleAction",
 		name = "idle",
 		condition = "no_target",
-		action_data = var_0_0.idle
+		action_data = chaos_bulwark.idle
 	},
 	{
 		"BTFallbackIdleAction",

@@ -1,14 +1,14 @@
 -- chunkname: @scripts/ui/views/hero_view/states/definitions/hero_view_state_store_definitions.lua
 
-local var_0_0 = {
+local tbl = {
 	800,
 	700
 }
-local var_0_1 = {
+local tbl_2 = {
 	16,
-	var_0_0[2]
+	tbl[2]
 }
-local var_0_2 = {
+local tbl_3 = {
 	root = {
 		is_root = true,
 		size = {
@@ -93,7 +93,7 @@ local var_0_2 = {
 		vertical_alignment = "top",
 		parent = "screen",
 		horizontal_alignment = "left",
-		size = var_0_0,
+		size = tbl,
 		position = {
 			130,
 			-215,
@@ -104,10 +104,10 @@ local var_0_2 = {
 		vertical_alignment = "top",
 		parent = "list_window",
 		horizontal_alignment = "left",
-		size = var_0_0,
+		size = tbl,
 		position = {
 			0,
-			-var_0_0[2],
+			-tbl[2],
 			0
 		}
 	},
@@ -115,7 +115,7 @@ local var_0_2 = {
 		vertical_alignment = "top",
 		parent = "list_window",
 		horizontal_alignment = "left",
-		size = var_0_1,
+		size = tbl_2,
 		position = {
 			-58,
 			0,
@@ -207,7 +207,7 @@ local var_0_2 = {
 		}
 	}
 }
-local var_0_3 = {
+local tbl_4 = {
 	use_shadow = true,
 	upper_case = false,
 	localize = true,
@@ -223,7 +223,7 @@ local var_0_3 = {
 		2
 	}
 }
-local var_0_4 = {
+local tbl_5 = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -240,7 +240,7 @@ local var_0_4 = {
 		2
 	}
 }
-local var_0_5 = {
+local tbl_6 = {
 	video_fullscreen_fade = {
 		scenegraph_id = "video_fullscreen_fade",
 		element = {
@@ -252,22 +252,23 @@ local var_0_5 = {
 				{
 					style_id = "rect",
 					pass_type = "rect",
-					content_change_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-						local var_1_0 = arg_1_0.progress
+					content_change_function = function (self, arg_1_1, arg_1_2, arg_1_3)
+						-- function 1
+						local progress = self.progress
 
-						if not var_1_0 then
+						if not progress then
 							return
 						end
 
-						local var_1_1 = math.min(var_1_0 + arg_1_3, 1)
-						local var_1_2 = 255 - 255 * math.smoothstep(var_1_1, 0, 1)
+						local min = math.min(progress + arg_1_3, 1)
+						local num = 255 - 255 * math.smoothstep(min, 0, 1)
 
-						arg_1_1.color[1] = var_1_2
+						arg_1_1.color[1] = num
 
-						if var_1_1 == 1 then
-							arg_1_0.progress = nil
+						if min == 1 then
+							self.progress = nil
 						else
-							arg_1_0.progress = var_1_1
+							self.progress = min
 						end
 					end
 				}
@@ -300,7 +301,7 @@ local var_0_5 = {
 		}
 	}
 }
-local var_0_6 = {
+local tbl_7 = {
 	list_detail_top_left = UIWidgets.create_simple_uv_texture("divider_skull_left", {
 		{
 			0,
@@ -354,21 +355,24 @@ local var_0_6 = {
 		19
 	})
 }
-local var_0_7 = {
+local tbl_8 = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+				-- function 2
 				arg_2_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
-				local var_3_0 = math.easeOutCubic(arg_3_3)
+			update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+				-- function 3
+				local easeOutCubic = math.easeOutCubic(arg_3_3)
 
 				arg_3_4.render_settings.alpha_multiplier = 1
 			end,
-			on_complete = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			on_complete = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				-- function 4
 				return
 			end
 		}
@@ -378,15 +382,18 @@ local var_0_7 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+				-- function 5
 				arg_5_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
-				local var_6_0 = math.easeOutCubic(arg_6_3)
+			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+				-- function 6
+				local easeOutCubic = math.easeOutCubic(arg_6_3)
 
 				arg_6_4.render_settings.alpha_multiplier = 1
 			end,
-			on_complete = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			on_complete = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+				-- function 7
 				return
 			end
 		}
@@ -396,35 +403,38 @@ local var_0_7 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			init = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+				-- function 8
 				return
 			end,
-			update = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
-				local var_9_0 = math.easeOutCubic(arg_9_3)
-				local var_9_1 = arg_9_2.list_detail_top_left
-				local var_9_2 = arg_9_2.list_detail_top_right
-				local var_9_3 = arg_9_2.list_detail_bottom_left
-				local var_9_4 = arg_9_2.list_detail_bottom_center
-				local var_9_5 = arg_9_2.list_detail_top_center
-				local var_9_6 = arg_9_2.list_detail_bottom_right
-				local var_9_7 = arg_9_2.chain
-				local var_9_8 = 255 * var_9_0
+			update = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+				-- function 9
+				local easeOutCubic = math.easeOutCubic(arg_9_3)
+				local list_detail_top_left = arg_9_2.list_detail_top_left
+				local list_detail_top_right = arg_9_2.list_detail_top_right
+				local list_detail_bottom_left = arg_9_2.list_detail_bottom_left
+				local list_detail_bottom_center = arg_9_2.list_detail_bottom_center
+				local list_detail_top_center = arg_9_2.list_detail_top_center
+				local list_detail_bottom_right = arg_9_2.list_detail_bottom_right
+				local chain = arg_9_2.chain
+				local num = 255 * easeOutCubic
 
-				var_9_7.style.tiling_texture.color[1] = var_9_8
-				var_9_5.style.tiling_texture.color[1] = var_9_8
-				var_9_4.style.tiling_texture.color[1] = var_9_8
-				var_9_1.style.texture_id.color[1] = var_9_8
-				var_9_3.style.texture_id.color[1] = var_9_8
-				var_9_2.style.texture_id.color[1] = var_9_8
-				var_9_6.style.texture_id.color[1] = var_9_8
+				chain.style.tiling_texture.color[1] = num
+				list_detail_top_center.style.tiling_texture.color[1] = num
+				list_detail_bottom_center.style.tiling_texture.color[1] = num
+				list_detail_top_left.style.texture_id.color[1] = num
+				list_detail_bottom_left.style.texture_id.color[1] = num
+				list_detail_top_right.style.texture_id.color[1] = num
+				list_detail_bottom_right.style.texture_id.color[1] = num
 			end,
-			on_complete = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			on_complete = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+				-- function 10
 				return
 			end
 		}
 	}
 }
-local var_0_8 = {
+local tbl_9 = {
 	{
 		input_action = "confirm",
 		priority = 2,
@@ -438,9 +448,9 @@ local var_0_8 = {
 }
 
 return {
-	widgets = var_0_5,
-	generic_input_actions = var_0_8,
-	list_detail_widgets = var_0_6,
-	scenegraph_definition = var_0_2,
-	animation_definitions = var_0_7
+	widgets = tbl_6,
+	generic_input_actions = tbl_9,
+	list_detail_widgets = tbl_7,
+	scenegraph_definition = tbl_3,
+	animation_definitions = tbl_8
 }

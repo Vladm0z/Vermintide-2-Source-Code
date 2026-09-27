@@ -1,13 +1,13 @@
 -- chunkname: @scripts/ui/views/store_login_rewards_popup_definitions.lua
 
-local var_0_0 = 1550
-local var_0_1 = 700
-local var_0_2 = 150
-local var_0_3 = 350
-local var_0_4 = 20
-local var_0_5 = 8
-local var_0_6 = true
-local var_0_7 = {
+local num = 1550
+local num_2 = 700
+local num_3 = 150
+local num_4 = 350
+local num_5 = 20
+local num_6 = 8
+local flag = true
+local tbl = {
 	screen = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
@@ -27,8 +27,8 @@ local var_0_7 = {
 		parent = "screen",
 		horizontal_alignment = "center",
 		size = {
-			var_0_0,
-			var_0_1
+			num,
+			num_2
 		},
 		position = {
 			0,
@@ -69,8 +69,8 @@ local var_0_7 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_0 - 84,
-			var_0_1 - 84
+			num - 84,
+			num_2 - 84
 		},
 		position = {
 			0,
@@ -83,7 +83,7 @@ local var_0_7 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_0 - 42,
+			num - 42,
 			42
 		},
 		position = {
@@ -97,7 +97,7 @@ local var_0_7 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_0 - 42,
+			num - 42,
 			42
 		},
 		position = {
@@ -112,7 +112,7 @@ local var_0_7 = {
 		horizontal_alignment = "left",
 		size = {
 			42,
-			var_0_1 - 42
+			num_2 - 42
 		},
 		position = {
 			0,
@@ -126,7 +126,7 @@ local var_0_7 = {
 		horizontal_alignment = "right",
 		size = {
 			42,
-			var_0_1 - 42
+			num_2 - 42
 		},
 		position = {
 			0,
@@ -195,7 +195,7 @@ local var_0_7 = {
 		parent = "window_inner",
 		horizontal_alignment = "left",
 		size = {
-			var_0_0 - 84 - 150,
+			num - 84 - 150,
 			42
 		},
 		position = {
@@ -223,7 +223,7 @@ local var_0_7 = {
 		parent = "backdrop",
 		horizontal_alignment = "center",
 		size = {
-			var_0_0,
+			num,
 			30
 		},
 		position = {
@@ -251,8 +251,8 @@ local var_0_7 = {
 		parent = "window_inner",
 		horizontal_alignment = "center",
 		size = {
-			(var_0_2 + var_0_4) * var_0_5,
-			var_0_3
+			(num_3 + num_5) * num_6,
+			num_4
 		},
 		position = {
 			0,
@@ -265,8 +265,8 @@ local var_0_7 = {
 		parent = "calendar",
 		horizontal_alignment = "left",
 		size = {
-			var_0_2,
-			var_0_3
+			num_3,
+			num_4
 		},
 		position = {
 			0,
@@ -279,7 +279,7 @@ local var_0_7 = {
 		parent = "day_pivot",
 		horizontal_alignment = "center",
 		size = {
-			var_0_2 - 8,
+			num_3 - 8,
 			42
 		},
 		position = {
@@ -317,7 +317,7 @@ local var_0_7 = {
 		}
 	}
 }
-local var_0_8 = {
+local tbl_2 = {
 	word_wrap = true,
 	font_size = 42,
 	localize = true,
@@ -332,7 +332,7 @@ local var_0_8 = {
 		2
 	}
 }
-local var_0_9 = {
+local tbl_3 = {
 	word_wrap = true,
 	font_size = 24,
 	localize = true,
@@ -347,7 +347,7 @@ local var_0_9 = {
 		2
 	}
 }
-local var_0_10 = {
+local tbl_4 = {
 	word_wrap = true,
 	font_size = 32,
 	localize = false,
@@ -368,18 +368,19 @@ local var_0_10 = {
 	}
 }
 
-local function var_0_11(arg_1_0, arg_1_1)
-	local var_1_0 = UIFrameSettings.frame_outer_glow_04_big
-	local var_1_1 = UIFrameSettings.frame_outer_glow_01
-	local var_1_2 = var_1_1.texture_sizes.vertical[1]
-	local var_1_3 = {
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
+	local frame_outer_glow_04_big = UIFrameSettings.frame_outer_glow_04_big
+	local frame_outer_glow_01 = UIFrameSettings.frame_outer_glow_01
+	local var_1_2 = frame_outer_glow_01.texture_sizes.vertical[1]
+	local tbl = {
 		80,
 		80
 	}
-	local var_1_4 = {
+	local tbl_2 = {
 		scenegraph_id = "reward_pivot",
 		offset = {
-			(arg_1_0 - 1) * (var_0_2 + var_0_4) + 0.5 * var_0_4,
+			(arg_1_0 - 1) * (num_3 + num_5) + 0.5 * num_5,
 			(arg_1_1 - 1) * -85,
 			0
 		},
@@ -404,8 +405,9 @@ local function var_0_11(arg_1_0, arg_1_1)
 					texture_id = "item_illusion",
 					style_id = "item_illusion",
 					pass_type = "texture",
-					content_check_function = function(arg_2_0)
-						return arg_2_0.is_illusion
+					content_check_function = function (self)
+						-- function 2
+						return self.is_illusion
 					end
 				},
 				{
@@ -416,21 +418,35 @@ local function var_0_11(arg_1_0, arg_1_1)
 					style_id = "item_tooltip",
 					item_id = "item",
 					pass_type = "item_tooltip",
-					content_check_function = function(arg_3_0)
-						local var_3_0 = Managers.input:is_device_active("gamepad")
+					content_check_function = function (self)
+						-- function 3
+						local is_device_active = Managers.input:is_device_active("gamepad")
+						local is_hover = self.is_hover
 
-						return arg_3_0.is_hover or var_3_0 and arg_3_0.is_selected and arg_3_0.show_tooltips
+						if is_hover or not is_device_active then
+							-- Nothing
+						end
+
+						::label_3_0::
+
+						is_hover = self.is_selected
+						is_hover = not is_hover and self.show_tooltips
+
+						::label_3_1::
+
+						return is_hover
 					end
 				},
 				{
 					pass_type = "texture_frame",
 					style_id = "cursor",
 					texture_id = "cursor",
-					content_check_function = function(arg_4_0)
-						if Managers.input:is_device_active("gamepad") then
-							return arg_4_0.is_selected
+					content_check_function = function (self)
+						-- function 4
+						if not Managers.input:is_device_active("gamepad") then
+							return self.is_selected
 						else
-							return arg_4_0.is_hover
+							return self.is_hover
 						end
 					end
 				}
@@ -444,8 +460,8 @@ local function var_0_11(arg_1_0, arg_1_1)
 			is_illusion = false,
 			show_tooltips = false,
 			item_icon = "icons_placeholder",
-			shadow = var_1_1.texture,
-			cursor = var_1_0.texture
+			shadow = frame_outer_glow_01.texture,
+			cursor = frame_outer_glow_04_big.texture
 		},
 		style = {
 			shadow = {
@@ -458,8 +474,8 @@ local function var_0_11(arg_1_0, arg_1_1)
 					-var_1_2,
 					-var_1_2
 				},
-				texture_size = var_1_1.texture_size,
-				texture_sizes = var_1_1.texture_sizes,
+				texture_size = frame_outer_glow_01.texture_size,
+				texture_sizes = frame_outer_glow_01.texture_sizes,
 				color = {
 					255,
 					50,
@@ -473,7 +489,7 @@ local function var_0_11(arg_1_0, arg_1_1)
 					0,
 					1
 				},
-				texture_size = var_1_3
+				texture_size = tbl
 			},
 			item_icon = {
 				offset = {
@@ -481,7 +497,7 @@ local function var_0_11(arg_1_0, arg_1_1)
 					0,
 					2
 				},
-				texture_size = var_1_3
+				texture_size = tbl
 			},
 			item_illusion = {
 				offset = {
@@ -489,7 +505,7 @@ local function var_0_11(arg_1_0, arg_1_1)
 					0,
 					3
 				},
-				texture_size = var_1_3
+				texture_size = tbl
 			},
 			item_tooltip = {
 				font_type = "hell_shark",
@@ -501,7 +517,7 @@ local function var_0_11(arg_1_0, arg_1_1)
 					0,
 					5
 				},
-				size = var_1_3,
+				size = tbl,
 				text_color = Colors.get_color_table_with_alpha("white", 255),
 				line_colors = {
 					Colors.get_color_table_with_alpha("font_title", 255),
@@ -509,9 +525,9 @@ local function var_0_11(arg_1_0, arg_1_1)
 				}
 			},
 			cursor = {
-				size = var_1_3,
-				texture_size = var_1_0.texture_size,
-				texture_sizes = var_1_0.texture_sizes,
+				size = tbl,
+				texture_size = frame_outer_glow_04_big.texture_size,
+				texture_sizes = frame_outer_glow_04_big.texture_sizes,
 				frame_margins = {
 					-22,
 					-22
@@ -531,27 +547,28 @@ local function var_0_11(arg_1_0, arg_1_1)
 		}
 	}
 
-	UIWidgets.append_item_frame_pass("item_frame", var_1_4.element.passes, var_1_4.content, var_1_4.style, var_1_3, {
+	UIWidgets.append_item_frame_pass("item_frame", tbl_2.element.passes, tbl_2.content, tbl_2.style, tbl, {
 		0,
 		0,
 		4
 	}, false, nil, nil, nil, nil)
 
-	return var_1_4
+	return tbl_2
 end
 
-local function var_0_12(arg_5_0)
-	local var_5_0 = UIFrameSettings.button_frame_01_gold
-	local var_5_1 = UIFrameSettings.frame_corner_detail_01_gold
-	local var_5_2 = UIFrameSettings.frame_outer_glow_04_big
-	local var_5_3 = var_5_2.texture_sizes.horizontal[2]
-	local var_5_4 = UIFrameSettings.frame_outer_glow_01_white
-	local var_5_5 = var_5_4.texture_sizes.vertical[1]
+local function fn_2(arg_5_0)
+	-- function 5
+	local button_frame_01_gold = UIFrameSettings.button_frame_01_gold
+	local frame_corner_detail_01_gold = UIFrameSettings.frame_corner_detail_01_gold
+	local frame_outer_glow_04_big = UIFrameSettings.frame_outer_glow_04_big
+	local var_5_3 = frame_outer_glow_04_big.texture_sizes.horizontal[2]
+	local frame_outer_glow_01_white = UIFrameSettings.frame_outer_glow_01_white
+	local var_5_5 = frame_outer_glow_01_white.texture_sizes.vertical[1]
 
 	return {
 		scenegraph_id = "day_pivot",
 		offset = {
-			(arg_5_0 - 1) * (var_0_2 + var_0_4) + 0.5 * var_0_4,
+			(arg_5_0 - 1) * (num_3 + num_5) + 0.5 * num_5,
 			0,
 			0
 		},
@@ -581,8 +598,9 @@ local function var_0_12(arg_5_0)
 					pass_type = "texture_frame",
 					style_id = "selection_frame",
 					texture_id = "selection_frame",
-					content_check_function = function(arg_6_0, arg_6_1)
-						return Managers.input:is_device_active("gamepad") and arg_6_0.selection_index == arg_6_0.day_index
+					content_check_function = function (self, arg_6_1)
+						-- function 6
+						return not Managers.input:is_device_active("gamepad") and self.selection_index == self.day_index
 					end
 				},
 				{
@@ -594,74 +612,84 @@ local function var_0_12(arg_5_0)
 					pass_type = "texture_frame",
 					style_id = "glow",
 					texture_id = "glow",
-					content_check_function = function(arg_7_0)
-						return arg_7_0.is_today
+					content_check_function = function (self)
+						-- function 7
+						return self.is_today
 					end
 				},
 				{
 					style_id = "bottom_glow",
 					pass_type = "texture_uv",
 					content_id = "bottom_glow",
-					content_check_function = function(arg_8_0)
-						return arg_8_0.parent.is_today
+					content_check_function = function (self)
+						-- function 8
+						return self.parent.is_today
 					end
 				},
 				{
 					style_id = "day_text",
 					pass_type = "text",
 					text_id = "day_text",
-					content_check_function = function(arg_9_0)
-						return arg_9_0.calendar_type == "personal_time_strike"
+					content_check_function = function (self)
+						-- function 9
+						return self.calendar_type == "personal_time_strike"
 					end
 				},
 				{
 					style_id = "day_text_shadow",
 					pass_type = "text",
 					text_id = "day_text",
-					content_check_function = function(arg_10_0)
-						return arg_10_0.calendar_type == "personal_time_strike"
+					content_check_function = function (self)
+						-- function 10
+						return self.calendar_type == "personal_time_strike"
 					end
 				},
 				{
 					style_id = "day_number",
 					pass_type = "text",
 					text_id = "day_number",
-					content_check_function = function(arg_11_0)
-						return not arg_11_0.is_today
+					content_check_function = function (self)
+						-- function 11
+						return not self.is_today
 					end
 				},
 				{
 					style_id = "day_number_shadow",
 					pass_type = "text",
 					text_id = "day_number",
-					content_check_function = function(arg_12_0)
-						return not arg_12_0.is_today
+					content_check_function = function (self)
+						-- function 12
+						return not self.is_today
 					end
 				},
 				{
 					texture_id = "day_number_texture",
 					style_id = "day_number_texture",
 					pass_type = "texture",
-					content_check_function = function(arg_13_0)
-						return arg_13_0.is_today
+					content_check_function = function (self)
+						-- function 13
+						return self.is_today
 					end
 				},
 				{
 					texture_id = "claimed",
 					style_id = "claimed",
 					pass_type = "texture",
-					content_check_function = function(arg_14_0)
-						return arg_14_0.is_claimed
+					content_check_function = function (self)
+						-- function 14
+						return self.is_claimed
 					end
 				},
 				{
 					style_id = "unclaimed_tint",
 					pass_type = "rect",
-					content_check_function = function(arg_15_0)
-						return arg_15_0.calendar_type == "calendar" and not arg_15_0.is_claimed and arg_15_0.day_index <= arg_15_0.current_day and not arg_15_0.is_loop
+					content_check_function = function (self)
+						-- function 15
+						return self.calendar_type ~= "calendar" or not not self.is_claimed or not (self.day_index <= self.current_day) or not self.is_loop
 					end,
-					content_change_function = function(arg_16_0, arg_16_1)
-						if arg_16_0.calendar_type == "calendar" and not arg_16_0.is_claimed and arg_16_0.day_index <= arg_16_0.current_day and not arg_16_0.is_loop then
+					content_change_function = function (self, arg_16_1)
+						-- function 16
+						if not (self.calendar_type ~= "calendar" or self.is_claimed or not (self.day_index <= self.current_day) or self.is_loop) then
 							arg_16_1.color[1] = 120
 						end
 					end
@@ -677,10 +705,10 @@ local function var_0_12(arg_5_0)
 			calendar_type = "personal_time_strike",
 			bg = "menu_frame_bg_09",
 			hotspot = {},
-			frame = var_5_0.texture,
-			corner = var_5_1.texture,
-			glow = var_5_2.texture,
-			selection_frame = var_5_4.texture,
+			frame = button_frame_01_gold.texture,
+			corner = frame_corner_detail_01_gold.texture,
+			glow = frame_outer_glow_04_big.texture,
+			selection_frame = frame_outer_glow_01_white.texture,
 			bottom_glow = {
 				texture_id = "login_rewards_embers",
 				visible = false,
@@ -721,8 +749,8 @@ local function var_0_12(arg_5_0)
 					0,
 					4
 				},
-				texture_size = var_5_0.texture_size,
-				texture_sizes = var_5_0.texture_sizes,
+				texture_size = button_frame_01_gold.texture_size,
+				texture_sizes = button_frame_01_gold.texture_sizes,
 				color = {
 					255,
 					255,
@@ -736,8 +764,8 @@ local function var_0_12(arg_5_0)
 					0,
 					5
 				},
-				texture_size = var_5_1.texture_size,
-				texture_sizes = var_5_1.texture_sizes,
+				texture_size = frame_corner_detail_01_gold.texture_size,
+				texture_sizes = frame_corner_detail_01_gold.texture_sizes,
 				color = {
 					255,
 					255,
@@ -755,8 +783,8 @@ local function var_0_12(arg_5_0)
 					-var_5_3,
 					-var_5_3
 				},
-				texture_size = var_5_2.texture_size,
-				texture_sizes = var_5_2.texture_sizes,
+				texture_size = frame_outer_glow_04_big.texture_size,
+				texture_sizes = frame_outer_glow_04_big.texture_sizes,
 				color = {
 					255,
 					255,
@@ -774,8 +802,8 @@ local function var_0_12(arg_5_0)
 					-var_5_5,
 					-var_5_5
 				},
-				texture_size = var_5_4.texture_size,
-				texture_sizes = var_5_4.texture_sizes,
+				texture_size = frame_outer_glow_01_white.texture_size,
+				texture_sizes = frame_outer_glow_01_white.texture_sizes,
 				color = {
 					255,
 					255,
@@ -805,8 +833,8 @@ local function var_0_12(arg_5_0)
 					3
 				},
 				texture_size = {
-					var_0_2,
-					var_0_3
+					num_3,
+					num_4
 				},
 				color = {
 					255,
@@ -946,7 +974,7 @@ local function var_0_12(arg_5_0)
 	}
 end
 
-local var_0_13 = {
+local tbl_5 = {
 	scenegraph_id = "window",
 	element = {
 		passes = {
@@ -983,7 +1011,7 @@ local var_0_13 = {
 				0
 			},
 			texture_size = {
-				var_0_0,
+				num,
 				100
 			},
 			color = Colors.get_color_table_with_alpha("exotic", 200)
@@ -997,14 +1025,14 @@ local var_0_13 = {
 				0
 			},
 			texture_size = {
-				var_0_0,
+				num,
 				100
 			},
 			color = Colors.get_color_table_with_alpha("exotic", 200)
 		}
 	}
 }
-local var_0_14 = {
+local tbl_6 = {
 	scenegraph_id = "loading_icon",
 	element = {
 		passes = {
@@ -1012,11 +1040,16 @@ local var_0_14 = {
 				style_id = "loading_icon",
 				pass_type = "rotated_texture",
 				texture_id = "loading_icon",
-				content_change_function = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
-					local var_17_0 = ((arg_17_1.progress or 0) + arg_17_3) % 1
+				content_change_function = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+					-- function 17
+					local progress = arg_17_1.progress
 
-					arg_17_1.angle = math.pow(2, math.smoothstep(var_17_0, 0, 1)) * (math.pi * 2)
-					arg_17_1.progress = var_17_0
+					progress = progress or 0
+
+					local num = (progress + arg_17_3) % 1
+
+					arg_17_1.angle = math.pow(2, math.smoothstep(num, 0, 1)) * (math.pi * 2)
+					arg_17_1.progress = num
 				end
 			}
 		}
@@ -1044,9 +1077,9 @@ local var_0_14 = {
 		}
 	}
 }
-local var_0_15 = UIFrameSettings.frame_outer_glow_01
-local var_0_16 = var_0_15.texture_sizes.horizontal[2]
-local var_0_17 = {
+local frame_outer_glow_01 = UIFrameSettings.frame_outer_glow_01
+local var_0_16 = frame_outer_glow_01.texture_sizes.horizontal[2]
+local tbl_7 = {
 	scenegraph_id = "claim_button",
 	element = {
 		passes = {
@@ -1054,15 +1087,16 @@ local var_0_17 = {
 				style_id = "outer_glow",
 				texture_id = "outer_glow",
 				pass_type = "texture_frame",
-				content_change_function = function(arg_18_0, arg_18_1)
+				content_change_function = function (arg_18_0, arg_18_1)
+					-- function 18
 					arg_18_1.color[1] = 150 + 105 * math.sin(5 * Managers.time:time("ui"))
 				end
 			}
 		}
 	},
 	content = {
-		outer_glow = var_0_15.texture,
-		disable_with_gamepad = var_0_6
+		outer_glow = frame_outer_glow_01.texture,
+		disable_with_gamepad = flag
 	},
 	style = {
 		outer_glow = {
@@ -1070,8 +1104,8 @@ local var_0_17 = {
 				-var_0_16,
 				-var_0_16
 			},
-			texture_size = var_0_15.texture_size,
-			texture_sizes = var_0_15.texture_sizes,
+			texture_size = frame_outer_glow_01.texture_size,
+			texture_sizes = frame_outer_glow_01.texture_sizes,
 			offset = {
 				0,
 				0,
@@ -1086,16 +1120,16 @@ local var_0_17 = {
 		}
 	}
 }
-local var_0_18 = {
+local tbl_8 = {
 	background_overlay = UIWidgets.create_simple_rect("screen", {
 		220,
 		12,
 		12,
 		12
 	}),
-	loading_icon = var_0_14
+	loading_icon = tbl_6
 }
-local var_0_19 = {
+local tbl_9 = {
 	overlay = UIWidgets.create_simple_rect("screen", {
 		220,
 		12,
@@ -1105,14 +1139,14 @@ local var_0_19 = {
 	loading_glow = UIWidgets.create_simple_texture("loading_title_divider", "claim_overlay_divider", nil, nil, nil, 1),
 	loading_frame = UIWidgets.create_simple_texture("loading_title_divider_background", "claim_overlay_divider")
 }
-local var_0_20 = {
+local tbl_10 = {
 	screen = UIWidgets.create_simple_rect("screen", {
 		220,
 		12,
 		12,
 		12
 	}),
-	background_glows = var_0_13,
+	background_glows = tbl_5,
 	window_background = UIWidgets.create_tiled_texture("window_inner", "menu_frame_bg_03", {
 		256,
 		256
@@ -1155,28 +1189,30 @@ local var_0_20 = {
 		75.5
 	}, "corner_top_right"),
 	backdrop = UIWidgets.create_simple_texture("store_preview_info_text_backdrop", "backdrop"),
-	title = UIWidgets.create_simple_text("store_login_rewards_title", "title", nil, nil, var_0_8),
-	description = UIWidgets.create_simple_text("store_login_rewards_desc", "description", nil, nil, var_0_9),
-	timer = UIWidgets.create_simple_text(Localize("available_now"), "timer", nil, nil, var_0_10),
-	claim_button = UIWidgets.create_default_button("claim_button", var_0_7.claim_button.size, "button_frame_01_gold", "menu_frame_bg_06", Localize("welcome_currency_popup_button_claim"), 28, nil, "button_detail_03_gold", nil),
-	close_button = UIWidgets.create_default_button("close_button", var_0_7.close_button.size, "button_frame_01_gold", "menu_frame_bg_06", Localize("interaction_action_close"), 28, nil, "button_detail_03_gold", nil, var_0_6),
-	claim_button_glow = var_0_17
+	title = UIWidgets.create_simple_text("store_login_rewards_title", "title", nil, nil, tbl_2),
+	description = UIWidgets.create_simple_text("store_login_rewards_desc", "description", nil, nil, tbl_3),
+	timer = UIWidgets.create_simple_text(Localize("available_now"), "timer", nil, nil, tbl_4),
+	claim_button = UIWidgets.create_default_button("claim_button", tbl.claim_button.size, "button_frame_01_gold", "menu_frame_bg_06", Localize("welcome_currency_popup_button_claim"), 28, nil, "button_detail_03_gold", nil),
+	close_button = UIWidgets.create_default_button("close_button", tbl.close_button.size, "button_frame_01_gold", "menu_frame_bg_06", Localize("interaction_action_close"), 28, nil, "button_detail_03_gold", nil, flag),
+	claim_button_glow = tbl_7
 }
-local var_0_21 = Script.new_array(var_0_5)
+local new_array = Script.new_array(num_6)
 
-for iter_0_0 = 1, var_0_5 do
-	var_0_21[iter_0_0] = var_0_12(iter_0_0)
+for i = 1, num_6 do
+	new_array[i] = fn_2(i)
 end
 
-local var_0_22 = {
+local tbl_11 = {
 	on_enter = {
 		{
 			name = "fade_in",
 			duration = 0.3,
-			init = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			init = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+				-- function 19
 				arg_19_3.alpha_multiplier = 0
 			end,
-			update = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+			update = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+				-- function 20
 				arg_20_4.alpha_multiplier = math.easeOutCubic(arg_20_3)
 			end,
 			on_complete = NOP
@@ -1184,10 +1220,12 @@ local var_0_22 = {
 		{
 			name = "slide_in",
 			duration = 0.8,
-			init = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			init = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+				-- function 21
 				arg_21_0.window.local_position[2] = 432
 			end,
-			update = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+			update = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+				-- function 22
 				arg_22_0.window.local_position[2] = math.round(432 * (1 - math.ease_out_elastic(arg_22_3)))
 			end,
 			on_complete = NOP
@@ -1196,10 +1234,12 @@ local var_0_22 = {
 			name = "fade_in_glows",
 			delay = 0.5,
 			duration = 0.8,
-			init = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+			init = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+				-- function 23
 				arg_23_2.background_glows.content.alpha_multiplier = 0
 			end,
-			update = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+			update = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+				-- function 24
 				arg_24_2.background_glows.content.alpha_multiplier = math.easeOutCubic(arg_24_3)
 			end,
 			on_complete = NOP
@@ -1209,10 +1249,12 @@ local var_0_22 = {
 		{
 			name = "fade_out",
 			duration = 0.3,
-			init = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+			init = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+				-- function 25
 				arg_25_3.alpha_multiplier = 1
 			end,
-			update = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+			update = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+				-- function 26
 				arg_26_4.alpha_multiplier = 1 - math.easeOutCubic(arg_26_3)
 			end,
 			on_complete = NOP
@@ -1222,20 +1264,22 @@ local var_0_22 = {
 		{
 			name = "sigil",
 			duration = 0.25,
-			init = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
-				local var_27_0 = arg_27_2.style.claimed
+			init = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+				-- function 27
+				local claimed = arg_27_2.style.claimed
 
-				arg_27_3.og_size_x = var_27_0.texture_size[1]
-				arg_27_3.og_size_y = var_27_0.texture_size[2]
-				var_27_0.color[1] = 0
+				arg_27_3.og_size_x = claimed.texture_size[1]
+				arg_27_3.og_size_y = claimed.texture_size[2]
+				claimed.color[1] = 0
 			end,
-			update = function(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
-				local var_28_0 = math.easeInCubic(arg_28_3)
-				local var_28_1 = arg_28_2.style.claimed
+			update = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+				-- function 28
+				local easeInCubic = math.easeInCubic(arg_28_3)
+				local claimed = arg_28_2.style.claimed
 
-				var_28_1.texture_size[1] = (3 - 2 * var_28_0) * arg_28_4.og_size_x
-				var_28_1.texture_size[2] = (3 - 2 * var_28_0) * arg_28_4.og_size_y
-				var_28_1.color[1] = 255 * var_28_0
+				claimed.texture_size[1] = (3 - 2 * easeInCubic) * arg_28_4.og_size_x
+				claimed.texture_size[2] = (3 - 2 * easeInCubic) * arg_28_4.og_size_y
+				claimed.color[1] = 255 * easeInCubic
 			end,
 			on_complete = NOP
 		},
@@ -1243,10 +1287,12 @@ local var_0_22 = {
 			name = "fade_in_glow",
 			delay = 0.5,
 			duration = 0.5,
-			init = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+			init = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+				-- function 29
 				arg_29_2.style.glow.color[1] = 0
 			end,
-			update = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+			update = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+				-- function 30
 				arg_30_2.style.glow.color[1] = 255 * arg_30_3
 			end,
 			on_complete = NOP
@@ -1255,10 +1301,12 @@ local var_0_22 = {
 			name = "fade_in_bottom_glow",
 			delay = 0.5,
 			duration = 0.5,
-			init = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+			init = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+				-- function 31
 				arg_31_2.style.bottom_glow.color[1] = 0
 			end,
-			update = function(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+			update = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+				-- function 32
 				arg_32_2.style.bottom_glow.color[1] = 255 * arg_32_3
 			end,
 			on_complete = NOP
@@ -1273,7 +1321,7 @@ local var_0_22 = {
 		}
 	}
 }
-local var_0_23 = {
+local tbl_12 = {
 	default = {
 		{
 			input_action = "d_pad",
@@ -1318,13 +1366,13 @@ local var_0_23 = {
 }
 
 return {
-	scenegraph_definition = var_0_7,
-	loading_widgets_definitions = var_0_18,
-	overlay_widgets_definitions = var_0_19,
-	widget_definitions = var_0_20,
-	day_widget_definitions = var_0_21,
-	animation_definitions = var_0_22,
-	generic_input_actions = var_0_23,
-	create_reward_item_widget = var_0_11,
-	day_count = var_0_5
+	scenegraph_definition = tbl,
+	loading_widgets_definitions = tbl_8,
+	overlay_widgets_definitions = tbl_9,
+	widget_definitions = tbl_10,
+	day_widget_definitions = new_array,
+	animation_definitions = tbl_11,
+	generic_input_actions = tbl_12,
+	create_reward_item_widget = fn,
+	day_count = num_6
 }

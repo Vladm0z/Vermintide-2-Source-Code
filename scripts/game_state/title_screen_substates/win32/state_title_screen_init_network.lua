@@ -5,106 +5,115 @@ require("scripts/game_state/state_loading")
 StateTitleScreenInitNetwork = class(StateTitleScreenInitNetwork)
 StateTitleScreenInitNetwork.NAME = "StateTitleScreenInitNetwork"
 
-function StateTitleScreenInitNetwork.on_enter(arg_1_0, arg_1_1)
+StateTitleScreenInitNetwork.on_enter = function (self, arg_1_1)
+	-- function 1
 	print("[Gamestate] Enter Substate StateTitleScreenInitNetwork")
 
-	arg_1_0._params = arg_1_1
-	arg_1_0._title_start_ui = arg_1_1.ui
-	arg_1_0._save_data_loaded = false
+	self._params = arg_1_1
+	self._title_start_ui = arg_1_1.ui
+	self._save_data_loaded = false
 
-	local var_1_0 = arg_1_0.parent.parent.loading_context
-	local var_1_1 = var_1_0.loading_view
+	local loading_context = self.parent.parent.loading_context
+	local loading_view = loading_context.loading_view
 
-	if var_1_1 then
-		var_1_1:destroy()
+	if not loading_view then
+		loading_view:destroy()
 
-		var_1_0.loading_view = nil
+		loading_context.loading_view = nil
 	end
 
-	arg_1_0:_load_save_data()
+	self:_load_save_data()
 	Managers.transition:show_loading_icon(false)
 
-	local var_1_2 = Managers.backend
+	local backend = Managers.backend
 
-	if var_1_2:is_disconnected() then
-		var_1_2:reset()
+	if not backend:is_disconnected() then
+		backend:reset()
 	end
 end
 
-function StateTitleScreenInitNetwork._load_save_data(arg_2_0)
+StateTitleScreenInitNetwork._load_save_data = function (arg_2_0)
+	-- function 2
 	print("[StateTitleScreenInitNetwork] SaveFileName", SaveFileName)
 	Managers.save:auto_load(SaveFileName, callback(arg_2_0, "cb_save_data_loaded"))
 end
 
-function StateTitleScreenInitNetwork.cb_save_data_loaded(arg_3_0, arg_3_1)
-	if arg_3_1.error then
+StateTitleScreenInitNetwork.cb_save_data_loaded = function (self, arg_3_1)
+	-- function 3
+	if not arg_3_1.error then
 		Application.warning("Load error %q", arg_3_1.error)
 	else
 		populate_save_data(arg_3_1.data)
 	end
 
-	arg_3_0._save_data_loaded = true
+	self._save_data_loaded = true
 	GameSettingsDevelopment.trunk_path = Development.parameter("trunk_path")
-	arg_3_0.parent.parent.loading_context.restart_network = true
+	self.parent.parent.loading_context.restart_network = true
 end
 
-function StateTitleScreenInitNetwork.update(arg_4_0, arg_4_1, arg_4_2)
-	if arg_4_0._title_start_ui then
-		arg_4_0._title_start_ui:update(arg_4_1, arg_4_2)
+StateTitleScreenInitNetwork.update = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	if not self._title_start_ui then
+		self._title_start_ui:update(arg_4_1, arg_4_2)
 	end
 
-	if arg_4_0._popup_id then
-		arg_4_0:_handle_popup()
+	if not self._popup_id then
+		self:_handle_popup()
 
 		return
 	end
 
-	if not arg_4_0:_connected_to_steam() then
-		arg_4_0:create_popup("failure_start_no_steam")
+	if not self:_connected_to_steam() then
+		self:create_popup("failure_start_no_steam")
 
 		return
 	end
 
-	local var_4_0 = arg_4_0.backend_signin_initated
-	local var_4_1 = Managers.backend
+	local backend_signin_initated = self.backend_signin_initated
+	local backend = Managers.backend
 
-	if not var_4_0 and not var_4_1:signed_in() and arg_4_0._save_data_loaded then
-		var_4_1:signin()
+	if backend_signin_initated or backend:signed_in() or not self._save_data_loaded then
+		backend:signin()
 
-		arg_4_0.backend_signin_initated = true
+		self.backend_signin_initated = true
 	end
 
-	return arg_4_0:_next_state()
+	return self:_next_state()
 end
 
-function StateTitleScreenInitNetwork._connected_to_steam(arg_5_0)
-	if Development.parameter("use_lan_backend") then
+StateTitleScreenInitNetwork._connected_to_steam = function (arg_5_0)
+	-- function 5
+	if not Development.parameter("use_lan_backend") then
 		return true
 	end
 
-	local var_5_0 = true
+	local flag = true
 
-	if (IS_WINDOWS or IS_LINUX) and rawget(_G, "Steam") then
-		var_5_0 = Steam.connected()
+	if IS_WINDOWS or not IS_LINUX or not rawget(_G, "Steam") then
+		flag = Steam.connected()
 	end
 
-	return var_5_0
+	return flag
 end
 
-function StateTitleScreenInitNetwork._next_state(arg_6_0)
-	local var_6_0, var_6_1 = Managers.eac:is_initialized()
+StateTitleScreenInitNetwork._next_state = function (self)
+	-- function 6
+	local is_initialized, var_6_1 = Managers.eac:is_initialized()
+	local profiles_loaded = Managers.backend:profiles_loaded()
 
-	if Managers.backend:profiles_loaded() and not Managers.backend:is_waiting_for_user_input() and var_6_0 then
-		if var_6_1 then
-			arg_6_0:_create_eac_error_popup(var_6_1)
+	profiles_loaded = not profiles_loaded and not not Managers.backend:is_waiting_for_user_input() or is_initialized
+
+	if not profiles_loaded then
+		if not var_6_1 then
+			self:_create_eac_error_popup(var_6_1)
 
 			return
 		end
 
-		if GameSettingsDevelopment.skip_start_screen or Development.parameter("skip_start_screen") then
+		if GameSettingsDevelopment.skip_start_screen or not Development.parameter("skip_start_screen") then
 			return StateTitleScreenLoadSave
 		else
-			if script_data.honduras_demo and not arg_6_0._title_start_ui:is_ready() then
+			if not (not script_data.honduras_demo and self._title_start_ui:is_ready()) then
 				return
 			end
 
@@ -113,38 +122,42 @@ function StateTitleScreenInitNetwork._next_state(arg_6_0)
 	end
 end
 
-function StateTitleScreenInitNetwork.on_exit(arg_7_0, arg_7_1)
+StateTitleScreenInitNetwork.on_exit = function (arg_7_0, arg_7_1)
+	-- function 7
 	return
 end
 
-function StateTitleScreenInitNetwork.create_popup(arg_8_0, arg_8_1)
+StateTitleScreenInitNetwork.create_popup = function (self, arg_8_1)
+	-- function 8
 	assert(arg_8_1, "[StateTitleScreenInitNetwork] No error was passed to popup handler")
-	assert(arg_8_0._popup_id == nil, "Tried to show popup even though we already had one.")
+	assert(self._popup_id == nil, "Tried to show popup even though we already had one.")
 
 	local var_8_0 = Localize("popup_steam_error_header")
 	local var_8_1 = Localize(arg_8_1)
 
-	arg_8_0._popup_id = Managers.popup:queue_popup(var_8_1, var_8_0, "retry", Localize("button_retry"), "quit", Localize("menu_quit"))
+	self._popup_id = Managers.popup:queue_popup(var_8_1, var_8_0, "retry", Localize("button_retry"), "quit", Localize("menu_quit"))
 end
 
-function StateTitleScreenInitNetwork._create_eac_error_popup(arg_9_0, arg_9_1)
+StateTitleScreenInitNetwork._create_eac_error_popup = function (self, arg_9_1)
+	-- function 9
 	assert(arg_9_1, "[StateTitleScreenInitNetwork] No error was passed to popup handler")
-	assert(arg_9_0._popup_id == nil, "Tried to show popup even though we already had one.")
+	assert(self._popup_id == nil, "Tried to show popup even though we already had one.")
 
 	local var_9_0 = Localize("popup_eac_error_header")
 
-	arg_9_0._popup_id = Managers.popup:queue_popup(arg_9_1, var_9_0, "quit", Localize("menu_quit"))
+	self._popup_id = Managers.popup:queue_popup(arg_9_1, var_9_0, "quit", Localize("menu_quit"))
 end
 
-function StateTitleScreenInitNetwork._handle_popup(arg_10_0)
-	local var_10_0 = Managers.popup:query_result(arg_10_0._popup_id)
+StateTitleScreenInitNetwork._handle_popup = function (self)
+	-- function 10
+	local query_result = Managers.popup:query_result(self._popup_id)
 
-	if var_10_0 == "retry" then
-		arg_10_0._popup_id = nil
-	elseif var_10_0 == "quit" then
+	if query_result == "retry" then
+		self._popup_id = nil
+	elseif query_result == "quit" then
 		Boot.quit_game = true
-		arg_10_0._popup_id = nil
-	elseif var_10_0 then
-		print(string.format("[StateTitleScreenInitNetwork] No such result handled (%s)", var_10_0))
+		self._popup_id = nil
+	elseif not query_result then
+		print(string.format("[StateTitleScreenInitNetwork] No such result handled (%s)", query_result))
 	end
 end

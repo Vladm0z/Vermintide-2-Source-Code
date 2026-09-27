@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/hud_ui/component_list_definitions/hud_component_list_adventure.lua
 
-local var_0_0 = {
+local tbl = {
 	{
 		use_hud_scale = true,
 		class_name = "WorldMarkerUI",
@@ -80,7 +80,8 @@ local var_0_0 = {
 			"alive",
 			"in_menu"
 		},
-		validation_function = function(arg_1_0, arg_1_1)
+		validation_function = function (arg_1_0, arg_1_1)
+			-- function 1
 			return arg_1_1 or Managers.mechanism:current_mechanism_name() == "deus"
 		end
 	},
@@ -97,7 +98,8 @@ local var_0_0 = {
 			"dead",
 			"alive"
 		},
-		validation_function = function(arg_2_0, arg_2_1)
+		validation_function = function (arg_2_0, arg_2_1)
+			-- function 2
 			return not script_data.disable_news_ticker
 		end
 	},
@@ -113,7 +115,8 @@ local var_0_0 = {
 			"dead",
 			"alive"
 		},
-		validation_function = function(arg_3_0, arg_3_1)
+		validation_function = function (arg_3_0, arg_3_1)
+			-- function 3
 			return arg_3_1
 		end
 	},
@@ -195,8 +198,9 @@ local var_0_0 = {
 		visibility_groups = {
 			"alive"
 		},
-		validation_function = function(arg_4_0, arg_4_1)
-			return GameSettingsDevelopment.backend_settings.quests_enabled and not arg_4_1
+		validation_function = function (arg_4_0, arg_4_1)
+			-- function 4
+			return not GameSettingsDevelopment.backend_settings.quests_enabled and not arg_4_1
 		end
 	},
 	{
@@ -206,11 +210,12 @@ local var_0_0 = {
 		visibility_groups = {
 			"alive"
 		},
-		validation_function = function(arg_5_0, arg_5_1)
-			local var_5_0 = script_data.debug_show_damage_numbers
-			local var_5_1 = script_data.debug_ai_attack_pattern
+		validation_function = function (arg_5_0, arg_5_1)
+			-- function 5
+			local debug_show_damage_numbers = script_data.debug_show_damage_numbers
+			local debug_ai_attack_pattern = script_data.debug_ai_attack_pattern
 
-			return arg_5_1 or var_5_0 or var_5_1
+			return arg_5_1 or debug_show_damage_numbers or debug_ai_attack_pattern
 		end
 	},
 	{
@@ -230,7 +235,8 @@ local var_0_0 = {
 			"alive",
 			"dead"
 		},
-		validation_function = function(arg_6_0, arg_6_1)
+		validation_function = function (arg_6_0, arg_6_1)
+			-- function 6
 			return true
 		end
 	},
@@ -252,7 +258,8 @@ local var_0_0 = {
 		visibility_groups = {
 			"alive"
 		},
-		validation_function = function(arg_7_0, arg_7_1)
+		validation_function = function (arg_7_0, arg_7_1)
+			-- function 7
 			return Managers.state.game_mode:game_mode_key() == "survival"
 		end
 	},
@@ -333,289 +340,328 @@ local var_0_0 = {
 		visibility_groups = {
 			"alive"
 		}
-	},
-	{
-		class_name = "IngamePlayerListUI",
-		filename = GameSettingsDevelopment.use_new_tab_menu and "scripts/ui/views/ingame_player_list_ui_v2" or "scripts/ui/views/ingame_player_list_ui",
-		visibility_groups = {
-			"tab_menu",
-			"realism",
-			"game_mode_disable_hud",
-			"dead",
-			"alive"
-		}
-	},
-	{
-		use_hud_scale = true,
-		class_name = "PositiveReinforcementUI",
-		filename = "scripts/ui/views/positive_reinforcement_ui",
-		visibility_groups = {
-			"dead",
-			"alive"
-		}
-	},
-	{
-		use_hud_scale = true,
-		class_name = "TutorialInputUI",
-		filename = "scripts/ui/views/tutorial_input_ui",
-		visibility_groups = {
-			"game_mode_disable_hud",
-			"alive"
-		},
-		validation_function = function()
-			local var_8_0 = LevelHelper.current_level_settings()
+	}
+}
+local tbl_2 = {
+	class_name = "IngamePlayerListUI"
+}
+local flag
 
-			return var_8_0.tutorial_level or var_8_0.game_mode == "inn_vs"
-		end
+flag = not GameSettingsDevelopment.use_new_tab_menu and "scripts/ui/views/ingame_player_list_ui_v2" and "scripts/ui/views/ingame_player_list_ui"
+tbl_2.filename = flag
+tbl_2.visibility_groups = {
+	"tab_menu",
+	"realism",
+	"game_mode_disable_hud",
+	"dead",
+	"alive"
+}
+tbl[34] = tbl_2
+tbl[35] = {
+	use_hud_scale = true,
+	class_name = "PositiveReinforcementUI",
+	filename = "scripts/ui/views/positive_reinforcement_ui",
+	visibility_groups = {
+		"dead",
+		"alive"
+	}
+}
+tbl[36] = {
+	use_hud_scale = true,
+	class_name = "TutorialInputUI",
+	filename = "scripts/ui/views/tutorial_input_ui",
+	visibility_groups = {
+		"game_mode_disable_hud",
+		"alive"
 	},
-	{
-		class_name = "CutsceneOverlayUI",
-		filename = "scripts/ui/views/cutscene_overlay_ui",
-		visibility_groups = {
-			"cutscene",
-			"alive"
-		}
+	validation_function = function ()
+		-- function 8
+		local current_level_settings = LevelHelper.current_level_settings()
+		local tutorial_level = current_level_settings.tutorial_level
+
+		tutorial_level = tutorial_level or current_level_settings.game_mode == "inn_vs"
+
+		return tutorial_level
+	end
+}
+tbl[37] = {
+	class_name = "CutsceneOverlayUI",
+	filename = "scripts/ui/views/cutscene_overlay_ui",
+	visibility_groups = {
+		"cutscene",
+		"alive"
+	}
+}
+tbl[38] = {
+	class_name = "CutsceneUI",
+	filename = "scripts/ui/views/cutscene_ui",
+	visibility_groups = {
+		"entering_mission",
+		"mission_vote",
+		"hero_selection_popup",
+		"in_endscreen",
+		"in_menu",
+		"tab_menu",
+		"game_mode_disable_hud",
+		"cutscene",
+		"realism",
+		"dead",
+		"alive"
+	}
+}
+tbl[39] = {
+	use_hud_scale = true,
+	class_name = "PlayerInventoryUI",
+	filename = "scripts/ui/views/player_inventory_ui",
+	visibility_groups = {
+		"alive"
 	},
-	{
-		class_name = "CutsceneUI",
-		filename = "scripts/ui/views/cutscene_ui",
-		visibility_groups = {
-			"entering_mission",
-			"mission_vote",
-			"hero_selection_popup",
-			"in_endscreen",
-			"in_menu",
-			"tab_menu",
-			"game_mode_disable_hud",
-			"cutscene",
-			"realism",
-			"dead",
-			"alive"
-		}
+	validation_function = function (arg_9_0, arg_9_1)
+		-- function 9
+		return false
+	end
+}
+tbl[40] = {
+	use_hud_scale = true,
+	class_name = "SubtitleGui",
+	filename = "scripts/ui/views/subtitle_gui",
+	visibility_groups = {
+		"cutscene",
+		"realism",
+		"dead",
+		"alive"
+	}
+}
+tbl[41] = {
+	use_hud_scale = true,
+	class_name = "GiftPopupUI",
+	filename = "scripts/ui/gift_popup/gift_popup_ui",
+	visibility_groups = {
+		"alive",
+		"gift_popup"
+	}
+}
+tbl[42] = {
+	use_hud_scale = true,
+	class_name = "IngameVotingUI",
+	filename = "scripts/ui/views/ingame_voting_ui",
+	visibility_groups = {
+		"realism",
+		"game_mode_disable_hud",
+		"dead",
+		"alive"
+	}
+}
+tbl[43] = {
+	use_hud_scale = true,
+	class_name = "MatchmakingUI",
+	filename = "scripts/ui/views/matchmaking_ui",
+	visibility_groups = {
+		"mission_vote",
+		"hero_selection_popup",
+		"in_endscreen",
+		"in_menu",
+		"tab_menu",
+		"game_mode_disable_hud",
+		"cutscene",
+		"realism",
+		"dead",
+		"alive"
+	}
+}
+tbl[44] = {
+	class_name = "FloatingIconUI",
+	filename = "scripts/ui/hud_ui/floating_icon_ui",
+	visibility_groups = {
+		"alive"
+	}
+}
+tbl[45] = {
+	class_name = "SocialWheelUI",
+	filename = "scripts/ui/social_wheel/social_wheel_ui",
+	visibility_groups = {
+		"alive",
+		"realism"
 	},
-	{
-		use_hud_scale = true,
-		class_name = "PlayerInventoryUI",
-		filename = "scripts/ui/views/player_inventory_ui",
-		visibility_groups = {
-			"alive"
-		},
-		validation_function = function(arg_9_0, arg_9_1)
-			return false
-		end
-	},
-	{
-		use_hud_scale = true,
-		class_name = "SubtitleGui",
-		filename = "scripts/ui/views/subtitle_gui",
-		visibility_groups = {
-			"cutscene",
-			"realism",
-			"dead",
-			"alive"
-		}
-	},
-	{
-		use_hud_scale = true,
-		class_name = "GiftPopupUI",
-		filename = "scripts/ui/gift_popup/gift_popup_ui",
-		visibility_groups = {
-			"alive",
-			"gift_popup"
-		}
-	},
-	{
-		use_hud_scale = true,
-		class_name = "IngameVotingUI",
-		filename = "scripts/ui/views/ingame_voting_ui",
-		visibility_groups = {
-			"realism",
-			"game_mode_disable_hud",
-			"dead",
-			"alive"
-		}
-	},
-	{
-		use_hud_scale = true,
-		class_name = "MatchmakingUI",
-		filename = "scripts/ui/views/matchmaking_ui",
-		visibility_groups = {
-			"mission_vote",
-			"hero_selection_popup",
-			"in_endscreen",
-			"in_menu",
-			"tab_menu",
-			"game_mode_disable_hud",
-			"cutscene",
-			"realism",
-			"dead",
-			"alive"
-		}
-	},
-	{
-		class_name = "FloatingIconUI",
-		filename = "scripts/ui/hud_ui/floating_icon_ui",
-		visibility_groups = {
-			"alive"
-		}
-	},
-	{
-		class_name = "SocialWheelUI",
-		filename = "scripts/ui/social_wheel/social_wheel_ui",
-		visibility_groups = {
-			"alive",
-			"realism"
-		},
-		validation_function = function(arg_10_0, arg_10_1)
-			return Managers.state.game_mode:game_mode_key() ~= "tutorial"
-		end
-	},
-	{
-		use_hud_scale = true,
-		class_name = "ChallengeTrackerUI",
-		filename = "scripts/ui/hud_ui/challenge_tracker_ui",
-		visibility_groups = {
-			"game_mode_disable_hud",
-			"dead",
-			"alive"
-		}
-	},
-	{
-		use_hud_scale = true,
-		class_name = "EmotePhotomodeUI",
-		filename = "scripts/ui/hud_ui/emote_photomode_ui",
-		visibility_groups = {
-			"dead",
-			"alive"
-		}
-	},
-	{
-		use_hud_scale = true,
-		class_name = "PetUI",
-		filename = "scripts/ui/hud_ui/pet_ui",
-		visibility_groups = {
-			"alive"
-		}
+	validation_function = function (arg_10_0, arg_10_1)
+		-- function 10
+		return Managers.state.game_mode:game_mode_key() ~= "tutorial"
+	end
+}
+tbl[46] = {
+	use_hud_scale = true,
+	class_name = "ChallengeTrackerUI",
+	filename = "scripts/ui/hud_ui/challenge_tracker_ui",
+	visibility_groups = {
+		"game_mode_disable_hud",
+		"dead",
+		"alive"
+	}
+}
+tbl[47] = {
+	use_hud_scale = true,
+	class_name = "EmotePhotomodeUI",
+	filename = "scripts/ui/hud_ui/emote_photomode_ui",
+	visibility_groups = {
+		"dead",
+		"alive"
+	}
+}
+tbl[48] = {
+	use_hud_scale = true,
+	class_name = "PetUI",
+	filename = "scripts/ui/hud_ui/pet_ui",
+	visibility_groups = {
+		"alive"
 	}
 }
 
-DLCUtils.append("ingame_hud_components", var_0_0)
+DLCUtils.append("ingame_hud_components", tbl)
 
-local var_0_1 = {
+local tbl_3 = {
 	{
 		name = "disable_ingame_ui",
-		validation_function = function(arg_11_0)
-			return (arg_11_0:parent():disable_ingame_ui())
+		validation_function = function (self)
+			-- function 11
+			return (self:parent():disable_ingame_ui())
 		end
 	},
 	{
 		name = "entering_mission",
-		validation_function = function(arg_12_0)
-			local var_12_0 = arg_12_0:component("LevelCountdownUI")
+		validation_function = function (self)
+			-- function 12
+			local component = self:component("LevelCountdownUI")
 
-			return var_12_0 and var_12_0:is_enter_game()
+			return not component and component:is_enter_game()
 		end
 	},
 	{
 		name = "hero_selection_popup",
-		validation_function = function(arg_13_0)
-			return arg_13_0:parent():get_active_popup("profile_picker")
+		validation_function = function (self)
+			-- function 13
+			return self:parent():get_active_popup("profile_picker")
 		end
 	},
 	{
 		name = "mission_vote",
-		validation_function = function(arg_14_0)
-			local var_14_0 = arg_14_0:component("MissionVotingUI")
+		validation_function = function (self)
+			-- function 14
+			local component = self:component("MissionVotingUI")
 
-			return var_14_0 and var_14_0:is_active()
+			return not component and component:is_active()
 		end
 	},
 	{
 		name = "in_endscreen",
-		validation_function = function(arg_15_0)
-			local var_15_0 = arg_15_0:parent()
-			local var_15_1 = var_15_0:end_screen_active()
+		validation_function = function (self)
+			-- function 15
+			local parent = self:parent()
+			local end_screen_active = parent:end_screen_active()
 
-			return var_15_0.end_of_level_ui ~= nil or var_15_1
+			return parent.end_of_level_ui ~= nil or end_screen_active
 		end
 	},
 	{
 		name = "in_menu",
-		validation_function = function(arg_16_0)
-			local var_16_0 = arg_16_0:parent()
-			local var_16_1 = var_16_0.menu_active
-			local var_16_2 = var_16_0.current_view
+		validation_function = function (self)
+			-- function 16
+			local parent = self:parent()
+			local menu_active = parent.menu_active
+			local current_view = parent.current_view
 
-			return var_16_1 or var_16_2 ~= nil
+			return menu_active or current_view ~= nil
 		end
 	},
 	{
 		name = "gift_popup",
-		validation_function = function(arg_17_0)
-			local var_17_0 = arg_17_0:component("GiftPopupUI")
+		validation_function = function (self)
+			-- function 17
+			local component = self:component("GiftPopupUI")
 
-			return var_17_0 and var_17_0:active()
+			return not component and component:active()
 		end
 	},
 	{
 		name = "cutscene",
-		validation_function = function(arg_18_0)
-			local var_18_0 = Managers.state.entity:system("cutscene_system")
+		validation_function = function (arg_18_0)
+			-- function 18
+			local system = Managers.state.entity:system("cutscene_system")
+			local active_camera = system.active_camera
 
-			return var_18_0.active_camera and not var_18_0.ingame_hud_enabled
+			active_camera = not active_camera and not system.ingame_hud_enabled
+
+			return active_camera
 		end
 	},
 	{
 		name = "tab_menu",
-		validation_function = function(arg_19_0)
-			local var_19_0 = arg_19_0:component("IngamePlayerListUI")
-			local var_19_1 = var_19_0 and var_19_0:is_active()
-			local var_19_2 = arg_19_0:component("VersusSlotStatusUI")
+		validation_function = function (self)
+			-- function 19
+			local component = self:component("IngamePlayerListUI")
+			local flag = not component and component:is_active()
+			local component_2 = self:component("VersusSlotStatusUI")
 
-			var_19_1 = var_19_2 and var_19_2:is_active() or var_19_1
+			flag = not component_2 and component_2:is_active() and flag
 
-			return var_19_1
+			return flag
 		end
 	},
 	{
 		name = "realism",
-		validation_function = function(arg_20_0)
-			local var_20_0 = Managers.state.game_mode
+		validation_function = function (arg_20_0)
+			-- function 20
+			local game_mode = Managers.state.game_mode
 
-			return var_20_0 and var_20_0:has_activated_mutator("realism")
+			return not game_mode and game_mode:has_activated_mutator("realism")
 		end
 	},
 	{
 		name = "game_mode_disable_hud",
-		validation_function = function(arg_21_0)
-			local var_21_0 = Managers.state.game_mode
-			local var_21_1 = var_21_0 and var_21_0:game_mode()
+		validation_function = function (arg_21_0)
+			-- function 21
+			local game_mode = Managers.state.game_mode
+			local flag = not game_mode and game_mode:game_mode()
 
-			return var_21_1 and var_21_1.game_mode_hud_disabled and var_21_1:game_mode_hud_disabled()
+			if not flag then
+				-- Nothing
+			end
+
+			::label_21_0::
+
+			local game_mode_hud_disabled = flag.game_mode_hud_disabled
+
+			game_mode_hud_disabled = not game_mode_hud_disabled and flag:game_mode_hud_disabled()
+
+			::label_21_1::
+
+			return game_mode_hud_disabled
 		end
 	},
 	{
 		name = "emote_photomode",
-		validation_function = function(arg_22_0)
-			local var_22_0 = Managers.state.game_mode
-			local var_22_1 = var_22_0 and var_22_0:game_mode()
+		validation_function = function (arg_22_0)
+			-- function 22
+			local game_mode = Managers.state.game_mode
+			local flag = not game_mode and game_mode:game_mode()
 
-			return var_22_1 and var_22_1:photomode_enabled()
+			return not flag and flag:photomode_enabled()
 		end
 	},
 	{
 		name = "dead",
-		validation_function = function(arg_23_0)
-			return arg_23_0:is_own_player_dead()
+		validation_function = function (self)
+			-- function 23
+			return self:is_own_player_dead()
 		end
 	},
 	{
 		name = "alive",
-		validation_function = function(arg_24_0)
-			local var_24_0 = Network.peer_id()
-			local var_24_1 = Managers.player:player_from_peer_id(var_24_0).player_unit
+		validation_function = function (arg_24_0)
+			-- function 24
+			local peer_id = Network.peer_id()
+			local player_unit = Managers.player:player_from_peer_id(peer_id).player_unit
 
-			if var_24_1 and Unit.alive(var_24_1) then
+			if not player_unit and not Unit.alive(player_unit) then
 				return true
 			end
 
@@ -624,13 +670,13 @@ local var_0_1 = {
 	}
 }
 
-for iter_0_0, iter_0_1 in ipairs(var_0_0) do
-	local var_0_2 = iter_0_1.filename
+for i, v in ipairs(tbl) do
+	local filename = v.filename
 
-	require(var_0_2)
+	require(filename)
 end
 
 return {
-	components = var_0_0,
-	visibility_groups = var_0_1
+	components = tbl,
+	visibility_groups = tbl_3
 }

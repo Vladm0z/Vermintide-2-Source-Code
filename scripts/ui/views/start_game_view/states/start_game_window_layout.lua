@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/start_game_view/states/start_game_window_layout.lua
 
-local var_0_0 = {
+local tbl = {
 	game_mode = {
 		class_name = "StartGameWindowGameMode",
 		name = "game_mode"
@@ -70,7 +70,7 @@ local var_0_0 = {
 		name = "adventure_mode_settings"
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	{
 		sound_event_enter = "play_gui_lobby_button_00_quickplay",
 		name = "adventure",
@@ -86,8 +86,9 @@ local var_0_1 = {
 			game_mode = 1,
 			adventure = 2
 		},
-		can_add_function = function(arg_1_0)
-			return arg_1_0:is_in_mechanism("adventure")
+		can_add_function = function (self)
+			-- function 1
+			return self:is_in_mechanism("adventure")
 		end
 	},
 	{
@@ -105,8 +106,9 @@ local var_0_1 = {
 			game_mode = 1,
 			mission = 2
 		},
-		can_add_function = function(arg_2_0)
-			return arg_2_0:is_in_mechanism("adventure")
+		can_add_function = function (self)
+			-- function 2
+			return self:is_in_mechanism("adventure")
 		end
 	},
 	{
@@ -124,8 +126,9 @@ local var_0_1 = {
 			game_mode = 1,
 			mutator_list = 3
 		},
-		can_add_function = function(arg_3_0)
-			return arg_3_0:is_in_mechanism("adventure")
+		can_add_function = function (self)
+			-- function 3
+			return self:is_in_mechanism("adventure")
 		end
 	},
 	{
@@ -143,8 +146,13 @@ local var_0_1 = {
 			game_mode = 1,
 			twitch_game_settings = 3
 		},
-		can_add_function = function(arg_4_0)
-			return arg_4_0:is_in_mechanism("adventure") and arg_4_0:can_use_streaming()
+		can_add_function = function (self)
+			-- function 4
+			local is_in_mechanism = self:is_in_mechanism("adventure")
+
+			is_in_mechanism = not is_in_mechanism and self:can_use_streaming()
+
+			return is_in_mechanism
 		end
 	},
 	{
@@ -158,8 +166,9 @@ local var_0_1 = {
 		windows = {
 			lobby_browser = 1
 		},
-		can_add_function = function(arg_5_0)
-			return arg_5_0:is_in_mechanism("adventure")
+		can_add_function = function (self)
+			-- function 5
+			return self:is_in_mechanism("adventure")
 		end
 	},
 	{
@@ -241,98 +250,108 @@ local var_0_1 = {
 		}
 	}
 }
-local var_0_2 = {
+local tbl_3 = {
 	adventure = {
 		game_mode_type = "custom",
 		difficulty_index_getter_name = "completed_level_difficulty_index",
 		layout_name = "area_selection_custom"
 	}
 }
-local var_0_3 = {
+local tbl_4 = {
 	adventure = {
 		game_mode_type = "twitch",
 		difficulty_index_getter_name = "completed_level_difficulty_index",
 		layout_name = "area_selection_twitch"
 	}
 }
-local var_0_4 = {
+local tbl_5 = {
 	adventure = {
 		game_mode_type = "adventure",
 		layout_name = "difficulty_selection_adventure"
 	}
 }
-local var_0_5 = {}
+local tbl_6 = {}
 
-DLCUtils.map("start_game_window_layout", function(arg_6_0)
-	local var_6_0 = arg_6_0.windows
+DLCUtils.map("start_game_window_layout", function (self)
+	-- function 6
+	local windows = self.windows
 
-	if var_6_0 then
-		for iter_6_0, iter_6_1 in pairs(var_6_0) do
-			var_0_0[iter_6_0] = iter_6_1
+	if not windows then
+		for k, v in pairs(windows) do
+			tbl[k] = v
 		end
 	end
 
-	local var_6_1 = arg_6_0.window_layouts
+	local window_layouts = self.window_layouts
 
-	if var_6_1 then
-		for iter_6_2 = 1, #var_6_1 do
-			var_0_1[#var_0_1 + 1] = var_6_1[iter_6_2]
+	if not window_layouts then
+		for k_2 = 1, #window_layouts do
+			tbl_2[#tbl_2 + 1] = window_layouts[k_2]
 		end
 	end
 
-	local var_6_2 = arg_6_0.mechanism_custom_game
+	local mechanism_custom_game = self.mechanism_custom_game
 
-	if var_6_2 then
-		local var_6_3 = var_6_2.mechanism_name
+	if not mechanism_custom_game then
+		local mechanism_name = mechanism_custom_game.mechanism_name
 
-		fassert(var_0_2[var_6_3] == nil, "Trying to set custom_game for the mechanism '%s' which is already set.", var_6_3)
+		fassert(tbl_3[mechanism_name] == nil, "Trying to set custom_game for the mechanism '%s' which is already set.", mechanism_name)
 
-		var_0_2[var_6_3] = var_6_2
+		tbl_3[mechanism_name] = mechanism_custom_game
 	end
 
-	local var_6_4 = arg_6_0.mechanism_twitch
+	local mechanism_twitch = self.mechanism_twitch
 
-	if var_6_4 then
-		local var_6_5 = var_6_4.mechanism_name
+	if not mechanism_twitch then
+		local mechanism_name_2 = mechanism_twitch.mechanism_name
 
-		fassert(var_0_3[var_6_5] == nil, "Trying to set twitch for the mechanism '%s' which is already set.", var_6_5)
+		fassert(tbl_4[mechanism_name_2] == nil, "Trying to set twitch for the mechanism '%s' which is already set.", mechanism_name_2)
 
-		var_0_3[var_6_5] = var_6_4
+		tbl_4[mechanism_name_2] = mechanism_twitch
 	end
 
-	local var_6_6 = arg_6_0.mechanism_quickplay
+	local mechanism_quickplay = self.mechanism_quickplay
 
-	if var_6_6 then
-		local var_6_7 = var_6_6.mechanism_name
-		local var_6_8 = var_6_6.layout_name
-		local var_6_9 = var_6_6.game_mode_type
+	if not mechanism_quickplay then
+		local mechanism_name_3 = mechanism_quickplay.mechanism_name
+		local layout_name = mechanism_quickplay.layout_name
+		local game_mode_type = mechanism_quickplay.game_mode_type
 
-		fassert(var_0_4[var_6_7] == nil, "Trying to set twitch for the mechanism '%s' which is already set.", var_6_7)
+		fassert(tbl_5[mechanism_name_3] == nil, "Trying to set twitch for the mechanism '%s' which is already set.", mechanism_name_3)
 
-		var_0_4[var_6_7] = {
-			layout_name = var_6_8,
-			game_mode_type = var_6_9
+		tbl_5[mechanism_name_3] = {
+			layout_name = layout_name,
+			game_mode_type = game_mode_type
 		}
 	end
 end)
-DLCUtils.merge("start_game_save_data_table_map", var_0_5)
+DLCUtils.merge("start_game_save_data_table_map", tbl_6)
 
-local var_0_6 = math.huge
+local huge = math.huge
 
-table.sort(var_0_1, function(arg_7_0, arg_7_1)
-	return (arg_7_0.panel_sorting or var_0_6) < (arg_7_1.panel_sorting or var_0_6)
+table.sort(tbl_2, function (self, arg_7_1)
+	-- function 7
+	local panel_sorting = self.panel_sorting
+
+	panel_sorting = panel_sorting or huge
+
+	local panel_sorting_2 = arg_7_1.panel_sorting
+
+	panel_sorting_2 = panel_sorting_2 or huge
+
+	return panel_sorting < panel_sorting_2
 end)
 
-local var_0_7 = 4
-local var_0_8 = 3
+local num = 4
+local num_2 = 3
 
 return {
-	max_alignment_windows = var_0_8,
-	max_active_windows = var_0_7,
-	windows = var_0_0,
-	window_layouts = var_0_1,
-	mechanism_custom_game_settings = var_0_2,
-	mechanism_twitch_settings = var_0_3,
-	mechanism_quickplay_settings = var_0_4,
-	save_data_table_maps = var_0_5
+	max_alignment_windows = num_2,
+	max_active_windows = num,
+	windows = tbl,
+	window_layouts = tbl_2,
+	mechanism_custom_game_settings = tbl_3,
+	mechanism_twitch_settings = tbl_4,
+	mechanism_quickplay_settings = tbl_5,
+	save_data_table_maps = tbl_6
 }

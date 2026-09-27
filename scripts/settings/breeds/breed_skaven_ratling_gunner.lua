@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/breeds/breed_skaven_ratling_gunner.lua
 
-local var_0_0 = {
+local tbl = {
 	threat_value = 8,
 	walk_speed = 1.9,
 	perception = "perception_all_seeing",
@@ -85,170 +85,175 @@ local var_0_0 = {
 		200,
 		200,
 		0
-	},
-	disabled = Development.setting("disable_ratling_gunner") or false,
-	line_of_sight_cast_template = {
-		"c_spine",
-		"c_head",
-		c_spine = false,
-		c_head = false,
-		current_index = 1
-	},
-	hitzone_multiplier_types = {
-		head = "headshot"
-	},
-	hit_zones = {
-		head = {
-			prio = 1,
-			actors = {
-				"c_head"
-			},
-			push_actors = {
-				"j_head",
-				"j_spine1"
-			}
+	}
+}
+local setting = Development.setting("disable_ratling_gunner")
+
+setting = setting or false
+tbl.disabled = setting
+tbl.line_of_sight_cast_template = {
+	"c_spine",
+	"c_head",
+	c_spine = false,
+	c_head = false,
+	current_index = 1
+}
+tbl.hitzone_multiplier_types = {
+	head = "headshot"
+}
+tbl.hit_zones = {
+	head = {
+		prio = 1,
+		actors = {
+			"c_head"
 		},
-		neck = {
-			prio = 1,
-			actors = {
-				"c_neck",
-				"c_neck1"
-			},
-			push_actors = {
-				"j_head",
-				"j_spine1"
-			}
-		},
-		torso = {
-			prio = 2,
-			actors = {
-				"c_hips",
-				"c_spine",
-				"c_spine2",
-				"c_leftshoulder",
-				"c_rightshoulder"
-			},
-			push_actors = {
-				"j_spine1"
-			}
-		},
-		left_arm = {
-			prio = 3,
-			actors = {
-				"c_leftarm",
-				"c_leftforearm",
-				"c_lefthand"
-			},
-			push_actors = {
-				"j_spine1"
-			}
-		},
-		right_arm = {
-			prio = 3,
-			actors = {
-				"c_rightarm",
-				"c_rightforearm",
-				"c_righthand"
-			},
-			push_actors = {
-				"j_spine1"
-			}
-		},
-		left_leg = {
-			prio = 3,
-			actors = {
-				"c_leftleg",
-				"c_leftupleg",
-				"c_leftfoot",
-				"c_lefttoebase"
-			},
-			push_actors = {
-				"j_leftfoot",
-				"j_rightfoot",
-				"j_hips"
-			}
-		},
-		right_leg = {
-			prio = 3,
-			actors = {
-				"c_rightleg",
-				"c_rightupleg",
-				"c_rightfoot",
-				"c_righttoebase"
-			},
-			push_actors = {
-				"j_leftfoot",
-				"j_rightfoot",
-				"j_hips"
-			}
-		},
-		tail = {
-			prio = 3,
-			actors = {
-				"c_tail1",
-				"c_tail2",
-				"c_tail3",
-				"c_tail4",
-				"c_tail5",
-				"c_tail6"
-			},
-			push_actors = {
-				"j_hips"
-			}
-		},
-		aux = {
-			prio = 4,
-			actors = {
-				"c_backpack"
-			},
-			push_actors = {
-				"j_backpack"
-			}
-		},
-		full = {
-			prio = 5,
-			actors = {}
-		},
-		afro = {
-			prio = 6,
-			actors = {
-				"c_afro"
-			}
+		push_actors = {
+			"j_head",
+			"j_spine1"
 		}
 	},
-	custom_death_enter_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
-		local var_1_0 = BLACKBOARDS[arg_1_0]
-
-		if not Unit.alive(arg_1_1) then
-			return
-		end
-
-		QuestSettings.check_ratling_gunner_killed_by_melee(arg_1_1, arg_1_5)
-		QuestSettings.check_ratling_gunner_killed_while_shooting(var_1_0, arg_1_1)
-	end
+	neck = {
+		prio = 1,
+		actors = {
+			"c_neck",
+			"c_neck1"
+		},
+		push_actors = {
+			"j_head",
+			"j_spine1"
+		}
+	},
+	torso = {
+		prio = 2,
+		actors = {
+			"c_hips",
+			"c_spine",
+			"c_spine2",
+			"c_leftshoulder",
+			"c_rightshoulder"
+		},
+		push_actors = {
+			"j_spine1"
+		}
+	},
+	left_arm = {
+		prio = 3,
+		actors = {
+			"c_leftarm",
+			"c_leftforearm",
+			"c_lefthand"
+		},
+		push_actors = {
+			"j_spine1"
+		}
+	},
+	right_arm = {
+		prio = 3,
+		actors = {
+			"c_rightarm",
+			"c_rightforearm",
+			"c_righthand"
+		},
+		push_actors = {
+			"j_spine1"
+		}
+	},
+	left_leg = {
+		prio = 3,
+		actors = {
+			"c_leftleg",
+			"c_leftupleg",
+			"c_leftfoot",
+			"c_lefttoebase"
+		},
+		push_actors = {
+			"j_leftfoot",
+			"j_rightfoot",
+			"j_hips"
+		}
+	},
+	right_leg = {
+		prio = 3,
+		actors = {
+			"c_rightleg",
+			"c_rightupleg",
+			"c_rightfoot",
+			"c_righttoebase"
+		},
+		push_actors = {
+			"j_leftfoot",
+			"j_rightfoot",
+			"j_hips"
+		}
+	},
+	tail = {
+		prio = 3,
+		actors = {
+			"c_tail1",
+			"c_tail2",
+			"c_tail3",
+			"c_tail4",
+			"c_tail5",
+			"c_tail6"
+		},
+		push_actors = {
+			"j_hips"
+		}
+	},
+	aux = {
+		prio = 4,
+		actors = {
+			"c_backpack"
+		},
+		push_actors = {
+			"j_backpack"
+		}
+	},
+	full = {
+		prio = 5,
+		actors = {}
+	},
+	afro = {
+		prio = 6,
+		actors = {
+			"c_afro"
+		}
+	}
 }
 
-Breeds.skaven_ratling_gunner = table.create_copy(Breeds.skaven_ratling_gunner, var_0_0)
+tbl.custom_death_enter_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	-- function 1
+	local var_1_0 = BLACKBOARDS[arg_1_0]
 
-local var_0_1 = {
+	if not Unit.alive(arg_1_1) then
+		return
+	end
+
+	QuestSettings.check_ratling_gunner_killed_by_melee(arg_1_1, arg_1_5)
+	QuestSettings.check_ratling_gunner_killed_while_shooting(var_1_0, arg_1_1)
+end
+
+Breeds.skaven_ratling_gunner = table.create_copy(Breeds.skaven_ratling_gunner, tbl)
+
+local tbl_2 = {
 	move_to_players = {
 		find_target_function_name = "_find_target_ratling_gunner"
 	},
 	lurk = {
 		move_anim = "move_fwd",
 		check_distance = 35,
-		move_speed = var_0_0.walk_speed
+		move_speed = tbl.walk_speed
 	},
 	engage = {
 		check_distance = 20,
 		max_angle_step = 2,
 		move_anim = "move_fwd_run",
 		min_angle_step = 0,
-		move_speed = var_0_0.run_speed
+		move_speed = tbl.run_speed
 	},
 	move_to_shoot_position = {
 		move_anim = "move_fwd_run",
-		move_speed = var_0_0.run_speed,
+		move_speed = tbl.run_speed,
 		keep_target_distance = {
 			15,
 			20
@@ -427,4 +432,4 @@ local var_0_1 = {
 	}
 }
 
-BreedActions.skaven_ratling_gunner = table.create_copy(BreedActions.skaven_ratling_gunner, var_0_1)
+BreedActions.skaven_ratling_gunner = table.create_copy(BreedActions.skaven_ratling_gunner, tbl_2)

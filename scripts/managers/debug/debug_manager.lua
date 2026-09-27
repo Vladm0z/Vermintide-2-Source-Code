@@ -6,18 +6,28 @@ require("scripts/managers/debug/debug")
 require("scripts/managers/debug/profiler_scopes")
 
 DebugManager = class(DebugManager)
-QuickDrawer = QuickDrawer or true
-QuickDrawerStay = QuickDrawerStay or true
 
-local var_0_0 = {
+local QuickDrawer = QuickDrawer
+
+QuickDrawer = QuickDrawer or true
+QuickDrawer = QuickDrawer
+
+local QuickDrawerStay = QuickDrawerStay
+
+QuickDrawerStay = QuickDrawerStay or true
+QuickDrawerStay = QuickDrawerStay
+
+local tbl = {
 	"rpc_debug_command",
 	"rpc_propagate_debug_option",
 	"rpc_debug_option_propagation_response"
 }
+local GLOBAL_TIME_SCALE = GLOBAL_TIME_SCALE
 
 GLOBAL_TIME_SCALE = GLOBAL_TIME_SCALE or 1
+GLOBAL_TIME_SCALE = GLOBAL_TIME_SCALE
 
-local var_0_1 = {
+local tbl_2 = {
 	1e-05,
 	0.0001,
 	0.001,
@@ -43,7 +53,7 @@ local var_0_1 = {
 	5000,
 	10000
 }
-local var_0_2 = {
+local tbl_3 = {
 	10,
 	20,
 	30,
@@ -62,478 +72,522 @@ local var_0_2 = {
 	3000,
 	5000
 }
-local var_0_3 = 0
+local num = 0
 
-function DebugManager.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
-	arg_1_0._world = arg_1_1
-	arg_1_0._drawers = {}
-	arg_1_0.free_flight_manager = arg_1_2
-	arg_1_0.input_manager = arg_1_3
-	arg_1_0.input_service = arg_1_0.input_manager:get_service("Debug")
-	arg_1_0.is_server = arg_1_5
-	arg_1_0._actor_draw = {}
-	arg_1_0._paused = false
-	arg_1_0._visualize_units = {}
-	QuickDrawer = arg_1_0:drawer({
+DebugManager.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	-- function 1
+	self._world = arg_1_1
+	self._drawers = {}
+	self.free_flight_manager = arg_1_2
+	self.input_manager = arg_1_3
+	self.input_service = self.input_manager:get_service("Debug")
+	self.is_server = arg_1_5
+	self._actor_draw = {}
+	self._paused = false
+	self._visualize_units = {}
+	QuickDrawer = self:drawer({
 		name = "quick_debug",
 		mode = "immediate"
 	})
-	QuickDrawerStay = arg_1_0:drawer({
+	QuickDrawerStay = self:drawer({
 		name = "quick_debug_stay",
 		mode = "retained"
 	})
-	arg_1_0.time_paused = false
-	arg_1_0.time_scale_index = table.find(var_0_1, 100)
-	arg_1_0.time_scale_accumulating_value = 0
-	arg_1_0.speed_scale_index = table.find(var_0_2, 100)
-	arg_1_0.graph_drawer = GraphDrawer:new(arg_1_1, arg_1_3)
-	arg_1_0.network_event_delegate = arg_1_4
+	self.time_paused = false
+	self.time_scale_index = table.find(tbl_2, 100)
+	self.time_scale_accumulating_value = 0
+	self.speed_scale_index = table.find(tbl_3, 100)
+	self.graph_drawer = GraphDrawer:new(arg_1_1, arg_1_3)
+	self.network_event_delegate = arg_1_4
 
-	arg_1_4:register(arg_1_0, unpack(var_0_0))
+	arg_1_4:register(self, unpack(tbl))
 
-	arg_1_0.time_scale_list = var_0_1
-	arg_1_0._debug_updates = {}
+	self.time_scale_list = tbl_2
+	self._debug_updates = {}
 end
 
-function DebugManager.drawer(arg_2_0, arg_2_1)
+DebugManager.drawer = function (self, arg_2_1)
+	-- function 2
 	arg_2_1 = arg_2_1 or {}
 
-	local var_2_0 = arg_2_1.name
+	local name = arg_2_1.name
 	local var_2_1
-	local var_2_2 = BUILD == "release" and DebugDrawerRelease or DebugDrawer
+	local DebugDrawerRelease
 
-	if var_2_0 == nil then
-		local var_2_3 = World.create_line_object(arg_2_0._world)
+	if BUILD == "release" then
+		DebugDrawerRelease = DebugDrawerRelease
 
-		var_2_1 = var_2_2:new(var_2_3, arg_2_1.mode)
-		arg_2_0._drawers[#arg_2_0._drawers + 1] = var_2_1
-	elseif arg_2_0._drawers[var_2_0] == nil then
-		local var_2_4 = World.create_line_object(arg_2_0._world)
+		if not DebugDrawerRelease then
+			-- Nothing
+		end
+	end
 
-		var_2_1 = var_2_2:new(var_2_4, arg_2_1.mode)
-		arg_2_0._drawers[var_2_0] = var_2_1
+	DebugDrawerRelease = DebugDrawer
+
+	::label_2_0::
+
+	if name == nil then
+		local create_line_object = World.create_line_object(self._world)
+
+		var_2_1 = DebugDrawerRelease:new(create_line_object, arg_2_1.mode)
+		self._drawers[#self._drawers + 1] = var_2_1
+	elseif self._drawers[name] == nil then
+		local create_line_object_2 = World.create_line_object(self._world)
+
+		var_2_1 = DebugDrawerRelease:new(create_line_object_2, arg_2_1.mode)
+		self._drawers[name] = var_2_1
 	else
-		var_2_1 = arg_2_0._drawers[var_2_0]
+		var_2_1 = self._drawers[name]
 	end
 
 	return var_2_1
 end
 
-function DebugManager.reset_drawer(arg_3_0, arg_3_1)
-	if arg_3_0._drawers[arg_3_1] then
-		arg_3_0._drawers[arg_3_1]:reset()
+DebugManager.reset_drawer = function (self, arg_3_1)
+	-- function 3
+	if not self._drawers[arg_3_1] then
+		self._drawers[arg_3_1]:reset()
 	end
 end
 
-function DebugManager.update(arg_4_0, arg_4_1, arg_4_2)
-	local var_4_0 = arg_4_1 / (var_0_1[arg_4_0.time_scale_index] / 100)
+DebugManager.update = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	local num = arg_4_1 / (tbl_2[self.time_scale_index] / 100)
 
-	if IS_LINUX then
+	if not IS_LINUX then
 		return
 	end
 
-	arg_4_0:update_time_scale(var_4_0)
-	arg_4_0:_update_sound_debug()
+	self:update_time_scale(num)
+	self:_update_sound_debug()
 
-	if script_data.player_mechanics_goodness_debug then
-		arg_4_0:_adjust_player_speed()
+	if not script_data.player_mechanics_goodness_debug then
+		self:_adjust_player_speed()
 	end
 
-	if Managers.input:is_device_active("gamepad") then
-		arg_4_0:_adjust_gamepad_player_speed()
+	if not Managers.input:is_device_active("gamepad") then
+		self:_adjust_gamepad_player_speed()
 	end
 
-	local var_4_1 = var_0_2[arg_4_0.speed_scale_index]
+	local var_4_1 = tbl_3[self.speed_scale_index]
 
 	if var_4_1 ~= 100 then
 		if math.ceil(var_4_1) == var_4_1 then
 			Debug.text("Player speed scaled by " .. tostring(var_4_1) .. "%%")
 		else
-			local var_4_2 = string.format("Speed scaled by %f", var_4_1):gsub("^(.-)0*$", "%1") .. "%%"
+			local str = string.format("Speed scaled by %f", var_4_1):gsub("^(.-)0*$", "%1") .. "%%"
 
-			Debug.text(var_4_2)
+			Debug.text(str)
 		end
 	end
 
-	if script_data.debug_wwise_timestamp then
-		local var_4_3 = Wwise.get_timestamp()
-		local var_4_4 = math.floor(var_4_3 / 3600000)
-		local var_4_5 = var_4_3 - var_4_4 * 1000 * 60 * 60
-		local var_4_6 = math.floor(var_4_5 / 60000)
-		local var_4_7 = var_4_5 - var_4_6 * 1000 * 60
-		local var_4_8 = math.floor(var_4_7 / 1000)
-		local var_4_9 = var_4_7 - var_4_8 * 1000
+	if not script_data.debug_wwise_timestamp then
+		local get_timestamp = Wwise.get_timestamp()
+		local floor = math.floor(get_timestamp / 3600000)
+		local num_2 = get_timestamp - floor * 1000 * 60 * 60
+		local floor_2 = math.floor(num_2 / 60000)
+		local num_3 = num_2 - floor_2 * 1000 * 60
+		local floor_3 = math.floor(num_3 / 1000)
+		local num_4 = num_3 - floor_3 * 1000
 
-		Debug.text("Wwise Timestamp: %.2d:%.2d:%.2d.%.3d", var_4_4, var_4_6, var_4_8, var_4_9)
+		Debug.text("Wwise Timestamp: %.2d:%.2d:%.2d.%.3d", floor, floor_2, floor_3, num_4)
 	end
 
-	if script_data.debug_particle_simulation then
-		Debug.text("Particles simulated: " .. World.num_particles(arg_4_0._world))
+	if not script_data.debug_particle_simulation then
+		Debug.text("Particles simulated: " .. World.num_particles(self._world))
 	end
 
-	if script_data.debug_enemy_package_loader then
+	if not script_data.debug_enemy_package_loader then
 		Managers.level_transition_handler.enemy_package_loader:debug_loaded_breeds()
 	end
 
-	if script_data.debug_pickup_package_loader then
+	if not script_data.debug_pickup_package_loader then
 		Managers.level_transition_handler.pickup_package_loader:debug_loaded_pickups()
 	end
 
-	if script_data.debug_general_synced_package_loader then
+	if not script_data.debug_general_synced_package_loader then
 		Managers.level_transition_handler.general_synced_package_loader:debug_loaded_packages()
 	end
 
-	arg_4_0:_update_bot_behavior_debug()
-	arg_4_0:_update_actor_draw(var_4_0)
+	self:_update_bot_behavior_debug()
+	self:_update_actor_draw(num)
 
-	for iter_4_0, iter_4_1 in pairs(arg_4_0._drawers) do
-		iter_4_1:update(arg_4_0._world)
+	for k, v in pairs(self._drawers) do
+		v:update(self._world)
 	end
 
-	arg_4_0.graph_drawer:update(arg_4_0.input_service, arg_4_2)
+	self.graph_drawer:update(self.input_service, arg_4_2)
 
-	if DebugKeyHandler.key_pressed("f7", "cycle patched weapons") then
-		arg_4_0:cycle_patched_items(arg_4_2)
+	if not DebugKeyHandler.key_pressed("f7", "cycle patched weapons") then
+		self:cycle_patched_items(arg_4_2)
 	end
 
-	local var_4_10 = arg_4_0._cycle_patch_items_at
+	local _cycle_patch_items_at = self._cycle_patch_items_at
 
-	if var_4_10 and var_4_10 < arg_4_2 then
-		arg_4_0:_cycle_patched_items()
+	if not (not _cycle_patch_items_at and not (_cycle_patch_items_at < arg_4_2)) then
+		self:_cycle_patched_items()
 
-		arg_4_0._cycle_patch_items_at = nil
+		self._cycle_patch_items_at = nil
 	end
 
-	arg_4_0:_update_unit_spawning(var_4_0, arg_4_2)
+	self:_update_unit_spawning(num, arg_4_2)
 
-	if script_data.debug_unit and arg_4_0.is_server and script_data.debug_behaviour_trees then
-		local var_4_11 = script_data.debug_unit
+	if not script_data.debug_unit and not self.is_server and not script_data.debug_behaviour_trees then
+		local debug_unit = script_data.debug_unit
 
-		if Unit.alive(var_4_11) then
-			local var_4_12 = ScriptUnit.extension(var_4_11, "ai_system"):blackboard().action
+		if not Unit.alive(debug_unit) then
+			local action = ScriptUnit.extension(debug_unit, "ai_system"):blackboard().action
 
-			if var_4_12 then
-				Debug.text(var_4_12.name)
+			if not action then
+				Debug.text(action.name)
 			end
 		end
 	end
 
-	local var_4_13 = arg_4_0.free_flight_manager:active("global")
+	local active = self.free_flight_manager:active("global")
 
-	if not var_4_13 and arg_4_0._in_free_flight and script_data.has_mouse then
-		arg_4_0:_toggle_debug_mouse_cursor(false)
+	if (active or not self._in_free_flight) and not script_data.has_mouse then
+		self:_toggle_debug_mouse_cursor(false)
 	end
 
-	for iter_4_2, iter_4_3 in pairs(arg_4_0._debug_updates) do
-		iter_4_3(var_4_0, arg_4_2)
+	for k_2, v_2 in pairs(self._debug_updates) do
+		v_2(num, arg_4_2)
 	end
 
-	arg_4_0:_clear_debug_draws()
+	self:_clear_debug_draws()
 
-	arg_4_0._in_free_flight = var_4_13
+	self._in_free_flight = active
 
-	if not var_4_13 then
+	if not active then
 		return
 	end
 
-	local var_4_14 = Managers.player:player_from_peer_id(Network.peer_id()).input_source
+	local input_source = Managers.player:player_from_peer_id(Network.peer_id()).input_source
 
-	if var_4_14 and var_4_14:has("debug_mouse_cursor") and var_4_14:get("debug_mouse_cursor") and script_data.has_mouse then
-		local var_4_15 = not arg_4_0._debug_mouse_cursor
-
-		arg_4_0:_toggle_debug_mouse_cursor(var_4_15)
+	if not input_source then
+		-- Nothing
 	end
 
-	arg_4_0:_update_paused_game(var_4_14, var_4_0)
+	::label_4_0::
+
+	local has = input_source:has("debug_mouse_cursor")
+
+	has = not has and input_source:get("debug_mouse_cursor")
+
+	::label_4_1::
+
+	if not has and not script_data.has_mouse then
+		local flag = not self._debug_mouse_cursor
+
+		self:_toggle_debug_mouse_cursor(flag)
+	end
+
+	self:_update_paused_game(input_source, num)
 end
 
-function DebugManager._clear_debug_draws(arg_5_0)
-	if DebugKeyHandler.key_pressed("x", "clear quickdraw", "ai debugger", nil, "FreeFlight") then
+DebugManager._clear_debug_draws = function (arg_5_0)
+	-- function 5
+	if not DebugKeyHandler.key_pressed("x", "clear quickdraw", "ai debugger", nil, "FreeFlight") then
 		QuickDrawerStay:reset()
 		Debug.reset_sticky_world_texts()
 	end
 end
 
-function DebugManager.register_update(arg_6_0, arg_6_1, arg_6_2)
+DebugManager.register_update = function (arg_6_0, arg_6_1, arg_6_2)
+	-- function 6
 	arg_6_0._debug_updates[arg_6_1] = arg_6_2
 end
 
-function DebugManager.unregister_update(arg_7_0, arg_7_1)
+DebugManager.unregister_update = function (arg_7_0, arg_7_1)
+	-- function 7
 	arg_7_0._debug_updates[arg_7_1] = nil
 end
 
-function DebugManager.update_time_scale(arg_8_0, arg_8_1)
-	local var_8_0 = arg_8_0.time_scale_index
+DebugManager.update_time_scale = function (self, arg_8_1)
+	-- function 8
+	local time_scale_index = self.time_scale_index
 
-	if not not arg_8_0._disable_time_travel ~= not not script_data.disable_time_travel then
-		arg_8_0._disable_time_travel = not not script_data.disable_time_travel
-		var_8_0 = table.index_of(var_0_1, 100)
+	if not not self._disable_time_travel ~= not not script_data.disable_time_travel then
+		self._disable_time_travel = not not script_data.disable_time_travel
+		time_scale_index = table.index_of(tbl_2, 100)
 
-		arg_8_0:set_time_scale(var_8_0)
+		self:set_time_scale(time_scale_index)
 	end
 
-	local var_8_1 = arg_8_0.time_paused
-	local var_8_2 = Managers.input
+	local time_paused = self.time_paused
+	local input = Managers.input
 
-	if not script_data.disable_time_travel and Keyboard.button(Keyboard.button_index("left shift")) > 0.5 then
-		local var_8_3 = Mouse.axis_index("wheel")
+	if not (script_data.disable_time_travel or not (Keyboard.button(Keyboard.button_index("left shift")) > 0.5)) then
+		local axis_index = Mouse.axis_index("wheel")
 
-		if Vector3.y(Mouse.axis(var_8_3)) > 0 then
-			var_8_0 = math.min(var_8_0 + 1, #var_0_1)
+		if Vector3.y(Mouse.axis(axis_index)) > 0 then
+			time_scale_index = math.min(time_scale_index + 1, #tbl_2)
 
-			arg_8_0:set_time_scale(var_8_0)
-		elseif Vector3.y(Mouse.axis(var_8_3)) < 0 and GLOBAL_TIME_SCALE > 0.0001 then
-			var_8_0 = math.max(var_8_0 - 1, 1)
+			self:set_time_scale(time_scale_index)
+		elseif not (not (Vector3.y(Mouse.axis(axis_index)) < 0) or not (GLOBAL_TIME_SCALE > 0.0001)) then
+			time_scale_index = math.max(time_scale_index - 1, 1)
 
-			arg_8_0:set_time_scale(var_8_0)
+			self:set_time_scale(time_scale_index)
 		elseif Mouse.button(Mouse.button_index("middle")) > 0.5 then
-			var_8_0 = table.index_of(var_0_1, 100)
+			time_scale_index = table.index_of(tbl_2, 100)
 
-			arg_8_0:set_time_scale(var_8_0)
+			self:set_time_scale(time_scale_index)
 		end
-	elseif var_8_2:is_device_active("gamepad") then
-		if IS_LINUX then
+	elseif not input:is_device_active("gamepad") then
+		if not IS_LINUX then
 			return
 		end
 
-		local var_8_4 = var_8_2:get_service("Debug")
+		local get_service = input:get_service("Debug")
 
-		if var_8_4 and var_8_4:get("time_scale") then
-			arg_8_0.time_scale_accumulating_value = arg_8_0.time_scale_accumulating_value + var_8_4:get("time_scale_axis") * arg_8_1 * 5
+		if not get_service and not get_service:get("time_scale") then
+			self.time_scale_accumulating_value = self.time_scale_accumulating_value + get_service:get("time_scale_axis") * arg_8_1 * 5
 
-			if arg_8_0.time_scale_accumulating_value > 1 then
-				var_8_0 = math.min(var_8_0 + 1, #var_0_1)
+			if self.time_scale_accumulating_value > 1 then
+				time_scale_index = math.min(time_scale_index + 1, #tbl_2)
 
-				arg_8_0:set_time_scale(var_8_0)
+				self:set_time_scale(time_scale_index)
 
-				arg_8_0.time_scale_accumulating_value = arg_8_0.time_scale_accumulating_value - 1
-			elseif arg_8_0.time_scale_accumulating_value < -1 then
-				var_8_0 = math.max(var_8_0 - 1, 1)
+				self.time_scale_accumulating_value = self.time_scale_accumulating_value - 1
+			elseif self.time_scale_accumulating_value < -1 then
+				time_scale_index = math.max(time_scale_index - 1, 1)
 
-				arg_8_0:set_time_scale(var_8_0)
+				self:set_time_scale(time_scale_index)
 
-				arg_8_0.time_scale_accumulating_value = arg_8_0.time_scale_accumulating_value + 1
+				self.time_scale_accumulating_value = self.time_scale_accumulating_value + 1
 			end
 		else
-			arg_8_0.time_scale_accumulating_value = 0
+			self.time_scale_accumulating_value = 0
 		end
 	end
 
-	if DebugKeyHandler.key_pressed("page up", "speed up time", "time") then
-		var_8_0 = math.min(var_8_0 + 1, #var_0_1)
+	if not DebugKeyHandler.key_pressed("page up", "speed up time", "time") then
+		time_scale_index = math.min(time_scale_index + 1, #tbl_2)
 
-		arg_8_0:set_time_scale(var_8_0)
-	elseif DebugKeyHandler.key_pressed("page down", "slow down time", "time") then
-		var_8_0 = math.max(var_8_0 - 1, 1)
+		self:set_time_scale(time_scale_index)
+	elseif not DebugKeyHandler.key_pressed("page down", "slow down time", "time") then
+		time_scale_index = math.max(time_scale_index - 1, 1)
 
-		arg_8_0:set_time_scale(var_8_0)
-	elseif DebugKeyHandler.key_pressed("home", "pause", "time") then
-		var_8_1 = not var_8_1
+		self:set_time_scale(time_scale_index)
+	elseif not DebugKeyHandler.key_pressed("home", "pause", "time") then
+		time_paused = not time_paused
 
-		if var_8_1 then
-			arg_8_0:set_time_paused()
+		if not time_paused then
+			self:set_time_paused()
 		else
-			arg_8_0:set_time_scale(var_8_0)
+			self:set_time_scale(time_scale_index)
 		end
 	end
 
-	if var_8_1 then
+	if not time_paused then
 		Debug.text("Time paused. (press home to unpause)")
 	else
-		local var_8_5 = var_0_1[var_8_0]
+		local var_8_5 = tbl_2[time_scale_index]
 
 		if var_8_5 ~= 100 then
 			if math.ceil(var_8_5) == var_8_5 then
 				Debug.text("Time scaled by " .. tostring(var_8_5) .. "%%")
 			else
-				local var_8_6 = string.format("Time scaled by %f", var_8_5):gsub("^(.-)0*$", "%1") .. "%%"
+				local str = string.format("Time scaled by %f", var_8_5):gsub("^(.-)0*$", "%1") .. "%%"
 
-				Debug.text(var_8_6)
+				Debug.text(str)
 			end
 		end
 	end
 
-	arg_8_0.time_paused = var_8_1
-	arg_8_0.time_scale_index = var_8_0
+	self.time_paused = time_paused
+	self.time_scale_index = time_scale_index
 end
 
-function DebugManager._adjust_player_speed(arg_9_0)
+DebugManager._adjust_player_speed = function (self)
+	-- function 9
 	if Keyboard.button(Keyboard.button_index("left alt")) > 0.5 then
-		local var_9_0 = Mouse.axis_index("wheel")
-		local var_9_1 = arg_9_0.speed_scale_index
+		local axis_index = Mouse.axis_index("wheel")
+		local speed_scale_index = self.speed_scale_index
 
-		if Vector3.y(Mouse.axis(var_9_0)) > 0 then
-			var_9_1 = math.min(var_9_1 + 1, #var_0_2)
+		if Vector3.y(Mouse.axis(axis_index)) > 0 then
+			speed_scale_index = math.min(speed_scale_index + 1, #tbl_3)
 
-			local var_9_2 = PlayerUnitMovementSettings.get_active_units_in_movement_settings()
+			local get_active_units_in_movement_settings = PlayerUnitMovementSettings.get_active_units_in_movement_settings()
 
-			for iter_9_0, iter_9_1 in pairs(var_9_2) do
-				PlayerUnitMovementSettings.get_movement_settings_table(iter_9_1).player_speed_scale = var_0_2[var_9_1] * 0.01
+			for k, v in pairs(get_active_units_in_movement_settings) do
+				PlayerUnitMovementSettings.get_movement_settings_table(v).player_speed_scale = tbl_3[speed_scale_index] * 0.01
 			end
-		elseif Vector3.y(Mouse.axis(var_9_0)) < 0 then
-			var_9_1 = math.max(var_9_1 - 1, 1)
+		elseif Vector3.y(Mouse.axis(axis_index)) < 0 then
+			speed_scale_index = math.max(speed_scale_index - 1, 1)
 
-			local var_9_3 = PlayerUnitMovementSettings.get_active_units_in_movement_settings()
+			local get_active_units_in_movement_settings_2 = PlayerUnitMovementSettings.get_active_units_in_movement_settings()
 
-			for iter_9_2, iter_9_3 in pairs(var_9_3) do
-				PlayerUnitMovementSettings.get_movement_settings_table(iter_9_3).player_speed_scale = var_0_2[var_9_1] * 0.01
+			for k_2, v_2 in pairs(get_active_units_in_movement_settings_2) do
+				PlayerUnitMovementSettings.get_movement_settings_table(v_2).player_speed_scale = tbl_3[speed_scale_index] * 0.01
 			end
 		elseif Mouse.button(Mouse.button_index("middle")) > 0.5 then
-			var_9_1 = table.index_of(var_0_2, 100)
+			speed_scale_index = table.index_of(tbl_3, 100)
 
-			local var_9_4 = PlayerUnitMovementSettings.get_active_units_in_movement_settings()
+			local get_active_units_in_movement_settings_3 = PlayerUnitMovementSettings.get_active_units_in_movement_settings()
 
-			for iter_9_4, iter_9_5 in pairs(var_9_4) do
-				PlayerUnitMovementSettings.get_movement_settings_table(iter_9_5).player_speed_scale = var_0_2[var_9_1] * 0.01
+			for k_3, v_3 in pairs(get_active_units_in_movement_settings_3) do
+				PlayerUnitMovementSettings.get_movement_settings_table(v_3).player_speed_scale = tbl_3[speed_scale_index] * 0.01
 			end
 		end
 
-		arg_9_0.speed_scale_index = var_9_1
+		self.speed_scale_index = speed_scale_index
 	end
 end
 
-function DebugManager._adjust_gamepad_player_speed(arg_10_0)
-	local var_10_0 = Managers.account:active_controller()
+DebugManager._adjust_gamepad_player_speed = function (self)
+	-- function 10
+	local active_controller = Managers.account:active_controller()
 
-	if not var_10_0 then
+	if not active_controller then
 		return
 	end
 
-	local var_10_1 = var_10_0.type() == "sce_pad"
+	local flag = active_controller.type() == "sce_pad"
 	local var_10_2
 
-	if not IS_PS4 and not var_10_1 then
-		local var_10_3 = var_10_0.button_index("right_thumb")
+	if not (IS_PS4 or flag) then
+		local button_index = active_controller.button_index("right_thumb")
 
-		var_10_2 = var_10_3 and var_10_0.button(var_10_3) > 0.5
+		var_10_2 = not button_index and active_controller.button(button_index) > 0.5
 	else
-		var_10_2 = var_10_0.button(var_10_0.button_index("r3")) > 0.5
+		var_10_2 = active_controller.button(active_controller.button_index("r3")) > 0.5
 	end
 
-	if var_10_2 then
+	if not var_10_2 then
 		local var_10_4
 		local var_10_5
 
-		if not IS_PS4 and not var_10_1 then
-			local var_10_6 = var_10_0.button_index("d_up")
+		if not (IS_PS4 or flag) then
+			local button_index_2 = active_controller.button_index("d_up")
 
-			var_10_4 = var_10_6 and var_10_0.pressed(var_10_6)
+			var_10_4 = not button_index_2 and active_controller.pressed(button_index_2)
 
-			local var_10_7 = var_10_0.button_index("d_down")
+			local button_index_3 = active_controller.button_index("d_down")
 
-			var_10_5 = var_10_7 and var_10_0.pressed(var_10_7)
+			var_10_5 = not button_index_3 and active_controller.pressed(button_index_3)
 		else
-			var_10_4 = var_10_0.pressed(var_10_0.button_index("up"))
-			var_10_5 = var_10_0.pressed(var_10_0.button_index("down"))
+			var_10_4 = active_controller.pressed(active_controller.button_index("up"))
+			var_10_5 = active_controller.pressed(active_controller.button_index("down"))
 		end
 
-		local var_10_8 = arg_10_0.speed_scale_index
+		local speed_scale_index = self.speed_scale_index
 
-		if var_10_4 then
-			var_10_8 = math.min(var_10_8 + 1, #var_0_2)
+		if not var_10_4 then
+			speed_scale_index = math.min(speed_scale_index + 1, #tbl_3)
 
-			local var_10_9 = PlayerUnitMovementSettings.get_active_units_in_movement_settings()
+			local get_active_units_in_movement_settings = PlayerUnitMovementSettings.get_active_units_in_movement_settings()
 
-			for iter_10_0, iter_10_1 in pairs(var_10_9) do
-				PlayerUnitMovementSettings.get_movement_settings_table(iter_10_1).player_speed_scale = var_0_2[var_10_8] * 0.01
+			for k, v in pairs(get_active_units_in_movement_settings) do
+				PlayerUnitMovementSettings.get_movement_settings_table(v).player_speed_scale = tbl_3[speed_scale_index] * 0.01
 			end
-		elseif var_10_5 then
-			var_10_8 = math.max(var_10_8 - 1, 1)
+		elseif not var_10_5 then
+			speed_scale_index = math.max(speed_scale_index - 1, 1)
 
-			local var_10_10 = PlayerUnitMovementSettings.get_active_units_in_movement_settings()
+			local get_active_units_in_movement_settings_2 = PlayerUnitMovementSettings.get_active_units_in_movement_settings()
 
-			for iter_10_2, iter_10_3 in pairs(var_10_10) do
-				PlayerUnitMovementSettings.get_movement_settings_table(iter_10_3).player_speed_scale = var_0_2[var_10_8] * 0.01
+			for k_2, v_2 in pairs(get_active_units_in_movement_settings_2) do
+				PlayerUnitMovementSettings.get_movement_settings_table(v_2).player_speed_scale = tbl_3[speed_scale_index] * 0.01
 			end
 		end
 
-		arg_10_0.speed_scale_index = var_10_8
+		self.speed_scale_index = speed_scale_index
 	end
 end
 
-function DebugManager._update_actor_draw(arg_11_0, arg_11_1)
-	local var_11_0 = arg_11_0._world
-	local var_11_1 = World.get_data(var_11_0, "physics_world")
-	local var_11_2 = World.debug_camera_pose(var_11_0)
+DebugManager._update_actor_draw = function (self, arg_11_1)
+	-- function 11
+	local _world = self._world
+	local get_data = World.get_data(_world, "physics_world")
+	local debug_camera_pose = World.debug_camera_pose(_world)
 
-	for iter_11_0, iter_11_1 in pairs(arg_11_0._actor_draw) do
-		PhysicsWorld.overlap(var_11_1, function(...)
-			arg_11_0:_actor_draw_overlap_callback(iter_11_1, ...)
-		end, "shape", "sphere", "size", iter_11_1.range, "pose", var_11_2, "types", "both", "collision_filter", iter_11_1.collision_filter)
+	for k, v in pairs(self._actor_draw) do
+		PhysicsWorld.overlap(get_data, function (...)
+			-- function 12
+			self:_actor_draw_overlap_callback(v, ...)
+		end, "shape", "sphere", "size", v.range, "pose", debug_camera_pose, "types", "both", "collision_filter", v.collision_filter)
 
-		if iter_11_1.actors then
-			local var_11_3 = arg_11_0._actor_drawer
+		if not v.actors then
+			local _actor_drawer = self._actor_drawer
 
-			for iter_11_2, iter_11_3 in ipairs(iter_11_1.actors) do
-				if ActorBox(iter_11_3):unbox() then
-					var_11_3:actor(iter_11_3, iter_11_1.color:unbox(), var_11_2)
+			for i, v_2 in ipairs(v.actors) do
+				if not ActorBox(v_2):unbox() then
+					_actor_drawer:actor(v_2, v.color:unbox(), debug_camera_pose)
 				end
 			end
 		end
 	end
 end
 
-function DebugManager._actor_draw_overlap_callback(arg_13_0, arg_13_1, arg_13_2)
+DebugManager._actor_draw_overlap_callback = function (arg_13_0, arg_13_1, arg_13_2)
+	-- function 13
 	arg_13_1.actors = arg_13_2
 end
 
-function DebugManager.enable_actor_draw(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
-	local var_14_0 = arg_14_0._world
-	local var_14_1 = World.physics_world(var_14_0)
+DebugManager.enable_actor_draw = function (self, arg_14_1, arg_14_2, arg_14_3)
+	-- function 14
+	local _world = self._world
+	local physics_world = World.physics_world(_world)
 
-	PhysicsWorld.immediate_overlap(var_14_1, "shape", "sphere", "size", 0.1, "position", Vector3(0, 0, 0), "types", "both", "collision_filter", arg_14_1)
+	PhysicsWorld.immediate_overlap(physics_world, "shape", "sphere", "size", 0.1, "position", Vector3(0, 0, 0), "types", "both", "collision_filter", arg_14_1)
 
-	arg_14_0._actor_drawer = arg_14_0:drawer({
+	self._actor_drawer = self:drawer({
 		mode = "immediate",
 		name = "_actor_drawer"
 	})
-	arg_14_0._actor_draw[arg_14_1] = {
+	self._actor_draw[arg_14_1] = {
 		color = QuaternionBox(arg_14_2),
 		range = arg_14_3,
 		collision_filter = arg_14_1
 	}
 end
 
-function DebugManager.disable_actor_draw(arg_15_0, arg_15_1)
+DebugManager.disable_actor_draw = function (arg_15_0, arg_15_1)
+	-- function 15
 	arg_15_0._actor_draw[arg_15_1] = nil
 end
 
-function DebugManager.color(arg_16_0, arg_16_1, arg_16_2)
+DebugManager.color = function (self, arg_16_1, arg_16_2)
+	-- function 16
 	fassert(Unit.alive(arg_16_1), "Trying to get color from a destroyed unit")
 
-	local var_16_0 = arg_16_2 or 255
+	local flag = arg_16_2 or 255
+	local _unit_color_list = self._unit_color_list
 
-	arg_16_0._unit_color_list = arg_16_0._unit_color_list or {}
+	_unit_color_list = _unit_color_list or {}
+	self._unit_color_list = _unit_color_list
 
-	if not arg_16_0._unit_color_list[arg_16_1] then
-		arg_16_0._unit_color_list[arg_16_1] = arg_16_0:_get_next_color_index()
+	if not self._unit_color_list[arg_16_1] then
+		self._unit_color_list[arg_16_1] = self:_get_next_color_index()
 	end
 
-	local var_16_1 = arg_16_0._unit_color_list[arg_16_1]
-	local var_16_2 = GameSettingsDevelopment.debug_unit_colors[var_16_1]
+	local var_16_2 = self._unit_color_list[arg_16_1]
+	local var_16_3 = GameSettingsDevelopment.debug_unit_colors[var_16_2]
 
-	return Color(var_16_0, var_16_2[1], var_16_2[2], var_16_2[3]), var_16_1
+	return Color(flag, var_16_3[1], var_16_3[2], var_16_3[3]), var_16_2
 end
 
-function DebugManager._get_next_color_index(arg_17_0)
-	for iter_17_0, iter_17_1 in pairs(arg_17_0._unit_color_list) do
-		if not Unit.alive(iter_17_0) then
-			arg_17_0._unit_color_list[iter_17_0] = nil
+DebugManager._get_next_color_index = function (self)
+	-- function 17
+	for k, v in pairs(self._unit_color_list) do
+		if not Unit.alive(k) then
+			self._unit_color_list[k] = nil
 		end
 	end
 
-	for iter_17_2, iter_17_3 in pairs(GameSettingsDevelopment.debug_unit_colors) do
-		if not arg_17_0:_color_index_in_use(iter_17_2) then
-			return iter_17_2
+	for k_2, v_2 in pairs(GameSettingsDevelopment.debug_unit_colors) do
+		if not self:_color_index_in_use(k_2) then
+			return k_2
 		end
 	end
 
 	return 1
 end
 
-function DebugManager._color_index_in_use(arg_18_0, arg_18_1)
-	for iter_18_0, iter_18_1 in pairs(arg_18_0._unit_color_list) do
-		if arg_18_1 == iter_18_1 then
+DebugManager._color_index_in_use = function (self, arg_18_1)
+	-- function 18
+	for k, v in pairs(self._unit_color_list) do
+		if arg_18_1 == v then
 			return true
 		end
 	end
@@ -541,56 +595,68 @@ function DebugManager._color_index_in_use(arg_18_0, arg_18_1)
 	return false
 end
 
-function DebugManager._toggle_debug_mouse_cursor(arg_19_0, arg_19_1)
+DebugManager._toggle_debug_mouse_cursor = function (self, arg_19_1)
+	-- function 19
 	Window.set_show_cursor(arg_19_1)
 
-	if arg_19_1 then
-		arg_19_0._free_flight_update_global_free_flight = arg_19_0.free_flight_manager._update_global_free_flight
+	if not arg_19_1 then
+		self._free_flight_update_global_free_flight = self.free_flight_manager._update_global_free_flight
 
-		function arg_19_0.free_flight_manager._update_global_free_flight()
+		self.free_flight_manager._update_global_free_flight = function ()
+			-- function 20
 			return
 		end
 	else
-		arg_19_0.free_flight_manager._update_global_free_flight = arg_19_0._free_flight_update_global_free_flight
+		self.free_flight_manager._update_global_free_flight = self._free_flight_update_global_free_flight
 	end
 
-	arg_19_0._debug_mouse_cursor = arg_19_1
+	self._debug_mouse_cursor = arg_19_1
 end
 
-function DebugManager._update_paused_game(arg_21_0, arg_21_1, arg_21_2)
-	local var_21_0 = arg_21_1:get("action_one")
+DebugManager._update_paused_game = function (self, arg_21_1, arg_21_2)
+	-- function 21
+	local get = arg_21_1:get("action_one")
 
 	if not script_data.disable_debug_draw then
-		arg_21_0:_update_visuals(arg_21_2)
+		self:_update_visuals(arg_21_2)
 	end
 end
 
-local var_0_4 = true
+local flag = true
 
-function DebugManager._update_sound_debug(arg_22_0)
-	local var_22_0 = script_data.sound_debug
-	local var_22_1 = script_data.sound_cue_breakpoint
+DebugManager._update_sound_debug = function (self)
+	-- function 22
+	local sound_debug = script_data.sound_debug
+	local sound_cue_breakpoint = script_data.sound_cue_breakpoint
 
-	if arg_22_0._sound_debug ~= var_22_0 or arg_22_0._sound_cue_breakpoint ~= var_22_1 or var_0_4 then
-		arg_22_0._sound_debug = var_22_0
-		arg_22_0._sound_cue_breakpoint = var_22_1
+	if self._sound_debug ~= sound_debug or self._sound_cue_breakpoint ~= sound_cue_breakpoint or not flag then
+		self._sound_debug = sound_debug
+		self._sound_cue_breakpoint = sound_cue_breakpoint
 
-		local var_22_2
+		local flag_2
 
-		var_22_2 = var_22_0 and var_22_1
+		flag_2 = not sound_debug and sound_cue_breakpoint
 
-		if var_22_0 then
-			Debug.hook(WwiseWorld, "trigger_event", function(arg_23_0, arg_23_1, arg_23_2, ...)
-				if arg_22_0._sound_debug then
+		if not sound_debug then
+			Debug.hook(WwiseWorld, "trigger_event", function (arg_23_0, arg_23_1, arg_23_2, ...)
+				-- function 23
+				if not self._sound_debug then
 					printf("[sound_debug] Played sound: %s", arg_23_2)
 				end
 
-				if arg_22_0._sound_cue_breakpoint then
-					rawset(_G, "_sound_cue_breakpoint_set", rawget(_G, "_sound_cue_breakpoint_set") or {})
+				if not self._sound_cue_breakpoint then
+					local rawset = rawset
+					local _G = _G
+					local str = "_sound_cue_breakpoint_set"
+					local var_23_3 = rawget(_G, "_sound_cue_breakpoint_set")
+
+					var_23_3 = var_23_3 or {}
+
+					rawset(_G, str, var_23_3)
 
 					_sound_cue_breakpoint_set[arg_23_2] = true
 
-					if arg_22_0._sound_cue_breakpoint == arg_23_2 then
+					if self._sound_cue_breakpoint == arg_23_2 then
 						Script.do_break()
 					end
 				end
@@ -601,143 +667,154 @@ function DebugManager._update_sound_debug(arg_22_0)
 			Debug.unhook(WwiseWorld, "trigger_event", true)
 		end
 
-		var_0_4 = false
+		flag = false
 	end
 end
 
-function DebugManager._update_visuals(arg_24_0)
-	local var_24_0 = Managers.state.debug:drawer({
+DebugManager._update_visuals = function (self)
+	-- function 24
+	local drawer = Managers.state.debug:drawer({
 		name = "mouse_ray_hit",
 		mode = "immediate"
 	})
 
-	if arg_24_0._selected_unit then
-		local var_24_1 = arg_24_0:color(arg_24_0._selected_unit)
-		local var_24_2 = Unit.world_position(arg_24_0._selected_unit, 0)
+	if not self._selected_unit then
+		local color = self:color(self._selected_unit)
+		local world_position = Unit.world_position(self._selected_unit, 0)
 
-		var_24_0:sphere(var_24_2, 0.2, var_24_1)
+		drawer:sphere(world_position, 0.2, color)
 
-		local var_24_3 = arg_24_0._visualize_units[arg_24_0._selected_unit]
+		local var_24_3 = self._visualize_units[self._selected_unit]
 
-		if var_24_3 then
-			local var_24_4 = var_24_3:unbox()
+		if not var_24_3 then
+			local unbox = var_24_3:unbox()
 
-			var_24_0:sphere(var_24_4, 0.2, var_24_1)
+			drawer:sphere(unbox, 0.2, color)
 		end
 	end
 
-	for iter_24_0, iter_24_1 in pairs(arg_24_0._visualize_units) do
-		local var_24_5 = arg_24_0:color(iter_24_0, 100)
-		local var_24_6 = Unit.world_position(iter_24_0, 0)
+	for k, v in pairs(self._visualize_units) do
+		local color_2 = self:color(k, 100)
+		local world_position_2 = Unit.world_position(k, 0)
 
-		var_24_0:sphere(var_24_6, 0.2, var_24_5)
+		drawer:sphere(world_position_2, 0.2, color_2)
 
-		if iter_24_1 then
-			local var_24_7 = iter_24_1:unbox()
+		if not v then
+			local unbox_2 = v:unbox()
 
-			var_24_0:sphere(var_24_7, 0.2, var_24_5)
+			drawer:sphere(unbox_2, 0.2, color_2)
 		end
 	end
 end
 
-function DebugManager.selected_unit(arg_25_0)
-	return arg_25_0._selected_unit
+DebugManager.selected_unit = function (self)
+	-- function 25
+	return self._selected_unit
 end
 
-function DebugManager._create_screen_gui(arg_26_0)
-	arg_26_0._screen_gui = World.create_screen_gui(arg_26_0._world, "material", "materials/fonts/gw_fonts", "immediate")
+DebugManager._create_screen_gui = function (self)
+	-- function 26
+	self._screen_gui = World.create_screen_gui(self._world, "material", "materials/fonts/gw_fonts", "immediate")
 end
 
-function DebugManager.draw_screen_rect(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6)
-	if not arg_27_0._screen_gui then
-		arg_27_0:_create_screen_gui()
+DebugManager.draw_screen_rect = function (self, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6)
+	-- function 27
+	if not self._screen_gui then
+		self:_create_screen_gui()
 	end
 
-	Gui.rect(arg_27_0._screen_gui, Vector3(arg_27_1, arg_27_2, arg_27_3 or 1), Vector2(arg_27_4, arg_27_5), arg_27_6 or Color(255, 255, 255, 255))
+	Gui.rect(self._screen_gui, Vector3(arg_27_1, arg_27_2, arg_27_3 or 1), Vector2(arg_27_4, arg_27_5), arg_27_6 or Color(255, 255, 255, 255))
 end
 
-function DebugManager.draw_screen_text(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5, arg_28_6, arg_28_7)
-	if not arg_28_0._screen_gui then
-		arg_28_0:_create_screen_gui()
+DebugManager.draw_screen_text = function (self, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5, arg_28_6, arg_28_7)
+	-- function 28
+	if not self._screen_gui then
+		self:_create_screen_gui()
 	end
 
-	local var_28_0 = arg_28_7 or "hell_shark"
+	local flag = arg_28_7 or "hell_shark"
 	local var_28_1 = UIFontByResolution({
 		dynamic_font = true,
-		font_type = var_28_0,
+		font_type = flag,
 		font_size = arg_28_5
 	})
 	local var_28_2, var_28_3, var_28_4 = unpack(var_28_1)
 
-	Gui.text(arg_28_0._screen_gui, arg_28_4, var_28_2, var_28_3, var_28_4, Vector3(arg_28_1, arg_28_2, arg_28_3), arg_28_6 or Color(255, 255, 255, 255))
+	Gui.text(self._screen_gui, arg_28_4, var_28_2, var_28_3, var_28_4, Vector3(arg_28_1, arg_28_2, arg_28_3), arg_28_6 or Color(255, 255, 255, 255))
 end
 
-function DebugManager.screen_text_extents(arg_29_0, arg_29_1, arg_29_2)
-	if not arg_29_0._screen_gui then
-		arg_29_0:_create_screen_gui()
+DebugManager.screen_text_extents = function (self, arg_29_1, arg_29_2)
+	-- function 29
+	if not self._screen_gui then
+		self:_create_screen_gui()
 	end
 
-	local var_29_0, var_29_1 = Gui.text_extents(arg_29_0._screen_gui, arg_29_1, GameSettings.ingame_font.font, arg_29_2)
-	local var_29_2 = var_29_1[1] - var_29_0[1]
-	local var_29_3 = var_29_1[2] - var_29_0[2]
+	local text_extents, var_29_1 = Gui.text_extents(self._screen_gui, arg_29_1, GameSettings.ingame_font.font, arg_29_2)
+	local num = var_29_1[1] - text_extents[1]
+	local num_2 = var_29_1[2] - text_extents[2]
 
-	return var_29_2, var_29_3
+	return num, num_2
 end
 
-function DebugManager.destroy(arg_30_0)
-	if arg_30_0._screen_gui then
-		World.destroy_gui(arg_30_0._world, arg_30_0._screen_gui)
+DebugManager.destroy = function (self)
+	-- function 30
+	if not self._screen_gui then
+		World.destroy_gui(self._world, self._screen_gui)
 
-		arg_30_0._screen_gui = nil
+		self._screen_gui = nil
 	end
 
-	arg_30_0.network_event_delegate:unregister(arg_30_0)
+	self.network_event_delegate:unregister(self)
 end
 
-function DebugManager.set_time_scale(arg_31_0, arg_31_1, arg_31_2)
-	local var_31_0 = var_0_1[arg_31_1] * 0.01
+DebugManager.set_time_scale = function (self, arg_31_1, arg_31_2)
+	-- function 31
+	local num = tbl_2[arg_31_1] * 0.01
 
-	Application.set_time_step_policy("external_multiplier", var_31_0)
+	Application.set_time_step_policy("external_multiplier", num)
 
-	GLOBAL_TIME_SCALE = var_31_0
+	GLOBAL_TIME_SCALE = num
 
-	if not arg_31_2 and Managers.state.network:game() then
-		local var_31_1 = NetworkLookup.debug_commands.set_time_scale
+	if arg_31_2 or not Managers.state.network:game() then
+		local set_time_scale = NetworkLookup.debug_commands.set_time_scale
 
-		if arg_31_0.is_server then
-			Managers.state.network.network_transmit:send_rpc_clients("rpc_debug_command", var_31_1, arg_31_1)
+		if not self.is_server then
+			Managers.state.network.network_transmit:send_rpc_clients("rpc_debug_command", set_time_scale, arg_31_1)
 		else
-			Managers.state.network.network_transmit:send_rpc_server("rpc_debug_command", var_31_1, arg_31_1)
+			Managers.state.network.network_transmit:send_rpc_server("rpc_debug_command", set_time_scale, arg_31_1)
 		end
 	end
 
-	arg_31_0.time_scale_index = arg_31_1
-	arg_31_0.time_paused = false
+	self.time_scale_index = arg_31_1
+	self.time_paused = false
 end
 
-function DebugManager.set_time_paused(arg_32_0)
-	local var_32_0 = 1e-08
+DebugManager.set_time_paused = function (self)
+	-- function 32
+	local num_2 = 1e-08
 
-	Application.set_time_step_policy("external_multiplier", var_32_0)
+	Application.set_time_step_policy("external_multiplier", num_2)
 
-	GLOBAL_TIME_SCALE = var_32_0
+	GLOBAL_TIME_SCALE = num_2
 
-	if arg_32_0.is_server then
-		local var_32_1 = NetworkLookup.debug_commands.set_time_paused
+	if not self.is_server then
+		local set_time_paused = NetworkLookup.debug_commands.set_time_paused
 
-		Managers.state.network.network_transmit:send_rpc_clients("rpc_debug_command", var_32_1, var_0_3)
+		Managers.state.network.network_transmit:send_rpc_clients("rpc_debug_command", set_time_paused, num)
 	end
 
-	arg_32_0.time_paused = true
+	self.time_paused = true
 end
 
-function DebugManager.hot_join_sync(arg_33_0, arg_33_1)
-	local var_33_0 = NetworkLookup.debug_commands.set_time_scale
+DebugManager.hot_join_sync = function (self, arg_33_1)
+	-- function 33
+	local set_time_scale = NetworkLookup.debug_commands.set_time_scale
 
-	Managers.state.network.network_transmit:send_rpc_clients("rpc_debug_command", var_33_0, arg_33_0.time_scale_index)
+	Managers.state.network.network_transmit:send_rpc_clients("rpc_debug_command", set_time_scale, self.time_scale_index)
 end
 
-function DebugManager.cycle_patched_items(arg_34_0, arg_34_1)
+DebugManager.cycle_patched_items = function (self, arg_34_1)
+	-- function 34
 	do return end
 
 	if not Managers.backend:is_local() then
@@ -746,89 +823,92 @@ function DebugManager.cycle_patched_items(arg_34_0, arg_34_1)
 		return
 	end
 
-	if not arg_34_0._patched_items_list then
-		arg_34_0._patched_items_list = arg_34_0:_load_patched_items_into_backend()
+	if not self._patched_items_list then
+		self._patched_items_list = self:_load_patched_items_into_backend()
 
-		local var_34_0 = Network.game_session()
-		local var_34_1 = GameSession.other_peers(var_34_0)
-		local var_34_2 = RPC.rpc_debug_command
-		local var_34_3 = NetworkLookup.debug_commands.load_patched_items_into_backend
+		local game_session = Network.game_session()
+		local other_peers = GameSession.other_peers(game_session)
+		local rpc_debug_command = RPC.rpc_debug_command
+		local load_patched_items_into_backend = NetworkLookup.debug_commands.load_patched_items_into_backend
 
-		for iter_34_0, iter_34_1 in ipairs(var_34_1) do
-			local var_34_4 = PEER_ID_TO_CHANNEL[iter_34_1]
+		for i, v in ipairs(other_peers) do
+			local var_34_4 = PEER_ID_TO_CHANNEL[v]
 
-			var_34_2(var_34_4, var_34_3, var_0_3)
+			rpc_debug_command(var_34_4, load_patched_items_into_backend, num)
 		end
 
-		if #var_34_1 > 0 then
-			arg_34_0._cycle_patch_items_at = arg_34_1 + 1
+		if #other_peers > 0 then
+			self._cycle_patch_items_at = arg_34_1 + 1
 
 			return
 		end
 	end
 
-	arg_34_0:_cycle_patched_items()
+	self:_cycle_patched_items()
 end
 
-function DebugManager._cycle_patched_items(arg_35_0)
-	local var_35_0 = arg_35_0._patched_items_list
-	local var_35_1 = arg_35_0._current_patch_item_index
-	local var_35_2, var_35_3 = next(var_35_0, var_35_1)
+DebugManager._cycle_patched_items = function (self)
+	-- function 35
+	local _patched_items_list = self._patched_items_list
+	local _current_patch_item_index = self._current_patch_item_index
+	local var_35_2, var_35_3 = next(_patched_items_list, _current_patch_item_index)
 
 	if var_35_3 == nil then
-		var_35_2, var_35_3 = next(var_35_0)
+		var_35_2, var_35_3 = next(_patched_items_list)
 	end
 
-	local var_35_4 = Managers.backend:get_interface("items")
-	local var_35_5 = Managers.backend:get_interface("common")
-	local var_35_6 = var_35_4:get_key(var_35_3)
-	local var_35_7 = ItemMasterList[var_35_6]
-	local var_35_8 = Managers.player:local_player()
-	local var_35_9 = var_35_8:profile_index()
-	local var_35_10 = var_35_8:career_index()
-	local var_35_11 = SPProfiles[var_35_9].careers[var_35_10].name
+	local get_interface = Managers.backend:get_interface("items")
+	local get_interface_2 = Managers.backend:get_interface("common")
+	local get_key = get_interface:get_key(var_35_3)
+	local var_35_7 = ItemMasterList[get_key]
+	local local_player = Managers.player:local_player()
+	local profile_index = local_player:profile_index()
+	local career_index = local_player:career_index()
+	local name = SPProfiles[profile_index].careers[career_index].name
 
-	if var_35_5:can_wield(var_35_11, var_35_7) then
-		local var_35_12 = var_35_7.slot_type
-		local var_35_13 = InventorySettings.slot_names_by_type[var_35_12][1]
-		local var_35_14 = var_35_8.player_unit
+	if not get_interface_2:can_wield(name, var_35_7) then
+		local slot_type = var_35_7.slot_type
+		local var_35_13 = InventorySettings.slot_names_by_type[slot_type][1]
+		local player_unit = local_player.player_unit
 
-		ScriptUnit.extension(var_35_14, "inventory_system"):create_equipment_in_slot(var_35_13, var_35_3)
+		ScriptUnit.extension(player_unit, "inventory_system"):create_equipment_in_slot(var_35_13, var_35_3)
 		Debug.sticky_text("template:%s", var_35_7.template, "delay", 7)
 
-		if var_35_7.right_hand_unit then
+		if not var_35_7.right_hand_unit then
 			Debug.sticky_text("right_hand_unit:%s", var_35_7.right_hand_unit, "delay", 7)
 		end
 
-		if var_35_7.left_hand_unit then
+		if not var_35_7.left_hand_unit then
 			Debug.sticky_text("left_hand_unit:%s", var_35_7.left_hand_unit, "delay", 7)
 		end
 	else
-		Debug.sticky_text("%s can't use %s", var_35_11, var_35_6)
+		Debug.sticky_text("%s can't use %s", name, get_key)
 	end
 
-	arg_35_0._current_patch_item_index = var_35_2
+	self._current_patch_item_index = var_35_2
 end
 
-function DebugManager.rpc_debug_command(arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+DebugManager.rpc_debug_command = function (self, arg_36_1, arg_36_2, arg_36_3)
+	-- function 36
 	local var_36_0 = NetworkLookup.debug_commands[arg_36_2]
 
 	if var_36_0 == "load_patched_items_into_backend" then
-		arg_36_0._patched_items_list = arg_36_0:_load_patched_items_into_backend()
+		self._patched_items_list = self:_load_patched_items_into_backend()
 	elseif var_36_0 == "set_time_scale" then
 		local var_36_1 = arg_36_3
 
-		arg_36_0:set_time_scale(var_36_1, true)
+		self:set_time_scale(var_36_1, true)
 
-		if arg_36_0.is_server then
+		if not self.is_server then
 			Managers.state.network.network_transmit:send_rpc_clients_except("rpc_debug_command", CHANNEL_TO_PEER_ID[arg_36_1], arg_36_2, arg_36_3)
 		end
 	elseif var_36_0 == "set_time_paused" then
-		arg_36_0:set_time_paused()
+		self:set_time_paused()
 	end
 end
 
-function DebugManager.rpc_propagate_debug_option(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5)
+DebugManager.rpc_propagate_debug_option = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5)
+	-- function 37
 	if not rawget(_G, "DebugScreen") then
 		Managers.state.network.network_transmit:send_rpc("rpc_debug_option_propagation_response", CHANNEL_TO_PEER_ID[arg_37_1], "DebugScreen is missing")
 
@@ -836,152 +916,158 @@ function DebugManager.rpc_propagate_debug_option(arg_37_0, arg_37_1, arg_37_2, a
 	end
 
 	local var_37_0 = tonumber(arg_37_2)
-	local var_37_1 = DebugScreen.handle_propagated_option(var_37_0, arg_37_3, arg_37_4, arg_37_5)
+	local handle_propagated_option = DebugScreen.handle_propagated_option(var_37_0, arg_37_3, arg_37_4, arg_37_5)
 
-	if var_37_1 then
-		Managers.state.network.network_transmit:send_rpc("rpc_debug_option_propagation_response", CHANNEL_TO_PEER_ID[arg_37_1], var_37_1)
+	if not handle_propagated_option then
+		Managers.state.network.network_transmit:send_rpc("rpc_debug_option_propagation_response", CHANNEL_TO_PEER_ID[arg_37_1], handle_propagated_option)
 	end
 end
 
-function DebugManager.rpc_debug_option_propagation_response(arg_38_0, arg_38_1, arg_38_2)
+DebugManager.rpc_debug_option_propagation_response = function (arg_38_0, arg_38_1, arg_38_2)
+	-- function 38
 	Debug.sticky_text("[DebugManager] Propagated debug option failed: %s", arg_38_2, "delay", 10)
 end
 
-function DebugManager._load_patched_items_into_backend(arg_39_0)
+DebugManager._load_patched_items_into_backend = function (self)
+	-- function 39
 	if not Managers.backend:is_local() then
 		Debug.sticky_text("patching of ItemMasterList only works with local backend")
 
 		return
 	end
 
-	local var_39_0 = {}
+	local tbl = {}
 	local var_39_1 = dofile("scripts/settings/equipment/item_master_list_debug_patch")
 
-	for iter_39_0, iter_39_1 in pairs(var_39_1) do
+	for k, v in pairs(var_39_1) do
 		repeat
-			if rawget(ItemMasterList, iter_39_0) then
-				Debug.sticky_text("name %s already exists in ItemMasterList", iter_39_0)
+			if not rawget(ItemMasterList, k) then
+				Debug.sticky_text("name %s already exists in ItemMasterList", k)
 
 				break
 			end
 
-			iter_39_1.name = iter_39_0
-			ItemMasterList[iter_39_0] = iter_39_1
+			v.name = k
+			ItemMasterList[k] = v
 
-			local var_39_2 = #NetworkLookup.item_names + 1
+			local num = #NetworkLookup.item_names + 1
 
-			NetworkLookup.item_names[var_39_2] = iter_39_0
-			NetworkLookup.item_names[iter_39_0] = var_39_2
+			NetworkLookup.item_names[num] = k
+			NetworkLookup.item_names[k] = num
 
-			local var_39_3 = #NetworkLookup.damage_sources + 1
+			local num_2 = #NetworkLookup.damage_sources + 1
 
-			NetworkLookup.damage_sources[var_39_3] = iter_39_0
-			NetworkLookup.damage_sources[iter_39_0] = var_39_3
+			NetworkLookup.damage_sources[num_2] = k
+			NetworkLookup.damage_sources[k] = num_2
 
-			local var_39_4 = iter_39_1.right_hand_unit
+			local right_hand_unit = v.right_hand_unit
 
-			if var_39_4 then
-				arg_39_0:_load_resource(var_39_4)
+			if not right_hand_unit then
+				self:_load_resource(right_hand_unit)
 			end
 
-			local var_39_5 = iter_39_1.left_hand_unit
+			local left_hand_unit = v.left_hand_unit
 
-			if var_39_5 then
-				arg_39_0:_load_resource(var_39_5)
+			if not left_hand_unit then
+				self:_load_resource(left_hand_unit)
 			end
 
-			local var_39_6 = Managers.backend:get_interface("items"):award_item(iter_39_0)
+			local award_item = Managers.backend:get_interface("items"):award_item(k)
 
-			table.insert(var_39_0, var_39_6)
-			printf("added %s: to ItemMasterList", iter_39_0)
-			printf("awarded %s: to player", iter_39_0)
+			table.insert(tbl, award_item)
+			printf("added %s: to ItemMasterList", k)
+			printf("awarded %s: to player", k)
 		until true
 	end
 
-	return var_39_0
+	return tbl
 end
 
-function DebugManager._load_resource(arg_40_0, arg_40_1)
-	local var_40_0 = #NetworkLookup.husks + 1
+DebugManager._load_resource = function (arg_40_0, arg_40_1)
+	-- function 40
+	local num = #NetworkLookup.husks + 1
 
-	NetworkLookup.husks[var_40_0] = arg_40_1
-	NetworkLookup.husks[arg_40_1] = var_40_0
+	NetworkLookup.husks[num] = arg_40_1
+	NetworkLookup.husks[arg_40_1] = num
 
 	local var_40_1
-	local var_40_2 = false
-	local var_40_3 = true
-	local var_40_4 = arg_40_1 .. "_3p"
+	local flag = false
+	local flag_2 = true
+	local str = arg_40_1 .. "_3p"
 
-	Managers.package:load(arg_40_1, "debug_patch", var_40_1, var_40_2, var_40_3)
-	Managers.package:load(var_40_4, "debug_patch", var_40_1, var_40_2, var_40_3)
+	Managers.package:load(arg_40_1, "debug_patch", var_40_1, flag, flag_2)
+	Managers.package:load(str, "debug_patch", var_40_1, flag, flag_2)
 end
 
-function DebugManager.send_conflict_director_command(arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
+DebugManager.send_conflict_director_command = function (self, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
+	-- function 41
 	arg_41_2 = arg_41_2 or ""
 
 	if not arg_41_3 then
-		local var_41_0 = Managers.player:local_player().player_unit
-		local var_41_1 = POSITION_LOOKUP[var_41_0]
+		local player_unit = Managers.player:local_player().player_unit
+		local var_41_1 = POSITION_LOOKUP[player_unit]
 
-		arg_41_3 = Managers.state.conflict:player_aim_raycast(arg_41_0._world, false, "filter_ray_horde_spawn") or var_41_1 or Vector3.zero()
+		arg_41_3 = Managers.state.conflict:player_aim_raycast(self._world, false, "filter_ray_horde_spawn") or var_41_1 or Vector3.zero()
 	end
 
-	local var_41_2 = ""
-	local var_41_3 = arg_41_0.debug_breed_picker.picked_enhancements
+	local str = ""
+	local picked_enhancements = self.debug_breed_picker.picked_enhancements
 
-	if var_41_3 and next(var_41_3) then
-		var_41_2 = table.concat(table.keys_if(var_41_3, {}, function(arg_42_0, arg_42_1)
+	if not picked_enhancements and not next(picked_enhancements) then
+		str = table.concat(table.keys_if(picked_enhancements, {}, function (arg_42_0, arg_42_1)
+			-- function 42
 			return arg_42_1 == true
 		end), ",")
 	end
 
-	Managers.state.network.network_transmit:send_rpc_server("rpc_debug_conflict_director_command", arg_41_1, arg_41_2, arg_41_3, var_41_2, arg_41_4 or {})
+	Managers.state.network.network_transmit:send_rpc_server("rpc_debug_conflict_director_command", arg_41_1, arg_41_2, arg_41_3, str, arg_41_4 or {})
 end
 
-function DebugManager._update_unit_spawning(arg_43_0, arg_43_1, arg_43_2)
-	if DebugKeyHandler.key_pressed("o", "switch spawn breed", "ai") then
-		arg_43_0.debug_breed_picker:activate()
+DebugManager._update_unit_spawning = function (self, arg_43_1, arg_43_2)
+	-- function 43
+	if not DebugKeyHandler.key_pressed("o", "switch spawn breed", "ai") then
+		self.debug_breed_picker:activate()
 	end
 
-	if arg_43_0.debug_breed_picker.active and arg_43_0.is_server then
-		if DebugKeyHandler.key_pressed("i", "switch spawn breed", "ai", "left shift") then
+	if not self.debug_breed_picker.active and not self.is_server then
+		if not DebugKeyHandler.key_pressed("i", "switch spawn breed", "ai", "left shift") then
 			Managers.state.conflict:cycle_debug_spawn_side()
 		end
 
 		Debug.text("Debug spawn side: %s", Managers.state.conflict.debug_spawn_side_id)
 	end
 
-	arg_43_0.debug_breed_picker:update(arg_43_2, arg_43_1)
+	self.debug_breed_picker:update(arg_43_2, arg_43_1)
 
-	local var_43_0 = arg_43_0.debug_breed_picker:current_item_name()
+	local current_item_name = self.debug_breed_picker:current_item_name()
 
-	if DebugKeyHandler.key_pressed("p", "spawn " .. var_43_0, "ai", "left ctrl") then
-		arg_43_0:send_conflict_director_command("debug_spawn_group", var_43_0)
-	elseif DebugKeyHandler.key_pressed("p", "spawn " .. var_43_0, "ai", "right ctrl") then
-		arg_43_0:send_conflict_director_command("debug_spawn_roaming_patrol")
-	elseif DebugKeyHandler.key_pressed("p", "spawn " .. var_43_0, "ai", "left alt") then
-		arg_43_0:send_conflict_director_command("debug_spawn_group_at_main_path")
-	elseif DebugKeyHandler.key_pressed("p", "spawn " .. var_43_0, "ai") then
-		local var_43_1 = arg_43_0.debug_breed_picker:current_item()
+	if not DebugKeyHandler.key_pressed("p", "spawn " .. current_item_name, "ai", "left ctrl") then
+		self:send_conflict_director_command("debug_spawn_group", current_item_name)
+	elseif not DebugKeyHandler.key_pressed("p", "spawn " .. current_item_name, "ai", "right ctrl") then
+		self:send_conflict_director_command("debug_spawn_roaming_patrol")
+	elseif not DebugKeyHandler.key_pressed("p", "spawn " .. current_item_name, "ai", "left alt") then
+		self:send_conflict_director_command("debug_spawn_group_at_main_path")
+	elseif not DebugKeyHandler.key_pressed("p", "spawn " .. current_item_name, "ai") then
+		local current_item = self.debug_breed_picker:current_item()
 
-		if Breeds[var_43_0] then
-			arg_43_0._last_debug_breed_name = var_43_0
-			arg_43_0._last_current_item = arg_43_0.debug_breed_picker:current_item()
-		elseif var_43_1[2] ~= "pick_enhancement" then
-			var_43_1 = arg_43_0.debug_breed_picker:current_item()
-		elseif arg_43_0._last_debug_breed_name then
-			var_43_0 = arg_43_0._last_debug_breed_name
-			var_43_1 = arg_43_0._last_current_item
+		if not Breeds[current_item_name] then
+			self._last_debug_breed_name = current_item_name
+			self._last_current_item = self.debug_breed_picker:current_item()
+		elseif current_item[2] ~= "pick_enhancement" then
+			current_item = self.debug_breed_picker:current_item()
+		elseif not self._last_debug_breed_name then
+			current_item_name = self._last_debug_breed_name
+			current_item = self._last_current_item
 		end
 
-		arg_43_0:send_conflict_director_command("debug_spawn_breed", var_43_0, nil, var_43_1)
-	elseif DebugKeyHandler.key_pressed("o", "spawn hidden " .. var_43_0, "ai", "left ctrl") then
-		arg_43_0:send_conflict_director_command("debug_spawn_breed_at_hidden_spawner", var_43_0)
+		self:send_conflict_director_command("debug_spawn_breed", current_item_name, nil, current_item)
+	elseif not DebugKeyHandler.key_pressed("o", "spawn hidden " .. current_item_name, "ai", "left ctrl") then
+		self:send_conflict_director_command("debug_spawn_breed_at_hidden_spawner", current_item_name)
 	end
 
-	if DebugKeyHandler.key_pressed("u", "unspawn close AIs", "ai") then
-		local var_43_2 = Managers.player:local_player().player_unit
-		local var_43_3 = POSITION_LOOKUP[var_43_2]
+	if not DebugKeyHandler.key_pressed("u", "unspawn close AIs", "ai") then
+		local player_unit = Managers.player:local_player().player_unit
+		local var_43_3 = POSITION_LOOKUP[player_unit]
 
 		if not var_43_3 then
 			print("can't destroy close units - player is dead")
@@ -989,24 +1075,28 @@ function DebugManager._update_unit_spawning(arg_43_0, arg_43_1, arg_43_2)
 			return
 		end
 
-		arg_43_0:send_conflict_director_command("destroy_close_units", nil, var_43_3)
-	elseif DebugKeyHandler.key_pressed("l", "unspawn all AIs", "ai") then
-		arg_43_0:send_conflict_director_command("destroy_all_units")
+		self:send_conflict_director_command("destroy_close_units", nil, var_43_3)
+	elseif not DebugKeyHandler.key_pressed("l", "unspawn all AIs", "ai") then
+		self:send_conflict_director_command("destroy_all_units")
 	end
 
-	if DebugKeyHandler.key_pressed("m", "unspawn all AI specials", "ai") then
-		arg_43_0:send_conflict_director_command("destroy_specials")
+	if not DebugKeyHandler.key_pressed("m", "unspawn all AI specials", "ai") then
+		self:send_conflict_director_command("destroy_specials")
 	end
 end
 
-function DebugManager._update_bot_behavior_debug(arg_44_0)
+DebugManager._update_bot_behavior_debug = function (arg_44_0)
+	-- function 44
 	if not script_data.ai_bots_debug_behavior then
 		script_data.ai_bots_debug_behavior_data = nil
 
 		return
 	end
 
-	script_data.ai_bots_debug_behavior_data = script_data.ai_bots_debug_behavior_data or {
+	local script_data = script_data
+	local ai_bots_debug_behavior_data = script_data.ai_bots_debug_behavior_data
+
+	ai_bots_debug_behavior_data = ai_bots_debug_behavior_data or {
 		time_in_heavy_attack = 0,
 		time_in_light_attack = 0,
 		time_spent_attacking = 0,
@@ -1014,27 +1104,29 @@ function DebugManager._update_bot_behavior_debug(arg_44_0)
 		failed_ranged_attacks = 0,
 		time_spent_defending = 0
 	}
+	script_data.ai_bots_debug_behavior_data = ai_bots_debug_behavior_data
 
-	local var_44_0 = 15
-	local var_44_1 = 20
-	local var_44_2 = 250
-	local var_44_3 = Vector3(10, var_44_2, 10)
-	local var_44_4 = Color(255, 130, 10)
+	local num = 15
+	local num_2 = 20
+	local num_3 = 250
+	local var_44_5 = Vector3(10, num_3, 10)
+	local var_44_6 = Color(255, 130, 10)
 
-	Debug.draw_rect(var_44_3, Vector3(340, var_44_2 + var_44_1 * 20, 0), Color(200, 0, 0, 0))
+	Debug.draw_rect(var_44_5, Vector3(340, num_3 + num_2 * 20, 0), Color(200, 0, 0, 0))
 
-	local var_44_5 = var_44_3
+	local var_44_7 = var_44_5
 
-	for iter_44_0, iter_44_1 in pairs(script_data.ai_bots_debug_behavior_data) do
-		local var_44_6 = string.format("%s: %s", iter_44_0, iter_44_1)
+	for k, v in pairs(script_data.ai_bots_debug_behavior_data) do
+		local format = string.format("%s: %s", k, v)
 
-		Debug.draw_text(var_44_6, var_44_5, var_44_0, var_44_4)
+		Debug.draw_text(format, var_44_7, num, var_44_6)
 
-		var_44_5[2] = var_44_5[2] + var_44_1
+		var_44_7[2] = var_44_7[2] + num_2
 	end
 end
 
-function DebugManager.start_bot_behavior_scenario()
+DebugManager.start_bot_behavior_scenario = function ()
+	-- function 45
 	if Managers.state.game_mode:level_key() ~= "military" then
 		Debug.sticky_text("ERROR: The bot behavior scenario is set up for 'military' level only.")
 
@@ -1053,111 +1145,114 @@ function DebugManager.start_bot_behavior_scenario()
 	script_data.disable_debug_draw = false
 	POSITION_LOOKUP[player_unit()] = Vector3(122.148, 87.8162, -12.8631)
 
-	local var_45_0 = Quaternion.identity()
+	local identity = Quaternion.identity()
 
-	Quaternion.set_xyzw(var_45_0, 0, 0, 1, -0.000214087)
-	ScriptUnit.extension(player_unit(), "locomotion_system"):teleport_to(Vector3(122.148, 87.8162, -13.6631) + Quaternion.forward(var_45_0) * 2, var_45_0)
+	Quaternion.set_xyzw(identity, 0, 0, 1, -0.000214087)
+	ScriptUnit.extension(player_unit(), "locomotion_system"):teleport_to(Vector3(122.148, 87.8162, -13.6631) + Quaternion.forward(identity) * 2, identity)
 
-	local var_45_1 = Managers.input:get_service("FreeFlight")
-	local var_45_2 = Managers.time:time("main") + 0.5
-	local var_45_3 = 1
-	local var_45_4 = QuaternionBox(var_45_0)
-	local var_45_5 = update
+	local get_service = Managers.input:get_service("FreeFlight")
+	local num = Managers.time:time("main") + 0.5
+	local num_2 = 1
+	local var_45_4 = QuaternionBox(identity)
+	local update = update
 
 	function update(...)
-		local var_46_0 = var_45_5(...)
+		-- function 46
+		local var_46_0 = update(...)
 
-		var_45_0 = var_45_4:unbox()
+		identity = var_45_4:unbox()
 
-		local var_46_1 = Managers.time:time("main")
+		local time = Managers.time:time("main")
 
-		if var_45_3 == 1 then
-			if var_46_1 > var_45_2 then
+		if num_2 == 1 then
+			if time > num then
 				Managers.state.conflict:destroy_all_units()
 
-				local var_46_2 = Unit.local_position(player_unit(), 0)
-				local var_46_3 = Quaternion.forward(var_45_0)
-				local var_46_4 = Quaternion.right(var_45_0)
+				local local_position = Unit.local_position(player_unit(), 0)
+				local forward = Quaternion.forward(identity)
+				local right = Quaternion.right(identity)
 
-				for iter_46_0 = -4, 4 do
-					local var_46_5 = var_46_2 + var_46_3 * 4 + var_46_4 * iter_46_0
+				for i = -4, 4 do
+					local num_3 = local_position + forward * 4 + right * i
 
-					Managers.state.conflict:debug_spawn_breed("skaven_slave", false, var_46_5, {})
+					Managers.state.conflict:debug_spawn_breed("skaven_slave", false, num_3, {})
 				end
 
-				for iter_46_1 = -1.5, 1.5 do
-					local var_46_6 = var_46_2 + var_46_3 * 5.5 + var_46_4 * iter_46_1
+				for j = -1.5, 1.5 do
+					local num_4 = local_position + forward * 5.5 + right * j
 
-					Managers.state.conflict:debug_spawn_breed("skaven_slave", false, var_46_6, {})
+					Managers.state.conflict:debug_spawn_breed("skaven_slave", false, num_4, {})
 				end
 
-				for iter_46_2 = -1.5, 1.5 do
-					local var_46_7 = var_46_2 + var_46_3 * 7 + var_46_4 * iter_46_2
+				for k = -1.5, 1.5 do
+					local num_5 = local_position + forward * 7 + right * k
 
-					Managers.state.conflict:debug_spawn_breed("skaven_storm_vermin_with_shield", false, var_46_7, {})
+					Managers.state.conflict:debug_spawn_breed("skaven_storm_vermin_with_shield", false, num_5, {})
 				end
 
-				for iter_46_3 = 0, 0 do
-					local var_46_8 = var_46_2 + var_46_3 * 8.5 + var_46_4 * iter_46_3
+				for l = 0, 0 do
+					local num_6 = local_position + forward * 8.5 + right * l
 
-					Managers.state.conflict:debug_spawn_breed("chaos_warrior", false, var_46_8, {})
+					Managers.state.conflict:debug_spawn_breed("chaos_warrior", false, num_6, {})
 				end
 
-				local var_46_9 = var_45_1.get
+				local get = get_service.get
 
-				function var_45_1.get(arg_47_0, arg_47_1, ...)
+				get_service.get = function (arg_47_0, arg_47_1, ...)
+					-- function 47
 					if arg_47_1 == "global_free_flight_toggle" then
-						var_45_1.get = var_46_9
-						var_45_3 = 2
+						get_service.get = get
+						num_2 = 2
 
 						return true
 					end
 
-					return var_46_9(arg_47_0, arg_47_1, ...)
+					return get(arg_47_0, arg_47_1, ...)
 				end
 			end
-		elseif var_45_3 == 2 then
-			local var_46_10 = Managers.world:world(Managers.free_flight.data.global.viewport_world_name)
-			local var_46_11 = ScriptWorld.global_free_flight_viewport(var_46_10)
-			local var_46_12 = ScriptViewport.camera(var_46_11)
+		elseif num_2 == 2 then
+			local world = Managers.world:world(Managers.free_flight.data.global.viewport_world_name)
+			local global_free_flight_viewport = ScriptWorld.global_free_flight_viewport(world)
+			local camera = ScriptViewport.camera(global_free_flight_viewport)
 
-			ScriptCamera.set_local_position(var_46_12, Vector3(126.374, 80.3227, -8.77923))
+			ScriptCamera.set_local_position(camera, Vector3(126.374, 80.3227, -8.77923))
 
-			local var_46_13 = Quaternion.identity()
+			local identity_2 = Quaternion.identity()
 
-			Quaternion.set_xyzw(var_46_13, 0.281551, 0.111096, -0.349516, -0.886694)
-			ScriptCamera.set_local_rotation(var_46_12, var_46_13)
+			Quaternion.set_xyzw(identity_2, 0.281551, 0.111096, -0.349516, -0.886694)
+			ScriptCamera.set_local_rotation(camera, identity_2)
 
-			var_45_2 = var_46_1 + 2
-			var_45_3 = 3
-		elseif var_45_3 == 3 then
-			if var_46_1 > var_45_2 then
-				var_45_3 = 4
+			num = time + 2
+			num_2 = 3
+		elseif num_2 == 3 then
+			if time > num then
+				num_2 = 4
 				script_data.disable_ai_perception = false
-				var_45_2 = var_46_1 + 45
+				num = time + 45
 			end
-		elseif var_45_3 == 4 then
-			local var_46_14 = Quaternion.right(var_45_0)
+		elseif num_2 == 4 then
+			local right_2 = Quaternion.right(identity)
 
-			var_45_0 = Quaternion.multiply(Quaternion.axis_angle(var_46_14, math.pi * -0.4), var_45_0)
+			identity = Quaternion.multiply(Quaternion.axis_angle(right_2, math.pi * -0.4), identity)
 
-			if var_46_1 > var_45_2 then
-				var_45_3 = 5
+			if time > num then
+				num_2 = 5
 			end
 		else
-			local var_46_15 = var_45_1.get
+			local get_2 = get_service.get
 
-			function var_45_1.get(arg_48_0, arg_48_1, ...)
+			get_service.get = function (arg_48_0, arg_48_1, ...)
+				-- function 48
 				if arg_48_1 == "global_free_flight_toggle" then
-					var_45_1.get = var_46_15
+					get_service.get = get_2
 
 					return true
 				end
 
-				return var_46_15(arg_48_0, arg_48_1, ...)
+				return get_2(arg_48_0, arg_48_1, ...)
 			end
 
-			update = var_45_5
+			update = update
 		end
 
 		return var_46_0

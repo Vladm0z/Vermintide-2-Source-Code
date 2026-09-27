@@ -1,6 +1,9 @@
 -- chunkname: @scripts/settings/equipment/attack_templates_dlc_shovel.lua
 
+local AttackTemplates = AttackTemplates
+
 AttackTemplates = AttackTemplates or {}
+AttackTemplates = AttackTemplates
 AttackTemplates.cursed_blood_spread = {
 	is_push = true,
 	stagger_value = 2,

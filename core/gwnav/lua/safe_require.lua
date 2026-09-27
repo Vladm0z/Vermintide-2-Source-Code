@@ -1,11 +1,12 @@
 -- chunkname: @core/gwnav/lua/safe_require.lua
 
-local var_0_0 = 0
-local var_0_1 = {}
+local num = 0
+local tbl = {}
 local var_0_2
 
 function safe_require(arg_1_0)
-	if var_0_1[arg_1_0] == nil then
+	-- function 1
+	if tbl[arg_1_0] == nil then
 		var_0_2 = arg_1_0
 		required_module = require(arg_1_0)
 
@@ -17,29 +18,31 @@ function safe_require(arg_1_0)
 			return required_module
 		end
 
-		var_0_1[arg_1_0] = required_module
-	elseif var_0_0 == 1 then
+		tbl[arg_1_0] = required_module
+	elseif num == 1 then
 		require(arg_1_0)
 	end
 
-	return var_0_1[arg_1_0]
+	return tbl[arg_1_0]
 end
 
 function safe_require_guard()
-	local var_2_0 = {}
+	-- function 2
+	local tbl_2 = {}
 
 	if var_0_2 == nil then
 		print_warning("`safe_require` should be used for modules using `safe_require_guard`, otherwise looping `require` calls will raise errors")
 
-		return var_2_0
+		return tbl_2
 	end
 
-	var_0_1[var_0_2] = var_2_0
+	tbl[var_0_2] = tbl_2
 	var_0_2 = nil
 
-	return var_2_0
+	return tbl_2
 end
 
 function set_safe_require_error_level(arg_3_0)
-	var_0_0 = arg_3_0
+	-- function 3
+	num = arg_3_0
 end

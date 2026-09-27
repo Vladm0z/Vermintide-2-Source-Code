@@ -2,133 +2,138 @@
 
 ActionChargedProjectileUtility = {}
 
-function ActionChargedProjectileUtility.prepare_charged_projectile(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
-	local var_1_0 = ScriptUnit.extension(arg_1_1, "overcharge_system")
-	local var_1_1 = ScriptUnit.extension(arg_1_1, "buff_system")
-	local var_1_2 = ScriptUnit.has_extension(arg_1_2, "ammo_system")
-	local var_1_3 = var_1_2
+ActionChargedProjectileUtility.prepare_charged_projectile = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	-- function 1
+	local extension = ScriptUnit.extension(arg_1_1, "overcharge_system")
+	local extension_2 = ScriptUnit.extension(arg_1_1, "buff_system")
+	local has_extension = ScriptUnit.has_extension(arg_1_2, "ammo_system")
+	local var_1_3 = has_extension
 
-	if arg_1_0.forced_charge_level then
-		arg_1_4 = arg_1_0.forced_charge_level
+	if not self.forced_charge_level then
+		arg_1_4 = self.forced_charge_level
 	end
 
-	local var_1_4 = {
+	local tbl = {
 		first_shot = true,
-		overcharge_extension = var_1_0,
-		buff_extension = var_1_1,
-		ammo_extension = var_1_2,
+		overcharge_extension = extension,
+		buff_extension = extension_2,
+		ammo_extension = has_extension,
 		item_name = arg_1_3,
 		power_level = arg_1_5,
 		owner_unit = arg_1_1,
 		weapon_unit = arg_1_2,
-		action_data = arg_1_0,
+		action_data = self,
 		charge_level = arg_1_4,
 		is_grenade = var_1_3
 	}
 
-	if var_1_3 then
-		var_1_4.extra_grenades = var_1_1:apply_buffs_to_value(0, "grenade_extra_shot")
-		var_1_4.grenade_thrown = false
-		var_1_4.free_grenade = false
-		var_1_4.rewield_grenade = false
+	if not var_1_3 then
+		tbl.extra_grenades = extension_2:apply_buffs_to_value(0, "grenade_extra_shot")
+		tbl.grenade_thrown = false
+		tbl.free_grenade = false
+		tbl.rewield_grenade = false
 	end
 
-	return var_1_4
+	return tbl
 end
 
-function ActionChargedProjectileUtility.fire_charged_projectile(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
-	local var_2_0 = arg_2_0.action_data
-	local var_2_1 = var_2_0.overcharge_type
-	local var_2_2 = arg_2_0.buff_extension
+ActionChargedProjectileUtility.fire_charged_projectile = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	-- function 2
+	local action_data = self.action_data
+	local overcharge_type = action_data.overcharge_type
+	local buff_extension = self.buff_extension
 
-	if var_2_1 and arg_2_0.first_shot then
-		local var_2_3 = PlayerUnitStatusSettings.overcharge_values[var_2_1]
+	if not overcharge_type and not self.first_shot then
+		local var_2_3 = PlayerUnitStatusSettings.overcharge_values[overcharge_type]
 
-		if arg_2_1 and var_2_2:has_buff_perk("no_overcharge_crit") then
+		if not arg_2_1 and not buff_extension:has_buff_perk("no_overcharge_crit") then
 			var_2_3 = 0
 		end
 
-		local var_2_4 = arg_2_0.overcharge_extension
+		local overcharge_extension = self.overcharge_extension
 
-		if var_2_0.scale_overcharge then
-			local var_2_5 = arg_2_0.charge_level
+		if not action_data.scale_overcharge then
+			local charge_level = self.charge_level
 
-			var_2_4:add_charge(var_2_3, var_2_5)
+			overcharge_extension:add_charge(var_2_3, charge_level)
 		else
-			var_2_4:add_charge(var_2_3)
+			overcharge_extension:add_charge(var_2_3)
 		end
 	end
 
 	local var_2_6
-	local var_2_7 = arg_2_0.charge_level
+	local charge_level_2 = self.charge_level
 	local var_2_8
 
-	if var_2_0.charged_speed then
-		var_2_8 = math.lerp(var_2_0.speed, var_2_0.charged_speed, math.clamp(var_2_7, 0, 1))
+	if not action_data.charged_speed then
+		var_2_8 = math.lerp(action_data.speed, action_data.charged_speed, math.clamp(charge_level_2, 0, 1))
 	else
-		var_2_8 = var_2_0.speed
+		var_2_8 = action_data.speed
 	end
 
-	local var_2_9 = arg_2_0.owner_unit
+	local owner_unit = self.owner_unit
 	local var_2_10
 
-	if arg_2_0.is_grenade then
-		var_2_8 = var_2_2:apply_buffs_to_value(var_2_8, "grenade_throw_range")
+	if not self.is_grenade then
+		var_2_8 = buff_extension:apply_buffs_to_value(var_2_8, "grenade_throw_range")
 
-		local var_2_11 = var_2_0.ammo_usage
+		local ammo_usage = action_data.ammo_usage
 
-		if not arg_2_0.grenade_thrown then
-			arg_2_0.grenade_thrown = true
+		if not self.grenade_thrown then
+			self.grenade_thrown = true
 
-			local var_2_12, var_2_13 = var_2_2:apply_buffs_to_value(0, "not_consume_grenade")
-			local var_2_14 = var_2_2:has_buff_perk("free_grenade")
+			local apply_buffs_to_value, var_2_13 = buff_extension:apply_buffs_to_value(0, "not_consume_grenade")
+			local has_buff_perk = buff_extension:has_buff_perk("free_grenade")
 
-			if var_2_13 or var_2_14 then
-				arg_2_0.free_grenade = true
+			if var_2_13 or not has_buff_perk then
+				self.free_grenade = true
 
-				var_2_2:trigger_procs("on_grenade_use")
+				buff_extension:trigger_procs("on_grenade_use")
 			end
 
-			arg_2_0.rewield_grenade = var_2_2:has_buff_perk("rewield_grenade_on_throw")
+			self.rewield_grenade = buff_extension:has_buff_perk("rewield_grenade_on_throw")
 
-			Managers.state.achievement:trigger_event("on_grenade_thrown", var_2_9, var_2_0)
+			Managers.state.achievement:trigger_event("on_grenade_thrown", owner_unit, action_data)
 		end
 
-		if arg_2_2 then
-			if not arg_2_0.free_grenade then
-				arg_2_0.ammo_extension:use_ammo(var_2_11)
+		if not arg_2_2 then
+			if not self.free_grenade then
+				self.ammo_extension:use_ammo(ammo_usage)
 			end
 
-			var_2_10 = arg_2_0.rewield_grenade and "rewield_wielded_weapon" or "wield_previous_weapon"
+			var_2_10 = not self.rewield_grenade and "rewield_wielded_weapon" and "wield_previous_weapon"
 		end
 	end
 
 	local var_2_15
-	local var_2_16 = arg_2_0.weapon_unit
-	local var_2_17 = var_2_0.projectile_info
+	local weapon_unit = self.weapon_unit
+	local projectile_info = action_data.projectile_info
 
-	if var_2_17.fire_from_muzzle then
-		local var_2_18 = var_2_17.muzzle_name or "fx_muzzle"
-		local var_2_19 = Unit.node(var_2_16, var_2_18)
-		local var_2_20 = Unit.world_position(var_2_16, var_2_19)
-		local var_2_21 = 1
+	if not projectile_info.fire_from_muzzle then
+		local muzzle_name = projectile_info.muzzle_name
 
-		if var_2_17.timed_data then
-			var_2_21 = var_2_17.timed_data.life_time
+		muzzle_name = muzzle_name or "fx_muzzle"
+
+		local node = Unit.node(weapon_unit, muzzle_name)
+		local world_position = Unit.world_position(weapon_unit, node)
+		local num = 1
+
+		if not projectile_info.timed_data then
+			num = projectile_info.timed_data.life_time
 		end
 
 		var_2_6 = ActionUtils.pitch_from_rotation(arg_2_4)
 		var_2_15 = Vector3.normalize(Vector3.flat(Quaternion.forward(arg_2_4)))
 
-		local var_2_22 = math.degrees_to_radians(var_2_6)
-		local var_2_23 = ProjectileGravitySettings[var_2_17.gravity_settings]
-		local var_2_24 = WeaponHelper:position_on_trajectory(arg_2_3, var_2_15, var_2_8 / 100, var_2_22, var_2_23, var_2_21)
+		local degrees_to_radians = math.degrees_to_radians(var_2_6)
+		local var_2_23 = ProjectileGravitySettings[projectile_info.gravity_settings]
+		local position_on_trajectory = WeaponHelper:position_on_trajectory(arg_2_3, var_2_15, var_2_8 / 100, degrees_to_radians, var_2_23, num)
 
-		var_2_15 = Vector3.normalize(Vector3.flat(var_2_24 - var_2_20))
-		arg_2_3 = var_2_20
+		var_2_15 = Vector3.normalize(Vector3.flat(position_on_trajectory - world_position))
+		arg_2_3 = world_position
 	end
 
-	if var_2_0.flatten_target_vector ~= false then
+	if not (action_data.flatten_target_vector ~= false) then
 		var_2_6 = var_2_6 or ActionUtils.pitch_from_rotation(arg_2_4)
 		var_2_15 = var_2_15 or Vector3.normalize(Vector3.flat(Quaternion.forward(arg_2_4)))
 	else
@@ -136,266 +141,286 @@ function ActionChargedProjectileUtility.fire_charged_projectile(arg_2_0, arg_2_1
 		var_2_15 = Quaternion.forward(arg_2_4)
 	end
 
-	if var_2_0.fire_at_gaze_setting and var_2_0.throw_up_this_much_in_target_direction and ScriptUnit.has_extension(var_2_9, "eyetracking_system") then
-		local var_2_25 = ScriptUnit.extension(var_2_9, "eyetracking_system")
+	if not action_data.fire_at_gaze_setting and not action_data.throw_up_this_much_in_target_direction and not ScriptUnit.has_extension(owner_unit, "eyetracking_system") then
+		local extension = ScriptUnit.extension(owner_unit, "eyetracking_system")
 
-		if var_2_25:get_is_feature_enabled("tobii_fire_at_gaze") then
-			local var_2_26 = var_2_25:get_gaze_rayhit()
+		if not extension:get_is_feature_enabled("tobii_fire_at_gaze") then
+			local get_gaze_rayhit = extension:get_gaze_rayhit()
 
-			if var_2_26 then
-				local var_2_27 = Vector3.distance(Vector3.flat(arg_2_3), Vector3.flat(var_2_26))
-				local var_2_28 = arg_2_3[3] - var_2_26[3]
-				local var_2_29 = ProjectileGravitySettings[var_2_17.gravity_settings]
-				local var_2_30 = Vector3.normalize(Quaternion.forward(arg_2_4)) + Vector3(0, 0, var_2_0.throw_up_this_much_in_target_direction)
-				local var_2_31 = -Vector3.normalize(var_2_30)[3]
-				local var_2_32 = math.sqrt(1 - var_2_31 * var_2_31)
-				local var_2_33 = 22500
-				local var_2_34 = math.clamp(-0.5 * var_2_29 * var_2_27 * var_2_27 / (var_2_28 * var_2_32 * var_2_32 - var_2_27 * var_2_31 * var_2_32), 0.1, var_2_33)
+			if not get_gaze_rayhit then
+				local distance = Vector3.distance(Vector3.flat(arg_2_3), Vector3.flat(get_gaze_rayhit))
+				local num_2 = arg_2_3[3] - get_gaze_rayhit[3]
+				local var_2_29 = ProjectileGravitySettings[projectile_info.gravity_settings]
+				local num_3 = Vector3.normalize(Quaternion.forward(arg_2_4)) + Vector3(0, 0, action_data.throw_up_this_much_in_target_direction)
+				local num_4 = -Vector3.normalize(num_3)[3]
+				local sqrt = math.sqrt(1 - num_4 * num_4)
+				local num_5 = 22500
+				local clamp = math.clamp(-0.5 * var_2_29 * distance * distance / (num_2 * sqrt * sqrt - distance * num_4 * sqrt), 0.1, num_5)
 
-				var_2_8 = math.sqrt(var_2_34) * 100
+				var_2_8 = math.sqrt(clamp) * 100
 			end
 		end
 	end
 
-	local var_2_35 = Managers.player:owner(var_2_9)
-	local var_2_36 = var_2_35 and var_2_35.bot_player
+	local owner = Managers.player:owner(owner_unit)
+	local flag = not owner and owner.bot_player
 
-	if var_2_0.throw_up_this_much_in_target_direction and not var_2_36 then
-		var_2_15 = Vector3.normalize(var_2_15 + Vector3(0, 0, var_2_0.throw_up_this_much_in_target_direction))
+	if not (not action_data.throw_up_this_much_in_target_direction and flag) then
+		var_2_15 = Vector3.normalize(var_2_15 + Vector3(0, 0, action_data.throw_up_this_much_in_target_direction))
 	end
 
-	local var_2_37 = var_2_0.lookup_data
-	local var_2_38 = arg_2_0.item_name
-	local var_2_39 = var_2_37.item_template_name
-	local var_2_40 = var_2_37.action_name
-	local var_2_41 = var_2_37.sub_action_name
-	local var_2_42 = math.round(math.max(var_2_7, 0) * 100)
-	local var_2_43 = var_2_0.scale_projectile ~= false and var_2_42 or 1
-	local var_2_44 = arg_2_0.power_level
+	local lookup_data = action_data.lookup_data
+	local item_name = self.item_name
+	local item_template_name = lookup_data.item_template_name
+	local action_name = lookup_data.action_name
+	local sub_action_name = lookup_data.sub_action_name
+	local round = math.round(math.max(charge_level_2, 0) * 100)
+	local flag_2 = not (action_data.scale_projectile ~= false) and round and 1
+	local power_level = self.power_level
 
-	if var_2_2:has_buff_perk("full_charge_boost") and var_2_7 >= 1 then
-		var_2_44 = var_2_2:apply_buffs_to_value(var_2_44, "full_charge_boost")
+	if not (not buff_extension:has_buff_perk("full_charge_boost") and not (charge_level_2 >= 1)) then
+		power_level = buff_extension:apply_buffs_to_value(power_level, "full_charge_boost")
 	end
 
-	local var_2_45 = ActionUtils.scale_charged_projectile_power_level(var_2_44, var_2_0, var_2_7)
+	local scale_charged_projectile_power_level = ActionUtils.scale_charged_projectile_power_level(power_level, action_data, charge_level_2)
 
-	ActionUtils.spawn_player_projectile(var_2_9, arg_2_3, arg_2_4, var_2_43, var_2_6, var_2_15, var_2_8, var_2_38, var_2_39, var_2_40, var_2_41, arg_2_1, var_2_45, arg_2_5, var_2_42)
+	ActionUtils.spawn_player_projectile(owner_unit, arg_2_3, arg_2_4, flag_2, var_2_6, var_2_15, var_2_8, item_name, item_template_name, action_name, sub_action_name, arg_2_1, scale_charged_projectile_power_level, arg_2_5, round)
 
-	local var_2_46 = var_2_0.fire_sound_event
+	local fire_sound_event = action_data.fire_sound_event
 
-	if var_2_46 then
-		local var_2_47 = var_2_0.fire_sound_on_husk
+	if not fire_sound_event then
+		local fire_sound_on_husk = action_data.fire_sound_on_husk
 
-		ScriptUnit.extension(var_2_9, "first_person_system"):play_hud_sound_event(var_2_46, nil, var_2_47)
+		ScriptUnit.extension(owner_unit, "first_person_system"):play_hud_sound_event(fire_sound_event, nil, fire_sound_on_husk)
 	end
 
-	if var_2_0.alert_sound_range_fire then
-		Managers.state.entity:system("ai_system"):alert_enemies_within_range(var_2_9, POSITION_LOOKUP[var_2_9], var_2_0.alert_sound_range_fire)
+	if not action_data.alert_sound_range_fire then
+		Managers.state.entity:system("ai_system"):alert_enemies_within_range(owner_unit, POSITION_LOOKUP[owner_unit], action_data.alert_sound_range_fire)
 	end
 
-	if var_2_0.hide_weapon_after_fire then
-		Unit.set_unit_visibility(var_2_16, false)
+	if not action_data.hide_weapon_after_fire then
+		Unit.set_unit_visibility(weapon_unit, false)
 	end
 
-	if not var_2_17.disable_throwing_dialogue and var_2_17.pickup_name then
-		local var_2_48 = ScriptUnit.extension_input(var_2_9, "dialogue_system")
-		local var_2_49 = FrameTable.alloc_table()
+	if projectile_info.disable_throwing_dialogue or not projectile_info.pickup_name then
+		local extension_input = ScriptUnit.extension_input(owner_unit, "dialogue_system")
+		local alloc_table = FrameTable.alloc_table()
 
-		var_2_49.item_type = var_2_17.pickup_name
+		alloc_table.item_type = projectile_info.pickup_name
 
-		var_2_48:trigger_networked_dialogue_event("throwing_item", var_2_49)
+		extension_input:trigger_networked_dialogue_event("throwing_item", alloc_table)
 	end
 
-	arg_2_0.first_shot = false
+	self.first_shot = false
 
 	return var_2_10
 end
 
 ActionChargedProjectile = class(ActionChargedProjectile, ActionBase)
 
-function ActionChargedProjectile.init(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8)
-	ActionChargedProjectile.super.init(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8)
+ActionChargedProjectile.init = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8)
+	-- function 3
+	ActionChargedProjectile.super.init(self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8)
 
-	if ScriptUnit.has_extension(arg_3_7, "spread_system") then
-		arg_3_0.spread_extension = ScriptUnit.extension(arg_3_7, "spread_system")
+	if not ScriptUnit.has_extension(arg_3_7, "spread_system") then
+		self.spread_extension = ScriptUnit.extension(arg_3_7, "spread_system")
 	end
 
-	arg_3_0._weapon_unit = arg_3_7
+	self._weapon_unit = arg_3_7
 end
 
-function ActionChargedProjectile.client_owner_start_action(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-	ActionChargedProjectile.super.client_owner_start_action(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+ActionChargedProjectile.client_owner_start_action = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	-- function 4
+	ActionChargedProjectile.super.client_owner_start_action(self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 
-	local var_4_0 = arg_4_0.owner_unit
-	local var_4_1 = ActionUtils.is_critical_strike(arg_4_0.owner_unit, arg_4_1, arg_4_2)
-	local var_4_2 = ScriptUnit.extension(var_4_0, "buff_system")
+	local owner_unit = self.owner_unit
+	local is_critical_strike = ActionUtils.is_critical_strike(self.owner_unit, arg_4_1, arg_4_2)
+	local extension = ScriptUnit.extension(owner_unit, "buff_system")
 
-	arg_4_0.owner_buff_extension = var_4_2
-	arg_4_0.current_action = arg_4_1
-	arg_4_0.state = "waiting_to_shoot"
+	self.owner_buff_extension = extension
+	self.current_action = arg_4_1
+	self.state = "waiting_to_shoot"
 
-	local var_4_3 = arg_4_3 and arg_4_3.charge_level or 0
+	local charge_level
 
-	arg_4_0._projectile_context = ActionChargedProjectileUtility.prepare_charged_projectile(arg_4_1, var_4_0, arg_4_0._weapon_unit, arg_4_0.item_name, var_4_3, arg_4_4)
-	arg_4_0.time_to_shoot = arg_4_2 + arg_4_1.fire_time
-	arg_4_0.extra_buff_shot = false
+	if not arg_4_3 then
+		charge_level = arg_4_3.charge_level
 
-	local var_4_4 = arg_4_1.spread_template_override
-
-	if var_4_4 then
-		arg_4_0.spread_extension:override_spread_template(var_4_4)
+		if not charge_level then
+			-- Nothing
+		end
 	end
 
-	local var_4_5 = arg_4_1.loaded_projectile_settings
+	charge_level = 0
 
-	if var_4_5 then
-		ScriptUnit.extension(arg_4_0.owner_unit, "inventory_system"):set_loaded_projectile_override(var_4_5)
+	::label_4_0::
+
+	self._projectile_context = ActionChargedProjectileUtility.prepare_charged_projectile(arg_4_1, owner_unit, self._weapon_unit, self.item_name, charge_level, arg_4_4)
+	self.time_to_shoot = arg_4_2 + arg_4_1.fire_time
+	self.extra_buff_shot = false
+
+	local spread_template_override = arg_4_1.spread_template_override
+
+	if not spread_template_override then
+		self.spread_extension:override_spread_template(spread_template_override)
 	end
 
-	local var_4_6 = arg_4_1.is_spell
-	local var_4_7 = arg_4_0._projectile_context.charge_level
+	local loaded_projectile_settings = arg_4_1.loaded_projectile_settings
 
-	if var_4_7 and var_4_7 >= 1 and var_4_6 then
-		var_4_2:trigger_procs("on_full_charge_action", arg_4_1, arg_4_2, arg_4_3)
+	if not loaded_projectile_settings then
+		ScriptUnit.extension(self.owner_unit, "inventory_system"):set_loaded_projectile_override(loaded_projectile_settings)
 	end
 
-	local var_4_8 = ScriptUnit.has_extension(var_4_0, "hud_system")
+	local is_spell = arg_4_1.is_spell
+	local charge_level_2 = self._projectile_context.charge_level
 
-	arg_4_0:_handle_critical_strike(var_4_1, var_4_2, var_4_8, nil, "on_critical_shot", nil)
+	if not charge_level_2 and not (charge_level_2 >= 1) or not is_spell then
+		extension:trigger_procs("on_full_charge_action", arg_4_1, arg_4_2, arg_4_3)
+	end
 
-	arg_4_0._is_critical_strike = var_4_1
+	local has_extension = ScriptUnit.has_extension(owner_unit, "hud_system")
+
+	self:_handle_critical_strike(is_critical_strike, extension, has_extension, nil, "on_critical_shot", nil)
+
+	self._is_critical_strike = is_critical_strike
 end
 
-function ActionChargedProjectile.client_owner_post_update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
-	if arg_5_0.state == "waiting_to_shoot" and arg_5_2 >= arg_5_0.time_to_shoot then
-		arg_5_0.state = "shooting"
+ActionChargedProjectile.client_owner_post_update = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	-- function 5
+	if not (self.state ~= "waiting_to_shoot" or not (arg_5_2 >= self.time_to_shoot)) then
+		self.state = "shooting"
 	end
 
-	if arg_5_0.state == "shooting" then
-		if arg_5_0:_update_extra_shots(arg_5_0.owner_buff_extension, 1) then
-			arg_5_0.state = "waiting_to_shoot"
-			arg_5_0.time_to_shoot = arg_5_2 + 0.1
-			arg_5_0.extra_buff_shot = true
+	if self.state == "shooting" then
+		if not self:_update_extra_shots(self.owner_buff_extension, 1) then
+			self.state = "waiting_to_shoot"
+			self.time_to_shoot = arg_5_2 + 0.1
+			self.extra_buff_shot = true
 		else
-			arg_5_0.extra_buff_shot = false
-			arg_5_0.state = "shot"
+			self.extra_buff_shot = false
+			self.state = "shot"
 		end
 
-		arg_5_0:_shoot(arg_5_2)
-		arg_5_0:_proc_spell_used(arg_5_0.owner_buff_extension)
+		self:_shoot(arg_5_2)
+		self:_proc_spell_used(self.owner_buff_extension)
 	end
 end
 
-function ActionChargedProjectile._update_extra_shots(arg_6_0, arg_6_1, arg_6_2)
-	local var_6_0 = arg_6_0._projectile_context
+ActionChargedProjectile._update_extra_shots = function (self, arg_6_1, arg_6_2)
+	-- function 6
+	local _projectile_context = self._projectile_context
 
-	if var_6_0.is_grenade then
-		local var_6_1 = var_6_0.extra_grenades
+	if not _projectile_context.is_grenade then
+		local extra_grenades = _projectile_context.extra_grenades
 
-		if arg_6_2 then
-			var_6_0.extra_grenades = var_6_0.extra_grenades - arg_6_2
+		if not arg_6_2 then
+			_projectile_context.extra_grenades = _projectile_context.extra_grenades - arg_6_2
 		end
 
-		return var_6_1 > 0
+		return extra_grenades > 0
 	end
 
-	return ActionChargedProjectile.super._update_extra_shots(arg_6_0, arg_6_1, arg_6_2)
+	return ActionChargedProjectile.super._update_extra_shots(self, arg_6_1, arg_6_2)
 end
 
-function ActionChargedProjectile._shoot(arg_7_0, arg_7_1)
-	local var_7_0 = arg_7_0._projectile_context
-	local var_7_1 = var_7_0.action_data
-	local var_7_2 = arg_7_0.owner_unit
+ActionChargedProjectile._shoot = function (self, arg_7_1)
+	-- function 7
+	local _projectile_context = self._projectile_context
+	local action_data = _projectile_context.action_data
+	local owner_unit = self.owner_unit
 
-	if not Managers.player:owner(arg_7_0.owner_unit).bot_player then
+	if not Managers.player:owner(self.owner_unit).bot_player then
 		Managers.state.controller_features:add_effect("rumble", {
 			rumble_effect = "handgun_fire"
 		})
 	end
 
-	local var_7_3 = false
-	local var_7_4 = arg_7_0.first_person_unit
+	local flag = false
+	local first_person_unit = self.first_person_unit
 	local var_7_5
 	local var_7_6
 
-	if var_7_1.fire_pos_rot then
-		var_7_5, var_7_6 = var_7_1.fire_pos_rot(var_7_1, var_7_4, arg_7_0.weapon_unit, var_7_2, arg_7_0.world)
+	if not action_data.fire_pos_rot then
+		var_7_5, var_7_6 = action_data.fire_pos_rot(action_data, first_person_unit, self.weapon_unit, owner_unit, self.world)
 	else
-		var_7_5 = Unit.world_position(var_7_4, 0)
-		var_7_6 = Unit.local_rotation(var_7_4, 0)
+		var_7_5 = Unit.world_position(first_person_unit, 0)
+		var_7_6 = Unit.local_rotation(first_person_unit, 0)
 
-		if var_7_1.fire_at_gaze_setting and ScriptUnit.has_extension(var_7_2, "eyetracking_system") then
-			local var_7_7 = ScriptUnit.has_extension(var_7_2, "eyetracking_system")
+		if not action_data.fire_at_gaze_setting and not ScriptUnit.has_extension(owner_unit, "eyetracking_system") then
+			local has_extension = ScriptUnit.has_extension(owner_unit, "eyetracking_system")
 
-			if var_7_7 and var_7_7:get_is_feature_enabled("tobii_fire_at_gaze") then
-				var_7_6 = var_7_7:gaze_rotation()
-				var_7_3 = true
+			if not has_extension and not has_extension:get_is_feature_enabled("tobii_fire_at_gaze") then
+				var_7_6 = has_extension:gaze_rotation()
+				flag = true
 			end
 		end
 
-		local var_7_8 = arg_7_0.spread_extension
+		local spread_extension = self.spread_extension
 
-		if var_7_8 then
-			var_7_6 = var_7_8:get_randomised_spread(var_7_6)
+		if not spread_extension then
+			var_7_6 = spread_extension:get_randomised_spread(var_7_6)
 
-			if var_7_0.first_shot then
-				var_7_8:set_shooting()
+			if not _projectile_context.first_shot then
+				spread_extension:set_shooting()
 			end
 		end
 	end
 
-	local var_7_9 = not arg_7_0.extra_buff_shot
-	local var_7_10 = ActionChargedProjectileUtility.fire_charged_projectile(var_7_0, arg_7_0._is_critical_strike, var_7_9, var_7_5, var_7_6, var_7_3)
-	local var_7_11 = ScriptUnit.extension(var_7_2, "inventory_system")
+	local flag_2 = not self.extra_buff_shot
+	local fire_charged_projectile = ActionChargedProjectileUtility.fire_charged_projectile(_projectile_context, self._is_critical_strike, flag_2, var_7_5, var_7_6, flag)
+	local extension = ScriptUnit.extension(owner_unit, "inventory_system")
 
-	if var_7_10 == "wield_previous_weapon" then
-		var_7_11:wield_previous_weapon()
-	elseif var_7_10 == "rewield_wielded_weapon" then
-		var_7_11:rewield_wielded_slot()
+	if fire_charged_projectile == "wield_previous_weapon" then
+		extension:wield_previous_weapon()
+	elseif fire_charged_projectile == "rewield_wielded_weapon" then
+		extension:rewield_wielded_slot()
 	end
 end
 
-function ActionChargedProjectile.finish(arg_8_0, arg_8_1)
-	if arg_8_0.state == "waiting_to_shoot" then
-		arg_8_0.state = "shot"
+ActionChargedProjectile.finish = function (self, arg_8_1)
+	-- function 8
+	if self.state == "waiting_to_shoot" then
+		self.state = "shot"
 
-		local var_8_0 = Managers.time:time("game")
-		local var_8_1 = 5
+		local time = Managers.time:time("game")
+		local num = 5
 
-		for iter_8_0 = 1, var_8_1 do
-			arg_8_0:_shoot(var_8_0)
-			arg_8_0:_proc_spell_used(arg_8_0.owner_buff_extension)
+		for i = 1, num do
+			self:_shoot(time)
+			self:_proc_spell_used(self.owner_buff_extension)
 
-			arg_8_0.extra_buff_shot = true
+			self.extra_buff_shot = true
 
-			if not arg_8_0:_update_extra_shots(arg_8_0.owner_buff_extension, 1) then
+			if not self:_update_extra_shots(self.owner_buff_extension, 1) then
 				break
 			end
 		end
 	end
 
-	local var_8_2 = arg_8_0._projectile_context.ammo_extension
-	local var_8_3 = arg_8_0.current_action
-	local var_8_4 = arg_8_0.owner_unit
+	local ammo_extension = self._projectile_context.ammo_extension
+	local current_action = self.current_action
+	local owner_unit = self.owner_unit
 
 	if arg_8_1 ~= "new_interupting_action" then
-		local var_8_5 = var_8_3.reload_when_out_of_ammo_condition_func
-		local var_8_6 = not var_8_5 and true or var_8_5(var_8_4, arg_8_1)
+		local reload_when_out_of_ammo_condition_func = current_action.reload_when_out_of_ammo_condition_func
+		local flag
 
-		if var_8_2 and var_8_3.reload_when_out_of_ammo and var_8_6 and var_8_2:ammo_count() == 0 and var_8_2:can_reload() then
-			var_8_2:start_reload(true)
+		flag = reload_when_out_of_ammo_condition_func or not true or reload_when_out_of_ammo_condition_func(owner_unit, arg_8_1)
+
+		if not ammo_extension and not current_action.reload_when_out_of_ammo and not flag and ammo_extension:ammo_count() ~= 0 or not ammo_extension:can_reload() then
+			ammo_extension:start_reload(true)
 		end
 	end
 
-	ScriptUnit.extension(var_8_4, "inventory_system"):set_loaded_projectile_override(nil)
+	ScriptUnit.extension(owner_unit, "inventory_system"):set_loaded_projectile_override(nil)
 
-	if arg_8_0.spread_extension then
-		arg_8_0.spread_extension:reset_spread_template()
+	if not self.spread_extension then
+		self.spread_extension:reset_spread_template()
 	end
 
-	local var_8_7 = ScriptUnit.has_extension(var_8_4, "hud_system")
+	local has_extension = ScriptUnit.has_extension(owner_unit, "hud_system")
 
-	if var_8_7 then
-		var_8_7.show_critical_indication = false
+	if not has_extension then
+		has_extension.show_critical_indication = false
 	end
 end

@@ -2,431 +2,556 @@
 
 ActionFlamethrower = class(ActionFlamethrower, ActionBase)
 
-local var_0_0 = -1.5
-local var_0_1 = math.abs(var_0_0) + 10
-local var_0_2 = 2
-local var_0_3 = 50
-local var_0_4 = {
+local num = -1.5
+local num_2 = math.abs(num) + 10
+local num_3 = 2
+local num_4 = 50
+local tbl = {
 	"j_leftshoulder",
 	"j_rightshoulder",
 	"j_spine1"
 }
-local var_0_5 = #var_0_4
+local count = #tbl
 
-function ActionFlamethrower.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
-	ActionFlamethrower.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionFlamethrower.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	-- function 1
+	ActionFlamethrower.super.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
-	if ScriptUnit.has_extension(arg_1_7, "ammo_system") then
-		arg_1_0.ammo_extension = ScriptUnit.extension(arg_1_7, "ammo_system")
+	if not ScriptUnit.has_extension(arg_1_7, "ammo_system") then
+		self.ammo_extension = ScriptUnit.extension(arg_1_7, "ammo_system")
 	end
 
-	arg_1_0.overcharge_extension = ScriptUnit.extension(arg_1_4, "overcharge_system")
-	arg_1_0.buff_extension = ScriptUnit.extension(arg_1_4, "buff_system")
-	arg_1_0.targets = {}
-	arg_1_0.old_targets = {}
-	arg_1_0.stop_sound_event = "Stop_player_combat_weapon_drakegun_flamethrower_shoot"
-	arg_1_0.unit_id = Managers.state.network.unit_storage:go_id(arg_1_4)
+	self.overcharge_extension = ScriptUnit.extension(arg_1_4, "overcharge_system")
+	self.buff_extension = ScriptUnit.extension(arg_1_4, "buff_system")
+	self.targets = {}
+	self.old_targets = {}
+	self.stop_sound_event = "Stop_player_combat_weapon_drakegun_flamethrower_shoot"
+	self.unit_id = Managers.state.network.unit_storage:go_id(arg_1_4)
 end
 
-function ActionFlamethrower.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
-	ActionFlamethrower.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+ActionFlamethrower.client_owner_start_action = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	-- function 2
+	ActionFlamethrower.super.client_owner_start_action(self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 
-	arg_2_0.current_action = arg_2_1
-	arg_2_0.power_level = arg_2_4
-	arg_2_0.state = "waiting_to_shoot"
-	arg_2_0.time_to_shoot = arg_2_2 + arg_2_1.fire_time
-	arg_2_0.overcharge_timer = 0
-	arg_2_0.damage_timer = 1
-	arg_2_0.stop_sound_event = arg_2_1.stop_fire_event or arg_2_0.stop_sound_event
-	arg_2_0.muzzle_node_name = arg_2_1.fx_node or "fx_muzzle"
-	arg_2_0._fx_stopped = false
-	arg_2_0.dot_check = arg_2_1.dot_check or 0.95
-	arg_2_0.spray_range = arg_2_1.spray_range and math.abs(var_0_0) + arg_2_1.spray_range or var_0_1
-	arg_2_0.charge_level = arg_2_3 and arg_2_3.charge_level or 1
-	arg_2_0.max_flame_time = arg_2_1.fire_stop_time and arg_2_2 + arg_2_1.fire_stop_time or arg_2_2 + arg_2_0.charge_level * (arg_2_1.charge_fuel_time_multiplier or 3)
+	self.current_action = arg_2_1
+	self.power_level = arg_2_4
+	self.state = "waiting_to_shoot"
+	self.time_to_shoot = arg_2_2 + arg_2_1.fire_time
+	self.overcharge_timer = 0
+	self.damage_timer = 1
 
-	if arg_2_0.buff_extension:has_buff_perk("full_charge_boost") and arg_2_0.charge_level >= 1 then
-		arg_2_0.power_level = arg_2_0.buff_extension:apply_buffs_to_value(arg_2_0.power_level, "full_charge_boost")
+	local stop_fire_event = arg_2_1.stop_fire_event
+
+	stop_fire_event = stop_fire_event or self.stop_sound_event
+	self.stop_sound_event = stop_fire_event
+
+	local fx_node = arg_2_1.fx_node
+
+	fx_node = fx_node or "fx_muzzle"
+	self.muzzle_node_name = fx_node
+	self._fx_stopped = false
+
+	local dot_check = arg_2_1.dot_check
+
+	dot_check = dot_check or 0.95
+	self.dot_check = dot_check
+
+	local num_3
+
+	if not arg_2_1.spray_range then
+		num_3 = math.abs(num) + arg_2_1.spray_range
+
+		if not num_3 then
+			-- Nothing
+		end
 	end
 
-	if arg_2_3 and arg_2_3.charge_level and arg_2_0.charge_level and arg_2_0.charge_level >= 1 then
-		arg_2_0.buff_extension:trigger_procs("on_full_charge_action", arg_2_1, arg_2_2, arg_2_3)
+	num_3 = num_2
+
+	::label_2_0::
+
+	self.spray_range = num_3
+
+	local charge_level
+
+	if not arg_2_3 then
+		charge_level = arg_2_3.charge_level
+
+		if not charge_level then
+			-- Nothing
+		end
 	end
 
-	table.clear(arg_2_0.old_targets)
-	table.clear(arg_2_0.targets)
+	charge_level = 1
+
+	::label_2_1::
+
+	self.charge_level = charge_level
+
+	local num_4
+
+	if not arg_2_1.fire_stop_time then
+		num_4 = arg_2_2 + arg_2_1.fire_stop_time
+
+		if not num_4 then
+			-- Nothing
+		end
+	end
+
+	do
+		local charge_level_2 = self.charge_level
+		local charge_fuel_time_multiplier = arg_2_1.charge_fuel_time_multiplier
+
+		charge_fuel_time_multiplier = charge_fuel_time_multiplier or 3
+		num_4 = arg_2_2 + charge_level_2 * charge_fuel_time_multiplier
+	end
+
+	::label_2_2::
+
+	self.max_flame_time = num_4
+
+	if not (not self.buff_extension:has_buff_perk("full_charge_boost") and not (self.charge_level >= 1)) then
+		self.power_level = self.buff_extension:apply_buffs_to_value(self.power_level, "full_charge_boost")
+	end
+
+	if not (not arg_2_3 and not arg_2_3.charge_level and not self.charge_level and not (self.charge_level >= 1)) then
+		self.buff_extension:trigger_procs("on_full_charge_action", arg_2_1, arg_2_2, arg_2_3)
+	end
+
+	table.clear(self.old_targets)
+	table.clear(self.targets)
 end
 
-local var_0_6 = 4
+local num_5 = 4
 
-function ActionFlamethrower.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
-	local var_3_0 = arg_3_0.owner_unit
-	local var_3_1 = arg_3_0.first_person_unit
-	local var_3_2 = arg_3_0.current_action
-	local var_3_3 = arg_3_0.owner_player
-	local var_3_4 = var_3_3.bot_player
-	local var_3_5 = arg_3_0.network_transmit
-	local var_3_6 = arg_3_0.is_server
+ActionFlamethrower.client_owner_post_update = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	-- function 3
+	local owner_unit = self.owner_unit
+	local first_person_unit = self.first_person_unit
+	local current_action = self.current_action
+	local owner_player = self.owner_player
+	local bot_player = owner_player.bot_player
+	local network_transmit = self.network_transmit
+	local is_server = self.is_server
 
-	if arg_3_0.state == "waiting_to_shoot" and arg_3_2 >= arg_3_0.time_to_shoot then
-		arg_3_0.state = "shooting"
+	if not (self.state ~= "waiting_to_shoot" or not (arg_3_2 >= self.time_to_shoot)) then
+		self.state = "shooting"
 
-		local var_3_7 = var_3_2.first_person_muzzle and var_3_1 or arg_3_0.weapon_unit
-		local var_3_8 = arg_3_0.muzzle_node_name
-		local var_3_9 = arg_3_0.unit_id
-		local var_3_10 = Unit.node(var_3_7, var_3_8)
-		local var_3_11 = Unit.world_position(var_3_7, var_3_10)
-		local var_3_12 = Unit.world_rotation(var_3_7, var_3_10)
-		local var_3_13 = var_3_2.particle_effect_flames
-		local var_3_14 = var_3_2.particle_effect_flames_3p
-		local var_3_15 = NetworkLookup.effects[var_3_14]
+		local flag = not current_action.first_person_muzzle and first_person_unit and self.weapon_unit
+		local muzzle_node_name = self.muzzle_node_name
+		local unit_id = self.unit_id
+		local node = Unit.node(flag, muzzle_node_name)
+		local world_position = Unit.world_position(flag, node)
+		local world_rotation = Unit.world_rotation(flag, node)
+		local particle_effect_flames = current_action.particle_effect_flames
+		local particle_effect_flames_3p = current_action.particle_effect_flames_3p
+		local var_3_15 = NetworkLookup.effects[particle_effect_flames_3p]
 
-		if not var_3_4 then
-			arg_3_0._flamethrower_effect = World.create_particles(arg_3_3, var_3_13, var_3_11, var_3_12)
+		if not bot_player then
+			self._flamethrower_effect = World.create_particles(arg_3_3, particle_effect_flames, world_position, world_rotation)
 
-			World.link_particles(arg_3_3, arg_3_0._flamethrower_effect, var_3_7, var_3_10, Matrix4x4.identity(), "destroy")
+			World.link_particles(arg_3_3, self._flamethrower_effect, flag, node, Matrix4x4.identity(), "destroy")
 		end
 
-		if not var_3_2.first_person_muzzle then
-			if var_3_6 or LEVEL_EDITOR_TEST then
-				if var_3_4 then
-					var_3_5:send_rpc_all("rpc_start_flamethrower", var_3_9, var_3_15)
+		if not current_action.first_person_muzzle then
+			if is_server or not LEVEL_EDITOR_TEST then
+				if not bot_player then
+					network_transmit:send_rpc_all("rpc_start_flamethrower", unit_id, var_3_15)
 				else
-					var_3_5:send_rpc_clients("rpc_start_flamethrower", var_3_9, var_3_15)
+					network_transmit:send_rpc_clients("rpc_start_flamethrower", unit_id, var_3_15)
 				end
 			else
-				var_3_5:send_rpc_server("rpc_start_flamethrower", var_3_9, var_3_15)
+				network_transmit:send_rpc_server("rpc_start_flamethrower", unit_id, var_3_15)
 			end
 		end
 
-		if var_3_2.fire_sound_event then
-			if arg_3_0._source_id then
-				local var_3_16 = not arg_3_0.owner_player.local_player
+		if not current_action.fire_sound_event then
+			if not self._source_id then
+				local flag_2 = not self.owner_player.local_player
+				local set_switch = WwiseWorld.set_switch
+				local wwise_world = self.wwise_world
+				local str = "husk"
+				local flag_3
 
-				WwiseWorld.set_switch(arg_3_0.wwise_world, "husk", var_3_16 and "true" or "false", arg_3_0._source_id)
-				WwiseWorld.trigger_event(arg_3_0.wwise_world, arg_3_0.stop_sound_event, arg_3_0._source_id)
+				flag_3 = not flag_2 and "true" and "false"
+
+				set_switch(wwise_world, str, flag_3, self._source_id)
+				WwiseWorld.trigger_event(self.wwise_world, self.stop_sound_event, self._source_id)
 			else
-				arg_3_0._source_id = WwiseWorld.make_auto_source(arg_3_0.wwise_world, arg_3_0.weapon_unit)
+				self._source_id = WwiseWorld.make_auto_source(self.wwise_world, self.weapon_unit)
 			end
 
-			local var_3_17 = not arg_3_0.owner_player.local_player
+			local flag_4 = not self.owner_player.local_player
+			local set_switch_2 = WwiseWorld.set_switch
+			local wwise_world_2 = self.wwise_world
+			local str_2 = "husk"
+			local flag_5
 
-			WwiseWorld.set_switch(arg_3_0.wwise_world, "husk", var_3_17 and "true" or "false", arg_3_0._source_id)
-			WwiseWorld.trigger_event(arg_3_0.wwise_world, var_3_2.fire_sound_event, arg_3_0._source_id)
+			flag_5 = not flag_4 and "true" and "false"
+
+			set_switch_2(wwise_world_2, str_2, flag_5, self._source_id)
+			WwiseWorld.trigger_event(self.wwise_world, current_action.fire_sound_event, self._source_id)
 		end
 	end
 
-	arg_3_0.overcharge_timer = arg_3_0.overcharge_timer + arg_3_1
+	self.overcharge_timer = self.overcharge_timer + arg_3_1
 
-	if arg_3_0.state == "shooting" and arg_3_0.overcharge_timer >= var_3_2.overcharge_interval then
-		local var_3_18 = PlayerUnitStatusSettings.overcharge_values[var_3_2.overcharge_type]
+	if not (self.state ~= "shooting" or not (self.overcharge_timer >= current_action.overcharge_interval)) then
+		local var_3_26 = PlayerUnitStatusSettings.overcharge_values[current_action.overcharge_type]
 
-		if arg_3_0.buff_extension then
-			local var_3_19 = arg_3_0.buff_extension:has_buff_perk("no_overcharge_crit")
+		if not self.buff_extension then
+			local has_buff_perk = self.buff_extension:has_buff_perk("no_overcharge_crit")
 
-			if ActionUtils.is_critical_strike(var_3_0, var_3_2, arg_3_2) and var_3_19 then
-				var_3_18 = 0
+			if not ActionUtils.is_critical_strike(owner_unit, current_action, arg_3_2) and not has_buff_perk then
+				var_3_26 = 0
 			end
 		end
 
-		arg_3_0.overcharge_extension:add_charge(var_3_18)
+		self.overcharge_extension:add_charge(var_3_26)
 
-		arg_3_0.overcharge_timer = 0
+		self.overcharge_timer = 0
 	end
 
-	if arg_3_0.state == "shooting" and arg_3_2 < arg_3_0.max_flame_time then
-		local var_3_20 = ScriptUnit.extension(var_3_0, "first_person_system"):current_position()
+	if not (self.state ~= "shooting" or not (arg_3_2 < self.max_flame_time)) then
+		local current_position = ScriptUnit.extension(owner_unit, "first_person_system"):current_position()
 
-		if not Managers.player:owner(var_3_0).bot_player and not arg_3_0._rumble_effect_id then
-			arg_3_0._rumble_effect_id = Managers.state.controller_features:add_effect("persistent_rumble", {
+		if not (Managers.player:owner(owner_unit).bot_player or self._rumble_effect_id) then
+			self._rumble_effect_id = Managers.state.controller_features:add_effect("persistent_rumble", {
 				rumble_effect = "reload_start"
 			})
 		end
 
-		local var_3_21 = var_3_2.damage_interval
-		local var_3_22 = 0
+		local damage_interval = current_action.damage_interval
+		local num = 0
 
-		if var_3_21 then
-			if arg_3_0.damage_timer >= var_3_2.damage_interval then
-				arg_3_0.damage_timer = 0
+		if not damage_interval then
+			if self.damage_timer >= current_action.damage_interval then
+				self.damage_timer = 0
 			end
 
-			if arg_3_0.damage_timer == 0 then
-				arg_3_0:_check_critical_strike(arg_3_2)
-				arg_3_0:_select_targets(arg_3_3, true)
+			if self.damage_timer == 0 then
+				self:_check_critical_strike(arg_3_2)
+				self:_select_targets(arg_3_3, true)
 
-				local var_3_23 = arg_3_0.targets
-				local var_3_24 = true
+				local targets = self.targets
+				local flag_6 = true
 
-				for iter_3_0 = 1, #var_3_23 do
-					local var_3_25 = false
-					local var_3_26 = var_3_23[iter_3_0]
+				for i = 1, #targets do
+					local flag_7 = false
+					local var_3_34 = targets[i]
 
-					if Unit.alive(var_3_26) then
-						local var_3_27 = Unit.get_data(var_3_26, "breed")
-						local var_3_28 = "j_spine"
+					if not Unit.alive(var_3_34) then
+						local get_data = Unit.get_data(var_3_34, "breed")
+						local str_3 = "j_spine"
 
-						if var_3_27 then
-							var_3_22 = var_3_22 + 1
+						if not get_data then
+							num = num + 1
 
-							local var_3_29 = math.round(Math.random_range(1, var_0_5))
+							local round = math.round(Math.random_range(1, count))
 
-							for iter_3_1 = 1, var_0_5 do
-								local var_3_30 = math.index_wrapper(var_3_29 + iter_3_1 - 1, var_0_5)
-								local var_3_31 = var_0_4[var_3_30]
+							for j = 1, count do
+								local index_wrapper = math.index_wrapper(round + j - 1, count)
+								local var_3_39 = tbl[index_wrapper]
 
-								if Unit.has_node(var_3_26, var_3_31) then
-									var_3_28 = var_3_31
+								if not Unit.has_node(var_3_34, var_3_39) then
+									str_3 = var_3_39
 
 									break
 								end
 							end
 						end
 
-						local var_3_32 = Unit.world_position(var_3_26, Unit.node(var_3_26, var_3_28))
-						local var_3_33 = Vector3.normalize(var_3_32 - var_3_20)
-						local var_3_34 = arg_3_0:raycast_to_target(arg_3_3, var_3_20, var_3_33, var_3_26)
+						local world_position_2 = Unit.world_position(var_3_34, Unit.node(var_3_34, str_3))
+						local normalize = Vector3.normalize(world_position_2 - current_position)
+						local raycast_to_target = self:raycast_to_target(arg_3_3, current_position, normalize, var_3_34)
 
-						if var_3_34 then
-							local var_3_35 = arg_3_0.power_level
-							local var_3_36 = arg_3_0.old_targets and arg_3_0.old_targets[var_3_26]
-							local var_3_37
+						if not raycast_to_target then
+							local power_level = self.power_level
+							local old_targets = self.old_targets
 
-							if var_3_36 then
-								var_3_35 = var_3_35 * (math.clamp(var_3_36, 0, 4) * 0.5)
+							old_targets = not old_targets and self.old_targets[var_3_34]
 
-								if var_3_36 < 5 then
-									var_3_37 = var_3_2.initial_damage_profile or var_3_2.damage_profile or "default"
+							local var_3_45
+
+							if not old_targets then
+								power_level = power_level * (math.clamp(old_targets, 0, 4) * 0.5)
+
+								if old_targets < 5 then
+									var_3_45 = current_action.initial_damage_profile or current_action.damage_profile or "default"
 								end
 							else
-								var_3_37 = var_3_2.initial_damage_profile or var_3_2.damage_profile or "default"
+								var_3_45 = current_action.initial_damage_profile or current_action.damage_profile or "default"
 							end
 
-							if DamageUtils.process_projectile_hit(arg_3_3, arg_3_0.item_name, var_3_0, var_3_6, var_3_34, var_3_2, var_3_33, var_3_24, var_3_26, nil, arg_3_0._is_critical_strike, var_3_35, var_3_37, var_3_22).buffs_checked then
-								var_3_24 = var_3_24 and false
+							if not DamageUtils.process_projectile_hit(arg_3_3, self.item_name, owner_unit, is_server, raycast_to_target, current_action, normalize, flag_6, var_3_34, nil, self._is_critical_strike, power_level, var_3_45, num).buffs_checked then
+								flag_6 = not flag_6 and false
 							end
 
-							var_3_25 = true
+							flag_7 = true
 						end
 					end
 
-					var_3_23[var_3_26] = var_3_25
+					targets[var_3_34] = flag_7
 				end
 
-				local var_3_38 = var_3_2.spray_range or var_0_1
-				local var_3_39 = World.get_data(arg_3_3, "physics_world")
-				local var_3_40 = Unit.world_rotation(var_3_1, 0)
-				local var_3_41 = Vector3.normalize(Quaternion.forward(var_3_40))
-				local var_3_42 = PhysicsWorld.immediate_raycast_actors(var_3_39, var_3_20, var_3_41, var_3_38, "static_collision_filter", "filter_player_ray_projectile_static_only", "dynamic_collision_filter", "filter_player_ray_projectile_hitbox_only")
-				local var_3_43
+				local spray_range = current_action.spray_range
 
-				if var_3_42 then
-					local var_3_44 = Managers.state.difficulty:get_difficulty_settings()
-					local var_3_45 = DamageUtils.allow_friendly_fire_ranged(var_3_44, var_3_3)
-					local var_3_46 = Managers.state.side.side_by_unit[arg_3_0.owner_unit].PLAYER_AND_BOT_UNITS
+				spray_range = spray_range or num_2
 
-					for iter_3_2, iter_3_3 in pairs(var_3_42) do
-						local var_3_47 = iter_3_3[var_0_6]
-						local var_3_48 = Actor.unit(var_3_47)
-						local var_3_49 = var_3_43 and Unit.get_data(var_3_43, "breed")
+				local get_data_2 = World.get_data(arg_3_3, "physics_world")
+				local world_rotation_2 = Unit.world_rotation(first_person_unit, 0)
+				local normalize_2 = Vector3.normalize(Quaternion.forward(world_rotation_2))
+				local immediate_raycast_actors = PhysicsWorld.immediate_raycast_actors(get_data_2, current_position, normalize_2, spray_range, "static_collision_filter", "filter_player_ray_projectile_static_only", "dynamic_collision_filter", "filter_player_ray_projectile_hitbox_only")
+				local var_3_51
 
-						if var_3_48 ~= arg_3_0.owner_unit and not var_3_23[var_3_48] and not var_3_49 then
-							if table.contains(var_3_46, var_3_48) then
-								if var_3_45 then
-									var_3_43 = var_3_48
+				if not immediate_raycast_actors then
+					local get_difficulty_settings = Managers.state.difficulty:get_difficulty_settings()
+					local allow_friendly_fire_ranged = DamageUtils.allow_friendly_fire_ranged(get_difficulty_settings, owner_player)
+					local PLAYER_AND_BOT_UNITS = Managers.state.side.side_by_unit[self.owner_unit].PLAYER_AND_BOT_UNITS
+
+					for k, v in pairs(immediate_raycast_actors) do
+						local var_3_55 = v[num_5]
+						local unit = Actor.unit(var_3_55)
+						local flag_8 = not var_3_51 and Unit.get_data(var_3_51, "breed")
+
+						if not (unit == self.owner_unit or targets[unit] or flag_8) then
+							if not table.contains(PLAYER_AND_BOT_UNITS, unit) then
+								if not allow_friendly_fire_ranged then
+									var_3_51 = unit
 
 									break
 								end
 							else
-								var_3_43 = var_3_48
+								var_3_51 = unit
 
 								break
 							end
 						end
 					end
 
-					if var_3_43 and var_3_42 then
-						DamageUtils.process_projectile_hit(arg_3_3, arg_3_0.item_name, arg_3_0.owner_unit, var_3_6, var_3_42, var_3_2, var_3_41, var_3_24, var_3_43, nil, arg_3_0._is_critical_strike, arg_3_0.power_level)
+					if not var_3_51 and not immediate_raycast_actors then
+						DamageUtils.process_projectile_hit(arg_3_3, self.item_name, self.owner_unit, is_server, immediate_raycast_actors, current_action, normalize_2, flag_6, var_3_51, nil, self._is_critical_strike, self.power_level)
 					end
 				end
 
-				arg_3_0:_clear_targets()
+				self:_clear_targets()
 			end
 
-			arg_3_0.damage_timer = arg_3_0.damage_timer + arg_3_1
+			self.damage_timer = self.damage_timer + arg_3_1
 		end
-	elseif arg_3_2 >= arg_3_0.max_flame_time and arg_3_0.state == "shooting" then
-		arg_3_0.state = "shot"
+	elseif not (not (arg_3_2 >= self.max_flame_time) or self.state ~= "shooting") then
+		self.state = "shot"
 
-		arg_3_0:_stop_fx()
-		arg_3_0:_proc_spell_used(arg_3_0.buff_extension)
+		self:_stop_fx()
+		self:_proc_spell_used(self.buff_extension)
 	end
 end
 
-function ActionFlamethrower._stop_fx(arg_4_0)
-	if arg_4_0._fx_stopped then
+ActionFlamethrower._stop_fx = function (self)
+	-- function 4
+	if not self._fx_stopped then
 		return
 	end
 
-	if arg_4_0._flamethrower_effect then
-		World.stop_spawning_particles(arg_4_0.world, arg_4_0._flamethrower_effect)
+	if not self._flamethrower_effect then
+		World.stop_spawning_particles(self.world, self._flamethrower_effect)
 
-		arg_4_0._flamethrower_effect = nil
+		self._flamethrower_effect = nil
 	end
 
-	local var_4_0 = arg_4_0.unit_id
+	local unit_id = self.unit_id
 
-	if arg_4_0.is_server or LEVEL_EDITOR_TEST then
-		if arg_4_0.owner_player.bot_player then
-			arg_4_0.network_transmit:send_rpc_all("rpc_end_flamethrower", var_4_0)
+	if self.is_server or not LEVEL_EDITOR_TEST then
+		if not self.owner_player.bot_player then
+			self.network_transmit:send_rpc_all("rpc_end_flamethrower", unit_id)
 		else
-			arg_4_0.network_transmit:send_rpc_clients("rpc_end_flamethrower", var_4_0)
+			self.network_transmit:send_rpc_clients("rpc_end_flamethrower", unit_id)
 		end
 	else
-		arg_4_0.network_transmit:send_rpc_server("rpc_end_flamethrower", var_4_0)
+		self.network_transmit:send_rpc_server("rpc_end_flamethrower", unit_id)
 	end
 
-	local var_4_1 = arg_4_0._source_id
+	local _source_id = self._source_id
 
-	if var_4_1 then
-		local var_4_2 = not arg_4_0.owner_player.local_player
+	if not _source_id then
+		local flag = not self.owner_player.local_player
+		local set_switch = WwiseWorld.set_switch
+		local wwise_world = self.wwise_world
+		local str = "husk"
+		local flag_2
 
-		WwiseWorld.set_switch(arg_4_0.wwise_world, "husk", var_4_2 and "true" or "false", var_4_1)
-		WwiseWorld.trigger_event(arg_4_0.wwise_world, arg_4_0.stop_sound_event, var_4_1)
+		flag_2 = not flag and "true" and "false"
 
-		arg_4_0._source_id = nil
+		set_switch(wwise_world, str, flag_2, _source_id)
+		WwiseWorld.trigger_event(self.wwise_world, self.stop_sound_event, _source_id)
+
+		self._source_id = nil
 	end
 
-	local var_4_3 = ScriptUnit.has_extension(arg_4_0.owner_unit, "hud_system")
+	local has_extension = ScriptUnit.has_extension(self.owner_unit, "hud_system")
 
-	if var_4_3 then
-		var_4_3.show_critical_indication = false
+	if not has_extension then
+		has_extension.show_critical_indication = false
 	end
 
-	if arg_4_0._rumble_effect_id then
-		Managers.state.controller_features:stop_effect(arg_4_0._rumble_effect_id)
+	if not self._rumble_effect_id then
+		Managers.state.controller_features:stop_effect(self._rumble_effect_id)
 
-		arg_4_0._rumble_effect_id = nil
-	end
-end
-
-function ActionFlamethrower.finish(arg_5_0, arg_5_1)
-	arg_5_0:_clear_targets()
-
-	if arg_5_0.state ~= "shot" then
-		arg_5_0:_proc_spell_used(arg_5_0.buff_extension)
-	end
-
-	arg_5_0:_stop_fx()
-end
-
-function ActionFlamethrower.destroy(arg_6_0)
-	if arg_6_0._flamethrower_effect then
-		World.destroy_particles(arg_6_0.world, arg_6_0._flamethrower_effect)
-
-		arg_6_0._flamethrower_effect = nil
+		self._rumble_effect_id = nil
 	end
 end
 
-function ActionFlamethrower._clear_targets(arg_7_0)
-	local var_7_0 = arg_7_0.targets
-	local var_7_1 = arg_7_0.old_targets
-	local var_7_2 = {}
+ActionFlamethrower.finish = function (self, arg_5_1)
+	-- function 5
+	self:_clear_targets()
 
-	for iter_7_0 = 1, #var_7_0 do
-		local var_7_3 = var_7_1 and var_7_1[var_7_0[iter_7_0]] or 0
-
-		var_7_2[var_7_0[iter_7_0]] = var_7_3 + 1
+	if self.state ~= "shot" then
+		self:_proc_spell_used(self.buff_extension)
 	end
 
-	table.clear(arg_7_0.old_targets)
-	table.clear(arg_7_0.targets)
-
-	arg_7_0.old_targets = var_7_2
+	self:_stop_fx()
 end
 
-function ActionFlamethrower._select_targets(arg_8_0, arg_8_1, arg_8_2)
-	local var_8_0 = arg_8_0.owner_unit
-	local var_8_1 = ScriptUnit.extension(var_8_0, "first_person_system")
+ActionFlamethrower.destroy = function (self)
+	-- function 6
+	if not self._flamethrower_effect then
+		World.destroy_particles(self.world, self._flamethrower_effect)
+
+		self._flamethrower_effect = nil
+	end
+end
+
+ActionFlamethrower._clear_targets = function (self)
+	-- function 7
+	local targets = self.targets
+	local old_targets = self.old_targets
+	local tbl = {}
+
+	for i = 1, #targets do
+		local var_7_3
+
+		if not old_targets then
+			var_7_3 = old_targets[targets[i]]
+
+			if not var_7_3 then
+				-- Nothing
+			end
+		end
+
+		var_7_3 = 0
+
+		::label_7_0::
+
+		tbl[targets[i]] = var_7_3 + 1
+	end
+
+	table.clear(self.old_targets)
+	table.clear(self.targets)
+
+	self.old_targets = tbl
+end
+
+ActionFlamethrower._select_targets = function (self, arg_8_1, arg_8_2)
+	-- function 8
+	local owner_unit = self.owner_unit
+	local extension = ScriptUnit.extension(owner_unit, "first_person_system")
 	local var_8_2 = Vector3(0, 0, -0.4)
-	local var_8_3 = var_8_1:current_position() + var_8_2
-	local var_8_4 = arg_8_0.first_person_unit
-	local var_8_5 = Unit.world_rotation(var_8_4, 0)
-	local var_8_6 = Vector3.normalize(Quaternion.forward(var_8_5))
-	local var_8_7 = not Managers.state.difficulty:get_difficulty_settings().friendly_fire_ranged
-	local var_8_8 = var_8_3 + var_8_6 * var_0_0
-	local var_8_9 = 6
-	local var_8_10 = BLACKBOARDS[var_8_0].side
-	local var_8_11 = {}
-	local var_8_12 = AiUtils.broadphase_query(var_8_3 + var_8_6 * var_8_9, var_8_9, var_8_11)
-	local var_8_13 = World.get_data(arg_8_1, "physics_world")
+	local num_3 = extension:current_position() + var_8_2
+	local first_person_unit = self.first_person_unit
+	local world_rotation = Unit.world_rotation(first_person_unit, 0)
+	local normalize = Vector3.normalize(Quaternion.forward(world_rotation))
+	local flag = not Managers.state.difficulty:get_difficulty_settings().friendly_fire_ranged
+	local num_5 = num_3 + normalize * num
+	local num_6 = 6
+	local side = BLACKBOARDS[owner_unit].side
+	local tbl = {}
+	local broadphase_query = AiUtils.broadphase_query(num_3 + normalize * num_6, num_6, tbl)
+	local get_data = World.get_data(arg_8_1, "physics_world")
 
-	PhysicsWorld.prepare_actors_for_overlap(var_8_13, var_8_8, var_0_1 * var_0_1)
+	PhysicsWorld.prepare_actors_for_overlap(get_data, num_5, num_2 * num_2)
 
-	if var_8_12 > 0 then
-		local var_8_14 = arg_8_0.targets
-		local var_8_15, var_8_16, var_8_17 = Script.temp_count()
-		local var_8_18 = 0
+	if broadphase_query > 0 then
+		local targets = self.targets
+		local temp_count, var_8_16, var_8_17 = Script.temp_count()
+		local num_7 = 0
 
-		for iter_8_0 = 1, var_8_12 do
-			local var_8_19 = var_8_11[iter_8_0]
-			local var_8_20 = POSITION_LOOKUP[var_8_19] + Vector3.up()
+		for i = 1, broadphase_query do
+			local var_8_19 = tbl[i]
+			local num_8 = POSITION_LOOKUP[var_8_19] + Vector3.up()
 
-			if var_8_14[var_8_19] == nil then
-				local var_8_21 = var_8_10.enemy_units_lookup[var_8_19]
+			if targets[var_8_19] == nil then
+				local var_8_21 = side.enemy_units_lookup[var_8_19]
 
-				if (var_8_21 or not var_8_7) and arg_8_0:_is_infront_player(var_8_3, var_8_6, var_8_20) and arg_8_0:_check_within_cone(var_8_8, var_8_6, var_8_19, var_8_21) then
-					var_8_14[#var_8_14 + 1] = var_8_19
-					var_8_14[var_8_19] = false
+				if (var_8_21 or not flag or not self:_is_infront_player(num_3, normalize, num_8)) and not self:_check_within_cone(num_5, normalize, var_8_19, var_8_21) then
+					targets[#targets + 1] = var_8_19
+					targets[var_8_19] = false
 
-					if var_8_21 and HEALTH_ALIVE[var_8_19] then
-						var_8_18 = var_8_18 + 1
+					if not var_8_21 and not HEALTH_ALIVE[var_8_19] then
+						num_7 = num_7 + 1
 					end
 				end
 
-				if var_8_18 >= var_0_3 then
+				if num_7 >= num_4 then
 					break
 				end
 			end
 		end
 
-		Script.set_temp_count(var_8_15, var_8_16, var_8_17)
+		Script.set_temp_count(temp_count, var_8_16, var_8_17)
 	end
 end
 
-function ActionFlamethrower._check_within_cone(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
-	local var_9_0 = Unit.world_position(arg_9_3, Unit.node(arg_9_3, "j_neck"))
-	local var_9_1 = Vector3.normalize(var_9_0 - arg_9_1)
+ActionFlamethrower._check_within_cone = function (self, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	-- function 9
+	local world_position = Unit.world_position(arg_9_3, Unit.node(arg_9_3, "j_neck"))
+	local normalize = Vector3.normalize(world_position - arg_9_1)
+	local dot = Vector3.dot(arg_9_2, normalize)
+	local dot_check
 
-	if Vector3.dot(arg_9_2, var_9_1) >= (arg_9_4 and arg_9_0.dot_check or 0.99) then
+	if not arg_9_4 then
+		dot_check = self.dot_check
+
+		if not dot_check then
+			-- Nothing
+		end
+	end
+
+	dot_check = 0.99
+
+	::label_9_0::
+
+	if dot_check <= dot then
 		return true
 	end
 
 	return false
 end
 
-function ActionFlamethrower._is_infront_player(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
-	local var_10_0 = Vector3.normalize(arg_10_3 - arg_10_1)
+ActionFlamethrower._is_infront_player = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	-- function 10
+	local normalize = Vector3.normalize(arg_10_3 - arg_10_1)
 
-	if Vector3.dot(var_10_0, arg_10_2) > 0 then
+	if Vector3.dot(normalize, arg_10_2) > 0 then
 		return true
 	end
 end
 
-function ActionFlamethrower.raycast_to_target(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
-	local var_11_0 = World.get_data(arg_11_1, "physics_world")
-	local var_11_1 = "filter_player_ray_projectile"
+ActionFlamethrower.raycast_to_target = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+	-- function 11
+	local get_data = World.get_data(arg_11_1, "physics_world")
+	local str = "filter_player_ray_projectile"
 
-	return (PhysicsWorld.immediate_raycast(var_11_0, arg_11_2, arg_11_3, var_0_1, "all", "collision_filter", var_11_1))
+	return (PhysicsWorld.immediate_raycast(get_data, arg_11_2, arg_11_3, num_2, "all", "collision_filter", str))
 end
 
-function ActionFlamethrower._check_critical_strike(arg_12_0, arg_12_1)
-	local var_12_0 = arg_12_0.owner_unit
-	local var_12_1 = arg_12_0.current_action
-	local var_12_2 = ActionUtils.is_critical_strike(var_12_0, var_12_1, arg_12_1)
-	local var_12_3 = ScriptUnit.has_extension(var_12_0, "hud_system")
+ActionFlamethrower._check_critical_strike = function (self, arg_12_1)
+	-- function 12
+	local owner_unit = self.owner_unit
+	local current_action = self.current_action
+	local is_critical_strike = ActionUtils.is_critical_strike(owner_unit, current_action, arg_12_1)
+	local has_extension = ScriptUnit.has_extension(owner_unit, "hud_system")
 
-	arg_12_0:_handle_critical_strike(var_12_2, arg_12_0.buff_extension, var_12_3, nil, "on_critical_shot", nil)
+	self:_handle_critical_strike(is_critical_strike, self.buff_extension, has_extension, nil, "on_critical_shot", nil)
 
-	arg_12_0._is_critical_strike = var_12_2
+	self._is_critical_strike = is_critical_strike
 end

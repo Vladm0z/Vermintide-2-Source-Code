@@ -4,501 +4,543 @@ require("scripts/utils/input_helper")
 
 UNASSIGNED_KEY = "unassigned_keymap"
 PlayerControllerKeymaps = {}
-PlayerControllerKeymaps.win32 = InputUtils.keymaps_key_approved("win32") and {
-	toggle_input_helper = {
-		"keyboard",
-		"f1",
-		"pressed"
-	},
-	action_one = {
-		"mouse",
-		"left",
-		"pressed"
-	},
-	action_one_hold = {
-		"mouse",
-		"left",
-		"held"
-	},
-	action_one_release = {
-		"mouse",
-		"left",
-		"released"
-	},
-	action_two = {
-		"mouse",
-		"right",
-		"pressed"
-	},
-	action_two_hold = {
-		"mouse",
-		"right",
-		"held"
-	},
-	action_two_release = {
-		"mouse",
-		"right",
-		"released"
-	},
-	action_three = {
-		"keyboard",
-		"v",
-		"pressed"
-	},
-	action_three_hold = {
-		"keyboard",
-		"v",
-		"held"
-	},
-	action_three_release = {
-		"keyboard",
-		"v",
-		"released"
-	},
-	action_middle = {
-		"mouse",
-		"middle",
-		"pressed"
-	},
-	action_inspect = {
-		"keyboard",
-		"z",
-		"pressed"
-	},
-	action_inspect_hold = {
-		"keyboard",
-		"z",
-		"held"
-	},
-	action_inspect_release = {
-		"keyboard",
-		"z",
-		"released"
-	},
-	action_career = {
-		"keyboard",
-		"f",
-		"pressed"
-	},
-	action_career_hold = {
-		"keyboard",
-		"f",
-		"held"
-	},
-	action_career_release = {
-		"keyboard",
-		"f",
-		"released"
-	},
-	action_one_softbutton_gamepad = {},
-	action_one_mouse = {
-		"mouse",
-		"left",
-		"pressed"
-	},
-	weapon_reload = {
-		"keyboard",
-		"r",
-		"pressed"
-	},
-	weapon_reload_hold = {
-		"keyboard",
-		"r",
-		"held"
-	},
-	character_inspecting = {
-		"keyboard",
-		"x",
-		"held"
-	},
-	wield_1 = {
-		"keyboard",
-		"1",
-		"pressed"
-	},
-	wield_2 = {
-		"keyboard",
-		"2",
-		"pressed"
-	},
-	wield_3 = {
-		"keyboard",
-		"3",
-		"pressed"
-	},
-	wield_4 = IS_XB1 and {
-		"keyboard",
-		"5",
-		"pressed"
-	} or {
+
+local PlayerControllerKeymaps = PlayerControllerKeymaps
+local keymaps_key_approved = InputUtils.keymaps_key_approved("win32")
+
+if not keymaps_key_approved then
+	keymaps_key_approved = {
+		toggle_input_helper = {
+			"keyboard",
+			"f1",
+			"pressed"
+		},
+		action_one = {
+			"mouse",
+			"left",
+			"pressed"
+		},
+		action_one_hold = {
+			"mouse",
+			"left",
+			"held"
+		},
+		action_one_release = {
+			"mouse",
+			"left",
+			"released"
+		},
+		action_two = {
+			"mouse",
+			"right",
+			"pressed"
+		},
+		action_two_hold = {
+			"mouse",
+			"right",
+			"held"
+		},
+		action_two_release = {
+			"mouse",
+			"right",
+			"released"
+		},
+		action_three = {
+			"keyboard",
+			"v",
+			"pressed"
+		},
+		action_three_hold = {
+			"keyboard",
+			"v",
+			"held"
+		},
+		action_three_release = {
+			"keyboard",
+			"v",
+			"released"
+		},
+		action_middle = {
+			"mouse",
+			"middle",
+			"pressed"
+		},
+		action_inspect = {
+			"keyboard",
+			"z",
+			"pressed"
+		},
+		action_inspect_hold = {
+			"keyboard",
+			"z",
+			"held"
+		},
+		action_inspect_release = {
+			"keyboard",
+			"z",
+			"released"
+		},
+		action_career = {
+			"keyboard",
+			"f",
+			"pressed"
+		},
+		action_career_hold = {
+			"keyboard",
+			"f",
+			"held"
+		},
+		action_career_release = {
+			"keyboard",
+			"f",
+			"released"
+		},
+		action_one_softbutton_gamepad = {},
+		action_one_mouse = {
+			"mouse",
+			"left",
+			"pressed"
+		},
+		weapon_reload = {
+			"keyboard",
+			"r",
+			"pressed"
+		},
+		weapon_reload_hold = {
+			"keyboard",
+			"r",
+			"held"
+		},
+		character_inspecting = {
+			"keyboard",
+			"x",
+			"held"
+		},
+		wield_1 = {
+			"keyboard",
+			"1",
+			"pressed"
+		},
+		wield_2 = {
+			"keyboard",
+			"2",
+			"pressed"
+		},
+		wield_3 = {
+			"keyboard",
+			"3",
+			"pressed"
+		}
+	}
+
+	local tbl
+
+	if not IS_XB1 then
+		tbl = {
+			"keyboard",
+			"5",
+			"pressed"
+		}
+
+		if not tbl then
+			-- Nothing
+		end
+	end
+
+	tbl = {
 		"keyboard",
 		"4",
 		"pressed"
-	},
-	wield_4_alt = {
+	}
+
+	::label_0_0::
+
+	keymaps_key_approved.wield_4 = tbl
+	keymaps_key_approved.wield_4_alt = {
 		"keyboard",
 		UNASSIGNED_KEY,
 		"pressed"
-	},
-	wield_5 = IS_XB1 and {
-		"keyboard",
-		"4",
-		"pressed"
-	} or {
+	}
+
+	local tbl_2
+
+	if not IS_XB1 then
+		tbl_2 = {
+			"keyboard",
+			"4",
+			"pressed"
+		}
+
+		if not tbl_2 then
+			-- Nothing
+		end
+	end
+
+	tbl_2 = {
 		"keyboard",
 		"5",
 		"pressed"
-	},
-	wield_6 = {
+	}
+
+	::label_0_1::
+
+	keymaps_key_approved.wield_5 = tbl_2
+	keymaps_key_approved.wield_6 = {
 		"keyboard",
 		"6",
 		"pressed"
-	},
-	wield_7 = {
+	}
+	keymaps_key_approved.wield_7 = {
 		"keyboard",
 		"7",
 		"pressed"
-	},
-	wield_8 = {
+	}
+	keymaps_key_approved.wield_8 = {
 		"keyboard",
 		"8",
 		"pressed"
-	},
-	wield_9 = {
+	}
+	keymaps_key_approved.wield_9 = {
 		"keyboard",
 		"9",
 		"pressed"
-	},
-	wield_0 = {
+	}
+	keymaps_key_approved.wield_0 = {
 		"keyboard",
 		"0",
 		"pressed"
-	},
-	wield_switch = {
+	}
+	keymaps_key_approved.wield_switch = {
 		"keyboard",
 		"q",
 		"pressed"
-	},
-	wield_switch_1 = {
+	}
+	keymaps_key_approved.wield_switch_1 = {
 		"keyboard",
 		"q",
 		"pressed"
-	},
-	wield_switch_2 = {},
-	wield_scroll = {
+	}
+	keymaps_key_approved.wield_switch_2 = {}
+	keymaps_key_approved.wield_scroll = {
 		"mouse",
 		"wheel",
 		"axis"
-	},
-	wield_next = {
+	}
+	keymaps_key_approved.wield_next = {
 		"mouse",
 		"wheel_down",
 		"pressed"
-	},
-	wield_prev = {
+	}
+	keymaps_key_approved.wield_prev = {
 		"mouse",
 		"wheel_up",
 		"pressed"
-	},
-	walk = {
+	}
+	keymaps_key_approved.walk = {
 		"keyboard",
 		"left alt",
 		"held"
-	},
-	interact = {
-		"keyboard",
-		"e",
-		"pressed"
-	},
-	interacting = {
-		"keyboard",
-		"e",
-		"held"
-	},
-	jump_1 = {
-		"keyboard",
-		"space",
-		"pressed"
-	},
-	jump_2 = {},
-	jump_only = {
-		"keyboard",
-		UNASSIGNED_KEY,
-		"pressed"
-	},
-	dodge_hold = {
-		"keyboard",
-		"space",
-		"held"
-	},
-	dodge = {
-		"keyboard",
-		UNASSIGNED_KEY,
-		"pressed"
-	},
-	crouch = {
-		"keyboard",
-		"left ctrl",
-		"pressed"
-	},
-	crouching = {
-		"keyboard",
-		"left ctrl",
-		"held"
-	},
-	look_raw = {
-		"mouse",
-		"mouse",
-		"axis"
-	},
-	look_raw_controller = {
-		"gamepad",
-		"right",
-		"axis"
-	},
-	move_controller = {
-		"gamepad",
-		"left",
-		"axis"
-	},
-	ping = {
-		"keyboard",
-		"t",
-		"pressed"
-	},
-	ping_hold = {
-		"keyboard",
-		"t",
-		"held"
-	},
-	ping_release = {
-		"keyboard",
-		"t",
-		"released"
-	},
-	angular_velocity = {},
-	social_wheel_only = {
-		"keyboard",
-		UNASSIGNED_KEY,
-		"pressed"
-	},
-	social_wheel_only_hold = {
-		"keyboard",
-		UNASSIGNED_KEY,
-		"held"
-	},
-	social_wheel_only_release = {
-		"keyboard",
-		UNASSIGNED_KEY,
-		"released"
-	},
-	weapon_poses_only = {
-		"keyboard",
-		UNASSIGNED_KEY,
-		"pressed"
-	},
-	weapon_poses_only_hold = {
-		"keyboard",
-		UNASSIGNED_KEY,
-		"held"
-	},
-	weapon_poses_only_release = {
-		"keyboard",
-		UNASSIGNED_KEY,
-		"released"
-	},
-	photomode_only = {
-		"keyboard",
-		"u",
-		"pressed"
-	},
-	photomode_only_hold = {
-		"keyboard",
-		"u",
-		"held"
-	},
-	photomode_only_release = {
-		"keyboard",
-		"u",
-		"released"
-	},
-	social_wheel_page = {
-		"keyboard",
-		"e",
-		"pressed"
-	},
-	ping_only = {
-		"keyboard",
-		UNASSIGNED_KEY,
-		"pressed"
-	},
-	move_left = {
-		"keyboard",
-		"a",
-		"soft_button"
-	},
-	move_right = {
-		"keyboard",
-		"d",
-		"soft_button"
-	},
-	move_forward = {
-		"keyboard",
-		"w",
-		"soft_button"
-	},
-	move_back = {
-		"keyboard",
-		"s",
-		"soft_button"
-	},
-	move_left_pressed = {
-		"keyboard",
-		"a",
-		"pressed"
-	},
-	move_right_pressed = {
-		"keyboard",
-		"d",
-		"pressed"
-	},
-	move_forward_pressed = {
-		"keyboard",
-		"w",
-		"pressed"
-	},
-	move_back_pressed = {
-		"keyboard",
-		"s",
-		"pressed"
-	},
-	cursor = {
-		"mouse",
-		"cursor",
-		"axis"
-	},
-	show_career_help = {
-		"keyboard",
-		"f1",
-		"held"
-	},
-	next_observer_target = {
-		"mouse",
-		"left",
-		"pressed"
-	},
-	previous_observer_target = {
-		"mouse",
-		"right",
-		"pressed"
-	},
-	observer_change_offset = {
-		"mouse",
-		"wheel",
-		"axis"
-	},
-	previous_observer_view = {
-		"keyboard",
-		"q",
-		"pressed"
-	},
-	next_observer_view = {
-		"keyboard",
-		"e",
-		"pressed"
-	},
-	next_observer_rotation_state = {
-		"keyboard",
-		"l",
-		"pressed"
-	},
-	previous_observer_rotation_state = {
-		"keyboard",
-		"k",
-		"pressed"
-	},
-	emote_camera_zoom = {
-		"mouse",
-		"wheel",
-		"axis"
-	},
-	emote_toggle_hud_visibility = {
-		"keyboard",
-		"h",
-		"pressed"
-	},
-	ghost_mode_enter = {
-		"keyboard",
-		"q",
-		"pressed"
-	},
-	ghost_mode_exit = {
-		"mouse",
-		"right",
-		"pressed"
-	},
-	versus_horde_ability = {
-		"keyboard",
-		"f",
-		"pressed"
-	},
-	dark_pact_action_one = {
-		"mouse",
-		"left",
-		"pressed"
-	},
-	dark_pact_action_one_hold = {
-		"mouse",
-		"left",
-		"held"
-	},
-	dark_pact_action_one_release = {
-		"mouse",
-		"left",
-		"released"
-	},
-	dark_pact_action_two = {
-		"mouse",
-		"right",
-		"pressed"
-	},
-	dark_pact_action_two_hold = {
-		"mouse",
-		"right",
-		"held"
-	},
-	dark_pact_action_two_release = {
-		"mouse",
-		"right",
-		"released"
-	},
-	dark_pact_reload = {
-		"keyboard",
-		"r",
-		"pressed"
-	},
-	dark_pact_reload_hold = {
-		"keyboard",
-		"r",
-		"held"
-	},
-	dark_pact_interact = {
-		"keyboard",
-		"e",
-		"pressed"
-	},
-	dark_pact_interacting = {
-		"keyboard",
-		"e",
-		"held"
-	},
-	dark_pact_climb_point = {
+	}
+	keymaps_key_approved.interact = {
 		"keyboard",
 		"e",
 		"pressed"
 	}
-}
-PlayerControllerKeymaps.xb1 = InputUtils.keymaps_key_approved("xb1") and {
+	keymaps_key_approved.interacting = {
+		"keyboard",
+		"e",
+		"held"
+	}
+	keymaps_key_approved.jump_1 = {
+		"keyboard",
+		"space",
+		"pressed"
+	}
+	keymaps_key_approved.jump_2 = {}
+	keymaps_key_approved.jump_only = {
+		"keyboard",
+		UNASSIGNED_KEY,
+		"pressed"
+	}
+	keymaps_key_approved.dodge_hold = {
+		"keyboard",
+		"space",
+		"held"
+	}
+	keymaps_key_approved.dodge = {
+		"keyboard",
+		UNASSIGNED_KEY,
+		"pressed"
+	}
+	keymaps_key_approved.crouch = {
+		"keyboard",
+		"left ctrl",
+		"pressed"
+	}
+	keymaps_key_approved.crouching = {
+		"keyboard",
+		"left ctrl",
+		"held"
+	}
+	keymaps_key_approved.look_raw = {
+		"mouse",
+		"mouse",
+		"axis"
+	}
+	keymaps_key_approved.look_raw_controller = {
+		"gamepad",
+		"right",
+		"axis"
+	}
+	keymaps_key_approved.move_controller = {
+		"gamepad",
+		"left",
+		"axis"
+	}
+	keymaps_key_approved.ping = {
+		"keyboard",
+		"t",
+		"pressed"
+	}
+	keymaps_key_approved.ping_hold = {
+		"keyboard",
+		"t",
+		"held"
+	}
+	keymaps_key_approved.ping_release = {
+		"keyboard",
+		"t",
+		"released"
+	}
+	keymaps_key_approved.angular_velocity = {}
+	keymaps_key_approved.social_wheel_only = {
+		"keyboard",
+		UNASSIGNED_KEY,
+		"pressed"
+	}
+	keymaps_key_approved.social_wheel_only_hold = {
+		"keyboard",
+		UNASSIGNED_KEY,
+		"held"
+	}
+	keymaps_key_approved.social_wheel_only_release = {
+		"keyboard",
+		UNASSIGNED_KEY,
+		"released"
+	}
+	keymaps_key_approved.weapon_poses_only = {
+		"keyboard",
+		UNASSIGNED_KEY,
+		"pressed"
+	}
+	keymaps_key_approved.weapon_poses_only_hold = {
+		"keyboard",
+		UNASSIGNED_KEY,
+		"held"
+	}
+	keymaps_key_approved.weapon_poses_only_release = {
+		"keyboard",
+		UNASSIGNED_KEY,
+		"released"
+	}
+	keymaps_key_approved.photomode_only = {
+		"keyboard",
+		"u",
+		"pressed"
+	}
+	keymaps_key_approved.photomode_only_hold = {
+		"keyboard",
+		"u",
+		"held"
+	}
+	keymaps_key_approved.photomode_only_release = {
+		"keyboard",
+		"u",
+		"released"
+	}
+	keymaps_key_approved.social_wheel_page = {
+		"keyboard",
+		"e",
+		"pressed"
+	}
+	keymaps_key_approved.ping_only = {
+		"keyboard",
+		UNASSIGNED_KEY,
+		"pressed"
+	}
+	keymaps_key_approved.move_left = {
+		"keyboard",
+		"a",
+		"soft_button"
+	}
+	keymaps_key_approved.move_right = {
+		"keyboard",
+		"d",
+		"soft_button"
+	}
+	keymaps_key_approved.move_forward = {
+		"keyboard",
+		"w",
+		"soft_button"
+	}
+	keymaps_key_approved.move_back = {
+		"keyboard",
+		"s",
+		"soft_button"
+	}
+	keymaps_key_approved.move_left_pressed = {
+		"keyboard",
+		"a",
+		"pressed"
+	}
+	keymaps_key_approved.move_right_pressed = {
+		"keyboard",
+		"d",
+		"pressed"
+	}
+	keymaps_key_approved.move_forward_pressed = {
+		"keyboard",
+		"w",
+		"pressed"
+	}
+	keymaps_key_approved.move_back_pressed = {
+		"keyboard",
+		"s",
+		"pressed"
+	}
+	keymaps_key_approved.cursor = {
+		"mouse",
+		"cursor",
+		"axis"
+	}
+	keymaps_key_approved.show_career_help = {
+		"keyboard",
+		"f1",
+		"held"
+	}
+	keymaps_key_approved.next_observer_target = {
+		"mouse",
+		"left",
+		"pressed"
+	}
+	keymaps_key_approved.previous_observer_target = {
+		"mouse",
+		"right",
+		"pressed"
+	}
+	keymaps_key_approved.observer_change_offset = {
+		"mouse",
+		"wheel",
+		"axis"
+	}
+	keymaps_key_approved.previous_observer_view = {
+		"keyboard",
+		"q",
+		"pressed"
+	}
+	keymaps_key_approved.next_observer_view = {
+		"keyboard",
+		"e",
+		"pressed"
+	}
+	keymaps_key_approved.next_observer_rotation_state = {
+		"keyboard",
+		"l",
+		"pressed"
+	}
+	keymaps_key_approved.previous_observer_rotation_state = {
+		"keyboard",
+		"k",
+		"pressed"
+	}
+	keymaps_key_approved.emote_camera_zoom = {
+		"mouse",
+		"wheel",
+		"axis"
+	}
+	keymaps_key_approved.emote_toggle_hud_visibility = {
+		"keyboard",
+		"h",
+		"pressed"
+	}
+	keymaps_key_approved.ghost_mode_enter = {
+		"keyboard",
+		"q",
+		"pressed"
+	}
+	keymaps_key_approved.ghost_mode_exit = {
+		"mouse",
+		"right",
+		"pressed"
+	}
+	keymaps_key_approved.versus_horde_ability = {
+		"keyboard",
+		"f",
+		"pressed"
+	}
+	keymaps_key_approved.dark_pact_action_one = {
+		"mouse",
+		"left",
+		"pressed"
+	}
+	keymaps_key_approved.dark_pact_action_one_hold = {
+		"mouse",
+		"left",
+		"held"
+	}
+	keymaps_key_approved.dark_pact_action_one_release = {
+		"mouse",
+		"left",
+		"released"
+	}
+	keymaps_key_approved.dark_pact_action_two = {
+		"mouse",
+		"right",
+		"pressed"
+	}
+	keymaps_key_approved.dark_pact_action_two_hold = {
+		"mouse",
+		"right",
+		"held"
+	}
+	keymaps_key_approved.dark_pact_action_two_release = {
+		"mouse",
+		"right",
+		"released"
+	}
+	keymaps_key_approved.dark_pact_reload = {
+		"keyboard",
+		"r",
+		"pressed"
+	}
+	keymaps_key_approved.dark_pact_reload_hold = {
+		"keyboard",
+		"r",
+		"held"
+	}
+	keymaps_key_approved.dark_pact_interact = {
+		"keyboard",
+		"e",
+		"pressed"
+	}
+	keymaps_key_approved.dark_pact_interacting = {
+		"keyboard",
+		"e",
+		"held"
+	}
+	keymaps_key_approved.dark_pact_climb_point = {
+		"keyboard",
+		"e",
+		"pressed"
+	}
+end
+
+PlayerControllerKeymaps.win32 = keymaps_key_approved
+
+local PlayerControllerKeymaps_2 = PlayerControllerKeymaps
+local keymaps_key_approved_2 = InputUtils.keymaps_key_approved("xb1")
+
+keymaps_key_approved_2 = not keymaps_key_approved_2 and {
 	toggle_input_helper = {},
 	action_one = {
 		"gamepad",
@@ -848,7 +890,13 @@ PlayerControllerKeymaps.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 		"pressed"
 	}
 }
-PlayerControllerKeymaps.ps4 = InputUtils.keymaps_key_approved("ps4") and {
+PlayerControllerKeymaps_2.xb1 = keymaps_key_approved_2
+
+local PlayerControllerKeymaps_3 = PlayerControllerKeymaps
+local str = "ps4"
+local keymaps_key_approved_3 = InputUtils.keymaps_key_approved("ps4")
+
+keymaps_key_approved_3 = not keymaps_key_approved_3 and {
 	toggle_input_helper = {
 		"keyboard",
 		"f1",
@@ -1211,7 +1259,13 @@ PlayerControllerKeymaps.ps4 = InputUtils.keymaps_key_approved("ps4") and {
 		"pressed"
 	}
 }
-PlayerControllerKeymaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {
+PlayerControllerKeymaps_3[str] = keymaps_key_approved_3
+
+local PlayerControllerKeymaps_4 = PlayerControllerKeymaps
+local str_2 = "ps_pad"
+local keymaps_key_approved_4 = InputUtils.keymaps_key_approved("ps_pad")
+
+keymaps_key_approved_4 = not keymaps_key_approved_4 and {
 	toggle_input_helper = {
 		"keyboard",
 		"f1",
@@ -1574,9 +1628,14 @@ PlayerControllerKeymaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {
 		"pressed"
 	}
 }
+PlayerControllerKeymaps_4[str_2] = keymaps_key_approved_4
 TutorialPlayerControllerKeymaps = table.clone(PlayerControllerKeymaps)
 PlayerControllerFilters = {}
-PlayerControllerFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
+
+local PlayerControllerFilters = PlayerControllerFilters
+local keymaps_key_approved_5 = InputUtils.keymaps_key_approved("win32")
+
+keymaps_key_approved_5 = not keymaps_key_approved_5 and {
 	move = {
 		filter_type = "virtual_axis",
 		input_mappings = {
@@ -1679,7 +1738,12 @@ PlayerControllerFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
 		}
 	}
 }
-PlayerControllerFilters.xb1 = InputUtils.keymaps_key_approved("xb1") and {
+PlayerControllerFilters.win32 = keymaps_key_approved_5
+
+local PlayerControllerFilters_2 = PlayerControllerFilters
+local keymaps_key_approved_6 = InputUtils.keymaps_key_approved("xb1")
+
+keymaps_key_approved_6 = not keymaps_key_approved_6 and {
 	look_controller = {
 		filter_type = "scale_vector3_xy_accelerated_x",
 		multiplier_return_y = 1.75,
@@ -1858,8 +1922,9 @@ PlayerControllerFilters.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 		}
 	}
 }
+PlayerControllerFilters_2.xb1 = keymaps_key_approved_6
 
-local var_0_0 = {
+local tbl_3 = {
 	look_controller = {
 		filter_type = "scale_vector3_xy_accelerated_x",
 		multiplier_min_x = 1.5,
@@ -2038,12 +2103,26 @@ local var_0_0 = {
 		}
 	}
 }
+local PlayerControllerFilters_3 = PlayerControllerFilters
+local str_3 = "ps4"
+local keymaps_key_approved_7 = InputUtils.keymaps_key_approved("ps4")
 
-PlayerControllerFilters.ps4 = InputUtils.keymaps_key_approved("ps4") and var_0_0
-PlayerControllerFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and var_0_0
+keymaps_key_approved_7 = not keymaps_key_approved_7 and tbl_3
+PlayerControllerFilters_3[str_3] = keymaps_key_approved_7
+
+local PlayerControllerFilters_4 = PlayerControllerFilters
+local str_4 = "ps_pad"
+local keymaps_key_approved_8 = InputUtils.keymaps_key_approved("ps_pad")
+
+keymaps_key_approved_8 = not keymaps_key_approved_8 and tbl_3
+PlayerControllerFilters_4[str_4] = keymaps_key_approved_8
 TutorialPlayerControllerFilters = table.clone(PlayerControllerFilters)
 TwitchControllerSettings = {}
-TwitchControllerSettings.win32 = InputUtils.keymaps_key_approved("win32") and {
+
+local TwitchControllerSettings = TwitchControllerSettings
+local keymaps_key_approved_9 = InputUtils.keymaps_key_approved("win32")
+
+keymaps_key_approved_9 = not keymaps_key_approved_9 and {
 	execute_login_1 = {
 		"keyboard",
 		"enter",
@@ -2080,8 +2159,13 @@ TwitchControllerSettings.win32 = InputUtils.keymaps_key_approved("win32") and {
 		"held"
 	}
 }
+TwitchControllerSettings.win32 = keymaps_key_approved_9
 TwitchControllerFilters = {}
-TwitchControllerFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
+
+local TwitchControllerFilters = TwitchControllerFilters
+local keymaps_key_approved_10 = InputUtils.keymaps_key_approved("win32")
+
+keymaps_key_approved_10 = not keymaps_key_approved_10 and {
 	execute_login = {
 		filter_type = "or",
 		input_mappings = {
@@ -2090,8 +2174,13 @@ TwitchControllerFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
 		}
 	}
 }
+TwitchControllerFilters.win32 = keymaps_key_approved_10
 ChatControllerSettings = {}
-ChatControllerSettings.win32 = InputUtils.keymaps_key_approved("win32") and {
+
+local ChatControllerSettings = ChatControllerSettings
+local keymaps_key_approved_11 = InputUtils.keymaps_key_approved("win32")
+
+keymaps_key_approved_11 = not keymaps_key_approved_11 and {
 	activate_chat_input = {
 		"keyboard",
 		"y",
@@ -2218,7 +2307,12 @@ ChatControllerSettings.win32 = InputUtils.keymaps_key_approved("win32") and {
 		"held"
 	}
 }
-ChatControllerSettings.xb1 = InputUtils.keymaps_key_approved("xb1") and {
+ChatControllerSettings.win32 = keymaps_key_approved_11
+
+local ChatControllerSettings_2 = ChatControllerSettings
+local keymaps_key_approved_12 = InputUtils.keymaps_key_approved("xb1")
+
+keymaps_key_approved_12 = not keymaps_key_approved_12 and {
 	activate_chat_input = {
 		"keyboard",
 		"y",
@@ -2271,7 +2365,13 @@ ChatControllerSettings.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 	},
 	voip_push_to_talk = {}
 }
-ChatControllerSettings.ps4 = InputUtils.keymaps_key_approved("ps4") and {
+ChatControllerSettings_2.xb1 = keymaps_key_approved_12
+
+local ChatControllerSettings_3 = ChatControllerSettings
+local str_5 = "ps4"
+local keymaps_key_approved_13 = InputUtils.keymaps_key_approved("ps4")
+
+keymaps_key_approved_13 = not keymaps_key_approved_13 and {
 	activate_chat_input = {
 		"keyboard",
 		"y",
@@ -2324,7 +2424,13 @@ ChatControllerSettings.ps4 = InputUtils.keymaps_key_approved("ps4") and {
 	},
 	voip_push_to_talk = {}
 }
-ChatControllerSettings.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {
+ChatControllerSettings_3[str_5] = keymaps_key_approved_13
+
+local ChatControllerSettings_4 = ChatControllerSettings
+local str_6 = "ps_pad"
+local keymaps_key_approved_14 = InputUtils.keymaps_key_approved("ps_pad")
+
+keymaps_key_approved_14 = not keymaps_key_approved_14 and {
 	activate_chat_input = {
 		"keyboard",
 		"y",
@@ -2377,8 +2483,13 @@ ChatControllerSettings.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {
 	},
 	voip_push_to_talk = {}
 }
+ChatControllerSettings_4[str_6] = keymaps_key_approved_14
 ChatControllerFilters = {}
-ChatControllerFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
+
+local ChatControllerFilters = ChatControllerFilters
+local keymaps_key_approved_15 = InputUtils.keymaps_key_approved("win32")
+
+keymaps_key_approved_15 = not keymaps_key_approved_15 and {
 	unallowed_activate_chat_input = {
 		filter_type = "or",
 		input_mappings = {
@@ -2423,7 +2534,12 @@ ChatControllerFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
 		}
 	}
 }
-ChatControllerFilters.xb1 = InputUtils.keymaps_key_approved("xb1") and {
+ChatControllerFilters.win32 = keymaps_key_approved_15
+
+local ChatControllerFilters_2 = ChatControllerFilters
+local keymaps_key_approved_16 = InputUtils.keymaps_key_approved("xb1")
+
+keymaps_key_approved_16 = not keymaps_key_approved_16 and {
 	unallowed_activate_chat_input = {
 		filter_type = "or",
 		input_mappings = {
@@ -2440,8 +2556,9 @@ ChatControllerFilters.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 		}
 	}
 }
+ChatControllerFilters_2.xb1 = keymaps_key_approved_16
 
-local var_0_1 = {
+local tbl_4 = {
 	unallowed_activate_chat_input = {
 		filter_type = "or",
 		input_mappings = {
@@ -2458,11 +2575,25 @@ local var_0_1 = {
 		}
 	}
 }
+local ChatControllerFilters_3 = ChatControllerFilters
+local str_7 = "ps4"
+local keymaps_key_approved_17 = InputUtils.keymaps_key_approved("ps4")
 
-ChatControllerFilters.ps4 = InputUtils.keymaps_key_approved("ps4") and var_0_1
-ChatControllerFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and var_0_1
+keymaps_key_approved_17 = not keymaps_key_approved_17 and tbl_4
+ChatControllerFilters_3[str_7] = keymaps_key_approved_17
+
+local ChatControllerFilters_4 = ChatControllerFilters
+local str_8 = "ps_pad"
+local keymaps_key_approved_18 = InputUtils.keymaps_key_approved("ps_pad")
+
+keymaps_key_approved_18 = not keymaps_key_approved_18 and tbl_4
+ChatControllerFilters_4[str_8] = keymaps_key_approved_18
 RconControllerSettings = {}
-RconControllerSettings.win32 = InputUtils.keymaps_key_approved("win32") and {
+
+local RconControllerSettings = RconControllerSettings
+local keymaps_key_approved_19 = InputUtils.keymaps_key_approved("win32")
+
+keymaps_key_approved_19 = not keymaps_key_approved_19 and {
 	activate_menu = {
 		"keyboard",
 		"f2",
@@ -2514,7 +2645,12 @@ RconControllerSettings.win32 = InputUtils.keymaps_key_approved("win32") and {
 		"held"
 	}
 }
-RconControllerSettings.xb1 = InputUtils.keymaps_key_approved("xb1") and {
+RconControllerSettings.win32 = keymaps_key_approved_19
+
+local RconControllerSettings_2 = RconControllerSettings
+local keymaps_key_approved_20 = InputUtils.keymaps_key_approved("xb1")
+
+keymaps_key_approved_20 = not keymaps_key_approved_20 and {
 	activate_menu = {
 		"keyboard",
 		"f2",
@@ -2566,9 +2702,14 @@ RconControllerSettings.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 		"held"
 	}
 }
+RconControllerSettings_2.xb1 = keymaps_key_approved_20
 RconControllerFilters = {}
 FreeFlightKeymaps = {}
-FreeFlightKeymaps.win32 = InputUtils.keymaps_key_approved("win32") and {
+
+local FreeFlightKeymaps = FreeFlightKeymaps
+local keymaps_key_approved_21 = InputUtils.keymaps_key_approved("win32")
+
+keymaps_key_approved_21 = not keymaps_key_approved_21 and {
 	quit_game = {
 		"keyboard",
 		"esc",
@@ -2870,7 +3011,12 @@ FreeFlightKeymaps.win32 = InputUtils.keymaps_key_approved("win32") and {
 		"pressed"
 	}
 }
-FreeFlightKeymaps.xb1 = InputUtils.keymaps_key_approved("xb1") and {
+FreeFlightKeymaps.win32 = keymaps_key_approved_21
+
+local FreeFlightKeymaps_2 = FreeFlightKeymaps
+local keymaps_key_approved_22 = InputUtils.keymaps_key_approved("xb1")
+
+keymaps_key_approved_22 = not keymaps_key_approved_22 and {
 	quit_game = {
 		"keyboard",
 		"esc",
@@ -3137,7 +3283,13 @@ FreeFlightKeymaps.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 		"pressed"
 	}
 }
-FreeFlightKeymaps.ps4 = InputUtils.keymaps_key_approved("ps4") and {
+FreeFlightKeymaps_2.xb1 = keymaps_key_approved_22
+
+local FreeFlightKeymaps_3 = FreeFlightKeymaps
+local str_9 = "ps4"
+local keymaps_key_approved_23 = InputUtils.keymaps_key_approved("ps4")
+
+keymaps_key_approved_23 = not keymaps_key_approved_23 and {
 	quit_game = {
 		"keyboard",
 		"esc",
@@ -3439,7 +3591,13 @@ FreeFlightKeymaps.ps4 = InputUtils.keymaps_key_approved("ps4") and {
 		"pressed"
 	}
 }
-FreeFlightKeymaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {
+FreeFlightKeymaps_3[str_9] = keymaps_key_approved_23
+
+local FreeFlightKeymaps_4 = FreeFlightKeymaps
+local str_10 = "ps_pad"
+local keymaps_key_approved_24 = InputUtils.keymaps_key_approved("ps_pad")
+
+keymaps_key_approved_24 = not keymaps_key_approved_24 and {
 	quit_game = {
 		"keyboard",
 		"esc",
@@ -3741,8 +3899,13 @@ FreeFlightKeymaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {
 		"pressed"
 	}
 }
+FreeFlightKeymaps_4[str_10] = keymaps_key_approved_24
 FreeFlightFilters = {}
-FreeFlightFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
+
+local FreeFlightFilters = FreeFlightFilters
+local keymaps_key_approved_25 = InputUtils.keymaps_key_approved("win32")
+
+keymaps_key_approved_25 = not keymaps_key_approved_25 and {
 	move = {
 		filter_type = "virtual_axis",
 		input_mappings = {
@@ -3790,7 +3953,12 @@ FreeFlightFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
 		}
 	}
 }
-FreeFlightFilters.xb1 = InputUtils.keymaps_key_approved("xb1") and {
+FreeFlightFilters.win32 = keymaps_key_approved_25
+
+local FreeFlightFilters_2 = FreeFlightFilters
+local keymaps_key_approved_26 = InputUtils.keymaps_key_approved("xb1")
+
+keymaps_key_approved_26 = not keymaps_key_approved_26 and {
 	look = {
 		multiplier_y = -400.5,
 		power_of = 2,
@@ -3869,8 +4037,9 @@ FreeFlightFilters.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 		}
 	}
 }
+FreeFlightFilters_2.xb1 = keymaps_key_approved_26
 
-local var_0_2 = {
+local tbl_5 = {
 	look = {
 		multiplier_y = -400.5,
 		power_of = 2,
@@ -3958,11 +4127,25 @@ local var_0_2 = {
 		}
 	}
 }
+local FreeFlightFilters_3 = FreeFlightFilters
+local str_11 = "ps4"
+local keymaps_key_approved_27 = InputUtils.keymaps_key_approved("ps4")
 
-FreeFlightFilters.ps4 = InputUtils.keymaps_key_approved("ps4") and var_0_2
-FreeFlightFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and var_0_2
+keymaps_key_approved_27 = not keymaps_key_approved_27 and tbl_5
+FreeFlightFilters_3[str_11] = keymaps_key_approved_27
+
+local FreeFlightFilters_4 = FreeFlightFilters
+local str_12 = "ps_pad"
+local keymaps_key_approved_28 = InputUtils.keymaps_key_approved("ps_pad")
+
+keymaps_key_approved_28 = not keymaps_key_approved_28 and tbl_5
+FreeFlightFilters_4[str_12] = keymaps_key_approved_28
 SplashScreenKeymaps = {}
-SplashScreenKeymaps.win32 = InputUtils.keymaps_key_approved("win32") and {
+
+local SplashScreenKeymaps = SplashScreenKeymaps
+local keymaps_key_approved_29 = InputUtils.keymaps_key_approved("win32")
+
+keymaps_key_approved_29 = not keymaps_key_approved_29 and {
 	skip_splash_1 = {
 		"keyboard",
 		"enter",
@@ -3994,29 +4177,51 @@ SplashScreenKeymaps.win32 = InputUtils.keymaps_key_approved("win32") and {
 		"pressed"
 	}
 }
-SplashScreenKeymaps.xb1 = InputUtils.keymaps_key_approved("xb1") and {
+SplashScreenKeymaps.win32 = keymaps_key_approved_29
+
+local SplashScreenKeymaps_2 = SplashScreenKeymaps
+local keymaps_key_approved_30 = InputUtils.keymaps_key_approved("xb1")
+
+keymaps_key_approved_30 = not keymaps_key_approved_30 and {
 	skip_splash = {
 		"gamepad",
 		"a",
 		"pressed"
 	}
 }
-SplashScreenKeymaps.ps4 = InputUtils.keymaps_key_approved("ps4") and {
+SplashScreenKeymaps_2.xb1 = keymaps_key_approved_30
+
+local SplashScreenKeymaps_3 = SplashScreenKeymaps
+local str_13 = "ps4"
+local keymaps_key_approved_31 = InputUtils.keymaps_key_approved("ps4")
+
+keymaps_key_approved_31 = not keymaps_key_approved_31 and {
 	skip_splash = {
 		"gamepad",
 		"cross",
 		"pressed"
 	}
 }
-SplashScreenKeymaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {
+SplashScreenKeymaps_3[str_13] = keymaps_key_approved_31
+
+local SplashScreenKeymaps_4 = SplashScreenKeymaps
+local str_14 = "ps_pad"
+local keymaps_key_approved_32 = InputUtils.keymaps_key_approved("ps_pad")
+
+keymaps_key_approved_32 = not keymaps_key_approved_32 and {
 	skip_splash = {
 		"ps_pad",
 		"cross",
 		"pressed"
 	}
 }
+SplashScreenKeymaps_4[str_14] = keymaps_key_approved_32
 SplashScreenFilters = {}
-SplashScreenFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
+
+local SplashScreenFilters = SplashScreenFilters
+local keymaps_key_approved_33 = InputUtils.keymaps_key_approved("win32")
+
+keymaps_key_approved_33 = not keymaps_key_approved_33 and {
 	skip_splash = {
 		filter_type = "or",
 		input_mappings = {
@@ -4029,11 +4234,33 @@ SplashScreenFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
 		}
 	}
 }
-SplashScreenFilters.xb1 = InputUtils.keymaps_key_approved("xb1") and {}
-SplashScreenFilters.ps4 = InputUtils.keymaps_key_approved("ps4") and {}
-SplashScreenFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {}
+SplashScreenFilters.win32 = keymaps_key_approved_33
+
+local SplashScreenFilters_2 = SplashScreenFilters
+local keymaps_key_approved_34 = InputUtils.keymaps_key_approved("xb1")
+
+keymaps_key_approved_34 = not keymaps_key_approved_34 and {}
+SplashScreenFilters_2.xb1 = keymaps_key_approved_34
+
+local SplashScreenFilters_3 = SplashScreenFilters
+local str_15 = "ps4"
+local keymaps_key_approved_35 = InputUtils.keymaps_key_approved("ps4")
+
+keymaps_key_approved_35 = not keymaps_key_approved_35 and {}
+SplashScreenFilters_3[str_15] = keymaps_key_approved_35
+
+local SplashScreenFilters_4 = SplashScreenFilters
+local str_16 = "ps_pad"
+local keymaps_key_approved_36 = InputUtils.keymaps_key_approved("ps_pad")
+
+keymaps_key_approved_36 = not keymaps_key_approved_36 and {}
+SplashScreenFilters_4[str_16] = keymaps_key_approved_36
 TitleLoadingKeyMaps = {}
-TitleLoadingKeyMaps.win32 = InputUtils.keymaps_key_approved("win32") and {
+
+local TitleLoadingKeyMaps = TitleLoadingKeyMaps
+local keymaps_key_approved_37 = InputUtils.keymaps_key_approved("win32")
+
+keymaps_key_approved_37 = not keymaps_key_approved_37 and {
 	cancel_video_1 = {
 		"keyboard",
 		"space",
@@ -4100,7 +4327,12 @@ TitleLoadingKeyMaps.win32 = InputUtils.keymaps_key_approved("win32") and {
 		"axis"
 	}
 }
-TitleLoadingKeyMaps.xb1 = InputUtils.keymaps_key_approved("xb1") and {
+TitleLoadingKeyMaps.win32 = keymaps_key_approved_37
+
+local TitleLoadingKeyMaps_2 = TitleLoadingKeyMaps
+local keymaps_key_approved_38 = InputUtils.keymaps_key_approved("xb1")
+
+keymaps_key_approved_38 = not keymaps_key_approved_38 and {
 	cancel_video_1 = {
 		"gamepad",
 		"a",
@@ -4137,7 +4369,13 @@ TitleLoadingKeyMaps.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 		"axis"
 	}
 }
-TitleLoadingKeyMaps.ps4 = InputUtils.keymaps_key_approved("ps4") and {
+TitleLoadingKeyMaps_2.xb1 = keymaps_key_approved_38
+
+local TitleLoadingKeyMaps_3 = TitleLoadingKeyMaps
+local str_17 = "ps4"
+local keymaps_key_approved_39 = InputUtils.keymaps_key_approved("ps4")
+
+keymaps_key_approved_39 = not keymaps_key_approved_39 and {
 	cancel_video_1 = {
 		"gamepad",
 		"cross",
@@ -4174,7 +4412,13 @@ TitleLoadingKeyMaps.ps4 = InputUtils.keymaps_key_approved("ps4") and {
 		"axis"
 	}
 }
-TitleLoadingKeyMaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {
+TitleLoadingKeyMaps_3[str_17] = keymaps_key_approved_39
+
+local TitleLoadingKeyMaps_4 = TitleLoadingKeyMaps
+local str_18 = "ps_pad"
+local keymaps_key_approved_40 = InputUtils.keymaps_key_approved("ps_pad")
+
+keymaps_key_approved_40 = not keymaps_key_approved_40 and {
 	cancel_video_1 = {
 		"ps_pad",
 		"cross",
@@ -4211,8 +4455,13 @@ TitleLoadingKeyMaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {
 		"axis"
 	}
 }
+TitleLoadingKeyMaps_4[str_18] = keymaps_key_approved_40
 TitleLoadingFilters = {}
-TitleLoadingFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
+
+local TitleLoadingFilters = TitleLoadingFilters
+local keymaps_key_approved_41 = InputUtils.keymaps_key_approved("win32")
+
+keymaps_key_approved_41 = not keymaps_key_approved_41 and {
 	cancel_video = {
 		filter_type = "or",
 		input_mappings = {
@@ -4222,7 +4471,12 @@ TitleLoadingFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
 		}
 	}
 }
-TitleLoadingFilters.xb1 = InputUtils.keymaps_key_approved("xb1") and {
+TitleLoadingFilters.win32 = keymaps_key_approved_41
+
+local TitleLoadingFilters_2 = TitleLoadingFilters
+local keymaps_key_approved_42 = InputUtils.keymaps_key_approved("xb1")
+
+keymaps_key_approved_42 = not keymaps_key_approved_42 and {
 	cancel_video = {
 		filter_type = "or",
 		input_mappings = {
@@ -4230,8 +4484,9 @@ TitleLoadingFilters.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 		}
 	}
 }
+TitleLoadingFilters_2.xb1 = keymaps_key_approved_42
 
-local var_0_3 = {
+local tbl_6 = {
 	cancel_video = {
 		filter_type = "or",
 		input_mappings = {
@@ -4239,11 +4494,25 @@ local var_0_3 = {
 		}
 	}
 }
+local TitleLoadingFilters_3 = TitleLoadingFilters
+local str_19 = "ps4"
+local keymaps_key_approved_43 = InputUtils.keymaps_key_approved("ps4")
 
-TitleLoadingFilters.ps4 = InputUtils.keymaps_key_approved("ps4") and var_0_3
-TitleLoadingFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and var_0_3
+keymaps_key_approved_43 = not keymaps_key_approved_43 and tbl_6
+TitleLoadingFilters_3[str_19] = keymaps_key_approved_43
+
+local TitleLoadingFilters_4 = TitleLoadingFilters
+local str_20 = "ps_pad"
+local keymaps_key_approved_44 = InputUtils.keymaps_key_approved("ps_pad")
+
+keymaps_key_approved_44 = not keymaps_key_approved_44 and tbl_6
+TitleLoadingFilters_4[str_20] = keymaps_key_approved_44
 TitleScreenKeyMaps = {}
-TitleScreenKeyMaps.win32 = InputUtils.keymaps_key_approved("win32") and {
+
+local TitleScreenKeyMaps = TitleScreenKeyMaps
+local keymaps_key_approved_45 = InputUtils.keymaps_key_approved("win32")
+
+keymaps_key_approved_45 = not keymaps_key_approved_45 and {
 	move_up_raw = {
 		"keyboard",
 		"up",
@@ -4359,7 +4628,12 @@ TitleScreenKeyMaps.win32 = InputUtils.keymaps_key_approved("win32") and {
 		"axis"
 	}
 }
-TitleScreenKeyMaps.xb1 = InputUtils.keymaps_key_approved("xb1") and {
+TitleScreenKeyMaps.win32 = keymaps_key_approved_45
+
+local TitleScreenKeyMaps_2 = TitleScreenKeyMaps
+local keymaps_key_approved_46 = InputUtils.keymaps_key_approved("xb1")
+
+keymaps_key_approved_46 = not keymaps_key_approved_46 and {
 	move_left_raw = {
 		"gamepad",
 		"d_left",
@@ -4466,7 +4740,13 @@ TitleScreenKeyMaps.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 		"pressed"
 	}
 }
-TitleScreenKeyMaps.ps4 = InputUtils.keymaps_key_approved("ps4") and {
+TitleScreenKeyMaps_2.xb1 = keymaps_key_approved_46
+
+local TitleScreenKeyMaps_3 = TitleScreenKeyMaps
+local str_21 = "ps4"
+local keymaps_key_approved_47 = InputUtils.keymaps_key_approved("ps4")
+
+keymaps_key_approved_47 = not keymaps_key_approved_47 and {
 	move_left_raw = {
 		"gamepad",
 		"left",
@@ -4573,7 +4853,13 @@ TitleScreenKeyMaps.ps4 = InputUtils.keymaps_key_approved("ps4") and {
 		"pressed"
 	}
 }
-TitleScreenKeyMaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {
+TitleScreenKeyMaps_3[str_21] = keymaps_key_approved_47
+
+local TitleScreenKeyMaps_4 = TitleScreenKeyMaps
+local str_22 = "ps_pad"
+local keymaps_key_approved_48 = InputUtils.keymaps_key_approved("ps_pad")
+
+keymaps_key_approved_48 = not keymaps_key_approved_48 and {
 	move_left_raw = {
 		"ps_pad",
 		"left",
@@ -4680,8 +4966,13 @@ TitleScreenKeyMaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {
 		"pressed"
 	}
 }
+TitleScreenKeyMaps_4[str_22] = keymaps_key_approved_48
 TitleScreenFilters = {}
-TitleScreenFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
+
+local TitleScreenFilters = TitleScreenFilters
+local keymaps_key_approved_49 = InputUtils.keymaps_key_approved("win32")
+
+keymaps_key_approved_49 = not keymaps_key_approved_49 and {
 	start = {
 		filter_type = "or",
 		input_mappings = {
@@ -4764,7 +5055,12 @@ TitleScreenFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
 		}
 	}
 }
-TitleScreenFilters.xb1 = InputUtils.keymaps_key_approved("xb1") and {
+TitleScreenFilters.win32 = keymaps_key_approved_49
+
+local TitleScreenFilters_2 = TitleScreenFilters
+local keymaps_key_approved_50 = InputUtils.keymaps_key_approved("xb1")
+
+keymaps_key_approved_50 = not keymaps_key_approved_50 and {
 	start = {
 		filter_type = "or",
 		input_mappings = {
@@ -4852,8 +5148,9 @@ TitleScreenFilters.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 		}
 	}
 }
+TitleScreenFilters_2.xb1 = keymaps_key_approved_50
 
-local var_0_4 = {
+local tbl_7 = {
 	start = {
 		filter_type = "or",
 		input_mappings = {
@@ -4941,11 +5238,25 @@ local var_0_4 = {
 		}
 	}
 }
+local TitleScreenFilters_3 = TitleScreenFilters
+local str_23 = "ps4"
+local keymaps_key_approved_51 = InputUtils.keymaps_key_approved("ps4")
 
-TitleScreenFilters.ps4 = InputUtils.keymaps_key_approved("ps4") and var_0_4
-TitleScreenFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and var_0_4
+keymaps_key_approved_51 = not keymaps_key_approved_51 and tbl_7
+TitleScreenFilters_3[str_23] = keymaps_key_approved_51
+
+local TitleScreenFilters_4 = TitleScreenFilters
+local str_24 = "ps_pad"
+local keymaps_key_approved_52 = InputUtils.keymaps_key_approved("ps_pad")
+
+keymaps_key_approved_52 = not keymaps_key_approved_52 and tbl_7
+TitleScreenFilters_4[str_24] = keymaps_key_approved_52
 DemoUIKeyMaps = {}
-DemoUIKeyMaps.win32 = InputUtils.keymaps_key_approved("win32") and {
+
+local DemoUIKeyMaps = DemoUIKeyMaps
+local keymaps_key_approved_53 = InputUtils.keymaps_key_approved("win32")
+
+keymaps_key_approved_53 = not keymaps_key_approved_53 and {
 	left = {
 		"gamepad",
 		"d_left",
@@ -5002,7 +5313,12 @@ DemoUIKeyMaps.win32 = InputUtils.keymaps_key_approved("win32") and {
 		"pressed"
 	}
 }
-DemoUIKeyMaps.xb1 = InputUtils.keymaps_key_approved("xb1") and {
+DemoUIKeyMaps.win32 = keymaps_key_approved_53
+
+local DemoUIKeyMaps_2 = DemoUIKeyMaps
+local keymaps_key_approved_54 = InputUtils.keymaps_key_approved("xb1")
+
+keymaps_key_approved_54 = not keymaps_key_approved_54 and {
 	left = {
 		"gamepad",
 		"d_left",
@@ -5034,7 +5350,13 @@ DemoUIKeyMaps.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 		"pressed"
 	}
 }
-DemoUIKeyMaps.ps4 = InputUtils.keymaps_key_approved("ps4") and {
+DemoUIKeyMaps_2.xb1 = keymaps_key_approved_54
+
+local DemoUIKeyMaps_3 = DemoUIKeyMaps
+local str_25 = "ps4"
+local keymaps_key_approved_55 = InputUtils.keymaps_key_approved("ps4")
+
+keymaps_key_approved_55 = not keymaps_key_approved_55 and {
 	left = {
 		"gamepad",
 		"left",
@@ -5066,7 +5388,13 @@ DemoUIKeyMaps.ps4 = InputUtils.keymaps_key_approved("ps4") and {
 		"pressed"
 	}
 }
-DemoUIKeyMaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {
+DemoUIKeyMaps_3[str_25] = keymaps_key_approved_55
+
+local DemoUIKeyMaps_4 = DemoUIKeyMaps
+local str_26 = "ps_pad"
+local keymaps_key_approved_56 = InputUtils.keymaps_key_approved("ps_pad")
+
+keymaps_key_approved_56 = not keymaps_key_approved_56 and {
 	left = {
 		"ps_pad",
 		"left",
@@ -5098,8 +5426,13 @@ DemoUIKeyMaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {
 		"pressed"
 	}
 }
+DemoUIKeyMaps_4[str_26] = keymaps_key_approved_56
 DemoUIFilters = {}
-DemoUIFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
+
+local DemoUIFilters = DemoUIFilters
+local keymaps_key_approved_57 = InputUtils.keymaps_key_approved("win32")
+
+keymaps_key_approved_57 = not keymaps_key_approved_57 and {
 	start = {
 		filter_type = "or",
 		input_mappings = {
@@ -5118,11 +5451,33 @@ DemoUIFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
 		}
 	}
 }
-DemoUIFilters.xb1 = InputUtils.keymaps_key_approved("xb1") and {}
-DemoUIFilters.ps4 = InputUtils.keymaps_key_approved("ps4") and {}
-DemoUIFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {}
+DemoUIFilters.win32 = keymaps_key_approved_57
+
+local DemoUIFilters_2 = DemoUIFilters
+local keymaps_key_approved_58 = InputUtils.keymaps_key_approved("xb1")
+
+keymaps_key_approved_58 = not keymaps_key_approved_58 and {}
+DemoUIFilters_2.xb1 = keymaps_key_approved_58
+
+local DemoUIFilters_3 = DemoUIFilters
+local str_27 = "ps4"
+local keymaps_key_approved_59 = InputUtils.keymaps_key_approved("ps4")
+
+keymaps_key_approved_59 = not keymaps_key_approved_59 and {}
+DemoUIFilters_3[str_27] = keymaps_key_approved_59
+
+local DemoUIFilters_4 = DemoUIFilters
+local str_28 = "ps_pad"
+local keymaps_key_approved_60 = InputUtils.keymaps_key_approved("ps_pad")
+
+keymaps_key_approved_60 = not keymaps_key_approved_60 and {}
+DemoUIFilters_4[str_28] = keymaps_key_approved_60
 IngamePlayerListKeymaps = {}
-IngamePlayerListKeymaps.win32 = InputUtils.keymaps_key_approved("win32") and {
+
+local IngamePlayerListKeymaps = IngamePlayerListKeymaps
+local keymaps_key_approved_61 = InputUtils.keymaps_key_approved("win32")
+
+keymaps_key_approved_61 = not keymaps_key_approved_61 and {
 	toggle_menu = {
 		"keyboard",
 		"esc",
@@ -5266,7 +5621,12 @@ IngamePlayerListKeymaps.win32 = InputUtils.keymaps_key_approved("win32") and {
 	back = {},
 	show_profile = {}
 }
-IngamePlayerListKeymaps.xb1 = InputUtils.keymaps_key_approved("xb1") and {
+IngamePlayerListKeymaps.win32 = keymaps_key_approved_61
+
+local IngamePlayerListKeymaps_2 = IngamePlayerListKeymaps
+local keymaps_key_approved_62 = InputUtils.keymaps_key_approved("xb1")
+
+keymaps_key_approved_62 = not keymaps_key_approved_62 and {
 	toggle_menu = {
 		"gamepad",
 		"start",
@@ -5372,7 +5732,13 @@ IngamePlayerListKeymaps.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 		"pressed"
 	}
 }
-IngamePlayerListKeymaps.ps4 = InputUtils.keymaps_key_approved("ps4") and {
+IngamePlayerListKeymaps_2.xb1 = keymaps_key_approved_62
+
+local IngamePlayerListKeymaps_3 = IngamePlayerListKeymaps
+local str_29 = "ps4"
+local keymaps_key_approved_63 = InputUtils.keymaps_key_approved("ps4")
+
+keymaps_key_approved_63 = not keymaps_key_approved_63 and {
 	toggle_menu = {
 		"gamepad",
 		"options",
@@ -5478,7 +5844,13 @@ IngamePlayerListKeymaps.ps4 = InputUtils.keymaps_key_approved("ps4") and {
 		"pressed"
 	}
 }
-IngamePlayerListKeymaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {
+IngamePlayerListKeymaps_3[str_29] = keymaps_key_approved_63
+
+local IngamePlayerListKeymaps_4 = IngamePlayerListKeymaps
+local str_30 = "ps_pad"
+local keymaps_key_approved_64 = InputUtils.keymaps_key_approved("ps_pad")
+
+keymaps_key_approved_64 = not keymaps_key_approved_64 and {
 	toggle_menu = {
 		"ps_pad",
 		"options",
@@ -5584,8 +5956,13 @@ IngamePlayerListKeymaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {
 		"pressed"
 	}
 }
+IngamePlayerListKeymaps_4[str_30] = keymaps_key_approved_64
 IngamePlayerListFilters = {}
-IngamePlayerListFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
+
+local IngamePlayerListFilters = IngamePlayerListFilters
+local keymaps_key_approved_65 = InputUtils.keymaps_key_approved("win32")
+
+keymaps_key_approved_65 = not keymaps_key_approved_65 and {
 	ingame_player_list_exit = {
 		filter_type = "or",
 		input_mappings = {
@@ -5637,7 +6014,12 @@ IngamePlayerListFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
 		}
 	}
 }
-IngamePlayerListFilters.xb1 = InputUtils.keymaps_key_approved("xb1") and {
+IngamePlayerListFilters.win32 = keymaps_key_approved_65
+
+local IngamePlayerListFilters_2 = IngamePlayerListFilters
+local keymaps_key_approved_66 = InputUtils.keymaps_key_approved("xb1")
+
+keymaps_key_approved_66 = not keymaps_key_approved_66 and {
 	cursor = {
 		filter_type = "gamepad_cursor",
 		multiplier = 1000,
@@ -5653,8 +6035,9 @@ IngamePlayerListFilters.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 		hover_multiplier = 0.3
 	}
 }
+IngamePlayerListFilters_2.xb1 = keymaps_key_approved_66
 
-local var_0_5 = {
+local tbl_8 = {
 	cursor = {
 		filter_type = "gamepad_cursor",
 		multiplier = 1000,
@@ -5670,442 +6053,752 @@ local var_0_5 = {
 		hover_multiplier = 0.3
 	}
 }
+local IngamePlayerListFilters_3 = IngamePlayerListFilters
+local str_31 = "ps4"
+local keymaps_key_approved_67 = InputUtils.keymaps_key_approved("ps4")
 
-IngamePlayerListFilters.ps4 = InputUtils.keymaps_key_approved("ps4") and var_0_5
-IngamePlayerListFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and var_0_5
+keymaps_key_approved_67 = not keymaps_key_approved_67 and tbl_8
+IngamePlayerListFilters_3[str_31] = keymaps_key_approved_67
+
+local IngamePlayerListFilters_4 = IngamePlayerListFilters
+local str_32 = "ps_pad"
+local keymaps_key_approved_68 = InputUtils.keymaps_key_approved("ps_pad")
+
+keymaps_key_approved_68 = not keymaps_key_approved_68 and tbl_8
+IngamePlayerListFilters_4[str_32] = keymaps_key_approved_68
 IngameMenuKeymaps = {}
-IngameMenuKeymaps.win32 = InputUtils.keymaps_key_approved("win32") and {
-	ingame_vote_yes = {
+
+local IngameMenuKeymaps = IngameMenuKeymaps
+local keymaps_key_approved_69 = InputUtils.keymaps_key_approved("win32")
+
+if not keymaps_key_approved_69 then
+	keymaps_key_approved_69 = {
+		ingame_vote_yes = {
+			"keyboard",
+			"f5",
+			"pressed"
+		},
+		ingame_vote_no = {
+			"keyboard",
+			"f6",
+			"pressed"
+		},
+		ui_reload_debug = {
+			"keyboard",
+			"f5",
+			"pressed"
+		},
+		ui_debug = {
+			"keyboard",
+			"f6",
+			"pressed"
+		}
+	}
+
+	local tbl_9 = {
 		"keyboard",
-		"f5",
+		nil,
 		"pressed"
-	},
-	ingame_vote_no = {
-		"keyboard",
-		"f6",
-		"pressed"
-	},
-	ui_reload_debug = {
-		"keyboard",
-		"f5",
-		"pressed"
-	},
-	ui_debug = {
-		"keyboard",
-		"f6",
-		"pressed"
-	},
-	cancel_matchmaking = {
-		"keyboard",
-		IS_XB1 and "b" or "f10",
-		"pressed"
-	},
-	xbox_cancel_matchmaking = {
+	}
+	local flag
+
+	flag = not IS_XB1 and "b" and "f10"
+	tbl_9[2] = flag
+	keymaps_key_approved_69.cancel_matchmaking = tbl_9
+
+	local tbl_10 = {
 		"keyboard",
 		"esc",
 		"pressed"
-	},
-	matchmaking_ready_instigate = {
+	}
+
+	keymaps_key_approved_69.xbox_cancel_matchmaking = tbl_10
+
+	local tbl_11 = {
 		"keyboard",
 		"f2",
 		"pressed"
-	},
-	matchmaking_ready = {
+	}
+
+	keymaps_key_approved_69.matchmaking_ready_instigate = tbl_11
+
+	local tbl_12 = {
 		"keyboard",
 		"f2",
 		"pressed"
-	},
-	matchmaking_start = {
+	}
+
+	keymaps_key_approved_69.matchmaking_ready = tbl_12
+
+	local tbl_13 = {
 		"keyboard",
 		"f3",
 		"pressed"
-	},
-	toggle_menu = {
+	}
+
+	keymaps_key_approved_69.matchmaking_start = tbl_13
+
+	local tbl_14 = {
 		"keyboard",
 		"esc",
 		"pressed"
-	},
-	back_menu = {
+	}
+
+	keymaps_key_approved_69.toggle_menu = tbl_14
+
+	local tbl_15 = {
 		"mouse",
 		"right",
 		"pressed"
-	},
-	back_menu_alt = {
+	}
+
+	keymaps_key_approved_69.back_menu = tbl_15
+
+	local tbl_16 = {
 		"mouse",
 		"extra_1",
 		"released"
-	},
-	move_up_raw = {
+	}
+
+	keymaps_key_approved_69.back_menu_alt = tbl_16
+
+	local tbl_17 = {
 		"keyboard",
 		"up",
 		"pressed"
-	},
-	move_down_raw = {
+	}
+
+	keymaps_key_approved_69.move_up_raw = tbl_17
+
+	local tbl_18 = {
 		"keyboard",
 		"down",
 		"pressed"
-	},
-	move_left_raw = {
+	}
+
+	keymaps_key_approved_69.move_down_raw = tbl_18
+
+	local tbl_19 = {
 		"keyboard",
 		"left",
 		"pressed"
-	},
-	move_right_raw = {
+	}
+
+	keymaps_key_approved_69.move_left_raw = tbl_19
+
+	local tbl_20 = {
 		"keyboard",
 		"right",
 		"pressed"
-	},
-	move_up_hold_raw = {
+	}
+
+	keymaps_key_approved_69.move_right_raw = tbl_20
+
+	local tbl_21 = {
 		"keyboard",
 		"up",
 		"held"
-	},
-	move_down_hold_raw = {
+	}
+
+	keymaps_key_approved_69.move_up_hold_raw = tbl_21
+
+	local tbl_22 = {
 		"keyboard",
 		"down",
 		"held"
-	},
-	move_left_hold_raw = {
+	}
+
+	keymaps_key_approved_69.move_down_hold_raw = tbl_22
+
+	local tbl_23 = {
 		"keyboard",
 		"left",
 		"held"
-	},
-	move_right_hold_raw = {
+	}
+
+	keymaps_key_approved_69.move_left_hold_raw = tbl_23
+
+	local tbl_24 = {
 		"keyboard",
 		"right",
 		"held"
-	},
-	move_up_alt_raw = {
+	}
+
+	keymaps_key_approved_69.move_right_hold_raw = tbl_24
+
+	local tbl_25 = {
 		"keyboard",
 		"w",
 		"pressed"
-	},
-	move_down_alt_raw = {
+	}
+
+	keymaps_key_approved_69.move_up_alt_raw = tbl_25
+
+	local tbl_26 = {
 		"keyboard",
 		"s",
 		"pressed"
-	},
-	move_left_alt_raw = {
+	}
+
+	keymaps_key_approved_69.move_down_alt_raw = tbl_26
+
+	local tbl_27 = {
 		"keyboard",
 		"a",
 		"pressed"
-	},
-	move_right_alt_raw = {
+	}
+
+	keymaps_key_approved_69.move_left_alt_raw = tbl_27
+
+	local tbl_28 = {
 		"keyboard",
 		"d",
 		"pressed"
-	},
-	move_up_alt_hold_raw = {
+	}
+
+	keymaps_key_approved_69.move_right_alt_raw = tbl_28
+
+	local tbl_29 = {
 		"keyboard",
 		"w",
 		"held"
-	},
-	move_down_alt_hold_raw = {
+	}
+
+	keymaps_key_approved_69.move_up_alt_hold_raw = tbl_29
+
+	local tbl_30 = {
 		"keyboard",
 		"s",
 		"held"
-	},
-	move_left_alt_hold_raw = {
+	}
+
+	keymaps_key_approved_69.move_down_alt_hold_raw = tbl_30
+
+	local tbl_31 = {
 		"keyboard",
 		"a",
 		"held"
-	},
-	move_right_alt_hold_raw = {
+	}
+
+	keymaps_key_approved_69.move_left_alt_hold_raw = tbl_31
+
+	local tbl_32 = {
 		"keyboard",
 		"d",
 		"held"
-	},
-	versus_menu_toggle = {
+	}
+
+	keymaps_key_approved_69.move_right_alt_hold_raw = tbl_32
+
+	local tbl_33 = {
 		"keyboard",
 		"left alt",
 		"pressed"
-	},
-	analog_input = {},
-	skip = {
+	}
+
+	keymaps_key_approved_69.versus_menu_toggle = tbl_33
+
+	local tbl_34 = {}
+
+	keymaps_key_approved_69.analog_input = tbl_34
+
+	local tbl_35 = {
 		"keyboard",
 		"space",
 		"held"
-	},
-	skip_pressed = {
+	}
+
+	keymaps_key_approved_69.skip = tbl_35
+
+	local tbl_36 = {
 		"keyboard",
 		"space",
 		"pressed"
-	},
-	cursor = {
+	}
+
+	keymaps_key_approved_69.skip_pressed = tbl_36
+	keymaps_key_approved_69.cursor = {
 		"mouse",
 		"cursor",
 		"axis"
-	},
-	left_release = {
+	}
+
+	local tbl_37 = {
 		"mouse",
 		"left",
 		"released"
-	},
-	left_hold = {
-		"mouse",
-		"left",
-		"held"
-	},
-	left_press = {
-		"mouse",
-		"left",
-		"pressed"
-	},
-	right_press = {
-		"mouse",
-		"right",
-		"pressed"
-	},
-	mouse_middle_press = {
-		"mouse",
-		"middle",
-		"pressed"
-	},
-	mouse_middle_held = {
-		"mouse",
-		"middle",
-		"held"
-	},
-	confirm = {
-		"keyboard",
-		"space",
-		"released"
-	},
-	confirm_hold = {
-		"keyboard",
-		"space",
-		"held"
-	},
-	confirm_press = {
-		"keyboard",
-		"space",
-		"pressed"
-	},
-	back = {},
-	refresh = {},
-	refresh_hold = {},
-	refresh_press = {},
-	special_1 = {},
-	special_1_hold = {},
-	special_1_press = {},
-	left_stick_press = {},
-	right_stick_press = {},
-	cycle_next_raw = {
-		"keyboard",
-		"tab",
-		"pressed"
-	},
-	cycle_next_raw_hold = {
-		"keyboard",
-		"tab",
-		"held"
-	},
-	cycle_next_alt_raw = {
-		"keyboard",
-		"e",
-		"pressed"
-	},
-	cycle_next_alt_raw_hold = {
-		"keyboard",
-		"e",
-		"held"
-	},
-	cycle_prev_raw = {
-		"keyboard",
-		"q",
-		"pressed"
-	},
-	cycle_prev_raw_held = {
-		"keyboard",
-		"q",
-		"held"
-	},
-	trigger_left_soft = {},
-	trigger_right_soft = {},
-	trigger_cycle_next = {},
-	trigger_cycle_next_hold = {},
-	trigger_cycle_previous = {},
-	trigger_cycle_previous_hold = {},
-	gamepad_left_axis = {},
-	gamepad_right_axis = {},
-	look_raw_controller = {},
-	show_information = {
-		"mouse",
-		"left",
-		"pressed"
-	},
-	hotkey_map = {
-		"keyboard",
-		"m",
-		"pressed"
-	},
-	hotkey_weave_leaderboard = {
-		"keyboard",
-		"l",
-		"pressed"
-	},
-	hotkey_weave_forge = {
-		"keyboard",
-		"k",
-		"pressed"
-	},
-	hotkey_weave_play = {
-		"keyboard",
-		"j",
-		"pressed"
-	},
-	hotkey_talents = {
-		"keyboard",
-		"t",
-		"pressed"
-	},
-	hotkey_hero = {
-		"keyboard",
-		"h",
-		"pressed"
-	},
-	hotkey_inventory = {
-		"keyboard",
-		"i",
-		"pressed"
-	},
-	hotkey_altar = {
-		"keyboard",
-		"h",
-		"pressed"
-	},
-	hotkey_quests = {
-		"keyboard",
-		"u",
-		"pressed"
-	},
-	hotkey_achievements = {
-		"keyboard",
-		"o",
-		"pressed"
-	},
-	hotkey_mark_favorite_item = {
-		"keyboard",
-		"f",
-		"pressed"
-	},
-	hotkey_loot = {
-		"keyboard",
-		"c",
-		"pressed"
-	},
-	item_compare_1 = {
-		"keyboard",
-		"left shift",
-		"held"
-	},
-	item_compare_2 = {
-		"keyboard",
-		"right shift",
-		"held"
-	},
-	item_detail_1 = {
-		"keyboard",
-		"left ctrl",
-		"held"
-	},
-	item_detail_2 = {
-		"keyboard",
-		"right ctrl",
-		"held"
-	},
-	keyboard_1 = {
-		"keyboard",
-		"1",
-		"pressed"
-	},
-	keyboard_2 = {
-		"keyboard",
-		"2",
-		"pressed"
-	},
-	keyboard_3 = {
-		"keyboard",
-		"3",
-		"pressed"
-	},
-	keyboard_4 = {
-		"keyboard",
-		"4",
-		"pressed"
-	},
-	keyboard_5 = {
-		"keyboard",
-		"5",
-		"pressed"
-	},
-	keyboard_6 = {
-		"keyboard",
-		"6",
-		"pressed"
-	},
-	keyboard_7 = {
-		"keyboard",
-		"7",
-		"pressed"
-	},
-	keyboard_8 = {
-		"keyboard",
-		"8",
-		"pressed"
-	},
-	keyboard_9 = {
-		"keyboard",
-		"9",
-		"pressed"
-	},
-	keyboard_0 = {
-		"keyboard",
-		"0",
-		"pressed"
-	},
-	scroll_axis = {
-		"mouse",
-		"wheel",
-		"axis"
-	},
-	debug_pixeldistance_1 = {
-		"keyboard",
-		"left shift",
-		"held"
-	},
-	debug_pixeldistance_2 = {
-		"mouse",
-		"right",
-		"held"
-	},
-	execute_login_1 = {
-		"keyboard",
-		"enter",
-		"pressed"
-	},
-	execute_login_2 = {
-		"keyboard",
-		"numpad enter",
-		"pressed"
-	},
-	cancel_video_1 = {
-		"keyboard",
-		"space",
-		"held"
-	},
-	cancel_video_2 = {
-		"keyboard",
-		"esc",
-		"held"
-	},
-	cancel_video_3 = {
+	}
+
+	keymaps_key_approved_69.left_release = tbl_37
+
+	local tbl_38 = {
 		"mouse",
 		"left",
 		"held"
 	}
-}
-IngameMenuKeymaps.xb1 = InputUtils.keymaps_key_approved("xb1") and {
+
+	keymaps_key_approved_69.left_hold = tbl_38
+
+	local tbl_39 = {
+		"mouse",
+		"left",
+		"pressed"
+	}
+
+	keymaps_key_approved_69.left_press = tbl_39
+
+	local tbl_40 = {
+		"mouse",
+		"right",
+		"pressed"
+	}
+
+	keymaps_key_approved_69.right_press = tbl_40
+
+	local tbl_41 = {
+		"mouse",
+		"middle",
+		"pressed"
+	}
+
+	keymaps_key_approved_69.mouse_middle_press = tbl_41
+
+	local tbl_42 = {
+		"mouse",
+		"middle",
+		"held"
+	}
+
+	keymaps_key_approved_69.mouse_middle_held = tbl_42
+
+	local tbl_43 = {
+		"keyboard",
+		"space",
+		"released"
+	}
+
+	keymaps_key_approved_69.confirm = tbl_43
+
+	local tbl_44 = {
+		"keyboard",
+		"space",
+		"held"
+	}
+
+	keymaps_key_approved_69.confirm_hold = tbl_44
+
+	local tbl_45 = {
+		"keyboard",
+		"space",
+		"pressed"
+	}
+
+	keymaps_key_approved_69.confirm_press = tbl_45
+
+	local tbl_46 = {}
+
+	keymaps_key_approved_69.back = tbl_46
+
+	local tbl_47 = {}
+
+	keymaps_key_approved_69.refresh = tbl_47
+
+	local tbl_48 = {}
+
+	keymaps_key_approved_69.refresh_hold = tbl_48
+
+	local tbl_49 = {}
+
+	keymaps_key_approved_69.refresh_press = tbl_49
+
+	local tbl_50 = {}
+
+	keymaps_key_approved_69.special_1 = tbl_50
+
+	local tbl_51 = {}
+
+	keymaps_key_approved_69.special_1_hold = tbl_51
+
+	local tbl_52 = {}
+
+	keymaps_key_approved_69.special_1_press = tbl_52
+
+	local tbl_53 = {}
+
+	keymaps_key_approved_69.left_stick_press = tbl_53
+
+	local tbl_54 = {}
+
+	keymaps_key_approved_69.right_stick_press = tbl_54
+
+	local tbl_55 = {
+		"keyboard",
+		"tab",
+		"pressed"
+	}
+
+	keymaps_key_approved_69.cycle_next_raw = tbl_55
+
+	local tbl_56 = {
+		"keyboard",
+		"tab",
+		"held"
+	}
+
+	keymaps_key_approved_69.cycle_next_raw_hold = tbl_56
+
+	local tbl_57 = {
+		"keyboard",
+		"e",
+		"pressed"
+	}
+
+	keymaps_key_approved_69.cycle_next_alt_raw = tbl_57
+
+	local tbl_58 = {
+		"keyboard",
+		"e",
+		"held"
+	}
+
+	keymaps_key_approved_69.cycle_next_alt_raw_hold = tbl_58
+
+	local tbl_59 = {
+		"keyboard",
+		"q",
+		"pressed"
+	}
+
+	keymaps_key_approved_69.cycle_prev_raw = tbl_59
+
+	local tbl_60 = {
+		"keyboard",
+		"q",
+		"held"
+	}
+
+	keymaps_key_approved_69.cycle_prev_raw_held = tbl_60
+
+	local tbl_61 = {}
+
+	keymaps_key_approved_69.trigger_left_soft = tbl_61
+
+	local tbl_62 = {}
+
+	keymaps_key_approved_69.trigger_right_soft = tbl_62
+
+	local tbl_63 = {}
+
+	keymaps_key_approved_69.trigger_cycle_next = tbl_63
+
+	local tbl_64 = {}
+
+	keymaps_key_approved_69.trigger_cycle_next_hold = tbl_64
+
+	local tbl_65 = {}
+
+	keymaps_key_approved_69.trigger_cycle_previous = tbl_65
+
+	local tbl_66 = {}
+
+	keymaps_key_approved_69.trigger_cycle_previous_hold = tbl_66
+
+	local tbl_67 = {}
+
+	keymaps_key_approved_69.gamepad_left_axis = tbl_67
+
+	local tbl_68 = {}
+
+	keymaps_key_approved_69.gamepad_right_axis = tbl_68
+	keymaps_key_approved_69.look_raw_controller = {}
+
+	local tbl_69 = {
+		"mouse",
+		"left",
+		"pressed"
+	}
+
+	keymaps_key_approved_69.show_information = tbl_69
+
+	local tbl_70 = {
+		"keyboard",
+		"m",
+		"pressed"
+	}
+
+	keymaps_key_approved_69.hotkey_map = tbl_70
+
+	local tbl_71 = {
+		"keyboard",
+		"l",
+		"pressed"
+	}
+
+	keymaps_key_approved_69.hotkey_weave_leaderboard = tbl_71
+
+	local tbl_72 = {
+		"keyboard",
+		"k",
+		"pressed"
+	}
+
+	keymaps_key_approved_69.hotkey_weave_forge = tbl_72
+
+	local tbl_73 = {
+		"keyboard",
+		"j",
+		"pressed"
+	}
+
+	keymaps_key_approved_69.hotkey_weave_play = tbl_73
+
+	local tbl_74 = {
+		"keyboard",
+		"t",
+		"pressed"
+	}
+
+	keymaps_key_approved_69.hotkey_talents = tbl_74
+
+	local tbl_75 = {
+		"keyboard",
+		"h",
+		"pressed"
+	}
+
+	keymaps_key_approved_69.hotkey_hero = tbl_75
+
+	local tbl_76 = {
+		"keyboard",
+		"i",
+		"pressed"
+	}
+
+	keymaps_key_approved_69.hotkey_inventory = tbl_76
+
+	local tbl_77 = {
+		"keyboard",
+		"h",
+		"pressed"
+	}
+
+	keymaps_key_approved_69.hotkey_altar = tbl_77
+
+	local tbl_78 = {
+		"keyboard",
+		"u",
+		"pressed"
+	}
+
+	keymaps_key_approved_69.hotkey_quests = tbl_78
+
+	local tbl_79 = {
+		"keyboard",
+		"o",
+		"pressed"
+	}
+
+	keymaps_key_approved_69.hotkey_achievements = tbl_79
+
+	local tbl_80 = {
+		"keyboard",
+		"f",
+		"pressed"
+	}
+
+	keymaps_key_approved_69.hotkey_mark_favorite_item = tbl_80
+
+	local tbl_81 = {
+		"keyboard",
+		"c",
+		"pressed"
+	}
+
+	keymaps_key_approved_69.hotkey_loot = tbl_81
+
+	local tbl_82 = {
+		"keyboard",
+		"left shift",
+		"held"
+	}
+
+	keymaps_key_approved_69.item_compare_1 = tbl_82
+
+	local tbl_83 = {
+		"keyboard",
+		"right shift",
+		"held"
+	}
+
+	keymaps_key_approved_69.item_compare_2 = tbl_83
+
+	local tbl_84 = {
+		"keyboard",
+		"left ctrl",
+		"held"
+	}
+
+	keymaps_key_approved_69.item_detail_1 = tbl_84
+
+	local tbl_85 = {
+		"keyboard",
+		"right ctrl",
+		"held"
+	}
+
+	keymaps_key_approved_69.item_detail_2 = tbl_85
+
+	local tbl_86 = {
+		"keyboard",
+		"1",
+		"pressed"
+	}
+
+	keymaps_key_approved_69.keyboard_1 = tbl_86
+
+	local tbl_87 = {
+		"keyboard",
+		"2",
+		"pressed"
+	}
+
+	keymaps_key_approved_69.keyboard_2 = tbl_87
+
+	local tbl_88 = {
+		"keyboard",
+		"3",
+		"pressed"
+	}
+
+	keymaps_key_approved_69.keyboard_3 = tbl_88
+
+	local tbl_89 = {
+		"keyboard",
+		"4",
+		"pressed"
+	}
+
+	keymaps_key_approved_69.keyboard_4 = tbl_89
+
+	local tbl_90 = {
+		"keyboard",
+		"5",
+		"pressed"
+	}
+
+	keymaps_key_approved_69.keyboard_5 = tbl_90
+
+	local tbl_91 = {
+		"keyboard",
+		"6",
+		"pressed"
+	}
+
+	keymaps_key_approved_69.keyboard_6 = tbl_91
+
+	local tbl_92 = {
+		"keyboard",
+		"7",
+		"pressed"
+	}
+
+	keymaps_key_approved_69.keyboard_7 = tbl_92
+
+	local tbl_93 = {
+		"keyboard",
+		"8",
+		"pressed"
+	}
+
+	keymaps_key_approved_69.keyboard_8 = tbl_93
+
+	local tbl_94 = {
+		"keyboard",
+		"9",
+		"pressed"
+	}
+
+	keymaps_key_approved_69.keyboard_9 = tbl_94
+
+	local tbl_95 = {
+		"keyboard",
+		"0",
+		"pressed"
+	}
+
+	keymaps_key_approved_69.keyboard_0 = tbl_95
+
+	local tbl_96 = {
+		"mouse",
+		"wheel",
+		"axis"
+	}
+
+	keymaps_key_approved_69.scroll_axis = tbl_96
+
+	local tbl_97 = {
+		"keyboard",
+		"left shift",
+		"held"
+	}
+
+	keymaps_key_approved_69.debug_pixeldistance_1 = tbl_97
+
+	local tbl_98 = {
+		"mouse",
+		"right",
+		"held"
+	}
+
+	keymaps_key_approved_69.debug_pixeldistance_2 = tbl_98
+
+	local tbl_99 = {
+		"keyboard",
+		"enter",
+		"pressed"
+	}
+
+	keymaps_key_approved_69.execute_login_1 = tbl_99
+
+	local tbl_100 = {
+		"keyboard",
+		"numpad enter",
+		"pressed"
+	}
+
+	keymaps_key_approved_69.execute_login_2 = tbl_100
+
+	local tbl_101 = {
+		"keyboard",
+		"space",
+		"held"
+	}
+
+	keymaps_key_approved_69.cancel_video_1 = tbl_101
+
+	local tbl_102 = {
+		"keyboard",
+		"esc",
+		"held"
+	}
+
+	keymaps_key_approved_69.cancel_video_2 = tbl_102
+
+	local tbl_103 = {
+		"mouse",
+		"left",
+		"held"
+	}
+
+	keymaps_key_approved_69.cancel_video_3 = tbl_103
+end
+
+IngameMenuKeymaps.win32 = keymaps_key_approved_69
+
+local IngameMenuKeymaps_2 = IngameMenuKeymaps
+local keymaps_key_approved_70 = InputUtils.keymaps_key_approved("xb1")
+
+keymaps_key_approved_70 = not keymaps_key_approved_70 and {
 	ingame_vote_yes = {
 		"gamepad",
 		"back",
@@ -6415,7 +7108,13 @@ IngameMenuKeymaps.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 		"held"
 	}
 }
-IngameMenuKeymaps.ps4 = InputUtils.keymaps_key_approved("ps4") and {
+IngameMenuKeymaps_2.xb1 = keymaps_key_approved_70
+
+local IngameMenuKeymaps_3 = IngameMenuKeymaps
+local str_33 = "ps4"
+local keymaps_key_approved_71 = InputUtils.keymaps_key_approved("ps4")
+
+keymaps_key_approved_71 = not keymaps_key_approved_71 and {
 	ingame_vote_yes = {
 		"gamepad",
 		"l1",
@@ -6725,7 +7424,13 @@ IngameMenuKeymaps.ps4 = InputUtils.keymaps_key_approved("ps4") and {
 		"held"
 	}
 }
-IngameMenuKeymaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {
+IngameMenuKeymaps_3[str_33] = keymaps_key_approved_71
+
+local IngameMenuKeymaps_4 = IngameMenuKeymaps
+local str_34 = "ps_pad"
+local keymaps_key_approved_72 = InputUtils.keymaps_key_approved("ps_pad")
+
+keymaps_key_approved_72 = not keymaps_key_approved_72 and {
 	ingame_vote_yes = {
 		"ps_pad",
 		"l1",
@@ -7035,8 +7740,13 @@ IngameMenuKeymaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {
 		"held"
 	}
 }
+IngameMenuKeymaps_4[str_34] = keymaps_key_approved_72
 IngameMenuFilters = {}
-IngameMenuFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
+
+local IngameMenuFilters = IngameMenuFilters
+local keymaps_key_approved_73 = InputUtils.keymaps_key_approved("win32")
+
+keymaps_key_approved_73 = not keymaps_key_approved_73 and {
 	debug_pixeldistance = {
 		filter_type = "and",
 		input_mappings = {
@@ -7326,7 +8036,12 @@ IngameMenuFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
 		}
 	}
 }
-IngameMenuFilters.xb1 = InputUtils.keymaps_key_approved("xb1") and {
+IngameMenuFilters.win32 = keymaps_key_approved_73
+
+local IngameMenuFilters_2 = IngameMenuFilters
+local keymaps_key_approved_74 = InputUtils.keymaps_key_approved("xb1")
+
+keymaps_key_approved_74 = not keymaps_key_approved_74 and {
 	debug_pixeldistance = {
 		filter_type = "and",
 		input_mappings = {
@@ -7551,8 +8266,9 @@ IngameMenuFilters.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 		}
 	}
 }
+IngameMenuFilters_2.xb1 = keymaps_key_approved_74
 
-local var_0_6 = {
+local tbl_104 = {
 	debug_pixeldistance = {
 		filter_type = "and",
 		input_mappings = {
@@ -7777,11 +8493,25 @@ local var_0_6 = {
 		}
 	}
 }
+local IngameMenuFilters_3 = IngameMenuFilters
+local str_35 = "ps4"
+local keymaps_key_approved_75 = InputUtils.keymaps_key_approved("ps4")
 
-IngameMenuFilters.ps4 = InputUtils.keymaps_key_approved("ps4") and var_0_6
-IngameMenuFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and var_0_6
+keymaps_key_approved_75 = not keymaps_key_approved_75 and tbl_104
+IngameMenuFilters_3[str_35] = keymaps_key_approved_75
+
+local IngameMenuFilters_4 = IngameMenuFilters
+local str_36 = "ps_pad"
+local keymaps_key_approved_76 = InputUtils.keymaps_key_approved("ps_pad")
+
+keymaps_key_approved_76 = not keymaps_key_approved_76 and tbl_104
+IngameMenuFilters_4[str_36] = keymaps_key_approved_76
 CutsceneKeymaps = {}
-CutsceneKeymaps.win32 = InputUtils.keymaps_key_approved("win32") and {
+
+local CutsceneKeymaps = CutsceneKeymaps
+local keymaps_key_approved_77 = InputUtils.keymaps_key_approved("win32")
+
+keymaps_key_approved_77 = not keymaps_key_approved_77 and {
 	skip_cutscene_1 = {
 		"keyboard",
 		"enter",
@@ -7813,7 +8543,12 @@ CutsceneKeymaps.win32 = InputUtils.keymaps_key_approved("win32") and {
 		"pressed"
 	}
 }
-CutsceneKeymaps.xb1 = InputUtils.keymaps_key_approved("xb1") and {
+CutsceneKeymaps.win32 = keymaps_key_approved_77
+
+local CutsceneKeymaps_2 = CutsceneKeymaps
+local keymaps_key_approved_78 = InputUtils.keymaps_key_approved("xb1")
+
+keymaps_key_approved_78 = not keymaps_key_approved_78 and {
 	skip_cutscene = {
 		"gamepad",
 		"a",
@@ -7826,7 +8561,13 @@ CutsceneKeymaps.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 	},
 	gdc_debug_skip = {}
 }
-CutsceneKeymaps.ps4 = InputUtils.keymaps_key_approved("ps4") and {
+CutsceneKeymaps_2.xb1 = keymaps_key_approved_78
+
+local CutsceneKeymaps_3 = CutsceneKeymaps
+local str_37 = "ps4"
+local keymaps_key_approved_79 = InputUtils.keymaps_key_approved("ps4")
+
+keymaps_key_approved_79 = not keymaps_key_approved_79 and {
 	skip_cutscene = {
 		"gamepad",
 		"cross",
@@ -7839,7 +8580,13 @@ CutsceneKeymaps.ps4 = InputUtils.keymaps_key_approved("ps4") and {
 	},
 	gdc_debug_skip = {}
 }
-CutsceneKeymaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {
+CutsceneKeymaps_3[str_37] = keymaps_key_approved_79
+
+local CutsceneKeymaps_4 = CutsceneKeymaps
+local str_38 = "ps_pad"
+local keymaps_key_approved_80 = InputUtils.keymaps_key_approved("ps_pad")
+
+keymaps_key_approved_80 = not keymaps_key_approved_80 and {
 	skip_cutscene = {
 		"ps_pad",
 		"cross",
@@ -7852,8 +8599,13 @@ CutsceneKeymaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {
 	},
 	gdc_debug_skip = {}
 }
+CutsceneKeymaps_4[str_38] = keymaps_key_approved_80
 CutsceneFilters = {}
-CutsceneFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
+
+local CutsceneFilters = CutsceneFilters
+local keymaps_key_approved_81 = InputUtils.keymaps_key_approved("win32")
+
+keymaps_key_approved_81 = not keymaps_key_approved_81 and {
 	skip_cutscene = {
 		filter_type = "or",
 		input_mappings = {
@@ -7870,11 +8622,33 @@ CutsceneFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
 		}
 	}
 }
-CutsceneFilters.xb1 = InputUtils.keymaps_key_approved("xb1") and {}
-CutsceneFilters.ps4 = InputUtils.keymaps_key_approved("ps4") and {}
-CutsceneFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {}
+CutsceneFilters.win32 = keymaps_key_approved_81
+
+local CutsceneFilters_2 = CutsceneFilters
+local keymaps_key_approved_82 = InputUtils.keymaps_key_approved("xb1")
+
+keymaps_key_approved_82 = not keymaps_key_approved_82 and {}
+CutsceneFilters_2.xb1 = keymaps_key_approved_82
+
+local CutsceneFilters_3 = CutsceneFilters
+local str_39 = "ps4"
+local keymaps_key_approved_83 = InputUtils.keymaps_key_approved("ps4")
+
+keymaps_key_approved_83 = not keymaps_key_approved_83 and {}
+CutsceneFilters_3[str_39] = keymaps_key_approved_83
+
+local CutsceneFilters_4 = CutsceneFilters
+local str_40 = "ps_pad"
+local keymaps_key_approved_84 = InputUtils.keymaps_key_approved("ps_pad")
+
+keymaps_key_approved_84 = not keymaps_key_approved_84 and {}
+CutsceneFilters_4[str_40] = keymaps_key_approved_84
 ControllerDisconnectKeymaps = {}
-ControllerDisconnectKeymaps.xb1 = InputUtils.keymaps_key_approved("xb1") and {
+
+local ControllerDisconnectKeymaps = ControllerDisconnectKeymaps
+local keymaps_key_approved_85 = InputUtils.keymaps_key_approved("xb1")
+
+keymaps_key_approved_85 = not keymaps_key_approved_85 and {
 	accept_held_1 = {
 		"gamepad",
 		"a",
@@ -7916,8 +8690,13 @@ ControllerDisconnectKeymaps.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 		"released"
 	}
 }
+ControllerDisconnectKeymaps.xb1 = keymaps_key_approved_85
 ControllerDisconnectFilters = {}
-ControllerDisconnectFilters.xb1 = InputUtils.keymaps_key_approved("xb1") and {
+
+local ControllerDisconnectFilters = ControllerDisconnectFilters
+local keymaps_key_approved_86 = InputUtils.keymaps_key_approved("xb1")
+
+keymaps_key_approved_86 = not keymaps_key_approved_86 and {
 	accept_held = {
 		filter_type = "or",
 		input_mappings = {
@@ -7947,30 +8726,40 @@ ControllerDisconnectFilters.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 		}
 	}
 }
+ControllerDisconnectFilters.xb1 = keymaps_key_approved_86
 BenchmarkControllerSettings = {}
-BenchmarkControllerSettings.win32 = InputUtils.keymaps_key_approved("win32") and {
+
+local BenchmarkControllerSettings = BenchmarkControllerSettings
+local keymaps_key_approved_87 = InputUtils.keymaps_key_approved("win32")
+
+keymaps_key_approved_87 = not keymaps_key_approved_87 and {
 	cycle_through_views = {
 		"keyboard",
 		"tab",
 		"pressed"
 	}
 }
+BenchmarkControllerSettings.win32 = keymaps_key_approved_87
 EndLevelViewKeymapsFilters = table.clone(IngameMenuFilters)
 
-if EndLevelViewKeymapsFilters.xb1 then
+if not EndLevelViewKeymapsFilters.xb1 then
 	EndLevelViewKeymapsFilters.xb1.cursor = nil
 end
 
-if EndLevelViewKeymapsFilters.ps4 then
+if not EndLevelViewKeymapsFilters.ps4 then
 	EndLevelViewKeymapsFilters.ps4.cursor = nil
 end
 
-if EndLevelViewKeymapsFilters.ps_pad then
+if not EndLevelViewKeymapsFilters.ps_pad then
 	EndLevelViewKeymapsFilters.ps_pad.cursor = nil
 end
 
 DarkPactSelectionUIKeymaps = {}
-DarkPactSelectionUIKeymaps.win32 = InputUtils.keymaps_key_approved("win32") and {
+
+local DarkPactSelectionUIKeymaps = DarkPactSelectionUIKeymaps
+local keymaps_key_approved_88 = InputUtils.keymaps_key_approved("win32")
+
+keymaps_key_approved_88 = not keymaps_key_approved_88 and {
 	switch_dark_pact_profile = {
 		"keyboard",
 		"h",
@@ -8048,8 +8837,13 @@ DarkPactSelectionUIKeymaps.win32 = InputUtils.keymaps_key_approved("win32") and 
 	},
 	analog_input = {}
 }
+DarkPactSelectionUIKeymaps.win32 = keymaps_key_approved_88
 DarkPactSelectionUIFilters = {}
-DarkPactSelectionUIFilters.win32 = InputUtils.keymaps_key_approved("win32") and {
+
+local DarkPactSelectionUIFilters = DarkPactSelectionUIFilters
+local keymaps_key_approved_89 = InputUtils.keymaps_key_approved("win32")
+
+keymaps_key_approved_89 = not keymaps_key_approved_89 and {
 	move_left = {
 		filter_type = "move_filter",
 		threshold = 0.7,
@@ -8083,7 +8877,12 @@ DarkPactSelectionUIFilters.win32 = InputUtils.keymaps_key_approved("win32") and 
 		}
 	}
 }
-DarkPactSelectionUIKeymaps.xb1 = InputUtils.keymaps_key_approved("xb1") and {
+DarkPactSelectionUIFilters.win32 = keymaps_key_approved_89
+
+local DarkPactSelectionUIKeymaps_2 = DarkPactSelectionUIKeymaps
+local keymaps_key_approved_90 = InputUtils.keymaps_key_approved("xb1")
+
+keymaps_key_approved_90 = not keymaps_key_approved_90 and {
 	confirm = {
 		"gamepad",
 		"a",
@@ -8125,7 +8924,12 @@ DarkPactSelectionUIKeymaps.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 		"pressed"
 	}
 }
-DarkPactSelectionUIFilters.xb1 = InputUtils.keymaps_key_approved("xb1") and {
+DarkPactSelectionUIKeymaps_2.xb1 = keymaps_key_approved_90
+
+local DarkPactSelectionUIFilters_2 = DarkPactSelectionUIFilters
+local keymaps_key_approved_91 = InputUtils.keymaps_key_approved("xb1")
+
+keymaps_key_approved_91 = not keymaps_key_approved_91 and {
 	move_left = {
 		filter_type = "move_filter",
 		threshold = 0.7,
@@ -8157,7 +8961,13 @@ DarkPactSelectionUIFilters.xb1 = InputUtils.keymaps_key_approved("xb1") and {
 		}
 	}
 }
-DarkPactSelectionUIKeymaps.ps4 = InputUtils.keymaps_key_approved("ps4") and {
+DarkPactSelectionUIFilters_2.xb1 = keymaps_key_approved_91
+
+local DarkPactSelectionUIKeymaps_3 = DarkPactSelectionUIKeymaps
+local str_41 = "ps4"
+local keymaps_key_approved_92 = InputUtils.keymaps_key_approved("ps4")
+
+keymaps_key_approved_92 = not keymaps_key_approved_92 and {
 	confirm = {
 		"gamepad",
 		"cross",
@@ -8199,6 +9009,7 @@ DarkPactSelectionUIKeymaps.ps4 = InputUtils.keymaps_key_approved("ps4") and {
 		"pressed"
 	}
 }
+DarkPactSelectionUIKeymaps_3[str_41] = keymaps_key_approved_92
 DarkPactSelectionUIFilters_ps4 = {
 	move_left = {
 		filter_type = "move_filter",
@@ -8231,7 +9042,12 @@ DarkPactSelectionUIFilters_ps4 = {
 		}
 	}
 }
-DarkPactSelectionUIKeymaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and {
+
+local DarkPactSelectionUIKeymaps_4 = DarkPactSelectionUIKeymaps
+local str_42 = "ps_pad"
+local keymaps_key_approved_93 = InputUtils.keymaps_key_approved("ps_pad")
+
+keymaps_key_approved_93 = not keymaps_key_approved_93 and {
 	confirm = {
 		"ps_pad",
 		"cross",
@@ -8273,8 +9089,21 @@ DarkPactSelectionUIKeymaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad") an
 		"pressed"
 	}
 }
-DarkPactSelectionUIFilters.ps4 = InputUtils.keymaps_key_approved("ps4") and table.clone(DarkPactSelectionUIFilters_ps4)
-DarkPactSelectionUIFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad") and table.clone(DarkPactSelectionUIFilters_ps4)
+DarkPactSelectionUIKeymaps_4[str_42] = keymaps_key_approved_93
+
+local DarkPactSelectionUIFilters_3 = DarkPactSelectionUIFilters
+local str_43 = "ps4"
+local keymaps_key_approved_94 = InputUtils.keymaps_key_approved("ps4")
+
+keymaps_key_approved_94 = not keymaps_key_approved_94 and table.clone(DarkPactSelectionUIFilters_ps4)
+DarkPactSelectionUIFilters_3[str_43] = keymaps_key_approved_94
+
+local DarkPactSelectionUIFilters_4 = DarkPactSelectionUIFilters
+local str_44 = "ps_pad"
+local keymaps_key_approved_95 = InputUtils.keymaps_key_approved("ps_pad")
+
+keymaps_key_approved_95 = not keymaps_key_approved_95 and table.clone(DarkPactSelectionUIFilters_ps4)
+DarkPactSelectionUIFilters_4[str_44] = keymaps_key_approved_95
 GamepadSettings = {
 	menu_cooldown = 0.25,
 	menu_analog_deadzone = 0.5,
@@ -8284,19 +9113,19 @@ GamepadSettings = {
 	quest_menu_navigation_cooldown = 0.15
 }
 
-for iter_0_0, iter_0_1 in pairs(DLCSettings) do
-	local var_0_7 = iter_0_1.controller_settings
+for k, v in pairs(DLCSettings) do
+	local controller_settings = v.controller_settings
 
-	if var_0_7 then
-		for iter_0_2, iter_0_3 in pairs(var_0_7) do
-			local var_0_8 = rawget(_G, iter_0_2)
+	if not controller_settings then
+		for k_2, v_2 in pairs(controller_settings) do
+			local var_0_340 = rawget(_G, k_2)
 
-			fassert(var_0_8, "controller_settings.lua - Could not find input table for: (%s)", iter_0_2)
+			fassert(var_0_340, "controller_settings.lua - Could not find input table for: (%s)", k_2)
 
-			for iter_0_4, iter_0_5 in pairs(iter_0_3) do
-				if InputUtils.keymaps_key_approved(iter_0_4) then
-					for iter_0_6, iter_0_7 in pairs(iter_0_5) do
-						var_0_8[iter_0_4][iter_0_6] = iter_0_7
+			for k_3, v_3 in pairs(v_2) do
+				if not InputUtils.keymaps_key_approved(k_3) then
+					for k_4, v_4 in pairs(v_3) do
+						var_0_340[k_3][k_4] = v_4
 					end
 				end
 			end

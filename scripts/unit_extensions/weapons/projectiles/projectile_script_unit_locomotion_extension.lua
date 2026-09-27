@@ -4,280 +4,320 @@ require("scripts/helpers/network_utils")
 
 ProjectileScriptUnitLocomotionExtension = class(ProjectileScriptUnitLocomotionExtension)
 
-function ProjectileScriptUnitLocomotionExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	arg_1_0.unit = arg_1_2
-	arg_1_0.world = arg_1_1.world
-	arg_1_0.spawn_time = Managers.time:time("game") - (arg_1_3.fast_forward_time or 0)
-	arg_1_0.t = arg_1_0.spawn_time
-	arg_1_0.gravity_settings = arg_1_3.gravity_settings or "default"
-	arg_1_0.rotation_speed = arg_1_3.rotation_speed or 0
-	arg_1_0.rotate_around_forward = arg_1_3.rotate_around_forward or false
-	arg_1_0.rotation_offset = arg_1_3.rotation_offset
-	arg_1_0.gravity = ProjectileGravitySettings[arg_1_0.gravity_settings]
-	arg_1_0.velocity = Vector3Box()
-	arg_1_0.angle = arg_1_3.angle
-	arg_1_0.radians = math.degrees_to_radians(arg_1_0.angle)
-	arg_1_0.speed = arg_1_3.speed
+ProjectileScriptUnitLocomotionExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	self.unit = arg_1_2
+	self.world = arg_1_1.world
 
-	local var_1_0 = arg_1_3.initial_position
+	local time = Managers.time:time("game")
+	local fast_forward_time = arg_1_3.fast_forward_time
 
-	arg_1_0.initial_position_boxed = Vector3Box(var_1_0)
-	arg_1_0.target_vector = arg_1_3.target_vector
-	arg_1_0.target_vector_boxed = Vector3Box(arg_1_0.target_vector)
-	arg_1_0.trajectory_template_name = arg_1_3.trajectory_template_name
+	fast_forward_time = fast_forward_time or 0
+	self.spawn_time = time - fast_forward_time
+	self.t = self.spawn_time
 
-	fassert(arg_1_0.trajectory_template_name, "No trajectory template defined when initializing ProjectileScriptUnitLocomotionExtension")
+	local gravity_settings = arg_1_3.gravity_settings
 
-	arg_1_0._linear_dampening = arg_1_3.linear_dampening or 1
-	arg_1_0.is_husk = not not arg_1_3.is_husk
-	arg_1_0.traversal_data = {}
+	gravity_settings = gravity_settings or "default"
+	self.gravity_settings = gravity_settings
 
-	if arg_1_0.trajectory_template_name == "random_spinning_target_traversal" then
-		arg_1_0.traversal_data.random_spin_dir = (math.random(0, 1) - 0.5) * 2
+	local rotation_speed = arg_1_3.rotation_speed
+
+	rotation_speed = rotation_speed or 0
+	self.rotation_speed = rotation_speed
+
+	local rotate_around_forward = arg_1_3.rotate_around_forward
+
+	rotate_around_forward = rotate_around_forward or false
+	self.rotate_around_forward = rotate_around_forward
+	self.rotation_offset = arg_1_3.rotation_offset
+	self.gravity = ProjectileGravitySettings[self.gravity_settings]
+	self.velocity = Vector3Box()
+	self.angle = arg_1_3.angle
+	self.radians = math.degrees_to_radians(self.angle)
+	self.speed = arg_1_3.speed
+
+	local initial_position = arg_1_3.initial_position
+
+	self.initial_position_boxed = Vector3Box(initial_position)
+	self.target_vector = arg_1_3.target_vector
+	self.target_vector_boxed = Vector3Box(self.target_vector)
+	self.trajectory_template_name = arg_1_3.trajectory_template_name
+
+	fassert(self.trajectory_template_name, "No trajectory template defined when initializing ProjectileScriptUnitLocomotionExtension")
+
+	local linear_dampening = arg_1_3.linear_dampening
+
+	linear_dampening = linear_dampening or 1
+	self._linear_dampening = linear_dampening
+	self.is_husk = not not arg_1_3.is_husk
+	self.traversal_data = {}
+
+	if self.trajectory_template_name == "random_spinning_target_traversal" then
+		self.traversal_data.random_spin_dir = (math.random(0, 1) - 0.5) * 2
 	end
 
-	if arg_1_3.target_positions then
-		arg_1_0.target_positions = arg_1_3.target_positions
-		arg_1_0.target_units = arg_1_3.target_units
-		arg_1_0._has_multiple_targets = true
-		arg_1_0.current_target_index = 1
-		arg_1_0.has_reached_all_targets = false
-		arg_1_0.impact_with_last_target = arg_1_3.impact_with_last_target or false
-		arg_1_0.random_x_axis = math.random(-100, 100) / 100
-		arg_1_0.random_y_axis = math.random(-30, 100) / 100
-		arg_1_0.distance_to_traverse = Vector3.distance(arg_1_0.target_positions[1]:unbox(), var_1_0)
+	if not arg_1_3.target_positions then
+		self.target_positions = arg_1_3.target_positions
+		self.target_units = arg_1_3.target_units
+		self._has_multiple_targets = true
+		self.current_target_index = 1
+		self.has_reached_all_targets = false
+
+		local impact_with_last_target = arg_1_3.impact_with_last_target
+
+		impact_with_last_target = impact_with_last_target or false
+		self.impact_with_last_target = impact_with_last_target
+		self.random_x_axis = math.random(-100, 100) / 100
+		self.random_y_axis = math.random(-30, 100) / 100
+		self.distance_to_traverse = Vector3.distance(self.target_positions[1]:unbox(), initial_position)
 	end
 
-	arg_1_0._last_position = Vector3Box(POSITION_LOOKUP[arg_1_2])
-	arg_1_0._position = Vector3Box(POSITION_LOOKUP[arg_1_2])
-	arg_1_0._rotation = QuaternionBox(Unit.world_rotation(arg_1_2, 0))
-	arg_1_0.is_server = Managers.player.is_server
-	arg_1_0.stopped = false
-	arg_1_0.moved = false
+	self._last_position = Vector3Box(POSITION_LOOKUP[arg_1_2])
+	self._position = Vector3Box(POSITION_LOOKUP[arg_1_2])
+	self._rotation = QuaternionBox(Unit.world_rotation(arg_1_2, 0))
+	self.is_server = Managers.player.is_server
+	self.stopped = false
+	self.moved = false
 
-	local var_1_1
-	local var_1_2
+	local var_1_8
+	local var_1_9
 
-	if arg_1_0._has_multiple_targets then
-		var_1_1 = arg_1_0:_get_new_position_multiple_targetpoints(0, 0)
-		var_1_2 = arg_1_0:_get_new_rotation(arg_1_0.target_vector, 0)
+	if not self._has_multiple_targets then
+		var_1_8 = self:_get_new_position_multiple_targetpoints(0, 0)
+		var_1_9 = self:_get_new_rotation(self.target_vector, 0)
 	else
-		var_1_1 = arg_1_0:_get_new_position(0)
-		var_1_2 = arg_1_0:_get_new_rotation(arg_1_0.target_vector, 0)
+		var_1_8 = self:_get_new_position(0)
+		var_1_9 = self:_get_new_rotation(self.target_vector, 0)
 	end
 
-	Unit.set_local_position(arg_1_2, 0, var_1_1)
-	Unit.set_local_rotation(arg_1_2, 0, var_1_2)
+	Unit.set_local_position(arg_1_2, 0, var_1_8)
+	Unit.set_local_rotation(arg_1_2, 0, var_1_9)
 
-	arg_1_0.start_paused_for_time = arg_1_3.start_paused_for_time
+	self.start_paused_for_time = arg_1_3.start_paused_for_time
 end
 
-function ProjectileScriptUnitLocomotionExtension.destroy(arg_2_0)
+ProjectileScriptUnitLocomotionExtension.destroy = function (arg_2_0)
+	-- function 2
 	return
 end
 
-function ProjectileScriptUnitLocomotionExtension.bounce(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
-	local var_3_0 = Vector3.normalize(Vector3.reflect(arg_3_2, arg_3_3))
-	local var_3_1 = arg_3_1 - arg_3_2 * 0.25 + arg_3_3 * 0.1
-	local var_3_2 = Quaternion.look(var_3_0)
+ProjectileScriptUnitLocomotionExtension.bounce = function (self, arg_3_1, arg_3_2, arg_3_3)
+	-- function 3
+	local normalize = Vector3.normalize(Vector3.reflect(arg_3_2, arg_3_3))
+	local num = arg_3_1 - arg_3_2 * 0.25 + arg_3_3 * 0.1
+	local look = Quaternion.look(normalize)
 
-	arg_3_0.spawn_time = Managers.time:time("game")
-	arg_3_0.t = arg_3_0.spawn_time
+	self.spawn_time = Managers.time:time("game")
+	self.t = self.spawn_time
 
-	arg_3_0.target_vector_boxed:store(var_3_0)
-	arg_3_0.initial_position_boxed:store(var_3_1)
+	self.target_vector_boxed:store(normalize)
+	self.initial_position_boxed:store(num)
 
-	arg_3_0.radians = math.degrees_to_radians(ActionUtils.pitch_from_rotation(var_3_2))
+	self.radians = math.degrees_to_radians(ActionUtils.pitch_from_rotation(look))
 
-	arg_3_0._position:store(var_3_1)
-	arg_3_0:_unit_set_position_rotation(arg_3_0.unit, var_3_1, var_3_2)
+	self._position:store(num)
+	self:_unit_set_position_rotation(self.unit, num, look)
 end
 
-function ProjectileScriptUnitLocomotionExtension.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
-	arg_4_0.time_lived = arg_4_5 - arg_4_0.spawn_time
+ProjectileScriptUnitLocomotionExtension.update = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	-- function 4
+	self.time_lived = arg_4_5 - self.spawn_time
 
-	if arg_4_0.start_paused_for_time then
-		arg_4_0.time_lived = math.max(0, arg_4_0.time_lived - arg_4_0.start_paused_for_time)
+	if not self.start_paused_for_time then
+		self.time_lived = math.max(0, self.time_lived - self.start_paused_for_time)
 	end
 
-	arg_4_0.dt = arg_4_5 - arg_4_0.t
-	arg_4_0.moved = false
+	self.dt = arg_4_5 - self.t
+	self.moved = false
 
-	if arg_4_0.stopped then
+	if not self.stopped then
 		return
 	end
 
-	local var_4_0 = arg_4_0._position:unbox()
+	local unbox = self._position:unbox()
 
-	arg_4_0.speed = arg_4_0.speed - arg_4_0.dt * arg_4_0.speed * (1 - arg_4_0._linear_dampening)
+	self.speed = self.speed - self.dt * self.speed * (1 - self._linear_dampening)
 
-	local var_4_1 = arg_4_0.time_lived
+	local time_lived = self.time_lived
 	local var_4_2
 
-	if arg_4_0._has_multiple_targets and not arg_4_0.has_reached_all_targets then
-		var_4_2 = arg_4_0:_get_new_position_multiple_targetpoints(var_4_1, arg_4_0.dt)
+	if not (not self._has_multiple_targets and self.has_reached_all_targets) then
+		var_4_2 = self:_get_new_position_multiple_targetpoints(time_lived, self.dt)
 	else
-		var_4_2 = arg_4_0:_get_new_position(var_4_1, arg_4_0.dt)
+		var_4_2 = self:_get_new_position(time_lived, self.dt)
 	end
 
-	local var_4_3 = var_4_2 - var_4_0
-	local var_4_4 = Vector3.normalize(var_4_3)
-	local var_4_5 = Vector3.length(var_4_3)
+	local num = var_4_2 - unbox
+	local normalize = Vector3.normalize(num)
+	local length = Vector3.length(num)
 
-	if not NetworkUtils.network_safe_position(var_4_2) or arg_4_0.has_reached_all_targets and arg_4_0.time_lived >= 10 then
-		arg_4_0:stop()
+	if not (not NetworkUtils.network_safe_position(var_4_2) and not self.has_reached_all_targets and not (self.time_lived >= 10)) then
+		self:stop()
 
-		if not arg_4_0.is_husk then
-			Managers.state.unit_spawner:mark_for_deletion(arg_4_0.unit)
+		if not self.is_husk then
+			Managers.state.unit_spawner:mark_for_deletion(self.unit)
 		end
 
 		return
 	end
 
-	if var_4_5 <= 0.001 then
+	if length <= 0.001 then
 		return
 	end
 
-	local var_4_6 = arg_4_0:_get_new_rotation(var_4_4, var_4_1)
+	local _get_new_rotation = self:_get_new_rotation(normalize, time_lived)
 
-	arg_4_0:_unit_set_position_rotation(arg_4_1, var_4_2, var_4_6)
-	arg_4_0._last_position:store(var_4_0)
-	arg_4_0._position:store(var_4_2)
-	arg_4_0.velocity:store(var_4_3)
-	arg_4_0._rotation:store(var_4_6)
+	self:_unit_set_position_rotation(arg_4_1, var_4_2, _get_new_rotation)
+	self._last_position:store(unbox)
+	self._position:store(var_4_2)
+	self.velocity:store(num)
+	self._rotation:store(_get_new_rotation)
 
-	arg_4_0.moved = true
-	arg_4_0.t = arg_4_5
+	self.moved = true
+	self.t = arg_4_5
 end
 
-local var_0_0 = 9
+local num = 9
 
-function ProjectileScriptUnitLocomotionExtension._get_new_position_multiple_targetpoints(arg_5_0, arg_5_1, arg_5_2)
-	local var_5_0 = arg_5_0.speed
-	local var_5_1 = arg_5_0.radians
-	local var_5_2 = arg_5_0.gravity
-	local var_5_3 = arg_5_0.is_husk
-	local var_5_4 = ProjectileTemplates.get_trajectory_template(arg_5_0.trajectory_template_name, var_5_3)
-	local var_5_5 = arg_5_0.target_vector_boxed:unbox()
-	local var_5_6 = Vector3Box.unbox(arg_5_0.initial_position_boxed)
-	local var_5_7 = arg_5_0.target_positions[arg_5_0.current_target_index]:unbox()
-	local var_5_8 = arg_5_0._position:unbox()
+ProjectileScriptUnitLocomotionExtension._get_new_position_multiple_targetpoints = function (self, arg_5_1, arg_5_2)
+	-- function 5
+	local speed = self.speed
+	local radians = self.radians
+	local gravity = self.gravity
+	local is_husk = self.is_husk
+	local get_trajectory_template = ProjectileTemplates.get_trajectory_template(self.trajectory_template_name, is_husk)
+	local unbox = self.target_vector_boxed:unbox()
+	local unbox_2 = Vector3Box.unbox(self.initial_position_boxed)
+	local unbox_3 = self.target_positions[self.current_target_index]:unbox()
+	local unbox_4 = self._position:unbox()
 
-	arg_5_0.traversal_data.current_target = var_5_7
-	arg_5_0.traversal_data.position = var_5_8
-	arg_5_0.traversal_data.random_x_axis = arg_5_0.random_x_axis
-	arg_5_0.traversal_data.random_y_axis = arg_5_0.random_y_axis
-	arg_5_0.traversal_data.distance_to_traverse = arg_5_0.distance_to_traverse
+	self.traversal_data.current_target = unbox_3
+	self.traversal_data.position = unbox_4
+	self.traversal_data.random_x_axis = self.random_x_axis
+	self.traversal_data.random_y_axis = self.random_y_axis
+	self.traversal_data.distance_to_traverse = self.distance_to_traverse
 
-	local var_5_9 = var_5_4.update(var_5_0, var_5_1, var_5_2, var_5_6, var_5_5, arg_5_1, arg_5_2, arg_5_0.traversal_data)
+	local update = get_trajectory_template.update(speed, radians, gravity, unbox_2, unbox, arg_5_1, arg_5_2, self.traversal_data)
 
-	if not (Vector3.distance_squared(var_5_9, var_5_7) < var_0_0) then
-		return var_5_9
+	if not (Vector3.distance_squared(update, unbox_3) < num) then
+		return update
 	end
 
-	if #arg_5_0.target_positions > arg_5_0.current_target_index then
-		arg_5_0.current_target_index = arg_5_0.current_target_index + 1
-		arg_5_0.trajectory_template_name = "straight_target_traversal"
-	elseif arg_5_0.impact_with_last_target then
-		if 0.010000000000000002 > Vector3.distance_squared(var_5_9, var_5_7) then
-			ScriptUnit.extension(arg_5_0.unit, "projectile_system"):force_impact(arg_5_0.unit, var_5_9)
+	if not (#self.target_positions > self.current_target_index) then
+		self.current_target_index = self.current_target_index + 1
+		self.trajectory_template_name = "straight_target_traversal"
+	elseif not self.impact_with_last_target then
+		if 0.010000000000000002 > Vector3.distance_squared(update, unbox_3) then
+			ScriptUnit.extension(self.unit, "projectile_system"):force_impact(self.unit, update)
 		end
 	else
-		arg_5_0:rotate_projectile_away_from_target(var_5_9, var_5_8)
-		Unit.flow_event(arg_5_0.target_units[arg_5_0.current_target_index], "deflect_projectile")
+		self:rotate_projectile_away_from_target(update, unbox_4)
+		Unit.flow_event(self.target_units[self.current_target_index], "deflect_projectile")
 
-		arg_5_0.trajectory_template_name = "straight_direction_traversal"
+		self.trajectory_template_name = "straight_direction_traversal"
 	end
 
-	return var_5_9
+	return update
 end
 
-function ProjectileScriptUnitLocomotionExtension._get_new_position(arg_6_0, arg_6_1, arg_6_2)
-	local var_6_0 = arg_6_0.speed
-	local var_6_1 = arg_6_0.trajectory_template_name
+ProjectileScriptUnitLocomotionExtension._get_new_position = function (self, arg_6_1, arg_6_2)
+	-- function 6
+	local speed = self.speed
+	local trajectory_template_name = self.trajectory_template_name
 
-	if var_6_1 == "throw_trajectory" then
-		var_6_0 = var_6_0 / 100
+	if trajectory_template_name == "throw_trajectory" then
+		speed = speed / 100
 	end
 
-	local var_6_2 = arg_6_0.radians
-	local var_6_3 = arg_6_0.gravity
-	local var_6_4 = arg_6_0.is_husk
-	local var_6_5 = ProjectileTemplates.get_trajectory_template(var_6_1, var_6_4)
-	local var_6_6 = arg_6_0.target_vector_boxed:unbox()
-	local var_6_7 = Vector3Box.unbox(arg_6_0.initial_position_boxed)
-	local var_6_8 = arg_6_0._position:unbox()
-	local var_6_9 = {
-		position = var_6_8
+	local radians = self.radians
+	local gravity = self.gravity
+	local is_husk = self.is_husk
+	local get_trajectory_template = ProjectileTemplates.get_trajectory_template(trajectory_template_name, is_husk)
+	local unbox = self.target_vector_boxed:unbox()
+	local unbox_2 = Vector3Box.unbox(self.initial_position_boxed)
+	local unbox_3 = self._position:unbox()
+	local tbl = {
+		position = unbox_3
 	}
 
-	return (var_6_5.update(var_6_0, var_6_2, var_6_3, var_6_7, var_6_6, arg_6_1, arg_6_2, var_6_9))
+	return (get_trajectory_template.update(speed, radians, gravity, unbox_2, unbox, arg_6_1, arg_6_2, tbl))
 end
 
-function ProjectileScriptUnitLocomotionExtension._get_new_rotation(arg_7_0, arg_7_1, arg_7_2)
-	local var_7_0 = Vector3.normalize(arg_7_1)
-	local var_7_1 = Quaternion.look(var_7_0)
+ProjectileScriptUnitLocomotionExtension._get_new_rotation = function (self, arg_7_1, arg_7_2)
+	-- function 7
+	local normalize = Vector3.normalize(arg_7_1)
+	local look = Quaternion.look(normalize)
 
-	if arg_7_0.rotation_offset then
-		var_7_1 = Quaternion.multiply(var_7_1, Quaternion.from_euler_angles_xyz(arg_7_0.rotation_offset.x, arg_7_0.rotation_offset.y, arg_7_0.rotation_offset.z))
+	if not self.rotation_offset then
+		look = Quaternion.multiply(look, Quaternion.from_euler_angles_xyz(self.rotation_offset.x, self.rotation_offset.y, self.rotation_offset.z))
 	end
 
-	if arg_7_0.rotation_speed ~= 0 then
-		local var_7_2 = Quaternion.look(var_7_0, Vector3.up())
+	if self.rotation_speed ~= 0 then
+		local look_2 = Quaternion.look(normalize, Vector3.up())
 		local var_7_3
 
-		if arg_7_0.rotate_around_forward then
-			var_7_3 = Quaternion.forward(var_7_2)
+		if not self.rotate_around_forward then
+			var_7_3 = Quaternion.forward(look_2)
 		else
-			var_7_3 = -Quaternion.right(var_7_2)
+			var_7_3 = -Quaternion.right(look_2)
 		end
 
-		var_7_1 = Quaternion.multiply(Quaternion.axis_angle(var_7_3, arg_7_2 * arg_7_0.rotation_speed), var_7_1)
+		look = Quaternion.multiply(Quaternion.axis_angle(var_7_3, arg_7_2 * self.rotation_speed), look)
 	end
 
-	return var_7_1
+	return look
 end
 
-function ProjectileScriptUnitLocomotionExtension.rotate_projectile_away_from_target(arg_8_0, arg_8_1, arg_8_2)
-	arg_8_0.has_reached_all_targets = true
-	arg_8_0._has_multiple_targets = false
+ProjectileScriptUnitLocomotionExtension.rotate_projectile_away_from_target = function (self, arg_8_1, arg_8_2)
+	-- function 8
+	self.has_reached_all_targets = true
+	self._has_multiple_targets = false
 
-	local var_8_0 = Vector3.normalize(arg_8_1 - arg_8_2)
-	local var_8_1, var_8_2 = math.get_uniformly_random_point_inside_sector(0.75, 1.5, 0, 2 * math.pi)
-	local var_8_3 = Quaternion.rotate(Quaternion.look(var_8_0, Vector3.up()), Vector3.normalize(Vector3(var_8_1, 2, var_8_2)))
+	local normalize = Vector3.normalize(arg_8_1 - arg_8_2)
+	local get_uniformly_random_point_inside_sector, var_8_2 = math.get_uniformly_random_point_inside_sector(0.75, 1.5, 0, 2 * math.pi)
+	local rotate = Quaternion.rotate(Quaternion.look(normalize, Vector3.up()), Vector3.normalize(Vector3(get_uniformly_random_point_inside_sector, 2, var_8_2)))
 
-	arg_8_0.target_vector_boxed = Vector3Box(var_8_3)
+	self.target_vector_boxed = Vector3Box(rotate)
 end
 
-function ProjectileScriptUnitLocomotionExtension._unit_set_position_rotation(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+ProjectileScriptUnitLocomotionExtension._unit_set_position_rotation = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	-- function 9
 	Unit.set_local_rotation(arg_9_1, 0, arg_9_3)
 	Unit.set_local_position(arg_9_1, 0, arg_9_2)
 end
 
-function ProjectileScriptUnitLocomotionExtension.moved_this_frame(arg_10_0)
-	return arg_10_0.moved
+ProjectileScriptUnitLocomotionExtension.moved_this_frame = function (self)
+	-- function 10
+	return self.moved
 end
 
-function ProjectileScriptUnitLocomotionExtension.current_velocity(arg_11_0)
-	return arg_11_0.velocity:unbox()
+ProjectileScriptUnitLocomotionExtension.current_velocity = function (self)
+	-- function 11
+	return self.velocity:unbox()
 end
 
-function ProjectileScriptUnitLocomotionExtension.current_position(arg_12_0)
-	return arg_12_0._position:unbox()
+ProjectileScriptUnitLocomotionExtension.current_position = function (self)
+	-- function 12
+	return self._position:unbox()
 end
 
-function ProjectileScriptUnitLocomotionExtension.current_rotation(arg_13_0)
-	return arg_13_0._rotation:unbox()
+ProjectileScriptUnitLocomotionExtension.current_rotation = function (self)
+	-- function 13
+	return self._rotation:unbox()
 end
 
-function ProjectileScriptUnitLocomotionExtension.last_position(arg_14_0)
-	return arg_14_0._last_position:unbox()
+ProjectileScriptUnitLocomotionExtension.last_position = function (self)
+	-- function 14
+	return self._last_position:unbox()
 end
 
-function ProjectileScriptUnitLocomotionExtension.stop(arg_15_0)
-	arg_15_0.stopped = true
+ProjectileScriptUnitLocomotionExtension.stop = function (self)
+	-- function 15
+	self.stopped = true
 end
 
-function ProjectileScriptUnitLocomotionExtension.has_stopped(arg_16_0)
-	return arg_16_0.stopped
+ProjectileScriptUnitLocomotionExtension.has_stopped = function (self)
+	-- function 16
+	return self.stopped
 end

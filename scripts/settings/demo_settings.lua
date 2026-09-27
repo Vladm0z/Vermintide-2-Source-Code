@@ -1,6 +1,8 @@
 -- chunkname: @scripts/settings/demo_settings.lua
 
-DemoSettings = Demosettings or {
+local Demosettings = Demosettings
+
+Demosettings = Demosettings or {
 	disable_free_flight = true,
 	career_index = "we_shade",
 	disable_intro_trailer = true,
@@ -35,17 +37,38 @@ DemoSettings = Demosettings or {
 		empire_soldier = "Play_soldier_career_presentation_huntsman_vo"
 	}
 }
+DemoSettings = Demosettings
 
 if DemoSettings.key_combinations_allowed == nil then
 	if Window == nil then
 		key_combinations_allowed = {}
 	else
-		DemoSettings.key_combinations_allowed = {
-			[Window.KEYSTROKE_ALT_ENTER] = (BUILD == "dev" or BUILD == "debug") and true or false,
-			[Window.KEYSTROKE_ALT_F4] = (BUILD == "dev" or BUILD == "debug") and true or false,
-			[Window.KEYSTROKE_ALT_TAB] = (BUILD == "dev" or BUILD == "debug") and true or false,
-			[Window.KEYSTROKE_WINDOWS] = (BUILD == "dev" or BUILD == "debug") and true or false
-		}
+		local DemoSettings = DemoSettings
+		local tbl = {}
+		local KEYSTROKE_ALT_ENTER = Window.KEYSTROKE_ALT_ENTER
+		local flag
+
+		flag = BUILD == "dev" or BUILD == "debug" or true or false
+		tbl[KEYSTROKE_ALT_ENTER] = flag
+
+		local KEYSTROKE_ALT_F4 = Window.KEYSTROKE_ALT_F4
+		local flag_2
+
+		flag_2 = BUILD == "dev" or BUILD == "debug" or true or false
+		tbl[KEYSTROKE_ALT_F4] = flag_2
+
+		local KEYSTROKE_ALT_TAB = Window.KEYSTROKE_ALT_TAB
+		local flag_3
+
+		flag_3 = BUILD == "dev" or BUILD == "debug" or true or false
+		tbl[KEYSTROKE_ALT_TAB] = flag_3
+
+		local KEYSTROKE_WINDOWS = Window.KEYSTROKE_WINDOWS
+		local flag_4
+
+		flag_4 = BUILD == "dev" or BUILD == "debug" or true or false
+		tbl[KEYSTROKE_WINDOWS] = flag_4
+		DemoSettings.key_combinations_allowed = tbl
 	end
 end
 

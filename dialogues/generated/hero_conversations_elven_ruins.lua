@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/hero_conversations_elven_ruins.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pbw_level_elven_ruins_story_eight_01",

@@ -2,120 +2,137 @@
 
 ActionThrow = class(ActionThrow, ActionBase)
 
-function ActionThrow.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
-	ActionThrow.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionThrow.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	-- function 1
+	ActionThrow.super.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
-	if ScriptUnit.has_extension(arg_1_7, "ammo_system") then
-		arg_1_0.ammo_extension = ScriptUnit.extension(arg_1_7, "ammo_system")
+	if not ScriptUnit.has_extension(arg_1_7, "ammo_system") then
+		self.ammo_extension = ScriptUnit.extension(arg_1_7, "ammo_system")
 	end
 
-	arg_1_0.owner_inventory_extension = ScriptUnit.extension(arg_1_4, "inventory_system")
+	self.owner_inventory_extension = ScriptUnit.extension(arg_1_4, "inventory_system")
 end
 
-function ActionThrow.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
-	ActionThrow.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
+ActionThrow.client_owner_start_action = function (self, arg_2_1, arg_2_2)
+	-- function 2
+	ActionThrow.super.client_owner_start_action(self, arg_2_1, arg_2_2)
 
-	arg_2_0.current_action = arg_2_1
-	arg_2_0.action_time_started = arg_2_2
-	arg_2_0.thrown = nil
+	self.current_action = arg_2_1
+	self.action_time_started = arg_2_2
+	self.thrown = nil
 end
 
-function ActionThrow.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
-	if arg_3_0.thrown then
+ActionThrow.client_owner_post_update = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	-- function 3
+	if not self.thrown then
 		return
 	end
 
-	local var_3_0 = arg_3_0.current_action
+	local current_action = self.current_action
 
-	if arg_3_2 >= arg_3_0.action_time_started + var_3_0.throw_time then
-		arg_3_0:_throw()
+	if arg_3_2 >= self.action_time_started + current_action.throw_time then
+		self:_throw()
 
-		arg_3_0.thrown = true
+		self.thrown = true
 	end
 end
 
-function ActionThrow._throw(arg_4_0)
-	local var_4_0 = arg_4_0.owner_unit
-	local var_4_1 = arg_4_0.current_action
-	local var_4_2 = var_4_1.projectile_info
-	local var_4_3 = ScriptUnit.extension(var_4_0, "first_person_system"):get_first_person_unit()
-	local var_4_4 = POSITION_LOOKUP[var_4_3]
-	local var_4_5 = var_4_1.speed
-	local var_4_6 = ScriptUnit.has_extension(var_4_0, "buff_system")
+ActionThrow._throw = function (self)
+	-- function 4
+	local owner_unit = self.owner_unit
+	local current_action = self.current_action
+	local projectile_info = current_action.projectile_info
+	local get_first_person_unit = ScriptUnit.extension(owner_unit, "first_person_system"):get_first_person_unit()
+	local var_4_4 = POSITION_LOOKUP[get_first_person_unit]
+	local speed = current_action.speed
+	local has_extension = ScriptUnit.has_extension(owner_unit, "buff_system")
 
-	if var_4_6 then
-		var_4_5 = var_4_6:apply_buffs_to_value(var_4_5, "throw_speed_increase")
+	if not has_extension then
+		speed = has_extension:apply_buffs_to_value(speed, "throw_speed_increase")
 	end
 
-	local var_4_7 = var_4_1.velocity_multiplier or 0.25
-	local var_4_8 = Unit.local_pose(var_4_3, 0)
-	local var_4_9 = Unit.local_rotation(var_4_3, 0)
+	local velocity_multiplier = current_action.velocity_multiplier
+
+	velocity_multiplier = velocity_multiplier or 0.25
+
+	local local_pose = Unit.local_pose(get_first_person_unit, 0)
+	local local_rotation = Unit.local_rotation(get_first_person_unit, 0)
 	local var_4_10 = Vector3(0, 0, 0)
 
-	if ScriptUnit.has_extension(var_4_0, "locomotion_system") then
-		var_4_10 = ScriptUnit.extension(var_4_0, "locomotion_system"):current_velocity()
+	if not ScriptUnit.has_extension(owner_unit, "locomotion_system") then
+		var_4_10 = ScriptUnit.extension(owner_unit, "locomotion_system"):current_velocity()
 	end
 
-	local var_4_11 = Quaternion.forward(var_4_9)
-	local var_4_12 = var_4_1.throw_offset
-	local var_4_13 = Vector3(var_4_12[1], var_4_12[2], var_4_12[3])
-	local var_4_14 = var_4_4 + Matrix4x4.transform_without_translation(var_4_8, var_4_13)
-	local var_4_15 = Unit.world_pose(arg_4_0.weapon_unit, 0)
-	local var_4_16 = var_4_1.angular_velocity
-	local var_4_17 = Vector3(var_4_16[1], var_4_16[2], var_4_16[3])
-	local var_4_18 = Matrix4x4.transform_without_translation(var_4_15, var_4_17)
-	local var_4_19 = Vector3.normalize(Quaternion.forward(var_4_9) + Vector3(0, 0, var_4_1.uppety or 0.6)) * var_4_5 + var_4_10 * var_4_7
-	local var_4_20 = Unit.world_rotation(arg_4_0.weapon_unit, 0)
+	local forward = Quaternion.forward(local_rotation)
+	local throw_offset = current_action.throw_offset
+	local var_4_13 = Vector3(throw_offset[1], throw_offset[2], throw_offset[3])
+	local num = var_4_4 + Matrix4x4.transform_without_translation(local_pose, var_4_13)
+	local world_pose = Unit.world_pose(self.weapon_unit, 0)
+	local angular_velocity = current_action.angular_velocity
+	local var_4_17 = Vector3(angular_velocity[1], angular_velocity[2], angular_velocity[3])
+	local transform_without_translation = Matrix4x4.transform_without_translation(world_pose, var_4_17)
+	local normalize = Vector3.normalize
+	local forward_2 = Quaternion.forward(local_rotation)
+	local Vector3 = Vector3
+	local num_2 = 0
+	local num_3 = 0
+	local uppety = current_action.uppety
 
-	if var_4_1.is_statue_and_needs_rotation_cause_reasons then
-		local var_4_21 = Quaternion(Vector3.up(), -math.pi)
+	uppety = uppety or 0.6
 
-		var_4_20 = Quaternion.multiply(var_4_20, var_4_21)
+	local num_4 = normalize(forward_2 + Vector3(num_2, num_3, uppety)) * speed + var_4_10 * velocity_multiplier
+	local world_rotation = Unit.world_rotation(self.weapon_unit, 0)
+
+	if not current_action.is_statue_and_needs_rotation_cause_reasons then
+		local var_4_27 = Quaternion(Vector3.up(), -math.pi)
+
+		world_rotation = Quaternion.multiply(world_rotation, var_4_27)
 	end
 
-	if var_4_1.rotate_towards_owner_unit then
-		var_4_20 = Quaternion.look(Vector3.normalize(Vector3.flat(POSITION_LOOKUP[var_4_0]) - Vector3.flat(var_4_14)))
+	if not current_action.rotate_towards_owner_unit then
+		world_rotation = Quaternion.look(Vector3.normalize(Vector3.flat(POSITION_LOOKUP[owner_unit]) - Vector3.flat(num)))
 	end
 
-	local var_4_22 = var_4_4 + var_4_11 * 1.2 - var_4_4
-	local var_4_23 = Vector3.length(var_4_22)
-	local var_4_24 = Vector3.normalize(var_4_22)
-	local var_4_25 = World.get_data(arg_4_0.world, "physics_world")
+	local num_5 = var_4_4 + forward * 1.2 - var_4_4
+	local length = Vector3.length(num_5)
+	local normalize_2 = Vector3.normalize(num_5)
+	local get_data = World.get_data(self.world, "physics_world")
 
-	if PhysicsWorld.immediate_raycast(var_4_25, var_4_4, var_4_24, var_4_23, "closest", "types", "both", "collision_filter", "filter_physics_projectile_large") then
-		var_4_14 = var_4_4
+	if not PhysicsWorld.immediate_raycast(get_data, var_4_4, normalize_2, length, "closest", "types", "both", "collision_filter", "filter_physics_projectile_large") then
+		num = var_4_4
 	end
 
-	local var_4_26 = "thrown"
+	local str = "thrown"
 
-	ActionUtils.spawn_pickup_projectile(arg_4_0.world, arg_4_0.weapon_unit, var_4_2.projectile_unit_name, var_4_2.projectile_unit_template_name, var_4_1, var_4_0, var_4_14, var_4_20, var_4_19, var_4_18, arg_4_0.item_name, var_4_26)
-	Unit.set_unit_visibility(arg_4_0.weapon_unit, false)
-	Unit.flow_event(arg_4_0.weapon_unit, "lua_unwield")
+	ActionUtils.spawn_pickup_projectile(self.world, self.weapon_unit, projectile_info.projectile_unit_name, projectile_info.projectile_unit_template_name, current_action, owner_unit, num, world_rotation, num_4, transform_without_translation, self.item_name, str)
+	Unit.set_unit_visibility(self.weapon_unit, false)
+	Unit.flow_event(self.weapon_unit, "lua_unwield")
 
-	local var_4_27 = false
+	local flag = false
 
-	CharacterStateHelper.show_inventory_3p(var_4_0, false, var_4_27, arg_4_0.is_server, arg_4_0.owner_inventory_extension)
+	CharacterStateHelper.show_inventory_3p(owner_unit, false, flag, self.is_server, self.owner_inventory_extension)
 
-	if not var_4_2.disable_throwing_dialogue and var_4_2.pickup_name then
-		local var_4_28 = ScriptUnit.extension_input(arg_4_0.owner_unit, "dialogue_system")
-		local var_4_29 = FrameTable.alloc_table()
+	if projectile_info.disable_throwing_dialogue or not projectile_info.pickup_name then
+		local extension_input = ScriptUnit.extension_input(self.owner_unit, "dialogue_system")
+		local alloc_table = FrameTable.alloc_table()
 
-		var_4_29.item_type = var_4_2.pickup_name
+		alloc_table.item_type = projectile_info.pickup_name
 
-		var_4_28:trigger_networked_dialogue_event("throwing_item", var_4_29)
+		extension_input:trigger_networked_dialogue_event("throwing_item", alloc_table)
 	end
 
-	if arg_4_0.ammo_extension then
-		local var_4_30 = var_4_1.ammo_usage
+	if not self.ammo_extension then
+		local ammo_usage = current_action.ammo_usage
 
-		arg_4_0.ammo_extension:use_ammo(var_4_30)
+		self.ammo_extension:use_ammo(ammo_usage)
 	end
 end
 
-function ActionThrow.finish(arg_5_0, arg_5_1)
-	if arg_5_1 == "stunned" or arg_5_1 == "interacting" and not arg_5_0.thrown then
-		arg_5_0:_throw()
+ActionThrow.finish = function (self, arg_5_1)
+	-- function 5
+	if not (arg_5_1 == "stunned" or arg_5_1 ~= "interacting" or self.thrown) then
+		self:_throw()
 
-		arg_5_0.thrown = true
+		self.thrown = true
 	end
 end

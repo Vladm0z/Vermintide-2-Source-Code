@@ -4,40 +4,46 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTCombatStepAction = class(BTCombatStepAction, BTNode)
 
-function BTCombatStepAction.init(arg_1_0, ...)
+BTCombatStepAction.init = function (arg_1_0, ...)
+	-- function 1
 	BTCombatStepAction.super.init(arg_1_0, ...)
 end
 
 BTCombatStepAction.name = "BTCombatStepAction"
 
-local function var_0_0(arg_2_0)
-	if type(arg_2_0) == "table" then
-		return arg_2_0[Math.random(1, #arg_2_0)]
+local function fn(self)
+	-- function 2
+	if type(self) == "table" then
+		return self[Math.random(1, #self)]
 	else
-		return arg_2_0
+		return self
 	end
 end
 
-function BTCombatStepAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
-	arg_3_2.action = arg_3_0._tree_node.action_data
+BTCombatStepAction.enter = function (self, arg_3_1, arg_3_2, arg_3_3)
+	-- function 3
+	arg_3_2.action = self._tree_node.action_data
 	arg_3_2.active_node = BTCombatStepAction
 	arg_3_2.start_finished = nil
 	arg_3_2.start_started_since = arg_3_3
 
-	local var_3_0 = arg_3_2.navigation_extension
-	local var_3_1 = arg_3_2.target_unit
-	local var_3_2 = LocomotionUtils.rotation_towards_unit_flat(arg_3_1, var_3_1)
-	local var_3_3 = Unit.local_rotation(arg_3_1, 0)
-	local var_3_4 = Quaternion.forward(var_3_3)
-	local var_3_5 = arg_3_2.action
-	local var_3_6 = var_3_5.force_combat_step_animation or arg_3_0:_get_animation(var_3_2, var_3_4)
-	local var_3_7 = var_3_5.move_speed
+	local navigation_extension = arg_3_2.navigation_extension
+	local target_unit = arg_3_2.target_unit
+	local rotation_towards_unit_flat = LocomotionUtils.rotation_towards_unit_flat(arg_3_1, target_unit)
+	local local_rotation = Unit.local_rotation(arg_3_1, 0)
+	local forward = Quaternion.forward(local_rotation)
+	local action = arg_3_2.action
+	local force_combat_step_animation = action.force_combat_step_animation
 
-	if var_3_7 then
-		var_3_0:set_max_speed(var_3_7)
+	force_combat_step_animation = force_combat_step_animation or self:_get_animation(rotation_towards_unit_flat, forward)
+
+	local move_speed = action.move_speed
+
+	if not move_speed then
+		navigation_extension:set_max_speed(move_speed)
 	end
 
-	local var_3_8 = var_0_0(var_3_6)
+	local var_3_8 = fn(force_combat_step_animation)
 
 	Managers.state.network:anim_event(arg_3_1, var_3_8)
 
@@ -45,28 +51,29 @@ function BTCombatStepAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 
 	Managers.state.entity:system("ai_slot_system"):do_slot_search(arg_3_1, false)
 
-	local var_3_9 = arg_3_2.nav_world
-	local var_3_10 = LocomotionUtils.ray_can_go_on_mesh(var_3_9, POSITION_LOOKUP[arg_3_1], POSITION_LOOKUP[var_3_1], nil, 1, 1)
+	local nav_world = arg_3_2.nav_world
+	local ray_can_go_on_mesh = LocomotionUtils.ray_can_go_on_mesh(nav_world, POSITION_LOOKUP[arg_3_1], POSITION_LOOKUP[target_unit], nil, 1, 1)
 
-	if var_3_6 ~= "combat_step_fwd" and var_3_10 then
+	if force_combat_step_animation == "combat_step_fwd" or not ray_can_go_on_mesh then
 		arg_3_2.locomotion_extension:use_lerp_rotation(false)
 		LocomotionUtils.set_animation_driven_movement(arg_3_1, true, true, false)
 
-		local var_3_11 = POSITION_LOOKUP[var_3_1]
-		local var_3_12 = AiAnimUtils.get_animation_rotation_scale(arg_3_1, var_3_11, var_3_6, var_3_5.start_anims_data)
+		local var_3_11 = POSITION_LOOKUP[target_unit]
+		local get_animation_rotation_scale = AiAnimUtils.get_animation_rotation_scale(arg_3_1, var_3_11, force_combat_step_animation, action.start_anims_data)
 
-		LocomotionUtils.set_animation_rotation_scale(arg_3_1, var_3_12)
+		LocomotionUtils.set_animation_rotation_scale(arg_3_1, get_animation_rotation_scale)
 
 		arg_3_2.is_not_forward_combat_step = true
 	else
-		local var_3_13 = arg_3_2.locomotion_extension
-		local var_3_14 = LocomotionUtils.rotation_towards_unit_flat(arg_3_1, var_3_1)
+		local locomotion_extension = arg_3_2.locomotion_extension
+		local rotation_towards_unit_flat_2 = LocomotionUtils.rotation_towards_unit_flat(arg_3_1, target_unit)
 
-		var_3_13:set_wanted_rotation(var_3_14)
+		locomotion_extension:set_wanted_rotation(rotation_towards_unit_flat_2)
 	end
 end
 
-function BTCombatStepAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTCombatStepAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	-- function 4
 	arg_4_2.start_finished = nil
 	arg_4_2.start_started_since = nil
 
@@ -74,51 +81,57 @@ function BTCombatStepAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, a
 
 	arg_4_2.active_node = nil
 
-	local var_4_0 = AiUtils.get_default_breed_move_speed(arg_4_1, arg_4_2)
+	local get_default_breed_move_speed = AiUtils.get_default_breed_move_speed(arg_4_1, arg_4_2)
 
-	arg_4_2.navigation_extension:set_max_speed(var_4_0)
+	arg_4_2.navigation_extension:set_max_speed(get_default_breed_move_speed)
 
-	if arg_4_2.is_not_forward_combat_step then
-		local var_4_1 = arg_4_2.locomotion_extension
+	if not arg_4_2.is_not_forward_combat_step then
+		local locomotion_extension = arg_4_2.locomotion_extension
 
-		var_4_1:use_lerp_rotation(true)
+		locomotion_extension:use_lerp_rotation(true)
 		LocomotionUtils.set_animation_driven_movement(arg_4_1, false)
 		LocomotionUtils.set_animation_rotation_scale(arg_4_1, 1)
 
 		arg_4_2.is_not_forward_combat_step = nil
 
-		var_4_1:set_rotation_speed(10)
-		var_4_1:set_wanted_rotation(nil)
-		var_4_1:set_movement_type("snap_to_navmesh")
+		locomotion_extension:set_rotation_speed(10)
+		locomotion_extension:set_wanted_rotation(nil)
+		locomotion_extension:set_movement_type("snap_to_navmesh")
 	end
 end
 
-function BTCombatStepAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
-	if arg_5_2.start_finished or arg_5_3 - arg_5_2.start_started_since > 10 then
+BTCombatStepAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	-- function 5
+	if not (arg_5_2.start_finished or not (arg_5_3 - arg_5_2.start_started_since > 10)) then
 		return "done"
 	end
 
 	return "running"
 end
 
-function BTCombatStepAction.anim_cb_combat_step_stop(arg_6_0, arg_6_1, arg_6_2)
-	local var_6_0 = arg_6_2.navigation_extension
+BTCombatStepAction.anim_cb_combat_step_stop = function (arg_6_0, arg_6_1, arg_6_2)
+	-- function 6
+	local navigation_extension = arg_6_2.navigation_extension
 
-	if var_6_0:is_following_path() then
-		var_6_0:stop()
+	if not navigation_extension:is_following_path() then
+		navigation_extension:stop()
 	end
 
 	Managers.state.entity:system("ai_slot_system"):do_slot_search(arg_6_1, false)
 end
 
-function BTCombatStepAction._get_animation(arg_7_0, arg_7_1, arg_7_2)
-	local var_7_0 = Quaternion.right(arg_7_1)
-	local var_7_1 = Vector3.dot(var_7_0, arg_7_2)
-	local var_7_2 = math.abs(var_7_1)
-	local var_7_3 = Quaternion.forward(arg_7_1)
-	local var_7_4 = Vector3.dot(var_7_3, arg_7_2)
-	local var_7_5 = math.abs(var_7_4)
+BTCombatStepAction._get_animation = function (arg_7_0, arg_7_1, arg_7_2)
+	-- function 7
+	local right = Quaternion.right(arg_7_1)
+	local dot = Vector3.dot(right, arg_7_2)
+	local abs = math.abs(dot)
+	local forward = Quaternion.forward(arg_7_1)
+	local dot_2 = Vector3.dot(forward, arg_7_2)
+	local abs_2 = math.abs(dot_2)
 	local var_7_6
+	local flag
 
-	return var_7_5 < var_7_2 and var_7_1 > 0 and "combat_step_left" or var_7_5 < var_7_2 and "combat_step_right" or var_7_4 >= 0 and "combat_step_fwd" or "combat_step_bwd"
+	flag = (not (abs_2 < abs) or not (dot > 0) or not "combat_step_left" or not (abs_2 < abs)) and (not "combat_step_right" or not (dot_2 >= 0) or not "combat_step_fwd" or "combat_step_bwd")
+
+	return flag
 end

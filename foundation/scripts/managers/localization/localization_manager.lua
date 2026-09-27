@@ -1,25 +1,50 @@
 -- chunkname: @foundation/scripts/managers/localization/localization_manager.lua
 
-local function var_0_0(arg_1_0)
+local function fn(arg_1_0)
+	-- function 1
 	return "<" .. tostring(arg_1_0) .. ">"
 end
 
 LocalizationManager = class(LocalizationManager)
 
-function LocalizationManager.init(arg_2_0, arg_2_1)
-	arg_2_0:_setup_localizers()
+LocalizationManager.init = function (self, arg_2_1)
+	-- function 2
+	self:_setup_localizers()
 
-	arg_2_0._macros = {}
-	arg_2_0._find_macro_callback_to_self = callback(arg_2_0._find_macro, arg_2_0)
+	self._macros = {}
+	self._find_macro_callback_to_self = callback(self._find_macro, self)
 
 	local var_2_0 = rawget(_G, "Steam")
 
-	arg_2_0._language_id = arg_2_1 or Application.user_setting("language_id") or var_2_0 and Steam.language() or "en"
-	arg_2_0._backend_localizations = {}
+	if not arg_2_1 then
+		-- Nothing
+	end
 
-	Crashify.print_property("locale", arg_2_0._language_id)
-	rawset(_G, "Localize", function(arg_3_0)
-		return arg_2_0:lookup(arg_3_0)
+	::label_2_0::
+
+	local user_setting = Application.user_setting("language_id")
+
+	if not user_setting then
+		if not var_2_0 then
+			user_setting = Steam.language()
+
+			if not user_setting then
+				-- Nothing
+			end
+		end
+
+		user_setting = "en"
+	end
+
+	::label_2_1::
+
+	self._language_id = user_setting
+	self._backend_localizations = {}
+
+	Crashify.print_property("locale", self._language_id)
+	rawset(_G, "Localize", function (arg_3_0)
+		-- function 3
+		return self:lookup(arg_3_0)
 	end)
 
 	string.original_upper = string.upper
@@ -27,40 +52,43 @@ function LocalizationManager.init(arg_2_0, arg_2_1)
 	string.upper = Utf8.upper
 end
 
-function LocalizationManager.destroy(arg_4_0)
+LocalizationManager.destroy = function (arg_4_0)
+	-- function 4
 	rawset(_G, "Localize", nil)
 end
 
-function LocalizationManager._setup_localizers(arg_5_0)
-	fassert(not arg_5_0._localizers, "LocalizationManager already initialized")
+LocalizationManager._setup_localizers = function (self)
+	-- function 5
+	fassert(not self._localizers, "LocalizationManager already initialized")
 
-	arg_5_0._localizers = {
+	self._localizers = {
 		Localizer("localization/game")
 	}
 
-	for iter_5_0, iter_5_1 in pairs(DLCSettings) do
-		local var_5_0 = iter_5_1.localization
+	for k, v in pairs(DLCSettings) do
+		local localization = v.localization
 
-		if var_5_0 and Application.can_get("strings", var_5_0) then
-			arg_5_0._localizers[#arg_5_0._localizers + 1] = Localizer(var_5_0)
+		if not localization and not Application.can_get("strings", localization) then
+			self._localizers[#self._localizers + 1] = Localizer(localization)
 		end
 	end
 end
 
-function LocalizationManager._base_lookup(arg_6_0, arg_6_1)
-	local var_6_0 = arg_6_0._backend_localizations[arg_6_1]
+LocalizationManager._base_lookup = function (self, arg_6_1)
+	-- function 6
+	local var_6_0 = self._backend_localizations[arg_6_1]
 
-	if var_6_0 then
+	if not var_6_0 then
 		return var_6_0
 	end
 
-	local var_6_1 = Localizer.lookup
-	local var_6_2 = arg_6_0._localizers
+	local lookup = Localizer.lookup
+	local _localizers = self._localizers
 
-	for iter_6_0 = 1, #var_6_2 do
-		local var_6_3 = var_6_1(var_6_2[iter_6_0], arg_6_1)
+	for i = 1, #_localizers do
+		local var_6_3 = lookup(_localizers[i], arg_6_1)
 
-		if var_6_3 then
+		if not var_6_3 then
 			return var_6_3
 		end
 	end
@@ -68,77 +96,101 @@ function LocalizationManager._base_lookup(arg_6_0, arg_6_1)
 	return nil
 end
 
-function LocalizationManager.append_backend_localizations(arg_7_0, arg_7_1)
-	local var_7_0 = arg_7_0._backend_localizations
+LocalizationManager.append_backend_localizations = function (self, arg_7_1)
+	-- function 7
+	local _backend_localizations = self._backend_localizations
 
-	for iter_7_0, iter_7_1 in pairs(arg_7_1) do
-		var_7_0[iter_7_0] = iter_7_1
+	for k, v in pairs(arg_7_1) do
+		_backend_localizations[k] = v
 	end
 end
 
-function LocalizationManager.add_macro(arg_8_0, arg_8_1, arg_8_2)
+LocalizationManager.add_macro = function (arg_8_0, arg_8_1, arg_8_2)
+	-- function 8
 	arg_8_0._macros[arg_8_1] = arg_8_2
 end
 
-function LocalizationManager.language_id(arg_9_0)
-	return arg_9_0._language_id
+LocalizationManager.language_id = function (self)
+	-- function 9
+	return self._language_id
 end
 
-function LocalizationManager.text_to_upper(arg_10_0, arg_10_1)
+LocalizationManager.text_to_upper = function (arg_10_0, arg_10_1)
+	-- function 10
 	return Utf8.upper(arg_10_1)
 end
 
-function LocalizationManager.lookup(arg_11_0, arg_11_1)
-	fassert(arg_11_0._localizers, "LocalizationManager not initialized")
+LocalizationManager.lookup = function (self, arg_11_1)
+	-- function 11
+	fassert(self._localizers, "LocalizationManager not initialized")
 
-	local var_11_0 = arg_11_0:_base_lookup(arg_11_1) or var_0_0(arg_11_1)
+	local _base_lookup = self:_base_lookup(arg_11_1)
 
-	return (arg_11_0:apply_macro(var_11_0))
+	_base_lookup = _base_lookup or fn(arg_11_1)
+
+	return (self:apply_macro(_base_lookup))
 end
 
-function LocalizationManager.apply_macro(arg_12_0, arg_12_1)
-	return string.gsub(arg_12_1, "%b$;[%a%d_]*:", arg_12_0._find_macro_callback_to_self)
+LocalizationManager.apply_macro = function (self, arg_12_1)
+	-- function 12
+	return string.gsub(arg_12_1, "%b$;[%a%d_]*:", self._find_macro_callback_to_self)
 end
 
-function LocalizationManager.simple_lookup(arg_13_0, arg_13_1)
-	fassert(arg_13_0._localizers, "LocalizationManager not initialized")
+LocalizationManager.simple_lookup = function (self, arg_13_1)
+	-- function 13
+	fassert(self._localizers, "LocalizationManager not initialized")
 
-	return arg_13_0:_base_lookup(arg_13_1) or var_0_0(arg_13_1)
+	local _base_lookup = self:_base_lookup(arg_13_1)
+
+	_base_lookup = _base_lookup or fn(arg_13_1)
+
+	return _base_lookup
 end
 
-function LocalizationManager._find_macro(arg_14_0, arg_14_1)
-	local var_14_0 = string.find(arg_14_1, ";")
+LocalizationManager._find_macro = function (self, arg_14_1)
+	-- function 14
+	local find = string.find(arg_14_1, ";")
 
-	return arg_14_0._macros[string.sub(arg_14_1, 2, var_14_0 - 1)](string.sub(arg_14_1, var_14_0 + 1, -2))
+	return self._macros[string.sub(arg_14_1, 2, find - 1)](string.sub(arg_14_1, find + 1, -2))
 end
 
-function LocalizationManager.exists(arg_15_0, arg_15_1)
-	fassert(arg_15_0._localizers, "LocalizationManager not initialized")
+LocalizationManager.exists = function (self, arg_15_1)
+	-- function 15
+	fassert(self._localizers, "LocalizationManager not initialized")
 
-	return arg_15_0:_base_lookup(arg_15_1) ~= nil
+	return self:_base_lookup(arg_15_1) ~= nil
 end
 
-function LocalizationManager.plural_form(arg_16_0, arg_16_1)
-	local var_16_0 = arg_16_0._language_id
+LocalizationManager.plural_form = function (self, arg_16_1)
+	-- function 16
+	local _language_id = self._language_id
 
-	if var_16_0 == "en" or var_16_0 == "es" or var_16_0 == "it" or var_16_0 == "br-pt" then
-		return arg_16_1 ~= 1 and 1 or 0
-	elseif var_16_0 == "fr" then
-		return arg_16_1 > 1 and 1 or 0
-	elseif var_16_0 == "zh" then
+	if not (_language_id == "en" or _language_id == "es" or _language_id == "it" or _language_id ~= "br-pt") then
+		local flag
+
+		flag = arg_16_1 == 1 or not 1 or 0
+
+		return flag
+	elseif _language_id == "fr" then
+		local flag_2
+
+		flag_2 = not (arg_16_1 > 1) or not 1 or 0
+
+		return flag_2
+	elseif _language_id == "zh" then
 		return 0
-	elseif var_16_0 == "ru" then
-		if arg_16_1 % 10 == 1 and arg_16_1 % 100 ~= 11 then
+	elseif _language_id == "ru" then
+		if not (arg_16_1 % 10 ~= 1 or arg_16_1 % 100 == 11) then
 			return 0
-		elseif arg_16_1 % 10 >= 2 and arg_16_1 % 10 <= 4 and (arg_16_1 % 100 < 10 or arg_16_1 % 100 >= 20) then
+		elseif not (not (arg_16_1 % 10 >= 2) or not (arg_16_1 % 10 <= 4) or arg_16_1 % 100 < 10 or not (arg_16_1 % 100 >= 20)) then
 			return 1
 		else
 			return 2
 		end
-	elseif var_16_0 == "pl" then
+	elseif _language_id == "pl" then
 		if arg_16_1 == 1 then
 			return 0
-		elseif arg_16_1 % 10 >= 2 and arg_16_1 % 10 <= 4 and (arg_16_1 % 100 < 10 or arg_16_1 % 100 >= 20) then
+		elseif not (not (arg_16_1 % 10 >= 2) or not (arg_16_1 % 10 <= 4) or arg_16_1 % 100 < 10 or not (arg_16_1 % 100 >= 20)) then
 			return 1
 		else
 			return 2
@@ -148,82 +200,91 @@ function LocalizationManager.plural_form(arg_16_0, arg_16_1)
 	return 0
 end
 
-function LocalizeArray(arg_17_0, arg_17_1)
+function LocalizeArray(self, arg_17_1)
+	-- function 17
 	arg_17_1 = arg_17_1 or {}
 
-	local var_17_0 = #arg_17_0
+	local count = #self
 
-	for iter_17_0 = 1, var_17_0 do
-		local var_17_1 = arg_17_0[iter_17_0]
+	for i = 1, count do
+		local var_17_1 = self[i]
 
-		arg_17_1[iter_17_0] = Localize(var_17_1)
+		arg_17_1[i] = Localize(var_17_1)
 	end
 
 	return arg_17_1
 end
 
 function TextToUpper(arg_18_0)
+	-- function 18
 	return Managers.localizer:text_to_upper(arg_18_0)
 end
 
-local var_0_1 = {}
-local var_0_2 = {}
+local tbl = {}
+local tbl_2 = {}
 
-function LocalizationManager.get_input_action(arg_19_0, arg_19_1)
-	local var_19_0 = arg_19_0:_base_lookup(arg_19_1) or var_0_0(arg_19_1)
-	local var_19_1 = string.match(var_19_0, "%b$;[%a%d_]*:")
+LocalizationManager.get_input_action = function (self, arg_19_1)
+	-- function 19
+	local _base_lookup = self:_base_lookup(arg_19_1)
 
-	table.clear(var_0_1)
-	table.clear(var_0_2)
+	_base_lookup = _base_lookup or fn(arg_19_1)
 
-	while var_19_1 do
-		local var_19_2, var_19_3 = string.find(var_19_0, var_19_1)
+	local match = string.match(_base_lookup, "%b$;[%a%d_]*:")
+
+	table.clear(tbl)
+	table.clear(tbl_2)
+
+	while not match do
+		local find, var_19_3 = string.find(_base_lookup, match)
 
 		if not var_19_3 then
 			break
 		end
 
-		var_19_0 = string.sub(var_19_0, var_19_3 + 2)
+		_base_lookup = string.sub(_base_lookup, var_19_3 + 2)
 
-		local var_19_4 = string.find(var_19_1, ";")
-		local var_19_5 = string.sub(var_19_1, var_19_4 + 1, -2)
-		local var_19_6, var_19_7 = string.find(var_19_5, "__")
+		local find_2 = string.find(match, ";")
+		local sub = string.sub(match, find_2 + 1, -2)
+		local find_3, var_19_7 = string.find(sub, "__")
 
-		if var_19_6 then
-			var_0_2[#var_0_2 + 1] = string.sub(var_19_5, 1, var_19_6 - 1)
-			var_0_1[#var_0_1 + 1] = string.sub(var_19_5, var_19_7 + 1)
+		if not find_3 then
+			tbl_2[#tbl_2 + 1] = string.sub(sub, 1, find_3 - 1)
+			tbl[#tbl + 1] = string.sub(sub, var_19_7 + 1)
 		end
 
-		var_19_1 = string.match(var_19_0, "%b$;[%a%d_]*:")
+		match = string.match(_base_lookup, "%b$;[%a%d_]*:")
 	end
 
-	return var_0_1[1], var_0_1, var_0_2[1], var_0_2
+	return tbl[1], tbl, tbl_2[1], tbl_2
 end
 
-function LocalizationManager.replace_macro_in_string(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+LocalizationManager.replace_macro_in_string = function (self, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+	-- function 20
 	local var_20_0 = arg_20_1
 
 	if not arg_20_3 then
-		var_20_0 = arg_20_0:_base_lookup(arg_20_1) or var_0_0(arg_20_1)
+		var_20_0 = self:_base_lookup(arg_20_1) or fn(arg_20_1)
 	end
 
-	local var_20_1, var_20_2 = string.gsub(var_20_0, "%b$;[%a%d_]*:", arg_20_2, arg_20_4)
+	local gsub, var_20_2 = string.gsub(var_20_0, "%b$;[%a%d_]*:", arg_20_2, arg_20_4)
 
-	return var_20_1, var_20_0, arg_20_0:lookup(arg_20_1), var_20_2
+	return gsub, var_20_0, self:lookup(arg_20_1), var_20_2
 end
 
-function LocalizationManager._set_locale(arg_21_0, arg_21_1, arg_21_2)
+LocalizationManager._set_locale = function (self, arg_21_1, arg_21_2)
+	-- function 21
 	print("[LocalizationManager] Setting locale to:", arg_21_1)
 	DeadlockStack.pause()
 
-	arg_21_0._language_id = arg_21_1
+	self._language_id = arg_21_1
 
-	arg_21_0:_reload_locale_packages(arg_21_1, arg_21_2)
+	self:_reload_locale_packages(arg_21_1, arg_21_2)
 
 	if not arg_21_2 then
-		Managers.backend:get_interface("cdn"):load_backend_localizations(arg_21_1, function(arg_22_0)
-			if arg_22_0 then
-				arg_21_0:append_backend_localizations(arg_22_0)
+		Managers.backend:get_interface("cdn"):load_backend_localizations(arg_21_1, function (arg_22_0)
+			-- function 22
+			if not arg_22_0 then
+				self:append_backend_localizations(arg_22_0)
 			end
 		end)
 	end
@@ -233,36 +294,39 @@ function LocalizationManager._set_locale(arg_21_0, arg_21_1, arg_21_2)
 	DeadlockStack.unpause()
 end
 
-function LocalizationManager._reload_locale_packages(arg_23_0, arg_23_1, arg_23_2)
+LocalizationManager._reload_locale_packages = function (self, arg_23_1, arg_23_2)
+	-- function 23
 	printf("[LocalizationManager] reload_locale_packages(%q)", arg_23_1)
 	Application.set_resource_property_preference_order(arg_23_1, "en")
-	arg_23_0:_reload_boot_package("resource_packages/strings")
+	self:_reload_boot_package("resource_packages/strings")
 
 	if not arg_23_2 then
-		arg_23_0:_reload_boot_package("resource_packages/fonts")
+		self:_reload_boot_package("resource_packages/fonts")
 	end
 end
 
-function LocalizationManager._reload_boot_package(arg_24_0, arg_24_1)
+LocalizationManager._reload_boot_package = function (arg_24_0, arg_24_1)
+	-- function 24
 	DeadlockStack.pause()
 
-	local var_24_0 = Boot.startup_package_handles
-	local var_24_1 = var_24_0[arg_24_1]
+	local startup_package_handles = Boot.startup_package_handles
+	local var_24_1 = startup_package_handles[arg_24_1]
 
 	ResourcePackage.unload(var_24_1)
 	Application.release_resource_package(var_24_1)
 
-	local var_24_2 = Application.resource_package(arg_24_1)
+	local resource_package = Application.resource_package(arg_24_1)
 
-	ResourcePackage.load(var_24_2)
-	ResourcePackage.flush(var_24_2)
+	ResourcePackage.load(resource_package)
+	ResourcePackage.flush(resource_package)
 
-	var_24_0[arg_24_1] = var_24_2
+	startup_package_handles[arg_24_1] = resource_package
 
 	DeadlockStack.unpause()
 end
 
-function LocalizationManager.set_locale_override_setting(arg_25_0, arg_25_1)
+LocalizationManager.set_locale_override_setting = function (arg_25_0, arg_25_1)
+	-- function 25
 	Application.set_user_setting("language_id", arg_25_1)
 	Application.save_user_settings()
 end

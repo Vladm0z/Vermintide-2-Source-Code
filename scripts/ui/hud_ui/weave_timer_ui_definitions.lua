@@ -1,25 +1,25 @@
 -- chunkname: @scripts/ui/hud_ui/weave_timer_ui_definitions.lua
 
-local var_0_0 = 1920
-local var_0_1 = 1080
-local var_0_2 = 1.5
-local var_0_3 = {
-	250 * var_0_2,
-	21 * var_0_2
+local num = 1920
+local num_2 = 1080
+local num_3 = 1.5
+local tbl = {
+	250 * num_3,
+	21 * num_3
 }
-local var_0_4 = {
-	21 * var_0_2,
-	21 * var_0_2
+local tbl_2 = {
+	21 * num_3,
+	21 * num_3
 }
-local var_0_5 = {
+local tbl_3 = {
 	70,
 	50
 }
-local var_0_6 = {
-	325 * var_0_2,
-	40 * var_0_2
+local tbl_4 = {
+	325 * num_3,
+	40 * num_3
 }
-local var_0_7 = {
+local tbl_5 = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -28,8 +28,8 @@ local var_0_7 = {
 			UILayer.hud
 		},
 		size = {
-			var_0_0,
-			var_0_1
+			num,
+			num_2
 		}
 	},
 	timer_bg = {
@@ -52,10 +52,10 @@ local var_0_7 = {
 		horizontal_alignment = "right",
 		position = {
 			-20,
-			-20 - var_0_6[2],
+			-20 - tbl_4[2],
 			0
 		},
-		size = var_0_6
+		size = tbl_4
 	},
 	timer_icon = {
 		vertical_alignment = "center",
@@ -66,7 +66,7 @@ local var_0_7 = {
 			0,
 			1
 		},
-		size = var_0_5
+		size = tbl_3
 	},
 	timer_bar = {
 		vertical_alignment = "center",
@@ -77,7 +77,7 @@ local var_0_7 = {
 			0,
 			1
 		},
-		size = var_0_3
+		size = tbl
 	},
 	outer_frame = {
 		vertical_alignment = "center",
@@ -89,15 +89,16 @@ local var_0_7 = {
 			1
 		},
 		size = {
-			var_0_3[1] + 26,
-			var_0_3[2] + 26
+			tbl[1] + 26,
+			tbl[2] + 26
 		}
 	}
 }
 
-local function var_0_8(arg_1_0, arg_1_1)
-	local var_1_0 = UIFrameSettings.button_frame_02
-	local var_1_1 = UIFrameSettings.frame_outer_glow_02
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
+	local button_frame_02 = UIFrameSettings.button_frame_02
+	local frame_outer_glow_02 = UIFrameSettings.frame_outer_glow_02
 
 	return {
 		element = {
@@ -120,19 +121,21 @@ local function var_0_8(arg_1_0, arg_1_1)
 					style_id = "progress_bar_fill",
 					pass_type = "texture_uv",
 					content_id = "progress_bar_fill_id",
-					content_change_function = function(arg_2_0, arg_2_1)
-						arg_2_1.texture_size[1] = var_0_3[1] - arg_2_0.parent.progress * var_0_3[1]
-						arg_2_0.uvs[1][1] = arg_2_0.parent.progress
-						arg_2_0.uvs[2][1] = 1
-						arg_2_1.offset[1] = arg_2_0.parent.progress * var_0_3[1]
+					content_change_function = function (self, arg_2_1)
+						-- function 2
+						arg_2_1.texture_size[1] = tbl[1] - self.parent.progress * tbl[1]
+						self.uvs[1][1] = self.parent.progress
+						self.uvs[2][1] = 1
+						arg_2_1.offset[1] = self.parent.progress * tbl[1]
 					end
 				},
 				{
 					style_id = "progress_bar_tip",
 					pass_type = "texture_uv",
 					content_id = "progress_bar_tip",
-					content_change_function = function(arg_3_0, arg_3_1)
-						arg_3_1.offset[1] = arg_3_0.parent.progress * var_0_3[1]
+					content_change_function = function (self, arg_3_1)
+						-- function 3
+						arg_3_1.offset[1] = self.parent.progress * tbl[1]
 					end
 				},
 				{
@@ -145,15 +148,17 @@ local function var_0_8(arg_1_0, arg_1_1)
 					pass_type = "texture_frame",
 					texture_id = "outer_frame_id",
 					style_id = "outer_frame",
-					content_check_function = function(arg_4_0)
-						return arg_4_0.progress > 0.9
+					content_check_function = function (self)
+						-- function 4
+						return self.progress > 0.9
 					end,
-					content_change_function = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
-						if arg_5_0.progress >= 0.9 then
-							local var_5_0 = 192 + math.sin(arg_5_0.timer) * 64
+					content_change_function = function (self, arg_5_1, arg_5_2, arg_5_3)
+						-- function 5
+						if self.progress >= 0.9 then
+							local num = 192 + math.sin(self.timer) * 64
 
-							arg_5_1.color[1] = var_5_0
-							arg_5_0.timer = arg_5_0.timer + arg_5_3 * 7
+							arg_5_1.color[1] = num
+							self.timer = self.timer + arg_5_3 * 7
 						end
 					end
 				},
@@ -212,8 +217,8 @@ local function var_0_8(arg_1_0, arg_1_1)
 					}
 				}
 			},
-			frame_id = var_1_0.texture,
-			outer_frame_id = var_1_1.texture,
+			frame_id = button_frame_02.texture,
+			outer_frame_id = frame_outer_glow_02.texture,
 			progress_bar_end_left_id = {
 				texture_id = "weave_bar_end",
 				uvs = {
@@ -269,8 +274,8 @@ local function var_0_8(arg_1_0, arg_1_1)
 					2
 				},
 				texture_size = {
-					var_0_3[1],
-					var_0_3[2]
+					tbl[1],
+					tbl[2]
 				}
 			},
 			progress_bar_fill = {
@@ -286,8 +291,8 @@ local function var_0_8(arg_1_0, arg_1_1)
 					1
 				},
 				texture_size = {
-					var_0_3[1],
-					var_0_3[2] - 1
+					tbl[1],
+					tbl[2] - 1
 				}
 			},
 			progress_bar_tip = {
@@ -301,8 +306,8 @@ local function var_0_8(arg_1_0, arg_1_1)
 					255
 				},
 				texture_size = {
-					var_0_4[1],
-					var_0_4[2] - 1
+					tbl_2[1],
+					tbl_2[2] - 1
 				},
 				offset = {
 					0,
@@ -322,8 +327,8 @@ local function var_0_8(arg_1_0, arg_1_1)
 					0,
 					3
 				},
-				texture_size = var_1_0.texture_size,
-				texture_sizes = var_1_0.texture_sizes
+				texture_size = button_frame_02.texture_size,
+				texture_sizes = button_frame_02.texture_sizes
 			},
 			outer_frame = {
 				color = {
@@ -337,8 +342,8 @@ local function var_0_8(arg_1_0, arg_1_1)
 					0,
 					10
 				},
-				texture_size = var_1_1.texture_size,
-				texture_sizes = var_1_1.texture_sizes
+				texture_size = frame_outer_glow_02.texture_size,
+				texture_sizes = frame_outer_glow_02.texture_sizes
 			},
 			progress_bar_end_right = {
 				vertical_alignment = "center",
@@ -355,8 +360,8 @@ local function var_0_8(arg_1_0, arg_1_1)
 					4
 				},
 				texture_size = {
-					17 * var_0_2,
-					21 * var_0_2
+					17 * num_3,
+					21 * num_3
 				}
 			},
 			progress_bar_end_left = {
@@ -374,8 +379,8 @@ local function var_0_8(arg_1_0, arg_1_1)
 					4
 				},
 				texture_size = {
-					17 * var_0_2,
-					21 * var_0_2
+					17 * num_3,
+					21 * num_3
 				}
 			},
 			timer_text = {
@@ -415,8 +420,9 @@ local function var_0_8(arg_1_0, arg_1_1)
 	}
 end
 
-local function var_0_9(arg_6_0, arg_6_1)
-	local var_6_0 = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_6_0)
+local function fn_2(arg_6_0, arg_6_1)
+	-- function 6
+	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_6_0)
 
 	return {
 		element = {
@@ -440,16 +446,30 @@ local function var_0_9(arg_6_0, arg_6_1)
 					style_id = "background",
 					texture_id = "background_id",
 					pass_type = "texture",
-					content_check_function = function(arg_7_0)
-						return arg_7_0.progress >= arg_7_0.progress_cutoff
+					content_check_function = function (self)
+						-- function 7
+						return self.progress >= self.progress_cutoff
 					end,
-					content_change_function = function(arg_8_0, arg_8_1)
-						if arg_8_0.progress >= arg_8_0.progress_cutoff then
-							local var_8_0 = Managers.time:time("game")
-							local var_8_1 = arg_8_0.progress < 1 and math.cos(var_8_0 * math.pi * 2) or 1
+					content_change_function = function (self, arg_8_1)
+						-- function 8
+						if self.progress >= self.progress_cutoff then
+							local time = Managers.time:time("game")
+							local cos
 
-							arg_8_1.color[1] = 192 + var_8_1 * 64
-							arg_8_1.texture_size[1] = math.lerp(var_6_0.size[1], var_6_0.size[1] * 1.25, var_8_1)
+							if self.progress < 1 then
+								cos = math.cos(time * math.pi * 2)
+
+								if not cos then
+									-- Nothing
+								end
+							end
+
+							cos = 1
+
+							::label_8_0::
+
+							arg_8_1.color[1] = 192 + cos * 64
+							arg_8_1.texture_size[1] = math.lerp(get_atlas_settings_by_texture_name.size[1], get_atlas_settings_by_texture_name.size[1] * 1.25, cos)
 						end
 					end
 				}
@@ -487,7 +507,7 @@ local function var_0_9(arg_6_0, arg_6_1)
 			background = {
 				vertical_alignment = "bottom",
 				horizontal_alignment = "center",
-				texture_size = var_6_0.size,
+				texture_size = get_atlas_settings_by_texture_name.size,
 				color = {
 					255,
 					255,
@@ -537,11 +557,11 @@ local function var_0_9(arg_6_0, arg_6_1)
 	}
 end
 
-local var_0_10 = {
-	timer = var_0_9("weaves_timer_highlight", "timer_bg")
+local tbl_6 = {
+	timer = fn_2("weaves_timer_highlight", "timer_bg")
 }
 
 return {
-	scenegraph_definition = var_0_7,
-	widgets = var_0_10
+	scenegraph_definition = tbl_5,
+	widgets = tbl_6
 }

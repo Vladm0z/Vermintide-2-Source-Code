@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/dlc_shovel.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pbw_nm_shovel_conversation_eighteen_01",

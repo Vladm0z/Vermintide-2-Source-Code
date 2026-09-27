@@ -4,48 +4,70 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTMoveToGoalAction = class(BTMoveToGoalAction, BTNode)
 
-function BTMoveToGoalAction.init(arg_1_0, ...)
+BTMoveToGoalAction.init = function (arg_1_0, ...)
+	-- function 1
 	BTMoveToGoalAction.super.init(arg_1_0, ...)
 end
 
 BTMoveToGoalAction.name = "BTMoveToGoalAction"
 
-function BTMoveToGoalAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
-	arg_2_2.action = arg_2_0._tree_node.action_data
-	arg_2_2.time_to_next_evaluate = arg_2_3 + (arg_2_2.action.eval_time or 0.5)
+BTMoveToGoalAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+	-- function 2
+	arg_2_2.action = self._tree_node.action_data
+
+	local eval_time = arg_2_2.action.eval_time
+
+	eval_time = eval_time or 0.5
+	arg_2_2.time_to_next_evaluate = arg_2_3 + eval_time
 	arg_2_2.time_to_next_friend_alert = arg_2_3 + 0.3
 
-	local var_2_0 = arg_2_2.goal_destination:unbox()
+	local unbox = arg_2_2.goal_destination:unbox()
 
-	arg_2_2.navigation_extension:move_to(var_2_0)
+	arg_2_2.navigation_extension:move_to(unbox)
 
 	arg_2_2.new_move_to_goal = nil
 
-	local var_2_1 = Managers.state.network
-	local var_2_2 = arg_2_2.breed
+	local network = Managers.state.network
+	local breed = arg_2_2.breed
+	local passive_in_patrol
 
-	if var_2_2.passive_in_patrol == nil or var_2_2.passive_in_patrol and not arg_2_2.ignore_passive_on_patrol then
+	if breed.passive_in_patrol ~= nil then
+		passive_in_patrol = breed.passive_in_patrol
+
+		if not passive_in_patrol then
+			passive_in_patrol = not arg_2_2.ignore_passive_on_patrol
+		end
+
+		if false then
+			passive_in_patrol = false
+		end
+	else
+		passive_in_patrol = true
+	end
+
+	if not passive_in_patrol then
 		AiUtils.enter_passive(arg_2_1, arg_2_2)
 	else
 		AiUtils.enter_combat(arg_2_1, arg_2_2)
 	end
 
-	if not var_2_2.dont_wield_weapon_on_patrol and ScriptUnit.has_extension(arg_2_1, "ai_inventory_system") then
-		local var_2_3 = var_2_1:unit_game_object_id(arg_2_1)
+	if not not breed.dont_wield_weapon_on_patrol and not ScriptUnit.has_extension(arg_2_1, "ai_inventory_system") then
+		local unit_game_object_id = network:unit_game_object_id(arg_2_1)
 
-		var_2_1.network_transmit:send_rpc_all("rpc_ai_inventory_wield", var_2_3, 1)
+		network.network_transmit:send_rpc_all("rpc_ai_inventory_wield", unit_game_object_id, 1)
 	end
 
-	local var_2_4 = arg_2_2.action.override_move_speed
+	local override_move_speed = arg_2_2.action.override_move_speed
 
-	if var_2_4 then
-		arg_2_2.navigation_extension:set_max_speed(var_2_4)
+	if not override_move_speed then
+		arg_2_2.navigation_extension:set_max_speed(override_move_speed)
 	end
 end
 
-function BTMoveToGoalAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTMoveToGoalAction.leave = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	-- function 3
 	if not arg_3_5 then
-		arg_3_0:toggle_start_move_animation_lock(arg_3_1, false, arg_3_2)
+		self:toggle_start_move_animation_lock(arg_3_1, false, arg_3_2)
 	end
 
 	arg_3_2.start_anim_locked = nil
@@ -54,71 +76,78 @@ function BTMoveToGoalAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, a
 	arg_3_2.start_anim_done = nil
 	arg_3_2.skip_move_rotation = nil
 
-	local var_3_0 = AiUtils.get_default_breed_move_speed(arg_3_1, arg_3_2)
+	local get_default_breed_move_speed = AiUtils.get_default_breed_move_speed(arg_3_1, arg_3_2)
 
-	arg_3_2.navigation_extension:set_max_speed(var_3_0)
+	arg_3_2.navigation_extension:set_max_speed(get_default_breed_move_speed)
 end
 
-function BTMoveToGoalAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTMoveToGoalAction.run = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	-- function 4
 	if not arg_4_2.start_anim_done then
 		if not arg_4_2.start_anim_locked then
-			arg_4_0:start_move_animation(arg_4_1, arg_4_2)
+			self:start_move_animation(arg_4_1, arg_4_2)
 		end
 
-		if arg_4_2.anim_cb_rotation_start then
-			arg_4_0:start_move_rotation(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+		if not arg_4_2.anim_cb_rotation_start then
+			self:start_move_rotation(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 		end
 
-		if arg_4_2.anim_cb_move then
+		if not arg_4_2.anim_cb_move then
 			arg_4_2.anim_cb_move = false
 			arg_4_2.move_state = "moving"
 
-			arg_4_0:toggle_start_move_animation_lock(arg_4_1, false, arg_4_2)
+			self:toggle_start_move_animation_lock(arg_4_1, false, arg_4_2)
 
 			arg_4_2.start_anim_locked = nil
 			arg_4_2.start_anim_done = true
 		end
 	else
-		local var_4_0 = false
+		local flag = false
 
-		if ScriptUnit.has_extension(arg_4_1, "ai_group_system") then
-			var_4_0 = ScriptUnit.extension(arg_4_1, "ai_group_system").in_patrol
+		if not ScriptUnit.has_extension(arg_4_1, "ai_group_system") then
+			flag = ScriptUnit.extension(arg_4_1, "ai_group_system").in_patrol
 		end
 
-		local var_4_1 = arg_4_2.action
+		local action = arg_4_2.action
 
-		if not var_4_0 then
+		if not flag then
 			local var_4_2 = POSITION_LOOKUP[arg_4_1]
-			local var_4_3 = arg_4_2.goal_destination:unbox()
-			local var_4_4 = Vector3.distance_squared(var_4_2, var_4_3)
-			local var_4_5 = var_4_1.goal_margin or 0.75
+			local unbox = arg_4_2.goal_destination:unbox()
+			local distance_squared = Vector3.distance_squared(var_4_2, unbox)
+			local goal_margin = action.goal_margin
 
-			if var_4_4 < var_4_5 * var_4_5 then
+			goal_margin = goal_margin or 0.75
+
+			if distance_squared < goal_margin * goal_margin then
 				arg_4_2.goal_destination = nil
 			end
 		end
 
-		if var_4_1.move_speed_func then
-			var_4_1.move_speed_func(arg_4_1, arg_4_2)
+		if not action.move_speed_func then
+			action.move_speed_func(arg_4_1, arg_4_2)
 		end
 	end
 
 	local var_4_6
-	local var_4_7 = arg_4_2.navigation_extension
+	local navigation_extension = arg_4_2.navigation_extension
 
-	if arg_4_3 > arg_4_2.time_to_next_evaluate or var_4_7:has_reached_destination() then
+	if arg_4_3 > arg_4_2.time_to_next_evaluate or not navigation_extension:has_reached_destination() then
 		var_4_6 = "evaluate"
-		arg_4_2.time_to_next_evaluate = arg_4_3 + (arg_4_2.action.eval_time or 0.5)
+
+		local eval_time = arg_4_2.action.eval_time
+
+		eval_time = eval_time or 0.5
+		arg_4_2.time_to_next_evaluate = arg_4_3 + eval_time
 	end
 
-	if arg_4_2.new_move_to_goal then
-		if arg_4_2.goal_destination then
-			local var_4_8 = arg_4_2.goal_destination:unbox()
+	if not arg_4_2.new_move_to_goal then
+		if not arg_4_2.goal_destination then
+			local unbox_2 = arg_4_2.goal_destination:unbox()
 
-			var_4_7:move_to(var_4_8)
+			navigation_extension:move_to(unbox_2)
 
 			if arg_4_1 == script_data.debug_unit then
-				QuickDrawer:sphere(var_4_8, 1, Colors.get("yellow"))
+				QuickDrawer:sphere(unbox_2, 1, Colors.get("yellow"))
 			end
 		end
 
@@ -128,56 +157,59 @@ function BTMoveToGoalAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	return "running", var_4_6
 end
 
-function BTMoveToGoalAction.start_move_animation(arg_5_0, arg_5_1, arg_5_2)
-	arg_5_0:toggle_start_move_animation_lock(arg_5_1, true, arg_5_2)
+BTMoveToGoalAction.start_move_animation = function (self, arg_5_1, arg_5_2)
+	-- function 5
+	self:toggle_start_move_animation_lock(arg_5_1, true, arg_5_2)
 
-	local var_5_0 = arg_5_2.breed
-	local var_5_1 = var_5_0.passive_in_patrol == nil or var_5_0.passive_in_patrol
-	local var_5_2 = "move_start_fwd"
-	local var_5_3 = var_5_0.passive_in_patrol_start_anim
+	local breed = arg_5_2.breed
+	local flag = breed.passive_in_patrol == nil or breed.passive_in_patrol
+	local str = "move_start_fwd"
+	local passive_in_patrol_start_anim = breed.passive_in_patrol_start_anim
 
-	if var_5_1 and var_5_3 then
+	if not flag and not passive_in_patrol_start_anim then
 		arg_5_2.anim_cb_move = true
-		var_5_2 = type(var_5_3) == "table" and var_5_3[math.random(1, #var_5_3)] or var_5_3
+		str = type(passive_in_patrol_start_anim) ~= "table" or not passive_in_patrol_start_anim[math.random(1, #passive_in_patrol_start_anim)] or passive_in_patrol_start_anim
 		arg_5_2.skip_move_rotation = true
 	end
 
-	Managers.state.network:anim_event(arg_5_1, var_5_2)
+	Managers.state.network:anim_event(arg_5_1, str)
 
-	arg_5_2.move_animation_name = var_5_2
+	arg_5_2.move_animation_name = str
 	arg_5_2.start_anim_locked = true
 end
 
-function BTMoveToGoalAction.start_move_rotation(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
-	if arg_6_2.move_animation_name == "move_start_fwd" or arg_6_2.skip_move_rotation then
-		arg_6_0:toggle_start_move_animation_lock(arg_6_1, false, arg_6_2)
+BTMoveToGoalAction.start_move_rotation = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	-- function 6
+	if arg_6_2.move_animation_name == "move_start_fwd" or not arg_6_2.skip_move_rotation then
+		self:toggle_start_move_animation_lock(arg_6_1, false, arg_6_2)
 	else
 		arg_6_2.anim_cb_rotation_start = false
 
 		local var_6_0 = POSITION_LOOKUP[arg_6_2.target_unit]
 
-		if not var_6_0 and arg_6_2.goal_destination then
+		if var_6_0 or not arg_6_2.goal_destination then
 			var_6_0 = arg_6_2.goal_destination:unbox()
 		end
 
-		local var_6_1 = AiAnimUtils.get_animation_rotation_scale(arg_6_1, var_6_0, arg_6_2.move_animation_name, arg_6_2.action.start_anims_data)
+		local get_animation_rotation_scale = AiAnimUtils.get_animation_rotation_scale(arg_6_1, var_6_0, arg_6_2.move_animation_name, arg_6_2.action.start_anims_data)
 
-		LocomotionUtils.set_animation_rotation_scale(arg_6_1, var_6_1)
+		LocomotionUtils.set_animation_rotation_scale(arg_6_1, get_animation_rotation_scale)
 	end
 end
 
-function BTMoveToGoalAction.toggle_start_move_animation_lock(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
-	local var_7_0 = arg_7_3.locomotion_extension
+BTMoveToGoalAction.toggle_start_move_animation_lock = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	-- function 7
+	local locomotion_extension = arg_7_3.locomotion_extension
 
-	if not var_7_0._engine_extension_id then
+	if not locomotion_extension._engine_extension_id then
 		return
 	end
 
-	if arg_7_2 then
-		var_7_0:use_lerp_rotation(false)
+	if not arg_7_2 then
+		locomotion_extension:use_lerp_rotation(false)
 		LocomotionUtils.set_animation_driven_movement(arg_7_1, true, false, false)
 	else
-		var_7_0:use_lerp_rotation(true)
+		locomotion_extension:use_lerp_rotation(true)
 		LocomotionUtils.set_animation_driven_movement(arg_7_1, false)
 		LocomotionUtils.set_animation_rotation_scale(arg_7_1, 1)
 	end

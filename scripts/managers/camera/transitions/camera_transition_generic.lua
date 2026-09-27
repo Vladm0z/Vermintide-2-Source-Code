@@ -4,44 +4,46 @@ require("scripts/managers/camera/transitions/camera_transition_base")
 
 CameraTransitionGeneric = class(CameraTransitionGeneric, CameraTransitionBase)
 
-function CameraTransitionGeneric.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
-	CameraTransitionBase.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+CameraTransitionGeneric.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	-- function 1
+	CameraTransitionBase.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 
-	arg_1_0._transition_func = arg_1_5.transition_func
-	arg_1_0._parameter = arg_1_5.parameter
+	self._transition_func = arg_1_5.transition_func
+	self._parameter = arg_1_5.parameter
 end
 
-function CameraTransitionGeneric.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
-	CameraTransitionBase.update(arg_2_0, arg_2_1, arg_2_3)
+CameraTransitionGeneric.update = function (self, arg_2_1, arg_2_2, arg_2_3)
+	-- function 2
+	CameraTransitionBase.update(self, arg_2_1, arg_2_3)
 
-	local var_2_0 = arg_2_0._node_2[arg_2_0._parameter](arg_2_0._node_2)
-	local var_2_1 = arg_2_0._duration
-	local var_2_2 = arg_2_0._speed
+	local var_2_0 = self._node_2[self._parameter](self._node_2)
+	local _duration = self._duration
+	local _speed = self._speed
 	local var_2_3
 	local var_2_4
 
-	if var_2_2 and var_2_1 then
+	if not _speed and not _duration then
 		assert(false, "CameraTransitionGeneric:update() transition has defined both speed and duration, only one can be allowed at once")
-	elseif var_2_2 then
-		local var_2_5 = var_2_0 - arg_2_2
-		local var_2_6 = arg_2_0._time * var_2_2
+	elseif not _speed then
+		local num = var_2_0 - arg_2_2
+		local num_2 = self._time * _speed
 
-		if var_2_5 < var_2_6 then
+		if num < num_2 then
 			var_2_3 = var_2_0
 			var_2_4 = true
 		else
-			var_2_3 = arg_2_2 + var_2_6
+			var_2_3 = arg_2_2 + num_2
 		end
-	elseif var_2_1 then
-		local var_2_7 = arg_2_0._time / var_2_1
-		local var_2_8 = math.min(var_2_7, 1)
+	elseif not _duration then
+		local num_3 = self._time / _duration
+		local min = math.min(num_3, 1)
 
-		if arg_2_0._transition_func then
-			var_2_8 = arg_2_0._transition_func(var_2_8)
+		if not self._transition_func then
+			min = self._transition_func(min)
 		end
 
-		var_2_3 = arg_2_2 * (1 - var_2_8) + var_2_0 * var_2_8
-		var_2_4 = var_2_1 < arg_2_0._time
+		var_2_3 = arg_2_2 * (1 - min) + var_2_0 * min
+		var_2_4 = _duration < self._time
 	end
 
 	return var_2_3, var_2_4

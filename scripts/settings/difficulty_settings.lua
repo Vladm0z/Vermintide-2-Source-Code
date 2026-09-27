@@ -1,6 +1,9 @@
 -- chunkname: @scripts/settings/difficulty_settings.lua
 
+local DifficultySettings = DifficultySettings
+
 DifficultySettings = DifficultySettings or {}
+DifficultySettings = DifficultySettings
 DifficultySettings.normal = {
 	completed_frame_texture = "map_frame_01",
 	display_name = "difficulty_normal",
@@ -359,29 +362,46 @@ DifficultySettings.versus_base = {
 	}
 }
 
-for iter_0_0, iter_0_1 in pairs(DifficultySettings) do
-	iter_0_1.difficulty = iter_0_0
+for k, v in pairs(DifficultySettings) do
+	v.difficulty = k
 end
 
 ExtraDifficultyRequirements = {
 	kill_all_lords_on_legend = {
 		description_text = "achv_scorpion_cataclysm_unlock_kill_all_lords_desc",
-		requirement_function = function(arg_1_0)
-			if Development.parameter("unlock_all_difficulties") then
+		requirement_function = function (arg_1_0)
+			-- function 1
+			if not Development.parameter("unlock_all_difficulties") then
 				return true
 			end
 
-			if arg_1_0 then
+			if not arg_1_0 then
 				return true
 			end
 
-			local var_1_0 = Managers.backend:get_stats()
-			local var_1_1 = (tonumber(var_1_0.kill_chaos_exalted_champion_scorpion_hardest) or 0) >= 5
-			local var_1_2 = (tonumber(var_1_0.kill_chaos_exalted_sorcerer_scorpion_hardest) or 0) >= 5
-			local var_1_3 = (tonumber(var_1_0.kill_skaven_grey_seer_scorpion_hardest) or 0) >= 5
-			local var_1_4 = (tonumber(var_1_0.kill_skaven_storm_vermin_warlord_scorpion_hardest) or 0) >= 5
+			local get_stats = Managers.backend:get_stats()
+			local var_1_1 = tonumber(get_stats.kill_chaos_exalted_champion_scorpion_hardest)
 
-			return var_1_1 and var_1_2 and var_1_3 and var_1_4
+			var_1_1 = var_1_1 or 0
+
+			local flag = var_1_1 >= 5
+			local var_1_3 = tonumber(get_stats.kill_chaos_exalted_sorcerer_scorpion_hardest)
+
+			var_1_3 = var_1_3 or 0
+
+			local flag_2 = var_1_3 >= 5
+			local var_1_5 = tonumber(get_stats.kill_skaven_grey_seer_scorpion_hardest)
+
+			var_1_5 = var_1_5 or 0
+
+			local flag_3 = var_1_5 >= 5
+			local var_1_7 = tonumber(get_stats.kill_skaven_storm_vermin_warlord_scorpion_hardest)
+
+			var_1_7 = var_1_7 or 0
+
+			local flag_4 = var_1_7 >= 5
+
+			return not flag and not flag_2 and not flag_3 and flag_4
 		end
 	}
 }
@@ -390,12 +410,12 @@ DifficultyRankLookup = {}
 MinimumDifficultyRank = math.huge
 MaximumDifficultyRank = 0
 
-for iter_0_2, iter_0_3 in pairs(DifficultySettings) do
-	DifficultyRanks[#DifficultyRanks + 1] = iter_0_3.rank
-	DifficultyRankLookup[iter_0_3.rank] = iter_0_2
-	DifficultyRankLookup[iter_0_2] = iter_0_3.rank
-	MinimumDifficultyRank = math.min(MinimumDifficultyRank, iter_0_3.rank)
-	MaximumDifficultyRank = math.max(MaximumDifficultyRank, iter_0_3.rank)
+for k_2, v_2 in pairs(DifficultySettings) do
+	DifficultyRanks[#DifficultyRanks + 1] = v_2.rank
+	DifficultyRankLookup[v_2.rank] = k_2
+	DifficultyRankLookup[k_2] = v_2.rank
+	MinimumDifficultyRank = math.min(MinimumDifficultyRank, v_2.rank)
+	MaximumDifficultyRank = math.max(MaximumDifficultyRank, v_2.rank)
 end
 
 Difficulties = {

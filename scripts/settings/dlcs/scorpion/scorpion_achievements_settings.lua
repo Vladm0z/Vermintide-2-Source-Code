@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/scorpion/scorpion_achievements_settings.lua
 
-local var_0_0 = DLCSettings.scorpion
+local scorpion = DLCSettings.scorpion
 
-var_0_0.achievement_outline = {
+scorpion.achievement_outline = {
 	levels = {
 		entries = {
 			"scorpion_cataclysm_unlock_kill_all_lords"
@@ -160,22 +160,22 @@ var_0_0.achievement_outline = {
 }
 
 if not IS_WINDOWS then
-	local var_0_1 = var_0_0.achievement_outline.weaves
-	local var_0_2 = var_0_1.entries
-	local var_0_3 = var_0_1.categories
+	local weaves = scorpion.achievement_outline.weaves
+	local entries = weaves.entries
+	local categories = weaves.categories
 
-	for iter_0_0 = #var_0_3, 1, -1 do
-		local var_0_4 = var_0_3[iter_0_0]
+	for i = #categories, 1, -1 do
+		local var_0_4 = categories[i]
 
-		for iter_0_1, iter_0_2 in ipairs(var_0_4.entries) do
-			var_0_2[#var_0_2 + 1] = iter_0_2
+		for i_2, v in ipairs(var_0_4.entries) do
+			entries[#entries + 1] = v
 		end
 	end
 
-	var_0_1.categories = {}
+	weaves.categories = {}
 end
 
-var_0_0.achievement_template_file_names = {
+scorpion.achievement_template_file_names = {
 	"scripts/settings/dlcs/scorpion/scorpion_seasonal_settings",
 	"scripts/managers/achievements/achievement_templates_scorpion"
 }

@@ -44,34 +44,37 @@ PerformanceTitles.titles = {
 	}
 }
 
-local function var_0_0(arg_1_0, arg_1_1, arg_1_2)
-	local var_1_0 = 0
+local function fn(self, arg_1_1, arg_1_2)
+	-- function 1
+	local num = 0
 
-	for iter_1_0, iter_1_1 in ipairs(arg_1_2) do
-		var_1_0 = var_1_0 + arg_1_0:get_stat(arg_1_1, unpack(iter_1_1))
+	for i, v in ipairs(arg_1_2) do
+		num = num + self:get_stat(arg_1_1, unpack(v))
 	end
 
-	return var_1_0
+	return num
 end
 
 PerformanceTitles.templates = {
 	equal_higher = {
-		evaluate = function(arg_2_0, arg_2_1, arg_2_2)
-			local var_2_0 = var_0_0(arg_2_0, arg_2_1, arg_2_2.stat_types)
+		evaluate = function (arg_2_0, arg_2_1, arg_2_2)
+			-- function 2
+			local var_2_0 = fn(arg_2_0, arg_2_1, arg_2_2.stat_types)
 
 			return var_2_0 >= arg_2_2.amount, var_2_0
 		end,
-		compare = function(arg_3_0, arg_3_1)
+		compare = function (arg_3_0, arg_3_1)
+			-- function 3
 			return arg_3_1 <= arg_3_0
 		end
 	}
 }
 
-for iter_0_0, iter_0_1 in pairs(PerformanceTitles.titles) do
-	fassert(iter_0_1.display_name, "No display name in performance title %s", iter_0_0)
+for k, v in pairs(PerformanceTitles.titles) do
+	fassert(v.display_name, "No display name in performance title %s", k)
 
-	local var_0_1 = iter_0_1.evaluation_template
-	local var_0_2 = PerformanceTitles.templates[var_0_1]
+	local evaluation_template = v.evaluation_template
+	local var_0_2 = PerformanceTitles.templates[evaluation_template]
 
-	fassert(var_0_2, "Performance Titles %s failed, no evaluation_template called %s", iter_0_0, tostring(var_0_1))
+	fassert(var_0_2, "Performance Titles %s failed, no evaluation_template called %s", k, tostring(evaluation_template))
 end

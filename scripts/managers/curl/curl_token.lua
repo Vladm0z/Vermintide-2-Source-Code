@@ -2,32 +2,37 @@
 
 CurlToken = class(CurlToken)
 
-function CurlToken.init(arg_1_0, arg_1_1)
-	arg_1_0._token = arg_1_1
-	arg_1_0._info = {}
+CurlToken.init = function (self, arg_1_1)
+	-- function 1
+	self._token = arg_1_1
+	self._info = {}
 
 	if not arg_1_1 then
-		arg_1_0._info.done = true
-		arg_1_0._info.error = "Not a valid token"
+		self._info.done = true
+		self._info.error = "Not a valid token"
 	end
 end
 
-function CurlToken.info(arg_2_0)
-	return arg_2_0._info
+CurlToken.info = function (self)
+	-- function 2
+	return self._info
 end
 
-function CurlToken.update(arg_3_0)
-	if arg_3_0._token then
-		arg_3_0._info = Curl.progress(arg_3_0._token)
+CurlToken.update = function (self)
+	-- function 3
+	if not self._token then
+		self._info = Curl.progress(self._token)
 	end
 end
 
-function CurlToken.done(arg_4_0)
-	return arg_4_0._info.done
+CurlToken.done = function (self)
+	-- function 4
+	return self._info.done
 end
 
-function CurlToken.close(arg_5_0)
-	if arg_5_0._token then
-		Curl.close(arg_5_0._token)
+CurlToken.close = function (self)
+	-- function 5
+	if not self._token then
+		Curl.close(self._token)
 	end
 end

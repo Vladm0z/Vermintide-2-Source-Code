@@ -1610,13 +1610,13 @@ CameraEffectSettings = {
 	}
 }
 
-local var_0_0 = {
+local tbl = {
 	persistance = 0,
 	duration = 0,
 	amplitude = 0,
 	octaves = 0
 }
-local var_0_1 = {
+local tbl_2 = {
 	persistance = 1,
 	duration = 0.2,
 	amplitude = 0.03,
@@ -1624,46 +1624,55 @@ local var_0_1 = {
 }
 
 function hit_impact_multiplied_by_x(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	local var_1_0 = CameraEffectSettings.sequence[arg_1_0] or {
+	-- function 1
+	local var_1_0 = CameraEffectSettings.sequence[arg_1_0]
+
+	var_1_0 = var_1_0 or {
 		values = {},
 		time_to_recuperate_to = CameraEffectSettings.sequence[arg_1_1].time_to_recuperate_to
 	}
-
 	CameraEffectSettings.sequence[arg_1_0] = var_1_0
 
-	for iter_1_0, iter_1_1 in pairs(CameraEffectSettings.sequence[arg_1_1].values) do
-		local var_1_1 = {}
+	for k, v in pairs(CameraEffectSettings.sequence[arg_1_1].values) do
+		local tbl = {}
 
-		for iter_1_2, iter_1_3 in ipairs(iter_1_1) do
-			var_1_1[iter_1_2] = {
-				value = iter_1_3.value * arg_1_2,
-				time_stamp = iter_1_3.time_stamp * arg_1_3
+		for i, v_2 in ipairs(v) do
+			tbl[i] = {
+				value = v_2.value * arg_1_2,
+				time_stamp = v_2.time_stamp * arg_1_3
 			}
 		end
 
-		var_1_0.values[iter_1_0] = var_1_1
+		var_1_0.values[k] = tbl
 	end
 end
 
-CameraEffectSettings.shake.swing_impact_up_no_damage = var_0_1
-CameraEffectSettings.shake.swing_impact_down_no_damage = var_0_1
-CameraEffectSettings.shake.swing_impact_left_no_damage = var_0_1
-CameraEffectSettings.shake.swing_impact_right_no_damage = var_0_1
-CameraEffectSettings.shake.swing_impact_up_light = var_0_0
-CameraEffectSettings.shake.swing_impact_down_light = var_0_0
-CameraEffectSettings.shake.swing_impact_left_light = var_0_0
-CameraEffectSettings.shake.swing_impact_right_light = var_0_0
-CameraEffectSettings.shake.swing_impact_up_medium = var_0_0
-CameraEffectSettings.shake.swing_impact_down_medium = var_0_0
-CameraEffectSettings.shake.swing_impact_left_medium = var_0_0
-CameraEffectSettings.shake.swing_impact_right_medium = var_0_0
-CameraEffectSettings.shake.swing_impact_up_heavy = var_0_0
-CameraEffectSettings.shake.swing_impact_down_heavy = var_0_0
-CameraEffectSettings.shake.swing_impact_left_heavy = var_0_0
-CameraEffectSettings.shake.swing_impact_right_heavy = var_0_0
-CameraEffectSettings.transition_functions = CameraEffectSettings.transition_functions or {}
+CameraEffectSettings.shake.swing_impact_up_no_damage = tbl_2
+CameraEffectSettings.shake.swing_impact_down_no_damage = tbl_2
+CameraEffectSettings.shake.swing_impact_left_no_damage = tbl_2
+CameraEffectSettings.shake.swing_impact_right_no_damage = tbl_2
+CameraEffectSettings.shake.swing_impact_up_light = tbl
+CameraEffectSettings.shake.swing_impact_down_light = tbl
+CameraEffectSettings.shake.swing_impact_left_light = tbl
+CameraEffectSettings.shake.swing_impact_right_light = tbl
+CameraEffectSettings.shake.swing_impact_up_medium = tbl
+CameraEffectSettings.shake.swing_impact_down_medium = tbl
+CameraEffectSettings.shake.swing_impact_left_medium = tbl
+CameraEffectSettings.shake.swing_impact_right_medium = tbl
+CameraEffectSettings.shake.swing_impact_up_heavy = tbl
+CameraEffectSettings.shake.swing_impact_down_heavy = tbl
+CameraEffectSettings.shake.swing_impact_left_heavy = tbl
+CameraEffectSettings.shake.swing_impact_right_heavy = tbl
 
-function CameraEffectSettings.transition_functions.lerp(arg_2_0, arg_2_1, arg_2_2)
+local CameraEffectSettings = CameraEffectSettings
+local str = "transition_functions"
+local transition_functions = CameraEffectSettings.transition_functions
+
+transition_functions = transition_functions or {}
+CameraEffectSettings[str] = transition_functions
+
+CameraEffectSettings.transition_functions.lerp = function (arg_2_0, arg_2_1, arg_2_2)
+	-- function 2
 	return math.lerp(arg_2_0, arg_2_1, arg_2_2)
 end
 

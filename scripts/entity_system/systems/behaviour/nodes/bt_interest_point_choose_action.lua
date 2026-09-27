@@ -5,29 +5,32 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 BTInterestPointChooseAction = class(BTInterestPointChooseAction, BTNode)
 BTInterestPointChooseAction.name = "BTInterestPointChooseAction"
 
-function BTInterestPointChooseAction.init(arg_1_0, ...)
+BTInterestPointChooseAction.init = function (arg_1_0, ...)
+	-- function 1
 	BTInterestPointChooseAction.super.init(arg_1_0, ...)
 end
 
-function BTInterestPointChooseAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
-	local var_2_0 = arg_2_2.system_api.ai_interest_point_system
+BTInterestPointChooseAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+	-- function 2
+	local ai_interest_point_system = arg_2_2.system_api.ai_interest_point_system
 
 	if arg_2_2.ip_request_id == nil then
 		if arg_2_2.ip_root_pos == nil then
 			arg_2_2.ip_root_pos = Vector3Box(POSITION_LOOKUP[arg_2_1])
 		end
 
-		local var_2_1 = arg_2_0._tree_node.action_data
-		local var_2_2 = arg_2_2.ip_root_pos:unbox()
-		local var_2_3 = 0
-		local var_2_4 = var_2_1.max_range
+		local action_data = self._tree_node.action_data
+		local unbox = arg_2_2.ip_root_pos:unbox()
+		local num = 0
+		local max_range = action_data.max_range
 
-		arg_2_2.ip_request_id = var_2_0.start_async_claim_request(arg_2_1, var_2_2, var_2_3, var_2_4)
+		arg_2_2.ip_request_id = ai_interest_point_system.start_async_claim_request(arg_2_1, unbox, num, max_range)
 	end
 end
 
-function BTInterestPointChooseAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
-	if (arg_3_4 == "failed" or arg_3_4 == "aborted") and HEALTH_ALIVE[arg_3_1] then
+BTInterestPointChooseAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	-- function 3
+	if arg_3_4 == "failed" or arg_3_4 == "aborted" or not HEALTH_ALIVE[arg_3_1] then
 		arg_3_2.system_api.ai_interest_point_system.release_claim(arg_3_2.ip_request_id, arg_3_1)
 
 		arg_3_2.ip_request_id = nil
@@ -35,13 +38,14 @@ function BTInterestPointChooseAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, a
 	end
 end
 
-function BTInterestPointChooseAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-	local var_4_0 = arg_4_2.ip_request_id
-	local var_4_1 = arg_4_2.system_api.ai_interest_point_system.get_claim(var_4_0)
+BTInterestPointChooseAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	-- function 4
+	local ip_request_id = arg_4_2.ip_request_id
+	local get_claim = arg_4_2.system_api.ai_interest_point_system.get_claim(ip_request_id)
 
-	if var_4_1.result == nil then
+	if get_claim.result == nil then
 		return "running"
-	elseif var_4_1.result == "failed" then
+	elseif get_claim.result == "failed" then
 		return "failed"
 	else
 		return "done"

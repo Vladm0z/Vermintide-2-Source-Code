@@ -2,6 +2,8 @@
 
 require("scripts/utils/colors")
 
+local DeusThemeSettings = DeusThemeSettings
+
 DeusThemeSettings = DeusThemeSettings or {
 	wastes = {
 		journey_title = "deus_theme_title_wastes",
@@ -117,6 +119,10 @@ DeusThemeSettings = DeusThemeSettings or {
 		}
 	}
 }
+DeusThemeSettings = DeusThemeSettings
+
+local DEUS_THEME_TYPES = DEUS_THEME_TYPES
+
 DEUS_THEME_TYPES = DEUS_THEME_TYPES or {
 	WASTES = "wastes",
 	TZEENTCH = "tzeentch",
@@ -125,6 +131,10 @@ DEUS_THEME_TYPES = DEUS_THEME_TYPES or {
 	KHORNE = "khorne",
 	BELAKOR = "belakor"
 }
+DEUS_THEME_TYPES = DEUS_THEME_TYPES
+
+local DEUS_THEME_INDEX = DEUS_THEME_INDEX
+
 DEUS_THEME_INDEX = DEUS_THEME_INDEX or {
 	"wastes",
 	"khorne",
@@ -133,6 +143,10 @@ DEUS_THEME_INDEX = DEUS_THEME_INDEX or {
 	"slaanesh",
 	"belakor"
 }
+DEUS_THEME_INDEX = DEUS_THEME_INDEX
+
+local DEUS_GOD_TYPES = DEUS_GOD_TYPES
+
 DEUS_GOD_TYPES = DEUS_GOD_TYPES or {
 	NURGLE = "nurgle",
 	TZEENTCH = "tzeentch",
@@ -140,6 +154,10 @@ DEUS_GOD_TYPES = DEUS_GOD_TYPES or {
 	KHORNE = "khorne",
 	BELAKOR = "belakor"
 }
+DEUS_GOD_TYPES = DEUS_GOD_TYPES
+
+local DEUS_GOD_INDEX = DEUS_GOD_INDEX
+
 DEUS_GOD_INDEX = DEUS_GOD_INDEX or {
 	"khorne",
 	"nurgle",
@@ -147,3 +165,4 @@ DEUS_GOD_INDEX = DEUS_GOD_INDEX or {
 	"slaanesh",
 	"belakor"
 }
+DEUS_GOD_INDEX = DEUS_GOD_INDEX

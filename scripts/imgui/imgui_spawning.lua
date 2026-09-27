@@ -2,109 +2,139 @@
 
 ImguiSpawning = class(ImguiSpawning)
 
-function ImguiSpawning.init(arg_1_0)
-	arg_1_0._breed_index = 0
-	arg_1_0._breed_names = table.keys(Breeds)
+ImguiSpawning.init = function (self)
+	-- function 1
+	self._breed_index = 0
+	self._breed_names = table.keys(Breeds)
 
-	table.sort(arg_1_0._breed_names)
+	table.sort(self._breed_names)
 
-	arg_1_0._pickup_index = 0
-	arg_1_0._pickup_names = table.keys(AllPickups)
+	self._pickup_index = 0
+	self._pickup_names = table.keys(AllPickups)
 
-	table.sort(arg_1_0._pickup_names)
+	table.sort(self._pickup_names)
 
-	arg_1_0._mark_outline_extension = nil
-	arg_1_0._mark_outline_id = nil
-	arg_1_0._damage = 100
+	self._mark_outline_extension = nil
+	self._mark_outline_id = nil
+	self._damage = 100
 end
 
-function ImguiSpawning.update(arg_2_0)
-	if arg_2_0._mark_outline_extension then
-		arg_2_0._mark_outline_extension:remove_outline(arg_2_0._mark_outline_id)
+ImguiSpawning.update = function (self)
+	-- function 2
+	if not self._mark_outline_extension then
+		self._mark_outline_extension:remove_outline(self._mark_outline_id)
 
-		arg_2_0._mark_outline_extension = nil
+		self._mark_outline_extension = nil
 	end
 end
 
-local var_0_0 = "skaven_clan_rat"
+local str = "skaven_clan_rat"
 
-local function var_0_1()
-	return Breeds[var_0_0]
+local function fn()
+	-- function 3
+	return Breeds[str]
 end
 
-function ImguiSpawning.draw(arg_4_0)
-	local var_4_0 = Imgui.begin_window("Spawning")
-	local var_4_1 = arg_4_0._pickup_names[arg_4_0._pickup_index]
+ImguiSpawning.draw = function (self)
+	-- function 4
+	local begin_window = Imgui.begin_window("Spawning")
+	local var_4_1 = self._pickup_names[self._pickup_index]
 
-	if Imgui.button("Spawn Pickup", 100, 20) and var_4_1 then
-		local var_4_2 = Application.main_world()
-		local var_4_3 = Managers.state.conflict:player_aim_raycast(var_4_2, false, "filter_ray_horde_spawn")
+	if not Imgui.button("Spawn Pickup", 100, 20) and not var_4_1 then
+		local main_world = Application.main_world()
+		local player_aim_raycast = Managers.state.conflict:player_aim_raycast(main_world, false, "filter_ray_horde_spawn")
 
-		if var_4_3 then
-			Managers.state.network.network_transmit:send_rpc_server("rpc_spawn_pickup_with_physics", NetworkLookup.pickup_names[var_4_1], var_4_3, Quaternion.identity(), NetworkLookup.pickup_spawn_types.dropped)
+		if not player_aim_raycast then
+			Managers.state.network.network_transmit:send_rpc_server("rpc_spawn_pickup_with_physics", NetworkLookup.pickup_names[var_4_1], player_aim_raycast, Quaternion.identity(), NetworkLookup.pickup_spawn_types.dropped)
 		end
 	end
 
 	Imgui.same_line()
 
-	arg_4_0._pickup_index = Imgui.combo("Pickup", arg_4_0._pickup_index, arg_4_0._pickup_names)
+	self._pickup_index = Imgui.combo("Pickup", self._pickup_index, self._pickup_names)
 
 	Imgui.separator()
 
-	local var_4_4 = arg_4_0._breed_names[arg_4_0._breed_index]
+	local var_4_4 = self._breed_names[self._breed_index]
 
-	if Imgui.button("Spawn Breed", 100, 20) and var_4_4 then
-		local var_4_5 = Managers.state.conflict
+	if not Imgui.button("Spawn Breed", 100, 20) and not var_4_4 then
+		local conflict = Managers.state.conflict
 
-		var_0_0 = var_4_4
-		var_4_5.get_debug_breed = var_0_1
+		str = var_4_4
+		conflict.get_debug_breed = fn
 
-		var_4_5:debug_spawn_breed(0)
+		conflict:debug_spawn_breed(0)
 
-		var_4_5.get_debug_breed = nil
+		conflict.get_debug_breed = nil
 	end
 
 	Imgui.same_line()
 
-	arg_4_0._breed_index = Imgui.combo("Breed", arg_4_0._breed_index, arg_4_0._breed_names)
-	script_data.disable_ai_perception = Imgui.checkbox("Disable AI perception", script_data.disable_ai_perception or false)
+	self._breed_index = Imgui.combo("Breed", self._breed_index, self._breed_names)
+
+	local script_data = script_data
+	local checkbox = Imgui.checkbox
+	local str_2 = "Disable AI perception"
+	local disable_ai_perception = script_data.disable_ai_perception
+
+	disable_ai_perception = disable_ai_perception or false
+	script_data.disable_ai_perception = checkbox(str_2, disable_ai_perception)
 
 	Imgui.separator()
 
-	if Managers.state and Managers.state.conflict then
-		arg_4_0._damage = Imgui.slider_int("Damage", arg_4_0._damage, 1, 1000)
+	if not Managers.state and not Managers.state.conflict then
+		self._damage = Imgui.slider_int("Damage", self._damage, 1, 1000)
 
-		local var_4_6 = Application.main_world()
-		local var_4_7, var_4_8, var_4_9, var_4_10, var_4_11 = Managers.state.conflict:player_aim_raycast(var_4_6, true, "filter_player_ray_projectile")
+		local main_world_2 = Application.main_world()
+		local player_aim_raycast_2, var_4_12, var_4_13, var_4_14, var_4_15 = Managers.state.conflict:player_aim_raycast(main_world_2, true, "filter_player_ray_projectile")
+		local text = Imgui.text
+		local str_3 = "Looking at: "
+		local name
 
-		Imgui.text("Looking at: " .. (var_4_7 and var_4_7.name or "n/a"))
+		if not player_aim_raycast_2 then
+			name = player_aim_raycast_2.name
 
-		if var_4_7 then
-			local var_4_12 = Actor.unit(var_4_11)
-			local var_4_13 = ALIVE[var_4_12] and ScriptUnit.has_extension(var_4_12, "outline_system")
-
-			if var_4_13 then
-				arg_4_0._mark_outline_extension = var_4_13
-				arg_4_0._mark_outline_id = var_4_13:add_outline(OutlineSettings.templates.target_ally)
+			if not name then
+				-- Nothing
 			end
 		end
 
-		if (Imgui.button("Inflict damage (or mouse middle)", 100, 20) or Mouse.pressed(Mouse.button_id("middle"))) and var_4_7 then
-			local var_4_14 = Actor.unit(var_4_11)
+		name = "n/a"
 
-			DamageUtils.debug_deal_damage(var_4_14, arg_4_0._damage)
+		::label_4_0::
+
+		text(str_3 .. name)
+
+		if not player_aim_raycast_2 then
+			local unit = Actor.unit(var_4_15)
+			local var_4_20 = ALIVE[unit]
+
+			var_4_20 = not var_4_20 and ScriptUnit.has_extension(unit, "outline_system")
+
+			if not var_4_20 then
+				self._mark_outline_extension = var_4_20
+				self._mark_outline_id = var_4_20:add_outline(OutlineSettings.templates.target_ally)
+			end
+		end
+
+		if Imgui.button("Inflict damage (or mouse middle)", 100, 20) or not Mouse.pressed(Mouse.button_id("middle")) or not player_aim_raycast_2 then
+			local unit_2 = Actor.unit(var_4_15)
+
+			DamageUtils.debug_deal_damage(unit_2, self._damage)
 		end
 	end
 
 	Imgui.end_window()
 
-	return var_4_0
+	return begin_window
 end
 
-function ImguiSpawning._clear_outline(arg_5_0)
+ImguiSpawning._clear_outline = function (arg_5_0)
+	-- function 5
 	return
 end
 
-function ImguiSpawning.is_persistent(arg_6_0)
+ImguiSpawning.is_persistent = function (arg_6_0)
+	-- function 6
 	return true
 end

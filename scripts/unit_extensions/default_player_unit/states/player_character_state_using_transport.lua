@@ -2,84 +2,88 @@
 
 PlayerCharacterStateUsingTransport = class(PlayerCharacterStateUsingTransport, PlayerCharacterState)
 
-function PlayerCharacterStateUsingTransport.init(arg_1_0, arg_1_1)
+PlayerCharacterStateUsingTransport.init = function (arg_1_0, arg_1_1)
+	-- function 1
 	PlayerCharacterState.init(arg_1_0, arg_1_1, "using_transport")
 
 	local var_1_0 = arg_1_1
 end
 
-function PlayerCharacterStateUsingTransport.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
-	local var_2_0 = arg_2_0.first_person_extension
+PlayerCharacterStateUsingTransport.on_enter = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	-- function 2
+	local first_person_extension = self.first_person_extension
 
-	table.clear(arg_2_0.temp_params)
+	table.clear(self.temp_params)
 	CharacterStateHelper.play_animation_event(arg_2_1, "idle")
-	CharacterStateHelper.play_animation_event_first_person(var_2_0, "idle")
+	CharacterStateHelper.play_animation_event_first_person(first_person_extension, "idle")
 end
 
-function PlayerCharacterStateUsingTransport.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+PlayerCharacterStateUsingTransport.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+	-- function 3
 	return
 end
 
-function PlayerCharacterStateUsingTransport.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
-	local var_4_0 = arg_4_0.csm
-	local var_4_1 = arg_4_0.unit
-	local var_4_2 = arg_4_0.input_extension
-	local var_4_3 = arg_4_0.status_extension
-	local var_4_4 = arg_4_0.inventory_extension
-	local var_4_5 = arg_4_0.first_person_extension
+PlayerCharacterStateUsingTransport.update = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	-- function 4
+	local csm = self.csm
+	local unit = self.unit
+	local input_extension = self.input_extension
+	local status_extension = self.status_extension
+	local inventory_extension = self.inventory_extension
+	local first_person_extension = self.first_person_extension
 
-	if CharacterStateHelper.do_common_state_transitions(var_4_3, var_4_0) then
+	if not CharacterStateHelper.do_common_state_transitions(status_extension, csm) then
 		return
 	end
 
-	if not CharacterStateHelper.is_using_transport(var_4_3) then
-		var_4_0:change_state("standing")
+	if not CharacterStateHelper.is_using_transport(status_extension) then
+		csm:change_state("standing")
 
 		return
 	end
 
-	local var_4_6 = arg_4_0.interactor_extension
+	local interactor_extension = self.interactor_extension
 
-	if CharacterStateHelper.is_starting_interaction(var_4_2, var_4_6) then
-		local var_4_7, var_4_8 = InteractionHelper.interaction_action_names(var_4_1)
+	if not CharacterStateHelper.is_starting_interaction(input_extension, interactor_extension) then
+		local interaction_action_names, var_4_8 = InteractionHelper.interaction_action_names(unit)
 
-		var_4_6:start_interaction(var_4_8)
+		interactor_extension:start_interaction(var_4_8)
 
-		if var_4_6:allow_movement_during_interaction() then
+		if not interactor_extension:allow_movement_during_interaction() then
 			return
 		end
 
-		local var_4_9 = var_4_6:interaction_config()
-		local var_4_10 = arg_4_0.temp_params
+		local interaction_config = interactor_extension:interaction_config()
+		local temp_params = self.temp_params
 
-		var_4_10.swap_to_3p = var_4_9.swap_to_3p
-		var_4_10.show_weapons = var_4_9.show_weapons
-		var_4_10.activate_block = var_4_9.activate_block
-		var_4_10.allow_rotation_update = var_4_9.allow_rotation_update
+		temp_params.swap_to_3p = interaction_config.swap_to_3p
+		temp_params.show_weapons = interaction_config.show_weapons
+		temp_params.activate_block = interaction_config.activate_block
+		temp_params.allow_rotation_update = interaction_config.allow_rotation_update
 
-		var_4_0:change_state("interacting", var_4_10)
+		csm:change_state("interacting", temp_params)
 
 		return
 	end
 
-	if CharacterStateHelper.is_interacting(var_4_6) then
-		if var_4_6:allow_movement_during_interaction() then
+	if not CharacterStateHelper.is_interacting(interactor_extension) then
+		if not interactor_extension:allow_movement_during_interaction() then
 			return
 		end
 
-		local var_4_11 = var_4_6:interaction_config()
-		local var_4_12 = arg_4_0.temp_params
+		local interaction_config_2 = interactor_extension:interaction_config()
+		local temp_params_2 = self.temp_params
 
-		var_4_12.swap_to_3p = var_4_11.swap_to_3p
-		var_4_12.show_weapons = var_4_11.show_weapons
-		var_4_12.activate_block = var_4_11.activate_block
-		var_4_12.allow_rotation_update = var_4_11.allow_rotation_update
+		temp_params_2.swap_to_3p = interaction_config_2.swap_to_3p
+		temp_params_2.show_weapons = interaction_config_2.show_weapons
+		temp_params_2.activate_block = interaction_config_2.activate_block
+		temp_params_2.allow_rotation_update = interaction_config_2.allow_rotation_update
 
-		var_4_0:change_state("interacting", var_4_12)
+		csm:change_state("interacting", temp_params_2)
 
 		return
 	end
 
-	CharacterStateHelper.look(var_4_2, arg_4_0.player.viewport_name, arg_4_0.first_person_extension, var_4_3, arg_4_0.inventory_extension)
-	CharacterStateHelper.update_weapon_actions(arg_4_5, var_4_1, var_4_2, var_4_4, arg_4_0.health_extension)
+	CharacterStateHelper.look(input_extension, self.player.viewport_name, self.first_person_extension, status_extension, self.inventory_extension)
+	CharacterStateHelper.update_weapon_actions(arg_4_5, unit, input_extension, inventory_extension, self.health_extension)
 end

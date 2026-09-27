@@ -46,143 +46,162 @@ AdditionalHitReactions = {
 	"HitEffectsSkavenGreySeerMounted"
 }
 
-local function var_0_0(arg_1_0, arg_1_1)
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
 	if not arg_1_1 then
 		return
 	end
 
-	local var_1_0 = {}
+	local tbl = {}
 
-	for iter_1_0, iter_1_1 in pairs(arg_1_1) do
-		local var_1_1 = "dismember_" .. iter_1_0
+	for k, v in pairs(arg_1_1) do
+		local str = "dismember_" .. k
 
-		var_1_0[iter_1_0] = var_1_1
-		DismemberFlowEvents[var_1_1] = true
+		tbl[k] = str
+		DismemberFlowEvents[str] = true
 	end
 
-	Dismemberments[arg_1_0] = var_1_0
+	Dismemberments[arg_1_0] = tbl
 end
 
-local function var_0_1(arg_2_0)
+local function fn_2(arg_2_0)
+	-- function 2
 	if not SoundEvents[arg_2_0] then
-		local var_2_0 = {
+		local tbl = {
 			["false"] = arg_2_0,
 			["true"] = arg_2_0 .. "_husk"
 		}
 
-		SoundEvents[arg_2_0] = var_2_0
+		SoundEvents[arg_2_0] = tbl
 	end
 end
 
-local function var_0_2(arg_3_0, arg_3_1)
-	local var_3_0 = ""
+local function fn_3(self, arg_3_1)
+	-- function 3
+	local str = ""
 
-	for iter_3_0 = 1, #arg_3_0 do
-		var_3_0 = var_3_0 .. sprintf("\t%q inherits from %q\n", arg_3_0[iter_3_0], arg_3_0[iter_3_0 + 1] or arg_3_1)
+	for i = 1, #self do
+		local var_3_1 = str
+		local sprintf = sprintf
+		local str_2 = "\t%q inherits from %q\n"
+		local var_3_4 = self[i]
+		local var_3_5 = self[i + 1]
+
+		var_3_5 = var_3_5 or arg_3_1
+		str = var_3_1 .. sprintf(str_2, var_3_4, var_3_5)
 	end
 
-	return var_3_0
+	return str
 end
 
-local function var_0_3(arg_4_0, arg_4_1, arg_4_2)
-	local var_4_0 = {}
+local function fn_4(self, arg_4_1, arg_4_2)
+	-- function 4
+	local tbl = {}
 
-	if arg_4_0.inherits then
-		local var_4_1 = arg_4_0.inherits
-		local var_4_2 = arg_4_1[var_4_1]
+	if not self.inherits then
+		local inherits = self.inherits
+		local var_4_2 = arg_4_1[inherits]
 
-		assert(var_4_2, sprintf("Couldn't inherit from template %q; Template does not exist.", arg_4_0.inherits))
-		assert(table.contains(arg_4_2, var_4_1) == false, sprintf("Cyclic inheritence in %q:\n%s", arg_4_2[1], var_0_2(arg_4_2, var_4_1)))
+		assert(var_4_2, sprintf("Couldn't inherit from template %q; Template does not exist.", self.inherits))
+		assert(table.contains(arg_4_2, inherits) == false, sprintf("Cyclic inheritence in %q:\n%s", arg_4_2[1], fn_3(arg_4_2, inherits)))
 
-		arg_4_2[#arg_4_2 + 1] = var_4_1
-		var_4_0 = var_0_3(var_4_2, arg_4_1, arg_4_2)
+		arg_4_2[#arg_4_2 + 1] = inherits
+		tbl = fn_4(var_4_2, arg_4_1, arg_4_2)
 	end
 
-	local var_4_3 = var_4_0.conditions or {}
-	local var_4_4 = var_4_0.num_conditions or 0
+	local conditions = tbl.conditions
 
-	for iter_4_0, iter_4_1 in pairs(arg_4_0) do
-		var_4_0[iter_4_0] = iter_4_1
+	conditions = conditions or {}
+
+	local num_conditions = tbl.num_conditions
+
+	num_conditions = num_conditions or 0
+
+	for k, v in pairs(self) do
+		tbl[k] = v
 	end
 
-	if arg_4_0.extra_conditions then
-		for iter_4_2, iter_4_3 in pairs(arg_4_0.extra_conditions) do
-			if not var_4_3[iter_4_2] then
-				var_4_4 = var_4_4 + 1
+	if not self.extra_conditions then
+		for k_2, v_2 in pairs(self.extra_conditions) do
+			if not conditions[k_2] then
+				num_conditions = num_conditions + 1
 			end
 
-			var_4_3[iter_4_2] = iter_4_3
+			conditions[k_2] = v_2
 		end
 
-		var_4_0.extra_conditions = nil
+		tbl.extra_conditions = nil
 	end
 
-	var_4_0.conditions = var_4_3
-	var_4_0.num_conditions = var_4_4
+	tbl.conditions = conditions
+	tbl.num_conditions = num_conditions
 
-	return var_4_0
+	return tbl
 end
 
-local function var_0_4(arg_5_0, arg_5_1)
-	local var_5_0 = arg_5_1.num_conditions
+local function fn_5(self, arg_5_1)
+	-- function 5
+	local num_conditions = arg_5_1.num_conditions
 
-	for iter_5_0 = #arg_5_0 + 1, 1, -1 do
-		if iter_5_0 == 1 or var_5_0 <= arg_5_0[iter_5_0 - 1].num_conditions then
-			arg_5_0[iter_5_0] = arg_5_1
+	for i = #self + 1, 1, -1 do
+		if not (i == 1 or not (num_conditions <= self[i - 1].num_conditions)) then
+			self[i] = arg_5_1
 
 			break
 		else
-			arg_5_0[iter_5_0] = arg_5_0[iter_5_0 - 1]
+			self[i] = self[i - 1]
 		end
 	end
 end
 
-local function var_0_5(arg_6_0)
-	if not arg_6_0 or HitTemplates[arg_6_0] then
+local function fn_6(arg_6_0)
+	-- function 6
+	if not arg_6_0 and not HitTemplates[arg_6_0] then
 		return
 	end
 
-	local var_6_0 = {}
+	local tbl = {}
 	local var_6_1 = rawget(_G, arg_6_0)
 
-	for iter_6_0, iter_6_1 in pairs(var_6_1) do
-		local var_6_2 = var_0_3(iter_6_1, var_6_1, {
-			iter_6_0
+	for k, v in pairs(var_6_1) do
+		local var_6_2 = fn_4(v, var_6_1, {
+			k
 		})
 
-		var_6_2.template_name = iter_6_0
+		var_6_2.template_name = k
 
-		var_0_4(var_6_0, var_6_2)
+		fn_5(tbl, var_6_2)
 
-		if iter_6_1.sound_event then
-			local var_6_3 = iter_6_1.sound_event
+		if not v.sound_event then
+			local sound_event = v.sound_event
 
-			if type(var_6_3) == "string" then
-				var_0_1(var_6_3)
+			if type(sound_event) == "string" then
+				fn_2(sound_event)
 			else
-				local var_6_4 = #var_6_3
+				local count = #sound_event
 
-				for iter_6_2 = 1, var_6_4 do
-					var_0_1(var_6_3[iter_6_2])
+				for k_2 = 1, count do
+					fn_2(sound_event[k_2])
 				end
 			end
 		end
 	end
 
-	HitTemplates[arg_6_0] = var_6_0
+	HitTemplates[arg_6_0] = tbl
 end
 
-;(function()
-	for iter_7_0, iter_7_1 in pairs(Breeds) do
-		var_0_0(iter_7_0, iter_7_1.hit_zones)
-		var_0_5(iter_7_1.hit_effect_template)
+;(function ()
+	-- function 7
+	for k, v in pairs(Breeds) do
+		fn(k, v.hit_zones)
+		fn_6(v.hit_effect_template)
 	end
 
-	for iter_7_2, iter_7_3 in pairs(PlayerBreeds) do
-		var_0_0(iter_7_2, iter_7_3.hit_zones)
+	for k_2, v_2 in pairs(PlayerBreeds) do
+		fn(k_2, v_2.hit_zones)
 	end
 
-	for iter_7_4, iter_7_5 in pairs(AdditionalHitReactions) do
-		var_0_5(iter_7_5)
+	for k_3, v_3 in pairs(AdditionalHitReactions) do
+		fn_6(v_3)
 	end
 end)()

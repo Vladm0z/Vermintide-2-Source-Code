@@ -1,6 +1,9 @@
 -- chunkname: @scripts/settings/trophies.lua
 
+local Trophies = Trophies
+
 Trophies = Trophies or {}
+Trophies = Trophies
 Trophies.hub_trophy_empty = {
 	sound_event = "hub_trophy_empty_description",
 	unit_name = "units/props/inn/hub_trophy/hub_trophy_empty",
@@ -68,7 +71,7 @@ DefaultTrophies = {
 	"hub_trophy_empty"
 }
 
-local var_0_0 = {
+local tbl = {
 	"hub_trophy_empty",
 	"hub_trophy_holly",
 	"hub_trophy_skarrik",
@@ -79,12 +82,14 @@ local var_0_0 = {
 	"hub_trophy_bogenhafen",
 	"hub_trophy_rasknitt"
 }
+local TrophyOrder = TrophyOrder
 
 TrophyOrder = TrophyOrder or {}
+TrophyOrder = TrophyOrder
 
-for iter_0_0, iter_0_1 in ipairs(var_0_0) do
-	if not table.contains(TrophyOrder, iter_0_1) and not table.contains(DefaultTrophies, iter_0_1) then
-		TrophyOrder[#TrophyOrder + 1] = iter_0_1
+for i, v in ipairs(tbl) do
+	if not (table.contains(TrophyOrder, v) or table.contains(DefaultTrophies, v)) then
+		TrophyOrder[#TrophyOrder + 1] = v
 	end
 end
 

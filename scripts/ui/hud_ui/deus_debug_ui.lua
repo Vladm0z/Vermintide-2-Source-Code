@@ -2,88 +2,94 @@
 
 DeusDebugUI = class(DeusDebugUI)
 
-function DeusDebugUI.init(arg_1_0, arg_1_1, arg_1_2)
-	arg_1_0._world = arg_1_2.world_manager:world("level_world")
-	arg_1_0._gui = World.create_screen_gui(arg_1_0._world, "immediate", "material", "materials/fonts/gw_fonts")
+DeusDebugUI.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	self._world = arg_1_2.world_manager:world("level_world")
+	self._gui = World.create_screen_gui(self._world, "immediate", "material", "materials/fonts/gw_fonts")
 end
 
-function DeusDebugUI.destroy(arg_2_0)
-	World.destroy_gui(arg_2_0._world, arg_2_0._gui)
+DeusDebugUI.destroy = function (self)
+	-- function 2
+	World.destroy_gui(self._world, self._gui)
 
-	arg_2_0._gui = nil
+	self._gui = nil
 end
 
-function DeusDebugUI.update(arg_3_0, arg_3_1, arg_3_2)
-	arg_3_0:_draw(arg_3_1, arg_3_2)
+DeusDebugUI.update = function (self, arg_3_1, arg_3_2)
+	-- function 3
+	self:_draw(arg_3_1, arg_3_2)
 end
 
-function DeusDebugUI._draw(arg_4_0, arg_4_1, arg_4_2)
-	arg_4_0:_draw_left_side(arg_4_1, arg_4_2)
-	arg_4_0:_draw_right_side(arg_4_1, arg_4_2)
+DeusDebugUI._draw = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	self:_draw_left_side(arg_4_1, arg_4_2)
+	self:_draw_right_side(arg_4_1, arg_4_2)
 end
 
-function DeusDebugUI._draw_right_side(arg_5_0, arg_5_1, arg_5_2)
-	local var_5_0 = "materials/fonts/arial"
-	local var_5_1 = "arial"
-	local var_5_2 = 12
-	local var_5_3, var_5_4 = Gui.resolution()
-	local var_5_5 = var_5_3 * 0.75
+DeusDebugUI._draw_right_side = function (self, arg_5_1, arg_5_2)
+	-- function 5
+	local str = "materials/fonts/arial"
+	local str_2 = "arial"
+	local num = 12
+	local resolution, var_5_4 = Gui.resolution()
+	local num_2 = resolution * 0.75
 	local var_5_6 = var_5_4
-	local var_5_7 = ""
-	local var_5_8 = Managers.mechanism:game_mechanism():get_deus_run_controller()
+	local str_3 = ""
+	local get_deus_run_controller = Managers.mechanism:game_mechanism():get_deus_run_controller()
 
-	if var_5_8 then
-		var_5_7 = var_5_7 .. "Run seed: " .. var_5_8:get_run_seed()
+	if not get_deus_run_controller then
+		str_3 = str_3 .. "Run seed: " .. get_deus_run_controller:get_run_seed()
 	end
 
-	if IS_WINDOWS and rawget(_G, "Steam") then
-		var_5_7 = var_5_7 .. " User: " .. Steam.user_name()
+	if not IS_WINDOWS and not rawget(_G, "Steam") then
+		str_3 = str_3 .. " User: " .. Steam.user_name()
 	end
 
-	if var_5_7 == "" then
+	if str_3 == "" then
 		return
 	end
 
-	local var_5_9, var_5_10 = Gui.text_extents(arg_5_0._gui, var_5_7, var_5_0, var_5_2)
-	local var_5_11 = var_5_10.x - var_5_9.x
-	local var_5_12 = var_5_10.y
-	local var_5_13 = 5
-	local var_5_14 = var_5_5 - var_5_11 * 0.5 - var_5_13
-	local var_5_15 = var_5_6 - var_5_12 - var_5_13
-	local var_5_16 = var_5_11 + var_5_13 * 2
-	local var_5_17 = var_5_12 + var_5_13 * 2
-	local var_5_18 = var_5_14 - var_5_13
-	local var_5_19 = var_5_15 - var_5_13
+	local text_extents, var_5_10 = Gui.text_extents(self._gui, str_3, str, num)
+	local num_3 = var_5_10.x - text_extents.x
+	local y = var_5_10.y
+	local num_4 = 5
+	local num_5 = num_2 - num_3 * 0.5 - num_4
+	local num_6 = var_5_6 - y - num_4
+	local num_7 = num_3 + num_4 * 2
+	local num_8 = y + num_4 * 2
+	local num_9 = num_5 - num_4
+	local num_10 = num_6 - num_4
 
-	Gui.rect(arg_5_0._gui, Vector2(var_5_18, var_5_19), Vector2(var_5_16, var_5_17), Color(128, 0, 0, 0))
-	Gui.text(arg_5_0._gui, var_5_7, var_5_0, var_5_2, var_5_1, Vector3(var_5_14, var_5_15, 0), Color(255, 255, 255, 0))
+	Gui.rect(self._gui, Vector2(num_9, num_10), Vector2(num_7, num_8), Color(128, 0, 0, 0))
+	Gui.text(self._gui, str_3, str, num, str_2, Vector3(num_5, num_6, 0), Color(255, 255, 255, 0))
 end
 
-function DeusDebugUI._draw_left_side(arg_6_0, arg_6_1, arg_6_2)
-	local var_6_0 = Managers.mechanism:game_mechanism():get_deus_run_controller()
+DeusDebugUI._draw_left_side = function (self, arg_6_1, arg_6_2)
+	-- function 6
+	local get_deus_run_controller = Managers.mechanism:game_mechanism():get_deus_run_controller()
 
-	if not var_6_0 then
+	if not get_deus_run_controller then
 		return
 	end
 
-	local var_6_1 = "materials/fonts/arial"
-	local var_6_2 = "arial"
-	local var_6_3 = 12
-	local var_6_4, var_6_5 = Gui.resolution()
-	local var_6_6 = var_6_4 * 0.25
+	local str = "materials/fonts/arial"
+	local str_2 = "arial"
+	local num = 12
+	local resolution, var_6_5 = Gui.resolution()
+	local num_2 = resolution * 0.25
 	local var_6_7 = var_6_5
-	local var_6_8 = "Level: " .. var_6_0:get_current_node().level
-	local var_6_9, var_6_10 = Gui.text_extents(arg_6_0._gui, var_6_8, var_6_1, var_6_3)
-	local var_6_11 = var_6_10.x - var_6_9.x
-	local var_6_12 = var_6_10.y
-	local var_6_13 = 5
-	local var_6_14 = var_6_6 - var_6_11 * 0.5 - var_6_13
-	local var_6_15 = var_6_7 - var_6_12 - var_6_13
-	local var_6_16 = var_6_11 + var_6_13 * 2
-	local var_6_17 = var_6_12 + var_6_13 * 2
-	local var_6_18 = var_6_14 - var_6_13
-	local var_6_19 = var_6_15 - var_6_13
+	local str_3 = "Level: " .. get_deus_run_controller:get_current_node().level
+	local text_extents, var_6_10 = Gui.text_extents(self._gui, str_3, str, num)
+	local num_3 = var_6_10.x - text_extents.x
+	local y = var_6_10.y
+	local num_4 = 5
+	local num_5 = num_2 - num_3 * 0.5 - num_4
+	local num_6 = var_6_7 - y - num_4
+	local num_7 = num_3 + num_4 * 2
+	local num_8 = y + num_4 * 2
+	local num_9 = num_5 - num_4
+	local num_10 = num_6 - num_4
 
-	Gui.rect(arg_6_0._gui, Vector2(var_6_18, var_6_19), Vector2(var_6_16, var_6_17), Color(128, 0, 0, 0))
-	Gui.text(arg_6_0._gui, var_6_8, var_6_1, var_6_3, var_6_2, Vector3(var_6_14, var_6_15, 0), Color(255, 255, 255, 0))
+	Gui.rect(self._gui, Vector2(num_9, num_10), Vector2(num_7, num_8), Color(128, 0, 0, 0))
+	Gui.text(self._gui, str_3, str, num, str_2, Vector3(num_5, num_6, 0), Color(255, 255, 255, 0))
 end

@@ -2,129 +2,136 @@
 
 SpawningHelper = class(SpawningHelper)
 
-local var_0_0 = {
+local tbl = {
 	"slot_healthkit",
 	"slot_potion",
 	"slot_grenade"
 }
 
-function SpawningHelper.netpack_consumables(arg_1_0)
-	local var_1_0 = {}
+SpawningHelper.netpack_consumables = function (self)
+	-- function 1
+	local tbl_2 = {}
 
-	for iter_1_0 = 1, #var_0_0 do
-		local var_1_1 = arg_1_0[var_0_0[iter_1_0]]
+	for i = 1, #tbl do
+		local var_1_1 = self[tbl[i]]
 		local var_1_2 = rawget(ItemMasterList, var_1_1)
 
-		if not var_1_2 or var_1_2.skip_sync then
+		if not var_1_2 and not var_1_2.skip_sync then
 			var_1_1 = "n/a"
 		end
 
-		var_1_0[iter_1_0] = NetworkLookup.item_names[var_1_1]
+		tbl_2[i] = NetworkLookup.item_names[var_1_1]
 	end
 
-	return var_1_0
+	return tbl_2
 end
 
-function SpawningHelper.netpack_additional_items(arg_2_0)
-	local var_2_0 = {}
+SpawningHelper.netpack_additional_items = function (arg_2_0)
+	-- function 2
+	local tbl = {}
 
-	for iter_2_0, iter_2_1 in pairs(arg_2_0) do
-		local var_2_1 = iter_2_1.items
+	for k, v in pairs(arg_2_0) do
+		local items = v.items
 
-		for iter_2_2 = 1, #var_2_1 do
-			local var_2_2 = var_2_1[iter_2_2]
+		for k_2 = 1, #items do
+			local var_2_2 = items[k_2]
 
 			if not var_2_2.skip_sync then
-				local var_2_3 = var_2_2.key
-				local var_2_4 = NetworkLookup.equipment_slots[iter_2_0]
-				local var_2_5 = NetworkLookup.item_names[var_2_3]
+				local key = var_2_2.key
+				local var_2_4 = NetworkLookup.equipment_slots[k]
+				local var_2_5 = NetworkLookup.item_names[key]
 
-				var_2_0[#var_2_0 + 1] = var_2_4
-				var_2_0[#var_2_0 + 1] = var_2_5
+				tbl[#tbl + 1] = var_2_4
+				tbl[#tbl + 1] = var_2_5
 			end
 		end
 	end
 
-	return var_2_0
+	return tbl
 end
 
-function SpawningHelper.unnetpack_additional_items(arg_3_0)
-	local var_3_0 = {}
+SpawningHelper.unnetpack_additional_items = function (self)
+	-- function 3
+	local tbl = {}
 
-	for iter_3_0 = 1, #arg_3_0, 2 do
-		local var_3_1 = tonumber(arg_3_0[iter_3_0])
-		local var_3_2 = tonumber(arg_3_0[iter_3_0 + 1])
+	for i = 1, #self, 2 do
+		local var_3_1 = tonumber(self[i])
+		local var_3_2 = tonumber(self[i + 1])
 		local var_3_3 = NetworkLookup.equipment_slots[var_3_1]
 		local var_3_4 = NetworkLookup.item_names[var_3_2]
 
-		if not var_3_0[var_3_3] then
-			var_3_0[var_3_3] = {
+		if not tbl[var_3_3] then
+			tbl[var_3_3] = {
 				items = {}
 			}
 		end
 
-		local var_3_5 = var_3_0[var_3_3].items
+		local items = tbl[var_3_3].items
 
-		var_3_5[#var_3_5 + 1] = ItemMasterList[var_3_4]
+		items[#items + 1] = ItemMasterList[var_3_4]
 	end
 
-	return var_3_0
+	return tbl
 end
 
-function SpawningHelper.fill_consumable_table(arg_4_0, arg_4_1)
-	for iter_4_0 = 1, #var_0_0 do
-		local var_4_0 = var_0_0[iter_4_0]
-		local var_4_1 = arg_4_1:get_slot_data(var_4_0)
-		local var_4_2 = var_4_1 and var_4_1.item_data
-		local var_4_3 = var_4_2 and var_4_2.key
+SpawningHelper.fill_consumable_table = function (self, arg_4_1)
+	-- function 4
+	for i = 1, #tbl do
+		local var_4_0 = tbl[i]
+		local get_slot_data = arg_4_1:get_slot_data(var_4_0)
+		local flag = not get_slot_data and get_slot_data.item_data
+		local flag_2 = not flag and flag.key
 
-		if not var_4_2 or var_4_2.skip_sync then
-			arg_4_0[var_4_0] = nil
+		if not flag and not flag.skip_sync then
+			self[var_4_0] = nil
 		else
-			arg_4_0[var_4_0] = var_4_3
+			self[var_4_0] = flag_2
 		end
 	end
 end
 
-function SpawningHelper.default_spawn_items(arg_5_0, arg_5_1, arg_5_2)
+SpawningHelper.default_spawn_items = function (self, arg_5_1, arg_5_2)
+	-- function 5
 	if not arg_5_2.disable_difficulty_spawning_items then
-		for iter_5_0 = 1, #var_0_0 do
-			local var_5_0 = var_0_0[iter_5_0]
+		for i = 1, #tbl do
+			local var_5_0 = tbl[i]
 
-			arg_5_0[var_5_0] = arg_5_1[var_5_0]
+			self[var_5_0] = arg_5_1[var_5_0]
 		end
 	end
 end
 
-function SpawningHelper.get_consumable_slot_order()
-	return var_0_0
+SpawningHelper.get_consumable_slot_order = function ()
+	-- function 6
+	return tbl
 end
 
-function SpawningHelper.fill_ammo_percentage(arg_7_0, arg_7_1, arg_7_2)
-	local var_7_0 = arg_7_1:equipment().slots
-	local var_7_1 = Managers.player:owner(arg_7_2).remote
+SpawningHelper.fill_ammo_percentage = function (self, arg_7_1, arg_7_2)
+	-- function 7
+	local slots = arg_7_1:equipment().slots
+	local remote = Managers.player:owner(arg_7_2).remote
 
-	for iter_7_0, iter_7_1 in pairs(arg_7_0) do
-		local var_7_2 = 1
-		local var_7_3 = var_7_0[iter_7_0]
+	for k, v in pairs(self) do
+		local num = 1
+		local var_7_3 = slots[k]
 
-		if var_7_3 then
-			local var_7_4 = var_7_3.item_data
-			local var_7_5 = BackendUtils.get_item_template(var_7_4)
+		if not var_7_3 then
+			local item_data = var_7_3.item_data
+			local get_item_template = BackendUtils.get_item_template(item_data)
 
-			if var_7_5.ammo_data then
-				local var_7_6 = var_7_5.ammo_data.ammo_hand
+			if not get_item_template.ammo_data then
+				local ammo_hand = get_item_template.ammo_data.ammo_hand
 
-				if var_7_1 then
-					var_7_2 = arg_7_1:ammo_percentage() or var_7_2
-				elseif var_7_6 == "right" and Unit.alive(var_7_3.right_unit_1p) then
-					var_7_2 = ScriptUnit.extension(var_7_3.right_unit_1p, "ammo_system"):total_ammo_fraction()
-				elseif var_7_6 == "left" and Unit.alive(var_7_3.left_unit_1p) then
-					var_7_2 = ScriptUnit.extension(var_7_3.left_unit_1p, "ammo_system"):total_ammo_fraction()
+				if not remote then
+					num = arg_7_1:ammo_percentage() or num
+				elseif ammo_hand ~= "right" or not Unit.alive(var_7_3.right_unit_1p) then
+					num = ScriptUnit.extension(var_7_3.right_unit_1p, "ammo_system"):total_ammo_fraction()
+				elseif ammo_hand ~= "left" or not Unit.alive(var_7_3.left_unit_1p) then
+					num = ScriptUnit.extension(var_7_3.left_unit_1p, "ammo_system"):total_ammo_fraction()
 				end
 			end
 		end
 
-		arg_7_0[iter_7_0] = var_7_2
+		self[k] = num
 	end
 end

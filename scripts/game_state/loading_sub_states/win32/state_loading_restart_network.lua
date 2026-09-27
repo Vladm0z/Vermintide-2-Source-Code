@@ -16,34 +16,37 @@ require("scripts/network/network_transmit")
 StateLoadingRestartNetwork = class(StateLoadingRestartNetwork)
 StateLoadingRestartNetwork.NAME = "StateLoadingRestartNetwork"
 
-function StateLoadingRestartNetwork.on_enter(arg_1_0, arg_1_1)
+StateLoadingRestartNetwork.on_enter = function (self, arg_1_1)
+	-- function 1
 	print("[Gamestate] Enter Substate StateLoadingRestartNetwork")
-	arg_1_0:_init_params(arg_1_1)
-	arg_1_0:_init_network()
+	self:_init_params(arg_1_1)
+	self:_init_network()
 end
 
-function StateLoadingRestartNetwork._init_params(arg_2_0, arg_2_1)
-	arg_2_0._world = arg_2_1.world
-	arg_2_0._viewport = arg_2_1.viewport
-	arg_2_0._loading_view = arg_2_1.loading_view
-	arg_2_0._starting_tutorial = arg_2_1.starting_tutorial
-	arg_2_0._server_created = true
-	arg_2_0._lobby_joined = true
-	arg_2_0._previous_session_error_headers_lookup = {
+StateLoadingRestartNetwork._init_params = function (self, arg_2_1)
+	-- function 2
+	self._world = arg_2_1.world
+	self._viewport = arg_2_1.viewport
+	self._loading_view = arg_2_1.loading_view
+	self._starting_tutorial = arg_2_1.starting_tutorial
+	self._server_created = true
+	self._lobby_joined = true
+	self._previous_session_error_headers_lookup = {
 		host_left_game = "popup_notice_topic",
 		kicked_by_server = "popup_notice_topic",
 		afk_kick = "popup_notice_topic"
 	}
 end
 
-function StateLoadingRestartNetwork._init_network(arg_3_0)
-	local var_3_0 = Development.parameter("auto_join")
+StateLoadingRestartNetwork._init_network = function (self)
+	-- function 3
+	local parameter = Development.parameter("auto_join")
 
-	assert(not var_3_0 or Development.parameter("unique_server_name"), "Can't use auto_join without unique_server_name")
+	assert(not parameter and Development.parameter("unique_server_name"), "Can't use auto_join without unique_server_name")
 
-	local var_3_1 = Development.parameter("auto_join_server")
+	local parameter_2 = Development.parameter("auto_join_server")
 
-	if var_3_0 then
+	if not parameter then
 		Development.set_parameter("client", true)
 	end
 
@@ -51,33 +54,35 @@ function StateLoadingRestartNetwork._init_network(arg_3_0)
 	Development.set_parameter("auto_join_server", nil)
 
 	local var_3_2
-	local var_3_3 = var_3_1 ~= nil
-	local var_3_4 = arg_3_0.parent.parent.loading_context
-	local var_3_5 = IS_WINDOWS and not Development.parameter("use_lan_backend")
+	local flag = parameter_2 ~= nil
+	local loading_context = self.parent.parent.loading_context
+	local IS_WINDOWS = IS_WINDOWS
 
-	LobbySetup.setup_network_options(var_3_5)
+	IS_WINDOWS = not IS_WINDOWS and not Development.parameter("use_lan_backend")
 
-	local var_3_6 = LobbySetup.network_options()
-	local var_3_7 = PLATFORM
+	LobbySetup.setup_network_options(IS_WINDOWS)
 
-	if not rawget(_G, "LobbyInternal") or not LobbyInternal.network_initialized() then
-		if IS_WINDOWS or IS_LINUX then
-			if rawget(_G, "Steam") and not LEVEL_EDITOR_TEST and not Development.parameter("use_lan_backend") then
+	local network_options = LobbySetup.network_options()
+	local PLATFORM = PLATFORM
+
+	if not (not rawget(_G, "LobbyInternal") and LobbyInternal.network_initialized()) then
+		if IS_WINDOWS or not IS_LINUX then
+			if not (not rawget(_G, "Steam") and LEVEL_EDITOR_TEST or Development.parameter("use_lan_backend")) then
 				require("scripts/network/lobby_steam")
 				require("scripts/network/game_server/game_server_user_steam")
 
-				if rawget(_G, "SteamGameServer") then
+				if not rawget(_G, "SteamGameServer") then
 					require("scripts/network/game_server/game_server_steam")
 				end
 
-				local var_3_8, var_3_9 = Friends.boot_invite()
+				local boot_invite, var_3_9 = Friends.boot_invite()
 
-				if var_3_8 ~= Friends.NO_INVITE and not arg_3_0._starting_tutorial then
-					var_3_3 = var_3_8 == Friends.INVITE_SERVER
-					var_3_1 = var_3_9
+				if not (boot_invite == Friends.NO_INVITE or self._starting_tutorial) then
+					flag = boot_invite == Friends.INVITE_SERVER
+					parameter_2 = var_3_9
 				end
 
-				print("state_loading_restart_network JOIN VIA STEAM " .. var_3_8)
+				print("state_loading_restart_network JOIN VIA STEAM " .. boot_invite)
 			else
 				rawset(_G, "Steam", nil)
 
@@ -87,32 +92,32 @@ function StateLoadingRestartNetwork._init_network(arg_3_0)
 
 				var_3_2 = script_data.host_to_join
 			end
-		elseif IS_XB1 then
-			if Managers.account:offline_mode() then
-				if package.loaded["scripts/network/lobby_xbox_live"] then
+		elseif not IS_XB1 then
+			if not Managers.account:offline_mode() then
+				if not package.loaded["scripts/network/lobby_xbox_live"] then
 					package.loaded["scripts/network/lobby_xbox_live"] = nil
 					package.load_order[#package.load_order] = nil
 				end
 
 				require("scripts/network/lobby_lan")
 			else
-				if package.loaded["scripts/network/lobby_lan"] then
+				if not package.loaded["scripts/network/lobby_lan"] then
 					package.loaded["scripts/network/lobby_lan"] = nil
 					package.load_order[#package.load_order] = nil
 				end
 
 				require("scripts/network/lobby_xbox_live")
 			end
-		elseif IS_PS4 then
-			if Managers.account:offline_mode() then
-				if package.loaded["scripts/network/lobby_psn"] then
+		elseif not IS_PS4 then
+			if not Managers.account:offline_mode() then
+				if not package.loaded["scripts/network/lobby_psn"] then
 					package.loaded["scripts/network/lobby_psn"] = nil
 					package.load_order[#package.load_order] = nil
 				end
 
 				require("scripts/network/lobby_lan")
 			else
-				if package.loaded["scripts/network/lobby_lan"] then
+				if not package.loaded["scripts/network/lobby_lan"] then
 					package.loaded["scripts/network/lobby_lan"] = nil
 					package.load_order[#package.load_order] = nil
 				end
@@ -121,158 +126,162 @@ function StateLoadingRestartNetwork._init_network(arg_3_0)
 			end
 		end
 
-		LobbyInternal.init_client(var_3_6)
-	elseif IS_XB1 then
-		if Managers.account:offline_mode() then
-			if package.loaded["scripts/network/lobby_xbox_live"] then
+		LobbyInternal.init_client(network_options)
+	elseif not IS_XB1 then
+		if not Managers.account:offline_mode() then
+			if not package.loaded["scripts/network/lobby_xbox_live"] then
 				package.loaded["scripts/network/lobby_xbox_live"] = nil
 				package.load_order[#package.load_order] = nil
 			end
 
 			require("scripts/network/lobby_lan")
 		else
-			if package.loaded["scripts/network/lobby_lan"] then
+			if not package.loaded["scripts/network/lobby_lan"] then
 				package.loaded["scripts/network/lobby_lan"] = nil
 				package.load_order[#package.load_order] = nil
 			end
 
 			require("scripts/network/lobby_xbox_live")
-			LobbyInternal.init_client(var_3_6)
+			LobbyInternal.init_client(network_options)
 		end
-	elseif IS_PS4 then
-		if Managers.account:offline_mode() then
-			if package.loaded["scripts/network/lobby_psn"] then
+	elseif not IS_PS4 then
+		if not Managers.account:offline_mode() then
+			if not package.loaded["scripts/network/lobby_psn"] then
 				package.loaded["scripts/network/lobby_psn"] = nil
 				package.load_order[#package.load_order] = nil
 			end
 
 			require("scripts/network/lobby_lan")
 		else
-			if package.loaded["scripts/network/lobby_lan"] then
+			if not package.loaded["scripts/network/lobby_lan"] then
 				package.loaded["scripts/network/lobby_lan"] = nil
 				package.load_order[#package.load_order] = nil
 			end
 
 			require("scripts/network/lobby_psn")
-			LobbyInternal.init_client(var_3_6)
+			LobbyInternal.init_client(network_options)
 		end
 	end
 
 	dofile("scripts/network_lookup/network_constants")
 
-	if script_data.done_initial_join then
-		var_3_1 = nil
+	if not script_data.done_initial_join then
+		parameter_2 = nil
 		var_3_2 = nil
 	else
 		script_data.done_initial_join = true
 	end
 
-	if not arg_3_0.parent:has_registered_rpcs() then
-		arg_3_0.parent:register_rpcs()
+	if not self.parent:has_registered_rpcs() then
+		self.parent:register_rpcs()
 	end
 
-	if arg_3_0._starting_tutorial then
-		local var_3_10 = Managers.invite:get_invited_lobby_data()
+	if not self._starting_tutorial then
+		local get_invited_lobby_data = Managers.invite:get_invited_lobby_data()
 	end
 
-	local var_3_11 = StateLoading.LoadoutResyncStates.WAIT_FOR_LEVEL_LOAD
-	local var_3_12 = Managers.invite:has_invitation()
+	local WAIT_FOR_LEVEL_LOAD = StateLoading.LoadoutResyncStates.WAIT_FOR_LEVEL_LOAD
+	local has_invitation = Managers.invite:has_invitation()
 
-	print("[StateLoadingRestartNetwork] Selecting loadout_resync_state...", var_3_12, arg_3_0._starting_tutorial, var_3_4.join_lobby_data, var_3_4.join_server_data, var_3_0, var_3_1, var_3_2, var_3_7)
+	print("[StateLoadingRestartNetwork] Selecting loadout_resync_state...", has_invitation, self._starting_tutorial, loading_context.join_lobby_data, loading_context.join_server_data, parameter, parameter_2, var_3_2, PLATFORM)
 
-	if var_3_12 and not arg_3_0._starting_tutorial then
-		arg_3_0._has_invitation = true
-	elseif var_3_4.join_lobby_data or var_3_4.join_server_data then
-		arg_3_0.parent:setup_join_lobby()
-	elseif var_3_0 or var_3_1 or var_3_2 then
-		arg_3_0.parent:setup_lobby_finder(callback(arg_3_0, "cb_lobby_joined"), var_3_1, var_3_2, var_3_3)
+	if not (not has_invitation and self._starting_tutorial) then
+		self._has_invitation = true
+	elseif loading_context.join_lobby_data or not loading_context.join_server_data then
+		self.parent:setup_join_lobby()
+	elseif parameter or parameter_2 or not var_3_2 then
+		self.parent:setup_lobby_finder(callback(self, "cb_lobby_joined"), parameter_2, var_3_2, flag)
 
-		arg_3_0._lobby_joined = false
-	elseif IS_CONSOLE then
-		arg_3_0._server_created = false
-		arg_3_0._creating_lobby = false
-	elseif var_3_4.rejoin_lobby then
-		local var_3_13 = Managers.party:steal_lobby()
+		self._lobby_joined = false
+	elseif not IS_CONSOLE then
+		self._server_created = false
+		self._creating_lobby = false
+	elseif not loading_context.rejoin_lobby then
+		local steal_lobby = Managers.party:steal_lobby()
 
-		if type(var_3_13) == "table" then
-			var_3_4.join_lobby_data = var_3_13
+		if type(steal_lobby) == "table" then
+			loading_context.join_lobby_data = steal_lobby
 
-			arg_3_0.parent:setup_join_lobby()
+			self.parent:setup_join_lobby()
 		else
-			arg_3_0.parent:setup_lobby_host(nil, var_3_13)
+			self.parent:setup_lobby_host(nil, steal_lobby)
 
-			arg_3_0._server_created = true
+			self._server_created = true
 		end
 	else
-		arg_3_0.parent:setup_lobby_host()
+		self.parent:setup_lobby_host()
 
-		arg_3_0._server_created = true
-		var_3_11 = StateLoading.LoadoutResyncStates.CHECK_RESYNC
+		self._server_created = true
+		WAIT_FOR_LEVEL_LOAD = StateLoading.LoadoutResyncStates.CHECK_RESYNC
 	end
 
-	if arg_3_0.parent:loadout_resync_state() == StateLoading.LoadoutResyncStates.IDLE then
-		print("[StateLoadingRestartNetwork] loadout_resync_state IDLE ->", var_3_11)
-		arg_3_0.parent:set_loadout_resync_state(var_3_11)
+	if self.parent:loadout_resync_state() == StateLoading.LoadoutResyncStates.IDLE then
+		print("[StateLoadingRestartNetwork] loadout_resync_state IDLE ->", WAIT_FOR_LEVEL_LOAD)
+		self.parent:set_loadout_resync_state(WAIT_FOR_LEVEL_LOAD)
 	else
 		print("[StateLoadingRestartNetwork] Ignoring selected loadout_resync_state, wasn't IDLE")
 	end
 
-	if var_3_4.previous_session_error then
-		local var_3_14 = var_3_4.previous_session_error
+	if not loading_context.previous_session_error then
+		local previous_session_error = loading_context.previous_session_error
 
-		var_3_4.previous_session_error = nil
+		loading_context.previous_session_error = nil
 
-		arg_3_0.parent:create_popup(var_3_14, arg_3_0._previous_session_error_headers_lookup[var_3_14], "continue")
+		self.parent:create_popup(previous_session_error, self._previous_session_error_headers_lookup[previous_session_error], "continue")
 	end
 end
 
-function StateLoadingRestartNetwork.update(arg_4_0, arg_4_1, arg_4_2)
-	if arg_4_0._has_invitation_error or Managers.account:user_detached() then
+StateLoadingRestartNetwork.update = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	if self._has_invitation_error or not Managers.account:user_detached() then
 		return
 	end
 
-	if arg_4_0._has_invitation then
-		if Managers.invite:invites_handled() then
+	if not self._has_invitation then
+		if not Managers.invite:invites_handled() then
 			if not Managers.account:offline_mode() then
-				local var_4_0 = Managers.invite:get_invited_lobby_data()
+				local get_invited_lobby_data = Managers.invite:get_invited_lobby_data()
 
-				if var_4_0 then
-					if var_4_0.is_server_invite then
-						arg_4_0.parent.parent.loading_context.join_server_data = var_4_0
+				if not get_invited_lobby_data then
+					if not get_invited_lobby_data.is_server_invite then
+						self.parent.parent.loading_context.join_server_data = get_invited_lobby_data
 					else
-						arg_4_0.parent.parent.loading_context.join_lobby_data = var_4_0
+						self.parent.parent.loading_context.join_lobby_data = get_invited_lobby_data
 					end
 
-					arg_4_0.parent:setup_join_lobby()
+					self.parent:setup_join_lobby()
 
-					arg_4_0._has_invitation = false
+					self._has_invitation = false
 				else
-					arg_4_0.parent:set_invitation_error()
+					self.parent:set_invitation_error()
 
-					arg_4_0._has_invitation_error = true
+					self._has_invitation_error = true
 				end
 			else
-				arg_4_0.parent.offline_invite = true
-				arg_4_0._has_invitation = false
+				self.parent.offline_invite = true
+				self._has_invitation = false
 			end
 		end
-	elseif arg_4_0._server_created and arg_4_0._lobby_joined then
+	elseif not self._server_created and not self._lobby_joined then
 		return StateLoadingRunning
-	elseif IS_CONSOLE and Managers.account:all_sessions_cleaned_up() and not arg_4_0._creating_lobby then
-		arg_4_0.parent:setup_lobby_host(callback(arg_4_0, "cb_server_created"))
+	elseif not (not IS_CONSOLE and not Managers.account:all_sessions_cleaned_up() and self._creating_lobby) then
+		self.parent:setup_lobby_host(callback(self, "cb_server_created"))
 
-		arg_4_0._creating_lobby = true
+		self._creating_lobby = true
 	end
 end
 
-function StateLoadingRestartNetwork.on_exit(arg_5_0, arg_5_1)
+StateLoadingRestartNetwork.on_exit = function (arg_5_0, arg_5_1)
+	-- function 5
 	return
 end
 
-function StateLoadingRestartNetwork.cb_server_created(arg_6_0)
-	arg_6_0._server_created = true
+StateLoadingRestartNetwork.cb_server_created = function (self)
+	-- function 6
+	self._server_created = true
 end
 
-function StateLoadingRestartNetwork.cb_lobby_joined(arg_7_0)
-	arg_7_0._lobby_joined = true
+StateLoadingRestartNetwork.cb_lobby_joined = function (self)
+	-- function 7
+	self._lobby_joined = true
 end

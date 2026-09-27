@@ -1,6 +1,9 @@
 -- chunkname: @scripts/settings/paintings_01.lua
 
+local Paintings = Paintings
+
 Paintings = Paintings or {}
+Paintings = Paintings
 Paintings.hidden = {
 	sound_event = "painting_none_description",
 	rarity = "common",
@@ -2120,7 +2123,7 @@ DefaultPaintings = {
 	"hidden"
 }
 
-local var_0_0 = {
+local tbl = {
 	"hor_none",
 	"hor_dragon01",
 	"hor_highelf01",
@@ -2261,19 +2264,23 @@ local var_0_0 = {
 	"hor_dark_elves_page_06",
 	"ver_high_elves_page_099"
 }
+local PaintingOrder = PaintingOrder
 
 PaintingOrder = PaintingOrder or {}
+PaintingOrder = PaintingOrder
 
-for iter_0_0, iter_0_1 in ipairs(var_0_0) do
-	if not table.contains(PaintingOrder, iter_0_1) and not table.contains(DefaultPaintings, iter_0_1) then
-		PaintingOrder[#PaintingOrder + 1] = iter_0_1
+for i, v in ipairs(tbl) do
+	if not (table.contains(PaintingOrder, v) or table.contains(DefaultPaintings, v)) then
+		PaintingOrder[#PaintingOrder + 1] = v
 	end
 end
 
-local var_0_1 = "resource_packages/keep_paintings/keep_painting_"
+local str = "resource_packages/keep_paintings/keep_painting_"
+local PaintingPackageNames = PaintingPackageNames
 
 PaintingPackageNames = PaintingPackageNames or {}
+PaintingPackageNames = PaintingPackageNames
 
-for iter_0_2, iter_0_3 in pairs(Paintings) do
-	PaintingPackageNames[var_0_1 .. iter_0_2] = true
+for k, v_2 in pairs(Paintings) do
+	PaintingPackageNames[str .. k] = true
 end

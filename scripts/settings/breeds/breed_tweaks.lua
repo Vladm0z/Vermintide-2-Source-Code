@@ -4,7 +4,7 @@ require("foundation/scripts/util/math")
 
 BreedTweaks = {}
 
-local var_0_0 = {
+local tbl = {
 	1,
 	1,
 	1.5,
@@ -15,7 +15,7 @@ local var_0_0 = {
 	7.5,
 	1
 }
-local var_0_1 = {
+local tbl_2 = {
 	1,
 	0.85,
 	1.4,
@@ -26,7 +26,7 @@ local var_0_1 = {
 	3.5,
 	0.85
 }
-local var_0_2 = {
+local tbl_3 = {
 	1,
 	1,
 	1.7,
@@ -37,7 +37,7 @@ local var_0_2 = {
 	3.5,
 	1
 }
-local var_0_3 = {
+local tbl_4 = {
 	1,
 	1,
 	1.7,
@@ -48,7 +48,7 @@ local var_0_3 = {
 	4.5,
 	1
 }
-local var_0_4 = {
+local tbl_5 = {
 	1,
 	1,
 	1.5,
@@ -59,7 +59,7 @@ local var_0_4 = {
 	7.4,
 	1.5
 }
-local var_0_5 = {
+local tbl_6 = {
 	1,
 	1,
 	1.7,
@@ -70,7 +70,7 @@ local var_0_5 = {
 	4,
 	1
 }
-local var_0_6 = {
+local tbl_7 = {
 	1,
 	1,
 	1.7,
@@ -81,7 +81,7 @@ local var_0_6 = {
 	4.5,
 	1
 }
-local var_0_7 = {
+local tbl_8 = {
 	1,
 	1,
 	1.5,
@@ -92,7 +92,7 @@ local var_0_7 = {
 	6,
 	1
 }
-local var_0_8 = {
+local tbl_9 = {
 	1,
 	1,
 	1.5,
@@ -103,7 +103,7 @@ local var_0_8 = {
 	3,
 	1
 }
-local var_0_9 = {
+local tbl_10 = {
 	1,
 	1,
 	1.5,
@@ -114,7 +114,7 @@ local var_0_9 = {
 	3,
 	1
 }
-local var_0_10 = {
+local tbl_11 = {
 	1,
 	1,
 	1.5,
@@ -125,7 +125,7 @@ local var_0_10 = {
 	8,
 	1
 }
-local var_0_11 = {
+local tbl_12 = {
 	1,
 	1,
 	1.5,
@@ -137,107 +137,110 @@ local var_0_11 = {
 	1
 }
 
-local function var_0_12(arg_1_0)
+local function fn(arg_1_0)
+	-- function 1
 	arg_1_0 = math.clamp(arg_1_0, 0, 8191.5)
 
-	local var_1_0 = arg_1_0 % 1
-	local var_1_1 = math.round(var_1_0 * 4) * 0.25
+	local num = arg_1_0 % 1
+	local num_2 = math.round(num * 4) * 0.25
 
-	return math.floor(arg_1_0) + var_1_1
+	return math.floor(arg_1_0) + num_2
 end
 
-local function var_0_13(arg_2_0, arg_2_1)
-	local var_2_0 = {}
+local function fn_2(arg_2_0, arg_2_1)
+	-- function 2
+	local tbl = {}
 
-	for iter_2_0 = 1, 9 do
-		local var_2_1 = arg_2_0 * arg_2_1[iter_2_0]
+	for i = 1, 9 do
+		local num = arg_2_0 * arg_2_1[i]
 
-		var_2_0[iter_2_0] = var_0_12(var_2_1)
+		tbl[i] = fn(num)
 	end
 
-	return var_2_0
+	return tbl
 end
 
-local function var_0_14(arg_3_0, arg_3_1)
-	local var_3_0 = {}
+local function fn_3(arg_3_0, arg_3_1)
+	-- function 3
+	local tbl = {}
 
-	for iter_3_0 = 1, 9 do
-		local var_3_1 = arg_3_0 * arg_3_1[iter_3_0]
-		local var_3_2 = var_3_1 % 1
-		local var_3_3 = math.round(var_3_2 * 4) * 0.25
+	for i = 1, 9 do
+		local num = arg_3_0 * arg_3_1[i]
+		local num_2 = num % 1
+		local num_3 = math.round(num_2 * 4) * 0.25
 
-		var_3_0[iter_3_0] = math.floor(var_3_1) + var_3_3
+		tbl[i] = math.floor(num) + num_3
 	end
 
-	return var_3_0
+	return tbl
 end
 
 BreedTweaks.max_health = {
-	slave_rat = var_0_13(4, var_0_7),
-	fanatic = var_0_13(8, var_0_7),
-	ungor = var_0_13(6, var_0_7),
-	clan_rat = var_0_13(8, var_0_0),
-	clan_rat_with_shield = var_0_13(8, var_0_0),
-	marauder = var_0_13(16, var_0_0),
-	gor = var_0_13(12, var_0_0),
-	berzerker = var_0_13(18, var_0_4),
-	plague_monk = var_0_13(18, var_0_4),
-	stormvermin = var_0_13(16, var_0_4),
-	stormvermin_with_shield = var_0_13(16, var_0_4),
-	raider = var_0_13(30, var_0_4),
-	bestigor = var_0_13(20, var_0_4),
-	chaos_warrior = var_0_13(46, var_0_4),
-	chaos_bulwark = var_0_13(56, var_0_4),
-	chaos_spawn = var_0_13(800, var_0_10),
-	chaos_troll = var_0_13(600, var_0_10),
-	chaos_troll_chief = var_0_13(600, var_0_11),
-	rat_ogre = var_0_13(800, var_0_10),
-	stormfiend = var_0_13(600, var_0_10),
-	corruptor_sorcerer = var_0_13(20, var_0_0),
-	vortex_sorcerer = var_0_13(20, var_0_0),
-	warpfire_thrower = var_0_13(12, var_0_0),
-	globadier = var_0_13(20, var_0_0),
-	gutter_runner = var_0_13(12, var_0_0),
-	pack_master = var_0_13(25, var_0_0),
-	ratling_gunner = var_0_13(12, var_0_0),
-	standard_bearer = var_0_13(20, var_0_0),
-	stormvermin_warlord = var_0_13(500, var_0_10),
-	exalted_champion = var_0_13(700, var_0_10),
-	exalted_sorcerer = var_0_13(1000, var_0_10),
-	norsca_champion = var_0_13(600, var_0_10),
-	grey_seer = var_0_13(500, var_0_10),
-	stormfiend_boss = var_0_13(600, var_0_10)
+	slave_rat = fn_2(4, tbl_8),
+	fanatic = fn_2(8, tbl_8),
+	ungor = fn_2(6, tbl_8),
+	clan_rat = fn_2(8, tbl),
+	clan_rat_with_shield = fn_2(8, tbl),
+	marauder = fn_2(16, tbl),
+	gor = fn_2(12, tbl),
+	berzerker = fn_2(18, tbl_5),
+	plague_monk = fn_2(18, tbl_5),
+	stormvermin = fn_2(16, tbl_5),
+	stormvermin_with_shield = fn_2(16, tbl_5),
+	raider = fn_2(30, tbl_5),
+	bestigor = fn_2(20, tbl_5),
+	chaos_warrior = fn_2(46, tbl_5),
+	chaos_bulwark = fn_2(56, tbl_5),
+	chaos_spawn = fn_2(800, tbl_11),
+	chaos_troll = fn_2(600, tbl_11),
+	chaos_troll_chief = fn_2(600, tbl_12),
+	rat_ogre = fn_2(800, tbl_11),
+	stormfiend = fn_2(600, tbl_11),
+	corruptor_sorcerer = fn_2(20, tbl),
+	vortex_sorcerer = fn_2(20, tbl),
+	warpfire_thrower = fn_2(12, tbl),
+	globadier = fn_2(20, tbl),
+	gutter_runner = fn_2(12, tbl),
+	pack_master = fn_2(25, tbl),
+	ratling_gunner = fn_2(12, tbl),
+	standard_bearer = fn_2(20, tbl),
+	stormvermin_warlord = fn_2(500, tbl_11),
+	exalted_champion = fn_2(700, tbl_11),
+	exalted_sorcerer = fn_2(1000, tbl_11),
+	norsca_champion = fn_2(600, tbl_11),
+	grey_seer = fn_2(500, tbl_11),
+	stormfiend_boss = fn_2(600, tbl_11)
 }
 BreedTweaks.diff_stagger_resist = {
-	slave_rat = var_0_14(1, var_0_1),
-	fanatic = var_0_14(1.4, var_0_1),
-	ungor = var_0_14(1.3, var_0_1),
-	clan_rat = var_0_14(2.1, var_0_1),
-	gor = var_0_14(2.4, var_0_1),
-	marauder = var_0_14(2.65, var_0_1),
-	stormvermin = var_0_14(2.25, var_0_5),
-	bestigor = var_0_14(3.25, var_0_5),
-	raider = var_0_14(3, var_0_5),
-	warrior = var_0_14(4.8, var_0_5),
-	berzerker = var_0_14(2.7, var_0_5),
-	plague_monk = var_0_14(3, var_0_5),
-	packmaster = var_0_14(4, var_0_5),
-	ratling_gunner = var_0_14(2.5, var_0_5),
-	sorcerer = var_0_14(2.7, var_0_5)
+	slave_rat = fn_3(1, tbl_2),
+	fanatic = fn_3(1.4, tbl_2),
+	ungor = fn_3(1.3, tbl_2),
+	clan_rat = fn_3(2.1, tbl_2),
+	gor = fn_3(2.4, tbl_2),
+	marauder = fn_3(2.65, tbl_2),
+	stormvermin = fn_3(2.25, tbl_6),
+	bestigor = fn_3(3.25, tbl_6),
+	raider = fn_3(3, tbl_6),
+	warrior = fn_3(4.8, tbl_6),
+	berzerker = fn_3(2.7, tbl_6),
+	plague_monk = fn_3(3, tbl_6),
+	packmaster = fn_3(4, tbl_6),
+	ratling_gunner = fn_3(2.5, tbl_6),
+	sorcerer = fn_3(2.7, tbl_6)
 }
 BreedTweaks.stagger_reduction = {
-	marauder = var_0_14(0.2, var_0_1),
-	gor = var_0_14(0.1, var_0_1),
-	stormvermin = var_0_14(1, var_0_5),
-	raider = var_0_14(0.9, var_0_5),
-	warrior = var_0_14(1.8, var_0_5),
-	bestigor = var_0_14(1, var_0_5),
-	berzerker = var_0_14(0.75, var_0_5),
-	plague_monk = var_0_14(1.35, var_0_5),
-	sorcerer = var_0_14(2, var_0_5),
-	packmaster = var_0_14(2, var_0_5),
-	ratling_gunner = var_0_14(1, var_0_5),
-	stormvermin_warlord = var_0_14(1.35, var_0_5)
+	marauder = fn_3(0.2, tbl_2),
+	gor = fn_3(0.1, tbl_2),
+	stormvermin = fn_3(1, tbl_6),
+	raider = fn_3(0.9, tbl_6),
+	warrior = fn_3(1.8, tbl_6),
+	bestigor = fn_3(1, tbl_6),
+	berzerker = fn_3(0.75, tbl_6),
+	plague_monk = fn_3(1.35, tbl_6),
+	sorcerer = fn_3(2, tbl_6),
+	packmaster = fn_3(2, tbl_6),
+	ratling_gunner = fn_3(1, tbl_6),
+	stormvermin_warlord = fn_3(1.35, tbl_6)
 }
 BreedTweaks.stagger_duration = {
 	slave_rat = {
@@ -396,21 +399,21 @@ BreedTweaks.stagger_duration_difficulty_mod = {
 	}
 }
 BreedTweaks.hit_mass_counts = {
-	slave_rat = var_0_14(0.8, var_0_3),
-	fanatic = var_0_14(1.25, var_0_3),
-	ungor = var_0_14(1, var_0_3),
-	clan_rat = var_0_14(1.5, var_0_3),
-	clan_rat_shield_block = var_0_14(1.5, var_0_3),
-	marauder = var_0_14(3, var_0_3),
-	gor = var_0_14(2.75, var_0_3),
-	stormvermin = var_0_14(5, var_0_3),
-	stormvermin_shield_block = var_0_14(8, var_0_3),
-	bestigor = var_0_14(8, var_0_3),
-	raider = var_0_14(5, var_0_3),
-	berzerker = var_0_14(3, var_0_3),
-	marauder_shield_block = var_0_14(5, var_0_3),
-	plague_monk = var_0_14(2.5, var_0_3),
-	sorcerer = var_0_14(8, var_0_3)
+	slave_rat = fn_3(0.8, tbl_4),
+	fanatic = fn_3(1.25, tbl_4),
+	ungor = fn_3(1, tbl_4),
+	clan_rat = fn_3(1.5, tbl_4),
+	clan_rat_shield_block = fn_3(1.5, tbl_4),
+	marauder = fn_3(3, tbl_4),
+	gor = fn_3(2.75, tbl_4),
+	stormvermin = fn_3(5, tbl_4),
+	stormvermin_shield_block = fn_3(8, tbl_4),
+	bestigor = fn_3(8, tbl_4),
+	raider = fn_3(5, tbl_4),
+	berzerker = fn_3(3, tbl_4),
+	marauder_shield_block = fn_3(5, tbl_4),
+	plague_monk = fn_3(2.5, tbl_4),
+	sorcerer = fn_3(8, tbl_4)
 }
 BreedTweaks.difficulty_damage = {
 	beastmen_roamer_attack = {

@@ -1,11 +1,11 @@
 -- chunkname: @scripts/managers/achievements/achievement_templates_penny_part_3.lua
 
-local var_0_0 = AchievementTemplateHelper.add_event_challenge
-local var_0_1 = AchievementTemplateHelper.add_levels_complete_challenge
-local var_0_2 = AchievementTemplateHelper.add_meta_challenge
-local var_0_3 = AchievementTemplateHelper.PLACEHOLDER_ICON
-local var_0_4 = AchievementTemplates.achievements
-local var_0_5 = {
+local add_event_challenge = AchievementTemplateHelper.add_event_challenge
+local add_levels_complete_challenge = AchievementTemplateHelper.add_levels_complete_challenge
+local add_meta_challenge = AchievementTemplateHelper.add_meta_challenge
+local PLACEHOLDER_ICON = AchievementTemplateHelper.PLACEHOLDER_ICON
+local achievements = AchievementTemplates.achievements
+local tbl = {
 	penny_complete_veteran = 83,
 	penny_castle_eruptions = 90,
 	penny_complete_recruit = 82,
@@ -13,25 +13,25 @@ local var_0_5 = {
 	penny_complete_champion = 84,
 	penny_castle_no_kill = 91
 }
-local var_0_6 = {
+local tbl_2 = {
 	penny_castle_eruptions = "083"
 }
 
-var_0_0(var_0_4, "penny_castle_chalice", nil, nil, nil, var_0_5.penny_castle_chalice, var_0_6.penny_castle_chalice)
-var_0_0(var_0_4, "penny_castle_skull", nil, nil, nil, var_0_5.penny_castle_skull, var_0_6.penny_castle_skull)
-var_0_0(var_0_4, "penny_castle_flask", nil, nil, nil, var_0_5.penny_castle_flask, var_0_6.penny_castle_flask)
-var_0_0(var_0_4, "penny_castle_eruptions", nil, nil, nil, var_0_5.penny_castle_eruptions, var_0_6.penny_castle_eruptions)
-var_0_0(var_0_4, "penny_castle_no_kill", nil, nil, nil, var_0_5.penny_castle_no_kill, var_0_6.penny_castle_no_kill)
+add_event_challenge(achievements, "penny_castle_chalice", nil, nil, nil, tbl.penny_castle_chalice, tbl_2.penny_castle_chalice)
+add_event_challenge(achievements, "penny_castle_skull", nil, nil, nil, tbl.penny_castle_skull, tbl_2.penny_castle_skull)
+add_event_challenge(achievements, "penny_castle_flask", nil, nil, nil, tbl.penny_castle_flask, tbl_2.penny_castle_flask)
+add_event_challenge(achievements, "penny_castle_eruptions", nil, nil, nil, tbl.penny_castle_eruptions, tbl_2.penny_castle_eruptions)
+add_event_challenge(achievements, "penny_castle_no_kill", nil, nil, nil, tbl.penny_castle_no_kill, tbl_2.penny_castle_no_kill)
 
-local var_0_7 = {
+local tbl_3 = {
 	LevelSettings.dlc_portals,
 	LevelSettings.dlc_bastion,
 	LevelSettings.dlc_castle
 }
-local var_0_8 = {
+local tbl_4 = {
 	LevelSettings.dlc_castle
 }
-local var_0_9 = {
+local tbl_5 = {
 	"normal",
 	"hard",
 	"harder",
@@ -39,19 +39,19 @@ local var_0_9 = {
 	"cataclysm"
 }
 
-for iter_0_0 = 1, #var_0_9 do
-	local var_0_10 = var_0_9[iter_0_0]
+for i = 1, #tbl_5 do
+	local var_0_10 = tbl_5[i]
 	local var_0_11 = DifficultyMapping[var_0_10]
-	local var_0_12 = "penny_complete_" .. var_0_11
+	local str = "penny_complete_" .. var_0_11
 
-	var_0_1(var_0_4, var_0_12, var_0_7, DifficultySettings[var_0_10].rank, nil, nil, var_0_5[var_0_12], var_0_6[var_0_12])
+	add_levels_complete_challenge(achievements, str, tbl_3, DifficultySettings[var_0_10].rank, nil, nil, tbl[str], tbl_2[str])
 
-	local var_0_13 = "penny_complete_castle_" .. var_0_11
+	local str_2 = "penny_complete_castle_" .. var_0_11
 
-	var_0_1(var_0_4, var_0_13, var_0_8, DifficultySettings[var_0_10].rank, nil, nil, var_0_5[var_0_13], var_0_6[var_0_13])
+	add_levels_complete_challenge(achievements, str_2, tbl_4, DifficultySettings[var_0_10].rank, nil, nil, tbl[str_2], tbl_2[str_2])
 end
 
-var_0_2(var_0_4, "penny_complete_castle", {
+add_meta_challenge(achievements, "penny_complete_castle", {
 	"penny_castle_chalice",
 	"penny_castle_skull",
 	"penny_castle_flask",

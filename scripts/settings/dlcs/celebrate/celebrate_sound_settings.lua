@@ -1,11 +1,11 @@
 -- chunkname: @scripts/settings/dlcs/celebrate/celebrate_sound_settings.lua
 
-local var_0_0 = DLCSettings.celebrate
+local celebrate = DLCSettings.celebrate
 
-var_0_0.blocked_auto_load_files = {
+celebrate.blocked_auto_load_files = {
 	dlc_celebrate_crawl = true
 }
-var_0_0.dialogue_lookup = {
+celebrate.dialogue_lookup = {
 	"dialogues/generated/lookup_witch_hunter_crawl",
 	"dialogues/generated/lookup_bright_wizard_crawl",
 	"dialogues/generated/lookup_wood_elf_crawl",
@@ -20,7 +20,7 @@ var_0_0.dialogue_lookup = {
 	"dialogues/generated/lookup_enemies_celebration_level",
 	"dialogues/generated/lookup_hub_conversations_crawl"
 }
-var_0_0.dialogue_settings = {
+celebrate.dialogue_settings = {
 	dlc_celebrate_crawl = {
 		"dialogues/generated/wood_elf_crawl",
 		"dialogues/generated/empire_soldier_crawl",

@@ -4,55 +4,58 @@ require("scripts/ui/ui_animations")
 local_require("scripts/ui/views/menu_information_slate_ui")
 
 local var_0_0 = local_require("scripts/ui/views/title_main_ui_definitions")
-local var_0_1 = var_0_0.scenegraph_definition
-local var_0_2 = var_0_0.background_widget_definitions
-local var_0_3 = var_0_0.single_widget_definitions
-local var_0_4 = var_0_0.widget_definitions
-local var_0_5 = var_0_0.menu_videos
-local var_0_6 = var_0_0.create_menu_button_func
-local var_0_7 = var_0_0.legal_texts
-local var_0_8 = var_0_0.animation_definitions
-local var_0_9 = var_0_0.create_sub_logo_func
-local var_0_10 = true
-local var_0_11 = "TitleMainUI_ATTRACTMODE"
+local scenegraph_definition = var_0_0.scenegraph_definition
+local background_widget_definitions = var_0_0.background_widget_definitions
+local single_widget_definitions = var_0_0.single_widget_definitions
+local widget_definitions = var_0_0.widget_definitions
+local menu_videos = var_0_0.menu_videos
+local create_menu_button_func = var_0_0.create_menu_button_func
+local legal_texts = var_0_0.legal_texts
+local animation_definitions = var_0_0.animation_definitions
+local create_sub_logo_func = var_0_0.create_sub_logo_func
+local flag = true
+local str = "TitleMainUI_ATTRACTMODE"
 
 TitleMainUI = class(TitleMainUI)
 
-function TitleMainUI.init(arg_1_0, arg_1_1)
-	arg_1_0._world = arg_1_1
-	arg_1_0._render_settings = {
+TitleMainUI.init = function (self, arg_1_1)
+	-- function 1
+	self._world = arg_1_1
+	self._render_settings = {
 		snap_pixel_positions = true
 	}
-	arg_1_0._disable_input = false
-	arg_1_0._menu_hierarchy = {}
-	arg_1_0._menu_option_widgets = {}
-	arg_1_0._breadcrumbs = {}
+	self._disable_input = false
+	self._menu_hierarchy = {}
+	self._menu_option_widgets = {}
+	self._breadcrumbs = {}
 
-	arg_1_0:_create_ui_renderer()
-	arg_1_0:_setup_input()
-	arg_1_0:_create_ui_elements()
-	arg_1_0:_init_animations()
+	self:_create_ui_renderer()
+	self:_setup_input()
+	self:_create_ui_elements()
+	self:_init_animations()
 end
 
-function TitleMainUI._start_animation(arg_2_0, arg_2_1)
-	local var_2_0 = {
-		render_settings = arg_2_0._render_settings,
-		ui_scenegraph = arg_2_0._ui_scenegraph
+TitleMainUI._start_animation = function (self, arg_2_1)
+	-- function 2
+	local tbl = {
+		render_settings = self._render_settings,
+		ui_scenegraph = self._ui_scenegraph
 	}
-	local var_2_1 = arg_2_0._background_widgets
-	local var_2_2 = arg_2_0._animations[arg_2_1]
+	local _background_widgets = self._background_widgets
+	local var_2_2 = self._animations[arg_2_1]
 
-	if var_2_2 then
-		arg_2_0._ui_animator:stop_animation(var_2_2)
+	if not var_2_2 then
+		self._ui_animator:stop_animation(var_2_2)
 	end
 
-	local var_2_3 = arg_2_0._ui_animator:start_animation(arg_2_1, var_2_1, var_0_1, var_2_0)
+	local start_animation = self._ui_animator:start_animation(arg_2_1, _background_widgets, scenegraph_definition, tbl)
 
-	arg_2_0._animations[arg_2_1] = var_2_3
+	self._animations[arg_2_1] = start_animation
 end
 
-function TitleMainUI._create_ui_renderer(arg_3_0)
-	local var_3_0 = {
+TitleMainUI._create_ui_renderer = function (self)
+	-- function 3
+	local tbl = {
 		"material",
 		"materials/ui/ui_1080p_title_screen",
 		"material",
@@ -71,734 +74,885 @@ function TitleMainUI._create_ui_renderer(arg_3_0)
 		"materials/ui/ui_1080p_versus_available_common"
 	}
 
-	for iter_3_0, iter_3_1 in pairs(var_0_5) do
-		var_3_0[#var_3_0 + 1] = "material"
-		var_3_0[#var_3_0 + 1] = iter_3_1.video_name
+	for k, v in pairs(menu_videos) do
+		tbl[#tbl + 1] = "material"
+		tbl[#tbl + 1] = v.video_name
 	end
 
-	for iter_3_2, iter_3_3 in pairs(DLCSettings) do
-		local var_3_1 = iter_3_3.ui_materials
+	for k_2, v_2 in pairs(DLCSettings) do
+		local ui_materials = v_2.ui_materials
 
-		if var_3_1 then
-			for iter_3_4, iter_3_5 in ipairs(var_3_1) do
-				var_3_0[#var_3_0 + 1] = "material"
-				var_3_0[#var_3_0 + 1] = iter_3_5
+		if not ui_materials then
+			for i, v_3 in ipairs(ui_materials) do
+				tbl[#tbl + 1] = "material"
+				tbl[#tbl + 1] = v_3
 			end
 		end
 	end
 
-	arg_3_0._ui_renderer = UIRenderer.create(arg_3_0._world, unpack(var_3_0))
+	self._ui_renderer = UIRenderer.create(self._world, unpack(tbl))
 
-	UISetupFontHeights(arg_3_0._ui_renderer.gui)
+	UISetupFontHeights(self._ui_renderer.gui)
 end
 
-function TitleMainUI._setup_input(arg_4_0)
-	arg_4_0._input_manager = Managers.input
+TitleMainUI._setup_input = function (self)
+	-- function 4
+	self._input_manager = Managers.input
 
-	arg_4_0._input_manager:create_input_service("main_menu", "TitleScreenKeyMaps", "TitleScreenFilters")
-	arg_4_0._input_manager:map_device_to_service("main_menu", "gamepad")
-	arg_4_0._input_manager:map_device_to_service("main_menu", "keyboard")
-	arg_4_0._input_manager:map_device_to_service("main_menu", "mouse")
+	self._input_manager:create_input_service("main_menu", "TitleScreenKeyMaps", "TitleScreenFilters")
+	self._input_manager:map_device_to_service("main_menu", "gamepad")
+	self._input_manager:map_device_to_service("main_menu", "keyboard")
+	self._input_manager:map_device_to_service("main_menu", "mouse")
 end
 
-function TitleMainUI._play_sound(arg_5_0, arg_5_1)
+TitleMainUI._play_sound = function (arg_5_0, arg_5_1)
+	-- function 5
 	return Managers.music:trigger_event(arg_5_1)
 end
 
-function TitleMainUI.get_ui_renderer(arg_6_0)
-	return arg_6_0._ui_renderer
+TitleMainUI.get_ui_renderer = function (self)
+	-- function 6
+	return self._ui_renderer
 end
 
-function TitleMainUI._init_animations(arg_7_0)
-	arg_7_0._menu_item_animations = {}
-	arg_7_0._ui_animations = {}
-	arg_7_0._ui_animation_callbacks = {}
-	arg_7_0._animations = {}
-	arg_7_0._ui_animator = UIAnimator:new(arg_7_0._ui_scenegraph, var_0_8)
+TitleMainUI._init_animations = function (self)
+	-- function 7
+	self._menu_item_animations = {}
+	self._ui_animations = {}
+	self._ui_animation_callbacks = {}
+	self._animations = {}
+	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
 end
 
-function TitleMainUI._create_ui_elements(arg_8_0)
-	arg_8_0._alpha_multiplier = 1
-	arg_8_0._disabled_buttons = {}
-	arg_8_0._current_menu_widgets = {}
-	arg_8_0._menu_item_animations = {}
-	arg_8_0._current_menu_index = nil
-	arg_8_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
+TitleMainUI._create_ui_elements = function (self)
+	-- function 8
+	self._alpha_multiplier = 1
+	self._disabled_buttons = {}
+	self._current_menu_widgets = {}
+	self._menu_item_animations = {}
+	self._current_menu_index = nil
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	arg_8_0:_create_videos()
+	self:_create_videos()
 
-	arg_8_0._background_widgets = {}
+	self._background_widgets = {}
 
-	for iter_8_0, iter_8_1 in pairs(var_0_2) do
-		arg_8_0._background_widgets[iter_8_0] = UIWidget.init(iter_8_1)
+	for k, v in pairs(background_widget_definitions) do
+		self._background_widgets[k] = UIWidget.init(v)
 	end
 
-	arg_8_0._engage_prompt = UIWidget.init(var_0_3.create_engage_prompt(arg_8_0._ui_renderer))
-	arg_8_0._information_text = UIWidget.init(var_0_3.information_text)
-	arg_8_0._information_text.style.text.localize = false
-	arg_8_0._info_slate_widget = UIWidget.init(var_0_3.info_slate)
-	arg_8_0._game_type_tag_widget = UIWidget.init(var_0_3.game_type)
-	arg_8_0._game_type_description_widget = UIWidget.init(var_0_3.game_type_description)
-	arg_8_0._menu_selection_left = UIWidget.init(var_0_3.start_screen_selection_left)
-	arg_8_0._menu_selection_right = UIWidget.init(var_0_3.start_screen_selection_right)
-	arg_8_0._logo_widget = UIWidget.init(var_0_3.logo)
+	self._engage_prompt = UIWidget.init(single_widget_definitions.create_engage_prompt(self._ui_renderer))
+	self._information_text = UIWidget.init(single_widget_definitions.information_text)
+	self._information_text.style.text.localize = false
+	self._info_slate_widget = UIWidget.init(single_widget_definitions.info_slate)
+	self._game_type_tag_widget = UIWidget.init(single_widget_definitions.game_type)
+	self._game_type_description_widget = UIWidget.init(single_widget_definitions.game_type_description)
+	self._menu_selection_left = UIWidget.init(single_widget_definitions.start_screen_selection_left)
+	self._menu_selection_right = UIWidget.init(single_widget_definitions.start_screen_selection_right)
+	self._logo_widget = UIWidget.init(single_widget_definitions.logo)
 
-	arg_8_0:_setup_legal_texts()
-	UIRenderer.clear_scenegraph_queue(arg_8_0._ui_renderer)
+	self:_setup_legal_texts()
+	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
 
-	var_0_10 = false
+	flag = false
 end
 
-function TitleMainUI._setup_legal_texts(arg_9_0)
-	local var_9_0 = UIWidget.init(var_0_3.legal_text)
-	local var_9_1 = var_9_0.style.text
+TitleMainUI._setup_legal_texts = function (self)
+	-- function 9
+	local var_9_0 = UIWidget.init(single_widget_definitions.legal_text)
+	local text = var_9_0.style.text
 
-	var_9_1.localize = false
-	var_9_1.vertical_alignment = "bottom"
+	text.localize = false
+	text.vertical_alignment = "bottom"
 
-	local var_9_2 = ""
+	local str = ""
 
-	for iter_9_0, iter_9_1 in ipairs(var_0_7) do
-		var_9_2 = var_9_2 .. "\n" .. Localize(iter_9_1)
+	for i, v in ipairs(legal_texts) do
+		str = str .. "\n" .. Localize(v)
 	end
 
-	var_9_0.content.text = var_9_2
-	arg_9_0._legal_text = var_9_0
+	var_9_0.content.text = str
+	self._legal_text = var_9_0
 end
 
-function TitleMainUI._create_menu_option_widget(arg_10_0, arg_10_1, arg_10_2)
-	for iter_10_0, iter_10_1 in ipairs(arg_10_1) do
-		local var_10_0 = iter_10_1.text
-		local var_10_1 = iter_10_1.callback
-		local var_10_2 = iter_10_1.conditional_func
-		local var_10_3 = iter_10_1.layout
-		local var_10_4 = #arg_10_2 + 1
+TitleMainUI._create_menu_option_widget = function (self, arg_10_1, arg_10_2)
+	-- function 10
+	for i, v in ipairs(arg_10_1) do
+		local text = v.text
+		local callback = v.callback
+		local conditional_func = v.conditional_func
+		local layout = v.layout
+		local num = #arg_10_2 + 1
 
-		if not var_10_2 or var_10_2() then
-			local var_10_5 = "menu_option_" .. var_10_4
-			local var_10_6 = var_0_6(var_10_5, var_10_0, var_10_1, iter_10_1)
+		if not conditional_func and not conditional_func() then
+			local str = "menu_option_" .. num
+			local var_10_6 = create_menu_button_func(str, text, callback, v)
 
-			arg_10_2[var_10_4] = UIWidget.init(var_10_6)
+			arg_10_2[num] = UIWidget.init(var_10_6)
 
-			if var_10_3 then
-				arg_10_2.sub_menu = arg_10_2.sub_menu or {}
-				arg_10_2.sub_menu[var_10_4] = {}
+			if not layout then
+				local sub_menu = arg_10_2.sub_menu
 
-				local var_10_7 = arg_10_2.sub_menu[var_10_4]
+				sub_menu = sub_menu or {}
+				arg_10_2.sub_menu = sub_menu
+				arg_10_2.sub_menu[num] = {}
 
-				arg_10_0:_create_menu_option_widget(var_10_3, var_10_7)
+				local var_10_8 = arg_10_2.sub_menu[num]
 
-				local var_10_8 = #var_10_7 + 1
-				local var_10_9 = callback(arg_10_0, "_go_back")
-				local var_10_10 = "menu_option_" .. var_10_8
-				local var_10_11 = var_0_6(var_10_10, "back_menu_button_name", var_10_9)
+				self:_create_menu_option_widget(layout, var_10_8)
 
-				var_10_7[var_10_8] = UIWidget.init(var_10_11)
+				local num_2 = #var_10_8 + 1
+				local var_10_10 = callback(self, "_go_back")
+				local str_2 = "menu_option_" .. num_2
+				local var_10_12 = create_menu_button_func(str_2, "back_menu_button_name", var_10_10)
+
+				var_10_8[num_2] = UIWidget.init(var_10_12)
 			end
 		end
 	end
 end
 
-function TitleMainUI.create_menu_options(arg_11_0, arg_11_1)
-	table.clear(arg_11_0._menu_hierarchy)
-	arg_11_0:_create_menu_option_widget(arg_11_1, arg_11_0._menu_hierarchy)
+TitleMainUI.create_menu_options = function (self, arg_11_1)
+	-- function 11
+	table.clear(self._menu_hierarchy)
+	self:_create_menu_option_widget(arg_11_1, self._menu_hierarchy)
 
-	arg_11_0._current_menu_widgets = arg_11_0._menu_hierarchy
+	self._current_menu_widgets = self._menu_hierarchy
 end
 
-function TitleMainUI._update_animations(arg_12_0, arg_12_1)
-	local var_12_0 = arg_12_0._animations
-	local var_12_1 = arg_12_0._ui_animations
-	local var_12_2 = arg_12_0._ui_animation_callbacks
-	local var_12_3 = arg_12_0._ui_animator
-	local var_12_4 = arg_12_0._menu_item_animations
+TitleMainUI._update_animations = function (self, arg_12_1)
+	-- function 12
+	local _animations = self._animations
+	local _ui_animations = self._ui_animations
+	local _ui_animation_callbacks = self._ui_animation_callbacks
+	local _ui_animator = self._ui_animator
+	local _menu_item_animations = self._menu_item_animations
 
-	for iter_12_0, iter_12_1 in pairs(var_12_1) do
-		UIAnimation.update(iter_12_1, arg_12_1)
+	for k, v in pairs(_ui_animations) do
+		UIAnimation.update(v, arg_12_1)
 
-		if UIAnimation.completed(iter_12_1) then
-			var_12_1[iter_12_0] = nil
+		if not UIAnimation.completed(v) then
+			_ui_animations[k] = nil
 
-			local var_12_5 = var_12_2[iter_12_0]
+			local var_12_5 = _ui_animation_callbacks[k]
 
-			if var_12_5 then
+			if not var_12_5 then
 				var_12_5()
 
-				var_12_2[iter_12_0] = nil
+				_ui_animation_callbacks[k] = nil
 			end
 		end
 	end
 
-	for iter_12_2, iter_12_3 in pairs(var_12_4) do
-		arg_12_0[iter_12_3.func](arg_12_0, iter_12_3, iter_12_2, arg_12_1)
+	for k_2, v_2 in pairs(_menu_item_animations) do
+		self[v_2.func](self, v_2, k_2, arg_12_1)
 	end
 
-	var_12_3:update(arg_12_1)
+	_ui_animator:update(arg_12_1)
 
-	for iter_12_4, iter_12_5 in pairs(var_12_0) do
-		if var_12_3:is_animation_completed(iter_12_5) then
-			var_12_3:stop_animation(iter_12_5)
+	for k_3, v_3 in pairs(_animations) do
+		if not _ui_animator:is_animation_completed(v_3) then
+			_ui_animator:stop_animation(v_3)
 
-			var_12_0[iter_12_4] = nil
+			_animations[k_3] = nil
 		end
 	end
 end
 
-function TitleMainUI.update(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
-	if var_0_10 then
-		arg_13_0:_create_ui_elements()
-		arg_13_0:_init_animations()
+TitleMainUI.update = function (self, arg_13_1, arg_13_2, arg_13_3)
+	-- function 13
+	if not flag then
+		self:_create_ui_elements()
+		self:_init_animations()
 	end
 
-	arg_13_0:_update_information_text(arg_13_1, arg_13_2)
-	arg_13_0:_update_input(arg_13_1, arg_13_2, arg_13_3)
-	arg_13_0:_update_animations(arg_13_1)
-	arg_13_0:_draw(arg_13_1, arg_13_2, arg_13_3)
+	self:_update_information_text(arg_13_1, arg_13_2)
+	self:_update_input(arg_13_1, arg_13_2, arg_13_3)
+	self:_update_animations(arg_13_1)
+	self:_draw(arg_13_1, arg_13_2, arg_13_3)
 end
 
-function TitleMainUI._update_information_text(arg_14_0, arg_14_1, arg_14_2)
-	if not arg_14_0._show_menu then
-		local var_14_0 = Managers.backend and Managers.backend:get_current_api_call()
+TitleMainUI._update_information_text = function (self, arg_14_1, arg_14_2)
+	-- function 14
+	if not self._show_menu then
+		local backend = Managers.backend
 
-		if var_14_0 and Managers.localizer:exists(var_14_0) then
-			local var_14_1 = arg_14_0._information_text.content
+		backend = not backend and Managers.backend:get_current_api_call()
 
-			if var_14_1.text ~= var_14_0 then
-				var_14_1.text = Localize(var_14_0)
+		if not backend and not Managers.localizer:exists(backend) then
+			local content = self._information_text.content
+
+			if content.text ~= backend then
+				content.text = Localize(backend)
 			end
 		end
 	end
 end
 
-function TitleMainUI._destroy_video_players(arg_15_0)
-	if arg_15_0._video_widgets then
-		for iter_15_0, iter_15_1 in pairs(arg_15_0._video_widgets) do
-			local var_15_0 = iter_15_1.content.video_content.video_player
+TitleMainUI._destroy_video_players = function (self)
+	-- function 15
+	if not self._video_widgets then
+		for k, v in pairs(self._video_widgets) do
+			local video_player = v.content.video_content.video_player
 
-			if var_15_0 then
-				World.destroy_video_player(arg_15_0._world, var_15_0)
+			if not video_player then
+				World.destroy_video_player(self._world, video_player)
 			end
 		end
 
-		arg_15_0._video_widgets = nil
-		arg_15_0._active_video = nil
+		self._video_widgets = nil
+		self._active_video = nil
 	end
 end
 
-function TitleMainUI._change_video(arg_16_0, arg_16_1)
-	if arg_16_1 == arg_16_0._active_video_widget_name then
+TitleMainUI._change_video = function (self, arg_16_1)
+	-- function 16
+	if arg_16_1 == self._active_video_widget_name then
 		return
 	end
 
-	World.remove_video_player(arg_16_0._world, arg_16_0._active_video_widget.content.video_content.video_player)
+	World.remove_video_player(self._world, self._active_video_widget.content.video_content.video_player)
 
-	arg_16_0._active_video_widget = arg_16_0._video_widgets[arg_16_1]
-	arg_16_0._active_video_widget_name = arg_16_1
+	self._active_video_widget = self._video_widgets[arg_16_1]
+	self._active_video_widget_name = arg_16_1
 
-	World.add_video_player(arg_16_0._world, arg_16_0._active_video_widget.content.video_content.video_player)
-	arg_16_0:_start_animation("video_fade_in")
+	World.add_video_player(self._world, self._active_video_widget.content.video_content.video_player)
+	self:_start_animation("video_fade_in")
 end
 
-function TitleMainUI._create_videos(arg_17_0)
-	arg_17_0:_destroy_video_players()
+TitleMainUI._create_videos = function (self)
+	-- function 17
+	self:_destroy_video_players()
 
-	arg_17_0._video_widgets = {}
+	self._video_widgets = {}
 
-	for iter_17_0, iter_17_1 in pairs(var_0_5) do
-		local var_17_0 = World.create_video_player(arg_17_0._world, iter_17_1.video_name, true, false)
-		local var_17_1 = UIWidget.init(UIWidgets.create_splash_video(iter_17_1))
+	for k, v in pairs(menu_videos) do
+		local create_video_player = World.create_video_player(self._world, v.video_name, true, false)
+		local var_17_1 = UIWidget.init(UIWidgets.create_splash_video(v))
 
-		var_17_1.content.video_content.video_player = var_17_0
-		arg_17_0._video_widgets[iter_17_0] = var_17_1
+		var_17_1.content.video_content.video_player = create_video_player
+		self._video_widgets[k] = var_17_1
 	end
 
-	arg_17_0._active_video_widget = arg_17_0._video_widgets.main
+	self._active_video_widget = self._video_widgets.main
 
-	World.add_video_player(arg_17_0._world, arg_17_0._active_video_widget.content.video_content.video_player)
+	World.add_video_player(self._world, self._active_video_widget.content.video_content.video_player)
 end
 
-function TitleMainUI._draw_video(arg_18_0, arg_18_1, arg_18_2)
-	local var_18_0 = arg_18_0._ui_renderer
-	local var_18_1 = arg_18_0._ui_scenegraph
-	local var_18_2 = arg_18_0._input_manager:get_service("main_menu")
-	local var_18_3 = arg_18_0._render_settings
+TitleMainUI._draw_video = function (self, arg_18_1, arg_18_2)
+	-- function 18
+	local _ui_renderer = self._ui_renderer
+	local _ui_scenegraph = self._ui_scenegraph
+	local get_service = self._input_manager:get_service("main_menu")
+	local _render_settings = self._render_settings
 
-	var_18_3.alpha_multiplier = arg_18_0._alpha_multiplier
+	_render_settings.alpha_multiplier = self._alpha_multiplier
 
-	UIRenderer.begin_pass(var_18_0, var_18_1, var_18_2, arg_18_1, nil, var_18_3)
-	UIRenderer.draw_widget(var_18_0, arg_18_0._active_video_widget)
-	UIRenderer.end_pass(var_18_0)
+	UIRenderer.begin_pass(_ui_renderer, _ui_scenegraph, get_service, arg_18_1, nil, _render_settings)
+	UIRenderer.draw_widget(_ui_renderer, self._active_video_widget)
+	UIRenderer.end_pass(_ui_renderer)
 
-	var_18_3.alpha_multiplier = nil
+	_render_settings.alpha_multiplier = nil
 end
 
-function TitleMainUI._go_back(arg_19_0)
-	arg_19_0:_play_sound("Play_console_menu_back")
+TitleMainUI._go_back = function (self)
+	-- function 19
+	self:_play_sound("Play_console_menu_back")
 
-	local var_19_0 = arg_19_0._current_menu_index
-	local var_19_1 = arg_19_0._breadcrumbs
+	local _current_menu_index = self._current_menu_index
+	local _breadcrumbs = self._breadcrumbs
 
-	var_19_1[#var_19_1] = nil
+	_breadcrumbs[#_breadcrumbs] = nil
 
-	local var_19_2 = arg_19_0._menu_hierarchy
+	local _menu_hierarchy = self._menu_hierarchy
 
-	for iter_19_0 = 1, #var_19_1 do
-		local var_19_3 = var_19_1[iter_19_0]
+	for i = 1, #_breadcrumbs do
+		local var_19_3 = _breadcrumbs[i]
 
-		var_19_2 = var_19_2.sub_menu[var_19_3]
+		_menu_hierarchy = _menu_hierarchy.sub_menu[var_19_3]
 	end
 
-	if var_19_2 then
-		table.clear(arg_19_0._menu_item_animations)
-		arg_19_0:anim_deselect_button(nil, var_19_0, nil, 0)
+	if not _menu_hierarchy then
+		table.clear(self._menu_item_animations)
+		self:anim_deselect_button(nil, _current_menu_index, nil, 0)
 
-		arg_19_0._current_menu_widgets = var_19_2
-		arg_19_0._current_menu_index = nil
-		var_19_0 = 1
+		self._current_menu_widgets = _menu_hierarchy
+		self._current_menu_index = nil
+		_current_menu_index = 1
 	end
 
-	arg_19_0:_update_selection(var_19_0)
+	self:_update_selection(_current_menu_index)
 
 	return true
 end
 
-local function var_0_12()
+local function fn()
+	-- function 20
 	return
 end
 
-function TitleMainUI._activate_menu_widget(arg_21_0, arg_21_1)
-	local var_21_0 = arg_21_0._current_menu_index
+TitleMainUI._activate_menu_widget = function (self, arg_21_1)
+	-- function 21
+	local _current_menu_index = self._current_menu_index
+	local callback = self._current_menu_widgets[arg_21_1].content.callback
 
-	if (arg_21_0._current_menu_widgets[arg_21_1].content.callback or var_0_12)() then
+	callback = callback or fn
+
+	if not callback() then
 		return
 	else
-		local var_21_1 = arg_21_0._breadcrumbs
-		local var_21_2 = arg_21_0._menu_hierarchy
+		local _breadcrumbs = self._breadcrumbs
+		local _menu_hierarchy = self._menu_hierarchy
 
-		for iter_21_0 = 1, #var_21_1 do
-			local var_21_3 = var_21_1[iter_21_0]
+		for i = 1, #_breadcrumbs do
+			local var_21_4 = _breadcrumbs[i]
 
-			var_21_2 = var_21_2.sub_menu[var_21_3]
+			_menu_hierarchy = _menu_hierarchy.sub_menu[var_21_4]
 		end
 
-		local var_21_4 = var_21_2.sub_menu and var_21_2.sub_menu[arg_21_1]
+		local sub_menu = _menu_hierarchy.sub_menu
 
-		if var_21_4 then
-			table.clear(arg_21_0._menu_item_animations)
-			arg_21_0:anim_deselect_button(nil, var_21_0, nil, 0)
+		sub_menu = not sub_menu and _menu_hierarchy.sub_menu[arg_21_1]
 
-			var_21_1[#var_21_1 + 1] = arg_21_1
-			arg_21_0._current_menu_widgets = var_21_4
-			arg_21_0._current_menu_index = nil
-			var_21_0 = 1
+		if not sub_menu then
+			table.clear(self._menu_item_animations)
+			self:anim_deselect_button(nil, _current_menu_index, nil, 0)
 
-			arg_21_0:_play_sound("Play_console_menu_select")
+			_breadcrumbs[#_breadcrumbs + 1] = arg_21_1
+			self._current_menu_widgets = sub_menu
+			self._current_menu_index = nil
+			_current_menu_index = 1
+
+			self:_play_sound("Play_console_menu_select")
 		end
 	end
 
-	return var_21_0
+	return _current_menu_index
 end
 
-function TitleMainUI._update_mouse_input(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
-	local var_22_0 = arg_22_0._current_menu_index or 1
-	local var_22_1 = arg_22_0._current_menu_widgets[var_22_0].content
-	local var_22_2 = arg_22_0._breadcrumbs
+TitleMainUI._update_mouse_input = function (self, arg_22_1, arg_22_2, arg_22_3)
+	-- function 22
+	local _current_menu_index = self._current_menu_index
+
+	_current_menu_index = _current_menu_index or 1
+
+	local content = self._current_menu_widgets[_current_menu_index].content
+	local _breadcrumbs = self._breadcrumbs
 	local var_22_3
 
-	for iter_22_0, iter_22_1 in ipairs(arg_22_0._current_menu_widgets) do
-		if UIUtils.is_button_pressed(iter_22_1, "button_text") then
-			var_22_0 = arg_22_0:_activate_menu_widget(iter_22_0)
-		elseif UIUtils.is_button_hover_enter(iter_22_1, "button_text") then
-			var_22_0 = iter_22_0
+	for i, v in ipairs(self._current_menu_widgets) do
+		if not UIUtils.is_button_pressed(v, "button_text") then
+			_current_menu_index = self:_activate_menu_widget(i)
+		elseif not UIUtils.is_button_hover_enter(v, "button_text") then
+			_current_menu_index = i
 
-			arg_22_0:_play_sound("play_gui_inventory_item_hover")
+			self:_play_sound("play_gui_inventory_item_hover")
 		end
 	end
 
-	if not table.is_empty(var_22_2) and arg_22_3:get("back", true) then
-		return arg_22_0:_go_back()
+	if table.is_empty(_breadcrumbs) or not arg_22_3:get("back", true) then
+		return self:_go_back()
 	end
 
-	arg_22_0:_update_selection(var_22_0)
+	self:_update_selection(_current_menu_index)
 end
 
-function TitleMainUI._update_gamepad_input(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
-	local var_23_0 = arg_23_0._current_menu_index or 1
-	local var_23_1 = arg_23_0._current_menu_widgets[var_23_0].content
-	local var_23_2 = arg_23_0._breadcrumbs
+TitleMainUI._update_gamepad_input = function (self, arg_23_1, arg_23_2, arg_23_3)
+	-- function 23
+	local _current_menu_index = self._current_menu_index
 
-	if arg_23_3:get("up") then
-		var_23_0 = math.clamp(var_23_0 - 1, 1, #arg_23_0._current_menu_widgets)
+	_current_menu_index = _current_menu_index or 1
 
-		arg_23_0:_play_sound("play_gui_inventory_item_hover")
-	elseif arg_23_3:get("down") then
-		var_23_0 = math.clamp(var_23_0 + 1, 1, #arg_23_0._current_menu_widgets)
+	local content = self._current_menu_widgets[_current_menu_index].content
+	local _breadcrumbs = self._breadcrumbs
 
-		arg_23_0:_play_sound("play_gui_inventory_item_hover")
-	elseif arg_23_3:get("start", true) then
-		var_23_0 = arg_23_0:_activate_menu_widget(var_23_0)
-	elseif not table.is_empty(var_23_2) and arg_23_3:get("back", true) then
-		return arg_23_0:_go_back()
+	if not arg_23_3:get("up") then
+		_current_menu_index = math.clamp(_current_menu_index - 1, 1, #self._current_menu_widgets)
+
+		self:_play_sound("play_gui_inventory_item_hover")
+	elseif not arg_23_3:get("down") then
+		_current_menu_index = math.clamp(_current_menu_index + 1, 1, #self._current_menu_widgets)
+
+		self:_play_sound("play_gui_inventory_item_hover")
+	elseif not arg_23_3:get("start", true) then
+		_current_menu_index = self:_activate_menu_widget(_current_menu_index)
+	elseif table.is_empty(_breadcrumbs) or not arg_23_3:get("back", true) then
+		return self:_go_back()
 	end
 
-	arg_23_0:_update_selection(var_23_0)
+	self:_update_selection(_current_menu_index)
 end
 
-function TitleMainUI._update_selection(arg_24_0, arg_24_1)
-	if arg_24_1 and arg_24_1 ~= arg_24_0._current_menu_index then
-		if arg_24_0._current_menu_index then
-			arg_24_0:_add_menu_item_animation(arg_24_0._current_menu_index, "anim_deselect_button")
+TitleMainUI._update_selection = function (self, arg_24_1)
+	-- function 24
+	if not (not arg_24_1 and arg_24_1 == self._current_menu_index) then
+		if not self._current_menu_index then
+			self:_add_menu_item_animation(self._current_menu_index, "anim_deselect_button")
 		end
 
-		arg_24_0:_add_menu_item_animation(arg_24_1, "anim_select_button")
+		self:_add_menu_item_animation(arg_24_1, "anim_select_button")
 
-		arg_24_0._current_menu_index = arg_24_1
+		self._current_menu_index = arg_24_1
 
-		local var_24_0 = arg_24_0._current_menu_widgets[arg_24_0._current_menu_index]
+		local var_24_0 = self._current_menu_widgets[self._current_menu_index]
 
-		if var_24_0 then
-			arg_24_0:_populate_additional_data(var_24_0)
+		if not var_24_0 then
+			self:_populate_additional_data(var_24_0)
 		end
 	end
 end
 
-local var_0_13 = {}
+local tbl = {}
 
-function TitleMainUI._populate_additional_data(arg_25_0, arg_25_1)
-	local var_25_0 = arg_25_1.content.menu_option_data or var_0_13
-	local var_25_1 = var_25_0.tag
-	local var_25_2 = var_25_0.logo_texture
-	local var_25_3 = var_25_0.description
-	local var_25_4 = var_25_0.info_slate
-	local var_25_5 = var_25_0.video or "main_menu"
+TitleMainUI._populate_additional_data = function (self, arg_25_1)
+	-- function 25
+	local menu_option_data = arg_25_1.content.menu_option_data
 
-	arg_25_0._info_slate_widget.content.text = var_25_4
-	arg_25_0._game_type_tag_widget.content.text = var_25_1
-	arg_25_0._game_type_description_widget.content.text = var_25_3
-	arg_25_0._sub_logo_widget = var_25_2 and UIWidget.init(var_0_9(var_25_2)) or nil
+	menu_option_data = menu_option_data or tbl
 
-	arg_25_0:_change_video(var_25_5)
+	local tag = menu_option_data.tag
+	local logo_texture = menu_option_data.logo_texture
+	local description = menu_option_data.description
+	local info_slate = menu_option_data.info_slate
+	local video = menu_option_data.video
+
+	video = video or "main_menu"
+	self._info_slate_widget.content.text = info_slate
+	self._game_type_tag_widget.content.text = tag
+	self._game_type_description_widget.content.text = description
+
+	local var_25_6
+
+	if not logo_texture then
+		var_25_6 = UIWidget.init(create_sub_logo_func(logo_texture))
+
+		if not var_25_6 then
+			-- Nothing
+		end
+	end
+
+	var_25_6 = nil
+
+	::label_25_0::
+
+	self._sub_logo_widget = var_25_6
+
+	self:_change_video(video)
 end
 
-function TitleMainUI._update_input(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
-	if arg_26_0._disable_input then
+TitleMainUI._update_input = function (self, arg_26_1, arg_26_2, arg_26_3)
+	-- function 26
+	if not self._disable_input then
 		return
 	end
 
-	if not arg_26_0._show_menu then
+	if not self._show_menu then
 		return
 	end
 
-	if arg_26_3 or arg_26_0._frame_anim_id then
+	if arg_26_3 or not self._frame_anim_id then
 		return
 	end
 
-	if table.is_empty(arg_26_0._current_menu_widgets) then
+	if not table.is_empty(self._current_menu_widgets) then
 		return
 	end
 
-	local var_26_0 = arg_26_0._input_manager:get_service("main_menu")
+	local get_service = self._input_manager:get_service("main_menu")
 
-	if Managers.input:is_device_active("mouse") then
-		arg_26_0:_update_mouse_input(arg_26_1, arg_26_2, var_26_0)
+	if not Managers.input:is_device_active("mouse") then
+		self:_update_mouse_input(arg_26_1, arg_26_2, get_service)
 	else
-		arg_26_0:_update_gamepad_input(arg_26_1, arg_26_2, var_26_0)
+		self:_update_gamepad_input(arg_26_1, arg_26_2, get_service)
 	end
 end
 
-function TitleMainUI._draw_menu_background(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6)
+TitleMainUI._draw_menu_background = function (self, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6)
+	-- function 27
 	UIRenderer.begin_pass(arg_27_3, arg_27_4, arg_27_5, arg_27_1, nil, arg_27_6)
 
-	for iter_27_0, iter_27_1 in pairs(arg_27_0._background_widgets) do
-		UIRenderer.draw_widget(arg_27_3, iter_27_1)
+	for k, v in pairs(self._background_widgets) do
+		UIRenderer.draw_widget(arg_27_3, v)
 	end
 
-	local var_27_0 = arg_27_6.alpha_multiplier or 1
+	local alpha_multiplier = arg_27_6.alpha_multiplier
 
-	arg_27_6.alpha_multiplier = arg_27_0._alpha_multiplier
+	alpha_multiplier = alpha_multiplier or 1
+	arg_27_6.alpha_multiplier = self._alpha_multiplier
 
-	UIRenderer.draw_widget(arg_27_3, arg_27_0._logo_widget)
+	UIRenderer.draw_widget(arg_27_3, self._logo_widget)
 
-	arg_27_6.alpha_multiplier = var_27_0
+	arg_27_6.alpha_multiplier = alpha_multiplier
 
 	UIRenderer.end_pass(arg_27_3)
 end
 
-function TitleMainUI._draw_menu(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
-	if not arg_28_0._show_menu then
+TitleMainUI._draw_menu = function (self, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
+	-- function 28
+	if not self._show_menu then
 		return
 	end
 
-	local var_28_0 = {
-		alpha_multiplier = arg_28_0._alpha_multiplier
+	local tbl = {
+		alpha_multiplier = self._alpha_multiplier
 	}
 
-	UIRenderer.begin_pass(arg_28_3, arg_28_4, arg_28_5, arg_28_1, nil, var_28_0)
+	UIRenderer.begin_pass(arg_28_3, arg_28_4, arg_28_5, arg_28_1, nil, tbl)
 
-	for iter_28_0, iter_28_1 in ipairs(arg_28_0._current_menu_widgets) do
-		UIRenderer.draw_widget(arg_28_3, iter_28_1)
+	for i, v in ipairs(self._current_menu_widgets) do
+		UIRenderer.draw_widget(arg_28_3, v)
 	end
 
-	if arg_28_0._current_menu_index then
-		UIRenderer.draw_widget(arg_28_3, arg_28_0._menu_selection_left)
-		UIRenderer.draw_widget(arg_28_3, arg_28_0._menu_selection_right)
+	if not self._current_menu_index then
+		UIRenderer.draw_widget(arg_28_3, self._menu_selection_left)
+		UIRenderer.draw_widget(arg_28_3, self._menu_selection_right)
 	end
 
-	UIRenderer.draw_widget(arg_28_3, arg_28_0._info_slate_widget)
-	UIRenderer.draw_widget(arg_28_3, arg_28_0._game_type_tag_widget)
-	UIRenderer.draw_widget(arg_28_3, arg_28_0._game_type_description_widget)
+	UIRenderer.draw_widget(arg_28_3, self._info_slate_widget)
+	UIRenderer.draw_widget(arg_28_3, self._game_type_tag_widget)
+	UIRenderer.draw_widget(arg_28_3, self._game_type_description_widget)
 
-	if arg_28_0._sub_logo_widget then
-		UIRenderer.draw_widget(arg_28_3, arg_28_0._sub_logo_widget)
+	if not self._sub_logo_widget then
+		UIRenderer.draw_widget(arg_28_3, self._sub_logo_widget)
 	end
 
 	UIRenderer.end_pass(arg_28_3)
 end
 
-function TitleMainUI._draw_engage_screen(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6)
-	UIRenderer.begin_pass(arg_29_3, arg_29_4, arg_29_5, arg_29_1, nil, arg_29_0._render_settings)
+TitleMainUI._draw_engage_screen = function (self, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6)
+	-- function 29
+	UIRenderer.begin_pass(arg_29_3, arg_29_4, arg_29_5, arg_29_1, nil, self._render_settings)
 
-	if not arg_29_0._show_menu then
-		UIRenderer.draw_widget(arg_29_3, arg_29_0._legal_text)
+	if not self._show_menu then
+		UIRenderer.draw_widget(arg_29_3, self._legal_text)
 	end
 
-	if arg_29_0._has_engaged then
-		if arg_29_0._draw_information_text then
-			UIRenderer.draw_widget(arg_29_3, arg_29_0._information_text)
+	if not self._has_engaged then
+		if not self._draw_information_text then
+			UIRenderer.draw_widget(arg_29_3, self._information_text)
 		end
 	else
-		UIRenderer.draw_widget(arg_29_3, arg_29_0._engage_prompt)
+		UIRenderer.draw_widget(arg_29_3, self._engage_prompt)
 	end
 
 	UIRenderer.end_pass(arg_29_3)
 end
 
-function TitleMainUI._draw(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
-	local var_30_0 = arg_30_0._ui_renderer
-	local var_30_1 = arg_30_0._ui_scenegraph
-	local var_30_2 = arg_30_0._input_manager:get_service("main_menu")
-	local var_30_3 = arg_30_0._render_settings
+TitleMainUI._draw = function (self, arg_30_1, arg_30_2, arg_30_3)
+	-- function 30
+	local _ui_renderer = self._ui_renderer
+	local _ui_scenegraph = self._ui_scenegraph
+	local get_service = self._input_manager:get_service("main_menu")
+	local _render_settings = self._render_settings
 
-	arg_30_0:_draw_menu_background(arg_30_1, arg_30_2, var_30_0, var_30_1, var_30_2, var_30_3)
-	arg_30_0:_draw_video(arg_30_1, arg_30_2)
+	self:_draw_menu_background(arg_30_1, arg_30_2, _ui_renderer, _ui_scenegraph, get_service, _render_settings)
+	self:_draw_video(arg_30_1, arg_30_2)
 
-	if arg_30_0._show_menu and arg_30_0._information_slate_ui then
-		arg_30_0._information_slate_ui:update(arg_30_1, arg_30_2)
+	if not self._show_menu and not self._information_slate_ui then
+		self._information_slate_ui:update(arg_30_1, arg_30_2)
 	end
 
-	if arg_30_3 then
+	if not arg_30_3 then
 		return
 	end
 
-	arg_30_0:_draw_engage_screen(arg_30_1, arg_30_2, var_30_0, var_30_1, var_30_2, var_30_3)
-	arg_30_0:_draw_menu(arg_30_1, arg_30_2, var_30_0, var_30_1, var_30_2)
+	self:_draw_engage_screen(arg_30_1, arg_30_2, _ui_renderer, _ui_scenegraph, get_service, _render_settings)
+	self:_draw_menu(arg_30_1, arg_30_2, _ui_renderer, _ui_scenegraph, get_service)
 end
 
-function TitleMainUI.destroy(arg_31_0)
-	if arg_31_0._information_slate_ui then
-		arg_31_0._information_slate_ui:destroy()
+TitleMainUI.destroy = function (self)
+	-- function 31
+	if not self._information_slate_ui then
+		self._information_slate_ui:destroy()
 	end
 
-	GarbageLeakDetector.register_object(arg_31_0, "TitleMainUI")
-	UIRenderer.destroy(arg_31_0._ui_renderer, arg_31_0._world)
-	arg_31_0:_destroy_video_players()
+	GarbageLeakDetector.register_object(self, "TitleMainUI")
+	UIRenderer.destroy(self._ui_renderer, self._world)
+	self:_destroy_video_players()
 end
 
-function TitleMainUI.should_start(arg_32_0)
-	return arg_32_0._has_engaged
+TitleMainUI.should_start = function (self)
+	-- function 32
+	return self._has_engaged
 end
 
-function TitleMainUI.show_menu(arg_33_0, arg_33_1)
-	if arg_33_1 then
-		arg_33_0:_play_sound("Play_console_menu_start")
-		arg_33_0:_change_video("main_menu")
+TitleMainUI.show_menu = function (self, arg_33_1)
+	-- function 33
+	if not arg_33_1 then
+		self:_play_sound("Play_console_menu_start")
+		self:_change_video("main_menu")
 
-		arg_33_0._ui_animations.sidebar = UIAnimation.init(UIAnimation.function_by_time, arg_33_0._ui_scenegraph.sidebar.position, 1, -544, 0, 0.5, math.easeCubic)
-		arg_33_0._ui_animations.alpha_multiplier = UIAnimation.init(UIAnimation.function_by_time, arg_33_0, "_alpha_multiplier", 0, 1, 0.5, math.easeCubic)
-		arg_33_0._draw_information_text = false
+		self._ui_animations.sidebar = UIAnimation.init(UIAnimation.function_by_time, self._ui_scenegraph.sidebar.position, 1, -544, 0, 0.5, math.easeCubic)
+		self._ui_animations.alpha_multiplier = UIAnimation.init(UIAnimation.function_by_time, self, "_alpha_multiplier", 0, 1, 0.5, math.easeCubic)
+		self._draw_information_text = false
 
-		function arg_33_0._ui_animation_callbacks.alpha_multiplier()
-			local var_34_0 = Managers.input:get_service("main_menu")
+		self._ui_animation_callbacks.alpha_multiplier = function ()
+			-- function 34
+			local get_service = Managers.input:get_service("main_menu")
 
-			arg_33_0._information_slate_ui = MenuInformationSlateUI:new(arg_33_0._ui_renderer, var_34_0)
+			self._information_slate_ui = MenuInformationSlateUI:new(self._ui_renderer, get_service)
 		end
 	else
-		local var_33_0 = arg_33_0._current_menu_index
+		local _current_menu_index = self._current_menu_index
 
-		if var_33_0 then
-			arg_33_0:anim_deselect_button(nil, var_33_0, nil, 0)
+		if not _current_menu_index then
+			self:anim_deselect_button(nil, _current_menu_index, nil, 0)
 
-			arg_33_0._current_menu_index = nil
-			arg_33_0._menu_item_animations[var_33_0] = nil
+			self._current_menu_index = nil
+			self._menu_item_animations[_current_menu_index] = nil
 		end
 
-		arg_33_0:_play_sound("Play_console_menu_back")
-		arg_33_0:_change_video("main")
+		self:_play_sound("Play_console_menu_back")
+		self:_change_video("main")
 
-		arg_33_0._ui_scenegraph.sidebar.size[1] = 544
-		arg_33_0._ui_scenegraph.sidebar.position[1] = -800
-		arg_33_0._information_slate_ui = nil
+		self._ui_scenegraph.sidebar.size[1] = 544
+		self._ui_scenegraph.sidebar.position[1] = -800
+		self._information_slate_ui = nil
 
-		table.clear(arg_33_0._ui_animations)
-		table.clear(arg_33_0._ui_animation_callbacks)
-		table.clear(arg_33_0._breadcrumbs)
+		table.clear(self._ui_animations)
+		table.clear(self._ui_animation_callbacks)
+		table.clear(self._breadcrumbs)
 	end
 
-	arg_33_0._show_menu = arg_33_1
-	arg_33_0._is_in_sub_menu = false
-	arg_33_0._current_menu_widgets = arg_33_0._menu_hierarchy
+	self._show_menu = arg_33_1
+	self._is_in_sub_menu = false
+	self._current_menu_widgets = self._menu_hierarchy
 end
 
-function TitleMainUI.set_start_pressed(arg_35_0, arg_35_1)
-	if arg_35_0._has_engaged ~= arg_35_1 then
-		if arg_35_1 then
-			arg_35_0._ui_animations.legal_text_fade = UIAnimation.init(UIAnimation.function_by_time, arg_35_0._legal_text.style.text.text_color, 1, 255, 0, 0.2, math.easeCubic)
-			arg_35_0._ui_animations.information_text_fade = UIAnimation.init(UIAnimation.function_by_time, arg_35_0._information_text.style.text.text_color, 1, 0, 255, 0.5, math.easeCubic)
+TitleMainUI.set_start_pressed = function (self, arg_35_1)
+	-- function 35
+	if self._has_engaged ~= arg_35_1 then
+		if not arg_35_1 then
+			self._ui_animations.legal_text_fade = UIAnimation.init(UIAnimation.function_by_time, self._legal_text.style.text.text_color, 1, 255, 0, 0.2, math.easeCubic)
+			self._ui_animations.information_text_fade = UIAnimation.init(UIAnimation.function_by_time, self._information_text.style.text.text_color, 1, 0, 255, 0.5, math.easeCubic)
 		else
-			arg_35_0._ui_animations.legal_text_fade = UIAnimation.init(UIAnimation.function_by_time, arg_35_0._legal_text.style.text.text_color, 1, 0, 255, 0.5, math.easeCubic)
-			arg_35_0._ui_animations.information_text_fade = UIAnimation.init(UIAnimation.function_by_time, arg_35_0._information_text.style.text.text_color, 1, 255, 0, 0.2, math.easeCubic)
-			arg_35_0._draw_information_text = nil
+			self._ui_animations.legal_text_fade = UIAnimation.init(UIAnimation.function_by_time, self._legal_text.style.text.text_color, 1, 0, 255, 0.5, math.easeCubic)
+			self._ui_animations.information_text_fade = UIAnimation.init(UIAnimation.function_by_time, self._information_text.style.text.text_color, 1, 255, 0, 0.2, math.easeCubic)
+			self._draw_information_text = nil
 		end
 	end
 
-	arg_35_0._has_engaged = arg_35_1
+	self._has_engaged = arg_35_1
 end
 
-local var_0_14 = 0.2
-local var_0_15 = 0.2
+local num = 0.2
+local num_2 = 0.2
 
-function TitleMainUI.anim_select_button(arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+TitleMainUI.anim_select_button = function (self, arg_36_1, arg_36_2, arg_36_3)
+	-- function 36
 	if arg_36_1.progress == 1 then
 		return
 	end
 
-	arg_36_1.timer = arg_36_1.timer or arg_36_1.progress * var_0_14
+	local timer = arg_36_1.timer
+
+	timer = timer or arg_36_1.progress * num
+	arg_36_1.timer = timer
 	arg_36_1.timer = arg_36_1.timer + arg_36_3
-	arg_36_1.progress = math.clamp(arg_36_1.timer / var_0_14, 0, 1)
+	arg_36_1.progress = math.clamp(arg_36_1.timer / num, 0, 1)
 
-	local var_36_0 = arg_36_0._current_menu_widgets[arg_36_2]
-	local var_36_1 = var_36_0.content.disabled
-	local var_36_2 = var_36_1 and Colors.color_definitions.gray or Colors.color_definitions.font_title
-	local var_36_3 = var_36_1 and Colors.color_definitions.gray or Colors.color_definitions.white
+	local var_36_1 = self._current_menu_widgets[arg_36_2]
+	local disabled = var_36_1.content.disabled
+	local gray
 
-	if var_36_0.style.text then
-		var_36_0.style.text.text_color[2] = math.lerp(var_36_2[2], var_36_3[2], math.smoothstep(arg_36_1.progress, 0, 1))
-		var_36_0.style.text.text_color[3] = math.lerp(var_36_2[3], var_36_3[3], math.smoothstep(arg_36_1.progress, 0, 1))
-		var_36_0.style.text.text_color[4] = math.lerp(var_36_2[4], var_36_3[4], math.smoothstep(arg_36_1.progress, 0, 1))
-		var_36_0.style.text.font_size = math.lerp(var_36_0.style.text.font_size, var_36_0.content.default_font_size + 10, math.easeInCubic(arg_36_1.progress))
+	if not disabled then
+		gray = Colors.color_definitions.gray
+
+		if not gray then
+			-- Nothing
+		end
 	end
 
-	local var_36_4 = var_36_0.scenegraph_id
-	local var_36_5 = arg_36_0._ui_scenegraph
+	gray = Colors.color_definitions.font_title
 
-	var_36_5.selection_anchor.local_position[2] = var_36_5[var_36_4].local_position[2] + 5
+	do
+		local gray_2
+	end
 
-	local var_36_6 = var_36_0.style
-	local var_36_7 = var_36_0.content.text_field
+	::label_36_0::
 
-	if var_36_7 then
-		local var_36_8 = 20
+	if not disabled then
+		gray_2 = Colors.color_definitions.gray
 
-		var_36_8 = var_36_0.content.spacing or var_36_8
+		if not gray_2 then
+			-- Nothing
+		end
+	end
 
-		local var_36_9, var_36_10 = arg_36_0:_get_word_wrap_size(Localize(var_36_7), var_36_6.text, 1000)
+	gray_2 = Colors.color_definitions.white
 
-		var_36_5.selection_anchor.size[1] = (var_36_9 or 0) + var_36_8
-		arg_36_0._menu_selection_left.offset[1] = math.lerp(-50, 0, math.smoothstep(arg_36_1.progress, 0, 1))
-		arg_36_0._menu_selection_right.offset[1] = math.lerp(50, 0, math.smoothstep(arg_36_1.progress, 0, 1))
+	::label_36_1::
+
+	if not var_36_1.style.text then
+		var_36_1.style.text.text_color[2] = math.lerp(gray[2], gray_2[2], math.smoothstep(arg_36_1.progress, 0, 1))
+		var_36_1.style.text.text_color[3] = math.lerp(gray[3], gray_2[3], math.smoothstep(arg_36_1.progress, 0, 1))
+		var_36_1.style.text.text_color[4] = math.lerp(gray[4], gray_2[4], math.smoothstep(arg_36_1.progress, 0, 1))
+		var_36_1.style.text.font_size = math.lerp(var_36_1.style.text.font_size, var_36_1.content.default_font_size + 10, math.easeInCubic(arg_36_1.progress))
+	end
+
+	local scenegraph_id = var_36_1.scenegraph_id
+	local _ui_scenegraph = self._ui_scenegraph
+
+	_ui_scenegraph.selection_anchor.local_position[2] = _ui_scenegraph[scenegraph_id].local_position[2] + 5
+
+	local style = var_36_1.style
+	local text_field = var_36_1.content.text_field
+
+	if not text_field then
+		local num_2 = 20
+
+		num_2 = var_36_1.content.spacing or num_2
+
+		local _get_word_wrap_size, var_36_11 = self:_get_word_wrap_size(Localize(text_field), style.text, 1000)
+
+		_ui_scenegraph.selection_anchor.size[1] = (_get_word_wrap_size or 0) + num_2
+		self._menu_selection_left.offset[1] = math.lerp(-50, 0, math.smoothstep(arg_36_1.progress, 0, 1))
+		self._menu_selection_right.offset[1] = math.lerp(50, 0, math.smoothstep(arg_36_1.progress, 0, 1))
 	end
 end
 
-function TitleMainUI.anim_deselect_button(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
-	if arg_37_1 and arg_37_1.progress == 0 then
+TitleMainUI.anim_deselect_button = function (self, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
+	-- function 37
+	if not (not arg_37_1 and arg_37_1.progress ~= 0) then
 		return
 	end
 
-	local var_37_0 = 0
+	local num = 0
 
 	if not arg_37_4 then
-		arg_37_1.timer = arg_37_1.timer or arg_37_1.progress * var_0_15
+		local timer = arg_37_1.timer
+
+		timer = timer or arg_37_1.progress * num_2
+		arg_37_1.timer = timer
 		arg_37_1.timer = arg_37_1.timer - arg_37_3
-		arg_37_1.progress = math.clamp(arg_37_1.timer / var_0_15, 0, 1)
-		var_37_0 = arg_37_1.progress
+		arg_37_1.progress = math.clamp(arg_37_1.timer / num_2, 0, 1)
+		num = arg_37_1.progress
 	else
-		var_37_0 = arg_37_4
+		num = arg_37_4
 	end
 
-	local var_37_1 = arg_37_0._current_menu_widgets[arg_37_2]
-	local var_37_2 = var_37_1 and var_37_1.content.disabled
-	local var_37_3 = var_37_2 and Colors.color_definitions.gray or Colors.color_definitions.font_title
-	local var_37_4 = var_37_2 and Colors.color_definitions.gray or Colors.color_definitions.white
+	local var_37_2 = self._current_menu_widgets[arg_37_2]
+	local flag = not var_37_2 and var_37_2.content.disabled
+	local gray
 
-	if var_37_1 and var_37_1.style.text then
-		var_37_1.style.text.text_color[2] = math.lerp(var_37_3[2], var_37_4[2], math.smoothstep(var_37_0, 0, 1))
-		var_37_1.style.text.text_color[3] = math.lerp(var_37_3[3], var_37_4[3], math.smoothstep(var_37_0, 0, 1))
-		var_37_1.style.text.text_color[4] = math.lerp(var_37_3[4], var_37_4[4], math.smoothstep(var_37_0, 0, 1))
+	if not flag then
+		gray = Colors.color_definitions.gray
+
+		if not gray then
+			-- Nothing
+		end
 	end
 
-	if var_37_1 and var_37_1.style.text then
-		if arg_37_4 then
-			var_37_1.style.text.font_size = var_37_1.content.default_font_size * (1 - var_37_0)
+	gray = Colors.color_definitions.font_title
+
+	do
+		local gray_2
+	end
+
+	::label_37_0::
+
+	if not flag then
+		gray_2 = Colors.color_definitions.gray
+
+		if not gray_2 then
+			-- Nothing
+		end
+	end
+
+	gray_2 = Colors.color_definitions.white
+
+	::label_37_1::
+
+	if not var_37_2 and not var_37_2.style.text then
+		var_37_2.style.text.text_color[2] = math.lerp(gray[2], gray_2[2], math.smoothstep(num, 0, 1))
+		var_37_2.style.text.text_color[3] = math.lerp(gray[3], gray_2[3], math.smoothstep(num, 0, 1))
+		var_37_2.style.text.text_color[4] = math.lerp(gray[4], gray_2[4], math.smoothstep(num, 0, 1))
+	end
+
+	if not var_37_2 and not var_37_2.style.text then
+		if not arg_37_4 then
+			var_37_2.style.text.font_size = var_37_2.content.default_font_size * (1 - num)
 		else
-			var_37_1.style.text.font_size = math.lerp(var_37_1.style.text.font_size, var_37_1.content.default_font_size, math.easeInCubic(var_37_0))
+			var_37_2.style.text.font_size = math.lerp(var_37_2.style.text.font_size, var_37_2.content.default_font_size, math.easeInCubic(num))
 		end
 	end
 end
 
-function TitleMainUI._get_text_size(arg_38_0, arg_38_1, arg_38_2)
+TitleMainUI._get_text_size = function (self, arg_38_1, arg_38_2)
+	-- function 38
 	local var_38_0, var_38_1 = UIFontByResolution(arg_38_2)
-	local var_38_2, var_38_3, var_38_4 = UIRenderer.text_size(arg_38_0._ui_renderer, arg_38_1, var_38_0[1], var_38_1)
+	local text_size, var_38_3, var_38_4 = UIRenderer.text_size(self._ui_renderer, arg_38_1, var_38_0[1], var_38_1)
 
-	return var_38_2, var_38_3
+	return text_size, var_38_3
 end
 
-function TitleMainUI._get_word_wrap_size(arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+TitleMainUI._get_word_wrap_size = function (self, arg_39_1, arg_39_2, arg_39_3)
+	-- function 39
 	local var_39_0, var_39_1 = UIFontByResolution(arg_39_2)
-	local var_39_2 = UIRenderer.word_wrap(arg_39_0._ui_renderer, arg_39_1, var_39_0[1], var_39_1, arg_39_3)
-	local var_39_3, var_39_4 = arg_39_0:_get_text_size(arg_39_1, arg_39_2)
+	local word_wrap = UIRenderer.word_wrap(self._ui_renderer, arg_39_1, var_39_0[1], var_39_1, arg_39_3)
+	local _get_text_size, var_39_4 = self:_get_text_size(arg_39_1, arg_39_2)
 
-	return var_39_3, var_39_4 * #var_39_2
+	return _get_text_size, var_39_4 * #word_wrap
 end
 
-function TitleMainUI._add_menu_item_animation(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
-	arg_40_0._menu_item_animations[arg_40_1] = {
-		progress = arg_40_0._menu_item_animations[arg_40_1] and arg_40_0._menu_item_animations[arg_40_1].progress or 0,
-		func = arg_40_2
-	}
+TitleMainUI._add_menu_item_animation = function (self, arg_40_1, arg_40_2, arg_40_3)
+	-- function 40
+	local _menu_item_animations = self._menu_item_animations
+	local tbl = {}
+	local progress
+
+	if not self._menu_item_animations[arg_40_1] then
+		progress = self._menu_item_animations[arg_40_1].progress
+
+		if not progress then
+			-- Nothing
+		end
+	end
+
+	progress = 0
+
+	::label_40_0::
+
+	tbl.progress = progress
+	tbl.func = arg_40_2
+	_menu_item_animations[arg_40_1] = tbl
 end
 
-function TitleMainUI.set_information_text(arg_41_0, arg_41_1)
-	arg_41_0._draw_information_text = true
+TitleMainUI.set_information_text = function (self, arg_41_1)
+	-- function 41
+	self._draw_information_text = true
 
-	local var_41_0 = arg_41_0._information_text
-	local var_41_1 = var_41_0.content
-	local var_41_2 = var_41_0.style
+	local _information_text = self._information_text
+	local content = _information_text.content
+	local style = _information_text.style
 
 	if not arg_41_1 then
-		var_41_1.text = Localize("state_info")
+		content.text = Localize("state_info")
 	else
-		var_41_1.text = arg_41_1
+		content.text = arg_41_1
 	end
 end
 
-function TitleMainUI.disable_input(arg_42_0, arg_42_1)
-	arg_42_0._disable_input = arg_42_1
+TitleMainUI.disable_input = function (self, arg_42_1)
+	-- function 42
+	self._disable_input = arg_42_1
 end
 
-function TitleMainUI.view_activated(arg_43_0, arg_43_1)
-	if arg_43_1 then
-		arg_43_0._ui_animations.sidebar = UIAnimation.init(UIAnimation.function_by_time, arg_43_0._ui_scenegraph.sidebar.size, 1, 544, 1920, 0.5, math.easeCubic)
-		arg_43_0._ui_animations.alpha_multiplier = UIAnimation.init(UIAnimation.function_by_time, arg_43_0, "_alpha_multiplier", 1, 0, 0.5, math.easeCubic)
+TitleMainUI.view_activated = function (self, arg_43_1)
+	-- function 43
+	if not arg_43_1 then
+		self._ui_animations.sidebar = UIAnimation.init(UIAnimation.function_by_time, self._ui_scenegraph.sidebar.size, 1, 544, 1920, 0.5, math.easeCubic)
+		self._ui_animations.alpha_multiplier = UIAnimation.init(UIAnimation.function_by_time, self, "_alpha_multiplier", 1, 0, 0.5, math.easeCubic)
 
-		if arg_43_0._information_slate_ui then
-			arg_43_0._information_slate_ui:hide()
+		if not self._information_slate_ui then
+			self._information_slate_ui:hide()
 		end
 	else
-		arg_43_0._ui_animations.sidebar = UIAnimation.init(UIAnimation.function_by_time, arg_43_0._ui_scenegraph.sidebar.size, 1, 1920, 544, 0.5, math.easeCubic)
-		arg_43_0._ui_animations.alpha_multiplier = UIAnimation.init(UIAnimation.function_by_time, arg_43_0, "_alpha_multiplier", 0, 1, 0.5, math.easeCubic)
+		self._ui_animations.sidebar = UIAnimation.init(UIAnimation.function_by_time, self._ui_scenegraph.sidebar.size, 1, 1920, 544, 0.5, math.easeCubic)
+		self._ui_animations.alpha_multiplier = UIAnimation.init(UIAnimation.function_by_time, self, "_alpha_multiplier", 0, 1, 0.5, math.easeCubic)
 
-		if arg_43_0._information_slate_ui then
-			arg_43_0._information_slate_ui:show()
+		if not self._information_slate_ui then
+			self._information_slate_ui:show()
 		end
 	end
 end

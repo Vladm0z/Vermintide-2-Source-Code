@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/dwarf_ranger_cog.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pdr_activate_ability_dwarf_engineer",

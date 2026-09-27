@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/healing_draught.lua
 
-local var_0_0 = {
+local tbl = {
 	actions = {
 		action_one = {
 			default = {
@@ -15,19 +15,21 @@ local var_0_0 = {
 				anim_event = "attack_heal",
 				total_time = 1.2,
 				allowed_chain_actions = {},
-				condition_func = function(arg_1_0)
-					local var_1_0 = ScriptUnit.extension(arg_1_0, "health_system")
-					local var_1_1 = ScriptUnit.extension(arg_1_0, "status_system")
-					local var_1_2 = var_1_0:current_permanent_health_percent() >= 1
+				condition_func = function (arg_1_0)
+					-- function 1
+					local extension = ScriptUnit.extension(arg_1_0, "health_system")
+					local extension_2 = ScriptUnit.extension(arg_1_0, "status_system")
+					local flag = extension:current_permanent_health_percent() >= 1
 
-					return var_1_1:is_wounded() or not var_1_2
+					return extension_2:is_wounded() or not flag
 				end,
-				chain_condition_func = function(arg_2_0)
-					local var_2_0 = ScriptUnit.extension(arg_2_0, "health_system")
-					local var_2_1 = ScriptUnit.extension(arg_2_0, "status_system")
-					local var_2_2 = var_2_0:current_permanent_health_percent() >= 1
+				chain_condition_func = function (arg_2_0)
+					-- function 2
+					local extension = ScriptUnit.extension(arg_2_0, "health_system")
+					local extension_2 = ScriptUnit.extension(arg_2_0, "status_system")
+					local flag = extension:current_permanent_health_percent() >= 1
 
-					return var_2_1:is_wounded() or not var_2_2
+					return extension_2:is_wounded() or not flag
 				end
 			}
 		},
@@ -65,18 +67,18 @@ local var_0_0 = {
 	}
 }
 
-var_0_0.left_hand_unit = "units/weapons/player/wpn_potion/wpn_potion"
-var_0_0.left_hand_attachment_node_linking = AttachmentNodeLinking.potion
-var_0_0.wield_anim = "to_potion"
-var_0_0.state_machine = "units/beings/player/first_person_base/state_machines/common"
-var_0_0.load_state_machine = false
-var_0_0.gui_texture = "hud_consumable_icon_potion"
-var_0_0.max_fatigue_points = 1
-var_0_0.can_heal_self = true
-var_0_0.fast_heal = true
-var_0_0.can_give_other = true
-var_0_0.bot_heal_threshold = 0.4
-var_0_0.buffs = {
+tbl.left_hand_unit = "units/weapons/player/wpn_potion/wpn_potion"
+tbl.left_hand_attachment_node_linking = AttachmentNodeLinking.potion
+tbl.wield_anim = "to_potion"
+tbl.state_machine = "units/beings/player/first_person_base/state_machines/common"
+tbl.load_state_machine = false
+tbl.gui_texture = "hud_consumable_icon_potion"
+tbl.max_fatigue_points = 1
+tbl.can_heal_self = true
+tbl.fast_heal = true
+tbl.can_give_other = true
+tbl.bot_heal_threshold = 0.4
+tbl.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1
 	},
@@ -86,5 +88,5 @@ var_0_0.buffs = {
 }
 
 return {
-	healing_draught = table.clone(var_0_0)
+	healing_draught = table.clone(tbl)
 }

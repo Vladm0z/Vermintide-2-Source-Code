@@ -1,85 +1,99 @@
 -- chunkname: @foundation/scripts/util/hermite.lua
 
+local Hermite = Hermite
+
 Hermite = Hermite or {}
+Hermite = Hermite
 
-function Hermite.calc_point(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
-	local var_1_0 = arg_1_0 * arg_1_0
-	local var_1_1 = var_1_0 * arg_1_0
-	local var_1_2 = var_1_1 + var_1_1
-	local var_1_3 = var_1_0 + var_1_0
-	local var_1_4 = var_1_3 + var_1_0
-	local var_1_5 = var_1_2 - var_1_4 + 1
-	local var_1_6 = var_1_4 - var_1_2
-	local var_1_7 = var_1_1 - var_1_3 + arg_1_0
-	local var_1_8 = var_1_1 - var_1_0
-	local var_1_9 = Vector3.length(arg_1_3 - arg_1_2)
-	local var_1_10 = Vector3.normalize(arg_1_3 - arg_1_1) * var_1_9
-	local var_1_11 = Vector3.normalize(arg_1_4 - arg_1_2) * var_1_9
+Hermite.calc_point = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	-- function 1
+	local num = arg_1_0 * arg_1_0
+	local num_2 = num * arg_1_0
+	local num_3 = num_2 + num_2
+	local num_4 = num + num
+	local num_5 = num_4 + num
+	local num_6 = num_3 - num_5 + 1
+	local num_7 = num_5 - num_3
+	local num_8 = num_2 - num_4 + arg_1_0
+	local num_9 = num_2 - num
+	local length = Vector3.length(arg_1_3 - arg_1_2)
+	local num_10 = Vector3.normalize(arg_1_3 - arg_1_1) * length
+	local num_11 = Vector3.normalize(arg_1_4 - arg_1_2) * length
 
-	return arg_1_2 * var_1_5 + arg_1_3 * var_1_6 + var_1_10 * var_1_7 + var_1_11 * var_1_8
+	return arg_1_2 * num_6 + arg_1_3 * num_7 + num_10 * num_8 + num_11 * num_9
 end
 
-function Hermite.calc_tangent(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
-	local var_2_0 = arg_2_0 * arg_2_0
-	local var_2_1 = 6 * var_2_0 - 6 * arg_2_0
-	local var_2_2 = 6 * arg_2_0 - 6 * var_2_0
-	local var_2_3 = 3 * var_2_0 - 4 * arg_2_0 + 1
-	local var_2_4 = 3 * var_2_0 - 2 * arg_2_0
-	local var_2_5 = Vector3.length(arg_2_3 - arg_2_2)
-	local var_2_6 = Vector3.normalize(arg_2_3 - arg_2_1) * var_2_5
-	local var_2_7 = Vector3.normalize(arg_2_4 - arg_2_2) * var_2_5
+Hermite.calc_tangent = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	-- function 2
+	local num = arg_2_0 * arg_2_0
+	local num_2 = 6 * num - 6 * arg_2_0
+	local num_3 = 6 * arg_2_0 - 6 * num
+	local num_4 = 3 * num - 4 * arg_2_0 + 1
+	local num_5 = 3 * num - 2 * arg_2_0
+	local length = Vector3.length(arg_2_3 - arg_2_2)
+	local num_6 = Vector3.normalize(arg_2_3 - arg_2_1) * length
+	local num_7 = Vector3.normalize(arg_2_4 - arg_2_2) * length
 
-	return arg_2_2 * var_2_1 + arg_2_3 * var_2_2 + var_2_6 * var_2_3 + var_2_7 * var_2_4
+	return arg_2_2 * num_2 + arg_2_3 * num_3 + num_6 * num_4 + num_7 * num_5
 end
 
-function Hermite.draw(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+Hermite.draw = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+	-- function 3
 	arg_3_0 = arg_3_0 or 20
 
-	local var_3_0 = 1 / arg_3_0
-	local var_3_1 = 0
-	local var_3_2 = Hermite.calc_point(var_3_1, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+	local num = 1 / arg_3_0
+	local num_2 = 0
+	local calc_point = Hermite.calc_point(num_2, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
 
-	for iter_3_0 = 0, arg_3_0 do
-		local var_3_3 = var_3_0 * iter_3_0
-		local var_3_4 = Hermite.calc_point(var_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+	for i = 0, arg_3_0 do
+		local num_3 = num * i
+		local calc_point_2 = Hermite.calc_point(num_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
 
-		arg_3_1:line(var_3_2, var_3_4, arg_3_3)
+		arg_3_1:line(calc_point, calc_point_2, arg_3_3)
 
-		if arg_3_2 then
-			local var_3_5 = Hermite.calc_tangent(var_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+		if not arg_3_2 then
+			local calc_tangent = Hermite.calc_tangent(num_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
 
-			arg_3_1:vector(var_3_4, var_3_5 * arg_3_2, arg_3_3)
+			arg_3_1:vector(calc_point_2, calc_tangent * arg_3_2, arg_3_3)
 		end
 
-		var_3_2 = var_3_4
+		calc_point = calc_point_2
 	end
 end
 
-function Hermite.length(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-	local var_4_0 = 0
+Hermite.length = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	-- function 4
+	local num = 0
 	local var_4_1 = arg_4_2
 
-	for iter_4_0 = 1, arg_4_0 - 1 do
-		local var_4_2 = Hermite.calc_point(iter_4_0 / arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	for i = 1, arg_4_0 - 1 do
+		local calc_point = Hermite.calc_point(i / arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 
-		var_4_0 = var_4_0 + Vector3.length(var_4_2 - var_4_1)
-		var_4_1 = var_4_2
+		num = num + Vector3.length(calc_point - var_4_1)
+		var_4_1 = calc_point
 	end
 
-	return var_4_0 + Vector3.length(arg_4_3 - var_4_1)
+	return num + Vector3.length(arg_4_3 - var_4_1)
 end
 
-function Hermite.next_index(arg_5_0, arg_5_1)
-	local var_5_0 = arg_5_1 + 1
+Hermite.next_index = function (self, arg_5_1)
+	-- function 5
+	local num = arg_5_1 + 1
 
-	return arg_5_0[var_5_0 + 1] and var_5_0 or nil
+	return not self[num + 1] and num and nil
 end
 
-function Hermite.spline_points(arg_6_0, arg_6_1)
-	local var_6_0 = arg_6_0[arg_6_1]
-	local var_6_1 = arg_6_0[arg_6_1 + 1]
-	local var_6_2 = arg_6_0[arg_6_1 - 1] or 2 * var_6_0 - var_6_1
-	local var_6_3 = arg_6_0[arg_6_1 + 2] or 2 * var_6_1 - var_6_0
+Hermite.spline_points = function (self, arg_6_1)
+	-- function 6
+	local var_6_0 = self[arg_6_1]
+	local var_6_1 = self[arg_6_1 + 1]
+	local var_6_2 = self[arg_6_1 - 1]
+
+	var_6_2 = var_6_2 or 2 * var_6_0 - var_6_1
+
+	local var_6_3 = self[arg_6_1 + 2]
+
+	var_6_3 = var_6_3 or 2 * var_6_1 - var_6_0
 
 	return var_6_2, var_6_0, var_6_1, var_6_3
 end

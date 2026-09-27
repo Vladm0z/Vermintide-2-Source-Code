@@ -2,46 +2,49 @@
 
 PackmasterStateStanding = class(PackmasterStateStanding, EnemyCharacterStateStanding)
 
-function PackmasterStateStanding.init(arg_1_0, arg_1_1)
-	PackmasterStateStanding.super.init(arg_1_0, arg_1_1)
+PackmasterStateStanding.init = function (self, arg_1_1)
+	-- function 1
+	PackmasterStateStanding.super.init(self, arg_1_1)
 
-	arg_1_0._grab_ability_id = arg_1_0._career_extension:ability_id("grab")
-	arg_1_0._equip_ability_id = arg_1_0._career_extension:ability_id("equip")
+	self._grab_ability_id = self._career_extension:ability_id("grab")
+	self._equip_ability_id = self._career_extension:ability_id("equip")
 
-	local var_1_0, var_1_1 = arg_1_0._inventory_extension:get_all_weapon_unit()
+	local get_all_weapon_unit, var_1_1 = self._inventory_extension:get_all_weapon_unit()
 
-	arg_1_0._weapon_unit_left = var_1_0
-	arg_1_0._weapon_unit_right = var_1_1
+	self._weapon_unit_left = get_all_weapon_unit
+	self._weapon_unit_right = var_1_1
 end
 
-function PackmasterStateStanding.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
-	PackmasterStateStanding.super.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+PackmasterStateStanding.on_enter = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	-- function 2
+	PackmasterStateStanding.super.on_enter(self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 
-	arg_2_0._right_wpn_particle_node_name = "g_skaven_packmaster_claw"
-	arg_2_0._right_wpn_particle_name = "fx/wpnfx_packmaster_enemy_in_range_1p"
+	self._right_wpn_particle_node_name = "g_skaven_packmaster_claw"
+	self._right_wpn_particle_name = "fx/wpnfx_packmaster_enemy_in_range_1p"
 end
 
-function PackmasterStateStanding.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
-	if arg_3_0:common_state_changes() then
+PackmasterStateStanding.update = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	-- function 3
+	if not self:common_state_changes() then
 		return
 	end
 
-	local var_3_0 = arg_3_0._csm
-	local var_3_1 = arg_3_0._career_extension
+	local _csm = self._csm
+	local _career_extension = self._career_extension
 
-	if var_3_1:ability_was_triggered(arg_3_0._grab_ability_id) then
-		var_3_0:change_state("packmaster_grabbing")
-
-		return
-	end
-
-	if var_3_1:ability_was_triggered(arg_3_0._equip_ability_id) then
-		var_3_0:change_state("packmaster_equipping")
+	if not _career_extension:ability_was_triggered(self._grab_ability_id) then
+		_csm:change_state("packmaster_grabbing")
 
 		return
 	end
 
-	arg_3_0:_update_taunt_dialogue(arg_3_5)
+	if not _career_extension:ability_was_triggered(self._equip_ability_id) then
+		_csm:change_state("packmaster_equipping")
 
-	local var_3_2 = arg_3_0:common_movement(arg_3_5)
+		return
+	end
+
+	self:_update_taunt_dialogue(arg_3_5)
+
+	local common_movement = self:common_movement(arg_3_5)
 end

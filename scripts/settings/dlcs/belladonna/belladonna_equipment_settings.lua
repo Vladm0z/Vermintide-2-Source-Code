@@ -1,12 +1,13 @@
 -- chunkname: @scripts/settings/dlcs/belladonna/belladonna_equipment_settings.lua
 
-local var_0_0 = DLCSettings.belladonna
+local belladonna = DLCSettings.belladonna
 
-local function var_0_1(arg_1_0)
+local function fn(arg_1_0)
+	-- function 1
 	return arg_1_0 * 0.0174532925
 end
 
-var_0_0.light_weight_projectiles = {
+belladonna.light_weight_projectiles = {
 	ungor_archer = {
 		projectile_speed = 35,
 		hit_effect = "arrow_impact",
@@ -14,10 +15,10 @@ var_0_0.light_weight_projectiles = {
 		impact_push_speed = 3,
 		light_weight_projectile_effect = "ungor_arrow",
 		damage_profile = "ungor_archer_arrow",
-		spread = var_0_1(0.05),
-		dodge_spread = var_0_1(4),
-		first_shot_spread = var_0_1(8),
-		miss_spread = var_0_1(4),
+		spread = fn(0.05),
+		dodge_spread = fn(4),
+		first_shot_spread = fn(8),
+		miss_spread = fn(4),
 		attack_power_level = {
 			20,
 			40,
@@ -41,7 +42,7 @@ var_0_0.light_weight_projectiles = {
 		}
 	}
 }
-var_0_0.light_weight_projectile_effects = {
+belladonna.light_weight_projectile_effects = {
 	ungor_arrow = {
 		vfx = {
 			{
@@ -60,10 +61,10 @@ var_0_0.light_weight_projectile_effects = {
 		}
 	}
 }
-var_0_0.damage_profile_template_files_names = {
+belladonna.damage_profile_template_files_names = {
 	"scripts/settings/equipment/damage_profile_templates_scorpion"
 }
-var_0_0.explosion_templates = {
+belladonna.explosion_templates = {
 	standard_bearer_explosion = {
 		explosion = {
 			radius = 7,

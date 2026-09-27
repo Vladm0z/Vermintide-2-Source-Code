@@ -1,13 +1,13 @@
 -- chunkname: @scripts/ui/hud_ui/deus_soft_currency_indicator_ui_definitions.lua
 
-local var_0_0 = 1920
-local var_0_1 = 1080
-local var_0_2 = 1
-local var_0_3 = {
-	325 * var_0_2,
-	50 * var_0_2
+local num = 1920
+local num_2 = 1080
+local num_3 = 1
+local tbl = {
+	325 * num_3,
+	50 * num_3
 }
-local var_0_4 = {
+local tbl_2 = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -16,8 +16,8 @@ local var_0_4 = {
 			UILayer.hud
 		},
 		size = {
-			var_0_0,
-			var_0_1
+			num,
+			num_2
 		}
 	},
 	coin_ui = {
@@ -29,19 +29,20 @@ local var_0_4 = {
 			-25,
 			0
 		},
-		size = var_0_3
+		size = tbl
 	}
 }
 
-local function var_0_5()
-	local var_1_0 = "weaves_essence_bar_backdrop"
-	local var_1_1 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_1_0)
-	local var_1_2 = var_1_1.size[2] * 0.5
-	local var_1_3 = var_1_1.size[1] * 0.5
-	local var_1_4 = -2
-	local var_1_5 = {
-		var_1_2,
-		var_1_2
+local function fn()
+	-- function 1
+	local str = "weaves_essence_bar_backdrop"
+	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(str)
+	local num = get_atlas_settings_by_texture_name.size[2] * 0.5
+	local num_2 = get_atlas_settings_by_texture_name.size[1] * 0.5
+	local num_3 = -2
+	local tbl_2 = {
+		num,
+		num
 	}
 
 	return {
@@ -52,7 +53,8 @@ local function var_0_5()
 					pass_type = "texture",
 					style_id = "background",
 					texture_id = "background",
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
+						-- function 2
 						return Managers.mechanism:get_state() ~= "map_deus"
 					end
 				},
@@ -123,13 +125,13 @@ local function var_0_5()
 			background_glow = "horizontal_gradient",
 			coin_icon_highlight = "deus_icons_coin_highlight",
 			coins_label = "deus_collect_coins_text",
-			background = var_1_0
+			background = str
 		},
 		style = {
 			background = {
 				vertical_alignment = "top",
 				horizontal_alignment = "right",
-				texture_size = var_1_1.size,
+				texture_size = get_atlas_settings_by_texture_name.size,
 				color = {
 					255,
 					255,
@@ -145,7 +147,7 @@ local function var_0_5()
 			background_glow = {
 				vertical_alignment = "top",
 				horizontal_alignment = "right",
-				texture_size = var_1_1.size,
+				texture_size = get_atlas_settings_by_texture_name.size,
 				color = {
 					0,
 					74,
@@ -162,12 +164,12 @@ local function var_0_5()
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
 				texture_size = {
-					var_1_5[1],
-					var_1_5[2]
+					tbl_2[1],
+					tbl_2[2]
 				},
 				base_size = {
-					var_1_5[1],
-					var_1_5[2]
+					tbl_2[1],
+					tbl_2[2]
 				},
 				color = {
 					255,
@@ -176,8 +178,8 @@ local function var_0_5()
 					255
 				},
 				offset = {
-					var_1_3 - 155,
-					var_1_4,
+					num_2 - 155,
+					num_3,
 					10
 				}
 			},
@@ -185,8 +187,8 @@ local function var_0_5()
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
 				texture_size = {
-					var_1_5[1],
-					var_1_5[2]
+					tbl_2[1],
+					tbl_2[2]
 				},
 				color = {
 					255,
@@ -195,8 +197,8 @@ local function var_0_5()
 					255
 				},
 				offset = {
-					var_1_3 - 155,
-					var_1_4,
+					num_2 - 155,
+					num_3,
 					11
 				}
 			},
@@ -204,8 +206,8 @@ local function var_0_5()
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
 				texture_size = {
-					var_1_5[1],
-					var_1_5[2]
+					tbl_2[1],
+					tbl_2[2]
 				},
 				color = {
 					0,
@@ -214,13 +216,13 @@ local function var_0_5()
 					255
 				},
 				base_offset = {
-					var_1_3 - 155,
-					var_1_4,
+					num_2 - 155,
+					num_3,
 					12
 				},
 				offset = {
-					var_1_3 - 155,
-					var_1_4,
+					num_2 - 155,
+					num_3,
 					11
 				}
 			},
@@ -228,8 +230,8 @@ local function var_0_5()
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
 				texture_size = {
-					var_1_5[1] * 2,
-					var_1_5[2] * 2
+					tbl_2[1] * 2,
+					tbl_2[2] * 2
 				},
 				color = {
 					0,
@@ -238,8 +240,8 @@ local function var_0_5()
 					255
 				},
 				offset = {
-					var_1_3 - 155,
-					var_1_4,
+					num_2 - 155,
+					num_3,
 					13
 				}
 			},
@@ -247,12 +249,12 @@ local function var_0_5()
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
 				texture_size = {
-					var_1_5[1] * 1.75,
-					var_1_5[2] * 1.75
+					tbl_2[1] * 1.75,
+					tbl_2[2] * 1.75
 				},
 				base_texture_size = {
-					var_1_5[1] * 1.75,
-					var_1_5[2] * 1.75
+					tbl_2[1] * 1.75,
+					tbl_2[2] * 1.75
 				},
 				color = {
 					0,
@@ -261,8 +263,8 @@ local function var_0_5()
 					255
 				},
 				offset = {
-					var_1_3 - 155,
-					var_1_4,
+					num_2 - 155,
+					num_3,
 					13
 				}
 			},
@@ -287,8 +289,8 @@ local function var_0_5()
 					1
 				},
 				size = {
-					var_0_3[1] - 80,
-					var_0_3[2]
+					tbl[1] - 80,
+					tbl[2]
 				}
 			},
 			coins_label_shadow = {
@@ -312,8 +314,8 @@ local function var_0_5()
 					0
 				},
 				size = {
-					var_0_3[1] - 80,
-					var_0_3[2]
+					tbl[1] - 80,
+					tbl[2]
 				}
 			},
 			coin_count = {
@@ -323,8 +325,8 @@ local function var_0_5()
 				horizontal_alignment = "left",
 				vertical_alignment = "center",
 				font_type = "hell_shark_header",
-				base_font_size = var_1_2,
-				font_size = var_1_2,
+				base_font_size = num,
+				font_size = num,
 				text_color = {
 					255,
 					255,
@@ -332,8 +334,8 @@ local function var_0_5()
 					255
 				},
 				offset = {
-					var_1_3 + var_1_5[1] + 5,
-					var_1_4 - 2,
+					num_2 + tbl_2[1] + 5,
+					num_3 - 2,
 					1
 				}
 			},
@@ -344,7 +346,7 @@ local function var_0_5()
 				horizontal_alignment = "left",
 				vertical_alignment = "center",
 				font_type = "hell_shark_header",
-				font_size = var_1_2,
+				font_size = num,
 				text_color = {
 					255,
 					0,
@@ -352,8 +354,8 @@ local function var_0_5()
 					0
 				},
 				offset = {
-					var_1_3 + var_1_5[1] + 5 - 2,
-					var_1_4 - 2 - 2,
+					num_2 + tbl_2[1] + 5 - 2,
+					num_3 - 2 - 2,
 					0
 				}
 			},
@@ -362,7 +364,7 @@ local function var_0_5()
 				horizontal_alignment = "left",
 				localize = false,
 				font_type = "hell_shark_header",
-				font_size = var_1_2,
+				font_size = num,
 				text_color = {
 					255,
 					200,
@@ -370,13 +372,13 @@ local function var_0_5()
 					200
 				},
 				base_offset = {
-					var_1_3 + var_1_5[1] + 5 - 2 + 60,
-					var_1_4 - 2 - 2,
+					num_2 + tbl_2[1] + 5 - 2 + 60,
+					num_3 - 2 - 2,
 					3
 				},
 				offset = {
-					var_1_3 + var_1_5[1] + 5 - 2 + 60,
-					var_1_4 - 2 - 2,
+					num_2 + tbl_2[1] + 5 - 2 + 60,
+					num_3 - 2 - 2,
 					3
 				}
 			}
@@ -384,38 +386,57 @@ local function var_0_5()
 	}
 end
 
-local var_0_6 = {
+local tbl_3 = {
 	coin_change = {
 		{
 			name = "count",
 			duration = 1.2,
-			init = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			init = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+				-- function 3
 				arg_3_2.content.coin_delta = string.format("%+d", arg_3_3.coin_delta)
 				arg_3_3.delta_dir = math.sign(arg_3_3.coin_delta)
-				arg_3_2.style.coin_delta.text_color[2] = arg_3_3.delta_dir <= 0 and 255 or 200
-			end,
-			update = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-				local var_4_0 = 1 - (1 - arg_4_3)^2
-				local var_4_1 = math.lerp(arg_4_4.from_coin_count or 0, arg_4_4.to_coin_count or 100, var_4_0)
 
-				arg_4_2.content.coin_count_text = string.format("%d", var_4_1)
+				local text_color = arg_3_2.style.coin_delta.text_color
+				local flag
+
+				flag = not (arg_3_3.delta_dir <= 0) or not 255 or 200
+				text_color[2] = flag
+			end,
+			update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+				-- function 4
+				local num = 1 - (1 - arg_4_3)^2
+				local lerp = math.lerp
+				local from_coin_count = arg_4_4.from_coin_count
+
+				from_coin_count = from_coin_count or 0
+
+				local to_coin_count = arg_4_4.to_coin_count
+
+				to_coin_count = to_coin_count or 100
+
+				local var_4_4 = lerp(from_coin_count, to_coin_count, num)
+
+				arg_4_2.content.coin_count_text = string.format("%d", var_4_4)
 			end,
 			on_complete = NOP
 		},
 		{
 			name = "delta",
 			duration = 2,
-			init = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+				-- function 5
 				arg_5_3.delta_dir = math.sign(arg_5_3.coin_delta)
 				arg_5_2.content.coin_delta = string.format("%+d", arg_5_3.coin_delta)
 			end,
-			update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
-				local var_6_0 = arg_6_2.style.coin_delta
+			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+				-- function 6
+				local coin_delta = arg_6_2.style.coin_delta
 
-				var_6_0.offset[2] = var_6_0.base_offset[2] + arg_6_4.delta_dir * (arg_6_3 - 0.5) * 40
-				var_6_0.text_color[1] = math.clamp(255 * (1 - arg_6_3) / 0.8, 0, 255)
+				coin_delta.offset[2] = coin_delta.base_offset[2] + arg_6_4.delta_dir * (arg_6_3 - 0.5) * 40
+				coin_delta.text_color[1] = math.clamp(255 * (1 - arg_6_3) / 0.8, 0, 255)
 			end,
-			on_complete = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			on_complete = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+				-- function 7
 				arg_7_2.style.coin_delta.text_color[1] = 0
 			end
 		},
@@ -423,26 +444,28 @@ local var_0_6 = {
 			name = "grow",
 			delay = 0.2,
 			duration = 0.2,
-			init = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			init = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+				-- function 8
 				arg_8_3.icon_size_x = arg_8_2.style.coin_icon.texture_size[1]
 				arg_8_3.icon_size_y = arg_8_2.style.coin_icon.texture_size[2]
 			end,
-			update = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
-				local var_9_0 = 1 + 0.5 * (1 - (1 - arg_9_3) * (1 - arg_9_3))
-				local var_9_1 = arg_9_2.style
-				local var_9_2 = var_9_1.coin_count
-				local var_9_3 = var_9_1.coin_icon
-				local var_9_4 = var_9_1.coin_icon_mask
-				local var_9_5 = var_9_1.coin_icon_bloom
-				local var_9_6 = var_9_0 * arg_9_4.icon_size_x
-				local var_9_7 = var_9_0 * arg_9_4.icon_size_y
+			update = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+				-- function 9
+				local num = 1 + 0.5 * (1 - (1 - arg_9_3) * (1 - arg_9_3))
+				local style = arg_9_2.style
+				local coin_count = style.coin_count
+				local coin_icon = style.coin_icon
+				local coin_icon_mask = style.coin_icon_mask
+				local coin_icon_bloom = style.coin_icon_bloom
+				local num_2 = num * arg_9_4.icon_size_x
+				local num_3 = num * arg_9_4.icon_size_y
 
-				var_9_3.texture_size[1] = var_9_6
-				var_9_3.texture_size[2] = var_9_7
-				var_9_4.texture_size[1] = var_9_6
-				var_9_4.texture_size[2] = var_9_7
-				var_9_5.texture_size[1] = var_9_0 * var_9_5.base_texture_size[1]
-				var_9_5.texture_size[2] = var_9_0 * var_9_5.base_texture_size[2]
+				coin_icon.texture_size[1] = num_2
+				coin_icon.texture_size[2] = num_3
+				coin_icon_mask.texture_size[1] = num_2
+				coin_icon_mask.texture_size[2] = num_3
+				coin_icon_bloom.texture_size[1] = num * coin_icon_bloom.base_texture_size[1]
+				coin_icon_bloom.texture_size[2] = num * coin_icon_bloom.base_texture_size[2]
 			end,
 			on_complete = NOP
 		},
@@ -450,26 +473,28 @@ local var_0_6 = {
 			name = "shrink",
 			delay = 0.4,
 			duration = 0.4,
-			init = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+				-- function 10
 				arg_10_3.icon_size_x = arg_10_2.style.coin_icon.texture_size[1]
 				arg_10_3.icon_size_y = arg_10_2.style.coin_icon.texture_size[2]
 			end,
-			update = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
-				local var_11_0 = 1 + 0.5 * (1 - arg_11_3 * arg_11_3)
-				local var_11_1 = arg_11_2.style
-				local var_11_2 = var_11_1.coin_count
-				local var_11_3 = var_11_1.coin_icon
-				local var_11_4 = var_11_1.coin_icon_mask
-				local var_11_5 = var_11_1.coin_icon_bloom
-				local var_11_6 = var_11_0 * arg_11_4.icon_size_x
-				local var_11_7 = var_11_0 * arg_11_4.icon_size_y
+			update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+				-- function 11
+				local num = 1 + 0.5 * (1 - arg_11_3 * arg_11_3)
+				local style = arg_11_2.style
+				local coin_count = style.coin_count
+				local coin_icon = style.coin_icon
+				local coin_icon_mask = style.coin_icon_mask
+				local coin_icon_bloom = style.coin_icon_bloom
+				local num_2 = num * arg_11_4.icon_size_x
+				local num_3 = num * arg_11_4.icon_size_y
 
-				var_11_3.texture_size[1] = var_11_6
-				var_11_3.texture_size[2] = var_11_7
-				var_11_4.texture_size[1] = var_11_6
-				var_11_4.texture_size[2] = var_11_7
-				var_11_5.texture_size[1] = var_11_0 * var_11_5.base_texture_size[1]
-				var_11_5.texture_size[2] = var_11_0 * var_11_5.base_texture_size[2]
+				coin_icon.texture_size[1] = num_2
+				coin_icon.texture_size[2] = num_3
+				coin_icon_mask.texture_size[1] = num_2
+				coin_icon_mask.texture_size[2] = num_3
+				coin_icon_bloom.texture_size[1] = num * coin_icon_bloom.base_texture_size[1]
+				coin_icon_bloom.texture_size[2] = num * coin_icon_bloom.base_texture_size[2]
 			end,
 			on_complete = NOP
 		},
@@ -477,13 +502,15 @@ local var_0_6 = {
 			name = "background_glow",
 			delay = 0,
 			duration = 0.8,
-			init = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			init = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+				-- function 12
 				return
 			end,
-			update = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
-				local var_13_0 = 4 * arg_13_3 * (1 - arg_13_3)
+			update = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+				-- function 13
+				local num = 4 * arg_13_3 * (1 - arg_13_3)
 
-				arg_13_2.style.background_glow.color[1] = 96 * var_13_0
+				arg_13_2.style.background_glow.color[1] = 96 * num
 			end,
 			on_complete = NOP
 		},
@@ -491,14 +518,16 @@ local var_0_6 = {
 			name = "glow",
 			delay = 0.3,
 			duration = 0.4,
-			init = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			init = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+				-- function 14
 				return
 			end,
-			update = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
-				local var_15_0 = 4 * arg_15_3 * (1 - arg_15_3)
+			update = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+				-- function 15
+				local num = 4 * arg_15_3 * (1 - arg_15_3)
 
 				arg_15_2.style.coin_icon_highlight.color[1] = 0
-				arg_15_2.style.coin_icon_bloom.color[1] = 127 * var_15_0
+				arg_15_2.style.coin_icon_bloom.color[1] = 127 * num
 			end,
 			on_complete = NOP
 		},
@@ -506,16 +535,19 @@ local var_0_6 = {
 			name = "reflection",
 			delay = 0.5,
 			duration = 0.5,
-			init = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			init = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+				-- function 16
 				return
 			end,
-			update = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
-				local var_17_0 = arg_17_2.style.coin_icon_fx
+			update = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+				-- function 17
+				local coin_icon_fx = arg_17_2.style.coin_icon_fx
 
-				var_17_0.offset[1] = var_17_0.base_offset[1] + (2 * arg_17_3 - 1) * var_17_0.texture_size[1]
-				var_17_0.color[1] = 255
+				coin_icon_fx.offset[1] = coin_icon_fx.base_offset[1] + (2 * arg_17_3 - 1) * coin_icon_fx.texture_size[1]
+				coin_icon_fx.color[1] = 255
 			end,
-			on_complete = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			on_complete = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+				-- function 18
 				arg_18_2.style.coin_icon_fx.color[1] = 0
 			end
 		}
@@ -523,7 +555,7 @@ local var_0_6 = {
 }
 
 return {
-	scenegraph_definition = var_0_4,
-	coin_widget_definition = var_0_5(),
-	animation_definitions = var_0_6
+	scenegraph_definition = tbl_2,
+	coin_widget_definition = fn(),
+	animation_definitions = tbl_3
 }

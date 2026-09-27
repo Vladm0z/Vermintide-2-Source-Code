@@ -2,287 +2,334 @@
 
 require("scripts/managers/game_mode/game_modes/game_mode_base")
 
-script_data.disable_gamemode_end = script_data.disable_gamemode_end or Development.parameter("disable_gamemode_end")
+local script_data = script_data
+local disable_gamemode_end = script_data.disable_gamemode_end
+
+disable_gamemode_end = disable_gamemode_end or Development.parameter("disable_gamemode_end")
+script_data.disable_gamemode_end = disable_gamemode_end
 GameModeTutorial = class(GameModeTutorial, GameModeBase)
 
-local var_0_0 = false
-local var_0_1 = false
+local flag = false
+local flag_2 = false
 
-function GameModeTutorial.init(arg_1_0, arg_1_1, arg_1_2, ...)
-	GameModeTutorial.super.init(arg_1_0, arg_1_1, arg_1_2, ...)
+GameModeTutorial.init = function (self, arg_1_1, arg_1_2, ...)
+	-- function 1
+	GameModeTutorial.super.init(self, arg_1_1, arg_1_2, ...)
 
-	local var_1_0 = Managers.state.side:get_side_from_name("heroes")
+	local get_side_from_name = Managers.state.side:get_side_from_name("heroes")
 
-	arg_1_0._adventure_spawning = AdventureSpawning:new(arg_1_0._profile_synchronizer, var_1_0, arg_1_0._is_server, arg_1_0._network_server)
+	self._adventure_spawning = AdventureSpawning:new(self._profile_synchronizer, get_side_from_name, self._is_server, self._network_server)
 
-	arg_1_0:_register_player_spawner(arg_1_0._adventure_spawning)
-	arg_1_0:_switch_profile_to_tutorial()
-	Managers.state.event:register(arg_1_0, "level_start_local_player_spawned", "event_local_player_spawned")
+	self:_register_player_spawner(self._adventure_spawning)
+	self:_switch_profile_to_tutorial()
+	Managers.state.event:register(self, "level_start_local_player_spawned", "event_local_player_spawned")
 
-	arg_1_0._hud_disabled = false
-	arg_1_0._bot_players = {}
+	self._hud_disabled = false
+	self._bot_players = {}
 end
 
-function GameModeTutorial._switch_profile_to_tutorial(arg_2_0)
-	local var_2_0 = Network.peer_id()
-	local var_2_1 = 1
-	local var_2_2, var_2_3 = arg_2_0._profile_synchronizer:profile_by_peer(var_2_0, var_2_1)
+GameModeTutorial._switch_profile_to_tutorial = function (self)
+	-- function 2
+	local peer_id = Network.peer_id()
+	local num = 1
+	local profile_by_peer, var_2_3 = self._profile_synchronizer:profile_by_peer(peer_id, num)
 
-	if var_2_2 and var_2_3 then
-		arg_2_0._previous_profile_index = var_2_2
-		arg_2_0._previous_career_index = var_2_3
+	if not profile_by_peer and not var_2_3 then
+		self._previous_profile_index = profile_by_peer
+		self._previous_career_index = var_2_3
 	end
 
 	local var_2_4 = PROFILES_BY_AFFILIATION.tutorial[1]
 
-	arg_2_0._tutorial_profile_index = FindProfileIndex(var_2_4)
-	arg_2_0._tutorial_career_index = 1
-	arg_2_0._local_player_spawned = false
+	self._tutorial_profile_index = FindProfileIndex(var_2_4)
+	self._tutorial_career_index = 1
+	self._local_player_spawned = false
 
-	local var_2_5 = false
+	local flag = false
 
-	arg_2_0._profile_synchronizer:assign_full_profile(var_2_0, var_2_1, arg_2_0._tutorial_profile_index, arg_2_0._tutorial_career_index, var_2_5)
+	self._profile_synchronizer:assign_full_profile(peer_id, num, self._tutorial_profile_index, self._tutorial_career_index, flag)
 end
 
-function GameModeTutorial._switch_back_to_previous_profile(arg_3_0)
-	local var_3_0 = Network.peer_id()
-	local var_3_1 = 1
-	local var_3_2 = arg_3_0._previous_profile_index
-	local var_3_3 = arg_3_0._previous_career_index
+GameModeTutorial._switch_back_to_previous_profile = function (self)
+	-- function 3
+	local peer_id = Network.peer_id()
+	local num = 1
+	local _previous_profile_index = self._previous_profile_index
+	local _previous_career_index = self._previous_career_index
 
-	if var_3_2 and var_3_3 then
-		local var_3_4 = false
+	if not _previous_profile_index and not _previous_career_index then
+		local flag = false
 
-		arg_3_0._profile_synchronizer:assign_full_profile(var_3_0, var_3_1, var_3_2, var_3_3, var_3_4)
+		self._profile_synchronizer:assign_full_profile(peer_id, num, _previous_profile_index, _previous_career_index, flag)
 	else
-		arg_3_0._profile_synchronizer:unassign_profiles_of_peer(var_3_0, var_3_1)
+		self._profile_synchronizer:unassign_profiles_of_peer(peer_id, num)
 	end
 end
 
-function GameModeTutorial.register_rpcs(arg_4_0, arg_4_1, arg_4_2)
-	GameModeTutorial.super.register_rpcs(arg_4_0, arg_4_1, arg_4_2)
-	arg_4_0._adventure_spawning:register_rpcs(arg_4_1, arg_4_2)
+GameModeTutorial.register_rpcs = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	GameModeTutorial.super.register_rpcs(self, arg_4_1, arg_4_2)
+	self._adventure_spawning:register_rpcs(arg_4_1, arg_4_2)
 end
 
-function GameModeTutorial.unregister_rpcs(arg_5_0)
-	arg_5_0._adventure_spawning:unregister_rpcs()
-	GameModeTutorial.super.unregister_rpcs(arg_5_0)
+GameModeTutorial.unregister_rpcs = function (self)
+	-- function 5
+	self._adventure_spawning:unregister_rpcs()
+	GameModeTutorial.super.unregister_rpcs(self)
 end
 
-function GameModeTutorial.player_entered_game_session(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+GameModeTutorial.player_entered_game_session = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	-- function 6
 	GameModeTutorial.super.player_entered_game_session(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 
-	local var_6_0, var_6_1 = Managers.party:get_party_from_player_id(arg_6_1, arg_6_2)
+	local get_party_from_player_id, var_6_1 = Managers.party:get_party_from_player_id(arg_6_1, arg_6_2)
 
 	if var_6_1 ~= 1 then
-		local var_6_2 = 1
+		local num = 1
 
-		Managers.party:request_join_party(arg_6_1, arg_6_2, var_6_2)
+		Managers.party:request_join_party(arg_6_1, arg_6_2, num)
 	end
 end
 
-function GameModeTutorial.event_local_player_spawned(arg_7_0, arg_7_1)
-	arg_7_0._local_player_spawned = true
-	arg_7_0._is_initial_spawn = arg_7_1
+GameModeTutorial.event_local_player_spawned = function (self, arg_7_1)
+	-- function 7
+	self._local_player_spawned = true
+	self._is_initial_spawn = arg_7_1
 end
 
-function GameModeTutorial.destroy(arg_8_0)
-	arg_8_0:_switch_back_to_previous_profile()
+GameModeTutorial.destroy = function (self)
+	-- function 8
+	self:_switch_back_to_previous_profile()
 end
 
-function GameModeTutorial.cleanup_game_mode_units(arg_9_0)
-	arg_9_0:_clear_bots()
+GameModeTutorial.cleanup_game_mode_units = function (self)
+	-- function 9
+	self:_clear_bots()
 end
 
-function GameModeTutorial._clear_bots(arg_10_0)
-	local var_10_0 = arg_10_0._bot_players
+GameModeTutorial._clear_bots = function (self)
+	-- function 10
+	local _bot_players = self._bot_players
 
-	for iter_10_0 = #var_10_0, 1, -1 do
-		arg_10_0:_remove_bot(var_10_0[iter_10_0])
+	for i = #_bot_players, 1, -1 do
+		self:_remove_bot(_bot_players[i])
 	end
 end
 
-function GameModeTutorial.add_bot(arg_11_0, arg_11_1, arg_11_2)
-	local var_11_0 = arg_11_0._bot_players
-	local var_11_1 = 1
-	local var_11_2 = arg_11_0:_add_bot_to_party(var_11_1, arg_11_1, arg_11_2)
+GameModeTutorial.add_bot = function (self, arg_11_1, arg_11_2)
+	-- function 11
+	local _bot_players = self._bot_players
+	local num = 1
+	local _add_bot_to_party = self:_add_bot_to_party(num, arg_11_1, arg_11_2)
 
-	var_11_0[#var_11_0 + 1] = var_11_2
+	_bot_players[#_bot_players + 1] = _add_bot_to_party
 end
 
-function GameModeTutorial._remove_bot(arg_12_0, arg_12_1)
-	local var_12_0 = arg_12_0._bot_players
-	local var_12_1 = table.index_of(var_12_0, arg_12_1)
+GameModeTutorial._remove_bot = function (self, arg_12_1)
+	-- function 12
+	local _bot_players = self._bot_players
+	local index_of = table.index_of(_bot_players, arg_12_1)
 
-	arg_12_0:_remove_bot_instant(arg_12_1)
+	self:_remove_bot_instant(arg_12_1)
 
-	local var_12_2 = #var_12_0
+	local count = #_bot_players
 
-	var_12_0[var_12_1] = var_12_0[var_12_2]
-	var_12_0[var_12_2] = nil
+	_bot_players[index_of] = _bot_players[count]
+	_bot_players[count] = nil
 end
 
-function GameModeTutorial.update(arg_13_0, arg_13_1, arg_13_2)
-	arg_13_0._adventure_spawning:update(arg_13_1, arg_13_2)
+GameModeTutorial.update = function (self, arg_13_1, arg_13_2)
+	-- function 13
+	self._adventure_spawning:update(arg_13_1, arg_13_2)
 end
 
-function GameModeTutorial.server_update(arg_14_0, arg_14_1, arg_14_2)
-	arg_14_0._adventure_spawning:server_update(arg_14_1, arg_14_2)
+GameModeTutorial.server_update = function (self, arg_14_1, arg_14_2)
+	-- function 14
+	self._adventure_spawning:server_update(arg_14_1, arg_14_2)
 end
 
-function GameModeTutorial.evaluate_end_conditions(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
-	if var_0_0 then
-		arg_15_0:complete_level()
+GameModeTutorial.evaluate_end_conditions = function (self, arg_15_1, arg_15_2, arg_15_3)
+	-- function 15
+	if not flag then
+		self:complete_level()
 
-		var_0_0 = false
+		flag = false
 	end
 end
 
-function GameModeTutorial.mutators(arg_16_0)
+GameModeTutorial.mutators = function (arg_16_0)
+	-- function 16
 	return
 end
 
-function GameModeTutorial.complete_level(arg_17_0)
+GameModeTutorial.complete_level = function (self)
+	-- function 17
 	StatisticsUtil.register_complete_tutorial(Managers.state.game_mode.statistics_db)
 
-	local var_17_0 = Managers.backend
+	local backend = Managers.backend
 
-	var_17_0:get_interface("statistics"):save()
-	var_17_0:commit(true)
+	backend:get_interface("statistics"):save()
+	backend:commit(true)
 
-	arg_17_0._transition = "finish_tutorial"
+	self._transition = "finish_tutorial"
 end
 
-function GameModeTutorial.wanted_transition(arg_18_0)
-	return arg_18_0._transition
+GameModeTutorial.wanted_transition = function (self)
+	-- function 18
+	return self._transition
 end
 
-function GameModeTutorial.COMPLETE_LEVEL(arg_19_0)
-	var_0_0 = true
+GameModeTutorial.COMPLETE_LEVEL = function (arg_19_0)
+	-- function 19
+	flag = true
 end
 
-function GameModeTutorial.game_mode_hud_disabled(arg_20_0)
-	return arg_20_0._hud_disabled
+GameModeTutorial.game_mode_hud_disabled = function (self)
+	-- function 20
+	return self._hud_disabled
 end
 
-function GameModeTutorial.disable_hud(arg_21_0, arg_21_1)
-	arg_21_0._hud_disabled = arg_21_1
+GameModeTutorial.disable_hud = function (self, arg_21_1)
+	-- function 21
+	self._hud_disabled = arg_21_1
 end
 
-function GameModeTutorial.FAIL_LEVEL(arg_22_0)
-	var_0_1 = true
+GameModeTutorial.FAIL_LEVEL = function (arg_22_0)
+	-- function 22
+	flag_2 = true
 end
 
-function GameModeTutorial.disable_player_spawning(arg_23_0)
-	arg_23_0._adventure_spawning:set_spawning_disabled(true)
+GameModeTutorial.disable_player_spawning = function (self)
+	-- function 23
+	self._adventure_spawning:set_spawning_disabled(true)
 end
 
-function GameModeTutorial.enable_player_spawning(arg_24_0, arg_24_1, arg_24_2)
-	arg_24_0._adventure_spawning:set_spawning_disabled(false)
-	arg_24_0._adventure_spawning:force_update_spawn_positions(arg_24_1, arg_24_2)
+GameModeTutorial.enable_player_spawning = function (self, arg_24_1, arg_24_2)
+	-- function 24
+	self._adventure_spawning:set_spawning_disabled(false)
+	self._adventure_spawning:force_update_spawn_positions(arg_24_1, arg_24_2)
 end
 
-function GameModeTutorial.teleport_despawned_players(arg_25_0, arg_25_1)
-	arg_25_0._adventure_spawning:teleport_despawned_players(arg_25_1)
+GameModeTutorial.teleport_despawned_players = function (self, arg_25_1)
+	-- function 25
+	self._adventure_spawning:teleport_despawned_players(arg_25_1)
 end
 
-function GameModeTutorial.flow_callback_add_spawn_point(arg_26_0, arg_26_1)
-	arg_26_0._adventure_spawning:add_spawn_point(arg_26_1)
+GameModeTutorial.flow_callback_add_spawn_point = function (self, arg_26_1)
+	-- function 26
+	self._adventure_spawning:add_spawn_point(arg_26_1)
 end
 
-function GameModeTutorial.set_override_respawn_group(arg_27_0, arg_27_1, arg_27_2)
-	arg_27_0._adventure_spawning:set_override_respawn_group(arg_27_1, arg_27_2)
+GameModeTutorial.set_override_respawn_group = function (self, arg_27_1, arg_27_2)
+	-- function 27
+	self._adventure_spawning:set_override_respawn_group(arg_27_1, arg_27_2)
 end
 
-function GameModeTutorial.set_respawn_group_enabled(arg_28_0, arg_28_1, arg_28_2)
-	arg_28_0._adventure_spawning:set_respawn_group_enabled(arg_28_1, arg_28_2)
+GameModeTutorial.set_respawn_group_enabled = function (self, arg_28_1, arg_28_2)
+	-- function 28
+	self._adventure_spawning:set_respawn_group_enabled(arg_28_1, arg_28_2)
 end
 
-function GameModeTutorial.set_respawn_gate_enabled(arg_29_0, arg_29_1, arg_29_2)
-	arg_29_0._adventure_spawning:set_respawn_gate_enabled(arg_29_1, arg_29_2)
+GameModeTutorial.set_respawn_gate_enabled = function (self, arg_29_1, arg_29_2)
+	-- function 29
+	self._adventure_spawning:set_respawn_gate_enabled(arg_29_1, arg_29_2)
 end
 
-function GameModeTutorial.respawn_unit_spawned(arg_30_0, arg_30_1)
-	arg_30_0._adventure_spawning:respawn_unit_spawned(arg_30_1)
+GameModeTutorial.respawn_unit_spawned = function (self, arg_30_1)
+	-- function 30
+	self._adventure_spawning:respawn_unit_spawned(arg_30_1)
 end
 
-function GameModeTutorial.get_respawn_handler(arg_31_0)
-	return arg_31_0._adventure_spawning:get_respawn_handler()
+GameModeTutorial.get_respawn_handler = function (self)
+	-- function 31
+	return self._adventure_spawning:get_respawn_handler()
 end
 
-function GameModeTutorial.respawn_gate_unit_spawned(arg_32_0, arg_32_1)
-	arg_32_0._adventure_spawning:respawn_gate_unit_spawned(arg_32_1)
+GameModeTutorial.respawn_gate_unit_spawned = function (self, arg_32_1)
+	-- function 32
+	self._adventure_spawning:respawn_gate_unit_spawned(arg_32_1)
 end
 
-function GameModeTutorial.set_respawning_enabled(arg_33_0, arg_33_1)
-	arg_33_0._adventure_spawning:set_respawning_enabled(arg_33_1)
+GameModeTutorial.set_respawning_enabled = function (self, arg_33_1)
+	-- function 33
+	self._adventure_spawning:set_respawning_enabled(arg_33_1)
 end
 
-function GameModeTutorial.remove_respawn_units_due_to_crossroads(arg_34_0, arg_34_1, arg_34_2)
-	arg_34_0._adventure_spawning:remove_respawn_units_due_to_crossroads(arg_34_1, arg_34_2)
+GameModeTutorial.remove_respawn_units_due_to_crossroads = function (self, arg_34_1, arg_34_2)
+	-- function 34
+	self._adventure_spawning:remove_respawn_units_due_to_crossroads(arg_34_1, arg_34_2)
 end
 
-function GameModeTutorial.recalc_respawner_dist_due_to_crossroads(arg_35_0)
-	arg_35_0._adventure_spawning:recalc_respawner_dist_due_to_crossroads()
+GameModeTutorial.recalc_respawner_dist_due_to_crossroads = function (self)
+	-- function 35
+	self._adventure_spawning:recalc_respawner_dist_due_to_crossroads()
 end
 
-function GameModeTutorial.force_respawn_dead_players(arg_36_0)
-	arg_36_0._adventure_spawning:force_respawn_dead_players()
+GameModeTutorial.force_respawn_dead_players = function (self)
+	-- function 36
+	self._adventure_spawning:force_respawn_dead_players()
 end
 
-function GameModeTutorial.get_active_respawn_units(arg_37_0)
-	return arg_37_0._adventure_spawning:get_active_respawn_units()
+GameModeTutorial.get_active_respawn_units = function (self)
+	-- function 37
+	return self._adventure_spawning:get_active_respawn_units()
 end
 
-function GameModeTutorial.get_available_and_active_respawn_units(arg_38_0)
-	return arg_38_0._adventure_spawning:get_available_and_active_respawn_units()
+GameModeTutorial.get_available_and_active_respawn_units = function (self)
+	-- function 38
+	return self._adventure_spawning:get_available_and_active_respawn_units()
 end
 
-function GameModeTutorial.get_end_screen_config(arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+GameModeTutorial.get_end_screen_config = function (self, arg_39_1, arg_39_2, arg_39_3)
+	-- function 39
 	local var_39_0
-	local var_39_1 = {}
+	local tbl = {}
 
-	if arg_39_1 then
+	if not arg_39_1 then
 		var_39_0 = "victory"
 
-		local var_39_2 = arg_39_3:stats_id()
-		local var_39_3 = arg_39_0._statistics_db
-		local var_39_4 = arg_39_0._level_key
-		local var_39_5 = LevelUnlockUtils.completed_level_difficulty_index(var_39_3, var_39_2, var_39_4) or 0
+		local stats_id = arg_39_3:stats_id()
+		local _statistics_db = self._statistics_db
+		local _level_key = self._level_key
+		local completed_level_difficulty_index = LevelUnlockUtils.completed_level_difficulty_index(_statistics_db, stats_id, _level_key)
 
-		var_39_1 = {
-			level_key = var_39_4,
-			previous_completed_difficulty_index = var_39_5
+		completed_level_difficulty_index = completed_level_difficulty_index or 0
+		tbl = {
+			level_key = _level_key,
+			previous_completed_difficulty_index = completed_level_difficulty_index
 		}
 	else
 		var_39_0 = "defeat"
 	end
 
-	return var_39_0, var_39_1
+	return var_39_0, tbl
 end
 
-function GameModeTutorial.ended(arg_40_0, arg_40_1)
-	if not arg_40_0._network_server:are_all_peers_ingame() then
-		arg_40_0._network_server:disconnect_joining_peers()
+GameModeTutorial.ended = function (self, arg_40_1)
+	-- function 40
+	if not self._network_server:are_all_peers_ingame() then
+		self._network_server:disconnect_joining_peers()
 	end
 end
 
-function GameModeTutorial.local_player_ready_to_start(arg_41_0, arg_41_1)
-	if not arg_41_0._local_player_spawned then
+GameModeTutorial.local_player_ready_to_start = function (self, arg_41_1)
+	-- function 41
+	if not self._local_player_spawned then
 		return false
 	end
 
 	return true
 end
 
-function GameModeTutorial.local_player_game_starts(arg_42_0, arg_42_1, arg_42_2)
-	if arg_42_0._is_initial_spawn then
-		LevelHelper:flow_event(arg_42_0._world, "local_player_spawned")
+GameModeTutorial.local_player_game_starts = function (self, arg_42_1, arg_42_2)
+	-- function 42
+	if not self._is_initial_spawn then
+		LevelHelper:flow_event(self._world, "local_player_spawned")
 
-		if Development.parameter("attract_mode") then
-			LevelHelper:flow_event(arg_42_0._world, "start_benchmark")
+		if not Development.parameter("attract_mode") then
+			LevelHelper:flow_event(self._world, "start_benchmark")
 		else
-			LevelHelper:flow_event(arg_42_0._world, "level_start_local_player_spawned")
+			LevelHelper:flow_event(self._world, "level_start_local_player_spawned")
 		end
 	end
 end

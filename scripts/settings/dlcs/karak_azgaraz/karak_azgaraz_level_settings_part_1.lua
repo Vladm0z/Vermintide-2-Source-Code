@@ -1,10 +1,10 @@
 -- chunkname: @scripts/settings/dlcs/karak_azgaraz/karak_azgaraz_level_settings_part_1.lua
 
-local var_0_0 = DLCSettings.karak_azgaraz_part_1
+local karak_azgaraz_part_1 = DLCSettings.karak_azgaraz_part_1
 
-var_0_0.level_settings = "levels/honduras_dlcs/karak_azgaraz/level_settings_karak_azgaraz_part_1"
-var_0_0.level_unlock_settings = "levels/honduras_dlcs/karak_azgaraz/level_unlock_settings_karak_azgaraz"
-var_0_0.missions = {
+karak_azgaraz_part_1.level_settings = "levels/honduras_dlcs/karak_azgaraz/level_settings_karak_azgaraz_part_1"
+karak_azgaraz_part_1.level_unlock_settings = "levels/honduras_dlcs/karak_azgaraz/level_unlock_settings_karak_azgaraz"
+karak_azgaraz_part_1.missions = {
 	dwarf_interior_find_war_party = {
 		mission_template_name = "goal",
 		text = "dlc1_5_dwarf_interior_find_war_party_text"

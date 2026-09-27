@@ -4,177 +4,241 @@ require("scripts/ui/dlc_upsell/common_popup")
 
 ActiveEventPopup = class(ActiveEventPopup, CommonPopup)
 
-function ActiveEventPopup.create_ui_elements(arg_1_0)
-	ActiveEventPopup.super.create_ui_elements(arg_1_0)
+ActiveEventPopup.create_ui_elements = function (self)
+	-- function 1
+	ActiveEventPopup.super.create_ui_elements(self)
 
-	local var_1_0 = arg_1_0._common_settings
+	local _common_settings = self._common_settings
 
-	arg_1_0._widgets_by_name.window_background.content.texture_id = var_1_0.background_texture
-	arg_1_0._widgets_by_name.window_background.offset[1] = 100
+	self._widgets_by_name.window_background.content.texture_id = _common_settings.background_texture
+	self._widgets_by_name.window_background.offset[1] = 100
 
-	local var_1_1 = var_1_0.body_text and Localize(var_1_0.body_text) or ""
+	local var_1_1
 
-	if var_1_1 ~= "" and var_1_0.event_name then
-		var_1_1 = string.format(var_1_1, var_1_0.event_name)
+	if not _common_settings.body_text then
+		var_1_1 = Localize(_common_settings.body_text)
+
+		if not var_1_1 then
+			-- Nothing
+		end
 	end
 
-	if var_1_0.logo_data then
-		local var_1_2 = var_1_0.logo_data
+	var_1_1 = ""
 
-		arg_1_0._widgets_by_name.logo.content.texture_id = var_1_2.logo_texture and var_1_2.logo_texture or "hero_view_home_logo"
-		arg_1_0._widgets_by_name.logo.style.texture_id.texture_size = var_1_2.size and var_1_2.size or {
+	::label_1_0::
+
+	if var_1_1 == "" or not _common_settings.event_name then
+		var_1_1 = string.format(var_1_1, _common_settings.event_name)
+	end
+
+	if not _common_settings.logo_data then
+		local logo_data = _common_settings.logo_data
+		local content = self._widgets_by_name.logo.content
+		local logo_texture
+
+		if not logo_data.logo_texture then
+			logo_texture = logo_data.logo_texture
+
+			if not logo_texture then
+				-- Nothing
+			end
+		end
+
+		logo_texture = "hero_view_home_logo"
+
+		::label_1_1::
+
+		content.texture_id = logo_texture
+
+		local texture_id = self._widgets_by_name.logo.style.texture_id
+		local size
+
+		if not logo_data.size then
+			size = logo_data.size
+
+			if not size then
+				-- Nothing
+			end
+		end
+
+		size = {
 			468,
 			236.39999999999998
 		}
-		arg_1_0._widgets_by_name.logo.offset = var_1_2.offset and var_1_2.offset or {
+
+		::label_1_2::
+
+		texture_id.texture_size = size
+
+		local logo = self._widgets_by_name.logo
+		local offset
+
+		if not logo_data.offset then
+			offset = logo_data.offset
+
+			if not offset then
+				-- Nothing
+			end
+		end
+
+		offset = {
 			-234,
 			-118.19999999999999,
 			1
 		}
+
+		::label_1_3::
+
+		logo.offset = offset
 	end
 
-	arg_1_0._widgets_by_name.body_text.content.text = var_1_1
-	arg_1_0._widgets_by_name.close_button.content.title_text = Localize(var_1_0.button_text)
+	self._widgets_by_name.body_text.content.text = var_1_1
+	self._widgets_by_name.close_button.content.title_text = Localize(_common_settings.button_text)
 
-	if var_1_0.top_detail_texture then
-		arg_1_0._widgets_by_name.window_top_detail.content.texture_id = var_1_0.top_detail_texture.texture
-		arg_1_0._widgets_by_name.window_top_detail.style.texture_id.size = var_1_0.top_detail_texture.size
-		arg_1_0._widgets_by_name.window_top_detail.style.texture_id.offset = var_1_0.top_detail_texture.offset
+	if not _common_settings.top_detail_texture then
+		self._widgets_by_name.window_top_detail.content.texture_id = _common_settings.top_detail_texture.texture
+		self._widgets_by_name.window_top_detail.style.texture_id.size = _common_settings.top_detail_texture.size
+		self._widgets_by_name.window_top_detail.style.texture_id.offset = _common_settings.top_detail_texture.offset
 	end
 
-	if var_1_0.action_buttons then
-		arg_1_0._action_button_widgets = {}
+	if not _common_settings.action_buttons then
+		self._action_button_widgets = {}
 
-		local var_1_3 = var_1_0.action_buttons
+		local action_buttons = _common_settings.action_buttons
 
-		for iter_1_0 = 1, #var_1_3 do
-			local var_1_4 = var_1_3[iter_1_0]
-			local var_1_5 = var_1_4.button_text
-			local var_1_6 = {
+		for i = 1, #action_buttons do
+			local var_1_10 = action_buttons[i]
+			local button_text = var_1_10.button_text
+			local tbl = {
 				360,
 				60
 			}
-			local var_1_7 = arg_1_0._definitions.create_simple_action_button("action_buttons_anchor", var_1_6, var_1_5, "button_frame_02_gold")
-			local var_1_8 = UIWidget.init(var_1_7)
+			local create_simple_action_button = self._definitions.create_simple_action_button("action_buttons_anchor", tbl, button_text, "button_frame_02_gold")
+			local var_1_14 = UIWidget.init(create_simple_action_button)
 
-			var_1_8.offset[1] = -(var_1_6[1] * 0.5)
-			var_1_8.offset[2] = 80 * (#var_1_3 - iter_1_0)
-			var_1_8.content.on_pressed = callback(var_1_4.on_pressed)
-			arg_1_0._action_button_widgets[#arg_1_0._action_button_widgets + 1] = var_1_8
+			var_1_14.offset[1] = -(tbl[1] * 0.5)
+			var_1_14.offset[2] = 80 * (#action_buttons - i)
+			var_1_14.content.on_pressed = callback(var_1_10.on_pressed)
+			self._action_button_widgets[#self._action_button_widgets + 1] = var_1_14
 		end
 	end
 
-	arg_1_0._selected_button_idx = #arg_1_0._action_button_widgets
-	arg_1_0._buttons_amount = #arg_1_0._action_button_widgets
-	arg_1_0._action_button_widgets[#arg_1_0._action_button_widgets].content.button_hotspot.is_selected = true
+	self._selected_button_idx = #self._action_button_widgets
+	self._buttons_amount = #self._action_button_widgets
+	self._action_button_widgets[#self._action_button_widgets].content.button_hotspot.is_selected = true
 end
 
-function ActiveEventPopup.update(arg_2_0, arg_2_1)
-	if arg_2_0:should_show() and not arg_2_0._has_widget_been_closed then
-		arg_2_0:show()
+ActiveEventPopup.update = function (self, arg_2_1)
+	-- function 2
+	if not (not self:should_show() and self._has_widget_been_closed) then
+		self:show()
 	end
 
-	ActiveEventPopup.super.update(arg_2_0, arg_2_1)
+	ActiveEventPopup.super.update(self, arg_2_1)
 end
 
-function ActiveEventPopup.draw(arg_3_0, arg_3_1)
-	ActiveEventPopup.super.draw(arg_3_0, arg_3_1)
+ActiveEventPopup.draw = function (self, arg_3_1)
+	-- function 3
+	ActiveEventPopup.super.draw(self, arg_3_1)
 
-	local var_3_0 = arg_3_0._ui_top_renderer
-	local var_3_1 = arg_3_0._ui_scenegraph
-	local var_3_2 = arg_3_0:_get_input_service()
-	local var_3_3 = arg_3_0._render_settings
-	local var_3_4 = Managers.input:is_device_active("gamepad")
+	local _ui_top_renderer = self._ui_top_renderer
+	local _ui_scenegraph = self._ui_scenegraph
+	local _get_input_service = self:_get_input_service()
+	local _render_settings = self._render_settings
+	local is_device_active = Managers.input:is_device_active("gamepad")
 
-	UIRenderer.begin_pass(var_3_0, var_3_1, var_3_2, arg_3_1, nil, var_3_3)
+	UIRenderer.begin_pass(_ui_top_renderer, _ui_scenegraph, _get_input_service, arg_3_1, nil, _render_settings)
 
-	if arg_3_0._action_button_widgets then
-		UIRenderer.draw_all_widgets(var_3_0, arg_3_0._action_button_widgets)
+	if not self._action_button_widgets then
+		UIRenderer.draw_all_widgets(_ui_top_renderer, self._action_button_widgets)
 	end
 
-	UIRenderer.end_pass(var_3_0)
-	arg_3_0:_update_scrolling_background(arg_3_1)
+	UIRenderer.end_pass(_ui_top_renderer)
+	self:_update_scrolling_background(arg_3_1)
 end
 
-function ActiveEventPopup._handle_input(arg_4_0, arg_4_1)
-	local var_4_0 = arg_4_0:_get_input_service()
-	local var_4_1 = arg_4_0._widgets_by_name
-	local var_4_2 = Managers.input:is_device_active("gamepad")
+ActiveEventPopup._handle_input = function (self, arg_4_1)
+	-- function 4
+	local _get_input_service = self:_get_input_service()
+	local _widgets_by_name = self._widgets_by_name
+	local is_device_active = Managers.input:is_device_active("gamepad")
 
-	if var_4_2 then
-		arg_4_0:_handle_gamepad_selection(arg_4_1, var_4_0)
+	if not is_device_active then
+		self:_handle_gamepad_selection(arg_4_1, _get_input_service)
 	else
-		arg_4_0:_handle_mouse_selection(arg_4_1, var_4_0)
+		self:_handle_mouse_selection(arg_4_1, _get_input_service)
 	end
 
-	for iter_4_0, iter_4_1 in ipairs(arg_4_0._action_button_widgets) do
-		iter_4_1.content.button_hotspot.is_selected = var_4_2 and iter_4_0 == arg_4_0._selected_button_idx
+	for i, v in ipairs(self._action_button_widgets) do
+		v.content.button_hotspot.is_selected = not is_device_active and i == self._selected_button_idx
 	end
 
-	if var_4_2 and var_4_0:get("confirm_press", true) then
-		arg_4_0:play_sound("Play_gui_event_ui_select")
+	if not is_device_active and not _get_input_service:get("confirm_press", true) then
+		self:play_sound("Play_gui_event_ui_select")
 
-		local var_4_3 = arg_4_0._action_button_widgets[arg_4_0._selected_button_idx].content
+		local content = self._action_button_widgets[self._selected_button_idx].content
 
-		if var_4_3.on_pressed then
-			local var_4_4 = {
-				on_exit_func = var_4_3.on_pressed
+		if not content.on_pressed then
+			local tbl = {
+				on_exit_func = content.on_pressed
 			}
 
-			arg_4_0:_on_close(var_4_4)
+			self:_on_close(tbl)
 		end
 	end
 
-	if not arg_4_0._has_widget_been_closed and (UIUtils.is_button_pressed(var_4_1.close_button) or var_4_0:get("back", true) or var_4_0:get("toggle_menu", true)) then
-		arg_4_0:_on_close()
+	if self._has_widget_been_closed or UIUtils.is_button_pressed(_widgets_by_name.close_button) or _get_input_service:get("back", true) or not _get_input_service:get("toggle_menu", true) then
+		self:_on_close()
 
 		return
 	end
 end
 
-function ActiveEventPopup._handle_gamepad_selection(arg_5_0, arg_5_1, arg_5_2)
-	if arg_5_0._action_button_widgets then
-		local var_5_0 = arg_5_0._action_button_widgets
-		local var_5_1 = arg_5_0._selected_button_idx
+ActiveEventPopup._handle_gamepad_selection = function (self, arg_5_1, arg_5_2)
+	-- function 5
+	if not self._action_button_widgets then
+		local _action_button_widgets = self._action_button_widgets
+		local _selected_button_idx = self._selected_button_idx
 
-		if arg_5_2:get("move_up") then
-			var_5_1 = var_5_1 + 1 <= arg_5_0._buttons_amount and var_5_1 + 1 or 1
+		if not arg_5_2:get("move_up") then
+			_selected_button_idx = not (_selected_button_idx + 1 <= self._buttons_amount) or not (_selected_button_idx + 1) or 1
 
-			arg_5_0:play_sound("play_gui_start_menu_button_hover")
-		elseif arg_5_2:get("move_down") then
-			var_5_1 = var_5_1 - 1 >= 1 and var_5_1 - 1 or arg_5_0._buttons_amount
+			self:play_sound("play_gui_start_menu_button_hover")
+		elseif not arg_5_2:get("move_down") then
+			_selected_button_idx = not (_selected_button_idx - 1 >= 1) or not (_selected_button_idx - 1) or self._buttons_amount
 
-			arg_5_0:play_sound("play_gui_start_menu_button_hover")
+			self:play_sound("play_gui_start_menu_button_hover")
 		end
 
-		if var_5_1 ~= arg_5_0._selected_button_idx then
-			arg_5_0._selected_button_idx = var_5_1
+		if _selected_button_idx ~= self._selected_button_idx then
+			self._selected_button_idx = _selected_button_idx
 		end
 	end
 end
 
-function ActiveEventPopup._handle_mouse_selection(arg_6_0, arg_6_1, arg_6_2)
-	if arg_6_0._action_button_widgets then
-		local var_6_0 = arg_6_0._action_button_widgets
+ActiveEventPopup._handle_mouse_selection = function (self, arg_6_1, arg_6_2)
+	-- function 6
+	if not self._action_button_widgets then
+		local _action_button_widgets = self._action_button_widgets
 
-		for iter_6_0 = 1, #var_6_0 do
-			local var_6_1 = var_6_0[iter_6_0]
+		for i = 1, #_action_button_widgets do
+			local var_6_1 = _action_button_widgets[i]
 
-			if UIUtils.is_button_hover_enter(var_6_1) then
-				arg_6_0:play_sound("play_gui_start_menu_button_hover")
+			if not UIUtils.is_button_hover_enter(var_6_1) then
+				self:play_sound("play_gui_start_menu_button_hover")
 			end
 
-			if UIUtils.is_button_pressed(var_6_1) then
-				arg_6_0:play_sound("Play_gui_event_ui_select")
+			if not UIUtils.is_button_pressed(var_6_1) then
+				self:play_sound("Play_gui_event_ui_select")
 
-				local var_6_2 = var_6_1.content
+				local content = var_6_1.content
 
-				if var_6_2.on_pressed then
-					local var_6_3 = {
-						on_exit_func = var_6_2.on_pressed
+				if not content.on_pressed then
+					local tbl = {
+						on_exit_func = content.on_pressed
 					}
 
-					arg_6_0:_on_close(var_6_3)
+					self:_on_close(tbl)
 
 					return
 				end
@@ -183,65 +247,90 @@ function ActiveEventPopup._handle_mouse_selection(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function ActiveEventPopup._on_close(arg_7_0, arg_7_1)
-	arg_7_0._has_widget_been_closed = true
+ActiveEventPopup._on_close = function (self, arg_7_1)
+	-- function 7
+	self._has_widget_been_closed = true
 
-	arg_7_0:release_input()
-	arg_7_0:hide(arg_7_1)
+	self:release_input()
+	self:hide(arg_7_1)
 end
 
-function ActiveEventPopup.show(arg_8_0)
-	ActiveEventPopup.super.show(arg_8_0)
-	arg_8_0:_start_transition_animation("on_enter")
-	arg_8_0:play_sound("Play_gui_event_ui_open")
+ActiveEventPopup.show = function (self)
+	-- function 8
+	ActiveEventPopup.super.show(self)
+	self:_start_transition_animation("on_enter")
+	self:play_sound("Play_gui_event_ui_open")
 
-	local var_8_0 = Managers.world:world("level_world")
+	local world = Managers.world:world("level_world")
 
-	World.set_data(var_8_0, "fullscreen_blur", 0.5)
+	World.set_data(world, "fullscreen_blur", 0.5)
 end
 
-function ActiveEventPopup.hide(arg_9_0, arg_9_1)
-	arg_9_0._exit_anim_id = arg_9_0:_start_transition_animation("on_exit", arg_9_1)
+ActiveEventPopup.hide = function (self, arg_9_1)
+	-- function 9
+	self._exit_anim_id = self:_start_transition_animation("on_exit", arg_9_1)
 
-	local var_9_0 = Managers.world:world("level_world")
+	local world = Managers.world:world("level_world")
 
-	World.set_data(var_9_0, "fullscreen_blur", nil)
+	World.set_data(world, "fullscreen_blur", nil)
 end
 
-function ActiveEventPopup._start_transition_animation(arg_10_0, arg_10_1, arg_10_2)
-	local var_10_0 = {
-		wwise_world = arg_10_0._wwise_world,
-		render_settings = arg_10_0._render_settings
+ActiveEventPopup._start_transition_animation = function (self, arg_10_1, arg_10_2)
+	-- function 10
+	local tbl = {
+		wwise_world = self._wwise_world,
+		render_settings = self._render_settings
 	}
 
-	if arg_10_2 then
-		for iter_10_0, iter_10_1 in pairs(arg_10_2) do
-			var_10_0[iter_10_0] = iter_10_1
+	if not arg_10_2 then
+		for k, v in pairs(arg_10_2) do
+			tbl[k] = v
 		end
 	end
 
-	return arg_10_0._ui_animator:start_animation(arg_10_1, nil, arg_10_0._definitions.scenegraph_definition, var_10_0)
+	return self._ui_animator:start_animation(arg_10_1, nil, self._definitions.scenegraph_definition, tbl)
 end
 
-function ActiveEventPopup._update_animations(arg_11_0, arg_11_1)
-	ActiveEventPopup.super._update_animations(arg_11_0, arg_11_1)
+ActiveEventPopup._update_animations = function (self, arg_11_1)
+	-- function 11
+	ActiveEventPopup.super._update_animations(self, arg_11_1)
 
-	if arg_11_0._exit_anim_id and arg_11_0._ui_animator:is_animation_completed(arg_11_0._exit_anim_id) then
-		arg_11_0._is_visible = false
+	if not self._exit_anim_id and not self._ui_animator:is_animation_completed(self._exit_anim_id) then
+		self._is_visible = false
 	end
 
-	local var_11_0 = arg_11_0._widgets_by_name
+	local _widgets_by_name = self._widgets_by_name
 
-	UIWidgetUtils.animate_default_button(var_11_0.close_button, arg_11_1)
+	UIWidgetUtils.animate_default_button(_widgets_by_name.close_button, arg_11_1)
 end
 
-function ActiveEventPopup.should_show(arg_12_0)
-	return arg_12_0._ui_context.is_in_inn and Managers.popup:has_popup() == false and arg_12_0._ui_context.ingame_ui.current_view == nil and arg_12_0._ui_context.ingame_ui.has_left_menu and not arg_12_0._is_visible
+ActiveEventPopup.should_show = function (self)
+	-- function 12
+	local is_in_inn = self._ui_context.is_in_inn
+
+	if not is_in_inn then
+		if not (Managers.popup:has_popup() ~= false or self._ui_context.ingame_ui.current_view ~= nil) then
+			is_in_inn = self._ui_context.ingame_ui.has_left_menu
+
+			if not is_in_inn then
+				is_in_inn = not self._is_visible
+			end
+		else
+			is_in_inn = false
+		end
+	end
+
+	if false then
+		is_in_inn = true
+	end
+
+	return is_in_inn
 end
 
-function ActiveEventPopup._update_scrolling_background(arg_13_0, arg_13_1)
-	local var_13_0 = arg_13_0._widgets_by_name.window_background
-	local var_13_1 = 100 + 150 * math.sin(Managers.time:time("ui") * 0.1)
+ActiveEventPopup._update_scrolling_background = function (self, arg_13_1)
+	-- function 13
+	local window_background = self._widgets_by_name.window_background
+	local num = 100 + 150 * math.sin(Managers.time:time("ui") * 0.1)
 
-	var_13_0.offset[1] = var_13_1
+	window_background.offset[1] = num
 end

@@ -719,15 +719,15 @@ HordeWaveCompositions = {
 	}
 }
 
-for iter_0_0, iter_0_1 in pairs(DLCSettings) do
-	local var_0_0 = iter_0_1.horde_compositions_pacing_file
+for k, v in pairs(DLCSettings) do
+	local horde_compositions_pacing_file = v.horde_compositions_pacing_file
 
-	if var_0_0 then
-		local var_0_1 = dofile(var_0_0)
+	if not horde_compositions_pacing_file then
+		local var_0_1 = dofile(horde_compositions_pacing_file)
 
-		if var_0_1 then
-			for iter_0_2, iter_0_3 in pairs(var_0_1) do
-				HordeCompositionsPacing[iter_0_2] = iter_0_3
+		if not var_0_1 then
+			for k_2, v_2 in pairs(var_0_1) do
+				HordeCompositionsPacing[k_2] = v_2
 			end
 		end
 	end

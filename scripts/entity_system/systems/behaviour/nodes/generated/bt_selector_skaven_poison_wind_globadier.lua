@@ -2,185 +2,196 @@
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
-local var_0_0 = Unit.alive
-local var_0_1 = Profiler
+local alive = Unit.alive
+local Profiler = Profiler
 
-local function var_0_2()
+local function fn()
+	-- function 1
 	return
 end
 
 BTSelector_skaven_poison_wind_globadier = class(BTSelector_skaven_poison_wind_globadier, BTNode)
 BTSelector_skaven_poison_wind_globadier.name = "BTSelector_skaven_poison_wind_globadier"
 
-function BTSelector_skaven_poison_wind_globadier.init(arg_2_0, ...)
-	BTSelector_skaven_poison_wind_globadier.super.init(arg_2_0, ...)
+BTSelector_skaven_poison_wind_globadier.init = function (self, ...)
+	-- function 2
+	BTSelector_skaven_poison_wind_globadier.super.init(self, ...)
 
-	arg_2_0._children = {}
+	self._children = {}
 end
 
-function BTSelector_skaven_poison_wind_globadier.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
-	arg_3_0:set_running_child(arg_3_1, arg_3_2, arg_3_3, nil, arg_3_4)
+BTSelector_skaven_poison_wind_globadier.leave = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	-- function 3
+	self:set_running_child(arg_3_1, arg_3_2, arg_3_3, nil, arg_3_4)
 end
 
-function BTSelector_skaven_poison_wind_globadier.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-	local var_4_0 = var_0_1.start
-	local var_4_1 = var_0_1.stop
-	local var_4_2 = arg_4_0:current_running_child(arg_4_2)
-	local var_4_3 = arg_4_0._children
-	local var_4_4 = var_4_3[1]
+BTSelector_skaven_poison_wind_globadier.run = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	-- function 4
+	local start = Profiler.start
+	local stop = Profiler.stop
+	local current_running_child = self:current_running_child(arg_4_2)
+	local _children = self._children
+	local var_4_4 = _children[1]
+	local stagger = arg_4_2.stagger
 
-	if arg_4_2.stagger and arg_4_2.suicide_run ~= nil and arg_4_2.suicide_run.explosion_started then
-		arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_4, "aborted")
+	stagger = not stagger and arg_4_2.suicide_run == nil or arg_4_2.suicide_run.explosion_started
 
-		local var_4_5, var_4_6 = var_4_4:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	if not stagger then
+		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_4, "aborted")
 
-		if var_4_5 ~= "running" then
-			arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, var_4_5)
+		local run, var_4_7 = var_4_4:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+
+		if run ~= "running" then
+			self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run)
 		end
 
-		if var_4_5 ~= "failed" then
-			return var_4_5, var_4_6
+		if run ~= "failed" then
+			return run, var_4_7
 		end
-	elseif var_4_4 == var_4_2 then
-		arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
+	elseif var_4_4 == current_running_child then
+		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
 	end
 
-	local var_4_7 = var_4_3[2]
-	local var_4_8
+	local var_4_8 = _children[2]
+	local var_4_9
 
-	if arg_4_2.stagger then
-		if arg_4_2.stagger_prohibited then
+	if not arg_4_2.stagger then
+		if not arg_4_2.stagger_prohibited then
 			arg_4_2.stagger = false
 		else
-			var_4_8 = true
+			var_4_9 = true
 		end
 	end
 
-	if var_4_8 then
-		arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_7, "aborted")
+	if not var_4_9 then
+		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_8, "aborted")
 
-		local var_4_9, var_4_10 = var_4_7:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+		local run_2, var_4_11 = var_4_8:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 
-		if var_4_9 ~= "running" then
-			arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, var_4_9)
+		if run_2 ~= "running" then
+			self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run_2)
 		end
 
-		if var_4_9 ~= "failed" then
-			return var_4_9, var_4_10
+		if run_2 ~= "failed" then
+			return run_2, var_4_11
 		end
-	elseif var_4_7 == var_4_2 then
-		arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
+	elseif var_4_8 == current_running_child then
+		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
 	end
 
-	local var_4_11 = var_4_3[3]
+	local var_4_12 = _children[3]
 
-	if arg_4_2.spawn then
-		arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_11, "aborted")
+	if not arg_4_2.spawn then
+		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_12, "aborted")
 
-		local var_4_12, var_4_13 = var_4_11:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+		local run_3, var_4_14 = var_4_12:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 
-		if var_4_12 ~= "running" then
-			arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, var_4_12)
+		if run_3 ~= "running" then
+			self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run_3)
 		end
 
-		if var_4_12 ~= "failed" then
-			return var_4_12, var_4_13
+		if run_3 ~= "failed" then
+			return run_3, var_4_14
 		end
-	elseif var_4_11 == var_4_2 then
-		arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
+	elseif var_4_12 == current_running_child then
+		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
 	end
 
-	local var_4_14 = var_4_3[4]
+	local var_4_15 = _children[4]
 
-	if arg_4_2.in_vortex then
-		arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_14, "aborted")
+	if not arg_4_2.in_vortex then
+		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_15, "aborted")
 
-		local var_4_15, var_4_16 = var_4_14:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+		local run_4, var_4_17 = var_4_15:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 
-		if var_4_15 ~= "running" then
-			arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, var_4_15)
-		end
-
-		if var_4_15 ~= "failed" then
-			return var_4_15, var_4_16
-		end
-	elseif var_4_14 == var_4_2 then
-		arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
-	end
-
-	local var_4_17 = var_4_3[5]
-	local var_4_18
-	local var_4_19 = arg_4_2.next_smart_object_data
-
-	if not (var_4_19.next_smart_object_id ~= nil) then
-		var_4_18 = false
-	end
-
-	local var_4_20 = arg_4_2.is_smart_objecting
-	local var_4_21 = Managers.state.entity:system("nav_graph_system")
-	local var_4_22 = var_4_19.smart_object_data and var_4_19.smart_object_data.unit
-	local var_4_23, var_4_24 = var_4_21:has_nav_graph(var_4_22)
-
-	if var_4_23 and not var_4_24 and not var_4_20 and var_4_18 == nil then
-		var_4_18 = false
-	end
-
-	local var_4_25 = arg_4_2.is_in_smartobject_range
-	local var_4_26 = arg_4_2.move_state == "moving"
-
-	if var_4_18 == nil then
-		var_4_18 = var_4_25 and var_4_26 or var_4_20
-	end
-
-	if var_4_18 then
-		arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_17, "aborted")
-
-		local var_4_27, var_4_28 = var_4_17:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-
-		if var_4_27 ~= "running" then
-			arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, var_4_27)
+		if run_4 ~= "running" then
+			self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run_4)
 		end
 
-		if var_4_27 ~= "failed" then
-			return var_4_27, var_4_28
+		if run_4 ~= "failed" then
+			return run_4, var_4_17
 		end
-	elseif var_4_17 == var_4_2 then
-		arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
+	elseif var_4_15 == current_running_child then
+		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
 	end
 
-	local var_4_29 = var_4_3[6]
+	local var_4_18 = _children[5]
+	local var_4_19
+	local next_smart_object_data = arg_4_2.next_smart_object_data
 
-	if var_0_0(arg_4_2.target_unit) then
-		arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_29, "aborted")
-
-		local var_4_30, var_4_31 = var_4_29:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-
-		if var_4_30 ~= "running" then
-			arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, var_4_30)
-		end
-
-		if var_4_30 ~= "failed" then
-			return var_4_30, var_4_31
-		end
-	elseif var_4_29 == var_4_2 then
-		arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
+	if not (next_smart_object_data.next_smart_object_id ~= nil) then
+		var_4_19 = false
 	end
 
-	local var_4_32 = var_4_3[7]
+	local is_smart_objecting = arg_4_2.is_smart_objecting
+	local system = Managers.state.entity:system("nav_graph_system")
+	local smart_object_data = next_smart_object_data.smart_object_data
 
-	arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_32, "aborted")
+	smart_object_data = not smart_object_data and next_smart_object_data.smart_object_data.unit
 
-	local var_4_33, var_4_34 = var_4_32:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	local has_nav_graph, var_4_25 = system:has_nav_graph(smart_object_data)
 
-	if var_4_33 ~= "running" then
-		arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, var_4_33)
+	if not (not has_nav_graph and var_4_25 or is_smart_objecting or var_4_19 ~= nil) then
+		var_4_19 = false
 	end
 
-	if var_4_33 ~= "failed" then
-		return var_4_33, var_4_34
+	local is_in_smartobject_range = arg_4_2.is_in_smartobject_range
+	local flag = arg_4_2.move_state == "moving"
+
+	if var_4_19 == nil then
+		var_4_19 = not is_in_smartobject_range and flag and is_smart_objecting
+	end
+
+	if not var_4_19 then
+		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_18, "aborted")
+
+		local run_5, var_4_29 = var_4_18:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+
+		if run_5 ~= "running" then
+			self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run_5)
+		end
+
+		if run_5 ~= "failed" then
+			return run_5, var_4_29
+		end
+	elseif var_4_18 == current_running_child then
+		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
+	end
+
+	local var_4_30 = _children[6]
+
+	if not alive(arg_4_2.target_unit) then
+		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_30, "aborted")
+
+		local run_6, var_4_32 = var_4_30:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+
+		if run_6 ~= "running" then
+			self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run_6)
+		end
+
+		if run_6 ~= "failed" then
+			return run_6, var_4_32
+		end
+	elseif var_4_30 == current_running_child then
+		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
+	end
+
+	local var_4_33 = _children[7]
+
+	self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_33, "aborted")
+
+	local run_7, var_4_35 = var_4_33:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+
+	if run_7 ~= "running" then
+		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run_7)
+	end
+
+	if run_7 ~= "failed" then
+		return run_7, var_4_35
 	end
 end
 
-function BTSelector_skaven_poison_wind_globadier.add_child(arg_5_0, arg_5_1)
+BTSelector_skaven_poison_wind_globadier.add_child = function (arg_5_0, arg_5_1)
+	-- function 5
 	arg_5_0._children[#arg_5_0._children + 1] = arg_5_1
 end

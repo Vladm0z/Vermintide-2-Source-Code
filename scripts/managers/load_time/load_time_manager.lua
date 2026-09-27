@@ -2,153 +2,176 @@
 
 LoadTimeManager = class(LoadTimeManager)
 
-function LoadTimeManager.init(arg_1_0)
-	arg_1_0._previous_level_key = "none"
-	arg_1_0._members_joined = {}
-	arg_1_0._members_left = {}
-	arg_1_0._members = {}
-	arg_1_0._lobby_failed = false
-	arg_1_0._current_lobby = nil
+LoadTimeManager.init = function (self)
+	-- function 1
+	self._previous_level_key = "none"
+	self._members_joined = {}
+	self._members_left = {}
+	self._members = {}
+	self._lobby_failed = false
+	self._current_lobby = nil
 end
 
-function LoadTimeManager.start_timer(arg_2_0, arg_2_1, arg_2_2)
-	if Managers.time:has_timer("loading_timer") then
+LoadTimeManager.start_timer = function (self, arg_2_1, arg_2_2)
+	-- function 2
+	if not Managers.time:has_timer("loading_timer") then
 		Managers.time:unregister_timer("loading_timer")
 	end
 
 	Managers.time:register_timer("loading_timer", "main", 0)
 
-	arg_2_0._current_lobby = nil
-	arg_2_0._lobby_failed = false
-	arg_2_0._time_spent_in_level = arg_2_1 or -1
-	arg_2_0._end_reason = arg_2_2 or "unknown"
+	self._current_lobby = nil
+	self._lobby_failed = false
+	self._time_spent_in_level = arg_2_1 or -1
+	self._end_reason = arg_2_2 or "unknown"
 
-	table.clear(arg_2_0._members_joined)
-	table.clear(arg_2_0._members_left)
-	table.clear(arg_2_0._members)
+	table.clear(self._members_joined)
+	table.clear(self._members_left)
+	table.clear(self._members)
 end
 
-function LoadTimeManager.set_lobby(arg_3_0, arg_3_1)
-	arg_3_0._current_lobby = arg_3_1
+LoadTimeManager.set_lobby = function (self, arg_3_1)
+	-- function 3
+	self._current_lobby = arg_3_1
 
-	local var_3_0 = arg_3_0._current_lobby:members():get_members()
+	local get_members = self._current_lobby:members():get_members()
 
-	for iter_3_0, iter_3_1 in ipairs(var_3_0) do
-		arg_3_0._members[iter_3_1] = true
+	for i, v in ipairs(get_members) do
+		self._members[v] = true
 	end
 end
 
-function LoadTimeManager.has_lobby(arg_4_0)
-	if arg_4_0._lobby_failed then
+LoadTimeManager.has_lobby = function (self)
+	-- function 4
+	if not self._lobby_failed then
 		return false
 	end
 
-	return arg_4_0._current_lobby ~= nil
+	return self._current_lobby ~= nil
 end
 
-function LoadTimeManager.update(arg_5_0, arg_5_1)
-	if not arg_5_0._current_lobby then
+LoadTimeManager.update = function (self, arg_5_1)
+	-- function 5
+	if not self._current_lobby then
 		return
 	end
 
-	if arg_5_0._current_lobby:failed() then
-		arg_5_0._current_lobby = nil
-		arg_5_0._lobby_failed = true
+	if not self._current_lobby:failed() then
+		self._current_lobby = nil
+		self._lobby_failed = true
 
 		return
 	end
 
-	local var_5_0 = false
-	local var_5_1 = arg_5_0._current_lobby:members()
+	local flag = false
+	local members = self._current_lobby:members()
 
-	if not var_5_1 then
+	if not members then
 		return
 	end
 
-	local var_5_2 = var_5_1:get_members()
+	local get_members = members:get_members()
 
-	for iter_5_0, iter_5_1 in ipairs(var_5_2) do
-		if not arg_5_0._members[iter_5_1] then
-			arg_5_0._members_joined[#arg_5_0._members_joined + 1] = iter_5_1
+	for i, v in ipairs(get_members) do
+		if not self._members[v] then
+			self._members_joined[#self._members_joined + 1] = v
 
 			print("[LoadTimeManager] Member Joined")
 
-			var_5_0 = true
+			flag = true
 		end
 	end
 
-	for iter_5_2, iter_5_3 in pairs(arg_5_0._members) do
-		if not table.find(var_5_2, iter_5_2) then
-			arg_5_0._members_left[#arg_5_0._members_left + 1] = iter_5_2
+	for k, v_2 in pairs(self._members) do
+		if not table.find(get_members, k) then
+			self._members_left[#self._members_left + 1] = k
 
 			print("[LoadTimeManager] Member left")
 
-			var_5_0 = true
+			flag = true
 		end
 	end
 
-	if var_5_0 then
-		table.clear(arg_5_0._members)
+	if not flag then
+		table.clear(self._members)
 
-		for iter_5_4, iter_5_5 in ipairs(var_5_2) do
-			arg_5_0._members[iter_5_5] = true
+		for i_2, v_3 in ipairs(get_members) do
+			self._members[v_3] = true
 		end
 	end
 end
 
-local var_0_0 = {}
+local tbl = {}
 
-function LoadTimeManager.end_timer(arg_6_0)
-	table.clear(var_0_0)
+LoadTimeManager.end_timer = function (self)
+	-- function 6
+	table.clear(tbl)
 
-	local var_6_0 = "unknown"
+	local str = "unknown"
 
-	if Managers.state.game_mode then
-		var_6_0 = Managers.state.game_mode:level_key()
+	if not Managers.state.game_mode then
+		str = Managers.state.game_mode:level_key()
 	end
 
-	local var_6_1 = Managers.player:local_player()
-	local var_6_2 = var_6_1 and var_6_1.is_server or "unknown"
-	local var_6_3 = arg_6_0._previous_level_key
-	local var_6_4 = Managers.time:time("loading_timer") or 0
-	local var_6_5 = math.floor(var_6_4 % 60 + 0.5)
-	local var_6_6 = math.floor(var_6_4 / 60)
-	local var_6_7 = math.floor(var_6_6 / 60)
-	local var_6_8 = string.format("%02d:%02d:%02d", var_6_7, var_6_6, var_6_5)
+	local local_player = Managers.player:local_player()
+	local is_server
+
+	if not local_player then
+		is_server = local_player.is_server
+
+		if not is_server then
+			-- Nothing
+		end
+	end
+
+	is_server = "unknown"
+
+	::label_6_0::
+
+	local _previous_level_key = self._previous_level_key
+	local time = Managers.time:time("loading_timer")
+
+	time = time or 0
+
+	local floor = math.floor(time % 60 + 0.5)
+	local floor_2 = math.floor(time / 60)
+	local floor_3 = math.floor(floor_2 / 60)
+	local format = string.format("%02d:%02d:%02d", floor_3, floor_2, floor)
 
 	print("#################################################################################################################")
-	print(string.format("[Loading Time]: %s [Transition]: %s-%s  [Members joined]: %s [Members Left]: %s [Is Server]: %s", var_6_8, var_6_3, var_6_0, tostring(#arg_6_0._members_joined), tostring(#arg_6_0._members_left), tostring(var_6_2)))
+	print(string.format("[Loading Time]: %s [Transition]: %s-%s  [Members joined]: %s [Members Left]: %s [Is Server]: %s", format, _previous_level_key, str, tostring(#self._members_joined), tostring(#self._members_left), tostring(is_server)))
 	print("#################################################################################################################")
 
-	var_0_0.identifier = "load-level"
-	var_0_0.duration = tonumber(string.format("%.2f", var_6_4))
-	var_0_0.parameters = {
-		from_level = var_6_3,
-		to_level = var_6_0,
-		end_reason = arg_6_0._end_reason,
-		time_spent_in_level = arg_6_0._time_spent_in_level,
-		members_joined = #arg_6_0._members_joined,
-		members_left = #arg_6_0._members_left,
-		lobby_failed = arg_6_0._lobby_failed,
-		is_server = var_6_2
+	tbl.identifier = "load-level"
+	tbl.duration = tonumber(string.format("%.2f", time))
+	tbl.parameters = {
+		from_level = _previous_level_key,
+		to_level = str,
+		end_reason = self._end_reason,
+		time_spent_in_level = self._time_spent_in_level,
+		members_joined = #self._members_joined,
+		members_left = #self._members_left,
+		lobby_failed = self._lobby_failed,
+		is_server = is_server
 	}
 
-	BackendUtils.commit_load_time_data(var_0_0)
+	BackendUtils.commit_load_time_data(tbl)
 
-	arg_6_0._previous_level_key = var_6_0
-	arg_6_0._current_lobby = nil
-	arg_6_0._lobby_failed = false
+	self._previous_level_key = str
+	self._current_lobby = nil
+	self._lobby_failed = false
 end
 
-function LoadTimeManager.destroy(arg_7_0)
-	if Managers.time and Managers.time:has_timer("loading_timer") then
+LoadTimeManager.destroy = function (self)
+	-- function 7
+	if not Managers.time and not Managers.time:has_timer("loading_timer") then
 		Managers.time:unregister_timer("loading_timer")
 	end
 
-	arg_7_0._current_lobby = nil
-	arg_7_0._lobby_failed = false
+	self._current_lobby = nil
+	self._lobby_failed = false
 
-	table.clear(arg_7_0._members_joined)
-	table.clear(arg_7_0._members_left)
-	table.clear(arg_7_0._members)
+	table.clear(self._members_joined)
+	table.clear(self._members_left)
+	table.clear(self._members)
 end

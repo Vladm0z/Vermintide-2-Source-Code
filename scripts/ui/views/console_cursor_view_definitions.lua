@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/console_cursor_view_definitions.lua
 
-local var_0_0 = {
+local tbl = {
 	root = {
 		is_root = true,
 		position = {
@@ -28,7 +28,7 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	scenegraph_id = "screen",
 	element = {
 		passes = {
@@ -66,8 +66,8 @@ local var_0_1 = {
 }
 
 return {
-	scenegraph_definition = var_0_0,
+	scenegraph_definition = tbl,
 	widgets = {
-		console_cursor = var_0_1
+		console_cursor = tbl_2
 	}
 }

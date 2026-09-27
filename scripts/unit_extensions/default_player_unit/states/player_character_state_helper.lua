@@ -1,312 +1,409 @@
 -- chunkname: @scripts/unit_extensions/default_player_unit/states/player_character_state_helper.lua
 
+local CharacterStateHelper = CharacterStateHelper
+
 CharacterStateHelper = CharacterStateHelper or {}
+CharacterStateHelper = CharacterStateHelper
 
-local var_0_0 = CharacterStateHelper
+local CharacterStateHelper_2 = CharacterStateHelper
 
-function var_0_0.get_movement_input(arg_1_0)
-	local var_1_0 = arg_1_0:get("move") or Vector3(0, 0, 0)
-	local var_1_1 = arg_1_0:get("move_controller") or Vector3(0, 0, 0)
+CharacterStateHelper_2.get_movement_input = function (self)
+	-- function 1
+	local get = self:get("move")
+
+	get = get or Vector3(0, 0, 0)
+
+	local get_2 = self:get("move_controller")
+
+	get_2 = get_2 or Vector3(0, 0, 0)
+
 	local var_1_2
 
-	if Vector3.length(var_1_0) > Vector3.length(var_1_1) then
-		var_1_2 = Vector3.normalize(var_1_0)
+	if Vector3.length(get) > Vector3.length(get_2) then
+		var_1_2 = Vector3.normalize(get)
 	else
-		var_1_2 = var_1_1
+		var_1_2 = get_2
 	end
 
 	return var_1_2
 end
 
-function var_0_0.get_square_movement_input(arg_2_0)
-	local var_2_0 = arg_2_0:get("move") or Vector3(0, 0, 0)
-	local var_2_1 = arg_2_0:get("move_controller") or Vector3(0, 0, 0)
+CharacterStateHelper_2.get_square_movement_input = function (self)
+	-- function 2
+	local get = self:get("move")
+
+	get = get or Vector3(0, 0, 0)
+
+	local get_2 = self:get("move_controller")
+
+	get_2 = get_2 or Vector3(0, 0, 0)
+
 	local var_2_2
 
-	if Vector3.length(var_2_0) > Vector3.length(var_2_1) then
-		var_2_2 = var_2_0
+	if Vector3.length(get) > Vector3.length(get_2) then
+		var_2_2 = get
 	else
-		var_2_2 = math.circular_to_square_coordinates(var_2_1)
+		var_2_2 = math.circular_to_square_coordinates(get_2)
 	end
 
 	return var_2_2
 end
 
-function var_0_0.get_look_input(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
-	local var_3_0 = arg_3_1.unit
+CharacterStateHelper_2.get_look_input = function (self, arg_3_1, arg_3_2, arg_3_3)
+	-- function 3
+	local unit = arg_3_1.unit
 	local var_3_1
 
-	if ScriptUnit.has_extension(var_3_0, "smart_targeting_system") then
-		var_3_1 = ScriptUnit.extension(var_3_0, "smart_targeting_system"):get_targeting_data()
+	if not ScriptUnit.has_extension(unit, "smart_targeting_system") then
+		var_3_1 = ScriptUnit.extension(unit, "smart_targeting_system"):get_targeting_data()
 	end
 
-	local var_3_2 = arg_3_0:get("look")
+	local get = self:get("look")
 	local var_3_3
-	local var_3_4 = arg_3_1:is_zooming()
-	local var_3_5 = Managers.input:is_device_active("gamepad")
-	local var_3_6 = arg_3_2:get_wielded_slot_name()
-	local var_3_7 = arg_3_2:get_wielded_slot_item_template()
+	local is_zooming = arg_3_1:is_zooming()
+	local is_device_active = Managers.input:is_device_active("gamepad")
+	local get_wielded_slot_name = arg_3_2:get_wielded_slot_name()
+	local get_wielded_slot_item_template = arg_3_2:get_wielded_slot_item_template()
 
-	if var_3_5 then
-		if var_3_4 then
-			var_3_3 = arg_3_0:get("look_controller_zoom")
-		elseif arg_3_3 then
-			var_3_3 = arg_3_0:get("look_controller_3p")
-		elseif var_3_6 == "slot_ranged" then
-			var_3_3 = arg_3_0:get("look_controller_ranged")
-		elseif var_3_6 == "slot_melee" and var_3_1 and var_3_1.targets_within_range then
-			var_3_3 = arg_3_0:get("look_controller_melee")
+	if not is_device_active then
+		if not is_zooming then
+			var_3_3 = self:get("look_controller_zoom")
+		elseif not arg_3_3 then
+			var_3_3 = self:get("look_controller_3p")
+		elseif get_wielded_slot_name == "slot_ranged" then
+			var_3_3 = self:get("look_controller_ranged")
+		elseif (get_wielded_slot_name ~= "slot_melee" or not var_3_1) and not var_3_1.targets_within_range then
+			var_3_3 = self:get("look_controller_melee")
 		else
-			var_3_3 = arg_3_0:get("look_controller")
+			var_3_3 = self:get("look_controller")
 		end
 	end
 
 	local var_3_8 = Vector3(0, 0, 0)
 
-	if var_3_2 then
-		var_3_8 = var_3_8 + var_3_2
+	if not get then
+		var_3_8 = var_3_8 + get
 	end
 
-	if var_3_3 then
+	if not var_3_3 then
 		var_3_8 = var_3_8 + var_3_3
 	end
 
-	local var_3_9 = var_0_0.apply_motion_controls(var_3_8, arg_3_0)
+	local apply_motion_controls = CharacterStateHelper_2.apply_motion_controls(var_3_8, self)
 
-	if script_data.attract_mode_spectate then
-		var_3_9 = Vector3(0.005, 0, 0)
+	if not script_data.attract_mode_spectate then
+		apply_motion_controls = Vector3(0.005, 0, 0)
 	end
 
-	return var_3_9
+	return apply_motion_controls
 end
 
-function var_0_0.apply_motion_controls(arg_4_0, arg_4_1)
-	if MotionControlSettings.use_motion_controls then
-		if MotionControlSettings.motion_disable_right_stick_vertical then
-			arg_4_0.y = 0
+CharacterStateHelper_2.apply_motion_controls = function (self, arg_4_1)
+	-- function 4
+	if not MotionControlSettings.use_motion_controls then
+		if not MotionControlSettings.motion_disable_right_stick_vertical then
+			self.y = 0
 		end
 
-		local var_4_0 = MotionControlSettings.sensitivity_min_value
-		local var_4_1 = MotionControlSettings.sensitivity_base_value
-		local var_4_2 = MotionControlSettings.sensitivity_yaw_max - MotionControlSettings.sensitivity_yaw_min
-		local var_4_3 = (var_4_1 - var_4_0) / (var_4_2 * 0.5)
-		local var_4_4 = var_4_1 + MotionControlSettings.motion_sensitivity_yaw * var_4_3
-		local var_4_5 = MotionControlSettings.sensitivity_pitch_max - MotionControlSettings.sensitivity_pitch_min
-		local var_4_6 = (var_4_1 - var_4_0) / (var_4_5 * 0.5)
-		local var_4_7 = var_4_1 + MotionControlSettings.motion_sensitivity_pitch * var_4_6
-		local var_4_8 = var_4_4 * (MotionControlSettings.motion_invert_yaw and -1 or 1) * (MotionControlSettings.motion_enable_yaw_motion and 1 or 0)
-		local var_4_9 = var_4_7 * (MotionControlSettings.motion_invert_pitch and -1 or 1) * (MotionControlSettings.motion_enable_pitch_motion and 1 or 0)
-		local var_4_10 = arg_4_1:get("angular_velocity")
-		local var_4_11 = var_4_10 and var_4_10.x or 0
-		local var_4_12 = var_4_10 and -var_4_10.y or 0
+		local sensitivity_min_value = MotionControlSettings.sensitivity_min_value
+		local sensitivity_base_value = MotionControlSettings.sensitivity_base_value
+		local num = MotionControlSettings.sensitivity_yaw_max - MotionControlSettings.sensitivity_yaw_min
+		local num_2 = (sensitivity_base_value - sensitivity_min_value) / (num * 0.5)
+		local num_3 = sensitivity_base_value + MotionControlSettings.motion_sensitivity_yaw * num_2
+		local num_4 = MotionControlSettings.sensitivity_pitch_max - MotionControlSettings.sensitivity_pitch_min
+		local num_5 = (sensitivity_base_value - sensitivity_min_value) / (num_4 * 0.5)
+		local num_6 = sensitivity_base_value + MotionControlSettings.motion_sensitivity_pitch * num_5
+		local flag
 
-		arg_4_0 = arg_4_0 + Vector3(var_4_8 * var_4_12, var_4_9 * var_4_11, 0)
+		flag = not MotionControlSettings.motion_invert_yaw and -1 and 1
+
+		local num_7 = num_3 * flag
+		local flag_2
+
+		flag_2 = not MotionControlSettings.motion_enable_yaw_motion and 1 and 0
+
+		local num_8 = num_7 * flag_2
+		local flag_3
+
+		flag_3 = not MotionControlSettings.motion_invert_pitch and -1 and 1
+
+		local num_9 = num_6 * flag_3
+		local flag_4
+
+		flag_4 = not MotionControlSettings.motion_enable_pitch_motion and 1 and 0
+
+		local num_10 = num_9 * flag_4
+		local get = arg_4_1:get("angular_velocity")
+		local x
+
+		if not get then
+			x = get.x
+
+			if not x then
+				-- Nothing
+			end
+		end
+
+		x = 0
+
+		do
+			local num_11
+		end
+
+		::label_4_0::
+
+		if not get then
+			num_11 = -get.y
+
+			if not num_11 then
+				-- Nothing
+			end
+		end
+
+		num_11 = 0
+
+		::label_4_1::
+
+		self = self + Vector3(num_8 * num_11, num_10 * x, 0)
 	end
 
-	return arg_4_0
+	return self
 end
 
-function var_0_0.update_dodge_lock(arg_5_0, arg_5_1, arg_5_2)
-	if arg_5_2:dodge_locked() and not arg_5_1:get("dodge_hold") then
+CharacterStateHelper_2.update_dodge_lock = function (arg_5_0, arg_5_1, arg_5_2)
+	-- function 5
+	if not (not arg_5_2:dodge_locked() and arg_5_1:get("dodge_hold")) then
 		arg_5_2:set_dodge_locked(false)
 	end
 end
 
-local var_0_1 = {
+local tbl = {
 	move_left_pressed = Vector3Box(-Vector3.right()),
 	move_right_pressed = Vector3Box(Vector3.right()),
 	move_back_pressed = Vector3Box(-Vector3.forward())
 }
 
-function var_0_0.check_to_start_dodge(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
-	if arg_6_2:dodge_locked() or not arg_6_2:can_dodge(arg_6_3) then
+CharacterStateHelper_2.check_to_start_dodge = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	-- function 6
+	if not (arg_6_2:dodge_locked() or arg_6_2:can_dodge(arg_6_3)) then
 		return false
 	end
 
-	local var_6_0 = PlayerUnitMovementSettings.get_movement_settings_table(arg_6_0)
-	local var_6_1 = var_0_0.get_movement_input(arg_6_1)
-	local var_6_2 = arg_6_1.double_tap_dodge
-	local var_6_3 = false
+	local get_movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(arg_6_0)
+	local get_movement_input = CharacterStateHelper_2.get_movement_input(arg_6_1)
+	local double_tap_dodge = arg_6_1.double_tap_dodge
+	local flag = false
 	local var_6_4 = Vector3(0, 0, 0)
-	local var_6_5 = arg_6_1:get("dodge_hold")
-	local var_6_6 = arg_6_1:get("dodge")
-	local var_6_7 = var_6_6 or arg_6_1:get("jump") and var_6_5
-	local var_6_8 = Vector3.length(var_6_1)
-	local var_6_9 = not Managers.input:is_device_active("gamepad")
-	local var_6_10 = Application.user_setting("toggle_stationary_dodge")
+	local get = arg_6_1:get("dodge_hold")
+	local get_2 = arg_6_1:get("dodge")
 
-	if var_6_2 then
-		for iter_6_0, iter_6_1 in pairs(var_0_1) do
-			if arg_6_1:get(iter_6_0) then
-				local var_6_11 = arg_6_1:was_double_tap(iter_6_0, arg_6_3, Application.user_setting("double_tap_dodge_threshold"))
+	if not get_2 then
+		-- Nothing
+	end
 
-				for iter_6_2, iter_6_3 in pairs(var_0_1) do
-					arg_6_1:clear_double_tap(iter_6_2)
+	::label_6_0::
+
+	local get_3 = arg_6_1:get("jump")
+
+	get_3 = not get_3 and get
+
+	::label_6_1::
+
+	local length = Vector3.length(get_movement_input)
+	local flag_2 = not Managers.input:is_device_active("gamepad")
+	local user_setting = Application.user_setting("toggle_stationary_dodge")
+
+	if not double_tap_dodge then
+		for k, v in pairs(tbl) do
+			if not arg_6_1:get(k) then
+				local was_double_tap = arg_6_1:was_double_tap(k, arg_6_3, Application.user_setting("double_tap_dodge_threshold"))
+
+				for k_2, v_2 in pairs(tbl) do
+					arg_6_1:clear_double_tap(k_2)
 				end
 
-				if var_6_11 then
-					var_6_3 = true
-					var_6_4 = iter_6_1:unbox()
+				if not was_double_tap then
+					flag = true
+					var_6_4 = v:unbox()
 
 					break
 				end
 
-				arg_6_1:start_double_tap(iter_6_0, arg_6_3)
+				arg_6_1:start_double_tap(k, arg_6_3)
 
 				break
 			end
 		end
 	end
 
-	if not var_6_3 and var_6_7 and var_6_8 > arg_6_1.minimum_dodge_input then
-		local var_6_12 = var_6_1 / var_6_8
-		local var_6_13 = var_6_12.x
-		local var_6_14 = var_6_12.y
-		local var_6_15 = math.abs(var_6_13)
+	if not ((flag or not get_3) and not (length > arg_6_1.minimum_dodge_input)) then
+		local num = get_movement_input / length
+		local x = num.x
+		local y = num.y
+		local abs = math.abs(x)
 
-		if var_6_14 <= 0 or not var_6_9 and var_6_15 > 0.9239 or var_6_6 and var_6_15 > 0.707 then
-			var_6_3 = true
+		if not ((y <= 0 or flag_2 or not (abs > 0.9239)) and not get_2 and abs > 0.707) then
+			flag = true
 
-			if var_6_14 > 0 then
-				var_6_4 = Vector3(math.sign(var_6_13), 0, 0)
+			if y > 0 then
+				var_6_4 = Vector3(math.sign(x), 0, 0)
 			else
-				var_6_4 = var_6_12
+				var_6_4 = num
 			end
 		end
-	elseif var_6_7 and var_6_10 then
-		var_6_3 = true
+	elseif not get_3 and not user_setting then
+		flag = true
 		var_6_4 = -Vector3.forward()
 	end
 
-	if var_6_3 then
+	if not flag then
 		Managers.state.entity:system("play_go_tutorial_system"):register_dodge(var_6_4)
 		arg_6_2:add_fatigue_points("action_dodge")
 		arg_6_2:set_dodge_locked(true)
 		arg_6_2:add_dodge_cooldown()
 
-		local var_6_16 = ScriptUnit.extension(arg_6_0, "first_person_system")
+		local extension = ScriptUnit.extension(arg_6_0, "first_person_system")
 	end
 
-	return var_6_3, var_6_4
+	return flag, var_6_4
 end
 
-function var_0_0.move_on_ground(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
-	local var_7_0 = arg_7_0:current_rotation()
-	local var_7_1 = Quaternion.look(Vector3.flat(Quaternion.forward(var_7_0)), Vector3.up())
-	local var_7_2 = Quaternion.rotate(var_7_1, arg_7_3)
+CharacterStateHelper_2.move_on_ground = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
+	-- function 7
+	local current_rotation = self:current_rotation()
+	local look = Quaternion.look(Vector3.flat(Quaternion.forward(current_rotation)), Vector3.up())
+	local rotate = Quaternion.rotate(look, arg_7_3)
 
 	if arg_7_3.y < 0 then
 		arg_7_4 = arg_7_4 * PlayerUnitMovementSettings.get_movement_settings_table(arg_7_5).backward_move_scale
 	end
 
-	local var_7_3 = Vector3.dot(Quaternion.forward(var_7_1), var_7_2)
+	local dot = Vector3.dot(Quaternion.forward(look), rotate)
+	local num
 
-	arg_7_4 = arg_7_4 - arg_7_4 * (arg_7_6 and 1 - arg_7_6 or 0) * (1 - math.abs(var_7_3))
+	if not arg_7_6 then
+		num = 1 - arg_7_6
 
-	arg_7_2:set_wanted_velocity(var_7_2 * arg_7_4)
-end
-
-function var_0_0.packmaster_move_on_ground(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7, arg_8_8, arg_8_9, arg_8_10, arg_8_11)
-	local var_8_0 = arg_8_1:current_rotation()
-	local var_8_1 = Quaternion.look(Vector3.flat(Quaternion.forward(var_8_0)), Vector3.up())
-	local var_8_2 = Quaternion.rotate(var_8_1, arg_8_4)
-	local var_8_3 = Managers.world:world("level_world")
-	local var_8_4 = World.get_data(var_8_3, "physics_world")
-	local var_8_5 = Managers.state.camera:camera_rotation(arg_8_7.viewport_name)
-	local var_8_6 = Quaternion.forward(var_8_5)
-
-	Vector3.set_z(var_8_6, 0)
-	Vector3.set_z(arg_8_8, 0)
-
-	local var_8_7 = Vector3.normalize(var_8_6)
-
-	arg_8_8 = Vector3.normalize(arg_8_8)
-
-	local var_8_8 = Vector3.dot(arg_8_8, var_8_2)
-	local var_8_9 = var_8_8 > 0
-	local var_8_10 = PlayerUnitMovementSettings.get_movement_settings_table(arg_8_6)
-	local var_8_11 = math.clamp(1 - var_8_8, var_8_10.packmaster_forward_move_scale, 1)
-
-	if var_8_9 then
-		local var_8_12 = arg_8_10 and 1.5 or 1.1
-		local var_8_13 = POSITION_LOOKUP[arg_8_9]
-		local var_8_14, var_8_15, var_8_16, var_8_17, var_8_18 = PhysicsWorld.immediate_raycast(var_8_4, var_8_13 + Vector3(0, 0, 0.5), arg_8_8, var_8_12, "closest", "types", "both", "collision_filter", "filter_ground_material_check")
-
-		if var_8_14 then
-			var_8_11 = 0
-		end
-	else
-		local var_8_19 = Unit.node(arg_8_9, "j_neck")
-		local var_8_20 = Unit.world_position(arg_8_9, var_8_19)
-		local var_8_21 = Unit.node(arg_8_6, "j_rightweaponcomponent10")
-		local var_8_22 = Unit.world_position(arg_8_6, var_8_21)
-
-		if Vector3.distance(var_8_20, var_8_22) > 3.25 then
-			var_8_11 = 0
+		if not num then
+			-- Nothing
 		end
 	end
 
-	arg_8_5 = arg_8_5 * var_8_11
+	num = 0
 
-	arg_8_3:set_wanted_velocity(var_8_2 * arg_8_5)
+	::label_7_0::
+
+	arg_7_4 = arg_7_4 - arg_7_4 * num * (1 - math.abs(dot))
+
+	arg_7_2:set_wanted_velocity(rotate * arg_7_4)
 end
 
-function var_0_0.update_soft_collision_movement(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6)
-	local var_9_0 = PlayerUnitMovementSettings.get_movement_settings_table(arg_9_3)
+CharacterStateHelper_2.packmaster_move_on_ground = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7, arg_8_8, arg_8_9, arg_8_10, arg_8_11)
+	-- function 8
+	local current_rotation = arg_8_1:current_rotation()
+	local look = Quaternion.look(Vector3.flat(Quaternion.forward(current_rotation)), Vector3.up())
+	local rotate = Quaternion.rotate(look, arg_8_4)
+	local world = Managers.world:world("level_world")
+	local get_data = World.get_data(world, "physics_world")
+	local camera_rotation = Managers.state.camera:camera_rotation(arg_8_7.viewport_name)
+	local forward = Quaternion.forward(camera_rotation)
+
+	Vector3.set_z(forward, 0)
+	Vector3.set_z(arg_8_8, 0)
+
+	local normalize = Vector3.normalize(forward)
+
+	arg_8_8 = Vector3.normalize(arg_8_8)
+
+	local dot = Vector3.dot(arg_8_8, rotate)
+	local flag = dot > 0
+	local get_movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(arg_8_6)
+	local clamp = math.clamp(1 - dot, get_movement_settings_table.packmaster_forward_move_scale, 1)
+
+	if not flag then
+		local flag_2
+
+		flag_2 = not arg_8_10 and 1.5 and 1.1
+
+		local var_8_13 = POSITION_LOOKUP[arg_8_9]
+		local immediate_raycast, var_8_15, var_8_16, var_8_17, var_8_18 = PhysicsWorld.immediate_raycast(get_data, var_8_13 + Vector3(0, 0, 0.5), arg_8_8, flag_2, "closest", "types", "both", "collision_filter", "filter_ground_material_check")
+
+		if not immediate_raycast then
+			clamp = 0
+		end
+	else
+		local node = Unit.node(arg_8_9, "j_neck")
+		local world_position = Unit.world_position(arg_8_9, node)
+		local node_2 = Unit.node(arg_8_6, "j_rightweaponcomponent10")
+		local world_position_2 = Unit.world_position(arg_8_6, node_2)
+
+		if Vector3.distance(world_position, world_position_2) > 3.25 then
+			clamp = 0
+		end
+	end
+
+	arg_8_5 = arg_8_5 * clamp
+
+	arg_8_3:set_wanted_velocity(rotate * arg_8_5)
+end
+
+CharacterStateHelper_2.update_soft_collision_movement = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6)
+	-- function 9
+	local get_movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(arg_9_3)
 	local var_9_1 = Vector3(0, 0, 0)
 	local var_9_2 = POSITION_LOOKUP[arg_9_3]
-	local var_9_3 = Unit.local_rotation(arg_9_3, 0)
-	local var_9_4 = arg_9_6.PLAYER_UNITS
+	local local_rotation = Unit.local_rotation(arg_9_3, 0)
+	local PLAYER_UNITS = arg_9_6.PLAYER_UNITS
 
-	if Unit.alive(arg_9_3) then
-		for iter_9_0, iter_9_1 in pairs(var_9_4) do
-			if iter_9_1 ~= arg_9_3 and Unit.alive(iter_9_1) and StatusUtils.use_soft_collision(iter_9_1) then
-				local var_9_5 = var_9_2 - POSITION_LOOKUP[iter_9_1]
-				local var_9_6 = math.abs(Vector3.z(var_9_5))
+	if not Unit.alive(arg_9_3) then
+		for k, v in pairs(PLAYER_UNITS) do
+			if (v == arg_9_3 or not Unit.alive(v)) and not StatusUtils.use_soft_collision(v) then
+				local num = var_9_2 - POSITION_LOOKUP[v]
+				local abs = math.abs(Vector3.z(num))
 
-				Vector3.set_z(var_9_5, 0)
+				Vector3.set_z(num, 0)
 
-				local var_9_7 = Vector3.length(var_9_5)
+				local length = Vector3.length(num)
 
-				if var_9_6 <= var_9_0.soft_collision.max_height_diference and var_9_7 <= var_9_0.soft_collision.max_distance then
-					local var_9_8 = Vector3.normalize(var_9_5)
-					local var_9_9 = 1 / (var_9_7 + var_9_0.soft_collision.speed_modifier)
+				if not (not (abs <= get_movement_settings_table.soft_collision.max_height_diference) or not (length <= get_movement_settings_table.soft_collision.max_distance)) then
+					local normalize = Vector3.normalize(num)
+					local num_2 = 1 / (length + get_movement_settings_table.soft_collision.speed_modifier)
 
-					var_9_1 = var_9_1 + var_9_8 * (var_9_9 * var_9_9)
+					var_9_1 = var_9_1 + normalize * (num_2 * num_2)
 				end
 			end
 		end
 	end
 
-	local var_9_10 = Vector3.length(var_9_1)
-	local var_9_11 = Vector3.normalize(var_9_1)
-	local var_9_12 = var_9_0.soft_collision.idle_speed_threshold
+	local length_2 = Vector3.length(var_9_1)
+	local normalize_2 = Vector3.normalize(var_9_1)
+	local idle_speed_threshold = get_movement_settings_table.soft_collision.idle_speed_threshold
 
-	if var_9_10 <= var_9_12 then
+	if length_2 <= idle_speed_threshold then
 		arg_9_2:set_wanted_velocity(Vector3(0, 0, 0))
 	else
-		var_9_10 = math.clamp(var_9_10, var_9_0.soft_collision.lowest_speed, var_9_0.soft_collision.highest_speed)
+		length_2 = math.clamp(length_2, get_movement_settings_table.soft_collision.lowest_speed, get_movement_settings_table.soft_collision.highest_speed)
 
-		arg_9_2:set_wanted_velocity(var_9_11 * var_9_10)
+		arg_9_2:set_wanted_velocity(normalize_2 * length_2)
 	end
 
-	if var_9_10 <= var_9_12 then
+	if length_2 <= idle_speed_threshold then
 		if arg_9_5 ~= "idle" then
-			var_0_0.play_animation_event(arg_9_3, "idle")
-			var_0_0.play_animation_event_first_person(arg_9_0, "idle")
+			CharacterStateHelper_2.play_animation_event(arg_9_3, "idle")
+			CharacterStateHelper_2.play_animation_event_first_person(arg_9_0, "idle")
 
 			arg_9_5 = "idle"
 		end
-	elseif Vector3.dot(var_9_11, Quaternion.forward(var_9_3)) >= 0 then
+	elseif Vector3.dot(normalize_2, Quaternion.forward(local_rotation)) >= 0 then
 		if arg_9_5 ~= "move_fwd" then
-			var_0_0.play_animation_event(arg_9_3, "move_fwd")
-			var_0_0.play_animation_event_first_person(arg_9_0, "move_fwd")
+			CharacterStateHelper_2.play_animation_event(arg_9_3, "move_fwd")
+			CharacterStateHelper_2.play_animation_event_first_person(arg_9_0, "move_fwd")
 
 			arg_9_5 = "move_fwd"
 		end
 	elseif arg_9_5 ~= "move_bwd" then
-		var_0_0.play_animation_event(arg_9_3, "move_bwd")
-		var_0_0.play_animation_event_first_person(arg_9_0, "move_bwd")
+		CharacterStateHelper_2.play_animation_event(arg_9_3, "move_bwd")
+		CharacterStateHelper_2.play_animation_event_first_person(arg_9_0, "move_bwd")
 
 		arg_9_5 = "move_bwd"
 	end
@@ -314,106 +411,107 @@ function var_0_0.update_soft_collision_movement(arg_9_0, arg_9_1, arg_9_2, arg_9
 	return arg_9_5
 end
 
-function var_0_0.do_common_state_transitions(arg_10_0, arg_10_1, arg_10_2)
-	if var_0_0.is_dead(arg_10_0) then
+CharacterStateHelper_2.do_common_state_transitions = function (self, arg_10_1, arg_10_2)
+	-- function 10
+	if not CharacterStateHelper_2.is_dead(self) then
 		arg_10_1:change_state("dead")
 
 		return true
 	end
 
-	if var_0_0.is_staggered(arg_10_0) then
+	if not CharacterStateHelper_2.is_staggered(self) then
 		arg_10_1:change_state("staggered")
 
 		return true
 	end
 
-	if var_0_0.is_knocked_down(arg_10_0) then
+	if not CharacterStateHelper_2.is_knocked_down(self) then
 		arg_10_1:change_state("knocked_down")
 
 		return true
 	end
 
-	if var_0_0.is_pounced_down(arg_10_0) then
+	if not CharacterStateHelper_2.is_pounced_down(self) then
 		arg_10_1:change_state("pounced_down")
 
 		return true
 	end
 
-	local var_10_0, var_10_1 = var_0_0.is_catapulted(arg_10_0)
+	local is_catapulted, var_10_1 = CharacterStateHelper_2.is_catapulted(self)
 
-	if var_10_0 then
-		local var_10_2 = {
+	if not is_catapulted then
+		local tbl = {
 			sound_event = "Play_hit_by_ratogre",
 			direction = var_10_1
 		}
 
-		arg_10_1:change_state("catapulted", var_10_2)
+		arg_10_1:change_state("catapulted", tbl)
 
 		return true
 	end
 
-	if var_0_0.is_grabbed_by_pack_master(arg_10_0) then
+	if not CharacterStateHelper_2.is_grabbed_by_pack_master(self) then
 		arg_10_1:change_state("grabbed_by_pack_master")
 
 		return true
 	end
 
-	if arg_10_0.grabbed_by_corruptor then
+	if not self.grabbed_by_corruptor then
 		arg_10_1:change_state("grabbed_by_corruptor")
 
 		return true
 	end
 
-	if arg_10_0.grabbed_by_tentacle then
+	if not self.grabbed_by_tentacle then
 		arg_10_1:change_state("grabbed_by_tentacle")
 
 		return true
 	end
 
-	if arg_10_0.grabbed_by_chaos_spawn then
+	if not self.grabbed_by_chaos_spawn then
 		arg_10_1:change_state("grabbed_by_chaos_spawn")
 
 		return true
 	end
 
-	if arg_10_0.in_vortex then
+	if not self.in_vortex then
 		arg_10_1:change_state("in_vortex")
 
 		return true
 	end
 
-	if arg_10_0.do_lunge then
+	if not self.do_lunge then
 		arg_10_1:change_state("lunging")
 
 		return true
 	end
 
-	if arg_10_0.is_packmaster_dragging then
-		local var_10_3 = arg_10_0:get_packmaster_dragged_unit()
-		local var_10_4 = ScriptUnit.extension(var_10_3, "status_system")
+	if not self.is_packmaster_dragging then
+		local get_packmaster_dragged_unit = self:get_packmaster_dragged_unit()
+		local extension = ScriptUnit.extension(get_packmaster_dragged_unit, "status_system")
 
-		if not (var_10_4.pack_master_status == "pack_master_hanging" or var_10_4.pack_master_status == "pack_master_hoisting") then
+		if not (extension.pack_master_status == "pack_master_hanging" or extension.pack_master_status == "pack_master_hoisting") then
 			arg_10_1:change_state("packmaster_dragging")
 
 			return true
 		end
 	end
 
-	if arg_10_0.in_hanging_cage then
-		local var_10_5 = arg_10_0.in_hanging_cage_animations
-		local var_10_6 = arg_10_0.in_hanging_cage_unit
-		local var_10_7 = {
-			animations = var_10_5,
-			cage_unit = var_10_6
+	if not self.in_hanging_cage then
+		local in_hanging_cage_animations = self.in_hanging_cage_animations
+		local in_hanging_cage_unit = self.in_hanging_cage_unit
+		local tbl_2 = {
+			animations = in_hanging_cage_animations,
+			cage_unit = in_hanging_cage_unit
 		}
 
-		arg_10_1:change_state("in_hanging_cage", var_10_7)
+		arg_10_1:change_state("in_hanging_cage", tbl_2)
 
 		return true
 	end
 
-	if arg_10_2 ~= "overpowered" and arg_10_2 ~= "ledge_hanging" and arg_10_0.overpowered then
-		local var_10_8 = PlayerUnitMovementSettings.overpowered_templates[arg_10_0.overpowered_template]
+	if arg_10_2 == "overpowered" or arg_10_2 == "ledge_hanging" or not self.overpowered then
+		local var_10_8 = PlayerUnitMovementSettings.overpowered_templates[self.overpowered_template]
 
 		arg_10_1:change_state("overpowered", var_10_8)
 
@@ -423,317 +521,425 @@ function var_0_0.do_common_state_transitions(arg_10_0, arg_10_1, arg_10_2)
 	return false
 end
 
-function var_0_0.is_colliding_with_gameplay_collision_box(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
-	local var_11_0 = World.get_data(arg_11_0, "physics_world")
-	local var_11_1 = arg_11_3 and arg_11_3.position or POSITION_LOOKUP[arg_11_1]
-	local var_11_2 = PlayerUnitMovementSettings.get_movement_settings_table(arg_11_1)
-	local var_11_3 = arg_11_3 and arg_11_3.movement_settings_table_name or "gameplay_collision_box"
-	local var_11_4 = var_11_2[var_11_3].collision_check_player_half_height
-	local var_11_5 = var_11_2[var_11_3].collision_check_player_height_offset
-	local var_11_6 = var_11_1 + Vector3(0, 0, var_11_5)
-	local var_11_7 = Unit.local_rotation(arg_11_1, 0)
-	local var_11_8 = var_11_2[arg_11_3 and arg_11_3.movement_settings_table_name or "gameplay_collision_box"].collision_check_player_radius
-	local var_11_9 = Vector3(var_11_8, var_11_4, var_11_8)
-	local var_11_10 = var_11_4 - var_11_8 > 0 and "capsule" or "sphere"
-	local var_11_11 = PhysicsWorld.immediate_overlap(var_11_0, "shape", var_11_10, "position", var_11_6, "rotation", var_11_7, "size", var_11_9, "collision_filter", arg_11_2)
-	local var_11_12 = var_11_11 and var_11_11[1]
-	local var_11_13
+CharacterStateHelper_2.is_colliding_with_gameplay_collision_box = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+	-- function 11
+	local get_data = World.get_data(arg_11_0, "physics_world")
+	local position
+
+	if not arg_11_3 then
+		position = arg_11_3.position
+
+		if not position then
+			-- Nothing
+		end
+	end
+
+	position = POSITION_LOOKUP[arg_11_1]
+
+	::label_11_0::
+
+	local get_movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(arg_11_1)
+	local movement_settings_table_name
+
+	if not arg_11_3 then
+		movement_settings_table_name = arg_11_3.movement_settings_table_name
+
+		if not movement_settings_table_name then
+			-- Nothing
+		end
+	end
+
+	movement_settings_table_name = "gameplay_collision_box"
+
+	::label_11_1::
+
+	local collision_check_player_half_height = get_movement_settings_table[movement_settings_table_name].collision_check_player_half_height
+	local collision_check_player_height_offset = get_movement_settings_table[movement_settings_table_name].collision_check_player_height_offset
+	local num = position + Vector3(0, 0, collision_check_player_height_offset)
+	local local_rotation = Unit.local_rotation(arg_11_1, 0)
+	local movement_settings_table_name_2
+
+	if not arg_11_3 then
+		movement_settings_table_name_2 = arg_11_3.movement_settings_table_name
+
+		if not movement_settings_table_name_2 then
+			-- Nothing
+		end
+	end
+
+	movement_settings_table_name_2 = "gameplay_collision_box"
+
+	::label_11_2::
+
+	local collision_check_player_radius = get_movement_settings_table[movement_settings_table_name_2].collision_check_player_radius
+	local var_11_10 = Vector3(collision_check_player_radius, collision_check_player_half_height, collision_check_player_radius)
+	local flag
+
+	flag = not (collision_check_player_half_height - collision_check_player_radius > 0) or not "capsule" or "sphere"
+
+	local immediate_overlap = PhysicsWorld.immediate_overlap(get_data, "shape", flag, "position", num, "rotation", local_rotation, "size", var_11_10, "collision_filter", arg_11_2)
+	local flag_2 = not immediate_overlap and immediate_overlap[1]
 	local var_11_14
+	local var_11_15
 
-	if var_11_12 then
-		var_11_13 = true
-		var_11_14 = Actor.unit(var_11_12)
+	if not flag_2 then
+		var_11_14 = true
+		var_11_15 = Actor.unit(flag_2)
 	end
 
-	return var_11_13, var_11_14
+	return var_11_14, var_11_15
 end
 
-function var_0_0.move_in_air(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
-	local var_12_0 = var_0_0.get_movement_input(arg_12_1)
-	local var_12_1 = 0
+CharacterStateHelper_2.move_in_air = function (self, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
+	-- function 12
+	local get_movement_input = CharacterStateHelper_2.get_movement_input(arg_12_1)
+	local num = 0
 
-	if arg_12_5 and arg_12_5 > 0 then
-		var_12_1 = var_12_1 - 1
+	if not (not arg_12_5 and not (arg_12_5 > 0)) then
+		num = num - 1
 	end
 
-	if arg_12_6 and arg_12_6 > 0 then
-		var_12_1 = var_12_1 + 1
+	if not (not arg_12_6 and not (arg_12_6 > 0)) then
+		num = num + 1
 	end
 
-	if var_12_1 ~= 0 then
-		Vector3.set_y(var_12_0, var_12_1)
+	if num ~= 0 then
+		Vector3.set_y(get_movement_input, num)
 	end
 
-	local var_12_2 = Vector3.normalize(var_12_0)
-	local var_12_3 = arg_12_0:current_rotation()
-	local var_12_4 = Vector3.normalize(Vector3.flat(Quaternion.rotate(var_12_3, var_12_2)))
-	local var_12_5 = PlayerUnitMovementSettings.get_movement_settings_table(arg_12_4)
-	local var_12_6 = math.clamp(var_12_5.move_speed, 0, PlayerUnitMovementSettings.move_speed)
+	local normalize = Vector3.normalize(get_movement_input)
+	local current_rotation = self:current_rotation()
+	local normalize_2 = Vector3.normalize(Vector3.flat(Quaternion.rotate(current_rotation, normalize)))
+	local get_movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(arg_12_4)
+	local clamp = math.clamp(get_movement_settings_table.move_speed, 0, PlayerUnitMovementSettings.move_speed)
 
-	if var_12_0.y < 0 then
-		arg_12_3 = arg_12_3 * var_12_5.backward_move_scale
-		var_12_6 = var_12_6 * var_12_5.backward_move_scale * 0.9
+	if get_movement_input.y < 0 then
+		arg_12_3 = arg_12_3 * get_movement_settings_table.backward_move_scale
+		clamp = clamp * get_movement_settings_table.backward_move_scale * 0.9
 	end
 
-	local var_12_7 = Vector3.flat(arg_12_2:current_velocity()) + var_12_4 * arg_12_3
-	local var_12_8 = Vector3.length(var_12_7)
-	local var_12_9 = math.clamp(var_12_8, 0, var_12_6 * var_12_5.player_speed_scale)
-	local var_12_10 = Vector3.normalize(var_12_7)
+	local num_2 = Vector3.flat(arg_12_2:current_velocity()) + normalize_2 * arg_12_3
+	local length = Vector3.length(num_2)
+	local clamp_2 = math.clamp(length, 0, clamp * get_movement_settings_table.player_speed_scale)
+	local normalize_3 = Vector3.normalize(num_2)
 
-	arg_12_2:set_wanted_velocity(var_12_10 * var_12_9)
+	arg_12_2:set_wanted_velocity(normalize_3 * clamp_2)
 end
 
-function var_0_0.move_in_air_pactsworn(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7)
-	local var_13_0 = var_0_0.get_movement_input(arg_13_1)
-	local var_13_1 = 0
-	local var_13_2 = Unit.get_data(arg_13_4, "breed")
+CharacterStateHelper_2.move_in_air_pactsworn = function (self, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7)
+	-- function 13
+	local get_movement_input = CharacterStateHelper_2.get_movement_input(arg_13_1)
+	local num = 0
+	local get_data = Unit.get_data(arg_13_4, "breed")
 
-	if arg_13_5 and arg_13_5 > 0 then
-		var_13_1 = var_13_1 - 1
+	if not (not arg_13_5 and not (arg_13_5 > 0)) then
+		num = num - 1
 	end
 
-	if arg_13_6 and arg_13_6 > 0 then
-		var_13_1 = var_13_1 + 1
+	if not (not arg_13_6 and not (arg_13_6 > 0)) then
+		num = num + 1
 	end
 
-	if var_13_1 ~= 0 then
-		Vector3.set_y(var_13_0, var_13_1)
+	if num ~= 0 then
+		Vector3.set_y(get_movement_input, num)
 	end
 
-	local var_13_3 = Vector3.normalize(var_13_0)
-	local var_13_4 = arg_13_0:current_rotation()
-	local var_13_5 = Vector3.normalize(Vector3.flat(Quaternion.rotate(var_13_4, var_13_3)))
-	local var_13_6 = PlayerUnitMovementSettings.get_movement_settings_table(arg_13_4)
-	local var_13_7 = var_13_2.movement_speed_multiplier
-	local var_13_8 = var_13_6.move_speed
+	local normalize = Vector3.normalize(get_movement_input)
+	local current_rotation = self:current_rotation()
+	local normalize_2 = Vector3.normalize(Vector3.flat(Quaternion.rotate(current_rotation, normalize)))
+	local get_movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(arg_13_4)
+	local movement_speed_multiplier = get_data.movement_speed_multiplier
+	local move_speed = get_movement_settings_table.move_speed
 
-	if ScriptUnit.extension(arg_13_4, "ghost_mode_system"):is_in_ghost_mode() then
-		var_13_8 = var_13_6.ghost_move_speed
+	if not ScriptUnit.extension(arg_13_4, "ghost_mode_system"):is_in_ghost_mode() then
+		move_speed = get_movement_settings_table.ghost_move_speed
 	end
 
-	local var_13_9 = var_13_8 * var_13_7 * 0.7
+	local num_2 = move_speed * movement_speed_multiplier * 0.7
 
-	if var_13_0.y < 0 then
-		arg_13_3 = arg_13_3 * var_13_6.backward_move_scale
-		var_13_9 = var_13_9 * var_13_6.backward_move_scale * 0.9
+	if get_movement_input.y < 0 then
+		arg_13_3 = arg_13_3 * get_movement_settings_table.backward_move_scale
+		num_2 = num_2 * get_movement_settings_table.backward_move_scale * 0.9
 	end
 
-	local var_13_10 = Vector3.flat(arg_13_2:current_velocity()) + var_13_5 * arg_13_3
-	local var_13_11 = Vector3.length(var_13_10)
-	local var_13_12 = math.clamp(var_13_11, 0, var_13_9 * var_13_6.player_speed_scale)
-	local var_13_13 = Vector3.normalize(var_13_10)
+	local num_3 = Vector3.flat(arg_13_2:current_velocity()) + normalize_2 * arg_13_3
+	local length = Vector3.length(num_3)
+	local clamp = math.clamp(length, 0, num_2 * get_movement_settings_table.player_speed_scale)
+	local normalize_3 = Vector3.normalize(num_3)
 
-	arg_13_2:set_wanted_velocity(var_13_13 * var_13_12)
+	arg_13_2:set_wanted_velocity(normalize_3 * clamp)
 end
 
-function var_0_0.looking_up(arg_14_0, arg_14_1)
-	local var_14_0 = arg_14_0:get_first_person_unit()
-	local var_14_1 = Unit.world_rotation(var_14_0, 0)
-	local var_14_2 = Quaternion.forward(var_14_1)
-	local var_14_3 = Vector3.normalize(var_14_2)
+CharacterStateHelper_2.looking_up = function (self, arg_14_1)
+	-- function 14
+	local get_first_person_unit = self:get_first_person_unit()
+	local world_rotation = Unit.world_rotation(get_first_person_unit, 0)
+	local forward = Quaternion.forward(world_rotation)
+	local normalize = Vector3.normalize(forward)
+	local flag
 
-	return arg_14_1 < Vector3.dot(var_14_3, Vector3.up()) and true or false
+	flag = not (arg_14_1 < Vector3.dot(normalize, Vector3.up())) or not true or false
+
+	return flag
 end
 
-function var_0_0.looking_down(arg_15_0, arg_15_1)
-	local var_15_0 = arg_15_0:get_first_person_unit()
-	local var_15_1 = Unit.world_rotation(var_15_0, 0)
-	local var_15_2 = Quaternion.forward(var_15_1)
-	local var_15_3 = Vector3.normalize(var_15_2)
+CharacterStateHelper_2.looking_down = function (self, arg_15_1)
+	-- function 15
+	local get_first_person_unit = self:get_first_person_unit()
+	local world_rotation = Unit.world_rotation(get_first_person_unit, 0)
+	local forward = Quaternion.forward(world_rotation)
+	local normalize = Vector3.normalize(forward)
+	local flag
 
-	return arg_15_1 > Vector3.dot(var_15_3, Vector3.up()) and true or false
+	flag = not (arg_15_1 > Vector3.dot(normalize, Vector3.up())) or not true or false
+
+	return flag
 end
 
-function var_0_0.look(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6)
-	local var_16_0 = Managers.state.camera
-	local var_16_1 = arg_16_5 or var_16_0:has_viewport(arg_16_1) and var_16_0:fov(arg_16_1) / 0.785 or 1
-	local var_16_2 = arg_16_0.unit
-	local var_16_3 = var_16_1 * PlayerUnitMovementSettings.get_movement_settings_table(var_16_2).look_input_sensitivity
-	local var_16_4 = false
-	local var_16_5 = var_0_0.get_look_input(arg_16_0, arg_16_3, arg_16_4, var_16_4) * var_16_3
+CharacterStateHelper_2.look = function (self, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6)
+	-- function 16
+	local camera = Managers.state.camera
 
-	if arg_16_6 then
-		var_16_5 = var_16_5 + arg_16_6
+	if not arg_16_5 then
+		-- Nothing
 	end
 
-	arg_16_2:set_look_delta(var_16_5)
+	do
+		local num
+	end
+
+	::label_16_0::
+
+	if not camera:has_viewport(arg_16_1) then
+		num = camera:fov(arg_16_1) / 0.785
+
+		if not num then
+			-- Nothing
+		end
+	end
+
+	num = 1
+
+	::label_16_1::
+
+	local unit = self.unit
+	local num_2 = num * PlayerUnitMovementSettings.get_movement_settings_table(unit).look_input_sensitivity
+	local flag = false
+	local num_3 = CharacterStateHelper_2.get_look_input(self, arg_16_3, arg_16_4, flag) * num_2
+
+	if not arg_16_6 then
+		num_3 = num_3 + arg_16_6
+	end
+
+	arg_16_2:set_look_delta(num_3)
 end
 
-function var_0_0.look_limited_rotation_freedom(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, arg_17_9)
-	local var_17_0 = Managers.state.camera
-	local var_17_1 = arg_17_9 or var_17_0:has_viewport(arg_17_1) and Managers.state.camera:fov(arg_17_1) / 0.785 or 1
-	local var_17_2 = false
-	local var_17_3 = var_0_0.get_look_input(arg_17_0, arg_17_7, arg_17_8, var_17_2) * var_17_1
+CharacterStateHelper_2.look_limited_rotation_freedom = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, arg_17_9)
+	-- function 17
+	local camera = Managers.state.camera
 
-	if arg_17_5 then
-		local var_17_4 = Quaternion.yaw(arg_17_4) - Quaternion.yaw(Unit.local_rotation(arg_17_2.first_person_unit, 0))
-		local var_17_5 = Vector3.x(var_17_3)
+	if not arg_17_9 then
+		-- Nothing
+	end
 
-		if var_17_5 > 0 and arg_17_5 < var_17_4 then
-			var_17_5 = 0
+	do
+		local num
+	end
+
+	::label_17_0::
+
+	if not camera:has_viewport(arg_17_1) then
+		num = Managers.state.camera:fov(arg_17_1) / 0.785
+
+		if not num then
+			-- Nothing
+		end
+	end
+
+	num = 1
+
+	::label_17_1::
+
+	local flag = false
+	local num_2 = CharacterStateHelper_2.get_look_input(arg_17_0, arg_17_7, arg_17_8, flag) * num
+
+	if not arg_17_5 then
+		local num_3 = Quaternion.yaw(arg_17_4) - Quaternion.yaw(Unit.local_rotation(arg_17_2.first_person_unit, 0))
+		local x = Vector3.x(num_2)
+
+		if not (not (x > 0) or not (arg_17_5 < num_3)) then
+			x = 0
 		end
 
-		if var_17_5 < 0 and var_17_4 < -arg_17_5 then
-			var_17_5 = 0
+		if not (not (x < 0) or not (num_3 < -arg_17_5)) then
+			x = 0
 		end
 
-		Vector3.set_x(var_17_3, var_17_5)
+		Vector3.set_x(num_2, x)
 	end
 
-	if arg_17_6 then
-		local var_17_6 = Quaternion.pitch(arg_17_4) - Quaternion.pitch(Unit.local_rotation(arg_17_2.first_person_unit, 0))
-		local var_17_7 = Vector3.y(var_17_3)
-		local var_17_8 = math.pi / 2
+	if not arg_17_6 then
+		local num_4 = Quaternion.pitch(arg_17_4) - Quaternion.pitch(Unit.local_rotation(arg_17_2.first_person_unit, 0))
+		local y = Vector3.y(num_2)
+		local num_5 = math.pi / 2
 
-		if var_17_7 < 0 and arg_17_6 < var_17_6 then
-			var_17_7 = 0
+		if not (not (y < 0) or not (arg_17_6 < num_4)) then
+			y = 0
 		end
 
-		if var_17_7 > 0 and var_17_6 < -arg_17_6 then
-			var_17_7 = 0
+		if not (not (y > 0) or not (num_4 < -arg_17_6)) then
+			y = 0
 		end
 
-		Vector3.set_y(var_17_3, var_17_7)
+		Vector3.set_y(num_2, y)
 	end
 
-	arg_17_2:set_look_delta(var_17_3)
+	arg_17_2:set_look_delta(num_2)
 end
 
-function var_0_0.lerp_player_rotation_radian(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+CharacterStateHelper_2.lerp_player_rotation_radian = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+	-- function 18
 	local var_18_0
 
-	if arg_18_1 >= 0 and arg_18_0 >= 0 or arg_18_1 <= 0 and arg_18_0 <= 0 then
+	if not ((not (arg_18_1 >= 0) or not (arg_18_0 >= 0) or not (arg_18_1 <= 0)) and not (arg_18_0 <= 0)) then
 		var_18_0 = arg_18_0 + (arg_18_1 - arg_18_0) * arg_18_3
 	else
-		local var_18_1 = arg_18_2 * arg_18_3
+		local num = arg_18_2 * arg_18_3
 
 		if arg_18_1 < 0 then
 			if math.abs(arg_18_1) + arg_18_0 > math.pi then
-				var_18_0 = arg_18_0 + var_18_1
+				var_18_0 = arg_18_0 + num
 
 				if var_18_0 >= math.pi then
-					local var_18_2 = math.pi - math.abs(var_18_0)
+					local num_2 = math.pi - math.abs(var_18_0)
 
-					var_18_0 = math.pi - var_18_2
+					var_18_0 = math.pi - num_2
 				end
 			else
-				var_18_0 = arg_18_0 - var_18_1
+				var_18_0 = arg_18_0 - num
 			end
 		elseif arg_18_1 + math.abs(arg_18_0) > math.pi then
-			var_18_0 = arg_18_0 - var_18_1
+			var_18_0 = arg_18_0 - num
 
 			if var_18_0 <= -math.pi then
-				local var_18_3 = var_18_0 - math.pi
+				local num_3 = var_18_0 - math.pi
 
-				var_18_0 = -math.pi + var_18_3
+				var_18_0 = -math.pi + num_3
 			end
 		else
-			var_18_0 = arg_18_0 + var_18_1
+			var_18_0 = arg_18_0 + num
 		end
 	end
 
 	return var_18_0
 end
 
-function var_0_0.lerp_player_pitch_rotation(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
-	local var_19_0 = Unit.local_rotation(arg_19_3, 0)
-	local var_19_1 = math.lerp(arg_19_0, 0, arg_19_2)
-	local var_19_2 = Quaternion.yaw(var_19_0)
-	local var_19_3 = Quaternion.roll(var_19_0)
-	local var_19_4 = Quaternion(Vector3.up(), var_19_2)
-	local var_19_5 = Quaternion(Vector3.right(), var_19_1)
-	local var_19_6 = Quaternion(Vector3.forward(), var_19_3)
-	local var_19_7 = Quaternion.multiply(var_19_4, var_19_5)
-	local var_19_8 = Quaternion.multiply(var_19_7, var_19_6)
+CharacterStateHelper_2.lerp_player_pitch_rotation = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+	-- function 19
+	local local_rotation = Unit.local_rotation(arg_19_3, 0)
+	local lerp = math.lerp(arg_19_0, 0, arg_19_2)
+	local yaw = Quaternion.yaw(local_rotation)
+	local roll = Quaternion.roll(local_rotation)
+	local var_19_4 = Quaternion(Vector3.up(), yaw)
+	local var_19_5 = Quaternion(Vector3.right(), lerp)
+	local var_19_6 = Quaternion(Vector3.forward(), roll)
+	local multiply = Quaternion.multiply(var_19_4, var_19_5)
+	local multiply_2 = Quaternion.multiply(multiply, var_19_6)
 
-	arg_19_1:set_rotation(var_19_8)
-	Unit.set_local_rotation(arg_19_3, 0, var_19_8)
+	arg_19_1:set_rotation(multiply_2)
+	Unit.set_local_rotation(arg_19_3, 0, multiply_2)
 end
 
-function var_0_0.lerp_player_yaw_rotation(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
-	local var_20_0 = arg_20_3:get_first_person_unit()
-	local var_20_1 = Unit.local_rotation(var_20_0, 0)
-	local var_20_2 = var_0_0.lerp_player_rotation_radian(arg_20_0, arg_20_1, arg_20_2, arg_20_4)
-	local var_20_3 = Quaternion.pitch(var_20_1)
-	local var_20_4 = Quaternion.roll(var_20_1)
-	local var_20_5 = Quaternion(Vector3.up(), var_20_2)
-	local var_20_6 = Quaternion(Vector3.right(), var_20_3)
-	local var_20_7 = Quaternion(Vector3.forward(), var_20_4)
-	local var_20_8 = Quaternion.multiply(var_20_5, var_20_6)
-	local var_20_9 = Quaternion.multiply(var_20_8, var_20_7)
+CharacterStateHelper_2.lerp_player_yaw_rotation = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+	-- function 20
+	local get_first_person_unit = arg_20_3:get_first_person_unit()
+	local local_rotation = Unit.local_rotation(get_first_person_unit, 0)
+	local lerp_player_rotation_radian = CharacterStateHelper_2.lerp_player_rotation_radian(arg_20_0, arg_20_1, arg_20_2, arg_20_4)
+	local pitch = Quaternion.pitch(local_rotation)
+	local roll = Quaternion.roll(local_rotation)
+	local var_20_5 = Quaternion(Vector3.up(), lerp_player_rotation_radian)
+	local var_20_6 = Quaternion(Vector3.right(), pitch)
+	local var_20_7 = Quaternion(Vector3.forward(), roll)
+	local multiply = Quaternion.multiply(var_20_5, var_20_6)
+	local multiply_2 = Quaternion.multiply(multiply, var_20_7)
 
-	arg_20_3:set_rotation(var_20_9)
-	Unit.set_local_rotation(arg_20_5, 0, var_20_9)
+	arg_20_3:set_rotation(multiply_2)
+	Unit.set_local_rotation(arg_20_5, 0, multiply_2)
 end
 
-function var_0_0.time_in_ladder_move_animation(arg_21_0, arg_21_1)
-	local var_21_0 = Unit.world_position(arg_21_0, 0)
-	local var_21_1 = Vector3.z(var_21_0) - arg_21_1
-	local var_21_2 = PlayerUnitMovementSettings.get_movement_settings_table(arg_21_0)
+CharacterStateHelper_2.time_in_ladder_move_animation = function (arg_21_0, arg_21_1)
+	-- function 21
+	local world_position = Unit.world_position(arg_21_0, 0)
+	local num = Vector3.z(world_position) - arg_21_1
+	local get_movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(arg_21_0)
 
-	return var_21_1 % var_21_2.ladder.whole_movement_animation_distance / var_21_2.ladder.whole_movement_animation_distance * var_21_2.ladder.movement_animation_length
+	return num % get_movement_settings_table.ladder.whole_movement_animation_distance / get_movement_settings_table.ladder.whole_movement_animation_distance * get_movement_settings_table.ladder.movement_animation_length
 end
 
-function var_0_0.show_inventory_3p(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
-	local var_22_0 = Managers.state.network
-	local var_22_1 = var_22_0:unit_game_object_id(arg_22_0)
+CharacterStateHelper_2.show_inventory_3p = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+	-- function 22
+	local network = Managers.state.network
+	local unit_game_object_id = network:unit_game_object_id(arg_22_0)
 
-	if not var_22_0.game_session then
+	if not network.game_session then
 		return
 	end
 
-	if arg_22_2 or arg_22_3 and arg_22_4.is_bot then
+	if arg_22_2 or not arg_22_3 or not arg_22_4.is_bot then
 		arg_22_4:show_third_person_inventory(arg_22_1)
 	end
 
-	if arg_22_3 then
-		var_22_0.network_transmit:send_rpc_clients("rpc_show_inventory", var_22_1, arg_22_1)
+	if not arg_22_3 then
+		network.network_transmit:send_rpc_clients("rpc_show_inventory", unit_game_object_id, arg_22_1)
 	else
-		var_22_0.network_transmit:send_rpc_server("rpc_show_inventory", var_22_1, arg_22_1)
+		network.network_transmit:send_rpc_server("rpc_show_inventory", unit_game_object_id, arg_22_1)
 	end
 end
 
-function var_0_0.set_is_on_ladder(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
-	local var_23_0 = Managers.state.network
-	local var_23_1 = var_23_0:unit_game_object_id(arg_23_1)
-	local var_23_2, var_23_3 = var_23_0:game_object_or_level_id(arg_23_0)
+CharacterStateHelper_2.set_is_on_ladder = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+	-- function 23
+	local network = Managers.state.network
+	local unit_game_object_id = network:unit_game_object_id(arg_23_1)
+	local game_object_or_level_id, var_23_3 = network:game_object_or_level_id(arg_23_0)
 
 	assert(var_23_3, "Ladder unit wasn't a level unit")
 
-	if arg_23_3 or LEVEL_EDITOR_TEST then
-		Managers.state.entity:system("status_system"):rpc_status_change_bool(nil, NetworkLookup.statuses.ladder_climbing, arg_23_2, var_23_1, var_23_2)
+	if arg_23_3 or not LEVEL_EDITOR_TEST then
+		Managers.state.entity:system("status_system"):rpc_status_change_bool(nil, NetworkLookup.statuses.ladder_climbing, arg_23_2, unit_game_object_id, game_object_or_level_id)
 	else
 		arg_23_4:set_is_on_ladder(arg_23_2, arg_23_0)
-		var_23_0.network_transmit:send_rpc_server("rpc_status_change_bool", NetworkLookup.statuses.ladder_climbing, arg_23_2, var_23_1, var_23_2)
+		network.network_transmit:send_rpc_server("rpc_status_change_bool", NetworkLookup.statuses.ladder_climbing, arg_23_2, unit_game_object_id, game_object_or_level_id)
 	end
 end
 
-function var_0_0.set_is_on_ledge(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
-	local var_24_0 = Managers.state.network
-	local var_24_1 = var_24_0:unit_game_object_id(arg_24_1)
-	local var_24_2, var_24_3 = var_24_0:game_object_or_level_id(arg_24_0)
+CharacterStateHelper_2.set_is_on_ledge = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+	-- function 24
+	local network = Managers.state.network
+	local unit_game_object_id = network:unit_game_object_id(arg_24_1)
+	local game_object_or_level_id, var_24_3 = network:game_object_or_level_id(arg_24_0)
 
 	arg_24_4:set_crouching(false)
 
-	if Managers.state.network:game() and not LEVEL_EDITOR_TEST then
+	if not (not Managers.state.network:game() and LEVEL_EDITOR_TEST) then
 		arg_24_4:set_is_ledge_hanging(arg_24_2, arg_24_0)
-		var_24_0.network_transmit:send_rpc_server("rpc_status_change_bool", NetworkLookup.statuses.ledge_hanging, arg_24_2, var_24_1, var_24_2)
+		network.network_transmit:send_rpc_server("rpc_status_change_bool", NetworkLookup.statuses.ledge_hanging, arg_24_2, unit_game_object_id, game_object_or_level_id)
 	end
 end
 
-function var_0_0.get_buffered_input(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5)
+CharacterStateHelper_2.get_buffered_input = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5)
+	-- function 25
 	local var_25_0
 	local var_25_1
 
-	if arg_25_0 then
+	if not arg_25_0 then
 		var_25_0 = arg_25_1:get(arg_25_0)
 
-		if var_25_0 and arg_25_4 and var_25_0 < arg_25_4 then
+		if not (not var_25_0 and not arg_25_4 and not (var_25_0 < arg_25_4)) then
 			return false
 		end
 
 		if not arg_25_2 then
-			if var_25_0 then
+			if not var_25_0 then
 				arg_25_1:add_buffer(arg_25_0, arg_25_3)
 			else
 				var_25_0 = arg_25_1:get_buffer(arg_25_0)
@@ -745,53 +951,55 @@ function var_0_0.get_buffered_input(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_
 	return var_25_0, var_25_1
 end
 
-function var_0_0._check_cooldown(arg_26_0, arg_26_1, arg_26_2)
-	local var_26_0 = false
+CharacterStateHelper_2._check_cooldown = function (self, arg_26_1, arg_26_2)
+	-- function 26
+	local flag = false
 
-	if arg_26_0 then
-		local var_26_1 = arg_26_0:get_action_cooldown(arg_26_1)
+	if not self then
+		local get_action_cooldown = self:get_action_cooldown(arg_26_1)
 
-		var_26_0 = var_26_1 and arg_26_2 <= var_26_1
+		flag = not get_action_cooldown and arg_26_2 <= get_action_cooldown
 	end
 
-	return var_26_0
+	return flag
 end
 
-function var_0_0.wield_input(arg_27_0, arg_27_1, arg_27_2)
+CharacterStateHelper_2.wield_input = function (self, arg_27_1, arg_27_2)
+	-- function 27
 	if arg_27_2 ~= "action_wield" then
 		return nil
 	end
 
-	local var_27_0 = InventorySettings.slots_by_name
-	local var_27_1 = InventorySettings.slots_by_wield_input
-	local var_27_2 = arg_27_1:equipment()
-	local var_27_3 = var_27_2.wielded_slot
-	local var_27_4 = var_27_0[var_27_3]
-	local var_27_5 = var_27_4.wield_input
+	local slots_by_name = InventorySettings.slots_by_name
+	local slots_by_wield_input = InventorySettings.slots_by_wield_input
+	local equipment = arg_27_1:equipment()
+	local wielded_slot = equipment.wielded_slot
+	local var_27_4 = slots_by_name[wielded_slot]
+	local wield_input = var_27_4.wield_input
 	local var_27_6
 	local var_27_7
 
-	if var_0_0.get_buffered_input("wield_switch", arg_27_0, nil, nil, nil, var_27_3 == "slot_melee") then
-		var_27_6 = var_27_4.name ~= "slot_melee" and "slot_melee" or "slot_ranged"
+	if not CharacterStateHelper_2.get_buffered_input("wield_switch", self, nil, nil, nil, wielded_slot == "slot_melee") then
+		var_27_6 = var_27_4.name == "slot_melee" or not "slot_melee" or "slot_ranged"
 	end
 
 	if not var_27_6 then
-		for iter_27_0, iter_27_1 in ipairs(var_27_1) do
-			if iter_27_1 ~= var_27_4 or arg_27_1:can_swap_from_storage(iter_27_1.name, SwapFromStorageType.Unique) then
-				local var_27_8 = iter_27_1.wield_input
-				local var_27_9 = iter_27_1.name
+		for i, v in ipairs(slots_by_wield_input) do
+			if v ~= var_27_4 or not arg_27_1:can_swap_from_storage(v.name, SwapFromStorageType.Unique) then
+				local wield_input_2 = v.wield_input
+				local name = v.name
 
-				if var_27_2.slots[var_27_9] and var_0_0.get_buffered_input(var_27_8, arg_27_0, nil, nil, nil, var_27_3 == "slot_melee") then
-					var_27_6 = var_27_9
+				if not equipment.slots[name] and not CharacterStateHelper_2.get_buffered_input(wield_input_2, self, nil, nil, nil, wielded_slot == "slot_melee") then
+					var_27_6 = name
 
 					break
 				end
 			end
 
-			local var_27_10 = iter_27_1.wield_input_alt
+			local wield_input_alt = v.wield_input_alt
 
-			if var_27_10 and var_0_0.get_buffered_input(var_27_10, arg_27_0, nil, nil, nil, var_27_3 == "slot_melee") and (iter_27_1 ~= var_27_4 or arg_27_1:can_swap_from_storage(iter_27_1.name, SwapFromStorageType.LowestUnwieldPrio)) then
-				var_27_6 = iter_27_1.name
+			if not wield_input_alt and not CharacterStateHelper_2.get_buffered_input(wield_input_alt, self, nil, nil, nil, wielded_slot == "slot_melee") and v ~= var_27_4 and not arg_27_1:can_swap_from_storage(v.name, SwapFromStorageType.LowestUnwieldPrio) then
+				var_27_6 = v.name
 				var_27_7 = SwapFromStorageType.LowestUnwieldPrio
 
 				break
@@ -799,110 +1007,120 @@ function var_0_0.wield_input(arg_27_0, arg_27_1, arg_27_2)
 		end
 	end
 
-	local var_27_11 = 0
+	local num = 0
 
-	if arg_27_0:get("wield_prev") then
-		var_27_11 = -1
-	elseif arg_27_0:get("wield_next") then
-		var_27_11 = 1
+	if not self:get("wield_prev") then
+		num = -1
+	elseif not self:get("wield_next") then
+		num = 1
 	end
 
-	local var_27_12 = DebugKeyHandler.key_pressed("left shift") or DebugKeyHandler.key_pressed("left alt")
-	local var_27_13 = Application.user_setting("weapon_scroll_type") or "scroll_wrap"
+	local key_pressed = DebugKeyHandler.key_pressed("left shift")
 
-	if var_27_13 ~= "scroll_disabled" and not var_27_6 and var_27_11 ~= 0 and not var_27_12 then
-		local var_27_14 = var_27_4.wield_index or 1
-		local var_27_15 = #var_27_1
-		local var_27_16 = math.sign(var_27_11)
-		local var_27_17 = var_27_14 + var_27_16
+	key_pressed = key_pressed or DebugKeyHandler.key_pressed("left alt")
+
+	local user_setting = Application.user_setting("weapon_scroll_type")
+
+	user_setting = user_setting or "scroll_wrap"
+
+	if not (user_setting == "scroll_disabled" or var_27_6 or num == 0 or key_pressed) then
+		local wield_index = var_27_4.wield_index
+
+		wield_index = wield_index or 1
+
+		local count = #slots_by_wield_input
+		local sign = math.sign(num)
+		local num_2 = wield_index + sign
 
 		repeat
-			local var_27_18 = var_27_1[var_27_17]
-			local var_27_19 = var_27_18 and var_27_2.slots[var_27_18.name]
+			local var_27_18 = slots_by_wield_input[num_2]
+			local flag = not var_27_18 and equipment.slots[var_27_18.name]
 
-			if not var_27_19 then
-				if var_27_15 < var_27_17 then
-					if var_27_13 == "scroll_clamp" then
-						var_27_17 = var_27_15
-						var_27_16 = -1
+			if not flag then
+				if count < num_2 then
+					if user_setting == "scroll_clamp" then
+						num_2 = count
+						sign = -1
 					else
-						var_27_17 = 1
+						num_2 = 1
 					end
-				elseif var_27_17 < 1 then
-					if var_27_13 == "scroll_clamp" then
-						var_27_17 = 1
-						var_27_16 = 1
+				elseif num_2 < 1 then
+					if user_setting == "scroll_clamp" then
+						num_2 = 1
+						sign = 1
 					else
-						var_27_17 = var_27_15
+						num_2 = count
 					end
 				else
-					var_27_17 = var_27_17 + var_27_16
+					num_2 = num_2 + sign
 				end
 			end
-		until var_27_19
+		until not flag
 
-		if var_27_4.wield_index ~= var_27_17 then
-			var_27_6 = var_27_1[var_27_17].name
+		if var_27_4.wield_index ~= num_2 then
+			var_27_6 = slots_by_wield_input[num_2].name
 		end
 	end
 
-	if var_27_6 and not var_27_2.slots[var_27_6] then
+	if not (not var_27_6 and equipment.slots[var_27_6]) then
 		var_27_6 = nil
 	end
 
-	return var_27_6, var_27_11, var_27_7
+	return var_27_6, num, var_27_7
 end
 
-local var_0_2 = {}
+local tbl_2 = {}
 
-function var_0_0.get_item_data_and_weapon_extensions(arg_28_0)
-	local var_28_0 = arg_28_0:equipment()
-	local var_28_1 = var_28_0.wielded
+CharacterStateHelper_2.get_item_data_and_weapon_extensions = function (self)
+	-- function 28
+	local equipment = self:equipment()
+	local wielded = equipment.wielded
 
-	if var_28_1 == nil then
+	if wielded == nil then
 		return
 	end
 
-	local var_28_2 = var_28_0.right_hand_wielded_unit
-	local var_28_3 = var_28_0.left_hand_wielded_unit
+	local right_hand_wielded_unit = equipment.right_hand_wielded_unit
+	local left_hand_wielded_unit = equipment.left_hand_wielded_unit
 	local var_28_4
 	local var_28_5
 
-	if Unit.alive(var_28_2) then
-		var_28_4 = ScriptUnit.extension(var_28_2, "weapon_system")
+	if not Unit.alive(right_hand_wielded_unit) then
+		var_28_4 = ScriptUnit.extension(right_hand_wielded_unit, "weapon_system")
 	end
 
-	if Unit.alive(var_28_3) then
-		var_28_5 = ScriptUnit.extension(var_28_3, "weapon_system")
+	if not Unit.alive(left_hand_wielded_unit) then
+		var_28_5 = ScriptUnit.extension(left_hand_wielded_unit, "weapon_system")
 	end
 
-	if not var_28_4 and not var_28_5 then
+	if not (var_28_4 or var_28_5) then
 		return
 	end
 
-	return var_28_1, var_28_4, var_28_5
+	return wielded, var_28_4, var_28_5
 end
 
-function var_0_0.get_current_action_data(arg_29_0, arg_29_1)
+CharacterStateHelper_2.get_current_action_data = function (self, arg_29_1)
+	-- function 29
 	local var_29_0
 	local var_29_1
 	local var_29_2
 
-	if arg_29_0 then
-		local var_29_3 = arg_29_0.current_action_settings
+	if not self then
+		local current_action_settings = self.current_action_settings
 
-		if var_29_3 then
-			var_29_0 = var_29_3
-			var_29_1 = arg_29_0
+		if not current_action_settings then
+			var_29_0 = current_action_settings
+			var_29_1 = self
 			var_29_2 = var_29_0.weapon_action_hand or "left"
 		end
 	end
 
-	if arg_29_1 then
-		local var_29_4 = arg_29_1.current_action_settings
+	if not arg_29_1 then
+		local current_action_settings_2 = arg_29_1.current_action_settings
 
-		if var_29_4 then
-			var_29_0 = var_29_4
+		if not current_action_settings_2 then
+			var_29_0 = current_action_settings_2
 			var_29_1 = arg_29_1
 			var_29_2 = var_29_0.weapon_action_hand or "right"
 		end
@@ -911,115 +1129,129 @@ function var_0_0.get_current_action_data(arg_29_0, arg_29_1)
 	return var_29_0, var_29_1, var_29_2
 end
 
-function var_0_0._check_chain_action(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4, arg_30_5, arg_30_6, arg_30_7, arg_30_8)
+CharacterStateHelper_2._check_chain_action = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4, arg_30_5, arg_30_6, arg_30_7, arg_30_8)
+	-- function 30
 	local var_30_0
 	local var_30_1
 	local var_30_2
 	local var_30_3
 	local var_30_4
-	local var_30_5 = arg_30_1.release_required
-	local var_30_6 = true
+	local release_required = arg_30_1.release_required
+	local flag = true
 
-	if var_30_5 then
-		var_30_6 = arg_30_4:released_input(var_30_5)
+	if not release_required then
+		flag = arg_30_4:released_input(release_required)
 	end
 
-	local var_30_7 = arg_30_1.hold_required
+	local hold_required = arg_30_1.hold_required
 
-	if var_30_7 then
-		for iter_30_0, iter_30_1 in pairs(var_30_7) do
-			if arg_30_4:released_input(iter_30_1) then
-				var_30_6 = false
+	if not hold_required then
+		for k, v in pairs(hold_required) do
+			if not arg_30_4:released_input(v) then
+				flag = false
 
 				break
 			end
 		end
 	end
 
-	local var_30_8 = arg_30_1.softbutton_required
+	local softbutton_required = arg_30_1.softbutton_required
 
-	if var_30_8 then
-		for iter_30_2, iter_30_3 in pairs(var_30_8) do
-			if arg_30_4:released_softbutton_input(iter_30_3.input, iter_30_3.softbutton_threshold or arg_30_1.softbutton_threshold) then
-				var_30_6 = false
+	if not softbutton_required then
+		for k_2, v_2 in pairs(softbutton_required) do
+			local var_30_9 = arg_30_4
+			local released_softbutton_input = arg_30_4.released_softbutton_input
+			local input = v_2.input
+			local softbutton_threshold = v_2.softbutton_threshold
+
+			softbutton_threshold = softbutton_threshold or arg_30_1.softbutton_threshold
+
+			if not released_softbutton_input(var_30_9, input, softbutton_threshold) then
+				flag = false
 
 				break
 			end
 		end
 	end
 
-	local var_30_9 = arg_30_1.input
-	local var_30_10 = arg_30_1.softbutton_threshold
-	local var_30_11
-	local var_30_12
-	local var_30_13 = arg_30_1.no_buffer
-	local var_30_14 = arg_30_1.doubleclick_window
-	local var_30_15 = arg_30_1.blocking_input
-	local var_30_16 = false
+	local input_2 = arg_30_1.input
+	local softbutton_threshold_2 = arg_30_1.softbutton_threshold
+	local var_30_15
+	local var_30_16
+	local no_buffer = arg_30_1.no_buffer
+	local doubleclick_window = arg_30_1.doubleclick_window
+	local blocking_input = arg_30_1.blocking_input
+	local flag_2 = false
 
-	if var_30_15 then
-		var_30_16 = arg_30_4:get(var_30_15)
+	if not blocking_input then
+		flag_2 = arg_30_4:get(blocking_input)
 	end
 
-	if var_30_6 and not var_30_16 then
-		local var_30_17 = arg_30_5:equipment().wielded_slot
+	if not (not flag and flag_2) then
+		local wielded_slot = arg_30_5:equipment().wielded_slot
 
-		var_30_11, var_30_12 = var_0_0.get_buffered_input(var_30_9, arg_30_4, var_30_13, var_30_14, var_30_10, var_30_17 == "slot_melee")
+		var_30_15, var_30_16 = CharacterStateHelper_2.get_buffered_input(input_2, arg_30_4, no_buffer, doubleclick_window, softbutton_threshold_2, wielded_slot == "slot_melee")
 
-		if not var_30_11 and arg_30_1.hold_allowed then
-			var_30_11, var_30_12 = var_0_0.get_buffered_input(var_30_9 .. "_hold", arg_30_4, var_30_13, var_30_14, var_30_10, var_30_17 == "slot_melee")
+		if var_30_15 or not arg_30_1.hold_allowed then
+			var_30_15, var_30_16 = CharacterStateHelper_2.get_buffered_input(input_2 .. "_hold", arg_30_4, no_buffer, doubleclick_window, softbutton_threshold_2, wielded_slot == "slot_melee")
 		end
 	end
 
-	if not var_30_11 then
-		local var_30_18 = arg_30_1.action
-		local var_30_19 = arg_30_1.sub_action
-		local var_30_20 = arg_30_2.actions[var_30_18] and arg_30_2.actions[var_30_18][var_30_19]
+	if not var_30_15 then
+		local action = arg_30_1.action
+		local sub_action = arg_30_1.sub_action
+		local var_30_24 = arg_30_2.actions[action]
 
-		var_30_11 = var_30_20 and var_30_20.kind == "block" and arg_30_4:is_input_blocked()
+		var_30_24 = not var_30_24 and arg_30_2.actions[action][sub_action]
+		var_30_15 = not var_30_24 and var_30_24.kind ~= "block" or arg_30_4:is_input_blocked()
 	end
 
-	if not var_30_11 then
-		arg_30_0 = var_0_0.wield_input(arg_30_4, arg_30_5, arg_30_1.action)
-		var_30_11 = arg_30_0
+	if not var_30_15 then
+		arg_30_0 = CharacterStateHelper_2.wield_input(arg_30_4, arg_30_5, arg_30_1.action)
+		var_30_15 = arg_30_0
 	end
 
-	local var_30_21 = arg_30_1.auto_chain and var_30_6
+	local auto_chain = arg_30_1.auto_chain
 
-	if var_30_11 or var_30_21 then
-		local var_30_22 = (arg_30_1.select_chance or 1) >= math.random()
+	auto_chain = not auto_chain and flag
 
-		if arg_30_3:is_chain_action_available(arg_30_1, arg_30_7) and var_30_22 then
-			local var_30_23 = arg_30_1.sub_action
+	if var_30_15 or not auto_chain then
+		local select_chance = arg_30_1.select_chance
 
-			if arg_30_1.blocker then
+		select_chance = select_chance or 1
+
+		local flag_3 = select_chance >= math.random()
+
+		if not arg_30_3:is_chain_action_available(arg_30_1, arg_30_7) and not flag_3 then
+			local sub_action_2 = arg_30_1.sub_action
+
+			if not arg_30_1.blocker then
 				return true, nil, nil, arg_30_0, nil, nil
 			end
 
-			if var_30_23 then
-				local var_30_24 = arg_30_1.action
-				local var_30_25 = var_30_23
-				local var_30_26 = arg_30_2.actions[var_30_24] and arg_30_2.actions[var_30_24][var_30_25]
-				local var_30_27 = var_30_26 and var_30_26.chain_condition_func
-				local var_30_28 = false
+			if not sub_action_2 then
+				local action_2 = arg_30_1.action
+				local var_30_30 = sub_action_2
+				local var_30_31 = arg_30_2.actions[action_2]
 
-				if var_30_27 then
-					var_30_28 = not var_30_27(arg_30_6, arg_30_4, arg_30_8, arg_30_3)
+				var_30_31 = not var_30_31 and arg_30_2.actions[action_2][var_30_30]
+
+				local flag_4 = not var_30_31 and var_30_31.chain_condition_func
+				local flag_5 = false
+
+				if not flag_4 then
+					flag_5 = not flag_4(arg_30_6, arg_30_4, arg_30_8, arg_30_3)
 				end
 
-				local var_30_29 = var_0_0._check_cooldown(arg_30_3, var_30_24, arg_30_7)
+				local _check_cooldown = CharacterStateHelper_2._check_cooldown(arg_30_3, action_2, arg_30_7)
 
-				if var_30_26 and not var_30_28 and not var_30_29 then
-					local var_30_30 = arg_30_1.send_buffer
-					local var_30_31 = arg_30_1.clear_buffer
+				if not (not var_30_31 and flag_5 or _check_cooldown) then
+					local send_buffer = arg_30_1.send_buffer
+					local clear_buffer = arg_30_1.clear_buffer
 
-					if var_30_12 and arg_30_1.input == "action_one_release" then
-						var_30_4 = "action_one_hold"
-					elseif var_30_21 and arg_30_1.input == "action_wield" then
-						-- block empty
-					end
+					var_30_4 = not var_30_16 and arg_30_1.input == "action_one_release" and "action_one_hold" and not auto_chain or arg_30_1.input == "action_wield" and var_30_4 or arg_30_1.input ~= "action_wield" and var_30_4
 
-					return true, var_30_24, var_30_25, arg_30_0, var_30_30, var_30_31, var_30_4
+					return true, action_2, var_30_30, arg_30_0, send_buffer, clear_buffer, var_30_4
 				end
 			end
 		end
@@ -1028,14 +1260,15 @@ function var_0_0._check_chain_action(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg
 	return false
 end
 
-local var_0_3 = {
+local tbl_3 = {
 	sub_action = "default",
 	start_time = 0,
 	action = "N/A",
 	input = "action_career"
 }
 
-function var_0_0._get_chain_action_data(arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4, arg_31_5, arg_31_6, arg_31_7)
+CharacterStateHelper_2._get_chain_action_data = function (self, arg_31_1, arg_31_2, arg_31_3, arg_31_4, arg_31_5, arg_31_6, arg_31_7)
+	-- function 31
 	local var_31_0
 	local var_31_1
 	local var_31_2
@@ -1043,36 +1276,36 @@ function var_0_0._get_chain_action_data(arg_31_0, arg_31_1, arg_31_2, arg_31_3, 
 	local var_31_4
 	local var_31_5
 	local var_31_6
-	local var_31_7 = ScriptUnit.has_extension(arg_31_5, "career_system")
+	local has_extension = ScriptUnit.has_extension(arg_31_5, "career_system")
 
-	if var_31_7 then
-		local var_31_8 = arg_31_2.lookup_data.action_name
-		local var_31_9 = var_31_7:ability_amount()
+	if not has_extension then
+		local action_name = arg_31_2.lookup_data.action_name
+		local ability_amount = has_extension:ability_amount()
 
-		for iter_31_0 = 1, var_31_9 do
-			local var_31_10 = var_31_7:get_activated_ability_data(iter_31_0)
-			local var_31_11 = var_31_10.action_name
+		for i = 1, ability_amount do
+			local get_activated_ability_data = has_extension:get_activated_ability_data(i)
+			local action_name_2 = get_activated_ability_data.action_name
 
-			if var_31_11 and var_31_11 ~= var_31_8 then
-				local var_31_12 = var_0_3
+			if not (not action_name_2 and action_name_2 == action_name) then
+				local var_31_12 = tbl_3
 
-				var_31_12.action = var_31_11
+				var_31_12.action = action_name_2
 
-				local var_31_13, var_31_14, var_31_15, var_31_16, var_31_17, var_31_18, var_31_19 = var_0_0._check_chain_action(var_31_3, var_31_12, arg_31_0, arg_31_1, arg_31_3, arg_31_4, arg_31_5, arg_31_6, arg_31_7)
+				local _check_chain_action, var_31_14, var_31_15, var_31_16, var_31_17, var_31_18, var_31_19 = CharacterStateHelper_2._check_chain_action(var_31_3, var_31_12, self, arg_31_1, arg_31_3, arg_31_4, arg_31_5, arg_31_6, arg_31_7)
 
-				if var_31_13 then
-					local var_31_20 = var_31_10.activatable_on_wield_chain_only
-					local var_31_21 = not var_31_20
+				if not _check_chain_action then
+					local activatable_on_wield_chain_only = get_activated_ability_data.activatable_on_wield_chain_only
+					local flag = not activatable_on_wield_chain_only
 
-					if var_31_20 then
-						local var_31_22 = arg_31_2.allowed_chain_actions
+					if not activatable_on_wield_chain_only then
+						local allowed_chain_actions = arg_31_2.allowed_chain_actions
 
-						if var_31_22 then
-							for iter_31_1 = 1, #var_31_22 do
-								local var_31_23 = var_31_22[iter_31_1]
+						if not allowed_chain_actions then
+							for j = 1, #allowed_chain_actions do
+								local var_31_23 = allowed_chain_actions[j]
 
-								if var_31_23.input == "action_wield" and arg_31_1:is_chain_action_available(var_31_23, arg_31_6) then
-									var_31_21 = true
+								if var_31_23.input ~= "action_wield" or not arg_31_1:is_chain_action_available(var_31_23, arg_31_6) then
+									flag = true
 
 									break
 								end
@@ -1080,8 +1313,8 @@ function var_0_0._get_chain_action_data(arg_31_0, arg_31_1, arg_31_2, arg_31_3, 
 						end
 					end
 
-					if var_31_21 then
-						local var_31_24 = var_31_13
+					if not flag then
+						local var_31_24 = _check_chain_action
 
 						var_31_1 = var_31_14
 						var_31_2 = var_31_15
@@ -1096,11 +1329,13 @@ function var_0_0._get_chain_action_data(arg_31_0, arg_31_1, arg_31_2, arg_31_3, 
 	end
 
 	if not var_31_1 then
-		local var_31_25 = arg_31_2.allowed_chain_actions or var_0_2
+		local allowed_chain_actions_2 = arg_31_2.allowed_chain_actions
 
-		for iter_31_2 = 1, #var_31_25 do
-			local var_31_26 = var_31_25[iter_31_2]
-			local var_31_27, var_31_28, var_31_29, var_31_30, var_31_31, var_31_32, var_31_33 = var_0_0._check_chain_action(var_31_3, var_31_26, arg_31_0, arg_31_1, arg_31_3, arg_31_4, arg_31_5, arg_31_6, arg_31_7)
+		allowed_chain_actions_2 = allowed_chain_actions_2 or tbl_2
+
+		for k = 1, #allowed_chain_actions_2 do
+			local var_31_26 = allowed_chain_actions_2[k]
+			local _check_chain_action_2, var_31_28, var_31_29, var_31_30, var_31_31, var_31_32, var_31_33 = CharacterStateHelper_2._check_chain_action(var_31_3, var_31_26, self, arg_31_1, arg_31_3, arg_31_4, arg_31_5, arg_31_6, arg_31_7)
 
 			var_31_6 = var_31_33
 			var_31_5 = var_31_32
@@ -1109,18 +1344,20 @@ function var_0_0._get_chain_action_data(arg_31_0, arg_31_1, arg_31_2, arg_31_3, 
 			var_31_2 = var_31_29
 			var_31_1 = var_31_28
 
-			if var_31_27 then
+			if not _check_chain_action_2 then
 				break
 			end
 		end
 	end
 
-	if var_31_1 then
-		local var_31_34 = arg_31_0.actions[var_31_1] and arg_31_0.actions[var_31_1][var_31_2]
+	if not var_31_1 then
+		local var_31_34 = self.actions[var_31_1]
 
-		if var_31_5 or var_31_2 == "push" then
+		var_31_34 = not var_31_34 and self.actions[var_31_1][var_31_2]
+
+		if not (var_31_5 or var_31_2 ~= "push") then
 			arg_31_3:clear_input_buffer()
-		elseif var_31_34 and not var_31_3 and not var_31_34.keep_buffer and not var_31_4 then
+		elseif not (not var_31_34 and var_31_3 or var_31_34.keep_buffer or var_31_4) then
 			arg_31_3:reset_input_buffer()
 		end
 	end
@@ -1128,54 +1365,92 @@ function var_0_0._get_chain_action_data(arg_31_0, arg_31_1, arg_31_2, arg_31_3, 
 	return var_31_1, var_31_2, var_31_3, var_31_6
 end
 
-local function var_0_4(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5, arg_32_6, arg_32_7, arg_32_8, arg_32_9)
-	local var_32_0 = arg_32_3.input_override or arg_32_1
-	local var_32_1 = not arg_32_3.do_not_validate_with_hold and arg_32_3.hold_input
-	local var_32_2 = arg_32_3.allow_hold_toggle and arg_32_4.toggle_alternate_attack
-	local var_32_3 = arg_32_6 or arg_32_4:get(var_32_0) or arg_32_4:get_buffer(var_32_0) or arg_32_4:get(arg_32_3.attack_hold_input) or not var_32_2 and arg_32_4:get(var_32_1) or arg_32_3.kind == "block" and arg_32_4:is_input_blocked()
+local function fn(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5, arg_32_6, arg_32_7, arg_32_8, arg_32_9)
+	-- function 32
+	local input_override = arg_32_3.input_override
+
+	input_override = input_override or arg_32_1
+
+	local flag = not not arg_32_3.do_not_validate_with_hold or arg_32_3.hold_input
+	local allow_hold_toggle = arg_32_3.allow_hold_toggle
+
+	allow_hold_toggle = not allow_hold_toggle and arg_32_4.toggle_alternate_attack
+
+	if not arg_32_6 then
+		-- Nothing
+	end
+
+	::label_32_0::
+
+	local get = arg_32_4:get(input_override)
+
+	if not get then
+		get = arg_32_4:get_buffer(input_override)
+
+		if not get then
+			get = arg_32_4:get(arg_32_3.attack_hold_input)
+
+			if not get then
+				if not allow_hold_toggle then
+					get = arg_32_4:get(flag)
+
+					if not get then
+						-- Nothing
+					end
+				end
+
+				get = arg_32_3.kind ~= "block" or arg_32_4:is_input_blocked()
+			end
+		end
+	end
+
+	::label_32_1::
+
 	local var_32_4
 	local var_32_5
 
-	if not var_32_3 then
-		var_32_4 = var_0_0.wield_input(arg_32_4, arg_32_5, var_32_0)
+	if not get then
+		var_32_4 = CharacterStateHelper_2.wield_input(arg_32_4, arg_32_5, input_override)
 		var_32_5 = true
 	end
 
-	if var_32_3 or var_32_4 then
-		local var_32_6 = arg_32_3.condition_func
+	if get or not var_32_4 then
+		local condition_func = arg_32_3.condition_func
 
-		if (not var_32_6 or var_32_6(arg_32_0, arg_32_4, arg_32_7, arg_32_8)) and not var_0_0._check_cooldown(arg_32_8, arg_32_1, arg_32_9) then
+		if not (not condition_func and condition_func(arg_32_0, arg_32_4, arg_32_7, arg_32_8) and CharacterStateHelper_2._check_cooldown(arg_32_8, arg_32_1, arg_32_9)) then
 			if not var_32_5 then
-				var_32_4 = var_0_0.wield_input(arg_32_4, arg_32_5, var_32_0)
+				var_32_4 = CharacterStateHelper_2.wield_input(arg_32_4, arg_32_5, input_override)
 			end
 
-			if not var_32_4 and not arg_32_3.keep_buffer then
+			if not (var_32_4 or arg_32_3.keep_buffer) then
 				arg_32_4:reset_input_buffer()
 			end
 
 			return arg_32_1, arg_32_2
 		else
-			arg_32_4:add_buffer(var_32_0)
+			arg_32_4:add_buffer(input_override)
 		end
 	end
 end
 
-function var_0_0.validate_action(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5, arg_33_6, arg_33_7, arg_33_8, arg_33_9)
-	return var_0_4(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5, arg_33_6, arg_33_7, arg_33_8, arg_33_9)
+CharacterStateHelper_2.validate_action = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5, arg_33_6, arg_33_7, arg_33_8, arg_33_9)
+	-- function 33
+	return fn(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5, arg_33_6, arg_33_7, arg_33_8, arg_33_9)
 end
 
-local var_0_5 = {
+local tbl_4 = {
 	cutting_berserker = true,
 	cutting = true
 }
-local var_0_6 = {}
+local tbl_5 = {}
 
-function var_0_0.update_weapon_actions(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
-	local var_34_0, var_34_1, var_34_2 = var_0_0.get_item_data_and_weapon_extensions(arg_34_3)
+CharacterStateHelper_2.update_weapon_actions = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
+	-- function 34
+	local get_item_data_and_weapon_extensions, var_34_1, var_34_2 = CharacterStateHelper_2.get_item_data_and_weapon_extensions(arg_34_3)
 
-	table.clear(var_0_6)
+	table.clear(tbl_5)
 
-	if not var_34_0 then
+	if not get_item_data_and_weapon_extensions then
 		return
 	end
 
@@ -1186,61 +1461,78 @@ function var_0_0.update_weapon_actions(arg_34_0, arg_34_1, arg_34_2, arg_34_3, a
 	local var_34_7
 	local var_34_8
 	local var_34_9
-	local var_34_10, var_34_11, var_34_12 = var_0_0.get_current_action_data(var_34_2, var_34_1)
-	local var_34_13 = BackendUtils.get_item_template(var_34_0)
-	local var_34_14, var_34_15 = arg_34_4:recently_damaged()
-	local var_34_16 = ScriptUnit.extension(arg_34_1, "status_system")
-	local var_34_17 = ScriptUnit.extension(arg_34_1, "buff_system")
-	local var_34_18 = false
+	local get_current_action_data, var_34_11, var_34_12 = CharacterStateHelper_2.get_current_action_data(var_34_2, var_34_1)
+	local get_item_template = BackendUtils.get_item_template(get_item_data_and_weapon_extensions)
+	local recently_damaged, var_34_15 = arg_34_4:recently_damaged()
+	local extension = ScriptUnit.extension(arg_34_1, "status_system")
+	local extension_2 = ScriptUnit.extension(arg_34_1, "buff_system")
+	local flag = false
 
-	if var_34_10 then
-		var_34_18 = ActionUtils.is_melee_start_sub_action(var_34_10) and var_34_17:has_buff_perk("uninterruptible_heavy")
+	if not get_current_action_data then
+		flag = not ActionUtils.is_melee_start_sub_action(get_current_action_data) and extension_2:has_buff_perk("uninterruptible_heavy")
 	end
 
 	local var_34_19
 	local var_34_20
-	local var_34_21 = Managers.player:owner(arg_34_1)
-	local var_34_22 = var_34_21 and var_34_21.bot_player
-	local var_34_23 = var_34_2 and var_34_2.ammo_extension or var_34_1 and var_34_1.ammo_extension
-	local var_34_24 = Unit.get_data(arg_34_1, "breed")
+	local owner = Managers.player:owner(arg_34_1)
+	local flag_2 = not owner and owner.bot_player
+	local ammo_extension
 
-	if var_34_14 and var_0_5[var_34_14] and not var_34_24.boss then
-		if var_34_23 then
-			if var_34_2 and var_34_2.ammo_extension then
+	if not var_34_2 then
+		ammo_extension = var_34_2.ammo_extension
+
+		if not ammo_extension then
+			-- Nothing
+		end
+	end
+
+	ammo_extension = not var_34_1 and var_34_1.ammo_extension
+
+	::label_34_0::
+
+	local get_data = Unit.get_data(arg_34_1, "breed")
+
+	if not (not recently_damaged and not tbl_4[recently_damaged] and get_data.boss) then
+		if not ammo_extension then
+			if not var_34_2 and not var_34_2.ammo_extension then
 				var_34_20 = var_34_2.ammo_extension:is_reloading()
 			end
 
-			if var_34_1 and var_34_1.ammo_extension then
+			if not var_34_1 and not var_34_1.ammo_extension then
 				var_34_20 = var_34_1.ammo_extension:is_reloading()
 			end
 		end
 
-		if ((not var_34_10 or not var_34_10.uninterruptible) and not script_data.uninterruptible and not var_34_20 and not var_34_22 and not var_34_17:has_buff_perk("uninterruptible") and not var_34_18 or false) and (var_34_14 == "cutting_berserker" and true or var_34_16:hitreact_interrupt()) and not var_34_16:is_disabled() then
-			if var_34_17:has_buff_perk("reduced_hit_react") then
+		local flag_3
+
+		flag_3 = (not get_current_action_data and get_current_action_data.uninterruptible and script_data.uninterruptible or var_34_20 and flag_2 and extension_2:has_buff_perk("uninterruptible") and not flag) and false and recently_damaged ~= "cutting_berserker" or not true and extension:hitreact_interrupt()
+
+		if not (not flag_3 and extension:is_disabled()) then
+			if not extension_2:has_buff_perk("reduced_hit_react") then
 				var_34_15 = "light"
 			end
 
-			if var_34_10 then
+			if not get_current_action_data then
 				var_34_11:stop_action("interrupted")
 			end
 
-			local var_34_25 = ScriptUnit.extension(arg_34_1, "first_person_system")
+			local extension_3 = ScriptUnit.extension(arg_34_1, "first_person_system")
 
-			var_0_0.play_animation_event(arg_34_1, "hit_reaction")
+			CharacterStateHelper_2.play_animation_event(arg_34_1, "hit_reaction")
 
 			if var_34_15 == "medium" then
-				var_34_25:play_hud_sound_event("enemy_hit_medium")
+				extension_3:play_hud_sound_event("enemy_hit_medium")
 			elseif var_34_15 == "heavy" then
-				var_34_25:play_hud_sound_event("enemy_hit_heavy")
+				extension_3:play_hud_sound_event("enemy_hit_heavy")
 			end
 
 			if not Development.parameter("attract_mode") then
-				if var_34_14 == "cutting_berserker" then
-					var_34_16:set_hit_react_type(var_34_15)
-					var_34_16:set_pushed_no_cooldown(true, arg_34_0)
+				if recently_damaged == "cutting_berserker" then
+					extension:set_hit_react_type(var_34_15)
+					extension:set_pushed_no_cooldown(true, arg_34_0)
 				else
-					var_34_16:set_hit_react_type(var_34_15)
-					var_34_16:set_pushed(true, arg_34_0)
+					extension:set_hit_react_type(var_34_15)
+					extension:set_pushed(true, arg_34_0)
 				end
 			end
 
@@ -1248,149 +1540,187 @@ function var_0_0.update_weapon_actions(arg_34_0, arg_34_1, arg_34_2, arg_34_3, a
 		end
 	end
 
-	local var_34_26
+	local var_34_27
 
-	if var_34_10 then
-		local var_34_27
+	if not get_current_action_data then
+		local var_34_28
 
-		var_34_3, var_34_4, var_34_27, var_34_6 = var_0_0._get_chain_action_data(var_34_13, var_34_11, var_34_10, arg_34_2, arg_34_3, arg_34_1, arg_34_0, var_34_23)
+		var_34_3, var_34_4, var_34_28, var_34_6 = CharacterStateHelper_2._get_chain_action_data(get_item_template, var_34_11, get_current_action_data, arg_34_2, arg_34_3, arg_34_1, arg_34_0, ammo_extension)
 
 		if not var_34_3 then
-			if var_34_10.allow_hold_toggle and arg_34_2.toggle_alternate_attack then
-				local var_34_28 = var_34_10.lookup_data.action_name
+			if not get_current_action_data.allow_hold_toggle and not arg_34_2.toggle_alternate_attack then
+				local action_name = get_current_action_data.lookup_data.action_name
 
-				if var_34_28 and arg_34_2:get(var_34_28, true) and var_34_11:can_stop_hold_action(arg_34_0) then
+				if not action_name and not arg_34_2:get(action_name, true) and not var_34_11:can_stop_hold_action(arg_34_0) then
 					var_34_11:stop_action("hold_input_released")
 				end
-			elseif var_34_10.kind ~= "block" or not arg_34_2:is_input_blocked() then
-				local var_34_29 = var_34_10.hold_input
+			elseif not (get_current_action_data.kind ~= "block" or arg_34_2:is_input_blocked()) then
+				local hold_input = get_current_action_data.hold_input
 
-				if var_34_29 and not arg_34_2:get(var_34_29) and var_34_11:can_stop_hold_action(arg_34_0) then
+				if not hold_input and arg_34_2:get(hold_input) or not var_34_11:can_stop_hold_action(arg_34_0) then
 					var_34_11:stop_action("hold_input_released")
 				end
 			end
 		end
-	elseif var_34_13.next_action then
-		local var_34_30 = var_34_13.next_action
+	elseif not get_item_template.next_action then
+		local next_action = get_item_template.next_action
 
-		var_34_26 = var_34_30.action_init_data
+		var_34_27 = next_action.action_init_data
 
-		local var_34_31 = var_34_30.action
-		local var_34_32 = true
-		local var_34_33 = var_34_13.actions[var_34_31]
+		local action = next_action.action
+		local flag_4 = true
+		local var_34_34 = get_item_template.actions[action]
 
-		for iter_34_0, iter_34_1 in pairs(var_34_33) do
-			if iter_34_0 ~= "default" and iter_34_1.condition_func then
-				var_34_3, var_34_4 = var_0_4(arg_34_1, var_34_31, iter_34_0, iter_34_1, arg_34_2, arg_34_3, var_34_32, nil, var_34_11, arg_34_0)
+		for k, v in pairs(var_34_34) do
+			if k == "default" or not v.condition_func then
+				var_34_3, var_34_4 = fn(arg_34_1, action, k, v, arg_34_2, arg_34_3, flag_4, nil, var_34_11, arg_34_0)
 
-				if var_34_3 and var_34_4 then
+				if not var_34_3 and not var_34_4 then
 					break
 				end
 			end
 		end
 
 		if not var_34_3 then
-			local var_34_34 = var_34_13.actions[var_34_31].default
+			local default = get_item_template.actions[action].default
 
-			var_34_3, var_34_4 = var_0_4(arg_34_1, var_34_31, "default", var_34_34, arg_34_2, arg_34_3, var_34_32, nil, var_34_11, arg_34_0)
+			var_34_3, var_34_4 = fn(arg_34_1, action, "default", default, arg_34_2, arg_34_3, flag_4, nil, var_34_11, arg_34_0)
 		end
 
-		var_34_13.next_action = nil
+		get_item_template.next_action = nil
 	else
-		local var_34_35 = 0
+		local num = 0
 
-		for iter_34_2, iter_34_3 in pairs(var_34_13.actions) do
-			for iter_34_4, iter_34_5 in pairs(iter_34_3) do
-				if iter_34_4 ~= "default" and iter_34_5.condition_func then
-					local var_34_36 = iter_34_5.weapon_action_hand or "right"
-					local var_34_37 = iter_34_5.action_priority or 1
+		for k_2, v_2 in pairs(get_item_template.actions) do
+			for k_3, v_3 in pairs(v_2) do
+				if k_3 == "default" or not v_3.condition_func then
+					local weapon_action_hand = v_3.weapon_action_hand
 
-					if var_34_35 < var_34_37 then
-						local var_34_38 = var_34_36 == "right" and var_34_1 or var_34_2
-						local var_34_39, var_34_40 = var_0_4(arg_34_1, iter_34_2, iter_34_4, iter_34_5, arg_34_2, arg_34_3, false, var_34_23, var_34_38, arg_34_0)
+					weapon_action_hand = weapon_action_hand or "right"
 
-						if var_34_39 and var_34_40 then
-							var_34_3 = var_34_39
-							var_34_4 = var_34_40
-							var_34_35 = var_34_37
+					local action_priority = v_3.action_priority
+
+					action_priority = action_priority or 1
+
+					if num < action_priority then
+						local flag_5 = weapon_action_hand ~= "right" or not var_34_1 or var_34_2
+						local var_34_40, var_34_41 = fn(arg_34_1, k_2, k_3, v_3, arg_34_2, arg_34_3, false, ammo_extension, flag_5, arg_34_0)
+
+						if not var_34_40 and not var_34_41 then
+							var_34_3 = var_34_40
+							var_34_4 = var_34_41
+							num = action_priority
 						end
 					end
 				end
 			end
 
-			local var_34_41 = var_34_13.actions[iter_34_2].default
+			local default_2 = get_item_template.actions[k_2].default
 
-			if var_34_41 then
-				local var_34_42 = var_34_41.weapon_action_hand or "right"
-				local var_34_43 = var_34_41.action_priority or 1
+			if not default_2 then
+				local weapon_action_hand_2 = default_2.weapon_action_hand
 
-				if var_34_35 < var_34_43 then
-					local var_34_44 = var_34_42 == "right" and var_34_1 or var_34_2
-					local var_34_45, var_34_46 = var_0_4(arg_34_1, iter_34_2, "default", var_34_41, arg_34_2, arg_34_3, false, var_34_23, var_34_44, arg_34_0)
+				weapon_action_hand_2 = weapon_action_hand_2 or "right"
 
-					if var_34_45 and var_34_46 then
-						var_34_3 = var_34_45
-						var_34_4 = var_34_46
-						var_34_35 = var_34_43
+				local action_priority_2 = default_2.action_priority
+
+				action_priority_2 = action_priority_2 or 1
+
+				if num < action_priority_2 then
+					local flag_6 = weapon_action_hand_2 ~= "right" or not var_34_1 or var_34_2
+					local var_34_46, var_34_47 = fn(arg_34_1, k_2, "default", default_2, arg_34_2, arg_34_3, false, ammo_extension, flag_6, arg_34_0)
+
+					if not var_34_46 and not var_34_47 then
+						var_34_3 = var_34_46
+						var_34_4 = var_34_47
+						num = action_priority_2
 					end
 				end
 			end
 		end
 	end
 
-	if var_34_3 and var_34_4 then
-		local var_34_47 = ScriptUnit.extension(arg_34_1, "career_system"):get_career_power_level()
-		local var_34_48 = var_34_13.actions[var_34_3][var_34_4]
-		local var_34_49 = var_34_48.weapon_action_hand or "right"
+	if not var_34_3 and not var_34_4 then
+		local get_career_power_level = ScriptUnit.extension(arg_34_1, "career_system"):get_career_power_level()
+		local var_34_49 = get_item_template.actions[var_34_3][var_34_4]
+		local weapon_action_hand_3 = var_34_49.weapon_action_hand
 
-		var_0_6.new_action = var_34_3
-		var_0_6.new_sub_action = var_34_4
-		var_0_6.new_action_settings = var_34_48
+		weapon_action_hand_3 = weapon_action_hand_3 or "right"
+		tbl_5.new_action = var_34_3
+		tbl_5.new_sub_action = var_34_4
+		tbl_5.new_action_settings = var_34_49
 
-		if var_34_49 == "both" then
-			assert(var_34_2 and var_34_1, "tried to start a dual wield weapon action without both a left and right hand wielded unit")
+		if weapon_action_hand_3 == "both" then
+			assert(not var_34_2 and var_34_1, "tried to start a dual wield weapon action without both a left and right hand wielded unit")
 
 			if var_34_12 == "left" then
-				var_34_2:stop_action("new_interupting_action", var_0_6)
+				var_34_2:stop_action("new_interupting_action", tbl_5)
 			elseif var_34_12 == "right" then
-				var_34_1:stop_action("new_interupting_action", var_0_6)
+				var_34_1:stop_action("new_interupting_action", tbl_5)
 			elseif var_34_12 == "both" then
-				var_34_2:stop_action("new_interupting_action", var_0_6)
-				var_34_1:stop_action("new_interupting_action", var_0_6)
+				var_34_2:stop_action("new_interupting_action", tbl_5)
+				var_34_1:stop_action("new_interupting_action", tbl_5)
 			end
 
-			local var_34_50 = var_34_26 and table.merge(var_34_26, {
-				action_hand = "left"
-			}) or {
+			local merge
+
+			if not var_34_27 then
+				merge = table.merge(var_34_27, {
+					action_hand = "left"
+				})
+
+				if not merge then
+					-- Nothing
+				end
+			end
+
+			merge = {
 				action_hand = "left"
 			}
-			local var_34_51 = var_34_26 and table.merge(var_34_26, {
-				action_hand = "right"
-			}) or {
+
+			do
+				local merge_2
+			end
+
+			::label_34_1::
+
+			if not var_34_27 then
+				merge_2 = table.merge(var_34_27, {
+					action_hand = "right"
+				})
+
+				if not merge_2 then
+					-- Nothing
+				end
+			end
+
+			merge_2 = {
 				action_hand = "right"
 			}
 
-			var_34_2:start_action(var_34_3, var_34_4, var_34_13.actions, arg_34_0, var_34_47, var_34_50)
-			var_34_1:start_action(var_34_3, var_34_4, var_34_13.actions, arg_34_0, var_34_47, var_34_51)
+			::label_34_2::
+
+			var_34_2:start_action(var_34_3, var_34_4, get_item_template.actions, arg_34_0, get_career_power_level, merge)
+			var_34_1:start_action(var_34_3, var_34_4, get_item_template.actions, arg_34_0, get_career_power_level, merge_2)
 
 			return
 		end
 
-		if var_34_49 == "either" then
-			var_34_49 = var_34_1 and "right" or "left"
+		if weapon_action_hand_3 == "either" then
+			weapon_action_hand_3 = not var_34_1 and "right" and "left"
 		end
 
-		if var_34_49 == "left" then
+		if weapon_action_hand_3 == "left" then
 			assert(var_34_2, "tried to start a left hand weapon action without a left hand wielded unit")
 
 			if var_34_12 == "right" then
-				var_34_1:stop_action("new_interupting_action", var_0_6)
+				var_34_1:stop_action("new_interupting_action", tbl_5)
 			elseif var_34_12 == "both" then
-				var_34_2:stop_action("new_interupting_action", var_0_6)
-				var_34_1:stop_action("new_interupting_action", var_0_6)
+				var_34_2:stop_action("new_interupting_action", tbl_5)
+				var_34_1:stop_action("new_interupting_action", tbl_5)
 			end
 
-			var_34_2:start_action(var_34_3, var_34_4, var_34_13.actions, arg_34_0, var_34_47, var_34_26)
+			var_34_2:start_action(var_34_3, var_34_4, get_item_template.actions, arg_34_0, get_career_power_level, var_34_27)
 
 			return
 		end
@@ -1398,279 +1728,324 @@ function var_0_0.update_weapon_actions(arg_34_0, arg_34_1, arg_34_2, arg_34_3, a
 		assert(var_34_1, "tried to start a right hand weapon action without a right hand wielded unit")
 
 		if var_34_12 == "left" then
-			var_34_2:stop_action("new_interupting_action", var_0_6)
+			var_34_2:stop_action("new_interupting_action", tbl_5)
 		elseif var_34_12 == "both" then
-			var_34_2:stop_action("new_interupting_action", var_0_6)
-			var_34_1:stop_action("new_interupting_action", var_0_6)
+			var_34_2:stop_action("new_interupting_action", tbl_5)
+			var_34_1:stop_action("new_interupting_action", tbl_5)
 		end
 
-		var_34_1:start_action(var_34_3, var_34_4, var_34_13.actions, arg_34_0, var_34_47, var_34_26)
+		var_34_1:start_action(var_34_3, var_34_4, get_item_template.actions, arg_34_0, get_career_power_level, var_34_27)
 
-		if var_34_6 then
+		if not var_34_6 then
 			arg_34_2:force_release_input(var_34_6)
 		end
 	end
 end
 
-function var_0_0.stop_weapon_actions(arg_35_0, arg_35_1)
-	local var_35_0 = arg_35_0:equipment()
-	local var_35_1 = var_35_0.right_hand_wielded_unit
-	local var_35_2 = var_35_0.left_hand_wielded_unit
-	local var_35_3 = Unit.alive(var_35_1) and ScriptUnit.extension(var_35_1, "weapon_system")
-	local var_35_4 = Unit.alive(var_35_2) and ScriptUnit.extension(var_35_2, "weapon_system")
+CharacterStateHelper_2.stop_weapon_actions = function (self, arg_35_1)
+	-- function 35
+	local equipment = self:equipment()
+	local right_hand_wielded_unit = equipment.right_hand_wielded_unit
+	local left_hand_wielded_unit = equipment.left_hand_wielded_unit
+	local alive = Unit.alive(right_hand_wielded_unit)
 
-	if var_35_3 and var_35_3.current_action_settings then
-		var_35_3:stop_action(arg_35_1)
+	alive = not alive and ScriptUnit.extension(right_hand_wielded_unit, "weapon_system")
+
+	local alive_2 = Unit.alive(left_hand_wielded_unit)
+
+	alive_2 = not alive_2 and ScriptUnit.extension(left_hand_wielded_unit, "weapon_system")
+
+	if not alive and not alive.current_action_settings then
+		alive:stop_action(arg_35_1)
 	end
 
-	if var_35_4 and var_35_4.current_action_settings then
-		var_35_4:stop_action(arg_35_1)
+	if not alive_2 and not alive_2.current_action_settings then
+		alive_2:stop_action(arg_35_1)
 	end
 end
 
-function var_0_0.stop_career_abilities(arg_36_0, arg_36_1)
-	arg_36_0:stop_ability(arg_36_1)
+CharacterStateHelper_2.stop_career_abilities = function (self, arg_36_1)
+	-- function 36
+	self:stop_ability(arg_36_1)
 end
 
-function var_0_0.check_crouch(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5)
-	local var_37_0 = arg_37_2:is_crouching()
-	local var_37_1 = var_37_0
-	local var_37_2 = arg_37_1:get("crouch")
-	local var_37_3 = Managers.input:is_device_active("gamepad")
-	local var_37_4 = arg_37_1:get("crouching")
+CharacterStateHelper_2.check_crouch = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5)
+	-- function 37
+	local is_crouching = arg_37_2:is_crouching()
+	local var_37_1 = is_crouching
+	local get = arg_37_1:get("crouch")
+	local is_device_active = Managers.input:is_device_active("gamepad")
+	local get_2 = arg_37_1:get("crouching")
 
-	if var_37_3 and Managers.matchmaking and Managers.matchmaking:is_matchmaking_in_inn() then
-		var_37_2 = false
-		var_37_4 = false
+	if not is_device_active and not Managers.matchmaking and not Managers.matchmaking:is_matchmaking_in_inn() then
+		get = false
+		get_2 = false
 	end
 
-	if arg_37_3 and var_37_2 then
+	if not arg_37_3 and not get then
 		var_37_1 = arg_37_2:crouch_toggle()
-	elseif not arg_37_3 and not var_37_4 then
+	elseif not (arg_37_3 or get_2) then
 		var_37_1 = false
-	elseif not arg_37_3 and var_37_4 then
+	elseif arg_37_3 or not get_2 then
 		var_37_1 = true
 	end
 
-	if var_37_1 and not var_37_0 then
-		var_0_0.crouch(arg_37_0, arg_37_5, arg_37_4, arg_37_2)
-	elseif not var_37_1 and var_37_0 and var_0_0.can_uncrouch(arg_37_0) then
-		var_0_0.uncrouch(arg_37_0, arg_37_5, arg_37_4, arg_37_2)
+	if not (not var_37_1 and is_crouching) then
+		CharacterStateHelper_2.crouch(arg_37_0, arg_37_5, arg_37_4, arg_37_2)
+	elseif (var_37_1 or not is_crouching) and not CharacterStateHelper_2.can_uncrouch(arg_37_0) then
+		CharacterStateHelper_2.uncrouch(arg_37_0, arg_37_5, arg_37_4, arg_37_2)
 	end
 
-	return var_37_0
+	return is_crouching
 end
 
-function var_0_0.can_uncrouch(arg_38_0)
-	local var_38_0 = Unit.mover(arg_38_0)
-	local var_38_1 = Mover.position(var_38_0)
+CharacterStateHelper_2.can_uncrouch = function (arg_38_0)
+	-- function 38
+	local mover = Unit.mover(arg_38_0)
+	local position = Mover.position(mover)
 
-	return Unit.mover_fits_at(arg_38_0, "standing", var_38_1)
+	return Unit.mover_fits_at(arg_38_0, "standing", position)
 end
 
-function var_0_0.crouch(arg_39_0, arg_39_1, arg_39_2, arg_39_3)
-	var_0_0.play_animation_event(arg_39_0, "to_crouch")
-	var_0_0.play_animation_event_first_person(arg_39_2, "to_crouch")
-	var_0_0.set_animation_var_first_person(arg_39_2, "is_crouched", 1)
+CharacterStateHelper_2.crouch = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+	-- function 39
+	CharacterStateHelper_2.play_animation_event(arg_39_0, "to_crouch")
+	CharacterStateHelper_2.play_animation_event_first_person(arg_39_2, "to_crouch")
+	CharacterStateHelper_2.set_animation_var_first_person(arg_39_2, "is_crouched", 1)
 	arg_39_2:set_wanted_player_height("crouch", arg_39_1)
 	ScriptUnit.extension(arg_39_0, "locomotion_system"):set_active_mover("crouch")
 	arg_39_3:set_crouching(true)
 	ScriptUnit.extension(arg_39_0, "buff_system"):trigger_procs("on_crouch")
 end
 
-function var_0_0.uncrouch(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
-	var_0_0.play_animation_event(arg_40_0, "to_uncrouch")
-	var_0_0.play_animation_event_first_person(arg_40_2, "to_uncrouch")
-	var_0_0.set_animation_var_first_person(arg_40_2, "is_crouched", 0)
+CharacterStateHelper_2.uncrouch = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+	-- function 40
+	CharacterStateHelper_2.play_animation_event(arg_40_0, "to_uncrouch")
+	CharacterStateHelper_2.play_animation_event_first_person(arg_40_2, "to_uncrouch")
+	CharacterStateHelper_2.set_animation_var_first_person(arg_40_2, "is_crouched", 0)
 	arg_40_2:set_wanted_player_height("stand", arg_40_1)
 	ScriptUnit.extension(arg_40_0, "locomotion_system"):set_active_mover("standing")
 	arg_40_3:set_crouching(false)
 end
 
-local var_0_7 = 0.05
-local var_0_8 = 2.1
+local num = 0.05
+local num_2 = 2.1
 
-function var_0_0.get_move_animation(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
-	local var_41_0 = var_0_0.get_movement_input(arg_41_1)
-	local var_41_1 = "move_fwd"
-	local var_41_2 = "move_bwd"
+CharacterStateHelper_2.get_move_animation = function (self, arg_41_1, arg_41_2, arg_41_3)
+	-- function 41
+	local get_movement_input = CharacterStateHelper_2.get_movement_input(arg_41_1)
+	local str = "move_fwd"
+	local str_2 = "move_bwd"
 	local var_41_3
 
-	if arg_41_2.unit then
-		local var_41_4 = arg_41_2.unit
-		local var_41_5 = Unit.get_data(var_41_4, "breed")
+	if not arg_41_2.unit then
+		local unit = arg_41_2.unit
+		local get_data = Unit.get_data(unit, "breed")
 
-		if var_41_5 then
-			local var_41_6 = var_41_5.run_threshold
+		if not get_data then
+			local run_threshold = get_data.run_threshold
 
-			if var_41_6 then
-				local var_41_7 = var_41_5.walk_threshold or var_41_6 * 0.9
-				local var_41_8 = var_41_6
+			if not run_threshold then
+				local walk_threshold = get_data.walk_threshold
 
-				if arg_41_3 == var_41_1 or arg_41_3 == var_41_2 then
-					var_41_8 = var_41_7
+				walk_threshold = walk_threshold or run_threshold * 0.9
+
+				local var_41_8 = run_threshold
+
+				if not (arg_41_3 == str or arg_41_3 ~= str_2) then
+					var_41_8 = walk_threshold
 				end
 
-				var_41_3 = var_41_8 < Vector3.length(Vector3.flat(arg_41_0:current_velocity()))
+				var_41_3 = var_41_8 < Vector3.length(Vector3.flat(self:current_velocity()))
 			end
 		end
 	end
 
-	var_41_3 = var_41_3 or Vector3.length(Vector3.flat(arg_41_0:current_velocity())) > var_0_8
+	var_41_3 = var_41_3 or Vector3.length(Vector3.flat(self:current_velocity())) > num_2
 
-	if Vector3.length(arg_41_0:current_velocity()) < var_0_7 then
+	if Vector3.length(self:current_velocity()) < num then
 		return "idle", "idle"
 	end
 
-	if var_41_0.y < 0 then
-		return var_41_2, var_41_3 and var_41_2 or "walk_bwd"
+	if get_movement_input.y < 0 then
+		return str_2, not var_41_3 and str_2 and "walk_bwd"
 	end
 
-	return var_41_1, var_41_3 and var_41_1 or "walk_fwd"
+	return str, not var_41_3 and str and "walk_fwd"
 end
 
-function var_0_0.is_colliding_down(arg_42_0)
-	local var_42_0 = Unit.mover(arg_42_0)
+CharacterStateHelper_2.is_colliding_down = function (arg_42_0)
+	-- function 42
+	local mover = Unit.mover(arg_42_0)
 
-	return Mover.collides_down(var_42_0)
+	return Mover.collides_down(mover)
 end
 
-function var_0_0.is_colliding_sides(arg_43_0)
-	local var_43_0 = Unit.mover(arg_43_0)
+CharacterStateHelper_2.is_colliding_sides = function (arg_43_0)
+	-- function 43
+	local mover = Unit.mover(arg_43_0)
 
-	return Mover.collides_sides(var_43_0)
+	return Mover.collides_sides(mover)
 end
 
-function var_0_0.has_move_input(arg_44_0)
-	local var_44_0 = var_0_0.get_movement_input(arg_44_0)
+CharacterStateHelper_2.has_move_input = function (arg_44_0)
+	-- function 44
+	local get_movement_input = CharacterStateHelper_2.get_movement_input(arg_44_0)
 
-	return Vector3.length(var_44_0) > 0
+	return Vector3.length(get_movement_input) > 0
 end
 
-function var_0_0.is_moving(arg_45_0)
-	local var_45_0 = arg_45_0:current_velocity()
+CharacterStateHelper_2.is_moving = function (self)
+	-- function 45
+	local current_velocity = self:current_velocity()
 
-	return Vector3.length_squared(var_45_0) > 0.001
+	return Vector3.length_squared(current_velocity) > 0.001
 end
 
-function var_0_0.is_moving_backwards(arg_46_0, arg_46_1)
-	local var_46_0 = arg_46_1:current_rotation()
-	local var_46_1 = Vector3.flat(arg_46_0:current_velocity())
+CharacterStateHelper_2.is_moving_backwards = function (self, arg_46_1)
+	-- function 46
+	local current_rotation = arg_46_1:current_rotation()
+	local flat = Vector3.flat(self:current_velocity())
 
-	return Vector3.dot(var_46_1, var_46_0) < -0.1
+	return Vector3.dot(flat, current_rotation) < -0.1
 end
 
-function var_0_0.is_knocked_down(arg_47_0)
-	return arg_47_0:is_knocked_down()
+CharacterStateHelper_2.is_knocked_down = function (self)
+	-- function 47
+	return self:is_knocked_down()
 end
 
-function var_0_0.is_staggered(arg_48_0)
-	return arg_48_0:is_staggered()
+CharacterStateHelper_2.is_staggered = function (self)
+	-- function 48
+	return self:is_staggered()
 end
 
-function var_0_0.is_pounced_down(arg_49_0)
-	return arg_49_0:is_pounced_down()
+CharacterStateHelper_2.is_pounced_down = function (self)
+	-- function 49
+	return self:is_pounced_down()
 end
 
-function var_0_0.is_catapulted(arg_50_0)
-	local var_50_0, var_50_1 = arg_50_0:is_catapulted()
+CharacterStateHelper_2.is_catapulted = function (self)
+	-- function 50
+	local is_catapulted, var_50_1 = self:is_catapulted()
 
-	return var_50_0, var_50_1
+	return is_catapulted, var_50_1
 end
 
-function var_0_0.is_grabbed_by_pack_master(arg_51_0)
-	return arg_51_0:is_grabbed_by_pack_master()
+CharacterStateHelper_2.is_grabbed_by_pack_master = function (self)
+	-- function 51
+	return self:is_grabbed_by_pack_master()
 end
 
-function var_0_0.is_grabbed_by_tentacle(arg_52_0)
-	return arg_52_0.grabbed_by_tentacle
+CharacterStateHelper_2.is_grabbed_by_tentacle = function (self)
+	-- function 52
+	return self.grabbed_by_tentacle
 end
 
-function var_0_0.is_in_vortex(arg_53_0)
-	return arg_53_0.in_vortex
+CharacterStateHelper_2.is_in_vortex = function (self)
+	-- function 53
+	return self.in_vortex
 end
 
-function var_0_0.is_overcharge_exploding(arg_54_0)
-	return arg_54_0:is_overcharge_exploding()
+CharacterStateHelper_2.is_overcharge_exploding = function (self)
+	-- function 54
+	return self:is_overcharge_exploding()
 end
 
-function var_0_0.pack_master_status(arg_55_0)
-	return arg_55_0.pack_master_status
+CharacterStateHelper_2.pack_master_status = function (self)
+	-- function 55
+	return self.pack_master_status
 end
 
-function var_0_0.corruptor_status(arg_56_0)
-	return arg_56_0.corruptor_status
+CharacterStateHelper_2.corruptor_status = function (self)
+	-- function 56
+	return self.corruptor_status
 end
 
-function var_0_0.grabbed_by_tentacle_status(arg_57_0)
-	return arg_57_0.grabbed_by_tentacle_status
+CharacterStateHelper_2.grabbed_by_tentacle_status = function (self)
+	-- function 57
+	return self.grabbed_by_tentacle_status
 end
 
-function var_0_0.grabbed_by_chaos_spawn_status(arg_58_0)
-	return arg_58_0.grabbed_by_chaos_spawn_status, arg_58_0.grabbed_by_chaos_spawn_status_count
+CharacterStateHelper_2.grabbed_by_chaos_spawn_status = function (self)
+	-- function 58
+	return self.grabbed_by_chaos_spawn_status, self.grabbed_by_chaos_spawn_status_count
 end
 
-function var_0_0.is_waiting_for_assisted_respawn(arg_59_0)
-	return arg_59_0:is_ready_for_assisted_respawn()
+CharacterStateHelper_2.is_waiting_for_assisted_respawn = function (self)
+	-- function 59
+	return self:is_ready_for_assisted_respawn()
 end
 
-function var_0_0.is_assisted_respawning(arg_60_0)
-	return arg_60_0:is_assisted_respawning()
+CharacterStateHelper_2.is_assisted_respawning = function (self)
+	-- function 60
+	return self:is_assisted_respawning()
 end
 
-function var_0_0.is_pushed(arg_61_0)
-	return arg_61_0:is_pushed()
+CharacterStateHelper_2.is_pushed = function (self)
+	-- function 61
+	return self:is_pushed()
 end
 
-function var_0_0.is_charged(arg_62_0)
-	return arg_62_0:is_charged()
+CharacterStateHelper_2.is_charged = function (self)
+	-- function 62
+	return self:is_charged()
 end
 
-function var_0_0.is_block_broken(arg_63_0)
-	return arg_63_0:is_block_broken()
+CharacterStateHelper_2.is_block_broken = function (self)
+	-- function 63
+	return self:is_block_broken()
 end
 
-function var_0_0.is_dead(arg_64_0)
-	return arg_64_0:is_dead()
+CharacterStateHelper_2.is_dead = function (self)
+	-- function 64
+	return self:is_dead()
 end
 
-function var_0_0.is_using_transport(arg_65_0)
-	return arg_65_0:is_using_transport()
+CharacterStateHelper_2.is_using_transport = function (self)
+	-- function 65
+	return self:is_using_transport()
 end
 
-function var_0_0.is_zooming(arg_66_0)
-	return arg_66_0:is_zooming()
+CharacterStateHelper_2.is_zooming = function (self)
+	-- function 66
+	return self:is_zooming()
 end
 
-function var_0_0.is_crouching(arg_67_0)
-	return arg_67_0:is_crouching()
+CharacterStateHelper_2.is_crouching = function (self)
+	-- function 67
+	return self:is_crouching()
 end
 
-function var_0_0.is_starting_interaction(arg_68_0, arg_68_1)
-	local var_68_0, var_68_1, var_68_2, var_68_3 = arg_68_1:can_interact()
+CharacterStateHelper_2.is_starting_interaction = function (self, arg_68_1)
+	-- function 68
+	local can_interact, var_68_1, var_68_2, var_68_3 = arg_68_1:can_interact()
 
-	if GameSettingsDevelopment.disabled_interactions[var_68_2] then
+	if not GameSettingsDevelopment.disabled_interactions[var_68_2] then
 		return false
 	end
 
-	local var_68_4 = InteractionHelper.interaction_action_names(arg_68_0.unit, var_68_3)
+	local interaction_action_names = InteractionHelper.interaction_action_names(self.unit, var_68_3)
 
-	return var_68_0 and var_68_2 ~= "heal" and var_68_2 ~= "give_item" and arg_68_0:get(var_68_4, true)
+	return not can_interact and var_68_2 == "heal" and var_68_2 == "give_item" or self:get(interaction_action_names, true)
 end
 
-function var_0_0.is_interacting(arg_69_0)
-	return arg_69_0:is_interacting()
+CharacterStateHelper_2.is_interacting = function (self)
+	-- function 69
+	return self:is_interacting()
 end
 
-function var_0_0.is_waiting_for_interaction_approval(arg_70_0)
-	return arg_70_0:is_waiting_for_interaction_approval()
+CharacterStateHelper_2.is_waiting_for_interaction_approval = function (self)
+	-- function 70
+	return self:is_waiting_for_interaction_approval()
 end
 
-function var_0_0.interact(arg_71_0, arg_71_1)
-	if arg_71_1:interaction_config().hold then
-		local var_71_0 = arg_71_1:interaction_hold_input()
+CharacterStateHelper_2.interact = function (self, arg_71_1)
+	-- function 71
+	if not arg_71_1:interaction_config().hold then
+		local interaction_hold_input = arg_71_1:interaction_hold_input()
 
-		if not arg_71_0:get(var_71_0) then
+		if not self:get(interaction_hold_input) then
 			arg_71_1:abort_interaction()
 
 			return false
@@ -1680,16 +2055,50 @@ function var_0_0.interact(arg_71_0, arg_71_1)
 	return true
 end
 
-function var_0_0.will_be_ledge_hanging(arg_72_0, arg_72_1, arg_72_2)
+CharacterStateHelper_2.will_be_ledge_hanging = function (arg_72_0, arg_72_1, arg_72_2)
+	-- function 72
 	if not script_data.ledge_hanging_turned_off then
-		local var_72_0 = arg_72_2.collision_filter or "filter_ledge_collision"
-		local var_72_1, var_72_2 = var_0_0.is_raycasting_to_gameplay_collision_box(arg_72_0, arg_72_1, var_72_0, arg_72_2)
+		local collision_filter = arg_72_2.collision_filter
 
-		if var_72_1 then
-			local var_72_3 = Vector3.z(arg_72_2 and arg_72_2.ray_position or Unit.world_position(arg_72_1, 0)) + (arg_72_2 and arg_72_2.z_offset or 0)
-			local var_72_4 = Unit.node(var_72_2, "g_gameplay_ledge_trigger_box")
+		collision_filter = collision_filter or "filter_ledge_collision"
 
-			if var_72_3 <= Vector3.z(Unit.world_position(var_72_2, var_72_4)) then
+		local is_raycasting_to_gameplay_collision_box, var_72_2 = CharacterStateHelper_2.is_raycasting_to_gameplay_collision_box(arg_72_0, arg_72_1, collision_filter, arg_72_2)
+
+		if not is_raycasting_to_gameplay_collision_box then
+			local z = Vector3.z
+			local ray_position
+
+			if not arg_72_2 then
+				ray_position = arg_72_2.ray_position
+
+				if not ray_position then
+					-- Nothing
+				end
+			end
+
+			ray_position = Unit.world_position(arg_72_1, 0)
+
+			::label_72_0::
+
+			local var_72_5 = z(ray_position)
+			local z_offset
+
+			if not arg_72_2 then
+				z_offset = arg_72_2.z_offset
+
+				if not z_offset then
+					-- Nothing
+				end
+			end
+
+			z_offset = 0
+
+			::label_72_1::
+
+			local num = var_72_5 + z_offset
+			local node = Unit.node(var_72_2, "g_gameplay_ledge_trigger_box")
+
+			if not (num <= Vector3.z(Unit.world_position(var_72_2, node))) then
 				arg_72_2.ledge_unit = var_72_2
 
 				return true
@@ -1700,27 +2109,54 @@ function var_0_0.will_be_ledge_hanging(arg_72_0, arg_72_1, arg_72_2)
 	return false
 end
 
-local var_0_9 = 4
+local num_3 = 4
 
-function var_0_0.is_raycasting_to_gameplay_collision_box(arg_73_0, arg_73_1, arg_73_2, arg_73_3)
-	local var_73_0 = World.get_data(arg_73_0, "physics_world")
-	local var_73_1 = arg_73_3 and arg_73_3.ray_position or POSITION_LOOKUP[arg_73_1]
-	local var_73_2 = PlayerUnitMovementSettings.get_movement_settings_table(arg_73_1)
-	local var_73_3 = arg_73_3 and arg_73_3.movement_settings_table_name or "gameplay_collision_box"
-	local var_73_4 = var_73_2[var_73_3].collision_check_player_half_height
-	local var_73_5 = var_73_2[var_73_3].collision_check_player_height_offset
-	local var_73_6 = var_73_1 + Vector3(0, 0, var_73_5 * 2)
+CharacterStateHelper_2.is_raycasting_to_gameplay_collision_box = function (arg_73_0, arg_73_1, arg_73_2, arg_73_3)
+	-- function 73
+	local get_data = World.get_data(arg_73_0, "physics_world")
+	local ray_position
+
+	if not arg_73_3 then
+		ray_position = arg_73_3.ray_position
+
+		if not ray_position then
+			-- Nothing
+		end
+	end
+
+	ray_position = POSITION_LOOKUP[arg_73_1]
+
+	::label_73_0::
+
+	local get_movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(arg_73_1)
+	local movement_settings_table_name
+
+	if not arg_73_3 then
+		movement_settings_table_name = arg_73_3.movement_settings_table_name
+
+		if not movement_settings_table_name then
+			-- Nothing
+		end
+	end
+
+	movement_settings_table_name = "gameplay_collision_box"
+
+	::label_73_1::
+
+	local collision_check_player_half_height = get_movement_settings_table[movement_settings_table_name].collision_check_player_half_height
+	local collision_check_player_height_offset = get_movement_settings_table[movement_settings_table_name].collision_check_player_height_offset
+	local num = ray_position + Vector3(0, 0, collision_check_player_height_offset * 2)
 	local var_73_7
 	local var_73_8
-	local var_73_9, var_73_10 = PhysicsWorld.immediate_raycast(var_73_0, var_73_6, Vector3.down(), var_73_4 * 4, "all", "collision_filter", arg_73_2)
+	local immediate_raycast, var_73_10 = PhysicsWorld.immediate_raycast(get_data, num, Vector3.down(), collision_check_player_half_height * 4, "all", "collision_filter", arg_73_2)
 
-	for iter_73_0 = 1, var_73_10 do
-		local var_73_11 = var_73_9[iter_73_0][var_0_9]
-		local var_73_12 = Actor.unit(var_73_11)
+	for i = 1, var_73_10 do
+		local var_73_11 = immediate_raycast[i][num_3]
+		local unit = Actor.unit(var_73_11)
 
-		if Unit.get_data(var_73_12, "is_ledge_unit") then
+		if not Unit.get_data(unit, "is_ledge_unit") then
 			var_73_7 = true
-			var_73_8 = var_73_12
+			var_73_8 = unit
 		else
 			var_73_7 = false
 			var_73_8 = nil
@@ -1729,19 +2165,32 @@ function var_0_0.is_raycasting_to_gameplay_collision_box(arg_73_0, arg_73_1, arg
 		end
 	end
 
-	if var_73_7 and var_73_8 then
-		local var_73_13 = arg_73_3 and arg_73_3.radius or 0.15
-		local var_73_14 = 4
-		local var_73_15 = PhysicsWorld.linear_sphere_sweep(var_73_0, var_73_6, var_73_6 + Vector3.down() * var_73_4 * 4, var_73_13, var_73_14, "collision_filter", arg_73_2, "report_initial_overlap")
+	if not var_73_7 and not var_73_8 then
+		local radius
 
-		if var_73_15 then
-			for iter_73_1 = 1, #var_73_15 do
-				local var_73_16 = var_73_15[iter_73_1].actor
-				local var_73_17 = Actor.unit(var_73_16)
+		if not arg_73_3 then
+			radius = arg_73_3.radius
 
-				if Unit.get_data(var_73_17, "is_ledge_unit") then
+			if not radius then
+				-- Nothing
+			end
+		end
+
+		radius = 0.15
+
+		::label_73_2::
+
+		local num_2 = 4
+		local linear_sphere_sweep = PhysicsWorld.linear_sphere_sweep(get_data, num, num + Vector3.down() * collision_check_player_half_height * 4, radius, num_2, "collision_filter", arg_73_2, "report_initial_overlap")
+
+		if not linear_sphere_sweep then
+			for j = 1, #linear_sphere_sweep do
+				local actor = linear_sphere_sweep[j].actor
+				local unit_2 = Actor.unit(actor)
+
+				if not Unit.get_data(unit_2, "is_ledge_unit") then
 					var_73_7 = true
-					var_73_8 = var_73_17
+					var_73_8 = unit_2
 				else
 					var_73_7 = false
 					var_73_8 = nil
@@ -1755,15 +2204,46 @@ function var_0_0.is_raycasting_to_gameplay_collision_box(arg_73_0, arg_73_1, arg
 	return var_73_7, var_73_8
 end
 
-function var_0_0.is_ledge_hanging(arg_74_0, arg_74_1, arg_74_2)
+CharacterStateHelper_2.is_ledge_hanging = function (arg_74_0, arg_74_1, arg_74_2)
+	-- function 74
 	if not script_data.ledge_hanging_turned_off then
-		local var_74_0, var_74_1 = var_0_0.is_colliding_with_gameplay_collision_box(arg_74_0, arg_74_1, "filter_ledge_collision", arg_74_2)
+		local is_colliding_with_gameplay_collision_box, var_74_1 = CharacterStateHelper_2.is_colliding_with_gameplay_collision_box(arg_74_0, arg_74_1, "filter_ledge_collision", arg_74_2)
 
-		if var_74_0 then
-			local var_74_2 = Vector3.z(arg_74_2 and arg_74_2.position or Unit.world_position(arg_74_1, 0)) + (arg_74_2 and arg_74_2.z_offset or 0)
-			local var_74_3 = Unit.node(var_74_1, "g_gameplay_ledge_trigger_box")
+		if not is_colliding_with_gameplay_collision_box then
+			local z = Vector3.z
+			local position
 
-			if var_74_2 <= Vector3.z(Unit.world_position(var_74_1, var_74_3)) then
+			if not arg_74_2 then
+				position = arg_74_2.position
+
+				if not position then
+					-- Nothing
+				end
+			end
+
+			position = Unit.world_position(arg_74_1, 0)
+
+			::label_74_0::
+
+			local var_74_4 = z(position)
+			local z_offset
+
+			if not arg_74_2 then
+				z_offset = arg_74_2.z_offset
+
+				if not z_offset then
+					-- Nothing
+				end
+			end
+
+			z_offset = 0
+
+			::label_74_1::
+
+			local num = var_74_4 + z_offset
+			local node = Unit.node(var_74_1, "g_gameplay_ledge_trigger_box")
+
+			if not (num <= Vector3.z(Unit.world_position(var_74_1, node))) then
 				arg_74_2.ledge_unit = var_74_1
 
 				return true
@@ -1774,119 +2254,131 @@ function var_0_0.is_ledge_hanging(arg_74_0, arg_74_1, arg_74_2)
 	return false
 end
 
-function var_0_0.recently_left_ladder(arg_75_0, arg_75_1)
-	return arg_75_0:has_recently_left_ladder(arg_75_1)
+CharacterStateHelper_2.recently_left_ladder = function (self, arg_75_1)
+	-- function 75
+	return self:has_recently_left_ladder(arg_75_1)
 end
 
-function var_0_0.change_camera_state(arg_76_0, arg_76_1, arg_76_2)
-	if arg_76_0.bot_player then
+CharacterStateHelper_2.change_camera_state = function (self, arg_76_1, arg_76_2)
+	-- function 76
+	if not self.bot_player then
 		return
 	end
 
-	if Development.parameter("third_person_mode") and arg_76_1 == "follow" then
+	if not (not Development.parameter("third_person_mode") and arg_76_1 ~= "follow") then
 		arg_76_1 = "follow_third_person_over_shoulder"
 	end
 
-	Managers.state.entity:system("camera_system"):external_state_change(arg_76_0, arg_76_1, arg_76_2)
+	Managers.state.entity:system("camera_system"):external_state_change(self, arg_76_1, arg_76_2)
 end
 
-function var_0_0.change_camera_state_delayed(arg_77_0, arg_77_1, arg_77_2, arg_77_3)
-	if arg_77_0.bot_player then
+CharacterStateHelper_2.change_camera_state_delayed = function (self, arg_77_1, arg_77_2, arg_77_3)
+	-- function 77
+	if not self.bot_player then
 		return
 	end
 
-	if Development.parameter("third_person_mode") and arg_77_1 == "follow" then
+	if not (not Development.parameter("third_person_mode") and arg_77_1 ~= "follow") then
 		arg_77_1 = "follow_third_person_over_shoulder"
 	end
 
-	Managers.state.entity:system("camera_system"):external_state_change_delayed(arg_77_0, arg_77_1, arg_77_2, arg_77_3)
+	Managers.state.entity:system("camera_system"):external_state_change_delayed(self, arg_77_1, arg_77_2, arg_77_3)
 end
 
-function var_0_0.play_animation_event(arg_78_0, arg_78_1)
+CharacterStateHelper_2.play_animation_event = function (arg_78_0, arg_78_1)
+	-- function 78
 	Managers.state.network:anim_event(arg_78_0, arg_78_1)
 end
 
-function var_0_0.play_animation_event_first_person(arg_79_0, arg_79_1)
-	arg_79_0:animation_event(arg_79_1)
+CharacterStateHelper_2.play_animation_event_first_person = function (self, arg_79_1)
+	-- function 79
+	self:animation_event(arg_79_1)
 end
 
-function var_0_0.set_animation_var_first_person(arg_80_0, arg_80_1, arg_80_2)
-	arg_80_0:animation_set_variable(arg_80_1, arg_80_2)
+CharacterStateHelper_2.set_animation_var_first_person = function (self, arg_80_1, arg_80_2)
+	-- function 80
+	self:animation_set_variable(arg_80_1, arg_80_2)
 end
 
-function var_0_0.play_animation_event_with_variable_float(arg_81_0, arg_81_1, arg_81_2, arg_81_3)
+CharacterStateHelper_2.play_animation_event_with_variable_float = function (arg_81_0, arg_81_1, arg_81_2, arg_81_3)
+	-- function 81
 	Managers.state.network:anim_event_with_variable_float(arg_81_0, arg_81_1, arg_81_2, arg_81_3)
 end
 
-function var_0_0.set_animation_variable_float(arg_82_0, arg_82_1, arg_82_2)
+CharacterStateHelper_2.set_animation_variable_float = function (arg_82_0, arg_82_1, arg_82_2)
+	-- function 82
 	Managers.state.network:anim_set_variable_float(arg_82_0, arg_82_1, arg_82_2)
 end
 
-function var_0_0.is_enemy_character(arg_83_0)
+CharacterStateHelper_2.is_enemy_character = function (arg_83_0)
+	-- function 83
 	local var_83_0 = Managers.state.side.side_by_unit[arg_83_0]
 
-	if var_83_0 and var_83_0:name() == "dark_pact" then
+	if not (not var_83_0 and var_83_0:name() ~= "dark_pact") then
 		return true
 	end
 
 	return false
 end
 
-function var_0_0.is_viable_stab_target(arg_84_0, arg_84_1, arg_84_2)
-	if arg_84_2:disabled_by_other(arg_84_0) then
+CharacterStateHelper_2.is_viable_stab_target = function (arg_84_0, arg_84_1, arg_84_2)
+	-- function 84
+	if not arg_84_2:disabled_by_other(arg_84_0) then
 		return false
 	end
 
-	local var_84_0 = arg_84_2:is_using_transport()
-	local var_84_1 = var_0_0.is_enemy_character(arg_84_1)
+	local is_using_transport = arg_84_2:is_using_transport()
+	local is_enemy_character = CharacterStateHelper_2.is_enemy_character(arg_84_1)
 
-	if var_84_0 or var_84_1 then
+	if is_using_transport or not is_enemy_character then
 		return false
 	end
 
 	return true
 end
 
-function var_0_0.ghost_mode(arg_85_0, arg_85_1)
-	if not arg_85_0:is_in_ghost_mode() then
-		if arg_85_1:get("ghost_mode_enter") and arg_85_0:allowed_to_enter() then
-			arg_85_0:try_enter_ghost_mode()
+CharacterStateHelper_2.ghost_mode = function (self, arg_85_1)
+	-- function 85
+	if not self:is_in_ghost_mode() then
+		if not arg_85_1:get("ghost_mode_enter") and not self:allowed_to_enter() then
+			self:try_enter_ghost_mode()
 		end
-	elseif arg_85_0:is_in_ghost_mode() then
-		if arg_85_1:get("ghost_mode_exit") and arg_85_0:allowed_to_leave() then
-			local var_85_0 = false
+	elseif not self:is_in_ghost_mode() then
+		if not arg_85_1:get("ghost_mode_exit") and not self:allowed_to_leave() then
+			local flag = false
 
-			arg_85_0:try_leave_ghost_mode(var_85_0)
-		elseif arg_85_1:get("ghost_mode_enter") then
-			local var_85_1 = false
+			self:try_leave_ghost_mode(flag)
+		elseif not arg_85_1:get("ghost_mode_enter") then
+			local flag_2 = false
 
-			arg_85_0:teleport_player(var_85_1)
+			self:teleport_player(flag_2)
 		end
 	end
 end
 
-function var_0_0.handle_bot_ledge_hanging_failsafe(arg_86_0, arg_86_1)
-	if arg_86_1 and ALIVE[arg_86_0] then
+CharacterStateHelper_2.handle_bot_ledge_hanging_failsafe = function (arg_86_0, arg_86_1)
+	-- function 86
+	if not arg_86_1 and not ALIVE[arg_86_0] then
 		local var_86_0 = BLACKBOARDS[arg_86_0]
-		local var_86_1 = var_86_0.locomotion_extension
+		local locomotion_extension = var_86_0.locomotion_extension
 
-		if var_86_1.external_velocity then
+		if not locomotion_extension.external_velocity then
 			return false
 		else
-			local var_86_2 = var_86_0.navigation_extension:current_goal()
+			local current_goal = var_86_0.navigation_extension:current_goal()
 
-			if not var_86_2 then
-				local var_86_3 = var_86_0.ai_bot_group_extension.data.follow_unit
+			if not current_goal then
+				local follow_unit = var_86_0.ai_bot_group_extension.data.follow_unit
 
-				if ALIVE[var_86_3] then
-					var_86_2 = ScriptUnit.extension(var_86_3, "whereabouts_system"):last_position_on_navmesh()
+				if not ALIVE[follow_unit] then
+					current_goal = ScriptUnit.extension(follow_unit, "whereabouts_system"):last_position_on_navmesh()
 				else
-					var_86_2 = var_86_0.navigation_extension:destination()
+					current_goal = var_86_0.navigation_extension:destination()
 				end
 			end
 
-			if var_86_2 then
-				var_86_1:teleport_to(var_86_2)
+			if not current_goal then
+				locomotion_extension:teleport_to(current_goal)
 
 				return true
 			end

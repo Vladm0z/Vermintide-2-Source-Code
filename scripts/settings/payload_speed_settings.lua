@@ -1,171 +1,489 @@
 -- chunkname: @scripts/settings/payload_speed_settings.lua
 
+local PayloadSpeedSettings = PayloadSpeedSettings
+
 PayloadSpeedSettings = PayloadSpeedSettings or {}
-PayloadSpeedSettings.flat = PayloadSpeedSettings.flat or {}
-PayloadSpeedSettings.flat.pushed = PayloadSpeedSettings.flat.pushed or {}
+PayloadSpeedSettings = PayloadSpeedSettings
+
+local PayloadSpeedSettings_2 = PayloadSpeedSettings
+local flat = PayloadSpeedSettings.flat
+
+flat = flat or {}
+PayloadSpeedSettings_2.flat = flat
+
+local flat_2 = PayloadSpeedSettings.flat
+local pushed = PayloadSpeedSettings.flat.pushed
+
+pushed = pushed or {}
+flat_2.pushed = pushed
 PayloadSpeedSettings.flat.pushed.speed = 0.8
 PayloadSpeedSettings.flat.pushed.bonus_speed_per_player = 0.05
 PayloadSpeedSettings.flat.pushed.acceleration = 0.5
-PayloadSpeedSettings.flat.not_pushed = PayloadSpeedSettings.flat.not_pushed or {}
+
+local flat_3 = PayloadSpeedSettings.flat
+local not_pushed = PayloadSpeedSettings.flat.not_pushed
+
+not_pushed = not_pushed or {}
+flat_3.not_pushed = not_pushed
 PayloadSpeedSettings.flat.not_pushed.speed = 0
 PayloadSpeedSettings.flat.not_pushed.acceleration = 0.5
-PayloadSpeedSettings.uphill = PayloadSpeedSettings.uphill or {}
-PayloadSpeedSettings.uphill.pushed = PayloadSpeedSettings.uphill.pushed or {}
+
+local PayloadSpeedSettings_3 = PayloadSpeedSettings
+local uphill = PayloadSpeedSettings.uphill
+
+uphill = uphill or {}
+PayloadSpeedSettings_3.uphill = uphill
+
+local uphill_2 = PayloadSpeedSettings.uphill
+local pushed_2 = PayloadSpeedSettings.uphill.pushed
+
+pushed_2 = pushed_2 or {}
+uphill_2.pushed = pushed_2
 PayloadSpeedSettings.uphill.pushed.speed = 0.4
 PayloadSpeedSettings.uphill.pushed.bonus_speed_per_player = 0.05
 PayloadSpeedSettings.uphill.pushed.acceleration = 1.2
-PayloadSpeedSettings.uphill.not_pushed = PayloadSpeedSettings.uphill.not_pushed or {}
+
+local uphill_3 = PayloadSpeedSettings.uphill
+local not_pushed_2 = PayloadSpeedSettings.uphill.not_pushed
+
+not_pushed_2 = not_pushed_2 or {}
+uphill_3.not_pushed = not_pushed_2
 PayloadSpeedSettings.uphill.not_pushed.speed = -1
 PayloadSpeedSettings.uphill.not_pushed.acceleration = 0.3
-PayloadSpeedSettings.downhill = PayloadSpeedSettings.downhill or {}
-PayloadSpeedSettings.downhill.pushed = PayloadSpeedSettings.downhill.pushed or {}
+
+local PayloadSpeedSettings_4 = PayloadSpeedSettings
+local downhill = PayloadSpeedSettings.downhill
+
+downhill = downhill or {}
+PayloadSpeedSettings_4.downhill = downhill
+
+local downhill_2 = PayloadSpeedSettings.downhill
+local pushed_3 = PayloadSpeedSettings.downhill.pushed
+
+pushed_3 = pushed_3 or {}
+downhill_2.pushed = pushed_3
 PayloadSpeedSettings.downhill.pushed.speed = 1.6
 PayloadSpeedSettings.downhill.pushed.bonus_speed_per_player = 0.05
 PayloadSpeedSettings.downhill.pushed.acceleration = 0.5
-PayloadSpeedSettings.downhill.not_pushed = PayloadSpeedSettings.downhill.not_pushed or {}
+
+local downhill_3 = PayloadSpeedSettings.downhill
+local not_pushed_3 = PayloadSpeedSettings.downhill.not_pushed
+
+not_pushed_3 = not_pushed_3 or {}
+downhill_3.not_pushed = not_pushed_3
 PayloadSpeedSettings.downhill.not_pushed.speed = 1.2
 PayloadSpeedSettings.downhill.not_pushed.acceleration = 0.2
-PayloadSpeedSettings.muddy = PayloadSpeedSettings.muddy or {}
-PayloadSpeedSettings.muddy.pushed = PayloadSpeedSettings.muddy.pushed or {}
+
+local PayloadSpeedSettings_5 = PayloadSpeedSettings
+local muddy = PayloadSpeedSettings.muddy
+
+muddy = muddy or {}
+PayloadSpeedSettings_5.muddy = muddy
+
+local muddy_2 = PayloadSpeedSettings.muddy
+local pushed_4 = PayloadSpeedSettings.muddy.pushed
+
+pushed_4 = pushed_4 or {}
+muddy_2.pushed = pushed_4
 PayloadSpeedSettings.muddy.pushed.speed = 0.7
 PayloadSpeedSettings.muddy.pushed.bonus_speed_per_player = 0.05
 PayloadSpeedSettings.muddy.pushed.acceleration = 0.5
-PayloadSpeedSettings.muddy.not_pushed = PayloadSpeedSettings.muddy.not_pushed or {}
+
+local muddy_3 = PayloadSpeedSettings.muddy
+local not_pushed_4 = PayloadSpeedSettings.muddy.not_pushed
+
+not_pushed_4 = not_pushed_4 or {}
+muddy_3.not_pushed = not_pushed_4
 PayloadSpeedSettings.muddy.not_pushed.speed = 0
 PayloadSpeedSettings.muddy.not_pushed.acceleration = 0.5
-PayloadSpeedSettings.small_flat = PayloadSpeedSettings.small_flat or {}
-PayloadSpeedSettings.small_flat.pushed = PayloadSpeedSettings.small_flat.pushed or {}
+
+local PayloadSpeedSettings_6 = PayloadSpeedSettings
+local small_flat = PayloadSpeedSettings.small_flat
+
+small_flat = small_flat or {}
+PayloadSpeedSettings_6.small_flat = small_flat
+
+local small_flat_2 = PayloadSpeedSettings.small_flat
+local pushed_5 = PayloadSpeedSettings.small_flat.pushed
+
+pushed_5 = pushed_5 or {}
+small_flat_2.pushed = pushed_5
 PayloadSpeedSettings.small_flat.pushed.speed = 1.4
 PayloadSpeedSettings.small_flat.pushed.bonus_speed_per_player = 0.05
 PayloadSpeedSettings.small_flat.pushed.acceleration = 0.5
-PayloadSpeedSettings.small_flat.not_pushed = PayloadSpeedSettings.small_flat.not_pushed or {}
+
+local small_flat_3 = PayloadSpeedSettings.small_flat
+local not_pushed_5 = PayloadSpeedSettings.small_flat.not_pushed
+
+not_pushed_5 = not_pushed_5 or {}
+small_flat_3.not_pushed = not_pushed_5
 PayloadSpeedSettings.small_flat.not_pushed.speed = 0
 PayloadSpeedSettings.small_flat.not_pushed.acceleration = 0.5
-PayloadSpeedSettings.small_slowdown = PayloadSpeedSettings.small_slowdown or {}
-PayloadSpeedSettings.small_slowdown.pushed = PayloadSpeedSettings.small_slowdown.pushed or {}
+
+local PayloadSpeedSettings_7 = PayloadSpeedSettings
+local small_slowdown = PayloadSpeedSettings.small_slowdown
+
+small_slowdown = small_slowdown or {}
+PayloadSpeedSettings_7.small_slowdown = small_slowdown
+
+local small_slowdown_2 = PayloadSpeedSettings.small_slowdown
+local pushed_6 = PayloadSpeedSettings.small_slowdown.pushed
+
+pushed_6 = pushed_6 or {}
+small_slowdown_2.pushed = pushed_6
 PayloadSpeedSettings.small_slowdown.pushed.speed = 0
 PayloadSpeedSettings.small_slowdown.pushed.bonus_speed_per_player = 0
 PayloadSpeedSettings.small_slowdown.pushed.acceleration = 0.5
-PayloadSpeedSettings.small_slowdown.not_pushed = PayloadSpeedSettings.small_slowdown.not_pushed or {}
+
+local small_slowdown_3 = PayloadSpeedSettings.small_slowdown
+local not_pushed_6 = PayloadSpeedSettings.small_slowdown.not_pushed
+
+not_pushed_6 = not_pushed_6 or {}
+small_slowdown_3.not_pushed = not_pushed_6
 PayloadSpeedSettings.small_slowdown.not_pushed.speed = 0
 PayloadSpeedSettings.small_slowdown.not_pushed.acceleration = 0.5
-PayloadSpeedSettings.small_uphill = PayloadSpeedSettings.small_uphill or {}
-PayloadSpeedSettings.small_uphill.pushed = PayloadSpeedSettings.small_uphill.pushed or {}
+
+local PayloadSpeedSettings_8 = PayloadSpeedSettings
+local small_uphill = PayloadSpeedSettings.small_uphill
+
+small_uphill = small_uphill or {}
+PayloadSpeedSettings_8.small_uphill = small_uphill
+
+local small_uphill_2 = PayloadSpeedSettings.small_uphill
+local pushed_7 = PayloadSpeedSettings.small_uphill.pushed
+
+pushed_7 = pushed_7 or {}
+small_uphill_2.pushed = pushed_7
 PayloadSpeedSettings.small_uphill.pushed.speed = 1.3
 PayloadSpeedSettings.small_uphill.pushed.bonus_speed_per_player = 0.05
 PayloadSpeedSettings.small_uphill.pushed.acceleration = 1.2
-PayloadSpeedSettings.small_uphill.not_pushed = PayloadSpeedSettings.small_uphill.not_pushed or {}
+
+local small_uphill_3 = PayloadSpeedSettings.small_uphill
+local not_pushed_7 = PayloadSpeedSettings.small_uphill.not_pushed
+
+not_pushed_7 = not_pushed_7 or {}
+small_uphill_3.not_pushed = not_pushed_7
 PayloadSpeedSettings.small_uphill.not_pushed.speed = -2.5
 PayloadSpeedSettings.small_uphill.not_pushed.acceleration = 0.75
-PayloadSpeedSettings.small_downhill_slow = PayloadSpeedSettings.small_downhill_slow or {}
-PayloadSpeedSettings.small_downhill_slow.pushed = PayloadSpeedSettings.small_downhill_slow.pushed or {}
+
+local PayloadSpeedSettings_9 = PayloadSpeedSettings
+local small_downhill_slow = PayloadSpeedSettings.small_downhill_slow
+
+small_downhill_slow = small_downhill_slow or {}
+PayloadSpeedSettings_9.small_downhill_slow = small_downhill_slow
+
+local small_downhill_slow_2 = PayloadSpeedSettings.small_downhill_slow
+local pushed_8 = PayloadSpeedSettings.small_downhill_slow.pushed
+
+pushed_8 = pushed_8 or {}
+small_downhill_slow_2.pushed = pushed_8
 PayloadSpeedSettings.small_downhill_slow.pushed.speed = 2
 PayloadSpeedSettings.small_downhill_slow.pushed.bonus_speed_per_player = 0.05
 PayloadSpeedSettings.small_downhill_slow.pushed.acceleration = 0.5
-PayloadSpeedSettings.small_downhill_slow.not_pushed = PayloadSpeedSettings.small_downhill_slow.not_pushed or {}
+
+local small_downhill_slow_3 = PayloadSpeedSettings.small_downhill_slow
+local not_pushed_8 = PayloadSpeedSettings.small_downhill_slow.not_pushed
+
+not_pushed_8 = not_pushed_8 or {}
+small_downhill_slow_3.not_pushed = not_pushed_8
 PayloadSpeedSettings.small_downhill_slow.not_pushed.speed = 1
 PayloadSpeedSettings.small_downhill_slow.not_pushed.acceleration = 0.2
-PayloadSpeedSettings.small_downhill = PayloadSpeedSettings.small_downhill or {}
-PayloadSpeedSettings.small_downhill.pushed = PayloadSpeedSettings.small_downhill.pushed or {}
+
+local PayloadSpeedSettings_10 = PayloadSpeedSettings
+local small_downhill = PayloadSpeedSettings.small_downhill
+
+small_downhill = small_downhill or {}
+PayloadSpeedSettings_10.small_downhill = small_downhill
+
+local small_downhill_2 = PayloadSpeedSettings.small_downhill
+local pushed_9 = PayloadSpeedSettings.small_downhill.pushed
+
+pushed_9 = pushed_9 or {}
+small_downhill_2.pushed = pushed_9
 PayloadSpeedSettings.small_downhill.pushed.speed = 2.5
 PayloadSpeedSettings.small_downhill.pushed.bonus_speed_per_player = 0.05
 PayloadSpeedSettings.small_downhill.pushed.acceleration = 0.5
-PayloadSpeedSettings.small_downhill.not_pushed = PayloadSpeedSettings.small_downhill.not_pushed or {}
+
+local small_downhill_3 = PayloadSpeedSettings.small_downhill
+local not_pushed_9 = PayloadSpeedSettings.small_downhill.not_pushed
+
+not_pushed_9 = not_pushed_9 or {}
+small_downhill_3.not_pushed = not_pushed_9
 PayloadSpeedSettings.small_downhill.not_pushed.speed = 2
 PayloadSpeedSettings.small_downhill.not_pushed.acceleration = 0.2
-PayloadSpeedSettings.small_downhill_fast = PayloadSpeedSettings.small_downhill_fast or {}
-PayloadSpeedSettings.small_downhill_fast.pushed = PayloadSpeedSettings.small_downhill_fast.pushed or {}
+
+local PayloadSpeedSettings_11 = PayloadSpeedSettings
+local small_downhill_fast = PayloadSpeedSettings.small_downhill_fast
+
+small_downhill_fast = small_downhill_fast or {}
+PayloadSpeedSettings_11.small_downhill_fast = small_downhill_fast
+
+local small_downhill_fast_2 = PayloadSpeedSettings.small_downhill_fast
+local pushed_10 = PayloadSpeedSettings.small_downhill_fast.pushed
+
+pushed_10 = pushed_10 or {}
+small_downhill_fast_2.pushed = pushed_10
 PayloadSpeedSettings.small_downhill_fast.pushed.speed = 3.5
 PayloadSpeedSettings.small_downhill_fast.pushed.bonus_speed_per_player = 0.05
 PayloadSpeedSettings.small_downhill_fast.pushed.acceleration = 0.5
-PayloadSpeedSettings.small_downhill_fast.not_pushed = PayloadSpeedSettings.small_downhill_fast.not_pushed or {}
+
+local small_downhill_fast_3 = PayloadSpeedSettings.small_downhill_fast
+local not_pushed_10 = PayloadSpeedSettings.small_downhill_fast.not_pushed
+
+not_pushed_10 = not_pushed_10 or {}
+small_downhill_fast_3.not_pushed = not_pushed_10
 PayloadSpeedSettings.small_downhill_fast.not_pushed.speed = 3
 PayloadSpeedSettings.small_downhill_fast.not_pushed.acceleration = 0.2
-PayloadSpeedSettings.small_downhill_chase_01 = PayloadSpeedSettings.small_downhill_chase_01 or {}
-PayloadSpeedSettings.small_downhill_chase_01.pushed = PayloadSpeedSettings.small_downhill_chase_01.pushed or {}
+
+local PayloadSpeedSettings_12 = PayloadSpeedSettings
+local small_downhill_chase_01 = PayloadSpeedSettings.small_downhill_chase_01
+
+small_downhill_chase_01 = small_downhill_chase_01 or {}
+PayloadSpeedSettings_12.small_downhill_chase_01 = small_downhill_chase_01
+
+local small_downhill_chase_01_2 = PayloadSpeedSettings.small_downhill_chase_01
+local pushed_11 = PayloadSpeedSettings.small_downhill_chase_01.pushed
+
+pushed_11 = pushed_11 or {}
+small_downhill_chase_01_2.pushed = pushed_11
 PayloadSpeedSettings.small_downhill_chase_01.pushed.speed = 7.5
 PayloadSpeedSettings.small_downhill_chase_01.pushed.bonus_speed_per_player = 0
 PayloadSpeedSettings.small_downhill_chase_01.pushed.acceleration = 4
-PayloadSpeedSettings.small_downhill_chase_01.not_pushed = PayloadSpeedSettings.small_downhill_chase_01.not_pushed or {}
+
+local small_downhill_chase_01_3 = PayloadSpeedSettings.small_downhill_chase_01
+local not_pushed_11 = PayloadSpeedSettings.small_downhill_chase_01.not_pushed
+
+not_pushed_11 = not_pushed_11 or {}
+small_downhill_chase_01_3.not_pushed = not_pushed_11
 PayloadSpeedSettings.small_downhill_chase_01.not_pushed.speed = 7.5
 PayloadSpeedSettings.small_downhill_chase_01.not_pushed.acceleration = 4
-PayloadSpeedSettings.small_downhill_chase_02 = PayloadSpeedSettings.small_downhill_chase_02 or {}
-PayloadSpeedSettings.small_downhill_chase_02.pushed = PayloadSpeedSettings.small_downhill_chase_02.pushed or {}
+
+local PayloadSpeedSettings_13 = PayloadSpeedSettings
+local small_downhill_chase_02 = PayloadSpeedSettings.small_downhill_chase_02
+
+small_downhill_chase_02 = small_downhill_chase_02 or {}
+PayloadSpeedSettings_13.small_downhill_chase_02 = small_downhill_chase_02
+
+local small_downhill_chase_02_2 = PayloadSpeedSettings.small_downhill_chase_02
+local pushed_12 = PayloadSpeedSettings.small_downhill_chase_02.pushed
+
+pushed_12 = pushed_12 or {}
+small_downhill_chase_02_2.pushed = pushed_12
 PayloadSpeedSettings.small_downhill_chase_02.pushed.speed = 6.5
 PayloadSpeedSettings.small_downhill_chase_02.pushed.bonus_speed_per_player = 0
 PayloadSpeedSettings.small_downhill_chase_02.pushed.acceleration = 3
-PayloadSpeedSettings.small_downhill_chase_02.not_pushed = PayloadSpeedSettings.small_downhill_chase_02.not_pushed or {}
+
+local small_downhill_chase_02_3 = PayloadSpeedSettings.small_downhill_chase_02
+local not_pushed_12 = PayloadSpeedSettings.small_downhill_chase_02.not_pushed
+
+not_pushed_12 = not_pushed_12 or {}
+small_downhill_chase_02_3.not_pushed = not_pushed_12
 PayloadSpeedSettings.small_downhill_chase_02.not_pushed.speed = 6.5
 PayloadSpeedSettings.small_downhill_chase_02.not_pushed.acceleration = 3
-PayloadSpeedSettings.ussingen_downhill_mansion_01 = PayloadSpeedSettings.ussingen_downhill_mansion_01 or {}
-PayloadSpeedSettings.ussingen_downhill_mansion_01.pushed = PayloadSpeedSettings.ussingen_downhill_mansion_01.pushed or {}
+
+local PayloadSpeedSettings_14 = PayloadSpeedSettings
+local ussingen_downhill_mansion_01 = PayloadSpeedSettings.ussingen_downhill_mansion_01
+
+ussingen_downhill_mansion_01 = ussingen_downhill_mansion_01 or {}
+PayloadSpeedSettings_14.ussingen_downhill_mansion_01 = ussingen_downhill_mansion_01
+
+local ussingen_downhill_mansion_01_2 = PayloadSpeedSettings.ussingen_downhill_mansion_01
+local pushed_13 = PayloadSpeedSettings.ussingen_downhill_mansion_01.pushed
+
+pushed_13 = pushed_13 or {}
+ussingen_downhill_mansion_01_2.pushed = pushed_13
 PayloadSpeedSettings.ussingen_downhill_mansion_01.pushed.speed = 6.5
 PayloadSpeedSettings.ussingen_downhill_mansion_01.pushed.bonus_speed_per_player = 0
 PayloadSpeedSettings.ussingen_downhill_mansion_01.pushed.acceleration = 3
-PayloadSpeedSettings.ussingen_downhill_mansion_01.not_pushed = PayloadSpeedSettings.ussingen_downhill_mansion_01.not_pushed or {}
+
+local ussingen_downhill_mansion_01_3 = PayloadSpeedSettings.ussingen_downhill_mansion_01
+local not_pushed_13 = PayloadSpeedSettings.ussingen_downhill_mansion_01.not_pushed
+
+not_pushed_13 = not_pushed_13 or {}
+ussingen_downhill_mansion_01_3.not_pushed = not_pushed_13
 PayloadSpeedSettings.ussingen_downhill_mansion_01.not_pushed.speed = 6.5
 PayloadSpeedSettings.ussingen_downhill_mansion_01.not_pushed.acceleration = 3
-PayloadSpeedSettings.farmlands_heavy_load_01 = PayloadSpeedSettings.farmlands_heavy_load_01 or {}
-PayloadSpeedSettings.farmlands_heavy_load_01.pushed = PayloadSpeedSettings.farmlands_heavy_load_01.pushed or {}
+
+local PayloadSpeedSettings_15 = PayloadSpeedSettings
+local farmlands_heavy_load_01 = PayloadSpeedSettings.farmlands_heavy_load_01
+
+farmlands_heavy_load_01 = farmlands_heavy_load_01 or {}
+PayloadSpeedSettings_15.farmlands_heavy_load_01 = farmlands_heavy_load_01
+
+local farmlands_heavy_load_01_2 = PayloadSpeedSettings.farmlands_heavy_load_01
+local pushed_14 = PayloadSpeedSettings.farmlands_heavy_load_01.pushed
+
+pushed_14 = pushed_14 or {}
+farmlands_heavy_load_01_2.pushed = pushed_14
 PayloadSpeedSettings.farmlands_heavy_load_01.pushed.speed = 0.2
 PayloadSpeedSettings.farmlands_heavy_load_01.pushed.bonus_speed_per_player = 0.07
 PayloadSpeedSettings.farmlands_heavy_load_01.pushed.acceleration = 1
-PayloadSpeedSettings.farmlands_heavy_load_01.not_pushed = PayloadSpeedSettings.farmlands_heavy_load_01.not_pushed or {}
+
+local farmlands_heavy_load_01_3 = PayloadSpeedSettings.farmlands_heavy_load_01
+local not_pushed_14 = PayloadSpeedSettings.farmlands_heavy_load_01.not_pushed
+
+not_pushed_14 = not_pushed_14 or {}
+farmlands_heavy_load_01_3.not_pushed = not_pushed_14
 PayloadSpeedSettings.farmlands_heavy_load_01.not_pushed.speed = 0
 PayloadSpeedSettings.farmlands_heavy_load_01.not_pushed.acceleration = 0.2
-PayloadSpeedSettings.normal = PayloadSpeedSettings.normal or {}
-PayloadSpeedSettings.normal.pushed = PayloadSpeedSettings.normal.pushed or {}
+
+local PayloadSpeedSettings_16 = PayloadSpeedSettings
+local normal = PayloadSpeedSettings.normal
+
+normal = normal or {}
+PayloadSpeedSettings_16.normal = normal
+
+local normal_2 = PayloadSpeedSettings.normal
+local pushed_15 = PayloadSpeedSettings.normal.pushed
+
+pushed_15 = pushed_15 or {}
+normal_2.pushed = pushed_15
 PayloadSpeedSettings.normal.pushed.speed = 2.5
 PayloadSpeedSettings.normal.pushed.bonus_speed_per_player = 0.25
 PayloadSpeedSettings.normal.pushed.acceleration = 0.25
-PayloadSpeedSettings.normal.not_pushed = PayloadSpeedSettings.normal.not_pushed or {}
+
+local normal_3 = PayloadSpeedSettings.normal
+local not_pushed_15 = PayloadSpeedSettings.normal.not_pushed
+
+not_pushed_15 = not_pushed_15 or {}
+normal_3.not_pushed = not_pushed_15
 PayloadSpeedSettings.normal.not_pushed.speed = 0
 PayloadSpeedSettings.normal.not_pushed.acceleration = 0.25
-PayloadSpeedSettings.sled_ice = PayloadSpeedSettings.sled_ice or {}
-PayloadSpeedSettings.sled_ice.pushed = PayloadSpeedSettings.sled_ice.pushed or {}
+
+local PayloadSpeedSettings_17 = PayloadSpeedSettings
+local sled_ice = PayloadSpeedSettings.sled_ice
+
+sled_ice = sled_ice or {}
+PayloadSpeedSettings_17.sled_ice = sled_ice
+
+local sled_ice_2 = PayloadSpeedSettings.sled_ice
+local pushed_16 = PayloadSpeedSettings.sled_ice.pushed
+
+pushed_16 = pushed_16 or {}
+sled_ice_2.pushed = pushed_16
 PayloadSpeedSettings.sled_ice.pushed.speed = 3
 PayloadSpeedSettings.sled_ice.pushed.bonus_speed_per_player = 0.25
 PayloadSpeedSettings.sled_ice.pushed.acceleration = 1
-PayloadSpeedSettings.sled_ice.not_pushed = PayloadSpeedSettings.sled_ice.not_pushed or {}
+
+local sled_ice_3 = PayloadSpeedSettings.sled_ice
+local not_pushed_16 = PayloadSpeedSettings.sled_ice.not_pushed
+
+not_pushed_16 = not_pushed_16 or {}
+sled_ice_3.not_pushed = not_pushed_16
 PayloadSpeedSettings.sled_ice.not_pushed.speed = 0
 PayloadSpeedSettings.sled_ice.not_pushed.acceleration = 0.5
-PayloadSpeedSettings.sled_normal = PayloadSpeedSettings.sled_normal or {}
-PayloadSpeedSettings.sled_normal.pushed = PayloadSpeedSettings.sled_normal.pushed or {}
+
+local PayloadSpeedSettings_18 = PayloadSpeedSettings
+local sled_normal = PayloadSpeedSettings.sled_normal
+
+sled_normal = sled_normal or {}
+PayloadSpeedSettings_18.sled_normal = sled_normal
+
+local sled_normal_2 = PayloadSpeedSettings.sled_normal
+local pushed_17 = PayloadSpeedSettings.sled_normal.pushed
+
+pushed_17 = pushed_17 or {}
+sled_normal_2.pushed = pushed_17
 PayloadSpeedSettings.sled_normal.pushed.speed = 1.85
 PayloadSpeedSettings.sled_normal.pushed.bonus_speed_per_player = 0.75
 PayloadSpeedSettings.sled_normal.pushed.acceleration = 1.75
-PayloadSpeedSettings.sled_normal.not_pushed = PayloadSpeedSettings.sled_normal.not_pushed or {}
+
+local sled_normal_3 = PayloadSpeedSettings.sled_normal
+local not_pushed_17 = PayloadSpeedSettings.sled_normal.not_pushed
+
+not_pushed_17 = not_pushed_17 or {}
+sled_normal_3.not_pushed = not_pushed_17
 PayloadSpeedSettings.sled_normal.not_pushed.speed = 0
 PayloadSpeedSettings.sled_normal.not_pushed.acceleration = 1.75
-PayloadSpeedSettings.sled_fast = PayloadSpeedSettings.sled_fast or {}
-PayloadSpeedSettings.sled_fast.pushed = PayloadSpeedSettings.sled_fast.pushed or {}
+
+local PayloadSpeedSettings_19 = PayloadSpeedSettings
+local sled_fast = PayloadSpeedSettings.sled_fast
+
+sled_fast = sled_fast or {}
+PayloadSpeedSettings_19.sled_fast = sled_fast
+
+local sled_fast_2 = PayloadSpeedSettings.sled_fast
+local pushed_18 = PayloadSpeedSettings.sled_fast.pushed
+
+pushed_18 = pushed_18 or {}
+sled_fast_2.pushed = pushed_18
 PayloadSpeedSettings.sled_fast.pushed.speed = 8
 PayloadSpeedSettings.sled_fast.pushed.bonus_speed_per_player = 0
 PayloadSpeedSettings.sled_fast.pushed.acceleration = 3
-PayloadSpeedSettings.sled_fast.not_pushed = PayloadSpeedSettings.sled_fast.not_pushed or {}
+
+local sled_fast_3 = PayloadSpeedSettings.sled_fast
+local not_pushed_18 = PayloadSpeedSettings.sled_fast.not_pushed
+
+not_pushed_18 = not_pushed_18 or {}
+sled_fast_3.not_pushed = not_pushed_18
 PayloadSpeedSettings.sled_fast.not_pushed.speed = 8
 PayloadSpeedSettings.sled_fast.not_pushed.acceleration = 2
-PayloadSpeedSettings.sled_downhill = PayloadSpeedSettings.sled_downhill or {}
-PayloadSpeedSettings.sled_downhill.pushed = PayloadSpeedSettings.small_downhill.pushed or {}
+
+local PayloadSpeedSettings_20 = PayloadSpeedSettings
+local sled_downhill = PayloadSpeedSettings.sled_downhill
+
+sled_downhill = sled_downhill or {}
+PayloadSpeedSettings_20.sled_downhill = sled_downhill
+
+local sled_downhill_2 = PayloadSpeedSettings.sled_downhill
+local pushed_19 = PayloadSpeedSettings.small_downhill.pushed
+
+pushed_19 = pushed_19 or {}
+sled_downhill_2.pushed = pushed_19
 PayloadSpeedSettings.sled_downhill.pushed.speed = 5.5
 PayloadSpeedSettings.sled_downhill.pushed.bonus_speed_per_player = 0.5
 PayloadSpeedSettings.sled_downhill.pushed.acceleration = 2.5
-PayloadSpeedSettings.sled_downhill.not_pushed = PayloadSpeedSettings.sled_downhill.not_pushed or {}
+
+local sled_downhill_3 = PayloadSpeedSettings.sled_downhill
+local not_pushed_19 = PayloadSpeedSettings.sled_downhill.not_pushed
+
+not_pushed_19 = not_pushed_19 or {}
+sled_downhill_3.not_pushed = not_pushed_19
 PayloadSpeedSettings.sled_downhill.not_pushed.speed = 5
 PayloadSpeedSettings.sled_downhill.not_pushed.acceleration = 1.75
-PayloadSpeedSettings.sled_fast02 = PayloadSpeedSettings.sled_fast02 or {}
-PayloadSpeedSettings.sled_fast02.pushed = PayloadSpeedSettings.sled_fast02.pushed or {}
+
+local PayloadSpeedSettings_21 = PayloadSpeedSettings
+local sled_fast02 = PayloadSpeedSettings.sled_fast02
+
+sled_fast02 = sled_fast02 or {}
+PayloadSpeedSettings_21.sled_fast02 = sled_fast02
+
+local sled_fast02_2 = PayloadSpeedSettings.sled_fast02
+local pushed_20 = PayloadSpeedSettings.sled_fast02.pushed
+
+pushed_20 = pushed_20 or {}
+sled_fast02_2.pushed = pushed_20
 PayloadSpeedSettings.sled_fast02.pushed.speed = 9
 PayloadSpeedSettings.sled_fast02.pushed.bonus_speed_per_player = 0
 PayloadSpeedSettings.sled_fast02.pushed.acceleration = 4
-PayloadSpeedSettings.sled_fast02.not_pushed = PayloadSpeedSettings.sled_fast02.not_pushed or {}
+
+local sled_fast02_3 = PayloadSpeedSettings.sled_fast02
+local not_pushed_20 = PayloadSpeedSettings.sled_fast02.not_pushed
+
+not_pushed_20 = not_pushed_20 or {}
+sled_fast02_3.not_pushed = not_pushed_20
 PayloadSpeedSettings.sled_fast02.not_pushed.speed = 9
 PayloadSpeedSettings.sled_fast02.not_pushed.acceleration = 4
-PayloadSpeedSettings.tiny_uphill = PayloadSpeedSettings.tiny_uphill or {}
-PayloadSpeedSettings.tiny_uphill.pushed = PayloadSpeedSettings.tiny_uphill.pushed or {}
+
+local PayloadSpeedSettings_22 = PayloadSpeedSettings
+local tiny_uphill = PayloadSpeedSettings.tiny_uphill
+
+tiny_uphill = tiny_uphill or {}
+PayloadSpeedSettings_22.tiny_uphill = tiny_uphill
+
+local tiny_uphill_2 = PayloadSpeedSettings.tiny_uphill
+local pushed_21 = PayloadSpeedSettings.tiny_uphill.pushed
+
+pushed_21 = pushed_21 or {}
+tiny_uphill_2.pushed = pushed_21
 PayloadSpeedSettings.tiny_uphill.pushed.speed = 1.45
 PayloadSpeedSettings.tiny_uphill.pushed.bonus_speed_per_player = 0.25
 PayloadSpeedSettings.tiny_uphill.pushed.acceleration = 0.75
-PayloadSpeedSettings.tiny_uphill.not_pushed = PayloadSpeedSettings.tiny_uphill.not_pushed or {}
+
+local tiny_uphill_3 = PayloadSpeedSettings.tiny_uphill
+local not_pushed_21 = PayloadSpeedSettings.tiny_uphill.not_pushed
+
+not_pushed_21 = not_pushed_21 or {}
+tiny_uphill_3.not_pushed = not_pushed_21
 PayloadSpeedSettings.tiny_uphill.not_pushed.speed = -1.75
 PayloadSpeedSettings.tiny_uphill.not_pushed.acceleration = 1.2

@@ -1,20 +1,32 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/kerillian_waywatcher_career_skill_piercing_shot.lua
 
-local var_0_0 = 1
-local var_0_1 = 4
-local var_0_2 = 2
-local var_0_3 = table.clone(ActionTemplates.wield)
-local var_0_4 = var_0_3.default
-local var_0_5 = type(var_0_4.pre_action_anim_event) == "table" and table.clone(var_0_4.pre_action_anim_event) or {
-	var_0_4.pre_action_anim_event
+local num = 1
+local num_2 = 4
+local num_3 = 2
+local clone = table.clone(ActionTemplates.wield)
+local default = clone.default
+local clone_2
+
+if type(default.pre_action_anim_event) == "table" then
+	clone_2 = table.clone(default.pre_action_anim_event)
+
+	if not clone_2 then
+		-- Nothing
+	end
+end
+
+clone_2 = {
+	default.pre_action_anim_event
 }
 
-table.insert(var_0_5, 1, "waywatcher_trueflight_ability_cancel")
-table.insert(var_0_5, 2, "ability_finished")
+::label_0_0::
 
-var_0_4.pre_action_anim_event = var_0_5
+table.insert(clone_2, 1, "waywatcher_trueflight_ability_cancel")
+table.insert(clone_2, 2, "ability_finished")
 
-local var_0_6 = {
+default.pre_action_anim_event = clone_2
+
+local tbl = {
 	actions = {
 		action_career_hold = {
 			default = {
@@ -25,19 +37,22 @@ local var_0_6 = {
 				weapon_action_hand = "left",
 				uninterruptible = true,
 				anim_event = "waywatcher_trueflight_ability_charge",
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
+					-- function 1
 					return arg_1_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
-				num_projectiles = var_0_0,
+				num_projectiles = num,
 				buffed_zoom_thresholds = {
 					"zoom_in_trueflight",
 					"zoom_in"
 				},
-				zoom_condition_function = function()
+				zoom_condition_function = function ()
+					-- function 2
 					return true
 				end,
-				unzoom_condition_function = function(arg_3_0)
+				unzoom_condition_function = function (arg_3_0)
+					-- function 3
 					return arg_3_0 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {
@@ -87,19 +102,22 @@ local var_0_6 = {
 				weapon_action_hand = "left",
 				uninterruptible = true,
 				anim_event = "waywatcher_trueflight_ability_hold",
-				anim_end_event_condition_func = function(arg_4_0, arg_4_1)
+				anim_end_event_condition_func = function (arg_4_0, arg_4_1)
+					-- function 4
 					return arg_4_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
-				num_projectiles = var_0_0,
+				num_projectiles = num,
 				buffed_zoom_thresholds = {
 					"zoom_in_trueflight",
 					"zoom_in"
 				},
-				zoom_condition_function = function()
+				zoom_condition_function = function ()
+					-- function 5
 					return true
 				end,
-				unzoom_condition_function = function(arg_6_0)
+				unzoom_condition_function = function (arg_6_0)
+					-- function 6
 					return arg_6_0 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {
@@ -164,14 +182,16 @@ local var_0_6 = {
 				uninterruptible = true,
 				ignore_shield_hit = true,
 				total_time = 0.28,
-				anim_end_event_condition_func = function(arg_7_0, arg_7_1)
+				anim_end_event_condition_func = function (arg_7_0, arg_7_1)
+					-- function 7
 					return arg_7_1 ~= "new_interupting_action"
 				end,
-				unzoom_condition_function = function(arg_8_0)
+				unzoom_condition_function = function (arg_8_0)
+					-- function 8
 					return arg_8_0 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {},
-				num_projectiles = var_0_0,
+				num_projectiles = num,
 				projectile_info = Projectiles.kerillian_ability_true_flight_piercing,
 				impact_data = {
 					max_bounces = 2,
@@ -183,8 +203,8 @@ local var_0_6 = {
 					link = true,
 					depth_offset = -0.6
 				},
-				alert_sound_range_fire = var_0_1,
-				alert_sound_range_hit = var_0_2,
+				alert_sound_range_fire = num_2,
+				alert_sound_range_hit = num_3,
 				recoil_settings = {
 					horizontal_climb = -0.5,
 					restore_duration = 0.2,
@@ -202,17 +222,19 @@ local var_0_6 = {
 				anim_event = "waywatcher_trueflight_ability_cancel",
 				weapon_action_hand = "left",
 				total_time = 0.35,
-				anim_end_event_condition_func = function(arg_9_0, arg_9_1)
+				anim_end_event_condition_func = function (arg_9_0, arg_9_1)
+					-- function 9
 					return arg_9_1 ~= "new_interupting_action"
 				end,
-				unzoom_condition_function = function(arg_10_0)
+				unzoom_condition_function = function (arg_10_0)
+					-- function 10
 					return arg_10_0 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {}
 			}
 		},
 		action_inspect = ActionTemplates.action_inspect,
-		action_wield = var_0_3
+		action_wield = clone
 	},
 	ammo_data = {
 		ammo_immediately_available = true,
@@ -242,21 +264,21 @@ local var_0_6 = {
 	}
 }
 
-var_0_6.default_spread_template = "longbow"
-var_0_6.slot_to_use = "slot_ranged"
-var_0_6.left_hand_unit = "units/weapons/player/wpn_we_bow_01_t1/wpn_we_bow_01_t1"
-var_0_6.display_unit = "units/weapons/weapon_display/display_bow"
-var_0_6.left_hand_attachment_node_linking = AttachmentNodeLinking.bow
-var_0_6.wield_anim = "to_longbow"
-var_0_6.wield_anim_no_ammo = "to_longbow_noammo"
-var_0_6.state_machine = "units/beings/player/first_person_base/state_machines/career/skill_waywatcher"
-var_0_6.load_state_machine = false
-var_0_6.crosshair_style = "projectile"
-var_0_6.no_ammo_reload_event = "reload"
-var_0_6.buff_type = "RANGED_ABILITY"
-var_0_6.weapon_type = "LONGBOW_TRUEFLIGHT"
-var_0_6.dodge_count = 3
-var_0_6.buffs = {
+tbl.default_spread_template = "longbow"
+tbl.slot_to_use = "slot_ranged"
+tbl.left_hand_unit = "units/weapons/player/wpn_we_bow_01_t1/wpn_we_bow_01_t1"
+tbl.display_unit = "units/weapons/weapon_display/display_bow"
+tbl.left_hand_attachment_node_linking = AttachmentNodeLinking.bow
+tbl.wield_anim = "to_longbow"
+tbl.wield_anim_no_ammo = "to_longbow_noammo"
+tbl.state_machine = "units/beings/player/first_person_base/state_machines/career/skill_waywatcher"
+tbl.load_state_machine = false
+tbl.crosshair_style = "projectile"
+tbl.no_ammo_reload_event = "reload"
+tbl.buff_type = "RANGED_ABILITY"
+tbl.weapon_type = "LONGBOW_TRUEFLIGHT"
+tbl.dodge_count = 3
+tbl.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1
 	},
@@ -264,7 +286,7 @@ var_0_6.buffs = {
 		external_optional_multiplier = 1
 	}
 }
-var_0_6.aim_assist_settings = {
+tbl.aim_assist_settings = {
 	max_range = 50,
 	no_aim_input_multiplier = 0,
 	always_auto_aim = true,
@@ -277,10 +299,10 @@ var_0_6.aim_assist_settings = {
 		skaven_slave = 1
 	}
 }
-var_0_6.wwise_dep_left_hand = {
+tbl.wwise_dep_left_hand = {
 	"wwise/bow"
 }
-var_0_6.compare_statistics = {
+tbl.compare_statistics = {
 	attacks = {
 		light_attack = {
 			speed = 0.6,
@@ -310,5 +332,5 @@ var_0_6.compare_statistics = {
 }
 
 return {
-	kerillian_waywatcher_career_skill_weapon_piercing_shot = table.clone(var_0_6)
+	kerillian_waywatcher_career_skill_weapon_piercing_shot = table.clone(tbl)
 }

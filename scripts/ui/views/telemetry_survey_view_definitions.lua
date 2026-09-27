@@ -1,10 +1,10 @@
 -- chunkname: @scripts/ui/views/telemetry_survey_view_definitions.lua
 
-local var_0_0 = {
+local tbl = {
 	15,
 	15
 }
-local var_0_1 = {
+local tbl_2 = {
 	root = {
 		is_root = true,
 		position = {
@@ -69,7 +69,7 @@ local var_0_1 = {
 		},
 		position = {
 			0,
-			-(275 + var_0_0[2] - 58),
+			-(275 + tbl[2] - 58),
 			2
 		}
 	},
@@ -83,12 +83,12 @@ local var_0_1 = {
 		},
 		position = {
 			0,
-			-(450 + var_0_0[2] - 58),
+			-(450 + tbl[2] - 58),
 			2
 		}
 	}
 }
-local var_0_2 = {
+local tbl_3 = {
 	background_1 = {
 		scenegraph_id = "background_1",
 		element = UIElements.SimpleTexture,
@@ -202,11 +202,12 @@ local var_0_2 = {
 		}
 	}
 }
-local var_0_3 = 4
+local num = 4
 
-local function var_0_4(arg_1_0)
-	local var_1_0 = arg_1_0 - 1
-	local var_1_1 = (var_0_3 + 58) * var_1_0 + 29 - (58 + var_0_3) * 2.5
+local function fn(arg_1_0)
+	-- function 1
+	local num_2 = arg_1_0 - 1
+	local num_3 = (num + 58) * num_2 + 29 - (58 + num) * 2.5
 
 	return {
 		scenegraph_id = "survey_rating_buttons",
@@ -221,30 +222,38 @@ local function var_0_4(arg_1_0)
 					pass_type = "texture",
 					style_id = "style_normal",
 					texture_id = "texture_id",
-					content_check_function = function(arg_2_0)
-						return not arg_2_0.button_hotspot.is_hover and arg_2_0.button_hotspot.is_clicked > 0
+					content_check_function = function (self)
+						-- function 2
+						return not not self.button_hotspot.is_hover or self.button_hotspot.is_clicked > 0
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "style_hover",
 					texture_id = "texture_hover_id",
-					content_check_function = function(arg_3_0)
-						return arg_3_0.button_hotspot.is_hover and arg_3_0.button_hotspot.is_clicked > 0
+					content_check_function = function (self)
+						-- function 3
+						local is_hover = self.button_hotspot.is_hover
+
+						is_hover = not is_hover and self.button_hotspot.is_clicked > 0
+
+						return is_hover
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "style_click",
 					texture_id = "texture_click_id",
-					content_check_function = function(arg_4_0)
-						return arg_4_0.button_hotspot.is_clicked == 0 or arg_4_0.button_hotspot.is_selected
+					content_check_function = function (self)
+						-- function 4
+						return self.button_hotspot.is_clicked == 0 or self.button_hotspot.is_selected
 					end
 				},
 				{
 					pass_type = "on_click",
 					click_check_content_id = "button_hotspot",
-					click_function = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+					click_function = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+						-- function 5
 						arg_5_2.button_hotspot.is_selected = true
 					end
 				}
@@ -266,7 +275,7 @@ local function var_0_4(arg_1_0)
 					255
 				},
 				offset = {
-					var_1_1,
+					num_3,
 					0,
 					0
 				}
@@ -274,7 +283,7 @@ local function var_0_4(arg_1_0)
 			style_hover = {
 				horizontal_alignment = "center",
 				offset = {
-					var_1_1,
+					num_3,
 					0,
 					0
 				}
@@ -282,7 +291,7 @@ local function var_0_4(arg_1_0)
 			style_click = {
 				horizontal_alignment = "center",
 				offset = {
-					var_1_1,
+					num_3,
 					0,
 					0
 				}
@@ -292,7 +301,7 @@ local function var_0_4(arg_1_0)
 end
 
 return {
-	scenegraph_definition = var_0_1,
-	widget_definitions = var_0_2,
-	survey_rating_definitions = var_0_4
+	scenegraph_definition = tbl_2,
+	widget_definitions = tbl_3,
+	survey_rating_definitions = fn
 }

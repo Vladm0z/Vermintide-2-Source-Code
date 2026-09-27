@@ -5,97 +5,111 @@ require("core/gwnav/lua/safe_require")
 local var_0_0 = safe_require_guard()
 local var_0_1 = safe_require("core/gwnav/lua/runtime/navclass")(var_0_0)
 local var_0_2 = safe_require("core/gwnav/lua/runtime/navhelpers")
-local var_0_3 = stingray.Math
-local var_0_4 = stingray.Vector3
-local var_0_5 = stingray.Vector3Box
-local var_0_6 = stingray.Matrix4x4
-local var_0_7 = stingray.Matrix4x4Box
-local var_0_8 = stingray.Quaternion
-local var_0_9 = stingray.QuaternionBox
-local var_0_10 = stingray.Unit
-local var_0_11 = stingray.GwNavWorld
-local var_0_12 = stingray.GwNavTagVolume
-local var_0_13 = stingray.GwNavBoxObstacle
-local var_0_14 = {}
+local Math = stingray.Math
+local Vector3 = stingray.Vector3
+local Vector3Box = stingray.Vector3Box
+local Matrix4x4 = stingray.Matrix4x4
+local Matrix4x4Box = stingray.Matrix4x4Box
+local Quaternion = stingray.Quaternion
+local QuaternionBox = stingray.QuaternionBox
+local Unit = stingray.Unit
+local GwNavWorld = stingray.GwNavWorld
+local GwNavTagVolume = stingray.GwNavTagVolume
+local GwNavBoxObstacle = stingray.GwNavBoxObstacle
+local tbl = {}
 
-function var_0_1.get_navboxstacle(arg_1_0)
-	return var_0_14[arg_1_0]
+var_0_1.get_navboxstacle = function (arg_1_0)
+	-- function 1
+	return tbl[arg_1_0]
 end
 
-function var_0_1.init(arg_2_0, arg_2_1, arg_2_2)
-	arg_2_0.unit = arg_2_2
-	arg_2_0.navworld = arg_2_1
+var_0_1.init = function (self, arg_2_1, arg_2_2)
+	-- function 2
+	self.unit = arg_2_2
+	self.navworld = arg_2_1
 
-	local var_2_0 = var_0_4(var_0_2.unit_script_data(arg_2_2, 0.2, "GwNavBoxObstacle", "half_extent", "x"), var_0_2.unit_script_data(arg_2_2, 1, "GwNavBoxObstacle", "half_extent", "y"), var_0_2.unit_script_data(arg_2_2, 2, "GwNavBoxObstacle", "half_extent", "z"))
-	local var_2_1 = var_0_4(var_0_2.unit_script_data(arg_2_2, 0, "GwNavBoxObstacle", "offset", "x"), var_0_2.unit_script_data(arg_2_2, 0, "GwNavBoxObstacle", "offset", "y"), var_0_2.unit_script_data(arg_2_2, 0, "GwNavBoxObstacle", "offset", "z"))
-	local var_2_2, var_2_3, var_2_4, var_2_5, var_2_6 = var_0_2.get_layer_and_smartobject(arg_2_2, "GwNavBoxObstacle")
-	local var_2_7 = var_0_6.transform(arg_2_1.transform:unbox(), var_0_10.world_position(arg_2_2, 1))
+	local var_2_0 = Vector3(var_0_2.unit_script_data(arg_2_2, 0.2, "GwNavBoxObstacle", "half_extent", "x"), var_0_2.unit_script_data(arg_2_2, 1, "GwNavBoxObstacle", "half_extent", "y"), var_0_2.unit_script_data(arg_2_2, 2, "GwNavBoxObstacle", "half_extent", "z"))
+	local var_2_1 = Vector3(var_0_2.unit_script_data(arg_2_2, 0, "GwNavBoxObstacle", "offset", "x"), var_0_2.unit_script_data(arg_2_2, 0, "GwNavBoxObstacle", "offset", "y"), var_0_2.unit_script_data(arg_2_2, 0, "GwNavBoxObstacle", "offset", "z"))
+	local get_layer_and_smartobject, var_2_3, var_2_4, var_2_5, var_2_6 = var_0_2.get_layer_and_smartobject(arg_2_2, "GwNavBoxObstacle")
+	local transform = Matrix4x4.transform(arg_2_1.transform:unbox(), Unit.world_position(arg_2_2, 1))
 
-	arg_2_0.lastpos = var_0_5(var_2_7)
-	arg_2_0.last_rotation = var_0_9()
-	arg_2_0.nav_boxobstacle = var_0_13.create(arg_2_0.navworld.gwnavworld, var_2_7, var_2_1, var_2_0, var_2_2, var_2_3, var_2_4, var_2_5, var_2_6)
-	arg_2_0.does_trigger_tag_volume = var_0_2.unit_script_data(arg_2_2, false, "GwNavBoxObstacle", "does_trigger_tag_volume")
+	self.lastpos = Vector3Box(transform)
+	self.last_rotation = QuaternionBox()
+	self.nav_boxobstacle = GwNavBoxObstacle.create(self.navworld.gwnavworld, transform, var_2_1, var_2_0, get_layer_and_smartobject, var_2_3, var_2_4, var_2_5, var_2_6)
+	self.does_trigger_tag_volume = var_0_2.unit_script_data(arg_2_2, false, "GwNavBoxObstacle", "does_trigger_tag_volume")
 
-	arg_2_0:set_does_trigger_tagvolume(trigger_tag_volume)
+	self:set_does_trigger_tagvolume(trigger_tag_volume)
 
-	arg_2_0.rotation_mode = var_0_2.unit_script_data(arg_2_2, "free", "GwNavBoxObstacle", "rotation_mode") == "yaw"
+	self.rotation_mode = var_0_2.unit_script_data(arg_2_2, "free", "GwNavBoxObstacle", "rotation_mode") == "yaw"
 
-	arg_2_0:set_rotation_mode_around_yaw(arg_2_0.rotation_mode)
+	self:set_rotation_mode_around_yaw(self.rotation_mode)
 
-	var_0_14[arg_2_0.unit] = arg_2_0
+	tbl[self.unit] = self
 end
 
-function var_0_1.set_does_trigger_tagvolume(arg_3_0, arg_3_1)
-	var_0_13.set_does_trigger_tagvolume(arg_3_0.nav_boxobstacle, arg_3_1)
+var_0_1.set_does_trigger_tagvolume = function (self, arg_3_1)
+	-- function 3
+	GwNavBoxObstacle.set_does_trigger_tagvolume(self.nav_boxobstacle, arg_3_1)
 end
 
-function var_0_1.set_rotation_mode_around_yaw(arg_4_0, arg_4_1)
-	var_0_13.set_rotation_mode_around_yaw_only(arg_4_0.nav_boxobstacle, arg_4_1)
+var_0_1.set_rotation_mode_around_yaw = function (self, arg_4_1)
+	-- function 4
+	GwNavBoxObstacle.set_rotation_mode_around_yaw_only(self.nav_boxobstacle, arg_4_1)
 end
 
-function var_0_1.set_next_update_config(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
-	var_0_13.set_transform(arg_5_0.nav_boxobstacle, arg_5_1)
-	var_0_13.set_linear_velocity(arg_5_0.nav_boxobstacle, arg_5_2)
-	var_0_13.set_angular_velocity(arg_5_0.nav_boxobstacle, arg_5_3)
+var_0_1.set_next_update_config = function (self, arg_5_1, arg_5_2, arg_5_3)
+	-- function 5
+	GwNavBoxObstacle.set_transform(self.nav_boxobstacle, arg_5_1)
+	GwNavBoxObstacle.set_linear_velocity(self.nav_boxobstacle, arg_5_2)
+	GwNavBoxObstacle.set_angular_velocity(self.nav_boxobstacle, arg_5_3)
 end
 
-function var_0_1.update(arg_6_0, arg_6_1)
-	local var_6_0 = var_0_10.local_pose(arg_6_0.unit, 1)
-	local var_6_1 = var_0_6.translation(var_6_0)
-	local var_6_2 = (var_6_1 - arg_6_0.lastpos:unbox()) / arg_6_1
-	local var_6_3 = var_0_10.local_rotation(arg_6_0.unit, 1)
+var_0_1.update = function (self, arg_6_1)
+	-- function 6
+	local local_pose = Unit.local_pose(self.unit, 1)
+	local translation = Matrix4x4.translation(local_pose)
+	local num = (translation - self.lastpos:unbox()) / arg_6_1
+	local local_rotation = Unit.local_rotation(self.unit, 1)
+	local var_6_4 = self
+	local set_does_trigger_tagvolume = self.set_does_trigger_tagvolume
+	local does_trigger_tag_volume = self.does_trigger_tag_volume
 
-	arg_6_0:set_does_trigger_tagvolume(arg_6_0.does_trigger_tag_volume and var_0_4.length(var_6_2) == 0)
+	does_trigger_tag_volume = not does_trigger_tag_volume and Vector3.length(num) == 0
 
-	local var_6_4 = var_0_4(0, 0, 0)
-	local var_6_5 = arg_6_0.last_rotation:unbox()
+	set_does_trigger_tagvolume(var_6_4, does_trigger_tag_volume)
 
-	if var_0_8.is_valid(var_6_3) and var_0_8.is_valid(var_6_5) then
-		local var_6_6 = var_0_8.multiply(var_0_8.inverse(var_6_3), var_6_5)
-		local var_6_7, var_6_8 = var_0_8.decompose(var_6_6)
+	local var_6_7 = Vector3(0, 0, 0)
+	local unbox = self.last_rotation:unbox()
 
-		var_6_4 = var_6_7 * var_6_8 / arg_6_1
+	if not Quaternion.is_valid(local_rotation) and not Quaternion.is_valid(unbox) then
+		local multiply = Quaternion.multiply(Quaternion.inverse(local_rotation), unbox)
+		local decompose, var_6_11 = Quaternion.decompose(multiply)
+
+		var_6_7 = decompose * var_6_11 / arg_6_1
 	end
 
-	arg_6_0:set_next_update_config(var_6_0, var_6_2, var_6_4)
-	arg_6_0.lastpos:store(var_6_1)
-	arg_6_0.last_rotation:store(var_6_3)
+	self:set_next_update_config(local_pose, num, var_6_7)
+	self.lastpos:store(translation)
+	self.last_rotation:store(local_rotation)
 end
 
-function var_0_1.shutdown(arg_7_0)
-	arg_7_0.navworld:remove_boxobstacle(arg_7_0.unit)
-	var_0_13.destroy(arg_7_0.nav_boxobstacle)
+var_0_1.shutdown = function (self)
+	-- function 7
+	self.navworld:remove_boxobstacle(self.unit)
+	GwNavBoxObstacle.destroy(self.nav_boxobstacle)
 
-	arg_7_0.nav_boxobstacle = nil
-	var_0_14[arg_7_0.unit] = nil
+	self.nav_boxobstacle = nil
+	tbl[self.unit] = nil
 end
 
-function var_0_1.add_to_world(arg_8_0)
-	var_0_13.add_to_world(arg_8_0.nav_boxobstacle)
+var_0_1.add_to_world = function (self)
+	-- function 8
+	GwNavBoxObstacle.add_to_world(self.nav_boxobstacle)
 end
 
-function var_0_1.remove_from_world(arg_9_0)
-	var_0_13.remove_from_world(arg_9_0.nav_boxobstacle)
+var_0_1.remove_from_world = function (self)
+	-- function 9
+	GwNavBoxObstacle.remove_from_world(self.nav_boxobstacle)
 end
 
 return var_0_1

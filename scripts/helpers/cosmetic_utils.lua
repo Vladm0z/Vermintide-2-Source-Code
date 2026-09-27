@@ -1,89 +1,94 @@
 -- chunkname: @scripts/helpers/cosmetic_utils.lua
 
-CosmeticUtils = CosmeticUtils or {}
+local CosmeticUtils = CosmeticUtils
 
-function CosmeticUtils.color_tint_unit(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	local var_1_0 = "mtr_outfit"
+CosmeticUtils = CosmeticUtils or {}
+CosmeticUtils = CosmeticUtils
+
+CosmeticUtils.color_tint_unit = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	local str = "mtr_outfit"
 
 	if arg_1_1 == "bright_wizard" then
-		var_1_0 = "mtr_body"
+		str = "mtr_body"
 	end
 
-	local var_1_1 = Unit.num_meshes(arg_1_0)
+	local num_meshes = Unit.num_meshes(arg_1_0)
 
-	for iter_1_0 = 0, var_1_1 - 1 do
-		local var_1_2 = Unit.mesh(arg_1_0, iter_1_0)
+	for i = 0, num_meshes - 1 do
+		local mesh = Unit.mesh(arg_1_0, i)
 
-		if Mesh.has_material(var_1_2, var_1_0) then
-			local var_1_3 = Mesh.material(var_1_2, var_1_0)
+		if not Mesh.has_material(mesh, str) then
+			local material = Mesh.material(mesh, str)
 			local var_1_4 = arg_1_2
 			local var_1_5 = arg_1_3
 
-			Material.set_scalar(var_1_3, "gradient_variation", var_1_4)
-			Material.set_scalar(var_1_3, "tint_columns_pair", var_1_5)
+			Material.set_scalar(material, "gradient_variation", var_1_4)
+			Material.set_scalar(material, "tint_columns_pair", var_1_5)
 		end
 	end
 end
 
-function CosmeticUtils.apply_material_settings(arg_2_0, arg_2_1)
+CosmeticUtils.apply_material_settings = function (arg_2_0, arg_2_1)
+	-- function 2
 	local var_2_0 = MaterialSettingsTemplates[arg_2_1]
 
-	for iter_2_0, iter_2_1 in pairs(var_2_0) do
-		if iter_2_1.type == "color" then
-			if iter_2_1.apply_to_children then
-				Unit.set_color_for_materials_in_unit_and_childs(arg_2_0, iter_2_0, Quaternion(iter_2_1.alpha, iter_2_1.r, iter_2_1.g, iter_2_1.b))
+	for k, v in pairs(var_2_0) do
+		if v.type == "color" then
+			if not v.apply_to_children then
+				Unit.set_color_for_materials_in_unit_and_childs(arg_2_0, k, Quaternion(v.alpha, v.r, v.g, v.b))
 			else
-				Unit.set_color_for_materials(arg_2_0, iter_2_0, Quaternion(iter_2_1.alpha, iter_2_1.r, iter_2_1.g, iter_2_1.b))
+				Unit.set_color_for_materials(arg_2_0, k, Quaternion(v.alpha, v.r, v.g, v.b))
 			end
-		elseif iter_2_1.type == "matrix4x4" then
-			local var_2_1 = Matrix4x4(iter_2_1.xx, iter_2_1.xy, iter_2_1.xz, iter_2_1.yx, iter_2_1.yy, iter_2_1.yz, iter_2_1.zx, iter_2_1.zy, iter_2_1.zz, iter_2_1.tx, iter_2_1.ty, iter_2_1.tz)
+		elseif v.type == "matrix4x4" then
+			local var_2_1 = Matrix4x4(v.xx, v.xy, v.xz, v.yx, v.yy, v.yz, v.zx, v.zy, v.zz, v.tx, v.ty, v.tz)
 
-			if iter_2_1.apply_to_children then
-				Unit.set_matrix4x4_for_materials_in_unit_and_childs(arg_2_0, iter_2_0, var_2_1)
+			if not v.apply_to_children then
+				Unit.set_matrix4x4_for_materials_in_unit_and_childs(arg_2_0, k, var_2_1)
 			else
-				Unit.set_matrix4x4_for_materials(arg_2_0, iter_2_0, var_2_1)
+				Unit.set_matrix4x4_for_materials(arg_2_0, k, var_2_1)
 			end
-		elseif iter_2_1.type == "scalar" then
-			if iter_2_1.apply_to_children then
-				Unit.set_scalar_for_materials_in_unit_and_childs(arg_2_0, iter_2_0, iter_2_1.value)
+		elseif v.type == "scalar" then
+			if not v.apply_to_children then
+				Unit.set_scalar_for_materials_in_unit_and_childs(arg_2_0, k, v.value)
 			else
-				Unit.set_scalar_for_materials(arg_2_0, iter_2_0, iter_2_1.value)
+				Unit.set_scalar_for_materials(arg_2_0, k, v.value)
 			end
-		elseif iter_2_1.type == "vector2" then
-			if iter_2_1.apply_to_children then
-				Unit.set_vector2_for_materials_in_unit_and_childs(arg_2_0, iter_2_0, Vector3(iter_2_1.x, iter_2_1.y, 0))
+		elseif v.type == "vector2" then
+			if not v.apply_to_children then
+				Unit.set_vector2_for_materials_in_unit_and_childs(arg_2_0, k, Vector3(v.x, v.y, 0))
 			else
-				Unit.set_vector2_for_materials(arg_2_0, iter_2_0, Vector3(iter_2_1.x, iter_2_1.y, 0))
+				Unit.set_vector2_for_materials(arg_2_0, k, Vector3(v.x, v.y, 0))
 			end
-		elseif iter_2_1.type == "vector3" then
-			if iter_2_1.apply_to_children then
-				Unit.set_vector3_for_materials_in_unit_and_childs(arg_2_0, iter_2_0, Vector3(iter_2_1.x, iter_2_1.y, iter_2_1.z))
+		elseif v.type == "vector3" then
+			if not v.apply_to_children then
+				Unit.set_vector3_for_materials_in_unit_and_childs(arg_2_0, k, Vector3(v.x, v.y, v.z))
 			else
-				Unit.set_vector3_for_materials(arg_2_0, iter_2_0, Vector3(iter_2_1.x, iter_2_1.y, iter_2_1.z))
+				Unit.set_vector3_for_materials(arg_2_0, k, Vector3(v.x, v.y, v.z))
 			end
-		elseif iter_2_1.type == "vector4" then
-			if iter_2_1.apply_to_children then
-				Unit.set_vector4_for_materials_in_unit_and_childs(arg_2_0, iter_2_0, Quaternion(iter_2_1.x, iter_2_1.y, iter_2_1.z, iter_2_1.w))
+		elseif v.type == "vector4" then
+			if not v.apply_to_children then
+				Unit.set_vector4_for_materials_in_unit_and_childs(arg_2_0, k, Quaternion(v.x, v.y, v.z, v.w))
 			else
-				Unit.set_vector4_for_materials(arg_2_0, iter_2_0, Quaternion(iter_2_1.x, iter_2_1.y, iter_2_1.z, iter_2_1.w))
+				Unit.set_vector4_for_materials(arg_2_0, k, Quaternion(v.x, v.y, v.z, v.w))
 			end
-		elseif iter_2_1.type == "texture" and Application.can_get("texture", iter_2_1.texture) then
-			Unit.set_texture_for_materials(arg_2_0, iter_2_0, iter_2_1.texture)
+		elseif v.type ~= "texture" or not Application.can_get("texture", v.texture) then
+			Unit.set_texture_for_materials(arg_2_0, k, v.texture)
 		end
 	end
 end
 
-local var_0_0 = {
+local tbl = {
 	slot_frame = true,
 	slot_hat = true,
 	slot_skin = true
 }
-local var_0_1 = {
+local tbl_2 = {
 	frame = true,
 	skin = true,
 	hat = true
 }
-local var_0_2 = {
+local tbl_3 = {
 	"slot_ranged",
 	"slot_melee",
 	"slot_skin",
@@ -91,7 +96,7 @@ local var_0_2 = {
 	"slot_frame",
 	"slot_pose"
 }
-local var_0_3 = {
+local tbl_4 = {
 	slot_pose = true,
 	slot_hat = true,
 	slot_skin = true,
@@ -100,19 +105,22 @@ local var_0_3 = {
 	slot_ranged = true
 }
 
-function CosmeticUtils.is_cosmetic_slot(arg_3_0)
-	return var_0_0[arg_3_0] ~= nil
+CosmeticUtils.is_cosmetic_slot = function (arg_3_0)
+	-- function 3
+	return tbl[arg_3_0] ~= nil
 end
 
-function CosmeticUtils.is_cosmetic_item(arg_4_0)
-	return var_0_1[arg_4_0] ~= nil
+CosmeticUtils.is_cosmetic_item = function (arg_4_0)
+	-- function 4
+	return tbl_2[arg_4_0] ~= nil
 end
 
-function CosmeticUtils.is_weapon_pose(arg_5_0)
-	return arg_5_0.slot_type == "weapon_pose"
+CosmeticUtils.is_weapon_pose = function (self)
+	-- function 5
+	return self.slot_type == "weapon_pose"
 end
 
-local var_0_4 = {
+local tbl_5 = {
 	name = "",
 	icon = "unit_frame_02",
 	unit = "",
@@ -123,25 +131,26 @@ local var_0_4 = {
 	}
 }
 
-function CosmeticUtils.generate_frame_template(arg_6_0)
-	local var_6_0 = var_0_4
-	local var_6_1 = string.format("resource_packages/store/item_icons/store_item_icon_%s", arg_6_0)
+CosmeticUtils.generate_frame_template = function (arg_6_0)
+	-- function 6
+	local var_6_0 = tbl_5
+	local format = string.format("resource_packages/store/item_icons/store_item_icon_%s", arg_6_0)
 
-	if Application.can_get("package", var_6_1) then
-		var_6_0.texture_package_name = var_6_1
+	if not Application.can_get("package", format) then
+		var_6_0.texture_package_name = format
 		MaterialSettingsTemplates.generated_portrait_frame.portrait_frame.texture = string.format("gui/1080p/single_textures/store_item_icons/store_item_icon_%s/store_item_icon_%s", arg_6_0, arg_6_0)
-	elseif Cosmetics[arg_6_0] then
+	elseif not Cosmetics[arg_6_0] then
 		local var_6_2 = Cosmetics[arg_6_0]
 
-		if var_6_2.texture_package_name then
+		if not var_6_2.texture_package_name then
 			var_6_0.texture_package_name = var_6_2.texture_package_name
 		end
 
-		local var_6_3 = var_6_2.material_settings_name
-		local var_6_4 = table.safe_get(MaterialSettingsTemplates, var_6_3, "portrait_frame", "texture")
+		local material_settings_name = var_6_2.material_settings_name
+		local safe_get = table.safe_get(MaterialSettingsTemplates, material_settings_name, "portrait_frame", "texture")
 
-		if var_6_4 then
-			MaterialSettingsTemplates.generated_portrait_frame.portrait_frame.texture = var_6_4
+		if not safe_get then
+			MaterialSettingsTemplates.generated_portrait_frame.portrait_frame.texture = safe_get
 		end
 	end
 
@@ -150,10 +159,11 @@ function CosmeticUtils.generate_frame_template(arg_6_0)
 	return var_6_0
 end
 
-function CosmeticUtils.get_cosmetic_name(arg_7_0, arg_7_1)
+CosmeticUtils.get_cosmetic_name = function (arg_7_0, arg_7_1)
+	-- function 7
 	local var_7_0
 
-	if arg_7_0 == "slot_frame" or arg_7_0 == "slot_skin" then
+	if not (arg_7_0 == "slot_frame" or arg_7_0 ~= "slot_skin") then
 		var_7_0 = NetworkLookup.cosmetics[arg_7_1 or 1]
 	else
 		var_7_0 = NetworkLookup.item_names[arg_7_1 or 1]
@@ -162,10 +172,11 @@ function CosmeticUtils.get_cosmetic_name(arg_7_0, arg_7_1)
 	return var_7_0
 end
 
-function CosmeticUtils.get_weapon_skin_name(arg_8_0, arg_8_1)
+CosmeticUtils.get_weapon_skin_name = function (arg_8_0, arg_8_1)
+	-- function 8
 	local var_8_0
 
-	if CosmeticUtils.is_weapon_slot(arg_8_0) then
+	if not CosmeticUtils.is_weapon_slot(arg_8_0) then
 		var_8_0 = NetworkLookup.weapon_skins[arg_8_1 or 1]
 	elseif arg_8_0 == "slot_pose" then
 		var_8_0 = NetworkLookup.item_names[arg_8_1 or 1]
@@ -174,44 +185,47 @@ function CosmeticUtils.get_weapon_skin_name(arg_8_0, arg_8_1)
 	return var_8_0
 end
 
-function CosmeticUtils.get_cosmetic_id(arg_9_0, arg_9_1)
-	if arg_9_0 == "slot_frame" or arg_9_0 == "slot_skin" then
+CosmeticUtils.get_cosmetic_id = function (arg_9_0, arg_9_1)
+	-- function 9
+	if not (arg_9_0 == "slot_frame" or arg_9_0 ~= "slot_skin") then
 		return NetworkLookup.cosmetics[arg_9_1 or "default"]
 	else
 		return NetworkLookup.item_names[arg_9_1 or "n/a"]
 	end
 end
 
-function CosmeticUtils.get_weapon_pose_skin(arg_10_0)
+CosmeticUtils.get_weapon_pose_skin = function (arg_10_0)
+	-- function 10
 	local var_10_0
 	local var_10_1 = ItemMasterList[arg_10_0]
-	local var_10_2 = Managers.backend:get_interface("items")
-	local var_10_3 = var_10_2:get_equipped_weapon_pose_skins()[var_10_1.parent]
+	local get_interface = Managers.backend:get_interface("items")
+	local var_10_3 = get_interface:get_equipped_weapon_pose_skins()[var_10_1.parent]
 
-	if var_10_3 then
-		local var_10_4 = var_10_2:get_weapon_skin_from_skin_key(var_10_3)
+	if not var_10_3 then
+		local get_weapon_skin_from_skin_key = get_interface:get_weapon_skin_from_skin_key(var_10_3)
 
-		var_10_0 = var_10_4 and var_10_2:get_item_from_id(var_10_4)
+		var_10_0 = not get_weapon_skin_from_skin_key and get_interface:get_item_from_id(get_weapon_skin_from_skin_key)
 	end
 
 	return var_10_0
 end
 
-function CosmeticUtils.get_weapon_skin_id(arg_11_0, arg_11_1)
+CosmeticUtils.get_weapon_skin_id = function (arg_11_0, arg_11_1)
+	-- function 11
 	local var_11_0
 
-	if CosmeticUtils.is_weapon_slot(arg_11_0) then
+	if not CosmeticUtils.is_weapon_slot(arg_11_0) then
 		var_11_0 = NetworkLookup.weapon_skins[arg_11_1 or "n/a"]
 	elseif arg_11_0 == "slot_pose" then
 		local var_11_1 = ItemMasterList[arg_11_1]
-		local var_11_2 = Managers.backend:get_interface("items")
-		local var_11_3 = var_11_1.parent
-		local var_11_4 = var_11_2:get_equipped_weapon_pose_skin(var_11_3)
+		local get_interface = Managers.backend:get_interface("items")
+		local parent = var_11_1.parent
+		local get_equipped_weapon_pose_skin = get_interface:get_equipped_weapon_pose_skin(parent)
 
-		if var_11_4 then
-			local var_11_5 = NetworkLookup.item_names[var_11_4]
+		if not get_equipped_weapon_pose_skin then
+			local var_11_5 = NetworkLookup.item_names[get_equipped_weapon_pose_skin]
 
-			if var_11_5 then
+			if not var_11_5 then
 				var_11_0 = var_11_5
 			end
 		else
@@ -222,40 +236,42 @@ function CosmeticUtils.get_weapon_skin_id(arg_11_0, arg_11_1)
 	return var_11_0
 end
 
-function CosmeticUtils.update_cosmetic_slot(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
-	if not var_0_3[arg_12_1] then
+CosmeticUtils.update_cosmetic_slot = function (self, arg_12_1, arg_12_2, arg_12_3)
+	-- function 12
+	if not tbl_4[arg_12_1] then
 		return
 	end
 
-	if arg_12_0 and (arg_12_0.local_player or arg_12_0.bot_player and arg_12_0.is_server) and arg_12_0:sync_data_active() then
-		local var_12_0 = CosmeticUtils.get_cosmetic_id(arg_12_1, arg_12_2)
+	if not self and (self.local_player or not self.bot_player or not self.is_server or not self:sync_data_active()) then
+		local get_cosmetic_id = CosmeticUtils.get_cosmetic_id(arg_12_1, arg_12_2)
 
-		arg_12_0:set_data(arg_12_1, var_12_0)
+		self:set_data(arg_12_1, get_cosmetic_id)
 
 		local var_12_1
 
 		if arg_12_1 == "slot_pose" then
 			var_12_1 = CosmeticUtils.get_weapon_skin_id(arg_12_1, arg_12_2)
-		elseif arg_12_3 then
+		elseif not arg_12_3 then
 			var_12_1 = CosmeticUtils.get_weapon_skin_id(arg_12_1, arg_12_3)
 		end
 
-		if var_12_1 then
-			arg_12_0:set_data(arg_12_1 .. "_skin", var_12_1)
+		if not var_12_1 then
+			self:set_data(arg_12_1 .. "_skin", var_12_1)
 		end
 	end
 end
 
-function CosmeticUtils.get_cosmetic_slot(arg_13_0, arg_13_1)
-	if not var_0_3[arg_13_1] then
+CosmeticUtils.get_cosmetic_slot = function (self, arg_13_1)
+	-- function 13
+	if not tbl_4[arg_13_1] then
 		return nil
 	end
 
-	if arg_13_0 and arg_13_0:sync_data_active() then
-		local var_13_0 = {}
-		local var_13_1 = arg_13_0:get_data(arg_13_1)
+	if not self and not self:sync_data_active() then
+		local tbl = {}
+		local get_data = self:get_data(arg_13_1)
 
-		if not var_13_1 then
+		if not get_data then
 			print("[CosmeticUtils] item_id for slot " .. arg_13_1 .. " is nill ")
 
 			return nil
@@ -263,63 +279,66 @@ function CosmeticUtils.get_cosmetic_slot(arg_13_0, arg_13_1)
 
 		local var_13_2
 
-		if CosmeticUtils.is_weapon_slot(arg_13_1) or arg_13_1 == "slot_pose" then
-			var_13_2 = arg_13_0:get_data(arg_13_1 .. "_skin")
+		if not (CosmeticUtils.is_weapon_slot(arg_13_1) or arg_13_1 ~= "slot_pose") then
+			var_13_2 = self:get_data(arg_13_1 .. "_skin")
 		end
 
-		local var_13_3 = CosmeticUtils.get_cosmetic_name(arg_13_1, var_13_1)
+		local get_cosmetic_name = CosmeticUtils.get_cosmetic_name(arg_13_1, get_data)
 
-		if var_13_3 == "default" or var_13_3 == "n/a" then
-			var_13_3 = nil
+		if not (get_cosmetic_name == "default" or get_cosmetic_name ~= "n/a") then
+			get_cosmetic_name = nil
 		end
 
-		local var_13_4 = CosmeticUtils.get_weapon_skin_name(arg_13_1, var_13_2)
+		local get_weapon_skin_name = CosmeticUtils.get_weapon_skin_name(arg_13_1, var_13_2)
 
-		if var_13_4 == "n/a" then
-			var_13_4 = nil
+		if get_weapon_skin_name == "n/a" then
+			get_weapon_skin_name = nil
 		end
 
-		var_13_0.item_name = var_13_3
-		var_13_0.skin_name = var_13_4
+		tbl.item_name = get_cosmetic_name
+		tbl.skin_name = get_weapon_skin_name
 
-		return var_13_0
+		return tbl
 	end
 
 	return nil
 end
 
-function CosmeticUtils.is_weapon_slot(arg_14_0)
+CosmeticUtils.is_weapon_slot = function (arg_14_0)
+	-- function 14
 	return arg_14_0 == "slot_melee" or arg_14_0 == "slot_ranged"
 end
 
-function CosmeticUtils.is_valid(arg_15_0)
-	return arg_15_0 and arg_15_0.item_name
+CosmeticUtils.is_valid = function (self)
+	-- function 15
+	return not self and self.item_name
 end
 
-function CosmeticUtils.get_default_cosmetic_slot(arg_16_0, arg_16_1)
-	if not var_0_3[arg_16_1] then
+CosmeticUtils.get_default_cosmetic_slot = function (self, arg_16_1)
+	-- function 16
+	if not tbl_4[arg_16_1] then
 		return nil
 	end
 
 	if arg_16_1 == "slot_skin" then
 		return {
-			item_name = arg_16_0.base_skin
+			item_name = self.base_skin
 		}
 	elseif arg_16_1 == "slot_pose" then
 		return {
 			item_name = "default_weapon_pose_01"
 		}
-	elseif CosmeticUtils.is_weapon_slot(arg_16_1) or arg_16_1 == "slot_hat" then
-		local var_16_0 = arg_16_0.preview_items
+	elseif not (CosmeticUtils.is_weapon_slot(arg_16_1) or arg_16_1 ~= "slot_hat") then
+		local preview_items = self.preview_items
 
-		if var_16_0 then
-			for iter_16_0 = 1, #var_16_0 do
-				local var_16_1 = var_16_0[iter_16_0].item_name
-				local var_16_2 = ItemMasterList[var_16_1].slot_type
+		if not preview_items then
+			for i = 1, #preview_items do
+				local item_name = preview_items[i].item_name
+				local slot_type = ItemMasterList[item_name].slot_type
 
-				if InventorySettings.slot_names_by_type[var_16_2][1] == arg_16_1 then
+				if InventorySettings.slot_names_by_type[slot_type][1] == arg_16_1 then
 					return {
-						item_name = var_16_1
+						item_name = item_name
 					}
 				end
 			end
@@ -333,7 +352,8 @@ function CosmeticUtils.get_default_cosmetic_slot(arg_16_0, arg_16_1)
 	return nil
 end
 
-function CosmeticUtils.sync_local_player_cosmetics(arg_17_0, arg_17_1, arg_17_2)
+CosmeticUtils.sync_local_player_cosmetics = function (arg_17_0, arg_17_1, arg_17_2)
+	-- function 17
 	if not arg_17_0 then
 		Application.warning("[CosmeticUtils.sync_local_player_cosmetics] Failed to sync cosmetics")
 
@@ -341,34 +361,34 @@ function CosmeticUtils.sync_local_player_cosmetics(arg_17_0, arg_17_1, arg_17_2)
 	end
 
 	local var_17_0 = SPProfiles[arg_17_1].careers[arg_17_2]
-	local var_17_1 = var_17_0.name
-	local var_17_2 = #var_0_2
-	local var_17_3 = var_17_0.preview_items
+	local name = var_17_0.name
+	local count = #tbl_3
+	local preview_items = var_17_0.preview_items
 
-	if var_17_3 then
-		for iter_17_0 = 1, #var_17_3 do
-			local var_17_4 = var_17_3[iter_17_0].item_name
-			local var_17_5 = ItemMasterList[var_17_4].slot_type
-			local var_17_6 = InventorySettings.slot_names_by_type[var_17_5][1]
+	if not preview_items then
+		for i = 1, #preview_items do
+			local item_name = preview_items[i].item_name
+			local slot_type = ItemMasterList[item_name].slot_type
+			local var_17_6 = InventorySettings.slot_names_by_type[slot_type][1]
 
-			CosmeticUtils.update_cosmetic_slot(arg_17_0, var_17_6, var_17_4)
+			CosmeticUtils.update_cosmetic_slot(arg_17_0, var_17_6, item_name)
 		end
 	end
 
 	CosmeticUtils.update_cosmetic_slot(arg_17_0, "slot_skin", var_17_0.base_skin)
 
-	for iter_17_1 = 1, var_17_2 do
-		local var_17_7 = var_0_2[iter_17_1]
-		local var_17_8 = BackendUtils.get_loadout_item(var_17_1, var_17_7)
+	for j = 1, count do
+		local var_17_7 = tbl_3[j]
+		local get_loadout_item = BackendUtils.get_loadout_item(name, var_17_7)
 
-		if var_17_8 then
-			local var_17_9 = var_17_8.data
-			local var_17_10 = var_17_8.backend_id
-			local var_17_11 = BackendUtils.get_item_units(var_17_9, var_17_10, nil, var_17_1)
-			local var_17_12 = var_17_9 and var_17_9.name
-			local var_17_13 = var_17_11 and var_17_11.skin
+		if not get_loadout_item then
+			local data = get_loadout_item.data
+			local backend_id = get_loadout_item.backend_id
+			local get_item_units = BackendUtils.get_item_units(data, backend_id, nil, name)
+			local flag = not data and data.name
+			local flag_2 = not get_item_units and get_item_units.skin
 
-			CosmeticUtils.update_cosmetic_slot(arg_17_0, var_17_7, var_17_12, var_17_13)
+			CosmeticUtils.update_cosmetic_slot(arg_17_0, var_17_7, flag, flag_2)
 		end
 	end
 end

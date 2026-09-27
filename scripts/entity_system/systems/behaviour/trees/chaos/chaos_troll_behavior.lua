@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/chaos/chaos_troll_behavior.lua
 
-local var_0_0 = BreedActions.chaos_troll
+local chaos_troll = BreedActions.chaos_troll
 
 BreedBehaviors.troll = {
 	"BTSelector",
@@ -20,7 +20,7 @@ BreedBehaviors.troll = {
 			"BTClimbAction",
 			name = "climb",
 			condition = "at_climb_smartobject",
-			action_data = var_0_0.climb
+			action_data = chaos_troll.climb
 		},
 		{
 			"BTJumpAcrossAction",
@@ -31,7 +31,7 @@ BreedBehaviors.troll = {
 			"BTSmashDoorAction",
 			name = "smash_door",
 			condition = "at_door_smartobject",
-			action_data = var_0_0.smash_door
+			action_data = chaos_troll.smash_door
 		},
 		condition = "ratogre_at_smartobject",
 		name = "smartobject"
@@ -40,13 +40,13 @@ BreedBehaviors.troll = {
 		"BTTrollDownedAction",
 		name = "downed",
 		condition = "troll_downed",
-		action_data = var_0_0.downed
+		action_data = chaos_troll.downed
 	},
 	{
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = var_0_0.stagger
+		action_data = chaos_troll.stagger
 	},
 	{
 		"BTSelector",
@@ -55,24 +55,24 @@ BreedBehaviors.troll = {
 			enter_hook = "rage_on_enter",
 			name = "target_rage",
 			condition = "target_changed",
-			action_data = var_0_0.target_rage
+			action_data = chaos_troll.target_rage
 		},
 		{
 			"BTUtilityNode",
 			{
 				"BTBossFollowAction",
 				name = "follow_crouching",
-				action_data = var_0_0.follow_crouching
+				action_data = chaos_troll.follow_crouching
 			},
 			{
 				"BTMeleeOverlapAttackAction",
 				name = "attack_crouch_sweep",
-				action_data = var_0_0.attack_crouch_sweep
+				action_data = chaos_troll.attack_crouch_sweep
 			},
 			{
 				"BTVomitAction",
 				name = "vomit",
-				action_data = var_0_0.vomit
+				action_data = chaos_troll.vomit
 			},
 			name = "in_combat_crouching",
 			condition = "needs_to_crouch",
@@ -83,27 +83,27 @@ BreedBehaviors.troll = {
 			{
 				"BTBossFollowAction",
 				name = "follow",
-				action_data = var_0_0.follow
+				action_data = chaos_troll.follow
 			},
 			{
 				"BTMeleeOverlapAttackAction",
 				name = "melee_shove",
-				action_data = var_0_0.melee_shove
+				action_data = chaos_troll.melee_shove
 			},
 			{
 				"BTMeleeOverlapAttackAction",
 				name = "melee_sweep",
-				action_data = var_0_0.melee_sweep
+				action_data = chaos_troll.melee_sweep
 			},
 			{
 				"BTVomitAction",
 				name = "vomit",
-				action_data = var_0_0.vomit
+				action_data = chaos_troll.vomit
 			},
 			{
 				"BTMeleeOverlapAttackAction",
 				name = "attack_cleave",
-				action_data = var_0_0.attack_cleave
+				action_data = chaos_troll.attack_cleave
 			},
 			name = "in_combat",
 			condition = "ratogre_target_reachable",
@@ -112,7 +112,7 @@ BreedBehaviors.troll = {
 		{
 			"BTTargetUnreachableAction",
 			name = "target_unreachable",
-			action_data = var_0_0.target_unreachable
+			action_data = chaos_troll.target_unreachable
 		},
 		condition = "can_see_player",
 		name = "has_target"
@@ -121,7 +121,7 @@ BreedBehaviors.troll = {
 		"BTMoveToGoalAction",
 		name = "move_to_goal",
 		condition = "has_goal_destination",
-		action_data = var_0_0.follow
+		action_data = chaos_troll.follow
 	},
 	{
 		"BTIdleAction",

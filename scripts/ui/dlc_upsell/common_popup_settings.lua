@@ -1,6 +1,9 @@
 -- chunkname: @scripts/ui/dlc_upsell/common_popup_settings.lua
 
+local CommonPopupSettings = CommonPopupSettings
+
 CommonPopupSettings = CommonPopupSettings or {}
+CommonPopupSettings = CommonPopupSettings
 CommonPopupSettings.scorpion = {
 	definitions_path = "scripts/ui/dlc_upsell/upsell_popup_definitions",
 	title_text = "menu_weave_area_no_wom_title",
@@ -126,7 +129,8 @@ CommonPopupSettings.anniversary = {
 	action_buttons = {
 		{
 			button_text = "popup_button_open_store_event_tab",
-			on_pressed = function()
+			on_pressed = function ()
+				-- function 1
 				Managers.ui:handle_transition("hero_view_force", {
 					menu_state_name = "store",
 					use_fade = true,
@@ -139,7 +143,8 @@ CommonPopupSettings.anniversary = {
 		},
 		{
 			button_text = "popup_button_open_weekly_challenges",
-			on_pressed = function()
+			on_pressed = function ()
+				-- function 2
 				Managers.ui:handle_transition("hero_view_force", {
 					menu_state_name = "achievements",
 					use_fade = true,
@@ -156,7 +161,8 @@ CommonPopupSettings.anniversary = {
 		},
 		{
 			button_text = "popup_button_open_mission_selection_event_tab",
-			on_pressed = function()
+			on_pressed = function ()
+				-- function 3
 				Managers.ui:handle_transition("start_game_view_force", {
 					menu_sub_state_name = "event",
 					menu_state_name = "play",
@@ -198,7 +204,8 @@ CommonPopupSettings.geheimnisnacht = {
 	action_buttons = {
 		{
 			button_text = "popup_button_open_store_event_tab",
-			on_pressed = function()
+			on_pressed = function ()
+				-- function 4
 				Managers.ui:handle_transition("hero_view_force", {
 					menu_state_name = "store",
 					use_fade = true,
@@ -211,7 +218,8 @@ CommonPopupSettings.geheimnisnacht = {
 		},
 		{
 			button_text = "popup_button_open_weekly_challenges",
-			on_pressed = function()
+			on_pressed = function ()
+				-- function 5
 				Managers.ui:handle_transition("hero_view_force", {
 					menu_state_name = "achievements",
 					use_fade = true,
@@ -228,13 +236,23 @@ CommonPopupSettings.geheimnisnacht = {
 		},
 		{
 			button_text = "popup_button_open_mission_selection_event_tab",
-			on_pressed = function()
-				local var_6_0 = require("scripts/settings/dlcs/geheimnisnacht_2025/geheimnisnacht_utils").maps_by_live_event(true)
+			on_pressed = function ()
+				-- function 6
+				local maps_by_live_event = require("scripts/settings/dlcs/geheimnisnacht_2025/geheimnisnacht_utils").maps_by_live_event(true)
 
-				if PlayerData then
-					PlayerData.mission_selection = PlayerData.mission_selection or {}
-					PlayerData.mission_selection.custom = PlayerData.mission_selection.custom or {}
-					PlayerData.mission_selection.custom.level_id = table.random(var_6_0)
+				if not PlayerData then
+					local PlayerData = PlayerData
+					local mission_selection = PlayerData.mission_selection
+
+					mission_selection = mission_selection or {}
+					PlayerData.mission_selection = mission_selection
+
+					local mission_selection_2 = PlayerData.mission_selection
+					local custom = PlayerData.mission_selection.custom
+
+					custom = custom or {}
+					mission_selection_2.custom = custom
+					PlayerData.mission_selection.custom.level_id = table.random(maps_by_live_event)
 				end
 
 				Managers.ui:handle_transition("start_game_view_force", {
@@ -266,7 +284,8 @@ CommonPopupSettings.gotwf = {
 	action_buttons = {
 		{
 			button_text = "popup_button_open_store_event_tab",
-			on_pressed = function()
+			on_pressed = function ()
+				-- function 7
 				Managers.ui:handle_transition("hero_view_force", {
 					menu_state_name = "store",
 					use_fade = true,
@@ -279,7 +298,8 @@ CommonPopupSettings.gotwf = {
 		},
 		{
 			button_text = "popup_button_open_store_event_tab",
-			on_pressed = function()
+			on_pressed = function ()
+				-- function 8
 				Managers.ui:handle_transition("hero_view_force", {
 					menu_state_name = "store",
 					use_fade = true,
@@ -313,7 +333,8 @@ CommonPopupSettings.default_event = {
 	action_buttons = {
 		{
 			button_text = "popup_button_open_mission_selection_event_tab",
-			on_pressed = function()
+			on_pressed = function ()
+				-- function 9
 				Managers.ui:handle_transition("start_game_view_force", {
 					menu_sub_state_name = "event",
 					menu_state_name = "play",
@@ -343,7 +364,8 @@ CommonPopupSettings.skulls = {
 	action_buttons = {
 		{
 			button_text = "popup_button_open_store_event_tab",
-			on_pressed = function()
+			on_pressed = function ()
+				-- function 10
 				Managers.ui:handle_transition("hero_view_force", {
 					menu_state_name = "store",
 					use_fade = true,
@@ -356,7 +378,8 @@ CommonPopupSettings.skulls = {
 		},
 		{
 			button_text = "popup_button_open_weekly_challenges",
-			on_pressed = function()
+			on_pressed = function ()
+				-- function 11
 				Managers.ui:handle_transition("hero_view_force", {
 					menu_state_name = "achievements",
 					use_fade = true,
@@ -373,7 +396,8 @@ CommonPopupSettings.skulls = {
 		},
 		{
 			button_text = "lb_game_type_quick_play",
-			on_pressed = function()
+			on_pressed = function ()
+				-- function 12
 				Managers.ui:handle_transition("start_game_view_force", {
 					menu_sub_state_name = "adventure",
 					menu_state_name = "play",
@@ -395,11 +419,11 @@ CommonPopupSettings.skulls = {
 
 require("scripts/settings/handbook_settings")
 
-for iter_0_0, iter_0_1 in pairs(HandbookSettings.popups) do
-	CommonPopupSettings[iter_0_0] = {
+for k, v in pairs(HandbookSettings.popups) do
+	CommonPopupSettings[k] = {
 		definitions_path = "scripts/ui/dlc_upsell/handbook_popup_definitions",
 		class_name = "HandbookPopup",
 		popup_type = "handbook",
-		pages = iter_0_1.pages
+		pages = v.pages
 	}
 end

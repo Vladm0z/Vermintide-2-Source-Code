@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/witch_hunter_bogenhafen_slum.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pwh_bh_level_bogenhafen_slum_blackfire",

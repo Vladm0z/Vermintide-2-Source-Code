@@ -1,6 +1,10 @@
 -- chunkname: @scripts/settings/dlcs/lake/lake_bot_conditions.lua
 
-BTConditions.can_activate = BTConditions.can_activate or {}
+local BTConditions = BTConditions
+local can_activate = BTConditions.can_activate
+
+can_activate = can_activate or {}
+BTConditions.can_activate = can_activate
 
 table.merge_recursive(BTConditions.ability_check_categories, {
 	activate_ability = {
@@ -8,45 +12,59 @@ table.merge_recursive(BTConditions.ability_check_categories, {
 	}
 })
 
-local var_0_0 = 5
-local var_0_1 = var_0_0 * var_0_0
-local var_0_2 = 5
-local var_0_3 = 10
+local num = 5
+local num_2 = num * num
+local num_3 = 5
+local num_4 = 10
 
-function BTConditions.can_activate.es_questingknight(arg_1_0)
-	local var_1_0 = arg_1_0.target_unit
+BTConditions.can_activate.es_questingknight = function (self)
+	-- function 1
+	local target_unit = self.target_unit
 
-	if not ALIVE[var_1_0] then
+	if not ALIVE[target_unit] then
 		return false
 	end
 
-	local var_1_1 = BLACKBOARDS[var_1_0]
+	local var_1_1 = BLACKBOARDS[target_unit]
 
 	if not var_1_1 then
 		return false
 	end
 
-	if var_1_0 == arg_1_0.priority_target_enemy and arg_1_0.priority_target_distance <= var_0_0 or var_1_0 == arg_1_0.urgent_target_enemy and arg_1_0.urgent_target_distance <= var_0_0 or var_1_0 == arg_1_0.opportunity_target_enemy and arg_1_0.opportunity_target_distance <= var_0_0 then
+	if not ((target_unit ~= self.priority_target_enemy or not (self.priority_target_distance <= num) or target_unit ~= self.urgent_target_enemy) and (not (self.urgent_target_distance <= num) or target_unit ~= self.opportunity_target_enemy or not (self.opportunity_target_distance <= num))) then
 		return true
 	end
 
-	local var_1_2 = var_1_1.breed
+	local breed = var_1_1.breed
+	local threat_value
 
-	if (var_1_2 and var_1_2.threat_value or 0) >= var_0_2 then
-		local var_1_3 = arg_1_0.unit
-		local var_1_4 = POSITION_LOOKUP[var_1_3]
-		local var_1_5 = arg_1_0.proximite_enemies
-		local var_1_6 = #var_1_5
-		local var_1_7 = 0
+	if not breed then
+		threat_value = breed.threat_value
 
-		for iter_1_0 = 1, var_1_6 do
-			local var_1_8 = var_1_5[iter_1_0]
-			local var_1_9 = POSITION_LOOKUP[var_1_8]
+		if not threat_value then
+			-- Nothing
+		end
+	end
 
-			if ALIVE[var_1_8] and Vector3.distance_squared(var_1_4, var_1_9) <= var_0_1 then
-				var_1_7 = var_1_7 + BLACKBOARDS[var_1_8].breed.threat_value
+	threat_value = 0
 
-				if var_1_7 >= var_0_3 then
+	::label_1_0::
+
+	if threat_value >= num_3 then
+		local unit = self.unit
+		local var_1_5 = POSITION_LOOKUP[unit]
+		local proximite_enemies = self.proximite_enemies
+		local count = #proximite_enemies
+		local num_5 = 0
+
+		for i = 1, count do
+			local var_1_9 = proximite_enemies[i]
+			local var_1_10 = POSITION_LOOKUP[var_1_9]
+
+			if not (not ALIVE[var_1_9] and not (Vector3.distance_squared(var_1_5, var_1_10) <= num_2)) then
+				num_5 = num_5 + BLACKBOARDS[var_1_9].breed.threat_value
+
+				if num_5 >= num_4 then
 					return true
 				end
 			end

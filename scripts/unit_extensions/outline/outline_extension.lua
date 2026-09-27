@@ -4,84 +4,91 @@ require("scripts/settings/outline_settings")
 
 OutlineExtension = class(OutlineExtension)
 
-function OutlineExtension.init(arg_1_0, arg_1_1, arg_1_2)
-	arg_1_0._unique_id = 0
-	arg_1_0._default_settings = nil
-	arg_1_0._unit = arg_1_2
-	arg_1_0.outlined = false
-	arg_1_0.reapply = false
-	arg_1_0.flag = nil
-	arg_1_0.apply_method = nil
-	arg_1_0.outline_color = nil
-	arg_1_0.distance = nil
-	arg_1_0.method = nil
-	arg_1_0.outline_settings = {}
-	arg_1_0._outline_system = arg_1_1
+OutlineExtension.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	self._unique_id = 0
+	self._default_settings = nil
+	self._unit = arg_1_2
+	self.outlined = false
+	self.reapply = false
+	self.flag = nil
+	self.apply_method = nil
+	self.outline_color = nil
+	self.distance = nil
+	self.method = nil
+	self.outline_settings = {}
+	self._outline_system = arg_1_1
 end
 
-function OutlineExtension.add_outline(arg_2_0, arg_2_1)
-	local var_2_0 = arg_2_0._unique_id
-	local var_2_1 = table.clone(arg_2_1)
+OutlineExtension.add_outline = function (self, arg_2_1)
+	-- function 2
+	local _unique_id = self._unique_id
+	local clone = table.clone(arg_2_1)
 
-	arg_2_0._unique_id = arg_2_0._unique_id + 1
+	self._unique_id = self._unique_id + 1
 
-	if var_2_0 == 0 then
-		arg_2_0._default_settings = var_2_1
+	if _unique_id == 0 then
+		self._default_settings = clone
 	end
 
-	var_2_1._unique_id = var_2_0
-	var_2_1.priority = var_2_1.priority or 0
+	clone._unique_id = _unique_id
 
-	local var_2_2 = arg_2_0.outline_settings
-	local var_2_3 = #var_2_2
-	local var_2_4 = var_2_3 + 1
-	local var_2_5 = var_2_1.priority
+	local priority = clone.priority
 
-	for iter_2_0 = 1, var_2_3 do
-		if var_2_5 >= var_2_2[iter_2_0][1].priority then
-			var_2_4 = iter_2_0
+	priority = priority or 0
+	clone.priority = priority
+
+	local outline_settings = self.outline_settings
+	local count = #outline_settings
+	local num = count + 1
+	local priority_2 = clone.priority
+
+	for i = 1, count do
+		if priority_2 >= outline_settings[i][1].priority then
+			num = i
 
 			break
 		end
 	end
 
-	if var_2_2[var_2_4] then
-		local var_2_6 = var_2_2[var_2_4]
+	if not outline_settings[num] then
+		local var_2_7 = outline_settings[num]
 
-		table.insert(var_2_6, 1, var_2_1)
+		table.insert(var_2_7, 1, clone)
 	else
-		var_2_2[var_2_4] = {
-			var_2_1
+		outline_settings[num] = {
+			clone
 		}
 	end
 
-	if var_2_4 == 1 then
-		arg_2_0:_refresh_current_outline()
+	if num == 1 then
+		self:_refresh_current_outline()
 	end
 
-	return var_2_0
+	return _unique_id
 end
 
-function OutlineExtension.remove_outline(arg_3_0, arg_3_1)
-	if not arg_3_1 or arg_3_1 < 0 then
+OutlineExtension.remove_outline = function (self, arg_3_1)
+	-- function 3
+	if not (not arg_3_1 and not (arg_3_1 < 0)) then
 		return
 	end
 
-	local var_3_0 = arg_3_0.outline_settings
+	local outline_settings = self.outline_settings
 
-	for iter_3_0 = 1, #var_3_0 do
-		local var_3_1 = var_3_0[iter_3_0]
+	for i = 1, #outline_settings do
+		local var_3_1 = outline_settings[i]
 
-		for iter_3_1 = 1, #var_3_1 do
-			if var_3_1[iter_3_1]._unique_id == arg_3_1 then
-				table.remove(var_3_1, iter_3_1)
+		for j = 1, #var_3_1 do
+			if var_3_1[j]._unique_id == arg_3_1 then
+				table.remove(var_3_1, j)
 
 				if #var_3_1 == 0 then
-					table.remove(var_3_0, iter_3_0)
+					table.remove(outline_settings, i)
 				end
 
-				if iter_3_0 == 1 and iter_3_1 == 1 then
-					arg_3_0:_refresh_current_outline()
+				if not (i ~= 1 or j ~= 1) then
+					self:_refresh_current_outline()
 				end
 
 				return
@@ -90,104 +97,181 @@ function OutlineExtension.remove_outline(arg_3_0, arg_3_1)
 	end
 end
 
-function OutlineExtension.update_outline(arg_4_0, arg_4_1, arg_4_2)
-	if not arg_4_2 or arg_4_2 < 0 then
+OutlineExtension.update_outline = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	if not (not arg_4_2 and not (arg_4_2 < 0)) then
 		return
 	end
 
-	local var_4_0 = arg_4_0.outline_settings
+	local outline_settings = self.outline_settings
 
-	for iter_4_0 = 1, #var_4_0 do
-		local var_4_1 = var_4_0[iter_4_0]
+	for i = 1, #outline_settings do
+		local var_4_1 = outline_settings[i]
 
-		for iter_4_1 = 1, #var_4_1 do
-			local var_4_2 = var_4_1[iter_4_1]
+		for j = 1, #var_4_1 do
+			local var_4_2 = var_4_1[j]
 
 			if var_4_2._unique_id == arg_4_2 then
 				table.merge(var_4_2, arg_4_1)
 
 				arg_4_1._unique_id = arg_4_2
 
-				if iter_4_0 == 1 and iter_4_1 == 1 then
-					arg_4_0:_refresh_current_outline()
+				if not (i ~= 1 or j ~= 1) then
+					self:_refresh_current_outline()
 				end
 			end
 		end
 	end
 end
 
-function OutlineExtension.reapply_outline(arg_5_0)
-	arg_5_0.reapply = true
+OutlineExtension.reapply_outline = function (self)
+	-- function 5
+	self.reapply = true
 
-	arg_5_0._outline_system:mark_outline_dirty(arg_5_0._unit)
+	self._outline_system:mark_outline_dirty(self._unit)
 end
 
-function OutlineExtension._refresh_current_outline(arg_6_0, arg_6_1)
-	local var_6_0 = arg_6_0._default_settings
-	local var_6_1 = arg_6_0.outline_settings[1][1]
-	local var_6_2 = not var_6_1.outline_color or arg_6_0.outline_color ~= var_6_1.outline_color
+OutlineExtension._refresh_current_outline = function (self, arg_6_1)
+	-- function 6
+	local _default_settings = self._default_settings
+	local var_6_1 = self.outline_settings[1][1]
+	local flag = not var_6_1.outline_color and self.outline_color ~= var_6_1.outline_color
+	local outline_color
 
-	arg_6_0.outline_color = var_6_1.outline_color and var_6_1.outline_color or var_6_0.outline_color
-	arg_6_0.distance = var_6_1.distance and var_6_1.distance or var_6_0.distance
-	arg_6_0.method = var_6_1.method and var_6_1.method or var_6_0.method
-	arg_6_0.prev_flag = arg_6_0.flag
-	arg_6_0.flag = var_6_1.flag and var_6_1.flag or var_6_0.flag
-	arg_6_0.reapply = arg_6_1 or arg_6_0.outlined and var_6_2
+	if not var_6_1.outline_color then
+		outline_color = var_6_1.outline_color
 
-	if arg_6_0.reapply or var_6_2 then
-		arg_6_0._outline_system:mark_outline_dirty(arg_6_0._unit)
+		if not outline_color then
+			-- Nothing
+		end
+	end
+
+	outline_color = _default_settings.outline_color
+
+	::label_6_0::
+
+	self.outline_color = outline_color
+
+	local distance
+
+	if not var_6_1.distance then
+		distance = var_6_1.distance
+
+		if not distance then
+			-- Nothing
+		end
+	end
+
+	distance = _default_settings.distance
+
+	::label_6_1::
+
+	self.distance = distance
+
+	local method
+
+	if not var_6_1.method then
+		method = var_6_1.method
+
+		if not method then
+			-- Nothing
+		end
+	end
+
+	method = _default_settings.method
+
+	::label_6_2::
+
+	self.method = method
+	self.prev_flag = self.flag
+
+	local flag_2
+
+	if not var_6_1.flag then
+		flag_2 = var_6_1.flag
+
+		if not flag_2 then
+			-- Nothing
+		end
+	end
+
+	flag_2 = _default_settings.flag
+
+	::label_6_3::
+
+	self.flag = flag_2
+
+	if not arg_6_1 then
+		-- Nothing
+	end
+
+	::label_6_4::
+
+	local outlined = self.outlined
+
+	outlined = not outlined and flag
+
+	::label_6_5::
+
+	self.reapply = outlined
+
+	if self.reapply or not flag then
+		self._outline_system:mark_outline_dirty(self._unit)
 	end
 end
 
-function OutlineExtension.on_freeze(arg_7_0)
-	arg_7_0.method = "never"
+OutlineExtension.on_freeze = function (self)
+	-- function 7
+	self.method = "never"
 
-	table.clear(arg_7_0.outline_settings)
+	table.clear(self.outline_settings)
 
-	arg_7_0.outline_settings[1] = {
-		arg_7_0._default_settings
+	self.outline_settings[1] = {
+		self._default_settings
 	}
 end
 
-function OutlineExtension.on_unfreeze(arg_8_0)
-	arg_8_0:_refresh_current_outline()
+OutlineExtension.on_unfreeze = function (self)
+	-- function 8
+	self:_refresh_current_outline()
 end
 
-function OutlineExtension.swap_delete_outline(arg_9_0, arg_9_1, arg_9_2)
-	local var_9_0 = arg_9_0.outline_settings
+OutlineExtension.swap_delete_outline = function (self, arg_9_1, arg_9_2)
+	-- function 9
+	local outline_settings = self.outline_settings
 	local var_9_1
 	local var_9_2
 	local var_9_3
 	local var_9_4
 
-	for iter_9_0 = 1, #var_9_0 do
-		local var_9_5 = var_9_0[iter_9_0]
+	for i = 1, #outline_settings do
+		local var_9_5 = outline_settings[i]
 
-		for iter_9_1 = 1, #var_9_5 do
-			if var_9_5[iter_9_1]._unique_id == arg_9_1 then
-				var_9_3 = iter_9_0
-				var_9_4 = iter_9_1
+		for j = 1, #var_9_5 do
+			if var_9_5[j]._unique_id == arg_9_1 then
+				var_9_3 = i
+				var_9_4 = j
 			end
 
-			if var_9_5[iter_9_1]._unique_id == arg_9_2 then
-				var_9_1 = iter_9_0
-				var_9_2 = iter_9_1
+			if var_9_5[j]._unique_id == arg_9_2 then
+				var_9_1 = i
+				var_9_2 = j
 			end
 		end
 	end
 
-	local var_9_6 = var_9_0[var_9_3][var_9_4]
+	local var_9_6 = outline_settings[var_9_3][var_9_4]
 
 	var_9_6._unique_id = arg_9_2
-	var_9_0[var_9_1][var_9_2] = var_9_6
+	outline_settings[var_9_1][var_9_2] = var_9_6
 
-	table.remove(var_9_0[var_9_3], var_9_4)
+	table.remove(outline_settings[var_9_3], var_9_4)
 
-	if #var_9_0[var_9_3] == 0 then
-		table.remove(var_9_0, var_9_3)
+	if #outline_settings[var_9_3] == 0 then
+		table.remove(outline_settings, var_9_3)
 	end
 
-	arg_9_0._default_settings = var_9_6
+	self._default_settings = var_9_6
 
-	arg_9_0:update_outline(var_9_6, arg_9_2)
+	self:update_outline(var_9_6, arg_9_2)
 end

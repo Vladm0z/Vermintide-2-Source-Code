@@ -1,10 +1,10 @@
 -- chunkname: @scripts/settings/profiles/base_units.lua
 
-local var_0_0 = {
+local tbl = {
 	first_person_bot = "units/beings/player/first_person_base/chr_first_person_bot_base",
 	first_person = "units/beings/player/first_person_base/chr_first_person_base"
 }
-local var_0_1 = {
+local tbl_2 = {
 	witch_hunter = {
 		third_person_husk = "units/beings/player/third_person_base/witch_hunter/chr_third_person_husk_base",
 		third_person_bot = "units/beings/player/third_person_base/witch_hunter/chr_third_person_base",
@@ -34,16 +34,16 @@ local var_0_1 = {
 
 BaseUnits = {}
 
-for iter_0_0, iter_0_1 in pairs(var_0_1) do
-	if not BaseUnits[iter_0_0] then
-		BaseUnits[iter_0_0] = {}
+for k, v in pairs(tbl_2) do
+	if not BaseUnits[k] then
+		BaseUnits[k] = {}
 	end
 
-	for iter_0_2, iter_0_3 in pairs(var_0_0) do
-		BaseUnits[iter_0_0][iter_0_2] = iter_0_3
+	for k_2, v_2 in pairs(tbl) do
+		BaseUnits[k][k_2] = v_2
 	end
 
-	for iter_0_4, iter_0_5 in pairs(iter_0_1) do
-		BaseUnits[iter_0_0][iter_0_4] = iter_0_5
+	for k_3, v_3 in pairs(v) do
+		BaseUnits[k][k_3] = v_3
 	end
 end

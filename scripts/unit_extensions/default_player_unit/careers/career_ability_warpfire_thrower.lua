@@ -2,17 +2,18 @@
 
 CareerAbilityWarpfireThrower = class(CareerAbilityWarpfireThrower, CareerAbilityDarkPactBase)
 
-function CareerAbilityWarpfireThrower.ability_ready(arg_1_0)
-	arg_1_0.super.ability_ready(arg_1_0)
+CareerAbilityWarpfireThrower.ability_ready = function (self)
+	-- function 1
+	self.super.ability_ready(self)
 
-	local var_1_0 = arg_1_0._first_person_extension
+	local _first_person_extension = self._first_person_extension
 
-	if var_1_0 then
-		local var_1_1 = arg_1_0._unit
-		local var_1_2 = arg_1_0._wwise_world
+	if not _first_person_extension then
+		local _unit = self._unit
+		local _wwise_world = self._wwise_world
 
-		WwiseWorld.trigger_event(var_1_2, "player_enemy_warpfire_steam_after_flame_stop", var_1_1)
-		CharacterStateHelper.play_animation_event_first_person(var_1_0, "cooldown_ready")
-		CharacterStateHelper.play_animation_event(var_1_1, "cooldown_ready")
+		WwiseWorld.trigger_event(_wwise_world, "player_enemy_warpfire_steam_after_flame_stop", _unit)
+		CharacterStateHelper.play_animation_event_first_person(_first_person_extension, "cooldown_ready")
+		CharacterStateHelper.play_animation_event(_unit, "cooldown_ready")
 	end
 end

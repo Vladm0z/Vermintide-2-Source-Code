@@ -2,42 +2,51 @@
 
 CrawlSpaceExtension = class(CrawlSpaceExtension)
 
-function CrawlSpaceExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	arg_1_0.unit = arg_1_2
-	arg_1_0.partner_unit = nil
-	arg_1_0.entrance_type = Unit.get_data(arg_1_2, "entrance_type")
+CrawlSpaceExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	self.unit = arg_1_2
+	self.partner_unit = nil
+	self.entrance_type = Unit.get_data(arg_1_2, "entrance_type")
 
-	local var_1_0 = Unit.local_position(arg_1_2, 0)
-	local var_1_1 = Unit.local_rotation(arg_1_2, 0)
+	local local_position = Unit.local_position(arg_1_2, 0)
+	local local_rotation = Unit.local_rotation(arg_1_2, 0)
 
-	if arg_1_0.entrance_type == "manhole" or arg_1_0.entrance_type == "well" then
-		var_1_1 = Quaternion.multiply(var_1_1, Quaternion.from_euler_angles_xyz(90, 0, 0))
+	if not (self.entrance_type == "manhole" or self.entrance_type ~= "well") then
+		local_rotation = Quaternion.multiply(local_rotation, Quaternion.from_euler_angles_xyz(90, 0, 0))
 	end
 
-	local var_1_2 = Vector3.flat(Quaternion.forward(var_1_1))
+	local flat = Vector3.flat(Quaternion.forward(local_rotation))
 
-	arg_1_0.enter_rot = Vector3Box(var_1_2)
-	arg_1_0.enter_pos = Vector3Box(var_1_0 - var_1_2 + Vector3.down())
-	arg_1_0.entrance_type = Unit.get_data(arg_1_2, "entrance_type")
-	arg_1_0.id = Unit.get_data(arg_1_2, "crawl_space_id")
-	arg_1_0.type = arg_1_0.id == 0 and "spawner" or "tunnel"
+	self.enter_rot = Vector3Box(flat)
+	self.enter_pos = Vector3Box(local_position - flat + Vector3.down())
+	self.entrance_type = Unit.get_data(arg_1_2, "entrance_type")
+	self.id = Unit.get_data(arg_1_2, "crawl_space_id")
+
+	local flag
+
+	flag = self.id ~= 0 or not "spawner" or "tunnel"
+	self.type = flag
 end
 
-function CrawlSpaceExtension.extensions_ready(arg_2_0)
-	if arg_2_0.entrance_type == "chimney" then
-		ScriptUnit.extension(arg_2_0.unit, "interactable_system"):set_enabled(false)
+CrawlSpaceExtension.extensions_ready = function (self)
+	-- function 2
+	if self.entrance_type == "chimney" then
+		ScriptUnit.extension(self.unit, "interactable_system"):set_enabled(false)
 	end
 end
 
-function CrawlSpaceExtension.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+CrawlSpaceExtension.update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	-- function 3
 	return
 end
 
-function CrawlSpaceExtension.hot_join_sync(arg_4_0, arg_4_1)
+CrawlSpaceExtension.hot_join_sync = function (arg_4_0, arg_4_1)
+	-- function 4
 	return
 end
 
-function CrawlSpaceExtension.destroy(arg_5_0)
-	arg_5_0.unit = nil
-	arg_5_0.partner_unit = nil
+CrawlSpaceExtension.destroy = function (self)
+	-- function 5
+	self.unit = nil
+	self.partner_unit = nil
 end

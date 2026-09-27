@@ -1,59 +1,62 @@
 -- chunkname: @foundation/scripts/util/frame_table.lua
 
-if rawget(_G, "FrameTable") then
+if not rawget(_G, "FrameTable") then
 	return
 end
 
 FrameTable = {}
 
-local var_0_0 = 256
-local var_0_1 = Script.new_array(var_0_0)
-local var_0_2 = Script.new_array(var_0_0)
-local var_0_3 = 0
-local var_0_4 = 0
+local num = 256
+local new_array = Script.new_array(num)
+local new_array_2 = Script.new_array(num)
+local num_2 = 0
+local num_3 = 0
 
-for iter_0_0 = 1, var_0_0 do
-	var_0_1[iter_0_0] = {}
-	var_0_2[iter_0_0] = {}
+for i = 1, num do
+	new_array[i] = {}
+	new_array_2[i] = {}
 end
 
-function FrameTable.alloc_table()
-	var_0_3 = var_0_3 + 1
+FrameTable.alloc_table = function ()
+	-- function 1
+	num_2 = num_2 + 1
 
-	if var_0_3 > var_0_0 then
-		local var_1_0 = var_0_0
+	if num_2 > num then
+		local var_1_0 = num
 
-		var_0_0 = 2 * var_1_0
+		num = 2 * var_1_0
 
-		Application.warning("[FrameTable] WARNING: Expanding frame table size from %d to %d", var_1_0, var_0_0)
+		Application.warning("[FrameTable] WARNING: Expanding frame table size from %d to %d", var_1_0, num)
 
-		for iter_1_0 = var_1_0 + 1, var_0_0 do
-			var_0_1[iter_1_0] = {}
-			var_0_2[iter_1_0] = {}
+		for i = var_1_0 + 1, num do
+			new_array[i] = {}
+			new_array_2[i] = {}
 		end
 	end
 
-	return var_0_1[var_0_3]
+	return new_array[num_2]
 end
 
-function FrameTable.swap_and_clear()
-	local var_2_0 = table.clear
+FrameTable.swap_and_clear = function ()
+	-- function 2
+	local clear = table.clear
 
-	for iter_2_0 = 1, var_0_4 do
-		var_2_0(var_0_2[iter_2_0])
+	for i = 1, num_3 do
+		clear(new_array_2[i])
 	end
 
-	var_0_1, var_0_2 = var_0_2, var_0_1
-	var_0_4 = var_0_3
-	var_0_3 = 0
+	new_array, new_array_2 = new_array_2, new_array
+	num_3 = num_2
+	num_2 = 0
 end
 
-function FrameTable.init(arg_3_0)
-	if arg_3_0 then
+FrameTable.init = function (arg_3_0)
+	-- function 3
+	if not arg_3_0 then
 		FrameTable.alloc_table = TABLE_NEW
 		FrameTable.swap_and_clear = NOP
-		var_0_1 = nil
-		var_0_2 = nil
+		new_array = nil
+		new_array_2 = nil
 	end
 
 	printf("[FrameTable] Initialized (use_ordinary_tables=%s)", arg_3_0)

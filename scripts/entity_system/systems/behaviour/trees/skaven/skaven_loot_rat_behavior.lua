@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/skaven/skaven_loot_rat_behavior.lua
 
-local var_0_0 = BreedActions.skaven_loot_rat
+local skaven_loot_rat = BreedActions.skaven_loot_rat
 
 BreedBehaviors.loot_rat = {
 	"BTSelector",
@@ -23,7 +23,7 @@ BreedBehaviors.loot_rat = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "loot_rat_stagger",
-		action_data = var_0_0.stagger
+		action_data = skaven_loot_rat.stagger
 	},
 	{
 		"BTSelector",
@@ -46,7 +46,7 @@ BreedBehaviors.loot_rat = {
 			"BTSmashDoorAction",
 			name = "smash_door",
 			condition = "at_door_smartobject",
-			action_data = var_0_0.smash_door
+			action_data = skaven_loot_rat.smash_door
 		},
 		condition = "at_smartobject",
 		name = "smartobject"
@@ -55,13 +55,13 @@ BreedBehaviors.loot_rat = {
 		"BTLootRatDodgeAction",
 		name = "dodge",
 		condition = "loot_rat_dodge",
-		action_data = var_0_0.dodge
+		action_data = skaven_loot_rat.dodge
 	},
 	{
 		"BTLootRatFleeAction",
 		name = "flee",
 		condition = "loot_rat_flee",
-		action_data = var_0_0.flee
+		action_data = skaven_loot_rat.flee
 	},
 	{
 		"BTLootRatAlertedAction",
@@ -71,7 +71,7 @@ BreedBehaviors.loot_rat = {
 	{
 		"BTIdleAction",
 		name = "idle",
-		action_data = var_0_0.idle
+		action_data = skaven_loot_rat.idle
 	},
 	name = "horde"
 }

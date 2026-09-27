@@ -2,112 +2,131 @@
 
 ThornMutatorExtension = class(ThornMutatorExtension)
 
-local var_0_0 = 1
+local num = 1
 
-function ThornMutatorExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	arg_1_0.spawn_time = arg_1_3.spawn_animation_time or 0
-	arg_1_0.despawn_time = arg_1_3.despawn_animation_time or 0
-	arg_1_0._spawn_timer = 0
-	arg_1_0._life_timer = 0
-	arg_1_0._is_server = Managers.state.network.is_server
-	arg_1_0._unit = arg_1_2
+ThornMutatorExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	local spawn_animation_time = arg_1_3.spawn_animation_time
 
-	local var_1_0 = Unit.local_scale(arg_1_2, 0)
+	spawn_animation_time = spawn_animation_time or 0
+	self.spawn_time = spawn_animation_time
 
-	arg_1_0._scale_x = var_1_0.x
-	arg_1_0._scale_y = var_1_0.y
-	arg_1_0._scale_z = var_1_0.z
+	local despawn_animation_time = arg_1_3.despawn_animation_time
 
-	local var_1_1 = ScriptUnit.extension(arg_1_2, "area_damage_system")
+	despawn_animation_time = despawn_animation_time or 0
+	self.despawn_time = despawn_animation_time
+	self._spawn_timer = 0
+	self._life_timer = 0
+	self._is_server = Managers.state.network.is_server
+	self._unit = arg_1_2
 
-	arg_1_0._area_damage_extension = var_1_1
-	arg_1_0._life_time = var_1_1.life_time
-	arg_1_0._despawning = false
+	local local_scale = Unit.local_scale(arg_1_2, 0)
+
+	self._scale_x = local_scale.x
+	self._scale_y = local_scale.y
+	self._scale_z = local_scale.z
+
+	local extension = ScriptUnit.extension(arg_1_2, "area_damage_system")
+
+	self._area_damage_extension = extension
+	self._life_time = extension.life_time
+	self._despawning = false
 end
 
-function ThornMutatorExtension.current_progress(arg_2_0)
-	return arg_2_0._spawn_timer
+ThornMutatorExtension.current_progress = function (self)
+	-- function 2
+	return self._spawn_timer
 end
 
-function ThornMutatorExtension.get_spawn_time(arg_3_0)
-	return arg_3_0.spawn_time
+ThornMutatorExtension.get_spawn_time = function (self)
+	-- function 3
+	return self.spawn_time
 end
 
-function ThornMutatorExtension.setup_rpc_sync(arg_4_0, arg_4_1, arg_4_2)
-	arg_4_0.spawn_time = arg_4_1
-	arg_4_0._spawn_timer = arg_4_2
+ThornMutatorExtension.setup_rpc_sync = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	self.spawn_time = arg_4_1
+	self._spawn_timer = arg_4_2
 end
 
-function ThornMutatorExtension.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
-	local var_5_0 = arg_5_0.spawn_time
-	local var_5_1 = arg_5_0._spawn_timer
+ThornMutatorExtension.update = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	-- function 5
+	local spawn_time = self.spawn_time
+	local _spawn_timer = self._spawn_timer
 
-	if var_5_1 < 1 then
-		local var_5_2 = math.clamp(var_5_1 + arg_5_3 / var_5_0, 0, 1)
+	if _spawn_timer < 1 then
+		local clamp = math.clamp(_spawn_timer + arg_5_3 / spawn_time, 0, 1)
 
-		if var_5_2 == 1 and arg_5_0._is_server then
-			local var_5_3 = Managers.state.network
-			local var_5_4 = var_5_3:unit_game_object_id(arg_5_0._unit)
+		if clamp ~= 1 or not self._is_server then
+			local network = Managers.state.network
+			local unit_game_object_id = network:unit_game_object_id(self._unit)
 
-			var_5_3.network_transmit:send_rpc_clients("rpc_thorn_bush_trigger_area_damage", var_5_4)
-			arg_5_0:trigger_area_damage()
+			network.network_transmit:send_rpc_clients("rpc_thorn_bush_trigger_area_damage", unit_game_object_id)
+			self:trigger_area_damage()
 		end
 
-		arg_5_0._spawn_timer = var_5_2
+		self._spawn_timer = clamp
 	end
 
-	if arg_5_0._spawn_timer == 1 and arg_5_0._life_timer < 1 then
-		local var_5_5 = arg_5_0._life_time - arg_5_0.despawn_time
-		local var_5_6 = arg_5_0._life_timer
+	if not (self._spawn_timer ~= 1 or not (self._life_timer < 1)) then
+		local num_2 = self._life_time - self.despawn_time
+		local _life_timer = self._life_timer
 
-		if not arg_5_0._despawning then
-			local var_5_7 = math.clamp(var_5_6 + arg_5_3 / var_5_5, 0, 1)
+		if not self._despawning then
+			local clamp_2 = math.clamp(_life_timer + arg_5_3 / num_2, 0, 1)
 
-			if var_5_7 == 1 and arg_5_0._is_server then
-				local var_5_8 = Managers.state.network
-				local var_5_9 = var_5_8:unit_game_object_id(arg_5_0._unit)
+			if clamp_2 ~= 1 or not self._is_server then
+				local network_2 = Managers.state.network
+				local unit_game_object_id_2 = network_2:unit_game_object_id(self._unit)
 
-				var_5_8.network_transmit:send_rpc_clients("rpc_thorn_bush_trigger_despawn", var_5_9)
-				arg_5_0:despawn()
+				network_2.network_transmit:send_rpc_clients("rpc_thorn_bush_trigger_despawn", unit_game_object_id_2)
+				self:despawn()
 
-				arg_5_0._despawn_done_time = arg_5_5 + var_0_0
+				self._despawn_done_time = arg_5_5 + num
 			end
 
-			arg_5_0._life_timer = var_5_7
+			self._life_timer = clamp_2
 		end
 	end
 
-	if arg_5_0._is_server and arg_5_0._area_damage_extension.num_hits > 0 and not arg_5_0._despawning then
-		local var_5_10 = Managers.state.network
-		local var_5_11 = var_5_10:unit_game_object_id(arg_5_0._unit)
+	if not (not self._is_server and not (self._area_damage_extension.num_hits > 0) or self._despawning) then
+		local network_3 = Managers.state.network
+		local unit_game_object_id_3 = network_3:unit_game_object_id(self._unit)
 
-		var_5_10.network_transmit:send_rpc_clients("rpc_thorn_bush_trigger_despawn", var_5_11)
+		network_3.network_transmit:send_rpc_clients("rpc_thorn_bush_trigger_despawn", unit_game_object_id_3)
 		WwiseUtils.trigger_unit_event(arg_5_4.world, "Play_winds_life_gameplay_thorn_hit_player", arg_5_1, 0)
-		arg_5_0:despawn()
+		self:despawn()
 
-		arg_5_0._despawn_done_time = arg_5_5 + var_0_0
+		self._despawn_done_time = arg_5_5 + num
 	end
 
-	if arg_5_0._is_server then
-		arg_5_0:_check_for_deletion(arg_5_5)
+	if not self._is_server then
+		self:_check_for_deletion(arg_5_5)
 	end
 end
 
-function ThornMutatorExtension.trigger_area_damage(arg_6_0)
-	Unit.flow_event(arg_6_0._unit, "set_static_material")
-	ScriptUnit.extension(arg_6_0._unit, "area_damage_system"):enable_area_damage(true)
+ThornMutatorExtension.trigger_area_damage = function (self)
+	-- function 6
+	Unit.flow_event(self._unit, "set_static_material")
+	ScriptUnit.extension(self._unit, "area_damage_system"):enable_area_damage(true)
 end
 
-function ThornMutatorExtension.despawn(arg_7_0)
-	Unit.flow_event(arg_7_0._unit, "despawn")
+ThornMutatorExtension.despawn = function (self)
+	-- function 7
+	Unit.flow_event(self._unit, "despawn")
 
-	arg_7_0._despawning = true
+	self._despawning = true
 
-	ScriptUnit.extension(arg_7_0._unit, "area_damage_system"):enable_area_damage(false)
+	ScriptUnit.extension(self._unit, "area_damage_system"):enable_area_damage(false)
 end
 
-function ThornMutatorExtension._check_for_deletion(arg_8_0, arg_8_1)
-	if arg_8_0._despawn_done_time and arg_8_1 > arg_8_0._despawn_done_time then
-		Managers.state.unit_spawner:mark_for_deletion(arg_8_0._unit)
+ThornMutatorExtension._check_for_deletion = function (self, arg_8_1)
+	-- function 8
+	local _despawn_done_time = self._despawn_done_time
+
+	_despawn_done_time = not _despawn_done_time and arg_8_1 > self._despawn_done_time
+
+	if not _despawn_done_time then
+		Managers.state.unit_spawner:mark_for_deletion(self._unit)
 	end
 end

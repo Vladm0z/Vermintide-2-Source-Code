@@ -1,8 +1,11 @@
 -- chunkname: @scripts/settings/breeds/breed_skaven_stormfiend.lua
 
-local var_0_0 = require("scripts/utils/stagger_types")
-local var_0_1 = BotConstants and BotConstants.default.DEFAULT_BOT_THREAT_DIFFICULTY_DATA
-local var_0_2 = {
+local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
+local BotConstants = BotConstants
+
+BotConstants = not BotConstants and BotConstants.default.DEFAULT_BOT_THREAT_DIFFICULTY_DATA
+
+local tbl = {
 	detection_radius = 9999999,
 	race = "skaven",
 	walk_speed = 5,
@@ -287,7 +290,8 @@ local var_0_2 = {
 		stormfiend_warpfire = 1,
 		vortex_danger_zone = 1
 	},
-	custom_death_enter_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	custom_death_enter_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+		-- function 1
 		local var_1_0 = BLACKBOARDS[arg_1_0]
 
 		if not Unit.alive(arg_1_1) then
@@ -299,9 +303,9 @@ local var_0_2 = {
 	end
 }
 
-Breeds.skaven_stormfiend = table.create_copy(Breeds.skaven_stormfiend, var_0_2)
+Breeds.skaven_stormfiend = table.create_copy(Breeds.skaven_stormfiend, tbl)
 
-local var_0_3 = {
+local tbl_2 = {
 	shove = {
 		easy = {
 			normal = 1
@@ -370,7 +374,7 @@ local var_0_3 = {
 		}
 	}
 }
-local var_0_4 = {
+local tbl_3 = {
 	climb = {
 		catapult_players = {
 			speed = 7,
@@ -632,7 +636,7 @@ local var_0_4 = {
 		action_weight = 1,
 		ignore_ai_damage = true,
 		damage_type = "cutting",
-		difficulty_attack_intensity = var_0_3,
+		difficulty_attack_intensity = tbl_2,
 		considerations = UtilityConsiderations.melee_shove,
 		attacks = {
 			{
@@ -706,10 +710,10 @@ local var_0_4 = {
 				push_ai = {
 					stagger_distance = 3,
 					stagger_impact = {
-						var_0_0.explosion,
-						var_0_0.heavy,
-						var_0_0.none,
-						var_0_0.none
+						scripts_utils_stagger_types.explosion,
+						scripts_utils_stagger_types.heavy,
+						scripts_utils_stagger_types.none,
+						scripts_utils_stagger_types.none
 					},
 					stagger_duration = {
 						4.5,
@@ -718,7 +722,7 @@ local var_0_4 = {
 						0
 					}
 				},
-				bot_threat_difficulty_data = var_0_1,
+				bot_threat_difficulty_data = BotConstants,
 				bot_threats = {
 					attack_melee_fwd = {
 						{
@@ -782,7 +786,7 @@ local var_0_4 = {
 		blocked_damage = 5,
 		ignore_ai_damage = true,
 		damage_type = "cutting",
-		difficulty_attack_intensity = var_0_3,
+		difficulty_attack_intensity = tbl_2,
 		considerations = UtilityConsiderations.stormfiend_charge,
 		attacks = {
 			{
@@ -817,11 +821,11 @@ local var_0_4 = {
 				push_ai = {
 					stagger_distance = 3,
 					stagger_impact = {
-						var_0_0.explosion,
-						var_0_0.explosion,
-						var_0_0.none,
-						var_0_0.none,
-						var_0_0.explosion
+						scripts_utils_stagger_types.explosion,
+						scripts_utils_stagger_types.explosion,
+						scripts_utils_stagger_types.none,
+						scripts_utils_stagger_types.none,
+						scripts_utils_stagger_types.explosion
 					},
 					stagger_duration = {
 						4.5,
@@ -946,8 +950,9 @@ local var_0_4 = {
 				right = {}
 			}
 		},
-		custom_weakspot_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
-			if arg_2_1.weakspot_hits then
+		custom_weakspot_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			-- function 2
+			if not arg_2_1.weakspot_hits then
 				arg_2_1.weakspot_hits = arg_2_1.weakspot_hits + 1
 			else
 				arg_2_1.weakspot_hits = 1
@@ -989,5 +994,5 @@ local var_0_4 = {
 	}
 }
 
-var_0_4.fling_skaven = table.clone(var_0_4.melee_shove)
-BreedActions.skaven_stormfiend = table.create_copy(BreedActions.skaven_stormfiend, var_0_4)
+tbl_3.fling_skaven = table.clone(tbl_3.melee_shove)
+BreedActions.skaven_stormfiend = table.create_copy(BreedActions.skaven_stormfiend, tbl_3)

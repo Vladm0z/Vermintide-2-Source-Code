@@ -9,190 +9,213 @@ local var_0_1 = safe_require("core/gwnav/lua/runtime/navworld")
 local var_0_2 = safe_require("core/gwnav/lua/runtime/navbot")
 local var_0_3 = safe_require("core/gwnav/lua/runtime/navboxobstacle")
 local var_0_4 = safe_require("core/gwnav/lua/runtime/navcylinderobstacle")
-local var_0_5 = stingray.Unit
-local var_0_6 = stingray.Vector3
-local var_0_7 = stingray.Vector3Box
-local var_0_8 = stingray.Matrix4x4
-local var_0_9 = {}
+local Unit = stingray.Unit
+local Vector3 = stingray.Vector3
+local Vector3Box = stingray.Vector3Box
+local Matrix4x4 = stingray.Matrix4x4
+local tbl = {}
 
-function GwNavFlowCallbacks.create_navworld(arg_1_0)
-	var_0_1(var_0_5.world(arg_1_0.unit), var_0_5.level(arg_1_0.unit))
+GwNavFlowCallbacks.create_navworld = function (self)
+	-- function 1
+	var_0_1(Unit.world(self.unit), Unit.level(self.unit))
 end
 
-function GwNavFlowCallbacks.destroy_navworld(arg_2_0)
-	var_0_1.get_navworld(var_0_5.level(arg_2_0.unit)):shutdown()
+GwNavFlowCallbacks.destroy_navworld = function (self)
+	-- function 2
+	var_0_1.get_navworld(Unit.level(self.unit)):shutdown()
 end
 
-function GwNavFlowCallbacks.update_navworld(arg_3_0)
-	var_0_1.get_navworld(var_0_5.level(arg_3_0.unit)):update(arg_3_0.delta_time)
+GwNavFlowCallbacks.update_navworld = function (self)
+	-- function 3
+	var_0_1.get_navworld(Unit.level(self.unit)):update(self.delta_time)
 end
 
-function GwNavFlowCallbacks.add_navmesh(arg_4_0)
-	var_0_1.get_navworld(var_0_5.level(arg_4_0.unit)):add_navdata(arg_4_0.name)
+GwNavFlowCallbacks.add_navmesh = function (self)
+	-- function 4
+	var_0_1.get_navworld(Unit.level(self.unit)):add_navdata(self.name)
 end
 
-function GwNavFlowCallbacks.create_navbot(arg_5_0)
-	local var_5_0 = var_0_1.get_navworld(var_0_5.level(arg_5_0.unit))
+GwNavFlowCallbacks.create_navbot = function (self)
+	-- function 5
+	local get_navworld = var_0_1.get_navworld(Unit.level(self.unit))
 
-	if arg_5_0.bot_configuration ~= nil then
-		var_5_0:init_bot_from_unit(arg_5_0.unit, arg_5_0.bot_configuration)
+	if self.bot_configuration ~= nil then
+		get_navworld:init_bot_from_unit(self.unit, self.bot_configuration)
 	else
-		var_5_0:init_bot(arg_5_0.unit)
+		get_navworld:init_bot(self.unit)
 	end
 end
 
-function GwNavFlowCallbacks.destroy_navbot(arg_6_0)
-	local var_6_0 = var_0_2.get_navbot(arg_6_0.unit)
+GwNavFlowCallbacks.destroy_navbot = function (self)
+	-- function 6
+	local get_navbot = var_0_2.get_navbot(self.unit)
 
-	if var_6_0 then
-		var_6_0:shutdown()
+	if not get_navbot then
+		get_navbot:shutdown()
 	end
 end
 
-function GwNavFlowCallbacks.navbot_velocity(arg_7_0)
-	local var_7_0 = var_0_2.get_navbot(arg_7_0.unit)
+GwNavFlowCallbacks.navbot_velocity = function (self)
+	-- function 7
+	local get_navbot = var_0_2.get_navbot(self.unit)
 
-	if var_7_0 then
-		arg_7_0.input_velocity = var_7_0:velocity()
+	if not get_navbot then
+		self.input_velocity = get_navbot:velocity()
 	else
-		arg_7_0.input_velocity = var_0_6(0, 0, 0)
+		self.input_velocity = Vector3(0, 0, 0)
 	end
 
-	return arg_7_0
+	return self
 end
 
-function GwNavFlowCallbacks.navbot_output_velocity(arg_8_0)
-	local var_8_0 = var_0_2.get_navbot(arg_8_0.unit)
+GwNavFlowCallbacks.navbot_output_velocity = function (self)
+	-- function 8
+	local get_navbot = var_0_2.get_navbot(self.unit)
 
-	if var_8_0 then
-		arg_8_0.output_velocity = var_8_0:output_velocity()
+	if not get_navbot then
+		self.output_velocity = get_navbot:output_velocity()
 	else
-		arg_8_0.output_velocity = var_0_6(0, 0, 0)
+		self.output_velocity = Vector3(0, 0, 0)
 	end
 
-	return arg_8_0
+	return self
 end
 
-function GwNavFlowCallbacks.navbot_local_output_velocity(arg_9_0)
-	local var_9_0 = var_0_2.get_navbot(arg_9_0.unit)
+GwNavFlowCallbacks.navbot_local_output_velocity = function (self)
+	-- function 9
+	local get_navbot = var_0_2.get_navbot(self.unit)
 
-	if var_9_0 then
-		arg_9_0.local_output_velocity = var_0_8.transform_without_translation(var_0_8.inverse(var_0_5.local_pose(arg_9_0.unit, 1)), var_9_0:output_velocity())
+	if not get_navbot then
+		self.local_output_velocity = Matrix4x4.transform_without_translation(Matrix4x4.inverse(Unit.local_pose(self.unit, 1)), get_navbot:output_velocity())
 	else
-		arg_9_0.local_output_velocity = var_0_6(0, 0, 0)
+		self.local_output_velocity = Vector3(0, 0, 0)
 	end
 
-	return arg_9_0
+	return self
 end
 
-function GwNavFlowCallbacks.navbot_destination(arg_10_0)
-	local var_10_0 = var_0_2.get_navbot(arg_10_0.unit)
+GwNavFlowCallbacks.navbot_destination = function (self)
+	-- function 10
+	local get_navbot = var_0_2.get_navbot(self.unit)
 
-	if var_10_0 then
-		arg_10_0.destination = var_10_0.destination:unbox()
+	if not get_navbot then
+		self.destination = get_navbot.destination:unbox()
 	else
-		arg_10_0.destination = var_0_6(0, 0, 0)
+		self.destination = Vector3(0, 0, 0)
 	end
 
-	return arg_10_0
+	return self
 end
 
-function GwNavFlowCallbacks.set_navbot_destination(arg_11_0)
-	local var_11_0 = var_0_2.get_navbot(arg_11_0.unit)
+GwNavFlowCallbacks.set_navbot_destination = function (self)
+	-- function 11
+	local get_navbot = var_0_2.get_navbot(self.unit)
 
-	if var_11_0 then
-		var_11_0:set_destination(arg_11_0.destination)
-	end
-end
-
-function GwNavFlowCallbacks.navbot_move_unit(arg_12_0)
-	local var_12_0 = var_0_2.get_navbot(arg_12_0.unit)
-
-	if var_12_0 then
-		var_12_0:move_unit(arg_12_0.delta_time)
+	if not get_navbot then
+		get_navbot:set_destination(self.destination)
 	end
 end
 
-function GwNavFlowCallbacks.navbot_move_unit_with_mover(arg_13_0)
-	local var_13_0 = var_0_2.get_navbot(arg_13_0.unit)
+GwNavFlowCallbacks.navbot_move_unit = function (self)
+	-- function 12
+	local get_navbot = var_0_2.get_navbot(self.unit)
 
-	if var_13_0 then
-		var_13_0:move_unit_with_mover(arg_13_0.delta_time, arg_13_0.gravity)
+	if not get_navbot then
+		get_navbot:move_unit(self.delta_time)
 	end
 end
 
-function GwNavFlowCallbacks.set_navbot_route(arg_14_0)
-	local var_14_0 = var_0_9[arg_14_0.id]
+GwNavFlowCallbacks.navbot_move_unit_with_mover = function (self)
+	-- function 13
+	local get_navbot = var_0_2.get_navbot(self.unit)
 
-	if var_14_0 then
-		local var_14_1 = var_0_2.get_navbot(arg_14_0.unit)
+	if not get_navbot then
+		get_navbot:move_unit_with_mover(self.delta_time, self.gravity)
+	end
+end
 
-		if var_14_1 then
-			var_14_1:set_route(var_14_0:positions())
+GwNavFlowCallbacks.set_navbot_route = function (self)
+	-- function 14
+	local var_14_0 = tbl[self.id]
+
+	if not var_14_0 then
+		local get_navbot = var_0_2.get_navbot(self.unit)
+
+		if not get_navbot then
+			get_navbot:set_route(var_14_0:positions())
 		end
 	end
 end
 
-function GwNavFlowCallbacks.navbot_set_layer_cost_multiplier(arg_15_0)
-	local var_15_0 = var_0_2.get_navbot(arg_15_0.unit)
+GwNavFlowCallbacks.navbot_set_layer_cost_multiplier = function (self)
+	-- function 15
+	local get_navbot = var_0_2.get_navbot(self.unit)
 
-	if var_15_0 then
-		var_15_0:set_layer_cost_multiplier(arg_15_0.layer, arg_15_0.cost)
+	if not get_navbot then
+		get_navbot:set_layer_cost_multiplier(self.layer, self.cost)
 	end
 end
 
-function GwNavFlowCallbacks.navbot_allow_layer(arg_16_0)
-	local var_16_0 = var_0_2.get_navbot(arg_16_0.unit)
+GwNavFlowCallbacks.navbot_allow_layer = function (self)
+	-- function 16
+	local get_navbot = var_0_2.get_navbot(self.unit)
 
-	if var_16_0 then
-		var_16_0:allow_layer(arg_16_0.layer)
+	if not get_navbot then
+		get_navbot:allow_layer(self.layer)
 	end
 end
 
-function GwNavFlowCallbacks.navbot_forbid_layer(arg_17_0)
-	local var_17_0 = var_0_2.get_navbot(arg_17_0.unit)
+GwNavFlowCallbacks.navbot_forbid_layer = function (self)
+	-- function 17
+	local get_navbot = var_0_2.get_navbot(self.unit)
 
-	if var_17_0 then
-		var_17_0:forbid_layer(arg_17_0.layer)
+	if not get_navbot then
+		get_navbot:forbid_layer(self.layer)
 	end
 end
 
-function GwNavFlowCallbacks.create_route(arg_18_0)
-	arg_18_0.route_id = tostring(#var_0_9 + 1)
-	var_0_9[arg_18_0.route_id] = var_0_0()
+GwNavFlowCallbacks.create_route = function (self)
+	-- function 18
+	self.route_id = tostring(#tbl + 1)
+	tbl[self.route_id] = var_0_0()
 
-	return arg_18_0
+	return self
 end
 
-function GwNavFlowCallbacks.add_position_to_route(arg_19_0)
-	local var_19_0 = var_0_9[arg_19_0.route_id]
+GwNavFlowCallbacks.add_position_to_route = function (self)
+	-- function 19
+	local var_19_0 = tbl[self.route_id]
 
-	if var_19_0 then
-		var_19_0:add_position(var_0_5.local_position(arg_19_0.unit, 1))
+	if not var_19_0 then
+		var_19_0:add_position(Unit.local_position(self.unit, 1))
 	end
 end
 
-function GwNavFlowCallbacks.navboxobstacle_create(arg_20_0)
-	var_0_1.get_navworld(var_0_5.level(arg_20_0.world_unit)):add_boxobstacle(arg_20_0.obstacle_unit)
+GwNavFlowCallbacks.navboxobstacle_create = function (self)
+	-- function 20
+	var_0_1.get_navworld(Unit.level(self.world_unit)):add_boxobstacle(self.obstacle_unit)
 end
 
-function GwNavFlowCallbacks.navboxobstacle_destroy(arg_21_0)
-	local var_21_0 = var_0_3.get_navboxstacle(arg_21_0.obstacle_unit)
+GwNavFlowCallbacks.navboxobstacle_destroy = function (self)
+	-- function 21
+	local get_navboxstacle = var_0_3.get_navboxstacle(self.obstacle_unit)
 
-	if var_21_0 then
-		var_21_0:shutdown()
+	if not get_navboxstacle then
+		get_navboxstacle:shutdown()
 	end
 end
 
-function GwNavFlowCallbacks.cylinderobstacle_create(arg_22_0)
-	var_0_1.get_navworld(var_0_5.level(arg_22_0.world_unit)):add_cylinderobstacle(arg_22_0.obstacle_unit)
+GwNavFlowCallbacks.cylinderobstacle_create = function (self)
+	-- function 22
+	var_0_1.get_navworld(Unit.level(self.world_unit)):add_cylinderobstacle(self.obstacle_unit)
 end
 
-function GwNavFlowCallbacks.cylinderobstacle_destroy(arg_23_0)
-	local var_23_0 = var_0_4.get_navcylinderostacle(arg_23_0.obstacle_unit)
+GwNavFlowCallbacks.cylinderobstacle_destroy = function (self)
+	-- function 23
+	local get_navcylinderostacle = var_0_4.get_navcylinderostacle(self.obstacle_unit)
 
-	if var_23_0 then
-		var_23_0:shutdown()
+	if not get_navcylinderostacle then
+		get_navcylinderostacle:shutdown()
 	end
 end
 

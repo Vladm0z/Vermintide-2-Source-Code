@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/hud_ui/dark_pact_selection_ui_definitions.lua
 
-local var_0_0 = {
+local tbl = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -56,32 +56,33 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = GameModeSettings.versus.dark_pact_profile_order
-local var_0_2 = {}
+local dark_pact_profile_order = GameModeSettings.versus.dark_pact_profile_order
+local tbl_2 = {}
 
-for iter_0_0 = 1, #var_0_1 do
-	local var_0_3 = var_0_1[iter_0_0]
+for i = 1, #dark_pact_profile_order do
+	local var_0_3 = dark_pact_profile_order[i]
 	local var_0_4 = FindProfileIndex(var_0_3)
-	local var_0_5 = SPProfiles[var_0_4].enemy_role
+	local enemy_role = SPProfiles[var_0_4].enemy_role
 
-	if var_0_2[var_0_5] then
-		local var_0_6 = var_0_2[var_0_5]
+	if not tbl_2[enemy_role] then
+		local var_0_6 = tbl_2[enemy_role]
 
 		var_0_6[#var_0_6 + 1] = var_0_3
 	else
-		var_0_2[var_0_5] = {}
+		tbl_2[enemy_role] = {}
 
-		local var_0_7 = var_0_2[var_0_5]
+		local var_0_7 = tbl_2[enemy_role]
 
 		var_0_7[#var_0_7 + 1] = var_0_3
 	end
 end
 
-local function var_0_8(arg_1_0, arg_1_1)
-	local var_1_0 = "pactsworn_frame_01"
-	local var_1_1 = UIFrameSettings[var_1_0]
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
+	local str = "pactsworn_frame_01"
+	local var_1_1 = UIFrameSettings[str]
 	local var_1_2 = var_1_1.texture_sizes.horizontal[2]
-	local var_1_3 = arg_1_1 and arg_1_1 or {
+	local flag = not arg_1_1 and arg_1_1 and {
 		148,
 		148
 	}
@@ -108,8 +109,13 @@ local function var_0_8(arg_1_0, arg_1_1)
 					pass_type = "texture",
 					style_id = "hovered_frame",
 					texture_id = "hovered_frame",
-					content_check_function = function(arg_2_0)
-						return arg_2_0.hotspot.is_hover or arg_2_0.selected
+					content_check_function = function (self)
+						-- function 2
+						local is_hover = self.hotspot.is_hover
+
+						is_hover = is_hover or self.selected
+
+						return is_hover
 					end
 				}
 			}
@@ -123,8 +129,8 @@ local function var_0_8(arg_1_0, arg_1_1)
 		},
 		style = {
 			profile_texture = {
-				size = var_1_3,
-				default_size = var_1_3,
+				size = flag,
+				default_size = flag,
 				color = {
 					255,
 					255,
@@ -144,12 +150,12 @@ local function var_0_8(arg_1_0, arg_1_1)
 			},
 			frame = {
 				size = {
-					var_1_3[1] - 2,
-					var_1_3[2] - 4
+					flag[1] - 2,
+					flag[2] - 4
 				},
 				default_size = {
-					var_1_3[1] - 2,
-					var_1_3[2] - 4
+					flag[1] - 2,
+					flag[2] - 4
 				},
 				texture_size = var_1_1.texture_size,
 				texture_sizes = var_1_1.texture_sizes,
@@ -175,7 +181,7 @@ local function var_0_8(arg_1_0, arg_1_1)
 				}
 			},
 			hotspot = {
-				size = var_1_3,
+				size = flag,
 				offset = {
 					0,
 					0,
@@ -186,12 +192,12 @@ local function var_0_8(arg_1_0, arg_1_1)
 				vertical_alignment = "bottom",
 				horizontal_alignment = "left",
 				texture_size = {
-					var_1_3[1] + 26,
-					var_1_3[2] + 30
+					flag[1] + 26,
+					flag[2] + 30
 				},
 				default_size = {
-					var_1_3[1] + 26,
-					var_1_3[2] + 30
+					flag[1] + 26,
+					flag[2] + 30
 				},
 				color = {
 					255,
@@ -220,7 +226,7 @@ local function var_0_8(arg_1_0, arg_1_1)
 	}
 end
 
-local var_0_9 = {
+local tbl_3 = {
 	scenegraph_id = "pivot",
 	element = {
 		passes = {
@@ -283,15 +289,15 @@ local var_0_9 = {
 		}
 	}
 }
-local var_0_10 = {
+local tbl_4 = {
 	255,
 	Colors.from_hex("545454")
 }
-local var_0_11 = {
+local tbl_5 = {
 	255,
 	Colors.from_hex("b65b00")
 }
-local var_0_12 = {
+local tbl_6 = {
 	font_size = 20,
 	localize = false,
 	use_shadow = true,
@@ -307,7 +313,7 @@ local var_0_12 = {
 		50
 	}
 }
-local var_0_13 = {
+local tbl_7 = {
 	font_size = 20,
 	localize = false,
 	horizontal_alignment = "center",
@@ -322,7 +328,7 @@ local var_0_13 = {
 		49
 	}
 }
-local var_0_14 = {
+local tbl_8 = {
 	overlay = UIWidgets.create_simple_rect("screen", {
 		255,
 		0,
@@ -377,8 +383,8 @@ local var_0_14 = {
 			bottom_detail = "gritty_frame_wide",
 			textured_backdrop = "textured_backdrop",
 			top_detail = "gritty_frame_wide",
-			color_disabled = var_0_10,
-			color_available = var_0_11
+			color_disabled = tbl_4,
+			color_available = tbl_5
 		},
 		style = {
 			bottom_glow = {
@@ -474,16 +480,17 @@ local var_0_14 = {
 			}
 		}
 	},
-	info_text = UIWidgets.create_simple_rect_text("info_text", "", nil, nil, nil, var_0_12),
-	info_text_shadow = UIWidgets.create_simple_rect_text("info_text", "", nil, nil, nil, var_0_13)
+	info_text = UIWidgets.create_simple_rect_text("info_text", "", nil, nil, nil, tbl_6),
+	info_text_shadow = UIWidgets.create_simple_rect_text("info_text", "", nil, nil, nil, tbl_7)
 }
-local var_0_15 = {
+local tbl_9 = {
 	on_enter = {
 		{
 			name = "fade_in_glow",
 			duration = 0.6,
 			init = NOP,
-			update = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+			update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+				-- function 3
 				local var_3_0 = arg_3_3
 
 				arg_3_2.chrome.style.bottom_glow.color[1] = 150 * var_3_0
@@ -496,17 +503,18 @@ local var_0_15 = {
 			name = "fade_slide_in_bg",
 			duration = 0.5,
 			init = NOP,
-			update = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-				local var_4_0 = math.easeOutCubic(arg_4_3)
-				local var_4_1 = arg_4_2.chrome
-				local var_4_2 = 0 * var_4_0
-				local var_4_3 = 480 * var_4_0
-				local var_4_4 = 285 * var_4_0
+			update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+				-- function 4
+				local easeOutCubic = math.easeOutCubic(arg_4_3)
+				local chrome = arg_4_2.chrome
+				local num = 0 * easeOutCubic
+				local num_2 = 480 * easeOutCubic
+				local num_3 = 285 * easeOutCubic
 
-				var_4_1.style.top_detail.color[1] = 0
-				var_4_1.style.top_detail.offset[2] = 0
-				var_4_1.style.bottom_detail.color[1] = 0
-				var_4_1.style.bottom_detail.offset[2] = 0
+				chrome.style.top_detail.color[1] = 0
+				chrome.style.top_detail.offset[2] = 0
+				chrome.style.bottom_detail.color[1] = 0
+				chrome.style.bottom_detail.offset[2] = 0
 			end,
 			on_complete = NOP
 		},
@@ -514,15 +522,17 @@ local var_0_15 = {
 			name = "fade_in_text",
 			delay = 0.3,
 			duration = 0.4,
-			init = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+				-- function 5
 				arg_5_2.chrome.style.category_text.text_color[1] = 0
 			end,
-			update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
-				local var_6_0 = math.easeOutCubic(arg_6_3)
-				local var_6_1 = arg_6_2.chrome
-				local var_6_2 = 255 * var_6_0
+			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+				-- function 6
+				local easeOutCubic = math.easeOutCubic(arg_6_3)
+				local chrome = arg_6_2.chrome
+				local num = 255 * easeOutCubic
 
-				var_6_1.style.category_text.text_color[1] = var_6_2
+				chrome.style.category_text.text_color[1] = num
 			end,
 			on_complete = NOP
 		},
@@ -530,15 +540,17 @@ local var_0_15 = {
 			name = "fade_in_pick_text",
 			delay = 0.4,
 			duration = 0.5,
-			init = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			init = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+				-- function 7
 				arg_7_2.chrome.style.pick_text.text_color[1] = 0
 			end,
-			update = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
-				local var_8_0 = math.easeOutCubic(arg_8_3)
-				local var_8_1 = arg_8_2.chrome
-				local var_8_2 = 255 * var_8_0
+			update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+				-- function 8
+				local easeOutCubic = math.easeOutCubic(arg_8_3)
+				local chrome = arg_8_2.chrome
+				local num = 255 * easeOutCubic
 
-				var_8_1.style.pick_text.text_color[1] = var_8_2
+				chrome.style.pick_text.text_color[1] = num
 			end,
 			on_complete = NOP
 		},
@@ -546,22 +558,25 @@ local var_0_15 = {
 			name = "slide_in_frames",
 			delay = 0,
 			duration = 0.5,
-			init = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
-				local var_9_0 = arg_9_3._selector_widgets
+			init = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+				-- function 9
+				local _selector_widgets = arg_9_3._selector_widgets
 
-				for iter_9_0 = 1, #var_9_0 do
-					var_9_0[iter_9_0].offset[2] = -1000
+				for i = 1, #_selector_widgets do
+					_selector_widgets[i].offset[2] = -1000
 				end
 			end,
-			update = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
-				local var_10_0 = 1 - math.easeOutCubic(arg_10_3)
-				local var_10_1 = arg_10_4._selector_widgets
+			update = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+				-- function 10
+				local num = 1 - math.easeOutCubic(arg_10_3)
+				local _selector_widgets = arg_10_4._selector_widgets
 
-				for iter_10_0 = 1, #var_10_1 do
-					var_10_1[iter_10_0].offset[2] = (400 + 100 * iter_10_0) * var_10_0
+				for i = 1, #_selector_widgets do
+					_selector_widgets[i].offset[2] = (400 + 100 * i) * num
 				end
 			end,
-			on_complete = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+			on_complete = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+				-- function 11
 				arg_11_3:_capture_input()
 			end
 		},
@@ -569,13 +584,16 @@ local var_0_15 = {
 			name = "fade_in_info_text",
 			delay = 0.5,
 			duration = 0.2,
-			init = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			init = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+				-- function 12
 				arg_12_2.info_text.style.text.text_color[1] = 0
 			end,
-			update = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+			update = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+				-- function 13
 				arg_13_2.info_text.style.text.text_color[1] = 255 * math.easeOutCubic(arg_13_3)
 			end,
-			on_complete = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			on_complete = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+				-- function 14
 				return
 			end
 		},
@@ -583,13 +601,16 @@ local var_0_15 = {
 			name = "fade_in_info_text_shadow",
 			delay = 0.5,
 			duration = 0.2,
-			init = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+			init = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+				-- function 15
 				arg_15_2.info_text_shadow.style.text.text_color[1] = 0
 			end,
-			update = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+			update = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+				-- function 16
 				arg_16_2.info_text_shadow.style.text.text_color[1] = 255 * math.easeOutCubic(arg_16_3)
 			end,
-			on_complete = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+			on_complete = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+				-- function 17
 				return
 			end
 		}
@@ -598,15 +619,17 @@ local var_0_15 = {
 		{
 			name = "fade_out_glow",
 			duration = 0.2,
-			init = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			init = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+				-- function 18
 				arg_18_3:_release_input()
 			end,
-			update = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
-				local var_19_0 = 1 - arg_19_3
+			update = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+				-- function 19
+				local num = 1 - arg_19_3
 
-				arg_19_2.chrome.style.bottom_glow.color[1] = 150 * var_19_0
-				arg_19_2.chrome.style.textured_backdrop.color[1] = 255 * var_19_0
-				arg_19_2.overlay.style.rect.color[1] = 30 * var_19_0
+				arg_19_2.chrome.style.bottom_glow.color[1] = 150 * num
+				arg_19_2.chrome.style.textured_backdrop.color[1] = 255 * num
+				arg_19_2.overlay.style.rect.color[1] = 30 * num
 			end,
 			on_complete = NOP
 		},
@@ -614,34 +637,37 @@ local var_0_15 = {
 			name = "fade_slide_out",
 			duration = 0.5,
 			init = NOP,
-			update = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
-				local var_20_0 = 1 - math.easeOutCubic(arg_20_3)
-				local var_20_1 = arg_20_2.chrome
-				local var_20_2 = 0 * var_20_0
+			update = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+				-- function 20
+				local num = 1 - math.easeOutCubic(arg_20_3)
+				local chrome = arg_20_2.chrome
+				local num_2 = 0 * num
 
-				var_20_1.style.top_detail.color[1] = 0
-				var_20_1.style.bottom_detail.color[1] = 0
-				var_20_1.style.category_text.text_color[1] = var_20_2
-				var_20_1.style.pick_text.text_color[1] = var_20_2
+				chrome.style.top_detail.color[1] = 0
+				chrome.style.bottom_detail.color[1] = 0
+				chrome.style.category_text.text_color[1] = num_2
+				chrome.style.pick_text.text_color[1] = num_2
 			end,
 			on_complete = NOP
 		},
 		{
 			name = "slide_out_frames",
 			duration = 0.5,
-			init = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
-				local var_21_0 = arg_21_3._selector_widgets
+			init = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+				-- function 21
+				local _selector_widgets = arg_21_3._selector_widgets
 
-				for iter_21_0 = 1, #var_21_0 do
-					var_21_0[iter_21_0].offset[2] = 0
+				for i = 1, #_selector_widgets do
+					_selector_widgets[i].offset[2] = 0
 				end
 			end,
-			update = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
-				local var_22_0 = math.easeOutCubic(arg_22_3)
-				local var_22_1 = arg_22_4._selector_widgets
+			update = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+				-- function 22
+				local easeOutCubic = math.easeOutCubic(arg_22_3)
+				local _selector_widgets = arg_22_4._selector_widgets
 
-				for iter_22_0 = 1, #var_22_1 do
-					var_22_1[iter_22_0].offset[2] = -(400 + 100 * iter_22_0) * var_22_0
+				for i = 1, #_selector_widgets do
+					_selector_widgets[i].offset[2] = -(400 + 100 * i) * easeOutCubic
 				end
 			end,
 			on_complete = NOP
@@ -650,7 +676,8 @@ local var_0_15 = {
 			name = "fade_out_info_text",
 			duration = 0.5,
 			init = NOP,
-			update = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+			update = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+				-- function 23
 				arg_23_2.info_text.style.text.text_color[1] = 255 * (1 - math.easeOutCubic(arg_23_3))
 			end,
 			on_complete = NOP
@@ -659,7 +686,8 @@ local var_0_15 = {
 			name = "fade_out_info_text_shadow",
 			duration = 0.5,
 			init = NOP,
-			update = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+			update = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+				-- function 24
 				arg_24_2.info_text_shadow.style.text.text_color[1] = 255 * (1 - math.easeOutCubic(arg_24_3))
 			end,
 			on_complete = NOP
@@ -668,10 +696,10 @@ local var_0_15 = {
 }
 
 return {
-	scenegraph_definition = var_0_0,
-	widget_definitions = var_0_14,
-	animation_definitions = var_0_15,
-	selection_frame_definition = var_0_9,
-	ordered_pactsworn_slots = var_0_2,
-	create_selection_widget = var_0_8
+	scenegraph_definition = tbl,
+	widget_definitions = tbl_8,
+	animation_definitions = tbl_9,
+	selection_frame_definition = tbl_3,
+	ordered_pactsworn_slots = tbl_2,
+	create_selection_widget = fn
 }

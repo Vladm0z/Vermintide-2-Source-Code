@@ -2,7 +2,7 @@
 
 CurlManager = class(CurlManager)
 
-local var_0_0 = {
+local tbl = {
 	[0] = "info_text",
 	"info_header_in",
 	"info_header_out",
@@ -12,122 +12,145 @@ local var_0_0 = {
 	"info_ssl_data_out"
 }
 
-local function var_0_1(arg_1_0, arg_1_1)
-	printf("[CURL] %s: %s", var_0_0[arg_1_0], arg_1_1)
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
+	printf("[CURL] %s: %s", tbl[arg_1_0], arg_1_1)
 end
 
-function CurlManager.init(arg_2_0)
-	arg_2_0._curl = lcurl.stingray_init()
-	arg_2_0._multi = arg_2_0._curl.multi()
-	arg_2_0._requests = {}
+CurlManager.init = function (self)
+	-- function 2
+	self._curl = lcurl.stingray_init()
+	self._multi = self._curl.multi()
+	self._requests = {}
 end
 
-function CurlManager.destroy(arg_3_0)
-	local var_3_0 = os.time() + 10
+CurlManager.destroy = function (self)
+	-- function 3
+	local num = os.time() + 10
 
-	while arg_3_0:_num_requests() > 0 do
-		arg_3_0:update(false)
+	while self:_num_requests() > 0 do
+		self:update(false)
 
-		if var_3_0 < os.time() then
+		if num < os.time() then
 			print("Not all curl requests were successfully handled")
 
 			break
 		end
 	end
 
-	for iter_3_0, iter_3_1 in pairs(arg_3_0._requests) do
-		iter_3_0:close()
+	for k, v in pairs(self._requests) do
+		k:close()
 	end
 end
 
-local var_0_2 = {}
+local tbl_2 = {}
 
-var_0_2.__index = var_0_2
+tbl_2.__index = tbl_2
 
-function var_0_2.new()
-	local var_4_0 = setmetatable({}, var_0_2)
+tbl_2.new = function ()
+	-- function 4
+	local var_4_0 = setmetatable({}, tbl_2)
 
 	var_4_0.headers = {}
 
 	return var_4_0
 end
 
-function var_0_2.OnResponse(arg_5_0, arg_5_1)
-	arg_5_0.data = arg_5_0.data and arg_5_0.data .. arg_5_1 or arg_5_1
+tbl_2.OnResponse = function (self, arg_5_1)
+	-- function 5
+	local str
+
+	if not self.data then
+		str = self.data .. arg_5_1
+
+		if not str then
+			-- Nothing
+		end
+	end
+
+	str = arg_5_1
+
+	::label_5_0::
+
+	self.data = str
 end
 
-function var_0_2.OnHeader(arg_6_0, arg_6_1)
-	local var_6_0, var_6_1 = arg_6_1:match("([^:]+):%s+([^:]+)")
+tbl_2.OnHeader = function (arg_6_0, arg_6_1)
+	-- function 6
+	local match, var_6_1 = arg_6_1:match("([^:]+):%s+([^:]+)")
 
-	if var_6_0 ~= nil then
-		arg_6_0.headers[var_6_0] = string.gsub(var_6_1, "\r\n", "")
+	if match ~= nil then
+		arg_6_0.headers[match] = string.gsub(var_6_1, "\r\n", "")
 	end
 end
 
-function CurlManager.update(arg_7_0, arg_7_1)
+CurlManager.update = function (self, arg_7_1)
+	-- function 7
 	DeadlockStack.pause()
 
-	if arg_7_0._multi:perform() > 0 then
-		arg_7_0._multi:wait(0)
+	if self._multi:perform() > 0 then
+		self._multi:wait(0)
 	end
 
 	DeadlockStack.unpause()
 
-	local var_7_0, var_7_1, var_7_2 = arg_7_0._multi:info_read()
+	local info_read, var_7_1, var_7_2 = self._multi:info_read()
 
-	if var_7_0 ~= 0 then
-		local var_7_3 = arg_7_0._requests[var_7_0]
+	if info_read ~= 0 then
+		local var_7_3 = self._requests[info_read]
 
 		if var_7_3 ~= nil then
-			if arg_7_1 and var_7_3.cb then
-				local var_7_4 = var_7_0:getinfo(arg_7_0._curl.INFO_RESPONSE_CODE)
+			if not arg_7_1 and not var_7_3.cb then
+				local getinfo = info_read:getinfo(self._curl.INFO_RESPONSE_CODE)
 
-				if var_7_1 then
-					var_7_3.cb(true, var_7_4, var_7_3.headers, var_7_3.data, var_7_3.userdata)
+				if not var_7_1 then
+					var_7_3.cb(true, getinfo, var_7_3.headers, var_7_3.data, var_7_3.userdata)
 				else
-					Application.warning("Curl Manager Error, Code: %s, Url: %s, Name: %s", tostring(var_7_4), var_7_3.url, tostring(var_7_2:name()))
-					var_7_3.cb(false, var_7_4, {}, var_7_2:name(), var_7_3.userdata)
+					Application.warning("Curl Manager Error, Code: %s, Url: %s, Name: %s", tostring(getinfo), var_7_3.url, tostring(var_7_2:name()))
+					var_7_3.cb(false, getinfo, {}, var_7_2:name(), var_7_3.userdata)
 				end
 			end
 
-			arg_7_0._requests[var_7_0] = nil
+			self._requests[info_read] = nil
 		end
 
-		var_7_0:close()
+		info_read:close()
 	end
 end
 
-function CurlManager._num_requests(arg_8_0)
-	return table.size(arg_8_0._requests)
+CurlManager._num_requests = function (self)
+	-- function 8
+	return table.size(self._requests)
 end
 
-function CurlManager.add_request(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7)
-	local var_9_0 = arg_9_0._curl.easy()
+CurlManager.add_request = function (self, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7)
+	-- function 9
+	local easy = self._curl.easy()
 
-	var_9_0:setopt_url(arg_9_2)
-	var_9_0:setopt_customrequest(arg_9_1)
+	easy:setopt_url(arg_9_2)
+	easy:setopt_customrequest(arg_9_1)
 
 	if arg_9_4 ~= nil then
 		if type(arg_9_4) == "table" then
-			var_9_0:setopt_httpheader(arg_9_4)
+			easy:setopt_httpheader(arg_9_4)
 		else
-			var_9_0:setopt_httpheader({
+			easy:setopt_httpheader({
 				arg_9_4
 			})
 		end
 	end
 
 	if arg_9_7 ~= nil then
-		for iter_9_0, iter_9_1 in pairs(arg_9_7) do
-			var_9_0:setopt(iter_9_0, iter_9_1)
+		for k, v in pairs(arg_9_7) do
+			easy:setopt(k, v)
 		end
 	end
 
 	if arg_9_3 ~= nil then
-		var_9_0:setopt_postfields(arg_9_3)
+		easy:setopt_postfields(arg_9_3)
 	end
 
-	local var_9_1 = var_0_2.new()
+	local var_9_1 = tbl_2.new()
 
 	var_9_1.cb = arg_9_5
 	var_9_1.userdata = arg_9_6
@@ -136,57 +159,65 @@ function CurlManager.add_request(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, ar
 	local var_9_2 = callback(var_9_1, "OnResponse")
 	local var_9_3 = callback(var_9_1, "OnHeader")
 
-	var_9_0:setopt_writefunction(var_9_2)
-	var_9_0:setopt_headerfunction(var_9_3)
-	arg_9_0._multi:add_handle(var_9_0)
+	easy:setopt_writefunction(var_9_2)
+	easy:setopt_headerfunction(var_9_3)
+	self._multi:add_handle(easy)
 
-	arg_9_0._requests[var_9_0] = var_9_1
+	self._requests[easy] = var_9_1
 end
 
-function CurlManager.get(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
-	arg_10_0:add_request("GET", arg_10_1, nil, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+CurlManager.get = function (self, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+	-- function 10
+	self:add_request("GET", arg_10_1, nil, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
 end
 
-function CurlManager.post(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6)
-	arg_11_0:add_request("POST", arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6)
+CurlManager.post = function (self, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6)
+	-- function 11
+	self:add_request("POST", arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6)
 end
 
-function CurlManager.put(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
-	arg_12_0:add_request("PUT", arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
+CurlManager.put = function (self, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
+	-- function 12
+	self:add_request("PUT", arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
 end
 
-function CurlManager.delete(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6)
-	arg_13_0:add_request("DELETE", arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6)
+CurlManager.delete = function (self, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6)
+	-- function 13
+	self:add_request("DELETE", arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6)
 end
 
-function CurlManager.patch(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6)
-	arg_14_0:add_request("PATCH", arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6)
+CurlManager.patch = function (self, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6)
+	-- function 14
+	self:add_request("PATCH", arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6)
 end
 
-local function var_0_3(arg_15_0)
-	local var_15_0 = false
+local function fn_2(arg_15_0)
+	-- function 15
+	local flag = false
 
-	return function()
-		if var_15_0 == false then
-			var_15_0 = true
+	return function ()
+		-- function 16
+		if flag == false then
+			flag = true
 
 			return arg_15_0
 		end
 	end
 end
 
-function CurlManager.upload(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
-	local var_17_0 = arg_17_0._curl.easy()
+CurlManager.upload = function (self, arg_17_1, arg_17_2, arg_17_3)
+	-- function 17
+	local easy = self._curl.easy()
 
-	var_17_0:setopt_url(arg_17_1)
-	var_17_0:setopt_upload(true)
-	var_17_0:setopt_readfunction(var_0_3(arg_17_2))
+	easy:setopt_url(arg_17_1)
+	easy:setopt_upload(true)
+	easy:setopt_readfunction(fn_2(arg_17_2))
 
-	local var_17_1 = var_0_2.new()
+	local var_17_1 = tbl_2.new()
 
 	var_17_1.cb = arg_17_3
 
-	arg_17_0._multi:add_handle(var_17_0)
+	self._multi:add_handle(easy)
 
-	arg_17_0._requests[var_17_0] = var_17_1
+	self._requests[easy] = var_17_1
 end

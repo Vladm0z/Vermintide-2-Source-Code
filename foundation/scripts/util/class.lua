@@ -1,64 +1,69 @@
 -- chunkname: @foundation/scripts/util/class.lua
 
-local var_0_0 = {
-	__index = function()
+local tbl = {
+	__index = function ()
+		-- function 1
 		error("This object has been destroyed", 2)
 	end
 }
-local var_0_1 = {
+local tbl_2 = {
 	new = true,
 	__index = true,
 	super = true,
 	delete = true
 }
 
-function class(arg_2_0, ...)
-	local var_2_0 = ...
+function class(self, ...)
+	-- function 2
+	local args = ...
 
-	if select("#", ...) >= 1 and var_2_0 == nil then
+	if not (not (select("#", ...) >= 1) or args ~= nil) then
 		ferror("Trying to inherit from nil")
 	end
 
-	if not arg_2_0 then
-		arg_2_0 = {
+	if not self then
+		self = {
 			___is_class_metatable___ = true,
-			super = var_2_0
+			super = args
 		}
-		arg_2_0.__index = arg_2_0
+		self.__index = self
 
-		function arg_2_0.new(arg_3_0, ...)
-			local var_3_0 = {}
+		self.new = function (arg_3_0, ...)
+			-- function 3
+			local tbl = {}
 
-			setmetatable(var_3_0, arg_2_0)
+			setmetatable(tbl, self)
 
-			if var_3_0.init then
-				var_3_0:init(...)
+			if not tbl.init then
+				tbl:init(...)
 			end
 
-			return var_3_0
+			return tbl
 		end
 
-		function arg_2_0.delete(arg_4_0, ...)
-			if arg_4_0.destroy then
-				arg_4_0:destroy(...)
+		self.delete = function (self, ...)
+			-- function 4
+			if not self.destroy then
+				self:destroy(...)
 			end
 
-			setmetatable(arg_4_0, var_0_0)
-		end
-	end
-
-	if var_2_0 then
-		for iter_2_0, iter_2_1 in pairs(var_2_0) do
-			if not var_0_1[iter_2_0] then
-				arg_2_0[iter_2_0] = iter_2_1
-			end
+			setmetatable(self, tbl)
 		end
 	end
 
-	return arg_2_0
+	if not args then
+		for k, v in pairs(args) do
+			if not tbl_2[k] then
+				self[k] = v
+			end
+		end
+	end
+
+	return self
 end
 
 function is_class_instance(arg_5_0)
+	-- function 5
 	if type(arg_5_0) ~= "table" then
 		return false
 	end

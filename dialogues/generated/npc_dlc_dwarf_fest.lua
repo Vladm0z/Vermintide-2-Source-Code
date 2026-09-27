@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/npc_dlc_dwarf_fest.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		response = "nco_dal_bonus_troll_one_dead_a",
 		name = "nco_dal_bonus_troll_one_dead_a",

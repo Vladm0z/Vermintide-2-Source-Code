@@ -4,194 +4,222 @@ require("scripts/managers/blood/blood_settings")
 
 BloodManager = class(BloodManager)
 
-local var_0_0 = 64
-local var_0_1 = 15
+local num = 64
+local num_2 = 15
 
-function BloodManager.init(arg_1_0, arg_1_1)
-	arg_1_0._world = arg_1_1
-	arg_1_0._weapon_blood = {}
-	arg_1_0._blood_effect_data = {}
-	arg_1_0._blood_active = true
+BloodManager.init = function (self, arg_1_1)
+	-- function 1
+	self._world = arg_1_1
+	self._weapon_blood = {}
+	self._blood_effect_data = {}
+	self._blood_active = true
 
-	arg_1_0:_create_blood_ball_buffer()
+	self:_create_blood_ball_buffer()
 
-	local var_1_0 = 5
+	local num = 5
 
-	arg_1_0._blood_system = EngineOptimizedExtensions.blood_init_system(arg_1_0._blood_system, arg_1_0._world, "blood_ball", var_1_0)
+	self._blood_system = EngineOptimizedExtensions.blood_init_system(self._blood_system, self._world, "blood_ball", num)
 
-	arg_1_0:_init_settings()
+	self:_init_settings()
 end
 
-function BloodManager.destroy(arg_2_0)
-	arg_2_0:clear_weapon_blood()
-	EngineOptimizedExtensions.blood_destroy_system(arg_2_0._blood_system)
+BloodManager.destroy = function (self)
+	-- function 2
+	self:clear_weapon_blood()
+	EngineOptimizedExtensions.blood_destroy_system(self._blood_system)
 end
 
-function BloodManager.update(arg_3_0, arg_3_1, arg_3_2)
-	if arg_3_0._blood_active then
-		local var_3_0 = World.time(arg_3_0._world)
+BloodManager.update = function (self, arg_3_1, arg_3_2)
+	-- function 3
+	if not self._blood_active then
+		local time = World.time(self._world)
 
-		arg_3_0:_update_weapon_blood(arg_3_1, var_3_0)
-		arg_3_0:_update_blood_ball_buffer()
+		self:_update_weapon_blood(arg_3_1, time)
+		self:_update_blood_ball_buffer()
 	end
 
-	arg_3_0:_update_blood_effects()
-	EngineOptimizedExtensions.blood_update(arg_3_0._blood_system)
+	self:_update_blood_effects()
+	EngineOptimizedExtensions.blood_update(self._blood_system)
 end
 
-function BloodManager.update_blood_enabled(arg_4_0, arg_4_1)
-	if not arg_4_1 and arg_4_0._blood_active then
-		arg_4_0:clear_weapon_blood()
-		arg_4_0:clear_blood_decals()
+BloodManager.update_blood_enabled = function (self, arg_4_1)
+	-- function 4
+	if arg_4_1 or not self._blood_active then
+		self:clear_weapon_blood()
+		self:clear_blood_decals()
 	end
 
-	arg_4_0._blood_active = arg_4_1
+	self._blood_active = arg_4_1
 	BloodSettings.enemy_blood.enabled = arg_4_1
 	BloodSettings.blood_decals.enabled = arg_4_1
 	BloodSettings.weapon_blood.enabled = arg_4_1
 	BloodSettings.hit_effects.enabled = arg_4_1
 end
 
-function BloodManager.get_blood_enabled(arg_5_0)
-	return arg_5_0._blood_active
+BloodManager.get_blood_enabled = function (self)
+	-- function 5
+	return self._blood_active
 end
 
-function BloodManager.update_num_blood_decals(arg_6_0, arg_6_1)
+BloodManager.update_num_blood_decals = function (arg_6_0, arg_6_1)
+	-- function 6
 	BloodSettings.blood_decals.num_decals = arg_6_1
 end
 
-function BloodManager.update_screen_blood_enabled(arg_7_0, arg_7_1)
+BloodManager.update_screen_blood_enabled = function (arg_7_0, arg_7_1)
+	-- function 7
 	BloodSettings.screen_space.enabled = arg_7_1
 end
 
-function BloodManager.update_dismemberment_enabled(arg_8_0, arg_8_1)
+BloodManager.update_dismemberment_enabled = function (arg_8_0, arg_8_1)
+	-- function 8
 	BloodSettings.dismemberment.enabled = arg_8_1
 end
 
-function BloodManager.update_ragdoll_enabled(arg_9_0, arg_9_1)
+BloodManager.update_ragdoll_enabled = function (arg_9_0, arg_9_1)
+	-- function 9
 	BloodSettings.ragdoll_push.enabled = arg_9_1
 end
 
-function BloodManager._init_settings(arg_10_0)
-	local var_10_0 = Application.user_setting("blood_enabled") or var_10_0 == nil
+BloodManager._init_settings = function (self)
+	-- function 10
+	local user_setting = Application.user_setting("blood_enabled")
 
-	arg_10_0:update_blood_enabled(var_10_0)
+	user_setting = user_setting or user_setting == nil
 
-	local var_10_1 = Application.user_setting("num_blood_decals") or BloodSettings.blood_decals.num_decals
+	self:update_blood_enabled(user_setting)
 
-	arg_10_0:update_num_blood_decals(var_10_1)
+	local user_setting_2 = Application.user_setting("num_blood_decals")
 
-	local var_10_2 = Application.user_setting("screen_blood_enabled") or var_10_2 == nil
+	user_setting_2 = user_setting_2 or BloodSettings.blood_decals.num_decals
 
-	arg_10_0:update_screen_blood_enabled(var_10_2)
+	self:update_num_blood_decals(user_setting_2)
 
-	local var_10_3 = Application.user_setting("dismemberment_enabled") or var_10_3 == nil
+	local user_setting_3 = Application.user_setting("screen_blood_enabled")
 
-	arg_10_0:update_dismemberment_enabled(var_10_3)
+	user_setting_3 = user_setting_3 or user_setting_3 == nil
 
-	local var_10_4 = Application.user_setting("ragdoll_enabled") or var_10_4 == nil
+	self:update_screen_blood_enabled(user_setting_3)
 
-	arg_10_0:update_ragdoll_enabled(var_10_4)
+	local user_setting_4 = Application.user_setting("dismemberment_enabled")
+
+	user_setting_4 = user_setting_4 or user_setting_4 == nil
+
+	self:update_dismemberment_enabled(user_setting_4)
+
+	local user_setting_5 = Application.user_setting("ragdoll_enabled")
+
+	user_setting_5 = user_setting_5 or user_setting_5 == nil
+
+	self:update_ragdoll_enabled(user_setting_5)
 end
 
-function BloodManager._update_weapon_blood(arg_11_0, arg_11_1, arg_11_2)
-	for iter_11_0, iter_11_1 in pairs(arg_11_0._weapon_blood) do
-		for iter_11_2, iter_11_3 in pairs(iter_11_1) do
-			iter_11_1[iter_11_2] = math.clamp(iter_11_3 - BloodSettings.weapon_blood.dissolve_rate * arg_11_1, 0, BloodSettings.weapon_blood.max_value)
+BloodManager._update_weapon_blood = function (self, arg_11_1, arg_11_2)
+	-- function 11
+	for k, v in pairs(self._weapon_blood) do
+		for k_2, v_2 in pairs(v) do
+			v[k_2] = math.clamp(v_2 - BloodSettings.weapon_blood.dissolve_rate * arg_11_1, 0, BloodSettings.weapon_blood.max_value)
 
-			arg_11_0:_set_weapon_blood_intensity(iter_11_0, iter_11_2, iter_11_1[iter_11_2])
+			self:_set_weapon_blood_intensity(k, k_2, v[k_2])
 		end
 	end
 end
 
-function BloodManager.clear_blood_decals(arg_12_0)
+BloodManager.clear_blood_decals = function (arg_12_0)
+	-- function 12
 	Managers.state.decal:clear_all_of_type("blood_decals")
 end
 
-function BloodManager.clear_unit_decals(arg_13_0, arg_13_1)
+BloodManager.clear_unit_decals = function (arg_13_0, arg_13_1)
+	-- function 13
 	Unit.set_vector4_for_materials(arg_13_1, "hit_position", Color(0, 0, 0, 0))
 end
 
-function BloodManager._update_blood_effects(arg_14_0)
-	for iter_14_0, iter_14_1 in pairs(arg_14_0._blood_effect_data) do
-		if not HEALTH_ALIVE[iter_14_0] and not iter_14_1.done then
-			for iter_14_2, iter_14_3 in ipairs(iter_14_1) do
-				if iter_14_3.effect_id then
-					World.destroy_particles(arg_14_0._world, iter_14_3.effect_id)
+BloodManager._update_blood_effects = function (self)
+	-- function 14
+	for k, v in pairs(self._blood_effect_data) do
+		if not (HEALTH_ALIVE[k] or v.done) then
+			for i, v_2 in ipairs(v) do
+				if not v_2.effect_id then
+					World.destroy_particles(self._world, v_2.effect_id)
 				end
 			end
 
-			arg_14_0._blood_effect_data[iter_14_0].done = true
+			self._blood_effect_data[k].done = true
 		end
 	end
 end
 
-function BloodManager._set_weapon_blood_intensity(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
-	if Unit.alive(arg_15_2) then
+BloodManager._set_weapon_blood_intensity = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+	-- function 15
+	if not Unit.alive(arg_15_2) then
 		Unit.set_scalar_for_materials(arg_15_2, "blood_intensity", arg_15_3)
 	else
 		arg_15_0._weapon_blood[arg_15_1][arg_15_2] = nil
 	end
 end
 
-function BloodManager.clear_weapon_blood(arg_16_0, arg_16_1, arg_16_2)
-	if arg_16_1 and arg_16_0._weapon_blood[arg_16_1] then
-		local var_16_0 = arg_16_0._weapon_blood[arg_16_1]
+BloodManager.clear_weapon_blood = function (self, arg_16_1, arg_16_2)
+	-- function 16
+	if not arg_16_1 and not self._weapon_blood[arg_16_1] then
+		local var_16_0 = self._weapon_blood[arg_16_1]
 
-		if arg_16_2 and var_16_0[arg_16_2] then
-			arg_16_0:_set_weapon_blood_intensity(arg_16_1, arg_16_2, 0)
+		if not arg_16_2 and not var_16_0[arg_16_2] then
+			self:_set_weapon_blood_intensity(arg_16_1, arg_16_2, 0)
 
-			arg_16_0._weapon_blood[arg_16_1][arg_16_2] = nil
+			self._weapon_blood[arg_16_1][arg_16_2] = nil
 		elseif not arg_16_2 then
-			for iter_16_0, iter_16_1 in pairs(var_16_0) do
-				arg_16_0:_set_weapon_blood_intensity(arg_16_1, iter_16_0, 0)
+			for k, v in pairs(var_16_0) do
+				self:_set_weapon_blood_intensity(arg_16_1, k, 0)
 			end
 
-			arg_16_0._weapon_blood[arg_16_1] = nil
+			self._weapon_blood[arg_16_1] = nil
 		end
 	else
-		for iter_16_2, iter_16_3 in pairs(arg_16_0._weapon_blood) do
-			for iter_16_4, iter_16_5 in pairs(iter_16_3) do
-				arg_16_0._weapon_blood[iter_16_2][iter_16_4] = nil
+		for k_2, v_2 in pairs(self._weapon_blood) do
+			for k_3, v_3 in pairs(v_2) do
+				self._weapon_blood[k_2][k_3] = nil
 
-				arg_16_0:_set_weapon_blood_intensity(iter_16_2, iter_16_4, 0)
+				self:_set_weapon_blood_intensity(k_2, k_3, 0)
 			end
 		end
 
-		arg_16_0._weapon_blood = {}
+		self._weapon_blood = {}
 	end
 end
 
-function BloodManager._update_blood_ball_buffer(arg_17_0)
-	local var_17_0 = arg_17_0._blood_ball_ring_buffer
-	local var_17_1 = var_17_0.size
+BloodManager._update_blood_ball_buffer = function (self)
+	-- function 17
+	local _blood_ball_ring_buffer = self._blood_ball_ring_buffer
+	local size = _blood_ball_ring_buffer.size
 
-	if var_17_1 == 0 then
+	if size == 0 then
 		return
 	end
 
-	local var_17_2 = var_17_0.buffer
-	local var_17_3 = var_17_0.read_index
-	local var_17_4 = var_17_0.max_size
-	local var_17_5 = math.min(var_0_1, var_17_1)
+	local buffer = _blood_ball_ring_buffer.buffer
+	local read_index = _blood_ball_ring_buffer.read_index
+	local max_size = _blood_ball_ring_buffer.max_size
+	local min = math.min(num_2, size)
 
-	for iter_17_0 = 1, var_17_5 do
-		local var_17_6 = var_17_2[var_17_3]
+	for i = 1, min do
+		local var_17_6 = buffer[read_index]
 
-		arg_17_0:_spawn_blood_ball(var_17_6)
+		self:_spawn_blood_ball(var_17_6)
 
-		var_17_3 = var_17_3 % var_17_4 + 1
-		var_17_1 = var_17_1 - 1
+		read_index = read_index % max_size + 1
+		size = size - 1
 	end
 
-	var_17_0.size = var_17_1
-	var_17_0.read_index = var_17_3
+	_blood_ball_ring_buffer.size = size
+	_blood_ball_ring_buffer.read_index = read_index
 end
 
-function BloodManager._create_blood_ball_buffer(arg_18_0)
-	local var_18_0 = var_0_0
+BloodManager._create_blood_ball_buffer = function (self)
+	-- function 18
+	local var_18_0 = num
 
-	arg_18_0._blood_ball_ring_buffer = {
+	self._blood_ball_ring_buffer = {
 		write_index = 1,
 		read_index = 1,
 		size = 0,
@@ -199,8 +227,8 @@ function BloodManager._create_blood_ball_buffer(arg_18_0)
 		max_size = var_18_0
 	}
 
-	for iter_18_0 = 1, var_18_0 do
-		arg_18_0._blood_ball_ring_buffer.buffer[iter_18_0] = {
+	for i = 1, var_18_0 do
+		self._blood_ball_ring_buffer.buffer[i] = {
 			velocity = 0,
 			position = Vector3Box(),
 			direction = Vector3Box()
@@ -208,176 +236,211 @@ function BloodManager._create_blood_ball_buffer(arg_18_0)
 	end
 end
 
-function BloodManager._spawn_blood_ball(arg_19_0, arg_19_1)
-	local var_19_0 = arg_19_1.position:unbox()
-	local var_19_1 = arg_19_1.direction:unbox()
-	local var_19_2 = Quaternion.look(var_19_1, Vector3.up())
-	local var_19_3 = arg_19_1.velocity
+BloodManager._spawn_blood_ball = function (self, arg_19_1)
+	-- function 19
+	local unbox = arg_19_1.position:unbox()
+	local unbox_2 = arg_19_1.direction:unbox()
+	local look = Quaternion.look(unbox_2, Vector3.up())
+	local velocity = arg_19_1.velocity
 
-	EngineOptimizedExtensions.blood_spawn_blood_ball(arg_19_0._blood_system, "units/decals/blood_ball", var_19_0, var_19_2, var_19_1, var_19_3)
+	EngineOptimizedExtensions.blood_spawn_blood_ball(self._blood_system, "units/decals/blood_ball", unbox, look, unbox_2, velocity)
 end
 
-function BloodManager.despawn_blood_ball(arg_20_0, arg_20_1)
-	EngineOptimizedExtensions.blood_despawn_blood_ball(arg_20_0._blood_system, arg_20_1)
+BloodManager.despawn_blood_ball = function (self, arg_20_1)
+	-- function 20
+	EngineOptimizedExtensions.blood_despawn_blood_ball(self._blood_system, arg_20_1)
 end
 
-function BloodManager._add_blood_ball_data_to_buffer(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
-	local var_21_0 = arg_21_0._blood_ball_ring_buffer
-	local var_21_1 = var_21_0.buffer
-	local var_21_2 = var_21_0.read_index
-	local var_21_3 = var_21_0.write_index
-	local var_21_4 = var_21_0.size
-	local var_21_5 = var_21_0.max_size
+BloodManager._add_blood_ball_data_to_buffer = function (self, arg_21_1, arg_21_2, arg_21_3)
+	-- function 21
+	local _blood_ball_ring_buffer = self._blood_ball_ring_buffer
+	local buffer = _blood_ball_ring_buffer.buffer
+	local read_index = _blood_ball_ring_buffer.read_index
+	local write_index = _blood_ball_ring_buffer.write_index
+	local size = _blood_ball_ring_buffer.size
+	local max_size = _blood_ball_ring_buffer.max_size
 
-	if var_21_5 < var_21_4 + 1 then
-		local var_21_6 = var_21_1[var_21_2]
+	if max_size < size + 1 then
+		local var_21_6 = buffer[read_index]
 
-		arg_21_0:_spawn_blood_ball(var_21_6)
+		self:_spawn_blood_ball(var_21_6)
 
-		var_21_0.size = var_21_4 - 1
-		var_21_0.read_index = var_21_2 % var_21_5 + 1
+		_blood_ball_ring_buffer.size = size - 1
+		_blood_ball_ring_buffer.read_index = read_index % max_size + 1
 	end
 
 	local var_21_7 = BloodSettings.blood_ball.damage_type_velocities[arg_21_3]
-	local var_21_8 = BloodSettings.blood_ball.damage_type_velocities.default
-	local var_21_9 = var_21_1[var_21_3]
+	local default = BloodSettings.blood_ball.damage_type_velocities.default
+	local var_21_9 = buffer[write_index]
 
 	var_21_9.position:store(arg_21_1)
 	var_21_9.direction:store(arg_21_2)
 
-	var_21_9.velocity = var_21_7 or var_21_8
-	var_21_0.size = var_21_4 + 1
-	var_21_0.write_index = var_21_3 % var_21_5 + 1
+	var_21_9.velocity = var_21_7 or default
+	_blood_ball_ring_buffer.size = size + 1
+	_blood_ball_ring_buffer.write_index = write_index % max_size + 1
 end
 
-function BloodManager.add_blood_ball(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
-	if BloodSettings.blood_decals.enabled then
-		local var_22_0 = Unit.get_data(arg_22_4, "breed")
+BloodManager.add_blood_ball = function (self, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+	-- function 22
+	if not BloodSettings.blood_decals.enabled then
+		local get_data = Unit.get_data(arg_22_4, "breed")
 
-		if BloodSettings.blood_decals.num_decals > 0 and Vector3.is_valid(arg_22_1) and not var_22_0.no_blood then
-			arg_22_0:_add_blood_ball_data_to_buffer(arg_22_1, arg_22_2, arg_22_3)
+		if not ((not (BloodSettings.blood_decals.num_decals > 0) or not Vector3.is_valid(arg_22_1)) and get_data.no_blood) then
+			self:_add_blood_ball_data_to_buffer(arg_22_1, arg_22_2, arg_22_3)
 		end
 
-		local var_22_1 = ScriptUnit.extension(arg_22_4, "health_system")
+		local extension = ScriptUnit.extension(arg_22_4, "health_system")
 
-		if var_22_0.blood_effect_name then
-			arg_22_0:_spawn_effects(arg_22_4, var_22_0, var_22_1)
+		if not get_data.blood_effect_name then
+			self:_spawn_effects(arg_22_4, get_data, extension)
 		end
 
-		if var_22_0.blood_intensity then
-			arg_22_0:_update_blood_intensity(arg_22_4, var_22_0, var_22_1)
+		if not get_data.blood_intensity then
+			self:_update_blood_intensity(arg_22_4, get_data, extension)
 		end
 	end
 end
 
-function BloodManager._get_blood_effect_data(arg_23_0, arg_23_1, arg_23_2)
-	if not arg_23_0._blood_effect_data[arg_23_1] then
-		arg_23_0._blood_effect_data[arg_23_1] = table.clone(arg_23_2)
+BloodManager._get_blood_effect_data = function (self, arg_23_1, arg_23_2)
+	-- function 23
+	if not self._blood_effect_data[arg_23_1] then
+		self._blood_effect_data[arg_23_1] = table.clone(arg_23_2)
 	end
 
-	return arg_23_0._blood_effect_data[arg_23_1]
+	return self._blood_effect_data[arg_23_1]
 end
 
-function BloodManager._spawn_effects(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
-	local var_24_0 = arg_24_2.blood_effect_name
-	local var_24_1 = arg_24_2.blood_effect_nodes
-	local var_24_2 = arg_24_0:_get_blood_effect_data(arg_24_1, var_24_1)
+BloodManager._spawn_effects = function (self, arg_24_1, arg_24_2, arg_24_3)
+	-- function 24
+	local blood_effect_name = arg_24_2.blood_effect_name
+	local blood_effect_nodes = arg_24_2.blood_effect_nodes
+	local _get_blood_effect_data = self:_get_blood_effect_data(arg_24_1, blood_effect_nodes)
 
-	if var_24_2.done then
+	if not _get_blood_effect_data.done then
 		return
 	end
 
-	local var_24_3 = 1 - arg_24_3:current_health_percent()
-	local var_24_4 = 1 / (#var_24_2 + 1)
-	local var_24_5 = var_24_4
+	local num = 1 - arg_24_3:current_health_percent()
+	local num_2 = 1 / (#_get_blood_effect_data + 1)
+	local var_24_5 = num_2
 
-	for iter_24_0, iter_24_1 in ipairs(var_24_2) do
-		if var_24_5 < var_24_3 then
-			if not iter_24_1.triggered then
-				local var_24_6 = World.create_particles(arg_24_0._world, var_24_0, Vector3(0, 0, 0))
+	for i, v in ipairs(_get_blood_effect_data) do
+		if var_24_5 < num then
+			if not v.triggered then
+				local create_particles = World.create_particles(self._world, blood_effect_name, Vector3(0, 0, 0))
 
-				var_24_2[iter_24_0].effect_id = var_24_6
+				_get_blood_effect_data[i].effect_id = create_particles
 
-				local var_24_7 = Unit.node(arg_24_1, iter_24_1.node)
-				local var_24_8 = Matrix4x4.from_quaternion(Unit.local_rotation(arg_24_1, var_24_7))
+				local node = Unit.node(arg_24_1, v.node)
+				local from_quaternion = Matrix4x4.from_quaternion(Unit.local_rotation(arg_24_1, node))
 
-				World.link_particles(arg_24_0._world, var_24_6, arg_24_1, var_24_7, var_24_8, "destroy")
+				World.link_particles(self._world, create_particles, arg_24_1, node, from_quaternion, "destroy")
 
-				var_24_2[iter_24_0].triggered = true
+				_get_blood_effect_data[i].triggered = true
 			end
 		else
 			break
 		end
 
-		var_24_5 = var_24_5 + var_24_4
+		var_24_5 = var_24_5 + num_2
 	end
 end
 
-function BloodManager._update_blood_intensity(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
-	local var_25_0 = arg_25_2.blood_intensity
-	local var_25_1 = Unit.num_meshes(arg_25_1)
-	local var_25_2 = 1 - arg_25_3:current_health_percent()
+BloodManager._update_blood_intensity = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+	-- function 25
+	local blood_intensity = arg_25_2.blood_intensity
+	local num_meshes = Unit.num_meshes(arg_25_1)
+	local num = 1 - arg_25_3:current_health_percent()
 
-	for iter_25_0 = 0, var_25_1 - 1 do
-		local var_25_3 = Unit.mesh(arg_25_1, iter_25_0)
+	for i = 0, num_meshes - 1 do
+		local mesh = Unit.mesh(arg_25_1, i)
 
-		for iter_25_1, iter_25_2 in pairs(var_25_0) do
-			if Mesh.has_material(var_25_3, iter_25_1) then
-				local var_25_4 = Mesh.material(var_25_3, iter_25_1)
+		for k, v in pairs(blood_intensity) do
+			if not Mesh.has_material(mesh, k) then
+				local material = Mesh.material(mesh, k)
 
-				Material.set_scalar(var_25_4, iter_25_2, var_25_2)
+				Material.set_scalar(material, v, num)
 			end
 		end
 	end
 end
 
-function BloodManager.add_weapon_blood(arg_26_0, arg_26_1, arg_26_2)
-	if BloodSettings.weapon_blood.enabled and arg_26_0:_is_player(arg_26_1) and arg_26_0:_is_melee_weapon(arg_26_1) then
-		local var_26_0 = ScriptUnit.extension(arg_26_1, "inventory_system"):equipment()
-		local var_26_1 = var_26_0.right_hand_wielded_unit
-		local var_26_2 = var_26_0.right_hand_wielded_unit_3p
-		local var_26_3 = var_26_0.left_hand_wielded_unit
-		local var_26_4 = var_26_0.left_hand_wielded_unit_3p
-		local var_26_5 = BloodSettings.weapon_blood[arg_26_2] or BloodSettings.weapon_blood.default
+BloodManager.add_weapon_blood = function (self, arg_26_1, arg_26_2)
+	-- function 26
+	if not BloodSettings.weapon_blood.enabled and not self:_is_player(arg_26_1) and not self:_is_melee_weapon(arg_26_1) then
+		local equipment = ScriptUnit.extension(arg_26_1, "inventory_system"):equipment()
+		local right_hand_wielded_unit = equipment.right_hand_wielded_unit
+		local right_hand_wielded_unit_3p = equipment.right_hand_wielded_unit_3p
+		local left_hand_wielded_unit = equipment.left_hand_wielded_unit
+		local left_hand_wielded_unit_3p = equipment.left_hand_wielded_unit_3p
+		local var_26_5 = BloodSettings.weapon_blood[arg_26_2]
 
-		arg_26_0._weapon_blood[arg_26_1] = arg_26_0._weapon_blood[arg_26_1] or {}
+		var_26_5 = var_26_5 or BloodSettings.weapon_blood.default
 
-		if var_26_1 then
-			arg_26_0._weapon_blood[arg_26_1][var_26_1] = math.max((arg_26_0._weapon_blood[arg_26_1][var_26_1] or 0) + var_26_5, BloodSettings.weapon_blood.starting_value)
+		local _weapon_blood = self._weapon_blood
+		local var_26_7 = self._weapon_blood[arg_26_1]
+
+		var_26_7 = var_26_7 or {}
+		_weapon_blood[arg_26_1] = var_26_7
+
+		if not right_hand_wielded_unit then
+			local var_26_8 = self._weapon_blood[arg_26_1]
+			local max = math.max
+			local var_26_10 = self._weapon_blood[arg_26_1][right_hand_wielded_unit]
+
+			var_26_10 = var_26_10 or 0
+			var_26_8[right_hand_wielded_unit] = max(var_26_10 + var_26_5, BloodSettings.weapon_blood.starting_value)
 		end
 
-		if var_26_2 then
-			arg_26_0._weapon_blood[arg_26_1][var_26_2] = math.max((arg_26_0._weapon_blood[arg_26_1][var_26_2] or 0) + var_26_5, BloodSettings.weapon_blood.starting_value)
+		if not right_hand_wielded_unit_3p then
+			local var_26_11 = self._weapon_blood[arg_26_1]
+			local max_2 = math.max
+			local var_26_13 = self._weapon_blood[arg_26_1][right_hand_wielded_unit_3p]
+
+			var_26_13 = var_26_13 or 0
+			var_26_11[right_hand_wielded_unit_3p] = max_2(var_26_13 + var_26_5, BloodSettings.weapon_blood.starting_value)
 		end
 
-		if var_26_3 then
-			arg_26_0._weapon_blood[arg_26_1][var_26_3] = math.max((arg_26_0._weapon_blood[arg_26_1][var_26_3] or 0) + var_26_5, BloodSettings.weapon_blood.starting_value)
+		if not left_hand_wielded_unit then
+			local var_26_14 = self._weapon_blood[arg_26_1]
+			local max_3 = math.max
+			local var_26_16 = self._weapon_blood[arg_26_1][left_hand_wielded_unit]
+
+			var_26_16 = var_26_16 or 0
+			var_26_14[left_hand_wielded_unit] = max_3(var_26_16 + var_26_5, BloodSettings.weapon_blood.starting_value)
 		end
 
-		if var_26_4 then
-			arg_26_0._weapon_blood[arg_26_1][var_26_4] = math.max((arg_26_0._weapon_blood[arg_26_1][var_26_2] or 0) + var_26_5, BloodSettings.weapon_blood.starting_value)
+		if not left_hand_wielded_unit_3p then
+			local var_26_17 = self._weapon_blood[arg_26_1]
+			local max_4 = math.max
+			local var_26_19 = self._weapon_blood[arg_26_1][right_hand_wielded_unit_3p]
+
+			var_26_19 = var_26_19 or 0
+			var_26_17[left_hand_wielded_unit_3p] = max_4(var_26_19 + var_26_5, BloodSettings.weapon_blood.starting_value)
 		end
 	end
 end
 
-function BloodManager.add_enemy_blood(arg_27_0, arg_27_1, arg_27_2)
-	if BloodSettings.enemy_blood.enabled and HEALTH_ALIVE[arg_27_2] then
-		local var_27_0 = Unit.local_position(arg_27_2, 0)
-		local var_27_1, var_27_2 = Unit.box(arg_27_2)
-		local var_27_3 = var_27_2[3] * 0.5
-		local var_27_4 = math.max(var_27_2[1], var_27_2[2]) * 0.5
-		local var_27_5 = var_27_0 + Vector3(0, 0, var_27_3)
-		local var_27_6 = var_27_5 + Vector3.normalize(arg_27_1 - var_27_5) * var_27_4
-		local var_27_7 = Unit.local_pose(arg_27_2, 0)
-		local var_27_8 = Matrix4x4.inverse(var_27_7)
-		local var_27_9 = Vector3.normalize(arg_27_1 - var_27_5)
-		local var_27_10 = Vector3.cross(var_27_9, Vector3.up())
-		local var_27_11 = Matrix4x4.transform(var_27_8, var_27_6)
-		local var_27_12 = Vector3.normalize(Matrix4x4.transform_without_translation(var_27_8, var_27_9))
-		local var_27_13 = Vector3.normalize(Matrix4x4.transform_without_translation(var_27_8, var_27_10))
-		local var_27_14 = Color(var_27_11[1], var_27_11[2], var_27_11[3], 1)
-		local var_27_15 = Color(var_27_12[1], var_27_12[2], var_27_12[3], 0)
-		local var_27_16 = Color(var_27_13[1], var_27_13[2], var_27_13[3], 0)
+BloodManager.add_enemy_blood = function (arg_27_0, arg_27_1, arg_27_2)
+	-- function 27
+	if not BloodSettings.enemy_blood.enabled and not HEALTH_ALIVE[arg_27_2] then
+		local local_position = Unit.local_position(arg_27_2, 0)
+		local box, var_27_2 = Unit.box(arg_27_2)
+		local num = var_27_2[3] * 0.5
+		local num_2 = math.max(var_27_2[1], var_27_2[2]) * 0.5
+		local num_3 = local_position + Vector3(0, 0, num)
+		local num_4 = num_3 + Vector3.normalize(arg_27_1 - num_3) * num_2
+		local local_pose = Unit.local_pose(arg_27_2, 0)
+		local inverse = Matrix4x4.inverse(local_pose)
+		local normalize = Vector3.normalize(arg_27_1 - num_3)
+		local cross = Vector3.cross(normalize, Vector3.up())
+		local transform = Matrix4x4.transform(inverse, num_4)
+		local normalize_2 = Vector3.normalize(Matrix4x4.transform_without_translation(inverse, normalize))
+		local normalize_3 = Vector3.normalize(Matrix4x4.transform_without_translation(inverse, cross))
+		local var_27_14 = Color(transform[1], transform[2], transform[3], 1)
+		local var_27_15 = Color(normalize_2[1], normalize_2[2], normalize_2[3], 0)
+		local var_27_16 = Color(normalize_3[1], normalize_3[2], normalize_3[3], 0)
 
 		Unit.set_vector4_for_materials(arg_27_2, "hit_position", var_27_14)
 		Unit.set_vector4_for_materials(arg_27_2, "hit_normal", var_27_15)
@@ -385,34 +448,37 @@ function BloodManager.add_enemy_blood(arg_27_0, arg_27_1, arg_27_2)
 	end
 end
 
-function BloodManager.play_screen_space_blood(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
-	if BloodSettings.screen_space.enabled then
-		World.create_particles(arg_28_0._world, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
+BloodManager.play_screen_space_blood = function (self, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
+	-- function 28
+	if not BloodSettings.screen_space.enabled then
+		World.create_particles(self._world, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
 	end
 end
 
-function BloodManager._is_melee_weapon(arg_29_0, arg_29_1)
-	local var_29_0 = ScriptUnit.has_extension(arg_29_1, "inventory_system")
+BloodManager._is_melee_weapon = function (arg_29_0, arg_29_1)
+	-- function 29
+	local has_extension = ScriptUnit.has_extension(arg_29_1, "inventory_system")
 
-	if not var_29_0 then
+	if not has_extension then
 		return false
 	end
 
-	local var_29_1 = var_29_0:equipment()
+	local equipment = has_extension:equipment()
 
-	if not var_29_1.wielded then
+	if not equipment.wielded then
 		return false
 	end
 
-	return var_29_1.wielded.slot_type == "melee"
+	return equipment.wielded.slot_type == "melee"
 end
 
-function BloodManager._is_player(arg_30_0, arg_30_1)
-	local var_30_0 = Managers.player:players()
+BloodManager._is_player = function (arg_30_0, arg_30_1)
+	-- function 30
+	local players = Managers.player:players()
 
-	for iter_30_0, iter_30_1 in pairs(var_30_0) do
-		if iter_30_1.player_unit == arg_30_1 then
-			return iter_30_1
+	for k, v in pairs(players) do
+		if v.player_unit == arg_30_1 then
+			return v
 		end
 	end
 

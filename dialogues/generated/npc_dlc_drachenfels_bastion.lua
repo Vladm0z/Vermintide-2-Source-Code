@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/npc_dlc_drachenfels_bastion.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		response = "ncv1_bastion_vo_first_villager",
 		name = "ncv1_bastion_vo_first_villager",

@@ -1,32 +1,38 @@
 -- chunkname: @scripts/settings/terror_events/terror_events_dlc_dwarf_fest.lua
 
-local function var_0_0(arg_1_0)
+local function fn(arg_1_0)
+	-- function 1
 	return Managers.state.conflict:count_units_by_breed_during_event(arg_1_0)
 end
 
-local function var_0_1(arg_2_0)
+local function fn_2(arg_2_0)
+	-- function 2
 	return Managers.state.conflict:count_units_by_breed(arg_2_0)
 end
 
-local function var_0_2()
+local function fn_3()
+	-- function 3
 	return #Managers.state.conflict:spawned_enemies()
 end
 
-local var_0_3 = 1
-local var_0_4 = 2
-local var_0_5 = 3
-local var_0_6 = 4
-local var_0_7 = 5
+local num = 1
+local num_2 = 2
+local num_3 = 3
+local num_4 = 4
+local num_5 = 5
 
-local function var_0_8(arg_4_0)
-	local var_4_0 = arg_4_0.enhancements[1]
+local function fn_4(self)
+	-- function 4
+	local var_4_0 = self.enhancements[1]
+	local enhancements = self.enhancements
 
-	arg_4_0.enhancements = arg_4_0.enhancements or {}
+	enhancements = enhancements or {}
+	self.enhancements = enhancements
 
-	return arg_4_0
+	return self
 end
 
-local var_0_9 = {
+local tbl = {
 	dwarf_fest_load_bosses = {
 		{
 			"force_load_breed_package",
@@ -77,8 +83,9 @@ local var_0_9 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_5_0)
-				return var_0_1("chaos_troll") < 1
+			condition = function (arg_5_0)
+				-- function 5
+				return fn_2("chaos_troll") < 1
 			end
 		},
 		{
@@ -114,8 +121,9 @@ local var_0_9 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_6_0)
-				return var_0_1("chaos_troll") < 2
+			condition = function (arg_6_0)
+				-- function 6
+				return fn_2("chaos_troll") < 2
 			end
 		},
 		{
@@ -124,8 +132,9 @@ local var_0_9 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_7_0)
-				return var_0_1("chaos_troll") < 1
+			condition = function (arg_7_0)
+				-- function 7
+				return fn_2("chaos_troll") < 1
 			end
 		},
 		{
@@ -145,7 +154,7 @@ local var_0_9 = {
 			"spawn_at_raw",
 			breed_name = "chaos_troll",
 			spawner_id = "troll_waterflow",
-			pre_spawn_func = var_0_8,
+			pre_spawn_func = fn_4,
 			optional_data = {
 				enhancements = {
 					BreedEnhancements.dwarf_fest_chaos_troll_waterflow_1,
@@ -159,8 +168,9 @@ local var_0_9 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_8_0)
-				return var_0_1("chaos_troll") < 1
+			condition = function (arg_8_0)
+				-- function 8
+				return fn_2("chaos_troll") < 1
 			end
 		},
 		{
@@ -180,7 +190,7 @@ local var_0_9 = {
 			"spawn_at_raw",
 			breed_name = "chaos_troll",
 			spawner_id = "troll_waterwheel",
-			pre_spawn_func = var_0_8,
+			pre_spawn_func = fn_4,
 			optional_data = {
 				enhancements = {
 					BreedEnhancements.dwarf_fest_chaos_troll_waterwheel_1,
@@ -194,8 +204,9 @@ local var_0_9 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_9_0)
-				return var_0_1("chaos_troll") < 1
+			condition = function (arg_9_0)
+				-- function 9
+				return fn_2("chaos_troll") < 1
 			end
 		},
 		{
@@ -215,7 +226,7 @@ local var_0_9 = {
 			"spawn_at_raw",
 			breed_name = "chaos_troll",
 			spawner_id = "troll_cog",
-			pre_spawn_func = var_0_8,
+			pre_spawn_func = fn_4,
 			optional_data = {
 				enhancements = {
 					BreedEnhancements.dwarf_fest_chaos_troll_cog_1,
@@ -229,8 +240,9 @@ local var_0_9 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_10_0)
-				return var_0_1("chaos_troll") < 1
+			condition = function (arg_10_0)
+				-- function 10
+				return fn_2("chaos_troll") < 1
 			end
 		},
 		{
@@ -460,8 +472,9 @@ local var_0_9 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function(arg_11_0)
-				return var_0_1("skaven_clan_rat") < 2 and var_0_1("skaven_slave") < 2 and var_0_1("skaven_warpfire_thrower") < 1 and var_0_1("skaven_pack_master") < 1
+			condition = function (arg_11_0)
+				-- function 11
+				return not (fn_2("skaven_clan_rat") < 2) or not (fn_2("skaven_slave") < 2) or not (fn_2("skaven_warpfire_thrower") < 1) or fn_2("skaven_pack_master") < 1
 			end
 		},
 		{
@@ -503,8 +516,9 @@ local var_0_9 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function(arg_12_0)
-				return var_0_1("skaven_clan_rat") < 2 and var_0_1("skaven_slave") < 2 and var_0_1("skaven_warpfire_thrower") < 1 and var_0_1("skaven_pack_master") < 1
+			condition = function (arg_12_0)
+				-- function 12
+				return not (fn_2("skaven_clan_rat") < 2) or not (fn_2("skaven_slave") < 2) or not (fn_2("skaven_warpfire_thrower") < 1) or fn_2("skaven_pack_master") < 1
 			end
 		},
 		{
@@ -559,8 +573,9 @@ local var_0_9 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function(arg_13_0)
-				return var_0_1("skaven_clan_rat") < 2 and var_0_1("skaven_slave") < 2
+			condition = function (arg_13_0)
+				-- function 13
+				return not (fn_2("skaven_clan_rat") < 2) or fn_2("skaven_slave") < 2
 			end
 		},
 		{
@@ -619,8 +634,9 @@ local var_0_9 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function(arg_14_0)
-				return var_0_1("skaven_clan_rat") < 2 and var_0_1("skaven_slave") < 2
+			condition = function (arg_14_0)
+				-- function 14
+				return not (fn_2("skaven_clan_rat") < 2) or fn_2("skaven_slave") < 2
 			end
 		},
 		{
@@ -700,7 +716,7 @@ local var_0_9 = {
 			"spawn_at_raw",
 			breed_name = "skaven_gutter_runner",
 			spawner_id = "cog_bridge_manual_02",
-			difficulty_requirement = var_0_4
+			difficulty_requirement = num_2
 		},
 		{
 			"delay",
@@ -718,13 +734,13 @@ local var_0_9 = {
 			"spawn_at_raw",
 			breed_name = "skaven_gutter_runner",
 			spawner_id = "cog_bridge_manual_03",
-			difficulty_requirement = var_0_5
+			difficulty_requirement = num_3
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_gutter_runner",
 			spawner_id = "cog_bridge_manual_02",
-			difficulty_requirement = var_0_6
+			difficulty_requirement = num_4
 		}
 	},
 	dwarf_fest_cog_manuals_bridge = {
@@ -739,7 +755,7 @@ local var_0_9 = {
 			"spawn_at_raw",
 			breed_name = "skaven_gutter_runner",
 			spawner_id = "cog_canyon_manual_01",
-			difficulty_requirement = var_0_4
+			difficulty_requirement = num_2
 		},
 		{
 			"delay",
@@ -761,13 +777,13 @@ local var_0_9 = {
 			"spawn_at_raw",
 			breed_name = "skaven_gutter_runner",
 			spawner_id = "cog_bridge_manual_03",
-			difficulty_requirement = var_0_4
+			difficulty_requirement = num_2
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_gutter_runner",
 			spawner_id = "cog_bridge_manual_03",
-			difficulty_requirement = var_0_5
+			difficulty_requirement = num_3
 		},
 		{
 			"delay",
@@ -785,7 +801,7 @@ local var_0_9 = {
 			"spawn_at_raw",
 			breed_name = "skaven_gutter_runner",
 			spawner_id = "cog_bridge_manual_03",
-			difficulty_requirement = var_0_6
+			difficulty_requirement = num_4
 		}
 	},
 	dwarf_fest_cog_manuals_canyon = {
@@ -800,7 +816,7 @@ local var_0_9 = {
 			"spawn_at_raw",
 			breed_name = "skaven_gutter_runner",
 			spawner_id = "cog_canyon_manual_01",
-			difficulty_requirement = var_0_4
+			difficulty_requirement = num_2
 		},
 		{
 			"delay",
@@ -822,7 +838,7 @@ local var_0_9 = {
 			"spawn_at_raw",
 			breed_name = "skaven_gutter_runner",
 			spawner_id = "cog_bridge_manual_03",
-			difficulty_requirement = var_0_4
+			difficulty_requirement = num_2
 		},
 		{
 			"delay",
@@ -835,7 +851,7 @@ local var_0_9 = {
 			"spawn_at_raw",
 			breed_name = "skaven_gutter_runner",
 			spawner_id = "cog_canyon_manual_01",
-			difficulty_requirement = var_0_6
+			difficulty_requirement = num_4
 		}
 	},
 	dwarf_fest_cog_horde_event_01 = {
@@ -914,8 +930,9 @@ local var_0_9 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function(arg_15_0)
-				return var_0_1("skaven_clan_rat") < 2 and var_0_1("skaven_slave") < 2
+			condition = function (arg_15_0)
+				-- function 15
+				return not (fn_2("skaven_clan_rat") < 2) or fn_2("skaven_slave") < 2
 			end
 		},
 		{
@@ -936,8 +953,9 @@ local var_0_9 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function(arg_16_0)
-				return var_0_1("skaven_clan_rat") < 2 and var_0_1("skaven_slave") < 2
+			condition = function (arg_16_0)
+				-- function 16
+				return not (fn_2("skaven_clan_rat") < 2) or fn_2("skaven_slave") < 2
 			end
 		},
 		{
@@ -958,8 +976,9 @@ local var_0_9 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function(arg_17_0)
-				return var_0_1("chaos_fanatic") < 2 and var_0_0("chaos_raider") < 3 and var_0_0("chaos_marauder") < 3 and var_0_0("chaos_marauder_with_shield") < 2
+			condition = function (arg_17_0)
+				-- function 17
+				return not (fn_2("chaos_fanatic") < 2) or not (fn("chaos_raider") < 3) or not (fn("chaos_marauder") < 3) or fn("chaos_marauder_with_shield") < 2
 			end
 		},
 		{
@@ -977,7 +996,7 @@ local var_0_9 = {
 				"skaven_gutter_runner",
 				"chaos_corruptor_sorcerer"
 			},
-			difficulty_requirement = var_0_5
+			difficulty_requirement = num_3
 		}
 	},
 	dwarf_fest_cog_event_manual_02 = {
@@ -990,7 +1009,7 @@ local var_0_9 = {
 				"skaven_gutter_runner",
 				"chaos_corruptor_sorcerer"
 			},
-			difficulty_requirement = var_0_6
+			difficulty_requirement = num_4
 		}
 	},
 	dwarf_fest_troll_horde_01 = {
@@ -1043,8 +1062,9 @@ local var_0_9 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_18_0)
-				return var_0_1("chaos_troll_chief") < 1
+			condition = function (arg_18_0)
+				-- function 18
+				return fn_2("chaos_troll_chief") < 1
 			end
 		},
 		{
@@ -1057,5 +1077,5 @@ local var_0_9 = {
 }
 
 return {
-	var_0_9
+	tbl
 }

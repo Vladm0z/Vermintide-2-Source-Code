@@ -1,11 +1,11 @@
 -- chunkname: @scripts/settings/terror_events/terror_events_plaza.lua
 
-local var_0_0 = require("scripts/settings/terror_events/terror_event_utils")
-local var_0_1 = var_0_0.num_spawned_enemies
-local var_0_2 = var_0_0.HARDER
-local var_0_3 = var_0_0.HARDEST
-local var_0_4 = var_0_0.CATACLYSM
-local var_0_5 = {
+local scripts_settings_terror_events_terror_event_utils = require("scripts/settings/terror_events/terror_event_utils")
+local num_spawned_enemies = scripts_settings_terror_events_terror_event_utils.num_spawned_enemies
+local HARDER = scripts_settings_terror_events_terror_event_utils.HARDER
+local HARDEST = scripts_settings_terror_events_terror_event_utils.HARDEST
+local CATACLYSM = scripts_settings_terror_events_terror_event_utils.CATACLYSM
+local tbl = {
 	plaza_disable_pacing = {
 		{
 			"control_pacing",
@@ -79,20 +79,21 @@ local var_0_5 = {
 			"spawn_at_raw",
 			breed_name = "skaven_ratling_gunner",
 			spawner_id = "manual_h",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_1_0)
-				return var_0_1() < 8
+			condition = function (arg_1_0)
+				-- function 1
+				return num_spawned_enemies() < 8
 			end
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_rat_ogre",
 			spawner_id = "manual_e",
-			difficulty_requirement = var_0_4
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"play_stinger",
@@ -120,8 +121,9 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_2_0)
-				return var_0_1() < 8
+			condition = function (arg_2_0)
+				-- function 2
+				return num_spawned_enemies() < 8
 			end
 		},
 		{
@@ -141,8 +143,9 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_3_0)
-				return var_0_1() < 3
+			condition = function (arg_3_0)
+				-- function 3
+				return num_spawned_enemies() < 3
 			end
 		},
 		{
@@ -179,8 +182,9 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_4_0)
-				return var_0_1() < 20
+			condition = function (arg_4_0)
+				-- function 4
+				return num_spawned_enemies() < 20
 			end
 		},
 		{
@@ -211,13 +215,13 @@ local var_0_5 = {
 			"spawn_at_raw",
 			breed_name = "skaven_poison_wind_globadier",
 			spawner_id = "manual_a",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_poison_wind_globadier",
 			spawner_id = "manual_i",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
@@ -226,8 +230,9 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_5_0)
-				return var_0_1() < 2
+			condition = function (arg_5_0)
+				-- function 5
+				return num_spawned_enemies() < 2
 			end
 		},
 		{
@@ -255,8 +260,9 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_6_0)
-				return var_0_1() < 10
+			condition = function (arg_6_0)
+				-- function 6
+				return num_spawned_enemies() < 10
 			end
 		},
 		{
@@ -322,7 +328,7 @@ local var_0_5 = {
 			"spawn_at_raw",
 			breed_name = "skaven_pack_master",
 			spawner_id = "manual_j",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
@@ -332,25 +338,26 @@ local var_0_5 = {
 			"spawn_at_raw",
 			breed_name = "skaven_pack_master",
 			spawner_id = "manual_i",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_poison_wind_globadier",
 			spawner_id = "manual_k",
-			difficulty_requirement = var_0_4
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_warpfire_thrower",
 			spawner_id = "manual_f",
-			difficulty_requirement = var_0_4
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"continue_when",
 			duration = 120,
-			condition = function(arg_7_0)
-				return var_0_1() < 1
+			condition = function (arg_7_0)
+				-- function 7
+				return num_spawned_enemies() < 1
 			end
 		},
 		{
@@ -402,82 +409,82 @@ local var_0_5 = {
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"play_stinger",
 			stinger_name = "enemy_gutterrunner_stinger",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"play_stinger",
 			stinger_name = "enemy_gutterrunner_stinger",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"play_stinger",
 			stinger_name = "enemy_gutterrunner_stinger",
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"play_stinger",
 			stinger_name = "enemy_gutterrunner_stinger",
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"play_stinger",
 			stinger_name = "enemy_gutterrunner_stinger",
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"play_stinger",
 			stinger_name = "enemy_gutterrunner_stinger",
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_4
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"play_stinger",
 			stinger_name = "enemy_gutterrunner_stinger",
-			difficulty_requirement = var_0_4
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_4
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"play_stinger",
 			stinger_name = "enemy_gutterrunner_stinger",
-			difficulty_requirement = var_0_4
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"delay",
@@ -520,67 +527,67 @@ local var_0_5 = {
 			"spawn_at_raw",
 			breed_name = "skaven_gutter_runner",
 			spawner_id = "manual_a",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_gutter_runner",
 			spawner_id = "manual_d",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_gutter_runner",
 			spawner_id = "manual_i",
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_gutter_runner",
 			spawner_id = "manual_k",
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_gutter_runner",
 			spawner_id = "manual_b",
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_gutter_runner",
 			spawner_id = "manual_j",
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_gutter_runner",
 			spawner_id = "manual_h",
-			difficulty_requirement = var_0_4
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_gutter_runner",
 			spawner_id = "manual_f",
-			difficulty_requirement = var_0_4
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_poison_wind_globadier",
 			spawner_id = "manual_h",
-			difficulty_requirement = var_0_4
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_poison_wind_globadier",
 			spawner_id = "manual_f",
-			difficulty_requirement = var_0_4
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_poison_wind_globadier",
 			spawner_id = "manual_i",
-			difficulty_requirement = var_0_4
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"delay",
@@ -589,8 +596,9 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_8_0)
-				return var_0_1() < 4
+			condition = function (arg_8_0)
+				-- function 8
+				return num_spawned_enemies() < 4
 			end
 		},
 		{
@@ -605,8 +613,9 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_9_0)
-				return var_0_1() < 12
+			condition = function (arg_9_0)
+				-- function 9
+				return num_spawned_enemies() < 12
 			end
 		},
 		{
@@ -640,8 +649,9 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_10_0)
-				return var_0_1() < 10
+			condition = function (arg_10_0)
+				-- function 10
+				return num_spawned_enemies() < 10
 			end
 		},
 		{
@@ -680,25 +690,26 @@ local var_0_5 = {
 			"spawn_at_raw",
 			breed_name = "chaos_vortex_sorcerer",
 			spawner_id = "manual_c",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "chaos_corruptor_sorcerer",
 			spawner_id = "manual_f",
-			difficulty_requirement = var_0_4
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "chaos_corruptor_sorcerer",
 			spawner_id = "manual_k",
-			difficulty_requirement = var_0_4
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_11_0)
-				return var_0_1() < 8
+			condition = function (arg_11_0)
+				-- function 11
+				return num_spawned_enemies() < 8
 			end
 		},
 		{
@@ -722,8 +733,9 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 120,
-			condition = function(arg_12_0)
-				return var_0_1() < 3
+			condition = function (arg_12_0)
+				-- function 12
+				return num_spawned_enemies() < 3
 			end
 		},
 		{
@@ -766,13 +778,13 @@ local var_0_5 = {
 			"spawn_at_raw",
 			breed_name = "skaven_ratling_gunner",
 			spawner_id = "manual_e",
-			difficulty_requirement = var_0_4
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_ratling_gunner",
 			spawner_id = "manual_f",
-			difficulty_requirement = var_0_4
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"event_horde",
@@ -791,8 +803,9 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_13_0)
-				return var_0_1() < 20
+			condition = function (arg_13_0)
+				-- function 13
+				return num_spawned_enemies() < 20
 			end
 		},
 		{
@@ -835,41 +848,42 @@ local var_0_5 = {
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "chaos_corruptor_sorcerer",
 			spawner_id = "manual_i",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "chaos_corruptor_sorcerer",
 			spawner_id = "manual_a",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "chaos_corruptor_sorcerer",
 			spawner_id = "manual_b",
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_14_0)
-				return var_0_1() < 5
+			condition = function (arg_14_0)
+				-- function 14
+				return num_spawned_enemies() < 5
 			end
 		},
 		{
@@ -925,24 +939,24 @@ local var_0_5 = {
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_ratling_gunner",
 			spawner_id = "manual_i",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_ratling_gunner",
 			spawner_id = "manual_c",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
@@ -951,8 +965,9 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_15_0)
-				return var_0_1() < 6
+			condition = function (arg_15_0)
+				-- function 15
+				return num_spawned_enemies() < 6
 			end
 		},
 		{
@@ -987,19 +1002,20 @@ local var_0_5 = {
 			"spawn_at_raw",
 			breed_name = "skaven_pack_master",
 			spawner_id = "manual_i",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_warpfire_thrower",
 			spawner_id = "manual_f",
-			difficulty_requirement = var_0_4
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_16_0)
-				return var_0_1() < 1
+			condition = function (arg_16_0)
+				-- function 16
+				return num_spawned_enemies() < 1
 			end
 		},
 		{
@@ -1062,35 +1078,35 @@ local var_0_5 = {
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_warpfire_thrower",
 			spawner_id = "manual_f",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_warpfire_thrower",
 			spawner_id = "manual_c",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_warpfire_thrower",
 			spawner_id = "manual_b",
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"delay",
@@ -1109,8 +1125,9 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_17_0)
-				return var_0_1() < 8
+			condition = function (arg_17_0)
+				-- function 17
+				return num_spawned_enemies() < 8
 			end
 		},
 		{
@@ -1157,19 +1174,20 @@ local var_0_5 = {
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_poison_wind_globadier",
 			spawner_id = "manual_f",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_18_0)
-				return var_0_1() < 5
+			condition = function (arg_18_0)
+				-- function 18
+				return num_spawned_enemies() < 5
 			end
 		},
 		{
@@ -1207,63 +1225,64 @@ local var_0_5 = {
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_pack_master",
 			spawner_id = "manual_b",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_pack_master",
 			spawner_id = "manual_c",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_pack_master",
 			spawner_id = "manual_d",
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_pack_master",
 			spawner_id = "manual_i",
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_pack_master",
 			spawner_id = "manual_e",
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_19_0)
-				return var_0_1() < 5
+			condition = function (arg_19_0)
+				-- function 19
+				return num_spawned_enemies() < 5
 			end
 		},
 		{
@@ -1283,8 +1302,9 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 160,
-			condition = function(arg_20_0)
-				return var_0_1() < 1
+			condition = function (arg_20_0)
+				-- function 20
+				return num_spawned_enemies() < 1
 			end
 		},
 		{
@@ -1351,8 +1371,9 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_21_0)
-				return var_0_1() < 8
+			condition = function (arg_21_0)
+				-- function 21
+				return num_spawned_enemies() < 8
 			end
 		},
 		{
@@ -1395,19 +1416,20 @@ local var_0_5 = {
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_poison_wind_globadier",
 			spawner_id = "manual_g",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_22_0)
-				return var_0_1() < 5
+			condition = function (arg_22_0)
+				-- function 22
+				return num_spawned_enemies() < 5
 			end
 		},
 		{
@@ -1439,22 +1461,22 @@ local var_0_5 = {
 		{
 			"play_stinger",
 			stinger_name = "enemy_gutterrunner_stinger",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"play_stinger",
 			stinger_name = "enemy_gutterrunner_stinger",
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
@@ -1477,30 +1499,31 @@ local var_0_5 = {
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_gutter_runner",
 			spawner_id = "manual_c",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_gutter_runner",
 			spawner_id = "manual_a",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_23_0)
-				return var_0_1() < 3
+			condition = function (arg_23_0)
+				-- function 23
+				return num_spawned_enemies() < 3
 			end
 		},
 		{
@@ -1547,85 +1570,86 @@ local var_0_5 = {
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_ratling_gunner",
 			spawner_id = "manual_f",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_ratling_gunner",
 			spawner_id = "manual_e",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_ratling_gunner",
 			spawner_id = "manual_b",
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_ratling_gunner",
 			spawner_id = "manual_i",
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_ratling_gunner",
 			spawner_id = "manual_a",
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_4
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "chaos_corruptor_sorcerer",
 			spawner_id = "manual_j",
-			difficulty_requirement = var_0_4
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_4
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "chaos_corruptor_sorcerer",
 			spawner_id = "manual_c",
-			difficulty_requirement = var_0_4
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_24_0)
-				return var_0_1() < 10
+			condition = function (arg_24_0)
+				-- function 24
+				return num_spawned_enemies() < 10
 			end
 		},
 		{
@@ -1649,8 +1673,9 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 120,
-			condition = function(arg_25_0)
-				return var_0_1() < 3
+			condition = function (arg_25_0)
+				-- function 25
+				return num_spawned_enemies() < 3
 			end
 		},
 		{
@@ -1715,13 +1740,13 @@ local var_0_5 = {
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "chaos_corruptor_sorcerer",
 			spawner_id = "manual_f",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
@@ -1731,13 +1756,14 @@ local var_0_5 = {
 			"spawn_at_raw",
 			breed_name = "chaos_troll",
 			spawner_id = "manual_a",
-			difficulty_requirement = var_0_4
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_26_0)
-				return var_0_1() < 10
+			condition = function (arg_26_0)
+				-- function 26
+				return num_spawned_enemies() < 10
 			end
 		},
 		{
@@ -1775,8 +1801,9 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_27_0)
-				return var_0_1() < 10
+			condition = function (arg_27_0)
+				-- function 27
+				return num_spawned_enemies() < 10
 			end
 		},
 		{
@@ -1800,8 +1827,9 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_28_0)
-				return var_0_1() < 5
+			condition = function (arg_28_0)
+				-- function 28
+				return num_spawned_enemies() < 5
 			end
 		},
 		{
@@ -1848,41 +1876,42 @@ local var_0_5 = {
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_poison_wind_globadier",
 			spawner_id = "manual_h",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_poison_wind_globadier",
 			spawner_id = "manual_f",
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_poison_wind_globadier",
 			spawner_id = "manual_e",
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_29_0)
-				return var_0_1() < 2
+			condition = function (arg_29_0)
+				-- function 29
+				return num_spawned_enemies() < 2
 			end
 		},
 		{
@@ -1933,46 +1962,46 @@ local var_0_5 = {
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "chaos_vortex_sorcerer",
 			spawner_id = "manual_b",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "chaos_vortex_sorcerer",
 			spawner_id = "manual_b",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "chaos_vortex_sorcerer",
 			spawner_id = "manual_f",
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "chaos_vortex_sorcerer",
 			spawner_id = "manual_c",
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"delay",
@@ -1986,8 +2015,9 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 180,
-			condition = function(arg_30_0)
-				return var_0_1() < 2
+			condition = function (arg_30_0)
+				-- function 30
+				return num_spawned_enemies() < 2
 			end
 		},
 		{
@@ -2034,13 +2064,13 @@ local var_0_5 = {
 		{
 			"delay",
 			duration = 8,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_rat_ogre",
 			spawner_id = "manual_d",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
@@ -2049,8 +2079,9 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 120,
-			condition = function(arg_31_0)
-				return var_0_1() < 6
+			condition = function (arg_31_0)
+				-- function 31
+				return num_spawned_enemies() < 6
 			end
 		},
 		{
@@ -2086,12 +2117,12 @@ local var_0_5 = {
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"play_stinger",
 			stinger_name = "enemy_gutterrunner_stinger",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
@@ -2114,13 +2145,13 @@ local var_0_5 = {
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_gutter_runner",
 			spawner_id = "manual_e",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
@@ -2129,8 +2160,9 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 120,
-			condition = function(arg_32_0)
-				return var_0_1() < 6
+			condition = function (arg_32_0)
+				-- function 32
+				return num_spawned_enemies() < 6
 			end
 		},
 		{
@@ -2168,13 +2200,13 @@ local var_0_5 = {
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_pack_master",
 			spawner_id = "manual_f",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"event_horde",
@@ -2188,8 +2220,9 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 160,
-			condition = function(arg_33_0)
-				return var_0_1() < 6
+			condition = function (arg_33_0)
+				-- function 33
+				return num_spawned_enemies() < 6
 			end
 		},
 		{
@@ -2218,24 +2251,24 @@ local var_0_5 = {
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_poison_wind_globadier",
 			spawner_id = "manual_f",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_poison_wind_globadier",
 			spawner_id = "manual_e",
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"delay",
@@ -2244,8 +2277,9 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 160,
-			condition = function(arg_34_0)
-				return var_0_1() < 6
+			condition = function (arg_34_0)
+				-- function 34
+				return num_spawned_enemies() < 6
 			end
 		},
 		{
@@ -2274,13 +2308,13 @@ local var_0_5 = {
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_pack_master",
 			spawner_id = "manual_k",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
@@ -2303,41 +2337,42 @@ local var_0_5 = {
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_ratling_gunner",
 			spawner_id = "manual_f",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
 			duration = 8,
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_rat_ogre",
 			spawner_id = "manual_a",
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"delay",
 			duration = 8,
-			difficulty_requirement = var_0_4
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_stormfiend",
 			spawner_id = "manual_b",
-			difficulty_requirement = var_0_4
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"continue_when",
 			duration = 120,
-			condition = function(arg_35_0)
-				return var_0_1() < 6
+			condition = function (arg_35_0)
+				-- function 35
+				return num_spawned_enemies() < 6
 			end
 		},
 		{
@@ -2366,12 +2401,12 @@ local var_0_5 = {
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"play_stinger",
 			stinger_name = "enemy_gutterrunner_stinger",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
@@ -2385,13 +2420,13 @@ local var_0_5 = {
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_gutter_runner",
 			spawner_id = "manual_c",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
@@ -2414,8 +2449,9 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 160,
-			condition = function(arg_36_0)
-				return var_0_1() < 6
+			condition = function (arg_36_0)
+				-- function 36
+				return num_spawned_enemies() < 6
 			end
 		},
 		{
@@ -2440,13 +2476,13 @@ local var_0_5 = {
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_warpfire_thrower",
 			spawner_id = "manual_d",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
@@ -2474,13 +2510,13 @@ local var_0_5 = {
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_warpfire_thrower",
 			spawner_id = "manual_h",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"event_horde",
@@ -2499,13 +2535,13 @@ local var_0_5 = {
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "chaos_vortex_sorcerer",
 			spawner_id = "manual_f",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
@@ -2519,30 +2555,31 @@ local var_0_5 = {
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "chaos_corruptor_sorcerer",
 			spawner_id = "manual_g",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "chaos_corruptor_sorcerer",
 			spawner_id = "manual_f",
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"continue_when",
 			duration = 160,
-			condition = function(arg_37_0)
-				return var_0_1() < 10
+			condition = function (arg_37_0)
+				-- function 37
+				return num_spawned_enemies() < 10
 			end
 		},
 		{
@@ -2629,8 +2666,9 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 160,
-			condition = function(arg_38_0)
-				return var_0_1() < 5
+			condition = function (arg_38_0)
+				-- function 38
+				return num_spawned_enemies() < 5
 			end
 		},
 		{
@@ -2655,8 +2693,9 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 300,
-			condition = function(arg_39_0)
-				return var_0_1() < 1
+			condition = function (arg_39_0)
+				-- function 39
+				return num_spawned_enemies() < 1
 			end
 		},
 		{
@@ -2667,5 +2706,5 @@ local var_0_5 = {
 }
 
 return {
-	var_0_5
+	tbl
 }

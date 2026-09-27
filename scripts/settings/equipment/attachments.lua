@@ -25,7 +25,7 @@ FirstPersonAttachments.empire_soldier = {
 }
 Attachments = {}
 
-local var_0_0 = {
+local tbl = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_trophy",
 	attachment_node_linking = AttachmentNodeLinking.trophies.hanging,
@@ -36,7 +36,7 @@ local var_0_0 = {
 	},
 	buffs = {}
 }
-local var_0_1 = {
+local tbl_2 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_trophy",
 	attachment_node_linking = AttachmentNodeLinking.trophies.flat,
@@ -48,10 +48,10 @@ local var_0_1 = {
 	buffs = {}
 }
 
-Attachments.hanging_trophy = table.clone(var_0_0)
-Attachments.flat_trophy = table.clone(var_0_1)
+Attachments.hanging_trophy = table.clone(tbl)
+Attachments.flat_trophy = table.clone(tbl_2)
 
-local var_0_2 = {
+local tbl_3 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_show_ears",
@@ -62,9 +62,9 @@ local var_0_2 = {
 	buffs = {}
 }
 
-Attachments.wh_hats = table.clone(var_0_2)
+Attachments.wh_hats = table.clone(tbl_3)
 
-local var_0_3 = {
+local tbl_4 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_show_ears",
@@ -75,9 +75,9 @@ local var_0_3 = {
 	buffs = {}
 }
 
-Attachments.wh_hats_skinned = table.clone(var_0_3)
+Attachments.wh_hats_skinned = table.clone(tbl_4)
 
-local var_0_4 = {
+local tbl_5 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_show_ears",
@@ -88,9 +88,9 @@ local var_0_4 = {
 	buffs = {}
 }
 
-Attachments.wh_face = table.clone(var_0_4)
+Attachments.wh_face = table.clone(tbl_5)
 
-local var_0_5 = {
+local tbl_6 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_show_ears",
@@ -107,9 +107,9 @@ local var_0_5 = {
 	}
 }
 
-Attachments.wh_face_no_hair = table.clone(var_0_5)
+Attachments.wh_face_no_hair = table.clone(tbl_6)
 
-local var_0_6 = {
+local tbl_7 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_hide_ears",
@@ -120,9 +120,9 @@ local var_0_6 = {
 	buffs = {}
 }
 
-Attachments.wh_hats_no_ears = table.clone(var_0_6)
+Attachments.wh_hats_no_ears = table.clone(tbl_7)
 
-local var_0_7 = {
+local tbl_8 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_hide_ears",
@@ -133,9 +133,9 @@ local var_0_7 = {
 	buffs = {}
 }
 
-Attachments.wh_hats_no_ears_skinned = table.clone(var_0_7)
+Attachments.wh_hats_no_ears_skinned = table.clone(tbl_8)
 
-local var_0_8 = {
+local tbl_9 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_hide_ears_lock_jaw",
@@ -146,9 +146,9 @@ local var_0_8 = {
 	buffs = {}
 }
 
-Attachments.wh_hats_no_ears_skinned_lock_jaw = table.clone(var_0_8)
+Attachments.wh_hats_no_ears_skinned_lock_jaw = table.clone(tbl_9)
 
-local var_0_9 = {
+local tbl_10 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_show_ears",
@@ -159,9 +159,9 @@ local var_0_9 = {
 	buffs = {}
 }
 
-Attachments.wh_hats_face_skinned = table.clone(var_0_9)
+Attachments.wh_hats_face_skinned = table.clone(tbl_10)
 
-local var_0_10 = {
+local tbl_11 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_hide_ears",
@@ -172,9 +172,9 @@ local var_0_10 = {
 	buffs = {}
 }
 
-Attachments.wh_hats_no_ears_face_skinned = table.clone(var_0_10)
+Attachments.wh_hats_no_ears_face_skinned = table.clone(tbl_11)
 
-local var_0_11 = {
+local tbl_12 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_show_ears",
@@ -191,9 +191,9 @@ local var_0_11 = {
 	}
 }
 
-Attachments.wh_z_hats_tattoo_00 = table.clone(var_0_11)
+Attachments.wh_z_hats_tattoo_00 = table.clone(tbl_12)
 
-local var_0_12 = {
+local tbl_13 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_show_ears",
@@ -210,9 +210,9 @@ local var_0_12 = {
 	}
 }
 
-Attachments.wh_z_hats_tattoo_00_face_skinned = table.clone(var_0_12)
+Attachments.wh_z_hats_tattoo_00_face_skinned = table.clone(tbl_13)
 
-local var_0_13 = {
+local tbl_14 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_show_ears",
@@ -229,9 +229,9 @@ local var_0_13 = {
 	}
 }
 
-Attachments.wh_z_hats_tattoo_01 = table.clone(var_0_13)
+Attachments.wh_z_hats_tattoo_01 = table.clone(tbl_14)
 
-local var_0_14 = {
+local tbl_15 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_show_ears",
@@ -248,9 +248,9 @@ local var_0_14 = {
 	}
 }
 
-Attachments.wh_z_hats_tattoo_02 = table.clone(var_0_14)
+Attachments.wh_z_hats_tattoo_02 = table.clone(tbl_15)
 
-local var_0_15 = {
+local tbl_16 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_show_ears",
@@ -267,9 +267,9 @@ local var_0_15 = {
 	}
 }
 
-Attachments.wh_z_hats_tattoo_03 = table.clone(var_0_15)
+Attachments.wh_z_hats_tattoo_03 = table.clone(tbl_16)
 
-local var_0_16 = {
+local tbl_17 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_show_ears",
@@ -286,9 +286,9 @@ local var_0_16 = {
 	}
 }
 
-Attachments.wh_z_hats_tattoo_04 = table.clone(var_0_16)
+Attachments.wh_z_hats_tattoo_04 = table.clone(tbl_17)
 
-local var_0_17 = {
+local tbl_18 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_show_ears",
@@ -305,9 +305,9 @@ local var_0_17 = {
 	}
 }
 
-Attachments.wh_z_hats_tattoo_05 = table.clone(var_0_17)
+Attachments.wh_z_hats_tattoo_05 = table.clone(tbl_18)
 
-local var_0_18 = {
+local tbl_19 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_show_ears",
@@ -324,9 +324,9 @@ local var_0_18 = {
 	}
 }
 
-Attachments.wh_z_hats_tattoo_06 = table.clone(var_0_18)
+Attachments.wh_z_hats_tattoo_06 = table.clone(tbl_19)
 
-local var_0_19 = {
+local tbl_20 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_show_ears",
@@ -343,9 +343,9 @@ local var_0_19 = {
 	}
 }
 
-Attachments.wh_z_hat_10 = table.clone(var_0_19)
+Attachments.wh_z_hat_10 = table.clone(tbl_20)
 
-local var_0_20 = {
+local tbl_21 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_mask",
@@ -356,9 +356,9 @@ local var_0_20 = {
 	buffs = {}
 }
 
-Attachments.ww_hoods = table.clone(var_0_20)
+Attachments.ww_hoods = table.clone(tbl_21)
 
-local var_0_21 = {
+local tbl_22 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_mask",
@@ -369,9 +369,9 @@ local var_0_21 = {
 	buffs = {}
 }
 
-Attachments.ww_hoods_jaw = table.clone(var_0_21)
+Attachments.ww_hoods_jaw = table.clone(tbl_22)
 
-local var_0_22 = {
+local tbl_23 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_balaclava",
@@ -382,9 +382,9 @@ local var_0_22 = {
 	buffs = {}
 }
 
-Attachments.ww_balaclava_wide = table.clone(var_0_22)
+Attachments.ww_balaclava_wide = table.clone(tbl_23)
 
-local var_0_23 = {
+local tbl_24 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_head_default",
@@ -395,9 +395,9 @@ local var_0_23 = {
 	buffs = {}
 }
 
-Attachments.ww_full_face = table.clone(var_0_23)
+Attachments.ww_full_face = table.clone(tbl_24)
 
-local var_0_24 = {
+local tbl_25 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_half_mask",
@@ -408,9 +408,9 @@ local var_0_24 = {
 	buffs = {}
 }
 
-Attachments.ww_half_masks = table.clone(var_0_24)
+Attachments.ww_half_masks = table.clone(tbl_25)
 
-local var_0_25 = {
+local tbl_26 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_mask",
@@ -421,9 +421,9 @@ local var_0_25 = {
 	buffs = {}
 }
 
-Attachments.ww_masks = table.clone(var_0_25)
+Attachments.ww_masks = table.clone(tbl_26)
 
-local var_0_26 = {
+local tbl_27 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_head_default",
@@ -434,9 +434,9 @@ local var_0_26 = {
 	buffs = {}
 }
 
-Attachments.ww_hat = table.clone(var_0_26)
+Attachments.ww_hat = table.clone(tbl_27)
 
-local var_0_27 = {
+local tbl_28 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_head_no_hood",
@@ -447,9 +447,9 @@ local var_0_27 = {
 	buffs = {}
 }
 
-Attachments.ww_hat_no_hood = table.clone(var_0_27)
+Attachments.ww_hat_no_hood = table.clone(tbl_28)
 
-local var_0_28 = {
+local tbl_29 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_head_default_no_face",
@@ -460,9 +460,9 @@ local var_0_28 = {
 	buffs = {}
 }
 
-Attachments.ww_hat_no_face = table.clone(var_0_28)
+Attachments.ww_hat_no_face = table.clone(tbl_29)
 
-local var_0_29 = {
+local tbl_30 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_helmet",
@@ -473,9 +473,9 @@ local var_0_29 = {
 	buffs = {}
 }
 
-Attachments.ww_helmet = table.clone(var_0_29)
+Attachments.ww_helmet = table.clone(tbl_30)
 
-local var_0_30 = {
+local tbl_31 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_helmet_ears",
@@ -486,9 +486,9 @@ local var_0_30 = {
 	buffs = {}
 }
 
-Attachments.ww_helmet_ears = table.clone(var_0_30)
+Attachments.ww_helmet_ears = table.clone(tbl_31)
 
-local var_0_31 = {
+local tbl_32 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_helmet_ears",
@@ -499,9 +499,9 @@ local var_0_31 = {
 	buffs = {}
 }
 
-Attachments.ww_helmet_ears_skinned = table.clone(var_0_31)
+Attachments.ww_helmet_ears_skinned = table.clone(tbl_32)
 
-local var_0_32 = {
+local tbl_33 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_helmet",
@@ -512,9 +512,9 @@ local var_0_32 = {
 	buffs = {}
 }
 
-Attachments.ww_helmet_skinned = table.clone(var_0_32)
+Attachments.ww_helmet_skinned = table.clone(tbl_33)
 
-local var_0_33 = {
+local tbl_34 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_helmet_mask",
@@ -525,9 +525,9 @@ local var_0_33 = {
 	buffs = {}
 }
 
-Attachments.ww_helmet_mask = table.clone(var_0_33)
+Attachments.ww_helmet_mask = table.clone(tbl_34)
 
-local var_0_34 = {
+local tbl_35 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_helmet_mask",
@@ -538,9 +538,9 @@ local var_0_34 = {
 	buffs = {}
 }
 
-Attachments.ww_helmet_mask_jaw = table.clone(var_0_34)
+Attachments.ww_helmet_mask_jaw = table.clone(tbl_35)
 
-local var_0_35 = {
+local tbl_36 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_helmet",
@@ -551,9 +551,9 @@ local var_0_35 = {
 	buffs = {}
 }
 
-Attachments.ww_helmet_jaw = table.clone(var_0_35)
+Attachments.ww_helmet_jaw = table.clone(tbl_36)
 
-local var_0_36 = {
+local tbl_37 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_head_default",
@@ -564,9 +564,9 @@ local var_0_36 = {
 	buffs = {}
 }
 
-Attachments.ww_half_mask_full_face = table.clone(var_0_36)
+Attachments.ww_half_mask_full_face = table.clone(tbl_37)
 
-local var_0_37 = {
+local tbl_38 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_hide_eyes_hair_hood_down",
@@ -577,9 +577,9 @@ local var_0_37 = {
 	buffs = {}
 }
 
-Attachments.ww_hide_eyes_hair_hood_down = table.clone(var_0_37)
+Attachments.ww_hide_eyes_hair_hood_down = table.clone(tbl_38)
 
-local var_0_38 = {
+local tbl_39 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_show_ears",
@@ -590,9 +590,9 @@ local var_0_38 = {
 	buffs = {}
 }
 
-Attachments.es_hats = table.clone(var_0_38)
+Attachments.es_hats = table.clone(tbl_39)
 
-local var_0_39 = {
+local tbl_40 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_show_ears",
@@ -603,9 +603,9 @@ local var_0_39 = {
 	buffs = {}
 }
 
-Attachments.es_hats_jaw = table.clone(var_0_39)
+Attachments.es_hats_jaw = table.clone(tbl_40)
 
-local var_0_40 = {
+local tbl_41 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_hide_ears",
@@ -616,9 +616,9 @@ local var_0_40 = {
 	buffs = {}
 }
 
-Attachments.es_hats_no_ear = table.clone(var_0_40)
+Attachments.es_hats_no_ear = table.clone(tbl_41)
 
-local var_0_41 = {
+local tbl_42 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_hide_ears_lock_neck",
@@ -629,9 +629,9 @@ local var_0_41 = {
 	buffs = {}
 }
 
-Attachments.es_hats_no_ear_lock_neck = table.clone(var_0_41)
+Attachments.es_hats_no_ear_lock_neck = table.clone(tbl_42)
 
-local var_0_42 = {
+local tbl_43 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_hide_moustache",
@@ -642,9 +642,9 @@ local var_0_42 = {
 	buffs = {}
 }
 
-Attachments.es_hats_no_moustache = table.clone(var_0_42)
+Attachments.es_hats_no_moustache = table.clone(tbl_43)
 
-local var_0_43 = {
+local tbl_44 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_hide_moustache",
@@ -655,9 +655,9 @@ local var_0_43 = {
 	buffs = {}
 }
 
-Attachments.es_hats_no_moustache_skinned = table.clone(var_0_43)
+Attachments.es_hats_no_moustache_skinned = table.clone(tbl_44)
 
-local var_0_44 = {
+local tbl_45 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_hide_ears_moustache",
@@ -668,9 +668,9 @@ local var_0_44 = {
 	buffs = {}
 }
 
-Attachments.es_hats_no_ear_moustache = table.clone(var_0_44)
+Attachments.es_hats_no_ear_moustache = table.clone(tbl_45)
 
-local var_0_45 = {
+local tbl_46 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_hide_ears_moustache",
@@ -681,9 +681,9 @@ local var_0_45 = {
 	buffs = {}
 }
 
-Attachments.es_hats_no_ear_moustache_skinned = table.clone(var_0_45)
+Attachments.es_hats_no_ear_moustache_skinned = table.clone(tbl_46)
 
-local var_0_46 = {
+local tbl_47 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_hide_ears_nose_moustache",
@@ -694,9 +694,9 @@ local var_0_46 = {
 	buffs = {}
 }
 
-Attachments.es_hats_no_beard_ear_nose_moustache = table.clone(var_0_46)
+Attachments.es_hats_no_beard_ear_nose_moustache = table.clone(tbl_47)
 
-local var_0_47 = {
+local tbl_48 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_hide_beard",
@@ -707,9 +707,9 @@ local var_0_47 = {
 	buffs = {}
 }
 
-Attachments.es_hats_no_beard = table.clone(var_0_47)
+Attachments.es_hats_no_beard = table.clone(tbl_48)
 
-local var_0_48 = {
+local tbl_49 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_hide_ears_beard",
@@ -720,9 +720,9 @@ local var_0_48 = {
 	buffs = {}
 }
 
-Attachments.es_hats_no_ears_beard = table.clone(var_0_48)
+Attachments.es_hats_no_ears_beard = table.clone(tbl_49)
 
-local var_0_49 = {
+local tbl_50 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet_es_hood",
 	show_attachments_event = "lua_show_ears",
@@ -733,9 +733,9 @@ local var_0_49 = {
 	buffs = {}
 }
 
-Attachments.es_hats_skinned = table.clone(var_0_49)
+Attachments.es_hats_skinned = table.clone(tbl_50)
 
-local var_0_50 = {
+local tbl_51 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet_es_hood",
 	show_attachments_event = "lua_hide_ears",
@@ -746,9 +746,9 @@ local var_0_50 = {
 	buffs = {}
 }
 
-Attachments.es_hats_no_ears_skinned = table.clone(var_0_50)
+Attachments.es_hats_no_ears_skinned = table.clone(tbl_51)
 
-local var_0_51 = {
+local tbl_52 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet_es_hood",
 	show_attachments_event = "lua_hide_beard",
@@ -759,9 +759,9 @@ local var_0_51 = {
 	buffs = {}
 }
 
-Attachments.es_hats_no_beard_skinned = table.clone(var_0_51)
+Attachments.es_hats_no_beard_skinned = table.clone(tbl_52)
 
-local var_0_52 = {
+local tbl_53 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_show_beard",
@@ -772,9 +772,9 @@ local var_0_52 = {
 	buffs = {}
 }
 
-Attachments.es_beard = table.clone(var_0_52)
+Attachments.es_beard = table.clone(tbl_53)
 
-local var_0_53 = {
+local tbl_54 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet_es_hood",
 	show_attachments_event = "lua_hide_beard",
@@ -785,9 +785,9 @@ local var_0_53 = {
 	buffs = {}
 }
 
-Attachments.es_beard_skinned = table.clone(var_0_53)
+Attachments.es_beard_skinned = table.clone(tbl_54)
 
-local var_0_54 = {
+local tbl_55 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_show_ears",
@@ -798,9 +798,9 @@ local var_0_54 = {
 	buffs = {}
 }
 
-Attachments.dr_helmets = table.clone(var_0_54)
+Attachments.dr_helmets = table.clone(tbl_55)
 
-local var_0_55 = {
+local tbl_56 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet_dr_hood",
 	show_attachments_event = "lua_show_ears",
@@ -811,9 +811,9 @@ local var_0_55 = {
 	buffs = {}
 }
 
-Attachments.dr_helmets_skinned_long = table.clone(var_0_55)
+Attachments.dr_helmets_skinned_long = table.clone(tbl_56)
 
-local var_0_56 = {
+local tbl_57 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet_dr_hood",
 	show_attachments_event = "lua_hide_head",
@@ -824,9 +824,9 @@ local var_0_56 = {
 	buffs = {}
 }
 
-Attachments.dr_helmets_skinned_long_no_head = table.clone(var_0_56)
+Attachments.dr_helmets_skinned_long_no_head = table.clone(tbl_57)
 
-local var_0_57 = {
+local tbl_58 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_hide_ears",
@@ -837,9 +837,9 @@ local var_0_57 = {
 	buffs = {}
 }
 
-Attachments.dr_helmets_no_ear = table.clone(var_0_57)
+Attachments.dr_helmets_no_ear = table.clone(tbl_58)
 
-local var_0_58 = {
+local tbl_59 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_hide_ears",
@@ -850,9 +850,9 @@ local var_0_58 = {
 	buffs = {}
 }
 
-Attachments.dr_helmets_hide_ears_skin_jaw = table.clone(var_0_58)
+Attachments.dr_helmets_hide_ears_skin_jaw = table.clone(tbl_59)
 
-local var_0_59 = {
+local tbl_60 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_hide_beard",
@@ -863,9 +863,9 @@ local var_0_59 = {
 	buffs = {}
 }
 
-Attachments.dr_helmets_hide_beard = table.clone(var_0_59)
+Attachments.dr_helmets_hide_beard = table.clone(tbl_60)
 
-local var_0_60 = {
+local tbl_61 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_hide_head_beard",
@@ -876,9 +876,9 @@ local var_0_60 = {
 	buffs = {}
 }
 
-Attachments.dr_helmets_hide_head_beard = table.clone(var_0_60)
+Attachments.dr_helmets_hide_head_beard = table.clone(tbl_61)
 
-local var_0_61 = {
+local tbl_62 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_hide_beard_ears",
@@ -889,9 +889,9 @@ local var_0_61 = {
 	buffs = {}
 }
 
-Attachments.dr_helmets_beard_ears = table.clone(var_0_61)
+Attachments.dr_helmets_beard_ears = table.clone(tbl_62)
 
-local var_0_62 = {
+local tbl_63 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_hide_face_show_ears",
@@ -902,9 +902,9 @@ local var_0_62 = {
 	buffs = {}
 }
 
-Attachments.dr_helmets_beard_face = table.clone(var_0_62)
+Attachments.dr_helmets_beard_face = table.clone(tbl_63)
 
-local var_0_63 = {
+local tbl_64 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_hide_face_hide_ears",
@@ -915,9 +915,9 @@ local var_0_63 = {
 	buffs = {}
 }
 
-Attachments.dr_helmets_beard_face_ears = table.clone(var_0_63)
+Attachments.dr_helmets_beard_face_ears = table.clone(tbl_64)
 
-local var_0_64 = {
+local tbl_65 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_hide_default_beard_ears",
@@ -928,9 +928,9 @@ local var_0_64 = {
 	buffs = {}
 }
 
-Attachments.dr_helmets_hide_beard_ears_default_only = table.clone(var_0_64)
+Attachments.dr_helmets_hide_beard_ears_default_only = table.clone(tbl_65)
 
-local var_0_65 = {
+local tbl_66 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_normal_nose",
@@ -947,9 +947,9 @@ local var_0_65 = {
 	}
 }
 
-Attachments.dr_hair_tattoo_00 = table.clone(var_0_65)
+Attachments.dr_hair_tattoo_00 = table.clone(tbl_66)
 
-local var_0_66 = {
+local tbl_67 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_hide_ears",
@@ -966,9 +966,9 @@ local var_0_66 = {
 	}
 }
 
-Attachments.dr_hair_tattoo_00_hide_ears_skin_jaw = table.clone(var_0_66)
+Attachments.dr_hair_tattoo_00_hide_ears_skin_jaw = table.clone(tbl_67)
 
-local var_0_67 = {
+local tbl_68 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_normal_nose",
@@ -985,9 +985,9 @@ local var_0_67 = {
 	}
 }
 
-Attachments.dr_hair_tattoo_01 = table.clone(var_0_67)
+Attachments.dr_hair_tattoo_01 = table.clone(tbl_68)
 
-local var_0_68 = {
+local tbl_69 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_normal_nose",
@@ -1004,9 +1004,9 @@ local var_0_68 = {
 	}
 }
 
-Attachments.dr_hair_tattoo_02 = table.clone(var_0_68)
+Attachments.dr_hair_tattoo_02 = table.clone(tbl_69)
 
-local var_0_69 = {
+local tbl_70 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_normal_nose",
@@ -1023,9 +1023,9 @@ local var_0_69 = {
 	}
 }
 
-Attachments.dr_hair_tattoo_03 = table.clone(var_0_69)
+Attachments.dr_hair_tattoo_03 = table.clone(tbl_70)
 
-local var_0_70 = {
+local tbl_71 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_normal_nose",
@@ -1042,9 +1042,9 @@ local var_0_70 = {
 	}
 }
 
-Attachments.dr_hair_tattoo_04 = table.clone(var_0_70)
+Attachments.dr_hair_tattoo_04 = table.clone(tbl_71)
 
-local var_0_71 = {
+local tbl_72 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_normal_nose",
@@ -1061,9 +1061,9 @@ local var_0_71 = {
 	}
 }
 
-Attachments.dr_hair_tattoo_05 = table.clone(var_0_71)
+Attachments.dr_hair_tattoo_05 = table.clone(tbl_72)
 
-local var_0_72 = {
+local tbl_73 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_big_nose",
@@ -1080,9 +1080,9 @@ local var_0_72 = {
 	}
 }
 
-Attachments.dr_hair_nose_big_tattoo_00 = table.clone(var_0_72)
+Attachments.dr_hair_nose_big_tattoo_00 = table.clone(tbl_73)
 
-local var_0_73 = {
+local tbl_74 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_big_nose",
@@ -1099,9 +1099,9 @@ local var_0_73 = {
 	}
 }
 
-Attachments.dr_hair_nose_big_tattoo_01 = table.clone(var_0_73)
+Attachments.dr_hair_nose_big_tattoo_01 = table.clone(tbl_74)
 
-local var_0_74 = {
+local tbl_75 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_big_nose",
@@ -1118,9 +1118,9 @@ local var_0_74 = {
 	}
 }
 
-Attachments.dr_hair_nose_big_tattoo_02 = table.clone(var_0_74)
+Attachments.dr_hair_nose_big_tattoo_02 = table.clone(tbl_75)
 
-local var_0_75 = {
+local tbl_76 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_big_nose",
@@ -1137,9 +1137,9 @@ local var_0_75 = {
 	}
 }
 
-Attachments.dr_hair_nose_big_tattoo_03 = table.clone(var_0_75)
+Attachments.dr_hair_nose_big_tattoo_03 = table.clone(tbl_76)
 
-local var_0_76 = {
+local tbl_77 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_big_nose",
@@ -1156,9 +1156,9 @@ local var_0_76 = {
 	}
 }
 
-Attachments.dr_hair_nose_big_tattoo_04 = table.clone(var_0_76)
+Attachments.dr_hair_nose_big_tattoo_04 = table.clone(tbl_77)
 
-local var_0_77 = {
+local tbl_78 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_big_nose",
@@ -1175,9 +1175,9 @@ local var_0_77 = {
 	}
 }
 
-Attachments.dr_hair_nose_big_tattoo_05 = table.clone(var_0_77)
+Attachments.dr_hair_nose_big_tattoo_05 = table.clone(tbl_78)
 
-local var_0_78 = {
+local tbl_79 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_normal_nose",
@@ -1194,9 +1194,9 @@ local var_0_78 = {
 	}
 }
 
-Attachments.dr_s_hat_14 = table.clone(var_0_78)
+Attachments.dr_s_hat_14 = table.clone(tbl_79)
 
-local var_0_79 = {
+local tbl_80 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_hide_beard",
@@ -1213,9 +1213,9 @@ local var_0_79 = {
 	}
 }
 
-Attachments.dr_s_hat_15 = table.clone(var_0_79)
+Attachments.dr_s_hat_15 = table.clone(tbl_80)
 
-local var_0_80 = {
+local tbl_81 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_show_ears",
@@ -1226,9 +1226,9 @@ local var_0_80 = {
 	buffs = {}
 }
 
-Attachments.bw_gates = table.clone(var_0_80)
+Attachments.bw_gates = table.clone(tbl_81)
 
-local var_0_81 = {
+local tbl_82 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_show_ears_lock_neck",
@@ -1239,9 +1239,9 @@ local var_0_81 = {
 	buffs = {}
 }
 
-Attachments.bw_gates_lock_neck = table.clone(var_0_81)
+Attachments.bw_gates_lock_neck = table.clone(tbl_82)
 
-local var_0_82 = {
+local tbl_83 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_show_ears",
@@ -1252,9 +1252,9 @@ local var_0_82 = {
 	buffs = {}
 }
 
-Attachments.bw_hat = table.clone(var_0_82)
+Attachments.bw_hat = table.clone(tbl_83)
 
-local var_0_83 = {
+local tbl_84 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_show_ears_lock_neck",
@@ -1265,9 +1265,9 @@ local var_0_83 = {
 	buffs = {}
 }
 
-Attachments.bw_hat_lock_neck = table.clone(var_0_83)
+Attachments.bw_hat_lock_neck = table.clone(tbl_84)
 
-local var_0_84 = {
+local tbl_85 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_hide_hair",
@@ -1278,9 +1278,9 @@ local var_0_84 = {
 	buffs = {}
 }
 
-Attachments.bw_hat_no_hair = table.clone(var_0_84)
+Attachments.bw_hat_no_hair = table.clone(tbl_85)
 
-local var_0_85 = {
+local tbl_86 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_hide_hair",
@@ -1291,9 +1291,9 @@ local var_0_85 = {
 	buffs = {}
 }
 
-Attachments.bw_hat_skinned_wide_no_hair = table.clone(var_0_85)
+Attachments.bw_hat_skinned_wide_no_hair = table.clone(tbl_86)
 
-local var_0_86 = {
+local tbl_87 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_hide_hair_lock_neck",
@@ -1304,9 +1304,9 @@ local var_0_86 = {
 	buffs = {}
 }
 
-Attachments.bw_hat_no_hair_lock_neck = table.clone(var_0_86)
+Attachments.bw_hat_no_hair_lock_neck = table.clone(tbl_87)
 
-local var_0_87 = {
+local tbl_88 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_hide_hair",
@@ -1317,9 +1317,9 @@ local var_0_87 = {
 	buffs = {}
 }
 
-Attachments.bw_hat_jaw_no_hair = table.clone(var_0_87)
+Attachments.bw_hat_jaw_no_hair = table.clone(tbl_88)
 
-local var_0_88 = {
+local tbl_89 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_hide_ears",
@@ -1330,9 +1330,9 @@ local var_0_88 = {
 	buffs = {}
 }
 
-Attachments.bw_hat_no_ears = table.clone(var_0_88)
+Attachments.bw_hat_no_ears = table.clone(tbl_89)
 
-local var_0_89 = {
+local tbl_90 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_hide_ears_hair",
@@ -1343,9 +1343,9 @@ local var_0_89 = {
 	buffs = {}
 }
 
-Attachments.bw_hat_no_ears_hair = table.clone(var_0_89)
+Attachments.bw_hat_no_ears_hair = table.clone(tbl_90)
 
-local var_0_90 = {
+local tbl_91 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_show_ears",
@@ -1356,9 +1356,9 @@ local var_0_90 = {
 	buffs = {}
 }
 
-Attachments.bw_gates_facemask = table.clone(var_0_90)
+Attachments.bw_gates_facemask = table.clone(tbl_91)
 
-local var_0_91 = {
+local tbl_92 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_hide_breastplate",
@@ -1369,9 +1369,9 @@ local var_0_91 = {
 	buffs = {}
 }
 
-Attachments.bw_gates_no_breastplate = table.clone(var_0_91)
+Attachments.bw_gates_no_breastplate = table.clone(tbl_92)
 
-local var_0_92 = {
+local tbl_93 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_hide_breastplate",
@@ -1382,9 +1382,9 @@ local var_0_92 = {
 	buffs = {}
 }
 
-Attachments.bw_gates_facemask_no_breastplate = table.clone(var_0_92)
+Attachments.bw_gates_facemask_no_breastplate = table.clone(tbl_93)
 
-local var_0_93 = {
+local tbl_94 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_show_ears",
@@ -1395,9 +1395,9 @@ local var_0_93 = {
 	buffs = {}
 }
 
-Attachments.bw_hat_skinned_wide = table.clone(var_0_93)
+Attachments.bw_hat_skinned_wide = table.clone(tbl_94)
 
-local var_0_94 = {
+local tbl_95 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_hide_face",
@@ -1408,9 +1408,9 @@ local var_0_94 = {
 	buffs = {}
 }
 
-Attachments.bw_face = table.clone(var_0_94)
+Attachments.bw_face = table.clone(tbl_95)
 
-local var_0_95 = {
+local tbl_96 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	link_to_skin = true,
@@ -1422,9 +1422,9 @@ local var_0_95 = {
 	buffs = {}
 }
 
-Attachments.bw_hat_cloak = table.clone(var_0_95)
+Attachments.bw_hat_cloak = table.clone(tbl_96)
 
-local var_0_96 = {
+local tbl_97 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet",
 	show_attachments_event = "lua_hide_hair",
@@ -1435,9 +1435,9 @@ local var_0_96 = {
 	buffs = {}
 }
 
-Attachments.bw_hair = table.clone(var_0_96)
+Attachments.bw_hair = table.clone(tbl_97)
 
-local var_0_97 = {
+local tbl_98 = {
 	unit = "",
 	display_unit = "units/weapons/weapon_display/display_helmet_dr_hood",
 	show_attachments_event = "lua_hide_head_eyes",
@@ -1448,9 +1448,9 @@ local var_0_97 = {
 	buffs = {}
 }
 
-Attachments.bw_hat_skinned_wide_no_head = table.clone(var_0_97)
+Attachments.bw_hat_skinned_wide_no_head = table.clone(tbl_98)
 
-local var_0_98 = {
+local tbl_99 = {
 	display_unit = "",
 	attachment_node_linking = AttachmentNodeLinking.non_visual_attachment,
 	slots = {
@@ -1458,9 +1458,9 @@ local var_0_98 = {
 	}
 }
 
-Attachments.necklace_template = table.clone(var_0_98)
+Attachments.necklace_template = table.clone(tbl_99)
 
-local var_0_99 = {
+local tbl_100 = {
 	display_unit = "",
 	attachment_node_linking = AttachmentNodeLinking.non_visual_attachment,
 	slots = {
@@ -1468,9 +1468,9 @@ local var_0_99 = {
 	}
 }
 
-Attachments.ring_template = table.clone(var_0_99)
+Attachments.ring_template = table.clone(tbl_100)
 
-local var_0_100 = {
+local tbl_101 = {
 	display_unit = "",
 	attachment_node_linking = AttachmentNodeLinking.non_visual_attachment,
 	slots = {
@@ -1478,12 +1478,12 @@ local var_0_100 = {
 	}
 }
 
-Attachments.trinket_template = table.clone(var_0_100)
+Attachments.trinket_template = table.clone(tbl_101)
 
-for iter_0_0, iter_0_1 in pairs(Attachments) do
-	iter_0_1.name = iter_0_0
+for k, v in pairs(Attachments) do
+	v.name = k
 
-	assert(iter_0_1.units ~= "", "Name is empty")
-	assert(iter_0_1.attachment_node_linking)
-	assert(iter_0_1.slots)
+	assert(v.units ~= "", "Name is empty")
+	assert(v.attachment_node_linking)
+	assert(v.slots)
 end

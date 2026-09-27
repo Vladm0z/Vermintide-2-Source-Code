@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/dwarf_ranger_dlc_wizards_tower.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pdr_enchantment_dummy_trigger",

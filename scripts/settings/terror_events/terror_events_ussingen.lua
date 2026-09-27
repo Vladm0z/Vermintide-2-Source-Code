@@ -1,11 +1,11 @@
 -- chunkname: @scripts/settings/terror_events/terror_events_ussingen.lua
 
-local var_0_0 = require("scripts/settings/terror_events/terror_event_utils")
-local var_0_1 = var_0_0.count_event_breed
-local var_0_2 = var_0_0.HARDER
-local var_0_3 = var_0_0.HARDEST
-local var_0_4 = var_0_0.CATACLYSM
-local var_0_5 = {
+local scripts_settings_terror_events_terror_event_utils = require("scripts/settings/terror_events/terror_event_utils")
+local count_event_breed = scripts_settings_terror_events_terror_event_utils.count_event_breed
+local HARDER = scripts_settings_terror_events_terror_event_utils.HARDER
+local HARDEST = scripts_settings_terror_events_terror_event_utils.HARDEST
+local CATACLYSM = scripts_settings_terror_events_terror_event_utils.CATACLYSM
+local tbl = {
 	ussingen_payload_event_loop = {
 		"ussingen_payload_event_loop_01",
 		1,
@@ -17,7 +17,7 @@ local var_0_5 = {
 		1
 	}
 }
-local var_0_6 = {
+local tbl_2 = {
 	generic_disable_pacing = GenericTerrorEvents.generic_disable_pacing,
 	ussingen_gate_guards = {
 		{
@@ -98,14 +98,14 @@ local var_0_6 = {
 		{
 			"delay",
 			duration = 8,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"event_horde",
 			limit_spawners = 2,
 			spawner_id = "ussingen_payload_square",
 			composition_type = "event_small_chaos",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_special",
@@ -114,7 +114,7 @@ local var_0_6 = {
 				"chaos_corruptor_sorcerer",
 				"skaven_warpfire_thrower"
 			},
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
@@ -123,8 +123,9 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 40,
-			condition = function(arg_1_0)
-				return var_0_1("chaos_fanatic") < 7 and var_0_1("chaos_raider") < 5 and var_0_1("chaos_marauder") < 8 and var_0_1("chaos_marauder_with_shield") < 6
+			condition = function (arg_1_0)
+				-- function 1
+				return not (count_event_breed("chaos_fanatic") < 7) or not (count_event_breed("chaos_raider") < 5) or not (count_event_breed("chaos_marauder") < 8) or count_event_breed("chaos_marauder_with_shield") < 6
 			end
 		},
 		{
@@ -158,19 +159,19 @@ local var_0_6 = {
 				"chaos_vortex_sorcerer",
 				"skaven_poison_wind_globadier"
 			},
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"delay",
 			duration = 6,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"event_horde",
 			limit_spawners = 2,
 			spawner_id = "ussingen_payload_transit",
 			composition_type = "event_medium_chaos",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
@@ -179,8 +180,9 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 50,
-			condition = function(arg_2_0)
-				return var_0_1("chaos_fanatic") < 6 and var_0_1("chaos_raider") < 6 and var_0_1("chaos_marauder") < 6 and var_0_1("chaos_marauder_with_shield") < 6
+			condition = function (arg_2_0)
+				-- function 2
+				return not (count_event_breed("chaos_fanatic") < 6) or not (count_event_breed("chaos_raider") < 6) or not (count_event_breed("chaos_marauder") < 6) or count_event_breed("chaos_marauder_with_shield") < 6
 			end
 		},
 		{
@@ -200,7 +202,7 @@ local var_0_6 = {
 			limit_spawners = 2,
 			spawner_id = "ussingen_payload_transit",
 			composition_type = "event_chaos_extra_spice_small",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_special",
@@ -210,7 +212,7 @@ local var_0_6 = {
 				"chaos_vortex_sorcerer",
 				"skaven_poison_wind_globadier"
 			},
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"delay",
@@ -219,8 +221,9 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 50,
-			condition = function(arg_3_0)
-				return var_0_1("chaos_fanatic") < 3 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
+			condition = function (arg_3_0)
+				-- function 3
+				return not (count_event_breed("chaos_fanatic") < 3) or not (count_event_breed("chaos_raider") < 3) or not (count_event_breed("chaos_marauder") < 3) or count_event_breed("chaos_marauder_with_shield") < 2
 			end
 		},
 		{
@@ -237,8 +240,9 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 50,
-			condition = function(arg_4_0)
-				return var_0_1("chaos_fanatic") < 3 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
+			condition = function (arg_4_0)
+				-- function 4
+				return not (count_event_breed("chaos_fanatic") < 3) or not (count_event_breed("chaos_raider") < 3) or not (count_event_breed("chaos_marauder") < 3) or count_event_breed("chaos_marauder_with_shield") < 2
 			end
 		},
 		{
@@ -255,7 +259,7 @@ local var_0_6 = {
 				"skaven_pack_master",
 				"skaven_gutter_runner"
 			},
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_special",
@@ -266,7 +270,7 @@ local var_0_6 = {
 				"skaven_gutter_runner",
 				"chaos_vortex_sorcerer"
 			},
-			difficulty_requirement = var_0_4
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"delay",
@@ -285,8 +289,9 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_5_0)
-				return var_0_1("chaos_fanatic") < 3 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
+			condition = function (arg_5_0)
+				-- function 5
+				return not (count_event_breed("chaos_fanatic") < 3) or not (count_event_breed("chaos_raider") < 3) or not (count_event_breed("chaos_marauder") < 3) or count_event_breed("chaos_marauder_with_shield") < 2
 			end
 		},
 		{
@@ -315,7 +320,7 @@ local var_0_6 = {
 				"skaven_pack_master",
 				"skaven_ratling_gunner"
 			},
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
@@ -324,8 +329,9 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 50,
-			condition = function(arg_6_0)
-				return var_0_1("chaos_fanatic") < 3 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
+			condition = function (arg_6_0)
+				-- function 6
+				return not (count_event_breed("chaos_fanatic") < 3) or not (count_event_breed("chaos_raider") < 3) or not (count_event_breed("chaos_marauder") < 3) or count_event_breed("chaos_marauder_with_shield") < 2
 			end
 		},
 		{
@@ -341,8 +347,9 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 50,
-			condition = function(arg_7_0)
-				return var_0_1("chaos_fanatic") < 3 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
+			condition = function (arg_7_0)
+				-- function 7
+				return not (count_event_breed("chaos_fanatic") < 3) or not (count_event_breed("chaos_raider") < 3) or not (count_event_breed("chaos_marauder") < 3) or count_event_breed("chaos_marauder_with_shield") < 2
 			end
 		},
 		{
@@ -377,20 +384,21 @@ local var_0_6 = {
 				"skaven_gutter_runner",
 				"chaos_vortex_sorcerer"
 			},
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"event_horde",
 			limit_spawners = 2,
 			spawner_id = "ussingen_payload_transit",
 			composition_type = "event_chaos_extra_spice_small",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_8_0)
-				return var_0_1("chaos_berzerker") < 3 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
+			condition = function (arg_8_0)
+				-- function 8
+				return not (count_event_breed("chaos_berzerker") < 3) or not (count_event_breed("chaos_raider") < 3) or not (count_event_breed("chaos_marauder") < 3) or count_event_breed("chaos_marauder_with_shield") < 2
 			end
 		},
 		{
@@ -411,7 +419,7 @@ local var_0_6 = {
 				"skaven_gutter_runner",
 				"chaos_vortex_sorcerer"
 			},
-			difficulty_requirement = var_0_4
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"delay",
@@ -432,7 +440,7 @@ local var_0_6 = {
 			limit_spawners = 4,
 			spawner_id = "ussingen_payload_square",
 			composition_type = "chaos_warriors_small",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"flow_event",
@@ -483,8 +491,9 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_9_0)
-				return var_0_1("chaos_berzerker") < 3 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
+			condition = function (arg_9_0)
+				-- function 9
+				return not (count_event_breed("chaos_berzerker") < 3) or not (count_event_breed("chaos_raider") < 3) or not (count_event_breed("chaos_marauder") < 3) or count_event_breed("chaos_marauder_with_shield") < 2
 			end
 		},
 		{
@@ -499,6 +508,6 @@ local var_0_6 = {
 }
 
 return {
-	var_0_6,
-	var_0_5
+	tbl_2,
+	tbl
 }

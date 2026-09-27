@@ -6,73 +6,84 @@ FadeSystem.system_extensions = {
 	"AIUnitFadeExtension"
 }
 
-local var_0_0 = Unit.alive
-local var_0_1 = ScriptUnit.extension
+local alive = Unit.alive
+local extension = ScriptUnit.extension
 
-function FadeSystem.init(arg_1_0, arg_1_1, arg_1_2)
-	local var_1_0 = FadeSystem.system_extensions
+FadeSystem.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	local system_extensions = FadeSystem.system_extensions
 
-	FadeSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_1_0)
+	FadeSystem.super.init(self, arg_1_1, arg_1_2, system_extensions)
 
-	arg_1_0.fade_system = EngineOptimizedExtensions.fade_init_system()
+	self.fade_system = EngineOptimizedExtensions.fade_init_system()
 end
 
-function FadeSystem.destroy(arg_2_0)
-	EngineOptimizedExtensions.fade_destroy_system(arg_2_0.fade_system)
+FadeSystem.destroy = function (self)
+	-- function 2
+	EngineOptimizedExtensions.fade_destroy_system(self.fade_system)
 end
 
-function FadeSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
-	EngineOptimizedExtensions.fade_on_add_extension(arg_3_0.fade_system, arg_3_2)
-	ScriptUnit.set_extension(arg_3_2, arg_3_0.name, {})
+FadeSystem.on_add_extension = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	-- function 3
+	EngineOptimizedExtensions.fade_on_add_extension(self.fade_system, arg_3_2)
+	ScriptUnit.set_extension(arg_3_2, self.name, {})
 
 	return {}
 end
 
-function FadeSystem.set_min_fade(arg_4_0, arg_4_1, arg_4_2)
-	EngineOptimizedExtensions.fade_set_min_fade(arg_4_0.fade_system, arg_4_1, arg_4_2)
+FadeSystem.set_min_fade = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	EngineOptimizedExtensions.fade_set_min_fade(self.fade_system, arg_4_1, arg_4_2)
 end
 
-function FadeSystem.new_linked_units(arg_5_0, arg_5_1, arg_5_2)
-	EngineOptimizedExtensions.fade_new_linked_units(arg_5_0.fade_system, arg_5_1, arg_5_2)
+FadeSystem.new_linked_units = function (self, arg_5_1, arg_5_2)
+	-- function 5
+	EngineOptimizedExtensions.fade_new_linked_units(self.fade_system, arg_5_1, arg_5_2)
 end
 
-function FadeSystem.on_remove_extension(arg_6_0, arg_6_1, arg_6_2)
-	EngineOptimizedExtensions.fade_on_remove_extension(arg_6_0.fade_system, arg_6_1)
-	ScriptUnit.remove_extension(arg_6_1, arg_6_0.name)
+FadeSystem.on_remove_extension = function (self, arg_6_1, arg_6_2)
+	-- function 6
+	EngineOptimizedExtensions.fade_on_remove_extension(self.fade_system, arg_6_1)
+	ScriptUnit.remove_extension(arg_6_1, self.name)
 end
 
-function FadeSystem.on_freeze_extension(arg_7_0, arg_7_1, arg_7_2)
-	EngineOptimizedExtensions.fade_on_remove_extension(arg_7_0.fade_system, arg_7_1)
+FadeSystem.on_freeze_extension = function (self, arg_7_1, arg_7_2)
+	-- function 7
+	EngineOptimizedExtensions.fade_on_remove_extension(self.fade_system, arg_7_1)
 end
 
-function FadeSystem.freeze(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
-	EngineOptimizedExtensions.fade_on_remove_extension(arg_8_0.fade_system, arg_8_1)
+FadeSystem.freeze = function (self, arg_8_1, arg_8_2, arg_8_3)
+	-- function 8
+	EngineOptimizedExtensions.fade_on_remove_extension(self.fade_system, arg_8_1)
 end
 
-function FadeSystem.unfreeze(arg_9_0, arg_9_1)
-	EngineOptimizedExtensions.fade_on_add_extension(arg_9_0.fade_system, arg_9_1)
+FadeSystem.unfreeze = function (self, arg_9_1)
+	-- function 9
+	EngineOptimizedExtensions.fade_on_add_extension(self.fade_system, arg_9_1)
 end
 
-function FadeSystem.local_player_created(arg_10_0, arg_10_1)
-	arg_10_0.player = arg_10_1
+FadeSystem.local_player_created = function (self, arg_10_1)
+	-- function 10
+	self.player = arg_10_1
 end
 
-function FadeSystem.update(arg_11_0, arg_11_1, arg_11_2)
-	if not arg_11_0.player then
+FadeSystem.update = function (self, arg_11_1, arg_11_2)
+	-- function 11
+	if not self.player then
 		return
 	end
 
-	local var_11_0 = arg_11_0.player
-	local var_11_1 = var_11_0:local_player_id()
-	local var_11_2 = var_11_0.viewport_name
+	local player = self.player
+	local local_player_id = player:local_player_id()
+	local viewport_name = player.viewport_name
 	local var_11_3
-	local var_11_4 = Managers.free_flight
+	local free_flight = Managers.free_flight
 
-	if var_11_4:active(var_11_1) then
-		var_11_3 = var_11_4:camera_position_rotation(var_11_1)
+	if not free_flight:active(local_player_id) then
+		var_11_3 = free_flight:camera_position_rotation(local_player_id)
 	else
-		var_11_3 = Managers.state.camera:camera_position(var_11_2)
+		var_11_3 = Managers.state.camera:camera_position(viewport_name)
 	end
 
-	EngineOptimizedExtensions.fade_update(arg_11_0.fade_system, var_11_3)
+	EngineOptimizedExtensions.fade_update(self.fade_system, var_11_3)
 end

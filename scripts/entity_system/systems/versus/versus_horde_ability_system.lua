@@ -7,363 +7,436 @@ local var_0_0 = local_require("scripts/settings/versus_horde_ability_settings")
 
 VersusHordeAbilitySystem = class(VersusHordeAbilitySystem, ExtensionSystemBase)
 
-local var_0_1 = {
+local tbl = {
 	"rpc_activate_dark_pact_horde_ability",
 	"rpc_client_outline_own_horde_units",
 	"rpc_horde_ability_activated"
 }
-local var_0_2 = {
+local tbl_2 = {
 	"VersusHordeAbilityExtension",
 	"VersusHordeAbilityHuskExtension"
 }
 
-function VersusHordeAbilitySystem.init(arg_1_0, arg_1_1, arg_1_2)
-	VersusHordeAbilitySystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_2)
-	arg_1_0:register_rpcs(arg_1_1.network_event_delegate)
+VersusHordeAbilitySystem.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	VersusHordeAbilitySystem.super.init(self, arg_1_1, arg_1_2, tbl_2)
+	self:register_rpcs(arg_1_1.network_event_delegate)
 
-	if arg_1_0.is_server then
-		arg_1_0._server_player_data = {}
-		arg_1_0._next_batch_sync = 0
-		arg_1_0._event_manager = Managers.state.event
-		arg_1_0._conflict_director = Managers.state.conflict
-		arg_1_0._mechanism = Managers.mechanism:game_mechanism()
-		arg_1_0._win_conditions = arg_1_0._mechanism:win_conditions()
+	if not self.is_server then
+		self._server_player_data = {}
+		self._next_batch_sync = 0
+		self._event_manager = Managers.state.event
+		self._conflict_director = Managers.state.conflict
+		self._mechanism = Managers.mechanism:game_mechanism()
+		self._win_conditions = self._mechanism:win_conditions()
 
-		arg_1_0._event_manager:register(arg_1_0, "new_player_unit", "on_player_unit_spawned")
-		arg_1_0._event_manager:register(arg_1_0, "gm_event_round_started", "on_round_started")
-		arg_1_0._event_manager:register(arg_1_0, "on_player_joined_party", "on_player_joined_party")
-		arg_1_0._event_manager:register(arg_1_0, "on_player_left_party", "on_player_left_party")
+		self._event_manager:register(self, "new_player_unit", "on_player_unit_spawned")
+		self._event_manager:register(self, "gm_event_round_started", "on_round_started")
+		self._event_manager:register(self, "on_player_joined_party", "on_player_joined_party")
+		self._event_manager:register(self, "on_player_left_party", "on_player_left_party")
 
-		arg_1_0._num_players_by_party = {
+		self._num_players_by_party = {
 			0,
 			0
 		}
 
-		if arg_1_0._mechanism:custom_settings_enabled() then
-			arg_1_0._custom_settings_modifier = arg_1_0._mechanism:get_custom_game_setting("horde_ability_recharge_rate_percent") / 100
+		if not self._mechanism:custom_settings_enabled() then
+			self._custom_settings_modifier = self._mechanism:get_custom_game_setting("horde_ability_recharge_rate_percent") / 100
 		end
 	end
 
-	arg_1_0._extensions = {}
-	arg_1_0.unit_storage = arg_1_1.unit_storage
+	self._extensions = {}
+	self.unit_storage = arg_1_1.unit_storage
 end
 
-function VersusHordeAbilitySystem.destroy(arg_2_0)
-	if arg_2_0.is_server then
-		arg_2_0._event_manager:unregister("new_player_unit", arg_2_0)
-		arg_2_0._event_manager:unregister("gm_event_round_started", arg_2_0)
-		arg_2_0._event_manager:unregister("on_player_joined_party", arg_2_0)
-		arg_2_0._event_manager:unregister("on_player_left_party", arg_2_0)
+VersusHordeAbilitySystem.destroy = function (self)
+	-- function 2
+	if not self.is_server then
+		self._event_manager:unregister("new_player_unit", self)
+		self._event_manager:unregister("gm_event_round_started", self)
+		self._event_manager:unregister("on_player_joined_party", self)
+		self._event_manager:unregister("on_player_left_party", self)
 
-		if var_0_0.save_charges_between_rounds then
-			arg_2_0._mechanism:cache_horde_ability_charge_data(arg_2_0._server_player_data)
+		if not var_0_0.save_charges_between_rounds then
+			self._mechanism:cache_horde_ability_charge_data(self._server_player_data)
 		end
 	end
 
-	arg_2_0:unregister_rpcs()
+	self:unregister_rpcs()
 end
 
-function VersusHordeAbilitySystem.register_rpcs(arg_3_0, arg_3_1)
-	arg_3_0._network_event_delegate = arg_3_1
+VersusHordeAbilitySystem.register_rpcs = function (self, arg_3_1)
+	-- function 3
+	self._network_event_delegate = arg_3_1
 
-	arg_3_1:register(arg_3_0, unpack(var_0_1))
+	arg_3_1:register(self, unpack(tbl))
 end
 
-function VersusHordeAbilitySystem.unregister_rpcs(arg_4_0)
-	if arg_4_0._network_event_delegate then
-		arg_4_0._network_event_delegate:unregister(arg_4_0)
+VersusHordeAbilitySystem.unregister_rpcs = function (self)
+	-- function 4
+	if not self._network_event_delegate then
+		self._network_event_delegate:unregister(self)
 
-		arg_4_0._network_event_delegate = nil
+		self._network_event_delegate = nil
 	end
 end
 
-function VersusHordeAbilitySystem.update(arg_5_0, arg_5_1, arg_5_2)
-	if arg_5_0.is_server then
-		arg_5_0:_server_update_ability_charges(arg_5_1.dt)
-		arg_5_0:_server_batch_sync_client_horde_units(arg_5_2)
+VersusHordeAbilitySystem.update = function (self, arg_5_1, arg_5_2)
+	-- function 5
+	if not self.is_server then
+		self:_server_update_ability_charges(arg_5_1.dt)
+		self:_server_batch_sync_client_horde_units(arg_5_2)
 	end
 
-	for iter_5_0, iter_5_1 in pairs(arg_5_0._extensions) do
-		iter_5_1:update(arg_5_2)
+	for k, v in pairs(self._extensions) do
+		v:update(arg_5_2)
 	end
 end
 
-function VersusHordeAbilitySystem.on_remove_extension(arg_6_0, arg_6_1, arg_6_2)
+VersusHordeAbilitySystem.on_remove_extension = function (arg_6_0, arg_6_1, arg_6_2)
+	-- function 6
 	arg_6_0._extensions[arg_6_1] = nil
 
 	VersusHordeAbilitySystem.super.on_remove_extension(arg_6_0, arg_6_1, arg_6_2)
 end
 
-function VersusHordeAbilitySystem.on_add_extension(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
-	local var_7_0 = VersusHordeAbilitySystem.super.on_add_extension(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+VersusHordeAbilitySystem.on_add_extension = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	-- function 7
+	local on_add_extension = VersusHordeAbilitySystem.super.on_add_extension(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 
-	arg_7_0._extensions[arg_7_2] = var_7_0
+	arg_7_0._extensions[arg_7_2] = on_add_extension
 
-	return var_7_0
+	return on_add_extension
 end
 
-function VersusHordeAbilitySystem.cooldown(arg_8_0)
+VersusHordeAbilitySystem.cooldown = function (arg_8_0)
+	-- function 8
 	return var_0_0.cooldown
 end
 
-function VersusHordeAbilitySystem.on_round_started(arg_9_0)
-	arg_9_0._round_started = true
+VersusHordeAbilitySystem.on_round_started = function (self)
+	-- function 9
+	self._round_started = true
 end
 
-function VersusHordeAbilitySystem.is_activation_allowed(arg_10_0, arg_10_1)
-	return (var_0_0.enable_activation_in_ghost_mode or not arg_10_1) and arg_10_0._round_started
+VersusHordeAbilitySystem.is_activation_allowed = function (self, arg_10_1)
+	-- function 10
+	local enable_activation_in_ghost_mode = var_0_0.enable_activation_in_ghost_mode
+
+	enable_activation_in_ghost_mode = enable_activation_in_ghost_mode or not arg_10_1
+
+	return not enable_activation_in_ghost_mode and self._round_started
 end
 
-function VersusHordeAbilitySystem.activate_dark_pact_horde_ability(arg_11_0)
-	if arg_11_0.is_server then
-		local var_11_0 = Managers.player:local_player():network_id()
+VersusHordeAbilitySystem.activate_dark_pact_horde_ability = function (self)
+	-- function 11
+	if not self.is_server then
+		local network_id = Managers.player:local_player():network_id()
 
-		arg_11_0:server_spawn_horde(var_11_0)
+		self:server_spawn_horde(network_id)
 	else
-		arg_11_0.network_transmit:send_rpc_server("rpc_activate_dark_pact_horde_ability")
+		self.network_transmit:send_rpc_server("rpc_activate_dark_pact_horde_ability")
 	end
 end
 
-function VersusHordeAbilitySystem.rpc_client_outline_own_horde_units(arg_12_0, arg_12_1, arg_12_2)
-	for iter_12_0 = 1, #arg_12_2 do
-		local var_12_0 = arg_12_0.unit_storage:unit(arg_12_2[iter_12_0])
+VersusHordeAbilitySystem.rpc_client_outline_own_horde_units = function (self, arg_12_1, arg_12_2)
+	-- function 12
+	for i = 1, #arg_12_2 do
+		local unit = self.unit_storage:unit(arg_12_2[i])
 
-		if var_12_0 then
-			ScriptUnit.extension(var_12_0, "outline_system"):add_outline(OutlineSettingsVS.templates.horde_ability)
+		if not unit then
+			ScriptUnit.extension(unit, "outline_system"):add_outline(OutlineSettingsVS.templates.horde_ability)
 		end
 	end
 end
 
-function VersusHordeAbilitySystem.server_register_horde_unit(arg_13_0, arg_13_1, arg_13_2)
-	local var_13_0 = arg_13_0._server_player_data[arg_13_2]
+VersusHordeAbilitySystem.server_register_horde_unit = function (self, arg_13_1, arg_13_2)
+	-- function 13
+	local var_13_0 = self._server_player_data[arg_13_2]
 
 	var_13_0.ability_horde_units_to_sync[#var_13_0.ability_horde_units_to_sync + 1] = arg_13_1
 end
 
-function VersusHordeAbilitySystem._server_update_ability_charges(arg_14_0, arg_14_1)
-	local var_14_0 = var_0_0.cooldown
+VersusHordeAbilitySystem._server_update_ability_charges = function (self, arg_14_1)
+	-- function 14
+	local cooldown = var_0_0.cooldown
 	local var_14_1
 
-	for iter_14_0, iter_14_1 in pairs(arg_14_0._server_player_data) do
-		if iter_14_1.ability_charge then
-			local var_14_2 = arg_14_0:_recharge_modifier(iter_14_0)
-			local var_14_3 = var_14_2.cooldown
-			local var_14_4 = arg_14_0._custom_settings_modifier or 1
-			local var_14_5 = not arg_14_0._round_started and 0 or arg_14_1 * var_14_3 * var_14_4
+	for k, v in pairs(self._server_player_data) do
+		if not v.ability_charge then
+			local _recharge_modifier = self:_recharge_modifier(k)
+			local cooldown_2 = _recharge_modifier.cooldown
+			local _custom_settings_modifier = self._custom_settings_modifier
 
-			if script_data.short_ability_cooldowns then
-				var_14_5 = var_14_5 * 100
+			_custom_settings_modifier = _custom_settings_modifier or 1
+
+			local flag
+
+			flag = self._round_started or not 0 or arg_14_1 * cooldown_2 * _custom_settings_modifier
+
+			if not script_data.short_ability_cooldowns then
+				flag = flag * 100
 			end
 
-			iter_14_1.ability_charge = math.clamp(iter_14_1.ability_charge + var_14_5, 0, var_14_0)
+			v.ability_charge = math.clamp(v.ability_charge + flag, 0, cooldown)
 
-			if iter_14_1.extension then
-				local var_14_6 = var_14_2.boost
+			if not v.extension then
+				local boost = _recharge_modifier.boost
 
-				iter_14_1.extension:server_set_ability_charge(math.floor(iter_14_1.ability_charge), var_14_3, var_14_6)
+				v.extension:server_set_ability_charge(math.floor(v.ability_charge), cooldown_2, boost)
 			end
 		end
 	end
 end
 
-function VersusHordeAbilitySystem.server_spawn_horde(arg_15_0, arg_15_1)
-	local var_15_0 = Managers.state.conflict
-	local var_15_1 = Managers.state.side:get_side_from_name("dark_pact").side_id
-	local var_15_2 = arg_15_0._server_player_data[arg_15_1]
+VersusHordeAbilitySystem.server_spawn_horde = function (self, arg_15_1)
+	-- function 15
+	local conflict = Managers.state.conflict
+	local side_id = Managers.state.side:get_side_from_name("dark_pact").side_id
+	local var_15_2 = self._server_player_data[arg_15_1]
 
 	if var_0_0.cooldown > var_15_2.ability_charge then
 		return
 	end
 
-	local var_15_3 = arg_15_0:get_composition()
-	local var_15_4 = {
-		override_composition_type = var_15_3
+	local get_composition = self:get_composition()
+	local tbl = {
+		override_composition_type = get_composition
 	}
-	local var_15_5 = {
+	local tbl_2 = {
 		horde_ability_caller_peer_id = arg_15_1
 	}
-	local var_15_6 = var_15_2.extension and POSITION_LOOKUP[var_15_2.extension:unit()] or nil
+	local var_15_6
 
-	var_15_0.horde_spawner:execute_ambush_horde(var_15_4, var_15_1, false, var_15_6, var_15_5)
+	if not var_15_2.extension then
+		var_15_6 = POSITION_LOOKUP[var_15_2.extension:unit()]
+
+		if not var_15_6 then
+			-- Nothing
+		end
+	end
+
+	var_15_6 = nil
+
+	::label_15_0::
+
+	conflict.horde_spawner:execute_ambush_horde(tbl, side_id, false, var_15_6, tbl_2)
 
 	var_15_2.ability_charge = 0
 
-	local var_15_7 = Managers.player:player(arg_15_1, 1)
+	local player = Managers.player:player(arg_15_1, 1)
 
-	if var_15_7 then
-		local var_15_8 = var_15_7.player_unit
+	if not player then
+		local player_unit = player.player_unit
 
-		if ALIVE[var_15_8] then
-			ScriptUnit.extension_input(var_15_8, "dialogue_system"):trigger_dialogue_event("vs_ability_horde")
+		if not ALIVE[player_unit] then
+			ScriptUnit.extension_input(player_unit, "dialogue_system"):trigger_dialogue_event("vs_ability_horde")
 		end
 
 		Managers.state.network.network_transmit:send_rpc_all("rpc_horde_ability_activated", arg_15_1)
 	end
 end
 
-function VersusHordeAbilitySystem.server_register_peer(arg_16_0, arg_16_1)
-	local var_16_0 = var_0_0.save_charges_between_rounds and arg_16_0._mechanism:get_cached_horde_ability_charges(arg_16_1)
+VersusHordeAbilitySystem.server_register_peer = function (self, arg_16_1)
+	-- function 16
+	local save_charges_between_rounds = var_0_0.save_charges_between_rounds
 
-	if not arg_16_0._server_player_data[arg_16_1] then
-		arg_16_0._server_player_data[arg_16_1] = {
-			ability_charge = var_16_0 or 0,
+	save_charges_between_rounds = not save_charges_between_rounds and self._mechanism:get_cached_horde_ability_charges(arg_16_1)
+
+	if not self._server_player_data[arg_16_1] then
+		self._server_player_data[arg_16_1] = {
+			ability_charge = save_charges_between_rounds or 0,
 			ability_horde_units_to_sync = {}
 		}
 	end
 end
 
-function VersusHordeAbilitySystem.server_ability_recharge_boost(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
-	if arg_17_5 and not var_0_0.recharge_boosts_on_downed_units then
+VersusHordeAbilitySystem.server_ability_recharge_boost = function (self, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
+	-- function 17
+	if not (not arg_17_5 and var_0_0.recharge_boosts_on_downed_units) then
 		return
 	end
 
-	local var_17_0 = arg_17_0._server_player_data[arg_17_1]
+	local var_17_0 = self._server_player_data[arg_17_1]
 
 	if not var_17_0 then
 		return
 	end
 
-	local var_17_1 = var_0_0.recharge_boosts.actions
-	local var_17_2 = var_0_0.recharge_boosts.damage_sources
-	local var_17_3 = var_17_1[arg_17_2] or var_17_2[arg_17_3] or var_17_2[arg_17_4]
+	local actions = var_0_0.recharge_boosts.actions
+	local damage_sources = var_0_0.recharge_boosts.damage_sources
+	local var_17_3 = actions[arg_17_2]
 
-	if var_17_3 then
-		local var_17_4 = var_17_3 * arg_17_0:_recharge_modifier(arg_17_1).boost
-		local var_17_5 = var_0_0.cooldown / 100 * var_17_4
+	if not var_17_3 then
+		var_17_3 = damage_sources[arg_17_3]
+		var_17_3 = var_17_3 or damage_sources[arg_17_4]
+	end
 
-		var_17_0.ability_charge = var_17_0.ability_charge + var_17_5
+	if not var_17_3 then
+		local num = var_17_3 * self:_recharge_modifier(arg_17_1).boost
+		local num_2 = var_0_0.cooldown / 100 * num
+
+		var_17_0.ability_charge = var_17_0.ability_charge + num_2
 	end
 end
 
-function VersusHordeAbilitySystem.on_player_unit_spawned(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
-	if not arg_18_0._extensions[arg_18_2] then
+VersusHordeAbilitySystem.on_player_unit_spawned = function (self, arg_18_1, arg_18_2, arg_18_3)
+	-- function 18
+	if not self._extensions[arg_18_2] then
 		return
 	end
 
-	local var_18_0 = arg_18_1.peer_id
-	local var_18_1 = arg_18_0._server_player_data[var_18_0] or {}
-	local var_18_2 = var_18_1 and var_18_1.ability_charge or arg_18_0._mechanism:get_cached_horde_ability_charges(var_18_0) or 0
+	local peer_id = arg_18_1.peer_id
+	local var_18_1 = self._server_player_data[peer_id]
+
+	var_18_1 = var_18_1 or {}
+
+	local ability_charge
+
+	if not var_18_1 then
+		ability_charge = var_18_1.ability_charge
+
+		if not ability_charge then
+			-- Nothing
+		end
+	end
+
+	ability_charge = self._mechanism:get_cached_horde_ability_charges(peer_id)
+	ability_charge = ability_charge or 0
+
+	::label_18_0::
 
 	var_18_1.player_unit = arg_18_2
-	var_18_1.extension = arg_18_0._extensions[arg_18_2]
-	var_18_1.ability_charge = var_18_2
-	arg_18_0._server_player_data[var_18_0] = var_18_1
+	var_18_1.extension = self._extensions[arg_18_2]
+	var_18_1.ability_charge = ability_charge
+	self._server_player_data[peer_id] = var_18_1
 end
 
-function VersusHordeAbilitySystem.rpc_activate_dark_pact_horde_ability(arg_19_0, arg_19_1)
+VersusHordeAbilitySystem.rpc_activate_dark_pact_horde_ability = function (self, arg_19_1)
+	-- function 19
 	local var_19_0 = CHANNEL_TO_PEER_ID[arg_19_1]
 
-	arg_19_0:server_spawn_horde(var_19_0)
+	self:server_spawn_horde(var_19_0)
 end
 
-function VersusHordeAbilitySystem._server_batch_sync_client_horde_units(arg_20_0, arg_20_1)
-	if arg_20_1 < arg_20_0._next_batch_sync then
+VersusHordeAbilitySystem._server_batch_sync_client_horde_units = function (self, arg_20_1)
+	-- function 20
+	if arg_20_1 < self._next_batch_sync then
 		return
 	end
 
-	arg_20_0._next_batch_sync = arg_20_1 + var_0_0.horde_units_batch_sync_interval
+	self._next_batch_sync = arg_20_1 + var_0_0.horde_units_batch_sync_interval
 
-	for iter_20_0, iter_20_1 in pairs(arg_20_0._server_player_data) do
-		local var_20_0 = iter_20_1.ability_horde_units_to_sync
+	for k, v in pairs(self._server_player_data) do
+		local ability_horde_units_to_sync = v.ability_horde_units_to_sync
 
-		if var_20_0 and not table.is_empty(var_20_0) then
-			local var_20_1 = Script.new_array(var_0_0.max_num_horde_units_per_player)
+		if not (not ability_horde_units_to_sync and table.is_empty(ability_horde_units_to_sync)) then
+			local new_array = Script.new_array(var_0_0.max_num_horde_units_per_player)
 
-			for iter_20_2 = 1, #var_20_0 do
-				var_20_1[iter_20_2] = var_20_0[iter_20_2]
+			for k_2 = 1, #ability_horde_units_to_sync do
+				new_array[k_2] = ability_horde_units_to_sync[k_2]
 			end
 
-			table.clear(var_20_0)
+			table.clear(ability_horde_units_to_sync)
 
-			if PEER_ID_TO_CHANNEL[iter_20_0] then
-				arg_20_0.network_transmit:send_rpc("rpc_client_outline_own_horde_units", iter_20_0, var_20_1)
+			if not PEER_ID_TO_CHANNEL[k] then
+				self.network_transmit:send_rpc("rpc_client_outline_own_horde_units", k, new_array)
 			end
 		end
 	end
 end
 
-function VersusHordeAbilitySystem.get_composition(arg_21_0)
-	local var_21_0 = ConflictDirectors[arg_21_0._conflict_director.current_conflict_settings].factions
-	local var_21_1 = var_0_0.compositions_per_faction
-	local var_21_2 = var_21_1.skaven
+VersusHordeAbilitySystem.get_composition = function (self)
+	-- function 21
+	local factions = ConflictDirectors[self._conflict_director.current_conflict_settings].factions
+	local compositions_per_faction = var_0_0.compositions_per_faction
+	local skaven = compositions_per_faction.skaven
 
-	if var_21_0 and not table.is_empty(var_21_0) then
-		local var_21_3 = #var_21_0
-		local var_21_4 = math.random(1, var_21_3)
+	if not (not factions and table.is_empty(factions)) then
+		local count = #factions
+		local random = math.random(1, count)
 
-		for iter_21_0 = 0, var_21_3 - 1 do
-			local var_21_5 = var_21_0[math.index_wrapper(var_21_4 + iter_21_0, var_21_3)]
+		for i = 0, count - 1 do
+			local var_21_5 = factions[math.index_wrapper(random + i, count)]
 
-			if var_21_1[var_21_5] then
-				var_21_2 = var_21_1[var_21_5]
+			if not compositions_per_faction[var_21_5] then
+				skaven = compositions_per_faction[var_21_5]
 
 				break
 			end
 		end
 	end
 
-	return var_21_2
+	return skaven
 end
 
-function VersusHordeAbilitySystem.on_player_joined_party(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5)
-	if arg_22_5 then
+VersusHordeAbilitySystem.on_player_joined_party = function (self, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5)
+	-- function 22
+	if not arg_22_5 then
 		return
 	end
 
-	if arg_22_0._num_players_by_party[arg_22_3] then
-		arg_22_0._num_players_by_party[arg_22_3] = arg_22_0._num_players_by_party[arg_22_3] + 1
+	if not self._num_players_by_party[arg_22_3] then
+		self._num_players_by_party[arg_22_3] = self._num_players_by_party[arg_22_3] + 1
 	end
 end
 
-function VersusHordeAbilitySystem.on_player_left_party(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
-	if arg_23_0._num_players_by_party[arg_23_3] then
-		arg_23_0._num_players_by_party[arg_23_3] = arg_23_0._num_players_by_party[arg_23_3] - 1
+VersusHordeAbilitySystem.on_player_left_party = function (self, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+	-- function 23
+	if not self._num_players_by_party[arg_23_3] then
+		self._num_players_by_party[arg_23_3] = self._num_players_by_party[arg_23_3] - 1
 	end
 end
 
-function VersusHordeAbilitySystem._recharge_modifier(arg_24_0)
-	arg_24_0._pactsworn_party_id = Managers.state.side:get_side_from_name("dark_pact").party.party_id
-	arg_24_0._hero_party_id = Managers.state.side:get_side_from_name("heroes").party.party_id
+VersusHordeAbilitySystem._recharge_modifier = function (self)
+	-- function 24
+	self._pactsworn_party_id = Managers.state.side:get_side_from_name("dark_pact").party.party_id
+	self._hero_party_id = Managers.state.side:get_side_from_name("heroes").party.party_id
 
-	local var_24_0 = Managers.state.side:get_side_from_name("dark_pact").party.party_id
-	local var_24_1 = Managers.state.side:get_side_from_name("heroes").party.party_id
-	local var_24_2 = math.clamp(arg_24_0._num_players_by_party[var_24_1] - arg_24_0._num_players_by_party[var_24_0], 0, 3)
-	local var_24_3 = var_0_0.team_size_difference_recharge_modifier[var_24_2]
-	local var_24_4 = arg_24_0._win_conditions:get_total_score(var_24_0)
-	local var_24_5 = arg_24_0._win_conditions:get_total_score(var_24_1)
-	local var_24_6 = 10
-	local var_24_7 = var_24_4 - var_24_5
-	local var_24_8 = math.sign(var_24_7)
-	local var_24_9 = math.floor(math.abs(var_24_7 / var_24_6)) * var_24_6 * var_24_8
-	local var_24_10 = var_0_0.max_score_difference_modifier
-	local var_24_11 = var_0_0.score_difference_recharge_modifier[var_24_9] or var_0_0.score_difference_recharge_modifier[var_24_10 * var_24_8]
+	local party_id = Managers.state.side:get_side_from_name("dark_pact").party.party_id
+	local party_id_2 = Managers.state.side:get_side_from_name("heroes").party.party_id
+	local clamp = math.clamp(self._num_players_by_party[party_id_2] - self._num_players_by_party[party_id], 0, 3)
+	local var_24_3 = var_0_0.team_size_difference_recharge_modifier[clamp]
+	local get_total_score = self._win_conditions:get_total_score(party_id)
+	local get_total_score_2 = self._win_conditions:get_total_score(party_id_2)
+	local num = 10
+	local num_2 = get_total_score - get_total_score_2
+	local sign = math.sign(num_2)
+	local num_3 = math.floor(math.abs(num_2 / num)) * num * sign
+	local max_score_difference_modifier = var_0_0.max_score_difference_modifier
+	local var_24_11 = var_0_0.score_difference_recharge_modifier[num_3]
+
+	var_24_11 = var_24_11 or var_0_0.score_difference_recharge_modifier[max_score_difference_modifier * sign]
+
 	local var_24_12 = var_0_0.team_size_difference_recharge_modifier[3]
-	local var_24_13 = {
+	local tbl = {
 		cooldown = math.min(var_24_11.cooldown_mod * var_24_3, var_24_12),
 		boost = math.min(var_24_11.boost_mod * var_24_3, var_24_12)
 	}
 
-	if arg_24_0._mechanism:get_current_set() == 1 then
-		var_24_13 = {
+	if self._mechanism:get_current_set() == 1 then
+		tbl = {
 			cooldown = var_24_3,
 			boost = var_24_3
 		}
 	end
 
-	return var_24_13 or 1
+	return tbl or 1
 end
 
-function VersusHordeAbilitySystem.settings(arg_25_0)
+VersusHordeAbilitySystem.settings = function (arg_25_0)
+	-- function 25
 	return var_0_0
 end
 
-function VersusHordeAbilitySystem.rpc_horde_ability_activated(arg_26_0, arg_26_1, arg_26_2)
-	if Managers.chat and Managers.chat:has_channel(1) then
-		local var_26_0 = Managers.player:player(arg_26_2, 1)
-		local var_26_1 = var_26_0 and var_26_0:name()
+VersusHordeAbilitySystem.rpc_horde_ability_activated = function (arg_26_0, arg_26_1, arg_26_2)
+	-- function 26
+	if not Managers.chat and not Managers.chat:has_channel(1) then
+		local player = Managers.player:player(arg_26_2, 1)
+		local flag = not player and player:name()
 
-		if var_26_1 then
-			Managers.chat:add_local_system_message(1, string.format(Localize("vs_chat_message_horde_ability"), var_26_1), true)
+		if not flag then
+			Managers.chat:add_local_system_message(1, string.format(Localize("vs_chat_message_horde_ability"), flag), true)
 		end
 	end
 end

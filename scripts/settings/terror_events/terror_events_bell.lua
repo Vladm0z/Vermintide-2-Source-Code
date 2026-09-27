@@ -1,11 +1,11 @@
 -- chunkname: @scripts/settings/terror_events/terror_events_bell.lua
 
-local var_0_0 = require("scripts/settings/terror_events/terror_event_utils")
-local var_0_1 = var_0_0.count_event_breed
-local var_0_2 = var_0_0.HARDER
-local var_0_3 = var_0_0.HARDEST
-local var_0_4 = var_0_0.CATACLYSM
-local var_0_5 = {
+local scripts_settings_terror_events_terror_event_utils = require("scripts/settings/terror_events/terror_event_utils")
+local count_event_breed = scripts_settings_terror_events_terror_event_utils.count_event_breed
+local HARDER = scripts_settings_terror_events_terror_event_utils.HARDER
+local HARDEST = scripts_settings_terror_events_terror_event_utils.HARDEST
+local CATACLYSM = scripts_settings_terror_events_terror_event_utils.CATACLYSM
+local tbl = {
 	canyon_bell_event = {
 		{
 			"set_master_event_running",
@@ -39,14 +39,14 @@ local var_0_5 = {
 				"skaven_pack_master",
 				"skaven_gutter_runner"
 			},
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"event_horde",
 			limit_spawners = 3,
 			spawner_id = "canyon_bell_event",
 			composition_type = "event_extra_spice_medium",
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"delay",
@@ -66,7 +66,7 @@ local var_0_5 = {
 				"skaven_gutter_runner",
 				"skaven_ratling_gunner"
 			},
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"delay",
@@ -77,13 +77,14 @@ local var_0_5 = {
 			limit_spawners = 3,
 			spawner_id = "canyon_bell_event",
 			composition_type = "plague_monks_small",
-			difficulty_requirement = var_0_4
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_1_0)
-				return var_0_1("skaven_slave") < 5 and var_0_1("skaven_clan_rat") < 5
+			condition = function (arg_1_0)
+				-- function 1
+				return not (count_event_breed("skaven_slave") < 5) or count_event_breed("skaven_clan_rat") < 5
 			end
 		},
 		{
@@ -106,14 +107,14 @@ local var_0_5 = {
 				"skaven_gutter_runner",
 				"skaven_ratling_gunner"
 			},
-			difficulty_requirement = var_0_4
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"event_horde",
 			limit_spawners = 3,
 			spawner_id = "canyon_bell_event",
 			composition_type = "event_extra_spice_medium",
-			difficulty_requirement = var_0_4
+			difficulty_requirement = CATACLYSM
 		}
 	},
 	canyon_escape_event = {
@@ -137,8 +138,9 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_2_0)
-				return var_0_1("skaven_slave") < 5 and var_0_1("skaven_clan_rat") < 5
+			condition = function (arg_2_0)
+				-- function 2
+				return not (count_event_breed("skaven_slave") < 5) or count_event_breed("skaven_clan_rat") < 5
 			end
 		},
 		{
@@ -169,5 +171,5 @@ local var_0_5 = {
 }
 
 return {
-	var_0_5
+	tbl
 }

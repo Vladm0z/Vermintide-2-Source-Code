@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/mutators/mutator_escape.lua
 
-local var_0_0 = 10
-local var_0_1 = {
+local num = 10
+local tbl = {
 	chaos = {
 		"event_large_chaos",
 		"event_large"
@@ -15,20 +15,22 @@ local var_0_1 = {
 	}
 }
 
-local function var_0_2(arg_1_0)
+local function fn(arg_1_0)
+	-- function 1
 	local var_1_0
 
-	for iter_1_0, iter_1_1 in ipairs(arg_1_0) do
-		if var_0_1[iter_1_1] then
-			var_1_0 = iter_1_1
+	for i, v in ipairs(arg_1_0) do
+		if not tbl[v] then
+			var_1_0 = v
 		end
 	end
 
 	return var_1_0
 end
 
-local function var_0_3(arg_2_0, arg_2_1)
-	local var_2_0 = var_0_1[arg_2_0]
+local function fn_2(arg_2_0, arg_2_1)
+	-- function 2
+	local var_2_0 = tbl[arg_2_0]
 	local var_2_1
 	local var_2_2
 
@@ -41,16 +43,17 @@ end
 
 return {
 	hide_from_player_ui = true,
-	server_update_function = function(arg_3_0, arg_3_1)
-		local var_3_0 = Managers.state.conflict
+	server_update_function = function (arg_3_0, arg_3_1)
+		-- function 3
+		local conflict = Managers.state.conflict
 
-		if not var_3_0 then
+		if not conflict then
 			return
 		end
 
 		if not arg_3_1.setup_done then
-			var_3_0.pacing:disable()
-			var_3_0.pacing:disable_roamers()
+			conflict.pacing:disable()
+			conflict.pacing:disable_roamers()
 
 			arg_3_1.seed = Managers.mechanism:get_level_seed("mutator")
 
@@ -59,32 +62,32 @@ return {
 			arg_3_1.setup_done = true
 		end
 
-		local var_3_1 = Managers.time:time("game")
+		local time = Managers.time:time("game")
 
-		if not arg_3_1.check_at or var_3_1 > arg_3_1.check_at then
-			if Managers.state.performance:num_active_enemies() < var_0_0 then
-				local var_3_2 = ConflictDirectors[var_3_0.current_conflict_settings].factions
-				local var_3_3 = var_3_2 and var_0_2(var_3_2)
+		if not (not arg_3_1.check_at and not (time > arg_3_1.check_at)) then
+			if Managers.state.performance:num_active_enemies() < num then
+				local factions = ConflictDirectors[conflict.current_conflict_settings].factions
+				local flag = not factions and fn(factions)
 
-				if var_3_3 then
-					local var_3_4 = Managers.state.side:get_side_from_name("dark_pact").side_id
+				if not flag then
+					local side_id = Managers.state.side:get_side_from_name("dark_pact").side_id
 					local var_3_5
 					local var_3_6
 
-					arg_3_1.seed, var_3_6 = var_0_3(var_3_3, arg_3_1.seed)
+					arg_3_1.seed, var_3_6 = fn_2(flag, arg_3_1.seed)
 
-					local var_3_7 = {
+					local tbl = {
 						start_delay = 0,
 						only_behind = true,
 						silent = true,
 						override_composition_type = var_3_6
 					}
 
-					var_3_0.horde_spawner:horde("vector", var_3_7, var_3_4)
+					conflict.horde_spawner:horde("vector", tbl, side_id)
 				end
 			end
 
-			arg_3_1.check_at = var_3_1 + 5
+			arg_3_1.check_at = time + 5
 		end
 	end
 }

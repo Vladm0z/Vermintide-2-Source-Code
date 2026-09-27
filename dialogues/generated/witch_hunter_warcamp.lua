@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/witch_hunter_warcamp.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pdr_level_ground_zero_cargo_elevator",

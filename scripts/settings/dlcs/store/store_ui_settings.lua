@@ -1,13 +1,13 @@
 -- chunkname: @scripts/settings/dlcs/store/store_ui_settings.lua
 
-local var_0_0 = DLCSettings.store
+local store = DLCSettings.store
 
-var_0_0.hero_view = {
+store.hero_view = {
 	store = {
 		filename = "scripts/ui/views/hero_view/states/hero_view_state_store"
 	}
 }
-var_0_0.hero_view_settings_by_screen = {
+store.hero_view_settings_by_screen = {
 	{
 		name = "store",
 		hotkey_disabled = false,
@@ -25,7 +25,7 @@ var_0_0.hero_view_settings_by_screen = {
 		}
 	}
 }
-var_0_0.controller_settings = {
+store.controller_settings = {
 	IngameMenuKeymaps = {
 		win32 = {
 			hotkey_store = {
@@ -36,7 +36,7 @@ var_0_0.controller_settings = {
 		}
 	}
 }
-var_0_0.hotkey_mapping = {
+store.hotkey_mapping = {
 	hotkey_store = {
 		in_transition = "hero_view_force",
 		error_message = "matchmaking_ready_interaction_message_store",
@@ -62,7 +62,7 @@ var_0_0.hotkey_mapping = {
 		}
 	}
 }
-var_0_0.store_state_filenames = {
+store.store_state_filenames = {
 	"scripts/ui/ui_widgets_store",
 	"scripts/settings/store_dlc_settings",
 	"scripts/settings/store_bundle_layouts",
@@ -82,10 +82,10 @@ var_0_0.store_state_filenames = {
 	"scripts/ui/views/hero_view/windows/store/store_window_item_details",
 	"scripts/ui/views/hero_view/windows/store/store_window_category_item_list"
 }
-var_0_0.ui_materials_in_inn = {
+store.ui_materials_in_inn = {
 	"materials/ui/ui_1080p_store_menu"
 }
-var_0_0.ui_texture_settings = {
+store.ui_texture_settings = {
 	filenames = {
 		"scripts/ui/atlas_settings/gui_store_menu_atlas"
 	},
@@ -111,7 +111,7 @@ var_0_0.ui_texture_settings = {
 		"dlc_store_banner_wom"
 	}
 }
-var_0_0.currency_ui_settings = {
+store.currency_ui_settings = {
 	SM = {
 		name = "menu_store_panel_currency_tooltip_title",
 		icon_small = "store_icon_currency_ingame",
@@ -148,7 +148,7 @@ var_0_0.currency_ui_settings = {
 		}
 	}
 }
-var_0_0.allowed_store_item_types = {
+store.allowed_store_item_types = {
 	weapon_pose = true,
 	weapon_skin = true,
 	hat = true,
@@ -157,7 +157,7 @@ var_0_0.allowed_store_item_types = {
 	skin = true,
 	weapon_pose_bundle = true
 }
-var_0_0.currency_types = {
+store.currency_types = {
 	[1] = "SM",
 	[2] = "VS"
 }

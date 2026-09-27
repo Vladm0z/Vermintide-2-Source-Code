@@ -2,30 +2,40 @@
 
 RatlingGunnerStateWalking = class(RatlingGunnerStateWalking, EnemyCharacterStateWalking)
 
-function RatlingGunnerStateWalking.init(arg_1_0, arg_1_1)
-	RatlingGunnerStateWalking.super.init(arg_1_0, arg_1_1)
+RatlingGunnerStateWalking.init = function (self, arg_1_1)
+	-- function 1
+	RatlingGunnerStateWalking.super.init(self, arg_1_1)
 
-	arg_1_0._fire_ability_id = arg_1_0._career_extension:ability_id("fire")
-	arg_1_0._reload_ability_id = arg_1_0._career_extension:ability_id("reload")
+	self._fire_ability_id = self._career_extension:ability_id("fire")
+	self._reload_ability_id = self._career_extension:ability_id("reload")
 end
 
-function RatlingGunnerStateWalking.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
-	RatlingGunnerStateWalking.super.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+RatlingGunnerStateWalking.on_enter = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	-- function 2
+	RatlingGunnerStateWalking.super.on_enter(self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 
-	arg_2_0._left_wpn_particle_node_name = "g_ratlinggun"
-	arg_2_0._left_wpn_particle_name = "fx/wpnfx_gunner_enemy_in_range_1p"
+	self._left_wpn_particle_node_name = "g_ratlinggun"
+	self._left_wpn_particle_name = "fx/wpnfx_gunner_enemy_in_range_1p"
 end
 
-function RatlingGunnerStateWalking.debug_display_ammo(arg_3_0)
-	local var_3_0 = arg_3_0._unit
-	local var_3_1 = (BLACKBOARDS[var_3_0].attack_pattern_data or {}).current_ammo or arg_3_0._breed.max_ammo
-	local var_3_2 = RESOLUTION_LOOKUP.res_w
-	local var_3_3 = RESOLUTION_LOOKUP.res_h * 0.85
-	local var_3_4 = var_3_2 * 0.87
-	local var_3_5 = Color(100, 255, 0)
-	local var_3_6 = Vector3(var_3_4, var_3_3, 10)
-	local var_3_7 = 40
-	local var_3_8 = string.format("Ammo: %2d", var_3_1)
+RatlingGunnerStateWalking.debug_display_ammo = function (self)
+	-- function 3
+	local _unit = self._unit
+	local attack_pattern_data = BLACKBOARDS[_unit].attack_pattern_data
 
-	Debug.draw_text(var_3_8, var_3_6, var_3_7, var_3_5)
+	attack_pattern_data = attack_pattern_data or {}
+
+	local current_ammo = attack_pattern_data.current_ammo
+
+	current_ammo = current_ammo or self._breed.max_ammo
+
+	local res_w = RESOLUTION_LOOKUP.res_w
+	local num = RESOLUTION_LOOKUP.res_h * 0.85
+	local num_2 = res_w * 0.87
+	local var_3_6 = Color(100, 255, 0)
+	local var_3_7 = Vector3(num_2, num, 10)
+	local num_3 = 40
+	local format = string.format("Ammo: %2d", current_ammo)
+
+	Debug.draw_text(format, var_3_7, num_3, var_3_6)
 end

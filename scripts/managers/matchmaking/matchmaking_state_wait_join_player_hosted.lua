@@ -3,33 +3,38 @@
 MatchmakingStateWaitJoinPlayerHosted = class(MatchmakingStateWaitJoinPlayerHosted)
 MatchmakingStateWaitJoinPlayerHosted.NAME = "MatchmakingStateWaitJoinPlayerHosted"
 
-function MatchmakingStateWaitJoinPlayerHosted.init(arg_1_0, arg_1_1)
-	arg_1_0._lobby = arg_1_1.lobby
-	arg_1_0._network_options = arg_1_1.network_options
-	arg_1_0._matchmaking_manager = arg_1_1.matchmaking_manager
-	arg_1_0._network_transmit = arg_1_1.network_transmit
-	arg_1_0._is_server = arg_1_1.is_server
+MatchmakingStateWaitJoinPlayerHosted.init = function (self, arg_1_1)
+	-- function 1
+	self._lobby = arg_1_1.lobby
+	self._network_options = arg_1_1.network_options
+	self._matchmaking_manager = arg_1_1.matchmaking_manager
+	self._network_transmit = arg_1_1.network_transmit
+	self._is_server = arg_1_1.is_server
 end
 
-function MatchmakingStateWaitJoinPlayerHosted.destroy(arg_2_0)
+MatchmakingStateWaitJoinPlayerHosted.destroy = function (arg_2_0)
+	-- function 2
 	return
 end
 
-function MatchmakingStateWaitJoinPlayerHosted.on_enter(arg_3_0, arg_3_1)
+MatchmakingStateWaitJoinPlayerHosted.on_enter = function (self, arg_3_1)
+	-- function 3
 	Managers.mechanism:mechanism_try_call("on_enter_custom_game_lobby")
 
-	arg_3_0._current_lobby = Managers.state.network:lobby()
-	arg_3_0._state_context = arg_3_1
-	arg_3_0._search_config = arg_3_1.search_config
+	self._current_lobby = Managers.state.network:lobby()
+	self._state_context = arg_3_1
+	self._search_config = arg_3_1.search_config
 
-	local var_3_0 = Managers.lobby:get_lobby("matchmaking_join_lobby")
-	local var_3_1 = var_3_0:lobby_data("match_started") == "true"
+	local get_lobby = Managers.lobby:get_lobby("matchmaking_join_lobby")
+	local flag = get_lobby:lobby_data("match_started") == "true"
+	local flag_2
 
-	arg_3_0._next_transition_state = var_3_1 and "start_lobby" or nil
-	arg_3_0._match_host = var_3_0:lobby_host()
-	arg_3_0._friend_joining = arg_3_1.friend_join
+	flag_2 = not flag and "start_lobby" and nil
+	self._next_transition_state = flag_2
+	self._match_host = get_lobby:lobby_host()
+	self._friend_joining = arg_3_1.friend_join
 
-	if arg_3_0._friend_joining and not var_3_1 then
+	if not (not self._friend_joining and flag) then
 		Managers.ui:handle_transition("start_game_view_force", {
 			menu_sub_state_name = "versus_player_hosted_lobby",
 			menu_state_name = "play",
@@ -38,72 +43,79 @@ function MatchmakingStateWaitJoinPlayerHosted.on_enter(arg_3_0, arg_3_1)
 	end
 end
 
-function MatchmakingStateWaitJoinPlayerHosted.on_exit(arg_4_0)
-	if not arg_4_0._next_transition_state then
-		arg_4_0:terminate()
+MatchmakingStateWaitJoinPlayerHosted.on_exit = function (self)
+	-- function 4
+	if not self._next_transition_state then
+		self:terminate()
 	end
 end
 
-function MatchmakingStateWaitJoinPlayerHosted.terminate(arg_5_0)
-	if Managers.lobby:query_lobby("matchmaking_join_lobby") then
+MatchmakingStateWaitJoinPlayerHosted.terminate = function (arg_5_0)
+	-- function 5
+	if not Managers.lobby:query_lobby("matchmaking_join_lobby") then
 		Managers.lobby:destroy_lobby("matchmaking_join_lobby")
 	end
 end
 
-function MatchmakingStateWaitJoinPlayerHosted.update(arg_6_0, arg_6_1, arg_6_2)
-	local var_6_0 = Managers.lobby:query_lobby("matchmaking_join_lobby")
+MatchmakingStateWaitJoinPlayerHosted.update = function (self, arg_6_1, arg_6_2)
+	-- function 6
+	local query_lobby = Managers.lobby:query_lobby("matchmaking_join_lobby")
 
-	if not var_6_0 then
-		return arg_6_0:_lobby_failed()
+	if not query_lobby then
+		return self:_lobby_failed()
 	end
 
-	var_6_0:update(arg_6_1)
+	query_lobby:update(arg_6_1)
 
-	if var_6_0:failed() then
-		return arg_6_0:_lobby_failed()
+	if not query_lobby:failed() then
+		return self:_lobby_failed()
 	end
 
-	local var_6_1 = var_6_0.lobby:lobby_host()
+	local lobby_host = query_lobby.lobby:lobby_host()
 
-	if var_6_1 and var_6_1 ~= arg_6_0._match_host then
-		Managers.matchmaking:add_broken_lobby_client(var_6_0, arg_6_2, true)
+	if not (not lobby_host and lobby_host == self._match_host) then
+		Managers.matchmaking:add_broken_lobby_client(query_lobby, arg_6_2, true)
 
-		return arg_6_0:_lobby_failed()
+		return self:_lobby_failed()
 	end
 end
 
-function MatchmakingStateWaitJoinPlayerHosted._teardown_lobby(arg_7_0)
-	if Managers.lobby:query_lobby("matchmaking_join_lobby") then
+MatchmakingStateWaitJoinPlayerHosted._teardown_lobby = function (self)
+	-- function 7
+	if not Managers.lobby:query_lobby("matchmaking_join_lobby") then
 		Managers.lobby:destroy_lobby("matchmaking_join_lobby")
 	end
 
-	arg_7_0._matchmaking_manager:reset_joining()
+	self._matchmaking_manager:reset_joining()
 
-	arg_7_0._state_context.join_lobby_data = nil
+	self._state_context.join_lobby_data = nil
 end
 
-function MatchmakingStateWaitJoinPlayerHosted._lobby_failed(arg_8_0)
-	arg_8_0:_teardown_lobby()
+MatchmakingStateWaitJoinPlayerHosted._lobby_failed = function (self)
+	-- function 8
+	self:_teardown_lobby()
 
 	return MatchmakingStateIdle
 end
 
-function MatchmakingStateWaitJoinPlayerHosted.get_transition(arg_9_0)
-	if arg_9_0._next_transition_state then
-		local var_9_0 = {
+MatchmakingStateWaitJoinPlayerHosted.get_transition = function (self)
+	-- function 9
+	if not self._next_transition_state then
+		local tbl = {
 			lobby_client = Managers.lobby:free_lobby("matchmaking_join_lobby")
 		}
 
-		return arg_9_0._next_transition_state, var_9_0
+		return self._next_transition_state, tbl
 	end
 end
 
-function MatchmakingStateWaitJoinPlayerHosted.rpc_matchmaking_join_game(arg_10_0, arg_10_1)
+MatchmakingStateWaitJoinPlayerHosted.rpc_matchmaking_join_game = function (self, arg_10_1)
+	-- function 10
 	mm_printf_force("Transition from join due to rpc_matchmaking_join_game")
-	arg_10_0._matchmaking_manager:send_system_chat_message("matchmaking_status_joining_game")
+	self._matchmaking_manager:send_system_chat_message("matchmaking_status_joining_game")
 
-	arg_10_0._matchmaking_manager.debug.text = "starting_game"
-	arg_10_0._next_transition_state = "start_lobby"
+	self._matchmaking_manager.debug.text = "starting_game"
+	self._next_transition_state = "start_lobby"
 
 	Managers.mechanism:network_handler():get_match_handler():send_rpc_down("rpc_matchmaking_join_game")
 end

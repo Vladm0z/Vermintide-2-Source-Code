@@ -98,26 +98,30 @@ VortexTemplates = {
 			7,
 			8
 		},
-		suck_in_ai_func = function(arg_1_0)
-			local var_1_0 = {
+		suck_in_ai_func = function (self)
+			-- function 1
+			local tbl = {
 				"halescourge_tornado_enemies",
 				"halescourge_tornado_enemies_cata"
 			}
 
-			for iter_1_0 = 1, #var_1_0 do
-				local var_1_1 = Managers.state.difficulty:get_difficulty()
+			for i = 1, #tbl do
+				local get_difficulty = Managers.state.difficulty:get_difficulty()
 
-				if QuestSettings.allowed_difficulties[var_1_0[iter_1_0]][var_1_1] and not arg_1_0.completed_vortex_suck_in_challenge then
-					if not arg_1_0.num_ai_units_sucked_in then
-						arg_1_0.num_ai_units_sucked_in = 0
+				if not (not QuestSettings.allowed_difficulties[tbl[i]][get_difficulty] and self.completed_vortex_suck_in_challenge) then
+					if not self.num_ai_units_sucked_in then
+						self.num_ai_units_sucked_in = 0
 					end
 
-					arg_1_0.num_ai_units_sucked_in = (arg_1_0.num_ai_units_sucked_in or 0) + 1
+					local num_ai_units_sucked_in = self.num_ai_units_sucked_in
 
-					if arg_1_0.num_ai_units_sucked_in >= QuestSettings.halescourge_tornado_enemies then
-						Managers.player:statistics_db():increment_stat_and_sync_to_clients(var_1_0[iter_1_0])
+					num_ai_units_sucked_in = num_ai_units_sucked_in or 0
+					self.num_ai_units_sucked_in = num_ai_units_sucked_in + 1
 
-						arg_1_0.completed_vortex_suck_in_challenge = true
+					if self.num_ai_units_sucked_in >= QuestSettings.halescourge_tornado_enemies then
+						Managers.player:statistics_db():increment_stat_and_sync_to_clients(tbl[i])
+
+						self.completed_vortex_suck_in_challenge = true
 					end
 				end
 			end

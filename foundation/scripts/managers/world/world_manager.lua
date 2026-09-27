@@ -4,66 +4,70 @@ require("foundation/scripts/util/script_world")
 
 WorldManager = class(WorldManager)
 
-function WorldManager.init(arg_1_0)
-	arg_1_0._worlds = {}
-	arg_1_0._disabled_worlds = {}
-	arg_1_0._update_queue = {}
-	arg_1_0._anim_update_callbacks = {}
-	arg_1_0._scene_update_callbacks = {}
-	arg_1_0._update_done_callbacks = {}
-	arg_1_0._queued_worlds_to_release = {}
-	arg_1_0._wwise_worlds = {}
+WorldManager.init = function (self)
+	-- function 1
+	self._worlds = {}
+	self._disabled_worlds = {}
+	self._update_queue = {}
+	self._anim_update_callbacks = {}
+	self._scene_update_callbacks = {}
+	self._update_done_callbacks = {}
+	self._queued_worlds_to_release = {}
+	self._wwise_worlds = {}
 end
 
-function WorldManager.create_world(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, ...)
-	fassert(arg_2_0._worlds[arg_2_1] == nil, "World %q already exists", arg_2_1)
+WorldManager.create_world = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, ...)
+	-- function 2
+	fassert(self._worlds[arg_2_1] == nil, "World %q already exists", arg_2_1)
 
-	local var_2_0 = true
+	local flag = true
 	local var_2_1 = select("#", ...)
 
-	for iter_2_0 = 1, var_2_1 do
-		if select(iter_2_0, ...) == Application.DISABLE_PHYSICS then
-			var_2_0 = false
+	for i = 1, var_2_1 do
+		if select(i, ...) == Application.DISABLE_PHYSICS then
+			flag = false
 		end
 	end
 
-	local var_2_2 = Application.new_world(arg_2_1, ...)
+	local new_world = Application.new_world(arg_2_1, ...)
 
-	World.set_data(var_2_2, "name", arg_2_1)
-	World.set_data(var_2_2, "layer", arg_2_4 or 1)
-	World.set_data(var_2_2, "active", true)
-	World.set_data(var_2_2, "has_physics_world", var_2_0)
+	World.set_data(new_world, "name", arg_2_1)
+	World.set_data(new_world, "layer", arg_2_4 or 1)
+	World.set_data(new_world, "active", true)
+	World.set_data(new_world, "has_physics_world", flag)
 
-	if var_2_0 then
-		local var_2_3 = World.physics_world(var_2_2)
+	if not flag then
+		local physics_world = World.physics_world(new_world)
 
-		World.set_data(var_2_2, "physics_world", var_2_3)
+		World.set_data(new_world, "physics_world", physics_world)
 	end
 
-	if arg_2_2 then
-		ScriptWorld.create_shading_environment(var_2_2, arg_2_2, arg_2_3, "default")
+	if not arg_2_2 then
+		ScriptWorld.create_shading_environment(new_world, arg_2_2, arg_2_3, "default")
 	end
 
-	World.set_data(var_2_2, "levels", {})
-	World.set_data(var_2_2, "viewports", {})
-	World.set_data(var_2_2, "free_flight_viewports", {})
-	World.set_data(var_2_2, "render_queue", {})
+	World.set_data(new_world, "levels", {})
+	World.set_data(new_world, "viewports", {})
+	World.set_data(new_world, "free_flight_viewports", {})
+	World.set_data(new_world, "render_queue", {})
 
-	arg_2_0._worlds[arg_2_1] = var_2_2
-	arg_2_0._wwise_worlds[var_2_2] = Wwise.wwise_world(var_2_2)
+	self._worlds[arg_2_1] = new_world
+	self._wwise_worlds[new_world] = Wwise.wwise_world(new_world)
 
-	arg_2_0:_sort_update_queue()
+	self:_sort_update_queue()
 
-	return var_2_2
+	return new_world
 end
 
-function WorldManager.wwise_world(arg_3_0, arg_3_1)
-	return arg_3_0._wwise_worlds[arg_3_1]
+WorldManager.wwise_world = function (self, arg_3_1)
+	-- function 3
+	return self._wwise_worlds[arg_3_1]
 end
 
-function WorldManager.destroy_world(arg_4_0, arg_4_1)
-	if arg_4_0.locked then
-		arg_4_0._queued_worlds_to_release[arg_4_1] = true
+WorldManager.destroy_world = function (self, arg_4_1)
+	-- function 4
+	if not self.locked then
+		self._queued_worlds_to_release[arg_4_1] = true
 
 		return
 	end
@@ -76,114 +80,129 @@ function WorldManager.destroy_world(arg_4_0, arg_4_1)
 		var_4_0 = World.get_data(arg_4_1, "name")
 	end
 
-	local var_4_1 = arg_4_0._worlds[var_4_0]
+	local var_4_1 = self._worlds[var_4_0]
 
 	if var_4_1 == nil then
-		var_4_1 = arg_4_0._disabled_worlds[var_4_0]
+		var_4_1 = self._disabled_worlds[var_4_0]
 	end
 
 	assert(var_4_1, "World %q doesn't exist", var_4_0)
 
-	local var_4_2 = PhysicsWorld.free_overlaps
+	local free_overlaps = PhysicsWorld.free_overlaps
 
-	if var_4_2 and World.get_data(var_4_1, "has_physics_world") then
-		local var_4_3 = World.get_data(var_4_1, "physics_world")
+	if not free_overlaps and not World.get_data(var_4_1, "has_physics_world") then
+		local get_data = World.get_data(var_4_1, "physics_world")
 
-		var_4_2(var_4_3)
+		free_overlaps(get_data)
 	end
 
 	Application.release_world(var_4_1)
 
-	arg_4_0._worlds[var_4_0] = nil
-	arg_4_0._disabled_worlds[var_4_0] = nil
-	arg_4_0._anim_update_callbacks[var_4_1] = nil
-	arg_4_0._scene_update_callbacks[var_4_1] = nil
-	arg_4_0._update_done_callbacks[var_4_1] = nil
-	arg_4_0._wwise_worlds[var_4_1] = nil
+	self._worlds[var_4_0] = nil
+	self._disabled_worlds[var_4_0] = nil
+	self._anim_update_callbacks[var_4_1] = nil
+	self._scene_update_callbacks[var_4_1] = nil
+	self._update_done_callbacks[var_4_1] = nil
+	self._wwise_worlds[var_4_1] = nil
 
-	arg_4_0:_sort_update_queue()
+	self:_sort_update_queue()
 end
 
-function WorldManager.has_world(arg_5_0, arg_5_1)
-	return arg_5_0._worlds and arg_5_0._worlds[arg_5_1] ~= nil
+WorldManager.has_world = function (self, arg_5_1)
+	-- function 5
+	local _worlds = self._worlds
+
+	_worlds = not _worlds and self._worlds[arg_5_1] ~= nil
+
+	return _worlds
 end
 
-function WorldManager.world(arg_6_0, arg_6_1)
-	fassert(arg_6_0._worlds[arg_6_1], "World %q doesn't exist", arg_6_1)
+WorldManager.world = function (self, arg_6_1)
+	-- function 6
+	fassert(self._worlds[arg_6_1], "World %q doesn't exist", arg_6_1)
 
-	return arg_6_0._worlds[arg_6_1]
+	return self._worlds[arg_6_1]
 end
 
-function WorldManager.update(arg_7_0, arg_7_1, arg_7_2)
-	arg_7_0.locked = true
+WorldManager.update = function (self, arg_7_1, arg_7_2)
+	-- function 7
+	self.locked = true
 
-	for iter_7_0, iter_7_1 in ipairs(arg_7_0._update_queue) do
-		ScriptWorld.update(iter_7_1, arg_7_1, arg_7_2, arg_7_0._anim_update_callbacks[iter_7_1], arg_7_0._scene_update_callbacks[iter_7_1], arg_7_0._update_done_callbacks[iter_7_1])
+	for i, v in ipairs(self._update_queue) do
+		ScriptWorld.update(v, arg_7_1, arg_7_2, self._anim_update_callbacks[v], self._scene_update_callbacks[v], self._update_done_callbacks[v])
 	end
 
-	arg_7_0.locked = false
+	self.locked = false
 
-	for iter_7_2, iter_7_3 in pairs(arg_7_0._queued_worlds_to_release) do
-		arg_7_0:destroy_world(iter_7_2)
+	for k, v_2 in pairs(self._queued_worlds_to_release) do
+		self:destroy_world(k)
 
-		arg_7_0._queued_worlds_to_release[iter_7_2] = nil
+		self._queued_worlds_to_release[k] = nil
 	end
 end
 
-function WorldManager.render(arg_8_0)
-	for iter_8_0, iter_8_1 in ipairs(arg_8_0._update_queue) do
-		ScriptWorld.render(iter_8_1)
+WorldManager.render = function (self)
+	-- function 8
+	for i, v in ipairs(self._update_queue) do
+		ScriptWorld.render(v)
 	end
 end
 
-function WorldManager.enable_world(arg_9_0, arg_9_1, arg_9_2)
-	if arg_9_2 then
-		local var_9_0 = arg_9_0._disabled_worlds[arg_9_1]
+WorldManager.enable_world = function (self, arg_9_1, arg_9_2)
+	-- function 9
+	if not arg_9_2 then
+		local var_9_0 = self._disabled_worlds[arg_9_1]
 
 		assert(var_9_0, "Tried to enable world %q that wasn't disabled", arg_9_1)
 
-		arg_9_0._worlds[arg_9_1] = var_9_0
-		arg_9_0._disabled_worlds[arg_9_1] = nil
+		self._worlds[arg_9_1] = var_9_0
+		self._disabled_worlds[arg_9_1] = nil
 	else
-		local var_9_1 = arg_9_0._worlds[arg_9_1]
+		local var_9_1 = self._worlds[arg_9_1]
 
 		assert(var_9_1, "Tried to disable world %q that wasn't enabled", arg_9_1)
 
-		arg_9_0._disabled_worlds[arg_9_1] = var_9_1
-		arg_9_0._worlds[arg_9_1] = nil
+		self._disabled_worlds[arg_9_1] = var_9_1
+		self._worlds[arg_9_1] = nil
 	end
 
-	arg_9_0:_sort_update_queue()
+	self:_sort_update_queue()
 end
 
-function WorldManager.destroy(arg_10_0)
-	for iter_10_0, iter_10_1 in pairs(arg_10_0._worlds) do
-		arg_10_0:destroy_world(iter_10_0)
+WorldManager.destroy = function (self)
+	-- function 10
+	for k, v in pairs(self._worlds) do
+		self:destroy_world(k)
 	end
 end
 
-function WorldManager._sort_update_queue(arg_11_0)
-	arg_11_0._update_queue = {}
+WorldManager._sort_update_queue = function (self)
+	-- function 11
+	self._update_queue = {}
 
-	for iter_11_0, iter_11_1 in pairs(arg_11_0._worlds) do
-		arg_11_0._update_queue[#arg_11_0._update_queue + 1] = iter_11_1
+	for k, v in pairs(self._worlds) do
+		self._update_queue[#self._update_queue + 1] = v
 	end
 
-	local function var_11_0(arg_12_0, arg_12_1)
+	local function fn(arg_12_0, arg_12_1)
+		-- function 12
 		return World.get_data(arg_12_0, "layer") < World.get_data(arg_12_1, "layer")
 	end
 
-	table.sort(arg_11_0._update_queue, var_11_0)
+	table.sort(self._update_queue, fn)
 end
 
-function WorldManager.set_anim_update_callback(arg_13_0, arg_13_1, arg_13_2)
+WorldManager.set_anim_update_callback = function (arg_13_0, arg_13_1, arg_13_2)
+	-- function 13
 	arg_13_0._anim_update_callbacks[arg_13_1] = arg_13_2
 end
 
-function WorldManager.set_scene_update_callback(arg_14_0, arg_14_1, arg_14_2)
+WorldManager.set_scene_update_callback = function (arg_14_0, arg_14_1, arg_14_2)
+	-- function 14
 	arg_14_0._scene_update_callbacks[arg_14_1] = arg_14_2
 end
 
-function WorldManager.set_update_done_callback(arg_15_0, arg_15_1, arg_15_2)
+WorldManager.set_update_done_callback = function (arg_15_0, arg_15_1, arg_15_2)
+	-- function 15
 	arg_15_0._update_done_callbacks[arg_15_1] = arg_15_2
 end

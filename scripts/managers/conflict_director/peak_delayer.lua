@@ -2,21 +2,22 @@
 
 PeakDelayer = class(PeakDelayer)
 
-local var_0_0 = 100
-local var_0_1 = 100
-local var_0_2 = 30
-local var_0_3 = {
+local num = 100
+local num_2 = 100
+local num_3 = 30
+local tbl = {
 	IN_PEAK = "IN_PEAK",
 	DELAYING = "DELAYING",
 	WAITING_TO_REACH_DELAY = "WAITING_TO_REACH_DELAY",
 	DELAY_FINISHED = "DELAY_FINISHED"
 }
 
-local function var_0_4(arg_1_0, arg_1_1)
-	for iter_1_0 = #arg_1_0, 1, -1 do
-		local var_1_0 = arg_1_0[iter_1_0]
+local function fn(self, arg_1_1)
+	-- function 1
+	for i = #self, 1, -1 do
+		local var_1_0 = self[i]
 
-		if math.value_inside_range(arg_1_1, var_1_0, var_1_0 + var_0_2) then
+		if not math.value_inside_range(arg_1_1, var_1_0, var_1_0 + num_3) then
 			return true
 		end
 	end
@@ -24,73 +25,95 @@ local function var_0_4(arg_1_0, arg_1_1)
 	return false
 end
 
-local function var_0_5(arg_2_0, arg_2_1)
-	for iter_2_0 = #arg_2_0, 1, -1 do
-		if arg_2_1 > arg_2_0[iter_2_0] then
-			return arg_2_0[iter_2_0 + 1]
+local function fn_2(self, arg_2_1)
+	-- function 2
+	for i = #self, 1, -1 do
+		if arg_2_1 > self[i] then
+			return self[i + 1]
 		end
 	end
 
-	return arg_2_0[1]
+	return self[1]
 end
 
-function PeakDelayer.init(arg_3_0, arg_3_1)
-	arg_3_0._peaks = arg_3_1
-	arg_3_0._state = var_0_3.WAITING_TO_REACH_DELAY
+PeakDelayer.init = function (self, arg_3_1)
+	-- function 3
+	self._peaks = arg_3_1
+	self._state = tbl.WAITING_TO_REACH_DELAY
 end
 
-function PeakDelayer.update(arg_4_0, arg_4_1, arg_4_2)
-	local var_4_0 = var_0_5(arg_4_0._peaks, arg_4_1) or math.huge
+PeakDelayer.update = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	local var_4_0 = fn_2(self._peaks, arg_4_1)
 
-	if arg_4_0._state == var_0_3.WAITING_TO_REACH_DELAY then
-		if var_0_4(arg_4_0._peaks, arg_4_1) then
-			arg_4_0._state = var_0_3.IN_PEAK
-		elseif var_4_0 - arg_4_1 < var_0_0 then
+	var_4_0 = var_4_0 or math.huge
+
+	if self._state == tbl.WAITING_TO_REACH_DELAY then
+		if not fn(self._peaks, arg_4_1) then
+			self._state = tbl.IN_PEAK
+		elseif var_4_0 - arg_4_1 < num then
 			Managers.state.event:trigger("event_delay_pacing", true)
 
-			arg_4_0._delaying_since = arg_4_2
-			arg_4_0._delay_for_peak = var_4_0
-			arg_4_0._state = var_0_3.DELAYING
+			self._delaying_since = arg_4_2
+			self._delay_for_peak = var_4_0
+			self._state = tbl.DELAYING
 		end
-	elseif arg_4_0._state == var_0_3.DELAYING then
-		if var_0_4(arg_4_0._peaks, arg_4_1) then
+	elseif self._state == tbl.DELAYING then
+		if not fn(self._peaks, arg_4_1) then
 			Managers.state.event:trigger("event_delay_pacing", false)
 
-			arg_4_0._state = var_0_3.IN_PEAK
-		elseif arg_4_0._delay_for_peak ~= var_4_0 then
+			self._state = tbl.IN_PEAK
+		elseif self._delay_for_peak ~= var_4_0 then
 			Managers.state.event:trigger("event_delay_pacing", false)
 
-			arg_4_0._delay_for_peak = nil
-			arg_4_0._state = var_0_3.WAITING_TO_REACH_DELAY
-		elseif arg_4_2 - arg_4_0._delaying_since > var_0_1 then
+			self._delay_for_peak = nil
+			self._state = tbl.WAITING_TO_REACH_DELAY
+		elseif arg_4_2 - self._delaying_since > num_2 then
 			Managers.state.event:trigger("event_delay_pacing", false)
 
-			arg_4_0._state = var_0_3.DELAY_FINISHED
+			self._state = tbl.DELAY_FINISHED
 		end
-	elseif arg_4_0._state == var_0_3.DELAY_FINISHED then
-		if var_0_4(arg_4_0._peaks, arg_4_1) then
-			arg_4_0._state = var_0_3.IN_PEAK
-		elseif arg_4_0._delay_for_peak ~= var_4_0 then
-			arg_4_0._delay_for_peak = nil
-			arg_4_0._state = var_0_3.WAITING_TO_REACH_DELAY
+	elseif self._state == tbl.DELAY_FINISHED then
+		if not fn(self._peaks, arg_4_1) then
+			self._state = tbl.IN_PEAK
+		elseif self._delay_for_peak ~= var_4_0 then
+			self._delay_for_peak = nil
+			self._state = tbl.WAITING_TO_REACH_DELAY
 		end
-	elseif arg_4_0._state == var_0_3.IN_PEAK and not var_0_4(arg_4_0._peaks, arg_4_1) then
-		arg_4_0._state = var_0_3.WAITING_TO_REACH_DELAY
+	elseif not (self._state ~= tbl.IN_PEAK or fn(self._peaks, arg_4_1)) then
+		self._state = tbl.WAITING_TO_REACH_DELAY
 	end
 
-	if script_data.debug_peak_delayer then
-		Debug.text("PeakDelayer state: %s", arg_4_0._state)
+	if not script_data.debug_peak_delayer then
+		Debug.text("PeakDelayer state: %s", self._state)
 	end
 end
 
-function PeakDelayer.is_near_or_in_a_peak(arg_5_0)
-	return arg_5_0._state ~= var_0_3.WAITING_TO_REACH_DELAY
+PeakDelayer.is_near_or_in_a_peak = function (self)
+	-- function 5
+	return self._state ~= tbl.WAITING_TO_REACH_DELAY
 end
 
-function PeakDelayer.set_peaks(arg_6_0, arg_6_1)
-	arg_6_0._peaks = table.clone(arg_6_1)
+PeakDelayer.set_peaks = function (self, arg_6_1)
+	-- function 6
+	self._peaks = table.clone(arg_6_1)
 end
 
-function PeakDelayer.get_peaks(arg_7_0)
-	return arg_7_0._peaks and table.clone(arg_7_0._peaks) or {}
+PeakDelayer.get_peaks = function (self)
+	-- function 7
+	local clone
+
+	if not self._peaks then
+		clone = table.clone(self._peaks)
+
+		if not clone then
+			-- Nothing
+		end
+	end
+
+	clone = {}
+
+	::label_7_0::
+
+	return clone
 end

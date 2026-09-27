@@ -1,6 +1,9 @@
 -- chunkname: @scripts/settings/outline_settings.lua
 
+local OutlineSettings = OutlineSettings
+
 OutlineSettings = OutlineSettings or {}
+OutlineSettings = OutlineSettings
 OutlineSettings.colors = {
 	ally = {
 		pulse_multiplier = 50,
@@ -137,6 +140,6 @@ OutlineSettings.templates = {
 
 DLCUtils.require_list("outline_settings")
 
-for iter_0_0, iter_0_1 in pairs(OutlineSettings.colors) do
-	iter_0_1.name = iter_0_0
+for k, v in pairs(OutlineSettings.colors) do
+	v.name = k
 end

@@ -1,19 +1,19 @@
 -- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_mutator_summary_definitions.lua
 
-local var_0_0 = UISettings.game_start_windows
-local var_0_1 = var_0_0.frame
-local var_0_2 = var_0_0.size
-local var_0_3 = {
-	var_0_2[1] - 60,
+local game_start_windows = UISettings.game_start_windows
+local frame = game_start_windows.frame
+local size = game_start_windows.size
+local tbl = {
+	size[1] - 60,
 	72
 }
-local var_0_4 = {
-	var_0_2[1] - 20,
-	var_0_2[2] - (50 + var_0_3[2])
+local tbl_2 = {
+	size[1] - 20,
+	size[2] - (50 + tbl[2])
 }
-local var_0_5 = "menu_frame_08"
-local var_0_6 = UIFrameSettings[var_0_5].texture_sizes.corner[1]
-local var_0_7 = {
+local str = "menu_frame_08"
+local var_0_6 = UIFrameSettings[str].texture_sizes.corner[1]
+local tbl_3 = {
 	root = {
 		is_root = true,
 		size = {
@@ -56,7 +56,7 @@ local var_0_7 = {
 		vertical_alignment = "center",
 		parent = "menu_root",
 		horizontal_alignment = "center",
-		size = var_0_2,
+		size = size,
 		position = {
 			0,
 			0,
@@ -69,7 +69,7 @@ local var_0_7 = {
 		horizontal_alignment = "center",
 		size = {
 			16,
-			var_0_2[2]
+			size[2]
 		},
 		position = {
 			195,
@@ -83,7 +83,7 @@ local var_0_7 = {
 		horizontal_alignment = "center",
 		size = {
 			16,
-			var_0_2[2]
+			size[2]
 		},
 		position = {
 			-195,
@@ -95,7 +95,7 @@ local var_0_7 = {
 		vertical_alignment = "top",
 		parent = "window",
 		horizontal_alignment = "center",
-		size = var_0_4,
+		size = tbl_2,
 		position = {
 			0,
 			-16,
@@ -107,7 +107,7 @@ local var_0_7 = {
 		parent = "game_option_1",
 		horizontal_alignment = "center",
 		size = {
-			var_0_4[1] - 10,
+			tbl_2[1] - 10,
 			0
 		},
 		position = {
@@ -120,7 +120,7 @@ local var_0_7 = {
 		vertical_alignment = "bottom",
 		parent = "window",
 		horizontal_alignment = "center",
-		size = var_0_3,
+		size = tbl,
 		position = {
 			0,
 			18,
@@ -129,11 +129,12 @@ local var_0_7 = {
 	}
 }
 
-local function var_0_8(arg_1_0, arg_1_1)
-	local var_1_0 = "game_options_bg_04"
-	local var_1_1 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_1_0)
-	local var_1_2 = "menu_frame_08"
-	local var_1_3 = UIFrameSettings[var_1_2]
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
+	local str = "game_options_bg_04"
+	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(str)
+	local str_2 = "menu_frame_08"
+	local var_1_3 = UIFrameSettings[str_2]
 
 	return {
 		element = {
@@ -156,14 +157,14 @@ local function var_0_8(arg_1_0, arg_1_1)
 				uvs = {
 					{
 						0,
-						1 - math.min(arg_1_1[2] / var_1_1.size[2], 1)
+						1 - math.min(arg_1_1[2] / get_atlas_settings_by_texture_name.size[2], 1)
 					},
 					{
-						math.min(arg_1_1[1] / var_1_1.size[1], 1),
+						math.min(arg_1_1[1] / get_atlas_settings_by_texture_name.size[1], 1),
 						1
 					}
 				},
-				texture_id = var_1_0
+				texture_id = str
 			}
 		},
 		style = {
@@ -206,10 +207,10 @@ local function var_0_8(arg_1_0, arg_1_1)
 	}
 end
 
-local var_0_9 = {
+local tbl_4 = {
 	background_fade = UIWidgets.create_simple_texture("options_window_fade_01", "window"),
-	window = UIWidgets.create_frame("window", var_0_2, var_0_1, 20),
-	confirm_button = UIWidgets.create_default_button("confirm_button", var_0_7.confirm_button.size, nil, nil, Localize("confirm_menu_button_name"), 32),
+	window = UIWidgets.create_frame("window", size, frame, 20),
+	confirm_button = UIWidgets.create_default_button("confirm_button", tbl_3.confirm_button.size, nil, nil, Localize("confirm_menu_button_name"), 32),
 	game_options_left_chain = UIWidgets.create_tiled_texture("game_options_left_chain", "chain_link_01", {
 		16,
 		19
@@ -218,13 +219,13 @@ local var_0_9 = {
 		16,
 		19
 	}),
-	game_option_placeholder = var_0_8("game_option_1", var_0_7.game_option_1.size),
-	item_presentation_frame = UIWidgets.create_frame("game_option_1", var_0_7.game_option_1.size, var_0_5, 20),
+	game_option_placeholder = fn("game_option_1", tbl_3.game_option_1.size),
+	item_presentation_frame = UIWidgets.create_frame("game_option_1", tbl_3.game_option_1.size, str, 20),
 	item_presentation_bg = UIWidgets.create_simple_texture("game_options_bg_04", "game_option_1"),
 	item_presentation = UIWidgets.create_simple_item_presentation("item_presentation")
 }
 
 return {
-	widgets = var_0_9,
-	scenegraph_definition = var_0_7
+	widgets = tbl_4,
+	scenegraph_definition = tbl_3
 }

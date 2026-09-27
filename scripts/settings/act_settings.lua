@@ -1,6 +1,9 @@
 -- chunkname: @scripts/settings/act_settings.lua
 
+local ActSettings = ActSettings
+
 ActSettings = ActSettings or {}
+ActSettings = ActSettings
 ActSettings.prologue = {
 	banner_texture = "menu_frame_bg_01",
 	sorting = 0,

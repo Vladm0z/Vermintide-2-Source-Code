@@ -1,22 +1,22 @@
 -- chunkname: @scripts/settings/dlcs/lake/lake_equipment_settings.lua
 
-local var_0_0 = DLCSettings.lake
+local lake = DLCSettings.lake
 
-var_0_0.item_master_list_file_names = {
+lake.item_master_list_file_names = {
 	"scripts/settings/dlcs/lake/item_master_list_lake"
 }
-var_0_0.weapon_skins_file_names = {
+lake.weapon_skins_file_names = {
 	"scripts/settings/equipment/weapon_skins_lake"
 }
-var_0_0.cosmetics_files = {
+lake.cosmetics_files = {
 	"scripts/settings/dlcs/lake/cosmetics_lake"
 }
-var_0_0.weapon_template_file_names = {
+lake.weapon_template_file_names = {
 	"scripts/settings/equipment/weapon_templates/markus_questingknight_career_skill",
 	"scripts/settings/equipment/weapon_templates/bastard_swords",
 	"scripts/settings/equipment/weapon_templates/1h_swords_shield_breton"
 }
-var_0_0.default_items = {
+lake.default_items = {
 	es_bastard_sword = {
 		inventory_icon = "icon_wpn_emp_gk_sword_01_t1",
 		description = "description_default_witch_hunter_wh_1h_falchions",
@@ -28,17 +28,17 @@ var_0_0.default_items = {
 		display_name = "es_1h_sword_shield_breton_blacksmith_name"
 	}
 }
-var_0_0.damage_profile_template_files_names = {
+lake.damage_profile_template_files_names = {
 	"scripts/settings/equipment/damage_profile_templates_dlc_lake"
 }
-var_0_0.attack_template_files_names = {}
-var_0_0.action_template_file_names = {
+lake.attack_template_files_names = {}
+lake.action_template_file_names = {
 	"scripts/settings/dlcs/lake/action_career_es_questingknight"
 }
-var_0_0.action_classes_lookup = {
+lake.action_classes_lookup = {
 	career_es_four = "ActionCareerESQuestingKnight"
 }
-var_0_0.inventory_package_list = {
+lake.inventory_package_list = {
 	"resource_packages/careers/es_questingknight",
 	"units/beings/player/empire_soldier_breton/first_person_base/chr_first_person_mesh",
 	"units/beings/player/empire_soldier_breton/third_person_base/chr_third_person_mesh",

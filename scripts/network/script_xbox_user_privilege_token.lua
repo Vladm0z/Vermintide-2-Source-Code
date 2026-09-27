@@ -2,37 +2,42 @@
 
 ScriptXboxUserPrivilegeToken = class(ScriptXboxUserPrivilegeToken)
 
-function ScriptXboxUserPrivilegeToken.init(arg_1_0, arg_1_1)
-	arg_1_0._token = arg_1_1
-	arg_1_0._result = {}
+ScriptXboxUserPrivilegeToken.init = function (self, arg_1_1)
+	-- function 1
+	self._token = arg_1_1
+	self._result = {}
 end
 
-function ScriptXboxUserPrivilegeToken.update(arg_2_0)
-	local var_2_0, var_2_1, var_2_2, var_2_3 = UserPrivilege.status(arg_2_0._token)
+ScriptXboxUserPrivilegeToken.update = function (self)
+	-- function 2
+	local status, var_2_1, var_2_2, var_2_3 = UserPrivilege.status(self._token)
 
-	arg_2_0._result.in_progress = var_2_0
-	arg_2_0._result.done = var_2_1
-	arg_2_0._result.error = var_2_2
-	arg_2_0._result.status_code = var_2_3
+	self._result.in_progress = status
+	self._result.done = var_2_1
+	self._result.error = var_2_2
+	self._result.status_code = var_2_3
 end
 
-function ScriptXboxUserPrivilegeToken.info(arg_3_0)
-	local var_3_0 = {}
+ScriptXboxUserPrivilegeToken.info = function (self)
+	-- function 3
+	local tbl = {}
 
-	if arg_3_0._result.error then
-		var_3_0.error = arg_3_0._result.error
-		var_3_0.status_code = arg_3_0._result.status_code
+	if not self._result.error then
+		tbl.error = self._result.error
+		tbl.status_code = self._result.status_code
 	else
-		var_3_0.status_code = arg_3_0._result.status_code
+		tbl.status_code = self._result.status_code
 	end
 
-	return var_3_0
+	return tbl
 end
 
-function ScriptXboxUserPrivilegeToken.done(arg_4_0)
-	return arg_4_0._result.done
+ScriptXboxUserPrivilegeToken.done = function (self)
+	-- function 4
+	return self._result.done
 end
 
-function ScriptXboxUserPrivilegeToken.close(arg_5_0)
-	UserPrivilege.release(arg_5_0._token)
+ScriptXboxUserPrivilegeToken.close = function (self)
+	-- function 5
+	UserPrivilege.release(self._token)
 end

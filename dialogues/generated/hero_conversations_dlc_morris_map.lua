@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/hero_conversations_dlc_morris_map.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		response = "nfl_morris_before_shrine_tutorial_01",
 		name = "nfl_morris_before_shrine_tutorial_01",

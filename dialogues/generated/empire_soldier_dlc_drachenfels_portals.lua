@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/empire_soldier_dlc_drachenfels_portals.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pes_portals_castle_gate",

@@ -1,12 +1,12 @@
 -- chunkname: @scripts/ui/dlc_upsell/upsell_popup_definitions.lua
 
-local var_0_0 = 1920
-local var_0_1 = 1080
-local var_0_2 = 50
-local var_0_3 = 455
-local var_0_4 = 636
-local var_0_5 = var_0_3 - var_0_2 * 2
-local var_0_6 = {
+local num = 1920
+local num_2 = 1080
+local num_3 = 50
+local num_4 = 455
+local num_5 = 636
+local num_6 = num_4 - num_3 * 2
+local tbl = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -15,8 +15,8 @@ local var_0_6 = {
 			UILayer.item_display_popup
 		},
 		size = {
-			var_0_0,
-			var_0_1
+			num,
+			num_2
 		}
 	},
 	background = {
@@ -43,8 +43,8 @@ local var_0_6 = {
 			2
 		},
 		size = {
-			var_0_3,
-			var_0_4
+			num_4,
+			num_5
 		}
 	},
 	window_top_detail = {
@@ -71,7 +71,7 @@ local var_0_6 = {
 			1
 		},
 		size = {
-			var_0_5,
+			num_6,
 			60
 		}
 	},
@@ -85,7 +85,7 @@ local var_0_6 = {
 			0
 		},
 		size = {
-			var_0_5,
+			num_6,
 			380
 		}
 	},
@@ -118,7 +118,7 @@ local var_0_6 = {
 		}
 	}
 }
-local var_0_7 = {
+local tbl_2 = {
 	use_shadow = true,
 	upper_case = true,
 	localize = false,
@@ -134,7 +134,7 @@ local var_0_7 = {
 		2
 	}
 }
-local var_0_8 = {
+local tbl_3 = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -152,16 +152,17 @@ local var_0_8 = {
 }
 
 function create_frameless_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8, arg_1_9, arg_1_10)
+	-- function 1
 	arg_1_2 = arg_1_2 or "button_bg_01"
 
-	local var_1_0 = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_1_2)
-	local var_1_1 = arg_1_8 or "button_detail_01"
-	local var_1_2 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_1_1).size
-	local var_1_3 = arg_1_4 or 24
-	local var_1_4 = arg_1_5 or "hell_shark"
-	local var_1_5 = arg_1_7 or "font_button_normal"
-	local var_1_6 = arg_1_6 == nil or arg_1_6
-	local var_1_7 = arg_1_9 or 9
+	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_1_2)
+	local flag = arg_1_8 or "button_detail_01"
+	local size = UIAtlasHelper.get_atlas_settings_by_texture_name(flag).size
+	local flag_2 = arg_1_4 or 24
+	local flag_3 = arg_1_5 or "hell_shark"
+	local flag_4 = arg_1_7 or "font_button_normal"
+	local flag_5 = arg_1_6 == nil or arg_1_6
+	local flag_6 = arg_1_9 or 9
 
 	return {
 		element = {
@@ -193,8 +194,9 @@ function create_frameless_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, ar
 				{
 					style_id = "disabled_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_2_0)
-						return arg_2_0.button_hotspot.disable_button
+					content_check_function = function (self)
+						-- function 2
+						return self.button_hotspot.disable_button
 					end
 				},
 				{
@@ -212,16 +214,18 @@ function create_frameless_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, ar
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_3_0)
-						return not arg_3_0.button_hotspot.disable_button
+					content_check_function = function (self)
+						-- function 3
+						return not self.button_hotspot.disable_button
 					end
 				},
 				{
 					style_id = "title_text_disabled",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_4_0)
-						return arg_4_0.button_hotspot.disable_button
+					content_check_function = function (self)
+						-- function 4
+						return self.button_hotspot.disable_button
 					end
 				},
 				{
@@ -256,7 +260,7 @@ function create_frameless_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, ar
 						1
 					}
 				},
-				texture_id = var_1_1
+				texture_id = flag
 			},
 			button_hotspot = {},
 			title_text = arg_1_3 or "n/a",
@@ -264,10 +268,10 @@ function create_frameless_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, ar
 				uvs = {
 					{
 						0,
-						1 - arg_1_1[2] / var_1_0.size[2]
+						1 - arg_1_1[2] / get_atlas_settings_by_texture_name.size[2]
 					},
 					{
-						arg_1_1[1] / var_1_0.size[1],
+						arg_1_1[1] / get_atlas_settings_by_texture_name.size[1],
 						1
 					}
 				},
@@ -362,11 +366,11 @@ function create_frameless_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, ar
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				dynamic_font_size = true,
-				upper_case = var_1_6,
-				font_size = var_1_3,
-				font_type = var_1_4,
-				text_color = Colors.get_color_table_with_alpha(var_1_5, 255),
-				default_text_color = Colors.get_color_table_with_alpha(var_1_5, 255),
+				upper_case = flag_5,
+				font_size = flag_2,
+				font_type = flag_3,
+				text_color = Colors.get_color_table_with_alpha(flag_4, 255),
+				default_text_color = Colors.get_color_table_with_alpha(flag_4, 255),
 				select_text_color = Colors.get_color_table_with_alpha("white", 255),
 				size = {
 					arg_1_1[1] - 40,
@@ -383,9 +387,9 @@ function create_frameless_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, ar
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				dynamic_font_size = true,
-				upper_case = var_1_6,
-				font_size = var_1_3,
-				font_type = var_1_4,
+				upper_case = flag_5,
+				font_size = flag_2,
+				font_type = flag_3,
 				text_color = Colors.get_color_table_with_alpha("gray", 255),
 				default_text_color = Colors.get_color_table_with_alpha("gray", 255),
 				size = {
@@ -403,9 +407,9 @@ function create_frameless_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, ar
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				dynamic_font_size = true,
-				upper_case = var_1_6,
-				font_size = var_1_3,
-				font_type = var_1_4,
+				upper_case = flag_5,
+				font_size = flag_2,
+				font_type = flag_3,
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				size = {
@@ -460,13 +464,13 @@ function create_frameless_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, ar
 					255
 				},
 				offset = {
-					-var_1_7,
-					arg_1_1[2] / 2 - var_1_2[2] / 2,
+					-flag_6,
+					arg_1_1[2] / 2 - size[2] / 2,
 					9
 				},
 				size = {
-					var_1_2[1],
-					var_1_2[2]
+					size[1],
+					size[2]
 				}
 			},
 			side_detail_right = {
@@ -477,13 +481,13 @@ function create_frameless_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, ar
 					255
 				},
 				offset = {
-					arg_1_1[1] - var_1_2[1] + var_1_7,
-					arg_1_1[2] / 2 - var_1_2[2] / 2,
+					arg_1_1[1] - size[1] + flag_6,
+					arg_1_1[2] / 2 - size[2] / 2,
 					9
 				},
 				size = {
-					var_1_2[1],
-					var_1_2[2]
+					size[1],
+					size[2]
 				}
 			}
 		},
@@ -496,40 +500,43 @@ function create_frameless_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, ar
 	}
 end
 
-local var_0_9 = true
-local var_0_10 = {
+local flag = true
+local tbl_4 = {
 	window_background = UIWidgets.create_simple_texture("wom_upsell_popup_bg", "window"),
 	window_top_detail = UIWidgets.create_simple_texture("tab_selection_01_bottom", "window_top_detail"),
-	window_frame = UIWidgets.create_frame("window", var_0_6.window.size, "menu_frame_12_gold", 5),
+	window_frame = UIWidgets.create_frame("window", tbl.window.size, "menu_frame_12_gold", 5),
 	screen_background = UIWidgets.create_simple_rect("screen", {
 		150,
 		0,
 		0,
 		0
 	}),
-	title_text = UIWidgets.create_simple_text("menu_weave_area_no_wom_title", "title", nil, nil, var_0_7),
-	body_text = UIWidgets.create_simple_text("menu_weave_area_no_wom_body", "body", nil, nil, var_0_8),
-	ok_button = create_frameless_button("ok_button", var_0_6.ok_button.size, nil, "", nil, nil, nil, nil, "button_detail_03_gold", nil, var_0_9),
-	store_button = create_frameless_button("store_button", var_0_6.store_button.size, nil, "", nil, "hell_shark_header", false, "white", "button_detail_01_gold", nil, var_0_9)
+	title_text = UIWidgets.create_simple_text("menu_weave_area_no_wom_title", "title", nil, nil, tbl_2),
+	body_text = UIWidgets.create_simple_text("menu_weave_area_no_wom_body", "body", nil, nil, tbl_3),
+	ok_button = create_frameless_button("ok_button", tbl.ok_button.size, nil, "", nil, nil, nil, nil, "button_detail_03_gold", nil, flag),
+	store_button = create_frameless_button("store_button", tbl.store_button.size, nil, "", nil, "hell_shark_header", false, "white", "button_detail_01_gold", nil, flag)
 }
-local var_0_11 = {
+local tbl_5 = {
 	transition_enter = {
 		{
 			name = "fade_in",
 			duration = 0.2,
-			init = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+				-- function 5
 				arg_5_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+				-- function 6
 				arg_6_4.render_settings.alpha_multiplier = math.easeOutCubic(arg_6_3)
 			end,
-			on_complete = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			on_complete = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+				-- function 7
 				return
 			end
 		}
 	}
 }
-local var_0_12 = {
+local tbl_6 = {
 	default = {
 		{
 			input_action = "back",
@@ -540,8 +547,8 @@ local var_0_12 = {
 }
 
 return {
-	scenegraph_definition = var_0_6,
-	widget_definitions = var_0_10,
-	animation_definitions = var_0_11,
-	generic_input_actions = var_0_12
+	scenegraph_definition = tbl,
+	widget_definitions = tbl_4,
+	animation_definitions = tbl_5,
+	generic_input_actions = tbl_6
 }

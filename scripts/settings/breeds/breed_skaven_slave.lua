@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/breeds/breed_skaven_slave.lua
 
-local var_0_0 = require("scripts/utils/stagger_types")
+local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
 
 breed_data = {
 	detection_radius = 10,
@@ -284,7 +284,7 @@ breed_data = {
 }
 Breeds.skaven_slave = table.create_copy(Breeds.skaven_slave, breed_data)
 
-local var_0_1 = {
+local tbl = {
 	normal = {
 		easy = {
 			normal = 2
@@ -344,7 +344,7 @@ local var_0_1 = {
 		}
 	}
 }
-local var_0_2 = {
+local tbl_2 = {
 	idle = {
 		alerted_anims = {
 			"alerted"
@@ -410,7 +410,7 @@ local var_0_2 = {
 		action_weight = 10,
 		moving_attack = true,
 		damage_type = "cutting",
-		difficulty_attack_intensity = var_0_1,
+		difficulty_attack_intensity = tbl,
 		default_attack = {
 			anims = {
 				"attack_move",
@@ -434,7 +434,7 @@ local var_0_2 = {
 		attack_intensity_type = "normal",
 		action_weight = 1,
 		move_anim = "move_fwd",
-		difficulty_attack_intensity = var_0_1,
+		difficulty_attack_intensity = tbl,
 		default_attack = {
 			anims = {
 				"attack_pounce",
@@ -576,11 +576,12 @@ local var_0_2 = {
 	stagger = {
 		scale_animation_speeds = true,
 		imation_speeds = true,
-		custom_enter_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-			if arg_1_1.stagger_type == var_0_0.heavy then
+		custom_enter_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			-- function 1
+			if arg_1_1.stagger_type == scripts_utils_stagger_types.heavy then
 				arg_1_1.stagger_immune_time = arg_1_2 + 1.25
 				arg_1_1.heavy_stagger_immune_time = arg_1_2 + 0.5
-			elseif arg_1_1.stagger_type == var_0_0.explosion then
+			elseif arg_1_1.stagger_type == scripts_utils_stagger_types.explosion then
 				arg_1_1.stagger_immune_time = arg_1_2 + 2.5
 				arg_1_1.heavy_stagger_immune_time = arg_1_2 + 2
 			end
@@ -791,4 +792,4 @@ local var_0_2 = {
 	}
 }
 
-BreedActions.skaven_slave_rat = table.create_copy(BreedActions.skaven_slave_rat, var_0_2)
+BreedActions.skaven_slave_rat = table.create_copy(BreedActions.skaven_slave_rat, tbl_2)

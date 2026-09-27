@@ -1,52 +1,59 @@
 -- chunkname: @scripts/managers/debug/profiler_scopes.lua
 
-local var_0_0 = 0
-local var_0_1 = false
-local var_0_2 = false
-local var_0_3 = false
+local num = 0
+local flag = false
+local flag_2 = false
+local flag_3 = false
 local var_0_4
-local var_0_5 = {}
-local var_0_6 = {}
-local var_0_7 = overloaded or false
+local tbl = {}
+local tbl_2 = {}
+local overloaded = overloaded
 
-local function var_0_8(arg_1_0)
-	local var_1_0 = ""
+overloaded = overloaded or false
 
-	for iter_1_0 = 0, 2 + arg_1_0 do
-		var_1_0 = var_1_0 .. "   "
+local function fn(arg_1_0)
+	-- function 1
+	local str = ""
+
+	for i = 0, 2 + arg_1_0 do
+		str = str .. "   "
 	end
 
-	return var_1_0
+	return str
 end
 
-local function var_0_9()
-	local var_2_0 = debug.traceback()
+local function fn_2()
+	-- function 2
+	local traceback = debug.traceback()
 
-	return (string.match(var_2_0, "\t.-\n\t.-\n\t(.-)\n"))
+	return (string.match(traceback, "\t.-\n\t.-\n\t(.-)\n"))
 end
 
 function profiler_scopes_trace()
-	if var_0_7 then
+	-- function 3
+	if not overloaded then
 		return
 	end
 
-	var_0_7 = true
+	overloaded = true
 end
 
 function profiler_scopes_dump()
+	-- function 4
 	profiler_scopes_trace()
 
-	var_0_2 = true
-	var_0_1 = true
+	flag_2 = true
+	flag = true
 end
 
 function profiler_scopes_dump_light()
+	-- function 5
 	profiler_scopes_trace()
 
-	var_0_2 = true
+	flag_2 = true
 end
 
-if Development.parameter("validate_profiling_scopes") or Development.parameter("debug_profiling_scopes") then
+if Development.parameter("validate_profiling_scopes") or not Development.parameter("debug_profiling_scopes") then
 	Application.warning("Enabling profile scope validation")
 	profiler_scopes_dump_light()
 end

@@ -2,58 +2,63 @@
 
 ImguiGenerateWeaponPoses = class(ImguiGenerateWeaponPoses)
 
-local var_0_0 = 6
+local num = 6
 
-function ImguiGenerateWeaponPoses.init(arg_1_0)
-	arg_1_0._num_weapon_poses = var_0_0
-	arg_1_0._alpha_timer = 0
+ImguiGenerateWeaponPoses.init = function (self)
+	-- function 1
+	self._num_weapon_poses = num
+	self._alpha_timer = 0
 end
 
-function ImguiGenerateWeaponPoses.update(arg_2_0)
+ImguiGenerateWeaponPoses.update = function (arg_2_0)
+	-- function 2
 	return
 end
 
-function ImguiGenerateWeaponPoses.is_persistent(arg_3_0)
+ImguiGenerateWeaponPoses.is_persistent = function (arg_3_0)
+	-- function 3
 	return false
 end
 
-function ImguiGenerateWeaponPoses._generate_weapon_poses(arg_4_0)
+ImguiGenerateWeaponPoses._generate_weapon_poses = function (self)
+	-- function 4
 	local var_4_0 = FileSystem(script_data.source_dir)
 
 	if not var_4_0 then
 		return
 	end
 
-	local var_4_1 = "scripts//settings//equipment//item_master_list_weapon_poses.lua"
+	local str = "scripts//settings//equipment//item_master_list_weapon_poses.lua"
 
-	if FileSystem.exists(var_4_0, var_4_1) then
-		FileSystem.remove_file(var_4_0, var_4_1)
+	if not FileSystem.exists(var_4_0, str) then
+		FileSystem.remove_file(var_4_0, str)
 	end
 
-	FileSystem.make_file(var_4_0, var_4_1)
+	FileSystem.make_file(var_4_0, str)
 
-	local var_4_2 = FileSystem.open_output(var_4_0, var_4_1)
+	local open_output = FileSystem.open_output(var_4_0, str)
 
-	arg_4_0:_add_header(var_4_2)
-	arg_4_0:_add_default_pose(var_4_2)
+	self:_add_header(open_output)
+	self:_add_default_pose(open_output)
 
-	for iter_4_0, iter_4_1 in pairs(ItemMasterList) do
-		local var_4_3 = iter_4_1.slot_type
+	for k, v in pairs(ItemMasterList) do
+		local slot_type = v.slot_type
 
-		if (var_4_3 == "melee" or var_4_3 == "ranged") and iter_4_1.skin_combination_table then
-			if not string.find(iter_4_1.name, "^vs_") then
-				print(iter_4_1.name)
-				arg_4_0:_add_weapon_poses(var_4_2, iter_4_1)
+		if slot_type == "melee" or slot_type == "ranged" or not v.skin_combination_table then
+			if not string.find(v.name, "^vs_") then
+				print(v.name)
+				self:_add_weapon_poses(open_output, v)
 			else
-				print("skipping:", iter_4_1.name)
+				print("skipping:", v.name)
 			end
 		end
 	end
 
-	OutputArchive.close(var_4_2)
+	OutputArchive.close(open_output)
 end
 
-function ImguiGenerateWeaponPoses._add_header(arg_5_0, arg_5_1)
+ImguiGenerateWeaponPoses._add_header = function (self, arg_5_1)
+	-- function 5
 	OutputArchive.write(arg_5_1, "-- *************************************************************\n")
 	OutputArchive.write(arg_5_1, "-- *************************************************************\n")
 	OutputArchive.write(arg_5_1, "-- ****                                                     ****\n")
@@ -73,14 +78,15 @@ function ImguiGenerateWeaponPoses._add_header(arg_5_0, arg_5_1)
 	OutputArchive.write(arg_5_1, "-- *************************************************************\n")
 	OutputArchive.write(arg_5_1, "-- *************************************************************\n")
 	OutputArchive.write(arg_5_1, "-- ****                                                     ****\n")
-	OutputArchive.write(arg_5_1, "-- ****          NUM WEAPON POSES PER WEAPON: " .. tostring(arg_5_0._num_weapon_poses) .. "             ****\n")
+	OutputArchive.write(arg_5_1, "-- ****          NUM WEAPON POSES PER WEAPON: " .. tostring(self._num_weapon_poses) .. "             ****\n")
 	OutputArchive.write(arg_5_1, "-- ****                                                     ****\n")
 	OutputArchive.write(arg_5_1, "-- *************************************************************\n")
 	OutputArchive.write(arg_5_1, "-- *************************************************************\n")
 	OutputArchive.write(arg_5_1, "\n")
 end
 
-function ImguiGenerateWeaponPoses._add_default_pose(arg_6_0, arg_6_1)
+ImguiGenerateWeaponPoses._add_default_pose = function (arg_6_0, arg_6_1)
+	-- function 6
 	OutputArchive.write(arg_6_1, "ItemMasterList.default_weapon_pose_01 = {\n")
 	OutputArchive.write(arg_6_1, "\tname = \"default_weapon_pose_01\",\n")
 	OutputArchive.write(arg_6_1, "\tdisplay_name = \"default_weapon_pose_01\",\n")
@@ -98,81 +104,83 @@ function ImguiGenerateWeaponPoses._add_default_pose(arg_6_0, arg_6_1)
 	OutputArchive.write(arg_6_1, "}\n\n")
 end
 
-function ImguiGenerateWeaponPoses._add_weapon_poses(arg_7_0, arg_7_1, arg_7_2)
-	local var_7_0 = arg_7_2.name
-	local var_7_1 = "{ "
+ImguiGenerateWeaponPoses._add_weapon_poses = function (self, arg_7_1, arg_7_2)
+	-- function 7
+	local name = arg_7_2.name
+	local str = "{ "
 
-	for iter_7_0, iter_7_1 in pairs(arg_7_2.can_wield) do
-		var_7_1 = var_7_1 .. "\"" .. iter_7_1 .. "\","
+	for k, v in pairs(arg_7_2.can_wield) do
+		str = str .. "\"" .. v .. "\","
 	end
 
-	local var_7_2 = var_7_1 .. " }"
+	local str_2 = str .. " }"
 
-	for iter_7_2 = 1, arg_7_0._num_weapon_poses do
-		local var_7_3 = string.format("%02d", iter_7_2)
+	for k_2 = 1, self._num_weapon_poses do
+		local format = string.format("%02d", k_2)
 
-		OutputArchive.write(arg_7_1, "ItemMasterList." .. var_7_0 .. "_weapon_pose_" .. var_7_3 .. " = {\n")
-		OutputArchive.write(arg_7_1, "\tname = \"" .. string.format(Localize(var_7_0 .. "_emote_wheel"), var_7_3) .. "\",\n")
-		OutputArchive.write(arg_7_1, "\tdisplay_name = \"" .. var_7_0 .. "_emote_wheel" .. "\",\n")
+		OutputArchive.write(arg_7_1, "ItemMasterList." .. name .. "_weapon_pose_" .. format .. " = {\n")
+		OutputArchive.write(arg_7_1, "\tname = \"" .. string.format(Localize(name .. "_emote_wheel"), format) .. "\",\n")
+		OutputArchive.write(arg_7_1, "\tdisplay_name = \"" .. name .. "_emote_wheel" .. "\",\n")
 		OutputArchive.write(arg_7_1, "\tdescription = \"weapon_pose_emote_description\",\n")
 		OutputArchive.write(arg_7_1, "\tslot_type = \"weapon_pose\",\n")
 		OutputArchive.write(arg_7_1, "\titem_type = \"weapon_pose\",\n")
 		OutputArchive.write(arg_7_1, "\tinformation_text = \"information_weapon_pose\",\n")
-		OutputArchive.write(arg_7_1, "\tdata = { anim_event = \"anim_pose_" .. var_7_3 .. "\", hide_weapons = false },\n")
-		OutputArchive.write(arg_7_1, "\thud_icon = \"" .. var_7_0 .. string.format("_%02d", iter_7_2) .. "\",\n")
-		OutputArchive.write(arg_7_1, "\tinventory_icon = \"" .. var_7_0 .. string.format("_%02d", iter_7_2) .. "\",\n")
+		OutputArchive.write(arg_7_1, "\tdata = { anim_event = \"anim_pose_" .. format .. "\", hide_weapons = false },\n")
+		OutputArchive.write(arg_7_1, "\thud_icon = \"" .. name .. string.format("_%02d", k_2) .. "\",\n")
+		OutputArchive.write(arg_7_1, "\tinventory_icon = \"" .. name .. string.format("_%02d", k_2) .. "\",\n")
 		OutputArchive.write(arg_7_1, "\trarity = \"exotic\",\n")
-		OutputArchive.write(arg_7_1, "\tpose_index = " .. iter_7_2 .. ",\n")
-		OutputArchive.write(arg_7_1, "\tparent = \"" .. var_7_0 .. "\",\n")
+		OutputArchive.write(arg_7_1, "\tpose_index = " .. k_2 .. ",\n")
+		OutputArchive.write(arg_7_1, "\tparent = \"" .. name .. "\",\n")
 		OutputArchive.write(arg_7_1, "\ttemplate = \"pose_template\",\n")
-		OutputArchive.write(arg_7_1, "\tcan_wield = " .. var_7_2 .. ",\n")
+		OutputArchive.write(arg_7_1, "\tcan_wield = " .. str_2 .. ",\n")
 		OutputArchive.write(arg_7_1, "}\n\n")
 	end
 end
 
-function ImguiGenerateWeaponPoses.draw(arg_8_0)
-	local var_8_0 = Imgui.begin_window("Generate Item Master List for Weapon Poses")
+ImguiGenerateWeaponPoses.draw = function (self)
+	-- function 8
+	local begin_window = Imgui.begin_window("Generate Item Master List for Weapon Poses")
 
 	Imgui.set_window_size(340, 120)
 	Imgui.text("Number of weapon poses per weapon")
 
-	local var_8_1, var_8_2 = Imgui.input_text("", arg_8_0._num_weapon_poses)
+	local input_text, var_8_2 = Imgui.input_text("", self._num_weapon_poses)
 
-	if var_8_2 then
-		arg_8_0._num_weapon_poses = var_8_1
+	if not var_8_2 then
+		self._num_weapon_poses = input_text
 	end
 
-	if Imgui.button("Generate") then
-		arg_8_0:_generate_weapon_poses()
+	if not Imgui.button("Generate") then
+		self:_generate_weapon_poses()
 
-		arg_8_0._generated = true
-		arg_8_0._current_color = {
+		self._generated = true
+		self._current_color = {
 			math.random(255),
 			math.random(255),
 			math.random(255)
 		}
-		arg_8_0._generated_with_num_weapon_poses = arg_8_0._num_weapon_poses
-		arg_8_0._alpha_timer = Application.time_since_launch() + 2
+		self._generated_with_num_weapon_poses = self._num_weapon_poses
+		self._alpha_timer = Application.time_since_launch() + 2
 	end
 
-	if arg_8_0._generated then
-		local var_8_3 = Application.time_since_launch()
-		local var_8_4 = 255
-		local var_8_5 = 0.5
+	if not self._generated then
+		local time_since_launch = Application.time_since_launch()
+		local num = 255
+		local num_2 = 0.5
 
-		if var_8_3 > arg_8_0._alpha_timer then
-			var_8_4 = 0
-		elseif var_8_5 > arg_8_0._alpha_timer - var_8_3 then
-			var_8_4 = (arg_8_0._alpha_timer - var_8_3) / 0.5 * 255
+		if time_since_launch > self._alpha_timer then
+			num = 0
+		elseif num_2 > self._alpha_timer - time_since_launch then
+			num = (self._alpha_timer - time_since_launch) / 0.5 * 255
 		end
 
 		Imgui.same_line(10)
-		Imgui.text_colored("Done!", arg_8_0._current_color[1], arg_8_0._current_color[2], arg_8_0._current_color[3], var_8_4)
+		Imgui.text_colored("Done!", self._current_color[1], self._current_color[2], self._current_color[3], num)
 		Imgui.indent(74)
-		Imgui.text_colored(string.format("Using %q poses per base weapon", arg_8_0._generated_with_num_weapon_poses), arg_8_0._current_color[1], arg_8_0._current_color[2], arg_8_0._current_color[3], var_8_4)
+		Imgui.text_colored(string.format("Using %q poses per base weapon", self._generated_with_num_weapon_poses), self._current_color[1], self._current_color[2], self._current_color[3], num)
 	end
 
 	Imgui.end_window()
 
-	return var_8_0
+	return begin_window
 end

@@ -1,7 +1,7 @@
 -- chunkname: @scripts/managers/backend/statistics_definitions_lake.lua
 
-local var_0_0 = StatisticsDefinitions.player
-local var_0_1 = {
+local player = StatisticsDefinitions.player
+local tbl = {
 	"complete_all_helmgart_levels_recruit_es_questingknight",
 	"complete_all_helmgart_levels_veteran_es_questingknight",
 	"complete_all_helmgart_levels_champion_es_questingknight",
@@ -16,42 +16,42 @@ local var_0_1 = {
 	"complete_all_grailknight_challenges"
 }
 
-var_0_0.weapon_kills_per_breed.markus_questingknight_career_skill_weapon = {}
+player.weapon_kills_per_breed.markus_questingknight_career_skill_weapon = {}
 
-for iter_0_0, iter_0_1 in pairs(Breeds) do
-	var_0_0.weapon_kills_per_breed.markus_questingknight_career_skill_weapon[iter_0_0] = {
+for k, v in pairs(Breeds) do
+	player.weapon_kills_per_breed.markus_questingknight_career_skill_weapon[k] = {
 		value = 0,
 		source = "player_data",
-		database_name = iter_0_0
+		database_name = k
 	}
 end
 
-for iter_0_2 = 1, #var_0_1 do
-	local var_0_2 = var_0_1[iter_0_2]
+for k_2 = 1, #tbl do
+	local var_0_2 = tbl[k_2]
 
-	var_0_0[var_0_2] = {
+	player[var_0_2] = {
 		value = 0,
 		source = "player_data",
 		database_name = var_0_2
 	}
 end
 
-local var_0_3 = {
+local tbl_2 = {
 	es_questingknight = true
 }
 
-for iter_0_3, iter_0_4 in pairs(CareerSettings) do
-	if var_0_3[iter_0_3] then
-		var_0_0.mission_streak[iter_0_3] = {}
+for k_3, v_2 in pairs(CareerSettings) do
+	if not tbl_2[k_3] then
+		player.mission_streak[k_3] = {}
 
-		for iter_0_5, iter_0_6 in pairs(LevelSettings) do
-			if table.contains(UnlockableLevels, iter_0_5) then
-				local var_0_4 = "mission_streak_" .. iter_0_3 .. "_" .. iter_0_5
+		for k_4, v_3 in pairs(LevelSettings) do
+			if not table.contains(UnlockableLevels, k_4) then
+				local str = "mission_streak_" .. k_3 .. "_" .. k_4
 
-				var_0_0.mission_streak[iter_0_3][iter_0_5] = {
+				player.mission_streak[k_3][k_4] = {
 					value = 0,
 					source = "player_data",
-					database_name = var_0_4
+					database_name = str
 				}
 			end
 		end

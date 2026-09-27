@@ -2,82 +2,102 @@
 
 BackendInterfaceQuestsBenchmark = class(BackendInterfaceQuestsBenchmark)
 
-function BackendInterfaceQuestsBenchmark.init(arg_1_0, arg_1_1)
+BackendInterfaceQuestsBenchmark.init = function (arg_1_0, arg_1_1)
+	-- function 1
 	return
 end
 
-function BackendInterfaceQuestsBenchmark._refresh(arg_2_0)
+BackendInterfaceQuestsBenchmark._refresh = function (arg_2_0)
+	-- function 2
 	return
 end
 
-function BackendInterfaceQuestsBenchmark.ready(arg_3_0)
+BackendInterfaceQuestsBenchmark.ready = function (arg_3_0)
+	-- function 3
 	return true
 end
 
-function BackendInterfaceQuestsBenchmark.make_dirty(arg_4_0)
+BackendInterfaceQuestsBenchmark.make_dirty = function (arg_4_0)
+	-- function 4
 	return
 end
 
-function BackendInterfaceQuestsBenchmark.update(arg_5_0, arg_5_1)
+BackendInterfaceQuestsBenchmark.update = function (arg_5_0, arg_5_1)
+	-- function 5
 	return
 end
 
-function BackendInterfaceQuestsBenchmark.get_quests_cb(arg_6_0, arg_6_1)
+BackendInterfaceQuestsBenchmark.get_quests_cb = function (arg_6_0, arg_6_1)
+	-- function 6
 	return
 end
 
-function BackendInterfaceQuestsBenchmark.delete(arg_7_0)
+BackendInterfaceQuestsBenchmark.delete = function (arg_7_0)
+	-- function 7
 	return
 end
 
-function BackendInterfaceQuestsBenchmark.get_quests(arg_8_0)
+BackendInterfaceQuestsBenchmark.get_quests = function (arg_8_0)
+	-- function 8
 	return {}
 end
 
-function BackendInterfaceQuestsBenchmark.get_daily_quest_update_time(arg_9_0)
+BackendInterfaceQuestsBenchmark.get_daily_quest_update_time = function (arg_9_0)
+	-- function 9
 	return 0
 end
 
-function BackendInterfaceQuestsBenchmark.get_time_left_on_event_quest(arg_10_0, arg_10_1)
+BackendInterfaceQuestsBenchmark.get_time_left_on_event_quest = function (arg_10_0, arg_10_1)
+	-- function 10
 	return 0
 end
 
-function BackendInterfaceQuestsBenchmark.can_refresh_daily_quest(arg_11_0)
+BackendInterfaceQuestsBenchmark.can_refresh_daily_quest = function (arg_11_0)
+	-- function 11
 	return false
 end
 
-function BackendInterfaceQuestsBenchmark.refresh_daily_quest(arg_12_0, arg_12_1)
+BackendInterfaceQuestsBenchmark.refresh_daily_quest = function (arg_12_0, arg_12_1)
+	-- function 12
 	return 1
 end
 
-function BackendInterfaceQuestsBenchmark.refresh_quest_cb(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+BackendInterfaceQuestsBenchmark.refresh_quest_cb = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+	-- function 13
 	return
 end
 
-function BackendInterfaceQuestsBenchmark.is_quest_refreshed(arg_14_0, arg_14_1)
+BackendInterfaceQuestsBenchmark.is_quest_refreshed = function (arg_14_0, arg_14_1)
+	-- function 14
 	return true
 end
 
-function BackendInterfaceQuestsBenchmark.can_claim_quest_rewards(arg_15_0, arg_15_1)
+BackendInterfaceQuestsBenchmark.can_claim_quest_rewards = function (arg_15_0, arg_15_1)
+	-- function 15
 	return false
 end
 
-function BackendInterfaceQuestsBenchmark.claim_quest_rewards(arg_16_0, arg_16_1)
+BackendInterfaceQuestsBenchmark.claim_quest_rewards = function (arg_16_0, arg_16_1)
+	-- function 16
 	return 1
 end
 
-function BackendInterfaceQuestsBenchmark.quest_rewards_request_cb(arg_17_0, arg_17_1, arg_17_2)
+BackendInterfaceQuestsBenchmark.quest_rewards_request_cb = function (arg_17_0, arg_17_1, arg_17_2)
+	-- function 17
 	return
 end
 
-function BackendInterfaceQuestsBenchmark.get_quest_key(arg_18_0, arg_18_1)
+BackendInterfaceQuestsBenchmark.get_quest_key = function (arg_18_0, arg_18_1)
+	-- function 18
 	return nil
 end
 
-function BackendInterfaceQuestsBenchmark.quest_rewards_generated(arg_19_0, arg_19_1)
+BackendInterfaceQuestsBenchmark.quest_rewards_generated = function (arg_19_0, arg_19_1)
+	-- function 19
 	return false
 end
 
-function BackendInterfaceQuestsBenchmark.get_quest_rewards(arg_20_0, arg_20_1)
+BackendInterfaceQuestsBenchmark.get_quest_rewards = function (arg_20_0, arg_20_1)
+	-- function 20
 	return {}
 end

@@ -1,23 +1,27 @@
 -- chunkname: @scripts/helpers/nav_tag_volume_utils.lua
 
-NavTagVolumeUtils = NavTagVolumeUtils or {}
+local NavTagVolumeUtils = NavTagVolumeUtils
 
-function NavTagVolumeUtils.nav_tags_from_position(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
-	local var_1_0 = arg_1_4 and LAYER_ID_MAPPING[arg_1_4]
-	local var_1_1 = GwNavQueries.tag_volumes_from_position(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+NavTagVolumeUtils = NavTagVolumeUtils or {}
+NavTagVolumeUtils = NavTagVolumeUtils
+
+NavTagVolumeUtils.nav_tags_from_position = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	-- function 1
+	local flag = not arg_1_4 and LAYER_ID_MAPPING[arg_1_4]
+	local tag_volumes_from_position = GwNavQueries.tag_volumes_from_position(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	local var_1_2
 
-	if var_1_1 then
-		local var_1_3 = GwNavQueries.nav_tag_volume_count(var_1_1)
+	if not tag_volumes_from_position then
+		local nav_tag_volume_count = GwNavQueries.nav_tag_volume_count(tag_volumes_from_position)
 
-		for iter_1_0 = 1, var_1_3 do
-			local var_1_4 = GwNavQueries.nav_tag_volume(var_1_1, iter_1_0)
-			local var_1_5, var_1_6, var_1_7, var_1_8, var_1_9 = GwNavTagVolume.navtag(var_1_4)
+		for i = 1, nav_tag_volume_count do
+			local nav_tag_volume = GwNavQueries.nav_tag_volume(tag_volumes_from_position, i)
+			local navtag, var_1_6, var_1_7, var_1_8, var_1_9 = GwNavTagVolume.navtag(nav_tag_volume)
 
-			if not var_1_0 or var_1_0 == var_1_7 then
+			if not (not flag and flag ~= var_1_7) then
 				var_1_2 = var_1_2 or {}
 				var_1_2[#var_1_2 + 1] = {
-					is_exclusive = var_1_5,
+					is_exclusive = navtag,
 					color = var_1_6,
 					layer_id = var_1_7,
 					smart_object_id = var_1_8,
@@ -26,23 +30,24 @@ function NavTagVolumeUtils.nav_tags_from_position(arg_1_0, arg_1_1, arg_1_2, arg
 			end
 		end
 
-		GwNavQueries.destroy_query_dynamic_output(var_1_1)
+		GwNavQueries.destroy_query_dynamic_output(tag_volumes_from_position)
 	end
 
 	return var_1_2
 end
 
-function NavTagVolumeUtils.inside_nav_tag_layer(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+NavTagVolumeUtils.inside_nav_tag_layer = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	-- function 2
 	local var_2_0 = LAYER_ID_MAPPING[arg_2_4]
-	local var_2_1 = GwNavQueries.tag_volumes_from_position(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	local tag_volumes_from_position = GwNavQueries.tag_volumes_from_position(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_2
 
-	if var_2_1 then
-		local var_2_3 = GwNavQueries.nav_tag_volume_count(var_2_1)
+	if not tag_volumes_from_position then
+		local nav_tag_volume_count = GwNavQueries.nav_tag_volume_count(tag_volumes_from_position)
 
-		for iter_2_0 = 1, var_2_3 do
-			local var_2_4 = GwNavQueries.nav_tag_volume(var_2_1, iter_2_0)
-			local var_2_5, var_2_6, var_2_7, var_2_8, var_2_9 = GwNavTagVolume.navtag(var_2_4)
+		for i = 1, nav_tag_volume_count do
+			local nav_tag_volume = GwNavQueries.nav_tag_volume(tag_volumes_from_position, i)
+			local navtag, var_2_6, var_2_7, var_2_8, var_2_9 = GwNavTagVolume.navtag(nav_tag_volume)
 
 			if var_2_0 == var_2_7 then
 				var_2_2 = true
@@ -51,21 +56,22 @@ function NavTagVolumeUtils.inside_nav_tag_layer(arg_2_0, arg_2_1, arg_2_2, arg_2
 			end
 		end
 
-		GwNavQueries.destroy_query_dynamic_output(var_2_1)
+		GwNavQueries.destroy_query_dynamic_output(tag_volumes_from_position)
 	end
 
 	return var_2_2
 end
 
-function NavTagVolumeUtils.inside_level_volume_layer(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+NavTagVolumeUtils.inside_level_volume_layer = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	-- function 3
 	local var_3_0 = arg_3_1.level_volumes_by_layer[arg_3_3]
 
 	if not var_3_0 then
 		return
 	end
 
-	for iter_3_0 = 1, #var_3_0 do
-		if Level.is_point_inside_volume(arg_3_0, var_3_0[iter_3_0], arg_3_2) then
+	for i = 1, #var_3_0 do
+		if not Level.is_point_inside_volume(arg_3_0, var_3_0[i], arg_3_2) then
 			return true
 		end
 	end

@@ -1,100 +1,106 @@
 -- chunkname: @scripts/ui/views/start_game_view/windows/start_game_window_mutator.lua
 
 local var_0_0 = local_require("scripts/ui/views/start_game_view/windows/definitions/start_game_window_mutator_definitions")
-local var_0_1 = var_0_0.widgets
-local var_0_2 = var_0_0.scenegraph_definition
+local widgets = var_0_0.widgets
+local scenegraph_definition = var_0_0.scenegraph_definition
 
 StartGameWindowMutator = class(StartGameWindowMutator)
 StartGameWindowMutator.NAME = "StartGameWindowMutator"
 
-function StartGameWindowMutator.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowMutator.on_enter = function (self, arg_1_1, arg_1_2)
+	-- function 1
 	print("[StartGameWindow] Enter Substate StartGameWindowMutator")
 
-	arg_1_0.parent = arg_1_1.parent
+	self.parent = arg_1_1.parent
 
-	local var_1_0 = arg_1_1.ingame_ui_context
+	local ingame_ui_context = arg_1_1.ingame_ui_context
 
-	arg_1_0.ui_renderer = var_1_0.ui_renderer
-	arg_1_0.input_manager = var_1_0.input_manager
-	arg_1_0.statistics_db = var_1_0.statistics_db
-	arg_1_0.render_settings = {
+	self.ui_renderer = ingame_ui_context.ui_renderer
+	self.input_manager = ingame_ui_context.input_manager
+	self.statistics_db = ingame_ui_context.statistics_db
+	self.render_settings = {
 		snap_pixel_positions = true
 	}
 
-	local var_1_1 = Managers.player
+	local player = Managers.player
 
-	arg_1_0._stats_id = var_1_1:local_player():stats_id()
-	arg_1_0.player_manager = var_1_1
-	arg_1_0.peer_id = var_1_0.peer_id
+	self._stats_id = player:local_player():stats_id()
+	self.player_manager = player
+	self.peer_id = ingame_ui_context.peer_id
 
-	arg_1_0:create_ui_elements(arg_1_1, arg_1_2)
+	self:create_ui_elements(arg_1_1, arg_1_2)
 end
 
-function StartGameWindowMutator.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
-	local var_2_0 = UISceneGraph.init_scenegraph(var_0_2)
+StartGameWindowMutator.create_ui_elements = function (self, arg_2_1, arg_2_2)
+	-- function 2
+	local init_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	arg_2_0.ui_scenegraph = var_2_0
+	self.ui_scenegraph = init_scenegraph
 
-	local var_2_1 = {}
-	local var_2_2 = {}
+	local tbl = {}
+	local tbl_2 = {}
 
-	for iter_2_0, iter_2_1 in pairs(var_0_1) do
-		local var_2_3 = UIWidget.init(iter_2_1)
+	for k, v in pairs(widgets) do
+		local var_2_3 = UIWidget.init(v)
 
-		var_2_1[#var_2_1 + 1] = var_2_3
-		var_2_2[iter_2_0] = var_2_3
+		tbl[#tbl + 1] = var_2_3
+		tbl_2[k] = var_2_3
 	end
 
-	arg_2_0._widgets = var_2_1
-	arg_2_0._widgets_by_name = var_2_2
+	self._widgets = tbl
+	self._widgets_by_name = tbl_2
 
-	UIRenderer.clear_scenegraph_queue(arg_2_0.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
-	if arg_2_2 then
-		local var_2_4 = var_2_0.window.local_position
+	if not arg_2_2 then
+		local local_position = init_scenegraph.window.local_position
 
-		var_2_4[1] = var_2_4[1] + arg_2_2[1]
-		var_2_4[2] = var_2_4[2] + arg_2_2[2]
-		var_2_4[3] = var_2_4[3] + arg_2_2[3]
+		local_position[1] = local_position[1] + arg_2_2[1]
+		local_position[2] = local_position[2] + arg_2_2[2]
+		local_position[3] = local_position[3] + arg_2_2[3]
 	end
 end
 
-function StartGameWindowMutator.on_exit(arg_3_0, arg_3_1)
+StartGameWindowMutator.on_exit = function (arg_3_0, arg_3_1)
+	-- function 3
 	print("[StartGameWindow] Exit Substate StartGameWindowMutator")
 end
 
-function StartGameWindowMutator.update(arg_4_0, arg_4_1, arg_4_2)
-	arg_4_0:draw(arg_4_1)
+StartGameWindowMutator.update = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	self:draw(arg_4_1)
 end
 
-function StartGameWindowMutator.post_update(arg_5_0, arg_5_1, arg_5_2)
+StartGameWindowMutator.post_update = function (arg_5_0, arg_5_1, arg_5_2)
+	-- function 5
 	return
 end
 
-function StartGameWindowMutator.draw(arg_6_0, arg_6_1)
-	local var_6_0 = arg_6_0.ui_renderer
-	local var_6_1 = arg_6_0.ui_scenegraph
-	local var_6_2 = arg_6_0.parent:window_input_service()
+StartGameWindowMutator.draw = function (self, arg_6_1)
+	-- function 6
+	local ui_renderer = self.ui_renderer
+	local ui_scenegraph = self.ui_scenegraph
+	local window_input_service = self.parent:window_input_service()
 
-	UIRenderer.begin_pass(var_6_0, var_6_1, var_6_2, arg_6_1, nil, arg_6_0.render_settings)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, window_input_service, arg_6_1, nil, self.render_settings)
 
-	local var_6_3 = arg_6_0._widgets
+	local _widgets = self._widgets
 
-	for iter_6_0 = 1, #var_6_3 do
-		local var_6_4 = var_6_3[iter_6_0]
+	for i = 1, #_widgets do
+		local var_6_4 = _widgets[i]
 
-		UIRenderer.draw_widget(var_6_0, var_6_4)
+		UIRenderer.draw_widget(ui_renderer, var_6_4)
 	end
 
-	local var_6_5 = arg_6_0._active_node_widgets
+	local _active_node_widgets = self._active_node_widgets
 
-	if var_6_5 then
-		for iter_6_1 = 1, #var_6_5 do
-			local var_6_6 = var_6_5[iter_6_1]
+	if not _active_node_widgets then
+		for j = 1, #_active_node_widgets do
+			local var_6_6 = _active_node_widgets[j]
 
-			UIRenderer.draw_widget(var_6_0, var_6_6)
+			UIRenderer.draw_widget(ui_renderer, var_6_6)
 		end
 	end
 
-	UIRenderer.end_pass(var_6_0)
+	UIRenderer.end_pass(ui_renderer)
 end

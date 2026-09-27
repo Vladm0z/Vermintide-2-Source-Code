@@ -1,16 +1,16 @@
 -- chunkname: @scripts/settings/terror_events/terror_events_ground_zero.lua
 
-local var_0_0 = require("scripts/settings/terror_events/terror_event_utils")
-local var_0_1 = var_0_0.count_event_breed
-local var_0_2 = var_0_0.HARD
-local var_0_3 = var_0_0.HARDER
-local var_0_4 = {
+local scripts_settings_terror_events_terror_event_utils = require("scripts/settings/terror_events/terror_event_utils")
+local count_event_breed = scripts_settings_terror_events_terror_event_utils.count_event_breed
+local HARD = scripts_settings_terror_events_terror_event_utils.HARD
+local HARDER = scripts_settings_terror_events_terror_event_utils.HARDER
+local tbl = {
 	gz_elevator_guards = {
 		"gz_elevator_guards_a",
 		1
 	}
 }
-local var_0_5 = {
+local tbl_2 = {
 	generic_disable_specials = GenericTerrorEvents.generic_disable_specials,
 	generic_disable_pacing = GenericTerrorEvents.generic_disable_pacing,
 	gz_chaos_boss = {
@@ -28,14 +28,16 @@ local var_0_5 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_1_0)
-				return var_0_1("chaos_exalted_sorcerer") == 1
+			condition = function (arg_1_0)
+				-- function 1
+				return count_event_breed("chaos_exalted_sorcerer") == 1
 			end
 		},
 		{
 			"continue_when",
-			condition = function(arg_2_0)
-				return var_0_1("chaos_exalted_sorcerer") < 1
+			condition = function (arg_2_0)
+				-- function 2
+				return count_event_breed("chaos_exalted_sorcerer") < 1
 			end
 		},
 		{
@@ -76,13 +78,13 @@ local var_0_5 = {
 			"spawn_at_raw",
 			breed_name = "skaven_storm_vermin_commander",
 			spawner_id = "ele_guard_a_5",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARD
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_storm_vermin_commander",
 			spawner_id = "ele_guard_a_6",
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
@@ -132,6 +134,6 @@ local var_0_5 = {
 }
 
 return {
-	var_0_5,
-	var_0_4
+	tbl_2,
+	tbl
 }

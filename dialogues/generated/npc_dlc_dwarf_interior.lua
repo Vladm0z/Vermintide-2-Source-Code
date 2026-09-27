@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/npc_dlc_dwarf_interior.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		response = "nde_dwarf_internal_barrel_drop",
 		name = "nde_dwarf_internal_barrel_drop",

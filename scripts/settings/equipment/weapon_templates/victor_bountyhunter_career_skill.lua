@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/victor_bountyhunter_career_skill.lua
 
-local var_0_0 = {
+local tbl = {
 	actions = {
 		action_career_hold = {
 			default = {
@@ -9,7 +9,8 @@ local var_0_0 = {
 				uninterruptible = true,
 				anim_event = "bounty_hunter_ability_draw",
 				weapon_action_hand = "left",
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
+					-- function 1
 					return arg_1_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -52,7 +53,8 @@ local var_0_0 = {
 				uninterruptible = true,
 				anim_event = "bounty_hunter_ability_hold",
 				weapon_action_hand = "left",
-				anim_end_event_condition_func = function(arg_2_0, arg_2_1)
+				anim_end_event_condition_func = function (arg_2_0, arg_2_1)
+					-- function 2
 					return arg_2_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -117,7 +119,8 @@ local var_0_0 = {
 				uninterruptible = true,
 				ignore_shield_hit = true,
 				total_time = 0.66,
-				anim_end_event_condition_func = function(arg_3_0, arg_3_1)
+				anim_end_event_condition_func = function (arg_3_0, arg_3_1)
+					-- function 3
 					return arg_3_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {},
@@ -135,7 +138,8 @@ local var_0_0 = {
 				anim_end_event = "ability_finished",
 				anim_event = "bounty_hunter_ability_cancel",
 				total_time = 0.47,
-				anim_end_event_condition_func = function(arg_4_0, arg_4_1)
+				anim_end_event_condition_func = function (arg_4_0, arg_4_1)
+					-- function 4
 					return arg_4_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {}
@@ -161,19 +165,19 @@ local var_0_0 = {
 	}
 }
 
-var_0_0.default_spread_template = "bounty_hunter_handgun"
-var_0_0.left_hand_unit = "units/weapons/player/wpn_emp_shotgun/pn_emp_shotgunw"
-var_0_0.left_hand_attachment_node_linking = AttachmentNodeLinking.bounty_hunter_handgun
-var_0_0.display_unit = "units/weapons/weapon_display/display_pistols"
-var_0_0.wield_anim = "bounty_hunter_ability_draw"
-var_0_0.state_machine = "units/beings/player/first_person_base/state_machines/career/skill_bountyhunter"
-var_0_0.load_state_machine = false
-var_0_0.crosshair_style = "default"
-var_0_0.gui_texture = "hud_weapon_icon_repeating_handgun"
-var_0_0.buff_type = "RANGED_ABILITY"
-var_0_0.weapon_type = "HANDGUN"
-var_0_0.dodge_count = 3
-var_0_0.buffs = {
+tbl.default_spread_template = "bounty_hunter_handgun"
+tbl.left_hand_unit = "units/weapons/player/wpn_emp_shotgun/pn_emp_shotgunw"
+tbl.left_hand_attachment_node_linking = AttachmentNodeLinking.bounty_hunter_handgun
+tbl.display_unit = "units/weapons/weapon_display/display_pistols"
+tbl.wield_anim = "bounty_hunter_ability_draw"
+tbl.state_machine = "units/beings/player/first_person_base/state_machines/career/skill_bountyhunter"
+tbl.load_state_machine = false
+tbl.crosshair_style = "default"
+tbl.gui_texture = "hud_weapon_icon_repeating_handgun"
+tbl.buff_type = "RANGED_ABILITY"
+tbl.weapon_type = "HANDGUN"
+tbl.dodge_count = 3
+tbl.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1.1
 	},
@@ -181,7 +185,7 @@ var_0_0.buffs = {
 		external_optional_multiplier = 1.1
 	}
 }
-var_0_0.aim_assist_settings = {
+tbl.aim_assist_settings = {
 	max_range = 22,
 	no_aim_input_multiplier = 0,
 	aim_at_node = "j_spine",
@@ -194,16 +198,16 @@ var_0_0.aim_assist_settings = {
 		skaven_slave = 1
 	}
 }
-var_0_0.wwise_dep_left_hand = {
+tbl.wwise_dep_left_hand = {
 	"wwise/rakegun"
 }
 
-local var_0_1 = table.clone(var_0_0)
+local clone = table.clone(tbl)
 
-var_0_1.actions.action_career_release.default.impact_data.damage_profile = "shot_sniper_ability_vs"
-var_0_1.actions.action_career_release.default.damage_profile = "shot_shotgun_ability"
+clone.actions.action_career_release.default.impact_data.damage_profile = "shot_sniper_ability_vs"
+clone.actions.action_career_release.default.damage_profile = "shot_shotgun_ability"
 
 return {
-	victor_bountyhunter_career_skill_weapon = table.clone(var_0_0),
-	victor_bountyhunter_career_skill_weapon_vs = table.clone(var_0_1)
+	victor_bountyhunter_career_skill_weapon = table.clone(tbl),
+	victor_bountyhunter_career_skill_weapon_vs = table.clone(clone)
 }

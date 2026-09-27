@@ -2,20 +2,23 @@
 
 DebugEventManagerRPC = class(DebugEventManagerRPC)
 
-function DebugEventManagerRPC.init(arg_1_0, arg_1_1)
-	arg_1_0._event_delegate = arg_1_1
+DebugEventManagerRPC.init = function (self, arg_1_1)
+	-- function 1
+	self._event_delegate = arg_1_1
 
-	arg_1_0._event_delegate:register(arg_1_0, "rpc_event_manager_event")
+	self._event_delegate:register(self, "rpc_event_manager_event")
 end
 
-function DebugEventManagerRPC.rpc_event_manager_event(arg_2_0, arg_2_1, ...)
-	local var_2_0 = Managers.state.event
+DebugEventManagerRPC.rpc_event_manager_event = function (arg_2_0, arg_2_1, ...)
+	-- function 2
+	local event = Managers.state.event
 
-	if var_2_0 then
-		var_2_0:trigger(...)
+	if not event then
+		event:trigger(...)
 	end
 end
 
-function DebugEventManagerRPC.destroy(arg_3_0)
-	arg_3_0._event_delegate:unregister(arg_3_0)
+DebugEventManagerRPC.destroy = function (self)
+	-- function 3
+	self._event_delegate:unregister(self)
 end

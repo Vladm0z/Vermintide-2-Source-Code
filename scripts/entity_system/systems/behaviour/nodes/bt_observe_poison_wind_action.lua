@@ -5,12 +5,14 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 BTObservePoisonWind = class(BTObservePoisonWind, BTNode)
 BTObservePoisonWind.name = "BTObservePoisonWind"
 
-function BTObservePoisonWind.init(arg_1_0, ...)
+BTObservePoisonWind.init = function (arg_1_0, ...)
+	-- function 1
 	BTObservePoisonWind.super.init(arg_1_0, ...)
 end
 
-function BTObservePoisonWind.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
-	arg_2_2.action = arg_2_0._tree_node.action_data
+BTObservePoisonWind.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+	-- function 2
+	arg_2_2.action = self._tree_node.action_data
 
 	arg_2_2.navigation_extension:set_enabled(false)
 	arg_2_2.locomotion_extension:set_wanted_velocity(Vector3.zero())
@@ -21,17 +23,19 @@ function BTObservePoisonWind.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	Managers.state.network:anim_event(arg_2_1, "attack_throw_look")
 end
 
-function BTObservePoisonWind.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTObservePoisonWind.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	-- function 3
 	arg_3_2.observe_poison_wind = nil
 	arg_3_2.action = nil
 
 	arg_3_2.navigation_extension:set_enabled(true)
 end
 
-function BTObservePoisonWind.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-	local var_4_0 = arg_4_2.throw_globe_data
+BTObservePoisonWind.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	-- function 4
+	local throw_globe_data = arg_4_2.throw_globe_data
 
-	if not var_4_0 then
+	if not throw_globe_data then
 		return "done"
 	end
 
@@ -39,24 +43,28 @@ function BTObservePoisonWind.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 		return "done"
 	end
 
-	if arg_4_3 > (var_4_0.next_throw_at or -math.huge) then
+	local next_throw_at = throw_globe_data.next_throw_at
+
+	next_throw_at = next_throw_at or -math.huge
+
+	if next_throw_at < arg_4_3 then
 		return "done"
 	end
 
-	local var_4_1 = arg_4_2.locomotion_extension
-	local var_4_2 = arg_4_2.throw_globe_data.throw_pos:unbox()
-	local var_4_3 = LocomotionUtils.look_at_position_flat(arg_4_1, var_4_2)
+	local locomotion_extension = arg_4_2.locomotion_extension
+	local unbox = arg_4_2.throw_globe_data.throw_pos:unbox()
+	local look_at_position_flat = LocomotionUtils.look_at_position_flat(arg_4_1, unbox)
 
-	var_4_1:set_wanted_rotation(var_4_3)
+	locomotion_extension:set_wanted_rotation(look_at_position_flat)
 
-	if arg_4_2.explosion_impact then
+	if not arg_4_2.explosion_impact then
 		Managers.state.network:anim_event(arg_4_1, "attack_throw_score")
 
 		arg_4_2.observe_poison_wind.score_anim = true
 		arg_4_2.explosion_impact = nil
 	end
 
-	if arg_4_2.observe_poison_wind.score_anim and arg_4_2.anim_cb_attack_throw_score_finished then
+	if not arg_4_2.observe_poison_wind.score_anim and not arg_4_2.anim_cb_attack_throw_score_finished then
 		arg_4_2.anim_cb_attack_throw_score_finished = nil
 
 		return "done"

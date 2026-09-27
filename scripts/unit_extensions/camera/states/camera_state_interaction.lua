@@ -2,91 +2,95 @@
 
 CameraStateInteraction = class(CameraStateInteraction, CameraState)
 
-function CameraStateInteraction.init(arg_1_0, arg_1_1)
+CameraStateInteraction.init = function (arg_1_0, arg_1_1)
+	-- function 1
 	CameraState.init(arg_1_0, arg_1_1, "camera_state_interaction")
 end
 
-function CameraStateInteraction.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
-	local var_2_0 = arg_2_7.camera_interaction_name
-	local var_2_1 = Managers.world
+CameraStateInteraction.on_enter = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	-- function 2
+	local camera_interaction_name = arg_2_7.camera_interaction_name
+	local world = Managers.world
 
-	if var_2_1:has_world("level_world") then
+	if not world:has_world("level_world") then
 		local var_2_2
-		local var_2_3 = var_2_1:world("level_world")
-		local var_2_4 = Managers.level_transition_handler:get_current_level_key()
-		local var_2_5 = LevelSettings[var_2_4].level_name
-		local var_2_6 = ScriptWorld.level(var_2_3, var_2_5)
+		local world_2 = world:world("level_world")
+		local get_current_level_key = Managers.level_transition_handler:get_current_level_key()
+		local level_name = LevelSettings[get_current_level_key].level_name
+		local level = ScriptWorld.level(world_2, level_name)
 
-		if var_2_6 then
-			local var_2_7 = Level.units(var_2_6)
+		if not level then
+			local units = Level.units(level)
 
-			for iter_2_0, iter_2_1 in ipairs(var_2_7) do
-				if Unit.has_data(iter_2_1, "camera_interaction_name") and Unit.get_data(iter_2_1, "camera_interaction_name") == var_2_0 then
-					var_2_2 = iter_2_1
+			for i, v in ipairs(units) do
+				if not (not Unit.has_data(v, "camera_interaction_name") and Unit.get_data(v, "camera_interaction_name") ~= camera_interaction_name) then
+					var_2_2 = v
 
 					break
 				end
 			end
 		end
 
-		arg_2_0.camera_target_unit = var_2_2
-		arg_2_0.total_lerp_time = UISettings.map.camera_time_enter
-		arg_2_0.lerp_time = 0
-		arg_2_0.progress = 0
-		arg_2_0.calculate_lerp = true
-		arg_2_0.camera_start_pose = Matrix4x4Box(Unit.world_pose(arg_2_1, 0))
+		self.camera_target_unit = var_2_2
+		self.total_lerp_time = UISettings.map.camera_time_enter
+		self.lerp_time = 0
+		self.progress = 0
+		self.calculate_lerp = true
+		self.camera_start_pose = Matrix4x4Box(Unit.world_pose(arg_2_1, 0))
 	end
 end
 
-function CameraStateInteraction.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
-	arg_3_0.camera_target_unit = nil
+CameraStateInteraction.on_exit = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+	-- function 3
+	self.camera_target_unit = nil
 end
 
-function CameraStateInteraction.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
-	local var_4_0 = arg_4_0.csm
-	local var_4_1 = arg_4_0.unit
-	local var_4_2 = arg_4_0.camera_extension
-	local var_4_3 = arg_4_0.camera_target_unit
+CameraStateInteraction.update = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	-- function 4
+	local csm = self.csm
+	local unit = self.unit
+	local camera_extension = self.camera_extension
+	local camera_target_unit = self.camera_target_unit
 
-	if not Unit.alive(var_4_3) then
-		var_4_0:change_state("idle")
+	if not Unit.alive(camera_target_unit) then
+		csm:change_state("idle")
 
 		return
 	end
 
-	local var_4_4 = var_4_2.external_state_change
-	local var_4_5 = var_4_2.external_state_change_params
+	local external_state_change = camera_extension.external_state_change
+	local external_state_change_params = camera_extension.external_state_change_params
 
-	if var_4_4 and var_4_4 ~= arg_4_0.name then
-		var_4_0:change_state(var_4_4, var_4_5)
-		var_4_2:set_external_state_change(nil)
+	if not (not external_state_change and external_state_change == self.name) then
+		csm:change_state(external_state_change, external_state_change_params)
+		camera_extension:set_external_state_change(nil)
 
 		return
 	end
 
-	if arg_4_0.calculate_lerp and var_4_3 then
-		local var_4_6 = arg_4_0.total_lerp_time
-		local var_4_7 = arg_4_0.lerp_time
-		local var_4_8 = arg_4_0.progress
-		local var_4_9 = math.min(var_4_7 + arg_4_3, var_4_6)
-		local var_4_10 = var_4_9 / var_4_6
-		local var_4_11 = math.smoothstep(var_4_10, 0, 1)
-		local var_4_12 = Unit.world_pose(var_4_3, 0)
-		local var_4_13 = arg_4_0.camera_start_pose:unbox()
-		local var_4_14 = Matrix4x4.lerp(var_4_13, var_4_12, var_4_11)
+	if not self.calculate_lerp and not camera_target_unit then
+		local total_lerp_time = self.total_lerp_time
+		local lerp_time = self.lerp_time
+		local progress = self.progress
+		local min = math.min(lerp_time + arg_4_3, total_lerp_time)
+		local num = min / total_lerp_time
+		local smoothstep = math.smoothstep(num, 0, 1)
+		local world_pose = Unit.world_pose(camera_target_unit, 0)
+		local unbox = self.camera_start_pose:unbox()
+		local lerp = Matrix4x4.lerp(unbox, world_pose, smoothstep)
 
-		assert(Matrix4x4.is_valid(var_4_14), "Camera lerp pose invalid.")
-		Unit.set_local_pose(var_4_1, 0, var_4_14)
+		assert(Matrix4x4.is_valid(lerp), "Camera lerp pose invalid.")
+		Unit.set_local_pose(unit, 0, lerp)
 
-		if var_4_8 == 1 then
-			arg_4_0.calculate_lerp = nil
-			arg_4_0.camera_start_pose = nil
-			arg_4_0.total_lerp_time = nil
-			arg_4_0.lerp_time = nil
-			arg_4_0.progress = nil
+		if progress == 1 then
+			self.calculate_lerp = nil
+			self.camera_start_pose = nil
+			self.total_lerp_time = nil
+			self.lerp_time = nil
+			self.progress = nil
 		else
-			arg_4_0.progress = var_4_10
-			arg_4_0.lerp_time = var_4_9
+			self.progress = num
+			self.lerp_time = min
 		end
 	end
 end

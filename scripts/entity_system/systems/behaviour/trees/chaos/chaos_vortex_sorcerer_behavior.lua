@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/chaos/chaos_vortex_sorcerer_behavior.lua
 
-local var_0_0 = BreedActions.chaos_vortex_sorcerer
+local chaos_vortex_sorcerer = BreedActions.chaos_vortex_sorcerer
 
 BreedBehaviors.chaos_vortex_sorcerer = {
 	"BTSelector",
@@ -23,7 +23,7 @@ BreedBehaviors.chaos_vortex_sorcerer = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = var_0_0.stagger
+		action_data = chaos_vortex_sorcerer.stagger
 	},
 	{
 		"BTSelector",
@@ -54,19 +54,19 @@ BreedBehaviors.chaos_vortex_sorcerer = {
 		"BTQuickTeleportAction",
 		name = "quick_teleport",
 		condition = "quick_teleport",
-		action_data = var_0_0.quick_teleport
+		action_data = chaos_vortex_sorcerer.quick_teleport
 	},
 	{
 		"BTChaosSorcererSummoningAction",
 		name = "spawn_vortex",
 		condition = "ready_to_summon",
-		action_data = var_0_0.spawn_vortex
+		action_data = chaos_vortex_sorcerer.spawn_vortex
 	},
 	{
 		"BTChaosSorcererSkulkApproachAction",
 		name = "skulk_approach",
 		condition = "can_see_player",
-		action_data = var_0_0.skulk_approach
+		action_data = chaos_vortex_sorcerer.skulk_approach
 	},
 	{
 		"BTIdleAction",

@@ -1,22 +1,22 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/definitions/hero_window_weave_forge_background_definitions.lua
 
-local var_0_0 = UISettings.game_start_windows
-local var_0_1 = var_0_0.size
-local var_0_2 = var_0_0.spacing
-local var_0_3 = var_0_0.large_window_frame
-local var_0_4 = UIFrameSettings[var_0_3].texture_sizes.vertical[1]
-local var_0_5 = {
-	var_0_1[1] * 3 + var_0_2 * 2 + var_0_4 * 2,
-	var_0_1[2] + 80
+local game_start_windows = UISettings.game_start_windows
+local size = game_start_windows.size
+local spacing = game_start_windows.spacing
+local large_window_frame = game_start_windows.large_window_frame
+local var_0_4 = UIFrameSettings[large_window_frame].texture_sizes.vertical[1]
+local tbl = {
+	size[1] * 3 + spacing * 2 + var_0_4 * 2,
+	size[2] + 80
 }
-local var_0_6 = {
-	var_0_5[1] + 50,
-	var_0_5[2]
+local tbl_2 = {
+	tbl[1] + 50,
+	tbl[2]
 }
-local var_0_7 = "menu_frame_11"
-local var_0_8 = UIFrameSettings[var_0_7].texture_sizes.vertical[1]
-local var_0_9 = UISettings.game_start_windows
-local var_0_10 = {
+local str = "menu_frame_11"
+local var_0_8 = UIFrameSettings[str].texture_sizes.vertical[1]
+local game_start_windows_2 = UISettings.game_start_windows
+local tbl_3 = {
 	root = {
 		is_root = true,
 		size = {
@@ -59,7 +59,7 @@ local var_0_10 = {
 		vertical_alignment = "center",
 		parent = "screen_center",
 		horizontal_alignment = "center",
-		size = var_0_6,
+		size = tbl_2,
 		position = {
 			0,
 			0,
@@ -71,7 +71,7 @@ local var_0_10 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_6[1] - var_0_8 * 2,
+			tbl_2[1] - var_0_8 * 2,
 			1000
 		},
 		position = {
@@ -85,7 +85,7 @@ local var_0_10 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_6[1] - var_0_8 * 2,
+			tbl_2[1] - var_0_8 * 2,
 			500
 		},
 		position = {
@@ -99,7 +99,7 @@ local var_0_10 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_6[1] - var_0_8 * 2,
+			tbl_2[1] - var_0_8 * 2,
 			200
 		},
 		position = {
@@ -109,7 +109,7 @@ local var_0_10 = {
 		}
 	}
 }
-local var_0_11 = {
+local tbl_4 = {
 	font_size = 36,
 	upper_case = true,
 	localize = false,
@@ -125,7 +125,7 @@ local var_0_11 = {
 		2
 	}
 }
-local var_0_12 = {
+local tbl_5 = {
 	font_size = 36,
 	upper_case = true,
 	localize = false,
@@ -141,7 +141,7 @@ local var_0_12 = {
 		2
 	}
 }
-local var_0_13 = {
+local tbl_6 = {
 	font_size = 28,
 	upper_case = true,
 	localize = false,
@@ -157,7 +157,7 @@ local var_0_13 = {
 		2
 	}
 }
-local var_0_14 = {
+local tbl_7 = {
 	font_size = 62,
 	upper_case = true,
 	localize = false,
@@ -173,7 +173,7 @@ local var_0_14 = {
 		2
 	}
 }
-local var_0_15 = {
+local tbl_8 = {
 	font_size = 62,
 	upper_case = true,
 	localize = false,
@@ -189,7 +189,7 @@ local var_0_15 = {
 		2
 	}
 }
-local var_0_16 = {
+local tbl_9 = {
 	font_size = 20,
 	upper_case = true,
 	localize = false,
@@ -205,7 +205,7 @@ local var_0_16 = {
 		2
 	}
 }
-local var_0_17 = {
+local tbl_10 = {
 	font_size = 20,
 	upper_case = true,
 	localize = false,
@@ -221,37 +221,37 @@ local var_0_17 = {
 		2
 	}
 }
-local var_0_18 = {
+local tbl_11 = {
 	255,
 	0,
 	0,
 	0
 }
-local var_0_19 = {
+local tbl_12 = {
 	200,
 	138,
 	0,
 	147
 }
-local var_0_20 = {
+local tbl_13 = {
 	255,
 	138,
 	0,
 	187
 }
-local var_0_21 = {
+local tbl_14 = {
 	200,
 	128,
 	0,
 	217
 }
-local var_0_22 = {
+local tbl_15 = {
 	130,
 	255,
 	255,
 	255
 }
-local var_0_23 = {
+local tbl_16 = {
 	bottom_glow_smoke_1 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_smoke_1", {
 		{
 			0,
@@ -261,7 +261,7 @@ local var_0_23 = {
 			1,
 			0
 		}
-	}, "bottom_glow", nil, nil, var_0_19),
+	}, "bottom_glow", nil, nil, tbl_12),
 	bottom_glow_smoke_2 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_smoke_2", {
 		{
 			0,
@@ -271,7 +271,7 @@ local var_0_23 = {
 			1,
 			0
 		}
-	}, "bottom_glow_short", nil, nil, var_0_20),
+	}, "bottom_glow_short", nil, nil, tbl_13),
 	bottom_glow_smoke_3 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_embers_2", {
 		{
 			0,
@@ -281,7 +281,7 @@ local var_0_23 = {
 			1,
 			0
 		}
-	}, "bottom_glow_shortest", nil, nil, var_0_21),
+	}, "bottom_glow_shortest", nil, nil, tbl_14),
 	bottom_glow_embers_1 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_embers_1", {
 		{
 			0,
@@ -291,7 +291,7 @@ local var_0_23 = {
 			1,
 			0
 		}
-	}, "bottom_glow", nil, nil, var_0_22, 1),
+	}, "bottom_glow", nil, nil, tbl_15, 1),
 	bottom_glow_embers_3 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_embers_3", {
 		{
 			0,
@@ -301,24 +301,27 @@ local var_0_23 = {
 			1,
 			0
 		}
-	}, "bottom_glow_short", nil, nil, var_0_22, 1),
-	window_background = UIWidgets.create_simple_rect("window", var_0_18)
+	}, "bottom_glow_short", nil, nil, tbl_15, 1),
+	window_background = UIWidgets.create_simple_rect("window", tbl_11)
 }
-local var_0_24 = {
+local tbl_17 = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+				-- function 1
 				arg_1_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
-				local var_2_0 = math.easeOutCubic(arg_2_3)
+			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+				-- function 2
+				local easeOutCubic = math.easeOutCubic(arg_2_3)
 
-				arg_2_4.render_settings.alpha_multiplier = var_2_0
+				arg_2_4.render_settings.alpha_multiplier = easeOutCubic
 			end,
-			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+				-- function 3
 				return
 			end
 		}
@@ -328,15 +331,18 @@ local var_0_24 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				-- function 4
 				arg_4_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
-				local var_5_0 = math.easeOutCubic(arg_5_3)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+				-- function 5
+				local easeOutCubic = math.easeOutCubic(arg_5_3)
 
-				arg_5_4.render_settings.alpha_multiplier = 1 - var_5_0
+				arg_5_4.render_settings.alpha_multiplier = 1 - easeOutCubic
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+				-- function 6
 				return
 			end
 		}
@@ -344,7 +350,7 @@ local var_0_24 = {
 }
 
 return {
-	widgets = var_0_23,
-	scenegraph_definition = var_0_10,
-	animation_definitions = var_0_24
+	widgets = tbl_16,
+	scenegraph_definition = tbl_3,
+	animation_definitions = tbl_17
 }

@@ -2,137 +2,147 @@
 
 ReplayManager = class(ReplayManager)
 
-function ReplayManager.init(arg_1_0, arg_1_1)
-	arg_1_0._world = arg_1_1
-	arg_1_0._playing = true
-	arg_1_0._level_name = nil
-	arg_1_0._frame = 0
-	arg_1_0._frame_needs_drawing = false
-	arg_1_0._stories = {}
-	arg_1_0._current_story_index = nil
-	arg_1_0._current_story_id = nil
-	arg_1_0._frame_time = 0.016666666666666666
-	arg_1_0._have_had_proper_level = false
+ReplayManager.init = function (self, arg_1_1)
+	-- function 1
+	self._world = arg_1_1
+	self._playing = true
+	self._level_name = nil
+	self._frame = 0
+	self._frame_needs_drawing = false
+	self._stories = {}
+	self._current_story_index = nil
+	self._current_story_id = nil
+	self._frame_time = 0.016666666666666666
+	self._have_had_proper_level = false
 end
 
-function ReplayManager.update(arg_2_0, arg_2_1)
-	local var_2_0 = 0
+ReplayManager.update = function (self, arg_2_1)
+	-- function 2
+	local num = 0
 
-	if arg_2_0._playing then
-		local var_2_1 = ExtendedReplay.num_frames()
+	if not self._playing then
+		local num_frames = ExtendedReplay.num_frames()
 
-		arg_2_0._frame = arg_2_0._frame + 1
+		self._frame = self._frame + 1
 
-		if arg_2_0._frame == var_2_1 then
-			arg_2_0._frame = 0
+		if self._frame == num_frames then
+			self._frame = 0
 		end
 
-		arg_2_0:move_to_current_frame()
+		self:move_to_current_frame()
 
-		var_2_0 = ExtendedReplay.delta_time()
+		num = ExtendedReplay.delta_time()
 	end
 
-	if arg_2_0._frame_needs_drawing then
-		arg_2_0:move_to_current_frame()
+	if not self._frame_needs_drawing then
+		self:move_to_current_frame()
 	end
 
-	return var_2_0
+	return num
 end
 
-function ReplayManager.move_to_current_frame(arg_3_0)
-	ExtendedReplay.set_frame(arg_3_0._frame)
+ReplayManager.move_to_current_frame = function (self)
+	-- function 3
+	ExtendedReplay.set_frame(self._frame)
 
-	arg_3_0._frame_needs_drawing = false
+	self._frame_needs_drawing = false
 
-	arg_3_0:report_frame()
+	self:report_frame()
 
 	local var_3_0
 
-	for iter_3_0, iter_3_1 in ipairs(arg_3_0._stories) do
-		if arg_3_0._frame >= iter_3_1.framestart and arg_3_0._frame < iter_3_1.frameend then
-			var_3_0 = iter_3_0
+	for i, v in ipairs(self._stories) do
+		if not (not (self._frame >= v.framestart) or not (self._frame < v.frameend)) then
+			var_3_0 = i
 
 			break
 		end
 	end
 
-	local var_3_1 = arg_3_0._world:storyteller()
+	local storyteller = self._world:storyteller()
 
-	if var_3_0 ~= arg_3_0._current_story_index then
-		if arg_3_0._current_story_id ~= nil and var_3_1:is_playing(arg_3_0._current_story_id) then
-			var_3_1:stop(arg_3_0._current_story_id)
+	if var_3_0 ~= self._current_story_index then
+		if self._current_story_id == nil or not storyteller:is_playing(self._current_story_id) then
+			storyteller:stop(self._current_story_id)
 		end
 
-		arg_3_0._current_story_index = var_3_0
-		arg_3_0._current_story_id = nil
+		self._current_story_index = var_3_0
+		self._current_story_id = nil
 	end
 
-	if arg_3_0._current_story_index ~= nil then
-		local var_3_2 = arg_3_0._world:level_by_name(arg_3_0._level_name)
+	if self._current_story_index ~= nil then
+		local level_by_name = self._world:level_by_name(self._level_name)
 
-		if var_3_2 == nil then
-			if not arg_3_0._have_had_proper_level then
-				local var_3_3 = {
+		if level_by_name == nil then
+			if not self._have_had_proper_level then
+				local tbl = {
 					action = "close",
 					message = "error",
 					type = "replay",
-					reason = "Level " .. arg_3_0._level_name .. " can't be found in the world. Have you loaded the correct level for this replay session?"
+					reason = "Level " .. self._level_name .. " can't be found in the world. Have you loaded the correct level for this replay session?"
 				}
 
-				Application.console_send(var_3_3)
+				Application.console_send(tbl)
 
-				arg_3_0._have_had_proper_level = true
+				self._have_had_proper_level = true
 			end
 		else
-			arg_3_0._have_had_proper_level = true
+			self._have_had_proper_level = true
 		end
 
-		if var_3_2 ~= nil then
-			if arg_3_0._current_story_id == nil or not var_3_1:is_playing(arg_3_0._current_story_id) then
-				arg_3_0._current_story_id = var_3_1:play_level_story(var_3_2, arg_3_0._stories[arg_3_0._current_story_index].name)
+		if level_by_name ~= nil then
+			if not (self._current_story_id == nil or storyteller:is_playing(self._current_story_id)) then
+				self._current_story_id = storyteller:play_level_story(level_by_name, self._stories[self._current_story_index].name)
 
-				var_3_1:set_speed(arg_3_0._current_story_id, 0)
+				storyteller:set_speed(self._current_story_id, 0)
 			end
 
-			var_3_1:set_time(arg_3_0._current_story_id, (arg_3_0._frame - arg_3_0._stories[arg_3_0._current_story_index].framestart) * arg_3_0._frame_time)
+			storyteller:set_time(self._current_story_id, (self._frame - self._stories[self._current_story_index].framestart) * self._frame_time)
 		end
 	end
 end
 
-function ReplayManager.report_frame(arg_4_0)
-	local var_4_0 = {
+ReplayManager.report_frame = function (self)
+	-- function 4
+	local tbl = {
 		message = "frame",
 		type = "replay",
-		frame = arg_4_0._frame
+		frame = self._frame
 	}
 
-	Application.console_send(var_4_0)
+	Application.console_send(tbl)
 end
 
-function ReplayManager.overriding_camera(arg_5_0)
-	if arg_5_0._current_story_id ~= nil then
-		return arg_5_0._world:storyteller():first_camera(arg_5_0._current_story_id)
+ReplayManager.overriding_camera = function (self)
+	-- function 5
+	if self._current_story_id ~= nil then
+		return self._world:storyteller():first_camera(self._current_story_id)
 	end
 end
 
-function ReplayManager.reload(arg_6_0)
-	arg_6_0._current_story_id = nil
-	arg_6_0._frame_needs_drawing = true
+ReplayManager.reload = function (self)
+	-- function 6
+	self._current_story_id = nil
+	self._frame_needs_drawing = true
 end
 
-function ReplayManager.play(arg_7_0, arg_7_1)
-	arg_7_0._playing = arg_7_1
+ReplayManager.play = function (self, arg_7_1)
+	-- function 7
+	self._playing = arg_7_1
 end
 
-function ReplayManager.set_frame(arg_8_0, arg_8_1)
-	arg_8_0._frame = arg_8_1
-	arg_8_0._frame_needs_drawing = true
+ReplayManager.set_frame = function (self, arg_8_1)
+	-- function 8
+	self._frame = arg_8_1
+	self._frame_needs_drawing = true
 end
 
-function ReplayManager.set_level(arg_9_0, arg_9_1)
-	arg_9_0._level_name = arg_9_1
+ReplayManager.set_level = function (self, arg_9_1)
+	-- function 9
+	self._level_name = arg_9_1
 end
 
-function ReplayManager.set_stories(arg_10_0, arg_10_1)
-	arg_10_0._stories = arg_10_1
+ReplayManager.set_stories = function (self, arg_10_1)
+	-- function 10
+	self._stories = arg_10_1
 end

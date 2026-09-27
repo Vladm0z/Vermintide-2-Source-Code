@@ -1,9 +1,9 @@
 -- chunkname: @scripts/settings/dlcs/karak_azgaraz/karak_azgaraz_level_settings_part_2.lua
 
-local var_0_0 = DLCSettings.karak_azgaraz_part_2
+local karak_azgaraz_part_2 = DLCSettings.karak_azgaraz_part_2
 
-var_0_0.level_settings = "levels/honduras_dlcs/karak_azgaraz/level_settings_karak_azgaraz_part_2"
-var_0_0.missions = {
+karak_azgaraz_part_2.level_settings = "levels/honduras_dlcs/karak_azgaraz/level_settings_karak_azgaraz_part_2"
+karak_azgaraz_part_2.missions = {
 	dwarf_exterior_follow_secret_path = {
 		mission_template_name = "goal",
 		text = "dlc1_5_dwarf_exterior_follow_secret_path_mission_text"

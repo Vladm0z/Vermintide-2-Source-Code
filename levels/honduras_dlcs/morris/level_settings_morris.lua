@@ -3,7 +3,7 @@
 require("levels/honduras_dlcs/morris/deus_level_settings")
 require("scripts/settings/dlcs/morris/deus_journey_settings")
 
-local var_0_0 = {
+local tbl = {
 	wastes = "resource_packages/levels/dlcs/morris/wastes_common",
 	tzeentch = "resource_packages/levels/dlcs/morris/tzeentch_common",
 	belakor = "resource_packages/levels/dlcs/morris/belakor_common",
@@ -80,73 +80,77 @@ LevelSettings.dlc_morris_map = {
 	}
 }
 
-for iter_0_0, iter_0_1 in pairs(DEUS_SHRINE_LEVEL_SETTINGS) do
-	local var_0_1 = table.clone(LevelSettings.dlc_morris_map)
+for k, v in pairs(DEUS_SHRINE_LEVEL_SETTINGS) do
+	local clone = table.clone(LevelSettings.dlc_morris_map)
 
-	for iter_0_2, iter_0_3 in pairs(iter_0_1) do
-		var_0_1[iter_0_2] = iter_0_3
+	for k_2, v_2 in pairs(v) do
+		clone[k_2] = v_2
 	end
 
-	LevelSettings[iter_0_0] = var_0_1
+	LevelSettings[k] = clone
 end
 
-for iter_0_4, iter_0_5 in pairs(DEUS_LEVEL_SETTINGS) do
-	for iter_0_6, iter_0_7 in ipairs(iter_0_5.themes) do
-		for iter_0_8, iter_0_9 in ipairs(iter_0_5.paths) do
-			local var_0_2 = table.clone(iter_0_5)
-			local var_0_3 = iter_0_7 .. "_path" .. iter_0_9
+for k_3, v_3 in pairs(DEUS_LEVEL_SETTINGS) do
+	for i, v_4 in ipairs(v_3.themes) do
+		for i_2, v_5 in ipairs(v_3.paths) do
+			local clone_2 = table.clone(v_3)
+			local str = v_4 .. "_path" .. v_5
 			local var_0_4
 			local var_0_5
 
-			if iter_0_5.overridden_level_name then
-				fassert(iter_0_5.overridden_level_key, "If a morris level settings has an overridden_level_name, it also must have a overriden_level_key")
+			if not v_3.overridden_level_name then
+				fassert(v_3.overridden_level_key, "If a morris level settings has an overridden_level_name, it also must have a overriden_level_key")
 
-				var_0_4 = iter_0_5.overridden_level_key
-				var_0_5 = iter_0_5.overridden_level_name
+				var_0_4 = v_3.overridden_level_key
+				var_0_5 = v_3.overridden_level_name
 			else
-				var_0_4 = iter_0_4 .. "_" .. var_0_3
-				var_0_5 = "levels/honduras_dlcs/morris/" .. iter_0_4 .. "/generated/" .. var_0_3 .. "/world"
+				var_0_4 = k_3 .. "_" .. str
+				var_0_5 = "levels/honduras_dlcs/morris/" .. k_3 .. "/generated/" .. str .. "/world"
 			end
 
-			var_0_2.level_name = var_0_5
-			var_0_2.theme = iter_0_7
-			var_0_2.display_name = iter_0_4 .. "_title"
-			var_0_2.description_text = iter_0_4 .. "_desc"
-			var_0_2.level_key = var_0_4
-			var_0_2.level_image = "level_icon_weaves"
-			var_0_2.loading_ui_package_name = var_0_2.loading_ui_package_name or "morris/deus_loading_screen_1"
-			var_0_2.music_won_state = var_0_2.music_won_state
-			var_0_2.game_mode = "deus"
-			var_0_2.mechanism = "deus"
-			var_0_2.disable_percentage_completed = true
-			var_0_2.act = "deus_act"
-			var_0_2.act_presentation_order = 1
-			var_0_2.act_unlock_order = 0
-			var_0_2.unlockable = true
-			var_0_2.dlc_name = "morris"
-			var_0_2.level_id = var_0_4
-			var_0_2.ommit_from_lobby_browser = true
-			var_0_2.allowed_locked_director_functions = {
+			clone_2.level_name = var_0_5
+			clone_2.theme = v_4
+			clone_2.display_name = k_3 .. "_title"
+			clone_2.description_text = k_3 .. "_desc"
+			clone_2.level_key = var_0_4
+			clone_2.level_image = "level_icon_weaves"
+
+			local loading_ui_package_name = clone_2.loading_ui_package_name
+
+			loading_ui_package_name = loading_ui_package_name or "morris/deus_loading_screen_1"
+			clone_2.loading_ui_package_name = loading_ui_package_name
+			clone_2.music_won_state = clone_2.music_won_state
+			clone_2.game_mode = "deus"
+			clone_2.mechanism = "deus"
+			clone_2.disable_percentage_completed = true
+			clone_2.act = "deus_act"
+			clone_2.act_presentation_order = 1
+			clone_2.act_unlock_order = 0
+			clone_2.unlockable = true
+			clone_2.dlc_name = "morris"
+			clone_2.level_id = var_0_4
+			clone_2.ommit_from_lobby_browser = true
+			clone_2.allowed_locked_director_functions = {
 				beastmen = true
 			}
-			var_0_2.disable_quickplay = true
+			clone_2.disable_quickplay = true
 
-			local var_0_6 = iter_0_5.base_level_name
-			local var_0_7 = var_0_2.packages
+			local base_level_name = v_3.base_level_name
+			local packages = clone_2.packages
 
-			if not iter_0_5.do_not_add_default_packages then
-				var_0_7[#var_0_7 + 1] = var_0_0[iter_0_7]
-				var_0_7[#var_0_7 + 1] = string.format("resource_packages/levels/dlcs/morris/%s/%s_common", var_0_6, iter_0_7)
-				var_0_7[#var_0_7 + 1] = string.format("resource_packages/levels/dlcs/morris/%s/%s", iter_0_4, var_0_3)
+			if not v_3.do_not_add_default_packages then
+				packages[#packages + 1] = tbl[v_4]
+				packages[#packages + 1] = string.format("resource_packages/levels/dlcs/morris/%s/%s_common", base_level_name, v_4)
+				packages[#packages + 1] = string.format("resource_packages/levels/dlcs/morris/%s/%s", k_3, str)
 			end
 
-			LevelSettings[var_0_4] = var_0_2
+			LevelSettings[var_0_4] = clone_2
 		end
 	end
 end
 
-for iter_0_10, iter_0_11 in pairs(DeusJourneySettings) do
-	local var_0_8 = {
+for k_4, v_6 in pairs(DeusJourneySettings) do
+	local tbl_2 = {
 		player_aux_bus_name = "environment_reverb_outside",
 		ambient_sound_event = "silent_default_world_sound",
 		knocked_down_setting = "knocked_down",
@@ -170,9 +174,9 @@ for iter_0_10, iter_0_11 in pairs(DeusJourneySettings) do
 		locations = {}
 	}
 
-	table.merge(var_0_8, iter_0_11)
+	table.merge(tbl_2, v_6)
 
-	LevelSettings[iter_0_10] = var_0_8
+	LevelSettings[k_4] = tbl_2
 end
 
 return LevelSettings

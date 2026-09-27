@@ -1,531 +1,687 @@
 -- chunkname: @scripts/ui/views/start_game_view/windows/start_game_window_panel_console.lua
 
 local var_0_0 = local_require("scripts/ui/views/start_game_view/windows/definitions/start_game_window_panel_console_definitions")
-local var_0_1 = "cycle_next"
-local var_0_2 = "cycle_previous"
+local str = "cycle_next"
+local str_2 = "cycle_previous"
 
 StartGameWindowPanelConsole = class(StartGameWindowPanelConsole)
 StartGameWindowPanelConsole.NAME = "StartGameWindowPanelConsole"
 
-function StartGameWindowPanelConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowPanelConsole.on_enter = function (self, arg_1_1, arg_1_2)
+	-- function 1
 	print("[HeroViewWindow] Enter Substate StartGameWindowPanelConsole")
 
-	arg_1_0.params = arg_1_1
-	arg_1_0.parent = arg_1_1.parent
+	self.params = arg_1_1
+	self.parent = arg_1_1.parent
 
-	local var_1_0 = arg_1_1.ingame_ui_context
+	local ingame_ui_context = arg_1_1.ingame_ui_context
 
-	arg_1_0.ui_renderer = var_1_0.ui_top_renderer
-	arg_1_0.input_manager = var_1_0.input_manager
-	arg_1_0.statistics_db = var_1_0.statistics_db
-	arg_1_0.render_settings = {
+	self.ui_renderer = ingame_ui_context.ui_top_renderer
+	self.input_manager = ingame_ui_context.input_manager
+	self.statistics_db = ingame_ui_context.statistics_db
+	self.render_settings = {
 		snap_pixel_positions = true
 	}
-	arg_1_0._layout_settings = arg_1_1.layout_settings
-	arg_1_0._mechanism_name = arg_1_1.mechanism_name
-	arg_1_0._animations = {}
-	arg_1_0._ui_animations = {}
+	self._layout_settings = arg_1_1.layout_settings
+	self._mechanism_name = arg_1_1.mechanism_name
+	self._animations = {}
+	self._ui_animations = {}
 
-	arg_1_0:_create_ui_elements(var_0_0, arg_1_1, arg_1_2)
-	arg_1_0:_setup_text_buttons_width_and_position()
-	arg_1_0:_setup_input_buttons()
+	self:_create_ui_elements(var_0_0, arg_1_1, arg_1_2)
+	self:_setup_text_buttons_width_and_position()
+	self:_setup_input_buttons()
 end
 
-function StartGameWindowPanelConsole._create_ui_elements(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
-	local var_2_0 = arg_2_1.scenegraph_definition
-	local var_2_1 = UISceneGraph.init_scenegraph(var_2_0)
+StartGameWindowPanelConsole._create_ui_elements = function (self, arg_2_1, arg_2_2, arg_2_3)
+	-- function 2
+	local scenegraph_definition = arg_2_1.scenegraph_definition
+	local init_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	arg_2_0.ui_scenegraph = var_2_1
-	arg_2_0._widgets, arg_2_0._widgets_by_name = UIUtils.create_widgets(arg_2_1.widget_definitions)
+	self.ui_scenegraph = init_scenegraph
+	self._widgets, self._widgets_by_name = UIUtils.create_widgets(arg_2_1.widget_definitions)
 
-	local var_2_2 = {}
-	local var_2_3 = arg_2_0._layout_settings.window_layouts
-	local var_2_4 = arg_2_0.parent
+	local tbl = {}
+	local window_layouts = self._layout_settings.window_layouts
+	local parent = self.parent
 
-	for iter_2_0 = 1, #var_2_3 do
-		local var_2_5 = var_2_3[iter_2_0]
+	for i = 1, #window_layouts do
+		local var_2_5 = window_layouts[i]
 
-		if var_2_5.panel_sorting and var_2_4:can_add_layout(var_2_5) then
-			local var_2_6 = "game_mode_option"
-			local var_2_7 = var_2_0[var_2_6].size
-			local var_2_8 = var_2_5.display_name or "n/a"
-			local var_2_9 = 32
-			local var_2_10 = "center"
-			local var_2_11 = arg_2_1.create_panel_button(var_2_6, var_2_7, var_2_8, var_2_9, nil, var_2_10)
-			local var_2_12 = UIWidget.init(var_2_11)
-			local var_2_13 = var_2_5.name
+		if not var_2_5.panel_sorting and not parent:can_add_layout(var_2_5) then
+			local str = "game_mode_option"
+			local size = scenegraph_definition[str].size
+			local display_name = var_2_5.display_name
 
-			var_2_12.content.layout_name = var_2_13
+			display_name = display_name or "n/a"
+
+			local num = 32
+			local str_2 = "center"
+			local create_panel_button = arg_2_1.create_panel_button(str, size, display_name, num, nil, str_2)
+			local var_2_12 = UIWidget.init(create_panel_button)
+			local name = var_2_5.name
+
+			var_2_12.content.layout_name = name
 			var_2_12.disable_function_name = var_2_5.disable_function_name
-			var_2_12.is_layout_disabled = Managers.ui:is_ui_layout_disabled(var_2_13)
-			var_2_2[#var_2_2 + 1] = var_2_12
+			var_2_12.is_layout_disabled = Managers.ui:is_ui_layout_disabled(name)
+			tbl[#tbl + 1] = var_2_12
 		end
 	end
 
-	arg_2_0._title_button_widgets = var_2_2
+	self._title_button_widgets = tbl
 
-	UIRenderer.clear_scenegraph_queue(arg_2_0.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
-	arg_2_0.ui_animator = UIAnimator:new(var_2_1, arg_2_1.animation_definitions)
+	self.ui_animator = UIAnimator:new(init_scenegraph, arg_2_1.animation_definitions)
 
-	if arg_2_3 then
-		local var_2_14 = var_2_1.window.local_position
+	if not arg_2_3 then
+		local local_position = init_scenegraph.window.local_position
 
-		var_2_14[1] = var_2_14[1] + arg_2_3[1]
-		var_2_14[2] = var_2_14[2] + arg_2_3[2]
-		var_2_14[3] = var_2_14[3] + arg_2_3[3]
+		local_position[1] = local_position[1] + arg_2_3[1]
+		local_position[2] = local_position[2] + arg_2_3[2]
+		local_position[3] = local_position[3] + arg_2_3[3]
 	end
 end
 
-function StartGameWindowPanelConsole._setup_text_buttons_width_and_position(arg_3_0)
-	local var_3_0 = arg_3_0.ui_scenegraph
-	local var_3_1 = var_3_0.panel_entry_area.size[1]
-	local var_3_2 = arg_3_0._title_button_widgets
-	local var_3_3 = #var_3_2
-	local var_3_4 = math.floor(var_3_1 / var_3_3)
+StartGameWindowPanelConsole._setup_text_buttons_width_and_position = function (self)
+	-- function 3
+	local ui_scenegraph = self.ui_scenegraph
+	local var_3_1 = ui_scenegraph.panel_entry_area.size[1]
+	local _title_button_widgets = self._title_button_widgets
+	local count = #_title_button_widgets
+	local floor = math.floor(var_3_1 / count)
 
-	var_3_0.game_mode_option.size[1] = var_3_4
+	ui_scenegraph.game_mode_option.size[1] = floor
 
-	for iter_3_0 = 1, var_3_3 do
-		local var_3_5 = var_3_2[iter_3_0]
+	for i = 1, count do
+		local var_3_5 = _title_button_widgets[i]
 
-		arg_3_0:_set_text_button_size(var_3_5, var_3_4)
+		self:_set_text_button_size(var_3_5, floor)
 
-		local var_3_6 = var_3_4 * (iter_3_0 - 1)
+		local num = floor * (i - 1)
 
-		var_3_5.offset[1] = var_3_6
+		var_3_5.offset[1] = num
 	end
 
-	arg_3_0._widgets_by_name.panel_input_area_2.offset[1] = var_3_4 * (var_3_3 - 1)
+	self._widgets_by_name.panel_input_area_2.offset[1] = floor * (count - 1)
 end
 
-function StartGameWindowPanelConsole._set_text_button_size(arg_4_0, arg_4_1, arg_4_2)
-	local var_4_0 = arg_4_1.style
+StartGameWindowPanelConsole._set_text_button_size = function (arg_4_0, arg_4_1, arg_4_2)
+	-- function 4
+	local style = arg_4_1.style
 
-	var_4_0.selected_texture.texture_size[1] = arg_4_2
+	style.selected_texture.texture_size[1] = arg_4_2
 
-	local var_4_1 = 5
-	local var_4_2 = arg_4_2 - var_4_1 * 2
+	local num = 5
+	local num_2 = arg_4_2 - num * 2
 
-	var_4_0.text.size[1] = var_4_2
-	var_4_0.text_shadow.size[1] = var_4_2
-	var_4_0.text_hover.size[1] = var_4_2
-	var_4_0.text_disabled.size[1] = var_4_2
-	var_4_0.text.offset[1] = var_4_0.text.default_offset[1] + var_4_1
-	var_4_0.text_shadow.offset[1] = var_4_0.text_shadow.default_offset[1] + var_4_1
-	var_4_0.text_hover.offset[1] = var_4_0.text_hover.default_offset[1] + var_4_1
-	var_4_0.text_disabled.offset[1] = var_4_0.text_disabled.default_offset[1] + var_4_1
+	style.text.size[1] = num_2
+	style.text_shadow.size[1] = num_2
+	style.text_hover.size[1] = num_2
+	style.text_disabled.size[1] = num_2
+	style.text.offset[1] = style.text.default_offset[1] + num
+	style.text_shadow.offset[1] = style.text_shadow.default_offset[1] + num
+	style.text_hover.offset[1] = style.text_hover.default_offset[1] + num
+	style.text_disabled.offset[1] = style.text_disabled.default_offset[1] + num
 end
 
-function StartGameWindowPanelConsole.on_exit(arg_5_0, arg_5_1)
+StartGameWindowPanelConsole.on_exit = function (self, arg_5_1)
+	-- function 5
 	print("[HeroViewWindow] Exit Substate StartGameWindowPanelConsole")
 
-	arg_5_0.ui_animator = nil
+	self.ui_animator = nil
 end
 
-function StartGameWindowPanelConsole.update(arg_6_0, arg_6_1, arg_6_2)
-	arg_6_0:_handle_gamepad_activity()
-	arg_6_0:_handle_back_button_visibility()
-	arg_6_0:_update_title_buttons_disable_status()
-	arg_6_0:_update_selected_option()
-	arg_6_0:_update_animations(arg_6_1, arg_6_2)
-	arg_6_0:draw(arg_6_1)
+StartGameWindowPanelConsole.update = function (self, arg_6_1, arg_6_2)
+	-- function 6
+	self:_handle_gamepad_activity()
+	self:_handle_back_button_visibility()
+	self:_update_title_buttons_disable_status()
+	self:_update_selected_option()
+	self:_update_animations(arg_6_1, arg_6_2)
+	self:draw(arg_6_1)
 end
 
-function StartGameWindowPanelConsole._update_selected_option(arg_7_0)
-	local var_7_0 = arg_7_0.parent:get_selected_layout_name()
+StartGameWindowPanelConsole._update_selected_option = function (self)
+	-- function 7
+	local get_selected_layout_name = self.parent:get_selected_layout_name()
 
-	if var_7_0 ~= arg_7_0._selected_layout_name then
-		arg_7_0:_set_selected_option(var_7_0)
+	if get_selected_layout_name ~= self._selected_layout_name then
+		self:_set_selected_option(get_selected_layout_name)
 	end
 end
 
-function StartGameWindowPanelConsole._update_title_buttons_disable_status(arg_8_0)
-	local var_8_0 = arg_8_0._title_button_widgets
+StartGameWindowPanelConsole._update_title_buttons_disable_status = function (self)
+	-- function 8
+	local _title_button_widgets = self._title_button_widgets
 
-	for iter_8_0 = 1, #var_8_0 do
-		local var_8_1 = var_8_0[iter_8_0]
-		local var_8_2 = false
+	for i = 1, #_title_button_widgets do
+		local var_8_1 = _title_button_widgets[i]
+		local flag = false
 
-		if var_8_1.is_layout_disabled then
-			var_8_2 = true
+		if not var_8_1.is_layout_disabled then
+			flag = true
 		else
-			local var_8_3 = var_8_1.disable_function_name
+			local disable_function_name = var_8_1.disable_function_name
 
-			if var_8_3 then
-				var_8_2 = arg_8_0[var_8_3](arg_8_0)
+			if not disable_function_name then
+				flag = self[disable_function_name](self)
 			end
 		end
 
-		var_8_1.content.button_hotspot.disable_button = var_8_2
+		var_8_1.content.button_hotspot.disable_button = flag
 	end
 end
 
-function StartGameWindowPanelConsole.post_update(arg_9_0, arg_9_1, arg_9_2)
-	arg_9_0:_handle_input(arg_9_1, arg_9_2)
+StartGameWindowPanelConsole.post_update = function (self, arg_9_1, arg_9_2)
+	-- function 9
+	self:_handle_input(arg_9_1, arg_9_2)
 end
 
-function StartGameWindowPanelConsole._update_animations(arg_10_0, arg_10_1, arg_10_2)
-	local var_10_0 = arg_10_0._ui_animations
+StartGameWindowPanelConsole._update_animations = function (self, arg_10_1, arg_10_2)
+	-- function 10
+	local _ui_animations = self._ui_animations
 
-	for iter_10_0, iter_10_1 in pairs(var_10_0) do
-		UIAnimation.update(iter_10_1, arg_10_1)
+	for k, v in pairs(_ui_animations) do
+		UIAnimation.update(v, arg_10_1)
 
-		if UIAnimation.completed(iter_10_1) then
-			var_10_0[iter_10_0] = nil
+		if not UIAnimation.completed(v) then
+			_ui_animations[k] = nil
 		end
 	end
 
-	local var_10_1 = arg_10_0.ui_animator
+	local ui_animator = self.ui_animator
 
-	var_10_1:update(arg_10_1)
+	ui_animator:update(arg_10_1)
 
-	local var_10_2 = arg_10_0._animations
+	local _animations = self._animations
 
-	for iter_10_2, iter_10_3 in pairs(var_10_2) do
-		if var_10_1:is_animation_completed(iter_10_3) then
-			var_10_2[iter_10_2] = nil
+	for k_2, v_2 in pairs(_animations) do
+		if not ui_animator:is_animation_completed(v_2) then
+			_animations[k_2] = nil
 		end
 	end
 
-	local var_10_3 = arg_10_0._title_button_widgets
+	local _title_button_widgets = self._title_button_widgets
 
-	for iter_10_4 = 1, #var_10_3 do
-		arg_10_0:_animate_title_entry(var_10_3[iter_10_4], arg_10_1, arg_10_2)
+	for i4 = 1, #_title_button_widgets do
+		self:_animate_title_entry(_title_button_widgets[i4], arg_10_1, arg_10_2)
 	end
 
-	arg_10_0:_animate_back_button(arg_10_0._widgets_by_name.back_button, arg_10_1)
-	arg_10_0:_animate_back_button(arg_10_0._widgets_by_name.close_button, arg_10_1)
+	self:_animate_back_button(self._widgets_by_name.back_button, arg_10_1)
+	self:_animate_back_button(self._widgets_by_name.close_button, arg_10_1)
 end
 
-function StartGameWindowPanelConsole._find_next_layout_name(arg_11_0, arg_11_1)
-	local var_11_0 = 1
-	local var_11_1 = arg_11_0._selected_layout_name
-	local var_11_2 = arg_11_0._title_button_widgets
+StartGameWindowPanelConsole._find_next_layout_name = function (self, arg_11_1)
+	-- function 11
+	local num = 1
+	local _selected_layout_name = self._selected_layout_name
+	local _title_button_widgets = self._title_button_widgets
 
-	for iter_11_0 = 1, #var_11_2 do
-		if var_11_2[iter_11_0].content.layout_name == var_11_1 then
-			var_11_0 = iter_11_0
+	for i = 1, #_title_button_widgets do
+		if _title_button_widgets[i].content.layout_name == _selected_layout_name then
+			num = i
 
 			break
 		end
 	end
 
 	local var_11_3
-	local var_11_4 = var_11_0
-	local var_11_5 = false
+	local var_11_4 = num
+	local flag = false
 
 	repeat
-		var_11_4 = math.index_wrapper(var_11_4 + arg_11_1, #var_11_2)
+		var_11_4 = math.index_wrapper(var_11_4 + arg_11_1, #_title_button_widgets)
 
-		local var_11_6 = var_11_2[var_11_4]
+		local var_11_6 = _title_button_widgets[var_11_4]
 
-		if var_11_4 == var_11_0 then
-			var_11_5 = true
+		if var_11_4 == num then
+			flag = true
 		elseif not var_11_6.content.button_hotspot.disable_button then
 			var_11_3 = var_11_6.content.layout_name
-			var_11_5 = true
+			flag = true
 		end
-	until var_11_5
+	until not flag
 
 	return var_11_3
 end
 
-function StartGameWindowPanelConsole._handle_input(arg_12_0, arg_12_1, arg_12_2)
-	local var_12_0 = false
+StartGameWindowPanelConsole._handle_input = function (self, arg_12_1, arg_12_2)
+	-- function 12
+	local flag = false
 	local var_12_1
-	local var_12_2 = arg_12_0._title_button_widgets
+	local _title_button_widgets = self._title_button_widgets
 
-	for iter_12_0 = 1, #var_12_2 do
-		local var_12_3 = var_12_2[iter_12_0]
+	for i = 1, #_title_button_widgets do
+		local var_12_3 = _title_button_widgets[i]
 
 		if not UIUtils.is_button_selected(var_12_3) then
-			if UIUtils.is_button_hover_enter(var_12_3) then
-				arg_12_0:_play_sound("Play_hud_hover")
+			if not UIUtils.is_button_hover_enter(var_12_3) then
+				self:_play_sound("Play_hud_hover")
 			end
 
-			if UIUtils.is_button_pressed(var_12_3) then
+			if not UIUtils.is_button_pressed(var_12_3) then
 				var_12_1 = var_12_3.content.layout_name
-				var_12_0 = true
+				flag = true
 			end
 		end
 	end
 
-	local var_12_4 = arg_12_0._widgets_by_name
-	local var_12_5 = var_12_4.close_button
-	local var_12_6 = var_12_4.back_button
+	local _widgets_by_name = self._widgets_by_name
+	local close_button = _widgets_by_name.close_button
+	local back_button = _widgets_by_name.back_button
 
-	if UIUtils.is_button_hover_enter(var_12_6) or UIUtils.is_button_hover_enter(var_12_5) then
-		arg_12_0:_play_sound("Play_hud_hover")
+	if UIUtils.is_button_hover_enter(back_button) or not UIUtils.is_button_hover_enter(close_button) then
+		self:_play_sound("Play_hud_hover")
 	end
 
-	local var_12_7 = arg_12_0.parent
+	local parent = self.parent
 
-	if not var_12_7:close_on_exit() and not var_12_0 and UIUtils.is_button_pressed(var_12_6) then
+	if parent:close_on_exit() or flag or not UIUtils.is_button_pressed(back_button) then
 		local var_12_8
-		local var_12_9 = arg_12_0.params
+		local params = self.params
 
-		if var_12_9 then
-			var_12_8 = var_12_9.return_layout_name
-			var_12_9.return_layout_name = nil
+		if not params then
+			var_12_8 = params.return_layout_name
+			params.return_layout_name = nil
 		end
 
-		var_12_8 = var_12_8 or var_12_7:get_previous_selected_layout_name()
+		var_12_8 = var_12_8 or parent:get_previous_selected_layout_name()
 
-		if var_12_8 then
-			arg_12_0:_reset_back_button()
+		if not var_12_8 then
+			self:_reset_back_button()
 
 			var_12_1 = var_12_8
-			var_12_0 = true
+			flag = true
 		end
 	end
 
-	if not var_12_0 and UIUtils.is_button_pressed(var_12_5) then
-		var_12_7:close_menu()
+	if flag or not UIUtils.is_button_pressed(close_button) then
+		parent:close_menu()
 
-		var_12_0 = true
+		flag = true
 	end
 
-	if not var_12_0 and not arg_12_0.parent:panel_title_buttons_hidden() then
-		local var_12_10 = var_12_7:window_input_service()
-		local var_12_11 = var_12_10:get(var_0_2) and -1 or var_12_10:get(var_0_1) and 1
+	if not (flag or self.parent:panel_title_buttons_hidden()) then
+		local window_input_service = parent:window_input_service()
+		local num
 
-		if var_12_11 then
-			var_12_1 = arg_12_0:_find_next_layout_name(var_12_11)
-			var_12_0 = true
+		if not window_input_service:get(str_2) then
+			num = -1
+		else
+			num = window_input_service:get(str)
+			num = not num and 1
+		end
+
+		if not num then
+			var_12_1 = self:_find_next_layout_name(num)
+			flag = true
 		end
 	end
 
-	if var_12_0 and var_12_1 then
-		var_12_7:set_layout_by_name(var_12_1)
+	if not flag and not var_12_1 then
+		parent:set_layout_by_name(var_12_1)
 
 		PlayerData.mission_selection.start_layout = var_12_1
 	end
 end
 
-function StartGameWindowPanelConsole._set_selected_option(arg_13_0, arg_13_1)
-	local var_13_0 = arg_13_0._title_button_widgets
+StartGameWindowPanelConsole._set_selected_option = function (self, arg_13_1)
+	-- function 13
+	local _title_button_widgets = self._title_button_widgets
 
-	for iter_13_0 = 1, #var_13_0 do
-		local var_13_1 = var_13_0[iter_13_0].content
-		local var_13_2 = var_13_1.layout_name
+	for i = 1, #_title_button_widgets do
+		local content = _title_button_widgets[i].content
+		local layout_name = content.layout_name
 
-		var_13_1.button_hotspot.is_selected = var_13_2 == arg_13_1
+		content.button_hotspot.is_selected = layout_name == arg_13_1
 	end
 
-	arg_13_0._selected_layout_name = arg_13_1
+	self._selected_layout_name = arg_13_1
 end
 
-function StartGameWindowPanelConsole.draw(arg_14_0, arg_14_1)
-	local var_14_0 = arg_14_0.ui_renderer
-	local var_14_1 = arg_14_0.ui_scenegraph
-	local var_14_2 = arg_14_0.parent:window_input_service()
+StartGameWindowPanelConsole.draw = function (self, arg_14_1)
+	-- function 14
+	local ui_renderer = self.ui_renderer
+	local ui_scenegraph = self.ui_scenegraph
+	local window_input_service = self.parent:window_input_service()
 
-	UIRenderer.begin_pass(var_14_0, var_14_1, var_14_2, arg_14_1, nil, arg_14_0.render_settings)
-	UIRenderer.draw_all_widgets(var_14_0, arg_14_0._widgets)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, window_input_service, arg_14_1, nil, self.render_settings)
+	UIRenderer.draw_all_widgets(ui_renderer, self._widgets)
 
-	if not arg_14_0.parent:panel_title_buttons_hidden() then
-		UIRenderer.draw_all_widgets(var_14_0, arg_14_0._title_button_widgets)
+	if not self.parent:panel_title_buttons_hidden() then
+		UIRenderer.draw_all_widgets(ui_renderer, self._title_button_widgets)
 	end
 
-	UIRenderer.end_pass(var_14_0)
+	UIRenderer.end_pass(ui_renderer)
 end
 
-function StartGameWindowPanelConsole._play_sound(arg_15_0, arg_15_1)
-	arg_15_0.parent:play_sound(arg_15_1)
+StartGameWindowPanelConsole._play_sound = function (self, arg_15_1)
+	-- function 15
+	self.parent:play_sound(arg_15_1)
 end
 
-function StartGameWindowPanelConsole._setup_input_buttons(arg_16_0)
-	local var_16_0 = arg_16_0.parent:window_input_service()
-	local var_16_1 = arg_16_0._widgets_by_name
-	local var_16_2 = var_16_1.panel_input_area_1
-	local var_16_3 = var_16_2.style.texture_id
-	local var_16_4 = UISettings.get_gamepad_input_texture_data(var_16_0, var_0_2, true)
+StartGameWindowPanelConsole._setup_input_buttons = function (self)
+	-- function 16
+	local window_input_service = self.parent:window_input_service()
+	local _widgets_by_name = self._widgets_by_name
+	local panel_input_area_1 = _widgets_by_name.panel_input_area_1
+	local texture_id = panel_input_area_1.style.texture_id
+	local get_gamepad_input_texture_data = UISettings.get_gamepad_input_texture_data(window_input_service, str_2, true)
 
-	var_16_3.horizontal_alignment = "center"
-	var_16_3.vertical_alignment = "center"
-	var_16_3.texture_size = {
-		var_16_4.size[1],
-		var_16_4.size[2]
+	texture_id.horizontal_alignment = "center"
+	texture_id.vertical_alignment = "center"
+	texture_id.texture_size = {
+		get_gamepad_input_texture_data.size[1],
+		get_gamepad_input_texture_data.size[2]
 	}
-	var_16_2.content.texture_id = var_16_4.texture
+	panel_input_area_1.content.texture_id = get_gamepad_input_texture_data.texture
 
-	local var_16_5 = var_16_1.panel_input_area_2
-	local var_16_6 = var_16_5.style.texture_id
-	local var_16_7 = UISettings.get_gamepad_input_texture_data(var_16_0, var_0_1, true)
+	local panel_input_area_2 = _widgets_by_name.panel_input_area_2
+	local texture_id_2 = panel_input_area_2.style.texture_id
+	local get_gamepad_input_texture_data_2 = UISettings.get_gamepad_input_texture_data(window_input_service, str, true)
 
-	var_16_6.horizontal_alignment = "center"
-	var_16_6.vertical_alignment = "center"
-	var_16_6.texture_size = {
-		var_16_7.size[1],
-		var_16_7.size[2]
+	texture_id_2.horizontal_alignment = "center"
+	texture_id_2.vertical_alignment = "center"
+	texture_id_2.texture_size = {
+		get_gamepad_input_texture_data_2.size[1],
+		get_gamepad_input_texture_data_2.size[2]
 	}
-	var_16_5.content.texture_id = var_16_7.texture
+	panel_input_area_2.content.texture_id = get_gamepad_input_texture_data_2.texture
 end
 
-function StartGameWindowPanelConsole._handle_back_button_visibility(arg_17_0)
-	if not arg_17_0.gamepad_active_last_frame then
-		local var_17_0 = not arg_17_0.parent:close_on_exit()
+StartGameWindowPanelConsole._handle_back_button_visibility = function (self)
+	-- function 17
+	if not self.gamepad_active_last_frame then
+		local flag = not self.parent:close_on_exit()
 
-		arg_17_0._widgets_by_name.back_button.content.visible = var_17_0
+		self._widgets_by_name.back_button.content.visible = flag
 	end
 end
 
-function StartGameWindowPanelConsole._reset_back_button(arg_18_0)
-	local var_18_0 = arg_18_0._widgets_by_name.back_button.content.button_hotspot
+StartGameWindowPanelConsole._reset_back_button = function (self)
+	-- function 18
+	local button_hotspot = self._widgets_by_name.back_button.content.button_hotspot
 
-	table.clear(var_18_0)
+	table.clear(button_hotspot)
 end
 
-function StartGameWindowPanelConsole._handle_gamepad_activity(arg_19_0)
-	local var_19_0
+StartGameWindowPanelConsole._handle_gamepad_activity = function (self)
+	-- function 19
+	local flag
 
-	var_19_0 = arg_19_0.gamepad_active_last_frame == nil
+	flag = self.gamepad_active_last_frame == nil
 
-	local var_19_1 = Managers.input:is_device_active("gamepad")
-	local var_19_2 = Managers.input:get_most_recent_device()
-	local var_19_3 = arg_19_0.gamepad_active_last_frame == nil or var_19_1 and var_19_2 ~= arg_19_0._most_recent_device
+	local is_device_active = Managers.input:is_device_active("gamepad")
+	local get_most_recent_device = Managers.input:get_most_recent_device()
+	local flag_2 = self.gamepad_active_last_frame == nil or not is_device_active or get_most_recent_device ~= self._most_recent_device
 
-	if var_19_1 then
-		if not arg_19_0.gamepad_active_last_frame or var_19_3 then
-			arg_19_0.gamepad_active_last_frame = true
+	if not is_device_active then
+		if not self.gamepad_active_last_frame and not flag_2 then
+			self.gamepad_active_last_frame = true
 
-			if not arg_19_0.parent:panel_title_buttons_hidden() then
-				local var_19_4 = arg_19_0._widgets_by_name
+			if not self.parent:panel_title_buttons_hidden() then
+				local _widgets_by_name = self._widgets_by_name
 
-				var_19_4.panel_input_area_1.content.visible = true
-				var_19_4.panel_input_area_2.content.visible = true
-				var_19_4.back_button.content.visible = false
-				var_19_4.close_button.content.visible = false
+				_widgets_by_name.panel_input_area_1.content.visible = true
+				_widgets_by_name.panel_input_area_2.content.visible = true
+				_widgets_by_name.back_button.content.visible = false
+				_widgets_by_name.close_button.content.visible = false
 			end
 
-			arg_19_0:_setup_input_buttons()
+			self:_setup_input_buttons()
 		end
-	elseif arg_19_0.gamepad_active_last_frame or var_19_3 then
-		arg_19_0.gamepad_active_last_frame = false
+	elseif self.gamepad_active_last_frame or not flag_2 then
+		self.gamepad_active_last_frame = false
 
-		local var_19_5 = arg_19_0._widgets_by_name
+		local _widgets_by_name_2 = self._widgets_by_name
 
-		var_19_5.panel_input_area_1.content.visible = false
-		var_19_5.panel_input_area_2.content.visible = false
-		var_19_5.close_button.content.visible = true
+		_widgets_by_name_2.panel_input_area_1.content.visible = false
+		_widgets_by_name_2.panel_input_area_2.content.visible = false
+		_widgets_by_name_2.close_button.content.visible = true
 	end
 
-	arg_19_0._most_recent_device = var_19_2
+	self._most_recent_device = get_most_recent_device
 end
 
-function StartGameWindowPanelConsole._is_in_quickplay_weave_menu(arg_20_0)
-	return arg_20_0.parent.parent:on_enter_sub_state() == "weave_quickplay"
+StartGameWindowPanelConsole._is_in_quickplay_weave_menu = function (self)
+	-- function 20
+	return self.parent.parent:on_enter_sub_state() == "weave_quickplay"
 end
 
-function StartGameWindowPanelConsole._is_supported_with_twitch(arg_21_0, arg_21_1)
-	local var_21_0 = Managers.twitch
+StartGameWindowPanelConsole._is_supported_with_twitch = function (arg_21_0, arg_21_1)
+	-- function 21
+	local twitch = Managers.twitch
 
-	if var_21_0 and (var_21_0:is_connecting() or var_21_0:is_connected()) then
-		return var_21_0:game_mode_supported(arg_21_1)
+	if not twitch and twitch:is_connecting() and not twitch:is_connected() then
+		return twitch:game_mode_supported(arg_21_1)
 	end
 
 	return true
 end
 
-function StartGameWindowPanelConsole._event_disable_function(arg_22_0)
-	return arg_22_0:_is_in_quickplay_weave_menu() or not arg_22_0:_is_supported_with_twitch("event")
+StartGameWindowPanelConsole._event_disable_function = function (self)
+	-- function 22
+	local _is_in_quickplay_weave_menu = self:_is_in_quickplay_weave_menu()
+
+	_is_in_quickplay_weave_menu = _is_in_quickplay_weave_menu or not self:_is_supported_with_twitch("event")
+
+	return _is_in_quickplay_weave_menu
 end
 
-function StartGameWindowPanelConsole._adventure_disable_function(arg_23_0)
-	return arg_23_0:_is_in_quickplay_weave_menu() or not arg_23_0:_is_supported_with_twitch("adventure")
+StartGameWindowPanelConsole._adventure_disable_function = function (self)
+	-- function 23
+	local _is_in_quickplay_weave_menu = self:_is_in_quickplay_weave_menu()
+
+	_is_in_quickplay_weave_menu = _is_in_quickplay_weave_menu or not self:_is_supported_with_twitch("adventure")
+
+	return _is_in_quickplay_weave_menu
 end
 
-function StartGameWindowPanelConsole._custom_game_disable_function(arg_24_0)
-	return arg_24_0:_is_in_quickplay_weave_menu() or not arg_24_0:_is_supported_with_twitch("custom")
+StartGameWindowPanelConsole._custom_game_disable_function = function (self)
+	-- function 24
+	local _is_in_quickplay_weave_menu = self:_is_in_quickplay_weave_menu()
+
+	_is_in_quickplay_weave_menu = _is_in_quickplay_weave_menu or not self:_is_supported_with_twitch("custom")
+
+	return _is_in_quickplay_weave_menu
 end
 
-function StartGameWindowPanelConsole._heroic_deed_disable_function(arg_25_0)
-	return arg_25_0:_is_in_quickplay_weave_menu() or not arg_25_0:_is_supported_with_twitch("deed") or script_data.use_beta_mode
+StartGameWindowPanelConsole._heroic_deed_disable_function = function (self)
+	-- function 25
+	local _is_in_quickplay_weave_menu = self:_is_in_quickplay_weave_menu()
+
+	_is_in_quickplay_weave_menu = (_is_in_quickplay_weave_menu or not self:_is_supported_with_twitch("deed")) and script_data.use_beta_mode
+
+	return _is_in_quickplay_weave_menu
 end
 
-function StartGameWindowPanelConsole._lobby_browser_disable_function(arg_26_0)
-	return not arg_26_0:_is_supported_with_twitch("lobby_browser")
+StartGameWindowPanelConsole._lobby_browser_disable_function = function (self)
+	-- function 26
+	return not self:_is_supported_with_twitch("lobby_browser")
 end
 
-function StartGameWindowPanelConsole._weave_disable_function(arg_27_0)
-	return arg_27_0:_is_in_quickplay_weave_menu() or not arg_27_0:_is_supported_with_twitch("weave")
+StartGameWindowPanelConsole._weave_disable_function = function (self)
+	-- function 27
+	local _is_in_quickplay_weave_menu = self:_is_in_quickplay_weave_menu()
+
+	_is_in_quickplay_weave_menu = _is_in_quickplay_weave_menu or not self:_is_supported_with_twitch("weave")
+
+	return _is_in_quickplay_weave_menu
 end
 
-function StartGameWindowPanelConsole._deus_quickplay_disable_function(arg_28_0)
-	return arg_28_0:_is_in_quickplay_weave_menu() or not arg_28_0:_is_supported_with_twitch("deus_quickplay")
+StartGameWindowPanelConsole._deus_quickplay_disable_function = function (self)
+	-- function 28
+	local _is_in_quickplay_weave_menu = self:_is_in_quickplay_weave_menu()
+
+	_is_in_quickplay_weave_menu = _is_in_quickplay_weave_menu or not self:_is_supported_with_twitch("deus_quickplay")
+
+	return _is_in_quickplay_weave_menu
 end
 
-function StartGameWindowPanelConsole._deus_custom_disable_function(arg_29_0)
-	return arg_29_0:_is_in_quickplay_weave_menu() or not arg_29_0:_is_supported_with_twitch("deus_custom")
+StartGameWindowPanelConsole._deus_custom_disable_function = function (self)
+	-- function 29
+	local _is_in_quickplay_weave_menu = self:_is_in_quickplay_weave_menu()
+
+	_is_in_quickplay_weave_menu = _is_in_quickplay_weave_menu or not self:_is_supported_with_twitch("deus_custom")
+
+	return _is_in_quickplay_weave_menu
 end
 
-function StartGameWindowPanelConsole._versus_quickplay_disable_function(arg_30_0)
-	return arg_30_0:_is_in_quickplay_weave_menu() or not arg_30_0:_is_supported_with_twitch("versus_quickplay")
+StartGameWindowPanelConsole._versus_quickplay_disable_function = function (self)
+	-- function 30
+	local _is_in_quickplay_weave_menu = self:_is_in_quickplay_weave_menu()
+
+	_is_in_quickplay_weave_menu = _is_in_quickplay_weave_menu or not self:_is_supported_with_twitch("versus_quickplay")
+
+	return _is_in_quickplay_weave_menu
 end
 
-function StartGameWindowPanelConsole._versus_custom_disable_function(arg_31_0)
-	return arg_31_0:_is_in_quickplay_weave_menu() or not arg_31_0:_is_supported_with_twitch("versus_custom")
+StartGameWindowPanelConsole._versus_custom_disable_function = function (self)
+	-- function 31
+	local _is_in_quickplay_weave_menu = self:_is_in_quickplay_weave_menu()
+
+	_is_in_quickplay_weave_menu = _is_in_quickplay_weave_menu or not self:_is_supported_with_twitch("versus_custom")
+
+	return _is_in_quickplay_weave_menu
 end
 
-function StartGameWindowPanelConsole._streaming_disable_function(arg_32_0)
-	if arg_32_0:_is_in_quickplay_weave_menu() then
+StartGameWindowPanelConsole._streaming_disable_function = function (self)
+	-- function 32
+	if not self:_is_in_quickplay_weave_menu() then
 		return true
 	end
 
-	local var_32_0 = GameSettingsDevelopment.twitch_enabled
-	local var_32_1 = Managers.account:offline_mode()
+	local twitch_enabled = GameSettingsDevelopment.twitch_enabled
+	local offline_mode = Managers.account:offline_mode()
 
-	return not var_32_0 or var_32_1
+	return not twitch_enabled and offline_mode
 end
 
-function StartGameWindowPanelConsole._animate_title_entry(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
-	local var_33_0 = arg_33_1.content.button_hotspot
-	local var_33_1 = var_33_0.is_selected
-	local var_33_2 = 20
-	local var_33_3 = not var_33_1 and var_33_0.is_clicked and var_33_0.is_clicked == 0
-	local var_33_4 = UIUtils.animate_value(var_33_0.input_progress or 0, arg_33_2 * var_33_2, var_33_3)
-	local var_33_5 = 8
-	local var_33_6 = UIUtils.animate_value(var_33_0.hover_progress or 0, arg_33_2 * var_33_5, var_33_0.is_hover)
-	local var_33_7 = UIUtils.animate_value(var_33_0.selection_progress or 0, arg_33_2 * var_33_5, var_33_1)
-	local var_33_8 = math.max(var_33_6, var_33_7)
-	local var_33_9 = 255 * var_33_8
-	local var_33_10 = arg_33_1.style
+StartGameWindowPanelConsole._animate_title_entry = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+	-- function 33
+	local button_hotspot = arg_33_1.content.button_hotspot
+	local is_selected = button_hotspot.is_selected
+	local num = 20
+	local is_clicked
 
-	var_33_10.selected_texture.color[1] = var_33_9
+	if not is_selected then
+		is_clicked = button_hotspot.is_clicked
 
-	local var_33_11 = 4 * var_33_8
+		if not is_clicked then
+			-- Nothing
+		end
 
-	var_33_10.text.offset[2] = 5 - var_33_11
-	var_33_10.text_shadow.offset[2] = 3 - var_33_11
-	var_33_10.text_hover.offset[2] = 5 - var_33_11
-	var_33_10.text_disabled.offset[2] = 5 - var_33_11
+		if button_hotspot.is_clicked ~= 0 then
+			-- Nothing
+		end
+	end
 
-	local var_33_12 = 0.5 + math.sin(arg_33_3 * 5) * 0.5
+	is_clicked = false
 
-	var_33_10.new_marker.color[1] = 100 + 155 * var_33_12
-	var_33_0.hover_progress = var_33_6
-	var_33_0.input_progress = var_33_4
-	var_33_0.selection_progress = var_33_7
+	goto label_33_1
+
+	::label_33_0::
+
+	is_clicked = true
+
+	::label_33_1::
+
+	local animate_value = UIUtils.animate_value
+	local input_progress = button_hotspot.input_progress
+
+	input_progress = input_progress or 0
+
+	local var_33_6 = animate_value(input_progress, arg_33_2 * num, is_clicked)
+	local num_2 = 8
+	local animate_value_2 = UIUtils.animate_value
+	local hover_progress = button_hotspot.hover_progress
+
+	hover_progress = hover_progress or 0
+
+	local var_33_10 = animate_value_2(hover_progress, arg_33_2 * num_2, button_hotspot.is_hover)
+	local animate_value_3 = UIUtils.animate_value
+	local selection_progress = button_hotspot.selection_progress
+
+	selection_progress = selection_progress or 0
+
+	local var_33_13 = animate_value_3(selection_progress, arg_33_2 * num_2, is_selected)
+	local max = math.max(var_33_10, var_33_13)
+	local num_3 = 255 * max
+	local style = arg_33_1.style
+
+	style.selected_texture.color[1] = num_3
+
+	local num_4 = 4 * max
+
+	style.text.offset[2] = 5 - num_4
+	style.text_shadow.offset[2] = 3 - num_4
+	style.text_hover.offset[2] = 5 - num_4
+	style.text_disabled.offset[2] = 5 - num_4
+
+	local num_5 = 0.5 + math.sin(arg_33_3 * 5) * 0.5
+
+	style.new_marker.color[1] = 100 + 155 * num_5
+	button_hotspot.hover_progress = var_33_10
+	button_hotspot.input_progress = var_33_6
+	button_hotspot.selection_progress = var_33_13
 end
 
-function StartGameWindowPanelConsole._animate_back_button(arg_34_0, arg_34_1, arg_34_2)
-	local var_34_0 = arg_34_1.content
-	local var_34_1 = arg_34_1.style
-	local var_34_2 = var_34_0.button_hotspot
-	local var_34_3 = var_34_2.is_selected
-	local var_34_4 = not var_34_3 and var_34_2.is_clicked and var_34_2.is_clicked == 0
-	local var_34_5 = 20
-	local var_34_6 = UIUtils.animate_value(var_34_2.input_progress or 0, arg_34_2 * var_34_5, var_34_4)
-	local var_34_7 = 8
-	local var_34_8 = UIUtils.animate_value(var_34_2.hover_progress or 0, var_34_7 * arg_34_2, var_34_2.is_hover)
-	local var_34_9 = UIUtils.animate_value(var_34_2.selection_progress or 0, var_34_7 * arg_34_2, var_34_3)
-	local var_34_10 = 255 * math.max(var_34_8, var_34_9)
+StartGameWindowPanelConsole._animate_back_button = function (arg_34_0, arg_34_1, arg_34_2)
+	-- function 34
+	local content = arg_34_1.content
+	local style = arg_34_1.style
+	local button_hotspot = content.button_hotspot
+	local is_selected = button_hotspot.is_selected
+	local is_clicked
 
-	var_34_1.texture_id.color[1] = 255 - var_34_10
-	var_34_1.texture_hover_id.color[1] = var_34_10
-	var_34_1.selected_texture.color[1] = var_34_10
-	var_34_2.hover_progress = var_34_8
-	var_34_2.input_progress = var_34_6
-	var_34_2.selection_progress = var_34_9
+	if not is_selected then
+		is_clicked = button_hotspot.is_clicked
+
+		if not is_clicked then
+			-- Nothing
+		end
+
+		if button_hotspot.is_clicked ~= 0 then
+			-- Nothing
+		end
+	end
+
+	is_clicked = false
+
+	goto label_34_1
+
+	::label_34_0::
+
+	is_clicked = true
+
+	::label_34_1::
+
+	local num = 20
+	local animate_value = UIUtils.animate_value
+	local input_progress = button_hotspot.input_progress
+
+	input_progress = input_progress or 0
+
+	local var_34_8 = animate_value(input_progress, arg_34_2 * num, is_clicked)
+	local num_2 = 8
+	local animate_value_2 = UIUtils.animate_value
+	local hover_progress = button_hotspot.hover_progress
+
+	hover_progress = hover_progress or 0
+
+	local var_34_12 = animate_value_2(hover_progress, num_2 * arg_34_2, button_hotspot.is_hover)
+	local animate_value_3 = UIUtils.animate_value
+	local selection_progress = button_hotspot.selection_progress
+
+	selection_progress = selection_progress or 0
+
+	local var_34_15 = animate_value_3(selection_progress, num_2 * arg_34_2, is_selected)
+	local num_3 = 255 * math.max(var_34_12, var_34_15)
+
+	style.texture_id.color[1] = 255 - num_3
+	style.texture_hover_id.color[1] = num_3
+	style.selected_texture.color[1] = num_3
+	button_hotspot.hover_progress = var_34_12
+	button_hotspot.input_progress = var_34_8
+	button_hotspot.selection_progress = var_34_15
 end

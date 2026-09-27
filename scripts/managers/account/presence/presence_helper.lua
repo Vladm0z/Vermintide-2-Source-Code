@@ -1,134 +1,185 @@
 -- chunkname: @scripts/managers/account/presence/presence_helper.lua
 
-PresenceHelper = PresenceHelper or {}
+local PresenceHelper = PresenceHelper
 
-function PresenceHelper.lobby_level()
+PresenceHelper = PresenceHelper or {}
+PresenceHelper = PresenceHelper
+
+PresenceHelper.lobby_level = function ()
+	-- function 1
 	return (Managers.level_transition_handler:get_current_level_key())
 end
 
-function PresenceHelper.lobby_difficulty()
+PresenceHelper.lobby_difficulty = function ()
+	-- function 2
 	return (Managers.level_transition_handler:get_current_difficulty())
 end
 
-local var_0_0 = {
+local tbl = {
 	versus = "versus_hub",
 	deus = "deus_hub"
 }
 
-function PresenceHelper.get_hub_presence()
-	local var_3_0 = Managers.mechanism:current_mechanism_name()
+PresenceHelper.get_hub_presence = function ()
+	-- function 3
+	local current_mechanism_name = Managers.mechanism:current_mechanism_name()
+	local var_3_1 = tbl[current_mechanism_name]
 
-	return var_0_0[var_3_0] or "adventure_hub"
+	var_3_1 = var_3_1 or "adventure_hub"
+
+	return var_3_1
 end
 
-function PresenceHelper.lobby_gamemode(arg_4_0)
-	local var_4_0 = Managers.mechanism:current_mechanism_name()
-	local var_4_1 = Managers.level_transition_handler:get_current_level_key() == "prologue"
-	local var_4_2 = Managers.level_transition_handler:get_current_level_key() == "plaza"
-	local var_4_3 = arg_4_0.matchmaking_type
-	local var_4_4 = to_boolean(arg_4_0.weave_quick_game) or Managers.venture.quickplay and Managers.venture.quickplay:is_quick_game()
-	local var_4_5 = tonumber(var_4_3) == NetworkLookup.matchmaking_types.event
-	local var_4_6 = tonumber(var_4_3) == NetworkLookup.matchmaking_types.custom
-	local var_4_7 = Managers.deed:has_deed()
-	local var_4_8 = to_boolean(arg_4_0.twitch_enabled)
-	local var_4_9 = to_boolean(arg_4_0.match_started)
-	local var_4_10 = Managers.level_transition_handler:in_hub_level()
-	local var_4_11 = var_4_4 and not var_4_10
-	local var_4_12 = Managers.mechanism:get_state()
+PresenceHelper.lobby_gamemode = function (self)
+	-- function 4
+	local current_mechanism_name = Managers.mechanism:current_mechanism_name()
+	local flag = Managers.level_transition_handler:get_current_level_key() == "prologue"
+	local flag_2 = Managers.level_transition_handler:get_current_level_key() == "plaza"
+	local matchmaking_type = self.matchmaking_type
+	local var_4_4 = to_boolean(self.weave_quick_game)
 
-	if var_4_1 then
+	if not var_4_4 then
+		var_4_4 = Managers.venture.quickplay
+		var_4_4 = not var_4_4 and Managers.venture.quickplay:is_quick_game()
+	end
+
+	local flag_3 = tonumber(matchmaking_type) == NetworkLookup.matchmaking_types.event
+	local flag_4 = tonumber(matchmaking_type) == NetworkLookup.matchmaking_types.custom
+	local has_deed = Managers.deed:has_deed()
+	local var_4_8 = to_boolean(self.twitch_enabled)
+	local var_4_9 = to_boolean(self.match_started)
+	local in_hub_level = Managers.level_transition_handler:in_hub_level()
+	local flag_5 = not var_4_4 and not in_hub_level
+	local get_state = Managers.mechanism:get_state()
+
+	if not flag then
 		return "gamemode_prologue"
-	elseif var_4_0 == "weave" then
-		if var_4_11 then
+	elseif current_mechanism_name == "weave" then
+		if not flag_5 then
 			return "gamemode_weave_quick_play"
 		else
 			return "gamemode_weave"
 		end
-	elseif var_4_0 == "deus" then
-		if var_4_8 then
+	elseif current_mechanism_name == "deus" then
+		if not var_4_8 then
 			return "gamemode_deus_twitch"
-		elseif var_4_11 then
+		elseif not flag_5 then
 			return "gamemode_deus_quick_play"
-		elseif not var_4_11 and not var_4_8 and not var_4_10 then
+		elseif not (flag_5 or var_4_8 or in_hub_level) then
 			return "gamemode_deus_custom"
 		else
 			return "gamemode_deus_none"
 		end
-	elseif var_4_0 == "versus" then
-		if var_4_10 then
+	elseif current_mechanism_name == "versus" then
+		if not in_hub_level then
 			return "versus_hub"
 		end
 
-		if var_4_12 == "round_1" or var_4_12 == "round_2" then
+		if not (get_state == "round_1" or get_state ~= "round_2") then
 			return "gamemode_versus_quick_play"
 		end
 
 		return "gamemode_versus_none"
-	elseif var_4_8 then
+	elseif not var_4_8 then
 		return "gamemode_twitch"
-	elseif var_4_11 then
+	elseif not flag_5 then
 		return "gamemode_quick_play"
-	elseif var_4_7 then
+	elseif not has_deed then
 		return "gamemode_deed"
-	elseif var_4_6 or var_4_2 then
+	elseif flag_4 or not flag_2 then
 		return "gamemode_custom"
-	elseif var_4_5 then
+	elseif not flag_3 then
 		return "gamemode_event"
 	end
 
 	return "gamemode_none"
 end
 
-function PresenceHelper.has_eac()
-	return not IS_WINDOWS or lobby_data.eac_authorized
+PresenceHelper.has_eac = function ()
+	-- function 5
+	return not IS_WINDOWS and lobby_data.eac_authorized
 end
 
-local function var_0_1()
+local function fn()
+	-- function 6
 	return Managers.state.network:lobby():members():get_member_count()
 end
 
-function PresenceHelper.lobby_num_players()
-	local var_7_0, var_7_1 = pcall(var_0_1)
+PresenceHelper.lobby_num_players = function ()
+	-- function 7
+	local var_7_0, var_7_1 = pcall(fn)
 
-	return var_7_0 and var_7_1 or 1
+	return not var_7_0 and var_7_1 and 1
 end
 
-function PresenceHelper.get_side()
-	local var_8_0 = Network.peer_id()
-	local var_8_1 = Managers.party
-	local var_8_2 = var_8_1 and var_8_1:get_party_from_player_id(var_8_0, 1)
-	local var_8_3 = Managers.state.side
-	local var_8_4 = var_8_3 and var_8_3.side_by_party[var_8_2]
+PresenceHelper.get_side = function ()
+	-- function 8
+	local peer_id = Network.peer_id()
+	local party = Managers.party
+	local flag = not party and party:get_party_from_player_id(peer_id, 1)
+	local side = Managers.state.side
+	local flag_2 = not side and side.side_by_party[flag]
+	local name
 
-	return var_8_4 and var_8_4:name() or "heroes"
+	if not flag_2 then
+		name = flag_2:name()
+
+		if not name then
+			-- Nothing
+		end
+	end
+
+	name = "heroes"
+
+	::label_8_0::
+
+	return name
 end
 
-function PresenceHelper.get_game_score()
-	local var_9_0 = Network.peer_id()
-	local var_9_1 = Managers.mechanism:game_mechanism()
-	local var_9_2 = var_9_1 and var_9_1:win_conditions()
-	local var_9_3 = Managers.party
-	local var_9_4
+PresenceHelper.get_game_score = function ()
+	-- function 9
+	local peer_id = Network.peer_id()
+	local game_mechanism = Managers.mechanism:game_mechanism()
+	local flag = not game_mechanism and game_mechanism:win_conditions()
+	local party = Managers.party
+	local flag_2
 
-	var_9_4 = var_9_3 and var_9_3:get_party_from_player_id(var_9_0, 1)
+	flag_2 = not party and party:get_party_from_player_id(peer_id, 1)
 
 	local var_9_5
-	local var_9_6 = var_9_5 == 1 and 2 or 1
-	local var_9_7 = var_9_2 and var_9_2:get_total_score(var_9_5)
-	local var_9_8 = var_9_2 and var_9_2:get_total_score(var_9_6)
-	local var_9_9 = "[%d]-[%d]"
+	local flag_3
 
-	if var_9_8 and var_9_7 then
-		return string.format(var_9_9, var_9_7, var_9_8)
+	flag_3 = var_9_5 ~= 1 or not 2 or 1
+
+	local flag_4 = not flag and flag:get_total_score(var_9_5)
+	local flag_5 = not flag and flag:get_total_score(flag_3)
+	local str = "[%d]-[%d]"
+
+	if not flag_5 and not flag_4 then
+		return string.format(str, flag_4, flag_5)
 	else
 		return "[?]-[?]"
 	end
 end
 
-function PresenceHelper.get_current_set()
-	local var_10_0 = Managers.mechanism:game_mechanism()
-	local var_10_1 = var_10_0 and var_10_0:win_conditions()
-	local var_10_2 = var_10_1 and var_10_1:get_current_round()
+PresenceHelper.get_current_set = function ()
+	-- function 10
+	local game_mechanism = Managers.mechanism:game_mechanism()
+	local flag = not game_mechanism and game_mechanism:win_conditions()
+	local flag_2 = not flag and flag:get_current_round()
+	local round
 
-	return var_10_2 and math.round(var_10_2 / 2) or 0
+	if not flag_2 then
+		round = math.round(flag_2 / 2)
+
+		if not round then
+			-- Nothing
+		end
+	end
+
+	round = 0
+
+	::label_10_0::
+
+	return round
 end

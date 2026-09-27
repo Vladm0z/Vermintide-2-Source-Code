@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/options_view_settings.lua
 
-local var_0_0 = {
+local tbl = {
 	{
 		text = "settings_view_header_display",
 		widget_type = "title"
@@ -414,27 +414,38 @@ local var_0_0 = {
 		widget_type = "empty"
 	}
 }
-local var_0_1 = Colors.get_color_table_with_alpha("black", UISettings.subtitles_background_alpha)
+local get_color_table_with_alpha = Colors.get_color_table_with_alpha("black", UISettings.subtitles_background_alpha)
 
-local function var_0_2(arg_1_0, arg_1_1, arg_1_2)
-	local var_1_0 = 5
+local function fn(self, arg_1_1, arg_1_2)
+	-- function 1
+	local num = 5
+	local slider_image_base_size_x = self.slider_image_base_size_x
 
-	arg_1_0.slider_image_base_size_x = arg_1_0.slider_image_base_size_x or arg_1_1.slider_image.size[1]
-	arg_1_0.slider_image_base_offset_x = arg_1_0.slider_image_base_offset_x or arg_1_1.slider_image.offset[1]
-	arg_1_0.slider_image_text_base_offset_x = arg_1_0.slider_image_text_base_offset_x or arg_1_1.slider_image_text.offset[1]
+	slider_image_base_size_x = slider_image_base_size_x or arg_1_1.slider_image.size[1]
+	self.slider_image_base_size_x = slider_image_base_size_x
 
-	local var_1_1 = arg_1_0.slider_image_text
-	local var_1_2 = UIUtils.get_text_width(arg_1_2.ui_renderer, arg_1_1.slider_image_text, var_1_1)
+	local slider_image_base_offset_x = self.slider_image_base_offset_x
 
-	arg_1_1.slider_image.size[1] = var_1_2 + var_1_0 * 2
+	slider_image_base_offset_x = slider_image_base_offset_x or arg_1_1.slider_image.offset[1]
+	self.slider_image_base_offset_x = slider_image_base_offset_x
 
-	local var_1_3 = var_1_2 - arg_1_0.slider_image_base_size_x + var_1_0 * 2
+	local slider_image_text_base_offset_x = self.slider_image_text_base_offset_x
 
-	arg_1_1.slider_image.offset[1] = arg_1_0.slider_image_base_offset_x - var_1_3
-	arg_1_1.slider_image_text.offset[1] = arg_1_0.slider_image_text_base_offset_x - var_1_3
+	slider_image_text_base_offset_x = slider_image_text_base_offset_x or arg_1_1.slider_image_text.offset[1]
+	self.slider_image_text_base_offset_x = slider_image_text_base_offset_x
+
+	local slider_image_text = self.slider_image_text
+	local get_text_width = UIUtils.get_text_width(arg_1_2.ui_renderer, arg_1_1.slider_image_text, slider_image_text)
+
+	arg_1_1.slider_image.size[1] = get_text_width + num * 2
+
+	local num_2 = get_text_width - self.slider_image_base_size_x + num * 2
+
+	arg_1_1.slider_image.offset[1] = self.slider_image_base_offset_x - num_2
+	arg_1_1.slider_image_text.offset[1] = self.slider_image_text_base_offset_x - num_2
 end
 
-local var_0_3 = {
+local tbl_2 = {
 	{
 		text = "settings_view_header_game_sound",
 		widget_type = "title"
@@ -533,7 +544,8 @@ local var_0_3 = {
 	{
 		setting_name = "sound_channel_configuration",
 		widget_type = "stepper",
-		value_set_function = function(arg_2_0, arg_2_1, arg_2_2)
+		value_set_function = function (arg_2_0, arg_2_1, arg_2_2)
+			-- function 2
 			Wwise.set_bus_config("ingame_mastering_channel", arg_2_2)
 		end,
 		options = {
@@ -569,11 +581,13 @@ local var_0_3 = {
 	{
 		setting_name = "subtitles_background_opacity",
 		widget_type = "slider",
-		value_set_function = function(arg_3_0, arg_3_1, arg_3_2)
-			var_0_1[1] = 2.55 * arg_3_2
+		value_set_function = function (arg_3_0, arg_3_1, arg_3_2)
+			-- function 3
+			get_color_table_with_alpha[1] = 2.55 * arg_3_2
 		end,
-		value_saved_function = function(arg_4_0, arg_4_1, arg_4_2)
-			var_0_1[1] = 2.55 * arg_4_2
+		value_saved_function = function (arg_4_0, arg_4_1, arg_4_2)
+			-- function 4
+			get_color_table_with_alpha[1] = 2.55 * arg_4_2
 		end,
 		options = {
 			decimals = 0,
@@ -584,16 +598,18 @@ local var_0_3 = {
 	{
 		setting_name = "subtitles_font_size",
 		widget_type = "slider",
-		value_set_function = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+		value_set_function = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			-- function 5
 			arg_5_1.slider_image_text.font_size = arg_5_2
 
-			var_0_2(arg_5_0, arg_5_1, arg_5_3)
+			fn(arg_5_0, arg_5_1, arg_5_3)
 		end,
-		value_saved_function = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
-			arg_6_1.slider_image.color = var_0_1
+		value_saved_function = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			-- function 6
+			arg_6_1.slider_image.color = get_color_table_with_alpha
 			arg_6_1.slider_image_text.font_size = arg_6_2
 
-			var_0_2(arg_6_0, arg_6_1, arg_6_3)
+			fn(arg_6_0, arg_6_1, arg_6_3)
 		end,
 		slider_image = {
 			slider_image = "rect_masked",
@@ -601,7 +617,7 @@ local var_0_3 = {
 				420,
 				50
 			},
-			color = var_0_1
+			color = get_color_table_with_alpha
 		},
 		slider_image_text = {
 			text = string.format("%s: %s", Localize("subtitle_name_witch_hunter"), Localize("pwh_activate_ability_zealot_03")),
@@ -615,17 +631,17 @@ local var_0_3 = {
 		}
 	}
 }
-local var_0_4 = {}
+local tbl_3 = {}
 
-for iter_0_0 = 1, #var_0_3 do
-	local var_0_5 = var_0_3[iter_0_0]
+for i = 1, #tbl_2 do
+	local var_0_5 = tbl_2[i]
 
 	if not var_0_5.show_only_with_voip then
-		var_0_4[#var_0_4 + 1] = var_0_5
+		tbl_3[#tbl_3 + 1] = var_0_5
 	end
 end
 
-local var_0_6 = {
+local tbl_4 = {
 	{
 		text = "settings_view_header_input",
 		widget_type = "title"
@@ -1200,13 +1216,15 @@ local var_0_6 = {
 	}
 }
 
-local function var_0_7(arg_7_0, arg_7_1, arg_7_2)
-	local var_7_0 = arg_7_1 - arg_7_0
+local function fn_2(arg_7_0, arg_7_1, arg_7_2)
+	-- function 7
+	local num = arg_7_1 - arg_7_0
 
-	return (math.clamp(arg_7_2, arg_7_0, arg_7_1) - arg_7_0) / var_7_0
+	return (math.clamp(arg_7_2, arg_7_0, arg_7_1) - arg_7_0) / num
 end
 
-local function var_0_8(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+local function fn_3(self, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+	-- function 8
 	local var_8_0
 
 	if arg_8_2 == "slider" then
@@ -1215,138 +1233,176 @@ local function var_0_8(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
 		var_8_0 = arg_8_3.options_values[arg_8_3.current_selection]
 	end
 
-	local var_8_1 = arg_8_3.definition.setting_type or "user_settings"
+	local setting_type = arg_8_3.definition.setting_type
 
-	arg_8_0:_set_setting(var_8_1, arg_8_1, var_8_0)
-	arg_8_5(arg_8_3, arg_8_4, var_8_0, arg_8_0)
+	setting_type = setting_type or "user_settings"
+
+	self:_set_setting(setting_type, arg_8_1, var_8_0)
+	arg_8_5(arg_8_3, arg_8_4, var_8_0, self)
 end
 
-local function var_0_9(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
-	local var_9_0 = arg_9_4.setting_type or "user_settings"
-	local var_9_1 = DefaultUserSettings.get(var_9_0, arg_9_1)
+local function fn_4(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	-- function 9
+	local setting_type = arg_9_4.setting_type
+
+	setting_type = setting_type or "user_settings"
+
+	local get = DefaultUserSettings.get(setting_type, arg_9_1)
 	local var_9_2
 
-	if var_9_0 == "user_settings" then
+	if setting_type == "user_settings" then
 		var_9_2 = Application.user_setting(arg_9_1)
 	else
-		var_9_2 = Application.user_setting(var_9_0, arg_9_1)
+		var_9_2 = Application.user_setting(setting_type, arg_9_1)
 	end
 
-	local var_9_3 = arg_9_4.menu_setting_name or "menu_settings_" .. arg_9_1
+	local menu_setting_name = arg_9_4.menu_setting_name
+
+	menu_setting_name = menu_setting_name or "menu_settings_" .. arg_9_1
 
 	if arg_9_2 == "slider" then
-		local var_9_4 = arg_9_3.min
-		local var_9_5 = arg_9_3.max
-		local var_9_6 = arg_9_3.decimals
+		local min = arg_9_3.min
+		local max = arg_9_3.max
+		local decimals = arg_9_3.decimals
 
-		return var_0_7(var_9_4, var_9_5, var_9_2), var_9_4, var_9_5, var_9_6, var_9_3, var_9_1
+		return fn_2(min, max, var_9_2), min, max, decimals, menu_setting_name, get
 	else
 		local var_9_7
 		local var_9_8
 
-		for iter_9_0, iter_9_1 in ipairs(arg_9_3) do
-			local var_9_9 = iter_9_1.value
+		for i, v in ipairs(arg_9_3) do
+			local value = v.value
 
-			if var_9_9 == var_9_2 then
-				var_9_7 = iter_9_0
+			if value == var_9_2 then
+				var_9_7 = i
 			end
 
-			if var_9_9 == var_9_1 then
-				var_9_8 = iter_9_0
+			if value == get then
+				var_9_8 = i
 			end
 		end
 
-		fassert(var_9_8, "Default value %q for %q does not exist in passed options table", tostring(var_9_1), arg_9_1)
+		fassert(var_9_8, "Default value %q for %q does not exist in passed options table", tostring(get), arg_9_1)
 
 		var_9_7 = var_9_7 or var_9_8
 
-		return var_9_7, arg_9_3, var_9_3, var_9_8
+		return var_9_7, arg_9_3, menu_setting_name, var_9_8
 	end
 end
 
-local function var_0_10(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
-	local var_10_0 = arg_10_3.content.definition.setting_type or "user_settings"
-	local var_10_1 = arg_10_0:_get_setting(var_10_0, arg_10_1)
-	local var_10_2 = DefaultUserSettings.get(var_10_0, arg_10_1)
+local function fn_5(self, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+	-- function 10
+	local setting_type = arg_10_3.content.definition.setting_type
 
-	if var_10_1 == nil then
-		var_10_1 = var_10_2
+	setting_type = setting_type or "user_settings"
+
+	local _get_setting = self:_get_setting(setting_type, arg_10_1)
+	local get = DefaultUserSettings.get(setting_type, arg_10_1)
+
+	if _get_setting == nil then
+		_get_setting = get
 	end
 
-	local var_10_3 = arg_10_3.content
-	local var_10_4 = arg_10_3.style
+	local content = arg_10_3.content
+	local style = arg_10_3.style
 
 	if arg_10_2 == "slider" then
-		local var_10_5 = var_10_3.min
-		local var_10_6 = var_10_3.max
+		local min = content.min
+		local max = content.max
 
-		var_10_1 = math.clamp(var_10_1, var_10_5, var_10_6)
-		var_10_3.internal_value = var_0_7(var_10_5, var_10_6, var_10_1)
-		var_10_3.value = var_10_1
+		_get_setting = math.clamp(_get_setting, min, max)
+		content.internal_value = fn_2(min, max, _get_setting)
+		content.value = _get_setting
 	else
-		var_10_3.current_selection = table.find(var_10_3.options_values, var_10_1) or table.find(var_10_3.options_values, var_10_2)
+		local find = table.find(content.options_values, _get_setting)
+
+		find = find or table.find(content.options_values, get)
+		content.current_selection = find
 	end
 
-	arg_10_4(var_10_3, var_10_4, var_10_1, arg_10_0)
+	arg_10_4(content, style, _get_setting, self)
 end
 
-local function var_0_11(arg_11_0)
-	for iter_11_0, iter_11_1 in pairs(arg_11_0) do
-		local var_11_0 = iter_11_1.setting_name
+local function fn_6(arg_11_0)
+	-- function 11
+	for k, v in pairs(arg_11_0) do
+		local setting_name = v.setting_name
 
-		if var_11_0 then
-			local var_11_1 = "cb_" .. var_11_0
-			local var_11_2 = var_11_1
+		if not setting_name then
+			local str = "cb_" .. setting_name
+			local var_11_2 = str
 
-			iter_11_1.callback = var_11_1
+			v.callback = str
 
-			local var_11_3 = iter_11_1.widget_type
+			local widget_type = v.widget_type
 
-			OptionsView[var_11_2] = function(arg_12_0, arg_12_1, arg_12_2)
-				return var_0_8(arg_12_0, var_11_0, var_11_3, arg_12_1, arg_12_2, iter_11_1.value_set_function or NOP)
+			OptionsView[var_11_2] = function (arg_12_0, arg_12_1, arg_12_2)
+				-- function 12
+				local var_12_0 = fn_3
+				local var_12_1 = arg_12_0
+				local var_12_2 = setting_name
+				local var_12_3 = widget_type
+				local var_12_4 = arg_12_1
+				local var_12_5 = arg_12_2
+				local value_set_function = v.value_set_function
+
+				value_set_function = value_set_function or NOP
+
+				return var_12_0(var_12_1, var_12_2, var_12_3, var_12_4, var_12_5, value_set_function)
 			end
 
-			local var_11_4 = var_11_1 .. "_setup"
+			local str_2 = str .. "_setup"
 
-			iter_11_1.setup = var_11_4
-			OptionsView[var_11_4] = function(arg_13_0)
-				return var_0_9(arg_13_0, var_11_0, var_11_3, iter_11_1.options, iter_11_1)
+			v.setup = str_2
+			OptionsView[str_2] = function (arg_13_0)
+				-- function 13
+				return fn_4(arg_13_0, setting_name, widget_type, v.options, v)
 			end
 
-			local var_11_5 = var_11_1 .. "_saved_value"
+			local str_3 = str .. "_saved_value"
 
-			iter_11_1.saved_value = var_11_5
-			OptionsView[var_11_5] = function(arg_14_0, arg_14_1)
-				return var_0_10(arg_14_0, var_11_0, var_11_3, arg_14_1, iter_11_1.value_saved_function or NOP)
+			v.saved_value = str_3
+			OptionsView[str_3] = function (arg_14_0, arg_14_1)
+				-- function 14
+				local var_14_0 = fn_5
+				local var_14_1 = arg_14_0
+				local var_14_2 = setting_name
+				local var_14_3 = widget_type
+				local var_14_4 = arg_14_1
+				local value_saved_function = v.value_saved_function
+
+				value_saved_function = value_saved_function or NOP
+
+				return var_14_0(var_14_1, var_14_2, var_14_3, var_14_4, value_saved_function)
 			end
 
-			if not iter_11_1.tooltip_text then
-				iter_11_1.tooltip_text = "tooltip_" .. var_11_0
+			if not v.tooltip_text then
+				v.tooltip_text = "tooltip_" .. setting_name
 			end
 		end
 	end
 end
 
-var_0_11(var_0_3)
-var_0_11(var_0_6)
-var_0_11(var_0_0)
+fn_6(tbl_2)
+fn_6(tbl_4)
+fn_6(tbl)
 
 local var_0_12 = rawget(_G, "LightFX")
 local var_0_13 = rawget(_G, "RazerChroma")
 
-if var_0_12 or RazerChroma then
-	var_0_6[#var_0_6 + 1] = {
+if var_0_12 or not RazerChroma then
+	tbl_4[#tbl_4 + 1] = {
 		size_y = 30,
 		widget_type = "empty"
 	}
-	var_0_6[#var_0_6 + 1] = {
+	tbl_4[#tbl_4 + 1] = {
 		text = "settings_view_header_misc",
 		widget_type = "title"
 	}
 end
 
-if var_0_12 then
-	var_0_6[#var_0_6 + 1] = {
+if not var_0_12 then
+	tbl_4[#tbl_4 + 1] = {
 		setup = "cb_alien_fx_setup",
 		saved_value = "cb_alien_fx_saved_value",
 		callback = "cb_alien_fx",
@@ -1355,8 +1411,8 @@ if var_0_12 then
 	}
 end
 
-if RazerChroma then
-	var_0_6[#var_0_6 + 1] = {
+if not RazerChroma then
+	tbl_4[#tbl_4 + 1] = {
 		setup = "cb_razer_chroma_setup",
 		saved_value = "cb_razer_chroma_saved_value",
 		callback = "cb_razer_chroma",
@@ -1365,12 +1421,12 @@ if RazerChroma then
 	}
 end
 
-var_0_6[#var_0_6 + 1] = {
+tbl_4[#tbl_4 + 1] = {
 	size_y = 110,
 	widget_type = "empty"
 }
 
-local var_0_14 = {
+local tbl_5 = {
 	{
 		size_y = 30,
 		widget_type = "empty"
@@ -1380,7 +1436,7 @@ local var_0_14 = {
 		widget_type = "title"
 	}
 }
-local var_0_15 = {
+local tbl_6 = {
 	{
 		text = "settings_view_header_movement",
 		widget_type = "title"
@@ -1915,13 +1971,13 @@ local var_0_15 = {
 	}
 }
 
-for iter_0_1, iter_0_2 in ipairs(var_0_15) do
-	if not iter_0_2.keymappings_table_key then
-		iter_0_2.keymappings_table_key = "win32"
+for i_2, v in ipairs(tbl_6) do
+	if not v.keymappings_table_key then
+		v.keymappings_table_key = "win32"
 	end
 end
 
-local var_0_16 = {
+local tbl_7 = {
 	gamepad_right_axis = true,
 	analog_input = true,
 	look_raw = true,
@@ -1932,7 +1988,7 @@ local var_0_16 = {
 	scroll_axis = true,
 	cursor = true
 }
-local var_0_17 = {
+local tbl_8 = {
 	{
 		size_y = 30,
 		widget_type = "empty"
@@ -2051,10 +2107,11 @@ local var_0_17 = {
 }
 local var_0_18
 
-if rawget(_G, "Tobii") then
+if not rawget(_G, "Tobii") then
 	var_0_18 = {}
 
-	local function var_0_19(arg_15_0, arg_15_1)
+	local function fn_7(arg_15_0, arg_15_1)
+		-- function 15
 		var_0_18[#var_0_18 + 1] = {
 			widget_type = "stepper",
 			callback = "cb_" .. arg_15_0,
@@ -2064,7 +2121,8 @@ if rawget(_G, "Tobii") then
 		}
 	end
 
-	local function var_0_20(arg_16_0, arg_16_1)
+	local function fn_8(arg_16_0, arg_16_1)
+		-- function 16
 		var_0_18[#var_0_18 + 1] = {
 			widget_type = "slider",
 			callback = "cb_" .. arg_16_0,
@@ -2079,16 +2137,16 @@ if rawget(_G, "Tobii") then
 		widget_type = "title"
 	}
 
-	var_0_19("tobii_eyetracking", "tooltip_tobii_eyetracking")
-	var_0_19("tobii_extended_view", "tooltip_tobii_extended_view")
-	var_0_20("tobii_extended_view_sensitivity", "tooltip_tobii_extended_view_sensitivity")
-	var_0_19("tobii_extended_view_use_head_tracking", "tooltip_tobii_extended_view_use_head_tracking")
-	var_0_19("tobii_aim_at_gaze", "tooltip_tobii_aim_at_gaze")
-	var_0_19("tobii_fire_at_gaze", "tooltip_tobii_fire_at_gaze")
-	var_0_19("tobii_clean_ui", "tooltip_tobii_clean_ui")
+	fn_7("tobii_eyetracking", "tooltip_tobii_eyetracking")
+	fn_7("tobii_extended_view", "tooltip_tobii_extended_view")
+	fn_8("tobii_extended_view_sensitivity", "tooltip_tobii_extended_view_sensitivity")
+	fn_7("tobii_extended_view_use_head_tracking", "tooltip_tobii_extended_view_use_head_tracking")
+	fn_7("tobii_aim_at_gaze", "tooltip_tobii_aim_at_gaze")
+	fn_7("tobii_fire_at_gaze", "tooltip_tobii_fire_at_gaze")
+	fn_7("tobii_clean_ui", "tooltip_tobii_clean_ui")
 end
 
-local var_0_21 = {
+local tbl_9 = {
 	{
 		text = "settings_view_matchmaking_display",
 		widget_type = "title"
@@ -2184,9 +2242,9 @@ local var_0_21 = {
 	}
 }
 
-var_0_11(var_0_21)
+fn_6(tbl_9)
 
-local var_0_22 = {
+local tbl_10 = {
 	{
 		text = "settings_view_versus_damage_feedback",
 		widget_type = "title"
@@ -2271,9 +2329,9 @@ local var_0_22 = {
 	}
 }
 
-var_0_11(var_0_22)
+fn_6(tbl_10)
 
-local var_0_23 = {
+local tbl_11 = {
 	"screen_resolution",
 	"fullscreen",
 	"borderless_fullscreen",
@@ -2307,7 +2365,7 @@ local var_0_23 = {
 	"local_probes_enabled",
 	"volumetric_fog_quality"
 }
-local var_0_24 = {
+local tbl_12 = {
 	"char_texture_quality",
 	"env_texture_quality",
 	"use_physic_debris",
@@ -2332,36 +2390,36 @@ TutorialSettingsMenuNavigation = {
 	true
 }
 
-local var_0_25 = {}
+local tbl_13 = {}
 
-var_0_25[#var_0_25 + 1] = UIWidgets.create_text_button("settings_button_1", "settings_view_gameplay", 18)
-var_0_25[#var_0_25 + 1] = UIWidgets.create_text_button("settings_button_3", "settings_view_video", 18)
-var_0_25[#var_0_25 + 1] = UIWidgets.create_text_button("settings_button_4", "settings_view_sound", 18)
-var_0_25[#var_0_25 + 1] = UIWidgets.create_text_button("settings_button_5", "settings_view_keybind", 18)
-var_0_25[#var_0_25 + 1] = UIWidgets.create_text_button("settings_button_6", "settings_view_gamepad", 18)
-var_0_25[#var_0_25 + 1] = UIWidgets.create_text_button("settings_button_7", "settings_view_network", 18)
+tbl_13[#tbl_13 + 1] = UIWidgets.create_text_button("settings_button_1", "settings_view_gameplay", 18)
+tbl_13[#tbl_13 + 1] = UIWidgets.create_text_button("settings_button_3", "settings_view_video", 18)
+tbl_13[#tbl_13 + 1] = UIWidgets.create_text_button("settings_button_4", "settings_view_sound", 18)
+tbl_13[#tbl_13 + 1] = UIWidgets.create_text_button("settings_button_5", "settings_view_keybind", 18)
+tbl_13[#tbl_13 + 1] = UIWidgets.create_text_button("settings_button_6", "settings_view_gamepad", 18)
+tbl_13[#tbl_13 + 1] = UIWidgets.create_text_button("settings_button_7", "settings_view_network", 18)
 
-if rawget(_G, "Tobii") then
-	var_0_25[#var_0_25 + 1] = UIWidgets.create_text_button("settings_button_8", "settings_view_eyetracking", 18)
+if not rawget(_G, "Tobii") then
+	tbl_13[#tbl_13 + 1] = UIWidgets.create_text_button("settings_button_8", "settings_view_eyetracking", 18)
 	SettingsMenuNavigation[#SettingsMenuNavigation + 1] = "tobii_eyetracking_settings"
 end
 
-var_0_25[#var_0_25 + 1] = UIWidgets.create_text_button("settings_button_10", "settings_view_versus", 18)
+tbl_13[#tbl_13 + 1] = UIWidgets.create_text_button("settings_button_10", "settings_view_versus", 18)
 SettingsMenuNavigation[#SettingsMenuNavigation + 1] = "versus_settings"
 
 return {
-	video_settings_definition = var_0_0,
-	audio_settings_definition = var_0_3,
-	audio_settings_definition_without_voip = var_0_4,
-	gameplay_settings_definition = var_0_6,
-	display_settings_definition = var_0_14,
-	keybind_settings_definition = var_0_15,
-	gamepad_settings_definition = var_0_17,
+	video_settings_definition = tbl,
+	audio_settings_definition = tbl_2,
+	audio_settings_definition_without_voip = tbl_3,
+	gameplay_settings_definition = tbl_4,
+	display_settings_definition = tbl_5,
+	keybind_settings_definition = tbl_6,
+	gamepad_settings_definition = tbl_8,
 	tobii_settings_definition = var_0_18,
-	network_settings_definition = var_0_21,
-	versus_settings_definition = var_0_22,
-	needs_restart_settings = var_0_24,
-	needs_reload_settings = var_0_23,
-	ignore_keybind = var_0_16,
-	title_button_definitions = var_0_25
+	network_settings_definition = tbl_9,
+	versus_settings_definition = tbl_10,
+	needs_restart_settings = tbl_12,
+	needs_reload_settings = tbl_11,
+	ignore_keybind = tbl_7,
+	title_button_definitions = tbl_13
 }

@@ -28,72 +28,108 @@ VoteTemplates.carousel_settings_vote = {
 			input = "ingame_vote_no"
 		}
 	},
-	on_start = function(arg_1_0, arg_1_1)
+	on_start = function (arg_1_0, arg_1_1)
+		-- function 1
 		Managers.matchmaking:cancel_matchmaking()
 	end,
-	on_complete = function(arg_2_0, arg_2_1, arg_2_2)
+	on_complete = function (arg_2_0, arg_2_1, arg_2_2)
+		-- function 2
 		if arg_2_0 == 1 then
-			local var_2_0 = arg_2_2.vote_type
+			local vote_type = arg_2_2.vote_type
 
-			if Managers.twitch and (Managers.twitch:is_connecting() or Managers.twitch:is_connected()) and not Managers.twitch:game_mode_supported(var_2_0, difficulty) then
+			if not (not Managers.twitch and Managers.twitch:is_connecting() and not Managers.twitch:is_connected() and Managers.twitch:game_mode_supported(vote_type, difficulty)) then
 				Managers.twitch:disconnect()
 			end
 
-			local var_2_1 = Managers.state.network:lobby()
-			local var_2_2 = arg_2_2.use_dedicated_win_servers or arg_2_2.use_dedicated_aws_servers
-			local var_2_3 = {
+			local lobby = Managers.state.network:lobby()
+			local use_dedicated_win_servers = arg_2_2.use_dedicated_win_servers
+
+			use_dedicated_win_servers = use_dedicated_win_servers or arg_2_2.use_dedicated_aws_servers
+
+			local tbl = {
 				wait_for_join_message = true,
 				mission_id = arg_2_2.mission_id,
 				preferred_level_keys = arg_2_2.preferred_level_keys,
-				difficulty = arg_2_2.difficulty,
-				quick_game = arg_2_2.quick_game or false,
-				join_method = arg_2_2.join_method,
-				private_game = arg_2_2.private_game or false,
-				party_lobby_host = var_2_2 and var_2_1,
-				max_num_players = GameModeSettings.versus.max_num_players,
-				player_hosted = arg_2_2.player_hosted,
-				dedicated_server = var_2_2,
-				aws = arg_2_2.use_dedicated_aws_servers,
-				linux = arg_2_2.use_dedicated_aws_servers,
-				mechanism = arg_2_2.mechanism,
-				matchmaking_type = arg_2_2.matchmaking_type
+				difficulty = arg_2_2.difficulty
 			}
+			local quick_game = arg_2_2.quick_game
 
-			Managers.matchmaking:find_game(var_2_3)
+			quick_game = quick_game or false
+			tbl.quick_game = quick_game
+			tbl.join_method = arg_2_2.join_method
+
+			local private_game = arg_2_2.private_game
+
+			private_game = private_game or false
+			tbl.private_game = private_game
+			tbl.party_lobby_host = not use_dedicated_win_servers and lobby
+			tbl.max_num_players = GameModeSettings.versus.max_num_players
+			tbl.player_hosted = arg_2_2.player_hosted
+			tbl.dedicated_server = use_dedicated_win_servers
+			tbl.aws = arg_2_2.use_dedicated_aws_servers
+			tbl.linux = arg_2_2.use_dedicated_aws_servers
+			tbl.mechanism = arg_2_2.mechanism
+			tbl.matchmaking_type = arg_2_2.matchmaking_type
+
+			Managers.matchmaking:find_game(tbl)
 		end
 	end,
-	pack_sync_data = function(arg_3_0)
-		local var_3_0 = arg_3_0.mission_id or "n/a"
-		local var_3_1 = arg_3_0.difficulty or "n/a"
-		local var_3_2 = arg_3_0.player_hosted
-		local var_3_3 = arg_3_0.use_dedicated_win_servers
-		local var_3_4 = arg_3_0.use_dedicated_aws_servers
-		local var_3_5 = arg_3_0.matchmaking_type
-		local var_3_6 = arg_3_0.mechanism
-		local var_3_7 = arg_3_0.quick_game
+	pack_sync_data = function (self)
+		-- function 3
+		local mission_id = self.mission_id
 
-		return {
-			NetworkLookup.mission_ids[var_3_0],
-			NetworkLookup.difficulties[var_3_1],
-			NetworkLookup.join_methods[arg_3_0.join_method],
-			var_3_2 and 1 or 2,
-			var_3_3 and 1 or 2,
-			var_3_4 and 1 or 2,
-			NetworkLookup.matchmaking_types[var_3_5],
-			NetworkLookup.mechanisms[var_3_6],
-			var_3_7 and 1 or 2
+		mission_id = mission_id or "n/a"
+
+		local difficulty = self.difficulty
+
+		difficulty = difficulty or "n/a"
+
+		local player_hosted = self.player_hosted
+		local use_dedicated_win_servers = self.use_dedicated_win_servers
+		local use_dedicated_aws_servers = self.use_dedicated_aws_servers
+		local matchmaking_type = self.matchmaking_type
+		local mechanism = self.mechanism
+		local quick_game = self.quick_game
+		local tbl = {
+			NetworkLookup.mission_ids[mission_id],
+			NetworkLookup.difficulties[difficulty],
+			NetworkLookup.join_methods[self.join_method]
 		}
+		local flag
+
+		flag = not player_hosted and 1 and 2
+		tbl[4] = flag
+
+		local flag_2
+
+		flag_2 = not use_dedicated_win_servers and 1 and 2
+		tbl[5] = flag_2
+
+		local flag_3
+
+		flag_3 = not use_dedicated_aws_servers and 1 and 2
+		tbl[6] = flag_3
+		tbl[7] = NetworkLookup.matchmaking_types[matchmaking_type]
+		tbl[8] = NetworkLookup.mechanisms[mechanism]
+
+		local flag_4
+
+		flag_4 = not quick_game and 1 and 2
+		tbl[9] = flag_4
+
+		return tbl
 	end,
-	extract_sync_data = function(arg_4_0)
-		local var_4_0 = arg_4_0[1]
-		local var_4_1 = arg_4_0[2]
-		local var_4_2 = arg_4_0[3]
-		local var_4_3 = arg_4_0[4]
-		local var_4_4 = arg_4_0[5]
-		local var_4_5 = arg_4_0[6]
-		local var_4_6 = arg_4_0[7]
-		local var_4_7 = arg_4_0[8]
-		local var_4_8 = arg_4_0[9]
+	extract_sync_data = function (self)
+		-- function 4
+		local var_4_0 = self[1]
+		local var_4_1 = self[2]
+		local var_4_2 = self[3]
+		local var_4_3 = self[4]
+		local var_4_4 = self[5]
+		local var_4_5 = self[6]
+		local var_4_6 = self[7]
+		local var_4_7 = self[8]
+		local var_4_8 = self[9]
 		local var_4_9 = NetworkLookup.mission_ids[var_4_0]
 
 		if var_4_9 == "n/a" then
@@ -117,9 +153,10 @@ VoteTemplates.carousel_settings_vote = {
 			quick_game = var_4_8 == 1
 		}
 	end,
-	initial_vote_func = function(arg_5_0)
+	initial_vote_func = function (self)
+		-- function 5
 		return {
-			[arg_5_0.voter_peer_id] = 1
+			[self.voter_peer_id] = 1
 		}
 	end
 }
@@ -151,62 +188,79 @@ VoteTemplates.carousel_player_hosted_settings_vote = {
 			input = "ingame_vote_no"
 		}
 	},
-	on_start = function(arg_6_0, arg_6_1)
+	on_start = function (arg_6_0, arg_6_1)
+		-- function 6
 		Managers.matchmaking:cancel_matchmaking()
 	end,
-	on_complete = function(arg_7_0, arg_7_1, arg_7_2)
+	on_complete = function (arg_7_0, arg_7_1, arg_7_2)
+		-- function 7
 		if arg_7_0 == 1 then
-			local var_7_0 = arg_7_2.vote_type
+			local vote_type = arg_7_2.vote_type
 
-			if Managers.twitch and (Managers.twitch:is_connecting() or Managers.twitch:is_connected()) and not Managers.twitch:game_mode_supported(var_7_0, difficulty) then
+			if not (not Managers.twitch and Managers.twitch:is_connecting() and not Managers.twitch:is_connected() and Managers.twitch:game_mode_supported(vote_type, difficulty)) then
 				Managers.twitch:disconnect()
 			end
 
-			local var_7_1 = Managers.state.network:lobby()
+			local lobby = Managers.state.network:lobby()
 
 			if not arg_7_2.use_dedicated_win_servers then
-				local var_7_2 = arg_7_2.use_dedicated_aws_servers
+				local use_dedicated_aws_servers = arg_7_2.use_dedicated_aws_servers
 			end
 
-			local var_7_3 = {
+			local tbl = {
 				player_hosted = true,
 				matchmaking_start_state = "MatchmakingStatePlayerHostedGame",
 				dedicated_server = false,
 				quick_game = false,
 				mission_id = arg_7_2.mission_id,
 				any_level = arg_7_2.any_level,
-				difficulty = arg_7_2.difficulty,
-				private_game = arg_7_2.private_game or false,
-				party_lobby_host = var_7_1,
-				max_num_players = GameModeSettings.versus.max_num_players,
-				mechanism = arg_7_2.mechanism,
-				matchmaking_type = arg_7_2.matchmaking_type
+				difficulty = arg_7_2.difficulty
 			}
+			local private_game = arg_7_2.private_game
 
-			Managers.matchmaking:find_game(var_7_3)
+			private_game = private_game or false
+			tbl.private_game = private_game
+			tbl.party_lobby_host = lobby
+			tbl.max_num_players = GameModeSettings.versus.max_num_players
+			tbl.mechanism = arg_7_2.mechanism
+			tbl.matchmaking_type = arg_7_2.matchmaking_type
+
+			Managers.matchmaking:find_game(tbl)
 		end
 	end,
-	pack_sync_data = function(arg_8_0)
-		local var_8_0 = arg_8_0.mission_id or "n/a"
-		local var_8_1 = arg_8_0.difficulty or "n/a"
-		local var_8_2 = arg_8_0.player_hosted
-		local var_8_3 = arg_8_0.matchmaking_type
-		local var_8_4 = arg_8_0.mechanism
+	pack_sync_data = function (self)
+		-- function 8
+		local mission_id = self.mission_id
 
-		return {
-			NetworkLookup.mission_ids[var_8_0],
-			NetworkLookup.difficulties[var_8_1],
-			var_8_2 and 1 or 2,
-			NetworkLookup.matchmaking_types[var_8_3],
-			NetworkLookup.mechanisms[var_8_4]
+		mission_id = mission_id or "n/a"
+
+		local difficulty = self.difficulty
+
+		difficulty = difficulty or "n/a"
+
+		local player_hosted = self.player_hosted
+		local matchmaking_type = self.matchmaking_type
+		local mechanism = self.mechanism
+		local tbl = {
+			NetworkLookup.mission_ids[mission_id],
+			NetworkLookup.difficulties[difficulty]
 		}
+		local flag
+
+		flag = not player_hosted and 1 and 2
+		tbl[3] = flag
+		tbl[4] = NetworkLookup.matchmaking_types[matchmaking_type]
+		tbl[5] = NetworkLookup.mechanisms[mechanism]
+
+		return tbl
 	end,
-	extract_sync_data = function(arg_9_0)
-		local var_9_0 = arg_9_0[1]
-		local var_9_1 = arg_9_0[2]
-		local var_9_2 = arg_9_0[3]
-		local var_9_3 = arg_9_0[4]
-		local var_9_4 = arg_9_0[5]
+	extract_sync_data = function (self)
+		-- function 9
+		local var_9_0 = self[1]
+		local var_9_1 = self[2]
+		local var_9_2 = self[3]
+		local var_9_3 = self[4]
+		local var_9_4 = self[5]
 		local var_9_5 = NetworkLookup.mission_ids[var_9_0]
 
 		if var_9_5 == "n/a" then
@@ -225,9 +279,10 @@ VoteTemplates.carousel_player_hosted_settings_vote = {
 			mechanism = var_9_8
 		}
 	end,
-	initial_vote_func = function(arg_10_0)
+	initial_vote_func = function (self)
+		-- function 10
 		return {
-			[arg_10_0.voter_peer_id] = 1
+			[self.voter_peer_id] = 1
 		}
 	end
 }

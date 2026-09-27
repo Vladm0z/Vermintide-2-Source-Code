@@ -4,66 +4,71 @@ require("scripts/ui/dlc_upsell/common_popup")
 
 UpsellPopup = class(UpsellPopup, CommonPopup)
 
-function UpsellPopup.create_ui_elements(arg_1_0)
-	UpsellPopup.super.create_ui_elements(arg_1_0)
+UpsellPopup.create_ui_elements = function (self)
+	-- function 1
+	UpsellPopup.super.create_ui_elements(self)
 
-	local var_1_0 = arg_1_0._common_settings
+	local _common_settings = self._common_settings
 
-	arg_1_0._widgets_by_name.window_background.content.texture_id = var_1_0.background_texture
-	arg_1_0._widgets_by_name.title_text.content.text = Localize(var_1_0.title_text)
-	arg_1_0._widgets_by_name.body_text.content.text = Localize(var_1_0.body_text)
-	arg_1_0._widgets_by_name.store_button.content.title_text = Localize(var_1_0.button_text)
-	arg_1_0._widgets_by_name.ok_button.content.title_text = Localize(var_1_0.ok_button_text)
+	self._widgets_by_name.window_background.content.texture_id = _common_settings.background_texture
+	self._widgets_by_name.title_text.content.text = Localize(_common_settings.title_text)
+	self._widgets_by_name.body_text.content.text = Localize(_common_settings.body_text)
+	self._widgets_by_name.store_button.content.title_text = Localize(_common_settings.button_text)
+	self._widgets_by_name.ok_button.content.title_text = Localize(_common_settings.ok_button_text)
 end
 
-function UpsellPopup.update(arg_2_0, arg_2_1)
-	UpsellPopup.super.update(arg_2_0, arg_2_1)
+UpsellPopup.update = function (self, arg_2_1)
+	-- function 2
+	UpsellPopup.super.update(self, arg_2_1)
 
-	if arg_2_0:should_show() and not arg_2_0._has_widget_been_closed then
-		arg_2_0:show()
+	if not (not self:should_show() and self._has_widget_been_closed) then
+		self:show()
 	end
 end
 
-function UpsellPopup._handle_input(arg_3_0, arg_3_1)
-	local var_3_0 = arg_3_0:_get_input_service()
+UpsellPopup._handle_input = function (self, arg_3_1)
+	-- function 3
+	local _get_input_service = self:_get_input_service()
 
-	if var_3_0:get("toggle_menu", true) or var_3_0:get("back", true) then
-		arg_3_0._has_widget_been_closed = true
+	if _get_input_service:get("toggle_menu", true) or not _get_input_service:get("back", true) then
+		self._has_widget_been_closed = true
 
-		arg_3_0:hide()
+		self:hide()
 
 		return
 	end
 
-	local var_3_1 = arg_3_0._widgets_by_name
+	local _widgets_by_name = self._widgets_by_name
 
-	if UIUtils.is_button_pressed(var_3_1.ok_button) or var_3_0:get("back", true) then
-		arg_3_0._has_widget_been_closed = true
+	if UIUtils.is_button_pressed(_widgets_by_name.ok_button) or not _get_input_service:get("back", true) then
+		self._has_widget_been_closed = true
 
-		arg_3_0:hide()
+		self:hide()
 
 		return
 	end
 
-	if UIUtils.is_button_pressed(var_3_1.store_button) or var_3_0:get("confirm_press", true) then
-		Managers.unlock:open_dlc_page(arg_3_0._name)
+	if UIUtils.is_button_pressed(_widgets_by_name.store_button) or not _get_input_service:get("confirm_press", true) then
+		Managers.unlock:open_dlc_page(self._name)
 
 		return
 	end
 end
 
-function UpsellPopup._start_transition_animation(arg_4_0, arg_4_1)
-	return arg_4_0._ui_animator:start_animation(arg_4_1, nil, arg_4_0._common_settings.definitions.scenegraph_definition, {
-		wwise_world = arg_4_0._wwise_world,
-		render_settings = arg_4_0._render_settings
+UpsellPopup._start_transition_animation = function (self, arg_4_1)
+	-- function 4
+	return self._ui_animator:start_animation(arg_4_1, nil, self._common_settings.definitions.scenegraph_definition, {
+		wwise_world = self._wwise_world,
+		render_settings = self._render_settings
 	})
 end
 
-function UpsellPopup._update_animations(arg_5_0, arg_5_1)
-	UpsellPopup.super._update_animations(arg_5_0, arg_5_1)
+UpsellPopup._update_animations = function (self, arg_5_1)
+	-- function 5
+	UpsellPopup.super._update_animations(self, arg_5_1)
 
-	local var_5_0 = arg_5_0._widgets_by_name
+	local _widgets_by_name = self._widgets_by_name
 
-	UIWidgetUtils.animate_default_button(var_5_0.ok_button, arg_5_1)
-	UIWidgetUtils.animate_default_button(var_5_0.store_button, arg_5_1)
+	UIWidgetUtils.animate_default_button(_widgets_by_name.ok_button, arg_5_1)
+	UIWidgetUtils.animate_default_button(_widgets_by_name.store_button, arg_5_1)
 end

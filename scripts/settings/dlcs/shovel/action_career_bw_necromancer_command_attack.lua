@@ -2,121 +2,131 @@
 
 ActionCareerBWNecromancerCommandAttack = class(ActionCareerBWNecromancerCommandAttack, ActionBase)
 
-local var_0_0 = {
+local tbl = {
 	critter_rat = true
 }
-local var_0_1 = {}
-local var_0_2 = {}
-local var_0_3 = {}
-local var_0_4 = {}
+local tbl_2 = {}
+local tbl_3 = {}
+local tbl_4 = {}
+local tbl_5 = {}
 
-function ActionCareerBWNecromancerCommandAttack.pre_calculate_target(arg_1_0)
-	local var_1_0 = ScriptUnit.extension(arg_1_0, "ai_commander_system")
-	local var_1_1 = ScriptUnit.extension(arg_1_0, "first_person_system")
-	local var_1_2 = var_1_0:get_controlled_units()
+ActionCareerBWNecromancerCommandAttack.pre_calculate_target = function (arg_1_0)
+	-- function 1
+	local extension = ScriptUnit.extension(arg_1_0, "ai_commander_system")
+	local extension_2 = ScriptUnit.extension(arg_1_0, "first_person_system")
+	local get_controlled_units = extension:get_controlled_units()
 
-	if table.is_empty(var_1_2) then
+	if not table.is_empty(get_controlled_units) then
 		return nil
 	end
 
-	local var_1_3 = var_1_1:current_position()
-	local var_1_4 = Quaternion.forward(var_1_1:current_rotation())
-	local var_1_5 = Managers.state.side.side_by_unit[arg_1_0].enemy_broadphase_categories
+	local current_position = extension_2:current_position()
+	local forward = Quaternion.forward(extension_2:current_rotation())
+	local enemy_broadphase_categories = Managers.state.side.side_by_unit[arg_1_0].enemy_broadphase_categories
 
-	table.clear(var_0_4)
+	table.clear(tbl_5)
 
-	local var_1_6 = 50
-	local var_1_7 = AiUtils.broadphase_query(var_1_3, var_1_6, var_0_2, var_1_5)
+	local num = 50
+	local broadphase_query = AiUtils.broadphase_query(current_position, num, tbl_3, enemy_broadphase_categories)
 
-	for iter_1_0 = 1, var_1_7 do
-		var_0_4[iter_1_0] = var_0_2[iter_1_0]
+	for i = 1, broadphase_query do
+		tbl_5[i] = tbl_3[i]
 	end
 
-	local var_1_8 = PlayerUtils.broadphase_query(var_1_3, var_1_6, var_0_3, var_1_5)
+	local broadphase_query_2 = PlayerUtils.broadphase_query(current_position, num, tbl_4, enemy_broadphase_categories)
 
-	for iter_1_1 = 1, var_1_8 do
-		local var_1_9 = ScriptUnit.has_extension(var_0_3[iter_1_1], "status_system")
+	for j = 1, broadphase_query_2 do
+		local has_extension = ScriptUnit.has_extension(tbl_4[j], "status_system")
 
-		if not (var_1_9 and var_1_9:is_invisible()) then
-			var_0_4[#var_0_4 + 1] = var_0_3[iter_1_1]
+		if not (not has_extension and has_extension:is_invisible()) then
+			tbl_5[#tbl_5 + 1] = tbl_4[j]
 		end
 	end
 
-	local var_1_10 = 1
-	local var_1_11 = 1
-	local var_1_12 = 1
-	local var_1_13 = 1.5
-	local var_1_14 = TrueFlightUtility.sort(var_0_4, var_1_3, var_1_4, var_1_10, var_1_11, var_1_12, var_1_6, 0.7, 1.8, var_1_13)
+	local num_2 = 1
+	local num_3 = 1
+	local num_4 = 1
+	local num_5 = 1.5
+	local sort = TrueFlightUtility.sort(tbl_5, current_position, forward, num_2, num_3, num_4, num, 0.7, 1.8, num_5)
 
-	for iter_1_2 = 1, var_1_7 + var_1_8 do
+	for k = 1, broadphase_query + broadphase_query_2 do
 		repeat
-			local var_1_15 = var_0_4[iter_1_2]
+			local var_1_15 = tbl_5[k]
 			local var_1_16 = BLACKBOARDS[var_1_15]
-			local var_1_17 = var_1_16 and var_1_16.breed.name
+			local flag = not var_1_16 and var_1_16.breed.name
 
-			if var_1_14[var_1_15] == 0 then
+			if sort[var_1_15] == 0 then
 				return false
 			end
 
-			if var_0_0[var_1_17] or not HEALTH_ALIVE[var_1_15] then
+			if not (tbl[flag] or HEALTH_ALIVE[var_1_15]) then
 				break
 			end
 
-			if not AiUtils.line_of_sight_from_random_point(var_1_3, var_1_15, math.huge) then
+			if not AiUtils.line_of_sight_from_random_point(current_position, var_1_15, math.huge) then
 				break
 			end
 
-			var_0_1[arg_1_0] = var_1_15
+			tbl_2[arg_1_0] = var_1_15
 
 			return true
 		until true
 	end
 end
 
-function ActionCareerBWNecromancerCommandAttack.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8)
-	ActionCareerBWNecromancerCommandAttack.super.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8)
+ActionCareerBWNecromancerCommandAttack.init = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8)
+	-- function 2
+	ActionCareerBWNecromancerCommandAttack.super.init(self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8)
 
-	arg_2_0._buff_extension = ScriptUnit.extension(arg_2_4, "buff_system")
-	arg_2_0._commander_extension = ScriptUnit.extension(arg_2_4, "ai_commander_system")
-	arg_2_0._first_person_extension = ScriptUnit.has_extension(arg_2_4, "first_person_system")
-	arg_2_0._career_extension = ScriptUnit.has_extension(arg_2_4, "career_system")
-	arg_2_0._command_ability = arg_2_0._career_extension:get_passive_ability_by_name("bw_necromancer_command")
-	arg_2_0._owner_unit = arg_2_4
+	self._buff_extension = ScriptUnit.extension(arg_2_4, "buff_system")
+	self._commander_extension = ScriptUnit.extension(arg_2_4, "ai_commander_system")
+	self._first_person_extension = ScriptUnit.has_extension(arg_2_4, "first_person_system")
+	self._career_extension = ScriptUnit.has_extension(arg_2_4, "career_system")
+	self._command_ability = self._career_extension:get_passive_ability_by_name("bw_necromancer_command")
+	self._owner_unit = arg_2_4
 end
 
-function ActionCareerBWNecromancerCommandAttack.client_owner_start_action(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
-	ActionCareerBWNecromancerCommandAttack.super.client_owner_start_action(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+ActionCareerBWNecromancerCommandAttack.client_owner_start_action = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	-- function 3
+	ActionCareerBWNecromancerCommandAttack.super.client_owner_start_action(self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 
-	local var_3_0 = var_0_1[arg_3_0._owner_unit]
+	local var_3_0 = tbl_2[self._owner_unit]
 
-	var_0_1[arg_3_0._owner_unit] = nil
+	tbl_2[self._owner_unit] = nil
 
-	if ALIVE[var_3_0] then
-		local var_3_1 = arg_3_0:_is_charge_off_cooldown() and arg_3_0:_has_armored_pet()
+	if not ALIVE[var_3_0] then
+		local _is_charge_off_cooldown = self:_is_charge_off_cooldown()
 
-		arg_3_0._command_ability:command_attack_enemy(var_3_0, var_3_1, arg_3_2)
+		_is_charge_off_cooldown = not _is_charge_off_cooldown and self:_has_armored_pet()
+
+		self._command_ability:command_attack_enemy(var_3_0, _is_charge_off_cooldown, arg_3_2)
 	end
 end
 
-function ActionCareerBWNecromancerCommandAttack.client_owner_post_update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+ActionCareerBWNecromancerCommandAttack.client_owner_post_update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	-- function 4
 	return
 end
 
-function ActionCareerBWNecromancerCommandAttack.destroy(arg_5_0)
+ActionCareerBWNecromancerCommandAttack.destroy = function (arg_5_0)
+	-- function 5
 	return
 end
 
-function ActionCareerBWNecromancerCommandAttack._select_target(arg_6_0)
+ActionCareerBWNecromancerCommandAttack._select_target = function (arg_6_0)
+	-- function 6
 	return
 end
 
-function ActionCareerBWNecromancerCommandAttack._is_charge_off_cooldown(arg_7_0)
-	return arg_7_0._buff_extension:get_buff_type("sienna_necromancer_6_3_available_charge")
+ActionCareerBWNecromancerCommandAttack._is_charge_off_cooldown = function (self)
+	-- function 7
+	return self._buff_extension:get_buff_type("sienna_necromancer_6_3_available_charge")
 end
 
-function ActionCareerBWNecromancerCommandAttack._has_armored_pet(arg_8_0)
-	for iter_8_0, iter_8_1 in pairs(arg_8_0._commander_extension:get_controlled_units()) do
-		if Unit.get_data(iter_8_0, "breed").name == "pet_skeleton_armored" then
+ActionCareerBWNecromancerCommandAttack._has_armored_pet = function (self)
+	-- function 8
+	for k, v in pairs(self._commander_extension:get_controlled_units()) do
+		if Unit.get_data(k, "breed").name == "pet_skeleton_armored" then
 			return true
 		end
 	end

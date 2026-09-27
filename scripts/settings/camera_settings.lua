@@ -1,17 +1,25 @@
 -- chunkname: @scripts/settings/camera_settings.lua
 
+local CameraSettings = CameraSettings
+
 CameraSettings = CameraSettings or {}
+CameraSettings = CameraSettings
 PITCH_SPEED = 480
 YAW_SPEED = 480
+
+local CameraTweaks = CameraTweaks
+
 CameraTweaks = CameraTweaks or {}
+CameraTweaks = CameraTweaks
 CameraTweaks.zoom = {
 	scale = 0.1,
-	interpolation_function = function(arg_1_0, arg_1_1, arg_1_2)
+	interpolation_function = function (arg_1_0, arg_1_1, arg_1_2)
+		-- function 1
 		return math.lerp(arg_1_0, arg_1_1, arg_1_2 * 7)
 	end
 }
 
-local var_0_0 = {
+local tbl = {
 	revive = CameraTransitionTemplates.reviving,
 	heal_self = CameraTransitionTemplates.reviving,
 	emotes = CameraTransitionTemplates.reviving,
@@ -58,7 +66,7 @@ CameraSettings.first_person = {
 				x = 0,
 				y = 0
 			},
-			node_transitions = var_0_0
+			node_transitions = tbl
 		},
 		{
 			_node = {
@@ -74,7 +82,7 @@ CameraSettings.first_person = {
 				node_transitions = table.merge({
 					first_person_node = CameraTransitionTemplates.zoom,
 					increased_zoom_in = CameraTransitionTemplates.zoom
-				}, var_0_0)
+				}, tbl)
 			}
 		},
 		{
@@ -91,7 +99,7 @@ CameraSettings.first_person = {
 				node_transitions = table.merge({
 					first_person_node = CameraTransitionTemplates.zoom,
 					increased_zoom_in = CameraTransitionTemplates.zoom
-				}, var_0_0)
+				}, tbl)
 			}
 		},
 		{
@@ -106,7 +114,7 @@ CameraSettings.first_person = {
 				node_transitions = table.merge({
 					zoom_in = CameraTransitionTemplates.zoom,
 					increased_zoom_in = CameraTransitionTemplates.zoom
-				}, var_0_0)
+				}, tbl)
 			}
 		},
 		{
@@ -121,7 +129,7 @@ CameraSettings.first_person = {
 				node_transitions = table.merge({
 					zoom_in = CameraTransitionTemplates.zoom,
 					increased_zoom_in = CameraTransitionTemplates.zoom
-				}, var_0_0)
+				}, tbl)
 			}
 		},
 		{
@@ -139,7 +147,7 @@ CameraSettings.first_person = {
 					first_person_node = CameraTransitionTemplates.zoom,
 					zoom_in = CameraTransitionTemplates.zoom,
 					zoom_in_trueflight = CameraTransitionTemplates.zoom
-				}, var_0_0)
+				}, tbl)
 			}
 		},
 		{
@@ -157,7 +165,7 @@ CameraSettings.first_person = {
 					first_person_node = CameraTransitionTemplates.zoom,
 					zoom_in = CameraTransitionTemplates.zoom,
 					zoom_in_trueflight = CameraTransitionTemplates.zoom
-				}, var_0_0)
+				}, tbl)
 			}
 		},
 		{
@@ -170,7 +178,7 @@ CameraSettings.first_person = {
 					x = 0,
 					y = 0
 				},
-				node_transitions = var_0_0
+				node_transitions = tbl
 			}
 		},
 		{
@@ -244,7 +252,8 @@ CameraSettings.first_person = {
 								x = 0,
 								y = -5
 							},
-							scale_function = function(arg_2_0)
+							scale_function = function (arg_2_0)
+								-- function 2
 								return arg_2_0
 							end,
 							node_transitions = {
@@ -278,7 +287,7 @@ CameraSettings.first_person = {
 						},
 						node_transitions = table.merge({
 							first_person_node = CameraTransitionTemplates.first_person
-						}, var_0_0)
+						}, tbl)
 					}
 				},
 				{
@@ -320,7 +329,7 @@ CameraSettings.first_person = {
 						},
 						node_transitions = table.merge({
 							first_person_node = CameraTransitionTemplates.first_person
-						}, var_0_0)
+						}, tbl)
 					}
 				},
 				{
@@ -404,7 +413,7 @@ CameraSettings.first_person = {
 						},
 						node_transitions = table.merge({
 							first_person_node = CameraTransitionTemplates.first_person_fast
-						}, var_0_0)
+						}, tbl)
 					}
 				},
 				{
@@ -418,7 +427,7 @@ CameraSettings.first_person = {
 						},
 						node_transitions = table.merge({
 							first_person_node = CameraTransitionTemplates.first_person_fast
-						}, var_0_0)
+						}, tbl)
 					}
 				}
 			}
@@ -426,7 +435,7 @@ CameraSettings.first_person = {
 	}
 }
 
-if script_data.debug_third_person then
+if not script_data.debug_third_person then
 	CameraSettings.first_person[1]._node.offset_position.y = -3
 end
 
@@ -547,7 +556,8 @@ CameraSettings.player_dead = {
 								x = 0,
 								y = -2
 							},
-							scale_function = function(arg_3_0)
+							scale_function = function (arg_3_0)
+								-- function 3
 								return arg_3_0
 							end
 						},

@@ -1,12 +1,12 @@
 -- chunkname: @scripts/ui/dlc_upsell/alterantive_reminder_popup_definitions.lua
 
-local var_0_0 = 1920
-local var_0_1 = 1080
-local var_0_2 = 50
-local var_0_3 = 455
-local var_0_4 = 636
-local var_0_5 = var_0_3 - var_0_2 * 2
-local var_0_6 = {
+local num = 1920
+local num_2 = 1080
+local num_3 = 50
+local num_4 = 455
+local num_5 = 636
+local num_6 = num_4 - num_3 * 2
+local tbl = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -15,8 +15,8 @@ local var_0_6 = {
 			UILayer.item_display_popup
 		},
 		size = {
-			var_0_0,
-			var_0_1
+			num,
+			num_2
 		}
 	},
 	background = {
@@ -43,8 +43,8 @@ local var_0_6 = {
 			2
 		},
 		size = {
-			var_0_3,
-			var_0_4
+			num_4,
+			num_5
 		}
 	},
 	window_top_detail = {
@@ -71,7 +71,7 @@ local var_0_6 = {
 			0
 		},
 		size = {
-			var_0_5,
+			num_6,
 			380
 		}
 	},
@@ -90,7 +90,7 @@ local var_0_6 = {
 		}
 	}
 }
-local var_0_7 = {
+local tbl_2 = {
 	word_wrap = true,
 	upper_case = false,
 	localize = true,
@@ -106,33 +106,36 @@ local var_0_7 = {
 		2
 	}
 }
-local var_0_8 = true
-local var_0_9 = {
+local flag = true
+local tbl_3 = {
 	window_background = UIWidgets.create_simple_texture("wom_upsell_popup_bg", "window"),
 	window_top_detail = UIWidgets.create_simple_texture("tab_selection_01_bottom", "window_top_detail"),
-	window_frame = UIWidgets.create_frame("window", var_0_6.window.size, "upsell_image_keyart_frame", 5),
+	window_frame = UIWidgets.create_frame("window", tbl.window.size, "upsell_image_keyart_frame", 5),
 	screen_background = UIWidgets.create_simple_rect("screen", {
 		150,
 		0,
 		0,
 		0
 	}),
-	body_text = UIWidgets.create_simple_text("not_assigned", "body", nil, nil, var_0_7),
-	ok_button = UIWidgets.create_default_button("ok_button", var_0_6.ok_button.size, "upsell_image_button_frame", "button_bg_01", "", nil, nil, nil, nil, var_0_8, true)
+	body_text = UIWidgets.create_simple_text("not_assigned", "body", nil, nil, tbl_2),
+	ok_button = UIWidgets.create_default_button("ok_button", tbl.ok_button.size, "upsell_image_button_frame", "button_bg_01", "", nil, nil, nil, nil, flag, true)
 }
-local var_0_10 = {
+local tbl_4 = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+				-- function 1
 				arg_1_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+				-- function 2
 				arg_2_4.render_settings.alpha_multiplier = math.easeOutCubic(arg_2_3)
 			end,
-			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+				-- function 3
 				return
 			end
 		}
@@ -142,23 +145,26 @@ local var_0_10 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				-- function 4
 				return
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+				-- function 5
 				arg_5_4.render_settings.alpha_multiplier = 1 - math.easeOutCubic(arg_5_3)
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+				-- function 6
 				return
 			end
 		}
 	}
 }
-local var_0_11 = {}
+local tbl_5 = {}
 
 return {
-	scenegraph_definition = var_0_6,
-	widget_definitions = var_0_9,
-	animation_definitions = var_0_10,
-	generic_input_actions = var_0_11
+	scenegraph_definition = tbl,
+	widget_definitions = tbl_3,
+	animation_definitions = tbl_4,
+	generic_input_actions = tbl_5
 }

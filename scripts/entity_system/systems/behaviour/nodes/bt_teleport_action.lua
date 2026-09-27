@@ -4,58 +4,65 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTTeleportAction = class(BTTeleportAction, BTNode)
 
-function BTTeleportAction.init(arg_1_0, ...)
+BTTeleportAction.init = function (arg_1_0, ...)
+	-- function 1
 	BTTeleportAction.super.init(arg_1_0, ...)
 end
 
 BTTeleportAction.name = "BTTeleportAction"
 
-function BTTeleportAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTTeleportAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	-- function 2
 	local var_2_0 = POSITION_LOOKUP[arg_2_1]
-	local var_2_1 = arg_2_2.next_smart_object_data
-	local var_2_2 = var_2_1.entrance_pos:unbox()
-	local var_2_3 = var_2_1.exit_pos:unbox()
+	local next_smart_object_data = arg_2_2.next_smart_object_data
+	local unbox = next_smart_object_data.entrance_pos:unbox()
+	local unbox_2 = next_smart_object_data.exit_pos:unbox()
 
-	arg_2_2.smart_object_data = var_2_1.smart_object_data
-	arg_2_2.teleport_position = Vector3Box(var_2_3)
-	arg_2_2.entrance_position = Vector3Box(var_2_2)
+	arg_2_2.smart_object_data = next_smart_object_data.smart_object_data
+	arg_2_2.teleport_position = Vector3Box(unbox_2)
+	arg_2_2.entrance_position = Vector3Box(unbox)
 end
 
-function BTTeleportAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTTeleportAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	-- function 3
 	arg_3_2.teleport_position = nil
 	arg_3_2.entrance_position = nil
 	arg_3_2.teleport_timeout = nil
 
-	local var_3_0 = arg_3_2.navigation_extension
+	local navigation_extension = arg_3_2.navigation_extension
 
-	if var_3_0:is_using_smart_object() then
-		local var_3_1 = var_3_0:use_smart_object(false)
+	if not navigation_extension:is_using_smart_object() then
+		local use_smart_object = navigation_extension:use_smart_object(false)
 	end
 end
 
-function BTTeleportAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTTeleportAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	-- function 4
 	if arg_4_2.smart_object_data ~= arg_4_2.next_smart_object_data.smart_object_data then
 		return "failed"
 	end
 
-	local var_4_0 = arg_4_2.navigation_extension
-	local var_4_1 = arg_4_2.locomotion_extension
+	local navigation_extension = arg_4_2.navigation_extension
+	local locomotion_extension = arg_4_2.locomotion_extension
 	local var_4_2 = POSITION_LOOKUP[arg_4_1]
-	local var_4_3 = arg_4_2.entrance_position:unbox() - var_4_2
-	local var_4_4 = Vector3.normalize(var_4_0:desired_velocity())
+	local num = arg_4_2.entrance_position:unbox() - var_4_2
+	local normalize = Vector3.normalize(navigation_extension:desired_velocity())
 
-	if Vector3.length(Vector3.flat(var_4_4)) < 0.05 and Vector3.dot(var_4_4, Vector3.normalize(var_4_3)) > 0.99 then
-		arg_4_2.teleport_timeout = arg_4_2.teleport_timeout or arg_4_3 + 0.3
+	if not (not (Vector3.length(Vector3.flat(normalize)) < 0.05) or not (Vector3.dot(normalize, Vector3.normalize(num)) > 0.99)) then
+		local teleport_timeout = arg_4_2.teleport_timeout
+
+		teleport_timeout = teleport_timeout or arg_4_3 + 0.3
+		arg_4_2.teleport_timeout = teleport_timeout
 	else
 		arg_4_2.teleport_timeout = nil
 	end
 
-	if var_4_3.x + var_4_3.y + var_4_3.z < 1 or arg_4_2.teleport_timeout and arg_4_3 > arg_4_2.teleport_timeout then
-		local var_4_5 = arg_4_2.teleport_position:unbox()
+	if not ((num.x + num.y + num.z < 1 or not arg_4_2.teleport_timeout) and not (arg_4_3 > arg_4_2.teleport_timeout)) then
+		local unbox = arg_4_2.teleport_position:unbox()
 
-		var_4_0:set_navbot_position(var_4_5)
-		var_4_1:teleport_to(var_4_5)
-		var_4_1:set_wanted_velocity(Vector3.zero())
+		navigation_extension:set_navbot_position(unbox)
+		locomotion_extension:teleport_to(unbox)
+		locomotion_extension:set_wanted_velocity(Vector3.zero())
 
 		return "done"
 	else

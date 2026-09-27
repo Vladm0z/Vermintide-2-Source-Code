@@ -4,30 +4,33 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTPackMasterHoistAction = class(BTPackMasterHoistAction, BTNode)
 
-function BTPackMasterHoistAction.init(arg_1_0, ...)
+BTPackMasterHoistAction.init = function (arg_1_0, ...)
+	-- function 1
 	BTPackMasterHoistAction.super.init(arg_1_0, ...)
 end
 
 BTPackMasterHoistAction.name = "BTPackMasterHoistAction"
 
-function BTPackMasterHoistAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
-	local var_2_0 = arg_2_0._tree_node.action_data
+BTPackMasterHoistAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+	-- function 2
+	local action_data = self._tree_node.action_data
 
-	arg_2_2.action = var_2_0
-	arg_2_2.hosting_end_time = arg_2_3 + var_2_0.hoist_anim_length
+	arg_2_2.action = action_data
+	arg_2_2.hosting_end_time = arg_2_3 + action_data.hoist_anim_length
 
 	StatusUtils.set_grabbed_by_pack_master_network("pack_master_hoisting", arg_2_2.drag_target_unit, true, arg_2_1)
 	LocomotionUtils.set_animation_driven_movement(arg_2_1, true, false, false)
 	AiUtils.show_polearm(arg_2_1, false)
 end
 
-function BTPackMasterHoistAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTPackMasterHoistAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	-- function 3
 	if arg_3_4 == "done" then
 		arg_3_2.needs_hook = true
 
 		AiUtils.show_polearm(arg_3_1, false)
 	else
-		if Unit.alive(arg_3_2.drag_target_unit) then
+		if not Unit.alive(arg_3_2.drag_target_unit) then
 			StatusUtils.set_grabbed_by_pack_master_network("pack_master_hoisting", arg_3_2.drag_target_unit, false, arg_3_1)
 		end
 
@@ -45,15 +48,16 @@ function BTPackMasterHoistAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3
 	end
 end
 
-function BTPackMasterHoistAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-	local var_4_0 = arg_4_2.drag_target_unit
+BTPackMasterHoistAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	-- function 4
+	local drag_target_unit = arg_4_2.drag_target_unit
 
-	if not AiUtils.is_of_interest_to_packmaster(arg_4_1, var_4_0) and not ScriptUnit.extension(var_4_0, "status_system"):is_knocked_down() then
+	if not (AiUtils.is_of_interest_to_packmaster(arg_4_1, drag_target_unit) or ScriptUnit.extension(drag_target_unit, "status_system"):is_knocked_down()) then
 		return "failed"
 	end
 
 	if arg_4_3 > arg_4_2.hosting_end_time then
-		StatusUtils.set_grabbed_by_pack_master_network("pack_master_hanging", var_4_0, true, arg_4_1)
+		StatusUtils.set_grabbed_by_pack_master_network("pack_master_hanging", drag_target_unit, true, arg_4_1)
 
 		return "done"
 	end

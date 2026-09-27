@@ -2,8 +2,16 @@
 
 require("scripts/entity_system/systems/buff/buff_sync_type")
 
+local Pickups = Pickups
+
 Pickups = Pickups or {}
-Pickups.healing = Pickups.healing or {}
+Pickups = Pickups
+
+local Pickups_2 = Pickups
+local healing = Pickups.healing
+
+healing = healing or {}
+Pickups_2.healing = healing
 Pickups.healing.first_aid_kit = {
 	only_once = true,
 	individual_pickup = false,
@@ -36,7 +44,12 @@ Pickups.healing.healing_draught = {
 	local_pickup_sound = true,
 	hud_description = "potion_healing_draught_01"
 }
-Pickups.potions = Pickups.potions or {}
+
+local Pickups_3 = Pickups
+local potions = Pickups.potions
+
+potions = potions or {}
+Pickups_3.potions = potions
 Pickups.potions.damage_boost_potion = {
 	only_once = true,
 	individual_pickup = false,
@@ -88,7 +101,12 @@ Pickups.potions.cooldown_reduction_potion = {
 	local_pickup_sound = true,
 	hud_description = "potion_cooldown_reduction_01"
 }
-Pickups.level_events = Pickups.level_events or {}
+
+local Pickups_4 = Pickups
+local level_events = Pickups.level_events
+
+level_events = level_events or {}
+Pickups_4.level_events = level_events
 Pickups.level_events.grain_sack = {
 	only_once = true,
 	individual_pickup = false,
@@ -130,21 +148,24 @@ Pickups.level_events.training_dummy_bob = {
 	unit_template_name = "ai_unit_training_dummy_bob",
 	wield_on_pickup = true,
 	hud_description = "dummy_description",
-	spawn_override_func = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-		local var_1_0 = Breeds.training_dummy
-		local var_1_1 = {
+	spawn_override_func = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+		-- function 1
+		local training_dummy = Breeds.training_dummy
+		local tbl = {
 			side_id = 2,
-			prepare_func = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			prepare_func = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+				-- function 2
 				arg_2_1.projectile_locomotion_system = arg_1_1.projectile_locomotion_system
 				arg_2_1.pickup_system = arg_1_1.pickup_system
 			end,
-			spawned_func = function(arg_3_0, arg_3_1, arg_3_2)
+			spawned_func = function (arg_3_0, arg_3_1, arg_3_2)
+				-- function 3
 				Managers.state.entity:system("ai_system"):set_attribute(arg_3_0, "armor", "training_dummy", false)
 			end
 		}
-		local var_1_2, var_1_3 = Managers.state.conflict:spawn_unit_immediate(var_1_0, arg_1_2, arg_1_3, "pickup", nil, nil, var_1_1)
+		local spawn_unit_immediate, var_1_3 = Managers.state.conflict:spawn_unit_immediate(training_dummy, arg_1_2, arg_1_3, "pickup", nil, nil, tbl)
 
-		return var_1_2, var_1_3
+		return spawn_unit_immediate, var_1_3
 	end
 }
 Pickups.level_events.training_dummy_armored_bob = {
@@ -160,21 +181,24 @@ Pickups.level_events.training_dummy_armored_bob = {
 	unit_template_name = "ai_unit_training_dummy_bob",
 	wield_on_pickup = true,
 	hud_description = "dummy_description",
-	spawn_override_func = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
-		local var_4_0 = Breeds.training_dummy
-		local var_4_1 = {
+	spawn_override_func = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+		-- function 4
+		local training_dummy = Breeds.training_dummy
+		local tbl = {
 			side_id = 2,
-			prepare_func = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			prepare_func = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+				-- function 5
 				arg_5_1.projectile_locomotion_system = arg_4_1.projectile_locomotion_system
 				arg_5_1.pickup_system = arg_4_1.pickup_system
 			end,
-			spawned_func = function(arg_6_0, arg_6_1, arg_6_2)
+			spawned_func = function (arg_6_0, arg_6_1, arg_6_2)
+				-- function 6
 				Managers.state.entity:system("ai_system"):set_attribute(arg_6_0, "armor", "training_dummy", true)
 			end
 		}
-		local var_4_2, var_4_3 = Managers.state.conflict:spawn_unit_immediate(var_4_0, arg_4_2, arg_4_3, "pickup", nil, nil, var_4_1)
+		local spawn_unit_immediate, var_4_3 = Managers.state.conflict:spawn_unit_immediate(training_dummy, arg_4_2, arg_4_3, "pickup", nil, nil, tbl)
 
-		return var_4_2, var_4_3
+		return spawn_unit_immediate, var_4_3
 	end
 }
 Pickups.level_events.torch = {
@@ -191,8 +215,9 @@ Pickups.level_events.torch = {
 	unit_template_name = "pickup_torch_unit_init",
 	wield_on_pickup = true,
 	hud_description = "interaction_torch",
-	on_pick_up_func = function(arg_7_0, arg_7_1, arg_7_2)
-		if arg_7_2 then
+	on_pick_up_func = function (arg_7_0, arg_7_1, arg_7_2)
+		-- function 7
+		if not arg_7_2 then
 			LevelHelper:flow_event(arg_7_0, "lua_torch_picked_up")
 		end
 	end
@@ -211,8 +236,9 @@ Pickups.level_events.mutator_torch = {
 	unit_template_name = "pickup_torch_unit",
 	wield_on_pickup = true,
 	hud_description = "interaction_torch",
-	on_pick_up_func = function(arg_8_0, arg_8_1, arg_8_2)
-		if arg_8_2 then
+	on_pick_up_func = function (arg_8_0, arg_8_1, arg_8_2)
+		-- function 8
+		if not arg_8_2 then
 			LevelHelper:flow_event(arg_8_0, "lua_torch_picked_up")
 		end
 	end
@@ -231,8 +257,9 @@ Pickups.level_events.shadow_torch = {
 	unit_template_name = "pickup_torch_unit_init",
 	wield_on_pickup = true,
 	hud_description = "interaction_torch",
-	on_pick_up_func = function(arg_9_0, arg_9_1, arg_9_2)
-		if arg_9_2 then
+	on_pick_up_func = function (arg_9_0, arg_9_1, arg_9_2)
+		-- function 9
+		if not arg_9_2 then
 			LevelHelper:flow_event(arg_9_0, "lua_torch_picked_up")
 		end
 	end
@@ -340,10 +367,11 @@ Pickups.level_events.wizards_barrel = {
 	unit_template_name = "explosive_pickup_projectile_unit_limited",
 	wield_on_pickup = true,
 	hud_description = "wizards_barrel",
-	on_pick_up_func = function(arg_10_0, arg_10_1, arg_10_2)
+	on_pick_up_func = function (arg_10_0, arg_10_1, arg_10_2)
+		-- function 10
 		Managers.state.event:trigger("set_tower_skulls_target", arg_10_1)
 
-		if arg_10_2 then
+		if not arg_10_2 then
 			AIGroupTemplates.ethereal_skulls.try_spawn_group("picked_up", arg_10_1)
 		end
 	end
@@ -503,7 +531,12 @@ Pickups.level_events.shadow_gargoyle_head = {
 	wield_on_pickup = true,
 	hud_description = "gargoyle_head"
 }
-Pickups.ammo = Pickups.ammo or {}
+
+local Pickups_5 = Pickups
+local ammo = Pickups.ammo
+
+ammo = ammo or {}
+Pickups_5.ammo = ammo
 Pickups.ammo.all_ammo = {
 	only_once = false,
 	individual_pickup = false,
@@ -515,22 +548,28 @@ Pickups.ammo.all_ammo = {
 	consumable_item = true,
 	local_pickup_sound = true,
 	hud_description = "interaction_ammunition_crate",
-	pickup_sound_event_func = function(arg_11_0, arg_11_1, arg_11_2)
-		return ScriptUnit.extension(arg_11_0, "inventory_system"):has_full_ammo() and "pickup_ammo_full" or "pickup_ammo"
-	end,
-	can_interact_func = function(arg_12_0, arg_12_1, arg_12_2)
-		local var_12_0 = ScriptUnit.has_extension(arg_12_0, "inventory_system")
+	pickup_sound_event_func = function (arg_11_0, arg_11_1, arg_11_2)
+		-- function 11
+		local flag
 
-		if not var_12_0 then
+		flag = not ScriptUnit.extension(arg_11_0, "inventory_system"):has_full_ammo() and "pickup_ammo_full" and "pickup_ammo"
+
+		return flag
+	end,
+	can_interact_func = function (arg_12_0, arg_12_1, arg_12_2)
+		-- function 12
+		local has_extension = ScriptUnit.has_extension(arg_12_0, "inventory_system")
+
+		if not has_extension then
 			return false
 		end
 
-		local var_12_1 = var_12_0:has_ammo_consuming_weapon_equipped()
-		local var_12_2 = var_12_0:has_ammo_consuming_weapon_equipped("throwing_axe")
-		local var_12_3 = var_12_0:has_infinite_ammo()
+		local has_ammo_consuming_weapon_equipped = has_extension:has_ammo_consuming_weapon_equipped()
+		local has_ammo_consuming_weapon_equipped_2 = has_extension:has_ammo_consuming_weapon_equipped("throwing_axe")
+		local has_infinite_ammo = has_extension:has_infinite_ammo()
 
-		if not var_12_2 then
-			return var_12_1 and not var_12_3
+		if not has_ammo_consuming_weapon_equipped_2 then
+			return not has_ammo_consuming_weapon_equipped and not has_infinite_ammo
 		end
 
 		return true
@@ -548,18 +587,19 @@ Pickups.ammo.all_ammo_small = {
 	consumable_item = true,
 	local_pickup_sound = true,
 	hud_description = "interaction_ammunition",
-	can_interact_func = function(arg_13_0, arg_13_1, arg_13_2)
-		local var_13_0 = ScriptUnit.has_extension(arg_13_0, "inventory_system")
+	can_interact_func = function (arg_13_0, arg_13_1, arg_13_2)
+		-- function 13
+		local has_extension = ScriptUnit.has_extension(arg_13_0, "inventory_system")
 
-		if not var_13_0 then
+		if not has_extension then
 			return false
 		end
 
-		local var_13_1 = var_13_0:has_ammo_consuming_weapon_equipped()
-		local var_13_2 = var_13_0:has_ammo_consuming_weapon_equipped("throwing_axe")
-		local var_13_3 = var_13_0:has_infinite_ammo()
+		local has_ammo_consuming_weapon_equipped = has_extension:has_ammo_consuming_weapon_equipped()
+		local has_ammo_consuming_weapon_equipped_2 = has_extension:has_ammo_consuming_weapon_equipped("throwing_axe")
+		local has_infinite_ammo = has_extension:has_infinite_ammo()
 
-		return var_13_1 and not var_13_2 and not var_13_3
+		return not has_ammo_consuming_weapon_equipped and not not has_ammo_consuming_weapon_equipped_2 or not has_infinite_ammo
 	end
 }
 Pickups.ammo.ammo_ranger = {
@@ -576,18 +616,19 @@ Pickups.ammo.ammo_ranger = {
 	consumable_item = true,
 	local_pickup_sound = true,
 	hud_description = "interaction_ranger_ammunition",
-	can_interact_func = function(arg_14_0, arg_14_1, arg_14_2)
-		local var_14_0 = ScriptUnit.has_extension(arg_14_0, "inventory_system")
+	can_interact_func = function (arg_14_0, arg_14_1, arg_14_2)
+		-- function 14
+		local has_extension = ScriptUnit.has_extension(arg_14_0, "inventory_system")
 
-		if not var_14_0 then
+		if not has_extension then
 			return false
 		end
 
-		local var_14_1 = var_14_0:has_ammo_consuming_weapon_equipped()
-		local var_14_2 = var_14_0:has_ammo_consuming_weapon_equipped("throwing_axe")
-		local var_14_3 = var_14_0:has_infinite_ammo()
+		local has_ammo_consuming_weapon_equipped = has_extension:has_ammo_consuming_weapon_equipped()
+		local has_ammo_consuming_weapon_equipped_2 = has_extension:has_ammo_consuming_weapon_equipped("throwing_axe")
+		local has_infinite_ammo = has_extension:has_infinite_ammo()
 
-		return var_14_1 and not var_14_2 and not var_14_3
+		return not has_ammo_consuming_weapon_equipped and not not has_ammo_consuming_weapon_equipped_2 or not has_infinite_ammo
 	end
 }
 Pickups.ammo.ammo_ranger_improved = {
@@ -604,21 +645,27 @@ Pickups.ammo.ammo_ranger_improved = {
 	consumable_item = true,
 	local_pickup_sound = true,
 	hud_description = "interaction_ranger_ammunition_improved",
-	can_interact_func = function(arg_15_0, arg_15_1, arg_15_2)
-		local var_15_0 = ScriptUnit.has_extension(arg_15_0, "inventory_system")
+	can_interact_func = function (arg_15_0, arg_15_1, arg_15_2)
+		-- function 15
+		local has_extension = ScriptUnit.has_extension(arg_15_0, "inventory_system")
 
-		if not var_15_0 then
+		if not has_extension then
 			return false
 		end
 
-		local var_15_1 = var_15_0:has_ammo_consuming_weapon_equipped()
-		local var_15_2 = var_15_0:has_ammo_consuming_weapon_equipped("throwing_axe")
-		local var_15_3 = var_15_0:has_infinite_ammo()
+		local has_ammo_consuming_weapon_equipped = has_extension:has_ammo_consuming_weapon_equipped()
+		local has_ammo_consuming_weapon_equipped_2 = has_extension:has_ammo_consuming_weapon_equipped("throwing_axe")
+		local has_infinite_ammo = has_extension:has_infinite_ammo()
 
-		return var_15_1 and not var_15_2 and not var_15_3
+		return not has_ammo_consuming_weapon_equipped and not not has_ammo_consuming_weapon_equipped_2 or not has_infinite_ammo
 	end
 }
-Pickups.grenades = Pickups.grenades or {}
+
+local Pickups_6 = Pickups
+local grenades = Pickups.grenades
+
+grenades = grenades or {}
+Pickups_6.grenades = grenades
 Pickups.grenades.frag_grenade_t1 = {
 	only_once = true,
 	individual_pickup = false,
@@ -653,7 +700,12 @@ Pickups.grenades.fire_grenade_t1 = {
 	local_pickup_sound = true,
 	hud_description = "grenade_fire"
 }
-Pickups.improved_grenades = Pickups.improved_grenades or {}
+
+local Pickups_7 = Pickups
+local improved_grenades = Pickups.improved_grenades
+
+improved_grenades = improved_grenades or {}
+Pickups_7.improved_grenades = improved_grenades
 Pickups.improved_grenades.frag_grenade_t2 = {
 	only_once = true,
 	individual_pickup = false,
@@ -717,16 +769,17 @@ Pickups.special.loot_die = {
 	unit_name = "units/props/dice_bowl/pup_loot_die",
 	local_pickup_sound = false,
 	hud_description = "interaction_loot_dice",
-	can_spawn_func = function(arg_16_0, arg_16_1)
-		if arg_16_1 then
+	can_spawn_func = function (self, arg_16_1)
+		-- function 16
+		if not arg_16_1 then
 			return true
 		end
 
-		if not arg_16_0 then
+		if not self then
 			return true
 		end
 
-		return arg_16_0.dice_keeper:num_bonus_dice_spawned() < 2
+		return self.dice_keeper:num_bonus_dice_spawned() < 2
 	end
 }
 Pickups.special.bardin_survival_ale = {
@@ -748,15 +801,17 @@ Pickups.special.bardin_survival_ale = {
 		action = "action_one",
 		sub_action = "default"
 	},
-	on_pick_up_func = function(arg_17_0, arg_17_1, arg_17_2)
+	on_pick_up_func = function (arg_17_0, arg_17_1, arg_17_2)
+		-- function 17
 		ScriptUnit.extension(arg_17_1, "buff_system"):add_buff("intoxication_base")
 	end,
-	can_interact_func = function(arg_18_0, arg_18_1, arg_18_2)
-		local var_18_0 = ScriptUnit.extension(arg_18_0, "buff_system")
-		local var_18_1 = var_18_0:has_buff_type("beer_bottle_pickup_cooldown")
-		local var_18_2 = var_18_0:has_buff_perk("falling_down")
+	can_interact_func = function (arg_18_0, arg_18_1, arg_18_2)
+		-- function 18
+		local extension = ScriptUnit.extension(arg_18_0, "buff_system")
+		local has_buff_type = extension:has_buff_type("beer_bottle_pickup_cooldown")
+		local has_buff_perk = extension:has_buff_perk("falling_down")
 
-		return not var_18_1 and not var_18_2
+		return not not has_buff_type or not has_buff_perk
 	end
 }
 Pickups.special.necromancer_ripped_soul = {
@@ -771,10 +826,11 @@ Pickups.special.necromancer_ripped_soul = {
 	granted_buff = "sienna_necromancer_4_2_soul_rip_stack",
 	spawn_weighting = 1e-06,
 	buff_sync_type = BuffSyncType.Local,
-	can_pickup_orb = function(arg_19_0, arg_19_1)
-		local var_19_0 = ScriptUnit.has_extension(arg_19_1, "career_system")
+	can_pickup_orb = function (arg_19_0, arg_19_1)
+		-- function 19
+		local has_extension = ScriptUnit.has_extension(arg_19_1, "career_system")
 
-		if var_19_0 and var_19_0:career_name() == "bw_necromancer" then
+		if not (not has_extension and has_extension:career_name() ~= "bw_necromancer") then
 			return true
 		end
 	end,
@@ -794,8 +850,12 @@ Pickups.special.necromancer_ripped_soul = {
 	}
 }
 
-if script_data then
-	script_data.lorebook_enabled = script_data.lorebook_enabled or Development.parameter("lorebook_enabled")
+if not script_data then
+	local script_data = script_data
+	local lorebook_enabled = script_data.lorebook_enabled
+
+	lorebook_enabled = lorebook_enabled or Development.parameter("lorebook_enabled")
+	script_data.lorebook_enabled = lorebook_enabled
 end
 
 Pickups.lorebook_pages = {}
@@ -808,31 +868,33 @@ Pickups.lorebook_pages.lorebook_page = {
 	debug_pickup_category = "special",
 	unit_name = "units/weapons/player/pup_lore_page/pup_lore_page_01",
 	hud_description = "interaction_lorebook_page",
-	hide_func = function(arg_20_0)
-		local var_20_0 = Managers.state.game_mode:level_key()
-		local var_20_1 = LorebookCollectablePages[var_20_0]
+	hide_func = function (self)
+		-- function 20
+		local level_key = Managers.state.game_mode:level_key()
+		local var_20_1 = LorebookCollectablePages[level_key]
 
 		fassert(var_20_1, "Trying to a pick up a lorebook page on a level where pages can not be unlocked")
 
-		local var_20_2 = #var_20_1
-		local var_20_3 = Managers.player:local_player():stats_id()
-		local var_20_4 = true
+		local count = #var_20_1
+		local stats_id = Managers.player:local_player():stats_id()
+		local flag = true
 
-		for iter_20_0 = 1, var_20_2 do
-			local var_20_5 = var_20_1[iter_20_0]
+		for i = 1, count do
+			local var_20_5 = var_20_1[i]
 			local var_20_6 = LorebookCategoryLookup[var_20_5]
 
-			if not arg_20_0:get_persistent_array_stat(var_20_3, "lorebook_unlocks", var_20_6) then
-				var_20_4 = false
+			if not self:get_persistent_array_stat(stats_id, "lorebook_unlocks", var_20_6) then
+				flag = false
 
 				break
 			end
 		end
 
-		return var_20_4
+		return flag
 	end,
-	can_spawn_func = function(arg_21_0, arg_21_1)
-		if arg_21_1 then
+	can_spawn_func = function (arg_21_0, arg_21_1)
+		-- function 21
+		if not arg_21_1 then
 			return true
 		end
 
@@ -840,9 +902,9 @@ Pickups.lorebook_pages.lorebook_page = {
 			return false
 		end
 
-		local var_21_0 = Managers.state.game_mode:level_key()
+		local level_key = Managers.state.game_mode:level_key()
 
-		if LorebookCollectablePages[var_21_0] then
+		if not LorebookCollectablePages[level_key] then
 			return true
 		end
 
@@ -861,7 +923,8 @@ Pickups.painting_scrap.painting_scrap = {
 	unit_name = "units/weapons/player/pup_painting/pup_painting_scraps",
 	local_pickup_sound = true,
 	hud_description = "ravaged_art",
-	can_spawn_func = function(arg_22_0, arg_22_1)
+	can_spawn_func = function (arg_22_0, arg_22_1)
+		-- function 22
 		return true
 	end
 }
@@ -892,51 +955,58 @@ LootRatPickups = {
 }
 BardinScavengerCustomPotions = {}
 
-for iter_0_0, iter_0_1 in pairs(DLCSettings) do
-	local var_0_0 = iter_0_1.loot_rat_pickups
+for k, v in pairs(DLCSettings) do
+	local loot_rat_pickups = v.loot_rat_pickups
 
-	if var_0_0 then
-		table.merge(LootRatPickups, var_0_0)
+	if not loot_rat_pickups then
+		table.merge(LootRatPickups, loot_rat_pickups)
 	end
 
-	local var_0_1 = iter_0_1.bardin_scavenger_custom_potions
+	local bardin_scavenger_custom_potions = v.bardin_scavenger_custom_potions
 
-	if var_0_1 then
-		table.merge(BardinScavengerCustomPotions, var_0_1)
+	if not bardin_scavenger_custom_potions then
+		table.merge(BardinScavengerCustomPotions, bardin_scavenger_custom_potions)
+	end
+end
+
+for k_2, v_2 in pairs(LootRatPickups) do
+	local num = 0
+
+	for k_3, v_3 in pairs(v_2) do
+		num = num + v_3
+	end
+
+	for k_4, v_4 in pairs(v_2) do
+		v_2[k_4] = v_4 / num
 	end
 end
 
-for iter_0_2, iter_0_3 in pairs(LootRatPickups) do
-	local var_0_2 = 0
-
-	for iter_0_4, iter_0_5 in pairs(iter_0_3) do
-		var_0_2 = var_0_2 + iter_0_5
-	end
-
-	for iter_0_6, iter_0_7 in pairs(iter_0_3) do
-		iter_0_3[iter_0_6] = iter_0_7 / var_0_2
-	end
-end
+local NearPickupSpawnChance = NearPickupSpawnChance
 
 NearPickupSpawnChance = NearPickupSpawnChance or {
 	grenades = 0.5,
 	healing = 0.7,
 	potions = 0.3
 }
+NearPickupSpawnChance = NearPickupSpawnChance
 AllPickups = {}
 
-for iter_0_8, iter_0_9 in pairs(Pickups) do
-	local var_0_3 = 0
+for k_5, v_5 in pairs(Pickups) do
+	local num_2 = 0
 
-	for iter_0_10, iter_0_11 in pairs(iter_0_9) do
-		var_0_3 = var_0_3 + iter_0_11.spawn_weighting
+	for k_6, v_6 in pairs(v_5) do
+		num_2 = num_2 + v_6.spawn_weighting
 	end
 
-	for iter_0_12, iter_0_13 in pairs(iter_0_9) do
-		iter_0_13.spawn_weighting = iter_0_13.spawn_weighting / var_0_3
-		iter_0_13.pickup_name = iter_0_12
-		AllPickups[iter_0_12] = iter_0_13
+	for k_7, v_7 in pairs(v_5) do
+		v_7.spawn_weighting = v_7.spawn_weighting / num_2
+		v_7.pickup_name = k_7
+		AllPickups[k_7] = v_7
 	end
 
-	NearPickupSpawnChance[iter_0_8] = NearPickupSpawnChance[iter_0_8] or 0
+	local NearPickupSpawnChance_2 = NearPickupSpawnChance
+	local var_0_21 = NearPickupSpawnChance[k_5]
+
+	var_0_21 = var_0_21 or 0
+	NearPickupSpawnChance_2[k_5] = var_0_21
 end

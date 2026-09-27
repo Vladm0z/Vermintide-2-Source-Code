@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/breeds/breed_training_dummy.lua
 
-local var_0_0 = 2
-local var_0_1 = {
+local num = 2
+local tbl = {
 	detection_radius = 12,
 	bot_melee_aim_node = "j_neck",
 	target_selection = "pick_closest_target",
@@ -57,15 +57,15 @@ local var_0_1 = {
 	has_inventory = false,
 	infighting = InfightingSettings.small,
 	max_health = {
-		25 * var_0_0,
-		25 * var_0_0,
-		37.5 * var_0_0,
-		50 * var_0_0,
-		75 * var_0_0,
-		75 * var_0_0,
-		75 * var_0_0,
-		75 * var_0_0,
-		25 * var_0_0
+		25 * num,
+		25 * num,
+		37.5 * num,
+		50 * num,
+		75 * num,
+		75 * num,
+		75 * num,
+		75 * num,
+		25 * num
 	},
 	hit_mass_counts = BreedTweaks.hit_mass_counts.marauder,
 	stagger_duration = {
@@ -140,32 +140,52 @@ local var_0_1 = {
 			}
 		}
 	},
-	modify_extension_init_data = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
-		local var_1_0 = arg_1_1.projectile_locomotion_system or {}
+	modify_extension_init_data = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+		-- function 1
+		local projectile_locomotion_system = arg_1_1.projectile_locomotion_system
 
-		var_1_0.network_position = arg_1_1.network_position or AiAnimUtils.position_network_scale(arg_1_3, true)
-		var_1_0.network_rotation = arg_1_1.network_rotation or AiAnimUtils.rotation_network_scale(arg_1_4, true)
-		var_1_0.network_velocity = arg_1_1.network_velocity or AiAnimUtils.velocity_network_scale(Vector3.zero(), true)
-		var_1_0.network_angular_velocity = arg_1_1.network_angular_velocity or AiAnimUtils.velocity_network_scale(Vector3.zero(), true)
-		arg_1_1.projectile_locomotion_system = var_1_0
+		projectile_locomotion_system = projectile_locomotion_system or {}
 
-		local var_1_1 = arg_1_1.pickup_system or {}
+		local network_position = arg_1_1.network_position
 
-		var_1_1.has_physics = false
-		var_1_1.spawn_type = "debug"
-		var_1_1.pickup_name = "training_dummy_bob"
-		arg_1_1.pickup_system = var_1_1
+		network_position = network_position or AiAnimUtils.position_network_scale(arg_1_3, true)
+		projectile_locomotion_system.network_position = network_position
+
+		local network_rotation = arg_1_1.network_rotation
+
+		network_rotation = network_rotation or AiAnimUtils.rotation_network_scale(arg_1_4, true)
+		projectile_locomotion_system.network_rotation = network_rotation
+
+		local network_velocity = arg_1_1.network_velocity
+
+		network_velocity = network_velocity or AiAnimUtils.velocity_network_scale(Vector3.zero(), true)
+		projectile_locomotion_system.network_velocity = network_velocity
+
+		local network_angular_velocity = arg_1_1.network_angular_velocity
+
+		network_angular_velocity = network_angular_velocity or AiAnimUtils.velocity_network_scale(Vector3.zero(), true)
+		projectile_locomotion_system.network_angular_velocity = network_angular_velocity
+		arg_1_1.projectile_locomotion_system = projectile_locomotion_system
+
+		local pickup_system = arg_1_1.pickup_system
+
+		pickup_system = pickup_system or {}
+		pickup_system.has_physics = false
+		pickup_system.spawn_type = "debug"
+		pickup_system.pickup_name = "training_dummy_bob"
+		arg_1_1.pickup_system = pickup_system
 	end,
 	debug_spawn_optional_data = {
-		prepare_func = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
-			arg_2_0.modify_extension_init_data(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+		prepare_func = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			-- function 2
+			self.modify_extension_init_data(self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 		end
 	}
 }
 
-Breeds.training_dummy = table.create_copy(Breeds.training_dummy, var_0_1)
+Breeds.training_dummy = table.create_copy(Breeds.training_dummy, tbl)
 
-local var_0_2 = {
+local tbl_2 = {
 	dummy_idle = {},
 	stagger = {
 		stagger_anims = {
@@ -291,4 +311,4 @@ local var_0_2 = {
 	}
 }
 
-BreedActions.training_dummy = table.create_copy(BreedActions.training_dummy, var_0_2)
+BreedActions.training_dummy = table.create_copy(BreedActions.training_dummy, tbl_2)

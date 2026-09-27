@@ -175,25 +175,25 @@ if not StoreLayoutConfig then
 		display_name = "menu_store_panel_title_discounts"
 	}
 
-	local var_0_0 = {}
-	local var_0_1 = {}
-	local var_0_2 = {}
-	local var_0_3 = PLATFORM
+	local tbl = {}
+	local tbl_2 = {}
+	local tbl_3 = {}
+	local PLATFORM = PLATFORM
 
-	for iter_0_0, iter_0_1 in ipairs(StoreDlcSettings) do
-		local var_0_4 = iter_0_1.available_platforms
+	for i, v in ipairs(StoreDlcSettings) do
+		local available_platforms = v.available_platforms
 
-		if not var_0_4 or table.find(var_0_4, var_0_3) then
-			if iter_0_1.is_bundle then
-				var_0_1[#var_0_1 + 1] = iter_0_1.dlc_name
-				var_0_2[iter_0_1.dlc_name] = iter_0_1
+		if not available_platforms and not table.find(available_platforms, PLATFORM) then
+			if not v.is_bundle then
+				tbl_2[#tbl_2 + 1] = v.dlc_name
+				tbl_3[v.dlc_name] = v
 			else
-				var_0_0[#var_0_0 + 1] = iter_0_1.dlc_name
+				tbl[#tbl + 1] = v.dlc_name
 			end
 		end
 	end
 
-	if IS_CONSOLE then
+	if not IS_CONSOLE then
 		StoreLayoutConfig.pages.bundles = {
 			sound_event_enter = "Play_hud_store_category_button",
 			layout = "dlc_list",
@@ -201,17 +201,17 @@ if not StoreLayoutConfig then
 			type = "dlc",
 			category_button_texture = "store_category_icon_weapons",
 			sort_order = 3,
-			content = var_0_1
+			content = tbl_2
 		}
 
-		for iter_0_2, iter_0_3 in pairs(var_0_2) do
-			StoreLayoutConfig.pages[iter_0_2] = {
+		for k, v_2 in pairs(tbl_3) do
+			StoreLayoutConfig.pages[k] = {
 				layout = "item_list",
 				type = "bundle_items",
 				sort_order = 1,
-				dlc_name = iter_0_3.dlc_name,
-				bundle_contains = iter_0_3.bundle_contains,
-				display_name = iter_0_3.name
+				dlc_name = v_2.dlc_name,
+				bundle_contains = v_2.bundle_contains,
+				display_name = v_2.name
 			}
 		end
 	else
@@ -231,7 +231,7 @@ if not StoreLayoutConfig then
 		layout = "dlc_list",
 		display_name = "menu_store_panel_title_dlcs",
 		type = "dlc",
-		content = var_0_0
+		content = tbl
 	}
 
 	if not IS_CONSOLE then
@@ -636,143 +636,171 @@ if not StoreLayoutConfig then
 		category_button_texture = "store_category_icon_kruber_mercenary"
 	}
 
-	for iter_0_4, iter_0_5 in pairs(DLCSettings) do
-		local var_0_5 = iter_0_5.store_layout
+	for k_2, v_3 in pairs(DLCSettings) do
+		local store_layout = v_3.store_layout
 
-		if var_0_5 then
-			table.append_recursive(StoreLayoutConfig, var_0_5)
+		if not store_layout then
+			table.append_recursive(StoreLayoutConfig, store_layout)
 		end
 	end
 end
 
-function StoreLayoutConfig.make_sort_key(arg_1_0)
-	local var_1_0 = Managers.backend:get_interface("items")
-	local var_1_1 = arg_1_0.data
-	local var_1_2 = arg_1_0.key
-	local var_1_3 = var_1_2
-	local var_1_4 = arg_1_0.prio or 0
-	local var_1_5 = 0
-	local var_1_6 = arg_1_0.rarity or "plentiful"
-	local var_1_7 = ""
-	local var_1_8 = (var_1_0:has_item(var_1_2) or var_1_0:has_weapon_illusion(var_1_2)) and 2 or 0
+StoreLayoutConfig.make_sort_key = function (self)
+	-- function 1
+	local get_interface = Managers.backend:get_interface("items")
+	local data = self.data
+	local key = self.key
+	local var_1_3 = key
+	local prio = self.prio
 
-	if var_1_1 then
-		local var_1_9 = Managers.backend:get_interface("live_events")
-		local var_1_10 = var_1_9 and var_1_9:get_active_events()
+	prio = prio or 0
 
-		if var_1_10 then
+	local num = 0
+	local rarity = self.rarity
+
+	rarity = rarity or "plentiful"
+
+	local str = ""
+	local flag
+
+	flag = get_interface:has_item(key) or not get_interface:has_weapon_illusion(key) or 2 or 0
+
+	if not data then
+		local get_interface_2 = Managers.backend:get_interface("live_events")
+		local flag_2 = not get_interface_2 and get_interface_2:get_active_events()
+
+		if not flag_2 then
 			local var_1_11
 
-			if var_1_1 and var_1_1.events then
-				var_1_10 = table.mirror_array_inplace(var_1_10)
+			if not data and not data.events then
+				flag_2 = table.mirror_array_inplace(flag_2)
 
-				for iter_1_0 = 1, #var_1_1.events do
-					local var_1_12 = var_1_1.events[iter_1_0]
+				for i = 1, #data.events do
+					local var_1_12 = data.events[i]
 
-					if table.contains(var_1_10, var_1_12) then
-						var_1_11 = math.min(var_1_11 or math.huge, var_1_10[var_1_12])
+					if not table.contains(flag_2, var_1_12) then
+						var_1_11 = math.min(var_1_11 or math.huge, flag_2[var_1_12])
 					end
 				end
 			end
 
-			var_1_7 = (var_1_11 or #var_1_10 + 1) .. ".event"
+			str = (var_1_11 or #flag_2 + 1) .. ".event"
 		end
 
-		var_1_3 = var_1_1.item_type or arg_1_0.item_type
+		var_1_3 = data.item_type or self.item_type
 
 		if var_1_3 == "weapon_skin" then
-			var_1_3 = var_1_1.matching_item_key or "weapon_skin"
+			var_1_3 = data.matching_item_key or "weapon_skin"
 		else
-			var_1_3 = var_1_3 == "bundle" and "2.bundle" or var_1_3 == "skin" and "1.skin" or var_1_3 == "hat" and "0.hat" or var_1_2
+			var_1_3 = (var_1_3 ~= "bundle" or not "2.bundle" or var_1_3 ~= "skin") and (not "1.skin" or var_1_3 ~= "hat" or not "0.hat" or key)
 		end
 
-		var_1_4 = var_1_1.prio or var_1_4
-		var_1_6 = var_1_1.rarity or var_1_6
+		prio = data.prio or prio
+		rarity = data.rarity or rarity
 
-		local var_1_13 = arg_1_0.current_prices
+		local current_prices = self.current_prices
 
-		if var_1_13 then
-			var_1_5 = var_1_13.SM or 0
+		if not current_prices then
+			num = current_prices.SM or 0
 		end
 
-		if not var_1_8 and var_1_0:has_bundle_contents(var_1_1.bundle_contains) then
-			var_1_8 = 1
+		if flag or not get_interface:has_bundle_contents(data.bundle_contains) then
+			flag = 1
 		end
 	end
 
-	local var_1_14 = 65536 - var_1_4
+	local num_2 = 65536 - prio
 
-	if var_1_14 <= 0 then
-		var_1_14 = 1
+	if num_2 <= 0 then
+		num_2 = 1
 	end
 
-	return (string.format("%01x%s%-16.16s%03x%04x%01x", var_1_8, var_1_7, var_1_3, var_1_14, var_1_5, ORDER_RARITY[var_1_6] or 0))
+	local format = string.format
+	local str_2 = "%01x%s%-16.16s%03x%04x%01x"
+	local var_1_17 = flag
+	local var_1_18 = str
+	local var_1_19 = var_1_3
+	local var_1_20 = num_2
+	local var_1_21 = num
+	local var_1_22 = ORDER_RARITY[rarity]
+
+	var_1_22 = var_1_22 or 0
+
+	return (format(str_2, var_1_17, var_1_18, var_1_19, var_1_20, var_1_21, var_1_22))
 end
 
-function StoreLayoutConfig.compare_sort_key(arg_2_0, arg_2_1)
-	return arg_2_0.sort_key < arg_2_1.sort_key
+StoreLayoutConfig.compare_sort_key = function (self, arg_2_1)
+	-- function 2
+	return self.sort_key < arg_2_1.sort_key
 end
 
-function StoreLayoutConfig.get_item_filter(arg_3_0, arg_3_1)
-	local var_3_0 = StoreLayoutConfig.structure
-	local var_3_1 = StoreLayoutConfig.pages
-	local var_3_2 = StoreLayoutConfig.base_filter
-	local var_3_3 = var_3_2 == "" and 0 or 1
+StoreLayoutConfig.get_item_filter = function (arg_3_0, arg_3_1)
+	-- function 3
+	local structure = StoreLayoutConfig.structure
+	local pages = StoreLayoutConfig.pages
+	local base_filter = StoreLayoutConfig.base_filter
+	local flag
 
-	for iter_3_0, iter_3_1 in ipairs(arg_3_0) do
-		local var_3_4 = var_3_1[iter_3_1] or arg_3_1(iter_3_1)
-		local var_3_5 = var_3_4.item_filter
+	flag = base_filter ~= "" or not 0 or 1
 
-		if var_3_4.exclusive_filter then
-			var_3_2 = StoreLayoutConfig.base_filter .. " and " .. var_3_5
-			var_3_3 = 1
-		elseif var_3_5 then
-			var_3_2 = var_3_2 .. " and " .. var_3_5
-			var_3_3 = var_3_3 + 1
+	for i, v in ipairs(arg_3_0) do
+		local var_3_4 = pages[v]
+
+		var_3_4 = var_3_4 or arg_3_1(v)
+
+		local item_filter = var_3_4.item_filter
+
+		if not var_3_4.exclusive_filter then
+			base_filter = StoreLayoutConfig.base_filter .. " and " .. item_filter
+			flag = 1
+		elseif not item_filter then
+			base_filter = base_filter .. " and " .. item_filter
+			flag = flag + 1
 		end
 
-		if type(var_3_0) == "table" then
-			var_3_0 = var_3_0[iter_3_1]
+		if type(structure) == "table" then
+			structure = structure[v]
 		end
 	end
 
-	if type(var_3_0) == "table" then
-		local var_3_6 = StoreLayoutConfig._get_sub_filter(var_3_0)
+	if type(structure) == "table" then
+		local _get_sub_filter = StoreLayoutConfig._get_sub_filter(structure)
 
-		if var_3_6 then
-			var_3_2 = var_3_2 .. " and ( " .. var_3_6 .. " ) "
+		if not _get_sub_filter then
+			base_filter = base_filter .. " and ( " .. _get_sub_filter .. " ) "
 		end
 	end
 
-	return var_3_2
+	return base_filter
 end
 
-function StoreLayoutConfig._get_sub_filter(arg_4_0)
-	local var_4_0 = StoreLayoutConfig.pages
+StoreLayoutConfig._get_sub_filter = function (arg_4_0)
+	-- function 4
+	local pages = StoreLayoutConfig.pages
 	local var_4_1
 
-	for iter_4_0, iter_4_1 in pairs(arg_4_0) do
+	for k, v in pairs(arg_4_0) do
 		local var_4_2
-		local var_4_3 = var_4_0[iter_4_0]
+		local var_4_3 = pages[k]
 
-		if var_4_3 then
+		if not var_4_3 then
 			var_4_2 = var_4_3.item_filter
 		end
 
-		if type(iter_4_1) == "table" then
-			local var_4_4 = StoreLayoutConfig._get_sub_filter(iter_4_1)
+		if type(v) == "table" then
+			local _get_sub_filter = StoreLayoutConfig._get_sub_filter(v)
 
-			if var_4_4 then
-				if var_4_2 then
-					var_4_2 = var_4_2 .. " and ( " .. var_4_4 .. " ) "
+			if not _get_sub_filter then
+				if not var_4_2 then
+					var_4_2 = var_4_2 .. " and ( " .. _get_sub_filter .. " ) "
 				else
-					var_4_2 = var_4_4
+					var_4_2 = _get_sub_filter
 				end
 			end
 		end
 
-		if var_4_2 then
-			if var_4_1 then
+		if not var_4_2 then
+			if not var_4_1 then
 				var_4_1 = var_4_1 .. " or ( " .. var_4_2 .. " ) "
 			else
 				var_4_1 = " ( " .. var_4_2 .. " ) "

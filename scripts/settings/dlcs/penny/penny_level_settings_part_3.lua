@@ -1,10 +1,10 @@
 -- chunkname: @scripts/settings/dlcs/penny/penny_level_settings_part_3.lua
 
-local var_0_0 = DLCSettings.penny_part_3
+local penny_part_3 = DLCSettings.penny_part_3
 
-var_0_0.level_settings = "levels/honduras_dlcs/penny/level_settings_penny_part_3"
-var_0_0.terror_event_blueprints_filename = "levels/honduras_dlcs/penny/terror_events_penny"
-var_0_0.missions = {
+penny_part_3.level_settings = "levels/honduras_dlcs/penny/level_settings_penny_part_3"
+penny_part_3.terror_event_blueprints_filename = "levels/honduras_dlcs/penny/terror_events_penny"
+penny_part_3.missions = {
 	castle_enter_castle = {
 		mission_template_name = "goal",
 		text = "mission_castle_enter_castle"

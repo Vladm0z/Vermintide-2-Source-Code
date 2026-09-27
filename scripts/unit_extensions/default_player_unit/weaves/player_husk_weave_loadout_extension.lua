@@ -2,54 +2,59 @@
 
 PlayerHuskWeaveLoadoutExtension = class(PlayerHuskWeaveLoadoutExtension)
 
-function PlayerHuskWeaveLoadoutExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	arg_1_0._unit = arg_1_2
-	arg_1_0._synced_buff_params = nil
+PlayerHuskWeaveLoadoutExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	self._unit = arg_1_2
+	self._synced_buff_params = nil
 end
 
-function PlayerHuskWeaveLoadoutExtension.destroy(arg_2_0)
-	arg_2_0._unit = nil
-	arg_2_0._synced_buff_params = nil
+PlayerHuskWeaveLoadoutExtension.destroy = function (self)
+	-- function 2
+	self._unit = nil
+	self._synced_buff_params = nil
 end
 
-function PlayerHuskWeaveLoadoutExtension.add_buffs(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
-	arg_3_0._synced_buff_params = {
+PlayerHuskWeaveLoadoutExtension.add_buffs = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	-- function 3
+	self._synced_buff_params = {
 		arg_3_1,
 		arg_3_2,
 		arg_3_3,
 		arg_3_4
 	}
 
-	local var_3_0 = BuffUtils.buffs_from_rpc_params(arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	local buffs_from_rpc_params = BuffUtils.buffs_from_rpc_params(arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 
-	arg_3_0:_apply_buffs(var_3_0)
+	self:_apply_buffs(buffs_from_rpc_params)
 end
 
-function PlayerHuskWeaveLoadoutExtension._apply_buffs(arg_4_0, arg_4_1)
-	local var_4_0 = ScriptUnit.extension(arg_4_0._unit, "buff_system")
+PlayerHuskWeaveLoadoutExtension._apply_buffs = function (self, arg_4_1)
+	-- function 4
+	local extension = ScriptUnit.extension(self._unit, "buff_system")
 
-	for iter_4_0, iter_4_1 in pairs(arg_4_1) do
-		local var_4_1 = {}
+	for k, v in pairs(arg_4_1) do
+		local tbl = {}
 
-		for iter_4_2, iter_4_3 in pairs(iter_4_1) do
-			var_4_1[iter_4_2] = iter_4_3
+		for k_2, v_2 in pairs(v) do
+			tbl[k_2] = v_2
 		end
 
-		var_4_0:add_buff(iter_4_0, var_4_1)
+		extension:add_buff(k, tbl)
 	end
 end
 
-function PlayerHuskWeaveLoadoutExtension.hot_join_sync(arg_5_0, arg_5_1)
-	if Managers.state.unit_spawner:is_marked_for_deletion(arg_5_0._unit) then
+PlayerHuskWeaveLoadoutExtension.hot_join_sync = function (self, arg_5_1)
+	-- function 5
+	if not Managers.state.unit_spawner:is_marked_for_deletion(self._unit) then
 		return
 	end
 
-	local var_5_0 = arg_5_0._synced_buff_params
+	local _synced_buff_params = self._synced_buff_params
 
-	if var_5_0 then
-		local var_5_1 = Managers.state.unit_storage:go_id(arg_5_0._unit)
+	if not _synced_buff_params then
+		local go_id = Managers.state.unit_storage:go_id(self._unit)
 		local var_5_2 = PEER_ID_TO_CHANNEL[arg_5_1]
 
-		RPC.rpc_add_weave_buffs(var_5_2, var_5_1, unpack(var_5_0))
+		RPC.rpc_add_weave_buffs(var_5_2, go_id, unpack(_synced_buff_params))
 	end
 end

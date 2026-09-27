@@ -1,45 +1,45 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/beastmen/beastmen_gor_behavior.lua
 
-local var_0_0 = BreedActions.beastmen_gor
-local var_0_1 = {
+local beastmen_gor = BreedActions.beastmen_gor
+local tbl = {
 	"BTUtilityNode",
 	{
 		"BTCombatStepAction",
 		name = "combat_step",
-		action_data = var_0_0.combat_step
+		action_data = beastmen_gor.combat_step
 	},
 	{
 		"BTClanRatFollowAction",
 		name = "follow",
-		action_data = var_0_0.follow
+		action_data = beastmen_gor.follow
 	},
 	{
 		"BTAttackAction",
 		name = "headbutt_attack",
 		condition = "ask_target_before_attacking",
-		action_data = var_0_0.headbutt_attack
+		action_data = beastmen_gor.headbutt_attack
 	},
 	{
 		"BTAttackAction",
 		name = "running_attack",
 		condition = "ask_target_before_attacking",
-		action_data = var_0_0.running_attack
+		action_data = beastmen_gor.running_attack
 	},
 	{
 		"BTAttackAction",
 		name = "normal_attack",
 		condition = "ask_target_before_attacking",
-		action_data = var_0_0.normal_attack
+		action_data = beastmen_gor.normal_attack
 	},
 	{
 		"BTCombatShoutAction",
 		name = "combat_shout",
-		action_data = var_0_0.combat_shout
+		action_data = beastmen_gor.combat_shout
 	},
 	condition = "confirmed_player_sighting",
 	name = "in_combat"
 }
-local var_0_2 = {
+local tbl_2 = {
 	"BTSelector",
 	{
 		"BTTeleportAction",
@@ -60,7 +60,7 @@ local var_0_2 = {
 		"BTSmashDoorAction",
 		name = "smash_door",
 		condition = "at_door_smartobject",
-		action_data = var_0_0.smash_door
+		action_data = beastmen_gor.smash_door
 	},
 	condition = "at_smartobject",
 	name = "smartobject"
@@ -92,39 +92,39 @@ BreedBehaviors.gor = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = var_0_0.stagger
+		action_data = beastmen_gor.stagger
 	},
 	{
 		"BTBlockedAction",
 		name = "blocked",
 		condition = "blocked",
-		action_data = var_0_0.blocked
+		action_data = beastmen_gor.blocked
 	},
-	var_0_2,
+	tbl_2,
 	{
 		"BTHesitateAction",
 		name = "hesitate",
 		condition = "is_alerted",
-		action_data = var_0_0.alerted
+		action_data = beastmen_gor.alerted
 	},
-	var_0_1,
+	tbl,
 	{
 		"BTMoveToGoalAction",
 		name = "move_to_goal",
 		condition = "has_goal_destination",
-		action_data = var_0_0.follow
+		action_data = beastmen_gor.follow
 	},
 	{
 		"BTAlertedAction",
 		name = "alerted",
 		condition = "player_spotted",
-		action_data = var_0_0.alerted
+		action_data = beastmen_gor.alerted
 	},
 	{
 		"BTIdleAction",
 		name = "idle",
 		condition = "no_target",
-		action_data = var_0_0.idle
+		action_data = beastmen_gor.idle
 	},
 	{
 		"BTFallbackIdleAction",

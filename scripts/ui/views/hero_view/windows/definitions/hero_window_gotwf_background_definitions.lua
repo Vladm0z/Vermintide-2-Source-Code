@@ -1,13 +1,13 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/definitions/hero_window_gotwf_background_definitions.lua
 
-local var_0_0 = UISettings.game_start_windows
-local var_0_1 = var_0_0.background
-local var_0_2 = var_0_0.frame
-local var_0_3 = var_0_0.size
-local var_0_4 = UIFrameSettings[var_0_2].texture_sizes.vertical[1]
-local var_0_5 = UIFrameSettings[var_0_2].texture_sizes.horizontal[2]
-local var_0_6 = var_0_3[1] - (var_0_4 * 2 + 60)
-local var_0_7 = {
+local game_start_windows = UISettings.game_start_windows
+local background = game_start_windows.background
+local frame = game_start_windows.frame
+local size = game_start_windows.size
+local var_0_4 = UIFrameSettings[frame].texture_sizes.vertical[1]
+local var_0_5 = UIFrameSettings[frame].texture_sizes.horizontal[2]
+local num = size[1] - (var_0_4 * 2 + 60)
+local tbl = {
 	root = {
 		is_root = true,
 		size = {
@@ -73,7 +73,7 @@ local var_0_7 = {
 		}
 	}
 }
-local var_0_8 = {
+local tbl_2 = {
 	loading_overlay = UIWidgets.create_simple_rect("loading_overlay", {
 		255,
 		12,
@@ -84,29 +84,32 @@ local var_0_8 = {
 	loading_overlay_loading_frame = UIWidgets.create_simple_texture("loading_title_divider_background", "loading_detail", nil, nil, nil, 1)
 }
 
-local function var_0_9(arg_1_0)
+local function fn(arg_1_0)
+	-- function 1
 	return {
 		element = {
 			passes = {
 				{
 					style_id = "rect",
 					pass_type = "rect",
-					content_check_function = function(arg_2_0)
-						local var_2_0 = arg_2_0.fade_start
+					content_check_function = function (self)
+						-- function 2
+						local fade_start = self.fade_start
 
-						return var_2_0 <= arg_2_0.progress or arg_2_0.progress <= 1 - var_2_0
+						return fade_start <= self.progress or self.progress <= 1 - fade_start
 					end,
-					content_change_function = function(arg_3_0, arg_3_1)
-						local var_3_0 = arg_3_0.fade_start
+					content_change_function = function (self, arg_3_1)
+						-- function 3
+						local fade_start = self.fade_start
 
-						if var_3_0 < arg_3_0.progress then
-							local var_3_1 = (arg_3_0.progress - var_3_0) / (1 - var_3_0)
+						if fade_start < self.progress then
+							local num = (self.progress - fade_start) / (1 - fade_start)
 
-							arg_3_1.color[1] = var_3_1 * 255
+							arg_3_1.color[1] = num * 255
 						else
-							local var_3_2 = 1 - arg_3_0.progress / (1 - var_3_0)
+							local num_2 = 1 - self.progress / (1 - fade_start)
 
-							arg_3_1.color[1] = var_3_2 * 255
+							arg_3_1.color[1] = num_2 * 255
 						end
 					end
 				}
@@ -140,30 +143,33 @@ local function var_0_9(arg_1_0)
 	}
 end
 
-local var_0_10 = {
-	background_fade = var_0_9("screen")
+local tbl_3 = {
+	background_fade = fn("screen")
 }
-local var_0_11 = UIWidgets.create_simple_texture("gradient_dice_game_reward", "screen", nil, nil, {
+local create_simple_texture = UIWidgets.create_simple_texture("gradient_dice_game_reward", "screen", nil, nil, {
 	80,
 	255,
 	255,
 	255
 })
-local var_0_12 = {
+local tbl_4 = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				-- function 4
 				arg_4_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
-				local var_5_0 = math.easeOutCubic(arg_5_3)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+				-- function 5
+				local easeOutCubic = math.easeOutCubic(arg_5_3)
 
-				arg_5_4.render_settings.alpha_multiplier = var_5_0
+				arg_5_4.render_settings.alpha_multiplier = easeOutCubic
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+				-- function 6
 				return
 			end
 		}
@@ -173,15 +179,18 @@ local var_0_12 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			init = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+				-- function 7
 				arg_7_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
-				local var_8_0 = math.easeOutCubic(arg_8_3)
+			update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+				-- function 8
+				local easeOutCubic = math.easeOutCubic(arg_8_3)
 
-				arg_8_4.render_settings.alpha_multiplier = 1 - var_8_0
+				arg_8_4.render_settings.alpha_multiplier = 1 - easeOutCubic
 			end,
-			on_complete = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			on_complete = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+				-- function 9
 				return
 			end
 		}
@@ -189,9 +198,9 @@ local var_0_12 = {
 }
 
 return {
-	viewport_widgets = var_0_10,
-	background_rect = var_0_11,
-	scenegraph_definition = var_0_7,
-	animation_definitions = var_0_12,
-	loading_overlay_widgets = var_0_8
+	viewport_widgets = tbl_3,
+	background_rect = create_simple_texture,
+	scenegraph_definition = tbl,
+	animation_definitions = tbl_4,
+	loading_overlay_widgets = tbl_2
 }

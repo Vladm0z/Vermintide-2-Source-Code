@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/breeds/breed_critters.lua
 
-local var_0_0 = {
+local tbl = {
 	detection_radius = 10,
 	bone_lod_level = 1,
 	target_selection = "pick_no_targets",
@@ -92,9 +92,9 @@ local var_0_0 = {
 	allowed_layers = {}
 }
 
-Breeds.critter_pig = table.create_copy(Breeds.critter_pig, var_0_0)
+Breeds.critter_pig = table.create_copy(Breeds.critter_pig, tbl)
 
-local var_0_1 = {
+local tbl_2 = {
 	detection_radius = 10,
 	target_selection = "pick_closest_target",
 	run_speed = 6,
@@ -194,9 +194,9 @@ local var_0_1 = {
 	}
 }
 
-Breeds.critter_rat = table.create_copy(Breeds.critter_rat, var_0_1)
+Breeds.critter_rat = table.create_copy(Breeds.critter_rat, tbl_2)
 
-local var_0_2 = {
+local tbl_3 = {
 	detection_radius = 10,
 	target_selection = "pick_closest_target",
 	run_speed = 4,
@@ -313,7 +313,7 @@ local var_0_2 = {
 	}
 }
 
-Breeds.critter_nurgling = table.create_copy(Breeds.critter_nurgling, var_0_2)
+Breeds.critter_nurgling = table.create_copy(Breeds.critter_nurgling, tbl_3)
 BreedActions.critter_nurgling = {
 	roam = {
 		check_overlap_radius = 0.3,

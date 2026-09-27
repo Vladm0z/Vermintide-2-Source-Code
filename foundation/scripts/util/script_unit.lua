@@ -1,27 +1,33 @@
 -- chunkname: @foundation/scripts/util/script_unit.lua
 
+local ScriptUnit = ScriptUnit
+
 ScriptUnit = ScriptUnit or {}
+ScriptUnit = ScriptUnit
 
-local var_0_0 = rawget(_G, "G_Entities")
+local var_0_1 = rawget(_G, "G_Entities")
 
-if not var_0_0 then
-	var_0_0 = {}
+if not var_0_1 then
+	var_0_1 = {}
 
-	rawset(_G, "G_Entities", var_0_0)
+	rawset(_G, "G_Entities", var_0_1)
 end
 
-local function var_0_1()
-	var_0_0 = {}
+local function fn()
+	-- function 1
+	var_0_1 = {}
 
-	rawset(_G, "G_Entities", var_0_0)
+	rawset(_G, "G_Entities", var_0_1)
 end
 
-local function var_0_2(arg_2_0)
-	var_0_0[arg_2_0] = nil
+local function fn_2(arg_2_0)
+	-- function 2
+	var_0_1[arg_2_0] = nil
 end
 
-local function var_0_3(arg_3_0, arg_3_1)
-	local var_3_0 = var_0_0[arg_3_0]
+local function fn_3(arg_3_0, arg_3_1)
+	-- function 3
+	local var_3_0 = var_0_1[arg_3_0]
 
 	fassert(var_3_0)
 	fassert(var_3_0[arg_3_1], "Tried to remove system %s extension for unit %s", arg_3_1, arg_3_0)
@@ -29,70 +35,104 @@ local function var_0_3(arg_3_0, arg_3_1)
 	var_3_0[arg_3_1] = nil
 end
 
-local function var_0_4(arg_4_0, arg_4_1, arg_4_2)
-	local var_4_0 = var_0_0[arg_4_0]
+local function fn_4(arg_4_0, arg_4_1, arg_4_2)
+	-- function 4
+	local var_4_0 = var_0_1[arg_4_0]
 
 	if not var_4_0 then
 		var_4_0 = {}
-		var_0_0[arg_4_0] = var_4_0
+		var_0_1[arg_4_0] = var_4_0
 	end
 
 	var_4_0[arg_4_1] = arg_4_2
 end
 
-local function var_0_5(arg_5_0, arg_5_1)
-	local var_5_0 = var_0_0[arg_5_0]
+local function fn_5(arg_5_0, arg_5_1)
+	-- function 5
+	local var_5_0 = var_0_1[arg_5_0]
 
-	return var_5_0 and var_5_0[arg_5_1]
+	return not var_5_0 and var_5_0[arg_5_1]
 end
 
-local function var_0_6(arg_6_0, arg_6_1)
-	local var_6_0 = var_0_0[arg_6_0]
+local function fn_6(arg_6_0, arg_6_1)
+	-- function 6
+	local var_6_0 = var_0_1[arg_6_0]
 
-	return var_6_0 and var_6_0[arg_6_1] and var_6_0[arg_6_1].input
+	if not var_6_0 then
+		-- Nothing
+	end
+
+	::label_6_0::
+
+	local var_6_1 = var_6_0[arg_6_1]
+
+	var_6_1 = not var_6_1 and var_6_0[arg_6_1].input
+
+	::label_6_1::
+
+	return var_6_1
 end
 
-function ScriptUnit.extension_input(arg_7_0, arg_7_1)
-	return var_0_5(arg_7_0, arg_7_1).input
+ScriptUnit.extension_input = function (arg_7_0, arg_7_1)
+	-- function 7
+	return fn_5(arg_7_0, arg_7_1).input
 end
 
-function ScriptUnit.extension(arg_8_0, arg_8_1)
-	local var_8_0 = var_0_0[arg_8_0]
+ScriptUnit.extension = function (arg_8_0, arg_8_1)
+	-- function 8
+	local var_8_0 = var_0_1[arg_8_0]
 
-	return var_8_0 and var_8_0[arg_8_1]
+	return not var_8_0 and var_8_0[arg_8_1]
 end
 
-function ScriptUnit.extensions(arg_9_0)
-	return var_0_0[arg_9_0]
+ScriptUnit.extensions = function (arg_9_0)
+	-- function 9
+	return var_0_1[arg_9_0]
 end
 
-ScriptUnit.has_extension = var_0_5
+ScriptUnit.has_extension = fn_5
 
-function ScriptUnit.has_extension_input(arg_10_0, arg_10_1)
-	local var_10_0 = var_0_0[arg_10_0]
+ScriptUnit.has_extension_input = function (arg_10_0, arg_10_1)
+	-- function 10
+	local var_10_0 = var_0_1[arg_10_0]
 
-	return var_10_0 and var_10_0[arg_10_1] and var_10_0[arg_10_1].input
+	if not var_10_0 then
+		-- Nothing
+	end
+
+	::label_10_0::
+
+	local var_10_1 = var_10_0[arg_10_1]
+
+	var_10_1 = not var_10_1 and var_10_0[arg_10_1].input
+
+	::label_10_1::
+
+	return var_10_1
 end
 
-function ScriptUnit.check_all_units_deleted()
-	if next(var_0_0) then
+ScriptUnit.check_all_units_deleted = function ()
+	-- function 11
+	if not next(var_0_1) then
 		print("------------ UNITS THAT HAVENT BEEN DELETED --------------")
 
-		for iter_11_0, iter_11_1 in pairs(var_0_0) do
-			local var_11_0 = unit_alive_info(iter_11_0)
+		for k, v in pairs(var_0_1) do
+			local var_11_0 = unit_alive_info(k)
 
-			print(iter_11_0, Unit.alive(iter_11_0), var_11_0)
+			print(k, Unit.alive(k), var_11_0)
 		end
 
 		fassert(false, "Some units have not been cleaned up properly!")
 	end
 end
 
-function ScriptUnit.set_extension(arg_12_0, arg_12_1, arg_12_2)
-	var_0_4(arg_12_0, arg_12_1, arg_12_2)
+ScriptUnit.set_extension = function (arg_12_0, arg_12_1, arg_12_2)
+	-- function 12
+	fn_4(arg_12_0, arg_12_1, arg_12_2)
 end
 
-function ScriptUnit.add_extension(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+ScriptUnit.add_extension = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+	-- function 13
 	local var_13_0 = rawget(_G, arg_13_2)
 
 	fassert(var_13_0, "No class found for extension with name %q", arg_13_2)
@@ -101,103 +141,111 @@ function ScriptUnit.add_extension(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13
 	local var_13_2 = var_13_0:new(arg_13_0, arg_13_1, arg_13_4)
 
 	fassert(not ScriptUnit.has_extension(arg_13_1, arg_13_3), "An extension already exists with name %q belonging to unit %s", arg_13_3, arg_13_1)
-	var_0_4(arg_13_1, arg_13_3, var_13_2)
+	fn_4(arg_13_1, arg_13_3, var_13_2)
 
 	return var_13_2
 end
 
-function ScriptUnit.destroy_extension(arg_14_0, arg_14_1)
-	local var_14_0 = ScriptUnit.extension(arg_14_0, arg_14_1)
+ScriptUnit.destroy_extension = function (arg_14_0, arg_14_1)
+	-- function 14
+	local extension = ScriptUnit.extension(arg_14_0, arg_14_1)
 
-	if var_14_0.destroy then
-		var_14_0:destroy()
+	if not extension.destroy then
+		extension:destroy()
 	end
 end
 
-function ScriptUnit.optimize(arg_15_0)
-	if Unit.alive(arg_15_0) then
-		if Unit.get_data(arg_15_0, "disable_shadows") then
-			local var_15_0 = Unit.num_meshes(arg_15_0)
+ScriptUnit.optimize = function (arg_15_0)
+	-- function 15
+	if not Unit.alive(arg_15_0) then
+		if not Unit.get_data(arg_15_0, "disable_shadows") then
+			local num_meshes = Unit.num_meshes(arg_15_0)
 
-			for iter_15_0 = 0, var_15_0 - 1 do
-				Unit.set_mesh_visibility(arg_15_0, iter_15_0, false, "shadow_caster")
+			for i = 0, num_meshes - 1 do
+				Unit.set_mesh_visibility(arg_15_0, i, false, "shadow_caster")
 			end
 		end
 
-		if Unit.get_data(arg_15_0, "force_ssm") then
-			local var_15_1 = Unit.num_meshes(arg_15_0)
+		if not Unit.get_data(arg_15_0, "force_ssm") then
+			local num_meshes_2 = Unit.num_meshes(arg_15_0)
 
-			for iter_15_1 = 0, var_15_1 - 1 do
-				Unit.set_mesh_ssm_visibility(arg_15_0, iter_15_1, true)
+			for j = 0, num_meshes_2 - 1 do
+				Unit.set_mesh_ssm_visibility(arg_15_0, j, true)
 			end
 		end
 
-		if Unit.get_data(arg_15_0, "disable_physics") then
-			local var_15_2 = Unit.num_actors(arg_15_0)
+		if not Unit.get_data(arg_15_0, "disable_physics") then
+			local num_actors = Unit.num_actors(arg_15_0)
 
-			for iter_15_2 = 0, var_15_2 - 1 do
-				Unit.destroy_actor(arg_15_0, iter_15_2)
+			for k = 0, num_actors - 1 do
+				Unit.destroy_actor(arg_15_0, k)
 			end
 		end
 	end
 end
 
-function ScriptUnit.remove_extension(arg_16_0, arg_16_1)
-	var_0_3(arg_16_0, arg_16_1)
+ScriptUnit.remove_extension = function (arg_16_0, arg_16_1)
+	-- function 16
+	fn_3(arg_16_0, arg_16_1)
 end
 
-ScriptUnit.remove_unit = var_0_2
+ScriptUnit.remove_unit = fn_2
 
-function ScriptUnit.extension_definitions(arg_17_0)
-	local var_17_0 = {}
-	local var_17_1 = 0
+ScriptUnit.extension_definitions = function (arg_17_0)
+	-- function 17
+	local tbl = {}
+	local num = 0
 
-	while Unit.has_data(arg_17_0, "extensions", var_17_1) do
-		var_17_0[var_17_1], var_17_1 = Unit.get_data(arg_17_0, "extensions", var_17_1), var_17_1 + 1
+	while not Unit.has_data(arg_17_0, "extensions", num) do
+		tbl[num], num = Unit.get_data(arg_17_0, "extensions", num), num + 1
 	end
 
-	return var_17_0, var_17_1
+	return tbl, num
 end
 
-function ScriptUnit.move_extensions(arg_18_0, arg_18_1)
-	var_0_0[arg_18_1] = var_0_0[arg_18_0]
-	var_0_0[arg_18_0] = nil
+ScriptUnit.move_extensions = function (arg_18_0, arg_18_1)
+	-- function 18
+	var_0_1[arg_18_1] = var_0_1[arg_18_0]
+	var_0_1[arg_18_0] = nil
 end
 
-function ScriptUnit.save_scene_graph(arg_19_0)
-	local var_19_0 = {}
+ScriptUnit.save_scene_graph = function (arg_19_0)
+	-- function 19
+	local tbl = {}
 
-	for iter_19_0 = 0, Unit.num_scene_graph_items(arg_19_0) - 1 do
-		local var_19_1 = Unit.scene_graph_parent(arg_19_0, iter_19_0)
-		local var_19_2 = Matrix4x4Box(Unit.local_pose(arg_19_0, iter_19_0))
+	for i = 0, Unit.num_scene_graph_items(arg_19_0) - 1 do
+		local scene_graph_parent = Unit.scene_graph_parent(arg_19_0, i)
+		local var_19_2 = Matrix4x4Box(Unit.local_pose(arg_19_0, i))
 
-		var_19_0[iter_19_0] = {
-			parent = var_19_1,
+		tbl[i] = {
+			parent = scene_graph_parent,
 			local_pose = var_19_2
 		}
 	end
 
-	return var_19_0
+	return tbl
 end
 
-function ScriptUnit.restore_scene_graph(arg_20_0, arg_20_1)
-	for iter_20_0, iter_20_1 in ipairs(arg_20_1) do
-		if iter_20_1.parent then
-			Unit.scene_graph_link(arg_20_0, iter_20_0, iter_20_1.parent)
-			Unit.set_local_pose(arg_20_0, iter_20_0, iter_20_1.local_pose:unbox())
+ScriptUnit.restore_scene_graph = function (arg_20_0, arg_20_1)
+	-- function 20
+	for i, v in ipairs(arg_20_1) do
+		if not v.parent then
+			Unit.scene_graph_link(arg_20_0, i, v.parent)
+			Unit.set_local_pose(arg_20_0, i, v.local_pose:unbox())
 		end
 	end
 end
 
-function ScriptUnit.set_material_variable(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+ScriptUnit.set_material_variable = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+	-- function 21
 	if type(arg_21_2) == "number" then
 		Unit.set_scalar_for_materials(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 	elseif type(arg_21_2) == "table" then
-		local var_21_0 = #arg_21_2
+		local count = #arg_21_2
 
-		if var_21_0 == 2 then
+		if count == 2 then
 			Unit.set_vector2_for_materials(arg_21_0, arg_21_1, Vector2(arg_21_2[1], arg_21_2[2]), arg_21_3)
-		elseif var_21_0 == 3 then
+		elseif count == 3 then
 			Unit.set_vector3_for_materials(arg_21_0, arg_21_1, Vector3(arg_21_2[1], arg_21_2[2], arg_21_2[3]), arg_21_3)
 		else
 			Unit.set_vector4_for_materials(arg_21_0, arg_21_1, Color(arg_21_2[1], arg_21_2[2], arg_21_2[3], arg_21_2[4]), arg_21_3)

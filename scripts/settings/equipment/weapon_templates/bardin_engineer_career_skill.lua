@@ -1,40 +1,42 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/bardin_engineer_career_skill.lua
 
-local var_0_0 = 0.75
-local var_0_1 = 1
-local var_0_2 = 0.5
-local var_0_3 = 0.15
-local var_0_4 = 4
-local var_0_5 = 12
-local var_0_6 = 1.5
-local var_0_7 = 0.2
-local var_0_8 = 2
-local var_0_9 = "engineer_ability_shot_armor_pierce"
-local var_0_10 = 2
-local var_0_11 = 3.6
-local var_0_12 = 1.5
-local var_0_13 = 0.2
-local var_0_14 = 0.34
-local var_0_15 = 0.67
-local var_0_16 = 0.0015
-local var_0_17 = 0.002
-local var_0_18 = 0.006
-local var_0_19 = 0.16666666666666666
-local var_0_20 = 0.3333333333333333
+local num = 0.75
+local num_2 = 1
+local num_3 = 0.5
+local num_4 = 0.15
+local num_5 = 4
+local num_6 = 12
+local num_7 = 1.5
+local num_8 = 0.2
+local num_9 = 2
+local str = "engineer_ability_shot_armor_pierce"
+local num_10 = 2
+local num_11 = 3.6
+local num_12 = 1.5
+local num_13 = 0.2
+local num_14 = 0.34
+local num_15 = 0.67
+local num_16 = 0.0015
+local num_17 = 0.002
+local num_18 = 0.006
+local num_19 = 0.16666666666666666
+local num_20 = 0.3333333333333333
 
-local function var_0_21(arg_1_0, arg_1_1)
-	local var_1_0, var_1_1 = ScriptUnit.extension(arg_1_0, "career_system"):current_ability_cooldown(1)
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
+	local current_ability_cooldown, var_1_1 = ScriptUnit.extension(arg_1_0, "career_system"):current_ability_cooldown(1)
 
-	return var_1_1 - var_1_0 >= var_0_1 * var_0_0
+	return var_1_1 - current_ability_cooldown >= num_2 * num
 end
 
-local function var_0_22(arg_2_0, arg_2_1)
-	local var_2_0, var_2_1 = ScriptUnit.extension(arg_2_0, "career_system"):current_ability_cooldown(1)
+local function fn_2(arg_2_0, arg_2_1)
+	-- function 2
+	local current_ability_cooldown, var_2_1 = ScriptUnit.extension(arg_2_0, "career_system"):current_ability_cooldown(1)
 
-	return var_2_1 - var_2_0 >= var_0_1 * var_0_8
+	return var_2_1 - current_ability_cooldown >= num_2 * num_9
 end
 
-local var_0_23 = {
+local tbl = {
 	actions = {
 		action_one = {
 			default = {
@@ -58,8 +60,9 @@ local var_0_23 = {
 						input = "weapon_reload"
 					}
 				},
-				condition_func = var_0_21,
-				enter_function = function(arg_3_0, arg_3_1)
+				condition_func = fn,
+				enter_function = function (arg_3_0, arg_3_1)
+					-- function 3
 					arg_3_1:clear_input_buffer()
 
 					return arg_3_1:reset_release_input()
@@ -82,13 +85,14 @@ local var_0_23 = {
 				hold_input = "action_one_hold",
 				anim_event = "attack_charge",
 				charge_sound_husk_stop_event = "Stop_player_engineer_engine_loop_husk",
-				anim_end_event_condition_func = function(arg_4_0, arg_4_1)
+				anim_end_event_condition_func = function (arg_4_0, arg_4_1)
+					-- function 4
 					return arg_4_1 ~= "new_interupting_action"
 				end,
 				on_chain_keep_audio_loops = {
 					"engineer_weapon_spin"
 				},
-				total_time = var_0_2 + 0.25,
+				total_time = num_3 + 0.25,
 				buff_data = {
 					{
 						start_time = 0,
@@ -103,7 +107,7 @@ local var_0_23 = {
 						action = "action_one",
 						hold_allowed = true,
 						input = "action_one",
-						start_time = var_0_2
+						start_time = num_3
 					},
 					{
 						sub_action = "default",
@@ -119,13 +123,14 @@ local var_0_23 = {
 						input = "weapon_reload"
 					}
 				},
-				condition_func = var_0_21,
-				enter_function = function(arg_5_0, arg_5_1)
+				condition_func = fn,
+				enter_function = function (arg_5_0, arg_5_1)
+					-- function 5
 					arg_5_1:clear_input_buffer()
 
 					return arg_5_1:reset_release_input()
 				end,
-				visual_spinup_time = var_0_2 / 3
+				visual_spinup_time = num_3 / 3
 			},
 			fire = {
 				kind = "action_selector",
@@ -135,16 +140,17 @@ local var_0_23 = {
 				conditional_actions = {
 					{
 						sub_action = "armor_pierce_fire",
-						condition = function(arg_6_0, arg_6_1)
-							return arg_6_0 and arg_6_0:has_talent("bardin_engineer_armor_piercing_ability")
+						condition = function (self, arg_6_1)
+							-- function 6
+							return not self and self:has_talent("bardin_engineer_armor_piercing_ability")
 						end
 					}
 				},
 				default_action = {
 					sub_action = "base_fire"
 				},
-				condition_func = var_0_21,
-				chain_condition_func = var_0_21
+				condition_func = fn,
+				chain_condition_func = fn
 			},
 			base_fire = {
 				anim_event = "attack_shoot_charged",
@@ -207,21 +213,22 @@ local var_0_23 = {
 						sub_action = "default",
 						action = "action_wield",
 						input = "action_wield",
-						start_time = var_0_3
+						start_time = num_4
 					}
 				},
-				enter_function = function(arg_7_0, arg_7_1)
+				enter_function = function (arg_7_0, arg_7_1)
+					-- function 7
 					arg_7_1:clear_input_buffer()
 
 					return arg_7_1:reset_release_input()
 				end,
-				visual_heat_generation = var_0_16,
-				base_anim_speed = var_0_19,
-				initial_rounds_per_second = var_0_4,
-				max_rps = var_0_5,
-				rps_loss_per_second = var_0_6,
-				rps_gain_per_shot = var_0_7,
-				ammo_usage = var_0_0,
+				visual_heat_generation = num_16,
+				base_anim_speed = num_19,
+				initial_rounds_per_second = num_5,
+				max_rps = num_6,
+				rps_loss_per_second = num_7,
+				rps_gain_per_shot = num_8,
+				ammo_usage = num,
 				recoil_settings = {
 					horizontal_climb = 0,
 					restore_duration = 0.25,
@@ -251,7 +258,8 @@ local var_0_23 = {
 				hold_input = "action_two_hold",
 				anim_event = "attack_charge_loop",
 				charge_sound_name = "Play_player_engineer_engine_charge",
-				anim_end_event_condition_func = function(arg_8_0, arg_8_1)
+				anim_end_event_condition_func = function (arg_8_0, arg_8_1)
+					-- function 8
 					return arg_8_1 ~= "new_interupting_action"
 				end,
 				on_chain_keep_audio_loops = {
@@ -272,7 +280,7 @@ local var_0_23 = {
 						action = "action_two",
 						hold_allowed = true,
 						input = "action_two",
-						start_time = var_0_2
+						start_time = num_3
 					},
 					{
 						sub_action = "default",
@@ -288,9 +296,10 @@ local var_0_23 = {
 						input = "action_wield"
 					}
 				},
-				condition_func = var_0_21,
-				chain_condition_func = var_0_21,
-				enter_function = function(arg_9_0, arg_9_1)
+				condition_func = fn,
+				chain_condition_func = fn,
+				enter_function = function (arg_9_0, arg_9_1)
+					-- function 9
 					arg_9_1:clear_input_buffer()
 
 					return arg_9_1:reset_release_input()
@@ -305,7 +314,8 @@ local var_0_23 = {
 				hold_input = "action_two_hold",
 				anim_event = "attack_charge_end",
 				windup_speed = 0.2,
-				anim_end_event_condition_func = function(arg_10_0, arg_10_1)
+				anim_end_event_condition_func = function (arg_10_0, arg_10_1)
+					-- function 10
 					return arg_10_1 ~= "new_interupting_action"
 				end,
 				on_chain_keep_audio_loops = {
@@ -326,7 +336,7 @@ local var_0_23 = {
 						action = "action_one",
 						hold_allowed = true,
 						input = "action_one",
-						start_time = var_0_3
+						start_time = num_4
 					},
 					{
 						sub_action = "default",
@@ -342,9 +352,10 @@ local var_0_23 = {
 						input = "action_wield"
 					}
 				},
-				condition_func = var_0_21,
-				chain_condition_func = var_0_21,
-				enter_function = function(arg_11_0, arg_11_1)
+				condition_func = fn,
+				chain_condition_func = fn,
+				enter_function = function (arg_11_0, arg_11_1)
+					-- function 11
 					arg_11_1:clear_input_buffer()
 
 					return arg_11_1:reset_release_input()
@@ -366,7 +377,8 @@ local var_0_23 = {
 				uninterruptible = true,
 				anim_event = "cooldown_start",
 				charge_sound_name = "Play_player_engineer_steam_loop",
-				anim_end_event_condition_func = function(arg_12_0, arg_12_1)
+				anim_end_event_condition_func = function (arg_12_0, arg_12_1)
+					-- function 12
 					return arg_12_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -379,41 +391,43 @@ local var_0_23 = {
 						input = "action_wield"
 					}
 				},
-				condition_func = function(arg_13_0, arg_13_1)
-					local var_13_0 = ScriptUnit.has_extension(arg_13_0, "career_system")
+				condition_func = function (arg_13_0, arg_13_1)
+					-- function 13
+					local has_extension = ScriptUnit.has_extension(arg_13_0, "career_system")
 
 					return not ScriptUnit.has_extension(arg_13_0, "buff_system"):has_buff_type("bardin_engineer_pump_max_exhaustion_buff")
 				end,
-				chain_condition_func = function(arg_14_0, arg_14_1)
-					local var_14_0 = ScriptUnit.has_extension(arg_14_0, "career_system")
+				chain_condition_func = function (arg_14_0, arg_14_1)
+					-- function 14
+					local has_extension = ScriptUnit.has_extension(arg_14_0, "career_system")
 
 					return not ScriptUnit.has_extension(arg_14_0, "buff_system"):has_buff_type("bardin_engineer_pump_max_exhaustion_buff")
 				end,
-				initial_charge_delay = var_0_14,
-				ability_charge_interval = var_0_15
+				initial_charge_delay = num_14,
+				ability_charge_interval = num_15
 			}
 		},
 		action_inspect = ActionTemplates.action_inspect,
 		action_wield = ActionTemplates.wield
 	}
 }
-local var_0_24 = table.shallow_copy(var_0_23.actions.action_one.base_fire)
+local shallow_copy = table.shallow_copy(tbl.actions.action_one.base_fire)
 
-var_0_23.actions.action_one.fast_fire = var_0_24
+tbl.actions.action_one.fast_fire = shallow_copy
 
-local var_0_25 = table.shallow_copy(var_0_23.actions.action_one.base_fire)
+local shallow_copy_2 = table.shallow_copy(tbl.actions.action_one.base_fire)
 
-var_0_25.damage_profile = var_0_9
-var_0_25.visual_heat_generation = var_0_17
-var_0_25.base_anim_speed = var_0_20
-var_0_25.ammo_usage = var_0_8
-var_0_25.initial_rounds_per_second = var_0_10
-var_0_25.max_rps = var_0_11
-var_0_25.rps_loss_per_second = var_0_12
-var_0_25.rps_gain_per_shot = var_0_13
-var_0_25.fire_sound_event = "Play_player_engineer_shooting_armor_piercing"
-var_0_23.actions.action_one.armor_pierce_fire = var_0_25
-var_0_23.attack_meta_data = {
+shallow_copy_2.damage_profile = str
+shallow_copy_2.visual_heat_generation = num_17
+shallow_copy_2.base_anim_speed = num_20
+shallow_copy_2.ammo_usage = num_9
+shallow_copy_2.initial_rounds_per_second = num_10
+shallow_copy_2.max_rps = num_11
+shallow_copy_2.rps_loss_per_second = num_12
+shallow_copy_2.rps_gain_per_shot = num_13
+shallow_copy_2.fire_sound_event = "Play_player_engineer_shooting_armor_piercing"
+tbl.actions.action_one.armor_pierce_fire = shallow_copy_2
+tbl.attack_meta_data = {
 	max_range = 25,
 	aim_at_node = "j_spine1",
 	keep_distance = 6.5,
@@ -426,23 +440,24 @@ var_0_23.attack_meta_data = {
 		min_radius = math.pi / 72,
 		max_radius = math.pi / 16
 	},
-	hold_fire_condition = function(arg_15_0, arg_15_1)
+	hold_fire_condition = function (arg_15_0, arg_15_1)
+		-- function 15
 		return true
 	end,
 	effective_against = bit.bor(BreedCategory.Infantry, BreedCategory.Shielded, BreedCategory.Boss, BreedCategory.Berserker, BreedCategory.Special)
 }
-var_0_23.default_spread_template = "sparks"
-var_0_23.right_hand_unit = ""
-var_0_23.right_hand_attachment_node_linking = AttachmentNodeLinking.rotary_gun
-var_0_23.display_unit = "units/weapons/weapon_display/display_drakegun"
-var_0_23.wield_anim = "to_engineer_career_skill"
-var_0_23.state_machine = "units/beings/player/first_person_base/state_machines/career/skill_engineer"
-var_0_23.load_state_machine = false
-var_0_23.crosshair_style = "default"
-var_0_23.buff_type = "RANGED"
-var_0_23.weapon_type = "BRACE_OF_PISTOLS"
-var_0_23.dodge_count = 1
-var_0_23.buffs = {
+tbl.default_spread_template = "sparks"
+tbl.right_hand_unit = ""
+tbl.right_hand_attachment_node_linking = AttachmentNodeLinking.rotary_gun
+tbl.display_unit = "units/weapons/weapon_display/display_drakegun"
+tbl.wield_anim = "to_engineer_career_skill"
+tbl.state_machine = "units/beings/player/first_person_base/state_machines/career/skill_engineer"
+tbl.load_state_machine = false
+tbl.crosshair_style = "default"
+tbl.buff_type = "RANGED"
+tbl.weapon_type = "BRACE_OF_PISTOLS"
+tbl.dodge_count = 1
+tbl.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1.1
 	},
@@ -450,7 +465,7 @@ var_0_23.buffs = {
 		external_optional_multiplier = 1.1
 	}
 }
-var_0_23.aim_assist_settings = {
+tbl.aim_assist_settings = {
 	max_range = 22,
 	no_aim_input_multiplier = 0,
 	aim_at_node = "j_spine",
@@ -463,7 +478,7 @@ var_0_23.aim_assist_settings = {
 		skaven_slave = 1
 	}
 }
-var_0_23.particle_fx = {
+tbl.particle_fx = {
 	heat_shimmer = {
 		{
 			orphaned_policy = "destroy",
@@ -476,48 +491,49 @@ var_0_23.particle_fx = {
 		}
 	}
 }
-var_0_23.particle_fx_lookup = table.mirror_array_inplace(table.keys(var_0_23.particle_fx))
-var_0_23.visual_heat_cooldown_speed = var_0_18
-var_0_23.custom_data = {
+tbl.particle_fx_lookup = table.mirror_array_inplace(table.keys(tbl.particle_fx))
+tbl.visual_heat_cooldown_speed = num_18
+tbl.custom_data = {
 	windup = 0,
-	windup_loss_per_second = (var_0_5 - var_0_4) / var_0_6
+	windup_loss_per_second = (num_6 - num_5) / num_7
 }
 
-function var_0_23.update(arg_16_0, arg_16_1, arg_16_2)
-	local var_16_0 = arg_16_0:get_custom_data("windup") - arg_16_0:get_custom_data("windup_loss_per_second") * arg_16_1
+tbl.update = function (self, arg_16_1, arg_16_2)
+	-- function 16
+	local num = self:get_custom_data("windup") - self:get_custom_data("windup_loss_per_second") * arg_16_1
 
-	arg_16_0:set_custom_data("windup", var_16_0)
+	self:set_custom_data("windup", num)
 end
 
-local var_0_26 = table.clone(var_0_23)
+local clone = table.clone(tbl)
 
-var_0_26.wield_anim = "to_engineer_career_skill_special"
-var_0_26.actions.action_one.default.condition_func = var_0_22
-var_0_26.actions.action_one.default.chain_condition_func = var_0_22
-var_0_26.actions.action_one.spin.condition_func = var_0_22
-var_0_26.actions.action_one.spin.chain_condition_func = var_0_22
-var_0_26.actions.action_one.fire.condition_func = var_0_22
-var_0_26.actions.action_one.fire.chain_condition_func = var_0_22
-var_0_26.actions.action_two.default.condition_func = var_0_22
-var_0_26.actions.action_two.default.chain_condition_func = var_0_22
-var_0_26.actions.action_two.charged.condition_func = var_0_22
-var_0_26.actions.action_two.charged.chain_condition_func = var_0_22
-var_0_26.attack_meta_data = {
+clone.wield_anim = "to_engineer_career_skill_special"
+clone.actions.action_one.default.condition_func = fn_2
+clone.actions.action_one.default.chain_condition_func = fn_2
+clone.actions.action_one.spin.condition_func = fn_2
+clone.actions.action_one.spin.chain_condition_func = fn_2
+clone.actions.action_one.fire.condition_func = fn_2
+clone.actions.action_one.fire.chain_condition_func = fn_2
+clone.actions.action_two.default.condition_func = fn_2
+clone.actions.action_two.default.chain_condition_func = fn_2
+clone.actions.action_two.charged.condition_func = fn_2
+clone.actions.action_two.charged.chain_condition_func = fn_2
+clone.attack_meta_data = {
 	effective_against = bit.bor(BreedCategory.Infantry, BreedCategory.Shielded, BreedCategory.Boss, BreedCategory.Berserker, BreedCategory.Special, BreedCategory.Armored)
 }
-var_0_23.custom_data = {
+tbl.custom_data = {
 	windup = 0,
-	windup_loss_per_second = (var_0_11 - var_0_10) / var_0_12
+	windup_loss_per_second = (num_11 - num_10) / num_12
 }
 
-local var_0_27 = table.clone(var_0_23)
+local clone_2 = table.clone(tbl)
 
-var_0_27.actions.action_one.base_fire.damage_profile = "engineer_ability_shot_vs"
-armor_piercing_template_vs = table.clone(var_0_26)
+clone_2.actions.action_one.base_fire.damage_profile = "engineer_ability_shot_vs"
+armor_piercing_template_vs = table.clone(clone)
 
 return {
-	bardin_engineer_career_skill_weapon = table.clone(var_0_23),
-	bardin_engineer_career_skill_weapon_special = var_0_26,
-	bardin_engineer_career_skill_weapon_vs = table.clone(var_0_27),
+	bardin_engineer_career_skill_weapon = table.clone(tbl),
+	bardin_engineer_career_skill_weapon_special = clone,
+	bardin_engineer_career_skill_weapon_vs = table.clone(clone_2),
 	bardin_engineer_career_skill_weapon_special_vs = armor_piercing_template_vs
 }

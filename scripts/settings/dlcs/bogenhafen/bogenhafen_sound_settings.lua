@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/bogenhafen/bogenhafen_sound_settings.lua
 
-local var_0_0 = DLCSettings.bogenhafen
+local bogenhafen = DLCSettings.bogenhafen
 
-var_0_0.dialogue_lookup = {
+bogenhafen.dialogue_lookup = {
 	"dialogues/generated/lookup_witch_hunter_bogenhafen_city",
 	"dialogues/generated/lookup_bright_wizard_bogenhafen_city",
 	"dialogues/generated/lookup_dwarf_ranger_bogenhafen_city",
@@ -16,7 +16,7 @@ var_0_0.dialogue_lookup = {
 	"dialogues/generated/lookup_hero_conversations_dlc_bogenhafen_city",
 	"dialogues/generated/lookup_hero_conversations_dlc_bogenhafen_slum"
 }
-var_0_0.dialogue_settings = {
+bogenhafen.dialogue_settings = {
 	dlc_bogenhafen_slum = {
 		"dialogues/generated/witch_hunter_bogenhafen_slum",
 		"dialogues/generated/bright_wizard_bogenhafen_slum",

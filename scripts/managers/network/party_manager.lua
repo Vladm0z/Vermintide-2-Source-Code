@@ -4,7 +4,7 @@ require("scripts/helpers/player_utils")
 
 PartyManager = class(PartyManager)
 
-local var_0_0 = {
+local tbl = {
 	"rpc_request_join_party",
 	"rpc_reset_party_data",
 	"rpc_peer_assigned_to_party",
@@ -13,115 +13,128 @@ local var_0_0 = {
 	"rpc_sync_friend_party_ids"
 }
 
-local function var_0_1(arg_1_0, ...)
+local function fn(arg_1_0, ...)
+	-- function 1
 	printf("[PartyManager] " .. arg_1_0, ...)
 end
 
-function PartyManager.init(arg_2_0)
-	arg_2_0._leader = nil
-	arg_2_0._hot_join_synced_peers = {}
+PartyManager.init = function (self)
+	-- function 2
+	self._leader = nil
+	self._hot_join_synced_peers = {}
 
-	arg_2_0:clear_parties()
+	self:clear_parties()
 
-	arg_2_0._friend_party_lookup = {}
+	self._friend_party_lookup = {}
 
-	if DEDICATED_SERVER then
-		arg_2_0:server_init_friend_parties(false)
+	if not DEDICATED_SERVER then
+		self:server_init_friend_parties(false)
 	else
-		arg_2_0._client_friend_party = {}
+		self._client_friend_party = {}
 	end
 end
 
-function PartyManager.destroy(arg_3_0)
-	if arg_3_0._gui then
-		local var_3_0 = Application.debug_world()
+PartyManager.destroy = function (self)
+	-- function 3
+	if not self._gui then
+		local debug_world = Application.debug_world()
 
-		World.destroy_gui(var_3_0, arg_3_0._gui)
+		World.destroy_gui(debug_world, self._gui)
 
-		arg_3_0._gui = nil
+		self._gui = nil
 	end
 end
 
-function PartyManager._free_lobby(arg_4_0)
-	if arg_4_0._party_lobby_or_data ~= nil then
-		var_0_1("Party lobby has been freed")
+PartyManager._free_lobby = function (self)
+	-- function 4
+	if self._party_lobby_or_data ~= nil then
+		fn("Party lobby has been freed")
 
-		if type(arg_4_0._party_lobby_or_data) == "userdata" then
-			LobbyInternal.leave_lobby(arg_4_0._party_lobby_or_data)
+		if type(self._party_lobby_or_data) == "userdata" then
+			LobbyInternal.leave_lobby(self._party_lobby_or_data)
 		end
 
-		arg_4_0._party_lobby_or_data = nil
+		self._party_lobby_or_data = nil
 	end
 end
 
-function PartyManager.reset()
-	var_0_1("reset")
+PartyManager.reset = function ()
+	-- function 5
+	fn("reset")
 
-	if Managers.party then
+	if not Managers.party then
 		Managers.party:destroy()
 	end
 
 	Managers.party = PartyManager:new()
 end
 
-function PartyManager.set_leader(arg_6_0, arg_6_1)
+PartyManager.set_leader = function (self, arg_6_1)
+	-- function 6
 	if arg_6_1 == nil then
-		var_0_1("Cleared leader")
+		fn("Cleared leader")
 	else
-		var_0_1("Leader set to %q", arg_6_1)
+		fn("Leader set to %q", arg_6_1)
 	end
 
-	arg_6_0._leader = arg_6_1
+	self._leader = arg_6_1
 end
 
-function PartyManager.leader(arg_7_0)
-	return arg_7_0._leader
+PartyManager.leader = function (self)
+	-- function 7
+	return self._leader
 end
 
-function PartyManager.is_leader(arg_8_0, arg_8_1)
-	return arg_8_1 == arg_8_0._leader
+PartyManager.is_leader = function (self, arg_8_1)
+	-- function 8
+	return arg_8_1 == self._leader
 end
 
-function PartyManager.has_party_lobby(arg_9_0)
-	return arg_9_0._party_lobby_or_data ~= nil
+PartyManager.has_party_lobby = function (self)
+	-- function 9
+	return self._party_lobby_or_data ~= nil
 end
 
-function PartyManager.store_lobby(arg_10_0, arg_10_1)
-	var_0_1("Party lobby has been stored '%s'", arg_10_1)
-	arg_10_0:_free_lobby()
+PartyManager.store_lobby = function (self, arg_10_1)
+	-- function 10
+	fn("Party lobby has been stored '%s'", arg_10_1)
+	self:_free_lobby()
 
-	arg_10_0._party_lobby_or_data = arg_10_1
+	self._party_lobby_or_data = arg_10_1
 end
 
-function PartyManager.steal_lobby(arg_11_0)
-	var_0_1("Party lobby has been stolen!")
+PartyManager.steal_lobby = function (self)
+	-- function 11
+	fn("Party lobby has been stolen!")
 
-	local var_11_0 = arg_11_0._party_lobby_or_data
+	local _party_lobby_or_data = self._party_lobby_or_data
 
-	arg_11_0._party_lobby_or_data = nil
+	self._party_lobby_or_data = nil
 
-	return var_11_0
+	return _party_lobby_or_data
 end
 
-function PartyManager.clear_parties(arg_12_0, arg_12_1)
-	var_0_1("Clear parties. sync_to_clients: %q", arg_12_1)
+PartyManager.clear_parties = function (self, arg_12_1)
+	-- function 12
+	fn("Clear parties. sync_to_clients: %q", arg_12_1)
 
-	arg_12_0._player_statuses = {}
-	arg_12_0._parties = {}
-	arg_12_0._game_participating_parties = {}
-	arg_12_0._party_by_name = {}
-	arg_12_0._num_parties = 0
-	arg_12_0._num_game_participating_parties = 0
-	arg_12_0._undecided_party = arg_12_0:create_party(arg_12_0:generate_undecided_party())
-	arg_12_0._parties[0] = arg_12_0._undecided_party
-	arg_12_0._cleared = true
+	self._player_statuses = {}
+	self._parties = {}
+	self._game_participating_parties = {}
+	self._party_by_name = {}
+	self._num_parties = 0
+	self._num_game_participating_parties = 0
+	self._undecided_party = self:create_party(self:generate_undecided_party())
+	self._parties[0] = self._undecided_party
+	self._cleared = true
 
-	if arg_12_1 then
-		arg_12_0:_send_rpc_to_clients("rpc_reset_party_data")
+	if not arg_12_1 then
+		self:_send_rpc_to_clients("rpc_reset_party_data")
 	end
 end
 
-function PartyManager.generate_undecided_party(arg_13_0)
+PartyManager.generate_undecided_party = function (arg_13_0)
+	-- function 13
 	return {
 		party_id = 0,
 		name = "undecided",
@@ -132,312 +145,342 @@ function PartyManager.generate_undecided_party(arg_13_0)
 	}
 end
 
-function PartyManager.gather_party_members(arg_14_0, arg_14_1)
-	local var_14_0 = {}
+PartyManager.gather_party_members = function (self, arg_14_1)
+	-- function 14
+	local tbl = {}
 	local var_14_1
 
-	if arg_14_1 then
-		var_14_1 = arg_14_0:get_party(arg_14_1)
+	if not arg_14_1 then
+		var_14_1 = self:get_party(arg_14_1)
 	else
-		var_14_1 = arg_14_0:get_local_player_party()
+		var_14_1 = self:get_local_player_party()
 	end
 
 	if not var_14_1 then
-		return var_14_0
+		return tbl
 	end
 
-	local var_14_2 = var_14_1.occupied_slots
+	local occupied_slots = var_14_1.occupied_slots
 
-	for iter_14_0, iter_14_1 in ipairs(var_14_2) do
-		var_14_0[#var_14_0 + 1] = {
-			peer_id = iter_14_1.peer_id,
-			local_player_id = iter_14_1.local_player_id
+	for i, v in ipairs(occupied_slots) do
+		tbl[#tbl + 1] = {
+			peer_id = v.peer_id,
+			local_player_id = v.local_player_id
 		}
 	end
 
-	return var_14_0
+	return tbl
 end
 
-function PartyManager.create_party(arg_15_0, arg_15_1)
-	var_0_1("Register party. party_id: %q | name: %q | num_slots: %q", arg_15_1.party_id, arg_15_1.name, arg_15_1.num_slots)
+PartyManager.create_party = function (arg_15_0, arg_15_1)
+	-- function 15
+	fn("Register party. party_id: %q | name: %q | num_slots: %q", arg_15_1.party_id, arg_15_1.name, arg_15_1.num_slots)
 
-	local var_15_0 = arg_15_1.num_slots
-	local var_15_1 = {}
-	local var_15_2 = {}
+	local num_slots = arg_15_1.num_slots
+	local tbl = {}
+	local tbl_2 = {}
 
-	for iter_15_0 = 1, var_15_0 do
-		var_15_1[iter_15_0] = {
+	for i = 1, num_slots do
+		tbl[i] = {
 			game_mode_data = {}
 		}
-		var_15_2[iter_15_0] = {
-			slot_id = iter_15_0
+		tbl_2[i] = {
+			slot_id = i
 		}
 	end
 
-	return {
+	local tbl_3 = {
 		num_bots = 0,
 		num_used_slots = 0,
 		party_id = arg_15_1.party_id,
-		name = arg_15_1.name,
-		game_participating = arg_15_1.game_participating == nil and true or arg_15_1.game_participating,
-		num_open_slots = var_15_0,
-		num_slots = var_15_0,
-		slots = var_15_1,
-		occupied_slots = {},
-		bot_add_order = {},
-		slots_data = var_15_2
+		name = arg_15_1.name
 	}
+	local flag
+
+	flag = arg_15_1.game_participating ~= nil or not true or arg_15_1.game_participating
+	tbl_3.game_participating = flag
+	tbl_3.num_open_slots = num_slots
+	tbl_3.num_slots = num_slots
+	tbl_3.slots = tbl
+	tbl_3.occupied_slots = {}
+	tbl_3.bot_add_order = {}
+	tbl_3.slots_data = tbl_2
+
+	return tbl_3
 end
 
-function PartyManager.max_party_members(arg_16_0, arg_16_1)
-	local var_16_0 = 0
+PartyManager.max_party_members = function (arg_16_0, arg_16_1)
+	-- function 16
+	local num = 0
 
-	for iter_16_0, iter_16_1 in pairs(arg_16_1) do
-		local var_16_1 = iter_16_1.num_slots
+	for k, v in pairs(arg_16_1) do
+		local num_slots = v.num_slots
 
-		if iter_16_1.game_participating ~= false and var_16_0 < var_16_1 then
-			var_16_0 = var_16_1
+		if not (not (v.game_participating ~= false) and not (num < num_slots)) then
+			num = num_slots
 		end
 	end
 
-	return var_16_0
+	return num
 end
 
-function PartyManager.register_parties(arg_17_0, arg_17_1)
-	var_0_1("Register parties")
+PartyManager.register_parties = function (self, arg_17_1)
+	-- function 17
+	fn("Register parties")
 
-	for iter_17_0, iter_17_1 in pairs(arg_17_1) do
-		local var_17_0 = iter_17_1.party_id
+	for k, v in pairs(arg_17_1) do
+		local party_id = v.party_id
 
-		fassert(var_17_0 ~= 0, "This party id is reserved for undecided party.")
+		fassert(party_id ~= 0, "This party id is reserved for undecided party.")
 
-		local var_17_1 = arg_17_0:create_party(iter_17_1)
+		local create_party = self:create_party(v)
 
-		arg_17_0._parties[var_17_0] = var_17_1
-		arg_17_0._party_by_name[iter_17_0] = var_17_1
-		arg_17_0._num_parties = arg_17_0._num_parties + 1
+		self._parties[party_id] = create_party
+		self._party_by_name[k] = create_party
+		self._num_parties = self._num_parties + 1
 
-		if var_17_1.game_participating then
-			arg_17_0._num_game_participating_parties = arg_17_0._num_game_participating_parties + 1
-			arg_17_0._game_participating_parties[var_17_0] = var_17_1
+		if not create_party.game_participating then
+			self._num_game_participating_parties = self._num_game_participating_parties + 1
+			self._game_participating_parties[party_id] = create_party
 		end
 	end
 
-	local var_17_2 = true
+	local flag = true
 
-	for iter_17_2 = 1, arg_17_0._num_parties do
-		if arg_17_0._parties[iter_17_2].game_participating then
-			assert(var_17_2, "Game participating parties may not be separated by non participating ones.")
+	for k_2 = 1, self._num_parties do
+		if not self._parties[k_2].game_participating then
+			assert(flag, "Game participating parties may not be separated by non participating ones.")
 		else
-			var_17_2 = false
+			flag = false
 		end
 	end
 
-	arg_17_0._cleared = false
+	self._cleared = false
 end
 
-function PartyManager.cleared(arg_18_0)
-	return arg_18_0._cleared
+PartyManager.cleared = function (self)
+	-- function 18
+	return self._cleared
 end
 
-function PartyManager._create_player_status(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
-	local var_19_0 = PlayerUtils.unique_player_id(arg_19_1, arg_19_2)
-	local var_19_1 = arg_19_0._player_statuses
-	local var_19_2 = {
+PartyManager._create_player_status = function (self, arg_19_1, arg_19_2, arg_19_3)
+	-- function 19
+	local unique_player_id = PlayerUtils.unique_player_id(arg_19_1, arg_19_2)
+	local _player_statuses = self._player_statuses
+	local tbl = {
 		score = 0,
 		peer_id = arg_19_1,
 		local_player_id = arg_19_2,
-		unique_id = var_19_0,
+		unique_id = unique_player_id,
 		is_bot = arg_19_3,
 		is_player = not arg_19_3,
 		game_mode_data = {}
 	}
 
-	fassert(not var_19_1[var_19_0], "Player already connected peer_id=%s local_player_id%s", arg_19_1, arg_19_2)
+	fassert(not _player_statuses[unique_player_id], "Player already connected peer_id=%s local_player_id%s", arg_19_1, arg_19_2)
 
-	var_19_1[var_19_0] = var_19_2
+	_player_statuses[unique_player_id] = tbl
 
-	return var_19_2
+	return tbl
 end
 
-function PartyManager.register_player(arg_20_0, arg_20_1, arg_20_2)
-	local var_20_0 = arg_20_0._player_statuses[arg_20_2]
+PartyManager.register_player = function (self, arg_20_1, arg_20_2)
+	-- function 20
+	local var_20_0 = self._player_statuses[arg_20_2]
 
 	if not var_20_0 then
-		local var_20_1 = arg_20_1:network_id()
-		local var_20_2 = arg_20_1:local_player_id()
+		local network_id = arg_20_1:network_id()
+		local local_player_id = arg_20_1:local_player_id()
 
-		var_20_0 = arg_20_0:_create_player_status(var_20_1, var_20_2, false)
+		var_20_0 = self:_create_player_status(network_id, local_player_id, false)
 	end
 
 	var_20_0.player = arg_20_1
 end
 
-function PartyManager.set_selected_profile(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
-	local var_21_0 = arg_21_0:get_player_status(arg_21_1, arg_21_2)
+PartyManager.set_selected_profile = function (self, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+	-- function 21
+	local get_player_status = self:get_player_status(arg_21_1, arg_21_2)
 
-	var_21_0.selected_profile_index = arg_21_3
-	var_21_0.selected_career_index = arg_21_4
-	var_21_0.profile_index = arg_21_3
-	var_21_0.career_index = arg_21_4
+	get_player_status.selected_profile_index = arg_21_3
+	get_player_status.selected_career_index = arg_21_4
+	get_player_status.profile_index = arg_21_3
+	get_player_status.career_index = arg_21_4
 end
 
-function PartyManager.cleanup_game_mode_data(arg_22_0)
-	for iter_22_0, iter_22_1 in pairs(arg_22_0._player_statuses) do
-		iter_22_1.game_mode_data = {}
+PartyManager.cleanup_game_mode_data = function (self)
+	-- function 22
+	for k, v in pairs(self._player_statuses) do
+		v.game_mode_data = {}
 	end
 end
 
-function PartyManager.register_rpcs(arg_23_0, arg_23_1)
-	arg_23_0._network_event_delegate = arg_23_1
+PartyManager.register_rpcs = function (self, arg_23_1)
+	-- function 23
+	self._network_event_delegate = arg_23_1
 
-	arg_23_1:register(arg_23_0, unpack(var_0_0))
+	arg_23_1:register(self, unpack(tbl))
 end
 
-function PartyManager.unregister_rpcs(arg_24_0)
-	arg_24_0._network_event_delegate:unregister(arg_24_0)
+PartyManager.unregister_rpcs = function (self)
+	-- function 24
+	self._network_event_delegate:unregister(self)
 
-	arg_24_0._network_event_delegate = nil
+	self._network_event_delegate = nil
 end
 
-function PartyManager.update(arg_25_0, arg_25_1, arg_25_2)
+PartyManager.update = function (arg_25_0, arg_25_1, arg_25_2)
+	-- function 25
 	return
 end
 
-function PartyManager.get_local_player_party(arg_26_0)
-	local var_26_0 = Managers.player:local_player()
+PartyManager.get_local_player_party = function (self)
+	-- function 26
+	local local_player = Managers.player:local_player()
 
-	if var_26_0 then
-		return arg_26_0:get_party_from_unique_id(var_26_0:unique_id())
+	if not local_player then
+		return self:get_party_from_unique_id(local_player:unique_id())
 	end
 end
 
-function PartyManager.get_party(arg_27_0, arg_27_1)
-	return arg_27_0._parties[arg_27_1]
+PartyManager.get_party = function (self, arg_27_1)
+	-- function 27
+	return self._parties[arg_27_1]
 end
 
-function PartyManager.parties(arg_28_0)
-	return arg_28_0._parties
+PartyManager.parties = function (self)
+	-- function 28
+	return self._parties
 end
 
-function PartyManager.game_participating_parties(arg_29_0)
-	return arg_29_0._game_participating_parties
+PartyManager.game_participating_parties = function (self)
+	-- function 29
+	return self._game_participating_parties
 end
 
-function PartyManager.is_game_participating_party(arg_30_0, arg_30_1)
-	return arg_30_0._game_participating_parties[arg_30_1] ~= nil
+PartyManager.is_game_participating_party = function (self, arg_30_1)
+	-- function 30
+	return self._game_participating_parties[arg_30_1] ~= nil
 end
 
-function PartyManager.get_party_composition(arg_31_0)
-	local var_31_0 = {}
+PartyManager.get_party_composition = function (self)
+	-- function 31
+	local tbl = {}
 
-	for iter_31_0, iter_31_1 in ipairs(arg_31_0._parties) do
-		local var_31_1 = iter_31_1.occupied_slots
+	for i, v in ipairs(self._parties) do
+		local occupied_slots = v.occupied_slots
 
-		for iter_31_2, iter_31_3 in ipairs(var_31_1) do
-			var_31_0[iter_31_3.unique_id] = iter_31_1.party_id
+		for i_2, v_2 in ipairs(occupied_slots) do
+			tbl[v_2.unique_id] = v.party_id
 		end
 	end
 
-	return var_31_0
+	return tbl
 end
 
-function PartyManager._slot_empty_in_party(arg_32_0, arg_32_1, arg_32_2)
-	return arg_32_0._parties[arg_32_1].slots[arg_32_2].peer_id == nil
+PartyManager._slot_empty_in_party = function (self, arg_32_1, arg_32_2)
+	-- function 32
+	return self._parties[arg_32_1].slots[arg_32_2].peer_id == nil
 end
 
-function PartyManager.request_join_party(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5)
-	if arg_33_0._is_server then
-		local var_33_0 = arg_33_0._parties[arg_33_3]
-		local var_33_1 = true
+PartyManager.request_join_party = function (self, arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5)
+	-- function 33
+	if not self._is_server then
+		local var_33_0 = self._parties[arg_33_3]
+		local flag = true
 
-		if arg_33_4 then
-			var_33_1 = arg_33_0:_slot_empty_in_party(arg_33_3, arg_33_4)
+		if not arg_33_4 then
+			flag = self:_slot_empty_in_party(arg_33_3, arg_33_4)
 		end
 
-		if var_33_1 then
-			local var_33_2 = Managers.mechanism:preferred_slot_id(arg_33_3, arg_33_1, arg_33_2)
+		if not flag then
+			local preferred_slot_id = Managers.mechanism:preferred_slot_id(arg_33_3, arg_33_1, arg_33_2)
 
-			if var_33_2 then
-				if arg_33_0:is_slot_bot(var_33_0, var_33_2) then
-					local var_33_3, var_33_4 = arg_33_0:slot_peer_id(var_33_0, var_33_2)
-					local var_33_5 = Managers.party:get_player_status(var_33_3, var_33_4)
+			if not preferred_slot_id then
+				if not self:is_slot_bot(var_33_0, preferred_slot_id) then
+					local slot_peer_id, var_33_4 = self:slot_peer_id(var_33_0, preferred_slot_id)
+					local get_player_status = Managers.party:get_player_status(slot_peer_id, var_33_4)
 
-					arg_33_0:remove_peer_from_party(var_33_5.peer_id, var_33_5.local_player_id, var_33_5.party_id)
+					self:remove_peer_from_party(get_player_status.peer_id, get_player_status.local_player_id, get_player_status.party_id)
 
-					arg_33_4 = var_33_2
-				elseif arg_33_0:is_slot_empty(var_33_0, var_33_2) then
-					arg_33_4 = var_33_2
+					arg_33_4 = preferred_slot_id
+				elseif not self:is_slot_empty(var_33_0, preferred_slot_id) then
+					arg_33_4 = preferred_slot_id
 				end
 			end
 
-			local var_33_6 = false
+			local flag_2 = false
 
 			if var_33_0.num_used_slots < var_33_0.num_slots then
-				arg_33_0:assign_peer_to_party(arg_33_1, arg_33_2, arg_33_3, arg_33_4, var_33_6)
+				self:assign_peer_to_party(arg_33_1, arg_33_2, arg_33_3, arg_33_4, flag_2)
 			elseif var_33_0.num_bots > 0 then
 				local var_33_7
 
-				if arg_33_5 then
-					local var_33_8 = arg_33_5:network_id()
-					local var_33_9 = arg_33_5:local_player_id()
+				if not arg_33_5 then
+					local network_id = arg_33_5:network_id()
+					local local_player_id = arg_33_5:local_player_id()
 
-					var_33_7 = Managers.party:get_player_status(var_33_8, var_33_9)
+					var_33_7 = Managers.party:get_player_status(network_id, local_player_id)
 				else
-					var_33_7 = arg_33_0:get_last_added_bot_for_party(arg_33_3)
+					var_33_7 = self:get_last_added_bot_for_party(arg_33_3)
 				end
 
-				arg_33_0:remove_peer_from_party(var_33_7.peer_id, var_33_7.local_player_id, var_33_7.party_id)
-				arg_33_0:assign_peer_to_party(arg_33_1, arg_33_2, arg_33_3, arg_33_4, var_33_6)
+				self:remove_peer_from_party(var_33_7.peer_id, var_33_7.local_player_id, var_33_7.party_id)
+				self:assign_peer_to_party(arg_33_1, arg_33_2, arg_33_3, arg_33_4, flag_2)
 			end
 		end
 	else
-		var_0_1("Sending request join party")
+		fn("Sending request join party")
 
 		arg_33_4 = arg_33_4 or NetworkConstants.INVALID_PARTY_SLOT_ID
 
-		local var_33_10 = PEER_ID_TO_CHANNEL[arg_33_0._server_peer_id]
+		local var_33_10 = PEER_ID_TO_CHANNEL[self._server_peer_id]
 
 		RPC.rpc_request_join_party(var_33_10, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
 	end
 end
 
-function PartyManager.get_player_status(arg_34_0, arg_34_1, arg_34_2)
-	local var_34_0 = PlayerUtils.unique_player_id(arg_34_1, arg_34_2)
+PartyManager.get_player_status = function (self, arg_34_1, arg_34_2)
+	-- function 34
+	local unique_player_id = PlayerUtils.unique_player_id(arg_34_1, arg_34_2)
 
-	return arg_34_0._player_statuses[var_34_0]
+	return self._player_statuses[unique_player_id]
 end
 
-function PartyManager.get_status_from_unique_id(arg_35_0, arg_35_1)
-	return arg_35_0._player_statuses[arg_35_1]
+PartyManager.get_status_from_unique_id = function (self, arg_35_1)
+	-- function 35
+	return self._player_statuses[arg_35_1]
 end
 
-function PartyManager.get_party_from_player_id(arg_36_0, arg_36_1, arg_36_2)
-	local var_36_0 = PlayerUtils.unique_player_id(arg_36_1, arg_36_2)
-	local var_36_1 = arg_36_0._player_statuses[var_36_0]
+PartyManager.get_party_from_player_id = function (self, arg_36_1, arg_36_2)
+	-- function 36
+	local unique_player_id = PlayerUtils.unique_player_id(arg_36_1, arg_36_2)
+	local var_36_1 = self._player_statuses[unique_player_id]
 
-	if var_36_1 then
-		local var_36_2 = var_36_1.party_id
+	if not var_36_1 then
+		local party_id = var_36_1.party_id
 
-		return arg_36_0._parties[var_36_2], var_36_2
+		return self._parties[party_id], party_id
 	end
 end
 
-function PartyManager.get_party_from_unique_id(arg_37_0, arg_37_1)
-	local var_37_0 = arg_37_0._player_statuses[arg_37_1]
+PartyManager.get_party_from_unique_id = function (self, arg_37_1)
+	-- function 37
+	local var_37_0 = self._player_statuses[arg_37_1]
 
-	if var_37_0 then
-		local var_37_1 = var_37_0.party_id
+	if not var_37_0 then
+		local party_id = var_37_0.party_id
 
-		return arg_37_0._parties[var_37_1], var_37_1
+		return self._parties[party_id], party_id
 	end
 end
 
-function PartyManager.get_party_from_name(arg_38_0, arg_38_1)
-	local var_38_0 = arg_38_0._parties
+PartyManager.get_party_from_name = function (self, arg_38_1)
+	-- function 38
+	local _parties = self._parties
 
-	for iter_38_0 = 0, #var_38_0 do
-		local var_38_1 = var_38_0[iter_38_0]
+	for i = 0, #_parties do
+		local var_38_1 = _parties[i]
 
 		if var_38_1.name == arg_38_1 then
 			return var_38_1
@@ -445,185 +488,206 @@ function PartyManager.get_party_from_name(arg_38_0, arg_38_1)
 	end
 end
 
-function update_status_profile_index(arg_39_0)
-	local var_39_0 = Managers.state
+function update_status_profile_index(self)
+	-- function 39
+	local state = Managers.state
 
-	if not var_39_0 then
+	if not state then
 		return
 	end
 
-	local var_39_1 = var_39_0.network
+	local network = state.network
 
-	if not var_39_1 then
+	if not network then
 		return
 	end
 
-	local var_39_2 = var_39_1.profile_synchronizer
+	local profile_synchronizer = network.profile_synchronizer
 
-	if not var_39_2 then
+	if not profile_synchronizer then
 		return
 	end
 
-	local var_39_3, var_39_4 = var_39_2:profile_by_peer(arg_39_0.peer_id, arg_39_0.local_player_id)
+	local profile_by_peer, var_39_4 = profile_synchronizer:profile_by_peer(self.peer_id, self.local_player_id)
 
-	arg_39_0.profile_index = var_39_3
-	arg_39_0.career_index = var_39_4
-	arg_39_0.profile_id = var_39_3 and SPProfiles[var_39_3].display_name
+	self.profile_index = profile_by_peer
+	self.career_index = var_39_4
+	self.profile_id = not profile_by_peer and SPProfiles[profile_by_peer].display_name
 end
 
-function PartyManager.get_num_parties(arg_40_0)
-	return arg_40_0._num_parties
+PartyManager.get_num_parties = function (self)
+	-- function 40
+	return self._num_parties
 end
 
-function PartyManager.get_num_game_participating_parties(arg_41_0)
-	return arg_41_0._num_game_participating_parties
+PartyManager.get_num_game_participating_parties = function (self)
+	-- function 41
+	return self._num_game_participating_parties
 end
 
-function PartyManager.is_game_participating(arg_42_0, arg_42_1)
-	return arg_42_0._parties[arg_42_1].game_participating
+PartyManager.is_game_participating = function (self, arg_42_1)
+	-- function 42
+	return self._parties[arg_42_1].game_participating
 end
 
-function PartyManager.assign_peer_to_party(arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4, arg_43_5)
+PartyManager.assign_peer_to_party = function (self, arg_43_1, arg_43_2, arg_43_3, arg_43_4, arg_43_5)
+	-- function 43
 	arg_43_5 = not not arg_43_5
 
-	local var_43_0 = PlayerUtils.unique_player_id(arg_43_1, arg_43_2)
-	local var_43_1 = true
-	local var_43_2 = arg_43_0._player_statuses[var_43_0]
+	local unique_player_id = PlayerUtils.unique_player_id(arg_43_1, arg_43_2)
+	local flag = true
+	local var_43_2 = self._player_statuses[unique_player_id]
 
 	if not var_43_2 then
-		var_43_2 = arg_43_0:_create_player_status(arg_43_1, arg_43_2, arg_43_5)
-		var_43_1 = false
+		var_43_2 = self:_create_player_status(arg_43_1, arg_43_2, arg_43_5)
+		flag = false
 	end
 
 	local var_43_3
 
-	if var_43_1 and var_43_2.party_id then
+	if not flag and not var_43_2.party_id then
 		var_43_3 = var_43_2.party_id
 
-		local var_43_4 = arg_43_0._parties[var_43_3]
-		local var_43_5 = var_43_2.slot_id
-		local var_43_6 = var_43_2.is_bot
+		local var_43_4 = self._parties[var_43_3]
+		local slot_id = var_43_2.slot_id
+		local is_bot = var_43_2.is_bot
 
-		arg_43_0:_clear_slot_in_party(var_43_4, var_43_5, var_43_6)
+		self:_clear_slot_in_party(var_43_4, slot_id, is_bot)
 	end
 
 	update_status_profile_index(var_43_2)
 
-	local var_43_7 = arg_43_3 and arg_43_0._parties[arg_43_3] or arg_43_0._undecided_party
-	local var_43_8 = arg_43_3 or 0
+	local var_43_7
 
-	var_0_1("Player (%s:%d) was put into party %s (%d)", arg_43_1, arg_43_2, var_43_7.name, var_43_8)
+	if not arg_43_3 then
+		var_43_7 = self._parties[arg_43_3]
 
-	local var_43_9 = arg_43_4 or arg_43_0:find_first_empty_slot_id(var_43_7)
-
-	if PartyManager._find_slot_index(var_43_7, var_43_9) then
-		var_43_9 = nil
+		if not var_43_7 then
+			-- Nothing
+		end
 	end
 
-	var_43_7.slots[var_43_9] = var_43_2
+	var_43_7 = self._undecided_party
+
+	::label_43_0::
+
+	local flag_2 = arg_43_3 or 0
+
+	fn("Player (%s:%d) was put into party %s (%d)", arg_43_1, arg_43_2, var_43_7.name, flag_2)
+
+	local flag_3 = arg_43_4 or self:find_first_empty_slot_id(var_43_7)
+
+	if not PartyManager._find_slot_index(var_43_7, flag_3) then
+		flag_3 = nil
+	end
+
+	var_43_7.slots[flag_3] = var_43_2
 	var_43_7.occupied_slots[#var_43_7.occupied_slots + 1] = var_43_2
-	var_43_2.party_id = var_43_8
-	var_43_2.slot_id = var_43_9
+	var_43_2.party_id = flag_2
+	var_43_2.slot_id = flag_3
 	var_43_7.num_used_slots = var_43_7.num_used_slots + 1
 	var_43_7.num_open_slots = var_43_7.num_slots - var_43_7.num_used_slots
 
-	if arg_43_5 then
+	if not arg_43_5 then
 		var_43_7.num_bots = var_43_7.num_bots + 1
-		var_43_7.bot_add_order[var_43_7.num_bots] = var_43_9
+		var_43_7.bot_add_order[var_43_7.num_bots] = flag_3
 	end
 
-	if arg_43_0._is_server then
-		var_0_1("Sending 'rpc_peer_assigned_to_party'")
-		arg_43_0:_send_rpc_to_clients("rpc_peer_assigned_to_party", arg_43_1, arg_43_2, var_43_8, var_43_9, arg_43_5)
+	if not self._is_server then
+		fn("Sending 'rpc_peer_assigned_to_party'")
+		self:_send_rpc_to_clients("rpc_peer_assigned_to_party", arg_43_1, arg_43_2, flag_2, flag_3, arg_43_5)
 	end
 
-	local var_43_10 = Managers.player:player(arg_43_1, arg_43_2)
-	local var_43_11 = var_43_10 and var_43_10.local_player
+	local player = Managers.player:player(arg_43_1, arg_43_2)
+	local flag_4 = not player and player.local_player
 
-	if Managers.state.event then
-		Managers.state.event:trigger("player_party_changed", var_43_10, var_43_11, var_43_3, var_43_8)
+	if not Managers.state.event then
+		Managers.state.event:trigger("player_party_changed", player, flag_4, var_43_3, flag_2)
 	end
 
-	if Managers.state.game_mode then
-		Managers.state.game_mode:player_joined_party(arg_43_1, arg_43_2, var_43_8, var_43_9, var_43_3)
+	if not Managers.state.game_mode then
+		Managers.state.game_mode:player_joined_party(arg_43_1, arg_43_2, flag_2, flag_3, var_43_3)
 	end
 
-	if Managers.state.event then
-		Managers.state.event:trigger("on_player_joined_party", arg_43_1, arg_43_2, var_43_8, var_43_9, arg_43_5)
+	if not Managers.state.event then
+		Managers.state.event:trigger("on_player_joined_party", arg_43_1, arg_43_2, flag_2, flag_3, arg_43_5)
 	end
 
-	if Managers.venture.challenge then
-		Managers.venture.challenge:on_player_joined_party(arg_43_1, arg_43_2, var_43_8, var_43_9, arg_43_5)
+	if not Managers.venture.challenge then
+		Managers.venture.challenge:on_player_joined_party(arg_43_1, arg_43_2, flag_2, flag_3, arg_43_5)
 	end
 
-	Managers.mechanism:player_joined_party(arg_43_1, arg_43_2, var_43_8, var_43_9, arg_43_5)
+	Managers.mechanism:player_joined_party(arg_43_1, arg_43_2, flag_2, flag_3, arg_43_5)
 
 	return var_43_2
 end
 
-function PartyManager.remove_peer_from_party(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
-	local var_44_0 = arg_44_0:get_player_status(arg_44_1, arg_44_2)
+PartyManager.remove_peer_from_party = function (self, arg_44_1, arg_44_2, arg_44_3)
+	-- function 44
+	local get_player_status = self:get_player_status(arg_44_1, arg_44_2)
 
-	if not var_44_0 then
+	if not get_player_status then
 		return
 	end
 
-	local var_44_1 = arg_44_0._parties[arg_44_3]
-	local var_44_2 = var_44_0.slot_id
-	local var_44_3 = var_44_1.slots[var_44_2]
+	local var_44_1 = self._parties[arg_44_3]
+	local slot_id = get_player_status.slot_id
+	local var_44_3 = var_44_1.slots[slot_id]
 
-	if arg_44_0._is_server then
-		arg_44_0:_send_rpc_to_clients("rpc_remove_peer_from_party", arg_44_1, arg_44_2, arg_44_3)
+	if not self._is_server then
+		self:_send_rpc_to_clients("rpc_remove_peer_from_party", arg_44_1, arg_44_2, arg_44_3)
 	end
 
-	arg_44_0:_clear_slot_in_party(var_44_1, var_44_0.slot_id, var_44_0.is_bot)
+	self:_clear_slot_in_party(var_44_1, get_player_status.slot_id, get_player_status.is_bot)
 
-	if Managers.state.game_mode then
-		Managers.state.game_mode:player_left_party(arg_44_1, arg_44_2, arg_44_3, var_44_2, var_44_3)
+	if not Managers.state.game_mode then
+		Managers.state.game_mode:player_left_party(arg_44_1, arg_44_2, arg_44_3, slot_id, var_44_3)
 	end
 
-	if Managers.state.event then
-		Managers.state.event:trigger("on_player_left_party", arg_44_1, arg_44_2, arg_44_3, var_44_2)
+	if not Managers.state.event then
+		Managers.state.event:trigger("on_player_left_party", arg_44_1, arg_44_2, arg_44_3, slot_id)
 	end
 
-	if Managers.venture.challenge then
-		local var_44_4 = var_44_0.is_bot
+	if not Managers.venture.challenge then
+		local is_bot = get_player_status.is_bot
 
-		Managers.venture.challenge:on_player_left_party(arg_44_1, arg_44_2, arg_44_3, var_44_2, var_44_4)
+		Managers.venture.challenge:on_player_left_party(arg_44_1, arg_44_2, arg_44_3, slot_id, is_bot)
 	end
 
 	if not DEDICATED_SERVER then
 		Managers.account:update_presence()
 	end
 
-	var_44_0.party_id = nil
-	var_44_0.slot_id = nil
+	get_player_status.party_id = nil
+	get_player_status.slot_id = nil
 end
 
-local var_0_2 = {}
+local tbl_2 = {}
 
-function PartyManager.get_players_in_party(arg_45_0, arg_45_1)
-	table.clear(var_0_2)
+PartyManager.get_players_in_party = function (self, arg_45_1)
+	-- function 45
+	table.clear(tbl_2)
 
-	local var_45_0 = 0
+	local num = 0
 
-	for iter_45_0, iter_45_1 in pairs(arg_45_0._player_statuses) do
-		if iter_45_1.party_id == arg_45_1 then
-			var_45_0 = var_45_0 + 1
-			var_0_2[var_45_0] = iter_45_1
+	for k, v in pairs(self._player_statuses) do
+		if v.party_id == arg_45_1 then
+			num = num + 1
+			tbl_2[num] = v
 		end
 	end
 
-	return var_0_2, var_45_0
+	return tbl_2, num
 end
 
-function PartyManager._find_slot_index(arg_46_0, arg_46_1)
+PartyManager._find_slot_index = function (self, arg_46_1)
+	-- function 46
 	local var_46_0
-	local var_46_1 = arg_46_0.occupied_slots
+	local occupied_slots = self.occupied_slots
 
-	for iter_46_0 = 1, #var_46_1 do
-		if var_46_1[iter_46_0].slot_id == arg_46_1 then
-			var_46_0 = iter_46_0
+	for i = 1, #occupied_slots do
+		if occupied_slots[i].slot_id == arg_46_1 then
+			var_46_0 = i
 
 			break
 		end
@@ -632,187 +696,203 @@ function PartyManager._find_slot_index(arg_46_0, arg_46_1)
 	return var_46_0
 end
 
-function PartyManager._clear_slot_in_party(arg_47_0, arg_47_1, arg_47_2, arg_47_3)
+PartyManager._clear_slot_in_party = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3)
+	-- function 47
 	arg_47_1.slots[arg_47_2] = {}
 
-	local var_47_0 = PartyManager._find_slot_index(arg_47_1, arg_47_2)
+	local _find_slot_index = PartyManager._find_slot_index(arg_47_1, arg_47_2)
 
-	fassert(var_47_0 ~= nil, "could not find player status in occupied_slots")
+	fassert(_find_slot_index ~= nil, "could not find player status in occupied_slots")
 
-	local var_47_1 = arg_47_1.occupied_slots
-	local var_47_2 = arg_47_1.num_used_slots
+	local occupied_slots = arg_47_1.occupied_slots
+	local num_used_slots = arg_47_1.num_used_slots
 
-	var_47_1[var_47_0] = var_47_1[var_47_2]
-	var_47_1[var_47_2] = nil
-	arg_47_1.num_used_slots = var_47_2 - 1
+	occupied_slots[_find_slot_index] = occupied_slots[num_used_slots]
+	occupied_slots[num_used_slots] = nil
+	arg_47_1.num_used_slots = num_used_slots - 1
 	arg_47_1.num_open_slots = arg_47_1.num_slots - arg_47_1.num_used_slots
 
-	if arg_47_3 then
+	if not arg_47_3 then
 		arg_47_1.num_bots = arg_47_1.num_bots - 1
 
-		local var_47_3 = table.find(arg_47_1.bot_add_order, arg_47_2)
+		local find = table.find(arg_47_1.bot_add_order, arg_47_2)
 
-		table.remove(arg_47_1.bot_add_order, var_47_3)
+		table.remove(arg_47_1.bot_add_order, find)
 	end
 end
 
-function PartyManager.is_slot_empty(arg_48_0, arg_48_1, arg_48_2)
-	local var_48_0 = arg_48_1.slots
+PartyManager.is_slot_empty = function (arg_48_0, arg_48_1, arg_48_2)
+	-- function 48
+	local slots = arg_48_1.slots
 
-	return var_48_0[arg_48_2] == nil or var_48_0[arg_48_2].peer_id == nil
+	return slots[arg_48_2] == nil or slots[arg_48_2].peer_id == nil
 end
 
-function PartyManager.is_slot_bot(arg_49_0, arg_49_1, arg_49_2)
+PartyManager.is_slot_bot = function (arg_49_0, arg_49_1, arg_49_2)
+	-- function 49
 	local var_49_0 = arg_49_1.slots[arg_49_2]
 
-	return var_49_0 and var_49_0.is_bot
+	return not var_49_0 and var_49_0.is_bot
 end
 
-function PartyManager.slot_peer_id(arg_50_0, arg_50_1, arg_50_2)
+PartyManager.slot_peer_id = function (arg_50_0, arg_50_1, arg_50_2)
+	-- function 50
 	local var_50_0 = arg_50_1.slots[arg_50_2]
 
-	if var_50_0 then
+	if not var_50_0 then
 		return var_50_0.peer_id, var_50_0.local_player_id
 	end
 
 	return nil, nil
 end
 
-function PartyManager.find_first_empty_slot_id(arg_51_0, arg_51_1)
-	local var_51_0 = arg_51_1.num_slots
+PartyManager.find_first_empty_slot_id = function (self, arg_51_1)
+	-- function 51
+	local num_slots = arg_51_1.num_slots
 
-	for iter_51_0 = 1, var_51_0 do
-		if arg_51_0:is_slot_empty(arg_51_1, iter_51_0) then
-			return iter_51_0
+	for i = 1, num_slots do
+		if not self:is_slot_empty(arg_51_1, i) then
+			return i
 		end
 	end
 
 	ferror("No empty slot in party %s", arg_51_1.name)
 end
 
-function PartyManager.get_least_filled_party(arg_52_0, arg_52_1, arg_52_2)
-	local var_52_0 = arg_52_0._parties
+PartyManager.get_least_filled_party = function (self, arg_52_1, arg_52_2)
+	-- function 52
+	local _parties = self._parties
 
-	fassert(#var_52_0 > 1, "parties has not been initialized yet")
+	fassert(#_parties > 1, "parties has not been initialized yet")
 
-	local var_52_1 = 0
-	local var_52_2 = math.huge
+	local num = 0
+	local huge = math.huge
 
-	for iter_52_0 = 1, #var_52_0 do
-		local var_52_3 = var_52_0[iter_52_0]
+	for i = 1, #_parties do
+		local var_52_3 = _parties[i]
 
-		if not arg_52_2 or var_52_3.game_participating then
-			local var_52_4 = var_52_3.num_used_slots
+		if not arg_52_2 and not var_52_3.game_participating then
+			local num_used_slots = var_52_3.num_used_slots
 
-			if arg_52_1 then
-				var_52_4 = var_52_4 - var_52_3.num_bots
+			if not arg_52_1 then
+				num_used_slots = num_used_slots - var_52_3.num_bots
 			end
 
-			if var_52_4 < var_52_2 then
-				var_52_1 = iter_52_0
-				var_52_2 = var_52_4
+			if num_used_slots < huge then
+				num = i
+				huge = num_used_slots
 			end
 		end
 	end
 
-	return var_52_0[var_52_1], var_52_1
+	return _parties[num], num
 end
 
-function PartyManager.is_party_full(arg_53_0, arg_53_1)
-	local var_53_0 = arg_53_0._parties[arg_53_1]
+PartyManager.is_party_full = function (self, arg_53_1)
+	-- function 53
+	local var_53_0 = self._parties[arg_53_1]
 
 	return var_53_0.num_open_slots + var_53_0.num_bots == 0
 end
 
-function PartyManager.is_player_in_party(arg_54_0, arg_54_1, arg_54_2)
-	local var_54_0 = arg_54_0._parties[arg_54_2]
+PartyManager.is_player_in_party = function (self, arg_54_1, arg_54_2)
+	-- function 54
+	local var_54_0 = self._parties[arg_54_2]
 
-	return arg_54_2 == arg_54_0._player_statuses[arg_54_1].party_id
+	return arg_54_2 == self._player_statuses[arg_54_1].party_id
 end
 
-function PartyManager.get_last_added_bot_for_party(arg_55_0, arg_55_1)
-	local var_55_0 = arg_55_0._parties[arg_55_1]
+PartyManager.get_last_added_bot_for_party = function (self, arg_55_1)
+	-- function 55
+	local var_55_0 = self._parties[arg_55_1]
 	local var_55_1 = var_55_0.bot_add_order[var_55_0.num_bots]
 
 	return var_55_0.slots[var_55_1]
 end
 
-function PartyManager.hot_join_sync(arg_56_0, arg_56_1)
-	local var_56_0 = arg_56_0._parties
+PartyManager.hot_join_sync = function (self, arg_56_1)
+	-- function 56
+	local _parties = self._parties
 	local var_56_1 = PEER_ID_TO_CHANNEL[arg_56_1]
 
-	for iter_56_0 = 0, #var_56_0 do
-		local var_56_2 = var_56_0[iter_56_0].occupied_slots
+	for i = 0, #_parties do
+		local occupied_slots = _parties[i].occupied_slots
 
-		for iter_56_1 = 1, #var_56_2 do
-			local var_56_3 = var_56_2[iter_56_1]
-			local var_56_4 = var_56_3.peer_id
-			local var_56_5 = var_56_3.local_player_id
-			local var_56_6 = var_56_3.is_bot
-			local var_56_7 = var_56_3.slot_id
+		for j = 1, #occupied_slots do
+			local var_56_3 = occupied_slots[j]
+			local peer_id = var_56_3.peer_id
+			local local_player_id = var_56_3.local_player_id
+			local is_bot = var_56_3.is_bot
+			local slot_id = var_56_3.slot_id
 
-			RPC.rpc_peer_assigned_to_party(var_56_1, var_56_4, var_56_5, iter_56_0, var_56_7, var_56_6)
+			RPC.rpc_peer_assigned_to_party(var_56_1, peer_id, local_player_id, i, slot_id, is_bot)
 		end
 	end
 end
 
-function PartyManager._send_rpc_to_clients(arg_57_0, arg_57_1, ...)
+PartyManager._send_rpc_to_clients = function (self, arg_57_1, ...)
+	-- function 57
 	local var_57_0 = RPC[arg_57_1]
-	local var_57_1 = arg_57_0._server_peer_id
+	local _server_peer_id = self._server_peer_id
 
-	for iter_57_0, iter_57_1 in pairs(arg_57_0._hot_join_synced_peers) do
-		if iter_57_0 ~= var_57_1 and iter_57_1 then
-			local var_57_2 = PEER_ID_TO_CHANNEL[iter_57_0]
+	for k, v in pairs(self._hot_join_synced_peers) do
+		if k == _server_peer_id or not v then
+			local var_57_2 = PEER_ID_TO_CHANNEL[k]
 
 			var_57_0(var_57_2, ...)
 		end
 	end
 end
 
-function PartyManager.network_context_created(arg_58_0, arg_58_1, arg_58_2, arg_58_3)
-	var_0_1("network_context_created (server_peer_id=%s, own_peer_id=%s)", arg_58_2, arg_58_3)
+PartyManager.network_context_created = function (self, arg_58_1, arg_58_2, arg_58_3)
+	-- function 58
+	fn("network_context_created (server_peer_id=%s, own_peer_id=%s)", arg_58_2, arg_58_3)
 
-	arg_58_0._lobby = arg_58_1
-	arg_58_0._server_peer_id = arg_58_2
-	arg_58_0._peer_id = arg_58_3
-	arg_58_0._is_server = arg_58_2 == arg_58_3
+	self._lobby = arg_58_1
+	self._server_peer_id = arg_58_2
+	self._peer_id = arg_58_3
+	self._is_server = arg_58_2 == arg_58_3
 end
 
-function PartyManager.parties_by_name(arg_59_0)
-	return arg_59_0._party_by_name
+PartyManager.parties_by_name = function (self)
+	-- function 59
+	return self._party_by_name
 end
 
-function PartyManager.network_context_destroyed(arg_60_0)
-	var_0_1("network_context_created")
+PartyManager.network_context_destroyed = function (self)
+	-- function 60
+	fn("network_context_created")
 
-	arg_60_0._lobby = nil
-	arg_60_0._server_peer_id = nil
-	arg_60_0._peer_id = nil
-	arg_60_0._is_server = nil
-	arg_60_0._hot_join_synced_peers = {}
+	self._lobby = nil
+	self._server_peer_id = nil
+	self._peer_id = nil
+	self._is_server = nil
+	self._hot_join_synced_peers = {}
 
-	arg_60_0:clear_parties()
+	self:clear_parties()
 end
 
-function PartyManager.server_peer_hot_join_synced(arg_61_0, arg_61_1)
+PartyManager.server_peer_hot_join_synced = function (arg_61_0, arg_61_1)
+	-- function 61
 	arg_61_0._hot_join_synced_peers[arg_61_1] = true
 end
 
-function PartyManager.server_peer_left_session(arg_62_0, arg_62_1, arg_62_2, arg_62_3)
-	arg_62_0._hot_join_synced_peers[arg_62_1] = false
+PartyManager.server_peer_left_session = function (self, arg_62_1, arg_62_2, arg_62_3)
+	-- function 62
+	self._hot_join_synced_peers[arg_62_1] = false
 
-	local var_62_0 = arg_62_0._parties
+	local _parties = self._parties
 
-	for iter_62_0 = 0, #var_62_0 do
-		local var_62_1 = var_62_0[iter_62_0]
-		local var_62_2 = var_62_1.slots
-		local var_62_3 = var_62_1.num_slots
+	for i = 0, #_parties do
+		local var_62_1 = _parties[i]
+		local slots = var_62_1.slots
+		local num_slots = var_62_1.num_slots
 
-		for iter_62_1 = 1, var_62_3 do
-			local var_62_4 = var_62_2[iter_62_1]
+		for j = 1, num_slots do
+			local var_62_4 = slots[j]
 
 			if var_62_4.peer_id == arg_62_1 then
-				arg_62_0:remove_peer_from_party(var_62_4.peer_id, var_62_4.local_player_id, iter_62_0)
+				self:remove_peer_from_party(var_62_4.peer_id, var_62_4.local_player_id, i)
 			end
 		end
 	end
@@ -820,239 +900,332 @@ function PartyManager.server_peer_left_session(arg_62_0, arg_62_1, arg_62_2, arg
 	Managers.state.event:trigger("friend_party_peer_left", arg_62_1, arg_62_2, arg_62_3)
 end
 
-function PartyManager.rpc_request_join_party(arg_63_0, arg_63_1, arg_63_2, arg_63_3, arg_63_4, arg_63_5)
+PartyManager.rpc_request_join_party = function (self, arg_63_1, arg_63_2, arg_63_3, arg_63_4, arg_63_5)
+	-- function 63
 	printf("Recieved join party request from %s - %s party_id(%s)", arg_63_2, arg_63_3, arg_63_4)
 
 	if arg_63_5 == NetworkConstants.INVALID_PARTY_SLOT_ID then
 		arg_63_5 = nil
 	end
 
-	arg_63_0:request_join_party(arg_63_2, arg_63_3, arg_63_4, arg_63_5)
+	self:request_join_party(arg_63_2, arg_63_3, arg_63_4, arg_63_5)
 end
 
-function PartyManager.rpc_peer_assigned_to_party(arg_64_0, arg_64_1, arg_64_2, arg_64_3, arg_64_4, arg_64_5, arg_64_6)
-	var_0_1("rpc_peer_assigned_to_party. channel_id: %q | peer_id: %q | local_player_id: %q | party_id: %q | slot_id: %q | is_bot: %q", arg_64_1, arg_64_2, arg_64_3, arg_64_4, arg_64_5, arg_64_6)
-	arg_64_0:assign_peer_to_party(arg_64_2, arg_64_3, arg_64_4, arg_64_5, arg_64_6)
+PartyManager.rpc_peer_assigned_to_party = function (self, arg_64_1, arg_64_2, arg_64_3, arg_64_4, arg_64_5, arg_64_6)
+	-- function 64
+	fn("rpc_peer_assigned_to_party. channel_id: %q | peer_id: %q | local_player_id: %q | party_id: %q | slot_id: %q | is_bot: %q", arg_64_1, arg_64_2, arg_64_3, arg_64_4, arg_64_5, arg_64_6)
+	self:assign_peer_to_party(arg_64_2, arg_64_3, arg_64_4, arg_64_5, arg_64_6)
 end
 
-function PartyManager.rpc_remove_peer_from_party(arg_65_0, arg_65_1, arg_65_2, arg_65_3, arg_65_4)
-	var_0_1("rpc_remove_peer_from_party. channel_id: %q | peer_id: %q | local_player_id: %q | party_id: %q", arg_65_1, arg_65_2, arg_65_3, arg_65_4)
-	arg_65_0:remove_peer_from_party(arg_65_2, arg_65_3, arg_65_4)
+PartyManager.rpc_remove_peer_from_party = function (self, arg_65_1, arg_65_2, arg_65_3, arg_65_4)
+	-- function 65
+	fn("rpc_remove_peer_from_party. channel_id: %q | peer_id: %q | local_player_id: %q | party_id: %q", arg_65_1, arg_65_2, arg_65_3, arg_65_4)
+	self:remove_peer_from_party(arg_65_2, arg_65_3, arg_65_4)
 end
 
-function PartyManager.rpc_set_client_friend_party(arg_66_0, arg_66_1, arg_66_2)
-	arg_66_0:_client_set_friend_party(arg_66_2)
+PartyManager.rpc_set_client_friend_party = function (self, arg_66_1, arg_66_2)
+	-- function 66
+	self:_client_set_friend_party(arg_66_2)
 end
 
-function PartyManager.rpc_reset_party_data(arg_67_0)
-	arg_67_0:clear_parties()
+PartyManager.rpc_reset_party_data = function (self)
+	-- function 67
+	self:clear_parties()
 	Managers.mechanism:setup_mechanism_parties()
 end
 
-function PartyManager._draw_debug(arg_68_0, arg_68_1)
-	local var_68_0 = "materials/fonts/arial"
-	local var_68_1 = "arial"
-	local var_68_2 = 20
-	local var_68_3 = 20
-	local var_68_4 = 32
-	local var_68_5 = 180
-	local var_68_6 = 160
-	local var_68_7 = 90
-	local var_68_8 = 2 * var_68_4 + var_68_5 + var_68_6 + var_68_7
-	local var_68_9 = Managers.player.is_server
+PartyManager._draw_debug = function (self, arg_68_1)
+	-- function 68
+	local str = "materials/fonts/arial"
+	local str_2 = "arial"
+	local num = 20
+	local num_2 = 20
+	local num_3 = 32
+	local num_4 = 180
+	local num_5 = 160
+	local num_6 = 90
+	local num_7 = 2 * num_3 + num_4 + num_5 + num_6
+	local is_server = Managers.player.is_server
 	local var_68_10 = Color(128, 0, 0, 0)
 	local var_68_11 = Color(255, 255, 255, 255)
 	local var_68_12 = Color(255, 128, 255, 255)
 	local var_68_13 = Color(255, 155, 155, 255)
 	local var_68_14 = Color(255, 155, 255, 155)
 	local var_68_15 = Color(255, 55, 155, 156)
-	local var_68_16 = var_68_9 and Color(255, 255, 255, 0) or Color(255, 55, 126, 255)
-	local var_68_17, var_68_18 = Gui.resolution()
-	local var_68_19 = var_68_18 - var_68_4 - var_68_2
-	local var_68_20 = var_68_17 - var_68_8
+	local var_68_16
 
-	if arg_68_0._gui == nil then
-		local var_68_21 = Application.debug_world()
+	if not is_server then
+		var_68_16 = Color(255, 255, 255, 0)
 
-		arg_68_0._gui = World.create_screen_gui(var_68_21, "immediate", "material", "materials/fonts/gw_fonts")
+		if not var_68_16 then
+			-- Nothing
+		end
 	end
 
-	Gui.rect(arg_68_0._gui, Vector2(var_68_20, 0), Vector2(var_68_8, var_68_18), var_68_10)
+	var_68_16 = Color(255, 55, 126, 255)
 
-	local var_68_22 = var_68_9 and "(Server)" or "(Client)"
+	::label_68_0::
 
-	Gui.text(arg_68_0._gui, var_68_22, var_68_0, var_68_2, var_68_1, Vector3(var_68_20 + var_68_8 - 80, var_68_19, 0), var_68_16)
+	local resolution, var_68_18 = Gui.resolution()
+	local num_8 = var_68_18 - num_3 - num
+	local num_9 = resolution - num_7
 
-	local var_68_23 = Managers.mechanism:current_mechanism_name()
-	local var_68_24 = Managers.mechanism:game_mechanism():get_state()
-	local var_68_25 = string.format("Mechanism:'%s', state:'%s'", var_68_23, var_68_24)
+	if self._gui == nil then
+		local debug_world = Application.debug_world()
 
-	Gui.text(arg_68_0._gui, var_68_25, var_68_0, var_68_2, var_68_1, Vector3(var_68_20 + var_68_4, var_68_19, 0), var_68_15)
+		self._gui = World.create_screen_gui(debug_world, "immediate", "material", "materials/fonts/gw_fonts")
+	end
 
-	local var_68_26 = var_68_19 - var_68_3
-	local var_68_27 = Managers.state.game_mode:game_mode()
-	local var_68_28 = var_68_27 and var_68_27:settings().key or "none"
-	local var_68_29 = Managers.mechanism:get_level_seed()
-	local var_68_30 = string.format("Game mode: '%s', seed: %s", var_68_28, tostring(var_68_29))
+	Gui.rect(self._gui, Vector2(num_9, 0), Vector2(num_7, var_68_18), var_68_10)
 
-	Gui.text(arg_68_0._gui, var_68_30, var_68_0, var_68_2, var_68_1, Vector3(var_68_20 + var_68_4, var_68_26, 0), var_68_14)
+	local flag
 
-	local var_68_31 = var_68_26 - var_68_3
-	local var_68_32 = string.format("    state: '%s' max: %s", var_68_27:game_mode_state(), LobbySetup._network_options.max_members)
+	flag = not is_server and "(Server)" and "(Client)"
 
-	Gui.text(arg_68_0._gui, var_68_32, var_68_0, var_68_2, var_68_1, Vector3(var_68_20 + var_68_4, var_68_31, 0), var_68_14)
+	Gui.text(self._gui, flag, str, num, str_2, Vector3(num_9 + num_7 - 80, num_8, 0), var_68_16)
 
-	local var_68_33 = var_68_31 - var_68_3 * 2
-	local var_68_34 = Managers.mechanism:game_mechanism()
+	local current_mechanism_name = Managers.mechanism:current_mechanism_name()
+	local get_state = Managers.mechanism:game_mechanism():get_state()
+	local format = string.format("Mechanism:'%s', state:'%s'", current_mechanism_name, get_state)
 
-	if var_68_34.win_conditions then
-		local var_68_35 = Managers.state.game_mode:game_mode()
+	Gui.text(self._gui, format, str, num, str_2, Vector3(num_9 + num_3, num_8, 0), var_68_15)
 
-		if var_68_35.round_id then
-			local var_68_36 = var_68_34:win_conditions()
-			local var_68_37 = var_68_34:get_current_set()
-			local var_68_38 = var_68_34:num_sets()
-			local var_68_39 = var_68_34:total_rounds_started()
-			local var_68_40 = string.format("Set: %s/%s --> round: %d/2, round_id: %d", var_68_37, var_68_38, tostring(var_68_35:round_id() or -1), var_68_39)
+	local num_10 = num_8 - num_2
+	local game_mode = Managers.state.game_mode:game_mode()
+	local key
 
-			Gui.text(arg_68_0._gui, var_68_40, var_68_0, var_68_2, var_68_1, Vector3(var_68_20 + var_68_4, var_68_33, 0), var_68_14)
+	if not game_mode then
+		key = game_mode:settings().key
 
-			var_68_33 = var_68_33 - var_68_3
+		if not key then
+			-- Nothing
+		end
+	end
 
-			local var_68_41 = 14
+	key = "none"
 
-			for iter_68_0 = 1, var_68_38 do
-				var_68_33 = var_68_33 - var_68_41 / 2
+	::label_68_1::
 
-				local var_68_42 = iter_68_0 == var_68_37 and "(current set)" or ""
-				local var_68_43 = string.format("Set %s  %s", iter_68_0, var_68_42)
+	local get_level_seed = Managers.mechanism:get_level_seed()
+	local format_2 = string.format("Game mode: '%s', seed: %s", key, tostring(get_level_seed))
 
-				Gui.text(arg_68_0._gui, var_68_43, var_68_0, var_68_41, var_68_1, Vector3(var_68_20 + var_68_4, var_68_33, 0), Color(255, 220, 200, 0))
+	Gui.text(self._gui, format_2, str, num, str_2, Vector3(num_9 + num_3, num_10, 0), var_68_14)
 
-				var_68_33 = var_68_33 - var_68_41 - 4
+	local num_11 = num_10 - num_2
+	local format_3 = string.format("    state: '%s' max: %s", game_mode:game_mode_state(), LobbySetup._network_options.max_members)
 
-				for iter_68_1 = 1, 2 do
-					local var_68_44 = var_68_36:set_data(iter_68_1)[iter_68_0]
+	Gui.text(self._gui, format_3, str, num, str_2, Vector3(num_9 + num_3, num_11, 0), var_68_14)
 
-					if var_68_44 then
-						local var_68_45 = ""
+	local num_12 = num_11 - num_2 * 2
+	local game_mechanism = Managers.mechanism:game_mechanism()
 
-						if var_68_44.distance_traveled > 0 then
-							var_68_45 = string.format("dist: %.1f%%", var_68_44.distance_traveled * 100)
+	if not game_mechanism.win_conditions then
+		local game_mode_2 = Managers.state.game_mode:game_mode()
+
+		if not game_mode_2.round_id then
+			local win_conditions = game_mechanism:win_conditions()
+			local get_current_set = game_mechanism:get_current_set()
+			local num_sets = game_mechanism:num_sets()
+			local total_rounds_started = game_mechanism:total_rounds_started()
+			local format_4 = string.format
+			local str_3 = "Set: %s/%s --> round: %d/2, round_id: %d"
+			local var_68_42 = get_current_set
+			local var_68_43 = num_sets
+			local tostring = tostring
+			local round_id = game_mode_2:round_id()
+
+			round_id = round_id or -1
+
+			local var_68_46 = format_4(str_3, var_68_42, var_68_43, tostring(round_id), total_rounds_started)
+
+			Gui.text(self._gui, var_68_46, str, num, str_2, Vector3(num_9 + num_3, num_12, 0), var_68_14)
+
+			num_12 = num_12 - num_2
+
+			local num_13 = 14
+
+			for i = 1, num_sets do
+				num_12 = num_12 - num_13 / 2
+
+				local flag_2
+
+				flag_2 = i ~= get_current_set or not "(current set)" or ""
+
+				local format_5 = string.format("Set %s  %s", i, flag_2)
+
+				Gui.text(self._gui, format_5, str, num_13, str_2, Vector3(num_9 + num_3, num_12, 0), Color(255, 220, 200, 0))
+
+				num_12 = num_12 - num_13 - 4
+
+				for j = 1, 2 do
+					local var_68_50 = win_conditions:set_data(j)[i]
+
+					if not var_68_50 then
+						local str_4 = ""
+
+						if var_68_50.distance_traveled > 0 then
+							str_4 = string.format("dist: %.1f%%", var_68_50.distance_traveled * 100)
 						end
 
-						local var_68_46 = string.format("Party %s -> Score: %s/%s(%s) %s", iter_68_1, var_68_44.claimed_points, tostring(var_68_44.max_points), var_68_44.max_points - var_68_44.claimed_points, var_68_45)
+						local format_6 = string.format("Party %s -> Score: %s/%s(%s) %s", j, var_68_50.claimed_points, tostring(var_68_50.max_points), var_68_50.max_points - var_68_50.claimed_points, str_4)
 
-						Gui.text(arg_68_0._gui, var_68_46, var_68_0, var_68_41, var_68_1, Vector3(var_68_20 + var_68_4, var_68_33, 0), var_68_14)
+						Gui.text(self._gui, format_6, str, num_13, str_2, Vector3(num_9 + num_3, num_12, 0), var_68_14)
 					end
 
-					var_68_33 = var_68_33 - var_68_41 - 4
+					num_12 = num_12 - num_13 - 4
 				end
 			end
 
-			var_68_33 = var_68_33 - var_68_41 - 4
+			num_12 = num_12 - num_13 - 4
 		end
 	end
 
-	local var_68_47 = arg_68_0._parties
+	local _parties = self._parties
 
-	for iter_68_2 = 0, #var_68_47 do
-		local var_68_48 = var_68_47[iter_68_2]
-		local var_68_49 = var_68_20 + var_68_4
+	for k = 0, #_parties do
+		local var_68_54 = _parties[k]
+		local num_14 = num_9 + num_3
 
-		Gui.text(arg_68_0._gui, "Party " .. tostring(var_68_48.party_id), var_68_0, var_68_2, var_68_1, Vector3(var_68_49, var_68_33, 0), var_68_13)
+		Gui.text(self._gui, "Party " .. tostring(var_68_54.party_id), str, num, str_2, Vector3(num_14, num_12, 0), var_68_13)
 
-		local var_68_50 = var_68_49 + var_68_5
-		local var_68_51 = Managers.state.side.side_by_party[var_68_48]
-		local var_68_52 = var_68_51 and var_68_51._num_units or 0
-		local var_68_53 = var_68_51 and var_68_51._num_enemy_units or 0
+		local num_15 = num_14 + num_4
+		local var_68_57 = Managers.state.side.side_by_party[var_68_54]
+		local _num_units
 
-		Gui.text(arg_68_0._gui, string.format("(%d/%d) units(%d) enemies(%d)", var_68_48.num_used_slots, var_68_48.num_slots, var_68_52, var_68_53), var_68_0, var_68_2, var_68_1, Vector3(var_68_50, var_68_33, 0), var_68_13)
+		if not var_68_57 then
+			_num_units = var_68_57._num_units
 
-		var_68_33 = var_68_33 - var_68_3
+			if not _num_units then
+				-- Nothing
+			end
+		end
 
-		local var_68_54 = var_68_20 + var_68_4
+		_num_units = 0
 
-		Gui.text(arg_68_0._gui, "Peer", var_68_0, var_68_2, var_68_1, Vector3(var_68_54, var_68_33, 0), var_68_11)
+		do
+			local _num_enemy_units
+		end
 
-		local var_68_55 = var_68_54 + var_68_5
+		::label_68_2::
 
-		Gui.text(arg_68_0._gui, "State", var_68_0, var_68_2, var_68_1, Vector3(var_68_55, var_68_33, 0), var_68_11)
+		if not var_68_57 then
+			_num_enemy_units = var_68_57._num_enemy_units
 
-		local var_68_56 = var_68_55 + var_68_6
+			if not _num_enemy_units then
+				-- Nothing
+			end
+		end
 
-		Gui.text(arg_68_0._gui, "Info", var_68_0, var_68_2, var_68_1, Vector3(var_68_56, var_68_33, 0), var_68_11)
+		_num_enemy_units = 0
 
-		var_68_33 = var_68_33 - 4
+		::label_68_3::
 
-		Gui.rect(arg_68_0._gui, Vector2(var_68_20 + var_68_4, var_68_33), Vector2(var_68_5 + var_68_6 + var_68_7, 1), var_68_11)
+		Gui.text(self._gui, string.format("(%d/%d) units(%d) enemies(%d)", var_68_54.num_used_slots, var_68_54.num_slots, _num_units, _num_enemy_units), str, num, str_2, Vector3(num_15, num_12, 0), var_68_13)
 
-		var_68_33 = var_68_33 - var_68_3
+		num_12 = num_12 - num_2
 
-		local var_68_57 = var_68_48.occupied_slots
+		local num_16 = num_9 + num_3
 
-		for iter_68_3 = 1, #var_68_57 do
-			local var_68_58 = var_68_57[iter_68_3]
-			local var_68_59 = var_68_58.game_mode_data.spawn_state == "w8_to_spawn" and var_68_58.game_mode_data.spawn_timer and string.format("%.1f", var_68_58.game_mode_data.spawn_timer - arg_68_1) or ""
-			local var_68_60 = string.format("%s %s", var_68_58.game_mode_data.spawn_state or "?", var_68_59)
-			local var_68_61 = var_68_58.peer_id
-			local var_68_62 = var_68_58.profile_id
-			local var_68_63 = var_68_58.profile_index
-			local var_68_64 = var_68_58.career_index
-			local var_68_65 = string.format("P/C: %s-%s/%s", tostring(var_68_62), tostring(var_68_63), tostring(var_68_64))
-			local var_68_66 = "-"
-			local var_68_67 = "?"
-			local var_68_68 = var_68_58.player
+		Gui.text(self._gui, "Peer", str, num, str_2, Vector3(num_16, num_12, 0), var_68_11)
 
-			if var_68_68 then
-				var_68_67 = var_68_68:is_player_controlled() and "P" or "B"
-				var_68_66 = "1"
+		local num_17 = num_16 + num_4
 
-				local var_68_69 = var_68_68.player_unit
-				local var_68_70
+		Gui.text(self._gui, "State", str, num, str_2, Vector3(num_17, num_12, 0), var_68_11)
 
-				if var_68_69 then
-					local var_68_71 = Unit.get_data(var_68_69, "breed")
+		local num_18 = num_17 + num_5
 
-					var_68_66 = var_68_71 and var_68_71.hit_zones_lookup ~= nil and "L" or "2"
-				else
-					var_68_66 = next(var_68_68.owned_units) and "P" or "?"
+		Gui.text(self._gui, "Info", str, num, str_2, Vector3(num_18, num_12, 0), var_68_11)
+
+		num_12 = num_12 - 4
+
+		Gui.rect(self._gui, Vector2(num_9 + num_3, num_12), Vector2(num_4 + num_5 + num_6, 1), var_68_11)
+
+		num_12 = num_12 - num_2
+
+		local occupied_slots = var_68_54.occupied_slots
+
+		for l = 1, #occupied_slots do
+			local var_68_64 = occupied_slots[l]
+			local format_7
+
+			if var_68_64.game_mode_data.spawn_state ~= "w8_to_spawn" or not var_68_64.game_mode_data.spawn_timer then
+				format_7 = string.format("%.1f", var_68_64.game_mode_data.spawn_timer - arg_68_1)
+
+				if not format_7 then
+					-- Nothing
 				end
 			end
 
-			local var_68_72 = var_68_67 .. var_68_66
-			local var_68_73 = var_68_20 + var_68_4
+			format_7 = ""
 
-			Gui.text(arg_68_0._gui, var_68_61, var_68_0, var_68_2, var_68_1, Vector3(var_68_73, var_68_33, 0), var_68_11)
+			::label_68_4::
 
-			local var_68_74 = var_68_73 + var_68_5
+			local format_8 = string.format
+			local str_5 = "%s %s"
+			local spawn_state = var_68_64.game_mode_data.spawn_state
 
-			Gui.text(arg_68_0._gui, tostring(var_68_60), var_68_0, var_68_2, var_68_1, Vector3(var_68_74, var_68_33, 0), var_68_11)
+			spawn_state = spawn_state or "?"
 
-			local var_68_75 = var_68_74 + var_68_6
+			local var_68_69 = format_8(str_5, spawn_state, format_7)
+			local peer_id = var_68_64.peer_id
+			local profile_id = var_68_64.profile_id
+			local profile_index = var_68_64.profile_index
+			local career_index = var_68_64.career_index
+			local format_9 = string.format("P/C: %s-%s/%s", tostring(profile_id), tostring(profile_index), tostring(career_index))
+			local str_6 = "-"
+			local str_7 = "?"
+			local player = var_68_64.player
 
-			Gui.text(arg_68_0._gui, var_68_72, var_68_0, var_68_2, var_68_1, Vector3(var_68_75, var_68_33, 0), var_68_11)
+			if not player then
+				str_7 = not player:is_player_controlled() and "P" and "B"
+				str_6 = "1"
 
-			var_68_33 = var_68_33 - var_68_3
+				local player_unit = player.player_unit
+				local var_68_79
 
-			local var_68_76 = var_68_20 + var_68_4
+				if not player_unit then
+					local get_data = Unit.get_data(player_unit, "breed")
 
-			Gui.text(arg_68_0._gui, tostring(var_68_65), var_68_0, var_68_2, var_68_1, Vector3(var_68_76, var_68_33, 0), var_68_12)
+					str_6 = not get_data and get_data.hit_zones_lookup ~= nil and "L" and "2"
+				else
+					str_6 = not next(player.owned_units) and "P" and "?"
+				end
+			end
 
-			var_68_33 = var_68_33 - var_68_3
+			local str_8 = str_7 .. str_6
+			local num_19 = num_9 + num_3
+
+			Gui.text(self._gui, peer_id, str, num, str_2, Vector3(num_19, num_12, 0), var_68_11)
+
+			local num_20 = num_19 + num_4
+
+			Gui.text(self._gui, tostring(var_68_69), str, num, str_2, Vector3(num_20, num_12, 0), var_68_11)
+
+			local num_21 = num_20 + num_5
+
+			Gui.text(self._gui, str_8, str, num, str_2, Vector3(num_21, num_12, 0), var_68_11)
+
+			num_12 = num_12 - num_2
+
+			local num_22 = num_9 + num_3
+
+			Gui.text(self._gui, tostring(format_9), str, num, str_2, Vector3(num_22, num_12, 0), var_68_12)
+
+			num_12 = num_12 - num_2
 		end
 
-		var_68_33 = var_68_33 - var_68_3 * 2
+		num_12 = num_12 - num_2 * 2
 	end
 end
 
-function PartyManager.any_party_has_free_slots(arg_69_0, arg_69_1)
+PartyManager.any_party_has_free_slots = function (self, arg_69_1)
+	-- function 69
 	arg_69_1 = arg_69_1 or 1
 
-	local var_69_0 = arg_69_0._parties
+	local _parties = self._parties
 
-	for iter_69_0 = 1, #var_69_0 do
-		local var_69_1 = var_69_0[iter_69_0]
+	for i = 1, #_parties do
+		local var_69_1 = _parties[i]
 
 		if arg_69_1 <= var_69_1.num_open_slots + var_69_1.num_bots then
 			return true
@@ -1062,47 +1235,51 @@ function PartyManager.any_party_has_free_slots(arg_69_0, arg_69_1)
 	return false
 end
 
-function PartyManager.server_init_friend_parties(arg_70_0, arg_70_1)
-	arg_70_0._is_hosting_vs_custom_game = true
-	arg_70_0._friend_parties = {}
-	arg_70_0._friend_party_lookup = {}
-	arg_70_0._num_friend_party_ids = 0
+PartyManager.server_init_friend_parties = function (self, arg_70_1)
+	-- function 70
+	self._is_hosting_vs_custom_game = true
+	self._friend_parties = {}
+	self._friend_party_lookup = {}
+	self._num_friend_party_ids = 0
 
-	if arg_70_1 then
-		local var_70_0 = Managers.player:local_player()
-		local var_70_1 = var_70_0:get_party()
-		local var_70_2 = {}
+	if not arg_70_1 then
+		local local_player = Managers.player:local_player()
+		local get_party = local_player:get_party()
+		local tbl = {}
 
-		for iter_70_0, iter_70_1 in pairs(var_70_1.slots) do
-			if iter_70_1.peer_id then
-				var_70_2[#var_70_2 + 1] = iter_70_1.peer_id
+		for k, v in pairs(get_party.slots) do
+			if not v.peer_id then
+				tbl[#tbl + 1] = v.peer_id
 			end
 		end
 
-		arg_70_0:server_create_friend_party(var_70_2, var_70_0.peer_id)
+		self:server_create_friend_party(tbl, local_player.peer_id)
 	end
 end
 
-function PartyManager.server_clear_friend_parties(arg_71_0)
-	if arg_71_0._is_hosting_vs_custom_game then
-		arg_71_0._is_hosting_vs_custom_game = nil
+PartyManager.server_clear_friend_parties = function (self)
+	-- function 71
+	if not self._is_hosting_vs_custom_game then
+		self._is_hosting_vs_custom_game = nil
 	end
 
-	table.clear(arg_71_0._friend_parties)
-	table.clear(arg_71_0._friend_party_lookup)
+	table.clear(self._friend_parties)
+	table.clear(self._friend_party_lookup)
 end
 
-function PartyManager.server_update_all_client_friend_parties(arg_72_0)
-	for iter_72_0, iter_72_1 in pairs(arg_72_0._friend_parties) do
-		arg_72_0:_server_set_client_friend_party(iter_72_0)
+PartyManager.server_update_all_client_friend_parties = function (self)
+	-- function 72
+	for k, v in pairs(self._friend_parties) do
+		self:_server_set_client_friend_party(k)
 	end
 end
 
-function PartyManager.server_create_friend_party(arg_73_0, arg_73_1, arg_73_2, arg_73_3)
+PartyManager.server_create_friend_party = function (self, arg_73_1, arg_73_2, arg_73_3)
+	-- function 73
 	if arg_73_1[1] ~= arg_73_2 then
-		for iter_73_0 = 1, #arg_73_1 do
-			if arg_73_1[iter_73_0] == arg_73_2 then
-				arg_73_1[iter_73_0] = arg_73_1[1]
+		for i = 1, #arg_73_1 do
+			if arg_73_1[i] == arg_73_2 then
+				arg_73_1[i] = arg_73_1[1]
 				arg_73_1[1] = arg_73_2
 
 				break
@@ -1110,43 +1287,44 @@ function PartyManager.server_create_friend_party(arg_73_0, arg_73_1, arg_73_2, a
 		end
 	end
 
-	local var_73_0 = arg_73_3 or arg_73_0:_server_generate_friend_party_id()
+	local flag = arg_73_3 or self:_server_generate_friend_party_id()
 
-	arg_73_0._friend_parties[var_73_0] = {
+	self._friend_parties[flag] = {
 		leader = arg_73_2,
 		peers = arg_73_1,
 		num_peers = #arg_73_1
 	}
 
-	for iter_73_1 = 1, #arg_73_1 do
-		arg_73_0._friend_party_lookup[arg_73_1[iter_73_1]] = var_73_0
+	for j = 1, #arg_73_1 do
+		self._friend_party_lookup[arg_73_1[j]] = flag
 	end
 
-	arg_73_0:_server_set_client_friend_party(var_73_0)
+	self:_server_set_client_friend_party(flag)
 end
 
-function PartyManager.server_remove_friend_party_peer(arg_74_0, arg_74_1)
-	local var_74_0 = arg_74_0._friend_party_lookup[arg_74_1]
+PartyManager.server_remove_friend_party_peer = function (self, arg_74_1)
+	-- function 74
+	local var_74_0 = self._friend_party_lookup[arg_74_1]
 
-	arg_74_0._friend_party_lookup[arg_74_1] = nil
+	self._friend_party_lookup[arg_74_1] = nil
 
 	if not var_74_0 then
 		return
 	end
 
-	local var_74_1 = arg_74_0._friend_parties[var_74_0]
+	local var_74_1 = self._friend_parties[var_74_0]
 
 	assert(var_74_1, "[Party Manager: server_remove_friend_party_peer] tried to remove friend party peer " .. arg_74_1 .. " from non-existant party with id " .. var_74_0)
 
 	if var_74_1.num_peers == 1 then
-		arg_74_0:_server_remove_friend_party(var_74_0)
+		self:_server_remove_friend_party(var_74_0)
 
 		return
 	end
 
-	for iter_74_0 = 1, var_74_1.num_peers do
-		if var_74_1.peers[iter_74_0] == arg_74_1 then
-			table.swap_delete(var_74_1.peers, iter_74_0)
+	for i = 1, var_74_1.num_peers do
+		if var_74_1.peers[i] == arg_74_1 then
+			table.swap_delete(var_74_1.peers, i)
 
 			break
 		end
@@ -1154,87 +1332,95 @@ function PartyManager.server_remove_friend_party_peer(arg_74_0, arg_74_1)
 
 	var_74_1.num_peers = var_74_1.num_peers - 1
 	var_74_1.leader = var_74_1.peers[1]
-	arg_74_0._friend_party_lookup[arg_74_1] = nil
+	self._friend_party_lookup[arg_74_1] = nil
 
-	arg_74_0:_server_set_client_friend_party(var_74_0)
+	self:_server_set_client_friend_party(var_74_0)
 end
 
-function PartyManager.server_add_friend_party_peer(arg_75_0, arg_75_1, arg_75_2)
-	local var_75_0 = arg_75_0._friend_parties[arg_75_1]
+PartyManager.server_add_friend_party_peer = function (self, arg_75_1, arg_75_2)
+	-- function 75
+	local var_75_0 = self._friend_parties[arg_75_1]
 
 	var_75_0.num_peers = var_75_0.num_peers + 1
 	var_75_0.peers[var_75_0.num_peers] = arg_75_2
-	arg_75_0._friend_party_lookup[arg_75_2] = arg_75_1
+	self._friend_party_lookup[arg_75_2] = arg_75_1
 
-	arg_75_0:_server_set_client_friend_party(arg_75_1)
+	self:_server_set_client_friend_party(arg_75_1)
 end
 
-function PartyManager.server_add_friend_party_peer_from_invitee(arg_76_0, arg_76_1, arg_76_2)
-	local var_76_0 = arg_76_0._friend_party_lookup[arg_76_2]
+PartyManager.server_add_friend_party_peer_from_invitee = function (self, arg_76_1, arg_76_2)
+	-- function 76
+	local var_76_0 = self._friend_party_lookup[arg_76_2]
 
-	if var_76_0 then
-		arg_76_0:server_add_friend_party_peer(var_76_0, arg_76_1)
+	if not var_76_0 then
+		self:server_add_friend_party_peer(var_76_0, arg_76_1)
 	end
 end
 
-function PartyManager.server_get_friend_party_from_peer(arg_77_0, arg_77_1)
-	local var_77_0 = arg_77_0:get_friend_party_id_from_peer(arg_77_1)
+PartyManager.server_get_friend_party_from_peer = function (self, arg_77_1)
+	-- function 77
+	local get_friend_party_id_from_peer = self:get_friend_party_id_from_peer(arg_77_1)
 
-	if var_77_0 then
-		return arg_77_0:server_get_friend_party(var_77_0)
+	if not get_friend_party_id_from_peer then
+		return self:server_get_friend_party(get_friend_party_id_from_peer)
 	end
 end
 
-function PartyManager.server_get_friend_party(arg_78_0, arg_78_1)
-	return arg_78_0._friend_parties[arg_78_1]
+PartyManager.server_get_friend_party = function (self, arg_78_1)
+	-- function 78
+	return self._friend_parties[arg_78_1]
 end
 
-function PartyManager.server_get_friend_parties_sorted(arg_79_0)
-	local var_79_0 = {}
-	local var_79_1 = 1
+PartyManager.server_get_friend_parties_sorted = function (self)
+	-- function 79
+	local tbl = {}
+	local num = 1
 
-	for iter_79_0, iter_79_1 in pairs(arg_79_0._friend_parties) do
-		var_79_0[var_79_1] = iter_79_1
-		var_79_1 = var_79_1 + 1
+	for k, v in pairs(self._friend_parties) do
+		tbl[num] = v
+		num = num + 1
 	end
 
-	table.sort(var_79_0, function(arg_80_0, arg_80_1)
-		return arg_80_0.num_peers > arg_80_1.num_peers
+	table.sort(tbl, function (self, arg_80_1)
+		-- function 80
+		return self.num_peers > arg_80_1.num_peers
 	end)
 
-	return var_79_0
+	return tbl
 end
 
-function PartyManager.server_has_room_for_friend_party(arg_81_0, arg_81_1, arg_81_2)
-	local var_81_0 = #arg_81_0:parties()
-	local var_81_1 = FrameTable.alloc_table()
+PartyManager.server_has_room_for_friend_party = function (self, arg_81_1, arg_81_2)
+	-- function 81
+	local count = #self:parties()
+	local alloc_table = FrameTable.alloc_table()
 
-	var_81_1.num_peers = arg_81_2
+	alloc_table.num_peers = arg_81_2
 
-	local var_81_2 = table.values(arg_81_0._friend_parties, FrameTable.alloc_table())
+	local values = table.values(self._friend_parties, FrameTable.alloc_table())
 
-	var_81_2[#var_81_2 + 1] = var_81_1
+	values[#values + 1] = alloc_table
 
-	table.sort(var_81_2, function(arg_82_0, arg_82_1)
-		return arg_82_0.num_peers > arg_82_1.num_peers
+	table.sort(values, function (self, arg_82_1)
+		-- function 82
+		return self.num_peers > arg_82_1.num_peers
 	end)
 
-	local var_81_3 = Script.new_array(var_81_0)
+	local new_array = Script.new_array(count)
 
-	table.fill(var_81_3, var_81_0, 0)
+	table.fill(new_array, count, 0)
 
-	for iter_81_0 = 1, #var_81_2 do
-		local var_81_4 = var_81_2[iter_81_0]
+	for i = 1, #values do
+		local var_81_4 = values[i]
 		local var_81_5
-		local var_81_6 = 0
+		local num = 0
 
-		for iter_81_1 = 1, var_81_0 do
-			if arg_81_0:is_game_participating(iter_81_1) then
-				local var_81_7 = #arg_81_1[iter_81_1] - var_81_3[iter_81_1]
+		for j = 1, count do
+			if not self:is_game_participating(j) then
+				local num_2 = #arg_81_1[j] - new_array[j]
 
-				if var_81_6 < var_81_7 then
-					var_81_5 = iter_81_1
-					var_81_6 = var_81_7
+				if num < num_2 then
+					var_81_5 = j
+					num = num_2
 				end
 			end
 		end
@@ -1243,9 +1429,9 @@ function PartyManager.server_has_room_for_friend_party(arg_81_0, arg_81_1, arg_8
 			return false
 		end
 
-		var_81_3[var_81_5] = var_81_3[var_81_5] + var_81_4.num_peers
+		new_array[var_81_5] = new_array[var_81_5] + var_81_4.num_peers
 
-		if var_81_3[var_81_5] > #arg_81_1[var_81_5] then
+		if new_array[var_81_5] > #arg_81_1[var_81_5] then
 			return false
 		end
 	end
@@ -1253,209 +1439,241 @@ function PartyManager.server_has_room_for_friend_party(arg_81_0, arg_81_1, arg_8
 	return true
 end
 
-function PartyManager.can_kick_to_fill_server(arg_83_0, arg_83_1, arg_83_2)
-	local var_83_0 = #arg_83_0:parties()
-	local var_83_1 = FrameTable.alloc_table()
+PartyManager.can_kick_to_fill_server = function (self, arg_83_1, arg_83_2)
+	-- function 83
+	local count = #self:parties()
+	local alloc_table = FrameTable.alloc_table()
 
-	var_83_1.num_peers = arg_83_2
+	alloc_table.num_peers = arg_83_2
 
-	local var_83_2 = table.values(arg_83_0._friend_parties, FrameTable.alloc_table())
+	local values = table.values(self._friend_parties, FrameTable.alloc_table())
 
-	var_83_2[#var_83_2 + 1] = var_83_1
+	values[#values + 1] = alloc_table
 
-	table.sort(var_83_2, function(arg_84_0, arg_84_1)
-		return arg_84_0.num_peers > arg_84_1.num_peers
+	table.sort(values, function (self, arg_84_1)
+		-- function 84
+		return self.num_peers > arg_84_1.num_peers
 	end)
 
-	local var_83_3 = Script.new_array(var_83_0)
+	local new_array = Script.new_array(count)
 
-	table.fill(var_83_3, var_83_0, 0)
+	table.fill(new_array, count, 0)
 
-	local var_83_4 = FrameTable.alloc_table()
+	local alloc_table_2 = FrameTable.alloc_table()
 
-	for iter_83_0 = 1, #var_83_2 do
+	for i = 1, #values do
 		local var_83_5
-		local var_83_6 = 0
+		local num = 0
 
-		for iter_83_1 = 1, var_83_0 do
-			if arg_83_0:is_game_participating(iter_83_1) then
-				local var_83_7 = #arg_83_1[iter_83_1] - var_83_3[iter_83_1]
+		for j = 1, count do
+			if not self:is_game_participating(j) then
+				local num_2 = #arg_83_1[j] - new_array[j]
 
-				if var_83_6 < var_83_7 then
-					var_83_5 = iter_83_1
-					var_83_6 = var_83_7
+				if num < num_2 then
+					var_83_5 = j
+					num = num_2
 				end
 			end
 		end
 
-		local var_83_8 = var_83_2[iter_83_0]
-		local var_83_9 = var_83_8.num_peers
+		local var_83_8 = values[i]
+		local num_peers = var_83_8.num_peers
 
-		if var_83_6 < var_83_9 then
-			if var_83_8 == var_83_1 then
+		if num < num_peers then
+			if var_83_8 == alloc_table then
 				return false
 			end
 
-			var_83_4[#var_83_4 + 1] = var_83_8
+			alloc_table_2[#alloc_table_2 + 1] = var_83_8
 		else
-			var_83_3[var_83_5] = var_83_3[var_83_5] + var_83_9
+			new_array[var_83_5] = new_array[var_83_5] + num_peers
 		end
 	end
 
-	for iter_83_2 = 1, var_83_0 do
-		if arg_83_0:is_game_participating(iter_83_2) and var_83_3[iter_83_2] ~= #arg_83_1[iter_83_2] then
+	for k = 1, count do
+		if not (not self:is_game_participating(k) and new_array[k] == #arg_83_1[k]) then
 			return false
 		end
 	end
 
-	return var_83_4
+	return alloc_table_2
 end
 
-function PartyManager._server_generate_friend_party_id(arg_85_0)
-	if not arg_85_0._num_friend_party_ids then
-		arg_85_0._num_friend_party_ids = 0
+PartyManager._server_generate_friend_party_id = function (self)
+	-- function 85
+	if not self._num_friend_party_ids then
+		self._num_friend_party_ids = 0
 	end
 
-	arg_85_0._num_friend_party_ids = arg_85_0._num_friend_party_ids + 1
+	self._num_friend_party_ids = self._num_friend_party_ids + 1
 
-	return arg_85_0._num_friend_party_ids
+	return self._num_friend_party_ids
 end
 
-function PartyManager._server_remove_friend_party(arg_86_0, arg_86_1)
-	local var_86_0 = arg_86_0._friend_parties[arg_86_1]
+PartyManager._server_remove_friend_party = function (self, arg_86_1)
+	-- function 86
+	local var_86_0 = self._friend_parties[arg_86_1]
 
-	for iter_86_0, iter_86_1 in pairs(var_86_0.peers) do
-		arg_86_0._friend_party_lookup[iter_86_1] = nil
+	for k, v in pairs(var_86_0.peers) do
+		self._friend_party_lookup[v] = nil
 	end
 
-	arg_86_0._friend_parties[arg_86_1] = nil
+	self._friend_parties[arg_86_1] = nil
 end
 
-function PartyManager._collect_peers_from_friend_party(arg_87_0, arg_87_1)
-	assert(DEDICATED_SERVER or arg_87_0._is_hosting_vs_custom_game)
+PartyManager._collect_peers_from_friend_party = function (self, arg_87_1)
+	-- function 87
+	local assert = assert
+	local DEDICATED_SERVER = DEDICATED_SERVER
 
-	local var_87_0 = arg_87_0._friend_parties[arg_87_1]
+	DEDICATED_SERVER = DEDICATED_SERVER or self._is_hosting_vs_custom_game
 
-	assert(var_87_0, "[Party Manager:server_update_client_friend_parties()] tried to update client friend parties of nonexistant friend party id " .. arg_87_1)
+	assert(DEDICATED_SERVER)
 
-	local var_87_1 = 4
-	local var_87_2 = Script.new_array(var_87_1)
-	local var_87_3 = var_87_0.peers
-	local var_87_4 = #var_87_3
+	local var_87_2 = self._friend_parties[arg_87_1]
 
-	if var_87_1 < var_87_4 then
-		table.dump(var_87_3, "friend party peers")
-		Crashify.print_exception("[PartyManager]", "Friend party stragglers found. Party size: %s", var_87_4)
+	assert(var_87_2, "[Party Manager:server_update_client_friend_parties()] tried to update client friend parties of nonexistant friend party id " .. arg_87_1)
+
+	local num = 4
+	local new_array = Script.new_array(num)
+	local peers = var_87_2.peers
+	local count = #peers
+
+	if num < count then
+		table.dump(peers, "friend party peers")
+		Crashify.print_exception("[PartyManager]", "Friend party stragglers found. Party size: %s", count)
 	end
 
-	for iter_87_0 = 1, var_87_4 do
-		local var_87_5 = var_87_3[iter_87_0]
-		local var_87_6 = #var_87_2 + 1
+	for i = 1, count do
+		local var_87_7 = peers[i]
+		local num_2 = #new_array + 1
 
-		if var_87_1 < var_87_6 then
-			print("Too many peers in the same party:", var_87_5)
+		if num < num_2 then
+			print("Too many peers in the same party:", var_87_7)
 		else
-			var_87_2[var_87_6] = var_87_3[iter_87_0]
+			new_array[num_2] = peers[i]
 		end
 	end
 
-	return var_87_2
+	return new_array
 end
 
-function PartyManager.sync_friend_party_for_player(arg_88_0, arg_88_1)
-	assert(DEDICATED_SERVER or arg_88_0._is_hosting_vs_custom_game)
+PartyManager.sync_friend_party_for_player = function (self, arg_88_1)
+	-- function 88
+	local assert = assert
+	local DEDICATED_SERVER = DEDICATED_SERVER
 
-	local var_88_0 = PEER_ID_TO_CHANNEL[arg_88_1]
+	DEDICATED_SERVER = DEDICATED_SERVER or self._is_hosting_vs_custom_game
 
-	if var_88_0 then
-		local var_88_1 = arg_88_0:get_friend_party_id_from_peer(arg_88_1)
-		local var_88_2 = arg_88_0:_collect_peers_from_friend_party(var_88_1)
+	assert(DEDICATED_SERVER)
 
-		RPC.rpc_set_client_friend_party(var_88_0, var_88_2)
+	local var_88_2 = PEER_ID_TO_CHANNEL[arg_88_1]
+
+	if not var_88_2 then
+		local get_friend_party_id_from_peer = self:get_friend_party_id_from_peer(arg_88_1)
+		local _collect_peers_from_friend_party = self:_collect_peers_from_friend_party(get_friend_party_id_from_peer)
+
+		RPC.rpc_set_client_friend_party(var_88_2, _collect_peers_from_friend_party)
 	end
 end
 
-function PartyManager._server_set_client_friend_party(arg_89_0, arg_89_1)
-	local var_89_0 = arg_89_0:_collect_peers_from_friend_party(arg_89_1)
+PartyManager._server_set_client_friend_party = function (self, arg_89_1)
+	-- function 89
+	local _collect_peers_from_friend_party = self:_collect_peers_from_friend_party(arg_89_1)
 
-	arg_89_0:_server_send_rpc_to_friend_party("rpc_set_client_friend_party", arg_89_1, var_89_0)
+	self:_server_send_rpc_to_friend_party("rpc_set_client_friend_party", arg_89_1, _collect_peers_from_friend_party)
 end
 
-function PartyManager.server_get_friend_party_leaders(arg_90_0, arg_90_1)
-	local var_90_0 = {}
-	local var_90_1 = Network.peer_id()
+PartyManager.server_get_friend_party_leaders = function (self, arg_90_1)
+	-- function 90
+	local tbl = {}
+	local peer_id = Network.peer_id()
 
-	if not arg_90_0._friend_parties then
-		return var_90_0
+	if not self._friend_parties then
+		return tbl
 	end
 
-	for iter_90_0, iter_90_1 in pairs(arg_90_0._friend_parties) do
-		if not arg_90_1 or iter_90_1.leader ~= var_90_1 then
-			var_90_0[#var_90_0 + 1] = iter_90_1.leader
+	for k, v in pairs(self._friend_parties) do
+		if not (not arg_90_1 and v.leader == peer_id) then
+			tbl[#tbl + 1] = v.leader
 		end
 	end
 
-	return var_90_0
+	return tbl
 end
 
-function PartyManager._server_send_rpc_to_friend_party(arg_91_0, arg_91_1, arg_91_2, ...)
-	local var_91_0 = arg_91_0._friend_parties[arg_91_2]
+PartyManager._server_send_rpc_to_friend_party = function (self, arg_91_1, arg_91_2, ...)
+	-- function 91
+	local var_91_0 = self._friend_parties[arg_91_2]
 
 	if not var_91_0 then
 		return
 	end
 
-	for iter_91_0, iter_91_1 in pairs(var_91_0.peers) do
-		local var_91_1 = PEER_ID_TO_CHANNEL[iter_91_1]
+	for k, v in pairs(var_91_0.peers) do
+		local var_91_1 = PEER_ID_TO_CHANNEL[v]
 
-		if var_91_1 then
+		if not var_91_1 then
 			RPC[arg_91_1](var_91_1, ...)
 		end
 	end
 end
 
-function PartyManager.sync_friend_party_ids(arg_92_0)
-	local var_92_0 = {}
-	local var_92_1 = {}
-	local var_92_2 = 0
+PartyManager.sync_friend_party_ids = function (self)
+	-- function 92
+	local tbl = {}
+	local tbl_2 = {}
+	local num = 0
 
-	for iter_92_0, iter_92_1 in pairs(arg_92_0._friend_party_lookup) do
-		var_92_2 = var_92_2 + 1
-		var_92_0[var_92_2] = iter_92_0
-		var_92_1[var_92_2] = iter_92_1
+	for k, v in pairs(self._friend_party_lookup) do
+		num = num + 1
+		tbl[num] = k
+		tbl_2[num] = v
 	end
 
-	for iter_92_2 = 1, arg_92_0._num_friend_party_ids do
-		if arg_92_0._friend_parties[iter_92_2] then
-			arg_92_0:_server_send_rpc_to_friend_party("rpc_sync_friend_party_ids", iter_92_2, var_92_0, var_92_1)
+	for k_2 = 1, self._num_friend_party_ids do
+		if not self._friend_parties[k_2] then
+			self:_server_send_rpc_to_friend_party("rpc_sync_friend_party_ids", k_2, tbl, tbl_2)
 		end
 	end
 end
 
-function PartyManager.get_friend_party_id_from_peer(arg_93_0, arg_93_1)
-	return arg_93_0._friend_party_lookup[arg_93_1]
+PartyManager.get_friend_party_id_from_peer = function (self, arg_93_1)
+	-- function 93
+	return self._friend_party_lookup[arg_93_1]
 end
 
-function PartyManager._client_set_friend_party(arg_94_0, arg_94_1)
-	arg_94_0._client_friend_party = arg_94_1
+PartyManager._client_set_friend_party = function (self, arg_94_1)
+	-- function 94
+	self._client_friend_party = arg_94_1
 end
 
-function PartyManager.rpc_sync_friend_party_ids(arg_95_0, arg_95_1, arg_95_2, arg_95_3)
-	for iter_95_0 = 1, #arg_95_2 do
-		arg_95_0._friend_party_lookup[arg_95_2[iter_95_0]] = arg_95_3[iter_95_0]
+PartyManager.rpc_sync_friend_party_ids = function (self, arg_95_1, arg_95_2, arg_95_3)
+	-- function 95
+	for i = 1, #arg_95_2 do
+		self._friend_party_lookup[arg_95_2[i]] = arg_95_3[i]
 	end
 
-	local var_95_0 = Managers.mechanism:game_mechanism()
+	local game_mechanism = Managers.mechanism:game_mechanism()
+	local is_hosting_versus_custom_game = game_mechanism.is_hosting_versus_custom_game
 
-	if not (var_95_0.is_hosting_versus_custom_game and var_95_0:is_hosting_versus_custom_game()) and arg_95_0._is_server then
-		arg_95_0:_send_rpc_to_clients("rpc_sync_friend_party_ids", arg_95_2, arg_95_3)
+	is_hosting_versus_custom_game = not is_hosting_versus_custom_game and game_mechanism:is_hosting_versus_custom_game()
+
+	if is_hosting_versus_custom_game or not self._is_server then
+		self:_send_rpc_to_clients("rpc_sync_friend_party_ids", arg_95_2, arg_95_3)
 	end
 end
 
-function PartyManager.client_get_friend_party(arg_96_0)
-	return arg_96_0._client_friend_party
+PartyManager.client_get_friend_party = function (self)
+	-- function 96
+	return self._client_friend_party
 end
 
-function PartyManager.client_is_friend_party_leader(arg_97_0, arg_97_1)
-	return arg_97_0._client_friend_party and arg_97_0._client_friend_party[1] == arg_97_1
+PartyManager.client_is_friend_party_leader = function (self, arg_97_1)
+	-- function 97
+	local _client_friend_party = self._client_friend_party
+
+	_client_friend_party = not _client_friend_party and self._client_friend_party[1] == arg_97_1
+
+	return _client_friend_party
 end

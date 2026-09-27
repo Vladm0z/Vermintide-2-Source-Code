@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/terror_events/terror_events_prologue.lua
 
-local var_0_0 = require("scripts/settings/terror_events/terror_event_utils").count_event_breed
-local var_0_1 = {
+local count_event_breed = require("scripts/settings/terror_events/terror_event_utils").count_event_breed
+local tbl = {
 	prologue_well_02 = {
 		{
 			"spawn_at_raw",
@@ -101,8 +101,9 @@ local var_0_1 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_1_0)
-				return var_0_0("skaven_clan_rat_tutorial") < 3
+			condition = function (arg_1_0)
+				-- function 1
+				return count_event_breed("skaven_clan_rat_tutorial") < 3
 			end
 		},
 		{
@@ -128,8 +129,9 @@ local var_0_1 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_2_0)
-				return var_0_0("skaven_slave") < 3
+			condition = function (arg_2_0)
+				-- function 2
+				return count_event_breed("skaven_slave") < 3
 			end
 		},
 		{
@@ -180,8 +182,9 @@ local var_0_1 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_3_0)
-				return var_0_0("chaos_marauder_tutorial") < 1
+			condition = function (arg_3_0)
+				-- function 3
+				return count_event_breed("chaos_marauder_tutorial") < 1
 			end
 		},
 		{
@@ -206,8 +209,9 @@ local var_0_1 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_4_0)
-				return var_0_0("chaos_raider_tutorial") < 1
+			condition = function (arg_4_0)
+				-- function 4
+				return count_event_breed("chaos_raider_tutorial") < 1
 			end
 		},
 		{
@@ -233,8 +237,9 @@ local var_0_1 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_5_0)
-				return var_0_0("skaven_slave") < 1
+			condition = function (arg_5_0)
+				-- function 5
+				return count_event_breed("skaven_slave") < 1
 			end
 		},
 		{
@@ -260,8 +265,9 @@ local var_0_1 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_6_0)
-				return var_0_0("skaven_clan_rat") < 1
+			condition = function (arg_6_0)
+				-- function 6
+				return count_event_breed("skaven_clan_rat") < 1
 			end
 		},
 		{
@@ -473,8 +479,9 @@ local var_0_1 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_7_0)
-				return var_0_0("skaven_clan_rat") < 3 and var_0_0("skaven_slave") < 3
+			condition = function (arg_7_0)
+				-- function 7
+				return not (count_event_breed("skaven_clan_rat") < 3) or count_event_breed("skaven_slave") < 3
 			end
 		},
 		{
@@ -572,5 +579,5 @@ local var_0_1 = {
 }
 
 return {
-	var_0_1
+	tbl
 }

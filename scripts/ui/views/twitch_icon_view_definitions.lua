@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/twitch_icon_view_definitions.lua
 
-local var_0_0 = {
+local tbl = {
 	root = {
 		is_root = true,
 		position = {
@@ -40,7 +40,7 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	scenegraph_id = "twitch_icon",
 	element = {
 		passes = {
@@ -53,7 +53,8 @@ local var_0_1 = {
 				pass_type = "texture",
 				style_id = "twitch_connected",
 				texture_id = "twitch_connected",
-				content_check_function = function(arg_1_0, arg_1_1)
+				content_check_function = function (arg_1_0, arg_1_1)
+					-- function 1
 					return (Managers.twitch:is_connected())
 				end
 			},
@@ -61,7 +62,8 @@ local var_0_1 = {
 				pass_type = "texture",
 				style_id = "twitch_disconnected",
 				texture_id = "twitch_disconnected",
-				content_check_function = function(arg_2_0, arg_2_1)
+				content_check_function = function (arg_2_0, arg_2_1)
+					-- function 2
 					return not Managers.twitch:is_connected()
 				end
 			}
@@ -121,6 +123,6 @@ local var_0_1 = {
 }
 
 return {
-	scenegraph_definition = var_0_0,
-	twitch_icon_widget = var_0_1
+	scenegraph_definition = tbl,
+	twitch_icon_widget = tbl_2
 }

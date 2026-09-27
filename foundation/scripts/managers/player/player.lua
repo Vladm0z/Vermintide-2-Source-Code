@@ -14,40 +14,47 @@ Player._allowed_transitions = {
 	}
 }
 
-function Player.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
-	arg_1_0.network_manager = arg_1_1
-	arg_1_0.input_source = arg_1_2
-	arg_1_0.viewport_name = arg_1_3
-	arg_1_0.viewport_world_name = arg_1_4
-	arg_1_0.owned_units = {}
-	arg_1_0.is_server = arg_1_5
-	arg_1_0.camera_follow_unit = nil
-	arg_1_0._spawn_state = "despawned"
+Player.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	-- function 1
+	self.network_manager = arg_1_1
+	self.input_source = arg_1_2
+	self.viewport_name = arg_1_3
+	self.viewport_world_name = arg_1_4
+	self.owned_units = {}
+	self.is_server = arg_1_5
+	self.camera_follow_unit = nil
+	self._spawn_state = "despawned"
 end
 
-function Player.destroy(arg_2_0)
-	arg_2_0.network_manager = nil
+Player.destroy = function (self)
+	-- function 2
+	self.network_manager = nil
 end
 
-function Player.set_camera_follow_unit(arg_3_0, arg_3_1)
-	arg_3_0.camera_follow_unit = arg_3_1
+Player.set_camera_follow_unit = function (self, arg_3_1)
+	-- function 3
+	self.camera_follow_unit = arg_3_1
 end
 
-function Player.needs_despawn(arg_4_0)
-	return arg_4_0._spawn_state == "spawned"
+Player.needs_despawn = function (self)
+	-- function 4
+	return self._spawn_state == "spawned"
 end
 
-function Player.mark_as_queued_for_despawn(arg_5_0)
-	arg_5_0:_set_spawn_state("queued_for_despawn")
+Player.mark_as_queued_for_despawn = function (self)
+	-- function 5
+	self:_set_spawn_state("queued_for_despawn")
 end
 
-function Player._set_spawn_state(arg_6_0, arg_6_1)
+Player._set_spawn_state = function (self, arg_6_1)
+	-- function 6
 	fassert(arg_6_1 == "spawned" or arg_6_1 == "queued_for_despawn" or arg_6_1 == "despawned", "Invalid spawn state %s", arg_6_1)
-	fassert(Player._allowed_transitions[arg_6_0._spawn_state][arg_6_1], "Spawn state transition from %s to %s is not allowed", arg_6_0._spawn_state, arg_6_1)
+	fassert(Player._allowed_transitions[self._spawn_state][arg_6_1], "Spawn state transition from %s to %s is not allowed", self._spawn_state, arg_6_1)
 
-	arg_6_0._spawn_state = arg_6_1
+	self._spawn_state = arg_6_1
 end
 
-function Player.spawn_state(arg_7_0)
-	return arg_7_0._spawn_state
+Player.spawn_state = function (self)
+	-- function 7
+	return self._spawn_state
 end

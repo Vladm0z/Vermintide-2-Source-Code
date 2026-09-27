@@ -6,90 +6,98 @@ StateMachineManager.FONT = "foundation/fonts/debug"
 StateMachineManager.FONT_MATERIAL = "debug"
 StateMachineManager.FONT_SIZE = 14
 
-function StateMachineManager.init(arg_1_0)
-	arg_1_0._state_machines = {}
-	arg_1_0._world = nil
-	arg_1_0._gui = nil
-	arg_1_0._column1_width = 0
+StateMachineManager.init = function (self)
+	-- function 1
+	self._state_machines = {}
+	self._world = nil
+	self._gui = nil
+	self._column1_width = 0
 end
 
-function StateMachineManager.update(arg_2_0, arg_2_1)
-	if StateMachineManager.DEBUG then
-		if arg_2_0._world == nil then
-			arg_2_0._world = Application.debug_world()
+StateMachineManager.update = function (self, arg_2_1)
+	-- function 2
+	if not StateMachineManager.DEBUG then
+		if self._world == nil then
+			self._world = Application.debug_world()
 
-			if arg_2_0._world ~= nil then
-				arg_2_0._gui = World.create_screen_gui(arg_2_0._world, "immediate", "material", StateMachineManager.FONT)
+			if self._world ~= nil then
+				self._gui = World.create_screen_gui(self._world, "immediate", "material", StateMachineManager.FONT)
 			end
 		end
 
-		if arg_2_0._gui then
-			arg_2_0:_draw_panel()
+		if not self._gui then
+			self:_draw_panel()
 		end
 	end
 end
 
-function StateMachineManager.destroy(arg_3_0)
-	if StateMachineManager.DEBUG and arg_3_0._gui ~= nil then
-		World.destroy_gui(arg_3_0._world, arg_3_0._gui)
+StateMachineManager.destroy = function (self)
+	-- function 3
+	if not (not StateMachineManager.DEBUG and self._gui == nil) then
+		World.destroy_gui(self._world, self._gui)
 
-		arg_3_0._gui = nil
+		self._gui = nil
 	end
 end
 
-function StateMachineManager._register_state_machine(arg_4_0, arg_4_1)
+StateMachineManager._register_state_machine = function (arg_4_0, arg_4_1)
+	-- function 4
 	arg_4_0._state_machines[#arg_4_0._state_machines + 1] = arg_4_1
 end
 
-function StateMachineManager._unregister_state_machine(arg_5_0, arg_5_1)
-	local var_5_0 = table.find(arg_5_0._state_machines, arg_5_1)
+StateMachineManager._unregister_state_machine = function (self, arg_5_1)
+	-- function 5
+	local find = table.find(self._state_machines, arg_5_1)
 
-	assert(var_5_0, "unregister a state machine " .. arg_5_1._name .. " that was not registered")
-	table.remove(arg_5_0._state_machines, var_5_0)
+	assert(find, "unregister a state machine " .. arg_5_1._name .. " that was not registered")
+	table.remove(self._state_machines, find)
 end
 
-function StateMachineManager._root_state_machines(arg_6_0)
-	local var_6_0 = {}
+StateMachineManager._root_state_machines = function (self)
+	-- function 6
+	local tbl = {}
 
-	for iter_6_0, iter_6_1 in ipairs(arg_6_0._state_machines) do
-		if iter_6_1._state_machine_stack[1] == iter_6_1 then
-			var_6_0[#var_6_0 + 1] = iter_6_1
+	for i, v in ipairs(self._state_machines) do
+		if v._state_machine_stack[1] == v then
+			tbl[#tbl + 1] = v
 		end
 	end
 
-	return var_6_0
+	return tbl
 end
 
-function StateMachineManager._state_machines_column_width(arg_7_0, arg_7_1)
-	local var_7_0 = 0
+StateMachineManager._state_machines_column_width = function (self, arg_7_1)
+	-- function 7
+	local num = 0
 
-	for iter_7_0, iter_7_1 in ipairs(arg_7_1) do
-		local var_7_1, var_7_2 = Gui.text_extents(arg_7_0._gui, iter_7_1._name, StateMachineManager.FONT, StateMachineManager.FONT_SIZE)
-		local var_7_3 = var_7_2.x - var_7_1.x
+	for i, v in ipairs(arg_7_1) do
+		local text_extents, var_7_2 = Gui.text_extents(self._gui, v._name, StateMachineManager.FONT, StateMachineManager.FONT_SIZE)
+		local num_2 = var_7_2.x - text_extents.x
 
-		var_7_0 = math.max(var_7_3, var_7_0)
+		num = math.max(num_2, num)
 	end
 
-	return var_7_0
+	return num
 end
 
-function StateMachineManager._draw_panel(arg_8_0)
-	local var_8_0, var_8_1 = Gui.resolution()
-	local var_8_2 = 16
-	local var_8_3 = 4
-	local var_8_4 = arg_8_0:_root_state_machines()
-	local var_8_5 = arg_8_0:_state_machines_column_width(var_8_4) + 2 * var_8_3
+StateMachineManager._draw_panel = function (self)
+	-- function 8
+	local resolution, var_8_1 = Gui.resolution()
+	local num = 16
+	local num_2 = 4
+	local _root_state_machines = self:_root_state_machines()
+	local num_3 = self:_state_machines_column_width(_root_state_machines) + 2 * num_2
 
-	arg_8_0._column1_width = math.max(var_8_5, arg_8_0._column1_width)
+	self._column1_width = math.max(num_3, self._column1_width)
 
-	Gui.rect(arg_8_0._gui, Vector2(var_8_2, var_8_2), Vector2(arg_8_0._column1_width, var_8_1 - 2 * var_8_2), Color(64, 0, 0, 0))
+	Gui.rect(self._gui, Vector2(num, num), Vector2(self._column1_width, var_8_1 - 2 * num), Color(64, 0, 0, 0))
 
-	local var_8_6 = var_8_2
-	local var_8_7 = var_8_1 - var_8_2
+	local var_8_6 = num
+	local num_4 = var_8_1 - num
 
-	for iter_8_0, iter_8_1 in ipairs(var_8_4) do
-		Gui.text(arg_8_0._gui, iter_8_1._name, StateMachineManager.FONT, StateMachineManager.FONT_SIZE, StateMachineManager.FONT_MATERIAL, Vector3(var_8_6 + var_8_3, var_8_7 - StateMachineManager.FONT_SIZE, 0))
+	for i, v in ipairs(_root_state_machines) do
+		Gui.text(self._gui, v._name, StateMachineManager.FONT, StateMachineManager.FONT_SIZE, StateMachineManager.FONT_MATERIAL, Vector3(var_8_6 + num_2, num_4 - StateMachineManager.FONT_SIZE, 0))
 
-		var_8_7 = var_8_7 - StateMachineManager.FONT_SIZE
+		num_4 = num_4 - StateMachineManager.FONT_SIZE
 	end
 end

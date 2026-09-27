@@ -1,28 +1,28 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/definitions/hero_window_weave_properties_definitions.lua
 
-local var_0_0 = UISettings.game_start_windows
-local var_0_1 = var_0_0.size
-local var_0_2 = var_0_0.spacing
-local var_0_3 = var_0_0.large_window_frame
-local var_0_4 = UIFrameSettings[var_0_3].texture_sizes.vertical[1]
-local var_0_5 = {
-	var_0_1[1] * 3 + var_0_2 * 2 + var_0_4 * 2,
-	var_0_1[2] + 80
+local game_start_windows = UISettings.game_start_windows
+local size = game_start_windows.size
+local spacing = game_start_windows.spacing
+local large_window_frame = game_start_windows.large_window_frame
+local var_0_4 = UIFrameSettings[large_window_frame].texture_sizes.vertical[1]
+local tbl = {
+	size[1] * 3 + spacing * 2 + var_0_4 * 2,
+	size[2] + 80
 }
-local var_0_6 = {
-	var_0_5[1] + 50,
-	var_0_5[2]
+local tbl_2 = {
+	tbl[1] + 50,
+	tbl[2]
 }
-local var_0_7 = "menu_frame_11"
-local var_0_8 = UIFrameSettings[var_0_7].texture_sizes.vertical[1]
-local var_0_9 = UISettings.game_start_windows
-local var_0_10 = 85
-local var_0_11 = 85
-local var_0_12 = {
+local str = "menu_frame_11"
+local var_0_8 = UIFrameSettings[str].texture_sizes.vertical[1]
+local game_start_windows_2 = UISettings.game_start_windows
+local num = 85
+local num_2 = 85
+local tbl_3 = {
 	16,
-	var_0_6[2] - (var_0_8 * 2 + 220)
+	tbl_2[2] - (var_0_8 * 2 + 220)
 }
-local var_0_13 = {
+local tbl_4 = {
 	root = {
 		is_root = true,
 		size = {
@@ -65,7 +65,7 @@ local var_0_13 = {
 		vertical_alignment = "center",
 		parent = "screen_center",
 		horizontal_alignment = "center",
-		size = var_0_6,
+		size = tbl_2,
 		position = {
 			0,
 			0,
@@ -76,7 +76,7 @@ local var_0_13 = {
 		vertical_alignment = "center",
 		parent = "window",
 		horizontal_alignment = "center",
-		size = var_0_6,
+		size = tbl_2,
 		position = {
 			0,
 			0,
@@ -88,8 +88,8 @@ local var_0_13 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_6[1] - var_0_8 * 2,
-			var_0_6[2] - var_0_8 * 2
+			tbl_2[1] - var_0_8 * 2,
+			tbl_2[2] - var_0_8 * 2
 		},
 		position = {
 			0,
@@ -103,7 +103,7 @@ local var_0_13 = {
 		horizontal_alignment = "left",
 		size = {
 			560,
-			var_0_6[2] - var_0_8 * 2
+			tbl_2[2] - var_0_8 * 2
 		},
 		position = {
 			var_0_8,
@@ -117,7 +117,7 @@ local var_0_13 = {
 		horizontal_alignment = "left",
 		size = {
 			300,
-			var_0_6[2] - var_0_8 * 2
+			tbl_2[2] - var_0_8 * 2
 		},
 		position = {
 			var_0_8,
@@ -130,7 +130,7 @@ local var_0_13 = {
 		parent = "viewport_background",
 		horizontal_alignment = "right",
 		size = {
-			var_0_6[2] - var_0_8 * 2,
+			tbl_2[2] - var_0_8 * 2,
 			300
 		},
 		position = {
@@ -591,7 +591,7 @@ local var_0_13 = {
 		vertical_alignment = "center",
 		parent = "window",
 		horizontal_alignment = "right",
-		size = var_0_12,
+		size = tbl_3,
 		position = {
 			-(var_0_8 + 20),
 			0,
@@ -697,7 +697,7 @@ local var_0_13 = {
 		}
 	}
 }
-local var_0_14 = {
+local tbl_5 = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -719,7 +719,7 @@ local var_0_14 = {
 		2
 	}
 }
-local var_0_15 = {
+local tbl_6 = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -736,7 +736,7 @@ local var_0_15 = {
 		2
 	}
 }
-local var_0_16 = {
+local tbl_7 = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -758,7 +758,7 @@ local var_0_16 = {
 		2
 	}
 }
-local var_0_17 = {
+local tbl_8 = {
 	font_size = 58,
 	upper_case = true,
 	localize = false,
@@ -779,7 +779,7 @@ local var_0_17 = {
 		2
 	}
 }
-local var_0_18 = {
+local tbl_9 = {
 	font_size = 20,
 	upper_case = true,
 	localize = false,
@@ -800,7 +800,7 @@ local var_0_18 = {
 		2
 	}
 }
-local var_0_19 = {
+local tbl_10 = {
 	font_size = 22,
 	upper_case = true,
 	localize = false,
@@ -816,7 +816,7 @@ local var_0_19 = {
 		2
 	}
 }
-local var_0_20 = {
+local tbl_11 = {
 	font_size = 22,
 	upper_case = false,
 	localize = false,
@@ -837,7 +837,7 @@ local var_0_20 = {
 		2
 	}
 }
-local var_0_21 = {
+local tbl_12 = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -859,7 +859,7 @@ local var_0_21 = {
 		2
 	}
 }
-local var_0_22 = {
+local tbl_13 = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -876,7 +876,7 @@ local var_0_22 = {
 		2
 	}
 }
-local var_0_23 = {
+local tbl_14 = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -893,7 +893,7 @@ local var_0_23 = {
 		2
 	}
 }
-local var_0_24 = {
+local tbl_15 = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -911,8 +911,9 @@ local var_0_24 = {
 	}
 }
 
-local function var_0_25(arg_1_0, arg_1_1, arg_1_2)
-	local var_1_0 = {
+local function fn(arg_1_0, arg_1_1, arg_1_2)
+	-- function 1
+	local tbl = {
 		{
 			style_id = "icon",
 			pass_type = "hotspot",
@@ -925,99 +926,124 @@ local function var_0_25(arg_1_0, arg_1_1, arg_1_2)
 			content_passes = {
 				"weave_progression_slot_titles"
 			},
-			content_check_function = function(arg_2_0)
-				return arg_2_0.tooltip and arg_2_0.button_hotspot.is_hover
+			content_check_function = function (self)
+				-- function 2
+				local tooltip = self.tooltip
+
+				tooltip = not tooltip and self.button_hotspot.is_hover
+
+				return tooltip
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "icon",
 			texture_id = "icon",
-			content_check_function = function(arg_3_0)
-				return arg_3_0.icon and not arg_3_0.highlight
+			content_check_function = function (self)
+				-- function 3
+				local icon = self.icon
+
+				icon = not icon and not self.highlight
+
+				return icon
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "icon_highlight",
 			texture_id = "icon",
-			content_check_function = function(arg_4_0)
-				return arg_4_0.icon and arg_4_0.highlight and not arg_4_0.locked
+			content_check_function = function (self)
+				-- function 4
+				local icon = self.icon
+
+				if not icon then
+					icon = self.highlight
+					icon = not icon and not self.locked
+				end
+
+				return icon
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "slot",
 			texture_id = "slot",
-			content_check_function = function(arg_5_0)
-				return not arg_5_0.locked
+			content_check_function = function (self)
+				-- function 5
+				return not self.locked
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "slot_locked",
 			texture_id = "slot_locked",
-			content_check_function = function(arg_6_0)
-				return arg_6_0.locked
+			content_check_function = function (self)
+				-- function 6
+				return self.locked
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "fill_effect",
 			texture_id = "slot",
-			content_check_function = function(arg_7_0)
-				return not arg_7_0.locked
+			content_check_function = function (self)
+				-- function 7
+				return not self.locked
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "hover",
 			texture_id = "hover",
-			content_check_function = function(arg_8_0)
-				return not arg_8_0.locked
+			content_check_function = function (self)
+				-- function 8
+				return not self.locked
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "highlight_texture",
 			texture_id = "highlight_texture",
-			content_check_function = function(arg_9_0)
-				return not arg_9_0.locked
+			content_check_function = function (self)
+				-- function 9
+				return not self.locked
 			end
 		},
 		{
 			style_id = "new_effect",
 			pass_type = "texture",
 			texture_id = "highlight_texture",
-			content_change_function = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
-				local var_10_0 = arg_10_0.new_effect_timer
+			content_change_function = function (self, arg_10_1, arg_10_2, arg_10_3)
+				-- function 10
+				local new_effect_timer = self.new_effect_timer
 
-				if var_10_0 then
-					local var_10_1 = 1
-					local var_10_2 = math.min(var_10_0 + arg_10_3, var_10_1)
-					local var_10_3 = var_10_2 / var_10_1
-					local var_10_4 = math.easeInCubic(var_10_3)
-					local var_10_5 = math.ease_pulse(var_10_3)
-					local var_10_6 = arg_10_1.texture_size
-					local var_10_7 = arg_10_1.default_texture_size
+				if not new_effect_timer then
+					local num = 1
+					local min = math.min(new_effect_timer + arg_10_3, num)
+					local num_2 = min / num
+					local easeInCubic = math.easeInCubic(num_2)
+					local ease_pulse = math.ease_pulse(num_2)
+					local texture_size = arg_10_1.texture_size
+					local default_texture_size = arg_10_1.default_texture_size
 
-					var_10_6[1] = var_10_7[1] + var_10_7[1] * var_10_4
-					var_10_6[2] = var_10_7[2] + var_10_7[2] * var_10_4
-					arg_10_1.color[1] = 255 * var_10_5
+					texture_size[1] = default_texture_size[1] + default_texture_size[1] * easeInCubic
+					texture_size[2] = default_texture_size[2] + default_texture_size[2] * easeInCubic
+					arg_10_1.color[1] = 255 * ease_pulse
 
-					if var_10_3 == 1 then
-						arg_10_0.new_effect_timer = nil
+					if num_2 == 1 then
+						self.new_effect_timer = nil
 					else
-						arg_10_0.new_effect_timer = var_10_2
+						self.new_effect_timer = min
 					end
 				end
 			end,
-			content_check_function = function(arg_11_0)
-				return arg_11_0.new_effect_timer
+			content_check_function = function (self)
+				-- function 11
+				return self.new_effect_timer
 			end
 		}
 	}
-	local var_1_1 = {
+	local tbl_2 = {
 		text = "-",
 		slot = "athanor_skilltree_slot_property_unlocked",
 		hover = "athanor_skilltree_slot_property_hover",
@@ -1026,7 +1052,7 @@ local function var_0_25(arg_1_0, arg_1_1, arg_1_2)
 		button_hotspot = {},
 		size = arg_1_1
 	}
-	local var_1_2 = {
+	local tbl_3 = {
 		tooltip = {
 			vertical_alignment = "top",
 			max_width = 300,
@@ -1201,34 +1227,38 @@ local function var_0_25(arg_1_0, arg_1_1, arg_1_2)
 				0,
 				6
 			}
-		},
-		text = {
-			vertical_alignment = "center",
-			font_size = 20,
-			horizontal_alignment = "center",
-			font_type = arg_1_2 and "hell_shark_masked" or "hell_shark",
-			text_color = Colors.get_color_table_with_alpha("font_default", 255),
-			color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				-arg_1_1[1] / 2,
-				-arg_1_1[2] / 2,
-				5
-			},
-			size = arg_1_1
 		}
 	}
+	local tbl_4 = {
+		vertical_alignment = "center",
+		font_size = 20,
+		horizontal_alignment = "center"
+	}
+	local flag
+
+	flag = not arg_1_2 and "hell_shark_masked" and "hell_shark"
+	tbl_4.font_type = flag
+	tbl_4.text_color = Colors.get_color_table_with_alpha("font_default", 255)
+	tbl_4.color = {
+		255,
+		255,
+		255,
+		255
+	}
+	tbl_4.offset = {
+		-arg_1_1[1] / 2,
+		-arg_1_1[2] / 2,
+		5
+	}
+	tbl_4.size = arg_1_1
+	tbl_3.text = tbl_4
 
 	return {
 		element = {
-			passes = var_1_0
+			passes = tbl
 		},
-		content = var_1_1,
-		style = var_1_2,
+		content = tbl_2,
+		style = tbl_3,
 		offset = {
 			0,
 			0,
@@ -1238,8 +1268,9 @@ local function var_0_25(arg_1_0, arg_1_1, arg_1_2)
 	}
 end
 
-local function var_0_26(arg_12_0, arg_12_1, arg_12_2)
-	local var_12_0 = {
+local function fn_2(arg_12_0, arg_12_1, arg_12_2)
+	-- function 12
+	local tbl = {
 		{
 			style_id = "icon",
 			pass_type = "hotspot",
@@ -1249,40 +1280,45 @@ local function var_0_26(arg_12_0, arg_12_1, arg_12_2)
 			pass_type = "texture",
 			style_id = "slot",
 			texture_id = "slot",
-			content_check_function = function(arg_13_0)
-				return not arg_13_0.locked
+			content_check_function = function (self)
+				-- function 13
+				return not self.locked
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "slot_locked",
 			texture_id = "slot_locked",
-			content_check_function = function(arg_14_0)
-				return arg_14_0.locked
+			content_check_function = function (self)
+				-- function 14
+				return self.locked
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "fill_effect",
 			texture_id = "slot",
-			content_check_function = function(arg_15_0)
-				return not arg_15_0.locked
+			content_check_function = function (self)
+				-- function 15
+				return not self.locked
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "icon",
 			texture_id = "icon",
-			content_check_function = function(arg_16_0)
-				return arg_16_0.icon
+			content_check_function = function (self)
+				-- function 16
+				return self.icon
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "icon_mask",
 			texture_id = "icon_mask",
-			content_check_function = function(arg_17_0)
-				return arg_17_0.icon
+			content_check_function = function (self)
+				-- function 17
+				return self.icon
 			end
 		},
 		{
@@ -1292,64 +1328,73 @@ local function var_0_26(arg_12_0, arg_12_1, arg_12_2)
 			content_passes = {
 				"weave_progression_slot_titles"
 			},
-			content_check_function = function(arg_18_0)
-				return arg_18_0.tooltip and arg_18_0.button_hotspot.is_hover
+			content_check_function = function (self)
+				-- function 18
+				local tooltip = self.tooltip
+
+				tooltip = not tooltip and self.button_hotspot.is_hover
+
+				return tooltip
 			end
 		},
 		{
 			style_id = "text",
 			pass_type = "text",
 			text_id = "text",
-			content_check_function = function(arg_19_0)
-				return not arg_19_0.locked and not arg_19_0.icon
+			content_check_function = function (self)
+				-- function 19
+				return not not self.locked or not self.icon
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "hover",
 			texture_id = "hover",
-			content_check_function = function(arg_20_0)
-				return not arg_20_0.locked
+			content_check_function = function (self)
+				-- function 20
+				return not self.locked
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "highlight_texture",
 			texture_id = "highlight_texture",
-			content_check_function = function(arg_21_0)
-				return not arg_21_0.locked
+			content_check_function = function (self)
+				-- function 21
+				return not self.locked
 			end
 		},
 		{
 			style_id = "new_effect",
 			texture_id = "highlight_texture",
 			pass_type = "texture",
-			content_change_function = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
-				local var_22_0 = arg_22_0.new_effect_timer
+			content_change_function = function (self, arg_22_1, arg_22_2, arg_22_3)
+				-- function 22
+				local new_effect_timer = self.new_effect_timer
 
-				if var_22_0 then
-					local var_22_1 = 1
-					local var_22_2 = math.min(var_22_0 + arg_22_3, var_22_1)
-					local var_22_3 = var_22_2 / var_22_1
-					local var_22_4 = math.easeInCubic(var_22_3)
-					local var_22_5 = math.ease_pulse(var_22_3)
-					local var_22_6 = arg_22_1.texture_size
-					local var_22_7 = arg_22_1.default_texture_size
+				if not new_effect_timer then
+					local num = 1
+					local min = math.min(new_effect_timer + arg_22_3, num)
+					local num_2 = min / num
+					local easeInCubic = math.easeInCubic(num_2)
+					local ease_pulse = math.ease_pulse(num_2)
+					local texture_size = arg_22_1.texture_size
+					local default_texture_size = arg_22_1.default_texture_size
 
-					var_22_6[1] = var_22_7[1] + var_22_7[1] * var_22_4
-					var_22_6[2] = var_22_7[2] + var_22_7[2] * var_22_4
-					arg_22_1.color[1] = 255 * var_22_5
+					texture_size[1] = default_texture_size[1] + default_texture_size[1] * easeInCubic
+					texture_size[2] = default_texture_size[2] + default_texture_size[2] * easeInCubic
+					arg_22_1.color[1] = 255 * ease_pulse
 
-					if var_22_3 == 1 then
-						arg_22_0.new_effect_timer = nil
+					if num_2 == 1 then
+						self.new_effect_timer = nil
 					else
-						arg_22_0.new_effect_timer = var_22_2
+						self.new_effect_timer = min
 					end
 				end
 			end
 		}
 	}
-	local var_12_1 = {
+	local tbl_2 = {
 		text = "",
 		slot = "athanor_skilltree_slot_talent",
 		slot_locked = "athanor_skilltree_slot_talent_locked",
@@ -1359,7 +1404,7 @@ local function var_0_26(arg_12_0, arg_12_1, arg_12_2)
 		button_hotspot = {},
 		size = arg_12_1
 	}
-	local var_12_2 = {
+	local tbl_3 = {
 		tooltip = {
 			vertical_alignment = "top",
 			max_width = 300,
@@ -1539,40 +1584,44 @@ local function var_0_26(arg_12_0, arg_12_1, arg_12_2)
 				0,
 				6
 			}
-		},
-		text = {
-			horizontal_alignment = "center",
-			font_size = 38,
-			word_wrap = true,
-			vertical_alignment = "center",
-			font_type = arg_12_2 and "hell_shark_masked" or "hell_shark",
-			text_color = {
-				255,
-				87,
-				39,
-				141
-			},
-			color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				-arg_12_1[1] / 2,
-				-arg_12_1[2] / 2 + 14,
-				3
-			},
-			size = arg_12_1
 		}
 	}
+	local tbl_4 = {
+		horizontal_alignment = "center",
+		font_size = 38,
+		word_wrap = true,
+		vertical_alignment = "center"
+	}
+	local flag
+
+	flag = not arg_12_2 and "hell_shark_masked" and "hell_shark"
+	tbl_4.font_type = flag
+	tbl_4.text_color = {
+		255,
+		87,
+		39,
+		141
+	}
+	tbl_4.color = {
+		255,
+		255,
+		255,
+		255
+	}
+	tbl_4.offset = {
+		-arg_12_1[1] / 2,
+		-arg_12_1[2] / 2 + 14,
+		3
+	}
+	tbl_4.size = arg_12_1
+	tbl_3.text = tbl_4
 
 	return {
 		element = {
-			passes = var_12_0
+			passes = tbl
 		},
-		content = var_12_1,
-		style = var_12_2,
+		content = tbl_2,
+		style = tbl_3,
 		offset = {
 			0,
 			0,
@@ -1582,8 +1631,9 @@ local function var_0_26(arg_12_0, arg_12_1, arg_12_2)
 	}
 end
 
-local function var_0_27(arg_23_0, arg_23_1, arg_23_2)
-	local var_23_0 = {
+local function fn_3(arg_23_0, arg_23_1, arg_23_2)
+	-- function 23
+	local tbl = {
 		{
 			style_id = "icon",
 			pass_type = "hotspot",
@@ -1596,96 +1646,109 @@ local function var_0_27(arg_23_0, arg_23_1, arg_23_2)
 			content_passes = {
 				"weave_progression_slot_titles"
 			},
-			content_check_function = function(arg_24_0)
-				return arg_24_0.tooltip and arg_24_0.button_hotspot.is_hover
+			content_check_function = function (self)
+				-- function 24
+				local tooltip = self.tooltip
+
+				tooltip = not tooltip and self.button_hotspot.is_hover
+
+				return tooltip
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "slot",
 			texture_id = "slot",
-			content_check_function = function(arg_25_0)
-				return not arg_25_0.locked
+			content_check_function = function (self)
+				-- function 25
+				return not self.locked
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "slot_locked",
 			texture_id = "slot_locked",
-			content_check_function = function(arg_26_0)
-				return arg_26_0.locked
+			content_check_function = function (self)
+				-- function 26
+				return self.locked
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "fill_effect",
 			texture_id = "slot",
-			content_check_function = function(arg_27_0)
-				return not arg_27_0.locked
+			content_check_function = function (self)
+				-- function 27
+				return not self.locked
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "icon",
 			texture_id = "icon",
-			content_check_function = function(arg_28_0)
-				return arg_28_0.icon
+			content_check_function = function (self)
+				-- function 28
+				return self.icon
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "icon_mask",
 			texture_id = "icon_mask",
-			content_check_function = function(arg_29_0)
-				return arg_29_0.icon
+			content_check_function = function (self)
+				-- function 29
+				return self.icon
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "hover",
 			texture_id = "hover",
-			content_check_function = function(arg_30_0)
-				return not arg_30_0.locked
+			content_check_function = function (self)
+				-- function 30
+				return not self.locked
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "highlight_texture",
 			texture_id = "highlight_texture",
-			content_check_function = function(arg_31_0)
-				return not arg_31_0.locked
+			content_check_function = function (self)
+				-- function 31
+				return not self.locked
 			end
 		},
 		{
 			style_id = "new_effect",
 			texture_id = "highlight_texture",
 			pass_type = "texture",
-			content_change_function = function(arg_32_0, arg_32_1, arg_32_2, arg_32_3)
-				local var_32_0 = arg_32_0.new_effect_timer
+			content_change_function = function (self, arg_32_1, arg_32_2, arg_32_3)
+				-- function 32
+				local new_effect_timer = self.new_effect_timer
 
-				if var_32_0 then
-					local var_32_1 = 1
-					local var_32_2 = math.min(var_32_0 + arg_32_3, var_32_1)
-					local var_32_3 = var_32_2 / var_32_1
-					local var_32_4 = math.easeInCubic(var_32_3)
-					local var_32_5 = math.ease_pulse(var_32_3)
-					local var_32_6 = arg_32_1.texture_size
-					local var_32_7 = arg_32_1.default_texture_size
+				if not new_effect_timer then
+					local num = 1
+					local min = math.min(new_effect_timer + arg_32_3, num)
+					local num_2 = min / num
+					local easeInCubic = math.easeInCubic(num_2)
+					local ease_pulse = math.ease_pulse(num_2)
+					local texture_size = arg_32_1.texture_size
+					local default_texture_size = arg_32_1.default_texture_size
 
-					var_32_6[1] = var_32_7[1] + var_32_7[1] * var_32_4
-					var_32_6[2] = var_32_7[2] + var_32_7[2] * var_32_4
-					arg_32_1.color[1] = 255 * var_32_5
+					texture_size[1] = default_texture_size[1] + default_texture_size[1] * easeInCubic
+					texture_size[2] = default_texture_size[2] + default_texture_size[2] * easeInCubic
+					arg_32_1.color[1] = 255 * ease_pulse
 
-					if var_32_3 == 1 then
-						arg_32_0.new_effect_timer = nil
+					if num_2 == 1 then
+						self.new_effect_timer = nil
 					else
-						arg_32_0.new_effect_timer = var_32_2
+						self.new_effect_timer = min
 					end
 				end
 			end
 		}
 	}
-	local var_23_1 = {
+	local tbl_2 = {
 		text = "-",
 		slot = "athanor_skilltree_slot_trait_unlocked",
 		slot_locked = "athanor_skilltree_slot_trait_locked",
@@ -1695,7 +1758,7 @@ local function var_0_27(arg_23_0, arg_23_1, arg_23_2)
 		button_hotspot = {},
 		size = arg_23_1
 	}
-	local var_23_2 = {
+	local tbl_3 = {
 		tooltip = {
 			vertical_alignment = "top",
 			max_width = 300,
@@ -1875,34 +1938,38 @@ local function var_0_27(arg_23_0, arg_23_1, arg_23_2)
 				0,
 				6
 			}
-		},
-		text = {
-			vertical_alignment = "center",
-			font_size = 20,
-			horizontal_alignment = "center",
-			font_type = arg_23_2 and "hell_shark_masked" or "hell_shark",
-			text_color = Colors.get_color_table_with_alpha("font_default", 255),
-			color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				-arg_23_1[1] / 2,
-				-arg_23_1[2] / 2,
-				5
-			},
-			size = arg_23_1
 		}
 	}
+	local tbl_4 = {
+		vertical_alignment = "center",
+		font_size = 20,
+		horizontal_alignment = "center"
+	}
+	local flag
+
+	flag = not arg_23_2 and "hell_shark_masked" and "hell_shark"
+	tbl_4.font_type = flag
+	tbl_4.text_color = Colors.get_color_table_with_alpha("font_default", 255)
+	tbl_4.color = {
+		255,
+		255,
+		255,
+		255
+	}
+	tbl_4.offset = {
+		-arg_23_1[1] / 2,
+		-arg_23_1[2] / 2,
+		5
+	}
+	tbl_4.size = arg_23_1
+	tbl_3.text = tbl_4
 
 	return {
 		element = {
-			passes = var_23_0
+			passes = tbl
 		},
-		content = var_23_1,
-		style = var_23_2,
+		content = tbl_2,
+		style = tbl_3,
 		offset = {
 			0,
 			0,
@@ -1912,8 +1979,9 @@ local function var_0_27(arg_23_0, arg_23_1, arg_23_2)
 	}
 end
 
-local function var_0_28(arg_33_0, arg_33_1, arg_33_2)
-	local var_33_0 = {
+local function fn_4(arg_33_0, arg_33_1, arg_33_2)
+	-- function 33
+	local tbl = {
 		{
 			pass_type = "hotspot",
 			content_id = "button_hotspot"
@@ -1937,16 +2005,18 @@ local function var_0_28(arg_33_0, arg_33_1, arg_33_2)
 			pass_type = "texture",
 			style_id = "icon",
 			texture_id = "icon",
-			content_check_function = function(arg_34_0)
-				return not arg_34_0.button_hotspot.disable_button
+			content_check_function = function (self)
+				-- function 34
+				return not self.button_hotspot.disable_button
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "icon_disabled",
 			texture_id = "icon",
-			content_check_function = function(arg_35_0)
-				return arg_35_0.button_hotspot.disable_button
+			content_check_function = function (self)
+				-- function 35
+				return self.button_hotspot.disable_button
 			end
 		},
 		{
@@ -1958,16 +2028,18 @@ local function var_0_28(arg_33_0, arg_33_1, arg_33_2)
 			style_id = "title_text",
 			pass_type = "text",
 			text_id = "title_text",
-			content_check_function = function(arg_36_0)
-				return not arg_36_0.button_hotspot.disable_button
+			content_check_function = function (self)
+				-- function 36
+				return not self.button_hotspot.disable_button
 			end
 		},
 		{
 			style_id = "title_text_disabled",
 			pass_type = "text",
 			text_id = "title_text",
-			content_check_function = function(arg_37_0)
-				return arg_37_0.button_hotspot.disable_button
+			content_check_function = function (self)
+				-- function 37
+				return self.button_hotspot.disable_button
 			end
 		},
 		{
@@ -1979,16 +2051,18 @@ local function var_0_28(arg_33_0, arg_33_1, arg_33_2)
 			style_id = "price_text",
 			pass_type = "text",
 			text_id = "price_text",
-			content_check_function = function(arg_38_0)
-				return not arg_38_0.button_hotspot.disable_button
+			content_check_function = function (self)
+				-- function 38
+				return not self.button_hotspot.disable_button
 			end
 		},
 		{
 			style_id = "price_text_disabled",
 			pass_type = "text",
 			text_id = "price_text",
-			content_check_function = function(arg_39_0)
-				return arg_39_0.button_hotspot.disable_button
+			content_check_function = function (self)
+				-- function 39
+				return self.button_hotspot.disable_button
 			end
 		},
 		{
@@ -2000,16 +2074,18 @@ local function var_0_28(arg_33_0, arg_33_1, arg_33_2)
 			pass_type = "texture",
 			style_id = "price_icon",
 			texture_id = "price_icon",
-			content_check_function = function(arg_40_0)
-				return not arg_40_0.button_hotspot.disable_button and arg_40_0.used_amount < arg_40_0.total_uses
+			content_check_function = function (self)
+				-- function 40
+				return not not self.button_hotspot.disable_button or self.used_amount < self.total_uses
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "lock_icon",
 			texture_id = "lock_icon",
-			content_check_function = function(arg_41_0)
-				return arg_41_0.button_hotspot.disable_button
+			content_check_function = function (self)
+				-- function 41
+				return self.button_hotspot.disable_button
 			end
 		},
 		{
@@ -2021,100 +2097,112 @@ local function var_0_28(arg_33_0, arg_33_1, arg_33_2)
 			style_id = "total_value_text",
 			pass_type = "text",
 			text_id = "total_value_text",
-			content_check_function = function(arg_42_0)
-				return arg_42_0.used_amount >= 1
+			content_check_function = function (self)
+				-- function 42
+				return self.used_amount >= 1
 			end
 		},
 		{
 			style_id = "total_value_text_shadow",
 			pass_type = "text",
 			text_id = "total_value_text",
-			content_check_function = function(arg_43_0)
-				return arg_43_0.used_amount >= 1
+			content_check_function = function (self)
+				-- function 43
+				return self.used_amount >= 1
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "amount_dot_1",
 			texture_id = "amount_dot",
-			content_check_function = function(arg_44_0)
-				return 1 <= arg_44_0.total_uses - arg_44_0.used_amount
+			content_check_function = function (self)
+				-- function 44
+				return 1 <= self.total_uses - self.used_amount
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "amount_dot_2",
 			texture_id = "amount_dot",
-			content_check_function = function(arg_45_0)
-				return 2 <= arg_45_0.total_uses - arg_45_0.used_amount
+			content_check_function = function (self)
+				-- function 45
+				return 2 <= self.total_uses - self.used_amount
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "amount_dot_3",
 			texture_id = "amount_dot",
-			content_check_function = function(arg_46_0)
-				return 3 <= arg_46_0.total_uses - arg_46_0.used_amount
+			content_check_function = function (self)
+				-- function 46
+				return 3 <= self.total_uses - self.used_amount
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "amount_dot_4",
 			texture_id = "amount_dot",
-			content_check_function = function(arg_47_0)
-				return 4 <= arg_47_0.total_uses - arg_47_0.used_amount
+			content_check_function = function (self)
+				-- function 47
+				return 4 <= self.total_uses - self.used_amount
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "amount_dot_5",
 			texture_id = "amount_dot",
-			content_check_function = function(arg_48_0)
-				return 5 <= arg_48_0.total_uses - arg_48_0.used_amount
+			content_check_function = function (self)
+				-- function 48
+				return 5 <= self.total_uses - self.used_amount
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "amount_dot_locked_1",
 			texture_id = "amount_dot_locked",
-			content_check_function = function(arg_49_0)
-				return arg_49_0.total_uses < 1
+			content_check_function = function (self)
+				-- function 49
+				return self.total_uses < 1
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "amount_dot_locked_2",
 			texture_id = "amount_dot_locked",
-			content_check_function = function(arg_50_0)
-				return arg_50_0.total_uses < 2
+			content_check_function = function (self)
+				-- function 50
+				return self.total_uses < 2
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "amount_dot_locked_3",
 			texture_id = "amount_dot_locked",
-			content_check_function = function(arg_51_0)
-				return arg_51_0.total_uses < 3
+			content_check_function = function (self)
+				-- function 51
+				return self.total_uses < 3
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "amount_dot_locked_4",
 			texture_id = "amount_dot_locked",
-			content_check_function = function(arg_52_0)
-				return arg_52_0.total_uses < 4
+			content_check_function = function (self)
+				-- function 52
+				return self.total_uses < 4
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "amount_dot_locked_5",
 			texture_id = "amount_dot_locked",
-			content_check_function = function(arg_53_0)
-				return arg_53_0.total_uses < 5
+			content_check_function = function (self)
+				-- function 53
+				return self.total_uses < 5
 			end
 		}
 	}
-	local var_33_1 = {
+	local tbl_2 = {
 		price_icon = "icon_mastery_small",
 		title_text = "",
 		value_glow = "athanor_entry_property_glow",
@@ -2133,7 +2221,7 @@ local function var_0_28(arg_33_0, arg_33_1, arg_33_2)
 		button_hotspot = {},
 		size = arg_33_1
 	}
-	local var_33_2 = {
+	local tbl_3 = {
 		amount_dot_5 = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
@@ -2528,270 +2616,309 @@ local function var_0_28(arg_33_0, arg_33_1, arg_33_2)
 				35,
 				35
 			}
-		},
-		price_text_disabled = {
-			font_size = 18,
-			word_wrap = true,
-			horizontal_alignment = "center",
-			vertical_alignment = "center",
-			dynamic_font_size = true,
-			color = {
-				150,
-				255,
-				0,
-				0
-			},
-			font_type = arg_33_2 and "hell_shark_masked" or "hell_shark",
-			text_color = {
-				255,
-				80,
-				80,
-				80
-			},
-			offset = {
-				100,
-				17,
-				3
-			},
-			default_offset = {
-				100,
-				17,
-				3
-			},
-			size = {
-				arg_33_1[1] - 185,
-				20
-			},
-			color_override = {},
-			color_override_table = {
-				start_index = 0,
-				end_index = 0,
-				color = {
-					255,
-					121,
-					193,
-					229
-				}
-			}
-		},
-		price_text = {
-			font_size = 18,
-			word_wrap = true,
-			horizontal_alignment = "center",
-			vertical_alignment = "center",
-			dynamic_font_size = true,
-			color = {
-				150,
-				255,
-				0,
-				0
-			},
-			font_type = arg_33_2 and "hell_shark_masked" or "hell_shark",
-			text_color = Colors.get_color_table_with_alpha("font_default", 255),
-			offset = {
-				100,
-				17,
-				3
-			},
-			default_offset = {
-				100,
-				17,
-				3
-			},
-			size = {
-				arg_33_1[1] - 185,
-				20
-			},
-			color_override = {},
-			color_override_table = {
-				start_index = 0,
-				end_index = 0,
-				color = {
-					255,
-					121,
-					193,
-					229
-				}
-			}
-		},
-		price_text_shadow = {
-			font_size = 18,
-			word_wrap = true,
-			horizontal_alignment = "center",
-			vertical_alignment = "center",
-			dynamic_font_size = true,
-			color = {
-				150,
-				255,
-				0,
-				0
-			},
-			font_type = arg_33_2 and "hell_shark_masked" or "hell_shark",
-			text_color = Colors.get_color_table_with_alpha("black", 255),
-			offset = {
-				102,
-				15,
-				2
-			},
-			default_offset = {
-				102,
-				15,
-				2
-			},
-			size = {
-				arg_33_1[1] - 185,
-				20
-			}
-		},
-		title_text_disabled = {
-			font_size = 18,
-			word_wrap = true,
-			dynamic_font_size_word_wrap = true,
-			horizontal_alignment = "center",
-			vertical_alignment = "center",
-			color = {
-				150,
-				255,
-				0,
-				0
-			},
-			font_type = arg_33_2 and "hell_shark_masked" or "hell_shark",
-			text_color = {
-				255,
-				80,
-				80,
-				80
-			},
-			offset = {
-				100,
-				arg_33_1[2] - 80,
-				3
-			},
-			size = {
-				arg_33_1[1] - 190,
-				70
-			},
-			color_override = {},
-			color_override_table = {
-				start_index = 0,
-				end_index = 0,
-				color = {
-					255,
-					80,
-					80,
-					80
-				}
-			}
-		},
-		title_text = {
-			font_size = 18,
-			word_wrap = true,
-			dynamic_font_size_word_wrap = true,
-			horizontal_alignment = "center",
-			vertical_alignment = "center",
-			color = {
-				150,
-				255,
-				0,
-				0
-			},
-			font_type = arg_33_2 and "hell_shark_masked" or "hell_shark",
-			text_color = Colors.get_color_table_with_alpha("font_default", 255),
-			offset = {
-				100,
-				arg_33_1[2] - 80,
-				3
-			},
-			size = {
-				arg_33_1[1] - 190,
-				70
-			},
-			color_override = {},
-			color_override_table = {
-				start_index = 0,
-				end_index = 0,
-				color = Colors.get_color_table_with_alpha("corn_flower_blue", 255)
-			}
-		},
-		title_text_shadow = {
-			font_size = 18,
-			word_wrap = true,
-			dynamic_font_size_word_wrap = true,
-			horizontal_alignment = "center",
-			vertical_alignment = "center",
-			color = {
-				150,
-				255,
-				0,
-				0
-			},
-			font_type = arg_33_2 and "hell_shark_masked" or "hell_shark",
-			text_color = Colors.get_color_table_with_alpha("black", 255),
-			offset = {
-				102,
-				arg_33_1[2] - 80 - 2,
-				2
-			},
-			size = {
-				arg_33_1[1] - 190,
-				70
-			}
-		},
-		total_value_text = {
-			font_size = 24,
-			word_wrap = true,
-			horizontal_alignment = "center",
-			vertical_alignment = "center",
-			dynamic_font_size = true,
-			font_type = arg_33_2 and "hell_shark_masked" or "hell_shark",
-			text_color = {
-				255,
-				17,
-				50,
-				157
-			},
-			color = {
-				100,
-				255,
-				255,
-				255
-			},
-			offset = {
-				arg_33_1[1] - 75,
-				arg_33_1[2] / 2 - 13,
-				7
-			},
-			size = {
-				60,
-				30
-			}
-		},
-		total_value_text_shadow = {
-			font_size = 24,
-			horizontal_alignment = "center",
-			word_wrap = true,
-			vertical_alignment = "center",
-			dynamic_font_size = true,
-			font_type = arg_33_2 and "hell_shark_masked" or "hell_shark",
-			text_color = Colors.get_color_table_with_alpha("black", 0),
-			offset = {
-				arg_33_1[1] - 75 + 2,
-				arg_33_1[2] / 2 - 13 - 2,
-				6
-			},
-			size = {
-				60,
-				30
-			}
 		}
 	}
+	local tbl_4 = {
+		font_size = 18,
+		word_wrap = true,
+		horizontal_alignment = "center",
+		vertical_alignment = "center",
+		dynamic_font_size = true,
+		color = {
+			150,
+			255,
+			0,
+			0
+		}
+	}
+	local flag
+
+	flag = not arg_33_2 and "hell_shark_masked" and "hell_shark"
+	tbl_4.font_type = flag
+	tbl_4.text_color = {
+		255,
+		80,
+		80,
+		80
+	}
+	tbl_4.offset = {
+		100,
+		17,
+		3
+	}
+	tbl_4.default_offset = {
+		100,
+		17,
+		3
+	}
+	tbl_4.size = {
+		arg_33_1[1] - 185,
+		20
+	}
+	tbl_4.color_override = {}
+	tbl_4.color_override_table = {
+		start_index = 0,
+		end_index = 0,
+		color = {
+			255,
+			121,
+			193,
+			229
+		}
+	}
+	tbl_3.price_text_disabled = tbl_4
+
+	local tbl_5 = {
+		font_size = 18,
+		word_wrap = true,
+		horizontal_alignment = "center",
+		vertical_alignment = "center",
+		dynamic_font_size = true,
+		color = {
+			150,
+			255,
+			0,
+			0
+		}
+	}
+	local flag_2
+
+	flag_2 = not arg_33_2 and "hell_shark_masked" and "hell_shark"
+	tbl_5.font_type = flag_2
+	tbl_5.text_color = Colors.get_color_table_with_alpha("font_default", 255)
+	tbl_5.offset = {
+		100,
+		17,
+		3
+	}
+	tbl_5.default_offset = {
+		100,
+		17,
+		3
+	}
+	tbl_5.size = {
+		arg_33_1[1] - 185,
+		20
+	}
+	tbl_5.color_override = {}
+	tbl_5.color_override_table = {
+		start_index = 0,
+		end_index = 0,
+		color = {
+			255,
+			121,
+			193,
+			229
+		}
+	}
+	tbl_3.price_text = tbl_5
+
+	local tbl_6 = {
+		font_size = 18,
+		word_wrap = true,
+		horizontal_alignment = "center",
+		vertical_alignment = "center",
+		dynamic_font_size = true,
+		color = {
+			150,
+			255,
+			0,
+			0
+		}
+	}
+	local flag_3
+
+	flag_3 = not arg_33_2 and "hell_shark_masked" and "hell_shark"
+	tbl_6.font_type = flag_3
+	tbl_6.text_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_6.offset = {
+		102,
+		15,
+		2
+	}
+	tbl_6.default_offset = {
+		102,
+		15,
+		2
+	}
+	tbl_6.size = {
+		arg_33_1[1] - 185,
+		20
+	}
+	tbl_3.price_text_shadow = tbl_6
+
+	local tbl_7 = {
+		font_size = 18,
+		word_wrap = true,
+		dynamic_font_size_word_wrap = true,
+		horizontal_alignment = "center",
+		vertical_alignment = "center",
+		color = {
+			150,
+			255,
+			0,
+			0
+		}
+	}
+	local flag_4
+
+	flag_4 = not arg_33_2 and "hell_shark_masked" and "hell_shark"
+	tbl_7.font_type = flag_4
+	tbl_7.text_color = {
+		255,
+		80,
+		80,
+		80
+	}
+	tbl_7.offset = {
+		100,
+		arg_33_1[2] - 80,
+		3
+	}
+	tbl_7.size = {
+		arg_33_1[1] - 190,
+		70
+	}
+	tbl_7.color_override = {}
+	tbl_7.color_override_table = {
+		start_index = 0,
+		end_index = 0,
+		color = {
+			255,
+			80,
+			80,
+			80
+		}
+	}
+	tbl_3.title_text_disabled = tbl_7
+
+	local tbl_8 = {
+		font_size = 18,
+		word_wrap = true,
+		dynamic_font_size_word_wrap = true,
+		horizontal_alignment = "center",
+		vertical_alignment = "center",
+		color = {
+			150,
+			255,
+			0,
+			0
+		}
+	}
+	local flag_5
+
+	flag_5 = not arg_33_2 and "hell_shark_masked" and "hell_shark"
+	tbl_8.font_type = flag_5
+	tbl_8.text_color = Colors.get_color_table_with_alpha("font_default", 255)
+	tbl_8.offset = {
+		100,
+		arg_33_1[2] - 80,
+		3
+	}
+	tbl_8.size = {
+		arg_33_1[1] - 190,
+		70
+	}
+	tbl_8.color_override = {}
+	tbl_8.color_override_table = {
+		start_index = 0,
+		end_index = 0,
+		color = Colors.get_color_table_with_alpha("corn_flower_blue", 255)
+	}
+	tbl_3.title_text = tbl_8
+
+	local tbl_9 = {
+		font_size = 18,
+		word_wrap = true,
+		dynamic_font_size_word_wrap = true,
+		horizontal_alignment = "center",
+		vertical_alignment = "center",
+		color = {
+			150,
+			255,
+			0,
+			0
+		}
+	}
+	local flag_6
+
+	flag_6 = not arg_33_2 and "hell_shark_masked" and "hell_shark"
+	tbl_9.font_type = flag_6
+	tbl_9.text_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_9.offset = {
+		102,
+		arg_33_1[2] - 80 - 2,
+		2
+	}
+	tbl_9.size = {
+		arg_33_1[1] - 190,
+		70
+	}
+	tbl_3.title_text_shadow = tbl_9
+
+	local tbl_10 = {
+		font_size = 24,
+		word_wrap = true,
+		horizontal_alignment = "center",
+		vertical_alignment = "center",
+		dynamic_font_size = true
+	}
+	local flag_7
+
+	flag_7 = not arg_33_2 and "hell_shark_masked" and "hell_shark"
+	tbl_10.font_type = flag_7
+	tbl_10.text_color = {
+		255,
+		17,
+		50,
+		157
+	}
+	tbl_10.color = {
+		100,
+		255,
+		255,
+		255
+	}
+	tbl_10.offset = {
+		arg_33_1[1] - 75,
+		arg_33_1[2] / 2 - 13,
+		7
+	}
+	tbl_10.size = {
+		60,
+		30
+	}
+	tbl_3.total_value_text = tbl_10
+
+	local tbl_11 = {
+		font_size = 24,
+		horizontal_alignment = "center",
+		word_wrap = true,
+		vertical_alignment = "center",
+		dynamic_font_size = true
+	}
+	local flag_8
+
+	flag_8 = not arg_33_2 and "hell_shark_masked" and "hell_shark"
+	tbl_11.font_type = flag_8
+	tbl_11.text_color = Colors.get_color_table_with_alpha("black", 0)
+	tbl_11.offset = {
+		arg_33_1[1] - 75 + 2,
+		arg_33_1[2] / 2 - 13 - 2,
+		6
+	}
+	tbl_11.size = {
+		60,
+		30
+	}
+	tbl_3.total_value_text_shadow = tbl_11
 
 	return {
 		element = {
-			passes = var_33_0
+			passes = tbl
 		},
-		content = var_33_1,
-		style = var_33_2,
+		content = tbl_2,
+		style = tbl_3,
 		offset = {
 			0,
 			0,
@@ -2801,14 +2928,15 @@ local function var_0_28(arg_33_0, arg_33_1, arg_33_2)
 	}
 end
 
-local function var_0_29(arg_54_0, arg_54_1, arg_54_2)
-	local var_54_0 = {
+local function fn_5(arg_54_0, arg_54_1, arg_54_2)
+	-- function 54
+	local tbl = {
 		255,
 		255,
 		255,
 		255
 	}
-	local var_54_1 = {
+	local tbl_2 = {
 		{
 			pass_type = "hotspot",
 			content_id = "button_hotspot"
@@ -2832,40 +2960,45 @@ local function var_0_29(arg_54_0, arg_54_1, arg_54_2)
 			pass_type = "texture",
 			style_id = "icon_equipped_frame",
 			texture_id = "icon_equipped_frame",
-			content_check_function = function(arg_55_0)
-				return arg_55_0.used_amount > 0
+			content_check_function = function (self)
+				-- function 55
+				return self.used_amount > 0
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "icon",
 			texture_id = "icon",
-			content_check_function = function(arg_56_0)
-				return not arg_56_0.button_hotspot.disable_button
+			content_check_function = function (self)
+				-- function 56
+				return not self.button_hotspot.disable_button
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "icon_disabled",
 			texture_id = "icon",
-			content_check_function = function(arg_57_0)
-				return arg_57_0.button_hotspot.disable_button
+			content_check_function = function (self)
+				-- function 57
+				return self.button_hotspot.disable_button
 			end
 		},
 		{
 			style_id = "text_disabled",
 			pass_type = "text",
 			text_id = "text",
-			content_check_function = function(arg_58_0)
-				return arg_58_0.button_hotspot.disable_button
+			content_check_function = function (self)
+				-- function 58
+				return self.button_hotspot.disable_button
 			end
 		},
 		{
 			style_id = "text",
 			pass_type = "text",
 			text_id = "text",
-			content_check_function = function(arg_59_0)
-				return not arg_59_0.button_hotspot.disable_button
+			content_check_function = function (self)
+				-- function 59
+				return not self.button_hotspot.disable_button
 			end
 		},
 		{
@@ -2877,16 +3010,18 @@ local function var_0_29(arg_54_0, arg_54_1, arg_54_2)
 			style_id = "title_text_disabled",
 			pass_type = "text",
 			text_id = "title_text",
-			content_check_function = function(arg_60_0)
-				return arg_60_0.button_hotspot.disable_button
+			content_check_function = function (self)
+				-- function 60
+				return self.button_hotspot.disable_button
 			end
 		},
 		{
 			style_id = "title_text",
 			pass_type = "text",
 			text_id = "title_text",
-			content_check_function = function(arg_61_0)
-				return not arg_61_0.button_hotspot.disable_button
+			content_check_function = function (self)
+				-- function 61
+				return not self.button_hotspot.disable_button
 			end
 		},
 		{
@@ -2898,16 +3033,18 @@ local function var_0_29(arg_54_0, arg_54_1, arg_54_2)
 			style_id = "price_text_disabled",
 			pass_type = "text",
 			text_id = "price_text",
-			content_check_function = function(arg_62_0)
-				return arg_62_0.button_hotspot.disable_button
+			content_check_function = function (self)
+				-- function 62
+				return self.button_hotspot.disable_button
 			end
 		},
 		{
 			style_id = "price_text",
 			pass_type = "text",
 			text_id = "price_text",
-			content_check_function = function(arg_63_0)
-				return not arg_63_0.button_hotspot.disable_button
+			content_check_function = function (self)
+				-- function 63
+				return not self.button_hotspot.disable_button
 			end
 		},
 		{
@@ -2919,8 +3056,9 @@ local function var_0_29(arg_54_0, arg_54_1, arg_54_2)
 			pass_type = "texture",
 			style_id = "price_icon",
 			texture_id = "price_icon",
-			content_check_function = function(arg_64_0)
-				return not arg_64_0.button_hotspot.disable_button and arg_64_0.used_amount < arg_64_0.total_uses
+			content_check_function = function (self)
+				-- function 64
+				return not not self.button_hotspot.disable_button or self.used_amount < self.total_uses
 			end
 		},
 		{
@@ -2932,8 +3070,9 @@ local function var_0_29(arg_54_0, arg_54_1, arg_54_2)
 			pass_type = "texture",
 			style_id = "lock_icon",
 			texture_id = "lock_icon",
-			content_check_function = function(arg_65_0)
-				return arg_65_0.button_hotspot.disable_button
+			content_check_function = function (self)
+				-- function 65
+				return self.button_hotspot.disable_button
 			end
 		},
 		{
@@ -2942,7 +3081,7 @@ local function var_0_29(arg_54_0, arg_54_1, arg_54_2)
 			texture_id = "hover"
 		}
 	}
-	local var_54_2 = {
+	local tbl_3 = {
 		price_text = "0",
 		price_icon = "icon_mastery_small",
 		hover = "athanor_entry_trait_bg_hover",
@@ -2960,7 +3099,7 @@ local function var_0_29(arg_54_0, arg_54_1, arg_54_2)
 		button_hotspot = {},
 		size = arg_54_1
 	}
-	local var_54_3 = {
+	local tbl_4 = {
 		debug = {
 			masked = arg_54_2,
 			color = {
@@ -3063,7 +3202,7 @@ local function var_0_29(arg_54_0, arg_54_1, arg_54_2)
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
 			masked = arg_54_2,
-			color = var_54_0,
+			color = tbl,
 			offset = {
 				-20,
 				0,
@@ -3078,7 +3217,7 @@ local function var_0_29(arg_54_0, arg_54_1, arg_54_2)
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			masked = arg_54_2,
-			color = var_54_0,
+			color = tbl,
 			offset = {
 				0,
 				0,
@@ -3107,7 +3246,7 @@ local function var_0_29(arg_54_0, arg_54_1, arg_54_2)
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			masked = arg_54_2,
-			color = var_54_0,
+			color = tbl,
 			offset = {
 				0,
 				0,
@@ -3160,283 +3299,327 @@ local function var_0_29(arg_54_0, arg_54_1, arg_54_2)
 				35,
 				35
 			}
-		},
-		price_text_disabled = {
-			font_size = 18,
-			word_wrap = true,
-			horizontal_alignment = "center",
-			vertical_alignment = "center",
-			dynamic_font_size = true,
-			color = {
-				150,
-				255,
-				0,
-				0
-			},
-			font_type = arg_54_2 and "hell_shark_masked" or "hell_shark",
-			text_color = {
-				255,
-				80,
-				80,
-				80
-			},
-			offset = {
-				100,
-				20,
-				3
-			},
-			default_offset = {
-				100,
-				20,
-				3
-			},
-			size = {
-				arg_54_1[1] - 160,
-				20
-			},
-			color_override = {},
-			color_override_table = {
-				start_index = 0,
-				end_index = 0,
-				color = {
-					255,
-					121,
-					193,
-					229
-				}
-			}
-		},
-		price_text = {
-			font_size = 18,
-			word_wrap = true,
-			horizontal_alignment = "center",
-			vertical_alignment = "center",
-			dynamic_font_size = true,
-			color = {
-				150,
-				255,
-				0,
-				0
-			},
-			font_type = arg_54_2 and "hell_shark_masked" or "hell_shark",
-			text_color = Colors.get_color_table_with_alpha("font_default", 255),
-			offset = {
-				100,
-				20,
-				3
-			},
-			default_offset = {
-				100,
-				20,
-				3
-			},
-			size = {
-				arg_54_1[1] - 160,
-				20
-			},
-			color_override = {},
-			color_override_table = {
-				start_index = 0,
-				end_index = 0,
-				color = {
-					255,
-					121,
-					193,
-					229
-				}
-			}
-		},
-		price_text_shadow = {
-			font_size = 18,
-			word_wrap = true,
-			horizontal_alignment = "center",
-			vertical_alignment = "center",
-			dynamic_font_size = true,
-			color = {
-				150,
-				255,
-				0,
-				0
-			},
-			font_type = arg_54_2 and "hell_shark_masked" or "hell_shark",
-			text_color = Colors.get_color_table_with_alpha("black", 255),
-			offset = {
-				102,
-				18,
-				2
-			},
-			default_offset = {
-				102,
-				18,
-				2
-			},
-			size = {
-				arg_54_1[1] - 160,
-				20
-			}
-		},
-		title_text_disabled = {
-			font_size = 20,
-			word_wrap = true,
-			horizontal_alignment = "center",
-			vertical_alignment = "center",
-			dynamic_font_size = true,
-			color = {
-				150,
-				255,
-				0,
-				0
-			},
-			font_type = arg_54_2 and "hell_shark_masked" or "hell_shark",
-			text_color = {
-				255,
-				100,
-				100,
-				100
-			},
-			offset = {
-				100,
-				arg_54_1[2] - 53,
-				3
-			},
-			size = {
-				arg_54_1[1] - 160,
-				30
-			}
-		},
-		title_text = {
-			font_size = 20,
-			word_wrap = true,
-			horizontal_alignment = "center",
-			vertical_alignment = "center",
-			dynamic_font_size = true,
-			color = {
-				150,
-				255,
-				0,
-				0
-			},
-			font_type = arg_54_2 and "hell_shark_masked" or "hell_shark",
-			text_color = Colors.get_color_table_with_alpha("font_title", 255),
-			offset = {
-				100,
-				arg_54_1[2] - 53,
-				3
-			},
-			size = {
-				arg_54_1[1] - 160,
-				30
-			}
-		},
-		title_text_shadow = {
-			font_size = 20,
-			word_wrap = true,
-			horizontal_alignment = "center",
-			vertical_alignment = "center",
-			dynamic_font_size = true,
-			color = {
-				150,
-				255,
-				0,
-				0
-			},
-			font_type = arg_54_2 and "hell_shark_masked" or "hell_shark",
-			text_color = Colors.get_color_table_with_alpha("black", 255),
-			offset = {
-				102,
-				arg_54_1[2] - 53 - 2,
-				2
-			},
-			size = {
-				arg_54_1[1] - 160,
-				30
-			}
-		},
-		text_disabled = {
-			font_size = 18,
-			word_wrap = true,
-			dynamic_font_size_word_wrap = true,
-			horizontal_alignment = "center",
-			vertical_alignment = "top",
-			color = {
-				150,
-				0,
-				255,
-				0
-			},
-			font_type = arg_54_2 and "hell_shark_masked" or "hell_shark",
-			text_color = {
-				255,
-				80,
-				80,
-				80
-			},
-			offset = {
-				90,
-				arg_54_1[2] - 150,
-				3
-			},
-			size = {
-				arg_54_1[1] - 140,
-				95
-			}
-		},
-		text = {
-			font_size = 18,
-			word_wrap = true,
-			dynamic_font_size_word_wrap = true,
-			horizontal_alignment = "center",
-			vertical_alignment = "top",
-			color = {
-				150,
-				0,
-				255,
-				0
-			},
-			font_type = arg_54_2 and "hell_shark_masked" or "hell_shark",
-			text_color = Colors.get_color_table_with_alpha("font_default", 255),
-			offset = {
-				90,
-				arg_54_1[2] - 150,
-				3
-			},
-			size = {
-				arg_54_1[1] - 140,
-				95
-			}
-		},
-		text_shadow = {
-			font_size = 18,
-			word_wrap = true,
-			dynamic_font_size_word_wrap = true,
-			horizontal_alignment = "center",
-			vertical_alignment = "top",
-			color = {
-				150,
-				0,
-				255,
-				0
-			},
-			font_type = arg_54_2 and "hell_shark_masked" or "hell_shark",
-			text_color = Colors.get_color_table_with_alpha("black", 255),
-			offset = {
-				92,
-				arg_54_1[2] - 150 - 2,
-				2
-			},
-			size = {
-				arg_54_1[1] - 140,
-				95
-			}
 		}
 	}
+	local tbl_5 = {
+		font_size = 18,
+		word_wrap = true,
+		horizontal_alignment = "center",
+		vertical_alignment = "center",
+		dynamic_font_size = true,
+		color = {
+			150,
+			255,
+			0,
+			0
+		}
+	}
+	local flag
+
+	flag = not arg_54_2 and "hell_shark_masked" and "hell_shark"
+	tbl_5.font_type = flag
+	tbl_5.text_color = {
+		255,
+		80,
+		80,
+		80
+	}
+	tbl_5.offset = {
+		100,
+		20,
+		3
+	}
+	tbl_5.default_offset = {
+		100,
+		20,
+		3
+	}
+	tbl_5.size = {
+		arg_54_1[1] - 160,
+		20
+	}
+	tbl_5.color_override = {}
+	tbl_5.color_override_table = {
+		start_index = 0,
+		end_index = 0,
+		color = {
+			255,
+			121,
+			193,
+			229
+		}
+	}
+	tbl_4.price_text_disabled = tbl_5
+
+	local tbl_6 = {
+		font_size = 18,
+		word_wrap = true,
+		horizontal_alignment = "center",
+		vertical_alignment = "center",
+		dynamic_font_size = true,
+		color = {
+			150,
+			255,
+			0,
+			0
+		}
+	}
+	local flag_2
+
+	flag_2 = not arg_54_2 and "hell_shark_masked" and "hell_shark"
+	tbl_6.font_type = flag_2
+	tbl_6.text_color = Colors.get_color_table_with_alpha("font_default", 255)
+	tbl_6.offset = {
+		100,
+		20,
+		3
+	}
+	tbl_6.default_offset = {
+		100,
+		20,
+		3
+	}
+	tbl_6.size = {
+		arg_54_1[1] - 160,
+		20
+	}
+	tbl_6.color_override = {}
+	tbl_6.color_override_table = {
+		start_index = 0,
+		end_index = 0,
+		color = {
+			255,
+			121,
+			193,
+			229
+		}
+	}
+	tbl_4.price_text = tbl_6
+
+	local tbl_7 = {
+		font_size = 18,
+		word_wrap = true,
+		horizontal_alignment = "center",
+		vertical_alignment = "center",
+		dynamic_font_size = true,
+		color = {
+			150,
+			255,
+			0,
+			0
+		}
+	}
+	local flag_3
+
+	flag_3 = not arg_54_2 and "hell_shark_masked" and "hell_shark"
+	tbl_7.font_type = flag_3
+	tbl_7.text_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_7.offset = {
+		102,
+		18,
+		2
+	}
+	tbl_7.default_offset = {
+		102,
+		18,
+		2
+	}
+	tbl_7.size = {
+		arg_54_1[1] - 160,
+		20
+	}
+	tbl_4.price_text_shadow = tbl_7
+
+	local tbl_8 = {
+		font_size = 20,
+		word_wrap = true,
+		horizontal_alignment = "center",
+		vertical_alignment = "center",
+		dynamic_font_size = true,
+		color = {
+			150,
+			255,
+			0,
+			0
+		}
+	}
+	local flag_4
+
+	flag_4 = not arg_54_2 and "hell_shark_masked" and "hell_shark"
+	tbl_8.font_type = flag_4
+	tbl_8.text_color = {
+		255,
+		100,
+		100,
+		100
+	}
+	tbl_8.offset = {
+		100,
+		arg_54_1[2] - 53,
+		3
+	}
+	tbl_8.size = {
+		arg_54_1[1] - 160,
+		30
+	}
+	tbl_4.title_text_disabled = tbl_8
+
+	local tbl_9 = {
+		font_size = 20,
+		word_wrap = true,
+		horizontal_alignment = "center",
+		vertical_alignment = "center",
+		dynamic_font_size = true,
+		color = {
+			150,
+			255,
+			0,
+			0
+		}
+	}
+	local flag_5
+
+	flag_5 = not arg_54_2 and "hell_shark_masked" and "hell_shark"
+	tbl_9.font_type = flag_5
+	tbl_9.text_color = Colors.get_color_table_with_alpha("font_title", 255)
+	tbl_9.offset = {
+		100,
+		arg_54_1[2] - 53,
+		3
+	}
+	tbl_9.size = {
+		arg_54_1[1] - 160,
+		30
+	}
+	tbl_4.title_text = tbl_9
+
+	local tbl_10 = {
+		font_size = 20,
+		word_wrap = true,
+		horizontal_alignment = "center",
+		vertical_alignment = "center",
+		dynamic_font_size = true,
+		color = {
+			150,
+			255,
+			0,
+			0
+		}
+	}
+	local flag_6
+
+	flag_6 = not arg_54_2 and "hell_shark_masked" and "hell_shark"
+	tbl_10.font_type = flag_6
+	tbl_10.text_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_10.offset = {
+		102,
+		arg_54_1[2] - 53 - 2,
+		2
+	}
+	tbl_10.size = {
+		arg_54_1[1] - 160,
+		30
+	}
+	tbl_4.title_text_shadow = tbl_10
+
+	local tbl_11 = {
+		font_size = 18,
+		word_wrap = true,
+		dynamic_font_size_word_wrap = true,
+		horizontal_alignment = "center",
+		vertical_alignment = "top",
+		color = {
+			150,
+			0,
+			255,
+			0
+		}
+	}
+	local flag_7
+
+	flag_7 = not arg_54_2 and "hell_shark_masked" and "hell_shark"
+	tbl_11.font_type = flag_7
+	tbl_11.text_color = {
+		255,
+		80,
+		80,
+		80
+	}
+	tbl_11.offset = {
+		90,
+		arg_54_1[2] - 150,
+		3
+	}
+	tbl_11.size = {
+		arg_54_1[1] - 140,
+		95
+	}
+	tbl_4.text_disabled = tbl_11
+
+	local tbl_12 = {
+		font_size = 18,
+		word_wrap = true,
+		dynamic_font_size_word_wrap = true,
+		horizontal_alignment = "center",
+		vertical_alignment = "top",
+		color = {
+			150,
+			0,
+			255,
+			0
+		}
+	}
+	local flag_8
+
+	flag_8 = not arg_54_2 and "hell_shark_masked" and "hell_shark"
+	tbl_12.font_type = flag_8
+	tbl_12.text_color = Colors.get_color_table_with_alpha("font_default", 255)
+	tbl_12.offset = {
+		90,
+		arg_54_1[2] - 150,
+		3
+	}
+	tbl_12.size = {
+		arg_54_1[1] - 140,
+		95
+	}
+	tbl_4.text = tbl_12
+
+	local tbl_13 = {
+		font_size = 18,
+		word_wrap = true,
+		dynamic_font_size_word_wrap = true,
+		horizontal_alignment = "center",
+		vertical_alignment = "top",
+		color = {
+			150,
+			0,
+			255,
+			0
+		}
+	}
+	local flag_9
+
+	flag_9 = not arg_54_2 and "hell_shark_masked" and "hell_shark"
+	tbl_13.font_type = flag_9
+	tbl_13.text_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_13.offset = {
+		92,
+		arg_54_1[2] - 150 - 2,
+		2
+	}
+	tbl_13.size = {
+		arg_54_1[1] - 140,
+		95
+	}
+	tbl_4.text_shadow = tbl_13
 
 	return {
 		element = {
-			passes = var_54_1
+			passes = tbl_2
 		},
-		content = var_54_2,
-		style = var_54_3,
+		content = tbl_3,
+		style = tbl_4,
 		offset = {
 			0,
 			0,
@@ -3446,14 +3629,15 @@ local function var_0_29(arg_54_0, arg_54_1, arg_54_2)
 	}
 end
 
-local function var_0_30(arg_66_0, arg_66_1, arg_66_2)
-	local var_66_0 = {
+local function fn_6(arg_66_0, arg_66_1, arg_66_2)
+	-- function 66
+	local tbl = {
 		255,
 		255,
 		255,
 		255
 	}
-	local var_66_1 = {
+	local tbl_2 = {
 		{
 			pass_type = "hotspot",
 			content_id = "button_hotspot"
@@ -3477,40 +3661,45 @@ local function var_0_30(arg_66_0, arg_66_1, arg_66_2)
 			pass_type = "texture",
 			style_id = "icon_equipped_frame",
 			texture_id = "icon_equipped_frame",
-			content_check_function = function(arg_67_0)
-				return arg_67_0.used_amount > 0
+			content_check_function = function (self)
+				-- function 67
+				return self.used_amount > 0
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "icon",
 			texture_id = "icon",
-			content_check_function = function(arg_68_0)
-				return not arg_68_0.button_hotspot.disable_button
+			content_check_function = function (self)
+				-- function 68
+				return not self.button_hotspot.disable_button
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "icon_disabled",
 			texture_id = "icon",
-			content_check_function = function(arg_69_0)
-				return arg_69_0.button_hotspot.disable_button
+			content_check_function = function (self)
+				-- function 69
+				return self.button_hotspot.disable_button
 			end
 		},
 		{
 			style_id = "text_disabled",
 			pass_type = "text",
 			text_id = "text",
-			content_check_function = function(arg_70_0)
-				return arg_70_0.button_hotspot.disable_button
+			content_check_function = function (self)
+				-- function 70
+				return self.button_hotspot.disable_button
 			end
 		},
 		{
 			style_id = "text",
 			pass_type = "text",
 			text_id = "text",
-			content_check_function = function(arg_71_0)
-				return not arg_71_0.button_hotspot.disable_button
+			content_check_function = function (self)
+				-- function 71
+				return not self.button_hotspot.disable_button
 			end
 		},
 		{
@@ -3522,24 +3711,27 @@ local function var_0_30(arg_66_0, arg_66_1, arg_66_2)
 			style_id = "title_text_disabled",
 			pass_type = "text",
 			text_id = "title_text",
-			content_check_function = function(arg_72_0)
-				return arg_72_0.button_hotspot.disable_button
+			content_check_function = function (self)
+				-- function 72
+				return self.button_hotspot.disable_button
 			end
 		},
 		{
 			style_id = "title_text_disabled",
 			pass_type = "text",
 			text_id = "title_text",
-			content_check_function = function(arg_73_0)
-				return arg_73_0.button_hotspot.disable_button
+			content_check_function = function (self)
+				-- function 73
+				return self.button_hotspot.disable_button
 			end
 		},
 		{
 			style_id = "title_text",
 			pass_type = "text",
 			text_id = "title_text",
-			content_check_function = function(arg_74_0)
-				return not arg_74_0.button_hotspot.disable_button
+			content_check_function = function (self)
+				-- function 74
+				return not self.button_hotspot.disable_button
 			end
 		},
 		{
@@ -3551,16 +3743,18 @@ local function var_0_30(arg_66_0, arg_66_1, arg_66_2)
 			style_id = "price_text_disabled",
 			pass_type = "text",
 			text_id = "price_text",
-			content_check_function = function(arg_75_0)
-				return arg_75_0.button_hotspot.disable_button
+			content_check_function = function (self)
+				-- function 75
+				return self.button_hotspot.disable_button
 			end
 		},
 		{
 			style_id = "price_text",
 			pass_type = "text",
 			text_id = "price_text",
-			content_check_function = function(arg_76_0)
-				return not arg_76_0.button_hotspot.disable_button
+			content_check_function = function (self)
+				-- function 76
+				return not self.button_hotspot.disable_button
 			end
 		},
 		{
@@ -3572,8 +3766,9 @@ local function var_0_30(arg_66_0, arg_66_1, arg_66_2)
 			pass_type = "texture",
 			style_id = "price_icon",
 			texture_id = "price_icon",
-			content_check_function = function(arg_77_0)
-				return not arg_77_0.button_hotspot.disable_button and arg_77_0.used_amount < arg_77_0.total_uses
+			content_check_function = function (self)
+				-- function 77
+				return not not self.button_hotspot.disable_button or self.used_amount < self.total_uses
 			end
 		},
 		{
@@ -3585,8 +3780,9 @@ local function var_0_30(arg_66_0, arg_66_1, arg_66_2)
 			pass_type = "texture",
 			style_id = "lock_icon",
 			texture_id = "lock_icon",
-			content_check_function = function(arg_78_0)
-				return arg_78_0.button_hotspot.disable_button
+			content_check_function = function (self)
+				-- function 78
+				return self.button_hotspot.disable_button
 			end
 		},
 		{
@@ -3595,7 +3791,7 @@ local function var_0_30(arg_66_0, arg_66_1, arg_66_2)
 			texture_id = "hover"
 		}
 	}
-	local var_66_2 = {
+	local tbl_3 = {
 		price_text = "0",
 		price_icon = "icon_mastery_small",
 		hover = "athanor_entry_talent_bg_hover",
@@ -3615,7 +3811,7 @@ local function var_0_30(arg_66_0, arg_66_1, arg_66_2)
 		},
 		size = arg_66_1
 	}
-	local var_66_3 = {
+	local tbl_4 = {
 		debug = {
 			masked = arg_66_2,
 			color = {
@@ -3718,7 +3914,7 @@ local function var_0_30(arg_66_0, arg_66_1, arg_66_2)
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
 			masked = arg_66_2,
-			color = var_66_0,
+			color = tbl,
 			offset = {
 				-20,
 				0,
@@ -3733,7 +3929,7 @@ local function var_0_30(arg_66_0, arg_66_1, arg_66_2)
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			masked = arg_66_2,
-			color = var_66_0,
+			color = tbl,
 			offset = {
 				0,
 				0,
@@ -3762,7 +3958,7 @@ local function var_0_30(arg_66_0, arg_66_1, arg_66_2)
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			masked = arg_66_2,
-			color = var_66_0,
+			color = tbl,
 			offset = {
 				0,
 				0,
@@ -3774,7 +3970,7 @@ local function var_0_30(arg_66_0, arg_66_1, arg_66_2)
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			masked = arg_66_2,
-			color = var_66_0,
+			color = tbl,
 			offset = {
 				0,
 				0,
@@ -3827,277 +4023,321 @@ local function var_0_30(arg_66_0, arg_66_1, arg_66_2)
 				35,
 				35
 			}
-		},
-		price_text_disabled = {
-			font_size = 18,
-			word_wrap = true,
-			horizontal_alignment = "center",
-			vertical_alignment = "center",
-			dynamic_font_size = true,
-			color = {
-				150,
-				255,
-				0,
-				0
-			},
-			font_type = arg_66_2 and "hell_shark_masked" or "hell_shark",
-			text_color = {
-				255,
-				80,
-				80,
-				80
-			},
-			offset = {
-				110,
-				20,
-				5
-			},
-			default_offset = {
-				110,
-				20,
-				5
-			},
-			size = {
-				arg_66_1[1] - 170,
-				20
-			},
-			color_override = {},
-			color_override_table = {
-				start_index = 0,
-				end_index = 0,
-				color = {
-					255,
-					121,
-					193,
-					229
-				}
-			}
-		},
-		price_text = {
-			font_size = 18,
-			word_wrap = true,
-			horizontal_alignment = "center",
-			vertical_alignment = "center",
-			dynamic_font_size = true,
-			color = {
-				150,
-				255,
-				0,
-				0
-			},
-			font_type = arg_66_2 and "hell_shark_masked" or "hell_shark",
-			text_color = Colors.get_color_table_with_alpha("font_default", 255),
-			offset = {
-				110,
-				20,
-				5
-			},
-			default_offset = {
-				110,
-				20,
-				5
-			},
-			size = {
-				arg_66_1[1] - 170,
-				20
-			},
-			color_override = {},
-			color_override_table = {
-				start_index = 0,
-				end_index = 0,
-				color = {
-					255,
-					121,
-					193,
-					229
-				}
-			}
-		},
-		price_text_shadow = {
-			font_size = 18,
-			horizontal_alignment = "center",
-			word_wrap = true,
-			vertical_alignment = "center",
-			dynamic_font_size = true,
-			font_type = arg_66_2 and "hell_shark_masked" or "hell_shark",
-			text_color = Colors.get_color_table_with_alpha("black", 255),
-			offset = {
-				112,
-				18,
-				4
-			},
-			default_offset = {
-				112,
-				18,
-				4
-			},
-			size = {
-				arg_66_1[1] - 170,
-				20
-			}
-		},
-		title_text_disabled = {
-			font_size = 20,
-			word_wrap = true,
-			horizontal_alignment = "center",
-			vertical_alignment = "center",
-			dynamic_font_size = true,
-			color = {
-				150,
-				255,
-				0,
-				0
-			},
-			font_type = arg_66_2 and "hell_shark_masked" or "hell_shark",
-			text_color = {
-				255,
-				100,
-				100,
-				100
-			},
-			offset = {
-				110,
-				arg_66_1[2] - 53,
-				5
-			},
-			size = {
-				arg_66_1[1] - 170,
-				30
-			}
-		},
-		title_text = {
-			font_size = 20,
-			word_wrap = true,
-			horizontal_alignment = "center",
-			vertical_alignment = "center",
-			dynamic_font_size = true,
-			color = {
-				150,
-				255,
-				0,
-				0
-			},
-			font_type = arg_66_2 and "hell_shark_masked" or "hell_shark",
-			text_color = Colors.get_color_table_with_alpha("font_title", 255),
-			offset = {
-				110,
-				arg_66_1[2] - 53,
-				5
-			},
-			size = {
-				arg_66_1[1] - 170,
-				30
-			}
-		},
-		title_text_shadow = {
-			font_size = 20,
-			word_wrap = true,
-			horizontal_alignment = "center",
-			vertical_alignment = "center",
-			dynamic_font_size = true,
-			color = {
-				150,
-				255,
-				0,
-				0
-			},
-			font_type = arg_66_2 and "hell_shark_masked" or "hell_shark",
-			text_color = Colors.get_color_table_with_alpha("black", 255),
-			offset = {
-				112,
-				arg_66_1[2] - 53 - 2,
-				4
-			},
-			size = {
-				arg_66_1[1] - 170,
-				30
-			}
-		},
-		text_disabled = {
-			font_size = 18,
-			word_wrap = true,
-			dynamic_font_size_word_wrap = true,
-			horizontal_alignment = "center",
-			vertical_alignment = "top",
-			color = {
-				150,
-				0,
-				255,
-				0
-			},
-			font_type = arg_66_2 and "hell_shark_masked" or "hell_shark",
-			text_color = {
-				255,
-				80,
-				80,
-				80
-			},
-			offset = {
-				100,
-				arg_66_1[2] - 185,
-				5
-			},
-			size = {
-				arg_66_1[1] - 150,
-				125
-			}
-		},
-		text = {
-			font_size = 17,
-			word_wrap = true,
-			dynamic_font_size_word_wrap = true,
-			horizontal_alignment = "center",
-			vertical_alignment = "top",
-			color = {
-				150,
-				0,
-				255,
-				0
-			},
-			font_type = arg_66_2 and "hell_shark_masked" or "hell_shark",
-			text_color = Colors.get_color_table_with_alpha("font_default", 255),
-			offset = {
-				100,
-				arg_66_1[2] - 185 + 10,
-				5
-			},
-			size = {
-				arg_66_1[1] - 150,
-				125
-			}
-		},
-		text_shadow = {
-			font_size = 17,
-			word_wrap = true,
-			dynamic_font_size_word_wrap = true,
-			horizontal_alignment = "center",
-			vertical_alignment = "top",
-			color = {
-				150,
-				0,
-				255,
-				0
-			},
-			font_type = arg_66_2 and "hell_shark_masked" or "hell_shark",
-			text_color = Colors.get_color_table_with_alpha("black", 255),
-			offset = {
-				102,
-				arg_66_1[2] - 185 - 2 + 10,
-				4
-			},
-			size = {
-				arg_66_1[1] - 150,
-				125
-			}
 		}
 	}
+	local tbl_5 = {
+		font_size = 18,
+		word_wrap = true,
+		horizontal_alignment = "center",
+		vertical_alignment = "center",
+		dynamic_font_size = true,
+		color = {
+			150,
+			255,
+			0,
+			0
+		}
+	}
+	local flag
+
+	flag = not arg_66_2 and "hell_shark_masked" and "hell_shark"
+	tbl_5.font_type = flag
+	tbl_5.text_color = {
+		255,
+		80,
+		80,
+		80
+	}
+	tbl_5.offset = {
+		110,
+		20,
+		5
+	}
+	tbl_5.default_offset = {
+		110,
+		20,
+		5
+	}
+	tbl_5.size = {
+		arg_66_1[1] - 170,
+		20
+	}
+	tbl_5.color_override = {}
+	tbl_5.color_override_table = {
+		start_index = 0,
+		end_index = 0,
+		color = {
+			255,
+			121,
+			193,
+			229
+		}
+	}
+	tbl_4.price_text_disabled = tbl_5
+
+	local tbl_6 = {
+		font_size = 18,
+		word_wrap = true,
+		horizontal_alignment = "center",
+		vertical_alignment = "center",
+		dynamic_font_size = true,
+		color = {
+			150,
+			255,
+			0,
+			0
+		}
+	}
+	local flag_2
+
+	flag_2 = not arg_66_2 and "hell_shark_masked" and "hell_shark"
+	tbl_6.font_type = flag_2
+	tbl_6.text_color = Colors.get_color_table_with_alpha("font_default", 255)
+	tbl_6.offset = {
+		110,
+		20,
+		5
+	}
+	tbl_6.default_offset = {
+		110,
+		20,
+		5
+	}
+	tbl_6.size = {
+		arg_66_1[1] - 170,
+		20
+	}
+	tbl_6.color_override = {}
+	tbl_6.color_override_table = {
+		start_index = 0,
+		end_index = 0,
+		color = {
+			255,
+			121,
+			193,
+			229
+		}
+	}
+	tbl_4.price_text = tbl_6
+
+	local tbl_7 = {
+		font_size = 18,
+		horizontal_alignment = "center",
+		word_wrap = true,
+		vertical_alignment = "center",
+		dynamic_font_size = true
+	}
+	local flag_3
+
+	flag_3 = not arg_66_2 and "hell_shark_masked" and "hell_shark"
+	tbl_7.font_type = flag_3
+	tbl_7.text_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_7.offset = {
+		112,
+		18,
+		4
+	}
+	tbl_7.default_offset = {
+		112,
+		18,
+		4
+	}
+	tbl_7.size = {
+		arg_66_1[1] - 170,
+		20
+	}
+	tbl_4.price_text_shadow = tbl_7
+
+	local tbl_8 = {
+		font_size = 20,
+		word_wrap = true,
+		horizontal_alignment = "center",
+		vertical_alignment = "center",
+		dynamic_font_size = true,
+		color = {
+			150,
+			255,
+			0,
+			0
+		}
+	}
+	local flag_4
+
+	flag_4 = not arg_66_2 and "hell_shark_masked" and "hell_shark"
+	tbl_8.font_type = flag_4
+	tbl_8.text_color = {
+		255,
+		100,
+		100,
+		100
+	}
+	tbl_8.offset = {
+		110,
+		arg_66_1[2] - 53,
+		5
+	}
+	tbl_8.size = {
+		arg_66_1[1] - 170,
+		30
+	}
+	tbl_4.title_text_disabled = tbl_8
+
+	local tbl_9 = {
+		font_size = 20,
+		word_wrap = true,
+		horizontal_alignment = "center",
+		vertical_alignment = "center",
+		dynamic_font_size = true,
+		color = {
+			150,
+			255,
+			0,
+			0
+		}
+	}
+	local flag_5
+
+	flag_5 = not arg_66_2 and "hell_shark_masked" and "hell_shark"
+	tbl_9.font_type = flag_5
+	tbl_9.text_color = Colors.get_color_table_with_alpha("font_title", 255)
+	tbl_9.offset = {
+		110,
+		arg_66_1[2] - 53,
+		5
+	}
+	tbl_9.size = {
+		arg_66_1[1] - 170,
+		30
+	}
+	tbl_4.title_text = tbl_9
+
+	local tbl_10 = {
+		font_size = 20,
+		word_wrap = true,
+		horizontal_alignment = "center",
+		vertical_alignment = "center",
+		dynamic_font_size = true,
+		color = {
+			150,
+			255,
+			0,
+			0
+		}
+	}
+	local flag_6
+
+	flag_6 = not arg_66_2 and "hell_shark_masked" and "hell_shark"
+	tbl_10.font_type = flag_6
+	tbl_10.text_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_10.offset = {
+		112,
+		arg_66_1[2] - 53 - 2,
+		4
+	}
+	tbl_10.size = {
+		arg_66_1[1] - 170,
+		30
+	}
+	tbl_4.title_text_shadow = tbl_10
+
+	local tbl_11 = {
+		font_size = 18,
+		word_wrap = true,
+		dynamic_font_size_word_wrap = true,
+		horizontal_alignment = "center",
+		vertical_alignment = "top",
+		color = {
+			150,
+			0,
+			255,
+			0
+		}
+	}
+	local flag_7
+
+	flag_7 = not arg_66_2 and "hell_shark_masked" and "hell_shark"
+	tbl_11.font_type = flag_7
+	tbl_11.text_color = {
+		255,
+		80,
+		80,
+		80
+	}
+	tbl_11.offset = {
+		100,
+		arg_66_1[2] - 185,
+		5
+	}
+	tbl_11.size = {
+		arg_66_1[1] - 150,
+		125
+	}
+	tbl_4.text_disabled = tbl_11
+
+	local tbl_12 = {
+		font_size = 17,
+		word_wrap = true,
+		dynamic_font_size_word_wrap = true,
+		horizontal_alignment = "center",
+		vertical_alignment = "top",
+		color = {
+			150,
+			0,
+			255,
+			0
+		}
+	}
+	local flag_8
+
+	flag_8 = not arg_66_2 and "hell_shark_masked" and "hell_shark"
+	tbl_12.font_type = flag_8
+	tbl_12.text_color = Colors.get_color_table_with_alpha("font_default", 255)
+	tbl_12.offset = {
+		100,
+		arg_66_1[2] - 185 + 10,
+		5
+	}
+	tbl_12.size = {
+		arg_66_1[1] - 150,
+		125
+	}
+	tbl_4.text = tbl_12
+
+	local tbl_13 = {
+		font_size = 17,
+		word_wrap = true,
+		dynamic_font_size_word_wrap = true,
+		horizontal_alignment = "center",
+		vertical_alignment = "top",
+		color = {
+			150,
+			0,
+			255,
+			0
+		}
+	}
+	local flag_9
+
+	flag_9 = not arg_66_2 and "hell_shark_masked" and "hell_shark"
+	tbl_13.font_type = flag_9
+	tbl_13.text_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_13.offset = {
+		102,
+		arg_66_1[2] - 185 - 2 + 10,
+		4
+	}
+	tbl_13.size = {
+		arg_66_1[1] - 150,
+		125
+	}
+	tbl_4.text_shadow = tbl_13
 
 	return {
 		element = {
-			passes = var_66_1
+			passes = tbl_2
 		},
-		content = var_66_2,
-		style = var_66_3,
+		content = tbl_3,
+		style = tbl_4,
 		offset = {
 			0,
 			0,
@@ -4107,10 +4347,11 @@ local function var_0_30(arg_66_0, arg_66_1, arg_66_2)
 	}
 end
 
-local function var_0_31(arg_79_0, arg_79_1, arg_79_2)
+local function fn_7(arg_79_0, arg_79_1, arg_79_2)
+	-- function 79
 	arg_79_2 = arg_79_2 or 20
 
-	local var_79_0 = {
+	local tbl = {
 		passes = {
 			{
 				pass_type = "hotspot",
@@ -4133,14 +4374,14 @@ local function var_0_31(arg_79_0, arg_79_1, arg_79_2)
 			}
 		}
 	}
-	local var_79_1 = {
+	local tbl_2 = {
 		mask_texture = "mask_rect",
 		mask_edge = "mask_rect_edge_fade",
 		hotspot = {
 			allow_multi_hover = true
 		}
 	}
-	local var_79_2 = {
+	local tbl_3 = {
 		debug = {
 			size = arg_79_1,
 			color = {
@@ -4220,9 +4461,9 @@ local function var_0_31(arg_79_0, arg_79_1, arg_79_2)
 	}
 
 	return {
-		element = var_79_0,
-		content = var_79_1,
-		style = var_79_2,
+		element = tbl,
+		content = tbl_2,
+		style = tbl_3,
 		offset = {
 			0,
 			0,
@@ -4232,8 +4473,9 @@ local function var_0_31(arg_79_0, arg_79_1, arg_79_2)
 	}
 end
 
-local function var_0_32(arg_80_0, arg_80_1)
-	local var_80_0 = {
+local function fn_8(arg_80_0, arg_80_1)
+	-- function 80
+	local tbl = {
 		passes = {
 			{
 				pass_type = "texture",
@@ -4257,13 +4499,13 @@ local function var_0_32(arg_80_0, arg_80_1)
 			}
 		}
 	}
-	local var_80_1 = {
+	local tbl_2 = {
 		title_text = "title_text",
 		icon = "icon_trait",
 		description_text = "description_text",
 		sub_title_text = "sub_title_text"
 	}
-	local var_80_2 = {
+	local tbl_3 = {
 		icon = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
@@ -4371,9 +4613,9 @@ local function var_0_32(arg_80_0, arg_80_1)
 	}
 
 	return {
-		element = var_80_0,
-		content = var_80_1,
-		style = var_80_2,
+		element = tbl,
+		content = tbl_2,
+		style = tbl_3,
 		offset = {
 			0,
 			0,
@@ -4383,7 +4625,8 @@ local function var_0_32(arg_80_0, arg_80_1)
 	}
 end
 
-local function var_0_33(arg_81_0)
+local function fn_9(arg_81_0)
+	-- function 81
 	return {
 		element = {
 			passes = {
@@ -4403,33 +4646,33 @@ local function var_0_33(arg_81_0)
 	}
 end
 
-local var_0_34 = true
-local var_0_35 = {
+local flag = true
+local tbl_16 = {
 	top_hdr_background_write_mask = UIWidgets.create_simple_texture("ui_write_mask", "window"),
 	upgrade_bg = UIWidgets.create_simple_texture("weave_menu_athanor_upgrade_bg", "upgrade_bg")
 }
-local var_0_36 = {
+local tbl_17 = {
 	255,
 	138,
 	0,
 	147
 }
-local var_0_37 = {
-	hdr_background_wheel = UIWidgets.create_simple_texture("athanor_skilltree_background_effect", "background_wheel", nil, nil, var_0_36, 5),
+local tbl_18 = {
+	hdr_background_wheel = UIWidgets.create_simple_texture("athanor_skilltree_background_effect", "background_wheel", nil, nil, tbl_17, 5),
 	hdr_wheel_ring_1 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_effect_1", 0, {
 		94,
 		94
-	}, "wheel_ring_1", nil, nil, var_0_36, 1),
+	}, "wheel_ring_1", nil, nil, tbl_17, 1),
 	hdr_wheel_ring_2 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_effect_2", 0, {
 		230.5,
 		230.5
-	}, "wheel_ring_2", nil, nil, var_0_36, 1),
+	}, "wheel_ring_2", nil, nil, tbl_17, 1),
 	hdr_wheel_ring_3 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_effect_3", 0, {
 		537,
 		537
-	}, "wheel_ring_3", nil, nil, var_0_36, 1)
+	}, "wheel_ring_3", nil, nil, tbl_17, 1)
 }
-local var_0_38 = {
+local tbl_19 = {
 	background_write_mask = UIWidgets.create_simple_texture("athanor_background_write_mask", "window"),
 	background_wheel = UIWidgets.create_simple_texture("athanor_skilltree_background", "background_wheel"),
 	viewport_background = UIWidgets.create_simple_rect("viewport_background", {
@@ -4439,7 +4682,7 @@ local var_0_38 = {
 		0
 	}),
 	viewport_background_fade = UIWidgets.create_simple_rotated_texture("edge_fade_small", math.pi / 2, {
-		var_0_13.viewport_background_fade.size[1],
+		tbl_4.viewport_background_fade.size[1],
 		0
 	}, "viewport_background_fade"),
 	wheel_ring_1 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_1", 0, {
@@ -4456,15 +4699,15 @@ local var_0_38 = {
 	}, "wheel_ring_3")
 }
 
-var_0_37.hdr_wheel_ring_1.content.snap_pixel_positions = false
-var_0_37.hdr_wheel_ring_2.content.snap_pixel_positions = false
-var_0_37.hdr_wheel_ring_3.content.snap_pixel_positions = false
-var_0_38.wheel_ring_1.content.snap_pixel_positions = false
-var_0_38.wheel_ring_2.content.snap_pixel_positions = false
-var_0_38.wheel_ring_3.content.snap_pixel_positions = false
+tbl_18.hdr_wheel_ring_1.content.snap_pixel_positions = false
+tbl_18.hdr_wheel_ring_2.content.snap_pixel_positions = false
+tbl_18.hdr_wheel_ring_3.content.snap_pixel_positions = false
+tbl_19.wheel_ring_1.content.snap_pixel_positions = false
+tbl_19.wheel_ring_2.content.snap_pixel_positions = false
+tbl_19.wheel_ring_3.content.snap_pixel_positions = false
 
-local var_0_39 = {
-	upgrade_text = UIWidgets.create_simple_text(Localize("menu_weave_item_upgraded_effect_title"), "upgrade_text", nil, nil, var_0_14),
+local tbl_20 = {
+	upgrade_text = UIWidgets.create_simple_text(Localize("menu_weave_item_upgraded_effect_title"), "upgrade_text", nil, nil, tbl_5),
 	viewport_panel_divider = UIWidgets.create_simple_texture("athanor_item_divider_middle", "viewport_panel_divider"),
 	viewport_panel_divider_left = UIWidgets.create_simple_uv_texture("athanor_item_divider_edge", {
 		{
@@ -4477,21 +4720,21 @@ local var_0_39 = {
 		}
 	}, "viewport_panel_divider_left"),
 	viewport_panel_divider_right = UIWidgets.create_simple_texture("athanor_item_divider_edge", "viewport_panel_divider_right"),
-	viewport_level_title = UIWidgets.create_simple_text(Localize("menu_weave_forge_magic_level_title"), "panel_level_title", nil, nil, var_0_21),
-	viewport_level_value = UIWidgets.create_simple_text("0", "panel_level_value", nil, nil, var_0_22),
-	viewport_power_title = UIWidgets.create_simple_text(Localize("menu_weave_forge_loadout_power_title"), "panel_power_title", nil, nil, var_0_21),
-	viewport_power_value = UIWidgets.create_simple_text("0", "panel_power_value", nil, nil, var_0_22),
+	viewport_level_title = UIWidgets.create_simple_text(Localize("menu_weave_forge_magic_level_title"), "panel_level_title", nil, nil, tbl_12),
+	viewport_level_value = UIWidgets.create_simple_text("0", "panel_level_value", nil, nil, tbl_13),
+	viewport_power_title = UIWidgets.create_simple_text(Localize("menu_weave_forge_loadout_power_title"), "panel_power_title", nil, nil, tbl_12),
+	viewport_power_value = UIWidgets.create_simple_text("0", "panel_power_value", nil, nil, tbl_13),
 	viewport_button = UIWidgets.create_simple_hotspot("viewport_button", true),
-	viewport_title = UIWidgets.create_simple_text("", "viewport_title", nil, nil, var_0_23),
-	viewport_sub_title = UIWidgets.create_simple_text("", "viewport_sub_title", nil, nil, var_0_24),
-	upgrade_essence_warning = UIWidgets.create_simple_text(Localize("menu_weave_forge_level_too_low"), "upgrade_essence_warning", nil, nil, var_0_20),
-	upgrade_button = UIWidgets.create_athanor_upgrade_button("upgrade_button", var_0_13.upgrade_button.size, "athanor_icon_upgrade", Localize("menu_weave_forge_upgrade_loadout_button"), 24),
+	viewport_title = UIWidgets.create_simple_text("", "viewport_title", nil, nil, tbl_14),
+	viewport_sub_title = UIWidgets.create_simple_text("", "viewport_sub_title", nil, nil, tbl_15),
+	upgrade_essence_warning = UIWidgets.create_simple_text(Localize("menu_weave_forge_level_too_low"), "upgrade_essence_warning", nil, nil, tbl_11),
+	upgrade_button = UIWidgets.create_athanor_upgrade_button("upgrade_button", tbl_4.upgrade_button.size, "athanor_icon_upgrade", Localize("menu_weave_forge_upgrade_loadout_button"), 24),
 	options_background_edge = UIWidgets.create_simple_texture("athanor_categories_background", "options_background_edge"),
-	options_list_button = var_0_33("options_scroll_field"),
+	options_list_button = fn_9("options_scroll_field"),
 	options_background = UIWidgets.create_tiled_texture("options_background", "menu_frame_bg_01", {
 		960,
 		1080
-	}, nil, var_0_34, {
+	}, nil, flag, {
 		255,
 		120,
 		120,
@@ -4517,18 +4760,18 @@ local var_0_39 = {
 			0
 		}
 	}, "clear_background"),
-	clear_button = UIWidgets.create_default_button("clear_button", var_0_13.clear_button.size, nil, nil, Localize("menu_weave_forge_reset_options_button"), 26, nil, "button_detail_02"),
+	clear_button = UIWidgets.create_default_button("clear_button", tbl_4.clear_button.size, nil, nil, Localize("menu_weave_forge_reset_options_button"), 26, nil, "button_detail_02"),
 	mastery_icon = UIWidgets.create_simple_texture("icon_mastery_big", "mastery_icon"),
-	mastery_text = UIWidgets.create_simple_text("", "mastery_text", nil, nil, var_0_17),
-	mastery_title_text = UIWidgets.create_simple_text(Localize("menu_weave_forge_mastery_title"), "mastery_title_text", nil, nil, var_0_18),
-	mastery_tooltip = UIWidgets.create_additional_option_tooltip("mastery_tooltip", var_0_13.mastery_tooltip.size, {
+	mastery_text = UIWidgets.create_simple_text("", "mastery_text", nil, nil, tbl_8),
+	mastery_title_text = UIWidgets.create_simple_text(Localize("menu_weave_forge_mastery_title"), "mastery_title_text", nil, nil, tbl_9),
+	mastery_tooltip = UIWidgets.create_additional_option_tooltip("mastery_tooltip", tbl_4.mastery_tooltip.size, {
 		"additional_option_info"
 	}, {
 		title = Localize("menu_weave_forge_tooltip_mastery_title"),
 		description = Localize("menu_weave_forge_tooltip_mastery_description")
 	}, 400, nil, nil, true),
-	title_text = UIWidgets.create_simple_text("", "title_text", nil, nil, var_0_15),
-	sub_title_text = UIWidgets.create_simple_text("", "sub_title_text", nil, nil, var_0_16),
+	title_text = UIWidgets.create_simple_text("", "title_text", nil, nil, tbl_6),
+	sub_title_text = UIWidgets.create_simple_text("", "sub_title_text", nil, nil, tbl_7),
 	title_background = UIWidgets.create_simple_texture("athanor_decoration_headline", "title_background"),
 	window_overlay = UIWidgets.create_simple_rect("window_overlay", {
 		0,
@@ -4536,30 +4779,33 @@ local var_0_39 = {
 		10,
 		10
 	}),
-	locked_slot_description = var_0_32("options_scroll_field", var_0_13.options_scroll_field.size)
+	locked_slot_description = fn_8("options_scroll_field", tbl_4.options_scroll_field.size)
 }
-local var_0_40 = {
+local tbl_21 = {
 	upgrade = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 1,
-			init = function(arg_82_0, arg_82_1, arg_82_2, arg_82_3)
-				local var_82_0 = arg_82_2.upgrade_bg
-				local var_82_1 = arg_82_2.upgrade_text
+			init = function (arg_82_0, arg_82_1, arg_82_2, arg_82_3)
+				-- function 82
+				local upgrade_bg = arg_82_2.upgrade_bg
+				local upgrade_text = arg_82_2.upgrade_text
 
-				var_82_0.alpha_multiplier = 0
-				var_82_1.alpha_multiplier = 0
+				upgrade_bg.alpha_multiplier = 0
+				upgrade_text.alpha_multiplier = 0
 			end,
-			update = function(arg_83_0, arg_83_1, arg_83_2, arg_83_3, arg_83_4)
-				local var_83_0 = math.easeOutCubic(arg_83_3)
-				local var_83_1 = arg_83_2.upgrade_bg
-				local var_83_2 = arg_83_2.upgrade_text
+			update = function (arg_83_0, arg_83_1, arg_83_2, arg_83_3, arg_83_4)
+				-- function 83
+				local easeOutCubic = math.easeOutCubic(arg_83_3)
+				local upgrade_bg = arg_83_2.upgrade_bg
+				local upgrade_text = arg_83_2.upgrade_text
 
-				var_83_1.alpha_multiplier = var_83_0
-				var_83_2.alpha_multiplier = var_83_0
+				upgrade_bg.alpha_multiplier = easeOutCubic
+				upgrade_text.alpha_multiplier = easeOutCubic
 			end,
-			on_complete = function(arg_84_0, arg_84_1, arg_84_2, arg_84_3)
+			on_complete = function (arg_84_0, arg_84_1, arg_84_2, arg_84_3)
+				-- function 84
 				return
 			end
 		},
@@ -4567,18 +4813,21 @@ local var_0_40 = {
 			name = "fade_out",
 			start_progress = 1,
 			end_progress = 2,
-			init = function(arg_85_0, arg_85_1, arg_85_2, arg_85_3)
+			init = function (arg_85_0, arg_85_1, arg_85_2, arg_85_3)
+				-- function 85
 				return
 			end,
-			update = function(arg_86_0, arg_86_1, arg_86_2, arg_86_3, arg_86_4)
-				local var_86_0 = math.easeInCubic(1 - arg_86_3)
-				local var_86_1 = arg_86_2.upgrade_bg
-				local var_86_2 = arg_86_2.upgrade_text
+			update = function (arg_86_0, arg_86_1, arg_86_2, arg_86_3, arg_86_4)
+				-- function 86
+				local easeInCubic = math.easeInCubic(1 - arg_86_3)
+				local upgrade_bg = arg_86_2.upgrade_bg
+				local upgrade_text = arg_86_2.upgrade_text
 
-				var_86_1.alpha_multiplier = var_86_0
-				var_86_2.alpha_multiplier = var_86_0
+				upgrade_bg.alpha_multiplier = easeInCubic
+				upgrade_text.alpha_multiplier = easeInCubic
 			end,
-			on_complete = function(arg_87_0, arg_87_1, arg_87_2, arg_87_3)
+			on_complete = function (arg_87_0, arg_87_1, arg_87_2, arg_87_3)
+				-- function 87
 				return
 			end
 		},
@@ -4586,15 +4835,18 @@ local var_0_40 = {
 			name = "text_offset",
 			start_progress = 0,
 			end_progress = 2,
-			init = function(arg_88_0, arg_88_1, arg_88_2, arg_88_3)
+			init = function (arg_88_0, arg_88_1, arg_88_2, arg_88_3)
+				-- function 88
 				return
 			end,
-			update = function(arg_89_0, arg_89_1, arg_89_2, arg_89_3, arg_89_4)
-				local var_89_0 = math.easeOutCubic(arg_89_3)
+			update = function (arg_89_0, arg_89_1, arg_89_2, arg_89_3, arg_89_4)
+				-- function 89
+				local easeOutCubic = math.easeOutCubic(arg_89_3)
 
-				arg_89_2.upgrade_text.offset[2] = -40 + 50 * var_89_0
+				arg_89_2.upgrade_text.offset[2] = -40 + 50 * easeOutCubic
 			end,
-			on_complete = function(arg_90_0, arg_90_1, arg_90_2, arg_90_3)
+			on_complete = function (arg_90_0, arg_90_1, arg_90_2, arg_90_3)
+				-- function 90
 				return
 			end
 		},
@@ -4602,24 +4854,27 @@ local var_0_40 = {
 			name = "size_increase",
 			start_progress = 0,
 			end_progress = 4,
-			init = function(arg_91_0, arg_91_1, arg_91_2, arg_91_3)
-				local var_91_0 = arg_91_2.upgrade_bg.scenegraph_id
-				local var_91_1 = arg_91_1[var_91_0].size
-				local var_91_2 = arg_91_0[var_91_0].size
+			init = function (self, arg_91_1, arg_91_2, arg_91_3)
+				-- function 91
+				local scenegraph_id = arg_91_2.upgrade_bg.scenegraph_id
+				local size = arg_91_1[scenegraph_id].size
+				local size_2 = self[scenegraph_id].size
 
-				var_91_2[1] = var_91_1[1]
-				var_91_2[2] = var_91_1[2]
+				size_2[1] = size[1]
+				size_2[2] = size[2]
 			end,
-			update = function(arg_92_0, arg_92_1, arg_92_2, arg_92_3, arg_92_4)
-				local var_92_0 = math.easeOutCubic(arg_92_3)
-				local var_92_1 = arg_92_2.upgrade_bg.scenegraph_id
-				local var_92_2 = arg_92_1[var_92_1].size
-				local var_92_3 = arg_92_0[var_92_1].size
+			update = function (self, arg_92_1, arg_92_2, arg_92_3, arg_92_4)
+				-- function 92
+				local easeOutCubic = math.easeOutCubic(arg_92_3)
+				local scenegraph_id = arg_92_2.upgrade_bg.scenegraph_id
+				local size = arg_92_1[scenegraph_id].size
+				local size_2 = self[scenegraph_id].size
 
-				var_92_3[1] = var_92_2[1] + 200 * (1 - var_92_0)
-				var_92_3[2] = var_92_2[2] + 200 * (1 - var_92_0)
+				size_2[1] = size[1] + 200 * (1 - easeOutCubic)
+				size_2[2] = size[2] + 200 * (1 - easeOutCubic)
 			end,
-			on_complete = function(arg_93_0, arg_93_1, arg_93_2, arg_93_3)
+			on_complete = function (arg_93_0, arg_93_1, arg_93_2, arg_93_3)
+				-- function 93
 				return
 			end
 		}
@@ -4629,17 +4884,20 @@ local var_0_40 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_94_0, arg_94_1, arg_94_2, arg_94_3)
+			init = function (arg_94_0, arg_94_1, arg_94_2, arg_94_3)
+				-- function 94
 				arg_94_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_95_0, arg_95_1, arg_95_2, arg_95_3, arg_95_4)
-				local var_95_0 = math.easeOutCubic(arg_95_3)
+			update = function (arg_95_0, arg_95_1, arg_95_2, arg_95_3, arg_95_4)
+				-- function 95
+				local easeOutCubic = math.easeOutCubic(arg_95_3)
 
-				arg_95_4.render_settings.alpha_multiplier = var_95_0
-				arg_95_0.viewport_panel.local_position[2] = arg_95_1.viewport_panel.position[2] + (-50 + 50 * var_95_0)
-				arg_95_0.slot_root.local_position[1] = arg_95_1.slot_root.position[1] + (-150 + 150 * var_95_0)
+				arg_95_4.render_settings.alpha_multiplier = easeOutCubic
+				arg_95_0.viewport_panel.local_position[2] = arg_95_1.viewport_panel.position[2] + (-50 + 50 * easeOutCubic)
+				arg_95_0.slot_root.local_position[1] = arg_95_1.slot_root.position[1] + (-150 + 150 * easeOutCubic)
 			end,
-			on_complete = function(arg_96_0, arg_96_1, arg_96_2, arg_96_3)
+			on_complete = function (arg_96_0, arg_96_1, arg_96_2, arg_96_3)
+				-- function 96
 				return
 			end
 		}
@@ -4649,15 +4907,18 @@ local var_0_40 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_97_0, arg_97_1, arg_97_2, arg_97_3)
+			init = function (arg_97_0, arg_97_1, arg_97_2, arg_97_3)
+				-- function 97
 				arg_97_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_98_0, arg_98_1, arg_98_2, arg_98_3, arg_98_4)
-				local var_98_0 = math.easeOutCubic(arg_98_3)
+			update = function (arg_98_0, arg_98_1, arg_98_2, arg_98_3, arg_98_4)
+				-- function 98
+				local easeOutCubic = math.easeOutCubic(arg_98_3)
 
-				arg_98_4.render_settings.alpha_multiplier = 1 - var_98_0
+				arg_98_4.render_settings.alpha_multiplier = 1 - easeOutCubic
 			end,
-			on_complete = function(arg_99_0, arg_99_1, arg_99_2, arg_99_3)
+			on_complete = function (arg_99_0, arg_99_1, arg_99_2, arg_99_3)
+				-- function 99
 				return
 			end
 		}
@@ -4665,19 +4926,19 @@ local var_0_40 = {
 }
 
 return {
-	scrollbar_widget = UIWidgets.create_chain_scrollbar("options_list_scrollbar", "options_scroll_field", var_0_13.options_list_scrollbar.size),
-	top_widgets = var_0_39,
-	bottom_widgets = var_0_38,
-	top_hdr_widgets = var_0_35,
-	bottom_hdr_widgets = var_0_37,
-	options_mask_margin = var_0_11,
-	options_mask_offset = var_0_10,
-	scenegraph_definition = var_0_13,
-	animation_definitions = var_0_40,
-	create_trait_slot_definition = var_0_27,
-	create_menu_option_trait_definition = var_0_29,
-	create_menu_option_talent_definition = var_0_30,
-	create_menu_option_property_definition = var_0_28,
-	create_talent_slot_definition = var_0_26,
-	create_property_slot_definition = var_0_25
+	scrollbar_widget = UIWidgets.create_chain_scrollbar("options_list_scrollbar", "options_scroll_field", tbl_4.options_list_scrollbar.size),
+	top_widgets = tbl_20,
+	bottom_widgets = tbl_19,
+	top_hdr_widgets = tbl_16,
+	bottom_hdr_widgets = tbl_18,
+	options_mask_margin = num_2,
+	options_mask_offset = num,
+	scenegraph_definition = tbl_4,
+	animation_definitions = tbl_21,
+	create_trait_slot_definition = fn_3,
+	create_menu_option_trait_definition = fn_5,
+	create_menu_option_talent_definition = fn_6,
+	create_menu_option_property_definition = fn_4,
+	create_talent_slot_definition = fn_2,
+	create_property_slot_definition = fn
 }

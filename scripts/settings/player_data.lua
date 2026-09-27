@@ -39,37 +39,42 @@ DefaultPlayerData = {
 	},
 	seen_shop_items = {}
 }
+
+local PlayerData = PlayerData
+
 PlayerData = PlayerData or table.clone(DefaultPlayerData)
+PlayerData = PlayerData
 
-function populate_player_data_from_save(arg_1_0, arg_1_1, arg_1_2)
-	if not arg_1_0.player_data then
-		arg_1_0.player_data = {}
+function populate_player_data_from_save(self, arg_1_1, arg_1_2)
+	-- function 1
+	if not self.player_data then
+		self.player_data = {}
 	end
 
-	if not arg_1_0.player_data[arg_1_1] then
-		local var_1_0 = table.clone(DefaultPlayerData)
+	if not self.player_data[arg_1_1] then
+		local clone = table.clone(DefaultPlayerData)
 
-		if arg_1_0.controls then
-			var_1_0.controls = arg_1_0.controls
-			arg_1_0.controls = nil
+		if not self.controls then
+			clone.controls = self.controls
+			self.controls = nil
 		end
 
-		if arg_1_0.new_item_ids then
-			var_1_0.new_item_ids = arg_1_0.new_item_ids
-			arg_1_0.new_item_ids = nil
+		if not self.new_item_ids then
+			clone.new_item_ids = self.new_item_ids
+			self.new_item_ids = nil
 		end
 
-		if arg_1_0.recent_irc_channels then
-			var_1_0.recent_irc_channels = arg_1_0.recent_irc_channels
-			arg_1_0.recent_irc_channels = nil
+		if not self.recent_irc_channels then
+			clone.recent_irc_channels = self.recent_irc_channels
+			self.recent_irc_channels = nil
 		end
 
-		arg_1_0.player_data[arg_1_1] = var_1_0
+		self.player_data[arg_1_1] = clone
 	end
 
-	local var_1_1 = arg_1_0.player_data[arg_1_1]
+	local var_1_1 = self.player_data[arg_1_1]
 
-	if arg_1_2 then
+	if not arg_1_2 then
 		if DefaultPlayerData.mission_selection_version ~= var_1_1.mission_selection_version then
 			var_1_1.mission_selection = {}
 
@@ -154,9 +159,9 @@ function populate_player_data_from_save(arg_1_0, arg_1_1, arg_1_2)
 
 	PlayerData = var_1_1
 
-	local var_1_2 = Managers.input
+	local input = Managers.input
 
-	if var_1_2 then
-		var_1_2:apply_saved_keymaps()
+	if not input then
+		input:apply_saved_keymaps()
 	end
 end

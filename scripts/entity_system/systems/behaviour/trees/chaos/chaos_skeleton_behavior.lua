@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/chaos/chaos_skeleton_behavior.lua
 
-local var_0_0 = BreedActions.chaos_skeleton
+local chaos_skeleton = BreedActions.chaos_skeleton
 
 BreedBehaviors.chaos_skeleton = {
 	"BTSelector",
@@ -23,13 +23,13 @@ BreedBehaviors.chaos_skeleton = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = var_0_0.stagger
+		action_data = chaos_skeleton.stagger
 	},
 	{
 		"BTBlockedAction",
 		name = "blocked",
 		condition = "blocked",
-		action_data = var_0_0.blocked
+		action_data = chaos_skeleton.blocked
 	},
 	{
 		"BTSelector",
@@ -47,7 +47,7 @@ BreedBehaviors.chaos_skeleton = {
 			"BTZombieExplodeAction",
 			name = "explosion_attack",
 			condition = "at_door_smartobject",
-			action_data = var_0_0.explosion_attack
+			action_data = chaos_skeleton.explosion_attack
 		},
 		condition = "at_smartobject",
 		name = "smartobject"
@@ -57,7 +57,7 @@ BreedBehaviors.chaos_skeleton = {
 		{
 			"BTClanRatFollowAction",
 			name = "follow",
-			action_data = var_0_0.follow
+			action_data = chaos_skeleton.follow
 		},
 		condition = "confirmed_player_sighting",
 		name = "in_combat"
@@ -66,24 +66,24 @@ BreedBehaviors.chaos_skeleton = {
 		"BTAlertedAction",
 		name = "alerted",
 		condition = "player_spotted",
-		action_data = var_0_0.alerted
+		action_data = chaos_skeleton.alerted
 	},
 	{
 		"BTMoveToGoalAction",
 		name = "move_to_goal",
 		condition = "has_goal_destination",
-		action_data = var_0_0.follow
+		action_data = chaos_skeleton.follow
 	},
 	{
 		"BTIdleAction",
 		name = "idle",
 		condition = "no_target",
-		action_data = var_0_0.idle
+		action_data = chaos_skeleton.idle
 	},
 	{
 		"BTFallbackIdleAction",
 		name = "fallback_idle",
-		action_data = var_0_0.fallback_idle
+		action_data = chaos_skeleton.fallback_idle
 	},
 	name = "chaos_skeleton"
 }

@@ -2,9 +2,9 @@
 
 BossDoorExtension = class(BossDoorExtension)
 
-local var_0_0 = 30
-local var_0_1 = 3
-local var_0_2 = {
+local num = 30
+local num_2 = 3
+local tbl = {
 	chaos_troll = "lua_closed_troll",
 	chaos_spawn = "lua_closed_stormfiend",
 	beastmen_minotaur = "lua_closed_stormfiend",
@@ -12,107 +12,123 @@ local var_0_2 = {
 	skaven_stormfiend = "lua_closed_stormfiend"
 }
 
-function BossDoorExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	local var_1_0 = arg_1_1.world
+BossDoorExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	local world = arg_1_1.world
 
-	arg_1_0.unit = arg_1_2
-	arg_1_0.world = var_1_0
-	arg_1_0.is_server = Managers.player.is_server
-	arg_1_0.current_state = "open"
-	arg_1_0.state_to_nav_obstacle_map = {}
-	arg_1_0.ignore_umbra = not World.umbra_available(var_1_0)
-	arg_1_0.breeds_failed_leaving_smart_object = {}
-	arg_1_0.num_attackers = 0
-	arg_1_0.animation_stop_time = 0
+	self.unit = arg_1_2
+	self.world = world
+	self.is_server = Managers.player.is_server
+	self.current_state = "open"
+	self.state_to_nav_obstacle_map = {}
+	self.ignore_umbra = not World.umbra_available(world)
+	self.breeds_failed_leaving_smart_object = {}
+	self.num_attackers = 0
+	self.animation_stop_time = 0
 end
 
-function BossDoorExtension.extensions_ready(arg_2_0)
+BossDoorExtension.extensions_ready = function (arg_2_0)
+	-- function 2
 	return
 end
 
-function BossDoorExtension.update_nav_obstacles(arg_3_0)
-	local var_3_0 = arg_3_0.current_state
-	local var_3_1 = arg_3_0.state_to_nav_obstacle_map
+BossDoorExtension.update_nav_obstacles = function (self)
+	-- function 3
+	local current_state = self.current_state
+	local state_to_nav_obstacle_map = self.state_to_nav_obstacle_map
 
-	for iter_3_0, iter_3_1 in pairs(var_3_1) do
-		local var_3_2 = iter_3_0 == var_3_0
+	for k, v in pairs(state_to_nav_obstacle_map) do
+		local flag = k == current_state
 
-		GwNavBoxObstacle.set_does_trigger_tagvolume(iter_3_1, var_3_2)
+		GwNavBoxObstacle.set_does_trigger_tagvolume(v, flag)
 	end
 end
 
-function BossDoorExtension.set_door_state(arg_4_0, arg_4_1, arg_4_2)
-	if arg_4_0.current_state == arg_4_1 then
+BossDoorExtension.set_door_state = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	if self.current_state == arg_4_1 then
 		return
 	end
 
-	local var_4_0 = arg_4_0.unit
-	local var_4_1 = arg_4_1 == "closed" and "lua_close" or "lua_open"
+	local unit = self.unit
+	local flag
 
-	Unit.flow_event(var_4_0, var_4_1)
+	flag = arg_4_1 ~= "closed" or not "lua_close" or "lua_open"
 
-	local var_4_2 = var_0_2[arg_4_2]
+	Unit.flow_event(unit, flag)
 
-	if var_4_2 then
-		Unit.flow_event(var_4_0, var_4_2)
+	local var_4_2 = tbl[arg_4_2]
+
+	if not var_4_2 then
+		Unit.flow_event(unit, var_4_2)
 	end
 
-	local var_4_3
+	local flag_2
 
-	var_4_3 = arg_4_1 == "closed"
-	arg_4_0.current_state = arg_4_1
-	arg_4_0.breed_name = arg_4_2
+	flag_2 = arg_4_1 == "closed"
+	self.current_state = arg_4_1
+	self.breed_name = arg_4_2
 end
 
-function BossDoorExtension.get_current_state(arg_5_0)
-	return arg_5_0.current_state
+BossDoorExtension.get_current_state = function (self)
+	-- function 5
+	return self.current_state
 end
 
-function BossDoorExtension.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
-	local var_6_0 = arg_6_0.animation_stop_time
+BossDoorExtension.update = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+	-- function 6
+	local animation_stop_time = self.animation_stop_time
 
-	if var_6_0 and var_6_0 <= arg_6_5 then
-		arg_6_0:update_nav_obstacles()
+	if not (not animation_stop_time and not (animation_stop_time <= arg_6_5)) then
+		self:update_nav_obstacles()
 
-		arg_6_0.animation_stop_time = nil
+		self.animation_stop_time = nil
 	end
 end
 
-function BossDoorExtension.hot_join_sync(arg_7_0, arg_7_1)
-	local var_7_0 = LevelHelper:current_level(arg_7_0.world)
-	local var_7_1 = Level.unit_index(var_7_0, arg_7_0.unit)
-	local var_7_2 = arg_7_0.current_state
-	local var_7_3 = NetworkLookup.door_states[var_7_2]
-	local var_7_4 = arg_7_0.breed_name or "n/a"
-	local var_7_5 = NetworkLookup.breeds[var_7_4]
+BossDoorExtension.hot_join_sync = function (self, arg_7_1)
+	-- function 7
+	local current_level = LevelHelper:current_level(self.world)
+	local unit_index = Level.unit_index(current_level, self.unit)
+	local current_state = self.current_state
+	local var_7_3 = NetworkLookup.door_states[current_state]
+	local breed_name = self.breed_name
+
+	breed_name = breed_name or "n/a"
+
+	local var_7_5 = NetworkLookup.breeds[breed_name]
 	local var_7_6 = PEER_ID_TO_CHANNEL[arg_7_1]
 
-	RPC.rpc_sync_boss_door_state(var_7_6, var_7_1, var_7_3, var_7_5)
+	RPC.rpc_sync_boss_door_state(var_7_6, unit_index, var_7_3, var_7_5)
 end
 
-function BossDoorExtension.destroy(arg_8_0)
-	arg_8_0:destroy_box_obstacles()
+BossDoorExtension.destroy = function (self)
+	-- function 8
+	self:destroy_box_obstacles()
 
-	arg_8_0.unit = nil
-	arg_8_0.world = nil
+	self.unit = nil
+	self.world = nil
 end
 
-function BossDoorExtension.destroy_box_obstacles(arg_9_0)
-	if arg_9_0.state_to_nav_obstacle_map then
-		for iter_9_0, iter_9_1 in pairs(arg_9_0.state_to_nav_obstacle_map) do
-			GwNavBoxObstacle.destroy(iter_9_1)
+BossDoorExtension.destroy_box_obstacles = function (self)
+	-- function 9
+	if not self.state_to_nav_obstacle_map then
+		for k, v in pairs(self.state_to_nav_obstacle_map) do
+			GwNavBoxObstacle.destroy(v)
 		end
 
-		arg_9_0.state_to_nav_obstacle_map = nil
+		self.state_to_nav_obstacle_map = nil
 	end
 end
 
-function BossDoorExtension.animation_played(arg_10_0, arg_10_1, arg_10_2)
-	local var_10_0 = arg_10_1 / var_0_0 / arg_10_2
+BossDoorExtension.animation_played = function (self, arg_10_1, arg_10_2)
+	-- function 10
+	local num_2 = arg_10_1 / num / arg_10_2
 
-	arg_10_0.animation_stop_time = Managers.time:time("game") + var_10_0
+	self.animation_stop_time = Managers.time:time("game") + num_2
 end
 
-function BossDoorExtension.is_open(arg_11_0)
-	return arg_11_0.current_state == "open"
+BossDoorExtension.is_open = function (self)
+	-- function 11
+	return self.current_state == "open"
 end

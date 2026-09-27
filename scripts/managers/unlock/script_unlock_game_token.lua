@@ -2,22 +2,27 @@
 
 ScriptUnlockGameToken = class(ScriptUnlockGameToken)
 
-function ScriptUnlockGameToken.init(arg_1_0, arg_1_1)
+ScriptUnlockGameToken.init = function (arg_1_0, arg_1_1)
+	-- function 1
 	return
 end
 
-function ScriptUnlockGameToken.update(arg_2_0)
+ScriptUnlockGameToken.update = function (arg_2_0)
+	-- function 2
 	return
 end
 
-function ScriptUnlockGameToken.info(arg_3_0)
+ScriptUnlockGameToken.info = function (arg_3_0)
+	-- function 3
 	return
 end
 
-function ScriptUnlockGameToken.done(arg_4_0)
+ScriptUnlockGameToken.done = function (arg_4_0)
+	-- function 4
 	return
 end
 
-function ScriptUnlockGameToken.close(arg_5_0)
+ScriptUnlockGameToken.close = function (arg_5_0)
+	-- function 5
 	return
 end

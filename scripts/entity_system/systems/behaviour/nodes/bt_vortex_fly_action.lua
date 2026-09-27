@@ -4,31 +4,36 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTVortexFlyAction = class(BTVortexFlyAction, BTNode)
 
-function BTVortexFlyAction.init(arg_1_0, ...)
+BTVortexFlyAction.init = function (arg_1_0, ...)
+	-- function 1
 	BTVortexFlyAction.super.init(arg_1_0, ...)
 end
 
 BTVortexFlyAction.name = "BTVortexFlyAction"
 
-function BTVortexFlyAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
-	local var_2_0 = arg_2_2.next_smart_object_data
-	local var_2_1 = var_2_0.entrance_pos:unbox()
-	local var_2_2 = var_2_0.exit_pos:unbox()
+BTVortexFlyAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	-- function 2
+	local next_smart_object_data = arg_2_2.next_smart_object_data
+	local unbox = next_smart_object_data.entrance_pos:unbox()
+	local unbox_2 = next_smart_object_data.exit_pos:unbox()
 
-	arg_2_2.fly_entrance_pos = Vector3Box(var_2_1)
-	arg_2_2.fly_exit_pos = Vector3Box(var_2_2)
+	arg_2_2.fly_entrance_pos = Vector3Box(unbox)
+	arg_2_2.fly_exit_pos = Vector3Box(unbox_2)
 
-	local var_2_3 = var_2_0.smart_object_data
-	local var_2_4 = var_2_3.ledge_position and Vector3Aux.unbox(var_2_3.ledge_position)
+	local smart_object_data = next_smart_object_data.smart_object_data
+	local ledge_position = smart_object_data.ledge_position
 
-	if var_2_4 then
-		arg_2_2.fly_middle_pos = Vector3Box(var_2_4)
+	ledge_position = not ledge_position and Vector3Aux.unbox(smart_object_data.ledge_position)
+
+	if not ledge_position then
+		arg_2_2.fly_middle_pos = Vector3Box(ledge_position)
 	end
 
 	arg_2_2.fly_state = "moving_to_within_smartobject_range"
 end
 
-function BTVortexFlyAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTVortexFlyAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	-- function 3
 	arg_3_2.fly_entrance_pos = nil
 	arg_3_2.fly_middle_pos = nil
 	arg_3_2.fly_exit_pos = nil
@@ -40,29 +45,30 @@ function BTVortexFlyAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, ar
 		arg_3_2.locomotion_extension:set_movement_type("snap_to_navmesh")
 	end
 
-	local var_3_0 = arg_3_2.navigation_extension
+	local navigation_extension = arg_3_2.navigation_extension
 
-	var_3_0:set_enabled(true)
+	navigation_extension:set_enabled(true)
 
-	if var_3_0:is_using_smart_object() then
-		local var_3_1 = var_3_0:use_smart_object(false)
+	if not navigation_extension:is_using_smart_object() then
+		local use_smart_object = navigation_extension:use_smart_object(false)
 	end
 end
 
-function BTVortexFlyAction._move_to_destination(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
-	local var_4_0 = arg_4_2 - arg_4_1
-	local var_4_1 = Vector3.length(var_4_0)
+BTVortexFlyAction._move_to_destination = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	-- function 4
+	local num = arg_4_2 - arg_4_1
+	local length = Vector3.length(num)
 
-	if var_4_1 > 0.1 then
+	if length > 0.1 then
 		local var_4_2 = arg_4_5
 
-		if var_4_1 < var_4_2 * arg_4_4 then
-			var_4_2 = var_4_1 / arg_4_4
+		if length < var_4_2 * arg_4_4 then
+			var_4_2 = length / arg_4_4
 		end
 
-		local var_4_3 = Vector3.normalize(var_4_0) * var_4_2
+		local num_2 = Vector3.normalize(num) * var_4_2
 
-		arg_4_3:set_wanted_velocity(var_4_3)
+		arg_4_3:set_wanted_velocity(num_2)
 
 		return false
 	else
@@ -72,23 +78,24 @@ function BTVortexFlyAction._move_to_destination(arg_4_0, arg_4_1, arg_4_2, arg_4
 	end
 end
 
-function BTVortexFlyAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
-	local var_5_0 = arg_5_2.locomotion_extension
-	local var_5_1 = arg_5_2.breed.run_speed
+BTVortexFlyAction.run = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	-- function 5
+	local locomotion_extension = arg_5_2.locomotion_extension
+	local run_speed = arg_5_2.breed.run_speed
 	local var_5_2 = POSITION_LOOKUP[arg_5_1]
 
 	if arg_5_2.fly_state == "moving_to_within_smartobject_range" then
-		local var_5_3 = arg_5_2.fly_entrance_pos:unbox()
+		local unbox = arg_5_2.fly_entrance_pos:unbox()
 
-		if Vector3.distance_squared(var_5_3, var_5_2) < 1 then
-			var_5_0:set_wanted_velocity(Vector3.zero())
-			var_5_0:set_movement_type("script_driven")
+		if Vector3.distance_squared(unbox, var_5_2) < 1 then
+			locomotion_extension:set_wanted_velocity(Vector3.zero())
+			locomotion_extension:set_movement_type("script_driven")
 
-			local var_5_4 = arg_5_2.navigation_extension
+			local navigation_extension = arg_5_2.navigation_extension
 
-			var_5_4:set_enabled(false)
+			navigation_extension:set_enabled(false)
 
-			if var_5_4:use_smart_object(true) then
+			if not navigation_extension:use_smart_object(true) then
 				arg_5_2.is_smart_objecting = true
 				arg_5_2.is_flying = true
 				arg_5_2.fly_state = "moving_towards_entrance_pos"
@@ -99,25 +106,25 @@ function BTVortexFlyAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 			end
 		end
 	elseif arg_5_2.fly_state == "moving_towards_entrance_pos" then
-		local var_5_5 = arg_5_2.fly_entrance_pos:unbox()
+		local unbox_2 = arg_5_2.fly_entrance_pos:unbox()
 
-		if arg_5_0:_move_to_destination(var_5_2, var_5_5, var_5_0, arg_5_4, var_5_1) then
-			if arg_5_2.fly_middle_pos then
+		if not self:_move_to_destination(var_5_2, unbox_2, locomotion_extension, arg_5_4, run_speed) then
+			if not arg_5_2.fly_middle_pos then
 				arg_5_2.fly_state = "moving_towards_middle_pos"
 			else
 				arg_5_2.fly_state = "moving_towards_exit_pos"
 			end
 		end
 	elseif arg_5_2.fly_state == "moving_towards_middle_pos" then
-		local var_5_6 = arg_5_2.fly_middle_pos:unbox()
+		local unbox_3 = arg_5_2.fly_middle_pos:unbox()
 
-		if arg_5_0:_move_to_destination(var_5_2, var_5_6, var_5_0, arg_5_4, var_5_1) then
+		if not self:_move_to_destination(var_5_2, unbox_3, locomotion_extension, arg_5_4, run_speed) then
 			arg_5_2.fly_state = "moving_towards_exit_pos"
 		end
 	elseif arg_5_2.fly_state == "moving_towards_exit_pos" then
-		local var_5_7 = arg_5_2.fly_exit_pos:unbox()
+		local unbox_4 = arg_5_2.fly_exit_pos:unbox()
 
-		if arg_5_0:_move_to_destination(var_5_2, var_5_7, var_5_0, arg_5_4, var_5_1) then
+		if not self:_move_to_destination(var_5_2, unbox_4, locomotion_extension, arg_5_4, run_speed) then
 			arg_5_2.fly_state = "done"
 		end
 	end

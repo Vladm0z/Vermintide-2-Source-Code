@@ -2,33 +2,38 @@
 
 ScriptIrcToken = class(ScriptIrcToken)
 
-function ScriptIrcToken.init(arg_1_0, arg_1_1)
-	arg_1_0._token = arg_1_1
-	arg_1_0._result = {}
-	arg_1_0._done = false
+ScriptIrcToken.init = function (self, arg_1_1)
+	-- function 1
+	self._token = arg_1_1
+	self._result = {}
+	self._done = false
 end
 
-function ScriptIrcToken.update(arg_2_0)
-	local var_2_0, var_2_1 = Irc.connect_async_status(arg_2_0._token)
+ScriptIrcToken.update = function (self)
+	-- function 2
+	local connect_async_status, var_2_1 = Irc.connect_async_status(self._token)
 
-	arg_2_0._done = var_2_0
-	arg_2_0._result = var_2_1
+	self._done = connect_async_status
+	self._result = var_2_1
 end
 
-function ScriptIrcToken.info(arg_3_0)
-	local var_3_0 = {}
+ScriptIrcToken.info = function (self)
+	-- function 3
+	local tbl = {}
 
-	if arg_3_0._done then
-		var_3_0.result = arg_3_0._result
+	if not self._done then
+		tbl.result = self._result
 	end
 
-	return var_3_0
+	return tbl
 end
 
-function ScriptIrcToken.done(arg_4_0)
-	return arg_4_0._done
+ScriptIrcToken.done = function (self)
+	-- function 4
+	return self._done
 end
 
-function ScriptIrcToken.close(arg_5_0)
-	Irc.release_token(arg_5_0._token)
+ScriptIrcToken.close = function (self)
+	-- function 5
+	Irc.release_token(self._token)
 end

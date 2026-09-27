@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/wood_elf_ground_zero.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pwe_ground_zero_intro_a",

@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/dwarf_ranger_farmland.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pdr_farmlands_intro_a",

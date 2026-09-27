@@ -1,13 +1,13 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/store/definitions/store_window_featured_definitions.lua
 
-local var_0_0 = UISettings.console_menu_scenegraphs
-local var_0_1 = 10
-local var_0_2 = {
-	screen = var_0_0.screen,
-	area = var_0_0.area,
-	area_left = var_0_0.area_left,
-	area_right = var_0_0.area_right,
-	area_divider = var_0_0.area_divider,
+local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
+local num = 10
+local tbl = {
+	screen = console_menu_scenegraphs.screen,
+	area = console_menu_scenegraphs.area,
+	area_left = console_menu_scenegraphs.area_left,
+	area_right = console_menu_scenegraphs.area_right,
+	area_divider = console_menu_scenegraphs.area_divider,
 	discount_banner = {
 		vertical_alignment = "top",
 		parent = "screen",
@@ -149,13 +149,14 @@ local var_0_2 = {
 	}
 }
 
-local function var_0_3(arg_1_0)
-	local var_1_0 = var_0_2[arg_1_0].size
-	local var_1_1 = UIFrameSettings.button_frame_01_gold
-	local var_1_2 = UIFrameSettings.frame_outer_glow_01
-	local var_1_3 = var_1_2.texture_sizes.horizontal[2]
-	local var_1_4 = "button_detail_09_gold"
-	local var_1_5 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_1_4).size
+local function fn(arg_1_0)
+	-- function 1
+	local size = tbl[arg_1_0].size
+	local button_frame_01_gold = UIFrameSettings.button_frame_01_gold
+	local frame_outer_glow_01 = UIFrameSettings.frame_outer_glow_01
+	local var_1_3 = frame_outer_glow_01.texture_sizes.horizontal[2]
+	local str = "button_detail_09_gold"
+	local size_2 = UIAtlasHelper.get_atlas_settings_by_texture_name(str).size
 
 	return {
 		scenegraph_id = arg_1_0,
@@ -214,10 +215,12 @@ local function var_0_3(arg_1_0)
 					style_id = "outer_glow",
 					texture_id = "outer_glow",
 					pass_type = "texture_frame",
-					content_check_function = function(arg_2_0)
-						return arg_2_0.is_claimable
+					content_check_function = function (self)
+						-- function 2
+						return self.is_claimable
 					end,
-					content_change_function = function(arg_3_0, arg_3_1)
+					content_change_function = function (arg_3_0, arg_3_1)
+						-- function 3
 						arg_3_1.color[1] = 150 + 105 * math.sin(5 * Managers.time:time("ui"))
 					end
 				},
@@ -248,7 +251,7 @@ local function var_0_3(arg_1_0)
 			glass_top = "button_glass_01",
 			glass_bottom = "button_glass_02",
 			button_hotspot = {},
-			frame = var_1_1.texture,
+			frame = button_frame_01_gold.texture,
 			side_detail = {
 				uvs = {
 					{
@@ -260,9 +263,9 @@ local function var_0_3(arg_1_0)
 						1
 					}
 				},
-				texture_id = var_1_4
+				texture_id = str
 			},
-			outer_glow = var_1_2.texture
+			outer_glow = frame_outer_glow_01.texture
 		},
 		style = {
 			bg = {
@@ -309,8 +312,8 @@ local function var_0_3(arg_1_0)
 					2
 				},
 				texture_size = {
-					var_1_0[1],
-					math.min(var_1_0[2] - 5, 80)
+					size[1],
+					math.min(size[2] - 5, 80)
 				}
 			},
 			glass = {
@@ -340,13 +343,13 @@ local function var_0_3(arg_1_0)
 					4
 				},
 				texture_size = {
-					var_1_0[1],
+					size[1],
 					11
 				}
 			},
 			frame = {
-				texture_size = var_1_1.texture_size,
-				texture_sizes = var_1_1.texture_sizes,
+				texture_size = button_frame_01_gold.texture_size,
+				texture_sizes = button_frame_01_gold.texture_sizes,
 				offset = {
 					0,
 					0,
@@ -374,8 +377,8 @@ local function var_0_3(arg_1_0)
 					10
 				},
 				texture_size = {
-					var_1_5[1],
-					var_1_5[2]
+					size_2[1],
+					size_2[2]
 				}
 			},
 			side_detail_right = {
@@ -393,8 +396,8 @@ local function var_0_3(arg_1_0)
 					10
 				},
 				texture_size = {
-					var_1_5[1],
-					var_1_5[2]
+					size_2[1],
+					size_2[2]
 				}
 			},
 			outer_glow = {
@@ -402,8 +405,8 @@ local function var_0_3(arg_1_0)
 					-var_1_3,
 					-var_1_3
 				},
-				texture_size = var_1_2.texture_size,
-				texture_sizes = var_1_2.texture_sizes,
+				texture_size = frame_outer_glow_01.texture_size,
+				texture_sizes = frame_outer_glow_01.texture_sizes,
 				offset = {
 					0,
 					0,
@@ -430,8 +433,8 @@ local function var_0_3(arg_1_0)
 					6
 				},
 				size = {
-					var_1_0[1] - 60,
-					var_1_0[2]
+					size[1] - 60,
+					size[2]
 				}
 			},
 			title_shadow = {
@@ -453,8 +456,8 @@ local function var_0_3(arg_1_0)
 					5
 				},
 				size = {
-					var_1_0[1] - 60,
-					var_1_0[2]
+					size[1] - 60,
+					size[2]
 				}
 			},
 			subtitle = {
@@ -474,20 +477,21 @@ local function var_0_3(arg_1_0)
 	}
 end
 
-local function var_0_4(arg_4_0, arg_4_1)
-	local var_4_0 = "menu_frame_16"
-	local var_4_1 = UIFrameSettings[var_4_0]
-	local var_4_2 = "frame_outer_glow_04"
-	local var_4_3 = UIFrameSettings[var_4_2]
+local function fn_2(arg_4_0, arg_4_1)
+	-- function 4
+	local str = "menu_frame_16"
+	local var_4_1 = UIFrameSettings[str]
+	local str_2 = "frame_outer_glow_04"
+	local var_4_3 = UIFrameSettings[str_2]
 	local var_4_4 = var_4_3.texture_sizes.horizontal[2]
-	local var_4_5 = "frame_outer_glow_04_big"
-	local var_4_6 = UIFrameSettings[var_4_5]
+	local str_3 = "frame_outer_glow_04_big"
+	local var_4_6 = UIFrameSettings[str_3]
 	local var_4_7 = var_4_6.texture_sizes.horizontal[2]
-	local var_4_8 = false
-	local var_4_9 = {
+	local flag = false
+	local tbl = {
 		element = {}
 	}
-	local var_4_10 = {
+	local tbl_2 = {
 		{
 			style_id = "hotspot",
 			pass_type = "hotspot",
@@ -560,8 +564,9 @@ local function var_0_4(arg_4_0, arg_4_1)
 			pass_type = "texture",
 			style_id = "hourglass_icon",
 			texture_id = "hourglass_icon",
-			content_check_function = function(arg_5_0)
-				return arg_5_0.show_hourglass
+			content_check_function = function (self)
+				-- function 5
+				return self.show_hourglass
 			end
 		},
 		{
@@ -587,7 +592,7 @@ local function var_0_4(arg_4_0, arg_4_1)
 			}
 		}
 	}
-	local var_4_11 = {
+	local tbl_3 = {
 		hourglass_icon = "icon_store_timer",
 		title_text = "n/a",
 		rect = "rect_masked",
@@ -642,17 +647,17 @@ local function var_0_4(arg_4_0, arg_4_1)
 			allow_multi_hover = true
 		}
 	}
-	local var_4_12 = var_4_11.list_content
+	local list_content = tbl_3.list_content
 
-	for iter_4_0 = 1, var_0_1 do
-		var_4_12[iter_4_0] = {
+	for i = 1, num do
+		list_content[i] = {
 			background = "store_slideshow_off",
 			icon = "store_slideshow_on",
 			button_hotspot = {}
 		}
 	end
 
-	local var_4_13 = {
+	local tbl_4 = {
 		hotspot = {
 			size = arg_4_1,
 			offset = {
@@ -752,7 +757,7 @@ local function var_0_4(arg_4_0, arg_4_1)
 		background = {
 			vertical_alignment = "top",
 			horizontal_alignment = "left",
-			masked = var_4_8,
+			masked = flag,
 			texture_size = arg_4_1,
 			color = {
 				200,
@@ -769,7 +774,7 @@ local function var_0_4(arg_4_0, arg_4_1)
 		text_background = {
 			vertical_alignment = "top",
 			horizontal_alignment = "left",
-			masked = var_4_8,
+			masked = flag,
 			texture_size = {
 				arg_4_1[1] * 0.33 + 30,
 				arg_4_1[2]
@@ -791,7 +796,7 @@ local function var_0_4(arg_4_0, arg_4_1)
 			texture_width = 144,
 			horizontal_alignment = "left",
 			size = arg_4_1,
-			masked = var_4_8,
+			masked = flag,
 			texture_size = {
 				0,
 				3
@@ -812,7 +817,7 @@ local function var_0_4(arg_4_0, arg_4_1)
 			vertical_alignment = "bottom",
 			horizontal_alignment = "center",
 			size = arg_4_1,
-			masked = var_4_8,
+			masked = flag,
 			texture_size = {
 				150,
 				9
@@ -832,7 +837,7 @@ local function var_0_4(arg_4_0, arg_4_1)
 		icon_1 = {
 			vertical_alignment = "top",
 			horizontal_alignment = "left",
-			masked = var_4_8,
+			masked = flag,
 			texture_size = arg_4_1,
 			color = {
 				255,
@@ -849,7 +854,7 @@ local function var_0_4(arg_4_0, arg_4_1)
 		icon_2 = {
 			vertical_alignment = "top",
 			horizontal_alignment = "left",
-			masked = var_4_8,
+			masked = flag,
 			texture_size = arg_4_1,
 			color = {
 				255,
@@ -866,7 +871,7 @@ local function var_0_4(arg_4_0, arg_4_1)
 		frame = {
 			horizontal_alignment = "left",
 			vertical_alignment = "top",
-			masked = var_4_8,
+			masked = flag,
 			area_size = arg_4_1,
 			texture_size = var_4_1.texture_size,
 			texture_sizes = var_4_1.texture_sizes,
@@ -889,7 +894,7 @@ local function var_0_4(arg_4_0, arg_4_1)
 		hover_frame = {
 			horizontal_alignment = "left",
 			vertical_alignment = "top",
-			masked = var_4_8,
+			masked = flag,
 			area_size = arg_4_1,
 			texture_size = var_4_3.texture_size,
 			texture_sizes = var_4_3.texture_sizes,
@@ -912,7 +917,7 @@ local function var_0_4(arg_4_0, arg_4_1)
 		pulse_frame = {
 			horizontal_alignment = "left",
 			vertical_alignment = "top",
-			masked = var_4_8,
+			masked = flag,
 			area_size = arg_4_1,
 			texture_size = var_4_6.texture_size,
 			texture_sizes = var_4_6.texture_sizes,
@@ -965,10 +970,10 @@ local function var_0_4(arg_4_0, arg_4_1)
 			item_styles = {}
 		}
 	}
-	local var_4_14 = var_4_13.list_style.item_styles
+	local item_styles = tbl_4.list_style.item_styles
 
-	for iter_4_1 = 1, var_0_1 do
-		var_4_14[iter_4_1] = {
+	for j = 1, num do
+		item_styles[j] = {
 			list_member_offset = {
 				33,
 				0,
@@ -979,7 +984,7 @@ local function var_0_4(arg_4_0, arg_4_1)
 				39
 			},
 			background = {
-				masked = var_4_8,
+				masked = flag,
 				color = {
 					255,
 					255,
@@ -993,7 +998,7 @@ local function var_0_4(arg_4_0, arg_4_1)
 				}
 			},
 			icon = {
-				masked = var_4_8,
+				masked = flag,
 				color = {
 					0,
 					255,
@@ -1009,23 +1014,24 @@ local function var_0_4(arg_4_0, arg_4_1)
 		}
 	end
 
-	var_4_9.element.passes = var_4_10
-	var_4_9.content = var_4_11
-	var_4_9.style = var_4_13
-	var_4_9.offset = {
+	tbl.element.passes = tbl_2
+	tbl.content = tbl_3
+	tbl.style = tbl_4
+	tbl.offset = {
 		0,
 		0,
 		0
 	}
-	var_4_9.scenegraph_id = arg_4_0
+	tbl.scenegraph_id = arg_4_0
 
-	return var_4_9
+	return tbl
 end
 
-local function var_0_5(arg_6_0)
-	local var_6_0 = var_0_2[arg_6_0].size
-	local var_6_1 = "button_frame_03_gold"
-	local var_6_2 = UIFrameSettings[var_6_1]
+local function fn_3(arg_6_0)
+	-- function 6
+	local size = tbl[arg_6_0].size
+	local str = "button_frame_03_gold"
+	local var_6_2 = UIFrameSettings[str]
 	local var_6_3 = var_6_2.texture_sizes.horizontal[2]
 
 	return {
@@ -1085,10 +1091,11 @@ local function var_0_5(arg_6_0)
 					style_id = "icon",
 					texture_id = "icon",
 					pass_type = "texture",
-					content_change_function = function(arg_7_0, arg_7_1)
-						local var_7_0 = 0.5 + math.sin(Managers.time:time("ui") * 3) * 0.5
+					content_change_function = function (arg_7_0, arg_7_1)
+						-- function 7
+						local num = 0.5 + math.sin(Managers.time:time("ui") * 3) * 0.5
 
-						arg_7_1.color[1] = 215 + 40 * var_7_0
+						arg_7_1.color[1] = 215 + 40 * num
 					end
 				}
 			}
@@ -1140,7 +1147,7 @@ local function var_0_5(arg_6_0)
 			glass_top = {
 				vertical_alignment = "top",
 				texture_size = {
-					var_6_0[1],
+					size[1],
 					5
 				},
 				offset = {
@@ -1152,7 +1159,7 @@ local function var_0_5(arg_6_0)
 			glass_bottom = {
 				vertical_alignment = "bottom",
 				texture_size = {
-					var_6_0[1],
+					size[1],
 					5
 				},
 				offset = {
@@ -1208,8 +1215,8 @@ local function var_0_5(arg_6_0)
 					7
 				},
 				size = {
-					var_6_0[1] - 100,
-					var_6_0[2]
+					size[1] - 100,
+					size[2]
 				}
 			},
 			text_shadow = {
@@ -1226,14 +1233,14 @@ local function var_0_5(arg_6_0)
 					6
 				},
 				size = {
-					var_6_0[1] - 100,
-					var_6_0[2]
+					size[1] - 100,
+					size[2]
 				}
 			},
 			frame = {
 				texture_size = var_6_2.texture_size,
 				texture_sizes = var_6_2.texture_sizes,
-				area_size = var_6_0,
+				area_size = size,
 				offset = {
 					0,
 					0,
@@ -1244,14 +1251,14 @@ local function var_0_5(arg_6_0)
 	}
 end
 
-local var_0_6 = {
-	slideshow = var_0_4("slideshow", {
+local tbl_2 = {
+	slideshow = fn_2("slideshow", {
 		920,
 		680
 	})
 }
-local var_0_7 = {
-	discount_banner = var_0_5("discount_banner"),
+local tbl_3 = {
+	discount_banner = fn_3("discount_banner"),
 	skull_front_right = UIWidgets.create_simple_uv_texture("store_fence_skulls_front", {
 		{
 			0,
@@ -1292,24 +1299,27 @@ local var_0_7 = {
 			1
 		}
 	}, "skull_back_left"),
-	login_rewards_button = var_0_3("login_rewards"),
-	gotwf_rewards_button = var_0_3("login_rewards")
+	login_rewards_button = fn("login_rewards"),
+	gotwf_rewards_button = fn("login_rewards")
 }
-local var_0_8 = {
+local tbl_4 = {
 	on_enter = {
 		{
 			name = "fence_fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			init = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+				-- function 8
 				arg_8_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
-				local var_9_0 = math.easeOutCubic(arg_9_3)
+			update = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+				-- function 9
+				local easeOutCubic = math.easeOutCubic(arg_9_3)
 
-				arg_9_4.render_settings.alpha_multiplier = var_9_0
+				arg_9_4.render_settings.alpha_multiplier = easeOutCubic
 			end,
-			on_complete = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			on_complete = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+				-- function 10
 				return
 			end
 		},
@@ -1317,15 +1327,18 @@ local var_0_8 = {
 			name = "fade_in",
 			start_progress = 0.2,
 			end_progress = 0.5,
-			init = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+			init = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+				-- function 11
 				arg_11_3.render_settings.content_alpha_multiplier = 0
 			end,
-			update = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
-				local var_12_0 = math.easeOutCubic(arg_12_3)
+			update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+				-- function 12
+				local easeOutCubic = math.easeOutCubic(arg_12_3)
 
-				arg_12_4.render_settings.content_alpha_multiplier = var_12_0
+				arg_12_4.render_settings.content_alpha_multiplier = easeOutCubic
 			end,
-			on_complete = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			on_complete = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+				-- function 13
 				return
 			end
 		}
@@ -1335,21 +1348,24 @@ local var_0_8 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			init = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+				-- function 14
 				arg_14_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
-				local var_15_0 = math.easeOutCubic(arg_15_3)
+			update = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+				-- function 15
+				local easeOutCubic = math.easeOutCubic(arg_15_3)
 
-				arg_15_4.render_settings.alpha_multiplier = 1 - var_15_0
+				arg_15_4.render_settings.alpha_multiplier = 1 - easeOutCubic
 			end,
-			on_complete = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			on_complete = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+				-- function 16
 				return
 			end
 		}
 	}
 }
-local var_0_9 = {
+local tbl_5 = {
 	default = {
 		{
 			input_action = "confirm",
@@ -1392,10 +1408,10 @@ local var_0_9 = {
 }
 
 return {
-	generic_input_actions = var_0_9,
-	max_slideshow_items = var_0_1,
-	widgets = var_0_7,
-	content_widgets = var_0_6,
-	scenegraph_definition = var_0_2,
-	animation_definitions = var_0_8
+	generic_input_actions = tbl_5,
+	max_slideshow_items = num,
+	widgets = tbl_3,
+	content_widgets = tbl_2,
+	scenegraph_definition = tbl,
+	animation_definitions = tbl_4
 }

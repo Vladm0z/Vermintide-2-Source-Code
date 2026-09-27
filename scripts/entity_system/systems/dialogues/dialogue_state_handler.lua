@@ -1,23 +1,26 @@
 -- chunkname: @scripts/entity_system/systems/dialogues/dialogue_state_handler.lua
 
-local var_0_0 = 10
+local num = 10
 
 DialogueStateHandler = class(DialogueStateHandler)
 DialogueStateHandler.debug = true
 
-local function var_0_1(...)
-	if DialogueStateHandler.debug then
+local function fn(...)
+	-- function 1
+	if not DialogueStateHandler.debug then
 		print("[DialogueStateHandler] " .. string.format(...))
 	end
 end
 
-function DialogueStateHandler.init(arg_2_0, arg_2_1)
-	arg_2_0._world = arg_2_1
-	arg_2_0._playing_dialogues = {}
-	arg_2_0._current_index = 1
+DialogueStateHandler.init = function (self, arg_2_1)
+	-- function 2
+	self._world = arg_2_1
+	self._playing_dialogues = {}
+	self._current_index = 1
 end
 
-function DialogueStateHandler.add_playing_dialogue(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+DialogueStateHandler.add_playing_dialogue = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	-- function 3
 	arg_3_0._playing_dialogues[#arg_3_0._playing_dialogues + 1] = {
 		identifier = arg_3_1,
 		event_id = arg_3_2,
@@ -26,42 +29,43 @@ function DialogueStateHandler.add_playing_dialogue(arg_3_0, arg_3_1, arg_3_2, ar
 	}
 end
 
-local var_0_2 = {}
+local tbl = {}
 
-function DialogueStateHandler.update(arg_4_0, arg_4_1)
-	if table.is_empty(arg_4_0._playing_dialogues) then
+DialogueStateHandler.update = function (self, arg_4_1)
+	-- function 4
+	if not table.is_empty(self._playing_dialogues) then
 		return
 	end
 
-	table.clear(var_0_2)
+	table.clear(tbl)
 
-	local var_4_0 = 0
-	local var_4_1 = arg_4_0._current_index
-	local var_4_2 = LevelHelper:current_level(arg_4_0._world)
+	local num_2 = 0
+	local _current_index = self._current_index
+	local current_level = LevelHelper:current_level(self._world)
 
 	repeat
-		local var_4_3 = arg_4_0._playing_dialogues[arg_4_0._current_index]
+		local var_4_3 = self._playing_dialogues[self._current_index]
 
 		if arg_4_1 > var_4_3.expected_end then
-			Level.set_flow_variable(var_4_2, "dialogue_identifier", var_4_3.identifier)
-			Level.trigger_event(var_4_2, "dialogue_ended")
+			Level.set_flow_variable(current_level, "dialogue_identifier", var_4_3.identifier)
+			Level.trigger_event(current_level, "dialogue_ended")
 
-			var_0_2[#var_0_2 + 1] = arg_4_0._current_index
+			tbl[#tbl + 1] = self._current_index
 
-			var_0_1("Triggering %s after %.2fs", var_4_3.identifier, arg_4_1 - var_4_3.start_time)
+			fn("Triggering %s after %.2fs", var_4_3.identifier, arg_4_1 - var_4_3.start_time)
 		end
 
-		arg_4_0._current_index = math.index_wrapper(arg_4_0._current_index + 1, #arg_4_0._playing_dialogues)
-		var_4_0 = var_4_0 + 1
-	until arg_4_0._current_index == var_4_1 or var_4_0 >= var_0_0
+		self._current_index = math.index_wrapper(self._current_index + 1, #self._playing_dialogues)
+		num_2 = num_2 + 1
+	until not (self._current_index == _current_index or not (num_2 >= num))
 
-	if not table.is_empty(var_0_2) then
-		table.sort(var_0_2)
+	if not table.is_empty(tbl) then
+		table.sort(tbl)
 
-		for iter_4_0 = #var_0_2, 1, -1 do
-			local var_4_4 = var_0_2[iter_4_0]
+		for i = #tbl, 1, -1 do
+			local var_4_4 = tbl[i]
 
-			table.remove(arg_4_0._playing_dialogues, var_4_4)
+			table.remove(self._playing_dialogues, var_4_4)
 		end
 	end
 end

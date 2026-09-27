@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/morris/deus_soft_currency_settings.lua
 
-local var_0_0 = {
+local tbl = {
 	{
 		max = 104,
 		min = 43
@@ -18,7 +18,7 @@ local var_0_0 = {
 		min = 28
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	{
 		max = 59,
 		min = 28
@@ -36,28 +36,30 @@ local var_0_1 = {
 		min = 18
 	}
 }
+local DeusSoftCurrencySettings = DeusSoftCurrencySettings
 
 DeusSoftCurrencySettings = DeusSoftCurrencySettings or {
 	loot_amount = {
-		["n/a"] = var_0_1,
-		beastmen_minotaur = var_0_0,
-		chaos_exalted_champion_norsca = var_0_0,
-		chaos_exalted_champion_warcamp = var_0_0,
-		chaos_exalted_sorcerer = var_0_0,
-		chaos_exalted_sorcerer_drachenfels = var_0_0,
-		chaos_spawn = var_0_0,
-		chaos_spawn_exalted_champion_warcamp = var_0_0,
-		chaos_troll = var_0_0,
-		skaven_grey_seer = var_0_0,
-		skaven_rat_ogre = var_0_0,
-		skaven_storm_vermin_champion = var_0_0,
-		skaven_storm_vermin_warlord = var_0_0,
-		skaven_stormfiend = var_0_0,
-		skaven_stormfiend_boss = var_0_0,
-		skaven_loot_rat = var_0_0
+		["n/a"] = tbl_2,
+		beastmen_minotaur = tbl,
+		chaos_exalted_champion_norsca = tbl,
+		chaos_exalted_champion_warcamp = tbl,
+		chaos_exalted_sorcerer = tbl,
+		chaos_exalted_sorcerer_drachenfels = tbl,
+		chaos_spawn = tbl,
+		chaos_spawn_exalted_champion_warcamp = tbl,
+		chaos_troll = tbl,
+		skaven_grey_seer = tbl,
+		skaven_rat_ogre = tbl,
+		skaven_storm_vermin_champion = tbl,
+		skaven_storm_vermin_warlord = tbl,
+		skaven_stormfiend = tbl,
+		skaven_stormfiend_boss = tbl,
+		skaven_loot_rat = tbl
 	},
 	types = {
 		GROUND = 1,
 		MONSTER = 2
 	}
 }
+DeusSoftCurrencySettings = DeusSoftCurrencySettings

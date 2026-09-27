@@ -2,202 +2,228 @@
 
 ImguiFlamegraph = class(ImguiFlamegraph)
 
-local var_0_0 = Gui.rect
-local var_0_1 = Gui.text
-local var_0_2 = Vector2
-local var_0_3 = Vector3
-local var_0_4 = Color
-local var_0_5 = Mouse
-local var_0_6 = require("jit.profile")
-local var_0_7 = var_0_6.dumpstack
-local var_0_8 = string.gmatch
-local var_0_9 = string.find
-local var_0_10 = string.byte
-local var_0_11 = string.sub
-local var_0_12 = math.floor
-local var_0_13 = math.point_is_inside_2d_box
-local var_0_14 = Colors.hsl2rgb
-local var_0_15 = tonumber
-local var_0_16 = pairs
-local var_0_17 = Application.make_hash
-local var_0_18 = false
+local rect = Gui.rect
+local text = Gui.text
+local Vector2 = Vector2
+local Vector3 = Vector3
+local Color = Color
+local Mouse = Mouse
+local profile = require("jit.profile")
+local dumpstack = profile.dumpstack
+local gmatch = string.gmatch
+local find = string.find
+local byte = string.byte
+local sub = string.sub
+local floor = math.floor
+local point_is_inside_2d_box = math.point_is_inside_2d_box
+local hsl2rgb = Colors.hsl2rgb
+local tonumber = tonumber
+local pairs = pairs
+local make_hash = Application.make_hash
+local flag = false
 
-function ImguiFlamegraph.init(arg_1_0)
-	arg_1_0._recording = false
-	arg_1_0._rendering = false
-	arg_1_0._invert = false
-	arg_1_0._search = ""
+ImguiFlamegraph.init = function (self)
+	-- function 1
+	self._recording = false
+	self._rendering = false
+	self._invert = false
+	self._search = ""
 
-	arg_1_0:clear_data()
-	arg_1_0:reset_zoom()
+	self:clear_data()
+	self:reset_zoom()
 end
 
-function ImguiFlamegraph.do_cell(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8, arg_2_9)
-	local var_2_0 = var_0_4(var_0_14(var_0_15(var_0_11(var_0_17(arg_2_3), 1, 2), 16) / 256, 0.4, 0.5))
-	local var_2_1 = arg_2_0._search
-	local var_2_2 = var_2_1 ~= "" and var_0_9(arg_2_3, var_2_1) and var_0_4(255, 255, 255) or var_0_4(64, 64, 64)
-	local var_2_3 = var_0_3(arg_2_8, arg_2_9, 999)
-	local var_2_4 = var_0_2(arg_2_6, math.max(2, arg_2_7))
+ImguiFlamegraph.do_cell = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8, arg_2_9)
+	-- function 2
+	local var_2_0 = Color(hsl2rgb(tonumber(sub(make_hash(arg_2_3), 1, 2), 16) / 256, 0.4, 0.5))
+	local _search = self._search
+	local var_2_2
 
-	var_0_0(arg_2_1, var_2_3, var_2_4, var_2_2)
-	var_0_0(arg_2_1, var_2_3 + var_0_3(1, 1, 1), var_2_4 - var_0_2(2, 2), var_2_0)
+	if _search == "" or not find(arg_2_3, _search) then
+		var_2_2 = Color(255, 255, 255)
 
-	local var_2_5 = arg_2_6 / arg_2_5
-	local var_2_6 = arg_2_8
-	local var_2_7 = arg_2_9 - arg_2_7
-	local var_2_8 = var_0_13(arg_2_2, var_2_3, var_2_4)
-
-	if var_2_8 and var_0_5.pressed(var_0_5.button_id("left")) then
-		arg_2_0._draw_name = arg_2_3
-		arg_2_0._draw_node = arg_2_4
-	end
-
-	for iter_2_0, iter_2_1 in var_0_16(arg_2_4) do
-		if iter_2_0 then
-			local var_2_9 = iter_2_1[false]
-			local var_2_10 = var_2_5 * var_2_9
-
-			var_2_8 = arg_2_0:do_cell(arg_2_1, arg_2_2, iter_2_0, iter_2_1, var_2_9, var_2_10, arg_2_7, var_2_6, var_2_7) or var_2_8
-			var_2_6 = var_2_6 + var_2_10
+		if not var_2_2 then
+			-- Nothing
 		end
 	end
 
-	if var_2_8 then
-		var_0_1(arg_2_1, arg_2_3 .. " (" .. arg_2_5 .. ")", "materials/fonts/arial", arg_2_7, nil, var_0_3(arg_2_8, arg_2_9 + 3, 1000))
+	var_2_2 = Color(64, 64, 64)
+
+	::label_2_0::
+
+	local var_2_3 = Vector3(arg_2_8, arg_2_9, 999)
+	local var_2_4 = Vector2(arg_2_6, math.max(2, arg_2_7))
+
+	rect(arg_2_1, var_2_3, var_2_4, var_2_2)
+	rect(arg_2_1, var_2_3 + Vector3(1, 1, 1), var_2_4 - Vector2(2, 2), var_2_0)
+
+	local num = arg_2_6 / arg_2_5
+	local var_2_6 = arg_2_8
+	local num_2 = arg_2_9 - arg_2_7
+	local var_2_8 = point_is_inside_2d_box(arg_2_2, var_2_3, var_2_4)
+
+	if not var_2_8 and not Mouse.pressed(Mouse.button_id("left")) then
+		self._draw_name = arg_2_3
+		self._draw_node = arg_2_4
+	end
+
+	for iter_2_0, iter_2_1 in pairs(arg_2_4) do
+		if not iter_2_0 then
+			local var_2_9 = iter_2_1[false]
+			local num_3 = num * var_2_9
+
+			var_2_8 = self:do_cell(arg_2_1, arg_2_2, iter_2_0, iter_2_1, var_2_9, num_3, arg_2_7, var_2_6, num_2) or var_2_8
+			var_2_6 = var_2_6 + num_3
+		end
+	end
+
+	if not var_2_8 then
+		text(arg_2_1, arg_2_3 .. " (" .. arg_2_5 .. ")", "materials/fonts/arial", arg_2_7, nil, Vector3(arg_2_8, arg_2_9 + 3, 1000))
 
 		return true
 	end
 end
 
-function ImguiFlamegraph.update(arg_3_0)
-	if arg_3_0._rendering then
-		var_0_18 = true
+ImguiFlamegraph.update = function (self)
+	-- function 3
+	if not self._rendering then
+		flag = true
 
-		if var_0_5.pressed(var_0_5.button_id("right")) then
-			arg_3_0:reset_zoom()
+		if not Mouse.pressed(Mouse.button_id("right")) then
+			self:reset_zoom()
 		end
 
-		local var_3_0 = arg_3_0._draw_node
-		local var_3_1 = var_3_0[false]
+		local _draw_node = self._draw_node
+		local var_3_1 = _draw_node[false]
 
 		if var_3_1 > 0 then
-			local var_3_2, var_3_3 = Gui.resolution()
-			local var_3_4 = Debug.gui
-			local var_3_5 = var_0_5.axis(var_0_5.axis_id("cursor"))
+			local resolution, var_3_3 = Gui.resolution()
+			local gui = Debug.gui
+			local axis = Mouse.axis(Mouse.axis_id("cursor"))
 
-			arg_3_0:do_cell(var_3_4, var_3_5, arg_3_0._draw_name, var_3_0, var_3_1, var_3_2 - 50, 12, 25, var_3_3 - 50)
+			self:do_cell(gui, axis, self._draw_name, _draw_node, var_3_1, resolution - 50, 12, 25, var_3_3 - 50)
 		end
 
-		var_0_18 = false
+		flag = false
 	end
 end
 
-function ImguiFlamegraph.is_persistent(arg_4_0)
+ImguiFlamegraph.is_persistent = function (arg_4_0)
+	-- function 4
 	return false
 end
 
-function ImguiFlamegraph.clear_data(arg_5_0)
+ImguiFlamegraph.clear_data = function (self)
+	-- function 5
 	ImguiFlamegraph._root = {
 		[false] = 0
 	}
 
-	arg_5_0:reset_zoom()
+	self:reset_zoom()
 end
 
-function ImguiFlamegraph.reset_zoom(arg_6_0)
-	arg_6_0._draw_name = "@root"
-	arg_6_0._draw_node = ImguiFlamegraph._root
+ImguiFlamegraph.reset_zoom = function (self)
+	-- function 6
+	self._draw_name = "@root"
+	self._draw_node = ImguiFlamegraph._root
 end
 
-function ImguiFlamegraph.profile_cb(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
-	if var_0_18 then
+ImguiFlamegraph.profile_cb = function (self, arg_7_1, arg_7_2, arg_7_3)
+	-- function 7
+	if not flag then
 		return
 	end
 
-	local var_7_0 = arg_7_0._invert and 100 or -100
-	local var_7_1 = var_0_7(arg_7_1, "pFZ;", var_7_0)
+	local flag_2
 
-	if var_0_9(var_7_1, "^scripts/boot.lua:%d+$") then
+	flag_2 = not self._invert and 100 and -100
+
+	local var_7_1 = dumpstack(arg_7_1, "pFZ;", flag_2)
+
+	if not find(var_7_1, "^scripts/boot.lua:%d+$") then
 		return
 	end
 
-	local var_7_2 = ImguiFlamegraph._root
+	local _root = ImguiFlamegraph._root
 
-	var_7_2[false] = var_7_2[false] + arg_7_2
+	_root[false] = _root[false] + arg_7_2
 
-	for iter_7_0 in var_0_8(var_7_1, "[^;]+") do
-		local var_7_3 = var_7_2[iter_7_0]
+	for iter_7_0 in gmatch(var_7_1, "[^;]+") do
+		local var_7_3 = _root[iter_7_0]
 
-		if var_7_3 then
+		if not var_7_3 then
 			var_7_3[false] = var_7_3[false] + arg_7_2
 		else
 			var_7_3 = {
 				[false] = arg_7_2
 			}
-			var_7_2[iter_7_0] = var_7_3
+			_root[iter_7_0] = var_7_3
 		end
 
-		var_7_2 = var_7_3
+		_root = var_7_3
 	end
 end
 
-function ImguiFlamegraph.toggle_recording(arg_8_0, arg_8_1)
+ImguiFlamegraph.toggle_recording = function (self, arg_8_1)
+	-- function 8
 	if arg_8_1 == nil then
-		arg_8_1 = not arg_8_0._recording
+		arg_8_1 = not self._recording
 	end
 
-	if arg_8_0._recording ~= arg_8_1 then
-		if arg_8_1 then
-			var_0_6.start("fi33", callback(arg_8_0, "profile_cb"))
+	if self._recording ~= arg_8_1 then
+		if not arg_8_1 then
+			profile.start("fi33", callback(self, "profile_cb"))
 		else
-			var_0_6.stop()
+			profile.stop()
 		end
 
-		arg_8_0._recording = arg_8_1
+		self._recording = arg_8_1
 	end
 end
 
-function ImguiFlamegraph.toggle_rendering(arg_9_0, arg_9_1)
+ImguiFlamegraph.toggle_rendering = function (self, arg_9_1)
+	-- function 9
 	if arg_9_1 == nil then
-		arg_9_1 = not arg_9_0._rendering
+		arg_9_1 = not self._rendering
 	end
 
-	arg_9_0._rendering = arg_9_1
+	self._rendering = arg_9_1
 end
 
-local var_0_19 = "Flamegraph help\n---------------\nUses LuaJIT's in-built statistical profiler.\nIt needs to run for a while to capture nested calls.\nFlamegraph rendering is excluded from samples.\nIt's still recommendable to disable it while recording.\n\nLeft-click on a segment to focus on it.\nRight-click anywhere to reset the view.\n"
+local str = "Flamegraph help\n---------------\nUses LuaJIT's in-built statistical profiler.\nIt needs to run for a while to capture nested calls.\nFlamegraph rendering is excluded from samples.\nIt's still recommendable to disable it while recording.\n\nLeft-click on a segment to focus on it.\nRight-click anywhere to reset the view.\n"
 
-function ImguiFlamegraph.draw(arg_10_0)
-	local var_10_0 = Imgui.begin_window("Flamegraph")
-	local var_10_1 = Imgui.checkbox("Recording", arg_10_0._recording)
+ImguiFlamegraph.draw = function (self)
+	-- function 10
+	local begin_window = Imgui.begin_window("Flamegraph")
+	local checkbox = Imgui.checkbox("Recording", self._recording)
 
-	if var_10_1 ~= arg_10_0._recording then
-		arg_10_0:toggle_recording(var_10_1)
+	if checkbox ~= self._recording then
+		self:toggle_recording(checkbox)
 	end
 
-	local var_10_2 = Imgui.checkbox("Draw flamegraph", arg_10_0._rendering)
+	local checkbox_2 = Imgui.checkbox("Draw flamegraph", self._rendering)
 
-	if var_10_2 ~= arg_10_0._rendering then
-		arg_10_0:toggle_rendering(var_10_2)
+	if checkbox_2 ~= self._rendering then
+		self:toggle_rendering(checkbox_2)
 	end
 
-	local var_10_3 = Imgui.checkbox("Invert", arg_10_0._invert)
+	local checkbox_3 = Imgui.checkbox("Invert", self._invert)
 
-	if not var_10_1 and not next(ImguiFlamegraph._root, false) then
-		arg_10_0._invert = var_10_3
+	if not (checkbox or next(ImguiFlamegraph._root, false)) then
+		self._invert = checkbox_3
 	end
 
-	Imgui.text("Total samples: " .. tostring(arg_10_0._root[false]))
+	Imgui.text("Total samples: " .. tostring(self._root[false]))
 
-	if Imgui.button("Reset") then
-		arg_10_0:clear_data()
+	if not Imgui.button("Reset") then
+		self:clear_data()
 	end
 
-	arg_10_0._search = Imgui.input_text("Search", arg_10_0._search)
+	self._search = Imgui.input_text("Search", self._search)
 
 	Imgui.dummy(1, 20)
-	Imgui.text(var_0_19)
+	Imgui.text(str)
 	Imgui.end_window()
 
-	return var_10_0
+	return begin_window
 end

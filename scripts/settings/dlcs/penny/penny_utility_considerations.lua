@@ -1,6 +1,9 @@
 -- chunkname: @scripts/settings/dlcs/penny/penny_utility_considerations.lua
 
+local UtilityConsiderations = UtilityConsiderations
+
 UtilityConsiderations = UtilityConsiderations or {}
+UtilityConsiderations = UtilityConsiderations
 UtilityConsiderations.chaos_exalted_sorcerer_drachenfels_tp_trickle = {
 	time_since_last = {
 		max_value = 14,

@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/hub_conversations_carousel.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "nde_vs_hub_idle_a",

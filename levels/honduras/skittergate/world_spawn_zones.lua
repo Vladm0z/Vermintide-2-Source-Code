@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras/skittergate/world_spawn_zones.lua
 
-local var_0_0 = {
+local tbl = {
 	{
 		roaming_set = "skaven/chaos",
 		main_path_index = 1,
@@ -932,7 +932,7 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	{
 		path_length = 8.654707908630371,
 		travel_dist = {
@@ -3525,8 +3525,8 @@ local var_0_1 = {
 		}
 	}
 }
-local var_0_2 = {}
-local var_0_3 = {
+local tbl_3 = {}
+local tbl_4 = {
 	{
 		unique_zone_id = 1,
 		travel_dist = 28.549774885177612,
@@ -52309,7 +52309,7 @@ local var_0_3 = {
 		}
 	}
 }
-local var_0_4 = {
+local tbl_5 = {
 	289.92047119140625,
 	451.36602783203125,
 	-20.213186264038086,
@@ -56096,7 +56096,7 @@ local var_0_4 = {
 	-0.9544783234596252,
 	0.2982804477214813
 }
-local var_0_5 = {
+local tbl_6 = {
 	{
 		-147.38682556152344,
 		-450.3699951171875,
@@ -285378,20 +285378,20 @@ local var_0_5 = {
 		-51.49363327026367
 	}
 }
-local var_0_6 = 45856
-local var_0_7 = 161
-local var_0_8 = 1800.4718961716
-local var_0_9 = "1"
+local num = 45856
+local num_2 = 161
+local num_3 = 1800.4718961716
+local str = "1"
 
 return {
-	version = var_0_9,
-	number_of_spawns = var_0_6,
-	path_markers = var_0_0,
-	zones = var_0_3,
-	cover_points = var_0_4,
-	num_main_zones = var_0_7,
-	position_lookup = var_0_5,
-	main_paths = var_0_1,
-	crossroads = var_0_2,
-	total_main_path_length = var_0_8
+	version = str,
+	number_of_spawns = num,
+	path_markers = tbl,
+	zones = tbl_4,
+	cover_points = tbl_5,
+	num_main_zones = num_2,
+	position_lookup = tbl_6,
+	main_paths = tbl_2,
+	crossroads = tbl_3,
+	total_main_path_length = num_3
 }

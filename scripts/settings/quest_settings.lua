@@ -241,7 +241,7 @@ QuestSettings.allowed_difficulties = {
 	}
 }
 
-local var_0_0 = {
+local tbl = {
 	catacombs_added_souls = "achv_catacombs_stay_inside_ritual_pool_name",
 	elven_ruins_speed_event_cata = "achv_elven_ruins_align_leylines_timed_cata_name",
 	elven_ruins_speed_event = "achv_elven_ruins_align_leylines_timed_name",
@@ -269,362 +269,406 @@ local var_0_0 = {
 	catacombs_added_souls_cata = "achv_catacombs_stay_inside_ritual_pool_cata_name",
 	bell_speed_event_cata = "achv_bell_destroy_bell_flee_timed_cata_name"
 }
-local var_0_1 = {}
+local tbl_2 = {}
 
-for iter_0_0, iter_0_1 in pairs(QuestSettings.rules) do
-	local var_0_2 = string.format("%s_quest", iter_0_0)
+for k, v in pairs(QuestSettings.rules) do
+	local format = string.format("%s_quest", k)
 
-	for iter_0_2 = 1, iter_0_1.max_quests do
-		local var_0_3 = string.format("%s_%d", var_0_2, iter_0_2)
-		local var_0_4 = {}
+	for k_2 = 1, v.max_quests do
+		local format_2 = string.format("%s_%d", format, k_2)
+		local tbl_3 = {}
 
-		for iter_0_3 = 1, iter_0_1.num_criterias do
-			var_0_4[#var_0_4 + 1] = string.format("%s_stat_%d", var_0_3, iter_0_3)
+		for l = 1, v.num_criterias do
+			tbl_3[#tbl_3 + 1] = string.format("%s_stat_%d", format_2, l)
 		end
 
-		var_0_1[var_0_3] = var_0_4
+		tbl_2[format_2] = tbl_3
 	end
 end
 
-QuestSettings.stat_mappings = var_0_1
+QuestSettings.stat_mappings = tbl_2
 
-function QuestSettings.send_completed_message(arg_1_0)
-	local var_1_0 = false
-	local var_1_1 = Managers.player:human_players()
-	local var_1_2 = Managers.player:statistics_db()
+QuestSettings.send_completed_message = function (arg_1_0)
+	-- function 1
+	local flag = false
+	local human_players = Managers.player:human_players()
+	local statistics_db = Managers.player:statistics_db()
 
-	for iter_1_0, iter_1_1 in pairs(var_1_1) do
-		local var_1_3 = var_1_2:get_persistent_stat(iter_1_1:stats_id(), arg_1_0)
+	for k, v in pairs(human_players) do
+		local get_persistent_stat = statistics_db:get_persistent_stat(v:stats_id(), arg_1_0)
 
-		if not var_1_3 or var_1_3 == 0 then
-			var_1_0 = true
+		if not (not get_persistent_stat and get_persistent_stat ~= 0) then
+			flag = true
 
 			break
 		end
 	end
 
-	if var_1_0 then
-		local var_1_4 = var_0_0[arg_1_0]
+	if not flag then
+		local var_1_4 = tbl[arg_1_0]
 
-		if var_1_4 then
+		if not var_1_4 then
 			local var_1_5 = var_1_4
-			local var_1_6 = false
+			local flag_2 = false
 
-			Managers.chat:send_system_chat_message(1, var_1_5, 1, var_1_6, true)
+			Managers.chat:send_system_chat_message(1, var_1_5, 1, flag_2, true)
 		end
 	end
 end
 
-local function var_0_5(arg_2_0, arg_2_1)
-	local var_2_0 = Managers.player:unit_owner(arg_2_0)
+local function fn(arg_2_0, arg_2_1)
+	-- function 2
+	local unit_owner = Managers.player:unit_owner(arg_2_0)
 
-	if var_2_0 and not var_2_0.bot_player then
-		local var_2_1 = var_2_0:network_id()
-		local var_2_2 = Managers.state.network
+	if not (not unit_owner and unit_owner.bot_player) then
+		local network_id = unit_owner:network_id()
+		local network = Managers.state.network
 		local var_2_3 = NetworkLookup.statistics[arg_2_1]
 
-		var_2_2.network_transmit:send_rpc("rpc_increment_stat", var_2_1, var_2_3)
+		network.network_transmit:send_rpc("rpc_increment_stat", network_id, var_2_3)
 	end
 end
 
-local function var_0_6(arg_3_0)
+local function fn_2(arg_3_0)
+	-- function 3
 	Managers.player:statistics_db():increment_stat_and_sync_to_clients(arg_3_0)
 end
 
-function QuestSettings.check_globadier_kill_before_throwing(arg_4_0, arg_4_1)
-	if not arg_4_0.has_thrown_first_globe then
-		local var_4_0 = "globadier_kill_before_throwing"
+QuestSettings.check_globadier_kill_before_throwing = function (self, arg_4_1)
+	-- function 4
+	if not self.has_thrown_first_globe then
+		local str = "globadier_kill_before_throwing"
 
-		var_0_5(arg_4_1, var_4_0)
+		fn(arg_4_1, str)
 
-		arg_4_0.has_thrown_first_globe = nil
+		self.has_thrown_first_globe = nil
 	end
 end
 
-function QuestSettings.check_globadier_kill_during_suicide(arg_5_0, arg_5_1, arg_5_2)
-	if arg_5_1 ~= arg_5_2 and arg_5_0.action and arg_5_0.action.name and arg_5_0.action.name == "suicide_run" then
-		local var_5_0 = "globadier_kill_during_suicide"
+QuestSettings.check_globadier_kill_during_suicide = function (self, arg_5_1, arg_5_2)
+	-- function 5
+	if not ((arg_5_1 == arg_5_2 or not self.action or not self.action.name) and self.action.name ~= "suicide_run") then
+		local str = "globadier_kill_during_suicide"
 
-		var_0_5(arg_5_2, var_5_0)
+		fn(arg_5_2, str)
 	end
 end
 
-function QuestSettings.check_num_enemies_killed_by_poison(arg_6_0, arg_6_1)
-	local var_6_0 = AiUtils.get_actual_attacker_unit(arg_6_1)
-	local var_6_1 = BLACKBOARDS[var_6_0]
+QuestSettings.check_num_enemies_killed_by_poison = function (arg_6_0, arg_6_1)
+	-- function 6
+	local get_actual_attacker_unit = AiUtils.get_actual_attacker_unit(arg_6_1)
+	local var_6_1 = BLACKBOARDS[get_actual_attacker_unit]
 
-	if var_6_1 then
-		var_6_1.num_killed_by_poison = (var_6_1.num_killed_by_poison or 0) + 1
+	if not var_6_1 then
+		local num_killed_by_poison = var_6_1.num_killed_by_poison
+
+		num_killed_by_poison = num_killed_by_poison or 0
+		var_6_1.num_killed_by_poison = num_killed_by_poison + 1
 
 		if var_6_1.num_killed_by_poison >= QuestSettings.num_enemies_killed_by_poison then
-			local var_6_2 = "globadier_enemies_killed_by_poison"
+			local str = "globadier_enemies_killed_by_poison"
 
-			var_0_6(var_6_2)
+			fn_2(str)
 
 			var_6_1.num_killed_by_poison = 0
 		end
 	end
 end
 
-function QuestSettings.check_warpfire_kill_before_shooting(arg_7_0, arg_7_1)
-	if not arg_7_0.has_fired then
-		local var_7_0 = "warpfire_kill_before_shooting"
+QuestSettings.check_warpfire_kill_before_shooting = function (self, arg_7_1)
+	-- function 7
+	if not self.has_fired then
+		local str = "warpfire_kill_before_shooting"
 
-		var_0_5(arg_7_1, var_7_0)
+		fn(arg_7_1, str)
 	end
 end
 
-function QuestSettings.check_warpfire_kill_on_power_cell(arg_8_0, arg_8_1)
+QuestSettings.check_warpfire_kill_on_power_cell = function (arg_8_0, arg_8_1)
+	-- function 8
 	if arg_8_0 == "aux" then
-		local var_8_0 = "warpfire_kill_on_power_cell"
+		local str = "warpfire_kill_on_power_cell"
 
-		var_0_5(arg_8_1, var_8_0)
+		fn(arg_8_1, str)
 	end
 end
 
-function QuestSettings.check_num_enemies_killed_by_warpfire(arg_9_0, arg_9_1)
+QuestSettings.check_num_enemies_killed_by_warpfire = function (arg_9_0, arg_9_1)
+	-- function 9
 	local var_9_0 = BLACKBOARDS[arg_9_1]
+	local hit_units_warpfire_challenge = var_9_0.hit_units_warpfire_challenge
 
-	var_9_0.hit_units_warpfire_challenge = var_9_0.hit_units_warpfire_challenge or {}
+	hit_units_warpfire_challenge = hit_units_warpfire_challenge or {}
+	var_9_0.hit_units_warpfire_challenge = hit_units_warpfire_challenge
 
 	if not var_9_0.hit_units_warpfire_challenge[arg_9_0] then
-		var_9_0.num_ai_killed_by_warpfire = (var_9_0.num_ai_killed_by_warpfire or 0) + 1
+		local num_ai_killed_by_warpfire = var_9_0.num_ai_killed_by_warpfire
+
+		num_ai_killed_by_warpfire = num_ai_killed_by_warpfire or 0
+		var_9_0.num_ai_killed_by_warpfire = num_ai_killed_by_warpfire + 1
 		var_9_0.hit_units_warpfire_challenge[arg_9_0] = true
 
 		if var_9_0.num_ai_killed_by_warpfire >= QuestSettings.num_enemies_killed_by_warpfire then
 			var_9_0.num_ai_killed_by_warpfire = nil
 			var_9_0.hit_units_warpfire_challenge = nil
 
-			local var_9_1 = "warpfire_enemies_killed_by_warpfire"
+			local str = "warpfire_enemies_killed_by_warpfire"
 
-			var_0_6(var_9_1)
+			fn_2(str)
 		end
 	end
 end
 
-function QuestSettings.check_pack_master_dodge(arg_10_0)
-	local var_10_0 = "pack_master_dodged_attack"
+QuestSettings.check_pack_master_dodge = function (arg_10_0)
+	-- function 10
+	local str = "pack_master_dodged_attack"
 
-	var_0_5(arg_10_0, var_10_0)
+	fn(arg_10_0, str)
 end
 
-function QuestSettings.check_pack_master_kill_abducting_ally(arg_11_0, arg_11_1)
-	if arg_11_0.action and (arg_11_0.action.name == "drag" or arg_11_0.action.name == "initial_pull") then
-		local var_11_0 = "pack_master_kill_abducting_ally"
+QuestSettings.check_pack_master_kill_abducting_ally = function (self, arg_11_1)
+	-- function 11
+	if not (not self.action and self.action.name == "drag" or self.action.name ~= "initial_pull") then
+		local str = "pack_master_kill_abducting_ally"
 
-		var_0_5(arg_11_1, var_11_0)
+		fn(arg_11_1, str)
 	end
 end
 
-function QuestSettings.check_pack_master_rescue_hoisted_ally(arg_12_0)
-	local var_12_0 = "pack_master_rescue_hoisted_ally"
+QuestSettings.check_pack_master_rescue_hoisted_ally = function (arg_12_0)
+	-- function 12
+	local str = "pack_master_rescue_hoisted_ally"
 
-	var_0_5(arg_12_0, var_12_0)
+	fn(arg_12_0, str)
 end
 
-function QuestSettings.check_gutter_killed_while_pouncing(arg_13_0, arg_13_1, arg_13_2)
+QuestSettings.check_gutter_killed_while_pouncing = function (self, arg_13_1, arg_13_2)
+	-- function 13
 	local var_13_0 = rawget(ItemMasterList, arg_13_2)
 
-	if var_13_0 and arg_13_0.action then
-		local var_13_1 = var_13_0.slot_type
+	if not var_13_0 and not self.action then
+		local slot_type = var_13_0.slot_type
 
-		if var_13_1 and var_13_1 == "ranged" and arg_13_0.action.name == "jump" then
-			local var_13_2 = "gutter_runner_killed_on_pounce"
+		if not (not slot_type and slot_type ~= "ranged" or self.action.name ~= "jump") then
+			local str = "gutter_runner_killed_on_pounce"
 
-			var_0_5(arg_13_1, var_13_2)
+			fn(arg_13_1, str)
 		end
 	end
 end
 
-function QuestSettings.check_gutter_runner_push_on_pounce(arg_14_0, arg_14_1)
-	local var_14_0 = arg_14_0.unit
+QuestSettings.check_gutter_runner_push_on_pounce = function (self, arg_14_1)
+	-- function 14
+	local unit = self.unit
 
-	if ScriptUnit.extension(var_14_0, "ai_system"):current_action_name() == "jump" and Unit.alive(arg_14_1) then
-		local var_14_1 = "gutter_runner_push_on_pounce"
+	if ScriptUnit.extension(unit, "ai_system"):current_action_name() ~= "jump" or not Unit.alive(arg_14_1) then
+		local str = "gutter_runner_push_on_pounce"
 
-		var_0_5(arg_14_1, var_14_1)
+		fn(arg_14_1, str)
 	end
 end
 
-function QuestSettings.check_gutter_runner_push_on_target_pounced(arg_15_0, arg_15_1)
-	local var_15_0 = arg_15_0.unit
+QuestSettings.check_gutter_runner_push_on_target_pounced = function (self, arg_15_1)
+	-- function 15
+	local unit = self.unit
 
-	if ScriptUnit.extension(var_15_0, "ai_system"):current_action_name() == "target_pounced" and Unit.alive(arg_15_1) then
-		local var_15_1 = "gutter_runner_push_on_target_pounced"
+	if ScriptUnit.extension(unit, "ai_system"):current_action_name() ~= "target_pounced" or not Unit.alive(arg_15_1) then
+		local str = "gutter_runner_push_on_target_pounced"
 
-		var_0_5(arg_15_1, var_15_1)
+		fn(arg_15_1, str)
 	end
 end
 
-function QuestSettings.check_corruptor_killed_at_teleport_time(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+QuestSettings.check_corruptor_killed_at_teleport_time = function (self, arg_16_1, arg_16_2, arg_16_3)
+	-- function 16
 	if arg_16_2 - arg_16_1 <= QuestSettings.corruptor_killed_at_teleport_time then
-		local var_16_0 = "corruptor_killed_at_teleport_time"
+		local str = "corruptor_killed_at_teleport_time"
 
-		var_0_5(arg_16_3, var_16_0)
+		fn(arg_16_3, str)
 
-		arg_16_0.teleport_at_t = nil
+		self.teleport_at_t = nil
 	end
 end
 
-function QuestSettings.check_corruptor_dodge(arg_17_0)
-	local var_17_0 = "corruptor_dodged_attack"
+QuestSettings.check_corruptor_dodge = function (arg_17_0)
+	-- function 17
+	local str = "corruptor_dodged_attack"
 
-	var_0_5(arg_17_0, var_17_0)
+	fn(arg_17_0, str)
 end
 
-function QuestSettings.check_corruptor_killed_while_grabbing(arg_18_0, arg_18_1)
-	if arg_18_0.grabbed_unit and not arg_18_0.has_dealed_damage and Unit.alive(arg_18_1) then
-		local var_18_0 = "corruptor_killed_while_grabbing"
+QuestSettings.check_corruptor_killed_while_grabbing = function (self, arg_18_1)
+	-- function 18
+	if not self.grabbed_unit and self.has_dealed_damage or not Unit.alive(arg_18_1) then
+		local str = "corruptor_killed_while_grabbing"
 
-		var_0_5(arg_18_1, var_18_0)
+		fn(arg_18_1, str)
 	end
 end
 
-function QuestSettings.check_vortex_sorcerer_killed_while_summoning(arg_19_0, arg_19_1)
-	local var_19_0 = arg_19_0.unit
+QuestSettings.check_vortex_sorcerer_killed_while_summoning = function (self, arg_19_1)
+	-- function 19
+	local unit = self.unit
 
-	if ScriptUnit.extension(var_19_0, "ai_system"):current_action_name() == "spawn_vortex" and Unit.alive(arg_19_1) then
-		local var_19_1 = "vortex_sorcerer_killed_while_summoning"
+	if ScriptUnit.extension(unit, "ai_system"):current_action_name() ~= "spawn_vortex" or not Unit.alive(arg_19_1) then
+		local str = "vortex_sorcerer_killed_while_summoning"
 
-		var_0_5(arg_19_1, var_19_1)
+		fn(arg_19_1, str)
 	end
 end
 
-function QuestSettings.check_vortex_sorcerer_killed_while_ally_in_vortex(arg_20_0, arg_20_1)
-	local var_20_0 = Managers.player:players()
+QuestSettings.check_vortex_sorcerer_killed_while_ally_in_vortex = function (arg_20_0, arg_20_1)
+	-- function 20
+	local players = Managers.player:players()
 
-	for iter_20_0, iter_20_1 in pairs(var_20_0) do
-		local var_20_1 = iter_20_1.player_unit
-		local var_20_2 = var_20_1 and ScriptUnit.extension(var_20_1, "status_system")
+	for k, v in pairs(players) do
+		local player_unit = v.player_unit
+		local flag = not player_unit and ScriptUnit.extension(player_unit, "status_system")
 
-		if var_20_1 ~= arg_20_1 and var_20_2 and var_20_2:is_in_vortex() then
-			local var_20_3 = "vortex_sorcerer_killed_while_ally_in_vortex"
+		if (player_unit == arg_20_1 or not flag) and not flag:is_in_vortex() then
+			local str = "vortex_sorcerer_killed_while_ally_in_vortex"
 
-			var_0_5(arg_20_1, var_20_3)
+			fn(arg_20_1, str)
 
 			break
 		end
 	end
 end
 
-function QuestSettings.check_vortex_sorcerer_killed_by_melee(arg_21_0, arg_21_1)
+QuestSettings.check_vortex_sorcerer_killed_by_melee = function (arg_21_0, arg_21_1)
+	-- function 21
 	local var_21_0 = rawget(ItemMasterList, arg_21_1)
 
-	if var_21_0 and var_21_0.slot_type == "melee" then
-		local var_21_1 = "vortex_sorcerer_killed_by_melee"
+	if not (not var_21_0 and var_21_0.slot_type ~= "melee") then
+		local str = "vortex_sorcerer_killed_by_melee"
 
-		var_0_5(arg_21_0, var_21_1)
+		fn(arg_21_0, str)
 	end
 end
 
-function QuestSettings.check_ratling_gunner_killed_by_melee(arg_22_0, arg_22_1)
+QuestSettings.check_ratling_gunner_killed_by_melee = function (arg_22_0, arg_22_1)
+	-- function 22
 	local var_22_0 = rawget(ItemMasterList, arg_22_1)
 
-	if var_22_0 and var_22_0.slot_type == "melee" then
-		local var_22_1 = "ratling_gunner_killed_by_melee"
+	if not (not var_22_0 and var_22_0.slot_type ~= "melee") then
+		local str = "ratling_gunner_killed_by_melee"
 
-		var_0_5(arg_22_0, var_22_1)
+		fn(arg_22_0, str)
 	end
 end
 
-function QuestSettings.check_ratling_gunner_killed_while_shooting(arg_23_0, arg_23_1)
-	local var_23_0 = arg_23_0.unit
-	local var_23_1 = ScriptUnit.extension(var_23_0, "ai_system"):current_action_name()
+QuestSettings.check_ratling_gunner_killed_while_shooting = function (self, arg_23_1)
+	-- function 23
+	local unit = self.unit
+	local current_action_name = ScriptUnit.extension(unit, "ai_system"):current_action_name()
+	local attack_pattern_data = self.attack_pattern_data
 
-	if (arg_23_0.attack_pattern_data and arg_23_0.attack_pattern_data.target_unit) ~= arg_23_1 and var_23_1 == "shoot_ratling_gun" then
-		local var_23_2 = "ratling_gunner_killed_while_shooting"
+	attack_pattern_data = not attack_pattern_data and self.attack_pattern_data.target_unit
 
-		var_0_5(arg_23_1, var_23_2)
+	if not (attack_pattern_data == arg_23_1 or current_action_name ~= "shoot_ratling_gun") then
+		local str = "ratling_gunner_killed_while_shooting"
+
+		fn(arg_23_1, str)
 	end
 end
 
-function QuestSettings.check_chaos_spawn_killed_while_grabbing(arg_24_0, arg_24_1)
-	local var_24_0 = arg_24_0.unit
-	local var_24_1 = ScriptUnit.extension(var_24_0, "ai_system"):current_action_name()
+QuestSettings.check_chaos_spawn_killed_while_grabbing = function (self, arg_24_1)
+	-- function 24
+	local unit = self.unit
+	local current_action_name = ScriptUnit.extension(unit, "ai_system"):current_action_name()
 
-	if var_24_1 == "attack_grabbed_chew" or var_24_1 == "attack_grabbed_smash" or var_24_1 == "attack_grabbed_throw" then
-		local var_24_2 = "chaos_spawn_killed_while_grabbing"
+	if not (current_action_name == "attack_grabbed_chew" or current_action_name == "attack_grabbed_smash" or current_action_name ~= "attack_grabbed_throw") then
+		local str = "chaos_spawn_killed_while_grabbing"
 
-		var_0_5(arg_24_1, var_24_2)
+		fn(arg_24_1, str)
 	end
 end
 
-function QuestSettings.check_chaos_spawn_killed_without_having_grabbed(arg_25_0, arg_25_1)
-	if not arg_25_0.has_grabbed then
-		local var_25_0 = "chaos_spawn_killed_without_having_grabbed"
+QuestSettings.check_chaos_spawn_killed_without_having_grabbed = function (self, arg_25_1)
+	-- function 25
+	if not self.has_grabbed then
+		local str = "chaos_spawn_killed_without_having_grabbed"
 
-		var_0_6(var_25_0)
+		fn_2(str)
 
-		arg_25_0.has_grabbed = nil
+		self.has_grabbed = nil
 	end
 end
 
-function QuestSettings.check_chaos_troll_killed_without_regen(arg_26_0, arg_26_1)
-	if arg_26_0.num_regen == 1 then
-		local var_26_0 = "chaos_troll_killed_without_regen"
+QuestSettings.check_chaos_troll_killed_without_regen = function (self, arg_26_1)
+	-- function 26
+	if not (self.num_regen == 1) then
+		local str = "chaos_troll_killed_without_regen"
 
-		var_0_6(var_26_0)
+		fn_2(str)
 	end
 end
 
-function QuestSettings.check_chaos_troll_killed_without_bile_damage(arg_27_0, arg_27_1)
-	if not arg_27_0.has_done_bile_damage then
-		local var_27_0 = "chaos_troll_killed_without_bile_damage"
+QuestSettings.check_chaos_troll_killed_without_bile_damage = function (self, arg_27_1)
+	-- function 27
+	if not self.has_done_bile_damage then
+		local str = "chaos_troll_killed_without_bile_damage"
 
-		var_0_6(var_27_0)
+		fn_2(str)
 	end
 end
 
-function QuestSettings.check_rat_ogre_killed_mid_leap(arg_28_0, arg_28_1)
-	local var_28_0 = arg_28_0.unit
+QuestSettings.check_rat_ogre_killed_mid_leap = function (self, arg_28_1)
+	-- function 28
+	local unit = self.unit
 
-	if ScriptUnit.extension(var_28_0, "ai_system"):current_action_name() == "jump_slam" then
-		local var_28_1 = "rat_ogre_killed_mid_leap"
+	if ScriptUnit.extension(unit, "ai_system"):current_action_name() == "jump_slam" then
+		local str = "rat_ogre_killed_mid_leap"
 
-		var_0_5(arg_28_1, var_28_1)
+		fn(arg_28_1, str)
 	end
 end
 
-function QuestSettings.check_rat_ogre_killed_without_dealing_damage(arg_29_0, arg_29_1)
-	if not arg_29_0.has_dealt_damage then
-		local var_29_0 = "rat_ogre_killed_without_dealing_damage"
+QuestSettings.check_rat_ogre_killed_without_dealing_damage = function (self, arg_29_1)
+	-- function 29
+	if not self.has_dealt_damage then
+		local str = "rat_ogre_killed_without_dealing_damage"
 
-		var_0_6(var_29_0)
+		fn_2(str)
 	end
 end
 
-function QuestSettings.check_stormfiend_killed_without_burn_damage(arg_30_0, arg_30_1)
-	if not arg_30_0.has_dealt_burn_damage then
-		local var_30_0 = "stormfiend_killed_without_burn_damage"
+QuestSettings.check_stormfiend_killed_without_burn_damage = function (self, arg_30_1)
+	-- function 30
+	if not self.has_dealt_burn_damage then
+		local str = "stormfiend_killed_without_burn_damage"
 
-		var_0_6(var_30_0)
+		fn_2(str)
 	end
 end
 
-function QuestSettings.check_stormfiend_killed_on_controller(arg_31_0, arg_31_1)
+QuestSettings.check_stormfiend_killed_on_controller = function (arg_31_0, arg_31_1)
+	-- function 31
 	if arg_31_0 == "weakspot" then
-		local var_31_0 = "stormfiend_killed_on_controller"
+		local str = "stormfiend_killed_on_controller"
 
-		var_0_5(arg_31_1, var_31_0)
+		fn(arg_31_1, str)
 	end
 end
 
-function QuestSettings.check_killed_lord_as_last_player_standing(arg_32_0)
-	local var_32_0 = Managers.player:unit_owner(arg_32_0)
+QuestSettings.check_killed_lord_as_last_player_standing = function (arg_32_0)
+	-- function 32
+	local unit_owner = Managers.player:unit_owner(arg_32_0)
 
-	if Managers.player:num_alive_allies(var_32_0) == 0 then
-		local var_32_1 = "killed_lord_as_last_player_standing"
+	if not (Managers.player:num_alive_allies(unit_owner) == 0) then
+		local str = "killed_lord_as_last_player_standing"
 
-		var_0_5(arg_32_0, var_32_1)
+		fn(arg_32_0, str)
 	end
 end
 
 QuestSettings.track_bastard_block_breeds = {}
 
-function QuestSettings.handle_bastard_block(arg_33_0, arg_33_1, arg_33_2)
-	local var_33_0 = Unit.get_data(arg_33_0, "breed")
+QuestSettings.handle_bastard_block = function (arg_33_0, arg_33_1, arg_33_2)
+	-- function 33
+	local get_data = Unit.get_data(arg_33_0, "breed")
 
-	if not var_33_0 or not QuestSettings.track_bastard_block_breeds[var_33_0.name] then
+	if not (not get_data and QuestSettings.track_bastard_block_breeds[get_data.name]) then
 		return false
 	end
 
@@ -634,7 +678,7 @@ function QuestSettings.handle_bastard_block(arg_33_0, arg_33_1, arg_33_2)
 		return false
 	end
 
-	if var_33_1.failed_boss then
+	if not var_33_1.failed_boss then
 		return false
 	end
 
@@ -645,17 +689,21 @@ function QuestSettings.handle_bastard_block(arg_33_0, arg_33_1, arg_33_2)
 		return false
 	end
 
-	if ScriptUnit.has_extension(arg_33_0, "status_system").charge_blocking then
-		var_33_1.bastard_block = (var_33_1.bastard_block or 0) + 1
+	if not ScriptUnit.has_extension(arg_33_0, "status_system").charge_blocking then
+		local bastard_block = var_33_1.bastard_block
+
+		bastard_block = bastard_block or 0
+		var_33_1.bastard_block = bastard_block + 1
 	end
 end
 
-function QuestSettings.handle_bastard_block_on_death(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
-	if arg_34_0.boss then
+QuestSettings.handle_bastard_block_on_death = function (self, arg_34_1, arg_34_2, arg_34_3)
+	-- function 34
+	if not self.boss then
 		local var_34_0 = arg_34_2[3]
 		local var_34_1 = BLACKBOARDS[arg_34_1]
 
-		if not var_34_1 or not var_34_1.bastard_block then
+		if not (not var_34_1 and var_34_1.bastard_block) then
 			return false
 		end
 
@@ -663,16 +711,16 @@ function QuestSettings.handle_bastard_block_on_death(arg_34_0, arg_34_1, arg_34_
 			return false
 		end
 
-		local var_34_2 = Unit.get_data(var_34_0, "breed")
+		local get_data = Unit.get_data(var_34_0, "breed")
 
-		if not var_34_2 or not QuestSettings.track_bastard_block_breeds[var_34_2.name] then
+		if not (not get_data and QuestSettings.track_bastard_block_breeds[get_data.name]) then
 			return false
 		end
 
 		if var_34_1.bastard_block >= 3 then
-			local var_34_3 = "lake_bastard_block"
+			local str = "lake_bastard_block"
 
-			var_0_5(var_34_0, var_34_3)
+			fn(var_34_0, str)
 		end
 
 		var_34_1.failed_boss = nil
@@ -682,30 +730,31 @@ end
 
 QuestSettings.track_charge_stagger_breeds = {}
 
-function QuestSettings.handle_charge_stagger(arg_35_0, arg_35_1, arg_35_2)
-	local var_35_0 = ScriptUnit.has_extension(arg_35_2, "career_system")
+QuestSettings.handle_charge_stagger = function (arg_35_0, arg_35_1, arg_35_2)
+	-- function 35
+	local has_extension = ScriptUnit.has_extension(arg_35_2, "career_system")
 
-	if not var_35_0 then
+	if not has_extension then
 		return
 	end
 
-	local var_35_1 = var_35_0:career_name()
+	local career_name = has_extension:career_name()
 
-	if not QuestSettings.track_charge_stagger_breeds[var_35_1] then
+	if not QuestSettings.track_charge_stagger_breeds[career_name] then
 		return
 	end
 
-	if ScriptUnit.has_extension(arg_35_0, "health_system"):recent_damage_source() == var_35_0:career_skill_weapon_name(nil) then
-		local var_35_2 = arg_35_1.action
+	if ScriptUnit.has_extension(arg_35_0, "health_system"):recent_damage_source() == has_extension:career_skill_weapon_name(nil) then
+		local action = arg_35_1.action
 
-		if var_35_2 and var_35_2.name == "charge" then
-			local var_35_3 = Managers.time:time("game")
-			local var_35_4 = arg_35_1.attack_started_at_t
+		if not (not action and action.name ~= "charge") then
+			local time = Managers.time:time("game")
+			local attack_started_at_t = arg_35_1.attack_started_at_t
 
-			if var_35_4 and var_35_3 - var_35_4 > 2 then
-				local var_35_5 = "lake_charge_stagger"
+			if not (not attack_started_at_t and not (time - attack_started_at_t > 2)) then
+				local str = "lake_charge_stagger"
 
-				var_0_5(arg_35_2, var_35_5)
+				fn(arg_35_2, str)
 			end
 		end
 	end

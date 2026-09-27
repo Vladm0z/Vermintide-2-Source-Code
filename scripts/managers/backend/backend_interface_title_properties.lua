@@ -2,33 +2,37 @@
 
 BackendInterfaceTitleProperties = class(BackendInterfaceTitleProperties)
 
-function BackendInterfaceTitleProperties.init(arg_1_0)
+BackendInterfaceTitleProperties.init = function (arg_1_0)
+	-- function 1
 	return
 end
 
-function BackendInterfaceTitleProperties._refresh_if_needed(arg_2_0)
-	if not arg_2_0._properties then
-		local var_2_0 = Backend.get_title_properties()
-		local var_2_1 = {}
+BackendInterfaceTitleProperties._refresh_if_needed = function (self)
+	-- function 2
+	if not self._properties then
+		local get_title_properties = Backend.get_title_properties()
+		local tbl = {}
 
-		for iter_2_0, iter_2_1 in pairs(var_2_0) do
-			var_2_1[iter_2_0] = cjson.decode(iter_2_1)
+		for k, v in pairs(get_title_properties) do
+			tbl[k] = cjson.decode(v)
 		end
 
-		arg_2_0._properties = var_2_1
+		self._properties = tbl
 	end
 end
 
-function BackendInterfaceTitleProperties.get(arg_3_0)
-	arg_3_0:_refresh_if_needed()
+BackendInterfaceTitleProperties.get = function (self)
+	-- function 3
+	self:_refresh_if_needed()
 
-	return arg_3_0._properties
+	return self._properties
 end
 
-function BackendInterfaceTitleProperties.get_value(arg_4_0, arg_4_1)
-	arg_4_0:_refresh_if_needed()
+BackendInterfaceTitleProperties.get_value = function (self, arg_4_1)
+	-- function 4
+	self:_refresh_if_needed()
 
-	local var_4_0 = arg_4_0._properties[arg_4_1]
+	local var_4_0 = self._properties[arg_4_1]
 
 	fassert(var_4_0 ~= nil, "No such key '%s'", arg_4_1)
 

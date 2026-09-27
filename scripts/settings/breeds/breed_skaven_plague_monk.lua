@@ -1,15 +1,15 @@
 -- chunkname: @scripts/settings/breeds/breed_skaven_plague_monk.lua
 
-local var_0_0 = require("scripts/utils/stagger_types")
-local var_0_1 = {
+local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
+local tbl = {
 	"stagger_run_light_bwd",
 	"stagger_run_light_bwd_2"
 }
-local var_0_2 = {
+local tbl_2 = {
 	"stagger_run_heavy_bwd",
 	"stagger_run_heavy_bwd_2"
 }
-local var_0_3 = {
+local tbl_3 = {
 	detection_radius = 24,
 	walk_speed = 3.25,
 	proximity_system_check = true,
@@ -302,9 +302,9 @@ local var_0_3 = {
 	}
 }
 
-Breeds.skaven_plague_monk = table.create_copy(Breeds.skaven_plague_monk, var_0_3)
+Breeds.skaven_plague_monk = table.create_copy(Breeds.skaven_plague_monk, tbl_3)
 
-local var_0_4 = {
+local tbl_4 = {
 	normal = {
 		easy = {
 			normal = 2
@@ -402,7 +402,7 @@ local var_0_4 = {
 		}
 	}
 }
-local var_0_5 = {
+local tbl_5 = {
 	true,
 	false,
 	false,
@@ -411,7 +411,7 @@ local var_0_5 = {
 	false,
 	true
 }
-local var_0_6 = {
+local tbl_6 = {
 	true,
 	true,
 	true,
@@ -420,7 +420,7 @@ local var_0_6 = {
 	true,
 	true
 }
-local var_0_7 = {
+local tbl_7 = {
 	false,
 	false,
 	false,
@@ -429,7 +429,7 @@ local var_0_7 = {
 	true,
 	false
 }
-local var_0_8 = {
+local tbl_8 = {
 	alerted = {
 		no_hesitation = true,
 		cooldown = -1,
@@ -489,7 +489,7 @@ local var_0_8 = {
 		action_weight = 10,
 		damage_type = "cutting",
 		moving_attack = true,
-		difficulty_attack_intensity = var_0_4,
+		difficulty_attack_intensity = tbl_4,
 		default_attack = {
 			anims = "attack_move"
 		},
@@ -509,7 +509,7 @@ local var_0_8 = {
 		attack_intensity_type = "normal",
 		action_weight = 1,
 		move_anim = "move_fwd",
-		difficulty_attack_intensity = var_0_4,
+		difficulty_attack_intensity = tbl_4,
 		default_attack = {
 			anims = "attack_pounce"
 		},
@@ -610,15 +610,28 @@ local var_0_8 = {
 		moving_stagger_minimum_destination_distance = 3,
 		scale_animation_speeds = true,
 		moving_stagger_threshold = 3,
-		custom_enter_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-			local var_1_0 = arg_1_1.combo_attack_data
+		custom_enter_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			-- function 1
+			local combo_attack_data = arg_1_1.combo_attack_data
 
-			if var_1_0 and var_1_0.aborted then
-				local var_1_1 = arg_1_1.stagger_type <= var_0_0.heavy and math.clamp(arg_1_1.stagger_type - 1, 1, 1.5) or 1
+			if not combo_attack_data and not combo_attack_data.aborted then
+				local clamp
 
-				if arg_1_1.stagger_type ~= var_0_0.explosion and arg_1_1.stagger_type ~= var_0_0.heavy then
+				if arg_1_1.stagger_type <= scripts_utils_stagger_types.heavy then
+					clamp = math.clamp(arg_1_1.stagger_type - 1, 1, 1.5)
+
+					if not clamp then
+						-- Nothing
+					end
+				end
+
+				clamp = 1
+
+				::label_1_0::
+
+				if not (arg_1_1.stagger_type == scripts_utils_stagger_types.explosion or arg_1_1.stagger_type == scripts_utils_stagger_types.heavy) then
 					arg_1_1.stagger_ignore_anim_cb = true
-					arg_1_1.stagger_time = arg_1_2 + arg_1_1.breed.berzerking_stagger_time * var_1_1
+					arg_1_1.stagger_time = arg_1_2 + arg_1_1.breed.berzerking_stagger_time * clamp
 				end
 			end
 
@@ -641,11 +654,11 @@ local var_0_8 = {
 				dwn = {
 					"stun_bwd_sword"
 				},
-				moving_fwd = var_0_1,
-				moving_bwd = var_0_1,
-				moving_left = var_0_1,
-				moving_right = var_0_1,
-				moving_dwn = var_0_1
+				moving_fwd = tbl,
+				moving_bwd = tbl,
+				moving_left = tbl,
+				moving_right = tbl,
+				moving_dwn = tbl
 			},
 			{
 				fwd = {
@@ -664,11 +677,11 @@ local var_0_8 = {
 				dwn = {
 					"stun_bwd_sword"
 				},
-				moving_fwd = var_0_1,
-				moving_bwd = var_0_1,
-				moving_left = var_0_1,
-				moving_right = var_0_1,
-				moving_dwn = var_0_1
+				moving_fwd = tbl,
+				moving_bwd = tbl,
+				moving_left = tbl,
+				moving_right = tbl,
+				moving_dwn = tbl
 			},
 			{
 				fwd = {
@@ -687,11 +700,11 @@ local var_0_8 = {
 				dwn = {
 					"stun_bwd_sword"
 				},
-				moving_fwd = var_0_2,
-				moving_bwd = var_0_2,
-				moving_left = var_0_2,
-				moving_right = var_0_2,
-				moving_dwn = var_0_2
+				moving_fwd = tbl_2,
+				moving_bwd = tbl_2,
+				moving_left = tbl_2,
+				moving_right = tbl_2,
+				moving_dwn = tbl_2
 			},
 			{
 				fwd = {
@@ -706,11 +719,11 @@ local var_0_8 = {
 				right = {
 					"stun_right_sword"
 				},
-				moving_fwd = var_0_1,
-				moving_bwd = var_0_1,
-				moving_left = var_0_1,
-				moving_right = var_0_1,
-				moving_dwn = var_0_1
+				moving_fwd = tbl,
+				moving_bwd = tbl,
+				moving_left = tbl,
+				moving_right = tbl,
+				moving_dwn = tbl
 			},
 			{
 				fwd = {
@@ -726,11 +739,11 @@ local var_0_8 = {
 				right = {
 					"stagger_right"
 				},
-				moving_fwd = var_0_1,
-				moving_bwd = var_0_1,
-				moving_left = var_0_1,
-				moving_right = var_0_1,
-				moving_dwn = var_0_1
+				moving_fwd = tbl,
+				moving_bwd = tbl,
+				moving_left = tbl,
+				moving_right = tbl,
+				moving_dwn = tbl
 			},
 			{
 				fwd = {
@@ -745,11 +758,11 @@ local var_0_8 = {
 				right = {
 					"stagger_right_exp"
 				},
-				moving_fwd = var_0_2,
-				moving_bwd = var_0_2,
-				moving_left = var_0_2,
-				moving_right = var_0_2,
-				moving_dwn = var_0_2
+				moving_fwd = tbl_2,
+				moving_bwd = tbl_2,
+				moving_left = tbl_2,
+				moving_right = tbl_2,
+				moving_dwn = tbl_2
 			},
 			{
 				fwd = {
@@ -768,11 +781,11 @@ local var_0_8 = {
 				dwn = {
 					"stun_bwd_sword"
 				},
-				moving_fwd = var_0_1,
-				moving_bwd = var_0_1,
-				moving_left = var_0_1,
-				moving_right = var_0_1,
-				moving_dwn = var_0_1
+				moving_fwd = tbl,
+				moving_bwd = tbl,
+				moving_left = tbl,
+				moving_right = tbl,
+				moving_dwn = tbl
 			},
 			{
 				fwd = {},
@@ -802,16 +815,16 @@ local var_0_8 = {
 				dwn = {
 					"stun_bwd_sword"
 				},
-				moving_fwd = var_0_2,
-				moving_bwd = var_0_2,
-				moving_left = var_0_2,
-				moving_right = var_0_2,
-				moving_dwn = var_0_2
+				moving_fwd = tbl_2,
+				moving_bwd = tbl_2,
+				moving_left = tbl_2,
+				moving_right = tbl_2,
+				moving_dwn = tbl_2
 			}
 		}
 	}
 }
-local var_0_9 = {
+local tbl_9 = {
 	action_weight = 10,
 	combo_anim_variations = 2,
 	fatigue_type = "blocked_attack",
@@ -825,9 +838,9 @@ local var_0_9 = {
 	attack_intensity_type = "frenzy",
 	move_anim = "move_fwd",
 	start_sound_event = "Play_enemy_plague_monk_start_frenzy",
-	difficulty_attack_intensity = var_0_4,
+	difficulty_attack_intensity = tbl_4,
 	considerations = UtilityConsiderations.plague_monk_frenzy_attack,
-	ignore_staggers = var_0_5,
+	ignore_staggers = tbl_5,
 	attack_directions = {
 		attack_2_run_quick_2 = "right",
 		attack_quick_3 = "right",
@@ -863,7 +876,7 @@ local var_0_9 = {
 				"attack_run_quick_1",
 				"attack_2_run_quick_1"
 			},
-			ignore_staggers = var_0_5
+			ignore_staggers = tbl_5
 		},
 		attack_2 = {
 			rotation_scheme = "continuous",
@@ -879,7 +892,7 @@ local var_0_9 = {
 				"attack_run_quick_2",
 				"attack_2_run_quick_2"
 			},
-			ignore_staggers = var_0_5
+			ignore_staggers = tbl_5
 		},
 		attack_2b = {
 			rotation_scheme = "continuous",
@@ -895,7 +908,7 @@ local var_0_9 = {
 				"attack_run_quick_2",
 				"attack_2_run_quick_2"
 			},
-			ignore_staggers = var_0_5
+			ignore_staggers = tbl_5
 		},
 		attack_3 = {
 			no_abort_attack = true,
@@ -912,7 +925,7 @@ local var_0_9 = {
 				"attack_run_quick_3",
 				"attack_2_run_quick_3"
 			},
-			ignore_staggers = var_0_5
+			ignore_staggers = tbl_5
 		},
 		attack_3b = {
 			rotation_scheme = "continuous",
@@ -928,7 +941,7 @@ local var_0_9 = {
 				"attack_run_quick_3",
 				"attack_2_run_quick_3"
 			},
-			ignore_staggers = var_0_5
+			ignore_staggers = tbl_5
 		},
 		attack_medium = {
 			next_blocked = "attack_heavy",
@@ -948,7 +961,7 @@ local var_0_9 = {
 				"attack_run_medium",
 				"attack_run_medium_2"
 			},
-			ignore_staggers = var_0_5
+			ignore_staggers = tbl_5
 		},
 		attack_heavy = {
 			rotation_scheme = "continuous",
@@ -961,7 +974,7 @@ local var_0_9 = {
 			next = "done",
 			move_anim = "attack_heavy",
 			anim = "attack_heavy",
-			staggers_allowed = var_0_6,
+			staggers_allowed = tbl_6,
 			difficulty_damage = BreedTweaks.difficulty_damage.elite_attack
 		},
 		attack_wild_flailing = {
@@ -974,7 +987,7 @@ local var_0_9 = {
 			next = "done",
 			move_anim = "attack_wild_flailing",
 			anim = "attack_wild_flailing",
-			staggers_allowed = var_0_6,
+			staggers_allowed = tbl_6,
 			push_non_targets = {
 				close_impact_radius = 1.5,
 				lateral_impact_speed = 1.75,
@@ -993,9 +1006,9 @@ local var_0_9 = {
 	}
 }
 
-var_0_8.frenzy_attack = table.create_copy(var_0_8.frenzy_attack, var_0_9)
-var_0_8.frenzy_attack.considerations = UtilityConsiderations.plague_monk_frenzy_attack
-var_0_8.frenzy_attack.combo_attacks.attack_1 = {
+tbl_8.frenzy_attack = table.create_copy(tbl_8.frenzy_attack, tbl_9)
+tbl_8.frenzy_attack.considerations = UtilityConsiderations.plague_monk_frenzy_attack
+tbl_8.frenzy_attack.combo_attacks.attack_1 = {
 	run_speed = 5,
 	rotation_scheme = "continuous",
 	fatigue_type = "blocked_berzerker",
@@ -1006,12 +1019,12 @@ var_0_8.frenzy_attack.combo_attacks.attack_1 = {
 	next = "attack_2",
 	move_anim = "attack_run_quick_1",
 	anim = "attack_run_quick_1",
-	difficulty_attack_intensity = var_0_4,
-	staggers_allowed = var_0_5
+	difficulty_attack_intensity = tbl_4,
+	staggers_allowed = tbl_5
 }
-var_0_8.frenzy_attack_ranged = table.create_copy(var_0_8.frenzy_attack_ranged, var_0_9)
-var_0_8.frenzy_attack_ranged.considerations = UtilityConsiderations.plague_monk_frenzy_attack_ranged
-var_0_8.frenzy_attack_ranged.combo_attacks.attack_1 = {
+tbl_8.frenzy_attack_ranged = table.create_copy(tbl_8.frenzy_attack_ranged, tbl_9)
+tbl_8.frenzy_attack_ranged.considerations = UtilityConsiderations.plague_monk_frenzy_attack_ranged
+tbl_8.frenzy_attack_ranged.combo_attacks.attack_1 = {
 	fatigue_type = "blocked_berzerker",
 	rotation_scheme = "continuous",
 	attack_intensity_type = "frenzy",
@@ -1021,8 +1034,8 @@ var_0_8.frenzy_attack_ranged.combo_attacks.attack_1 = {
 	combo_cooldown_start = true,
 	next = "attack_2",
 	anim = "attack_run_lunge",
-	difficulty_attack_intensity = var_0_4,
-	staggers_allowed = var_0_7,
+	difficulty_attack_intensity = tbl_4,
+	staggers_allowed = tbl_7,
 	push_non_targets = {
 		close_impact_radius = 1.5,
 		lateral_impact_speed = 1.75,
@@ -1030,4 +1043,4 @@ var_0_8.frenzy_attack_ranged.combo_attacks.attack_1 = {
 		far_impact_radius = 2
 	}
 }
-BreedActions.skaven_plague_monk = table.create_copy(BreedActions.skaven_plague_monk, var_0_8)
+BreedActions.skaven_plague_monk = table.create_copy(BreedActions.skaven_plague_monk, tbl_8)

@@ -1,27 +1,32 @@
 -- chunkname: @scripts/ui/hud_ui/world_marker_templates/world_marker_template_news_feed.lua
 
+local WorldMarkerTemplates = WorldMarkerTemplates
+
 WorldMarkerTemplates = WorldMarkerTemplates or {}
+WorldMarkerTemplates = WorldMarkerTemplates
 
-local var_0_0 = "news_feed"
-local var_0_1 = WorldMarkerTemplates[var_0_0] or {}
+local str = "news_feed"
+local var_0_2 = WorldMarkerTemplates[str]
 
-WorldMarkerTemplates[var_0_0] = var_0_1
-var_0_1.position_offset = {
+var_0_2 = var_0_2 or {}
+WorldMarkerTemplates[str] = var_0_2
+var_0_2.position_offset = {
 	0,
 	0,
 	2
 }
-var_0_1.max_distance = nil
-var_0_1.screen_clamp = true
-var_0_1.screen_margins = {
+var_0_2.max_distance = nil
+var_0_2.screen_clamp = true
+var_0_2.screen_margins = {
 	down = 150,
 	up = 150,
 	left = 150,
 	right = 150
 }
 
-function var_0_1.create_widget_definition(arg_1_0)
-	local var_1_0 = 25
+var_0_2.create_widget_definition = function (arg_1_0)
+	-- function 1
+	local num = 25
 
 	return {
 		element = {
@@ -50,16 +55,22 @@ function var_0_1.create_widget_definition(arg_1_0)
 					pass_type = "rotated_texture",
 					style_id = "arrow",
 					texture_id = "arrow",
-					content_check_function = function(arg_2_0)
-						return arg_2_0.is_clamped
+					content_check_function = function (self)
+						-- function 2
+						return self.is_clamped
 					end
 				},
 				{
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_3_0)
-						return arg_3_0.is_clamped or arg_3_0.distance > 5
+					content_check_function = function (self)
+						-- function 3
+						local is_clamped = self.is_clamped
+
+						is_clamped = is_clamped or self.distance > 5
+
+						return is_clamped
 					end
 				}
 			}
@@ -170,7 +181,7 @@ function var_0_1.create_widget_definition(arg_1_0)
 				horizontal_alignment = "center",
 				angle = 0,
 				pivot = {
-					21.5 + var_1_0,
+					21.5 + num,
 					24
 				},
 				texture_size = {
@@ -188,7 +199,7 @@ function var_0_1.create_widget_definition(arg_1_0)
 					255
 				},
 				offset = {
-					-var_1_0,
+					-num,
 					0,
 					0
 				}
@@ -226,54 +237,71 @@ function var_0_1.create_widget_definition(arg_1_0)
 	}
 end
 
-function var_0_1.on_enter(arg_4_0)
+var_0_2.on_enter = function (arg_4_0)
+	-- function 4
 	arg_4_0.content.spawn_progress_timer = 0
 end
 
-function var_0_1.update_function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
-	local var_5_0 = false
-	local var_5_1 = arg_5_1.content
-	local var_5_2 = arg_5_1.style
-	local var_5_3 = var_5_1.is_inside_frustum
-	local var_5_4 = var_5_1.is_under
-	local var_5_5 = var_5_1.distance
-	local var_5_6 = var_5_1.angle
-	local var_5_7 = var_5_1.spawn_progress_timer
+var_0_2.update_function = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	-- function 5
+	local flag = false
+	local content = arg_5_1.content
+	local style = arg_5_1.style
+	local is_inside_frustum = content.is_inside_frustum
+	local is_under = content.is_under
+	local distance = content.distance
+	local angle = content.angle
+	local spawn_progress_timer = content.spawn_progress_timer
 
-	if var_5_7 then
-		local var_5_8 = var_5_7 + arg_5_4
-		local var_5_9 = 1
-		local var_5_10 = math.min(var_5_8 / var_5_9, 1)
-		local var_5_11 = math.easeOutCubic(var_5_10)
-		local var_5_12 = math.easeInCubic(1 - var_5_10)
+	if not spawn_progress_timer then
+		local num = spawn_progress_timer + arg_5_4
+		local num_2 = 1
+		local min = math.min(num / num_2, 1)
+		local easeOutCubic = math.easeOutCubic(min)
+		local easeInCubic = math.easeInCubic(1 - min)
 
-		var_5_1.spawn_progress_timer = var_5_10 ~= 1 and var_5_8 or nil
+		content.spawn_progress_timer = min == 1 or not num or nil
 
-		local var_5_13 = var_5_2.icon_pulse
-		local var_5_14 = var_5_13.color
-		local var_5_15 = var_5_13.texture_size
-		local var_5_16 = var_5_13.default_size
+		local icon_pulse = style.icon_pulse
+		local color = icon_pulse.color
+		local texture_size = icon_pulse.texture_size
+		local default_size = icon_pulse.default_size
 
-		var_5_15[1] = var_5_16[1] + var_5_16[1] * var_5_12
-		var_5_15[2] = var_5_16[1] + var_5_16[2] * var_5_12
-		var_5_14[1] = 255 - 255 * var_5_11
+		texture_size[1] = default_size[1] + default_size[1] * easeInCubic
+		texture_size[2] = default_size[1] + default_size[2] * easeInCubic
+		color[1] = 255 - 255 * easeOutCubic
 
-		for iter_5_0 = 1, 2 do
-			local var_5_17 = var_5_2["background_pulse_" .. iter_5_0]
-			local var_5_18 = var_5_17.color
-			local var_5_19 = var_5_17.texture_size
-			local var_5_20 = var_5_17.default_size
+		for i = 1, 2 do
+			local var_5_17 = style["background_pulse_" .. i]
+			local color_2 = var_5_17.color
+			local texture_size_2 = var_5_17.texture_size
+			local default_size_2 = var_5_17.default_size
 
-			var_5_19[1] = var_5_20[1] - var_5_20[1] * var_5_12
-			var_5_19[2] = var_5_20[1] - var_5_20[2] * var_5_12
-			var_5_18[1] = 255 - 255 * var_5_11
+			texture_size_2[1] = default_size_2[1] - default_size_2[1] * easeInCubic
+			texture_size_2[2] = default_size_2[1] - default_size_2[2] * easeInCubic
+			color_2[1] = 255 - 255 * easeOutCubic
 		end
 
-		var_5_0 = true
+		flag = true
 	end
 
-	var_5_2.arrow.angle = var_5_6 + math.pi * 0.5
-	var_5_1.text = var_5_5 > 1 and tostring(UIUtils.comma_value(math.floor(var_5_5))) .. "m" or ""
+	style.arrow.angle = angle + math.pi * 0.5
 
-	return var_5_0
+	local str
+
+	if distance > 1 then
+		str = tostring(UIUtils.comma_value(math.floor(distance))) .. "m"
+
+		if not str then
+			-- Nothing
+		end
+	end
+
+	str = ""
+
+	::label_5_0::
+
+	content.text = str
+
+	return flag
 end

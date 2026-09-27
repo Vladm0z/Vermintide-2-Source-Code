@@ -2,72 +2,76 @@
 
 FunctionCommandQueue = class(FunctionCommandQueue)
 
-function FunctionCommandQueue.init(arg_1_0, arg_1_1)
-	arg_1_0._command_queue = {}
-	arg_1_0._next_command_index = 1
-	arg_1_0._command_stride = arg_1_1 + 1
+FunctionCommandQueue.init = function (self, arg_1_1)
+	-- function 1
+	self._command_queue = {}
+	self._next_command_index = 1
+	self._command_stride = arg_1_1 + 1
 end
 
-function FunctionCommandQueue.run_commands(arg_2_0)
-	local var_2_0 = arg_2_0._command_queue
-	local var_2_1 = arg_2_0._command_stride
+FunctionCommandQueue.run_commands = function (self)
+	-- function 2
+	local _command_queue = self._command_queue
+	local _command_stride = self._command_stride
 
-	for iter_2_0 = 1, arg_2_0._next_command_index - 1 do
-		local var_2_2 = math.stride_index(iter_2_0, var_2_1)
+	for i = 1, self._next_command_index - 1 do
+		local stride_index = math.stride_index(i, _command_stride)
 
-		var_2_0[var_2_2](unpack_index[var_2_1 - 1](var_2_0, var_2_2 + 1))
+		_command_queue[stride_index](unpack_index[_command_stride - 1](_command_queue, stride_index + 1))
 
-		for iter_2_1 = 1, var_2_1 do
-			var_2_0[math.stride_index(iter_2_0, var_2_1, iter_2_1)] = nil
+		for j = 1, _command_stride do
+			_command_queue[math.stride_index(i, _command_stride, j)] = nil
 		end
 	end
 
-	arg_2_0._next_command_index = 1
+	self._next_command_index = 1
 end
 
-function FunctionCommandQueue.cleanup_destroyed_unit(arg_3_0, arg_3_1)
-	local var_3_0 = arg_3_0._command_queue
-	local var_3_1 = arg_3_0._command_stride
-	local var_3_2 = Unit.animation_event
-	local var_3_3 = arg_3_0._next_command_index - 1
-	local var_3_4 = 1
+FunctionCommandQueue.cleanup_destroyed_unit = function (self, arg_3_1)
+	-- function 3
+	local _command_queue = self._command_queue
+	local _command_stride = self._command_stride
+	local animation_event = Unit.animation_event
+	local num = self._next_command_index - 1
+	local num_2 = 1
 
-	while var_3_4 <= var_3_3 do
-		local var_3_5 = math.stride_index(var_3_4, var_3_1)
+	while num_2 <= num do
+		local stride_index = math.stride_index(num_2, _command_stride)
 
-		if var_3_0[var_3_5] == var_3_2 then
-			if var_3_0[var_3_5 + 1] == arg_3_1 then
-				for iter_3_0 = 1, var_3_1 do
-					local var_3_6 = math.stride_index(var_3_3, var_3_1, iter_3_0)
+		if _command_queue[stride_index] == animation_event then
+			if _command_queue[stride_index + 1] == arg_3_1 then
+				for i = 1, _command_stride do
+					local stride_index_2 = math.stride_index(num, _command_stride, i)
 
-					var_3_0[math.stride_index(var_3_4, var_3_1, iter_3_0)] = var_3_0[var_3_6]
-					var_3_0[var_3_6] = nil
+					_command_queue[math.stride_index(num_2, _command_stride, i)] = _command_queue[stride_index_2]
+					_command_queue[stride_index_2] = nil
 				end
 
-				var_3_3 = var_3_3 - 1
+				num = num - 1
 			else
-				var_3_4 = var_3_4 + 1
+				num_2 = num_2 + 1
 			end
 		else
-			var_3_4 = var_3_4 + 1
+			num_2 = num_2 + 1
 		end
 	end
 
-	arg_3_0._next_command_index = var_3_3 + 1
+	self._next_command_index = num + 1
 end
 
-function FunctionCommandQueue.queue_function_command(arg_4_0, arg_4_1, ...)
-	local var_4_0 = arg_4_0._next_command_index
-	local var_4_1 = arg_4_0._command_queue
+FunctionCommandQueue.queue_function_command = function (self, arg_4_1, ...)
+	-- function 4
+	local _next_command_index = self._next_command_index
+	local _command_queue = self._command_queue
 
-	var_4_1[math.stride_index(var_4_0, arg_4_0._command_stride)] = arg_4_1
+	_command_queue[math.stride_index(_next_command_index, self._command_stride)] = arg_4_1
 
-	local var_4_2 = select
-	local var_4_3 = var_4_2("#", ...)
+	local select = select
+	local var_4_3 = select("#", ...)
 
-	for iter_4_0 = 1, var_4_3 do
-		var_4_1[math.stride_index(var_4_0, arg_4_0._command_stride, iter_4_0 + 1)] = var_4_2(iter_4_0, ...)
+	for i = 1, var_4_3 do
+		_command_queue[math.stride_index(_next_command_index, self._command_stride, i + 1)] = select(i, ...)
 	end
 
-	arg_4_0._next_command_index = var_4_0 + 1
+	self._next_command_index = _next_command_index + 1
 end

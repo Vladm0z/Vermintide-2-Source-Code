@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/hero_conversations_dlc_morris_ingame.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		response = "nfl_morris_arena_altar",
 		name = "nfl_morris_arena_altar",

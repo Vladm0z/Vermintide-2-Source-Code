@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/breeds/breed_chaos_exalted_sorcerer_drachenfels.lua
 
-local var_0_0 = require("scripts/utils/stagger_types")
-local var_0_1 = 850
-local var_0_2 = {
+local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
+local num = 850
+local tbl = {
 	minion_detection_radius = 20,
 	walk_speed = 6.5,
 	is_bot_aid_threat = true,
@@ -83,19 +83,20 @@ local var_0_2 = {
 		1.4
 	},
 	max_health = {
-		var_0_1 * 1,
-		var_0_1 * 1,
-		var_0_1 * 1.5,
-		var_0_1 * 2,
-		var_0_1 * 3,
-		var_0_1 * 5,
-		var_0_1 * 6.5,
-		var_0_1 * 8
+		num * 1,
+		num * 1,
+		num * 1.5,
+		num * 2,
+		num * 3,
+		num * 5,
+		num * 6.5,
+		num * 8
 	},
 	bloodlust_health = BreedTweaks.bloodlust_health.monster,
-	stagger_modifier_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
-		if arg_1_4.stagger_count >= var_0_0.heavy then
-			arg_1_0 = var_0_0.none
+	stagger_modifier_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+		-- function 1
+		if arg_1_4.stagger_count >= scripts_utils_stagger_types.heavy then
+			arg_1_0 = scripts_utils_stagger_types.none
 			arg_1_4.stagger_ignore_anim_cb = true
 		else
 			arg_1_4.stagger_ignore_anim_cb = false
@@ -235,7 +236,8 @@ local var_0_2 = {
 		"kill_chaos_exalted_sorcerer_difficulty_rank",
 		"kill_chaos_exalted_sorcerer_scorpion_hardest"
 	},
-	custom_death_enter_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	custom_death_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+		-- function 2
 		if not Unit.alive(arg_2_1) then
 			return
 		end
@@ -243,7 +245,7 @@ local var_0_2 = {
 		QuestSettings.check_killed_lord_as_last_player_standing(arg_2_1)
 	end
 }
-local var_0_3 = {
+local tbl_2 = {
 	sweep = {
 		easy = {
 			normal = 1.5,
@@ -425,17 +427,17 @@ local var_0_3 = {
 		}
 	}
 }
-local var_0_4 = {
+local tbl_3 = {
 	ahead_dist = 2,
 	push_width = 3,
 	push_forward_offset = 1,
 	push_stagger_distance = 1,
 	player_pushed_speed = 10,
 	push_stagger_impact = {
-		var_0_0.medium,
-		var_0_0.medium,
-		var_0_0.none,
-		var_0_0.none
+		scripts_utils_stagger_types.medium,
+		scripts_utils_stagger_types.medium,
+		scripts_utils_stagger_types.none,
+		scripts_utils_stagger_types.none
 	},
 	push_stagger_duration = {
 		1.5,
@@ -444,17 +446,17 @@ local var_0_4 = {
 		0
 	}
 }
-local var_0_5 = {
+local tbl_4 = {
 	ahead_dist = 1,
 	push_width = 3,
 	push_forward_offset = 1,
 	push_stagger_distance = 1,
 	player_pushed_speed = 10,
 	push_stagger_impact = {
-		var_0_0.medium,
-		var_0_0.medium,
-		var_0_0.none,
-		var_0_0.none
+		scripts_utils_stagger_types.medium,
+		scripts_utils_stagger_types.medium,
+		scripts_utils_stagger_types.none,
+		scripts_utils_stagger_types.none
 	},
 	push_stagger_duration = {
 		1.5,
@@ -464,12 +466,12 @@ local var_0_5 = {
 	}
 }
 
-Breeds.chaos_exalted_sorcerer_drachenfels = table.create_copy(Breeds.chaos_exalted_sorcerer_drachenfels, var_0_2)
+Breeds.chaos_exalted_sorcerer_drachenfels = table.create_copy(Breeds.chaos_exalted_sorcerer_drachenfels, tbl)
 
-local var_0_6 = 2
-local var_0_7 = 12
-local var_0_8 = 2 * math.pi / ((var_0_7 + 1) * 0.5)
-local var_0_9 = {
+local num_2 = 2
+local num_3 = 12
+local num_4 = 2 * math.pi / ((num_3 + 1) * 0.5)
+local tbl_5 = {
 	skulking = {
 		third_wave_max_distance = 7,
 		third_wave_min_distance = 1,
@@ -560,7 +562,7 @@ local var_0_9 = {
 		blocked_velocity_scale = 1.5,
 		catapult_force_z = 5,
 		charge_speed_max = 25,
-		difficulty_attack_intensity = var_0_3,
+		difficulty_attack_intensity = tbl_2,
 		charging_distance_thresholds = {
 			far = 0,
 			medium = 0,
@@ -599,11 +601,11 @@ local var_0_9 = {
 		push_ai = {
 			stagger_distance = 1.5,
 			stagger_impact = {
-				var_0_0.explosion,
-				var_0_0.explosion,
-				var_0_0.none,
-				var_0_0.none,
-				var_0_0.explosion
+				scripts_utils_stagger_types.explosion,
+				scripts_utils_stagger_types.explosion,
+				scripts_utils_stagger_types.none,
+				scripts_utils_stagger_types.none,
+				scripts_utils_stagger_types.explosion
 			},
 			stagger_duration = {
 				3,
@@ -672,23 +674,24 @@ local var_0_9 = {
 		teleport_end_effect = "fx/drachenfels_boss_teleport_enter",
 		face_player_when_teleporting = true,
 		teleport_start_anim = "teleport_start",
-		teleport_pos_func = function(arg_3_0, arg_3_1)
-			local var_3_0 = Managers.state.side:get_side_from_name("heroes").PLAYER_POSITIONS
-			local var_3_1 = Vector3.zero()
+		teleport_pos_func = function (arg_3_0, arg_3_1)
+			-- function 3
+			local PLAYER_POSITIONS = Managers.state.side:get_side_from_name("heroes").PLAYER_POSITIONS
+			local zero = Vector3.zero()
 			local var_3_2 = Managers.state.conflict.level_analysis.generic_ai_node_units.sorcerer_boss_drachenfels_center[1]
-			local var_3_3 = Unit.local_position(var_3_2, 0)
+			local local_position = Unit.local_position(var_3_2, 0)
 
-			for iter_3_0, iter_3_1 in ipairs(var_3_0) do
-				if iter_3_1 then
-					var_3_1 = var_3_1 + iter_3_1
+			for i, v in ipairs(PLAYER_POSITIONS) do
+				if not v then
+					zero = zero + v
 				end
 			end
 
-			local var_3_4 = var_3_1 / #var_3_0
-			local var_3_5 = arg_3_1.nav_world
-			local var_3_6 = 12
+			local num = zero / #PLAYER_POSITIONS
+			local nav_world = arg_3_1.nav_world
+			local num_2 = 12
 
-			return (ConflictUtils.get_furthest_pos_from_pos_on_circle(var_3_5, var_3_3, var_3_6, 1, 15, var_3_4))
+			return (ConflictUtils.get_furthest_pos_from_pos_on_circle(nav_world, local_position, num_2, 1, 15, num))
 		end,
 		considerations = {},
 		ignore_staggers = {
@@ -706,17 +709,18 @@ local var_0_9 = {
 		force_teleport = true,
 		teleport_effect_trail = "fx/chr_chaos_sorcerer_teleport_direction",
 		action_weight = 10,
-		teleport_pos_func = function(arg_4_0, arg_4_1)
-			local var_4_0 = arg_4_1.nav_world
+		teleport_pos_func = function (arg_4_0, arg_4_1)
+			-- function 4
+			local nav_world = arg_4_1.nav_world
 			local var_4_1 = POSITION_LOOKUP[arg_4_0]
 			local var_4_2 = POSITION_LOOKUP[arg_4_1.target_unit]
-			local var_4_3 = var_4_2 + 3 * Vector3.normalize(var_4_2 - var_4_1)
-			local var_4_4, var_4_5 = GwNavQueries.triangle_from_position(var_4_0, var_4_3, 2, 2)
+			local num = var_4_2 + 3 * Vector3.normalize(var_4_2 - var_4_1)
+			local triangle_from_position, var_4_5 = GwNavQueries.triangle_from_position(nav_world, num, 2, 2)
 
-			if var_4_4 then
-				var_4_3.z = var_4_5
+			if not triangle_from_position then
+				num.z = var_4_5
 
-				return var_4_3
+				return num
 			end
 		end,
 		considerations = {},
@@ -1638,7 +1642,7 @@ local var_0_9 = {
 					"attack_float_01",
 					"attack_float_02"
 				},
-				difficulty_attack_intensity = var_0_3,
+				difficulty_attack_intensity = tbl_2,
 				reset_attack_animations = {
 					"attack_float_01",
 					"attack_float_02"
@@ -1671,7 +1675,7 @@ local var_0_9 = {
 					"attack_float_01_fwd",
 					"attack_float_02_fwd"
 				},
-				difficulty_attack_intensity = var_0_3,
+				difficulty_attack_intensity = tbl_2,
 				reset_attack_animations = {
 					"attack_float_01_fwd",
 					"attack_float_02_fwd"
@@ -1706,7 +1710,7 @@ local var_0_9 = {
 		allow_friendly_fire = true,
 		attack_intensity_type = "combo",
 		action_weight = 1,
-		difficulty_attack_intensity = var_0_3,
+		difficulty_attack_intensity = tbl_2,
 		considerations = UtilityConsiderations.drachenfels_floating_combo,
 		attacks = {
 			{
@@ -1727,8 +1731,8 @@ local var_0_9 = {
 				attack_anim = {
 					"attack_float_combo_01"
 				},
-				push_units_in_the_way = var_0_4,
-				push_units_in_the_way_continuous = var_0_5,
+				push_units_in_the_way = tbl_3,
+				push_units_in_the_way_continuous = tbl_4,
 				bot_threats = {
 					{
 						range = 3.5,
@@ -1751,8 +1755,9 @@ local var_0_9 = {
 						start_time = 1.9333333333333333
 					}
 				},
-				hit_player_func = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
-					if arg_5_5 then
+				hit_player_func = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+					-- function 5
+					if not arg_5_5 then
 						arg_5_1.has_dealt_damage = true
 					end
 				end
@@ -1777,7 +1782,7 @@ local var_0_9 = {
 		action_weight = 1,
 		blocked_damage = 5,
 		damage_type = "cutting",
-		difficulty_attack_intensity = var_0_3,
+		difficulty_attack_intensity = tbl_2,
 		considerations = UtilityConsiderations.drachenfels_overhead_floating_attack,
 		attacks = {
 			{
@@ -1805,7 +1810,7 @@ local var_0_9 = {
 					"attack_float_06",
 					"attack_float_03"
 				},
-				difficulty_attack_intensity = var_0_3,
+				difficulty_attack_intensity = tbl_2,
 				reset_attack_animations = {
 					"attack_float_06",
 					"attack_float_03"
@@ -1838,7 +1843,7 @@ local var_0_9 = {
 					"attack_float_03_fwd",
 					"attack_float_06_fwd"
 				},
-				difficulty_attack_intensity = var_0_3,
+				difficulty_attack_intensity = tbl_2,
 				reset_attack_animations = {
 					"attack_float_03_fwd",
 					"attack_float_06_fwd"
@@ -1879,7 +1884,7 @@ local var_0_9 = {
 			"attack_float_01",
 			"attack_float_02"
 		},
-		difficulty_attack_intensity = var_0_3,
+		difficulty_attack_intensity = tbl_2,
 		difficulty_damage = {
 			harder = 25,
 			hard = 15,
@@ -1923,7 +1928,7 @@ local var_0_9 = {
 		action_weight = 1,
 		bot_threat_start_time_step = 1.45,
 		width = 0.4,
-		difficulty_attack_intensity = var_0_3,
+		difficulty_attack_intensity = tbl_2,
 		considerations = UtilityConsiderations.drachenfels_overhead_downed_attack,
 		attack_anim = {
 			"attack_close_01"
@@ -1958,7 +1963,7 @@ local var_0_9 = {
 		action_weight = 1,
 		bot_threat_start_time_step = 1.45,
 		width = 3,
-		difficulty_attack_intensity = var_0_3,
+		difficulty_attack_intensity = tbl_2,
 		considerations = UtilityConsiderations.drachenfels_cleave_downed_attack,
 		attack_anim = {
 			"attack_close_02"
@@ -1993,7 +1998,7 @@ local var_0_9 = {
 		action_weight = 1,
 		bot_threat_start_time_step = 1.45,
 		width = 1.5,
-		difficulty_attack_intensity = var_0_3,
+		difficulty_attack_intensity = tbl_2,
 		considerations = UtilityConsiderations.drachenfels_punch_downed_attack,
 		attack_anim = {
 			"attack_close_03"
@@ -2039,15 +2044,17 @@ local var_0_9 = {
 			1.1719,
 			1.3749
 		},
-		init_spell_func = function(arg_6_0)
-			arg_6_0.current_spell = arg_6_0.magic_missile_ground_data
+		init_spell_func = function (self)
+			-- function 6
+			self.current_spell = self.magic_missile_ground_data
 		end,
-		get_throw_position_func = function(arg_7_0, arg_7_1, arg_7_2)
+		get_throw_position_func = function (arg_7_0, arg_7_1, arg_7_2)
+			-- function 7
 			local var_7_0 = ScriptUnit.has_extension(arg_7_0, "ai_inventory_system").inventory_item_units[1]
-			local var_7_1 = Unit.world_position(var_7_0, Unit.node(var_7_0, "g_scythe"))
-			local var_7_2 = Vector3.normalize(arg_7_2 - var_7_1)
+			local world_position = Unit.world_position(var_7_0, Unit.node(var_7_0, "g_scythe"))
+			local normalize = Vector3.normalize(arg_7_2 - world_position)
 
-			return var_7_1, var_7_2
+			return world_position, normalize
 		end,
 		ignore_staggers = {
 			true,
@@ -2075,8 +2082,9 @@ local var_0_9 = {
 			1.1719,
 			1.3749
 		},
-		init_spell_func = function(arg_8_0)
-			arg_8_0.current_spell = arg_8_0.seeking_bomb_missile_data
+		init_spell_func = function (self)
+			-- function 8
+			self.current_spell = self.seeking_bomb_missile_data
 		end,
 		ignore_staggers = {
 			true,
@@ -2136,12 +2144,13 @@ local var_0_9 = {
 			true,
 			true
 		},
-		teleport_pos_func = function(arg_9_0, arg_9_1)
-			local var_9_0 = ConflictUtils.get_random_spawner_with_id("sorcerer_boss_drachenfels", arg_9_1.defensive_spawner)
+		teleport_pos_func = function (arg_9_0, arg_9_1)
+			-- function 9
+			local get_random_spawner_with_id = ConflictUtils.get_random_spawner_with_id("sorcerer_boss_drachenfels", arg_9_1.defensive_spawner)
 
-			arg_9_1.defensive_spawner = var_9_0
+			arg_9_1.defensive_spawner = get_random_spawner_with_id
 
-			return Unit.local_position(var_9_0, 0)
+			return Unit.local_position(get_random_spawner_with_id, 0)
 		end
 	},
 	defensive_teleport = {
@@ -2174,7 +2183,8 @@ local var_0_9 = {
 			true,
 			true
 		},
-		teleport_start_function = function(arg_10_0, arg_10_1)
+		teleport_start_function = function (arg_10_0, arg_10_1)
+			-- function 10
 			LevelHelper:flow_event(arg_10_1.world, "cs_boss_death")
 			LocomotionUtils.set_animation_driven_movement(arg_10_0, true)
 		end
@@ -2426,7 +2436,8 @@ local var_0_9 = {
 		}
 	},
 	stagger = {
-		custom_enter_function = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+		custom_enter_function = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+			-- function 11
 			arg_11_1.stagger_ignore_anim_cb = true
 
 			return arg_11_3.stagger_anims[arg_11_1.stagger_type], "idle"
@@ -2554,22 +2565,23 @@ local var_0_9 = {
 	}
 }
 
-local function var_0_10(arg_12_0, arg_12_1, arg_12_2)
-	local var_12_0 = table.clone(arg_12_1)
+local function fn(arg_12_0, arg_12_1, arg_12_2)
+	-- function 12
+	local clone = table.clone(arg_12_1)
 
-	var_12_0.considerations = UtilityConsiderations[arg_12_0]
-	var_12_0.action_weight = 1
-	var_12_0.available_spells = {
+	clone.considerations = UtilityConsiderations[arg_12_0]
+	clone.action_weight = 1
+	clone.available_spells = {
 		arg_12_2
 	}
 
-	return var_12_0
+	return clone
 end
 
-var_0_9.vortex_skulking = var_0_10("vortex_skulking", var_0_9.skulking, "vortex")
-var_0_9.vortex_skulking.search_func_name = "_update_vortex_search"
-var_0_9.tentacle_skulking = var_0_10("tentacle_skulking", var_0_9.skulking, "tentacle")
-var_0_9.plague_wave_skulking = var_0_10("exalted_plague_wave_skulking", var_0_9.skulking, "plague_wave")
-var_0_9.magic_missile_skulking = var_0_10("magic_missile_skulking", var_0_9.skulking, "magic_missile")
-var_0_9.seeking_bomb_missile_skulking = var_0_10("seeking_bomb_missile_skulking", var_0_9.skulking, "seeking_bomb_missile")
-BreedActions.chaos_exalted_sorcerer_drachenfels = table.create_copy(BreedActions.chaos_exalted_sorcerer_drachenfels, var_0_9)
+tbl_5.vortex_skulking = fn("vortex_skulking", tbl_5.skulking, "vortex")
+tbl_5.vortex_skulking.search_func_name = "_update_vortex_search"
+tbl_5.tentacle_skulking = fn("tentacle_skulking", tbl_5.skulking, "tentacle")
+tbl_5.plague_wave_skulking = fn("exalted_plague_wave_skulking", tbl_5.skulking, "plague_wave")
+tbl_5.magic_missile_skulking = fn("magic_missile_skulking", tbl_5.skulking, "magic_missile")
+tbl_5.seeking_bomb_missile_skulking = fn("seeking_bomb_missile_skulking", tbl_5.skulking, "seeking_bomb_missile")
+BreedActions.chaos_exalted_sorcerer_drachenfels = table.create_copy(BreedActions.chaos_exalted_sorcerer_drachenfels, tbl_5)

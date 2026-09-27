@@ -10,31 +10,34 @@ ProjectileImpactDataIndex = {
 	NORMAL = 4
 }
 
-function ProjectileBaseImpactUnitExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	local var_1_0 = arg_1_1.world
+ProjectileBaseImpactUnitExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	local world = arg_1_1.world
 
-	arg_1_0.world = var_1_0
-	arg_1_0.unit = arg_1_2
-	arg_1_0.physics_world = World.get_data(var_1_0, "physics_world")
-	arg_1_0.impact_buffer = pdArray.new()
+	self.world = world
+	self.unit = arg_1_2
+	self.physics_world = World.get_data(world, "physics_world")
+	self.impact_buffer = pdArray.new()
 end
 
-function ProjectileBaseImpactUnitExtension.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
-	pdArray.set_empty(arg_2_0.impact_buffer)
+ProjectileBaseImpactUnitExtension.update = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	-- function 2
+	pdArray.set_empty(self.impact_buffer)
 end
 
-local var_0_0 = {}
+local tbl = {}
 
-function ProjectileBaseImpactUnitExtension.impact(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
-	local var_3_0 = arg_3_0.impact_buffer
+ProjectileBaseImpactUnitExtension.impact = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	-- function 3
+	local impact_buffer = self.impact_buffer
 
-	var_0_0[ProjectileImpactDataIndex.UNIT] = arg_3_1
-	var_0_0[ProjectileImpactDataIndex.POSITION] = Vector3Box(arg_3_2)
-	var_0_0[ProjectileImpactDataIndex.DIRECTION] = Vector3Box(arg_3_3)
-	var_0_0[ProjectileImpactDataIndex.NORMAL] = Vector3Box(arg_3_4)
-	var_0_0[ProjectileImpactDataIndex.ACTOR_INDEX] = arg_3_5
+	tbl[ProjectileImpactDataIndex.UNIT] = arg_3_1
+	tbl[ProjectileImpactDataIndex.POSITION] = Vector3Box(arg_3_2)
+	tbl[ProjectileImpactDataIndex.DIRECTION] = Vector3Box(arg_3_3)
+	tbl[ProjectileImpactDataIndex.NORMAL] = Vector3Box(arg_3_4)
+	tbl[ProjectileImpactDataIndex.ACTOR_INDEX] = arg_3_5
 
-	pdArray.push_back5(var_3_0, unpack(var_0_0))
+	pdArray.push_back5(impact_buffer, unpack(tbl))
 
 	if Unit.actor(arg_3_1, arg_3_5) == nil then
 		print("hitting pickup?")
@@ -43,6 +46,7 @@ function ProjectileBaseImpactUnitExtension.impact(arg_3_0, arg_3_1, arg_3_2, arg
 	end
 end
 
-function ProjectileBaseImpactUnitExtension.recent_impacts(arg_4_0)
-	return pdArray.data(arg_4_0.impact_buffer)
+ProjectileBaseImpactUnitExtension.recent_impacts = function (self)
+	-- function 4
+	return pdArray.data(self.impact_buffer)
 end

@@ -1,12 +1,12 @@
 -- chunkname: @scripts/settings/terror_events/terror_events_crater.lua
 
-local var_0_0 = require("scripts/settings/terror_events/terror_event_utils")
-local var_0_1 = var_0_0.count_event_breed
-local var_0_2 = var_0_0.num_spawned_enemies
-local var_0_3 = var_0_0.count_breed
-local var_0_4 = var_0_0.num_alive_standards
-local var_0_5 = var_0_0.HARD
-local var_0_6 = {
+local scripts_settings_terror_events_terror_event_utils = require("scripts/settings/terror_events/terror_event_utils")
+local count_event_breed = scripts_settings_terror_events_terror_event_utils.count_event_breed
+local num_spawned_enemies = scripts_settings_terror_events_terror_event_utils.num_spawned_enemies
+local count_breed = scripts_settings_terror_events_terror_event_utils.count_breed
+local num_alive_standards = scripts_settings_terror_events_terror_event_utils.num_alive_standards
+local HARD = scripts_settings_terror_events_terror_event_utils.HARD
+local tbl = {
 	skaven = {
 		stinger_sound_event = "enemy_horde_stinger",
 		music_states = {
@@ -28,7 +28,7 @@ local var_0_6 = {
 		}
 	}
 }
-local var_0_7 = {
+local tbl_2 = {
 	crater_no_horde = {
 		{
 			"control_hordes",
@@ -56,14 +56,14 @@ local var_0_7 = {
 			limit_spawners = 3,
 			spawner_id = "crater_mid_event_door_horde_01",
 			composition_type = "event_medium_beastmen",
-			sound_settings = var_0_6.beastmen
+			sound_settings = tbl.beastmen
 		},
 		{
 			"event_horde",
 			limit_spawners = 3,
 			spawner_id = "crater_mid_event_door_horde_02",
 			composition_type = "event_medium_beastmen",
-			sound_settings = var_0_6.beastmen
+			sound_settings = tbl.beastmen
 		},
 		{
 			"delay",
@@ -72,8 +72,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 40,
-			condition = function(arg_1_0)
-				return var_0_1("beastmen_gor") < 1 and var_0_3("beastmen_ungor") < 1
+			condition = function (arg_1_0)
+				-- function 1
+				return not (count_event_breed("beastmen_gor") < 1) or count_breed("beastmen_ungor") < 1
 			end
 		},
 		{
@@ -93,7 +94,7 @@ local var_0_7 = {
 			limit_spawners = 1,
 			spawner_id = "crater_mid_event_door_elite_02",
 			composition_type = "crater_bestigor_medium",
-			sound_settings = var_0_6.beastmen
+			sound_settings = tbl.beastmen
 		},
 		{
 			"delay",
@@ -101,8 +102,9 @@ local var_0_7 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_2_0)
-				return var_0_1("beastmen_bestigor") < 1
+			condition = function (arg_2_0)
+				-- function 2
+				return count_event_breed("beastmen_bestigor") < 1
 			end
 		},
 		{
@@ -227,8 +229,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 55,
-			condition = function(arg_3_0)
-				return var_0_1("beastmen_gor") < 4 and var_0_3("beastmen_ungor") < 4
+			condition = function (arg_3_0)
+				-- function 3
+				return not (count_event_breed("beastmen_gor") < 4) or count_breed("beastmen_ungor") < 4
 			end
 		},
 		{
@@ -265,8 +268,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function(arg_4_0)
-				return var_0_2() < 8
+			condition = function (arg_4_0)
+				-- function 4
+				return num_spawned_enemies() < 8
 			end
 		},
 		{
@@ -289,8 +293,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 180,
-			condition = function(arg_5_0)
-				return var_0_4() < 1 and var_0_1("beastmen_gor") < 5 and var_0_1("beastmen_ungor") < 5
+			condition = function (arg_5_0)
+				-- function 5
+				return not (num_alive_standards() < 1) or not (count_event_breed("beastmen_gor") < 5) or count_event_breed("beastmen_ungor") < 5
 			end
 		},
 		{
@@ -327,8 +332,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function(arg_6_0)
-				return var_0_2() < 6
+			condition = function (arg_6_0)
+				-- function 6
+				return num_spawned_enemies() < 6
 			end
 		},
 		{
@@ -351,8 +357,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 180,
-			condition = function(arg_7_0)
-				return var_0_4() < 1 and var_0_1("beastmen_gor") < 5 and var_0_1("beastmen_ungor") < 5
+			condition = function (arg_7_0)
+				-- function 7
+				return not (num_alive_standards() < 1) or not (count_event_breed("beastmen_gor") < 5) or count_event_breed("beastmen_ungor") < 5
 			end
 		},
 		{
@@ -389,8 +396,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 45,
-			condition = function(arg_8_0)
-				return var_0_2() < 5
+			condition = function (arg_8_0)
+				-- function 8
+				return num_spawned_enemies() < 5
 			end
 		},
 		{
@@ -413,8 +421,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 180,
-			condition = function(arg_9_0)
-				return var_0_4() < 1 and var_0_1("beastmen_gor") < 5 and var_0_1("beastmen_ungor") < 5
+			condition = function (arg_9_0)
+				-- function 9
+				return not (num_alive_standards() < 1) or not (count_event_breed("beastmen_gor") < 5) or count_event_breed("beastmen_ungor") < 5
 			end
 		},
 		{
@@ -451,8 +460,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function(arg_10_0)
-				return var_0_2() < 8
+			condition = function (arg_10_0)
+				-- function 10
+				return num_spawned_enemies() < 8
 			end
 		},
 		{
@@ -479,8 +489,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 180,
-			condition = function(arg_11_0)
-				return var_0_4() < 1 and var_0_1("beastmen_gor") < 5 and var_0_1("beastmen_ungor") < 5
+			condition = function (arg_11_0)
+				-- function 11
+				return not (num_alive_standards() < 1) or not (count_event_breed("beastmen_gor") < 5) or count_event_breed("beastmen_ungor") < 5
 			end
 		},
 		{
@@ -510,23 +521,25 @@ local var_0_7 = {
 			"spawn_at_raw",
 			breed_name = "beastmen_minotaur",
 			spawner_id = "event_minotaur",
-			difficulty_requirement = var_0_5
+			difficulty_requirement = HARD
 		},
 		{
 			"continue_when",
-			condition = function(arg_12_0)
-				return var_0_1("beastmen_minotaur") == 1
+			condition = function (arg_12_0)
+				-- function 12
+				return count_event_breed("beastmen_minotaur") == 1
 			end
 		},
 		{
 			"continue_when",
-			condition = function(arg_13_0)
-				return var_0_1("beastmen_minotaur") < 1
+			condition = function (arg_13_0)
+				-- function 13
+				return count_event_breed("beastmen_minotaur") < 1
 			end
 		}
 	}
 }
 
 return {
-	var_0_7
+	tbl_2
 }

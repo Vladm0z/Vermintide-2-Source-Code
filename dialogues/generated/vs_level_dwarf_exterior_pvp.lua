@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/vs_level_dwarf_exterior_pvp.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		response = "nde_vs_dwarf_external_safe_room_idle_dummy_set1",
 		name = "nde_vs_dwarf_external_safe_room_idle_dummy_set1",

@@ -30,153 +30,169 @@ require("scripts/ui/text_popup/text_popup_ui")
 require("scripts/ui/weave_tutorial/weave_ui_onboarding_tutorial")
 require("scripts/ui/dlc_upsell/common_popup_handler")
 require("scripts/ui/hint_ui/hint_ui_handler")
-DLCUtils.map_list("ui_views", function(arg_1_0)
-	local var_1_0 = arg_1_0.file
+DLCUtils.map_list("ui_views", function (self)
+	-- function 1
+	local file = self.file
 
-	if var_1_0 then
-		dofile(var_1_0)
+	if not file then
+		dofile(file)
 	end
 end)
 
-for iter_0_0, iter_0_1 in pairs(PopupSettings) do
-	if iter_0_1.file then
-		require(iter_0_1.file)
+for k, v in pairs(PopupSettings) do
+	if not v.file then
+		require(v.file)
 	end
 end
 
-local var_0_0 = {}
-local var_0_1 = require("scripts/ui/views/ingame_ui_settings")
-local var_0_2 = var_0_1.view_settings
-local var_0_3 = var_0_1.transitions
-local var_0_4 = script_data.testify and require("scripts/ui/views/ingame_ui_testify")
+local tbl = {}
+local scripts_ui_views_ingame_ui_settings = require("scripts/ui/views/ingame_ui_settings")
+local view_settings = scripts_ui_views_ingame_ui_settings.view_settings
+local transitions = scripts_ui_views_ingame_ui_settings.transitions
+local testify = script_data.testify
 
+testify = not testify and require("scripts/ui/views/ingame_ui_testify")
 IngameUI = class(IngameUI)
 
-function IngameUI.init(arg_2_0, arg_2_1)
+IngameUI.init = function (self, arg_2_1)
+	-- function 2
 	printf("[IngameUI] init")
 
-	arg_2_0.unlock_manager = Managers.unlock
-	arg_2_0.world_manager = arg_2_1.world_manager
-	arg_2_0.camera_manager = arg_2_1.camera_manager
-	arg_2_0.is_in_inn = arg_2_1.is_in_inn
+	self.unlock_manager = Managers.unlock
+	self.world_manager = arg_2_1.world_manager
+	self.camera_manager = arg_2_1.camera_manager
+	self.is_in_inn = arg_2_1.is_in_inn
 
-	local var_2_0 = Managers.world:world("level_world")
-	local var_2_1 = Managers.world:world("top_ingame_view")
-	local var_2_2 = Managers.world:wwise_world(var_2_0)
+	local world = Managers.world:world("level_world")
+	local world_2 = Managers.world:world("top_ingame_view")
+	local wwise_world = Managers.world:wwise_world(world)
 
-	arg_2_0.wwise_world = var_2_2
-	arg_2_0.world = var_2_0
-	arg_2_0.top_world = var_2_1
+	self.wwise_world = wwise_world
+	self.world = world
+	self.top_world = world_2
 
-	local var_2_3 = Managers.state.game_mode:game_mode_key()
-	local var_2_4 = Managers.mechanism:current_mechanism_name()
-	local var_2_5 = var_2_3 == "tutorial"
-	local var_2_6 = arg_2_0.is_in_inn
+	local game_mode_key = Managers.state.game_mode:game_mode_key()
+	local current_mechanism_name = Managers.mechanism:current_mechanism_name()
+	local flag = game_mode_key == "tutorial"
+	local is_in_inn = self.is_in_inn
 
-	arg_2_0.ui_renderer = arg_2_0:create_ui_renderer(var_2_0, var_2_5, var_2_6, var_2_4)
-	arg_2_0.ui_top_renderer = arg_2_0:create_ui_renderer(var_2_1, var_2_5, var_2_6, var_2_4)
-	arg_2_0.blocked_transitions = var_0_2.blocked_transitions
-	arg_2_0.fps = 0
-	arg_2_0.mean_dt = 0
-	arg_2_0._fps_cooldown = 0
+	self.ui_renderer = self:create_ui_renderer(world, flag, is_in_inn, current_mechanism_name)
+	self.ui_top_renderer = self:create_ui_renderer(world_2, flag, is_in_inn, current_mechanism_name)
+	self.blocked_transitions = view_settings.blocked_transitions
+	self.fps = 0
+	self.mean_dt = 0
+	self._fps_cooldown = 0
 
-	UISetupFontHeights(arg_2_0.ui_renderer.gui)
+	UISetupFontHeights(self.ui_renderer.gui)
 
-	local var_2_7 = arg_2_1.input_manager
+	local input_manager = arg_2_1.input_manager
 
-	arg_2_0.input_manager = var_2_7
+	self.input_manager = input_manager
 
-	var_2_7:create_input_service("ingame_menu", "IngameMenuKeymaps", "IngameMenuFilters")
-	var_2_7:map_device_to_service("ingame_menu", "keyboard")
-	var_2_7:map_device_to_service("ingame_menu", "mouse")
-	var_2_7:map_device_to_service("ingame_menu", "gamepad")
+	input_manager:create_input_service("ingame_menu", "IngameMenuKeymaps", "IngameMenuFilters")
+	input_manager:map_device_to_service("ingame_menu", "keyboard")
+	input_manager:map_device_to_service("ingame_menu", "mouse")
+	input_manager:map_device_to_service("ingame_menu", "gamepad")
 
-	arg_2_1.ui_renderer = arg_2_0.ui_renderer
-	arg_2_1.ui_top_renderer = arg_2_0.ui_top_renderer
-	arg_2_1.ingame_ui = arg_2_0
-	arg_2_1.wwise_world = var_2_2
-	arg_2_0.profile_synchronizer = arg_2_1.profile_synchronizer
-	arg_2_0.peer_id = arg_2_1.peer_id
-	arg_2_0.local_player_id = arg_2_1.local_player_id
-	arg_2_0._player = arg_2_1.player
-	arg_2_0.is_server = arg_2_1.is_server
-	arg_2_0.ingame_hud = IngameHud:new(arg_2_0, arg_2_1)
-	arg_2_0.popups_by_name = {}
-	arg_2_0.last_resolution_x, arg_2_0.last_resolution_y = Application.resolution()
+	arg_2_1.ui_renderer = self.ui_renderer
+	arg_2_1.ui_top_renderer = self.ui_top_renderer
+	arg_2_1.ingame_ui = self
+	arg_2_1.wwise_world = wwise_world
+	self.profile_synchronizer = arg_2_1.profile_synchronizer
+	self.peer_id = arg_2_1.peer_id
+	self.local_player_id = arg_2_1.local_player_id
+	self._player = arg_2_1.player
+	self.is_server = arg_2_1.is_server
+	self.ingame_hud = IngameHud:new(self, arg_2_1)
+	self.popups_by_name = {}
+	self.last_resolution_x, self.last_resolution_y = Application.resolution()
 
-	arg_2_0:setup_views(arg_2_1)
+	self:setup_views(arg_2_1)
 
-	arg_2_0.end_screen = EndScreenUI:new(arg_2_1)
-	arg_2_0.weave_onboarding = WeaveUIOnboardingTutorial:new(arg_2_1)
-	arg_2_0.popup_handler = CommonPopupHandler:new(arg_2_1)
-	arg_2_0.text_popup_ui = TextPopupUI:new(arg_2_1)
-	arg_2_0.hint_ui_handler = HintUIHandler:new(arg_2_1)
+	self.end_screen = EndScreenUI:new(arg_2_1)
+	self.weave_onboarding = WeaveUIOnboardingTutorial:new(arg_2_1)
+	self.popup_handler = CommonPopupHandler:new(arg_2_1)
+	self.text_popup_ui = TextPopupUI:new(arg_2_1)
+	self.hint_ui_handler = HintUIHandler:new(arg_2_1)
 
-	if GameSettingsDevelopment.help_screen_enabled then
-		arg_2_0.help_screen = HelpScreenUI:new(arg_2_1)
+	if not GameSettingsDevelopment.help_screen_enabled then
+		self.help_screen = HelpScreenUI:new(arg_2_1)
 	end
 
-	arg_2_0.cutscene_system = Managers.state.entity:system("cutscene_system")
+	self.cutscene_system = Managers.state.entity:system("cutscene_system")
 
-	arg_2_0:register_rpcs(arg_2_1.network_event_delegate)
-	GarbageLeakDetector.register_object(arg_2_0, "IngameUI")
+	self:register_rpcs(arg_2_1.network_event_delegate)
+	GarbageLeakDetector.register_object(self, "IngameUI")
 
-	if not arg_2_0.is_server and arg_2_0.is_in_inn and arg_2_0.views.map_view then
-		arg_2_0.views.map_view:set_map_interaction_state(false)
+	if (self.is_server or not self.is_in_inn) and not self.views.map_view then
+		self.views.map_view:set_map_interaction_state(false)
 	end
 
 	Managers.chat:set_profile_synchronizer(arg_2_1.profile_synchronizer)
-	Managers.chat:set_wwise_world(var_2_2)
-	Managers.chat:set_input_manager(var_2_7)
+	Managers.chat:set_wwise_world(wwise_world)
+	Managers.chat:set_input_manager(input_manager)
 
-	arg_2_0._profile_requester = (arg_2_1.network_server or arg_2_1.network_client):profile_requester()
-	arg_2_0.telemetry_time_view_enter = 0
-	arg_2_0.ingame_ui_context = arg_2_1
+	local network_server = arg_2_1.network_server
+
+	network_server = network_server or arg_2_1.network_client
+	self._profile_requester = network_server:profile_requester()
+	self.telemetry_time_view_enter = 0
+	self.ingame_ui_context = arg_2_1
 end
 
-function IngameUI.create_ui_renderer(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
-	return var_0_2.ui_renderer_function(arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+IngameUI.create_ui_renderer = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	-- function 3
+	return view_settings.ui_renderer_function(arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 end
 
-function IngameUI.setup_views(arg_4_0, arg_4_1)
-	arg_4_0.views = var_0_2.views_function(arg_4_1)
-	arg_4_0.hotkey_mapping = var_0_2.hotkey_mapping
+IngameUI.setup_views = function (self, arg_4_1)
+	-- function 4
+	self.views = view_settings.views_function(arg_4_1)
+	self.hotkey_mapping = view_settings.hotkey_mapping
 end
 
-function IngameUI.setup_specific_view(arg_5_0, arg_5_1, arg_5_2)
+IngameUI.setup_specific_view = function (self, arg_5_1, arg_5_2)
+	-- function 5
 	printf("[IngameUI] setup_specific_view %s", arg_5_2)
 
 	local var_5_0 = rawget(_G, arg_5_2)
 
-	if arg_5_0.views[arg_5_1] and arg_5_0.views[arg_5_1].destroy then
-		arg_5_0.views[arg_5_1]:destroy()
+	if not self.views[arg_5_1] and not self.views[arg_5_1].destroy then
+		self.views[arg_5_1]:destroy()
 		printf("[IngameUI] setup_specific_view destroy %s", arg_5_2)
 	end
 
-	arg_5_0.views[arg_5_1] = var_5_0:new(arg_5_0.ingame_ui_context)
+	self.views[arg_5_1] = var_5_0:new(self.ingame_ui_context)
 end
 
-function IngameUI.is_local_player_ready_for_game(arg_6_0)
-	if arg_6_0.is_in_inn then
-		local var_6_0 = Managers.player:local_player()
-		local var_6_1 = var_6_0 and var_6_0.player_unit
+IngameUI.is_local_player_ready_for_game = function (self)
+	-- function 6
+	if not self.is_in_inn then
+		local local_player = Managers.player:local_player()
+		local flag = not local_player and local_player.player_unit
 
-		if var_6_1 then
-			return ScriptUnit.extension(var_6_1, "status_system"):is_in_end_zone()
+		if not flag then
+			return ScriptUnit.extension(flag, "status_system"):is_in_end_zone()
 		end
 	end
 end
 
-function IngameUI.can_view_lobby_browser(arg_7_0)
-	local var_7_0 = arg_7_0.is_server
-	local var_7_1 = Managers.matchmaking:is_game_matchmaking()
+IngameUI.can_view_lobby_browser = function (self)
+	-- function 7
+	local is_server = self.is_server
+	local is_game_matchmaking = Managers.matchmaking:is_game_matchmaking()
 
-	return var_7_0 and not var_7_1
+	return not is_server and not is_game_matchmaking
 end
 
-script_data.lorebook_enabled = script_data.lorebook_enabled or Development.parameter("lorebook_enabled")
+local script_data = script_data
+local lorebook_enabled = script_data.lorebook_enabled
 
-function IngameUI.is_lorebook_enabled(arg_8_0)
+lorebook_enabled = lorebook_enabled or Development.parameter("lorebook_enabled")
+script_data.lorebook_enabled = lorebook_enabled
+
+IngameUI.is_lorebook_enabled = function (arg_8_0)
+	-- function 8
 	if not script_data.lorebook_enabled then
 		return false
 	end
@@ -184,154 +200,168 @@ function IngameUI.is_lorebook_enabled(arg_8_0)
 	return true
 end
 
-function IngameUI.register_rpcs(arg_9_0, arg_9_1)
-	arg_9_0.network_event_delegate = arg_9_1
+IngameUI.register_rpcs = function (self, arg_9_1)
+	-- function 9
+	self.network_event_delegate = arg_9_1
 
-	arg_9_1:register(arg_9_0, unpack(var_0_0))
+	arg_9_1:register(self, unpack(tbl))
 end
 
-function IngameUI.unregister_rpcs(arg_10_0)
-	arg_10_0.network_event_delegate:unregister(arg_10_0)
+IngameUI.unregister_rpcs = function (self)
+	-- function 10
+	self.network_event_delegate:unregister(self)
 
-	arg_10_0.network_event_delegate = nil
+	self.network_event_delegate = nil
 end
 
-function IngameUI.is_in_view_state(arg_11_0, arg_11_1)
-	if not arg_11_0.current_view then
+IngameUI.is_in_view_state = function (self, arg_11_1)
+	-- function 11
+	if not self.current_view then
 		return false
 	end
 
-	local var_11_0 = arg_11_0.views[arg_11_0.current_view]
-	local var_11_1 = var_11_0.current_state and var_11_0:current_state()
+	local var_11_0 = self.views[self.current_view]
+	local current_state = var_11_0.current_state
 
-	if not var_11_1 then
+	current_state = not current_state and var_11_0:current_state()
+
+	if not current_state then
 		return false
 	end
 
-	return var_11_1.NAME == arg_11_1
+	return current_state.NAME == arg_11_1
 end
 
-function IngameUI.destroy(arg_12_0)
-	arg_12_0:unregister_rpcs()
+IngameUI.destroy = function (self)
+	-- function 12
+	self:unregister_rpcs()
 	Managers.chat:set_profile_synchronizer(nil)
 	Managers.chat:set_wwise_world(nil)
 	Managers.chat:set_input_manager(nil)
 
-	local var_12_0 = arg_12_0.current_view
+	local current_view = self.current_view
 
-	if not arg_12_0.menu_active and var_12_0 then
-		-- block empty
+	if self.menu_active or not current_view then
+		-- Nothing
 	end
 
-	if var_12_0 then
-		local var_12_1 = {}
+	if not current_view then
+		local tbl = {}
 
-		arg_12_0.views[var_12_0]:on_exit(var_12_1)
+		self.views[current_view]:on_exit(tbl)
 
-		arg_12_0.current_view = nil
+		self.current_view = nil
 	end
 
-	for iter_12_0, iter_12_1 in pairs(arg_12_0.views) do
-		if iter_12_1.destroy then
-			iter_12_1:destroy()
+	for k, v in pairs(self.views) do
+		if not v.destroy then
+			v:destroy()
 		end
 	end
 
-	arg_12_0.end_screen:destroy()
+	self.end_screen:destroy()
 
-	arg_12_0.end_screen = nil
+	self.end_screen = nil
 
-	arg_12_0.ingame_hud:destroy()
+	self.ingame_hud:destroy()
 
-	arg_12_0.ingame_hud = nil
+	self.ingame_hud = nil
 
-	if arg_12_0.help_screen then
-		arg_12_0.help_screen:destroy()
+	if not self.help_screen then
+		self.help_screen:destroy()
 
-		arg_12_0.help_screen = nil
+		self.help_screen = nil
 	end
 
-	local var_12_2 = arg_12_0.popups_by_name
+	local popups_by_name = self.popups_by_name
 
-	for iter_12_2, iter_12_3 in pairs(arg_12_0.popups_by_name) do
-		local var_12_3 = iter_12_3.popup
+	for k_2, v_2 in pairs(self.popups_by_name) do
+		local popup = v_2.popup
 
-		var_12_3:hide()
-		var_12_3:delete()
+		popup:hide()
+		popup:delete()
 
-		var_12_2[iter_12_2] = nil
+		popups_by_name[k_2] = nil
 	end
 
-	arg_12_0.text_popup_ui:destroy()
+	self.text_popup_ui:destroy()
 
-	arg_12_0.text_popup_ui = nil
+	self.text_popup_ui = nil
 
-	if arg_12_0.popup_id then
-		Managers.popup:cancel_popup(arg_12_0.popup_id)
+	if not self.popup_id then
+		Managers.popup:cancel_popup(self.popup_id)
 	end
 
-	if arg_12_0.weave_onboarding then
-		arg_12_0.weave_onboarding:destroy()
+	if not self.weave_onboarding then
+		self.weave_onboarding:destroy()
 
-		arg_12_0.weave_onboarding = nil
+		self.weave_onboarding = nil
 	end
 
-	if arg_12_0.popup_handler then
-		arg_12_0.popup_handler:destroy()
+	if not self.popup_handler then
+		self.popup_handler:destroy()
 
-		arg_12_0.popup_handler = nil
+		self.popup_handler = nil
 	end
 
-	if arg_12_0.hint_ui_handler then
-		arg_12_0.hint_ui_handler:destroy()
+	if not self.hint_ui_handler then
+		self.hint_ui_handler:destroy()
 
-		arg_12_0.hint_ui_handler = nil
+		self.hint_ui_handler = nil
 	end
 
-	UIRenderer.destroy(arg_12_0.ui_renderer, arg_12_0.world)
-	UIRenderer.destroy(arg_12_0.ui_top_renderer, arg_12_0.top_world)
+	UIRenderer.destroy(self.ui_renderer, self.world)
+	UIRenderer.destroy(self.ui_top_renderer, self.top_world)
 
-	arg_12_0.ui_renderer = nil
-	arg_12_0.ui_top_renderer = nil
+	self.ui_renderer = nil
+	self.ui_top_renderer = nil
 
 	printf("[IngameUI] destroy")
 end
 
-function IngameUI.weaves_requirements_fulfilled(arg_13_0)
+IngameUI.weaves_requirements_fulfilled = function (arg_13_0)
+	-- function 13
 	if Managers.mechanism:current_mechanism_name() ~= "adventure" then
 		return false
 	end
 
-	if script_data.unlock_all_levels then
+	if not script_data.unlock_all_levels then
 		return true
 	end
 
-	if Managers.twitch and (Managers.twitch:is_connected() or Managers.twitch:is_activated()) then
+	local twitch = Managers.twitch
+
+	if not twitch then
+		twitch = Managers.twitch:is_connected()
+		twitch = twitch or Managers.twitch:is_activated()
+	end
+
+	if not twitch then
 		Managers.state.event:trigger("weave_tutorial_message", WeaveUITutorials.twitch_not_supported_for_weaves)
 
 		return false
-	elseif not Managers.player.is_server and Managers.state.network:lobby():lobby_data("twitch_enabled") == "true" then
+	elseif not (Managers.player.is_server or Managers.state.network:lobby():lobby_data("twitch_enabled") ~= "true") then
 		Managers.state.event:trigger("weave_tutorial_message", WeaveUITutorials.twitch_not_supported_for_weaves_client)
 
 		return false
 	end
 
-	local var_13_0 = Managers.player
-	local var_13_1 = var_13_0:statistics_db()
-	local var_13_2 = var_13_0:local_player():stats_id()
+	local player = Managers.player
+	local statistics_db = player:statistics_db()
+	local stats_id = player:local_player():stats_id()
 
-	for iter_13_0, iter_13_1 in pairs(HelmgartLevels) do
-		if LevelSettings[iter_13_1].mechanism == "adventure" and var_13_1:get_persistent_stat(var_13_2, "completed_levels", iter_13_1) < 1 then
+	for k, v in pairs(HelmgartLevels) do
+		if not (LevelSettings[v].mechanism ~= "adventure" or not (statistics_db:get_persistent_stat(stats_id, "completed_levels", v) < 1)) then
 			Managers.state.event:trigger("weave_tutorial_message", WeaveUITutorials.requirements_not_met)
 
 			return false
 		end
 	end
 
-	local var_13_3 = GameActs.act_scorpion
+	local act_scorpion = GameActs.act_scorpion
 
-	for iter_13_2, iter_13_3 in pairs(var_13_3) do
-		if LevelSettings[iter_13_3].mechanism == "adventure" and var_13_1:get_persistent_stat(var_13_2, "completed_levels", iter_13_3) < 1 then
+	for k_2, v_2 in pairs(act_scorpion) do
+		if not (LevelSettings[v_2].mechanism ~= "adventure" or not (statistics_db:get_persistent_stat(stats_id, "completed_levels", v_2) < 1)) then
 			Managers.state.event:trigger("weave_tutorial_message", WeaveUITutorials.requirements_not_met)
 
 			return false
@@ -341,133 +371,159 @@ function IngameUI.weaves_requirements_fulfilled(arg_13_0)
 	return true
 end
 
-function IngameUI._handle_versus_matchmaking(arg_14_0)
-	local var_14_0 = Managers.matchmaking
+IngameUI._handle_versus_matchmaking = function (self)
+	-- function 14
+	local matchmaking = Managers.matchmaking
 
-	if not var_14_0:is_matchmaking_versus() then
+	if not matchmaking:is_matchmaking_versus() then
 		return true
 	end
 
-	if var_14_0:is_in_versus_custom_game_lobby() then
+	if not matchmaking:is_in_versus_custom_game_lobby() then
 		return true
 	end
 
-	arg_14_0:add_local_system_message("matchmaking_ready_interaction_message_map")
+	self:add_local_system_message("matchmaking_ready_interaction_message_map")
 
 	return false
 end
 
-function IngameUI.can_open_loot(arg_15_0)
+IngameUI.can_open_loot = function (arg_15_0)
+	-- function 15
 	return not GameSettingsDevelopment.read_only_backend
 end
 
-local var_0_5 = {
+local tbl_2 = {
 	"hotkey_map"
 }
 
-function IngameUI.handle_menu_hotkeys(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+IngameUI.handle_menu_hotkeys = function (self, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+	-- function 16
 	if not arg_16_3 then
 		return
 	end
 
-	local var_16_0 = arg_16_0.views
-	local var_16_1 = arg_16_0.current_view
-	local var_16_2 = arg_16_0.hotkey_mapping
-	local var_16_3 = Managers.player:local_player()
+	local views = self.views
+	local current_view = self.current_view
+	local hotkey_mapping = self.hotkey_mapping
+	local local_player = Managers.player:local_player()
 
-	if not (var_16_3 and var_16_3.player_unit ~= nil) then
+	if not (not local_player and local_player.player_unit ~= nil) then
 		return
 	end
 
-	local var_16_4 = arg_16_0:is_local_player_ready_for_game()
-	local var_16_5 = Managers.matchmaking:is_game_matchmaking()
-	local var_16_6 = Managers.state.voting
-	local var_16_7 = var_16_6:vote_in_progress() and var_16_6:is_mission_vote()
+	local is_local_player_ready_for_game = self:is_local_player_ready_for_game()
+	local is_game_matchmaking = Managers.matchmaking:is_game_matchmaking()
+	local voting = Managers.state.voting
+	local vote_in_progress = voting:vote_in_progress()
 
-	for iter_16_0, iter_16_1 in pairs(var_16_2) do
-		if var_16_1 then
-			if var_16_1 == iter_16_1.view then
-				local var_16_8 = var_16_0[var_16_1]
-				local var_16_9 = var_16_8:input_service()
+	vote_in_progress = not vote_in_progress and voting:is_mission_vote()
 
-				if not var_16_8:transitioning() and var_16_9:get(iter_16_0) then
-					local var_16_10 = arg_16_0.transition_params
-					local var_16_11 = var_16_10 and var_16_10.menu_state_name
-					local var_16_12 = var_16_10 and var_16_10.menu_sub_state_name
-					local var_16_13 = var_16_11 == iter_16_1.transition_state
-					local var_16_14 = var_16_12 == iter_16_1.transition_sub_state
-					local var_16_15 = var_16_10 and var_16_10.ignore_sub_state_on_exit
+	for k, v in pairs(hotkey_mapping) do
+		if not current_view then
+			if not (current_view == v.view) then
+				local var_16_8 = views[current_view]
+				local input_service = var_16_8:input_service()
 
-					if (var_16_13 and var_16_14 or var_16_13 and var_16_15) and (var_16_8.hotkey_allowed and var_16_8:hotkey_allowed(iter_16_0, iter_16_1)) ~= false then
-						local var_16_16 = not arg_16_4
+				if var_16_8:transitioning() or not input_service:get(k) then
+					local transition_params = self.transition_params
+					local flag = not transition_params and transition_params.menu_state_name
+					local flag_2 = not transition_params and transition_params.menu_sub_state_name
+					local flag_3 = flag == v.transition_state
+					local flag_4 = flag_2 == v.transition_sub_state
+					local flag_5 = not transition_params and transition_params.ignore_sub_state_on_exit
 
-						var_16_0[var_16_1]:exit(var_16_16)
+					if not flag_3 and flag_4 and not flag_3 or not flag_5 then
+						local hotkey_allowed = var_16_8.hotkey_allowed
 
-						break
+						hotkey_allowed = not hotkey_allowed and var_16_8:hotkey_allowed(k, v)
+
+						if not (hotkey_allowed ~= false) then
+							local flag_6 = not arg_16_4
+
+							views[current_view]:exit(flag_6)
+
+							break
+						end
 					end
 				end
 			end
 		else
-			local var_16_17
 			local var_16_18
 			local var_16_19
-			local var_16_20 = Managers.mechanism:current_mechanism_name()
-			local var_16_21 = iter_16_1.disable_for_mechanism and iter_16_1.disable_for_mechanism[var_16_20]
+			local var_16_20
+			local current_mechanism_name = Managers.mechanism:current_mechanism_name()
+			local disable_for_mechanism = v.disable_for_mechanism
 
-			if var_16_21 then
-				var_16_17 = var_16_21.matchmaking
-				var_16_18 = var_16_21.matchmaking_ready
-				var_16_19 = var_16_21.not_matchmaking
+			disable_for_mechanism = not disable_for_mechanism and v.disable_for_mechanism[current_mechanism_name]
+
+			if not disable_for_mechanism then
+				var_16_18 = disable_for_mechanism.matchmaking
+				var_16_19 = disable_for_mechanism.matchmaking_ready
+				var_16_20 = disable_for_mechanism.not_matchmaking
 			end
 
-			local var_16_22 = table.contains(var_0_5, iter_16_0)
-			local var_16_23 = var_16_4 and var_16_18 or var_16_5 and var_16_17 or var_16_22 and var_16_7
+			local contains = table.contains(tbl_2, k)
+			local flag_7 = not is_local_player_ready_for_game and var_16_19 and not is_game_matchmaking or var_16_18 and not contains and vote_in_progress
 
-			var_16_23 = var_16_23 or var_16_19
+			flag_7 = flag_7 or var_16_20
 
-			local var_16_24 = var_16_0[iter_16_1.view]
-			local var_16_25 = iter_16_1.can_interact_flag
-			local var_16_26 = iter_16_1.can_interact_func
-			local var_16_27 = iter_16_1.required_dlc
+			local var_16_25 = views[v.view]
+			local can_interact_flag = v.can_interact_flag
+			local can_interact_func = v.can_interact_func
+			local required_dlc = v.required_dlc
 
-			if arg_16_2:get(iter_16_0) then
-				local var_16_28 = true
+			if not arg_16_2:get(k) then
+				local flag_8 = true
 
-				if var_16_25 and not var_16_24[var_16_25] then
-					var_16_28 = false
+				if not (not can_interact_flag and var_16_25[can_interact_flag]) then
+					flag_8 = false
 				end
 
-				if var_16_28 and var_16_26 and not arg_16_0[var_16_26](arg_16_0) then
-					var_16_28 = false
+				if not (not flag_8 and not can_interact_func and self[can_interact_func](self)) then
+					flag_8 = false
 				end
 
-				if var_16_28 and var_16_27 and not Managers.unlock:is_dlc_unlocked(var_16_27) then
-					var_16_28 = false
+				if not (not flag_8 and not required_dlc and Managers.unlock:is_dlc_unlocked(required_dlc)) then
+					flag_8 = false
 				end
 
-				if var_16_28 then
-					if var_16_23 then
-						local var_16_29 = iter_16_1.error_message
+				if not flag_8 then
+					if not flag_7 then
+						local error_message = v.error_message
 
-						if var_16_29 then
-							arg_16_0:add_local_system_message(var_16_29)
+						if not error_message then
+							self:add_local_system_message(error_message)
 						end
 
 						break
 					end
 
-					local var_16_30 = arg_16_4 and iter_16_1.in_transition_menu or iter_16_1.in_transition
-					local var_16_31 = {
-						menu_state_name = iter_16_1.transition_state,
-						menu_sub_state_name = iter_16_1.transition_sub_state
-					}
-					local var_16_32 = iter_16_1.inject_transition_params_func
+					local in_transition_menu
 
-					if var_16_32 then
-						var_16_32(var_16_31)
+					if not arg_16_4 then
+						in_transition_menu = v.in_transition_menu
+
+						if not in_transition_menu then
+							-- Nothing
+						end
 					end
 
-					arg_16_0:transition_with_fade(var_16_30, var_16_31)
+					in_transition_menu = v.in_transition
+
+					::label_16_0::
+
+					local tbl = {
+						menu_state_name = v.transition_state,
+						menu_sub_state_name = v.transition_sub_state
+					}
+					local inject_transition_params_func = v.inject_transition_params_func
+
+					if not inject_transition_params_func then
+						inject_transition_params_func(tbl)
+					end
+
+					self:transition_with_fade(in_transition_menu, tbl)
 
 					break
 				end
@@ -476,469 +532,550 @@ function IngameUI.handle_menu_hotkeys(arg_16_0, arg_16_1, arg_16_2, arg_16_3, ar
 	end
 end
 
-function IngameUI.event_dlc_status_changed(arg_17_0)
-	if arg_17_0.current_view == "map_view" then
-		arg_17_0:handle_transition("exit_menu")
+IngameUI.event_dlc_status_changed = function (self)
+	-- function 17
+	if self.current_view == "map_view" then
+		self:handle_transition("exit_menu")
 	end
 
-	arg_17_0:setup_specific_view("map_view", "ConsoleMapView")
+	self:setup_specific_view("map_view", "ConsoleMapView")
 end
 
-function IngameUI.update_loading_subtitle_gui(arg_18_0, arg_18_1, arg_18_2)
-	arg_18_1:update(arg_18_0.ui_top_renderer, arg_18_2)
+IngameUI.update_loading_subtitle_gui = function (self, arg_18_1, arg_18_2)
+	-- function 18
+	arg_18_1:update(self.ui_top_renderer, arg_18_2)
 end
 
-function IngameUI.update(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
-	arg_19_0._disable_ingame_ui = arg_19_3
+IngameUI.update = function (self, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+	-- function 19
+	self._disable_ingame_ui = arg_19_3
 
-	arg_19_0:_update_fade_transition()
+	self:_update_fade_transition()
 
-	local var_19_0 = arg_19_0.views
-	local var_19_1 = arg_19_0.is_in_inn
-	local var_19_2 = arg_19_0.input_manager:get_service("ingame_menu")
-	local var_19_3 = arg_19_0.ingame_hud
-	local var_19_4 = Managers.transition
-	local var_19_5 = arg_19_0.end_screen
+	local views = self.views
+	local is_in_inn = self.is_in_inn
+	local get_service = self.input_manager:get_service("ingame_menu")
+	local ingame_hud = self.ingame_hud
+	local transition = Managers.transition
+	local end_screen = self.end_screen
 
-	arg_19_0:_update_system_message_cooldown(arg_19_1)
-	arg_19_0:_handle_resolution_changes()
+	self:_update_system_message_cooldown(arg_19_1)
+	self:_handle_resolution_changes()
 
-	if arg_19_0.is_server then
-		arg_19_0:update_map_enable_state()
+	if not self.is_server then
+		self:update_map_enable_state()
 	end
 
-	if arg_19_0._respawning and arg_19_0:_update_respawning() then
-		arg_19_0._respawning = nil
+	if not self._respawning and not self:_update_respawning() then
+		self._respawning = nil
 	end
 
-	if arg_19_0.popup_id then
-		local var_19_6 = Managers.popup:query_result(arg_19_0.popup_id)
+	if not self.popup_id then
+		local query_result = Managers.popup:query_result(self.popup_id)
 
-		if var_19_6 then
-			arg_19_0:handle_transition(var_19_6)
+		if not query_result then
+			self:handle_transition(query_result)
 		end
 	end
 
-	if arg_19_0.survey_active then
-		arg_19_0:_survey_update(arg_19_1)
+	if not self.survey_active then
+		self:_survey_update(arg_19_1)
 	end
 
-	if arg_19_0.quit_game_retry and arg_19_2 >= arg_19_0.delay_quit_game_retry then
-		arg_19_0.quit_game_retry = nil
+	if not (not self.quit_game_retry and not (arg_19_2 >= self.delay_quit_game_retry)) then
+		self.quit_game_retry = nil
 
-		arg_19_0:handle_transition("end_game")
+		self:handle_transition("end_game")
 	end
 
-	if arg_19_0.hint_ui_handler then
-		arg_19_0.hint_ui_handler:update(arg_19_1, arg_19_2)
+	if not self.hint_ui_handler then
+		self.hint_ui_handler:update(arg_19_1, arg_19_2)
 	end
 
-	if var_19_1 then
-		local var_19_7 = arg_19_0.has_left_menu and arg_19_0.hud_visible
+	if not is_in_inn then
+		local has_left_menu = self.has_left_menu
 
-		arg_19_0.text_popup_ui:update(arg_19_1)
+		has_left_menu = not has_left_menu and self.hud_visible
 
-		if var_19_7 and not arg_19_0.text_popup_ui.is_visible and not PlayerData.viewed_dialogues.dlc_holly and Managers.unlock:is_dlc_unlocked("holly") then
-			local var_19_8 = callback(arg_19_0, "_holly_dlc_intro_closed")
+		self.text_popup_ui:update(arg_19_1)
 
-			arg_19_0.text_popup_ui:show("area_selection_holly_name", "holly_lohner_spiel_short", var_19_8)
+		if not has_left_menu and self.text_popup_ui.is_visible and PlayerData.viewed_dialogues.dlc_holly or not Managers.unlock:is_dlc_unlocked("holly") then
+			local var_19_8 = callback(self, "_holly_dlc_intro_closed")
+
+			self.text_popup_ui:show("area_selection_holly_name", "holly_lohner_spiel_short", var_19_8)
 		end
 
-		if arg_19_0.weave_onboarding then
-			arg_19_0.weave_onboarding:update(arg_19_1, arg_19_2)
+		if not self.weave_onboarding then
+			self.weave_onboarding:update(arg_19_1, arg_19_2)
 		end
 
-		if arg_19_0.popup_handler then
-			arg_19_0.popup_handler:update(arg_19_1, arg_19_2)
+		if not self.popup_handler then
+			self.popup_handler:update(arg_19_1, arg_19_2)
 		end
 	end
 
 	if not arg_19_3 then
-		local var_19_9 = false
+		local flag = false
 
-		if arg_19_0.current_view then
-			local var_19_10 = arg_19_0.current_view
+		if not self.current_view then
+			local current_view = self.current_view
 
-			var_19_0[var_19_10]:update(arg_19_1, arg_19_2)
+			views[current_view]:update(arg_19_1, arg_19_2)
 
-			if var_19_0[var_19_10].disable_toggle_menu then
-				var_19_9 = var_19_0[var_19_10]:disable_toggle_menu()
+			if not views[current_view].disable_toggle_menu then
+				flag = views[current_view]:disable_toggle_menu()
 			end
 		end
 
-		local var_19_11 = Managers.input:is_device_active("gamepad")
-		local var_19_12 = true
-		local var_19_13 = var_19_3:component("IngamePlayerListUI")
-		local var_19_14 = var_19_13 and var_19_13:is_active()
-		local var_19_15 = var_19_3:component("VersusTabUI")
-		local var_19_16 = var_19_3:component("VersusSlotStatusUI")
+		local is_device_active = Managers.input:is_device_active("gamepad")
+		local flag_2 = true
+		local component = ingame_hud:component("IngamePlayerListUI")
+		local flag_3 = not component and component:is_active()
+		local component_2 = ingame_hud:component("VersusTabUI")
+		local component_3 = ingame_hud:component("VersusSlotStatusUI")
 
-		var_19_14 = var_19_15 and var_19_15:is_active() or var_19_16 and var_19_16:is_active() or var_19_14
+		flag_3 = not component_2 and component_2:is_active() and not component_3 or component_3:is_active() and flag_3
 
-		local var_19_17 = Managers.state.game_mode:game_mode()
+		local game_mode = Managers.state.game_mode:game_mode()
 
-		if var_19_17.menu_access_allowed_in_state and not var_19_17:menu_access_allowed_in_state() then
-			var_19_12 = false
+		if not (not game_mode.menu_access_allowed_in_state and game_mode:menu_access_allowed_in_state()) then
+			flag_2 = false
 		end
 
-		local var_19_18 = Managers.transition:in_fade_active()
+		local in_fade_active = Managers.transition:in_fade_active()
 
-		if var_19_12 and not var_19_14 and not var_19_9 and not arg_19_0:pending_transition() and not var_19_18 and not arg_19_0:end_screen_active() and not arg_19_0.menu_active and not arg_19_0.leave_game and not arg_19_0.return_to_title_screen and not arg_19_0:get_active_popup("profile_picker") and var_19_2:get("toggle_menu", true) then
-			if IS_CONSOLE or var_19_11 or not UISettings.use_pc_menu_layout then
-				local var_19_19 = "overview"
+		if not flag_2 and flag_3 and flag and self:pending_transition() and in_fade_active and self:end_screen_active() and self.menu_active and self.leave_game and self.return_to_title_screen and self:get_active_popup("profile_picker") or not get_service:get("toggle_menu", true) then
+			local IS_CONSOLE = IS_CONSOLE
 
-				if var_19_1 and var_19_11 then
-					local var_19_20 = var_19_11 and "equipment" or "system"
-					local var_19_21 = {
-						menu_state_name = var_19_19,
-						menu_sub_state_name = var_19_20
+			IS_CONSOLE = IS_CONSOLE or is_device_active or not UISettings.use_pc_menu_layout
+
+			if not IS_CONSOLE then
+				local str = "overview"
+
+				if not is_in_inn and not is_device_active then
+					local flag_4
+
+					flag_4 = not is_device_active and "equipment" and "system"
+
+					local tbl = {
+						menu_state_name = str,
+						menu_sub_state_name = flag_4
 					}
 
-					arg_19_0:transition_with_fade("hero_view_force", var_19_21)
+					self:transition_with_fade("hero_view_force", tbl)
 				else
-					local var_19_22 = "system"
-					local var_19_23 = {
-						menu_state_name = var_19_19,
-						menu_sub_state_name = var_19_22,
+					local str_2 = "system"
+					local tbl_2 = {
+						menu_state_name = str,
+						menu_sub_state_name = str_2,
 						force_ingame_menu = IS_WINDOWS
 					}
 
-					arg_19_0:handle_transition("hero_view_force", var_19_23)
+					self:handle_transition("hero_view_force", tbl_2)
 				end
 			else
-				arg_19_0:handle_transition("ingame_menu")
+				self:handle_transition("ingame_menu")
 			end
 		end
 
-		if not arg_19_0:pending_transition() then
-			local var_19_24 = Managers.player:local_player()
-			local var_19_25 = var_19_24 and var_19_24.player_unit
+		if not self:pending_transition() then
+			local local_player = Managers.player:local_player()
+			local flag_5 = not local_player and local_player.player_unit
 
-			if var_19_25 and Unit.alive(var_19_25) then
-				local var_19_26 = arg_19_4 ~= nil
-				local var_19_27 = var_19_1 and not arg_19_3 and not var_19_26
+			if not flag_5 and not Unit.alive(flag_5) then
+				local flag_6 = arg_19_4 ~= nil
+				local flag_7 = not is_in_inn and not not arg_19_3 or not flag_6
 
-				arg_19_0:handle_menu_hotkeys(arg_19_1, var_19_2, var_19_27, arg_19_0.menu_active)
+				self:handle_menu_hotkeys(arg_19_1, get_service, flag_7, self.menu_active)
 			end
 		end
 
-		for iter_19_0, iter_19_1 in pairs(arg_19_0.popups_by_name) do
-			iter_19_1.popup:update(arg_19_1, arg_19_2)
+		for k, v in pairs(self.popups_by_name) do
+			v.popup:update(arg_19_1, arg_19_2)
 		end
 
-		var_19_5:update(arg_19_1, arg_19_2)
+		end_screen:update(arg_19_1, arg_19_2)
 
-		if arg_19_0.help_screen then
-			arg_19_0.help_screen:update(arg_19_1)
+		if not self.help_screen then
+			self.help_screen:update(arg_19_1)
 		end
 	end
 
-	if Managers.state.network:game() then
-		arg_19_0.ingame_hud:update(arg_19_1, arg_19_2)
+	if not Managers.state.network:game() then
+		self.ingame_hud:update(arg_19_1, arg_19_2)
 	end
 
-	arg_19_0:_update_menu_blocking_information(arg_19_1, arg_19_2, var_19_2, arg_19_4)
-	arg_19_0:_render_debug_ui(arg_19_1, arg_19_2)
-	arg_19_0:_update_fade_transition()
+	self:_update_menu_blocking_information(arg_19_1, arg_19_2, get_service, arg_19_4)
+	self:_render_debug_ui(arg_19_1, arg_19_2)
+	self:_update_fade_transition()
 
-	if script_data.testify then
-		Testify:poll_requests_through_handler(var_0_4, arg_19_0)
+	if not script_data.testify then
+		Testify:poll_requests_through_handler(testify, self)
 	end
 end
 
-function IngameUI.disable_ingame_ui(arg_20_0)
-	return arg_20_0._disable_ingame_ui
+IngameUI.disable_ingame_ui = function (self)
+	-- function 20
+	return self._disable_ingame_ui
 end
 
-function IngameUI._holly_dlc_intro_closed(arg_21_0)
+IngameUI._holly_dlc_intro_closed = function (arg_21_0)
+	-- function 21
 	PlayerData.viewed_dialogues.dlc_holly = true
 
 	Managers.save:auto_save(SaveFileName, SaveData)
 end
 
-function IngameUI.post_update(arg_22_0, arg_22_1, arg_22_2)
-	arg_22_0:_post_handle_transition()
+IngameUI.post_update = function (self, arg_22_1, arg_22_2)
+	-- function 22
+	self:_post_handle_transition()
 
-	local var_22_0 = arg_22_0.current_view
+	local current_view = self.current_view
 
-	if var_22_0 then
-		local var_22_1 = arg_22_0.views
+	if not current_view then
+		local views = self.views
 
-		if var_22_1[var_22_0].post_update then
-			var_22_1[var_22_0]:post_update(arg_22_1, arg_22_2)
+		if not views[current_view].post_update then
+			views[current_view]:post_update(arg_22_1, arg_22_2)
 		end
 	end
 
-	arg_22_0.ingame_hud:post_update(arg_22_1, arg_22_2)
+	self.ingame_hud:post_update(arg_22_1, arg_22_2)
 end
 
-function IngameUI.cutscene_active(arg_23_0)
-	return arg_23_0.cutscene_system.active_camera ~= nil
+IngameUI.cutscene_active = function (self)
+	-- function 23
+	return self.cutscene_system.active_camera ~= nil
 end
 
-function IngameUI._survey_update(arg_24_0, arg_24_1)
-	local var_24_0 = arg_24_0.views.telemetry_survey
+IngameUI._survey_update = function (self, arg_24_1)
+	-- function 24
+	local telemetry_survey = self.views.telemetry_survey
 
-	var_24_0:update(arg_24_1)
+	telemetry_survey:update(arg_24_1)
 
-	if var_24_0:is_survey_answered() or var_24_0:is_survey_timed_out() then
-		arg_24_0.survey_active = false
+	if telemetry_survey:is_survey_answered() or not telemetry_survey:is_survey_timed_out() then
+		self.survey_active = false
 
-		var_24_0:on_exit()
+		telemetry_survey:on_exit()
 	end
 end
 
-function IngameUI._handle_resolution_changes(arg_25_0)
-	local var_25_0 = RESOLUTION_LOOKUP.res_w
-	local var_25_1 = RESOLUTION_LOOKUP.res_h
+IngameUI._handle_resolution_changes = function (self)
+	-- function 25
+	local res_w = RESOLUTION_LOOKUP.res_w
+	local res_h = RESOLUTION_LOOKUP.res_h
 
-	if var_25_0 ~= arg_25_0.last_resolution_x or var_25_1 ~= arg_25_0.last_resolution_y then
-		arg_25_0.last_resolution_x, arg_25_0.last_resolution_y = var_25_0, var_25_1
+	if not (res_w ~= self.last_resolution_x or res_h == self.last_resolution_y) then
+		self.last_resolution_x, self.last_resolution_y = res_w, res_h
 	end
 end
 
-function IngameUI._update_menu_blocking_information(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
-	local var_26_0, var_26_1, var_26_2 = arg_26_0:_menu_blocking_information(arg_26_3, arg_26_4)
+IngameUI._update_menu_blocking_information = function (self, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+	-- function 26
+	local _menu_blocking_information, var_26_1, var_26_2 = self:_menu_blocking_information(arg_26_3, arg_26_4)
 
-	Managers.chat:update(arg_26_1, arg_26_2, var_26_0, var_26_1, var_26_2)
+	Managers.chat:update(arg_26_1, arg_26_2, _menu_blocking_information, var_26_1, var_26_2)
 
-	if IS_WINDOWS and var_26_0 ~= arg_26_0._was_in_view then
-		arg_26_0._was_in_view = var_26_0
+	if not (not IS_WINDOWS and _menu_blocking_information == self._was_in_view) then
+		self._was_in_view = _menu_blocking_information
 
-		Application.set_in_menu(var_26_0)
+		Application.set_in_menu(_menu_blocking_information)
 	end
 end
 
-function IngameUI._menu_blocking_information(arg_27_0, arg_27_1, arg_27_2)
-	local var_27_0 = arg_27_0.ingame_hud
-	local var_27_1 = var_27_0:component("IngamePlayerListUI") or var_27_0:component("VersusTabUI")
-	local var_27_2 = var_27_1 and var_27_1:is_focused()
-	local var_27_3 = var_27_0:component("GiftPopupUI")
-	local var_27_4 = var_27_3 and var_27_3:active()
-	local var_27_5 = arg_27_0:end_screen_active()
-	local var_27_6 = var_27_0:component("MissionVotingUI")
-	local var_27_7 = var_27_6 and var_27_6:is_active()
-	local var_27_8 = arg_27_0.cutscene_system
-	local var_27_9 = arg_27_0:get_active_popup("profile_picker")
-	local var_27_10 = arg_27_0.menu_active or arg_27_2 and arg_27_2:enable_chat() or arg_27_0.current_view ~= nil and not arg_27_0.views[arg_27_0.current_view].normal_chat
-	local var_27_11 = var_27_8.active_camera and not var_27_8.ingame_hud_enabled
+IngameUI._menu_blocking_information = function (self, arg_27_1, arg_27_2)
+	-- function 27
+	local ingame_hud = self.ingame_hud
+	local component = ingame_hud:component("IngamePlayerListUI")
 
-	if arg_27_0.current_view then
-		local var_27_12 = arg_27_0.views[arg_27_0.current_view]:input_service()
+	component = component or ingame_hud:component("VersusTabUI")
 
-		return var_27_10, var_27_12, false
-	elseif var_27_7 then
-		local var_27_13 = var_27_6:active_input_service()
+	local flag = not component and component:is_focused()
+	local component_2 = ingame_hud:component("GiftPopupUI")
+	local flag_2 = not component_2 and component_2:active()
+	local end_screen_active = self:end_screen_active()
+	local component_3 = ingame_hud:component("MissionVotingUI")
+	local flag_3 = not component_3 and component_3:is_active()
+	local cutscene_system = self.cutscene_system
+	local get_active_popup = self:get_active_popup("profile_picker")
+	local menu_active = self.menu_active
 
-		return var_27_10, var_27_13, false
-	elseif arg_27_2 then
-		local var_27_14 = arg_27_2:active_input_service()
+	if not menu_active then
+		if not arg_27_2 then
+			menu_active = arg_27_2:enable_chat()
 
-		return var_27_10, var_27_14, false
-	elseif var_27_4 then
-		local var_27_15 = var_27_3:active_input_service()
+			if not menu_active then
+				-- Nothing
+			end
+		end
 
-		return var_27_10, var_27_15, false
-	elseif var_27_9 then
-		local var_27_16 = var_27_9:input_service()
+		menu_active = self.current_view == nil or not self.views[self.current_view].normal_chat
+	end
 
-		return var_27_10, var_27_16, false
-	elseif var_27_2 then
-		local var_27_17 = var_27_1:input_service()
+	::label_27_0::
 
-		return var_27_10, var_27_17, false
-	elseif arg_27_0.menu_active then
-		return var_27_10, arg_27_1, false
-	elseif var_27_11 then
-		local var_27_18 = var_27_0:component("CutsceneUI"):input_service()
+	local active_camera = cutscene_system.active_camera
 
-		return var_27_10, var_27_18, false
-	elseif var_27_5 then
-		local var_27_19 = arg_27_0.end_screen:input_service()
+	active_camera = not active_camera and not cutscene_system.ingame_hud_enabled
 
-		return var_27_10, var_27_19, false
+	if not self.current_view then
+		local input_service = self.views[self.current_view]:input_service()
+
+		return menu_active, input_service, false
+	elseif not flag_3 then
+		local active_input_service = component_3:active_input_service()
+
+		return menu_active, active_input_service, false
+	elseif not arg_27_2 then
+		local active_input_service_2 = arg_27_2:active_input_service()
+
+		return menu_active, active_input_service_2, false
+	elseif not flag_2 then
+		local active_input_service_3 = component_2:active_input_service()
+
+		return menu_active, active_input_service_3, false
+	elseif not get_active_popup then
+		local input_service_2 = get_active_popup:input_service()
+
+		return menu_active, input_service_2, false
+	elseif not flag then
+		local input_service_3 = component:input_service()
+
+		return menu_active, input_service_3, false
+	elseif not self.menu_active then
+		return menu_active, arg_27_1, false
+	elseif not active_camera then
+		local input_service_4 = ingame_hud:component("CutsceneUI"):input_service()
+
+		return menu_active, input_service_4, false
+	elseif not end_screen_active then
+		local input_service_5 = self.end_screen:input_service()
+
+		return menu_active, input_service_5, false
 	else
-		return var_27_10, nil, false
+		return menu_active, nil, false
 	end
 end
 
-function IngameUI._render_debug_ui(arg_28_0, arg_28_1, arg_28_2)
+IngameUI._render_debug_ui = function (self, arg_28_1, arg_28_2)
+	-- function 28
 	if not script_data.disable_debug_draw then
-		if arg_28_0.menu_active and GameSettingsDevelopment.show_version_info and not script_data.hide_version_info then
-			arg_28_0:_render_version_info()
+		if not (not self.menu_active and not GameSettingsDevelopment.show_version_info and script_data.hide_version_info) then
+			self:_render_version_info()
 		end
 
-		if GameSettingsDevelopment.show_fps and not script_data.hide_fps then
-			arg_28_0:_render_fps(arg_28_1)
+		if not (not GameSettingsDevelopment.show_fps and script_data.hide_fps) then
+			self:_render_fps(arg_28_1)
 		end
 	end
 end
 
-function IngameUI.show_info(arg_29_0)
-	local var_29_0 = Managers.state.entity:system("mission_system")
-	local var_29_1 = var_29_0:get_level_end_mission_data("grimoire_hidden_mission")
-	local var_29_2 = var_29_0:get_level_end_mission_data("tome_bonus_mission")
-	local var_29_3, var_29_4 = Application.resolution()
+IngameUI.show_info = function (self)
+	-- function 29
+	local system = Managers.state.entity:system("mission_system")
+	local get_level_end_mission_data = system:get_level_end_mission_data("grimoire_hidden_mission")
+	local get_level_end_mission_data_2 = system:get_level_end_mission_data("tome_bonus_mission")
+	local resolution, var_29_4 = Application.resolution()
 	local var_29_5 = Vector3(100, var_29_4 - 100, 999)
-	local var_29_6 = arg_29_0:_show_text(var_29_1 and var_29_1.current_amount or "", var_29_5)
-	local var_29_7 = arg_29_0:_show_text(var_29_2 and var_29_2.current_amount or "", var_29_6)
+	local var_29_6 = self
+	local _show_text = self._show_text
+	local current_amount
+
+	if not get_level_end_mission_data then
+		current_amount = get_level_end_mission_data.current_amount
+
+		if not current_amount then
+			-- Nothing
+		end
+	end
+
+	current_amount = ""
+
+	::label_29_0::
+
+	local var_29_9 = _show_text(var_29_6, current_amount, var_29_5)
+	local var_29_10 = self
+	local _show_text_2 = self._show_text
+	local current_amount_2
+
+	if not get_level_end_mission_data_2 then
+		current_amount_2 = get_level_end_mission_data_2.current_amount
+
+		if not current_amount_2 then
+			-- Nothing
+		end
+	end
+
+	current_amount_2 = ""
+
+	::label_29_1::
+
+	local var_29_13 = _show_text_2(var_29_10, current_amount_2, var_29_9)
 end
 
-function IngameUI._show_text(arg_30_0, arg_30_1, arg_30_2)
-	Gui.text(arg_30_0.ui_renderer.gui, "text", "materials/fonts/gw_head", 20, "gw_head", arg_30_2, Color(0, 255, 0))
+IngameUI._show_text = function (self, arg_30_1, arg_30_2)
+	-- function 30
+	Gui.text(self.ui_renderer.gui, "text", "materials/fonts/gw_head", 20, "gw_head", arg_30_2, Color(0, 255, 0))
 
 	return Vector3(arg_30_2[1], arg_30_2[2] - 30, arg_30_2[3])
 end
 
-function IngameUI._update_system_message_cooldown(arg_31_0, arg_31_1)
-	local var_31_0 = arg_31_0.system_message_delay
+IngameUI._update_system_message_cooldown = function (self, arg_31_1)
+	-- function 31
+	local system_message_delay = self.system_message_delay
 
-	if var_31_0 then
-		local var_31_1 = var_31_0 - arg_31_1
+	if not system_message_delay then
+		local num = system_message_delay - arg_31_1
 
-		arg_31_0.system_message_delay = var_31_1 > 0 and var_31_1 or nil
+		self.system_message_delay = not (num > 0) or not num or nil
 	end
 end
 
-function IngameUI.add_local_system_message(arg_32_0, arg_32_1)
-	if not arg_32_0.system_message_delay or arg_32_0.last_sent_system_message ~= arg_32_1 then
-		local var_32_0 = true
+IngameUI.add_local_system_message = function (self, arg_32_1)
+	-- function 32
+	if not (not self.system_message_delay and self.last_sent_system_message == arg_32_1) then
+		local flag = true
 		local var_32_1 = Localize(arg_32_1)
 
-		if IS_WINDOWS then
-			Managers.chat:add_local_system_message(1, var_32_1, var_32_0)
+		if not IS_WINDOWS then
+			Managers.chat:add_local_system_message(1, var_32_1, flag)
 		else
-			local var_32_2 = Managers.player:local_player():stats_id()
+			local stats_id = Managers.player:local_player():stats_id()
 
-			Managers.state.event:trigger("add_personal_interaction_warning", var_32_2 .. arg_32_1, arg_32_1)
+			Managers.state.event:trigger("add_personal_interaction_warning", stats_id .. arg_32_1, arg_32_1)
 		end
 
-		arg_32_0.last_sent_system_message = arg_32_1
-		arg_32_0.system_message_delay = 1.5
+		self.last_sent_system_message = arg_32_1
+		self.system_message_delay = 1.5
 	end
 end
 
-function IngameUI.is_transition_allowed(arg_33_0, arg_33_1)
+IngameUI.is_transition_allowed = function (self, arg_33_1)
+	-- function 33
 	local var_33_0
-	local var_33_1 = true
+	local flag = true
 
-	if arg_33_0:is_local_player_ready_for_game() then
+	if not self:is_local_player_ready_for_game() then
 		if arg_33_1 == "profile_view" then
 			var_33_0 = "matchmaking_ready_interaction_message_profile_view"
-			var_33_1 = false
+			flag = false
 		elseif arg_33_1 == "inventory_view_force" then
 			var_33_0 = "matchmaking_ready_interaction_message_inventory"
-			var_33_1 = false
+			flag = false
 		end
 	end
 
-	if var_33_0 then
-		arg_33_0:add_local_system_message(var_33_0)
+	if not var_33_0 then
+		self:add_local_system_message(var_33_0)
 	end
 
-	return var_33_1
+	return flag
 end
 
-function IngameUI._post_handle_transition(arg_34_0)
-	if not arg_34_0.new_transition then
+IngameUI._post_handle_transition = function (self)
+	-- function 34
+	if not self.new_transition then
 		return
 	end
 
-	local var_34_0 = arg_34_0.transition_params
-	local var_34_1 = arg_34_0.views[arg_34_0.new_transition_old_view]
+	local transition_params = self.transition_params
+	local var_34_1 = self.views[self.new_transition_old_view]
 
-	if var_34_1 and var_34_1.post_update_on_exit then
+	if not var_34_1 and not var_34_1.post_update_on_exit then
 		printf("[IngameUI] menu view post_update_on_exit %s", var_34_1)
-		var_34_1:post_update_on_exit(var_34_0, arg_34_0.new_transition_old_view == arg_34_0.current_view)
+		var_34_1:post_update_on_exit(transition_params, self.new_transition_old_view == self.current_view)
 	end
 
-	local var_34_2 = arg_34_0.views[arg_34_0.current_view]
+	local var_34_2 = self.views[self.current_view]
 
-	if var_34_2 and var_34_2.post_update_on_enter then
+	if not var_34_2 and not var_34_2.post_update_on_enter then
 		printf("[IngameUI] menu view post_update_on_enter %s", var_34_2)
-		var_34_2:post_update_on_enter(var_34_0)
+		var_34_2:post_update_on_enter(transition_params)
 	end
 
-	if script_data.debug_enabled then
-		arg_34_0.last_transition_params = arg_34_0.transition_params
-		arg_34_0.last_transition_name = arg_34_0.new_transition
+	if not script_data.debug_enabled then
+		self.last_transition_params = self.transition_params
+		self.last_transition_name = self.new_transition
 	end
 
-	arg_34_0.new_transition_old_view = nil
-	arg_34_0.new_transition = nil
+	self.new_transition_old_view = nil
+	self.new_transition = nil
 end
 
-function IngameUI.handle_transition(arg_35_0, arg_35_1, arg_35_2)
-	fassert(var_0_3[arg_35_1], "Missing transition to %s", arg_35_1)
+IngameUI.handle_transition = function (self, arg_35_1, arg_35_2)
+	-- function 35
+	fassert(transitions[arg_35_1], "Missing transition to %s", arg_35_1)
 
-	local var_35_0 = arg_35_0.blocked_transitions
+	local blocked_transitions = self.blocked_transitions
 
-	if var_35_0 and var_35_0[arg_35_1] then
+	if not blocked_transitions and not blocked_transitions[arg_35_1] then
 		return
 	end
 
-	local var_35_1 = arg_35_0._previous_transition
+	local _previous_transition = self._previous_transition
 
-	if not arg_35_0:is_transition_allowed(arg_35_1) or var_35_1 and var_35_1 == arg_35_1 then
+	if not (not self:is_transition_allowed(arg_35_1) and not _previous_transition and _previous_transition ~= arg_35_1) then
 		return
 	end
 
-	if arg_35_0.new_transition_old_view then
+	if not self.new_transition_old_view then
 		return
 	end
 
 	arg_35_2 = arg_35_2 or {}
 
-	local var_35_2 = arg_35_0.current_view
+	local current_view = self.current_view
 
-	var_0_3[arg_35_1](arg_35_0, arg_35_2)
+	transitions[arg_35_1](self, arg_35_2)
 
-	local var_35_3 = arg_35_0.current_view
-	local var_35_4 = arg_35_2.force_open
+	local current_view_2 = self.current_view
+	local force_open = arg_35_2.force_open
 
-	if var_35_2 ~= var_35_3 or var_35_4 then
-		if arg_35_0.views[var_35_2] then
-			if arg_35_0.views[var_35_2].on_exit then
-				printf("[IngameUI] menu view on_exit %s", var_35_2)
-				arg_35_0.views[var_35_2]:on_exit(arg_35_2)
+	if current_view ~= current_view_2 or not force_open then
+		if not self.views[current_view] then
+			if not self.views[current_view].on_exit then
+				printf("[IngameUI] menu view on_exit %s", current_view)
+				self.views[current_view]:on_exit(arg_35_2)
 
-				arg_35_0.views[var_35_2].exit_to_game = nil
+				self.views[current_view].exit_to_game = nil
 			end
 
-			local var_35_5 = arg_35_0.transition_params
-			local var_35_6 = var_35_5 and var_35_5.on_exit_callback
+			local transition_params = self.transition_params
+			local flag = not transition_params and transition_params.on_exit_callback
 
-			if var_35_6 then
-				var_35_6()
+			if not flag then
+				flag()
 			end
 		end
 
-		if var_35_3 and arg_35_0.views[var_35_3] and arg_35_0.views[var_35_3].on_enter then
-			printf("[IngameUI] menu view on_enter %s", var_35_3)
-			arg_35_0.views[var_35_3]:on_enter(arg_35_2)
+		if not current_view_2 and not self.views[current_view_2] and not self.views[current_view_2].on_enter then
+			printf("[IngameUI] menu view on_enter %s", current_view_2)
+			self.views[current_view_2]:on_enter(arg_35_2)
 		end
 
-		arg_35_0.new_transition = arg_35_1
-		arg_35_0.new_transition_old_view = var_35_2
-		arg_35_0.transition_params = arg_35_2
-		arg_35_0._previous_transition = arg_35_1
+		self.new_transition = arg_35_1
+		self.new_transition_old_view = current_view
+		self.transition_params = arg_35_2
+		self._previous_transition = arg_35_1
 	end
 end
 
-function IngameUI.transition_with_fade(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
-	local var_36_0 = arg_36_0.blocked_transitions
+IngameUI.transition_with_fade = function (self, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
+	-- function 36
+	local blocked_transitions = self.blocked_transitions
 
-	if var_36_0 and var_36_0[arg_36_1] then
+	if not blocked_transitions and not blocked_transitions[arg_36_1] then
 		return
 	end
 
-	local var_36_1 = arg_36_0._previous_transition
+	local _previous_transition = self._previous_transition
 
-	if not arg_36_0:is_transition_allowed(arg_36_1) or var_36_1 and var_36_1 == arg_36_1 then
+	if not (not self:is_transition_allowed(arg_36_1) and not _previous_transition and _previous_transition ~= arg_36_1) then
 		return
 	end
 
-	arg_36_0._transition_fade_data = {
+	self._transition_fade_data = {
 		new_transition = arg_36_1,
 		transition_params = arg_36_2,
 		fade_out_speed = arg_36_4
@@ -947,317 +1084,346 @@ function IngameUI.transition_with_fade(arg_36_0, arg_36_1, arg_36_2, arg_36_3, a
 	Managers.transition:fade_in(arg_36_3 or 10)
 end
 
-function IngameUI._update_fade_transition(arg_37_0)
-	local var_37_0 = arg_37_0._transition_fade_data
+IngameUI._update_fade_transition = function (self)
+	-- function 37
+	local _transition_fade_data = self._transition_fade_data
 
-	if not var_37_0 then
+	if not _transition_fade_data then
 		return
 	end
 
-	if Managers.transition:fade_in_completed() then
-		local var_37_1 = var_37_0.new_transition
-		local var_37_2 = var_37_0.transition_params
+	if not Managers.transition:fade_in_completed() then
+		local new_transition = _transition_fade_data.new_transition
+		local transition_params = _transition_fade_data.transition_params
 
-		arg_37_0:handle_transition(var_37_1, var_37_2)
+		self:handle_transition(new_transition, transition_params)
 
-		local var_37_3 = arg_37_0._transition_fade_data.fade_out_speed
+		local fade_out_speed = self._transition_fade_data.fade_out_speed
 
-		arg_37_0._transition_fade_data = nil
+		self._transition_fade_data = nil
 
-		Managers.transition:fade_out(var_37_3 or 10)
+		Managers.transition:fade_out(fade_out_speed or 10)
 	end
 end
 
-function IngameUI.pending_transition(arg_38_0)
-	return arg_38_0._transition_fade_data ~= nil or arg_38_0.new_transition_old_view ~= nil
+IngameUI.pending_transition = function (self)
+	-- function 38
+	return self._transition_fade_data ~= nil or self.new_transition_old_view ~= nil
 end
 
-function IngameUI.get_transition(arg_39_0)
-	if arg_39_0.leave_game then
-		if Managers.play_go:installed() then
+IngameUI.get_transition = function (self)
+	-- function 39
+	if not self.leave_game then
+		if not Managers.play_go:installed() then
 			return "leave_game"
 		else
 			return "finish_tutorial"
 		end
-	elseif arg_39_0.return_to_pc_menu then
+	elseif not self.return_to_pc_menu then
 		return "return_to_pc_menu"
-	elseif arg_39_0.return_to_title_screen then
+	elseif not self.return_to_title_screen then
 		return "return_to_title_screen"
-	elseif arg_39_0.return_to_demo_title_screen then
+	elseif not self.return_to_demo_title_screen then
 		return "return_to_demo_title_screen"
-	elseif arg_39_0.restart_demo then
+	elseif not self.restart_demo then
 		return "restart_demo"
-	elseif arg_39_0.join_lobby then
-		return "join_lobby", arg_39_0.join_lobby
-	elseif arg_39_0.restart_game then
+	elseif not self.join_lobby then
+		return "join_lobby", self.join_lobby
+	elseif not self.restart_game then
 		return "restart_game"
-	elseif arg_39_0.quit_game then
+	elseif not self.quit_game then
 		return "quit_game"
 	end
 end
 
-function IngameUI.suspend_active_view(arg_40_0)
-	local var_40_0 = arg_40_0.current_view
+IngameUI.suspend_active_view = function (self)
+	-- function 40
+	local current_view = self.current_view
 
-	if var_40_0 and var_40_0 ~= "exit_menu" and arg_40_0.views[var_40_0] then
-		arg_40_0:handle_transition("exit_menu")
+	if not current_view and current_view == "exit_menu" or not self.views[current_view] then
+		self:handle_transition("exit_menu")
 	end
 end
 
-function IngameUI.activate_end_screen_ui(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
-	arg_41_0.end_screen:on_enter(arg_41_1, arg_41_2, arg_41_3)
+IngameUI.activate_end_screen_ui = function (self, arg_41_1, arg_41_2, arg_41_3)
+	-- function 41
+	self.end_screen:on_enter(arg_41_1, arg_41_2, arg_41_3)
 end
 
-function IngameUI.deactivate_end_screen_ui(arg_42_0)
-	local var_42_0 = arg_42_0.end_screen
+IngameUI.deactivate_end_screen_ui = function (self)
+	-- function 42
+	local end_screen = self.end_screen
 
-	if var_42_0.is_active then
-		var_42_0:on_exit()
+	if not end_screen.is_active then
+		end_screen:on_exit()
 	end
 end
 
-function IngameUI.end_screen_active(arg_43_0)
-	local var_43_0 = arg_43_0.end_screen
+IngameUI.end_screen_active = function (self)
+	-- function 43
+	local end_screen = self.end_screen
 
-	return var_43_0 and var_43_0.is_active
+	return not end_screen and end_screen.is_active
 end
 
-function IngameUI.end_screen_completed(arg_44_0)
-	local var_44_0 = arg_44_0.end_screen
+IngameUI.end_screen_completed = function (self)
+	-- function 44
+	local end_screen = self.end_screen
 
-	return var_44_0 and var_44_0.is_complete
+	return not end_screen and end_screen.is_complete
 end
 
-function IngameUI.end_screen_fade_in_complete(arg_45_0)
-	local var_45_0 = arg_45_0.end_screen
+IngameUI.end_screen_fade_in_complete = function (self)
+	-- function 45
+	local end_screen = self.end_screen
 
-	return var_45_0 and var_45_0:fade_in_complete()
+	return not end_screen and end_screen:fade_in_complete()
 end
 
-function IngameUI.update_map_enable_state(arg_46_0)
-	if arg_46_0.is_in_inn then
-		local var_46_0 = arg_46_0.views.map_view
+IngameUI.update_map_enable_state = function (self)
+	-- function 46
+	if not self.is_in_inn then
+		local map_view = self.views.map_view
 
-		if var_46_0 then
-			local var_46_1 = var_46_0.map_interaction_enabled
-			local var_46_2 = Managers.matchmaking:is_game_matchmaking()
+		if not map_view then
+			local map_interaction_enabled = map_view.map_interaction_enabled
+			local is_game_matchmaking = Managers.matchmaking:is_game_matchmaking()
 
-			if var_46_1 and var_46_2 then
-				var_46_0:set_map_interaction_state(false)
-			elseif not var_46_1 and not var_46_2 then
-				var_46_0:set_map_interaction_state(true)
+			if not map_interaction_enabled and not is_game_matchmaking then
+				map_view:set_map_interaction_state(false)
+			elseif not (map_interaction_enabled or is_game_matchmaking) then
+				map_view:set_map_interaction_state(true)
 			end
 		end
 	end
 end
 
-function IngameUI.play_sound(arg_47_0, arg_47_1)
-	WwiseWorld.trigger_event(arg_47_0.wwise_world, arg_47_1)
+IngameUI.play_sound = function (self, arg_47_1)
+	-- function 47
+	WwiseWorld.trigger_event(self.wwise_world, arg_47_1)
 end
 
-local var_0_6 = "arial"
-local var_0_7 = "materials/fonts/" .. var_0_6
-local var_0_8 = {}
-local var_0_9 = Colors.color_definitions.white
-local var_0_10 = Colors.color_definitions.black
-local var_0_11 = Colors.color_definitions.red
+local str = "arial"
+local str_2 = "materials/fonts/" .. str
+local tbl_3 = {}
+local white = Colors.color_definitions.white
+local black = Colors.color_definitions.black
+local red = Colors.color_definitions.red
 
-function IngameUI._render_version_info(arg_48_0)
-	local var_48_0 = arg_48_0.ui_top_renderer
-	local var_48_1 = 1920
-	local var_48_2 = 1080
-	local var_48_3 = 18
-	local var_48_4 = script_data.build_identifier or "???"
-	local var_48_5 = script_data.settings.content_revision or "???"
-	local var_48_6 = tostring(Application.make_hash(var_48_4, var_48_5)):sub(1, 4):upper()
+IngameUI._render_version_info = function (self)
+	-- function 48
+	local ui_top_renderer = self.ui_top_renderer
+	local num = 1920
+	local num_2 = 1080
+	local num_3 = 18
+	local build_identifier = script_data.build_identifier
 
-	if var_48_4 == "???" and var_48_5 == "???" then
-		var_48_6 = "???"
+	build_identifier = build_identifier or "???"
+
+	local content_revision = script_data.settings.content_revision
+
+	content_revision = content_revision or "???"
+
+	local upper = tostring(Application.make_hash(build_identifier, content_revision)):sub(1, 4):upper()
+
+	if not (build_identifier ~= "???" or content_revision ~= "???") then
+		upper = "???"
 	end
 
-	local var_48_7 = "GAME HASH: " .. var_48_6 .. " | Content revision: " .. var_48_5 .. " | Engine version: " .. var_48_4:sub(1, 6) .. "..."
+	local str_3 = "GAME HASH: " .. upper .. " | Content revision: " .. content_revision .. " | Engine version: " .. build_identifier:sub(1, 6) .. "..."
 
-	if rawget(_G, "Steam") then
-		local var_48_8 = Steam.app_id()
+	if not rawget(_G, "Steam") then
+		local app_id = Steam.app_id()
 
-		var_48_7 = var_48_7 .. " Appid: " .. var_48_8
+		str_3 = str_3 .. " Appid: " .. app_id
 	end
 
-	local var_48_9, var_48_10 = UIRenderer.text_size(var_48_0, var_48_7, var_0_7, var_48_3)
-	local var_48_11 = var_48_1 - var_48_9 - 8
+	local text_size, var_48_10 = UIRenderer.text_size(ui_top_renderer, str_3, str_2, num_3)
+	local num_4 = num - text_size - 8
 	local var_48_12 = var_48_10
 
-	var_0_8[1] = var_48_11
-	var_0_8[2] = var_48_12
-	var_0_8[3] = 899
+	tbl_3[1] = num_4
+	tbl_3[2] = var_48_12
+	tbl_3[3] = 899
 
-	UIRenderer.draw_text(var_48_0, var_48_7, var_0_7, var_48_3, var_0_6, Vector3(unpack(var_0_8)), var_0_9)
+	UIRenderer.draw_text(ui_top_renderer, str_3, str_2, num_3, str, Vector3(unpack(tbl_3)), white)
 
-	var_0_8[1] = var_48_11 + 2
-	var_0_8[2] = var_48_12 - 2
-	var_0_8[3] = 898
+	tbl_3[1] = num_4 + 2
+	tbl_3[2] = var_48_12 - 2
+	tbl_3[3] = 898
 
-	UIRenderer.draw_text(var_48_0, var_48_7, var_0_7, var_48_3, var_0_6, Vector3(unpack(var_0_8)), var_0_10)
+	UIRenderer.draw_text(ui_top_renderer, str_3, str_2, num_3, str, Vector3(unpack(tbl_3)), black)
 end
 
-function IngameUI._render_fps(arg_49_0, arg_49_1)
-	arg_49_0._fpses = arg_49_0._fpses or {}
+IngameUI._render_fps = function (self, arg_49_1)
+	-- function 49
+	local _fpses = self._fpses
 
-	local var_49_0 = arg_49_0.ui_top_renderer
+	_fpses = _fpses or {}
+	self._fpses = _fpses
 
-	arg_49_0._fpses[#arg_49_0._fpses + 1] = arg_49_1
-	arg_49_0._fps_cooldown = arg_49_0._fps_cooldown + arg_49_1
+	local ui_top_renderer = self.ui_top_renderer
 
-	if arg_49_0._fps_cooldown > 1 then
-		local var_49_1 = arg_49_0._fpses
-		local var_49_2 = #arg_49_0._fpses
-		local var_49_3 = 0
+	self._fpses[#self._fpses + 1] = arg_49_1
+	self._fps_cooldown = self._fps_cooldown + arg_49_1
 
-		for iter_49_0, iter_49_1 in pairs(arg_49_0._fpses) do
-			var_49_3 = var_49_3 + iter_49_1
+	if self._fps_cooldown > 1 then
+		local _fpses_2 = self._fpses
+		local count = #self._fpses
+		local num = 0
+
+		for k, v in pairs(self._fpses) do
+			num = num + v
 		end
 
-		local var_49_4 = var_49_3 / var_49_2
+		local num_2 = num / count
 
-		arg_49_0.mean_dt = var_49_4
-		arg_49_0.fps = math.floor(1 / var_49_4 + 0.5)
+		self.mean_dt = num_2
+		self.fps = math.floor(1 / num_2 + 0.5)
 
-		table.clear(arg_49_0._fpses)
+		table.clear(self._fpses)
 
-		arg_49_0._fps_cooldown = arg_49_0._fps_cooldown - 1
+		self._fps_cooldown = self._fps_cooldown - 1
 	end
 
-	local var_49_5 = arg_49_0.fps
-	local var_49_6 = arg_49_0.mean_dt
-	local var_49_7 = string.format("%.2fms  %i FPS", var_49_6 * 1000, var_49_5)
-	local var_49_8
-	local var_49_9 = 30
+	local fps = self.fps
+	local mean_dt = self.mean_dt
+	local format = string.format("%.2fms  %i FPS", mean_dt * 1000, fps)
+	local var_49_9
+	local num_3 = 30
 
-	if IS_CONSOLE then
-		var_49_9 = 28
+	if not IS_CONSOLE then
+		num_3 = 28
 	end
 
-	if var_49_5 < var_49_9 then
-		var_49_8 = var_0_11
+	if fps < num_3 then
+		var_49_9 = red
 	else
-		var_49_8 = var_0_9
+		var_49_9 = white
 	end
 
-	local var_49_10 = RESOLUTION_LOOKUP.res_w
-	local var_49_11 = RESOLUTION_LOOKUP.res_h
-	local var_49_12 = 24
-	local var_49_13 = RESOLUTION_LOOKUP.inv_scale
-	local var_49_14, var_49_15 = UIRenderer.text_size(var_49_0, var_49_7, var_0_7, var_49_12 * RESOLUTION_LOOKUP.scale)
-	local var_49_16 = (var_49_10 - var_49_14 - 8) * var_49_13
-	local var_49_17 = (var_49_15 + 16) * var_49_13
+	local res_w = RESOLUTION_LOOKUP.res_w
+	local res_h = RESOLUTION_LOOKUP.res_h
+	local num_4 = 24
+	local inv_scale = RESOLUTION_LOOKUP.inv_scale
+	local text_size, var_49_16 = UIRenderer.text_size(ui_top_renderer, format, str_2, num_4 * RESOLUTION_LOOKUP.scale)
+	local num_5 = (res_w - text_size - 8) * inv_scale
+	local num_6 = (var_49_16 + 16) * inv_scale
 
-	var_0_8[1] = var_49_16
-	var_0_8[2] = var_49_17
-	var_0_8[3] = 899
+	tbl_3[1] = num_5
+	tbl_3[2] = num_6
+	tbl_3[3] = 899
 
-	UIRenderer.draw_text(var_49_0, var_49_7, var_0_7, var_49_12, var_0_6, Vector3(unpack(var_0_8)), var_49_8)
+	UIRenderer.draw_text(ui_top_renderer, format, str_2, num_4, str, Vector3(unpack(tbl_3)), var_49_9)
 
-	var_0_8[1] = var_49_16 + 2
-	var_0_8[2] = var_49_17 - 2
-	var_0_8[3] = 898
+	tbl_3[1] = num_5 + 2
+	tbl_3[2] = num_6 - 2
+	tbl_3[3] = 898
 
-	UIRenderer.draw_text(var_49_0, var_49_7, var_0_7, var_49_12, var_0_6, Vector3(unpack(var_0_8)), var_0_10)
+	UIRenderer.draw_text(ui_top_renderer, format, str_2, num_4, str, Vector3(unpack(tbl_3)), black)
 
-	local var_49_18 = Managers.state.camera
+	local camera = Managers.state.camera
 
-	if var_49_18 then
-		local var_49_19 = Managers.player:local_player(1)
-		local var_49_20 = var_49_19 and var_49_19.viewport_name
+	if not camera then
+		local local_player = Managers.player:local_player(1)
+		local flag = not local_player and local_player.viewport_name
 
-		if var_49_20 then
-			local var_49_21 = var_49_18:camera_position(var_49_20)
-			local var_49_22 = var_49_18:camera_rotation(var_49_20)
-			local var_49_23 = 18
-			local var_49_24 = string.format("Position(%.2f, %.2f, %.2f) Rotation(%.4f, %.4f, %.4f, %.4f)", var_49_21.x, var_49_21.y, var_49_21.z, Quaternion.to_elements(var_49_22))
+		if not flag then
+			local camera_position = camera:camera_position(flag)
+			local camera_rotation = camera:camera_rotation(flag)
+			local num_7 = 18
+			local format_2 = string.format("Position(%.2f, %.2f, %.2f) Rotation(%.4f, %.4f, %.4f, %.4f)", camera_position.x, camera_position.y, camera_position.z, Quaternion.to_elements(camera_rotation))
 
-			UIRenderer.draw_text(var_49_0, var_49_24, var_0_7, var_49_23, var_0_6, Vector3(11, 11, 1), var_49_8)
-			UIRenderer.draw_text(var_49_0, var_49_24, var_0_7, var_49_23, var_0_6, Vector3(10, 10, 0), var_0_10)
+			UIRenderer.draw_text(ui_top_renderer, format_2, str_2, num_7, str, Vector3(11, 11, 1), var_49_9)
+			UIRenderer.draw_text(ui_top_renderer, format_2, str_2, num_7, str, Vector3(10, 10, 0), black)
 		end
 	end
 
-	local var_49_25, var_49_26 = Application.resolution()
-	local var_49_27 = string.format("Resolution W:%i H:%i", var_49_25, var_49_26)
+	local resolution, var_49_27 = Application.resolution()
+	local format_3 = string.format("Resolution W:%i H:%i", resolution, var_49_27)
 
-	UIRenderer.draw_text(var_49_0, var_49_27, var_0_7, 18, var_0_6, Vector3(11, 31, 1), var_49_8)
-	UIRenderer.draw_text(var_49_0, var_49_27, var_0_7, 18, var_0_6, Vector3(10, 30, 0), var_0_10)
+	UIRenderer.draw_text(ui_top_renderer, format_3, str_2, 18, str, Vector3(11, 31, 1), var_49_9)
+	UIRenderer.draw_text(ui_top_renderer, format_3, str_2, 18, str, Vector3(10, 30, 0), black)
 
-	if LobbyInternal.SESSION_NAME then
-		UIRenderer.draw_text(var_49_0, "My server name:", var_0_7, 20, var_0_6, Vector3(20, 40, 999))
-		UIRenderer.draw_text(var_49_0, "My server name:", var_0_7, 20, var_0_6, Vector3(22, 38, 998), var_0_10)
-		UIRenderer.draw_text(var_49_0, LobbyInternal.SESSION_NAME, var_0_7, 20, var_0_6, Vector3(20, 20, 999))
-		UIRenderer.draw_text(var_49_0, LobbyInternal.SESSION_NAME, var_0_7, 20, var_0_6, Vector3(22, 18, 998), var_0_10)
+	if not LobbyInternal.SESSION_NAME then
+		UIRenderer.draw_text(ui_top_renderer, "My server name:", str_2, 20, str, Vector3(20, 40, 999))
+		UIRenderer.draw_text(ui_top_renderer, "My server name:", str_2, 20, str, Vector3(22, 38, 998), black)
+		UIRenderer.draw_text(ui_top_renderer, LobbyInternal.SESSION_NAME, str_2, 20, str, Vector3(20, 20, 999))
+		UIRenderer.draw_text(ui_top_renderer, LobbyInternal.SESSION_NAME, str_2, 20, str, Vector3(22, 18, 998), black)
 	end
 end
 
-function IngameUI.open_popup(arg_50_0, arg_50_1, ...)
-	local var_50_0 = arg_50_0.popups_by_name
+IngameUI.open_popup = function (self, arg_50_1, ...)
+	-- function 50
+	local popups_by_name = self.popups_by_name
 
-	fassert(var_50_0[arg_50_1] == nil, "Trying to open a popup %q that is already active", arg_50_1)
+	fassert(popups_by_name[arg_50_1] == nil, "Trying to open a popup %q that is already active", arg_50_1)
 
 	local var_50_1 = PopupSettingsByName[arg_50_1]
-	local var_50_2 = rawget(_G, var_50_1.class):new(arg_50_0.ingame_ui_context, ...)
+	local var_50_2 = rawget(_G, var_50_1.class):new(self.ingame_ui_context, ...)
 
-	var_50_0[arg_50_1] = {
+	popups_by_name[arg_50_1] = {
 		settings = var_50_1,
 		popup = var_50_2
 	}
 end
 
-function IngameUI.close_popup(arg_51_0, arg_51_1)
-	local var_51_0 = arg_51_0.popups_by_name
-	local var_51_1 = var_51_0[arg_51_1]
+IngameUI.close_popup = function (self, arg_51_1)
+	-- function 51
+	local popups_by_name = self.popups_by_name
+	local var_51_1 = popups_by_name[arg_51_1]
 
 	fassert(var_51_1 ~= nil, "Trying to close a popup %q that is not active", arg_51_1)
 
-	local var_51_2 = var_51_1.popup
+	local popup = var_51_1.popup
 
-	var_51_2:hide()
-	var_51_2:delete()
+	popup:hide()
+	popup:delete()
 
-	var_51_0[arg_51_1] = nil
+	popups_by_name[arg_51_1] = nil
 end
 
-function IngameUI.get_active_popup(arg_52_0, arg_52_1)
-	local var_52_0 = arg_52_0.popups_by_name[arg_52_1]
+IngameUI.get_active_popup = function (self, arg_52_1)
+	-- function 52
+	local var_52_0 = self.popups_by_name[arg_52_1]
 
-	return var_52_0 and var_52_0.popup
+	return not var_52_0 and var_52_0.popup
 end
 
-function IngameUI.respawn(arg_53_0)
+IngameUI.respawn = function (self)
+	-- function 53
 	if not Managers.state.network:game() then
 		return
 	end
 
-	local var_53_0 = arg_53_0.peer_id
-	local var_53_1 = arg_53_0.local_player_id
-	local var_53_2, var_53_3 = arg_53_0.profile_synchronizer:profile_by_peer(var_53_0, var_53_1)
-	local var_53_4, var_53_5 = hero_and_career_name_from_index(var_53_2, var_53_3)
-	local var_53_6 = true
+	local peer_id = self.peer_id
+	local local_player_id = self.local_player_id
+	local profile_by_peer, var_53_3 = self.profile_synchronizer:profile_by_peer(peer_id, local_player_id)
+	local var_53_4, var_53_5 = hero_and_career_name_from_index(profile_by_peer, var_53_3)
+	local flag = true
 
-	arg_53_0._profile_requester:request_profile(var_53_0, var_53_1, var_53_4, var_53_5, var_53_6)
+	self._profile_requester:request_profile(peer_id, local_player_id, var_53_4, var_53_5, flag)
 
-	arg_53_0._respawning = true
+	self._respawning = true
 end
 
-function IngameUI._update_respawning(arg_54_0)
-	if arg_54_0._profile_requester:result() ~= nil then
+IngameUI._update_respawning = function (self)
+	-- function 54
+	if self._profile_requester:result() ~= nil then
 		return true
 	end
 
 	return false
 end
 
-function IngameUI._cancel_popup(arg_55_0)
-	if arg_55_0.popup_id then
-		Managers.popup:cancel_popup(arg_55_0.popup_id)
+IngameUI._cancel_popup = function (self)
+	-- function 55
+	if not self.popup_id then
+		Managers.popup:cancel_popup(self.popup_id)
 	end
 end
 
-function IngameUI.get_hud_component(arg_56_0, arg_56_1)
-	return arg_56_0.ingame_hud:get_hud_component(arg_56_1)
+IngameUI.get_hud_component = function (self, arg_56_1)
+	-- function 56
+	return self.ingame_hud:get_hud_component(arg_56_1)
 end

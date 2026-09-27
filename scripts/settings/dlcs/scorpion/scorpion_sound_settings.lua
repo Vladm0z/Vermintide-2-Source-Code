@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/scorpion/scorpion_sound_settings.lua
 
-local var_0_0 = DLCSettings.scorpion
+local scorpion = DLCSettings.scorpion
 
-var_0_0.dialogue_lookup = {
+scorpion.dialogue_lookup = {
 	"dialogues/generated/lookup_winds_intro_metal",
 	"dialogues/generated/lookup_winds_intro_shadow",
 	"dialogues/generated/lookup_winds_intro_beasts",
@@ -12,7 +12,7 @@ var_0_0.dialogue_lookup = {
 	"dialogues/generated/lookup_winds_intro_life",
 	"dialogues/generated/lookup_winds_intro_light"
 }
-var_0_0.network_sound_events = {
+scorpion.network_sound_events = {
 	"Play_winds_heavens_gameplay_spawn",
 	"Play_winds_heavens_gameplay_lock",
 	"Play_winds_heavens_gamepay_charge",
@@ -49,7 +49,7 @@ var_0_0.network_sound_events = {
 	"hud_text_reveal"
 }
 
-local var_0_1 = {
+local tbl = {
 	"alleys",
 	"canyon",
 	"crater",
@@ -63,7 +63,7 @@ local var_0_1 = {
 	"wall",
 	"woods"
 }
-local var_0_2 = {
+local tbl_2 = {
 	"beasts",
 	"death",
 	"fire",
@@ -73,18 +73,18 @@ local var_0_2 = {
 	"metal",
 	"shadow"
 }
-local var_0_3 = "dlc_scorpion_"
-local var_0_4 = "dialogues/generated/winds_intro_"
+local str = "dlc_scorpion_"
+local str_2 = "dialogues/generated/winds_intro_"
 
-var_0_0.dialogue_settings = {}
+scorpion.dialogue_settings = {}
 
-for iter_0_0, iter_0_1 in ipairs(var_0_1) do
-	for iter_0_2, iter_0_3 in ipairs(var_0_2) do
-		local var_0_5 = string.format("%s%s_%s", var_0_3, iter_0_1, iter_0_3)
-		local var_0_6 = string.format("%s%s", var_0_4, iter_0_3)
+for i, v in ipairs(tbl) do
+	for i_2, v_2 in ipairs(tbl_2) do
+		local format = string.format("%s%s_%s", str, v, v_2)
+		local format_2 = string.format("%s%s", str_2, v_2)
 
-		var_0_0.dialogue_settings[var_0_5] = {
-			var_0_6
+		scorpion.dialogue_settings[format] = {
+			format_2
 		}
 	end
 end

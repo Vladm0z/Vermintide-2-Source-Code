@@ -4,82 +4,89 @@ require("scripts/unit_extensions/mutator_items/mutator_item_spawner_extension")
 
 MutatorItemSystem = class(MutatorItemSystem, ExtensionSystemBase)
 
-local var_0_0 = {}
-local var_0_1 = {
+local tbl = {}
+local tbl_2 = {
 	"MutatorItemSpawnerExtension"
 }
 
-function MutatorItemSystem.init(arg_1_0, arg_1_1, arg_1_2)
-	MutatorItemSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
+MutatorItemSystem.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	MutatorItemSystem.super.init(self, arg_1_1, arg_1_2, tbl_2)
 
-	local var_1_0 = arg_1_1.network_event_delegate
+	local network_event_delegate = arg_1_1.network_event_delegate
 
-	arg_1_0.network_event_delegate = var_1_0
+	self.network_event_delegate = network_event_delegate
 
-	var_1_0:register(arg_1_0, unpack(var_0_0))
+	network_event_delegate:register(self, unpack(tbl))
 
-	arg_1_0._spawners = {}
-	arg_1_0._spawners_by_name = {}
+	self._spawners = {}
+	self._spawners_by_name = {}
 end
 
-function MutatorItemSystem.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, ...)
+MutatorItemSystem.on_add_extension = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, ...)
+	-- function 2
 	if arg_2_3 == "MutatorItemSpawnerExtension" then
-		local var_2_0 = arg_2_0._spawners
+		local _spawners = self._spawners
 
-		var_2_0[#var_2_0 + 1] = arg_2_2
+		_spawners[#_spawners + 1] = arg_2_2
 
-		local var_2_1 = Unit.get_data(arg_2_2, "mutator_item_spawner_id")
+		local get_data = Unit.get_data(arg_2_2, "mutator_item_spawner_id")
 
-		arg_2_0._spawners_by_name[var_2_1] = arg_2_2
+		self._spawners_by_name[get_data] = arg_2_2
 	end
 
-	return MutatorItemSystem.super.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, ...)
+	return MutatorItemSystem.super.on_add_extension(self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, ...)
 end
 
-local var_0_2 = {}
+local tbl_3 = {}
 
-function MutatorItemSystem.spawn_mutator_items(arg_3_0, arg_3_1)
-	local var_3_0 = arg_3_0._spawners
-	local var_3_1 = arg_3_0._spawners_by_name
+MutatorItemSystem.spawn_mutator_items = function (self, arg_3_1)
+	-- function 3
+	local _spawners = self._spawners
+	local _spawners_by_name = self._spawners_by_name
 
-	table.clear(var_0_2)
+	table.clear(tbl_3)
 
 	if not arg_3_1 then
 		return
 	end
 
-	for iter_3_0, iter_3_1 in pairs(arg_3_1) do
-		local var_3_2 = var_3_1[iter_3_0]
+	for k, v in pairs(arg_3_1) do
+		local var_3_2 = _spawners_by_name[k]
 
-		if var_3_2 then
-			local var_3_3 = iter_3_1.unit_name
-			local var_3_4 = iter_3_1.unit_extension_template
-			local var_3_5 = iter_3_1.extension_init_data
-			local var_3_6 = Unit.local_position(var_3_2, 0)
-			local var_3_7 = Unit.local_rotation(var_3_2, 0)
-			local var_3_8 = Managers.state.unit_spawner:spawn_network_unit(var_3_3, var_3_4, var_3_5, var_3_6, var_3_7)
+		if not var_3_2 then
+			local unit_name = v.unit_name
+			local unit_extension_template = v.unit_extension_template
+			local extension_init_data = v.extension_init_data
+			local local_position = Unit.local_position(var_3_2, 0)
+			local local_rotation = Unit.local_rotation(var_3_2, 0)
+			local spawn_network_unit = Managers.state.unit_spawner:spawn_network_unit(unit_name, unit_extension_template, extension_init_data, local_position, local_rotation)
 
-			var_0_2[#var_0_2 + 1] = var_3_8
+			tbl_3[#tbl_3 + 1] = spawn_network_unit
 		end
 	end
 
-	return var_0_2
+	return tbl_3
 end
 
-function MutatorItemSystem.on_remove_extension(arg_4_0, arg_4_1, arg_4_2, ...)
+MutatorItemSystem.on_remove_extension = function (arg_4_0, arg_4_1, arg_4_2, ...)
+	-- function 4
 	return MutatorItemSystem.super.on_remove_extension(arg_4_0, arg_4_1, arg_4_2, ...)
 end
 
-function MutatorItemSystem.update(arg_5_0, arg_5_1, arg_5_2)
-	if arg_5_0.is_server then
-		-- block empty
+MutatorItemSystem.update = function (self, arg_5_1, arg_5_2)
+	-- function 5
+	if not self.is_server then
+		-- Nothing
 	end
 end
 
-function MutatorItemSystem.destroy(arg_6_0)
-	arg_6_0.network_event_delegate:unregister(arg_6_0)
+MutatorItemSystem.destroy = function (self)
+	-- function 6
+	self.network_event_delegate:unregister(self)
 end
 
-function MutatorItemSystem.hot_join_sync(arg_7_0, arg_7_1)
+MutatorItemSystem.hot_join_sync = function (arg_7_0, arg_7_1)
+	-- function 7
 	return
 end

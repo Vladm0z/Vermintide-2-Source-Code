@@ -2,8 +2,8 @@
 
 require("scripts/entity_system/systems/buff/buff_sync_type")
 
-local var_0_0 = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
-local var_0_1 = {
+local scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
+local tbl = {
 	kerillian_shade_ability_cooldown_on_hit = {
 		bonus = 0.5
 	},
@@ -252,8 +252,10 @@ local var_0_1 = {
 		multiplier = 1
 	}
 }
+local TalentBuffTemplates = TalentBuffTemplates
 
 TalentBuffTemplates = TalentBuffTemplates or {}
+TalentBuffTemplates = TalentBuffTemplates
 TalentBuffTemplates.wood_elf = {
 	kerillian_shade_ability_cooldown_on_hit = {
 		buffs = {
@@ -333,7 +335,7 @@ TalentBuffTemplates.wood_elf = {
 		buffs = {
 			{
 				perks = {
-					var_0_0.crit_backstab_killing_blow
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.crit_backstab_killing_blow
 				}
 			}
 		}
@@ -415,7 +417,7 @@ TalentBuffTemplates.wood_elf = {
 				max_stacks = 1,
 				can_restealth_on_remove = false,
 				can_restealth_combo = true,
-				duration = var_0_1.kerillian_shade_activated_ability.duration,
+				duration = tbl.kerillian_shade_activated_ability.duration,
 				perks = {
 					"shade_melee_boost"
 				}
@@ -430,7 +432,7 @@ TalentBuffTemplates.wood_elf = {
 				event = "on_hit",
 				bonus = 2,
 				perks = {
-					var_0_0.ninja_healing
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.ninja_healing
 				}
 			}
 		}
@@ -444,7 +446,7 @@ TalentBuffTemplates.wood_elf = {
 				buff_func = "heal_percentage_of_enemy_hp_on_melee_kill",
 				event = "on_kill",
 				perks = {
-					var_0_0.smiter_healing
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.smiter_healing
 				}
 			}
 		}
@@ -755,7 +757,7 @@ TalentBuffTemplates.wood_elf = {
 				remove_buff_func = "remove_movement_buff",
 				max_stacks = 1,
 				apply_buff_func = "apply_movement_buff",
-				duration = var_0_1.kerillian_shade_phasing_buff.duration,
+				duration = tbl.kerillian_shade_phasing_buff.duration,
 				path_to_movement_setting_to_modify = {
 					"move_speed"
 				}
@@ -769,7 +771,7 @@ TalentBuffTemplates.wood_elf = {
 				name = "kerillian_shade_power_buff",
 				stat_buff = "power_level",
 				max_stacks = 1,
-				duration = var_0_1.kerillian_shade_phasing_buff.duration
+				duration = tbl.kerillian_shade_phasing_buff.duration
 			}
 		}
 	},
@@ -840,7 +842,7 @@ TalentBuffTemplates.wood_elf = {
 		buffs = {
 			{
 				perks = {
-					var_0_0.uninterruptible_revive
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.uninterruptible_revive
 				}
 			}
 		}
@@ -897,7 +899,7 @@ TalentBuffTemplates.wood_elf = {
 				max_targets = 5,
 				bonus = 0.25,
 				perks = {
-					var_0_0.linesman_healing
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.linesman_healing
 				}
 			}
 		}
@@ -911,7 +913,7 @@ TalentBuffTemplates.wood_elf = {
 				buff_func = "heal_percentage_of_enemy_hp_on_melee_kill",
 				event = "on_kill",
 				perks = {
-					var_0_0.smiter_healing
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.smiter_healing
 				}
 			}
 		}
@@ -1236,7 +1238,7 @@ TalentBuffTemplates.wood_elf = {
 		buffs = {
 			{
 				perks = {
-					var_0_0.increased_zoom
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.increased_zoom
 				}
 			}
 		}
@@ -1245,7 +1247,7 @@ TalentBuffTemplates.wood_elf = {
 		buffs = {
 			{
 				perks = {
-					var_0_0.no_damage_dropoff
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.no_damage_dropoff
 				}
 			}
 		}
@@ -1258,7 +1260,7 @@ TalentBuffTemplates.wood_elf = {
 				event = "on_hit",
 				bonus = 2,
 				perks = {
-					var_0_0.ninja_healing
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.ninja_healing
 				}
 			}
 		}
@@ -1273,7 +1275,7 @@ TalentBuffTemplates.wood_elf = {
 				max_targets = 5,
 				bonus = 0.25,
 				perks = {
-					var_0_0.linesman_healing
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.linesman_healing
 				}
 			}
 		}
@@ -1315,7 +1317,7 @@ TalentBuffTemplates.wood_elf = {
 		buffs = {
 			{
 				perks = {
-					var_0_0.kerillian_critical_bleed_dot
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.kerillian_critical_bleed_dot
 				}
 			}
 		}
@@ -1376,7 +1378,7 @@ TalentBuffTemplates.wood_elf = {
 				max_stacks = 1,
 				stat_buff = "projectile_bounces",
 				perks = {
-					var_0_0.add_projectile_bounces
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.add_projectile_bounces
 				}
 			}
 		}
@@ -1398,7 +1400,11 @@ TalentBuffTemplates.wood_elf = {
 		}
 	}
 }
+
+local TalentTrees = TalentTrees
+
 TalentTrees = TalentTrees or {}
+TalentTrees = TalentTrees
 TalentTrees.wood_elf = {
 	{
 		{
@@ -1596,7 +1602,7 @@ Talents.wood_elf = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.kerillian_shade_increased_damage_on_poisoned_or_bleeding_enemy.multiplier
+				value = tbl.kerillian_shade_increased_damage_on_poisoned_or_bleeding_enemy.multiplier
 			}
 		},
 		buffs = {
@@ -1612,7 +1618,7 @@ Talents.wood_elf = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.kerillian_shade_increased_critical_strike_damage.multiplier
+				value = tbl.kerillian_shade_increased_critical_strike_damage.multiplier
 			}
 		},
 		buffs = {
@@ -1628,13 +1634,13 @@ Talents.wood_elf = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.kerillian_shade_stacking_headshot_damage_on_headshot_buff.multiplier
+				value = tbl.kerillian_shade_stacking_headshot_damage_on_headshot_buff.multiplier
 			},
 			{
-				value = var_0_1.kerillian_shade_stacking_headshot_damage_on_headshot_buff.duration
+				value = tbl.kerillian_shade_stacking_headshot_damage_on_headshot_buff.duration
 			},
 			{
-				value = var_0_1.kerillian_shade_stacking_headshot_damage_on_headshot_buff.max_stacks
+				value = tbl.kerillian_shade_stacking_headshot_damage_on_headshot_buff.max_stacks
 			}
 		},
 		buffs = {
@@ -1650,13 +1656,13 @@ Talents.wood_elf = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.kerillian_shade_charged_backstabs_buff.bonus
+				value = tbl.kerillian_shade_charged_backstabs_buff.bonus
 			},
 			{
-				value = var_0_1.kerillian_shade_charged_backstabs_buff.duration
+				value = tbl.kerillian_shade_charged_backstabs_buff.duration
 			},
 			{
-				value = var_0_1.kerillian_shade_charged_backstabs_buff.max_stacks
+				value = tbl.kerillian_shade_charged_backstabs_buff.max_stacks
 			}
 		},
 		buffs = {
@@ -1670,7 +1676,7 @@ Talents.wood_elf = {
 		icon = "kerillian_shade_passive_stealth_on_backstab_kill",
 		description_values = {
 			{
-				value = var_0_1.kerillian_shade_backstabs_cooldown_regeneration_buff.duration
+				value = tbl.kerillian_shade_backstabs_cooldown_regeneration_buff.duration
 			}
 		},
 		buffs = {
@@ -1684,10 +1690,10 @@ Talents.wood_elf = {
 		icon = "kerillian_shade_backstabs_replenishes_ammunition",
 		description_values = {
 			{
-				value = var_0_1.kerillian_shade_backstabs_replenishes_ammunition.bonus
+				value = tbl.kerillian_shade_backstabs_replenishes_ammunition.bonus
 			},
 			{
-				value = var_0_1.kerillian_shade_backstabs_replenishes_ammunition_cooldown.duration
+				value = tbl.kerillian_shade_backstabs_replenishes_ammunition_cooldown.duration
 			}
 		},
 		buffs = {
@@ -1702,7 +1708,7 @@ Talents.wood_elf = {
 		description_values = {
 			{
 				value_type = "baked_percent",
-				value = var_0_1.kerillian_shade_movement_speed.multiplier
+				value = tbl.kerillian_shade_movement_speed.multiplier
 			}
 		},
 		buffs = {
@@ -1717,10 +1723,10 @@ Talents.wood_elf = {
 		description_values = {
 			{
 				value_type = "baked_percent",
-				value = var_0_1.kerillian_shade_movement_speed_on_critical_hit_buff.multiplier
+				value = tbl.kerillian_shade_movement_speed_on_critical_hit_buff.multiplier
 			},
 			{
-				value = var_0_1.kerillian_shade_movement_speed_on_critical_hit_buff.duration
+				value = tbl.kerillian_shade_movement_speed_on_critical_hit_buff.duration
 			}
 		},
 		buffs = {
@@ -1736,10 +1742,10 @@ Talents.wood_elf = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.kerillian_shade_damage_reduction_on_critical_hit_buff.multiplier
+				value = tbl.kerillian_shade_damage_reduction_on_critical_hit_buff.multiplier
 			},
 			{
-				value = var_0_1.kerillian_shade_damage_reduction_on_critical_hit_buff.duration
+				value = tbl.kerillian_shade_damage_reduction_on_critical_hit_buff.duration
 			}
 		},
 		buffs = {
@@ -1754,10 +1760,10 @@ Talents.wood_elf = {
 		icon = "kerillian_shade_activated_ability_quick_cooldown",
 		description_values = {
 			{
-				value = var_0_1.kerillian_shade_ult_invis.duration
+				value = tbl.kerillian_shade_ult_invis.duration
 			},
 			{
-				value = var_0_1.kerillian_shade_ult_invis_combo_window.extend_time
+				value = tbl.kerillian_shade_ult_invis_combo_window.extend_time
 			}
 		},
 		buffs = {}
@@ -1770,14 +1776,14 @@ Talents.wood_elf = {
 		description_values = {
 			{
 				value_type = "baked_percent",
-				value = var_0_1.kerillian_shade_movespeed_buff.multiplier
+				value = tbl.kerillian_shade_movespeed_buff.multiplier
 			},
 			{
 				value_type = "percent",
-				value = var_0_1.kerillian_shade_power_buff.multiplier
+				value = tbl.kerillian_shade_power_buff.multiplier
 			},
 			{
-				value = var_0_1.kerillian_shade_phasing_buff.duration
+				value = tbl.kerillian_shade_phasing_buff.duration
 			}
 		},
 		buffs = {}
@@ -1937,11 +1943,11 @@ Talents.wood_elf = {
 		icon = "kerillian_maidenguard_power_level_on_unharmed",
 		description_values = {
 			{
-				value = var_0_1.kerillian_maidenguard_power_level_on_unharmed_cooldown.duration
+				value = tbl.kerillian_maidenguard_power_level_on_unharmed_cooldown.duration
 			},
 			{
 				value_type = "percent",
-				value = var_0_1.kerillian_maidenguard_power_level_on_unharmed.multiplier
+				value = tbl.kerillian_maidenguard_power_level_on_unharmed.multiplier
 			}
 		},
 		buffs = {
@@ -1957,7 +1963,7 @@ Talents.wood_elf = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.kerillian_maidenguard_crit_chance.bonus
+				value = tbl.kerillian_maidenguard_crit_chance.bonus
 			}
 		},
 		buffs = {
@@ -1973,11 +1979,11 @@ Talents.wood_elf = {
 		description_values = {
 			{
 				value_type = "baked_percent",
-				value = var_0_1.kerillian_maidenguard_improved_dodge.multiplier
+				value = tbl.kerillian_maidenguard_improved_dodge.multiplier
 			},
 			{
 				value_type = "percent",
-				value = var_0_1.kerillian_maidenguard_power_on_dodge.multiplier
+				value = tbl.kerillian_maidenguard_power_on_dodge.multiplier
 			}
 		},
 		buffs = {
@@ -1992,13 +1998,13 @@ Talents.wood_elf = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.kerillian_maidenguard_passive_attack_speed_on_dodge_buff.multiplier
+				value = tbl.kerillian_maidenguard_passive_attack_speed_on_dodge_buff.multiplier
 			},
 			{
-				value = var_0_1.kerillian_maidenguard_passive_attack_speed_on_dodge_buff.duration
+				value = tbl.kerillian_maidenguard_passive_attack_speed_on_dodge_buff.duration
 			},
 			{
-				value = var_0_1.kerillian_maidenguard_passive_attack_speed_on_dodge_buff.max_stacks
+				value = tbl.kerillian_maidenguard_passive_attack_speed_on_dodge_buff.max_stacks
 			}
 		},
 		buffs = {
@@ -2014,11 +2020,11 @@ Talents.wood_elf = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.kerillian_maidenguard_speed_on_block_buff.multiplier
+				value = tbl.kerillian_maidenguard_speed_on_block_buff.multiplier
 			},
 			{
 				value_type = "percent",
-				value = var_0_1.kerillian_maidenguard_power_on_block_buff.multiplier
+				value = tbl.kerillian_maidenguard_power_on_block_buff.multiplier
 			}
 		},
 		buffs = {
@@ -2046,7 +2052,7 @@ Talents.wood_elf = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.kerillian_maidenguard_max_ammo.multiplier
+				value = tbl.kerillian_maidenguard_max_ammo.multiplier
 			}
 		},
 		buffs = {
@@ -2062,7 +2068,7 @@ Talents.wood_elf = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.kerillian_maidenguard_max_health.multiplier
+				value = tbl.kerillian_maidenguard_max_health.multiplier
 			}
 		},
 		buffs = {
@@ -2077,7 +2083,7 @@ Talents.wood_elf = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.kerillian_maidenguard_block_cost.multiplier
+				value = tbl.kerillian_maidenguard_block_cost.multiplier
 			}
 		},
 		buffs = {
@@ -2091,7 +2097,7 @@ Talents.wood_elf = {
 		icon = "kerillian_maidenguard_activated_ability_invis_duration",
 		description_values = {
 			{
-				value = var_0_1.kerillian_maidenguard_activated_ability_invis_duration.duration
+				value = tbl.kerillian_maidenguard_activated_ability_invis_duration.duration
 			}
 		},
 		buffs = {}
@@ -2114,13 +2120,13 @@ Talents.wood_elf = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.kerillian_maidenguard_activated_ability_crit_buff.bonus
+				value = tbl.kerillian_maidenguard_activated_ability_crit_buff.bonus
 			},
 			{
-				value = var_0_1.kerillian_maidenguard_activated_ability_crit_buff.duration
+				value = tbl.kerillian_maidenguard_activated_ability_crit_buff.duration
 			},
 			{
-				value = var_0_1.kerillian_maidenguard_activated_ability_crit_buff.max_stacks
+				value = tbl.kerillian_maidenguard_activated_ability_crit_buff.max_stacks
 			}
 		},
 		buffs = {
@@ -2278,7 +2284,7 @@ Talents.wood_elf = {
 		icon = "kerillian_waywatcher_extra_arrow_melee_kill",
 		description_values = {
 			{
-				value = var_0_1.kerillian_waywatcher_extra_arrow_melee_kill_buff.duration
+				value = tbl.kerillian_waywatcher_extra_arrow_melee_kill_buff.duration
 			}
 		},
 		buffs = {
@@ -2304,10 +2310,10 @@ Talents.wood_elf = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.kerillian_waywatcher_attack_speed_on_ranged_headshot_buff.multiplier
+				value = tbl.kerillian_waywatcher_attack_speed_on_ranged_headshot_buff.multiplier
 			},
 			{
-				value = var_0_1.kerillian_waywatcher_attack_speed_on_ranged_headshot_buff.duration
+				value = tbl.kerillian_waywatcher_attack_speed_on_ranged_headshot_buff.duration
 			}
 		},
 		buffs = {
@@ -2322,7 +2328,7 @@ Talents.wood_elf = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.kerillian_waywatcher_improved_regen.display_multiplier
+				value = tbl.kerillian_waywatcher_improved_regen.display_multiplier
 			}
 		},
 		buffs = {}
@@ -2342,7 +2348,7 @@ Talents.wood_elf = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.kerillian_waywatcher_passive_cooldown_restore.display_multiplier
+				value = tbl.kerillian_waywatcher_passive_cooldown_restore.display_multiplier
 			}
 		},
 		buffs = {}
@@ -2355,10 +2361,10 @@ Talents.wood_elf = {
 		description_values = {
 			{
 				value_type = "baked_percent",
-				value = var_0_1.kerillian_waywatcher_movement_speed_on_special_kill_buff.multiplier
+				value = tbl.kerillian_waywatcher_movement_speed_on_special_kill_buff.multiplier
 			},
 			{
-				value = var_0_1.kerillian_waywatcher_movement_speed_on_special_kill_buff.duration
+				value = tbl.kerillian_waywatcher_movement_speed_on_special_kill_buff.duration
 			}
 		},
 		buffs = {
@@ -2373,7 +2379,7 @@ Talents.wood_elf = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.kerillian_waywatcher_activated_ability_cooldown.multiplier
+				value = tbl.kerillian_waywatcher_activated_ability_cooldown.multiplier
 			}
 		},
 		buffs = {
@@ -2388,7 +2394,7 @@ Talents.wood_elf = {
 		icon = "kerillian_waywatcher_projectile_ricochet",
 		description_values = {
 			{
-				value = var_0_1.kerillian_waywatcher_projectile_ricochet.bonus
+				value = tbl.kerillian_waywatcher_projectile_ricochet.bonus
 			}
 		},
 		buffs = {
@@ -2403,7 +2409,7 @@ Talents.wood_elf = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.kerillian_waywatcher_activated_ability_restore_ammo_on_career_skill_special_kill.ammo_bonus_fraction
+				value = tbl.kerillian_waywatcher_activated_ability_restore_ammo_on_career_skill_special_kill.ammo_bonus_fraction
 			}
 		},
 		buffs = {
@@ -2427,7 +2433,7 @@ Talents.wood_elf = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.kerillian_waywatcher_activated_ability_piercing_shot.multiplier
+				value = tbl.kerillian_waywatcher_activated_ability_piercing_shot.multiplier
 			}
 		},
 		buffs = {
@@ -2497,4 +2503,4 @@ Talents.wood_elf = {
 }
 
 BuffUtils.copy_talent_buff_names(TalentBuffTemplates.wood_elf)
-BuffUtils.apply_buff_tweak_data(TalentBuffTemplates.wood_elf, var_0_1)
+BuffUtils.apply_buff_tweak_data(TalentBuffTemplates.wood_elf, tbl)

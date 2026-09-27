@@ -1,10 +1,10 @@
 -- chunkname: @scripts/settings/terror_events/terror_events_warcamp.lua
 
-local var_0_0 = require("scripts/settings/terror_events/terror_event_utils")
-local var_0_1 = var_0_0.count_event_breed
-local var_0_2 = var_0_0.HARDER
-local var_0_3 = var_0_0.HARDEST
-local var_0_4 = {
+local scripts_settings_terror_events_terror_event_utils = require("scripts/settings/terror_events/terror_event_utils")
+local count_event_breed = scripts_settings_terror_events_terror_event_utils.count_event_breed
+local HARDER = scripts_settings_terror_events_terror_event_utils.HARDER
+local HARDEST = scripts_settings_terror_events_terror_event_utils.HARDEST
+local tbl = {
 	generic_disable_specials = GenericTerrorEvents.generic_disable_specials,
 	generic_enable_specials = GenericTerrorEvents.generic_enable_specials,
 	generic_disable_pacing = GenericTerrorEvents.generic_disable_pacing,
@@ -49,7 +49,7 @@ local var_0_4 = {
 				"chaos_corruptor_sorcerer",
 				"chaos_vortex_sorcerer"
 			},
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
@@ -58,8 +58,9 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 40,
-			condition = function(arg_1_0)
-				return var_0_1("chaos_berzerker") < 3 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
+			condition = function (arg_1_0)
+				-- function 1
+				return not (count_event_breed("chaos_berzerker") < 3) or not (count_event_breed("chaos_raider") < 3) or not (count_event_breed("chaos_marauder") < 3) or count_event_breed("chaos_marauder_with_shield") < 2
 			end
 		},
 		{
@@ -71,7 +72,7 @@ local var_0_4 = {
 		{
 			"delay",
 			duration = 10,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_special",
@@ -81,14 +82,14 @@ local var_0_4 = {
 				"chaos_vortex_sorcerer",
 				"skaven_gutter_runner"
 			},
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"event_horde",
 			limit_spawners = 2,
 			spawner_id = "payload_event_l",
 			composition_type = "event_chaos_extra_spice_small",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
@@ -102,7 +103,7 @@ local var_0_4 = {
 				"skaven_ratling_gunner",
 				"skaven_poison_wind_globadier"
 			},
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_special",
@@ -112,13 +113,14 @@ local var_0_4 = {
 				"chaos_vortex_sorcerer",
 				"skaven_gutter_runner"
 			},
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"continue_when",
 			duration = 40,
-			condition = function(arg_2_0)
-				return var_0_1("chaos_berzerker") < 2 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
+			condition = function (arg_2_0)
+				-- function 2
+				return not (count_event_breed("chaos_berzerker") < 2) or not (count_event_breed("chaos_raider") < 3) or not (count_event_breed("chaos_marauder") < 3) or count_event_breed("chaos_marauder_with_shield") < 2
 			end
 		},
 		{
@@ -146,14 +148,14 @@ local var_0_4 = {
 				"skaven_pack_master",
 				"skaven_gutter_runner"
 			},
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"event_horde",
 			limit_spawners = 2,
 			spawner_id = "payload_event_l",
 			composition_type = "event_chaos_extra_spice_small",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"event_horde",
@@ -178,13 +180,14 @@ local var_0_4 = {
 				"chaos_vortex_sorcerer",
 				"skaven_gutter_runner"
 			},
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"continue_when",
 			duration = 40,
-			condition = function(arg_3_0)
-				return var_0_1("chaos_berzerker") < 3 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
+			condition = function (arg_3_0)
+				-- function 3
+				return not (count_event_breed("chaos_berzerker") < 3) or not (count_event_breed("chaos_raider") < 3) or not (count_event_breed("chaos_marauder") < 3) or count_event_breed("chaos_marauder_with_shield") < 2
 			end
 		},
 		{
@@ -206,7 +209,7 @@ local var_0_4 = {
 			limit_spawners = 2,
 			spawner_id = "payload_event_r",
 			composition_type = "event_chaos_extra_spice_small",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
@@ -215,8 +218,9 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 40,
-			condition = function(arg_4_0)
-				return var_0_1("chaos_berzerker") < 3 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
+			condition = function (arg_4_0)
+				-- function 4
+				return not (count_event_breed("chaos_berzerker") < 3) or not (count_event_breed("chaos_raider") < 3) or not (count_event_breed("chaos_marauder") < 3) or count_event_breed("chaos_marauder_with_shield") < 2
 			end
 		},
 		{
@@ -246,8 +250,9 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 40,
-			condition = function(arg_5_0)
-				return var_0_1("chaos_berzerker") < 3 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
+			condition = function (arg_5_0)
+				-- function 5
+				return not (count_event_breed("chaos_berzerker") < 3) or not (count_event_breed("chaos_raider") < 3) or not (count_event_breed("chaos_marauder") < 3) or count_event_breed("chaos_marauder_with_shield") < 2
 			end
 		},
 		{
@@ -273,8 +278,9 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 40,
-			condition = function(arg_6_0)
-				return var_0_1("chaos_berzerker") < 3 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
+			condition = function (arg_6_0)
+				-- function 6
+				return not (count_event_breed("chaos_berzerker") < 3) or not (count_event_breed("chaos_raider") < 3) or not (count_event_breed("chaos_marauder") < 3) or count_event_breed("chaos_marauder_with_shield") < 2
 			end
 		},
 		{
@@ -295,14 +301,16 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_7_0)
-				return var_0_1("chaos_exalted_champion_warcamp") == 1
+			condition = function (arg_7_0)
+				-- function 7
+				return count_event_breed("chaos_exalted_champion_warcamp") == 1
 			end
 		},
 		{
 			"continue_when",
-			condition = function(arg_8_0)
-				return var_0_1("chaos_exalted_champion_warcamp") < 1
+			condition = function (arg_8_0)
+				-- function 8
+				return count_event_breed("chaos_exalted_champion_warcamp") < 1
 			end
 		},
 		{
@@ -366,14 +374,14 @@ local var_0_4 = {
 		{
 			"delay",
 			duration = 3,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"event_horde",
 			limit_spawners = 2,
 			spawner_id = "camp_event",
 			composition_type = "event_chaos_extra_spice_small",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
@@ -382,8 +390,9 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function(arg_9_0)
-				return var_0_1("chaos_berzerker") < 3 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2 and var_0_1("chaos_fanatic") < 4
+			condition = function (arg_9_0)
+				-- function 9
+				return not (count_event_breed("chaos_berzerker") < 3) or not (count_event_breed("chaos_raider") < 3) or not (count_event_breed("chaos_marauder") < 3) or not (count_event_breed("chaos_marauder_with_shield") < 2) or count_event_breed("chaos_fanatic") < 4
 			end
 		},
 		{
@@ -437,8 +446,9 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_10_0)
-				return var_0_1("chaos_berzerker") < 3 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
+			condition = function (arg_10_0)
+				-- function 10
+				return not (count_event_breed("chaos_berzerker") < 3) or not (count_event_breed("chaos_raider") < 3) or not (count_event_breed("chaos_marauder") < 3) or count_event_breed("chaos_marauder_with_shield") < 2
 			end
 		},
 		{
@@ -449,5 +459,5 @@ local var_0_4 = {
 }
 
 return {
-	var_0_4
+	tbl
 }

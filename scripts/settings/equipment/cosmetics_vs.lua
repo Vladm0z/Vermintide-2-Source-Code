@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/cosmetics_vs.lua
 
-local var_0_0 = {
+local tbl = {
 	third_person_husk = "units/beings/player/dark_pact_third_person_base/skaven_gutter_runner/chr_third_person_base_husk",
 	first_person = "units/beings/player/dark_pact_first_person_base/skaven_common/chr_first_person_base",
 	third_person = "units/beings/player/dark_pact_third_person_base/skaven_gutter_runner/chr_third_person_base",
@@ -20,7 +20,7 @@ local var_0_0 = {
 		"slot_hat"
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	third_person_husk = "units/beings/player/dark_pact_third_person_base/skaven_pack_master/chr_third_person_base_husk",
 	first_person = "units/beings/player/dark_pact_first_person_base/skaven_common/chr_first_person_base",
 	third_person = "units/beings/player/dark_pact_third_person_base/skaven_pack_master/chr_third_person_base",
@@ -40,7 +40,7 @@ local var_0_1 = {
 		"slot_hat"
 	}
 }
-local var_0_2 = {
+local tbl_3 = {
 	third_person_husk = "units/beings/player/dark_pact_third_person_base/skaven_wind_globadier/chr_third_person_base_husk",
 	first_person = "units/beings/player/dark_pact_first_person_base/skaven_common/chr_first_person_base",
 	third_person = "units/beings/player/dark_pact_third_person_base/skaven_wind_globadier/chr_third_person_base",
@@ -60,7 +60,7 @@ local var_0_2 = {
 		"slot_hat"
 	}
 }
-local var_0_3 = {
+local tbl_4 = {
 	third_person_husk = "units/beings/player/dark_pact_third_person_base/skaven_warpfire_thrower/chr_third_person_base_husk",
 	first_person = "units/beings/player/dark_pact_first_person_base/skaven_common/chr_first_person_base",
 	third_person = "units/beings/player/dark_pact_third_person_base/skaven_warpfire_thrower/chr_third_person_base",
@@ -80,7 +80,7 @@ local var_0_3 = {
 		"slot_hat"
 	}
 }
-local var_0_4 = {
+local tbl_5 = {
 	third_person_husk = "units/beings/player/dark_pact_third_person_base/skaven_ratlinggunner/chr_third_person_base_husk",
 	first_person = "units/beings/player/dark_pact_first_person_base/skaven_common/chr_first_person_base",
 	third_person = "units/beings/player/dark_pact_third_person_base/skaven_ratlinggunner/chr_third_person_base",
@@ -100,7 +100,7 @@ local var_0_4 = {
 		"slot_hat"
 	}
 }
-local var_0_5 = {
+local tbl_6 = {
 	third_person_husk = "units/beings/player/dark_pact_third_person_base/chaos_troll/chr_third_person_base_husk",
 	first_person = "units/beings/player/dark_pact_first_person_base/chaos_troll/chr_first_person_base",
 	third_person = "units/beings/player/dark_pact_third_person_base/chaos_troll/chr_third_person_base",
@@ -120,7 +120,7 @@ local var_0_5 = {
 		"slot_hat"
 	}
 }
-local var_0_6 = {
+local tbl_7 = {
 	third_person_husk = "units/beings/player/dark_pact_third_person_base/skaven_rat_ogre/chr_third_person_base_husk",
 	first_person = "units/beings/player/dark_pact_first_person_base/skaven_rat_ogre/chr_first_person_base",
 	third_person = "units/beings/player/dark_pact_third_person_base/skaven_rat_ogre/chr_third_person_base",
@@ -142,11 +142,11 @@ local var_0_6 = {
 }
 
 return {
-	skaven_gutter_runner_skin_0000 = table.clone(var_0_0),
-	skaven_pack_master_skin_0000 = table.clone(var_0_1),
-	skaven_wind_globadier_skin_0000 = table.clone(var_0_2),
-	skaven_warpfire_thrower_skin_0000 = table.clone(var_0_3),
-	skaven_ratling_gunner_skin_0000 = table.clone(var_0_4),
-	chaos_troll_skin_0000 = table.clone(var_0_5),
-	skaven_rat_ogre_skin_0000 = table.clone(var_0_6)
+	skaven_gutter_runner_skin_0000 = table.clone(tbl),
+	skaven_pack_master_skin_0000 = table.clone(tbl_2),
+	skaven_wind_globadier_skin_0000 = table.clone(tbl_3),
+	skaven_warpfire_thrower_skin_0000 = table.clone(tbl_4),
+	skaven_ratling_gunner_skin_0000 = table.clone(tbl_5),
+	chaos_troll_skin_0000 = table.clone(tbl_6),
+	skaven_rat_ogre_skin_0000 = table.clone(tbl_7)
 }

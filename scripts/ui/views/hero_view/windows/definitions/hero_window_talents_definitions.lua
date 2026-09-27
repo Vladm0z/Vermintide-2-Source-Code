@@ -1,23 +1,23 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/definitions/hero_window_talents_definitions.lua
 
-local var_0_0 = UISettings.game_start_windows
-local var_0_1 = var_0_0.background
-local var_0_2 = var_0_0.frame
-local var_0_3 = var_0_0.size
-local var_0_4 = var_0_0.spacing
-local var_0_5 = UIFrameSettings[var_0_2].texture_sizes.vertical[1]
-local var_0_6 = UIFrameSettings[var_0_2].texture_sizes.horizontal[2]
-local var_0_7 = var_0_3[1] * 2 + var_0_4 * 2
-local var_0_8 = var_0_3[1] - (var_0_5 * 2 + 60)
-local var_0_9 = {
-	var_0_3[1] * 2 + var_0_4,
-	var_0_3[2]
+local game_start_windows = UISettings.game_start_windows
+local background = game_start_windows.background
+local frame = game_start_windows.frame
+local size = game_start_windows.size
+local spacing = game_start_windows.spacing
+local var_0_5 = UIFrameSettings[frame].texture_sizes.vertical[1]
+local var_0_6 = UIFrameSettings[frame].texture_sizes.horizontal[2]
+local num = size[1] * 2 + spacing * 2
+local num_2 = size[1] - (var_0_5 * 2 + 60)
+local tbl = {
+	size[1] * 2 + spacing,
+	size[2]
 }
-local var_0_10 = {
-	math.floor(var_0_9[1] / 2 - 10),
+local tbl_2 = {
+	math.floor(tbl[1] / 2 - 10),
 	160
 }
-local var_0_11 = {
+local tbl_3 = {
 	root = {
 		is_root = true,
 		size = {
@@ -60,7 +60,7 @@ local var_0_11 = {
 		vertical_alignment = "center",
 		parent = "menu_root",
 		horizontal_alignment = "center",
-		size = var_0_3,
+		size = size,
 		position = {
 			0,
 			0,
@@ -71,7 +71,7 @@ local var_0_11 = {
 		vertical_alignment = "center",
 		parent = "window",
 		horizontal_alignment = "left",
-		size = var_0_9,
+		size = tbl,
 		position = {
 			0,
 			0,
@@ -83,8 +83,8 @@ local var_0_11 = {
 		parent = "window_frame",
 		horizontal_alignment = "center",
 		size = {
-			var_0_9[1] - 20,
-			var_0_10[2] + 40
+			tbl[1] - 20,
+			tbl_2[2] + 40
 		},
 		position = {
 			0,
@@ -97,7 +97,7 @@ local var_0_11 = {
 		parent = "career_window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_9[1] - 20,
+			tbl[1] - 20,
 			0
 		},
 		position = {
@@ -112,7 +112,7 @@ local var_0_11 = {
 		horizontal_alignment = "center",
 		size = {
 			0,
-			var_0_10[2] - 5
+			tbl_2[2] - 5
 		},
 		position = {
 			0,
@@ -124,7 +124,7 @@ local var_0_11 = {
 		vertical_alignment = "top",
 		parent = "career_window",
 		horizontal_alignment = "left",
-		size = var_0_10,
+		size = tbl_2,
 		position = {
 			0,
 			0,
@@ -164,7 +164,7 @@ local var_0_11 = {
 		parent = "passive_window",
 		horizontal_alignment = "left",
 		size = {
-			var_0_10[1] * 0.6,
+			tbl_2[1] * 0.6,
 			50
 		},
 		position = {
@@ -192,7 +192,7 @@ local var_0_11 = {
 		parent = "passive_window",
 		horizontal_alignment = "right",
 		size = {
-			var_0_10[1] * 0.3,
+			tbl_2[1] * 0.3,
 			50
 		},
 		position = {
@@ -206,8 +206,8 @@ local var_0_11 = {
 		parent = "passive_icon",
 		horizontal_alignment = "left",
 		size = {
-			var_0_10[1] - 110,
-			var_0_10[2] - 50
+			tbl_2[1] - 110,
+			tbl_2[2] - 50
 		},
 		position = {
 			90,
@@ -219,7 +219,7 @@ local var_0_11 = {
 		vertical_alignment = "top",
 		parent = "career_window",
 		horizontal_alignment = "right",
-		size = var_0_10,
+		size = tbl_2,
 		position = {
 			0,
 			0,
@@ -259,7 +259,7 @@ local var_0_11 = {
 		parent = "active_window",
 		horizontal_alignment = "left",
 		size = {
-			var_0_10[1] * 0.6,
+			tbl_2[1] * 0.6,
 			50
 		},
 		position = {
@@ -287,7 +287,7 @@ local var_0_11 = {
 		parent = "active_window",
 		horizontal_alignment = "right",
 		size = {
-			var_0_10[1] * 0.3,
+			tbl_2[1] * 0.3,
 			50
 		},
 		position = {
@@ -301,8 +301,8 @@ local var_0_11 = {
 		parent = "active_icon",
 		horizontal_alignment = "left",
 		size = {
-			var_0_10[1] - 110,
-			var_0_10[2] - 50
+			tbl_2[1] - 110,
+			tbl_2[2] - 50
 		},
 		position = {
 			90,
@@ -315,7 +315,7 @@ local var_0_11 = {
 		parent = "career_window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_9[1] - 40,
+			tbl[1] - 40,
 			40
 		},
 		position = {
@@ -371,7 +371,7 @@ local var_0_11 = {
 		parent = "career_window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_9[1],
+			tbl[1],
 			50
 		},
 		position = {
@@ -399,7 +399,7 @@ local var_0_11 = {
 		parent = "window_frame",
 		horizontal_alignment = "center",
 		size = {
-			var_0_9[1],
+			tbl[1],
 			505
 		},
 		position = {
@@ -413,7 +413,7 @@ local var_0_11 = {
 		parent = "talent_row_2",
 		horizontal_alignment = "center",
 		size = {
-			var_0_9[1] - 20,
+			tbl[1] - 20,
 			80
 		},
 		position = {
@@ -427,7 +427,7 @@ local var_0_11 = {
 		parent = "talent_row_3",
 		horizontal_alignment = "center",
 		size = {
-			var_0_9[1] - 20,
+			tbl[1] - 20,
 			80
 		},
 		position = {
@@ -441,7 +441,7 @@ local var_0_11 = {
 		parent = "talent_row_4",
 		horizontal_alignment = "center",
 		size = {
-			var_0_9[1] - 20,
+			tbl[1] - 20,
 			80
 		},
 		position = {
@@ -455,7 +455,7 @@ local var_0_11 = {
 		parent = "talent_row_5",
 		horizontal_alignment = "center",
 		size = {
-			var_0_9[1] - 20,
+			tbl[1] - 20,
 			80
 		},
 		position = {
@@ -469,7 +469,7 @@ local var_0_11 = {
 		parent = "talent_row_6",
 		horizontal_alignment = "center",
 		size = {
-			var_0_9[1] - 20,
+			tbl[1] - 20,
 			80
 		},
 		position = {
@@ -483,7 +483,7 @@ local var_0_11 = {
 		parent = "window_frame",
 		horizontal_alignment = "center",
 		size = {
-			var_0_9[1] - 20,
+			tbl[1] - 20,
 			80
 		},
 		position = {
@@ -493,7 +493,7 @@ local var_0_11 = {
 		}
 	}
 }
-local var_0_12 = {
+local tbl_4 = {
 	font_size = 42,
 	upper_case = true,
 	localize = false,
@@ -508,7 +508,7 @@ local var_0_12 = {
 		2
 	}
 }
-local var_0_13 = {
+local tbl_5 = {
 	font_size = 17,
 	use_shadow = true,
 	localize = false,
@@ -525,7 +525,7 @@ local var_0_13 = {
 		2
 	}
 }
-local var_0_14 = {
+local tbl_6 = {
 	word_wrap = true,
 	use_shadow = true,
 	localize = false,
@@ -541,7 +541,7 @@ local var_0_14 = {
 		2
 	}
 }
-local var_0_15 = {
+local tbl_7 = {
 	font_size = 32,
 	upper_case = false,
 	localize = false,
@@ -558,7 +558,7 @@ local var_0_15 = {
 		2
 	}
 }
-local var_0_16 = {
+local tbl_8 = {
 	font_size = 36,
 	upper_case = true,
 	localize = false,
@@ -575,20 +575,20 @@ local var_0_16 = {
 	}
 }
 
-local function var_0_17(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	-- function 1
 	local var_1_0
 
-	if arg_1_5 then
+	if not arg_1_5 then
 		var_1_0 = "button_" .. arg_1_5
 	else
 		var_1_0 = "button_normal"
 	end
 
-	local var_1_1 = Colors.get_color_table_with_alpha(var_1_0, 255)
-	local var_1_2 = "button_bg_01"
-	local var_1_3 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_1_2)
-
-	return {
+	local get_color_table_with_alpha = Colors.get_color_table_with_alpha(var_1_0, 255)
+	local str = "button_bg_01"
+	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(str)
+	local tbl = {
 		element = {
 			passes = {
 				{
@@ -620,26 +620,44 @@ local function var_0_17(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 					texture_id = "hover_glow",
 					style_id = "hover_glow",
 					pass_type = "texture",
-					content_check_function = function(arg_2_0)
-						local var_2_0 = arg_2_0.button_hotspot
+					content_check_function = function (self)
+						-- function 2
+						local button_hotspot = self.button_hotspot
+						local is_selected
 
-						return not var_2_0.disable_button and (var_2_0.is_selected or var_2_0.is_hover)
+						if not button_hotspot.disable_button then
+							is_selected = button_hotspot.is_selected
+
+							if not is_selected then
+								is_selected = button_hotspot.is_hover
+							end
+						else
+							is_selected = false
+						end
+
+						if false then
+							is_selected = true
+						end
+
+						return is_selected
 					end
 				},
 				{
 					style_id = "button_text",
 					pass_type = "text",
 					text_id = "button_text",
-					content_check_function = function(arg_3_0)
-						return not arg_3_0.button_hotspot.disable_button
+					content_check_function = function (self)
+						-- function 3
+						return not self.button_hotspot.disable_button
 					end
 				},
 				{
 					style_id = "button_text_disabled",
 					pass_type = "text",
 					text_id = "button_text",
-					content_check_function = function(arg_4_0)
-						return arg_4_0.button_hotspot.disable_button
+					content_check_function = function (self)
+						-- function 4
+						return self.button_hotspot.disable_button
 					end
 				},
 				{
@@ -650,304 +668,342 @@ local function var_0_17(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 				{
 					style_id = "button_clicked_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_5_0)
-						local var_5_0 = arg_5_0.button_hotspot.is_clicked
+					content_check_function = function (self)
+						-- function 5
+						local is_clicked = self.button_hotspot.is_clicked
 
-						return not var_5_0 or var_5_0 == 0
+						return not is_clicked and is_clicked == 0
 					end
 				},
 				{
 					style_id = "button_disabled_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_6_0)
-						return arg_6_0.button_hotspot.disable_button
+					content_check_function = function (self)
+						-- function 6
+						return self.button_hotspot.disable_button
 					end
 				},
 				{
 					texture_id = "bottom_edge",
 					style_id = "bottom_edge",
 					pass_type = "tiled_texture",
-					content_check_function = function(arg_7_0)
-						return arg_7_0.use_bottom_edge
+					content_check_function = function (self)
+						-- function 7
+						return self.use_bottom_edge
 					end
 				},
 				{
 					texture_id = "edge_holder_left",
 					style_id = "edge_holder_left",
 					pass_type = "texture",
-					content_check_function = function(arg_8_0)
-						return arg_8_0.use_bottom_edge
+					content_check_function = function (self)
+						-- function 8
+						return self.use_bottom_edge
 					end
 				},
 				{
 					texture_id = "edge_holder_right",
 					style_id = "edge_holder_right",
 					pass_type = "texture",
-					content_check_function = function(arg_9_0)
-						return arg_9_0.use_bottom_edge
+					content_check_function = function (self)
+						-- function 9
+						return self.use_bottom_edge
 					end
 				}
 			}
-		},
-		content = {
-			edge_holder_left = "menu_frame_09_divider_left",
-			edge_holder_right = "menu_frame_09_divider_right",
-			glass_top = "button_glass_01",
-			bottom_edge = "menu_frame_09_divider",
-			use_bottom_edge = arg_1_4,
-			button_hotspot = {},
-			button_text = arg_1_2 or "n/a",
-			hover_glow = arg_1_5 and "button_state_hover_" .. arg_1_5 or "button_state_hover",
-			glow = arg_1_5 and "button_state_normal_" .. arg_1_5 or "button_state_normal",
-			button_background = {
-				uvs = {
-					{
-						0,
-						1 - math.min(arg_1_1[2] / var_1_3.size[2], 1)
-					},
-					{
-						math.min(arg_1_1[1] / var_1_3.size[1], 1),
-						1
-					}
-				},
-				texture_id = var_1_2
-			}
-		},
-		style = {
-			button_background = {
-				color = var_1_1,
-				offset = {
-					0,
-					0,
-					2
-				},
-				size = arg_1_1
-			},
-			button_edge = {
-				color = {
-					255,
-					255,
-					255,
-					255
-				},
-				offset = {
-					0,
-					arg_1_1[2],
-					3
-				},
-				size = {
-					arg_1_1[1],
-					5
-				},
-				texture_tiling_size = {
-					1,
-					5
-				}
-			},
-			glass_top = {
-				color = {
-					255,
-					255,
-					255,
-					255
-				},
-				offset = {
-					0,
-					arg_1_1[2] - 4,
-					3
-				},
-				size = {
-					arg_1_1[1],
-					5
-				}
-			},
-			glow = {
-				color = {
-					255,
-					255,
-					255,
-					255
-				},
-				offset = {
-					0,
-					5,
-					3
-				},
-				size = {
-					arg_1_1[1],
-					arg_1_1[2] - 5
-				}
-			},
-			hover_glow = {
-				color = {
-					255,
-					255,
-					255,
-					255
-				},
-				offset = {
-					0,
-					5,
-					2
-				},
-				size = {
-					arg_1_1[1],
-					arg_1_1[2] - 5
-				}
-			},
-			bottom_edge = {
-				color = {
-					255,
-					255,
-					255,
-					255
-				},
-				offset = {
-					5,
-					0,
-					6
-				},
-				size = {
-					arg_1_1[1] - 10,
-					5
-				},
-				texture_tiling_size = {
-					1,
-					5
-				}
-			},
-			edge_holder_left = {
-				color = {
-					255,
-					255,
-					255,
-					255
-				},
-				offset = {
-					3,
-					-6,
-					10
-				},
-				size = {
-					9,
-					17
-				}
-			},
-			edge_holder_right = {
-				color = {
-					255,
-					255,
-					255,
-					255
-				},
-				offset = {
-					arg_1_1[1] - 12,
-					-6,
-					10
-				},
-				size = {
-					9,
-					17
-				}
-			},
-			button_text = {
-				upper_case = true,
-				word_wrap = true,
-				horizontal_alignment = "center",
-				vertical_alignment = "center",
-				font_type = "hell_shark",
-				font_size = arg_1_3 or 24,
-				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
-				offset = {
-					0,
-					5,
-					4
-				},
-				size = arg_1_1
-			},
-			button_text_disabled = {
-				upper_case = true,
-				word_wrap = true,
-				horizontal_alignment = "center",
-				vertical_alignment = "center",
-				font_type = "hell_shark",
-				font_size = arg_1_3 or 24,
-				text_color = Colors.get_color_table_with_alpha("gray", 255),
-				offset = {
-					0,
-					5,
-					4
-				},
-				size = arg_1_1
-			},
-			button_text_shadow = {
-				upper_case = true,
-				word_wrap = true,
-				horizontal_alignment = "center",
-				vertical_alignment = "center",
-				font_type = "hell_shark",
-				font_size = arg_1_3 or 24,
-				text_color = Colors.get_color_table_with_alpha("black", 255),
-				offset = {
-					2,
-					3,
-					3
-				},
-				size = arg_1_1
-			},
-			button_clicked_rect = {
-				color = {
-					100,
-					0,
-					0,
-					0
-				},
-				offset = {
-					5,
-					0,
-					5
-				},
-				size = {
-					arg_1_1[1] - 10,
-					arg_1_1[2]
-				}
-			},
-			button_disabled_rect = {
-				color = {
-					150,
-					5,
-					5,
-					5
-				},
-				offset = {
-					5,
-					0,
-					5
-				},
-				size = {
-					arg_1_1[1] - 10,
-					arg_1_1[2]
-				}
-			}
-		},
-		scenegraph_id = arg_1_0,
-		offset = {
-			0,
-			0,
-			0
 		}
 	}
+	local tbl_2 = {
+		edge_holder_left = "menu_frame_09_divider_left",
+		edge_holder_right = "menu_frame_09_divider_right",
+		glass_top = "button_glass_01",
+		bottom_edge = "menu_frame_09_divider",
+		use_bottom_edge = arg_1_4,
+		button_hotspot = {},
+		button_text = arg_1_2 or "n/a"
+	}
+	local str_2
+
+	if not arg_1_5 then
+		str_2 = "button_state_hover_" .. arg_1_5
+
+		if not str_2 then
+			-- Nothing
+		end
+	end
+
+	str_2 = "button_state_hover"
+
+	::label_1_0::
+
+	tbl_2.hover_glow = str_2
+
+	local str_3
+
+	if not arg_1_5 then
+		str_3 = "button_state_normal_" .. arg_1_5
+
+		if not str_3 then
+			-- Nothing
+		end
+	end
+
+	str_3 = "button_state_normal"
+
+	::label_1_1::
+
+	tbl_2.glow = str_3
+	tbl_2.button_background = {
+		uvs = {
+			{
+				0,
+				1 - math.min(arg_1_1[2] / get_atlas_settings_by_texture_name.size[2], 1)
+			},
+			{
+				math.min(arg_1_1[1] / get_atlas_settings_by_texture_name.size[1], 1),
+				1
+			}
+		},
+		texture_id = str
+	}
+	tbl.content = tbl_2
+	tbl.style = {
+		button_background = {
+			color = get_color_table_with_alpha,
+			offset = {
+				0,
+				0,
+				2
+			},
+			size = arg_1_1
+		},
+		button_edge = {
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				0,
+				arg_1_1[2],
+				3
+			},
+			size = {
+				arg_1_1[1],
+				5
+			},
+			texture_tiling_size = {
+				1,
+				5
+			}
+		},
+		glass_top = {
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				0,
+				arg_1_1[2] - 4,
+				3
+			},
+			size = {
+				arg_1_1[1],
+				5
+			}
+		},
+		glow = {
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				0,
+				5,
+				3
+			},
+			size = {
+				arg_1_1[1],
+				arg_1_1[2] - 5
+			}
+		},
+		hover_glow = {
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				0,
+				5,
+				2
+			},
+			size = {
+				arg_1_1[1],
+				arg_1_1[2] - 5
+			}
+		},
+		bottom_edge = {
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				5,
+				0,
+				6
+			},
+			size = {
+				arg_1_1[1] - 10,
+				5
+			},
+			texture_tiling_size = {
+				1,
+				5
+			}
+		},
+		edge_holder_left = {
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				3,
+				-6,
+				10
+			},
+			size = {
+				9,
+				17
+			}
+		},
+		edge_holder_right = {
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				arg_1_1[1] - 12,
+				-6,
+				10
+			},
+			size = {
+				9,
+				17
+			}
+		},
+		button_text = {
+			upper_case = true,
+			word_wrap = true,
+			horizontal_alignment = "center",
+			vertical_alignment = "center",
+			font_type = "hell_shark",
+			font_size = arg_1_3 or 24,
+			text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
+			offset = {
+				0,
+				5,
+				4
+			},
+			size = arg_1_1
+		},
+		button_text_disabled = {
+			upper_case = true,
+			word_wrap = true,
+			horizontal_alignment = "center",
+			vertical_alignment = "center",
+			font_type = "hell_shark",
+			font_size = arg_1_3 or 24,
+			text_color = Colors.get_color_table_with_alpha("gray", 255),
+			offset = {
+				0,
+				5,
+				4
+			},
+			size = arg_1_1
+		},
+		button_text_shadow = {
+			upper_case = true,
+			word_wrap = true,
+			horizontal_alignment = "center",
+			vertical_alignment = "center",
+			font_type = "hell_shark",
+			font_size = arg_1_3 or 24,
+			text_color = Colors.get_color_table_with_alpha("black", 255),
+			offset = {
+				2,
+				3,
+				3
+			},
+			size = arg_1_1
+		},
+		button_clicked_rect = {
+			color = {
+				100,
+				0,
+				0,
+				0
+			},
+			offset = {
+				5,
+				0,
+				5
+			},
+			size = {
+				arg_1_1[1] - 10,
+				arg_1_1[2]
+			}
+		},
+		button_disabled_rect = {
+			color = {
+				150,
+				5,
+				5,
+				5
+			},
+			offset = {
+				5,
+				0,
+				5
+			},
+			size = {
+				arg_1_1[1] - 10,
+				arg_1_1[2]
+			}
+		}
+	}
+	tbl.scenegraph_id = arg_1_0
+	tbl.offset = {
+		0,
+		0,
+		0
+	}
+
+	return tbl
 end
 
-local function var_0_18(arg_10_0, arg_10_1, arg_10_2)
-	local var_10_0 = UIFrameSettings.menu_frame_09
-	local var_10_1 = "frame_outer_glow_01"
-	local var_10_2 = UIFrameSettings[var_10_1]
+local function fn_2(arg_10_0, arg_10_1, arg_10_2)
+	-- function 10
+	local menu_frame_09 = UIFrameSettings.menu_frame_09
+	local str = "frame_outer_glow_01"
+	local var_10_2 = UIFrameSettings[str]
 	local var_10_3 = var_10_2.texture_sizes.corner[1]
-	local var_10_4 = {
+	local tbl = {
 		element = {}
 	}
-	local var_10_5 = {
+	local tbl_2 = {
 		{
 			pass_type = "texture_frame",
 			style_id = "frame",
@@ -983,17 +1039,17 @@ local function var_0_18(arg_10_0, arg_10_1, arg_10_2)
 			pass_type = "texture_frame"
 		}
 	}
-	local var_10_6 = {
+	local tbl_3 = {
 		level_text = "0",
 		lock = "talent_lock_fg",
 		amount = arg_10_2,
-		frame = var_10_0.texture,
+		frame = menu_frame_09.texture,
 		glow_frame = var_10_2.texture
 	}
-	local var_10_7 = {
+	local tbl_4 = {
 		frame = {
-			texture_size = var_10_0.texture_size,
-			texture_sizes = var_10_0.texture_sizes,
+			texture_size = menu_frame_09.texture_size,
+			texture_sizes = menu_frame_09.texture_sizes,
 			color = {
 				255,
 				255,
@@ -1011,8 +1067,8 @@ local function var_0_18(arg_10_0, arg_10_1, arg_10_2)
 			}
 		},
 		frame_lock = {
-			texture_size = var_10_0.texture_size,
-			texture_sizes = var_10_0.texture_sizes,
+			texture_size = menu_frame_09.texture_size,
+			texture_sizes = menu_frame_09.texture_sizes,
 			color = {
 				255,
 				255,
@@ -1120,48 +1176,48 @@ local function var_0_18(arg_10_0, arg_10_1, arg_10_2)
 			}
 		}
 	}
-	local var_10_8 = 0
-	local var_10_9 = 0
-	local var_10_10 = {
+	local num = 0
+	local num_2 = 0
+	local tbl_5 = {
 		314,
 		arg_10_1[2]
 	}
-	local var_10_11 = {
+	local tbl_6 = {
 		80,
 		80
 	}
-	local var_10_12 = arg_10_1[1] - (var_10_10[1] * arg_10_2 + var_10_8 * (arg_10_2 - 1))
+	local num_3 = arg_10_1[1] - (tbl_5[1] * arg_10_2 + num * (arg_10_2 - 1))
 
-	for iter_10_0 = 1, arg_10_2 do
-		local var_10_13 = "_" .. tostring(iter_10_0)
-		local var_10_14 = iter_10_0 - 1
-		local var_10_15 = {
-			var_10_12,
+	for i = 1, arg_10_2 do
+		local str_2 = "_" .. tostring(i)
+		local num_4 = i - 1
+		local tbl_7 = {
+			num_3,
 			0,
-			var_10_9
+			num_2
 		}
-		local var_10_16 = "hotspot" .. var_10_13
+		local str_3 = "hotspot" .. str_2
 
-		var_10_5[#var_10_5 + 1] = {
+		tbl_2[#tbl_2 + 1] = {
 			pass_type = "hotspot",
-			content_id = var_10_16,
-			style_id = var_10_16
+			content_id = str_3,
+			style_id = str_3
 		}
-		var_10_7[var_10_16] = {
-			size = var_10_10,
-			offset = var_10_15
+		tbl_4[str_3] = {
+			size = tbl_5,
+			offset = tbl_7
 		}
-		var_10_6[var_10_16] = {}
+		tbl_3[str_3] = {}
 
-		local var_10_17 = var_10_6[var_10_16]
-		local var_10_18 = "background" .. var_10_13
+		local var_10_17 = tbl_3[str_3]
+		local str_4 = "background" .. str_2
 
-		var_10_5[#var_10_5 + 1] = {
+		tbl_2[#tbl_2 + 1] = {
 			pass_type = "rect",
-			style_id = var_10_18
+			style_id = str_4
 		}
-		var_10_7[var_10_18] = {
-			size = var_10_10,
+		tbl_4[str_4] = {
+			size = tbl_5,
 			color = {
 				100,
 				0,
@@ -1169,23 +1225,23 @@ local function var_0_18(arg_10_0, arg_10_1, arg_10_2)
 				0
 			},
 			offset = {
-				var_10_15[1],
-				var_10_15[2],
+				tbl_7[1],
+				tbl_7[2],
 				0
 			}
 		}
 
-		local var_10_19 = "frame" .. var_10_13
+		local str_5 = "frame" .. str_2
 
-		var_10_5[#var_10_5 + 1] = {
+		tbl_2[#tbl_2 + 1] = {
 			pass_type = "texture_frame",
-			texture_id = var_10_19,
-			style_id = var_10_19
+			texture_id = str_5,
+			style_id = str_5
 		}
-		var_10_7[var_10_19] = {
-			texture_size = var_10_0.texture_size,
-			texture_sizes = var_10_0.texture_sizes,
-			size = var_10_10,
+		tbl_4[str_5] = {
+			texture_size = menu_frame_09.texture_size,
+			texture_sizes = menu_frame_09.texture_sizes,
+			size = tbl_5,
 			color = {
 				255,
 				255,
@@ -1193,31 +1249,32 @@ local function var_0_18(arg_10_0, arg_10_1, arg_10_2)
 				255
 			},
 			offset = {
-				var_10_15[1],
-				var_10_15[2],
+				tbl_7[1],
+				tbl_7[2],
 				7
 			}
 		}
-		var_10_6[var_10_19] = var_10_0.texture
+		tbl_3[str_5] = menu_frame_09.texture
 
-		local var_10_20 = "selected" .. var_10_13
+		local str_6 = "selected" .. str_2
 
-		var_10_5[#var_10_5 + 1] = {
+		tbl_2[#tbl_2 + 1] = {
 			pass_type = "texture",
-			texture_id = var_10_20,
-			style_id = var_10_20,
-			content_check_function = function(arg_11_0)
-				return arg_11_0[var_10_16].is_selected
+			texture_id = str_6,
+			style_id = str_6,
+			content_check_function = function (self)
+				-- function 11
+				return self[str_3].is_selected
 			end
 		}
-		var_10_7[var_10_20] = {
+		tbl_4[str_6] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			texture_size = {
 				318,
 				80
 			},
-			size = var_10_10,
+			size = tbl_5,
 			color = {
 				255,
 				255,
@@ -1225,26 +1282,27 @@ local function var_0_18(arg_10_0, arg_10_1, arg_10_2)
 				255
 			},
 			offset = {
-				var_10_15[1],
-				var_10_15[2],
+				tbl_7[1],
+				tbl_7[2],
 				28
 			}
 		}
-		var_10_6[var_10_20] = "talent_selected"
+		tbl_3[str_6] = "talent_selected"
 
-		local var_10_21 = "title_text" .. var_10_13
+		local str_7 = "title_text" .. str_2
 
-		var_10_5[#var_10_5 + 1] = {
+		tbl_2[#tbl_2 + 1] = {
 			pass_type = "text",
-			text_id = var_10_21,
-			style_id = var_10_21,
-			content_check_function = function(arg_12_0)
-				local var_12_0 = arg_12_0[var_10_16]
+			text_id = str_7,
+			style_id = str_7,
+			content_check_function = function (self)
+				-- function 12
+				local var_12_0 = self[str_3]
 
-				return not var_12_0.is_selected and not var_12_0.disabled
+				return not not var_12_0.is_selected or not var_12_0.disabled
 			end
 		}
-		var_10_7[var_10_21] = {
+		tbl_4[str_7] = {
 			word_wrap = true,
 			font_size = 24,
 			localize = false,
@@ -1253,30 +1311,34 @@ local function var_0_18(arg_10_0, arg_10_1, arg_10_2)
 			font_type = "hell_shark_header",
 			text_color = Colors.get_color_table_with_alpha("font_default", 255),
 			size = {
-				var_10_10[1] - 100,
-				var_10_10[2]
+				tbl_5[1] - 100,
+				tbl_5[2]
 			},
 			offset = {
-				var_10_15[1] + 90,
-				var_10_15[2],
+				tbl_7[1] + 90,
+				tbl_7[2],
 				3
 			}
 		}
-		var_10_6[var_10_21] = "n/a"
+		tbl_3[str_7] = "n/a"
 
-		local var_10_22 = "title_text_selected" .. var_10_13
+		local str_8 = "title_text_selected" .. str_2
 
-		var_10_5[#var_10_5 + 1] = {
+		tbl_2[#tbl_2 + 1] = {
 			pass_type = "text",
-			text_id = var_10_21,
-			style_id = var_10_22,
-			content_check_function = function(arg_13_0)
-				local var_13_0 = arg_13_0[var_10_16]
+			text_id = str_7,
+			style_id = str_8,
+			content_check_function = function (self)
+				-- function 13
+				local var_13_0 = self[str_3]
+				local is_selected = var_13_0.is_selected
 
-				return var_13_0.is_selected and not var_13_0.disabled
+				is_selected = not is_selected and not var_13_0.disabled
+
+				return is_selected
 			end
 		}
-		var_10_7[var_10_22] = {
+		tbl_4[str_8] = {
 			word_wrap = true,
 			font_size = 24,
 			localize = false,
@@ -1285,27 +1347,28 @@ local function var_0_18(arg_10_0, arg_10_1, arg_10_2)
 			font_type = "hell_shark_header",
 			text_color = Colors.get_color_table_with_alpha("font_title", 255),
 			size = {
-				var_10_10[1] - 100,
-				var_10_10[2]
+				tbl_5[1] - 100,
+				tbl_5[2]
 			},
 			offset = {
-				var_10_15[1] + 90,
-				var_10_15[2],
+				tbl_7[1] + 90,
+				tbl_7[2],
 				3
 			}
 		}
 
-		local var_10_23 = "title_text_disabled" .. var_10_13
+		local str_9 = "title_text_disabled" .. str_2
 
-		var_10_5[#var_10_5 + 1] = {
+		tbl_2[#tbl_2 + 1] = {
 			pass_type = "text",
-			text_id = var_10_21,
-			style_id = var_10_23,
-			content_check_function = function(arg_14_0)
-				return arg_14_0[var_10_16].disabled
+			text_id = str_7,
+			style_id = str_9,
+			content_check_function = function (self)
+				-- function 14
+				return self[str_3].disabled
 			end
 		}
-		var_10_7[var_10_23] = {
+		tbl_4[str_9] = {
 			word_wrap = true,
 			font_size = 24,
 			localize = false,
@@ -1319,24 +1382,24 @@ local function var_0_18(arg_10_0, arg_10_1, arg_10_2)
 				50
 			},
 			size = {
-				var_10_10[1] - 100,
-				var_10_10[2]
+				tbl_5[1] - 100,
+				tbl_5[2]
 			},
 			offset = {
-				var_10_15[1] + 90,
-				var_10_15[2],
+				tbl_7[1] + 90,
+				tbl_7[2],
 				3
 			}
 		}
 
-		local var_10_24 = "title_text_shadow" .. var_10_13
+		local str_10 = "title_text_shadow" .. str_2
 
-		var_10_5[#var_10_5 + 1] = {
+		tbl_2[#tbl_2 + 1] = {
 			pass_type = "text",
-			text_id = var_10_21,
-			style_id = var_10_24
+			text_id = str_7,
+			style_id = str_10
 		}
-		var_10_7[var_10_24] = {
+		tbl_4[str_10] = {
 			word_wrap = true,
 			font_size = 24,
 			localize = false,
@@ -1345,28 +1408,29 @@ local function var_0_18(arg_10_0, arg_10_1, arg_10_2)
 			font_type = "hell_shark_header",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			size = {
-				var_10_10[1] - 100,
-				var_10_10[2]
+				tbl_5[1] - 100,
+				tbl_5[2]
 			},
 			offset = {
-				var_10_15[1] + 90 + 2,
-				var_10_15[2] - 2,
+				tbl_7[1] + 90 + 2,
+				tbl_7[2] - 2,
 				2
 			}
 		}
 
-		local var_10_25 = "background_glow" .. var_10_13
+		local str_11 = "background_glow" .. str_2
 
-		var_10_5[#var_10_5 + 1] = {
+		tbl_2[#tbl_2 + 1] = {
 			pass_type = "texture",
-			texture_id = var_10_25,
-			style_id = var_10_25,
-			content_check_function = function(arg_15_0)
-				return arg_15_0[var_10_16].is_hover
+			texture_id = str_11,
+			style_id = str_11,
+			content_check_function = function (self)
+				-- function 15
+				return self[str_3].is_hover
 			end
 		}
-		var_10_7[var_10_25] = {
-			size = var_10_10,
+		tbl_4[str_11] = {
+			size = tbl_5,
 			color = {
 				255,
 				255,
@@ -1374,23 +1438,23 @@ local function var_0_18(arg_10_0, arg_10_1, arg_10_2)
 				255
 			},
 			offset = {
-				var_10_15[1],
-				var_10_15[2],
+				tbl_7[1],
+				tbl_7[2],
 				3
 			}
 		}
-		var_10_6[var_10_25] = "talent_bg_glow_01"
+		tbl_3[str_11] = "talent_bg_glow_01"
 
-		local var_10_26 = "glass_top" .. var_10_13
+		local str_12 = "glass_top" .. str_2
 
-		var_10_5[#var_10_5 + 1] = {
+		tbl_2[#tbl_2 + 1] = {
 			pass_type = "texture",
-			texture_id = var_10_26,
-			style_id = var_10_26
+			texture_id = str_12,
+			style_id = str_12
 		}
-		var_10_7[var_10_26] = {
+		tbl_4[str_12] = {
 			size = {
-				var_10_10[1],
+				tbl_5[1],
 				3
 			},
 			color = {
@@ -1400,45 +1464,46 @@ local function var_0_18(arg_10_0, arg_10_1, arg_10_2)
 				255
 			},
 			offset = {
-				var_10_15[1],
-				var_10_15[2] + var_10_10[2] - 8,
+				tbl_7[1],
+				tbl_7[2] + tbl_5[2] - 8,
 				5
 			}
 		}
-		var_10_6[var_10_26] = "button_glass_01"
+		tbl_3[str_12] = "button_glass_01"
 
-		local var_10_27 = "icon" .. var_10_13
+		local str_13 = "icon" .. str_2
 
-		var_10_5[#var_10_5 + 1] = {
+		tbl_2[#tbl_2 + 1] = {
 			pass_type = "texture",
-			texture_id = var_10_27,
-			style_id = var_10_27
+			texture_id = str_13,
+			style_id = str_13
 		}
-		var_10_7[var_10_27] = {
+		tbl_4[str_13] = {
 			saturated = true,
-			size = var_10_11,
+			size = tbl_6,
 			color = Colors.get_color_table_with_alpha("white", 255),
 			offset = {
-				var_10_15[1],
-				var_10_15[2] + var_10_10[2] / 2 - var_10_11[2] / 2,
+				tbl_7[1],
+				tbl_7[2] + tbl_5[2] / 2 - tbl_6[2] / 2,
 				3
 			}
 		}
-		var_10_6[var_10_27] = "icons_placeholder"
+		tbl_3[str_13] = "icons_placeholder"
 
-		local var_10_28 = "icon_rect" .. var_10_13
+		local str_14 = "icon_rect" .. str_2
 
-		var_10_5[#var_10_5 + 1] = {
+		tbl_2[#tbl_2 + 1] = {
 			pass_type = "rect",
-			style_id = var_10_28,
-			content_check_function = function(arg_16_0)
-				local var_16_0 = arg_16_0[var_10_16]
+			style_id = str_14,
+			content_check_function = function (self)
+				-- function 16
+				local var_16_0 = self[str_3]
 
-				return not var_16_0.disabled and not var_16_0.is_selected
+				return not not var_16_0.disabled or not var_16_0.is_selected
 			end
 		}
-		var_10_7[var_10_28] = {
-			size = var_10_11,
+		tbl_4[str_14] = {
+			size = tbl_6,
 			color = {
 				100,
 				0,
@@ -1446,23 +1511,24 @@ local function var_0_18(arg_10_0, arg_10_1, arg_10_2)
 				0
 			},
 			offset = {
-				var_10_15[1],
-				var_10_15[2] + var_10_10[2] / 2 - var_10_11[2] / 2,
+				tbl_7[1],
+				tbl_7[2] + tbl_5[2] / 2 - tbl_6[2] / 2,
 				4
 			}
 		}
 
-		local var_10_29 = "icon_disabled_rect" .. var_10_13
+		local str_15 = "icon_disabled_rect" .. str_2
 
-		var_10_5[#var_10_5 + 1] = {
+		tbl_2[#tbl_2 + 1] = {
 			pass_type = "rect",
-			style_id = var_10_29,
-			content_check_function = function(arg_17_0)
-				return arg_17_0[var_10_16].disabled
+			style_id = str_15,
+			content_check_function = function (self)
+				-- function 17
+				return self[str_3].disabled
 			end
 		}
-		var_10_7[var_10_29] = {
-			size = var_10_11,
+		tbl_4[str_15] = {
+			size = tbl_6,
 			color = {
 				200,
 				0,
@@ -1470,71 +1536,77 @@ local function var_0_18(arg_10_0, arg_10_1, arg_10_2)
 				0
 			},
 			offset = {
-				var_10_15[1],
-				var_10_15[2] + var_10_10[2] / 2 - var_10_11[2] / 2,
+				tbl_7[1],
+				tbl_7[2] + tbl_5[2] / 2 - tbl_6[2] / 2,
 				4
 			}
 		}
 
-		local var_10_30 = "icon_divider" .. var_10_13
+		local str_16 = "icon_divider" .. str_2
 
-		var_10_5[#var_10_5 + 1] = {
+		tbl_2[#tbl_2 + 1] = {
 			pass_type = "texture",
-			texture_id = var_10_30,
-			style_id = var_10_30
+			texture_id = str_16,
+			style_id = str_16
 		}
-		var_10_7[var_10_30] = {
+		tbl_4[str_16] = {
 			size = {
 				5,
-				var_10_11[2] - 2
+				tbl_6[2] - 2
 			},
 			color = Colors.get_color_table_with_alpha("white", 255),
 			offset = {
-				var_10_15[1] + var_10_11[1] - 5,
-				var_10_15[2] + var_10_10[2] / 2 - var_10_11[2] / 2 + 1,
+				tbl_7[1] + tbl_6[1] - 5,
+				tbl_7[2] + tbl_5[2] / 2 - tbl_6[2] / 2 + 1,
 				6
 			}
 		}
-		var_10_6[var_10_30] = "menu_frame_09_divider_vertical"
+		tbl_3[str_16] = "menu_frame_09_divider_vertical"
 
-		local var_10_31 = "tooltip" .. var_10_13
+		local str_17 = "tooltip" .. str_2
 
-		var_10_5[#var_10_5 + 1] = {
+		tbl_2[#tbl_2 + 1] = {
 			talent_id = "talent",
 			pass_type = "talent_tooltip",
-			content_id = var_10_16,
-			style_id = var_10_31,
-			content_check_function = function(arg_18_0)
-				return arg_18_0.talent and arg_18_0.is_hover
+			content_id = str_3,
+			style_id = str_17,
+			content_check_function = function (self)
+				-- function 18
+				local talent = self.talent
+
+				talent = not talent and self.is_hover
+
+				return talent
 			end
 		}
-		var_10_7[var_10_31] = {
-			size = var_10_10,
+		tbl_4[str_17] = {
+			size = tbl_5,
 			offset = {
-				var_10_15[1],
-				var_10_15[2],
-				var_10_15[3] + 10
+				tbl_7[1],
+				tbl_7[2],
+				tbl_7[3] + 10
 			}
 		}
-		var_10_6[var_10_31] = nil
-		var_10_12 = var_10_12 + var_10_10[1] + var_10_8
+		tbl_3[str_17] = nil
+		num_3 = num_3 + tbl_5[1] + num
 	end
 
-	var_10_4.element.passes = var_10_5
-	var_10_4.content = var_10_6
-	var_10_4.style = var_10_7
-	var_10_4.offset = {
+	tbl.element.passes = tbl_2
+	tbl.content = tbl_3
+	tbl.style = tbl_4
+	tbl.offset = {
 		0,
 		0,
 		0
 	}
-	var_10_4.scenegraph_id = arg_10_0
+	tbl.scenegraph_id = arg_10_0
 
-	return var_10_4
+	return tbl
 end
 
-local function var_0_19(arg_19_0, arg_19_1, arg_19_2)
-	local var_19_0 = arg_19_2 or "09"
+local function fn_3(arg_19_0, arg_19_1, arg_19_2)
+	-- function 19
+	local flag = arg_19_2 or "09"
 
 	return {
 		element = {
@@ -1557,9 +1629,9 @@ local function var_0_19(arg_19_0, arg_19_1, arg_19_2)
 			}
 		},
 		content = {
-			edge_holder_left = "menu_frame_" .. var_19_0 .. "_divider_left",
-			edge_holder_right = "menu_frame_" .. var_19_0 .. "_divider_right",
-			bottom_edge = "menu_frame_" .. var_19_0 .. "_divider"
+			edge_holder_left = "menu_frame_" .. flag .. "_divider_left",
+			edge_holder_right = "menu_frame_" .. flag .. "_divider_right",
+			bottom_edge = "menu_frame_" .. flag .. "_divider"
 		},
 		style = {
 			bottom_edge = {
@@ -1627,8 +1699,9 @@ local function var_0_19(arg_19_0, arg_19_1, arg_19_2)
 	}
 end
 
-local function var_0_20(arg_20_0, arg_20_1, arg_20_2)
-	local var_20_0 = arg_20_2 or "09"
+local function fn_4(arg_20_0, arg_20_1, arg_20_2)
+	-- function 20
+	local flag = arg_20_2 or "09"
 
 	return {
 		element = {
@@ -1651,9 +1724,9 @@ local function var_0_20(arg_20_0, arg_20_1, arg_20_2)
 			}
 		},
 		content = {
-			edge_holder_top = "menu_frame_" .. var_20_0 .. "_divider_top",
-			edge_holder_bottom = "menu_frame_" .. var_20_0 .. "_divider_bottom",
-			edge = "menu_frame_" .. var_20_0 .. "_divider_vertical"
+			edge_holder_top = "menu_frame_" .. flag .. "_divider_top",
+			edge_holder_bottom = "menu_frame_" .. flag .. "_divider_bottom",
+			edge = "menu_frame_" .. flag .. "_divider_vertical"
 		},
 		style = {
 			edge = {
@@ -1721,7 +1794,8 @@ local function var_0_20(arg_20_0, arg_20_1, arg_20_2)
 	}
 end
 
-local function var_0_21(arg_21_0, arg_21_1)
+local function fn_5(arg_21_0, arg_21_1)
+	-- function 21
 	return {
 		element = {
 			passes = {
@@ -1733,16 +1807,18 @@ local function var_0_21(arg_21_0, arg_21_1)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_22_0)
-						return not arg_22_0.button_hotspot.is_hover
+					content_check_function = function (self)
+						-- function 22
+						return not self.button_hotspot.is_hover
 					end
 				},
 				{
 					style_id = "text_hover",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_23_0)
-						return arg_23_0.button_hotspot.is_hover
+					content_check_function = function (self)
+						-- function 23
+						return self.button_hotspot.is_hover
 					end
 				},
 				{
@@ -1754,8 +1830,9 @@ local function var_0_21(arg_21_0, arg_21_1)
 					style_id = "tooltip",
 					additional_option_id = "tooltip_data",
 					pass_type = "additional_option_tooltip",
-					content_check_function = function(arg_24_0)
-						return arg_24_0.button_hotspot.is_hover
+					content_check_function = function (self)
+						-- function 24
+						return self.button_hotspot.is_hover
 					end
 				}
 			}
@@ -1830,31 +1907,31 @@ local function var_0_21(arg_21_0, arg_21_1)
 	}
 end
 
-local var_0_22 = {
-	talent_title_text = UIWidgets.create_simple_text(Localize("hero_window_talents"), "talent_title_text", nil, nil, var_0_16),
-	talent_row_1 = var_0_18("talent_row_1", var_0_11.talent_row_1.size, 3, "green"),
-	talent_row_2 = var_0_18("talent_row_2", var_0_11.talent_row_2.size, 3),
-	talent_row_3 = var_0_18("talent_row_3", var_0_11.talent_row_3.size, 3),
-	talent_row_4 = var_0_18("talent_row_4", var_0_11.talent_row_4.size, 3),
-	talent_row_5 = var_0_18("talent_row_5", var_0_11.talent_row_5.size, 3),
-	talent_row_6 = var_0_18("talent_row_6", var_0_11.talent_row_6.size, 3),
-	career_background = UIWidgets.create_background("window_frame", var_0_11.window_frame.size, "talent_tree_bg_01"),
-	career_window = UIWidgets.create_frame("window_frame", var_0_11.window_frame.size, var_0_2, 10),
+local tbl_9 = {
+	talent_title_text = UIWidgets.create_simple_text(Localize("hero_window_talents"), "talent_title_text", nil, nil, tbl_8),
+	talent_row_1 = fn_2("talent_row_1", tbl_3.talent_row_1.size, 3, "green"),
+	talent_row_2 = fn_2("talent_row_2", tbl_3.talent_row_2.size, 3),
+	talent_row_3 = fn_2("talent_row_3", tbl_3.talent_row_3.size, 3),
+	talent_row_4 = fn_2("talent_row_4", tbl_3.talent_row_4.size, 3),
+	talent_row_5 = fn_2("talent_row_5", tbl_3.talent_row_5.size, 3),
+	talent_row_6 = fn_2("talent_row_6", tbl_3.talent_row_6.size, 3),
+	career_background = UIWidgets.create_background("window_frame", tbl_3.window_frame.size, "talent_tree_bg_01"),
+	career_window = UIWidgets.create_frame("window_frame", tbl_3.window_frame.size, frame, 10),
 	career_background_rect = UIWidgets.create_simple_rect("window_frame", {
 		150,
 		0,
 		0,
 		0
 	}, 1),
-	career_info_window = UIWidgets.create_frame("career_window", var_0_11.window_frame.size, var_0_2, 10),
+	career_info_window = UIWidgets.create_frame("career_window", tbl_3.window_frame.size, frame, 10),
 	career_info_window_rect = UIWidgets.create_simple_rect("career_window", {
 		150,
 		0,
 		0,
 		0
 	}, 1),
-	career_info_window_bottom_edge = var_0_19("career_window_edge", var_0_11.career_window_edge.size),
-	career_info_window_center_edge = var_0_20("career_window_center_edge", var_0_11.career_window_center_edge.size),
+	career_info_window_bottom_edge = fn_3("career_window_edge", tbl_3.career_window_edge.size),
+	career_info_window_center_edge = fn_4("career_window_center_edge", tbl_3.career_window_center_edge.size),
 	career_perks_dots = UIWidgets.create_simple_centered_texture_amount("mission_objective_01", {
 		54,
 		22
@@ -1863,23 +1940,23 @@ local var_0_22 = {
 		54,
 		22
 	}, "career_perks", 2),
-	career_perk_1 = var_0_21("", "career_perk_1"),
-	career_perk_2 = var_0_21("", "career_perk_2"),
-	career_perk_3 = var_0_21("", "career_perk_3"),
-	passive_title_text = UIWidgets.create_simple_text("n/a", "passive_title_text", nil, nil, var_0_15),
-	passive_type_title = UIWidgets.create_simple_text(Localize("hero_view_passive_ability"), "passive_type_title", nil, nil, var_0_14),
+	career_perk_1 = fn_5("", "career_perk_1"),
+	career_perk_2 = fn_5("", "career_perk_2"),
+	career_perk_3 = fn_5("", "career_perk_3"),
+	passive_title_text = UIWidgets.create_simple_text("n/a", "passive_title_text", nil, nil, tbl_7),
+	passive_type_title = UIWidgets.create_simple_text(Localize("hero_view_passive_ability"), "passive_type_title", nil, nil, tbl_6),
 	passive_title_divider = UIWidgets.create_simple_texture("infoslate_frame_02_horizontal", "passive_title_divider"),
-	passive_description_text = UIWidgets.create_simple_text("n/a", "passive_description_text", nil, nil, var_0_13),
+	passive_description_text = UIWidgets.create_simple_text("n/a", "passive_description_text", nil, nil, tbl_5),
 	passive_icon = UIWidgets.create_simple_texture("icons_placeholder", "passive_icon"),
 	passive_icon_frame = UIWidgets.create_simple_texture("talent_frame", "passive_icon_frame"),
-	active_title_text = UIWidgets.create_simple_text("n/a", "active_title_text", nil, nil, var_0_15),
-	active_type_title = UIWidgets.create_simple_text(Localize("hero_view_activated_ability"), "active_type_title", nil, nil, var_0_14),
+	active_title_text = UIWidgets.create_simple_text("n/a", "active_title_text", nil, nil, tbl_7),
+	active_type_title = UIWidgets.create_simple_text(Localize("hero_view_activated_ability"), "active_type_title", nil, nil, tbl_6),
 	active_title_divider = UIWidgets.create_simple_texture("infoslate_frame_02_horizontal", "active_title_divider"),
-	active_description_text = UIWidgets.create_simple_text("n/a", "active_description_text", nil, nil, var_0_13),
+	active_description_text = UIWidgets.create_simple_text("n/a", "active_description_text", nil, nil, tbl_5),
 	active_icon = UIWidgets.create_simple_texture("icons_placeholder", "active_icon"),
 	active_icon_frame = UIWidgets.create_simple_texture("talent_frame", "active_icon_frame")
 }
-local var_0_23 = {
+local tbl_10 = {
 	default = {
 		{
 			input_action = "d_vertical",
@@ -1899,21 +1976,24 @@ local var_0_23 = {
 		}
 	}
 }
-local var_0_24 = {
+local tbl_11 = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+			init = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+				-- function 25
 				arg_25_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
-				local var_26_0 = math.easeOutCubic(arg_26_3)
+			update = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+				-- function 26
+				local easeOutCubic = math.easeOutCubic(arg_26_3)
 
-				arg_26_4.render_settings.alpha_multiplier = var_26_0
+				arg_26_4.render_settings.alpha_multiplier = easeOutCubic
 			end,
-			on_complete = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+			on_complete = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+				-- function 27
 				return
 			end
 		}
@@ -1923,15 +2003,18 @@ local var_0_24 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+			init = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+				-- function 28
 				arg_28_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
-				local var_29_0 = math.easeOutCubic(arg_29_3)
+			update = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
+				-- function 29
+				local easeOutCubic = math.easeOutCubic(arg_29_3)
 
-				arg_29_4.render_settings.alpha_multiplier = 1 - var_29_0
+				arg_29_4.render_settings.alpha_multiplier = 1 - easeOutCubic
 			end,
-			on_complete = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+			on_complete = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+				-- function 30
 				return
 			end
 		}
@@ -1939,9 +2022,9 @@ local var_0_24 = {
 }
 
 return {
-	widgets = var_0_22,
+	widgets = tbl_9,
 	node_widgets = node_widgets,
-	scenegraph_definition = var_0_11,
-	animation_definitions = var_0_24,
-	generic_input_actions = var_0_23
+	scenegraph_definition = tbl_3,
+	animation_definitions = tbl_11,
+	generic_input_actions = tbl_10
 }

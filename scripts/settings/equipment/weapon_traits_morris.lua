@@ -1,11 +1,11 @@
 -- chunkname: @scripts/settings/equipment/weapon_traits_morris.lua
 
-local var_0_0 = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
+local scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
 
 require("scripts/settings/dlcs/morris/tweak_data/buff_tweak_data")
 
-local var_0_1 = {}
-local var_0_2 = {
+local tbl = {}
+local tbl_2 = {
 	armor_breaker_on_armored_kill = {
 		trigger_on_breed = {
 			chaos_bulwark = true,
@@ -54,7 +54,7 @@ local var_0_2 = {
 	}
 }
 
-var_0_1.buff_templates = {
+tbl.buff_templates = {
 	stagger_aoe_on_crit = {
 		buffs = {
 			{
@@ -92,7 +92,7 @@ var_0_1.buff_templates = {
 			{
 				name = "shield_of_isha",
 				stat_buff = "max_damage_taken",
-				value = var_0_2.shield_of_isha.value
+				value = tbl_2.shield_of_isha.value
 			}
 		}
 	},
@@ -136,7 +136,7 @@ var_0_1.buff_templates = {
 		}
 	}
 }
-var_0_1.traits = {
+tbl.traits = {
 	stagger_aoe_on_crit = {
 		display_name = "traits_stagger_aoe_on_crit",
 		buffer = "server",
@@ -168,7 +168,7 @@ var_0_1.traits = {
 		buff_name = "shield_of_isha",
 		description_values = {
 			{
-				value = var_0_2.shield_of_isha.value
+				value = tbl_2.shield_of_isha.value
 			}
 		}
 	},
@@ -180,19 +180,19 @@ var_0_1.traits = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_2.bloodthirst_attack_speed.multiplier
+				value = tbl_2.bloodthirst_attack_speed.multiplier
 			},
 			{
 				value_type = "bonus",
-				value = var_0_2.bloodthirst.kills_needed
+				value = tbl_2.bloodthirst.kills_needed
 			},
 			{
 				value_type = "bonus",
-				value = var_0_2.bloodthirst_attack_speed.max_stacks
+				value = tbl_2.bloodthirst_attack_speed.max_stacks
 			},
 			{
 				value_type = "duration",
-				value = var_0_2.bloodthirst.reset_after_time
+				value = tbl_2.bloodthirst.reset_after_time
 			}
 		}
 	},
@@ -205,15 +205,15 @@ var_0_1.traits = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_2.headhunter_damage.multiplier
+				value = tbl_2.headhunter_damage.multiplier
 			},
 			{
 				value_type = "bonus",
-				value = var_0_2.headhunter_damage.max_stacks
+				value = tbl_2.headhunter_damage.max_stacks
 			},
 			{
 				value_type = "bonus",
-				value = var_0_2.headhunter.remove_amount
+				value = tbl_2.headhunter.remove_amount
 			}
 		}
 	},
@@ -646,11 +646,11 @@ var_0_1.traits = {
 	}
 }
 
-for iter_0_0, iter_0_1 in pairs(var_0_1.traits) do
-	iter_0_1.name = iter_0_0
+for k, v in pairs(tbl.traits) do
+	v.name = k
 end
 
-var_0_1.combinations = {
+tbl.combinations = {
 	deus_melee = {
 		{
 			"melee_timed_block_cost"
@@ -977,22 +977,22 @@ var_0_1.combinations = {
 	}
 }
 
-BuffUtils.apply_buff_tweak_data(var_0_1.buff_templates, var_0_2)
+BuffUtils.apply_buff_tweak_data(tbl.buff_templates, tbl_2)
 
-for iter_0_2, iter_0_3 in pairs(var_0_1.buff_templates) do
-	fassert(not WeaponTraits.buff_templates[iter_0_2], "duplicate buff_template found between WeaponTraits.buff_templates and buff_templates added by morris dlc")
+for k_2, v_2 in pairs(tbl.buff_templates) do
+	fassert(not WeaponTraits.buff_templates[k_2], "duplicate buff_template found between WeaponTraits.buff_templates and buff_templates added by morris dlc")
 
-	WeaponTraits.buff_templates[iter_0_2] = iter_0_3
+	WeaponTraits.buff_templates[k_2] = v_2
 end
 
-for iter_0_4, iter_0_5 in pairs(var_0_1.traits) do
-	fassert(not WeaponTraits.traits[iter_0_4], "duplicate traits found between WeaponTraits.traits and traits added by morris dlc")
+for k_3, v_3 in pairs(tbl.traits) do
+	fassert(not WeaponTraits.traits[k_3], "duplicate traits found between WeaponTraits.traits and traits added by morris dlc")
 
-	WeaponTraits.traits[iter_0_4] = iter_0_5
+	WeaponTraits.traits[k_3] = v_3
 end
 
-for iter_0_6, iter_0_7 in pairs(var_0_1.combinations) do
-	fassert(not WeaponTraits.combinations[iter_0_6], "duplicate combinations found between WeaponTraits.combinations and combinations added by morris dlc")
+for k_4, v_4 in pairs(tbl.combinations) do
+	fassert(not WeaponTraits.combinations[k_4], "duplicate combinations found between WeaponTraits.combinations and combinations added by morris dlc")
 
-	WeaponTraits.combinations[iter_0_6] = iter_0_7
+	WeaponTraits.combinations[k_4] = v_4
 end

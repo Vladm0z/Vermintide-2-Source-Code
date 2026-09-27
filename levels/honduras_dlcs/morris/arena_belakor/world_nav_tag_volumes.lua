@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/morris/arena_belakor/world_nav_tag_volumes.lua
 
-local var_0_0 = {
+local tbl = {
 	damage_insta_kill_volume_002 = {
 		delay_nav_tag_volume_creation = true,
 		alt_max = 15.031871795654297,
@@ -227,9 +227,9 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = "1"
+local str = "1"
 
 return {
-	version = var_0_1,
-	nav_tag_volumes = var_0_0
+	version = str,
+	nav_tag_volumes = tbl
 }

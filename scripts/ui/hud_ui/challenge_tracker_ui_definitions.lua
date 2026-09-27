@@ -1,14 +1,14 @@
 -- chunkname: @scripts/ui/hud_ui/challenge_tracker_ui_definitions.lua
 
-local var_0_0 = 1920
-local var_0_1 = 1080
-local var_0_2 = {
+local num = 1920
+local num_2 = 1080
+local tbl = {
 	260,
 	75
 }
-local var_0_3 = 20
-local var_0_4 = true
-local var_0_5 = {
+local num_3 = 20
+local flag = true
+local tbl_2 = {
 	screen = {
 		scale = "hud_scale_fit",
 		position = {
@@ -17,8 +17,8 @@ local var_0_5 = {
 			UILayer.hud
 		},
 		size = {
-			var_0_0,
-			var_0_1
+			num,
+			num_2
 		}
 	},
 	pivot = {
@@ -44,91 +44,91 @@ local var_0_5 = {
 			0,
 			0
 		},
-		size = var_0_2
+		size = tbl
 	}
 }
-local var_0_6 = UIAtlasHelper.get_atlas_settings_by_texture_name("objective_detail")
-local var_0_7 = UIAtlasHelper.get_atlas_settings_by_texture_name("lily")
-local var_0_8 = {
+local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name("objective_detail")
+local get_atlas_settings_by_texture_name_2 = UIAtlasHelper.get_atlas_settings_by_texture_name("lily")
+local tbl_3 = {
 	scenegraph_id = "quest",
 	element = {
 		passes = {
 			{
 				style_id = "background_rect",
 				pass_type = "rect",
-				retained_mode = var_0_4
+				retained_mode = flag
 			},
 			{
 				pass_type = "texture",
 				style_id = "background_lilies",
 				texture_id = "background_id",
-				retained_mode = var_0_4
+				retained_mode = flag
 			},
 			{
 				pass_type = "texture",
 				style_id = "corner_top_right",
 				texture_id = "corner_id",
-				retained_mode = var_0_4
+				retained_mode = flag
 			},
 			{
 				pass_type = "texture",
 				style_id = "corner_bot_right",
 				texture_id = "corner_id",
-				retained_mode = var_0_4
+				retained_mode = flag
 			},
 			{
 				pass_type = "texture",
 				style_id = "lily",
 				texture_id = "lily_id",
-				retained_mode = var_0_4
+				retained_mode = flag
 			},
 			{
 				pass_type = "texture",
 				style_id = "progress",
 				texture_id = "progress_id",
-				retained_mode = var_0_4
+				retained_mode = flag
 			},
 			{
 				pass_type = "texture",
 				style_id = "progress_bg",
 				texture_id = "progress_bg_id",
-				retained_mode = var_0_4
+				retained_mode = flag
 			},
 			{
 				pass_type = "texture",
 				style_id = "reward_icon",
 				texture_id = "reward_icon",
-				retained_mode = var_0_4
+				retained_mode = flag
 			},
 			{
 				style_id = "progress_text",
 				pass_type = "text",
 				text_id = "progress_text",
-				retained_mode = var_0_4
+				retained_mode = flag
 			},
 			{
 				style_id = "challenge_name",
 				pass_type = "text",
 				text_id = "challenge_name",
-				retained_mode = var_0_4
+				retained_mode = flag
 			},
 			{
 				style_id = "challenge_name_shadow",
 				pass_type = "text",
 				text_id = "challenge_name",
-				retained_mode = var_0_4
+				retained_mode = flag
 			},
 			{
 				style_id = "reward_name",
 				pass_type = "text",
 				text_id = "reward_name",
-				retained_mode = var_0_4
+				retained_mode = flag
 			},
 			{
 				style_id = "reward_name_shadow",
 				pass_type = "text",
 				text_id = "reward_name",
-				retained_mode = var_0_4
+				retained_mode = flag
 			}
 		}
 	},
@@ -145,8 +145,8 @@ local var_0_8 = {
 		max_progress = 0,
 		progress_id = "challenge_ui_progress_arc",
 		last_progress = 0,
-		lily_id = var_0_7.texture_name,
-		corner_id = var_0_6.texture_name
+		lily_id = get_atlas_settings_by_texture_name_2.texture_name,
+		corner_id = get_atlas_settings_by_texture_name.texture_name
 	},
 	style = {
 		background_rect = {
@@ -170,10 +170,10 @@ local var_0_8 = {
 			horizontal_alignment = "right",
 			offset = {
 				0,
-				0.5 * var_0_6.size[2],
+				0.5 * get_atlas_settings_by_texture_name.size[2],
 				1
 			},
-			texture_size = var_0_6.size,
+			texture_size = get_atlas_settings_by_texture_name.size,
 			color = {
 				255,
 				255,
@@ -186,10 +186,10 @@ local var_0_8 = {
 			horizontal_alignment = "right",
 			offset = {
 				0,
-				-0.5 * var_0_6.size[2],
+				-0.5 * get_atlas_settings_by_texture_name.size[2],
 				1
 			},
-			texture_size = var_0_6.size,
+			texture_size = get_atlas_settings_by_texture_name.size,
 			color = {
 				255,
 				255,
@@ -201,11 +201,11 @@ local var_0_8 = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
 			offset = {
-				-0.5 * var_0_7.size[1] + 3,
+				-0.5 * get_atlas_settings_by_texture_name_2.size[1] + 3,
 				0,
 				5
 			},
-			texture_size = var_0_7.size,
+			texture_size = get_atlas_settings_by_texture_name_2.size,
 			color = {
 				255,
 				255,
@@ -256,13 +256,13 @@ local var_0_8 = {
 			dynamic_font_size = true,
 			font_type = "hell_shark_header",
 			size = {
-				var_0_2[1] - 95,
-				var_0_2[2] * 0.5
+				tbl[1] - 95,
+				tbl[2] * 0.5
 			},
 			text_color = Colors.get_color_table_with_alpha("white", 255),
 			offset = {
 				20,
-				var_0_2[2] * 0.5,
+				tbl[2] * 0.5,
 				1
 			}
 		},
@@ -276,8 +276,8 @@ local var_0_8 = {
 			dynamic_font_size = true,
 			font_type = "hell_shark_header",
 			size = {
-				var_0_2[1] - 95,
-				var_0_2[2] * 0.5
+				tbl[1] - 95,
+				tbl[2] * 0.5
 			},
 			text_color = {
 				255,
@@ -287,7 +287,7 @@ local var_0_8 = {
 			},
 			offset = {
 				22,
-				var_0_2[2] * 0.5 - 2,
+				tbl[2] * 0.5 - 2,
 				0
 			}
 		},
@@ -301,8 +301,8 @@ local var_0_8 = {
 			vertical_alignment = "top",
 			font_type = "hell_shark_header",
 			size = {
-				var_0_2[1] - 95,
-				var_0_2[2] * 0.5
+				tbl[1] - 95,
+				tbl[2] * 0.5
 			},
 			text_color = Colors.get_color_table_with_alpha("es_questingknight", 255),
 			offset = {
@@ -321,8 +321,8 @@ local var_0_8 = {
 			vertical_alignment = "top",
 			font_type = "hell_shark_header",
 			size = {
-				var_0_2[1] - 95,
-				var_0_2[2] * 0.5
+				tbl[1] - 95,
+				tbl[2] * 0.5
 			},
 			text_color = {
 				255,
@@ -366,7 +366,7 @@ local var_0_8 = {
 			font_type = "hell_shark_header",
 			text_color = Colors.get_color_table_with_alpha("white", 255),
 			offset = {
-				var_0_2[1] * 0.5 - 40,
+				tbl[1] * 0.5 - 40,
 				10,
 				1
 			}
@@ -374,25 +374,27 @@ local var_0_8 = {
 	}
 }
 
-local function var_0_9(arg_1_0, arg_1_1)
+local function fn(self, arg_1_1)
+	-- function 1
 	return {
-		arg_1_0[1],
-		arg_1_0[2] - (var_0_2[2] + var_0_3) * (arg_1_1 - 1),
-		arg_1_0[3]
+		self[1],
+		self[2] - (tbl[2] + num_3) * (arg_1_1 - 1),
+		self[3]
 	}
 end
 
-local function var_0_10(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
-	local var_2_0 = UIWidget.init(var_0_8)
+local function fn_2(self, arg_2_1, arg_2_2, arg_2_3)
+	-- function 2
+	local var_2_0 = UIWidget.init(tbl_3)
 
-	var_2_0.offset = var_0_9(arg_2_2, arg_2_3)
+	var_2_0.offset = fn(arg_2_2, arg_2_3)
 
-	local var_2_1 = var_2_0.content
+	local content = var_2_0.content
 
-	var_2_1.challenge = arg_2_0
-	var_2_1.challenge_name = Localize(arg_2_0:get_challenge_name())
+	content.challenge = self
+	content.challenge_name = Localize(self:get_challenge_name())
 
-	if arg_2_0:is_repeatable() then
+	if not self:is_repeatable() then
 		var_2_0.style.background_rect.color = {
 			200,
 			15,
@@ -407,66 +409,82 @@ local function var_0_10(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 		}
 	end
 
-	local var_2_2 = arg_2_0:get_reward()
-	local var_2_3 = arg_2_0:get_reward_name()
+	local get_reward = self:get_reward()
+	local get_reward_name = self:get_reward_name()
 
-	var_2_1.reward_name = UIUtils.format_localized_description(var_2_3, var_2_2.description_values)
-	var_2_1.reward_icon = var_2_2.icon
+	content.reward_name = UIUtils.format_localized_description(get_reward_name, get_reward.description_values)
+	content.reward_icon = get_reward.icon
 
-	local var_2_4, var_2_5 = arg_2_0:get_progress()
+	local get_progress, var_2_5 = self:get_progress()
 
-	var_2_1.progress = var_2_4
-	var_2_1.last_progress = var_2_4
-	var_2_1.max_progress = var_2_5
-	var_2_1.start_anim_progress = var_2_4 / var_2_5
-	var_2_1.last_milestone = math.floor(var_2_1.start_anim_progress * 4)
+	content.progress = get_progress
+	content.last_progress = get_progress
+	content.max_progress = var_2_5
+	content.start_anim_progress = get_progress / var_2_5
+	content.last_milestone = math.floor(content.start_anim_progress * 4)
 
-	local var_2_6 = var_2_1.progress_id
-	local var_2_7 = var_2_1.progress_id .. math.uuid()
+	local progress_id = content.progress_id
+	local str = content.progress_id .. math.uuid()
 
-	Gui.clone_material_from_template(arg_2_1, var_2_7, var_2_6)
+	Gui.clone_material_from_template(arg_2_1, str, progress_id)
 
-	var_2_1.progress_id = var_2_7
-	var_2_1.progress_text = tostring(var_2_5 - var_2_4)
+	content.progress_id = str
+	content.progress_text = tostring(var_2_5 - get_progress)
 
 	return var_2_0
 end
 
-local var_0_11 = {
+local tbl_4 = {
 	on_enter = {
 		{
 			name = "ease_in",
 			delay = 0.5,
 			duration = 1,
-			init = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
-				local var_3_0 = arg_3_2.offset
+			init = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+				-- function 3
+				local offset = arg_3_2.offset
 
 				arg_3_3.src = {
-					var_3_0[1] + 1.5 * var_0_2[2],
-					var_3_0[2]
+					offset[1] + 1.5 * tbl[2],
+					offset[2]
 				}
 				arg_3_3.dst = {
-					var_3_0[1],
-					var_3_0[2]
+					offset[1],
+					offset[2]
 				}
 				arg_3_2.content.alpha_multiplier = 0
 				arg_3_2.offset[1] = arg_3_3.src[1]
 				arg_3_2.offset[2] = arg_3_3.src[2]
 
-				local var_3_1 = var_0_4 and arg_3_3.ui_renderer.gui_retained or arg_3_3.ui_renderer.gui
-				local var_3_2 = arg_3_2.content
-				local var_3_3 = Gui.material(var_3_1, arg_3_2.content.progress_id)
+				local gui_retained
 
-				Material.set_scalar(var_3_3, "angle", (var_3_2.start_anim_progress - 0.5) * math.pi * 2)
-			end,
-			update = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-				local var_4_0 = math.easeOutCubic(arg_4_3)
+				if not flag then
+					gui_retained = arg_3_3.ui_renderer.gui_retained
 
-				arg_4_2.content.alpha_multiplier = var_4_0
-				arg_4_2.offset[1] = math.floor(math.lerp(arg_4_4.src[1], arg_4_4.dst[1], var_4_0))
-				arg_4_2.offset[2] = math.floor(math.lerp(arg_4_4.src[2], arg_4_4.dst[2], var_4_0))
+					if not gui_retained then
+						-- Nothing
+					end
+				end
+
+				gui_retained = arg_3_3.ui_renderer.gui
+
+				::label_3_0::
+
+				local content = arg_3_2.content
+				local material = Gui.material(gui_retained, arg_3_2.content.progress_id)
+
+				Material.set_scalar(material, "angle", (content.start_anim_progress - 0.5) * math.pi * 2)
 			end,
-			on_complete = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+				-- function 4
+				local easeOutCubic = math.easeOutCubic(arg_4_3)
+
+				arg_4_2.content.alpha_multiplier = easeOutCubic
+				arg_4_2.offset[1] = math.floor(math.lerp(arg_4_4.src[1], arg_4_4.dst[1], easeOutCubic))
+				arg_4_2.offset[2] = math.floor(math.lerp(arg_4_4.src[2], arg_4_4.dst[2], easeOutCubic))
+			end,
+			on_complete = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+				-- function 5
 				arg_5_3.view:_play_sound("Play_hud_grail_knight_quest_start")
 			end
 		}
@@ -475,35 +493,53 @@ local var_0_11 = {
 		{
 			name = "update circle",
 			duration = 0.2,
-			init = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
-				local var_6_0 = arg_6_2.content
-				local var_6_1 = var_6_0.progress
-				local var_6_2 = var_6_0.max_progress
+			init = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+				-- function 6
+				local content = arg_6_2.content
+				local progress = content.progress
+				local max_progress = content.max_progress
+				local start_anim_progress = content.start_anim_progress
 
-				var_6_0.start_anim_progress = var_6_0.start_anim_progress or 0
-				var_6_0.end_anim_progress = var_6_1 / var_6_2
-				var_6_0.progress_text = tostring(var_6_2 - var_6_1)
+				start_anim_progress = start_anim_progress or 0
+				content.start_anim_progress = start_anim_progress
+				content.end_anim_progress = progress / max_progress
+				content.progress_text = tostring(max_progress - progress)
 			end,
-			update = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
-				local var_7_0 = arg_7_2.content
-				local var_7_1 = var_0_4 and arg_7_4.ui_renderer.gui_retained or arg_7_4.ui_renderer.gui
-				local var_7_2 = Gui.material(var_7_1, arg_7_2.content.progress_id)
-				local var_7_3 = var_7_0.start_anim_progress
-				local var_7_4 = var_7_0.end_anim_progress
-				local var_7_5 = math.lerp(var_7_3, var_7_4, arg_7_3)
+			update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+				-- function 7
+				local content = arg_7_2.content
+				local gui_retained
 
-				Material.set_scalar(var_7_2, "angle", (var_7_5 - 0.5) * math.pi * 2)
+				if not flag then
+					gui_retained = arg_7_4.ui_renderer.gui_retained
 
-				if var_7_4 > (var_7_0.last_milestone + 1) / 4 and var_7_4 < 1 then
+					if not gui_retained then
+						-- Nothing
+					end
+				end
+
+				gui_retained = arg_7_4.ui_renderer.gui
+
+				::label_7_0::
+
+				local material = Gui.material(gui_retained, arg_7_2.content.progress_id)
+				local start_anim_progress = content.start_anim_progress
+				local end_anim_progress = content.end_anim_progress
+				local lerp = math.lerp(start_anim_progress, end_anim_progress, arg_7_3)
+
+				Material.set_scalar(material, "angle", (lerp - 0.5) * math.pi * 2)
+
+				if not (not (end_anim_progress > (content.last_milestone + 1) / 4) or not (end_anim_progress < 1)) then
 					arg_7_4.view:_play_sound("Play_hud_grail_knight_quest_milestone_finish")
 
-					var_7_0.last_milestone = math.floor(var_7_4 * 4)
+					content.last_milestone = math.floor(end_anim_progress * 4)
 				end
 			end,
-			on_complete = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
-				local var_8_0 = arg_8_2.content
+			on_complete = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+				-- function 8
+				local content = arg_8_2.content
 
-				var_8_0.start_anim_progress = var_8_0.end_anim_progress
+				content.start_anim_progress = content.end_anim_progress
 			end
 		}
 	},
@@ -512,10 +548,12 @@ local var_0_11 = {
 			name = "fade and play sound",
 			delay = 0.5,
 			duration = 1,
-			init = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			init = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+				-- function 9
 				arg_9_3.view:_play_sound("Play_hud_grail_knight_quest_finish")
 			end,
-			update = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+			update = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+				-- function 10
 				arg_10_2.content.alpha_multiplier = 1 - arg_10_3
 			end,
 			on_complete = NOP
@@ -526,15 +564,16 @@ local var_0_11 = {
 			duration = 0.1,
 			init = NOP,
 			update = NOP,
-			on_complete = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
-				local var_11_0 = arg_11_2.content.challenge
-				local var_11_1 = var_11_0:get_reward().sound
+			on_complete = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+				-- function 11
+				local challenge = arg_11_2.content.challenge
+				local sound = challenge:get_reward().sound
 
-				if var_11_1 then
-					arg_11_3.view:_play_sound(var_11_1)
+				if not sound then
+					arg_11_3.view:_play_sound(sound)
 				end
 
-				arg_11_3.view:_cb_on_done(arg_11_2, var_11_0)
+				arg_11_3.view:_cb_on_done(arg_11_2, challenge)
 			end
 		}
 	},
@@ -543,25 +582,28 @@ local var_0_11 = {
 			name = "fade",
 			delay = 0.5,
 			duration = 1,
-			init = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			init = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+				-- function 12
 				return
 			end,
-			update = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+			update = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+				-- function 13
 				arg_13_2.content.alpha_multiplier = 1 - arg_13_3
 			end,
-			on_complete = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
-				local var_14_0 = arg_14_2.content.challenge
+			on_complete = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+				-- function 14
+				local challenge = arg_14_2.content.challenge
 
-				arg_14_3.view:_cb_on_done(arg_14_2, var_14_0)
+				arg_14_3.view:_cb_on_done(arg_14_2, challenge)
 			end
 		}
 	}
 }
 
 return {
-	animation_definitions = var_0_11,
-	scenegraph_definition = var_0_5,
-	create_objective = var_0_10,
-	get_widget_position = var_0_9,
-	RETAINED_MODE_ENABLED = var_0_4
+	animation_definitions = tbl_4,
+	scenegraph_definition = tbl_2,
+	create_objective = fn_2,
+	get_widget_position = fn,
+	RETAINED_MODE_ENABLED = flag
 }

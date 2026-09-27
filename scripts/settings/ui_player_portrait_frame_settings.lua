@@ -3286,15 +3286,18 @@ UIPlayerPortraitFrameSettings = {
 	}
 }
 
-local function var_0_0()
+local function fn()
+	-- function 1
 	return
 end
 
-local function var_0_1()
+local function fn_2()
+	-- function 2
 	return
 end
 
-local function var_0_2()
+local function fn_3()
+	-- function 3
 	return
 end
 

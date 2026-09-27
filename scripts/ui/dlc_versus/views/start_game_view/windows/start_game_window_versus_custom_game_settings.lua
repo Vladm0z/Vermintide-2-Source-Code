@@ -1,544 +1,601 @@
 -- chunkname: @scripts/ui/dlc_versus/views/start_game_view/windows/start_game_window_versus_custom_game_settings.lua
 
 local var_0_0 = local_require("scripts/ui/dlc_versus/views/start_game_view/windows/definitions/start_game_window_versus_custom_game_settings_definitions")
-local var_0_1 = var_0_0.animation_definitions
-local var_0_2 = var_0_0.scenegraph_definition
+local animation_definitions = var_0_0.animation_definitions
+local scenegraph_definition = var_0_0.scenegraph_definition
 
 StartGameWindowVersusCustomGameSettings = class(StartGameWindowVersusCustomGameSettings)
 StartGameWindowVersusCustomGameSettings.NAME = "StartGameWindowVersusCustomGameSettings"
 
-local var_0_3 = {
+local tbl = {
 	default = UIWidgets.create_settings_stepper_widget,
 	stepper = UIWidgets.create_settings_stepper_widget,
 	slider = UIWidgets.create_settings_slider_widget
 }
-local var_0_4 = {
+local tbl_2 = {
 	default = 36,
 	slider = 36,
 	stepper = 36
 }
 
-function StartGameWindowVersusCustomGameSettings.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowVersusCustomGameSettings.on_enter = function (self, arg_1_1, arg_1_2)
+	-- function 1
 	print("Entered Substate StartGameWindowVersusCustomGameSettings")
 
-	arg_1_0._parent = arg_1_1.parent
+	self._parent = arg_1_1.parent
 
-	local var_1_0 = arg_1_1.ingame_ui_context
+	local ingame_ui_context = arg_1_1.ingame_ui_context
 
-	arg_1_0._ingame_ui_context = var_1_0
-	arg_1_0._ui_renderer = var_1_0.ui_renderer
-	arg_1_0._ui_top_renderer = var_1_0.ui_top_renderer
-	arg_1_0._matchmaking_manager = var_1_0.matchmaking_manager
-	arg_1_0._peer_id = var_1_0.peer_id
-	arg_1_0._is_server = var_1_0.is_server
+	self._ingame_ui_context = ingame_ui_context
+	self._ui_renderer = ingame_ui_context.ui_renderer
+	self._ui_top_renderer = ingame_ui_context.ui_top_renderer
+	self._matchmaking_manager = ingame_ui_context.matchmaking_manager
+	self._peer_id = ingame_ui_context.peer_id
+	self._is_server = ingame_ui_context.is_server
 
-	local var_1_1 = Managers.mechanism:game_mechanism()
-	local var_1_2 = var_1_1 and var_1_1:get_custom_game_settings_handler()
+	local game_mechanism = Managers.mechanism:game_mechanism()
+	local flag = not game_mechanism and game_mechanism:get_custom_game_settings_handler()
 
-	arg_1_0._settings_templates = var_1_2 and var_1_2:get_settings_template()
-	arg_1_0._custom_game_settings_handler = var_1_2
-	arg_1_0._game_mechanism = var_1_1
-	arg_1_0._selected_setting_index = nil
-	arg_1_0._input_focused = false
-	arg_1_0._is_loading = true
-	arg_1_0._custom_settings_toggled = var_1_1 and var_1_1:custom_settings_enabled() or false
+	self._settings_templates = not flag and flag:get_settings_template()
+	self._custom_game_settings_handler = flag
+	self._game_mechanism = game_mechanism
+	self._selected_setting_index = nil
+	self._input_focused = false
+	self._is_loading = true
 
-	arg_1_0:_create_ui_elements()
-	Managers.state.event:register(arg_1_0, "event_focus_custom_game_settings_input", "focus_custom_game_settings_input")
-	Managers.state.event:register(arg_1_0, "event_reset_host_settings", "_reset_host_settings")
+	local custom_settings_enabled
+
+	if not game_mechanism then
+		custom_settings_enabled = game_mechanism:custom_settings_enabled()
+
+		if not custom_settings_enabled then
+			-- Nothing
+		end
+	end
+
+	custom_settings_enabled = false
+
+	::label_1_0::
+
+	self._custom_settings_toggled = custom_settings_enabled
+
+	self:_create_ui_elements()
+	Managers.state.event:register(self, "event_focus_custom_game_settings_input", "focus_custom_game_settings_input")
+	Managers.state.event:register(self, "event_reset_host_settings", "_reset_host_settings")
 end
 
-function StartGameWindowVersusCustomGameSettings._create_ui_elements(arg_2_0)
-	UIRenderer.clear_scenegraph_queue(arg_2_0._ui_renderer)
-	UIRenderer.clear_scenegraph_queue(arg_2_0._ui_top_renderer)
+StartGameWindowVersusCustomGameSettings._create_ui_elements = function (self)
+	-- function 2
+	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
+	UIRenderer.clear_scenegraph_queue(self._ui_top_renderer)
 
-	arg_2_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 
-	local var_2_0 = {}
-	local var_2_1 = {}
-	local var_2_2 = var_0_0.widget_definitions
+	local tbl = {}
+	local tbl_2 = {}
+	local widget_definitions = var_0_0.widget_definitions
 
-	UIUtils.create_widgets(var_2_2, var_2_0, var_2_1)
+	UIUtils.create_widgets(widget_definitions, tbl, tbl_2)
 
-	arg_2_0._widgets = var_2_0
-	arg_2_0._widgets_by_name = var_2_1
-	arg_2_0._ui_animator = UIAnimator:new(arg_2_0._ui_scenegraph, var_0_1)
-	arg_2_0._animations = {}
-	arg_2_0._ui_animations = {}
+	self._widgets = tbl
+	self._widgets_by_name = tbl_2
+	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
+	self._animations = {}
+	self._ui_animations = {}
 end
 
-function StartGameWindowVersusCustomGameSettings._populate_settings(arg_3_0)
-	local var_3_0 = arg_3_0._is_server and arg_3_0._game_mechanism:is_hosting_versus_custom_game()
-	local var_3_1 = arg_3_0._custom_game_settings_handler:get_settings()
-	local var_3_2 = arg_3_0._settings_templates
-	local var_3_3 = DLCSettings.carousel.custom_game_ui_settings
-	local var_3_4 = {}
-	local var_3_5 = {}
-	local var_3_6 = 0
+StartGameWindowVersusCustomGameSettings._populate_settings = function (self)
+	-- function 3
+	local _is_server = self._is_server
 
-	for iter_3_0, iter_3_1 in ipairs(var_3_1) do
-		local var_3_7 = var_3_2[iter_3_0]
-		local var_3_8 = var_3_7.setting_name
-		local var_3_9 = var_3_7.values
-		local var_3_10 = var_3_3[var_3_8]
-		local var_3_11 = var_3_10 and var_3_10.widget_type or "default"
-		local var_3_12 = var_0_4[var_3_11]
-		local var_3_13 = var_3_7.values_reverse_lookup[iter_3_1]
-		local var_3_14 = var_3_7.default
-		local var_3_15 = var_3_7.values_reverse_lookup[var_3_14]
-		local var_3_16 = callback(arg_3_0, "on_setting_changed_cb")
-		local var_3_17 = var_0_3[var_3_11]("settings_anchor", var_3_7, var_3_10, iter_3_1, var_3_13, iter_3_0, var_3_16)
+	_is_server = not _is_server and self._game_mechanism:is_hosting_versus_custom_game()
+
+	local get_settings = self._custom_game_settings_handler:get_settings()
+	local _settings_templates = self._settings_templates
+	local custom_game_ui_settings = DLCSettings.carousel.custom_game_ui_settings
+	local tbl_3 = {}
+	local tbl_4 = {}
+	local num = 0
+
+	for i, v in ipairs(get_settings) do
+		local var_3_7 = _settings_templates[i]
+		local setting_name = var_3_7.setting_name
+		local values = var_3_7.values
+		local var_3_10 = custom_game_ui_settings[setting_name]
+		local widget_type
+
+		if not var_3_10 then
+			widget_type = var_3_10.widget_type
+
+			if not widget_type then
+				-- Nothing
+			end
+		end
+
+		widget_type = "default"
+
+		::label_3_0::
+
+		local var_3_12 = tbl_2[widget_type]
+		local var_3_13 = var_3_7.values_reverse_lookup[v]
+		local default = var_3_7.default
+		local var_3_15 = var_3_7.values_reverse_lookup[default]
+		local var_3_16 = callback(self, "on_setting_changed_cb")
+		local var_3_17 = tbl[widget_type]("settings_anchor", var_3_7, var_3_10, v, var_3_13, i, var_3_16)
 		local var_3_18 = UIWidget.init(var_3_17)
 
-		var_3_6 = var_3_6 + var_3_12
+		num = num + var_3_12
 		var_3_18.offset = {
 			20,
-			-var_3_6,
+			-num,
 			1
 		}
-		var_3_18.content.is_server = var_3_0
-		var_3_18.content.default_value = var_3_14
+		var_3_18.content.is_server = _is_server
+		var_3_18.content.default_value = default
 		var_3_18.content.default_idx = var_3_15
-		var_3_18.content.widget_type = var_3_11
-		var_3_4[#var_3_4 + 1] = var_3_18
-		var_3_5[var_3_8] = var_3_18
+		var_3_18.content.widget_type = widget_type
+		tbl_3[#tbl_3 + 1] = var_3_18
+		tbl_4[setting_name] = var_3_18
 	end
 
-	arg_3_0._settings_widgets = var_3_4
-	arg_3_0._settings_widgets_by_name = var_3_5
-	arg_3_0._num_settings = #var_3_1, arg_3_0:_setup_scrollbar(var_3_6)
-	arg_3_0._settings = var_3_1
+	self._settings_widgets = tbl_3
+	self._settings_widgets_by_name = tbl_4
+	self._num_settings = #get_settings, self:_setup_scrollbar(num)
+	self._settings = get_settings
 end
 
-function StartGameWindowVersusCustomGameSettings.on_exit(arg_4_0, arg_4_1)
+StartGameWindowVersusCustomGameSettings.on_exit = function (self, arg_4_1)
+	-- function 4
 	print("Exited Substate StartGameWindowVersusCustomGameSettings")
 
-	arg_4_0._ui_animator = nil
+	self._ui_animator = nil
 
-	Managers.state.event:unregister("event_focus_custom_game_settings_input", arg_4_0)
-	Managers.state.event:unregister("event_reset_host_settings", arg_4_0)
+	Managers.state.event:unregister("event_focus_custom_game_settings_input", self)
+	Managers.state.event:unregister("event_reset_host_settings", self)
 end
 
-function StartGameWindowVersusCustomGameSettings.update(arg_5_0, arg_5_1, arg_5_2)
-	arg_5_0._ui_animator:update(arg_5_1)
-	arg_5_0:_update_animations(arg_5_1)
-	arg_5_0:_draw(arg_5_1, arg_5_2)
+StartGameWindowVersusCustomGameSettings.update = function (self, arg_5_1, arg_5_2)
+	-- function 5
+	self._ui_animator:update(arg_5_1)
+	self:_update_animations(arg_5_1)
+	self:_draw(arg_5_1, arg_5_2)
 
-	local var_5_0 = Managers.mechanism:network_handler():get_match_handler():get_match_owner()
+	local get_match_owner = Managers.mechanism:network_handler():get_match_handler():get_match_owner()
 
-	arg_5_0._is_loading = not Managers.mechanism:mechanism_try_call("get_all_reservation_handlers_by_owner", var_5_0) or not Managers.matchmaking:is_in_versus_custom_game_lobby()
+	self._is_loading = not Managers.mechanism:mechanism_try_call("get_all_reservation_handlers_by_owner", get_match_owner) and not Managers.matchmaking:is_in_versus_custom_game_lobby()
 end
 
-function StartGameWindowVersusCustomGameSettings._update_animations(arg_6_0, arg_6_1, arg_6_2)
-	local var_6_0 = arg_6_0._animations
-	local var_6_1 = arg_6_0._ui_animator
-	local var_6_2 = arg_6_0._ui_animations
+StartGameWindowVersusCustomGameSettings._update_animations = function (self, arg_6_1, arg_6_2)
+	-- function 6
+	local _animations = self._animations
+	local _ui_animator = self._ui_animator
+	local _ui_animations = self._ui_animations
 
-	for iter_6_0, iter_6_1 in pairs(arg_6_0._ui_animations) do
-		UIAnimation.update(iter_6_1, arg_6_1)
+	for k, v in pairs(self._ui_animations) do
+		UIAnimation.update(v, arg_6_1)
 
-		if UIAnimation.completed(iter_6_1) then
-			arg_6_0._ui_animations[iter_6_0] = nil
+		if not UIAnimation.completed(v) then
+			self._ui_animations[k] = nil
 		end
 	end
 
-	for iter_6_2, iter_6_3 in pairs(var_6_0) do
-		if var_6_1:is_animation_completed(iter_6_3) then
-			var_6_1:stop_animation(iter_6_3)
+	for k_2, v_2 in pairs(_animations) do
+		if not _ui_animator:is_animation_completed(v_2) then
+			_ui_animator:stop_animation(v_2)
 
-			var_6_0[iter_6_2] = nil
+			_animations[k_2] = nil
 		end
 	end
 
-	if arg_6_0._ui_animations.move_up or arg_6_0._ui_animations.move_down then
-		arg_6_0._scrollbar_ui:force_update_progress(2)
+	if self._ui_animations.move_up or not self._ui_animations.move_down then
+		self._scrollbar_ui:force_update_progress(2)
 	end
 end
 
-function StartGameWindowVersusCustomGameSettings.post_update(arg_7_0, arg_7_1, arg_7_2)
-	if not arg_7_0._settings_initialized then
-		arg_7_0._settings_initialized = true
+StartGameWindowVersusCustomGameSettings.post_update = function (self, arg_7_1, arg_7_2)
+	-- function 7
+	if not self._settings_initialized then
+		self._settings_initialized = true
 
-		arg_7_0:_populate_settings()
+		self:_populate_settings()
 	end
 
-	if arg_7_0._settings_initialized and not arg_7_0._game_mechanism:is_hosting_versus_custom_game() then
-		arg_7_0:_client_sync_settings()
+	if not (not self._settings_initialized and self._game_mechanism:is_hosting_versus_custom_game()) then
+		self:_client_sync_settings()
 	end
 
-	if arg_7_0._settings_is_dirty then
-		arg_7_0:_update_lobby_data(arg_7_1, arg_7_2)
+	if not self._settings_is_dirty then
+		self:_update_lobby_data(arg_7_1, arg_7_2)
 	end
 
-	local var_7_0 = Managers.input:is_device_active("gamepad")
+	local is_device_active = Managers.input:is_device_active("gamepad")
 
-	if var_7_0 and arg_7_0._input_focused then
-		arg_7_0:_handle_gamepad_input(arg_7_1, arg_7_2)
+	if not is_device_active and not self._input_focused then
+		self:_handle_gamepad_input(arg_7_1, arg_7_2)
 	else
-		arg_7_0:_handle_input(arg_7_1, arg_7_2)
+		self:_handle_input(arg_7_1, arg_7_2)
 	end
 
-	arg_7_0:_update_focus_overlay(arg_7_1, arg_7_2, var_7_0)
+	self:_update_focus_overlay(arg_7_1, arg_7_2, is_device_active)
 end
 
-function StartGameWindowVersusCustomGameSettings._update_lobby_data(arg_8_0, arg_8_1, arg_8_2)
-	if arg_8_0._custom_settings_toggled then
-		local var_8_0 = arg_8_0._custom_game_settings_handler:get_packed_custom_settings()
+StartGameWindowVersusCustomGameSettings._update_lobby_data = function (self, arg_8_1, arg_8_2)
+	-- function 8
+	if not self._custom_settings_toggled then
+		local get_packed_custom_settings = self._custom_game_settings_handler:get_packed_custom_settings()
 
-		Managers.matchmaking:set_versus_custom_lobby_data(var_8_0)
+		Managers.matchmaking:set_versus_custom_lobby_data(get_packed_custom_settings)
 	else
 		Managers.matchmaking:set_versus_custom_lobby_data("n/a")
 	end
 
-	arg_8_0._settings_is_dirty = false
+	self._settings_is_dirty = false
 end
 
-function StartGameWindowVersusCustomGameSettings._draw(arg_9_0, arg_9_1, arg_9_2)
-	local var_9_0 = arg_9_0._ui_top_renderer
-	local var_9_1 = arg_9_0._ui_scenegraph
-	local var_9_2 = arg_9_0._parent:window_input_service()
-	local var_9_3 = arg_9_0._render_settings
+StartGameWindowVersusCustomGameSettings._draw = function (self, arg_9_1, arg_9_2)
+	-- function 9
+	local _ui_top_renderer = self._ui_top_renderer
+	local _ui_scenegraph = self._ui_scenegraph
+	local window_input_service = self._parent:window_input_service()
+	local _render_settings = self._render_settings
 
-	UIRenderer.begin_pass(var_9_0, var_9_1, var_9_2, arg_9_1, nil, var_9_3)
+	UIRenderer.begin_pass(_ui_top_renderer, _ui_scenegraph, window_input_service, arg_9_1, nil, _render_settings)
 
-	if not arg_9_0._is_loading then
-		UIRenderer.draw_all_widgets(var_9_0, arg_9_0._widgets)
+	if not self._is_loading then
+		UIRenderer.draw_all_widgets(_ui_top_renderer, self._widgets)
 
-		if arg_9_0._settings_widgets then
-			UIRenderer.draw_all_widgets(var_9_0, arg_9_0._settings_widgets)
+		if not self._settings_widgets then
+			UIRenderer.draw_all_widgets(_ui_top_renderer, self._settings_widgets)
 		end
 	end
 
-	UIRenderer.end_pass(var_9_0)
+	UIRenderer.end_pass(_ui_top_renderer)
 
-	if not arg_9_0._is_loading and arg_9_0._scrollbar_ui then
-		arg_9_0._scrollbar_ui:update(arg_9_1, arg_9_2, var_9_0, var_9_2, var_9_3)
+	if self._is_loading or not self._scrollbar_ui then
+		self._scrollbar_ui:update(arg_9_1, arg_9_2, _ui_top_renderer, window_input_service, _render_settings)
 	end
 end
 
-function StartGameWindowVersusCustomGameSettings.on_setting_changed_cb(arg_10_0, arg_10_1, arg_10_2)
-	if arg_10_0._is_server and arg_10_0._game_mechanism:is_hosting_versus_custom_game() then
-		local var_10_0 = arg_10_0._settings_templates[arg_10_1]
+StartGameWindowVersusCustomGameSettings.on_setting_changed_cb = function (self, arg_10_1, arg_10_2)
+	-- function 10
+	if not self._is_server and not self._game_mechanism:is_hosting_versus_custom_game() then
+		local var_10_0 = self._settings_templates[arg_10_1]
 		local var_10_1 = var_10_0.values[arg_10_2]
-		local var_10_2 = var_10_0.setting_name
+		local setting_name = var_10_0.setting_name
 
-		arg_10_0._custom_game_settings_handler:server_set_setting(var_10_2, var_10_1)
+		self._custom_game_settings_handler:server_set_setting(setting_name, var_10_1)
 
-		arg_10_0._settings_is_dirty = true
+		self._settings_is_dirty = true
 	end
 end
 
-function StartGameWindowVersusCustomGameSettings._client_sync_settings(arg_11_0)
-	local var_11_0 = arg_11_0._custom_game_settings_handler:get_settings()
-	local var_11_1 = arg_11_0._settings_templates
+StartGameWindowVersusCustomGameSettings._client_sync_settings = function (self)
+	-- function 11
+	local get_settings = self._custom_game_settings_handler:get_settings()
+	local _settings_templates = self._settings_templates
 
-	for iter_11_0 = 1, #var_11_0 do
-		local var_11_2 = var_11_1[iter_11_0]
-		local var_11_3 = arg_11_0._settings_widgets_by_name[var_11_2.setting_name]
-		local var_11_4 = var_11_3.content.setting_idx
-		local var_11_5 = var_11_0[iter_11_0]
+	for i = 1, #get_settings do
+		local var_11_2 = _settings_templates[i]
+		local var_11_3 = self._settings_widgets_by_name[var_11_2.setting_name]
+		local setting_idx = var_11_3.content.setting_idx
+		local var_11_5 = get_settings[i]
 		local var_11_6 = var_11_2.values_reverse_lookup[var_11_5]
-		local var_11_7 = var_11_3.content
+		local content = var_11_3.content
 
-		if var_11_4 ~= var_11_6 then
-			var_11_7.setting_idx = var_11_6
+		if setting_idx ~= var_11_6 then
+			content.setting_idx = var_11_6
 
-			if var_11_7.widget_type == "slider" then
-				var_11_7.current_slider_value = math.clamp(var_11_6 / var_11_7.num_settings, 0, 1)
+			if content.widget_type == "slider" then
+				content.current_slider_value = math.clamp(var_11_6 / content.num_settings, 0, 1)
 			end
 		end
 	end
 end
 
-function StartGameWindowVersusCustomGameSettings._setup_scrollbar(arg_12_0, arg_12_1)
-	local var_12_0 = arg_12_1 - var_0_0.scenegraph_definition.container.size[2]
+StartGameWindowVersusCustomGameSettings._setup_scrollbar = function (self, arg_12_1)
+	-- function 12
+	local num = arg_12_1 - var_0_0.scenegraph_definition.container.size[2]
 
-	if var_12_0 > 0 then
-		local var_12_1 = arg_12_0._ui_scenegraph
-		local var_12_2 = "settings_anchor"
-		local var_12_3 = "container"
-		local var_12_4 = false
+	if num > 0 then
+		local _ui_scenegraph = self._ui_scenegraph
+		local str = "settings_anchor"
+		local str_2 = "container"
+		local flag = false
 		local var_12_5
 		local var_12_6
 
-		arg_12_0._scrollbar_ui = ScrollbarUI:new(var_12_1, var_12_2, var_12_3, var_12_0, var_12_4, var_12_5, var_12_6)
+		self._scrollbar_ui = ScrollbarUI:new(_ui_scenegraph, str, str_2, num, flag, var_12_5, var_12_6)
 	end
 end
 
-function StartGameWindowVersusCustomGameSettings.focus_custom_game_settings_input(arg_13_0, arg_13_1)
-	arg_13_0._input_focused = arg_13_1
+StartGameWindowVersusCustomGameSettings.focus_custom_game_settings_input = function (self, arg_13_1)
+	-- function 13
+	self._input_focused = arg_13_1
 
-	arg_13_0._parent:pause_input(arg_13_1)
-	arg_13_0._parent:set_input_description("versus_player_hosted_lobby_custom_settings")
+	self._parent:pause_input(arg_13_1)
+	self._parent:set_input_description("versus_player_hosted_lobby_custom_settings")
 
-	arg_13_0._custom_settings_toggled = arg_13_1
-	arg_13_0._settings_is_dirty = true
+	self._custom_settings_toggled = arg_13_1
+	self._settings_is_dirty = true
 end
 
-function StartGameWindowVersusCustomGameSettings._reset_host_settings(arg_14_0, arg_14_1)
-	if arg_14_1 then
-		local var_14_0 = arg_14_0._custom_game_settings_handler:get_settings()
-		local var_14_1 = arg_14_0._settings_templates
+StartGameWindowVersusCustomGameSettings._reset_host_settings = function (self, arg_14_1)
+	-- function 14
+	if not arg_14_1 then
+		local get_settings = self._custom_game_settings_handler:get_settings()
+		local _settings_templates = self._settings_templates
 
-		for iter_14_0 = 1, #var_14_0 do
-			local var_14_2 = var_14_1[iter_14_0]
-			local var_14_3 = arg_14_0._settings_widgets_by_name[var_14_2.setting_name]
-			local var_14_4 = var_14_2.default
-			local var_14_5 = var_14_2.values_reverse_lookup[var_14_4]
-			local var_14_6 = var_14_3.content
+		for i = 1, #get_settings do
+			local var_14_2 = _settings_templates[i]
+			local var_14_3 = self._settings_widgets_by_name[var_14_2.setting_name]
+			local default = var_14_2.default
+			local var_14_5 = var_14_2.values_reverse_lookup[default]
+			local content = var_14_3.content
 
-			var_14_6.setting_idx = var_14_5
+			content.setting_idx = var_14_5
 
-			if var_14_6.widget_type == "slider" then
-				var_14_6.current_slider_value = math.clamp(var_14_5 / var_14_6.num_settings, 0, 1)
+			if content.widget_type == "slider" then
+				content.current_slider_value = math.clamp(var_14_5 / content.num_settings, 0, 1)
 			end
 		end
 	end
 end
 
-local function var_0_5(arg_15_0, arg_15_1)
-	local var_15_0 = 0
-	local var_15_1 = 0
+local function fn(self, arg_15_1)
+	-- function 15
+	local num = 0
+	local num_2 = 0
 
-	for iter_15_0 = 1, arg_15_1 do
-		local var_15_2 = arg_15_0[iter_15_0].content.widget_type
+	for i = 1, arg_15_1 do
+		local widget_type = self[i].content.widget_type
 
-		var_15_0 = var_15_0 + var_0_4[var_15_2]
+		num = num + tbl_2[widget_type]
 
-		if var_15_0 > 350 then
-			var_15_1 = var_15_1 + var_0_4[var_15_2]
+		if num > 350 then
+			num_2 = num_2 + tbl_2[widget_type]
 		end
 	end
 
-	return var_15_1
+	return num_2
 end
 
-function StartGameWindowVersusCustomGameSettings._handle_gamepad_input(arg_16_0, arg_16_1, arg_16_2)
-	if not arg_16_0._settings_widgets then
+StartGameWindowVersusCustomGameSettings._handle_gamepad_input = function (self, arg_16_1, arg_16_2)
+	-- function 16
+	if not self._settings_widgets then
 		return
 	end
 
-	local var_16_0 = arg_16_0._parent:window_input_service()
-	local var_16_1 = arg_16_0._selected_setting_index or 1
-	local var_16_2 = arg_16_0._settings_widgets
+	local window_input_service = self._parent:window_input_service()
+	local _selected_setting_index = self._selected_setting_index
 
-	if var_16_0:get("move_up") then
-		if var_16_1 - 1 >= 1 then
-			var_16_1 = var_16_1 - 1
+	_selected_setting_index = _selected_setting_index or 1
+
+	local _settings_widgets = self._settings_widgets
+
+	if not window_input_service:get("move_up") then
+		if _selected_setting_index - 1 >= 1 then
+			_selected_setting_index = _selected_setting_index - 1
 		else
-			var_16_1 = #var_16_2
+			_selected_setting_index = #_settings_widgets
 		end
 
-		local var_16_3 = var_16_2[1]
+		local var_16_3 = _settings_widgets[1]
 
-		if arg_16_0._ui_scenegraph.settings_anchor.local_position[2] > 0 then
-			local var_16_4 = var_0_5(var_16_2, var_16_1)
+		if self._ui_scenegraph.settings_anchor.local_position[2] > 0 then
+			local var_16_4 = fn(_settings_widgets, _selected_setting_index)
 
-			arg_16_0._ui_animations.move_down = UIAnimation.init(UIAnimation.function_by_time, arg_16_0._ui_scenegraph.settings_anchor.local_position, 2, arg_16_0._ui_scenegraph.settings_anchor.local_position[2], var_16_4, 0.5, math.easeOutCubic)
+			self._ui_animations.move_down = UIAnimation.init(UIAnimation.function_by_time, self._ui_scenegraph.settings_anchor.local_position, 2, self._ui_scenegraph.settings_anchor.local_position[2], var_16_4, 0.5, math.easeOutCubic)
 		end
-	elseif var_16_0:get("move_down") then
-		if var_16_1 + 1 <= #var_16_2 then
-			var_16_1 = var_16_1 + 1
+	elseif not window_input_service:get("move_down") then
+		if _selected_setting_index + 1 <= #_settings_widgets then
+			_selected_setting_index = _selected_setting_index + 1
 		else
-			var_16_1 = 1
+			_selected_setting_index = 1
 		end
 
-		local var_16_5 = var_16_2[var_16_1]
+		local var_16_5 = _settings_widgets[_selected_setting_index]
 
 		if math.abs(var_16_5.offset[2]) > 380 then
-			local var_16_6 = var_0_5(var_16_2, var_16_1)
+			local var_16_6 = fn(_settings_widgets, _selected_setting_index)
 
-			arg_16_0._ui_animations.move_up = UIAnimation.init(UIAnimation.function_by_time, arg_16_0._ui_scenegraph.settings_anchor.local_position, 2, arg_16_0._ui_scenegraph.settings_anchor.local_position[2], var_16_6, 0.5, math.easeOutCubic)
+			self._ui_animations.move_up = UIAnimation.init(UIAnimation.function_by_time, self._ui_scenegraph.settings_anchor.local_position, 2, self._ui_scenegraph.settings_anchor.local_position[2], var_16_6, 0.5, math.easeOutCubic)
 		end
 	end
 
-	if var_16_1 ~= arg_16_0._selected_setting_index then
-		arg_16_0._selected_setting_index = var_16_1
+	if _selected_setting_index ~= self._selected_setting_index then
+		self._selected_setting_index = _selected_setting_index
 
-		for iter_16_0 = 1, #var_16_2 do
-			var_16_2[iter_16_0].content.is_selected = var_16_1 == iter_16_0
+		for i = 1, #_settings_widgets do
+			_settings_widgets[i].content.is_selected = _selected_setting_index == i
 		end
 	end
 
-	if arg_16_0._is_server and arg_16_0._game_mechanism:is_hosting_versus_custom_game() then
-		local var_16_7 = var_16_2[var_16_1]
-		local var_16_8 = var_16_7.content
-		local var_16_9 = var_16_8.input_cooldown_multiplier
-		local var_16_10 = false
-		local var_16_11 = false
+	if not self._is_server and not self._game_mechanism:is_hosting_versus_custom_game() then
+		local var_16_7 = _settings_widgets[_selected_setting_index]
+		local content = var_16_7.content
+		local input_cooldown_multiplier = content.input_cooldown_multiplier
+		local flag = false
+		local flag_2 = false
 
-		if var_16_8.input_cooldown then
-			var_16_10 = true
+		if not content.input_cooldown then
+			flag = true
 
-			local var_16_12 = var_16_8.input_cooldown
-			local var_16_13 = math.max(var_16_12 - arg_16_1, 0)
+			local input_cooldown = content.input_cooldown
+			local max = math.max(input_cooldown - arg_16_1, 0)
 
-			var_16_8.input_cooldown = var_16_13 > 0 and var_16_13 or nil
+			content.input_cooldown = not (max > 0) or not max or nil
 		end
 
-		if var_16_7 and not var_16_8.input_cooldown then
-			if var_16_0:get("move_left") or var_16_8.widget_type == "slider" and var_16_0:get("move_left_hold") then
-				local var_16_14 = var_16_8.setting_idx - 1
+		if not (not var_16_7 and content.input_cooldown) then
+			if window_input_service:get("move_left") or content.widget_type ~= "slider" or not window_input_service:get("move_left_hold") then
+				local num = content.setting_idx - 1
 
-				if var_16_14 < 1 then
-					var_16_14 = var_16_8.widget_type == "slider" and 1 or var_16_8.num_settings
+				if num < 1 then
+					num = content.widget_type ~= "slider" or not 1 or content.num_settings
 				end
 
-				var_16_8.setting_idx = var_16_14
+				content.setting_idx = num
 
-				if var_16_8.widget_type == "slider" then
-					local var_16_15 = 1 / var_16_8.num_settings
-					local var_16_16 = var_16_8.current_slider_value - var_16_15
+				if content.widget_type == "slider" then
+					local num_2 = 1 / content.num_settings
+					local num_3 = content.current_slider_value - num_2
 
-					var_16_8.current_slider_value = math.clamp(var_16_16, 0, 1)
+					content.current_slider_value = math.clamp(num_3, 0, 1)
 				end
 
-				var_16_8.on_setting_changed_cb(var_16_8.id, var_16_14)
+				content.on_setting_changed_cb(content.id, num)
 
-				var_16_11 = true
-			elseif var_16_0:get("move_right") or var_16_8.widget_type == "slider" and var_16_0:get("move_right_hold") then
-				local var_16_17 = var_16_8.setting_idx + 1
+				flag_2 = true
+			elseif window_input_service:get("move_right") or content.widget_type ~= "slider" or not window_input_service:get("move_right_hold") then
+				local num_4 = content.setting_idx + 1
 
-				if var_16_17 > var_16_8.num_settings then
-					var_16_17 = var_16_8.widget_type == "slider" and var_16_8.num_settings or 1
+				if num_4 > content.num_settings then
+					num_4 = content.widget_type ~= "slider" or not content.num_settings or 1
 				end
 
-				var_16_8.setting_idx = var_16_17
+				content.setting_idx = num_4
 
-				if var_16_8.widget_type == "slider" then
-					local var_16_18 = 1 / var_16_8.num_settings
-					local var_16_19 = var_16_8.current_slider_value + var_16_18
+				if content.widget_type == "slider" then
+					local num_5 = 1 / content.num_settings
+					local num_6 = content.current_slider_value + num_5
 
-					var_16_8.current_slider_value = math.clamp(var_16_19, 0, 1)
+					content.current_slider_value = math.clamp(num_6, 0, 1)
 				end
 
-				var_16_8.on_setting_changed_cb(var_16_8.id, var_16_17)
+				content.on_setting_changed_cb(content.id, num_4)
 
-				var_16_11 = true
-			elseif var_16_0:get("special_1") then
-				local var_16_20 = var_16_8.default_idx
+				flag_2 = true
+			elseif not window_input_service:get("special_1") then
+				local default_idx = content.default_idx
 
-				var_16_8.setting_idx = var_16_20
-				var_16_8.current_slider_value = math.clamp(var_16_20 / var_16_8.num_settings, 0, 1)
+				content.setting_idx = default_idx
+				content.current_slider_value = math.clamp(default_idx / content.num_settings, 0, 1)
 
-				var_16_8.on_setting_changed_cb(var_16_8.id, var_16_20)
+				content.on_setting_changed_cb(content.id, default_idx)
 
-				var_16_11 = true
+				flag_2 = true
 			end
 		end
 
-		if var_16_7 and var_16_11 then
-			if var_16_10 then
-				local var_16_21 = math.max(var_16_9 - 0.1, 0.1)
+		if not var_16_7 and not flag_2 then
+			if not flag then
+				local max_2 = math.max(input_cooldown_multiplier - 0.1, 0.1)
 
-				var_16_8.input_cooldown = 0.2 * math.ease_in_exp(var_16_21)
-				var_16_8.input_cooldown_multiplier = var_16_21
+				content.input_cooldown = 0.2 * math.ease_in_exp(max_2)
+				content.input_cooldown_multiplier = max_2
 			else
-				local var_16_22 = 1
+				local num_7 = 1
 
-				var_16_8.input_cooldown = 0.2 * math.ease_in_exp(var_16_22)
-				var_16_8.input_cooldown_multiplier = var_16_22
+				content.input_cooldown = 0.2 * math.ease_in_exp(num_7)
+				content.input_cooldown_multiplier = num_7
 			end
 		end
 	end
 
-	if var_16_0:get("back") then
+	if not window_input_service:get("back") then
 		Managers.state.event:trigger("event_focus_versus_hosted_lobby_input")
-		arg_16_0._parent:pause_input(false)
+		self._parent:pause_input(false)
 
-		arg_16_0._input_focused = false
-		arg_16_0._custom_settings_toggled = false
+		self._input_focused = false
+		self._custom_settings_toggled = false
 	end
 end
 
-function StartGameWindowVersusCustomGameSettings._handle_input(arg_17_0, arg_17_1, arg_17_2)
-	if not arg_17_0._settings_widgets then
+StartGameWindowVersusCustomGameSettings._handle_input = function (self, arg_17_1, arg_17_2)
+	-- function 17
+	if not self._settings_widgets then
 		return
 	end
 
-	local var_17_0 = arg_17_0._settings_widgets
+	local _settings_widgets = self._settings_widgets
 
-	for iter_17_0 = 1, #var_17_0 do
-		local var_17_1 = var_17_0[iter_17_0]
-		local var_17_2 = var_17_1.content
-		local var_17_3 = var_17_2.widget_type
-		local var_17_4 = arg_17_0:_is_list_hovered()
+	for i = 1, #_settings_widgets do
+		local var_17_1 = _settings_widgets[i]
+		local content = var_17_1.content
+		local widget_type = content.widget_type
+		local _is_list_hovered = self:_is_list_hovered()
 
-		var_17_2.can_hover = var_17_4
+		content.can_hover = _is_list_hovered
 
-		if var_17_3 == "stepper" or var_17_3 == "default" then
-			if var_17_4 then
-				if UIUtils.is_button_pressed(var_17_1, "left_arrow_hotspot") then
-					local var_17_5 = var_17_2.setting_idx - 1
+		if not (widget_type == "stepper" or widget_type ~= "default") then
+			if not _is_list_hovered then
+				if not UIUtils.is_button_pressed(var_17_1, "left_arrow_hotspot") then
+					local num = content.setting_idx - 1
 
-					if var_17_5 < 1 then
-						var_17_5 = var_17_2.num_settings
+					if num < 1 then
+						num = content.num_settings
 					end
 
-					var_17_2.setting_idx = var_17_5
+					content.setting_idx = num
 
-					var_17_2.on_setting_changed_cb(var_17_2.id, var_17_5)
-				elseif UIUtils.is_button_pressed(var_17_1, "right_arrow_hotspot") then
-					local var_17_6 = var_17_2.setting_idx + 1
+					content.on_setting_changed_cb(content.id, num)
+				elseif not UIUtils.is_button_pressed(var_17_1, "right_arrow_hotspot") then
+					local num_2 = content.setting_idx + 1
 
-					if var_17_6 > var_17_2.num_settings then
-						var_17_6 = 1
+					if num_2 > content.num_settings then
+						num_2 = 1
 					end
 
-					var_17_2.setting_idx = var_17_6
+					content.setting_idx = num_2
 
-					var_17_2.on_setting_changed_cb(var_17_2.id, var_17_6)
-				elseif UIUtils.is_button_pressed(var_17_1, "reset_setting_button_hotspot") then
-					local var_17_7 = var_17_2.default_idx
+					content.on_setting_changed_cb(content.id, num_2)
+				elseif not UIUtils.is_button_pressed(var_17_1, "reset_setting_button_hotspot") then
+					local default_idx = content.default_idx
 
-					var_17_2.setting_idx = var_17_7
+					content.setting_idx = default_idx
 
-					var_17_2.on_setting_changed_cb(var_17_2.id, var_17_7)
+					content.on_setting_changed_cb(content.id, default_idx)
 				end
 			end
-		elseif var_17_3 == "slider" and var_17_4 and UIUtils.is_button_pressed(var_17_1, "reset_setting_button_hotspot") then
-			local var_17_8 = var_17_2.default_idx
+		elseif (widget_type ~= "slider" or not _is_list_hovered) and not UIUtils.is_button_pressed(var_17_1, "reset_setting_button_hotspot") then
+			local default_idx_2 = content.default_idx
 
-			var_17_2.setting_idx = var_17_8
-			var_17_2.current_slider_value = var_17_8 / var_17_2.num_settings
+			content.setting_idx = default_idx_2
+			content.current_slider_value = default_idx_2 / content.num_settings
 
-			var_17_2.on_setting_changed_cb(var_17_2.id, var_17_8)
+			content.on_setting_changed_cb(content.id, default_idx_2)
 		end
 	end
 
-	local var_17_9 = arg_17_0._parent:window_input_service()
+	local window_input_service = self._parent:window_input_service()
 
-	if arg_17_0._custom_settings_toggled and var_17_9:get("toggle_menu", true) then
-		arg_17_0._parent:close_menu()
+	if not self._custom_settings_toggled and not window_input_service:get("toggle_menu", true) then
+		self._parent:close_menu()
 	end
 end
 
-function StartGameWindowVersusCustomGameSettings._is_list_hovered(arg_18_0)
-	return arg_18_0._widgets_by_name.mask.content.hotspot.is_hover
+StartGameWindowVersusCustomGameSettings._is_list_hovered = function (self)
+	-- function 18
+	return self._widgets_by_name.mask.content.hotspot.is_hover
 end
 
-function StartGameWindowVersusCustomGameSettings._update_focus_overlay(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
-	if not arg_19_0._settings_widgets then
+StartGameWindowVersusCustomGameSettings._update_focus_overlay = function (self, arg_19_1, arg_19_2, arg_19_3)
+	-- function 19
+	if not self._settings_widgets then
 		return
 	end
 
-	local var_19_0 = arg_19_0._settings_widgets
+	local _settings_widgets = self._settings_widgets
 
-	for iter_19_0 = 1, #var_19_0 do
-		local var_19_1 = var_19_0[iter_19_0].content
-		local var_19_2 = arg_19_0._custom_settings_toggled or arg_19_0._input_focused
+	for i = 1, #_settings_widgets do
+		local content = _settings_widgets[i].content
+		local _custom_settings_toggled = self._custom_settings_toggled
 
-		var_19_1.focused = var_19_2
+		_custom_settings_toggled = _custom_settings_toggled or self._input_focused
+		content.focused = _custom_settings_toggled
 
-		local var_19_3 = var_19_1.fade_progress or 0
-		local var_19_4 = 25
+		local fade_progress = content.fade_progress
 
-		if var_19_2 then
-			var_19_3 = math.min(var_19_3 + arg_19_1 * var_19_4, 1)
+		fade_progress = fade_progress or 0
+
+		local num = 25
+
+		if not _custom_settings_toggled then
+			fade_progress = math.min(fade_progress + arg_19_1 * num, 1)
 		else
-			var_19_3 = math.max(var_19_3 - arg_19_1 * var_19_4, 0)
+			fade_progress = math.max(fade_progress - arg_19_1 * num, 0)
 		end
 
-		var_19_1.fade_progress = var_19_3
+		content.fade_progress = fade_progress
 	end
 end

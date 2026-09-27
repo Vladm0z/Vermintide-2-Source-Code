@@ -1,27 +1,30 @@
 -- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_area_selection_console_v2_definitions.lua
 
-local var_0_0 = UISettings.game_start_windows
-local var_0_1 = var_0_0.size
-local var_0_2 = var_0_0.spacing
-local var_0_3 = {
-	var_0_1[1] * 3 + var_0_2 * 2,
-	var_0_1[2]
+local game_start_windows = UISettings.game_start_windows
+local size = game_start_windows.size
+local spacing = game_start_windows.spacing
+local tbl = {
+	size[1] * 3 + spacing * 2,
+	size[2]
 }
-local var_0_4 = {
+local tbl_2 = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+				-- function 1
 				arg_1_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
-				local var_2_0 = math.easeOutCubic(arg_2_3)
+			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+				-- function 2
+				local easeOutCubic = math.easeOutCubic(arg_2_3)
 
-				arg_2_4.render_settings.alpha_multiplier = var_2_0
+				arg_2_4.render_settings.alpha_multiplier = easeOutCubic
 			end,
-			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+				-- function 3
 				return
 			end
 		}
@@ -31,25 +34,28 @@ local var_0_4 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				-- function 4
 				arg_4_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
-				local var_5_0 = math.easeOutCubic(arg_5_3)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+				-- function 5
+				local easeOutCubic = math.easeOutCubic(arg_5_3)
 
-				arg_5_4.render_settings.alpha_multiplier = 1 - var_5_0
+				arg_5_4.render_settings.alpha_multiplier = 1 - easeOutCubic
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+				-- function 6
 				return
 			end
 		}
 	}
 }
-local var_0_5 = {
+local tbl_3 = {
 	5,
 	3
 }
-local var_0_6 = {
+local tbl_4 = {
 	root = {
 		is_root = true,
 		size = {
@@ -247,7 +253,7 @@ local var_0_6 = {
 		}
 	}
 }
-local var_0_7 = {
+local tbl_5 = {
 	word_wrap = true,
 	upper_case = true,
 	localize = true,
@@ -263,7 +269,7 @@ local var_0_7 = {
 		3
 	}
 }
-local var_0_8 = {
+local tbl_6 = {
 	word_wrap = true,
 	upper_case = true,
 	localize = true,
@@ -279,7 +285,7 @@ local var_0_8 = {
 		3
 	}
 }
-local var_0_9 = {
+local tbl_7 = {
 	word_wrap = true,
 	localize = false,
 	font_size = 32,
@@ -295,7 +301,7 @@ local var_0_9 = {
 		3
 	}
 }
-local var_0_10 = {
+local tbl_8 = {
 	font_size = 72,
 	upper_case = true,
 	localize = false,
@@ -311,7 +317,7 @@ local var_0_10 = {
 		2
 	}
 }
-local var_0_11 = {
+local tbl_9 = {
 	font_size = 32,
 	upper_case = true,
 	localize = false,
@@ -327,7 +333,7 @@ local var_0_11 = {
 		2
 	}
 }
-local var_0_12 = {
+local tbl_10 = {
 	font_size = 32,
 	upper_case = true,
 	localize = false,
@@ -343,7 +349,7 @@ local var_0_12 = {
 		2
 	}
 }
-local var_0_13 = {
+local tbl_11 = {
 	font_size = 28,
 	upper_case = false,
 	localize = true,
@@ -364,18 +370,19 @@ local var_0_13 = {
 	}
 }
 
-local function var_0_14()
-	local var_7_0 = {
+local function fn()
+	-- function 7
+	local tbl = {
 		250,
 		250
 	}
-	local var_7_1 = "area_root_main_campaign"
+	local str = "area_root_main_campaign"
 
-	var_0_6[var_7_1] = {
+	tbl_4[str] = {
 		vertical_alignment = "center",
 		parent = "area_root",
 		horizontal_alignment = "center",
-		size = var_7_0,
+		size = tbl,
 		position = {
 			0,
 			100,
@@ -383,10 +390,10 @@ local function var_0_14()
 		}
 	}
 
-	local var_7_2 = {
+	local tbl_2 = {
 		element = {}
 	}
-	local var_7_3 = {
+	local tbl_3 = {
 		{
 			style_id = "icon",
 			pass_type = "hotspot",
@@ -406,8 +413,9 @@ local function var_0_14()
 			pass_type = "texture",
 			style_id = "lock",
 			texture_id = "lock",
-			content_check_function = function(arg_8_0)
-				return arg_8_0.locked
+			content_check_function = function (self)
+				-- function 8
+				return self.locked
 			end
 		},
 		{
@@ -416,7 +424,7 @@ local function var_0_14()
 			texture_id = "frame"
 		}
 	}
-	local var_7_4 = {
+	local tbl_5 = {
 		locked = true,
 		frame = "map_frame_04",
 		icon = "level_icon_01",
@@ -437,11 +445,11 @@ local function var_0_14()
 			}
 		}
 	}
-	local var_7_5 = {
+	local tbl_6 = {
 		frame = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
-			texture_size = var_7_0,
+			texture_size = tbl,
 			offset = {
 				0,
 				0,
@@ -477,8 +485,8 @@ local function var_0_14()
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			texture_size = {
-				var_7_0[1] * 168 / 180,
-				var_7_0[2] * 168 / 180
+				tbl[1] * 168 / 180,
+				tbl[2] * 168 / 180
 			},
 			color = {
 				255,
@@ -496,8 +504,8 @@ local function var_0_14()
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			texture_size = {
-				var_7_0[1] * 270 / 180,
-				var_7_0[2] * 270 / 180
+				tbl[1] * 270 / 180,
+				tbl[2] * 270 / 180
 			},
 			offset = {
 				0,
@@ -519,7 +527,7 @@ local function var_0_14()
 				100
 			},
 			offset = {
-				var_7_0[1] * 0.15,
+				tbl[1] * 0.15,
 				0,
 				0
 			},
@@ -535,11 +543,11 @@ local function var_0_14()
 			horizontal_alignment = "right",
 			texture_size = {
 				2,
-				var_7_0[2]
+				tbl[2]
 			},
 			offset = {
-				var_7_0[1] * 0.15,
-				var_7_0[2] * 0.5,
+				tbl[1] * 0.15,
+				tbl[2] * 0.5,
 				0
 			},
 			color = {
@@ -554,11 +562,11 @@ local function var_0_14()
 			horizontal_alignment = "right",
 			texture_size = {
 				2,
-				var_7_0[2]
+				tbl[2]
 			},
 			offset = {
-				var_7_0[1] * 0.15,
-				-var_7_0[2] * 0.5,
+				tbl[1] * 0.15,
+				-tbl[2] * 0.5,
 				0
 			},
 			color = {
@@ -570,33 +578,34 @@ local function var_0_14()
 		}
 	}
 
-	var_7_2.element.passes = var_7_3
-	var_7_2.content = var_7_4
-	var_7_2.style = var_7_5
-	var_7_2.offset = {
+	tbl_2.element.passes = tbl_3
+	tbl_2.content = tbl_5
+	tbl_2.style = tbl_6
+	tbl_2.offset = {
 		0,
 		0,
 		0
 	}
-	var_7_2.scenegraph_id = var_7_1
+	tbl_2.scenegraph_id = str
 
-	return var_7_2
+	return tbl_2
 end
 
-local function var_0_15(arg_9_0, arg_9_1)
+local function fn_2(arg_9_0, arg_9_1)
+	-- function 9
 	local var_9_0 = arg_9_1
-	local var_9_1 = {
+	local tbl = {
 		150,
 		150
 	}
 
 	if not var_9_0 then
 		var_9_0 = "area_root_" .. arg_9_0
-		var_0_6[var_9_0] = {
+		tbl_4[var_9_0] = {
 			vertical_alignment = "center",
 			parent = "area_root",
 			horizontal_alignment = "center",
-			size = var_9_1,
+			size = tbl,
 			position = {
 				0,
 				100,
@@ -605,10 +614,10 @@ local function var_0_15(arg_9_0, arg_9_1)
 		}
 	end
 
-	local var_9_2 = {
+	local tbl_2 = {
 		element = {}
 	}
-	local var_9_3 = {
+	local tbl_3 = {
 		{
 			style_id = "icon",
 			pass_type = "hotspot",
@@ -628,8 +637,9 @@ local function var_0_15(arg_9_0, arg_9_1)
 			pass_type = "texture",
 			style_id = "lock",
 			texture_id = "lock",
-			content_check_function = function(arg_10_0)
-				return arg_10_0.locked
+			content_check_function = function (self)
+				-- function 10
+				return self.locked
 			end
 		},
 		{
@@ -638,7 +648,7 @@ local function var_0_15(arg_9_0, arg_9_1)
 			texture_id = "frame"
 		}
 	}
-	local var_9_4 = {
+	local tbl_5 = {
 		locked = true,
 		frame = "map_frame_04",
 		icon = "level_icon_01",
@@ -646,11 +656,11 @@ local function var_0_15(arg_9_0, arg_9_1)
 		icon_glow = "map_frame_glow_02",
 		button_hotspot = {}
 	}
-	local var_9_5 = {
+	local tbl_6 = {
 		frame = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
-			texture_size = var_9_1,
+			texture_size = tbl,
 			offset = {
 				0,
 				0,
@@ -686,8 +696,8 @@ local function var_0_15(arg_9_0, arg_9_1)
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			texture_size = {
-				var_9_1[1] * 168 / 180,
-				var_9_1[2] * 168 / 180
+				tbl[1] * 168 / 180,
+				tbl[2] * 168 / 180
 			},
 			color = {
 				255,
@@ -705,8 +715,8 @@ local function var_0_15(arg_9_0, arg_9_1)
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			texture_size = {
-				var_9_1[1] * 270 / 180,
-				var_9_1[2] * 270 / 180
+				tbl[1] * 270 / 180,
+				tbl[2] * 270 / 180
 			},
 			offset = {
 				0,
@@ -722,31 +732,32 @@ local function var_0_15(arg_9_0, arg_9_1)
 		}
 	}
 
-	var_9_2.element.passes = var_9_3
-	var_9_2.content = var_9_4
-	var_9_2.style = var_9_5
-	var_9_2.offset = {
+	tbl_2.element.passes = tbl_3
+	tbl_2.content = tbl_5
+	tbl_2.style = tbl_6
+	tbl_2.offset = {
 		0,
 		0,
 		0
 	}
-	var_9_2.scenegraph_id = var_9_0
+	tbl_2.scenegraph_id = var_9_0
 
-	return var_9_2
+	return tbl_2
 end
 
-local function var_0_16()
-	local var_11_0 = {
+local function fn_3()
+	-- function 11
+	local tbl = {
 		420,
 		1080
 	}
-	local var_11_1 = "left_fade"
+	local str = "left_fade"
 
-	var_0_6[var_11_1] = {
+	tbl_4[str] = {
 		vertical_alignment = "center",
 		parent = "menu_root",
 		horizontal_alignment = "center",
-		size = var_11_0,
+		size = tbl,
 		position = {
 			0,
 			0,
@@ -754,17 +765,17 @@ local function var_0_16()
 		}
 	}
 
-	local var_11_2 = {
+	local tbl_2 = {
 		element = {}
 	}
-	local var_11_3 = {
+	local tbl_3 = {
 		{
 			style_id = "left_fade",
 			pass_type = "texture_uv",
 			content_id = "left_fade"
 		}
 	}
-	local var_11_4 = {
+	local tbl_5 = {
 		left_fade = {
 			texture_id = "gradient",
 			uvs = {
@@ -779,12 +790,12 @@ local function var_0_16()
 			}
 		}
 	}
-	local var_11_5 = {
+	local tbl_6 = {
 		left_fade = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
 			texture_size = {
-				var_11_0[1],
+				tbl[1],
 				1080
 			},
 			color = {
@@ -794,34 +805,47 @@ local function var_0_16()
 				255
 			},
 			offset = {
-				-960 + var_11_0[1] * 0.5,
+				-960 + tbl[1] * 0.5,
 				0
 			}
 		}
 	}
 
-	var_11_2.element.passes = var_11_3
-	var_11_2.content = var_11_4
-	var_11_2.style = var_11_5
-	var_11_2.offset = {
+	tbl_2.element.passes = tbl_3
+	tbl_2.content = tbl_5
+	tbl_2.style = tbl_6
+	tbl_2.offset = {
 		0,
 		0,
 		0
 	}
-	var_11_2.scenegraph_id = var_11_1
+	tbl_2.scenegraph_id = str
 
-	return var_11_2
+	return tbl_2
 end
 
-local function var_0_17(arg_12_0, arg_12_1)
-	local var_12_0 = arg_12_1 and UIFrameSettings.button_frame_01_gold or UIFrameSettings.button_frame_01
+local function fn_4(arg_12_0, arg_12_1)
+	-- function 12
+	local button_frame_01_gold
 
-	arg_12_0 = UIAtlasHelper.has_atlas_settings_by_texture_name(arg_12_0) and arg_12_0 or "any_small_image"
+	if not arg_12_1 then
+		button_frame_01_gold = UIFrameSettings.button_frame_01_gold
 
-	local var_12_1 = {
+		if not button_frame_01_gold then
+			-- Nothing
+		end
+	end
+
+	button_frame_01_gold = UIFrameSettings.button_frame_01
+
+	::label_12_0::
+
+	arg_12_0 = not UIAtlasHelper.has_atlas_settings_by_texture_name(arg_12_0) and arg_12_0 and "any_small_image"
+
+	local tbl = {
 		element = {}
 	}
-	local var_12_2 = {
+	local tbl_2 = {
 		{
 			texture_id = "level_image",
 			style_id = "level_image",
@@ -836,53 +860,58 @@ local function var_0_17(arg_12_0, arg_12_1)
 			texture_id = "sigil",
 			style_id = "sigil",
 			pass_type = "texture",
-			content_check_function = function(arg_13_0, arg_13_1)
-				return arg_13_0.completed
+			content_check_function = function (self, arg_13_1)
+				-- function 13
+				return self.completed
 			end
 		},
 		{
 			texture_id = "sigil",
 			style_id = "sigil_shadow",
 			pass_type = "texture",
-			content_check_function = function(arg_14_0, arg_14_1)
-				return arg_14_0.completed
+			content_check_function = function (self, arg_14_1)
+				-- function 14
+				return self.completed
 			end
 		},
 		{
 			texture_id = "sigil_ribbon",
 			style_id = "sigil_ribbon",
 			pass_type = "texture",
-			content_check_function = function(arg_15_0, arg_15_1)
-				return arg_15_0.completed
+			content_check_function = function (self, arg_15_1)
+				-- function 15
+				return self.completed
 			end
 		},
 		{
 			texture_id = "sigil_ribbon",
 			style_id = "sigil_ribbon_shadow",
 			pass_type = "texture",
-			content_check_function = function(arg_16_0, arg_16_1)
-				return arg_16_0.completed
+			content_check_function = function (self, arg_16_1)
+				-- function 16
+				return self.completed
 			end
 		},
 		{
 			texture_id = "boss_icon",
 			style_id = "boss_icon",
 			pass_type = "texture",
-			content_check_function = function(arg_17_0, arg_17_1)
-				return arg_17_0.boss_level
+			content_check_function = function (self, arg_17_1)
+				-- function 17
+				return self.boss_level
 			end
 		}
 	}
-	local var_12_3 = {
+	local tbl_3 = {
 		completed = false,
 		boss_icon = "boss_icon",
 		boss_level = true,
 		sigil_ribbon = "store_owned_ribbon",
 		sigil = "store_owned_sigil",
 		level_image = arg_12_0,
-		frame = var_12_0.texture
+		frame = button_frame_01_gold.texture
 	}
-	local var_12_4 = {
+	local tbl_4 = {
 		level_image = {
 			vertical_alignment = "bottom",
 			saturated = true,
@@ -1017,8 +1046,8 @@ local function var_0_17(arg_12_0, arg_12_1)
 				97,
 				58
 			},
-			texture_size = var_12_0.texture_size,
-			texture_sizes = var_12_0.texture_sizes,
+			texture_size = button_frame_01_gold.texture_size,
+			texture_sizes = button_frame_01_gold.texture_sizes,
 			color = {
 				255,
 				255,
@@ -1033,65 +1062,86 @@ local function var_0_17(arg_12_0, arg_12_1)
 		}
 	}
 
-	var_12_1.element.passes = var_12_2
-	var_12_1.content = var_12_3
-	var_12_1.style = var_12_4
-	var_12_1.offset = {
+	tbl.element.passes = tbl_2
+	tbl.content = tbl_3
+	tbl.style = tbl_4
+	tbl.offset = {
 		0,
 		-68,
 		0
 	}
-	var_12_1.scenegraph_id = "area_title"
+	tbl.scenegraph_id = "area_title"
 
-	return var_12_1
+	return tbl
 end
 
-local function var_0_18()
-	local var_18_0 = {
+local function fn_5()
+	-- function 18
+	local tbl = {
 		element = {}
 	}
-	local var_18_1 = {
+	local tbl_2 = {
 		{
 			style_id = "text",
 			pass_type = "text",
 			text_id = "text",
-			content_change_function = function(arg_19_0, arg_19_1)
-				arg_19_1.offset[1] = (arg_19_0.locked or arg_19_0.dlc) and 36 or 0
+			content_change_function = function (self, arg_19_1)
+				-- function 19
+				local offset = arg_19_1.offset
+				local flag
+
+				flag = self.locked or not self.dlc or 36 or 0
+				offset[1] = flag
 			end
 		},
 		{
 			style_id = "text_shadow",
 			pass_type = "text",
 			text_id = "text",
-			content_change_function = function(arg_20_0, arg_20_1)
-				arg_20_1.offset[1] = (arg_20_0.locked or arg_20_0.dlc) and 36.9 or 0
+			content_change_function = function (self, arg_20_1)
+				-- function 20
+				local offset = arg_20_1.offset
+				local flag
+
+				flag = self.locked or not self.dlc or 36.9 or 0
+				offset[1] = flag
 			end
 		},
 		{
 			texture_id = "lock",
 			style_id = "lock",
 			pass_type = "texture",
-			content_check_function = function(arg_21_0, arg_21_1)
-				return arg_21_0.locked and not arg_21_0.dlc
+			content_check_function = function (self, arg_21_1)
+				-- function 21
+				local locked = self.locked
+
+				locked = not locked and not self.dlc
+
+				return locked
 			end
 		},
 		{
 			texture_id = "lock_dlc",
 			style_id = "lock",
 			pass_type = "texture",
-			content_check_function = function(arg_22_0, arg_22_1)
-				return arg_22_0.locked and arg_22_0.dlc_locked
+			content_check_function = function (self, arg_22_1)
+				-- function 22
+				local locked = self.locked
+
+				locked = not locked and self.dlc_locked
+
+				return locked
 			end
 		}
 	}
-	local var_18_2 = {
+	local tbl_3 = {
 		text = "area_selection_campaign",
 		locked = true,
 		lock = "hero_icon_locked",
 		dlc_locked = true,
 		lock_dlc = "hero_icon_locked_gold"
 	}
-	local var_18_3 = {
+	local tbl_4 = {
 		text = {
 			word_wrap = false,
 			upper_case = false,
@@ -1143,20 +1193,20 @@ local function var_0_18()
 		}
 	}
 
-	var_18_0.element.passes = var_18_1
-	var_18_0.content = var_18_2
-	var_18_0.style = var_18_3
-	var_18_0.offset = {
+	tbl.element.passes = tbl_2
+	tbl.content = tbl_3
+	tbl.style = tbl_4
+	tbl.offset = {
 		0,
 		0,
 		0
 	}
-	var_18_0.scenegraph_id = "area_title"
+	tbl.scenegraph_id = "area_title"
 
-	return var_18_0
+	return tbl
 end
 
-local var_0_19 = {
+local tbl_12 = {
 	background = UIWidgets.create_simple_rect("background", {
 		255,
 		0,
@@ -1170,29 +1220,29 @@ local var_0_19 = {
 		0
 	}),
 	window_fade = UIWidgets.create_simple_texture("options_window_fade_01", "video", nil, nil, nil, 2),
-	left_fade = var_0_16(),
-	campaign = UIWidgets.create_simple_text(Localize("area_selection_campaign"), "campaign_text", nil, nil, var_0_11),
-	area_title = UIWidgets.create_simple_text("area_title", "area_title", nil, nil, var_0_10),
-	area_desc = UIWidgets.create_simple_text("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut fringilla in nulla eu rutrum. Etiam non dapibus orci, sit amet tempus tortor. Mauris porttitor finibus quam eget tempor. Cras sed dui bibendum, gravida quam a, sodales justo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut fringilla in nulla eu rutrum. Etiam non dapibus orci, sit amet tempus tortor. Mauris porttitor finibus quam eget tempor. Cras sed dui bibendum, gravida quam a, sodales justo. ", "description_text", nil, nil, var_0_13),
-	area_type = var_0_18(),
+	left_fade = fn_3(),
+	campaign = UIWidgets.create_simple_text(Localize("area_selection_campaign"), "campaign_text", nil, nil, tbl_9),
+	area_title = UIWidgets.create_simple_text("area_title", "area_title", nil, nil, tbl_8),
+	area_desc = UIWidgets.create_simple_text("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut fringilla in nulla eu rutrum. Etiam non dapibus orci, sit amet tempus tortor. Mauris porttitor finibus quam eget tempor. Cras sed dui bibendum, gravida quam a, sodales justo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut fringilla in nulla eu rutrum. Etiam non dapibus orci, sit amet tempus tortor. Mauris porttitor finibus quam eget tempor. Cras sed dui bibendum, gravida quam a, sodales justo. ", "description_text", nil, nil, tbl_11),
+	area_type = fn_5(),
 	title_divider = UIWidgets.create_simple_texture("edge_divider_04_horizontal", "area_title", nil, nil, nil, nil, {
-		var_0_13.area_size[1] * 0.9,
+		tbl_11.area_size[1] * 0.9,
 		8
 	})
 }
-local var_0_20 = {}
+local tbl_13 = {}
 
-for iter_0_0 = 1, 20 do
-	var_0_20[iter_0_0] = var_0_15(iter_0_0)
+for i = 1, 20 do
+	tbl_13[i] = fn_2(i)
 end
 
 return {
-	widgets = var_0_19,
-	area_widgets = var_0_20,
-	create_level_image_func = var_0_17,
-	main_campaign_widget = var_0_14(),
-	map_size = var_0_3,
-	scenegraph_definition = var_0_6,
-	animation_definitions = var_0_4,
-	grid_settings = var_0_5
+	widgets = tbl_12,
+	area_widgets = tbl_13,
+	create_level_image_func = fn_4,
+	main_campaign_widget = fn(),
+	map_size = tbl,
+	scenegraph_definition = tbl_4,
+	animation_definitions = tbl_2,
+	grid_settings = tbl_3
 }

@@ -2,18 +2,19 @@
 
 require("scripts/settings/dlcs/morris/deus_cost_settings")
 
-local var_0_0 = 2
-local var_0_1 = 3
-local var_0_2 = 4
-local var_0_3 = 5
-local var_0_4 = 6
-local var_0_5 = {
-	[var_0_0] = 50,
-	[var_0_1] = 50,
-	[var_0_2] = 50,
-	[var_0_3] = 50,
-	[var_0_4] = 50
+local num = 2
+local num_2 = 3
+local num_3 = 4
+local num_4 = 5
+local num_5 = 6
+local tbl = {
+	[num] = 50,
+	[num_2] = 50,
+	[num_3] = 50,
+	[num_4] = 50,
+	[num_5] = 50
 }
+local DeusBlessingSettings = DeusBlessingSettings
 
 DeusBlessingSettings = DeusBlessingSettings or {
 	blessing_of_power = {
@@ -22,7 +23,7 @@ DeusBlessingSettings = DeusBlessingSettings or {
 		lifetime = 1,
 		icon = "blessing_power_01",
 		shop_icon = "blessing_power_02",
-		improve_all_weapons = var_0_5
+		improve_all_weapons = tbl
 	},
 	blessing_of_shallya = {
 		description = "blessing_of_shallya_desc",
@@ -97,3 +98,4 @@ DeusBlessingSettings = DeusBlessingSettings or {
 		}
 	}
 }
+DeusBlessingSettings = DeusBlessingSettings

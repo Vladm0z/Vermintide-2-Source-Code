@@ -2,105 +2,114 @@
 
 ScriptWebApiPsn = class(ScriptWebApiPsn)
 
-local var_0_0 = WebApi
-local var_0_1 = {
-	[var_0_0.GET] = "GET",
-	[var_0_0.PUT] = "PUT",
-	[var_0_0.POST] = "POST",
-	[var_0_0.DELETE] = "DELETE"
+local WebApi = WebApi
+local tbl = {
+	[WebApi.GET] = "GET",
+	[WebApi.PUT] = "PUT",
+	[WebApi.POST] = "POST",
+	[WebApi.DELETE] = "DELETE"
 }
 
-function ScriptWebApiPsn.init(arg_1_0)
-	arg_1_0._requests = {}
+ScriptWebApiPsn.init = function (self)
+	-- function 1
+	self._requests = {}
 end
 
-function ScriptWebApiPsn.destroy(arg_2_0)
-	local var_2_0 = arg_2_0._requests
+ScriptWebApiPsn.destroy = function (self)
+	-- function 2
+	local _requests = self._requests
 
-	for iter_2_0 = #var_2_0, 1, -1 do
-		local var_2_1 = var_2_0[iter_2_0]
+	for i = #_requests, 1, -1 do
+		local var_2_1 = _requests[i]
 
-		var_0_0.free(var_2_1.id)
+		WebApi.free(var_2_1.id)
 	end
 
-	arg_2_0._requests = nil
+	self._requests = nil
 end
 
-function ScriptWebApiPsn.update(arg_3_0, arg_3_1)
-	local var_3_0 = arg_3_0._requests
+ScriptWebApiPsn.update = function (self, arg_3_1)
+	-- function 3
+	local _requests = self._requests
 
-	for iter_3_0 = #var_3_0, 1, -1 do
-		local var_3_1 = var_3_0[iter_3_0].id
-		local var_3_2 = var_0_0.status(var_3_1)
+	for i = #_requests, 1, -1 do
+		local id = _requests[i].id
+		local status = WebApi.status(id)
 
-		if var_3_2 == var_0_0.COMPLETED then
-			arg_3_0:_handle_request_response(iter_3_0, true)
-		elseif var_3_2 == var_0_0.ERROR then
-			arg_3_0:_handle_request_response(iter_3_0, false)
+		if status == WebApi.COMPLETED then
+			self:_handle_request_response(i, true)
+		elseif status == WebApi.ERROR then
+			self:_handle_request_response(i, false)
 		end
 	end
 end
 
-function ScriptWebApiPsn._handle_request_response(arg_4_0, arg_4_1, arg_4_2)
-	local var_4_0 = arg_4_0._requests[arg_4_1]
-	local var_4_1 = var_4_0.id
-	local var_4_2 = var_4_0.response_callback
-	local var_4_3 = var_4_0.response_format or var_0_0.TABLE
+ScriptWebApiPsn._handle_request_response = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	local var_4_0 = self._requests[arg_4_1]
+	local id = var_4_0.id
+	local response_callback = var_4_0.response_callback
+	local response_format = var_4_0.response_format
 
-	if arg_4_2 then
-		if script_data.debug_psn then
+	response_format = response_format or WebApi.TABLE
+
+	if not arg_4_2 then
+		if not script_data.debug_psn then
 			printf("[ScriptWebApiPsn] Completed Request: %q", var_4_0.debug_text)
 		end
 
-		if var_4_2 then
-			local var_4_4 = var_0_0.request_result(var_4_1, var_4_3)
+		if not response_callback then
+			local request_result = WebApi.request_result(id, response_format)
 
-			var_4_2(var_4_4)
+			response_callback(request_result)
 		end
 	else
-		if script_data.debug_psn then
+		if not script_data.debug_psn then
 			printf("[ScriptWebApiPsn] Failed Request: %q", var_4_0.debug_text)
 		end
 
-		if var_4_2 then
-			var_4_2(nil)
+		if not response_callback then
+			response_callback(nil)
 		end
 	end
 
-	var_0_0.free(var_4_1)
-	table.remove(arg_4_0._requests, arg_4_1)
+	WebApi.free(id)
+	table.remove(self._requests, arg_4_1)
 end
 
-function ScriptWebApiPsn.send_request(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7)
+ScriptWebApiPsn.send_request = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7)
+	-- function 5
 	if arg_5_1 == nil then
 		return
 	end
 
-	local var_5_0 = var_0_0.send_request(arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	local send_request = WebApi.send_request(arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 
 	arg_5_0._requests[#arg_5_0._requests + 1] = {
-		id = var_5_0,
+		id = send_request,
 		response_callback = arg_5_6,
 		response_format = arg_5_7,
-		debug_text = string.format("%s %s", var_0_1[arg_5_4], arg_5_3)
+		debug_text = string.format("%s %s", tbl[arg_5_4], arg_5_3)
 	}
 end
 
-function ScriptWebApiPsn.send_request_create_session(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6)
-	local var_6_0 = var_0_0.send_request_create_session(arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+ScriptWebApiPsn.send_request_create_session = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6)
+	-- function 6
+	local send_request_create_session = WebApi.send_request_create_session(arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 
 	arg_6_0._requests[#arg_6_0._requests + 1] = {
 		debug_text = "POST /v1/sessions",
-		id = var_6_0,
+		id = send_request_create_session,
 		response_callback = arg_6_6
 	}
 end
 
-function ScriptWebApiPsn.send_request_session_invitation(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
-	local var_7_0 = var_0_0.send_request_session_invitation(arg_7_1, arg_7_2, arg_7_3)
+ScriptWebApiPsn.send_request_session_invitation = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	-- function 7
+	local send_request_session_invitation = WebApi.send_request_session_invitation(arg_7_1, arg_7_2, arg_7_3)
 
 	arg_7_0._requests[#arg_7_0._requests + 1] = {
-		id = var_7_0,
+		id = send_request_session_invitation,
 		debug_text = string.format("POST /v1/sessions/%s/invitations", arg_7_3)
 	}
 end

@@ -2,51 +2,55 @@
 
 AIShieldUserHuskExtension = class(AIShieldUserHuskExtension)
 
-function AIShieldUserHuskExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	arg_1_0._unit = arg_1_2
-	arg_1_0.is_blocking = arg_1_3.is_blocking
-	arg_1_0.is_dodging = arg_1_3.is_dodging
+AIShieldUserHuskExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	self._unit = arg_1_2
+	self.is_blocking = arg_1_3.is_blocking
+	self.is_dodging = arg_1_3.is_dodging
 end
 
-function AIShieldUserHuskExtension.destroy(arg_2_0)
+AIShieldUserHuskExtension.destroy = function (arg_2_0)
+	-- function 2
 	return
 end
 
-function AIShieldUserHuskExtension.can_block_attack(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+AIShieldUserHuskExtension.can_block_attack = function (self, arg_3_1, arg_3_2, arg_3_3)
+	-- function 3
 	assert(arg_3_1)
 
-	local var_3_0 = arg_3_0._unit
-	local var_3_1 = Managers.state.unit_storage:go_id(var_3_0)
-	local var_3_2 = Managers.state.network:game()
+	local _unit = self._unit
+	local go_id = Managers.state.unit_storage:go_id(_unit)
+	local game = Managers.state.network:game()
 
-	if not GameSession.game_object_field(var_3_2, var_3_1, "is_blocking") then
+	if not GameSession.game_object_field(game, go_id, "is_blocking") then
 		return false
 	end
 
-	local var_3_3 = Unit.world_position(arg_3_1, 0)
-	local var_3_4 = Unit.world_position(var_3_0, 0)
-	local var_3_5 = Vector3.normalize(var_3_4 - var_3_3)
-	local var_3_6 = Quaternion.forward(Unit.local_rotation(var_3_0, 0))
+	local world_position = Unit.world_position(arg_3_1, 0)
+	local world_position_2 = Unit.world_position(_unit, 0)
+	local normalize = Vector3.normalize(world_position_2 - world_position)
+	local forward = Quaternion.forward(Unit.local_rotation(_unit, 0))
 	local var_3_7
 	local var_3_8
 
-	if arg_3_2 then
-		local var_3_9 = Vector3.dot(var_3_6, arg_3_3)
+	if not arg_3_2 then
+		local dot = Vector3.dot(forward, arg_3_3)
 
-		var_3_8 = var_3_9 >= -0.75 and var_3_9 <= 1
+		var_3_8 = not (dot >= -0.75) or dot <= 1
 	else
-		local var_3_10 = Vector3.dot(var_3_6, var_3_5)
+		local dot_2 = Vector3.dot(forward, normalize)
 
-		var_3_8 = var_3_10 >= 0.55 and var_3_10 <= 1
+		var_3_8 = not (dot_2 >= 0.55) or dot_2 <= 1
 	end
 
 	return not var_3_8
 end
 
-function AIShieldUserHuskExtension.get_is_blocking(arg_4_0)
-	local var_4_0 = arg_4_0._unit
-	local var_4_1 = Managers.state.unit_storage:go_id(var_4_0)
-	local var_4_2 = Managers.state.network:game()
+AIShieldUserHuskExtension.get_is_blocking = function (self)
+	-- function 4
+	local _unit = self._unit
+	local go_id = Managers.state.unit_storage:go_id(_unit)
+	local game = Managers.state.network:game()
 
-	return (GameSession.game_object_field(var_4_2, var_4_1, "is_blocking"))
+	return (GameSession.game_object_field(game, go_id, "is_blocking"))
 end

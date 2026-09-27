@@ -4,21 +4,23 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTComboAttackAction = class(BTComboAttackAction, BTNode)
 
-local var_0_0 = 20
+local num = 20
 
-function BTComboAttackAction.init(arg_1_0, ...)
-	BTComboAttackAction.super.init(arg_1_0, ...)
+BTComboAttackAction.init = function (self, ...)
+	-- function 1
+	BTComboAttackAction.super.init(self, ...)
 
-	arg_1_0.last_attack_time = 0
-	arg_1_0.dodge_timer = 0
+	self.last_attack_time = 0
+	self.dodge_timer = 0
 end
 
 BTComboAttackAction.name = "BTComboAttackAction"
 
-function BTComboAttackAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
-	local var_2_0 = arg_2_0._tree_node.action_data
+BTComboAttackAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+	-- function 2
+	local action_data = self._tree_node.action_data
 
-	arg_2_2.action = var_2_0
+	arg_2_2.action = action_data
 	arg_2_2.active_node = BTComboAttackAction
 	arg_2_2.attack_finished = false
 	arg_2_2.attack_aborted = false
@@ -26,44 +28,57 @@ function BTComboAttackAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.attack_token = true
 	arg_2_2.keep_target = true
 
-	local var_2_1 = arg_2_2.target_unit
-	local var_2_2 = ScriptUnit.has_extension(var_2_1, "status_system")
+	local target_unit = arg_2_2.target_unit
+	local has_extension = ScriptUnit.has_extension(target_unit, "status_system")
 
-	if var_2_2 then
-		var_2_2:add_combo_target_count(1)
+	if not has_extension then
+		has_extension:add_combo_target_count(1)
 
-		arg_2_2.target_status_extension = var_2_2
+		arg_2_2.target_status_extension = has_extension
 	end
 
-	arg_2_2.attacking_target = var_2_1
+	arg_2_2.attacking_target = target_unit
 	arg_2_2.move_state = "attacking"
 
-	local var_2_3 = Unit.local_rotation(arg_2_1, 0)
-	local var_2_4 = ScriptUnit.has_extension(var_2_1, "locomotion_system")
+	local local_rotation = Unit.local_rotation(arg_2_1, 0)
+	local has_extension_2 = ScriptUnit.has_extension(target_unit, "locomotion_system")
 
-	arg_2_2.target_locomotion_extension = var_2_4
+	arg_2_2.target_locomotion_extension = has_extension_2
 
-	local var_2_5 = var_2_4 and var_2_4:current_velocity() or Vector3.zero()
-	local var_2_6 = arg_2_2.combo_attack_data
+	local current_velocity
 
-	if var_2_6 then
-		var_2_6.aborted = false
-		var_2_6.attack_start_time = math.huge
-		var_2_6.attacking_target = var_2_1
-		var_2_6.blocked = false
-		var_2_6.has_been_blocked = false
-		var_2_6.successful_hit = false
-		var_2_6.is_animation_driven = false
+	if not has_extension_2 then
+		current_velocity = has_extension_2:current_velocity()
 
-		var_2_6.rotation_target:store(var_2_3)
+		if not current_velocity then
+			-- Nothing
+		end
+	end
 
-		var_2_6.refresh_last_target_position = false
-		var_2_6.last_target_position_time = arg_2_3
+	current_velocity = Vector3.zero()
 
-		var_2_6.last_target_position:store(POSITION_LOOKUP[var_2_1])
-		var_2_6.last_target_velocity:store(var_2_5)
+	::label_2_0::
+
+	local combo_attack_data = arg_2_2.combo_attack_data
+
+	if not combo_attack_data then
+		combo_attack_data.aborted = false
+		combo_attack_data.attack_start_time = math.huge
+		combo_attack_data.attacking_target = target_unit
+		combo_attack_data.blocked = false
+		combo_attack_data.has_been_blocked = false
+		combo_attack_data.successful_hit = false
+		combo_attack_data.is_animation_driven = false
+
+		combo_attack_data.rotation_target:store(local_rotation)
+
+		combo_attack_data.refresh_last_target_position = false
+		combo_attack_data.last_target_position_time = arg_2_3
+
+		combo_attack_data.last_target_position:store(POSITION_LOOKUP[target_unit])
+		combo_attack_data.last_target_velocity:store(current_velocity)
 	else
-		var_2_6 = {
+		combo_attack_data = {
 			successful_hit = false,
 			aborted = false,
 			is_animation_driven = false,
@@ -71,172 +86,217 @@ function BTComboAttackAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 			has_been_blocked = false,
 			blocked = false,
 			attack_start_time = math.huge,
-			attacking_target = var_2_1,
+			attacking_target = target_unit,
 			pushed_targets = {},
-			rotation_target = QuaternionBox(var_2_3),
+			rotation_target = QuaternionBox(local_rotation),
 			last_target_position_time = arg_2_3,
-			last_target_position = Vector3Box(POSITION_LOOKUP[var_2_1]),
-			last_target_velocity = Vector3Box(var_2_5)
+			last_target_position = Vector3Box(POSITION_LOOKUP[target_unit]),
+			last_target_velocity = Vector3Box(current_velocity)
 		}
-		arg_2_2.combo_attack_data = var_2_6
+		arg_2_2.combo_attack_data = combo_attack_data
 	end
 
-	if var_2_0.combo_attack_cycle_index then
-		local var_2_7 = var_2_0.combo_anim_variations
-		local var_2_8 = var_2_0.combo_attack_cycle_index % var_2_7 + 1
+	if not action_data.combo_attack_cycle_index then
+		local combo_anim_variations = action_data.combo_anim_variations
+		local num = action_data.combo_attack_cycle_index % combo_anim_variations + 1
 
-		var_2_6.attack_variation = var_2_8
-		var_2_0.combo_attack_cycle_index = var_2_8
+		combo_attack_data.attack_variation = num
+		action_data.combo_attack_cycle_index = num
 	else
-		var_2_6.attack_variation = Math.random(1, var_2_0.combo_anim_variations)
+		combo_attack_data.attack_variation = Math.random(1, action_data.combo_anim_variations)
 	end
 
-	if var_2_0.start_sound_event then
-		Managers.state.entity:system("dialogue_system"):trigger_general_unit_event(arg_2_1, var_2_0.start_sound_event)
+	if not action_data.start_sound_event then
+		Managers.state.entity:system("dialogue_system"):trigger_general_unit_event(arg_2_1, action_data.start_sound_event)
 	end
 
-	local var_2_9 = ScriptUnit.has_extension(var_2_1, "ai_slot_system")
+	local has_extension_3 = ScriptUnit.has_extension(target_unit, "ai_slot_system")
 
-	if arg_2_2.attack_token and var_2_2 then
-		local var_2_10 = arg_2_2.breed
+	if not arg_2_2.attack_token and not has_extension then
+		local breed = arg_2_2.breed
 
-		if var_2_10.use_backstab_vo and var_2_9 and var_2_9.num_occupied_slots <= 5 then
-			local var_2_11 = Managers.player:unit_owner(var_2_1)
+		if not (not breed.use_backstab_vo and not has_extension_3 and not (has_extension_3.num_occupied_slots <= 5)) then
+			local unit_owner = Managers.player:unit_owner(target_unit)
 
-			if var_2_11 and not var_2_11.bot_player then
-				local var_2_12 = AiUtils.unit_is_flanking_player(arg_2_1, var_2_1)
+			if not (not unit_owner and unit_owner.bot_player) then
+				local unit_is_flanking_player = AiUtils.unit_is_flanking_player(arg_2_1, target_unit)
 
-				if var_2_12 then
+				if not unit_is_flanking_player then
 					arg_2_2.backstab_attack_trigger = true
 				end
 
-				if var_2_11.local_player then
-					if var_2_12 then
-						local var_2_13 = ScriptUnit.extension(arg_2_1, "dialogue_system")
-						local var_2_14, var_2_15 = WwiseUtils.make_unit_auto_source(arg_2_2.world, arg_2_1, var_2_13.voice_node)
-						local var_2_16 = var_2_10.backstab_player_sound_event
+				if not unit_owner.local_player then
+					if not unit_is_flanking_player then
+						local extension = ScriptUnit.extension(arg_2_1, "dialogue_system")
+						local make_unit_auto_source, var_2_15 = WwiseUtils.make_unit_auto_source(arg_2_2.world, arg_2_1, extension.voice_node)
+						local backstab_player_sound_event = breed.backstab_player_sound_event
 
-						Managers.state.entity:system("audio_system"):_play_event_with_source(var_2_15, var_2_16, var_2_14)
+						Managers.state.entity:system("audio_system"):_play_event_with_source(var_2_15, backstab_player_sound_event, make_unit_auto_source)
 					end
 				else
-					local var_2_17 = Managers.state.network
-					local var_2_18 = var_2_17.network_transmit
-					local var_2_19 = var_2_17:unit_game_object_id(arg_2_1)
-					local var_2_20 = var_2_11:network_id()
+					local network = Managers.state.network
+					local network_transmit = network.network_transmit
+					local unit_game_object_id = network:unit_game_object_id(arg_2_1)
+					local network_id = unit_owner:network_id()
 
-					var_2_18:send_rpc("rpc_check_trigger_backstab_sfx", var_2_20, var_2_19)
+					network_transmit:send_rpc("rpc_check_trigger_backstab_sfx", network_id, unit_game_object_id)
 				end
 			end
 		end
 	end
 
-	AiUtils.add_attack_intensity(var_2_1, var_2_0, arg_2_2)
-	arg_2_0:_start_attack(arg_2_1, arg_2_2, arg_2_3, var_2_0, "attack_1")
+	AiUtils.add_attack_intensity(target_unit, action_data, arg_2_2)
+	self:_start_attack(arg_2_1, arg_2_2, arg_2_3, action_data, "attack_1")
 end
 
-local function var_0_1(arg_3_0, arg_3_1)
-	local var_3_0 = arg_3_1.combo_attack_data
+local function fn(self, arg_3_1)
+	-- function 3
+	local combo_attack_data = arg_3_1.combo_attack_data
 
-	if type(arg_3_0) == "table" then
-		return arg_3_0[var_3_0.attack_variation]
+	if type(self) == "table" then
+		return self[combo_attack_data.attack_variation]
 	else
-		return arg_3_0
+		return self
 	end
 end
 
-function BTComboAttackAction._start_attack(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
-	arg_4_0.last_attack_time = arg_4_3
+BTComboAttackAction._start_attack = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	-- function 4
+	self.last_attack_time = arg_4_3
 
 	local var_4_0 = arg_4_4.combo_attacks[arg_4_5]
-	local var_4_1 = arg_4_2.target_speed_away > 1.5 or arg_4_2.target_dist > 3
-	local var_4_2 = var_0_1(var_4_1 and var_4_0.move_anim or var_4_0.anim, arg_4_2)
+	local flag = arg_4_2.target_speed_away > 1.5 or arg_4_2.target_dist > 3
+	local var_4_2 = fn
+	local move_anim
 
-	Managers.state.network:anim_event(arg_4_1, var_4_2)
+	if not flag then
+		move_anim = var_4_0.move_anim
 
-	arg_4_2.attack_anim = var_4_2
+		if not move_anim then
+			-- Nothing
+		end
+	end
 
-	local var_4_3 = arg_4_2.combo_attack_data
-	local var_4_4 = var_4_3.attacking_target
+	move_anim = var_4_0.anim
 
-	var_4_3.current_attack_name = arg_4_5
-	var_4_3.successful_hit = false
+	::label_4_0::
+
+	local var_4_4 = var_4_2(move_anim, arg_4_2)
+
+	Managers.state.network:anim_event(arg_4_1, var_4_4)
+
+	arg_4_2.attack_anim = var_4_4
+
+	local combo_attack_data = arg_4_2.combo_attack_data
+	local attacking_target = combo_attack_data.attacking_target
+
+	combo_attack_data.current_attack_name = arg_4_5
+	combo_attack_data.successful_hit = false
 	arg_4_2.attack_finished = false
 	arg_4_2.attack_damage_triggered = false
 	arg_4_2.target_dodged_during_attack = false
 
-	if var_4_3.refresh_last_target_position then
-		var_4_3.refresh_last_target_position = false
+	if not combo_attack_data.refresh_last_target_position then
+		combo_attack_data.refresh_last_target_position = false
 
-		arg_4_0:_set_target_position(arg_4_2, var_4_3, POSITION_LOOKUP[var_4_4], arg_4_3)
+		self:_set_target_position(arg_4_2, combo_attack_data, POSITION_LOOKUP[attacking_target], arg_4_3)
 	end
 
-	var_4_3.has_been_blocked = false
-	var_4_3.attack_start_time = arg_4_3
-	var_4_3.push_non_targets = var_4_0.push_non_targets
+	combo_attack_data.has_been_blocked = false
+	combo_attack_data.attack_start_time = arg_4_3
+	combo_attack_data.push_non_targets = var_4_0.push_non_targets
 
-	table.clear(var_4_3.pushed_targets)
+	table.clear(combo_attack_data.pushed_targets)
 
-	local var_4_5 = arg_4_2.target_status_extension
+	local target_status_extension = arg_4_2.target_status_extension
+	local is_animation_driven
 
-	if not var_4_3.is_animation_driven and var_4_0.is_animation_driven and var_4_5 and not var_4_5:is_knocked_down() then
+	if not combo_attack_data.is_animation_driven then
+		is_animation_driven = var_4_0.is_animation_driven
+
+		if not is_animation_driven and not target_status_extension then
+			-- Nothing
+		end
+
+		::label_4_1::
+
+		is_animation_driven = not target_status_extension:is_knocked_down()
+	else
+		is_animation_driven = false
+	end
+
+	if false then
+		is_animation_driven = true
+	end
+
+	::label_4_2::
+
+	if not is_animation_driven then
 		LocomotionUtils.set_animation_driven_movement(arg_4_1, true, true, true)
 
-		var_4_3.is_animation_driven = true
+		combo_attack_data.is_animation_driven = true
 
 		arg_4_2.navigation_extension:set_max_speed(0)
-	elseif var_4_3.is_animation_driven and not var_4_0.is_animation_driven then
+	elseif not (not combo_attack_data.is_animation_driven and var_4_0.is_animation_driven) then
 		LocomotionUtils.set_animation_driven_movement(arg_4_1, false)
 
-		var_4_3.is_animation_driven = false
+		combo_attack_data.is_animation_driven = false
 	end
 
-	arg_4_2.locomotion_extension:set_rotation_speed(var_0_0)
+	arg_4_2.locomotion_extension:set_rotation_speed(num)
 
-	if var_4_0.rotation_scheme == "on_enter" or var_4_0.rotation_scheme == "continuous" then
-		arg_4_0:_update_rotation_target(arg_4_3, arg_4_1, arg_4_2, var_4_3)
+	if not (var_4_0.rotation_scheme == "on_enter" or var_4_0.rotation_scheme ~= "continuous") then
+		self:_update_rotation_target(arg_4_3, arg_4_1, arg_4_2, combo_attack_data)
 	end
 
-	if var_4_0.bot_threat_duration then
-		local var_4_6 = LocomotionUtils.rotation_towards_unit_flat(arg_4_1, var_4_4)
-		local var_4_7 = var_4_0.bot_threat_range or 2
-		local var_4_8 = var_4_0.bot_threat_width or 1
-		local var_4_9 = var_4_7 * 0.5
-		local var_4_10 = Quaternion.rotate(var_4_6, Vector3.forward()) * var_4_9
-		local var_4_11 = POSITION_LOOKUP[arg_4_1] + var_4_10 + Vector3.up() * 0.5
+	if not var_4_0.bot_threat_duration then
+		local rotation_towards_unit_flat = LocomotionUtils.rotation_towards_unit_flat(arg_4_1, attacking_target)
+		local bot_threat_range = var_4_0.bot_threat_range
 
-		Managers.state.entity:system("ai_bot_group_system"):aoe_threat_created(var_4_11, "oobb", Vector3(var_4_8, var_4_7, 0.5), var_4_6, var_4_0.bot_threat_duration, "Combo Attack")
+		bot_threat_range = bot_threat_range or 2
+
+		local bot_threat_width = var_4_0.bot_threat_width
+
+		bot_threat_width = bot_threat_width or 1
+
+		local num_2 = bot_threat_range * 0.5
+		local num_3 = Quaternion.rotate(rotation_towards_unit_flat, Vector3.forward()) * num_2
+		local num_4 = POSITION_LOOKUP[arg_4_1] + num_3 + Vector3.up() * 0.5
+
+		Managers.state.entity:system("ai_bot_group_system"):aoe_threat_created(num_4, "oobb", Vector3(bot_threat_width, bot_threat_range, 0.5), rotation_towards_unit_flat, var_4_0.bot_threat_duration, "Combo Attack")
 	end
 
-	local var_4_12 = var_4_0.damage_done_time
+	local damage_done_time = var_4_0.damage_done_time
 
-	if var_4_12 then
-		if type(var_4_12) == "table" then
-			var_4_3.damage_done_time = arg_4_3 + var_4_12[var_4_2]
+	if not damage_done_time then
+		if type(damage_done_time) == "table" then
+			combo_attack_data.damage_done_time = arg_4_3 + damage_done_time[var_4_4]
 		else
-			var_4_3.damage_done_time = arg_4_3 + var_4_12
+			combo_attack_data.damage_done_time = arg_4_3 + damage_done_time
 		end
 	end
 end
 
-function BTComboAttackAction.leave(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+BTComboAttackAction.leave = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	-- function 5
 	if arg_5_2.move_state ~= "idle" then
 		Managers.state.network:anim_event(arg_5_1, "idle")
 
 		arg_5_2.move_state = "idle"
 	end
 
-	local var_5_0 = arg_5_2.combo_attack_data
+	local combo_attack_data = arg_5_2.combo_attack_data
 
-	if var_5_0.is_animation_driven and not arg_5_5 then
+	if not (not combo_attack_data.is_animation_driven and arg_5_5) then
 		LocomotionUtils.set_animation_driven_movement(arg_5_1, false)
 
-		var_5_0.is_animation_driven = false
+		combo_attack_data.is_animation_driven = false
 	end
 
-	local var_5_1 = arg_5_2.target_status_extension
+	local target_status_extension = arg_5_2.target_status_extension
 
-	if var_5_1 then
-		var_5_1:add_combo_target_count(-1)
+	if not target_status_extension then
+		target_status_extension:add_combo_target_count(-1)
 	end
 
 	if not arg_5_5 then
@@ -258,44 +318,66 @@ function BTComboAttackAction.leave(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, 
 	arg_5_2.keep_target = nil
 
 	if arg_5_4 == "aborted" then
-		var_5_0.aborted = true
+		combo_attack_data.aborted = true
 	end
 
-	var_5_0.damage_done_time = nil
+	combo_attack_data.damage_done_time = nil
 
 	arg_5_2.navigation_extension:set_max_speed(arg_5_2.breed.run_speed)
 end
 
-function BTComboAttackAction.run(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
-	local var_6_0 = arg_6_2.combo_attack_data
-	local var_6_1 = var_6_0.attacking_target
+BTComboAttackAction.run = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	-- function 6
+	local combo_attack_data = arg_6_2.combo_attack_data
+	local attacking_target = combo_attack_data.attacking_target
 
-	if arg_6_2.attack_aborted or not Unit.alive(var_6_1) then
-		var_6_0.aborted = true
+	if not (arg_6_2.attack_aborted or Unit.alive(attacking_target)) then
+		combo_attack_data.aborted = true
 
 		return "done"
 	end
 
-	local var_6_2 = arg_6_2.action
-	local var_6_3 = var_6_2.combo_attacks[var_6_0.current_attack_name]
+	local action = arg_6_2.action
+	local var_6_3 = action.combo_attacks[combo_attack_data.current_attack_name]
 
-	if var_6_0.blocked then
-		var_6_0.blocked = false
-		var_6_0.has_been_blocked = true
+	if not combo_attack_data.blocked then
+		combo_attack_data.blocked = false
+		combo_attack_data.has_been_blocked = true
 	end
 
-	if var_6_0.damage_done_time and arg_6_3 > var_6_0.damage_done_time then
-		var_6_0.damage_done_time = nil
+	if not (not combo_attack_data.damage_done_time and not (arg_6_3 > combo_attack_data.damage_done_time)) then
+		combo_attack_data.damage_done_time = nil
 		arg_6_2.attacking_target = nil
 	end
 
-	if arg_6_2.attack_finished or var_6_0.has_been_blocked and var_6_3.block_interrupts then
-		local var_6_4 = var_6_0.successful_hit
-		local var_6_5 = var_6_0.has_been_blocked and var_6_3.next_blocked or var_6_4 and var_6_3.next_hit or var_6_3.next
-		local var_6_6 = var_0_1(var_6_5, arg_6_2)
+	if arg_6_2.attack_finished or not combo_attack_data.has_been_blocked or not var_6_3.block_interrupts then
+		local successful_hit = combo_attack_data.successful_hit
+		local next_blocked
 
-		if var_6_3.combo_cooldown_start then
-			Unit.set_data(var_6_1, "last_combo_t", arg_6_3)
+		if not combo_attack_data.has_been_blocked then
+			next_blocked = var_6_3.next_blocked
+
+			if not next_blocked then
+				-- Nothing
+			end
+		end
+
+		if not successful_hit then
+			next_blocked = var_6_3.next_hit
+
+			if not next_blocked then
+				-- Nothing
+			end
+		end
+
+		next_blocked = var_6_3.next
+
+		::label_6_0::
+
+		local var_6_6 = fn(next_blocked, arg_6_2)
+
+		if not var_6_3.combo_cooldown_start then
+			Unit.set_data(attacking_target, "last_combo_t", arg_6_3)
 		end
 
 		if var_6_6 == "done" then
@@ -305,75 +387,112 @@ function BTComboAttackAction.run(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 
 			return "done"
 		else
-			arg_6_0:_start_attack(arg_6_1, arg_6_2, arg_6_3, var_6_2, var_6_6)
+			self:_start_attack(arg_6_1, arg_6_2, arg_6_3, action, var_6_6)
 		end
 	end
 
-	if not arg_6_2.anim_cb_move_stop and not var_6_0.is_animation_driven and var_6_1 then
-		arg_6_0:_follow(arg_6_4, arg_6_3, arg_6_1, arg_6_2, var_6_3)
+	if not (not not arg_6_2.anim_cb_move_stop or not not combo_attack_data.is_animation_driven or attacking_target) then
+		self:_follow(arg_6_4, arg_6_3, arg_6_1, arg_6_2, var_6_3)
 	else
 		arg_6_2.navigation_extension:set_max_speed(0)
 	end
 
-	local var_6_7 = arg_6_2.attack_damage_triggered and "no_rotation" or var_6_3.rotation_scheme
+	local flag
 
-	if var_6_7 == "continuous" then
-		arg_6_0:_update_rotation_target(arg_6_3, arg_6_1, arg_6_2, var_6_0)
-	elseif type(var_6_7) == "table" then
-		arg_6_0:_update_rotation_target_lerped(arg_6_3, arg_6_1, arg_6_2, var_6_0, var_6_7)
+	flag = not arg_6_2.attack_damage_triggered and "no_rotation" and var_6_3.rotation_scheme
+
+	if flag == "continuous" then
+		self:_update_rotation_target(arg_6_3, arg_6_1, arg_6_2, combo_attack_data)
+	elseif type(flag) == "table" then
+		self:_update_rotation_target_lerped(arg_6_3, arg_6_1, arg_6_2, combo_attack_data, flag)
 	end
 
-	arg_6_2.locomotion_extension:set_wanted_rotation(var_6_0.rotation_target:unbox())
+	arg_6_2.locomotion_extension:set_wanted_rotation(combo_attack_data.rotation_target:unbox())
 
-	local var_6_8 = var_6_0.push_non_targets
+	local push_non_targets = combo_attack_data.push_non_targets
 
-	if var_6_8 then
-		local var_6_9 = Vector3.normalize(Vector3.flat(Quaternion.forward(var_6_0.rotation_target:unbox())))
+	if not push_non_targets then
+		local normalize = Vector3.normalize(Vector3.flat(Quaternion.forward(combo_attack_data.rotation_target:unbox())))
 
-		arg_6_0:_push_non_targets(arg_6_1, POSITION_LOOKUP[arg_6_1], var_6_1, var_6_0, var_6_9, var_6_8.close_impact_radius, var_6_8.far_impact_radius, var_6_8.forward_impact_speed, var_6_8.lateral_impact_speed)
+		self:_push_non_targets(arg_6_1, POSITION_LOOKUP[arg_6_1], attacking_target, combo_attack_data, normalize, push_non_targets.close_impact_radius, push_non_targets.far_impact_radius, push_non_targets.forward_impact_speed, push_non_targets.lateral_impact_speed)
 	end
 
 	return "running"
 end
 
-function BTComboAttackAction._follow(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
-	local var_7_0 = arg_7_4.breed
-	local var_7_1 = arg_7_4.combo_attack_data.attacking_target
-	local var_7_2 = (var_7_0.weapon_reach or 2)^2
-	local var_7_3 = POSITION_LOOKUP[var_7_1] - POSITION_LOOKUP[arg_7_3]
-	local var_7_4 = Vector3.length_squared(var_7_3)
-	local var_7_5 = arg_7_5.run_speed or var_7_0.run_speed
+BTComboAttackAction._follow = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+	-- function 7
+	local breed = arg_7_4.breed
+	local attacking_target = arg_7_4.combo_attack_data.attacking_target
+	local weapon_reach = breed.weapon_reach
 
-	if var_7_4 < var_7_2 then
-		local var_7_6 = arg_7_4.target_locomotion_extension
-		local var_7_7 = var_7_6 and var_7_6.average_velocity and var_7_6:average_velocity() or Vector3.zero()
+	weapon_reach = weapon_reach or 2
 
-		var_7_5 = math.max(math.min(var_7_5, Vector3.dot(var_7_7, Vector3.normalize(var_7_3))), 0)
+	local num = weapon_reach^2
+	local num_2 = POSITION_LOOKUP[attacking_target] - POSITION_LOOKUP[arg_7_3]
+	local length_squared = Vector3.length_squared(num_2)
+	local run_speed = arg_7_5.run_speed
+
+	run_speed = run_speed or breed.run_speed
+
+	if length_squared < num then
+		local target_locomotion_extension = arg_7_4.target_locomotion_extension
+		local average_velocity
+
+		if not target_locomotion_extension and not target_locomotion_extension.average_velocity then
+			average_velocity = target_locomotion_extension:average_velocity()
+
+			if not average_velocity then
+				-- Nothing
+			end
+		end
+
+		average_velocity = Vector3.zero()
+
+		::label_7_0::
+
+		run_speed = math.max(math.min(run_speed, Vector3.dot(average_velocity, Vector3.normalize(num_2))), 0)
 	end
 
-	local var_7_8 = arg_7_5.attack_start_slow_factor_time or var_7_0.attack_start_slow_factor_time or 0.3
+	local attack_start_slow_factor_time = arg_7_5.attack_start_slow_factor_time
 
-	if arg_7_2 < arg_7_0.last_attack_time + var_7_8 then
-		local var_7_9 = arg_7_5.attack_start_slow_fraction or var_7_0.attack_start_slow_fraction or 0
-
-		var_7_5 = var_7_5 * (1 - var_7_9 + var_7_9 * ((arg_7_2 - arg_7_0.last_attack_time) / var_7_8))
+	if not attack_start_slow_factor_time then
+		attack_start_slow_factor_time = breed.attack_start_slow_factor_time
+		attack_start_slow_factor_time = attack_start_slow_factor_time or 0.3
 	end
 
-	local var_7_10 = arg_7_5.attack_stop_time or var_7_0.attack_stop_time or nil
+	if arg_7_2 < self.last_attack_time + attack_start_slow_factor_time then
+		local attack_start_slow_fraction = arg_7_5.attack_start_slow_fraction
 
-	if var_7_10 and arg_7_2 > arg_7_0.last_attack_time + var_7_10 then
-		var_7_5 = 0
+		if not attack_start_slow_fraction then
+			attack_start_slow_fraction = breed.attack_start_slow_fraction
+			attack_start_slow_fraction = attack_start_slow_fraction or 0
+		end
+
+		run_speed = run_speed * (1 - attack_start_slow_fraction + attack_start_slow_fraction * ((arg_7_2 - self.last_attack_time) / attack_start_slow_factor_time))
 	end
 
-	if arg_7_4.target_dodged_during_attack and arg_7_2 < arg_7_0.dodge_timer then
-		var_7_5 = math.clamp(var_7_5, 0, 3)
+	local attack_stop_time = arg_7_5.attack_stop_time
+
+	if not attack_stop_time then
+		attack_stop_time = breed.attack_stop_time
+		attack_stop_time = attack_stop_time or nil
 	end
 
-	arg_7_4.navigation_extension:set_max_speed(var_7_5)
+	if not (not attack_stop_time and not (arg_7_2 > self.last_attack_time + attack_stop_time)) then
+		run_speed = 0
+	end
+
+	if not (not arg_7_4.target_dodged_during_attack and not (arg_7_2 < self.dodge_timer)) then
+		run_speed = math.clamp(run_speed, 0, 3)
+	end
+
+	arg_7_4.navigation_extension:set_max_speed(run_speed)
 end
 
-function BTComboAttackAction.attack_success(arg_8_0, arg_8_1, arg_8_2)
-	if arg_8_2.breed.use_backstab_vo and arg_8_2.backstab_attack_trigger then
+BTComboAttackAction.attack_success = function (arg_8_0, arg_8_1, arg_8_2)
+	-- function 8
+	if not arg_8_2.breed.use_backstab_vo and not arg_8_2.backstab_attack_trigger then
 		Managers.state.entity:system("dialogue_system"):trigger_backstab_hit(arg_8_2.target_unit, arg_8_1)
 
 		arg_8_2.backstab_attack_trigger = false
@@ -382,90 +501,129 @@ function BTComboAttackAction.attack_success(arg_8_0, arg_8_1, arg_8_2)
 	arg_8_2.combo_attack_data.successful_hit = true
 end
 
-function BTComboAttackAction._update_rotation_target(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
-	local var_9_0 = arg_9_3.target_status_extension
-	local var_9_1 = var_9_0 and (var_9_0:get_is_dodging() or var_9_0:is_invisible())
+BTComboAttackAction._update_rotation_target = function (self, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	-- function 9
+	local target_status_extension = arg_9_3.target_status_extension
+
+	if not target_status_extension then
+		-- Nothing
+	end
+
+	::label_9_0::
+
+	local get_is_dodging = target_status_extension:get_is_dodging()
+
+	get_is_dodging = get_is_dodging or target_status_extension:is_invisible()
+
+	::label_9_1::
+
 	local var_9_2
 
-	if var_9_1 and not arg_9_3.target_dodged_during_attack then
+	if not (not get_is_dodging and arg_9_3.target_dodged_during_attack) then
 		arg_9_3.locomotion_extension:set_rotation_speed(2)
 
 		arg_9_4.refresh_last_target_position = true
 		arg_9_3.target_dodged_during_attack = true
-		arg_9_0.dodge_timer = arg_9_1 + (arg_9_3.breed.dodge_timer or 0.3)
+
+		local dodge_timer = arg_9_3.breed.dodge_timer
+
+		dodge_timer = dodge_timer or 0.3
+		self.dodge_timer = arg_9_1 + dodge_timer
 	end
 
-	if arg_9_3.target_dodged_during_attack and arg_9_1 < arg_9_0.dodge_timer then
+	if not (not arg_9_3.target_dodged_during_attack and not (arg_9_1 < self.dodge_timer)) then
 		var_9_2 = arg_9_4.last_target_position:unbox()
 	else
 		var_9_2 = POSITION_LOOKUP[arg_9_4.attacking_target]
 	end
 
-	arg_9_0:_set_target_position(arg_9_3, arg_9_4, var_9_2, arg_9_1)
+	self:_set_target_position(arg_9_3, arg_9_4, var_9_2, arg_9_1)
 
-	local var_9_3 = LocomotionUtils.look_at_position_flat(arg_9_2, var_9_2)
+	local look_at_position_flat = LocomotionUtils.look_at_position_flat(arg_9_2, var_9_2)
 
-	arg_9_4.rotation_target:store(var_9_3)
+	arg_9_4.rotation_target:store(look_at_position_flat)
 end
 
-function BTComboAttackAction._set_target_position(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
-	local var_10_0 = arg_10_1.target_locomotion_extension
+BTComboAttackAction._set_target_position = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+	-- function 10
+	local target_locomotion_extension = arg_10_1.target_locomotion_extension
 
 	arg_10_2.last_target_position:store(arg_10_3)
-	arg_10_2.last_target_velocity:store(var_10_0 and var_10_0:current_velocity() or Vector3.zero())
+
+	local last_target_velocity = arg_10_2.last_target_velocity
+	local var_10_2 = last_target_velocity
+	local store = last_target_velocity.store
+	local current_velocity
+
+	if not target_locomotion_extension then
+		current_velocity = target_locomotion_extension:current_velocity()
+
+		if not current_velocity then
+			-- Nothing
+		end
+	end
+
+	current_velocity = Vector3.zero()
+
+	::label_10_0::
+
+	store(var_10_2, current_velocity)
 
 	arg_10_2.last_target_position_time = arg_10_4
 end
 
-function BTComboAttackAction._update_rotation_target_lerped(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
-	arg_11_0:_update_rotation_target(arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+BTComboAttackAction._update_rotation_target_lerped = function (self, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+	-- function 11
+	self:_update_rotation_target(arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 
-	local var_11_0 = arg_11_1 - arg_11_4.attack_start_time
-	local var_11_1 = arg_11_5.start_lerp_in
-	local var_11_2 = arg_11_5.end_lerp_in
-	local var_11_3 = arg_11_5.start_lerp_out
-	local var_11_4 = arg_11_5.end_lerp_out
-	local var_11_5 = arg_11_5.target_speed
+	local num_2 = arg_11_1 - arg_11_4.attack_start_time
+	local start_lerp_in = arg_11_5.start_lerp_in
+	local end_lerp_in = arg_11_5.end_lerp_in
+	local start_lerp_out = arg_11_5.start_lerp_out
+	local end_lerp_out = arg_11_5.end_lerp_out
+	local target_speed = arg_11_5.target_speed
 	local var_11_6
 
-	if var_11_0 < var_11_1 then
-		var_11_6 = var_0_0
-	elseif var_11_0 < var_11_2 then
-		var_11_6 = math.lerp(var_0_0, var_11_5, (var_11_0 - var_11_1) / (var_11_2 - var_11_1))
-	elseif var_11_0 < var_11_3 then
-		var_11_6 = var_11_5
-	elseif var_11_0 < var_11_4 then
-		var_11_6 = math.lerp(var_11_5, var_0_0, (var_11_0 - var_11_3) / (var_11_4 - var_11_3))
+	if num_2 < start_lerp_in then
+		var_11_6 = num
+	elseif num_2 < end_lerp_in then
+		var_11_6 = math.lerp(num, target_speed, (num_2 - start_lerp_in) / (end_lerp_in - start_lerp_in))
+	elseif num_2 < start_lerp_out then
+		var_11_6 = target_speed
+	elseif num_2 < end_lerp_out then
+		var_11_6 = math.lerp(target_speed, num, (num_2 - start_lerp_out) / (end_lerp_out - start_lerp_out))
 	else
-		var_11_6 = var_0_0
+		var_11_6 = num
 	end
 
 	arg_11_3.locomotion_extension:set_rotation_speed(var_11_6)
 end
 
-function BTComboAttackAction.attack_cooldown(arg_12_0, arg_12_1, arg_12_2)
-	local var_12_0 = Managers.time:time("game")
+BTComboAttackAction.attack_cooldown = function (self, arg_12_1, arg_12_2)
+	-- function 12
+	local time = Managers.time:time("game")
 
-	arg_12_2.is_in_attack_cooldown, arg_12_2.attack_cooldown_at = arg_12_0:get_attack_cooldown_finished_at(arg_12_1, arg_12_2, var_12_0)
+	arg_12_2.is_in_attack_cooldown, arg_12_2.attack_cooldown_at = self:get_attack_cooldown_finished_at(arg_12_1, arg_12_2, time)
 end
 
-function BTComboAttackAction._push_non_targets(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7, arg_13_8, arg_13_9)
-	local var_13_0 = arg_13_7^2
-	local var_13_1 = Managers.state.side.side_by_unit[arg_13_1].ENEMY_PLAYER_AND_BOT_UNITS
+BTComboAttackAction._push_non_targets = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7, arg_13_8, arg_13_9)
+	-- function 13
+	local num = arg_13_7^2
+	local ENEMY_PLAYER_AND_BOT_UNITS = Managers.state.side.side_by_unit[arg_13_1].ENEMY_PLAYER_AND_BOT_UNITS
 
-	for iter_13_0 = 1, #var_13_1 do
-		local var_13_2 = var_13_1[iter_13_0]
+	for i = 1, #ENEMY_PLAYER_AND_BOT_UNITS do
+		local var_13_2 = ENEMY_PLAYER_AND_BOT_UNITS[i]
 
-		if var_13_2 ~= arg_13_3 and not arg_13_4.pushed_targets[var_13_2] and not ScriptUnit.extension(var_13_2, "status_system"):is_disabled() then
-			local var_13_3 = POSITION_LOOKUP[var_13_2] - arg_13_2
+		if not (var_13_2 == arg_13_3 or arg_13_4.pushed_targets[var_13_2] or ScriptUnit.extension(var_13_2, "status_system"):is_disabled()) then
+			local num_2 = POSITION_LOOKUP[var_13_2] - arg_13_2
 
-			if var_13_0 > Vector3.length_squared(var_13_3) then
-				local var_13_4 = Vector3.cross(arg_13_5, Vector3.up())
-				local var_13_5 = Vector3.dot(var_13_4, var_13_3)
-				local var_13_6 = math.auto_lerp(arg_13_6, arg_13_7, 1, 0, math.abs(var_13_5))
-				local var_13_7 = arg_13_5 * var_13_6 * arg_13_8 + var_13_4 * var_13_6 * arg_13_9
+			if num > Vector3.length_squared(num_2) then
+				local cross = Vector3.cross(arg_13_5, Vector3.up())
+				local dot = Vector3.dot(cross, num_2)
+				local auto_lerp = math.auto_lerp(arg_13_6, arg_13_7, 1, 0, math.abs(dot))
+				local num_3 = arg_13_5 * auto_lerp * arg_13_8 + cross * auto_lerp * arg_13_9
 
-				ScriptUnit.extension(var_13_2, "locomotion_system"):add_external_velocity(var_13_7)
+				ScriptUnit.extension(var_13_2, "locomotion_system"):add_external_velocity(num_3)
 
 				arg_13_4.pushed_targets[var_13_2] = true
 			end
@@ -473,99 +631,108 @@ function BTComboAttackAction._push_non_targets(arg_13_0, arg_13_1, arg_13_2, arg
 	end
 end
 
-function BTComboAttackAction.stagger_override(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6, arg_14_7, arg_14_8, arg_14_9, arg_14_10)
-	local var_14_0 = arg_14_2.combo_attack_data
-	local var_14_1 = arg_14_2.action.combo_attacks[var_14_0.current_attack_name]
+BTComboAttackAction.stagger_override = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6, arg_14_7, arg_14_8, arg_14_9, arg_14_10)
+	-- function 14
+	local combo_attack_data = arg_14_2.combo_attack_data
+	local var_14_1 = arg_14_2.action.combo_attacks[combo_attack_data.current_attack_name]
 
-	if var_14_1.staggers_allowed[arg_14_6] or arg_14_10 and var_14_1.allow_push_stagger then
+	if var_14_1.staggers_allowed[arg_14_6] or not arg_14_10 or not var_14_1.allow_push_stagger then
 		return false
 	else
 		return true
 	end
 end
 
-function BTComboAttackAction.anim_cb_frenzy_damage(arg_15_0, arg_15_1, arg_15_2)
-	local var_15_0 = arg_15_2.action
-	local var_15_1 = arg_15_2.combo_attack_data
-	local var_15_2 = var_15_1.attacking_target
+BTComboAttackAction.anim_cb_frenzy_damage = function (arg_15_0, arg_15_1, arg_15_2)
+	-- function 15
+	local action = arg_15_2.action
+	local combo_attack_data = arg_15_2.combo_attack_data
+	local attacking_target = combo_attack_data.attacking_target
 
-	if not Unit.alive(var_15_2) then
+	if not Unit.alive(attacking_target) then
 		return
 	end
 
 	arg_15_2.attack_damage_triggered = true
 
-	if not DamageUtils.check_distance(var_15_0, arg_15_2, arg_15_1, var_15_2) or not DamageUtils.check_infront(arg_15_1, var_15_2) then
+	if not (not DamageUtils.check_distance(action, arg_15_2, arg_15_1, attacking_target) and DamageUtils.check_infront(arg_15_1, attacking_target)) then
 		return
 	end
 
-	local var_15_3 = var_15_1.current_attack_name
-	local var_15_4 = var_15_0.combo_attacks[var_15_3]
-	local var_15_5 = var_15_4.fatigue_type or var_15_0.fatigue_type
-	local var_15_6 = var_15_0.attack_directions and var_15_0.attack_directions[arg_15_2.attack_anim]
+	local current_attack_name = combo_attack_data.current_attack_name
+	local var_15_4 = action.combo_attacks[current_attack_name]
+	local fatigue_type = var_15_4.fatigue_type
 
-	if DamageUtils.check_block(arg_15_1, var_15_2, var_15_5, var_15_6) then
+	fatigue_type = fatigue_type or action.fatigue_type
+
+	local attack_directions = action.attack_directions
+
+	attack_directions = not attack_directions and action.attack_directions[arg_15_2.attack_anim]
+
+	if not DamageUtils.check_block(arg_15_1, attacking_target, fatigue_type, attack_directions) then
 		arg_15_2.blocked = false
-		var_15_1.blocked = true
+		combo_attack_data.blocked = true
 
 		return
 	end
 
-	var_15_1.successful_hit = true
+	combo_attack_data.successful_hit = true
 
-	local var_15_7 = var_15_4.difficulty_damage
+	local difficulty_damage = var_15_4.difficulty_damage
 	local var_15_8
 
-	if var_15_7 then
-		var_15_8 = Managers.state.difficulty:get_difficulty_value_from_table(var_15_7)
+	if not difficulty_damage then
+		var_15_8 = Managers.state.difficulty:get_difficulty_value_from_table(difficulty_damage)
 	else
-		var_15_8 = var_15_0.damage
+		var_15_8 = action.damage
 	end
 
-	local var_15_9 = ScriptUnit.has_extension(var_15_2, "dialogue_system")
+	local has_extension = ScriptUnit.has_extension(attacking_target, "dialogue_system")
 
-	if var_15_9 then
-		local var_15_10 = var_15_9.context.player_profile
+	if not has_extension then
+		local player_profile = has_extension.context.player_profile
 
-		Managers.state.entity:system("surrounding_aware_system"):add_system_event(arg_15_1, "enemy_attack", DialogueSettings.armor_hit_broadcast_range, "attack_tag", "frenzy_attack_damage", "target_name", var_15_10)
+		Managers.state.entity:system("surrounding_aware_system"):add_system_event(arg_15_1, "enemy_attack", DialogueSettings.armor_hit_broadcast_range, "attack_tag", "frenzy_attack_damage", "target_name", player_profile)
 	end
 
-	AiUtils.damage_target(var_15_2, arg_15_1, var_15_0, var_15_8)
+	AiUtils.damage_target(attacking_target, arg_15_1, action, var_15_8)
 end
 
-function BTComboAttackAction.get_attack_cooldown_finished_at(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
-	local var_16_0 = arg_16_2.combo_attack_data.attacking_target
+BTComboAttackAction.get_attack_cooldown_finished_at = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+	-- function 16
+	local attacking_target = arg_16_2.combo_attack_data.attacking_target
 
-	if not Unit.alive(var_16_0) then
+	if not Unit.alive(attacking_target) then
 		return false, 0
 	end
 
-	local var_16_1 = arg_16_2.action.diminishing_damage
+	local diminishing_damage = arg_16_2.action.diminishing_damage
 
-	if not var_16_1 then
+	if not diminishing_damage then
 		return false, 0
 	end
 
-	local var_16_2 = ScriptUnit.has_extension(var_16_0, "ai_slot_system")
+	local has_extension = ScriptUnit.has_extension(attacking_target, "ai_slot_system")
 
-	if not var_16_2 or not var_16_2.has_slots_attached then
+	if not (not has_extension and has_extension.has_slots_attached) then
 		return false, 0
 	end
 
-	local var_16_3 = Managers.state.entity:system("ai_slot_system"):slots_count(var_16_0)
+	local slots_count = Managers.state.entity:system("ai_slot_system"):slots_count(attacking_target)
 
-	if var_16_3 == 0 then
+	if slots_count == 0 then
 		return false, 0
 	end
 
-	local var_16_4 = var_16_1[math.min(var_16_3, 9)].cooldown
-	local var_16_5 = AiUtils.random(var_16_4[1], var_16_4[2])
+	local cooldown = diminishing_damage[math.min(slots_count, 9)].cooldown
+	local random = AiUtils.random(cooldown[1], cooldown[2])
 
-	return true, var_16_5 + arg_16_3
+	return true, random + arg_16_3
 end
 
-function BTComboAttackAction.anim_cb_attack_vce(arg_17_0, arg_17_1, arg_17_2)
-	if Managers.state.network:game() then
+BTComboAttackAction.anim_cb_attack_vce = function (arg_17_0, arg_17_1, arg_17_2)
+	-- function 17
+	if not Managers.state.network:game() then
 		Managers.state.entity:system("dialogue_system"):trigger_attack(arg_17_2, arg_17_2.target_unit, arg_17_1, false, false)
 	end
 end

@@ -4,49 +4,59 @@ require("scripts/helpers/steam_helper")
 
 UnlockClan = class(UnlockClan)
 
-function UnlockClan.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
-	arg_1_0._name = arg_1_1
-	arg_1_0._id = arg_1_2
-	arg_1_0._backend_reward_id = arg_1_3
-	arg_1_0._unlocked = false
+UnlockClan.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	-- function 1
+	self._name = arg_1_1
+	self._id = arg_1_2
+	self._backend_reward_id = arg_1_3
+	self._unlocked = false
 
-	if rawget(_G, "Steam") and SteamHelper.clans()[arg_1_2] then
-		arg_1_0._unlocked = true
+	if not rawget(_G, "Steam") and not SteamHelper.clans()[arg_1_2] then
+		self._unlocked = true
 	end
 end
 
-function UnlockClan.ready(arg_2_0)
+UnlockClan.ready = function (arg_2_0)
+	-- function 2
 	return true
 end
 
-function UnlockClan.has_error(arg_3_0)
+UnlockClan.has_error = function (arg_3_0)
+	-- function 3
 	return false
 end
 
-function UnlockClan.id(arg_4_0)
-	return arg_4_0._id
+UnlockClan.id = function (self)
+	-- function 4
+	return self._id
 end
 
-function UnlockClan.backend_reward_id(arg_5_0)
-	return arg_5_0._backend_reward_id
+UnlockClan.backend_reward_id = function (self)
+	-- function 5
+	return self._backend_reward_id
 end
 
-function UnlockClan.remove_backend_reward_id(arg_6_0)
-	arg_6_0._backend_reward_id = nil
+UnlockClan.remove_backend_reward_id = function (self)
+	-- function 6
+	self._backend_reward_id = nil
 end
 
-function UnlockClan.set_status_changed(arg_7_0, arg_7_1)
+UnlockClan.set_status_changed = function (arg_7_0, arg_7_1)
+	-- function 7
 	return
 end
 
-function UnlockClan.unlocked(arg_8_0)
-	return arg_8_0._unlocked
+UnlockClan.unlocked = function (self)
+	-- function 8
+	return self._unlocked
 end
 
-function UnlockClan.installed(arg_9_0)
-	return arg_9_0._unlocked
+UnlockClan.installed = function (self)
+	-- function 9
+	return self._unlocked
 end
 
-function UnlockClan.is_cosmetic(arg_10_0)
+UnlockClan.is_cosmetic = function (arg_10_0)
+	-- function 10
 	return true
 end

@@ -2,36 +2,40 @@
 
 ActionDummy = class(ActionDummy, ActionBase)
 
-function ActionDummy.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
-	ActionDummy.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionDummy.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	-- function 1
+	ActionDummy.super.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
-	arg_1_0._owner_unit = arg_1_4
-	arg_1_0.status_extension = ScriptUnit.has_extension(arg_1_4, "status_system")
-	arg_1_0.spread_extension = ScriptUnit.has_extension(arg_1_7, "spread_system")
+	self._owner_unit = arg_1_4
+	self.status_extension = ScriptUnit.has_extension(arg_1_4, "status_system")
+	self.spread_extension = ScriptUnit.has_extension(arg_1_7, "spread_system")
 end
 
-function ActionDummy.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
-	ActionDummy.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
+ActionDummy.client_owner_start_action = function (self, arg_2_1, arg_2_2)
+	-- function 2
+	ActionDummy.super.client_owner_start_action(self, arg_2_1, arg_2_2)
 
-	arg_2_0.current_action = arg_2_1
-	arg_2_0.action_time_started = arg_2_2
+	self.current_action = arg_2_1
+	self.action_time_started = arg_2_2
 
-	local var_2_0 = arg_2_1.spread_template_override
+	local spread_template_override = arg_2_1.spread_template_override
 
-	if var_2_0 then
-		arg_2_0.spread_extension:override_spread_template(var_2_0)
+	if not spread_template_override then
+		self.spread_extension:override_spread_template(spread_template_override)
 	end
 end
 
-function ActionDummy.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+ActionDummy.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	-- function 3
 	return
 end
 
-function ActionDummy.finish(arg_4_0, arg_4_1)
-	if arg_4_0.spread_extension then
-		arg_4_0.spread_extension:reset_spread_template()
+ActionDummy.finish = function (self, arg_4_1)
+	-- function 4
+	if not self.spread_extension then
+		self.spread_extension:reset_spread_template()
 	end
 
-	Unit.flow_event(arg_4_0.owner_unit, "lua_force_stop")
-	Unit.flow_event(arg_4_0.first_person_unit, "lua_force_stop")
+	Unit.flow_event(self.owner_unit, "lua_force_stop")
+	Unit.flow_event(self.first_person_unit, "lua_force_stop")
 end

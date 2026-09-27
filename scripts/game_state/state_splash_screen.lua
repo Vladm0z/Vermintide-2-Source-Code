@@ -1,6 +1,6 @@
 -- chunkname: @scripts/game_state/state_splash_screen.lua
 
-if IS_WINDOWS then
+if not IS_WINDOWS then
 	require("scripts/managers/input/input_manager")
 	require("scripts/utils/visual_assert_log")
 	require("scripts/managers/debug/debug")
@@ -22,18 +22,19 @@ if not IS_WINDOWS then
 	StateSplashScreen.packages_to_load[#StateSplashScreen.packages_to_load + 1] = "resource_packages/news_splash/news_splash"
 end
 
-function StateSplashScreen.on_enter(arg_1_0)
+StateSplashScreen.on_enter = function (self)
+	-- function 1
 	Framerate.set_low_power()
 
-	if IS_WINDOWS then
-		local var_1_0 = true
+	if not IS_WINDOWS then
+		local flag = true
 
-		GarbageLeakDetector.run_leak_detection(var_1_0)
-		GarbageLeakDetector.register_object(arg_1_0, "StateSplashScreen")
+		GarbageLeakDetector.run_leak_detection(flag)
+		GarbageLeakDetector.register_object(self, "StateSplashScreen")
 		VisualAssertLog.setup(nil)
 	end
 
-	if script_data.honduras_demo then
+	if not script_data.honduras_demo then
 		table.insert(StateSplashScreen.packages_to_load, 1, DemoSettings.level_resource_package)
 		table.insert(StateSplashScreen.packages_to_load, 1, DemoSettings.inventory_resource_package)
 		table.insert(StateSplashScreen.packages_to_load, 1, "resource_packages/ingame_sounds_one")
@@ -49,47 +50,47 @@ function StateSplashScreen.on_enter(arg_1_0)
 
 	Managers.transition:force_fade_in()
 	Managers.transition:show_loading_icon(false)
-	arg_1_0:setup_world()
+	self:setup_world()
 
-	if IS_WINDOWS or IS_XB1 then
-		arg_1_0:setup_input()
+	if IS_WINDOWS or not IS_XB1 then
+		self:setup_input()
 	end
 
-	if IS_WINDOWS then
-		Managers.package:load("resource_packages/start_menu_splash", "StateSplashScreen", callback(arg_1_0, "cb_splashes_loaded"), true, true)
-	elseif IS_PS4 then
-		if PS4.title_id() == "CUSA14407_00" or PS4.title_id() == "CUSA13595_00" then
-			arg_1_0:setup_esrb_logo()
+	if not IS_WINDOWS then
+		Managers.package:load("resource_packages/start_menu_splash", "StateSplashScreen", callback(self, "cb_splashes_loaded"), true, true)
+	elseif not IS_PS4 then
+		if not (PS4.title_id() == "CUSA14407_00" or PS4.title_id() ~= "CUSA13595_00") then
+			self:setup_esrb_logo()
 		else
-			Managers.package:load("resource_packages/start_menu_splash", "StateSplashScreen", callback(arg_1_0, "cb_splashes_loaded"), true, true)
+			Managers.package:load("resource_packages/start_menu_splash", "StateSplashScreen", callback(self, "cb_splashes_loaded"), true, true)
 		end
-	elseif IS_XB1 then
-		if arg_1_0:_is_in_esrb_region() then
-			arg_1_0:setup_esrb_logo()
+	elseif not IS_XB1 then
+		if not self:_is_in_esrb_region() then
+			self:setup_esrb_logo()
 		else
-			Managers.package:load("resource_packages/start_menu_splash", "StateSplashScreen", callback(arg_1_0, "cb_splashes_loaded"), true, true)
+			Managers.package:load("resource_packages/start_menu_splash", "StateSplashScreen", callback(self, "cb_splashes_loaded"), true, true)
 		end
 	end
 
-	if Managers.popup then
+	if not Managers.popup then
 		Managers.popup:destroy()
 
 		Managers.popup = nil
 	end
 
-	local var_1_1 = arg_1_0.parent.loading_context
+	local loading_context = self.parent.loading_context
 
-	if var_1_1.reload_packages then
-		arg_1_0:unload_packages()
+	if not loading_context.reload_packages then
+		self:unload_packages()
 	end
 
-	arg_1_0:load_packages()
+	self:load_packages()
 	Managers.transition:fade_out(1)
 
-	if LEVEL_EDITOR_TEST then
-		arg_1_0._skip_splash = true
+	if not LEVEL_EDITOR_TEST then
+		self._skip_splash = true
 	else
-		local var_1_2 = {
+		local tbl = {
 			"auto_host_level",
 			"auto_join",
 			"vs_auto_search",
@@ -99,252 +100,267 @@ function StateSplashScreen.on_enter(arg_1_0)
 			"weave_name"
 		}
 
-		for iter_1_0 = 1, #var_1_2 do
-			local var_1_3 = var_1_2[iter_1_0]
+		for i = 1, #tbl do
+			local var_1_3 = tbl[i]
 
-			if Development.parameter(var_1_3) then
-				arg_1_0._skip_splash = true
+			if not Development.parameter(var_1_3) then
+				self._skip_splash = true
 
 				break
 			end
 		end
 	end
 
-	local var_1_4 = {
+	local tbl_2 = {
 		Application.argv()
 	}
 
-	for iter_1_1 = 1, #var_1_4 do
-		if var_1_4[iter_1_1] == "-skip-splash" then
-			arg_1_0._skip_splash = true
+	for j = 1, #tbl_2 do
+		if tbl_2[j] == "-skip-splash" then
+			self._skip_splash = true
 
 			break
 		end
 	end
 
-	if IS_WINDOWS and not arg_1_0._skip_splash then
-		var_1_1.first_time = true
+	if not (not IS_WINDOWS and self._skip_splash) then
+		loading_context.first_time = true
 	end
 
-	arg_1_0.parent.loading_context.show_profile_on_startup = true
+	self.parent.loading_context.show_profile_on_startup = true
 end
 
-local var_0_0 = {
+local tbl = {
 	CA = true,
 	US = true,
 	MX = true
 }
 
-function StateSplashScreen._is_in_esrb_region(arg_2_0)
-	local var_2_0 = XboxLive.region_info().GEO_ISO2
+StateSplashScreen._is_in_esrb_region = function (arg_2_0)
+	-- function 2
+	local GEO_ISO2 = XboxLive.region_info().GEO_ISO2
 
-	return var_0_0[var_2_0]
+	return tbl[GEO_ISO2]
 end
 
-function StateSplashScreen.setup_esrb_logo(arg_3_0)
-	arg_3_0.gui = World.create_screen_gui(arg_3_0.world, "material", "materials/ui/esrb_console_logo", "immediate")
+StateSplashScreen.setup_esrb_logo = function (self)
+	-- function 3
+	self.gui = World.create_screen_gui(self.world, "material", "materials/ui/esrb_console_logo", "immediate")
 
-	Managers.package:load("resource_packages/start_menu_splash", "StateSplashScreen", callback(arg_3_0, "cb_splashes_loaded"), true, true)
+	Managers.package:load("resource_packages/start_menu_splash", "StateSplashScreen", callback(self, "cb_splashes_loaded"), true, true)
 
-	arg_3_0.showing_esrb = true
-	arg_3_0.esrb_timer = 0
+	self.showing_esrb = true
+	self.esrb_timer = 0
 end
 
-function StateSplashScreen.update_esrb_logo(arg_4_0, arg_4_1, arg_4_2)
-	local var_4_0 = 5
-	local var_4_1 = arg_4_0.esrb_timer
-	local var_4_2 = 0
-	local var_4_3 = {
+StateSplashScreen.update_esrb_logo = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	local num = 5
+	local esrb_timer = self.esrb_timer
+	local num_2 = 0
+	local tbl = {
 		1200,
 		576
 	}
-	local var_4_4 = "esrb_logo"
+	local str = "esrb_logo"
 
-	if var_4_1 > var_4_0 - 0.5 then
-		var_4_2 = 255 - 255 * math.clamp((var_4_0 - var_4_1) / 0.5, 0, 1)
-	elseif var_4_1 <= 0.5 then
-		var_4_2 = 255 * math.clamp(1 - var_4_1 / 0.5, 0, 255)
+	if esrb_timer > num - 0.5 then
+		num_2 = 255 - 255 * math.clamp((num - esrb_timer) / 0.5, 0, 1)
+	elseif esrb_timer <= 0.5 then
+		num_2 = 255 * math.clamp(1 - esrb_timer / 0.5, 0, 255)
 	end
 
-	local var_4_5, var_4_6 = Application.resolution()
+	local resolution, var_4_6 = Application.resolution()
 
-	Gui.rect(arg_4_0.gui, Vector3(0, 0, 0), Vector2(var_4_5, var_4_6), Color(255, 0, 0, 0))
-	Gui.bitmap(arg_4_0.gui, var_4_4, Vector3(var_4_5 * 0.5 - var_4_3[1] * 0.5, var_4_6 * 0.5 - var_4_3[2] * 0.5, 1), Vector2(var_4_3[1], var_4_3[2]))
-	Gui.rect(arg_4_0.gui, Vector3(0, 0, 2), Vector2(var_4_5, var_4_6), Color(var_4_2, 0, 0, 0))
+	Gui.rect(self.gui, Vector3(0, 0, 0), Vector2(resolution, var_4_6), Color(255, 0, 0, 0))
+	Gui.bitmap(self.gui, str, Vector3(resolution * 0.5 - tbl[1] * 0.5, var_4_6 * 0.5 - tbl[2] * 0.5, 1), Vector2(tbl[1], tbl[2]))
+	Gui.rect(self.gui, Vector3(0, 0, 2), Vector2(resolution, var_4_6), Color(num_2, 0, 0, 0))
 
-	arg_4_0.esrb_timer = math.clamp(arg_4_0.esrb_timer + math.clamp(arg_4_1, 0, 0.1), 0, var_4_0)
+	self.esrb_timer = math.clamp(self.esrb_timer + math.clamp(arg_4_1, 0, 0.1), 0, num)
 
-	if var_4_0 <= arg_4_0.esrb_timer and arg_4_0.splashes_loaded then
-		arg_4_0:setup_splash_screen_view()
+	if not (num <= self.esrb_timer) or not self.splashes_loaded then
+		self:setup_splash_screen_view()
 		Managers.transition:force_fade_in()
 	end
 end
 
-function StateSplashScreen.cb_splashes_loaded(arg_5_0)
-	arg_5_0.splashes_loaded = true
+StateSplashScreen.cb_splashes_loaded = function (self)
+	-- function 5
+	self.splashes_loaded = true
 
-	if not arg_5_0.showing_esrb then
-		arg_5_0:setup_splash_screen_view()
+	if not self.showing_esrb then
+		self:setup_splash_screen_view()
 	end
 end
 
-function StateSplashScreen.setup_world(arg_6_0)
-	arg_6_0._world_name = "splash_ui"
-	arg_6_0._viewport_name = "splash_view_viewport"
-	arg_6_0.world = Managers.world:create_world(arg_6_0._world_name, GameSettingsDevelopment.default_environment, nil, 980, Application.DISABLE_PHYSICS, Application.DISABLE_APEX_CLOTH)
-	arg_6_0.viewport = ScriptWorld.create_viewport(arg_6_0.world, arg_6_0._viewport_name, "overlay", 1)
+StateSplashScreen.setup_world = function (self)
+	-- function 6
+	self._world_name = "splash_ui"
+	self._viewport_name = "splash_view_viewport"
+	self.world = Managers.world:create_world(self._world_name, GameSettingsDevelopment.default_environment, nil, 980, Application.DISABLE_PHYSICS, Application.DISABLE_APEX_CLOTH)
+	self.viewport = ScriptWorld.create_viewport(self.world, self._viewport_name, "overlay", 1)
 end
 
-if IS_WINDOWS or IS_XB1 then
-	function StateSplashScreen.setup_input(arg_7_0)
-		arg_7_0.input_manager = InputManager:new()
-		Managers.input = arg_7_0.input_manager
+if IS_WINDOWS or not IS_XB1 then
+	StateSplashScreen.setup_input = function (self)
+		-- function 7
+		self.input_manager = InputManager:new()
+		Managers.input = self.input_manager
 
-		arg_7_0.input_manager:initialize_device("keyboard", 1)
-		arg_7_0.input_manager:initialize_device("mouse", 1)
-		arg_7_0.input_manager:initialize_device("gamepad")
+		self.input_manager:initialize_device("keyboard", 1)
+		self.input_manager:initialize_device("mouse", 1)
+		self.input_manager:initialize_device("gamepad")
 	end
 end
 
-function StateSplashScreen.setup_splash_screen_view(arg_8_0)
+StateSplashScreen.setup_splash_screen_view = function (self)
+	-- function 8
 	if not Managers.package:has_loaded("resource_packages/start_menu_splash", "StateSplashScreen") then
-		local var_8_0 = os.clock()
+		local clock = os.clock()
 
-		print("Stall loading splash screen", var_8_0)
+		print("Stall loading splash screen", clock)
 		Managers.package:load("resource_packages/start_menu_splash", "StateSplashScreen")
-		print("done stall loading splash screen", os.clock() - var_8_0)
+		print("done stall loading splash screen", os.clock() - clock)
 	end
 
 	require("scripts/ui/views/splash_view")
 
-	arg_8_0.splash_view = SplashView:new(arg_8_0.input_manager, arg_8_0.world)
+	self.splash_view = SplashView:new(self.input_manager, self.world)
 
-	if arg_8_0.parent.loading_context.show_splash_screens then
-		arg_8_0.parent.loading_context.show_splash_screens = false
+	if not self.parent.loading_context.show_splash_screens then
+		self.parent.loading_context.show_splash_screens = false
 	else
-		arg_8_0.splash_view:set_index(4)
+		self.splash_view:set_index(4)
 	end
 end
 
-function StateSplashScreen.update(arg_9_0, arg_9_1, arg_9_2)
+StateSplashScreen.update = function (self, arg_9_1, arg_9_2)
+	-- function 9
 	if not IS_CONSOLE then
 		Debug.update(arg_9_2, arg_9_1)
-		arg_9_0.input_manager:update(arg_9_1, arg_9_2)
+		self.input_manager:update(arg_9_1, arg_9_2)
 	end
 
-	if arg_9_0.splash_view then
-		arg_9_0.splash_view:update(arg_9_1)
-	elseif arg_9_0.showing_esrb then
-		arg_9_0:update_esrb_logo(arg_9_1, arg_9_2)
+	if not self.splash_view then
+		self.splash_view:update(arg_9_1)
+	elseif not self.showing_esrb then
+		self:update_esrb_logo(arg_9_1, arg_9_2)
 	end
 
-	if not arg_9_0.wanted_state and (arg_9_0.splash_view and arg_9_0.splash_view:is_completed() or arg_9_0._skip_splash) and arg_9_0:packages_loaded() then
+	if (self.wanted_state or not self.splash_view) and self.splash_view:is_completed() and not self._skip_splash and not self:packages_loaded() then
 		require("scripts/game_state/state_title_screen")
-		Managers.transition:fade_in(0.5, callback(arg_9_0, "cb_fade_in_done"))
+		Managers.transition:fade_in(0.5, callback(self, "cb_fade_in_done"))
 	end
 
-	return (arg_9_0:next_state())
+	return (self:next_state())
 end
 
-function StateSplashScreen.render(arg_10_0)
-	if arg_10_0.splash_view then
-		arg_10_0.splash_view:render()
+StateSplashScreen.render = function (self)
+	-- function 10
+	if not self.splash_view then
+		self.splash_view:render()
 	end
 end
 
-function StateSplashScreen.next_state(arg_11_0)
-	if not arg_11_0:packages_loaded() or not arg_11_0.wanted_state then
+StateSplashScreen.next_state = function (self)
+	-- function 11
+	if not (not self:packages_loaded() and self.wanted_state) then
 		return
 	end
 
-	if IS_WINDOWS and not arg_11_0.debug_setup then
-		arg_11_0.debug_setup = true
+	if not (not IS_WINDOWS and self.debug_setup) then
+		self.debug_setup = true
 
-		Debug.setup(arg_11_0.world, "splash_ui")
+		Debug.setup(self.world, "splash_ui")
 	end
 
-	return arg_11_0.wanted_state
+	return self.wanted_state
 end
 
-function StateSplashScreen.unload_packages(arg_12_0)
-	local var_12_0 = Managers.package
+StateSplashScreen.unload_packages = function (arg_12_0)
+	-- function 12
+	local package = Managers.package
 
-	for iter_12_0, iter_12_1 in ipairs(StateSplashScreen.packages_to_load) do
-		if var_12_0:has_loaded(iter_12_1, "state_splash_screen") then
-			var_12_0:unload(iter_12_1, "state_splash_screen")
+	for i, v in ipairs(StateSplashScreen.packages_to_load) do
+		if not package:has_loaded(v, "state_splash_screen") then
+			package:unload(v, "state_splash_screen")
 		end
 	end
 end
 
-function StateSplashScreen.load_packages(arg_13_0)
-	local var_13_0 = Managers.package
+StateSplashScreen.load_packages = function (self)
+	-- function 13
+	local package = Managers.package
 
-	for iter_13_0, iter_13_1 in ipairs(StateSplashScreen.packages_to_load) do
-		if not var_13_0:has_loaded(iter_13_1, "state_splash_screen") then
-			var_13_0:load(iter_13_1, "state_splash_screen", nil, true)
+	for i, v in ipairs(StateSplashScreen.packages_to_load) do
+		if not package:has_loaded(v, "state_splash_screen") then
+			package:load(v, "state_splash_screen", nil, true)
 		end
 	end
 
-	arg_13_0._base_packages_loading = true
+	self._base_packages_loading = true
 end
 
-function StateSplashScreen.packages_loaded(arg_14_0)
-	local var_14_0 = Managers.package
+StateSplashScreen.packages_loaded = function (self)
+	-- function 14
+	local package = Managers.package
 
-	for iter_14_0, iter_14_1 in ipairs(StateSplashScreen.packages_to_load) do
-		if not var_14_0:has_loaded(iter_14_1) then
+	for i, v in ipairs(StateSplashScreen.packages_to_load) do
+		if not package:has_loaded(v) then
 			return false
 		end
 	end
 
-	if arg_14_0._base_packages_loading then
+	if not self._base_packages_loading then
 		Managers.transition:hide_loading_icon()
 
-		arg_14_0._base_packages_loading = nil
+		self._base_packages_loading = nil
 	end
 
-	if IS_CONSOLE and arg_14_0.splash_view then
-		arg_14_0.splash_view:allow_console_skip()
+	if not IS_CONSOLE and not self.splash_view then
+		self.splash_view:allow_console_skip()
 	end
 
 	return (GlobalResources.update_loading())
 end
 
-function StateSplashScreen.cb_fade_in_done(arg_15_0)
-	arg_15_0.wanted_state = StateTitleScreen
+StateSplashScreen.cb_fade_in_done = function (self)
+	-- function 15
+	self.wanted_state = StateTitleScreen
 end
 
-function StateSplashScreen.on_exit(arg_16_0, arg_16_1)
+StateSplashScreen.on_exit = function (self, arg_16_1)
+	-- function 16
 	Framerate.set_playing()
 
-	if arg_16_0.splash_view then
-		arg_16_0.splash_view:destroy()
+	if not self.splash_view then
+		self.splash_view:destroy()
 
-		arg_16_0.splash_view = nil
+		self.splash_view = nil
 	end
 
-	ScriptWorld.destroy_viewport(arg_16_0.world, "splash_view_viewport")
+	ScriptWorld.destroy_viewport(self.world, "splash_view_viewport")
 
-	if rawget(_G, "Debug") and Debug.active then
+	if not rawget(_G, "Debug") and not Debug.active then
 		Debug.teardown()
 	end
 
-	Managers.world:destroy_world(arg_16_0.world)
+	Managers.world:destroy_world(self.world)
 
-	arg_16_0.world = nil
+	self.world = nil
 
-	if IS_WINDOWS then
-		arg_16_0.input_manager:destroy()
+	if not IS_WINDOWS then
+		self.input_manager:destroy()
 
-		arg_16_0.input_manager = nil
+		self.input_manager = nil
 		Managers.input = nil
 
-		if GameSettingsDevelopment.skip_start_screen or Development.parameter("skip_start_screen") then
+		if GameSettingsDevelopment.skip_start_screen or not Development.parameter("skip_start_screen") then
 			Managers.package:unload("resource_packages/start_menu_splash", "StateSplashScreen")
 		end
 
 		VisualAssertLog.cleanup()
 
-		arg_16_0.parent.loading_context.windows_auto_sign_in = true
+		self.parent.loading_context.windows_auto_sign_in = true
 	end
 end

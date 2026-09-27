@@ -1,58 +1,68 @@
 -- chunkname: @scripts/managers/conflict_director/a_star.lua
 
+local LuaAStar = LuaAStar
+
 LuaAStar = LuaAStar or {}
+LuaAStar = LuaAStar
 LuaAStar.cached_paths = {}
 
-local var_0_0 = LuaAStar.cached_paths
+local cached_paths = LuaAStar.cached_paths
 
 function dist_between(arg_1_0, arg_1_1)
+	-- function 1
 	return Vector3.distance(arg_1_0, arg_1_1)
 end
 
-function dist_between_nodes(arg_2_0, arg_2_1)
-	return Vector3.distance(arg_2_0:get_group_center():unbox(), arg_2_1:get_group_center():unbox())
+function dist_between_nodes(self, arg_2_1)
+	-- function 2
+	return Vector3.distance(self:get_group_center():unbox(), arg_2_1:get_group_center():unbox())
 end
 
 function heuristic_cost_estimate(arg_3_0, arg_3_1)
+	-- function 3
 	return dist_between_nodes(arg_3_0, arg_3_1)
 end
 
 function is_valid_node(arg_4_0, arg_4_1)
+	-- function 4
 	return true
 end
 
-function lowest_f_score_node(arg_5_0, arg_5_1)
-	local var_5_0 = math.huge
+function lowest_f_score_node(self, arg_5_1)
+	-- function 5
+	local huge = math.huge
 	local var_5_1
 
-	for iter_5_0 = 1, #arg_5_0 do
-		local var_5_2 = arg_5_0[iter_5_0]
+	for i = 1, #self do
+		local var_5_2 = self[i]
 		local var_5_3 = arg_5_1[var_5_2]
 
-		if var_5_3 < var_5_0 then
-			var_5_0, var_5_1 = var_5_3, var_5_2
+		if var_5_3 < huge then
+			huge, var_5_1 = var_5_3, var_5_2
 		end
 	end
 
 	return var_5_1
 end
 
-function neighbour_nodes(arg_6_0, arg_6_1)
-	local var_6_0 = arg_6_0:get_group_neighbours()
-	local var_6_1 = {}
+function neighbour_nodes(self, arg_6_1)
+	-- function 6
+	local get_group_neighbours = self:get_group_neighbours()
+	local tbl = {}
 
-	for iter_6_0, iter_6_1 in pairs(var_6_0) do
-		var_6_1[#var_6_1 + 1] = iter_6_0
+	for k, v in pairs(get_group_neighbours) do
+		tbl[#tbl + 1] = k
 	end
 
-	return var_6_1
+	return tbl
 end
 
-function not_in(arg_7_0, arg_7_1)
-	local var_7_0 = #arg_7_0
+function not_in(self, arg_7_1)
+	-- function 7
+	local count = #self
 
-	for iter_7_0 = 1, var_7_0 do
-		if arg_7_0[iter_7_0] == arg_7_1 then
+	for i = 1, count do
+		if self[i] == arg_7_1 then
 			return false
 		end
 	end
@@ -60,13 +70,14 @@ function not_in(arg_7_0, arg_7_1)
 	return true
 end
 
-function remove_node(arg_8_0, arg_8_1)
-	local var_8_0 = #arg_8_0
+function remove_node(self, arg_8_1)
+	-- function 8
+	local count = #self
 
-	for iter_8_0 = 1, var_8_0 do
-		if arg_8_0[iter_8_0] == arg_8_1 then
-			arg_8_0[iter_8_0] = arg_8_0[var_8_0]
-			arg_8_0[var_8_0] = nil
+	for i = 1, count do
+		if self[i] == arg_8_1 then
+			self[i] = self[count]
+			self[count] = nil
 
 			break
 		end
@@ -74,7 +85,8 @@ function remove_node(arg_8_0, arg_8_1)
 end
 
 function reconstruct_path(arg_9_0, arg_9_1, arg_9_2)
-	if arg_9_1[arg_9_2] then
+	-- function 9
+	if not arg_9_1[arg_9_2] then
 		table.insert(arg_9_0, 1, arg_9_1[arg_9_2])
 
 		return reconstruct_path(arg_9_0, arg_9_1, arg_9_1[arg_9_2])
@@ -83,48 +95,49 @@ function reconstruct_path(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function LuaAStar.a_star_plain(arg_10_0, arg_10_1, arg_10_2)
-	local var_10_0 = {}
-	local var_10_1 = {
+LuaAStar.a_star_plain = function (arg_10_0, arg_10_1, arg_10_2)
+	-- function 10
+	local tbl = {}
+	local tbl_2 = {
 		arg_10_1
 	}
-	local var_10_2 = {}
-	local var_10_3 = {}
-	local var_10_4 = {}
+	local tbl_3 = {}
+	local tbl_4 = {}
+	local tbl_5 = {}
 
-	var_10_3[arg_10_1] = 0
-	var_10_4[arg_10_1] = var_10_3[arg_10_1] + heuristic_cost_estimate(arg_10_1, arg_10_2)
+	tbl_4[arg_10_1] = 0
+	tbl_5[arg_10_1] = tbl_4[arg_10_1] + heuristic_cost_estimate(arg_10_1, arg_10_2)
 
-	while #var_10_1 > 0 do
-		local var_10_5 = lowest_f_score_node(var_10_1, var_10_4)
+	while #tbl_2 > 0 do
+		local var_10_5 = lowest_f_score_node(tbl_2, tbl_5)
 
 		if var_10_5 == arg_10_2 then
-			local var_10_6 = reconstruct_path({}, var_10_2, arg_10_2)
+			local var_10_6 = reconstruct_path({}, tbl_3, arg_10_2)
 
 			var_10_6[#var_10_6 + 1] = arg_10_2
 
-			return var_10_6, var_10_4[var_10_5]
+			return var_10_6, tbl_5[var_10_5]
 		end
 
-		remove_node(var_10_1, var_10_5)
+		remove_node(tbl_2, var_10_5)
 
-		var_10_0[#var_10_0 + 1] = var_10_5
+		tbl[#tbl + 1] = var_10_5
 
 		local var_10_7 = neighbour_nodes(var_10_5, arg_10_0)
 
-		for iter_10_0 = 1, #var_10_7 do
-			local var_10_8 = var_10_7[iter_10_0]
+		for i = 1, #var_10_7 do
+			local var_10_8 = var_10_7[i]
 
-			if not_in(var_10_0, var_10_8) then
-				local var_10_9 = var_10_3[var_10_5] + dist_between_nodes(var_10_5, var_10_8)
+			if not not_in(tbl, var_10_8) then
+				local num = tbl_4[var_10_5] + dist_between_nodes(var_10_5, var_10_8)
 
-				if not_in(var_10_1, var_10_8) or var_10_9 < var_10_3[var_10_8] then
-					var_10_2[var_10_8] = var_10_5
-					var_10_3[var_10_8] = var_10_9
-					var_10_4[var_10_8] = var_10_3[var_10_8] + heuristic_cost_estimate(var_10_8, arg_10_2)
+				if not (not_in(tbl_2, var_10_8) or not (num < tbl_4[var_10_8])) then
+					tbl_3[var_10_8] = var_10_5
+					tbl_4[var_10_8] = num
+					tbl_5[var_10_8] = tbl_4[var_10_8] + heuristic_cost_estimate(var_10_8, arg_10_2)
 
-					if not_in(var_10_1, var_10_8) then
-						var_10_1[#var_10_1 + 1] = var_10_8
+					if not not_in(tbl_2, var_10_8) then
+						tbl_2[#tbl_2 + 1] = var_10_8
 					end
 				end
 			end
@@ -134,25 +147,27 @@ function LuaAStar.a_star_plain(arg_10_0, arg_10_1, arg_10_2)
 	return nil
 end
 
-function LuaAStar.clear_cached_paths()
-	var_0_0 = nil
+LuaAStar.clear_cached_paths = function ()
+	-- function 11
+	cached_paths = nil
 end
 
-function LuaAStar.a_star_cached(arg_12_0, arg_12_1, arg_12_2)
-	if not var_0_0[arg_12_1] then
-		var_0_0[arg_12_1] = {}
-	elseif var_0_0[arg_12_1][arg_12_2] then
-		local var_12_0 = var_0_0[arg_12_1][arg_12_2]
+LuaAStar.a_star_cached = function (arg_12_0, arg_12_1, arg_12_2)
+	-- function 12
+	if not cached_paths[arg_12_1] then
+		cached_paths[arg_12_1] = {}
+	elseif not cached_paths[arg_12_1][arg_12_2] then
+		local var_12_0 = cached_paths[arg_12_1][arg_12_2]
 
 		return var_12_0[1], var_12_0[2], true
 	end
 
-	local var_12_1, var_12_2 = LuaAStar.a_star_plain(arg_12_0, arg_12_1, arg_12_2)
+	local a_star_plain, var_12_2 = LuaAStar.a_star_plain(arg_12_0, arg_12_1, arg_12_2)
 
-	var_0_0[arg_12_1][arg_12_2] = {
-		var_12_1,
+	cached_paths[arg_12_1][arg_12_2] = {
+		a_star_plain,
 		var_12_2
 	}
 
-	return var_12_1, var_12_2
+	return a_star_plain, var_12_2
 end

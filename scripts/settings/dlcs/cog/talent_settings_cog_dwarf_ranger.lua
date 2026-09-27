@@ -2,8 +2,8 @@
 
 require("scripts/settings/profiles/career_constants")
 
-local var_0_0 = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
-local var_0_1 = {
+local scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
+local tbl = {
 	bardin_engineer_passive_no_ability_regen = {
 		multiplier = -1
 	},
@@ -81,7 +81,7 @@ local var_0_1 = {
 		duration = 4
 	}
 }
-local var_0_2 = {
+local tbl_2 = {
 	bardin_engineer_passive_no_ability_regen = {
 		buffs = {
 			{
@@ -128,8 +128,9 @@ local var_0_2 = {
 				buff_to_remove = "bardin_engineer_pump_buff_power",
 				on_max_stacks_func = "add_remove_buffs",
 				remove_buff_func = "remove_buff_local",
-				duration_modifier_func = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
-					if ScriptUnit.extension(arg_1_0, "talent_system"):has_talent("bardin_engineer_pump_buff_long") then
+				duration_modifier_func = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+					-- function 1
+					if not ScriptUnit.extension(arg_1_0, "talent_system"):has_talent("bardin_engineer_pump_buff_long") then
 						return nil, nil
 					end
 
@@ -168,7 +169,8 @@ local var_0_2 = {
 			{
 				max_stacks = 5,
 				stat_buff = "power_level",
-				apply_condition = function(arg_2_0, arg_2_1, arg_2_2)
+				apply_condition = function (arg_2_0, arg_2_1, arg_2_2)
+					-- function 2
 					return ScriptUnit.extension(arg_2_0, "talent_system"):has_talent("bardin_engineer_pump_buff_long")
 				end
 			}
@@ -182,7 +184,7 @@ local var_0_2 = {
 				buff_func = "heal_stagger_targets_on_melee",
 				event = "on_stagger",
 				perks = {
-					var_0_0.tank_healing
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.tank_healing
 				}
 			}
 		}
@@ -197,7 +199,7 @@ local var_0_2 = {
 				max_targets = 5,
 				bonus = 0.25,
 				perks = {
-					var_0_0.linesman_healing
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.linesman_healing
 				}
 			}
 		}
@@ -221,7 +223,7 @@ local var_0_2 = {
 				cooldown_buff = "bardin_engineer_2_1_cooldown",
 				update_frequency = 80,
 				perks = {
-					var_0_0.no_explosion_friendly_fire
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.no_explosion_friendly_fire
 				}
 			}
 		}
@@ -349,7 +351,7 @@ local var_0_2 = {
 				icon = "victor_bountyhunter_passive_infinite_ammo",
 				priority_buff = true,
 				perks = {
-					var_0_0.infinite_ammo
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.infinite_ammo
 				}
 			}
 		}
@@ -406,7 +408,7 @@ local var_0_2 = {
 		buffs = {
 			{
 				perks = {
-					var_0_0.frag_fire_grenades
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.frag_fire_grenades
 				}
 			}
 		}
@@ -435,7 +437,7 @@ local var_0_2 = {
 				stat_buff = "power_level_impact",
 				duration = 0.2,
 				perks = {
-					var_0_0.explosive_stagger
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.explosive_stagger
 				}
 			}
 		}
@@ -480,13 +482,13 @@ local var_0_2 = {
 				refresh_durations = true,
 				icon = "bardin_engineer_increased_ability_bar",
 				perks = {
-					var_0_0.free_ability_engineer
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.free_ability_engineer
 				}
 			}
 		}
 	}
 }
-local var_0_3 = {
+local tbl_3 = {
 	{
 		{
 			"bardin_engineer_thp_tank",
@@ -520,7 +522,7 @@ local var_0_3 = {
 		}
 	}
 }
-local var_0_4 = {
+local tbl_4 = {
 	{
 		description = "vanguard_desc",
 		name = "bardin_engineer_vanguard",
@@ -607,7 +609,7 @@ local var_0_4 = {
 		icon = "bardin_engineer_fast_ability_charge",
 		description_values = {
 			{
-				value = var_0_1.bardin_engineer_2_1_cooldown.duration
+				value = tbl.bardin_engineer_2_1_cooldown.duration
 			}
 		},
 		buffs = {
@@ -622,7 +624,7 @@ local var_0_4 = {
 		icon = "bardin_engineer_ranged_pierce",
 		description_values = {
 			{
-				value = var_0_1.bardin_engineer_ranged_pierce.bonus
+				value = tbl.bardin_engineer_ranged_pierce.bonus
 			}
 		},
 		buffs = {
@@ -637,17 +639,17 @@ local var_0_4 = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.bardin_engineer_melee_power_free_shot_stat.multiplier
+				value = tbl.bardin_engineer_melee_power_free_shot_stat.multiplier
 			},
 			{
-				value = var_0_1.bardin_engineer_melee_power_free_shot_counter.max_stacks
+				value = tbl.bardin_engineer_melee_power_free_shot_counter.max_stacks
 			},
 			{
 				value_type = "percent",
-				value = var_0_1.bardin_engineer_melee_power_range_power_buff.multiplier
+				value = tbl.bardin_engineer_melee_power_range_power_buff.multiplier
 			},
 			{
-				value = var_0_1.bardin_engineer_melee_power_range_power_buff.duration
+				value = tbl.bardin_engineer_melee_power_range_power_buff.duration
 			}
 		},
 		client_buffs = {
@@ -727,11 +729,11 @@ local var_0_4 = {
 		icon = "bardin_engineer_party_ability_charge",
 		description_values = {
 			{
-				value = var_0_1.bardin_engineer_power_on_max_pump.stacks_for_buff
+				value = tbl.bardin_engineer_power_on_max_pump.stacks_for_buff
 			},
 			{
 				value_type = "percent",
-				value = var_0_1.bardin_engineer_power_on_max_pump_buff.multiplier
+				value = tbl.bardin_engineer_power_on_max_pump_buff.multiplier
 			}
 		},
 		buffs = {
@@ -769,7 +771,7 @@ local var_0_4 = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.bardin_engineer_pump_buff_power.multiplier
+				value = tbl.bardin_engineer_pump_buff_power.multiplier
 			}
 		},
 		buffs = {
@@ -784,14 +786,14 @@ local var_0_4 = {
 		icon = "bardin_engineer_stacking_damage_reduction",
 		description_values = {
 			{
-				value = var_0_1.bardin_engineer_stacking_damage_reduction.update_frequency
+				value = tbl.bardin_engineer_stacking_damage_reduction.update_frequency
 			},
 			{
-				value = var_0_1.bardin_engineer_stacking_damage_reduction_buff.max_stacks
+				value = tbl.bardin_engineer_stacking_damage_reduction_buff.max_stacks
 			},
 			{
 				value_type = "percent",
-				value = var_0_1.bardin_engineer_stacking_damage_reduction_buff.multiplier
+				value = tbl.bardin_engineer_stacking_damage_reduction_buff.multiplier
 			}
 		},
 		buffs = {
@@ -830,7 +832,7 @@ local var_0_4 = {
 		icon = "bardin_engineer_no_overheat_explosion",
 		description_values = {
 			{
-				value = var_0_1.bardin_engineer_piston_powered_delay.duration
+				value = tbl.bardin_engineer_piston_powered_delay.duration
 			}
 		},
 		buffs = {
@@ -878,10 +880,10 @@ local var_0_4 = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.bardin_engineer_increased_ability_bar.multiplier
+				value = tbl.bardin_engineer_increased_ability_bar.multiplier
 			},
 			{
-				value = var_0_1.bardin_engineer_increased_ability_bar_buff.duration
+				value = tbl.bardin_engineer_increased_ability_bar_buff.duration
 			}
 		},
 		buffs = {
@@ -889,18 +891,21 @@ local var_0_4 = {
 		}
 	}
 }
-local var_0_5 = "dwarf_ranger"
+local str = "dwarf_ranger"
 
-table.merge(TalentBuffTemplates[var_0_5], var_0_2)
-table.append(TalentTrees[var_0_5], var_0_3)
-table.append(Talents[var_0_5], var_0_4)
+table.merge(TalentBuffTemplates[str], tbl_2)
+table.append(TalentTrees[str], tbl_3)
+table.append(Talents[str], tbl_4)
+
+local WeaveLoadoutSettings = WeaveLoadoutSettings
 
 WeaveLoadoutSettings = WeaveLoadoutSettings or {}
+WeaveLoadoutSettings = WeaveLoadoutSettings
 WeaveLoadoutSettings.dr_engineer = {
-	talent_tree = var_0_3[1],
+	talent_tree = tbl_3[1],
 	properties = {},
 	traits = {}
 }
 
-BuffUtils.copy_talent_buff_names(var_0_2)
-BuffUtils.apply_buff_tweak_data(var_0_2, var_0_1)
+BuffUtils.copy_talent_buff_names(tbl_2)
+BuffUtils.apply_buff_tweak_data(tbl_2, tbl)

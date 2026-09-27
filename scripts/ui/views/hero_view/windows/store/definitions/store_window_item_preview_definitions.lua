@@ -1,20 +1,20 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/store/definitions/store_window_item_preview_definitions.lua
 
-local var_0_0 = UISettings.console_menu_scenegraphs
-local var_0_1 = {
+local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
+local tbl = {
 	800,
 	600
 }
-local var_0_2 = {
+local tbl_2 = {
 	800,
 	220
 }
-local var_0_3 = {
+local tbl_3 = {
 	16,
-	var_0_1[2] + 100
+	tbl[2] + 100
 }
-local var_0_4 = {
-	screen = var_0_0.screen,
+local tbl_4 = {
+	screen = console_menu_scenegraphs.screen,
 	background = {
 		scale = "fit_height",
 		horizontal_alignment = "right",
@@ -74,7 +74,7 @@ local var_0_4 = {
 		vertical_alignment = "top",
 		parent = "screen",
 		horizontal_alignment = "right",
-		size = var_0_1,
+		size = tbl,
 		position = {
 			-130,
 			-255,
@@ -85,10 +85,10 @@ local var_0_4 = {
 		vertical_alignment = "top",
 		parent = "list_window",
 		horizontal_alignment = "right",
-		size = var_0_1,
+		size = tbl,
 		position = {
 			0,
-			-var_0_1[2],
+			-tbl[2],
 			0
 		}
 	},
@@ -96,7 +96,7 @@ local var_0_4 = {
 		vertical_alignment = "top",
 		parent = "list_window",
 		horizontal_alignment = "right",
-		size = var_0_3,
+		size = tbl_3,
 		position = {
 			58,
 			40,
@@ -122,8 +122,8 @@ local var_0_4 = {
 		parent = "list_window",
 		horizontal_alignment = "left",
 		size = {
-			var_0_1[1] + 62,
-			var_0_1[2] + 130
+			tbl[1] + 62,
+			tbl[2] + 130
 		},
 		position = {
 			-10,
@@ -426,7 +426,7 @@ local var_0_4 = {
 		}
 	}
 }
-local var_0_5 = {
+local tbl_5 = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -443,7 +443,7 @@ local var_0_5 = {
 		2
 	}
 }
-local var_0_6 = {
+local tbl_6 = {
 	word_wrap = false,
 	upper_case = false,
 	localize = false,
@@ -460,7 +460,7 @@ local var_0_6 = {
 		2
 	}
 }
-local var_0_7 = {
+local tbl_7 = {
 	word_wrap = false,
 	upper_case = false,
 	localize = false,
@@ -477,7 +477,7 @@ local var_0_7 = {
 		2
 	}
 }
-local var_0_8 = {
+local tbl_8 = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -499,7 +499,7 @@ local var_0_8 = {
 		2
 	}
 }
-local var_0_9 = {
+local tbl_9 = {
 	word_wrap = false,
 	upper_case = false,
 	localize = false,
@@ -521,7 +521,7 @@ local var_0_9 = {
 		2
 	}
 }
-local var_0_10 = {
+local tbl_10 = {
 	loading_icon = {
 		scenegraph_id = "loading_icon",
 		element = {
@@ -530,11 +530,16 @@ local var_0_10 = {
 					style_id = "texture_id",
 					pass_type = "rotated_texture",
 					texture_id = "texture_id",
-					content_change_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-						local var_1_0 = ((arg_1_1.progress or 0) + arg_1_3) % 1
+					content_change_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+						-- function 1
+						local progress = arg_1_1.progress
 
-						arg_1_1.angle = math.pow(2, math.smoothstep(var_1_0, 0, 1)) * (math.pi * 2)
-						arg_1_1.progress = var_1_0
+						progress = progress or 0
+
+						local num = (progress + arg_1_3) % 1
+
+						arg_1_1.angle = math.pow(2, math.smoothstep(num, 0, 1)) * (math.pi * 2)
+						arg_1_1.progress = num
 					end
 				}
 			}
@@ -570,7 +575,8 @@ local var_0_10 = {
 	}
 }
 
-local function var_0_11(arg_2_0, arg_2_1)
+local function fn(arg_2_0, arg_2_1)
+	-- function 2
 	return {
 		element = {
 			passes = {
@@ -708,9 +714,10 @@ local function var_0_11(arg_2_0, arg_2_1)
 	}
 end
 
-local function var_0_12(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+local function fn_2(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	-- function 3
 	local var_3_0 = UIFrameSettings.frame_outer_glow_04_big.texture_sizes.horizontal[2]
-	local var_3_1 = {
+	local tbl = {
 		passes = {
 			{
 				style_id = "hotspot",
@@ -739,7 +746,7 @@ local function var_0_12(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 			}
 		}
 	}
-	local var_3_2 = {
+	local tbl_2 = {
 		mask_edge = "mask_rect_edge_fade",
 		mask_texture = "mask_rect",
 		list_hotspot = {},
@@ -750,7 +757,7 @@ local function var_0_12(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 			scroll_value = 1
 		}
 	}
-	local var_3_3 = {
+	local tbl_3 = {
 		hotspot = {
 			size = {
 				arg_3_2[1],
@@ -838,9 +845,9 @@ local function var_0_12(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	}
 
 	return {
-		element = var_3_1,
-		content = var_3_2,
-		style = var_3_3,
+		element = tbl,
+		content = tbl_2,
+		style = tbl_3,
 		offset = {
 			0,
 			0,
@@ -850,8 +857,8 @@ local function var_0_12(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	}
 end
 
-local var_0_13 = {}
-local var_0_14 = {
+local tbl_11 = {}
+local tbl_12 = {
 	unlock_button_edge = UIWidgets.create_tiled_texture("unlock_button_edge", "divider_skull_middle_down", {
 		64,
 		97
@@ -903,32 +910,36 @@ local var_0_14 = {
 					pass_type = "texture",
 					style_id = "normal",
 					texture_id = "normal",
-					content_check_function = function(arg_4_0)
-						return not arg_4_0.button_hotspot.is_selected
+					content_check_function = function (self)
+						-- function 4
+						return not self.button_hotspot.is_selected
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "normal_glow",
 					texture_id = "normal_glow",
-					content_check_function = function(arg_5_0)
-						return not arg_5_0.button_hotspot.is_selected
+					content_check_function = function (self)
+						-- function 5
+						return not self.button_hotspot.is_selected
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "expanded",
 					texture_id = "expanded",
-					content_check_function = function(arg_6_0)
-						return arg_6_0.button_hotspot.is_selected
+					content_check_function = function (self)
+						-- function 6
+						return self.button_hotspot.is_selected
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "expanded_glow",
 					texture_id = "expanded_glow",
-					content_check_function = function(arg_7_0)
-						return arg_7_0.button_hotspot.is_selected
+					content_check_function = function (self)
+						-- function 7
+						return self.button_hotspot.is_selected
 					end
 				}
 			}
@@ -981,8 +992,8 @@ local var_0_14 = {
 		}
 	}
 }
-local var_0_15 = false
-local var_0_16 = {
+local flag = false
+local tbl_13 = {
 	smoke_effect = UIWidgets.create_simple_uv_texture("item_preview_smoke_01", {
 		{
 			0,
@@ -994,30 +1005,48 @@ local var_0_16 = {
 		}
 	}, "smoke_effect", nil, nil, Colors.get_color_table_with_alpha("gold", 255)),
 	disclaimer_divider = UIWidgets.create_simple_texture("tooltip_marker_gold", "disclaimer_divider"),
-	disclaimer_text = UIWidgets.create_simple_text("Headgear is sold separatly", "disclaimer_text", nil, nil, var_0_9),
-	expire_timer_text = UIWidgets.create_simple_text("", "disclaimer_text", nil, nil, var_0_9),
-	title_text = UIWidgets.create_simple_text("", "title_text", nil, nil, var_0_5),
-	sub_title_text = UIWidgets.create_simple_text("", "sub_title_text", nil, nil, var_0_6),
-	type_title_text = UIWidgets.create_simple_text("", "sub_title_text", nil, nil, var_0_7),
-	career_title_text = UIWidgets.create_simple_text("", "career_title_text", nil, nil, var_0_8),
-	unlock_button = UIWidgets.create_store_purchase_button("unlock_button", var_0_4.unlock_button.size, not IS_PS4 and Localize("menu_store_purchase_button_unlock") or "", 32, var_0_15),
-	viewport_button = UIWidgets.create_simple_hotspot("viewport")
+	disclaimer_text = UIWidgets.create_simple_text("Headgear is sold separatly", "disclaimer_text", nil, nil, tbl_9),
+	expire_timer_text = UIWidgets.create_simple_text("", "disclaimer_text", nil, nil, tbl_9),
+	title_text = UIWidgets.create_simple_text("", "title_text", nil, nil, tbl_5),
+	sub_title_text = UIWidgets.create_simple_text("", "sub_title_text", nil, nil, tbl_6),
+	type_title_text = UIWidgets.create_simple_text("", "sub_title_text", nil, nil, tbl_7),
+	career_title_text = UIWidgets.create_simple_text("", "career_title_text", nil, nil, tbl_8)
 }
-local var_0_17 = {
+local create_store_purchase_button = UIWidgets.create_store_purchase_button
+local str = "unlock_button"
+local size = tbl_4.unlock_button.size
+local var_0_20
+
+if not IS_PS4 then
+	var_0_20 = Localize("menu_store_purchase_button_unlock")
+
+	if not var_0_20 then
+		-- Nothing
+	end
+end
+
+var_0_20 = ""
+
+::label_0_0::
+
+tbl_13.unlock_button = create_store_purchase_button(str, size, var_0_20, 32, flag)
+tbl_13.viewport_button = UIWidgets.create_simple_hotspot("viewport")
+
+local tbl_14 = {
 	255,
 	0,
 	0,
 	0
 }
-local var_0_18 = "shadow_frame_02"
-local var_0_19 = UIFrameSettings[var_0_18].texture_sizes.corner
-local var_0_20 = {
-	-var_0_19[1],
-	-var_0_19[2]
+local str_2 = "shadow_frame_02"
+local corner = UIFrameSettings[str_2].texture_sizes.corner
+local tbl_15 = {
+	-corner[1],
+	-corner[2]
 }
-local var_0_21 = {
-	list = var_0_12("list_window", "list", var_0_1, var_0_2),
-	list_scrollbar = UIWidgets.create_chain_scrollbar("list_scrollbar", "list_window", var_0_4.list_scrollbar.size, "gold", nil, true),
+local tbl_16 = {
+	list = fn_2("list_window", "list", tbl, tbl_2),
+	list_scrollbar = UIWidgets.create_chain_scrollbar("list_scrollbar", "list_window", tbl_4.list_scrollbar.size, "gold", nil, true),
 	list_detail_top_left = UIWidgets.create_simple_uv_texture("divider_skull_left", {
 		{
 			1,
@@ -1067,23 +1096,26 @@ local var_0_21 = {
 		}
 	}, "list_detail_bottom_right")
 }
-local var_0_22 = {
-	list_background = UIWidgets.create_simple_rect("list_background", var_0_17),
-	list_background_frame = UIWidgets.create_frame("list_background", var_0_4.list_background.size, "shadow_frame_01", 0, var_0_17, var_0_20)
+local tbl_17 = {
+	list_background = UIWidgets.create_simple_rect("list_background", tbl_14),
+	list_background_frame = UIWidgets.create_frame("list_background", tbl_4.list_background.size, "shadow_frame_01", 0, tbl_14, tbl_15)
 }
-local var_0_23 = {
+local tbl_18 = {
 	on_enter = {
 		{
 			name = "delay",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			init = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+				-- function 8
 				return
 			end,
-			update = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+			update = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+				-- function 9
 				return
 			end,
-			on_complete = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			on_complete = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+				-- function 10
 				return
 			end
 		},
@@ -1091,15 +1123,18 @@ local var_0_23 = {
 			name = "fade_in",
 			start_progress = 0.3,
 			end_progress = 0.6,
-			init = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+			init = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+				-- function 11
 				arg_11_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
-				local var_12_0 = math.easeOutCubic(arg_12_3)
+			update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+				-- function 12
+				local easeOutCubic = math.easeOutCubic(arg_12_3)
 
-				arg_12_4.render_settings.alpha_multiplier = var_12_0
+				arg_12_4.render_settings.alpha_multiplier = easeOutCubic
 			end,
-			on_complete = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			on_complete = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+				-- function 13
 				return
 			end
 		}
@@ -1109,47 +1144,50 @@ local var_0_23 = {
 			name = "move",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			init = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+				-- function 14
 				return
 			end,
-			update = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
-				local var_15_0 = math.easeOutCubic(arg_15_3)
-				local var_15_1 = 255
-				local var_15_2 = 130
-				local var_15_3 = math.floor(var_15_1 * var_15_0)
-				local var_15_4 = math.floor(var_15_2 * var_15_0)
-				local var_15_5 = arg_15_1.background.size
+			update = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+				-- function 15
+				local easeOutCubic = math.easeOutCubic(arg_15_3)
+				local num = 255
+				local num_2 = 130
+				local floor = math.floor(num * easeOutCubic)
+				local floor_2 = math.floor(num_2 * easeOutCubic)
+				local size = arg_15_1.background.size
 
-				arg_15_0.background.size[1] = var_15_5[1] + var_15_3
+				arg_15_0.background.size[1] = size[1] + floor
 
-				local var_15_6 = arg_15_1.viewport.size
-				local var_15_7 = arg_15_1.viewport.position
+				local size_2 = arg_15_1.viewport.size
+				local position = arg_15_1.viewport.position
 
-				arg_15_0.viewport.size[1] = var_15_6[1] + var_15_3
-				arg_15_0.viewport.size[2] = var_15_6[2] + var_15_4
+				arg_15_0.viewport.size[1] = size_2[1] + floor
+				arg_15_0.viewport.size[2] = size_2[2] + floor_2
 
-				local var_15_8 = 255 - 255 * var_15_0
-				local var_15_9 = arg_15_2.title_text
+				local num_3 = 255 - 255 * easeOutCubic
+				local title_text = arg_15_2.title_text
 
-				var_15_9.style.text.text_color[1] = var_15_8
-				var_15_9.style.text_shadow.text_color[1] = var_15_8
+				title_text.style.text.text_color[1] = num_3
+				title_text.style.text_shadow.text_color[1] = num_3
 
-				local var_15_10 = arg_15_2.sub_title_text
+				local sub_title_text = arg_15_2.sub_title_text
 
-				var_15_10.style.text.text_color[1] = var_15_8
-				var_15_10.style.text_shadow.text_color[1] = var_15_8
+				sub_title_text.style.text.text_color[1] = num_3
+				sub_title_text.style.text_shadow.text_color[1] = num_3
 
-				local var_15_11 = arg_15_2.type_title_text
+				local type_title_text = arg_15_2.type_title_text
 
-				var_15_11.style.text.text_color[1] = var_15_8
-				var_15_11.style.text_shadow.text_color[1] = var_15_8
+				type_title_text.style.text.text_color[1] = num_3
+				type_title_text.style.text_shadow.text_color[1] = num_3
 
-				local var_15_12 = arg_15_2.career_title_text
+				local career_title_text = arg_15_2.career_title_text
 
-				var_15_12.style.text.text_color[1] = var_15_8
-				var_15_12.style.text_shadow.text_color[1] = var_15_8
+				career_title_text.style.text.text_color[1] = num_3
+				career_title_text.style.text_shadow.text_color[1] = num_3
 			end,
-			on_complete = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			on_complete = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+				-- function 16
 				return
 			end
 		}
@@ -1159,53 +1197,56 @@ local var_0_23 = {
 			name = "move",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+			init = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+				-- function 17
 				return
 			end,
-			update = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
-				local var_18_0 = math.easeOutCubic(arg_18_3)
-				local var_18_1 = 255
-				local var_18_2 = 130
-				local var_18_3 = math.floor(var_18_1 * var_18_0)
-				local var_18_4 = math.floor(var_18_2 * var_18_0)
-				local var_18_5 = arg_18_1.background.size
+			update = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+				-- function 18
+				local easeOutCubic = math.easeOutCubic(arg_18_3)
+				local num = 255
+				local num_2 = 130
+				local floor = math.floor(num * easeOutCubic)
+				local floor_2 = math.floor(num_2 * easeOutCubic)
+				local size = arg_18_1.background.size
 
-				arg_18_0.background.size[1] = var_18_5[1] + var_18_1 - var_18_3
+				arg_18_0.background.size[1] = size[1] + num - floor
 
-				local var_18_6 = arg_18_1.viewport.size
-				local var_18_7 = arg_18_1.viewport.position
+				local size_2 = arg_18_1.viewport.size
+				local position = arg_18_1.viewport.position
 
-				arg_18_0.viewport.size[1] = var_18_6[1] + var_18_1 - var_18_3
-				arg_18_0.viewport.size[2] = var_18_6[2] + var_18_2 - var_18_4
+				arg_18_0.viewport.size[1] = size_2[1] + num - floor
+				arg_18_0.viewport.size[2] = size_2[2] + num_2 - floor_2
 
-				local var_18_8 = 255 * var_18_0
-				local var_18_9 = arg_18_2.title_text
+				local num_3 = 255 * easeOutCubic
+				local title_text = arg_18_2.title_text
 
-				var_18_9.style.text.text_color[1] = var_18_8
-				var_18_9.style.text_shadow.text_color[1] = var_18_8
+				title_text.style.text.text_color[1] = num_3
+				title_text.style.text_shadow.text_color[1] = num_3
 
-				local var_18_10 = arg_18_2.sub_title_text
+				local sub_title_text = arg_18_2.sub_title_text
 
-				var_18_10.style.text.text_color[1] = var_18_8
-				var_18_10.style.text_shadow.text_color[1] = var_18_8
+				sub_title_text.style.text.text_color[1] = num_3
+				sub_title_text.style.text_shadow.text_color[1] = num_3
 
-				local var_18_11 = arg_18_2.type_title_text
+				local type_title_text = arg_18_2.type_title_text
 
-				var_18_11.style.text.text_color[1] = var_18_8
-				var_18_11.style.text_shadow.text_color[1] = var_18_8
+				type_title_text.style.text.text_color[1] = num_3
+				type_title_text.style.text_shadow.text_color[1] = num_3
 
-				local var_18_12 = arg_18_2.career_title_text
+				local career_title_text = arg_18_2.career_title_text
 
-				var_18_12.style.text.text_color[1] = var_18_8
-				var_18_12.style.text_shadow.text_color[1] = var_18_8
+				career_title_text.style.text.text_color[1] = num_3
+				career_title_text.style.text_shadow.text_color[1] = num_3
 			end,
-			on_complete = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			on_complete = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+				-- function 19
 				return
 			end
 		}
 	}
 }
-local var_0_24 = {
+local tbl_19 = {
 	default = {
 		{
 			input_action = "confirm",
@@ -1228,8 +1269,13 @@ local var_0_24 = {
 			input_action = "special_1",
 			priority = 4,
 			description_text = "input_description_toggle_hero_details",
-			content_check_function = function()
-				return IS_PS4 or IS_XB1
+			content_check_function = function ()
+				-- function 20
+				local IS_PS4 = IS_PS4
+
+				IS_PS4 = IS_PS4 or IS_XB1
+
+				return IS_PS4
 			end
 		},
 		{
@@ -1292,72 +1338,84 @@ local var_0_24 = {
 			priority = 6,
 			description_text = "input_description_back"
 		}
+	}
+}
+local tbl_20 = {}
+local tbl_21 = {
+	input_action = "confirm",
+	priority = 2
+}
+local flag_2
+
+flag_2 = not IS_WINDOWS and "interaction_action_unlock" and "dlc1_4_input_description_storepage"
+tbl_21.description_text = flag_2
+tbl_20[1] = tbl_21
+tbl_20[2] = {
+	input_action = "right_stick",
+	priority = 5,
+	description_text = "input_description_scroll_details",
+	ignore_keybinding = true
+}
+tbl_20[3] = {
+	input_action = "back",
+	priority = 6,
+	description_text = "input_description_close"
+}
+tbl_19.dlc_preview_purchase = tbl_20
+
+local tbl_22 = {
+	{
+		input_action = "right_stick",
+		priority = 5,
+		description_text = "input_description_scroll_details",
+		ignore_keybinding = true
 	},
-	dlc_preview_purchase = {
-		{
-			input_action = "confirm",
-			priority = 2,
-			description_text = IS_WINDOWS and "interaction_action_unlock" or "dlc1_4_input_description_storepage"
-		},
-		{
-			input_action = "right_stick",
-			priority = 5,
-			description_text = "input_description_scroll_details",
-			ignore_keybinding = true
-		},
-		{
-			input_action = "back",
-			priority = 6,
-			description_text = "input_description_close"
-		}
-	},
-	dlc_preview_owned = {
-		{
-			input_action = "right_stick",
-			priority = 5,
-			description_text = "input_description_scroll_details",
-			ignore_keybinding = true
-		},
-		{
-			input_action = "back",
-			priority = 6,
-			description_text = "input_description_back"
-		}
-	},
-	dlc_bundle_purchase = {
-		{
-			input_action = "confirm",
-			priority = 2,
-			description_text = IS_WINDOWS and "interaction_action_unlock" or "dlc1_4_input_description_storepage"
-		},
-		{
-			input_action = "special_1",
-			priority = 4,
-			description_text = "input_description_view_content"
-		},
-		{
-			input_action = "right_stick",
-			priority = 5,
-			description_text = "input_description_scroll_details",
-			ignore_keybinding = true
-		},
-		{
-			input_action = "back",
-			priority = 6,
-			description_text = "input_description_back"
-		}
+	{
+		input_action = "back",
+		priority = 6,
+		description_text = "input_description_back"
 	}
 }
 
+tbl_19.dlc_preview_owned = tbl_22
+
+local tbl_23 = {}
+local tbl_24 = {
+	input_action = "confirm",
+	priority = 2
+}
+local flag_3
+
+flag_3 = not IS_WINDOWS and "interaction_action_unlock" and "dlc1_4_input_description_storepage"
+tbl_24.description_text = flag_3
+tbl_23[1] = tbl_24
+tbl_23[2] = {
+	input_action = "special_1",
+	priority = 4,
+	description_text = "input_description_view_content"
+}
+tbl_23[3] = {
+	input_action = "right_stick",
+	priority = 5,
+	description_text = "input_description_scroll_details",
+	ignore_keybinding = true
+}
+tbl_23[4] = {
+	input_action = "back",
+	priority = 6,
+	description_text = "input_description_back"
+}
+tbl_19.dlc_bundle_purchase = tbl_23
+
 return {
-	generic_input_actions = var_0_24,
-	create_dlc_entry_definition = var_0_11,
-	item_widgets = var_0_14,
-	top_widgets = var_0_16,
-	bottom_widgets = var_0_13,
-	dlc_top_widgets = var_0_21,
-	dlc_bottom_widgets = var_0_22,
-	scenegraph_definition = var_0_4,
-	animation_definitions = var_0_23,
-	loading_widgets = var_0_10
+	generic_input_actions = tbl_19,
+	create_dlc_entry_definition = fn,
+	item_widgets = tbl_12,
+	top_widgets = tbl_13,
+	bottom_widgets = tbl_11,
+	dlc_top_widgets = tbl_16,
+	dlc_bottom_widgets = tbl_17,
+	scenegraph_definition = tbl_4,
+	animation_definitions = tbl_18,
+	loading_widgets = tbl_10
 }

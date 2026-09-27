@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/dlcs/anvil/anvil_pickup_settings.lua
 
-local var_0_0 = DLCSettings.anvil
-local var_0_1 = {
+local anvil = DLCSettings.anvil
+local tbl = {
 	only_once = true,
 	refill_amount = 1,
 	type = "ammo",
@@ -13,31 +13,34 @@ local var_0_1 = {
 	local_pickup_sound = true,
 	hud_description = "interaction_ammunition_axe",
 	ammo_kind = "thrown",
-	can_interact_func = function(arg_1_0, arg_1_1, arg_1_2)
-		local var_1_0 = ScriptUnit.has_extension(arg_1_0, "inventory_system")
+	can_interact_func = function (arg_1_0, arg_1_1, arg_1_2)
+		-- function 1
+		local has_extension = ScriptUnit.has_extension(arg_1_0, "inventory_system")
 
-		if not var_1_0 then
+		if not has_extension then
 			return false
 		end
 
-		return var_1_0:has_ammo_consuming_weapon_equipped("throwing_axe")
+		return has_extension:has_ammo_consuming_weapon_equipped("throwing_axe")
 	end,
-	outline_available_func = function(arg_2_0)
-		local var_2_0 = ScriptUnit.has_extension(arg_2_0, "inventory_system")
+	outline_available_func = function (arg_2_0)
+		-- function 2
+		local has_extension = ScriptUnit.has_extension(arg_2_0, "inventory_system")
 
-		if not var_2_0 then
+		if not has_extension then
 			return false
 		end
 
-		return var_2_0:has_ammo_consuming_weapon_equipped("throwing_axe")
+		return has_extension:has_ammo_consuming_weapon_equipped("throwing_axe")
 	end,
-	on_pick_up_func = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
-		local var_3_0 = Network.peer_id()
+	on_pick_up_func = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+		-- function 3
+		local peer_id = Network.peer_id()
 
-		Managers.state.entity:system("pickup_system"):delete_limited_owned_pickup_unit(var_3_0, arg_3_3)
+		Managers.state.entity:system("pickup_system"):delete_limited_owned_pickup_unit(peer_id, arg_3_3)
 	end
 }
-local var_0_2 = {
+local tbl_2 = {
 	ammo_throwing_axe_01_t1 = {
 		unit_template_name = "limited_owned_pickup_projectile_unit",
 		unit_name = "units/weapons/player/wpn_dw_thrown_axe_01_t1/pup_dw_thrown_axe_01_t1",
@@ -70,16 +73,16 @@ local var_0_2 = {
 	}
 }
 
-var_0_0.pickups = {}
+anvil.pickups = {}
 
-for iter_0_0, iter_0_1 in pairs(var_0_2) do
-	if not var_0_0.pickups[iter_0_1.category] then
-		var_0_0.pickups[iter_0_1.category] = {}
+for k, v in pairs(tbl_2) do
+	if not anvil.pickups[v.category] then
+		anvil.pickups[v.category] = {}
 	end
 
-	local var_0_3 = iter_0_1.category
+	local category = v.category
 
-	var_0_0.pickups[var_0_3][iter_0_0] = table.clone(var_0_1)
-	var_0_0.pickups[var_0_3][iter_0_0].unit_name = iter_0_1.unit_name
-	var_0_0.pickups[var_0_3][iter_0_0].unit_template_name = iter_0_1.unit_template_name
+	anvil.pickups[category][k] = table.clone(tbl)
+	anvil.pickups[category][k].unit_name = v.unit_name
+	anvil.pickups[category][k].unit_template_name = v.unit_template_name
 end

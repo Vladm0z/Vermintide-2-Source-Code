@@ -1,10 +1,10 @@
 -- chunkname: @scripts/ui/views/disconnect_indicator_view_definitions.lua
 
-local var_0_0 = 64
-local var_0_1 = 8
-local var_0_2 = 200
-local var_0_3 = 800
-local var_0_4 = {
+local num = 64
+local num_2 = 8
+local num_3 = 200
+local num_4 = 800
+local tbl = {
 	screen = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
@@ -24,12 +24,12 @@ local var_0_4 = {
 		parent = "screen",
 		horizontal_alignment = "center",
 		size = {
-			var_0_0,
-			var_0_0
+			num,
+			num
 		},
 		position = {
 			0,
-			var_0_2,
+			num_3,
 			1
 		}
 	},
@@ -38,11 +38,11 @@ local var_0_4 = {
 		parent = "indicator",
 		horizontal_alignment = "left",
 		size = {
-			var_0_3,
+			num_4,
 			100
 		},
 		position = {
-			var_0_0 + var_0_1,
+			num + num_2,
 			0,
 			1
 		}
@@ -50,10 +50,11 @@ local var_0_4 = {
 }
 
 if not IS_WINDOWS then
-	var_0_4.screen.scale = "hud_fit"
+	tbl.screen.scale = "hud_fit"
 end
 
-local function var_0_5(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	-- function 1
 	return {
 		element = {
 			passes = {
@@ -97,8 +98,8 @@ local function var_0_5(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 end
 
 return {
-	scenegraph_definition = var_0_4,
-	icon_text = var_0_5("icon_connection_lost", "", "indicator", "text", nil),
-	padding = var_0_1,
-	max_text_width = var_0_3
+	scenegraph_definition = tbl,
+	icon_text = fn("icon_connection_lost", "", "indicator", "text", nil),
+	padding = num_2,
+	max_text_width = num_4
 }

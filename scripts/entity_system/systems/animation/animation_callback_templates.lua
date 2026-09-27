@@ -1,102 +1,114 @@
 -- chunkname: @scripts/entity_system/systems/animation/animation_callback_templates.lua
 
-local var_0_0 = BLACKBOARDS
-local var_0_1 = require("scripts/utils/stagger_types")
+local BLACKBOARDS = BLACKBOARDS
+local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
 
 AnimationCallbackTemplates = {}
 AnimationCallbackTemplates.client = {}
 
-function AnimationCallbackTemplates.client.anim_cb_enable_second_hit_ragdoll(arg_1_0, arg_1_1)
+AnimationCallbackTemplates.client.anim_cb_enable_second_hit_ragdoll = function (arg_1_0, arg_1_1)
+	-- function 1
 	ScriptUnit.extension(arg_1_0, "death_system"):enable_second_hit_ragdoll()
 end
 
-function AnimationCallbackTemplates.client.anim_cb_push_finished(arg_2_0, arg_2_1)
-	local var_2_0 = ScriptUnit.has_extension(arg_2_0, "status_system")
+AnimationCallbackTemplates.client.anim_cb_push_finished = function (arg_2_0, arg_2_1)
+	-- function 2
+	local has_extension = ScriptUnit.has_extension(arg_2_0, "status_system")
 
-	if var_2_0 then
-		var_2_0:set_stagger_animation_done(true)
+	if not has_extension then
+		has_extension:set_stagger_animation_done(true)
 	end
 end
 
 AnimationCallbackTemplates.server = {}
 
-function AnimationCallbackTemplates.server.anim_cb_spawn_finished(arg_3_0, arg_3_1)
-	var_0_0[arg_3_0].spawning_finished = true
+AnimationCallbackTemplates.server.anim_cb_spawn_finished = function (arg_3_0, arg_3_1)
+	-- function 3
+	BLACKBOARDS[arg_3_0].spawning_finished = true
 end
 
-function AnimationCallbackTemplates.server.anim_cb_push_finished(arg_4_0, arg_4_1)
-	var_0_0[arg_4_0].stagger_anim_done = true
+AnimationCallbackTemplates.server.anim_cb_push_finished = function (arg_4_0, arg_4_1)
+	-- function 4
+	BLACKBOARDS[arg_4_0].stagger_anim_done = true
 end
 
-function AnimationCallbackTemplates.server.anim_cb_stunned_finished(arg_5_0, arg_5_1)
-	var_0_0[arg_5_0].blocked = nil
+AnimationCallbackTemplates.server.anim_cb_stunned_finished = function (arg_5_0, arg_5_1)
+	-- function 5
+	BLACKBOARDS[arg_5_0].blocked = nil
 end
 
-function AnimationCallbackTemplates.server.anim_cb_stagger_light_finished(arg_6_0, arg_6_1)
+AnimationCallbackTemplates.server.anim_cb_stagger_light_finished = function (arg_6_0, arg_6_1)
+	-- function 6
 	if not ALIVE[arg_6_0] then
 		return
 	end
 
-	local var_6_0 = Unit.get_data(arg_6_0, "breed")
-	local var_6_1 = var_0_0[arg_6_0]
+	local get_data = Unit.get_data(arg_6_0, "breed")
+	local var_6_1 = BLACKBOARDS[arg_6_0]
 
-	if var_6_0.handle_stagger_anim_cb then
-		var_6_0.handle_stagger_anim_cb(arg_6_0, var_6_1, "anim_cb_stagger_light_finished")
+	if not get_data.handle_stagger_anim_cb then
+		get_data.handle_stagger_anim_cb(arg_6_0, var_6_1, "anim_cb_stagger_light_finished")
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_stagger_medium_finished(arg_7_0, arg_7_1)
+AnimationCallbackTemplates.server.anim_cb_stagger_medium_finished = function (arg_7_0, arg_7_1)
+	-- function 7
 	if not ALIVE[arg_7_0] then
 		return
 	end
 
-	local var_7_0 = Unit.get_data(arg_7_0, "breed")
-	local var_7_1 = var_0_0[arg_7_0]
+	local get_data = Unit.get_data(arg_7_0, "breed")
+	local var_7_1 = BLACKBOARDS[arg_7_0]
 
-	if var_7_0.handle_stagger_anim_cb then
-		var_7_0.handle_stagger_anim_cb(arg_7_0, var_7_1, "anim_cb_stagger_medium_finished")
+	if not get_data.handle_stagger_anim_cb then
+		get_data.handle_stagger_anim_cb(arg_7_0, var_7_1, "anim_cb_stagger_medium_finished")
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_stagger_heavy_finished(arg_8_0, arg_8_1)
+AnimationCallbackTemplates.server.anim_cb_stagger_heavy_finished = function (arg_8_0, arg_8_1)
+	-- function 8
 	if not ALIVE[arg_8_0] then
 		return
 	end
 
-	local var_8_0 = Unit.get_data(arg_8_0, "breed")
-	local var_8_1 = var_0_0[arg_8_0]
+	local get_data = Unit.get_data(arg_8_0, "breed")
+	local var_8_1 = BLACKBOARDS[arg_8_0]
 
-	if var_8_0.handle_stagger_anim_cb then
-		var_8_0.handle_stagger_anim_cb(arg_8_0, var_8_1, "anim_cb_stagger_heavy_finished")
+	if not get_data.handle_stagger_anim_cb then
+		get_data.handle_stagger_anim_cb(arg_8_0, var_8_1, "anim_cb_stagger_heavy_finished")
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_tp_end_enter(arg_9_0, arg_9_1)
-	local var_9_0 = var_0_0[arg_9_0]
+AnimationCallbackTemplates.server.anim_cb_tp_end_enter = function (arg_9_0, arg_9_1)
+	-- function 9
+	local var_9_0 = BLACKBOARDS[arg_9_0]
 
-	if var_9_0.active_node and var_9_0.active_node.anim_cb_tp_end_enter then
+	if not var_9_0.active_node and not var_9_0.active_node.anim_cb_tp_end_enter then
 		var_9_0.active_node:anim_cb_tp_end_enter(arg_9_0, var_9_0)
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_hesitate_finished(arg_10_0, arg_10_1)
-	local var_10_0 = var_0_0[arg_10_0]
+AnimationCallbackTemplates.server.anim_cb_hesitate_finished = function (arg_10_0, arg_10_1)
+	-- function 10
+	local var_10_0 = BLACKBOARDS[arg_10_0]
 
-	if var_10_0.active_node and var_10_0.active_node.anim_cb_hesitate_finished then
+	if not var_10_0.active_node and not var_10_0.active_node.anim_cb_hesitate_finished then
 		var_10_0.active_node:anim_cb_hesitate_finished(arg_10_0, var_10_0)
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_emote_finished(arg_11_0, arg_11_1)
-	local var_11_0 = var_0_0[arg_11_0]
+AnimationCallbackTemplates.server.anim_cb_emote_finished = function (arg_11_0, arg_11_1)
+	-- function 11
+	local var_11_0 = BLACKBOARDS[arg_11_0]
 
-	if var_11_0.active_node and var_11_0.active_node.anim_cb_emote_finished then
+	if not var_11_0.active_node and not var_11_0.active_node.anim_cb_emote_finished then
 		var_11_0.active_node:anim_cb_emote_finished(arg_11_0, var_11_0)
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_direct_damage(arg_12_0, arg_12_1)
-	local var_12_0 = var_0_0[arg_12_0]
+AnimationCallbackTemplates.server.anim_cb_direct_damage = function (arg_12_0, arg_12_1)
+	-- function 12
+	local var_12_0 = BLACKBOARDS[arg_12_0]
 
 	if not Unit.alive(var_12_0.target_unit) then
 		return
@@ -106,51 +118,66 @@ function AnimationCallbackTemplates.server.anim_cb_direct_damage(arg_12_0, arg_1
 		return
 	end
 
-	local var_12_1 = var_12_0.active_node
+	local active_node = var_12_0.active_node
 
-	if var_12_1 and var_12_1.direct_damage then
-		var_12_1.direct_damage(arg_12_0, var_12_0)
+	if not active_node and not active_node.direct_damage then
+		active_node.direct_damage(arg_12_0, var_12_0)
 	end
 
 	var_12_0.attacks_done = var_12_0.attacks_done + 1
 end
 
-local var_0_2 = 0
-local var_0_3 = 0.6
-local var_0_4 = 0.3
+local num = 0
+local num_2 = 0.6
+local num_3 = 0.3
 
-function AnimationCallbackTemplates.server.anim_cb_damage(arg_13_0, arg_13_1)
-	local var_13_0 = var_0_0[arg_13_0]
-	local var_13_1 = var_13_0.smash_door and var_13_0.smash_door.target_unit or var_13_0.attacking_target or var_13_0.drag_target_unit
-	local var_13_2 = var_13_0.action
+AnimationCallbackTemplates.server.anim_cb_damage = function (arg_13_0, arg_13_1)
+	-- function 13
+	local var_13_0 = BLACKBOARDS[arg_13_0]
+	local target_unit
 
-	if not var_13_2 then
+	if not var_13_0.smash_door then
+		target_unit = var_13_0.smash_door.target_unit
+
+		if not target_unit then
+			-- Nothing
+		end
+	end
+
+	target_unit = var_13_0.attacking_target
+	target_unit = target_unit or var_13_0.drag_target_unit
+
+	::label_13_0::
+
+	local action = var_13_0.action
+
+	if not action then
 		return
 	end
 
-	if not var_13_2.damage then
+	if not action.damage then
 		return
 	end
 
-	local var_13_3 = var_13_0.combo_attack_data
+	local combo_attack_data = var_13_0.combo_attack_data
 
-	if var_13_3 and var_13_2.combo_attacks and var_13_2.combo_attacks[var_13_3.current_attack_name].no_abort_attack then
+	if not combo_attack_data and not action.combo_attacks and not action.combo_attacks[combo_attack_data.current_attack_name].no_abort_attack then
 		var_13_0.attack_aborted = false
 	end
 
-	if var_13_0.active_node and var_13_0.active_node.attack_cooldown then
+	if not var_13_0.active_node and not var_13_0.active_node.attack_cooldown then
 		var_13_0.active_node:attack_cooldown(arg_13_0, var_13_0)
 	end
 
-	if var_13_0.attack_aborted then
+	if not var_13_0.attack_aborted then
 		return
 	end
 
-	if var_13_0.buff_extension then
+	if not var_13_0.buff_extension then
 		var_13_0.buff_extension:trigger_procs("minion_attack_used")
 	end
 
-	if var_13_0.active_node and var_13_0.active_node.anim_cb_damage then
+	if not var_13_0.active_node and not var_13_0.active_node.anim_cb_damage then
 		var_13_0.active_node:anim_cb_damage(arg_13_0, var_13_0)
 
 		return
@@ -158,752 +185,845 @@ function AnimationCallbackTemplates.server.anim_cb_damage(arg_13_0, arg_13_1)
 
 	var_13_0.anim_cb_damage = true
 
-	if not Unit.alive(var_13_1) or not Unit.alive(arg_13_0) then
+	if not (not Unit.alive(target_unit) and Unit.alive(arg_13_0)) then
 		return
 	end
 
-	if var_13_0.has_line_of_sight == false or not DamageUtils.check_distance(var_13_2, var_13_0, arg_13_0, var_13_1) or not DamageUtils.check_infront(arg_13_0, var_13_1) then
+	if not ((var_13_0.has_line_of_sight == false or not DamageUtils.check_distance(action, var_13_0, arg_13_0, target_unit)) and DamageUtils.check_infront(arg_13_0, target_unit)) then
 		return
 	end
 
-	local var_13_4 = var_13_2.attack_directions and var_13_2.attack_directions[var_13_0.attack_anim]
+	local attack_directions = action.attack_directions
 
-	if not var_13_2.unblockable and DamageUtils.check_block(arg_13_0, var_13_1, var_13_2.fatigue_type, var_13_4) then
-		if var_13_0.active_node and var_13_0.active_node.attack_blocked then
-			var_13_0.active_node:attack_blocked(arg_13_0, var_13_0, var_13_4)
+	attack_directions = not attack_directions and action.attack_directions[var_13_0.attack_anim]
+
+	if action.unblockable or not DamageUtils.check_block(arg_13_0, target_unit, action.fatigue_type, attack_directions) then
+		if not var_13_0.active_node and not var_13_0.active_node.attack_blocked then
+			var_13_0.active_node:attack_blocked(arg_13_0, var_13_0, attack_directions)
 		end
 
-		local var_13_5 = Managers.time:time("game")
-		local var_13_6 = var_0_0[var_13_1]
+		local time = Managers.time:time("game")
+		local var_13_6 = BLACKBOARDS[target_unit]
 
 		if not var_13_6.is_player then
-			local var_13_7 = var_0_0[arg_13_0]
-			local var_13_8 = POSITION_LOOKUP[arg_13_0] or Unit.world_position(arg_13_0, 0)
-			local var_13_9 = POSITION_LOOKUP[var_13_1] or Unit.local_position(var_13_1, 0)
-			local var_13_10 = Vector3.normalize(var_13_9 - var_13_8)
-			local var_13_11 = AiUtils.calculate_ai_stagger_strength(var_13_7, var_13_6, var_13_5, true, var_0_1.medium, 0.25)
+			local var_13_7 = BLACKBOARDS[arg_13_0]
+			local var_13_8 = POSITION_LOOKUP[arg_13_0]
 
-			if var_13_11 == var_0_1.none then
-				var_13_11 = var_0_1.weak
-			elseif var_13_11 == var_0_1.heavy then
-				var_13_11 = var_0_1.medium
+			var_13_8 = var_13_8 or Unit.world_position(arg_13_0, 0)
+
+			local var_13_9 = POSITION_LOOKUP[target_unit]
+
+			var_13_9 = var_13_9 or Unit.local_position(target_unit, 0)
+
+			local normalize = Vector3.normalize(var_13_9 - var_13_8)
+			local calculate_ai_stagger_strength = AiUtils.calculate_ai_stagger_strength(var_13_7, var_13_6, time, true, scripts_utils_stagger_types.medium, 0.25)
+
+			if calculate_ai_stagger_strength == scripts_utils_stagger_types.none then
+				calculate_ai_stagger_strength = scripts_utils_stagger_types.weak
+			elseif calculate_ai_stagger_strength == scripts_utils_stagger_types.heavy then
+				calculate_ai_stagger_strength = scripts_utils_stagger_types.medium
 			end
 
-			local var_13_12, var_13_13 = AiUtils.calculate_ai_stagger_impact(var_13_11)
+			local calculate_ai_stagger_impact, var_13_13 = AiUtils.calculate_ai_stagger_impact(calculate_ai_stagger_strength)
 
-			AiUtils.stagger_target(arg_13_0, var_13_1, var_13_13, var_13_12, var_13_10, var_13_5, nil, nil, nil, true)
+			AiUtils.stagger_target(arg_13_0, target_unit, var_13_13, calculate_ai_stagger_impact, normalize, time, nil, nil, nil, true)
 		end
 
 		return
 	end
 
-	AiUtils.damage_target(var_13_1, arg_13_0, var_13_2, var_13_2.damage)
+	AiUtils.damage_target(target_unit, arg_13_0, action, action.damage)
 
-	if var_13_0.active_node and var_13_0.active_node.attack_success then
+	if not var_13_0.active_node and not var_13_0.active_node.attack_success then
 		var_13_0.active_node:attack_success(arg_13_0, var_13_0)
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_special_damage(arg_14_0, arg_14_1)
-	local var_14_0 = var_0_0[arg_14_0]
-	local var_14_1 = var_14_0.action
+AnimationCallbackTemplates.server.anim_cb_special_damage = function (arg_14_0, arg_14_1)
+	-- function 14
+	local var_14_0 = BLACKBOARDS[arg_14_0]
+	local action = var_14_0.action
 
-	if not var_14_1 or not var_14_1.damage then
+	if not (not action and action.damage) then
 		return
 	end
 
-	if var_14_0.attack_aborted then
+	if not var_14_0.attack_aborted then
 		return
 	end
 
-	if var_14_0.buff_extension then
+	if not var_14_0.buff_extension then
 		var_14_0.buff_extension:trigger_procs("minion_attack_used")
 	end
 
-	if var_14_0.active_node and var_14_0.active_node.anim_cb_damage then
+	if not var_14_0.active_node and not var_14_0.active_node.anim_cb_damage then
 		var_14_0.active_node:anim_cb_damage(arg_14_0, var_14_0)
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_reset_attack_animation_locked(arg_15_0, arg_15_1)
+AnimationCallbackTemplates.server.anim_cb_reset_attack_animation_locked = function (arg_15_0, arg_15_1)
+	-- function 15
 	ScriptUnit.extension(arg_15_0, "ai_system"):blackboard().reset_attack_animation_locked = true
 end
 
-function AnimationCallbackTemplates.server.anim_cb_unlink_unit(arg_16_0, arg_16_1)
+AnimationCallbackTemplates.server.anim_cb_unlink_unit = function (arg_16_0, arg_16_1)
+	-- function 16
 	ScriptUnit.extension(arg_16_0, "ai_system"):blackboard().unlink_unit = true
 end
 
-function AnimationCallbackTemplates.server.anim_cb_mounted_knocked_off(arg_17_0, arg_17_1)
-	local var_17_0 = ScriptUnit.extension(arg_17_0, "ai_system"):blackboard()
+AnimationCallbackTemplates.server.anim_cb_mounted_knocked_off = function (arg_17_0, arg_17_1)
+	-- function 17
+	local blackboard = ScriptUnit.extension(arg_17_0, "ai_system"):blackboard()
 
-	var_17_0.knocked_off_mount = true
+	blackboard.knocked_off_mount = true
 
-	local var_17_1 = var_17_0.locomotion_extension
+	local locomotion_extension = blackboard.locomotion_extension
 
 	LocomotionUtils.set_animation_driven_movement(arg_17_0, false, false, true)
-	var_17_1:use_lerp_rotation(true)
-	var_17_1:set_movement_type("snap_to_navmesh")
+	locomotion_extension:use_lerp_rotation(true)
+	locomotion_extension:set_movement_type("snap_to_navmesh")
 end
 
-function AnimationCallbackTemplates.server.anim_cb_mounting_finished(arg_18_0, arg_18_1)
+AnimationCallbackTemplates.server.anim_cb_mounting_finished = function (arg_18_0, arg_18_1)
+	-- function 18
 	ScriptUnit.extension(arg_18_0, "ai_system"):blackboard().mounting_finished = true
 end
 
-function AnimationCallbackTemplates.server.anim_cb_frenzy_damage(arg_19_0, arg_19_1)
-	local var_19_0 = var_0_0[arg_19_0]
-	local var_19_1 = var_19_0.action
+AnimationCallbackTemplates.server.anim_cb_frenzy_damage = function (arg_19_0, arg_19_1)
+	-- function 19
+	local var_19_0 = BLACKBOARDS[arg_19_0]
+	local action = var_19_0.action
 
-	if not var_19_1 or not var_19_1.damage then
+	if not (not action and action.damage) then
 		return
 	end
 
-	if var_19_0.attack_aborted then
+	if not var_19_0.attack_aborted then
 		return
 	end
 
-	if var_19_0.active_node and var_19_0.active_node.attack_cooldown then
+	if not var_19_0.active_node and not var_19_0.active_node.attack_cooldown then
 		var_19_0.active_node:attack_cooldown(arg_19_0, var_19_0)
 	end
 
-	local var_19_2 = var_19_0.active_node
+	local active_node = var_19_0.active_node
 
-	if var_19_2 and var_19_2.anim_cb_frenzy_damage then
-		var_19_2:anim_cb_frenzy_damage(arg_19_0, var_19_0)
+	if not active_node and not active_node.anim_cb_frenzy_damage then
+		active_node:anim_cb_frenzy_damage(arg_19_0, var_19_0)
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_attack_vce(arg_20_0, arg_20_1)
-	local var_20_0 = var_0_0[arg_20_0]
-	local var_20_1 = var_20_0.action
+AnimationCallbackTemplates.server.anim_cb_attack_vce = function (arg_20_0, arg_20_1)
+	-- function 20
+	local var_20_0 = BLACKBOARDS[arg_20_0]
+	local action = var_20_0.action
 
-	if var_20_0.attack_aborted then
+	if not var_20_0.attack_aborted then
 		return
 	end
 
-	local var_20_2 = var_20_0.active_node
+	local active_node = var_20_0.active_node
 
-	if var_20_2 and var_20_2.anim_cb_attack_vce then
-		var_20_2:anim_cb_attack_vce(arg_20_0, var_20_0)
+	if not active_node and not active_node.anim_cb_attack_vce then
+		active_node:anim_cb_attack_vce(arg_20_0, var_20_0)
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_attack_vce_long(arg_21_0, arg_21_1)
-	local var_21_0 = var_0_0[arg_21_0]
-	local var_21_1 = var_21_0.action
+AnimationCallbackTemplates.server.anim_cb_attack_vce_long = function (arg_21_0, arg_21_1)
+	-- function 21
+	local var_21_0 = BLACKBOARDS[arg_21_0]
+	local action = var_21_0.action
 
-	if var_21_0.attack_aborted then
+	if not var_21_0.attack_aborted then
 		return
 	end
 
-	local var_21_2 = var_21_0.active_node
+	local active_node = var_21_0.active_node
 
-	if var_21_2 and var_21_2.anim_cb_attack_vce_long then
-		var_21_2:anim_cb_attack_vce_long(arg_21_0, var_21_0)
+	if not active_node and not active_node.anim_cb_attack_vce_long then
+		active_node:anim_cb_attack_vce_long(arg_21_0, var_21_0)
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_shout_vo(arg_22_0, arg_22_1)
-	local var_22_0 = var_0_0[arg_22_0]
-	local var_22_1 = var_22_0.active_node
+AnimationCallbackTemplates.server.anim_cb_shout_vo = function (arg_22_0, arg_22_1)
+	-- function 22
+	local var_22_0 = BLACKBOARDS[arg_22_0]
+	local active_node = var_22_0.active_node
 
-	if var_22_1 and var_22_1.anim_cb_shout_vo then
-		var_22_1:anim_cb_shout_vo(arg_22_0, var_22_0)
+	if not active_node and not active_node.anim_cb_shout_vo then
+		active_node:anim_cb_shout_vo(arg_22_0, var_22_0)
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_combo_damage(arg_23_0, arg_23_1)
-	local var_23_0 = var_0_0[arg_23_0]
-	local var_23_1 = var_23_0.action
+AnimationCallbackTemplates.server.anim_cb_combo_damage = function (arg_23_0, arg_23_1)
+	-- function 23
+	local var_23_0 = BLACKBOARDS[arg_23_0]
+	local action = var_23_0.action
 
-	if not var_23_1 or not var_23_1.damage then
+	if not (not action and action.damage) then
 		return
 	end
 
-	if var_23_0.attack_aborted then
+	if not var_23_0.attack_aborted then
 		return
 	end
 
-	local var_23_2 = var_23_0.active_node
+	local active_node = var_23_0.active_node
 
-	if var_23_2 and var_23_2.anim_cb_combo_damage then
-		var_23_2.anim_cb_combo_damage(arg_23_0, var_23_0)
+	if not active_node and not active_node.anim_cb_combo_damage then
+		active_node.anim_cb_combo_damage(arg_23_0, var_23_0)
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_rotation_start(arg_24_0, arg_24_1)
-	var_0_0[arg_24_0].anim_cb_rotation_start = true
+AnimationCallbackTemplates.server.anim_cb_rotation_start = function (arg_24_0, arg_24_1)
+	-- function 24
+	BLACKBOARDS[arg_24_0].anim_cb_rotation_start = true
 end
 
-function AnimationCallbackTemplates.server.anim_cb_rotation_stop(arg_25_0, arg_25_1)
-	var_0_0[arg_25_0].anim_cb_rotation_stop = true
+AnimationCallbackTemplates.server.anim_cb_rotation_stop = function (arg_25_0, arg_25_1)
+	-- function 25
+	BLACKBOARDS[arg_25_0].anim_cb_rotation_stop = true
 end
 
-function AnimationCallbackTemplates.server.anim_cb_picked_up_standard(arg_26_0, arg_26_1)
-	var_0_0[arg_26_0].anim_cb_picked_up_standard = true
+AnimationCallbackTemplates.server.anim_cb_picked_up_standard = function (arg_26_0, arg_26_1)
+	-- function 26
+	BLACKBOARDS[arg_26_0].anim_cb_picked_up_standard = true
 end
 
-function AnimationCallbackTemplates.server.anim_cb_running_attack_start(arg_27_0, arg_27_1)
-	local var_27_0 = var_0_0[arg_27_0]
+AnimationCallbackTemplates.server.anim_cb_running_attack_start = function (arg_27_0, arg_27_1)
+	-- function 27
+	local var_27_0 = BLACKBOARDS[arg_27_0]
 
-	if var_27_0.active_node and var_27_0.active_node.anim_cb_running_attack_start then
+	if not var_27_0.active_node and not var_27_0.active_node.anim_cb_running_attack_start then
 		var_27_0.active_node:anim_cb_running_attack_start(arg_27_0, var_27_0)
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_running_attack_end(arg_28_0, arg_28_1)
-	local var_28_0 = var_0_0[arg_28_0]
+AnimationCallbackTemplates.server.anim_cb_running_attack_end = function (arg_28_0, arg_28_1)
+	-- function 28
+	local var_28_0 = BLACKBOARDS[arg_28_0]
 
-	if var_28_0.active_node and var_28_0.active_node.anim_cb_running_attack_end then
+	if not var_28_0.active_node and not var_28_0.active_node.anim_cb_running_attack_end then
 		var_28_0.active_node:anim_cb_running_attack_end(arg_28_0, var_28_0)
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_death_finished(arg_29_0, arg_29_1)
-	var_0_0[arg_29_0].anim_cb_death_finished = true
+AnimationCallbackTemplates.server.anim_cb_death_finished = function (arg_29_0, arg_29_1)
+	-- function 29
+	BLACKBOARDS[arg_29_0].anim_cb_death_finished = true
 end
 
-function AnimationCallbackTemplates.server.anim_cb_move(arg_30_0, arg_30_1)
-	local var_30_0 = var_0_0[arg_30_0]
-	local var_30_1 = var_30_0.active_node
+AnimationCallbackTemplates.server.anim_cb_move = function (arg_30_0, arg_30_1)
+	-- function 30
+	local var_30_0 = BLACKBOARDS[arg_30_0]
+	local active_node = var_30_0.active_node
 
 	var_30_0.anim_cb_move = true
 
-	if not var_30_1 or var_30_0.attack_aborted then
+	if not active_node and not var_30_0.attack_aborted then
 		return
 	end
 
-	local var_30_2 = var_30_1.anim_cb_move
+	local anim_cb_move = active_node.anim_cb_move
 
-	if var_30_2 then
-		var_30_2(var_30_2, arg_30_0, var_30_0)
+	if not anim_cb_move then
+		anim_cb_move(anim_cb_move, arg_30_0, var_30_0)
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_move_stop(arg_31_0, arg_31_1)
-	var_0_0[arg_31_0].anim_cb_move_stop = true
+AnimationCallbackTemplates.server.anim_cb_move_stop = function (arg_31_0, arg_31_1)
+	-- function 31
+	BLACKBOARDS[arg_31_0].anim_cb_move_stop = true
 end
 
-function AnimationCallbackTemplates.server.anim_cb_transform_finished(arg_32_0, arg_32_1)
-	local var_32_0 = var_0_0[arg_32_0]
-	local var_32_1 = var_32_0.active_node
-	local var_32_2 = var_32_1 and var_32_1.anim_cb_transform_finished
+AnimationCallbackTemplates.server.anim_cb_transform_finished = function (arg_32_0, arg_32_1)
+	-- function 32
+	local var_32_0 = BLACKBOARDS[arg_32_0]
+	local active_node = var_32_0.active_node
+	local flag = not active_node and active_node.anim_cb_transform_finished
 
-	if var_32_2 then
-		var_32_2(var_32_2, arg_32_0, var_32_0)
+	if not flag then
+		flag(flag, arg_32_0, var_32_0)
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_throw_weapon(arg_33_0, arg_33_1)
-	local var_33_0 = var_0_0[arg_33_0]
-	local var_33_1 = var_33_0.active_node.anim_cb_throw_weapon
+AnimationCallbackTemplates.server.anim_cb_throw_weapon = function (arg_33_0, arg_33_1)
+	-- function 33
+	local var_33_0 = BLACKBOARDS[arg_33_0]
+	local anim_cb_throw_weapon = var_33_0.active_node.anim_cb_throw_weapon
 
-	if var_33_1 then
-		var_33_1(var_33_1, arg_33_0, var_33_0)
+	if not anim_cb_throw_weapon then
+		anim_cb_throw_weapon(anim_cb_throw_weapon, arg_33_0, var_33_0)
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_throw_finished(arg_34_0, arg_34_1)
-	local var_34_0 = var_0_0[arg_34_0]
-	local var_34_1 = var_34_0.active_node
-	local var_34_2 = var_34_1 and var_34_1.anim_cb_throw_finished
+AnimationCallbackTemplates.server.anim_cb_throw_finished = function (arg_34_0, arg_34_1)
+	-- function 34
+	local var_34_0 = BLACKBOARDS[arg_34_0]
+	local active_node = var_34_0.active_node
+	local flag = not active_node and active_node.anim_cb_throw_finished
 
-	if var_34_2 then
-		var_34_2(var_34_2, arg_34_0, var_34_0)
+	if not flag then
+		flag(flag, arg_34_0, var_34_0)
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_charge_start_finished(arg_35_0, arg_35_1)
-	local var_35_0 = var_0_0[arg_35_0]
-	local var_35_1 = var_35_0.active_node
+AnimationCallbackTemplates.server.anim_cb_charge_start_finished = function (arg_35_0, arg_35_1)
+	-- function 35
+	local var_35_0 = BLACKBOARDS[arg_35_0]
+	local active_node = var_35_0.active_node
 
-	if var_35_1 and var_35_1.anim_cb_charge_start_finished then
-		var_35_1:anim_cb_charge_start_finished(arg_35_0, var_35_0)
+	if not active_node and not active_node.anim_cb_charge_start_finished then
+		active_node:anim_cb_charge_start_finished(arg_35_0, var_35_0)
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_charge_charging_finished(arg_36_0, arg_36_1)
-	local var_36_0 = var_0_0[arg_36_0]
-	local var_36_1 = var_36_0.active_node
+AnimationCallbackTemplates.server.anim_cb_charge_charging_finished = function (arg_36_0, arg_36_1)
+	-- function 36
+	local var_36_0 = BLACKBOARDS[arg_36_0]
+	local active_node = var_36_0.active_node
 
-	if var_36_1 and var_36_1.anim_cb_charge_charging_finished then
-		var_36_1:anim_cb_charge_charging_finished(arg_36_0, var_36_0)
+	if not active_node and not active_node.anim_cb_charge_charging_finished then
+		active_node:anim_cb_charge_charging_finished(arg_36_0, var_36_0)
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_charge_impact_finished(arg_37_0, arg_37_1)
-	local var_37_0 = var_0_0[arg_37_0]
-	local var_37_1 = var_37_0.active_node
+AnimationCallbackTemplates.server.anim_cb_charge_impact_finished = function (arg_37_0, arg_37_1)
+	-- function 37
+	local var_37_0 = BLACKBOARDS[arg_37_0]
+	local active_node = var_37_0.active_node
 
-	if var_37_1 and var_37_1.anim_cb_charge_impact_finished then
-		var_37_1:anim_cb_charge_impact_finished(arg_37_0, var_37_0)
+	if not active_node and not active_node.anim_cb_charge_impact_finished then
+		active_node:anim_cb_charge_impact_finished(arg_37_0, var_37_0)
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_disable_charge_collision(arg_38_0, arg_38_1)
-	local var_38_0 = var_0_0[arg_38_0]
-	local var_38_1 = var_38_0.active_node
+AnimationCallbackTemplates.server.anim_cb_disable_charge_collision = function (arg_38_0, arg_38_1)
+	-- function 38
+	local var_38_0 = BLACKBOARDS[arg_38_0]
+	local active_node = var_38_0.active_node
 
-	if var_38_1 and var_38_1.anim_cb_disable_charge_collision then
-		var_38_1:anim_cb_disable_charge_collision(arg_38_0, var_38_0)
+	if not active_node and not active_node.anim_cb_disable_charge_collision then
+		active_node:anim_cb_disable_charge_collision(arg_38_0, var_38_0)
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_throw(arg_39_0, arg_39_1)
-	var_0_0[arg_39_0].anim_cb_throw = true
+AnimationCallbackTemplates.server.anim_cb_throw = function (arg_39_0, arg_39_1)
+	-- function 39
+	BLACKBOARDS[arg_39_0].anim_cb_throw = true
 end
 
-function AnimationCallbackTemplates.server.anim_cb_spawn_projectile(arg_40_0, arg_40_1)
-	var_0_0[arg_40_0].anim_cb_spawn_projectile = true
+AnimationCallbackTemplates.server.anim_cb_spawn_projectile = function (arg_40_0, arg_40_1)
+	-- function 40
+	BLACKBOARDS[arg_40_0].anim_cb_spawn_projectile = true
 end
 
-function AnimationCallbackTemplates.server.anim_cb_jump_start_finished(arg_41_0, arg_41_1)
-	var_0_0[arg_41_0].jump_start_finished = true
+AnimationCallbackTemplates.server.anim_cb_jump_start_finished = function (arg_41_0, arg_41_1)
+	-- function 41
+	BLACKBOARDS[arg_41_0].jump_start_finished = true
 end
 
-function AnimationCallbackTemplates.server.anim_cb_jump_climb_finished(arg_42_0, arg_42_1)
-	var_0_0[arg_42_0].jump_climb_finished = true
+AnimationCallbackTemplates.server.anim_cb_jump_climb_finished = function (arg_42_0, arg_42_1)
+	-- function 42
+	BLACKBOARDS[arg_42_0].jump_climb_finished = true
 end
 
-function AnimationCallbackTemplates.server.anim_cb_start_finished(arg_43_0, arg_43_1)
-	var_0_0[arg_43_0].start_finished = true
+AnimationCallbackTemplates.server.anim_cb_start_finished = function (arg_43_0, arg_43_1)
+	-- function 43
+	BLACKBOARDS[arg_43_0].start_finished = true
 end
 
-function AnimationCallbackTemplates.server.anim_cb_attack_start(arg_44_0, arg_44_1)
-	local var_44_0 = var_0_0[arg_44_0]
-	local var_44_1 = var_44_0.active_node
+AnimationCallbackTemplates.server.anim_cb_attack_start = function (arg_44_0, arg_44_1)
+	-- function 44
+	local var_44_0 = BLACKBOARDS[arg_44_0]
+	local active_node = var_44_0.active_node
 
-	if not var_44_1 or var_44_0.attack_aborted then
+	if not active_node and not var_44_0.attack_aborted then
 		return
 	end
 
-	local var_44_2 = var_44_1.anim_cb_attack_start
+	local anim_cb_attack_start = active_node.anim_cb_attack_start
 
-	if var_44_2 then
-		var_44_2(var_44_2, arg_44_0, var_44_0)
+	if not anim_cb_attack_start then
+		anim_cb_attack_start(anim_cb_attack_start, arg_44_0, var_44_0)
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_attack_finished(arg_45_0, arg_45_1)
-	local var_45_0 = var_0_0[arg_45_0]
+AnimationCallbackTemplates.server.anim_cb_attack_finished = function (arg_45_0, arg_45_1)
+	-- function 45
+	local var_45_0 = BLACKBOARDS[arg_45_0]
 
-	if var_45_0.active_node and var_45_0.active_node.anim_cb_attack_finished then
-		local var_45_1 = var_45_0.active_node.anim_cb_attack_finished
+	if not var_45_0.active_node and not var_45_0.active_node.anim_cb_attack_finished then
+		local anim_cb_attack_finished = var_45_0.active_node.anim_cb_attack_finished
 
-		var_45_1(var_45_1, arg_45_0, var_45_0)
+		anim_cb_attack_finished(anim_cb_attack_finished, arg_45_0, var_45_0)
 	else
 		var_45_0.attacks_done = var_45_0.attacks_done + 1
 		var_45_0.attack_finished = true
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_escape_finished(arg_46_0, arg_46_1)
-	var_0_0[arg_46_0].anim_cb_escape_finished = true
+AnimationCallbackTemplates.server.anim_cb_escape_finished = function (arg_46_0, arg_46_1)
+	-- function 46
+	BLACKBOARDS[arg_46_0].anim_cb_escape_finished = true
 end
 
-function AnimationCallbackTemplates.server.anim_cb_attack_cooldown(arg_47_0, arg_47_1)
-	var_0_0[arg_47_0].anim_cb_attack_cooldown = true
+AnimationCallbackTemplates.server.anim_cb_attack_cooldown = function (arg_47_0, arg_47_1)
+	-- function 47
+	BLACKBOARDS[arg_47_0].anim_cb_attack_cooldown = true
 end
 
-function AnimationCallbackTemplates.server.anim_cb_blocked_cooldown(arg_48_0, arg_48_1)
-	var_0_0[arg_48_0].anim_cb_blocked_cooldown = true
+AnimationCallbackTemplates.server.anim_cb_blocked_cooldown = function (arg_48_0, arg_48_1)
+	-- function 48
+	BLACKBOARDS[arg_48_0].anim_cb_blocked_cooldown = true
 end
 
-function AnimationCallbackTemplates.server.anim_cb_summoning_finished(arg_49_0, arg_49_1)
-	var_0_0[arg_49_0].summoning_finished = true
+AnimationCallbackTemplates.server.anim_cb_summoning_finished = function (arg_49_0, arg_49_1)
+	-- function 49
+	BLACKBOARDS[arg_49_0].summoning_finished = true
 end
 
-function AnimationCallbackTemplates.server.anim_cb_shout_finished(arg_50_0, arg_50_1)
-	var_0_0[arg_50_0].anim_cb_shout_finished = true
+AnimationCallbackTemplates.server.anim_cb_shout_finished = function (arg_50_0, arg_50_1)
+	-- function 50
+	BLACKBOARDS[arg_50_0].anim_cb_shout_finished = true
 end
 
-function AnimationCallbackTemplates.server.anim_cb_order_finished(arg_51_0, arg_51_1)
-	var_0_0[arg_51_0].anim_cb_order_finished = true
+AnimationCallbackTemplates.server.anim_cb_order_finished = function (arg_51_0, arg_51_1)
+	-- function 51
+	BLACKBOARDS[arg_51_0].anim_cb_order_finished = true
 end
 
-function AnimationCallbackTemplates.server.anim_cb_scurry_under_finished(arg_52_0, arg_52_1)
-	var_0_0[arg_52_0].anim_cb_scurry_under_finished = true
+AnimationCallbackTemplates.server.anim_cb_scurry_under_finished = function (arg_52_0, arg_52_1)
+	-- function 52
+	BLACKBOARDS[arg_52_0].anim_cb_scurry_under_finished = true
 end
 
-function AnimationCallbackTemplates.server.anim_cb_dig_finished(arg_53_0, arg_53_1)
-	var_0_0[arg_53_0].anim_cb_dig_finished = true
+AnimationCallbackTemplates.server.anim_cb_dig_finished = function (arg_53_0, arg_53_1)
+	-- function 53
+	BLACKBOARDS[arg_53_0].anim_cb_dig_finished = true
 end
 
-function AnimationCallbackTemplates.server.anim_cb_attack_throw_score_finished(arg_54_0, arg_54_1)
-	local var_54_0 = ScriptUnit.has_extension(arg_54_0, "ai_system")
+AnimationCallbackTemplates.server.anim_cb_attack_throw_score_finished = function (arg_54_0, arg_54_1)
+	-- function 54
+	local has_extension = ScriptUnit.has_extension(arg_54_0, "ai_system")
 
-	if var_54_0 then
-		var_54_0:blackboard().anim_cb_attack_throw_score_finished = true
+	if not has_extension then
+		has_extension:blackboard().anim_cb_attack_throw_score_finished = true
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_attack_jump_start_finished(arg_55_0, arg_55_1)
-	local var_55_0 = ScriptUnit.has_extension(arg_55_0, "ai_system")
+AnimationCallbackTemplates.server.anim_cb_attack_jump_start_finished = function (arg_55_0, arg_55_1)
+	-- function 55
+	local has_extension = ScriptUnit.has_extension(arg_55_0, "ai_system")
 
-	if var_55_0 then
-		var_55_0:blackboard().anim_cb_attack_jump_start_finished = true
+	if not has_extension then
+		has_extension:blackboard().anim_cb_attack_jump_start_finished = true
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_attack_shoot_start_finished(arg_56_0, arg_56_1)
-	local var_56_0 = ScriptUnit.has_extension(arg_56_0, "ai_system")
+AnimationCallbackTemplates.server.anim_cb_attack_shoot_start_finished = function (arg_56_0, arg_56_1)
+	-- function 56
+	local has_extension = ScriptUnit.has_extension(arg_56_0, "ai_system")
 
-	if var_56_0 then
-		var_56_0:blackboard().anim_cb_attack_shoot_start_finished = true
+	if not has_extension then
+		has_extension:blackboard().anim_cb_attack_shoot_start_finished = true
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_reload_start_finished(arg_57_0, arg_57_1)
-	local var_57_0 = ScriptUnit.has_extension(arg_57_0, "ai_system")
+AnimationCallbackTemplates.server.anim_cb_reload_start_finished = function (arg_57_0, arg_57_1)
+	-- function 57
+	local has_extension = ScriptUnit.has_extension(arg_57_0, "ai_system")
 
-	if var_57_0 then
-		var_57_0:blackboard().anim_cb_reload_start_finished = true
+	if not has_extension then
+		has_extension:blackboard().anim_cb_reload_start_finished = true
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_attack_windup_start_finished(arg_58_0, arg_58_1)
-	local var_58_0 = ScriptUnit.has_extension(arg_58_0, "ai_system")
+AnimationCallbackTemplates.server.anim_cb_attack_windup_start_finished = function (arg_58_0, arg_58_1)
+	-- function 58
+	local has_extension = ScriptUnit.has_extension(arg_58_0, "ai_system")
 
-	if var_58_0 then
-		var_58_0:blackboard().anim_cb_attack_windup_start_finished = true
+	if not has_extension then
+		has_extension:blackboard().anim_cb_attack_windup_start_finished = true
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_attack_shoot_random_shot(arg_59_0, arg_59_1)
-	local var_59_0 = ScriptUnit.has_extension(arg_59_0, "ai_system")
+AnimationCallbackTemplates.server.anim_cb_attack_shoot_random_shot = function (arg_59_0, arg_59_1)
+	-- function 59
+	local has_extension = ScriptUnit.has_extension(arg_59_0, "ai_system")
 
-	if var_59_0 then
-		var_59_0:blackboard().anim_cb_attack_shoot_random_shot = true
+	if not has_extension then
+		has_extension:blackboard().anim_cb_attack_shoot_random_shot = true
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_stormvermin_voice(arg_60_0, arg_60_1)
-	local var_60_0 = ScriptUnit.has_extension(arg_60_0, "ai_system")
+AnimationCallbackTemplates.server.anim_cb_stormvermin_voice = function (arg_60_0, arg_60_1)
+	-- function 60
+	local has_extension = ScriptUnit.has_extension(arg_60_0, "ai_system")
 
-	if var_60_0 then
-		var_60_0:blackboard().anim_cb_stormvermin_voice = true
+	if not has_extension then
+		has_extension:blackboard().anim_cb_stormvermin_voice = true
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_patrol_sound(arg_61_0, arg_61_1)
-	local var_61_0 = ScriptUnit.has_extension(arg_61_0, "ai_system")
+AnimationCallbackTemplates.server.anim_cb_patrol_sound = function (arg_61_0, arg_61_1)
+	-- function 61
+	local has_extension = ScriptUnit.has_extension(arg_61_0, "ai_system")
 
-	if var_61_0 then
-		var_61_0:blackboard().anim_cb_patrol_sound = true
+	if not has_extension then
+		has_extension:blackboard().anim_cb_patrol_sound = true
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_exit_shooting_hit_react(arg_62_0, arg_62_1)
-	local var_62_0 = ScriptUnit.has_extension(arg_62_0, "ai_system")
+AnimationCallbackTemplates.server.anim_cb_exit_shooting_hit_react = function (arg_62_0, arg_62_1)
+	-- function 62
+	local has_extension = ScriptUnit.has_extension(arg_62_0, "ai_system")
 
-	if var_62_0 then
-		var_62_0:blackboard().in_hit_reaction = nil
+	if not has_extension then
+		has_extension:blackboard().in_hit_reaction = nil
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_enter_shooting_hit_react(arg_63_0, arg_63_1)
-	local var_63_0 = ScriptUnit.has_extension(arg_63_0, "ai_system")
+AnimationCallbackTemplates.server.anim_cb_enter_shooting_hit_react = function (arg_63_0, arg_63_1)
+	-- function 63
+	local has_extension = ScriptUnit.has_extension(arg_63_0, "ai_system")
 
-	if var_63_0 then
-		var_63_0:blackboard().in_hit_reaction = true
+	if not has_extension then
+		has_extension:blackboard().in_hit_reaction = true
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_place_standard(arg_64_0, arg_64_1)
-	local var_64_0 = var_0_0[arg_64_0]
-	local var_64_1 = var_64_0.active_node
+AnimationCallbackTemplates.server.anim_cb_place_standard = function (arg_64_0, arg_64_1)
+	-- function 64
+	local var_64_0 = BLACKBOARDS[arg_64_0]
+	local active_node = var_64_0.active_node
 
-	if var_64_1 then
-		local var_64_2 = var_64_1.anim_cb_place_standard
+	if not active_node then
+		local anim_cb_place_standard = active_node.anim_cb_place_standard
 
-		if var_64_2 then
-			var_64_2(var_64_1, arg_64_0, var_64_0)
+		if not anim_cb_place_standard then
+			anim_cb_place_standard(active_node, arg_64_0, var_64_0)
 		end
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_pick_up_standard(arg_65_0, arg_65_1)
-	local var_65_0 = var_0_0[arg_65_0]
-	local var_65_1 = var_65_0.active_node
+AnimationCallbackTemplates.server.anim_cb_pick_up_standard = function (arg_65_0, arg_65_1)
+	-- function 65
+	local var_65_0 = BLACKBOARDS[arg_65_0]
+	local active_node = var_65_0.active_node
 
-	if var_65_1 then
-		local var_65_2 = var_65_1.anim_cb_pick_up_standard
+	if not active_node then
+		local anim_cb_pick_up_standard = active_node.anim_cb_pick_up_standard
 
-		if var_65_2 then
-			var_65_2(var_65_1, arg_65_0, var_65_0)
+		if not anim_cb_pick_up_standard then
+			anim_cb_pick_up_standard(active_node, arg_65_0, var_65_0)
 		end
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_placed_standard(arg_66_0, arg_66_1)
-	local var_66_0 = var_0_0[arg_66_0]
-	local var_66_1 = var_66_0.active_node
-	local var_66_2 = var_66_1 and var_66_1.anim_cb_placed_standard
+AnimationCallbackTemplates.server.anim_cb_placed_standard = function (arg_66_0, arg_66_1)
+	-- function 66
+	local var_66_0 = BLACKBOARDS[arg_66_0]
+	local active_node = var_66_0.active_node
+	local flag = not active_node and active_node.anim_cb_placed_standard
 
-	if var_66_2 then
-		var_66_2(var_66_1, arg_66_0, var_66_0)
+	if not flag then
+		flag(active_node, arg_66_0, var_66_0)
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_stormvermin_push(arg_67_0, arg_67_1)
-	local var_67_0 = var_0_0[arg_67_0]
-	local var_67_1 = var_67_0.attacking_target
-	local var_67_2 = var_67_0.active_node
+AnimationCallbackTemplates.server.anim_cb_stormvermin_push = function (arg_67_0, arg_67_1)
+	-- function 67
+	local var_67_0 = BLACKBOARDS[arg_67_0]
+	local attacking_target = var_67_0.attacking_target
+	local active_node = var_67_0.active_node
 
-	if not var_67_2 or var_67_0.attack_aborted or not HEALTH_ALIVE[var_67_1] then
+	if not (not active_node and var_67_0.attack_aborted or HEALTH_ALIVE[attacking_target]) then
 		return
 	end
 
-	local var_67_3 = var_67_2.anim_cb_stormvermin_push
+	local anim_cb_stormvermin_push = active_node.anim_cb_stormvermin_push
 
-	if var_67_3 then
-		var_67_3(var_67_2, arg_67_0, var_67_0, var_67_1)
+	if not anim_cb_stormvermin_push then
+		anim_cb_stormvermin_push(active_node, arg_67_0, var_67_0, attacking_target)
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_stormvermin_push_finished(arg_68_0, arg_68_1)
-	var_0_0[arg_68_0].attack_finished = true
+AnimationCallbackTemplates.server.anim_cb_stormvermin_push_finished = function (arg_68_0, arg_68_1)
+	-- function 68
+	BLACKBOARDS[arg_68_0].attack_finished = true
 end
 
-function AnimationCallbackTemplates.server.anim_cb_attack_overlap_done(arg_69_0, arg_69_1)
-	local var_69_0 = var_0_0[arg_69_0]
-	local var_69_1 = var_69_0.active_node
+AnimationCallbackTemplates.server.anim_cb_attack_overlap_done = function (arg_69_0, arg_69_1)
+	-- function 69
+	local var_69_0 = BLACKBOARDS[arg_69_0]
+	local active_node = var_69_0.active_node
 
-	if not var_69_1 or var_69_0.attack_aborted then
+	if not active_node and not var_69_0.attack_aborted then
 		return
 	end
 
-	local var_69_2 = var_69_1.anim_cb_attack_overlap_done
+	local anim_cb_attack_overlap_done = active_node.anim_cb_attack_overlap_done
 
-	if var_69_2 then
-		var_69_2(var_69_1, arg_69_0, var_69_0)
+	if not anim_cb_attack_overlap_done then
+		anim_cb_attack_overlap_done(active_node, arg_69_0, var_69_0)
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_vomit(arg_70_0, arg_70_1)
-	local var_70_0 = var_0_0[arg_70_0]
-	local var_70_1 = var_70_0.active_node
+AnimationCallbackTemplates.server.anim_cb_vomit = function (arg_70_0, arg_70_1)
+	-- function 70
+	local var_70_0 = BLACKBOARDS[arg_70_0]
+	local active_node = var_70_0.active_node
 
-	if not var_70_1 or var_70_0.attack_aborted then
+	if not active_node and not var_70_0.attack_aborted then
 		return
 	end
 
-	local var_70_2 = var_70_1.anim_cb_vomit
+	local anim_cb_vomit = active_node.anim_cb_vomit
 
-	if var_70_2 then
-		var_70_2(var_70_2, arg_70_0, var_70_0)
+	if not anim_cb_vomit then
+		anim_cb_vomit(anim_cb_vomit, arg_70_0, var_70_0)
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_vomit_end(arg_71_0, arg_71_1)
-	var_0_0[arg_71_0].is_puking = nil
+AnimationCallbackTemplates.server.anim_cb_vomit_end = function (arg_71_0, arg_71_1)
+	-- function 71
+	BLACKBOARDS[arg_71_0].is_puking = nil
 end
 
-function AnimationCallbackTemplates.server.anim_cb_dodge_finished(arg_72_0, arg_72_1)
-	var_0_0[arg_72_0].anim_cb_dodge_finished = true
+AnimationCallbackTemplates.server.anim_cb_dodge_finished = function (arg_72_0, arg_72_1)
+	-- function 72
+	BLACKBOARDS[arg_72_0].anim_cb_dodge_finished = true
 end
 
-function AnimationCallbackTemplates.server.anim_cb_downed_end_finished(arg_73_0, arg_73_1)
-	var_0_0[arg_73_0].downed_end_finished = true
+AnimationCallbackTemplates.server.anim_cb_downed_end_finished = function (arg_73_0, arg_73_1)
+	-- function 73
+	BLACKBOARDS[arg_73_0].downed_end_finished = true
 end
 
-function AnimationCallbackTemplates.server.anim_cb_rage_finished(arg_74_0, arg_74_1)
-	var_0_0[arg_74_0].rage_end_finished = true
+AnimationCallbackTemplates.server.anim_cb_rage_finished = function (arg_74_0, arg_74_1)
+	-- function 74
+	BLACKBOARDS[arg_74_0].rage_end_finished = true
 end
 
-function AnimationCallbackTemplates.server.anim_cb_roar_begin(arg_75_0, arg_75_1)
-	var_0_0[arg_75_0].anim_cb_roar_begin = true
+AnimationCallbackTemplates.server.anim_cb_roar_begin = function (arg_75_0, arg_75_1)
+	-- function 75
+	BLACKBOARDS[arg_75_0].anim_cb_roar_begin = true
 end
 
-function AnimationCallbackTemplates.server.anim_cb_roar_end(arg_76_0, arg_76_1)
-	var_0_0[arg_76_0].anim_cb_roar_end = true
+AnimationCallbackTemplates.server.anim_cb_roar_end = function (arg_76_0, arg_76_1)
+	-- function 76
+	BLACKBOARDS[arg_76_0].anim_cb_roar_end = true
 end
 
-function AnimationCallbackTemplates.server.anim_cb_landing_finished(arg_77_0, arg_77_1)
-	var_0_0[arg_77_0].landing_finished = true
+AnimationCallbackTemplates.server.anim_cb_landing_finished = function (arg_77_0, arg_77_1)
+	-- function 77
+	BLACKBOARDS[arg_77_0].landing_finished = true
 end
 
-function AnimationCallbackTemplates.server.anim_cb_teleport_finished(arg_78_0, arg_78_1)
-	var_0_0[arg_78_0].anim_cb_teleport_finished = true
+AnimationCallbackTemplates.server.anim_cb_teleport_finished = function (arg_78_0, arg_78_1)
+	-- function 78
+	BLACKBOARDS[arg_78_0].anim_cb_teleport_finished = true
 end
 
-function AnimationCallbackTemplates.server.anim_cb_teleport_start_finished(arg_79_0, arg_79_1)
-	local var_79_0 = var_0_0[arg_79_0]
-	local var_79_1 = var_79_0.active_node
+AnimationCallbackTemplates.server.anim_cb_teleport_start_finished = function (arg_79_0, arg_79_1)
+	-- function 79
+	local var_79_0 = BLACKBOARDS[arg_79_0]
+	local active_node = var_79_0.active_node
 
-	if var_79_1 and var_79_1.anim_cb_teleport_start_finished then
-		var_79_1:anim_cb_teleport_start_finished(arg_79_0, var_79_0)
+	if not active_node and not active_node.anim_cb_teleport_start_finished then
+		active_node:anim_cb_teleport_start_finished(arg_79_0, var_79_0)
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_teleport_end_finished(arg_80_0, arg_80_1)
-	local var_80_0 = var_0_0[arg_80_0]
-	local var_80_1 = var_80_0.active_node
+AnimationCallbackTemplates.server.anim_cb_teleport_end_finished = function (arg_80_0, arg_80_1)
+	-- function 80
+	local var_80_0 = BLACKBOARDS[arg_80_0]
+	local active_node = var_80_0.active_node
 
-	if var_80_1 and var_80_1.anim_cb_teleport_end_finished then
-		var_80_1:anim_cb_teleport_end_finished(arg_80_0, var_80_0)
+	if not active_node and not active_node.anim_cb_teleport_end_finished then
+		active_node:anim_cb_teleport_end_finished(arg_80_0, var_80_0)
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_move_jump_finished(arg_81_0, arg_81_1)
-	local var_81_0 = var_0_0[arg_81_0]
-	local var_81_1 = var_81_0.active_node
+AnimationCallbackTemplates.server.anim_cb_move_jump_finished = function (arg_81_0, arg_81_1)
+	-- function 81
+	local var_81_0 = BLACKBOARDS[arg_81_0]
+	local active_node = var_81_0.active_node
 
-	if var_81_1 and var_81_1.anim_cb_move_jump_finished then
-		var_81_1:anim_cb_move_jump_finished(arg_81_0, var_81_0)
+	if not active_node and not active_node.anim_cb_move_jump_finished then
+		active_node:anim_cb_move_jump_finished(arg_81_0, var_81_0)
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_stagger_immune(arg_82_0, arg_82_1)
-	var_0_0[arg_82_0].anim_cb_stagger_immune = true
+AnimationCallbackTemplates.server.anim_cb_stagger_immune = function (arg_82_0, arg_82_1)
+	-- function 82
+	BLACKBOARDS[arg_82_0].anim_cb_stagger_immune = true
 end
 
-function AnimationCallbackTemplates.server.anim_cb_push_cancel(arg_83_0, arg_83_1)
-	local var_83_0 = var_0_0[arg_83_0]
-	local var_83_1 = var_83_0.active_node
+AnimationCallbackTemplates.server.anim_cb_push_cancel = function (arg_83_0, arg_83_1)
+	-- function 83
+	local var_83_0 = BLACKBOARDS[arg_83_0]
+	local active_node = var_83_0.active_node
 
-	if var_83_1 and var_83_1.anim_cb_push_cancel then
-		var_83_1:anim_cb_push_cancel(arg_83_0, var_83_0)
+	if not active_node and not active_node.anim_cb_push_cancel then
+		active_node:anim_cb_push_cancel(arg_83_0, var_83_0)
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_disable_invincibility(arg_84_0, arg_84_1)
-	local var_84_0 = ScriptUnit.has_extension(arg_84_0, "health_system")
+AnimationCallbackTemplates.server.anim_cb_disable_invincibility = function (arg_84_0, arg_84_1)
+	-- function 84
+	local has_extension = ScriptUnit.has_extension(arg_84_0, "health_system")
 
-	if var_84_0 then
-		var_84_0.is_invincible = false
+	if not has_extension then
+		has_extension.is_invincible = false
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_combat_step_stop(arg_85_0, arg_85_1)
-	local var_85_0 = var_0_0[arg_85_0]
+AnimationCallbackTemplates.server.anim_cb_combat_step_stop = function (arg_85_0, arg_85_1)
+	-- function 85
+	local var_85_0 = BLACKBOARDS[arg_85_0]
 
-	if var_85_0.active_node and var_85_0.active_node.anim_cb_combat_step_stop then
+	if not var_85_0.active_node and not var_85_0.active_node.anim_cb_combat_step_stop then
 		var_85_0.active_node:anim_cb_combat_step_stop(arg_85_0, var_85_0)
 	end
 end
 
-function AnimationCallbackTemplates.client.anim_cb_hide_unit(arg_86_0, arg_86_1)
+AnimationCallbackTemplates.client.anim_cb_hide_unit = function (arg_86_0, arg_86_1)
+	-- function 86
 	Unit.set_unit_visibility(arg_86_0, false)
 
-	local var_86_0 = ScriptUnit.has_extension(arg_86_0, "inventory_system")
+	local has_extension = ScriptUnit.has_extension(arg_86_0, "inventory_system")
 
-	if var_86_0 then
-		var_86_0:show_third_person_inventory(false)
+	if not has_extension then
+		has_extension:show_third_person_inventory(false)
 	end
 
-	local var_86_1 = ScriptUnit.has_extension(arg_86_0, "attachment_system")
+	local has_extension_2 = ScriptUnit.has_extension(arg_86_0, "attachment_system")
 
-	if var_86_1 then
-		var_86_1:show_attachments(false)
+	if not has_extension_2 then
+		has_extension_2:show_attachments(false)
 	end
 end
 
-function AnimationCallbackTemplates.client.anim_cb_hide_weapons(arg_87_0, arg_87_1)
-	local var_87_0 = Managers.player:unit_owner(arg_87_0)
+AnimationCallbackTemplates.client.anim_cb_hide_weapons = function (arg_87_0, arg_87_1)
+	-- function 87
+	local unit_owner = Managers.player:unit_owner(arg_87_0)
 
-	if not var_87_0 then
+	if not unit_owner then
 		return
 	end
 
-	local var_87_1 = var_87_0.local_player
-	local var_87_2 = true
+	local local_player = unit_owner.local_player
+	local flag = true
 
-	if var_87_1 then
-		var_87_2 = not ScriptUnit.extension(arg_87_0, "first_person_system").first_person_mode
+	if not local_player then
+		flag = not ScriptUnit.extension(arg_87_0, "first_person_system").first_person_mode
 	end
 
-	local var_87_3 = ScriptUnit.has_extension(arg_87_0, "inventory_system")
+	local has_extension = ScriptUnit.has_extension(arg_87_0, "inventory_system")
 
-	if var_87_2 and var_87_3 and var_87_3:is_showing_third_person_inventory() then
-		var_87_3:show_third_person_inventory(false)
+	if not flag and not has_extension and not has_extension:is_showing_third_person_inventory() then
+		has_extension:show_third_person_inventory(false)
 	end
 end
 
-function AnimationCallbackTemplates.client.anim_cb_unhide_weapons(arg_88_0, arg_88_1)
-	local var_88_0 = Managers.player:unit_owner(arg_88_0)
+AnimationCallbackTemplates.client.anim_cb_unhide_weapons = function (arg_88_0, arg_88_1)
+	-- function 88
+	local unit_owner = Managers.player:unit_owner(arg_88_0)
 
-	if not var_88_0 then
+	if not unit_owner then
 		return
 	end
 
-	local var_88_1 = var_88_0.local_player
-	local var_88_2 = true
+	local local_player = unit_owner.local_player
+	local flag = true
 
-	if var_88_1 then
-		var_88_2 = not ScriptUnit.extension(arg_88_0, "first_person_system").first_person_mode
+	if not local_player then
+		flag = not ScriptUnit.extension(arg_88_0, "first_person_system").first_person_mode
 	end
 
-	local var_88_3 = ScriptUnit.has_extension(arg_88_0, "inventory_system")
+	local has_extension = ScriptUnit.has_extension(arg_88_0, "inventory_system")
 
-	if var_88_2 and var_88_3 and not var_88_3:is_showing_third_person_inventory() then
-		var_88_3:show_third_person_inventory(true)
+	if not (not flag and not has_extension and has_extension:is_showing_third_person_inventory()) then
+		has_extension:show_third_person_inventory(true)
 	end
 end
 
-function AnimationCallbackTemplates.client.anim_cb_climb_rotation_start(arg_89_0, arg_89_1)
+AnimationCallbackTemplates.client.anim_cb_climb_rotation_start = function (arg_89_0, arg_89_1)
+	-- function 89
 	ScriptUnit.extension(arg_89_0, "status_system").start_climb_rotation = true
 end
 
-function AnimationCallbackTemplates.server.anim_cb_chew_attack(arg_90_0, arg_90_1)
-	local var_90_0 = var_0_0[arg_90_0]
-	local var_90_1 = var_90_0.active_node
-	local var_90_2 = var_90_0.victim_grabbed
+AnimationCallbackTemplates.server.anim_cb_chew_attack = function (arg_90_0, arg_90_1)
+	-- function 90
+	local var_90_0 = BLACKBOARDS[arg_90_0]
+	local active_node = var_90_0.active_node
+	local victim_grabbed = var_90_0.victim_grabbed
 
-	if not var_90_2 or not Unit.alive(var_90_2) then
+	if not (not victim_grabbed and Unit.alive(victim_grabbed)) then
 		return
 	end
 
-	if var_90_1 then
-		local var_90_3 = var_90_1.anim_cb_chew_attack
+	if not active_node then
+		local anim_cb_chew_attack = active_node.anim_cb_chew_attack
 
-		if var_90_3 then
-			var_90_3(var_90_1, arg_90_0, var_90_0)
+		if not anim_cb_chew_attack then
+			anim_cb_chew_attack(active_node, arg_90_0, var_90_0)
 		end
 	end
 end
 
-function AnimationCallbackTemplates.server.anim_cb_chew_attack_finished(arg_91_0, arg_91_1)
-	var_0_0[arg_91_0].anim_cb_chew_attack_finished = true
+AnimationCallbackTemplates.server.anim_cb_chew_attack_finished = function (arg_91_0, arg_91_1)
+	-- function 91
+	BLACKBOARDS[arg_91_0].anim_cb_chew_attack_finished = true
 end
 
-function AnimationCallbackTemplates.server.anim_cb_attack_grabbed_smash(arg_92_0, arg_92_1)
-	local var_92_0 = var_0_0[arg_92_0]
-	local var_92_1 = var_92_0.active_node
-	local var_92_2 = var_92_0.victim_grabbed
+AnimationCallbackTemplates.server.anim_cb_attack_grabbed_smash = function (arg_92_0, arg_92_1)
+	-- function 92
+	local var_92_0 = BLACKBOARDS[arg_92_0]
+	local active_node = var_92_0.active_node
+	local victim_grabbed = var_92_0.victim_grabbed
 
-	if not var_92_2 or not Unit.alive(var_92_2) then
+	if not (not victim_grabbed and Unit.alive(victim_grabbed)) then
 		return
 	end
 
-	if var_92_1 then
-		local var_92_3 = var_92_1.anim_cb_attack_grabbed_smash
+	if not active_node then
+		local anim_cb_attack_grabbed_smash = active_node.anim_cb_attack_grabbed_smash
 
-		if var_92_3 then
-			var_92_3(var_92_1, arg_92_0, var_92_0)
+		if not anim_cb_attack_grabbed_smash then
+			anim_cb_attack_grabbed_smash(active_node, arg_92_0, var_92_0)
 		end
 	end
 end
 
-function AnimationCallbackTemplates.client.anim_cb_enable_skeleton_collison(arg_93_0, arg_93_1)
-	local var_93_0 = Unit.get_data(arg_93_0, "breed")
+AnimationCallbackTemplates.client.anim_cb_enable_skeleton_collison = function (arg_93_0, arg_93_1)
+	-- function 93
+	local get_data = Unit.get_data(arg_93_0, "breed")
+	local extension = ScriptUnit.extension(arg_93_0, "ai_system")
+	local player_locomotion_constrain_radius = get_data.player_locomotion_constrain_radius
 
-	ScriptUnit.extension(arg_93_0, "ai_system").player_locomotion_constrain_radius = var_93_0.player_locomotion_constrain_radius or nil
+	player_locomotion_constrain_radius = player_locomotion_constrain_radius or nil
+	extension.player_locomotion_constrain_radius = player_locomotion_constrain_radius
 end
 
-function AnimationCallbackTemplates.server.anim_cb_shielded(arg_94_0, arg_94_1)
-	if ScriptUnit.has_extension(arg_94_0, "ai_shield_system") then
+AnimationCallbackTemplates.server.anim_cb_shielded = function (arg_94_0, arg_94_1)
+	-- function 94
+	if not ScriptUnit.has_extension(arg_94_0, "ai_shield_system") then
 		ScriptUnit.extension(arg_94_0, "ai_shield_system"):set_is_blocking(true)
 	end
 
-	var_0_0[arg_94_0].shield_is_up = true
+	BLACKBOARDS[arg_94_0].shield_is_up = true
 end
 
-function AnimationCallbackTemplates.server.anim_cb_unshielded(arg_95_0, arg_95_1)
-	if ScriptUnit.has_extension(arg_95_0, "ai_shield_system") then
+AnimationCallbackTemplates.server.anim_cb_unshielded = function (arg_95_0, arg_95_1)
+	-- function 95
+	if not ScriptUnit.has_extension(arg_95_0, "ai_shield_system") then
 		ScriptUnit.extension(arg_95_0, "ai_shield_system"):set_is_blocking(false)
 	end
 
-	var_0_0[arg_95_0].shield_is_up = false
+	BLACKBOARDS[arg_95_0].shield_is_up = false
 end
 
 DLCUtils.require_list("animation_callback_template_files")

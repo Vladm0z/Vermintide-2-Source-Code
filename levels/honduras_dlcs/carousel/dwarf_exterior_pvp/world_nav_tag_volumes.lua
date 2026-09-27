@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/carousel/dwarf_exterior_pvp/world_nav_tag_volumes.lua
 
-local var_0_0 = {
+local tbl = {
 	volume_navtag_layer32 = {
 		delay_nav_tag_volume_creation = false,
 		alt_max = 0.04910993576049805,
@@ -4129,9 +4129,9 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = "1"
+local str = "1"
 
 return {
-	version = var_0_1,
-	nav_tag_volumes = var_0_0
+	version = str,
+	nav_tag_volumes = tbl
 }

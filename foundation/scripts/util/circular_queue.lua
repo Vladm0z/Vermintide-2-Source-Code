@@ -2,163 +2,196 @@
 
 CircularQueue = class(CircularQueue)
 
-function CircularQueue.init(arg_1_0, arg_1_1)
-	arg_1_0.queue = {}
-	arg_1_0.capacity = arg_1_1
-	arg_1_0.first = 1
-	arg_1_0.last = arg_1_1
-	arg_1_0.num_items = 0
+CircularQueue.init = function (self, arg_1_1)
+	-- function 1
+	self.queue = {}
+	self.capacity = arg_1_1
+	self.first = 1
+	self.last = arg_1_1
+	self.num_items = 0
 end
 
-function CircularQueue.push_back(arg_2_0, arg_2_1)
+CircularQueue.push_back = function (self, arg_2_1)
+	-- function 2
 	fassert(arg_2_1 ~= nil, "Queue can't contain nil item!")
 
-	arg_2_0.last = arg_2_0.last % arg_2_0.capacity + 1
+	self.last = self.last % self.capacity + 1
 
-	fassert(arg_2_0.num_items < arg_2_0.capacity, "Can't push to full queue (%d).", arg_2_0.capacity)
+	fassert(self.num_items < self.capacity, "Can't push to full queue (%d).", self.capacity)
 
-	arg_2_0.num_items = arg_2_0.num_items + 1
-	arg_2_0.queue[arg_2_0.last] = arg_2_1
+	self.num_items = self.num_items + 1
+	self.queue[self.last] = arg_2_1
 end
 
-function CircularQueue.write_at(arg_3_0, arg_3_1, arg_3_2)
+CircularQueue.write_at = function (self, arg_3_1, arg_3_2)
+	-- function 3
 	ferror("Disabled this for now, should probably assert that index is within first->last")
 	fassert(arg_3_1 ~= nil, "Queue can't contain nil item!")
-	fassert(arg_3_2 > 0 and arg_3_2 <= arg_3_0.capacity, "Wrong index!")
+	fassert(not (arg_3_2 > 0) or arg_3_2 <= self.capacity, "Wrong index!")
 end
 
-function CircularQueue.pop_first(arg_4_0)
-	fassert(arg_4_0.num_items > 0, "Can't pop empty queue.")
+CircularQueue.pop_first = function (self)
+	-- function 4
+	fassert(self.num_items > 0, "Can't pop empty queue.")
 
-	local var_4_0 = arg_4_0.queue[arg_4_0.first]
+	local var_4_0 = self.queue[self.first]
 
-	arg_4_0.queue[arg_4_0.first] = nil
-	arg_4_0.num_items = arg_4_0.num_items - 1
-	arg_4_0.first = arg_4_0.first % arg_4_0.capacity + 1
+	self.queue[self.first] = nil
+	self.num_items = self.num_items - 1
+	self.first = self.first % self.capacity + 1
 
-	fassert(arg_4_0.num_items == 0 or arg_4_0.queue[arg_4_0.first] ~= nil, "Queue contained nil item!")
+	fassert(self.num_items == 0 or self.queue[self.first] ~= nil, "Queue contained nil item!")
 
 	return var_4_0
 end
 
-function CircularQueue.reset(arg_5_0)
-	arg_5_0.first = 1
-	arg_5_0.last = arg_5_0.capacity
-	arg_5_0.num_items = 0
+CircularQueue.reset = function (self)
+	-- function 5
+	self.first = 1
+	self.last = self.capacity
+	self.num_items = 0
 end
 
-function CircularQueue.contains(arg_6_0, arg_6_1)
-	local var_6_0 = arg_6_0.first
-	local var_6_1 = arg_6_0.queue
+CircularQueue.contains = function (self, arg_6_1)
+	-- function 6
+	local first = self.first
+	local queue = self.queue
 
-	for iter_6_0 = 1, arg_6_0.num_items do
-		if arg_6_1 == var_6_1[var_6_0] then
+	for i = 1, self.num_items do
+		if arg_6_1 == queue[first] then
 			return true
 		end
 
-		var_6_0 = var_6_0 % arg_6_0.capacity + 1
+		first = first % self.capacity + 1
 	end
 
 	return false
 end
 
-function CircularQueue.size(arg_7_0)
-	return arg_7_0.num_items
+CircularQueue.size = function (self)
+	-- function 7
+	return self.num_items
 end
 
-function CircularQueue.available(arg_8_0)
-	return arg_8_0.capacity - arg_8_0.num_items
+CircularQueue.available = function (self)
+	-- function 8
+	return self.capacity - self.num_items
 end
 
-function CircularQueue.is_full(arg_9_0)
-	return arg_9_0.num_items == arg_9_0.capacity
+CircularQueue.is_full = function (self)
+	-- function 9
+	return self.num_items == self.capacity
 end
 
-function CircularQueue.is_empty(arg_10_0)
-	return arg_10_0.num_items == 0
+CircularQueue.is_empty = function (self)
+	-- function 10
+	return self.num_items == 0
 end
 
-function CircularQueue.get_first(arg_11_0)
-	return arg_11_0.queue[arg_11_0.first]
+CircularQueue.get_first = function (self)
+	-- function 11
+	return self.queue[self.first]
 end
 
-function CircularQueue.get_last(arg_12_0)
-	return arg_12_0.queue[arg_12_0.last]
+CircularQueue.get_last = function (self)
+	-- function 12
+	return self.queue[self.last]
 end
 
-function CircularQueue.foreach(arg_13_0, arg_13_1, arg_13_2, ...)
-	local var_13_0 = arg_13_0.first
-	local var_13_1 = arg_13_0.queue
-	local var_13_2 = arg_13_0.capacity
+CircularQueue.foreach = function (self, arg_13_1, arg_13_2, ...)
+	-- function 13
+	local first = self.first
+	local queue = self.queue
+	local capacity = self.capacity
 
-	for iter_13_0 = 1, arg_13_0.num_items do
-		local var_13_3 = var_13_1[var_13_0]
+	for i = 1, self.num_items do
+		local var_13_3 = queue[first]
 
-		if arg_13_1 then
+		if not arg_13_1 then
 			arg_13_2(arg_13_1, var_13_3, ...)
 		else
 			arg_13_2(var_13_3, ...)
 		end
 
-		var_13_0 = var_13_0 % var_13_2 + 1
+		first = first % capacity + 1
 	end
 end
 
-function CircularQueue.index_before(arg_14_0, arg_14_1)
-	return (arg_14_1 - 2) % arg_14_0.capacity + 1
+CircularQueue.index_before = function (self, arg_14_1)
+	-- function 14
+	return (arg_14_1 - 2) % self.capacity + 1
 end
 
-function CircularQueue.index_after(arg_15_0, arg_15_1)
-	return arg_15_1 % arg_15_0.capacity + 1
+CircularQueue.index_after = function (self, arg_15_1)
+	-- function 15
+	return arg_15_1 % self.capacity + 1
 end
 
-function CircularQueue.tostring(arg_16_0, arg_16_1, arg_16_2)
+CircularQueue.tostring = function (self, arg_16_1, arg_16_2)
+	-- function 16
 	arg_16_1 = arg_16_1 or tostring
-	arg_16_2 = arg_16_2 or arg_16_0.num_items
+	arg_16_2 = arg_16_2 or self.num_items
 
-	local var_16_0 = string.format("{[%d->%d][%d/%d] ", arg_16_0.first, arg_16_0.last, arg_16_0.num_items, arg_16_0.capacity)
-	local var_16_1 = arg_16_0.first
-	local var_16_2 = arg_16_0.queue
+	local format = string.format("{[%d->%d][%d/%d] ", self.first, self.last, self.num_items, self.capacity)
+	local first = self.first
+	local queue = self.queue
 
-	for iter_16_0 = 1, math.min(arg_16_2, arg_16_0.num_items) do
-		var_16_0 = var_16_0 .. arg_16_1(var_16_2[var_16_1]) .. ","
-		var_16_1 = var_16_1 % arg_16_0.capacity + 1
+	for i = 1, math.min(arg_16_2, self.num_items) do
+		format = format .. arg_16_1(queue[first]) .. ","
+		first = first % self.capacity + 1
 	end
 
-	if arg_16_2 < arg_16_0.num_items then
-		var_16_0 = var_16_0 .. "... "
+	if arg_16_2 < self.num_items then
+		format = format .. "... "
 	end
 
-	return var_16_0 .. "}"
+	return format .. "}"
 end
 
-function CircularQueue.tostring2(arg_17_0, arg_17_1, arg_17_2)
+CircularQueue.tostring2 = function (self, arg_17_1, arg_17_2)
+	-- function 17
 	arg_17_1 = arg_17_1 or tostring
-	arg_17_2 = arg_17_2 or arg_17_0.num_items
+	arg_17_2 = arg_17_2 or self.num_items
 
-	local var_17_0 = string.format("{[%d->%d][%d/%d] ", arg_17_0.first, arg_17_0.last, arg_17_0.num_items, arg_17_0.capacity)
-	local var_17_1 = arg_17_0.queue
+	local format = string.format("{[%d->%d][%d/%d] ", self.first, self.last, self.num_items, self.capacity)
+	local queue = self.queue
 
-	for iter_17_0 = 1, math.min(arg_17_2, arg_17_0.capacity) do
-		var_17_0 = var_17_0 .. (var_17_1[iter_17_0] and arg_17_1(var_17_1[iter_17_0]) or "_") .. ","
+	for i = 1, math.min(arg_17_2, self.capacity) do
+		local var_17_2 = format
+		local var_17_3
+
+		if not queue[i] then
+			var_17_3 = arg_17_1(queue[i])
+
+			if not var_17_3 then
+				-- Nothing
+			end
+		end
+
+		var_17_3 = "_"
+
+		::label_17_0::
+
+		format = var_17_2 .. var_17_3 .. ","
 	end
 
-	if arg_17_2 < arg_17_0.num_items then
-		var_17_0 = var_17_0 .. "... "
+	if arg_17_2 < self.num_items then
+		format = format .. "... "
 	end
 
-	return var_17_0 .. "}"
+	return format .. "}"
 end
 
-function CircularQueue.print_items(arg_18_0, arg_18_1)
-	local var_18_0 = (arg_18_1 or "") .. " queue: [" .. arg_18_0.first .. "->" .. arg_18_0.last .. "] --> "
-	local var_18_1 = arg_18_0.first
-	local var_18_2 = arg_18_0.queue
+CircularQueue.print_items = function (self, arg_18_1)
+	-- function 18
+	local str = (arg_18_1 or "") .. " queue: [" .. self.first .. "->" .. self.last .. "] --> "
+	local first = self.first
+	local queue = self.queue
 
-	for iter_18_0 = 1, arg_18_0.num_items do
-		var_18_0 = var_18_0 .. tostring(var_18_2[var_18_1]) .. ","
-		var_18_1 = var_18_1 % arg_18_0.capacity + 1
+	for i = 1, self.num_items do
+		str = str .. tostring(queue[first]) .. ","
+		first = first % self.capacity + 1
 	end
 
-	print(var_18_0)
+	print(str)
 end

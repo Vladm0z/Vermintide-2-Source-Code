@@ -2,9 +2,20 @@
 
 require("scripts/unit_extensions/human/ai_player_unit/ai_utils")
 
+local PlayerBots = PlayerBots
+
 PlayerBots = PlayerBots or {}
+PlayerBots = PlayerBots
+
+local BotActions = BotActions
+
 BotActions = BotActions or {}
+BotActions = BotActions
+
+local BotConstants = BotConstants
+
 BotConstants = BotConstants or {}
+BotConstants = BotConstants
 BotActions.default = {
 	follow = {
 		action_weight = 1
@@ -233,10 +244,14 @@ BotActions.default = {
 	}
 }
 
-for iter_0_0, iter_0_1 in pairs(BotActions) do
-	for iter_0_2, iter_0_3 in pairs(iter_0_1) do
-		iter_0_3.name = iter_0_2
-		iter_0_3.considerations = UtilityConsiderations["player_bot_" .. iter_0_0 .. "_" .. iter_0_2] or nil
+for k, v in pairs(BotActions) do
+	for k_2, v_2 in pairs(v) do
+		v_2.name = k_2
+
+		local var_0_3 = UtilityConsiderations["player_bot_" .. k .. "_" .. k_2]
+
+		var_0_3 = var_0_3 or nil
+		v_2.considerations = var_0_3
 	end
 end
 

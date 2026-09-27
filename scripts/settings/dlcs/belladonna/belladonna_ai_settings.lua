@@ -1,15 +1,15 @@
 -- chunkname: @scripts/settings/dlcs/belladonna/belladonna_ai_settings.lua
 
-local var_0_0 = DLCSettings.belladonna
+local belladonna = DLCSettings.belladonna
 
-var_0_0.breeds = {
+belladonna.breeds = {
 	"scripts/settings/breeds/breed_beastmen_gor",
 	"scripts/settings/breeds/breed_beastmen_ungor",
 	"scripts/settings/breeds/breed_beastmen_ungor_archer",
 	"scripts/settings/breeds/breed_beastmen_bestigor",
 	"scripts/settings/breeds/breed_beastmen_standard_bearer"
 }
-var_0_0.behaviour_trees_precompiled = {
+belladonna.behaviour_trees_precompiled = {
 	"scripts/entity_system/systems/behaviour/nodes/generated/bt_selector_gor",
 	"scripts/entity_system/systems/behaviour/nodes/generated/bt_selector_ungor",
 	"scripts/entity_system/systems/behaviour/nodes/generated/bt_selector_ungor_archer",
@@ -17,14 +17,14 @@ var_0_0.behaviour_trees_precompiled = {
 	"scripts/entity_system/systems/behaviour/nodes/generated/bt_selector_standard_bearer",
 	"scripts/entity_system/systems/behaviour/nodes/generated/bt_selector_beastmen_dummy"
 }
-var_0_0.behaviour_tree_nodes = {
+belladonna.behaviour_tree_nodes = {
 	"scripts/entity_system/systems/behaviour/nodes/bt_charge_attack_action",
 	"scripts/entity_system/systems/behaviour/nodes/bt_fire_projectile_action",
 	"scripts/entity_system/systems/behaviour/nodes/bt_pick_up_standard_action",
 	"scripts/entity_system/systems/behaviour/nodes/bt_place_standard_action",
 	"scripts/entity_system/systems/behaviour/nodes/bt_defend_standard_action"
 }
-var_0_0.behaviour_trees = {
+belladonna.behaviour_trees = {
 	"scripts/entity_system/systems/behaviour/trees/beastmen/beastmen_gor_behavior",
 	"scripts/entity_system/systems/behaviour/trees/beastmen/beastmen_ungor_behavior",
 	"scripts/entity_system/systems/behaviour/trees/beastmen/beastmen_ungor_archer_behavior",
@@ -32,51 +32,51 @@ var_0_0.behaviour_trees = {
 	"scripts/entity_system/systems/behaviour/trees/beastmen/beastmen_standard_bearer_behavior",
 	"scripts/entity_system/systems/behaviour/trees/beastmen/beastmen_dummy_behavior"
 }
-var_0_0.health_extension_files = {
+belladonna.health_extension_files = {
 	"scripts/unit_extensions/health/beastmen_standard_health_extension"
 }
-var_0_0.health_extensions = {
+belladonna.health_extensions = {
 	"BeastmenStandardHealthExtension"
 }
-var_0_0.enemy_package_loader_breed_categories = {
+belladonna.enemy_package_loader_breed_categories = {
 	specials = {
 		"beastmen_standard_bearer"
 	}
 }
-var_0_0.alias_to_breed = {
+belladonna.alias_to_breed = {
 	beastmen_ungor_dummy = "beastmen_ungor",
 	beastmen_bestigor_dummy = "beastmen_bestigor",
 	beastmen_gor_dummy = "beastmen_gor",
 	beastmen_standard_bearer_crater = "beastmen_standard_bearer"
 }
-var_0_0.opt_lookup_breed_names = {
+belladonna.opt_lookup_breed_names = {
 	beastmen_ungor = "beastmen_ungor_opt",
 	beastmen_gor = "beastmen_gor_opt",
 	beastmen_ungor_archer = "beastmen_ungor_archer_opt"
 }
-var_0_0.ai_breed_snippets_file_names = {
+belladonna.ai_breed_snippets_file_names = {
 	"scripts/settings/dlcs/belladonna/belladonna_ai_breed_snippets"
 }
-var_0_0.animation_movement_templates_file_names = {
+belladonna.animation_movement_templates_file_names = {
 	"scripts/settings/dlcs/belladonna/belladonna_animation_movement_templates"
 }
-var_0_0.slot_templates_file_names = {
+belladonna.slot_templates_file_names = {
 	"scripts/settings/dlcs/belladonna/belladonna_slot_templates"
 }
-var_0_0.utility_considerations_file_names = {
+belladonna.utility_considerations_file_names = {
 	"scripts/settings/dlcs/belladonna/belladonna_utility_considerations"
 }
-var_0_0.aim_templates_file_names = {
+belladonna.aim_templates_file_names = {
 	"scripts/settings/dlcs/belladonna/belladonna_aim_templates"
 }
-var_0_0.network_sound_events = {
+belladonna.network_sound_events = {
 	"Play_enemy_beastmen_standar_chanting_loop",
 	"Stop_enemy_beastmen_standar_chanting_loop",
 	"Play_enemy_minotaur_charge_attack_miss",
 	"Play_enemy_bestigor_charge_attack_miss",
 	"Play_boss_aggro_enter"
 }
-var_0_0.anim_lookup = {
+belladonna.anim_lookup = {
 	"stagger_fwd_cheer_1",
 	"stagger_fwd_cheer_2",
 	"stagger_fwd_cheer_3",
@@ -111,7 +111,7 @@ var_0_0.anim_lookup = {
 	"attack_punch"
 }
 
-local var_0_1 = {
+local tbl = {
 	sounds = {
 		PLAYER_SPOTTED = "beastmen_patrol_player_spotted",
 		FORMING = "beastmen_patrol_forming",
@@ -136,12 +136,12 @@ local var_0_1 = {
 	}
 }
 
-var_0_0.patrol_formation_settings = {
-	default_beastmen_settings = var_0_1
+belladonna.patrol_formation_settings = {
+	default_beastmen_settings = tbl
 }
-var_0_0.patrol_formations = {
+belladonna.patrol_formations = {
 	beastmen_standard = {
-		settings = var_0_1,
+		settings = tbl,
 		normal = {
 			{
 				"beastmen_standard_bearer"
@@ -300,7 +300,7 @@ var_0_0.patrol_formations = {
 		}
 	},
 	beastmen_archers = {
-		settings = var_0_1,
+		settings = tbl,
 		normal = {
 			{
 				"beastmen_standard_bearer"

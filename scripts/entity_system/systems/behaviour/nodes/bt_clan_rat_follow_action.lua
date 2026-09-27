@@ -4,39 +4,41 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTClanRatFollowAction = class(BTClanRatFollowAction, BTNode)
 
-local var_0_0 = 36
-local var_0_1 = 16
-local var_0_2 = 0.01
-local var_0_3 = 3
-local var_0_4 = 2
-local var_0_5 = 10
-local var_0_6 = 2
-local var_0_7 = 1
-local var_0_8 = 0.05
-local var_0_9 = POSITION_LOOKUP
-local var_0_10 = 7
-local var_0_11 = 30
-local var_0_12 = 3
+local num = 36
+local num_2 = 16
+local num_3 = 0.01
+local num_4 = 3
+local num_5 = 2
+local num_6 = 10
+local num_7 = 2
+local num_8 = 1
+local num_9 = 0.05
+local POSITION_LOOKUP = POSITION_LOOKUP
+local num_10 = 7
+local num_11 = 30
+local num_12 = 3
 
-function BTClanRatFollowAction.init(arg_1_0, ...)
-	BTClanRatFollowAction.super.init(arg_1_0, ...)
+BTClanRatFollowAction.init = function (self, ...)
+	-- function 1
+	BTClanRatFollowAction.super.init(self, ...)
 
-	arg_1_0.next_time_to_trigger_running_dialogue = 0
-	arg_1_0.triggered_units = {}
+	self.next_time_to_trigger_running_dialogue = 0
+	self.triggered_units = {}
 end
 
 BTClanRatFollowAction.name = "BTClanRatFollowAction"
 
-local var_0_13 = 0.0001
+local num_13 = 0.0001
 
-function BTClanRatFollowAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
-	local var_2_0 = arg_2_0._tree_node.action_data
+BTClanRatFollowAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+	-- function 2
+	local action_data = self._tree_node.action_data
 
-	arg_2_2.action = var_2_0
-	arg_2_2.active_node = arg_2_0
+	arg_2_2.action = action_data
+	arg_2_2.active_node = self
 	arg_2_2.time_to_next_evaluate = arg_2_3 + 0.5
 
-	if arg_2_2.sneaky then
+	if not arg_2_2.sneaky then
 		arg_2_2.time_to_next_friend_alert = arg_2_3 + 99999
 	else
 		arg_2_2.time_to_next_friend_alert = arg_2_3 + 0.3
@@ -44,68 +46,87 @@ function BTClanRatFollowAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 
 	Managers.state.entity:system("ai_slot_system"):do_slot_search(arg_2_1, true)
 
-	local var_2_1 = arg_2_2.target_unit
-	local var_2_2 = arg_2_2.locomotion_extension
-	local var_2_3 = LocomotionUtils.rotation_towards_unit_flat(arg_2_1, var_2_1)
+	local target_unit = arg_2_2.target_unit
+	local locomotion_extension = arg_2_2.locomotion_extension
+	local rotation_towards_unit_flat = LocomotionUtils.rotation_towards_unit_flat(arg_2_1, target_unit)
 
-	var_2_2:set_wanted_rotation(var_2_3)
+	locomotion_extension:set_wanted_rotation(rotation_towards_unit_flat)
 
-	local var_2_4 = var_0_9[arg_2_1]
-	local var_2_5 = arg_2_2.breed
-	local var_2_6 = var_2_5.enter_walk_distance and var_2_5.enter_walk_distance^2 or var_0_1
-	local var_2_7 = arg_2_2.navigation_extension:destination()
-	local var_2_8 = arg_2_0:_should_walk(var_2_7, var_2_4, var_2_6, var_2_3)
-	local var_2_9 = arg_2_0:_slow_approach(var_2_7, var_2_4, var_2_0, var_2_3)
+	local var_2_4 = POSITION_LOOKUP[arg_2_1]
+	local breed = arg_2_2.breed
+	local num
 
-	if var_2_8 or var_2_9 then
-		arg_2_2.walking = true
+	if not breed.enter_walk_distance then
+		num = breed.enter_walk_distance^2
 
-		if var_2_9 then
-			arg_2_2.walk_timer = arg_2_3 + var_2_0.slow_approach_time
-		else
-			arg_2_2.walk_timer = arg_2_3 + (var_2_0.walk_time or 3 + 1 * Math.random())
+		if not num then
+			-- Nothing
 		end
 	end
 
-	if var_2_0.skip_start_anim_if_moving and arg_2_2.move_state == "moving" then
+	num = num_2
+
+	::label_2_0::
+
+	local destination = arg_2_2.navigation_extension:destination()
+	local _should_walk = self:_should_walk(destination, var_2_4, num, rotation_towards_unit_flat)
+	local _slow_approach = self:_slow_approach(destination, var_2_4, action_data, rotation_towards_unit_flat)
+
+	if _should_walk or not _slow_approach then
+		arg_2_2.walking = true
+
+		if not _slow_approach then
+			arg_2_2.walk_timer = arg_2_3 + action_data.slow_approach_time
+		else
+			local walk_time = action_data.walk_time
+
+			walk_time = walk_time or 3 + 1 * Math.random()
+			arg_2_2.walk_timer = arg_2_3 + walk_time
+		end
+	end
+
+	if not (not action_data.skip_start_anim_if_moving and arg_2_2.move_state ~= "moving") then
 		arg_2_2.skip_start_anim = true
 	end
 end
 
-function BTClanRatFollowAction._should_walk(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
-	local var_3_0 = arg_3_1 - arg_3_2
-	local var_3_1 = Vector3.dot(Quaternion.forward(arg_3_4), var_3_0)
-	local var_3_2 = Vector3.dot(Quaternion.right(arg_3_4), var_3_0)
+BTClanRatFollowAction._should_walk = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	-- function 3
+	local num = arg_3_1 - arg_3_2
+	local dot = Vector3.dot(Quaternion.forward(arg_3_4), num)
+	local dot_2 = Vector3.dot(Quaternion.right(arg_3_4), num)
 
-	return arg_3_3 > var_3_1 * var_3_1 + var_3_2 * var_0_2 * (var_3_2 * var_0_2)
+	return arg_3_3 > dot * dot + dot_2 * num_3 * (dot_2 * num_3)
 end
 
-function BTClanRatFollowAction._slow_approach(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-	local var_4_0 = arg_4_3.slow_approach_distance_sq
+BTClanRatFollowAction._slow_approach = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	-- function 4
+	local slow_approach_distance_sq = arg_4_3.slow_approach_distance_sq
 
-	if not var_4_0 then
+	if not slow_approach_distance_sq then
 		return false
 	end
 
-	local var_4_1 = arg_4_1 - arg_4_2
-	local var_4_2 = Vector3.dot(Quaternion.forward(arg_4_4), var_4_1)
-	local var_4_3 = Vector3.dot(Quaternion.right(arg_4_4), var_4_1)
+	local num = arg_4_1 - arg_4_2
+	local dot = Vector3.dot(Quaternion.forward(arg_4_4), num)
+	local dot_2 = Vector3.dot(Quaternion.right(arg_4_4), num)
 
-	return var_4_0 < var_4_2^2 + (var_4_3 * var_0_2)^2
+	return slow_approach_distance_sq < dot^2 + (dot_2 * num_3)^2
 end
 
-function BTClanRatFollowAction.leave(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+BTClanRatFollowAction.leave = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	-- function 5
 	arg_5_2.active_node = nil
 
 	if not arg_5_2.locomotion_extension._engine_extension_id then
 		return
 	end
 
-	if Managers.state.network:in_game_session() then
-		arg_5_0:set_start_move_animation_lock(arg_5_1, arg_5_2, false)
+	if not Managers.state.network:in_game_session() then
+		self:set_start_move_animation_lock(arg_5_1, arg_5_2, false)
 	end
 
-	if arg_5_2.is_turning then
+	if not arg_5_2.is_turning then
 		LocomotionUtils.reset_turning(arg_5_1, arg_5_2)
 
 		arg_5_2.is_turning = nil
@@ -121,132 +142,191 @@ function BTClanRatFollowAction.leave(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4
 	arg_5_2.walking_direction = nil
 	arg_5_2.skip_start_anim = nil
 
-	local var_5_0 = AiUtils.get_default_breed_move_speed(arg_5_1, arg_5_2)
+	local get_default_breed_move_speed = AiUtils.get_default_breed_move_speed(arg_5_1, arg_5_2)
 
-	arg_5_2.navigation_extension:set_max_speed(var_5_0)
+	arg_5_2.navigation_extension:set_max_speed(get_default_breed_move_speed)
 
-	arg_5_0.triggered_units[arg_5_1] = nil
+	self.triggered_units[arg_5_1] = nil
 end
 
-local var_0_14 = Unit.alive
+local alive = Unit.alive
 
-function BTClanRatFollowAction.run(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
-	if not var_0_14(arg_6_2.target_unit) then
+BTClanRatFollowAction.run = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	-- function 6
+	if not alive(arg_6_2.target_unit) then
 		return "done"
 	end
 
-	if arg_6_2.spawn_to_running or arg_6_2.skip_start_anim then
+	if arg_6_2.spawn_to_running or not arg_6_2.skip_start_anim then
 		arg_6_2.spawn_to_running = nil
 		arg_6_2.start_anim_done = true
 		arg_6_2.move_state = "moving"
 		arg_6_2.start_anim_locked = nil
 		arg_6_2.skip_start_anim = nil
 
-		arg_6_0:set_start_move_animation_lock(arg_6_1, arg_6_2, false)
+		self:set_start_move_animation_lock(arg_6_1, arg_6_2, false)
 	end
 
-	if arg_6_2.walking then
-		arg_6_0:_update_walking(arg_6_1, arg_6_2, arg_6_4, arg_6_3)
+	if not arg_6_2.walking then
+		self:_update_walking(arg_6_1, arg_6_2, arg_6_4, arg_6_3)
 	end
 
-	if not arg_6_2.walking and not arg_6_2.start_anim_done then
+	if not (arg_6_2.walking or arg_6_2.start_anim_done) then
 		if not arg_6_2.start_anim_locked then
-			arg_6_0:start_move_animation(arg_6_1, arg_6_2)
+			self:start_move_animation(arg_6_1, arg_6_2)
 
 			arg_6_2.anim_lock_fallback_time = arg_6_3 + 2.5
 		end
 
-		if arg_6_2.anim_cb_rotation_start then
-			arg_6_0:start_move_rotation(arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+		if not arg_6_2.anim_cb_rotation_start then
+			self:start_move_rotation(arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 		end
 
-		if arg_6_2.anim_cb_move or arg_6_2.anim_lock_fallback_time and arg_6_3 >= arg_6_2.anim_lock_fallback_time then
+		if not ((arg_6_2.anim_cb_move or not arg_6_2.anim_lock_fallback_time) and not (arg_6_3 >= arg_6_2.anim_lock_fallback_time)) then
 			arg_6_2.anim_cb_move = false
 			arg_6_2.move_state = "moving"
 			arg_6_2.anim_lock_fallback_time = nil
 
-			arg_6_0:set_start_move_animation_lock(arg_6_1, arg_6_2, false)
+			self:set_start_move_animation_lock(arg_6_1, arg_6_2, false)
 
 			arg_6_2.start_anim_locked = nil
 			arg_6_2.start_anim_done = true
 		end
 	else
-		arg_6_0:follow(arg_6_1, arg_6_2, arg_6_3, arg_6_4)
-		arg_6_0:do_dialogue(arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+		self:follow(arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+		self:do_dialogue(arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	end
 
 	local var_6_0
-	local var_6_1 = arg_6_2.navigation_extension
+	local navigation_extension = arg_6_2.navigation_extension
 
-	if arg_6_3 > arg_6_2.time_to_next_evaluate or var_6_1:has_reached_destination() then
-		local var_6_2 = arg_6_2.have_slot == 1 and arg_6_2.attacks_done == 0
+	if arg_6_3 > arg_6_2.time_to_next_evaluate or not navigation_extension:has_reached_destination() then
+		local flag = arg_6_2.have_slot ~= 1 or arg_6_2.attacks_done == 0
 
 		var_6_0 = "evaluate"
-		arg_6_2.time_to_next_evaluate = var_6_2 and arg_6_3 + 0.1 or arg_6_3 + 0.5
+
+		local num
+
+		if not flag then
+			num = arg_6_3 + 0.1
+
+			if not num then
+				-- Nothing
+			end
+		end
+
+		num = arg_6_3 + 0.5
+
+		::label_6_0::
+
+		arg_6_2.time_to_next_evaluate = num
 	end
 
 	return "running", var_6_0
 end
 
-function BTClanRatFollowAction._update_walking(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
-	local var_7_0 = arg_7_2.target_unit
-	local var_7_1 = arg_7_2.locomotion_extension
-	local var_7_2 = LocomotionUtils.rotation_towards_unit_flat(arg_7_1, var_7_0)
+BTClanRatFollowAction._update_walking = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	-- function 7
+	local target_unit = arg_7_2.target_unit
+	local locomotion_extension = arg_7_2.locomotion_extension
+	local rotation_towards_unit_flat = LocomotionUtils.rotation_towards_unit_flat(arg_7_1, target_unit)
 
-	var_7_1:set_wanted_rotation(var_7_2)
+	locomotion_extension:set_wanted_rotation(rotation_towards_unit_flat)
 
-	local var_7_3 = arg_7_2.action
-	local var_7_4 = var_0_9[arg_7_1]
-	local var_7_5 = ScriptUnit.has_extension(var_7_0, "locomotion_system")
-	local var_7_6 = var_7_5 and var_7_5.average_velocity and Vector3.dot(var_7_5:average_velocity(), Vector3.normalize(var_0_9[var_7_0] - var_7_4))
-	local var_7_7 = arg_7_2.navigation_extension:destination()
-	local var_7_8 = arg_7_4 > arg_7_2.walk_timer
-	local var_7_9 = arg_7_0:_slow_approach(var_7_7, var_7_4, var_7_3, var_7_2)
-	local var_7_10 = arg_7_2.breed
-	local var_7_11 = var_7_10.leave_walk_distance
-	local var_7_12 = var_7_11 and var_7_11 * var_7_11 or var_0_0
-	local var_7_13 = arg_7_0:_should_walk(var_7_7, var_7_4, var_7_12, var_7_2)
-	local var_7_14 = not var_7_9 and not var_7_13
-	local var_7_15 = not var_7_9 and var_7_6 and var_7_6 > var_0_3 and not var_7_3.ignore_target_velocity
-	local var_7_16 = arg_7_2.action.custom_is_tired_function and arg_7_2.action.custom_is_tired_function(arg_7_1, arg_7_2)
-	local var_7_17 = var_7_16 and arg_7_2.action.alt_tired_anim or "move_fwd"
+	local action = arg_7_2.action
+	local var_7_4 = POSITION_LOOKUP[arg_7_1]
+	local has_extension = ScriptUnit.has_extension(target_unit, "locomotion_system")
 
-	if (not var_7_10.force_walk_while_tired or not var_7_16) and (not var_7_13 and var_7_8 or var_7_14 or var_7_15) then
+	if not has_extension then
+		-- Nothing
+	end
+
+	::label_7_0::
+
+	local average_velocity = has_extension.average_velocity
+
+	average_velocity = not average_velocity and Vector3.dot(has_extension:average_velocity(), Vector3.normalize(POSITION_LOOKUP[target_unit] - var_7_4))
+
+	::label_7_1::
+
+	local destination = arg_7_2.navigation_extension:destination()
+	local flag = arg_7_4 > arg_7_2.walk_timer
+	local _slow_approach = self:_slow_approach(destination, var_7_4, action, rotation_towards_unit_flat)
+	local breed = arg_7_2.breed
+	local leave_walk_distance = breed.leave_walk_distance
+	local num_2
+
+	if not leave_walk_distance then
+		num_2 = leave_walk_distance * leave_walk_distance
+
+		if not num_2 then
+			-- Nothing
+		end
+	end
+
+	num_2 = num
+
+	::label_7_2::
+
+	local _should_walk = self:_should_walk(destination, var_7_4, num_2, rotation_towards_unit_flat)
+	local flag_2 = not not _slow_approach or not _should_walk
+	local flag_3 = not not _slow_approach or not average_velocity or not (average_velocity > num_4) or not action.ignore_target_velocity
+	local custom_is_tired_function = arg_7_2.action.custom_is_tired_function
+
+	custom_is_tired_function = not custom_is_tired_function and arg_7_2.action.custom_is_tired_function(arg_7_1, arg_7_2)
+
+	local alt_tired_anim
+
+	if not custom_is_tired_function then
+		alt_tired_anim = arg_7_2.action.alt_tired_anim
+
+		if not alt_tired_anim then
+			-- Nothing
+		end
+	end
+
+	alt_tired_anim = "move_fwd"
+
+	::label_7_3::
+
+	if (not breed.force_walk_while_tired and custom_is_tired_function or _should_walk or not flag) and flag_2 or not flag_3 then
 		arg_7_2.walking = false
 		arg_7_2.walking_direction = nil
 
-		Managers.state.network:anim_event(arg_7_1, var_7_17)
+		Managers.state.network:anim_event(arg_7_1, alt_tired_anim)
 
 		return
 	end
 
-	local var_7_18 = var_7_3.walk_anims
-	local var_7_19 = arg_7_2.navigation_extension:desired_velocity()
-	local var_7_20 = arg_7_0:_calculate_walk_dir(Quaternion.right(var_7_2), Quaternion.forward(var_7_2), var_7_19, var_7_4, var_7_18)
+	local walk_anims = action.walk_anims
+	local desired_velocity = arg_7_2.navigation_extension:desired_velocity()
+	local _calculate_walk_dir = self:_calculate_walk_dir(Quaternion.right(rotation_towards_unit_flat), Quaternion.forward(rotation_towards_unit_flat), desired_velocity, var_7_4, walk_anims)
 
-	if var_7_20 ~= arg_7_2.walking_direction then
-		local var_7_21 = arg_7_0:_calculate_walk_animation(var_7_20, var_7_18)
+	if _calculate_walk_dir ~= arg_7_2.walking_direction then
+		local _calculate_walk_animation = self:_calculate_walk_animation(_calculate_walk_dir, walk_anims)
 
-		if arg_7_2.action.alt_walk_anim and not var_7_16 then
+		if not (not arg_7_2.action.alt_walk_anim and custom_is_tired_function) then
 			Managers.state.network:anim_event(arg_7_1, arg_7_2.action.alt_walk_anim)
 		else
-			Managers.state.network:anim_event(arg_7_1, var_7_21)
+			Managers.state.network:anim_event(arg_7_1, _calculate_walk_animation)
 		end
 
 		arg_7_2.move_state = "moving"
-		arg_7_2.walking_direction = var_7_20
+		arg_7_2.walking_direction = _calculate_walk_dir
 	end
 end
 
-local function var_0_15(arg_8_0)
-	if type(arg_8_0) == "table" then
-		return arg_8_0[Math.random(1, #arg_8_0)]
+local function fn(self)
+	-- function 8
+	if type(self) == "table" then
+		return self[Math.random(1, #self)]
 	else
-		return arg_8_0
+		return self
 	end
 end
 
-function BTClanRatFollowAction._calculate_walk_animation(arg_9_0, arg_9_1, arg_9_2)
+BTClanRatFollowAction._calculate_walk_animation = function (arg_9_0, arg_9_1, arg_9_2)
+	-- function 9
 	local var_9_0
 
 	if arg_9_1 == "right" then
@@ -254,7 +334,7 @@ function BTClanRatFollowAction._calculate_walk_animation(arg_9_0, arg_9_1, arg_9
 	elseif arg_9_1 == "left" then
 		var_9_0 = "move_left_walk"
 	elseif arg_9_1 == "forward" then
-		var_9_0 = arg_9_2 and var_0_15(arg_9_2) or "move_fwd_walk"
+		var_9_0 = not arg_9_2 and fn(arg_9_2) and "move_fwd_walk"
 	else
 		var_9_0 = "move_bwd_walk"
 	end
@@ -262,28 +342,36 @@ function BTClanRatFollowAction._calculate_walk_animation(arg_9_0, arg_9_1, arg_9
 	return var_9_0
 end
 
-function BTClanRatFollowAction._calculate_walk_dir(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
-	local var_10_0 = Vector3.dot(arg_10_1, arg_10_3)
-	local var_10_1 = Vector3.dot(arg_10_2, arg_10_3)
-	local var_10_2 = math.abs(var_10_0)
-	local var_10_3 = math.abs(var_10_1)
+BTClanRatFollowAction._calculate_walk_dir = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+	-- function 10
+	local dot = Vector3.dot(arg_10_1, arg_10_3)
+	local dot_2 = Vector3.dot(arg_10_2, arg_10_3)
+	local abs = math.abs(dot)
+	local abs_2 = math.abs(dot_2)
 
-	arg_10_3 = var_10_3 < var_10_2 and var_10_0 > 0 and "right" or var_10_3 < var_10_2 and "left" or var_10_1 > 0 and "forward" or "backward"
+	arg_10_3 = (not (abs_2 < abs) or not (dot > 0) or not "right" or not (abs_2 < abs)) and (not "left" or not (dot_2 > 0) or not "forward" or "backward")
 
 	return arg_10_3
 end
 
-function BTClanRatFollowAction.follow(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
-	local var_11_0 = arg_11_2.breed
-	local var_11_1 = arg_11_2.target_unit
-	local var_11_2 = arg_11_2.target_dist
-	local var_11_3 = var_11_0.follow_reach or var_11_0.weapon_reach or 2
-	local var_11_4 = ScriptUnit.has_extension(var_11_1, "locomotion_system")
-	local var_11_5 = arg_11_2.locomotion_extension
-	local var_11_6 = Vector3.length(var_11_5:current_velocity())
+BTClanRatFollowAction.follow = function (self, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+	-- function 11
+	local breed = arg_11_2.breed
+	local target_unit = arg_11_2.target_unit
+	local target_dist = arg_11_2.target_dist
+	local follow_reach = breed.follow_reach
 
-	if var_11_0.use_big_boy_turning and arg_11_2.move_state == "moving" then
-		if arg_11_2.is_turning then
+	if not follow_reach then
+		follow_reach = breed.weapon_reach
+		follow_reach = follow_reach or 2
+	end
+
+	local has_extension = ScriptUnit.has_extension(target_unit, "locomotion_system")
+	local locomotion_extension = arg_11_2.locomotion_extension
+	local length = Vector3.length(locomotion_extension:current_velocity())
+
+	if not (not breed.use_big_boy_turning and arg_11_2.move_state ~= "moving") then
+		if not arg_11_2.is_turning then
 			LocomotionUtils.update_turning(arg_11_1, arg_11_3, arg_11_4, arg_11_2)
 		else
 			LocomotionUtils.check_start_turning(arg_11_1, arg_11_3, arg_11_4, arg_11_2)
@@ -292,60 +380,116 @@ function BTClanRatFollowAction.follow(arg_11_0, arg_11_1, arg_11_2, arg_11_3, ar
 
 	local var_11_7
 
-	if arg_11_2.walking then
+	if not arg_11_2.walking then
 		arg_11_2.deacceleration_factor = nil
-		var_11_7 = var_11_0.walk_speed
-	elseif var_11_2 < (var_11_0.match_speed_distance or 2 * var_11_3) then
-		arg_11_2.deacceleration_factor = nil
-
-		local var_11_8 = math.max((var_11_2 - var_11_3) / var_11_3, 0) * 0.4
-		local var_11_9 = var_11_4 and var_11_4.average_velocity and var_11_4:average_velocity() or Vector3.zero()
-		local var_11_10 = Vector3.length(var_11_9) or 0
-		local var_11_11 = var_11_10 > var_11_0.walk_speed and var_11_10 or var_11_0.walk_speed
-
-		var_11_7 = math.lerp(var_11_11, var_11_0.run_speed, var_11_8)
-	elseif (var_11_6 > var_11_0.run_speed + 0.1 or arg_11_2.deacceleration_factor) and var_11_2 < 2 * var_11_3 + var_0_7 then
-		local var_11_12 = var_11_2 - var_11_3
-
-		if not arg_11_2.deacceleration_factor then
-			arg_11_2.deacceleration_factor = (var_11_6 - var_11_0.run_speed) / var_11_12
-		end
-
-		var_11_7 = arg_11_2.deacceleration_factor * var_11_12 + var_11_0.run_speed
+		var_11_7 = breed.walk_speed
 	else
-		arg_11_2.deacceleration_factor = nil
+		local match_speed_distance = breed.match_speed_distance
 
-		local var_11_13 = arg_11_2.breed.run_speed_interpolation_factor or var_0_8
-		local var_11_14 = arg_11_0:_calculate_run_speed(arg_11_1, var_11_1, arg_11_2, var_11_4)
-		local var_11_15 = math.sign(var_11_14 - var_11_6)
+		match_speed_distance = match_speed_distance or 2 * follow_reach
 
-		var_11_6 = var_11_15 > 0 and var_11_6 < var_11_0.run_speed and var_11_2 > (var_11_0.match_speed_distance or var_11_3) + 0.5 and var_11_0.run_speed or var_11_6
-		var_11_7 = math.min(var_11_6 + var_11_15 * var_11_13 * arg_11_4, var_11_14)
+		if target_dist < match_speed_distance then
+			arg_11_2.deacceleration_factor = nil
+
+			local num = math.max((target_dist - follow_reach) / follow_reach, 0) * 0.4
+			local average_velocity
+
+			if not has_extension and not has_extension.average_velocity then
+				average_velocity = has_extension:average_velocity()
+
+				if not average_velocity then
+					-- Nothing
+				end
+			end
+
+			average_velocity = Vector3.zero()
+
+			::label_11_0::
+
+			local length_2 = Vector3.length(average_velocity)
+
+			length_2 = length_2 or 0
+
+			local flag = not (length_2 > breed.walk_speed) or not length_2 or breed.walk_speed
+
+			var_11_7 = math.lerp(flag, breed.run_speed, num)
+		elseif not ((length > breed.run_speed + 0.1 or not arg_11_2.deacceleration_factor) and not (target_dist < 2 * follow_reach + num_8)) then
+			local num_3 = target_dist - follow_reach
+
+			if not arg_11_2.deacceleration_factor then
+				arg_11_2.deacceleration_factor = (length - breed.run_speed) / num_3
+			end
+
+			var_11_7 = arg_11_2.deacceleration_factor * num_3 + breed.run_speed
+		else
+			arg_11_2.deacceleration_factor = nil
+
+			local run_speed_interpolation_factor = arg_11_2.breed.run_speed_interpolation_factor
+
+			run_speed_interpolation_factor = run_speed_interpolation_factor or num_9
+
+			local _calculate_run_speed = self:_calculate_run_speed(arg_11_1, target_unit, arg_11_2, has_extension)
+			local sign = math.sign(_calculate_run_speed - length)
+
+			if not (not (sign > 0) or not (length < breed.run_speed)) then
+				local match_speed_distance_2 = breed.match_speed_distance
+
+				match_speed_distance_2 = match_speed_distance_2 or follow_reach
+				length = not (target_dist > match_speed_distance_2 + 0.5) or not breed.run_speed or length
+			end
+
+			var_11_7 = math.min(length + sign * run_speed_interpolation_factor * arg_11_4, _calculate_run_speed)
+		end
 	end
 
-	local var_11_16 = arg_11_2.action
+	local action = arg_11_2.action
 
-	if var_11_16.custom_is_tired_function and var_11_16.custom_is_tired_function(arg_11_1, arg_11_2) then
+	if not action.custom_is_tired_function and not action.custom_is_tired_function(arg_11_1, arg_11_2) then
 		arg_11_2.walking = true
 		arg_11_2.walk_timer = arg_11_3 + 2.5
 	end
 
 	if not arg_11_2.walking then
-		local var_11_17 = var_11_0.enter_walk_distance and var_11_0.enter_walk_distance^2 or var_0_1
-		local var_11_18 = arg_11_2.navigation_extension:destination()
-		local var_11_19 = LocomotionUtils.rotation_towards_unit_flat(arg_11_1, arg_11_2.target_unit)
-		local var_11_20 = var_0_9[arg_11_1]
+		local num_5
 
-		if arg_11_0:_should_walk(var_11_18, var_11_20, var_11_17, var_11_19) then
-			local var_11_21 = 0
+		if not breed.enter_walk_distance then
+			num_5 = breed.enter_walk_distance^2
 
-			if not var_11_16.ignore_target_velocity then
-				local var_11_22 = var_11_4 and var_11_4.average_velocity and var_11_4:average_velocity() or Vector3.zero()
+			if not num_5 then
+				-- Nothing
+			end
+		end
 
-				var_11_21 = Vector3.length(var_11_22) or 0
+		num_5 = num_2
+
+		::label_11_1::
+
+		local destination = arg_11_2.navigation_extension:destination()
+		local rotation_towards_unit_flat = LocomotionUtils.rotation_towards_unit_flat(arg_11_1, arg_11_2.target_unit)
+		local var_11_22 = POSITION_LOOKUP[arg_11_1]
+
+		if not self:_should_walk(destination, var_11_22, num_5, rotation_towards_unit_flat) then
+			local num_6 = 0
+
+			if not action.ignore_target_velocity then
+				local average_velocity_2
+
+				if not has_extension and not has_extension.average_velocity then
+					average_velocity_2 = has_extension:average_velocity()
+
+					if not average_velocity_2 then
+						-- Nothing
+					end
+				end
+
+				average_velocity_2 = Vector3.zero()
+
+				::label_11_2::
+
+				num_6 = Vector3.length(average_velocity_2) or 0
 			end
 
-			if var_11_21 < var_0_3 then
+			if num_6 < num_4 then
 				arg_11_2.walking = true
 				arg_11_2.walk_timer = arg_11_3 + 2.5
 			end
@@ -357,114 +501,153 @@ function BTClanRatFollowAction.follow(arg_11_0, arg_11_1, arg_11_2, arg_11_3, ar
 	if arg_11_3 > arg_11_2.time_to_next_friend_alert then
 		arg_11_2.time_to_next_friend_alert = arg_11_3 + 0.5
 
-		if var_11_2 > (var_11_0.min_alert_friends_distance or var_0_10) and var_11_2 < (var_11_0.max_alert_friends_distance or var_0_11) then
-			local var_11_23 = World.get_data(arg_11_2.world, "physics_world")
-			local var_11_24 = var_0_9[arg_11_1]
-			local var_11_25 = var_0_9[var_11_1] - var_11_24
-			local var_11_26 = var_11_24 + Vector3(0, 0, 1)
+		local min_alert_friends_distance = breed.min_alert_friends_distance
 
-			if Vector3.length_squared(var_11_25) > 0 then
-				local var_11_27, var_11_28, var_11_29, var_11_30 = PhysicsWorld.immediate_raycast(var_11_23, var_11_26, var_11_25, arg_11_2.target_dist, "closest", "types", "statics", "collision_filter", "filter_ai_line_of_sight_check")
+		min_alert_friends_distance = min_alert_friends_distance or num_10
 
-				if not var_11_27 then
-					AiUtils.alert_nearby_friends_of_enemy(arg_11_1, arg_11_2.group_blackboard.broadphase, var_11_1, var_11_0.friends_alert_range or var_0_12)
+		if min_alert_friends_distance < target_dist then
+			local max_alert_friends_distance = breed.max_alert_friends_distance
+
+			max_alert_friends_distance = max_alert_friends_distance or num_11
+
+			if not (target_dist < max_alert_friends_distance) then
+				-- Nothing
+			end
+		end
+
+		do
+			local flag_2 = false
+
+			goto label_11_4
+		end
+
+		::label_11_3::
+
+		flag_2 = true
+
+		::label_11_4::
+
+		if not flag_2 then
+			local get_data = World.get_data(arg_11_2.world, "physics_world")
+			local var_11_29 = POSITION_LOOKUP[arg_11_1]
+			local num_7 = POSITION_LOOKUP[target_unit] - var_11_29
+			local num_13 = var_11_29 + Vector3(0, 0, 1)
+
+			if Vector3.length_squared(num_7) > 0 then
+				local immediate_raycast, var_11_33, var_11_34, var_11_35 = PhysicsWorld.immediate_raycast(get_data, num_13, num_7, arg_11_2.target_dist, "closest", "types", "statics", "collision_filter", "filter_ai_line_of_sight_check")
+
+				if not immediate_raycast then
+					local alert_nearby_friends_of_enemy = AiUtils.alert_nearby_friends_of_enemy
+					local var_11_37 = arg_11_1
+					local broadphase = arg_11_2.group_blackboard.broadphase
+					local var_11_39 = target_unit
+					local friends_alert_range = breed.friends_alert_range
+
+					friends_alert_range = friends_alert_range or num_12
+
+					alert_nearby_friends_of_enemy(var_11_37, broadphase, var_11_39, friends_alert_range)
 				end
 			end
 		end
 	end
 end
 
-function BTClanRatFollowAction._calculate_run_speed(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
-	local var_12_0 = arg_12_3.target_dist
-	local var_12_1 = arg_12_3.destination_dist
-	local var_12_2 = 0
+BTClanRatFollowAction._calculate_run_speed = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+	-- function 12
+	local target_dist = arg_12_3.target_dist
+	local destination_dist = arg_12_3.destination_dist
+	local num = 0
 
-	if arg_12_4 and arg_12_4.average_velocity and var_12_1 > var_0_4 and var_12_0 < var_0_5 then
-		local var_12_3 = var_0_9[arg_12_1]
-		local var_12_4 = arg_12_3.navigation_extension:destination()
-		local var_12_5 = arg_12_4:average_velocity()
-		local var_12_6 = Vector3.normalize(var_12_4 - var_12_3)
-		local var_12_7 = Vector3.normalize(var_12_5)
-		local var_12_8 = Vector3.dot(var_12_7, var_12_6)
+	if not (not arg_12_4 and not arg_12_4.average_velocity and not (destination_dist > num_5) or not (target_dist < num_6)) then
+		local var_12_3 = POSITION_LOOKUP[arg_12_1]
+		local destination = arg_12_3.navigation_extension:destination()
+		local average_velocity = arg_12_4:average_velocity()
+		local normalize = Vector3.normalize(destination - var_12_3)
+		local normalize_2 = Vector3.normalize(average_velocity)
+		local dot = Vector3.dot(normalize_2, normalize)
 
-		var_12_2 = math.clamp(var_12_8, 0, 1)
+		num = math.clamp(dot, 0, 1)
 	end
 
-	return arg_12_3.breed.run_speed + var_0_6 * var_12_2
+	return arg_12_3.breed.run_speed + num_7 * num
 end
 
-function BTClanRatFollowAction.start_move_animation(arg_13_0, arg_13_1, arg_13_2)
-	arg_13_0:set_start_move_animation_lock(arg_13_1, arg_13_2, true)
+BTClanRatFollowAction.start_move_animation = function (self, arg_13_1, arg_13_2)
+	-- function 13
+	self:set_start_move_animation_lock(arg_13_1, arg_13_2, true)
 
-	local var_13_0 = var_0_9[arg_13_2.target_unit]
+	local var_13_0 = POSITION_LOOKUP[arg_13_2.target_unit]
 	local var_13_1
-	local var_13_2 = arg_13_2.action
+	local action = arg_13_2.action
 
-	if var_13_2.start_alt_tired_anims_name and var_13_2.custom_is_tired_function(arg_13_1, arg_13_2) then
-		var_13_1 = var_13_2.start_alt_tired_anims_name
+	if not action.start_alt_tired_anims_name and not action.custom_is_tired_function(arg_13_1, arg_13_2) then
+		var_13_1 = action.start_alt_tired_anims_name
 	else
 		var_13_1 = arg_13_2.action.start_anims_name
 	end
 
-	local var_13_3 = AiAnimUtils.get_start_move_animation(arg_13_1, var_13_0, var_13_1)
+	local get_start_move_animation = AiAnimUtils.get_start_move_animation(arg_13_1, var_13_0, var_13_1)
 
-	Managers.state.network:anim_event(arg_13_1, var_13_3)
+	Managers.state.network:anim_event(arg_13_1, get_start_move_animation)
 
-	arg_13_2.move_animation_name = var_13_3
+	arg_13_2.move_animation_name = get_start_move_animation
 	arg_13_2.start_anim_locked = true
 end
 
-function BTClanRatFollowAction.start_move_rotation(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
-	if arg_14_2.move_animation_name == "move_start_fwd" or arg_14_2.move_animation_name == "move_start_fwd_jog" then
-		arg_14_0:set_start_move_animation_lock(arg_14_1, arg_14_2, false)
+BTClanRatFollowAction.start_move_rotation = function (self, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+	-- function 14
+	if not (arg_14_2.move_animation_name == "move_start_fwd" or arg_14_2.move_animation_name ~= "move_start_fwd_jog") then
+		self:set_start_move_animation_lock(arg_14_1, arg_14_2, false)
 
-		local var_14_0 = arg_14_2.locomotion_extension
-		local var_14_1 = LocomotionUtils.rotation_towards_unit_flat(arg_14_1, arg_14_2.target_unit)
+		local locomotion_extension = arg_14_2.locomotion_extension
+		local rotation_towards_unit_flat = LocomotionUtils.rotation_towards_unit_flat(arg_14_1, arg_14_2.target_unit)
 
-		var_14_0:set_wanted_rotation(var_14_1)
+		locomotion_extension:set_wanted_rotation(rotation_towards_unit_flat)
 	else
 		arg_14_2.anim_cb_rotation_start = false
 
-		local var_14_2 = var_0_9[arg_14_2.target_unit]
-		local var_14_3 = AiAnimUtils.get_animation_rotation_scale(arg_14_1, var_14_2, arg_14_2.move_animation_name, arg_14_2.action.start_anims_data)
+		local var_14_2 = POSITION_LOOKUP[arg_14_2.target_unit]
+		local get_animation_rotation_scale = AiAnimUtils.get_animation_rotation_scale(arg_14_1, var_14_2, arg_14_2.move_animation_name, arg_14_2.action.start_anims_data)
 
-		LocomotionUtils.set_animation_rotation_scale(arg_14_1, var_14_3)
+		LocomotionUtils.set_animation_rotation_scale(arg_14_1, get_animation_rotation_scale)
 	end
 end
 
-function BTClanRatFollowAction.set_start_move_animation_lock(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
-	local var_15_0 = arg_15_2.locomotion_extension
+BTClanRatFollowAction.set_start_move_animation_lock = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+	-- function 15
+	local locomotion_extension = arg_15_2.locomotion_extension
 
-	if arg_15_3 then
-		var_15_0:use_lerp_rotation(false)
+	if not arg_15_3 then
+		locomotion_extension:use_lerp_rotation(false)
 		LocomotionUtils.set_animation_driven_movement(arg_15_1, true, false, false)
 	else
-		var_15_0:use_lerp_rotation(true)
+		locomotion_extension:use_lerp_rotation(true)
 		LocomotionUtils.set_animation_driven_movement(arg_15_1, false)
 		LocomotionUtils.set_animation_rotation_scale(arg_15_1, 1)
 	end
 end
 
-local var_0_16 = {}
+local tbl = {}
 
-function BTClanRatFollowAction.do_dialogue(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
-	if arg_16_3 > arg_16_0.next_time_to_trigger_running_dialogue and arg_16_0.triggered_units[arg_16_1] == nil then
-		local var_16_0 = math.ceil(Vector3.distance(var_0_9[arg_16_1], var_0_9[arg_16_2.target_unit]))
+BTClanRatFollowAction.do_dialogue = function (self, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+	-- function 16
+	if not (not (arg_16_3 > self.next_time_to_trigger_running_dialogue) or self.triggered_units[arg_16_1] ~= nil) then
+		local ceil = math.ceil(Vector3.distance(POSITION_LOOKUP[arg_16_1], POSITION_LOOKUP[arg_16_2.target_unit]))
 
-		if var_16_0 < 15 then
-			local var_16_1 = var_0_9[arg_16_1]
-			local var_16_2 = AiUtils.broadphase_query(var_16_1, 10, var_0_16)
+		if ceil < 15 then
+			local var_16_1 = POSITION_LOOKUP[arg_16_1]
+			local broadphase_query = AiUtils.broadphase_query(var_16_1, 10, tbl)
 
-			arg_16_0.next_time_to_trigger_running_dialogue = arg_16_3 + 1
-			arg_16_0.triggered_units[arg_16_1] = true
+			self.next_time_to_trigger_running_dialogue = arg_16_3 + 1
+			self.triggered_units[arg_16_1] = true
 
-			local var_16_3 = ScriptUnit.extension_input(arg_16_1, "dialogue_system")
-			local var_16_4 = FrameTable.alloc_table()
+			local extension_input = ScriptUnit.extension_input(arg_16_1, "dialogue_system")
+			local alloc_table = FrameTable.alloc_table()
 
-			var_16_4.distance = var_16_0
-			var_16_4.num_units = var_16_2 - 1
+			alloc_table.distance = ceil
+			alloc_table.num_units = broadphase_query - 1
 
-			var_16_3:trigger_networked_dialogue_event("running", var_16_4)
+			extension_input:trigger_networked_dialogue_event("running", alloc_table)
 		end
 	end
 end

@@ -1,10 +1,10 @@
 -- chunkname: @scripts/settings/dlcs/wizards/wizards_level_settings_part_1.lua
 
-local var_0_0 = DLCSettings.wizards_part_1
+local wizards_part_1 = DLCSettings.wizards_part_1
 
-var_0_0.level_settings = "levels/honduras_dlcs/wizards/level_settings_wizards_part_1"
-var_0_0.level_unlock_settings = "levels/honduras_dlcs/wizards/level_unlock_settings_wizards_part_1"
-var_0_0.missions = {
+wizards_part_1.level_settings = "levels/honduras_dlcs/wizards/level_settings_wizards_part_1"
+wizards_part_1.level_unlock_settings = "levels/honduras_dlcs/wizards/level_unlock_settings_wizards_part_1"
+wizards_part_1.missions = {
 	level_trail_mission_01 = {
 		mission_template_name = "goal",
 		text = "mission_wizards_trail_caravan"

@@ -2,87 +2,99 @@
 
 TestifyExpect = class(TestifyExpect)
 
-function TestifyExpect.init(arg_1_0)
-	arg_1_0._expects = {}
+TestifyExpect.init = function (self)
+	-- function 1
+	self._expects = {}
 end
 
-function TestifyExpect.update(arg_2_0)
-	local var_2_0 = arg_2_0._expects
+TestifyExpect.update = function (self)
+	-- function 2
+	local _expects = self._expects
 
-	for iter_2_0, iter_2_1 in pairs(var_2_0) do
-		arg_2_0:_handle_expect(iter_2_1)
+	for k, v in pairs(_expects) do
+		self:_handle_expect(v)
 
-		var_2_0[iter_2_0] = nil
+		_expects[k] = nil
 	end
 end
 
-function TestifyExpect.fail(arg_3_0, arg_3_1, arg_3_2)
-	arg_3_0:_expect(arg_3_1, false, arg_3_2)
+TestifyExpect.fail = function (self, arg_3_1, arg_3_2)
+	-- function 3
+	self:_expect(arg_3_1, false, arg_3_2)
 end
 
-function TestifyExpect.is_true(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+TestifyExpect.is_true = function (self, arg_4_1, arg_4_2, arg_4_3)
+	-- function 4
 	arg_4_2 = arg_4_2 == true
 
-	arg_4_0:_expect(arg_4_1, arg_4_2, arg_4_3)
+	self:_expect(arg_4_1, arg_4_2, arg_4_3)
 end
 
-function TestifyExpect.is_false(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+TestifyExpect.is_false = function (self, arg_5_1, arg_5_2, arg_5_3)
+	-- function 5
 	arg_5_2 = arg_5_2 == false
 
-	arg_5_0:_expect(arg_5_1, arg_5_2, arg_5_3)
+	self:_expect(arg_5_1, arg_5_2, arg_5_3)
 end
 
-function TestifyExpect.is_not_nil(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
-	local var_6_0 = arg_6_2 ~= nil
+TestifyExpect.is_not_nil = function (self, arg_6_1, arg_6_2, arg_6_3)
+	-- function 6
+	local flag = arg_6_2 ~= nil
 
-	arg_6_0:_expect(arg_6_1, var_6_0, arg_6_3)
+	self:_expect(arg_6_1, flag, arg_6_3)
 end
 
-function TestifyExpect.is_nil(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
-	local var_7_0 = arg_7_2 == nil
+TestifyExpect.is_nil = function (self, arg_7_1, arg_7_2, arg_7_3)
+	-- function 7
+	local flag = arg_7_2 == nil
 
-	arg_7_0:_expect(arg_7_1, var_7_0, arg_7_3)
+	self:_expect(arg_7_1, flag, arg_7_3)
 end
 
-function TestifyExpect.are_equal(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
-	local var_8_0 = arg_8_0:_are_equal(arg_8_2, arg_8_3)
+TestifyExpect.are_equal = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+	-- function 8
+	local _are_equal = self:_are_equal(arg_8_2, arg_8_3)
 
-	arg_8_0:_expect(arg_8_1, var_8_0, arg_8_4)
+	self:_expect(arg_8_1, _are_equal, arg_8_4)
 end
 
-function TestifyExpect.are_not_equal(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
-	local var_9_0 = not arg_9_0:_are_equal(arg_9_2, arg_9_3)
+TestifyExpect.are_not_equal = function (self, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	-- function 9
+	local flag = not self:_are_equal(arg_9_2, arg_9_3)
 
-	arg_9_0:_expect(arg_9_1, var_9_0, arg_9_4)
+	self:_expect(arg_9_1, flag, arg_9_4)
 end
 
-function TestifyExpect._expect(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
-	local var_10_0 = {
+TestifyExpect._expect = function (self, arg_10_1, arg_10_2, arg_10_3)
+	-- function 10
+	local tbl = {
 		expect = arg_10_1,
 		condition = arg_10_2,
 		message = arg_10_3
 	}
-	local var_10_1 = arg_10_0._expects
+	local _expects = self._expects
 
-	var_10_1[#var_10_1 + 1] = var_10_0
+	_expects[#_expects + 1] = tbl
 end
 
-function TestifyExpect._handle_expect(arg_11_0, arg_11_1)
+TestifyExpect._handle_expect = function (arg_11_0, arg_11_1)
+	-- function 11
 	if not string.is_snake_case(arg_11_1.expect) then
 		ferror("expect parameter must be in snake case format (eg: this_is_snake_case): " .. arg_11_1.expect)
 	end
 
-	local var_11_0 = {
+	local tbl = {
 		[arg_11_1.expect] = fassert,
 		expect_data = arg_11_1
 	}
 	local var_11_1 = loadstring(string.format("%s(expect_data.condition, expect_data.message)", arg_11_1.expect))
 
-	setfenv(var_11_1, var_11_0)
+	setfenv(var_11_1, tbl)
 	var_11_1(arg_11_1)
 end
 
-function TestifyExpect._are_equal(arg_12_0, arg_12_1, arg_12_2)
+TestifyExpect._are_equal = function (self, arg_12_1, arg_12_2)
+	-- function 12
 	if arg_12_1 == arg_12_2 then
 		return true
 	end
@@ -97,20 +109,20 @@ function TestifyExpect._are_equal(arg_12_0, arg_12_1, arg_12_2)
 		return false
 	end
 
-	local var_12_1 = {}
+	local tbl = {}
 
-	for iter_12_0, iter_12_1 in pairs(arg_12_1) do
-		local var_12_2 = arg_12_2[iter_12_0]
+	for k, v in pairs(arg_12_1) do
+		local var_12_2 = arg_12_2[k]
 
-		if var_12_2 == nil or arg_12_0:_are_equal(iter_12_1, var_12_2) == false then
+		if not (var_12_2 == nil or self:_are_equal(v, var_12_2) ~= false) then
 			return false
 		end
 
-		var_12_1[iter_12_0] = true
+		tbl[k] = true
 	end
 
-	for iter_12_2, iter_12_3 in pairs(arg_12_2) do
-		if not var_12_1[iter_12_2] then
+	for k_2, v_2 in pairs(arg_12_2) do
+		if not tbl[k_2] then
 			return false
 		end
 	end

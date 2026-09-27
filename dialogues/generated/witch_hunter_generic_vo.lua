@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/witch_hunter_generic_vo.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pwh_gameplay_path_clear",

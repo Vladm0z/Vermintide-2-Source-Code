@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/skaven/skaven_warpfire_thrower_behavior.lua
 
-local var_0_0 = BreedActions.skaven_warpfire_thrower
+local skaven_warpfire_thrower = BreedActions.skaven_warpfire_thrower
 
 BreedBehaviors.skaven_warpfire_thrower = {
 	"BTSelector",
@@ -23,7 +23,7 @@ BreedBehaviors.skaven_warpfire_thrower = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = var_0_0.stagger
+		action_data = skaven_warpfire_thrower.stagger
 	},
 	{
 		"BTSelector",
@@ -46,7 +46,7 @@ BreedBehaviors.skaven_warpfire_thrower = {
 			"BTSmashDoorAction",
 			name = "smash_door",
 			condition = "at_door_smartobject",
-			action_data = var_0_0.smash_door
+			action_data = skaven_warpfire_thrower.smash_door
 		},
 		condition = "at_smartobject",
 		name = "smartobject"
@@ -57,18 +57,18 @@ BreedBehaviors.skaven_warpfire_thrower = {
 			"BTPackMasterSkulkAroundAction",
 			name = "skulk",
 			condition = "path_found",
-			action_data = var_0_0.skulk
+			action_data = skaven_warpfire_thrower.skulk
 		},
 		{
 			"BTPackMasterFollowAction",
 			name = "follow",
 			condition = "path_found",
-			action_data = var_0_0.follow
+			action_data = skaven_warpfire_thrower.follow
 		},
 		{
 			"BTWarpfireThrowerShootAction",
 			name = "shoot_warpfire_thrower",
-			action_data = var_0_0.shoot_warpfire_thrower
+			action_data = skaven_warpfire_thrower.shoot_warpfire_thrower
 		},
 		condition = "can_see_player",
 		name = "enemy_spotted"

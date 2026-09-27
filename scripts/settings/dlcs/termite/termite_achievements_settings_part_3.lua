@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/termite/termite_achievements_settings_part_3.lua
 
-local var_0_0 = DLCSettings.termite_part_3
+local termite_part_3 = DLCSettings.termite_part_3
 
-var_0_0.achievement_outline = {
+termite_part_3.achievement_outline = {
 	levels = {
 		entries = {},
 		categories = {
@@ -25,6 +25,6 @@ var_0_0.achievement_outline = {
 		}
 	}
 }
-var_0_0.achievement_template_file_names = {
+termite_part_3.achievement_template_file_names = {
 	"scripts/managers/achievements/achievement_templates_termite_part_3"
 }

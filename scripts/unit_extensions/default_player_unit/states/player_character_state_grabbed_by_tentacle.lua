@@ -2,352 +2,377 @@
 
 PlayerCharacterStateGrabbedByTentacle = class(PlayerCharacterStateGrabbedByTentacle, PlayerCharacterState)
 
-local var_0_0 = POSITION_LOOKUP
-local var_0_1 = CharacterStateHelper.play_animation_event
-local var_0_2 = 100
-local var_0_3 = 9
+local POSITION_LOOKUP = POSITION_LOOKUP
+local play_animation_event = CharacterStateHelper.play_animation_event
+local num = 100
+local num_2 = 9
 
-function PlayerCharacterStateGrabbedByTentacle.init(arg_1_0, arg_1_1)
+PlayerCharacterStateGrabbedByTentacle.init = function (arg_1_0, arg_1_1)
+	-- function 1
 	PlayerCharacterState.init(arg_1_0, arg_1_1, "grabbed_by_tentacle")
 end
 
-function PlayerCharacterStateGrabbedByTentacle.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
-	local var_2_0 = arg_2_0.inventory_extension
-	local var_2_1 = arg_2_0.career_extension
+PlayerCharacterStateGrabbedByTentacle.on_enter = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
+	-- function 2
+	local inventory_extension = self.inventory_extension
+	local career_extension = self.career_extension
 
-	CharacterStateHelper.stop_weapon_actions(var_2_0, "grabbed")
-	CharacterStateHelper.stop_career_abilities(var_2_1, "grabbed")
-	var_2_0:check_and_drop_pickups("grabbed_by_tentacle")
+	CharacterStateHelper.stop_weapon_actions(inventory_extension, "grabbed")
+	CharacterStateHelper.stop_career_abilities(career_extension, "grabbed")
+	inventory_extension:check_and_drop_pickups("grabbed_by_tentacle")
 
-	local var_2_2 = arg_2_0.first_person_extension
+	local first_person_extension = self.first_person_extension
 
-	var_2_2:set_first_person_mode(false)
-	var_2_2:set_wanted_player_height("grabbed_by_tentacle", arg_2_5)
+	first_person_extension:set_first_person_mode(false)
+	first_person_extension:set_wanted_player_height("grabbed_by_tentacle", arg_2_5)
 
-	local var_2_3 = arg_2_0.status_extension
-	local var_2_4 = var_2_3.grabbed_by_tentacle_unit
+	local status_extension = self.status_extension
+	local grabbed_by_tentacle_unit = status_extension.grabbed_by_tentacle_unit
 
-	arg_2_0.tentacle_unit = var_2_4
+	self.tentacle_unit = grabbed_by_tentacle_unit
 
-	local var_2_5 = ScriptUnit.has_extension(var_2_4, "ai_supplementary_system")
-	local var_2_6 = var_2_5.portal_unit
+	local has_extension = ScriptUnit.has_extension(grabbed_by_tentacle_unit, "ai_supplementary_system")
+	local portal_unit = has_extension.portal_unit
 
-	arg_2_0.tentacle_template = var_2_5.tentacle_template
-	arg_2_0.portal_unit = var_2_6
-	arg_2_0.tentacle_spline_extension = var_2_5
-	arg_2_0.winding_dist = var_2_5.lock_point_dist
+	self.tentacle_template = has_extension.tentacle_template
+	self.portal_unit = portal_unit
+	self.tentacle_spline_extension = has_extension
+	self.winding_dist = has_extension.lock_point_dist
 
-	local var_2_7 = var_2_5.tentacle_data
-	local var_2_8 = Quaternion.forward(Unit.local_rotation(var_2_7.portal_unit, 0))
+	local tentacle_data = has_extension.tentacle_data
+	local forward = Quaternion.forward(Unit.local_rotation(tentacle_data.portal_unit, 0))
 
-	arg_2_0.portal_forward = Vector3Box(var_2_8)
+	self.portal_forward = Vector3Box(forward)
 
-	local var_2_9 = Unit.get_data(var_2_4, "breed")
+	local get_data = Unit.get_data(grabbed_by_tentacle_unit, "breed")
 
-	arg_2_0.breed = var_2_9
-	arg_2_0.drag_speed = var_2_9.drag_speed
-	arg_2_0.camera_state = "first_person"
-	arg_2_0.hips_node = Unit.node(arg_2_1, "j_hips")
+	self.breed = get_data
+	self.drag_speed = get_data.drag_speed
+	self.camera_state = "first_person"
+	self.hips_node = Unit.node(arg_2_1, "j_hips")
 
-	if Unit.has_node(var_2_6, "a_player_attach") then
-		arg_2_0.hang_node = Unit.node(var_2_6, "a_player_attach")
+	if not Unit.has_node(portal_unit, "a_player_attach") then
+		self.hang_node = Unit.node(portal_unit, "a_player_attach")
 	end
 
-	arg_2_0.physics_world = World.physics_world(arg_2_0.world)
-	arg_2_0.nav_world = arg_2_0.nav_world or Managers.state.entity:system("ai_system"):nav_world()
+	self.physics_world = World.physics_world(self.world)
 
-	local var_2_10 = arg_2_0.locomotion_extension
+	local nav_world = self.nav_world
 
-	var_2_10:enable_script_driven_no_mover_movement()
-	var_2_10:enable_rotation_towards_velocity(false)
+	nav_world = nav_world or Managers.state.entity:system("ai_system"):nav_world()
+	self.nav_world = nav_world
 
-	local var_2_11 = CharacterStateHelper.grabbed_by_tentacle_status(var_2_3)
-	local var_2_12 = PlayerCharacterStateGrabbedByTentacle.states
+	local locomotion_extension = self.locomotion_extension
 
-	if var_2_12[var_2_11].enter then
-		var_2_12[var_2_11].enter(arg_2_0, arg_2_1, arg_2_5)
+	locomotion_extension:enable_script_driven_no_mover_movement()
+	locomotion_extension:enable_rotation_towards_velocity(false)
+
+	local grabbed_by_tentacle_status = CharacterStateHelper.grabbed_by_tentacle_status(status_extension)
+	local states = PlayerCharacterStateGrabbedByTentacle.states
+
+	if not states[grabbed_by_tentacle_status].enter then
+		states[grabbed_by_tentacle_status].enter(self, arg_2_1, arg_2_5)
 	end
 
-	arg_2_0.grabbed_by_tentacle_status = var_2_11
+	self.grabbed_by_tentacle_status = grabbed_by_tentacle_status
 end
 
-local function var_0_4(arg_3_0, arg_3_1)
-	local var_3_0 = LocomotionUtils.pos_on_mesh(arg_3_0, arg_3_1, 1, 1)
+local function fn(arg_3_0, arg_3_1)
+	-- function 3
+	local pos_on_mesh = LocomotionUtils.pos_on_mesh(arg_3_0, arg_3_1, 1, 1)
 
-	if var_3_0 then
-		return var_3_0
+	if not pos_on_mesh then
+		return pos_on_mesh
 	end
 
-	local var_3_1 = 1
-	local var_3_2 = 2
-	local var_3_3 = 1
-	local var_3_4 = 0.05
-	local var_3_5 = GwNavQueries.inside_position_from_outside_position(arg_3_0, arg_3_1, var_3_1, var_3_2, var_3_3, var_3_4)
+	local num = 1
+	local num_2 = 2
+	local num_3 = 1
+	local num_4 = 0.05
+	local inside_position_from_outside_position = GwNavQueries.inside_position_from_outside_position(arg_3_0, arg_3_1, num, num_2, num_3, num_4)
 
-	if var_3_5 then
-		return var_3_5
+	if not inside_position_from_outside_position then
+		return inside_position_from_outside_position
 	end
 end
 
-function PlayerCharacterStateGrabbedByTentacle.on_exit(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
-	local var_4_0 = arg_4_0.status_extension
+PlayerCharacterStateGrabbedByTentacle.on_exit = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
+	-- function 4
+	local status_extension = self.status_extension
 
-	var_4_0:set_grabbed_by_tentacle(false)
+	status_extension:set_grabbed_by_tentacle(false)
 
-	local var_4_1 = arg_4_0.camera_state ~= "first_person" or false
+	local flag = self.camera_state ~= "first_person" or false
 
-	CharacterStateHelper.show_inventory_3p(arg_4_1, true, var_4_1, arg_4_0.is_server, arg_4_0.inventory_extension)
+	CharacterStateHelper.show_inventory_3p(arg_4_1, true, flag, self.is_server, self.inventory_extension)
 
-	local var_4_2 = arg_4_0.player
+	local player = self.player
 
-	Managers.state.entity:system("camera_system"):set_follow_unit(var_4_2)
+	Managers.state.entity:system("camera_system"):set_follow_unit(player)
 
-	if arg_4_0.grabbed_by_tentacle_status ~= "portal_consume" then
-		local var_4_3 = arg_4_0.locomotion_extension
+	if self.grabbed_by_tentacle_status ~= "portal_consume" then
+		local locomotion_extension = self.locomotion_extension
 
-		if not CharacterStateHelper.is_knocked_down(var_4_0) and not CharacterStateHelper.is_dead(var_4_0) then
-			local var_4_4 = arg_4_0.first_person_extension
-			local var_4_5 = arg_4_0.camera_state
+		if not (CharacterStateHelper.is_knocked_down(status_extension) or CharacterStateHelper.is_dead(status_extension)) then
+			local first_person_extension = self.first_person_extension
+			local camera_state = self.camera_state
 
-			CharacterStateHelper.change_camera_state(var_4_2, "follow")
+			CharacterStateHelper.change_camera_state(player, "follow")
 
-			if var_4_5 == "first_person" then
-				var_4_4:set_first_person_mode(true)
+			if camera_state == "first_person" then
+				first_person_extension:set_first_person_mode(true)
 			else
-				var_4_4:toggle_visibility(CameraTransitionSettings.perspective_transition_time)
+				first_person_extension:toggle_visibility(CameraTransitionSettings.perspective_transition_time)
 			end
 
-			var_4_3:reset_maximum_upwards_velocity()
-			var_4_3:enable_script_driven_movement()
-			var_4_3:enable_rotation_towards_velocity(true)
+			locomotion_extension:reset_maximum_upwards_velocity()
+			locomotion_extension:enable_script_driven_movement()
+			locomotion_extension:enable_rotation_towards_velocity(true)
 		end
 
-		local var_4_6 = arg_4_0.nav_world
-		local var_4_7 = Unit.world_position(arg_4_1, arg_4_0.hips_node)
-		local var_4_8 = arg_4_0.tentacle_spline_extension.tentacle_data.last_target_pos:unbox()
+		local nav_world = self.nav_world
+		local world_position = Unit.world_position(arg_4_1, self.hips_node)
+		local unbox = self.tentacle_spline_extension.tentacle_data.last_target_pos:unbox()
 
-		if var_4_8 then
-			var_4_3:teleport_to(var_4_8)
+		if not unbox then
+			locomotion_extension:teleport_to(unbox)
 		end
 	end
 
-	arg_4_0.first_person_extension:set_wanted_player_height("stand", arg_4_5)
+	self.first_person_extension:set_wanted_player_height("stand", arg_4_5)
 
-	arg_4_0.camera_state = nil
-	arg_4_0.grabbed_by_tentacle_status = nil
+	self.camera_state = nil
+	self.grabbed_by_tentacle_status = nil
 end
 
 PlayerCharacterStateGrabbedByTentacle.states = {
 	grabbed = {
-		enter = function(arg_5_0, arg_5_1, arg_5_2)
-			local var_5_0 = arg_5_0.camera_state ~= "first_person" or false
+		enter = function (self, arg_5_1, arg_5_2)
+			-- function 5
+			local flag = self.camera_state ~= "first_person" or false
 
-			CharacterStateHelper.show_inventory_3p(arg_5_1, false, var_5_0, arg_5_0.is_server, arg_5_0.inventory_extension)
-			var_0_1(arg_5_1, "tentacle_grabbed_loop")
+			CharacterStateHelper.show_inventory_3p(arg_5_1, false, flag, self.is_server, self.inventory_extension)
+			play_animation_event(arg_5_1, "tentacle_grabbed_loop")
 		end,
-		run = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
-			local var_6_0 = Unit.world_position(arg_6_1, arg_6_0.hips_node)
-			local var_6_1 = arg_6_0.nav_world
-			local var_6_2 = arg_6_0:get_drag_velocity(var_6_0, arg_6_2, arg_6_3)
-			local var_6_3 = var_6_0 + var_6_2
-			local var_6_4, var_6_5, var_6_6, var_6_7, var_6_8 = PhysicsWorld.immediate_raycast(arg_6_0.physics_world, var_6_0, Vector3(0, 0, -1), 1, "all", "collision_filter", "filter_ledge_test")
+		run = function (self, arg_6_1, arg_6_2, arg_6_3)
+			-- function 6
+			local world_position = Unit.world_position(arg_6_1, self.hips_node)
+			local nav_world = self.nav_world
+			local get_drag_velocity = self:get_drag_velocity(world_position, arg_6_2, arg_6_3)
+			local num = world_position + get_drag_velocity
+			local immediate_raycast, var_6_5, var_6_6, var_6_7, var_6_8 = PhysicsWorld.immediate_raycast(self.physics_world, world_position, Vector3(0, 0, -1), 1, "all", "collision_filter", "filter_ledge_test")
 
-			if var_6_4 then
-				var_6_2.z = 0.5
+			if not immediate_raycast then
+				get_drag_velocity.z = 0.5
 			end
 
-			arg_6_0.locomotion_extension:set_wanted_velocity(var_6_2)
+			self.locomotion_extension:set_wanted_velocity(get_drag_velocity)
 
-			local var_6_9 = Vector3.normalize(var_6_2)
-			local var_6_10 = Unit.world_rotation(arg_6_1, 0)
-			local var_6_11 = Quaternion.look(var_6_9, Vector3.up())
-			local var_6_12 = Quaternion.lerp(var_6_10, var_6_11, arg_6_3)
+			local normalize = Vector3.normalize(get_drag_velocity)
+			local world_rotation = Unit.world_rotation(arg_6_1, 0)
+			local look = Quaternion.look(normalize, Vector3.up())
+			local lerp = Quaternion.lerp(world_rotation, look, arg_6_3)
 
-			Unit.set_local_rotation(arg_6_1, 0, var_6_12)
+			Unit.set_local_rotation(arg_6_1, 0, lerp)
 
-			local var_6_13 = arg_6_0.camera_state
+			local camera_state = self.camera_state
 
-			if var_6_13 == "first_person" or var_6_13 == "third_person" then
-				local var_6_14 = arg_6_0.player
-				local var_6_15 = arg_6_0.portal_unit
-				local var_6_16 = var_0_0[var_6_15] - var_6_0
-				local var_6_17 = Vector3.length_squared(var_6_16)
-				local var_6_18 = arg_6_0.tentacle_template
+			if not (camera_state == "first_person" or camera_state ~= "third_person") then
+				local player = self.player
+				local portal_unit = self.portal_unit
+				local num_2 = POSITION_LOOKUP[portal_unit] - world_position
+				local length_squared = Vector3.length_squared(num_2)
+				local tentacle_template = self.tentacle_template
 
-				if var_6_13 == "first_person" and var_6_17 < var_6_18.switch_to_3p_dist_sq then
-					CharacterStateHelper.change_camera_state(var_6_14, "follow_third_person")
-					arg_6_0.inventory_extension:show_third_person_inventory(false)
+				if not (camera_state ~= "first_person" or not (length_squared < tentacle_template.switch_to_3p_dist_sq)) then
+					CharacterStateHelper.change_camera_state(player, "follow_third_person")
+					self.inventory_extension:show_third_person_inventory(false)
 
-					arg_6_0.camera_state = "third_person"
-				elseif var_6_13 == "third_person" and var_6_17 < var_6_18.switch_to_portal_cam_dist_sq then
-					local var_6_19 = Managers.state.entity:system("camera_system")
-					local var_6_20 = arg_6_0.tentacle_template.portal_camera_node
+					self.camera_state = "third_person"
+				elseif not (camera_state ~= "third_person" or not (length_squared < tentacle_template.switch_to_portal_cam_dist_sq)) then
+					local system = Managers.state.entity:system("camera_system")
+					local portal_camera_node = self.tentacle_template.portal_camera_node
 
-					var_6_19:set_follow_unit(var_6_14, var_6_15, var_6_20)
+					system:set_follow_unit(player, portal_unit, portal_camera_node)
 
-					arg_6_0.camera_state = "portal"
+					self.camera_state = "portal"
 				end
 			end
 		end,
-		leave = function(arg_7_0, arg_7_1)
+		leave = function (arg_7_0, arg_7_1)
+			-- function 7
 			return
 		end
 	},
 	portal_hanging = {
-		enter = function(arg_8_0, arg_8_1, arg_8_2)
-			var_0_1(arg_8_1, "tentacle_portal_struggle_loop")
+		enter = function (self, arg_8_1, arg_8_2)
+			-- function 8
+			play_animation_event(arg_8_1, "tentacle_portal_struggle_loop")
 
-			local var_8_0 = Unit.world_rotation(arg_8_0.portal_unit, arg_8_0.hang_node)
+			local world_rotation = Unit.world_rotation(self.portal_unit, self.hang_node)
 
-			Unit.set_local_rotation(arg_8_1, 0, var_8_0)
+			Unit.set_local_rotation(arg_8_1, 0, world_rotation)
 		end,
-		run = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
-			local var_9_0 = Unit.world_position(arg_9_1, 0)
-			local var_9_1 = Unit.world_position(arg_9_0.portal_unit, arg_9_0.hang_node) - var_9_0
+		run = function (self, arg_9_1, arg_9_2, arg_9_3)
+			-- function 9
+			local world_position = Unit.world_position(arg_9_1, 0)
+			local num = Unit.world_position(self.portal_unit, self.hang_node) - world_position
 
-			if Vector3.length_squared(var_9_1) > 0.01 then
-				local var_9_2 = 5 * var_9_1
+			if Vector3.length_squared(num) > 0.01 then
+				local num_2 = 5 * num
 
-				arg_9_0.locomotion_extension:set_wanted_velocity(var_9_2)
+				self.locomotion_extension:set_wanted_velocity(num_2)
 			else
-				arg_9_0.locomotion_extension:set_wanted_velocity(Vector3.zero())
+				self.locomotion_extension:set_wanted_velocity(Vector3.zero())
 			end
 		end,
-		leave = function(arg_10_0, arg_10_1)
+		leave = function (arg_10_0, arg_10_1)
+			-- function 10
 			return
 		end
 	},
 	portal_consume = {
-		enter = function(arg_11_0, arg_11_1, arg_11_2)
-			local var_11_0 = arg_11_0.portal_unit
-			local var_11_1 = Unit.node(var_11_0, "a_surface_center")
-			local var_11_2 = Unit.world_position(var_11_0, var_11_1)
-			local var_11_3 = Unit.world_rotation(var_11_0, var_11_1)
-			local var_11_4 = Quaternion.forward(var_11_3)
-			local var_11_5 = arg_11_0.breed
-			local var_11_6 = {
+		enter = function (self, arg_11_1, arg_11_2)
+			-- function 11
+			local portal_unit = self.portal_unit
+			local node = Unit.node(portal_unit, "a_surface_center")
+			local world_position = Unit.world_position(portal_unit, node)
+			local world_rotation = Unit.world_rotation(portal_unit, node)
+			local forward = Quaternion.forward(world_rotation)
+			local breed = self.breed
+			local tbl = {
 				animation = "tentacle_portal_struggle_dead",
-				drop_items_delay = var_11_5.time_before_consume_kill_player,
-				override_item_drop_position = var_11_2,
-				override_item_drop_direction = var_11_4
+				drop_items_delay = breed.time_before_consume_kill_player,
+				override_item_drop_position = world_position,
+				override_item_drop_direction = forward
 			}
 
-			arg_11_0.csm:change_state("dead", var_11_6)
+			self.csm:change_state("dead", tbl)
 		end,
-		run = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+		run = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			-- function 12
 			return
 		end,
-		leave = function(arg_13_0, arg_13_1)
+		leave = function (arg_13_0, arg_13_1)
+			-- function 13
 			return
 		end
 	},
 	portal_release = {
-		enter = function(arg_14_0, arg_14_1, arg_14_2)
-			var_0_1(arg_14_1, "tentacle_portal_struggle_release")
-			arg_14_0.locomotion_extension:set_wanted_velocity(Vector3.zero())
+		enter = function (self, arg_14_1, arg_14_2)
+			-- function 14
+			play_animation_event(arg_14_1, "tentacle_portal_struggle_release")
+			self.locomotion_extension:set_wanted_velocity(Vector3.zero())
 
-			arg_14_0.wait_for_release = arg_14_2 + arg_14_0.breed.portal_release_time
+			self.wait_for_release = arg_14_2 + self.breed.portal_release_time
 		end,
-		run = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
-			if arg_15_2 > arg_15_0.wait_for_release then
-				arg_15_0.csm:change_state("standing")
+		run = function (self, arg_15_1, arg_15_2, arg_15_3)
+			-- function 15
+			if arg_15_2 > self.wait_for_release then
+				self.csm:change_state("standing")
 			end
 		end,
-		leave = function(arg_16_0, arg_16_1)
+		leave = function (arg_16_0, arg_16_1)
+			-- function 16
 			return
 		end
 	}
 }
 
-function PlayerCharacterStateGrabbedByTentacle.get_drag_velocity(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
-	arg_17_0.winding_dist = arg_17_0.winding_dist - arg_17_0.drag_speed * arg_17_3
+PlayerCharacterStateGrabbedByTentacle.get_drag_velocity = function (self, arg_17_1, arg_17_2, arg_17_3)
+	-- function 17
+	self.winding_dist = self.winding_dist - self.drag_speed * arg_17_3
 
-	local var_17_0 = arg_17_0.tentacle_spline_extension.spline
-	local var_17_1 = arg_17_0.tentacle_spline_extension.tentacle_data
-	local var_17_2 = var_17_1.portal_spawn_type == "floor" and 3.3 or 2.5
-	local var_17_3 = var_17_0:get_point_at_distance(arg_17_0.winding_dist - var_17_2)
-	local var_17_4 = arg_17_0.tentacle_spline_extension.tentacle_data.travel_to_node_index
+	local spline = self.tentacle_spline_extension.spline
+	local tentacle_data = self.tentacle_spline_extension.tentacle_data
+	local flag
+
+	flag = tentacle_data.portal_spawn_type ~= "floor" or not 3.3 or 2.5
+
+	local get_point_at_distance = spline:get_point_at_distance(self.winding_dist - flag)
+	local travel_to_node_index = self.tentacle_spline_extension.tentacle_data.travel_to_node_index
 	local var_17_5
 	local var_17_6
 
-	if var_17_4 then
-		local var_17_7 = arg_17_0.tentacle_spline_extension.tentacle_data.astar_node_list[var_17_4 + 1]:unbox()
-		local var_17_8 = arg_17_0.tentacle_spline_extension.tentacle_data.astar_node_list[var_17_4]:unbox()
+	if not travel_to_node_index then
+		local unbox = self.tentacle_spline_extension.tentacle_data.astar_node_list[travel_to_node_index + 1]:unbox()
+		local unbox_2 = self.tentacle_spline_extension.tentacle_data.astar_node_list[travel_to_node_index]:unbox()
 
-		var_17_5 = Vector3.normalize(var_17_8 - var_17_7)
+		var_17_5 = Vector3.normalize(unbox_2 - unbox)
 
-		QuickDrawer:line(var_17_8, arg_17_1, Color(200, 0, 255))
+		QuickDrawer:line(unbox_2, arg_17_1, Color(200, 0, 255))
 	else
 		local var_17_9
 		local var_17_10
-		local var_17_11 = arg_17_0.portal_forward:unbox()
-		local var_17_12 = var_17_1.root_pos:unbox()
-		local var_17_13 = var_17_1.wall_pos:unbox()
+		local unbox_3 = self.portal_forward:unbox()
+		local unbox_4 = tentacle_data.root_pos:unbox()
+		local unbox_5 = tentacle_data.wall_pos:unbox()
 
-		if var_17_1.portal_spawn_type == "floor" then
-			local var_17_14 = 4
-			local var_17_15 = 3
-			local var_17_16
+		if tentacle_data.portal_spawn_type == "floor" then
+			local num = 4
+			local num_2 = 3
+			local funnel_one_point
 
-			var_17_16, var_17_10 = arg_17_0.tentacle_spline_extension:funnel_one_point(var_17_3, var_17_13, var_17_12, var_17_11, var_17_14, var_17_15)
+			funnel_one_point, var_17_10 = self.tentacle_spline_extension:funnel_one_point(get_point_at_distance, unbox_5, unbox_4, unbox_3, num, num_2)
 		else
-			local var_17_17 = 2.5
-			local var_17_18
+			local num_3 = 2.5
+			local funnel_one_point_2
 
-			var_17_18, var_17_10 = arg_17_0.tentacle_spline_extension:funnel_one_point(var_17_3, var_17_13, var_17_12, var_17_11, var_17_17)
+			funnel_one_point_2, var_17_10 = self.tentacle_spline_extension:funnel_one_point(get_point_at_distance, unbox_5, unbox_4, unbox_3, num_3)
 		end
 
 		if var_17_10 > 1 then
-			var_17_3 = var_17_13 + var_17_11 * 2
+			get_point_at_distance = unbox_5 + unbox_3 * 2
 		end
 
-		var_17_5 = Vector3.normalize(var_17_3 - arg_17_1)
+		var_17_5 = Vector3.normalize(get_point_at_distance - arg_17_1)
 	end
 
 	local var_17_19
 
-	return var_17_5 * arg_17_0.drag_speed, var_17_19
+	return var_17_5 * self.drag_speed, var_17_19
 end
 
-function PlayerCharacterStateGrabbedByTentacle.update(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
-	local var_18_0 = arg_18_0.csm
-	local var_18_1 = arg_18_0.input_extension
-	local var_18_2 = arg_18_0.status_extension
-	local var_18_3 = arg_18_0.tentacle_unit
+PlayerCharacterStateGrabbedByTentacle.update = function (self, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
+	-- function 18
+	local csm = self.csm
+	local input_extension = self.input_extension
+	local status_extension = self.status_extension
+	local tentacle_unit = self.tentacle_unit
 
-	if not var_18_2.grabbed_by_tentacle or not Unit.alive(var_18_3) then
-		if CharacterStateHelper.is_waiting_for_assisted_respawn(var_18_2) then
-			var_18_0:change_state("waiting_for_assisted_respawn")
-		elseif CharacterStateHelper.is_knocked_down(var_18_2) then
-			var_18_0:change_state("knocked_down")
-		elseif CharacterStateHelper.is_dead(var_18_2) then
-			var_18_0:change_state("dead")
+	if not (not status_extension.grabbed_by_tentacle and Unit.alive(tentacle_unit)) then
+		if not CharacterStateHelper.is_waiting_for_assisted_respawn(status_extension) then
+			csm:change_state("waiting_for_assisted_respawn")
+		elseif not CharacterStateHelper.is_knocked_down(status_extension) then
+			csm:change_state("knocked_down")
+		elseif not CharacterStateHelper.is_dead(status_extension) then
+			csm:change_state("dead")
 		else
-			var_18_0:change_state("standing")
+			csm:change_state("standing")
 		end
 
 		return
 	end
 
-	local var_18_4 = CharacterStateHelper.grabbed_by_tentacle_status(var_18_2)
-	local var_18_5 = arg_18_0.grabbed_by_tentacle_status
-	local var_18_6 = PlayerCharacterStateGrabbedByTentacle.states
+	local grabbed_by_tentacle_status = CharacterStateHelper.grabbed_by_tentacle_status(status_extension)
+	local grabbed_by_tentacle_status_2 = self.grabbed_by_tentacle_status
+	local states = PlayerCharacterStateGrabbedByTentacle.states
 
-	if var_18_4 ~= var_18_5 then
-		if var_18_6[var_18_5].leave then
-			var_18_6[var_18_5].leave(arg_18_0, arg_18_1)
+	if grabbed_by_tentacle_status ~= grabbed_by_tentacle_status_2 then
+		if not states[grabbed_by_tentacle_status_2].leave then
+			states[grabbed_by_tentacle_status_2].leave(self, arg_18_1)
 		end
 
-		if var_18_6[var_18_4].enter then
-			var_18_6[var_18_4].enter(arg_18_0, arg_18_1, arg_18_5)
+		if not states[grabbed_by_tentacle_status].enter then
+			states[grabbed_by_tentacle_status].enter(self, arg_18_1, arg_18_5)
 		end
 
-		arg_18_0.grabbed_by_tentacle_status = var_18_4
+		self.grabbed_by_tentacle_status = grabbed_by_tentacle_status
 	end
 
-	var_18_6[var_18_4].run(arg_18_0, arg_18_1, arg_18_5, arg_18_3)
+	states[grabbed_by_tentacle_status].run(self, arg_18_1, arg_18_5, arg_18_3)
 
-	local var_18_7 = arg_18_0.player
+	local player = self.player
 
-	CharacterStateHelper.look(var_18_1, var_18_7.viewport_name, arg_18_0.first_person_extension, var_18_2, arg_18_0.inventory_extension)
+	CharacterStateHelper.look(input_extension, player.viewport_name, self.first_person_extension, status_extension, self.inventory_extension)
 end

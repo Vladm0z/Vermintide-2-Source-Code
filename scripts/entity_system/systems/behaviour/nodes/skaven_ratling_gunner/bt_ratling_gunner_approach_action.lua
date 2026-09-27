@@ -4,64 +4,74 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTRatlingGunnerApproachAction = class(BTRatlingGunnerApproachAction, BTNode)
 
-function BTRatlingGunnerApproachAction.init(arg_1_0, ...)
+BTRatlingGunnerApproachAction.init = function (arg_1_0, ...)
+	-- function 1
 	BTRatlingGunnerApproachAction.super.init(arg_1_0, ...)
 end
 
 BTRatlingGunnerApproachAction.name = "BTRatlingGunnerApproachAction"
 
-function BTRatlingGunnerApproachAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
-	local var_2_0 = arg_2_0._tree_node.action_data
+BTRatlingGunnerApproachAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+	-- function 2
+	local action_data = self._tree_node.action_data
+	local attack_pattern_data = arg_2_2.attack_pattern_data
 
-	arg_2_2.attack_pattern_data = arg_2_2.attack_pattern_data or {}
-	arg_2_2.action = var_2_0
-	arg_2_2.lurk_start = arg_2_2.lurk_start or arg_2_3
+	attack_pattern_data = attack_pattern_data or {}
+	arg_2_2.attack_pattern_data = attack_pattern_data
+	arg_2_2.action = action_data
 
-	local var_2_1 = var_2_0.move_speed
-	local var_2_2 = arg_2_2.navigation_extension
+	local lurk_start = arg_2_2.lurk_start
 
-	var_2_2:set_max_speed(var_2_1)
-	var_2_2:stop()
+	lurk_start = lurk_start or arg_2_3
+	arg_2_2.lurk_start = lurk_start
+
+	local move_speed = action_data.move_speed
+	local navigation_extension = arg_2_2.navigation_extension
+
+	navigation_extension:set_max_speed(move_speed)
+	navigation_extension:stop()
 
 	if arg_2_2.move_state == "moving" then
-		local var_2_3 = var_2_0.move_anim
+		local move_anim = action_data.move_anim
 
-		Managers.state.network:anim_event(arg_2_1, var_2_3)
+		Managers.state.network:anim_event(arg_2_1, move_anim)
 	end
 
-	local var_2_4 = var_2_0.tutorial_message_template
+	local tutorial_message_template = action_data.tutorial_message_template
 
-	if var_2_4 then
-		local var_2_5 = NetworkLookup.tutorials[var_2_4]
-		local var_2_6 = NetworkLookup.tutorials[arg_2_2.breed.name]
+	if not tutorial_message_template then
+		local var_2_7 = NetworkLookup.tutorials[tutorial_message_template]
+		local var_2_8 = NetworkLookup.tutorials[arg_2_2.breed.name]
 
-		Managers.state.network.network_transmit:send_rpc_all("rpc_tutorial_message", var_2_5, var_2_6)
+		Managers.state.network.network_transmit:send_rpc_all("rpc_tutorial_message", var_2_7, var_2_8)
 	end
 end
 
-function BTRatlingGunnerApproachAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTRatlingGunnerApproachAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	-- function 3
 	if arg_3_4 ~= "done" then
 		arg_3_2.move_pos = nil
 	end
 
-	local var_3_0 = AiUtils.get_default_breed_move_speed(arg_3_1, arg_3_2)
+	local get_default_breed_move_speed = AiUtils.get_default_breed_move_speed(arg_3_1, arg_3_2)
 
-	arg_3_2.navigation_extension:set_max_speed(var_3_0)
+	arg_3_2.navigation_extension:set_max_speed(get_default_breed_move_speed)
 end
 
-function BTRatlingGunnerApproachAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-	if arg_4_0:is_within_check_distance(arg_4_1, arg_4_2) then
+BTRatlingGunnerApproachAction.run = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	-- function 4
+	if not self:is_within_check_distance(arg_4_1, arg_4_2) then
 		return "done"
 	end
 
-	local var_4_0 = arg_4_2.move_pos
-	local var_4_1 = var_4_0 and arg_4_2.destination_dist < 0.5
+	local move_pos = arg_4_2.move_pos
+	local flag = not move_pos and arg_4_2.destination_dist < 0.5
 
-	if not var_4_0 or var_4_1 then
-		local var_4_2 = arg_4_0:calculate_move_position(arg_4_1, arg_4_2)
+	if not move_pos and not flag then
+		local calculate_move_position = self:calculate_move_position(arg_4_1, arg_4_2)
 
-		if var_4_2 then
-			arg_4_0:move_to(var_4_2, arg_4_2)
+		if not calculate_move_position then
+			self:move_to(calculate_move_position, arg_4_2)
 
 			return "running"
 		else
@@ -69,16 +79,16 @@ function BTRatlingGunnerApproachAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, a
 		end
 	end
 
-	if arg_4_2.no_path_found then
+	if not arg_4_2.no_path_found then
 		return "failed"
 	end
 
-	local var_4_3 = arg_4_2.is_computing_path
+	local is_computing_path = arg_4_2.is_computing_path
 
-	if arg_4_2.move_state ~= "moving" and not var_4_3 then
-		local var_4_4 = arg_4_2.action.move_anim
+	if not (arg_4_2.move_state == "moving" or is_computing_path) then
+		local move_anim = arg_4_2.action.move_anim
 
-		Managers.state.network:anim_event(arg_4_1, var_4_4)
+		Managers.state.network:anim_event(arg_4_1, move_anim)
 
 		arg_4_2.move_state = "moving"
 	end
@@ -86,25 +96,28 @@ function BTRatlingGunnerApproachAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, a
 	return "running"
 end
 
-function BTRatlingGunnerApproachAction.is_within_check_distance(arg_5_0, arg_5_1, arg_5_2)
-	local var_5_0 = arg_5_2.action
-	local var_5_1 = arg_5_2.previous_attacker
+BTRatlingGunnerApproachAction.is_within_check_distance = function (arg_5_0, arg_5_1, arg_5_2)
+	-- function 5
+	local action = arg_5_2.action
+	local previous_attacker = arg_5_2.previous_attacker
 
-	return arg_5_2.target_dist < var_5_0.check_distance or var_5_1
+	return arg_5_2.target_dist < action.check_distance or previous_attacker
 end
 
-function BTRatlingGunnerApproachAction.move_to(arg_6_0, arg_6_1, arg_6_2)
+BTRatlingGunnerApproachAction.move_to = function (arg_6_0, arg_6_1, arg_6_2)
+	-- function 6
 	arg_6_2.navigation_extension:move_to(arg_6_1)
 
 	arg_6_2.move_pos = Vector3Box(arg_6_1)
 end
 
-function BTRatlingGunnerApproachAction.calculate_move_position(arg_7_0, arg_7_1, arg_7_2)
-	local var_7_0 = arg_7_2.action
-	local var_7_1 = var_7_0.check_distance - 2
-	local var_7_2 = var_7_0.check_distance
-	local var_7_3 = var_7_0.min_angle_step
-	local var_7_4 = var_7_0.max_angle_step
+BTRatlingGunnerApproachAction.calculate_move_position = function (arg_7_0, arg_7_1, arg_7_2)
+	-- function 7
+	local action = arg_7_2.action
+	local num = action.check_distance - 2
+	local check_distance = action.check_distance
+	local min_angle_step = action.min_angle_step
+	local max_angle_step = action.max_angle_step
 
-	return (AiUtils.advance_towards_target(arg_7_1, arg_7_2, var_7_1, var_7_2, var_7_3, var_7_4))
+	return (AiUtils.advance_towards_target(arg_7_1, arg_7_2, num, check_distance, min_angle_step, max_angle_step))
 end

@@ -2,11 +2,13 @@
 
 TokenManager = class(TokenManager)
 
-function TokenManager.init(arg_1_0)
-	arg_1_0._tokens = {}
+TokenManager.init = function (self)
+	-- function 1
+	self._tokens = {}
 end
 
-function TokenManager.register_token(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+TokenManager.register_token = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	-- function 2
 	arg_2_0._tokens[#arg_2_0._tokens + 1] = {
 		token = arg_2_1,
 		callback = arg_2_2,
@@ -14,34 +16,36 @@ function TokenManager.register_token(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	}
 end
 
-function TokenManager.update(arg_3_0, arg_3_1, arg_3_2)
-	for iter_3_0, iter_3_1 in pairs(arg_3_0._tokens) do
-		local var_3_0 = iter_3_1.token
+TokenManager.update = function (self, arg_3_1, arg_3_2)
+	-- function 3
+	for k, v in pairs(self._tokens) do
+		local token = v.token
 
-		var_3_0:update()
+		token:update()
 
-		if var_3_0:done() or arg_3_2 >= iter_3_1.timeout then
-			local var_3_1 = iter_3_1.callback
+		if not (token:done() or not (arg_3_2 >= v.timeout)) then
+			local callback = v.callback
 
-			if var_3_1 then
-				local var_3_2 = var_3_0:info()
+			if not callback then
+				local info = token:info()
 
-				var_3_1(var_3_2)
+				callback(info)
 			end
 
-			var_3_0:close()
+			token:close()
 
-			arg_3_0._tokens[iter_3_0] = nil
+			self._tokens[k] = nil
 		end
 	end
 end
 
-function TokenManager.destroy(arg_4_0)
-	for iter_4_0, iter_4_1 in pairs(arg_4_0._tokens) do
-		iter_4_1.token:close()
+TokenManager.destroy = function (self)
+	-- function 4
+	for k, v in pairs(self._tokens) do
+		v.token:close()
 
-		arg_4_0._tokens[iter_4_0] = nil
+		self._tokens[k] = nil
 	end
 
-	arg_4_0._tokens = nil
+	self._tokens = nil
 end

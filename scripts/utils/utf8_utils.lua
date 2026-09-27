@@ -1,47 +1,53 @@
 -- chunkname: @scripts/utils/utf8_utils.lua
 
+local UTF8Utils = UTF8Utils
+
 UTF8Utils = UTF8Utils or {}
+UTF8Utils = UTF8Utils
 
-local var_0_0 = Utf8.location
+local location = Utf8.location
 
-function Utf8.length(arg_1_0)
-	local var_1_0 = #arg_1_0
-	local var_1_1 = 1
+Utf8.length = function (arg_1_0)
+	-- function 1
+	local count = #arg_1_0
+	local num = 1
 
-	for iter_1_0 = 1, var_1_0 do
-		local var_1_2, var_1_3 = Utf8.location(arg_1_0, var_1_1)
+	for i = 1, count do
+		local location, var_1_3 = Utf8.location(arg_1_0, num)
 
-		if var_1_0 < var_1_3 then
-			return iter_1_0
+		if count < var_1_3 then
+			return i
 		end
 
-		var_1_1 = var_1_3
+		num = var_1_3
 	end
 
 	return 0
 end
 
-function UTF8Utils.sub_string(arg_2_0, arg_2_1, arg_2_2)
+UTF8Utils.sub_string = function (arg_2_0, arg_2_1, arg_2_2)
+	-- function 2
 	if #arg_2_0 == 0 then
 		return arg_2_0
 	end
 
-	local var_2_0 = UTF8Utils.count_bytes(arg_2_0, arg_2_1 - 1, 1) + 1
-	local var_2_1 = UTF8Utils.count_bytes(arg_2_0, arg_2_2 - arg_2_1 + 1, var_2_0)
+	local num = UTF8Utils.count_bytes(arg_2_0, arg_2_1 - 1, 1) + 1
+	local count_bytes = UTF8Utils.count_bytes(arg_2_0, arg_2_2 - arg_2_1 + 1, num)
 
-	return string.sub(arg_2_0, var_2_0, var_2_1)
+	return string.sub(arg_2_0, num, count_bytes)
 end
 
-function UTF8Utils.count_bytes(arg_3_0, arg_3_1, arg_3_2)
-	local var_3_0 = #arg_3_0
+UTF8Utils.count_bytes = function (arg_3_0, arg_3_1, arg_3_2)
+	-- function 3
+	local count = #arg_3_0
 	local var_3_1
 
-	for iter_3_0 = 1, arg_3_1 do
+	for i = 1, arg_3_1 do
 		local var_3_2
 
-		var_3_2, arg_3_2 = var_0_0(arg_3_0, arg_3_2)
+		var_3_2, arg_3_2 = location(arg_3_0, arg_3_2)
 
-		if var_3_0 < arg_3_2 then
+		if count < arg_3_2 then
 			break
 		end
 	end
@@ -49,7 +55,8 @@ function UTF8Utils.count_bytes(arg_3_0, arg_3_1, arg_3_2)
 	return arg_3_2 - 1
 end
 
-function UTF8Utils.clamp_byte_length(arg_4_0, arg_4_1)
+UTF8Utils.clamp_byte_length = function (arg_4_0, arg_4_1)
+	-- function 4
 	if arg_4_1 <= 0 then
 		return ""
 	end
@@ -58,7 +65,7 @@ function UTF8Utils.clamp_byte_length(arg_4_0, arg_4_1)
 		return arg_4_0
 	end
 
-	local var_4_0 = var_0_0(arg_4_0, arg_4_1 + 1)
+	local var_4_0 = location(arg_4_0, arg_4_1 + 1)
 
 	return string.sub(arg_4_0, 1, var_4_0 - 1)
 end

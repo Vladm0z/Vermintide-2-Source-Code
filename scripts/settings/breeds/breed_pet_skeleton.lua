@@ -1,22 +1,23 @@
 -- chunkname: @scripts/settings/breeds/breed_pet_skeleton.lua
 
-local var_0_0 = require("scripts/utils/stagger_types")
+local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
 
 require("scripts/settings/profiles/career_constants")
 
-local function var_0_1(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	-- function 1
 	if arg_1_2 ~= arg_1_1.attacking_target then
-		local var_1_0 = 0
+		local num = 0
 
-		ScriptUnit.extension(arg_1_0, "buff_system"):trigger_procs("on_damage_dealt", arg_1_2, arg_1_0, var_1_0, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+		ScriptUnit.extension(arg_1_0, "buff_system"):trigger_procs("on_damage_dealt", arg_1_2, arg_1_0, num, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 
 		if not Managers.state.network:in_game_session() then
-			Managers.state.achievement:trigger_event("on_damage_dealt", arg_1_2, arg_1_0, var_1_0, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+			Managers.state.achievement:trigger_event("on_damage_dealt", arg_1_2, arg_1_0, num, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 		end
 	end
 end
 
-local var_0_2 = {
+local tbl = {
 	detection_radius = 18,
 	pet_skeleton_type = "default",
 	walk_speed = 4,
@@ -173,13 +174,14 @@ local var_0_2 = {
 		40,
 		40
 	},
-	stagger_modifier_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	stagger_modifier_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+		-- function 2
 		if arg_2_4.stagger_type == 3 then
-			if arg_2_0 == 3 and arg_2_4.heavy_stagger_immune_time then
+			if arg_2_0 ~= 3 or not arg_2_4.heavy_stagger_immune_time then
 				arg_2_0 = 0
 				arg_2_1 = 0
 				arg_2_2 = 0
-			elseif arg_2_0 ~= 3 and arg_2_4.stagger_immune_time then
+			elseif arg_2_0 == 3 or not arg_2_4.stagger_immune_time then
 				arg_2_0 = 0
 				arg_2_1 = 0
 				arg_2_2 = 0
@@ -435,9 +437,9 @@ local var_0_2 = {
 	}
 }
 
-Breeds.pet_skeleton = table.create_copy(Breeds.pet_skeleton, var_0_2)
+Breeds.pet_skeleton = table.create_copy(Breeds.pet_skeleton, tbl)
 
-local var_0_3 = {
+local tbl_2 = {
 	normal = {
 		easy = {
 			normal = 2
@@ -497,7 +499,7 @@ local var_0_3 = {
 		}
 	}
 }
-local var_0_4 = {
+local tbl_3 = {
 	spawn = {
 		incrementing_anim_variations = {
 			{
@@ -621,30 +623,31 @@ local var_0_4 = {
 		goal_margin = 0.3,
 		action_weight = 1,
 		considerations = UtilityConsiderations.clan_rat_follow,
-		move_speed_func = function(arg_3_0, arg_3_1)
-			local var_3_0 = arg_3_1.goal_destination
+		move_speed_func = function (arg_3_0, arg_3_1)
+			-- function 3
+			local goal_destination = arg_3_1.goal_destination
 
-			if not var_3_0 then
+			if not goal_destination then
 				return
 			end
 
-			local var_3_1 = var_3_0:unbox()
-			local var_3_2 = 0
-			local var_3_3 = ScriptUnit.has_extension(arg_3_1.commander_unit, "locomotion_system")
+			local unbox = goal_destination:unbox()
+			local num = 0
+			local has_extension = ScriptUnit.has_extension(arg_3_1.commander_unit, "locomotion_system")
 
-			if var_3_3 then
-				var_3_2 = Vector3.length(var_3_3:current_velocity())
+			if not has_extension then
+				num = Vector3.length(has_extension:current_velocity())
 			end
 
 			local var_3_4 = POSITION_LOOKUP[arg_3_0]
-			local var_3_5 = Vector3.distance(var_3_4, var_3_1)
-			local var_3_6 = math.max(arg_3_1.breed.run_speed, var_3_2)
-			local var_3_7 = math.max(arg_3_1.breed.min_run_speed, var_3_2)
-			local var_3_8 = arg_3_1.breed.run_max_speed_distance
-			local var_3_9 = arg_3_1.breed.run_min_speed_distance
-			local var_3_10 = math.lerp(var_3_7, var_3_6, math.clamp01((var_3_5 - var_3_9) / var_3_8))
+			local distance = Vector3.distance(var_3_4, unbox)
+			local max = math.max(arg_3_1.breed.run_speed, num)
+			local max_2 = math.max(arg_3_1.breed.min_run_speed, num)
+			local run_max_speed_distance = arg_3_1.breed.run_max_speed_distance
+			local run_min_speed_distance = arg_3_1.breed.run_min_speed_distance
+			local lerp = math.lerp(max_2, max, math.clamp01((distance - run_min_speed_distance) / run_max_speed_distance))
 
-			arg_3_1.navigation_extension:set_max_speed(var_3_10)
+			arg_3_1.navigation_extension:set_max_speed(lerp)
 		end,
 		start_anims_name = {
 			bwd = "move_start_bwd",
@@ -744,7 +747,7 @@ local var_0_4 = {
 		action_weight = 10,
 		ignore_ai_damage = true,
 		self_running_speed_threshold = 1,
-		difficulty_attack_intensity = var_0_3,
+		difficulty_attack_intensity = tbl_2,
 		considerations = UtilityConsiderations.marauder_running_attack,
 		target_running_distance_threshold = math.huge,
 		running_attacks = {
@@ -767,10 +770,10 @@ local var_0_4 = {
 				push_ai = {
 					stagger_distance = 1,
 					stagger_impact = {
-						var_0_0.weak,
-						var_0_0.none,
-						var_0_0.none,
-						var_0_0.none
+						scripts_utils_stagger_types.weak,
+						scripts_utils_stagger_types.none,
+						scripts_utils_stagger_types.none,
+						scripts_utils_stagger_types.none
 					},
 					stagger_duration = {
 						1,
@@ -805,10 +808,10 @@ local var_0_4 = {
 				push_ai = {
 					stagger_distance = 1,
 					stagger_impact = {
-						var_0_0.weak,
-						var_0_0.none,
-						var_0_0.none,
-						var_0_0.none
+						scripts_utils_stagger_types.weak,
+						scripts_utils_stagger_types.none,
+						scripts_utils_stagger_types.none,
+						scripts_utils_stagger_types.none
 					},
 					stagger_duration = {
 						1,
@@ -897,7 +900,7 @@ local var_0_4 = {
 			}
 		},
 		fatigue_type = BreedTweaks.fatigue_types.roamer.running_attack,
-		hit_ai_func = var_0_1
+		hit_ai_func = fn
 	},
 	sweep_attack = {
 		damage = 3,
@@ -905,7 +908,7 @@ local var_0_4 = {
 		action_weight = 1,
 		ignore_ai_damage = true,
 		damage_type = "cutting",
-		difficulty_attack_intensity = var_0_3,
+		difficulty_attack_intensity = tbl_2,
 		considerations = UtilityConsiderations.marauder_attack,
 		attacks = {
 			{
@@ -928,10 +931,10 @@ local var_0_4 = {
 				push_ai = {
 					stagger_distance = 1,
 					stagger_impact = {
-						var_0_0.weak,
-						var_0_0.none,
-						var_0_0.none,
-						var_0_0.none
+						scripts_utils_stagger_types.weak,
+						scripts_utils_stagger_types.none,
+						scripts_utils_stagger_types.none,
+						scripts_utils_stagger_types.none
 					},
 					stagger_duration = {
 						1,
@@ -962,10 +965,10 @@ local var_0_4 = {
 				push_ai = {
 					stagger_distance = 1,
 					stagger_impact = {
-						var_0_0.weak,
-						var_0_0.none,
-						var_0_0.none,
-						var_0_0.none
+						scripts_utils_stagger_types.weak,
+						scripts_utils_stagger_types.none,
+						scripts_utils_stagger_types.none,
+						scripts_utils_stagger_types.none
 					},
 					stagger_duration = {
 						1,
@@ -1054,7 +1057,7 @@ local var_0_4 = {
 				5
 			}
 		},
-		hit_ai_func = var_0_1
+		hit_ai_func = fn
 	},
 	combat_step = {
 		move_speed = 4,
@@ -1110,7 +1113,8 @@ local var_0_4 = {
 	},
 	stagger = {
 		scale_animation_speeds = true,
-		custom_enter_function = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+		custom_enter_function = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			-- function 4
 			if arg_4_1.stagger_type == 3 then
 				arg_4_1.stagger_immune_time = arg_4_2 + 2.25
 				arg_4_1.heavy_stagger_immune_time = arg_4_2 + 1.5
@@ -1371,12 +1375,12 @@ local var_0_4 = {
 	follow_owner = {}
 }
 
-var_0_4.command_attack = table.clone(var_0_4.sweep_attack)
-var_0_4.command_attack.considerations = UtilityConsiderations.command_attack
-var_0_4.running_command_attack = table.clone(var_0_4.running_sweep_attack)
-var_0_4.running_command_attack.considerations = UtilityConsiderations.running_command_attack
-var_0_4.command_follow = table.clone(var_0_4.follow)
-var_0_4.command_follow.slow_approach_time = 0
-var_0_4.command_follow.walk_time = 0
-var_0_4.fallback_idle = var_0_4.idle
-BreedActions.pet_skeleton = table.create_copy(BreedActions.pet_skeleton, var_0_4)
+tbl_3.command_attack = table.clone(tbl_3.sweep_attack)
+tbl_3.command_attack.considerations = UtilityConsiderations.command_attack
+tbl_3.running_command_attack = table.clone(tbl_3.running_sweep_attack)
+tbl_3.running_command_attack.considerations = UtilityConsiderations.running_command_attack
+tbl_3.command_follow = table.clone(tbl_3.follow)
+tbl_3.command_follow.slow_approach_time = 0
+tbl_3.command_follow.walk_time = 0
+tbl_3.fallback_idle = tbl_3.idle
+BreedActions.pet_skeleton = table.create_copy(BreedActions.pet_skeleton, tbl_3)

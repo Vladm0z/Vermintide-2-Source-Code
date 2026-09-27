@@ -3,144 +3,156 @@
 ScriptBackend = class(ScriptBackend)
 BackendSaveDataVersion = 30
 
-local var_0_0 = {}
-local var_0_1 = {}
-local var_0_2 = {}
-local var_0_3 = {}
+local tbl = {}
+local tbl_2 = {}
+local tbl_3 = {}
+local tbl_4 = {}
 
-if rawget(_G, "Backend") then
-	var_0_0[Backend.CONNECTION_UNINITIALIZED] = "connection_uninitialized"
-	var_0_0[Backend.CONNECTION_INITIALIZED] = "connection_initialized"
-	var_0_0[Backend.CONNECTION_CONNECTING] = "connection_connecting"
-	var_0_0[Backend.CONNECTION_CONNECTED] = "connection_connected"
-	var_0_0[Backend.CONNECTION_WAITING_AUTH_TICKET] = "connection_waiting_auth_ticket"
-	var_0_0[Backend.CONNECTION_AUTHENTICATING] = "connection_authenticating"
-	var_0_0[Backend.CONNECTION_AUTHENTICATED] = "connection_authenticated"
-	var_0_0[Backend.CONNECTION_DISCONNECTING] = "connection_disconnecting"
-	var_0_0[Backend.CONNECTION_ENTITIES_LOADED] = "connection_entities_loaded"
-	var_0_0[Backend.CONNECTION_ERROR] = "connection_error"
-	var_0_1[Backend.CONNECTION_UNINITIALIZED] = {
+if not rawget(_G, "Backend") then
+	tbl[Backend.CONNECTION_UNINITIALIZED] = "connection_uninitialized"
+	tbl[Backend.CONNECTION_INITIALIZED] = "connection_initialized"
+	tbl[Backend.CONNECTION_CONNECTING] = "connection_connecting"
+	tbl[Backend.CONNECTION_CONNECTED] = "connection_connected"
+	tbl[Backend.CONNECTION_WAITING_AUTH_TICKET] = "connection_waiting_auth_ticket"
+	tbl[Backend.CONNECTION_AUTHENTICATING] = "connection_authenticating"
+	tbl[Backend.CONNECTION_AUTHENTICATED] = "connection_authenticated"
+	tbl[Backend.CONNECTION_DISCONNECTING] = "connection_disconnecting"
+	tbl[Backend.CONNECTION_ENTITIES_LOADED] = "connection_entities_loaded"
+	tbl[Backend.CONNECTION_ERROR] = "connection_error"
+	tbl_2[Backend.CONNECTION_UNINITIALIZED] = {
 		[Backend.CONNECTION_INITIALIZED] = true
 	}
-	var_0_1[Backend.CONNECTION_INITIALIZED] = {
+	tbl_2[Backend.CONNECTION_INITIALIZED] = {
 		[Backend.CONNECTION_CONNECTING] = true,
 		[Backend.CONNECTION_CONNECTED] = true
 	}
-	var_0_1[Backend.CONNECTION_CONNECTING] = {
+	tbl_2[Backend.CONNECTION_CONNECTING] = {
 		[Backend.CONNECTION_CONNECTED] = true
 	}
-	var_0_1[Backend.CONNECTION_CONNECTED] = {
+	tbl_2[Backend.CONNECTION_CONNECTED] = {
 		[Backend.CONNECTION_AUTHENTICATING] = true,
 		[Backend.CONNECTION_AUTHENTICATED] = true,
 		[Backend.CONNECTION_WAITING_AUTH_TICKET] = true
 	}
-	var_0_1[Backend.CONNECTION_WAITING_AUTH_TICKET] = {
+	tbl_2[Backend.CONNECTION_WAITING_AUTH_TICKET] = {
 		[Backend.CONNECTION_AUTHENTICATING] = true,
 		[Backend.CONNECTION_AUTHENTICATED] = true
 	}
-	var_0_1[Backend.CONNECTION_AUTHENTICATING] = {
+	tbl_2[Backend.CONNECTION_AUTHENTICATING] = {
 		[Backend.CONNECTION_AUTHENTICATED] = true
 	}
-	var_0_1[Backend.CONNECTION_AUTHENTICATED] = {
+	tbl_2[Backend.CONNECTION_AUTHENTICATED] = {
 		[Backend.CONNECTION_ENTITIES_LOADED] = true
 	}
-	var_0_1[Backend.CONNECTION_ENTITIES_LOADED] = {}
-	var_0_2[Backend.RES_OK] = "backend_res_ok"
-	var_0_2[Backend.RES_UNKNOWN_ERR] = "backend_res_unknown_error"
-	var_0_2[Backend.RES_INVALID_STATE] = "backend_res_invalid_state"
-	var_0_2[Backend.RES_AUTH_IN_PROGRESS] = "backend_res_auth_in_progress"
-	var_0_2[Backend.RES_INVALID_USER] = "backend_res_invalid_user"
-	var_0_2[Backend.RES_HTTP_ERROR] = "backend_res_http_error"
-	var_0_2[Backend.RES_DNS_ERROR] = "backend_res_dns_error"
-	var_0_2[Backend.RES_INVALID_TRANSACTION] = "backend_res_invalid_transaction"
-	var_0_2[Backend.RES_INVALID_ATTRIBUTE] = "backend_res_invalid_attribute"
-	var_0_2[Backend.RES_NO_PENDING_DATA] = "backend_res_no_pending_data"
-	var_0_2[Backend.RES_COMM_ERROR] = "backend_res_comm_error"
-	var_0_2[Backend.RES_NO_SUCH_ENTITY] = "backend_res_no_such_entity"
-	var_0_2[Backend.RES_NO_CHANGE] = "backend_res_no_change"
-	var_0_2[Backend.RES_INVALID_ENTITY_ID] = "backend_res_invalid_entity_id"
-	var_0_2[Backend.RES_ACTIVE_SESSION] = "backend_res_active_session"
-	var_0_2[Backend.RES_NO_ACTIVE_SESSION] = "backend_res_no_active_session"
-	var_0_2[Backend.RES_PARSE_ERROR] = "backend_res_parse_error"
-	var_0_2[Backend.RES_TITLE_ID_DISABLED] = "backend_res_title_id_disabled"
+	tbl_2[Backend.CONNECTION_ENTITIES_LOADED] = {}
+	tbl_3[Backend.RES_OK] = "backend_res_ok"
+	tbl_3[Backend.RES_UNKNOWN_ERR] = "backend_res_unknown_error"
+	tbl_3[Backend.RES_INVALID_STATE] = "backend_res_invalid_state"
+	tbl_3[Backend.RES_AUTH_IN_PROGRESS] = "backend_res_auth_in_progress"
+	tbl_3[Backend.RES_INVALID_USER] = "backend_res_invalid_user"
+	tbl_3[Backend.RES_HTTP_ERROR] = "backend_res_http_error"
+	tbl_3[Backend.RES_DNS_ERROR] = "backend_res_dns_error"
+	tbl_3[Backend.RES_INVALID_TRANSACTION] = "backend_res_invalid_transaction"
+	tbl_3[Backend.RES_INVALID_ATTRIBUTE] = "backend_res_invalid_attribute"
+	tbl_3[Backend.RES_NO_PENDING_DATA] = "backend_res_no_pending_data"
+	tbl_3[Backend.RES_COMM_ERROR] = "backend_res_comm_error"
+	tbl_3[Backend.RES_NO_SUCH_ENTITY] = "backend_res_no_such_entity"
+	tbl_3[Backend.RES_NO_CHANGE] = "backend_res_no_change"
+	tbl_3[Backend.RES_INVALID_ENTITY_ID] = "backend_res_invalid_entity_id"
+	tbl_3[Backend.RES_ACTIVE_SESSION] = "backend_res_active_session"
+	tbl_3[Backend.RES_NO_ACTIVE_SESSION] = "backend_res_no_active_session"
+	tbl_3[Backend.RES_PARSE_ERROR] = "backend_res_parse_error"
+	tbl_3[Backend.RES_TITLE_ID_DISABLED] = "backend_res_title_id_disabled"
 
-	if Backend.ENV_DEV then
-		var_0_3[Backend.ENV_DEV] = "Dev"
-		var_0_3[Backend.ENV_STAGE] = "Stage"
-		var_0_3[Backend.ENV_PROD] = "Prod"
+	if not Backend.ENV_DEV then
+		tbl_4[Backend.ENV_DEV] = "Dev"
+		tbl_4[Backend.ENV_STAGE] = "Stage"
+		tbl_4[Backend.ENV_PROD] = "Prod"
 	end
 end
 
-local var_0_4 = {
+local tbl_5 = {
 	off = 0,
 	verbose = 2,
 	normal = 1
 }
 
-function ScriptBackend.init(arg_1_0)
-	local var_1_0 = GameSettingsDevelopment.backend_settings.title_id
-	local var_1_1 = GameSettingsDevelopment.backend_settings.environment
+ScriptBackend.init = function (self)
+	-- function 1
+	local title_id = GameSettingsDevelopment.backend_settings.title_id
+	local environment = GameSettingsDevelopment.backend_settings.environment
 
-	print(string.format("[Backend] Creating backend with title id: %d, environment: %q", var_1_0, var_0_3[var_1_1]))
-	Backend.create(var_1_0, var_1_1)
+	print(string.format("[Backend] Creating backend with title id: %d, environment: %q", title_id, tbl_4[environment]))
+	Backend.create(title_id, environment)
 
-	arg_1_0._backend = true
+	self._backend = true
 
-	arg_1_0:refresh_log_level()
+	self:refresh_log_level()
 
-	arg_1_0._dirty = true
-	arg_1_0._dirty_stats = true
-	arg_1_0._state = Backend.CONNECTION_UNINITIALIZED
-	arg_1_0._commits = {}
-	arg_1_0._commit_current_id = nil
-	arg_1_0._commit_queue_id = nil
-	arg_1_0._last_id = 0
+	self._dirty = true
+	self._dirty_stats = true
+	self._state = Backend.CONNECTION_UNINITIALIZED
+	self._commits = {}
+	self._commit_current_id = nil
+	self._commit_queue_id = nil
+	self._last_id = 0
 end
 
-local function var_0_5(arg_2_0, arg_2_1)
-	if arg_2_0 and arg_2_0.reason ~= Backend.ERR_OK then
-		local var_2_0 = string.format("%q failed with %d, %s", arg_2_1, arg_2_0.reason, arg_2_0.details or "nil")
+local function fn(self, arg_2_1)
+	-- function 2
+	if not (not self and self.reason == Backend.ERR_OK) then
+		local format = string.format
+		local str = "%q failed with %d, %s"
+		local var_2_2 = arg_2_1
+		local reason = self.reason
+		local details = self.details
 
-		print_error(var_2_0)
+		details = details or "nil"
+
+		local var_2_5 = format(str, var_2_2, reason, details)
+
+		print_error(var_2_5)
 
 		return {
-			reason = arg_2_0.reason,
-			details = arg_2_0.details
+			reason = self.reason,
+			details = self.details
 		}
 	end
 end
 
-function ScriptBackend.update(arg_3_0)
-	if arg_3_0._commit_current_id then
-		arg_3_0:_check_current_commit()
+ScriptBackend.update = function (self)
+	-- function 3
+	if not self._commit_current_id then
+		self:_check_current_commit()
 	end
 
 	return (Backend.update())
 end
 
-function ScriptBackend._update_state(arg_4_0)
-	local var_4_0 = Backend.state()
-	local var_4_1 = var_0_1[arg_4_0._state]
+ScriptBackend._update_state = function (self)
+	-- function 4
+	local state = Backend.state()
+	local var_4_1 = tbl_2[self._state]
 
-	if var_4_0 ~= arg_4_0._state then
-		print("[Backend] Changed state from", var_0_0[arg_4_0._state], "to", var_0_0[var_4_0])
+	if state ~= self._state then
+		print("[Backend] Changed state from", tbl[self._state], "to", tbl[state])
 	end
 
 	local var_4_2
 
-	if var_4_0 ~= arg_4_0._state and not var_4_1[var_4_0] then
-		local var_4_3 = arg_4_0:check_for_errors()
+	if not (state == self._state or var_4_1[state]) then
+		local check_for_errors = self:check_for_errors()
 
-		if var_4_3 then
-			return var_4_3
+		if not check_for_errors then
+			return check_for_errors
 		end
 
-		local var_4_4 = var_0_0[arg_4_0._state]
-		local var_4_5 = var_0_0[var_4_0]
+		local var_4_4 = tbl[self._state]
+		local var_4_5 = tbl[state]
 		local var_4_6
 		local var_4_7
 
-		if arg_4_0._state == Backend.CONNECTION_ENTITIES_LOADED then
+		if self._state == Backend.CONNECTION_ENTITIES_LOADED then
 			Crashify.print_exception("Backend", "Disconnected")
 
 			var_4_7 = BACKEND_LUA_ERRORS.ERR_DISCONNECTED
@@ -157,79 +169,85 @@ function ScriptBackend._update_state(arg_4_0)
 		}
 	end
 
-	arg_4_0._state = var_4_0
+	self._state = state
 
 	return var_4_2
 end
 
-function ScriptBackend.update_state(arg_5_0)
-	return arg_5_0:_update_state()
+ScriptBackend.update_state = function (self)
+	-- function 5
+	return self:_update_state()
 end
 
-function ScriptBackend.update_signin(arg_6_0)
-	local var_6_0 = arg_6_0:_update_state()
+ScriptBackend.update_signin = function (self)
+	-- function 6
+	local _update_state = self:_update_state()
 
-	if var_6_0 then
-		return var_6_0
+	if not _update_state then
+		return _update_state
 	end
 
-	local var_6_1 = arg_6_0._state
+	local _state = self._state
 	local var_6_2
 
-	if var_6_1 == Backend.CONNECTION_INITIALIZED then
-		var_6_2 = var_0_5(Backend.connect(), "Connect")
+	if _state == Backend.CONNECTION_INITIALIZED then
+		var_6_2 = fn(Backend.connect(), "Connect")
 	end
 
-	if var_6_1 == Backend.CONNECTION_CONNECTED then
-		var_6_2 = var_0_5(Backend.steam_auth(), "Auth")
+	if _state == Backend.CONNECTION_CONNECTED then
+		var_6_2 = fn(Backend.steam_auth(), "Auth")
 	end
 
-	if var_6_1 == Backend.CONNECTION_AUTHENTICATED and not arg_6_0._entities_requested then
+	if not (_state ~= Backend.CONNECTION_AUTHENTICATED or self._entities_requested) then
 		Backend.load_entities()
 
-		arg_6_0._entities_requested = true
+		self._entities_requested = true
 	end
 
 	return var_6_2
 end
 
-function ScriptBackend.authenticated(arg_7_0)
+ScriptBackend.authenticated = function (arg_7_0)
+	-- function 7
 	return Backend.state() == Backend.CONNECTION_ENTITIES_LOADED
 end
 
-function ScriptBackend._refresh_stats(arg_8_0)
-	if arg_8_0._dirty_stats or not arg_8_0._stats then
-		local var_8_0 = BackendStats.get_stats(arg_8_0._backend)
-		local var_8_1 = {}
+ScriptBackend._refresh_stats = function (self)
+	-- function 8
+	if not (self._dirty_stats or self._stats) then
+		local get_stats = BackendStats.get_stats(self._backend)
+		local tbl = {}
 
-		for iter_8_0, iter_8_1 in pairs(var_8_0) do
-			var_8_1[iter_8_1.key] = iter_8_1.data
+		for k, v in pairs(get_stats) do
+			tbl[v.key] = v.data
 		end
 
-		arg_8_0._stats = var_8_0
-		arg_8_0._nice_stats = var_8_1
-		arg_8_0._dirty_stats = false
+		self._stats = get_stats
+		self._nice_stats = tbl
+		self._dirty_stats = false
 	end
 end
 
-function ScriptBackend.get_stats(arg_9_0)
-	arg_9_0:_refresh_stats()
+ScriptBackend.get_stats = function (self)
+	-- function 9
+	self:_refresh_stats()
 
-	return arg_9_0._nice_stats
+	return self._nice_stats
 end
 
-function ScriptBackend.set_stats(arg_10_0, arg_10_1)
-	arg_10_0:_refresh_stats()
+ScriptBackend.set_stats = function (self, arg_10_1)
+	-- function 10
+	self:_refresh_stats()
 
-	local var_10_0 = table.clone(arg_10_1)
+	local clone = table.clone(arg_10_1)
 
-	for iter_10_0, iter_10_1 in pairs(arg_10_1) do
-		for iter_10_2, iter_10_3 in pairs(arg_10_0._stats) do
-			if iter_10_3.key == iter_10_0 then
-				var_10_0[iter_10_0] = nil
+	for k, v in pairs(arg_10_1) do
+		for k_2, v_2 in pairs(self._stats) do
+			if v_2.key == k then
+				clone[k] = nil
 
-				if iter_10_3.data ~= iter_10_1 then
-					var_0_5(BackendStats.set_stat(iter_10_2, iter_10_0, iter_10_1), "Set stat")
+				if v_2.data ~= v then
+					fn(BackendStats.set_stat(k_2, k, v), "Set stat")
 				end
 
 				break
@@ -237,165 +255,179 @@ function ScriptBackend.set_stats(arg_10_0, arg_10_1)
 		end
 	end
 
-	for iter_10_4, iter_10_5 in pairs(var_10_0) do
-		Crashify.print_exception("ScriptBackend", "Tried to set unregistered stat %s, value: %s", iter_10_4, iter_10_5)
+	for k_3, v_3 in pairs(clone) do
+		Crashify.print_exception("ScriptBackend", "Tried to set unregistered stat %s, value: %s", k_3, v_3)
 	end
 
-	arg_10_0:commit()
+	self:commit()
 
-	arg_10_0._dirty_stats = true
+	self._dirty_stats = true
 end
 
-function ScriptBackend.check_for_errors(arg_11_0)
-	local var_11_0 = Backend.get_error()
-	local var_11_1 = BackendSession.get_error()
+ScriptBackend.check_for_errors = function (self)
+	-- function 11
+	local get_error = Backend.get_error()
+	local get_error_2 = BackendSession.get_error()
 	local var_11_2
 
-	if arg_11_0._commit_error then
+	if not self._commit_error then
 		var_11_2 = {
 			reason = Backend.ERR_COMMIT
 		}
-		arg_11_0._commit_error = nil
+		self._commit_error = nil
 	end
 
-	return var_11_0 or var_11_1 or var_11_2
+	return get_error or get_error_2 or var_11_2
 end
 
-function ScriptBackend._new_id(arg_12_0)
-	arg_12_0._last_id = arg_12_0._last_id + 1
+ScriptBackend._new_id = function (self)
+	-- function 12
+	self._last_id = self._last_id + 1
 
-	return arg_12_0._last_id
+	return self._last_id
 end
 
-function ScriptBackend._check_current_commit(arg_13_0)
-	local var_13_0 = arg_13_0:commit_status(arg_13_0._commit_current_id)
+ScriptBackend._check_current_commit = function (self)
+	-- function 13
+	local commit_status = self:commit_status(self._commit_current_id)
 
-	if var_13_0 ~= Backend.COMMIT_WAITING then
-		local var_13_1 = arg_13_0._commits[arg_13_0._commit_current_id]
+	if commit_status ~= Backend.COMMIT_WAITING then
+		local var_13_1 = self._commits[self._commit_current_id]
 
-		print("commit status", var_13_0, var_13_1.id)
+		print("commit status", commit_status, var_13_1.id)
 
-		arg_13_0._commit_current_id = nil
+		self._commit_current_id = nil
 
-		if var_13_0 == Backend.COMMIT_SUCCESS then
-			if arg_13_0._commit_queue_id then
-				arg_13_0:commit(true)
+		if commit_status == Backend.COMMIT_SUCCESS then
+			if not self._commit_queue_id then
+				self:commit(true)
 			end
-		elseif var_13_0 == Backend.COMMIT_ERROR then
-			arg_13_0._commit_error = true
-			arg_13_0._commit_queue_id = nil
+		elseif commit_status == Backend.COMMIT_ERROR then
+			self._commit_error = true
+			self._commit_queue_id = nil
 		end
 	end
 end
 
-function ScriptBackend._commit_internal(arg_14_0, arg_14_1)
-	local var_14_0, var_14_1 = Backend.commit()
-	local var_14_2 = arg_14_1 or arg_14_0:_new_id()
-	local var_14_3 = {
-		id = var_14_0,
+ScriptBackend._commit_internal = function (self, arg_14_1)
+	-- function 14
+	local commit, var_14_1 = Backend.commit()
+	local flag = arg_14_1 or self:_new_id()
+	local tbl = {
+		id = commit,
 		timeout = os.time() + 15,
 		result = var_14_1
 	}
 
-	arg_14_0._commits[var_14_2] = var_14_3
-	arg_14_0._commit_current_id = var_14_2
+	self._commits[flag] = tbl
+	self._commit_current_id = flag
 
-	print(string.format("Commiting with %d:%d result: %d", var_14_2, var_14_0, var_14_1))
+	print(string.format("Commiting with %d:%d result: %d", flag, commit, var_14_1))
 
-	return var_14_2
+	return flag
 end
 
-function ScriptBackend._queue_commit(arg_15_0)
-	if not arg_15_0._commit_queue_id then
-		arg_15_0._commit_queue_id = arg_15_0:_new_id()
+ScriptBackend._queue_commit = function (self)
+	-- function 15
+	if not self._commit_queue_id then
+		self._commit_queue_id = self:_new_id()
 	end
 
-	return arg_15_0._commit_queue_id
+	return self._commit_queue_id
 end
 
-function ScriptBackend.commit(arg_16_0, arg_16_1)
-	print("Trying to commit", arg_16_1, arg_16_0._commit_current_id, arg_16_0._commit_queue_id)
+ScriptBackend.commit = function (self, arg_16_1)
+	-- function 16
+	print("Trying to commit", arg_16_1, self._commit_current_id, self._commit_queue_id)
 
-	if arg_16_0._commit_current_id then
+	if not self._commit_current_id then
 		fassert(not arg_16_1, "Internal backend commit error, current commit exists")
 
-		return arg_16_0:_queue_commit()
+		return self:_queue_commit()
 	else
-		local var_16_0 = arg_16_0:_commit_internal(arg_16_0._commit_queue_id)
+		local _commit_internal = self:_commit_internal(self._commit_queue_id)
 
-		arg_16_0._commit_queue_id = nil
+		self._commit_queue_id = nil
 
-		return var_16_0
+		return _commit_internal
 	end
 end
 
-function ScriptBackend.commit_status(arg_17_0, arg_17_1)
+ScriptBackend.commit_status = function (self, arg_17_1)
+	-- function 17
 	fassert(arg_17_1, "Querying status for commit_id %s", tostring(arg_17_1))
 
-	if arg_17_1 == arg_17_0._commit_queue_id then
+	if arg_17_1 == self._commit_queue_id then
 		return Backend.COMMIT_WAITING
 	end
 
-	local var_17_0 = arg_17_0._commits[arg_17_1]
+	local var_17_0 = self._commits[arg_17_1]
 
 	fassert(var_17_0, "No commit with id %d", arg_17_1)
 
 	if var_17_0.timeout < os.time() then
 		print(var_17_0.timeout, os.time())
 
-		local var_17_1 = string.format("Commit timed out %d:%d", arg_17_1, var_17_0.id)
+		local format = string.format("Commit timed out %d:%d", arg_17_1, var_17_0.id)
 
-		Application.warning(var_17_1)
+		Application.warning(format)
 
 		return Backend.COMMIT_ERROR
 	end
 
 	if var_17_0.result ~= Backend.COMMIT_WAITING then
 		return var_17_0.result
-	elseif var_17_0.id then
-		local var_17_2 = Backend.query_commit(var_17_0.id)
+	elseif not var_17_0.id then
+		local query_commit = Backend.query_commit(var_17_0.id)
 
-		if var_17_2 == Backend.COMMIT_SUCCESS then
+		if query_commit == Backend.COMMIT_SUCCESS then
 			Managers.backend:get_interface("items"):__dirtify()
 		end
 
-		var_17_0.result = var_17_2
+		var_17_0.result = query_commit
 
-		return var_17_2
+		return query_commit
 	else
 		return Backend.COMMIT_WAITING
 	end
 end
 
-function ScriptBackend.destroy(arg_18_0)
+ScriptBackend.destroy = function (arg_18_0)
+	-- function 18
 	print("[Backend] ScriptBackend destroy")
 	Backend.destroy()
 end
 
-function ScriptBackend.backend_object(arg_19_0)
+ScriptBackend.backend_object = function (self)
+	-- function 19
 	error("no backend object in lua anymore")
 
-	return arg_19_0._backend
+	return self._backend
 end
 
-function ScriptBackend.refresh_log_level(arg_20_0)
-	local var_20_0 = script_data.backend_logging_level or "verbose"
-	local var_20_1 = var_0_4[var_20_0]
+ScriptBackend.refresh_log_level = function (arg_20_0)
+	-- function 20
+	local backend_logging_level = script_data.backend_logging_level
+
+	backend_logging_level = backend_logging_level or "verbose"
+
+	local var_20_1 = tbl_5[backend_logging_level]
 
 	Backend.set_log_level(var_20_1)
 end
 
-function ScriptBackend.wait_for_shutdown(arg_21_0, arg_21_1)
-	local var_21_0 = os.time() + arg_21_1
+ScriptBackend.wait_for_shutdown = function (self, arg_21_1)
+	-- function 21
+	local num = os.time() + arg_21_1
 
-	while Backend.active_requests() > 0 or arg_21_0._commit_queue_id do
-		local var_21_1 = arg_21_0:update()
+	while Backend.active_requests() > 0 or not self._commit_queue_id do
+		local update = self:update()
 
-		if var_21_1 or var_21_0 < os.time() then
-			if var_21_1 then
+		if not (update or not (num < os.time())) then
+			if not update then
 				print("wait for shutdown has enountered error")
 			else
-				print("wait for shutdown has timed out", Backend.active_requests(), arg_21_0._commit_queue_id)
+				print("wait for shutdown has timed out", Backend.active_requests(), self._commit_queue_id)
 			end
 
 			return
@@ -405,11 +437,11 @@ function ScriptBackend.wait_for_shutdown(arg_21_0, arg_21_1)
 	print("disconnecting backend")
 	Backend.disconnect()
 
-	while not arg_21_0:update() and Backend.active_requests() > 0 and var_21_0 > os.time() do
-		-- block empty
+	while not (self:update() or not (Backend.active_requests() > 0) or not (num > os.time())) do
+		-- Nothing
 	end
 
-	if var_21_0 < os.time() then
+	if num < os.time() then
 		print("backend disconnect has timed out")
 	end
 end

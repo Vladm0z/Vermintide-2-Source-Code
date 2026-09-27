@@ -2,7 +2,7 @@
 
 require("scripts/settings/dlcs/morris/tweak_data/buff_tweak_data")
 
-local var_0_0 = {
+local tbl = {
 	dr_deus_01 = {
 		ammo_unit = "units/weapons/player/wpn_dr_deus_projectile_01/wpn_dr_deus_projectile_01",
 		display_name = "dr_deus_01_name",
@@ -1573,9 +1573,9 @@ local var_0_0 = {
 	}
 }
 
-table.merge(ItemMasterList, var_0_0)
+table.merge(ItemMasterList, tbl)
 
-if DLCSettings.cog then
+if not DLCSettings.cog then
 	UpdateItemMasterList({
 		"dr_deus_01",
 		"dr_deus_01_magic"

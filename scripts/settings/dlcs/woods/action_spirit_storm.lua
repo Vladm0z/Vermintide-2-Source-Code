@@ -2,103 +2,112 @@
 
 ActionSpiritStorm = class(ActionSpiritStorm, ActionBase)
 
-function ActionSpiritStorm.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
-	ActionSpiritStorm.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionSpiritStorm.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	-- function 1
+	ActionSpiritStorm.super.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
-	arg_1_0.overcharge_extension = ScriptUnit.extension(arg_1_4, "overcharge_system")
+	self.overcharge_extension = ScriptUnit.extension(arg_1_4, "overcharge_system")
 end
 
-function ActionSpiritStorm.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
-	ActionSpiritStorm.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+ActionSpiritStorm.client_owner_start_action = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	-- function 2
+	ActionSpiritStorm.super.client_owner_start_action(self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 
-	arg_2_0.current_action = arg_2_1
+	self.current_action = arg_2_1
 
-	local var_2_0 = arg_2_0.owner_unit
+	local owner_unit = self.owner_unit
 
-	arg_2_0.owner_buff_extension = ScriptUnit.extension(var_2_0, "buff_system")
-	arg_2_0.state = "waiting_to_shoot"
-	arg_2_0.time_to_shoot = arg_2_2 + (arg_2_1.fire_time or 0)
-	arg_2_0.target = arg_2_3.target
-	arg_2_0.is_critical_strike = ActionUtils.is_critical_strike(var_2_0, arg_2_1)
+	self.owner_buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
+	self.state = "waiting_to_shoot"
+
+	local fire_time = arg_2_1.fire_time
+
+	fire_time = fire_time or 0
+	self.time_to_shoot = arg_2_2 + fire_time
+	self.target = arg_2_3.target
+	self.is_critical_strike = ActionUtils.is_critical_strike(owner_unit, arg_2_1)
 end
 
-function ActionSpiritStorm.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
-	local var_3_0 = arg_3_0.current_action
+ActionSpiritStorm.client_owner_post_update = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	-- function 3
+	local current_action = self.current_action
 
-	if arg_3_0.state == "waiting_to_shoot" and arg_3_2 >= arg_3_0.time_to_shoot then
-		arg_3_0.state = "shooting"
+	if not (self.state ~= "waiting_to_shoot" or not (arg_3_2 >= self.time_to_shoot)) then
+		self.state = "shooting"
 	end
 
-	if arg_3_0.state == "shooting" then
-		arg_3_0:fire()
+	if self.state == "shooting" then
+		self:fire()
 
-		arg_3_0.state = "doing_damage"
+		self.state = "doing_damage"
 	end
 
-	if arg_3_0.state == "doing_damage" then
-		arg_3_0:_proc_spell_used(arg_3_0.owner_buff_extension)
+	if self.state == "doing_damage" then
+		self:_proc_spell_used(self.owner_buff_extension)
 
-		arg_3_0.state = "shot"
-	end
-end
-
-function ActionSpiritStorm.finish(arg_4_0, arg_4_1)
-	if arg_4_0.state ~= "waiting_to_shoot" and arg_4_0.state ~= "shot" then
-		arg_4_0:_proc_spell_used(arg_4_0.owner_buff_extension)
-	end
-
-	arg_4_0.position = nil
-
-	local var_4_0 = ScriptUnit.has_extension(arg_4_0.owner_unit, "hud_system")
-
-	if var_4_0 then
-		var_4_0.show_critical_indication = false
+		self.state = "shot"
 	end
 end
 
-function ActionSpiritStorm.fire(arg_5_0, arg_5_1)
-	local var_5_0 = arg_5_0.current_action
-	local var_5_1 = arg_5_0.owner_unit
-	local var_5_2 = arg_5_0.target
-	local var_5_3 = POSITION_LOOKUP[var_5_2]
-	local var_5_4 = var_5_0.overcharge_amount
+ActionSpiritStorm.finish = function (self, arg_4_1)
+	-- function 4
+	if not (self.state == "waiting_to_shoot" or self.state == "shot") then
+		self:_proc_spell_used(self.owner_buff_extension)
+	end
 
-	if var_5_3 then
-		local var_5_5 = Managers.state.unit_storage:go_id(var_5_1)
-		local var_5_6 = Managers.state.unit_storage:go_id(arg_5_0.target)
+	self.position = nil
 
-		arg_5_0.network_transmit:send_rpc_server("rpc_summon_vortex", var_5_5, var_5_6)
+	local has_extension = ScriptUnit.has_extension(self.owner_unit, "hud_system")
 
-		local var_5_7 = Unit.get_data(var_5_2, "breed")
+	if not has_extension then
+		has_extension.show_critical_indication = false
+	end
+end
 
-		if var_5_7 and var_5_7.is_player then
-			var_5_4 = var_5_0.overcharge_amount_player_target or var_5_4
+ActionSpiritStorm.fire = function (self, arg_5_1)
+	-- function 5
+	local current_action = self.current_action
+	local owner_unit = self.owner_unit
+	local target = self.target
+	local var_5_3 = POSITION_LOOKUP[target]
+	local overcharge_amount = current_action.overcharge_amount
 
-			if var_5_0.player_target_buff then
-				arg_5_0.owner_buff_extension:add_buff(var_5_0.player_target_buff)
+	if not var_5_3 then
+		local go_id = Managers.state.unit_storage:go_id(owner_unit)
+		local go_id_2 = Managers.state.unit_storage:go_id(self.target)
+
+		self.network_transmit:send_rpc_server("rpc_summon_vortex", go_id, go_id_2)
+
+		local get_data = Unit.get_data(target, "breed")
+
+		if not get_data and not get_data.is_player then
+			overcharge_amount = current_action.overcharge_amount_player_target or overcharge_amount
+
+			if not current_action.player_target_buff then
+				self.owner_buff_extension:add_buff(current_action.player_target_buff)
 			end
 		end
 	end
 
-	if var_5_4 then
-		local var_5_8 = arg_5_0.owner_buff_extension
+	if not overcharge_amount then
+		local owner_buff_extension = self.owner_buff_extension
 
-		if arg_5_0.is_critical_strike and var_5_8:has_buff_perk("no_overcharge_crit") then
-			var_5_4 = 0
+		if not self.is_critical_strike and not owner_buff_extension:has_buff_perk("no_overcharge_crit") then
+			overcharge_amount = 0
 		end
 
-		arg_5_0.overcharge_extension:add_charge(var_5_4)
+		self.overcharge_extension:add_charge(overcharge_amount)
 	end
 
-	local var_5_9 = arg_5_0.current_action.fire_sound_event
+	local fire_sound_event = self.current_action.fire_sound_event
 
-	if var_5_9 then
-		local var_5_10 = arg_5_0.current_action.fire_sound_on_husk
+	if not fire_sound_event then
+		local fire_sound_on_husk = self.current_action.fire_sound_on_husk
 
-		ScriptUnit.extension(var_5_1, "first_person_system"):play_hud_sound_event(var_5_9, nil, var_5_10)
+		ScriptUnit.extension(owner_unit, "first_person_system"):play_hud_sound_event(fire_sound_event, nil, fire_sound_on_husk)
 	end
 
-	if var_5_0.alert_enemies and var_5_3 then
-		Managers.state.entity:system("ai_system"):alert_enemies_within_range(var_5_1, var_5_3, var_5_0.alert_sound_range_fire)
+	if not current_action.alert_enemies and not var_5_3 then
+		Managers.state.entity:system("ai_system"):alert_enemies_within_range(owner_unit, var_5_3, current_action.alert_sound_range_fire)
 	end
 end

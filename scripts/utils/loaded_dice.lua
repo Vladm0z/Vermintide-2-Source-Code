@@ -2,98 +2,102 @@
 
 LoadedDice = {}
 
-function LoadedDice.create(arg_1_0, arg_1_1)
-	local var_1_0 = #arg_1_0
-	local var_1_1 = {}
-	local var_1_2 = {}
+LoadedDice.create = function (self, arg_1_1)
+	-- function 1
+	local count = #self
+	local tbl = {}
+	local tbl_2 = {}
 
-	if arg_1_1 then
-		var_1_2 = table.clone(arg_1_0)
+	if not arg_1_1 then
+		tbl_2 = table.clone(self)
 	else
-		local var_1_3 = 0
+		local num = 0
 
-		for iter_1_0 = 1, var_1_0 do
-			var_1_3 = var_1_3 + arg_1_0[iter_1_0]
+		for i = 1, count do
+			num = num + self[i]
 		end
 
-		for iter_1_1 = 1, var_1_0 do
-			var_1_2[iter_1_1] = arg_1_0[iter_1_1] / var_1_3
+		for j = 1, count do
+			tbl_2[j] = self[j] / num
 		end
 	end
 
-	local var_1_4 = {}
-	local var_1_5 = {}
-	local var_1_6 = 1 / var_1_0
+	local tbl_3 = {}
+	local tbl_4 = {}
+	local num_2 = 1 / count
 
-	for iter_1_2 = 1, var_1_0 do
-		if var_1_6 <= var_1_2[iter_1_2] then
-			var_1_5[#var_1_5 + 1] = iter_1_2
+	for k = 1, count do
+		if num_2 <= tbl_2[k] then
+			tbl_4[#tbl_4 + 1] = k
 		else
-			var_1_4[#var_1_4 + 1] = iter_1_2
+			tbl_3[#tbl_3 + 1] = k
 		end
 	end
 
-	while next(var_1_4) ~= nil and next(var_1_5) ~= nil do
-		local var_1_7 = var_1_4[#var_1_4]
+	while not (next(tbl_3) == nil or next(tbl_4) == nil) do
+		local var_1_7 = tbl_3[#tbl_3]
 
-		var_1_4[#var_1_4] = nil
+		tbl_3[#tbl_3] = nil
 
-		local var_1_8 = var_1_5[#var_1_5]
+		local var_1_8 = tbl_4[#tbl_4]
 
-		var_1_5[#var_1_5] = nil
-		var_1_1[var_1_7] = var_1_8
-		var_1_2[var_1_8] = var_1_2[var_1_8] + var_1_2[var_1_7] - var_1_6
+		tbl_4[#tbl_4] = nil
+		tbl[var_1_7] = var_1_8
+		tbl_2[var_1_8] = tbl_2[var_1_8] + tbl_2[var_1_7] - num_2
 
-		if var_1_6 <= var_1_2[var_1_8] then
-			var_1_5[#var_1_5 + 1] = var_1_8
+		if num_2 <= tbl_2[var_1_8] then
+			tbl_4[#tbl_4 + 1] = var_1_8
 		else
-			var_1_4[#var_1_4 + 1] = var_1_8
+			tbl_3[#tbl_3 + 1] = var_1_8
 		end
 	end
 
-	while next(var_1_4) ~= nil do
-		var_1_2[var_1_4[#var_1_4]] = var_1_6
-		var_1_4[#var_1_4] = nil
+	while next(tbl_3) ~= nil do
+		tbl_2[tbl_3[#tbl_3]] = num_2
+		tbl_3[#tbl_3] = nil
 	end
 
-	while next(var_1_5) ~= nil do
-		var_1_2[var_1_5[#var_1_5]] = var_1_6
-		var_1_5[#var_1_5] = nil
+	while next(tbl_4) ~= nil do
+		tbl_2[tbl_4[#tbl_4]] = num_2
+		tbl_4[#tbl_4] = nil
 	end
 
-	for iter_1_3 = 1, var_1_0 do
-		var_1_2[iter_1_3] = var_1_2[iter_1_3] * var_1_0
+	for l = 1, count do
+		tbl_2[l] = tbl_2[l] * count
 	end
 
-	return var_1_2, var_1_1
+	return tbl_2, tbl
 end
 
-function LoadedDice.roll(arg_2_0, arg_2_1)
-	local var_2_0 = math.random(1, #arg_2_0)
+LoadedDice.roll = function (self, arg_2_1)
+	-- function 2
+	local random = math.random(1, #self)
 
-	return math.random() < arg_2_0[var_2_0] and var_2_0 or arg_2_1[var_2_0]
+	return not (math.random() < self[random]) and random and arg_2_1[random]
 end
 
-function LoadedDice.roll_seeded(arg_3_0, arg_3_1, arg_3_2)
-	local var_3_0, var_3_1 = Math.next_random(arg_3_2, 1, #arg_3_0)
-	local var_3_2, var_3_3 = Math.next_random(var_3_0)
-	local var_3_4 = var_3_3 < arg_3_0[var_3_1]
+LoadedDice.roll_seeded = function (self, arg_3_1, arg_3_2)
+	-- function 3
+	local next_random, var_3_1 = Math.next_random(arg_3_2, 1, #self)
+	local next_random_2, var_3_3 = Math.next_random(next_random)
+	local flag = var_3_3 < self[var_3_1]
 
-	return var_3_2, var_3_4 and var_3_1 or arg_3_1[var_3_1]
+	return next_random_2, not flag and var_3_1 and arg_3_1[var_3_1]
 end
 
-local var_0_0 = {}
+local tbl = {}
 
-function LoadedDice.create_from_mixed(arg_4_0, arg_4_1)
-	local var_4_0 = var_0_0
-	local var_4_1 = #arg_4_0 / 2
+LoadedDice.create_from_mixed = function (self, arg_4_1)
+	-- function 4
+	local var_4_0 = tbl
+	local num = #self / 2
 
-	for iter_4_0 = var_4_1, #var_4_0 do
-		var_4_0[iter_4_0] = nil
+	for i = num, #var_4_0 do
+		var_4_0[i] = nil
 	end
 
-	for iter_4_1 = 1, var_4_1 do
-		var_4_0[iter_4_1] = arg_4_0[iter_4_1 * 2]
+	for j = 1, num do
+		var_4_0[j] = self[j * 2]
 	end
 
 	local var_4_2, var_4_3 = LoadedDice.create(var_4_0, arg_4_1)
@@ -104,41 +108,44 @@ function LoadedDice.create_from_mixed(arg_4_0, arg_4_1)
 	}
 end
 
-function LoadedDice.roll_easy(arg_5_0)
-	return LoadedDice.roll(arg_5_0[1], arg_5_0[2])
+LoadedDice.roll_easy = function (self)
+	-- function 5
+	return LoadedDice.roll(self[1], self[2])
 end
 
-function LoadedDice.roll_easy_seeded(arg_6_0, arg_6_1)
-	return LoadedDice.roll_seeded(arg_6_0[1], arg_6_0[2], arg_6_1)
+LoadedDice.roll_easy_seeded = function (self, arg_6_1)
+	-- function 6
+	return LoadedDice.roll_seeded(self[1], self[2], arg_6_1)
 end
 
-function LoadedDice.test()
-	local var_7_0 = {
+LoadedDice.test = function ()
+	-- function 7
+	local tbl = {
 		10,
 		5,
 		3,
 		2
 	}
-	local var_7_1, var_7_2 = LoadedDice.create(var_7_0, false)
-	local var_7_3 = 100000
-	local var_7_4 = {
+	local var_7_1, var_7_2 = LoadedDice.create(tbl, false)
+	local num = 100000
+	local tbl_2 = {
 		0,
 		0,
 		0,
 		0
 	}
 
-	for iter_7_0 = 1, var_7_3 do
-		local var_7_5 = LoadedDice.roll(var_7_1, var_7_2)
+	for i = 1, num do
+		local roll = LoadedDice.roll(var_7_1, var_7_2)
 
-		var_7_4[var_7_5] = var_7_4[var_7_5] + 1
+		tbl_2[roll] = tbl_2[roll] + 1
 	end
 
-	local var_7_6 = "Loaded Dice | "
+	local str = "Loaded Dice | "
 
-	for iter_7_1 = 1, #var_7_0 do
-		var_7_6 = var_7_6 .. var_7_0[iter_7_1] .. "->" .. var_7_4[iter_7_1] .. "( " .. var_7_4[iter_7_1] / var_7_3 .. "% ) | "
+	for j = 1, #tbl do
+		str = str .. tbl[j] .. "->" .. tbl_2[j] .. "( " .. tbl_2[j] / num .. "% ) | "
 	end
 
-	print(var_7_6)
+	print(str)
 end

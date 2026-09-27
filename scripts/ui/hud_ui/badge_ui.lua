@@ -1,84 +1,90 @@
 -- chunkname: @scripts/ui/hud_ui/badge_ui.lua
 
 local var_0_0 = local_require("scripts/ui/hud_ui/badge_ui_definitions")
-local var_0_1 = var_0_0.badge_widget_definition
-local var_0_2 = var_0_0.scenegraph_definition
-local var_0_3 = var_0_0.animation_definitions
+local badge_widget_definition = var_0_0.badge_widget_definition
+local scenegraph_definition = var_0_0.scenegraph_definition
+local animation_definitions = var_0_0.animation_definitions
 
 BadgeUI = class(BadgeUI)
 
-function BadgeUI.init(arg_1_0, arg_1_1, arg_1_2)
-	arg_1_0._parent = arg_1_1
-	arg_1_0._ui_renderer = arg_1_2.ui_renderer
-	arg_1_0._input_manager = arg_1_2.input_manager
-	arg_1_0._player_manager = arg_1_2.player_manager
-	arg_1_0._local_unique_id = arg_1_2.player:unique_id()
-	arg_1_0._world = arg_1_2.world_manager:world("level_world")
-	arg_1_0._wwise_world = arg_1_2.world_manager:wwise_world(arg_1_0._world)
-	arg_1_0._render_settings = {
+BadgeUI.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	self._parent = arg_1_1
+	self._ui_renderer = arg_1_2.ui_renderer
+	self._input_manager = arg_1_2.input_manager
+	self._player_manager = arg_1_2.player_manager
+	self._local_unique_id = arg_1_2.player:unique_id()
+	self._world = arg_1_2.world_manager:world("level_world")
+	self._wwise_world = arg_1_2.world_manager:wwise_world(self._world)
+	self._render_settings = {
 		alpha_multiplier = 1,
 		snap_pixel_positions = true
 	}
-	arg_1_0._ingame_ui_context = arg_1_2
-	arg_1_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
-	arg_1_0._ui_animator = UIAnimator:new(arg_1_0._ui_scenegraph, var_0_3)
-	arg_1_0._has_active_badge = false
-	arg_1_0._animations = {}
-	arg_1_0._badges_queue = {}
+	self._ingame_ui_context = arg_1_2
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
+	self._has_active_badge = false
+	self._animations = {}
+	self._badges_queue = {}
 
-	arg_1_0:_create_ui_elements()
-	Managers.state.event:register(arg_1_0, "add_local_badge", "event_add_local_badge")
+	self:_create_ui_elements()
+	Managers.state.event:register(self, "add_local_badge", "event_add_local_badge")
 end
 
-function BadgeUI.destroy(arg_2_0)
-	GarbageLeakDetector.register_object(arg_2_0, "badge_ui")
-	Managers.state.event:unregister("add_badge", arg_2_0)
+BadgeUI.destroy = function (self)
+	-- function 2
+	GarbageLeakDetector.register_object(self, "badge_ui")
+	Managers.state.event:unregister("add_badge", self)
 
-	arg_2_0.ui_animator = nil
+	self.ui_animator = nil
 end
 
-function BadgeUI._create_ui_elements(arg_3_0)
-	UIRenderer.clear_scenegraph_queue(arg_3_0._ui_renderer)
+BadgeUI._create_ui_elements = function (self)
+	-- function 3
+	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
 
-	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
-	arg_3_0._badge_widget = UIWidget.init(var_0_1)
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+	self._badge_widget = UIWidget.init(badge_widget_definition)
 end
 
-function BadgeUI.update(arg_4_0, arg_4_1, arg_4_2)
-	local var_4_0 = arg_4_0._animations
-	local var_4_1 = arg_4_0._ui_animator
+BadgeUI.update = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	local _animations = self._animations
+	local _ui_animator = self._ui_animator
 
-	var_4_1:update(arg_4_1)
+	_ui_animator:update(arg_4_1)
 
-	for iter_4_0, iter_4_1 in pairs(var_4_0) do
-		local var_4_2 = iter_4_1.id
+	for k, v in pairs(_animations) do
+		local id = v.id
 
-		if var_4_1:is_animation_completed(var_4_2) then
-			var_4_1:stop_animation(var_4_2)
-			arg_4_0:_remove_active_badge(iter_4_0)
-			arg_4_0:_add_badge_from_queue()
+		if not _ui_animator:is_animation_completed(id) then
+			_ui_animator:stop_animation(id)
+			self:_remove_active_badge(k)
+			self:_add_badge_from_queue()
 		end
 	end
 
-	arg_4_0:_draw(arg_4_1)
+	self:_draw(arg_4_1)
 end
 
-function BadgeUI._draw(arg_5_0, arg_5_1)
-	if not arg_5_0._has_active_badge then
+BadgeUI._draw = function (self, arg_5_1)
+	-- function 5
+	if not self._has_active_badge then
 		return
 	end
 
-	local var_5_0 = arg_5_0._ui_renderer
-	local var_5_1 = arg_5_0._ui_scenegraph
-	local var_5_2 = arg_5_0._input_manager:get_service("ingame_menu")
-	local var_5_3 = arg_5_0._render_settings
+	local _ui_renderer = self._ui_renderer
+	local _ui_scenegraph = self._ui_scenegraph
+	local get_service = self._input_manager:get_service("ingame_menu")
+	local _render_settings = self._render_settings
 
-	UIRenderer.begin_pass(var_5_0, var_5_1, var_5_2, arg_5_1, nil, var_5_3)
-	UIRenderer.draw_widget(var_5_0, arg_5_0._badge_widget)
-	UIRenderer.end_pass(var_5_0)
+	UIRenderer.begin_pass(_ui_renderer, _ui_scenegraph, get_service, arg_5_1, nil, _render_settings)
+	UIRenderer.draw_widget(_ui_renderer, self._badge_widget)
+	UIRenderer.end_pass(_ui_renderer)
 end
 
-function BadgeUI._get_badge(arg_6_0, arg_6_1)
+BadgeUI._get_badge = function (arg_6_0, arg_6_1)
+	-- function 6
 	local var_6_0 = NetworkLookup.badges[arg_6_1]
 	local var_6_1 = BadgeDefinitions[var_6_0]
 
@@ -87,95 +93,102 @@ function BadgeUI._get_badge(arg_6_0, arg_6_1)
 	return var_6_1
 end
 
-function BadgeUI.event_add_local_badge(arg_7_0, arg_7_1)
-	arg_7_0:add_badge(arg_7_0._local_unique_id .. "_" .. arg_7_1, arg_7_0:_get_badge(arg_7_1))
+BadgeUI.event_add_local_badge = function (self, arg_7_1)
+	-- function 7
+	self:add_badge(self._local_unique_id .. "_" .. arg_7_1, self:_get_badge(arg_7_1))
 end
 
-function BadgeUI.event_add_remote_player_badge(arg_8_0, arg_8_1, arg_8_2)
-	arg_8_0:add_badge(arg_8_1 .. "_" .. arg_8_2, arg_8_0:_get_badge(arg_8_2))
+BadgeUI.event_add_remote_player_badge = function (self, arg_8_1, arg_8_2)
+	-- function 8
+	self:add_badge(arg_8_1 .. "_" .. arg_8_2, self:_get_badge(arg_8_2))
 end
 
-function BadgeUI._add_to_queue(arg_9_0, arg_9_1, arg_9_2)
-	local var_9_0 = arg_9_0._badges_queue
+BadgeUI._add_to_queue = function (self, arg_9_1, arg_9_2)
+	-- function 9
+	local _badges_queue = self._badges_queue
 
-	for iter_9_0, iter_9_1 in ipairs(var_9_0) do
-		if iter_9_1.hash == arg_9_1 then
-			iter_9_1.amount = iter_9_1.amount + 1
+	for i, v in ipairs(_badges_queue) do
+		if v.hash == arg_9_1 then
+			v.amount = v.amount + 1
 
 			return
 		end
 	end
 
-	var_9_0[#var_9_0 + 1] = {
+	_badges_queue[#_badges_queue + 1] = {
 		amount = 1,
 		hash = arg_9_1,
 		badge = arg_9_2
 	}
 end
 
-function BadgeUI.add_badge(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
-	arg_10_3 = arg_10_3 == nil and true or arg_10_3
-	arg_10_4 = arg_10_4 == nil and 1 or arg_10_4
+BadgeUI.add_badge = function (self, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+	-- function 10
+	arg_10_3 = arg_10_3 ~= nil or not true or arg_10_3
+	arg_10_4 = arg_10_4 ~= nil or not 1 or arg_10_4
 
-	if arg_10_3 and arg_10_0._has_active_badge then
-		arg_10_0:_add_to_queue(arg_10_1, arg_10_2)
+	if not arg_10_3 and not self._has_active_badge then
+		self:_add_to_queue(arg_10_1, arg_10_2)
 
 		return
 	end
 
-	arg_10_0._has_active_badge = true
+	self._has_active_badge = true
 
-	local var_10_0 = arg_10_0._badge_widget
-	local var_10_1 = var_10_0.content
-	local var_10_2 = arg_10_0._ui_renderer.gui
+	local _badge_widget = self._badge_widget
+	local content = _badge_widget.content
+	local gui = self._ui_renderer.gui
 
-	Material.set_texture(Gui.material(var_10_2, "versus_badge_icon"), "diffuse_map", "gui/1080p/single_textures/carousel/badge_icons/" .. arg_10_2.texture_id .. "_icon")
-	Material.set_texture(Gui.material(var_10_2, "versus_badge_glow"), "diffuse_map", "gui/1080p/single_textures/carousel/badge_icons/" .. arg_10_2.texture_id .. "_glow")
+	Material.set_texture(Gui.material(gui, "versus_badge_icon"), "diffuse_map", "gui/1080p/single_textures/carousel/badge_icons/" .. arg_10_2.texture_id .. "_icon")
+	Material.set_texture(Gui.material(gui, "versus_badge_glow"), "diffuse_map", "gui/1080p/single_textures/carousel/badge_icons/" .. arg_10_2.texture_id .. "_glow")
 
-	var_10_0.style.frame_glow.color = arg_10_2.color
-	var_10_0.style.icon_glow.color = arg_10_2.color
-	var_10_1.text_name = arg_10_2.text
-	var_10_1.text_desc = arg_10_2.description
+	_badge_widget.style.frame_glow.color = arg_10_2.color
+	_badge_widget.style.icon_glow.color = arg_10_2.color
+	content.text_name = arg_10_2.text
+	content.text_desc = arg_10_2.description
 
 	if arg_10_4 > 1 then
-		var_10_1.text_name = var_10_1.text_name .. " x" .. arg_10_4
+		content.text_name = content.text_name .. " x" .. arg_10_4
 	end
 
-	arg_10_0:_start_animation("on_enter", 1, var_10_0)
+	self:_start_animation("on_enter", 1, _badge_widget)
 end
 
-function BadgeUI._start_animation(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
-	local var_11_0 = {
-		wwise_world = arg_11_0._wwise_world,
-		render_settings = arg_11_0._render_settings,
-		ui_scenegraph = arg_11_0._ui_scenegraph
+BadgeUI._start_animation = function (self, arg_11_1, arg_11_2, arg_11_3)
+	-- function 11
+	local tbl = {
+		wwise_world = self._wwise_world,
+		render_settings = self._render_settings,
+		ui_scenegraph = self._ui_scenegraph
 	}
-	local var_11_1 = arg_11_0._ui_animator:start_animation(arg_11_1, arg_11_3, var_0_2, var_11_0)
+	local start_animation = self._ui_animator:start_animation(arg_11_1, arg_11_3, scenegraph_definition, tbl)
 
-	arg_11_0._animations[arg_11_2] = {
-		id = var_11_1,
+	self._animations[arg_11_2] = {
+		id = start_animation,
 		name = arg_11_1
 	}
 end
 
-function BadgeUI._remove_active_badge(arg_12_0, arg_12_1)
-	arg_12_0._animations[arg_12_1] = nil
-	arg_12_0._has_active_badge = false
+BadgeUI._remove_active_badge = function (self, arg_12_1)
+	-- function 12
+	self._animations[arg_12_1] = nil
+	self._has_active_badge = false
 end
 
-function BadgeUI._add_badge_from_queue(arg_13_0)
-	if arg_13_0._has_active_badge then
+BadgeUI._add_badge_from_queue = function (self)
+	-- function 13
+	if not self._has_active_badge then
 		return
 	end
 
-	local var_13_0 = table.remove(arg_13_0._badges_queue, 1)
+	local remove = table.remove(self._badges_queue, 1)
 
-	if not var_13_0 then
+	if not remove then
 		return
 	end
 
-	local var_13_1 = var_13_0.badge
-	local var_13_2 = var_13_0.hash
+	local badge = remove.badge
+	local hash = remove.hash
 
-	arg_13_0:add_badge(var_13_2, var_13_1, false, var_13_0.amount)
+	self:add_badge(hash, badge, false, remove.amount)
 end

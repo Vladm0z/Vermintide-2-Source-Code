@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/hero_conversations_ussingen.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pbw_level_ussingen_story_eleven_01",

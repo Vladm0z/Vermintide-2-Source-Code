@@ -5,93 +5,102 @@ require("scripts/unit_extensions/default_player_unit/attachment/player_husk_atta
 
 AttachmentSystem = class(AttachmentSystem, ExtensionSystemBase)
 
-local var_0_0 = {
+local tbl = {
 	"rpc_create_attachment",
 	"rpc_remove_attachment",
 	"rpc_add_attachment_buffs"
 }
-local var_0_1 = {
+local tbl_2 = {
 	"PlayerUnitAttachmentExtension",
 	"PlayerHuskAttachmentExtension"
 }
 
-function AttachmentSystem.init(arg_1_0, arg_1_1, arg_1_2)
-	AttachmentSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
+AttachmentSystem.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	AttachmentSystem.super.init(self, arg_1_1, arg_1_2, tbl_2)
 
-	local var_1_0 = arg_1_1.network_event_delegate
+	local network_event_delegate = arg_1_1.network_event_delegate
 
-	arg_1_0.network_event_delegate = var_1_0
+	self.network_event_delegate = network_event_delegate
 
-	var_1_0:register(arg_1_0, unpack(var_0_0))
+	network_event_delegate:register(self, unpack(tbl))
 end
 
-function AttachmentSystem.destroy(arg_2_0)
-	arg_2_0.network_event_delegate:unregister(arg_2_0)
+AttachmentSystem.destroy = function (self)
+	-- function 2
+	self.network_event_delegate:unregister(self)
 
-	arg_2_0.network_event_delegate = nil
+	self.network_event_delegate = nil
 end
 
-function AttachmentSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
-	arg_3_4.is_server = arg_3_0.is_server
+AttachmentSystem.on_add_extension = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	-- function 3
+	arg_3_4.is_server = self.is_server
 
-	return AttachmentSystem.super.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	return AttachmentSystem.super.on_add_extension(self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 end
 
-function AttachmentSystem.create_attachment(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
-	local var_4_0 = ScriptUnit.extension(arg_4_1, "attachment_system")
+AttachmentSystem.create_attachment = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	-- function 4
+	local extension = ScriptUnit.extension(arg_4_1, "attachment_system")
 	local var_4_1 = NetworkLookup.equipment_slots[arg_4_2]
 	local var_4_2 = NetworkLookup.item_names[arg_4_3]
 	local var_4_3 = ItemMasterList[var_4_2]
 
-	var_4_0:create_attachment(var_4_1, var_4_3)
+	extension:create_attachment(var_4_1, var_4_3)
 end
 
-function AttachmentSystem.remove_attachment(arg_5_0, arg_5_1, arg_5_2)
-	local var_5_0 = ScriptUnit.extension(arg_5_1, "attachment_system")
+AttachmentSystem.remove_attachment = function (arg_5_0, arg_5_1, arg_5_2)
+	-- function 5
+	local extension = ScriptUnit.extension(arg_5_1, "attachment_system")
 	local var_5_1 = NetworkLookup.equipment_slots[arg_5_2]
 
-	var_5_0:remove_attachment(var_5_1)
+	extension:remove_attachment(var_5_1)
 end
 
-function AttachmentSystem.add_attachment_buffs(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6)
+AttachmentSystem.add_attachment_buffs = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6)
+	-- function 6
 	local var_6_0 = NetworkLookup.equipment_slots[arg_6_2]
-	local var_6_1 = BuffUtils.buffs_from_rpc_params(arg_6_3, arg_6_4, arg_6_5, arg_6_6)
+	local buffs_from_rpc_params = BuffUtils.buffs_from_rpc_params(arg_6_3, arg_6_4, arg_6_5, arg_6_6)
 
-	ScriptUnit.extension(arg_6_1, "attachment_system"):set_buffs_to_slot(var_6_0, var_6_1)
+	ScriptUnit.extension(arg_6_1, "attachment_system"):set_buffs_to_slot(var_6_0, buffs_from_rpc_params)
 end
 
-function AttachmentSystem.rpc_create_attachment(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
-	if arg_7_0.is_server then
+AttachmentSystem.rpc_create_attachment = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	-- function 7
+	if not self.is_server then
 		local var_7_0 = CHANNEL_TO_PEER_ID[arg_7_1]
 
-		arg_7_0.network_transmit:send_rpc_clients_except("rpc_create_attachment", var_7_0, arg_7_2, arg_7_3, arg_7_4)
+		self.network_transmit:send_rpc_clients_except("rpc_create_attachment", var_7_0, arg_7_2, arg_7_3, arg_7_4)
 	end
 
-	local var_7_1 = arg_7_0.unit_storage:unit(arg_7_2)
+	local unit = self.unit_storage:unit(arg_7_2)
 
-	arg_7_0:create_attachment(var_7_1, arg_7_3, arg_7_4)
+	self:create_attachment(unit, arg_7_3, arg_7_4)
 end
 
-function AttachmentSystem.rpc_remove_attachment(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
-	if arg_8_0.is_server then
+AttachmentSystem.rpc_remove_attachment = function (self, arg_8_1, arg_8_2, arg_8_3)
+	-- function 8
+	if not self.is_server then
 		local var_8_0 = CHANNEL_TO_PEER_ID[arg_8_1]
 
-		arg_8_0.network_transmit:send_rpc_clients_except("rpc_remove_attachment", var_8_0, arg_8_2, arg_8_3)
+		self.network_transmit:send_rpc_clients_except("rpc_remove_attachment", var_8_0, arg_8_2, arg_8_3)
 	end
 
-	local var_8_1 = arg_8_0.unit_storage:unit(arg_8_2)
+	local unit = self.unit_storage:unit(arg_8_2)
 
-	arg_8_0:remove_attachment(var_8_1, arg_8_3)
+	self:remove_attachment(unit, arg_8_3)
 end
 
-function AttachmentSystem.rpc_add_attachment_buffs(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7)
-	if arg_9_0.is_server then
+AttachmentSystem.rpc_add_attachment_buffs = function (self, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7)
+	-- function 9
+	if not self.is_server then
 		local var_9_0 = CHANNEL_TO_PEER_ID[arg_9_1]
 
-		arg_9_0.network_transmit:send_rpc_clients_except("rpc_add_attachment_buffs", var_9_0, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7)
+		self.network_transmit:send_rpc_clients_except("rpc_add_attachment_buffs", var_9_0, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7)
 	end
 
-	local var_9_1 = arg_9_0.unit_storage:unit(arg_9_2)
+	local unit = self.unit_storage:unit(arg_9_2)
 
-	arg_9_0:add_attachment_buffs(var_9_1, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7)
+	self:add_attachment_buffs(unit, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7)
 end

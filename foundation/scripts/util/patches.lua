@@ -2,17 +2,21 @@
 
 require("foundation/scripts/util/misc_util")
 
-local function var_0_0(arg_1_0)
-	local var_1_0 = rawget(_G, arg_1_0) or {}
+local function fn(arg_1_0)
+	-- function 1
+	local var_1_0 = rawget(_G, arg_1_0)
+
+	var_1_0 = var_1_0 or {}
 
 	assert(getmetatable(var_1_0) == nil, "It's not safe auto-patching methods on a table that already has a metatable. Set them to NOP manually.")
 
 	return rawset(_G, arg_1_0, setmetatable(var_1_0, {
-		__index = function(arg_2_0, arg_2_1)
+		__index = function (self, arg_2_1)
+			-- function 2
 			if not script_data.disable_auto_patch_missing_methods then
 				Application.error("Missing method key autovivified with NOP: %s.%s\n%s", arg_1_0, arg_2_1, Script.callstack())
 
-				arg_2_0[arg_2_1] = NOP
+				self[arg_2_1] = NOP
 
 				return NOP
 			end
@@ -20,41 +24,46 @@ local function var_0_0(arg_1_0)
 	}))
 end
 
-MockClass = MockClass or {}
+local MockClass = MockClass
 
-function MockClass.new()
+MockClass = MockClass or {}
+MockClass = MockClass
+
+MockClass.new = function ()
+	-- function 3
 	return MockClass
 end
 
-local var_0_1 = {
-	__index = function(arg_4_0, arg_4_1)
+local tbl = {
+	__index = function (arg_4_0, arg_4_1)
+		-- function 4
 		return NOP
 	end,
 	update = NOP
 }
 
-setmetatable(MockClass, var_0_1)
+setmetatable(MockClass, tbl)
 
-if not _G.FOUNDATION_patches_applied and (IS_CONSOLE or DEDICATED_SERVER) then
+if _G.FOUNDATION_patches_applied or IS_CONSOLE or not DEDICATED_SERVER then
 	_G.FOUNDATION_patches_applied = true
 
 	if not Wwise then
-		var_0_0("Wwise")
+		fn("Wwise")
 	end
 
 	if not WwiseWorld then
-		var_0_0("WwiseWorld")
+		fn("WwiseWorld")
 	end
 
 	if not TerrainDecoration then
-		var_0_0("TerrainDecoration")
+		fn("TerrainDecoration")
 	end
 
 	if not LandscapeDecoration then
-		var_0_0("LandscapeDecoration")
+		fn("LandscapeDecoration")
 	end
 
-	var_0_0("Application")
+	fn("Application")
 
 	Application.apply_user_settings = NOP
 	Application.enum_display_modes = TNEW
@@ -65,7 +74,7 @@ if not _G.FOUNDATION_patches_applied and (IS_CONSOLE or DEDICATED_SERVER) then
 	Application.set_max_frame_stacking = NOP
 	Application.user_settings_load_error = NOP
 
-	var_0_0("Window")
+	fn("Window")
 
 	Window.KEYSTROKE_ALT_ENTER = 0
 	Window.KEYSTROKE_ALT_F4 = 0
@@ -91,19 +100,20 @@ if not _G.FOUNDATION_patches_applied and (IS_CONSOLE or DEDICATED_SERVER) then
 	Window.set_title = NOP
 	Window.show_cursor = NOP
 
-	var_0_0("DisplayAdapter")
+	fn("DisplayAdapter")
 
 	DisplayAdapter.num_adapters = CONST(0)
 	DisplayAdapter.name = CONST("function patched out")
 	DisplayAdapter.num_outputs = CONST(0)
 	DisplayAdapter.num_modes = CONST(0)
 
-	function DisplayAdapter.mode()
+	DisplayAdapter.mode = function ()
+		-- function 5
 		return 1, 1
 	end
 
 	if not DEDICATED_SERVER then
-		var_0_0("CommandWindow")
+		fn("CommandWindow")
 
 		CommandWindow.close = NOP
 		CommandWindow.open = NOP
@@ -115,47 +125,54 @@ if not _G.FOUNDATION_patches_applied and (IS_CONSOLE or DEDICATED_SERVER) then
 end
 
 if not Clipboard then
-	var_0_0("Clipboard")
+	fn("Clipboard")
 
 	Clipboard.get = CONST("")
 	Clipboard.put = NOP
 end
 
 if not Presence then
-	var_0_0("Presence")
+	fn("Presence")
 
 	Presence.set_presence = NOP
 end
 
 ColorBox = QuaternionBox
+
+local __STRING_FORMAT = __STRING_FORMAT
+
 __STRING_FORMAT = __STRING_FORMAT or nil
+__STRING_FORMAT = __STRING_FORMAT
 
 if not __STRING_FORMAT then
-	local var_0_2 = {}
-	local var_0_3 = {}
+	local tbl_2 = {}
+	local tbl_3 = {}
+	local __STRING_FORMAT_2 = __STRING_FORMAT
 
-	__STRING_FORMAT = __STRING_FORMAT or string.format
+	__STRING_FORMAT_2 = __STRING_FORMAT_2 or string.format
+	__STRING_FORMAT = __STRING_FORMAT_2
 	string._format = string.format
 
-	function string.format(arg_6_0, ...)
-		if var_0_2[arg_6_0] then
+	string.format = function (arg_6_0, ...)
+		-- function 6
+		if not tbl_2[arg_6_0] then
 			return __STRING_FORMAT(arg_6_0, ...)
 		end
 
-		if var_0_3[arg_6_0] then
+		if not tbl_3[arg_6_0] then
 			return "<Invalid string format>"
 		end
 
 		local var_6_0, var_6_1 = pcall(__STRING_FORMAT, arg_6_0, ...)
 
 		if not var_6_0 then
-			var_0_3[arg_6_0] = true
+			tbl_3[arg_6_0] = true
 
 			Crashify.print_exception("string.format", "Invalid string format for string %q", arg_6_0)
 
 			return "<Invalid string format>"
 		else
-			var_0_2[arg_6_0] = true
+			tbl_2[arg_6_0] = true
 
 			return var_6_1
 		end

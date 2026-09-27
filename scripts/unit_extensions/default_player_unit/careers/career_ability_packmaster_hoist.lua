@@ -2,10 +2,23 @@
 
 CareerAbilityPackmasterHoist = class(CareerAbilityPackmasterHoist, CareerAbilityDarkPactBase)
 
-function CareerAbilityPackmasterHoist._ability_available(arg_1_0)
-	local var_1_0 = arg_1_0.super._ability_available(arg_1_0)
-	local var_1_1 = arg_1_0._status_extension
-	local var_1_2 = arg_1_0._locomotion_extension
+CareerAbilityPackmasterHoist._ability_available = function (self)
+	-- function 1
+	local _ability_available = self.super._ability_available(self)
+	local _status_extension = self._status_extension
+	local _locomotion_extension = self._locomotion_extension
 
-	return var_1_0 and var_1_1:get_is_packmaster_dragging() and var_1_2:is_on_ground()
+	if not _ability_available then
+		-- Nothing
+	end
+
+	::label_1_0::
+
+	local get_is_packmaster_dragging = _status_extension:get_is_packmaster_dragging()
+
+	get_is_packmaster_dragging = not get_is_packmaster_dragging and _locomotion_extension:is_on_ground()
+
+	::label_1_1::
+
+	return get_is_packmaster_dragging
 end

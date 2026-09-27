@@ -2,13 +2,14 @@
 
 UICleanUI = class(UICleanUI)
 
-local var_0_0 = 1
-local var_0_1 = 1.5
-local var_0_2 = 0.1
-local var_0_3 = 50
-local var_0_4 = 1
+local num = 1
+local num_2 = 1.5
+local num_3 = 0.1
+local num_4 = 50
+local num_5 = 1
 
-function UICleanUI.create(arg_1_0, arg_1_1)
+UICleanUI.create = function (arg_1_0, arg_1_1)
+	-- function 1
 	return {
 		off_window_clock = 0,
 		was_enabled = false,
@@ -21,165 +22,169 @@ function UICleanUI.create(arg_1_0, arg_1_1)
 	}
 end
 
-local function var_0_5(arg_2_0)
-	local var_2_0, var_2_1 = Application.resolution()
-	local var_2_2 = var_2_0
+local function fn(arg_2_0)
+	-- function 2
+	local resolution, var_2_1 = Application.resolution()
+	local var_2_2 = resolution
 	local var_2_3 = var_2_1
-	local var_2_4 = 0
-	local var_2_5 = 0
+	local num = 0
+	local num_2 = 0
 
-	for iter_2_0, iter_2_1 in ipairs(arg_2_0) do
-		var_2_2 = math.min(var_2_2, iter_2_1[1][1])
-		var_2_3 = math.min(var_2_3, iter_2_1[1][2])
-		var_2_4 = math.max(var_2_4, iter_2_1[1][1] + iter_2_1[2][1])
-		var_2_5 = math.max(var_2_5, iter_2_1[1][2] + iter_2_1[2][2])
+	for i, v in ipairs(arg_2_0) do
+		var_2_2 = math.min(var_2_2, v[1][1])
+		var_2_3 = math.min(var_2_3, v[1][2])
+		num = math.max(num, v[1][1] + v[2][1])
+		num_2 = math.max(num_2, v[1][2] + v[2][2])
 	end
 
-	local var_2_6 = RESOLUTION_LOOKUP.scale
+	local scale = RESOLUTION_LOOKUP.scale
 
 	return {
-		var_2_2 * var_2_6,
-		var_2_3 * var_2_6,
-		var_2_4 * var_2_6,
-		var_2_5 * var_2_6
+		var_2_2 * scale,
+		var_2_3 * scale,
+		num * scale,
+		num_2 * scale
 	}
 end
 
-local function var_0_6(arg_3_0, arg_3_1)
+local function fn_2(self, arg_3_1)
+	-- function 3
 	return {
-		arg_3_0[1] - arg_3_1,
-		arg_3_0[2] - arg_3_1,
-		arg_3_0[3] + arg_3_1,
-		arg_3_0[4] + arg_3_1
+		self[1] - arg_3_1,
+		self[2] - arg_3_1,
+		self[3] + arg_3_1,
+		self[4] + arg_3_1
 	}
 end
 
-local function var_0_7(arg_4_0, arg_4_1, arg_4_2)
-	return arg_4_0 > arg_4_2[1] and arg_4_0 < arg_4_2[3] and arg_4_1 > arg_4_2[2] and arg_4_1 < arg_4_2[4]
+local function fn_3(arg_4_0, arg_4_1, arg_4_2)
+	-- function 4
+	return not (arg_4_0 > arg_4_2[1]) or not (arg_4_0 < arg_4_2[3]) or not (arg_4_1 > arg_4_2[2]) or arg_4_1 < arg_4_2[4]
 end
 
-function UICleanUI.update(arg_5_0, arg_5_1)
-	local var_5_0 = false
-	local var_5_1 = arg_5_0.peer_id
-	local var_5_2 = Managers.player:player_from_peer_id(var_5_1)
-	local var_5_3 = var_5_2 and var_5_2.player_unit
+UICleanUI.update = function (self, arg_5_1)
+	-- function 5
+	local flag = false
+	local peer_id = self.peer_id
+	local player_from_peer_id = Managers.player:player_from_peer_id(peer_id)
+	local flag_2 = not player_from_peer_id and player_from_peer_id.player_unit
 
-	if Unit.alive(var_5_3) and ScriptUnit.has_extension(var_5_3, "eyetracking_system") then
-		var_5_0 = ScriptUnit.extension(var_5_3, "eyetracking_system"):get_is_feature_enabled("tobii_clean_ui")
+	if not Unit.alive(flag_2) and not ScriptUnit.has_extension(flag_2, "eyetracking_system") then
+		flag = ScriptUnit.extension(flag_2, "eyetracking_system"):get_is_feature_enabled("tobii_clean_ui")
 	end
 
-	local var_5_4, var_5_5 = Tobii.get_gaze_point()
-	local var_5_6 = var_5_4 * 0.5 + 0.5
-	local var_5_7 = var_5_5 * 0.5 + 0.5
-	local var_5_8, var_5_9 = Application.resolution()
-	local var_5_10 = var_5_6 * var_5_8
-	local var_5_11 = var_5_7 * var_5_9
-	local var_5_12 = var_5_6 >= 0 and var_5_6 <= 1 and var_5_7 >= 0 and var_5_7 <= 1
-	local var_5_13 = false
+	local get_gaze_point, var_5_5 = Tobii.get_gaze_point()
+	local num_6 = get_gaze_point * 0.5 + 0.5
+	local num_7 = var_5_5 * 0.5 + 0.5
+	local resolution, var_5_9 = Application.resolution()
+	local num_8 = num_6 * resolution
+	local num_9 = num_7 * var_5_9
+	local flag_3 = not (num_6 >= 0) or not (num_6 <= 1) or not (num_7 >= 0) or num_7 <= 1
+	local flag_4 = false
 
-	if var_5_12 then
-		arg_5_0.off_window_clock = 0
+	if not flag_3 then
+		self.off_window_clock = 0
 	else
-		arg_5_0.off_window_clock = arg_5_0.off_window_clock + arg_5_1
-		var_5_13 = arg_5_0.off_window_clock > var_0_4
+		self.off_window_clock = self.off_window_clock + arg_5_1
+		flag_4 = self.off_window_clock > num_5
 
-		if var_5_13 then
-			arg_5_0.off_window_clock = var_0_4
+		if not flag_4 then
+			self.off_window_clock = num_5
 		end
 	end
 
-	local var_5_14 = arg_5_0.hud
-	local var_5_15 = {
+	local hud = self.hud
+	local tbl = {
 		86,
 		108
 	}
-	local var_5_16 = {}
-	local var_5_17 = var_5_14:component("UnitFramesHandler")
-	local var_5_18 = var_5_17:unit_frame_amount()
+	local tbl_2 = {}
+	local component = hud:component("UnitFramesHandler")
+	local unit_frame_amount = component:unit_frame_amount()
 
-	for iter_5_0 = 1, var_5_18 do
-		local var_5_19 = var_5_17:get_unit_widget(iter_5_0).ui_scenegraph.portrait_pivot.world_position
+	for i = 1, unit_frame_amount do
+		local world_position = component:get_unit_widget(i).ui_scenegraph.portrait_pivot.world_position
 
-		var_5_16[iter_5_0] = {
+		tbl_2[i] = {
 			{
-				var_5_19[1] - var_5_15[1] * 0.5,
-				var_5_19[2] - var_5_15[2]
+				world_position[1] - tbl[1] * 0.5,
+				world_position[2] - tbl[2]
 			},
-			var_5_15
+			tbl
 		}
 	end
 
-	local var_5_20 = var_5_14:component("EquipmentUI")
-	local var_5_21 = var_5_14:component("GamePadEquipmentUI")
+	local component_2 = hud:component("EquipmentUI")
+	local component_3 = hud:component("GamePadEquipmentUI")
 
-	if not var_5_20 or not var_5_21 then
+	if not (not component_2 and component_3) then
 		return
 	end
 
-	local var_5_22 = var_5_20.ui_scenegraph.ammo_background.world_position
-	local var_5_23 = var_5_20.ui_scenegraph.ammo_background.size
-	local var_5_24 = var_5_20.ui_scenegraph.background_panel.world_position
-	local var_5_25 = var_5_21.ui_scenegraph.background_panel.world_position
-	local var_5_26 = var_5_20.ui_scenegraph.background_panel.size
-	local var_5_27 = var_5_21.ui_scenegraph.background_panel.size
-	local var_5_28 = {
+	local world_position_2 = component_2.ui_scenegraph.ammo_background.world_position
+	local size = component_2.ui_scenegraph.ammo_background.size
+	local world_position_3 = component_2.ui_scenegraph.background_panel.world_position
+	local world_position_4 = component_3.ui_scenegraph.background_panel.world_position
+	local size_2 = component_2.ui_scenegraph.background_panel.size
+	local size_3 = component_3.ui_scenegraph.background_panel.size
+	local tbl_3 = {
 		{
 			{
-				var_5_24[1],
-				var_5_24[2],
-				var_5_24[3]
+				world_position_3[1],
+				world_position_3[2],
+				world_position_3[3]
 			},
 			{
-				var_5_26[1],
-				var_5_26[2]
+				size_2[1],
+				size_2[2]
 			}
 		}
 	}
-	local var_5_29 = {
+	local tbl_4 = {
 		{
 			{
-				var_5_22[1],
-				var_5_22[2],
-				var_5_22[3]
+				world_position_2[1],
+				world_position_2[2],
+				world_position_2[3]
 			},
 			{
-				var_5_23[1],
-				var_5_23[2]
+				size[1],
+				size[2]
 			}
 		}
 	}
-	local var_5_30 = {
+	local tbl_5 = {
 		{
 			{
-				var_5_25[1],
-				var_5_25[2],
-				var_5_25[3]
+				world_position_4[1],
+				world_position_4[2],
+				world_position_4[3]
 			},
 			{
-				var_5_27[1],
-				var_5_27[2]
+				size_3[1],
+				size_3[2]
 			}
 		}
 	}
-	local var_5_31 = {
-		var_5_16[2],
-		var_5_16[3],
-		var_5_16[4]
+	local tbl_6 = {
+		tbl_2[2],
+		tbl_2[3],
+		tbl_2[4]
 	}
-	local var_5_32 = {
-		var_5_16[1]
+	local tbl_7 = {
+		tbl_2[1]
 	}
 
-	if not arg_5_0.clusters or RESOLUTION_LOOKUP.modified or arg_5_0.dirty then
-		local var_5_33 = arg_5_0.hud
+	if not self.clusters and RESOLUTION_LOOKUP.modified or not self.dirty then
+		local hud_2 = self.hud
 
-		if arg_5_0.gamepadclusters then
-			arg_5_0.gamepadclusters.bottom.bounding_box = var_0_6(var_0_5(var_5_30), var_0_3)
-			arg_5_0.gamepadclusters.left.bounding_box = var_0_6(var_0_5(var_5_31), var_0_3)
-			arg_5_0.gamepadclusters.bottom_left.bounding_box = var_0_6(var_0_5(var_5_32), var_0_3)
-			arg_5_0.gamepadclusters.bottom_right.bounding_box = var_0_6(var_0_5(var_5_29), var_0_3)
+		if not self.gamepadclusters then
+			self.gamepadclusters.bottom.bounding_box = fn_2(fn(tbl_5), num_4)
+			self.gamepadclusters.left.bounding_box = fn_2(fn(tbl_6), num_4)
+			self.gamepadclusters.bottom_left.bounding_box = fn_2(fn(tbl_7), num_4)
+			self.gamepadclusters.bottom_right.bounding_box = fn_2(fn(tbl_4), num_4)
 		else
-			arg_5_0.gamepadclusters = {
+			self.gamepadclusters = {
 				mission = {
 					bounding_box = {
 						0,
@@ -190,99 +195,106 @@ function UICleanUI.update(arg_5_0, arg_5_1)
 					widgets = {}
 				},
 				bottom = {
-					bounding_box = var_0_6(var_0_5(var_5_28), var_0_3),
+					bounding_box = fn_2(fn(tbl_3), num_4),
 					widgets = {
 						{
 							alpha = -1,
 							set_alpha_function = "set_health_alpha",
-							get_widget_function = function(arg_6_0)
-								return (arg_6_0.hud:component("UnitFramesHandler"):get_unit_widget(1))
+							get_widget_function = function (self)
+								-- function 6
+								return (self.hud:component("UnitFramesHandler"):get_unit_widget(1))
 							end
 						},
 						{
 							set_alpha_function = "set_frame_alpha",
 							alpha = -1,
-							widget = var_5_33:component("GamepadEquipmentUI")
+							widget = hud_2:component("GamepadEquipmentUI")
 						}
 					}
 				},
 				left = {
-					bounding_box = var_0_6(var_0_5(var_5_31), var_0_3),
+					bounding_box = fn_2(fn(tbl_6), num_4),
 					widgets = {
 						{
 							alpha = 1,
-							get_widget_function = function(arg_7_0)
-								return (arg_7_0.hud:component("UnitFramesHandler"):get_unit_widget(2))
+							get_widget_function = function (self)
+								-- function 7
+								return (self.hud:component("UnitFramesHandler"):get_unit_widget(2))
 							end
 						},
 						{
 							alpha = -1,
-							get_widget_function = function(arg_8_0)
-								return (arg_8_0.hud:component("UnitFramesHandler"):get_unit_widget(3))
+							get_widget_function = function (self)
+								-- function 8
+								return (self.hud:component("UnitFramesHandler"):get_unit_widget(3))
 							end
 						},
 						{
 							alpha = -1,
-							get_widget_function = function(arg_9_0)
-								return (arg_9_0.hud:component("UnitFramesHandler"):get_unit_widget(4))
+							get_widget_function = function (self)
+								-- function 9
+								return (self.hud:component("UnitFramesHandler"):get_unit_widget(4))
 							end
 						}
 					}
 				},
 				bottom_left = {
-					bounding_box = var_0_6(var_0_5(var_5_31), var_0_3),
+					bounding_box = fn_2(fn(tbl_6), num_4),
 					widgets = {
 						{
 							alpha = -1,
 							set_alpha_function = "set_default_alpha",
-							get_widget_function = function(arg_10_0)
-								return (arg_10_0.hud:component("UnitFramesHandler"):get_unit_widget(1))
+							get_widget_function = function (self)
+								-- function 10
+								return (self.hud:component("UnitFramesHandler"):get_unit_widget(1))
 							end
 						},
 						{
 							alpha = -1,
 							set_alpha_function = "set_portrait_alpha",
-							get_widget_function = function(arg_11_0)
-								return (arg_11_0.hud:component("UnitFramesHandler"):get_unit_widget(1))
+							get_widget_function = function (self)
+								-- function 11
+								return (self.hud:component("UnitFramesHandler"):get_unit_widget(1))
 							end
 						},
 						{
 							alpha = -1,
-							widget = var_5_33:component("BuffUI")
+							widget = hud_2:component("BuffUI")
 						}
 					}
 				},
 				bottom_right = {
-					bounding_box = var_0_6(var_0_5(var_5_29), var_0_3),
+					bounding_box = fn_2(fn(tbl_4), num_4),
 					widgets = {
 						{
 							set_alpha_function = "set_panel_alpha",
 							alpha = -1,
-							widget = var_5_33:component("GamePadEquipmentUI")
+							widget = hud_2:component("GamePadEquipmentUI")
 						},
 						{
 							alpha = -1,
 							set_alpha_function = "set_ability_alpha",
-							get_widget_function = function(arg_12_0)
-								return (arg_12_0.hud:component("UnitFramesHandler"):get_unit_widget(1))
+							get_widget_function = function (self)
+								-- function 12
+								return (self.hud:component("UnitFramesHandler"):get_unit_widget(1))
 							end
 						},
 						{
 							alpha = -1,
-							widget = var_5_33:component("GamePadAbilityUI")
+							widget = hud_2:component("GamePadAbilityUI")
 						}
 					}
 				}
 			}
 		end
 
-		if arg_5_0.clusters then
-			arg_5_0.clusters.bottom.bounding_box = var_0_6(var_0_5(var_5_28), var_0_3)
-			arg_5_0.clusters.left.bounding_box = var_0_6(var_0_5(var_5_31), var_0_3)
-			arg_5_0.clusters.bottom_left.bounding_box = var_0_6(var_0_5(var_5_32), var_0_3)
-			arg_5_0.clusters.bottom_right.bounding_box = var_0_6(var_0_5(var_5_29), var_0_3)
+		if not self.clusters then
+			self.clusters.bottom.bounding_box = fn_2(fn(tbl_3), num_4)
+			self.clusters.left.bounding_box = fn_2(fn(tbl_6), num_4)
+			self.clusters.bottom_left.bounding_box = fn_2(fn(tbl_7), num_4)
+			self.clusters.bottom_right.bounding_box = fn_2(fn(tbl_4), num_4)
 		else
-			arg_5_0.clusters = {
+			self.clusters = {
 				mission = {
 					bounding_box = {
 						0,
@@ -293,93 +305,101 @@ function UICleanUI.update(arg_5_0, arg_5_1)
 					widgets = {}
 				},
 				bottom = {
-					bounding_box = var_0_6(var_0_5(var_5_28), var_0_3),
+					bounding_box = fn_2(fn(tbl_3), num_4),
 					widgets = {
 						{
 							set_alpha_function = "set_panel_alpha",
 							alpha = -1,
-							widget = var_5_33:component("EquipmentUI")
+							widget = hud_2:component("EquipmentUI")
 						},
 						{
 							alpha = -1,
 							set_alpha_function = "set_equipment_alpha",
-							get_widget_function = function(arg_13_0)
-								return (arg_13_0.hud:component("UnitFramesHandler"):get_unit_widget(1))
+							get_widget_function = function (self)
+								-- function 13
+								return (self.hud:component("UnitFramesHandler"):get_unit_widget(1))
 							end
 						},
 						{
 							alpha = -1,
 							set_alpha_function = "set_health_alpha",
-							get_widget_function = function(arg_14_0)
-								return (arg_14_0.hud:component("UnitFramesHandler"):get_unit_widget(1))
+							get_widget_function = function (self)
+								-- function 14
+								return (self.hud:component("UnitFramesHandler"):get_unit_widget(1))
 							end
 						},
 						{
 							alpha = -1,
 							set_alpha_function = "set_ability_alpha",
-							get_widget_function = function(arg_15_0)
-								return (arg_15_0.hud:component("UnitFramesHandler"):get_unit_widget(1))
+							get_widget_function = function (self)
+								-- function 15
+								return (self.hud:component("UnitFramesHandler"):get_unit_widget(1))
 							end
 						},
 						{
 							alpha = -1,
-							widget = var_5_33:component("AbilityUI")
+							widget = hud_2:component("AbilityUI")
 						}
 					}
 				},
 				left = {
-					bounding_box = var_0_6(var_0_5(var_5_31), var_0_3),
+					bounding_box = fn_2(fn(tbl_6), num_4),
 					widgets = {
 						{
 							alpha = 1,
-							get_widget_function = function(arg_16_0)
-								return (arg_16_0.hud:component("UnitFramesHandler"):get_unit_widget(2))
+							get_widget_function = function (self)
+								-- function 16
+								return (self.hud:component("UnitFramesHandler"):get_unit_widget(2))
 							end
 						},
 						{
 							alpha = -1,
-							get_widget_function = function(arg_17_0)
-								return (arg_17_0.hud:component("UnitFramesHandler"):get_unit_widget(3))
+							get_widget_function = function (self)
+								-- function 17
+								return (self.hud:component("UnitFramesHandler"):get_unit_widget(3))
 							end
 						},
 						{
 							alpha = -1,
-							get_widget_function = function(arg_18_0)
-								return (arg_18_0.hud:component("UnitFramesHandler"):get_unit_widget(4))
+							get_widget_function = function (self)
+								-- function 18
+								return (self.hud:component("UnitFramesHandler"):get_unit_widget(4))
 							end
 						}
 					}
 				},
 				bottom_left = {
-					bounding_box = var_0_6(var_0_5(var_5_31), var_0_3),
+					bounding_box = fn_2(fn(tbl_6), num_4),
 					widgets = {
 						{
 							alpha = -1,
 							set_alpha_function = "set_default_alpha",
-							get_widget_function = function(arg_19_0)
-								return (arg_19_0.hud:component("UnitFramesHandler"):get_unit_widget(1))
+							get_widget_function = function (self)
+								-- function 19
+								return (self.hud:component("UnitFramesHandler"):get_unit_widget(1))
 							end
 						},
 						{
 							alpha = -1,
 							set_alpha_function = "set_portrait_alpha",
-							get_widget_function = function(arg_20_0)
-								return (arg_20_0.hud:component("UnitFramesHandler"):get_unit_widget(1))
+							get_widget_function = function (self)
+								-- function 20
+								return (self.hud:component("UnitFramesHandler"):get_unit_widget(1))
 							end
 						},
 						{
 							alpha = -1,
-							widget = var_5_33:component("BuffUI")
+							widget = hud_2:component("BuffUI")
 						}
 					}
 				},
 				bottom_right = {
-					bounding_box = var_0_6(var_0_5(var_5_29), var_0_3),
+					bounding_box = fn_2(fn(tbl_4), num_4),
 					widgets = {
 						{
 							set_alpha_function = "set_ammo_alpha",
 							alpha = -1,
-							widget = var_5_33:component("EquipmentUI")
+							widget = hud_2:component("EquipmentUI")
 						}
 					}
 				}
@@ -387,76 +407,76 @@ function UICleanUI.update(arg_5_0, arg_5_1)
 		end
 	end
 
-	local var_5_34 = true
+	local flag_5 = true
 
-	for iter_5_1, iter_5_2 in pairs(arg_5_0.clocks) do
-		var_5_34 = false
+	for k, v in pairs(self.clocks) do
+		flag_5 = false
 	end
 
-	local var_5_35 = Managers.state.entity:system("cutscene_system")
-	local var_5_36 = var_5_35 and var_5_35.active_camera
-	local var_5_37 = Managers.input:is_device_active("gamepad")
-	local var_5_38 = arg_5_0.clusters
+	local system = Managers.state.entity:system("cutscene_system")
+	local flag_6 = not system and system.active_camera
+	local is_device_active = Managers.input:is_device_active("gamepad")
+	local clusters = self.clusters
 
-	if var_5_37 then
-		var_5_38 = arg_5_0.gamepadclusters
+	if not is_device_active then
+		clusters = self.gamepadclusters
 	end
 
-	local var_5_39 = arg_5_0.clocks
+	local clocks = self.clocks
 
-	for iter_5_3, iter_5_4 in pairs(var_5_38) do
-		local var_5_40 = var_5_39[iter_5_3]
-		local var_5_41 = var_0_7(var_5_10, var_5_11, iter_5_4.bounding_box)
+	for k_2, v_2 in pairs(clusters) do
+		local var_5_40 = clocks[k_2]
+		local var_5_41 = fn_3(num_8, num_9, v_2.bounding_box)
 
-		iter_5_4.visible = var_5_41
+		v_2.visible = var_5_41
 
-		if var_5_41 or var_5_34 or var_5_13 or var_5_36 then
-			var_5_40 = var_0_0 + var_0_1
+		if var_5_41 or flag_5 or flag_4 or not flag_6 then
+			var_5_40 = num + num_2
 		else
 			var_5_40 = math.max(0, var_5_40 - arg_5_1)
 		end
 
-		local var_5_42 = 1
+		local num_10 = 1
 
-		if var_5_0 then
-			var_5_42 = var_5_40 / var_0_1
-			var_5_42 = var_5_42 * (1 - var_0_2) + var_0_2
-			var_5_42 = math.clamp(var_5_42, 0, 1)
+		if not flag then
+			num_10 = var_5_40 / num_2
+			num_10 = num_10 * (1 - num_3) + num_3
+			num_10 = math.clamp(num_10, 0, 1)
 		end
 
-		local var_5_43 = iter_5_4.widgets
+		local widgets = v_2.widgets
 
-		for iter_5_5, iter_5_6 in pairs(var_5_43) do
-			local var_5_44 = iter_5_6.widget
-			local var_5_45 = iter_5_6.get_widget_function
+		for k_3, v_3 in pairs(widgets) do
+			local widget = v_3.widget
+			local get_widget_function = v_3.get_widget_function
 
-			if var_5_45 then
-				var_5_44 = var_5_45(arg_5_0)
+			if not get_widget_function then
+				widget = get_widget_function(self)
 			end
 
-			if iter_5_6.alpha ~= var_5_42 then
-				if var_5_44 then
-					local var_5_46 = iter_5_6.set_alpha_function
+			if v_3.alpha ~= num_10 then
+				if not widget then
+					local set_alpha_function = v_3.set_alpha_function
 
-					if var_5_46 then
-						if var_5_44[var_5_46] then
-							var_5_44[var_5_46](var_5_44, var_5_42)
+					if not set_alpha_function then
+						if not widget[set_alpha_function] then
+							widget[set_alpha_function](widget, num_10)
 						end
 					else
-						if var_5_44.set_panel_alpha then
-							var_5_44:set_panel_alpha(var_5_42)
+						if not widget.set_panel_alpha then
+							widget:set_panel_alpha(num_10)
 						end
 
-						if var_5_44.set_alpha then
-							var_5_44:set_alpha(var_5_42)
+						if not widget.set_alpha then
+							widget:set_alpha(num_10)
 						end
 					end
 				end
 
-				iter_5_6.alpha = var_5_42
+				v_3.alpha = num_10
 			end
 		end
 
-		var_5_39[iter_5_3] = var_5_40
+		clocks[k_2] = var_5_40
 	end
 end

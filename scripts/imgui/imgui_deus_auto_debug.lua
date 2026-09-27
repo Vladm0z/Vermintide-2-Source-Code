@@ -2,7 +2,7 @@
 
 ImguiDeusAutoDebug = class(ImguiDeusAutoDebug)
 
-local var_0_0 = {
+local tbl = {
 	"That ain't working.",
 	"Have you tried restarting?",
 	"Maybe furiously spamming this button will work.",
@@ -14,33 +14,38 @@ local var_0_0 = {
 	"It is wednesday my dudes"
 }
 
-function ImguiDeusAutoDebug.init(arg_1_0)
-	arg_1_0._current_response = ""
+ImguiDeusAutoDebug.init = function (self)
+	-- function 1
+	self._current_response = ""
 end
 
-function ImguiDeusAutoDebug.update(arg_2_0)
+ImguiDeusAutoDebug.update = function (arg_2_0)
+	-- function 2
 	return
 end
 
-function ImguiDeusAutoDebug.is_persistent(arg_3_0)
+ImguiDeusAutoDebug.is_persistent = function (arg_3_0)
+	-- function 3
 	return false
 end
 
-function ImguiDeusAutoDebug.draw(arg_4_0)
-	local var_4_0 = Imgui.begin_window("DeusAutoDebug", "always_auto_resize")
+ImguiDeusAutoDebug.draw = function (self)
+	-- function 4
+	local begin_window = Imgui.begin_window("DeusAutoDebug", "always_auto_resize")
 
-	if Imgui.button("Automatically debug my problems") then
-		local var_4_1 = table.clone(var_0_0)
+	if not Imgui.button("Automatically debug my problems") then
+		local clone = table.clone(tbl)
 
-		table.array_remove_if(var_4_1, function(arg_5_0)
-			return arg_5_0 == arg_4_0._current_response
+		table.array_remove_if(clone, function (arg_5_0)
+			-- function 5
+			return arg_5_0 == self._current_response
 		end)
 
-		arg_4_0._current_response = var_4_1[math.random(1, #var_4_1)]
+		self._current_response = clone[math.random(1, #clone)]
 	end
 
-	Imgui.text(arg_4_0._current_response)
+	Imgui.text(self._current_response)
 	Imgui.end_window()
 
-	return var_4_0
+	return begin_window
 end

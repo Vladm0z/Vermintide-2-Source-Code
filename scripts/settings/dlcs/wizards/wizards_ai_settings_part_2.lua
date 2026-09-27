@@ -1,28 +1,28 @@
 -- chunkname: @scripts/settings/dlcs/wizards/wizards_ai_settings_part_2.lua
 
-local var_0_0 = DLCSettings.wizards_part_2
+local wizards_part_2 = DLCSettings.wizards_part_2
 
-var_0_0.breeds = {
+wizards_part_2.breeds = {
 	"scripts/settings/breeds/breed_tower_homing_skull",
 	"scripts/settings/breeds/breed_ethereal_skeleton_with_shield",
 	"scripts/settings/breeds/breed_ethereal_skeleton_with_hammer"
 }
-var_0_0.behaviour_trees_precompiled = {
+wizards_part_2.behaviour_trees_precompiled = {
 	"scripts/entity_system/systems/behaviour/nodes/generated/bt_selector_horde_rat_defend_destructible",
 	"scripts/entity_system/systems/behaviour/nodes/generated/bt_selector_tower_homing_skull"
 }
-var_0_0.behaviour_trees = {
+wizards_part_2.behaviour_trees = {
 	"scripts/entity_system/systems/behaviour/trees/skaven/skaven_horde_rat_defend_destructible_behavior",
 	"scripts/entity_system/systems/behaviour/trees/shadow/tower_homing_skull_behavior"
 }
-var_0_0.behaviour_tree_nodes = {
+wizards_part_2.behaviour_tree_nodes = {
 	"scripts/entity_system/systems/behaviour/nodes/bt_set_defend_position_action",
 	"scripts/entity_system/systems/behaviour/nodes/bt_ethereal_homing_flight_action",
 	"scripts/entity_system/systems/behaviour/nodes/bt_ethereal_skull_take_off_action"
 }
-var_0_0.ai_inventory = {}
-var_0_0.anim_lookup = {}
-var_0_0.ethereal_skull_settings = {
+wizards_part_2.ai_inventory = {}
+wizards_part_2.anim_lookup = {}
+wizards_part_2.ethereal_skull_settings = {
 	patrol_target_adjustment_speed = 0.75,
 	patrol_speed = 15,
 	despawn_dist_sq = 1600,
@@ -50,7 +50,8 @@ var_0_0.ethereal_skull_settings = {
 		4,
 		4
 	},
-	speed_multiplier_curve_func = function(arg_1_0)
+	speed_multiplier_curve_func = function (arg_1_0)
+		-- function 1
 		return -(1 / (math.min(arg_1_0 + 2, 4) / 4)) + 2
 	end
 }

@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/chaos/chaos_corruptor_sorcerer_behavior.lua
 
-local var_0_0 = BreedActions.chaos_corruptor_sorcerer
+local chaos_corruptor_sorcerer = BreedActions.chaos_corruptor_sorcerer
 
 BreedBehaviors.chaos_corruptor_sorcerer = {
 	"BTSelector",
@@ -24,7 +24,7 @@ BreedBehaviors.chaos_corruptor_sorcerer = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = var_0_0.stagger
+		action_data = chaos_corruptor_sorcerer.stagger
 	},
 	{
 		"BTSelector",
@@ -55,20 +55,20 @@ BreedBehaviors.chaos_corruptor_sorcerer = {
 		"BTQuickTeleportAction",
 		name = "quick_teleport",
 		condition = "quick_teleport",
-		action_data = var_0_0.quick_teleport
+		action_data = chaos_corruptor_sorcerer.quick_teleport
 	},
 	{
 		"BTCorruptorGrabAction",
 		name = "attack",
 		condition = "ready_to_summon",
-		action_data = var_0_0.grab_attack
+		action_data = chaos_corruptor_sorcerer.grab_attack
 	},
 	{
 		"BTSelector",
 		{
 			"BTChaosSorcererPlagueSkulkAction",
 			name = "skulk_approach",
-			action_data = var_0_0.skulk_approach
+			action_data = chaos_corruptor_sorcerer.skulk_approach
 		},
 		condition = "can_see_player",
 		name = "in_combat"

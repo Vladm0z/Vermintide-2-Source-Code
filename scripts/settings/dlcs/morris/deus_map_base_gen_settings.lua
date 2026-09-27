@@ -1,5 +1,7 @@
 -- chunkname: @scripts/settings/dlcs/morris/deus_map_base_gen_settings.lua
 
+local DEUS_BASE_MAP_GEN_SETTINGS = DEUS_BASE_MAP_GEN_SETTINGS
+
 DEUS_BASE_MAP_GEN_SETTINGS = DEUS_BASE_MAP_GEN_SETTINGS or {
 	default = {
 		MAX_STRAIGHT_LINE = 2,
@@ -236,6 +238,7 @@ DEUS_BASE_MAP_GEN_SETTINGS = DEUS_BASE_MAP_GEN_SETTINGS or {
 		}
 	}
 }
+DEUS_BASE_MAP_GEN_SETTINGS = DEUS_BASE_MAP_GEN_SETTINGS
 DEUS_BASE_MAP_GEN_SETTINGS.journey_cave = table.clone(DEUS_BASE_MAP_GEN_SETTINGS.default)
 DEUS_BASE_MAP_GEN_SETTINGS.journey_ice = table.clone(DEUS_BASE_MAP_GEN_SETTINGS.default)
 DEUS_BASE_MAP_GEN_SETTINGS.journey_citadel = table.clone(DEUS_BASE_MAP_GEN_SETTINGS.default)
@@ -247,6 +250,6 @@ DEUS_BASE_MAP_GEN_SETTINGS.journey_citadel.FINAL_NODE_VALIDATIONS = {
 	"check_minimum_nodes"
 }
 
-for iter_0_0, iter_0_1 in pairs(DEUS_BASE_MAP_GEN_SETTINGS) do
-	iter_0_1.name = iter_0_0
+for k, v in pairs(DEUS_BASE_MAP_GEN_SETTINGS) do
+	v.name = k
 end

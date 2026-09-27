@@ -1,9 +1,9 @@
 -- chunkname: @scripts/settings/dlcs/cosmetics_2023_q4/cosmetics_2023_q4_common_settings.lua
 
-local var_0_0 = DLCSettings.cosmetics_2023_q4
+local cosmetics_2023_q4 = DLCSettings.cosmetics_2023_q4
 
-var_0_0.unlock_settings = {}
-var_0_0.unlock_settings_xb1 = {
+cosmetics_2023_q4.unlock_settings = {}
+cosmetics_2023_q4.unlock_settings_xb1 = {
 	slayer_bundle_0002 = {
 		id = "47574D39-4632-3033-C048-4B4C43322300",
 		backend_reward_id = "slayer_bundle_0002",
@@ -35,7 +35,7 @@ var_0_0.unlock_settings_xb1 = {
 		class = "UnlockDlc"
 	}
 }
-var_0_0.unlock_settings_ps4 = {
+cosmetics_2023_q4.unlock_settings_ps4 = {
 	CUSA13595_00 = {
 		slayer_bundle_0002 = {
 			id = "0d16d6460a514b12877d580c1bf275ed",

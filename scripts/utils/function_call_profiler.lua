@@ -1,6 +1,6 @@
 -- chunkname: @scripts/utils/function_call_profiler.lua
 
-local var_0_0 = script_data
+local script_data = script_data
 
 if _G.FunctionCallProfiler == nil then
 	FunctionCallProfiler = {}
@@ -8,65 +8,69 @@ if _G.FunctionCallProfiler == nil then
 	FunctionCallProfiler.num_frames = 10
 	FunctionCallProfiler.frames = {}
 
-	for iter_0_0 = 1, FunctionCallProfiler.num_frames do
-		FunctionCallProfiler.frames[iter_0_0] = {}
+	for i = 1, FunctionCallProfiler.num_frames do
+		FunctionCallProfiler.frames[i] = {}
 	end
 end
 
-function FunctionCallProfiler.setup(arg_1_0)
+FunctionCallProfiler.setup = function (arg_1_0)
+	-- function 1
 	FunctionCallProfiler.world = arg_1_0
 	FunctionCallProfiler.gui = World.create_screen_gui(arg_1_0, "material", "materials/fonts/gw_fonts", "immediate")
 end
 
-function FunctionCallProfiler.destroy()
+FunctionCallProfiler.destroy = function ()
+	-- function 2
 	World.destroy_gui(FunctionCallProfiler.gui)
 
 	FunctionCallProfiler.world = nil
 end
 
-local var_0_1 = 16
-local var_0_2 = "arial"
-local var_0_3 = "materials/fonts/" .. var_0_2
+local num = 16
+local str = "arial"
+local str_2 = "materials/fonts/" .. str
 
-function FunctionCallProfiler.render()
-	if not var_0_0.profile_function_calls then
+FunctionCallProfiler.render = function ()
+	-- function 3
+	if not script_data.profile_function_calls then
 		return
 	end
 
-	local var_3_0 = FunctionCallProfiler.num_frames
+	local num_frames = FunctionCallProfiler.num_frames
 	local var_3_1 = Color(250, 255, 120, 0)
-	local var_3_2, var_3_3 = Application.resolution()
-	local var_3_4 = FunctionCallProfiler.gui
-	local var_3_5 = FunctionCallProfiler.current_frame - 1
-	local var_3_6 = FunctionCallProfiler.frames
-	local var_3_7 = var_3_2 / 2
-	local var_3_8 = var_3_3 / 2
-	local var_3_9 = Vector3(var_3_7, var_3_8 - var_0_1, 200)
+	local resolution, var_3_3 = Application.resolution()
+	local gui = FunctionCallProfiler.gui
+	local num_2 = FunctionCallProfiler.current_frame - 1
+	local frames = FunctionCallProfiler.frames
+	local num_3 = resolution / 2
+	local num_4 = var_3_3 / 2
+	local var_3_9 = Vector3(num_3, num_4 - num, 200)
 
-	for iter_3_0 = 1, var_3_0 do
-		var_3_5 = var_3_5 % var_3_0 + 1
+	for i = 1, num_frames do
+		num_2 = num_2 % num_frames + 1
 
-		local var_3_10 = var_3_6[var_3_5]
+		local var_3_10 = frames[num_2]
 
-		for iter_3_1, iter_3_2 in pairs(var_3_10) do
-			Gui.text(var_3_4, iter_3_1 .. "    " .. tostring(iter_3_2), var_0_3, var_0_1, var_0_2, var_3_9, var_3_1)
+		for k, v in pairs(var_3_10) do
+			Gui.text(gui, k .. "    " .. tostring(v), str_2, num, str, var_3_9, var_3_1)
 
-			var_3_9.y = var_3_9.y - var_0_1 * 1.5
+			var_3_9.y = var_3_9.y - num * 1.5
 		end
 
-		var_3_9.y = var_3_9.y - var_0_1 * 1.5
+		var_3_9.y = var_3_9.y - num * 1.5
 	end
 
-	Gui.rect(var_3_4, Vector3(var_3_7, var_3_9.y + var_0_1, 100), Vector2(250, var_3_8 - var_3_9.y), Color(240, 25, 50, 25))
+	Gui.rect(gui, Vector3(num_3, var_3_9.y + num, 100), Vector2(250, num_4 - var_3_9.y), Color(240, 25, 50, 25))
 end
 
-function FunctionCallProfiler.log_function_call(arg_4_0)
-	if not var_0_0.profile_function_calls then
+FunctionCallProfiler.log_function_call = function (arg_4_0)
+	-- function 4
+	if not script_data.profile_function_calls then
 		return
 	end
 
-	local var_4_0 = FunctionCallProfiler.current_frame
-	local var_4_1 = FunctionCallProfiler.frames[var_4_0]
+	local current_frame = FunctionCallProfiler.current_frame
+	local var_4_1 = FunctionCallProfiler.frames[current_frame]
 
 	if var_4_1[arg_4_0] == nil then
 		var_4_1[arg_4_0] = 0
@@ -76,5 +80,6 @@ function FunctionCallProfiler.log_function_call(arg_4_0)
 end
 
 function LogFunctionCall(arg_5_0)
+	-- function 5
 	FunctionCallProfiler.log_function_call(arg_5_0)
 end

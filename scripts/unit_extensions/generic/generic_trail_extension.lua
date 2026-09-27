@@ -2,8 +2,9 @@
 
 GenericTrailExtension = class(GenericTrailExtension)
 
-function GenericTrailExtension.init(arg_1_0, arg_1_1, arg_1_2)
-	arg_1_0.unit = arg_1_2
+GenericTrailExtension.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	self.unit = arg_1_2
 
 	Unit.flow_event(arg_1_2, "lua_trail")
 end

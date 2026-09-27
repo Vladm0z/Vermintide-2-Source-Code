@@ -1,14 +1,14 @@
 -- chunkname: @scripts/settings/dlcs/eight_ball/eight_ball_equipment_settings.lua
 
-local var_0_0 = DLCSettings.eight_ball
+local eight_ball = DLCSettings.eight_ball
 
-var_0_0.cosmetics_files = {
+eight_ball.cosmetics_files = {
 	"scripts/settings/dlcs/eight_ball/cosmetics_eight_ball"
 }
-var_0_0.item_master_list_file_names = {
+eight_ball.item_master_list_file_names = {
 	"scripts/settings/equipment/item_master_list_eight_ball"
 }
-var_0_0.inventory_package_list = {
+eight_ball.inventory_package_list = {
 	"units/beings/player/witch_hunter_zealot/headpiece/wh_z_hat_09",
 	"units/beings/player/bright_wizard_adept/headpiece/bw_a_fatshark_hat_01",
 	"units/beings/player/dwarf_ranger_upgraded/headpiece/dr_u_fatshark_hat_01",

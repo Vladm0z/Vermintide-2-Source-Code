@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/drakegun.lua
 
-local var_0_0 = {
+local tbl = {
 	actions = {
 		action_one = {
 			default = {
@@ -75,7 +75,8 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_1_0, arg_1_1)
+				enter_function = function (arg_1_0, arg_1_1)
+					-- function 1
 					arg_1_1:clear_input_buffer()
 
 					return arg_1_1:reset_release_input()
@@ -139,7 +140,8 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_2_0, arg_2_1)
+				enter_function = function (arg_2_0, arg_2_1)
+					-- function 2
 					arg_2_1:clear_input_buffer()
 
 					return arg_2_1:reset_release_input()
@@ -163,7 +165,8 @@ local var_0_0 = {
 				hold_input = "action_two_hold",
 				anim_event = "attack_charge",
 				charge_sound_name = "player_combat_weapon_drakegun_charge",
-				anim_end_event_condition_func = function(arg_3_0, arg_3_1)
+				anim_end_event_condition_func = function (arg_3_0, arg_3_1)
+					-- function 3
 					return arg_3_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -221,7 +224,8 @@ local var_0_0 = {
 				hold_input = "weapon_reload_hold",
 				anim_event = "cooldown_start",
 				charge_sound_name = "weapon_drakegun_cooldown_loop",
-				anim_end_event_condition_func = function(arg_4_0, arg_4_1)
+				anim_end_event_condition_func = function (arg_4_0, arg_4_1)
+					-- function 4
 					return arg_4_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -241,10 +245,12 @@ local var_0_0 = {
 						input = "action_wield"
 					}
 				},
-				condition_func = function(arg_5_0, arg_5_1)
+				condition_func = function (arg_5_0, arg_5_1)
+					-- function 5
 					return ScriptUnit.extension(arg_5_0, "overcharge_system"):get_overcharge_value() ~= 0
 				end,
-				chain_condition_func = function(arg_6_0, arg_6_1)
+				chain_condition_func = function (arg_6_0, arg_6_1)
+					-- function 6
 					return ScriptUnit.extension(arg_6_0, "overcharge_system"):get_overcharge_value() ~= 0
 				end
 			}
@@ -266,8 +272,8 @@ local var_0_0 = {
 	}
 }
 
-var_0_0.overcharge_data.critical_overcharge_margin = var_0_0.overcharge_data.max_value * 0.03
-var_0_0.attack_meta_data = {
+tbl.overcharge_data.critical_overcharge_margin = tbl.overcharge_data.max_value * 0.03
+tbl.attack_meta_data = {
 	max_range = 15,
 	obstruction_fuzzyness_range_charged = 1,
 	always_charge_before_firing = false,
@@ -280,17 +286,17 @@ var_0_0.attack_meta_data = {
 	obstruction_fuzzyness_range = 1,
 	effective_against = bit.bor(BreedCategory.Infantry, BreedCategory.Berserker, BreedCategory.Shielded, BreedCategory.Armored, BreedCategory.Special)
 }
-var_0_0.default_spread_template = "drakegun"
-var_0_0.right_hand_unit = ""
-var_0_0.right_hand_attachment_node_linking = AttachmentNodeLinking.drakegun
-var_0_0.display_unit = "units/weapons/weapon_display/display_drakegun"
-var_0_0.wield_anim = "to_drakegun"
-var_0_0.state_machine = "units/beings/player/first_person_base/state_machines/ranged/drakegun"
-var_0_0.crosshair_style = "circle"
-var_0_0.buff_type = "RANGED"
-var_0_0.weapon_type = "DRAKEFIRE"
-var_0_0.dodge_count = 1
-var_0_0.buffs = {
+tbl.default_spread_template = "drakegun"
+tbl.right_hand_unit = ""
+tbl.right_hand_attachment_node_linking = AttachmentNodeLinking.drakegun
+tbl.display_unit = "units/weapons/weapon_display/display_drakegun"
+tbl.wield_anim = "to_drakegun"
+tbl.state_machine = "units/beings/player/first_person_base/state_machines/ranged/drakegun"
+tbl.crosshair_style = "circle"
+tbl.buff_type = "RANGED"
+tbl.weapon_type = "DRAKEFIRE"
+tbl.dodge_count = 1
+tbl.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 0.85
 	},
@@ -298,7 +304,7 @@ var_0_0.buffs = {
 		external_optional_multiplier = 0.85
 	}
 }
-var_0_0.weapon_diagram = {
+tbl.weapon_diagram = {
 	light_attack = {
 		[DamageTypes.ARMOR_PIERCING] = 2,
 		[DamageTypes.CLEAVE] = 5,
@@ -314,12 +320,12 @@ var_0_0.weapon_diagram = {
 		[DamageTypes.DAMAGE] = 2
 	}
 }
-var_0_0.tooltip_keywords = {
+tbl.tooltip_keywords = {
 	"weapon_keyword_crowd_control",
 	"weapon_keyword_close_range",
 	"weapon_keyword_overheat"
 }
-var_0_0.tooltip_compare = {
+tbl.tooltip_compare = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -329,7 +335,7 @@ var_0_0.tooltip_compare = {
 		sub_action_name = "shoot_charged"
 	}
 }
-var_0_0.tooltip_detail = {
+tbl.tooltip_detail = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -339,19 +345,19 @@ var_0_0.tooltip_detail = {
 		sub_action_name = "shoot_charged"
 	}
 }
-var_0_0.wwise_dep_right_hand = {
+tbl.wwise_dep_right_hand = {
 	"wwise/drakegun",
 	"wwise/flamethrower"
 }
 
-local var_0_1 = table.clone(var_0_0)
+local clone = table.clone(tbl)
 
-var_0_1.actions.action_one.default.damage_profile = "flamethrower_spray_vs"
-var_0_1.actions.action_one.default.overcharge_type = "spear_2"
-var_0_1.actions.action_one.shoot_charged.damage_profile = "flamethrower_vs"
-var_0_1.actions.action_one.shoot_charged.initial_damage_profile = "flamethrower_initial_vs"
+clone.actions.action_one.default.damage_profile = "flamethrower_spray_vs"
+clone.actions.action_one.default.overcharge_type = "spear_2"
+clone.actions.action_one.shoot_charged.damage_profile = "flamethrower_vs"
+clone.actions.action_one.shoot_charged.initial_damage_profile = "flamethrower_initial_vs"
 
 return {
-	drakegun_template_1 = table.clone(var_0_0),
-	drakegun_template_1_vs = table.clone(var_0_1)
+	drakegun_template_1 = table.clone(tbl),
+	drakegun_template_1_vs = table.clone(clone)
 }

@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/breeds/breed_chaos_marauder.lua
 
-local var_0_0 = require("scripts/utils/stagger_types")
-local var_0_1 = {
+local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
+local tbl = {
 	detection_radius = 12,
 	ai_strength = 1,
 	walk_speed = 2.3,
@@ -114,14 +114,15 @@ local var_0_1 = {
 		40,
 		40
 	},
-	stagger_modifier_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
-		if arg_1_4.stagger_type == var_0_0.heavy then
-			if arg_1_0 == var_0_0.heavy and arg_1_4.heavy_stagger_immune_time then
-				arg_1_0 = var_0_0.none
+	stagger_modifier_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+		-- function 1
+		if arg_1_4.stagger_type == scripts_utils_stagger_types.heavy then
+			if arg_1_0 ~= scripts_utils_stagger_types.heavy or not arg_1_4.heavy_stagger_immune_time then
+				arg_1_0 = scripts_utils_stagger_types.none
 				arg_1_1 = 0
 				arg_1_2 = 0
-			elseif arg_1_0 ~= var_0_0.heavy and arg_1_4.stagger_immune_time then
-				arg_1_0 = var_0_0.none
+			elseif arg_1_0 == scripts_utils_stagger_types.heavy or not arg_1_4.stagger_immune_time then
+				arg_1_0 = scripts_utils_stagger_types.none
 				arg_1_1 = 0
 				arg_1_2 = 0
 			end
@@ -306,13 +307,13 @@ local var_0_1 = {
 	}
 }
 
-Breeds.chaos_marauder = table.create_copy(Breeds.chaos_marauder, var_0_1)
-Breeds.chaos_marauder_tutorial = table.create_copy(Breeds.chaos_marauder_tutorial, var_0_1)
+Breeds.chaos_marauder = table.create_copy(Breeds.chaos_marauder, tbl)
+Breeds.chaos_marauder_tutorial = table.create_copy(Breeds.chaos_marauder_tutorial, tbl)
 Breeds.chaos_marauder_tutorial.behavior = "marauder_tutorial"
 Breeds.chaos_marauder_tutorial.horde_behavior = "marauder_tutorial"
 Breeds.chaos_marauder_tutorial.debug_spawn_category = "Misc"
 
-local var_0_2 = {
+local tbl_2 = {
 	normal = {
 		easy = {
 			normal = 2
@@ -372,7 +373,7 @@ local var_0_2 = {
 		}
 	}
 }
-local var_0_3 = {
+local tbl_3 = {
 	idle = {
 		anim_cycle_index = 0,
 		animations = {
@@ -550,7 +551,7 @@ local var_0_3 = {
 		player_push_speed = 3,
 		attack_intensity_type = "running",
 		action_weight = 10,
-		difficulty_attack_intensity = var_0_2,
+		difficulty_attack_intensity = tbl_2,
 		considerations = UtilityConsiderations.marauder_running_attack,
 		default_attack = {
 			anims = {
@@ -578,7 +579,7 @@ local var_0_3 = {
 		player_push_speed = 5,
 		attack_intensity_type = "normal",
 		action_weight = 1,
-		difficulty_attack_intensity = var_0_2,
+		difficulty_attack_intensity = tbl_2,
 		considerations = UtilityConsiderations.marauder_attack,
 		dodge_window_start = BreedTweaks.dodge_windows.normal_attack,
 		dodge_window_duration = BreedTweaks.dodge_window_durations.normal_attack,
@@ -720,7 +721,7 @@ local var_0_3 = {
 		player_push_speed = 5,
 		attack_intensity_type = "normal",
 		action_weight = 1,
-		difficulty_attack_intensity = var_0_2,
+		difficulty_attack_intensity = tbl_2,
 		considerations = UtilityConsiderations.marauder_attack,
 		default_attack = {
 			anims = {
@@ -787,11 +788,12 @@ local var_0_3 = {
 	},
 	stagger = {
 		scale_animation_speeds = true,
-		custom_enter_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
-			if arg_2_1.stagger_type == var_0_0.heavy then
+		custom_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			-- function 2
+			if arg_2_1.stagger_type == scripts_utils_stagger_types.heavy then
 				arg_2_1.stagger_immune_time = arg_2_2 + 2.25
 				arg_2_1.heavy_stagger_immune_time = arg_2_2 + 1.5
-			elseif arg_2_1.stagger_type == var_0_0.explosion then
+			elseif arg_2_1.stagger_type == scripts_utils_stagger_types.explosion then
 				arg_2_1.stagger_immune_time = arg_2_2 + 3.5
 				arg_2_1.heavy_stagger_immune_time = arg_2_2 + 3
 			end
@@ -1047,5 +1049,5 @@ local var_0_3 = {
 	}
 }
 
-var_0_3.fallback_idle = var_0_3.idle
-BreedActions.chaos_marauder = table.create_copy(BreedActions.chaos_marauder, var_0_3)
+tbl_3.fallback_idle = tbl_3.idle
+BreedActions.chaos_marauder = table.create_copy(BreedActions.chaos_marauder, tbl_3)

@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/witch_hunter_mines.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pwh_level_mine_bell_ringing",

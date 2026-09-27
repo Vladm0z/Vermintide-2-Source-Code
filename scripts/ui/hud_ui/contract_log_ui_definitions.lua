@@ -1,10 +1,10 @@
 -- chunkname: @scripts/ui/hud_ui/contract_log_ui_definitions.lua
 
-local var_0_0 = 1920
-local var_0_1 = 1080
-local var_0_2 = 300
-local var_0_3 = true
-local var_0_4 = {
+local num = 1920
+local num_2 = 1080
+local num_3 = 300
+local flag = true
+local tbl = {
 	root = {
 		is_root = true,
 		position = {
@@ -13,8 +13,8 @@ local var_0_4 = {
 			UILayer.hud
 		},
 		size = {
-			var_0_0,
-			var_0_1
+			num,
+			num_2
 		}
 	},
 	pivot = {
@@ -22,7 +22,7 @@ local var_0_4 = {
 		parent = "root",
 		horizontal_alignment = "right",
 		position = {
-			-var_0_2 - 10,
+			-num_3 - 10,
 			-80,
 			1
 		},
@@ -33,9 +33,10 @@ local var_0_4 = {
 	}
 }
 
-local function var_0_5(arg_1_0)
-	local var_1_0 = 20
-	local var_1_1 = 20
+local function fn(arg_1_0)
+	-- function 1
+	local num = 20
+	local num_2 = 20
 
 	return {
 		scenegraph_id = "pivot",
@@ -45,31 +46,31 @@ local function var_0_5(arg_1_0)
 					pass_type = "texture",
 					style_id = "texture_icon",
 					texture_id = "texture_icon",
-					retained_mode = var_0_3
+					retained_mode = flag
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_icon_bg",
 					texture_id = "texture_icon_bg",
-					retained_mode = var_0_3
+					retained_mode = flag
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_fade_bg",
 					texture_id = "texture_fade_bg",
-					retained_mode = var_0_3
+					retained_mode = flag
 				},
 				{
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					retained_mode = var_0_3
+					retained_mode = flag
 				},
 				{
 					style_id = "task_text",
 					pass_type = "text",
 					text_id = "task_text",
-					retained_mode = var_0_3
+					retained_mode = flag
 				}
 			}
 		},
@@ -83,8 +84,8 @@ local function var_0_5(arg_1_0)
 		style = {
 			texture_icon = {
 				size = {
-					var_1_0,
-					var_1_1
+					num,
+					num_2
 				},
 				color = {
 					200,
@@ -93,15 +94,15 @@ local function var_0_5(arg_1_0)
 					255
 				},
 				offset = {
-					var_0_2 - 20,
+					num_3 - 20,
 					10,
 					4
 				}
 			},
 			texture_icon_bg = {
 				size = {
-					var_1_0,
-					var_1_1
+					num,
+					num_2
 				},
 				color = {
 					200,
@@ -110,14 +111,14 @@ local function var_0_5(arg_1_0)
 					255
 				},
 				offset = {
-					var_0_2 - 20,
+					num_3 - 20,
 					10,
 					3
 				}
 			},
 			texture_fade_bg = {
 				size = {
-					var_0_2 + 60,
+					num_3 + 60,
 					5
 				},
 				color = {
@@ -138,11 +139,11 @@ local function var_0_5(arg_1_0)
 				horizontal_alignment = "right",
 				font_type = "hell_shark",
 				size = {
-					var_0_2,
+					num_3,
 					10
 				},
 				offset = {
-					-5 - (var_1_0 + 3),
+					-5 - (num + 3),
 					10,
 					4
 				},
@@ -161,11 +162,11 @@ local function var_0_5(arg_1_0)
 				vertical_alignment = "top",
 				font_type = "hell_shark",
 				size = {
-					var_0_2 * 2,
+					num_3 * 2,
 					20
 				},
 				offset = {
-					-5 - var_0_2,
+					-5 - num_3,
 					10,
 					4
 				},
@@ -185,7 +186,7 @@ local function var_0_5(arg_1_0)
 	}
 end
 
-local var_0_6 = {
+local tbl_2 = {
 	title_text = {
 		scenegraph_id = "pivot",
 		element = {
@@ -194,13 +195,13 @@ local var_0_6 = {
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					retained_mode = var_0_3
+					retained_mode = flag
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_fade_bg",
 					texture_id = "texture_fade_bg",
-					retained_mode = var_0_3
+					retained_mode = flag
 				}
 			}
 		},
@@ -215,7 +216,7 @@ local var_0_6 = {
 				horizontal_alignment = "right",
 				font_type = "hell_shark",
 				size = {
-					var_0_2,
+					num_3,
 					50
 				},
 				offset = {
@@ -227,7 +228,7 @@ local var_0_6 = {
 			},
 			texture_fade_bg = {
 				size = {
-					var_0_2 + 60,
+					num_3 + 60,
 					30
 				},
 				color = {
@@ -250,15 +251,15 @@ local var_0_6 = {
 		}
 	}
 }
-local var_0_7 = {}
+local tbl_3 = {}
 
-for iter_0_0 = 1, 3 do
-	var_0_7[iter_0_0] = var_0_5(iter_0_0)
+for i = 1, 3 do
+	tbl_3[i] = fn(i)
 end
 
 return {
-	scenegraph_definition = var_0_4,
-	entry_widget_definitions = var_0_7,
-	widget_definitions = var_0_6,
-	ENTRY_LENGTH = var_0_2
+	scenegraph_definition = tbl,
+	entry_widget_definitions = tbl_3,
+	widget_definitions = tbl_2,
+	ENTRY_LENGTH = num_3
 }

@@ -4,174 +4,199 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTUtilityNode = class(BTUtilityNode, BTNode)
 
-function BTUtilityNode.init(arg_1_0, ...)
-	BTUtilityNode.super.init(arg_1_0, ...)
+BTUtilityNode.init = function (self, ...)
+	-- function 1
+	BTUtilityNode.super.init(self, ...)
 
-	arg_1_0._children = {}
-	arg_1_0.fail_cooldown_name = arg_1_0._identifier .. "_fail_cooldown"
+	self._children = {}
+	self.fail_cooldown_name = self._identifier .. "_fail_cooldown"
 end
 
 BTUtilityNode.name = "BTUtilityNode"
 
-function BTUtilityNode.ready(arg_2_0, arg_2_1)
-	for iter_2_0, iter_2_1 in pairs(arg_2_0._children) do
-		arg_2_0._action_list = arg_2_0._action_list or {}
-		arg_2_0._action_list[#arg_2_0._action_list + 1] = iter_2_1._tree_node.action_data
+BTUtilityNode.ready = function (self, arg_2_1)
+	-- function 2
+	for k, v in pairs(self._children) do
+		local _action_list = self._action_list
+
+		_action_list = _action_list or {}
+		self._action_list = _action_list
+		self._action_list[#self._action_list + 1] = v._tree_node.action_data
 	end
 end
 
-function BTUtilityNode.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTUtilityNode.enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	-- function 3
 	return
 end
 
-function BTUtilityNode.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTUtilityNode.leave = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	-- function 4
 	arg_4_2.running_attack_action = nil
 
-	arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, arg_4_4)
+	self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, arg_4_4)
 end
 
-local function var_0_0(arg_5_0, arg_5_1, arg_5_2)
-	arg_5_0[arg_5_2], arg_5_0[arg_5_1] = arg_5_0[arg_5_1], arg_5_0[arg_5_2]
+local function fn(self, arg_5_1, arg_5_2)
+	-- function 5
+	self[arg_5_2], self[arg_5_1] = self[arg_5_1], self[arg_5_2]
 end
 
-local function var_0_1(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
-	local var_6_0 = #arg_6_1
-	local var_6_1 = 0
+local function fn_2(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	-- function 6
+	local count = #arg_6_1
+	local num = 0
 
-	for iter_6_0 = 1, var_6_0 do
-		local var_6_2 = arg_6_1[iter_6_0]
-		local var_6_3 = var_6_2.name
-		local var_6_4 = arg_6_4[var_6_3]
-		local var_6_5 = 0
+	for i = 1, count do
+		local var_6_2 = arg_6_1[i]
+		local name = var_6_2.name
+		local var_6_4 = arg_6_4[name]
+		local num_2 = 0
 
-		if var_6_4:condition(arg_6_2) then
-			var_6_5 = Utility.get_action_utility(var_6_2, var_6_3, arg_6_2, arg_6_3)
+		if not var_6_4:condition(arg_6_2) then
+			num_2 = Utility.get_action_utility(var_6_2, name, arg_6_2, arg_6_3)
 		end
 
-		arg_6_1[iter_6_0].utility_score = var_6_5
-		var_6_1 = var_6_1 + var_6_5
+		arg_6_1[i].utility_score = num_2
+		num = num + num_2
 	end
 
-	for iter_6_1 = 1, var_6_0 do
+	for j = 1, count do
 		local var_6_6
-		local var_6_7 = math.random() * var_6_1
+		local num_3 = math.random() * num
 
-		for iter_6_2 = iter_6_1, var_6_0 do
-			local var_6_8 = arg_6_1[iter_6_2].utility_score
+		for k = j, count do
+			local utility_score = arg_6_1[k].utility_score
 
-			if var_6_7 < var_6_8 then
-				var_6_6 = iter_6_2
+			if num_3 < utility_score then
+				var_6_6 = k
 
 				break
 			end
 
-			var_6_7 = var_6_7 - var_6_8
+			num_3 = num_3 - utility_score
 		end
 
 		if not var_6_6 then
-			var_6_0 = iter_6_1 - 1
+			count = j - 1
 
-			return var_6_0
+			return count
 		end
 
-		var_6_1 = var_6_1 - arg_6_1[var_6_6].utility_score
+		num = num - arg_6_1[var_6_6].utility_score
 
-		if var_6_6 ~= iter_6_1 then
-			var_0_0(arg_6_1, var_6_6, iter_6_1)
+		if var_6_6 ~= j then
+			fn(arg_6_1, var_6_6, j)
 		end
 	end
 
-	return var_6_0
+	return count
 end
 
-function BTUtilityNode.run(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
-	local var_7_0 = arg_7_0._tree_node.action_data
-	local var_7_1 = arg_7_2[arg_7_0.fail_cooldown_name]
+BTUtilityNode.run = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	-- function 7
+	local action_data = self._tree_node.action_data
+	local var_7_1 = arg_7_2[self.fail_cooldown_name]
 
-	if var_7_1 then
+	if not var_7_1 then
 		if arg_7_3 < var_7_1 then
 			return "failed"
 		end
 
-		arg_7_2[arg_7_0.fail_cooldown_name] = nil
+		arg_7_2[self.fail_cooldown_name] = nil
 	end
 
-	local var_7_2 = arg_7_0:current_running_child(arg_7_2)
-	local var_7_3 = "failed"
+	local current_running_child = self:current_running_child(arg_7_2)
+	local str = "failed"
 	local var_7_4
 
-	if var_7_2 and not arg_7_2.evaluate then
-		local var_7_5 = var_7_2._identifier
+	if not (not current_running_child and arg_7_2.evaluate) then
+		local _identifier = current_running_child._identifier
 		local var_7_6
 
-		var_7_3, var_7_6 = var_7_2:evaluate(arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+		str, var_7_6 = current_running_child:evaluate(arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 
-		if var_7_3 == "done" then
-			arg_7_2.utility_actions[var_7_5].last_done_time = arg_7_3
+		if str == "done" then
+			arg_7_2.utility_actions[_identifier].last_done_time = arg_7_3
 		end
 
-		if var_7_3 ~= "failed" then
+		if str ~= "failed" then
 			arg_7_2.evaluate = var_7_6
 
-			return var_7_3
+			return str
 		end
 	end
 
-	local var_7_7 = arg_7_0._action_list
-	local var_7_8 = var_0_1(arg_7_1, var_7_7, arg_7_2, arg_7_3, arg_7_0._children)
+	local _action_list = self._action_list
+	local var_7_8 = fn_2(arg_7_1, _action_list, arg_7_2, arg_7_3, self._children)
 
-	for iter_7_0 = 1, var_7_8 do
-		local var_7_9 = var_7_7[iter_7_0].name
-		local var_7_10 = arg_7_0._children[var_7_9]
+	for i = 1, var_7_8 do
+		local name = _action_list[i].name
+		local var_7_10 = self._children[name]
 
-		if var_7_10 ~= var_7_2 then
-			arg_7_0:set_running_child(arg_7_1, arg_7_2, arg_7_3, var_7_10, "aborted")
+		if var_7_10 ~= current_running_child then
+			self:set_running_child(arg_7_1, arg_7_2, arg_7_3, var_7_10, "aborted")
 
-			var_7_2 = var_7_10
+			current_running_child = var_7_10
 		end
 
-		local var_7_11 = arg_7_2.utility_actions[var_7_9]
+		local var_7_11 = arg_7_2.utility_actions[name]
 
 		var_7_11.last_time = arg_7_3
 
-		local var_7_12 = var_7_10._identifier
+		local _identifier_2 = var_7_10._identifier
 		local var_7_13
 
-		var_7_3, var_7_13 = var_7_10:evaluate(arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+		str, var_7_13 = var_7_10:evaluate(arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 
-		if var_7_3 ~= "running" then
-			if var_7_3 == "done" then
+		if str ~= "running" then
+			if str == "done" then
 				var_7_11.last_done_time = arg_7_3
 			end
 
-			arg_7_0:set_running_child(arg_7_1, arg_7_2, arg_7_3, nil, var_7_3)
+			self:set_running_child(arg_7_1, arg_7_2, arg_7_3, nil, str)
 
-			var_7_2 = nil
+			current_running_child = nil
 		end
 
-		if var_7_3 ~= "failed" then
+		if str ~= "failed" then
 			arg_7_2.evaluate = var_7_13
 
 			break
 		end
 	end
 
-	if var_7_3 == "running" or var_7_3 == "done" then
-		return var_7_3
+	if not (str == "running" or str ~= "done") then
+		return str
 	end
 
-	local var_7_14 = var_7_0 and var_7_0.fail_cooldown_blackboard_identifier
-	local var_7_15 = var_7_14 and arg_7_2[var_7_14]
+	local flag = not action_data and action_data.fail_cooldown_blackboard_identifier
+	local flag_2 = not flag and arg_7_2[flag]
 
-	if var_7_15 == nil then
-		var_7_15 = arg_7_3 + (var_7_0 and var_7_0.fail_cooldown or 0.5)
+	if flag_2 == nil then
+		local fail_cooldown
+
+		if not action_data then
+			fail_cooldown = action_data.fail_cooldown
+
+			if not fail_cooldown then
+				-- Nothing
+			end
+		end
+
+		fail_cooldown = 0.5
+
+		::label_7_0::
+
+		flag_2 = arg_7_3 + fail_cooldown
 	end
 
-	arg_7_2[arg_7_0.fail_cooldown_name] = var_7_15
+	arg_7_2[self.fail_cooldown_name] = flag_2
 
-	return var_7_3
+	return str
 end
 
-function BTUtilityNode.add_child(arg_8_0, arg_8_1)
+BTUtilityNode.add_child = function (arg_8_0, arg_8_1)
+	-- function 8
 	arg_8_0._children[arg_8_1._identifier] = arg_8_1
 end

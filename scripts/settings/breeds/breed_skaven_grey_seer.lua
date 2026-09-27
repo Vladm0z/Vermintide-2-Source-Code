@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/breeds/breed_skaven_grey_seer.lua
 
-local var_0_0 = require("scripts/utils/stagger_types")
-local var_0_1 = {
+local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
+local tbl = {
 	show_health_bar = true,
 	walk_speed = 5,
 	minion_detection_radius = 20,
@@ -88,26 +88,27 @@ local var_0_1 = {
 	run_on_update = AiBreedSnippets.on_grey_seer_update,
 	run_on_death = AiBreedSnippets.on_grey_seer_death,
 	run_on_despawn = AiBreedSnippets.on_grey_seer_despawn,
-	stagger_modifier_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	stagger_modifier_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+		-- function 1
 		if not arg_1_4.unit then
 			return arg_1_0, arg_1_1, arg_1_2
 		end
 
-		local var_1_0 = ScriptUnit.extension(arg_1_4.unit, "health_system")
-		local var_1_1 = var_1_0:current_health_percent()
+		local extension = ScriptUnit.extension(arg_1_4.unit, "health_system")
+		local current_health_percent = extension:current_health_percent()
 
-		if not var_1_0:get_is_invincible() and var_1_1 < 0.05 and arg_1_4.current_phase ~= 6 then
-			local var_1_2 = var_1_0:get_max_health()
+		if not (extension:get_is_invincible() or not (current_health_percent < 0.05) or arg_1_4.current_phase == 6) then
+			local get_max_health = extension:get_max_health()
 
-			var_1_0.is_invincible = true
+			extension.is_invincible = true
 
-			var_1_0:set_current_damage(var_1_2 * 0.95)
+			extension:set_current_damage(get_max_health * 0.95)
 
 			arg_1_4.death_sequence = true
 		end
 
-		if arg_1_4.mounted_data and not arg_1_4.knocked_off_mount or arg_1_4.stagger_count >= 5 then
-			arg_1_0 = var_0_0.none
+		if not (not arg_1_4.mounted_data and arg_1_4.knocked_off_mount or not (arg_1_4.stagger_count >= 5)) then
+			arg_1_0 = scripts_utils_stagger_types.none
 			arg_1_4.stagger_ignore_anim_cb = true
 		else
 			arg_1_4.stagger_ignore_anim_cb = false
@@ -269,7 +270,8 @@ local var_0_1 = {
 		"kill_skaven_grey_seer_difficulty_rank",
 		"kill_skaven_grey_seer_scorpion_hardest"
 	},
-	custom_death_enter_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	custom_death_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+		-- function 2
 		if not Unit.alive(arg_2_1) then
 			return
 		end
@@ -278,9 +280,9 @@ local var_0_1 = {
 	end
 }
 
-Breeds.skaven_grey_seer = table.create_copy(Breeds.skaven_grey_seer, var_0_1)
+Breeds.skaven_grey_seer = table.create_copy(Breeds.skaven_grey_seer, tbl)
 
-local var_0_2 = {
+local tbl_2 = {
 	ground_combat = {
 		spawn_allies_cooldown = 20,
 		use_fallback_spawners = true,
@@ -432,11 +434,12 @@ local var_0_2 = {
 	stagger = {
 		scale_animation_speeds = true,
 		stagger_animation_scale = 1.3,
-		custom_enter_function = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+		custom_enter_function = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			-- function 3
 			local var_3_0 = arg_3_3.stagger_anims[arg_3_1.stagger_type]
-			local var_3_1 = "idle_eat_warpstone"
+			local str = "idle_eat_warpstone"
 
-			return var_3_0, var_3_1
+			return var_3_0, str
 		end,
 		stagger_anims = {
 			{
@@ -642,4 +645,4 @@ local var_0_2 = {
 	}
 }
 
-BreedActions.skaven_grey_seer = table.create_copy(BreedActions.skaven_grey_seer, var_0_2)
+BreedActions.skaven_grey_seer = table.create_copy(BreedActions.skaven_grey_seer, tbl_2)

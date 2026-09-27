@@ -1,5 +1,7 @@
 -- chunkname: @scripts/settings/dlc_settings.lua
 
+local DLCSettings = DLCSettings
+
 DLCSettings = DLCSettings or {
 	store = {
 		localization = "localization/store",
@@ -625,3 +627,4 @@ DLCSettings = DLCSettings or {
 		}
 	}
 }
+DLCSettings = DLCSettings

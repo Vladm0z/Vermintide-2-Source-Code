@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/skaven/skaven_stormfiend_demo_behavior.lua
 
-local var_0_0 = BreedActions.skaven_stormfiend_demo
+local skaven_stormfiend_demo = BreedActions.skaven_stormfiend_demo
 
 BreedBehaviors.stormfiend_demo = {
 	"BTSelector",
@@ -20,7 +20,7 @@ BreedBehaviors.stormfiend_demo = {
 			"BTClimbAction",
 			name = "climb",
 			condition = "at_climb_smartobject",
-			action_data = var_0_0.climb
+			action_data = skaven_stormfiend_demo.climb
 		},
 		{
 			"BTJumpAcrossAction",
@@ -31,7 +31,7 @@ BreedBehaviors.stormfiend_demo = {
 			"BTSmashDoorAction",
 			name = "smash_door",
 			condition = "at_door_smartobject",
-			action_data = var_0_0.smash_door
+			action_data = skaven_stormfiend_demo.smash_door
 		},
 		condition = "ratogre_at_smartobject",
 		name = "smartobject"
@@ -40,7 +40,7 @@ BreedBehaviors.stormfiend_demo = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = var_0_0.stagger
+		action_data = skaven_stormfiend_demo.stagger
 	},
 	{
 		"BTSelector",
@@ -49,36 +49,36 @@ BreedBehaviors.stormfiend_demo = {
 			leave_hook = "reset_fling_skaven",
 			name = "fling_skaven",
 			condition = "fling_skaven",
-			action_data = var_0_0.fling_skaven
+			action_data = skaven_stormfiend_demo.fling_skaven
 		},
 		{
 			"BTTargetRageAction",
 			enter_hook = "rage_on_enter",
 			name = "target_rage",
 			condition = "target_changed_and_distant",
-			action_data = var_0_0.target_rage
+			action_data = skaven_stormfiend_demo.target_rage
 		},
 		{
 			"BTUtilityNode",
 			{
 				"BTBossFollowAction",
 				name = "follow",
-				action_data = var_0_0.follow
+				action_data = skaven_stormfiend_demo.follow
 			},
 			{
 				"BTMeleeOverlapAttackAction",
 				name = "melee_shove",
-				action_data = var_0_0.melee_shove
+				action_data = skaven_stormfiend_demo.melee_shove
 			},
 			{
 				"BTStormfiendShootAction",
 				name = "shoot",
-				action_data = var_0_0.shoot
+				action_data = skaven_stormfiend_demo.shoot
 			},
 			{
 				"BTTargetUnreachableAction",
 				name = "target_unreachable",
-				action_data = var_0_0.target_unreachable
+				action_data = skaven_stormfiend_demo.target_unreachable
 			},
 			name = "in_combat"
 		},

@@ -1,6 +1,9 @@
 -- chunkname: @scripts/settings/player_unit_status_settings.lua
 
+local PlayerUnitStatusSettings = PlayerUnitStatusSettings
+
 PlayerUnitStatusSettings = PlayerUnitStatusSettings or {}
+PlayerUnitStatusSettings = PlayerUnitStatusSettings
 PlayerUnitStatusSettings.MAX_FATIGUE = 100
 PlayerUnitStatusSettings.FATIGUE_DEGEN_DELAY = 1
 PlayerUnitStatusSettings.FATIGUE_POINTS_DEGEN_AMOUNT = 1.5
@@ -10,7 +13,8 @@ PlayerUnitStatusSettings.move_speed_reduction_on_hit_recover_time = 0.5
 PlayerUnitStatusSettings.poison_dot_time = 1
 PlayerUnitStatusSettings.poison_level_max = 5
 
-function PlayerUnitStatusSettings.poison_dot_function(arg_1_0)
+PlayerUnitStatusSettings.poison_dot_function = function (arg_1_0)
+	-- function 1
 	return arg_1_0 * arg_1_0 * 0.3
 end
 
@@ -86,7 +90,13 @@ PlayerUnitStatusSettings.charge_values_defensive = {
 	catapulted = 0.02,
 	pounced = 0.02
 }
-PlayerUnitStatusSettings.overcharge_values = table.merge(PlayerUnitStatusSettings.overcharge_values or {}, {
+
+local PlayerUnitStatusSettings_2 = PlayerUnitStatusSettings
+local merge = table.merge
+local overcharge_values = PlayerUnitStatusSettings.overcharge_values
+
+overcharge_values = overcharge_values or {}
+PlayerUnitStatusSettings_2.overcharge_values = merge(overcharge_values, {
 	drakegun_basic = 2,
 	beam_staff_alternate = 0.85,
 	beam_staff_shotgun = 7,

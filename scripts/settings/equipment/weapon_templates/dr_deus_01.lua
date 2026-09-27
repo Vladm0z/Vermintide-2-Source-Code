@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/dr_deus_01.lua
 
-local var_0_0 = {
+local tbl = {
 	actions = {
 		action_one = {
 			default = {
@@ -90,8 +90,9 @@ local var_0_0 = {
 				anim_event = "attack_push",
 				damage_profile_inner = "medium_push",
 				total_time = 0.5,
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
-					return arg_1_1 ~= "new_interupting_action" and arg_1_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
+					-- function 1
+					return arg_1_1 == "new_interupting_action" or arg_1_1 ~= "action_complete"
 				end,
 				buff_data = {
 					{
@@ -122,7 +123,8 @@ local var_0_0 = {
 						input = "action_two_hold"
 					}
 				},
-				chain_condition_func = function(arg_2_0, arg_2_1)
+				chain_condition_func = function (arg_2_0, arg_2_1)
+					-- function 2
 					return not ScriptUnit.extension(arg_2_0, "status_system"):fatigued()
 				end
 			}
@@ -137,11 +139,13 @@ local var_0_0 = {
 				reload_when_out_of_ammo = true,
 				hold_input = "action_two_hold",
 				anim_event = "parry_pose",
-				anim_end_event_condition_func = function(arg_3_0, arg_3_1)
+				anim_end_event_condition_func = function (arg_3_0, arg_3_1)
+					-- function 3
 					return arg_3_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
-				enter_function = function(arg_4_0, arg_4_1, arg_4_2)
+				enter_function = function (arg_4_0, arg_4_1, arg_4_2)
+					-- function 4
 					return arg_4_1:reset_release_input_with_delay(arg_4_2)
 				end,
 				buff_data = {
@@ -177,8 +181,9 @@ local var_0_0 = {
 						input = "action_wield"
 					}
 				},
-				reload_when_out_of_ammo_condition_func = function(arg_5_0, arg_5_1)
-					return arg_5_1 ~= "new_interupting_action" and arg_5_1 ~= "stunned"
+				reload_when_out_of_ammo_condition_func = function (arg_5_0, arg_5_1)
+					-- function 5
+					return arg_5_1 == "new_interupting_action" or arg_5_1 ~= "stunned"
 				end
 			}
 		},
@@ -239,34 +244,34 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = var_0_0.actions.action_one.default
+local default = tbl.actions.action_one.default
 
-var_0_0.default_loaded_projectile_settings = {
+tbl.default_loaded_projectile_settings = {
 	drop_multiplier = 0.02,
-	speed = var_0_1.speed,
-	gravity = ProjectileGravitySettings[var_0_1.projectile_info.gravity_settings]
+	speed = default.speed,
+	gravity = ProjectileGravitySettings[default.projectile_info.gravity_settings]
 }
-var_0_0.default_spread_template = "crossbow"
-var_0_0.spread_lerp_speed = 6
-var_0_0.left_hand_unit = ""
-var_0_0.left_hand_attachment_node_linking = AttachmentNodeLinking.dr_deus_01
-var_0_0.display_unit = "units/weapons/weapon_display/display_trollhammer"
-var_0_0.wield_anim = "to_dr_deus_01_loaded"
-var_0_0.wield_anim_no_ammo = "to_dr_deus_01_noammo"
-var_0_0.wield_anim_not_loaded = "to_dr_deus_01"
-var_0_0.state_machine = "units/beings/player/first_person_base/state_machines/ranged/dr_deus_01"
-var_0_0.crosshair_style = "projectile"
-var_0_0.reload_event = "reload"
-var_0_0.buff_type = "RANGED"
-var_0_0.weapon_type = "dr_deus_01"
-var_0_0.default_projectile_action = var_0_0.actions.action_one.default
-var_0_0.max_fatigue_points = 6
-var_0_0.dodge_count = 1
-var_0_0.block_angle = 90
-var_0_0.outer_block_angle = 360
-var_0_0.block_fatigue_point_multiplier = 0.5
-var_0_0.outer_block_fatigue_point_multiplier = 2
-var_0_0.buffs = {
+tbl.default_spread_template = "crossbow"
+tbl.spread_lerp_speed = 6
+tbl.left_hand_unit = ""
+tbl.left_hand_attachment_node_linking = AttachmentNodeLinking.dr_deus_01
+tbl.display_unit = "units/weapons/weapon_display/display_trollhammer"
+tbl.wield_anim = "to_dr_deus_01_loaded"
+tbl.wield_anim_no_ammo = "to_dr_deus_01_noammo"
+tbl.wield_anim_not_loaded = "to_dr_deus_01"
+tbl.state_machine = "units/beings/player/first_person_base/state_machines/ranged/dr_deus_01"
+tbl.crosshair_style = "projectile"
+tbl.reload_event = "reload"
+tbl.buff_type = "RANGED"
+tbl.weapon_type = "dr_deus_01"
+tbl.default_projectile_action = tbl.actions.action_one.default
+tbl.max_fatigue_points = 6
+tbl.dodge_count = 1
+tbl.block_angle = 90
+tbl.outer_block_angle = 360
+tbl.block_fatigue_point_multiplier = 0.5
+tbl.outer_block_fatigue_point_multiplier = 2
+tbl.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1
 	},
@@ -274,10 +279,10 @@ var_0_0.buffs = {
 		external_optional_multiplier = 1
 	}
 }
-var_0_0.wwise_dep_left_hand = {
+tbl.wwise_dep_left_hand = {
 	"wwise/dr_deus_01"
 }
-var_0_0.weapon_diagram = {
+tbl.weapon_diagram = {
 	light_attack = {
 		[DamageTypes.ARMOR_PIERCING] = 7,
 		[DamageTypes.CLEAVE] = 7,
@@ -293,18 +298,18 @@ var_0_0.weapon_diagram = {
 		[DamageTypes.DAMAGE] = 0
 	}
 }
-var_0_0.tooltip_keywords = {
+tbl.tooltip_keywords = {
 	"weapon_keyword_high_damage",
 	"weapon_keyword_crowd_control",
 	"weapon_keyword_piercing_bolts"
 }
-var_0_0.tooltip_compare = {
+tbl.tooltip_compare = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
 	}
 }
-var_0_0.tooltip_detail = {
+tbl.tooltip_detail = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -315,11 +320,11 @@ var_0_0.tooltip_detail = {
 	}
 }
 
-local var_0_2 = table.clone(var_0_0)
+local clone = table.clone(tbl)
 
-var_0_2.actions.action_one.default.impact_data.damage_profile = "dr_deus_01_vs"
+clone.actions.action_one.default.impact_data.damage_profile = "dr_deus_01_vs"
 
 return {
-	dr_deus_01_template_1 = table.clone(var_0_0),
-	dr_deus_01_template_1_vs = table.clone(var_0_2)
+	dr_deus_01_template_1 = table.clone(tbl),
+	dr_deus_01_template_1_vs = table.clone(clone)
 }

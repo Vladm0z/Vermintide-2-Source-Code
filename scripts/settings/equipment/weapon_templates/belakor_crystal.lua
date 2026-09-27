@@ -2,7 +2,7 @@
 
 require("scripts/settings/dlcs/belakor/belakor_balancing")
 
-local var_0_0 = {
+local tbl = {
 	dodge_count = 1,
 	max_fatigue_points = 1,
 	left_hand_unit = "units/weapons/player/wpn_belakor_crystal/wpn_belakor_crystal",
@@ -25,8 +25,9 @@ local var_0_0 = {
 				uninterruptible = true,
 				anim_event = "attack_throw",
 				total_time = 0.7249999999999999,
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
-					return arg_1_1 ~= "new_interupting_action" and arg_1_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
+					-- function 1
+					return arg_1_1 == "new_interupting_action" or arg_1_1 ~= "action_complete"
 				end,
 				buff_data = {},
 				allowed_chain_actions = {},
@@ -65,8 +66,9 @@ local var_0_0 = {
 				anim_event = "attack_push",
 				damage_profile_inner = "medium_push",
 				total_time = 0.8,
-				anim_end_event_condition_func = function(arg_2_0, arg_2_1)
-					return arg_2_1 ~= "new_interupting_action" and arg_2_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_2_0, arg_2_1)
+					-- function 2
+					return arg_2_1 == "new_interupting_action" or arg_2_1 ~= "action_complete"
 				end,
 				allowed_chain_actions = {
 					{
@@ -77,7 +79,8 @@ local var_0_0 = {
 						input = "action_one"
 					}
 				},
-				condition_func = function(arg_3_0, arg_3_1)
+				condition_func = function (arg_3_0, arg_3_1)
+					-- function 3
 					return not ScriptUnit.extension(arg_3_0, "status_system"):fatigued()
 				end
 			}
@@ -96,8 +99,9 @@ local var_0_0 = {
 				uninterruptible = true,
 				anim_event = "attack_throw",
 				total_time = 0.7249999999999999,
-				anim_end_event_condition_func = function(arg_4_0, arg_4_1)
-					return arg_4_1 ~= "new_interupting_action" and arg_4_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_4_0, arg_4_1)
+					-- function 4
+					return arg_4_1 == "new_interupting_action" or arg_4_1 ~= "action_complete"
 				end,
 				buff_data = {
 					{
@@ -142,5 +146,5 @@ local var_0_0 = {
 }
 
 return {
-	belakor_crystal = var_0_0
+	belakor_crystal = tbl
 }

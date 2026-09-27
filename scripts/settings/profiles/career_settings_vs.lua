@@ -1,37 +1,40 @@
 -- chunkname: @scripts/settings/profiles/career_settings_vs.lua
 
-local function var_0_0(arg_1_0, arg_1_1, arg_1_2)
-	local var_1_0, var_1_1 = arg_1_0:override_available_for_mechanism()
+local function fn(self, arg_1_1, arg_1_2)
+	-- function 1
+	local override_available_for_mechanism, var_1_1 = self:override_available_for_mechanism()
 
-	if not var_1_0 then
-		return var_1_0, var_1_1
+	if not override_available_for_mechanism then
+		return override_available_for_mechanism, var_1_1
 	end
 
 	local var_1_2
-	local var_1_3, var_1_4, var_1_5 = arg_1_0:is_dlc_unlocked()
+	local is_dlc_unlocked, var_1_4, var_1_5 = self:is_dlc_unlocked()
 	local var_1_6 = var_1_5
 	local var_1_7 = var_1_4
 
-	if not var_1_3 then
+	if not is_dlc_unlocked then
 		return false, var_1_7, var_1_6
 	end
 
 	return true
 end
 
-local function var_0_1(arg_2_0)
-	if Managers.unlock:is_dlc_unlocked("carousel") then
+local function fn_2(arg_2_0)
+	-- function 2
+	if not Managers.unlock:is_dlc_unlocked("carousel") then
 		return true
 	else
 		return false, "dlc_not_owned", "carousel"
 	end
 end
 
-local function var_0_2(arg_3_0)
-	local var_3_0 = Managers.mechanism:mechanism_setting_for_title("override_career_availability")
-	local var_3_1 = arg_3_0.display_name
+local function fn_3(self)
+	-- function 3
+	local mechanism_setting_for_title = Managers.mechanism:mechanism_setting_for_title("override_career_availability")
+	local display_name = self.display_name
 
-	if var_3_0 and var_3_0[var_3_1] == false then
+	if not (not mechanism_setting_for_title and mechanism_setting_for_title[display_name] ~= false) then
 		return false, "disabled_for_mechanism"
 	end
 
@@ -57,9 +60,9 @@ CareerSettings.vs_undecided = {
 	portrait_image = "unit_frame_portrait_default",
 	category_image = "icons_placeholder",
 	icon = "icons_placeholder",
-	is_unlocked_function = var_0_0,
-	is_dlc_unlocked = var_0_1,
-	override_available_for_mechanism = var_0_2
+	is_unlocked_function = fn,
+	is_dlc_unlocked = fn_2,
+	override_available_for_mechanism = fn_3
 }
 CareerSettings.vs_gutter_runner = {
 	profile_name = "vs_gutter_runner",
@@ -118,9 +121,9 @@ CareerSettings.vs_gutter_runner = {
 			title = "vs_htp_gutter_smoke"
 		}
 	},
-	is_unlocked_function = var_0_0,
-	is_dlc_unlocked = var_0_1,
-	override_available_for_mechanism = var_0_2,
+	is_unlocked_function = fn,
+	is_dlc_unlocked = fn_2,
+	override_available_for_mechanism = fn_3,
 	loadout_equipment_slots = {
 		"melee",
 		"ranged",
@@ -216,9 +219,9 @@ CareerSettings.vs_poison_wind_globadier = {
 			title = "vs_htp_globadier_globe"
 		}
 	},
-	is_unlocked_function = var_0_0,
-	is_dlc_unlocked = var_0_1,
-	override_available_for_mechanism = var_0_2,
+	is_unlocked_function = fn,
+	is_dlc_unlocked = fn_2,
+	override_available_for_mechanism = fn_3,
 	loadout_equipment_slots = {
 		"melee",
 		"melee",
@@ -312,9 +315,9 @@ CareerSettings.vs_packmaster = {
 			double_input = true
 		}
 	},
-	is_unlocked_function = var_0_0,
-	is_dlc_unlocked = var_0_1,
-	override_available_for_mechanism = var_0_2,
+	is_unlocked_function = fn,
+	is_dlc_unlocked = fn_2,
+	override_available_for_mechanism = fn_3,
 	loadout_equipment_slots = {
 		"melee",
 		"melee",
@@ -416,9 +419,9 @@ CareerSettings.vs_ratling_gunner = {
 			title = "vs_htp_ratling_reload"
 		}
 	},
-	is_unlocked_function = var_0_0,
-	is_dlc_unlocked = var_0_1,
-	override_available_for_mechanism = var_0_2,
+	is_unlocked_function = fn,
+	is_dlc_unlocked = fn_2,
+	override_available_for_mechanism = fn_3,
 	loadout_equipment_slots = {
 		"melee",
 		"melee",
@@ -509,9 +512,9 @@ CareerSettings.vs_warpfire_thrower = {
 			title = "vs_htp_wapfire_blast"
 		}
 	},
-	is_unlocked_function = var_0_0,
-	is_dlc_unlocked = var_0_1,
-	override_available_for_mechanism = var_0_2,
+	is_unlocked_function = fn,
+	is_dlc_unlocked = fn_2,
+	override_available_for_mechanism = fn_3,
 	loadout_equipment_slots = {
 		"melee",
 		"melee",
@@ -609,9 +612,9 @@ CareerSettings.vs_chaos_troll = {
 			title = "vs_htp_troll_vomit"
 		}
 	},
-	is_unlocked_function = var_0_0,
-	is_dlc_unlocked = var_0_1,
-	override_available_for_mechanism = var_0_2,
+	is_unlocked_function = fn,
+	is_dlc_unlocked = fn_2,
+	override_available_for_mechanism = fn_3,
 	loadout_equipment_slots = {
 		"melee",
 		"melee",
@@ -693,9 +696,9 @@ CareerSettings.vs_rat_ogre = {
 			item_name = "vs_rat_ogre_hands"
 		}
 	},
-	is_unlocked_function = var_0_0,
-	is_dlc_unlocked = var_0_1,
-	override_available_for_mechanism = var_0_2,
+	is_unlocked_function = fn,
+	is_dlc_unlocked = fn_2,
+	override_available_for_mechanism = fn_3,
 	career_info_settings = {
 		{
 			description = "vs_htp_rat_ogre_melee_description_line1",
@@ -762,17 +765,24 @@ CareerSettings.spectator = {
 		resource = "video/career_videos/bardin/dr_slayer"
 	},
 	item_slot_types_by_slot_name = {},
-	is_unlocked_function = function(arg_4_0, arg_4_1, arg_4_2)
+	is_unlocked_function = function (arg_4_0, arg_4_1, arg_4_2)
+		-- function 4
 		return false
 	end,
-	is_dlc_unlocked = function(arg_5_0)
+	is_dlc_unlocked = function (arg_5_0)
+		-- function 5
 		return false
 	end,
-	override_available_for_mechanism = function(arg_6_0)
+	override_available_for_mechanism = function (arg_6_0)
+		-- function 6
 		return false
 	end
 }
+
+local OverchargeData = OverchargeData
+
 OverchargeData = OverchargeData or {}
+OverchargeData = OverchargeData
 OverchargeData.vs_warpfire_thrower = {
 	max_value = 40,
 	overcharge_value_decrease_rate = 12.5,
@@ -782,7 +792,8 @@ OverchargeData.vs_warpfire_thrower = {
 	overcharge_threshold = 39,
 	no_explosion = true,
 	time_until_overcharge_decreases = 0.5,
-	overcharge_depleted_func = function(arg_7_0, arg_7_1, arg_7_2)
+	overcharge_depleted_func = function (arg_7_0, arg_7_1, arg_7_2)
+		-- function 7
 		return
 	end,
 	overcharge_ui = {
@@ -792,7 +803,17 @@ OverchargeData.vs_warpfire_thrower = {
 		color_high = Colors.get_color_table_with_alpha("pactsworn_green", 255)
 	}
 }
+
+local PlayerUnitStatusSettings = PlayerUnitStatusSettings
+
 PlayerUnitStatusSettings = PlayerUnitStatusSettings or {}
-PlayerUnitStatusSettings.overcharge_values = table.merge(PlayerUnitStatusSettings.overcharge_values or {}, {
+PlayerUnitStatusSettings = PlayerUnitStatusSettings
+
+local PlayerUnitStatusSettings_2 = PlayerUnitStatusSettings
+local merge = table.merge
+local overcharge_values = PlayerUnitStatusSettings.overcharge_values
+
+overcharge_values = overcharge_values or {}
+PlayerUnitStatusSettings_2.overcharge_values = merge(overcharge_values, {
 	vs_warpfire_thrower_normal = 5
 })

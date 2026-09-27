@@ -1,29 +1,32 @@
 -- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_adventure_overview_console_definitions.lua
 
-local var_0_0 = UISettings.game_start_windows
-local var_0_1 = var_0_0.frame
-local var_0_2 = var_0_0.size
-local var_0_3 = UIFrameSettings[var_0_1].texture_sizes.horizontal[2]
-local var_0_4 = {
-	var_0_2[1],
+local game_start_windows = UISettings.game_start_windows
+local frame = game_start_windows.frame
+local size = game_start_windows.size
+local var_0_3 = UIFrameSettings[frame].texture_sizes.horizontal[2]
+local tbl = {
+	size[1],
 	194
 }
-local var_0_5 = var_0_2[1]
-local var_0_6 = {
+local var_0_5 = size[1]
+local tbl_2 = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+				-- function 1
 				arg_1_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
-				local var_2_0 = math.easeOutCubic(arg_2_3)
+			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+				-- function 2
+				local easeOutCubic = math.easeOutCubic(arg_2_3)
 
-				arg_2_4.render_settings.alpha_multiplier = var_2_0
+				arg_2_4.render_settings.alpha_multiplier = easeOutCubic
 			end,
-			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+				-- function 3
 				return
 			end
 		}
@@ -33,19 +36,22 @@ local var_0_6 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				-- function 4
 				arg_4_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+				-- function 5
 				arg_5_4.render_settings.alpha_multiplier = 1
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+				-- function 6
 				return
 			end
 		}
 	}
 }
-local var_0_7 = {
+local tbl_3 = {
 	root = {
 		is_root = true,
 		size = {
@@ -88,7 +94,7 @@ local var_0_7 = {
 		vertical_alignment = "center",
 		parent = "menu_root",
 		horizontal_alignment = "left",
-		size = var_0_2,
+		size = size,
 		position = {
 			220,
 			0,
@@ -100,7 +106,7 @@ local var_0_7 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_2[1],
+			size[1],
 			var_0_3
 		},
 		position = {
@@ -114,7 +120,7 @@ local var_0_7 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_2[1] + 70,
+			size[1] + 70,
 			230
 		},
 		position = {
@@ -170,8 +176,8 @@ local var_0_7 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_4[1],
-			var_0_4[2]
+			tbl[1],
+			tbl[2]
 		},
 		position = {
 			-15,
@@ -184,12 +190,12 @@ local var_0_7 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_4[1],
-			var_0_4[2]
+			tbl[1],
+			tbl[2]
 		},
 		position = {
 			-15,
-			-15 + var_0_4[2],
+			-15 + tbl[2],
 			1
 		}
 	},
@@ -198,12 +204,12 @@ local var_0_7 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_4[1],
-			var_0_4[2]
+			tbl[1],
+			tbl[2]
 		},
 		position = {
 			-15,
-			-15 + var_0_4[2] * 2,
+			-15 + tbl[2] * 2,
 			1
 		}
 	},
@@ -212,8 +218,8 @@ local var_0_7 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_4[1],
-			var_0_4[2]
+			tbl[1],
+			tbl[2]
 		},
 		position = {
 			0,
@@ -236,7 +242,7 @@ local var_0_7 = {
 		}
 	}
 }
-local var_0_8 = {
+local tbl_4 = {
 	font_size = 50,
 	upper_case = true,
 	localize = false,
@@ -253,7 +259,7 @@ local var_0_8 = {
 		2
 	}
 }
-local var_0_9 = {
+local tbl_5 = {
 	font_size = 28,
 	upper_case = false,
 	localize = false,
@@ -269,22 +275,22 @@ local var_0_9 = {
 		2
 	}
 }
-local var_0_10 = {
-	adventure_description_background = UIWidgets.create_rect_with_outer_frame("adventure_background", var_0_7.adventure_background.size, "frame_outer_fade_02", nil, UISettings.console_start_game_menu_rect_color),
-	adventure_title = UIWidgets.create_simple_text(Localize("start_game_window_adventure_title"), "adventure_title", nil, nil, var_0_8),
+local tbl_6 = {
+	adventure_description_background = UIWidgets.create_rect_with_outer_frame("adventure_background", tbl_3.adventure_background.size, "frame_outer_fade_02", nil, UISettings.console_start_game_menu_rect_color),
+	adventure_title = UIWidgets.create_simple_text(Localize("start_game_window_adventure_title"), "adventure_title", nil, nil, tbl_4),
 	adventure_divider = UIWidgets.create_simple_texture("divider_01_top", "adventure_divider"),
-	adventure_description = UIWidgets.create_simple_text(Localize("start_game_window_adventure_desc"), "adventure_description", nil, nil, var_0_9),
-	difficulty_setting = UIWidgets.create_start_game_console_setting_button("game_option_1", Localize("start_game_window_difficulty"), nil, "difficulty_option_1", nil, var_0_7.game_option_1.size, true),
+	adventure_description = UIWidgets.create_simple_text(Localize("start_game_window_adventure_desc"), "adventure_description", nil, nil, tbl_5),
+	difficulty_setting = UIWidgets.create_start_game_console_setting_button("game_option_1", Localize("start_game_window_difficulty"), nil, "difficulty_option_1", nil, tbl_3.game_option_1.size, true),
 	play_button = UIWidgets.create_icon_and_name_button("play_button", "options_button_icon_quickplay", Localize("start_game_window_play"))
 }
-local var_0_11 = {
+local tbl_7 = {
 	"difficulty_setting",
 	"play_button"
 }
 
 return {
-	scenegraph_definition = var_0_7,
-	widgets = var_0_10,
-	animation_definitions = var_0_6,
-	selector_input_definition = var_0_11
+	scenegraph_definition = tbl_3,
+	widgets = tbl_6,
+	animation_definitions = tbl_2,
+	selector_input_definition = tbl_7
 }

@@ -8,12 +8,14 @@ NewsFeedTemplates = {
 		cooldown = -1,
 		infinite = false,
 		title = "news_feed_vt1_skins_title",
-		condition_func = function(arg_1_0)
-			if ItemHelper.has_new_sign_in_reward("vt1_skins") then
+		condition_func = function (arg_1_0)
+			-- function 1
+			if not ItemHelper.has_new_sign_in_reward("vt1_skins") then
 				return true
 			end
 		end,
-		removed_func = function(arg_2_0)
+		removed_func = function (arg_2_0)
+			-- function 2
 			ItemHelper.unmark_sign_in_reward_as_new("vt1_skins")
 		end
 	},
@@ -23,12 +25,14 @@ NewsFeedTemplates = {
 		cooldown = -1,
 		infinite = false,
 		duration = 0,
-		condition_func = function(arg_3_0)
-			if ItemHelper.has_new_sign_in_reward("vt2_collectors_edition") then
+		condition_func = function (arg_3_0)
+			-- function 3
+			if not ItemHelper.has_new_sign_in_reward("vt2_collectors_edition") then
 				return true
 			end
 		end,
-		removed_func = function(arg_4_0)
+		removed_func = function (arg_4_0)
+			-- function 4
 			ItemHelper.unmark_sign_in_reward_as_new("vt2_collectors_edition")
 		end
 	},
@@ -38,12 +42,14 @@ NewsFeedTemplates = {
 		cooldown = -1,
 		infinite = false,
 		duration = 0,
-		condition_func = function(arg_5_0)
-			if ItemHelper.has_new_sign_in_reward("celebrate_2019") then
+		condition_func = function (arg_5_0)
+			-- function 5
+			if not ItemHelper.has_new_sign_in_reward("celebrate_2019") then
 				return true
 			end
 		end,
-		removed_func = function(arg_6_0)
+		removed_func = function (arg_6_0)
+			-- function 6
 			ItemHelper.unmark_sign_in_reward_as_new("celebrate_2019")
 		end
 	},
@@ -54,7 +60,8 @@ NewsFeedTemplates = {
 		cooldown = -1,
 		infinite = false,
 		title = "news_feed_unclaimed_challenge_title",
-		condition_func = function(arg_7_0)
+		condition_func = function (arg_7_0)
+			-- function 7
 			return (Managers.state.achievement:has_any_unclaimed_achievement())
 		end
 	},
@@ -65,7 +72,8 @@ NewsFeedTemplates = {
 		cooldown = -1,
 		infinite = false,
 		title = "news_feed_unclaimed_quest_title",
-		condition_func = function(arg_8_0)
+		condition_func = function (arg_8_0)
+			-- function 8
 			return (Managers.state.quest:has_any_unclaimed_quests())
 		end
 	},
@@ -76,30 +84,31 @@ NewsFeedTemplates = {
 		cooldown = -1,
 		infinite = false,
 		title = "news_feed_equipment_title",
-		condition_func = function(arg_9_0)
+		condition_func = function (self)
+			-- function 9
 			if Managers.mechanism:current_mechanism_name() == "versus" then
 				return false
 			end
 
-			local var_9_0 = arg_9_0.rarities_to_ignore
+			local rarities_to_ignore = self.rarities_to_ignore
 
-			if ItemHelper.has_new_backend_ids_by_slot_type("trinket", var_9_0) then
+			if not ItemHelper.has_new_backend_ids_by_slot_type("trinket", rarities_to_ignore) then
 				return true
-			elseif ItemHelper.has_new_backend_ids_by_slot_type("ring", var_9_0) then
+			elseif not ItemHelper.has_new_backend_ids_by_slot_type("ring", rarities_to_ignore) then
 				return true
-			elseif ItemHelper.has_new_backend_ids_by_slot_type("necklace", var_9_0) then
+			elseif not ItemHelper.has_new_backend_ids_by_slot_type("necklace", rarities_to_ignore) then
 				return true
 			else
-				local var_9_1 = arg_9_0.hero_name
-				local var_9_2 = FindProfileIndex(var_9_1)
-				local var_9_3 = SPProfiles[var_9_2].careers
+				local hero_name = self.hero_name
+				local var_9_2 = FindProfileIndex(hero_name)
+				local careers = SPProfiles[var_9_2].careers
 
-				for iter_9_0, iter_9_1 in ipairs(var_9_3) do
-					local var_9_4 = iter_9_1.name
+				for i, v in ipairs(careers) do
+					local name = v.name
 
-					if ItemHelper.has_new_backend_ids_by_career_name_and_slot_type(var_9_4, "melee", var_9_0) then
+					if not ItemHelper.has_new_backend_ids_by_career_name_and_slot_type(name, "melee", rarities_to_ignore) then
 						return true
-					elseif ItemHelper.has_new_backend_ids_by_career_name_and_slot_type(var_9_4, "ranged", var_9_0) then
+					elseif not ItemHelper.has_new_backend_ids_by_career_name_and_slot_type(name, "ranged", rarities_to_ignore) then
 						return true
 					end
 				end
@@ -123,7 +132,8 @@ NewsFeedTemplates = {
 			40,
 			40
 		},
-		condition_func = function(arg_10_0)
+		condition_func = function (arg_10_0)
+			-- function 10
 			return Managers.backend:get_interface("peddler"):get_login_rewards().next_claim_timestamp < os.time()
 		end
 	},
@@ -134,32 +144,33 @@ NewsFeedTemplates = {
 		cooldown = -1,
 		infinite = false,
 		title = "news_feed_talent_title",
-		condition_func = function(arg_11_0)
-			local var_11_0 = arg_11_0.hero_name
-			local var_11_1 = arg_11_0.career_name
-			local var_11_2 = Managers.backend:get_interface("talents"):get_talents(var_11_1)
-			local var_11_3 = 0
+		condition_func = function (self)
+			-- function 11
+			local hero_name = self.hero_name
+			local career_name = self.career_name
+			local get_talents = Managers.backend:get_interface("talents"):get_talents(career_name)
+			local num = 0
 
-			if var_11_2 then
-				for iter_11_0, iter_11_1 in ipairs(var_11_2) do
-					if iter_11_1 > 0 then
-						var_11_3 = var_11_3 + 1
+			if not get_talents then
+				for i, v in ipairs(get_talents) do
+					if v > 0 then
+						num = num + 1
 					end
 				end
 			end
 
-			local var_11_4 = ExperienceSettings.get_experience(var_11_0)
-			local var_11_5 = ExperienceSettings.get_level(var_11_4)
-			local var_11_6 = 0
-			local var_11_7 = Development.parameter("debug_unlock_talents")
+			local get_experience = ExperienceSettings.get_experience(hero_name)
+			local get_level = ExperienceSettings.get_level(get_experience)
+			local num_2 = 0
+			local parameter = Development.parameter("debug_unlock_talents")
 
-			for iter_11_2, iter_11_3 in pairs(TalentUnlockLevels) do
-				if ProgressionUnlocks.is_unlocked(iter_11_2, var_11_5) or var_11_7 then
-					var_11_6 = var_11_6 + 1
+			for k, v_2 in pairs(TalentUnlockLevels) do
+				if ProgressionUnlocks.is_unlocked(k, get_level) or not parameter then
+					num_2 = num_2 + 1
 				end
 			end
 
-			return var_11_3 < var_11_6
+			return num < num_2
 		end
 	},
 	{
@@ -169,7 +180,8 @@ NewsFeedTemplates = {
 		cooldown = -1,
 		infinite = false,
 		title = "news_feed_career_title",
-		condition_func = function(arg_12_0)
+		condition_func = function (arg_12_0)
+			-- function 12
 			return false
 		end
 	},
@@ -180,14 +192,15 @@ NewsFeedTemplates = {
 		cooldown = -1,
 		infinite = false,
 		title = "news_feed_cosmetics_title",
-		condition_func = function(arg_13_0)
-			local var_13_0 = arg_13_0.career_name
+		condition_func = function (self)
+			-- function 13
+			local career_name = self.career_name
 
-			if ItemHelper.has_new_backend_ids_by_career_name_and_slot_type(var_13_0, "skin") then
+			if not ItemHelper.has_new_backend_ids_by_career_name_and_slot_type(career_name, "skin") then
 				return true
-			elseif ItemHelper.has_new_backend_ids_by_slot_type("frame") then
+			elseif not ItemHelper.has_new_backend_ids_by_slot_type("frame") then
 				return true
-			elseif ItemHelper.has_new_backend_ids_by_career_name_and_slot_type(var_13_0, "hat") then
+			elseif not ItemHelper.has_new_backend_ids_by_career_name_and_slot_type(career_name, "hat") then
 				return true
 			end
 		end
@@ -199,7 +212,8 @@ NewsFeedTemplates = {
 		cooldown = -1,
 		infinite = false,
 		title = "news_feed_loot_chest_title",
-		condition_func = function(arg_14_0)
+		condition_func = function (arg_14_0)
+			-- function 14
 			return ItemHelper.has_new_backend_ids_by_slot_type("loot_chest")
 		end
 	},
@@ -209,36 +223,38 @@ NewsFeedTemplates = {
 		cooldown = -1,
 		infinite = false,
 		duration = 0,
-		condition_func = function(arg_15_0)
-			if ItemHelper.has_new_sign_in_reward() then
+		condition_func = function (arg_15_0)
+			-- function 15
+			if not ItemHelper.has_new_sign_in_reward() then
 				return true
 			end
 		end,
-		added_func = function(arg_16_0)
-			local var_16_0 = Managers.state.event
-			local var_16_1 = Managers.backend
+		added_func = function (arg_16_0)
+			-- function 16
+			local event = Managers.state.event
+			local backend = Managers.backend
 
-			if var_16_0 and var_16_1 then
-				local var_16_2 = var_16_1:get_interface("items")
+			if not event and not backend then
+				local get_interface = backend:get_interface("items")
 
-				if var_16_2 then
-					local var_16_3 = {}
+				if not get_interface then
+					local tbl = {}
 
-					for iter_16_0, iter_16_1 in pairs(PlayerData.new_sign_in_rewards) do
-						for iter_16_2, iter_16_3 in ipairs(iter_16_1) do
-							if var_16_2:get_item_from_id(iter_16_3) ~= nil then
-								table.insert(var_16_3, {
+					for k, v in pairs(PlayerData.new_sign_in_rewards) do
+						for i, v_2 in ipairs(v) do
+							if get_interface:get_item_from_id(v_2) ~= nil then
+								table.insert(tbl, {
 									type = "item",
-									backend_id = iter_16_3
+									backend_id = v_2
 								})
 							end
 						end
 
-						ItemHelper.unmark_sign_in_reward_as_new(iter_16_0)
+						ItemHelper.unmark_sign_in_reward_as_new(k)
 					end
 
-					if #var_16_3 > 0 then
-						var_16_0:trigger("present_rewards", var_16_3)
+					if #tbl > 0 then
+						event:trigger("present_rewards", tbl)
 					end
 				end
 			end
@@ -247,9 +263,10 @@ NewsFeedTemplates = {
 }
 
 function FindNewsTemplateIndex(arg_17_0)
-	for iter_17_0, iter_17_1 in pairs(NewsFeedTemplates) do
-		if iter_17_1.name == arg_17_0 then
-			return iter_17_0
+	-- function 17
+	for k, v in pairs(NewsFeedTemplates) do
+		if v.name == arg_17_0 then
+			return k
 		end
 	end
 end

@@ -4,44 +4,49 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTDummyIdleAction = class(BTDummyIdleAction, BTNode)
 
-function BTDummyIdleAction.init(arg_1_0, ...)
+BTDummyIdleAction.init = function (arg_1_0, ...)
+	-- function 1
 	BTDummyIdleAction.super.init(arg_1_0, ...)
 end
 
 BTDummyIdleAction.name = "BTDummyIdleAction"
 
-local function var_0_0(arg_2_0)
-	if type(arg_2_0) == "table" then
-		return arg_2_0[Math.random(1, #arg_2_0)]
+local function fn(self)
+	-- function 2
+	if type(self) == "table" then
+		return self[Math.random(1, #self)]
 	else
-		return arg_2_0
+		return self
 	end
 end
 
-function BTDummyIdleAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
-	local var_3_0 = Managers.state.network
-	local var_3_1 = "idle"
-	local var_3_2 = arg_3_0._tree_node.action_data
+BTDummyIdleAction.enter = function (self, arg_3_1, arg_3_2, arg_3_3)
+	-- function 3
+	local network = Managers.state.network
+	local str = "idle"
+	local action_data = self._tree_node.action_data
 
-	arg_3_2.action = var_3_2
+	arg_3_2.action = action_data
 
-	if var_3_2 and var_3_2.idle_animation then
-		var_3_1 = var_0_0(var_3_2.idle_animation)
+	if not action_data and not action_data.idle_animation then
+		str = fn(action_data.idle_animation)
 	end
 
-	if arg_3_2.move_state ~= "idle" and not var_3_2.no_anim then
-		var_3_0:anim_event(arg_3_1, var_3_1)
+	if not (arg_3_2.move_state == "idle" or action_data.no_anim) then
+		network:anim_event(arg_3_1, str)
 
 		arg_3_2.move_state = "idle"
 	end
 end
 
-function BTDummyIdleAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTDummyIdleAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	-- function 4
 	return
 end
 
-local var_0_1 = Unit.alive
+local alive = Unit.alive
 
-function BTDummyIdleAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTDummyIdleAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	-- function 5
 	return "running"
 end

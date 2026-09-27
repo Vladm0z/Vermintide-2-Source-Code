@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/dlc_versus/views/start_game_view/windows/definitions/start_game_window_versus_custom_game_settings_definitions.lua
 
-local var_0_0 = {
+local tbl = {
 	root = {
 		is_root = true,
 		size = {
@@ -43,7 +43,8 @@ local var_0_0 = {
 	}
 }
 
-local function var_0_1(arg_1_0, arg_1_1)
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
 	arg_1_1 = arg_1_1 or {
 		600,
 		380
@@ -97,14 +98,14 @@ local function var_0_1(arg_1_0, arg_1_1)
 	}
 end
 
-local var_0_2 = {
-	background = UIWidgets.create_rect_with_outer_frame("container", var_0_0.container.size, "frame_outer_fade_02", nil, UISettings.console_start_game_menu_rect_color),
-	mask = var_0_1("container", var_0_0.container.size)
+local tbl_2 = {
+	background = UIWidgets.create_rect_with_outer_frame("container", tbl.container.size, "frame_outer_fade_02", nil, UISettings.console_start_game_menu_rect_color),
+	mask = fn("container", tbl.container.size)
 }
-local var_0_3 = {}
+local tbl_3 = {}
 
 return {
-	scenegraph_definition = var_0_0,
-	widget_definitions = var_0_2,
-	animation_definitions = var_0_3
+	scenegraph_definition = tbl,
+	widget_definitions = tbl_2,
+	animation_definitions = tbl_3
 }

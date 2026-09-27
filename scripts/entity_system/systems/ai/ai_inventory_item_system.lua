@@ -1,60 +1,66 @@
 -- chunkname: @scripts/entity_system/systems/ai/ai_inventory_item_system.lua
 
-local var_0_0 = {}
-local var_0_1 = {
+local tbl = {}
+local tbl_2 = {
 	"AIInventoryItemExtension"
 }
 
 AIInventoryItemSystem = class(AIInventoryItemSystem, ExtensionSystemBase)
 
-function AIInventoryItemSystem.init(arg_1_0, arg_1_1, arg_1_2)
-	local var_1_0 = arg_1_1.entity_manager
+AIInventoryItemSystem.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	local entity_manager = arg_1_1.entity_manager
 
-	var_1_0:register_system(arg_1_0, arg_1_2, var_0_1)
+	entity_manager:register_system(self, arg_1_2, tbl_2)
 
-	arg_1_0.entity_manager = var_1_0
-	arg_1_0.is_server = arg_1_1.is_server
-	arg_1_0.world = arg_1_1.world
-	arg_1_0.unit_storage = arg_1_1.unit_storage
+	self.entity_manager = entity_manager
+	self.is_server = arg_1_1.is_server
+	self.world = arg_1_1.world
+	self.unit_storage = arg_1_1.unit_storage
 
-	local var_1_1 = arg_1_1.network_event_delegate
+	local network_event_delegate = arg_1_1.network_event_delegate
 
-	arg_1_0.network_event_delegate = var_1_1
+	self.network_event_delegate = network_event_delegate
 
-	var_1_1:register(arg_1_0, unpack(var_0_0))
+	network_event_delegate:register(self, unpack(tbl))
 
-	arg_1_0.entities = {}
+	self.entities = {}
 end
 
-function AIInventoryItemSystem.destroy(arg_2_0)
-	arg_2_0.network_event_delegate:unregister(arg_2_0)
+AIInventoryItemSystem.destroy = function (self)
+	-- function 2
+	self.network_event_delegate:unregister(self)
 end
 
-local var_0_2 = {}
+local tbl_3 = {}
 
-function AIInventoryItemSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
-	local var_3_0 = {}
+AIInventoryItemSystem.on_add_extension = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	-- function 3
+	local tbl = {}
 
-	ScriptUnit.set_extension(arg_3_2, "ai_inventory_item_system", var_3_0, var_0_2)
+	ScriptUnit.set_extension(arg_3_2, "ai_inventory_item_system", tbl, tbl_3)
 
 	if arg_3_3 == "AIInventoryItemExtension" then
-		arg_3_0.entities[arg_3_2] = var_3_0
-		var_3_0.wielding_unit = arg_3_4.wielding_unit
+		arg_3_0.entities[arg_3_2] = tbl
+		tbl.wielding_unit = arg_3_4.wielding_unit
 	end
 
-	return var_3_0
+	return tbl
 end
 
-function AIInventoryItemSystem.on_remove_extension(arg_4_0, arg_4_1, arg_4_2)
-	arg_4_0.entities[arg_4_1] = nil
+AIInventoryItemSystem.on_remove_extension = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	self.entities[arg_4_1] = nil
 
-	ScriptUnit.remove_extension(arg_4_1, arg_4_0.NAME)
+	ScriptUnit.remove_extension(arg_4_1, self.NAME)
 end
 
-function AIInventoryItemSystem.hot_join_sync(arg_5_0, arg_5_1)
+AIInventoryItemSystem.hot_join_sync = function (arg_5_0, arg_5_1)
+	-- function 5
 	return
 end
 
-function AIInventoryItemSystem.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+AIInventoryItemSystem.update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	-- function 6
 	return
 end

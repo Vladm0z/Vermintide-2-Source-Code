@@ -3,111 +3,127 @@
 WeaveTargetExtension = class(WeaveTargetExtension, BaseObjectiveExtension)
 WeaveTargetExtension.NAME = "WeaveTargetExtension"
 
-function WeaveTargetExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	WeaveTargetExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+WeaveTargetExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	WeaveTargetExtension.super.init(self, arg_1_1, arg_1_2, arg_1_3)
 
-	arg_1_0._on_start_func = arg_1_3.on_start_func
-	arg_1_0._on_progress_func = arg_1_3.on_progress_func
-	arg_1_0._on_complete_func = arg_1_3.on_complete_func
-	arg_1_0._audio_system = Managers.state.entity:system("audio_system")
-	arg_1_0.keep_alive = true
+	self._on_start_func = arg_1_3.on_start_func
+	self._on_progress_func = arg_1_3.on_progress_func
+	self._on_complete_func = arg_1_3.on_complete_func
+	self._audio_system = Managers.state.entity:system("audio_system")
+	self.keep_alive = true
 
-	local var_1_0 = arg_1_3.terror_event_spawner_id
+	local terror_event_spawner_id = arg_1_3.terror_event_spawner_id
 
-	Unit.set_data(arg_1_2, "terror_event_spawner_id", var_1_0)
+	Unit.set_data(arg_1_2, "terror_event_spawner_id", terror_event_spawner_id)
 
-	arg_1_0._attacks_allowed = arg_1_3.attacks_allowed or {
+	local attacks_allowed = arg_1_3.attacks_allowed
+
+	attacks_allowed = attacks_allowed or {
 		melee = true,
 		ranged = true
 	}
+	self._attacks_allowed = attacks_allowed
 
-	Unit.set_data(arg_1_2, "allow_melee_damage", arg_1_0._attacks_allowed.melee)
-	Unit.set_data(arg_1_2, "allow_ranged_damage", arg_1_0._attacks_allowed.ranged)
+	Unit.set_data(arg_1_2, "allow_melee_damage", self._attacks_allowed.melee)
+	Unit.set_data(arg_1_2, "allow_ranged_damage", self._attacks_allowed.ranged)
 end
 
-function WeaveTargetExtension.extensions_ready(arg_2_0)
-	arg_2_0._health_extension = ScriptUnit.has_extension(arg_2_0._unit, "health_system")
+WeaveTargetExtension.extensions_ready = function (self)
+	-- function 2
+	self._health_extension = ScriptUnit.has_extension(self._unit, "health_system")
 
-	if arg_2_0._health_extension then
-		arg_2_0._max_health = arg_2_0._health_extension:current_health()
-		arg_2_0._health = arg_2_0._max_health
+	if not self._health_extension then
+		self._max_health = self._health_extension:current_health()
+		self._health = self._max_health
 	end
 end
 
-function WeaveTargetExtension.display_name(arg_3_0)
+WeaveTargetExtension.display_name = function (arg_3_0)
+	-- function 3
 	return "objective_targets_name_single"
 end
 
-function WeaveTargetExtension.is_stacking_objective(arg_4_0)
+WeaveTargetExtension.is_stacking_objective = function (arg_4_0)
+	-- function 4
 	return "target"
 end
 
-function WeaveTargetExtension.initial_sync_data(arg_5_0, arg_5_1)
-	arg_5_1.value = arg_5_0:get_percentage_done()
+WeaveTargetExtension.initial_sync_data = function (self, arg_5_1)
+	-- function 5
+	arg_5_1.value = self:get_percentage_done()
 end
 
-function WeaveTargetExtension._set_objective_data(arg_6_0, arg_6_1)
+WeaveTargetExtension._set_objective_data = function (arg_6_0, arg_6_1)
+	-- function 6
 	return
 end
 
-function WeaveTargetExtension._activate(arg_7_0)
-	local var_7_0 = ScriptUnit.has_extension(arg_7_0._unit, "tutorial_system")
+WeaveTargetExtension._activate = function (self)
+	-- function 7
+	local has_extension = ScriptUnit.has_extension(self._unit, "tutorial_system")
 
-	if var_7_0 then
-		var_7_0:set_active(true)
+	if not has_extension then
+		has_extension:set_active(true)
 	end
 end
 
-function WeaveTargetExtension._deactivate(arg_8_0)
-	Unit.flow_event(arg_8_0._unit, "target_destroyed")
+WeaveTargetExtension._deactivate = function (self)
+	-- function 8
+	Unit.flow_event(self._unit, "target_destroyed")
 
-	ScriptUnit.extension(arg_8_0._unit, "tutorial_system").active = false
+	ScriptUnit.extension(self._unit, "tutorial_system").active = false
 
-	local var_8_0 = Unit.local_position(arg_8_0._unit, 0)
+	local local_position = Unit.local_position(self._unit, 0)
 
-	for iter_8_0 = 1, 3 do
-		local var_8_1 = math.random(-10, 10) / 10
-		local var_8_2 = math.random(-10, 10) / 10
-		local var_8_3 = math.random(-10, 10) / 10
+	for i = 1, 3 do
+		local num = math.random(-10, 10) / 10
+		local num_2 = math.random(-10, 10) / 10
+		local num_3 = math.random(-10, 10) / 10
 
-		Managers.state.entity:system("objective_system"):weave_essence_handler():spawn_essence_unit(var_8_0 + Vector3(0, 0, 0.5) + Vector3(var_8_1, var_8_2, var_8_3))
+		Managers.state.entity:system("objective_system"):weave_essence_handler():spawn_essence_unit(local_position + Vector3(0, 0, 0.5) + Vector3(num, num_2, num_3))
 	end
 end
 
-function WeaveTargetExtension._server_update(arg_9_0, arg_9_1, arg_9_2)
-	local var_9_0 = arg_9_0._health_extension:current_health()
+WeaveTargetExtension._server_update = function (self, arg_9_1, arg_9_2)
+	-- function 9
+	local current_health = self._health_extension:current_health()
 
-	if var_9_0 ~= arg_9_0._health then
-		if arg_9_0._on_start_func then
-			arg_9_0._on_start_func(arg_9_0._unit)
+	if current_health ~= self._health then
+		if not self._on_start_func then
+			self._on_start_func(self._unit)
 
-			arg_9_0._on_start_func = nil
+			self._on_start_func = nil
 		end
 
-		arg_9_0._audio_system:play_2d_audio_event("hud_text_reveal")
+		self._audio_system:play_2d_audio_event("hud_text_reveal")
 
-		if var_9_0 < arg_9_0._health and arg_9_0._on_progress_func then
-			arg_9_0._on_progress_func(arg_9_0._unit, var_9_0, arg_9_0._max_health)
+		if not (current_health < self._health) or not self._on_progress_func then
+			self._on_progress_func(self._unit, current_health, self._max_health)
 		end
 
-		arg_9_0._health = var_9_0
+		self._health = current_health
 
-		arg_9_0:server_set_value(arg_9_0:get_percentage_done())
+		self:server_set_value(self:get_percentage_done())
 	end
 end
 
-function WeaveTargetExtension._client_update(arg_10_0, arg_10_1, arg_10_2)
+WeaveTargetExtension._client_update = function (arg_10_0, arg_10_1, arg_10_2)
+	-- function 10
 	return
 end
 
-function WeaveTargetExtension.is_done(arg_11_0)
-	return arg_11_0._health_extension:is_dead()
+WeaveTargetExtension.is_done = function (self)
+	-- function 11
+	return self._health_extension:is_dead()
 end
 
-function WeaveTargetExtension.attacks_allowed(arg_12_0)
-	return arg_12_0._attacks_allowed
+WeaveTargetExtension.attacks_allowed = function (self)
+	-- function 12
+	return self._attacks_allowed
 end
 
-function WeaveTargetExtension.get_percentage_done(arg_13_0)
-	return math.clamp(1 - arg_13_0._health / arg_13_0._max_health, 0, 1)
+WeaveTargetExtension.get_percentage_done = function (self)
+	-- function 13
+	return math.clamp(1 - self._health / self._max_health, 0, 1)
 end

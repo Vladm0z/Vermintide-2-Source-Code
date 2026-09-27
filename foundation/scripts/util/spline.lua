@@ -2,141 +2,215 @@
 
 Spline = class(Spline)
 
-function Spline.calc_point(arg_1_0, arg_1_1)
-	local var_1_0 = arg_1_1 * arg_1_1
-	local var_1_1 = var_1_0 * arg_1_1
-	local var_1_2 = var_1_1 + var_1_1
-	local var_1_3 = var_1_0 + var_1_0
-	local var_1_4 = var_1_3 + var_1_0
-	local var_1_5 = var_1_2 - var_1_4 + 1
-	local var_1_6 = var_1_4 - var_1_2
-	local var_1_7 = var_1_1 - var_1_3 + arg_1_1
-	local var_1_8 = var_1_1 - var_1_0
+Spline.calc_point = function (self, arg_1_1)
+	-- function 1
+	local num = arg_1_1 * arg_1_1
+	local num_2 = num * arg_1_1
+	local num_3 = num_2 + num_2
+	local num_4 = num + num
+	local num_5 = num_4 + num
+	local num_6 = num_3 - num_5 + 1
+	local num_7 = num_5 - num_3
+	local num_8 = num_2 - num_4 + arg_1_1
+	local num_9 = num_2 - num
 
-	return Vector3.from_table(arg_1_0._P1) * var_1_5 + Vector3.from_table(arg_1_0._P2) * var_1_6 + Vector3.from_table(arg_1_0._T1) * var_1_7 + Vector3.from_table(arg_1_0._T2) * var_1_8
+	return Vector3.from_table(self._P1) * num_6 + Vector3.from_table(self._P2) * num_7 + Vector3.from_table(self._T1) * num_8 + Vector3.from_table(self._T2) * num_9
 end
 
-function Spline.calc_tangent(arg_2_0, arg_2_1)
-	local var_2_0 = arg_2_1 * arg_2_1
-	local var_2_1 = 6 * var_2_0 - 6 * arg_2_1
-	local var_2_2 = 6 * arg_2_1 - 6 * var_2_0
-	local var_2_3 = 3 * var_2_0 - 4 * arg_2_1 + 1
-	local var_2_4 = 3 * var_2_0 - 2 * arg_2_1
+Spline.calc_tangent = function (self, arg_2_1)
+	-- function 2
+	local num = arg_2_1 * arg_2_1
+	local num_2 = 6 * num - 6 * arg_2_1
+	local num_3 = 6 * arg_2_1 - 6 * num
+	local num_4 = 3 * num - 4 * arg_2_1 + 1
+	local num_5 = 3 * num - 2 * arg_2_1
 
-	return Vector3.from_table(arg_2_0._P1) * var_2_1 + Vector3.from_table(arg_2_0._P2) * var_2_2 + Vector3.from_table(arg_2_0._T1) * var_2_3 + Vector3.from_table(arg_2_0._T2) * var_2_4
+	return Vector3.from_table(self._P1) * num_2 + Vector3.from_table(self._P2) * num_3 + Vector3.from_table(self._T1) * num_4 + Vector3.from_table(self._T2) * num_5
 end
 
-function Spline.set_points(arg_3_0, arg_3_1)
-	local var_3_0 = Vector3.from_table(arg_3_1[1])
-	local var_3_1 = Vector3.from_table(arg_3_1[2])
-	local var_3_2 = Vector3.from_table(arg_3_1[3])
-	local var_3_3 = Vector3.from_table(arg_3_1[4])
-	local var_3_4 = Vector3.length(var_3_1 - var_3_2)
-	local var_3_5 = Vector3.normalize(var_3_2 - var_3_0) * var_3_4
+Spline.set_points = function (self, arg_3_1)
+	-- function 3
+	local from_table = Vector3.from_table(arg_3_1[1])
+	local from_table_2 = Vector3.from_table(arg_3_1[2])
+	local from_table_3 = Vector3.from_table(arg_3_1[3])
+	local from_table_4 = Vector3.from_table(arg_3_1[4])
+	local length = Vector3.length(from_table_2 - from_table_3)
+	local num = Vector3.normalize(from_table_3 - from_table) * length
 
-	arg_3_0._T1 = Vector3.as_table(var_3_5)
+	self._T1 = Vector3.as_table(num)
 
-	local var_3_6 = Vector3.normalize(var_3_3 - var_3_1) * var_3_4
+	local num_2 = Vector3.normalize(from_table_4 - from_table_2) * length
 
-	arg_3_0._T2 = Vector3.as_table(var_3_6)
-	arg_3_0._P1 = table.clone(Vector3.as_table(arg_3_1[2]))
-	arg_3_0._P2 = table.clone(Vector3.as_table(arg_3_1[3]))
+	self._T2 = Vector3.as_table(num_2)
+	self._P1 = table.clone(Vector3.as_table(arg_3_1[2]))
+	self._P2 = table.clone(Vector3.as_table(arg_3_1[3]))
 end
 
-function Spline.draw(arg_4_0, arg_4_1, arg_4_2)
+Spline.draw = function (self, arg_4_1, arg_4_2)
+	-- function 4
 	arg_4_2 = arg_4_2 or 20
 
-	local var_4_0 = 1 / arg_4_2
-	local var_4_1 = 0
-	local var_4_2 = arg_4_0:calc_point(var_4_1)
+	local num = 1 / arg_4_2
+	local num_2 = 0
+	local calc_point = self:calc_point(num_2)
 
-	while var_4_1 < 1 do
-		var_4_1 = var_4_1 + var_4_0
+	while num_2 < 1 do
+		num_2 = num_2 + num
 
-		local var_4_3 = arg_4_0:calc_point(var_4_1)
+		local calc_point_2 = self:calc_point(num_2)
 
-		arg_4_1:line(var_4_2, var_4_3)
+		arg_4_1:line(calc_point, calc_point_2)
 
-		var_4_2 = var_4_3
+		calc_point = calc_point_2
 	end
 end
 
-function Spline.length(arg_5_0, arg_5_1)
-	local var_5_0 = 0
-	local var_5_1 = Vector3.from_table(arg_5_0._P1)
+Spline.length = function (self, arg_5_1)
+	-- function 5
+	local num = 0
+	local from_table = Vector3.from_table(self._P1)
 
-	for iter_5_0 = 1, arg_5_1 do
-		local var_5_2 = arg_5_0:calc_point(iter_5_0 / arg_5_1)
+	for i = 1, arg_5_1 do
+		local calc_point = self:calc_point(i / arg_5_1)
 
-		var_5_0 = var_5_0 + Vector3.length(var_5_2 - var_5_1)
-		var_5_1 = var_5_2
+		num = num + Vector3.length(calc_point - from_table)
+		from_table = calc_point
 	end
 
-	return var_5_0
+	return num
 end
 
-function Spline.tangent(arg_6_0, arg_6_1, arg_6_2)
+Spline.tangent = function (self, arg_6_1, arg_6_2)
+	-- function 6
 	arg_6_2 = arg_6_2 or 0.01
 
-	local var_6_0 = math.max(arg_6_1 - arg_6_2, 0)
-	local var_6_1 = math.min(arg_6_1 + arg_6_2, 1)
-	local var_6_2 = arg_6_0:calc_point(var_6_0)
-	local var_6_3 = arg_6_0:calc_point(var_6_1)
+	local max = math.max(arg_6_1 - arg_6_2, 0)
+	local min = math.min(arg_6_1 + arg_6_2, 1)
+	local calc_point = self:calc_point(max)
+	local calc_point_2 = self:calc_point(min)
 
-	return Vector3.normalize(var_6_3 - var_6_2)
+	return Vector3.normalize(calc_point_2 - calc_point)
 end
 
-function Spline.set_points_manual_tangents(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
-	arg_7_0._T1 = arg_7_1 and Vector3.as_table(arg_7_1) or arg_7_0._T1
-	arg_7_0._T2 = arg_7_2 and Vector3.as_table(arg_7_2) or arg_7_0._T2
-	arg_7_0._P1 = arg_7_3 and Vector3.as_table(arg_7_3) or arg_7_0._P1
-	arg_7_0._P2 = arg_7_4 and Vector3.as_table(arg_7_4) or arg_7_0._P2
+Spline.set_points_manual_tangents = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	-- function 7
+	local as_table
+
+	if not arg_7_1 then
+		as_table = Vector3.as_table(arg_7_1)
+
+		if not as_table then
+			-- Nothing
+		end
+	end
+
+	as_table = self._T1
+
+	::label_7_0::
+
+	self._T1 = as_table
+
+	local as_table_2
+
+	if not arg_7_2 then
+		as_table_2 = Vector3.as_table(arg_7_2)
+
+		if not as_table_2 then
+			-- Nothing
+		end
+	end
+
+	as_table_2 = self._T2
+
+	::label_7_1::
+
+	self._T2 = as_table_2
+
+	local as_table_3
+
+	if not arg_7_3 then
+		as_table_3 = Vector3.as_table(arg_7_3)
+
+		if not as_table_3 then
+			-- Nothing
+		end
+	end
+
+	as_table_3 = self._P1
+
+	::label_7_2::
+
+	self._P1 = as_table_3
+
+	local as_table_4
+
+	if not arg_7_4 then
+		as_table_4 = Vector3.as_table(arg_7_4)
+
+		if not as_table_4 then
+			-- Nothing
+		end
+	end
+
+	as_table_4 = self._P2
+
+	::label_7_3::
+
+	self._P2 = as_table_4
 end
 
-function Spline.set_points_with_rotation_tangents(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
-	arg_8_0._P1 = table.clone(Vector3.as_table(arg_8_1[1]))
-	arg_8_0._P2 = table.clone(Vector3.as_table(arg_8_1[2]))
+Spline.set_points_with_rotation_tangents = function (self, arg_8_1, arg_8_2, arg_8_3)
+	-- function 8
+	self._P1 = table.clone(Vector3.as_table(arg_8_1[1]))
+	self._P2 = table.clone(Vector3.as_table(arg_8_1[2]))
 
-	local var_8_0 = Vector3.length(Vector3.from_table(arg_8_1[1]) - Vector3.from_table(arg_8_1[2]))
+	local length = Vector3.length(Vector3.from_table(arg_8_1[1]) - Vector3.from_table(arg_8_1[2]))
 
-	arg_8_0._T1 = Vector3.as_table(Vector3.from_table(arg_8_2) * var_8_0)
-	arg_8_0._T2 = Vector3.as_table(Vector3.from_table(arg_8_3) * var_8_0)
+	self._T1 = Vector3.as_table(Vector3.from_table(arg_8_2) * length)
+	self._T2 = Vector3.as_table(Vector3.from_table(arg_8_3) * length)
 end
 
-function Spline.set_points_manual_start_tangent(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
-	local var_9_0 = Vector3.length(arg_9_2 - arg_9_3)
+Spline.set_points_manual_start_tangent = function (self, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	-- function 9
+	local length = Vector3.length(arg_9_2 - arg_9_3)
 
-	arg_9_0._T1 = Vector3.as_table(arg_9_1 * var_9_0)
-	arg_9_0._T2 = Vector3.as_table(Vector3.normalize(arg_9_4 - arg_9_2) * var_9_0)
-	arg_9_0._P1 = Vector3.as_table(arg_9_2)
-	arg_9_0._P2 = Vector3.as_table(arg_9_3)
+	self._T1 = Vector3.as_table(arg_9_1 * length)
+	self._T2 = Vector3.as_table(Vector3.normalize(arg_9_4 - arg_9_2) * length)
+	self._P1 = Vector3.as_table(arg_9_2)
+	self._P2 = Vector3.as_table(arg_9_3)
 end
 
-function Spline.set_points_manual_end_tangent(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
-	local var_10_0 = Vector3.length(arg_10_2 - arg_10_3)
+Spline.set_points_manual_end_tangent = function (self, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+	-- function 10
+	local length = Vector3.length(arg_10_2 - arg_10_3)
 
-	arg_10_0._T1 = Vector3.as_table(Vector3.normalize(arg_10_3 - arg_10_1) * var_10_0)
-	arg_10_0._T2 = Vector3.as_table(arg_10_4 * var_10_0)
-	arg_10_0._P1 = Vector3.as_table(arg_10_2)
-	arg_10_0._P2 = Vector3.as_table(arg_10_3)
+	self._T1 = Vector3.as_table(Vector3.normalize(arg_10_3 - arg_10_1) * length)
+	self._T2 = Vector3.as_table(arg_10_4 * length)
+	self._P1 = Vector3.as_table(arg_10_2)
+	self._P2 = Vector3.as_table(arg_10_3)
 end
 
-function Spline.debug_print(arg_11_0)
+Spline.debug_print = function (arg_11_0)
+	-- function 11
 	return
 end
 
-function Spline.p1(arg_12_0)
-	return arg_12_0._P1
+Spline.p1 = function (self)
+	-- function 12
+	return self._P1
 end
 
-function Spline.p2(arg_13_0)
-	return arg_13_0._P2
+Spline.p2 = function (self)
+	-- function 13
+	return self._P2
 end
 
-function Spline.t1(arg_14_0)
-	return arg_14_0._T1
+Spline.t1 = function (self)
+	-- function 14
+	return self._T1
 end
 
-function Spline.t2(arg_15_0)
-	return arg_15_0._T2
+Spline.t2 = function (self)
+	-- function 15
+	return self._T2
 end

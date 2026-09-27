@@ -2,7 +2,7 @@
 
 DebugHeroTemplates = {}
 
-local var_0_0 = {
+local tbl = {
 	prestige_level = 2,
 	level = 5,
 	items = {
@@ -20,7 +20,7 @@ local var_0_0 = {
 	},
 	talents = {}
 }
-local var_0_1 = {
+local tbl_2 = {
 	prestige_level = 5,
 	level = 15,
 	items = {
@@ -38,7 +38,7 @@ local var_0_1 = {
 	},
 	talents = {}
 }
-local var_0_2 = {
+local tbl_3 = {
 	prestige_level = 8,
 	level = 30,
 	items = {
@@ -57,11 +57,11 @@ local var_0_2 = {
 	talents = {}
 }
 
-DebugHeroTemplates.dr_ironbreaker = table.clone(var_0_0)
-DebugHeroTemplates.dr_slayer = table.clone(var_0_1)
-DebugHeroTemplates.dr_ranger = table.clone(var_0_2)
+DebugHeroTemplates.dr_ironbreaker = table.clone(tbl)
+DebugHeroTemplates.dr_slayer = table.clone(tbl_2)
+DebugHeroTemplates.dr_ranger = table.clone(tbl_3)
 
-local var_0_3 = {
+local tbl_4 = {
 	prestige_level = 2,
 	level = 5,
 	items = {
@@ -76,7 +76,7 @@ local var_0_3 = {
 	},
 	talents = {}
 }
-local var_0_4 = {
+local tbl_5 = {
 	prestige_level = 5,
 	level = 15,
 	items = {
@@ -91,7 +91,7 @@ local var_0_4 = {
 	},
 	talents = {}
 }
-local var_0_5 = {
+local tbl_6 = {
 	prestige_level = 8,
 	level = 30,
 	items = {
@@ -107,11 +107,11 @@ local var_0_5 = {
 	talents = {}
 }
 
-DebugHeroTemplates.wh_zealot = table.clone(var_0_3)
-DebugHeroTemplates.wh_bountyhunter = table.clone(var_0_4)
-DebugHeroTemplates.wh_captain = table.clone(var_0_5)
+DebugHeroTemplates.wh_zealot = table.clone(tbl_4)
+DebugHeroTemplates.wh_bountyhunter = table.clone(tbl_5)
+DebugHeroTemplates.wh_captain = table.clone(tbl_6)
 
-local var_0_6 = {
+local tbl_7 = {
 	prestige_level = 2,
 	level = 5,
 	items = {
@@ -129,7 +129,7 @@ local var_0_6 = {
 	},
 	talents = {}
 }
-local var_0_7 = {
+local tbl_8 = {
 	prestige_level = 5,
 	level = 15,
 	items = {
@@ -148,7 +148,7 @@ local var_0_7 = {
 	},
 	talents = {}
 }
-local var_0_8 = {
+local tbl_9 = {
 	prestige_level = 8,
 	level = 30,
 	items = {
@@ -167,11 +167,11 @@ local var_0_8 = {
 	talents = {}
 }
 
-DebugHeroTemplates.es_poacher = table.clone(var_0_6)
-DebugHeroTemplates.es_fullplate = table.clone(var_0_7)
-DebugHeroTemplates.es_vanilla = table.clone(var_0_8)
+DebugHeroTemplates.es_poacher = table.clone(tbl_7)
+DebugHeroTemplates.es_fullplate = table.clone(tbl_8)
+DebugHeroTemplates.es_vanilla = table.clone(tbl_9)
 
-local var_0_9 = {
+local tbl_10 = {
 	prestige_level = 2,
 	level = 5,
 	items = {
@@ -187,7 +187,7 @@ local var_0_9 = {
 	},
 	talents = {}
 }
-local var_0_10 = {
+local tbl_11 = {
 	prestige_level = 5,
 	level = 15,
 	items = {
@@ -203,7 +203,7 @@ local var_0_10 = {
 	},
 	talents = {}
 }
-local var_0_11 = {
+local tbl_12 = {
 	prestige_level = 8,
 	level = 30,
 	items = {
@@ -220,11 +220,11 @@ local var_0_11 = {
 	talents = {}
 }
 
-DebugHeroTemplates.we_shade = table.clone(var_0_9)
-DebugHeroTemplates.we_maiden = table.clone(var_0_10)
-DebugHeroTemplates.we_waywatcher = table.clone(var_0_11)
+DebugHeroTemplates.we_shade = table.clone(tbl_10)
+DebugHeroTemplates.we_maiden = table.clone(tbl_11)
+DebugHeroTemplates.we_waywatcher = table.clone(tbl_12)
 
-local var_0_12 = {
+local tbl_13 = {
 	prestige_level = 2,
 	level = 5,
 	items = {
@@ -238,7 +238,7 @@ local var_0_12 = {
 	},
 	talents = {}
 }
-local var_0_13 = {
+local tbl_14 = {
 	prestige_level = 5,
 	level = 15,
 	items = {
@@ -252,7 +252,7 @@ local var_0_13 = {
 	},
 	talents = {}
 }
-local var_0_14 = {
+local tbl_15 = {
 	prestige_level = 8,
 	level = 30,
 	items = {
@@ -267,10 +267,10 @@ local var_0_14 = {
 	talents = {}
 }
 
-DebugHeroTemplates.bw_sniper = table.clone(var_0_12)
-DebugHeroTemplates.bw_boomer = table.clone(var_0_13)
-DebugHeroTemplates.bw_melee = table.clone(var_0_14)
+DebugHeroTemplates.bw_sniper = table.clone(tbl_13)
+DebugHeroTemplates.bw_boomer = table.clone(tbl_14)
+DebugHeroTemplates.bw_melee = table.clone(tbl_15)
 
-for iter_0_0, iter_0_1 in pairs(DebugHeroTemplates) do
-	iter_0_1.name = iter_0_0
+for k, v in pairs(DebugHeroTemplates) do
+	v.name = k
 end

@@ -1,9 +1,10 @@
 -- chunkname: @scripts/settings/dlcs/morris/morris_potion_settings.lua
 
-local var_0_0 = DLCSettings.morris.pickups.deus_potions
+local deus_potions = DLCSettings.morris.pickups.deus_potions
 
-local function var_0_1(arg_1_0)
-	local var_1_0 = {
+local function fn(arg_1_0)
+	-- function 1
+	local tbl = {
 		actions = {
 			action_one = {
 				default = {
@@ -17,15 +18,17 @@ local function var_0_1(arg_1_0)
 					uninterruptible = true,
 					anim_event = "attack_heal",
 					total_time = 1.3,
-					anim_end_event_condition_func = function(arg_2_0, arg_2_1)
-						return arg_2_1 ~= "new_interupting_action" and arg_2_1 ~= "action_complete"
+					anim_end_event_condition_func = function (arg_2_0, arg_2_1)
+						-- function 2
+						return arg_2_1 == "new_interupting_action" or arg_2_1 ~= "action_complete"
 					end,
-					condition_func = function(arg_3_0)
-						local var_3_0 = ScriptUnit.extension(arg_3_0, "buff_system")
-						local var_3_1 = var_3_0:has_buff_type(arg_1_0 .. "_potion")
-						local var_3_2 = var_3_0:has_buff_type(arg_1_0 .. "_potion_increased")
+					condition_func = function (arg_3_0)
+						-- function 3
+						local extension = ScriptUnit.extension(arg_3_0, "buff_system")
+						local has_buff_type = extension:has_buff_type(arg_1_0 .. "_potion")
+						local has_buff_type_2 = extension:has_buff_type(arg_1_0 .. "_potion_increased")
 
-						return not (var_3_1 or var_3_2)
+						return not (has_buff_type or has_buff_type_2)
 					end,
 					allowed_chain_actions = {},
 					buff_template = arg_1_0 .. "_potion"
@@ -54,12 +57,14 @@ local function var_0_1(arg_1_0)
 					anim_event = "attack_heal",
 					auto_validate_on_gamepad = true,
 					total_time = 1.3,
-					anim_end_event_condition_func = function(arg_4_0, arg_4_1)
-						return arg_4_1 ~= "new_interupting_action" and arg_4_1 ~= "action_complete"
+					anim_end_event_condition_func = function (arg_4_0, arg_4_1)
+						-- function 4
+						return arg_4_1 == "new_interupting_action" or arg_4_1 ~= "action_complete"
 					end,
 					allowed_chain_actions = {},
 					buff_template = arg_1_0 .. "_potion",
-					condition_func = function(arg_5_0)
+					condition_func = function (arg_5_0)
+						-- function 5
 						return true
 					end
 				}
@@ -81,15 +86,15 @@ local function var_0_1(arg_1_0)
 		}
 	}
 
-	var_1_0.left_hand_unit = "units/weapons/player/wpn_potion_buff/wpn_potion_buff"
-	var_1_0.left_hand_attachment_node_linking = AttachmentNodeLinking.potion
-	var_1_0.wield_anim = "to_potion"
-	var_1_0.state_machine = "units/beings/player/first_person_base/state_machines/common"
-	var_1_0.load_state_machine = false
-	var_1_0.gui_texture = "hud_consumable_icon_potion"
-	var_1_0.max_fatigue_points = 4
-	var_1_0.can_give_other = true
-	var_1_0.buffs = {
+	tbl.left_hand_unit = "units/weapons/player/wpn_potion_buff/wpn_potion_buff"
+	tbl.left_hand_attachment_node_linking = AttachmentNodeLinking.potion
+	tbl.wield_anim = "to_potion"
+	tbl.state_machine = "units/beings/player/first_person_base/state_machines/common"
+	tbl.load_state_machine = false
+	tbl.gui_texture = "hud_consumable_icon_potion"
+	tbl.max_fatigue_points = 4
+	tbl.can_give_other = true
+	tbl.buffs = {
 		change_dodge_distance = {
 			external_optional_multiplier = 1
 		},
@@ -97,21 +102,21 @@ local function var_0_1(arg_1_0)
 			external_optional_multiplier = 1
 		}
 	}
-	var_1_0.pickup_data = {
+	tbl.pickup_data = {
 		pickup_name = arg_1_0 .. "_potion"
 	}
-	var_1_0.material_settings_name = var_0_0[arg_1_0 .. "_potion"].material_settings_name
+	tbl.material_settings_name = deus_potions[arg_1_0 .. "_potion"].material_settings_name
 
-	return var_1_0
+	return tbl
 end
 
 return {
-	liquid_bravado_potion = var_0_1("liquid_bravado"),
-	vampiric_draught_potion = var_0_1("vampiric_draught"),
-	moot_milk_potion = var_0_1("moot_milk"),
-	friendly_murderer_potion = var_0_1("friendly_murderer"),
-	killer_in_the_shadows_potion = var_0_1("killer_in_the_shadows"),
-	pockets_full_of_bombs_potion = var_0_1("pockets_full_of_bombs"),
-	hold_my_beer_potion = var_0_1("hold_my_beer"),
-	poison_proof_potion = var_0_1("poison_proof")
+	liquid_bravado_potion = fn("liquid_bravado"),
+	vampiric_draught_potion = fn("vampiric_draught"),
+	moot_milk_potion = fn("moot_milk"),
+	friendly_murderer_potion = fn("friendly_murderer"),
+	killer_in_the_shadows_potion = fn("killer_in_the_shadows"),
+	pockets_full_of_bombs_potion = fn("pockets_full_of_bombs"),
+	hold_my_beer_potion = fn("hold_my_beer"),
+	poison_proof_potion = fn("poison_proof")
 }

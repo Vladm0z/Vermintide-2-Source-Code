@@ -2,19 +2,20 @@
 
 require("scripts/unit_extensions/generic/generic_volume_templates")
 
-local var_0_0 = "PlayerVolumeExtension"
-local var_0_1 = "BotVolumeExtension"
-local var_0_2 = "AIVolumeExtension"
-local var_0_3 = "PickupProjectileVolumeExtension"
-local var_0_4 = "LocalPlayerVolumeExtension"
+local str = "PlayerVolumeExtension"
+local str_2 = "BotVolumeExtension"
+local str_3 = "AIVolumeExtension"
+local str_4 = "PickupProjectileVolumeExtension"
+local str_5 = "LocalPlayerVolumeExtension"
+local VolumeSystemSettings = VolumeSystemSettings
 
 VolumeSystemSettings = VolumeSystemSettings or {
 	updates_per_frame = {
-		[var_0_0] = 4,
-		[var_0_4] = 1,
-		[var_0_1] = 3,
-		[var_0_2] = 10,
-		[var_0_3] = 1
+		[str] = 4,
+		[str_5] = 1,
+		[str_2] = 3,
+		[str_3] = 10,
+		[str_4] = 1
 	},
 	traversal_costs = {
 		high = 2,
@@ -24,10 +25,14 @@ VolumeSystemSettings = VolumeSystemSettings or {
 		medium = 1.5
 	}
 }
+VolumeSystemSettings = VolumeSystemSettings
+
+local VolumeExtensionSettings = VolumeExtensionSettings
+
 VolumeExtensionSettings = VolumeExtensionSettings or {
 	damage_volume = {
 		generic_dot = {
-			[var_0_0] = {
+			[str] = {
 				time_between_damage = 2,
 				damage = {
 					10,
@@ -37,7 +42,7 @@ VolumeExtensionSettings = VolumeExtensionSettings or {
 					10
 				}
 			},
-			[var_0_1] = {
+			[str_2] = {
 				traversal_cost = "low",
 				time_between_damage = 2,
 				damage = {
@@ -48,7 +53,7 @@ VolumeExtensionSettings = VolumeExtensionSettings or {
 					10
 				}
 			},
-			[var_0_2] = {
+			[str_3] = {
 				traversal_cost = "low",
 				time_between_damage = 2,
 				damage = {
@@ -61,7 +66,7 @@ VolumeExtensionSettings = VolumeExtensionSettings or {
 			}
 		},
 		warpstone_meteor = {
-			[var_0_0] = {
+			[str] = {
 				time_between_damage = 0.1,
 				damage = {
 					3,
@@ -71,7 +76,7 @@ VolumeExtensionSettings = VolumeExtensionSettings or {
 					3
 				}
 			},
-			[var_0_1] = {
+			[str_2] = {
 				traversal_cost = "medium",
 				time_between_damage = 0.1,
 				damage = {
@@ -82,7 +87,7 @@ VolumeExtensionSettings = VolumeExtensionSettings or {
 					3
 				}
 			},
-			[var_0_2] = {
+			[str_3] = {
 				traversal_cost = "medium",
 				time_between_damage = 0.1,
 				damage = {
@@ -95,7 +100,7 @@ VolumeExtensionSettings = VolumeExtensionSettings or {
 			}
 		},
 		ai_kill_dot = {
-			[var_0_2] = {
+			[str_3] = {
 				traversal_cost = "insane",
 				time_between_damage = 0.1,
 				damage = {
@@ -108,53 +113,53 @@ VolumeExtensionSettings = VolumeExtensionSettings or {
 			}
 		},
 		generic_insta_kill = {
-			[var_0_0] = {},
-			[var_0_4] = {},
-			[var_0_1] = {
+			[str] = {},
+			[str_5] = {},
+			[str_2] = {
 				traversal_cost = "high"
 			},
-			[var_0_2] = {
+			[str_3] = {
 				traversal_cost = "high"
 			}
 		},
 		player_insta_kill = {
-			[var_0_0] = {},
-			[var_0_4] = {},
-			[var_0_1] = {
+			[str] = {},
+			[str_5] = {},
+			[str_2] = {
 				traversal_cost = "high"
 			}
 		},
 		ai_insta_kill = {
-			[var_0_2] = {
+			[str_3] = {
 				traversal_cost = "high"
 			}
 		},
 		generic_insta_kill_no_cost = {
-			[var_0_0] = {},
-			[var_0_4] = {},
-			[var_0_1] = {},
-			[var_0_2] = {}
+			[str] = {},
+			[str_5] = {},
+			[str_2] = {},
+			[str_3] = {}
 		},
 		player_insta_kill_no_cost = {
-			[var_0_0] = {},
-			[var_0_4] = {},
-			[var_0_1] = {}
+			[str] = {},
+			[str_5] = {},
+			[str_2] = {}
 		},
 		pactsworn_insta_kill_no_cost = {
-			[var_0_0] = {},
-			[var_0_4] = {},
-			[var_0_1] = {}
+			[str] = {},
+			[str_5] = {},
+			[str_2] = {}
 		},
 		heroes_insta_kill_no_cost = {
-			[var_0_0] = {},
-			[var_0_4] = {},
-			[var_0_1] = {}
+			[str] = {},
+			[str_5] = {},
+			[str_2] = {}
 		},
 		ai_insta_kill_no_cost = {
-			[var_0_2] = {}
+			[str_3] = {}
 		},
 		ai_kill_dot_no_cost = {
-			[var_0_2] = {
+			[str_3] = {
 				time_between_damage = 0.1,
 				damage = {
 					500,
@@ -166,7 +171,7 @@ VolumeExtensionSettings = VolumeExtensionSettings or {
 			}
 		},
 		generic_fire = {
-			[var_0_0] = {
+			[str] = {
 				time_between_damage = 0.5,
 				damage = {
 					1,
@@ -176,7 +181,7 @@ VolumeExtensionSettings = VolumeExtensionSettings or {
 					1
 				}
 			},
-			[var_0_1] = {
+			[str_2] = {
 				traversal_cost = "high",
 				time_between_damage = 0.5,
 				damage = {
@@ -189,16 +194,16 @@ VolumeExtensionSettings = VolumeExtensionSettings or {
 			}
 		},
 		catacombs_corpse_pit = {
-			[var_0_0] = {}
+			[str] = {}
 		},
 		cemetery_plague_floor = {
-			[var_0_0] = {},
-			[var_0_1] = {
+			[str] = {},
+			[str_2] = {
 				traversal_cost = "insane"
 			}
 		},
 		skaven_molten_steel = {
-			[var_0_0] = {
+			[str] = {
 				time_between_damage = 1,
 				damage = {
 					10,
@@ -208,7 +213,7 @@ VolumeExtensionSettings = VolumeExtensionSettings or {
 					10
 				}
 			},
-			[var_0_1] = {
+			[str_2] = {
 				traversal_cost = "inferno",
 				time_between_damage = 1,
 				damage = {
@@ -219,7 +224,7 @@ VolumeExtensionSettings = VolumeExtensionSettings or {
 					10
 				}
 			},
-			[var_0_2] = {
+			[str_3] = {
 				traversal_cost = "inferno",
 				time_between_damage = 1,
 				damage = {
@@ -232,130 +237,139 @@ VolumeExtensionSettings = VolumeExtensionSettings or {
 			}
 		},
 		bot_avoid_area = {
-			[var_0_1] = {
+			[str_2] = {
 				traversal_cost = "inferno"
 			}
 		},
 		ai_avoid_area = {
-			[var_0_2] = {
+			[str_3] = {
 				traversal_cost = "inferno"
 			}
 		}
 	},
 	movement_volume = {
 		generic_slowdown = {
-			[var_0_0] = {
+			[str] = {
 				speed_multiplier = 0.75
 			},
-			[var_0_1] = {
+			[str_2] = {
 				speed_multiplier = 0.75
 			}
 		},
 		generic_slowdown_2 = {
-			[var_0_0] = {
+			[str] = {
 				speed_multiplier = 0.6
 			},
-			[var_0_1] = {
+			[str_2] = {
 				speed_multiplier = 0.6
 			}
 		},
 		generic_slowdown_3 = {
-			[var_0_0] = {
+			[str] = {
 				speed_multiplier = 0.8
 			},
-			[var_0_1] = {
+			[str_2] = {
 				speed_multiplier = 0.8
 			}
 		},
 		generic_slowdown_glue = {
-			[var_0_0] = {
+			[str] = {
 				speed_multiplier = 0.1
 			},
-			[var_0_1] = {
+			[str_2] = {
 				speed_multiplier = 0.1
 			}
 		}
 	},
 	location_volume = {
 		area_indication = {
-			[var_0_0] = {}
+			[str] = {}
 		}
 	},
 	trigger_volume = {
 		all_alive_humans_outside = {
-			[var_0_0] = {
+			[str] = {
 				filter = GenericVolumeTemplates.filters.unit_not_disabled
 			}
 		},
 		all_alive_players_outside = {
-			[var_0_0] = {
+			[str] = {
 				filter = GenericVolumeTemplates.filters.unit_not_disabled
 			},
-			[var_0_1] = {
+			[str_2] = {
 				filter = GenericVolumeTemplates.filters.unit_not_disabled
 			}
 		},
 		all_alive_players_outside_no_alive_inside = {
-			[var_0_0] = {
+			[str] = {
 				filter = GenericVolumeTemplates.filters.unit_not_disabled_outside_or_disabled_inside_and_not_all_disabled_inside
 			},
-			[var_0_1] = {
+			[str_2] = {
 				filter = GenericVolumeTemplates.filters.unit_not_disabled_outside_or_disabled_inside_and_not_all_disabled_inside
 			}
 		},
 		all_alive_players_inside = {
-			[var_0_0] = {
+			[str] = {
 				filter = GenericVolumeTemplates.filters.all_alive_players_inside
 			}
 		},
 		all_non_disabled_players_inside = {
-			[var_0_0] = {
+			[str] = {
 				filter = GenericVolumeTemplates.filters.all_non_disabled_players_inside
 			}
 		},
 		non_disabled_players_inside = {
-			[var_0_0] = {
+			[str] = {
 				filter = GenericVolumeTemplates.filters.unit_not_disabled
 			}
 		},
 		ai_inside = {
-			[var_0_2] = {
+			[str_3] = {
 				filter = GenericVolumeTemplates.filters.is_alive_default_enemy
 			}
 		},
 		players_and_bots_inside = {
-			[var_0_0] = {},
-			[var_0_1] = {}
+			[str] = {},
+			[str_2] = {}
 		},
 		players_inside = {
-			[var_0_0] = {}
+			[str] = {}
 		},
 		local_player_inside = {
-			[var_0_0] = {},
-			[var_0_4] = {}
+			[str] = {},
+			[str_5] = {}
 		}
 	},
 	despawn_volume = {
 		pickup_projectiles = {
-			[var_0_3] = {}
+			[str_4] = {}
 		}
 	}
 }
+VolumeExtensionSettings = VolumeExtensionSettings
 
-local var_0_5 = {}
+local tbl = {}
 
-for iter_0_0, iter_0_1 in pairs(VolumeExtensionSettings) do
-	for iter_0_2, iter_0_3 in pairs(iter_0_1) do
-		for iter_0_4, iter_0_5 in pairs(iter_0_3) do
-			local var_0_6 = iter_0_5.traversal_cost
+for k, v in pairs(VolumeExtensionSettings) do
+	for k_2, v_2 in pairs(v) do
+		for k_3, v_3 in pairs(v_2) do
+			local traversal_cost = v_3.traversal_cost
 
-			if var_0_6 then
-				var_0_5[iter_0_0] = var_0_5[iter_0_0] or {}
-				var_0_5[iter_0_0][iter_0_2] = var_0_5[iter_0_0][iter_0_2] or {}
-				var_0_5[iter_0_0][iter_0_2][iter_0_4] = VolumeSystemSettings.traversal_costs[var_0_6]
+			if not traversal_cost then
+				local var_0_9 = tbl[k]
+
+				var_0_9 = var_0_9 or {}
+				tbl[k] = var_0_9
+
+				local var_0_10 = tbl[k]
+				local var_0_11 = tbl[k][k_2]
+
+				var_0_11 = var_0_11 or {}
+				var_0_10[k_2] = var_0_11
+				tbl[k][k_2][k_3] = VolumeSystemSettings.traversal_costs[traversal_cost]
 			end
 		end
 	end
 end
 
-VolumeSystemSettings.nav_tag_layer_costs = var_0_5
+VolumeSystemSettings.nav_tag_layer_costs = tbl

@@ -1,11 +1,11 @@
 -- chunkname: @scripts/settings/terror_events/terror_events_catacombs.lua
 
-local var_0_0 = require("scripts/settings/terror_events/terror_event_utils")
-local var_0_1 = var_0_0.count_event_breed
-local var_0_2 = var_0_0.HARDER
-local var_0_3 = var_0_0.HARDEST
-local var_0_4 = var_0_0.CATACLYSM
-local var_0_5 = {
+local scripts_settings_terror_events_terror_event_utils = require("scripts/settings/terror_events/terror_event_utils")
+local count_event_breed = scripts_settings_terror_events_terror_event_utils.count_event_breed
+local HARDER = scripts_settings_terror_events_terror_event_utils.HARDER
+local HARDEST = scripts_settings_terror_events_terror_event_utils.HARDEST
+local CATACLYSM = scripts_settings_terror_events_terror_event_utils.CATACLYSM
+local tbl = {
 	catacombs_end_event_02 = {
 		"catacombs_end_event_02a",
 		1,
@@ -23,7 +23,7 @@ local var_0_5 = {
 		1
 	}
 }
-local var_0_6 = {
+local tbl_2 = {
 	catacombs_puzzle_event_start = {
 		{
 			"control_pacing",
@@ -130,8 +130,9 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_1_0)
-				return var_0_1("skaven_clan_rat") < 2 and var_0_1("skaven_slave") < 2 and var_0_1("skaven_storm_vermin_commander") < 1
+			condition = function (arg_1_0)
+				-- function 1
+				return not (count_event_breed("skaven_clan_rat") < 2) or not (count_event_breed("skaven_slave") < 2) or count_event_breed("skaven_storm_vermin_commander") < 1
 			end
 		},
 		{
@@ -139,7 +140,7 @@ local var_0_6 = {
 			limit_spawners = 2,
 			spawner_id = "puzzle_event_loop",
 			composition_type = "event_extra_spice_small",
-			difficulty_requirement = var_0_4
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"delay",
@@ -166,7 +167,7 @@ local var_0_6 = {
 				"skaven_poison_wind_globadier",
 				"skaven_warpfire_thrower"
 			},
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		}
 	},
 	catacombs_special_event_b = {
@@ -185,7 +186,7 @@ local var_0_6 = {
 				"skaven_gutter_runner",
 				"skaven_ratling_gunner"
 			},
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		}
 	},
 	catacombs_special_event_c = {
@@ -204,7 +205,7 @@ local var_0_6 = {
 				"skaven_poison_wind_globadier",
 				"skaven_pack_master"
 			},
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		}
 	},
 	catacombs_puzzle_event_end = {
@@ -294,8 +295,9 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_2_0)
-				return var_0_1("skaven_clan_rat") < 2 and var_0_1("skaven_slave") < 4 and var_0_1("chaos_marauder") < 2 and var_0_1("chaos_marauder_with_shield") < 2
+			condition = function (arg_2_0)
+				-- function 2
+				return not (count_event_breed("skaven_clan_rat") < 2) or not (count_event_breed("skaven_slave") < 4) or not (count_event_breed("chaos_marauder") < 2) or count_event_breed("chaos_marauder_with_shield") < 2
 			end
 		},
 		{
@@ -335,8 +337,9 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_3_0)
-				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 4 and var_0_1("skaven_storm_vermin_commander") < 2
+			condition = function (arg_3_0)
+				-- function 3
+				return not (count_event_breed("skaven_clan_rat") < 3) or not (count_event_breed("skaven_slave") < 4) or count_event_breed("skaven_storm_vermin_commander") < 2
 			end
 		},
 		{
@@ -350,7 +353,7 @@ local var_0_6 = {
 			limit_spawners = 6,
 			spawner_id = "end_event",
 			composition_type = "chaos_warriors_small",
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"delay",
@@ -359,8 +362,9 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_4_0)
-				return var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 3 and var_0_1("chaos_warrior") < 2
+			condition = function (arg_4_0)
+				-- function 4
+				return not (count_event_breed("chaos_marauder") < 3) or not (count_event_breed("chaos_marauder_with_shield") < 3) or count_event_breed("chaos_warrior") < 2
 			end
 		},
 		{
@@ -388,7 +392,7 @@ local var_0_6 = {
 			limit_spawners = 6,
 			spawner_id = "end_event",
 			composition_type = "chaos_warriors_small",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"event_horde",
@@ -413,8 +417,9 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_5_0)
-				return var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2 and var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 3 and var_0_1("chaos_warrior") < 2
+			condition = function (arg_5_0)
+				-- function 5
+				return not (count_event_breed("chaos_marauder") < 3) or not (count_event_breed("chaos_marauder_with_shield") < 2) or not (count_event_breed("skaven_clan_rat") < 3) or not (count_event_breed("skaven_slave") < 3) or count_event_breed("chaos_warrior") < 2
 			end
 		},
 		{
@@ -456,8 +461,9 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_6_0)
-				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 4 and var_0_1("skaven_storm_vermin_commander") < 2
+			condition = function (arg_6_0)
+				-- function 6
+				return not (count_event_breed("skaven_clan_rat") < 3) or not (count_event_breed("skaven_slave") < 4) or count_event_breed("skaven_storm_vermin_commander") < 2
 			end
 		},
 		{
@@ -489,7 +495,7 @@ local var_0_6 = {
 			"spawn_special",
 			breed_name = "skaven_pack_master",
 			amount = 1,
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"delay",
@@ -498,8 +504,9 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 120,
-			condition = function(arg_7_0)
-				return var_0_1("skaven_poison_wind_globadier") < 1 and var_0_1("skaven_pack_master") < 1
+			condition = function (arg_7_0)
+				-- function 7
+				return not (count_event_breed("skaven_poison_wind_globadier") < 1) or count_event_breed("skaven_pack_master") < 1
 			end
 		},
 		{
@@ -539,8 +546,9 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 120,
-			condition = function(arg_8_0)
-				return var_0_1("skaven_warpfire_thrower") < 1 and var_0_1("skaven_gutter_runner") < 1
+			condition = function (arg_8_0)
+				-- function 8
+				return not (count_event_breed("skaven_warpfire_thrower") < 1) or count_event_breed("skaven_gutter_runner") < 1
 			end
 		},
 		{
@@ -580,8 +588,9 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 120,
-			condition = function(arg_9_0)
-				return var_0_1("skaven_ratling_gunner") < 1 and var_0_1("skaven_pack_master") < 1
+			condition = function (arg_9_0)
+				-- function 9
+				return not (count_event_breed("skaven_ratling_gunner") < 1) or count_event_breed("skaven_pack_master") < 1
 			end
 		},
 		{
@@ -595,14 +604,14 @@ local var_0_6 = {
 			challenge_name = "volume_corpse_pit_damage",
 			increment_stat_name = "catacombs_added_souls",
 			volume_name = "volume_corpse_pit_damage",
-			only_on_difficulty = var_0_3
+			only_on_difficulty = HARDEST
 		},
 		{
 			"do_volume_challenge",
 			challenge_name = "volume_corpse_pit_damage_cata",
 			increment_stat_name = "catacombs_added_souls_cata",
 			volume_name = "volume_corpse_pit_damage",
-			only_on_difficulty = var_0_4
+			only_on_difficulty = CATACLYSM
 		}
 	},
 	catacombs_plague_wave = {
@@ -652,6 +661,6 @@ local var_0_6 = {
 }
 
 return {
-	var_0_6,
-	var_0_5
+	tbl_2,
+	tbl
 }

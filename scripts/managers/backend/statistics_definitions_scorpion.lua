@@ -3,221 +3,221 @@
 require("scripts/settings/weave_settings")
 require("scripts/settings/dlcs/scorpion/scorpion_seasonal_settings")
 
-local var_0_0 = StatisticsDefinitions.player
-local var_0_1 = ScorpionSeasonalSettings.current_season_id
-local var_0_2 = 2
-local var_0_3 = {
+local player = StatisticsDefinitions.player
+local current_season_id = ScorpionSeasonalSettings.current_season_id
+local num = 2
+local tbl = {
 	"weave_quickplay_wins"
 }
 
-for iter_0_0 = var_0_2, var_0_1 do
-	local var_0_4 = "s" .. iter_0_0
+for i = num, current_season_id do
+	local str = "s" .. i
 
-	var_0_0[var_0_4] = {}
+	player[str] = {}
 
-	local var_0_5 = var_0_0[var_0_4]
+	local var_0_5 = player[str]
 
-	if iter_0_0 == 2 then
+	if i == 2 then
 		var_0_5.weave_quickplay_wins = {
 			value = 0,
 			database_name = "weave_quickplay_wins",
 			source = "player_data"
 		}
 	else
-		for iter_0_1 = 1, #var_0_3 do
-			local var_0_6 = var_0_3[iter_0_1]
-			local var_0_7 = var_0_4 .. "_" .. var_0_6
+		for j = 1, #tbl do
+			local var_0_6 = tbl[j]
+			local str_2 = str .. "_" .. var_0_6
 
 			var_0_5[var_0_6] = {
 				value = 0,
 				source = "player_data",
-				database_name = var_0_7
+				database_name = str_2
 			}
 		end
 	end
 
-	for iter_0_2 = 1, 500 do
-		for iter_0_3 = 1, 4 do
-			local var_0_8 = iter_0_2 .. "_" .. iter_0_3
-			local var_0_9 = var_0_4 .. "_" .. var_0_8
+	for k = 1, 500 do
+		for l = 1, 4 do
+			local str_3 = k .. "_" .. l
+			local str_4 = str .. "_" .. str_3
 
-			var_0_5[var_0_8] = {
+			var_0_5[str_3] = {
 				value = 0,
 				source = "player_data",
-				database_name = var_0_9
+				database_name = str_4
 			}
 		end
 	end
 end
 
-var_0_0.season_1 = {}
+player.season_1 = {}
 
-for iter_0_4 = 1, 500 do
-	local var_0_10 = {
+for i4 = 1, 500 do
+	local tbl_2 = {
 		value = 0,
 		source = "player_data"
 	}
 
-	for iter_0_5 = 1, 4 do
-		local var_0_11 = "weave_score_weave_" .. iter_0_4 .. "_" .. iter_0_5 .. "_players"
-		local var_0_12 = "season_1_" .. var_0_11
+	for i5 = 1, 4 do
+		local str_5 = "weave_score_weave_" .. i4 .. "_" .. i5 .. "_players"
+		local str_6 = "season_1_" .. str_5
 
-		var_0_0.season_1[var_0_11] = table.clone(var_0_10)
-		var_0_0.season_1[var_0_11].database_name = var_0_12
+		player.season_1[str_5] = table.clone(tbl_2)
+		player.season_1[str_5].database_name = str_6
 	end
 end
 
-local var_0_13 = PROFILES_BY_AFFILIATION.heroes
+local heroes = PROFILES_BY_AFFILIATION.heroes
 
-for iter_0_6 = 1, #var_0_13 do
-	local var_0_14 = FindProfileIndex(var_0_13[iter_0_6])
+for i6 = 1, #heroes do
+	local var_0_14 = FindProfileIndex(heroes[i6])
 
-	for iter_0_7, iter_0_8 in pairs(SPProfiles[var_0_14].careers) do
-		local var_0_15 = {
+	for k_2, v in pairs(SPProfiles[var_0_14].careers) do
+		local tbl_3 = {
 			value = 0,
 			source = "player_data"
 		}
-		local var_0_16 = "weaves_complete_" .. iter_0_8.display_name .. "_season_1"
-		local var_0_17 = "season_1_" .. var_0_16
+		local str_7 = "weaves_complete_" .. v.display_name .. "_season_1"
+		local str_8 = "season_1_" .. str_7
 
-		var_0_0.season_1[var_0_16] = table.clone(var_0_15)
-		var_0_0.season_1[var_0_16].database_name = var_0_17
+		player.season_1[str_7] = table.clone(tbl_3)
+		player.season_1[str_7].database_name = str_8
 
-		for iter_0_9, iter_0_10 in ipairs(WeaveSettings.winds) do
-			local var_0_18 = "weave_rainbow_" .. iter_0_10 .. "_" .. iter_0_8.display_name .. "_season_1"
-			local var_0_19 = "season_1_" .. var_0_18
+		for i_2, v_2 in ipairs(WeaveSettings.winds) do
+			local str_9 = "weave_rainbow_" .. v_2 .. "_" .. v.display_name .. "_season_1"
+			local str_10 = "season_1_" .. str_9
 
-			var_0_0.season_1[var_0_18] = table.clone(var_0_15)
-			var_0_0.season_1[var_0_18].database_name = var_0_19
+			player.season_1[str_9] = table.clone(tbl_3)
+			player.season_1[str_9].database_name = str_10
 		end
 	end
 end
 
-var_0_0.season_1.weave_quickplay_wins = {
+player.season_1.weave_quickplay_wins = {
 	value = 0,
 	database_name = "season_1_weave_quickplay_wins",
 	source = "player_data"
 }
 
-local var_0_20 = {
+local tbl_4 = {
 	value = 0,
 	source = "player_data"
 }
 
-for iter_0_11, iter_0_12 in pairs(DifficultySettings) do
-	local var_0_21 = "weave_quickplay_" .. iter_0_11 .. "_wins"
-	local var_0_22 = "season_1_" .. var_0_21
+for k_3, v_3 in pairs(DifficultySettings) do
+	local str_11 = "weave_quickplay_" .. k_3 .. "_wins"
+	local str_12 = "season_1_" .. str_11
 
-	var_0_0.season_1[var_0_21] = table.clone(var_0_20)
-	var_0_0.season_1[var_0_21].database_name = var_0_22
+	player.season_1[str_11] = table.clone(tbl_4)
+	player.season_1[str_11].database_name = str_12
 end
 
-for iter_0_13, iter_0_14 in ipairs(WeaveSettings.winds) do
-	local var_0_23 = "scorpion_weaves_" .. iter_0_14 .. "_season_1"
-	local var_0_24 = "season_1_" .. var_0_23
-	local var_0_25 = {
+for i_3, v_4 in ipairs(WeaveSettings.winds) do
+	local str_13 = "scorpion_weaves_" .. v_4 .. "_season_1"
+	local str_14 = "season_1_" .. str_13
+	local tbl_5 = {
 		value = 0,
 		source = "player_data"
 	}
 
-	var_0_0.season_1[var_0_23] = table.clone(var_0_25)
-	var_0_0.season_1[var_0_23].database_name = var_0_24
+	player.season_1[str_13] = table.clone(tbl_5)
+	player.season_1[str_13].database_name = str_14
 end
 
-var_0_0.season_1.weave_life_stepped_in_bush = {
+player.season_1.weave_life_stepped_in_bush = {
 	value = 0,
 	database_name = "season_1_weave_life_stepped_in_bush",
 	source = "player_data"
 }
-var_0_0.season_1.weave_death_hit_by_spirit = {
+player.season_1.weave_death_hit_by_spirit = {
 	value = 0,
 	database_name = "season_1_weave_death_hit_by_spirit",
 	source = "player_data"
 }
-var_0_0.season_1.weave_beasts_destroyed_totems = {
+player.season_1.weave_beasts_destroyed_totems = {
 	value = 0,
 	database_name = "season_1_weave_beasts_destroyed_totems",
 	source = "player_data"
 }
-var_0_0.season_1.weave_light_low_curse = {
+player.season_1.weave_light_low_curse = {
 	value = 0,
 	database_name = "season_1_weave_light_low_curse",
 	source = "player_data"
 }
-var_0_0.season_1.weave_shadow_kill_no_shrouded = {
+player.season_1.weave_shadow_kill_no_shrouded = {
 	value = 0,
 	database_name = "season_1_weave_shadow_kill_no_shrouded",
 	source = "player_data"
 }
 
-local var_0_26 = WeaveSettings.templates
+local templates = WeaveSettings.templates
 
-var_0_0.completed_weaves = {}
-var_0_0.season_1.weave_won = {}
+player.completed_weaves = {}
+player.season_1.weave_won = {}
 
-for iter_0_15, iter_0_16 in pairs(var_0_26) do
-	var_0_0.completed_weaves[iter_0_15] = {
+for k_4, v_5 in pairs(templates) do
+	player.completed_weaves[k_4] = {
 		value = 0,
 		source = "player_data",
-		database_name = "completed_" .. iter_0_15
+		database_name = "completed_" .. k_4
 	}
 
-	local var_0_27 = 1
-	local var_0_28 = iter_0_16.tier
+	local num_2 = 1
+	local tier = v_5.tier
 
-	var_0_0.season_1.weave_won[var_0_28] = {
+	player.season_1.weave_won[tier] = {
 		value = 0,
 		source = "player_data",
-		database_name = "weave_won_" .. var_0_27 .. "_" .. var_0_28
+		database_name = "weave_won_" .. num_2 .. "_" .. tier
 	}
 end
 
-var_0_0.scorpion_onboarding_step = {
+player.scorpion_onboarding_step = {
 	value = 0,
 	database_name = "scorpion_onboarding_step",
 	source = "player_data"
 }
-var_0_0.scorpion_ui_onboarding_state = {
+player.scorpion_ui_onboarding_state = {
 	value = 0,
 	database_name = "scorpion_ui_onboarding_state",
 	source = "player_data"
 }
-var_0_0.scorpion_weaves_won = {
+player.scorpion_weaves_won = {
 	value = 0,
 	database_name = "scorpion_weaves_won",
 	source = "player_data"
 }
-var_0_0.kill_chaos_exalted_champion_scorpion_hardest = {
+player.kill_chaos_exalted_champion_scorpion_hardest = {
 	value = 0,
 	database_name = "kill_chaos_exalted_champion_scorpion_hardest",
 	source = "player_data"
 }
-var_0_0.kill_chaos_exalted_sorcerer_scorpion_hardest = {
+player.kill_chaos_exalted_sorcerer_scorpion_hardest = {
 	value = 0,
 	database_name = "kill_chaos_exalted_sorcerer_scorpion_hardest",
 	source = "player_data"
 }
-var_0_0.kill_skaven_grey_seer_scorpion_hardest = {
+player.kill_skaven_grey_seer_scorpion_hardest = {
 	value = 0,
 	database_name = "kill_skaven_grey_seer_scorpion_hardest",
 	source = "player_data"
 }
-var_0_0.kill_skaven_storm_vermin_warlord_scorpion_hardest = {
+player.kill_skaven_storm_vermin_warlord_scorpion_hardest = {
 	value = 0,
 	database_name = "kill_skaven_storm_vermin_warlord_scorpion_hardest",
 	source = "player_data"
 }
-var_0_0.scorpion_onboarding_weave_first_fail_vo_played = {
+player.scorpion_onboarding_weave_first_fail_vo_played = {
 	value = 0,
 	database_name = "scorpion_onboarding_weave_first_fail_vo_played",
 	source = "player_data"
 }
 
-StatisticsUtil.generate_weapon_kill_stats_dlc(var_0_0, "scorpion", {
+StatisticsUtil.generate_weapon_kill_stats_dlc(player, "scorpion", {
 	value = 0,
 	source = "player_data"
 })
-StatisticsUtil.generate_level_complete_with_weapon_stats_dlc(var_0_0, "scorpion", {
+StatisticsUtil.generate_level_complete_with_weapon_stats_dlc(player, "scorpion", {
 	value = 0,
 	source = "player_data"
 })

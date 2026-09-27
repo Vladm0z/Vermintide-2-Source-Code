@@ -1,11 +1,11 @@
 -- chunkname: @scripts/ui/views/level_end/states/definitions/end_view_state_summary_deus_definitions.lua
 
 local var_0_0 = local_require("scripts/ui/views/level_end/states/definitions/end_view_state_summary_definitions")
-local var_0_1 = table.clone(var_0_0)
-local var_0_2 = var_0_1.scenegraph_definition.summary_entry_total_title
+local clone = table.clone(var_0_0)
+local summary_entry_total_title = clone.scenegraph_definition.summary_entry_total_title
 
-var_0_2.position[2] = var_0_2.position[2] + 60
-var_0_1.scenegraph_definition.coins_retained = {
+summary_entry_total_title.position[2] = summary_entry_total_title.position[2] + 60
+clone.scenegraph_definition.coins_retained = {
 	vertical_alignment = "center",
 	parent = "background",
 	horizontal_alignment = "center",
@@ -19,7 +19,7 @@ var_0_1.scenegraph_definition.coins_retained = {
 		1
 	}
 }
-var_0_1.scenegraph_definition.deus_progress_reset_text = {
+clone.scenegraph_definition.deus_progress_reset_text = {
 	vertical_alignment = "bottom",
 	parent = "background",
 	horizontal_alignment = "center",
@@ -34,7 +34,7 @@ var_0_1.scenegraph_definition.deus_progress_reset_text = {
 	}
 }
 
-local var_0_3 = {
+local tbl = {
 	font_size = 28,
 	upper_case = true,
 	word_wrap = true,
@@ -49,7 +49,7 @@ local var_0_3 = {
 		2
 	}
 }
-local var_0_4 = {
+local tbl_2 = {
 	font_size = 16,
 	upper_case = true,
 	word_wrap = true,
@@ -70,7 +70,8 @@ local var_0_4 = {
 	}
 }
 
-local function var_0_5(arg_1_0)
+local function fn(arg_1_0)
+	-- function 1
 	return {
 		element = {
 			passes = {
@@ -196,7 +197,7 @@ local function var_0_5(arg_1_0)
 	}
 end
 
-local var_0_6 = {
+local tbl_3 = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -213,9 +214,9 @@ local var_0_6 = {
 	}
 }
 
-var_0_1.widgets.coins_retained_title_text = UIWidgets.create_simple_text(Localize("end_screen_deus_coins_retained"), "coins_retained", nil, nil, var_0_3)
-var_0_1.widgets.coins_retained_description_text = UIWidgets.create_simple_text(Localize("end_screen_deus_coins_retained_description"), "coins_retained", nil, nil, var_0_4)
-var_0_1.widgets.coins_retained_total_text = var_0_5("coins_retained")
-var_0_1.widgets.deus_progress_reset_text = UIWidgets.create_simple_text(Localize("deus_progress_reset"), "deus_progress_reset_text", nil, nil, var_0_6)
+clone.widgets.coins_retained_title_text = UIWidgets.create_simple_text(Localize("end_screen_deus_coins_retained"), "coins_retained", nil, nil, tbl)
+clone.widgets.coins_retained_description_text = UIWidgets.create_simple_text(Localize("end_screen_deus_coins_retained_description"), "coins_retained", nil, nil, tbl_2)
+clone.widgets.coins_retained_total_text = fn("coins_retained")
+clone.widgets.deus_progress_reset_text = UIWidgets.create_simple_text(Localize("deus_progress_reset"), "deus_progress_reset_text", nil, nil, tbl_3)
 
-return var_0_1
+return clone

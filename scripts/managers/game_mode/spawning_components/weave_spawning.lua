@@ -4,26 +4,31 @@ require("scripts/managers/game_mode/spawning_components/adventure_spawning")
 
 WeaveSpawning = class(WeaveSpawning, AdventureSpawning)
 
-function WeaveSpawning._get_spawn_position_close_to_server(arg_1_0)
-	local var_1_0 = arg_1_0._side.party.occupied_slots
-	local var_1_1 = Managers.player
+WeaveSpawning._get_spawn_position_close_to_server = function (self)
+	-- function 1
+	local occupied_slots = self._side.party.occupied_slots
+	local player = Managers.player
 
-	for iter_1_0 = 1, #var_1_0 do
-		local var_1_2 = var_1_0[iter_1_0]
-		local var_1_3 = var_1_2.peer_id
-		local var_1_4 = var_1_2.local_player_id
-		local var_1_5 = var_1_3 and var_1_4 and var_1_1:player(var_1_3, var_1_4)
+	for i = 1, #occupied_slots do
+		local var_1_2 = occupied_slots[i]
+		local peer_id = var_1_2.peer_id
+		local local_player_id = var_1_2.local_player_id
+		local flag = not peer_id and not local_player_id and player:player(peer_id, local_player_id)
 
-		if var_1_5 and var_1_5.is_server and var_1_5.player_unit then
-			return (ScriptUnit.extension(var_1_5.player_unit, "whereabouts_system"):last_position_onground_on_navmesh())
+		if not flag and not flag.is_server and not flag.player_unit then
+			return (ScriptUnit.extension(flag.player_unit, "whereabouts_system"):last_position_onground_on_navmesh())
 		end
 	end
 end
 
-function WeaveSpawning._find_spawn_point(arg_2_0, arg_2_1)
-	local var_2_0 = arg_2_1.game_mode_data
-	local var_2_1 = arg_2_0:_get_spawn_position_close_to_server() or var_2_0.position:unbox()
-	local var_2_2 = var_2_0.rotation:unbox()
+WeaveSpawning._find_spawn_point = function (self, arg_2_1)
+	-- function 2
+	local game_mode_data = arg_2_1.game_mode_data
+	local _get_spawn_position_close_to_server = self:_get_spawn_position_close_to_server()
 
-	return var_2_1, var_2_2
+	_get_spawn_position_close_to_server = _get_spawn_position_close_to_server or game_mode_data.position:unbox()
+
+	local unbox = game_mode_data.rotation:unbox()
+
+	return _get_spawn_position_close_to_server, unbox
 end

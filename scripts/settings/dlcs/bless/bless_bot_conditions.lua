@@ -1,9 +1,17 @@
 -- chunkname: @scripts/settings/dlcs/bless/bless_bot_conditions.lua
 
-local var_0_0 = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
+local scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
+local BTConditions = BTConditions
+local can_activate = BTConditions.can_activate
 
-BTConditions.can_activate = BTConditions.can_activate or {}
-BTConditions.can_activate_non_combat = BTConditions.can_activate_non_combat or {}
+can_activate = can_activate or {}
+BTConditions.can_activate = can_activate
+
+local BTConditions_2 = BTConditions
+local can_activate_non_combat = BTConditions.can_activate_non_combat
+
+can_activate_non_combat = can_activate_non_combat or {}
+BTConditions_2.can_activate_non_combat = can_activate_non_combat
 
 table.merge_recursive(BTConditions.ability_check_categories, {
 	activate_ability = {
@@ -11,105 +19,123 @@ table.merge_recursive(BTConditions.ability_check_categories, {
 	}
 })
 
-local var_0_1 = 15
-local var_0_2 = 10
-local var_0_3 = 5
-local var_0_4 = 15
+local num = 15
+local num_2 = 10
+local num_3 = 5
+local num_4 = 15
 
-local function var_0_5(arg_1_0)
-	local var_1_0 = ScriptUnit.has_extension(arg_1_0, "buff_system")
+local function fn(arg_1_0)
+	-- function 1
+	local has_extension = ScriptUnit.has_extension(arg_1_0, "buff_system")
 
-	return not var_1_0 or var_1_0:has_buff_perk(var_0_0.invulnerable)
+	return not has_extension and has_extension:has_buff_perk(scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.invulnerable)
 end
 
-function BTConditions.can_activate.wh_priest(arg_2_0)
-	local var_2_0 = arg_2_0.unit
-	local var_2_1 = arg_2_0.target_ally_unit
-	local var_2_2 = false
-	local var_2_3 = false
+BTConditions.can_activate.wh_priest = function (self)
+	-- function 2
+	local unit = self.unit
+	local target_ally_unit = self.target_ally_unit
+	local flag = false
+	local flag_2 = false
 
-	if ALIVE[var_2_0] and ALIVE[var_2_1] and arg_2_0.ally_distance and arg_2_0.ally_distance < var_0_1 then
-		local var_2_4 = ScriptUnit.has_extension(var_2_1, "status_system")
+	if not (not ALIVE[unit] and not ALIVE[target_ally_unit] and not self.ally_distance and not (self.ally_distance < num)) then
+		local has_extension = ScriptUnit.has_extension(target_ally_unit, "status_system")
 
-		if var_2_4 then
-			if var_2_4:is_pounced_down() or var_2_4:is_grabbed_by_pack_master() or var_2_4:is_grabbed_by_corruptor() then
-				var_2_2 = true
+		if not has_extension then
+			if has_extension:is_pounced_down() or has_extension:is_grabbed_by_pack_master() or not has_extension:is_grabbed_by_corruptor() then
+				flag = true
 			end
 
-			if not var_2_2 then
-				local var_2_5 = ScriptUnit.has_extension(var_2_0, "talent_system")
+			if not flag then
+				local has_extension_2 = ScriptUnit.has_extension(unit, "talent_system")
 
-				if var_2_5 and var_2_5:has_talent("victor_priest_6_3") and var_2_4:is_knocked_down() then
-					var_2_2 = true
+				if not (not has_extension_2 and has_extension_2:has_talent("victor_priest_6_3")) and not has_extension:is_knocked_down() then
+					flag = true
 				end
 			end
 		end
 	end
 
-	if not var_2_2 then
-		local var_2_6 = arg_2_0.ally_distance and arg_2_0.ally_distance > var_0_1
-		local var_2_7 = arg_2_0.target_unit
-		local var_2_8 = BLACKBOARDS[var_2_7]
-		local var_2_9 = var_2_8 and var_2_8.breed
+	if not flag then
+		local ally_distance = self.ally_distance
 
-		if (var_2_9 and var_2_9.threat_value or 0) >= var_0_3 then
-			local var_2_10 = arg_2_0.unit
-			local var_2_11 = POSITION_LOOKUP[var_2_10]
-			local var_2_12 = arg_2_0.proximite_enemies
-			local var_2_13 = #var_2_12
-			local var_2_14 = 0
-			local var_2_15 = 0
-			local var_2_16 = 0
+		ally_distance = not ally_distance and self.ally_distance > num
 
-			for iter_2_0 = 1, var_2_13 do
-				local var_2_17 = var_2_12[iter_2_0]
-				local var_2_18 = POSITION_LOOKUP[var_2_17]
+		local target_unit = self.target_unit
+		local var_2_8 = BLACKBOARDS[target_unit]
+		local flag_3 = not var_2_8 and var_2_8.breed
+		local threat_value
 
-				if ALIVE[var_2_17] then
-					local var_2_19 = BLACKBOARDS[var_2_17].breed.threat_value
+		if not flag_3 then
+			threat_value = flag_3.threat_value
 
-					if var_2_6 then
-						var_2_15 = var_2_15 + var_2_19
+			if not threat_value then
+				-- Nothing
+			end
+		end
 
-						if var_2_15 > var_0_4 then
+		threat_value = 0
+
+		::label_2_0::
+
+		if threat_value >= num_3 then
+			local unit_2 = self.unit
+			local var_2_12 = POSITION_LOOKUP[unit_2]
+			local proximite_enemies = self.proximite_enemies
+			local count = #proximite_enemies
+			local num_5 = 0
+			local num_6 = 0
+			local num_7 = 0
+
+			for i = 1, count do
+				local var_2_18 = proximite_enemies[i]
+				local var_2_19 = POSITION_LOOKUP[var_2_18]
+
+				if not ALIVE[var_2_18] then
+					local threat_value_2 = BLACKBOARDS[var_2_18].breed.threat_value
+
+					if not ally_distance then
+						num_6 = num_6 + threat_value_2
+
+						if num_6 > num_4 then
 							break
 						end
-					elseif Vector3.distance_squared(var_2_11, var_2_18) <= var_0_2 then
-						var_2_15 = var_2_15 + var_2_19
+					elseif Vector3.distance_squared(var_2_12, var_2_19) <= num_2 then
+						num_6 = num_6 + threat_value_2
 					else
-						var_2_16 = var_2_16 + var_2_19
+						num_7 = num_7 + threat_value_2
 
-						if var_2_16 > var_0_4 then
+						if num_7 > num_4 then
 							break
 						end
 					end
 				end
 			end
 
-			if arg_2_0.ally_distance and arg_2_0.ally_distance <= 3.2 then
-				var_2_16 = math.max(var_2_15, var_2_16)
+			if not (not self.ally_distance and not (self.ally_distance <= 3.2)) then
+				num_7 = math.max(num_6, num_7)
 			end
 
-			if var_2_16 > var_0_4 then
-				var_2_2 = true
-			elseif var_2_15 > var_0_4 then
-				var_2_3 = true
+			if num_7 > num_4 then
+				flag = true
+			elseif num_6 > num_4 then
+				flag_2 = true
 			end
 		end
 	end
 
-	if var_2_2 or var_2_3 then
-		local var_2_20
+	if flag or not flag_2 then
+		local var_2_21
 
-		if var_2_2 and not var_0_5(var_2_1) then
-			var_2_20 = var_2_1
-		elseif var_2_3 and not var_0_5(var_2_0) then
-			var_2_20 = var_2_0
+		if not (not flag and fn(target_ally_unit)) then
+			var_2_21 = target_ally_unit
+		elseif not (not flag_2 and fn(unit)) then
+			var_2_21 = unit
 		end
 
-		arg_2_0.activate_ability_data.target_unit = var_2_20
+		self.activate_ability_data.target_unit = var_2_21
 
-		return var_2_20 ~= nil
+		return var_2_21 ~= nil
 	end
 
 	return false

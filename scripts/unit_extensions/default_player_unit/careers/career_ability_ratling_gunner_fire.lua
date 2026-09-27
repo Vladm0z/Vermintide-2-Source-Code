@@ -2,49 +2,66 @@
 
 CareerAbilityRatlingGunnerFire = class(CareerAbilityRatlingGunnerFire, CareerAbilityDarkPactBase)
 
-function CareerAbilityRatlingGunnerFire.ability_ready(arg_1_0)
-	arg_1_0.super.ability_ready(arg_1_0)
+CareerAbilityRatlingGunnerFire.ability_ready = function (self)
+	-- function 1
+	self.super.ability_ready(self)
 
-	if arg_1_0._first_person_extension then
-		local var_1_0 = Unit.get_data(arg_1_0._unit, "breed")
+	if not self._first_person_extension then
+		local get_data = Unit.get_data(self._unit, "breed")
 
-		if not BLACKBOARDS[arg_1_0._unit].attack_pattern_data then
-			local var_1_1 = {}
+		if not BLACKBOARDS[self._unit].attack_pattern_data then
+			local tbl = {}
 		end
 	end
 end
 
 CareerAbilityRatlingGunnerReload = class(CareerAbilityRatlingGunnerReload, CareerAbilityDarkPactBase)
 
-function CareerAbilityRatlingGunnerReload.ability_ready(arg_2_0)
-	arg_2_0.super.ability_ready(arg_2_0)
+CareerAbilityRatlingGunnerReload.ability_ready = function (self)
+	-- function 2
+	self.super.ability_ready(self)
 end
 
-function CareerAbilityRatlingGunnerReload._start(arg_3_0)
-	arg_3_0.super.ability_ready(arg_3_0)
+CareerAbilityRatlingGunnerReload._start = function (self)
+	-- function 3
+	self.super.ability_ready(self)
 
-	local var_3_0 = arg_3_0._first_person_extension
-	local var_3_1 = Unit.get_data(arg_3_0._unit, "breed")
-	local var_3_2 = BLACKBOARDS[arg_3_0._unit].attack_pattern_data or {}
+	local _first_person_extension = self._first_person_extension
+	local get_data = Unit.get_data(self._unit, "breed")
+	local attack_pattern_data = BLACKBOARDS[self._unit].attack_pattern_data
 
-	if not arg_3_0._career_extension:can_use_activated_ability(2) or (var_3_2.current_ammo or 120) >= 120 then
-		return
+	attack_pattern_data = attack_pattern_data or {}
+
+	if not self._career_extension:can_use_activated_ability(2) then
+		local current_ammo = attack_pattern_data.current_ammo
+
+		current_ammo = current_ammo or 120
+
+		if current_ammo >= 120 then
+			-- Nothing
+		end
 	end
 
-	arg_3_0._career_extension:start_activated_ability_cooldown(1)
-	arg_3_0._career_extension:start_activated_ability_cooldown(2)
+	do return end
+
+	::label_3_0::
+
+	self._career_extension:start_activated_ability_cooldown(1)
+	self._career_extension:start_activated_ability_cooldown(2)
 end
 
-function CareerAbilityRatlingGunnerReload.force_trigger_ability(arg_4_0)
-	arg_4_0:_start()
+CareerAbilityRatlingGunnerReload.force_trigger_ability = function (self)
+	-- function 4
+	self:_start()
 end
 
-function CareerAbilityRatlingGunnerReload._ability_available(arg_5_0)
-	local var_5_0 = arg_5_0._career_extension
-	local var_5_1 = arg_5_0._status_extension
-	local var_5_2 = arg_5_0._locomotion_extension
-	local var_5_3 = var_5_0:can_use_activated_ability(2)
-	local var_5_4 = var_5_1:is_disabled()
+CareerAbilityRatlingGunnerReload._ability_available = function (self)
+	-- function 5
+	local _career_extension = self._career_extension
+	local _status_extension = self._status_extension
+	local _locomotion_extension = self._locomotion_extension
+	local can_use_activated_ability = _career_extension:can_use_activated_ability(2)
+	local is_disabled = _status_extension:is_disabled()
 
-	return var_5_3 and not var_5_4
+	return not can_use_activated_ability and not is_disabled
 end

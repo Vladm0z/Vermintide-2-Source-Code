@@ -2,92 +2,119 @@
 
 GenericCameraExtension = class(GenericCameraExtension)
 
-function GenericCameraExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	arg_1_0.unit = arg_1_2
-	arg_1_0.player = arg_1_3.player
-	arg_1_0.viewport_name = arg_1_0.player.viewport_name
-	arg_1_0.idle_position = Vector3Box(0, 0, 0)
-	arg_1_0.idle_rotation = QuaternionBox(Quaternion.identity())
-	arg_1_0.external_state_change = nil
-	arg_1_0.external_state_change_params = nil
+GenericCameraExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	self.unit = arg_1_2
+	self.player = arg_1_3.player
+	self.viewport_name = self.player.viewport_name
+	self.idle_position = Vector3Box(0, 0, 0)
+	self.idle_rotation = QuaternionBox(Quaternion.identity())
+	self.external_state_change = nil
+	self.external_state_change_params = nil
 end
 
-function GenericCameraExtension.extensions_ready(arg_2_0)
+GenericCameraExtension.extensions_ready = function (arg_2_0)
+	-- function 2
 	return
 end
 
-function GenericCameraExtension.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
-	if arg_3_0._delayed_state_change and arg_3_5 > arg_3_0._delayed_state_change_t then
-		arg_3_0:set_external_state_change(arg_3_0._delayed_state_change, arg_3_0._delayed_state_change_params)
+GenericCameraExtension.update = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	-- function 3
+	if not (not self._delayed_state_change and not (arg_3_5 > self._delayed_state_change_t)) then
+		self:set_external_state_change(self._delayed_state_change, self._delayed_state_change_params)
 	end
 
-	local var_3_0 = arg_3_0.override_follow_unit
+	local override_follow_unit = self.override_follow_unit
 
-	if var_3_0 and not Unit.alive(var_3_0) then
-		arg_3_0:set_follow_unit(nil, nil)
+	if not (not override_follow_unit and Unit.alive(override_follow_unit)) then
+		self:set_follow_unit(nil, nil)
 	end
 end
 
-function GenericCameraExtension.set_external_state_change(arg_4_0, arg_4_1, arg_4_2)
-	arg_4_0.external_state_change = arg_4_1
-	arg_4_0.external_state_change_params = arg_4_2
-	arg_4_0._delayed_state_change = nil
-	arg_4_0._delayed_state_change_t = nil
-	arg_4_0._delayed_state_change_params = nil
+GenericCameraExtension.set_external_state_change = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	self.external_state_change = arg_4_1
+	self.external_state_change_params = arg_4_2
+	self._delayed_state_change = nil
+	self._delayed_state_change_t = nil
+	self._delayed_state_change_params = nil
 end
 
-function GenericCameraExtension.set_delayed_external_state_change(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
-	arg_5_0._delayed_state_change = arg_5_1
-	arg_5_0._delayed_state_change_t = arg_5_3
-	arg_5_0._delayed_state_change_params = arg_5_2
+GenericCameraExtension.set_delayed_external_state_change = function (self, arg_5_1, arg_5_2, arg_5_3)
+	-- function 5
+	self._delayed_state_change = arg_5_1
+	self._delayed_state_change_t = arg_5_3
+	self._delayed_state_change_params = arg_5_2
 end
 
-function GenericCameraExtension.set_idle_position(arg_6_0, arg_6_1)
-	local var_6_0 = arg_6_0.viewport_name
+GenericCameraExtension.set_idle_position = function (self, arg_6_1)
+	-- function 6
+	local viewport_name = self.viewport_name
 
 	assert(Vector3.is_valid(arg_6_1), "Trying to set invalid camera position")
-	arg_6_0.idle_position:store(arg_6_1)
+	self.idle_position:store(arg_6_1)
 end
 
-function GenericCameraExtension.set_idle_rotation(arg_7_0, arg_7_1)
-	local var_7_0 = arg_7_0.viewport_name
+GenericCameraExtension.set_idle_rotation = function (self, arg_7_1)
+	-- function 7
+	local viewport_name = self.viewport_name
 
-	arg_7_0.idle_rotation:store(arg_7_1)
+	self.idle_rotation:store(arg_7_1)
 end
 
-function GenericCameraExtension.get_idle_position(arg_8_0)
-	return arg_8_0.idle_position:unbox()
+GenericCameraExtension.get_idle_position = function (self)
+	-- function 8
+	return self.idle_position:unbox()
 end
 
-function GenericCameraExtension.get_idle_rotation(arg_9_0)
-	return arg_9_0.idle_rotation:unbox()
+GenericCameraExtension.get_idle_rotation = function (self)
+	-- function 9
+	return self.idle_rotation:unbox()
 end
 
-function GenericCameraExtension.set_follow_unit(arg_10_0, arg_10_1, arg_10_2)
-	arg_10_0.override_follow_unit = arg_10_1
-	arg_10_0.override_follow_node = arg_10_2 and Unit.node(arg_10_1, arg_10_2) or nil
+GenericCameraExtension.set_follow_unit = function (self, arg_10_1, arg_10_2)
+	-- function 10
+	self.override_follow_unit = arg_10_1
+
+	local node
+
+	if not arg_10_2 then
+		node = Unit.node(arg_10_1, arg_10_2)
+
+		if not node then
+			-- Nothing
+		end
+	end
+
+	node = nil
+
+	::label_10_0::
+
+	self.override_follow_node = node
 end
 
-function GenericCameraExtension.get_follow_data(arg_11_0)
-	local var_11_0 = arg_11_0.player
-	local var_11_1 = var_11_0.player_unit
+GenericCameraExtension.get_follow_data = function (self)
+	-- function 11
+	local player = self.player
+	local player_unit = player.player_unit
 	local var_11_2
 	local var_11_3
 
-	if var_11_0.respawning then
+	if not player.respawning then
 		return
 	end
 
-	if arg_11_0.override_follow_unit then
-		return arg_11_0.override_follow_unit, arg_11_0.override_follow_node
-	elseif var_11_1 and ScriptUnit.has_extension(var_11_1, "first_person_system") then
-		var_11_2 = ScriptUnit.extension(var_11_1, "first_person_system"):get_first_person_unit()
+	if not self.override_follow_unit then
+		return self.override_follow_unit, self.override_follow_node
+	elseif not player_unit and not ScriptUnit.has_extension(player_unit, "first_person_system") then
+		var_11_2 = ScriptUnit.extension(player_unit, "first_person_system"):get_first_person_unit()
 		var_11_3 = Unit.node(var_11_2, "camera_node")
 	end
 
 	return var_11_2, var_11_3
 end
 
-function GenericCameraExtension.destroy(arg_12_0)
+GenericCameraExtension.destroy = function (arg_12_0)
+	-- function 12
 	return
 end

@@ -2,209 +2,236 @@
 
 ImguiBuffsDebug = class(ImguiBuffsDebug)
 
-local var_0_0 = true
+local flag = true
 
-function ImguiBuffsDebug.init(arg_1_0)
-	arg_1_0._buff_system = nil
-	arg_1_0._unit_names = {}
-	arg_1_0._units = {}
-	arg_1_0._selected_unit_idx = arg_1_0._selected_unit_idx or -1
-	arg_1_0._selected_unit = nil
-	arg_1_0._selected_debug_unit = nil
-	arg_1_0._debug_unit_alive = false
-	arg_1_0._stat_base_value = 1
-	arg_1_0._filter_text = arg_1_0._filter_text or ""
-	arg_1_0._buff_list = {}
-	arg_1_0._filtered_buff_list = {}
-	arg_1_0._selected_buff_id = 0
-	arg_1_0._selected_buff_sync_type_id = 1
-	arg_1_0._buff_advanced_params_enabled = false
-	arg_1_0._buff_bonus_enabled = false
-	arg_1_0._buff_multiplier_enabled = false
-	arg_1_0._buff_value_enabled = false
-	arg_1_0._buff_proc_chance_enabled = false
-	arg_1_0._buff_duration_enabled = false
-	arg_1_0._buff_range_enabled = false
-	arg_1_0._buff_bonus = 0
-	arg_1_0._buff_multiplier = 0
-	arg_1_0._buff_value = 0
-	arg_1_0._buff_proc_chance = 0
-	arg_1_0._buff_duration = 0
-	arg_1_0._buff_range = 0
-	arg_1_0._buff_power_level = 0
-	arg_1_0._current_unit = nil
-	arg_1_0._buff_extension = nil
+ImguiBuffsDebug.init = function (self)
+	-- function 1
+	self._buff_system = nil
+	self._unit_names = {}
+	self._units = {}
 
-	arg_1_0:_get_buff_templates()
+	local _selected_unit_idx = self._selected_unit_idx
 
-	arg_1_0._filtered_buff_list = arg_1_0:_apply_buff_filter(arg_1_0._filter_text, arg_1_0._buff_list)
-	arg_1_0._target_peer_id = ""
+	_selected_unit_idx = _selected_unit_idx or -1
+	self._selected_unit_idx = _selected_unit_idx
+	self._selected_unit = nil
+	self._selected_debug_unit = nil
+	self._debug_unit_alive = false
+	self._stat_base_value = 1
+
+	local _filter_text = self._filter_text
+
+	_filter_text = _filter_text or ""
+	self._filter_text = _filter_text
+	self._buff_list = {}
+	self._filtered_buff_list = {}
+	self._selected_buff_id = 0
+	self._selected_buff_sync_type_id = 1
+	self._buff_advanced_params_enabled = false
+	self._buff_bonus_enabled = false
+	self._buff_multiplier_enabled = false
+	self._buff_value_enabled = false
+	self._buff_proc_chance_enabled = false
+	self._buff_duration_enabled = false
+	self._buff_range_enabled = false
+	self._buff_bonus = 0
+	self._buff_multiplier = 0
+	self._buff_value = 0
+	self._buff_proc_chance = 0
+	self._buff_duration = 0
+	self._buff_range = 0
+	self._buff_power_level = 0
+	self._current_unit = nil
+	self._buff_extension = nil
+
+	self:_get_buff_templates()
+
+	self._filtered_buff_list = self:_apply_buff_filter(self._filter_text, self._buff_list)
+	self._target_peer_id = ""
 end
 
-function ImguiBuffsDebug._get_buff_templates(arg_2_0)
-	table.clear(arg_2_0._buff_list)
+ImguiBuffsDebug._get_buff_templates = function (self)
+	-- function 2
+	table.clear(self._buff_list)
 
-	for iter_2_0, iter_2_1 in pairs(BuffTemplates) do
-		iter_2_1 = BuffUtils.get_buff_template(iter_2_0)
+	for k, v in pairs(BuffTemplates) do
+		v = BuffUtils.get_buff_template(k)
 
-		table.insert(arg_2_0._buff_list, iter_2_0)
+		table.insert(self._buff_list, k)
 	end
 
-	table.sort(arg_2_0._buff_list)
+	table.sort(self._buff_list)
 
-	arg_2_0._selected_buff_id = 0
+	self._selected_buff_id = 0
 end
 
-function ImguiBuffsDebug._apply_buff_filter(arg_3_0, arg_3_1, arg_3_2)
+ImguiBuffsDebug._apply_buff_filter = function (arg_3_0, arg_3_1, arg_3_2)
+	-- function 3
 	if arg_3_1 == "" then
 		return arg_3_2
 	end
 
-	local var_3_0 = {}
-	local var_3_1 = string.gsub(arg_3_1, "[_ ]", "")
+	local tbl = {}
+	local gsub = string.gsub(arg_3_1, "[_ ]", "")
 
-	for iter_3_0 = 1, #arg_3_2 do
-		local var_3_2 = arg_3_2[iter_3_0]
+	for i = 1, #arg_3_2 do
+		local var_3_2 = arg_3_2[i]
 
-		if string.gsub(var_3_2, "[_ ]", ""):find(var_3_1, 1, true) then
-			table.insert(var_3_0, var_3_2)
+		if not string.gsub(var_3_2, "[_ ]", ""):find(gsub, 1, true) then
+			table.insert(tbl, var_3_2)
 		end
 	end
 
-	return var_3_0
+	return tbl
 end
 
-function ImguiBuffsDebug.update(arg_4_0)
-	if var_0_0 then
-		arg_4_0:init()
+ImguiBuffsDebug.update = function (self)
+	-- function 4
+	if not flag then
+		self:init()
 
-		var_0_0 = false
+		flag = false
 	end
 
-	if not arg_4_0._current_unit or not ALIVE[arg_4_0._current_unit] or arg_4_0._selected_unit and not ALIVE[arg_4_0._selected_unit] or arg_4_0._selected_debug_unit ~= script_data.debug_unit or arg_4_0._debug_unit_alive ~= ALIVE[arg_4_0._selected_debug_unit] then
-		arg_4_0:_refresh_unit_list()
+	if not (not self._current_unit and not ALIVE[self._current_unit] and not self._selected_unit and ALIVE[self._selected_unit] and self._selected_debug_unit ~= script_data.debug_unit or self._debug_unit_alive == ALIVE[self._selected_debug_unit]) then
+		self:_refresh_unit_list()
 	end
 end
 
-function ImguiBuffsDebug.on_round_start(arg_5_0)
-	arg_5_0._current_unit = nil
+ImguiBuffsDebug.on_round_start = function (self)
+	-- function 5
+	self._current_unit = nil
 
-	arg_5_0:_refresh_unit_list()
+	self:_refresh_unit_list()
 end
 
-function ImguiBuffsDebug.is_persistent(arg_6_0)
+ImguiBuffsDebug.is_persistent = function (arg_6_0)
+	-- function 6
 	return true
 end
 
-function ImguiBuffsDebug.draw(arg_7_0, arg_7_1)
-	local var_7_0 = Imgui.begin_window("Buff Debug")
+ImguiBuffsDebug.draw = function (self, arg_7_1)
+	-- function 7
+	local begin_window = Imgui.begin_window("Buff Debug")
 
-	arg_7_0:_update_controls()
+	self:_update_controls()
 
-	local var_7_1 = arg_7_0._buff_extension and arg_7_0._buff_extension._buffs
-	local var_7_2 = arg_7_0._buff_extension and arg_7_0._buff_extension._stat_buffs
-	local var_7_3 = arg_7_0._buff_extension and arg_7_0._buff_extension._event_buffs
-	local var_7_4 = arg_7_0._buff_extension and arg_7_0._buff_extension._perks
+	local _buff_extension = self._buff_extension
 
-	arg_7_0:_display_buffs(var_7_1)
-	arg_7_0:_display_perks(var_7_4)
-	arg_7_0:_display_stat_buffs(var_7_2)
-	arg_7_0:_display_event_buffs(var_7_3)
-	arg_7_0:_display_movement_settings(arg_7_0._current_unit)
+	_buff_extension = not _buff_extension and self._buff_extension._buffs
+
+	local _buff_extension_2 = self._buff_extension
+
+	_buff_extension_2 = not _buff_extension_2 and self._buff_extension._stat_buffs
+
+	local _buff_extension_3 = self._buff_extension
+
+	_buff_extension_3 = not _buff_extension_3 and self._buff_extension._event_buffs
+
+	local _buff_extension_4 = self._buff_extension
+
+	_buff_extension_4 = not _buff_extension_4 and self._buff_extension._perks
+
+	self:_display_buffs(_buff_extension)
+	self:_display_perks(_buff_extension_4)
+	self:_display_stat_buffs(_buff_extension_2)
+	self:_display_event_buffs(_buff_extension_3)
+	self:_display_movement_settings(self._current_unit)
 	Imgui.end_window()
 
-	return var_7_0
+	return begin_window
 end
 
-function ImguiBuffsDebug._update_controls(arg_8_0)
-	local var_8_0 = Imgui.combo("Unit", arg_8_0._selected_unit_idx, arg_8_0._unit_names)
+ImguiBuffsDebug._update_controls = function (self)
+	-- function 8
+	local combo = Imgui.combo("Unit", self._selected_unit_idx, self._unit_names)
 
-	if var_8_0 ~= arg_8_0._selected_unit_idx then
-		arg_8_0._selected_unit_idx = var_8_0
-		arg_8_0._selected_unit = arg_8_0._units[var_8_0]
+	if combo ~= self._selected_unit_idx then
+		self._selected_unit_idx = combo
+		self._selected_unit = self._units[combo]
 
-		if arg_8_0._selected_unit then
-			arg_8_0._fallback_to_ai = arg_8_0._selected_unit == script_data.debug_unit
+		if not self._selected_unit then
+			self._fallback_to_ai = self._selected_unit == script_data.debug_unit
 		end
 
-		arg_8_0:_initialize_unit(arg_8_0._selected_unit)
+		self:_initialize_unit(self._selected_unit)
 	end
 
 	Imgui.same_line()
 
-	if Imgui.button("Refresh") then
-		arg_8_0:_refresh_unit_list()
+	if not Imgui.button("Refresh") then
+		self:_refresh_unit_list()
 
-		arg_8_0._fallback_to_ai = arg_8_0._selected_unit == script_data.debug_unit
+		self._fallback_to_ai = self._selected_unit == script_data.debug_unit
 	end
 
-	arg_8_0._selected_buff_id, arg_8_0._filtered_buff_list, arg_8_0._filter_text = ImguiX.combo_search(arg_8_0._selected_buff_id, arg_8_0._filtered_buff_list, arg_8_0._filter_text, arg_8_0._buff_list)
-	arg_8_0._buff_advanced_params_enabled = Imgui.checkbox("Advanced Params", arg_8_0._buff_advanced_params_enabled)
+	self._selected_buff_id, self._filtered_buff_list, self._filter_text = ImguiX.combo_search(self._selected_buff_id, self._filtered_buff_list, self._filter_text, self._buff_list)
+	self._buff_advanced_params_enabled = Imgui.checkbox("Advanced Params", self._buff_advanced_params_enabled)
 
-	if arg_8_0._buff_advanced_params_enabled then
+	if not self._buff_advanced_params_enabled then
 		Imgui.tree_push("bonus_input")
 
-		arg_8_0._buff_bonus_enabled = Imgui.checkbox("Bonus", arg_8_0._buff_bonus_enabled)
+		self._buff_bonus_enabled = Imgui.checkbox("Bonus", self._buff_bonus_enabled)
 
-		if arg_8_0._buff_bonus_enabled then
+		if not self._buff_bonus_enabled then
 			Imgui.same_line()
 
-			arg_8_0._buff_bonus = Imgui.input_float("", arg_8_0._buff_bonus)
+			self._buff_bonus = Imgui.input_float("", self._buff_bonus)
 		end
 
 		Imgui.tree_pop()
 		Imgui.tree_push("mult_input")
 
-		arg_8_0._buff_multiplier_enabled = Imgui.checkbox("Multiplier", arg_8_0._buff_multiplier_enabled)
+		self._buff_multiplier_enabled = Imgui.checkbox("Multiplier", self._buff_multiplier_enabled)
 
-		if arg_8_0._buff_multiplier_enabled then
+		if not self._buff_multiplier_enabled then
 			Imgui.same_line()
 
-			arg_8_0._buff_multiplier = Imgui.input_float("", arg_8_0._buff_multiplier)
+			self._buff_multiplier = Imgui.input_float("", self._buff_multiplier)
 		end
 
 		Imgui.tree_pop()
 		Imgui.tree_push("val_input")
 
-		arg_8_0._buff_value_enabled = Imgui.checkbox("Value", arg_8_0._buff_value_enabled)
+		self._buff_value_enabled = Imgui.checkbox("Value", self._buff_value_enabled)
 
-		if arg_8_0._buff_value_enabled then
+		if not self._buff_value_enabled then
 			Imgui.same_line()
 
-			arg_8_0._buff_value = Imgui.input_float("", arg_8_0._buff_value)
+			self._buff_value = Imgui.input_float("", self._buff_value)
 		end
 
 		Imgui.tree_pop()
 		Imgui.tree_push("proc_input")
 
-		arg_8_0._buff_proc_chance_enabled = Imgui.checkbox("Proc Chance", arg_8_0._buff_proc_chance_enabled)
+		self._buff_proc_chance_enabled = Imgui.checkbox("Proc Chance", self._buff_proc_chance_enabled)
 
-		if arg_8_0._buff_proc_chance_enabled then
+		if not self._buff_proc_chance_enabled then
 			Imgui.same_line()
 
-			arg_8_0._buff_proc_chance = Imgui.input_float("", arg_8_0._buff_proc_chance)
+			self._buff_proc_chance = Imgui.input_float("", self._buff_proc_chance)
 		end
 
 		Imgui.tree_pop()
 		Imgui.tree_push("duration_input")
 
-		arg_8_0._buff_duration_enabled = Imgui.checkbox("Duration", arg_8_0._buff_duration_enabled)
+		self._buff_duration_enabled = Imgui.checkbox("Duration", self._buff_duration_enabled)
 
-		if arg_8_0._buff_duration_enabled then
+		if not self._buff_duration_enabled then
 			Imgui.same_line()
 
-			arg_8_0._buff_duration = Imgui.input_float("", arg_8_0._buff_duration)
+			self._buff_duration = Imgui.input_float("", self._buff_duration)
 		end
 
 		Imgui.tree_pop()
 		Imgui.tree_push("range_input")
 
-		arg_8_0._buff_range_enabled = Imgui.checkbox("Range", arg_8_0._buff_range_enabled)
+		self._buff_range_enabled = Imgui.checkbox("Range", self._buff_range_enabled)
 
-		if arg_8_0._buff_range_enabled then
+		if not self._buff_range_enabled then
 			Imgui.same_line()
 
-			arg_8_0._buff_range = Imgui.input_float("", arg_8_0._buff_range)
+			self._buff_range = Imgui.input_float("", self._buff_range)
 		end
 
 		Imgui.tree_pop()
@@ -214,73 +241,106 @@ function ImguiBuffsDebug._update_controls(arg_8_0)
 		Imgui.text("Power Level")
 		Imgui.same_line()
 
-		arg_8_0._buff_power_level = Imgui.input_float("", arg_8_0._buff_power_level)
+		self._buff_power_level = Imgui.input_float("", self._buff_power_level)
 
 		Imgui.tree_pop()
 	end
 
-	if Imgui.button("Add", 100, 20) then
-		local var_8_1 = arg_8_0._filtered_buff_list[arg_8_0._selected_buff_id]
-		local var_8_2 = arg_8_0._buff_advanced_params_enabled and {
-			external_optional_bonus = arg_8_0._buff_bonus_enabled and arg_8_0._buff_bonus,
-			external_optional_multiplier = arg_8_0._buff_multiplier_enabled and arg_8_0._buff_multiplier,
-			external_optional_value = arg_8_0._buff_value_enabled and arg_8_0._buff_value,
-			external_optional_proc_chance = arg_8_0._buff_proc_chance_enabled and arg_8_0._buff_proc_chance,
-			external_optional_duration = arg_8_0._buff_duration_enabled and arg_8_0._buff_duration,
-			external_optional_range = arg_8_0._buff_range_enabled and arg_8_0._buff_range,
-			power_level = arg_8_0._buff_power_level
-		}
+	if not Imgui.button("Add", 100, 20) then
+		local var_8_1 = self._filtered_buff_list[self._selected_buff_id]
+		local _buff_advanced_params_enabled = self._buff_advanced_params_enabled
 
-		arg_8_0:_add_buff(arg_8_0._buff_extension, var_8_1, var_8_2)
+		if not _buff_advanced_params_enabled then
+			_buff_advanced_params_enabled = {}
+
+			local _buff_bonus_enabled = self._buff_bonus_enabled
+
+			_buff_bonus_enabled = not _buff_bonus_enabled and self._buff_bonus
+			_buff_advanced_params_enabled.external_optional_bonus = _buff_bonus_enabled
+
+			local _buff_multiplier_enabled = self._buff_multiplier_enabled
+
+			_buff_multiplier_enabled = not _buff_multiplier_enabled and self._buff_multiplier
+			_buff_advanced_params_enabled.external_optional_multiplier = _buff_multiplier_enabled
+
+			local _buff_value_enabled = self._buff_value_enabled
+
+			_buff_value_enabled = not _buff_value_enabled and self._buff_value
+			_buff_advanced_params_enabled.external_optional_value = _buff_value_enabled
+
+			local _buff_proc_chance_enabled = self._buff_proc_chance_enabled
+
+			_buff_proc_chance_enabled = not _buff_proc_chance_enabled and self._buff_proc_chance
+			_buff_advanced_params_enabled.external_optional_proc_chance = _buff_proc_chance_enabled
+
+			local _buff_duration_enabled = self._buff_duration_enabled
+
+			_buff_duration_enabled = not _buff_duration_enabled and self._buff_duration
+			_buff_advanced_params_enabled.external_optional_duration = _buff_duration_enabled
+
+			local _buff_range_enabled = self._buff_range_enabled
+
+			_buff_range_enabled = not _buff_range_enabled and self._buff_range
+			_buff_advanced_params_enabled.external_optional_range = _buff_range_enabled
+			_buff_advanced_params_enabled.power_level = self._buff_power_level
+		end
+
+		self:_add_buff(self._buff_extension, var_8_1, _buff_advanced_params_enabled)
 	end
 
-	if Imgui.button("Add with buff system", 200, 20) then
-		local var_8_3 = arg_8_0._filtered_buff_list[arg_8_0._selected_buff_id]
+	if not Imgui.button("Add with buff system", 200, 20) then
+		local var_8_9 = self._filtered_buff_list[self._selected_buff_id]
 
-		if var_8_3 then
-			arg_8_0:_add_buff_with_buff_system(var_8_3)
+		if not var_8_9 then
+			self:_add_buff_with_buff_system(var_8_9)
 		end
 	end
 
 	Imgui.separator()
 	Imgui.push_item_width(200)
 
-	arg_8_0._selected_buff_sync_type_id = Imgui.combo("Sync Type", arg_8_0._selected_buff_sync_type_id, BuffSyncType)
+	self._selected_buff_sync_type_id = Imgui.combo("Sync Type", self._selected_buff_sync_type_id, BuffSyncType)
 
 	Imgui.pop_item_width()
 
-	local var_8_4 = BuffSyncType[arg_8_0._selected_buff_sync_type_id]
+	local var_8_10 = BuffSyncType[self._selected_buff_sync_type_id]
 
-	if var_8_4 == BuffSyncType.Client or var_8_4 == BuffSyncType.ClientAndServer then
-		local var_8_5 = FrameTable.alloc_table()
-		local var_8_6 = FrameTable.alloc_table()
-		local var_8_7 = table.select_array(table.keys(Managers.player:human_players()), function(arg_9_0, arg_9_1)
-			local var_9_0 = string.sub(arg_9_1, 1, string.find(arg_9_1, ":") - 1)
+	if not (var_8_10 == BuffSyncType.Client or var_8_10 ~= BuffSyncType.ClientAndServer) then
+		local alloc_table = FrameTable.alloc_table()
+		local alloc_table_2 = FrameTable.alloc_table()
+		local select_array = table.select_array(table.keys(Managers.player:human_players()), function (arg_9_0, arg_9_1)
+			-- function 9
+			local sub = string.sub(arg_9_1, 1, string.find(arg_9_1, ":") - 1)
 
-			if not var_8_5[var_9_0] then
-				var_8_5[var_9_0] = true
+			if not alloc_table[sub] then
+				alloc_table[sub] = true
 
-				local var_9_1 = Managers.player:player_from_unique_id(arg_9_1):name()
-				local var_9_2 = string.format("%s (%s)", var_9_1, var_9_0)
+				local name = Managers.player:player_from_unique_id(arg_9_1):name()
+				local format = string.format("%s (%s)", name, sub)
 
-				var_8_6[#var_8_6 + 1] = var_9_0
+				alloc_table_2[#alloc_table_2 + 1] = sub
 
-				return var_9_2
+				return format
 			end
 
 			return nil
 		end)
+		local combo_2 = Imgui.combo
+		local str = "Peer ID"
+		local min = math.min
+		local _target_peer_id_idx = self._target_peer_id_idx
 
-		arg_8_0._target_peer_id_idx = Imgui.combo("Peer ID", math.min(arg_8_0._target_peer_id_idx or 1, #var_8_7), var_8_7)
-		arg_8_0._target_peer_id = var_8_6[arg_8_0._target_peer_id_idx]
+		_target_peer_id_idx = _target_peer_id_idx or 1
+		self._target_peer_id_idx = combo_2(str, min(_target_peer_id_idx, #select_array), select_array)
+		self._target_peer_id = alloc_table_2[self._target_peer_id_idx]
 	end
 
-	if Imgui.button("Add Buff Sync", 200, 20) then
-		local var_8_8 = arg_8_0._filtered_buff_list[arg_8_0._selected_buff_id]
-		local var_8_9 = BuffSyncType[arg_8_0._selected_buff_sync_type_id]
+	if not Imgui.button("Add Buff Sync", 200, 20) then
+		local var_8_18 = self._filtered_buff_list[self._selected_buff_id]
+		local var_8_19 = BuffSyncType[self._selected_buff_sync_type_id]
 
-		if var_8_8 and var_8_9 then
-			arg_8_0:_add_buff_with_buff_synced(var_8_8, var_8_9)
+		if not var_8_18 and not var_8_19 then
+			self:_add_buff_with_buff_synced(var_8_18, var_8_19)
 		end
 	end
 
@@ -288,34 +348,35 @@ function ImguiBuffsDebug._update_controls(arg_8_0)
 	Imgui.dummy(10, 10)
 end
 
-function ImguiBuffsDebug._display_buffs(arg_10_0, arg_10_1)
-	if Imgui.tree_node("Buffs") then
-		if arg_10_1 then
+ImguiBuffsDebug._display_buffs = function (self, arg_10_1)
+	-- function 10
+	if not Imgui.tree_node("Buffs") then
+		if not arg_10_1 then
 			local var_10_0
 
-			for iter_10_0 = 1, #arg_10_1 do
-				local var_10_1 = arg_10_1[iter_10_0]
+			for i = 1, #arg_10_1 do
+				local var_10_1 = arg_10_1[i]
 
-				if not var_10_1.removed and Imgui.tree_node(var_10_1.buff_type .. "(" .. var_10_1.id .. ")") then
-					for iter_10_1, iter_10_2 in pairs(var_10_1) do
-						if iter_10_1 == "template" and Imgui.tree_node(iter_10_1) then
-							for iter_10_3, iter_10_4 in pairs(iter_10_2) do
-								Imgui.text(iter_10_3)
+				if var_10_1.removed or not Imgui.tree_node(var_10_1.buff_type .. "(" .. var_10_1.id .. ")") then
+					for k, v in pairs(var_10_1) do
+						if k ~= "template" or not Imgui.tree_node(k) then
+							for k_2, v_2 in pairs(v) do
+								Imgui.text(k_2)
 								Imgui.same_line()
-								Imgui.text(tostring(iter_10_4))
+								Imgui.text(tostring(v_2))
 							end
 
 							Imgui.tree_pop()
 						end
 
-						if type(iter_10_2) ~= "function" and type(iter_10_2) ~= "table" and iter_10_1 ~= "buff_type" and iter_10_1 ~= "id" then
-							Imgui.text(iter_10_1)
+						if not (type(v) == "function" or type(v) == "table" or k == "buff_type" or k == "id") then
+							Imgui.text(k)
 							Imgui.same_line()
-							Imgui.text(tostring(iter_10_2))
+							Imgui.text(tostring(v))
 						end
 					end
 
-					if Imgui.button("Remove") then
+					if not Imgui.button("Remove") then
 						var_10_0 = var_10_0 or {}
 
 						table.insert(var_10_0, var_10_1.id)
@@ -327,9 +388,9 @@ function ImguiBuffsDebug._display_buffs(arg_10_0, arg_10_1)
 				Imgui.separator()
 			end
 
-			if var_10_0 then
-				for iter_10_5 = 1, #var_10_0 do
-					arg_10_0:_remove_buff(arg_10_0._buff_extension, var_10_0[iter_10_5])
+			if not var_10_0 then
+				for i5 = 1, #var_10_0 do
+					self:_remove_buff(self._buff_extension, var_10_0[i5])
 				end
 			end
 		end
@@ -339,12 +400,13 @@ function ImguiBuffsDebug._display_buffs(arg_10_0, arg_10_1)
 	end
 end
 
-function ImguiBuffsDebug._display_perks(arg_11_0, arg_11_1)
-	if Imgui.tree_node("Perks") then
-		if arg_11_1 then
-			for iter_11_0, iter_11_1 in pairs(arg_11_1) do
-				if iter_11_1 > 0 then
-					Imgui.text(string.format("%s %d", iter_11_0 .. " ", iter_11_1))
+ImguiBuffsDebug._display_perks = function (arg_11_0, arg_11_1)
+	-- function 11
+	if not Imgui.tree_node("Perks") then
+		if not arg_11_1 then
+			for k, v in pairs(arg_11_1) do
+				if v > 0 then
+					Imgui.text(string.format("%s %d", k .. " ", v))
 				end
 			end
 		end
@@ -354,29 +416,50 @@ function ImguiBuffsDebug._display_perks(arg_11_0, arg_11_1)
 	end
 end
 
-function ImguiBuffsDebug._display_stat_buffs(arg_12_0, arg_12_1)
-	if Imgui.tree_node("Stat Buffs") then
-		arg_12_0._stat_base_value = Imgui.input_float("Base Stat Value", arg_12_0._stat_base_value)
+ImguiBuffsDebug._display_stat_buffs = function (self, arg_12_1)
+	-- function 12
+	if not Imgui.tree_node("Stat Buffs") then
+		self._stat_base_value = Imgui.input_float("Base Stat Value", self._stat_base_value)
 
-		if arg_12_1 then
+		if not arg_12_1 then
 			Imgui.separator()
 			Imgui.text(string.format("%-36s%8s%12s%13s%14s%15s", "Name", "Bonus", "Multiplier", "Value", "Proc Chance", "Final Value"))
 			Imgui.separator()
 
-			for iter_12_0, iter_12_1 in pairs(arg_12_1) do
-				if not table.is_empty(iter_12_1) then
-					local var_12_0 = arg_12_0._stat_base_value
+			for k, v in pairs(arg_12_1) do
+				if not table.is_empty(v) then
+					local _stat_base_value = self._stat_base_value
 
-					for iter_12_2, iter_12_3 in pairs(iter_12_1) do
-						local var_12_1 = iter_12_3.bonus or 0
-						local var_12_2 = type(iter_12_3.multiplier) == "function" and iter_12_3.multiplier(arg_12_0._current_unit, arg_12_0._buff_extension) or iter_12_3.multiplier or 0
-						local var_12_3 = iter_12_3.proc_chance or 0
-						local var_12_4 = iter_12_3.value
-						local var_12_5 = var_12_4 or 0
+					for k_2, v_2 in pairs(v) do
+						local bonus = v_2.bonus
 
-						var_12_0 = var_12_4 or var_12_0 * (1 + var_12_2) + var_12_1
+						bonus = bonus or 0
 
-						Imgui.text(string.format("%-36s%8.2f%12.2f%13.2f%14.2f%15.2f", iter_12_0, var_12_1, var_12_2, var_12_5, var_12_3, var_12_0))
+						local multiplier
+
+						if type(v_2.multiplier) == "function" then
+							multiplier = v_2.multiplier(self._current_unit, self._buff_extension)
+
+							if not multiplier then
+								-- Nothing
+							end
+						end
+
+						multiplier = v_2.multiplier
+						multiplier = multiplier or 0
+
+						::label_12_0::
+
+						local proc_chance = v_2.proc_chance
+
+						proc_chance = proc_chance or 0
+
+						local value = v_2.value
+						local flag = value or 0
+
+						_stat_base_value = value or _stat_base_value * (1 + multiplier) + bonus
+
+						Imgui.text(string.format("%-36s%8.2f%12.2f%13.2f%14.2f%15.2f", k, bonus, multiplier, flag, proc_chance, _stat_base_value))
 					end
 
 					Imgui.separator()
@@ -389,24 +472,39 @@ function ImguiBuffsDebug._display_stat_buffs(arg_12_0, arg_12_1)
 	end
 end
 
-function ImguiBuffsDebug._display_event_buffs(arg_13_0, arg_13_1)
-	if Imgui.tree_node("Event Buffs") then
-		if arg_13_1 then
+ImguiBuffsDebug._display_event_buffs = function (arg_13_0, arg_13_1)
+	-- function 13
+	if not Imgui.tree_node("Event Buffs") then
+		if not arg_13_1 then
 			Imgui.separator()
 			Imgui.text(string.format("%-53s%8s%12s%13s%14s", "Name", "Bonus", "Multiplier", "Value", "Proc Chance"))
 			Imgui.separator()
 
-			for iter_13_0, iter_13_1 in pairs(arg_13_1) do
-				if not table.is_empty(iter_13_1) then
-					if Imgui.tree_node(iter_13_0) then
-						for iter_13_2, iter_13_3 in pairs(iter_13_1) do
-							local var_13_0 = iter_13_3.buff_type or ""
-							local var_13_1 = iter_13_3.bonus or 0
-							local var_13_2 = iter_13_3.value or 0
-							local var_13_3 = iter_13_3.multiplier or 0
-							local var_13_4 = iter_13_3.proc_chance or 1
+			for k, v in pairs(arg_13_1) do
+				if not table.is_empty(v) then
+					if not Imgui.tree_node(k) then
+						for k_2, v_2 in pairs(v) do
+							local buff_type = v_2.buff_type
 
-							Imgui.text(string.format("%-50s%8.2f%12.2f%13.2f%14.2f", var_13_0, var_13_1, var_13_3, var_13_2, var_13_4))
+							buff_type = buff_type or ""
+
+							local bonus = v_2.bonus
+
+							bonus = bonus or 0
+
+							local value = v_2.value
+
+							value = value or 0
+
+							local multiplier = v_2.multiplier
+
+							multiplier = multiplier or 0
+
+							local proc_chance = v_2.proc_chance
+
+							proc_chance = proc_chance or 1
+
+							Imgui.text(string.format("%-50s%8.2f%12.2f%13.2f%14.2f", buff_type, bonus, multiplier, value, proc_chance))
 						end
 
 						Imgui.tree_pop()
@@ -422,121 +520,128 @@ function ImguiBuffsDebug._display_event_buffs(arg_13_0, arg_13_1)
 	end
 end
 
-function ImguiBuffsDebug._display_movement_settings(arg_14_0, arg_14_1)
+ImguiBuffsDebug._display_movement_settings = function (arg_14_0, arg_14_1)
+	-- function 14
 	if not Unit.alive(arg_14_1) then
 		return
 	end
 
-	local var_14_0 = PlayerUnitMovementSettings.get_movement_settings_table(arg_14_1)
+	local get_movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(arg_14_1)
 
-	if not var_14_0 then
+	if not get_movement_settings_table then
 		return
 	end
 
-	if Imgui.tree_node("Movement Settings") then
+	if not Imgui.tree_node("Movement Settings") then
 		Imgui.text(string.format("%-36s", "Move speed"))
-		Imgui.text(string.format("    %-36s%.1f", "forwards", var_14_0.move_speed))
-		Imgui.text(string.format("    %-36s%.1f", "backwards", var_14_0.backward_move_scale * var_14_0.move_speed))
-		Imgui.text(string.format("    %-36s%.1f", "walk", var_14_0.walk_move_speed))
-		Imgui.text(string.format("    %-36s%.1f", "crouch", var_14_0.crouch_move_speed))
-		Imgui.text(string.format("    %-36s%.1f", "pounce", var_14_0.pounce_speed))
+		Imgui.text(string.format("    %-36s%.1f", "forwards", get_movement_settings_table.move_speed))
+		Imgui.text(string.format("    %-36s%.1f", "backwards", get_movement_settings_table.backward_move_scale * get_movement_settings_table.move_speed))
+		Imgui.text(string.format("    %-36s%.1f", "walk", get_movement_settings_table.walk_move_speed))
+		Imgui.text(string.format("    %-36s%.1f", "crouch", get_movement_settings_table.crouch_move_speed))
+		Imgui.text(string.format("    %-36s%.1f", "pounce", get_movement_settings_table.pounce_speed))
 		Imgui.text(string.format("%-36s", "Dodge"))
-		Imgui.text(string.format("    %-36s%.1f m", "distance", var_14_0.dodging.distance))
-		Imgui.text(string.format("    %-36sx%.1f", "distance modifier", var_14_0.dodging.distance_modifier))
-		Imgui.text(string.format("    %-36s%.1f s", "cooldown", var_14_0.dodging.dodge_cd))
-		Imgui.text(string.format("    %-36sx%.1f", "speed modifier", var_14_0.dodging.speed_modifier))
+		Imgui.text(string.format("    %-36s%.1f m", "distance", get_movement_settings_table.dodging.distance))
+		Imgui.text(string.format("    %-36sx%.1f", "distance modifier", get_movement_settings_table.dodging.distance_modifier))
+		Imgui.text(string.format("    %-36s%.1f s", "cooldown", get_movement_settings_table.dodging.dodge_cd))
+		Imgui.text(string.format("    %-36sx%.1f", "speed modifier", get_movement_settings_table.dodging.speed_modifier))
 		Imgui.dummy(10, 10)
 		Imgui.tree_pop()
 	end
 end
 
-function ImguiBuffsDebug._refresh_unit_list(arg_15_0)
-	arg_15_0._unit_names = {}
-	arg_15_0._units = {}
+ImguiBuffsDebug._refresh_unit_list = function (self)
+	-- function 15
+	self._unit_names = {}
+	self._units = {}
 
 	local var_15_0
 
-	table.insert(arg_15_0._unit_names, "none")
-	table.insert(arg_15_0._units, false)
+	table.insert(self._unit_names, "none")
+	table.insert(self._units, false)
 
-	local var_15_1 = Managers.player
+	local player = Managers.player
 
-	if var_15_1 then
-		local var_15_2 = var_15_1:human_and_bot_players()
+	if not player then
+		local human_and_bot_players = player:human_and_bot_players()
 
-		for iter_15_0, iter_15_1 in pairs(var_15_2) do
-			if iter_15_1 then
-				local var_15_3 = iter_15_1:profile_display_name()
+		for k, v in pairs(human_and_bot_players) do
+			if not v then
+				local profile_display_name = v:profile_display_name()
 
-				table.insert(arg_15_0._unit_names, var_15_3)
-				table.insert(arg_15_0._units, iter_15_1.player_unit)
+				table.insert(self._unit_names, profile_display_name)
+				table.insert(self._units, v.player_unit)
 
-				if iter_15_1.local_player then
-					var_15_0 = #arg_15_0._unit_names
+				if not v.local_player then
+					var_15_0 = #self._unit_names
 				end
 			end
 		end
 	end
 
-	if ALIVE[script_data.debug_unit] then
-		local var_15_4 = script_data.debug_unit
+	if not ALIVE[script_data.debug_unit] then
+		local debug_unit = script_data.debug_unit
 
-		table.insert(arg_15_0._unit_names, "Selected AI: " .. Unit.debug_name(var_15_4))
-		table.insert(arg_15_0._units, var_15_4)
+		table.insert(self._unit_names, "Selected AI: " .. Unit.debug_name(debug_unit))
+		table.insert(self._units, debug_unit)
 
-		if arg_15_0._fallback_to_ai then
-			arg_15_0._selected_unit_idx = #arg_15_0._units
+		if not self._fallback_to_ai then
+			self._selected_unit_idx = #self._units
 		end
 	end
 
-	if not arg_15_0._units[arg_15_0._selected_unit_idx] then
-		arg_15_0._selected_unit_idx = var_15_0 or 1
+	if not self._units[self._selected_unit_idx] then
+		self._selected_unit_idx = var_15_0 or 1
 	end
 
-	arg_15_0._current_unit = arg_15_0._units[arg_15_0._selected_unit_idx]
-	arg_15_0._selected_unit = arg_15_0._current_unit
-	arg_15_0._selected_debug_unit = script_data.debug_unit
-	arg_15_0._debug_unit_alive = ALIVE[arg_15_0._selected_debug_unit]
+	self._current_unit = self._units[self._selected_unit_idx]
+	self._selected_unit = self._current_unit
+	self._selected_debug_unit = script_data.debug_unit
+	self._debug_unit_alive = ALIVE[self._selected_debug_unit]
 
-	arg_15_0:_initialize_unit(arg_15_0._current_unit)
+	self:_initialize_unit(self._current_unit)
 end
 
-function ImguiBuffsDebug._initialize_unit(arg_16_0, arg_16_1)
-	arg_16_0._current_unit = arg_16_1
+ImguiBuffsDebug._initialize_unit = function (self, arg_16_1)
+	-- function 16
+	self._current_unit = arg_16_1
 
-	if arg_16_1 and Unit.alive(arg_16_1) then
-		arg_16_0._buff_extension = ScriptUnit.extension(arg_16_1, "buff_system")
-	end
-end
-
-function ImguiBuffsDebug._add_buff(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
-	if arg_17_0._buff_extension and arg_17_2 then
-		arg_17_0._buff_extension:add_buff(arg_17_2, arg_17_3)
+	if not arg_16_1 and not Unit.alive(arg_16_1) then
+		self._buff_extension = ScriptUnit.extension(arg_16_1, "buff_system")
 	end
 end
 
-function ImguiBuffsDebug._add_buff_with_buff_system(arg_18_0, arg_18_1)
-	if arg_18_0._current_unit then
-		local var_18_0 = Managers.state.entity:system("buff_system")
-
-		if var_18_0 then
-			var_18_0:add_buff(arg_18_0._current_unit, arg_18_1, arg_18_0._current_unit)
-		end
+ImguiBuffsDebug._add_buff = function (self, arg_17_1, arg_17_2, arg_17_3)
+	-- function 17
+	if not self._buff_extension and not arg_17_2 then
+		self._buff_extension:add_buff(arg_17_2, arg_17_3)
 	end
 end
 
-function ImguiBuffsDebug._add_buff_with_buff_synced(arg_19_0, arg_19_1, arg_19_2)
-	if arg_19_0._current_unit then
-		local var_19_0 = Managers.state.entity:system("buff_system")
+ImguiBuffsDebug._add_buff_with_buff_system = function (self, arg_18_1)
+	-- function 18
+	if not self._current_unit then
+		local system = Managers.state.entity:system("buff_system")
 
-		if var_19_0 then
-			var_19_0:add_buff_synced(arg_19_0._current_unit, arg_19_1, arg_19_2, nil, arg_19_0._target_peer_id)
+		if not system then
+			system:add_buff(self._current_unit, arg_18_1, self._current_unit)
 		end
 	end
 end
 
-function ImguiBuffsDebug._remove_buff(arg_20_0, arg_20_1, arg_20_2)
-	if arg_20_0._buff_extension and arg_20_2 then
-		arg_20_0._buff_extension:remove_buff(arg_20_2)
+ImguiBuffsDebug._add_buff_with_buff_synced = function (self, arg_19_1, arg_19_2)
+	-- function 19
+	if not self._current_unit then
+		local system = Managers.state.entity:system("buff_system")
+
+		if not system then
+			system:add_buff_synced(self._current_unit, arg_19_1, arg_19_2, nil, self._target_peer_id)
+		end
+	end
+end
+
+ImguiBuffsDebug._remove_buff = function (self, arg_20_1, arg_20_2)
+	-- function 20
+	if not self._buff_extension and not arg_20_2 then
+		self._buff_extension:remove_buff(arg_20_2)
 	end
 end

@@ -1,33 +1,37 @@
 -- chunkname: @scripts/helpers/pseudo_random_distribution.lua
 
+local PseudoRandomDistribution = PseudoRandomDistribution
+
 PseudoRandomDistribution = PseudoRandomDistribution or {}
+PseudoRandomDistribution = PseudoRandomDistribution
 
-local var_0_0
+local var_0_1
 
-function PseudoRandomDistribution.flip_coin(arg_1_0, arg_1_1)
+PseudoRandomDistribution.flip_coin = function (arg_1_0, arg_1_1)
+	-- function 1
 	if arg_1_1 > 0.99 then
 		return true, arg_1_0
 	elseif arg_1_1 < 0.01 then
 		return false, arg_1_0
 	end
 
-	local var_1_0 = var_0_0[math.floor(arg_1_1 * 100)]
-	local var_1_1 = math.random
+	local var_1_0 = var_0_1[math.floor(arg_1_1 * 100)]
+	local random = math.random
 
-	if var_1_0 > var_1_1() then
-		return arg_1_1 > var_1_1(), arg_1_0
+	if var_1_0 > random() then
+		return arg_1_1 > random(), arg_1_0
 	end
 
-	local var_1_2 = arg_1_0 or math.floor(arg_1_1 / var_1_0)
+	local flag = arg_1_0 or math.floor(arg_1_1 / var_1_0)
 
-	if var_1_1() < var_1_2 * var_1_0 then
+	if random() < flag * var_1_0 then
 		return true, 1
 	else
-		return false, 1 + var_1_2
+		return false, 1 + flag
 	end
 end
 
-var_0_0 = {
+var_0_1 = {
 	0.0001560416916765,
 	0.0006200876164356,
 	0.0013861777203907,

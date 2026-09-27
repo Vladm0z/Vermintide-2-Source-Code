@@ -3,86 +3,126 @@
 require("scripts/ui/ui_layer")
 require("scripts/utils/colors")
 
-UISettings = UISettings or {
-	start_drag_threshold = 0.15,
-	tooltip_fade_in_speed = 4,
-	double_click_threshold = 0.1,
-	crafting_progress_time = 0.3,
-	max_craft_material_presentation_amount = 999,
-	bots_level_display_text = "BOT",
-	console_menu_camera_move_duration = 0.5,
-	items_per_chest = 3,
-	max_inventory_items = 1000,
-	hero_panel_height = 120,
-	wait_for_mip_streaming_items = false,
-	use_subtitles = true,
-	max_fatigue_shields = 20,
-	transparent_placeholder_texture = "gui/1080p/single_textures/generic/transparent_placeholder_texture",
-	crafting_animation_out_time = 0.1,
-	chest_upgrade_score_topics_min_duration = 0.5,
-	tooltip_wait_duration = 0.1,
-	chest_upgrade_score_topics_max_duration = 7,
-	crafting_animation_in_time = 0.2,
-	wait_for_mip_streaming_character = true,
-	crafting_animation_wait_time = 0.3,
-	console_menu_rect_color = Colors.get_color_table_with_alpha("console_menu_rect", 125),
-	console_start_game_menu_rect_color = Colors.get_color_table_with_alpha("console_menu_rect", 125),
-	game_start_windows = {
-		frame = "menu_frame_09",
-		background = "menu_frame_bg_01",
-		spacing = 25,
-		large_window_frame = "menu_frame_08",
-		size = {
-			520,
-			820
+local UISettings = UISettings
+
+if not UISettings then
+	UISettings = {
+		start_drag_threshold = 0.15,
+		tooltip_fade_in_speed = 4,
+		double_click_threshold = 0.1,
+		crafting_progress_time = 0.3,
+		max_craft_material_presentation_amount = 999,
+		bots_level_display_text = "BOT",
+		console_menu_camera_move_duration = 0.5,
+		items_per_chest = 3,
+		max_inventory_items = 1000,
+		hero_panel_height = 120,
+		wait_for_mip_streaming_items = false,
+		use_subtitles = true,
+		max_fatigue_shields = 20,
+		transparent_placeholder_texture = "gui/1080p/single_textures/generic/transparent_placeholder_texture",
+		crafting_animation_out_time = 0.1,
+		chest_upgrade_score_topics_min_duration = 0.5,
+		tooltip_wait_duration = 0.1,
+		chest_upgrade_score_topics_max_duration = 7,
+		crafting_animation_in_time = 0.2,
+		wait_for_mip_streaming_character = true,
+		crafting_animation_wait_time = 0.3,
+		console_menu_rect_color = Colors.get_color_table_with_alpha("console_menu_rect", 125),
+		console_start_game_menu_rect_color = Colors.get_color_table_with_alpha("console_menu_rect", 125),
+		game_start_windows = {
+			frame = "menu_frame_09",
+			background = "menu_frame_bg_01",
+			spacing = 25,
+			large_window_frame = "menu_frame_08",
+			size = {
+				520,
+				820
+			},
+			large_window_size = {
+				1680,
+				900
+			}
 		},
-		large_window_size = {
-			1680,
-			900
-		}
-	},
-	game_start_windows_console = {
-		frame = "menu_frame_09",
-		background = "menu_frame_bg_01",
-		spacing = 25,
-		large_window_frame = "menu_frame_08",
-		size = {
-			520,
-			740
+		game_start_windows_console = {
+			frame = "menu_frame_09",
+			background = "menu_frame_bg_01",
+			spacing = 25,
+			large_window_frame = "menu_frame_08",
+			size = {
+				520,
+				740
+			},
+			large_window_size = {
+				1680,
+				900
+			}
 		},
-		large_window_size = {
-			1680,
-			900
+		mission_selection_map_size = {
+			1630,
+			840
+		},
+		dice_type_success_sides = {
+			gold = 4,
+			metal = 3,
+			warpstone = 6,
+			wood = 2
 		}
-	},
-	mission_selection_map_size = {
-		1630,
-		840
-	},
-	dice_type_success_sides = {
-		gold = 4,
-		metal = 3,
-		warpstone = 6,
-		wood = 2
-	},
-	subtitles_font_size = Application.user_setting("subtitles_font_size") or 20,
-	subtitles_background_alpha = 2.55 * (Application.user_setting("subtitles_background_opacity") or 20),
-	root_scale = {
-		Application.user_setting("root_scale_x") or 1,
-		Application.user_setting("root_scale_y") or 1
-	},
-	hud_scale = Application.user_setting("hud_scale") or 100,
-	hud_clamp_ui_scaling = Application.user_setting("hud_clamp_ui_scaling") or false,
-	use_custom_hud_scale = Application.user_setting("use_custom_hud_scale") or false,
-	use_pc_menu_layout = Application.user_setting("use_pc_menu_layout") or false,
-	use_gamepad_hud_layout = Application.user_setting("use_gamepad_hud_layout") or false,
-	interaction = {
+	}
+
+	local user_setting = Application.user_setting("subtitles_font_size")
+
+	user_setting = user_setting or 20
+	UISettings.subtitles_font_size = user_setting
+
+	local user_setting_2 = Application.user_setting("subtitles_background_opacity")
+
+	user_setting_2 = user_setting_2 or 20
+	UISettings.subtitles_background_alpha = 2.55 * user_setting_2
+
+	local tbl = {}
+	local user_setting_3 = Application.user_setting("root_scale_x")
+
+	user_setting_3 = user_setting_3 or 1
+	tbl[1] = user_setting_3
+
+	local user_setting_4 = Application.user_setting("root_scale_y")
+
+	user_setting_4 = user_setting_4 or 1
+	tbl[2] = user_setting_4
+	UISettings.root_scale = tbl
+
+	local user_setting_5 = Application.user_setting("hud_scale")
+
+	user_setting_5 = user_setting_5 or 100
+	UISettings.hud_scale = user_setting_5
+
+	local user_setting_6 = Application.user_setting("hud_clamp_ui_scaling")
+
+	user_setting_6 = user_setting_6 or false
+	UISettings.hud_clamp_ui_scaling = user_setting_6
+
+	local user_setting_7 = Application.user_setting("use_custom_hud_scale")
+
+	user_setting_7 = user_setting_7 or false
+	UISettings.use_custom_hud_scale = user_setting_7
+
+	local user_setting_8 = Application.user_setting("use_pc_menu_layout")
+
+	user_setting_8 = user_setting_8 or false
+	UISettings.use_pc_menu_layout = user_setting_8
+
+	local user_setting_9 = Application.user_setting("use_gamepad_hud_layout")
+
+	user_setting_9 = user_setting_9 or false
+	UISettings.use_gamepad_hud_layout = user_setting_9
+	UISettings.interaction = {
 		bar = {
 			fade_in = 0.1,
 			fade_out = 0.1
 		}
-	},
-	inventory_hud = {
+	}
+	UISettings.inventory_hud = {
 		select_animation_duration = 0.2,
 		slot_default_alpha = 170,
 		slot_select_size = 62,
@@ -92,8 +132,8 @@ UISettings = UISettings or {
 		equip_animation_duration = 0.2,
 		bar_lit_fade_out_duration = 0.12,
 		bar_lit_pulse_duration = 3
-	},
-	inventory = {
+	}
+	UISettings.inventory = {
 		item_preview_fade_in_time = 0.2,
 		item_list = {
 			intro = {
@@ -132,13 +172,13 @@ UISettings = UISettings or {
 				fade_in_time = 0.1
 			}
 		}
-	},
-	map = {
+	}
+	UISettings.map = {
 		camera_time_exit = 0.5,
 		camera_time_enter = 0.5,
 		show_debug_levels = true
-	},
-	end_screen = {
+	}
+	UISettings.end_screen = {
 		victory_fade_out = 0.8,
 		defeat_fade_out = 0.5,
 		victory_fade_in = 0.5,
@@ -152,8 +192,8 @@ UISettings = UISettings or {
 		background_fade_out = 0.9,
 		text_fade_out = 0.3,
 		background_fade_in = 1.1
-	},
-	summary_screen = {
+	}
+	UISettings.summary_screen = {
 		reward_screen_fade_in_time = 0.2,
 		summary_entry_start_delay = 0.4,
 		tween_in_time = 1,
@@ -170,8 +210,8 @@ UISettings = UISettings or {
 		bar_progress_max_time = 3,
 		bar_progress_experience_time_multiplier = 0.006,
 		speed_up_experience_time_multiplier = 2.5
-	},
-	scoreboard = {
+	}
+	UISettings.scoreboard = {
 		topic_select_duration = 0.15,
 		arrow_select_duration = 0.12,
 		arrow_dehover_duration = 0.12,
@@ -189,27 +229,27 @@ UISettings = UISettings or {
 		topic_normal_alpha = 180,
 		close_duration = 0.4,
 		topic_scroll_duration = 0.4
-	},
-	area_indicator = {
+	}
+	UISettings.area_indicator = {
 		wait_time = 1,
 		fade_time = 1
-	},
-	mission_objective = {
+	}
+	UISettings.mission_objective = {
 		wait_time = 3,
 		fade_time = 1
-	},
-	crosshair = {
+	}
+	UISettings.crosshair = {
 		hit_marker_fade = 0.6
-	},
-	unit_frames = {
+	}
+	UISettings.unit_frames = {
 		health_bar_lerp_time = 1,
 		low_health_threshold = 0.42,
 		low_health_animation_alpha_from = 255,
 		low_health_animation_alpha_to = 200,
 		low_health_animation_time = 5,
 		health_step_value = 10
-	},
-	cutscene_ui = {
+	}
+	UISettings.cutscene_ui = {
 		skippable = false,
 		letterbox = {
 			bar_height = 70
@@ -224,8 +264,8 @@ UISettings = UISettings or {
 			fade_out_time = 1,
 			fade_in_time = 1
 		}
-	},
-	tutorial = {
+	}
+	UISettings.tutorial = {
 		tooltip = {
 			center_clamp_distance = 400
 		},
@@ -259,8 +299,8 @@ UISettings = UISettings or {
 				height = 200
 			}
 		}
-	},
-	chat = {
+	}
+	UISettings.chat = {
 		output_background_alpha = 255,
 		chat_close_delay = 6,
 		scrollbar_stroke_alpha = 80,
@@ -275,20 +315,24 @@ UISettings = UISettings or {
 		input_background_alpha = 180,
 		scrollbar_background_alpha = 80,
 		input_text_alpha = 255
-	},
-	positive_reinforcement = {
+	}
+	UISettings.positive_reinforcement = {
 		show_duration = 4,
 		folding_enabled = true,
 		fade_duration = 0.5,
 		increment_duration = 0.33
-	},
-	damage_feedback = {
+	}
+	UISettings.damage_feedback = {
 		fade_duration = 0.5,
 		show_duration = 4,
 		increment_duration = 0.33
-	},
-	use_ps4_input_icons = IS_PS4 or Application.user_setting("gamepad_use_ps4_style_input_icons"),
-	breed_textures = {
+	}
+
+	local IS_PS4 = IS_PS4
+
+	IS_PS4 = IS_PS4 or Application.user_setting("gamepad_use_ps4_style_input_icons")
+	UISettings.use_ps4_input_icons = IS_PS4
+	UISettings.breed_textures = {
 		chaos_vortex = "unit_frame_portrait_enemy_sorcerer_vortex",
 		pet_skeleton_dual_wield = "unit_frame_portrait_pet_skeleton",
 		chaos_tentacle = "unit_frame_portrait_enemy_chaos_sorcerer",
@@ -369,8 +413,8 @@ UISettings = UISettings or {
 		vs_gutter_runner = "unit_frame_portrait_enemy_gutter_runner",
 		skaven_storm_vermin_commander = "unit_frame_portrait_enemy_stormvermin",
 		beastmen_standard_bearer_crater = "unit_frame_portrait_enemy_standard_bearer"
-	},
-	chest_upgrade_score_topics = {
+	}
+	UISettings.chest_upgrade_score_topics = {
 		default = {
 			{
 				texture = "loot_mutator_icon_06",
@@ -404,7 +448,9 @@ UISettings = UISettings or {
 			}
 		}
 	}
-}
+end
+
+UISettings = UISettings
 
 DLCUtils.merge("ui_settings", UISettings)
 DLCUtils.merge("breed_textures", UISettings.breed_textures)
@@ -863,7 +909,8 @@ UISettings.ability_ui_data = {
 
 DLCUtils.merge("ability_ui_data", UISettings.gamepad_ability_ui_data)
 setmetatable(UISettings.item_rarity_textures, {
-	__index = function(arg_1_0, arg_1_1)
+	__index = function (arg_1_0, arg_1_1)
+		-- function 1
 		return "icons_placeholder"
 	end
 })
@@ -1233,11 +1280,13 @@ UISettings.console_tooltip_pass_definitions = {
 	"console_item_background"
 }
 
-function UISettings.hero_fullscreen_menu_on_enter()
+UISettings.hero_fullscreen_menu_on_enter = function ()
+	-- function 2
 	print("hero_fullscreen_menu_on_enter")
 end
 
-function UISettings.hero_fullscreen_menu_on_exit()
+UISettings.hero_fullscreen_menu_on_exit = function ()
+	-- function 3
 	print("hero_fullscreen_menu_on_exit")
 end
 
@@ -1608,7 +1657,7 @@ UISettings.dlc_order_data = {
 	}
 }
 
-local var_0_0 = {
+local tbl_2 = {
 	{
 		texture = "pc_button_icon_left",
 		size = {
@@ -1632,7 +1681,7 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = {
+local tbl_3 = {
 	win32 = {
 		mouse_0 = {
 			texture = "mouse_input_left",
@@ -2280,102 +2329,115 @@ local var_0_1 = {
 	}
 }
 
-UISettings.gamepad_button_texture_data = var_0_1
+UISettings.gamepad_button_texture_data = tbl_3
 
 function ButtonTextureByName(arg_4_0, arg_4_1)
-	local var_4_0 = UISettings.use_ps4_input_icons
-	local var_4_1 = Managers.input and Managers.input:get_most_recent_device()
+	-- function 4
+	local use_ps4_input_icons = UISettings.use_ps4_input_icons
+	local input = Managers.input
 
-	var_4_0 = var_4_1 and var_4_1.type() == "sce_pad" or var_4_0
+	input = not input and Managers.input:get_most_recent_device()
+	use_ps4_input_icons = not input and input.type() == "sce_pad" and use_ps4_input_icons
 
-	if IS_WINDOWS and (arg_4_1 == "xb1" or arg_4_1 == "ps_pad") and var_4_0 then
+	if not IS_WINDOWS and arg_4_1 == "xb1" and arg_4_1 == "ps_pad" and not use_ps4_input_icons then
 		arg_4_1 = "win32_ps4"
 	end
 
-	local var_4_2 = var_0_1[arg_4_1][arg_4_0]
+	local var_4_2 = tbl_3[arg_4_1][arg_4_0]
 
-	if not var_4_2 and arg_4_1 == "win32" then
-		var_4_2 = var_0_0
+	if not (var_4_2 or arg_4_1 ~= "win32") then
+		var_4_2 = tbl_2
 	end
 
 	return var_4_2
 end
 
-function UISettings.get_gamepad_input_texture_data(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
-	local var_5_0 = PLATFORM
+UISettings.get_gamepad_input_texture_data = function (self, arg_5_1, arg_5_2, arg_5_3)
+	-- function 5
+	local PLATFORM = PLATFORM
 
-	if IS_XB1 and GameSettingsDevelopment.allow_keyboard_mouse and not arg_5_2 then
-		var_5_0 = "win32"
-	elseif IS_WINDOWS and arg_5_2 then
-		var_5_0 = "xb1"
+	if not (not IS_XB1 and not GameSettingsDevelopment.allow_keyboard_mouse and arg_5_2) then
+		PLATFORM = "win32"
+	elseif not IS_WINDOWS and not arg_5_2 then
+		PLATFORM = "xb1"
 	end
 
 	local var_5_1
-	local var_5_2 = ""
-	local var_5_3 = arg_5_0:get_keymapping(arg_5_1, var_5_0)
+	local str = ""
+	local get_keymapping = self:get_keymapping(arg_5_1, PLATFORM)
 
-	if #var_5_3 < 3 then
-		return var_5_1, var_5_2
+	if #get_keymapping < 3 then
+		return var_5_1, str
 	end
 
-	local var_5_4 = var_5_3[1]
-	local var_5_5 = var_5_3[2]
-	local var_5_6 = var_5_3[3]
-	local var_5_7 = var_5_5 == UNASSIGNED_KEY
+	local var_5_4 = get_keymapping[1]
+	local var_5_5 = get_keymapping[2]
+	local var_5_6 = get_keymapping[3]
+	local flag = var_5_5 == UNASSIGNED_KEY
 
-	if var_5_5 == UNASSIGNED_KEY and arg_5_3 then
-		var_5_3 = arg_5_3:get_keymapping(arg_5_1, var_5_0)
-		var_5_4 = var_5_3[1]
-		var_5_5 = var_5_3[2]
-		var_5_6 = var_5_3[3]
-		var_5_7 = true
+	if var_5_5 ~= UNASSIGNED_KEY or not arg_5_3 then
+		get_keymapping = arg_5_3:get_keymapping(arg_5_1, PLATFORM)
+		var_5_4 = get_keymapping[1]
+		var_5_5 = get_keymapping[2]
+		var_5_6 = get_keymapping[3]
+		flag = true
 	end
 
-	if var_5_5 and var_5_5 ~= UNASSIGNED_KEY then
+	if not (not var_5_5 and var_5_5 == UNASSIGNED_KEY) then
 		if var_5_4 == "keyboard" then
-			var_5_2 = Keyboard.button_locale_name(var_5_5) or Keyboard.button_name(var_5_5)
+			str = Keyboard.button_locale_name(var_5_5) or Keyboard.button_name(var_5_5)
 		elseif var_5_4 == "mouse" then
 			if var_5_6 == "axis" then
-				var_5_2 = Mouse.axis_name(var_5_5)
+				str = Mouse.axis_name(var_5_5)
 			else
-				var_5_2 = Mouse.button_name(var_5_5)
+				str = Mouse.button_name(var_5_5)
 			end
 
-			var_5_1 = var_0_1.win32[var_5_2] or var_0_1.win32.default
+			var_5_1 = tbl_3.win32[str] or tbl_3.win32.default
 		elseif var_5_4 == "gamepad" then
 			if var_5_6 == "axis" then
-				var_5_2 = Pad1.axis_name(var_5_5)
-				var_5_2 = var_5_2 .. "_axis"
+				str = Pad1.axis_name(var_5_5)
+				str = str .. "_axis"
 			else
-				var_5_2 = Pad1.button_name(var_5_5)
+				str = Pad1.button_name(var_5_5)
 			end
 		end
 	end
 
-	var_5_2 = var_5_2 or "ERROR"
+	str = str or "ERROR"
 
-	local var_5_8 = UISettings.use_ps4_input_icons
-	local var_5_9 = Managers.input:get_most_recent_device().type()
+	local use_ps4_input_icons = UISettings.use_ps4_input_icons
+	local type = Managers.input:get_most_recent_device().type()
 
-	var_5_8 = var_5_9 == "sce_pad" or var_5_8
+	use_ps4_input_icons = type == "sce_pad" or use_ps4_input_icons
 
-	if var_5_8 and IS_WINDOWS and var_5_9 == "gamepad" then
-		var_5_0 = "win32_ps4"
+	if not (not use_ps4_input_icons and not IS_WINDOWS and type ~= "gamepad") then
+		PLATFORM = "win32_ps4"
 	end
 
-	var_5_1 = var_5_1 or ButtonTextureByName(var_5_2, var_5_0)
+	var_5_1 = var_5_1 or ButtonTextureByName(str, PLATFORM)
 
-	return var_5_1, var_5_2, var_5_3, var_5_7
+	return var_5_1, str, get_keymapping, flag
 end
 
-function UISettings.set_console_settings()
-	UISettings.subtitles_font_size = Application.user_setting("subtitles_font_size") or 20
-	UISettings.subtitles_background_alpha = 2.55 * (Application.user_setting("subtitles_background_opacity") or 20)
+UISettings.set_console_settings = function ()
+	-- function 6
+	local UISettings = UISettings
+	local user_setting = Application.user_setting("subtitles_font_size")
 
-	local var_6_0 = Application.user_setting("use_subtitles")
+	user_setting = user_setting or 20
+	UISettings.subtitles_font_size = user_setting
 
-	if var_6_0 ~= nil then
-		UISettings.use_subtitles = var_6_0
+	local UISettings_2 = UISettings
+	local user_setting_2 = Application.user_setting("subtitles_background_opacity")
+
+	user_setting_2 = user_setting_2 or 20
+	UISettings_2.subtitles_background_alpha = 2.55 * user_setting_2
+
+	local user_setting_3 = Application.user_setting("use_subtitles")
+
+	if user_setting_3 ~= nil then
+		UISettings.use_subtitles = user_setting_3
 	end
 end
 

@@ -1,12 +1,12 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/vs_1h_chaos_troll_axe.lua
 
-local var_0_0 = "dark_pact_action_one"
-local var_0_1 = "dark_pact_action_one_release"
-local var_0_2 = "dark_pact_action_one_hold"
-local var_0_3 = 0.9
-local var_0_4 = 1.1
-local var_0_5 = {}
-local var_0_6 = {
+local str = "dark_pact_action_one"
+local str_2 = "dark_pact_action_one_release"
+local str_3 = "dark_pact_action_one_hold"
+local num = 0.9
+local num_2 = 1.1
+local tbl = {}
+local tbl_2 = {
 	charge = {
 		{
 			start_time = 0,
@@ -111,7 +111,7 @@ local var_0_6 = {
 		}
 	}
 }
-local var_0_7 = {
+local tbl_3 = {
 	frenzy = {
 		player_catapult_speed_blocked = 12,
 		player_knockback_speed_blocked = 12,
@@ -134,8 +134,8 @@ local var_0_7 = {
 	}
 }
 
-var_0_5.actions = {
-	[var_0_0] = {
+tbl.actions = {
+	[str] = {
 		default = {
 			anim_end_event = "attack_finished",
 			disallow_ghost_mode = true,
@@ -151,40 +151,42 @@ var_0_5.actions = {
 			dedicated_target_range = 2,
 			uninterruptible = true,
 			anim_event = "attack_cleave_charge",
-			anim_end_event_condition_func = function(arg_1_0, arg_1_1)
-				return arg_1_1 ~= "new_interupting_action" and arg_1_1 ~= "action_complete"
+			anim_end_event_condition_func = function (arg_1_0, arg_1_1)
+				-- function 1
+				return arg_1_1 == "new_interupting_action" or arg_1_1 ~= "action_complete"
 			end,
-			condition_func = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			condition_func = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+				-- function 2
 				return not ScriptUnit.has_extension(arg_2_0, "ghost_mode_system"):is_in_ghost_mode()
 			end,
 			total_time = math.huge,
-			attack_hold_input = var_0_2,
-			buff_data = var_0_6.charge,
+			attack_hold_input = str_3,
+			buff_data = tbl_2.charge,
 			allowed_chain_actions = {
 				{
 					sub_action = "attack_sweep_1",
 					start_time = 0,
 					end_time = 0.4,
-					input = var_0_1,
-					action = var_0_0
+					input = str_2,
+					action = str
 				},
 				{
 					sub_action = "attack_cleave",
 					start_time = 1.2,
-					input = var_0_1,
-					action = var_0_0
+					input = str_2,
+					action = str
 				},
 				{
 					start_time = 0.6,
 					blocker = true,
 					end_time = 1.5,
-					input = var_0_2
+					input = str_3
 				},
 				{
 					sub_action = "attack_cleave",
 					start_time = 1,
 					auto_chain = true,
-					action = var_0_0
+					action = str
 				},
 				{
 					sub_action = "default",
@@ -209,37 +211,38 @@ var_0_5.actions = {
 			dedicated_target_range = 2,
 			uninterruptible = true,
 			anim_event = "attack_cleave_charge",
-			anim_end_event_condition_func = function(arg_3_0, arg_3_1)
-				return arg_3_1 ~= "new_interupting_action" and arg_3_1 ~= "action_complete"
+			anim_end_event_condition_func = function (arg_3_0, arg_3_1)
+				-- function 3
+				return arg_3_1 == "new_interupting_action" or arg_3_1 ~= "action_complete"
 			end,
 			total_time = math.huge,
-			attack_hold_input = var_0_2,
-			buff_data = var_0_6.charge,
+			attack_hold_input = str_3,
+			buff_data = tbl_2.charge,
 			allowed_chain_actions = {
 				{
 					sub_action = "attack_shove",
 					start_time = 0,
 					end_time = 0.4,
-					input = var_0_1,
-					action = var_0_0
+					input = str_2,
+					action = str
 				},
 				{
 					sub_action = "attack_cleave",
 					start_time = 1.2,
-					input = var_0_1,
-					action = var_0_0
+					input = str_2,
+					action = str
 				},
 				{
 					start_time = 0.6,
 					blocker = true,
 					end_time = 1.5,
-					input = var_0_2
+					input = str_3
 				},
 				{
 					sub_action = "attack_cleave",
 					start_time = 1,
 					auto_chain = true,
-					action = var_0_0
+					action = str
 				},
 				{
 					sub_action = "default",
@@ -273,24 +276,25 @@ var_0_5.actions = {
 			uninterruptible = true,
 			anim_event = "attack_sweep",
 			total_time = 2,
-			anim_end_event_condition_func = function(arg_4_0, arg_4_1)
-				return arg_4_1 ~= "new_interupting_action" and arg_4_1 ~= "action_complete"
+			anim_end_event_condition_func = function (arg_4_0, arg_4_1)
+				-- function 4
+				return arg_4_1 == "new_interupting_action" or arg_4_1 ~= "action_complete"
 			end,
-			knockback_data = var_0_7.frenzy,
-			buff_data = var_0_6.light_attack_1,
+			knockback_data = tbl_3.frenzy,
+			buff_data = tbl_2.light_attack_1,
 			allowed_chain_actions = {
 				{
 					sub_action = "default_2",
 					start_time = 1,
 					end_time = 1.4,
-					input = var_0_0,
-					action = var_0_0
+					input = str,
+					action = str
 				},
 				{
 					sub_action = "default",
 					start_time = 1.4,
-					input = var_0_0,
-					action = var_0_0
+					input = str,
+					action = str
 				}
 			},
 			baked_sweep = {
@@ -393,17 +397,18 @@ var_0_5.actions = {
 			anim_event = "attack_shove",
 			damage_profile_inner = "medium_push",
 			total_time = 2.4,
-			anim_end_event_condition_func = function(arg_5_0, arg_5_1)
-				return arg_5_1 ~= "new_interupting_action" and arg_5_1 ~= "action_complete"
+			anim_end_event_condition_func = function (arg_5_0, arg_5_1)
+				-- function 5
+				return arg_5_1 == "new_interupting_action" or arg_5_1 ~= "action_complete"
 			end,
-			knockback_data = var_0_7.frenzy,
-			buff_data = var_0_6.light_attack_2,
+			knockback_data = tbl_3.frenzy,
+			buff_data = tbl_2.light_attack_2,
 			allowed_chain_actions = {
 				{
 					sub_action = "default",
 					start_time = 1.5,
-					input = var_0_2,
-					action = var_0_0
+					input = str_3,
+					action = str
 				}
 			},
 			baked_sweep = {
@@ -500,30 +505,32 @@ var_0_5.actions = {
 			anim_event = "attack_cleave",
 			hit_stop_anim = "attack_hit",
 			total_time = 2.57,
-			anim_end_event_condition_func = function(arg_6_0, arg_6_1)
-				return arg_6_1 ~= "new_interupting_action" and arg_6_1 ~= "action_complete"
+			anim_end_event_condition_func = function (arg_6_0, arg_6_1)
+				-- function 6
+				return arg_6_1 == "new_interupting_action" or arg_6_1 ~= "action_complete"
 			end,
-			range_mod = var_0_4 * 1.65,
-			knockback_data = var_0_7.scrambler,
-			buff_data = var_0_6.heavy_attack,
+			range_mod = num_2 * 1.65,
+			knockback_data = tbl_3.scrambler,
+			buff_data = tbl_2.heavy_attack,
 			allowed_chain_actions = {
 				{
 					sub_action = "default_2",
 					start_time = 1.1,
 					end_time = 1.6,
-					input = var_0_0,
-					action = var_0_0,
-					release_required = var_0_2
+					input = str,
+					action = str,
+					release_required = str_3
 				},
 				{
 					sub_action = "default",
 					start_time = 1.6,
-					input = var_0_2,
-					action = var_0_0,
-					release_required = var_0_2
+					input = str_3,
+					action = str,
+					release_required = str_3
 				}
 			},
-			enter_function = function(arg_7_0, arg_7_1)
+			enter_function = function (arg_7_0, arg_7_1)
+				-- function 7
 				return arg_7_1:reset_release_input()
 			end,
 			baked_sweep = {
@@ -603,7 +610,7 @@ var_0_5.actions = {
 	action_inspect = ActionTemplates.action_inspect,
 	action_wield = ActionTemplates.wield
 }
-var_0_5.weapon_sway_settings = {
+tbl.weapon_sway_settings = {
 	camera_look_sensitivity = 1,
 	sway_range = 1,
 	recetner_dampening = 1,
@@ -612,17 +619,17 @@ var_0_5.weapon_sway_settings = {
 	recenter_acc = 5,
 	lerp_speed = math.huge
 }
-var_0_5.left_hand_unit = "units/weapons/player/dark_pact/wpn_chaos_troll/wpn_chaos_troll_01"
-var_0_5.left_hand_attachment_node_linking = AttachmentNodeLinking.vs_chaos_troll_axe.left
-var_0_5.right_hand_unit = "units/weapons/player/wpn_invisible_weapon"
-var_0_5.right_hand_attachment_node_linking = AttachmentNodeLinking.vs_chaos_troll_axe.right
-var_0_5.display_unit = "units/weapons/weapon_display/display_1h_axes"
-var_0_5.wield_anim = "to_1h_axe"
-var_0_5.buff_type = "MELEE_1H"
-var_0_5.weapon_type = "AXE_1H"
-var_0_5.max_fatigue_points = 6
-var_0_5.buffs = {}
-var_0_5.attack_meta_data = {
+tbl.left_hand_unit = "units/weapons/player/dark_pact/wpn_chaos_troll/wpn_chaos_troll_01"
+tbl.left_hand_attachment_node_linking = AttachmentNodeLinking.vs_chaos_troll_axe.left
+tbl.right_hand_unit = "units/weapons/player/wpn_invisible_weapon"
+tbl.right_hand_attachment_node_linking = AttachmentNodeLinking.vs_chaos_troll_axe.right
+tbl.display_unit = "units/weapons/weapon_display/display_1h_axes"
+tbl.wield_anim = "to_1h_axe"
+tbl.buff_type = "MELEE_1H"
+tbl.weapon_type = "AXE_1H"
+tbl.max_fatigue_points = 6
+tbl.buffs = {}
+tbl.attack_meta_data = {
 	tap_attack = {
 		arc = 0
 	},
@@ -630,7 +637,7 @@ var_0_5.attack_meta_data = {
 		arc = 0
 	}
 }
-var_0_5.aim_assist_settings = {
+tbl.aim_assist_settings = {
 	max_range = 5,
 	no_aim_input_multiplier = 0,
 	vertical_only = true,
@@ -642,7 +649,7 @@ var_0_5.aim_assist_settings = {
 		skaven_slave = 0.5
 	}
 }
-var_0_5.weapon_diagram = {
+tbl.weapon_diagram = {
 	light_attack = {
 		[DamageTypes.ARMOR_PIERCING] = 4,
 		[DamageTypes.CLEAVE] = 1,
@@ -658,35 +665,35 @@ var_0_5.weapon_diagram = {
 		[DamageTypes.DAMAGE] = 4
 	}
 }
-var_0_5.tooltip_keywords = {
+tbl.tooltip_keywords = {
 	"weapon_keyword_high_damage",
 	"weapon_keyword_armour_piercing",
 	"weapon_keyword_shield_breaking"
 }
-var_0_5.tooltip_compare = {
+tbl.tooltip_compare = {
 	light = {
 		sub_action_name = "light_attack_left",
-		action_name = var_0_0
+		action_name = str
 	},
 	heavy = {
 		sub_action_name = "heavy_attack_left",
-		action_name = var_0_0
+		action_name = str
 	}
 }
-var_0_5.tooltip_detail = {
+tbl.tooltip_detail = {
 	light = {
 		sub_action_name = "default",
-		action_name = var_0_0
+		action_name = str
 	},
 	heavy = {
 		sub_action_name = "default",
-		action_name = var_0_0
+		action_name = str
 	}
 }
-var_0_5.wwise_dep_right_hand = {
+tbl.wwise_dep_right_hand = {
 	"wwise/one_handed_axes"
 }
 
 return {
-	vs_chaos_troll_axe = var_0_5
+	vs_chaos_troll_axe = tbl
 }

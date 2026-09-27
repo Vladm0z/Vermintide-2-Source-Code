@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/belladonna/belladonna_buff_settings.lua
 
-local var_0_0 = DLCSettings.belladonna
+local belladonna = DLCSettings.belladonna
 
-var_0_0.buff_templates = {
+belladonna.buff_templates = {
 	invincibility_standard = {
 		buffs = {
 			{
@@ -36,87 +36,119 @@ var_0_0.buff_templates = {
 		}
 	}
 }
-var_0_0.buff_function_templates = {
-	apply_invincibility_standard = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+belladonna.buff_function_templates = {
+	apply_invincibility_standard = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+		-- function 1
 		return
 	end,
-	update_invincibility_standard = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	update_invincibility_standard = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+		-- function 2
 		QuickDrawer:sphere(POSITION_LOOKUP[arg_2_0], 1, Colors.get("cyan"))
 	end,
-	remove_invincibility_standard = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
-		if Managers.state.network.is_server then
-			local var_3_0 = arg_3_1.stored_damage
-			local var_3_1 = arg_3_1.standard_is_destroyed
+	remove_invincibility_standard = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+		-- function 3
+		if not Managers.state.network.is_server then
+			local stored_damage = arg_3_1.stored_damage
+			local standard_is_destroyed = arg_3_1.standard_is_destroyed
 
-			if var_3_0 and var_3_1 and HEALTH_ALIVE[arg_3_0] then
-				local var_3_2 = ALIVE[arg_3_2.attacker_unit] and arg_3_2.attacker_unit or arg_3_0
-				local var_3_3 = arg_3_1.armor_type
-				local var_3_4 = "buff"
-				local var_3_5 = var_3_0
-				local var_3_6 = arg_3_1.damage_source
+			if not stored_damage and not standard_is_destroyed and not HEALTH_ALIVE[arg_3_0] then
+				local attacker_unit
+
+				if not ALIVE[arg_3_2.attacker_unit] then
+					attacker_unit = arg_3_2.attacker_unit
+
+					if not attacker_unit then
+						-- Nothing
+					end
+				end
+
+				attacker_unit = arg_3_0
+
+				::label_3_0::
+
+				local armor_type = arg_3_1.armor_type
+				local str = "buff"
+				local var_3_5 = stored_damage
+				local damage_source = arg_3_1.damage_source
 
 				arg_3_1.applied_damage = true
 
-				DamageUtils.add_damage_network(arg_3_0, var_3_2, var_3_5, "torso", var_3_4, nil, Vector3(1, 0, 0), var_3_6, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
+				DamageUtils.add_damage_network(arg_3_0, attacker_unit, var_3_5, "torso", str, nil, Vector3(1, 0, 0), damage_source, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
 			end
 		end
 	end,
-	apply_healing_standard = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	apply_healing_standard = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+		-- function 4
 		arg_4_1.next_heal_tick_t = arg_4_2.t + 1
 
 		Unit.flow_event(arg_4_0, "vfx_healing_buff")
 
-		if Managers.state.network.is_server then
-			local var_4_0 = ScriptUnit.extension(arg_4_0, "health_system")
-			local var_4_1 = var_4_0:get_max_health()
-			local var_4_2 = arg_4_1.template
-			local var_4_3 = Managers.state.difficulty:get_difficulty()
-			local var_4_4 = var_4_1 + var_4_2.heal_amounts[var_4_3] * 5
+		if not Managers.state.network.is_server then
+			local extension = ScriptUnit.extension(arg_4_0, "health_system")
+			local get_max_health = extension:get_max_health()
+			local template = arg_4_1.template
+			local get_difficulty = Managers.state.difficulty:get_difficulty()
+			local num = get_max_health + template.heal_amounts[get_difficulty] * 5
 
-			var_4_0._damage_cap_per_hit = var_4_0:set_max_health(var_4_4)
+			extension._damage_cap_per_hit = extension:set_max_health(num)
 		end
 	end,
-	update_healing_standard = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	update_healing_standard = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+		-- function 5
 		if arg_5_2.t > arg_5_1.next_heal_tick_t then
 			arg_5_1.next_heal_tick_t = arg_5_2.t + 1
 
-			if Managers.state.network.is_server then
-				local var_5_0 = ScriptUnit.has_extension(arg_5_0, "health_system")
+			if not Managers.state.network.is_server then
+				local has_extension = ScriptUnit.has_extension(arg_5_0, "health_system")
 
-				if var_5_0 then
-					local var_5_1 = arg_5_1.template
-					local var_5_2 = "leech"
-					local var_5_3 = Managers.state.difficulty:get_difficulty()
-					local var_5_4 = var_5_1.heal_amounts[var_5_3]
-					local var_5_5 = DamageUtils.networkify_damage(var_5_4)
+				if not has_extension then
+					local template = arg_5_1.template
+					local str = "leech"
+					local get_difficulty = Managers.state.difficulty:get_difficulty()
+					local var_5_4 = template.heal_amounts[get_difficulty]
+					local networkify_damage = DamageUtils.networkify_damage(var_5_4)
 
-					var_5_0:add_heal(arg_5_0, var_5_5, nil, var_5_2)
+					has_extension:add_heal(arg_5_0, networkify_damage, nil, str)
 				end
 			end
 
 			Unit.flow_event(arg_5_0, "vfx_healing_buff_proc")
 		end
 	end,
-	remove_healing_standard = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	remove_healing_standard = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+		-- function 6
 		Unit.flow_event(arg_6_0, "vfx_remove_healing_buff")
 
-		if Managers.state.network.is_server then
-			local var_6_0 = ScriptUnit.extension(arg_6_0, "health_system")
-			local var_6_1 = var_6_0:get_max_health()
-			local var_6_2 = arg_6_1.template
-			local var_6_3 = Managers.state.difficulty:get_difficulty()
-			local var_6_4 = var_6_1 - var_6_2.heal_amounts[var_6_3] * 5
+		if not Managers.state.network.is_server then
+			local extension = ScriptUnit.extension(arg_6_0, "health_system")
+			local get_max_health = extension:get_max_health()
+			local template = arg_6_1.template
+			local get_difficulty = Managers.state.difficulty:get_difficulty()
+			local num = get_max_health - template.heal_amounts[get_difficulty] * 5
 
-			var_6_0._damage_cap_per_hit = var_6_0:set_max_health(var_6_4)
+			extension._damage_cap_per_hit = extension:set_max_health(num)
 
-			local var_6_5 = ALIVE[arg_6_2.attacker_unit] and arg_6_2.attacker_unit or arg_6_0
-			local var_6_6 = "buff"
-			local var_6_7 = 1
-			local var_6_8 = arg_6_1.damage_source
+			local attacker_unit
+
+			if not ALIVE[arg_6_2.attacker_unit] then
+				attacker_unit = arg_6_2.attacker_unit
+
+				if not attacker_unit then
+					-- Nothing
+				end
+			end
+
+			attacker_unit = arg_6_0
+
+			::label_6_0::
+
+			local str = "buff"
+			local num_2 = 1
+			local damage_source = arg_6_1.damage_source
 
 			arg_6_1.applied_damage = true
 
-			DamageUtils.add_damage_network(arg_6_0, var_6_5, var_6_7, "torso", var_6_6, nil, Vector3(1, 0, 0), var_6_8, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
+			DamageUtils.add_damage_network(arg_6_0, attacker_unit, num_2, "torso", str, nil, Vector3(1, 0, 0), damage_source, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
 		end
 	end
 }

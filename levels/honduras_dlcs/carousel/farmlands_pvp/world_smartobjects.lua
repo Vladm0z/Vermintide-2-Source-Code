@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/carousel/farmlands_pvp/world_smartobjects.lua
 
-local var_0_0 = {
+local tbl = {
 	["bf8c8d9b-afdb-48c0-a18f-10c31fb11f95"] = {
 		{
 			smart_object_index = 793,
@@ -83034,13 +83034,13 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = 3430
-local var_0_2 = "v1"
-local var_0_3 = "2017.MAY.05.05"
+local num = 3430
+local str = "v1"
+local str_2 = "2017.MAY.05.05"
 
 return {
-	smart_objects = var_0_0,
-	smart_object_count = var_0_1,
-	version = var_0_2,
-	ledgelator_version = var_0_3
+	smart_objects = tbl,
+	smart_object_count = num,
+	version = str,
+	ledgelator_version = str_2
 }

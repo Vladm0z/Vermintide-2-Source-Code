@@ -1,6 +1,9 @@
 -- chunkname: @scripts/settings/handbook_settings.lua
 
+local HandbookSettings = HandbookSettings
+
 HandbookSettings = HandbookSettings or {}
+HandbookSettings = HandbookSettings
 HandbookSettings.outline = {
 	{
 		display_name = "tutorials_progression_header",
@@ -147,12 +150,14 @@ HandbookSettings.outline = {
 	}
 }
 
-local function var_0_0()
+local function fn()
+	-- function 1
 	return Managers.input:is_device_active("gamepad")
 end
 
-local function var_0_1()
-	return not var_0_0()
+local function fn_2()
+	-- function 2
+	return not fn()
 end
 
 HandbookSettings.popups = {
@@ -193,8 +198,9 @@ HandbookSettings.popups = {
 		triggers = {
 			"keep_menu_left"
 		},
-		custom_condition = function(arg_3_0)
-			return arg_3_0:get("player_level") >= 8
+		custom_condition = function (self)
+			-- function 3
+			return self:get("player_level") >= 8
 		end
 	},
 	new_career_unlocked = {
@@ -248,8 +254,9 @@ HandbookSettings.popups = {
 		triggers = {
 			"keep_menu_left"
 		},
-		custom_condition = function(arg_4_0)
-			return arg_4_0:get("player_level") >= 15
+		custom_condition = function (self)
+			-- function 4
+			return self:get("player_level") >= 15
 		end
 	},
 	tutorial_introduction = {
@@ -374,7 +381,7 @@ HandbookSettings.pages = {
 		{
 			text = "tutorial_movement_text_01",
 			type = "text",
-			condition_func = var_0_1,
+			condition_func = fn_2,
 			inputs = {
 				"move_forward",
 				"move_left",
@@ -387,7 +394,7 @@ HandbookSettings.pages = {
 		{
 			text = "tutorial_movement_text_01",
 			type = "text",
-			condition_func = var_0_0,
+			condition_func = fn,
 			inputs = {
 				"move_controller",
 				"move_controller",
@@ -518,7 +525,7 @@ HandbookSettings.pages = {
 			inputs = {
 				"action_career"
 			},
-			condition_func = var_0_1
+			condition_func = fn_2
 		},
 		{
 			text = "tutorial_career_ability_text_01",
@@ -526,7 +533,7 @@ HandbookSettings.pages = {
 			inputs = {
 				"ability"
 			},
-			condition_func = var_0_0
+			condition_func = fn
 		},
 		display_name = "tutorial_career_ability_header"
 	},
@@ -552,7 +559,7 @@ HandbookSettings.pages = {
 			inputs = {
 				"dodge_hold"
 			},
-			condition_func = var_0_1
+			condition_func = fn_2
 		},
 		{
 			text = "tutorial_dodging_text_01",
@@ -560,7 +567,7 @@ HandbookSettings.pages = {
 			inputs = {
 				"dodge_1"
 			},
-			condition_func = var_0_0
+			condition_func = fn
 		},
 		display_name = "tutorial_dodging_header"
 	},
@@ -656,14 +663,16 @@ HandbookSettings.pages = {
 		{
 			texture = "tutorial_hot_bar_01_console",
 			type = "image",
-			condition_func = function()
+			condition_func = function ()
+				-- function 5
 				return UIUtils.use_gamepad_hud_layout()
 			end
 		},
 		{
 			texture = "tutorial_hot_bar_01_pc",
 			type = "image",
-			condition_func = function()
+			condition_func = function ()
+				-- function 6
 				return not UIUtils.use_gamepad_hud_layout()
 			end
 		},
@@ -934,7 +943,7 @@ HandbookSettings.pages = {
 			inputs = {
 				"weapon_reload"
 			},
-			condition_func = var_0_1
+			condition_func = fn_2
 		},
 		{
 			text = "tutorial_gutterrunner_text_03",
@@ -942,7 +951,7 @@ HandbookSettings.pages = {
 			inputs = {
 				"weapon_reload_input"
 			},
-			condition_func = var_0_0
+			condition_func = fn
 		},
 		display_name = "tutorial_gutterrunner_header"
 	},
@@ -984,7 +993,7 @@ HandbookSettings.pages = {
 				"action_one",
 				"weapon_reload"
 			},
-			condition_func = var_0_1
+			condition_func = fn_2
 		},
 		{
 			text = "tutorial_ratling_gunner_text_01",
@@ -993,7 +1002,7 @@ HandbookSettings.pages = {
 				"action_one",
 				"weapon_reload_input"
 			},
-			condition_func = var_0_0
+			condition_func = fn
 		},
 		display_name = "tutorial_ratling_gunner_header"
 	},
@@ -1020,7 +1029,7 @@ HandbookSettings.pages = {
 				"action_one",
 				"weapon_reload"
 			},
-			condition_func = var_0_1
+			condition_func = fn_2
 		},
 		{
 			text = "tutorial_warpfire_thrower_text_01",
@@ -1029,7 +1038,7 @@ HandbookSettings.pages = {
 				"action_one",
 				"weapon_reload_input"
 			},
-			condition_func = var_0_0
+			condition_func = fn
 		},
 		display_name = "tutorial_warpfire_thrower_header"
 	},

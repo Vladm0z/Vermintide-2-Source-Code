@@ -2,29 +2,34 @@
 
 AILineOfSightExtension = class(AILineOfSightExtension)
 
-function AILineOfSightExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	arg_1_0.unit = arg_1_2
-	arg_1_0._offsets = {}
+AILineOfSightExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	self.unit = arg_1_2
+	self._offsets = {}
 end
 
-function AILineOfSightExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
-	arg_2_0._physics_world = World.physics_world(arg_2_1)
+AILineOfSightExtension.extensions_ready = function (self, arg_2_1, arg_2_2)
+	-- function 2
+	self._physics_world = World.physics_world(arg_2_1)
 end
 
-function AILineOfSightExtension.destroy(arg_3_0)
+AILineOfSightExtension.destroy = function (arg_3_0)
+	-- function 3
 	return
 end
 
-function AILineOfSightExtension.reset(arg_4_0)
+AILineOfSightExtension.reset = function (arg_4_0)
+	-- function 4
 	return
 end
 
-local var_0_0 = 36
-local var_0_1 = 0.1
-local var_0_2 = 0.1
+local num = 36
+local num_2 = 0.1
+local num_3 = 0.1
 
-function AILineOfSightExtension.has_line_of_sight(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
-	if arg_5_2.pause_line_of_sight_t then
+AILineOfSightExtension.has_line_of_sight = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	-- function 5
+	if not arg_5_2.pause_line_of_sight_t then
 		if Managers.time:time("game") < arg_5_2.pause_line_of_sight_t then
 			return false, 1
 		else
@@ -32,67 +37,89 @@ function AILineOfSightExtension.has_line_of_sight(arg_5_0, arg_5_1, arg_5_2, arg
 		end
 	end
 
-	local var_5_0 = arg_5_0._offsets
+	local _offsets = self._offsets
 
-	var_5_0[1] = Vector3(0, 0, 1.5)
-	var_5_0[2] = Vector3(0.5, 0, 1.5)
-	var_5_0[3] = Vector3(-0.5, 0, 1.5)
+	_offsets[1] = Vector3(0, 0, 1.5)
+	_offsets[2] = Vector3(0.5, 0, 1.5)
+	_offsets[3] = Vector3(-0.5, 0, 1.5)
 
 	local var_5_1 = Vector3(0, 0, 1.5)
-	local var_5_2 = 3
-	local var_5_3 = arg_5_0._physics_world
-	local var_5_4 = Vector3.up()
-	local var_5_5 = Unit.alive
-	local var_5_6 = DamageUtils.is_character
-	local var_5_7 = false
-	local var_5_8 = Vector3.distance_squared
-	local var_5_9 = 0
-	local var_5_10 = false
-	local var_5_11 = arg_5_4 or arg_5_2.breed.line_of_sight_distance_sq or var_0_0
-	local var_5_12 = arg_5_3 or arg_5_2.attacking_target or arg_5_2.target_unit
+	local num_4 = 3
+	local _physics_world = self._physics_world
+	local up = Vector3.up()
+	local alive = Unit.alive
+	local is_character = DamageUtils.is_character
+	local flag = false
+	local distance_squared = Vector3.distance_squared
+	local num_5 = 0
+	local flag_2 = false
 
-	if var_5_5(var_5_12) and var_5_6(var_5_12) then
+	if not arg_5_4 then
+		-- Nothing
+	end
+
+	::label_5_0::
+
+	local line_of_sight_distance_sq = arg_5_2.breed.line_of_sight_distance_sq
+
+	line_of_sight_distance_sq = line_of_sight_distance_sq or num
+
+	::label_5_1::
+
+	if not arg_5_3 then
+		-- Nothing
+	end
+
+	::label_5_2::
+
+	local attacking_target = arg_5_2.attacking_target
+
+	attacking_target = attacking_target or arg_5_2.target_unit
+
+	::label_5_3::
+
+	if not alive(attacking_target) and not is_character(attacking_target) then
 		local var_5_13 = POSITION_LOOKUP[arg_5_1]
-		local var_5_14 = POSITION_LOOKUP[var_5_12]
+		local var_5_14 = POSITION_LOOKUP[attacking_target]
 
-		if var_5_14 and var_5_11 > var_5_8(var_5_13, var_5_14) then
-			local var_5_15 = var_5_14 - var_5_13
+		if not (not var_5_14 and not (line_of_sight_distance_sq > distance_squared(var_5_13, var_5_14))) then
+			local num_6 = var_5_14 - var_5_13
 
-			var_5_10 = false
+			flag_2 = false
 
-			if math.abs(var_5_15.x) < var_0_1 and math.abs(var_5_15.y) < var_0_1 then
-				local var_5_16 = var_5_0[1].z
-				local var_5_17 = var_5_13 + var_5_1
-				local var_5_18 = var_5_15 + Vector3(0, 0, var_5_16 - var_5_1.z)
-				local var_5_19 = math.max(Vector3.length(var_5_18), 0.0001)
-				local var_5_20 = var_5_18 / var_5_19
+			if not (not (math.abs(num_6.x) < num_2) or not (math.abs(num_6.y) < num_2)) then
+				local z = _offsets[1].z
+				local num_7 = var_5_13 + var_5_1
+				local num_8 = num_6 + Vector3(0, 0, z - var_5_1.z)
+				local max = math.max(Vector3.length(num_8), 0.0001)
+				local num_9 = num_8 / max
 
-				if var_5_19 > var_0_2 then
-					var_5_9 = var_5_9 + 1
+				if max > num_3 then
+					num_5 = num_5 + 1
 
-					local var_5_21, var_5_22, var_5_23, var_5_24, var_5_25 = PhysicsWorld.raycast(var_5_3, var_5_17, var_5_20, var_5_19, "closest", "collision_filter", "filter_ai_line_of_sight_check")
+					local raycast, var_5_22, var_5_23, var_5_24, var_5_25 = PhysicsWorld.raycast(_physics_world, num_7, num_9, max, "closest", "collision_filter", "filter_ai_line_of_sight_check")
 
-					if not var_5_21 or Actor.unit(var_5_25) == var_5_12 then
-						var_5_10 = true
+					if not (not raycast and Actor.unit(var_5_25) ~= attacking_target) then
+						flag_2 = true
 					end
 				else
-					var_5_10 = true
+					flag_2 = true
 				end
 			else
-				local var_5_26 = Vector3.normalize(Vector3.cross(var_5_15, var_5_4))
+				local normalize = Vector3.normalize(Vector3.cross(num_6, up))
 
-				for iter_5_0 = 1, var_5_2 do
-					var_5_9 = var_5_9 + 1
+				for i = 1, num_4 do
+					num_5 = num_5 + 1
 
-					local var_5_27 = var_5_0[iter_5_0]
-					local var_5_28 = var_5_13 + var_5_1
-					local var_5_29 = var_5_15 + Vector3(var_5_26.x * var_5_27.x, var_5_26.y * var_5_27.x, var_5_27.z - var_5_1.z)
-					local var_5_30 = Vector3.length(var_5_29)
-					local var_5_31 = var_5_29 / var_5_30
-					local var_5_32, var_5_33, var_5_34, var_5_35, var_5_36 = PhysicsWorld.raycast(var_5_3, var_5_28, var_5_31, var_5_30, "closest", "collision_filter", "filter_ai_line_of_sight_check")
+					local var_5_27 = _offsets[i]
+					local num_10 = var_5_13 + var_5_1
+					local num_11 = num_6 + Vector3(normalize.x * var_5_27.x, normalize.y * var_5_27.x, var_5_27.z - var_5_1.z)
+					local length = Vector3.length(num_11)
+					local num_12 = num_11 / length
+					local raycast_2, var_5_33, var_5_34, var_5_35, var_5_36 = PhysicsWorld.raycast(_physics_world, num_10, num_12, length, "closest", "collision_filter", "filter_ai_line_of_sight_check")
 
-					if not var_5_32 or Actor.unit(var_5_36) == var_5_12 then
-						var_5_10 = true
+					if not (not raycast_2 and Actor.unit(var_5_36) ~= attacking_target) then
+						flag_2 = true
 
 						break
 					end
@@ -101,5 +128,5 @@ function AILineOfSightExtension.has_line_of_sight(arg_5_0, arg_5_1, arg_5_2, arg
 		end
 	end
 
-	return var_5_10, var_5_9
+	return flag_2, num_5
 end

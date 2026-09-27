@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/carousel/carousel_experience_settings.lua
 
-local var_0_0 = {
+local tbl = {
 	0,
 	1500,
 	1501,
@@ -252,93 +252,101 @@ local var_0_0 = {
 	22083,
 	22249
 }
-local var_0_1 = #var_0_0
-local var_0_2 = 0
+local count = #tbl
+local num = 0
 
-for iter_0_0 = 1, var_0_1 do
-	var_0_2 = var_0_2 + var_0_0[iter_0_0]
+for i = 1, count do
+	num = num + tbl[i]
 end
+
+local ExperienceSettings = ExperienceSettings
 
 ExperienceSettings = ExperienceSettings or {}
+ExperienceSettings = ExperienceSettings
 
-function ExperienceSettings.get_versus_level()
-	local var_1_0 = ExperienceSettings.get_versus_experience()
+ExperienceSettings.get_versus_level = function ()
+	-- function 1
+	local get_versus_experience = ExperienceSettings.get_versus_experience()
 
-	return ExperienceSettings.get_versus_level_from_experience(var_1_0)
+	return ExperienceSettings.get_versus_level_from_experience(get_versus_experience)
 end
 
-function ExperienceSettings.get_versus_player_level(arg_2_0)
-	local var_2_0 = Managers.state.network:game()
+ExperienceSettings.get_versus_player_level = function (self)
+	-- function 2
+	local game = Managers.state.network:game()
 
-	if not var_2_0 then
+	if not game then
 		return nil
 	end
 
-	local var_2_1 = Managers.state.unit_storage
-	local var_2_2 = arg_2_0.player_unit
-	local var_2_3 = var_2_1:go_id(var_2_2)
+	local unit_storage = Managers.state.unit_storage
+	local player_unit = self.player_unit
+	local go_id = unit_storage:go_id(player_unit)
 
-	if not var_2_3 then
+	if not go_id then
 		return nil
 	end
 
-	return (GameSession.game_object_field(var_2_0, var_2_3, "versus_level"))
+	return (GameSession.game_object_field(game, go_id, "versus_level"))
 end
 
-function ExperienceSettings.get_versus_experience()
+ExperienceSettings.get_versus_experience = function ()
+	-- function 3
 	return Managers.backend:get_interface("versus"):get_profile_data("experience") or 0
 end
 
-function ExperienceSettings.get_versus_level_from_experience(arg_4_0)
+ExperienceSettings.get_versus_level_from_experience = function (arg_4_0)
+	-- function 4
 	arg_4_0 = arg_4_0 or 0
 
 	assert(arg_4_0 >= 0, "Negative XP!??")
 
-	local var_4_0 = 0
-	local var_4_1 = 0
-	local var_4_2 = 0
-	local var_4_3 = 0
+	local num_2 = 0
+	local num_3 = 0
+	local num_4 = 0
+	local num_5 = 0
 	local var_4_4
 
-	if arg_4_0 >= var_0_2 then
-		return var_0_1, var_4_2, var_4_3
+	if arg_4_0 >= num then
+		return count, num_4, num_5
 	end
 
-	for iter_4_0 = 1, var_0_1 do
-		local var_4_5 = var_4_0
+	for i = 1, count do
+		local var_4_5 = num_2
 
-		var_4_0 = var_4_0 + var_0_0[iter_4_0]
+		num_2 = num_2 + tbl[i]
 
-		if arg_4_0 < var_4_0 then
-			var_4_1 = iter_4_0 - 1
-			var_4_3 = arg_4_0 - var_4_5
-			var_4_2 = var_4_3 / var_0_0[iter_4_0]
+		if arg_4_0 < num_2 then
+			num_3 = i - 1
+			num_5 = arg_4_0 - var_4_5
+			num_4 = num_5 / tbl[i]
 
 			break
 		end
 	end
 
-	return var_4_1, var_4_2, var_4_3
+	return num_3, num_4, num_5
 end
 
-function ExperienceSettings.get_versus_progress_breakdown(arg_5_0, arg_5_1)
-	local var_5_0, var_5_1 = ExperienceSettings.get_versus_level_from_experience(arg_5_0)
-	local var_5_2, var_5_3 = ExperienceSettings.get_versus_level_from_experience(arg_5_0 + arg_5_1)
-	local var_5_4 = {}
+ExperienceSettings.get_versus_progress_breakdown = function (arg_5_0, arg_5_1)
+	-- function 5
+	local get_versus_level_from_experience, var_5_1 = ExperienceSettings.get_versus_level_from_experience(arg_5_0)
+	local get_versus_level_from_experience_2, var_5_3 = ExperienceSettings.get_versus_level_from_experience(arg_5_0 + arg_5_1)
+	local tbl_2 = {}
 
-	for iter_5_0 = var_5_0, var_5_2 do
-		if not var_0_0[iter_5_0 + 1] then
-			var_5_4[iter_5_0] = 0
+	for i = get_versus_level_from_experience, get_versus_level_from_experience_2 do
+		if not tbl[i + 1] then
+			tbl_2[i] = 0
 		else
-			local var_5_5 = var_0_0[iter_5_0 + 1] * (iter_5_0 == var_5_2 and var_5_3 or 1)
+			local num = tbl[i + 1] * (i ~= get_versus_level_from_experience_2 or not var_5_3 or 1)
 
-			var_5_4[iter_5_0] = (var_5_5 - var_5_5 * var_5_1) / arg_5_1
+			tbl_2[i] = (num - num * var_5_1) / arg_5_1
 			var_5_1 = 0
 		end
 	end
 
-	return var_5_4, var_5_0
+	return tbl_2, get_versus_level_from_experience
 end
 
-ExperienceSettings.max_versus_experience = var_0_2
-ExperienceSettings.max_versus_level = var_0_1
+ExperienceSettings.max_versus_experience = num
+ExperienceSettings.max_versus_level = count

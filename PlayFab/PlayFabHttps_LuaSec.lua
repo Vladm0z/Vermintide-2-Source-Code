@@ -1,57 +1,64 @@
 -- chunkname: @PlayFab/PlayFabHttps_LuaSec.lua
 
-local var_0_0 = require("ssl.https")
-local var_0_1 = require("ltn12")
-local var_0_2 = require("PlayFab.json")
-local var_0_3 = require("PlayFab.PlayFabSettings")
+local https = require("ssl.https")
+local ltn12 = require("ltn12")
+local json = require("PlayFab.json")
+local PlayFabSettings = require("PlayFab.PlayFabSettings")
 
 return {
-	MakePlayFabApiCall = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
-		local var_1_0 = var_0_2.encode(arg_1_1)
-		local var_1_1 = {
+	MakePlayFabApiCall = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+		-- function 1
+		local encode = json.encode(arg_1_1)
+		local tbl = {
 			["X-ReportErrorAsSuccess"] = "true",
 			["Content-Type"] = "application/json",
-			["X-PlayFabSDK"] = var_0_3._internalSettings.sdkVersionString,
-			["content-length"] = tostring(string.len(var_1_0))
+			["X-PlayFabSDK"] = PlayFabSettings._internalSettings.sdkVersionString,
+			["content-length"] = tostring(string.len(encode))
 		}
 
-		if arg_1_2 then
-			var_1_1[arg_1_2] = arg_1_3
+		if not arg_1_2 then
+			tbl[arg_1_2] = arg_1_3
 		end
 
-		local var_1_2 = {}
-		local var_1_3 = "https://" .. var_0_3.settings.titleId .. ".playfabapi.com/" .. arg_1_0
-		local var_1_4, var_1_5, var_1_6, var_1_7 = var_0_0.request({
+		local tbl_2 = {}
+		local str = "https://" .. PlayFabSettings.settings.titleId .. ".playfabapi.com/" .. arg_1_0
+		local request, var_1_5, var_1_6, var_1_7 = https.request({
 			method = "POST",
-			url = var_1_3,
-			headers = var_1_1,
-			source = var_0_1.source.string(var_1_0),
-			sink = var_0_1.sink.table(var_1_2)
+			url = str,
+			headers = tbl,
+			source = ltn12.source.string(encode),
+			sink = ltn12.sink.table(tbl_2)
 		})
 
 		if var_1_5 == 200 then
-			local var_1_8, var_1_9 = pcall(var_0_2.decode, var_1_2[1] or "null")
+			local pcall = pcall
+			local decode = json.decode
+			local var_1_10 = tbl_2[1]
 
-			if var_1_9 and var_1_9.code == 200 and var_1_9.data and arg_1_4 then
-				arg_1_4(var_1_9.data)
-			elseif var_1_9 and arg_1_5 then
-				arg_1_5(var_1_9)
-			elseif arg_1_5 then
+			var_1_10 = var_1_10 or "null"
+
+			local var_1_11, var_1_12 = pcall(decode, var_1_10)
+
+			if not var_1_12 and (var_1_12.code ~= 200 or not var_1_12.data) and not arg_1_4 then
+				arg_1_4(var_1_12.data)
+			elseif not var_1_12 and not arg_1_5 then
+				arg_1_5(var_1_12)
+			elseif not arg_1_5 then
 				arg_1_5({
 					errorCode = 1123,
 					error = "ServiceUnavailable",
 					code = var_1_5,
 					status = var_1_7,
-					errorMessage = "Could not deserialize reseponse from server: " .. var_1_2[1]
+					errorMessage = "Could not deserialize reseponse from server: " .. tbl_2[1]
 				})
 			end
-		elseif arg_1_5 then
+		elseif not arg_1_5 then
 			arg_1_5({
 				errorCode = 1123,
 				error = "ServiceUnavailable",
 				code = var_1_5,
 				status = var_1_7,
-				errorMessage = "Could not deserialize reseponse from server: " .. var_1_2[1]
+				errorMessage = "Could not deserialize reseponse from server: " .. tbl_2[1]
 			})
 		end
 	end

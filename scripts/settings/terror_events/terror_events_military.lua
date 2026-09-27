@@ -1,12 +1,12 @@
 -- chunkname: @scripts/settings/terror_events/terror_events_military.lua
 
-local var_0_0 = require("scripts/settings/terror_events/terror_event_utils")
-local var_0_1 = var_0_0.count_event_breed
-local var_0_2 = var_0_0.spawned_during_event
-local var_0_3 = var_0_0.HARDER
-local var_0_4 = var_0_0.HARDEST
-local var_0_5 = var_0_0.CATACLYSM
-local var_0_6 = {
+local scripts_settings_terror_events_terror_event_utils = require("scripts/settings/terror_events/terror_event_utils")
+local count_event_breed = scripts_settings_terror_events_terror_event_utils.count_event_breed
+local spawned_during_event = scripts_settings_terror_events_terror_event_utils.spawned_during_event
+local HARDER = scripts_settings_terror_events_terror_event_utils.HARDER
+local HARDEST = scripts_settings_terror_events_terror_event_utils.HARDEST
+local CATACLYSM = scripts_settings_terror_events_terror_event_utils.CATACLYSM
+local tbl = {
 	military_end_event_survival_01 = {
 		"military_end_event_survival_01_back",
 		1,
@@ -86,7 +86,7 @@ local var_0_6 = {
 		1
 	}
 }
-local var_0_7 = {
+local tbl_2 = {
 	military_courtyard_event_start = {
 		{
 			"control_hordes",
@@ -129,8 +129,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 60,
-			condition = function(arg_1_0)
-				return var_0_2() < 8
+			condition = function (arg_1_0)
+				-- function 1
+				return spawned_during_event() < 8
 			end
 		},
 		{
@@ -152,8 +153,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 40,
-			condition = function(arg_2_0)
-				return var_0_2() < 10
+			condition = function (arg_2_0)
+				-- function 2
+				return spawned_during_event() < 10
 			end
 		},
 		{
@@ -161,7 +163,7 @@ local var_0_7 = {
 			limit_spawners = 8,
 			spawner_id = "courtyard_hidden",
 			composition_type = "storm_vermin_small",
-			difficulty_requirement = var_0_5
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"delay",
@@ -186,8 +188,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_3_0)
-				return var_0_1("skaven_plague_monk") < 2 and var_0_1("skaven_poison_wind_globadier") < 1 and var_0_1("chaos_corruptor_sorcerer") < 1 and var_0_1("skaven_warpfire_thrower") < 1
+			condition = function (arg_3_0)
+				-- function 3
+				return not (count_event_breed("skaven_plague_monk") < 2) or not (count_event_breed("skaven_poison_wind_globadier") < 1) or not (count_event_breed("chaos_corruptor_sorcerer") < 1) or count_event_breed("skaven_warpfire_thrower") < 1
 			end
 		},
 		{
@@ -209,8 +212,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_4_0)
-				return var_0_2() < 6
+			condition = function (arg_4_0)
+				-- function 4
+				return spawned_during_event() < 6
 			end
 		},
 		{
@@ -226,8 +230,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_5_0)
-				return var_0_2() < 6
+			condition = function (arg_5_0)
+				-- function 5
+				return spawned_during_event() < 6
 			end
 		},
 		{
@@ -265,8 +270,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 60,
-			condition = function(arg_6_0)
-				return var_0_2() < 8
+			condition = function (arg_6_0)
+				-- function 6
+				return spawned_during_event() < 8
 			end
 		},
 		{
@@ -288,8 +294,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 40,
-			condition = function(arg_7_0)
-				return var_0_2() < 10
+			condition = function (arg_7_0)
+				-- function 7
+				return spawned_during_event() < 10
 			end
 		},
 		{
@@ -297,7 +304,7 @@ local var_0_7 = {
 			limit_spawners = 8,
 			spawner_id = "courtyard_hidden",
 			composition_type = "chaos_warriors",
-			difficulty_requirement = var_0_5
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"delay",
@@ -322,8 +329,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_8_0)
-				return var_0_1("skaven_plague_monk") < 2 and var_0_1("skaven_poison_wind_globadier") < 1 and var_0_1("chaos_corruptor_sorcerer") < 1 and var_0_1("chaos_vortex_sorcerer") < 1 and var_0_1("skaven_warpfire_thrower") < 1
+			condition = function (arg_8_0)
+				-- function 8
+				return not (count_event_breed("skaven_plague_monk") < 2) or not (count_event_breed("skaven_poison_wind_globadier") < 1) or not (count_event_breed("chaos_corruptor_sorcerer") < 1) or not (count_event_breed("chaos_vortex_sorcerer") < 1) or count_event_breed("skaven_warpfire_thrower") < 1
 			end
 		},
 		{
@@ -339,8 +347,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_9_0)
-				return var_0_2() < 6
+			condition = function (arg_9_0)
+				-- function 9
+				return spawned_during_event() < 6
 			end
 		},
 		{
@@ -362,8 +371,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_10_0)
-				return var_0_2() < 6
+			condition = function (arg_10_0)
+				-- function 10
+				return spawned_during_event() < 6
 			end
 		},
 		{
@@ -393,8 +403,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_11_0)
-				return var_0_1("skaven_plague_monk") < 2
+			condition = function (arg_11_0)
+				-- function 11
+				return count_event_breed("skaven_plague_monk") < 2
 			end
 		},
 		{
@@ -415,13 +426,13 @@ local var_0_7 = {
 				"skaven_gutter_runner",
 				"skaven_pack_master"
 			},
-			difficulty_requirement = var_0_4
+			difficulty_requirement = HARDEST
 		},
 		{
 			"spawn_special",
 			breed_name = "skaven_ratling_gunner",
 			amount = 1,
-			difficulty_requirement = var_0_5
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"delay",
@@ -430,8 +441,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_12_0)
-				return var_0_1("skaven_poison_wind_globadier") < 1
+			condition = function (arg_12_0)
+				-- function 12
+				return count_event_breed("skaven_poison_wind_globadier") < 1
 			end
 		},
 		{
@@ -451,8 +463,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_13_0)
-				return var_0_1("skaven_plague_monk") < 2
+			condition = function (arg_13_0)
+				-- function 13
+				return count_event_breed("skaven_plague_monk") < 2
 			end
 		},
 		{
@@ -484,7 +497,7 @@ local var_0_7 = {
 				"skaven_gutter_runner",
 				"skaven_poison_wind_globadier"
 			},
-			difficulty_requirement = var_0_4
+			difficulty_requirement = HARDEST
 		},
 		{
 			"delay",
@@ -493,8 +506,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_14_0)
-				return var_0_1("chaos_corruptor_sorcerer") < 1 and var_0_1("chaos_vortex_sorcerer") < 1
+			condition = function (arg_14_0)
+				-- function 14
+				return not (count_event_breed("chaos_corruptor_sorcerer") < 1) or count_event_breed("chaos_vortex_sorcerer") < 1
 			end
 		},
 		{
@@ -514,8 +528,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_15_0)
-				return var_0_1("skaven_plague_monk") < 2
+			condition = function (arg_15_0)
+				-- function 15
+				return count_event_breed("skaven_plague_monk") < 2
 			end
 		},
 		{
@@ -533,13 +548,13 @@ local var_0_7 = {
 			"spawn_special",
 			breed_name = "skaven_ratling_gunner",
 			amount = 1,
-			difficulty_requirement = var_0_4
+			difficulty_requirement = HARDEST
 		},
 		{
 			"spawn_special",
 			breed_name = "skaven_poison_wind_globadier",
 			amount = 1,
-			difficulty_requirement = var_0_5
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"delay",
@@ -548,8 +563,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_16_0)
-				return var_0_1("chaos_vortex_sorcerer") < 1
+			condition = function (arg_16_0)
+				-- function 16
+				return count_event_breed("chaos_vortex_sorcerer") < 1
 			end
 		},
 		{
@@ -561,8 +577,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_17_0)
-				return var_0_1("skaven_plague_monk") < 2
+			condition = function (arg_17_0)
+				-- function 17
+				return count_event_breed("skaven_plague_monk") < 2
 			end
 		},
 		{
@@ -594,7 +611,7 @@ local var_0_7 = {
 				"chaos_vortex_sorcerer",
 				"skaven_ratling_gunner"
 			},
-			difficulty_requirement = var_0_4
+			difficulty_requirement = HARDEST
 		},
 		{
 			"delay",
@@ -603,8 +620,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_18_0)
-				return var_0_1("skaven_warpfire_thrower") < 1 and var_0_1("skaven_pack_master") < 1
+			condition = function (arg_18_0)
+				-- function 18
+				return not (count_event_breed("skaven_warpfire_thrower") < 1) or count_event_breed("skaven_pack_master") < 1
 			end
 		},
 		{
@@ -620,8 +638,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_19_0)
-				return var_0_1("skaven_plague_monk") < 2
+			condition = function (arg_19_0)
+				-- function 19
+				return count_event_breed("skaven_plague_monk") < 2
 			end
 		},
 		{
@@ -653,7 +672,7 @@ local var_0_7 = {
 				"skaven_gutter_runner",
 				"skaven_pack_master"
 			},
-			difficulty_requirement = var_0_4
+			difficulty_requirement = HARDEST
 		},
 		{
 			"delay",
@@ -662,8 +681,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_20_0)
-				return var_0_1("skaven_ratling_gunner") < 1 and var_0_1("skaven_poison_wind_globadier") < 1
+			condition = function (arg_20_0)
+				-- function 20
+				return not (count_event_breed("skaven_ratling_gunner") < 1) or count_event_breed("skaven_poison_wind_globadier") < 1
 			end
 		},
 		{
@@ -745,8 +765,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_21_0)
-				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 6 and var_0_1("skaven_storm_vermin_commander") < 2
+			condition = function (arg_21_0)
+				-- function 21
+				return not (count_event_breed("skaven_clan_rat") < 5) or not (count_event_breed("skaven_slave") < 6) or count_event_breed("skaven_storm_vermin_commander") < 2
 			end
 		},
 		{
@@ -782,14 +803,14 @@ local var_0_7 = {
 		{
 			"delay",
 			duration = 10,
-			difficulty_requirement = var_0_5
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"event_horde",
 			limit_spawners = 2,
 			spawner_id = "end_event_right_hidden",
 			composition_type = "chaos_warriors",
-			difficulty_requirement = var_0_5
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"delay",
@@ -798,8 +819,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_22_0)
-				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 5 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("chaos_marauder") < 2 and var_0_1("chaos_marauder_with_shield") < 2 and var_0_1("chaos_fanatic") < 4 and var_0_1("chaos_warrior") < 2
+			condition = function (arg_22_0)
+				-- function 22
+				return not (count_event_breed("skaven_clan_rat") < 3) or not (count_event_breed("skaven_slave") < 5) or not (count_event_breed("skaven_storm_vermin_commander") < 2) or not (count_event_breed("chaos_marauder") < 2) or not (count_event_breed("chaos_marauder_with_shield") < 2) or not (count_event_breed("chaos_fanatic") < 4) or count_event_breed("chaos_warrior") < 2
 			end
 		},
 		{
@@ -835,14 +857,14 @@ local var_0_7 = {
 		{
 			"delay",
 			duration = 10,
-			difficulty_requirement = var_0_5
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"event_horde",
 			limit_spawners = 2,
 			spawner_id = "end_event_right_hidden",
 			composition_type = "chaos_warriors",
-			difficulty_requirement = var_0_5
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"delay",
@@ -851,8 +873,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_23_0)
-				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 5 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("chaos_marauder") < 2 and var_0_1("chaos_marauder_with_shield") < 2 and var_0_1("chaos_fanatic") < 4
+			condition = function (arg_23_0)
+				-- function 23
+				return not (count_event_breed("skaven_clan_rat") < 3) or not (count_event_breed("skaven_slave") < 5) or not (count_event_breed("skaven_storm_vermin_commander") < 2) or not (count_event_breed("chaos_marauder") < 2) or not (count_event_breed("chaos_marauder_with_shield") < 2) or count_event_breed("chaos_fanatic") < 4
 			end
 		},
 		{
@@ -896,8 +919,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_24_0)
-				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 5 and var_0_1("skaven_storm_vermin_commander") < 1 and var_0_1("chaos_marauder") < 2 and var_0_1("chaos_marauder_with_shield") < 2 and var_0_1("chaos_fanatic") < 4
+			condition = function (arg_24_0)
+				-- function 24
+				return not (count_event_breed("skaven_clan_rat") < 3) or not (count_event_breed("skaven_slave") < 5) or not (count_event_breed("skaven_storm_vermin_commander") < 1) or not (count_event_breed("chaos_marauder") < 2) or not (count_event_breed("chaos_marauder_with_shield") < 2) or count_event_breed("chaos_fanatic") < 4
 			end
 		},
 		{
@@ -943,7 +967,7 @@ local var_0_7 = {
 			limit_spawners = 2,
 			spawner_id = "end_event_right_hidden",
 			composition_type = "chaos_warriors_small",
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
@@ -952,8 +976,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_25_0)
-				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 5 and var_0_1("skaven_storm_vermin_commander") < 1 and var_0_1("chaos_marauder") < 2 and var_0_1("chaos_marauder_with_shield") < 2 and var_0_1("chaos_fanatic") < 4 and var_0_1("chaos_warrior") < 2
+			condition = function (arg_25_0)
+				-- function 25
+				return not (count_event_breed("skaven_clan_rat") < 3) or not (count_event_breed("skaven_slave") < 5) or not (count_event_breed("skaven_storm_vermin_commander") < 1) or not (count_event_breed("chaos_marauder") < 2) or not (count_event_breed("chaos_marauder_with_shield") < 2) or not (count_event_breed("chaos_fanatic") < 4) or count_event_breed("chaos_warrior") < 2
 			end
 		},
 		{
@@ -997,8 +1022,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_26_0)
-				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 5 and var_0_1("skaven_storm_vermin_commander") < 1 and var_0_1("chaos_marauder") < 2 and var_0_1("chaos_marauder_with_shield") < 2 and var_0_1("chaos_fanatic") < 4
+			condition = function (arg_26_0)
+				-- function 26
+				return not (count_event_breed("skaven_clan_rat") < 3) or not (count_event_breed("skaven_slave") < 5) or not (count_event_breed("skaven_storm_vermin_commander") < 1) or not (count_event_breed("chaos_marauder") < 2) or not (count_event_breed("chaos_marauder_with_shield") < 2) or count_event_breed("chaos_fanatic") < 4
 			end
 		},
 		{
@@ -1042,8 +1068,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_27_0)
-				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 5 and var_0_1("skaven_storm_vermin_commander") < 1 and var_0_1("chaos_marauder") < 2 and var_0_1("chaos_marauder_with_shield") < 2 and var_0_1("chaos_fanatic") < 4
+			condition = function (arg_27_0)
+				-- function 27
+				return not (count_event_breed("skaven_clan_rat") < 3) or not (count_event_breed("skaven_slave") < 5) or not (count_event_breed("skaven_storm_vermin_commander") < 1) or not (count_event_breed("chaos_marauder") < 2) or not (count_event_breed("chaos_marauder_with_shield") < 2) or count_event_breed("chaos_fanatic") < 4
 			end
 		},
 		{
@@ -1073,7 +1100,7 @@ local var_0_7 = {
 				"chaos_troll",
 				"skaven_stormfiend"
 			},
-			difficulty_requirement = var_0_5
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"event_horde",
@@ -1098,8 +1125,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_28_0)
-				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 6 and var_0_1("skaven_storm_vermin_commander") < 2
+			condition = function (arg_28_0)
+				-- function 28
+				return not (count_event_breed("skaven_clan_rat") < 5) or not (count_event_breed("skaven_slave") < 6) or count_event_breed("skaven_storm_vermin_commander") < 2
 			end
 		},
 		{
@@ -1129,7 +1157,7 @@ local var_0_7 = {
 				"chaos_troll",
 				"skaven_stormfiend"
 			},
-			difficulty_requirement = var_0_5
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"event_horde",
@@ -1154,8 +1182,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_29_0)
-				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 6 and var_0_1("skaven_storm_vermin_commander") < 2
+			condition = function (arg_29_0)
+				-- function 29
+				return not (count_event_breed("skaven_clan_rat") < 5) or not (count_event_breed("skaven_slave") < 6) or count_event_breed("skaven_storm_vermin_commander") < 2
 			end
 		},
 		{
@@ -1185,7 +1214,7 @@ local var_0_7 = {
 				"chaos_troll",
 				"skaven_stormfiend"
 			},
-			difficulty_requirement = var_0_5
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"event_horde",
@@ -1210,8 +1239,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_30_0)
-				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 6 and var_0_1("skaven_storm_vermin_commander") < 2
+			condition = function (arg_30_0)
+				-- function 30
+				return not (count_event_breed("skaven_clan_rat") < 5) or not (count_event_breed("skaven_slave") < 6) or count_event_breed("skaven_storm_vermin_commander") < 2
 			end
 		},
 		{
@@ -1241,7 +1271,7 @@ local var_0_7 = {
 				"chaos_troll",
 				"skaven_stormfiend"
 			},
-			difficulty_requirement = var_0_5
+			difficulty_requirement = CATACLYSM
 		},
 		{
 			"event_horde",
@@ -1266,8 +1296,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_31_0)
-				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 6 and var_0_1("skaven_storm_vermin_commander") < 2
+			condition = function (arg_31_0)
+				-- function 31
+				return not (count_event_breed("skaven_clan_rat") < 5) or not (count_event_breed("skaven_slave") < 6) or count_event_breed("skaven_storm_vermin_commander") < 2
 			end
 		},
 		{
@@ -1307,8 +1338,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_32_0)
-				return var_0_1("skaven_clan_rat") < 4 and var_0_1("skaven_slave") < 5 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("chaos_berzerker") < 2 and var_0_1("chaos_marauder") < 2 and var_0_1("chaos_marauder_with_shield") < 2
+			condition = function (arg_32_0)
+				-- function 32
+				return not (count_event_breed("skaven_clan_rat") < 4) or not (count_event_breed("skaven_slave") < 5) or not (count_event_breed("skaven_storm_vermin_commander") < 2) or not (count_event_breed("chaos_berzerker") < 2) or not (count_event_breed("chaos_marauder") < 2) or count_event_breed("chaos_marauder_with_shield") < 2
 			end
 		},
 		{
@@ -1348,8 +1380,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_33_0)
-				return var_0_1("skaven_clan_rat") < 4 and var_0_1("skaven_slave") < 5 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("chaos_berzerker") < 2 and var_0_1("chaos_marauder") < 2 and var_0_1("chaos_marauder_with_shield") < 2
+			condition = function (arg_33_0)
+				-- function 33
+				return not (count_event_breed("skaven_clan_rat") < 4) or not (count_event_breed("skaven_slave") < 5) or not (count_event_breed("skaven_storm_vermin_commander") < 2) or not (count_event_breed("chaos_berzerker") < 2) or not (count_event_breed("chaos_marauder") < 2) or count_event_breed("chaos_marauder_with_shield") < 2
 			end
 		},
 		{
@@ -1389,8 +1422,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_34_0)
-				return var_0_1("skaven_clan_rat") < 4 and var_0_1("skaven_slave") < 5 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("chaos_berzerker") < 2 and var_0_1("chaos_marauder") < 2 and var_0_1("chaos_marauder_with_shield") < 2
+			condition = function (arg_34_0)
+				-- function 34
+				return not (count_event_breed("skaven_clan_rat") < 4) or not (count_event_breed("skaven_slave") < 5) or not (count_event_breed("skaven_storm_vermin_commander") < 2) or not (count_event_breed("chaos_berzerker") < 2) or not (count_event_breed("chaos_marauder") < 2) or count_event_breed("chaos_marauder_with_shield") < 2
 			end
 		},
 		{
@@ -1430,8 +1464,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_35_0)
-				return var_0_1("skaven_clan_rat") < 4 and var_0_1("skaven_slave") < 5 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("chaos_berzerker") < 2 and var_0_1("chaos_marauder") < 2 and var_0_1("chaos_marauder_with_shield") < 2
+			condition = function (arg_35_0)
+				-- function 35
+				return not (count_event_breed("skaven_clan_rat") < 4) or not (count_event_breed("skaven_slave") < 5) or not (count_event_breed("skaven_storm_vermin_commander") < 2) or not (count_event_breed("chaos_berzerker") < 2) or not (count_event_breed("chaos_marauder") < 2) or count_event_breed("chaos_marauder_with_shield") < 2
 			end
 		},
 		{
@@ -1485,8 +1520,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_36_0)
-				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 6 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_plague_monk") < 2
+			condition = function (arg_36_0)
+				-- function 36
+				return not (count_event_breed("skaven_clan_rat") < 5) or not (count_event_breed("skaven_slave") < 6) or not (count_event_breed("skaven_storm_vermin_commander") < 2) or count_event_breed("skaven_plague_monk") < 2
 			end
 		},
 		{
@@ -1540,8 +1576,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_37_0)
-				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 6 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_plague_monk") < 2
+			condition = function (arg_37_0)
+				-- function 37
+				return not (count_event_breed("skaven_clan_rat") < 5) or not (count_event_breed("skaven_slave") < 6) or not (count_event_breed("skaven_storm_vermin_commander") < 2) or count_event_breed("skaven_plague_monk") < 2
 			end
 		},
 		{
@@ -1595,8 +1632,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_38_0)
-				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 6 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_plague_monk") < 2
+			condition = function (arg_38_0)
+				-- function 38
+				return not (count_event_breed("skaven_clan_rat") < 5) or not (count_event_breed("skaven_slave") < 6) or not (count_event_breed("skaven_storm_vermin_commander") < 2) or count_event_breed("skaven_plague_monk") < 2
 			end
 		},
 		{
@@ -1650,8 +1688,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_39_0)
-				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 6 and var_0_1("skaven_storm_vermin_commander") < 2 and var_0_1("skaven_plague_monk") < 2
+			condition = function (arg_39_0)
+				-- function 39
+				return not (count_event_breed("skaven_clan_rat") < 5) or not (count_event_breed("skaven_slave") < 6) or not (count_event_breed("skaven_storm_vermin_commander") < 2) or count_event_breed("skaven_plague_monk") < 2
 			end
 		},
 		{
@@ -1691,8 +1730,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_40_0)
-				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 5 and var_0_1("skaven_storm_vermin_commander") < 1 and var_0_1("chaos_marauder") < 2 and var_0_1("chaos_marauder_with_shield") < 2
+			condition = function (arg_40_0)
+				-- function 40
+				return not (count_event_breed("skaven_clan_rat") < 3) or not (count_event_breed("skaven_slave") < 5) or not (count_event_breed("skaven_storm_vermin_commander") < 1) or not (count_event_breed("chaos_marauder") < 2) or count_event_breed("chaos_marauder_with_shield") < 2
 			end
 		},
 		{
@@ -1732,8 +1772,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_41_0)
-				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 5 and var_0_1("skaven_storm_vermin_commander") < 1 and var_0_1("chaos_marauder") < 2 and var_0_1("chaos_marauder_with_shield") < 2
+			condition = function (arg_41_0)
+				-- function 41
+				return not (count_event_breed("skaven_clan_rat") < 3) or not (count_event_breed("skaven_slave") < 5) or not (count_event_breed("skaven_storm_vermin_commander") < 1) or not (count_event_breed("chaos_marauder") < 2) or count_event_breed("chaos_marauder_with_shield") < 2
 			end
 		},
 		{
@@ -1773,8 +1814,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_42_0)
-				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 5 and var_0_1("skaven_storm_vermin_commander") < 1 and var_0_1("chaos_marauder") < 2 and var_0_1("chaos_marauder_with_shield") < 2
+			condition = function (arg_42_0)
+				-- function 42
+				return not (count_event_breed("skaven_clan_rat") < 3) or not (count_event_breed("skaven_slave") < 5) or not (count_event_breed("skaven_storm_vermin_commander") < 1) or not (count_event_breed("chaos_marauder") < 2) or count_event_breed("chaos_marauder_with_shield") < 2
 			end
 		},
 		{
@@ -1805,8 +1847,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_43_0)
-				return var_0_1("skaven_poison_wind_globadier") < 1
+			condition = function (arg_43_0)
+				-- function 43
+				return count_event_breed("skaven_poison_wind_globadier") < 1
 			end
 		},
 		{
@@ -1848,8 +1891,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_44_0)
-				return var_0_1("chaos_corruptor_sorcerer") < 1 and var_0_1("skaven_poison_wind_globadier") < 1
+			condition = function (arg_44_0)
+				-- function 44
+				return not (count_event_breed("chaos_corruptor_sorcerer") < 1) or count_event_breed("skaven_poison_wind_globadier") < 1
 			end
 		},
 		{
@@ -1891,8 +1935,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_45_0)
-				return var_0_1("skaven_warpfire_thrower") < 1 and var_0_1("skaven_pack_master") < 1
+			condition = function (arg_45_0)
+				-- function 45
+				return not (count_event_breed("skaven_warpfire_thrower") < 1) or count_event_breed("skaven_pack_master") < 1
 			end
 		},
 		{
@@ -1934,8 +1979,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_46_0)
-				return var_0_1("skaven_ratling_gunner") < 1 and var_0_1("skaven_pack_master") < 1
+			condition = function (arg_46_0)
+				-- function 46
+				return not (count_event_breed("skaven_ratling_gunner") < 1) or count_event_breed("skaven_pack_master") < 1
 			end
 		},
 		{
@@ -1977,8 +2023,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_47_0)
-				return var_0_1("skaven_warpfire_thrower") < 1 and var_0_1("skaven_poison_wind_globadier") < 1
+			condition = function (arg_47_0)
+				-- function 47
+				return not (count_event_breed("skaven_warpfire_thrower") < 1) or count_event_breed("skaven_poison_wind_globadier") < 1
 			end
 		},
 		{
@@ -2020,8 +2067,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_48_0)
-				return var_0_1("skaven_ratling_gunner") < 1 and var_0_1("skaven_poison_wind_globadier") < 1
+			condition = function (arg_48_0)
+				-- function 48
+				return not (count_event_breed("skaven_ratling_gunner") < 1) or count_event_breed("skaven_poison_wind_globadier") < 1
 			end
 		},
 		{
@@ -2055,8 +2103,9 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_49_0)
-				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 4
+			condition = function (arg_49_0)
+				-- function 49
+				return not (count_event_breed("skaven_clan_rat") < 3) or count_event_breed("skaven_slave") < 4
 			end
 		},
 		{
@@ -2254,6 +2303,6 @@ local var_0_7 = {
 }
 
 return {
-	var_0_7,
-	var_0_6
+	tbl_2,
+	tbl
 }

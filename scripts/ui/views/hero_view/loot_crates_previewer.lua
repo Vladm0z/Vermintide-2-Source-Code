@@ -2,206 +2,229 @@
 
 LootCratesPreviewer = class(LootCratesPreviewer)
 
-function LootCratesPreviewer.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6)
-	arg_1_0.background_world = arg_1_5
-	arg_1_0.background_viewport = arg_1_6
-	arg_1_0.spawn_positions = arg_1_3
-	arg_1_0.end_positions = arg_1_4
-	arg_1_0.units = arg_1_2
-	arg_1_0._rewards = arg_1_1
-	arg_1_0._spawned_units = arg_1_0:spawn_units(arg_1_2)
+LootCratesPreviewer.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6)
+	-- function 1
+	self.background_world = arg_1_5
+	self.background_viewport = arg_1_6
+	self.spawn_positions = arg_1_3
+	self.end_positions = arg_1_4
+	self.units = arg_1_2
+	self._rewards = arg_1_1
+	self._spawned_units = self:spawn_units(arg_1_2)
 
-	local var_1_0 = {}
+	local tbl = {}
 
-	for iter_1_0, iter_1_1 in ipairs(arg_1_1) do
-		local var_1_1 = iter_1_1.key
+	for i, v in ipairs(arg_1_1) do
+		local key = v.key
 
-		var_1_0[arg_1_0._spawned_units[iter_1_0]] = var_1_1
+		tbl[self._spawned_units[i]] = key
 	end
 
-	arg_1_0._item_key_by_unit = var_1_0
+	self._item_key_by_unit = tbl
 end
 
-function LootCratesPreviewer.destroy(arg_2_0)
-	arg_2_0:_destroy_units()
+LootCratesPreviewer.destroy = function (self)
+	-- function 2
+	self:_destroy_units()
 end
 
-function LootCratesPreviewer._destroy_units(arg_3_0)
-	local var_3_0 = arg_3_0.background_world
-	local var_3_1 = arg_3_0._spawned_units
+LootCratesPreviewer._destroy_units = function (self)
+	-- function 3
+	local background_world = self.background_world
+	local _spawned_units = self._spawned_units
 
-	if var_3_1 then
-		for iter_3_0, iter_3_1 in ipairs(var_3_1) do
-			World.destroy_unit(var_3_0, iter_3_1)
+	if not _spawned_units then
+		for i, v in ipairs(_spawned_units) do
+			World.destroy_unit(background_world, v)
 		end
 	end
 
-	arg_3_0.units_spawned = nil
+	self.units_spawned = nil
 end
 
-function LootCratesPreviewer.update(arg_4_0, arg_4_1, arg_4_2)
+LootCratesPreviewer.update = function (arg_4_0, arg_4_1, arg_4_2)
+	-- function 4
 	return
 end
 
-function LootCratesPreviewer.post_update(arg_5_0, arg_5_1, arg_5_2)
-	if not arg_5_0._entry_animation_complete then
-		arg_5_0:_animate_entry_positions(arg_5_1, arg_5_2)
+LootCratesPreviewer.post_update = function (self, arg_5_1, arg_5_2)
+	-- function 5
+	if not self._entry_animation_complete then
+		self:_animate_entry_positions(arg_5_1, arg_5_2)
 	end
 end
 
-function LootCratesPreviewer._animate_entry_positions(arg_6_0, arg_6_1, arg_6_2)
-	local var_6_0 = arg_6_0.spawn_positions
-	local var_6_1 = arg_6_0.end_positions
-	local var_6_2 = 1
-	local var_6_3 = arg_6_0._entry_progress or 0
-	local var_6_4 = math.min(var_6_3 + arg_6_1 * var_6_2, 1)
-	local var_6_5 = math.easeInCubic(var_6_4)
-	local var_6_6 = arg_6_0.background_world
-	local var_6_7 = arg_6_0._spawned_units
-	local var_6_8 = true
+LootCratesPreviewer._animate_entry_positions = function (self, arg_6_1, arg_6_2)
+	-- function 6
+	local spawn_positions = self.spawn_positions
+	local end_positions = self.end_positions
+	local num = 1
+	local _entry_progress = self._entry_progress
 
-	for iter_6_0, iter_6_1 in ipairs(var_6_7) do
-		local var_6_9 = var_6_1[iter_6_0]
-		local var_6_10 = var_6_0[iter_6_0]
-		local var_6_11 = Unit.local_position(iter_6_1, 0)
-		local var_6_12 = var_6_10[3] - var_6_9[3]
-		local var_6_13 = var_6_11[3] - var_6_9[3]
+	_entry_progress = _entry_progress or 0
 
-		var_6_11[3] = var_6_10[3] - var_6_5 * var_6_12
+	local min = math.min(_entry_progress + arg_6_1 * num, 1)
+	local easeInCubic = math.easeInCubic(min)
+	local background_world = self.background_world
+	local _spawned_units = self._spawned_units
+	local flag = true
 
-		Unit.set_local_position(iter_6_1, 0, var_6_11)
+	for i, v in ipairs(_spawned_units) do
+		local var_6_9 = end_positions[i]
+		local var_6_10 = spawn_positions[i]
+		local local_position = Unit.local_position(v, 0)
+		local num_2 = var_6_10[3] - var_6_9[3]
+		local num_3 = local_position[3] - var_6_9[3]
+
+		local_position[3] = var_6_10[3] - easeInCubic * num_2
+
+		Unit.set_local_position(v, 0, local_position)
 	end
 
-	if var_6_4 == 1 then
-		arg_6_0._entry_animation_complete = true
+	if min == 1 then
+		self._entry_animation_complete = true
 	end
 
-	arg_6_0._entry_progress = var_6_4
+	self._entry_progress = min
 end
 
-function LootCratesPreviewer._trigger_unit_flow_event(arg_7_0, arg_7_1, arg_7_2)
-	if arg_7_1 and Unit.alive(arg_7_1) then
+LootCratesPreviewer._trigger_unit_flow_event = function (arg_7_0, arg_7_1, arg_7_2)
+	-- function 7
+	if not arg_7_1 and not Unit.alive(arg_7_1) then
 		Unit.flow_event(arg_7_1, arg_7_2)
 	end
 end
 
-function LootCratesPreviewer._get_world(arg_8_0)
-	return arg_8_0.background_world, arg_8_0.background_viewport
+LootCratesPreviewer._get_world = function (self)
+	-- function 8
+	return self.background_world, self.background_viewport
 end
 
-function LootCratesPreviewer._get_camera_position(arg_9_0)
-	local var_9_0 = arg_9_0.background_viewport
-	local var_9_1 = ScriptViewport.camera(var_9_0)
+LootCratesPreviewer._get_camera_position = function (self)
+	-- function 9
+	local background_viewport = self.background_viewport
+	local camera = ScriptViewport.camera(background_viewport)
 
-	return ScriptCamera.position(var_9_1)
+	return ScriptCamera.position(camera)
 end
 
-function LootCratesPreviewer._get_camera_rotation(arg_10_0)
-	local var_10_0 = arg_10_0.background_viewport
-	local var_10_1 = ScriptViewport.camera(var_10_0)
+LootCratesPreviewer._get_camera_rotation = function (self)
+	-- function 10
+	local background_viewport = self.background_viewport
+	local camera = ScriptViewport.camera(background_viewport)
 
-	return ScriptCamera.rotation(var_10_1)
+	return ScriptCamera.rotation(camera)
 end
 
-function LootCratesPreviewer.get_units(arg_11_0)
-	return arg_11_0._spawned_units
+LootCratesPreviewer.get_units = function (self)
+	-- function 11
+	return self._spawned_units
 end
 
-function LootCratesPreviewer.has_units(arg_12_0)
-	return arg_12_0._spawned_units and #arg_12_0._spawned_units > 0
+LootCratesPreviewer.has_units = function (self)
+	-- function 12
+	local _spawned_units = self._spawned_units
+
+	_spawned_units = not _spawned_units and #self._spawned_units > 0
+
+	return _spawned_units
 end
 
-function LootCratesPreviewer.get_item_key_by_unit(arg_13_0, arg_13_1)
-	return arg_13_0._item_key_by_unit[arg_13_1]
+LootCratesPreviewer.get_item_key_by_unit = function (self, arg_13_1)
+	-- function 13
+	return self._item_key_by_unit[arg_13_1]
 end
 
-function LootCratesPreviewer.delete_unit(arg_14_0, arg_14_1)
-	local var_14_0 = arg_14_0.background_world
-	local var_14_1 = arg_14_0._spawned_units
+LootCratesPreviewer.delete_unit = function (self, arg_14_1)
+	-- function 14
+	local background_world = self.background_world
+	local _spawned_units = self._spawned_units
 
-	for iter_14_0, iter_14_1 in ipairs(var_14_1) do
-		if arg_14_1 == iter_14_1 then
-			table.remove(var_14_1, iter_14_0)
-			World.destroy_unit(var_14_0, iter_14_1)
+	for i, v in ipairs(_spawned_units) do
+		if arg_14_1 == v then
+			table.remove(_spawned_units, i)
+			World.destroy_unit(background_world, v)
 
 			return
 		end
 	end
 end
 
-function LootCratesPreviewer.spawn_units(arg_15_0, arg_15_1)
-	local var_15_0 = {}
-	local var_15_1 = arg_15_0.spawn_positions
+LootCratesPreviewer.spawn_units = function (self, arg_15_1)
+	-- function 15
+	local tbl = {}
+	local spawn_positions = self.spawn_positions
 
-	if arg_15_1 then
-		local var_15_2 = {}
-		local var_15_3 = arg_15_0.background_world
+	if not arg_15_1 then
+		local tbl_2 = {}
+		local background_world = self.background_world
 
-		for iter_15_0 = 1, #arg_15_1 do
-			local var_15_4 = var_15_1[iter_15_0]
-			local var_15_5 = arg_15_1[iter_15_0]
-			local var_15_6 = World.spawn_unit(var_15_3, var_15_5)
-			local var_15_7 = arg_15_0:_get_camera_rotation()
-			local var_15_8 = Quaternion.forward(var_15_7)
-			local var_15_9 = Quaternion.look(var_15_8, Vector3.up())
-			local var_15_10 = Quaternion.axis_angle(Vector3.up(), math.pi * 1)
-			local var_15_11 = Quaternion.multiply(var_15_9, var_15_10)
-			local var_15_12 = arg_15_0:_get_camera_position()
+		for i = 1, #arg_15_1 do
+			local var_15_4 = spawn_positions[i]
+			local var_15_5 = arg_15_1[i]
+			local spawn_unit = World.spawn_unit(background_world, var_15_5)
+			local _get_camera_rotation = self:_get_camera_rotation()
+			local forward = Quaternion.forward(_get_camera_rotation)
+			local look = Quaternion.look(forward, Vector3.up())
+			local axis_angle = Quaternion.axis_angle(Vector3.up(), math.pi * 1)
+			local multiply = Quaternion.multiply(look, axis_angle)
+			local _get_camera_position = self:_get_camera_position()
 			local var_15_13 = Vector3(var_15_4[1], var_15_4[2], var_15_4[3])
-			local var_15_14, var_15_15 = Unit.box(var_15_6)
-			local var_15_16 = Matrix4x4.translation(var_15_14) - Unit.world_position(var_15_6, 0)
+			local box, var_15_15 = Unit.box(spawn_unit)
+			local num = Matrix4x4.translation(box) - Unit.world_position(spawn_unit, 0)
 
-			if var_15_15 then
-				local var_15_17 = 0.3
-				local var_15_18 = 0
+			if not var_15_15 then
+				local num_2 = 0.3
+				local num_3 = 0
 
-				if var_15_18 < var_15_15.x then
-					var_15_18 = var_15_15.x
+				if num_3 < var_15_15.x then
+					num_3 = var_15_15.x
 				end
 
-				if var_15_18 < var_15_15.z then
-					var_15_18 = var_15_15.z
+				if num_3 < var_15_15.z then
+					num_3 = var_15_15.z
 				end
 
-				if var_15_18 < var_15_15.y then
-					var_15_18 = var_15_15.y
+				if num_3 < var_15_15.y then
+					num_3 = var_15_15.y
 				end
 
-				if var_15_17 < var_15_18 then
-					local var_15_19 = 1 - (var_15_18 - var_15_17) / var_15_18
-					local var_15_20 = Vector3(var_15_19, var_15_19, var_15_19)
+				if num_2 < num_3 then
+					local num_4 = 1 - (num_3 - num_2) / num_3
+					local var_15_20 = Vector3(num_4, num_4, num_4)
 
-					Unit.set_local_scale(var_15_6, 0, var_15_20)
+					Unit.set_local_scale(spawn_unit, 0, var_15_20)
 
-					var_15_16 = var_15_16 * var_15_19
+					num = num * num_4
 				end
 
-				local var_15_21 = var_15_13 - var_15_16
+				local num_5 = var_15_13 - num
 
-				Unit.set_local_position(var_15_6, 0, var_15_21)
+				Unit.set_local_position(spawn_unit, 0, num_5)
 			end
 
-			Unit.set_unit_visibility(var_15_6, true)
+			Unit.set_unit_visibility(spawn_unit, true)
 
-			var_15_0[#var_15_0 + 1] = var_15_6
+			tbl[#tbl + 1] = spawn_unit
 		end
 
-		arg_15_0.units_spawned = true
+		self.units_spawned = true
 	end
 
-	return var_15_0
+	return tbl
 end
 
-function LootCratesPreviewer._enable_units_visibility(arg_16_0)
-	local var_16_0 = arg_16_0._spawned_units
+LootCratesPreviewer._enable_units_visibility = function (self)
+	-- function 16
+	local _spawned_units = self._spawned_units
 
-	for iter_16_0, iter_16_1 in ipairs(var_16_0) do
-		if iter_16_1 and Unit.alive(iter_16_1) then
-			Unit.set_unit_visibility(iter_16_1, true)
+	for i, v in ipairs(_spawned_units) do
+		if not v and not Unit.alive(v) then
+			Unit.set_unit_visibility(v, true)
 
-			local var_16_1 = "lua_presentation"
+			local str = "lua_presentation"
 
-			arg_16_0:_trigger_unit_flow_event(iter_16_1, var_16_1)
+			self:_trigger_unit_flow_event(v, str)
 		end
 	end
 end

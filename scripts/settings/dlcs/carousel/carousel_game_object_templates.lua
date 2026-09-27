@@ -1,9 +1,9 @@
 -- chunkname: @scripts/settings/dlcs/carousel/carousel_game_object_templates.lua
 
-local var_0_0 = DLCSettings.carousel
+local carousel = DLCSettings.carousel
 
-var_0_0.game_object_templates = {}
-var_0_0.game_object_templates.versus_dark_pact_climbing_interaction_unit = {
+carousel.game_object_templates = {}
+carousel.game_object_templates.versus_dark_pact_climbing_interaction_unit = {
 	game_object_created_func_name = "game_object_created_network_unit",
 	syncs_position = true,
 	syncs_rotation = true,

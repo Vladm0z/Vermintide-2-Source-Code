@@ -2,49 +2,54 @@
 
 require("scripts/unit_extensions/generic/generic_unit_animation_movement_extension")
 
-local var_0_0 = {
+local tbl = {
 	"rpc_enable_animation_movement_system"
 }
-local var_0_1 = {
+local tbl_2 = {
 	"GenericUnitAnimationMovementExtension"
 }
 
 AnimationMovementSystem = class(AnimationMovementSystem, ExtensionSystemBase)
 
-function AnimationMovementSystem.init(arg_1_0, arg_1_1, arg_1_2)
-	AnimationMovementSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
+AnimationMovementSystem.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	AnimationMovementSystem.super.init(self, arg_1_1, arg_1_2, tbl_2)
 
-	arg_1_0._extensions = {}
-	arg_1_0._frozen_extensions = {}
+	self._extensions = {}
+	self._frozen_extensions = {}
 
-	local var_1_0 = arg_1_1.network_event_delegate
+	local network_event_delegate = arg_1_1.network_event_delegate
 
-	arg_1_0.network_event_delegate = var_1_0
+	self.network_event_delegate = network_event_delegate
 
-	var_1_0:register(arg_1_0, unpack(var_0_0))
+	network_event_delegate:register(self, unpack(tbl))
 end
 
-function AnimationMovementSystem.destroy(arg_2_0)
-	arg_2_0.network_event_delegate:unregister(arg_2_0)
+AnimationMovementSystem.destroy = function (self)
+	-- function 2
+	self.network_event_delegate:unregister(self)
 end
 
-function AnimationMovementSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
-	local var_3_0 = ScriptUnit.add_extension(arg_3_0.extension_init_context, arg_3_2, arg_3_3, arg_3_0.NAME, arg_3_4)
+AnimationMovementSystem.on_add_extension = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	-- function 3
+	local add_extension = ScriptUnit.add_extension(self.extension_init_context, arg_3_2, arg_3_3, self.NAME, arg_3_4)
 
-	arg_3_0._extensions[arg_3_2] = var_3_0
+	self._extensions[arg_3_2] = add_extension
 
-	return var_3_0
+	return add_extension
 end
 
-function AnimationMovementSystem.on_remove_extension(arg_4_0, arg_4_1, arg_4_2)
-	arg_4_0._frozen_extensions[arg_4_1] = nil
-	arg_4_0._extensions[arg_4_1] = nil
+AnimationMovementSystem.on_remove_extension = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	self._frozen_extensions[arg_4_1] = nil
+	self._extensions[arg_4_1] = nil
 
-	ScriptUnit.remove_extension(arg_4_1, arg_4_0.NAME)
+	ScriptUnit.remove_extension(arg_4_1, self.NAME)
 end
 
-function AnimationMovementSystem.on_freeze_extension(arg_5_0, arg_5_1, arg_5_2)
-	local var_5_0 = arg_5_0._extensions[arg_5_1]
+AnimationMovementSystem.on_freeze_extension = function (self, arg_5_1, arg_5_2)
+	-- function 5
+	local var_5_0 = self._extensions[arg_5_1]
 
 	fassert(var_5_0, "Unit was already frozen.")
 
@@ -52,54 +57,58 @@ function AnimationMovementSystem.on_freeze_extension(arg_5_0, arg_5_1, arg_5_2)
 		return
 	end
 
-	arg_5_0._frozen_extensions[arg_5_1] = var_5_0
-	arg_5_0._extensions[arg_5_1] = nil
+	self._frozen_extensions[arg_5_1] = var_5_0
+	self._extensions[arg_5_1] = nil
 
 	table.clear(var_5_0.data)
 end
 
-function AnimationMovementSystem.freeze(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
-	local var_6_0 = arg_6_0._frozen_extensions
+AnimationMovementSystem.freeze = function (self, arg_6_1, arg_6_2, arg_6_3)
+	-- function 6
+	local _frozen_extensions = self._frozen_extensions
 
-	if arg_6_0._frozen_extensions[arg_6_1] then
+	if not self._frozen_extensions[arg_6_1] then
 		return
 	end
 
-	local var_6_1 = arg_6_0._extensions[arg_6_1]
+	local var_6_1 = self._extensions[arg_6_1]
 
 	fassert(var_6_1, "Unit to freeze didn't have unfrozen extension")
 
-	arg_6_0._extensions[arg_6_1] = nil
-	var_6_0[arg_6_1] = var_6_1
+	self._extensions[arg_6_1] = nil
+	_frozen_extensions[arg_6_1] = var_6_1
 
 	table.clear(var_6_1.data)
 end
 
-function AnimationMovementSystem.unfreeze(arg_7_0, arg_7_1)
-	local var_7_0 = arg_7_0._frozen_extensions[arg_7_1]
+AnimationMovementSystem.unfreeze = function (self, arg_7_1)
+	-- function 7
+	local var_7_0 = self._frozen_extensions[arg_7_1]
 
 	fassert(var_7_0, "Unit to unfreeze didn't have frozen extension")
 
-	arg_7_0._frozen_extensions[arg_7_1] = nil
-	arg_7_0._extensions[arg_7_1] = var_7_0
+	self._frozen_extensions[arg_7_1] = nil
+	self._extensions[arg_7_1] = var_7_0
 	var_7_0.enabled = false
 
 	var_7_0.template[var_7_0.network_type].init(var_7_0.unit, var_7_0.data)
 end
 
-function AnimationMovementSystem.update(arg_8_0, arg_8_1, arg_8_2)
-	local var_8_0 = arg_8_1.dt
+AnimationMovementSystem.update = function (self, arg_8_1, arg_8_2)
+	-- function 8
+	local dt = arg_8_1.dt
 
-	for iter_8_0, iter_8_1 in pairs(arg_8_0._extensions) do
-		iter_8_1:update(iter_8_0, nil, var_8_0, arg_8_1, arg_8_2)
+	for k, v in pairs(self._extensions) do
+		v:update(k, nil, dt, arg_8_1, arg_8_2)
 	end
 end
 
-function AnimationMovementSystem.rpc_enable_animation_movement_system(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
-	local var_9_0 = arg_9_0.unit_storage:unit(arg_9_2)
-	local var_9_1 = arg_9_0._extensions[var_9_0]
+AnimationMovementSystem.rpc_enable_animation_movement_system = function (self, arg_9_1, arg_9_2, arg_9_3)
+	-- function 9
+	local unit = self.unit_storage:unit(arg_9_2)
+	local var_9_1 = self._extensions[unit]
 
-	if var_9_1 then
+	if not var_9_1 then
 		var_9_1:set_enabled(arg_9_3)
 	end
 end

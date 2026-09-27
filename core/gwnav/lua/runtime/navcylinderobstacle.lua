@@ -5,70 +5,83 @@ require("core/gwnav/lua/safe_require")
 local var_0_0 = safe_require_guard()
 local var_0_1 = safe_require("core/gwnav/lua/runtime/navclass")(var_0_0)
 local var_0_2 = safe_require("core/gwnav/lua/runtime/navhelpers")
-local var_0_3 = stingray.Math
-local var_0_4 = stingray.Vector3
-local var_0_5 = stingray.Vector3Box
-local var_0_6 = stingray.Matrix4x4
-local var_0_7 = stingray.Matrix4x4Box
-local var_0_8 = stingray.Unit
-local var_0_9 = stingray.GwNavWorld
-local var_0_10 = stingray.GwNavCylinderObstacle
-local var_0_11 = {}
+local Math = stingray.Math
+local Vector3 = stingray.Vector3
+local Vector3Box = stingray.Vector3Box
+local Matrix4x4 = stingray.Matrix4x4
+local Matrix4x4Box = stingray.Matrix4x4Box
+local Unit = stingray.Unit
+local GwNavWorld = stingray.GwNavWorld
+local GwNavCylinderObstacle = stingray.GwNavCylinderObstacle
+local tbl = {}
 
-function var_0_1.get_navcylinderostacle(arg_1_0)
-	return var_0_11[arg_1_0]
+var_0_1.get_navcylinderostacle = function (arg_1_0)
+	-- function 1
+	return tbl[arg_1_0]
 end
 
-function var_0_1.init(arg_2_0, arg_2_1, arg_2_2)
-	arg_2_0.unit = arg_2_2
-	arg_2_0.navworld = arg_2_1
+var_0_1.init = function (self, arg_2_1, arg_2_2)
+	-- function 2
+	self.unit = arg_2_2
+	self.navworld = arg_2_1
 
-	local var_2_0 = var_0_2.unit_script_data(arg_2_2, 0.5, "GwNavCylinderObstacle", "radius")
-	local var_2_1 = var_0_2.unit_script_data(arg_2_2, 2, "GwNavCylinderObstacle", "height")
-	local var_2_2, var_2_3, var_2_4, var_2_5, var_2_6 = var_0_2.get_layer_and_smartobject(arg_2_2, "GwNavCylinderObstacle")
-	local var_2_7 = var_0_6.transform(arg_2_1.transform:unbox(), var_0_8.world_position(arg_2_2, 1))
+	local unit_script_data = var_0_2.unit_script_data(arg_2_2, 0.5, "GwNavCylinderObstacle", "radius")
+	local unit_script_data_2 = var_0_2.unit_script_data(arg_2_2, 2, "GwNavCylinderObstacle", "height")
+	local get_layer_and_smartobject, var_2_3, var_2_4, var_2_5, var_2_6 = var_0_2.get_layer_and_smartobject(arg_2_2, "GwNavCylinderObstacle")
+	local transform = Matrix4x4.transform(arg_2_1.transform:unbox(), Unit.world_position(arg_2_2, 1))
 
-	arg_2_0.lastpos = var_0_5(var_2_7)
-	arg_2_0.nav_cylinderobstacle = var_0_10.create(arg_2_0.navworld.gwnavworld, var_2_7, var_2_1, var_2_0, var_2_2, var_2_3, var_2_4, var_2_5, var_2_6)
-	arg_2_0.does_trigger_tag_volume = var_0_2.unit_script_data(arg_2_2, false, "GwNavCylinderObstacle", "does_trigger_tag_volume")
+	self.lastpos = Vector3Box(transform)
+	self.nav_cylinderobstacle = GwNavCylinderObstacle.create(self.navworld.gwnavworld, transform, unit_script_data_2, unit_script_data, get_layer_and_smartobject, var_2_3, var_2_4, var_2_5, var_2_6)
+	self.does_trigger_tag_volume = var_0_2.unit_script_data(arg_2_2, false, "GwNavCylinderObstacle", "does_trigger_tag_volume")
 
-	arg_2_0:set_does_trigger_tagvolume(arg_2_0.does_trigger_tag_volume)
+	self:set_does_trigger_tagvolume(self.does_trigger_tag_volume)
 
-	var_0_11[arg_2_0.unit] = arg_2_0
+	tbl[self.unit] = self
 end
 
-function var_0_1.set_does_trigger_tagvolume(arg_3_0, arg_3_1)
-	var_0_10.set_does_trigger_tagvolume(arg_3_0.nav_cylinderobstacle, arg_3_1)
+var_0_1.set_does_trigger_tagvolume = function (self, arg_3_1)
+	-- function 3
+	GwNavCylinderObstacle.set_does_trigger_tagvolume(self.nav_cylinderobstacle, arg_3_1)
 end
 
-function var_0_1.set_next_update_config(arg_4_0, arg_4_1, arg_4_2)
-	var_0_10.set_position(arg_4_0.nav_cylinderobstacle, arg_4_1)
-	var_0_10.set_velocity(arg_4_0.nav_cylinderobstacle, arg_4_2)
+var_0_1.set_next_update_config = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	GwNavCylinderObstacle.set_position(self.nav_cylinderobstacle, arg_4_1)
+	GwNavCylinderObstacle.set_velocity(self.nav_cylinderobstacle, arg_4_2)
 end
 
-function var_0_1.update(arg_5_0, arg_5_1)
-	local var_5_0 = var_0_8.world_position(arg_5_0.unit, 1)
-	local var_5_1 = (var_5_0 - arg_5_0.lastpos:unbox()) / arg_5_1
+var_0_1.update = function (self, arg_5_1)
+	-- function 5
+	local world_position = Unit.world_position(self.unit, 1)
+	local num = (world_position - self.lastpos:unbox()) / arg_5_1
+	local var_5_2 = self
+	local set_does_trigger_tagvolume = self.set_does_trigger_tagvolume
+	local does_trigger_tag_volume = does_trigger_tag_volume
 
-	arg_5_0:set_does_trigger_tagvolume(does_trigger_tag_volume and var_0_4.length(var_5_1) == 0)
-	arg_5_0:set_next_update_config(var_5_0, var_5_1)
-	arg_5_0.lastpos:store(var_5_0)
+	does_trigger_tag_volume = not does_trigger_tag_volume and Vector3.length(num) == 0
+
+	set_does_trigger_tagvolume(var_5_2, does_trigger_tag_volume)
+	self:set_next_update_config(world_position, num)
+	self.lastpos:store(world_position)
 end
 
-function var_0_1.shutdown(arg_6_0)
-	arg_6_0.navworld:remove_cylinderobstacle(arg_6_0.unit)
-	var_0_10.destroy(arg_6_0.nav_cylinderobstacle)
+var_0_1.shutdown = function (self)
+	-- function 6
+	self.navworld:remove_cylinderobstacle(self.unit)
+	GwNavCylinderObstacle.destroy(self.nav_cylinderobstacle)
 
-	arg_6_0.nav_cylinderobstacle = nil
-	var_0_11[arg_6_0.unit] = nil
+	self.nav_cylinderobstacle = nil
+	tbl[self.unit] = nil
 end
 
-function var_0_1.add_to_world(arg_7_0)
-	var_0_10.add_to_world(arg_7_0.nav_cylinderobstacle)
+var_0_1.add_to_world = function (self)
+	-- function 7
+	GwNavCylinderObstacle.add_to_world(self.nav_cylinderobstacle)
 end
 
-function var_0_1.remove_from_world(arg_8_0)
-	var_0_10.remove_from_world(arg_8_0.nav_cylinderobstacle)
+var_0_1.remove_from_world = function (self)
+	-- function 8
+	GwNavCylinderObstacle.remove_from_world(self.nav_cylinderobstacle)
 end
 
 return var_0_1

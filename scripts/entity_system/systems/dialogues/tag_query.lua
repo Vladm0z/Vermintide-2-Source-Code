@@ -1,130 +1,171 @@
 -- chunkname: @scripts/entity_system/systems/dialogues/tag_query.lua
 
+local TagQuery = TagQuery
+
 TagQuery = TagQuery or {}
+TagQuery = TagQuery
 TagQuery.__index = TagQuery
 
-function TagQuery.add(arg_1_0, ...)
+TagQuery.add = function (self, ...)
+	-- function 1
 	local var_1_0 = select("#", ...)
 
 	fassert(var_1_0 == math.floor(var_1_0 / 2) * 2, "Uneven amount of args, number of arguments: %d", var_1_0)
 
-	local var_1_1 = arg_1_0.query_context
+	local query_context = self.query_context
 
-	for iter_1_0 = 1, var_1_0, 2 do
-		local var_1_2, var_1_3 = select(iter_1_0, ...)
+	for i = 1, var_1_0, 2 do
+		local var_1_2, var_1_3 = select(i, ...)
 
-		var_1_1[var_1_2] = var_1_3
+		query_context[var_1_2] = var_1_3
 	end
 
-	fassert(not arg_1_0.finalized, "Tried to add query after finalized.")
+	fassert(not self.finalized, "Tried to add query after finalized.")
 end
 
-function TagQuery.get_result(arg_2_0)
-	return arg_2_0.completed, arg_2_0.result
+TagQuery.get_result = function (self)
+	-- function 2
+	return self.completed, self.result
 end
 
-function TagQuery.finalize(arg_3_0)
-	arg_3_0.tagquery_database:add_query(arg_3_0)
+TagQuery.finalize = function (self)
+	-- function 3
+	self.tagquery_database:add_query(self)
 
-	arg_3_0.finalized = true
+	self.finalized = true
 end
 
-TagQuery.OP = TagQuery.OP or {
+local TagQuery_2 = TagQuery
+local OP = TagQuery.OP
+
+OP = OP or {
 	EQ = setmetatable({}, {
-		__tostring = function()
+		__tostring = function ()
+			-- function 4
 			return "EQ"
 		end
 	}),
 	LT = setmetatable({}, {
-		__tostring = function()
+		__tostring = function ()
+			-- function 5
 			return "LT"
 		end
 	}),
 	GT = setmetatable({}, {
-		__tostring = function()
+		__tostring = function ()
+			-- function 6
 			return "GT"
 		end
 	}),
 	LTEQ = setmetatable({}, {
-		__tostring = function()
+		__tostring = function ()
+			-- function 7
 			return "LTEQ"
 		end
 	}),
 	GTEQ = setmetatable({}, {
-		__tostring = function()
+		__tostring = function ()
+			-- function 8
 			return "GTEQ"
 		end
 	}),
 	SUB = setmetatable({}, {
-		__tostring = function()
+		__tostring = function ()
+			-- function 9
 			return "SUB"
 		end
 	}),
 	ADD = setmetatable({}, {
-		__tostring = function()
+		__tostring = function ()
+			-- function 10
 			return "ADD"
 		end
 	}),
 	NEQ = setmetatable({}, {
-		__tostring = function()
+		__tostring = function ()
+			-- function 11
 			return "NEQ"
 		end
 	}),
 	NOT = setmetatable({}, {
-		__tostring = function()
+		__tostring = function ()
+			-- function 12
 			return "NOT"
 		end
 	}),
 	RAND = setmetatable({}, {
-		__tostring = function()
+		__tostring = function ()
+			-- function 13
 			return "RAND"
 		end
 	}),
 	TIMEDIFF = setmetatable({}, {
-		__tostring = function()
+		__tostring = function ()
+			-- function 14
 			return "TIMEDIFF"
 		end
 	}),
 	TIMESET = setmetatable({}, {
-		__tostring = function()
+		__tostring = function ()
+			-- function 15
 			return "TIMESET"
 		end
 	}),
 	NUMSET = setmetatable({}, {
-		__tostring = function()
+		__tostring = function ()
+			-- function 16
 			return "NUMSET"
 		end
 	})
 }
-TagQuery.CombiningOP = TagQuery.CombiningOP or {
+TagQuery_2.OP = OP
+
+local TagQuery_3 = TagQuery
+local CombiningOP = TagQuery.CombiningOP
+
+CombiningOP = CombiningOP or {
 	AND_NEXT = setmetatable({}, {
-		__tostring = function()
+		__tostring = function ()
+			-- function 17
 			return "AND_NEXT"
 		end
 	}),
 	OR_NEXT = setmetatable({}, {
-		__tostring = function()
+		__tostring = function ()
+			-- function 18
 			return "OR_NEXT"
 		end
 	})
 }
-TagQuery.FilterOP = TagQuery.FilterOP or {
-	EQ = function(arg_19_0, arg_19_1)
+TagQuery_3.CombiningOP = CombiningOP
+
+local TagQuery_4 = TagQuery
+local FilterOP = TagQuery.FilterOP
+
+FilterOP = FilterOP or {
+	EQ = function (arg_19_0, arg_19_1)
+		-- function 19
 		return arg_19_0 == arg_19_1
 	end,
-	NEQ = function(arg_20_0, arg_20_1)
+	NEQ = function (arg_20_0, arg_20_1)
+		-- function 20
 		return arg_20_0 ~= arg_20_1
 	end,
-	LT = function(arg_21_0, arg_21_1)
+	LT = function (arg_21_0, arg_21_1)
+		-- function 21
 		return arg_21_0 < arg_21_1
 	end,
-	GT = function(arg_22_0, arg_22_1)
+	GT = function (arg_22_0, arg_22_1)
+		-- function 22
 		return arg_22_1 < arg_22_0
 	end,
-	LTEQ = function(arg_23_0, arg_23_1)
+	LTEQ = function (arg_23_0, arg_23_1)
+		-- function 23
 		return arg_23_0 <= arg_23_1
 	end,
-	GTEQ = function(arg_24_0, arg_24_1)
+	GTEQ = function (arg_24_0, arg_24_1)
+		-- function 24
 		return arg_24_1 <= arg_24_0
 	end
 }
+TagQuery_4.FilterOP = FilterOP

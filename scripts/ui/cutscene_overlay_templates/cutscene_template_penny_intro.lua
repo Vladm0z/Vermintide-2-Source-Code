@@ -1,8 +1,8 @@
 -- chunkname: @scripts/ui/cutscene_overlay_templates/cutscene_template_penny_intro.lua
 
-local var_0_0 = require("scripts/ui/cutscene_overlay_templates/cutscene_utils")
-local var_0_1 = 700
-local var_0_2 = {
+local scripts_ui_cutscene_overlay_templates_cutscene_utils = require("scripts/ui/cutscene_overlay_templates/cutscene_utils")
+local num = 700
+local tbl = {
 	template_1 = {
 		{
 			fade_out_duration = 0.3,
@@ -21,7 +21,7 @@ local var_0_2 = {
 			offset = {
 				0,
 				20,
-				var_0_1
+				num
 			}
 		},
 		{
@@ -41,7 +41,7 @@ local var_0_2 = {
 			offset = {
 				0,
 				20,
-				var_0_1
+				num
 			}
 		},
 		{
@@ -61,7 +61,7 @@ local var_0_2 = {
 			offset = {
 				0,
 				20,
-				var_0_1
+				num
 			}
 		},
 		{
@@ -81,14 +81,14 @@ local var_0_2 = {
 			offset = {
 				0,
 				20,
-				var_0_1
+				num
 			}
 		}
 	}
 }
 
-var_0_0.convert_string_timestamps_to_seconds(var_0_2)
+scripts_ui_cutscene_overlay_templates_cutscene_utils.convert_string_timestamps_to_seconds(tbl)
 
 return {
-	templates = var_0_2
+	templates = tbl
 }

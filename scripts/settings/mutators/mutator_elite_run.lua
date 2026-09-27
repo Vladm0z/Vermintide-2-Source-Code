@@ -13,25 +13,27 @@ return {
 		skaven_clan_rat = "skaven_storm_vermin",
 		chaos_marauder = "chaos_raider"
 	},
-	server_start_function = function(arg_1_0, arg_1_1)
-		local var_1_0 = arg_1_1.template.roamer_override_lookup
+	server_start_function = function (arg_1_0, arg_1_1)
+		-- function 1
+		local roamer_override_lookup = arg_1_1.template.roamer_override_lookup
 
-		Managers.state.entity:system("ai_interest_point_system"):set_breed_override_lookup(var_1_0)
-		Managers.state.conflict:set_breed_override_lookup(var_1_0)
+		Managers.state.entity:system("ai_interest_point_system"):set_breed_override_lookup(roamer_override_lookup)
+		Managers.state.conflict:set_breed_override_lookup(roamer_override_lookup)
 
-		for iter_1_0, iter_1_1 in pairs(var_1_0) do
-			local var_1_1 = Breeds[iter_1_0].threat_value
+		for k, v in pairs(roamer_override_lookup) do
+			local threat_value = Breeds[k].threat_value
 
-			Managers.state.conflict:set_threat_value(iter_1_1, var_1_1)
+			Managers.state.conflict:set_threat_value(v, threat_value)
 		end
 	end,
-	server_stop_function = function(arg_2_0, arg_2_1)
-		local var_2_0 = arg_2_1.template.roamer_override_lookup
+	server_stop_function = function (arg_2_0, arg_2_1)
+		-- function 2
+		local roamer_override_lookup = arg_2_1.template.roamer_override_lookup
 
-		for iter_2_0, iter_2_1 in pairs(var_2_0) do
-			local var_2_1 = Breeds[iter_2_1].threat_value
+		for k, v in pairs(roamer_override_lookup) do
+			local threat_value = Breeds[v].threat_value
 
-			Managers.state.conflict:set_threat_value(iter_2_1, var_2_1)
+			Managers.state.conflict:set_threat_value(v, threat_value)
 		end
 	end
 }

@@ -4,34 +4,36 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTRatlingGunnerMoveToShootAction = class(BTRatlingGunnerMoveToShootAction, BTNode)
 
-function BTRatlingGunnerMoveToShootAction.init(arg_1_0, ...)
+BTRatlingGunnerMoveToShootAction.init = function (arg_1_0, ...)
+	-- function 1
 	BTRatlingGunnerMoveToShootAction.super.init(arg_1_0, ...)
 end
 
 BTRatlingGunnerMoveToShootAction.name = "BTRatlingGunnerMoveToShootAction"
 
-function BTRatlingGunnerMoveToShootAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
-	local var_2_0 = arg_2_0._tree_node.action_data
-	local var_2_1 = {}
+BTRatlingGunnerMoveToShootAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+	-- function 2
+	local action_data = self._tree_node.action_data
+	local tbl = {}
 
-	arg_2_2.attack_pattern_data = var_2_1
-	arg_2_2.action = var_2_0
+	arg_2_2.attack_pattern_data = tbl
+	arg_2_2.action = action_data
 
-	local var_2_2, var_2_3 = PerceptionUtils.pick_ratling_gun_target(arg_2_1, arg_2_2)
+	local pick_ratling_gun_target, var_2_3 = PerceptionUtils.pick_ratling_gun_target(arg_2_1, arg_2_2)
 
-	if var_2_2 then
-		var_2_1.target_unit = var_2_2
-		var_2_1.target_node_name = var_2_3
-		var_2_1.exit_node = true
+	if not pick_ratling_gun_target then
+		tbl.target_unit = pick_ratling_gun_target
+		tbl.target_node_name = var_2_3
+		tbl.exit_node = true
 
 		return
 	end
 
-	local var_2_4 = var_2_0.move_speed
-	local var_2_5 = arg_2_2.navigation_extension
+	local move_speed = action_data.move_speed
+	local navigation_extension = arg_2_2.navigation_extension
 
-	var_2_5:set_max_speed(var_2_4)
-	var_2_5:stop()
+	navigation_extension:set_max_speed(move_speed)
+	navigation_extension:stop()
 
 	arg_2_2.move_pos = nil
 
@@ -41,35 +43,39 @@ function BTRatlingGunnerMoveToShootAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2
 	arg_2_2.move_attempts = 0
 end
 
-function BTRatlingGunnerMoveToShootAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTRatlingGunnerMoveToShootAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	-- function 3
 	if arg_3_4 ~= "done" then
 		arg_3_2.move_pos = nil
 	end
 
 	arg_3_2.move_attempts = nil
 
-	local var_3_0 = AiUtils.get_default_breed_move_speed(arg_3_1, arg_3_2)
+	local get_default_breed_move_speed = AiUtils.get_default_breed_move_speed(arg_3_1, arg_3_2)
 
-	arg_3_2.navigation_extension:set_max_speed(var_3_0)
+	arg_3_2.navigation_extension:set_max_speed(get_default_breed_move_speed)
 end
 
-function BTRatlingGunnerMoveToShootAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-	if arg_4_2.attack_pattern_data.exit_node then
+BTRatlingGunnerMoveToShootAction.run = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	-- function 4
+	if not arg_4_2.attack_pattern_data.exit_node then
 		arg_4_2.attack_pattern_data.exit_node = nil
 
 		return "done"
 	end
 
-	local var_4_0 = arg_4_2.move_pos
+	local move_pos = arg_4_2.move_pos
 
-	if not var_4_0 then
-		local var_4_1 = arg_4_0:calculate_move_position(arg_4_1, arg_4_2)
+	if not move_pos then
+		local calculate_move_position = self:calculate_move_position(arg_4_1, arg_4_2)
+		local move_attempts = arg_4_2.move_attempts
 
-		arg_4_2.move_attempts = arg_4_2.move_attempts or 0
+		move_attempts = move_attempts or 0
+		arg_4_2.move_attempts = move_attempts
 		arg_4_2.move_attempts = arg_4_2.move_attempts + 1
 
-		if var_4_1 then
-			arg_4_0:move_to(var_4_1, arg_4_1, arg_4_2)
+		if not calculate_move_position then
+			self:move_to(calculate_move_position, arg_4_1, arg_4_2)
 		elseif arg_4_2.move_attempts > 5 then
 			return "failed"
 		end
@@ -77,20 +83,20 @@ function BTRatlingGunnerMoveToShootAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3
 		return "running"
 	end
 
-	if var_4_0 and arg_4_2.destination_dist < 0.5 then
+	if not (not move_pos and arg_4_2.destination_dist < 0.5) then
 		return "done"
 	end
 
-	if arg_4_2.no_path_found then
+	if not arg_4_2.no_path_found then
 		return "failed"
 	end
 
-	local var_4_2 = arg_4_2.is_computing_path
+	local is_computing_path = arg_4_2.is_computing_path
 
-	if arg_4_2.move_state ~= "moving" and not var_4_2 then
-		local var_4_3 = arg_4_2.action.move_anim
+	if not (arg_4_2.move_state == "moving" or is_computing_path) then
+		local move_anim = arg_4_2.action.move_anim
 
-		Managers.state.network:anim_event(arg_4_1, var_4_3)
+		Managers.state.network:anim_event(arg_4_1, move_anim)
 
 		arg_4_2.move_state = "moving"
 	end
@@ -98,19 +104,21 @@ function BTRatlingGunnerMoveToShootAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3
 	return "running"
 end
 
-function BTRatlingGunnerMoveToShootAction.move_to(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+BTRatlingGunnerMoveToShootAction.move_to = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	-- function 5
 	arg_5_3.navigation_extension:move_to(arg_5_1)
 
 	arg_5_3.move_pos = Vector3Box(arg_5_1)
 end
 
-function BTRatlingGunnerMoveToShootAction.calculate_move_position(arg_6_0, arg_6_1, arg_6_2)
-	local var_6_0 = arg_6_2.action
-	local var_6_1 = var_6_0.keep_target_distance[1]
-	local var_6_2 = var_6_0.keep_target_distance[2]
-	local var_6_3 = 1
-	local var_6_4 = 3
-	local var_6_5 = 6
+BTRatlingGunnerMoveToShootAction.calculate_move_position = function (arg_6_0, arg_6_1, arg_6_2)
+	-- function 6
+	local action = arg_6_2.action
+	local var_6_1 = action.keep_target_distance[1]
+	local var_6_2 = action.keep_target_distance[2]
+	local num = 1
+	local num_2 = 3
+	local num_3 = 6
 
-	return (AiUtils.advance_towards_target(arg_6_1, arg_6_2, var_6_1, var_6_2, var_6_3, var_6_4, var_6_5))
+	return (AiUtils.advance_towards_target(arg_6_1, arg_6_2, var_6_1, var_6_2, num, num_2, num_3))
 end

@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/terror_events/terror_events_dlc_bogenhafen_slum.lua
 
-local var_0_0 = require("scripts/settings/terror_events/terror_event_utils").count_event_breed
-local var_0_1 = {
+local count_event_breed = require("scripts/settings/terror_events/terror_event_utils").count_event_breed
+local tbl = {
 	dlc_bogenhafen_slum_event_spice_random = {
 		"dlc_bogenhafen_slum_event_spice_left",
 		1,
@@ -9,7 +9,7 @@ local var_0_1 = {
 		1
 	}
 }
-local var_0_2 = {
+local tbl_2 = {
 	dlc_bogenhafen_slum_pacing_off = {
 		{
 			"control_specials",
@@ -61,8 +61,9 @@ local var_0_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_1_0)
-				return var_0_0("chaos_marauder_with_shield") < 3 and var_0_0("chaos_marauder") < 4
+			condition = function (arg_1_0)
+				-- function 1
+				return not (count_event_breed("chaos_marauder_with_shield") < 3) or count_event_breed("chaos_marauder") < 4
 			end
 		},
 		{
@@ -105,8 +106,9 @@ local var_0_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_2_0)
-				return var_0_0("chaos_marauder_with_shield") < 3 and var_0_0("chaos_marauder") < 4
+			condition = function (arg_2_0)
+				-- function 2
+				return not (count_event_breed("chaos_marauder_with_shield") < 3) or count_event_breed("chaos_marauder") < 4
 			end
 		},
 		{
@@ -122,8 +124,9 @@ local var_0_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_3_0)
-				return var_0_0("chaos_berzerkers_small") < 1
+			condition = function (arg_3_0)
+				-- function 3
+				return count_event_breed("chaos_berzerkers_small") < 1
 			end
 		},
 		{
@@ -198,15 +201,17 @@ local var_0_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_4_0)
-				return var_0_0("chaos_marauder_with_shield") < 3 and var_0_0("chaos_marauder") < 4
+			condition = function (arg_4_0)
+				-- function 4
+				return not (count_event_breed("chaos_marauder_with_shield") < 3) or count_event_breed("chaos_marauder") < 4
 			end
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_5_0)
-				return var_0_0("skaven_clan_rat") < 3 and var_0_0("skaven_slave") < 4
+			condition = function (arg_5_0)
+				-- function 5
+				return not (count_event_breed("skaven_clan_rat") < 3) or count_event_breed("skaven_slave") < 4
 			end
 		},
 		{
@@ -285,8 +290,9 @@ local var_0_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_6_0)
-				return var_0_0("chaos_berzerkers_small") < 1 and var_0_0("chaos_shields") < 1 and var_0_0("chaos_warriors") < 1 and var_0_0("skaven_clan_rat") < 2 and var_0_0("skaven_slave") < 2
+			condition = function (arg_6_0)
+				-- function 6
+				return not (count_event_breed("chaos_berzerkers_small") < 1) or not (count_event_breed("chaos_shields") < 1) or not (count_event_breed("chaos_warriors") < 1) or not (count_event_breed("skaven_clan_rat") < 2) or count_event_breed("skaven_slave") < 2
 			end
 		},
 		{
@@ -306,6 +312,6 @@ local var_0_2 = {
 }
 
 return {
-	var_0_2,
-	var_0_1
+	tbl_2,
+	tbl
 }

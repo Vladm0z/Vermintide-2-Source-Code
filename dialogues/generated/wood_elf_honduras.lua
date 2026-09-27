@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/wood_elf_honduras.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		response = "pwe_ability_activate_shade",
 		name = "pwe_ability_activate_shade",

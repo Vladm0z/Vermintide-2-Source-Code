@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/breeds/breed_chaos_plague_wave_spawner.lua
 
-local var_0_0 = {
+local tbl = {
 	detection_radius = 90,
 	animation_sync_rpc = "rpc_sync_anim_state_1",
 	has_inventory = false,
@@ -30,9 +30,9 @@ local var_0_0 = {
 	hit_zones = {}
 }
 
-Breeds.chaos_plague_wave_spawner = table.create_copy(Breeds.chaos_plague_wave_spawner, var_0_0)
+Breeds.chaos_plague_wave_spawner = table.create_copy(Breeds.chaos_plague_wave_spawner, tbl)
 
-local var_0_1 = {
+local tbl_2 = {
 	plague_wave_spawn = {
 		is_spawner = true,
 		spawn_func_name = "spawn_plague_wave_from_spawner"
@@ -46,4 +46,4 @@ local var_0_1 = {
 	}
 }
 
-BreedActions.chaos_plague_wave_spawner = table.create_copy(BreedActions.chaos_plague_wave_spawner, var_0_1)
+BreedActions.chaos_plague_wave_spawner = table.create_copy(BreedActions.chaos_plague_wave_spawner, tbl_2)

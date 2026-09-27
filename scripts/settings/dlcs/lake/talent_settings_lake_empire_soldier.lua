@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/dlcs/lake/talent_settings_lake_empire_soldier.lua
 
-local var_0_0 = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
-local var_0_1 = {
+local scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
+local tbl = {
 	markus_questing_knight_ability_cooldown_on_hit = {
 		bonus = 0.25
 	},
@@ -64,7 +64,7 @@ local var_0_1 = {
 		multiplier = 1.35
 	}
 }
-local var_0_2 = {
+local tbl_2 = {
 	markus_questing_knight_ability_cooldown_on_hit = {
 		buffs = {
 			{
@@ -103,7 +103,7 @@ local var_0_2 = {
 		buffs = {
 			{
 				perks = {
-					var_0_0.power_block
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.power_block
 				}
 			}
 		}
@@ -115,7 +115,7 @@ local var_0_2 = {
 				name = "vanguard",
 				buff_func = "heal_stagger_targets_on_melee",
 				perks = {
-					var_0_0.tank_healing
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.tank_healing
 				}
 			}
 		}
@@ -127,7 +127,7 @@ local var_0_2 = {
 				name = "bloodlust",
 				buff_func = "heal_percentage_of_enemy_hp_on_melee_kill",
 				perks = {
-					var_0_0.smiter_healing
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.smiter_healing
 				}
 			}
 		}
@@ -253,7 +253,7 @@ local var_0_2 = {
 		}
 	}
 }
-local var_0_3 = {
+local tbl_3 = {
 	{
 		{
 			"markus_questing_knight_thp_tank",
@@ -287,7 +287,7 @@ local var_0_3 = {
 		}
 	}
 }
-local var_0_4 = {
+local tbl_4 = {
 	{
 		description = "vanguard_desc",
 		name = "markus_questing_knight_vanguard",
@@ -376,13 +376,13 @@ local var_0_4 = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.markus_questing_knight_kills_buff_power_stacking_buff.multiplier
+				value = tbl.markus_questing_knight_kills_buff_power_stacking_buff.multiplier
 			},
 			{
-				value = var_0_1.markus_questing_knight_kills_buff_power_stacking_buff.duration
+				value = tbl.markus_questing_knight_kills_buff_power_stacking_buff.duration
 			},
 			{
-				value = var_0_1.markus_questing_knight_kills_buff_power_stacking_buff.max_stacks
+				value = tbl.markus_questing_knight_kills_buff_power_stacking_buff.max_stacks
 			}
 		},
 		buffs = {
@@ -397,7 +397,7 @@ local var_0_4 = {
 		icon = "markus_questing_knight_crit_can_insta_kill",
 		description_values = {
 			{
-				value = var_0_1.markus_questing_knight_crit_can_insta_kill.damage_multiplier
+				value = tbl.markus_questing_knight_crit_can_insta_kill.damage_multiplier
 			}
 		},
 		buffs = {
@@ -413,7 +413,7 @@ local var_0_4 = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.markus_questing_knight_charged_attacks_increased_power.multiplier
+				value = tbl.markus_questing_knight_charged_attacks_increased_power.multiplier
 			}
 		},
 		buffs = {
@@ -505,7 +505,7 @@ local var_0_4 = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.markus_questing_knight_passive_improved_reward.display_multiplier
+				value = tbl.markus_questing_knight_passive_improved_reward.display_multiplier
 			}
 		},
 		buffs = {}
@@ -519,10 +519,10 @@ local var_0_4 = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.markus_questing_knight_health_refund_over_time.heal_amount_fraction
+				value = tbl.markus_questing_knight_health_refund_over_time.heal_amount_fraction
 			},
 			{
-				value = var_0_1.markus_questing_knight_health_refund_over_time_delayed_heal.duration
+				value = tbl.markus_questing_knight_health_refund_over_time_delayed_heal.duration
 			}
 		},
 		buffs = {
@@ -538,10 +538,10 @@ local var_0_4 = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.markus_questing_knight_parry_increased_power_buff.multiplier
+				value = tbl.markus_questing_knight_parry_increased_power_buff.multiplier
 			},
 			{
-				value = var_0_1.markus_questing_knight_parry_increased_power_buff.duration
+				value = tbl.markus_questing_knight_parry_increased_power_buff.duration
 			}
 		},
 		buffs = {
@@ -556,7 +556,7 @@ local var_0_4 = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.markus_questing_knight_push_arc.multiplier
+				value = tbl.markus_questing_knight_push_arc.multiplier
 			}
 		},
 		buffs = {
@@ -579,10 +579,10 @@ local var_0_4 = {
 		description_values = {
 			{
 				value_type = "baked_percent",
-				value = var_0_1.markus_questing_knight_ability_buff_on_kill_movement_speed.multiplier
+				value = tbl.markus_questing_knight_ability_buff_on_kill_movement_speed.multiplier
 			},
 			{
-				value = var_0_1.markus_questing_knight_ability_buff_on_kill_movement_speed.duration
+				value = tbl.markus_questing_knight_ability_buff_on_kill_movement_speed.duration
 			}
 		},
 		buffs = {
@@ -597,18 +597,21 @@ local var_0_4 = {
 		buffs = {}
 	}
 }
-local var_0_5 = "empire_soldier"
+local str = "empire_soldier"
 
-table.merge(TalentBuffTemplates[var_0_5], var_0_2)
-table.append(TalentTrees[var_0_5], var_0_3)
-table.append(Talents[var_0_5], var_0_4)
+table.merge(TalentBuffTemplates[str], tbl_2)
+table.append(TalentTrees[str], tbl_3)
+table.append(Talents[str], tbl_4)
+
+local WeaveLoadoutSettings = WeaveLoadoutSettings
 
 WeaveLoadoutSettings = WeaveLoadoutSettings or {}
+WeaveLoadoutSettings = WeaveLoadoutSettings
 WeaveLoadoutSettings.es_questingknight = {
-	talent_tree = var_0_3[1],
+	talent_tree = tbl_3[1],
 	properties = {},
 	traits = {}
 }
 
-BuffUtils.copy_talent_buff_names(var_0_2)
-BuffUtils.apply_buff_tweak_data(var_0_2, var_0_1)
+BuffUtils.copy_talent_buff_names(tbl_2)
+BuffUtils.apply_buff_tweak_data(tbl_2, tbl)

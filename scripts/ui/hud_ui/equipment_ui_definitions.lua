@@ -1,17 +1,17 @@
 -- chunkname: @scripts/ui/hud_ui/equipment_ui_definitions.lua
 
-local var_0_0 = 1920
-local var_0_1 = 1080
-local var_0_2 = true
-local var_0_3 = {
+local num = 1920
+local num_2 = 1080
+local flag = true
+local tbl = {
 	46,
 	46
 }
-local var_0_4 = {
+local tbl_2 = {
 	40,
 	40
 }
-local var_0_5 = {
+local tbl_3 = {
 	root_parent = {
 		scale = "hud_scale_fit",
 		position = {
@@ -20,8 +20,8 @@ local var_0_5 = {
 			UILayer.hud
 		},
 		size = {
-			var_0_0,
-			var_0_1
+			num,
+			num_2
 		}
 	},
 	screen = {
@@ -32,8 +32,8 @@ local var_0_5 = {
 			UILayer.hud
 		},
 		size = {
-			var_0_0,
-			var_0_1
+			num,
+			num_2
 		}
 	},
 	root = {
@@ -45,8 +45,8 @@ local var_0_5 = {
 			0
 		},
 		size = {
-			var_0_0,
-			var_0_1
+			num,
+			num_2
 		}
 	},
 	screen_bottom_pivot = {
@@ -126,7 +126,7 @@ local var_0_5 = {
 			44,
 			-8
 		},
-		size = var_0_3
+		size = tbl
 	},
 	ammo_background_parent = {
 		vertical_alignment = "bottom",
@@ -242,17 +242,18 @@ local var_0_5 = {
 	}
 }
 
-local function var_0_6(arg_1_0, arg_1_1)
-	local var_1_0 = arg_1_0 - 1
-	local var_1_1 = 24
-	local var_1_2 = var_0_3[1]
-	local var_1_3 = var_1_2 * arg_1_1 + var_1_1 * (arg_1_1 - 1)
-	local var_1_4 = {
-		var_1_0 * (var_1_2 + var_1_1),
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
+	local num = arg_1_0 - 1
+	local num_2 = 24
+	local var_1_2 = tbl[1]
+	local num_3 = var_1_2 * arg_1_1 + num_2 * (arg_1_1 - 1)
+	local tbl_3 = {
+		num * (var_1_2 + num_2),
 		0,
 		-30
 	}
-	local var_1_5 = {
+	local tbl_4 = {
 		255,
 		36,
 		215,
@@ -267,108 +268,116 @@ local function var_0_6(arg_1_0, arg_1_1)
 					pass_type = "texture",
 					style_id = "texture_icon",
 					texture_id = "texture_icon",
-					retained_mode = var_0_2
+					retained_mode = flag
 				},
 				{
 					pass_type = "rotated_texture",
 					style_id = "secondary_texture_icon",
 					texture_id = "secondary_texture_icon",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_2_0, arg_2_1)
-						return arg_2_0.secondary_texture_icon
+					retained_mode = flag,
+					content_check_function = function (self, arg_2_1)
+						-- function 2
+						return self.secondary_texture_icon
 					end
 				},
 				{
 					pass_type = "rotated_texture",
 					style_id = "secondary_texture_icon_glow",
 					texture_id = "secondary_texture_icon_glow",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_3_0, arg_3_1)
-						return arg_3_0.secondary_texture_icon
+					retained_mode = flag,
+					content_check_function = function (self, arg_3_1)
+						-- function 3
+						return self.secondary_texture_icon
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "secondary_texture_bg",
 					texture_id = "secondary_texture_bg",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_4_0, arg_4_1)
-						return arg_4_0.secondary_texture_icon
+					retained_mode = flag,
+					content_check_function = function (self, arg_4_1)
+						-- function 4
+						return self.secondary_texture_icon
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_frame",
 					texture_id = "texture_frame",
-					retained_mode = var_0_2
+					retained_mode = flag
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_background",
 					texture_id = "texture_background",
-					retained_mode = var_0_2
+					retained_mode = flag
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_selected",
 					texture_id = "texture_selected",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_5_0, arg_5_1)
-						return arg_5_0.selected
+					retained_mode = flag,
+					content_check_function = function (self, arg_5_1)
+						-- function 5
+						return self.selected
 					end
 				},
 				{
 					pass_type = "rotated_texture",
 					style_id = "texture_highlight",
 					texture_id = "texture_highlight",
-					retained_mode = var_0_2
+					retained_mode = flag
 				},
 				{
 					style_id = "input_text",
 					pass_type = "text",
 					text_id = "input_text",
-					retained_mode = var_0_2
+					retained_mode = flag
 				},
 				{
 					style_id = "input_text_shadow",
 					pass_type = "text",
 					text_id = "input_text",
-					retained_mode = var_0_2
+					retained_mode = flag
 				},
 				{
 					style_id = "use_count_text",
 					pass_type = "text",
 					text_id = "use_count_text",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_6_0, arg_6_1)
-						return arg_6_0.has_additional_slots
+					retained_mode = flag,
+					content_check_function = function (self, arg_6_1)
+						-- function 6
+						return self.has_additional_slots
 					end
 				},
 				{
 					style_id = "use_count_text_shadow",
 					pass_type = "text",
 					text_id = "use_count_text",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_7_0, arg_7_1)
-						return arg_7_0.has_additional_slots
+					retained_mode = flag,
+					content_check_function = function (self, arg_7_1)
+						-- function 7
+						return self.has_additional_slots
 					end
 				},
 				{
 					style_id = "can_swap_text",
 					pass_type = "text",
 					text_id = "can_swap_text",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_8_0, arg_8_1)
-						return arg_8_0.can_swap
+					retained_mode = flag,
+					content_check_function = function (self, arg_8_1)
+						-- function 8
+						return self.can_swap
 					end
 				},
 				{
 					style_id = "can_swap_text_shadow",
 					pass_type = "text",
 					text_id = "can_swap_text",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_9_0, arg_9_1)
-						return arg_9_0.can_swap
+					retained_mode = flag,
+					content_check_function = function (self, arg_9_1)
+						-- function 9
+						return self.can_swap
 					end
 				}
 			}
@@ -479,7 +488,7 @@ local function var_0_6(arg_1_0, arg_1_1)
 			texture_icon = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				texture_size = var_0_4,
+				texture_size = tbl_2,
 				color = {
 					0,
 					255,
@@ -496,8 +505,8 @@ local function var_0_6(arg_1_0, arg_1_1)
 				vertical_alignment = "top",
 				horizontal_alignment = "right",
 				texture_size = {
-					var_0_4[1] * 0.75,
-					var_0_4[2] * 0.75
+					tbl_2[1] * 0.75,
+					tbl_2[2] * 0.75
 				},
 				color = {
 					255,
@@ -512,16 +521,16 @@ local function var_0_6(arg_1_0, arg_1_1)
 				},
 				angle = math.degrees_to_radians(-45),
 				pivot = {
-					var_0_4[1] * 0.75 * 0.5,
-					var_0_4[2] * 0.75 * 0.5
+					tbl_2[1] * 0.75 * 0.5,
+					tbl_2[2] * 0.75 * 0.5
 				}
 			},
 			secondary_texture_icon_glow = {
 				vertical_alignment = "top",
 				horizontal_alignment = "right",
 				texture_size = {
-					var_0_4[1] * 0.75,
-					var_0_4[2] * 0.75
+					tbl_2[1] * 0.75,
+					tbl_2[2] * 0.75
 				},
 				color = {
 					255,
@@ -536,8 +545,8 @@ local function var_0_6(arg_1_0, arg_1_1)
 				},
 				angle = math.degrees_to_radians(-45),
 				pivot = {
-					var_0_4[1] * 0.75 * 0.5,
-					var_0_4[2] * 0.75 * 0.5
+					tbl_2[1] * 0.75 * 0.5,
+					tbl_2[2] * 0.75 * 0.5
 				}
 			},
 			secondary_texture_bg = {
@@ -561,8 +570,8 @@ local function var_0_6(arg_1_0, arg_1_1)
 			},
 			texture_frame = {
 				size = {
-					var_0_3[1],
-					var_0_3[2]
+					tbl[1],
+					tbl[2]
 				},
 				color = {
 					255,
@@ -622,7 +631,7 @@ local function var_0_6(arg_1_0, arg_1_1)
 			texture_background = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				texture_size = var_0_4,
+				texture_size = tbl_2,
 				color = {
 					255,
 					255,
@@ -636,11 +645,11 @@ local function var_0_6(arg_1_0, arg_1_1)
 				}
 			}
 		},
-		offset = var_1_4
+		offset = tbl_3
 	}
 end
 
-local var_0_7 = {
+local tbl_4 = {
 	word_wrap = false,
 	font_size = 72,
 	localize = false,
@@ -656,7 +665,7 @@ local var_0_7 = {
 		2
 	}
 }
-local var_0_8 = {
+local tbl_5 = {
 	word_wrap = false,
 	font_size = 40,
 	localize = false,
@@ -672,7 +681,7 @@ local var_0_8 = {
 		2
 	}
 }
-local var_0_9 = {
+local tbl_6 = {
 	word_wrap = false,
 	font_size = 40,
 	localize = false,
@@ -688,7 +697,7 @@ local var_0_9 = {
 		2
 	}
 }
-local var_0_10 = {
+local tbl_7 = {
 	word_wrap = false,
 	localize = false,
 	font_size = 30,
@@ -703,17 +712,18 @@ local var_0_10 = {
 		2
 	}
 }
-local var_0_11 = 4 * (var_0_3[1] + 24)
+local num_3 = 4 * (tbl[1] + 24)
 
 function create_inventory_panel(arg_10_0, arg_10_1)
-	local var_10_0 = var_0_5[arg_10_1].size
-	local var_10_1 = {
+	-- function 10
+	local size = tbl_3[arg_10_1].size
+	local tbl = {
 		0,
 		0,
 		1
 	}
 	local var_10_2
-	local var_10_3 = var_0_2
+	local var_10_3 = flag
 
 	return {
 		element = {
@@ -743,21 +753,21 @@ function create_inventory_panel(arg_10_0, arg_10_1)
 					0
 				},
 				masked = var_10_2,
-				texture_size = var_10_0
+				texture_size = size
 			}
 		},
-		offset = var_10_1,
+		offset = tbl,
 		scenegraph_id = arg_10_1
 	}
 end
 
-local var_0_12 = {
+local tbl_8 = {
 	background_panel = create_inventory_panel("hud_inventory_panel", "background_panel"),
-	background_panel_bg = UIWidgets.create_simple_texture("hud_inventory_panel_bg", "background_panel_bg", nil, var_0_2),
+	background_panel_bg = UIWidgets.create_simple_texture("hud_inventory_panel_bg", "background_panel_bg", nil, flag),
 	extra_storage_bg = {
 		scenegraph_id = "slot",
 		offset = {
-			var_0_11,
+			num_3,
 			22,
 			-31
 		},
@@ -767,7 +777,7 @@ local var_0_12 = {
 					pass_type = "rotated_texture",
 					style_id = "texture",
 					texture_id = "texture",
-					retained_mode = var_0_2
+					retained_mode = flag
 				}
 			}
 		},
@@ -797,17 +807,17 @@ local var_0_12 = {
 		}
 	}
 }
-local var_0_13 = {
-	ammo_text_clip = UIWidgets.create_simple_text("-", "ammo_text_clip", nil, nil, var_0_7, nil, var_0_2),
-	ammo_text_remaining = UIWidgets.create_simple_text("-", "ammo_text_remaining", nil, nil, var_0_8, nil, var_0_2),
-	ammo_text_center = UIWidgets.create_simple_text("/", "ammo_text_center", nil, nil, var_0_9, nil, var_0_2),
-	ammo_background = UIWidgets.create_simple_texture("loot_objective_bg", "ammo_background", nil, var_0_2, {
+local tbl_9 = {
+	ammo_text_clip = UIWidgets.create_simple_text("-", "ammo_text_clip", nil, nil, tbl_4, nil, flag),
+	ammo_text_remaining = UIWidgets.create_simple_text("-", "ammo_text_remaining", nil, nil, tbl_5, nil, flag),
+	ammo_text_center = UIWidgets.create_simple_text("/", "ammo_text_center", nil, nil, tbl_6, nil, flag),
+	ammo_background = UIWidgets.create_simple_texture("loot_objective_bg", "ammo_background", nil, flag, {
 		200,
 		255,
 		255,
 		255
 	}),
-	overcharge_background = UIWidgets.create_simple_texture("hud_inventory_charge_icon", "overcharge_background", nil, var_0_2),
+	overcharge_background = UIWidgets.create_simple_texture("hud_inventory_charge_icon", "overcharge_background", nil, flag),
 	overcharge = UIWidgets.create_simple_uv_texture("hud_inventory_charge_icon", {
 		{
 			0,
@@ -817,12 +827,12 @@ local var_0_13 = {
 			1,
 			1
 		}
-	}, "overcharge", nil, var_0_2),
-	reload_tip_text = UIWidgets.create_simple_text("", "reload_ui", nil, Colors.get_color_table_with_alpha("white", 0), var_0_10, nil, false, true)
+	}, "overcharge", nil, flag),
+	reload_tip_text = UIWidgets.create_simple_text("", "reload_ui", nil, Colors.get_color_table_with_alpha("white", 0), tbl_7, nil, false, true)
 }
-local var_0_14 = InventorySettings.slots
-local var_0_15 = {}
-local var_0_16 = {
+local slots = InventorySettings.slots
+local tbl_10 = {}
+local tbl_11 = {
 	scenegraph_id = "background_panel",
 	offset = {
 		0,
@@ -835,39 +845,46 @@ local var_0_16 = {
 				pass_type = "texture",
 				style_id = "texture_icon",
 				texture_id = "texture_icon",
-				retained_mode = var_0_2
+				retained_mode = flag
 			},
 			{
 				pass_type = "texture",
 				style_id = "texture_selected",
 				texture_id = "texture_selected",
-				retained_mode = var_0_2
+				retained_mode = flag
 			},
 			{
 				style_id = "input_text",
 				pass_type = "text",
 				text_id = "input_text",
-				retained_mode = var_0_2,
-				content_check_function = function(arg_11_0)
-					return arg_11_0.can_reload
+				retained_mode = flag,
+				content_check_function = function (self)
+					-- function 11
+					return self.can_reload
 				end
 			},
 			{
 				style_id = "input_text_shadow",
 				pass_type = "text",
 				text_id = "input_text",
-				retained_mode = var_0_2,
-				content_check_function = function(arg_12_0)
-					return arg_12_0.can_reload
+				retained_mode = flag,
+				content_check_function = function (self)
+					-- function 12
+					return self.can_reload
 				end
 			},
 			{
 				pass_type = "texture",
 				style_id = "reload_icon",
 				texture_id = "reload_icon",
-				retained_mode = var_0_2,
-				content_check_function = function(arg_13_0)
-					return arg_13_0.can_reload or arg_13_0.is_exhausted
+				retained_mode = flag,
+				content_check_function = function (self)
+					-- function 13
+					local can_reload = self.can_reload
+
+					can_reload = can_reload or self.is_exhausted
+
+					return can_reload
 				end
 			}
 		}
@@ -971,32 +988,32 @@ local var_0_16 = {
 	}
 }
 
-for iter_0_0 = 1, #var_0_14 do
-	local var_0_17 = var_0_14[iter_0_0]
-	local var_0_18 = var_0_17.hud_index
+for i = 1, #slots do
+	local var_0_17 = slots[i]
+	local hud_index = var_0_17.hud_index
 
-	if var_0_18 then
+	if not hud_index then
 		local var_0_19
 
 		if var_0_17.name == "slot_career_skill_weapon" then
-			var_0_19 = var_0_16
+			var_0_19 = tbl_11
 		else
-			var_0_19 = var_0_6(var_0_18, 6)
+			var_0_19 = fn(hud_index, 6)
 		end
 
-		var_0_15[#var_0_15 + 1] = var_0_19
+		tbl_10[#tbl_10 + 1] = var_0_19
 	end
 end
 
-local var_0_20 = 2
-local var_0_21 = {}
+local num_4 = 2
+local tbl_12 = {}
 
-for iter_0_1 = 1, var_0_20 do
-	var_0_21[iter_0_1] = {
+for j = 1, num_4 do
+	tbl_12[j] = {
 		scenegraph_id = "slot",
 		offset = {
-			var_0_11,
-			30 + iter_0_1 * (var_0_4[2] + 4),
+			num_3,
+			30 + j * (tbl_2[2] + 4),
 			5
 		},
 		element = {
@@ -1028,7 +1045,7 @@ for iter_0_1 = 1, var_0_20 do
 					0,
 					6
 				},
-				texture_size = var_0_4,
+				texture_size = tbl_2,
 				color = {
 					0,
 					255,
@@ -1065,15 +1082,18 @@ animations_definitions = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			init = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+				-- function 14
 				arg_14_2.content.visible = true
 			end,
-			update = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
-				local var_15_0 = 255 * math.easeOutCubic(arg_15_3)
+			update = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+				-- function 15
+				local num = 255 * math.easeOutCubic(arg_15_3)
 
-				arg_15_2.style.text.text_color[1] = var_15_0
+				arg_15_2.style.text.text_color[1] = num
 			end,
-			on_complete = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			on_complete = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+				-- function 16
 				return
 			end
 		},
@@ -1081,15 +1101,18 @@ animations_definitions = {
 			name = "fade_out",
 			start_progress = 2.3,
 			end_progress = 2.6,
-			init = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+			init = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+				-- function 17
 				return
 			end,
-			update = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
-				local var_18_0 = 255 * (1 - math.easeOutCubic(arg_18_3))
+			update = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+				-- function 18
+				local num = 255 * (1 - math.easeOutCubic(arg_18_3))
 
-				arg_18_2.style.text.text_color[1] = var_18_0
+				arg_18_2.style.text.text_color[1] = num
 			end,
-			on_complete = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			on_complete = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+				-- function 19
 				arg_19_2.content.visible = false
 			end
 		}
@@ -1097,12 +1120,12 @@ animations_definitions = {
 }
 
 return {
-	slot_size = var_0_3,
-	NUM_SLOTS = #var_0_15,
-	scenegraph_definition = var_0_5,
-	widget_definitions = var_0_12,
-	ammo_widget_definitions = var_0_13,
-	slot_widget_definitions = var_0_15,
-	extra_storage_icon_definitions = var_0_21,
+	slot_size = tbl,
+	NUM_SLOTS = #tbl_10,
+	scenegraph_definition = tbl_3,
+	widget_definitions = tbl_8,
+	ammo_widget_definitions = tbl_9,
+	slot_widget_definitions = tbl_10,
+	extra_storage_icon_definitions = tbl_12,
 	animations_definitions = animations_definitions
 }

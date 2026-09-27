@@ -5,272 +5,319 @@ local var_0_0 = local_require("scripts/game_state/title_screen_substates/win32/s
 StateTitleScreenMainMenu = class(StateTitleScreenMainMenu)
 StateTitleScreenMainMenu.NAME = "StateTitleScreenMainMenu"
 
-function StateTitleScreenMainMenu.on_enter(arg_1_0, arg_1_1)
-	arg_1_0._params = arg_1_1
-	arg_1_0._world = arg_1_1.world
-	arg_1_0._viewport = arg_1_1.viewport
-	arg_1_0._title_start_ui = arg_1_1.ui
-	arg_1_0._auto_start = arg_1_1.auto_start
+StateTitleScreenMainMenu.on_enter = function (self, arg_1_1)
+	-- function 1
+	self._params = arg_1_1
+	self._world = arg_1_1.world
+	self._viewport = arg_1_1.viewport
+	self._title_start_ui = arg_1_1.ui
+	self._auto_start = arg_1_1.auto_start
 
-	if script_data.honduras_demo then
+	if not script_data.honduras_demo then
 		Wwise.set_state("menu_mute_ingame_sounds", "false")
 	end
 
-	arg_1_0._setup_sound()
-	arg_1_0:_init_menu_views()
-	arg_1_0:_setup_menu_options()
-	arg_1_0.parent:show_menu(true)
+	self._setup_sound()
+	self:_init_menu_views()
+	self:_setup_menu_options()
+	self.parent:show_menu(true)
 	Managers.transition:hide_loading_icon()
 end
 
-function StateTitleScreenMainMenu._check_prologue_status(arg_2_0)
-	local var_2_0 = true
+StateTitleScreenMainMenu._check_prologue_status = function (self)
+	-- function 2
+	local flag = true
+	local get_user_data = Managers.backend:get_user_data("has_completed_tutorial")
 
-	if Managers.backend:get_user_data("has_completed_tutorial") or SaveData.has_completed_tutorial or false or script_data.disable_tutorial_at_start then
-		var_2_0 = false
-	else
-		arg_2_0._input_disabled = true
-
-		Managers.transition:show_loading_icon(false)
-		arg_2_0._title_start_ui:disable_input(true)
-
-		arg_2_0._new_state = StateTitleScreenLoadSave
+	if not get_user_data then
+		get_user_data = SaveData.has_completed_tutorial
+		get_user_data = get_user_data or false
 	end
 
-	return var_2_0
+	if get_user_data or not script_data.disable_tutorial_at_start then
+		flag = false
+	else
+		self._input_disabled = true
+
+		Managers.transition:show_loading_icon(false)
+		self._title_start_ui:disable_input(true)
+
+		self._new_state = StateTitleScreenLoadSave
+	end
+
+	return flag
 end
 
-function StateTitleScreenMainMenu._start_game(arg_3_0, arg_3_1)
-	local var_3_0 = arg_3_1 == "prologue"
+StateTitleScreenMainMenu._start_game = function (self, arg_3_1)
+	-- function 3
+	local flag = arg_3_1 == "prologue"
 
-	arg_3_0.parent.parent.loading_context.restart_network = true
-	arg_3_0.parent.parent.loading_context.level_key = arg_3_1
-	arg_3_0.parent.parent.loading_context.play_trailer = var_3_0 or Application.user_setting("play_intro_cinematic")
-	arg_3_0.parent.parent.loading_context.force_run_tutorial = var_3_0
-	arg_3_0.parent.parent.loading_context.first_time = var_3_0
+	self.parent.parent.loading_context.restart_network = true
+	self.parent.parent.loading_context.level_key = arg_3_1
+	self.parent.parent.loading_context.play_trailer = flag or Application.user_setting("play_intro_cinematic")
+	self.parent.parent.loading_context.force_run_tutorial = flag
+	self.parent.parent.loading_context.first_time = flag
 
 	Managers.level_transition_handler:set_next_level(arg_3_1)
 	Managers.level_transition_handler:promote_next_level_data()
 
 	local var_3_1
 
-	if Managers.mechanism then
+	if not Managers.mechanism then
 		var_3_1 = Managers.mechanism:current_mechanism_name()
 
 		Managers.mechanism:destroy()
 	end
 
 	Managers.mechanism = GameMechanismManager:new(var_3_1)
-	arg_3_0._input_disabled = true
+	self._input_disabled = true
 
 	Managers.transition:show_loading_icon(false)
-	arg_3_0._title_start_ui:disable_input(true)
-	arg_3_0._title_start_ui:view_activated(true)
+	self._title_start_ui:disable_input(true)
+	self._title_start_ui:view_activated(true)
 
-	arg_3_0._new_state = StateTitleScreenLoadSave
+	self._new_state = StateTitleScreenLoadSave
 end
 
-function StateTitleScreenMainMenu._quit_game(arg_4_0)
-	arg_4_0._popup_id = Managers.popup:queue_popup(Localize("quit_game_popup_text"), Localize("popup_exit_game_topic"), "end_game", Localize("popup_choice_yes"), "cancel", Localize("popup_choice_no"))
+StateTitleScreenMainMenu._quit_game = function (self)
+	-- function 4
+	self._popup_id = Managers.popup:queue_popup(Localize("quit_game_popup_text"), Localize("popup_exit_game_topic"), "end_game", Localize("popup_choice_yes"), "cancel", Localize("popup_choice_no"))
 end
 
-function StateTitleScreenMainMenu._initiate_quit_game(arg_5_0)
-	arg_5_0._input_disabled = true
+StateTitleScreenMainMenu._initiate_quit_game = function (self)
+	-- function 5
+	self._input_disabled = true
 
-	arg_5_0._title_start_ui:disable_input(true)
-	Managers.transition:fade_in(GameSettings.transition_fade_in_speed, callback(arg_5_0, "cb_quit_game"))
+	self._title_start_ui:disable_input(true)
+	Managers.transition:fade_in(GameSettings.transition_fade_in_speed, callback(self, "cb_quit_game"))
 end
 
-function StateTitleScreenMainMenu.cb_quit_game(arg_6_0)
+StateTitleScreenMainMenu.cb_quit_game = function (arg_6_0)
+	-- function 6
 	Boot.quit_game = true
 end
 
-function StateTitleScreenMainMenu._setup_menu_options(arg_7_0)
-	local var_7_0 = var_0_0.create_menu_layout(arg_7_0)
+StateTitleScreenMainMenu._setup_menu_options = function (self)
+	-- function 7
+	local create_menu_layout = var_0_0.create_menu_layout(self)
 
-	arg_7_0._title_start_ui:create_menu_options(var_7_0)
+	self._title_start_ui:create_menu_options(create_menu_layout)
 end
 
-function StateTitleScreenMainMenu._setup_sound(arg_8_0)
-	local var_8_0 = Application.user_setting("master_bus_volume") or 90
-	local var_8_1 = Application.user_setting("music_bus_volume") or 90
+StateTitleScreenMainMenu._setup_sound = function (arg_8_0)
+	-- function 8
+	local user_setting = Application.user_setting("master_bus_volume")
+
+	user_setting = user_setting or 90
+
+	local user_setting_2 = Application.user_setting("music_bus_volume")
+
+	user_setting_2 = user_setting_2 or 90
+
 	local var_8_2
 
-	if GLOBAL_MUSIC_WORLD then
+	if not GLOBAL_MUSIC_WORLD then
 		var_8_2 = MUSIC_WWISE_WORLD
 	else
-		local var_8_3 = Managers.world:world("music_world")
+		local world = Managers.world:world("music_world")
 
-		var_8_2 = Managers.world:wwise_world(var_8_3)
+		var_8_2 = Managers.world:wwise_world(world)
 	end
 
-	WwiseWorld.set_global_parameter(var_8_2, "master_bus_volume", var_8_0)
-	Managers.music:set_master_volume(var_8_0)
-	Managers.music:set_music_volume(var_8_1)
+	WwiseWorld.set_global_parameter(var_8_2, "master_bus_volume", user_setting)
+	Managers.music:set_master_volume(user_setting)
+	Managers.music:set_music_volume(user_setting_2)
 end
 
-function StateTitleScreenMainMenu.cb_camera_animation_complete(arg_9_0)
+StateTitleScreenMainMenu.cb_camera_animation_complete = function (self)
+	-- function 9
 	ShowCursorStack.show("StateTitleScreenMainMenu")
-	arg_9_0._title_start_ui:activate_career_ui(true)
+	self._title_start_ui:activate_career_ui(true)
 end
 
-function StateTitleScreenMainMenu.cb_camera_animation_complete_back(arg_10_0)
-	arg_10_0._new_state = StateTitleScreenMain
+StateTitleScreenMainMenu.cb_camera_animation_complete_back = function (self)
+	-- function 10
+	self._new_state = StateTitleScreenMain
 end
 
-function StateTitleScreenMainMenu._init_menu_views(arg_11_0)
-	local var_11_0 = arg_11_0._title_start_ui:get_ui_renderer()
-	local var_11_1 = {
+StateTitleScreenMainMenu._init_menu_views = function (self)
+	-- function 11
+	local get_ui_renderer = self._title_start_ui:get_ui_renderer()
+	local tbl = {
 		in_title_screen = true,
-		ui_renderer = var_11_0,
-		ui_top_renderer = var_11_0,
+		ui_renderer = get_ui_renderer,
+		ui_top_renderer = get_ui_renderer,
 		input_manager = Managers.input,
 		world_manager = Managers.world
 	}
 
-	arg_11_0._views = {
-		credits_view = CreditsView:new(var_11_1),
-		options_view = OptionsView:new(var_11_1),
-		cinematics_view = CinematicsView:new(var_11_1)
+	self._views = {
+		credits_view = CreditsView:new(tbl),
+		options_view = OptionsView:new(tbl),
+		cinematics_view = CinematicsView:new(tbl)
 	}
 
 	ShowCursorStack.show("StateTitleScreenMainMenu")
 
-	for iter_11_0, iter_11_1 in pairs(arg_11_0._views) do
-		function iter_11_1.exit()
-			arg_11_0:exit_current_view()
+	for k, v in pairs(self._views) do
+		v.exit = function ()
+			-- function 12
+			self:exit_current_view()
 		end
 	end
 end
 
-function StateTitleScreenMainMenu.update(arg_13_0, arg_13_1, arg_13_2)
-	local var_13_0 = arg_13_0._active_view
+StateTitleScreenMainMenu.update = function (self, arg_13_1, arg_13_2)
+	-- function 13
+	local _active_view = self._active_view
 
-	if arg_13_0._auto_start and (Development.parameter("auto_host_level") or Development.parameter("auto_join") or Development.parameter("deus_auto_host") or Development.parameter("vs_auto_search") or Development.parameter("weave_name")) then
-		arg_13_0._input_disabled = true
+	if not self._auto_start and Development.parameter("auto_host_level") and Development.parameter("auto_join") and Development.parameter("deus_auto_host") and Development.parameter("vs_auto_search") and not Development.parameter("weave_name") then
+		self._input_disabled = true
 
 		Managers.transition:show_loading_icon(false)
-		arg_13_0._title_start_ui:disable_input(true)
+		self._title_start_ui:disable_input(true)
 
-		arg_13_0._new_state = StateTitleScreenLoadSave
-		arg_13_0._auto_start = nil
-	elseif arg_13_0._auto_start and Development.parameter("skip_splash") then
-		local var_13_1 = 1
+		self._new_state = StateTitleScreenLoadSave
+		self._auto_start = nil
+	elseif not self._auto_start and not Development.parameter("skip_splash") then
+		local num = 1
 
-		arg_13_0._title_start_ui:_activate_menu_widget(var_13_1)
+		self._title_start_ui:_activate_menu_widget(num)
 
-		arg_13_0._auto_start = nil
-	elseif var_13_0 then
-		arg_13_0._views[var_13_0]:update(arg_13_1, arg_13_2)
+		self._auto_start = nil
+	elseif not _active_view then
+		self._views[_active_view]:update(arg_13_1, arg_13_2)
 	end
 
-	arg_13_0._title_start_ui:update(arg_13_1, arg_13_2)
+	self._title_start_ui:update(arg_13_1, arg_13_2)
 
-	if not arg_13_0._input_disabled and Managers.input:get_service("main_menu"):get("back") then
-		arg_13_0:_close_menu()
+	if self._input_disabled or not Managers.input:get_service("main_menu"):get("back") then
+		self:_close_menu()
 	end
 
-	arg_13_0:_handle_popups()
+	self:_handle_popups()
 
-	return arg_13_0._new_state
+	return self._new_state
 end
 
-function StateTitleScreenMainMenu._handle_popups(arg_14_0)
-	if not arg_14_0._popup_id then
+StateTitleScreenMainMenu._handle_popups = function (self)
+	-- function 14
+	if not self._popup_id then
 		return
 	end
 
-	local var_14_0 = Managers.popup:query_result(arg_14_0._popup_id)
+	local query_result = Managers.popup:query_result(self._popup_id)
 
-	if var_14_0 then
-		arg_14_0._popup_id = nil
+	if not query_result then
+		self._popup_id = nil
 
-		arg_14_0:_handle_popup_result(var_14_0)
+		self:_handle_popup_result(query_result)
 	end
 end
 
-function StateTitleScreenMainMenu._handle_popup_result(arg_15_0, arg_15_1)
+StateTitleScreenMainMenu._handle_popup_result = function (self, arg_15_1)
+	-- function 15
 	if arg_15_1 == "end_game" then
-		arg_15_0:_initiate_quit_game()
+		self:_initiate_quit_game()
 	end
 end
 
-function StateTitleScreenMainMenu._close_menu(arg_16_0)
-	arg_16_0.parent:show_menu(false)
-	arg_16_0._title_start_ui:set_start_pressed(false)
-	arg_16_0._title_start_ui:disable_input(false)
+StateTitleScreenMainMenu._close_menu = function (self)
+	-- function 16
+	self.parent:show_menu(false)
+	self._title_start_ui:set_start_pressed(false)
+	self._title_start_ui:disable_input(false)
 
-	arg_16_0._closing_menu = true
+	self._closing_menu = true
 
 	Managers.transition:hide_loading_icon()
 	Managers.transition:force_fade_in()
 	Managers.transition:fade_out(GameSettings.transition_fade_in_speed * 2)
 
-	arg_16_0._new_state = StateTitleScreenMain
+	self._new_state = StateTitleScreenMain
 end
 
-function StateTitleScreenMainMenu.on_exit(arg_17_0)
-	for iter_17_0, iter_17_1 in pairs(arg_17_0._views) do
-		if iter_17_1.destroy then
-			iter_17_1:destroy()
+StateTitleScreenMainMenu.on_exit = function (self)
+	-- function 17
+	for k, v in pairs(self._views) do
+		if not v.destroy then
+			v:destroy()
 		end
 	end
 
-	arg_17_0._views = nil
+	self._views = nil
 
 	ShowCursorStack.hide("StateTitleScreenMainMenu")
 end
 
-function StateTitleScreenMainMenu.cb_fade_in_done(arg_18_0, arg_18_1, arg_18_2)
-	arg_18_0._new_state = StateTitleScreenLoadSave
-	arg_18_0.parent.parent.loading_context.restart_network = true
-	arg_18_0.parent.parent.loading_context.level_key = arg_18_1
-	arg_18_0.parent.parent.loading_context.play_trailer = arg_18_1 == "prologue" or Application.user_setting("play_intro_cinematic")
+StateTitleScreenMainMenu.cb_fade_in_done = function (self, arg_18_1, arg_18_2)
+	-- function 18
+	self._new_state = StateTitleScreenLoadSave
+	self.parent.parent.loading_context.restart_network = true
+	self.parent.parent.loading_context.level_key = arg_18_1
+	self.parent.parent.loading_context.play_trailer = arg_18_1 == "prologue" or Application.user_setting("play_intro_cinematic")
 
 	if arg_18_1 == "tutorial" then
 		Managers.backend:make_tutorial()
 
-		arg_18_0.parent.parent.loading_context.wanted_profile_index = 4
-	elseif script_data.honduras_demo then
-		arg_18_0.parent.parent.loading_context.wanted_profile_index = arg_18_2 and FindProfileIndex(arg_18_2) or DemoSettings.wanted_profile_index
+		self.parent.parent.loading_context.wanted_profile_index = 4
+	elseif not script_data.honduras_demo then
+		local loading_context = self.parent.parent.loading_context
+		local var_18_1
+
+		if not arg_18_2 then
+			var_18_1 = FindProfileIndex(arg_18_2)
+
+			if not var_18_1 then
+				-- Nothing
+			end
+		end
+
+		var_18_1 = DemoSettings.wanted_profile_index
+
+		::label_18_0::
+
+		loading_context.wanted_profile_index = var_18_1
 		GameSettingsDevelopment.disable_free_flight = DemoSettings.disable_free_flight
 		GameSettingsDevelopment.disable_intro_trailer = DemoSettings.disable_intro_trailer
 	end
 end
 
-function StateTitleScreenMainMenu._activate_view(arg_19_0, arg_19_1)
-	arg_19_0._active_view = arg_19_1
+StateTitleScreenMainMenu._activate_view = function (self, arg_19_1)
+	-- function 19
+	self._active_view = arg_19_1
 
-	local var_19_0 = arg_19_0._views
+	local _views = self._views
 
-	assert(var_19_0[arg_19_1])
+	assert(_views[arg_19_1])
 
-	if arg_19_1 and var_19_0[arg_19_1] and var_19_0[arg_19_1].on_enter then
-		var_19_0[arg_19_1]:on_enter()
+	if not arg_19_1 and not _views[arg_19_1] and not _views[arg_19_1].on_enter then
+		_views[arg_19_1]:on_enter()
 
-		arg_19_0._input_disabled = true
+		self._input_disabled = true
 
-		arg_19_0._title_start_ui:disable_input(true)
-		arg_19_0._title_start_ui:view_activated(true)
+		self._title_start_ui:disable_input(true)
+		self._title_start_ui:view_activated(true)
 	end
 end
 
-function StateTitleScreenMainMenu.exit_current_view(arg_20_0)
-	local var_20_0 = arg_20_0._active_view
-	local var_20_1 = arg_20_0._views
+StateTitleScreenMainMenu.exit_current_view = function (self)
+	-- function 20
+	local _active_view = self._active_view
+	local _views = self._views
 
-	assert(var_20_0)
+	assert(_active_view)
 
-	if var_20_1[var_20_0] and var_20_1[var_20_0].on_exit then
-		var_20_1[var_20_0]:on_exit()
+	if not _views[_active_view] and not _views[_active_view].on_exit then
+		_views[_active_view]:on_exit()
 
-		arg_20_0._input_disabled = false
+		self._input_disabled = false
 
-		arg_20_0._title_start_ui:disable_input(false)
-		arg_20_0._title_start_ui:view_activated(false)
+		self._title_start_ui:disable_input(false)
+		self._title_start_ui:view_activated(false)
 	end
 
-	arg_20_0._active_view = nil
+	self._active_view = nil
 
 	Managers.input:block_device_except_service("main_menu", "gamepad", 1)
 end

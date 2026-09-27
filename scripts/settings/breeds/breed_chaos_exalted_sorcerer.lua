@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/breeds/breed_chaos_exalted_sorcerer.lua
 
-local var_0_0 = require("scripts/utils/stagger_types")
-local var_0_1 = {
+local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
+local tbl = {
 	detection_radius = 9999999,
 	show_health_bar = true,
 	walk_speed = 0.65,
@@ -63,13 +63,14 @@ local var_0_1 = {
 	},
 	max_health = BreedTweaks.max_health.exalted_sorcerer,
 	bloodlust_health = BreedTweaks.bloodlust_health.monster,
-	stagger_modifier_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	stagger_modifier_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+		-- function 1
 		if not arg_1_4.unit then
 			return arg_1_0, arg_1_1, arg_1_2
 		end
 
-		if arg_1_4.stagger_count >= var_0_0.heavy then
-			arg_1_0 = var_0_0.none
+		if arg_1_4.stagger_count >= scripts_utils_stagger_types.heavy then
+			arg_1_0 = scripts_utils_stagger_types.none
 			arg_1_4.stagger_ignore_anim_cb = true
 		else
 			arg_1_4.stagger_ignore_anim_cb = false
@@ -209,7 +210,8 @@ local var_0_1 = {
 		"kill_chaos_exalted_sorcerer_difficulty_rank",
 		"kill_chaos_exalted_sorcerer_scorpion_hardest"
 	},
-	custom_death_enter_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	custom_death_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+		-- function 2
 		if not Unit.alive(arg_2_1) then
 			return
 		end
@@ -218,12 +220,12 @@ local var_0_1 = {
 	end
 }
 
-Breeds.chaos_exalted_sorcerer = table.create_copy(Breeds.chaos_exalted_sorcerer, var_0_1)
+Breeds.chaos_exalted_sorcerer = table.create_copy(Breeds.chaos_exalted_sorcerer, tbl)
 
-local var_0_2 = 4
-local var_0_3 = 12
-local var_0_4 = 2 * math.pi / ((var_0_3 + 1) * 0.5)
-local var_0_5 = {
+local num = 4
+local num_2 = 12
+local num_3 = 2 * math.pi / ((num_2 + 1) * 0.5)
+local tbl_2 = {
 	skulking = {
 		third_wave_max_distance = 7,
 		third_wave_min_distance = 1,
@@ -309,26 +311,41 @@ local var_0_5 = {
 			true,
 			true
 		},
-		num_waves = var_0_3,
-		spawn_rot_func = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
-			local var_3_0 = Unit.local_rotation(arg_3_2, 0)
-			local var_3_1 = arg_3_1.random_flower_angles and arg_3_1.random_flower_angles[arg_3_1.wave_counter] or var_0_4 * arg_3_1.wave_counter
-			local var_3_2 = Quaternion(Vector3.up(), var_3_1)
+		num_waves = num_2,
+		spawn_rot_func = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			-- function 3
+			local local_rotation = Unit.local_rotation(arg_3_2, 0)
+			local var_3_1
 
-			return (Quaternion.multiply(var_3_0, var_3_2))
-		end,
-		sequence_init_func = function(arg_4_0, arg_4_1)
-			local var_4_0 = {}
-			local var_4_1 = math.random()
+			if not arg_3_1.random_flower_angles then
+				var_3_1 = arg_3_1.random_flower_angles[arg_3_1.wave_counter]
 
-			for iter_4_0 = 1, var_0_3 do
-				var_4_1 = var_4_1 + var_0_4
-				var_4_0[iter_4_0] = var_4_1
+				if not var_3_1 then
+					-- Nothing
+				end
 			end
 
-			table.shuffle(var_4_0)
+			var_3_1 = num_3 * arg_3_1.wave_counter
 
-			arg_4_1.random_flower_angles = var_4_0
+			::label_3_0::
+
+			local var_3_2 = Quaternion(Vector3.up(), var_3_1)
+
+			return (Quaternion.multiply(local_rotation, var_3_2))
+		end,
+		sequence_init_func = function (arg_4_0, arg_4_1)
+			-- function 4
+			local tbl = {}
+			local random = math.random()
+
+			for i = 1, num_2 do
+				random = random + num_3
+				tbl[i] = random
+			end
+
+			table.shuffle(tbl)
+
+			arg_4_1.random_flower_angles = tbl
 		end
 	},
 	spawn_multiple_wave = {
@@ -346,17 +363,19 @@ local var_0_5 = {
 			true,
 			true
 		},
-		spawn_rot_func = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
-			local var_5_0 = Unit.local_rotation(arg_5_0, 0)
-			local var_5_1 = (arg_5_3 - 2) * 0.3
-			local var_5_2 = Quaternion(Vector3.up(), var_5_1)
+		spawn_rot_func = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			-- function 5
+			local local_rotation = Unit.local_rotation(arg_5_0, 0)
+			local num = (arg_5_3 - 2) * 0.3
+			local var_5_2 = Quaternion(Vector3.up(), num)
 
-			return (Quaternion.multiply(var_5_0, var_5_2))
+			return (Quaternion.multiply(local_rotation, var_5_2))
 		end,
-		goal_pos_func = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6)
-			local var_6_0, var_6_1 = GwNavQueries.raycast(arg_6_1.nav_world, arg_6_4, arg_6_5)
+		goal_pos_func = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6)
+			-- function 6
+			local raycast, var_6_1 = GwNavQueries.raycast(arg_6_1.nav_world, arg_6_4, arg_6_5)
 
-			if var_6_1 then
+			if not var_6_1 then
 				return var_6_1
 			end
 		end
@@ -384,15 +403,17 @@ local var_0_5 = {
 			1.1719,
 			1.3749
 		},
-		init_spell_func = function(arg_7_0)
-			arg_7_0.current_spell = arg_7_0.sorcerer_strike_missile_data
+		init_spell_func = function (self)
+			-- function 7
+			self.current_spell = self.sorcerer_strike_missile_data
 		end,
-		get_throw_position_func = function(arg_8_0, arg_8_1, arg_8_2)
+		get_throw_position_func = function (arg_8_0, arg_8_1, arg_8_2)
+			-- function 8
 			local var_8_0 = ScriptUnit.has_extension(arg_8_0, "ai_inventory_system").inventory_item_units[1]
-			local var_8_1 = Unit.world_position(var_8_0, Unit.node(var_8_0, "j_skull_2_parent"))
-			local var_8_2 = Vector3.normalize(arg_8_2 - var_8_1)
+			local world_position = Unit.world_position(var_8_0, Unit.node(var_8_0, "j_skull_2_parent"))
+			local normalize = Vector3.normalize(arg_8_2 - world_position)
 
-			return var_8_1, var_8_2
+			return world_position, normalize
 		end
 	},
 	cast_seeking_bomb_missile = {
@@ -412,8 +433,8 @@ local var_0_5 = {
 			true,
 			true
 		},
-		radius = var_0_2,
-		initial_radius = var_0_2 * 0.6,
+		radius = num,
+		initial_radius = num * 0.6,
 		missile_spawn_offset = {
 			0.1281,
 			1.1719,
@@ -451,22 +472,24 @@ local var_0_5 = {
 		volley_delay = 0.3,
 		action_weight = 1,
 		considerations = UtilityConsiderations.defensive_magic_missile,
-		radius = var_0_2,
-		initial_radius = var_0_2 * 0.6,
+		radius = num,
+		initial_radius = num * 0.6,
 		missile_spawn_offset = {
 			0.1281,
 			1.1719,
 			1.3749
 		},
-		init_spell_func = function(arg_9_0)
-			arg_9_0.current_spell = arg_9_0.sorcerer_strike_missile_data
+		init_spell_func = function (self)
+			-- function 9
+			self.current_spell = self.sorcerer_strike_missile_data
 		end,
-		get_throw_position_func = function(arg_10_0, arg_10_1, arg_10_2)
+		get_throw_position_func = function (arg_10_0, arg_10_1, arg_10_2)
+			-- function 10
 			local var_10_0 = ScriptUnit.has_extension(arg_10_0, "ai_inventory_system").inventory_item_units[1]
-			local var_10_1 = Unit.world_position(var_10_0, Unit.node(var_10_0, "j_skull_2_parent"))
-			local var_10_2 = Vector3.normalize(arg_10_2 - var_10_1)
+			local world_position = Unit.world_position(var_10_0, Unit.node(var_10_0, "j_skull_2_parent"))
+			local normalize = Vector3.normalize(arg_10_2 - world_position)
 
-			return var_10_1, var_10_2
+			return world_position, normalize
 		end,
 		ignore_staggers = {
 			true,
@@ -493,8 +516,9 @@ local var_0_5 = {
 			1.1719,
 			1.3749
 		},
-		init_spell_func = function(arg_11_0)
-			arg_11_0.current_spell = arg_11_0.seeking_bomb_missile_data
+		init_spell_func = function (self)
+			-- function 11
+			self.current_spell = self.seeking_bomb_missile_data
 		end,
 		ignore_staggers = {
 			true,
@@ -550,12 +574,13 @@ local var_0_5 = {
 			true,
 			true
 		},
-		teleport_pos_func = function(arg_12_0, arg_12_1)
-			local var_12_0 = ConflictUtils.get_random_spawner_with_id("sorcerer_boss", arg_12_1.defensive_spawner)
+		teleport_pos_func = function (arg_12_0, arg_12_1)
+			-- function 12
+			local get_random_spawner_with_id = ConflictUtils.get_random_spawner_with_id("sorcerer_boss", arg_12_1.defensive_spawner)
 
-			arg_12_1.defensive_spawner = var_12_0
+			arg_12_1.defensive_spawner = get_random_spawner_with_id
 
-			return Unit.local_position(var_12_0, 0)
+			return Unit.local_position(get_random_spawner_with_id, 0)
 		end
 	},
 	defensive_teleport = {
@@ -635,7 +660,8 @@ local var_0_5 = {
 		}
 	},
 	stagger = {
-		custom_enter_function = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+		custom_enter_function = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			-- function 13
 			arg_13_1.stagger_ignore_anim_cb = true
 
 			return arg_13_3.stagger_anims[arg_13_1.stagger_type], "idle"
@@ -763,22 +789,23 @@ local var_0_5 = {
 	}
 }
 
-local function var_0_6(arg_14_0, arg_14_1, arg_14_2)
-	local var_14_0 = table.clone(arg_14_1)
+local function fn(arg_14_0, arg_14_1, arg_14_2)
+	-- function 14
+	local clone = table.clone(arg_14_1)
 
-	var_14_0.considerations = UtilityConsiderations[arg_14_0]
-	var_14_0.action_weight = 1
-	var_14_0.available_spells = {
+	clone.considerations = UtilityConsiderations[arg_14_0]
+	clone.action_weight = 1
+	clone.available_spells = {
 		arg_14_2
 	}
 
-	return var_14_0
+	return clone
 end
 
-var_0_5.vortex_skulking = var_0_6("vortex_skulking", var_0_5.skulking, "vortex")
-var_0_5.vortex_skulking.search_func_name = "_update_vortex_search"
-var_0_5.tentacle_skulking = var_0_6("tentacle_skulking", var_0_5.skulking, "tentacle")
-var_0_5.plague_wave_skulking = var_0_6("exalted_plague_wave_skulking", var_0_5.skulking, "plague_wave")
-var_0_5.magic_missile_skulking = var_0_6("magic_missile_skulking", var_0_5.skulking, "magic_missile")
-var_0_5.seeking_bomb_missile_skulking = var_0_6("seeking_bomb_missile_skulking", var_0_5.skulking, "seeking_bomb_missile")
-BreedActions.chaos_exalted_sorcerer = table.create_copy(BreedActions.chaos_exalted_sorcerer, var_0_5)
+tbl_2.vortex_skulking = fn("vortex_skulking", tbl_2.skulking, "vortex")
+tbl_2.vortex_skulking.search_func_name = "_update_vortex_search"
+tbl_2.tentacle_skulking = fn("tentacle_skulking", tbl_2.skulking, "tentacle")
+tbl_2.plague_wave_skulking = fn("exalted_plague_wave_skulking", tbl_2.skulking, "plague_wave")
+tbl_2.magic_missile_skulking = fn("magic_missile_skulking", tbl_2.skulking, "magic_missile")
+tbl_2.seeking_bomb_missile_skulking = fn("seeking_bomb_missile_skulking", tbl_2.skulking, "seeking_bomb_missile")
+BreedActions.chaos_exalted_sorcerer = table.create_copy(BreedActions.chaos_exalted_sorcerer, tbl_2)

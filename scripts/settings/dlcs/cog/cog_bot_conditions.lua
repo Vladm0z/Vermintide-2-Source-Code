@@ -1,7 +1,16 @@
 -- chunkname: @scripts/settings/dlcs/cog/cog_bot_conditions.lua
 
-BTConditions.can_activate = BTConditions.can_activate or {}
-BTConditions.can_activate_non_combat = BTConditions.can_activate_non_combat or {}
+local BTConditions = BTConditions
+local can_activate = BTConditions.can_activate
+
+can_activate = can_activate or {}
+BTConditions.can_activate = can_activate
+
+local BTConditions_2 = BTConditions
+local can_activate_non_combat = BTConditions.can_activate_non_combat
+
+can_activate_non_combat = can_activate_non_combat or {}
+BTConditions_2.can_activate_non_combat = can_activate_non_combat
 
 table.merge_recursive(BTConditions.ability_check_categories, {
 	ranged_weapon = {
@@ -9,54 +18,57 @@ table.merge_recursive(BTConditions.ability_check_categories, {
 	}
 })
 
-local var_0_0 = Vector3.distance_squared
-local var_0_1 = 400
+local distance_squared = Vector3.distance_squared
+local num = 400
 
-function BTConditions.can_activate.dr_engineer(arg_1_0)
-	local var_1_0 = arg_1_0.target_unit
+BTConditions.can_activate.dr_engineer = function (self)
+	-- function 1
+	local target_unit = self.target_unit
 
-	if not ALIVE[var_1_0] or Unit.get_data(var_1_0, "breed") == nil then
+	if not (not ALIVE[target_unit] and Unit.get_data(target_unit, "breed") ~= nil) then
 		return false
 	end
 
-	local var_1_1 = ScriptUnit.has_extension(var_1_0, "buff_system")
+	local has_extension = ScriptUnit.has_extension(target_unit, "buff_system")
 
-	if var_1_1 and var_1_1:has_buff_perk("invulnerable_ranged") then
+	if not has_extension and not has_extension:has_buff_perk("invulnerable_ranged") then
 		return false
 	end
 
-	local var_1_2 = arg_1_0.ranged_obstruction_by_static
+	local ranged_obstruction_by_static = self.ranged_obstruction_by_static
 
-	if var_1_2 and var_1_2.unit == var_1_0 and Managers.time:time("game") <= var_1_2.timer + 1 then
+	if not ranged_obstruction_by_static and ranged_obstruction_by_static.unit ~= target_unit or not (Managers.time:time("game") <= ranged_obstruction_by_static.timer + 1) then
 		return false
 	end
 
-	local var_1_3 = arg_1_0.career_extension
-	local var_1_4 = arg_1_0.inventory_extension
-	local var_1_5 = var_1_4 and var_1_4:get_wielded_slot_name() == "career_skill_weapon" and 0.6 or 0.95
+	local career_extension = self.career_extension
+	local inventory_extension = self.inventory_extension
+	local flag
 
-	if not var_1_3 or var_1_5 < var_1_3:current_ability_cooldown_percentage() then
+	flag = not (not inventory_extension and inventory_extension:get_wielded_slot_name() == "career_skill_weapon") and 0.6 and 0.95
+
+	if not (not career_extension and not (flag < career_extension:current_ability_cooldown_percentage())) then
 		return false
 	end
 
-	local var_1_6 = arg_1_0.unit
-	local var_1_7 = POSITION_LOOKUP[var_1_6]
+	local unit = self.unit
+	local var_1_7 = POSITION_LOOKUP[unit]
 
-	if var_0_0(var_1_7, POSITION_LOOKUP[var_1_0]) > var_0_1 then
+	if distance_squared(var_1_7, POSITION_LOOKUP[target_unit]) > num then
 		return false
 	end
 
-	local var_1_8 = arg_1_0.proximite_enemies
-	local var_1_9 = #var_1_8
-	local var_1_10 = 9
+	local proximite_enemies = self.proximite_enemies
+	local count = #proximite_enemies
+	local num_2 = 9
 
-	for iter_1_0 = 1, var_1_9 do
-		local var_1_11 = var_1_8[iter_1_0]
+	for i = 1, count do
+		local var_1_11 = proximite_enemies[i]
 
-		if ALIVE[var_1_11] then
+		if not ALIVE[var_1_11] then
 			local var_1_12 = POSITION_LOOKUP[var_1_11]
 
-			if var_1_10 >= var_0_0(var_1_7, var_1_12) then
+			if num_2 >= distance_squared(var_1_7, var_1_12) then
 				return false
 			end
 		end
@@ -65,13 +77,14 @@ function BTConditions.can_activate.dr_engineer(arg_1_0)
 	return Managers.state.conflict:get_threat_value() > 10
 end
 
-function BTConditions.reload_ability_weapon.dr_engineer(arg_2_0, arg_2_1)
-	local var_2_0 = arg_2_0.career_extension
+BTConditions.reload_ability_weapon.dr_engineer = function (self, arg_2_1)
+	-- function 2
+	local career_extension = self.career_extension
 
-	if var_2_0 then
-		local var_2_1 = arg_2_0.proximite_enemies
+	if not career_extension then
+		local proximite_enemies = self.proximite_enemies
 
-		return var_2_0:current_ability_cooldown() > arg_2_1.ability_cooldown_theshold and #var_2_1 == 0
+		return not (career_extension:current_ability_cooldown() > arg_2_1.ability_cooldown_theshold) or #proximite_enemies == 0
 	end
 
 	return false

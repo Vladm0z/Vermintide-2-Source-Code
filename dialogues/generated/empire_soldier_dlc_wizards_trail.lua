@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/empire_soldier_dlc_wizards_trail.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pes_wizard_trail_bridge_down",

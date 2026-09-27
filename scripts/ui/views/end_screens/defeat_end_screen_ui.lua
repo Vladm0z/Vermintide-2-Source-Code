@@ -6,37 +6,40 @@ local var_0_0 = local_require("scripts/ui/views/end_screens/defeat_end_screen_ui
 
 DefeatEndScreenUI = class(DefeatEndScreenUI, BaseEndScreenUI)
 
-function DefeatEndScreenUI.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
-	DefeatEndScreenUI.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_0, arg_1_4)
-	arg_1_0:_play_sound("play_gui_splash_defeat")
+DefeatEndScreenUI.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	-- function 1
+	DefeatEndScreenUI.super.init(self, arg_1_1, arg_1_2, var_0_0, arg_1_4)
+	self:_play_sound("play_gui_splash_defeat")
 end
 
-function DefeatEndScreenUI._start(arg_2_0)
-	local var_2_0 = var_0_0.scenegraph_definition
-	local var_2_1 = {
-		draw_flags = arg_2_0._draw_flags,
-		wwise_world = arg_2_0._wwise_world
+DefeatEndScreenUI._start = function (self)
+	-- function 2
+	local scenegraph_definition = var_0_0.scenegraph_definition
+	local tbl = {
+		draw_flags = self._draw_flags,
+		wwise_world = self._wwise_world
 	}
 
-	arg_2_0._defeat_anim_id = arg_2_0._ui_animator:start_animation("defeat", arg_2_0._widgets_by_name, var_2_0, var_2_1)
+	self._defeat_anim_id = self._ui_animator:start_animation("defeat", self._widgets_by_name, scenegraph_definition, tbl)
 end
 
-function DefeatEndScreenUI._update(arg_3_0, arg_3_1)
-	if arg_3_0._completed then
+DefeatEndScreenUI._update = function (self, arg_3_1)
+	-- function 3
+	if not self._completed then
 		return
 	end
 
-	if arg_3_0._defeat_anim_id and arg_3_0._ui_animator:is_animation_completed(arg_3_0._defeat_anim_id) then
-		arg_3_0._defeat_anim_id = nil
+	if not self._defeat_anim_id and not self._ui_animator:is_animation_completed(self._defeat_anim_id) then
+		self._defeat_anim_id = nil
 	end
 
-	if arg_3_0._defeat_anim_id == nil then
-		if Managers.state.game_mode:setting("display_end_of_match_score_view") then
-			local var_3_0, var_3_1, var_3_2 = Managers.state.game_mode:get_end_of_round_screen_settings()
+	if self._defeat_anim_id == nil then
+		if not Managers.state.game_mode:setting("display_end_of_match_score_view") then
+			local get_end_of_round_screen_settings, var_3_1, var_3_2 = Managers.state.game_mode:get_end_of_round_screen_settings()
 
-			Managers.ui:activate_end_screen_ui(var_3_0, var_3_1, var_3_2)
+			Managers.ui:activate_end_screen_ui(get_end_of_round_screen_settings, var_3_1, var_3_2)
 		else
-			arg_3_0:_on_completed()
+			self:_on_completed()
 		end
 	end
 end

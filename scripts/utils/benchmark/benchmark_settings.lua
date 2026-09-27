@@ -49,48 +49,52 @@ BenchmarkSettings = {
 	}
 }
 
-local function var_0_0(arg_1_0)
-	for iter_1_0, iter_1_1 in pairs(arg_1_0) do
-		Development.set_parameter(iter_1_0, iter_1_1)
+local function fn(arg_1_0)
+	-- function 1
+	for k, v in pairs(arg_1_0) do
+		Development.set_parameter(k, v)
 
-		script_data[iter_1_0] = iter_1_1
+		script_data[k] = v
 	end
 end
 
-local function var_0_1(arg_2_0)
-	local var_2_0 = BenchmarkSettings.auto_host_level
-	local var_2_1 = LevelSettings[var_2_0]
+local function fn_2(self)
+	-- function 2
+	local auto_host_level = BenchmarkSettings.auto_host_level
+	local var_2_1 = LevelSettings[auto_host_level]
 
-	var_2_1.display_name = arg_2_0.display_name
-	var_2_1.loading_screen_wwise_events = arg_2_0.loading_screen_wwise_events
+	var_2_1.display_name = self.display_name
+	var_2_1.loading_screen_wwise_events = self.loading_screen_wwise_events
 	script_data.no_loading_screen_tip_texts = true
 end
 
-local function var_0_2(arg_3_0)
-	local function var_3_0(arg_4_0)
+local function fn_3(arg_3_0)
+	-- function 3
+	local function fn(arg_4_0)
+		-- function 4
 		return arg_3_0[arg_4_0]
 	end
 
-	Development.parameter = var_3_0
+	Development.parameter = fn
 end
 
-local var_0_3 = false
-local var_0_4 = {
+local flag = false
+local tbl = {
 	Application.argv()
 }
 
-for iter_0_0, iter_0_1 in pairs(var_0_4) do
-	if iter_0_1 == "-attract-mode" then
+for k, v in pairs(tbl) do
+	if v == "-attract-mode" then
 		LAUNCH_MODE = "attract"
 
 		Development.set_parameter("attract_mode", true)
-		var_0_0(BenchmarkSettings.parameters)
-		var_0_1(BenchmarkSettings.attract_mode_settings)
+		fn(BenchmarkSettings.parameters)
+		fn_2(BenchmarkSettings.attract_mode_settings)
 
 		break
 	end
 
-	if iter_0_1 == "-benchmark-mode" then
+	if v == "-benchmark-mode" then
 		LAUNCH_MODE = "attract_benchmark"
 		BenchmarkSettings.attract_benchmark = true
 		BenchmarkSettings.parameters.hide_fps = false
@@ -98,28 +102,29 @@ for iter_0_0, iter_0_1 in pairs(var_0_4) do
 		BenchmarkSettings.parameters.attract_mode = true
 		BenchmarkSettings.parameters.skip_start_screen = true
 
-		var_0_1(BenchmarkSettings.benchmark_mode_settings)
-		var_0_2(BenchmarkSettings.parameters)
+		fn_2(BenchmarkSettings.benchmark_mode_settings)
+		fn_3(BenchmarkSettings.parameters)
 
 		break
 	end
 
-	if iter_0_1 == "-demo-mode" then
-		var_0_3 = true
+	if v == "-demo-mode" then
+		flag = true
 	end
 end
 
-function BenchmarkSettings.demo_mode_overrides()
-	if var_0_3 then
+BenchmarkSettings.demo_mode_overrides = function ()
+	-- function 5
+	if not flag then
 		print("Entering demo mode")
 
-		for iter_5_0, iter_5_1 in pairs(PackSpawningSettings) do
-			iter_5_1.area_density_coefficient = iter_5_1.area_density_coefficient * 0.75
+		for k, v in pairs(PackSpawningSettings) do
+			v.area_density_coefficient = v.area_density_coefficient * 0.75
 		end
 
-		for iter_5_2, iter_5_3 in pairs(BreedPacks) do
-			if iter_5_3.patrol_overrides then
-				iter_5_3.patrol_overrides.patrol_chance = 0
+		for k_2, v_2 in pairs(BreedPacks) do
+			if not v_2.patrol_overrides then
+				v_2.patrol_overrides.patrol_chance = 0
 			end
 		end
 

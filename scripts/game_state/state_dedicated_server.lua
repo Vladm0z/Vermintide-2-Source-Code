@@ -21,104 +21,128 @@ StateDedicatedServer = class(StateDedicatedServer)
 StateDedicatedServer.NAME = "StateDedicatedServer"
 StateDedicatedServer.packages_to_load = {}
 
-function StateDedicatedServer.on_enter(arg_1_0, arg_1_1)
+StateDedicatedServer.on_enter = function (self, arg_1_1)
+	-- function 1
 	VisualAssertLog.setup(nil)
-	arg_1_0:_setup_garbage_collection()
-	arg_1_0:_setup_network()
-	arg_1_0:_setup_state_machine()
-	arg_1_0:_setup_popup_manager()
-	arg_1_0:_setup_chat_manager()
-	arg_1_0:_setup_account_manager()
-	arg_1_0:_setup_eac_manager()
+	self:_setup_garbage_collection()
+	self:_setup_network()
+	self:_setup_state_machine()
+	self:_setup_popup_manager()
+	self:_setup_chat_manager()
+	self:_setup_account_manager()
+	self:_setup_eac_manager()
 
-	if arg_1_0.parent.loading_context.reload_packages then
-		arg_1_0:_unload_packages()
+	if not self.parent.loading_context.reload_packages then
+		self:_unload_packages()
 	end
 
-	arg_1_0:_load_packages()
+	self:_load_packages()
 end
 
-function StateDedicatedServer._setup_garbage_collection(arg_2_0)
-	local var_2_0 = true
+StateDedicatedServer._setup_garbage_collection = function (arg_2_0)
+	-- function 2
+	local flag = true
 
-	GarbageLeakDetector.run_leak_detection(var_2_0)
+	GarbageLeakDetector.run_leak_detection(flag)
 	GarbageLeakDetector.register_object(arg_2_0, "StateDedicatedServer")
 end
 
-function StateDedicatedServer._init_input(arg_3_0)
-	arg_3_0._input_manager = InputManager:new()
+StateDedicatedServer._init_input = function (self)
+	-- function 3
+	self._input_manager = InputManager:new()
 
-	local var_3_0 = arg_3_0._input_manager
+	local _input_manager = self._input_manager
 
-	Managers.input = var_3_0
+	Managers.input = _input_manager
 
-	var_3_0:initialize_device("keyboard", 1)
-	var_3_0:initialize_device("mouse", 1)
-	var_3_0:initialize_device("gamepad")
+	_input_manager:initialize_device("keyboard", 1)
+	_input_manager:initialize_device("mouse", 1)
+	_input_manager:initialize_device("gamepad")
 end
 
-function StateDedicatedServer._setup_network(arg_4_0)
-	arg_4_0._network_event_delegate = NetworkEventDelegate:new()
+StateDedicatedServer._setup_network = function (self)
+	-- function 4
+	self._network_event_delegate = NetworkEventDelegate:new()
 end
 
-function StateDedicatedServer._setup_state_machine(arg_5_0)
-	local var_5_0 = {}
+StateDedicatedServer._setup_state_machine = function (self)
+	-- function 5
+	local tbl = {}
 
-	arg_5_0._machine = GameStateMachine:new(arg_5_0, StateDedicatedServerInit, var_5_0, true)
+	self._machine = GameStateMachine:new(self, StateDedicatedServerInit, tbl, true)
 end
 
-function StateDedicatedServer._setup_popup_manager(arg_6_0)
+StateDedicatedServer._setup_popup_manager = function (arg_6_0)
+	-- function 6
 	Managers.popup = PopupManager:new()
 	Managers.simple_popup = SimplePopup:new()
 end
 
-function StateDedicatedServer._setup_chat_manager(arg_7_0)
-	Managers.chat = Managers.chat or ChatManager:new()
+StateDedicatedServer._setup_chat_manager = function (arg_7_0)
+	-- function 7
+	local Managers = Managers
+	local chat = Managers.chat
+
+	chat = chat or ChatManager:new()
+	Managers.chat = chat
 end
 
-function StateDedicatedServer._setup_account_manager(arg_8_0)
-	Managers.account = Managers.account or AccountManager:new()
+StateDedicatedServer._setup_account_manager = function (arg_8_0)
+	-- function 8
+	local Managers = Managers
+	local account = Managers.account
+
+	account = account or AccountManager:new()
+	Managers.account = account
 end
 
-function StateDedicatedServer._setup_eac_manager(arg_9_0)
-	Managers.eac = Managers.eac or EacManager:new()
+StateDedicatedServer._setup_eac_manager = function (arg_9_0)
+	-- function 9
+	local Managers = Managers
+	local eac = Managers.eac
+
+	eac = eac or EacManager:new()
+	Managers.eac = eac
 end
 
-function StateDedicatedServer._load_packages(arg_10_0)
-	local var_10_0 = Managers.package
+StateDedicatedServer._load_packages = function (arg_10_0)
+	-- function 10
+	local package = Managers.package
 
-	for iter_10_0, iter_10_1 in ipairs(StateDedicatedServer.packages_to_load) do
-		if not var_10_0:has_loaded(iter_10_1, "state_dedicated_server") then
-			var_10_0:load(iter_10_1, "state_dedicated_server", nil, true)
+	for i, v in ipairs(StateDedicatedServer.packages_to_load) do
+		if not package:has_loaded(v, "state_dedicated_server") then
+			package:load(v, "state_dedicated_server", nil, true)
 		end
 	end
 
 	GlobalResources.update_loading()
 end
 
-function StateDedicatedServer._unload_packages(arg_11_0)
-	local var_11_0 = Managers.package
+StateDedicatedServer._unload_packages = function (arg_11_0)
+	-- function 11
+	local package = Managers.package
 
-	for iter_11_0, iter_11_1 in ipairs(StateDedicatedServer.packages_to_load) do
-		if var_11_0:has_loaded(iter_11_1, "state_dedicated_server") then
-			var_11_0:unload(iter_11_1, "state_dedicated_server")
+	for i, v in ipairs(StateDedicatedServer.packages_to_load) do
+		if not package:has_loaded(v, "state_dedicated_server") then
+			package:unload(v, "state_dedicated_server")
 		end
 	end
 
-	if GlobalResources.loaded then
+	if not GlobalResources.loaded then
 		GlobalResources.loaded = nil
 
-		for iter_11_2, iter_11_3 in ipairs(GlobalResources) do
-			var_11_0:unload(iter_11_3, "global")
+		for i_2, v_2 in ipairs(GlobalResources) do
+			package:unload(v_2, "global")
 		end
 	end
 end
 
-function StateDedicatedServer._packages_loaded(arg_12_0)
-	local var_12_0 = Managers.package
+StateDedicatedServer._packages_loaded = function (arg_12_0)
+	-- function 12
+	local package = Managers.package
 
-	for iter_12_0, iter_12_1 in ipairs(StateDedicatedServer.packages_to_load) do
-		if not var_12_0:has_loaded(iter_12_1) then
+	for i, v in ipairs(StateDedicatedServer.packages_to_load) do
+		if not package:has_loaded(v) then
 			return false
 		end
 	end
@@ -126,191 +150,208 @@ function StateDedicatedServer._packages_loaded(arg_12_0)
 	return true
 end
 
-function StateDedicatedServer.update(arg_13_0, arg_13_1, arg_13_2)
-	Network.update_receive(arg_13_1, arg_13_0._network_event_delegate.event_table)
-	arg_13_0._machine:update(arg_13_1, arg_13_2)
-	arg_13_0:_update_network(arg_13_1, arg_13_2)
+StateDedicatedServer.update = function (self, arg_13_1, arg_13_2)
+	-- function 13
+	Network.update_receive(arg_13_1, self._network_event_delegate.event_table)
+	self._machine:update(arg_13_1, arg_13_2)
+	self:_update_network(arg_13_1, arg_13_2)
 
-	if script_data.debug_enabled then
+	if not script_data.debug_enabled then
 		VisualAssertLog.update(arg_13_1)
 	end
 
-	if Managers.matchmaking then
+	if not Managers.matchmaking then
 		Managers.matchmaking:update(arg_13_1, arg_13_2)
 	end
 
-	if Managers.game_server then
+	if not Managers.game_server then
 		Managers.game_server:update(arg_13_1, arg_13_2)
 
-		local var_13_0 = Managers.game_server:start_game_params()
+		local start_game_params = Managers.game_server:start_game_params()
 
-		if var_13_0 then
-			local var_13_1 = var_13_0.level_key
-			local var_13_2 = var_13_0.environment_variation_id or 0
-			local var_13_3 = var_13_0.game_mode
-			local var_13_4 = var_13_0.difficulty
-			local var_13_5 = Managers.level_transition_handler
-			local var_13_6 = Managers.mechanism:generate_locked_director_functions(var_13_1)
-			local var_13_7 = Managers.mechanism:generate_level_seed()
+		if not start_game_params then
+			local level_key = start_game_params.level_key
+			local environment_variation_id = start_game_params.environment_variation_id
+
+			environment_variation_id = environment_variation_id or 0
+
+			local game_mode = start_game_params.game_mode
+			local difficulty = start_game_params.difficulty
+			local level_transition_handler = Managers.level_transition_handler
+			local generate_locked_director_functions = Managers.mechanism:generate_locked_director_functions(level_key)
+			local generate_level_seed = Managers.mechanism:generate_level_seed()
 			local var_13_8
 
-			var_13_5:set_next_level(var_13_1, var_13_2, var_13_7, var_13_8, var_13_3, nil, var_13_6, var_13_4)
-			var_13_5:promote_next_level_data()
+			level_transition_handler:set_next_level(level_key, environment_variation_id, generate_level_seed, var_13_8, game_mode, nil, generate_locked_director_functions, difficulty)
+			level_transition_handler:promote_next_level_data()
 
-			arg_13_0._wanted_state = StateLoading
+			self._wanted_state = StateLoading
 		end
 
-		arg_13_0:_update_wanted_state()
+		self:_update_wanted_state()
 	end
 
 	Network.update_transmit(arg_13_1)
 
-	if arg_13_0:_packages_loaded() then
-		return arg_13_0._wanted_state
+	if not self:_packages_loaded() then
+		return self._wanted_state
 	end
 end
 
-function StateDedicatedServer.setup_network_server(arg_14_0)
-	local var_14_0 = Managers.lobby:get_lobby("matchmaking_session_lobby")
-	local var_14_1 = Managers.mechanism:default_level_key()
-	local var_14_2 = arg_14_0.parent.loading_context
+StateDedicatedServer.setup_network_server = function (self)
+	-- function 14
+	local get_lobby = Managers.lobby:get_lobby("matchmaking_session_lobby")
+	local default_level_key = Managers.mechanism:default_level_key()
+	local loading_context = self.parent.loading_context
 
 	fassert(Managers.game_server == nil, "Already has a game server manager.")
 
 	Managers.game_server = GameServerManager:new()
-	arg_14_0._network_server = NetworkServer:new(Managers.player, var_14_0, nil, Managers.game_server)
-	arg_14_0._network_transmit = var_14_2.network_transmit or NetworkTransmit:new(true, arg_14_0._network_server.server_peer_id)
+	self._network_server = NetworkServer:new(Managers.player, get_lobby, nil, Managers.game_server)
 
-	arg_14_0._network_transmit:set_network_event_delegate(arg_14_0._network_event_delegate)
-	arg_14_0._network_server:register_rpcs(arg_14_0._network_event_delegate, arg_14_0._network_transmit)
+	local network_transmit = loading_context.network_transmit
 
-	arg_14_0._profile_synchronizer = arg_14_0._network_server.profile_synchronizer
+	network_transmit = network_transmit or NetworkTransmit:new(true, self._network_server.server_peer_id)
+	self._network_transmit = network_transmit
 
-	local var_14_3 = {
-		network_server = arg_14_0._network_server,
-		network_transmit = arg_14_0._network_transmit,
-		game_server = var_14_0,
-		profile_synchronizer = arg_14_0._profile_synchronizer
+	self._network_transmit:set_network_event_delegate(self._network_event_delegate)
+	self._network_server:register_rpcs(self._network_event_delegate, self._network_transmit)
+
+	self._profile_synchronizer = self._network_server.profile_synchronizer
+
+	local tbl = {
+		network_server = self._network_server,
+		network_transmit = self._network_transmit,
+		game_server = get_lobby,
+		profile_synchronizer = self._profile_synchronizer
 	}
 
-	Managers.game_server:setup_network_context(var_14_3)
+	Managers.game_server:setup_network_context(tbl)
 	fassert(Managers.matchmaking == nil, "Already has a matchmaking server manager.")
 
-	local var_14_4 = {
+	local tbl_2 = {
 		is_server = true,
-		network_transmit = arg_14_0._network_transmit,
-		lobby = var_14_0,
+		network_transmit = self._network_transmit,
+		lobby = get_lobby,
 		peer_id = Network.peer_id(),
-		profile_synchronizer = arg_14_0._profile_synchronizer,
-		network_server = arg_14_0._network_server
+		profile_synchronizer = self._profile_synchronizer,
+		network_server = self._network_server
 	}
 
-	Managers.matchmaking = MatchmakingManager:new(var_14_4)
+	Managers.matchmaking = MatchmakingManager:new(tbl_2)
 
-	Managers.matchmaking:register_rpcs(arg_14_0._network_event_delegate)
+	Managers.matchmaking:register_rpcs(self._network_event_delegate)
 
-	var_14_2.game_server = var_14_0
-	var_14_2.network_server = arg_14_0._network_server
+	loading_context.game_server = get_lobby
+	loading_context.network_server = self._network_server
 
-	Managers.mechanism:generate_locked_director_functions(var_14_1)
+	Managers.mechanism:generate_locked_director_functions(default_level_key)
 	Managers.mechanism:generate_level_seed()
 
-	local var_14_5 = Managers.level_transition_handler
+	local level_transition_handler = Managers.level_transition_handler
 
-	var_14_5:set_next_level(var_14_1)
-	var_14_5:promote_next_level_data()
+	level_transition_handler:set_next_level(default_level_key)
+	level_transition_handler:promote_next_level_data()
 end
 
-function StateDedicatedServer.setup_chat_manager(arg_15_0, arg_15_1)
-	local var_15_0 = Network.peer_id()
-	local var_15_1 = {
+StateDedicatedServer.setup_chat_manager = function (arg_15_0, arg_15_1)
+	-- function 15
+	local peer_id = Network.peer_id()
+	local tbl = {
 		is_server = true,
-		host_peer_id = var_15_0,
-		my_peer_id = var_15_0
+		host_peer_id = peer_id,
+		my_peer_id = peer_id
 	}
 
-	Managers.chat:setup_network_context(var_15_1)
+	Managers.chat:setup_network_context(tbl)
 	Managers.mechanism:mechanism_try_call("register_chats")
 
-	local function var_15_2()
+	local function fn()
+		-- function 16
 		return arg_15_1:members():get_members()
 	end
 
-	Managers.chat:register_channel(1, var_15_2)
+	Managers.chat:register_channel(1, fn)
 end
 
-function StateDedicatedServer.setup_enemy_package_loader(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
-	local var_17_0 = Network.peer_id()
+StateDedicatedServer.setup_enemy_package_loader = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+	-- function 17
+	local peer_id = Network.peer_id()
 
-	Managers.level_transition_handler.enemy_package_loader:network_context_created(arg_17_1, var_17_0, var_17_0, arg_17_4)
-	Managers.level_transition_handler.pickup_package_loader:network_context_created(arg_17_1, var_17_0, var_17_0, arg_17_4)
-	Managers.level_transition_handler.general_synced_package_loader:network_context_created(arg_17_1, var_17_0, var_17_0, arg_17_4)
-	Managers.level_transition_handler.transient_package_loader:network_context_created(arg_17_1, var_17_0, var_17_0)
+	Managers.level_transition_handler.enemy_package_loader:network_context_created(arg_17_1, peer_id, peer_id, arg_17_4)
+	Managers.level_transition_handler.pickup_package_loader:network_context_created(arg_17_1, peer_id, peer_id, arg_17_4)
+	Managers.level_transition_handler.general_synced_package_loader:network_context_created(arg_17_1, peer_id, peer_id, arg_17_4)
+	Managers.level_transition_handler.transient_package_loader:network_context_created(arg_17_1, peer_id, peer_id)
 end
 
-function StateDedicatedServer.setup_global_managers(arg_18_0, arg_18_1)
-	local var_18_0 = Network.peer_id()
-	local var_18_1 = true
-	local var_18_2 = arg_18_0._network_server
+StateDedicatedServer.setup_global_managers = function (self, arg_18_1)
+	-- function 18
+	local peer_id = Network.peer_id()
+	local flag = true
+	local _network_server = self._network_server
 
-	Managers.mechanism:network_context_created(arg_18_1, var_18_0, var_18_0, var_18_1, var_18_2)
-	Managers.party:network_context_created(arg_18_1, var_18_0, var_18_0)
+	Managers.mechanism:network_context_created(arg_18_1, peer_id, peer_id, flag, _network_server)
+	Managers.party:network_context_created(arg_18_1, peer_id, peer_id)
 end
 
-function StateDedicatedServer._update_network(arg_19_0, arg_19_1, arg_19_2)
-	if arg_19_0._network_server then
-		arg_19_0._network_server:update(arg_19_1, arg_19_2)
+StateDedicatedServer._update_network = function (self, arg_19_1, arg_19_2)
+	-- function 19
+	if not self._network_server then
+		self._network_server:update(arg_19_1, arg_19_2)
 	end
 end
 
-function StateDedicatedServer._update_wanted_state(arg_20_0)
-	if arg_20_0._machine:state().NAME == "StateDedicatedServerRunning" then
-		arg_20_0._wanted_state = StateLoading
+StateDedicatedServer._update_wanted_state = function (self)
+	-- function 20
+	if self._machine:state().NAME == "StateDedicatedServerRunning" then
+		self._wanted_state = StateLoading
 	end
 end
 
-function StateDedicatedServer._destroy_network(arg_21_0)
-	if arg_21_0._network_server then
-		arg_21_0._network_server:destroy()
+StateDedicatedServer._destroy_network = function (self)
+	-- function 21
+	if not self._network_server then
+		self._network_server:destroy()
 
-		arg_21_0._network_server = nil
+		self._network_server = nil
 	end
 
-	if Managers.lobby:query_lobby("matchmaking_session_lobby") then
+	if not Managers.lobby:query_lobby("matchmaking_session_lobby") then
 		Managers.lobby:destroy_lobby("matchmaking_session_lobby")
 	end
 
-	arg_21_0.parent.loading_context = {}
+	self.parent.loading_context = {}
 
 	Managers.chat:unregister_channel(1)
 	Managers.mechanism:mechanism_try_call("unregister_chats")
 
-	if arg_21_0._network_transmit then
-		arg_21_0._network_transmit:destroy()
+	if not self._network_transmit then
+		self._network_transmit:destroy()
 
-		arg_21_0._network_transmit = nil
+		self._network_transmit = nil
 	end
 end
 
-function StateDedicatedServer.on_exit(arg_22_0, arg_22_1)
-	if arg_22_0._network_server then
-		arg_22_0._network_server:unregister_rpcs()
+StateDedicatedServer.on_exit = function (self, arg_22_1)
+	-- function 22
+	if not self._network_server then
+		self._network_server:unregister_rpcs()
 	end
 
-	if Managers.matchmaking then
+	if not Managers.matchmaking then
 		Managers.matchmaking:unregister_rpcs()
 	end
 
-	if arg_22_1 then
-		arg_22_0:_destroy_network()
+	if not arg_22_1 then
+		self:_destroy_network()
 	else
-		local var_22_0 = arg_22_0.parent.loading_context
+		local loading_context = self.parent.loading_context
 
-		var_22_0.network_server = arg_22_0._network_server
-		var_22_0.network_transmit = arg_22_0._network_transmit
+		loading_context.network_server = self._network_server
+		loading_context.network_transmit = self._network_transmit
 	end
 
-	arg_22_0._network_event_delegate:destroy()
+	self._network_event_delegate:destroy()
 
-	arg_22_0._network_event_delegate = nil
+	self._network_event_delegate = nil
 end

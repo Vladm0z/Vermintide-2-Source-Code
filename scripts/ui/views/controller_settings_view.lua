@@ -2,13 +2,14 @@
 
 ControllerSettingsView = class(ControllerSettingsView)
 
-function ControllerSettingsView.init(arg_1_0, arg_1_1)
-	arg_1_0.ui_renderer = arg_1_1.ui_renderer
-	arg_1_0.input_manager = arg_1_1.input_manager
-	arg_1_0.ingame_ui = arg_1_1.ingame_ui
+ControllerSettingsView.init = function (self, arg_1_1)
+	-- function 1
+	self.ui_renderer = arg_1_1.ui_renderer
+	self.input_manager = arg_1_1.input_manager
+	self.ingame_ui = arg_1_1.ingame_ui
 end
 
-local var_0_0 = {
+local tbl = {
 	{
 		"Player",
 		PlayerControllerKeymaps
@@ -22,7 +23,7 @@ local var_0_0 = {
 		ChatControllerSettings
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	root = {
 		is_root = true,
 		position = {
@@ -55,22 +56,24 @@ UIElements.KeyBindElement = {
 			style_id = "text",
 			pass_type = "text",
 			text_id = "text_field",
-			content_check_function = function(arg_2_0)
-				return arg_2_0.button_hotspot.is_hover
+			content_check_function = function (self)
+				-- function 2
+				return self.button_hotspot.is_hover
 			end
 		},
 		{
 			style_id = "hover_text",
 			pass_type = "text",
 			text_id = "text_field",
-			content_check_function = function(arg_3_0)
-				return arg_3_0.button_hotspot.is_hover
+			content_check_function = function (self)
+				-- function 3
+				return self.button_hotspot.is_hover
 			end
 		}
 	}
 }
 
-local var_0_2 = {
+local tbl_3 = {
 	scenegraph_id = "",
 	element = UIElements.KeyBindElement,
 	content = {
@@ -93,9 +96,10 @@ local var_0_2 = {
 	}
 }
 
-local function var_0_3(arg_4_0, arg_4_1)
+local function fn(self, arg_4_1)
+	-- function 4
 	local var_4_0 = arg_4_1[1]
-	local var_4_1 = arg_4_0.mapped_devices[var_4_0][1]
+	local var_4_1 = self.mapped_devices[var_4_0][1]
 	local var_4_2 = arg_4_1[3]
 	local var_4_3 = arg_4_1[2]
 	local var_4_4
@@ -109,17 +113,18 @@ local function var_0_3(arg_4_0, arg_4_1)
 	return var_4_4
 end
 
-function ControllerSettingsView.create_ui_elements(arg_5_0)
-	local var_5_0 = {}
-	local var_5_1 = 0
-	local var_5_2 = var_0_1
-	local var_5_3 = var_0_2
-	local var_5_4 = arg_5_0.input_manager
+ControllerSettingsView.create_ui_elements = function (self)
+	-- function 5
+	local tbl_4 = {}
+	local num = 0
+	local var_5_2 = tbl_2
+	local var_5_3 = tbl_3
+	local input_manager = self.input_manager
 
-	for iter_5_0, iter_5_1 in ipairs(var_0_0) do
-		local var_5_5 = iter_5_1[1]
+	for i, v in ipairs(tbl) do
+		local var_5_5 = v[1]
 
-		var_5_1 = var_5_1 + 1
+		num = num + 1
 		var_5_3.content[var_5_5] = var_5_5
 		UIElements.KeyBindElement.passes[3].text_id = var_5_5
 		UIElements.KeyBindElement.passes[4].text_id = var_5_5
@@ -128,7 +133,7 @@ function ControllerSettingsView.create_ui_elements(arg_5_0)
 			parent = "widget_start",
 			offset = {
 				0,
-				-var_5_1 * 16,
+				-num * 16,
 				1
 			},
 			size = {
@@ -136,39 +141,39 @@ function ControllerSettingsView.create_ui_elements(arg_5_0)
 				16
 			}
 		}
-		var_5_0[var_5_1] = UIWidget.init(var_5_3)
+		tbl_4[num] = UIWidget.init(var_5_3)
 
-		local var_5_6 = var_5_4:get_service(var_5_5)
+		local get_service = input_manager:get_service(var_5_5)
 
-		for iter_5_2, iter_5_3 in pairs(iter_5_1[2]) do
-			var_5_1 = var_5_1 + 1
+		for k, v_2 in pairs(v[2]) do
+			num = num + 1
 
-			local var_5_7 = var_5_6:get_keymapping(iter_5_2)
-			local var_5_8 = var_5_7.input_mappings[1]
-			local var_5_9 = var_5_7.input_mappings[2]
-			local var_5_10 = "-"
-			local var_5_11 = "-"
+			local get_keymapping = get_service:get_keymapping(k)
+			local var_5_8 = get_keymapping.input_mappings[1]
+			local var_5_9 = get_keymapping.input_mappings[2]
+			local str = "-"
+			local str_2 = "-"
 
-			if var_5_8 then
-				var_5_10 = var_0_3(var_5_6, var_5_8)
+			if not var_5_8 then
+				str = fn(get_service, var_5_8)
 			end
 
-			if var_5_9 then
-				var_5_11 = var_0_3(var_5_6, var_5_9)
+			if not var_5_9 then
+				str_2 = fn(get_service, var_5_9)
 			end
 
-			local var_5_12 = "index_" .. tostring(var_5_1)
-			local var_5_13 = string.format("%s: %20s | %-20s", iter_5_2, var_5_10, var_5_11)
+			local str_3 = "index_" .. tostring(num)
+			local format = string.format("%s: %20s | %-20s", k, str, str_2)
 
-			var_5_3.content[var_5_12] = var_5_13
-			UIElements.KeyBindElement.passes[3].text_id = var_5_12
-			UIElements.KeyBindElement.passes[4].text_id = var_5_12
-			var_5_3.scenegraph_id = var_5_12
-			var_5_2[var_5_12] = {
+			var_5_3.content[str_3] = format
+			UIElements.KeyBindElement.passes[3].text_id = str_3
+			UIElements.KeyBindElement.passes[4].text_id = str_3
+			var_5_3.scenegraph_id = str_3
+			var_5_2[str_3] = {
 				parent = "widget_start",
 				offset = {
 					0,
-					-var_5_1 * 16,
+					-num * 16,
 					1
 				},
 				size = {
@@ -176,35 +181,38 @@ function ControllerSettingsView.create_ui_elements(arg_5_0)
 					16
 				}
 			}
-			var_5_0[var_5_1] = UIWidget.init(var_5_3)
+			tbl_4[num] = UIWidget.init(var_5_3)
 		end
 	end
 
-	arg_5_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_5_2)
-	arg_5_0.ui_widgets = var_5_0
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(var_5_2)
+	self.ui_widgets = tbl_4
 end
 
-function ControllerSettingsView.on_enter(arg_6_0)
-	arg_6_0:create_ui_elements()
+ControllerSettingsView.on_enter = function (self)
+	-- function 6
+	self:create_ui_elements()
 end
 
-function ControllerSettingsView.destroy(arg_7_0)
+ControllerSettingsView.destroy = function (arg_7_0)
+	-- function 7
 	return
 end
 
-function ControllerSettingsView.update(arg_8_0, arg_8_1)
-	local var_8_0 = arg_8_0.ui_renderer
-	local var_8_1 = arg_8_0.input_manager:get_service("ingame_menu")
+ControllerSettingsView.update = function (self, arg_8_1)
+	-- function 8
+	local ui_renderer = self.ui_renderer
+	local get_service = self.input_manager:get_service("ingame_menu")
 
-	UIRenderer.begin_pass(var_8_0, arg_8_0.ui_scenegraph, var_8_1, arg_8_1)
+	UIRenderer.begin_pass(ui_renderer, self.ui_scenegraph, get_service, arg_8_1)
 
-	for iter_8_0, iter_8_1 in ipairs(arg_8_0.ui_widgets) do
-		UIRenderer.draw_widget(var_8_0, iter_8_1)
+	for i, v in ipairs(self.ui_widgets) do
+		UIRenderer.draw_widget(ui_renderer, v)
 	end
 
-	UIRenderer.end_pass(var_8_0)
+	UIRenderer.end_pass(ui_renderer)
 
-	if var_8_1:get("toggle_menu") or var_8_1:get("back") then
-		arg_8_0.ingame_ui:handle_transition("ingame_menu", "OptionsMenu")
+	if get_service:get("toggle_menu") or not get_service:get("back") then
+		self.ingame_ui:handle_transition("ingame_menu", "OptionsMenu")
 	end
 end

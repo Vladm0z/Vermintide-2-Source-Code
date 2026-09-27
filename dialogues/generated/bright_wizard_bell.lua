@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/bright_wizard_bell.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pbw_bell_intro_a",

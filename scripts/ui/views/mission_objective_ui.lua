@@ -1,294 +1,325 @@
 -- chunkname: @scripts/ui/views/mission_objective_ui.lua
 
 local var_0_0 = local_require("scripts/ui/views/mission_objective_ui_definitions")
-local var_0_1 = var_0_0.animation_definitions
-local var_0_2 = var_0_0.scenegraph_definition
+local animation_definitions = var_0_0.animation_definitions
+local scenegraph_definition = var_0_0.scenegraph_definition
 
 MissionObjectiveUI = class(MissionObjectiveUI)
 
-function MissionObjectiveUI.init(arg_1_0, arg_1_1, arg_1_2)
-	arg_1_0._parent = arg_1_1
-	arg_1_0.ui_renderer = arg_1_2.ui_renderer
-	arg_1_0.ingame_ui = arg_1_2.ingame_ui
-	arg_1_0.input_manager = arg_1_2.input_manager
+MissionObjectiveUI.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	self._parent = arg_1_1
+	self.ui_renderer = arg_1_2.ui_renderer
+	self.ingame_ui = arg_1_2.ingame_ui
+	self.input_manager = arg_1_2.input_manager
 
-	local var_1_0 = arg_1_2.world_manager:world("level_world")
+	local world = arg_1_2.world_manager:world("level_world")
 
-	arg_1_0.wwise_world = Managers.world:wwise_world(var_1_0)
-	arg_1_0.saved_mission_objectives = {}
-	arg_1_0.completed_mission_objectives = {}
-	arg_1_0.current_mission_objective = nil
-	arg_1_0.index_count = 0
-	arg_1_0._animations = {}
-	arg_1_0.render_settings = {
+	self.wwise_world = Managers.world:wwise_world(world)
+	self.saved_mission_objectives = {}
+	self.completed_mission_objectives = {}
+	self.current_mission_objective = nil
+	self.index_count = 0
+	self._animations = {}
+	self.render_settings = {
 		snap_pixel_positions = true
 	}
 
-	arg_1_0:create_ui_elements()
+	self:create_ui_elements()
 
-	local var_1_1 = Managers.state.event
+	local event = Managers.state.event
 
-	if var_1_1 then
-		var_1_1:register(arg_1_0, "ui_event_add_mission_objective", "add_mission_objective")
-		var_1_1:register(arg_1_0, "ui_event_complete_mission", "complete_mission")
-		var_1_1:register(arg_1_0, "ui_event_update_mission", "update_mission")
-		var_1_1:register(arg_1_0, "ui_event_block_mission_ui", "block_mission_ui")
+	if not event then
+		event:register(self, "ui_event_add_mission_objective", "add_mission_objective")
+		event:register(self, "ui_event_complete_mission", "complete_mission")
+		event:register(self, "ui_event_update_mission", "update_mission")
+		event:register(self, "ui_event_block_mission_ui", "block_mission_ui")
 
-		local var_1_2 = Managers.state.entity:system("mission_system")
+		local system = Managers.state.entity:system("mission_system")
 
-		if var_1_2 then
-			var_1_2:trigger_active_mission_ui_events()
+		if not system then
+			system:trigger_active_mission_ui_events()
 		end
 	end
 end
 
-local var_0_3 = true
+local flag = true
 
-function MissionObjectiveUI.create_ui_elements(arg_2_0)
-	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
-	arg_2_0._mission_widget = UIWidget.init(var_0_0.widget_definitions.mission_widget)
-	arg_2_0.current_mission_objective = nil
+MissionObjectiveUI.create_ui_elements = function (self)
+	-- function 2
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
+	self._mission_widget = UIWidget.init(var_0_0.widget_definitions.mission_widget)
+	self.current_mission_objective = nil
 
-	UIRenderer.clear_scenegraph_queue(arg_2_0.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
-	arg_2_0.ui_animator = UIAnimator:new(arg_2_0.ui_scenegraph, var_0_1)
-	var_0_3 = false
+	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
+	flag = false
 end
 
-function MissionObjectiveUI.destroy(arg_3_0)
-	local var_3_0 = Managers.state.event
+MissionObjectiveUI.destroy = function (self)
+	-- function 3
+	local event = Managers.state.event
 
-	if var_3_0 then
-		var_3_0:unregister("ui_event_add_mission_objective", arg_3_0)
-		var_3_0:unregister("ui_event_complete_mission", arg_3_0)
-		var_3_0:unregister("ui_event_update_mission", arg_3_0)
-		var_3_0:unregister("ui_event_block_mission_ui", arg_3_0)
+	if not event then
+		event:unregister("ui_event_add_mission_objective", self)
+		event:unregister("ui_event_complete_mission", self)
+		event:unregister("ui_event_update_mission", self)
+		event:unregister("ui_event_block_mission_ui", self)
 	end
 
-	arg_3_0.ui_animator = nil
+	self.ui_animator = nil
 end
 
-function MissionObjectiveUI.block_mission_ui(arg_4_0, arg_4_1)
-	arg_4_0._ui_blocked = arg_4_1
+MissionObjectiveUI.block_mission_ui = function (self, arg_4_1)
+	-- function 4
+	self._ui_blocked = arg_4_1
 end
 
-local var_0_4 = {
+local tbl = {
 	root_scenegraph_id = "pivot",
 	label = "Objectives",
 	registry_key = "mission_objective",
 	drag_scenegraph_id = "background"
 }
 
-function MissionObjectiveUI.update(arg_5_0, arg_5_1)
-	if var_0_3 then
-		arg_5_0:create_ui_elements()
+MissionObjectiveUI.update = function (self, arg_5_1)
+	-- function 5
+	if not flag then
+		self:create_ui_elements()
 	end
 
-	HudCustomizer.run(arg_5_0.ui_renderer, arg_5_0.ui_scenegraph, var_0_4)
+	HudCustomizer.run(self.ui_renderer, self.ui_scenegraph, tbl)
 
-	if arg_5_0._ui_blocked then
+	if not self._ui_blocked then
 		return
 	end
 
-	arg_5_0:update_animations(arg_5_1)
-	arg_5_0:next_mission_objective(arg_5_1)
+	self:update_animations(arg_5_1)
+	self:next_mission_objective(arg_5_1)
 
-	if arg_5_0.current_mission_objective or arg_5_0._animations.mission_animation then
-		arg_5_0:draw(arg_5_1)
+	if self.current_mission_objective or not self._animations.mission_animation then
+		self:draw(arg_5_1)
 	end
 end
 
-function MissionObjectiveUI.add_mission_objective(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
-	local var_6_0 = arg_6_0.saved_mission_objectives
+MissionObjectiveUI.add_mission_objective = function (self, arg_6_1, arg_6_2, arg_6_3)
+	-- function 6
+	local saved_mission_objectives = self.saved_mission_objectives
 
-	for iter_6_0, iter_6_1 in pairs(var_6_0) do
-		if iter_6_1.mission_name == arg_6_1 then
+	for k, v in pairs(saved_mission_objectives) do
+		if v.mission_name == arg_6_1 then
 			return
 		end
 	end
 
-	arg_6_0.saved_mission_objectives[#arg_6_0.saved_mission_objectives + 1] = {
+	self.saved_mission_objectives[#self.saved_mission_objectives + 1] = {
 		mission_name = arg_6_1,
 		text = arg_6_2,
 		duration_text = arg_6_3
 	}
 end
 
-function MissionObjectiveUI._clear_animations(arg_7_0)
-	for iter_7_0, iter_7_1 in pairs(arg_7_0._animations) do
-		arg_7_0.ui_animator:stop_animation(iter_7_1)
+MissionObjectiveUI._clear_animations = function (self)
+	-- function 7
+	for k, v in pairs(self._animations) do
+		self.ui_animator:stop_animation(v)
 	end
 
-	table.clear(arg_7_0._animations)
+	table.clear(self._animations)
 end
 
-function MissionObjectiveUI.complete_mission(arg_8_0, arg_8_1, arg_8_2)
-	if arg_8_2 then
-		arg_8_0:_clear_animations()
-		arg_8_0:_remove_mission_objective(arg_8_1)
+MissionObjectiveUI.complete_mission = function (self, arg_8_1, arg_8_2)
+	-- function 8
+	if not arg_8_2 then
+		self:_clear_animations()
+		self:_remove_mission_objective(arg_8_1)
 	else
-		arg_8_0:_remove_mission_objective(arg_8_1)
-		arg_8_0:_clear_animations()
-		arg_8_0:_start_animation("mission_animation", "mission_end")
+		self:_remove_mission_objective(arg_8_1)
+		self:_clear_animations()
+		self:_start_animation("mission_animation", "mission_end")
 	end
 end
 
-function MissionObjectiveUI._remove_mission_objective(arg_9_0, arg_9_1)
+MissionObjectiveUI._remove_mission_objective = function (self, arg_9_1)
+	-- function 9
 	local var_9_0
 
-	for iter_9_0, iter_9_1 in ipairs(arg_9_0.saved_mission_objectives) do
-		if iter_9_1.mission_name == arg_9_1 then
-			var_9_0 = iter_9_0
+	for i, v in ipairs(self.saved_mission_objectives) do
+		if v.mission_name == arg_9_1 then
+			var_9_0 = i
 
 			break
 		end
 	end
 
-	if var_9_0 then
-		local var_9_1 = arg_9_0.saved_mission_objectives[var_9_0]
+	if not var_9_0 then
+		local var_9_1 = self.saved_mission_objectives[var_9_0]
 
-		if var_9_1 then
-			table.remove(arg_9_0.saved_mission_objectives, var_9_0)
+		if not var_9_1 then
+			table.remove(self.saved_mission_objectives, var_9_0)
 
-			arg_9_0.completed_mission_objectives[var_9_1.mission_name] = var_9_1.text
-			arg_9_0.current_mission_objective = nil
+			self.completed_mission_objectives[var_9_1.mission_name] = var_9_1.text
+			self.current_mission_objective = nil
 		end
 	end
 end
 
-function MissionObjectiveUI.update_mission(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+MissionObjectiveUI.update_mission = function (self, arg_10_1, arg_10_2, arg_10_3)
+	-- function 10
 	local var_10_0
 
-	for iter_10_0, iter_10_1 in ipairs(arg_10_0.saved_mission_objectives) do
-		if iter_10_1.mission_name == arg_10_1 then
-			var_10_0 = iter_10_0
+	for i, v in ipairs(self.saved_mission_objectives) do
+		if v.mission_name == arg_10_1 then
+			var_10_0 = i
 
 			break
 		end
 	end
 
-	if var_10_0 then
-		local var_10_1 = arg_10_0.saved_mission_objectives[var_10_0]
+	if not var_10_0 then
+		local var_10_1 = self.saved_mission_objectives[var_10_0]
 
-		arg_10_0.saved_mission_objectives[var_10_0].text = arg_10_2
+		self.saved_mission_objectives[var_10_0].text = arg_10_2
 
-		if var_10_1.mission_name == arg_10_0.current_mission_objective then
-			local var_10_2 = arg_10_0._mission_widget
+		if var_10_1.mission_name == self.current_mission_objective then
+			local _mission_widget = self._mission_widget
 
-			arg_10_0:_set_mission_text(arg_10_2, arg_10_3)
+			self:_set_mission_text(arg_10_2, arg_10_3)
 		end
 	end
 end
 
-function MissionObjectiveUI.next_mission_objective(arg_11_0, arg_11_1)
-	if not arg_11_0.current_mission_objective and #arg_11_0.saved_mission_objectives > 0 and not arg_11_0._animations.mission_animation then
-		local var_11_0 = arg_11_0.saved_mission_objectives[1]
+MissionObjectiveUI.next_mission_objective = function (self, arg_11_1)
+	-- function 11
+	if not (self.current_mission_objective or not (#self.saved_mission_objectives > 0) or self._animations.mission_animation) then
+		local var_11_0 = self.saved_mission_objectives[1]
 
-		arg_11_0.current_mission_objective = var_11_0.mission_name
+		self.current_mission_objective = var_11_0.mission_name
 
-		local var_11_1 = true
+		local flag = true
 
-		arg_11_0:_set_mission_text(var_11_0.text, var_11_0.duration_text, var_11_1)
-		arg_11_0:_start_animation("mission_animation", "mission_start")
+		self:_set_mission_text(var_11_0.text, var_11_0.duration_text, flag)
+		self:_start_animation("mission_animation", "mission_start")
 	end
 end
 
-function MissionObjectiveUI.update_animations(arg_12_0, arg_12_1)
-	local var_12_0 = arg_12_0._animations
-	local var_12_1 = arg_12_0.ui_animator
+MissionObjectiveUI.update_animations = function (self, arg_12_1)
+	-- function 12
+	local _animations = self._animations
+	local ui_animator = self.ui_animator
 
-	var_12_1:update(arg_12_1)
+	ui_animator:update(arg_12_1)
 
-	for iter_12_0, iter_12_1 in pairs(var_12_0) do
-		if var_12_1:is_animation_completed(iter_12_1) then
-			var_12_1:stop_animation(iter_12_1)
+	for k, v in pairs(_animations) do
+		if not ui_animator:is_animation_completed(v) then
+			ui_animator:stop_animation(v)
 
-			var_12_0[iter_12_0] = nil
+			_animations[k] = nil
 		end
 	end
 end
 
-function MissionObjectiveUI._set_mission_text(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
-	local var_13_0 = arg_13_0._mission_widget.content
-	local var_13_1 = arg_13_0._mission_widget.style
+MissionObjectiveUI._set_mission_text = function (self, arg_13_1, arg_13_2, arg_13_3)
+	-- function 13
+	local content = self._mission_widget.content
+	local style = self._mission_widget.style
 
-	var_13_0.area_text_content = arg_13_1
-	var_13_0.duration_text_content = arg_13_2 and arg_13_2 .. " " or nil
+	content.area_text_content = arg_13_1
 
-	local var_13_2 = arg_13_0.ui_renderer
-	local var_13_3 = 287.5
-	local var_13_4 = 40
+	local str
 
-	var_13_0.text_height = 45
+	if not arg_13_2 then
+		str = arg_13_2 .. " "
 
-	if arg_13_3 then
-		local var_13_5 = arg_13_0.ui_scenegraph
+		if not str then
+			-- Nothing
+		end
+	end
 
-		if arg_13_2 then
-			local var_13_6, var_13_7 = UIFontByResolution(var_13_1.area_text_style)
-			local var_13_8 = var_13_6[1]
-			local var_13_9 = var_13_7
-			local var_13_10 = string.upper(var_13_0.area_text_content)
-			local var_13_11 = UIRenderer.text_size(var_13_2, var_13_10, var_13_8, var_13_9)
-			local var_13_12 = arg_13_2
-			local var_13_13 = UIRenderer.text_size(var_13_2, var_13_12, var_13_8, var_13_9)
-			local var_13_14 = var_13_5.area_text_background.size[1]
-			local var_13_15 = var_13_5.duration_text_background.size[1]
+	str = nil
 
-			var_13_5.area_text_background.position[1] = var_13_13 * 0.5
-			var_13_5.duration_text_background.position[1] = -var_13_11 * 0.5
+	::label_13_0::
+
+	content.duration_text_content = str
+
+	local ui_renderer = self.ui_renderer
+	local num = 287.5
+	local num_2 = 40
+
+	content.text_height = 45
+
+	if not arg_13_3 then
+		local ui_scenegraph = self.ui_scenegraph
+
+		if not arg_13_2 then
+			local var_13_7, var_13_8 = UIFontByResolution(style.area_text_style)
+			local var_13_9 = var_13_7[1]
+			local var_13_10 = var_13_8
+			local upper = string.upper(content.area_text_content)
+			local text_size = UIRenderer.text_size(ui_renderer, upper, var_13_9, var_13_10)
+			local var_13_13 = arg_13_2
+			local text_size_2 = UIRenderer.text_size(ui_renderer, var_13_13, var_13_9, var_13_10)
+			local var_13_15 = ui_scenegraph.area_text_background.size[1]
+			local var_13_16 = ui_scenegraph.duration_text_background.size[1]
+
+			ui_scenegraph.area_text_background.position[1] = text_size_2 * 0.5
+			ui_scenegraph.duration_text_background.position[1] = -text_size * 0.5
 		else
-			var_13_5.area_text_background.local_position[1] = 0
-			var_13_5.duration_text_background.local_position[1] = 0
+			ui_scenegraph.area_text_background.local_position[1] = 0
+			ui_scenegraph.duration_text_background.local_position[1] = 0
 		end
 	end
 end
 
-function MissionObjectiveUI._get_text_size(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+MissionObjectiveUI._get_text_size = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+	-- function 14
 	arg_14_5.font_size = arg_14_5.default_font_size
 
-	local var_14_0 = math.huge
+	local huge = math.huge
 
-	if arg_14_4 < var_14_0 then
+	if arg_14_4 < huge then
 		repeat
 			local var_14_1, var_14_2 = UIFontByResolution(arg_14_5)
 			local var_14_3 = var_14_1[1]
 			local var_14_4 = var_14_1[2]
 			local var_14_5 = var_14_1[3]
 			local var_14_6, var_14_7, var_14_8 = UIGetFontHeight(arg_14_1.gui, var_14_5, var_14_4)
-			local var_14_9 = #UIRenderer.word_wrap(arg_14_1, arg_14_2, var_14_3, var_14_4, arg_14_3)
+			local count = #UIRenderer.word_wrap(arg_14_1, arg_14_2, var_14_3, var_14_4, arg_14_3)
 
-			var_14_0 = (var_14_8 + math.abs(var_14_7)) * RESOLUTION_LOOKUP.inv_scale * var_14_9
+			huge = (var_14_8 + math.abs(var_14_7)) * RESOLUTION_LOOKUP.inv_scale * count
 			arg_14_5.font_size = math.max(arg_14_5.font_size - 1, arg_14_5.min_font_size)
 			arg_14_5.new_font_size = arg_14_5.font_size
 
 			if arg_14_5.font_size == arg_14_5.min_font_size then
-				return var_14_0
+				return huge
 			end
-		until var_14_0 <= arg_14_4
+		until huge <= arg_14_4
 	end
 
-	return var_14_0
+	return huge
 end
 
-function MissionObjectiveUI.draw(arg_15_0, arg_15_1)
-	local var_15_0 = arg_15_0.ui_renderer
-	local var_15_1 = arg_15_0.ui_scenegraph
-	local var_15_2 = arg_15_0.input_manager:get_service("ingame_menu")
-	local var_15_3 = arg_15_0.render_settings
+MissionObjectiveUI.draw = function (self, arg_15_1)
+	-- function 15
+	local ui_renderer = self.ui_renderer
+	local ui_scenegraph = self.ui_scenegraph
+	local get_service = self.input_manager:get_service("ingame_menu")
+	local render_settings = self.render_settings
 
-	UIRenderer.begin_pass(var_15_0, var_15_1, var_15_2, arg_15_1, nil, var_15_3)
-	UIRenderer.draw_widget(var_15_0, arg_15_0._mission_widget)
-	UIRenderer.end_pass(var_15_0)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, get_service, arg_15_1, nil, render_settings)
+	UIRenderer.draw_widget(ui_renderer, self._mission_widget)
+	UIRenderer.end_pass(ui_renderer)
 end
 
-function MissionObjectiveUI._start_animation(arg_16_0, arg_16_1, arg_16_2)
-	local var_16_0 = {
-		wwise_world = arg_16_0.wwise_world,
-		render_settings = arg_16_0.render_settings,
-		ui_renderer = arg_16_0.ui_renderer
+MissionObjectiveUI._start_animation = function (self, arg_16_1, arg_16_2)
+	-- function 16
+	local tbl = {
+		wwise_world = self.wwise_world,
+		render_settings = self.render_settings,
+		ui_renderer = self.ui_renderer
 	}
-	local var_16_1 = arg_16_0.ui_animator:start_animation(arg_16_2, arg_16_0._mission_widget, var_0_2, var_16_0)
+	local start_animation = self.ui_animator:start_animation(arg_16_2, self._mission_widget, scenegraph_definition, tbl)
 
-	arg_16_0._animations[arg_16_1] = var_16_1
+	self._animations[arg_16_1] = start_animation
 end

@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/wizards/dlc_wizards_tower/world_spawn_zones.lua
 
-local var_0_0 = {
+local tbl = {
 	{
 		kind = "good",
 		main_path_index = 1,
@@ -290,7 +290,7 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	{
 		path_length = 87.08718490600586,
 		travel_dist = {
@@ -2821,8 +2821,8 @@ local var_0_1 = {
 		}
 	}
 }
-local var_0_2 = {}
-local var_0_3 = {
+local tbl_3 = {}
+local tbl_4 = {
 	{
 		unique_zone_id = 1,
 		travel_dist = 9.99999886751175,
@@ -36065,7 +36065,7 @@ local var_0_3 = {
 		}
 	}
 }
-local var_0_4 = {
+local tbl_5 = {
 	21.65999984741211,
 	-41.752498626708984,
 	0.34345027804374695,
@@ -42127,7 +42127,7 @@ local var_0_4 = {
 	-1,
 	0
 }
-local var_0_5 = {
+local tbl_6 = {
 	{
 		12.913813591003418,
 		-44.969947814941406,
@@ -194539,20 +194539,20 @@ local var_0_5 = {
 		8.872110366821289
 	}
 }
-local var_0_6 = 30482
-local var_0_7 = 139
-local var_0_8 = 1439.0747699738
-local var_0_9 = "1"
+local num = 30482
+local num_2 = 139
+local num_3 = 1439.0747699738
+local str = "1"
 
 return {
-	version = var_0_9,
-	number_of_spawns = var_0_6,
-	path_markers = var_0_0,
-	zones = var_0_3,
-	cover_points = var_0_4,
-	num_main_zones = var_0_7,
-	position_lookup = var_0_5,
-	main_paths = var_0_1,
-	crossroads = var_0_2,
-	total_main_path_length = var_0_8
+	version = str,
+	number_of_spawns = num,
+	path_markers = tbl,
+	zones = tbl_4,
+	cover_points = tbl_5,
+	num_main_zones = num_2,
+	position_lookup = tbl_6,
+	main_paths = tbl_2,
+	crossroads = tbl_3,
+	total_main_path_length = num_3
 }

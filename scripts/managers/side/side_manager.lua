@@ -2,66 +2,70 @@
 
 require("scripts/managers/side/side")
 
-local var_0_0 = script_data.testify and require("scripts/managers/side/side_manager_testify")
+local testify = script_data.testify
 
+testify = not testify and require("scripts/managers/side/side_manager_testify")
 SideManager = class(SideManager)
 ALL_PLAYER_AND_BOT_UNITS = {}
 
-function SideManager.init(arg_1_0, arg_1_1)
+SideManager.init = function (self, arg_1_1)
+	-- function 1
 	arg_1_1[0] = {
 		name = "undecided",
 		relations = {},
 		available_profiles = {},
 		party = Managers.party:get_party(0)
 	}
-	arg_1_0._sides, arg_1_0._side_lookup = arg_1_0:_create_sides(arg_1_1)
+	self._sides, self._side_lookup = self:_create_sides(arg_1_1)
 
-	arg_1_0:_setup_relations(arg_1_1, arg_1_0._sides, arg_1_0._side_lookup)
+	self:_setup_relations(arg_1_1, self._sides, self._side_lookup)
 
-	arg_1_0.side_by_party = arg_1_0:_setup_side_by_party(arg_1_0._sides)
-	arg_1_0.side_by_unit = {}
-	arg_1_0._player_units_lookup = {}
+	self.side_by_party = self:_setup_side_by_party(self._sides)
+	self.side_by_unit = {}
+	self._player_units_lookup = {}
 end
 
-function SideManager._create_sides(arg_2_0, arg_2_1)
-	local var_2_0 = {}
-	local var_2_1 = {}
+SideManager._create_sides = function (arg_2_0, arg_2_1)
+	-- function 2
+	local tbl = {}
+	local tbl_2 = {}
 
-	for iter_2_0 = 0, #arg_2_1 do
-		local var_2_2 = arg_2_1[iter_2_0]
-		local var_2_3 = var_2_2.name
+	for i = 0, #arg_2_1 do
+		local var_2_2 = arg_2_1[i]
+		local name = var_2_2.name
 
-		fassert(var_2_1[var_2_3] == nil, "Side with the same name exists in side_composition, side_name(%s)", var_2_3)
+		fassert(tbl_2[name] == nil, "Side with the same name exists in side_composition, side_name(%s)", name)
 
-		local var_2_4 = Side:new(var_2_2, iter_2_0)
+		local var_2_4 = Side:new(var_2_2, i)
 
-		var_2_0[iter_2_0] = var_2_4
-		var_2_1[var_2_3] = var_2_4
+		tbl[i] = var_2_4
+		tbl_2[name] = var_2_4
 	end
 
-	fassert(table.is_empty(var_2_0) == false, "No sides specified")
+	fassert(table.is_empty(tbl) == false, "No sides specified")
 
-	return var_2_0, var_2_1
+	return tbl, tbl_2
 end
 
-function SideManager._setup_relations(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
-	for iter_3_0 = 0, #arg_3_1 do
-		local var_3_0 = arg_3_1[iter_3_0]
-		local var_3_1 = arg_3_2[iter_3_0]
-		local var_3_2 = var_3_0.relations
+SideManager._setup_relations = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	-- function 3
+	for i = 0, #arg_3_1 do
+		local var_3_0 = arg_3_1[i]
+		local var_3_1 = arg_3_2[i]
+		local relations = var_3_0.relations
 
-		for iter_3_1, iter_3_2 in pairs(var_3_2) do
-			local var_3_3 = {}
+		for k, v in pairs(relations) do
+			local tbl = {}
 
-			for iter_3_3 = 1, #iter_3_2 do
-				local var_3_4 = iter_3_2[iter_3_3]
+			for l = 1, #v do
+				local var_3_4 = v[l]
 
 				fassert(arg_3_3[var_3_4], "Side (%s) does not exist", var_3_4)
 
-				var_3_3[#var_3_3 + 1] = arg_3_3[var_3_4]
+				tbl[#tbl + 1] = arg_3_3[var_3_4]
 			end
 
-			var_3_1:set_relation(iter_3_1, var_3_3)
+			var_3_1:set_relation(k, tbl)
 		end
 
 		var_3_1:set_relation("ally", {
@@ -70,144 +74,157 @@ function SideManager._setup_relations(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	end
 end
 
-function SideManager._setup_side_by_party(arg_4_0, arg_4_1)
-	local var_4_0 = {}
+SideManager._setup_side_by_party = function (arg_4_0, arg_4_1)
+	-- function 4
+	local tbl = {}
 
-	for iter_4_0 = 0, #arg_4_1 do
-		local var_4_1 = arg_4_1[iter_4_0]
-		local var_4_2 = var_4_1.party
+	for i = 0, #arg_4_1 do
+		local var_4_1 = arg_4_1[i]
+		local party = var_4_1.party
 
-		if var_4_2 then
-			fassert(var_4_0[var_4_2] == nil, "Party has multiple sides, this is not supported (party_id==%s)", tostring(var_4_2.party_id))
+		if not party then
+			fassert(tbl[party] == nil, "Party has multiple sides, this is not supported (party_id==%s)", tostring(party.party_id))
 
-			var_4_0[var_4_2] = var_4_1
+			tbl[party] = var_4_1
 		end
 	end
 
-	return var_4_0
+	return tbl
 end
 
-function SideManager.sides(arg_5_0)
-	return arg_5_0._sides
+SideManager.sides = function (self)
+	-- function 5
+	return self._sides
 end
 
-function SideManager.get_side(arg_6_0, arg_6_1)
-	return arg_6_0._sides[arg_6_1]
+SideManager.get_side = function (self, arg_6_1)
+	-- function 6
+	return self._sides[arg_6_1]
 end
 
-function SideManager.get_side_from_name(arg_7_0, arg_7_1)
-	return arg_7_0._side_lookup[arg_7_1]
+SideManager.get_side_from_name = function (self, arg_7_1)
+	-- function 7
+	return self._side_lookup[arg_7_1]
 end
 
-function SideManager.get_party_from_side_name(arg_8_0, arg_8_1)
-	return arg_8_0._side_lookup[arg_8_1].party
+SideManager.get_party_from_side_name = function (self, arg_8_1)
+	-- function 8
+	return self._side_lookup[arg_8_1].party
 end
 
-function SideManager.versus_is_hero(arg_9_0, arg_9_1)
-	local var_9_0 = arg_9_0.side_by_unit[arg_9_1]
+SideManager.versus_is_hero = function (self, arg_9_1)
+	-- function 9
+	local var_9_0 = self.side_by_unit[arg_9_1]
 
-	if not var_9_0 or var_9_0:name() ~= "heroes" then
+	if not (not var_9_0 and var_9_0:name() == "heroes") then
 		return
 	end
 
 	return not not Managers.player:owner(arg_9_1)
 end
 
-function SideManager.versus_is_dark_pact(arg_10_0, arg_10_1)
-	local var_10_0 = arg_10_0.side_by_unit[arg_10_1]
+SideManager.versus_is_dark_pact = function (self, arg_10_1)
+	-- function 10
+	local var_10_0 = self.side_by_unit[arg_10_1]
 
-	return var_10_0 and var_10_0:name() == "dark_pact"
+	return not var_10_0 and var_10_0:name() == "dark_pact"
 end
 
-function SideManager.add_unit_to_side(arg_11_0, arg_11_1, arg_11_2)
-	local var_11_0 = arg_11_0._sides[arg_11_2]
+SideManager.add_unit_to_side = function (self, arg_11_1, arg_11_2)
+	-- function 11
+	local var_11_0 = self._sides[arg_11_2]
 
 	var_11_0:add_unit(arg_11_1)
 
-	arg_11_0.side_by_unit[arg_11_1] = var_11_0
+	self.side_by_unit[arg_11_1] = var_11_0
 
-	local var_11_1 = var_11_0:get_enemy_sides()
+	local get_enemy_sides = var_11_0:get_enemy_sides()
 
-	for iter_11_0 = 1, #var_11_1 do
-		var_11_1[iter_11_0]:add_enemy_unit(arg_11_1)
+	for i = 1, #get_enemy_sides do
+		get_enemy_sides[i]:add_enemy_unit(arg_11_1)
 	end
 
-	local var_11_2 = var_11_0:get_allied_sides()
+	local get_allied_sides = var_11_0:get_allied_sides()
 
-	for iter_11_1 = 1, #var_11_2 do
-		var_11_2[iter_11_1]:add_allied_unit(arg_11_1)
+	for j = 1, #get_allied_sides do
+		get_allied_sides[j]:add_allied_unit(arg_11_1)
 	end
 
 	return var_11_0
 end
 
-function SideManager.remove_unit_from_side(arg_12_0, arg_12_1)
-	local var_12_0 = arg_12_0.side_by_unit[arg_12_1]
+SideManager.remove_unit_from_side = function (self, arg_12_1)
+	-- function 12
+	local var_12_0 = self.side_by_unit[arg_12_1]
 
 	if not var_12_0 then
 		return
 	end
 
-	local var_12_1 = var_12_0:get_enemy_sides()
+	local get_enemy_sides = var_12_0:get_enemy_sides()
 
-	for iter_12_0 = 1, #var_12_1 do
-		var_12_1[iter_12_0]:remove_enemy_unit(arg_12_1)
+	for i = 1, #get_enemy_sides do
+		get_enemy_sides[i]:remove_enemy_unit(arg_12_1)
 	end
 
-	local var_12_2 = var_12_0:get_allied_sides()
+	local get_allied_sides = var_12_0:get_allied_sides()
 
-	for iter_12_1 = 1, #var_12_2 do
-		var_12_2[iter_12_1]:remove_allied_unit(arg_12_1)
+	for j = 1, #get_allied_sides do
+		get_allied_sides[j]:remove_allied_unit(arg_12_1)
 	end
 
-	arg_12_0.side_by_unit[arg_12_1] = nil
+	self.side_by_unit[arg_12_1] = nil
 
 	var_12_0:remove_unit(arg_12_1)
 end
 
-function SideManager.add_player_unit_to_side(arg_13_0, arg_13_1, arg_13_2)
-	arg_13_0:add_unit_to_side(arg_13_1, arg_13_2)
+SideManager.add_player_unit_to_side = function (self, arg_13_1, arg_13_2)
+	-- function 13
+	self:add_unit_to_side(arg_13_1, arg_13_2)
 
-	local var_13_0 = arg_13_0._sides[arg_13_2]
+	local var_13_0 = self._sides[arg_13_2]
 
 	var_13_0:add_player_unit(arg_13_1)
 
-	local var_13_1 = var_13_0:get_enemy_sides()
+	local get_enemy_sides = var_13_0:get_enemy_sides()
 
-	for iter_13_0 = 1, #var_13_1 do
-		var_13_1[iter_13_0]:add_enemy_player_unit(arg_13_1)
+	for i = 1, #get_enemy_sides do
+		get_enemy_sides[i]:add_enemy_player_unit(arg_13_1)
 	end
 
-	arg_13_0._player_units_lookup[arg_13_1] = true
+	self._player_units_lookup[arg_13_1] = true
 end
 
-function SideManager.remove_player_unit_from_side(arg_14_0, arg_14_1)
-	arg_14_0._player_units_lookup[arg_14_1] = nil
+SideManager.remove_player_unit_from_side = function (self, arg_14_1)
+	-- function 14
+	self._player_units_lookup[arg_14_1] = nil
 
-	local var_14_0 = arg_14_0.side_by_unit[arg_14_1]
-	local var_14_1 = var_14_0:get_enemy_sides()
+	local var_14_0 = self.side_by_unit[arg_14_1]
+	local get_enemy_sides = var_14_0:get_enemy_sides()
 
-	for iter_14_0 = 1, #var_14_1 do
-		var_14_1[iter_14_0]:remove_enemy_player_unit(arg_14_1)
+	for i = 1, #get_enemy_sides do
+		get_enemy_sides[i]:remove_enemy_player_unit(arg_14_1)
 	end
 
 	var_14_0:remove_player_unit(arg_14_1)
-	arg_14_0:remove_unit_from_side(arg_14_1)
-	arg_14_0:_remove_player_unit_from_lists(arg_14_1)
+	self:remove_unit_from_side(arg_14_1)
+	self:_remove_player_unit_from_lists(arg_14_1)
 
-	local var_14_2 = Managers.player:owner(arg_14_1)
+	local owner = Managers.player:owner(arg_14_1)
 
-	Managers.state.event:trigger("on_player_left_side", var_14_2:unique_id(), var_14_2:local_player_id(), var_14_0.side_id)
+	Managers.state.event:trigger("on_player_left_side", owner:unique_id(), owner:local_player_id(), var_14_0.side_id)
 end
 
-function SideManager.is_enemy(arg_15_0, arg_15_1, arg_15_2)
-	local var_15_0 = arg_15_0.side_by_unit[arg_15_1]
+SideManager.is_enemy = function (self, arg_15_1, arg_15_2)
+	-- function 15
+	local var_15_0 = self.side_by_unit[arg_15_1]
 
-	return var_15_0 and var_15_0.enemy_units_lookup[arg_15_2], var_15_0
+	return not var_15_0 and var_15_0.enemy_units_lookup[arg_15_2], var_15_0
 end
 
-function SideManager.is_enemy_by_side(arg_16_0, arg_16_1, arg_16_2)
-	if arg_16_1 == nil or arg_16_2 == nil then
+SideManager.is_enemy_by_side = function (arg_16_0, arg_16_1, arg_16_2)
+	-- function 16
+	if not (arg_16_1 == nil or arg_16_2 ~= nil) then
 		return false
 	end
 
@@ -218,24 +235,28 @@ function SideManager.is_enemy_by_side(arg_16_0, arg_16_1, arg_16_2)
 	return true
 end
 
-function SideManager.is_enemy_by_party(arg_17_0, arg_17_1, arg_17_2)
-	return arg_17_0:is_enemy_by_side(arg_17_0.side_by_party[arg_17_1], arg_17_0.side_by_party[arg_17_2])
+SideManager.is_enemy_by_party = function (self, arg_17_1, arg_17_2)
+	-- function 17
+	return self:is_enemy_by_side(self.side_by_party[arg_17_1], self.side_by_party[arg_17_2])
 end
 
-function SideManager.is_enemy_by_player(arg_18_0, arg_18_1, arg_18_2)
-	local var_18_0 = Managers.party:get_party_from_unique_id(arg_18_1:unique_id())
-	local var_18_1 = Managers.party:get_party_from_unique_id(arg_18_2:unique_id())
+SideManager.is_enemy_by_player = function (self, arg_18_1, arg_18_2)
+	-- function 18
+	local get_party_from_unique_id = Managers.party:get_party_from_unique_id(arg_18_1:unique_id())
+	local get_party_from_unique_id_2 = Managers.party:get_party_from_unique_id(arg_18_2:unique_id())
 
-	return arg_18_0:is_enemy_by_party(var_18_0, var_18_1)
+	return self:is_enemy_by_party(get_party_from_unique_id, get_party_from_unique_id_2)
 end
 
-function SideManager.is_ally(arg_19_0, arg_19_1, arg_19_2)
-	local var_19_0 = arg_19_0.side_by_unit[arg_19_1]
+SideManager.is_ally = function (self, arg_19_1, arg_19_2)
+	-- function 19
+	local var_19_0 = self.side_by_unit[arg_19_1]
 
-	return var_19_0 and var_19_0.allied_units_lookup[arg_19_2], var_19_0
+	return not var_19_0 and var_19_0.allied_units_lookup[arg_19_2], var_19_0
 end
 
-function SideManager.is_ally_by_side(arg_20_0, arg_20_1, arg_20_2)
+SideManager.is_ally_by_side = function (arg_20_0, arg_20_1, arg_20_2)
+	-- function 20
 	if arg_20_1 == nil then
 		return false
 	end
@@ -247,45 +268,48 @@ function SideManager.is_ally_by_side(arg_20_0, arg_20_1, arg_20_2)
 	return true
 end
 
-function SideManager.is_player_friendly_fire(arg_21_0, arg_21_1, arg_21_2)
-	if not arg_21_1 or not arg_21_2 then
+SideManager.is_player_friendly_fire = function (self, arg_21_1, arg_21_2)
+	-- function 21
+	if not (not arg_21_1 and arg_21_2) then
 		return false
 	end
 
-	local var_21_0 = arg_21_0._player_units_lookup
+	local _player_units_lookup = self._player_units_lookup
 
-	if not var_21_0[arg_21_1] or not var_21_0[arg_21_2] then
+	if not (not _player_units_lookup[arg_21_1] and _player_units_lookup[arg_21_2]) then
 		return false
 	end
 
-	local var_21_1 = arg_21_0.side_by_unit[arg_21_1]
-	local var_21_2 = arg_21_0.side_by_unit[arg_21_2]
+	local var_21_1 = self.side_by_unit[arg_21_1]
+	local var_21_2 = self.side_by_unit[arg_21_2]
 
-	if not var_21_1 or not var_21_2 then
+	if not (not var_21_1 and var_21_2) then
 		return false
 	end
 
 	return var_21_1 == var_21_2
 end
 
-function SideManager.destroy(arg_22_0)
-	arg_22_0._sides = nil
-	arg_22_0.side_by_unit = nil
-	arg_22_0._player_units_lookup = nil
+SideManager.destroy = function (self)
+	-- function 22
+	self._sides = nil
+	self.side_by_unit = nil
+	self._player_units_lookup = nil
 end
 
-function SideManager.remove_aggro_unit(arg_23_0, arg_23_1, arg_23_2)
-	local var_23_0 = arg_23_0._sides[arg_23_1]:get_enemy_sides()
-	local var_23_1 = #var_23_0
+SideManager.remove_aggro_unit = function (self, arg_23_1, arg_23_2)
+	-- function 23
+	local get_enemy_sides = self._sides[arg_23_1]:get_enemy_sides()
+	local count = #get_enemy_sides
 
-	for iter_23_0 = 1, var_23_1 do
-		local var_23_2 = var_23_0[iter_23_0].AI_TARGET_UNITS
-		local var_23_3 = #var_23_2
+	for i = 1, count do
+		local AI_TARGET_UNITS = get_enemy_sides[i].AI_TARGET_UNITS
+		local count_2 = #AI_TARGET_UNITS
 
-		for iter_23_1 = 1, var_23_3 do
-			if arg_23_2 == var_23_2[iter_23_1] then
-				var_23_2[iter_23_1] = var_23_2[var_23_3]
-				var_23_2[var_23_3] = nil
+		for j = 1, count_2 do
+			if arg_23_2 == AI_TARGET_UNITS[j] then
+				AI_TARGET_UNITS[j] = AI_TARGET_UNITS[count_2]
+				AI_TARGET_UNITS[count_2] = nil
 
 				break
 			end
@@ -293,277 +317,289 @@ function SideManager.remove_aggro_unit(arg_23_0, arg_23_1, arg_23_2)
 	end
 end
 
-function SideManager.update_frame_tables(arg_24_0)
+SideManager.update_frame_tables = function (self)
+	-- function 24
 	table.clear(ALL_PLAYER_AND_BOT_UNITS)
 
-	local var_24_0 = arg_24_0._sides
-	local var_24_1 = #var_24_0
+	local _sides = self._sides
+	local count = #_sides
 
-	for iter_24_0 = 1, var_24_1 do
-		local var_24_2 = var_24_0[iter_24_0]
+	for i = 1, count do
+		local var_24_2 = _sides[i]
 
-		arg_24_0:_update_frame_tables(var_24_2, ALL_PLAYER_AND_BOT_UNITS)
+		self:_update_frame_tables(var_24_2, ALL_PLAYER_AND_BOT_UNITS)
 	end
 
-	for iter_24_1 = 1, var_24_1 do
-		local var_24_3 = var_24_0[iter_24_1]
+	for j = 1, count do
+		local var_24_3 = _sides[j]
 
-		arg_24_0:_update_ally_frame_tables(var_24_3)
-		arg_24_0:_update_enemy_frame_tables(var_24_3)
+		self:_update_ally_frame_tables(var_24_3)
+		self:_update_enemy_frame_tables(var_24_3)
 	end
 end
 
-local var_0_1 = Unit.alive
+local alive = Unit.alive
 
-local function var_0_2(arg_25_0)
-	return var_0_1(arg_25_0) and not ScriptUnit.extension(arg_25_0, "status_system"):is_ready_for_assisted_respawn()
+local function fn(arg_25_0)
+	-- function 25
+	local var_25_0 = alive(arg_25_0)
+
+	var_25_0 = not var_25_0 and not ScriptUnit.extension(arg_25_0, "status_system"):is_ready_for_assisted_respawn()
+
+	return var_25_0
 end
 
-local function var_0_3(arg_26_0)
-	local var_26_0 = ScriptUnit.extension(arg_26_0, "status_system")
-	local var_26_1 = true
+local function fn_2(arg_26_0)
+	-- function 26
+	local extension = ScriptUnit.extension(arg_26_0, "status_system")
+	local flag = true
 
-	if var_26_0.in_ghost_mode then
-		var_26_1 = false
+	if not extension.in_ghost_mode then
+		flag = false
 	end
 
-	return not var_26_0:is_in_end_zone() and not var_26_0:is_invisible() and var_26_1 and not var_26_0.spawn_grace and HEALTH_ALIVE[arg_26_0]
+	return not not extension:is_in_end_zone() or not not extension:is_invisible() or not flag or not not extension.spawn_grace or HEALTH_ALIVE[arg_26_0]
 end
 
-SideManager.is_valid_target = var_0_3
+SideManager.is_valid_target = fn_2
 
-local function var_0_4(arg_27_0)
+local function fn_3(arg_27_0)
+	-- function 27
 	if not ALIVE[arg_27_0] then
 		return false
 	end
 
-	local var_27_0 = ScriptUnit.has_extension(arg_27_0, "status_system")
+	local has_extension = ScriptUnit.has_extension(arg_27_0, "status_system")
 
-	if var_27_0 then
-		return not var_27_0.ready_for_assisted_respawn and not var_27_0:is_in_end_zone() and not var_27_0:is_invisible() and not var_27_0.spawn_grace and HEALTH_ALIVE[arg_27_0]
+	if not has_extension then
+		return not not has_extension.ready_for_assisted_respawn or not not has_extension:is_in_end_zone() or not not has_extension:is_invisible() or not not has_extension.spawn_grace or HEALTH_ALIVE[arg_27_0]
 	end
 
 	return true
 end
 
-local var_0_5 = POSITION_LOOKUP
+local POSITION_LOOKUP = POSITION_LOOKUP
 
-function SideManager._update_frame_tables(arg_28_0, arg_28_1, arg_28_2)
-	local var_28_0 = arg_28_1.PLAYER_UNITS
-	local var_28_1 = arg_28_1.PLAYER_POSITIONS
-	local var_28_2 = #arg_28_2
-	local var_28_3 = arg_28_1.PLAYER_AND_BOT_UNITS
-	local var_28_4 = arg_28_1.PLAYER_AND_BOT_POSITIONS
-	local var_28_5 = 0
-	local var_28_6 = 0
-	local var_28_7 = arg_28_1:player_units()
-	local var_28_8 = #var_28_7
-	local var_28_9 = Managers.player
-	local var_28_10 = false
+SideManager._update_frame_tables = function (arg_28_0, arg_28_1, arg_28_2)
+	-- function 28
+	local PLAYER_UNITS = arg_28_1.PLAYER_UNITS
+	local PLAYER_POSITIONS = arg_28_1.PLAYER_POSITIONS
+	local count = #arg_28_2
+	local PLAYER_AND_BOT_UNITS = arg_28_1.PLAYER_AND_BOT_UNITS
+	local PLAYER_AND_BOT_POSITIONS = arg_28_1.PLAYER_AND_BOT_POSITIONS
+	local num = 0
+	local num_2 = 0
+	local player_units = arg_28_1:player_units()
+	local count_2 = #player_units
+	local player = Managers.player
+	local flag = false
 
-	for iter_28_0 = 1, var_28_8 do
-		local var_28_11 = var_28_7[iter_28_0]
+	for i = 1, count_2 do
+		local var_28_11 = player_units[i]
 
-		if var_0_2(var_28_11) then
-			local var_28_12 = var_0_5[var_28_11]
+		if not fn(var_28_11) then
+			local var_28_12 = POSITION_LOOKUP[var_28_11]
 
-			var_28_6 = var_28_6 + 1
-			var_28_3[var_28_6] = var_28_11
-			var_28_4[var_28_6] = var_28_12
-			arg_28_2[var_28_2 + iter_28_0] = var_28_11
+			num_2 = num_2 + 1
+			PLAYER_AND_BOT_UNITS[num_2] = var_28_11
+			PLAYER_AND_BOT_POSITIONS[num_2] = var_28_12
+			arg_28_2[count + i] = var_28_11
 
-			if var_28_9:owner(var_28_11):is_player_controlled() then
-				var_28_5 = var_28_5 + 1
-				var_28_0[var_28_5] = var_28_11
-				var_28_1[var_28_5] = var_28_12
+			if not player:owner(var_28_11):is_player_controlled() then
+				num = num + 1
+				PLAYER_UNITS[num] = var_28_11
+				PLAYER_POSITIONS[num] = var_28_12
 			else
-				var_28_10 = true
+				flag = true
 			end
 		end
 	end
 
-	arg_28_1.has_bots = var_28_10
+	arg_28_1.has_bots = flag
 
-	local var_28_13 = var_28_5 + 1
+	local num_3 = num + 1
 
-	while var_28_0[var_28_13] do
-		var_28_0[var_28_13] = nil
-		var_28_1[var_28_13] = nil
-		var_28_13 = var_28_13 + 1
+	while not PLAYER_UNITS[num_3] do
+		PLAYER_UNITS[num_3] = nil
+		PLAYER_POSITIONS[num_3] = nil
+		num_3 = num_3 + 1
 	end
 
-	local var_28_14 = var_28_6 + 1
+	local num_4 = num_2 + 1
 
-	while var_28_3[var_28_14] do
-		var_28_3[var_28_14] = nil
-		var_28_4[var_28_14] = nil
-		var_28_14 = var_28_14 + 1
+	while not PLAYER_AND_BOT_UNITS[num_4] do
+		PLAYER_AND_BOT_UNITS[num_4] = nil
+		PLAYER_AND_BOT_POSITIONS[num_4] = nil
+		num_4 = num_4 + 1
 	end
 end
 
-function SideManager._update_ally_frame_tables(arg_29_0, arg_29_1)
-	local var_29_0 = arg_29_1.PLAYER_AND_BOT_UNITS
-	local var_29_1 = 0
-	local var_29_2 = arg_29_1.NON_DISABLED_PLAYER_AND_BOT_UNITS
+SideManager._update_ally_frame_tables = function (arg_29_0, arg_29_1)
+	-- function 29
+	local PLAYER_AND_BOT_UNITS = arg_29_1.PLAYER_AND_BOT_UNITS
+	local num = 0
+	local NON_DISABLED_PLAYER_AND_BOT_UNITS = arg_29_1.NON_DISABLED_PLAYER_AND_BOT_UNITS
 
-	for iter_29_0 = 1, #var_29_0 do
-		local var_29_3 = var_29_0[iter_29_0]
-		local var_29_4 = ScriptUnit.has_extension(var_29_3, "status_system")
+	for i = 1, #PLAYER_AND_BOT_UNITS do
+		local var_29_3 = PLAYER_AND_BOT_UNITS[i]
+		local has_extension = ScriptUnit.has_extension(var_29_3, "status_system")
 
-		if var_29_4 and not var_29_4:is_disabled_non_temporarily() then
-			var_29_1 = var_29_1 + 1
-			var_29_2[var_29_1] = var_29_3
+		if not (not has_extension and has_extension:is_disabled_non_temporarily()) then
+			num = num + 1
+			NON_DISABLED_PLAYER_AND_BOT_UNITS[num] = var_29_3
 		end
 	end
 
-	for iter_29_1 = var_29_1 + 1, #var_29_2 do
-		var_29_2[iter_29_1] = nil
+	for j = num + 1, #NON_DISABLED_PLAYER_AND_BOT_UNITS do
+		NON_DISABLED_PLAYER_AND_BOT_UNITS[j] = nil
 	end
 end
 
-function SideManager._update_enemy_frame_tables(arg_30_0, arg_30_1)
-	local var_30_0 = arg_30_1.ENEMY_PLAYER_UNITS
-	local var_30_1 = arg_30_1.ENEMY_PLAYER_POSITIONS
-	local var_30_2 = arg_30_1.ENEMY_PLAYER_AND_BOT_UNITS
-	local var_30_3 = arg_30_1.ENEMY_PLAYER_AND_BOT_POSITIONS
-	local var_30_4 = arg_30_1.VALID_ENEMY_PLAYERS_AND_BOTS
-	local var_30_5 = arg_30_1.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS
+SideManager._update_enemy_frame_tables = function (arg_30_0, arg_30_1)
+	-- function 30
+	local ENEMY_PLAYER_UNITS = arg_30_1.ENEMY_PLAYER_UNITS
+	local ENEMY_PLAYER_POSITIONS = arg_30_1.ENEMY_PLAYER_POSITIONS
+	local ENEMY_PLAYER_AND_BOT_UNITS = arg_30_1.ENEMY_PLAYER_AND_BOT_UNITS
+	local ENEMY_PLAYER_AND_BOT_POSITIONS = arg_30_1.ENEMY_PLAYER_AND_BOT_POSITIONS
+	local VALID_ENEMY_PLAYERS_AND_BOTS = arg_30_1.VALID_ENEMY_PLAYERS_AND_BOTS
+	local VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS = arg_30_1.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS
 
-	table.clear(var_30_4)
-	table.clear(var_30_5)
+	table.clear(VALID_ENEMY_PLAYERS_AND_BOTS)
+	table.clear(VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS)
 
-	local var_30_6 = 0
-	local var_30_7 = 0
-	local var_30_8 = arg_30_1:enemy_player_units()
-	local var_30_9 = #var_30_8
-	local var_30_10 = Managers.player
+	local num = 0
+	local num_2 = 0
+	local enemy_player_units = arg_30_1:enemy_player_units()
+	local count = #enemy_player_units
+	local player = Managers.player
 
-	for iter_30_0 = 1, var_30_9 do
-		local var_30_11 = var_30_8[iter_30_0]
+	for i = 1, count do
+		local var_30_11 = enemy_player_units[i]
 
-		if var_0_2(var_30_11) then
-			local var_30_12 = var_0_5[var_30_11]
+		if not fn(var_30_11) then
+			local var_30_12 = POSITION_LOOKUP[var_30_11]
 
-			var_30_7 = var_30_7 + 1
-			var_30_2[var_30_7] = var_30_11
-			var_30_3[var_30_7] = var_30_12
-			var_30_4[var_30_11] = true
+			num_2 = num_2 + 1
+			ENEMY_PLAYER_AND_BOT_UNITS[num_2] = var_30_11
+			ENEMY_PLAYER_AND_BOT_POSITIONS[num_2] = var_30_12
+			VALID_ENEMY_PLAYERS_AND_BOTS[var_30_11] = true
 
-			if var_30_10:owner(var_30_11):is_player_controlled() then
-				var_30_6 = var_30_6 + 1
-				var_30_0[var_30_6] = var_30_11
-				var_30_1[var_30_6] = var_30_12
+			if not player:owner(var_30_11):is_player_controlled() then
+				num = num + 1
+				ENEMY_PLAYER_UNITS[num] = var_30_11
+				ENEMY_PLAYER_POSITIONS[num] = var_30_12
 			end
 
-			if var_0_3(var_30_11) then
-				var_30_5[var_30_11] = true
-			end
-		end
-	end
-
-	local var_30_13 = var_30_6 + 1
-
-	while var_30_0[var_30_13] do
-		var_30_0[var_30_13] = nil
-		var_30_1[var_30_13] = nil
-		var_30_13 = var_30_13 + 1
-	end
-
-	local var_30_14 = var_30_7 + 1
-
-	while var_30_2[var_30_14] do
-		var_30_2[var_30_14] = nil
-		var_30_3[var_30_14] = nil
-		var_30_14 = var_30_14 + 1
-	end
-
-	local var_30_15 = arg_30_1.AI_TARGET_UNITS
-	local var_30_16 = Managers.state.entity:system("aggro_system")
-	local var_30_17 = arg_30_1:get_enemy_sides()
-	local var_30_18 = #var_30_17
-	local var_30_19 = 1
-
-	for iter_30_1 = 1, var_30_18 do
-		local var_30_20 = var_30_17[iter_30_1]
-		local var_30_21 = var_30_16.aggroable_units[var_30_20.side_id]
-
-		for iter_30_2, iter_30_3 in pairs(var_30_21) do
-			if var_0_4(iter_30_2) then
-				var_30_15[var_30_19] = iter_30_2
-				var_30_19 = var_30_19 + 1
+			if not fn_2(var_30_11) then
+				VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS[var_30_11] = true
 			end
 		end
 	end
 
-	while var_30_15[var_30_19] do
-		var_30_15[var_30_19] = nil
-		var_30_19 = var_30_19 + 1
+	local num_3 = num + 1
+
+	while not ENEMY_PLAYER_UNITS[num_3] do
+		ENEMY_PLAYER_UNITS[num_3] = nil
+		ENEMY_PLAYER_POSITIONS[num_3] = nil
+		num_3 = num_3 + 1
+	end
+
+	local num_4 = num_2 + 1
+
+	while not ENEMY_PLAYER_AND_BOT_UNITS[num_4] do
+		ENEMY_PLAYER_AND_BOT_UNITS[num_4] = nil
+		ENEMY_PLAYER_AND_BOT_POSITIONS[num_4] = nil
+		num_4 = num_4 + 1
+	end
+
+	local AI_TARGET_UNITS = arg_30_1.AI_TARGET_UNITS
+	local system = Managers.state.entity:system("aggro_system")
+	local get_enemy_sides = arg_30_1:get_enemy_sides()
+	local count_2 = #get_enemy_sides
+	local num_5 = 1
+
+	for j = 1, count_2 do
+		local var_30_20 = get_enemy_sides[j]
+		local var_30_21 = system.aggroable_units[var_30_20.side_id]
+
+		for k, v in pairs(var_30_21) do
+			if not fn_3(k) then
+				AI_TARGET_UNITS[num_5] = k
+				num_5 = num_5 + 1
+			end
+		end
+	end
+
+	while not AI_TARGET_UNITS[num_5] do
+		AI_TARGET_UNITS[num_5] = nil
+		num_5 = num_5 + 1
 	end
 end
 
-function SideManager._remove_player_unit_from_lists(arg_31_0, arg_31_1)
+SideManager._remove_player_unit_from_lists = function (self, arg_31_1)
+	-- function 31
 	POSITION_LOOKUP[arg_31_1] = nil
 
-	local var_31_0 = arg_31_0._sides
-	local var_31_1 = #var_31_0
+	local _sides = self._sides
+	local count = #_sides
 
-	for iter_31_0 = 1, var_31_1 do
-		local var_31_2 = var_31_0[iter_31_0]
-		local var_31_3 = var_31_2.PLAYER_UNITS
-		local var_31_4 = var_31_2.PLAYER_POSITIONS
-		local var_31_5 = #var_31_3
+	for i = 1, count do
+		local var_31_2 = _sides[i]
+		local PLAYER_UNITS = var_31_2.PLAYER_UNITS
+		local PLAYER_POSITIONS = var_31_2.PLAYER_POSITIONS
+		local count_2 = #PLAYER_UNITS
 
-		for iter_31_1 = 1, var_31_5 do
-			if arg_31_1 == var_31_3[iter_31_1] then
-				var_31_3[iter_31_1] = var_31_3[var_31_5]
-				var_31_3[var_31_5] = nil
-				var_31_4[iter_31_1] = var_31_4[var_31_5]
-				var_31_4[var_31_5] = nil
-
-				break
-			end
-		end
-
-		local var_31_6 = var_31_2.PLAYER_AND_BOT_UNITS
-		local var_31_7 = var_31_2.PLAYER_AND_BOT_POSITIONS
-		local var_31_8 = #var_31_6
-
-		for iter_31_2 = 1, var_31_8 do
-			if arg_31_1 == var_31_6[iter_31_2] then
-				var_31_6[iter_31_2] = var_31_6[var_31_8]
-				var_31_6[var_31_8] = nil
-				var_31_7[iter_31_2] = var_31_7[var_31_8]
-				var_31_7[var_31_8] = nil
+		for j = 1, count_2 do
+			if arg_31_1 == PLAYER_UNITS[j] then
+				PLAYER_UNITS[j] = PLAYER_UNITS[count_2]
+				PLAYER_UNITS[count_2] = nil
+				PLAYER_POSITIONS[j] = PLAYER_POSITIONS[count_2]
+				PLAYER_POSITIONS[count_2] = nil
 
 				break
 			end
 		end
 
-		local var_31_9 = var_31_2.ENEMY_PLAYER_UNITS
-		local var_31_10 = var_31_2.ENEMY_PLAYER_POSITIONS
-		local var_31_11 = #var_31_9
+		local PLAYER_AND_BOT_UNITS = var_31_2.PLAYER_AND_BOT_UNITS
+		local PLAYER_AND_BOT_POSITIONS = var_31_2.PLAYER_AND_BOT_POSITIONS
+		local count_3 = #PLAYER_AND_BOT_UNITS
 
-		for iter_31_3 = 1, var_31_11 do
-			if arg_31_1 == var_31_9[iter_31_3] then
-				var_31_9[iter_31_3] = var_31_9[var_31_11]
-				var_31_9[var_31_11] = nil
-				var_31_10[iter_31_3] = var_31_10[var_31_11]
-				var_31_10[var_31_11] = nil
+		for k = 1, count_3 do
+			if arg_31_1 == PLAYER_AND_BOT_UNITS[k] then
+				PLAYER_AND_BOT_UNITS[k] = PLAYER_AND_BOT_UNITS[count_3]
+				PLAYER_AND_BOT_UNITS[count_3] = nil
+				PLAYER_AND_BOT_POSITIONS[k] = PLAYER_AND_BOT_POSITIONS[count_3]
+				PLAYER_AND_BOT_POSITIONS[count_3] = nil
 
 				break
 			end
 		end
 
-		local var_31_12 = var_31_2.ENEMY_PLAYER_AND_BOT_UNITS
-		local var_31_13 = var_31_2.ENEMY_PLAYER_AND_BOT_POSITIONS
-		local var_31_14 = #var_31_12
+		local ENEMY_PLAYER_UNITS = var_31_2.ENEMY_PLAYER_UNITS
+		local ENEMY_PLAYER_POSITIONS = var_31_2.ENEMY_PLAYER_POSITIONS
+		local count_4 = #ENEMY_PLAYER_UNITS
 
-		for iter_31_4 = 1, var_31_14 do
-			if arg_31_1 == var_31_12[iter_31_4] then
-				var_31_12[iter_31_4] = var_31_12[var_31_14]
-				var_31_12[var_31_14] = nil
-				var_31_13[iter_31_4] = var_31_13[var_31_14]
-				var_31_13[var_31_14] = nil
+		for l = 1, count_4 do
+			if arg_31_1 == ENEMY_PLAYER_UNITS[l] then
+				ENEMY_PLAYER_UNITS[l] = ENEMY_PLAYER_UNITS[count_4]
+				ENEMY_PLAYER_UNITS[count_4] = nil
+				ENEMY_PLAYER_POSITIONS[l] = ENEMY_PLAYER_POSITIONS[count_4]
+				ENEMY_PLAYER_POSITIONS[count_4] = nil
+
+				break
+			end
+		end
+
+		local ENEMY_PLAYER_AND_BOT_UNITS = var_31_2.ENEMY_PLAYER_AND_BOT_UNITS
+		local ENEMY_PLAYER_AND_BOT_POSITIONS = var_31_2.ENEMY_PLAYER_AND_BOT_POSITIONS
+		local count_5 = #ENEMY_PLAYER_AND_BOT_UNITS
+
+		for i4 = 1, count_5 do
+			if arg_31_1 == ENEMY_PLAYER_AND_BOT_UNITS[i4] then
+				ENEMY_PLAYER_AND_BOT_UNITS[i4] = ENEMY_PLAYER_AND_BOT_UNITS[count_5]
+				ENEMY_PLAYER_AND_BOT_UNITS[count_5] = nil
+				ENEMY_PLAYER_AND_BOT_POSITIONS[i4] = ENEMY_PLAYER_AND_BOT_POSITIONS[count_5]
+				ENEMY_PLAYER_AND_BOT_POSITIONS[count_5] = nil
 
 				break
 			end
@@ -574,14 +610,16 @@ function SideManager._remove_player_unit_from_lists(arg_31_0, arg_31_1)
 	end
 end
 
-function SideManager.get_side_from_player_unique_id(arg_32_0, arg_32_1)
-	local var_32_0 = Managers.party
-	local var_32_1 = var_32_0:get_status_from_unique_id(arg_32_1).party_id
-	local var_32_2 = var_32_0:get_party(var_32_1)
+SideManager.get_side_from_player_unique_id = function (self, arg_32_1)
+	-- function 32
+	local party = Managers.party
+	local party_id = party:get_status_from_unique_id(arg_32_1).party_id
+	local get_party = party:get_party(party_id)
 
-	return arg_32_0.side_by_party[var_32_2]
+	return self.side_by_party[get_party]
 end
 
-function SideManager.update_testify(arg_33_0, arg_33_1, arg_33_2)
-	Testify:poll_requests_through_handler(var_0_0, arg_33_0)
+SideManager.update_testify = function (arg_33_0, arg_33_1, arg_33_2)
+	-- function 33
+	Testify:poll_requests_through_handler(testify, arg_33_0)
 end

@@ -3,48 +3,53 @@
 require("scripts/ui/ui_renderer")
 require("scripts/ui/ui_elements")
 
-local var_0_0 = require("scripts/ui/views/water_mark_view_definitions")
+local scripts_ui_views_water_mark_view_definitions = require("scripts/ui/views/water_mark_view_definitions")
 
 WaterMarkView = class(WaterMarkView)
 
-function WaterMarkView.init(arg_1_0, arg_1_1)
-	arg_1_0._world = arg_1_1
-	arg_1_0._ui_renderer = UIRenderer.create(arg_1_1, "material", "materials/ui/ui_1080p_watermarks")
-	arg_1_0._render_settings = {
+WaterMarkView.init = function (self, arg_1_1)
+	-- function 1
+	self._world = arg_1_1
+	self._ui_renderer = UIRenderer.create(arg_1_1, "material", "materials/ui/ui_1080p_watermarks")
+	self._render_settings = {
 		snap_pixel_positions = true
 	}
 
-	arg_1_0:_create_ui_elements()
+	self:_create_ui_elements()
 end
 
-function WaterMarkView._create_ui_elements(arg_2_0)
-	arg_2_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
-	arg_2_0._water_mark_widget = UIWidget.init(var_0_0.water_mark)
+WaterMarkView._create_ui_elements = function (self)
+	-- function 2
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(scripts_ui_views_water_mark_view_definitions.scenegraph_definition)
+	self._water_mark_widget = UIWidget.init(scripts_ui_views_water_mark_view_definitions.water_mark)
 
-	UIRenderer.clear_scenegraph_queue(arg_2_0._ui_renderer)
+	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
 end
 
-local var_0_1 = true
+local flag = true
 
-function WaterMarkView.update(arg_3_0, arg_3_1)
-	if var_0_1 then
-		var_0_1 = false
+WaterMarkView.update = function (self, arg_3_1)
+	-- function 3
+	if not flag then
+		flag = false
 
-		arg_3_0:_create_ui_elements()
+		self:_create_ui_elements()
 	end
 
-	arg_3_0:_draw(arg_3_1)
+	self:_draw(arg_3_1)
 end
 
-function WaterMarkView._draw(arg_4_0, arg_4_1)
-	local var_4_0 = arg_4_0._ui_renderer
-	local var_4_1 = arg_4_0._ui_scenegraph
+WaterMarkView._draw = function (self, arg_4_1)
+	-- function 4
+	local _ui_renderer = self._ui_renderer
+	local _ui_scenegraph = self._ui_scenegraph
 
-	UIRenderer.begin_pass(var_4_0, var_4_1, FAKE_INPUT_SERVICE, arg_4_1, nil, arg_4_0._render_settings)
-	UIRenderer.draw_widget(var_4_0, arg_4_0._water_mark_widget)
-	UIRenderer.end_pass(var_4_0)
+	UIRenderer.begin_pass(_ui_renderer, _ui_scenegraph, FAKE_INPUT_SERVICE, arg_4_1, nil, self._render_settings)
+	UIRenderer.draw_widget(_ui_renderer, self._water_mark_widget)
+	UIRenderer.end_pass(_ui_renderer)
 end
 
-function WaterMarkView.destroy(arg_5_0)
-	UIRenderer.destroy(arg_5_0._ui_renderer, arg_5_0._world)
+WaterMarkView.destroy = function (self)
+	-- function 5
+	UIRenderer.destroy(self._ui_renderer, self._world)
 end

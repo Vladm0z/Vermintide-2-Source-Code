@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/breeds/breed_skaven_clan_rat_with_shield.lua
 
-local var_0_0 = require("scripts/utils/stagger_types")
-local var_0_1 = {
+local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
+local tbl = {
 	detection_radius = 12,
 	walk_speed = 2.75,
 	poison_resistance = 70,
@@ -283,9 +283,9 @@ local var_0_1 = {
 	}
 }
 
-Breeds.skaven_clan_rat_with_shield = table.create_copy(Breeds.skaven_clan_rat_with_shield, var_0_1)
+Breeds.skaven_clan_rat_with_shield = table.create_copy(Breeds.skaven_clan_rat_with_shield, tbl)
 
-local var_0_2 = {
+local tbl_2 = {
 	normal = {
 		easy = {
 			normal = 2
@@ -345,7 +345,7 @@ local var_0_2 = {
 		}
 	}
 }
-local var_0_3 = {
+local tbl_3 = {
 	alerted = {
 		no_hesitation = true,
 		cooldown = -1,
@@ -406,7 +406,7 @@ local var_0_3 = {
 		attack_intensity_type = "running",
 		action_weight = 10,
 		moving_attack = true,
-		difficulty_attack_intensity = var_0_2,
+		difficulty_attack_intensity = tbl_2,
 		default_attack = {
 			anims = "attack_move"
 		},
@@ -426,7 +426,7 @@ local var_0_3 = {
 		attack_intensity_type = "normal",
 		action_weight = 1,
 		move_anim = "move_fwd",
-		difficulty_attack_intensity = var_0_2,
+		difficulty_attack_intensity = tbl_2,
 		default_attack = {
 			anims = {
 				"attack_pounce",
@@ -561,32 +561,33 @@ local var_0_3 = {
 	},
 	stagger = {
 		scale_animation_speeds = true,
-		custom_enter_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+		custom_enter_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			-- function 1
 			assert(ScriptUnit.has_extension(arg_1_0, "ai_shield_system"), "skaven_clan_rat_with_shield dont have ai_shield_user_extension")
 
-			if arg_1_1.shield_breaking_hit then
+			if not arg_1_1.shield_breaking_hit then
 				arg_1_1.shield_breaking_hit = false
 
 				return arg_1_3.shield_break_anims[arg_1_1.stagger_type], "idle", "to_sword"
 			end
 
-			local var_1_0 = ScriptUnit.extension(arg_1_0, "ai_shield_system")
+			local extension = ScriptUnit.extension(arg_1_0, "ai_shield_system")
 			local var_1_1
 			local var_1_2
 
-			if not var_1_0.shield_broken then
-				local var_1_3 = arg_1_1.stagger <= 1 and arg_1_1.stagger_type ~= var_0_0.explosion
+			if not not extension.shield_broken then
+				local flag = not (arg_1_1.stagger <= 1) or arg_1_1.stagger_type ~= scripts_utils_stagger_types.explosion
 
-				var_1_0:set_is_blocking(var_1_3)
+				extension:set_is_blocking(flag)
 
-				if not var_1_3 then
+				if not flag then
 					arg_1_1.stagger_time = arg_1_1.stagger_time + math.clamp(0.2 * arg_1_1.stagger, 0, 0.6)
 				end
 
-				if not arg_1_1.blocked and arg_1_1.stagger < 2 and arg_1_3.shield_block_anims then
+				if arg_1_1.blocked or not (arg_1_1.stagger < 2) or not arg_1_3.shield_block_anims then
 					var_1_1 = arg_1_3.shield_block_anims[arg_1_1.stagger_type]
 					var_1_2 = "idle"
-				elseif not arg_1_1.blocked and arg_1_1.stagger < 3 and arg_1_3.shield_stagger_anims then
+				elseif arg_1_1.blocked or not (arg_1_1.stagger < 3) or not arg_1_3.shield_stagger_anims then
 					var_1_1 = arg_1_3.shield_stagger_anims[arg_1_1.stagger_type]
 					var_1_2 = arg_1_1.breed.shield_opening_event or "idle"
 				else
@@ -600,8 +601,13 @@ local var_0_3 = {
 
 			return var_1_1, var_1_2
 		end,
-		custom_exit_function = function(arg_2_0, arg_2_1, arg_2_2)
-			(ScriptUnit.has_extension(arg_2_0, "ai_shield_system") and ScriptUnit.extension(arg_2_0, "ai_shield_system")):set_is_blocking(true)
+		custom_exit_function = function (arg_2_0, arg_2_1, arg_2_2)
+			-- function 2
+			local has_extension = ScriptUnit.has_extension(arg_2_0, "ai_shield_system")
+
+			has_extension = not has_extension and ScriptUnit.extension(arg_2_0, "ai_shield_system")
+
+			has_extension:set_is_blocking(true)
 		end,
 		stagger_anims = {
 			{
@@ -1250,4 +1256,4 @@ local var_0_3 = {
 	}
 }
 
-BreedActions.skaven_clan_rat_with_shield = table.create_copy(BreedActions.skaven_clan_rat_with_shield, var_0_3)
+BreedActions.skaven_clan_rat_with_shield = table.create_copy(BreedActions.skaven_clan_rat_with_shield, tbl_3)

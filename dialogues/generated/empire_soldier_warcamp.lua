@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/empire_soldier_warcamp.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pes_chaos_war_camp_challenge_reply_a",

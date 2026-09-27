@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/termite/dlc_termite_3/world_spawn_zones.lua
 
-local var_0_0 = {
+local tbl = {
 	{
 		roaming_set = "skaven",
 		main_path_index = 1,
@@ -522,7 +522,7 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	{
 		path_length = 12.875417709350586,
 		travel_dist = {
@@ -2345,8 +2345,8 @@ local var_0_1 = {
 		}
 	}
 }
-local var_0_2 = {}
-local var_0_3 = {
+local tbl_3 = {}
+local tbl_4 = {
 	{
 		unique_zone_id = 1,
 		roaming_set = "skaven",
@@ -54107,7 +54107,7 @@ local var_0_3 = {
 		}
 	}
 }
-local var_0_4 = {
+local tbl_5 = {
 	-128.25,
 	-481.79248046875,
 	2.942481517791748,
@@ -58484,7 +58484,7 @@ local var_0_4 = {
 	-0.9230791926383972,
 	-0.3846101462841034
 }
-local var_0_5 = {
+local tbl_6 = {
 	{
 		10.675943374633789,
 		-600.99267578125,
@@ -300156,20 +300156,20 @@ local var_0_5 = {
 		0.2742574214935303
 	}
 }
-local var_0_6 = 48334
-local var_0_7 = 171
-local var_0_8 = 1758.9835042953
-local var_0_9 = "1"
+local num = 48334
+local num_2 = 171
+local num_3 = 1758.9835042953
+local str = "1"
 
 return {
-	version = var_0_9,
-	number_of_spawns = var_0_6,
-	path_markers = var_0_0,
-	zones = var_0_3,
-	cover_points = var_0_4,
-	num_main_zones = var_0_7,
-	position_lookup = var_0_5,
-	main_paths = var_0_1,
-	crossroads = var_0_2,
-	total_main_path_length = var_0_8
+	version = str,
+	number_of_spawns = num,
+	path_markers = tbl,
+	zones = tbl_4,
+	cover_points = tbl_5,
+	num_main_zones = num_2,
+	position_lookup = tbl_6,
+	main_paths = tbl_2,
+	crossroads = tbl_3,
+	total_main_path_length = num_3
 }

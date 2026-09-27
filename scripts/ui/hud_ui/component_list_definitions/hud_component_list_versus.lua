@@ -1,33 +1,36 @@
 -- chunkname: @scripts/ui/hud_ui/component_list_definitions/hud_component_list_versus.lua
 
-local function var_0_0()
-	local var_1_0 = Managers.party:get_local_player_party()
-	local var_1_1 = Managers.state.side.side_by_party[var_1_0]
+local function fn()
+	-- function 1
+	local get_local_player_party = Managers.party:get_local_player_party()
+	local var_1_1 = Managers.state.side.side_by_party[get_local_player_party]
 
-	return var_1_1 and var_1_1:name() == "dark_pact"
+	return not var_1_1 and var_1_1:name() == "dark_pact"
 end
 
-local function var_0_1()
-	local var_2_0 = Managers.party:get_local_player_party()
-	local var_2_1 = Managers.state.side.side_by_party[var_2_0]
+local function fn_2()
+	-- function 2
+	local get_local_player_party = Managers.party:get_local_player_party()
+	local var_2_1 = Managers.state.side.side_by_party[get_local_player_party]
 
-	return var_2_1 and var_2_1:name() == "heroes"
+	return not var_2_1 and var_2_1:name() == "heroes"
 end
 
-local function var_0_2()
-	local var_3_0 = Managers.party:get_local_player_party()
-	local var_3_1 = Managers.state.side.side_by_party[var_3_0]
+local function fn_3()
+	-- function 3
+	local get_local_player_party = Managers.party:get_local_player_party()
+	local var_3_1 = Managers.state.side.side_by_party[get_local_player_party]
 
 	if not var_3_1 then
 		return false
 	end
 
-	local var_3_2 = var_3_1:name()
+	local name = var_3_1:name()
 
-	return var_3_2 == "dark_pact" or var_3_2 == "spectators"
+	return name == "dark_pact" or name == "spectators"
 end
 
-local var_0_3 = {
+local tbl = {
 	{
 		class_name = "VersusOnboardingUI",
 		filename = "scripts/ui/hud_ui/versus_onboarding_ui",
@@ -43,7 +46,7 @@ local var_0_3 = {
 			"dead",
 			"alive"
 		},
-		validation_function = var_0_0
+		validation_function = fn
 	},
 	{
 		class_name = "DarkPactAbilityUI",
@@ -52,7 +55,7 @@ local var_0_3 = {
 			"alive",
 			"ghost_mode"
 		},
-		validation_function = var_0_2
+		validation_function = fn_3
 	},
 	{
 		class_name = "DarkPactSelectionUI",
@@ -61,7 +64,7 @@ local var_0_3 = {
 			"alive",
 			"dead"
 		},
-		validation_function = var_0_0
+		validation_function = fn
 	},
 	{
 		use_hud_scale = true,
@@ -77,7 +80,7 @@ local var_0_3 = {
 		visibility_groups = {
 			"alive"
 		},
-		validation_function = var_0_0
+		validation_function = fn
 	},
 	{
 		use_hud_scale = true,
@@ -147,7 +150,8 @@ local var_0_3 = {
 			"dead",
 			"alive"
 		},
-		validation_function = function(arg_4_0, arg_4_1)
+		validation_function = function (arg_4_0, arg_4_1)
+			-- function 4
 			return arg_4_1
 		end
 	},
@@ -164,7 +168,8 @@ local var_0_3 = {
 			"dead",
 			"alive"
 		},
-		validation_function = function(arg_5_0, arg_5_1)
+		validation_function = function (arg_5_0, arg_5_1)
+			-- function 5
 			return not script_data.disable_news_ticker
 		end
 	},
@@ -176,7 +181,8 @@ local var_0_3 = {
 			"mission_vote",
 			"in_menu"
 		},
-		validation_function = function(arg_6_0, arg_6_1)
+		validation_function = function (arg_6_0, arg_6_1)
+			-- function 6
 			return arg_6_1
 		end
 	},
@@ -198,8 +204,9 @@ local var_0_3 = {
 			"alive",
 			"spectator"
 		},
-		validation_function = function()
-			return not var_0_0()
+		validation_function = function ()
+			-- function 7
+			return not fn()
 		end
 	},
 	{
@@ -209,8 +216,9 @@ local var_0_3 = {
 		visibility_groups = {
 			"alive"
 		},
-		validation_function = function()
-			return not var_0_0()
+		validation_function = function ()
+			-- function 8
+			return not fn()
 		end
 	},
 	{
@@ -221,8 +229,9 @@ local var_0_3 = {
 			"alive",
 			"spectator"
 		},
-		validation_function = function()
-			return not var_0_0()
+		validation_function = function ()
+			-- function 9
+			return not fn()
 		end
 	},
 	{
@@ -232,8 +241,9 @@ local var_0_3 = {
 		visibility_groups = {
 			"alive"
 		},
-		validation_function = function()
-			return not var_0_0()
+		validation_function = function ()
+			-- function 10
+			return not fn()
 		end
 	},
 	{
@@ -244,8 +254,9 @@ local var_0_3 = {
 			"alive",
 			"spectator"
 		},
-		validation_function = function()
-			return not var_0_0()
+		validation_function = function ()
+			-- function 11
+			return not fn()
 		end
 	},
 	{
@@ -255,8 +266,9 @@ local var_0_3 = {
 		visibility_groups = {
 			"alive"
 		},
-		validation_function = function()
-			return not var_0_0()
+		validation_function = function ()
+			-- function 12
+			return not fn()
 		end
 	},
 	{
@@ -328,8 +340,9 @@ local var_0_3 = {
 		visibility_groups = {
 			"alive"
 		},
-		validation_function = function()
-			return not var_0_0()
+		validation_function = function ()
+			-- function 13
+			return not fn()
 		end
 	},
 	{
@@ -339,8 +352,9 @@ local var_0_3 = {
 		visibility_groups = {
 			"alive"
 		},
-		validation_function = function()
-			return not var_0_0()
+		validation_function = function ()
+			-- function 14
+			return not fn()
 		end
 	},
 	{
@@ -405,7 +419,8 @@ local var_0_3 = {
 		visibility_groups = {
 			"alive"
 		},
-		validation_function = function(arg_15_0, arg_15_1)
+		validation_function = function (arg_15_0, arg_15_1)
+			-- function 15
 			return false
 		end
 	},
@@ -419,11 +434,21 @@ local var_0_3 = {
 			"dead",
 			"alive"
 		},
-		validation_function = function(arg_16_0, arg_16_1)
-			if arg_16_1 then
+		validation_function = function (arg_16_0, arg_16_1)
+			-- function 16
+			if not arg_16_1 then
 				return true
-			elseif not (Managers.twitch and (Managers.twitch:is_connected() or Managers.twitch:is_activated())) then
-				return true
+			else
+				local twitch = Managers.twitch
+
+				if not twitch then
+					twitch = Managers.twitch:is_connected()
+					twitch = twitch or Managers.twitch:is_activated()
+				end
+
+				if not twitch then
+					return true
+				end
 			end
 		end
 	},
@@ -477,8 +502,9 @@ local var_0_3 = {
 			"alive",
 			"realism"
 		},
-		validation_function = function(arg_17_0, arg_17_1)
-			return Managers.state.game_mode:game_mode_key() ~= "tutorial" and not arg_17_1
+		validation_function = function (arg_17_0, arg_17_1)
+			-- function 17
+			return Managers.state.game_mode:game_mode_key() == "tutorial" or not arg_17_1
 		end
 	},
 	{
@@ -506,7 +532,7 @@ local var_0_3 = {
 			"dead",
 			"alive"
 		},
-		validation_function = var_0_1
+		validation_function = fn_2
 	},
 	{
 		use_hud_scale = true,
@@ -518,149 +544,196 @@ local var_0_3 = {
 	}
 }
 
-DLCUtils.append("ingame_hud_components", var_0_3)
+DLCUtils.append("ingame_hud_components", tbl)
 
-local var_0_4 = {
+local tbl_2 = {
 	{
 		name = "disable_ingame_ui",
-		validation_function = function(arg_18_0)
-			return (arg_18_0:parent():disable_ingame_ui())
+		validation_function = function (self)
+			-- function 18
+			return (self:parent():disable_ingame_ui())
 		end
 	},
 	{
 		name = "entering_mission",
-		validation_function = function(arg_19_0)
-			local var_19_0 = arg_19_0:component("LevelCountdownUI")
+		validation_function = function (self)
+			-- function 19
+			local component = self:component("LevelCountdownUI")
 
-			return var_19_0 and var_19_0:is_enter_game()
+			return not component and component:is_enter_game()
 		end
 	},
 	{
 		name = "hero_selection_popup",
-		validation_function = function(arg_20_0)
-			return arg_20_0:parent():get_active_popup("profile_picker")
+		validation_function = function (self)
+			-- function 20
+			return self:parent():get_active_popup("profile_picker")
 		end
 	},
 	{
 		name = "mission_vote",
-		validation_function = function(arg_21_0)
-			local var_21_0 = arg_21_0:component("MissionVotingUI")
+		validation_function = function (self)
+			-- function 21
+			local component = self:component("MissionVotingUI")
 
-			return var_21_0 and var_21_0:is_active()
+			return not component and component:is_active()
 		end
 	},
 	{
 		name = "in_endscreen",
-		validation_function = function(arg_22_0)
-			local var_22_0 = arg_22_0:parent()
-			local var_22_1 = var_22_0:end_screen_active()
+		validation_function = function (self)
+			-- function 22
+			local parent = self:parent()
+			local end_screen_active = parent:end_screen_active()
 
-			return var_22_0.end_of_level_ui ~= nil or var_22_1
+			return parent.end_of_level_ui ~= nil or end_screen_active
 		end
 	},
 	{
 		name = "in_menu",
-		validation_function = function(arg_23_0)
-			local var_23_0 = arg_23_0:parent()
-			local var_23_1 = var_23_0.menu_active
-			local var_23_2 = var_23_0.current_view
+		validation_function = function (self)
+			-- function 23
+			local parent = self:parent()
+			local menu_active = parent.menu_active
+			local current_view = parent.current_view
 
-			return var_23_1 or var_23_2 ~= nil
+			return menu_active or current_view ~= nil
 		end
 	},
 	{
 		name = "gift_popup",
-		validation_function = function(arg_24_0)
-			local var_24_0 = arg_24_0:component("GiftPopupUI")
+		validation_function = function (self)
+			-- function 24
+			local component = self:component("GiftPopupUI")
 
-			return var_24_0 and var_24_0:active()
+			return not component and component:active()
 		end
 	},
 	{
 		name = "cutscene",
-		validation_function = function(arg_25_0)
-			local var_25_0 = Managers.state.entity:system("cutscene_system")
+		validation_function = function (arg_25_0)
+			-- function 25
+			local system = Managers.state.entity:system("cutscene_system")
+			local active_camera = system.active_camera
 
-			return var_25_0.active_camera and not var_25_0.ingame_hud_enabled
+			active_camera = not active_camera and not system.ingame_hud_enabled
+
+			return active_camera
 		end
 	},
 	{
 		name = "tab_menu",
-		validation_function = function(arg_26_0)
-			local var_26_0 = arg_26_0:component("VersusTabUI")
+		validation_function = function (self)
+			-- function 26
+			local component = self:component("VersusTabUI")
 
-			return var_26_0 and var_26_0:is_active()
+			return not component and component:is_active()
 		end
 	},
 	{
 		name = "in_inn",
-		validation_function = function(arg_27_0)
-			return arg_27_0:is_in_inn()
+		validation_function = function (self)
+			-- function 27
+			return self:is_in_inn()
 		end
 	},
 	{
 		name = "realism",
-		validation_function = function(arg_28_0)
-			local var_28_0 = Managers.state.game_mode
+		validation_function = function (arg_28_0)
+			-- function 28
+			local game_mode = Managers.state.game_mode
 
-			return var_28_0 and var_28_0:has_activated_mutator("realism")
+			return not game_mode and game_mode:has_activated_mutator("realism")
 		end
 	},
 	{
 		name = "game_mode_disable_hud",
-		validation_function = function(arg_29_0)
-			local var_29_0 = Managers.state.game_mode
-			local var_29_1 = var_29_0 and var_29_0:game_mode()
+		validation_function = function (arg_29_0)
+			-- function 29
+			local game_mode = Managers.state.game_mode
+			local flag = not game_mode and game_mode:game_mode()
 
-			return var_29_1 and var_29_1.game_mode_hud_disabled and var_29_1:game_mode_hud_disabled()
+			if not flag then
+				-- Nothing
+			end
+
+			::label_29_0::
+
+			local game_mode_hud_disabled = flag.game_mode_hud_disabled
+
+			game_mode_hud_disabled = not game_mode_hud_disabled and flag:game_mode_hud_disabled()
+
+			::label_29_1::
+
+			return game_mode_hud_disabled
 		end
 	},
 	{
 		name = "spectator",
-		validation_function = function(arg_30_0)
+		validation_function = function (arg_30_0)
+			-- function 30
 			return Managers.player:local_player():get_party().name == "spectators"
 		end
 	},
 	{
 		name = "dead",
-		validation_function = function(arg_31_0)
-			local var_31_0 = Managers.player:local_player()
-			local var_31_1 = Managers.state.side:get_side_from_player_unique_id(var_31_0:unique_id())
-			local var_31_2 = var_31_1 and var_31_1:name() == "heroes"
-			local var_31_3 = true
+		validation_function = function (self)
+			-- function 31
+			local local_player = Managers.player:local_player()
+			local get_side_from_player_unique_id = Managers.state.side:get_side_from_player_unique_id(local_player:unique_id())
+			local flag = not get_side_from_player_unique_id and get_side_from_player_unique_id:name() == "heroes"
+			local flag_2 = true
 
-			if var_31_2 then
-				var_31_3 = Managers.state.game_mode:game_mode():player_ready()
+			if not flag then
+				flag_2 = Managers.state.game_mode:game_mode():player_ready()
 			end
 
-			return arg_31_0:is_own_player_dead() and var_31_3
+			local is_own_player_dead = self:is_own_player_dead()
+
+			is_own_player_dead = not is_own_player_dead and flag_2
+
+			return is_own_player_dead
 		end
 	},
 	{
 		name = "alive",
-		validation_function = function(arg_32_0)
-			local var_32_0 = Managers.player:local_player().player_unit
-			local var_32_1 = Managers.state.game_mode:game_mode():player_ready()
+		validation_function = function (arg_32_0)
+			-- function 32
+			local player_unit = Managers.player:local_player().player_unit
+			local player_ready = Managers.state.game_mode:game_mode():player_ready()
 
-			return var_32_0 and Unit.alive(var_32_0) and var_32_1
+			if not player_unit then
+				-- Nothing
+			end
+
+			::label_32_0::
+
+			local alive = Unit.alive(player_unit)
+
+			alive = not alive and player_ready
+
+			::label_32_1::
+
+			return alive
 		end
 	},
 	{
 		name = "ghost_mode",
-		validation_function = function(arg_33_0)
-			local var_33_0 = Managers.player:local_player()
-			local var_33_1 = ScriptUnit.has_extension(var_33_0.unit, "ghost_mode_system")
+		validation_function = function (arg_33_0)
+			-- function 33
+			local local_player = Managers.player:local_player()
+			local has_extension = ScriptUnit.has_extension(local_player.unit, "ghost_mode_system")
 
-			return var_33_1 and var_33_1:is_in_ghost_mode()
+			return not has_extension and has_extension:is_in_ghost_mode()
 		end
 	}
 }
 
-for iter_0_0 = 1, #var_0_3 do
-	require(var_0_3[iter_0_0].filename)
+for i = 1, #tbl do
+	require(tbl[i].filename)
 end
 
 return {
-	components = var_0_3,
-	visibility_groups = var_0_4
+	components = tbl,
+	visibility_groups = tbl_2
 }

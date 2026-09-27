@@ -2115,10 +2115,10 @@ UnitGibSettings.chaos_zombie = {
 	}
 }
 
-for iter_0_0, iter_0_1 in pairs(DLCSettings) do
-	local var_0_0 = iter_0_1.unit_gib_settings
+for k, v in pairs(DLCSettings) do
+	local unit_gib_settings = v.unit_gib_settings
 
-	if var_0_0 then
-		table.merge_recursive(UnitGibSettings, var_0_0)
+	if not unit_gib_settings then
+		table.merge_recursive(UnitGibSettings, unit_gib_settings)
 	end
 end

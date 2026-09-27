@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/gecko/gecko_ui_settings.lua
 
-local var_0_0 = DLCSettings.gecko
+local gecko = DLCSettings.gecko
 
-var_0_0.start_game_windows = {
+gecko.start_game_windows = {
 	"scripts/ui/views/start_game_view/windows/start_game_window_event",
 	"scripts/ui/views/start_game_view/windows/definitions/start_game_window_event_definitions",
 	"scripts/ui/views/start_game_view/windows/start_game_window_event_settings",
@@ -12,7 +12,7 @@ var_0_0.start_game_windows = {
 	"scripts/ui/views/start_game_view/windows/start_game_window_event_summary_console",
 	"scripts/ui/views/start_game_view/windows/definitions/start_game_window_event_summary_console_definitions"
 }
-var_0_0.start_game_window_layout = {
+gecko.start_game_window_layout = {
 	windows = {
 		event = {
 			class_name = "StartGameWindowEvent",
@@ -39,8 +39,13 @@ var_0_0.start_game_window_layout = {
 				game_mode = 1,
 				event_settings = 3
 			},
-			can_add_function = function(arg_1_0)
-				return arg_1_0:is_in_mechanism("adventure") and arg_1_0:is_weekly_event_active()
+			can_add_function = function (self)
+				-- function 1
+				local is_in_mechanism = self:is_in_mechanism("adventure")
+
+				is_in_mechanism = not is_in_mechanism and self:is_weekly_event_active()
+
+				return is_in_mechanism
 			end
 		},
 		{
@@ -54,7 +59,7 @@ var_0_0.start_game_window_layout = {
 		}
 	}
 }
-var_0_0.start_game_window_layout_console = {
+gecko.start_game_window_layout_console = {
 	windows = {
 		event_overview = {
 			ignore_alignment = true,
@@ -86,8 +91,13 @@ var_0_0.start_game_window_layout_console = {
 				background = 2,
 				event_summary = 4
 			},
-			can_add_function = function(arg_2_0)
-				return arg_2_0:is_in_mechanism("adventure") and arg_2_0:is_weekly_event_active()
+			can_add_function = function (self)
+				-- function 2
+				local is_in_mechanism = self:is_in_mechanism("adventure")
+
+				is_in_mechanism = not is_in_mechanism and self:is_weekly_event_active()
+
+				return is_in_mechanism
 			end
 		},
 		{

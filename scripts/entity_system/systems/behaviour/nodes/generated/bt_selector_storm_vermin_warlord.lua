@@ -2,254 +2,274 @@
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
-local var_0_0 = Unit.alive
-local var_0_1 = Profiler
+local alive = Unit.alive
+local Profiler = Profiler
 
-local function var_0_2()
+local function fn()
+	-- function 1
 	return
 end
 
 BTSelector_storm_vermin_warlord = class(BTSelector_storm_vermin_warlord, BTNode)
 BTSelector_storm_vermin_warlord.name = "BTSelector_storm_vermin_warlord"
 
-function BTSelector_storm_vermin_warlord.init(arg_2_0, ...)
-	BTSelector_storm_vermin_warlord.super.init(arg_2_0, ...)
+BTSelector_storm_vermin_warlord.init = function (self, ...)
+	-- function 2
+	BTSelector_storm_vermin_warlord.super.init(self, ...)
 
-	arg_2_0._children = {}
+	self._children = {}
 end
 
-function BTSelector_storm_vermin_warlord.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
-	arg_3_0:set_running_child(arg_3_1, arg_3_2, arg_3_3, nil, arg_3_4)
+BTSelector_storm_vermin_warlord.leave = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	-- function 3
+	self:set_running_child(arg_3_1, arg_3_2, arg_3_3, nil, arg_3_4)
 end
 
-function BTSelector_storm_vermin_warlord.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-	local var_4_0 = var_0_1.start
-	local var_4_1 = var_0_1.stop
-	local var_4_2 = arg_4_0:current_running_child(arg_4_2)
-	local var_4_3 = arg_4_0._children
-	local var_4_4 = var_4_3[1]
+BTSelector_storm_vermin_warlord.run = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	-- function 4
+	local start = Profiler.start
+	local stop = Profiler.stop
+	local current_running_child = self:current_running_child(arg_4_2)
+	local _children = self._children
+	local var_4_4 = _children[1]
 
-	if arg_4_2.spawn then
-		arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_4, "aborted")
+	if not arg_4_2.spawn then
+		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_4, "aborted")
 
-		local var_4_5, var_4_6 = var_4_4:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+		local run, var_4_6 = var_4_4:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 
-		if var_4_5 ~= "running" then
-			arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, var_4_5)
+		if run ~= "running" then
+			self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run)
 		end
 
-		if var_4_5 ~= "failed" then
-			return var_4_5, var_4_6
+		if run ~= "failed" then
+			return run, var_4_6
 		end
-	elseif var_4_4 == var_4_2 then
-		arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
+	elseif var_4_4 == current_running_child then
+		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
 	end
 
-	local var_4_7 = var_4_3[2]
-	local var_4_8 = Managers.time:time("game")
+	local var_4_7 = _children[2]
+	local time = Managers.time:time("game")
+	local intro_timer = arg_4_2.intro_timer
 
-	if arg_4_2.intro_timer and var_4_8 < arg_4_2.intro_timer then
-		arg_4_0:set_running_child(arg_4_1, arg_4_2, var_4_8, var_4_7, "aborted")
+	intro_timer = not intro_timer and time < arg_4_2.intro_timer
 
-		local var_4_9, var_4_10 = var_4_7:run(arg_4_1, arg_4_2, var_4_8, arg_4_4)
+	if not intro_timer then
+		self:set_running_child(arg_4_1, arg_4_2, time, var_4_7, "aborted")
 
-		if var_4_9 ~= "running" then
-			arg_4_0:set_running_child(arg_4_1, arg_4_2, var_4_8, nil, var_4_9)
+		local run_2, var_4_11 = var_4_7:run(arg_4_1, arg_4_2, time, arg_4_4)
+
+		if run_2 ~= "running" then
+			self:set_running_child(arg_4_1, arg_4_2, time, nil, run_2)
 		end
 
-		if var_4_9 ~= "failed" then
-			return var_4_9, var_4_10
+		if run_2 ~= "failed" then
+			return run_2, var_4_11
 		end
-	elseif var_4_7 == var_4_2 then
-		arg_4_0:set_running_child(arg_4_1, arg_4_2, var_4_8, nil, "failed")
+	elseif var_4_7 == current_running_child then
+		self:set_running_child(arg_4_1, arg_4_2, time, nil, "failed")
 	end
 
-	local var_4_11 = var_4_3[3]
+	local var_4_12 = _children[3]
+	local switching_weapons = arg_4_2.switching_weapons
 
-	if arg_4_2.switching_weapons and not arg_4_2.defensive_mode_duration then
-		arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_11, "aborted")
+	switching_weapons = not switching_weapons and not arg_4_2.defensive_mode_duration
 
-		local var_4_12, var_4_13 = var_4_11:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	if not switching_weapons then
+		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_12, "aborted")
 
-		if var_4_12 ~= "running" then
-			arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, var_4_12)
+		local run_3, var_4_15 = var_4_12:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+
+		if run_3 ~= "running" then
+			self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run_3)
 		end
 
-		if var_4_12 ~= "failed" then
-			return var_4_12, var_4_13
+		if run_3 ~= "failed" then
+			return run_3, var_4_15
 		end
-	elseif var_4_11 == var_4_2 then
-		arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
+	elseif var_4_12 == current_running_child then
+		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
 	end
 
-	local var_4_14 = var_4_3[4]
+	local var_4_16 = _children[4]
 
-	if arg_4_2.jump_from_pos then
-		arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_14, "aborted")
+	if not arg_4_2.jump_from_pos then
+		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_16, "aborted")
 
-		local var_4_15, var_4_16 = var_4_14:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+		local run_4, var_4_18 = var_4_16:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 
-		if var_4_15 ~= "running" then
-			arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, var_4_15)
+		if run_4 ~= "running" then
+			self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run_4)
 		end
 
-		if var_4_15 ~= "failed" then
-			return var_4_15, var_4_16
+		if run_4 ~= "failed" then
+			return run_4, var_4_18
 		end
-	elseif var_4_14 == var_4_2 then
-		arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
+	elseif var_4_16 == current_running_child then
+		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
 	end
 
-	local var_4_17 = var_4_3[5]
+	local var_4_19 = _children[5]
+	local is_falling = arg_4_2.is_falling
 
-	if arg_4_2.is_falling or arg_4_2.fall_state ~= nil then
-		arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_17, "aborted")
+	is_falling = is_falling or arg_4_2.fall_state ~= nil
 
-		local var_4_18, var_4_19 = var_4_17:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	if not is_falling then
+		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_19, "aborted")
 
-		if var_4_18 ~= "running" then
-			arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, var_4_18)
-		end
+		local run_5, var_4_22 = var_4_19:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 
-		if var_4_18 ~= "failed" then
-			return var_4_18, var_4_19
-		end
-	elseif var_4_17 == var_4_2 then
-		arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
-	end
-
-	local var_4_20 = var_4_3[6]
-	local var_4_21
-	local var_4_22 = arg_4_2.next_smart_object_data
-
-	if not (var_4_22.next_smart_object_id ~= nil) then
-		var_4_21 = false
-	end
-
-	local var_4_23 = arg_4_2.is_smart_objecting
-	local var_4_24 = Managers.state.entity:system("nav_graph_system")
-	local var_4_25 = var_4_22.smart_object_data and var_4_22.smart_object_data.unit
-	local var_4_26, var_4_27 = var_4_24:has_nav_graph(var_4_25)
-
-	if var_4_26 and not var_4_27 and not var_4_23 and var_4_21 == nil then
-		var_4_21 = false
-	end
-
-	local var_4_28 = arg_4_2.is_in_smartobject_range
-	local var_4_29 = arg_4_2.move_state == "moving"
-
-	if var_4_21 == nil then
-		var_4_21 = var_4_28 and var_4_29 or var_4_23
-	end
-
-	if var_4_21 then
-		arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_20, "aborted")
-
-		local var_4_30, var_4_31 = var_4_20:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-
-		if var_4_30 ~= "running" then
-			arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, var_4_30)
+		if run_5 ~= "running" then
+			self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run_5)
 		end
 
-		if var_4_30 ~= "failed" then
-			return var_4_30, var_4_31
+		if run_5 ~= "failed" then
+			return run_5, var_4_22
 		end
-	elseif var_4_20 == var_4_2 then
-		arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
+	elseif var_4_19 == current_running_child then
+		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
 	end
 
-	local var_4_32 = var_4_3[7]
-	local var_4_33
+	local var_4_23 = _children[6]
+	local var_4_24
+	local next_smart_object_data = arg_4_2.next_smart_object_data
 
-	if arg_4_2.stagger then
-		if arg_4_2.stagger_prohibited then
+	if not (next_smart_object_data.next_smart_object_id ~= nil) then
+		var_4_24 = false
+	end
+
+	local is_smart_objecting = arg_4_2.is_smart_objecting
+	local system = Managers.state.entity:system("nav_graph_system")
+	local smart_object_data = next_smart_object_data.smart_object_data
+
+	smart_object_data = not smart_object_data and next_smart_object_data.smart_object_data.unit
+
+	local has_nav_graph, var_4_30 = system:has_nav_graph(smart_object_data)
+
+	if not (not has_nav_graph and var_4_30 or is_smart_objecting or var_4_24 ~= nil) then
+		var_4_24 = false
+	end
+
+	local is_in_smartobject_range = arg_4_2.is_in_smartobject_range
+	local flag = arg_4_2.move_state == "moving"
+
+	if var_4_24 == nil then
+		var_4_24 = not is_in_smartobject_range and flag and is_smart_objecting
+	end
+
+	if not var_4_24 then
+		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_23, "aborted")
+
+		local run_6, var_4_34 = var_4_23:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+
+		if run_6 ~= "running" then
+			self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run_6)
+		end
+
+		if run_6 ~= "failed" then
+			return run_6, var_4_34
+		end
+	elseif var_4_23 == current_running_child then
+		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
+	end
+
+	local var_4_35 = _children[7]
+	local var_4_36
+
+	if not arg_4_2.stagger then
+		if not arg_4_2.stagger_prohibited then
 			arg_4_2.stagger = false
 		else
-			var_4_33 = true
+			var_4_36 = true
 		end
 	end
 
-	if var_4_33 then
-		arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_32, "aborted")
+	if not var_4_36 then
+		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_35, "aborted")
 
-		local var_4_34, var_4_35 = var_4_32:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+		local run_7, var_4_38 = var_4_35:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 
-		if var_4_34 ~= "running" then
-			arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, var_4_34)
+		if run_7 ~= "running" then
+			self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run_7)
 		end
 
-		if var_4_34 ~= "failed" then
-			return var_4_34, var_4_35
+		if run_7 ~= "failed" then
+			return run_7, var_4_38
 		end
-	elseif var_4_32 == var_4_2 then
-		arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
+	elseif var_4_35 == current_running_child then
+		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
 	end
 
-	local var_4_36 = var_4_3[8]
+	local var_4_39 = _children[8]
+	local defensive_mode_duration = arg_4_2.defensive_mode_duration
 
-	if arg_4_2.defensive_mode_duration and var_0_0(arg_4_2.target_unit) then
-		arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_36, "aborted")
+	defensive_mode_duration = not defensive_mode_duration and alive(arg_4_2.target_unit)
 
-		local var_4_37, var_4_38 = var_4_36:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	if not defensive_mode_duration then
+		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_39, "aborted")
 
-		if var_4_37 ~= "running" then
-			arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, var_4_37)
-		end
+		local run_8, var_4_42 = var_4_39:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 
-		if var_4_37 ~= "failed" then
-			return var_4_37, var_4_38
-		end
-	elseif var_4_36 == var_4_2 then
-		arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
-	end
-
-	local var_4_39 = var_4_3[9]
-
-	if var_0_0(arg_4_2.target_unit) then
-		arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_39, "aborted")
-
-		local var_4_40, var_4_41 = var_4_39:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-
-		if var_4_40 ~= "running" then
-			arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, var_4_40)
+		if run_8 ~= "running" then
+			self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run_8)
 		end
 
-		if var_4_40 ~= "failed" then
-			return var_4_40, var_4_41
+		if run_8 ~= "failed" then
+			return run_8, var_4_42
 		end
-	elseif var_4_39 == var_4_2 then
-		arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
+	elseif var_4_39 == current_running_child then
+		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
 	end
 
-	local var_4_42 = var_4_3[10]
+	local var_4_43 = _children[9]
 
-	arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_42, "aborted")
+	if not alive(arg_4_2.target_unit) then
+		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_43, "aborted")
 
-	local var_4_43, var_4_44 = var_4_42:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+		local run_9, var_4_45 = var_4_43:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 
-	if var_4_43 ~= "running" then
-		arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, var_4_43)
+		if run_9 ~= "running" then
+			self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run_9)
+		end
+
+		if run_9 ~= "failed" then
+			return run_9, var_4_45
+		end
+	elseif var_4_43 == current_running_child then
+		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
 	end
 
-	if var_4_43 ~= "failed" then
-		return var_4_43, var_4_44
+	local var_4_46 = _children[10]
+
+	self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_46, "aborted")
+
+	local run_10, var_4_48 = var_4_46:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+
+	if run_10 ~= "running" then
+		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run_10)
 	end
 
-	local var_4_45 = var_4_3[11]
-
-	arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_45, "aborted")
-
-	local var_4_46, var_4_47 = var_4_45:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-
-	if var_4_46 ~= "running" then
-		arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, var_4_46)
+	if run_10 ~= "failed" then
+		return run_10, var_4_48
 	end
 
-	if var_4_46 ~= "failed" then
-		return var_4_46, var_4_47
+	local var_4_49 = _children[11]
+
+	self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_49, "aborted")
+
+	local run_11, var_4_51 = var_4_49:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+
+	if run_11 ~= "running" then
+		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run_11)
+	end
+
+	if run_11 ~= "failed" then
+		return run_11, var_4_51
 	end
 end
 
-function BTSelector_storm_vermin_warlord.add_child(arg_5_0, arg_5_1)
+BTSelector_storm_vermin_warlord.add_child = function (arg_5_0, arg_5_1)
+	-- function 5
 	arg_5_0._children[#arg_5_0._children + 1] = arg_5_1
 end

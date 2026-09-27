@@ -1,10 +1,10 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/we_thornsister_career_skill.lua
 
-local var_0_0 = -9.82
-local var_0_1 = 15
-local var_0_2 = 4
-local var_0_3 = 1
-local var_0_4 = {
+local num = -9.82
+local num_2 = 15
+local num_3 = 4
+local num_4 = 1
+local tbl = {
 	actions = {
 		action_career_hold = {
 			default = {
@@ -13,14 +13,15 @@ local var_0_4 = {
 				weapon_action_hand = "left",
 				uninterruptible = true,
 				anim_event = "thorn_ability_start",
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
+					-- function 1
 					return arg_1_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
-				target_sim_gravity = var_0_0,
-				target_sim_speed = var_0_1,
-				target_width = var_0_2,
-				target_thickness = var_0_3,
+				target_sim_gravity = num,
+				target_sim_speed = num_2,
+				target_width = num_3,
+				target_thickness = num_4,
 				allowed_chain_actions = {
 					{
 						sub_action = "default",
@@ -48,7 +49,8 @@ local var_0_4 = {
 						input = "action_one"
 					}
 				},
-				enter_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+				enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+					-- function 2
 					arg_2_1:clear_input_buffer()
 					arg_2_1:reset_release_input()
 					arg_2_3:change_synced_state("targeting", true)
@@ -61,14 +63,15 @@ local var_0_4 = {
 				weapon_action_hand = "left",
 				uninterruptible = true,
 				anim_event = "thorn_ability_flip",
-				anim_end_event_condition_func = function(arg_3_0, arg_3_1)
+				anim_end_event_condition_func = function (arg_3_0, arg_3_1)
+					-- function 3
 					return arg_3_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
-				target_sim_gravity = var_0_0,
-				target_sim_speed = var_0_1,
-				target_width = var_0_2,
-				target_thickness = var_0_3,
+				target_sim_gravity = num,
+				target_sim_speed = num_2,
+				target_width = num_3,
+				target_thickness = num_4,
 				target_bend_angle = wall_bend_angle,
 				allowed_chain_actions = {
 					{
@@ -97,7 +100,8 @@ local var_0_4 = {
 						input = "action_one"
 					}
 				},
-				enter_function = function(arg_4_0, arg_4_1)
+				enter_function = function (arg_4_0, arg_4_1)
+					-- function 4
 					arg_4_1:clear_input_buffer()
 
 					return arg_4_1:reset_release_input()
@@ -109,14 +113,15 @@ local var_0_4 = {
 				weapon_action_hand = "left",
 				uninterruptible = true,
 				anim_event = "thorn_ability_flip_back",
-				anim_end_event_condition_func = function(arg_5_0, arg_5_1)
+				anim_end_event_condition_func = function (arg_5_0, arg_5_1)
+					-- function 5
 					return arg_5_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
-				target_sim_gravity = var_0_0,
-				target_sim_speed = var_0_1,
-				target_width = var_0_2,
-				target_thickness = var_0_3,
+				target_sim_gravity = num,
+				target_sim_speed = num_2,
+				target_width = num_3,
+				target_thickness = num_4,
 				target_bend_angle = wall_bend_angle,
 				allowed_chain_actions = {
 					{
@@ -145,7 +150,8 @@ local var_0_4 = {
 						input = "action_one"
 					}
 				},
-				enter_function = function(arg_6_0, arg_6_1)
+				enter_function = function (arg_6_0, arg_6_1)
+					-- function 6
 					arg_6_1:clear_input_buffer()
 
 					return arg_6_1:reset_release_input()
@@ -159,11 +165,13 @@ local var_0_4 = {
 				anim_event = "thorn_ability_cancel",
 				weapon_action_hand = "left",
 				total_time = 0.21,
-				anim_end_event_condition_func = function(arg_7_0, arg_7_1)
+				anim_end_event_condition_func = function (arg_7_0, arg_7_1)
+					-- function 7
 					return arg_7_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {},
-				enter_function = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+				enter_function = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+					-- function 8
 					arg_8_1:clear_input_buffer()
 					arg_8_1:reset_release_input()
 					arg_8_3:change_synced_state(nil, true)
@@ -178,8 +186,9 @@ local var_0_4 = {
 					{
 						sub_action = "thorn_wall",
 						action = "spells",
-						condition = function(arg_9_0, arg_9_1, arg_9_2)
-							return arg_9_2 and arg_9_2:get_mode()
+						condition = function (arg_9_0, arg_9_1, arg_9_2)
+							-- function 9
+							return not arg_9_2 and arg_9_2:get_mode()
 						end
 					}
 				},
@@ -197,11 +206,13 @@ local var_0_4 = {
 				uninterruptible = true,
 				anim_event = "thorn_ability_cast",
 				total_time = 0.75,
-				anim_end_event_condition_func = function(arg_10_0, arg_10_1)
+				anim_end_event_condition_func = function (arg_10_0, arg_10_1)
+					-- function 10
 					return arg_10_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {},
-				enter_function = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+				enter_function = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+					-- function 11
 					arg_11_1:clear_input_buffer()
 					arg_11_1:reset_release_input()
 					arg_11_3:change_synced_state(nil, true)
@@ -212,17 +223,17 @@ local var_0_4 = {
 	}
 }
 
-var_0_4.left_hand_unit = ""
-var_0_4.left_hand_attachment_node_linking = AttachmentNodeLinking.one_handed_melee_weapon.left
-var_0_4.wield_anim = "thorn_ability_start"
-var_0_4.state_machine = "units/beings/player/first_person_base/state_machines/career/skill_thornsister"
-var_0_4.load_state_machine = false
-var_0_4.display_unit = "units/weapons/weapon_display/display_2h_swords_executioner"
-var_0_4.crosshair_style = "default"
-var_0_4.buff_type = "RANGED_ABILITY"
-var_0_4.weapon_type = "RANGED_ABILITY"
-var_0_4.dodge_count = 2
-var_0_4.buffs = {
+tbl.left_hand_unit = ""
+tbl.left_hand_attachment_node_linking = AttachmentNodeLinking.one_handed_melee_weapon.left
+tbl.wield_anim = "thorn_ability_start"
+tbl.state_machine = "units/beings/player/first_person_base/state_machines/career/skill_thornsister"
+tbl.load_state_machine = false
+tbl.display_unit = "units/weapons/weapon_display/display_2h_swords_executioner"
+tbl.crosshair_style = "default"
+tbl.buff_type = "RANGED_ABILITY"
+tbl.weapon_type = "RANGED_ABILITY"
+tbl.dodge_count = 2
+tbl.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1
 	},
@@ -231,14 +242,14 @@ var_0_4.buffs = {
 	}
 }
 
-local var_0_5 = {
+local tbl_2 = {
 	"ep_r_index",
 	"ep_r_middle",
 	"ep_r_ring",
 	"ep_r_pinky",
 	"ep_r_thumb"
 }
-local var_0_6 = {
+local tbl_3 = {
 	"ep_l_index",
 	"ep_l_middle",
 	"ep_l_ring",
@@ -246,50 +257,53 @@ local var_0_6 = {
 	"ep_l_thumb"
 }
 
-local function var_0_7(arg_12_0, arg_12_1)
-	if arg_12_0.particle_ids then
-		table.clear(arg_12_0.particle_ids)
+local function fn(self, arg_12_1)
+	-- function 12
+	if not self.particle_ids then
+		table.clear(self.particle_ids)
 	else
-		arg_12_0.particle_ids = {}
+		self.particle_ids = {}
 	end
 
-	if not arg_12_0.nodes then
-		arg_12_0.nodes = {}
+	if not self.nodes then
+		self.nodes = {}
 
-		local var_12_0 = ScriptUnit.has_extension(arg_12_1, "first_person_system"):get_first_person_mesh_unit()
+		local get_first_person_mesh_unit = ScriptUnit.has_extension(arg_12_1, "first_person_system"):get_first_person_mesh_unit()
 
-		for iter_12_0 = 1, #var_0_6 do
-			local var_12_1 = var_0_6[iter_12_0]
+		for i = 1, #tbl_3 do
+			local var_12_1 = tbl_3[i]
 
-			arg_12_0.nodes[var_12_1] = Unit.node(var_12_0, var_12_1)
+			self.nodes[var_12_1] = Unit.node(get_first_person_mesh_unit, var_12_1)
 		end
 
-		for iter_12_1 = 1, #var_0_5 do
-			local var_12_2 = var_0_5[iter_12_1]
+		for j = 1, #tbl_2 do
+			local var_12_2 = tbl_2[j]
 
-			arg_12_0.nodes[var_12_2] = Unit.node(var_12_0, var_12_2)
+			self.nodes[var_12_2] = Unit.node(get_first_person_mesh_unit, var_12_2)
 		end
 	end
 end
 
-var_0_4.synced_states = {
+tbl.synced_states = {
 	targeting = {
-		enter = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+		enter = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+			-- function 13
 			if not arg_13_4 then
 				return
 			end
 
-			var_0_7(arg_13_3, arg_13_1)
+			fn(arg_13_3, arg_13_1)
 
 			arg_13_3.delay = 0.1
 			arg_13_3.spawned = false
 		end,
-		update = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6)
+		update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6)
+			-- function 14
 			if not arg_14_4 then
 				return
 			end
 
-			if arg_14_3.spawned then
+			if not arg_14_3.spawned then
 				return
 			end
 
@@ -301,27 +315,28 @@ var_0_4.synced_states = {
 
 			arg_14_3.spawned = true
 
-			local var_14_0 = ScriptUnit.extension(arg_14_1, "first_person_system"):get_first_person_mesh_unit()
+			local get_first_person_mesh_unit = ScriptUnit.extension(arg_14_1, "first_person_system"):get_first_person_mesh_unit()
 
-			for iter_14_0 = 1, #var_0_5 do
-				local var_14_1 = arg_14_3.nodes[var_0_5[iter_14_0]]
+			for i = 1, #tbl_2 do
+				local var_14_1 = arg_14_3.nodes[tbl_2[i]]
 
-				arg_14_3.particle_ids[var_14_1] = ScriptWorld.create_particles_linked(arg_14_5, "fx/magic_thorn_sister_finger_trail", var_14_0, var_14_1, "destroy")
+				arg_14_3.particle_ids[var_14_1] = ScriptWorld.create_particles_linked(arg_14_5, "fx/magic_thorn_sister_finger_trail", get_first_person_mesh_unit, var_14_1, "destroy")
 			end
 
-			for iter_14_1 = 1, #var_0_6 do
-				local var_14_2 = arg_14_3.nodes[var_0_6[iter_14_1]]
+			for j = 1, #tbl_3 do
+				local var_14_2 = arg_14_3.nodes[tbl_3[j]]
 
-				arg_14_3.particle_ids[var_14_2] = ScriptWorld.create_particles_linked(arg_14_5, "fx/magic_thorn_sister_finger_trail", var_14_0, var_14_2, "destroy")
+				arg_14_3.particle_ids[var_14_2] = ScriptWorld.create_particles_linked(arg_14_5, "fx/magic_thorn_sister_finger_trail", get_first_person_mesh_unit, var_14_2, "destroy")
 			end
 		end,
-		leave = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7)
+		leave = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7)
+			-- function 15
 			if not arg_15_4 then
 				return
 			end
 
-			for iter_15_0 in pairs(arg_15_3.particle_ids) do
-				local var_15_0 = arg_15_3.particle_ids[iter_15_0]
+			for k in pairs(arg_15_3.particle_ids) do
+				local var_15_0 = arg_15_3.particle_ids[k]
 
 				World.stop_spawning_particles(arg_15_5, var_15_0)
 			end
@@ -330,5 +345,5 @@ var_0_4.synced_states = {
 }
 
 return {
-	we_thornsister_career_skill_weapon = table.clone(var_0_4)
+	we_thornsister_career_skill_weapon = table.clone(tbl)
 }

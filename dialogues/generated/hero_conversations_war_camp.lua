@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/hero_conversations_war_camp.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pbw_level_chaos_war_camp_story_four_01",

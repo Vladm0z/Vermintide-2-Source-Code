@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/dlcs/morris/deus_swap_weapon_interaction_ui_definitions.lua
 
-local var_0_0 = UISettings.console_menu_scenegraphs
-local var_0_1 = {
+local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
+local tbl = {
 	screen = {
 		scale = "fit",
 		size = {
@@ -71,7 +71,7 @@ local var_0_1 = {
 		}
 	}
 }
-local var_0_2 = {
+local tbl_2 = {
 	"equipped_item_title",
 	"item_titles",
 	"skin_applied",
@@ -81,21 +81,24 @@ local var_0_2 = {
 	"traits",
 	"keywords"
 }
-local var_0_3 = {
+local tbl_3 = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.1,
-			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+				-- function 1
 				arg_1_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
-				local var_2_0 = math.easeInCubic(arg_2_3)
+			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+				-- function 2
+				local easeInCubic = math.easeInCubic(arg_2_3)
 
-				arg_2_4.render_settings.alpha_multiplier = var_2_0
+				arg_2_4.render_settings.alpha_multiplier = easeInCubic
 			end,
-			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+				-- function 3
 				return
 			end
 		}
@@ -105,23 +108,27 @@ local var_0_3 = {
 			name = "bounce",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				-- function 4
 				arg_4_3.bounce_value = 1
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
-				local var_5_0 = math.easeInCubic(arg_5_3)
-				local var_5_1 = Managers.time:time("main")
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+				-- function 5
+				local easeInCubic = math.easeInCubic(arg_5_3)
+				local time = Managers.time:time("main")
 
-				arg_5_0.pivot.local_position[1] = math.sin(var_5_1 * 50) * 10 * (arg_5_4.bounce_value - arg_5_3)
+				arg_5_0.pivot.local_position[1] = math.sin(time * 50) * 10 * (arg_5_4.bounce_value - arg_5_3)
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+				-- function 6
 				return
 			end
 		}
 	}
 }
 
-local function var_0_4()
+local function fn()
+	-- function 7
 	return {
 		scenegraph_id = "chest_content",
 		element = {
@@ -130,40 +137,45 @@ local function var_0_4()
 					texture_id = "texture_id",
 					style_id = "coin_icon",
 					pass_type = "texture",
-					content_check_function = function(arg_8_0)
-						return arg_8_0.show_coin_icon
+					content_check_function = function (self)
+						-- function 8
+						return self.show_coin_icon
 					end
 				},
 				{
 					style_id = "cost_text",
 					pass_type = "text",
 					text_id = "cost_text",
-					content_check_function = function(arg_9_0)
-						return arg_9_0.cost_text
+					content_check_function = function (self)
+						-- function 9
+						return self.cost_text
 					end
 				},
 				{
 					style_id = "rarity",
 					pass_type = "text",
 					text_id = "rarity_text",
-					content_check_function = function(arg_10_0)
-						return arg_10_0.rarity_text
+					content_check_function = function (self)
+						-- function 10
+						return self.rarity_text
 					end
 				},
 				{
 					style_id = "reward_info",
 					pass_type = "text",
 					text_id = "reward_info_text",
-					content_check_function = function(arg_11_0)
-						return arg_11_0.reward_info_text
+					content_check_function = function (self)
+						-- function 11
+						return self.reward_info_text
 					end
 				},
 				{
 					style_id = "disabled_text",
 					pass_type = "text",
 					text_id = "disabled_text",
-					content_check_function = function(arg_12_0)
-						return arg_12_0.disabled_text
+					content_check_function = function (self)
+						-- function 12
+						return self.disabled_text
 					end
 				}
 			}
@@ -281,21 +293,21 @@ local function var_0_4()
 	}
 end
 
-local var_0_5 = true
-local var_0_6 = {
-	chest_content = var_0_4(),
-	weapon_tooltip = UIWidgets.create_simple_item_presentation("item_tooltip", var_0_2, var_0_5),
+local flag = true
+local tbl_4 = {
+	chest_content = fn(),
+	weapon_tooltip = UIWidgets.create_simple_item_presentation("item_tooltip", tbl_2, flag),
 	background = UIWidgets.create_simple_rect("background", {
 		255,
 		0,
 		0,
 		0
 	}),
-	frame = UIWidgets.create_frame("background", var_0_1.background.size, "item_tooltip_frame_01")
+	frame = UIWidgets.create_frame("background", tbl.background.size, "item_tooltip_frame_01")
 }
 
 return {
-	animation_definitions = var_0_3,
-	scenegraph_definition = var_0_1,
-	widgets = var_0_6
+	animation_definitions = tbl_3,
+	scenegraph_definition = tbl,
+	widgets = tbl_4
 }

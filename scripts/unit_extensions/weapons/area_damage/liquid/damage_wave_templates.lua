@@ -1,6 +1,6 @@
 -- chunkname: @scripts/unit_extensions/weapons/area_damage/liquid/damage_wave_templates.lua
 
-local var_0_0 = require("scripts/utils/stagger_types")
+local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
 
 DamageWaveTemplates = {}
 DamageWaveTemplates.templates = {
@@ -47,11 +47,11 @@ DamageWaveTemplates.templates = {
 			stagger_distance = 3,
 			push_along_wave_direction = true,
 			stagger_impact = {
-				var_0_0.explosion,
-				var_0_0.heavy,
-				var_0_0.none,
-				var_0_0.none,
-				var_0_0.explosion
+				scripts_utils_stagger_types.explosion,
+				scripts_utils_stagger_types.heavy,
+				scripts_utils_stagger_types.none,
+				scripts_utils_stagger_types.none,
+				scripts_utils_stagger_types.explosion
 			},
 			stagger_duration = {
 				2.5,
@@ -112,11 +112,11 @@ DamageWaveTemplates.templates = {
 			stagger_distance = 3,
 			push_along_wave_direction = true,
 			stagger_impact = {
-				var_0_0.explosion,
-				var_0_0.heavy,
-				var_0_0.none,
-				var_0_0.none,
-				var_0_0.explosion
+				scripts_utils_stagger_types.explosion,
+				scripts_utils_stagger_types.heavy,
+				scripts_utils_stagger_types.none,
+				scripts_utils_stagger_types.none,
+				scripts_utils_stagger_types.explosion
 			},
 			stagger_duration = {
 				2.5,
@@ -174,11 +174,11 @@ DamageWaveTemplates.templates = {
 			stagger_distance = 3,
 			push_along_wave_direction = true,
 			stagger_impact = {
-				var_0_0.explosion,
-				var_0_0.heavy,
-				var_0_0.none,
-				var_0_0.none,
-				var_0_0.explosion
+				scripts_utils_stagger_types.explosion,
+				scripts_utils_stagger_types.heavy,
+				scripts_utils_stagger_types.none,
+				scripts_utils_stagger_types.none,
+				scripts_utils_stagger_types.explosion
 			},
 			stagger_duration = {
 				2.5,
@@ -236,11 +236,11 @@ DamageWaveTemplates.templates = {
 			stagger_distance = 3,
 			push_along_wave_direction = true,
 			stagger_impact = {
-				var_0_0.explosion,
-				var_0_0.heavy,
-				var_0_0.none,
-				var_0_0.none,
-				var_0_0.explosion
+				scripts_utils_stagger_types.explosion,
+				scripts_utils_stagger_types.heavy,
+				scripts_utils_stagger_types.none,
+				scripts_utils_stagger_types.none,
+				scripts_utils_stagger_types.explosion
 			},
 			stagger_duration = {
 				2.5,
@@ -285,25 +285,27 @@ DamageWaveTemplates.templates.sienna_adept_ability_trail = {
 	apply_impact_buff_to_player = false,
 	fx_name_init = "fx/brw_adept_skill_02",
 	immune_breeds = {},
-	add_buff_func = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
-		if Unit.alive(arg_1_1) then
-			local var_1_0 = Managers.state.entity:system("buff_system")
-			local var_1_1 = FrameTable.alloc_table()
+	add_buff_func = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+		-- function 1
+		if not Unit.alive(arg_1_1) then
+			local system = Managers.state.entity:system("buff_system")
+			local alloc_table = FrameTable.alloc_table()
 
-			var_1_1.attacker_unit = arg_1_3
-			var_1_1.source_attacker_unit = arg_1_4
+			alloc_table.attacker_unit = arg_1_3
+			alloc_table.source_attacker_unit = arg_1_4
 
-			var_1_0:add_buff_synced(arg_1_1, arg_1_2, BuffSyncType.All, var_1_1)
+			system:add_buff_synced(arg_1_1, arg_1_2, BuffSyncType.All, alloc_table)
 		end
 	end,
-	leave_area_func = function(arg_2_0)
-		if Unit.alive(arg_2_0) then
-			local var_2_0 = ScriptUnit.extension(arg_2_0, "buff_system"):get_stacking_buff("sienna_adept_ability_trail")
-			local var_2_1 = var_2_0 and var_2_0[1]
+	leave_area_func = function (arg_2_0)
+		-- function 2
+		if not Unit.alive(arg_2_0) then
+			local get_stacking_buff = ScriptUnit.extension(arg_2_0, "buff_system"):get_stacking_buff("sienna_adept_ability_trail")
+			local flag = not get_stacking_buff and get_stacking_buff[1]
 
-			if var_2_1 then
-				var_2_1.start_time = Managers.time:time("game")
-				var_2_1.duration = var_2_1.template.leave_linger_time
+			if not flag then
+				flag.start_time = Managers.time:time("game")
+				flag.duration = flag.template.leave_linger_time
 			end
 		end
 	end
@@ -349,12 +351,12 @@ DamageWaveTemplates.templates.thornsister_thorn_wall_push = {
 		push_along_wave_direction = true,
 		drag_along_wave = true,
 		stagger_impact = {
-			var_0_0.heavy,
-			var_0_0.heavy,
-			var_0_0.heavy,
-			var_0_0.none,
-			var_0_0.heavy,
-			var_0_0.medium
+			scripts_utils_stagger_types.heavy,
+			scripts_utils_stagger_types.heavy,
+			scripts_utils_stagger_types.heavy,
+			scripts_utils_stagger_types.none,
+			scripts_utils_stagger_types.heavy,
+			scripts_utils_stagger_types.medium
 		},
 		stagger_duration = {
 			0.5,
@@ -389,82 +391,85 @@ DamageWaveTemplates.templates.thornsister_thorn_wall_push = {
 			0
 		}
 	},
-	update_func = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
-		local var_3_0 = arg_3_0._update_data
+	update_func = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+		-- function 3
+		local _update_data = self._update_data
 
-		if not var_3_0 then
-			var_3_0 = {
+		if not _update_data then
+			_update_data = {
 				next_spawn_t = 0
 			}
-			arg_3_0._update_data = var_3_0
+			self._update_data = _update_data
 		end
 
-		if arg_3_3 >= var_3_0.next_spawn_t and arg_3_0.wave_direction then
-			local var_3_1 = "units/beings/player/way_watcher_thornsister/abilities/ww_thornsister_thorn_wave_01"
-			local var_3_2 = 0.75
-			local var_3_3 = 1.25
-			local var_3_4 = math.rad(15)
-			local var_3_5 = 0.1
-			local var_3_6 = 0.1
-			local var_3_7 = 0.2
-			local var_3_8 = 1
-			local var_3_9 = 3
-			local var_3_10 = Quaternion.look(arg_3_0.wave_direction:unbox())
-			local var_3_11 = arg_3_0.template.ai_query_distance
-			local var_3_12 = Quaternion.right(var_3_10) * math.lerp(-var_3_11, var_3_11, math.random())
-			local var_3_13 = Vector3(0, 0, -var_3_5 * math.random())
-			local var_3_14, var_3_15, var_3_16, var_3_17 = ConflictUtils.get_spawn_pos_on_circle(arg_3_0.nav_world, arg_3_2 + var_3_12, 0, var_3_8, var_3_9)
+		if not (arg_3_3 >= _update_data.next_spawn_t) or not self.wave_direction then
+			local str = "units/beings/player/way_watcher_thornsister/abilities/ww_thornsister_thorn_wave_01"
+			local num = 0.75
+			local num_2 = 1.25
+			local rad = math.rad(15)
+			local num_3 = 0.1
+			local num_4 = 0.1
+			local num_5 = 0.2
+			local num_6 = 1
+			local num_7 = 3
+			local look = Quaternion.look(self.wave_direction:unbox())
+			local ai_query_distance = self.template.ai_query_distance
+			local num_8 = Quaternion.right(look) * math.lerp(-ai_query_distance, ai_query_distance, math.random())
+			local var_3_13 = Vector3(0, 0, -num_3 * math.random())
+			local get_spawn_pos_on_circle, var_3_15, var_3_16, var_3_17 = ConflictUtils.get_spawn_pos_on_circle(self.nav_world, arg_3_2 + num_8, 0, num_6, num_7)
 
-			if var_3_14 then
-				local var_3_18 = math.lerp(-var_3_4, var_3_4, math.random())
-				local var_3_19 = Quaternion.multiply(var_3_10, Quaternion.axis_angle(Vector3.up(), var_3_18))
-				local var_3_20 = Vector3.normalize(Vector3.cross(var_3_16 - var_3_15, var_3_17 - var_3_15))
-				local var_3_21 = Quaternion.forward(var_3_19)
-				local var_3_22 = Vector3.cross(var_3_21, var_3_20)
-				local var_3_23 = Vector3.cross(var_3_20, var_3_22)
-				local var_3_24 = Quaternion.look(var_3_23, var_3_20)
-				local var_3_25 = Managers.state.unit_spawner:spawn_local_unit(var_3_1, var_3_14 + var_3_13, var_3_24)
-				local var_3_26 = math.lerp(var_3_2, var_3_3, math.random())
+			if not get_spawn_pos_on_circle then
+				local lerp = math.lerp(-rad, rad, math.random())
+				local multiply = Quaternion.multiply(look, Quaternion.axis_angle(Vector3.up(), lerp))
+				local normalize = Vector3.normalize(Vector3.cross(var_3_16 - var_3_15, var_3_17 - var_3_15))
+				local forward = Quaternion.forward(multiply)
+				local cross = Vector3.cross(forward, normalize)
+				local cross_2 = Vector3.cross(normalize, cross)
+				local look_2 = Quaternion.look(cross_2, normalize)
+				local spawn_local_unit = Managers.state.unit_spawner:spawn_local_unit(str, get_spawn_pos_on_circle + var_3_13, look_2)
+				local lerp_2 = math.lerp(num, num_2, math.random())
 
-				Unit.set_local_scale(var_3_25, 0, Vector3(var_3_26, var_3_26, var_3_26))
+				Unit.set_local_scale(spawn_local_unit, 0, Vector3(lerp_2, lerp_2, lerp_2))
 			end
 
-			var_3_0.next_spawn_t = arg_3_3 + math.lerp(var_3_6, var_3_7, math.random())
+			_update_data.next_spawn_t = arg_3_3 + math.lerp(num_4, num_5, math.random())
 		end
 	end,
-	on_arrive_func = function(arg_4_0, arg_4_1, arg_4_2)
-		local var_4_0 = arg_4_0.optional_data
+	on_arrive_func = function (self, arg_4_1, arg_4_2)
+		-- function 4
+		local optional_data = self.optional_data
 
-		if var_4_0 then
-			local var_4_1 = "we_thornsister_career_skill_wall_explosion"
-			local var_4_2 = 1
-			local var_4_3 = arg_4_0.source_unit
-			local var_4_4 = var_4_0.power_level
+		if not optional_data then
+			local str = "we_thornsister_career_skill_wall_explosion"
+			local num = 1
+			local source_unit = self.source_unit
+			local power_level = optional_data.power_level
 
-			Managers.state.entity:system("area_damage_system"):create_explosion(var_4_3, arg_4_1, arg_4_2, var_4_1, var_4_2, "career_ability", var_4_4, false)
+			Managers.state.entity:system("area_damage_system"):create_explosion(source_unit, arg_4_1, arg_4_2, str, num, "career_ability", power_level, false)
 
-			local var_4_5 = var_4_0.wall_index
-			local var_4_6 = var_4_0.boxed_wall_segments
+			local wall_index = optional_data.wall_index
+			local boxed_wall_segments = optional_data.boxed_wall_segments
 
-			for iter_4_0 = 1, #var_4_6 do
-				local var_4_7 = var_4_6[iter_4_0]:unbox()
+			for i = 1, #boxed_wall_segments do
+				local unbox = boxed_wall_segments[i]:unbox()
 
-				Managers.state.unit_spawner:request_spawn_template_unit("thornsister_thorn_wall_unit", var_4_7, arg_4_2, var_4_3, var_4_5, iter_4_0)
+				Managers.state.unit_spawner:request_spawn_template_unit("thornsister_thorn_wall_unit", unbox, arg_4_2, source_unit, wall_index, i)
 			end
 		end
 	end
 }
 
-local function var_0_1(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
-	local var_5_0 = arg_5_1 + Quaternion.rotate(Quaternion.axis_angle(Vector3.up(), -arg_5_3), arg_5_2)
-	local var_5_1, var_5_2 = GwNavQueries.raycast(arg_5_0, arg_5_1, var_5_0)
-	local var_5_3 = Vector3.normalize(var_5_2 - arg_5_1)
+local function fn(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	-- function 5
+	local num = arg_5_1 + Quaternion.rotate(Quaternion.axis_angle(Vector3.up(), -arg_5_3), arg_5_2)
+	local raycast, var_5_2 = GwNavQueries.raycast(arg_5_0, arg_5_1, num)
+	local normalize = Vector3.normalize(var_5_2 - arg_5_1)
 
-	if var_5_1 then
-		return true, var_5_2, var_5_3
+	if not raycast then
+		return true, var_5_2, normalize
 	end
 
-	return false, var_5_2, var_5_3
+	return false, var_5_2, normalize
 end
 
 DamageWaveTemplates.templates.necromancer_curse_wave = {
@@ -511,17 +516,18 @@ DamageWaveTemplates.templates.necromancer_curse_wave = {
 				4,
 				0
 			},
-			on_spawn = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+			on_spawn = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+				-- function 6
 				local var_6_0 = Vector3(5, 6, 5)
 
 				Unit.set_local_scale(arg_6_3, 0, var_6_0)
 
-				local var_6_1 = World.time(Application.main_world())
-				local var_6_2 = DamageWaveTemplates.templates.necromancer_curse_wave.start_speed
-				local var_6_3 = var_6_1 + var_6_0.y / var_6_2
+				local time = World.time(Application.main_world())
+				local start_speed = DamageWaveTemplates.templates.necromancer_curse_wave.start_speed
+				local num = time + var_6_0.y / start_speed
 				local var_6_4 = Vector2(0, 1)
 
-				Unit.set_vector2_for_material(arg_6_3, "projector", "start_end_time", Vector2(var_6_1, var_6_3))
+				Unit.set_vector2_for_material(arg_6_3, "projector", "start_end_time", Vector2(time, num))
 				Unit.set_vector2_for_material(arg_6_3, "projector", "fade_direction", var_6_4)
 				Unit.set_scalar_for_material(arg_6_3, "projector", "trailing_fade_delay", 1.5)
 			end
@@ -550,17 +556,18 @@ DamageWaveTemplates.templates.necromancer_curse_wave = {
 				4,
 				0
 			},
-			on_spawn = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+			on_spawn = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+				-- function 7
 				local var_7_0 = Vector3(1, 1, 1)
 
 				Unit.set_local_scale(arg_7_3, 0, var_7_0)
 
-				local var_7_1 = World.time(Application.main_world())
-				local var_7_2 = var_7_1 + 3
-				local var_7_3 = 1.5
+				local time = World.time(Application.main_world())
+				local num = time + 3
+				local num_2 = 1.5
 
-				Unit.set_vector2_for_material(arg_7_3, "projector", "start_end_time", Vector2(var_7_1, var_7_2))
-				Unit.set_scalar_for_material(arg_7_3, "projector", "fade_time", var_7_3)
+				Unit.set_vector2_for_material(arg_7_3, "projector", "start_end_time", Vector2(time, num))
+				Unit.set_scalar_for_material(arg_7_3, "projector", "fade_time", num_2)
 				Unit.set_scalar_for_material(arg_7_3, "projector", "enable_fade", 1)
 			end
 		},
@@ -588,17 +595,18 @@ DamageWaveTemplates.templates.necromancer_curse_wave = {
 				4,
 				0
 			},
-			on_spawn = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+			on_spawn = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+				-- function 8
 				local var_8_0 = Vector3(1, 1, 1)
 
 				Unit.set_local_scale(arg_8_3, 0, var_8_0)
 
-				local var_8_1 = World.time(Application.main_world())
-				local var_8_2 = var_8_1 + 3
-				local var_8_3 = 1.5
+				local time = World.time(Application.main_world())
+				local num = time + 3
+				local num_2 = 1.5
 
-				Unit.set_vector2_for_material(arg_8_3, "projector", "start_end_time", Vector2(var_8_1, var_8_2))
-				Unit.set_scalar_for_material(arg_8_3, "projector", "fade_time", var_8_3)
+				Unit.set_vector2_for_material(arg_8_3, "projector", "start_end_time", Vector2(time, num))
+				Unit.set_scalar_for_material(arg_8_3, "projector", "fade_time", num_2)
 				Unit.set_scalar_for_material(arg_8_3, "projector", "enable_fade", 1)
 			end
 		}
@@ -607,12 +615,12 @@ DamageWaveTemplates.templates.necromancer_curse_wave = {
 		push_along_wave_direction = true,
 		drag_along_wave = false,
 		stagger_impact = {
-			var_0_0.heavy,
-			var_0_0.heavy,
-			var_0_0.heavy,
-			var_0_0.none,
-			var_0_0.heavy,
-			var_0_0.heavy
+			scripts_utils_stagger_types.heavy,
+			scripts_utils_stagger_types.heavy,
+			scripts_utils_stagger_types.heavy,
+			scripts_utils_stagger_types.none,
+			scripts_utils_stagger_types.heavy,
+			scripts_utils_stagger_types.heavy
 		},
 		stagger_duration = {
 			0.7,
@@ -652,28 +660,29 @@ DamageWaveTemplates.templates.necromancer_curse_wave = {
 			1.5
 		}
 	},
-	update_func = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
-		if not arg_9_0.wave_direction then
+	update_func = function (self, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+		-- function 9
+		if not self.wave_direction then
 			return
 		end
 
-		local var_9_0 = arg_9_0._update_data
+		local _update_data = self._update_data
 
-		if not var_9_0 then
-			local var_9_1 = arg_9_0.wave_direction:unbox()
+		if not _update_data then
+			local unbox = self.wave_direction:unbox()
 
-			var_9_0 = {
+			_update_data = {
 				next_spawn_t = 0,
 				failed_attempts = 0,
 				next_direction_update_t = 0,
 				hand_units_by_player = {},
-				original_direction = Vector3Box(var_9_1),
-				last_pos = Vector3Box(arg_9_2 - var_9_1)
+				original_direction = Vector3Box(unbox),
+				last_pos = Vector3Box(arg_9_2 - unbox)
 			}
-			arg_9_0._update_data = var_9_0
+			self._update_data = _update_data
 		end
 
-		if script_data.debug_necromancer_curse_wave then
+		if not script_data.debug_necromancer_curse_wave then
 			QuickDrawer:sphere(arg_9_2, 0.5)
 		end
 
@@ -681,78 +690,78 @@ DamageWaveTemplates.templates.necromancer_curse_wave = {
 			return
 		end
 
-		if arg_9_3 >= var_9_0.next_direction_update_t then
-			if var_9_0.next_direction then
-				arg_9_0.wave_direction = var_9_0.next_direction
-				var_9_0.next_direction = nil
+		if arg_9_3 >= _update_data.next_direction_update_t then
+			if not _update_data.next_direction then
+				self.wave_direction = _update_data.next_direction
+				_update_data.next_direction = nil
 			end
 
-			local var_9_2 = arg_9_0.acceleration
+			local acceleration = self.acceleration
 
-			assert(not var_9_2 or var_9_2 == 0, "Calculations won't be accurate if wave has acceleration")
+			assert(not acceleration and acceleration == 0, "Calculations won't be accurate if wave has acceleration")
 
-			local var_9_3 = DamageWaveTemplates.templates.necromancer_curse_wave.ai_query_distance
-			local var_9_4 = arg_9_0.wave_speed
-			local var_9_5 = arg_9_0.wave_direction:unbox() * var_9_4 * var_9_3
+			local ai_query_distance = DamageWaveTemplates.templates.necromancer_curse_wave.ai_query_distance
+			local wave_speed = self.wave_speed
+			local num = self.wave_direction:unbox() * wave_speed * ai_query_distance
 			local var_9_6 = arg_9_2
-			local var_9_7 = arg_9_2 + var_9_0.original_direction:unbox() * var_9_4 * var_9_3 * 2
-			local var_9_8 = Managers.state.entity:system("ai_system"):nav_world()
-			local var_9_9, var_9_10 = GwNavQueries.raycast(var_9_8, var_9_6, var_9_7)
+			local num_2 = arg_9_2 + _update_data.original_direction:unbox() * wave_speed * ai_query_distance * 2
+			local nav_world = Managers.state.entity:system("ai_system"):nav_world()
+			local raycast, var_9_10 = GwNavQueries.raycast(nav_world, var_9_6, num_2)
 			local var_9_11
 
-			if var_9_9 or Vector3.distance_squared(var_9_6, var_9_10) > var_9_3 * var_9_3 then
-				var_9_0.next_direction = var_9_0.original_direction
+			if not (raycast or not (Vector3.distance_squared(var_9_6, var_9_10) > ai_query_distance * ai_query_distance)) then
+				_update_data.next_direction = _update_data.original_direction
 				var_9_11 = var_9_10
 			else
-				local var_9_12 = var_9_6 + var_9_5
+				local num_3 = var_9_6 + num
 				local var_9_13
 
-				var_9_9, var_9_13 = GwNavQueries.raycast(var_9_8, var_9_6, var_9_12)
+				raycast, var_9_13 = GwNavQueries.raycast(nav_world, var_9_6, num_3)
 
-				if var_9_9 then
-					var_9_0.next_direction_update_t = arg_9_3 + 1
-				elseif var_9_0.failed_attempts < 4 then
-					local var_9_14 = var_9_13 + Vector3.normalize(var_9_6 - var_9_13) * var_9_3
-					local var_9_15 = math.pi * 0.25
+				if not raycast then
+					_update_data.next_direction_update_t = arg_9_3 + 1
+				elseif _update_data.failed_attempts < 4 then
+					local num_4 = var_9_13 + Vector3.normalize(var_9_6 - var_9_13) * ai_query_distance
+					local num_5 = math.pi * 0.25
 
 					repeat
 						local var_9_16
 						local var_9_17
 
-						var_9_9, var_9_11, var_9_17 = var_0_1(var_9_8, var_9_14, var_9_5, -var_9_15)
+						raycast, var_9_11, var_9_17 = fn(nav_world, num_4, num, -num_5)
 
-						if var_9_9 then
-							var_9_0.next_direction = Vector3Box(var_9_17)
+						if not raycast then
+							_update_data.next_direction = Vector3Box(var_9_17)
 
 							break
 						end
 
 						local var_9_18
 
-						var_9_9, var_9_11, var_9_18 = var_0_1(var_9_8, var_9_14, var_9_5, var_9_15)
+						raycast, var_9_11, var_9_18 = fn(nav_world, num_4, num, num_5)
 
-						if var_9_9 then
-							var_9_0.next_direction = Vector3Box(var_9_18)
+						if not raycast then
+							_update_data.next_direction = Vector3Box(var_9_18)
 
 							break
 						end
 
 						local var_9_19
 
-						var_9_9, var_9_11, var_9_19 = var_0_1(var_9_8, var_9_14, var_9_5, -2 * var_9_15)
+						raycast, var_9_11, var_9_19 = fn(nav_world, num_4, num, -2 * num_5)
 
-						if var_9_9 then
-							var_9_0.next_direction = Vector3Box(var_9_19)
+						if not raycast then
+							_update_data.next_direction = Vector3Box(var_9_19)
 
 							break
 						end
 
 						local var_9_20
 
-						var_9_9, var_9_11, var_9_20 = var_0_1(var_9_8, var_9_14, var_9_5, 2 * var_9_15)
+						raycast, var_9_11, var_9_20 = fn(nav_world, num_4, num, 2 * num_5)
 
-						if var_9_9 then
-							var_9_0.next_direction = Vector3Box(var_9_20)
+						if not raycast then
+							_update_data.next_direction = Vector3Box(var_9_20)
 						end
 
 						break
@@ -760,74 +769,77 @@ DamageWaveTemplates.templates.necromancer_curse_wave = {
 				end
 			end
 
-			if var_9_9 then
-				var_9_0.next_direction_update_t = arg_9_3 + 1
-				var_9_0.failed_attempts = 0
-			elseif var_9_11 then
-				var_9_0.next_direction_update_t = arg_9_3 + (Vector3.distance(var_9_11, var_9_6) - var_9_3) / var_9_4
-				var_9_0.failed_attempts = var_9_0.failed_attempts + 1
+			if not raycast then
+				_update_data.next_direction_update_t = arg_9_3 + 1
+				_update_data.failed_attempts = 0
+			elseif not var_9_11 then
+				_update_data.next_direction_update_t = arg_9_3 + (Vector3.distance(var_9_11, var_9_6) - ai_query_distance) / wave_speed
+				_update_data.failed_attempts = _update_data.failed_attempts + 1
 			end
 		end
 	end,
-	on_arrive_func = function(arg_10_0, arg_10_1, arg_10_2)
+	on_arrive_func = function (arg_10_0, arg_10_1, arg_10_2)
+		-- function 10
 		return
 	end
 }
 
-local var_0_2 = table.clone(DamageWaveTemplates.templates.necromancer_curse_wave)
+local clone = table.clone(DamageWaveTemplates.templates.necromancer_curse_wave)
 
-var_0_2.fx_name_filled = "fx/necromancer_wave_linger"
-var_0_2.fx_separation_dist = 1.5
-var_0_2.blob_separation_dist = 1
-var_0_2.apply_buff_to_owner = true
-var_0_2.buff_template_name = "sienna_necromancer_empowered_overcharge"
-var_0_2.buff_template_type = "sienna_necromancer_empowered_overcharge"
+clone.fx_name_filled = "fx/necromancer_wave_linger"
+clone.fx_separation_dist = 1.5
+clone.blob_separation_dist = 1
+clone.apply_buff_to_owner = true
+clone.buff_template_name = "sienna_necromancer_empowered_overcharge"
+clone.buff_template_type = "sienna_necromancer_empowered_overcharge"
 
-function var_0_2.add_buff_func(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
-	if not ALIVE[arg_11_1] or not Managers.state.network.is_server then
+clone.add_buff_func = function (self, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+	-- function 11
+	if not (not ALIVE[arg_11_1] and Managers.state.network.is_server) then
 		return
 	end
 
-	if arg_11_1 ~= arg_11_0.source_unit then
+	if arg_11_1 ~= self.source_unit then
 		return
 	end
 
-	local var_11_0 = Managers.player:owner(arg_11_1)
+	local owner = Managers.player:owner(arg_11_1)
 
-	if not var_11_0 then
+	if not owner then
 		return
 	end
 
-	local var_11_1 = ScriptUnit.extension(arg_11_1, "buff_system"):get_stacking_buff(arg_11_2)
+	local get_stacking_buff = ScriptUnit.extension(arg_11_1, "buff_system"):get_stacking_buff(arg_11_2)
 
-	if not (var_11_1 and var_11_1[1]) then
-		Managers.state.entity:system("buff_system"):add_buff_synced(arg_11_1, "sienna_necromancer_empowered_overcharge", BuffSyncType.ClientAndServer, nil, var_11_0.peer_id)
+	if not (not get_stacking_buff and get_stacking_buff[1]) then
+		Managers.state.entity:system("buff_system"):add_buff_synced(arg_11_1, "sienna_necromancer_empowered_overcharge", BuffSyncType.ClientAndServer, nil, owner.peer_id)
 	end
 end
 
-function var_0_2.leave_area_func(arg_12_0)
-	if ALIVE[arg_12_0] then
-		local var_12_0 = ScriptUnit.extension(arg_12_0, "buff_system")
-		local var_12_1 = var_12_0:get_stacking_buff("sienna_necromancer_empowered_overcharge")
-		local var_12_2 = var_12_1 and var_12_1[1]
+clone.leave_area_func = function (arg_12_0)
+	-- function 12
+	if not ALIVE[arg_12_0] then
+		local extension = ScriptUnit.extension(arg_12_0, "buff_system")
+		local get_stacking_buff = extension:get_stacking_buff("sienna_necromancer_empowered_overcharge")
+		local flag = not get_stacking_buff and get_stacking_buff[1]
 
-		if var_12_2 then
-			var_12_0:remove_buff(var_12_2.id)
+		if not flag then
+			extension:remove_buff(flag.id)
 		end
 	end
 end
 
-DamageWaveTemplates.templates.necromancer_curse_wave_linger = var_0_2
+DamageWaveTemplates.templates.necromancer_curse_wave_linger = clone
 
-for iter_0_0, iter_0_1 in pairs(DamageWaveTemplates.templates) do
-	local var_0_3 = iter_0_1.ai_push_data
-	local var_0_4 = var_0_3 and var_0_3.hit_half_extends
+for k, v in pairs(DamageWaveTemplates.templates) do
+	local ai_push_data = v.ai_push_data
+	local flag = not ai_push_data and ai_push_data.hit_half_extends
 
-	if var_0_4 then
-		fassert(not iter_0_1.ai_query_distance, "[DamageWaveTemplates] 'ai_query_distance' will be overridden by 'hit_half_extends'. (%s)", iter_0_0)
+	if not flag then
+		fassert(not v.ai_query_distance, "[DamageWaveTemplates] 'ai_query_distance' will be overridden by 'hit_half_extends'. (%s)", k)
 
-		local var_0_5 = Vector3Aux.unbox(var_0_4)
+		local unbox = Vector3Aux.unbox(flag)
 
-		iter_0_1.ai_query_distance = Vector3.length(var_0_5)
+		v.ai_query_distance = Vector3.length(unbox)
 	end
 end

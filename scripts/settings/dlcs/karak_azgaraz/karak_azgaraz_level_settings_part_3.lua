@@ -1,9 +1,9 @@
 -- chunkname: @scripts/settings/dlcs/karak_azgaraz/karak_azgaraz_level_settings_part_3.lua
 
-local var_0_0 = DLCSettings.karak_azgaraz_part_3
+local karak_azgaraz_part_3 = DLCSettings.karak_azgaraz_part_3
 
-var_0_0.level_settings = "levels/honduras_dlcs/karak_azgaraz/level_settings_karak_azgaraz_part_3"
-var_0_0.missions = {
+karak_azgaraz_part_3.level_settings = "levels/honduras_dlcs/karak_azgaraz/level_settings_karak_azgaraz_part_3"
+karak_azgaraz_part_3.missions = {
 	dwarf_beacons_find_trading_post = {
 		mission_template_name = "goal",
 		text = "dlc1_5_dwarf_beacons_find_trading_post_mission_text"

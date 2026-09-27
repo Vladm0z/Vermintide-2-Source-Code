@@ -599,32 +599,40 @@ RumbleTemplates = {
 	}
 }
 
-local var_0_0 = 0.5
+local num = 0.5
 
 ControllerFeaturesSettings = {
 	rumble = {
-		init = function(arg_1_0, arg_1_1)
+		init = function (self, arg_1_1)
+			-- function 1
 			local var_1_0 = RumbleTemplates[arg_1_1.rumble_effect]
 
-			if var_1_0 then
-				arg_1_0.ids = {}
-				arg_1_0._check_timer = var_0_0
+			if not var_1_0 then
+				self.ids = {}
+				self._check_timer = num
 
-				for iter_1_0, iter_1_1 in pairs(var_1_0.motors) do
-					arg_1_0.ids[iter_1_1] = arg_1_0.controller.rumble_effect(iter_1_1, var_1_0.params[iter_1_1 + 1] or var_1_0.params)
+				for k, v in pairs(var_1_0.motors) do
+					local ids = self.ids
+					local rumble_effect = self.controller.rumble_effect
+					local var_1_3 = v
+					local var_1_4 = var_1_0.params[v + 1]
+
+					var_1_4 = var_1_4 or var_1_0.params
+					ids[v] = rumble_effect(var_1_3, var_1_4)
 				end
 			else
 				Application.warning(string.format("[ControllerFeaturesImplementation] No such rumble effect: %s", tostring(arg_1_1.rumble_effect)))
 			end
 		end,
-		update = function(arg_2_0, arg_2_1, arg_2_2)
-			arg_2_0._check_timer = arg_2_0._check_timer - arg_2_1
+		update = function (self, arg_2_1, arg_2_2)
+			-- function 2
+			self._check_timer = self._check_timer - arg_2_1
 
-			if arg_2_0._check_timer <= 0 then
-				arg_2_0._check_timer = var_0_0
+			if self._check_timer <= 0 then
+				self._check_timer = num
 
-				for iter_2_0, iter_2_1 in pairs(arg_2_0.ids) do
-					if arg_2_0.controller.is_rumble_effect_playing(iter_2_0, iter_2_1) then
+				for k, v in pairs(self.ids) do
+					if not self.controller.is_rumble_effect_playing(k, v) then
 						return false
 					end
 				end
@@ -634,51 +642,54 @@ ControllerFeaturesSettings = {
 				return false
 			end
 		end,
-		destroy = function(arg_3_0, arg_3_1, arg_3_2)
-			for iter_3_0, iter_3_1 in pairs(arg_3_0.ids) do
-				if arg_3_0.controller.is_rumble_effect_playing(iter_3_0, iter_3_1) then
-					arg_3_0.controller.stop_rumble_effect(iter_3_0, iter_3_1)
+		destroy = function (self, arg_3_1, arg_3_2)
+			-- function 3
+			for k, v in pairs(self.ids) do
+				if not self.controller.is_rumble_effect_playing(k, v) then
+					self.controller.stop_rumble_effect(k, v)
 				end
 			end
 		end
 	},
 	hit_rumble = {
-		init = function(arg_4_0, arg_4_1)
-			local var_4_0 = arg_4_1.damage_amount
-			local var_4_1 = ScriptUnit.extension(arg_4_1.unit, "health_system"):get_max_health()
-			local var_4_2 = Managers.state.difficulty:get_difficulty_rank()
-			local var_4_3 = var_4_0 / var_4_1
-			local var_4_4 = 0.025 * var_4_2
-			local var_4_5 = 0.06 * var_4_2
-			local var_4_6 = "light_hit"
+		init = function (self, arg_4_1)
+			-- function 4
+			local damage_amount = arg_4_1.damage_amount
+			local get_max_health = ScriptUnit.extension(arg_4_1.unit, "health_system"):get_max_health()
+			local get_difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
+			local num_2 = damage_amount / get_max_health
+			local num_3 = 0.025 * get_difficulty_rank
+			local num_4 = 0.06 * get_difficulty_rank
+			local str = "light_hit"
 
-			if var_4_4 < var_4_3 and var_4_3 < var_4_5 then
-				var_4_6 = "medium_hit"
-			elseif var_4_5 <= var_4_3 then
-				var_4_6 = "heavy_hit"
+			if not (not (num_3 < num_2) or not (num_2 < num_4)) then
+				str = "medium_hit"
+			elseif num_4 <= num_2 then
+				str = "heavy_hit"
 			end
 
-			local var_4_7 = RumbleTemplates[var_4_6]
+			local var_4_7 = RumbleTemplates[str]
 
-			if var_4_7 then
-				arg_4_0.ids = {}
-				arg_4_0._check_timer = var_0_0
+			if not var_4_7 then
+				self.ids = {}
+				self._check_timer = num
 
-				for iter_4_0, iter_4_1 in pairs(var_4_7.motors) do
-					arg_4_0.ids[iter_4_1] = arg_4_0.controller.rumble_effect(iter_4_1, var_4_7.params)
+				for k, v in pairs(var_4_7.motors) do
+					self.ids[v] = self.controller.rumble_effect(v, var_4_7.params)
 				end
 			else
 				Application.warning(string.format("[ControllerFeaturesImplementation] No such rumble effect: %s", tostring(arg_4_1.rumble_effect)))
 			end
 		end,
-		update = function(arg_5_0, arg_5_1, arg_5_2)
-			arg_5_0._check_timer = arg_5_0._check_timer - arg_5_1
+		update = function (self, arg_5_1, arg_5_2)
+			-- function 5
+			self._check_timer = self._check_timer - arg_5_1
 
-			if arg_5_0._check_timer <= 0 then
-				arg_5_0._check_timer = var_0_0
+			if self._check_timer <= 0 then
+				self._check_timer = num
 
-				for iter_5_0, iter_5_1 in pairs(arg_5_0.ids) do
-					if arg_5_0.controller.is_rumble_effect_playing(iter_5_0, iter_5_1) then
+				for k, v in pairs(self.ids) do
+					if not self.controller.is_rumble_effect_playing(k, v) then
 						return false
 					end
 				end
@@ -688,53 +699,71 @@ ControllerFeaturesSettings = {
 				return false
 			end
 		end,
-		destroy = function(arg_6_0, arg_6_1, arg_6_2)
-			for iter_6_0, iter_6_1 in pairs(arg_6_0.ids) do
-				if arg_6_0.controller.is_rumble_effect_playing(iter_6_0, iter_6_1) then
-					arg_6_0.controller.stop_rumble_effect(iter_6_0, iter_6_1)
+		destroy = function (self, arg_6_1, arg_6_2)
+			-- function 6
+			for k, v in pairs(self.ids) do
+				if not self.controller.is_rumble_effect_playing(k, v) then
+					self.controller.stop_rumble_effect(k, v)
 				end
 			end
 		end
 	},
 	camera_shake = {
-		init = function(arg_7_0, arg_7_1)
-			local var_7_0 = arg_7_1.shake_settings
-			local var_7_1 = RumbleTemplates.camera_shake
+		init = function (self, arg_7_1)
+			-- function 7
+			local shake_settings = arg_7_1.shake_settings
+			local camera_shake = RumbleTemplates.camera_shake
 
-			arg_7_0.ids = {}
-			arg_7_0._check_timer = var_0_0
+			self.ids = {}
+			self._check_timer = num
 
-			if arg_7_1.event_name and var_7_1.disabled_events[arg_7_1.event_name] then
+			if not arg_7_1.event_name and not camera_shake.disabled_events[arg_7_1.event_name] then
 				print("[CameraFeatureSettings] Trying to add disabled rumble event:", arg_7_1.event_name)
 
 				return
 			end
 
-			local var_7_2 = var_7_0.event.fade_in or 0
-			local var_7_3 = var_7_0.event.fade_out or 0
-			local var_7_4 = arg_7_1.duration - var_7_2
-			local var_7_5 = math.clamp(arg_7_1.shake_settings.event.octaves or 0, 0, 6)
-			local var_7_6 = (1 - 1 / (var_7_0.event.octaves or 1)) * arg_7_1.scale * var_7_0.event.amplitude * var_7_0.event.persistance * 0.5
+			local fade_in = shake_settings.event.fade_in
 
-			var_7_1.params.attack = var_7_2
-			var_7_1.params.attack_level = var_7_6
-			var_7_1.params.frequency = var_7_5
-			var_7_1.params.release = var_7_3
-			var_7_1.params.sustain = var_7_4
-			var_7_1.params.sustain_level = var_7_6
+			fade_in = fade_in or 0
 
-			for iter_7_0, iter_7_1 in pairs(var_7_1.motors) do
-				arg_7_0.ids[iter_7_1] = arg_7_0.controller.rumble_effect(iter_7_1, var_7_1.params)
+			local fade_out = shake_settings.event.fade_out
+
+			fade_out = fade_out or 0
+
+			local num_2 = arg_7_1.duration - fade_in
+			local clamp = math.clamp
+			local octaves = arg_7_1.shake_settings.event.octaves
+
+			octaves = octaves or 0
+
+			local var_7_7 = clamp(octaves, 0, 6)
+			local octaves_2 = shake_settings.event.octaves
+
+			octaves_2 = octaves_2 or 1
+
+			local num_3 = (1 - 1 / octaves_2) * arg_7_1.scale * shake_settings.event.amplitude * shake_settings.event.persistance * 0.5
+
+			camera_shake.params.attack = fade_in
+			camera_shake.params.attack_level = num_3
+			camera_shake.params.frequency = var_7_7
+			camera_shake.params.release = fade_out
+			camera_shake.params.sustain = num_2
+			camera_shake.params.sustain_level = num_3
+
+			for k, v in pairs(camera_shake.motors) do
+				self.ids[v] = self.controller.rumble_effect(v, camera_shake.params)
 			end
 		end,
-		update = function(arg_8_0, arg_8_1, arg_8_2)
-			arg_8_0._check_timer = arg_8_0._check_timer - arg_8_1
+		update = function (self, arg_8_1, arg_8_2)
+			-- function 8
+			self._check_timer = self._check_timer - arg_8_1
 
-			if arg_8_0._check_timer <= 0 then
-				arg_8_0._check_timer = var_0_0
+			if self._check_timer <= 0 then
+				self._check_timer = num
 
-				for iter_8_0, iter_8_1 in pairs(arg_8_0.ids) do
-					if arg_8_0.controller.is_rumble_effect_playing(iter_8_0, iter_8_1) then
+				for k, v in pairs(self.ids) do
+					if not self.controller.is_rumble_effect_playing(k, v) then
 						return false
 					end
 				end
@@ -744,49 +773,58 @@ ControllerFeaturesSettings = {
 				return false
 			end
 		end,
-		destroy = function(arg_9_0, arg_9_1, arg_9_2)
-			for iter_9_0, iter_9_1 in pairs(arg_9_0.ids) do
-				if arg_9_0.controller.is_rumble_effect_playing(iter_9_0, iter_9_1) then
-					arg_9_0.controller.stop_rumble_effect(iter_9_0, iter_9_1)
+		destroy = function (self, arg_9_1, arg_9_2)
+			-- function 9
+			for k, v in pairs(self.ids) do
+				if not self.controller.is_rumble_effect_playing(k, v) then
+					self.controller.stop_rumble_effect(k, v)
 				end
 			end
 		end
 	},
 	persistent_rumble = {
-		init = function(arg_10_0, arg_10_1)
-			local var_10_0 = table.clone(RumbleTemplates[arg_10_1.rumble_effect])
-			local var_10_1 = arg_10_1.sustain_function
+		init = function (self, arg_10_1)
+			-- function 10
+			local clone = table.clone(RumbleTemplates[arg_10_1.rumble_effect])
+			local sustain_function = arg_10_1.sustain_function
 
-			if var_10_0 then
-				arg_10_0.sustain_function = var_10_1
-				arg_10_0.ids = {}
-				arg_10_0.check_timer = var_0_0
+			if not clone then
+				self.sustain_function = sustain_function
+				self.ids = {}
+				self.check_timer = num
 
-				for iter_10_0, iter_10_1 in pairs(var_10_0.params) do
-					if iter_10_1.sustain then
-						iter_10_1.sustain = math.huge
+				for k, v in pairs(clone.params) do
+					if not v.sustain then
+						v.sustain = math.huge
 					end
 				end
 
-				for iter_10_2, iter_10_3 in pairs(var_10_0.motors) do
-					arg_10_0.ids[iter_10_3] = arg_10_0.controller.rumble_effect(iter_10_3, var_10_0.params[iter_10_3 + 1] or var_10_0.params)
+				for k_2, v_2 in pairs(clone.motors) do
+					local ids = self.ids
+					local rumble_effect = self.controller.rumble_effect
+					local var_10_4 = v_2
+					local var_10_5 = clone.params[v_2 + 1]
+
+					var_10_5 = var_10_5 or clone.params
+					ids[v_2] = rumble_effect(var_10_4, var_10_5)
 				end
 			else
 				Application.warning(string.format("[ControllerFeaturesImplementation] No such rumble effect: %s", tostring(arg_10_1.rumble_effect)))
 			end
 		end,
-		update = function(arg_11_0, arg_11_1, arg_11_2)
-			arg_11_0.check_timer = arg_11_0.check_timer - arg_11_1
+		update = function (self, arg_11_1, arg_11_2)
+			-- function 11
+			self.check_timer = self.check_timer - arg_11_1
 
-			if arg_11_0.check_timer <= 0 then
-				arg_11_0.check_timer = var_0_0
+			if self.check_timer <= 0 then
+				self.check_timer = num
 
-				if arg_11_0.sustain_function and not arg_11_0.sustain_function() then
+				if not (not self.sustain_function and self.sustain_function()) then
 					return true
 				end
 
-				for iter_11_0, iter_11_1 in pairs(arg_11_0.ids) do
-					if arg_11_0.controller.is_rumble_effect_playing(iter_11_0, iter_11_1) then
+				for k, v in pairs(self.ids) do
+					if not self.controller.is_rumble_effect_playing(k, v) then
 						return false
 					end
 				end
@@ -796,10 +834,11 @@ ControllerFeaturesSettings = {
 				return false
 			end
 		end,
-		destroy = function(arg_12_0, arg_12_1, arg_12_2)
-			for iter_12_0, iter_12_1 in pairs(arg_12_0.ids) do
-				if arg_12_0.controller.is_rumble_effect_playing(iter_12_0, iter_12_1) then
-					arg_12_0.controller.stop_rumble_effect(iter_12_0, iter_12_1)
+		destroy = function (self, arg_12_1, arg_12_2)
+			-- function 12
+			for k, v in pairs(self.ids) do
+				if not self.controller.is_rumble_effect_playing(k, v) then
+					self.controller.stop_rumble_effect(k, v)
 				end
 			end
 		end

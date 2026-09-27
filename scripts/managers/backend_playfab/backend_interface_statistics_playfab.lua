@@ -1,103 +1,113 @@
 -- chunkname: @scripts/managers/backend_playfab/backend_interface_statistics_playfab.lua
 
-local var_0_0 = require("PlayFab.PlayFabClientApi")
+local PlayFabClientApi = require("PlayFab.PlayFabClientApi")
 
 BackendInterfaceStatisticsPlayFab = class(BackendInterfaceStatisticsPlayFab)
 
-function BackendInterfaceStatisticsPlayFab.update(arg_1_0, arg_1_1)
+BackendInterfaceStatisticsPlayFab.update = function (arg_1_0, arg_1_1)
+	-- function 1
 	return
 end
 
-function BackendInterfaceStatisticsPlayFab.init(arg_2_0, arg_2_1)
-	arg_2_0._mirror = arg_2_1
-	arg_2_0._request_queue = arg_2_1:request_queue()
+BackendInterfaceStatisticsPlayFab.init = function (self, arg_2_1)
+	-- function 2
+	self._mirror = arg_2_1
+	self._request_queue = arg_2_1:request_queue()
 
-	local function var_2_0(arg_3_0)
+	local function fn(self)
+		-- function 3
 		print("Player statistics loaded!")
 
-		local var_3_0 = arg_3_0.FunctionResult
+		local FunctionResult = self.FunctionResult
 
-		arg_2_0._mirror:set_stats(var_3_0)
+		self._mirror:set_stats(FunctionResult)
 
-		arg_2_0._ready = true
+		self._ready = true
 	end
 
-	local var_2_1 = {
+	local tbl = {
 		FunctionName = "loadPlayerStatistics"
 	}
 
-	arg_2_0._request_queue:enqueue(var_2_1, var_2_0)
+	self._request_queue:enqueue(tbl, fn)
 end
 
-function BackendInterfaceStatisticsPlayFab.ready(arg_4_0)
-	return arg_4_0._ready
+BackendInterfaceStatisticsPlayFab.ready = function (self)
+	-- function 4
+	return self._ready
 end
 
-function BackendInterfaceStatisticsPlayFab.get_stats(arg_5_0)
-	return arg_5_0._mirror:get_stats()
+BackendInterfaceStatisticsPlayFab.get_stats = function (self)
+	-- function 5
+	return self._mirror:get_stats()
 end
 
-local function var_0_1(arg_6_0)
-	local var_6_0 = {}
+local function fn(arg_6_0)
+	-- function 6
+	local tbl = {}
 
-	for iter_6_0, iter_6_1 in pairs(arg_6_0) do
-		if iter_6_1.value == nil then
-			table.append(var_6_0, var_0_1(iter_6_1))
+	for k, v in pairs(arg_6_0) do
+		if v.value == nil then
+			table.append(tbl, fn(v))
 		else
-			var_6_0[#var_6_0 + 1] = iter_6_1
+			tbl[#tbl + 1] = v
 		end
 	end
 
-	return var_6_0
+	return tbl
 end
 
-local function var_0_2(arg_7_0)
-	local var_7_0 = {}
+local function fn_2(arg_7_0)
+	-- function 7
+	local tbl = {}
 
-	for iter_7_0, iter_7_1 in pairs(arg_7_0) do
-		local var_7_1 = iter_7_1.database_name
-		local var_7_2 = iter_7_1.persistent_value
+	for k, v in pairs(arg_7_0) do
+		local database_name = v.database_name
+		local persistent_value = v.persistent_value
 
-		if var_7_1 and type(var_7_2) == "number" and iter_7_1.dirty then
-			var_7_0[#var_7_0 + 1] = iter_7_1
+		if not database_name and type(persistent_value) ~= "number" or not v.dirty then
+			tbl[#tbl + 1] = v
 		end
 	end
 
-	return var_7_0
+	return tbl
 end
 
-function BackendInterfaceStatisticsPlayFab.clear_dirty_flags(arg_8_0, arg_8_1)
-	for iter_8_0, iter_8_1 in pairs(arg_8_1) do
-		iter_8_1.dirty = false
+BackendInterfaceStatisticsPlayFab.clear_dirty_flags = function (arg_8_0, arg_8_1)
+	-- function 8
+	for k, v in pairs(arg_8_1) do
+		v.dirty = false
 	end
 end
 
-function BackendInterfaceStatisticsPlayFab.save(arg_9_0)
-	local var_9_0 = Managers.player
+BackendInterfaceStatisticsPlayFab.save = function (self)
+	-- function 9
+	local player = Managers.player
 
 	print("---------------------- BackendInterfaceStatisticsPlayFab:save ----------------------")
 
-	if not var_9_0 then
+	if not player then
 		print("[BackendInterfaceStatisticsPlayFab] No player manager, skipping saving statistics...")
 
 		return false
 	end
 
-	local var_9_1 = var_9_0:local_player()
+	local local_player = player:local_player()
 
-	if not var_9_1 then
+	if not local_player then
 		print("[BackendInterfaceStatisticsPlayFab] No player found, skipping saving statistics...")
 
 		return false
 	end
 
-	local var_9_2 = var_9_1:stats_id()
-	local var_9_3 = Managers.player:statistics_db():get_all_stats(var_9_2)
+	local stats_id = local_player:stats_id()
+	local get_all_stats = Managers.player:statistics_db():get_all_stats(stats_id)
 
-	arg_9_0._stats_to_save = var_0_2(var_0_1(var_9_3)), var_9_0:set_stats_backend(var_9_1)
+	self._stats_to_save = fn_2(fn(get_all_stats)), player:set_stats_backend(local_player)
 end
 
-function BackendInterfaceStatisticsPlayFab.save_explicit(arg_10_0, arg_10_1, arg_10_2)
+BackendInterfaceStatisticsPlayFab.save_explicit = function (self, arg_10_1, arg_10_2)
+	-- function 10
 	print("---------------------- BackendInterfaceStatisticsPlayFab:save ----------------------")
 
 	if not arg_10_2 then
@@ -112,32 +122,38 @@ function BackendInterfaceStatisticsPlayFab.save_explicit(arg_10_0, arg_10_1, arg
 		return false
 	end
 
-	local var_10_0 = arg_10_2:get_all_stats(arg_10_1)
+	local get_all_stats = arg_10_2:get_all_stats(arg_10_1)
 
-	arg_10_0._stats_to_save = var_0_2(var_0_1(var_10_0))
+	self._stats_to_save = fn_2(fn(get_all_stats))
 
-	local var_10_1 = {}
+	local tbl = {}
 
-	arg_10_2:generate_backend_stats(arg_10_1, var_10_1)
-	Managers.backend:set_stats(var_10_1)
+	arg_10_2:generate_backend_stats(arg_10_1, tbl)
+	Managers.backend:set_stats(tbl)
 end
 
-function BackendInterfaceStatisticsPlayFab.save_state_completed_achievements(arg_11_0, arg_11_1)
-	arg_11_0._state_completed_achievements = arg_11_1
+BackendInterfaceStatisticsPlayFab.save_state_completed_achievements = function (self, arg_11_1)
+	-- function 11
+	self._state_completed_achievements = arg_11_1
 end
 
-function BackendInterfaceStatisticsPlayFab.clear_saved_stats(arg_12_0)
-	arg_12_0._state_completed_achievements = nil
-	arg_12_0._stats_to_save = nil
+BackendInterfaceStatisticsPlayFab.clear_saved_stats = function (self)
+	-- function 12
+	self._state_completed_achievements = nil
+	self._stats_to_save = nil
 
 	Managers.player:statistics_db():apply_persistant_stats()
 end
 
-function BackendInterfaceStatisticsPlayFab.get_stat_save_request(arg_13_0)
-	local var_13_0 = arg_13_0._stats_to_save or {}
-	local var_13_1 = arg_13_0._state_completed_achievements
+BackendInterfaceStatisticsPlayFab.get_stat_save_request = function (self)
+	-- function 13
+	local _stats_to_save = self._stats_to_save
 
-	if (not var_13_0 or table.is_empty(var_13_0)) and (not var_13_1 or table.is_empty(var_13_1)) then
+	_stats_to_save = _stats_to_save or {}
+
+	local _state_completed_achievements = self._state_completed_achievements
+
+	if (not _stats_to_save and table.is_empty(_stats_to_save) or not _state_completed_achievements) and not table.is_empty(_state_completed_achievements) then
 		print("[BackendInterfaceStatisticsPlayFab] No modified player statistics or achievements to save...")
 
 		return false
@@ -146,66 +162,70 @@ function BackendInterfaceStatisticsPlayFab.get_stat_save_request(arg_13_0)
 	return {
 		FunctionName = "savePlayerStatistics3",
 		FunctionParameter = {
-			stats = var_13_0,
-			completed_achievements = var_13_1
+			stats = _stats_to_save,
+			completed_achievements = _state_completed_achievements
 		}
-	}, var_13_0
+	}, _stats_to_save
 end
 
-function BackendInterfaceStatisticsPlayFab.get_achievement_reward_levels(arg_14_0)
-	local var_14_0 = arg_14_0._mirror:get_read_only_data("achievement_reward_levels")
+BackendInterfaceStatisticsPlayFab.get_achievement_reward_levels = function (self)
+	-- function 14
+	local get_read_only_data = self._mirror:get_read_only_data("achievement_reward_levels")
 
-	if var_14_0 then
-		return (cjson.decode(var_14_0))
+	if not get_read_only_data then
+		return (cjson.decode(get_read_only_data))
 	end
 end
 
-function BackendInterfaceStatisticsPlayFab.get_achievement_reward_level(arg_15_0, arg_15_1)
-	local var_15_0 = arg_15_0._mirror:get_read_only_data("achievement_reward_levels")
+BackendInterfaceStatisticsPlayFab.get_achievement_reward_level = function (self, arg_15_1)
+	-- function 15
+	local get_read_only_data = self._mirror:get_read_only_data("achievement_reward_levels")
 
-	if var_15_0 then
-		return cjson.decode(var_15_0)[arg_15_1]
+	if not get_read_only_data then
+		return cjson.decode(get_read_only_data)[arg_15_1]
 	end
 end
 
-function BackendInterfaceStatisticsPlayFab.reset(arg_16_0)
-	local var_16_0 = Managers.player
+BackendInterfaceStatisticsPlayFab.reset = function (self)
+	-- function 16
+	local player = Managers.player
 
-	if not var_16_0 then
+	if not player then
 		print("[BackendInterfaceStatisticsPlayFab] No player manager, skipping resetting statistics...")
 
 		return false
 	end
 
-	local var_16_1 = var_16_0:local_player()
+	local local_player = player:local_player()
 
-	if not var_16_1 then
+	if not local_player then
 		print("[BackendInterfaceStatisticsPlayFab] No player found, skipping resetting statistics...")
 
 		return false
 	end
 
-	local var_16_2 = var_16_1:stats_id()
-	local var_16_3 = Managers.player:statistics_db():get_all_stats(var_16_2)
-	local var_16_4 = var_0_1(var_16_3)
-	local var_16_5 = {}
+	local stats_id = local_player:stats_id()
+	local get_all_stats = Managers.player:statistics_db():get_all_stats(stats_id)
+	local var_16_4 = fn(get_all_stats)
+	local tbl = {}
 
-	for iter_16_0, iter_16_1 in pairs(var_16_4) do
-		if iter_16_1.database_name and iter_16_1.source == nil then
-			var_16_5[#var_16_5 + 1] = iter_16_1.database_name
+	for k, v in pairs(var_16_4) do
+		if not (not v.database_name and v.source ~= nil) then
+			tbl[#tbl + 1] = v.database_name
 		end
 	end
 
-	local var_16_6 = {
+	local tbl_2 = {
 		FunctionName = "devResetPlayerStatistics",
 		FunctionParameter = {
-			stats = var_16_5
+			stats = tbl
 		}
 	}
 
-	local function var_16_7(arg_17_0)
+	local function fn_2(arg_17_0)
+		-- function 17
 		print("[BackendInterfaceStatisticsPlayFab] Player statistics resetted!")
 	end
 
-	arg_16_0._request_queue:enqueue(var_16_6, var_16_7)
+	self._request_queue:enqueue(tbl_2, fn_2)
 end

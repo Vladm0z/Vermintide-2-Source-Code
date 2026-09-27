@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/divine/dlc_reikwald_river/world_spawn_zones.lua
 
-local var_0_0 = {
+local tbl = {
 	{
 		roaming_set = "skaven",
 		main_path_index = 1,
@@ -618,7 +618,7 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	{
 		path_length = 9.698078155517578,
 		travel_dist = {
@@ -2075,8 +2075,8 @@ local var_0_1 = {
 		}
 	}
 }
-local var_0_2 = {}
-local var_0_3 = {
+local tbl_3 = {}
+local tbl_4 = {
 	{
 		unique_zone_id = 1,
 		roaming_set = "skaven",
@@ -44039,7 +44039,7 @@ local var_0_3 = {
 		}
 	}
 }
-local var_0_4 = {
+local tbl_5 = {
 	-106.20999908447266,
 	-197.60000610351562,
 	0.5619973540306091,
@@ -46861,7 +46861,7 @@ local var_0_4 = {
 	0.5240984559059143,
 	0.8516576886177063
 }
-local var_0_5 = {
+local tbl_6 = {
 	{
 		94.7090835571289,
 		-434.01983642578125,
@@ -244328,20 +244328,20 @@ local var_0_5 = {
 		3.836224317550659
 	}
 }
-local var_0_6 = 39493
-local var_0_7 = 106
-local var_0_8 = 1120.0545777082
-local var_0_9 = "1"
+local num = 39493
+local num_2 = 106
+local num_3 = 1120.0545777082
+local str = "1"
 
 return {
-	version = var_0_9,
-	number_of_spawns = var_0_6,
-	path_markers = var_0_0,
-	zones = var_0_3,
-	cover_points = var_0_4,
-	num_main_zones = var_0_7,
-	position_lookup = var_0_5,
-	main_paths = var_0_1,
-	crossroads = var_0_2,
-	total_main_path_length = var_0_8
+	version = str,
+	number_of_spawns = num,
+	path_markers = tbl,
+	zones = tbl_4,
+	cover_points = tbl_5,
+	num_main_zones = num_2,
+	position_lookup = tbl_6,
+	main_paths = tbl_2,
+	crossroads = tbl_3,
+	total_main_path_length = num_3
 }

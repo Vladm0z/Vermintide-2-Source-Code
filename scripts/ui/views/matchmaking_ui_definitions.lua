@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/matchmaking_ui_definitions.lua
 
-local var_0_0 = {
+local tbl = {
 	screen = {
 		scale = "fit",
 		size = {
@@ -392,14 +392,14 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = 5
-local var_0_2 = {
+local num = 5
+local tbl_2 = {
 	255,
 	10,
 	10,
 	10
 }
-local var_0_3 = {
+local tbl_3 = {
 	font_size = 22,
 	upper_case = true,
 	word_wrap = true,
@@ -414,80 +414,81 @@ local var_0_3 = {
 		2
 	}
 }
-local var_0_4 = table.clone(var_0_3)
+local clone = table.clone(tbl_3)
 
-var_0_4.vertical_alignment = "top"
-var_0_4.horizontal_alignment = "left"
-var_0_4.dynamic_font_size = true
-var_0_4.offset[2] = -10
-var_0_4.offset[1] = 15
-var_0_4.text_color = Colors.get_color_table_with_alpha("font_title", 255)
+clone.vertical_alignment = "top"
+clone.horizontal_alignment = "left"
+clone.dynamic_font_size = true
+clone.offset[2] = -10
+clone.offset[1] = 15
+clone.text_color = Colors.get_color_table_with_alpha("font_title", 255)
 
-local var_0_5 = table.clone(var_0_3)
+local clone_2 = table.clone(tbl_3)
 
-var_0_5.vertical_alignment = "top"
-var_0_5.horizontal_alignment = "left"
-var_0_5.font_size = 16
-var_0_5.offset[1] = 15
-var_0_5.offset[2] = -35
+clone_2.vertical_alignment = "top"
+clone_2.horizontal_alignment = "left"
+clone_2.font_size = 16
+clone_2.offset[1] = 15
+clone_2.offset[2] = -35
 
-local var_0_6 = table.clone(var_0_5)
+local clone_3 = table.clone(clone_2)
 
-var_0_6.default_color = {
+clone_3.default_color = {
 	255,
 	200,
 	200,
 	200
 }
 
-local var_0_7 = table.clone(var_0_3)
+local clone_4 = table.clone(tbl_3)
 
-var_0_7.vertical_alignment = "center"
-var_0_7.horizontal_alignment = "center"
-var_0_7.font_size = 26
-var_0_7.dynamic_font_size = true
-var_0_7.word_wrap = false
-var_0_7.offset[2] = 2
+clone_4.vertical_alignment = "center"
+clone_4.horizontal_alignment = "center"
+clone_4.font_size = 26
+clone_4.dynamic_font_size = true
+clone_4.word_wrap = false
+clone_4.offset[2] = 2
 
-local var_0_8 = table.clone(var_0_7)
+local clone_5 = table.clone(clone_4)
 
-var_0_8.text_color = Colors.get_table("font_title")
+clone_5.text_color = Colors.get_table("font_title")
 
-local var_0_9 = table.clone(var_0_3)
+local clone_6 = table.clone(tbl_3)
 
-var_0_9.vertical_alignment = "center"
-var_0_9.horizontal_alignment = "left"
-var_0_9.use_shadow = true
-var_0_9.font_size = 28
-var_0_9.dynamic_font_size = true
-var_0_9.offset[2] = 2
-var_0_9.text_color = Colors.get_color_table_with_alpha("font_title", 255)
+clone_6.vertical_alignment = "center"
+clone_6.horizontal_alignment = "left"
+clone_6.use_shadow = true
+clone_6.font_size = 28
+clone_6.dynamic_font_size = true
+clone_6.offset[2] = 2
+clone_6.text_color = Colors.get_color_table_with_alpha("font_title", 255)
 
-local var_0_10 = table.clone(var_0_9)
+local clone_7 = table.clone(clone_6)
 
-var_0_10.text_color = Colors.get_color_table_with_alpha("white", 255)
+clone_7.text_color = Colors.get_color_table_with_alpha("white", 255)
 
-local var_0_11 = table.clone(var_0_5)
+local clone_8 = table.clone(clone_2)
 
-var_0_11.default_color = {
+clone_8.default_color = {
 	255,
 	200,
 	200,
 	200
 }
 
-local var_0_12 = table.clone(var_0_7)
+local clone_9 = table.clone(clone_4)
 
-var_0_12.text_color = Colors.get_table("font_title")
+clone_9.text_color = Colors.get_table("font_title")
 
-local function var_0_13(arg_1_0, arg_1_1)
-	local var_1_0 = 0.6
-	local var_1_1 = 0.7
-	local var_1_2 = 4
-	local var_1_3 = {}
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
+	local num = 0.6
+	local num_2 = 0.7
+	local num_3 = 4
+	local tbl = {}
 
-	for iter_1_0 = 1, var_1_2 do
-		var_1_3[iter_1_0] = {
+	for i = 1, num_3 do
+		tbl[i] = {
 			255,
 			255,
 			255,
@@ -495,66 +496,69 @@ local function var_0_13(arg_1_0, arg_1_1)
 		}
 	end
 
-	local var_1_4 = {
+	local tbl_2 = {
 		element = {}
 	}
-	local var_1_5 = {
+	local tbl_3 = {
 		{
 			style_id = "orb",
 			pass_type = "texture_uv",
 			content_id = "orb",
-			content_change_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
-				local var_2_0 = arg_2_0.parent
-				local var_2_1 = var_2_0.size
-				local var_2_2 = var_2_0.progress
-				local var_2_3 = arg_2_1.default_size
-				local var_2_4 = arg_2_1.texture_size
-				local var_2_5 = arg_2_1.offset
-				local var_2_6 = var_2_0.speed
-				local var_2_7 = (var_2_1[1] + var_2_3[1]) / var_2_1[1]
-				local var_2_8 = var_2_1[1]
+			content_change_function = function (self, arg_2_1, arg_2_2, arg_2_3)
+				-- function 2
+				local parent = self.parent
+				local size = parent.size
+				local progress = parent.progress
+				local default_size = arg_2_1.default_size
+				local texture_size = arg_2_1.texture_size
+				local offset = arg_2_1.offset
+				local speed = parent.speed
+				local num = (size[1] + default_size[1]) / size[1]
+				local var_2_8 = size[1]
 
-				var_2_0.progress = (var_2_2 + arg_2_3 * var_2_6) % var_2_7
+				parent.progress = (progress + arg_2_3 * speed) % num
 
-				local var_2_9 = var_2_3[1] / var_2_1[1]
-				local var_2_10 = math.min(var_2_2 / var_2_9, 1)
-				local var_2_11 = math.min((var_2_7 - var_2_2) / var_2_9, 1)
-				local var_2_12 = var_2_7 - var_2_9
-				local var_2_13 = math.min((var_2_7 - var_2_2) / var_2_9, 1)
-				local var_2_14 = arg_2_0.uvs
+				local num_2 = default_size[1] / size[1]
+				local min = math.min(progress / num_2, 1)
+				local min_2 = math.min((num - progress) / num_2, 1)
+				local num_3 = num - num_2
+				local min_3 = math.min((num - progress) / num_2, 1)
+				local uvs = self.uvs
 
-				var_2_14[1][1] = 1 - var_2_10
-				var_2_14[2][1] = var_2_11
-				var_2_4[1] = math.floor(var_2_3[1] * math.min(var_2_10, var_2_11))
-				var_2_5[1] = math.floor(-var_2_4[1] + var_2_8 * var_2_2 - (1 - var_2_11) * var_2_3[1])
+				uvs[1][1] = 1 - min
+				uvs[2][1] = min_2
+				texture_size[1] = math.floor(default_size[1] * math.min(min, min_2))
+				offset[1] = math.floor(-texture_size[1] + var_2_8 * progress - (1 - min_2) * default_size[1])
 			end
 		},
 		{
 			style_id = "timeline",
 			pass_type = "rect",
-			content_change_function = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
-				local var_3_0 = arg_3_0.size
-				local var_3_1 = arg_3_0.progress
-				local var_3_2 = arg_3_1.offset
-				local var_3_3 = arg_3_1.color
-				local var_3_4 = arg_3_0.speed
+			content_change_function = function (self, arg_3_1, arg_3_2, arg_3_3)
+				-- function 3
+				local size = self.size
+				local progress = self.progress
+				local offset = arg_3_1.offset
+				local color = arg_3_1.color
+				local speed = self.speed
 
-				var_3_2[1] = -40 + var_3_0[1] * var_3_1
+				offset[1] = -40 + size[1] * progress
 			end
 		},
 		{
 			style_id = "trail",
 			texture_id = "trail",
 			pass_type = "texture",
-			content_change_function = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
-				local var_4_0 = arg_4_0.size
-				local var_4_1 = arg_4_0.progress
-				local var_4_2 = arg_4_1.texture_size
-				local var_4_3 = arg_4_1.offset
-				local var_4_4 = arg_4_1.parent.orb.default_size
-				local var_4_5 = var_4_0[1]
+			content_change_function = function (self, arg_4_1, arg_4_2, arg_4_3)
+				-- function 4
+				local size = self.size
+				local progress = self.progress
+				local texture_size = arg_4_1.texture_size
+				local offset = arg_4_1.offset
+				local default_size = arg_4_1.parent.orb.default_size
+				local var_4_5 = size[1]
 
-				var_4_3[1] = -(var_4_4[1] + 20) + var_4_5 * var_4_1
+				offset[1] = -(default_size[1] + 20) + var_4_5 * progress
 			end
 		},
 		{
@@ -571,26 +575,27 @@ local function var_0_13(arg_1_0, arg_1_1)
 			style_id = "globe",
 			texture_id = "globe",
 			pass_type = "texture",
-			content_change_function = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
-				local var_5_0 = arg_5_0.progress
-				local var_5_1 = math.min(var_5_0, 1)
+			content_change_function = function (self, arg_5_1, arg_5_2, arg_5_3)
+				-- function 5
+				local progress = self.progress
+				local min = math.min(progress, 1)
 
-				if var_5_1 < 0.5 then
-					var_5_1 = math.easeInCubic(2 * var_5_1)
+				if min < 0.5 then
+					min = math.easeInCubic(2 * min)
 				else
-					var_5_1 = math.easeOutCubic(2 - 2 * var_5_1)
+					min = math.easeOutCubic(2 - 2 * min)
 				end
 
-				local var_5_2 = arg_5_1.default_color
-				local var_5_3 = arg_5_1.color
-				local var_5_4 = 5
-				local var_5_5 = 0.5 + math.sin(Managers.time:time("ui") * var_5_4) * 0.5
-				local var_5_6 = math.max(var_5_1, var_5_5)
-				local var_5_7 = 0.2
+				local default_color = arg_5_1.default_color
+				local color = arg_5_1.color
+				local num = 5
+				local num_2 = 0.5 + math.sin(Managers.time:time("ui") * num) * 0.5
+				local max = math.max(min, num_2)
+				local num_3 = 0.2
 
-				var_5_3[2] = math.min(var_5_2[2] + var_5_2[2] * var_5_7 * var_5_5, 255)
-				var_5_3[3] = math.min(var_5_2[3] + var_5_2[3] * var_5_7 * var_5_5, 255)
-				var_5_3[4] = math.min(var_5_2[4] + var_5_2[4] * var_5_7 * var_5_5, 255)
+				color[2] = math.min(default_color[2] + default_color[2] * num_3 * num_2, 255)
+				color[3] = math.min(default_color[3] + default_color[3] * num_3 * num_2, 255)
+				color[4] = math.min(default_color[4] + default_color[4] * num_3 * num_2, 255)
 			end
 		},
 		{
@@ -609,7 +614,7 @@ local function var_0_13(arg_1_0, arg_1_1)
 			texture_id = "spark_pattern_2"
 		}
 	}
-	local var_1_6 = {
+	local tbl_4 = {
 		pattern = "versus_loading_trail_lines_bg_masked",
 		globe_bg = "versus_loading_trail_bg_back",
 		globe = "versus_loading_trail_center_effect",
@@ -635,15 +640,15 @@ local function var_0_13(arg_1_0, arg_1_1)
 				}
 			}
 		},
-		speed = var_1_0
+		speed = num
 	}
-	local var_1_7 = {
+	local tbl_5 = {
 		background = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			texture_size = {
-				556 * var_1_1,
-				108 * var_1_1
+				556 * num_2,
+				108 * num_2
 			},
 			color = {
 				255,
@@ -661,8 +666,8 @@ local function var_0_13(arg_1_0, arg_1_1)
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			texture_size = {
-				68 * var_1_1,
-				68 * var_1_1
+				68 * num_2,
+				68 * num_2
 			},
 			color = {
 				255,
@@ -680,8 +685,8 @@ local function var_0_13(arg_1_0, arg_1_1)
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			texture_size = {
-				68 * var_1_1,
-				68 * var_1_1
+				68 * num_2,
+				68 * num_2
 			},
 			color = {
 				255,
@@ -705,12 +710,12 @@ local function var_0_13(arg_1_0, arg_1_1)
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
 			texture_size = {
-				482 * var_1_1,
-				62 * var_1_1
+				482 * num_2,
+				62 * num_2
 			},
 			default_size = {
-				482 * var_1_1,
-				62 * var_1_1
+				482 * num_2,
+				62 * num_2
 			},
 			color = {
 				0,
@@ -728,8 +733,8 @@ local function var_0_13(arg_1_0, arg_1_1)
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
 			texture_size = {
-				416 * var_1_1,
-				arg_1_1[2] * var_1_1
+				416 * num_2,
+				arg_1_1[2] * num_2
 			},
 			color = {
 				255,
@@ -747,8 +752,8 @@ local function var_0_13(arg_1_0, arg_1_1)
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
 			texture_size = {
-				2 * var_1_1,
-				arg_1_1[2] * var_1_1
+				2 * num_2,
+				arg_1_1[2] * num_2
 			},
 			color = {
 				0,
@@ -766,8 +771,8 @@ local function var_0_13(arg_1_0, arg_1_1)
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			texture_size = {
-				556 * var_1_1,
-				160 * var_1_1
+				556 * num_2,
+				160 * num_2
 			},
 			offset = {
 				0,
@@ -775,8 +780,8 @@ local function var_0_13(arg_1_0, arg_1_1)
 				4
 			},
 			texture_tiling_size = {
-				arg_1_1[1] * var_1_1,
-				arg_1_1[2] * var_1_1
+				arg_1_1[1] * num_2,
+				arg_1_1[2] * num_2
 			},
 			color = {
 				255,
@@ -789,8 +794,8 @@ local function var_0_13(arg_1_0, arg_1_1)
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			texture_size = {
-				556 * var_1_1,
-				160 * var_1_1
+				556 * num_2,
+				160 * num_2
 			},
 			offset = {
 				0,
@@ -798,8 +803,8 @@ local function var_0_13(arg_1_0, arg_1_1)
 				4
 			},
 			texture_tiling_size = {
-				arg_1_1[1] * var_1_1,
-				arg_1_1[2] * var_1_1
+				arg_1_1[1] * num_2,
+				arg_1_1[2] * num_2
 			},
 			color = {
 				255,
@@ -810,21 +815,22 @@ local function var_0_13(arg_1_0, arg_1_1)
 		}
 	}
 
-	var_1_4.element.passes = var_1_5
-	var_1_4.content = var_1_6
-	var_1_4.style = var_1_7
-	var_1_4.offset = {
+	tbl_2.element.passes = tbl_3
+	tbl_2.content = tbl_4
+	tbl_2.style = tbl_5
+	tbl_2.offset = {
 		0,
 		0,
 		0
 	}
-	var_1_4.scenegraph_id = arg_1_0
+	tbl_2.scenegraph_id = arg_1_0
 
-	return var_1_4
+	return tbl_2
 end
 
-local function var_0_14(arg_6_0, arg_6_1)
-	return {
+local function fn_2(arg_6_0, arg_6_1)
+	-- function 6
+	local tbl = {
 		scenegraph_id = "window",
 		element = {
 			passes = {
@@ -832,19 +838,29 @@ local function var_0_14(arg_6_0, arg_6_1)
 					style_id = "texture_id",
 					pass_type = "texture",
 					texture_id = "texture_id",
-					content_check_function = function(arg_7_0)
-						return arg_7_0.is_connecting or arg_7_0.is_connected
+					content_check_function = function (self)
+						-- function 7
+						local is_connecting = self.is_connecting
+
+						is_connecting = is_connecting or self.is_connected
+
+						return is_connecting
 					end,
-					content_change_function = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
-						local var_8_0 = arg_8_1.color
+					content_change_function = function (self, arg_8_1, arg_8_2, arg_8_3)
+						-- function 8
+						local color = arg_8_1.color
 
-						if arg_8_0.is_connecting then
-							local var_8_1 = ((arg_8_0.color_progress or 1) + arg_8_3) % 1
+						if not self.is_connecting then
+							local color_progress = self.color_progress
 
-							arg_8_0.color_progress = var_8_1
-							var_8_0[1] = 255 * math.ease_pulse(var_8_1)
-						elseif arg_8_0.is_connected then
-							var_8_0[1] = 255
+							color_progress = color_progress or 1
+
+							local num = (color_progress + arg_8_3) % 1
+
+							self.color_progress = num
+							color[1] = 255 * math.ease_pulse(num)
+						elseif not self.is_connected then
+							color[1] = 255
 						end
 					end
 				}
@@ -854,32 +870,46 @@ local function var_0_14(arg_6_0, arg_6_1)
 			is_connected = false,
 			is_connecting = false,
 			texture_id = arg_6_0
-		},
-		style = {
-			texture_id = {
-				vertical_alignment = "botom",
-				horizontal_alignment = "right",
-				texture_size = {
-					30,
-					30
-				},
-				color = {
-					255,
-					255,
-					255,
-					255
-				},
-				offset = {
-					arg_6_1[1] or 0,
-					arg_6_1[2] or 0,
-					arg_6_1[3] or 0
-				}
-			}
 		}
 	}
+	local tbl_2 = {}
+	local tbl_3 = {
+		vertical_alignment = "botom",
+		horizontal_alignment = "right",
+		texture_size = {
+			30,
+			30
+		},
+		color = {
+			255,
+			255,
+			255,
+			255
+		}
+	}
+	local tbl_4 = {}
+	local var_6_4 = arg_6_1[1]
+
+	var_6_4 = var_6_4 or 0
+	tbl_4[1] = var_6_4
+
+	local var_6_5 = arg_6_1[2]
+
+	var_6_5 = var_6_5 or 0
+	tbl_4[2] = var_6_5
+
+	local var_6_6 = arg_6_1[3]
+
+	var_6_6 = var_6_6 or 0
+	tbl_4[3] = var_6_6
+	tbl_3.offset = tbl_4
+	tbl_2.texture_id = tbl_3
+	tbl.style = tbl_2
+
+	return tbl
 end
 
-local var_0_15 = {
+local tbl_4 = {
 	window = UIWidgets.create_simple_uv_texture("matchmaking_window", {
 		{
 			0,
@@ -899,37 +929,37 @@ local var_0_15 = {
 		71
 	}, "loading_status_frame"),
 	window_hotspot = UIWidgets.create_simple_hotspot("window"),
-	status_text = UIWidgets.create_simple_text("n/a", "status_text", nil, nil, var_0_7),
-	player_status_1 = var_0_14("matchmaking_light_02", {
+	status_text = UIWidgets.create_simple_text("n/a", "status_text", nil, nil, clone_4),
+	player_status_1 = fn_2("matchmaking_light_02", {
 		-89,
 		43,
 		1
 	}),
-	player_status_2 = var_0_14("matchmaking_light_02", {
+	player_status_2 = fn_2("matchmaking_light_02", {
 		-71,
 		22,
 		1
 	}),
-	player_status_3 = var_0_14("matchmaking_light_02", {
+	player_status_3 = fn_2("matchmaking_light_02", {
 		-45,
 		12,
 		1
 	}),
-	player_status_4 = var_0_14("matchmaking_light_02", {
+	player_status_4 = fn_2("matchmaking_light_02", {
 		-18,
 		15,
 		1
 	})
 }
-local var_0_16 = {
-	detailed_info_box_frame = UIWidgets.create_frame("detailed_info_box", var_0_0.detailed_info_box.size, "menu_frame_09", 1),
-	detailed_info_box = UIWidgets.create_background("detailed_info_box", var_0_0.detailed_info_box.size, "matchmaking_window_01"),
-	title_text = UIWidgets.create_simple_text("n/a", "level_key_info_box", nil, nil, var_0_4),
-	difficulty_text = UIWidgets.create_simple_text("n/a", "detailed_info_box", nil, nil, var_0_5),
-	party_slot_1 = UIWidgets.create_matchmaking_portrait(var_0_0.party_slot_1.size, "party_slot_1"),
-	party_slot_2 = UIWidgets.create_matchmaking_portrait(var_0_0.party_slot_2.size, "party_slot_2"),
-	party_slot_3 = UIWidgets.create_matchmaking_portrait(var_0_0.party_slot_3.size, "party_slot_3"),
-	party_slot_4 = UIWidgets.create_matchmaking_portrait(var_0_0.party_slot_4.size, "party_slot_4"),
+local tbl_5 = {
+	detailed_info_box_frame = UIWidgets.create_frame("detailed_info_box", tbl.detailed_info_box.size, "menu_frame_09", 1),
+	detailed_info_box = UIWidgets.create_background("detailed_info_box", tbl.detailed_info_box.size, "matchmaking_window_01"),
+	title_text = UIWidgets.create_simple_text("n/a", "level_key_info_box", nil, nil, clone),
+	difficulty_text = UIWidgets.create_simple_text("n/a", "detailed_info_box", nil, nil, clone_2),
+	party_slot_1 = UIWidgets.create_matchmaking_portrait(tbl.party_slot_1.size, "party_slot_1"),
+	party_slot_2 = UIWidgets.create_matchmaking_portrait(tbl.party_slot_2.size, "party_slot_2"),
+	party_slot_3 = UIWidgets.create_matchmaking_portrait(tbl.party_slot_3.size, "party_slot_3"),
+	party_slot_4 = UIWidgets.create_matchmaking_portrait(tbl.party_slot_4.size, "party_slot_4"),
 	timer_bg = UIWidgets.create_simple_texture("timer_bg", "timer_bg"),
 	timer_fg = UIWidgets.create_simple_uv_texture("timer_fg", {
 		{
@@ -943,7 +973,7 @@ local var_0_16 = {
 	}, "timer_fg"),
 	timer_glow = UIWidgets.create_simple_texture("timer_detail", "timer_glow")
 }
-local var_0_17 = {
+local tbl_6 = {
 	window = UIWidgets.create_simple_uv_texture("matchmaking_top", {
 		{
 			0,
@@ -972,36 +1002,36 @@ local var_0_17 = {
 		0
 	}),
 	window_hotspot = UIWidgets.create_simple_hotspot("window"),
-	status_text = UIWidgets.create_simple_text("n/a", "status_text", nil, nil, var_0_8),
-	player_status_1 = var_0_14("matchmaking_light_02", {
+	status_text = UIWidgets.create_simple_text("n/a", "status_text", nil, nil, clone_5),
+	player_status_1 = fn_2("matchmaking_light_02", {
 		-87,
 		46
 	}),
-	player_status_2 = var_0_14("matchmaking_light_02", {
+	player_status_2 = fn_2("matchmaking_light_02", {
 		-70,
 		25
 	}),
-	player_status_3 = var_0_14("matchmaking_light_02", {
+	player_status_3 = fn_2("matchmaking_light_02", {
 		-44,
 		15
 	}),
-	player_status_4 = var_0_14("matchmaking_light_02", {
+	player_status_4 = fn_2("matchmaking_light_02", {
 		-17,
 		19
 	})
 }
-local var_0_18 = {
+local tbl_7 = {
 	detailed_info_box = UIWidgets.create_simple_texture("matchmaking_animated_panel", "detailed_info_box", false, false, nil, {
 		-5,
 		-7,
 		0
 	}, "native"),
-	title_text = UIWidgets.create_simple_text("n/a", "level_key_info_box", nil, nil, var_0_4),
-	difficulty_text = UIWidgets.create_simple_text("n/a", "detailed_info_box", nil, nil, var_0_6),
-	party_slot_1 = UIWidgets.create_matchmaking_portrait(var_0_0.party_slot_1.size, "party_slot_1"),
-	party_slot_2 = UIWidgets.create_matchmaking_portrait(var_0_0.party_slot_2.size, "party_slot_2"),
-	party_slot_3 = UIWidgets.create_matchmaking_portrait(var_0_0.party_slot_3.size, "party_slot_3"),
-	party_slot_4 = UIWidgets.create_matchmaking_portrait(var_0_0.party_slot_4.size, "party_slot_4"),
+	title_text = UIWidgets.create_simple_text("n/a", "level_key_info_box", nil, nil, clone),
+	difficulty_text = UIWidgets.create_simple_text("n/a", "detailed_info_box", nil, nil, clone_3),
+	party_slot_1 = UIWidgets.create_matchmaking_portrait(tbl.party_slot_1.size, "party_slot_1"),
+	party_slot_2 = UIWidgets.create_matchmaking_portrait(tbl.party_slot_2.size, "party_slot_2"),
+	party_slot_3 = UIWidgets.create_matchmaking_portrait(tbl.party_slot_3.size, "party_slot_3"),
+	party_slot_4 = UIWidgets.create_matchmaking_portrait(tbl.party_slot_4.size, "party_slot_4"),
 	timer_bg = UIWidgets.create_simple_texture("matchmaking_progressbar_border", "timer_bg", false, false, nil, {
 		5,
 		-15,
@@ -1028,9 +1058,9 @@ local var_0_18 = {
 	})
 }
 
-var_0_18.detailed_info_box.content.no_background_changes = true
+tbl_7.detailed_info_box.content.no_background_changes = true
 
-local var_0_19 = {
+local tbl_8 = {
 	window = UIWidgets.create_simple_uv_texture("matchmaking_top_vs", {
 		{
 			0,
@@ -1059,16 +1089,16 @@ local var_0_19 = {
 		0
 	}),
 	window_hotspot = UIWidgets.create_simple_hotspot("window"),
-	status_text = UIWidgets.create_simple_text("n/a", "status_text", nil, nil, var_0_12)
+	status_text = UIWidgets.create_simple_text("n/a", "status_text", nil, nil, clone_9)
 }
-local var_0_20 = {
+local tbl_9 = {
 	detailed_info_box = UIWidgets.create_simple_texture("matchmaking_animated_panel", "detailed_info_box", false, false, nil, {
 		-5,
 		-7,
 		0
 	}, "native"),
-	title_text = UIWidgets.create_simple_text("n/a", "level_key_info_box", nil, nil, var_0_4),
-	difficulty_text = UIWidgets.create_simple_text("n/a", "detailed_info_box", nil, nil, var_0_11),
+	title_text = UIWidgets.create_simple_text("n/a", "level_key_info_box", nil, nil, clone),
+	difficulty_text = UIWidgets.create_simple_text("n/a", "detailed_info_box", nil, nil, clone_8),
 	timer_bg = UIWidgets.create_simple_texture("matchmaking_progressbar_border", "timer_bg", false, false, nil, {
 		5,
 		-15,
@@ -1093,26 +1123,26 @@ local var_0_20 = {
 		-1,
 		2
 	}),
-	slot_reservations = var_0_13("slot_reservations", var_0_0.slot_reservations.size)
+	slot_reservations = fn("slot_reservations", tbl.slot_reservations.size)
 }
 
-var_0_20.detailed_info_box.content.no_background_changes = true
+tbl_9.detailed_info_box.content.no_background_changes = true
 
-local var_0_21 = {
-	versus_cancel_text_input = UIWidgets.create_simple_text(Localize("matchmaking_suffix_cancel"), "versus_cancel_text_input", nil, nil, var_0_9),
-	versus_cancel_text_suffix = UIWidgets.create_simple_text(Localize("matchmaking_suffix_cancel"), "versus_cancel_text_suffix", nil, nil, var_0_10),
-	versus_cancel_text_prefix = UIWidgets.create_simple_text(Localize("matchmaking_suffix_cancel"), "versus_cancel_text_prefix", nil, nil, var_0_10),
+local tbl_10 = {
+	versus_cancel_text_input = UIWidgets.create_simple_text(Localize("matchmaking_suffix_cancel"), "versus_cancel_text_input", nil, nil, clone_6),
+	versus_cancel_text_suffix = UIWidgets.create_simple_text(Localize("matchmaking_suffix_cancel"), "versus_cancel_text_suffix", nil, nil, clone_7),
+	versus_cancel_text_prefix = UIWidgets.create_simple_text(Localize("matchmaking_suffix_cancel"), "versus_cancel_text_prefix", nil, nil, clone_7),
 	versus_cancel_icon = UIWidgets.create_simple_texture("xbone_button_icon_a", "versus_cancel_icon"),
 	cancel_input_backround = UIWidgets.create_simple_texture("tab_menu_bg_02", "cancel_input_backround")
 }
-local var_0_22 = {
-	cancel_text_input = UIWidgets.create_simple_text(Localize("matchmaking_suffix_cancel"), "cancel_text_input", nil, nil, var_0_9),
-	cancel_text_suffix = UIWidgets.create_simple_text(Localize("matchmaking_suffix_cancel"), "cancel_text_suffix", nil, nil, var_0_10),
-	cancel_text_prefix = UIWidgets.create_simple_text(Localize("matchmaking_suffix_cancel"), "cancel_text_prefix", nil, nil, var_0_10),
+local tbl_11 = {
+	cancel_text_input = UIWidgets.create_simple_text(Localize("matchmaking_suffix_cancel"), "cancel_text_input", nil, nil, clone_6),
+	cancel_text_suffix = UIWidgets.create_simple_text(Localize("matchmaking_suffix_cancel"), "cancel_text_suffix", nil, nil, clone_7),
+	cancel_text_prefix = UIWidgets.create_simple_text(Localize("matchmaking_suffix_cancel"), "cancel_text_prefix", nil, nil, clone_7),
 	cancel_icon = UIWidgets.create_simple_texture("xbone_button_icon_a", "cancel_icon"),
 	cancel_input_backround = UIWidgets.create_simple_texture("tab_menu_bg_02", "cancel_input_backround")
 }
-local var_0_23 = {
+local tbl_12 = {
 	debug_box = {
 		scenegraph_id = "debug_box",
 		element = {
@@ -1415,14 +1445,14 @@ local var_0_23 = {
 }
 
 return {
-	widget_definitions = var_0_15,
-	widget_detail_definitions = var_0_16,
-	deus_widget_definitions = var_0_17,
-	deus_widget_detail_definitions = var_0_18,
-	versus_widget_definitions = var_0_19,
-	versus_widget_detail_definitions = var_0_20,
-	cancel_input_widgets = var_0_22,
-	versus_input_widgets = var_0_21,
-	debug_widget_definitions = var_0_23,
-	scenegraph_definition = var_0_0
+	widget_definitions = tbl_4,
+	widget_detail_definitions = tbl_5,
+	deus_widget_definitions = tbl_6,
+	deus_widget_detail_definitions = tbl_7,
+	versus_widget_definitions = tbl_8,
+	versus_widget_detail_definitions = tbl_9,
+	cancel_input_widgets = tbl_11,
+	versus_input_widgets = tbl_10,
+	debug_widget_definitions = tbl_12,
+	scenegraph_definition = tbl
 }

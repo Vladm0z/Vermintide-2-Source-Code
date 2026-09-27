@@ -1,48 +1,62 @@
 -- chunkname: @scripts/entity_system/systems/tutorial/tutorial_condition_evaluator.lua
 
-TutorialConditions = TutorialConditions or {}
+local TutorialConditions = TutorialConditions
 
-function TutorialConditions.player(arg_1_0)
+TutorialConditions = TutorialConditions or {}
+TutorialConditions = TutorialConditions
+
+TutorialConditions.player = function (arg_1_0)
+	-- function 1
 	return Managers.player:local_player()
 end
 
-function TutorialConditions.hero_name(arg_2_0)
-	local var_2_0 = arg_2_0:get("player"):profile_display_name()
+TutorialConditions.hero_name = function (self)
+	-- function 2
+	local profile_display_name = self:get("player"):profile_display_name()
 
-	if var_2_0 then
-		return var_2_0
+	if not profile_display_name then
+		return profile_display_name
 	end
 
-	local var_2_1 = Managers.matchmaking.selected_profile_index or SaveData.wanted_profile_index or 1
+	local selected_profile_index = Managers.matchmaking.selected_profile_index
 
-	return SPProfiles[var_2_1].display_name
+	if not selected_profile_index then
+		selected_profile_index = SaveData.wanted_profile_index
+		selected_profile_index = selected_profile_index or 1
+	end
+
+	return SPProfiles[selected_profile_index].display_name
 end
 
-function TutorialConditions.career_name(arg_3_0)
-	return arg_3_0:get("player"):career_name()
+TutorialConditions.career_name = function (self)
+	-- function 3
+	return self:get("player"):career_name()
 end
 
-function TutorialConditions.player_level(arg_4_0)
-	local var_4_0 = arg_4_0:get("hero_name")
-	local var_4_1 = ExperienceSettings.get_experience(var_4_0)
+TutorialConditions.player_level = function (self)
+	-- function 4
+	local get = self:get("hero_name")
+	local get_experience = ExperienceSettings.get_experience(get)
 
-	return ExperienceSettings.get_level(var_4_1)
+	return ExperienceSettings.get_level(get_experience)
 end
 
-function TutorialConditions.has_max_level_character(arg_5_0)
+TutorialConditions.has_max_level_character = function (arg_5_0)
+	-- function 5
 	return ExperienceSettings.get_highest_character_level() == ExperienceSettings.max_level
 end
 
-function TutorialConditions.has_unlocked_non_dlc_career_for_current_hero(arg_6_0)
-	local var_6_0 = arg_6_0:get("player")
-	local var_6_1 = arg_6_0:get("player_level")
-	local var_6_2 = arg_6_0:get("career_name")
-	local var_6_3 = var_6_0:profile_index()
-	local var_6_4 = SPProfiles[var_6_3]
-	local var_6_5 = var_6_4 and var_6_4.careers
+TutorialConditions.has_unlocked_non_dlc_career_for_current_hero = function (self)
+	-- function 6
+	local get = self:get("player")
+	local get_2 = self:get("player_level")
+	local get_3 = self:get("career_name")
+	local profile_index = get:profile_index()
+	local var_6_4 = SPProfiles[profile_index]
+	local flag = not var_6_4 and var_6_4.careers
 
-	for iter_6_0, iter_6_1 in pairs(var_6_5) do
-		if iter_6_1.name ~= var_6_2 and not iter_6_1.required_dlc and iter_6_1:is_unlocked_function(var_6_4.display_name, var_6_1) then
+	for k, v in pairs(flag) do
+		if v.name == get_3 or v.required_dlc or not v:is_unlocked_function(var_6_4.display_name, get_2) then
 			return true
 		end
 	end
@@ -50,127 +64,143 @@ function TutorialConditions.has_unlocked_non_dlc_career_for_current_hero(arg_6_0
 	return false
 end
 
-function TutorialConditions.num_spent_talent_points(arg_7_0)
-	local var_7_0 = arg_7_0:get("career_name")
-	local var_7_1 = Managers.backend:get_interface("talents"):get_talents(var_7_0)
-	local var_7_2 = 0
+TutorialConditions.num_spent_talent_points = function (self)
+	-- function 7
+	local get = self:get("career_name")
+	local get_talents = Managers.backend:get_interface("talents"):get_talents(get)
+	local num = 0
 
-	if var_7_1 then
-		for iter_7_0 = 1, #var_7_1 do
-			if var_7_1[iter_7_0] > 0 then
-				var_7_2 = var_7_2 + 1
+	if not get_talents then
+		for i = 1, #get_talents do
+			if get_talents[i] > 0 then
+				num = num + 1
 			end
 		end
 	end
 
-	return var_7_2
+	return num
 end
 
-function TutorialConditions.num_unlocked_talent_points(arg_8_0)
-	local var_8_0 = arg_8_0:get("player_level")
-	local var_8_1 = 0
+TutorialConditions.num_unlocked_talent_points = function (self)
+	-- function 8
+	local get = self:get("player_level")
+	local num = 0
 
-	for iter_8_0 in pairs(TalentUnlockLevels) do
-		if ProgressionUnlocks.is_unlocked(iter_8_0, var_8_0) then
-			var_8_1 = var_8_1 + 1
+	for k in pairs(TalentUnlockLevels) do
+		if not ProgressionUnlocks.is_unlocked(k, get) then
+			num = num + 1
 		end
 	end
 
-	return var_8_1
+	return num
 end
 
-function TutorialConditions.has_unspent_talent_points(arg_9_0)
-	return arg_9_0:get("num_unlocked_talent_points") > arg_9_0:get("num_spent_talent_points")
+TutorialConditions.has_unspent_talent_points = function (self)
+	-- function 9
+	return self:get("num_unlocked_talent_points") > self:get("num_spent_talent_points")
 end
 
-function TutorialConditions.has_unopened_chests(arg_10_0)
+TutorialConditions.has_unopened_chests = function (arg_10_0)
+	-- function 10
 	return ItemHelper.has_new_backend_ids_by_slot_type("loot_chest")
 end
 
-function TutorialConditions.has_new_cosmetics(arg_11_0)
-	local var_11_0 = arg_11_0:get("career_name")
+TutorialConditions.has_new_cosmetics = function (self)
+	-- function 11
+	local get = self:get("career_name")
 
-	if ItemHelper.has_new_backend_ids_by_career_name_and_slot_type(var_11_0, "skin") then
+	if not ItemHelper.has_new_backend_ids_by_career_name_and_slot_type(get, "skin") then
 		return true
-	elseif ItemHelper.has_new_backend_ids_by_slot_type("frame") then
+	elseif not ItemHelper.has_new_backend_ids_by_slot_type("frame") then
 		return true
-	elseif ItemHelper.has_new_backend_ids_by_career_name_and_slot_type(var_11_0, "hat") then
+	elseif not ItemHelper.has_new_backend_ids_by_career_name_and_slot_type(get, "hat") then
 		return true
 	end
 
 	return false
 end
 
-function TutorialConditions.best_acquired_power_level(arg_12_0)
-	return (arg_12_0:get("player"):best_aquired_power_level())
+TutorialConditions.best_acquired_power_level = function (self)
+	-- function 12
+	return (self:get("player"):best_aquired_power_level())
 end
 
-local function var_0_0(arg_13_0, arg_13_1)
+local function fn(self, arg_13_1)
+	-- function 13
 	local var_13_0 = DifficultySettings[arg_13_1]
 
-	if arg_13_0:get("best_acquired_power_level") < var_13_0.required_power_level then
+	if self:get("best_acquired_power_level") < var_13_0.required_power_level then
 		return false
 	end
 
-	local var_13_1 = var_13_0.extra_requirement_name
+	local extra_requirement_name = var_13_0.extra_requirement_name
 
-	if var_13_1 and not ExtraDifficultyRequirements[var_13_1].requirement_function() then
+	if not (not extra_requirement_name and ExtraDifficultyRequirements[extra_requirement_name].requirement_function()) then
 		return false
 	end
 
-	local var_13_2 = var_13_0.dlc_requirement
+	local dlc_requirement = var_13_0.dlc_requirement
 
-	if var_13_2 and not Managers.unlock:is_dlc_unlocked(var_13_2) then
+	if not (not dlc_requirement and Managers.unlock:is_dlc_unlocked(dlc_requirement)) then
 		return false
 	end
 
 	return true
 end
 
-function TutorialConditions.harder_unlocked(arg_14_0)
-	return var_0_0(arg_14_0, "harder")
+TutorialConditions.harder_unlocked = function (arg_14_0)
+	-- function 14
+	return fn(arg_14_0, "harder")
 end
 
-function TutorialConditions.hardest_unlocked(arg_15_0)
-	return var_0_0(arg_15_0, "hardest")
+TutorialConditions.hardest_unlocked = function (arg_15_0)
+	-- function 15
+	return fn(arg_15_0, "hardest")
 end
 
-function TutorialConditions.cataclysm_unlocked(arg_16_0)
-	return var_0_0(arg_16_0, "cataclysm")
+TutorialConditions.cataclysm_unlocked = function (arg_16_0)
+	-- function 16
+	return fn(arg_16_0, "cataclysm")
 end
 
-function TutorialConditions.current_mechanism_name(arg_17_0)
+TutorialConditions.current_mechanism_name = function (arg_17_0)
+	-- function 17
 	return Managers.mechanism:current_mechanism_name()
 end
 
-function TutorialConditions.is_versus_mechanism(arg_18_0)
-	return arg_18_0:get("current_mechanism_name") == "versus"
+TutorialConditions.is_versus_mechanism = function (self)
+	-- function 18
+	return self:get("current_mechanism_name") == "versus"
 end
 
-function TutorialConditions.is_adventure_mechanism(arg_19_0)
-	return arg_19_0:get("current_mechanism_name") == "adventure"
+TutorialConditions.is_adventure_mechanism = function (self)
+	-- function 19
+	return self:get("current_mechanism_name") == "adventure"
 end
 
 TutorialConditionEvaluator = class(TutorialConditionEvaluator)
 
-function TutorialConditionEvaluator.init(arg_20_0)
-	arg_20_0._values = {}
+TutorialConditionEvaluator.init = function (self)
+	-- function 20
+	self._values = {}
 end
 
-function TutorialConditionEvaluator.clear_cache(arg_21_0)
-	table.clear(arg_21_0._values)
+TutorialConditionEvaluator.clear_cache = function (self)
+	-- function 21
+	table.clear(self._values)
 end
 
-function TutorialConditionEvaluator.get(arg_22_0, arg_22_1)
-	local var_22_0 = arg_22_0._values[arg_22_1]
+TutorialConditionEvaluator.get = function (self, arg_22_1)
+	-- function 22
+	local var_22_0 = self._values[arg_22_1]
 
 	if var_22_0 ~= nil then
 		return var_22_0
 	end
 
-	local var_22_1 = TutorialConditions[arg_22_1](arg_22_0) or false
+	local flag = TutorialConditions[arg_22_1](self) or false
 
-	arg_22_0._values[arg_22_1] = var_22_1
+	self._values[arg_22_1] = flag
 
-	return var_22_1
+	return flag
 end

@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/unlock_key_view_definitions.lua
 
-local var_0_0 = {
+local tbl = {
 	root = {
 		position = {
 			0,
@@ -143,12 +143,13 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	confirm = "(A)",
 	back = "(B)"
 }
 
-local function var_0_2(arg_1_0, arg_1_1)
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
 	return {
 		element = UIElements.GamepadButton(arg_1_0),
 		content = {
@@ -160,7 +161,7 @@ local function var_0_2(arg_1_0, arg_1_1)
 			gamepad_button = {
 				is_clicked = 10
 			},
-			button_type_text_field = var_0_1[arg_1_0]
+			button_type_text_field = tbl_2[arg_1_0]
 		},
 		style = {
 			text = {
@@ -192,9 +193,9 @@ local function var_0_2(arg_1_0, arg_1_1)
 	}
 end
 
-local var_0_3 = {
-	confirm_gamepad_button_widget = var_0_2("confirm", "confirm_gamepad_button"),
-	back_gamepad_button_widget = var_0_2("back", "back_gamepad_button"),
+local tbl_3 = {
+	confirm_gamepad_button_widget = fn("confirm", "confirm_gamepad_button"),
+	back_gamepad_button_widget = fn("back", "back_gamepad_button"),
 	processing_icon = {
 		scenegraph_id = "processing_icon",
 		element = {
@@ -439,7 +440,7 @@ local var_0_3 = {
 		}
 	}
 }
-local var_0_4 = {
+local tbl_4 = {
 	scenegraph_id = "",
 	element = UIElements.SimpleTexture,
 	content = {
@@ -448,15 +449,16 @@ local var_0_4 = {
 	style = {}
 }
 
-local function var_0_5(arg_2_0, arg_2_1)
-	var_0_4.content.texture_id = arg_2_0
-	var_0_4.scenegraph_id = arg_2_1
+local function fn_2(arg_2_0, arg_2_1)
+	-- function 2
+	tbl_4.content.texture_id = arg_2_0
+	tbl_4.scenegraph_id = arg_2_1
 
-	return UIWidget.init(var_0_4)
+	return UIWidget.init(tbl_4)
 end
 
 return {
-	scenegraph_definition = var_0_0,
-	widget_definitions = var_0_3,
-	create_simple_texture_widget = var_0_5
+	scenegraph_definition = tbl,
+	widget_definitions = tbl_3,
+	create_simple_texture_widget = fn_2
 }

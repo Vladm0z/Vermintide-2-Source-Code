@@ -4,7 +4,7 @@ ERROR_CODES = {}
 BACKEND_LUA_ERRORS = {}
 BACKEND_PLAYFAB_ERRORS = {}
 
-if rawget(_G, "Backend") then
+if not rawget(_G, "Backend") then
 	ERROR_CODES[Backend.ERR_OK] = "backend_err_ok"
 	ERROR_CODES[Backend.ERR_UNKNOWN] = "backend_err_unknown"
 	ERROR_CODES[Backend.ERR_AUTH] = "backend_err_auth"

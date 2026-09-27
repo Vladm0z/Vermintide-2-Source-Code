@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/breeds/breed_shadow_skull.lua
 
-local var_0_0 = {
+local tbl = {
 	detection_radius = 9999999,
 	debug_despawn_immunity = false,
 	target_selection = "pick_closest_target",
@@ -92,34 +92,38 @@ local var_0_0 = {
 			}
 		}
 	},
-	modify_extension_init_data = function(arg_1_0, arg_1_1, arg_1_2)
-		local var_1_0 = arg_1_0.impact_explosion_name
-		local var_1_1 = arg_1_0.collision_detection_sphere_radius
-		local var_1_2 = arg_1_0.only_one_impact
-		local var_1_3 = arg_1_0.impact_collision_filter
-		local var_1_4 = arg_1_0.impact_template_name
-		local var_1_5 = "n/a"
-		local var_1_6 = arg_1_2.projectile_impact_system or {}
+	modify_extension_init_data = function (self, arg_1_1, arg_1_2)
+		-- function 1
+		local impact_explosion_name = self.impact_explosion_name
+		local collision_detection_sphere_radius = self.collision_detection_sphere_radius
+		local only_one_impact = self.only_one_impact
+		local impact_collision_filter = self.impact_collision_filter
+		local impact_template_name = self.impact_template_name
+		local str = "n/a"
+		local projectile_impact_system = arg_1_2.projectile_impact_system
 
-		var_1_6.sphere_radius = var_1_1
-		var_1_6.only_one_impact = var_1_2
-		var_1_6.collision_filter = var_1_3
-		arg_1_2.projectile_impact_system = var_1_6
+		projectile_impact_system = projectile_impact_system or {}
+		projectile_impact_system.sphere_radius = collision_detection_sphere_radius
+		projectile_impact_system.only_one_impact = only_one_impact
+		projectile_impact_system.collision_filter = impact_collision_filter
+		arg_1_2.projectile_impact_system = projectile_impact_system
 
-		local var_1_7 = arg_1_2.projectile_system or {}
+		local projectile_system = arg_1_2.projectile_system
 
-		var_1_7.damage_source = var_1_5
-		var_1_7.impact_template_name = var_1_4
-		var_1_7.explosion_template_name = var_1_0
-		arg_1_2.projectile_system = var_1_7
+		projectile_system = projectile_system or {}
+		projectile_system.damage_source = str
+		projectile_system.impact_template_name = impact_template_name
+		projectile_system.explosion_template_name = impact_explosion_name
+		arg_1_2.projectile_system = projectile_system
 	end,
 	debug_spawn_optional_data = {
-		prepare_func = function(arg_2_0, arg_2_1)
-			local var_2_0 = false
+		prepare_func = function (self, arg_2_1)
+			-- function 2
+			local flag = false
 
-			arg_2_0.modify_extension_init_data(arg_2_0, var_2_0, arg_2_1)
+			self.modify_extension_init_data(self, flag, arg_2_1)
 		end
 	}
 }
 
-Breeds.shadow_skull = table.create_copy(Breeds.shadow_skull, var_0_0)
+Breeds.shadow_skull = table.create_copy(Breeds.shadow_skull, tbl)

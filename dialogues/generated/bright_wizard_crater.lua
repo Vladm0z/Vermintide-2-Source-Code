@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/bright_wizard_crater.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pbw_crater_ambush_done",

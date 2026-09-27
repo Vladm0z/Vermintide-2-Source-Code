@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/bright_wizard_honduras.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		response = "pbw_activate_ability_battle_wizard",
 		name = "pbw_activate_ability_battle_wizard",

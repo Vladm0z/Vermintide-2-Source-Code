@@ -1,13 +1,14 @@
 -- chunkname: @scripts/managers/bot_nav_transition/bot_nav_transition_manager.lua
 
-local function var_0_0(arg_1_0, ...)
-	if script_data.ai_bots_debug or script_data.ai_bot_transition_debug then
+local function fn(arg_1_0, ...)
+	-- function 1
+	if script_data.ai_bots_debug or not script_data.ai_bot_transition_debug then
 		printf("[BotNavTransitionManager] " .. arg_1_0, ...)
 	end
 end
 
-local var_0_1 = false
-local var_0_2 = 0.1
+local flag = false
+local num = 0.1
 
 BotNavTransitionManager = class(BotNavTransitionManager)
 BotNavTransitionManager.TRANSITION_LAYERS = {
@@ -36,142 +37,151 @@ BotNavTransitionManager.NAV_COST_MAP_LAYERS = {
 	troll_bile = 30
 }
 
-function BotNavTransitionManager.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
-	arg_2_0._world = arg_2_1
-	arg_2_0._physics_world = arg_2_2
-	arg_2_0._nav_world = arg_2_3
-	arg_2_0._index_offset = 471100
-	arg_2_0._current_index = arg_2_0._index_offset + 1
-	arg_2_0._max_amount = 100
-	arg_2_0._bot_nav_transitions = {}
-	arg_2_0._bot_nav_transition_lookup = {}
+BotNavTransitionManager.init = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
+	-- function 2
+	self._world = arg_2_1
+	self._physics_world = arg_2_2
+	self._nav_world = arg_2_3
+	self._index_offset = 471100
+	self._current_index = self._index_offset + 1
+	self._max_amount = 100
+	self._bot_nav_transitions = {}
+	self._bot_nav_transition_lookup = {}
 
-	local var_2_0 = GwNavCostMap.create_tag_cost_table()
+	local create_tag_cost_table = GwNavCostMap.create_tag_cost_table()
 
-	arg_2_0._nav_cost_map_cost_table = var_2_0
+	self._nav_cost_map_cost_table = create_tag_cost_table
 
-	AiUtils.initialize_nav_cost_map_cost_table(var_2_0, BotNavTransitionManager.NAV_COST_MAP_LAYERS)
+	AiUtils.initialize_nav_cost_map_cost_table(create_tag_cost_table, BotNavTransitionManager.NAV_COST_MAP_LAYERS)
 
-	arg_2_0._navtag_layer_cost_table = GwNavTagLayerCostTable.create()
-	arg_2_0._layerless_traverse_logic = GwNavTraverseLogic.create(arg_2_3, var_2_0)
-	arg_2_0._traverse_logic = GwNavTraverseLogic.create(arg_2_3, var_2_0)
+	self._navtag_layer_cost_table = GwNavTagLayerCostTable.create()
+	self._layerless_traverse_logic = GwNavTraverseLogic.create(arg_2_3, create_tag_cost_table)
+	self._traverse_logic = GwNavTraverseLogic.create(arg_2_3, create_tag_cost_table)
 
-	local var_2_1 = table.clone(BotNavTransitionManager.TRANSITION_LAYERS)
+	local clone = table.clone(BotNavTransitionManager.TRANSITION_LAYERS)
 
-	table.merge(var_2_1, NAV_TAG_VOLUME_LAYER_COST_BOTS)
-	AiUtils.initialize_cost_table(arg_2_0._navtag_layer_cost_table, var_2_1)
-	GwNavTraverseLogic.set_navtag_layer_cost_table(arg_2_0._traverse_logic, arg_2_0._navtag_layer_cost_table)
+	table.merge(clone, NAV_TAG_VOLUME_LAYER_COST_BOTS)
+	AiUtils.initialize_cost_table(self._navtag_layer_cost_table, clone)
+	GwNavTraverseLogic.set_navtag_layer_cost_table(self._traverse_logic, self._navtag_layer_cost_table)
 
-	arg_2_0._ladder_smart_object_index = arg_2_0._index_offset + arg_2_0._max_amount
-	arg_2_0._ladder_transitions = {}
-	arg_2_0._debug_ladder_smart_objects_created = 0
-	arg_2_0._is_server = arg_2_4
+	self._ladder_smart_object_index = self._index_offset + self._max_amount
+	self._ladder_transitions = {}
+	self._debug_ladder_smart_objects_created = 0
+	self._is_server = arg_2_4
 
 	if not arg_2_6 then
-		arg_2_0._network_event_delegate = arg_2_5
+		self._network_event_delegate = arg_2_5
 
-		arg_2_5:register(arg_2_0, "rpc_create_bot_nav_transition")
+		arg_2_5:register(self, "rpc_create_bot_nav_transition")
 	end
 end
 
-function BotNavTransitionManager.traverse_logic(arg_3_0)
-	return arg_3_0._traverse_logic
+BotNavTransitionManager.traverse_logic = function (self)
+	-- function 3
+	return self._traverse_logic
 end
 
-function BotNavTransitionManager.update(arg_4_0, arg_4_1, arg_4_2)
+BotNavTransitionManager.update = function (arg_4_0, arg_4_1, arg_4_2)
+	-- function 4
 	return
 end
 
-function BotNavTransitionManager.clear_transitions(arg_5_0)
-	local var_5_0 = arg_5_0._bot_nav_transitions
+BotNavTransitionManager.clear_transitions = function (self)
+	-- function 5
+	local _bot_nav_transitions = self._bot_nav_transitions
 
-	for iter_5_0, iter_5_1 in pairs(var_5_0) do
-		arg_5_0:_destroy_transition(var_5_0, iter_5_0)
+	for k, v in pairs(_bot_nav_transitions) do
+		self:_destroy_transition(_bot_nav_transitions, k)
 	end
 end
 
-function BotNavTransitionManager.destroy(arg_6_0)
-	arg_6_0._network_event_delegate:unregister(arg_6_0)
-	GwNavTagLayerCostTable.destroy(arg_6_0._navtag_layer_cost_table)
-	GwNavCostMap.destroy_tag_cost_table(arg_6_0._nav_cost_map_cost_table)
-	GwNavTraverseLogic.destroy(arg_6_0._traverse_logic)
-	GwNavTraverseLogic.destroy(arg_6_0._layerless_traverse_logic)
+BotNavTransitionManager.destroy = function (self)
+	-- function 6
+	self._network_event_delegate:unregister(self)
+	GwNavTagLayerCostTable.destroy(self._navtag_layer_cost_table)
+	GwNavCostMap.destroy_tag_cost_table(self._nav_cost_map_cost_table)
+	GwNavTraverseLogic.destroy(self._traverse_logic)
+	GwNavTraverseLogic.destroy(self._layerless_traverse_logic)
 end
 
-function BotNavTransitionManager._find_matching_layer(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
-	local var_7_0 = arg_7_2 - arg_7_1
-	local var_7_1 = Vector3.length(Vector3.flat(var_7_0))
-	local var_7_2 = var_7_0.z
+BotNavTransitionManager._find_matching_layer = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	-- function 7
+	local num = arg_7_2 - arg_7_1
+	local length = Vector3.length(Vector3.flat(num))
+	local z = num.z
 
-	if arg_7_3 then
+	if not arg_7_3 then
 		return "bot_leap_of_faith"
 	end
 
-	local var_7_3 = PlayerUnitMovementSettings.fall.heights
-	local var_7_4 = var_7_3.FALL_DAMAGE_MULTIPLIER
-	local var_7_5 = var_7_3.MIN_FALL_DAMAGE_HEIGHT
-	local var_7_6 = var_7_3.MIN_FALL_DAMAGE_PERCENTAGE
-	local var_7_7 = var_7_3.MAX_FALL_DAMAGE_PERCENTAGE
-	local var_7_8 = 100
-	local var_7_9 = var_7_8 * var_7_6
-	local var_7_10 = var_7_8 * var_7_7
+	local heights = PlayerUnitMovementSettings.fall.heights
+	local FALL_DAMAGE_MULTIPLIER = heights.FALL_DAMAGE_MULTIPLIER
+	local MIN_FALL_DAMAGE_HEIGHT = heights.MIN_FALL_DAMAGE_HEIGHT
+	local MIN_FALL_DAMAGE_PERCENTAGE = heights.MIN_FALL_DAMAGE_PERCENTAGE
+	local MAX_FALL_DAMAGE_PERCENTAGE = heights.MAX_FALL_DAMAGE_PERCENTAGE
+	local num_2 = 100
+	local num_3 = num_2 * MIN_FALL_DAMAGE_PERCENTAGE
+	local num_4 = num_2 * MAX_FALL_DAMAGE_PERCENTAGE
 
-	if var_7_2 < -(var_7_5 + (var_7_8 * 0.5 - var_7_9) / var_7_4) then
+	if z < -(MIN_FALL_DAMAGE_HEIGHT + (num_2 * 0.5 - num_3) / FALL_DAMAGE_MULTIPLIER) then
 		return nil
-	elseif var_7_2 < -var_7_5 then
+	elseif z < -MIN_FALL_DAMAGE_HEIGHT then
 		return "bot_damage_drops"
-	elseif var_7_2 < -0.5 then
+	elseif z < -0.5 then
 		return "bot_drops"
 	end
 
-	if var_7_2 > 0.3 then
+	if z > 0.3 then
 		return "bot_jumps"
 	end
 end
 
-function BotNavTransitionManager._destroy_transition(arg_8_0, arg_8_1, arg_8_2)
+BotNavTransitionManager._destroy_transition = function (self, arg_8_1, arg_8_2)
+	-- function 8
 	local var_8_0 = arg_8_1[arg_8_2]
 
 	arg_8_1[arg_8_2] = nil
-	arg_8_0._bot_nav_transition_lookup[var_8_0.unit] = nil
+	self._bot_nav_transition_lookup[var_8_0.unit] = nil
 
-	local var_8_1 = var_8_0.graph
+	local graph = var_8_0.graph
 
-	GwNavGraph.destroy(var_8_1)
-	World.destroy_unit(arg_8_0._world, var_8_0.unit)
+	GwNavGraph.destroy(graph)
+	World.destroy_unit(self._world, var_8_0.unit)
 end
 
-function BotNavTransitionManager.rpc_create_bot_nav_transition(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
-	arg_9_0:create_transition(arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+BotNavTransitionManager.rpc_create_bot_nav_transition = function (self, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+	-- function 9
+	self:create_transition(arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 end
 
-function BotNavTransitionManager.create_transition(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6)
-	if not arg_10_0._is_server then
+BotNavTransitionManager.create_transition = function (self, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6)
+	-- function 10
+	if not self._is_server then
 		Managers.state.network.network_transmit:send_rpc_server("rpc_create_bot_nav_transition", arg_10_1, arg_10_2, arg_10_3, arg_10_4 or false)
 
 		return
 	end
 
-	local var_10_0 = arg_10_0._world
-	local var_10_1 = arg_10_0._physics_world
-	local var_10_2 = PhysicsWorld.immediate_overlap(var_10_1, "position", arg_10_1, "shape", "sphere", "size", 0.1, "collision_filter", "filter_bot_nav_transition_overlap")
+	local _world = self._world
+	local _physics_world = self._physics_world
+	local immediate_overlap = PhysicsWorld.immediate_overlap(_physics_world, "position", arg_10_1, "shape", "sphere", "size", 0.1, "collision_filter", "filter_bot_nav_transition_overlap")
 
-	if var_10_2 and #var_10_2 > 0 then
+	if not (not immediate_overlap and #immediate_overlap > 0) then
 		return false
 	end
 
-	local var_10_3 = arg_10_0._nav_world
-	local var_10_4 = 0.3
-	local var_10_5 = 0.3
-	local var_10_6, var_10_7 = GwNavQueries.triangle_from_position(var_10_3, arg_10_3, var_10_4, var_10_5, arg_10_0._layerless_traverse_logic)
+	local _nav_world = self._nav_world
+	local num_2 = 0.3
+	local num_3 = 0.3
+	local triangle_from_position, var_10_7 = GwNavQueries.triangle_from_position(_nav_world, arg_10_3, num_2, num_3, self._layerless_traverse_logic)
 
-	if not var_10_6 then
-		local var_10_8 = 0.9
+	if not triangle_from_position then
+		local num_4 = 0.9
 		local var_10_9 = arg_10_3
 
-		arg_10_3 = GwNavQueries.inside_position_from_outside_position(var_10_3, arg_10_3, var_10_4, var_10_5, var_10_8)
+		arg_10_3 = GwNavQueries.inside_position_from_outside_position(_nav_world, arg_10_3, num_2, num_3, num_4)
 
-		if arg_10_3 then
+		if not arg_10_3 then
 			var_10_7 = arg_10_3.z
 		else
 			return false
@@ -180,129 +190,145 @@ function BotNavTransitionManager.create_transition(arg_10_0, arg_10_1, arg_10_2,
 
 	local var_10_10 = Vector3(arg_10_3.x, arg_10_3.y, var_10_7)
 
-	if GwNavQueries.raycango(var_10_3, arg_10_1, var_10_10, arg_10_0._traverse_logic) then
+	if not GwNavQueries.raycango(_nav_world, arg_10_1, var_10_10, self._traverse_logic) then
 		return false
 	end
 
-	local var_10_11 = arg_10_0:_find_matching_layer(arg_10_1, var_10_10, arg_10_4)
+	local _find_matching_layer = self:_find_matching_layer(arg_10_1, var_10_10, arg_10_4)
 
-	if not var_10_11 then
+	if not _find_matching_layer then
 		return false
 	end
 
-	local var_10_12 = arg_10_0._current_index
-	local var_10_13 = arg_10_0._bot_nav_transitions
+	local _current_index = self._current_index
+	local _bot_nav_transitions = self._bot_nav_transitions
 
-	if var_10_13[var_10_12] then
-		arg_10_0:_destroy_transition(var_10_13, var_10_12)
+	if not _bot_nav_transitions[_current_index] then
+		self:_destroy_transition(_bot_nav_transitions, _current_index)
 	end
 
-	local var_10_14 = LAYER_ID_MAPPING[var_10_11]
+	local var_10_14 = LAYER_ID_MAPPING[_find_matching_layer]
 
-	fassert(var_10_14, "Layer %s is not defined.", var_10_11)
+	fassert(var_10_14, "Layer %s is not defined.", _find_matching_layer)
 
 	local var_10_15
 
-	if arg_10_4 then
+	if not arg_10_4 then
 		var_10_15 = arg_10_2
 	else
-		local var_10_16 = Vector3.normalize(Vector3.flat(arg_10_2 - arg_10_1))
+		local normalize = Vector3.normalize(Vector3.flat(arg_10_2 - arg_10_1))
 
-		if Vector3.length_squared(var_10_16) > 0.001 then
-			local var_10_17 = arg_10_2 + var_10_16 * var_0_2
-			local var_10_18, var_10_19 = PhysicsWorld.immediate_raycast(var_10_1, arg_10_2, var_10_16, var_0_2, "closest", "collision_filter", "filter_player_mover")
+		if Vector3.length_squared(normalize) > 0.001 then
+			local num_5 = arg_10_2 + normalize * num
+			local immediate_raycast, var_10_19 = PhysicsWorld.immediate_raycast(_physics_world, arg_10_2, normalize, num, "closest", "collision_filter", "filter_player_mover")
 
-			if var_10_18 then
+			if not immediate_raycast then
 				var_10_15 = var_10_19
 			else
-				var_10_15 = var_10_17
+				var_10_15 = num_5
 			end
 		else
 			var_10_15 = arg_10_2
 		end
 	end
 
-	local var_10_20 = GwNavGraph.create(var_10_3, var_0_1, {
+	local var_10_20 = GwNavGraph.create(_nav_world, flag, {
 		arg_10_1,
 		var_10_15,
 		var_10_10
-	}, Colors.get("blue"), var_10_14, var_10_12)
+	}, Colors.get("blue"), var_10_14, _current_index)
 
 	GwNavGraph.add_to_database(var_10_20)
 
-	local var_10_21 = World.spawn_unit(var_10_0, "scripts/managers/bot_nav_transition/bot_nav_transition", arg_10_1)
+	local spawn_unit = World.spawn_unit(_world, "scripts/managers/bot_nav_transition/bot_nav_transition", arg_10_1)
 
-	Unit.set_data(var_10_21, "bot_nav_transition_manager_index", var_10_12)
+	Unit.set_data(spawn_unit, "bot_nav_transition_manager_index", _current_index)
 
-	var_10_13[var_10_12] = {
+	_bot_nav_transitions[_current_index] = {
 		graph = var_10_20,
 		from = Vector3Box(arg_10_1),
 		waypoint = Vector3Box(var_10_15),
 		to = Vector3Box(var_10_10),
-		unit = var_10_21,
-		type = var_10_11,
+		unit = spawn_unit,
+		type = _find_matching_layer,
 		permanent = arg_10_5 or false
 	}
-	arg_10_0._bot_nav_transition_lookup[var_10_21] = var_10_12
+	self._bot_nav_transition_lookup[spawn_unit] = _current_index
 
-	local var_10_22 = var_10_12
+	local var_10_22 = _current_index
 
 	repeat
-		var_10_22 = (var_10_22 - arg_10_0._index_offset) % arg_10_0._max_amount + 1 + arg_10_0._index_offset
-	until not var_10_13[var_10_22] or not var_10_13[var_10_22].permanent
+		var_10_22 = (var_10_22 - self._index_offset) % self._max_amount + 1 + self._index_offset
+	until not (not _bot_nav_transitions[var_10_22] and _bot_nav_transitions[var_10_22].permanent)
 
-	arg_10_0._current_index = var_10_22
+	self._current_index = var_10_22
 
-	return true, var_10_21
+	return true, spawn_unit
 end
 
-function BotNavTransitionManager.unregister_transition(arg_11_0, arg_11_1)
-	local var_11_0 = arg_11_0._bot_nav_transition_lookup[arg_11_1]
+BotNavTransitionManager.unregister_transition = function (self, arg_11_1)
+	-- function 11
+	local var_11_0 = self._bot_nav_transition_lookup[arg_11_1]
 
 	fassert(var_11_0, "No transition index found for unit %s.", arg_11_1)
-	arg_11_0:_destroy_transition(arg_11_0._bot_nav_transitions, var_11_0)
+	self:_destroy_transition(self._bot_nav_transitions, var_11_0)
 end
 
-function BotNavTransitionManager.transition_data(arg_12_0, arg_12_1)
-	local var_12_0 = arg_12_0._ladder_transitions[arg_12_1]
+BotNavTransitionManager.transition_data = function (self, arg_12_1)
+	-- function 12
+	local var_12_0 = self._ladder_transitions[arg_12_1]
 
-	if var_12_0 then
+	if not var_12_0 then
 		return "ladder", var_12_0.from:unbox(), var_12_0.to:unbox()
 	else
-		local var_12_1 = arg_12_0._bot_nav_transition_lookup[arg_12_1]
-		local var_12_2 = arg_12_0._bot_nav_transitions[var_12_1]
+		local var_12_1 = self._bot_nav_transition_lookup[arg_12_1]
+		local var_12_2 = self._bot_nav_transitions[var_12_1]
 
 		return var_12_2.type, var_12_2.from:unbox(), var_12_2.to:unbox(), var_12_2.waypoint:unbox()
 	end
 end
 
-function BotNavTransitionManager.register_ladder(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
-	local var_13_0 = {}
+BotNavTransitionManager.register_ladder = function (self, arg_13_1, arg_13_2, arg_13_3)
+	-- function 13
+	local tbl = {}
 	local var_13_1
-	local var_13_2 = arg_13_2 or 0
+	local flag = arg_13_2 or 0
 
-	arg_13_0._ladder_transitions[arg_13_1] = var_13_0
+	self._ladder_transitions[arg_13_1] = tbl
 
-	local var_13_3 = arg_13_0._nav_world
-	local var_13_4 = Unit.node(arg_13_1, "c_platform")
-	local var_13_5 = Unit.world_rotation(arg_13_1, var_13_2)
-	local var_13_6 = -Quaternion.forward(var_13_5)
-	local var_13_7 = Vector3.normalize(Vector3.flat(var_13_6))
-	local var_13_8 = -Quaternion.up(var_13_5)
-	local var_13_9 = Unit.world_position(arg_13_1, var_13_4)
-	local var_13_10 = Unit.get_data(arg_13_1, "bottom_node")
-	local var_13_11 = var_13_10 and Unit.node(arg_13_1, var_13_10) or var_13_2
-	local var_13_12 = Unit.world_position(arg_13_1, var_13_11)
-	local var_13_13 = Vector3.dot(var_13_12 - var_13_9, var_13_8)
-	local var_13_14 = arg_13_0._physics_world
-	local var_13_15 = var_13_9 + var_13_6 * 1
-	local var_13_16 = var_13_13 + 10
-	local var_13_17, var_13_18 = PhysicsWorld.immediate_raycast(var_13_14, var_13_15, var_13_8, var_13_16, "closest", "collision_filter", "filter_bot_nav_transition_ladder_ray")
+	local _nav_world = self._nav_world
+	local node = Unit.node(arg_13_1, "c_platform")
+	local world_rotation = Unit.world_rotation(arg_13_1, flag)
+	local num = -Quaternion.forward(world_rotation)
+	local normalize = Vector3.normalize(Vector3.flat(num))
+	local num_2 = -Quaternion.up(world_rotation)
+	local world_position = Unit.world_position(arg_13_1, node)
+	local get_data = Unit.get_data(arg_13_1, "bottom_node")
+	local node_2
 
-	if not var_13_17 then
-		var_13_0.failed = true
-		var_13_0.to = Vector3Box(var_13_15)
-		var_13_0.from = Vector3Box(var_13_15 + var_13_8 * var_13_16)
+	if not get_data then
+		node_2 = Unit.node(arg_13_1, get_data)
+
+		if not node_2 then
+			-- Nothing
+		end
+	end
+
+	node_2 = flag
+
+	::label_13_0::
+
+	local world_position_2 = Unit.world_position(arg_13_1, node_2)
+	local dot = Vector3.dot(world_position_2 - world_position, num_2)
+	local _physics_world = self._physics_world
+	local num_3 = world_position + num * 1
+	local num_4 = dot + 10
+	local immediate_raycast, var_13_18 = PhysicsWorld.immediate_raycast(_physics_world, num_3, num_2, num_4, "closest", "collision_filter", "filter_bot_nav_transition_ladder_ray")
+
+	if not immediate_raycast then
+		tbl.failed = true
+		tbl.to = Vector3Box(num_3)
+		tbl.from = Vector3Box(num_3 + num_2 * num_4)
 
 		return var_13_1
 	end
@@ -311,154 +337,160 @@ function BotNavTransitionManager.register_ladder(arg_13_0, arg_13_1, arg_13_2, a
 	local var_13_20
 	local var_13_21
 	local var_13_22
-	local var_13_23 = var_13_12 - var_13_8 * var_13_13
-	local var_13_24, var_13_25 = GwNavQueries.triangle_from_position(var_13_3, var_13_23, 0.3, 0.5, arg_13_0._layerless_traverse_logic)
+	local num_5 = world_position_2 - num_2 * dot
+	local triangle_from_position, var_13_25 = GwNavQueries.triangle_from_position(_nav_world, num_5, 0.3, 0.5, self._layerless_traverse_logic)
 
-	if var_13_24 then
-		var_13_20 = Vector3(var_13_23.x, var_13_23.y, var_13_25)
+	if not triangle_from_position then
+		var_13_20 = Vector3(num_5.x, num_5.y, var_13_25)
 	else
-		local var_13_26 = 0.2
-		local var_13_27 = 5
+		local num_6 = 0.2
+		local num_7 = 5
 
-		for iter_13_0 = 1, var_13_27 do
-			local var_13_28 = var_13_23 - var_13_7 * var_13_26 * iter_13_0
+		for i = 1, num_7 do
+			local num_8 = num_5 - normalize * num_6 * i
 			local var_13_29
 
-			var_13_24, var_13_29 = GwNavQueries.triangle_from_position(var_13_3, var_13_28, 0.3, 0.5, arg_13_0._layerless_traverse_logic)
+			triangle_from_position, var_13_29 = GwNavQueries.triangle_from_position(_nav_world, num_8, 0.3, 0.5, self._layerless_traverse_logic)
 
-			if var_13_24 then
-				var_13_20 = var_13_28
+			if not triangle_from_position then
+				var_13_20 = num_8
 				var_13_20.z = var_13_29
 
 				break
 			end
 		end
 
-		if not var_13_24 then
-			var_13_0.failed = true
-			var_13_20 = var_13_23
+		if not triangle_from_position then
+			tbl.failed = true
+			var_13_20 = num_5
 		end
 	end
 
-	local var_13_30, var_13_31 = GwNavQueries.triangle_from_position(var_13_3, var_13_18, 0.3, 0.5, arg_13_0._layerless_traverse_logic)
+	local triangle_from_position_2, var_13_31 = GwNavQueries.triangle_from_position(_nav_world, var_13_18, 0.3, 0.5, self._layerless_traverse_logic)
 
-	if var_13_30 then
+	if not triangle_from_position_2 then
 		var_13_19 = Vector3(var_13_18.x, var_13_18.y, var_13_31)
 	else
-		local var_13_32 = 0.2
-		local var_13_33 = 5
+		local num_9 = 0.2
+		local num_10 = 5
 
-		for iter_13_1 = 1, var_13_33 do
-			local var_13_34 = var_13_18 + var_13_7 * var_13_32 * iter_13_1
+		for j = 1, num_10 do
+			local num_11 = var_13_18 + normalize * num_9 * j
 			local var_13_35
 
-			var_13_30, var_13_35 = GwNavQueries.triangle_from_position(var_13_3, var_13_34, 0.3, 0.5, arg_13_0._layerless_traverse_logic)
+			triangle_from_position_2, var_13_35 = GwNavQueries.triangle_from_position(_nav_world, num_11, 0.3, 0.5, self._layerless_traverse_logic)
 
-			if var_13_30 then
-				var_13_19 = var_13_34
+			if not triangle_from_position_2 then
+				var_13_19 = num_11
 				var_13_19.z = var_13_35
 
 				break
 			end
 		end
 
-		if not var_13_30 then
-			var_13_0.failed = true
+		if not triangle_from_position_2 then
+			tbl.failed = true
 			var_13_19 = var_13_18
 		end
 	end
 
-	if var_13_0.failed then
-		-- block empty
+	if not tbl.failed then
+		-- Nothing
 	else
-		local var_13_36 = arg_13_0._ladder_smart_object_index + 1
-		local var_13_37 = 1.5
-		local var_13_38 = var_13_18.z > var_13_12.z - var_13_37
-		local var_13_39 = "bot_ladders"
-		local var_13_40 = LAYER_ID_MAPPING[var_13_39]
+		local num_12 = self._ladder_smart_object_index + 1
+		local num_13 = 1.5
+		local flag_2 = var_13_18.z > world_position_2.z - num_13
+		local str = "bot_ladders"
+		local var_13_40 = LAYER_ID_MAPPING[str]
 
-		fassert(var_13_40, "Layer %s is not defined.", var_13_39)
+		fassert(var_13_40, "Layer %s is not defined.", str)
 
-		local var_13_41 = GwNavGraph.create(var_13_3, var_13_38, {
+		local var_13_41 = GwNavGraph.create(_nav_world, flag_2, {
 			var_13_20,
-			var_13_9,
-			var_13_18 + var_13_6 * 0.2,
+			world_position,
+			var_13_18 + num * 0.2,
 			var_13_19
-		}, Colors.get("blue"), var_13_40, var_13_36)
+		}, Colors.get("blue"), var_13_40, num_12)
 
 		GwNavGraph.add_to_database(var_13_41)
 
-		arg_13_0._ladder_smart_object_index = var_13_36
-		var_13_0.index = var_13_36
-		var_13_0.graph = var_13_41
-		arg_13_0._debug_ladder_smart_objects_created = arg_13_0._debug_ladder_smart_objects_created + 1
+		self._ladder_smart_object_index = num_12
+		tbl.index = num_12
+		tbl.graph = var_13_41
+		self._debug_ladder_smart_objects_created = self._debug_ladder_smart_objects_created + 1
 	end
 
-	var_13_0.from = Vector3Box(var_13_19)
-	var_13_0.to = Vector3Box(var_13_20)
+	tbl.from = Vector3Box(var_13_19)
+	tbl.to = Vector3Box(var_13_20)
 
 	return var_13_1
 end
 
-function BotNavTransitionManager.get_ladder_coordinates(arg_14_0, arg_14_1)
-	local var_14_0 = arg_14_0._ladder_transitions[arg_14_1]
+BotNavTransitionManager.get_ladder_coordinates = function (self, arg_14_1)
+	-- function 14
+	local var_14_0 = self._ladder_transitions[arg_14_1]
 
 	return var_14_0.from:unbox(), var_14_0.to:unbox(), var_14_0.failed
 end
 
-function BotNavTransitionManager.debug_refresh_ladders(arg_15_0)
+BotNavTransitionManager.debug_refresh_ladders = function (self)
+	-- function 15
 	print("[BotNavTransitionManager] Refreshing ladders...")
 
-	local var_15_0 = {}
+	local tbl = {}
 
-	for iter_15_0, iter_15_1 in pairs(arg_15_0._ladder_transitions) do
-		arg_15_0:unregister_ladder(iter_15_0)
+	for k, v in pairs(self._ladder_transitions) do
+		self:unregister_ladder(k)
 
-		var_15_0[#var_15_0 + 1] = iter_15_0
+		tbl[#tbl + 1] = k
 	end
 
-	arg_15_0._ladder_smart_object_index = arg_15_0._index_offset + arg_15_0._max_amount
+	self._ladder_smart_object_index = self._index_offset + self._max_amount
 
-	fassert(arg_15_0._debug_ladder_smart_objects_created == 0, "Failed to clean up all ladder smart objects during refresh, %i left.", arg_15_0._debug_ladder_smart_objects_created)
+	fassert(self._debug_ladder_smart_objects_created == 0, "Failed to clean up all ladder smart objects during refresh, %i left.", self._debug_ladder_smart_objects_created)
 
-	for iter_15_2, iter_15_3 in ipairs(var_15_0) do
-		arg_15_0:register_ladder(iter_15_3)
-	end
-end
-
-function BotNavTransitionManager.clear_ladder_transitions(arg_16_0)
-	local var_16_0 = arg_16_0._ladder_transitions
-
-	for iter_16_0, iter_16_1 in pairs(var_16_0) do
-		arg_16_0:unregister_ladder(iter_16_0)
+	for i, v_2 in ipairs(tbl) do
+		self:register_ladder(v_2)
 	end
 end
 
-function BotNavTransitionManager.unregister_ladder(arg_17_0, arg_17_1)
-	local var_17_0 = arg_17_0._ladder_transitions[arg_17_1]
-	local var_17_1 = var_17_0.graph
+BotNavTransitionManager.clear_ladder_transitions = function (self)
+	-- function 16
+	local _ladder_transitions = self._ladder_transitions
+
+	for k, v in pairs(_ladder_transitions) do
+		self:unregister_ladder(k)
+	end
+end
+
+BotNavTransitionManager.unregister_ladder = function (self, arg_17_1)
+	-- function 17
+	local var_17_0 = self._ladder_transitions[arg_17_1]
+	local graph = var_17_0.graph
 
 	if not var_17_0.failed then
-		GwNavGraph.destroy(var_17_1)
+		GwNavGraph.destroy(graph)
 
-		arg_17_0._debug_ladder_smart_objects_created = arg_17_0._debug_ladder_smart_objects_created - 1
+		self._debug_ladder_smart_objects_created = self._debug_ladder_smart_objects_created - 1
 	end
 
-	arg_17_0._ladder_transitions[arg_17_1] = nil
+	self._ladder_transitions[arg_17_1] = nil
 end
 
-function BotNavTransitionManager.allow_layer(arg_18_0, arg_18_1, arg_18_2)
+BotNavTransitionManager.allow_layer = function (self, arg_18_1, arg_18_2)
+	-- function 18
 	local var_18_0 = LAYER_ID_MAPPING[arg_18_1]
 
-	if arg_18_2 then
-		GwNavTagLayerCostTable.allow_layer(arg_18_0._navtag_layer_cost_table, var_18_0)
+	if not arg_18_2 then
+		GwNavTagLayerCostTable.allow_layer(self._navtag_layer_cost_table, var_18_0)
 	else
-		GwNavTagLayerCostTable.forbid_layer(arg_18_0._navtag_layer_cost_table, var_18_0)
+		GwNavTagLayerCostTable.forbid_layer(self._navtag_layer_cost_table, var_18_0)
 	end
 end
 
-function BotNavTransitionManager.set_layer_cost(arg_19_0, arg_19_1, arg_19_2)
+BotNavTransitionManager.set_layer_cost = function (self, arg_19_1, arg_19_2)
+	-- function 19
 	local var_19_0 = LAYER_ID_MAPPING[arg_19_1]
 
-	GwNavTagLayerCostTable.set_layer_cost_multiplier(arg_19_0._navtag_layer_cost_table, var_19_0, arg_19_2)
+	GwNavTagLayerCostTable.set_layer_cost_multiplier(self._navtag_layer_cost_table, var_19_0, arg_19_2)
 end

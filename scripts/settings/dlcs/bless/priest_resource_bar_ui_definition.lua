@@ -1,10 +1,10 @@
 -- chunkname: @scripts/settings/dlcs/bless/priest_resource_bar_ui_definition.lua
 
-local var_0_0 = {
+local tbl = {
 	250,
 	16
 }
-local var_0_1 = {
+local tbl_2 = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -45,7 +45,7 @@ local var_0_1 = {
 		vertical_alignment = "center",
 		parent = "screen_bottom_pivot",
 		horizontal_alignment = "center",
-		size = var_0_0,
+		size = tbl,
 		position = {
 			0,
 			-220,
@@ -54,7 +54,7 @@ local var_0_1 = {
 	}
 }
 local var_0_2 = UIFrameSettings.frame_outer_glow_01.texture_sizes.corner[1]
-local var_0_3 = {
+local tbl_3 = {
 	charge_bar = {
 		scenegraph_id = "charge_bar",
 		element = {
@@ -97,8 +97,8 @@ local var_0_3 = {
 			bar_detail = "overcharge_bar_warrior_priest_slim_bar",
 			bar_fg = "overcharge_frame_priest",
 			size = {
-				var_0_0[1] - 6,
-				var_0_0[2]
+				tbl[1] - 6,
+				tbl[2]
 			}
 		},
 		style = {
@@ -116,8 +116,8 @@ local var_0_3 = {
 					3
 				},
 				size = {
-					var_0_0[1] - 6,
-					var_0_0[2] - 6
+					tbl[1] - 6,
+					tbl[2] - 6
 				}
 			},
 			bar_fg = {
@@ -135,8 +135,8 @@ local var_0_3 = {
 			},
 			bar_bg = {
 				size = {
-					var_0_0[1] - 6,
-					var_0_0[2] - 6
+					tbl[1] - 6,
+					tbl[2] - 6
 				},
 				offset = {
 					3,
@@ -163,7 +163,7 @@ local var_0_3 = {
 				},
 				offset = {
 					0,
-					-37.5 + var_0_0[2] / 2,
+					-37.5 + tbl[2] / 2,
 					11
 				}
 			},
@@ -180,8 +180,8 @@ local var_0_3 = {
 					3
 				},
 				size = {
-					var_0_0[1] - 6,
-					var_0_0[2] - 6
+					tbl[1] - 6,
+					tbl[2] - 6
 				}
 			},
 			bar_active = {
@@ -195,11 +195,11 @@ local var_0_3 = {
 				},
 				offset = {
 					3,
-					-50 + var_0_0[2] / 2,
+					-50 + tbl[2] / 2,
 					10
 				},
 				size = {
-					var_0_0[1] - 6,
+					tbl[1] - 6,
 					100
 				}
 			}
@@ -213,6 +213,6 @@ local var_0_3 = {
 }
 
 return {
-	scenegraph_definition = var_0_1,
-	widget_definitions = var_0_3
+	scenegraph_definition = tbl_2,
+	widget_definitions = tbl_3
 }

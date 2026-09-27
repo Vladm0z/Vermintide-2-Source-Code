@@ -1,11 +1,11 @@
 -- chunkname: @scripts/settings/dlcs/paperweight/paperweight_achievements_settings.lua
 
-local var_0_0 = DLCSettings.paperweight
+local paperweight = DLCSettings.paperweight
 
-var_0_0.achievement_template_file_names = {
+paperweight.achievement_template_file_names = {
 	"scripts/managers/achievements/achievement_templates_paperweight"
 }
-var_0_0.achievement_outline = {
+paperweight.achievement_outline = {
 	heroes = {
 		categories = {
 			{

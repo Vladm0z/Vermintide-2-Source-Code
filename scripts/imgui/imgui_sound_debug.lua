@@ -2,250 +2,287 @@
 
 ImguiSoundDebug = class(ImguiSoundDebug)
 
-local var_0_0 = false
-local var_0_1 = 820
-local var_0_2 = 500
+local flag = false
+local num = 820
+local num_2 = 500
 
-local function var_0_3(arg_1_0)
-	local var_1_0 = arg_1_0 % 60
-	local var_1_1 = math.floor(arg_1_0)
+local function fn(arg_1_0)
+	-- function 1
+	local num = arg_1_0 % 60
+	local floor = math.floor(arg_1_0)
 
-	return os.date("%H:%M", var_1_1) .. string.format(":%06.3f", var_1_0)
+	return os.date("%H:%M", floor) .. string.format(":%06.3f", num)
 end
 
-function ImguiSoundDebug.init(arg_2_0)
-	arg_2_0._event_name = "pwe_activate_ability_handmaiden_03"
-	arg_2_0._music_players = {}
-	arg_2_0._music_flags = {}
-	arg_2_0._is_persistent = false
-	arg_2_0._indent_counter = 0
-	arg_2_0._history = {}
-	arg_2_0._history_running = false
-	arg_2_0._sort_history_by = "timestamp"
-	arg_2_0._sort_direction = "asc"
-	arg_2_0._first_run = true
+ImguiSoundDebug.init = function (self)
+	-- function 2
+	self._event_name = "pwe_activate_ability_handmaiden_03"
+	self._music_players = {}
+	self._music_flags = {}
+	self._is_persistent = false
+	self._indent_counter = 0
+	self._history = {}
+	self._history_running = false
+	self._sort_history_by = "timestamp"
+	self._sort_direction = "asc"
+	self._first_run = true
 
-	arg_2_0:register_events()
+	self:register_events()
 
-	var_0_0 = false
+	flag = false
 end
 
-function ImguiSoundDebug.destroy(arg_3_0)
-	arg_3_0:unregister_events()
+ImguiSoundDebug.destroy = function (self)
+	-- function 3
+	self:unregister_events()
 end
 
-function ImguiSoundDebug.register_events(arg_4_0)
-	local var_4_0 = Managers.state.event
+ImguiSoundDebug.register_events = function (arg_4_0)
+	-- function 4
+	local event = Managers.state.event
 
-	if var_4_0 then
-		var_4_0:register(arg_4_0, "music_flag_change", "on_music_flag_change")
-		var_4_0:register(arg_4_0, "music_player_state_change", "on_music_player_state_change")
+	if not event then
+		event:register(arg_4_0, "music_flag_change", "on_music_flag_change")
+		event:register(arg_4_0, "music_player_state_change", "on_music_player_state_change")
 	end
 end
 
-function ImguiSoundDebug.unregister_events(arg_5_0)
-	local var_5_0 = Managers.state.event
+ImguiSoundDebug.unregister_events = function (arg_5_0)
+	-- function 5
+	local event = Managers.state.event
 
-	if var_5_0 then
-		var_5_0:unregister("music_flag_change", arg_5_0)
-		var_5_0:unregister("music_player_state_change", arg_5_0)
+	if not event then
+		event:unregister("music_flag_change", arg_5_0)
+		event:unregister("music_player_state_change", arg_5_0)
 	end
 end
 
-function ImguiSoundDebug.is_persistent(arg_6_0)
-	return arg_6_0._is_persistent
+ImguiSoundDebug.is_persistent = function (self)
+	-- function 6
+	return self._is_persistent
 end
 
-function ImguiSoundDebug.update(arg_7_0)
-	if var_0_0 then
-		arg_7_0:unregister_events()
-		arg_7_0:init()
+ImguiSoundDebug.update = function (self)
+	-- function 7
+	if not flag then
+		self:unregister_events()
+		self:init()
 	end
 
-	arg_7_0:_update_music_flags()
-	arg_7_0:_update_music_players()
+	self:_update_music_flags()
+	self:_update_music_players()
 end
 
-function ImguiSoundDebug._update_music_flags(arg_8_0)
-	local var_8_0 = Managers.music
-	local var_8_1 = var_8_0._flags
-	local var_8_2 = var_8_0.flags_update_disabled
+ImguiSoundDebug._update_music_flags = function (self)
+	-- function 8
+	local music = Managers.music
+	local _flags = music._flags
+	local flags_update_disabled = music.flags_update_disabled
 
-	for iter_8_0, iter_8_1 in pairs(var_8_1) do
-		arg_8_0._music_flags[iter_8_0] = {
-			value = iter_8_1,
-			update_disabled = var_8_2[iter_8_0] or false
+	for k, v in pairs(_flags) do
+		local _music_flags = self._music_flags
+		local tbl = {
+			value = v
 		}
+		local var_8_5 = flags_update_disabled[k]
+
+		var_8_5 = var_8_5 or false
+		tbl.update_disabled = var_8_5
+		_music_flags[k] = tbl
 	end
 end
 
-function ImguiSoundDebug._update_music_players(arg_9_0)
-	local var_9_0 = Managers.music._music_players
+ImguiSoundDebug._update_music_players = function (arg_9_0)
+	-- function 9
+	local _music_players = Managers.music._music_players
 
-	for iter_9_0, iter_9_1 in pairs(var_9_0) do
-		local var_9_1 = iter_9_1._playing
-		local var_9_2 = var_9_1 and var_9_1._group_states or {}
-		local var_9_3 = {}
+	for k, v in pairs(_music_players) do
+		local _playing = v._playing
+		local _group_states
 
-		for iter_9_2, iter_9_3 in pairs(var_9_2) do
-			var_9_3[iter_9_2] = {
-				value = iter_9_3,
-				update_disabled = var_9_1 and var_9_1.states_update_disabled[iter_9_2]
+		if not _playing then
+			_group_states = _playing._group_states
+
+			if not _group_states then
+				-- Nothing
+			end
+		end
+
+		_group_states = {}
+
+		::label_9_0::
+
+		local tbl = {}
+
+		for k_2, v_2 in pairs(_group_states) do
+			tbl[k_2] = {
+				value = v_2,
+				update_disabled = not _playing and _playing.states_update_disabled[k_2]
 			}
 		end
 
-		arg_9_0._music_players[iter_9_0] = {
-			is_playing = iter_9_1:is_playing(),
-			states = var_9_3
+		arg_9_0._music_players[k] = {
+			is_playing = v:is_playing(),
+			states = tbl
 		}
 	end
 end
 
-function ImguiSoundDebug.draw(arg_10_0)
-	if arg_10_0._first_run then
-		Imgui.set_next_window_size(var_0_1, var_0_2)
+ImguiSoundDebug.draw = function (self)
+	-- function 10
+	if not self._first_run then
+		Imgui.set_next_window_size(num, num_2)
 
-		arg_10_0._first_run = false
+		self._first_run = false
 	end
 
-	local var_10_0 = Imgui.begin_window("Sound Debug")
+	local begin_window = Imgui.begin_window("Sound Debug")
 
-	arg_10_0._is_persistent = Imgui.checkbox("Keep Window Open", arg_10_0._is_persistent)
+	self._is_persistent = Imgui.checkbox("Keep Window Open", self._is_persistent)
 
 	Imgui.separator()
-	arg_10_0:_draw_music_player()
+	self:_draw_music_player()
 	Imgui.separator()
-	arg_10_0:_draw_music_flags()
+	self:_draw_music_flags()
 	Imgui.separator()
-	arg_10_0:_draw_music_players()
+	self:_draw_music_players()
 	Imgui.separator()
-	arg_10_0:_draw_history()
+	self:_draw_history()
 	Imgui.separator()
-	arg_10_0:_verify_indent()
+	self:_verify_indent()
 	Imgui.end_window()
 
-	return var_10_0
+	return begin_window
 end
 
-function ImguiSoundDebug._draw_music_player(arg_11_0)
-	arg_11_0._event_name = Imgui.input_text("Event", arg_11_0._event_name)
+ImguiSoundDebug._draw_music_player = function (self)
+	-- function 11
+	self._event_name = Imgui.input_text("Event", self._event_name)
 
 	Imgui.same_line()
 
-	if Imgui.small_button("Play") then
-		local var_11_0 = Managers.world:world("level_world")
-		local var_11_1 = Managers.world:wwise_world(var_11_0)
+	if not Imgui.small_button("Play") then
+		local world = Managers.world:world("level_world")
+		local wwise_world = Managers.world:wwise_world(world)
 
-		WwiseWorld.trigger_event(var_11_1, arg_11_0._event_name)
+		WwiseWorld.trigger_event(wwise_world, self._event_name)
 	end
 end
 
-function ImguiSoundDebug._draw_music_flags(arg_12_0)
+ImguiSoundDebug._draw_music_flags = function (self)
+	-- function 12
 	Imgui.text("Music Flags")
 	Imgui.dummy(0, 2)
-	arg_12_0:_set_columns(3, true, 300)
+	self:_set_columns(3, true, 300)
 
-	local var_12_0 = arg_12_0._music_flags
+	local _music_flags = self._music_flags
 
-	for iter_12_0, iter_12_1 in pairs(var_12_0) do
-		Imgui.tree_push(iter_12_0)
-		Imgui.text(iter_12_0)
+	for k, v in pairs(_music_flags) do
+		Imgui.tree_push(k)
+		Imgui.text(k)
 		Imgui.next_column()
 
-		local var_12_1, var_12_2 = Imgui.input_text("", tostring(iter_12_1.value))
+		local input_text, var_12_2 = Imgui.input_text("", tostring(v.value))
 
-		if var_12_2 and var_12_1 ~= tostring(iter_12_1.value) then
-			local var_12_3 = string.lower(var_12_1)
+		if not (not var_12_2 and input_text == tostring(v.value)) then
+			local lower = string.lower(input_text)
 
-			if var_12_3 == "true" then
-				var_12_1 = true
-			elseif var_12_3 == "false" then
-				var_12_1 = false
+			if lower == "true" then
+				input_text = true
+			elseif lower == "false" then
+				input_text = false
 			end
 
-			local var_12_4 = Managers.music.flags_update_disabled
+			local flags_update_disabled = Managers.music.flags_update_disabled
 
-			var_12_4[iter_12_0] = nil
+			flags_update_disabled[k] = nil
 
-			Managers.music:set_flag(iter_12_0, var_12_1)
+			Managers.music:set_flag(k, input_text)
 
-			var_12_4[iter_12_0] = true
+			flags_update_disabled[k] = true
 		end
 
-		if type(iter_12_1.value) == "boolean" then
+		if type(v.value) == "boolean" then
 			Imgui.same_line()
 			Imgui.text("(Boolean)")
 		end
 
 		Imgui.next_column()
 
-		local var_12_5 = Imgui.checkbox("Update Disabled", iter_12_1.update_disabled)
+		local checkbox = Imgui.checkbox("Update Disabled", v.update_disabled)
 
-		if var_12_5 ~= iter_12_1.update_disabled then
-			Managers.music.flags_update_disabled[iter_12_0] = var_12_5
+		if checkbox ~= v.update_disabled then
+			Managers.music.flags_update_disabled[k] = checkbox
 		end
 
 		Imgui.next_column()
 		Imgui.tree_pop()
 	end
 
-	arg_12_0:_reset_columns()
+	self:_reset_columns()
 end
 
-function ImguiSoundDebug._draw_music_players(arg_13_0)
+ImguiSoundDebug._draw_music_players = function (self)
+	-- function 13
 	Imgui.text("Music Players")
 	Imgui.dummy(0, 2)
 
-	if not arg_13_0._music_players then
+	if not self._music_players then
 		return
 	end
 
-	arg_13_0:_indent()
+	self:_indent()
 
-	for iter_13_0, iter_13_1 in pairs(arg_13_0._music_players) do
-		Imgui.text(string.format("Player: %s", iter_13_0))
-		arg_13_0:_indent()
-		Imgui.text(string.format("Is Playing: %s", iter_13_1.is_playing))
+	for k, v in pairs(self._music_players) do
+		Imgui.text(string.format("Player: %s", k))
+		self:_indent()
+		Imgui.text(string.format("Is Playing: %s", v.is_playing))
 		Imgui.text("States: ")
-		arg_13_0:_set_columns(3, true, 300)
+		self:_set_columns(3, true, 300)
 
-		for iter_13_2, iter_13_3 in pairs(iter_13_1.states) do
-			Imgui.tree_push(iter_13_2)
-			Imgui.text(iter_13_2)
+		for k_2, v_2 in pairs(v.states) do
+			Imgui.tree_push(k_2)
+			Imgui.text(k_2)
 			Imgui.next_column()
 
-			local var_13_0, var_13_1 = Imgui.input_text("", tostring(iter_13_3.value))
+			local input_text, var_13_1 = Imgui.input_text("", tostring(v_2.value))
 
-			if var_13_1 and var_13_0 ~= tostring(iter_13_3.value) then
-				local var_13_2 = Managers.music._music_players[iter_13_0]._playing.states_update_disabled
+			if not (not var_13_1 and input_text == tostring(v_2.value)) then
+				local states_update_disabled = Managers.music._music_players[k]._playing.states_update_disabled
 
-				var_13_2[iter_13_2] = nil
+				states_update_disabled[k_2] = nil
 
-				Managers.music._music_players[iter_13_0]:set_group_state(iter_13_2, var_13_0)
+				Managers.music._music_players[k]:set_group_state(k_2, input_text)
 
-				var_13_2[iter_13_2] = true
+				states_update_disabled[k_2] = true
 			end
 
 			Imgui.next_column()
 
-			local var_13_3 = Imgui.checkbox("Update Disabled", iter_13_3.update_disabled or false)
+			local checkbox = Imgui.checkbox
+			local str = "Update Disabled"
+			local update_disabled = v_2.update_disabled
 
-			if var_13_3 ~= iter_13_3.update_disabled then
-				Managers.music._music_players[iter_13_0]._playing.states_update_disabled[iter_13_2] = var_13_3
+			update_disabled = update_disabled or false
+
+			local var_13_6 = checkbox(str, update_disabled)
+
+			if var_13_6 ~= v_2.update_disabled then
+				Managers.music._music_players[k]._playing.states_update_disabled[k_2] = var_13_6
 			end
 
 			Imgui.next_column()
 			Imgui.tree_pop()
 		end
 
-		arg_13_0:_unindent()
+		self:_unindent()
 	end
 
-	arg_13_0:_unindent()
-	arg_13_0:_reset_columns()
+	self:_unindent()
+	self:_reset_columns()
 end
 
-local var_0_4 = {
+local tbl = {
 	"timestamp",
 	"name",
 	"key",
@@ -253,30 +290,33 @@ local var_0_4 = {
 	"new_value"
 }
 
-function ImguiSoundDebug._draw_history(arg_14_0)
-	local var_14_0 = arg_14_0._history_running and "Stop" or "Start"
+ImguiSoundDebug._draw_history = function (self)
+	-- function 14
+	local flag
 
-	if Imgui.button(var_14_0) then
-		if arg_14_0._history_running then
-			arg_14_0:unregister_events()
+	flag = not self._history_running and "Stop" and "Start"
+
+	if not Imgui.button(flag) then
+		if not self._history_running then
+			self:unregister_events()
 		else
-			arg_14_0:register_events()
+			self:register_events()
 		end
 
-		arg_14_0._history_running = not arg_14_0._history_running
+		self._history_running = not self._history_running
 	end
 
 	Imgui.same_line()
 
-	if Imgui.button("Clear History") then
-		arg_14_0._history = {}
+	if not Imgui.button("Clear History") then
+		self._history = {}
 	end
 
-	arg_14_0:_set_columns(5)
+	self:_set_columns(5)
 
-	for iter_14_0, iter_14_1 in pairs(var_0_4) do
-		if arg_14_0:_draw_sort_button(iter_14_1) then
-			arg_14_0._history_sorted = false
+	for k, v in pairs(tbl) do
+		if not self:_draw_sort_button(v) then
+			self._history_sorted = false
 
 			break
 		end
@@ -284,82 +324,97 @@ function ImguiSoundDebug._draw_history(arg_14_0)
 		Imgui.next_column()
 	end
 
-	arg_14_0:_reset_columns()
+	self:_reset_columns()
 
-	if not arg_14_0._history_sorted then
-		for iter_14_2, iter_14_3 in pairs(arg_14_0._history) do
-			table.sort(arg_14_0._history, function(arg_15_0, arg_15_1)
-				if arg_14_0._sort_direction == "asc" then
-					return arg_15_0[arg_14_0._sort_history_by]:lower() < arg_15_1[arg_14_0._sort_history_by]:lower()
+	if not self._history_sorted then
+		for k_2, v_2 in pairs(self._history) do
+			table.sort(self._history, function (self, arg_15_1)
+				-- function 15
+				if self._sort_direction == "asc" then
+					return self[self._sort_history_by]:lower() < arg_15_1[self._sort_history_by]:lower()
 				else
-					return arg_15_0[arg_14_0._sort_history_by]:lower() > arg_15_1[arg_14_0._sort_history_by]:lower()
+					return self[self._sort_history_by]:lower() > arg_15_1[self._sort_history_by]:lower()
 				end
 			end)
 		end
 
-		arg_14_0._history_sorted = true
+		self._history_sorted = true
 	end
 
-	local var_14_1, var_14_2 = Imgui.get_window_size()
+	local get_window_size, var_14_2 = Imgui.get_window_size()
 
-	Imgui.begin_child_window("Log:", var_14_1, var_14_2 * 0.4, false)
-	arg_14_0:_set_columns(5)
+	Imgui.begin_child_window("Log:", get_window_size, var_14_2 * 0.4, false)
+	self:_set_columns(5)
 
-	for iter_14_4, iter_14_5 in pairs(arg_14_0._history) do
-		for iter_14_6, iter_14_7 in pairs(var_0_4) do
-			Imgui.text(tostring(iter_14_5[iter_14_7]))
+	for k_3, v_3 in pairs(self._history) do
+		for k_4, v_4 in pairs(tbl) do
+			Imgui.text(tostring(v_3[v_4]))
 			Imgui.next_column()
 		end
 	end
 
-	arg_14_0:_reset_columns()
+	self:_reset_columns()
 	Imgui.end_child_window()
 end
 
-function ImguiSoundDebug._draw_sort_button(arg_16_0, arg_16_1)
+ImguiSoundDebug._draw_sort_button = function (self, arg_16_1)
+	-- function 16
 	local var_16_0
 
-	if arg_16_0._sort_history_by == arg_16_1 then
-		var_16_0 = string.format("%s %s", arg_16_1, arg_16_0._sort_direction == "asc" and "/\\" or "\\/")
+	if self._sort_history_by == arg_16_1 then
+		local format = string.format
+		local str = "%s %s"
+		local var_16_3 = arg_16_1
+		local flag
+
+		flag = self._sort_direction ~= "asc" or not "/\\" or "\\/"
+		var_16_0 = format(str, var_16_3, flag)
 	else
 		var_16_0 = arg_16_1
 	end
 
-	if Imgui.button(var_16_0) then
-		arg_16_0._sort_history_by = arg_16_1
-		arg_16_0._sort_direction = arg_16_0._sort_direction == "asc" and "desc" or "asc"
+	if not Imgui.button(var_16_0) then
+		self._sort_history_by = arg_16_1
+
+		local flag_2
+
+		flag_2 = self._sort_direction ~= "asc" or not "desc" or "asc"
+		self._sort_direction = flag_2
 
 		return true
 	end
 end
 
-function ImguiSoundDebug.on_music_flag_change(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
-	local var_17_0 = {
+ImguiSoundDebug.on_music_flag_change = function (self, arg_17_1, arg_17_2, arg_17_3)
+	-- function 17
+	local tbl = {
 		name = "flag",
-		timestamp = var_0_3(os.time()),
+		timestamp = fn(os.time()),
 		key = arg_17_1,
 		old_value = arg_17_2 or "",
 		new_value = arg_17_3 or ""
 	}
 
-	arg_17_0._history[#arg_17_0._history + 1] = var_17_0
-	arg_17_0._history_sorted = false
+	self._history[#self._history + 1] = tbl
+	self._history_sorted = false
 end
 
-function ImguiSoundDebug.on_music_player_state_change(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
-	local var_18_0 = {
-		timestamp = var_0_3(os.time()),
+ImguiSoundDebug.on_music_player_state_change = function (self, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+	-- function 18
+	local tbl = {
+		timestamp = fn(os.time()),
 		name = arg_18_1,
 		key = arg_18_2,
 		old_value = arg_18_3 or "",
 		new_value = arg_18_4 or ""
 	}
 
-	arg_18_0._history[#arg_18_0._history + 1] = var_18_0
-	arg_18_0._history_sorted = false
+	self._history[#self._history + 1] = tbl
+	self._history_sorted = false
 end
 
-function ImguiSoundDebug._set_columns(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+ImguiSoundDebug._set_columns = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+	-- function 19
 	arg_19_2 = arg_19_2 or false
 
 	Imgui.columns(arg_19_1, arg_19_2)
@@ -369,34 +424,38 @@ function ImguiSoundDebug._set_columns(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	end
 
 	if type(arg_19_3) == "table" then
-		for iter_19_0, iter_19_1 in ipairs(arg_19_3) do
-			Imgui.set_column_width(iter_19_1, iter_19_0 - 1)
+		for i, v in ipairs(arg_19_3) do
+			Imgui.set_column_width(v, i - 1)
 		end
 	else
-		for iter_19_2 = 0, arg_19_1 - 1 do
-			Imgui.set_column_width(arg_19_3, iter_19_2)
+		for k = 0, arg_19_1 - 1 do
+			Imgui.set_column_width(arg_19_3, k)
 		end
 	end
 end
 
-function ImguiSoundDebug._reset_columns(arg_20_0)
-	arg_20_0:_set_columns(1)
+ImguiSoundDebug._reset_columns = function (self)
+	-- function 20
+	self:_set_columns(1)
 end
 
-local var_0_5 = 8
+local num_3 = 8
 
-function ImguiSoundDebug._indent(arg_21_0)
-	arg_21_0._indent_counter = arg_21_0._indent_counter + 1
+ImguiSoundDebug._indent = function (self)
+	-- function 21
+	self._indent_counter = self._indent_counter + 1
 
-	Imgui.indent(var_0_5)
+	Imgui.indent(num_3)
 end
 
-function ImguiSoundDebug._unindent(arg_22_0)
-	arg_22_0._indent_counter = arg_22_0._indent_counter - 1
+ImguiSoundDebug._unindent = function (self)
+	-- function 22
+	self._indent_counter = self._indent_counter - 1
 
-	Imgui.unindent(var_0_5)
+	Imgui.unindent(num_3)
 end
 
-function ImguiSoundDebug._verify_indent(arg_23_0)
-	fassert(arg_23_0._indent_counter == 0, tostring(arg_23_0._indent_counter))
+ImguiSoundDebug._verify_indent = function (self)
+	-- function 23
+	fassert(self._indent_counter == 0, tostring(self._indent_counter))
 end

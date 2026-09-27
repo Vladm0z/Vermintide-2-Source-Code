@@ -1,7 +1,7 @@
 -- chunkname: @scripts/ui/views/menu_information_slate_ui_definitions.lua
 
-local var_0_0 = 590
-local var_0_1 = {
+local num = 590
+local tbl = {
 	screen = {
 		scale = "fit",
 		size = {
@@ -221,7 +221,7 @@ local var_0_1 = {
 		}
 	}
 }
-local var_0_2 = {
+local tbl_2 = {
 	vertical_alignment = "top",
 	upper_case = true,
 	localize = false,
@@ -240,7 +240,7 @@ local var_0_2 = {
 		0
 	}
 }
-local var_0_3 = {
+local tbl_3 = {
 	font_size = 56,
 	upper_case = true,
 	localize = false,
@@ -260,7 +260,7 @@ local var_0_3 = {
 		0
 	}
 }
-local var_0_4 = {
+local tbl_4 = {
 	font_size = 25,
 	upper_case = false,
 	localize = false,
@@ -280,7 +280,7 @@ local var_0_4 = {
 		0
 	}
 }
-local var_0_5 = {
+local tbl_5 = {
 	font_size = 25,
 	upper_case = false,
 	localize = false,
@@ -311,7 +311,7 @@ local var_0_5 = {
 		0
 	}
 }
-local var_0_6 = {
+local tbl_6 = {
 	font_size = 25,
 	upper_case = false,
 	localize = false,
@@ -331,10 +331,10 @@ local var_0_6 = {
 		0
 	}
 }
-local var_0_7 = {
+local tbl_7 = {
 	text = {
 		spacing = 25,
-		default_text_style = var_0_6
+		default_text_style = tbl_6
 	},
 	image = {
 		spacing = 25
@@ -342,6 +342,7 @@ local var_0_7 = {
 }
 
 function create_hotspot_text(arg_1_0, arg_1_1, arg_1_2)
+	-- function 1
 	return {
 		element = {
 			passes = {
@@ -354,8 +355,9 @@ function create_hotspot_text(arg_1_0, arg_1_1, arg_1_2)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_change_function = function(arg_2_0, arg_2_1)
-						if arg_2_0.hotspot.is_hover then
+					content_change_function = function (self, arg_2_1)
+						-- function 2
+						if not self.hotspot.is_hover then
 							arg_2_1.text_color = arg_2_1.hover_color
 						else
 							arg_2_1.text_color = arg_2_1.base_color
@@ -394,119 +396,142 @@ function create_hotspot_text(arg_1_0, arg_1_1, arg_1_2)
 end
 
 function create_gamepad_input(arg_3_0, arg_3_1)
-	return {
+	-- function 3
+	local tbl = {
 		element = {
 			passes = {
 				{
 					texture_id = "xb_input",
 					style_id = "texture_id",
 					pass_type = "texture",
-					content_check_function = function(arg_4_0, arg_4_1)
-						local var_4_0 = Managers.input:is_device_active("gamepad")
-						local var_4_1 = UISettings.use_ps4_input_icons
+					content_check_function = function (arg_4_0, arg_4_1)
+						-- function 4
+						local is_device_active = Managers.input:is_device_active("gamepad")
+						local use_ps4_input_icons = UISettings.use_ps4_input_icons
 
-						var_4_1 = Managers.input:get_most_recent_device().type() == "sce_pad" or var_4_1
+						use_ps4_input_icons = Managers.input:get_most_recent_device().type() == "sce_pad" or use_ps4_input_icons
 
-						return var_4_0 and not var_4_1
+						return not is_device_active and not use_ps4_input_icons
 					end
 				},
 				{
 					texture_id = "ps_input",
 					style_id = "texture_id",
 					pass_type = "texture",
-					content_check_function = function(arg_5_0, arg_5_1)
-						local var_5_0 = Managers.input:is_device_active("gamepad")
-						local var_5_1 = UISettings.use_ps4_input_icons
+					content_check_function = function (arg_5_0, arg_5_1)
+						-- function 5
+						local is_device_active = Managers.input:is_device_active("gamepad")
+						local use_ps4_input_icons = UISettings.use_ps4_input_icons
 
-						var_5_1 = Managers.input:get_most_recent_device().type() == "sce_pad" or var_5_1
+						use_ps4_input_icons = Managers.input:get_most_recent_device().type() == "sce_pad" or use_ps4_input_icons
 
-						return var_5_0 and var_5_1
+						return not is_device_active and use_ps4_input_icons
 					end
 				}
 			}
-		},
-		content = {
-			xb_input = IS_CONSOLE and "xbone_button_icon_menu_large" or "xbone_button_icon_x",
-			ps_input = IS_CONSOLE and "ps4_button_icon_options" or "ps4_button_icon_square"
-		},
-		style = {
-			texture_id = {
-				texture_size = {
-					34,
-					34
-				},
-				color = arg_3_1 or {
-					255,
-					255,
-					255,
-					255
-				},
-				offset = {
-					-12,
-					-17,
-					1
-				}
-			}
-		},
-		offset = {
-			0,
-			0,
-			0
-		},
-		scenegraph_id = arg_3_0
+		}
 	}
+	local tbl_2 = {}
+	local flag
+
+	flag = not IS_CONSOLE and "xbone_button_icon_menu_large" and "xbone_button_icon_x"
+	tbl_2.xb_input = flag
+
+	local flag_2
+
+	flag_2 = not IS_CONSOLE and "ps4_button_icon_options" and "ps4_button_icon_square"
+	tbl_2.ps_input = flag_2
+	tbl.content = tbl_2
+	tbl.style = {
+		texture_id = {
+			texture_size = {
+				34,
+				34
+			},
+			color = arg_3_1 or {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				-12,
+				-17,
+				1
+			}
+		}
+	}
+	tbl.offset = {
+		0,
+		0,
+		0
+	}
+	tbl.scenegraph_id = arg_3_0
+
+	return tbl
 end
 
-local function var_0_8(arg_6_0)
-	local var_6_0 = #arg_6_0
-	local var_6_1 = {}
-	local var_6_2 = {
+local function fn(self)
+	-- function 6
+	local count = #self
+	local tbl = {}
+	local tbl_2 = {
 		passes = {}
 	}
-	local var_6_3 = var_6_2.passes
-	local var_6_4 = {}
-	local var_6_5 = {}
+	local passes = tbl_2.passes
+	local tbl_3 = {}
+	local tbl_4 = {}
 
-	var_6_3[#var_6_3 + 1] = {
+	passes[#passes + 1] = {
 		style_id = "right_arrow",
 		pass_type = "texture_uv",
 		content_id = "right_arrow",
-		content_check_function = function(arg_7_0, arg_7_1)
+		content_check_function = function (arg_7_0, arg_7_1)
+			-- function 7
 			return not Managers.input:is_device_active("gamepad")
 		end,
-		content_change_function = function(arg_8_0, arg_8_1)
-			local var_8_0 = arg_8_0.parent.right_arrow_hotspot.is_hover and 1 or 0.6
+		content_change_function = function (self, arg_8_1)
+			-- function 8
+			local flag
 
-			arg_8_1.color[2] = 255 * var_8_0
-			arg_8_1.color[3] = 255 * var_8_0
-			arg_8_1.color[4] = 255 * var_8_0
+			flag = not self.parent.right_arrow_hotspot.is_hover and 1 and 0.6
+			arg_8_1.color[2] = 255 * flag
+			arg_8_1.color[3] = 255 * flag
+			arg_8_1.color[4] = 255 * flag
 		end
 	}
-	var_6_3[#var_6_3 + 1] = {
+	passes[#passes + 1] = {
 		style_id = "right_arrow",
 		pass_type = "hotspot",
 		content_id = "right_arrow_hotspot"
 	}
-	var_6_3[#var_6_3 + 1] = {
+	passes[#passes + 1] = {
 		style_id = "right_shoulder",
 		texture_id = "right_shoulder",
 		pass_type = "texture",
-		content_check_function = function(arg_9_0, arg_9_1)
+		content_check_function = function (arg_9_0, arg_9_1)
+			-- function 9
 			return (Managers.input:is_device_active("gamepad"))
 		end,
-		content_change_function = function(arg_10_0, arg_10_1)
-			if IS_PS4 or IS_XB1 then
+		content_change_function = function (self, arg_10_1)
+			-- function 10
+			if IS_PS4 or not IS_XB1 then
 				return
 			end
 
-			local var_10_0 = UISettings.use_ps4_input_icons
-			local var_10_1 = Managers.input and Managers.input:get_most_recent_device()
+			local use_ps4_input_icons = UISettings.use_ps4_input_icons
+			local input = Managers.input
 
-			var_10_0 = var_10_1 and var_10_1.type() == "sce_pad" or var_10_0
-			arg_10_0.right_shoulder = var_10_0 and "ps4_button_icon_r1" or "xbone_button_icon_rb"
+			input = not input and Managers.input:get_most_recent_device()
+			use_ps4_input_icons = not input and input.type() == "sce_pad" and use_ps4_input_icons
+
+			local flag
+
+			flag = not use_ps4_input_icons and "ps4_button_icon_r1" and "xbone_button_icon_rb"
+			self.right_shoulder = flag
 		end
 	}
-	var_6_5.right_arrow = {
+	tbl_4.right_arrow = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
 		area_size = {
@@ -524,7 +549,7 @@ local function var_0_8(arg_6_0)
 			255
 		}
 	}
-	var_6_5.right_shoulder = {
+	tbl_4.right_shoulder = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
 		texture_size = {
@@ -538,8 +563,8 @@ local function var_0_8(arg_6_0)
 			255
 		}
 	}
-	var_6_4.right_arrow_hotspot = {}
-	var_6_4.right_arrow = {
+	tbl_3.right_arrow_hotspot = {}
+	tbl_3.right_arrow = {
 		texture_id = "info_slate_arrow",
 		uvs = {
 			{
@@ -552,53 +577,110 @@ local function var_0_8(arg_6_0)
 			}
 		}
 	}
-	var_6_4.right_shoulder = IS_PS4 and "ps4_button_icon_r1" or "xbone_button_icon_rb"
-	var_6_4.current_index = nil
 
-	local var_6_6 = {
+	local flag
+
+	flag = not IS_PS4 and "ps4_button_icon_r1" and "xbone_button_icon_rb"
+	tbl_3.right_shoulder = flag
+	tbl_3.current_index = nil
+
+	local tbl_5 = {
 		16,
 		16
 	}
-	local var_6_7 = 8
-	local var_6_8 = -28
+	local num = 8
+	local num_2 = -28
 
-	for iter_6_0 = var_6_0, 1, -1 do
-		local var_6_9 = arg_6_0[iter_6_0]
-		local var_6_10 = "slate_" .. iter_6_0
+	for i = count, 1, -1 do
+		local var_6_10 = self[i]
+		local str = "slate_" .. i
 
-		var_6_3[#var_6_3 + 1] = {
+		passes[#passes + 1] = {
 			pass_type = "rect",
-			content_id = var_6_10,
-			style_id = var_6_10,
-			content_change_function = function(arg_11_0, arg_11_1)
-				local var_11_0 = arg_11_1.alert_color
-				local var_11_1 = arg_11_0.parent[var_6_10 .. "_hotspot"]
-				local var_11_2 = var_11_1.is_hover or arg_11_0.index == arg_11_0.parent.current_index
-				local var_11_3 = var_11_1.is_hover and 1 or 0.8
+			content_id = str,
+			style_id = str,
+			content_change_function = function (self, arg_11_1)
+				-- function 11
+				local alert_color = arg_11_1.alert_color
+				local var_11_1 = self.parent[str .. "_hotspot"]
+				local is_hover = var_11_1.is_hover
 
+				is_hover = is_hover or self.index == self.parent.current_index
+
+				local flag
+
+				flag = not var_11_1.is_hover and 1 and 0.8
 				arg_11_1.color[1] = 255
-				arg_11_1.color[2] = (var_11_2 and var_11_0[2] or 255) * var_11_3
-				arg_11_1.color[3] = (var_11_2 and var_11_0[3] or 255) * var_11_3
-				arg_11_1.color[4] = (var_11_2 and var_11_0[4] or 255) * var_11_3
+
+				local color = arg_11_1.color
+				local var_11_5
+
+				if not is_hover then
+					var_11_5 = alert_color[2]
+
+					if not var_11_5 then
+						-- Nothing
+					end
+				end
+
+				var_11_5 = 255
+
+				::label_11_0::
+
+				color[2] = var_11_5 * flag
+
+				local color_2 = arg_11_1.color
+				local var_11_7
+
+				if not is_hover then
+					var_11_7 = alert_color[3]
+
+					if not var_11_7 then
+						-- Nothing
+					end
+				end
+
+				var_11_7 = 255
+
+				::label_11_1::
+
+				color_2[3] = var_11_7 * flag
+
+				local color_3 = arg_11_1.color
+				local var_11_9
+
+				if not is_hover then
+					var_11_9 = alert_color[4]
+
+					if not var_11_9 then
+						-- Nothing
+					end
+				end
+
+				var_11_9 = 255
+
+				::label_11_2::
+
+				color_3[4] = var_11_9 * flag
 			end
 		}
-		var_6_3[#var_6_3 + 1] = {
+		passes[#passes + 1] = {
 			pass_type = "hotspot",
-			content_id = var_6_10 .. "_hotspot",
-			style_id = var_6_10
+			content_id = str .. "_hotspot",
+			style_id = str
 		}
-		var_6_4[var_6_10 .. "_hotspot"] = {}
-		var_6_4[var_6_10] = {
-			index = iter_6_0
+		tbl_3[str .. "_hotspot"] = {}
+		tbl_3[str] = {
+			index = i
 		}
-		var_6_5[var_6_10] = {
+		tbl_4[str] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
-			alert_color = var_6_9.alert_color,
-			texture_size = var_6_6,
+			alert_color = var_6_10.alert_color,
+			texture_size = tbl_5,
 			area_size = {
-				var_6_6[1] * 1.5,
-				var_6_6[2] * 1.5
+				tbl_5[1] * 1.5,
+				tbl_5[2] * 1.5
 			},
 			color = {
 				255,
@@ -607,56 +689,66 @@ local function var_0_8(arg_6_0)
 				255
 			},
 			offset = {
-				var_6_8,
+				num_2,
 				0,
 				0
 			}
 		}
-		var_6_8 = var_6_8 - var_6_6[1] - var_6_7
+		num_2 = num_2 - tbl_5[1] - num
 	end
 
-	local var_6_11 = var_6_8 - 4
+	local num_3 = num_2 - 4
 
-	var_6_3[#var_6_3 + 1] = {
+	passes[#passes + 1] = {
 		style_id = "left_arrow",
 		texture_id = "left_arrow",
 		pass_type = "texture",
-		content_check_function = function(arg_12_0, arg_12_1)
+		content_check_function = function (arg_12_0, arg_12_1)
+			-- function 12
 			return not Managers.input:is_device_active("gamepad")
 		end,
-		content_change_function = function(arg_13_0, arg_13_1)
-			local var_13_0 = arg_13_0.left_arrow_hotspot.is_hover and 1 or 0.6
+		content_change_function = function (self, arg_13_1)
+			-- function 13
+			local flag
 
-			arg_13_1.color[2] = 255 * var_13_0
-			arg_13_1.color[3] = 255 * var_13_0
-			arg_13_1.color[4] = 255 * var_13_0
+			flag = not self.left_arrow_hotspot.is_hover and 1 and 0.6
+			arg_13_1.color[2] = 255 * flag
+			arg_13_1.color[3] = 255 * flag
+			arg_13_1.color[4] = 255 * flag
 		end
 	}
-	var_6_3[#var_6_3 + 1] = {
+	passes[#passes + 1] = {
 		style_id = "left_shoulder",
 		texture_id = "left_shoulder",
 		pass_type = "texture",
-		content_check_function = function(arg_14_0, arg_14_1)
+		content_check_function = function (arg_14_0, arg_14_1)
+			-- function 14
 			return (Managers.input:is_device_active("gamepad"))
 		end,
-		content_change_function = function(arg_15_0, arg_15_1)
-			if IS_PS4 or IS_XB1 then
+		content_change_function = function (self, arg_15_1)
+			-- function 15
+			if IS_PS4 or not IS_XB1 then
 				return
 			end
 
-			local var_15_0 = UISettings.use_ps4_input_icons
-			local var_15_1 = Managers.input and Managers.input:get_most_recent_device()
+			local use_ps4_input_icons = UISettings.use_ps4_input_icons
+			local input = Managers.input
 
-			var_15_0 = var_15_1 and var_15_1.type() == "sce_pad" or var_15_0
-			arg_15_0.left_shoulder = var_15_0 and "ps4_button_icon_l1" or "xbone_button_icon_lb"
+			input = not input and Managers.input:get_most_recent_device()
+			use_ps4_input_icons = not input and input.type() == "sce_pad" and use_ps4_input_icons
+
+			local flag
+
+			flag = not use_ps4_input_icons and "ps4_button_icon_l1" and "xbone_button_icon_lb"
+			self.left_shoulder = flag
 		end
 	}
-	var_6_3[#var_6_3 + 1] = {
+	passes[#passes + 1] = {
 		style_id = "left_arrow",
 		pass_type = "hotspot",
 		content_id = "left_arrow_hotspot"
 	}
-	var_6_5.left_arrow = {
+	tbl_4.left_arrow = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
 		area_size = {
@@ -674,12 +766,12 @@ local function var_0_8(arg_6_0)
 			255
 		},
 		offset = {
-			var_6_11,
+			num_3,
 			0,
 			0
 		}
 	}
-	var_6_5.left_shoulder = {
+	tbl_4.left_shoulder = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
 		texture_size = {
@@ -693,35 +785,39 @@ local function var_0_8(arg_6_0)
 			255
 		},
 		offset = {
-			var_6_11,
+			num_3,
 			0,
 			0
 		}
 	}
-	var_6_4.left_arrow_hotspot = {}
-	var_6_4.left_arrow = "info_slate_arrow"
-	var_6_4.left_shoulder = IS_PS4 and "ps4_button_icon_l1" or "xbone_button_icon_lb"
-	var_6_1.element = var_6_2
-	var_6_1.content = var_6_4
-	var_6_1.style = var_6_5
-	var_6_1.scenegraph_id = "switch_panel"
-	var_6_1.offset = {
+	tbl_3.left_arrow_hotspot = {}
+	tbl_3.left_arrow = "info_slate_arrow"
+
+	local flag_2
+
+	flag_2 = not IS_PS4 and "ps4_button_icon_l1" and "xbone_button_icon_lb"
+	tbl_3.left_shoulder = flag_2
+	tbl.element = tbl_2
+	tbl.content = tbl_3
+	tbl.style = tbl_4
+	tbl.scenegraph_id = "switch_panel"
+	tbl.offset = {
 		-5,
 		0,
 		0
 	}
 
-	return var_6_1
+	return tbl
 end
 
-local var_0_9 = true
-local var_0_10 = {
+local flag = true
+local tbl_8 = {
 	panel = UIWidgets.create_simple_rect("panel", {
 		192,
 		0,
 		0,
 		0
-	}, nil, nil, var_0_1.top_panel.size),
+	}, nil, nil, tbl.top_panel.size),
 	panel_mask = UIWidgets.create_simple_texture("mask_rect", "panel_mask", nil, nil, {
 		255,
 		255,
@@ -759,67 +855,102 @@ local var_0_10 = {
 		255,
 		255,
 		255
-	}, var_0_2),
+	}, tbl_2),
 	header = UIWidgets.create_simple_text("Header", "header", 25, {
 		255,
 		255,
 		255,
 		255
-	}, var_0_3),
+	}, tbl_3),
 	sub_header = UIWidgets.create_simple_text("Sub Header", "sub_header", 25, {
 		255,
 		255,
 		255,
 		255
-	}, var_0_4),
-	more_information = create_hotspot_text(Managers.localizer:exists("info_slate_more_information") and Localize("info_slate_more_information") or "More Information", "information", var_0_5),
-	less_information = create_hotspot_text(Managers.localizer:exists("info_slate_less_information") and Localize("info_slate_less_information") or "Less Information", "information", var_0_5),
-	triangle_right = UIWidgets.create_simple_triangle("triangle", {
-		255,
-		255,
-		255,
-		255
-	}, "right", {
-		10,
-		10
-	}, var_0_9),
-	triangle_down = UIWidgets.create_simple_triangle("triangle", {
-		255,
-		255,
-		255,
-		255
-	}, "down", {
-		10,
-		10
-	}, var_0_9),
-	input = create_gamepad_input("triangle", {
-		255,
-		255,
-		255,
-		255
-	})
+	}, tbl_4)
 }
-local var_0_11 = {
+local create_hotspot_text = create_hotspot_text
+local var_0_12
+
+if not Managers.localizer:exists("info_slate_more_information") then
+	var_0_12 = Localize("info_slate_more_information")
+
+	if not var_0_12 then
+		-- Nothing
+	end
+end
+
+var_0_12 = "More Information"
+
+::label_0_0::
+
+tbl_8.more_information = create_hotspot_text(var_0_12, "information", tbl_5)
+
+local create_hotspot_text_2 = create_hotspot_text
+local var_0_14
+
+if not Managers.localizer:exists("info_slate_less_information") then
+	var_0_14 = Localize("info_slate_less_information")
+
+	if not var_0_14 then
+		-- Nothing
+	end
+end
+
+var_0_14 = "Less Information"
+
+::label_0_1::
+
+tbl_8.less_information = create_hotspot_text_2(var_0_14, "information", tbl_5)
+tbl_8.triangle_right = UIWidgets.create_simple_triangle("triangle", {
+	255,
+	255,
+	255,
+	255
+}, "right", {
+	10,
+	10
+}, flag)
+tbl_8.triangle_down = UIWidgets.create_simple_triangle("triangle", {
+	255,
+	255,
+	255,
+	255
+}, "down", {
+	10,
+	10
+}, flag)
+tbl_8.input = create_gamepad_input("triangle", {
+	255,
+	255,
+	255,
+	255
+})
+
+local tbl_9 = {
 	animate_switch_panel_in = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			init = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+				-- function 16
 				arg_16_0.switch_panel.position[1] = 200
 			end,
-			update = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
-				local var_17_0 = math.easeOutCubic(arg_17_3)
+			update = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+				-- function 17
+				local easeOutCubic = math.easeOutCubic(arg_17_3)
 
-				arg_17_0.switch_panel.position[1] = 200 - 250 * var_17_0
+				arg_17_0.switch_panel.position[1] = 200 - 250 * easeOutCubic
 
-				local var_17_1 = arg_17_2.switch_panel
+				local switch_panel = arg_17_2.switch_panel
 
-				if var_17_1 then
-					var_17_1.content.alpha_value = var_17_0 * var_17_0
+				if not switch_panel then
+					switch_panel.content.alpha_value = easeOutCubic * easeOutCubic
 				end
 			end,
-			on_complete = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			on_complete = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+				-- function 18
 				return
 			end
 		}
@@ -829,21 +960,24 @@ local var_0_11 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			init = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+				-- function 19
 				arg_19_0.switch_panel.position[1] = 0
 			end,
-			update = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
-				local var_20_0 = math.easeOutCubic(arg_20_3)
+			update = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+				-- function 20
+				local easeOutCubic = math.easeOutCubic(arg_20_3)
 
-				arg_20_0.switch_panel.position[1] = 250 * var_20_0
+				arg_20_0.switch_panel.position[1] = 250 * easeOutCubic
 
-				local var_20_1 = arg_20_2.switch_panel
+				local switch_panel = arg_20_2.switch_panel
 
-				if var_20_1 then
-					var_20_1.content.alpha_value = 1 - var_20_0 * var_20_0
+				if not switch_panel then
+					switch_panel.content.alpha_value = 1 - easeOutCubic * easeOutCubic
 				end
 			end,
-			on_complete = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			on_complete = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+				-- function 21
 				return
 			end
 		}
@@ -853,7 +987,8 @@ local var_0_11 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+			init = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+				-- function 22
 				arg_22_3.render_settings.alpha_multiplier = 0
 				arg_22_0.panel.position[1] = 200
 				arg_22_2.more_information.content.visible = true
@@ -861,13 +996,15 @@ local var_0_11 = {
 				arg_22_2.triangle_right.content.visible = true
 				arg_22_2.triangle_down.content.visible = false
 			end,
-			update = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
-				local var_23_0 = math.easeOutCubic(arg_23_3)
+			update = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+				-- function 23
+				local easeOutCubic = math.easeOutCubic(arg_23_3)
 
-				arg_23_4.render_settings.alpha_multiplier = var_23_0 * var_23_0
-				arg_23_0.panel.position[1] = 200 - 250 * var_23_0
+				arg_23_4.render_settings.alpha_multiplier = easeOutCubic * easeOutCubic
+				arg_23_0.panel.position[1] = 200 - 250 * easeOutCubic
 			end,
-			on_complete = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+			on_complete = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+				-- function 24
 				return
 			end
 		}
@@ -877,23 +1014,26 @@ local var_0_11 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.25,
-			init = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+			init = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+				-- function 25
 				arg_25_3.render_settings.alpha_multiplier = 1
 				arg_25_3.render_settings.scrollbar_alpha = 0
 			end,
-			update = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
-				local var_26_0 = math.easeOutCubic(arg_26_3)
+			update = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+				-- function 26
+				local easeOutCubic = math.easeOutCubic(arg_26_3)
 
-				arg_26_4.render_settings.alpha_multiplier = 1 - var_26_0 * var_26_0
-				arg_26_0.panel.position[1] = 250 * var_26_0
+				arg_26_4.render_settings.alpha_multiplier = 1 - easeOutCubic * easeOutCubic
+				arg_26_0.panel.position[1] = 250 * easeOutCubic
 
-				local var_26_1 = arg_26_2.switch_panel
+				local switch_panel = arg_26_2.switch_panel
 
-				if var_26_1 then
-					var_26_1.content.alpha_value = arg_26_4.render_settings.alpha_multiplier
+				if not switch_panel then
+					switch_panel.content.alpha_value = arg_26_4.render_settings.alpha_multiplier
 				end
 			end,
-			on_complete = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+			on_complete = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+				-- function 27
 				arg_27_0.panel_mask.size[2] = 0
 				arg_27_2.panel.style.rect.texture_size[2] = arg_27_1.top_panel.size[2]
 			end
@@ -904,7 +1044,8 @@ local var_0_11 = {
 			name = "expand",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+			init = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+				-- function 28
 				arg_28_0.panel_mask.size[2] = 0
 				arg_28_2.more_information.content.visible = false
 				arg_28_2.less_information.content.visible = true
@@ -912,13 +1053,15 @@ local var_0_11 = {
 				arg_28_2.triangle_down.content.visible = true
 				arg_28_3.render_settings.scrollbar_alpha = 0
 			end,
-			update = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
-				local var_29_0 = math.easeOutCubic(arg_29_3)
+			update = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
+				-- function 29
+				local easeOutCubic = math.easeOutCubic(arg_29_3)
 
-				arg_29_0.panel_mask.size[2] = 590 * var_29_0
-				arg_29_2.panel.style.rect.texture_size[2] = math.lerp(arg_29_1.top_panel.size[2], arg_29_1.panel.size[2], var_29_0)
+				arg_29_0.panel_mask.size[2] = 590 * easeOutCubic
+				arg_29_2.panel.style.rect.texture_size[2] = math.lerp(arg_29_1.top_panel.size[2], arg_29_1.panel.size[2], easeOutCubic)
 			end,
-			on_complete = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+			on_complete = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+				-- function 30
 				return
 			end
 		},
@@ -926,15 +1069,18 @@ local var_0_11 = {
 			name = "fade_scrollbar",
 			start_progress = 0.5,
 			end_progress = 0.75,
-			init = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+			init = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+				-- function 31
 				return
 			end,
-			update = function(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
-				local var_32_0 = math.easeOutCubic(arg_32_3)
+			update = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+				-- function 32
+				local easeOutCubic = math.easeOutCubic(arg_32_3)
 
-				arg_32_4.render_settings.scrollbar_alpha = var_32_0
+				arg_32_4.render_settings.scrollbar_alpha = easeOutCubic
 			end,
-			on_complete = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+			on_complete = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+				-- function 33
 				return
 			end
 		}
@@ -944,7 +1090,8 @@ local var_0_11 = {
 			name = "expand",
 			start_progress = 0,
 			end_progress = 0,
-			init = function(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+			init = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+				-- function 34
 				arg_34_0.panel_mask.size[2] = 0
 				arg_34_2.more_information.content.visible = false
 				arg_34_2.less_information.content.visible = true
@@ -952,11 +1099,13 @@ local var_0_11 = {
 				arg_34_2.triangle_down.content.visible = true
 				arg_34_3.render_settings.scrollbar_alpha = 1
 			end,
-			update = function(arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
+			update = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
+				-- function 35
 				arg_35_0.panel_mask.size[2] = 590
 				arg_35_2.panel.style.rect.texture_size[2] = arg_35_1.panel.size[2]
 			end,
-			on_complete = function(arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+			on_complete = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+				-- function 36
 				return
 			end
 		}
@@ -966,20 +1115,23 @@ local var_0_11 = {
 			name = "collapse",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+			init = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+				-- function 37
 				arg_37_0.panel_mask.size[2] = 590
 				arg_37_2.more_information.content.visible = true
 				arg_37_2.less_information.content.visible = false
 				arg_37_2.triangle_right.content.visible = true
 				arg_37_2.triangle_down.content.visible = false
 			end,
-			update = function(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
-				local var_38_0 = math.easeOutCubic(arg_38_3)
+			update = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
+				-- function 38
+				local easeOutCubic = math.easeOutCubic(arg_38_3)
 
-				arg_38_0.panel_mask.size[2] = 590 * (1 - var_38_0)
-				arg_38_2.panel.style.rect.texture_size[2] = math.lerp(arg_38_1.panel.size[2], arg_38_1.top_panel.size[2], var_38_0)
+				arg_38_0.panel_mask.size[2] = 590 * (1 - easeOutCubic)
+				arg_38_2.panel.style.rect.texture_size[2] = math.lerp(arg_38_1.panel.size[2], arg_38_1.top_panel.size[2], easeOutCubic)
 			end,
-			on_complete = function(arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+			on_complete = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+				-- function 39
 				return
 			end
 		}
@@ -989,20 +1141,23 @@ local var_0_11 = {
 			name = "collapse",
 			start_progress = 0,
 			end_progress = 0,
-			init = function(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+			init = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+				-- function 40
 				arg_40_0.panel_mask.size[2] = 590
 				arg_40_2.more_information.content.visible = true
 				arg_40_2.less_information.content.visible = false
 				arg_40_2.triangle_right.content.visible = true
 				arg_40_2.triangle_down.content.visible = false
 			end,
-			update = function(arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
-				local var_41_0 = math.easeOutCubic(arg_41_3)
+			update = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
+				-- function 41
+				local easeOutCubic = math.easeOutCubic(arg_41_3)
 
-				arg_41_0.panel_mask.size[2] = 590 * (1 - var_41_0)
-				arg_41_2.panel.style.rect.texture_size[2] = math.lerp(arg_41_1.panel.size[2], arg_41_1.top_panel.size[2], var_41_0)
+				arg_41_0.panel_mask.size[2] = 590 * (1 - easeOutCubic)
+				arg_41_2.panel.style.rect.texture_size[2] = math.lerp(arg_41_1.panel.size[2], arg_41_1.top_panel.size[2], easeOutCubic)
 			end,
-			on_complete = function(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+			on_complete = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+				-- function 42
 				return
 			end
 		}
@@ -1010,10 +1165,10 @@ local var_0_11 = {
 }
 
 return {
-	widget_definitions = var_0_10,
-	body_parsing_data = var_0_7,
-	animation_definitions = var_0_11,
-	scenegraph_definition = var_0_1,
-	panel_scroll_area = var_0_0,
-	create_switch_panel_func = var_0_8
+	widget_definitions = tbl_8,
+	body_parsing_data = tbl_7,
+	animation_definitions = tbl_9,
+	scenegraph_definition = tbl,
+	panel_scroll_area = num,
+	create_switch_panel_func = fn
 }

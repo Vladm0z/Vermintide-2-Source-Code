@@ -2,142 +2,157 @@
 
 require("scripts/managers/backend/data_server_queue")
 
-local function var_0_0(...)
+local function fn(...)
+	-- function 1
 	print("[BackendInterfaceLoot]", ...)
 end
 
 BackendInterfaceLoot = class(BackendInterfaceLoot)
 
-local var_0_1 = "item"
+local str = "item"
 
-function BackendInterfaceLoot.init(arg_2_0)
+BackendInterfaceLoot.init = function (arg_2_0)
+	-- function 2
 	return
 end
 
-function BackendInterfaceLoot.setup(arg_3_0, arg_3_1)
-	arg_3_0:_register_executors(arg_3_1)
+BackendInterfaceLoot.setup = function (self, arg_3_1)
+	-- function 3
+	self:_register_executors(arg_3_1)
 
-	arg_3_0._queue = arg_3_1
-	arg_3_0.dirty = false
-	arg_3_0._attributes = {}
+	self._queue = arg_3_1
+	self.dirty = false
+	self._attributes = {}
 end
 
-function BackendInterfaceLoot._register_executors(arg_4_0, arg_4_1)
+BackendInterfaceLoot._register_executors = function (arg_4_0, arg_4_1)
+	-- function 4
 	arg_4_1:register_executor("loot_chest_generated", callback(arg_4_0, "_command_loot_chest_generated"))
 	arg_4_1:register_executor("loot_chest_consumed", callback(arg_4_0, "_command_loot_chest_consumed"))
 	arg_4_1:register_executor("weapon_with_properties_generated", callback(arg_4_0, "_command_weapon_with_properties_generated"))
 end
 
-function BackendInterfaceLoot._command_loot_chest_generated(arg_5_0, arg_5_1)
-	var_0_0("_command_loot_chest_generated ")
+BackendInterfaceLoot._command_loot_chest_generated = function (self, arg_5_1)
+	-- function 5
+	fn("_command_loot_chest_generated ")
 
-	arg_5_0.dirty = false
-	arg_5_0.last_generated_loot_chest = Managers.backend:get_interface("items"):get_item_from_id(arg_5_1).key
-
-	Backend.load_entities()
-	arg_5_0:_refresh_attributes()
-end
-
-function BackendInterfaceLoot._command_loot_chest_consumed(arg_6_0, arg_6_1)
-	var_0_0("_command_loot_chest_consumed " .. arg_6_1)
-
-	arg_6_0.dirty = false
+	self.dirty = false
+	self.last_generated_loot_chest = Managers.backend:get_interface("items"):get_item_from_id(arg_5_1).key
 
 	Backend.load_entities()
+	self:_refresh_attributes()
 end
 
-function BackendInterfaceLoot._command_weapon_with_properties_generated(arg_7_0, arg_7_1)
-	var_0_0("_command_weapon_with_properties_generated " .. arg_7_1)
+BackendInterfaceLoot._command_loot_chest_consumed = function (self, arg_6_1)
+	-- function 6
+	fn("_command_loot_chest_consumed " .. arg_6_1)
 
-	arg_7_0.dirty = false
+	self.dirty = false
 
 	Backend.load_entities()
-	arg_7_0:_refresh_attributes()
 end
 
-function BackendInterfaceLoot.generate_loot_chest(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6)
-	arg_8_0._queue:add_item("generate_loot_chest_1", "hero_name", cjson.encode(arg_8_1), "difficulty", cjson.encode(arg_8_2), "tomes", cjson.encode(arg_8_3), "grimoires", cjson.encode(arg_8_4), "loot_dice", cjson.encode(arg_8_5), "level", cjson.encode(arg_8_6))
+BackendInterfaceLoot._command_weapon_with_properties_generated = function (self, arg_7_1)
+	-- function 7
+	fn("_command_weapon_with_properties_generated " .. arg_7_1)
 
-	arg_8_0.dirty = true
+	self.dirty = false
+
+	Backend.load_entities()
+	self:_refresh_attributes()
 end
 
-function BackendInterfaceLoot.consume_loot_chest(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
-	local var_9_0 = ""
+BackendInterfaceLoot.generate_loot_chest = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6)
+	-- function 8
+	self._queue:add_item("generate_loot_chest_1", "hero_name", cjson.encode(arg_8_1), "difficulty", cjson.encode(arg_8_2), "tomes", cjson.encode(arg_8_3), "grimoires", cjson.encode(arg_8_4), "loot_dice", cjson.encode(arg_8_5), "level", cjson.encode(arg_8_6))
+
+	self.dirty = true
+end
+
+BackendInterfaceLoot.consume_loot_chest = function (self, arg_9_1, arg_9_2, arg_9_3)
+	-- function 9
+	local str = ""
 
 	fassert(arg_9_2, "Got nil item key to reward player")
 	fassert(arg_9_3, "No properties found for item %s", arg_9_2)
 
-	for iter_9_0, iter_9_1 in pairs(arg_9_3) do
-		var_9_0 = var_9_0 .. iter_9_1.rune_slot .. ":" .. iter_9_1.property_key .. ",empty,"
+	for k, v in pairs(arg_9_3) do
+		str = str .. v.rune_slot .. ":" .. v.property_key .. ",empty,"
 	end
 
-	arg_9_0._queue:add_item("consume_loot_chest_1", "entity_id", cjson.encode(arg_9_1), "item_key", cjson.encode(arg_9_2), "properties", cjson.encode(var_9_0))
+	self._queue:add_item("consume_loot_chest_1", "entity_id", cjson.encode(arg_9_1), "item_key", cjson.encode(arg_9_2), "properties", cjson.encode(str))
 
-	arg_9_0.dirty = true
+	self.dirty = true
 end
 
-function BackendInterfaceLoot.generate_weapon_with_properties(arg_10_0, arg_10_1, arg_10_2)
-	arg_10_0._queue:add_item("generate_property_weapon", "item_key", cjson.encode(arg_10_1), "properties", cjson.encode(arg_10_2))
+BackendInterfaceLoot.generate_weapon_with_properties = function (self, arg_10_1, arg_10_2)
+	-- function 10
+	self._queue:add_item("generate_property_weapon", "item_key", cjson.encode(arg_10_1), "properties", cjson.encode(arg_10_2))
 
-	arg_10_0.dirty = true
+	self.dirty = true
 end
 
-function BackendInterfaceLoot._refresh_attributes(arg_11_0)
-	local var_11_0 = Backend.get_entities_with_attributes(var_0_1)
-	local var_11_1 = {}
+BackendInterfaceLoot._refresh_attributes = function (self)
+	-- function 11
+	local get_entities_with_attributes = Backend.get_entities_with_attributes(str)
+	local tbl = {}
 
-	for iter_11_0, iter_11_1 in pairs(var_11_0) do
-		local var_11_2 = iter_11_1.attributes
+	for k, v in pairs(get_entities_with_attributes) do
+		local attributes = v.attributes
 
-		if var_11_2 then
-			var_11_1[iter_11_0] = var_11_2
+		if not attributes then
+			tbl[k] = attributes
 		end
 	end
 
-	arg_11_0._attributes = var_11_1
+	self._attributes = tbl
 end
 
-function BackendInterfaceLoot.on_authenticated(arg_12_0)
-	arg_12_0:_refresh_attributes()
+BackendInterfaceLoot.on_authenticated = function (self)
+	-- function 12
+	self:_refresh_attributes()
 end
 
-function BackendInterfaceLoot.get_loot(arg_13_0, arg_13_1)
-	arg_13_0:_refresh_attributes()
+BackendInterfaceLoot.get_loot = function (self, arg_13_1)
+	-- function 13
+	self:_refresh_attributes()
 
-	local var_13_0 = arg_13_0._attributes[arg_13_1]
+	local var_13_0 = self._attributes[arg_13_1]
 
 	fassert(var_13_0, "[BackendInterfaceLoot:get_loot] Tried to get attributes from an item with no attributes", "error")
 
-	local var_13_1 = {}
+	local tbl = {}
 
-	for iter_13_0, iter_13_1 in pairs(var_13_0) do
-		local var_13_2 = {}
-		local var_13_3 = {}
+	for k, v in pairs(var_13_0) do
+		local tbl_2 = {}
+		local tbl_3 = {}
 
-		for iter_13_2, iter_13_3 in string.gmatch(iter_13_1, "([%w_]+),*([%w_]*);") do
-			var_13_2.item_key = iter_13_2
-			var_13_2.loot_type = iter_13_3
+		for iter_13_2, iter_13_3 in string.gmatch(v, "([%w_]+),*([%w_]*);") do
+			tbl_2.item_key = iter_13_2
+			tbl_2.loot_type = iter_13_3
 		end
 
-		for iter_13_4, iter_13_5 in string.gmatch(iter_13_1, "([%w_]+):([%w_]+)") do
-			var_13_3[#var_13_3 + 1] = {
+		for iter_13_4, iter_13_5 in string.gmatch(v, "([%w_]+):([%w_]+)") do
+			tbl_3[#tbl_3 + 1] = {
 				rune_value = "empty",
 				rune_slot = iter_13_4,
 				property_key = iter_13_5
 			}
 		end
 
-		var_13_2.properties = var_13_3
-		var_13_1[#var_13_1 + 1] = var_13_2
+		tbl_2.properties = tbl_3
+		tbl[#tbl + 1] = tbl_2
 	end
 
-	return var_13_1
+	return tbl
 end
 
-function BackendInterfaceLoot.is_dirty(arg_14_0)
-	return arg_14_0.dirty
+BackendInterfaceLoot.is_dirty = function (self)
+	-- function 14
+	return self.dirty
 end
 
-function BackendInterfaceLoot.get_last_generated_loot_chest(arg_15_0)
-	return arg_15_0.last_generated_loot_chest
+BackendInterfaceLoot.get_last_generated_loot_chest = function (self)
+	-- function 15
+	return self.last_generated_loot_chest
 end

@@ -4,398 +4,440 @@ require("scripts/unit_extensions/generic/generic_state_machine")
 
 PlayerBotInput = class(PlayerBotInput)
 
-local var_0_0 = POSITION_LOOKUP
+local POSITION_LOOKUP = POSITION_LOOKUP
 
-function PlayerBotInput.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	arg_1_0.unit = arg_1_2
-	arg_1_0.move = {
+PlayerBotInput.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	self.unit = arg_1_2
+	self.move = {
 		x = 0,
 		y = 0
 	}
-	arg_1_0.look = {
+	self.look = {
 		x = 0,
 		y = 0
 	}
-	arg_1_0._aim_target = Vector3Box(0, 0, 0)
-	arg_1_0._aim_rotation = QuaternionBox(0, 0, 0)
-	arg_1_0._aiming = false
-	arg_1_0._soft_aiming = false
-	arg_1_0._charge_shot = false
-	arg_1_0._charge_shot_held = false
-	arg_1_0._fire_hold = false
-	arg_1_0._fire = false
-	arg_1_0._fire_held = false
-	arg_1_0._defend = false
-	arg_1_0._defend_held = false
-	arg_1_0._melee_push = false
-	arg_1_0._hold_attack = false
-	arg_1_0._tap_attack = false
-	arg_1_0._tap_attack_released = true
-	arg_1_0._interact = false
-	arg_1_0._interact_held = false
-	arg_1_0._activate_ability = false
-	arg_1_0._activate_ability_held = false
-	arg_1_0._cancel_held_ability = false
-	arg_1_0._weapon_reload = false
-	arg_1_0._dodge = false
-	arg_1_0._bot_in_attract_mode_focus = false
-	arg_1_0._avoiding_aoe_threat = false
-	arg_1_0.double_tap_dodge = false
-	arg_1_0.minimum_dodge_input = 0
-	arg_1_0._input = {}
-	arg_1_0._look_at_player = nil
-	arg_1_0._look_at_player_rotation_allowed = false
-	arg_1_0._world = arg_1_1.world
-	arg_1_0._nav_world = Managers.state.entity:system("ai_system"):nav_world()
-	arg_1_0._game = Managers.state.network:game()
+	self._aim_target = Vector3Box(0, 0, 0)
+	self._aim_rotation = QuaternionBox(0, 0, 0)
+	self._aiming = false
+	self._soft_aiming = false
+	self._charge_shot = false
+	self._charge_shot_held = false
+	self._fire_hold = false
+	self._fire = false
+	self._fire_held = false
+	self._defend = false
+	self._defend_held = false
+	self._melee_push = false
+	self._hold_attack = false
+	self._tap_attack = false
+	self._tap_attack_released = true
+	self._interact = false
+	self._interact_held = false
+	self._activate_ability = false
+	self._activate_ability_held = false
+	self._cancel_held_ability = false
+	self._weapon_reload = false
+	self._dodge = false
+	self._bot_in_attract_mode_focus = false
+	self._avoiding_aoe_threat = false
+	self.double_tap_dodge = false
+	self.minimum_dodge_input = 0
+	self._input = {}
+	self._look_at_player = nil
+	self._look_at_player_rotation_allowed = false
+	self._world = arg_1_1.world
+	self._nav_world = Managers.state.entity:system("ai_system"):nav_world()
+	self._game = Managers.state.network:game()
 end
 
-function PlayerBotInput.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
-	local var_2_0 = ScriptUnit.extension
+PlayerBotInput.extensions_ready = function (self, arg_2_1, arg_2_2)
+	-- function 2
+	local extension = ScriptUnit.extension
 
-	arg_2_0._navigation_extension = var_2_0(arg_2_2, "ai_navigation_system")
-	arg_2_0._status_extension = var_2_0(arg_2_2, "status_system")
-	arg_2_0._first_person_extension = var_2_0(arg_2_2, "first_person_system")
-	arg_2_0._ai_bot_group_extension = var_2_0(arg_2_2, "ai_bot_group_system")
-	arg_2_0._locomotion_extension = var_2_0(arg_2_2, "locomotion_system")
-	arg_2_0._ai_bot_group_system = Managers.state.entity:system("ai_bot_group_system")
+	self._navigation_extension = extension(arg_2_2, "ai_navigation_system")
+	self._status_extension = extension(arg_2_2, "status_system")
+	self._first_person_extension = extension(arg_2_2, "first_person_system")
+	self._ai_bot_group_extension = extension(arg_2_2, "ai_bot_group_system")
+	self._locomotion_extension = extension(arg_2_2, "locomotion_system")
+	self._ai_bot_group_system = Managers.state.entity:system("ai_bot_group_system")
 end
 
-function PlayerBotInput.destroy(arg_3_0)
+PlayerBotInput.destroy = function (arg_3_0)
+	-- function 3
 	return
 end
 
-function PlayerBotInput.reset(arg_4_0)
+PlayerBotInput.reset = function (arg_4_0)
+	-- function 4
 	return
 end
 
-function PlayerBotInput.pre_update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
-	local var_5_0 = var_0_0[arg_5_1]
-	local var_5_1, var_5_2 = GwNavQueries.triangle_from_position(arg_5_0._nav_world, var_5_0, 1.1, 0.5)
+PlayerBotInput.pre_update = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	-- function 5
+	local var_5_0 = POSITION_LOOKUP[arg_5_1]
+	local triangle_from_position, var_5_2 = GwNavQueries.triangle_from_position(self._nav_world, var_5_0, 1.1, 0.5)
+	local var_5_3
 
-	arg_5_0._position_on_navmesh = var_5_1 and Vector3(var_5_0.x, var_5_0.y, var_5_2) or var_5_0
-end
+	if not triangle_from_position then
+		var_5_3 = Vector3(var_5_0.x, var_5_0.y, var_5_2)
 
-function PlayerBotInput.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
-	table.clear(arg_6_0._input)
-	arg_6_0:_update_movement(arg_6_3, arg_6_5)
-	arg_6_0:_update_actions()
-end
-
-function PlayerBotInput._update_actions(arg_7_0)
-	local var_7_0 = arg_7_0._input
-
-	if arg_7_0._fire_hold then
-		arg_7_0._fire_hold = false
-		var_7_0.action_one_hold = true
-
-		if not arg_7_0._fire_held then
-			var_7_0.action_one = true
-			arg_7_0._fire_held = true
+		if not var_5_3 then
+			-- Nothing
 		end
-	elseif arg_7_0._fire_held then
-		arg_7_0._fire_held = false
-		var_7_0.action_one_release = true
-	elseif arg_7_0._fire then
-		arg_7_0._fire = false
-		var_7_0.action_one = true
 	end
 
-	if arg_7_0._melee_push then
-		arg_7_0._melee_push = false
-		arg_7_0._defend = false
+	var_5_3 = var_5_0
 
-		if arg_7_0._defend_held then
-			var_7_0.action_one = true
+	::label_5_0::
+
+	self._position_on_navmesh = var_5_3
+end
+
+PlayerBotInput.update = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+	-- function 6
+	table.clear(self._input)
+	self:_update_movement(arg_6_3, arg_6_5)
+	self:_update_actions()
+end
+
+PlayerBotInput._update_actions = function (self)
+	-- function 7
+	local _input = self._input
+
+	if not self._fire_hold then
+		self._fire_hold = false
+		_input.action_one_hold = true
+
+		if not self._fire_held then
+			_input.action_one = true
+			self._fire_held = true
+		end
+	elseif not self._fire_held then
+		self._fire_held = false
+		_input.action_one_release = true
+	elseif not self._fire then
+		self._fire = false
+		_input.action_one = true
+	end
+
+	if not self._melee_push then
+		self._melee_push = false
+		self._defend = false
+
+		if not self._defend_held then
+			_input.action_one = true
 		else
-			arg_7_0._defend_held = true
-			var_7_0.action_two = true
+			self._defend_held = true
+			_input.action_two = true
 		end
 
-		var_7_0.action_two_hold = true
-	elseif arg_7_0._defend then
-		arg_7_0._defend = false
+		_input.action_two_hold = true
+	elseif not self._defend then
+		self._defend = false
 
-		if not arg_7_0._defend_held then
-			arg_7_0._defend_held = true
-			var_7_0.action_two = true
+		if not self._defend_held then
+			self._defend_held = true
+			_input.action_two = true
 		end
 
-		var_7_0.action_two_hold = true
-	elseif arg_7_0._defend_held then
-		arg_7_0._defend_held = false
-		var_7_0.action_two_release = true
+		_input.action_two_hold = true
+	elseif not self._defend_held then
+		self._defend_held = false
+		_input.action_two_release = true
 	end
 
-	if arg_7_0._cancel_held_ability then
-		arg_7_0._cancel_held_ability = false
-		arg_7_0._activate_ability = false
-		arg_7_0._activate_ability_held = false
-		var_7_0.action_two = true
+	if not self._cancel_held_ability then
+		self._cancel_held_ability = false
+		self._activate_ability = false
+		self._activate_ability_held = false
+		_input.action_two = true
 	end
 
-	if arg_7_0._activate_ability then
-		arg_7_0._activate_ability = false
+	if not self._activate_ability then
+		self._activate_ability = false
 
-		if not arg_7_0._activate_ability_held then
-			arg_7_0._activate_ability_held = true
-			var_7_0.action_career = true
+		if not self._activate_ability_held then
+			self._activate_ability_held = true
+			_input.action_career = true
 		end
 
-		var_7_0.action_career_hold = true
-	elseif arg_7_0._activate_ability_held then
-		arg_7_0._activate_ability_held = false
-		var_7_0.action_career_release = true
+		_input.action_career_hold = true
+	elseif not self._activate_ability_held then
+		self._activate_ability_held = false
+		_input.action_career_release = true
 	end
 
-	if arg_7_0._weapon_reload then
-		arg_7_0._weapon_reload = false
-		var_7_0.weapon_reload = true
-		var_7_0.weapon_reload_hold = true
+	if not self._weapon_reload then
+		self._weapon_reload = false
+		_input.weapon_reload = true
+		_input.weapon_reload_hold = true
 	end
 
-	if arg_7_0._hold_attack then
-		var_7_0.action_one = true
-		var_7_0.action_one_hold = true
-		arg_7_0._hold_attack = false
-		arg_7_0._attack_held = true
-	elseif arg_7_0._attack_held then
-		arg_7_0._attack_held = false
-		var_7_0.action_one_release = true
-	elseif not arg_7_0._tap_attack_released then
-		arg_7_0._tap_attack_released = true
-		var_7_0.action_one_release = true
-	elseif arg_7_0._tap_attack then
-		arg_7_0._tap_attack_released = false
-		arg_7_0._tap_attack = false
-		var_7_0.action_one = true
+	if not self._hold_attack then
+		_input.action_one = true
+		_input.action_one_hold = true
+		self._hold_attack = false
+		self._attack_held = true
+	elseif not self._attack_held then
+		self._attack_held = false
+		_input.action_one_release = true
+	elseif not self._tap_attack_released then
+		self._tap_attack_released = true
+		_input.action_one_release = true
+	elseif not self._tap_attack then
+		self._tap_attack_released = false
+		self._tap_attack = false
+		_input.action_one = true
 	end
 
-	if arg_7_0._charge_shot then
-		arg_7_0._charge_shot = false
-		var_7_0.action_two_hold = true
+	if not self._charge_shot then
+		self._charge_shot = false
+		_input.action_two_hold = true
 
-		if not arg_7_0._charge_shot_held then
-			var_7_0.action_two = true
-			arg_7_0._charge_shot_held = true
+		if not self._charge_shot_held then
+			_input.action_two = true
+			self._charge_shot_held = true
 		end
-	elseif arg_7_0._charge_shot_held then
-		arg_7_0._charge_shot_held = false
-		var_7_0.action_two_release = true
+	elseif not self._charge_shot_held then
+		self._charge_shot_held = false
+		_input.action_two_release = true
 	end
 
-	if arg_7_0._interact then
-		arg_7_0._interact = false
+	if not self._interact then
+		self._interact = false
 
-		if not arg_7_0._interact_held then
-			arg_7_0._interact_held = true
-			var_7_0[InteractionHelper.interaction_action_names(arg_7_0.unit)] = true
+		if not self._interact_held then
+			self._interact_held = true
+			_input[InteractionHelper.interaction_action_names(self.unit)] = true
 		end
 
-		var_7_0.interacting = true
-	elseif arg_7_0._interact_held then
-		arg_7_0._interact_held = false
+		_input.interacting = true
+	elseif not self._interact_held then
+		self._interact_held = false
 	end
 
-	local var_7_1 = arg_7_0._slot_to_wield
+	local _slot_to_wield = self._slot_to_wield
 
-	if var_7_1 then
-		arg_7_0._slot_to_wield = nil
+	if not _slot_to_wield then
+		self._slot_to_wield = nil
 
-		local var_7_2 = InventorySettings.slots
-		local var_7_3 = #var_7_2
+		local slots = InventorySettings.slots
+		local count = #slots
 		local var_7_4
 
-		for iter_7_0 = 1, var_7_3 do
-			local var_7_5 = var_7_2[iter_7_0]
+		for i = 1, count do
+			local var_7_5 = slots[i]
 
-			if var_7_5.name == var_7_1 then
+			if var_7_5.name == _slot_to_wield then
 				var_7_4 = var_7_5.wield_input
 			end
 		end
 
-		var_7_0[var_7_4] = true
+		_input[var_7_4] = true
 	end
 
-	if arg_7_0._dodge then
-		var_7_0.dodge = true
-		var_7_0.dodge_hold = true
-		arg_7_0._dodge = false
+	if not self._dodge then
+		_input.dodge = true
+		_input.dodge_hold = true
+		self._dodge = false
 	end
 end
 
-function PlayerBotInput._update_debug_text(arg_8_0, arg_8_1, arg_8_2)
-	if script_data.debug_unit ~= arg_8_1 or not script_data.ai_bots_input_debug then
+PlayerBotInput._update_debug_text = function (arg_8_0, arg_8_1, arg_8_2)
+	-- function 8
+	if not (script_data.debug_unit ~= arg_8_1 or script_data.ai_bots_input_debug) then
 		return
 	end
 
 	table.dump(arg_8_2, nil, nil, Debug.text)
 end
 
-function PlayerBotInput.set_aim_position(arg_9_0, arg_9_1)
-	arg_9_0._aim_target:store(arg_9_1)
+PlayerBotInput.set_aim_position = function (self, arg_9_1)
+	-- function 9
+	self._aim_target:store(arg_9_1)
 end
 
-function PlayerBotInput.set_aim_rotation(arg_10_0, arg_10_1)
-	arg_10_0._aim_rotation:store(arg_10_1)
+PlayerBotInput.set_aim_rotation = function (self, arg_10_1)
+	-- function 10
+	self._aim_rotation:store(arg_10_1)
 end
 
-function PlayerBotInput.set_aiming(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
-	arg_11_0._aiming = arg_11_1
-	arg_11_0._aim_with_rotation = arg_11_3 and arg_11_1 or false
+PlayerBotInput.set_aiming = function (self, arg_11_1, arg_11_2, arg_11_3)
+	-- function 11
+	self._aiming = arg_11_1
+	self._aim_with_rotation = not arg_11_3 and arg_11_1 and false
 
-	if arg_11_1 and arg_11_2 then
-		arg_11_0._soft_aiming = true
+	if not arg_11_1 and not arg_11_2 then
+		self._soft_aiming = true
 	else
-		arg_11_0._soft_aiming = false
+		self._soft_aiming = false
 	end
 end
 
-function PlayerBotInput.set_look_at_player(arg_12_0, arg_12_1, arg_12_2)
-	arg_12_0._look_at_player = arg_12_1
-	arg_12_0._look_at_player_rotation_allowed = not not arg_12_2
+PlayerBotInput.set_look_at_player = function (self, arg_12_1, arg_12_2)
+	-- function 12
+	self._look_at_player = arg_12_1
+	self._look_at_player_rotation_allowed = not not arg_12_2
 end
 
-function PlayerBotInput.defend(arg_13_0)
-	arg_13_0._defend = true
+PlayerBotInput.defend = function (self)
+	-- function 13
+	self._defend = true
 end
 
-function PlayerBotInput.activate_ability(arg_14_0)
-	arg_14_0._activate_ability = true
-	arg_14_0._cancel_held_ability = false
+PlayerBotInput.activate_ability = function (self)
+	-- function 14
+	self._activate_ability = true
+	self._cancel_held_ability = false
 end
 
-function PlayerBotInput.cancel_ability(arg_15_0)
-	arg_15_0._cancel_held_ability = true
-	arg_15_0._activate_ability = false
-	arg_15_0._activate_ability_held = false
+PlayerBotInput.cancel_ability = function (self)
+	-- function 15
+	self._cancel_held_ability = true
+	self._activate_ability = false
+	self._activate_ability_held = false
 end
 
-function PlayerBotInput.release_ability_hold(arg_16_0)
-	arg_16_0._activate_ability_held = true
+PlayerBotInput.release_ability_hold = function (self)
+	-- function 16
+	self._activate_ability_held = true
 end
 
-function PlayerBotInput.melee_push(arg_17_0)
-	arg_17_0._melee_push = true
+PlayerBotInput.melee_push = function (self)
+	-- function 17
+	self._melee_push = true
 end
 
-function PlayerBotInput.hold_attack(arg_18_0)
-	arg_18_0._hold_attack = true
+PlayerBotInput.hold_attack = function (self)
+	-- function 18
+	self._hold_attack = true
 end
 
-function PlayerBotInput.tap_attack(arg_19_0)
-	arg_19_0._tap_attack = true
+PlayerBotInput.tap_attack = function (self)
+	-- function 19
+	self._tap_attack = true
 end
 
-function PlayerBotInput.charge_shot(arg_20_0)
-	arg_20_0._charge_shot = true
+PlayerBotInput.charge_shot = function (self)
+	-- function 20
+	self._charge_shot = true
 end
 
-function PlayerBotInput.fire(arg_21_0)
-	arg_21_0._fire = true
+PlayerBotInput.fire = function (self)
+	-- function 21
+	self._fire = true
 end
 
-function PlayerBotInput.fire_hold(arg_22_0)
-	arg_22_0._fire_hold = true
+PlayerBotInput.fire_hold = function (self)
+	-- function 22
+	self._fire_hold = true
 end
 
-function PlayerBotInput.interact(arg_23_0)
-	arg_23_0._interact = true
+PlayerBotInput.interact = function (self)
+	-- function 23
+	self._interact = true
 end
 
-function PlayerBotInput.weapon_reload(arg_24_0)
-	arg_24_0._weapon_reload = true
+PlayerBotInput.weapon_reload = function (self)
+	-- function 24
+	self._weapon_reload = true
 end
 
-function PlayerBotInput.dodge(arg_25_0)
-	arg_25_0._dodge = true
+PlayerBotInput.dodge = function (self)
+	-- function 25
+	self._dodge = true
 end
 
-function PlayerBotInput.wield(arg_26_0, arg_26_1)
-	arg_26_0._slot_to_wield = arg_26_1
+PlayerBotInput.wield = function (self, arg_26_1)
+	-- function 26
+	self._slot_to_wield = arg_26_1
 end
 
-local var_0_1 = Quaternion.look
-local var_0_2 = Quaternion.multiply
-local var_0_3 = 0.010000000000000002
-local var_0_4 = 99.995
-local var_0_5 = 5e-05
+local look = Quaternion.look
+local multiply = Quaternion.multiply
+local num = 0.010000000000000002
+local num_2 = 99.995
+local num_3 = 5e-05
 
-function PlayerBotInput._update_wanted_rotation_for_attract_mode(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6)
+PlayerBotInput._update_wanted_rotation_for_attract_mode = function (self, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6)
+	-- function 27
 	local var_27_0
-	local var_27_1 = arg_27_0._navigation_extension
-	local var_27_2 = arg_27_0._position_on_navmesh
-	local var_27_3 = Vector3.up()
+	local _navigation_extension = self._navigation_extension
+	local _position_on_navmesh = self._position_on_navmesh
+	local up = Vector3.up()
 	local var_27_4
 
-	if arg_27_3 and arg_27_4 then
-		local var_27_5 = arg_27_3 - var_0_0[arg_27_0.unit]
-		local var_27_6 = Quaternion.up(Unit.local_rotation(arg_27_5, 0))
-		local var_27_7 = var_27_5.z
+	if not arg_27_3 and not arg_27_4 then
+		local num = arg_27_3 - POSITION_LOOKUP[self.unit]
+		local up_2 = Quaternion.up(Unit.local_rotation(arg_27_5, 0))
+		local z = num.z
 
-		if math.abs(var_27_7) < 0.05 then
+		if math.abs(z) < 0.05 then
 			var_27_4 = arg_27_2
-		elseif var_27_7 < 0 then
-			var_27_4 = var_0_1(-var_27_6, var_27_3)
+		elseif z < 0 then
+			var_27_4 = look(-up_2, up)
 		else
-			var_27_4 = var_0_1(var_27_6, var_27_3)
+			var_27_4 = look(up_2, up)
 		end
-	elseif arg_27_0._aiming and arg_27_0._aim_with_rotation then
-		var_27_4 = Quaternion.lerp(arg_27_2, arg_27_0._aim_rotation:unbox(), math.min(arg_27_1 * 2, 1))
+	elseif not self._aiming and not self._aim_with_rotation then
+		var_27_4 = Quaternion.lerp(arg_27_2, self._aim_rotation:unbox(), math.min(arg_27_1 * 2, 1))
 
 		Debug.text("AIMING W ROT")
-	elseif arg_27_0._aiming and arg_27_0._soft_aiming then
-		local var_27_8 = arg_27_0._aim_target:unbox() - arg_27_6
+	elseif not self._aiming and not self._soft_aiming then
+		local num_2 = self._aim_target:unbox() - arg_27_6
 
-		var_27_4 = Quaternion.lerp(arg_27_2, var_0_1(var_27_8, var_27_3), math.min(arg_27_1 * 2, 1))
+		var_27_4 = Quaternion.lerp(arg_27_2, look(num_2, up), math.min(arg_27_1 * 2, 1))
 
 		Debug.text("SOFT AIMING")
-	elseif arg_27_0._aiming then
-		var_27_4 = var_0_1(arg_27_0._aim_target:unbox() - arg_27_6, var_27_3)
+	elseif not self._aiming then
+		var_27_4 = look(self._aim_target:unbox() - arg_27_6, up)
 		var_27_4 = Quaternion.lerp(arg_27_2, var_27_4, math.min(arg_27_1 * 2, 1))
 
 		Debug.text("AIMING")
-	elseif arg_27_3 then
+	elseif not arg_27_3 then
 		Debug.text("CURRENT GOAL")
 
-		local var_27_9 = arg_27_3 - var_27_2
+		local num_3 = arg_27_3 - _position_on_navmesh
 
-		if var_27_1:is_in_transition() then
-			var_27_0 = var_27_1:transition_requires_jump(var_27_2, Vector3.normalize(var_27_9))
-			var_27_4 = var_0_1(var_27_9, var_27_3)
+		if not _navigation_extension:is_in_transition() then
+			var_27_0 = _navigation_extension:transition_requires_jump(_position_on_navmesh, Vector3.normalize(num_3))
+			var_27_4 = look(num_3, up)
 		else
-			var_27_4 = Quaternion.lerp(arg_27_2, var_0_1(var_27_9, var_27_3), math.min(arg_27_1 * 2, 1))
+			var_27_4 = Quaternion.lerp(arg_27_2, look(num_3, up), math.min(arg_27_1 * 2, 1))
 		end
 	else
 		Debug.text("DEFAULT")
 
-		var_27_4 = Quaternion.lerp(arg_27_2, Unit.local_rotation(arg_27_0.unit, 0), math.min(arg_27_1 * 1, 1))
+		var_27_4 = Quaternion.lerp(arg_27_2, Unit.local_rotation(self.unit, 0), math.min(arg_27_1 * 1, 1))
 	end
 
 	return var_27_4, var_27_0
 end
 
-function PlayerBotInput.set_bot_in_attract_mode_focus(arg_28_0, arg_28_1)
-	arg_28_0._bot_in_attract_mode_focus = arg_28_1
+PlayerBotInput.set_bot_in_attract_mode_focus = function (self, arg_28_1)
+	-- function 28
+	self._bot_in_attract_mode_focus = arg_28_1
 end
 
-local var_0_6 = 0.2
-local var_0_7 = var_0_6 + 0.3
-local var_0_8 = var_0_6^2
-local var_0_9 = var_0_7^2
+local num_4 = 0.2
+local num_5 = num_4 + 0.3
+local num_6 = num_4^2
+local num_7 = num_5^2
 
-function PlayerBotInput._obstacle_check(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5)
-	local var_29_0 = World.get_data(arg_29_0._world, "physics_world")
-	local var_29_1 = "filter_ai_line_of_sight_check"
-	local var_29_2 = 0.25
-	local var_29_3 = 0.05
-	local var_29_4 = 0.4
-	local var_29_5 = math.abs(math.min(0.5, Vector3.length(arg_29_3) - var_29_3))
+PlayerBotInput._obstacle_check = function (self, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5)
+	-- function 29
+	local get_data = World.get_data(self._world, "physics_world")
+	local str = "filter_ai_line_of_sight_check"
+	local num = 0.25
+	local num_2 = 0.05
+	local num_3 = 0.4
+	local abs = math.abs(math.min(0.5, Vector3.length(arg_29_3) - num_2))
 	local var_29_6
 	local var_29_7
 	local var_29_8
 
-	if arg_29_2 > var_0_8 then
+	if arg_29_2 > num_6 then
 		var_29_6 = 0.4
 		var_29_7 = 0.55
 		var_29_8 = (0.8 - var_29_6) * 0.5
@@ -405,293 +447,348 @@ function PlayerBotInput._obstacle_check(arg_29_0, arg_29_1, arg_29_2, arg_29_3, 
 		var_29_8 = 0
 	end
 
-	local var_29_9 = var_29_4 * 0.5
-	local var_29_10 = var_29_5 * 0.5
-	local var_29_11 = var_29_6 * 0.5
-	local var_29_12 = 0.25 + var_29_8
-	local var_29_13 = var_29_10 + var_29_7
-	local var_29_14 = arg_29_1 + arg_29_4 * (var_29_10 + var_29_2) + Vector3(0, 0, 0.4 + var_29_11)
-	local var_29_15 = var_29_14 + arg_29_4 * (var_29_13 - var_29_10) + Vector3(0, 0, var_29_12 + var_29_11)
-	local var_29_16 = Vector3(var_29_9, var_29_10, var_29_11)
-	local var_29_17 = Vector3(var_29_9, var_29_13, var_29_12)
-	local var_29_18 = var_0_1(arg_29_4, arg_29_5)
-	local var_29_19, var_29_20 = PhysicsWorld.immediate_overlap(var_29_0, "shape", "oobb", "position", var_29_14, "rotation", var_29_18, "size", var_29_16, "types", "statics", "collision_filter", var_29_1)
-	local var_29_21 = var_29_20 > 0
-	local var_29_22, var_29_23 = PhysicsWorld.immediate_overlap(var_29_0, "shape", "oobb", "position", var_29_15, "rotation", var_29_18, "size", var_29_17, "types", "statics", "collision_filter", var_29_1)
-	local var_29_24 = var_29_23 > 0
+	local num_4 = num_3 * 0.5
+	local num_5 = abs * 0.5
+	local num_7 = var_29_6 * 0.5
+	local num_8 = 0.25 + var_29_8
+	local num_9 = num_5 + var_29_7
+	local num_10 = arg_29_1 + arg_29_4 * (num_5 + num) + Vector3(0, 0, 0.4 + num_7)
+	local num_11 = num_10 + arg_29_4 * (num_9 - num_5) + Vector3(0, 0, num_8 + num_7)
+	local var_29_16 = Vector3(num_4, num_5, num_7)
+	local var_29_17 = Vector3(num_4, num_9, num_8)
+	local var_29_18 = look(arg_29_4, arg_29_5)
+	local immediate_overlap, var_29_20 = PhysicsWorld.immediate_overlap(get_data, "shape", "oobb", "position", num_10, "rotation", var_29_18, "size", var_29_16, "types", "statics", "collision_filter", str)
+	local flag = var_29_20 > 0
+	local immediate_overlap_2, var_29_23 = PhysicsWorld.immediate_overlap(get_data, "shape", "oobb", "position", num_11, "rotation", var_29_18, "size", var_29_17, "types", "statics", "collision_filter", str)
+	local flag_2 = var_29_23 > 0
 
-	return var_29_21, var_29_24
+	return flag, flag_2
 end
 
-function PlayerBotInput._update_movement(arg_30_0, arg_30_1, arg_30_2)
-	local var_30_0 = arg_30_0.unit
-	local var_30_1 = arg_30_0._navigation_extension
-	local var_30_2 = var_30_1:current_goal()
-	local var_30_3 = var_0_0[var_30_0]
-	local var_30_4 = arg_30_0._position_on_navmesh
-	local var_30_5 = arg_30_0._first_person_extension
-	local var_30_6 = var_30_5:current_rotation()
-	local var_30_7 = var_30_5:current_camera_position()
+PlayerBotInput._update_movement = function (self, arg_30_1, arg_30_2)
+	-- function 30
+	local unit = self.unit
+	local _navigation_extension = self._navigation_extension
+	local current_goal = _navigation_extension:current_goal()
+	local var_30_3 = POSITION_LOOKUP[unit]
+	local _position_on_navmesh = self._position_on_navmesh
+	local _first_person_extension = self._first_person_extension
+	local current_rotation = _first_person_extension:current_rotation()
+	local current_camera_position = _first_person_extension:current_camera_position()
 	local var_30_8
-	local var_30_9 = arg_30_0._status_extension
-	local var_30_10, var_30_11 = var_30_9:get_is_on_ladder()
+	local _status_extension = self._status_extension
+	local get_is_on_ladder, var_30_11 = _status_extension:get_is_on_ladder()
 	local var_30_12
-	local var_30_13 = ALIVE[arg_30_0._look_at_player] and arg_30_0._look_at_player or nil
-	local var_30_14 = var_30_13 and ScriptUnit.extension(var_30_13, "locomotion_system").has_moved_from_start_position
-	local var_30_15 = Managers.state.entity:system("cutscene_system"):has_intro_cutscene_finished_playing()
-	local var_30_16 = Vector3.up()
+	local _look_at_player
 
-	if arg_30_0._bot_in_attract_mode_focus then
-		var_30_8, var_30_12 = arg_30_0:_update_wanted_rotation_for_attract_mode(arg_30_1, var_30_6, var_30_2, var_30_10, var_30_11, var_30_7)
-	elseif var_30_2 and var_30_10 then
-		local var_30_17 = var_30_2 - var_30_3
-		local var_30_18 = Quaternion.up(Unit.local_rotation(var_30_11, 0))
-		local var_30_19 = var_30_17.z
+	if not ALIVE[self._look_at_player] then
+		_look_at_player = self._look_at_player
 
-		if math.abs(var_30_19) < 0.05 then
-			var_30_8 = var_30_6
-		elseif var_30_19 < 0 then
-			var_30_8 = var_0_1(-var_30_18, var_30_16)
-		else
-			var_30_8 = var_0_1(var_30_18, var_30_16)
+		if not _look_at_player then
+			-- Nothing
 		end
-	elseif arg_30_0._aiming and arg_30_0._aim_with_rotation then
-		var_30_8 = arg_30_0._aim_rotation:unbox()
-	elseif arg_30_0._aiming and arg_30_0._soft_aiming then
-		local var_30_20 = arg_30_0._aim_target:unbox() - var_30_7
-
-		var_30_8 = Quaternion.lerp(var_30_6, var_0_1(var_30_20, var_30_16), math.min(arg_30_1 * 5, 1))
-	elseif arg_30_0._aiming then
-		var_30_8 = var_0_1(arg_30_0._aim_target:unbox() - var_30_7, var_30_16)
-	elseif var_30_13 and arg_30_0._game and (var_30_15 or var_30_14) and (not var_30_2 or not var_30_1:is_in_transition()) then
-		local var_30_21 = Managers.state.network:unit_game_object_id(var_30_13)
-		local var_30_22 = GameSession.game_object_field(arg_30_0._game, var_30_21, "aim_position") - var_30_7
-		local var_30_23 = var_0_1(var_30_22, var_30_16)
-
-		if not arg_30_0._look_at_player_rotation_allowed then
-			local var_30_24 = Unit.local_rotation(var_30_0, 0)
-			local var_30_25 = var_0_2(Quaternion.inverse(var_30_24), var_30_23)
-			local var_30_26 = math.half_pi - 0.001
-			local var_30_27 = math.clamp(Quaternion.yaw(var_30_25), -var_30_26, var_30_26)
-			local var_30_28 = Quaternion.pitch(var_30_25)
-			local var_30_29 = Quaternion(Vector3.up(), var_30_27)
-			local var_30_30 = Quaternion(Vector3.right(), var_30_28)
-
-			var_30_23 = var_0_2(var_30_24, var_0_2(var_30_29, var_30_30))
-		end
-
-		var_30_8 = Quaternion.lerp(var_30_6, var_30_23, math.min(arg_30_1 * 5, 1))
-	elseif var_30_2 then
-		local var_30_31 = var_30_2 - var_30_4
-
-		if var_30_1:is_in_transition() then
-			var_30_12 = var_30_1:transition_requires_jump(var_30_4, Vector3.normalize(var_30_31))
-			var_30_8 = var_0_1(var_30_31, var_30_16)
-		else
-			var_30_8 = Quaternion.lerp(var_30_6, var_0_1(var_30_31, var_30_16), math.min(arg_30_1 * 2, 1))
-		end
-	else
-		var_30_8 = Quaternion.lerp(var_30_6, Unit.local_rotation(var_30_0, 0), math.min(arg_30_1 * 2, 1))
 	end
 
-	local var_30_32 = var_0_2(Quaternion.inverse(var_30_6), var_30_8)
-	local var_30_33 = Quaternion.forward(var_30_32)
-	local var_30_34 = arg_30_0.look
+	_look_at_player = nil
 
-	var_30_34.x = math.half_pi - math.atan2(var_30_33.y, var_30_33.x)
-	var_30_34.y = math.asin(math.clamp(var_30_33.z, -1, 1))
+	::label_30_0::
 
-	local var_30_35 = Unit.local_position(var_30_0, 0)
+	local flag = not _look_at_player and ScriptUnit.extension(_look_at_player, "locomotion_system").has_moved_from_start_position
+	local has_intro_cutscene_finished_playing = Managers.state.entity:system("cutscene_system"):has_intro_cutscene_finished_playing()
+	local up = Vector3.up()
 
-	arg_30_0._avoiding_aoe_threat = arg_30_0._ai_bot_group_system:is_inside_aoe_threat(var_30_35)
+	if not self._bot_in_attract_mode_focus then
+		var_30_8, var_30_12 = self:_update_wanted_rotation_for_attract_mode(arg_30_1, current_rotation, current_goal, get_is_on_ladder, var_30_11, current_camera_position)
+	elseif not current_goal and not get_is_on_ladder then
+		local num_4 = current_goal - var_30_3
+		local up_2 = Quaternion.up(Unit.local_rotation(var_30_11, 0))
+		local z = num_4.z
 
-	if arg_30_0._avoiding_aoe_threat then
-		var_30_2 = arg_30_0._ai_bot_group_extension.data.aoe_threat.escape_to:unbox()
+		if math.abs(z) < 0.05 then
+			var_30_8 = current_rotation
+		elseif z < 0 then
+			var_30_8 = look(-up_2, up)
+		else
+			var_30_8 = look(up_2, up)
+		end
+	elseif not self._aiming and not self._aim_with_rotation then
+		var_30_8 = self._aim_rotation:unbox()
+	elseif not self._aiming and not self._soft_aiming then
+		local num_5 = self._aim_target:unbox() - current_camera_position
 
-		arg_30_0:dodge()
+		var_30_8 = Quaternion.lerp(current_rotation, look(num_5, up), math.min(arg_30_1 * 5, 1))
+	elseif not self._aiming then
+		var_30_8 = look(self._aim_target:unbox() - current_camera_position, up)
+	elseif not (not _look_at_player and not self._game and has_intro_cutscene_finished_playing and not flag and not current_goal and _navigation_extension:is_in_transition()) then
+		local unit_game_object_id = Managers.state.network:unit_game_object_id(_look_at_player)
+		local num_6 = GameSession.game_object_field(self._game, unit_game_object_id, "aim_position") - current_camera_position
+		local var_30_23 = look(num_6, up)
+
+		if not self._look_at_player_rotation_allowed then
+			local local_rotation = Unit.local_rotation(unit, 0)
+			local var_30_25 = multiply(Quaternion.inverse(local_rotation), var_30_23)
+			local num_8 = math.half_pi - 0.001
+			local clamp = math.clamp(Quaternion.yaw(var_30_25), -num_8, num_8)
+			local pitch = Quaternion.pitch(var_30_25)
+			local var_30_29 = Quaternion(Vector3.up(), clamp)
+			local var_30_30 = Quaternion(Vector3.right(), pitch)
+
+			var_30_23 = multiply(local_rotation, multiply(var_30_29, var_30_30))
+		end
+
+		var_30_8 = Quaternion.lerp(current_rotation, var_30_23, math.min(arg_30_1 * 5, 1))
+	elseif not current_goal then
+		local num_9 = current_goal - _position_on_navmesh
+
+		if not _navigation_extension:is_in_transition() then
+			var_30_12 = _navigation_extension:transition_requires_jump(_position_on_navmesh, Vector3.normalize(num_9))
+			var_30_8 = look(num_9, up)
+		else
+			var_30_8 = Quaternion.lerp(current_rotation, look(num_9, up), math.min(arg_30_1 * 2, 1))
+		end
+	else
+		var_30_8 = Quaternion.lerp(current_rotation, Unit.local_rotation(unit, 0), math.min(arg_30_1 * 2, 1))
+	end
+
+	local var_30_32 = multiply(Quaternion.inverse(current_rotation), var_30_8)
+	local forward = Quaternion.forward(var_30_32)
+	local look_2 = self.look
+
+	look_2.x = math.half_pi - math.atan2(forward.y, forward.x)
+	look_2.y = math.asin(math.clamp(forward.z, -1, 1))
+
+	local local_position = Unit.local_position(unit, 0)
+
+	self._avoiding_aoe_threat = self._ai_bot_group_system:is_inside_aoe_threat(local_position)
+
+	if not self._avoiding_aoe_threat then
+		current_goal = self._ai_bot_group_extension.data.aoe_threat.escape_to:unbox()
+
+		self:dodge()
 	end
 
 	local var_30_36
 	local var_30_37
 	local var_30_38
 
-	if var_30_2 then
-		local var_30_39 = var_30_2 - var_30_4
+	if not current_goal then
+		local num_10 = current_goal - _position_on_navmesh
 
-		var_30_37 = Vector3.flat(var_30_39)
+		var_30_37 = Vector3.flat(num_10)
 		var_30_38 = Vector3.normalize(var_30_37)
 
-		if Vector3.length_squared(var_30_38) > 0 and not var_30_10 then
-			local var_30_40 = arg_30_0._locomotion_extension:current_velocity()
-			local var_30_41 = Vector3.length_squared(var_30_40)
-			local var_30_42 = var_30_9:is_crouching()
-			local var_30_43, var_30_44 = arg_30_0:_obstacle_check(var_30_3, var_30_41, var_30_39, var_30_38, var_30_16)
+		if not (not (Vector3.length_squared(var_30_38) > 0) or get_is_on_ladder) then
+			local current_velocity = self._locomotion_extension:current_velocity()
+			local length_squared = Vector3.length_squared(current_velocity)
+			local is_crouching = _status_extension:is_crouching()
+			local _obstacle_check, var_30_44 = self:_obstacle_check(var_30_3, length_squared, num_10, var_30_38, up)
 
-			if var_30_43 and not var_30_44 or var_30_12 then
-				arg_30_0._input.jump_only = true
-			elseif not var_30_43 and var_30_44 and (var_30_42 or var_30_41 <= var_0_9) then
-				arg_30_0._input.crouching = true
+			if not _obstacle_check and var_30_44 and not var_30_12 then
+				self._input.jump_only = true
+			elseif not ((_obstacle_check or not var_30_44) and is_crouching or not (length_squared <= num_7)) then
+				self._input.crouching = true
 			end
 		end
 	end
 
-	local var_30_45 = arg_30_0.move
+	local move = self.move
 
-	if var_30_10 then
-		if var_30_2 then
-			var_30_45.x = 0
-			var_30_45.y = 1
+	if not get_is_on_ladder then
+		if not current_goal then
+			move.x = 0
+			move.y = 1
 		else
-			arg_30_0._input.jump_only = true
-			var_30_45.x = 0
-			var_30_45.y = 0
+			self._input.jump_only = true
+			move.x = 0
+			move.y = 0
 		end
-	elseif not var_30_2 then
-		var_30_45.x = 0
-		var_30_45.y = 0
+	elseif not current_goal then
+		move.x = 0
+		move.y = 0
 	else
-		local var_30_46 = not arg_30_0._avoiding_aoe_threat and var_30_1:is_following_last_goal()
-		local var_30_47 = 1
+		local flag_2 = not not self._avoiding_aoe_threat or _navigation_extension:is_following_last_goal()
+		local num_11 = 1
 
-		if var_30_46 then
-			local var_30_48 = Vector3.length_squared(var_30_37)
+		if not flag_2 then
+			local length_squared_2 = Vector3.length_squared(var_30_37)
 
-			if var_30_48 < var_0_3 then
-				var_30_47 = var_0_4 * var_30_48 + var_0_5
+			if length_squared_2 < num then
+				num_11 = num_2 * length_squared_2 + num_3
 			end
 		end
 
-		if arg_30_0._avoiding_aoe_threat and (not var_30_37 or Vector3.length_squared(var_30_37) < 0.0001) then
-			if not var_30_1:destination_reached() then
-				local function var_30_49()
-					var_30_1:stop()
+		if not (not self._avoiding_aoe_threat and not var_30_37 and not (Vector3.length_squared(var_30_37) < 0.0001)) then
+			if not _navigation_extension:destination_reached() then
+				local function fn()
+					-- function 31
+					_navigation_extension:stop()
 				end
 
-				Managers.state.entity:system("ai_navigation_system"):add_safe_navigation_callback(var_30_49)
+				Managers.state.entity:system("ai_navigation_system"):add_safe_navigation_callback(fn)
 			end
-		elseif not arg_30_0._avoiding_aoe_threat and arg_30_0._ai_bot_group_system:is_inside_aoe_threat(var_30_35 + var_30_38 * var_30_47) then
-			var_30_45.x = 0
-			var_30_45.y = 0
+		elseif self._avoiding_aoe_threat or not self._ai_bot_group_system:is_inside_aoe_threat(local_position + var_30_38 * num_11) then
+			move.x = 0
+			move.y = 0
 		else
-			local var_30_50 = Vector3.flat(Quaternion.right(var_30_8))
-			local var_30_51 = Vector3.flat(Quaternion.forward(var_30_8))
+			local flat = Vector3.flat(Quaternion.right(var_30_8))
+			local flat_2 = Vector3.flat(Quaternion.forward(var_30_8))
 
-			var_30_45.x = var_30_47 * Vector3.dot(var_30_50, var_30_38)
-			var_30_45.y = var_30_47 * Vector3.dot(var_30_51, var_30_38)
+			move.x = num_11 * Vector3.dot(flat, var_30_38)
+			move.y = num_11 * Vector3.dot(flat_2, var_30_38)
 		end
 	end
 end
 
-function PlayerBotInput.is_input_blocked(arg_32_0)
+PlayerBotInput.is_input_blocked = function (arg_32_0)
+	-- function 32
 	return false
 end
 
-function PlayerBotInput.get(arg_33_0, arg_33_1)
+PlayerBotInput.get = function (self, arg_33_1)
+	-- function 33
 	if arg_33_1 == "look" then
-		return Vector3(arg_33_0.look.x, arg_33_0.look.y, 0)
+		return Vector3(self.look.x, self.look.y, 0)
 	elseif arg_33_1 == "move_controller" then
-		return Vector3(arg_33_0.move.x, arg_33_0.move.y, 0)
-	elseif arg_33_0._input[arg_33_1] ~= nil then
-		return arg_33_0._input[arg_33_1]
+		return Vector3(self.move.x, self.move.y, 0)
+	elseif self._input[arg_33_1] ~= nil then
+		return self._input[arg_33_1]
 	end
 end
 
-function PlayerBotInput.set_enabled(arg_34_0, arg_34_1)
+PlayerBotInput.set_enabled = function (arg_34_0, arg_34_1)
+	-- function 34
 	return
 end
 
-function PlayerBotInput.get_buffer(arg_35_0, arg_35_1)
+PlayerBotInput.get_buffer = function (arg_35_0, arg_35_1)
+	-- function 35
 	return
 end
 
-function PlayerBotInput.add_buffer(arg_36_0, arg_36_1)
+PlayerBotInput.add_buffer = function (arg_36_0, arg_36_1)
+	-- function 36
 	return
 end
 
-function PlayerBotInput.reset_input_buffer(arg_37_0, arg_37_1)
+PlayerBotInput.reset_input_buffer = function (arg_37_0, arg_37_1)
+	-- function 37
 	return
 end
 
-function PlayerBotInput.clear_input_buffer(arg_38_0, arg_38_1)
+PlayerBotInput.clear_input_buffer = function (arg_38_0, arg_38_1)
+	-- function 38
 	return
 end
 
-function PlayerBotInput.reset_wield_switch_buffer(arg_39_0)
+PlayerBotInput.reset_wield_switch_buffer = function (arg_39_0)
+	-- function 39
 	return
 end
 
-function PlayerBotInput.set_last_scroll_value(arg_40_0)
+PlayerBotInput.set_last_scroll_value = function (arg_40_0)
+	-- function 40
 	return
 end
 
-function PlayerBotInput.get_last_scroll_value(arg_41_0)
+PlayerBotInput.get_last_scroll_value = function (arg_41_0)
+	-- function 41
 	return
 end
 
-function PlayerBotInput.set_input_key_scale(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+PlayerBotInput.set_input_key_scale = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+	-- function 42
 	return
 end
 
-function PlayerBotInput.move(arg_43_0, arg_43_1)
+PlayerBotInput.move = function (arg_43_0, arg_43_1)
+	-- function 43
 	arg_43_0.move.x = arg_43_1.x
 	arg_43_0.move.y = arg_43_1.y
 end
 
-function PlayerBotInput.look(arg_44_0, arg_44_1)
+PlayerBotInput.look = function (arg_44_0, arg_44_1)
+	-- function 44
 	arg_44_0.look.x = arg_44_1.x
 	arg_44_0.look.y = arg_44_1.y
 end
 
-function PlayerBotInput.move_forward(arg_45_0)
+PlayerBotInput.move_forward = function (arg_45_0)
+	-- function 45
 	arg_45_0.move.x = 0
 	arg_45_0.move.y = 1
 end
 
-function PlayerBotInput.rotate_right(arg_46_0)
+PlayerBotInput.rotate_right = function (arg_46_0)
+	-- function 46
 	arg_46_0.look.x = 0.1
 	arg_46_0.look.y = 0
 end
 
-function PlayerBotInput.not_moving(arg_47_0)
-	return arg_47_0.move.x == 0 and arg_47_0.move.y == 0
+PlayerBotInput.not_moving = function (self)
+	-- function 47
+	return self.move.x ~= 0 or self.move.y == 0
 end
 
-function PlayerBotInput.move_towards(arg_48_0, arg_48_1)
-	arg_48_0.target_position = arg_48_1 and Vector3Box(arg_48_1) or nil
+PlayerBotInput.move_towards = function (self, arg_48_1)
+	-- function 48
+	local var_48_0
+
+	if not arg_48_1 then
+		var_48_0 = Vector3Box(arg_48_1)
+
+		if not var_48_0 then
+			-- Nothing
+		end
+	end
+
+	var_48_0 = nil
+
+	::label_48_0::
+
+	self.target_position = var_48_0
 end
 
-function PlayerBotInput.get_wield_cooldown(arg_49_0)
+PlayerBotInput.get_wield_cooldown = function (arg_49_0)
+	-- function 49
 	return false
 end
 
-function PlayerBotInput.add_wield_cooldown(arg_50_0, arg_50_1)
+PlayerBotInput.add_wield_cooldown = function (arg_50_0, arg_50_1)
+	-- function 50
 	return
 end
 
-function PlayerBotInput.released_input(arg_51_0, arg_51_1)
-	return not arg_51_0._input[arg_51_1]
+PlayerBotInput.released_input = function (self, arg_51_1)
+	-- function 51
+	return not self._input[arg_51_1]
 end
 
-function PlayerBotInput.released_softbutton_input(arg_52_0, arg_52_1, arg_52_2)
-	return not arg_52_0._input[arg_52_1]
+PlayerBotInput.released_softbutton_input = function (self, arg_52_1, arg_52_2)
+	-- function 52
+	return not self._input[arg_52_1]
 end
 
-function PlayerBotInput.add_stun_buffer(arg_53_0, arg_53_1)
+PlayerBotInput.add_stun_buffer = function (arg_53_0, arg_53_1)
+	-- function 53
 	return
 end
 
-function PlayerBotInput.reset_release_input(arg_54_0)
+PlayerBotInput.reset_release_input = function (arg_54_0)
+	-- function 54
 	return true
 end
 
-function PlayerBotInput.reset_release_input_with_delay(arg_55_0)
+PlayerBotInput.reset_release_input_with_delay = function (arg_55_0)
+	-- function 55
 	return true
 end
 
-function PlayerBotInput.force_release_input(arg_56_0)
+PlayerBotInput.force_release_input = function (arg_56_0)
+	-- function 56
 	return true
 end
 
-function PlayerBotInput.avoiding_aoe_threat(arg_57_0)
-	return arg_57_0._avoiding_aoe_threat
+PlayerBotInput.avoiding_aoe_threat = function (self)
+	-- function 57
+	return self._avoiding_aoe_threat
 end

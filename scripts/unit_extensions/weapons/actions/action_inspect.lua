@@ -2,58 +2,62 @@
 
 ActionInspect = class(ActionInspect, ActionBase)
 
-function ActionInspect.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
-	ActionInspect.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionInspect.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	-- function 1
+	ActionInspect.super.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
-	arg_1_0._owner_unit = arg_1_4
+	self._owner_unit = arg_1_4
 
-	if ScriptUnit.has_extension(arg_1_4, "status_system") then
-		arg_1_0.status_extension = ScriptUnit.extension(arg_1_4, "status_system")
+	if not ScriptUnit.has_extension(arg_1_4, "status_system") then
+		self.status_extension = ScriptUnit.extension(arg_1_4, "status_system")
 	end
 
-	if ScriptUnit.has_extension(arg_1_7, "spread_system") then
-		arg_1_0.spread_extension = ScriptUnit.extension(arg_1_7, "spread_system")
+	if not ScriptUnit.has_extension(arg_1_7, "spread_system") then
+		self.spread_extension = ScriptUnit.extension(arg_1_7, "spread_system")
 	end
 
-	arg_1_0._first_person_extension = ScriptUnit.extension(arg_1_4, "first_person_system")
+	self._first_person_extension = ScriptUnit.extension(arg_1_4, "first_person_system")
 end
 
-function ActionInspect.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
-	ActionInspect.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
+ActionInspect.client_owner_start_action = function (self, arg_2_1, arg_2_2)
+	-- function 2
+	ActionInspect.super.client_owner_start_action(self, arg_2_1, arg_2_2)
 
-	arg_2_0.current_action = arg_2_1
-	arg_2_0.action_time_started = arg_2_2
+	self.current_action = arg_2_1
+	self.action_time_started = arg_2_2
 
-	local var_2_0 = arg_2_1.spread_template_override
+	local spread_template_override = arg_2_1.spread_template_override
 
-	if var_2_0 then
-		arg_2_0.spread_extension:override_spread_template(var_2_0)
+	if not spread_template_override then
+		self.spread_extension:override_spread_template(spread_template_override)
 	end
 
-	local var_2_1 = arg_2_0._first_person_extension
+	local _first_person_extension = self._first_person_extension
 
-	if var_2_1 then
-		local var_2_2 = var_2_1:current_rotation()
+	if not _first_person_extension then
+		local current_rotation = _first_person_extension:current_rotation()
 
-		var_2_1:force_look_rotation(var_2_2, math.huge)
+		_first_person_extension:force_look_rotation(current_rotation, math.huge)
 	end
 end
 
-function ActionInspect.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+ActionInspect.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	-- function 3
 	return
 end
 
-function ActionInspect.finish(arg_4_0, arg_4_1)
-	if arg_4_0.spread_extension then
-		arg_4_0.spread_extension:reset_spread_template()
+ActionInspect.finish = function (self, arg_4_1)
+	-- function 4
+	if not self.spread_extension then
+		self.spread_extension:reset_spread_template()
 	end
 
-	local var_4_0 = arg_4_0._first_person_extension
+	local _first_person_extension = self._first_person_extension
 
-	if var_4_0 then
-		var_4_0:stop_force_look_rotation()
+	if not _first_person_extension then
+		_first_person_extension:stop_force_look_rotation()
 	end
 
-	Unit.flow_event(arg_4_0.owner_unit, "lua_force_stop")
-	Unit.flow_event(arg_4_0.first_person_unit, "lua_force_stop")
+	Unit.flow_event(self.owner_unit, "lua_force_stop")
+	Unit.flow_event(self.first_person_unit, "lua_force_stop")
 end

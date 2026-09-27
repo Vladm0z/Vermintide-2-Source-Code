@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/breeds/breed_skaven_storm_vermin_with_shield.lua
 
-local var_0_0 = require("scripts/utils/stagger_types")
-local var_0_1 = {
+local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
+local tbl = {
 	detection_radius = 12,
 	using_combo = true,
 	walk_speed = 2,
@@ -314,7 +314,7 @@ local var_0_1 = {
 		j_tail2 = 0.05
 	}
 }
-local var_0_2 = {
+local tbl_2 = {
 	sweep = {
 		easy = {
 			normal = 1,
@@ -488,7 +488,7 @@ local var_0_2 = {
 		}
 	}
 }
-local var_0_3 = {
+local tbl_3 = {
 	false,
 	false,
 	true,
@@ -498,10 +498,10 @@ local var_0_3 = {
 	false
 }
 
-Breeds.skaven_storm_vermin_with_shield = table.create_copy(Breeds.skaven_storm_vermin_with_shield, var_0_1)
+Breeds.skaven_storm_vermin_with_shield = table.create_copy(Breeds.skaven_storm_vermin_with_shield, tbl)
 Breeds.skaven_storm_vermin_with_shield.killfeed_fold_with = "skaven_storm_vermin"
 
-local var_0_4 = {
+local tbl_4 = {
 	alerted = {
 		no_hesitation = true,
 		cooldown = -1,
@@ -581,7 +581,7 @@ local var_0_4 = {
 		attack_intensity_type = "cleave",
 		move_anim = "move_fwd",
 		width = 0.4,
-		difficulty_attack_intensity = var_0_2,
+		difficulty_attack_intensity = tbl_2,
 		difficulty_damage = BreedTweaks.difficulty_damage.elite_attack,
 		fatigue_type = BreedTweaks.fatigue_types.elite_sweep.normal_attack,
 		ignore_staggers = {
@@ -609,7 +609,7 @@ local var_0_4 = {
 		attack_intensity_type = "sweep",
 		move_anim = "move_fwd",
 		width = 2,
-		difficulty_attack_intensity = var_0_2,
+		difficulty_attack_intensity = tbl_2,
 		attack_anim = {
 			"attack_pounce",
 			"attack_pounce_2"
@@ -641,7 +641,7 @@ local var_0_4 = {
 		unblockable = true,
 		damage_type = "blunt",
 		attack_anim = "attack_push",
-		difficulty_attack_intensity = var_0_2,
+		difficulty_attack_intensity = tbl_2,
 		considerations = UtilityConsiderations.storm_vermin_shield_push_attack,
 		init_blackboard = {
 			wake_up_push = 0
@@ -667,7 +667,7 @@ local var_0_4 = {
 		damage_type = "blunt",
 		unblockable = true,
 		attack_anim = "attack_push",
-		difficulty_attack_intensity = var_0_2,
+		difficulty_attack_intensity = tbl_2,
 		considerations = UtilityConsiderations.storm_vermin_shield_push_attack_wake_up,
 		ignore_staggers = {
 			true,
@@ -690,7 +690,7 @@ local var_0_4 = {
 		damage_type = "cutting",
 		move_anim = "move_fwd",
 		attack_anim = "attack_combo_1",
-		difficulty_attack_intensity = var_0_2,
+		difficulty_attack_intensity = tbl_2,
 		difficulty_damage = BreedTweaks.difficulty_damage.elite_attack_shielded,
 		ignore_staggers = {
 			true,
@@ -725,79 +725,81 @@ local var_0_4 = {
 	},
 	stagger = {
 		scale_animation_speeds = true,
-		custom_enter_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+		custom_enter_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			-- function 1
 			assert(ScriptUnit.has_extension(arg_1_0, "ai_shield_system"), "skaven_storm_vermin_with_shield dont have ai_shield_user_extension")
 
-			local var_1_0 = arg_1_1.breed
-			local var_1_1 = arg_1_1.current_health_percent
-			local var_1_2 = arg_1_1.blocked
-			local var_1_3 = arg_1_1.stagger
-			local var_1_4 = arg_1_1.stagger_type
-			local var_1_5 = ScriptUnit.extension(arg_1_0, "ai_shield_system")
-			local var_1_6 = not var_1_5.shield_broken
-			local var_1_7 = var_1_5.is_blocking
-			local var_1_8 = var_1_5.blocked_previous_attack
-			local var_1_9 = 3
+			local breed = arg_1_1.breed
+			local current_health_percent = arg_1_1.current_health_percent
+			local blocked = arg_1_1.blocked
+			local stagger = arg_1_1.stagger
+			local stagger_type = arg_1_1.stagger_type
+			local extension = ScriptUnit.extension(arg_1_0, "ai_shield_system")
+			local flag = not extension.shield_broken
+			local is_blocking = extension.is_blocking
+			local blocked_previous_attack = extension.blocked_previous_attack
+			local num = 3
 
-			if var_1_1 <= 0.5 then
-				var_1_9 = 2
+			if current_health_percent <= 0.5 then
+				num = 2
 			end
 
 			local var_1_10
 			local var_1_11
 
-			if var_1_6 and var_1_3 then
-				if not var_1_2 and var_1_3 <= var_1_9 and arg_1_3.shield_block_anims and var_1_8 and arg_1_1.stagger_type ~= var_0_0.explosion then
-					arg_1_1.stagger_time = arg_1_1.stagger_time + math.max(0.5, var_1_3 / var_1_9) * var_1_0.block_stagger_mod
-					var_1_10 = arg_1_3.shield_block_anims[var_1_4]
+			if not flag and not stagger then
+				if not ((blocked or not (stagger <= num) or not arg_1_3.shield_block_anims or not blocked_previous_attack) and arg_1_1.stagger_type == scripts_utils_stagger_types.explosion) then
+					arg_1_1.stagger_time = arg_1_1.stagger_time + math.max(0.5, stagger / num) * breed.block_stagger_mod
+					var_1_10 = arg_1_3.shield_block_anims[stagger_type]
 
-					var_1_5:set_is_blocking(true)
+					extension:set_is_blocking(true)
 
 					var_1_11 = "idle_shield_up"
-				elseif not var_1_2 and var_1_7 and var_1_3 == var_1_9 and arg_1_3.shield_stagger_anims then
-					arg_1_1.stagger_time = arg_1_1.stagger_time + var_1_3 / var_1_9 * var_1_0.block_stagger_mod_2
+				elseif blocked or not is_blocking or stagger ~= num or not arg_1_3.shield_stagger_anims then
+					arg_1_1.stagger_time = arg_1_1.stagger_time + stagger / num * breed.block_stagger_mod_2
 
-					local var_1_12 = Math.random(1, 2)
+					local random = Math.random(1, 2)
 
 					var_1_11 = ({
 						"idle_shield_down",
 						"idle_shield_down_2"
-					})[var_1_12]
+					})[random]
 
-					var_1_5:set_is_blocking(false)
+					extension:set_is_blocking(false)
 
 					arg_1_1.wake_up_push = math.huge
-					var_1_10 = arg_1_3.shield_stagger_anims[var_1_4]
-				elseif var_1_3 > var_1_9 + 5 and arg_1_3.shield_block_anims then
+					var_1_10 = arg_1_3.shield_stagger_anims[stagger_type]
+				elseif not (stagger > num + 5) or not arg_1_3.shield_block_anims then
 					arg_1_1.stagger_time = 0
 					arg_1_1.stagger = 0
 
-					var_1_5:set_is_blocking(true)
+					extension:set_is_blocking(true)
 
-					var_1_10 = arg_1_3.shield_block_anims[var_1_4]
+					var_1_10 = arg_1_3.shield_block_anims[stagger_type]
 					arg_1_1.stagger_time = 0.2
 					var_1_11 = "idle_shield_up"
 				else
-					var_1_10 = arg_1_3.stagger_anims[var_1_4]
-					arg_1_1.stagger_time = arg_1_1.stagger_time + var_1_3 / var_1_9 * var_1_0.block_stagger_mod_2
+					var_1_10 = arg_1_3.stagger_anims[stagger_type]
+					arg_1_1.stagger_time = arg_1_1.stagger_time + stagger / num * breed.block_stagger_mod_2
 
-					local var_1_13 = Math.random(1, 2)
+					local random_2 = Math.random(1, 2)
 
 					var_1_11 = ({
 						"idle_shield_down",
 						"idle_shield_down_2"
-					})[var_1_13]
+					})[random_2]
 
-					var_1_5:set_is_blocking(false)
+					extension:set_is_blocking(false)
 				end
 			else
-				var_1_10 = arg_1_3.stagger_anims[var_1_4]
+				var_1_10 = arg_1_3.stagger_anims[stagger_type]
 				var_1_11 = "idle_shield_down"
 			end
 
 			return var_1_10, var_1_11, var_1_11
 		end,
-		custom_exit_function = function(arg_2_0, arg_2_1, arg_2_2)
+		custom_exit_function = function (arg_2_0, arg_2_1, arg_2_2)
+			-- function 2
 			ScriptUnit.extension(arg_2_0, "ai_shield_system"):set_is_blocking(true)
 		end,
 		shield_stagger_anims = {
@@ -1229,7 +1231,7 @@ local var_0_4 = {
 		}
 	}
 }
-local var_0_5 = {
+local tbl_5 = {
 	num_attacks = 4,
 	combo_anim_variations = 1,
 	cooldown = 10,
@@ -1242,7 +1244,7 @@ local var_0_5 = {
 	attack_intensity_type = "frenzy",
 	action_weight = 10,
 	move_anim = "move_fwd",
-	difficulty_attack_intensity = var_0_2,
+	difficulty_attack_intensity = tbl_2,
 	considerations = UtilityConsiderations.storm_vermin_shield_combo_attack,
 	init_blackboard = {
 		time_since_last_combo = math.huge
@@ -1260,7 +1262,7 @@ local var_0_5 = {
 			next = "attack_3",
 			move_anim = "attack_combo_2",
 			anim = "attack_combo_2",
-			staggers_allowed = var_0_3
+			staggers_allowed = tbl_3
 		},
 		attack_3 = {
 			next_blocked = "attack_4",
@@ -1273,7 +1275,7 @@ local var_0_5 = {
 			next = "attack_4",
 			move_anim = "attack_combo_3",
 			anim = "attack_combo_3",
-			staggers_allowed = var_0_3
+			staggers_allowed = tbl_3
 		},
 		attack_4 = {
 			fatigue_type = "blocked_berzerker",
@@ -1286,7 +1288,7 @@ local var_0_5 = {
 			next = "done",
 			allow_push_stagger = true,
 			anim = "attack_combo_4",
-			staggers_allowed = var_0_3
+			staggers_allowed = tbl_3
 		}
 	},
 	target_type_exceptions = {
@@ -1296,9 +1298,9 @@ local var_0_5 = {
 	}
 }
 
-var_0_4.frenzy_attack = table.create_copy(var_0_4.frenzy_attack, var_0_5)
-var_0_4.frenzy_attack.considerations = UtilityConsiderations.storm_vermin_shield_combo_attack
-var_0_4.frenzy_attack.combo_attacks.attack_1 = {
+tbl_4.frenzy_attack = table.create_copy(tbl_4.frenzy_attack, tbl_5)
+tbl_4.frenzy_attack.considerations = UtilityConsiderations.storm_vermin_shield_combo_attack
+tbl_4.frenzy_attack.combo_attacks.attack_1 = {
 	next_blocked = "attack_2",
 	rotation_scheme = "continuous",
 	is_animation_driven = false,
@@ -1311,12 +1313,12 @@ var_0_4.frenzy_attack.combo_attacks.attack_1 = {
 	attack_intensity_type = "frenzy",
 	move_anim = "attack_combo_1",
 	anim = "attack_combo_1",
-	difficulty_attack_intensity = var_0_2,
-	staggers_allowed = var_0_3
+	difficulty_attack_intensity = tbl_2,
+	staggers_allowed = tbl_3
 }
-var_0_4.frenzy_attack_ranged = table.create_copy(var_0_4.frenzy_attack_ranged, var_0_5)
-var_0_4.frenzy_attack_ranged.considerations = UtilityConsiderations.storm_vermin_shield_combo_attack
-var_0_4.frenzy_attack_ranged.combo_attacks.attack_1 = {
+tbl_4.frenzy_attack_ranged = table.create_copy(tbl_4.frenzy_attack_ranged, tbl_5)
+tbl_4.frenzy_attack_ranged.considerations = UtilityConsiderations.storm_vermin_shield_combo_attack
+tbl_4.frenzy_attack_ranged.combo_attacks.attack_1 = {
 	next_blocked = "attack_2",
 	rotation_scheme = "continuous",
 	is_animation_driven = false,
@@ -1329,7 +1331,7 @@ var_0_4.frenzy_attack_ranged.combo_attacks.attack_1 = {
 	run_speed = 3,
 	attack_intensity_type = "frenzy",
 	anim = "attack_combo_1",
-	difficulty_attack_intensity = var_0_2,
-	staggers_allowed = var_0_3
+	difficulty_attack_intensity = tbl_2,
+	staggers_allowed = tbl_3
 }
-BreedActions.skaven_storm_vermin_with_shield = table.create_copy(BreedActions.skaven_storm_vermin_with_shield, var_0_4)
+BreedActions.skaven_storm_vermin_with_shield = table.create_copy(BreedActions.skaven_storm_vermin_with_shield, tbl_4)

@@ -7,11 +7,11 @@ require("scripts/managers/conflict_director/conflict_utils")
 require("scripts/settings/terror_event_blueprints")
 require("scripts/settings/objective_lists")
 
-local var_0_0 = 100
-local var_0_1 = 80
-local var_0_2 = 5
-local var_0_3 = 0.8
-local var_0_4 = {
+local num = 100
+local num_2 = 80
+local num_3 = 5
+local num_4 = 0.8
+local tbl = {
 	kill = true,
 	interactions = true,
 	targets = true,
@@ -19,8 +19,10 @@ local var_0_4 = {
 	capture_points = false,
 	doom_wheels = true
 }
+local WeaveSettings = WeaveSettings
 
 WeaveSettings = WeaveSettings or {}
+WeaveSettings = WeaveSettings
 WeaveSettings.damage_taken_score_weighting = 1
 WeaveSettings.time_score_weighting = 1
 WeaveSettings.starting_time = 900
@@ -201,8 +203,8 @@ WeaveSettings.score = {
 	}
 }
 
-local var_0_5 = {}
-local var_0_6 = {
+local tbl_2 = {}
+local tbl_3 = {
 	"weave_1",
 	"weave_2",
 	"weave_3",
@@ -247,24 +249,24 @@ local var_0_6 = {
 
 WeaveSettings.weave_wind_ranges = {}
 
-for iter_0_0 = 1, #var_0_6 do
-	local var_0_7 = var_0_6[iter_0_0]
-	local var_0_8 = string.format("scripts/settings/weaves/%s", var_0_7)
-	local var_0_9 = local_require(var_0_8)
-	local var_0_10 = var_0_9.wind
+for i = 1, #tbl_3 do
+	local var_0_8 = tbl_3[i]
+	local format = string.format("scripts/settings/weaves/%s", var_0_8)
+	local var_0_10 = local_require(format)
+	local wind = var_0_10.wind
 
-	if not WeaveSettings.weave_wind_ranges[var_0_10] then
-		WeaveSettings.weave_wind_ranges[var_0_10] = {
-			iter_0_0
+	if not WeaveSettings.weave_wind_ranges[wind] then
+		WeaveSettings.weave_wind_ranges[wind] = {
+			i
 		}
 	else
-		table.insert(WeaveSettings.weave_wind_ranges[var_0_10], iter_0_0)
+		table.insert(WeaveSettings.weave_wind_ranges[wind], i)
 	end
 
-	var_0_5[#var_0_5 + 1] = var_0_9
+	tbl_2[#tbl_2 + 1] = var_0_10
 end
 
-local var_0_11 = #var_0_5
+local count = #tbl_2
 
 WeaveSettings.difficulty_increases = {
 	{
@@ -427,7 +429,7 @@ WeaveSettings.difficulty_increases = {
 	}
 }
 
-local var_0_12 = {}
+local tbl_4 = {}
 
 WeaveSettings.winds = {
 	"fire",
@@ -442,251 +444,287 @@ WeaveSettings.winds = {
 WeaveSettings.templates = {}
 WeaveSettings.templates_ordered = {}
 
-for iter_0_1 = 1, var_0_11 * 4 do
-	local var_0_13 = iter_0_1 % var_0_11
+for j = 1, count * 4 do
+	local num_5 = j % count
 
-	var_0_13 = var_0_13 == 0 and var_0_11 or var_0_13
+	num_5 = num_5 ~= 0 or not count or num_5
 
-	local var_0_14 = table.clone(var_0_5[var_0_13])
-	local var_0_15 = "weave_" .. iter_0_1
-	local var_0_16 = var_0_14.objectives
-	local var_0_17 = var_0_16[1]
-	local var_0_18 = var_0_14.wind
+	local clone = table.clone(tbl_2[num_5])
+	local str = "weave_" .. j
+	local objectives = clone.objectives
+	local var_0_18 = objectives[1]
+	local wind_2 = clone.wind
 
-	var_0_14.display_name = var_0_17.base_level_id .. "_" .. var_0_18 .. "_name"
-	var_0_14.name = var_0_15
-	var_0_14.tier = iter_0_1
-	var_0_14.dlc_name = "scorpion"
+	clone.display_name = var_0_18.base_level_id .. "_" .. wind_2 .. "_name"
+	clone.name = str
+	clone.tier = j
+	clone.dlc_name = "scorpion"
 
-	local var_0_19 = "cataclysm_3"
-	local var_0_20
+	local str_2 = "cataclysm_3"
+	local var_0_21
 
-	for iter_0_2, iter_0_3 in ipairs(WeaveSettings.difficulty_increases) do
-		if iter_0_1 <= iter_0_3.breakpoint then
-			var_0_19 = iter_0_3.difficulty_key
-			var_0_20 = iter_0_3.scaling_settings
+	for i_2, v in ipairs(WeaveSettings.difficulty_increases) do
+		if j <= v.breakpoint then
+			str_2 = v.difficulty_key
+			var_0_21 = v.scaling_settings
 
 			break
 		end
 	end
 
-	var_0_14.difficulty_key = var_0_19
-	var_0_14.scaling_settings = var_0_20
+	clone.difficulty_key = str_2
+	clone.scaling_settings = var_0_21
 
-	for iter_0_4 = 1, #var_0_16 do
-		local var_0_21 = var_0_16[iter_0_4].objective_settings
-		local var_0_22 = ObjectiveLists[var_0_21 and var_0_21.objective_lists]
+	for i4 = 1, #objectives do
+		local objective_settings = objectives[i4].objective_settings
+		local var_0_23 = ObjectiveLists[not objective_settings and objective_settings.objective_lists]
 
-		if var_0_22 then
-			for iter_0_5, iter_0_6 in ipairs(var_0_22) do
-				for iter_0_7, iter_0_8 in pairs(iter_0_6) do
-					var_0_12[iter_0_7] = true
+		if not var_0_23 then
+			for i_3, v_2 in ipairs(var_0_23) do
+				for k, v_3 in pairs(v_2) do
+					tbl_4[k] = true
 				end
 			end
 		end
 	end
 
-	WeaveSettings.templates[var_0_15] = var_0_14
-	WeaveSettings.templates_ordered[iter_0_1] = var_0_14
+	WeaveSettings.templates[str] = clone
+	WeaveSettings.templates_ordered[j] = clone
 end
 
-WeaveSettings.weave_objective_names = var_0_12
+WeaveSettings.weave_objective_names = tbl_4
 
-local var_0_23 = math.pow(2, 32)
-local var_0_24 = {}
+local pow = math.pow(2, 32)
+local tbl_5 = {}
 
-local function var_0_25(arg_1_0, arg_1_1)
-	return arg_1_0.sort_index < arg_1_1.sort_index
+local function fn(self, arg_1_1)
+	-- function 1
+	return self.sort_index < arg_1_1.sort_index
 end
 
-local function var_0_26(arg_2_0)
-	local var_2_0 = {}
-	local var_2_1 = arg_2_0.objectives
+local function fn_2(self)
+	-- function 2
+	local tbl = {}
+	local objectives = self.objectives
 
-	for iter_2_0, iter_2_1 in ipairs(var_2_1) do
-		var_2_0[iter_2_0] = {}
+	for i, v in ipairs(objectives) do
+		tbl[i] = {}
 
-		local var_2_2 = iter_2_1.objective_settings
-		local var_2_3 = ObjectiveLists[var_2_2 and var_2_2.objective_lists]
+		local objective_settings = v.objective_settings
+		local var_2_3 = ObjectiveLists[not objective_settings and objective_settings.objective_lists]
 
-		if var_2_3 then
-			for iter_2_2, iter_2_3 in ipairs(var_2_3) do
-				table.clear(var_0_24)
+		if not var_2_3 then
+			for i_2, v_2 in ipairs(var_2_3) do
+				table.clear(tbl_5)
 
-				for iter_2_4, iter_2_5 in pairs(iter_2_3) do
-					local var_2_4 = iter_2_5.sort_index or var_0_23
+				for k, v_3 in pairs(v_2) do
+					local sort_index = v_3.sort_index
 
-					var_0_24[#var_0_24 + 1] = {
-						sort_index = var_2_4,
-						objective_name = iter_2_4
+					sort_index = sort_index or pow
+					tbl_5[#tbl_5 + 1] = {
+						sort_index = sort_index,
+						objective_name = k
 					}
 				end
 
-				table.sort(var_0_24, var_0_25)
+				table.sort(tbl_5, fn)
 
-				for iter_2_6, iter_2_7 in pairs(var_0_24) do
-					local var_2_5 = iter_2_7.objective_name
+				for k_2, v_4 in pairs(tbl_5) do
+					local objective_name = v_4.objective_name
 
-					var_2_0[iter_2_0][#var_2_0[iter_2_0] + 1] = var_2_5
+					tbl[i][#tbl[i] + 1] = objective_name
 				end
 			end
 		end
 	end
 
-	arg_2_0.objectives_ordered = var_2_0
+	self.objectives_ordered = tbl
 end
 
-for iter_0_9, iter_0_10 in ipairs(WeaveSettings.templates_ordered) do
-	var_0_26(iter_0_10)
+for i_4, v_4 in ipairs(WeaveSettings.templates_ordered) do
+	fn_2(v_4)
 end
 
-local var_0_27 = {}
+local tbl_6 = {}
 
-local function var_0_28(arg_3_0, arg_3_1)
-	local var_3_0 = 0
-	local var_3_1 = arg_3_1.difficulty_requirement
+local function fn_3(arg_3_0, arg_3_1)
+	-- function 3
+	local num = 0
+	local difficulty_requirement = arg_3_1.difficulty_requirement
 
-	if var_3_1 and arg_3_0 < var_3_1 then
-		return var_3_0
+	if not (not difficulty_requirement and not (arg_3_0 < difficulty_requirement)) then
+		return num
 	end
 
-	local var_3_2 = arg_3_1.breed_name
+	local breed_name = arg_3_1.breed_name
 
-	if not var_3_2 then
+	if not breed_name then
 		table.dump(arg_3_1, "TEST", 2)
 		assert(false)
-	elseif type(var_3_2) == "table" then
-		var_3_0 = #var_3_2
+	elseif type(breed_name) == "table" then
+		num = #breed_name
 
-		for iter_3_0, iter_3_1 in pairs(var_3_2) do
-			var_0_27[iter_3_1] = (var_0_27[iter_3_1] or 0) + 1
+		for k, v in pairs(breed_name) do
+			local var_3_3 = tbl_6
+			local var_3_4 = tbl_6[v]
+
+			var_3_4 = var_3_4 or 0
+			var_3_3[v] = var_3_4 + 1
 		end
 	else
-		var_0_27[var_3_2] = (var_0_27[var_3_2] or 0) + 1
-		var_3_0 = 1
+		local var_3_5 = tbl_6
+		local var_3_6 = tbl_6[breed_name]
+
+		var_3_6 = var_3_6 or 0
+		var_3_5[breed_name] = var_3_6 + 1
+		num = 1
 	end
 
-	return var_3_0
+	return num
 end
 
-local function var_0_29(arg_4_0, arg_4_1, arg_4_2)
-	local var_4_0 = 0
-	local var_4_1 = arg_4_0.difficulty_requirement
+local function fn_4(self, arg_4_1, arg_4_2)
+	-- function 4
+	local num = 0
+	local difficulty_requirement = self.difficulty_requirement
 
-	if not var_4_1 or var_4_1 <= arg_4_1 then
-		local var_4_2 = arg_4_0.breed_name
-		local var_4_3 = arg_4_0.amount or 1
+	if not (not difficulty_requirement and not (difficulty_requirement <= arg_4_1)) then
+		local breed_name = self.breed_name
+		local amount = self.amount
 
-		for iter_4_0 = 1, var_4_3 do
+		amount = amount or 1
+
+		for i = 1, amount do
 			local var_4_4
 			local var_4_5
 
-			if type(var_4_2) == "table" then
+			if type(breed_name) == "table" then
 				local var_4_6
 
-				arg_4_2, var_4_6 = Math.next_random(arg_4_2, 1, #var_4_2)
+				arg_4_2, var_4_6 = Math.next_random(arg_4_2, 1, #breed_name)
 
-				local var_4_7 = var_4_2[var_4_6]
+				local var_4_7 = breed_name[var_4_6]
+				local var_4_8 = tbl_6
+				local var_4_9 = tbl_6[var_4_7]
 
-				var_0_27[var_4_7] = (var_0_27[var_4_7] or 0) + 1
+				var_4_9 = var_4_9 or 0
+				var_4_8[var_4_7] = var_4_9 + 1
 			else
-				local var_4_8 = var_4_2
+				local var_4_10 = breed_name
+				local var_4_11 = tbl_6
+				local var_4_12 = tbl_6[var_4_10]
 
-				var_0_27[var_4_8] = (var_0_27[var_4_8] or 0) + 1
+				var_4_12 = var_4_12 or 0
+				var_4_11[var_4_10] = var_4_12 + 1
 			end
 
-			var_4_0 = var_4_0 + 1
+			num = num + 1
 		end
 	end
 
-	return var_4_0, arg_4_2
+	return num, arg_4_2
 end
 
-local function var_0_30(arg_5_0, arg_5_1, arg_5_2)
+local function fn_5(self, arg_5_1, arg_5_2)
+	-- function 5
 	local var_5_0
-	local var_5_1 = arg_5_0.breed_name
-	local var_5_2 = arg_5_0.amount or 1
-	local var_5_3 = arg_5_0.difficulty_amount
+	local breed_name = self.breed_name
+	local amount = self.amount
 
-	if var_5_3 then
-		local var_5_4 = var_5_3[arg_5_1] or var_5_3.hardest
+	amount = amount or 1
+
+	local difficulty_amount = self.difficulty_amount
+
+	if not difficulty_amount then
+		local var_5_4 = difficulty_amount[arg_5_1]
+
+		var_5_4 = var_5_4 or difficulty_amount.hardest
 
 		if type(var_5_4) == "table" then
 			local var_5_5
 			local var_5_6
 
 			arg_5_2, var_5_6 = Math.next_random(arg_5_2, 1, #var_5_4)
-			var_5_2 = var_5_4[var_5_6]
+			amount = var_5_4[var_5_6]
 		else
-			var_5_2 = var_5_4
+			amount = var_5_4
 		end
-	elseif type(var_5_2) == "table" then
+	elseif type(amount) == "table" then
 		local var_5_7
 		local var_5_8
 
-		arg_5_2, var_5_8 = Math.next_random(arg_5_2, 1, #var_5_2)
-		var_5_2 = var_5_2[var_5_8]
+		arg_5_2, var_5_8 = Math.next_random(arg_5_2, 1, #amount)
+		amount = amount[var_5_8]
 	end
 
-	if type(var_5_1) == "table" then
+	if type(breed_name) == "table" then
 		local var_5_9
 		local var_5_10
 
-		arg_5_2, var_5_10 = Math.next_random(arg_5_2, 1, #var_5_1)
-		var_5_0 = var_5_1[var_5_10]
+		arg_5_2, var_5_10 = Math.next_random(arg_5_2, 1, #breed_name)
+		var_5_0 = breed_name[var_5_10]
 	else
-		var_5_0 = var_5_1
+		var_5_0 = breed_name
 	end
 
-	local var_5_11 = var_5_2
+	local var_5_11 = amount
+	local var_5_12 = tbl_6
+	local var_5_13 = tbl_6[var_5_0]
 
-	var_0_27[var_5_0] = (var_0_27[var_5_0] or 0) + var_5_2
+	var_5_13 = var_5_13 or 0
+	var_5_12[var_5_0] = var_5_13 + amount
 
 	return var_5_11, arg_5_2
 end
 
-local function var_0_31(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
-	local var_6_0 = DifficultySettings[arg_6_1].rank
+local function fn_6(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	-- function 6
+	local rank = DifficultySettings[arg_6_1].rank
 	local var_6_1 = TerrorEventBlueprints.weaves[arg_6_0]
 
-	for iter_6_0 = 1, #var_6_1 do
-		local var_6_2 = var_6_1[iter_6_0]
+	for i = 1, #var_6_1 do
+		local var_6_2 = var_6_1[i]
 		local var_6_3 = var_6_2[1]
 
 		if var_6_3 == "spawn_weave_special" then
 			local var_6_4
-			local var_6_5, var_6_6 = var_0_29(var_6_2, var_6_0, arg_6_3)
+			local var_6_5, var_6_6 = fn_4(var_6_2, rank, arg_6_3)
 
 			arg_6_3 = var_6_6
 			arg_6_2 = arg_6_2 + var_6_5
 		elseif var_6_3 == "spawn_weave_special_event" then
 			local var_6_7
-			local var_6_8, var_6_9 = var_0_30(var_6_2, arg_6_1, arg_6_3)
+			local var_6_8, var_6_9 = fn_5(var_6_2, arg_6_1, arg_6_3)
 
 			arg_6_3 = var_6_9
 			arg_6_2 = arg_6_2 + var_6_8
-		elseif var_6_3 == "spawn" or var_6_3 == "spawn_at_raw" then
-			arg_6_2 = arg_6_2 + var_0_28(var_6_0, var_6_2)
-		elseif var_6_3 == "event_horde" or var_6_3 == "ambush_horde" then
-			local var_6_10 = var_6_2.composition_type
-			local var_6_11 = var_6_0 - 1
-			local var_6_12 = HordeCompositions[var_6_10][var_6_11]
+		elseif not (var_6_3 == "spawn" or var_6_3 ~= "spawn_at_raw") then
+			arg_6_2 = arg_6_2 + fn_3(rank, var_6_2)
+		elseif not (var_6_3 == "event_horde" or var_6_3 ~= "ambush_horde") then
+			local composition_type = var_6_2.composition_type
+			local num = rank - 1
+			local var_6_12 = HordeCompositions[composition_type][num]
 
-			fassert(var_6_12 ~= nil, string.format("[WeaveSettings] No horde composition found for '%s' on difficulty '%s'", var_6_10, arg_6_1))
+			fassert(var_6_12 ~= nil, string.format("[WeaveSettings] No horde composition found for '%s' on difficulty '%s'", composition_type, arg_6_1))
 
-			for iter_6_1 = 1, #var_6_12 do
-				local var_6_13 = var_6_12[iter_6_1].breeds
+			for j = 1, #var_6_12 do
+				local breeds = var_6_12[j].breeds
 
-				for iter_6_2 = 1, #var_6_13, 2 do
-					local var_6_14 = var_6_13[iter_6_2]
-					local var_6_15 = var_6_13[iter_6_2 + 1]
+				for k = 1, #breeds, 2 do
+					local var_6_14 = breeds[k]
+					local var_6_15 = breeds[k + 1]
 
 					if type(var_6_15) == "table" then
 						var_6_15 = var_6_15[1]
 					end
 
 					arg_6_2 = arg_6_2 + var_6_15
-					var_0_27[var_6_14] = (var_0_27[var_6_14] or 0) + var_6_15
+
+					local var_6_16 = tbl_6
+					local var_6_17 = tbl_6[var_6_14]
+
+					var_6_17 = var_6_17 or 0
+					var_6_16[var_6_14] = var_6_17 + var_6_15
 				end
 			end
 		end
@@ -695,135 +733,150 @@ local function var_0_31(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	return arg_6_2, arg_6_3
 end
 
-local function var_0_32(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
-	for iter_7_0, iter_7_1 in ipairs(arg_7_0) do
-		local var_7_0 = iter_7_1.terror_event_name
+local function fn_7(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	-- function 7
+	for i, v in ipairs(arg_7_0) do
+		local terror_event_name = v.terror_event_name
 
-		arg_7_3, iter_7_0 = var_0_31(var_7_0, arg_7_1, arg_7_3, arg_7_4)
+		arg_7_3, i = fn_6(terror_event_name, arg_7_1, arg_7_3, arg_7_4)
 	end
 
 	return arg_7_3, arg_7_4
 end
 
-local function var_0_33(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
-	for iter_8_0, iter_8_1 in ipairs(arg_8_0) do
-		arg_8_3, iter_8_0 = var_0_31(iter_8_1, arg_8_1, arg_8_3, arg_8_4)
+local function fn_8(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+	-- function 8
+	for i, v in ipairs(arg_8_0) do
+		arg_8_3, i = fn_6(v, arg_8_1, arg_8_3, arg_8_4)
 	end
 
 	return arg_8_3, arg_8_4
 end
 
-local function var_0_34(arg_9_0, arg_9_1, arg_9_2)
-	local var_9_0 = arg_9_0.objective_settings
-	local var_9_1 = ObjectiveLists[var_9_0.objective_lists]
+local function fn_9(self, arg_9_1, arg_9_2)
+	-- function 9
+	local objective_settings = self.objective_settings
+	local var_9_1 = ObjectiveLists[objective_settings.objective_lists]
 
-	for iter_9_0, iter_9_1 in pairs(var_9_1) do
-		for iter_9_2, iter_9_3 in pairs(iter_9_1) do
-			if iter_9_2 == "kill_enemies" then
-				iter_9_3.score_multiplier = arg_9_1
+	for k, v in pairs(var_9_1) do
+		for k_2, v_2 in pairs(v) do
+			if k_2 == "kill_enemies" then
+				v_2.score_multiplier = arg_9_1
 			end
 
-			if iter_9_3.is_scored then
-				iter_9_3.score_for_completion = arg_9_2
+			if not v_2.is_scored then
+				v_2.score_for_completion = arg_9_2
 			end
 		end
 	end
 end
 
-local function var_0_35(arg_10_0)
-	local var_10_0 = arg_10_0.objective_settings
-	local var_10_1 = ObjectiveLists[var_10_0.objective_lists]
-	local var_10_2 = 0
+local function fn_10(self)
+	-- function 10
+	local objective_settings = self.objective_settings
+	local var_10_1 = ObjectiveLists[objective_settings.objective_lists]
+	local num = 0
 
-	for iter_10_0, iter_10_1 in pairs(var_10_1) do
-		for iter_10_2, iter_10_3 in pairs(iter_10_1) do
-			if iter_10_3.is_scored then
-				var_10_2 = var_10_2 + 1
+	for k, v in pairs(var_10_1) do
+		for k_2, v_2 in pairs(v) do
+			if not v_2.is_scored then
+				num = num + 1
 			end
 		end
 	end
 
-	return var_10_2
+	return num
 end
 
-local function var_0_36(arg_11_0, arg_11_1)
-	local var_11_0 = arg_11_0.objective_settings
+local function fn_11(self, arg_11_1)
+	-- function 11
+	local objective_settings = self.objective_settings
 
-	if not ObjectiveLists[var_11_0 and var_11_0.objective_lists] then
+	if not ObjectiveLists[not objective_settings and objective_settings.objective_lists] then
 		return
 	end
 
-	local var_11_1 = var_0_35(arg_11_0)
-	local var_11_2 = var_11_1 == 0 and 0 or var_0_1
-	local var_11_3 = math.max(var_0_0 - var_11_2, var_0_2)
-	local var_11_4 = var_11_2 / var_11_1
-	local var_11_5 = arg_11_0.to_spawn
-	local var_11_6 = {}
+	local var_11_1 = fn_10(self)
+	local flag
 
-	for iter_11_0, iter_11_1 in pairs(DifficultySettings) do
-		for iter_11_2, iter_11_3 in pairs(var_11_5[iter_11_0]) do
-			local var_11_7 = WeaveSettings.enemies_score_multipliers[iter_11_2] or WeaveSettings.enemies_score_multipliers.default
+	flag = var_11_1 ~= 0 or not 0 or num_2
 
-			var_11_6[iter_11_0] = (var_11_6[iter_11_0] or 0) + var_11_7 * iter_11_3
+	local max = math.max(num - flag, num_3)
+	local num_5 = flag / var_11_1
+	local to_spawn = self.to_spawn
+	local tbl = {}
+
+	for k, v in pairs(DifficultySettings) do
+		for k_2, v_2 in pairs(to_spawn[k]) do
+			local var_11_7 = WeaveSettings.enemies_score_multipliers[k_2]
+
+			var_11_7 = var_11_7 or WeaveSettings.enemies_score_multipliers.default
+
+			local var_11_8 = tbl[k]
+
+			var_11_8 = var_11_8 or 0
+			tbl[k] = var_11_8 + var_11_7 * v_2
 		end
 	end
 
-	local var_11_8 = {}
+	local tbl_2 = {}
 
-	for iter_11_4, iter_11_5 in pairs(var_11_6) do
-		var_11_8[iter_11_4] = var_11_3 / (iter_11_5 * var_0_3)
+	for k_3, v_3 in pairs(tbl) do
+		tbl_2[k_3] = max / (v_3 * num_4)
 	end
 
-	var_0_34(arg_11_0, var_11_8, var_11_4)
+	fn_9(self, tbl_2, num_5)
 end
 
-local var_0_37 = {}
-local var_0_38 = os.clock()
+local tbl_7 = {}
+local clock = os.clock()
 
-for iter_0_11, iter_0_12 in pairs(WeaveSettings.templates) do
-	local var_0_39 = iter_0_12.objectives
+for k_2, v_5 in pairs(WeaveSettings.templates) do
+	local objectives_2 = v_5.objectives
 
-	for iter_0_13, iter_0_14 in ipairs(var_0_39) do
-		table.clear(var_0_37)
+	for i_5, v_6 in ipairs(objectives_2) do
+		table.clear(tbl_7)
 
-		local var_0_40 = iter_0_14.objective_type
-		local var_0_41 = iter_0_14.spawning_settings
-		local var_0_42 = var_0_41 and var_0_41.main_path_spawning
-		local var_0_43 = iter_0_14.terror_events or var_0_37
+		local objective_type = v_6.objective_type
+		local spawning_settings = v_6.spawning_settings
+		local flag = not spawning_settings and spawning_settings.main_path_spawning
+		local terror_events = v_6.terror_events
 
-		fassert(var_0_42, "[WeaveSettings] No main path spawning in %q on objective: %q", iter_0_11, iter_0_13)
+		terror_events = terror_events or tbl_7
 
-		local var_0_44 = {}
-		local var_0_45 = {}
+		fassert(flag, "[WeaveSettings] No main path spawning in %q on objective: %q", k_2, i_5)
 
-		for iter_0_15, iter_0_16 in pairs(DifficultySettings) do
-			table.clear(var_0_27)
+		local tbl_8 = {}
+		local tbl_9 = {}
 
-			local var_0_46 = iter_0_14.spawning_seed
-			local var_0_47 = var_0_32(var_0_42, iter_0_15, iter_0_11, 0, var_0_46)
+		for k_3, v_7 in pairs(DifficultySettings) do
+			table.clear(tbl_6)
 
-			if var_0_40 and var_0_4[var_0_40] then
-				var_0_47 = var_0_33(var_0_43, iter_0_15, iter_0_11, var_0_47, var_0_46)
+			local spawning_seed = v_6.spawning_seed
+			local var_0_48 = fn_7(flag, k_3, k_2, 0, spawning_seed)
+
+			if not objective_type and not tbl[objective_type] then
+				var_0_48 = fn_8(terror_events, k_3, k_2, var_0_48, spawning_seed)
 			end
 
-			var_0_44[iter_0_15] = var_0_47
-			var_0_45[iter_0_15] = table.clone(var_0_27)
+			tbl_8[k_3] = var_0_48
+			tbl_9[k_3] = table.clone(tbl_6)
 		end
 
-		iter_0_14.to_spawn = var_0_45
-		iter_0_14.enemy_count = var_0_44
+		v_6.to_spawn = tbl_9
+		v_6.enemy_count = tbl_8
 
-		if iter_0_14.conflict_settings == "weave_disabled" then
-			iter_0_14.track_kills = true
-			iter_0_14.bar_cutoff = 100
-			iter_0_14.bar_multiplier = 0.25
+		if v_6.conflict_settings == "weave_disabled" then
+			v_6.track_kills = true
+			v_6.bar_cutoff = 100
+			v_6.bar_multiplier = 0.25
 		else
-			iter_0_14.bar_cutoff = 75
-			iter_0_14.bar_multiplier = 0.75
+			v_6.bar_cutoff = 75
+			v_6.bar_multiplier = 0.75
 		end
 
-		var_0_36(iter_0_14, iter_0_11)
+		fn_11(v_6, k_2)
 	end
 end
 
-print("TIME: " .. os.clock() - var_0_38)
+print("TIME: " .. os.clock() - clock)

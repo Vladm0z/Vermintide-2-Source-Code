@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/breeds/breed_chaos_tether_sorcerer.lua
 
-local var_0_0 = {
+local tbl = {
 	detection_radius = 9999999,
 	player_locomotion_constrain_radius = 0.7,
 	walk_speed = 0.65,
@@ -158,10 +158,12 @@ local var_0_0 = {
 			}
 		}
 	},
-	run_on_spawn = function(arg_1_0, ...)
+	run_on_spawn = function (arg_1_0, ...)
+		-- function 1
 		return AiBreedSnippets.on_chaos_sorcerer_spawn(arg_1_0, ...)
 	end,
-	on_weapon_wield = function(arg_2_0)
+	on_weapon_wield = function (arg_2_0)
+		-- function 2
 		Unit.flow_event(arg_2_0, "lua_spawn_tether_staff_effect")
 	end,
 	target_player_sound_events = {
@@ -183,41 +185,46 @@ local var_0_0 = {
 		200,
 		200,
 		0
-	},
-	disabled = Development.setting("disable_plague_sorcerer") or false,
-	allowed_layers = {
-		planks = 1.5,
-		ledges = 5,
-		bot_ratling_gun_fire = 10,
-		jumps = 5,
-		destructible_wall = 5,
-		temporary_wall = 0,
-		ledges_with_fence = 5,
-		doors = 1.5,
-		teleporters = 5,
-		bot_poison_wind = 2,
-		fire_grenade = 10
-	},
-	custom_death_enter_function = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
-		local var_3_0 = BLACKBOARDS[arg_3_0]
+	}
+}
+local setting = Development.setting("disable_plague_sorcerer")
 
-		if not Unit.alive(arg_3_1) then
-			return
-		end
-
-		local var_3_1 = var_3_0.teleport_at_t
-
-		if var_3_1 then
-			QuestSettings.check_corruptor_killed_at_teleport_time(var_3_0, var_3_1, arg_3_4, arg_3_1)
-		end
-
-		QuestSettings.check_corruptor_killed_while_grabbing(var_3_0, arg_3_1)
-	end
+setting = setting or false
+tbl.disabled = setting
+tbl.allowed_layers = {
+	planks = 1.5,
+	ledges = 5,
+	bot_ratling_gun_fire = 10,
+	jumps = 5,
+	destructible_wall = 5,
+	temporary_wall = 0,
+	ledges_with_fence = 5,
+	doors = 1.5,
+	teleporters = 5,
+	bot_poison_wind = 2,
+	fire_grenade = 10
 }
 
-Breeds.chaos_tether_sorcerer = table.create_copy(Breeds.chaos_tether_sorcerer, var_0_0)
+tbl.custom_death_enter_function = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	-- function 3
+	local var_3_0 = BLACKBOARDS[arg_3_0]
 
-local var_0_1 = {
+	if not Unit.alive(arg_3_1) then
+		return
+	end
+
+	local teleport_at_t = var_3_0.teleport_at_t
+
+	if not teleport_at_t then
+		QuestSettings.check_corruptor_killed_at_teleport_time(var_3_0, teleport_at_t, arg_3_4, arg_3_1)
+	end
+
+	QuestSettings.check_corruptor_killed_while_grabbing(var_3_0, arg_3_1)
+end
+
+Breeds.chaos_tether_sorcerer = table.create_copy(Breeds.chaos_tether_sorcerer, tbl)
+
+local tbl_2 = {
 	spawn = {
 		spawning_effect = "fx/chr_chaos_sorcerer_teleport"
 	},
@@ -281,12 +288,13 @@ local var_0_1 = {
 		}
 	},
 	stagger = {
-		custom_enter_function = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+		custom_enter_function = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			-- function 4
 			local var_4_0
 
 			arg_4_1.stagger_ignore_anim_cb = true
 
-			if arg_4_1.corruptor_grab_stagger then
+			if not arg_4_1.corruptor_grab_stagger then
 				var_4_0 = arg_4_3.grabbing_stagger_anims[arg_4_1.stagger_type]
 				arg_4_1.stagger_time = arg_4_2 + 1
 			else
@@ -295,7 +303,8 @@ local var_0_1 = {
 
 			return var_4_0, "idle"
 		end,
-		custom_exit_function = function(arg_5_0, arg_5_1, arg_5_2)
+		custom_exit_function = function (arg_5_0, arg_5_1, arg_5_2)
+			-- function 5
 			arg_5_1.corruptor_grab_stagger = nil
 		end,
 		stagger_anims = {
@@ -541,4 +550,4 @@ local var_0_1 = {
 	}
 }
 
-BreedActions.chaos_tether_sorcerer = table.create_copy(BreedActions.chaos_tether_sorcerer, var_0_1)
+BreedActions.chaos_tether_sorcerer = table.create_copy(BreedActions.chaos_tether_sorcerer, tbl_2)

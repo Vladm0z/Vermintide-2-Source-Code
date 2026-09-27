@@ -2,115 +2,128 @@
 
 BaseComponent = class(BaseComponent)
 
-function BaseComponent.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+BaseComponent.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
 	assert(arg_1_3, "No definitions passed")
 	assert(arg_1_3.scenegraph_definition, "No scenegraph in definitions")
 
-	arg_1_0._world = arg_1_2.world
-	arg_1_0._ui_renderer = arg_1_2.ui_renderer
-	arg_1_0._ui_top_renderer = arg_1_2.ui_top_renderer
-	arg_1_0._input_manager = arg_1_2.input_manager
-	arg_1_0._ingame_ui_context = arg_1_2
-	arg_1_0._definitions = arg_1_3
-	arg_1_0._retained_mode = not not arg_1_3.retained_mode
-	arg_1_0._dirty = true
+	self._world = arg_1_2.world
+	self._ui_renderer = arg_1_2.ui_renderer
+	self._ui_top_renderer = arg_1_2.ui_top_renderer
+	self._input_manager = arg_1_2.input_manager
+	self._ingame_ui_context = arg_1_2
+	self._definitions = arg_1_3
+	self._retained_mode = not not arg_1_3.retained_mode
+	self._dirty = true
 
-	arg_1_0:_create_ui_elements()
+	self:_create_ui_elements()
 end
 
-function BaseComponent._create_ui_elements(arg_2_0)
-	local var_2_0 = arg_2_0._definitions
-	local var_2_1 = var_2_0.scenegraph_definition
+BaseComponent._create_ui_elements = function (self)
+	-- function 2
+	local _definitions = self._definitions
+	local scenegraph_definition = _definitions.scenegraph_definition
 
-	arg_2_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_2_1)
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	local var_2_2 = {}
+	local tbl = {}
 
-	arg_2_0._widgets = UIUtils.create_widgets(var_2_0.widget_definitions, {}, var_2_2)
+	self._widgets = UIUtils.create_widgets(_definitions.widget_definitions, {}, tbl)
 
-	local var_2_3 = var_2_0.top_widget_definitions
+	local top_widget_definitions = _definitions.top_widget_definitions
 
-	if var_2_3 then
-		arg_2_0._top_widgets = UIUtils.create_widgets(var_2_3, {}, var_2_2)
+	if not top_widget_definitions then
+		self._top_widgets = UIUtils.create_widgets(top_widget_definitions, {}, tbl)
 	end
 
-	arg_2_0._widgets_by_name = var_2_2
+	self._widgets_by_name = tbl
 end
 
-function BaseComponent.destroy(arg_3_0)
-	arg_3_0:_destroy_ui_elements()
+BaseComponent.destroy = function (self)
+	-- function 3
+	self:_destroy_ui_elements()
 end
 
-function BaseComponent._destroy_ui_elements(arg_4_0)
-	if arg_4_0._retained_mode then
-		UIUtils.destroy_widgets(arg_4_0._ui_renderer, arg_4_0._widgets_by_name)
+BaseComponent._destroy_ui_elements = function (self)
+	-- function 4
+	if not self._retained_mode then
+		UIUtils.destroy_widgets(self._ui_renderer, self._widgets_by_name)
 	end
 
-	arg_4_0._widgets_by_name = nil
-	arg_4_0._top_widgets = nil
-	arg_4_0._widgets = nil
-	arg_4_0._ui_scenegraph = nil
+	self._widgets_by_name = nil
+	self._top_widgets = nil
+	self._widgets = nil
+	self._ui_scenegraph = nil
 end
 
-function BaseComponent.set_visible(arg_5_0, arg_5_1)
-	if arg_5_0._retained_mode then
-		local var_5_0 = arg_5_0._ui_renderer
+BaseComponent.set_visible = function (self, arg_5_1)
+	-- function 5
+	if not self._retained_mode then
+		local _ui_renderer = self._ui_renderer
 
-		for iter_5_0, iter_5_1 in ipairs(arg_5_0._widgets) do
-			UIRenderer.set_element_visible(var_5_0, iter_5_1.element, arg_5_1)
+		for i, v in ipairs(self._widgets) do
+			UIRenderer.set_element_visible(_ui_renderer, v.element, arg_5_1)
 		end
 
-		arg_5_0._dirty = true
+		self._dirty = true
 	end
 end
 
-function BaseComponent.debug_set_definitions(arg_6_0, arg_6_1)
-	arg_6_0._definitions = arg_6_1
+BaseComponent.debug_set_definitions = function (self, arg_6_1)
+	-- function 6
+	self._definitions = arg_6_1
 end
 
-function BaseComponent.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+BaseComponent.update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	-- function 7
 	return
 end
 
-function BaseComponent.post_update(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
-	if arg_8_0._dirty or not arg_8_0._retained_mode then
-		arg_8_0:_draw(arg_8_1, arg_8_0:input_service())
+BaseComponent.post_update = function (self, arg_8_1, arg_8_2, arg_8_3)
+	-- function 8
+	if not (self._dirty or self._retained_mode) then
+		self:_draw(arg_8_1, self:input_service())
 
-		arg_8_0._dirty = false
+		self._dirty = false
 	end
 end
 
-function BaseComponent._draw_widgets(arg_9_0, arg_9_1, arg_9_2)
+BaseComponent._draw_widgets = function (arg_9_0, arg_9_1, arg_9_2)
+	-- function 9
 	return
 end
 
-function BaseComponent._draw_top_widgets(arg_10_0, arg_10_1, arg_10_2)
+BaseComponent._draw_top_widgets = function (arg_10_0, arg_10_1, arg_10_2)
+	-- function 10
 	return
 end
 
-function BaseComponent._draw(arg_11_0, arg_11_1, arg_11_2)
-	local var_11_0 = arg_11_0._ui_renderer
-	local var_11_1 = arg_11_0._ui_top_renderer
-	local var_11_2 = arg_11_0._ui_scenegraph
+BaseComponent._draw = function (self, arg_11_1, arg_11_2)
+	-- function 11
+	local _ui_renderer = self._ui_renderer
+	local _ui_top_renderer = self._ui_top_renderer
+	local _ui_scenegraph = self._ui_scenegraph
 
-	UIRenderer.begin_pass(var_11_0, var_11_2, arg_11_2, arg_11_1)
-	UIRenderer.draw_all_widgets(var_11_0, arg_11_0._widgets)
-	arg_11_0:_draw_widgets(var_11_0, arg_11_1)
-	UIRenderer.end_pass(var_11_0)
-	UIRenderer.begin_pass(var_11_1, var_11_2, arg_11_2, arg_11_1)
+	UIRenderer.begin_pass(_ui_renderer, _ui_scenegraph, arg_11_2, arg_11_1)
+	UIRenderer.draw_all_widgets(_ui_renderer, self._widgets)
+	self:_draw_widgets(_ui_renderer, arg_11_1)
+	UIRenderer.end_pass(_ui_renderer)
+	UIRenderer.begin_pass(_ui_top_renderer, _ui_scenegraph, arg_11_2, arg_11_1)
 
-	if arg_11_0._top_widgets then
-		UIRenderer.draw_all_widgets(var_11_1, arg_11_0._top_widgets)
+	if not self._top_widgets then
+		UIRenderer.draw_all_widgets(_ui_top_renderer, self._top_widgets)
 	end
 
-	arg_11_0:_draw_top_widgets(var_11_1, arg_11_1)
-	UIRenderer.end_pass(var_11_1)
+	self:_draw_top_widgets(_ui_top_renderer, arg_11_1)
+	UIRenderer.end_pass(_ui_top_renderer)
 end
 
-function BaseComponent.input_service(arg_12_0)
-	return arg_12_0._input_manager:get_service("Player")
+BaseComponent.input_service = function (self)
+	-- function 12
+	return self._input_manager:get_service("Player")
 end
 
-function BaseComponent._set_widget_dirty(arg_13_0, arg_13_1)
+BaseComponent._set_widget_dirty = function (arg_13_0, arg_13_1)
+	-- function 13
 	arg_13_1.element.dirty = true
 end

@@ -1,89 +1,95 @@
 -- chunkname: @scripts/ui/hud_ui/kill_confirmation_ui.lua
 
 local var_0_0 = local_require("scripts/ui/hud_ui/kill_confirmation_ui_definitions")
-local var_0_1 = var_0_0.badge_widget_definition
-local var_0_2 = var_0_0.scenegraph_definition
-local var_0_3 = var_0_0.animation_definitions
+local badge_widget_definition = var_0_0.badge_widget_definition
+local scenegraph_definition = var_0_0.scenegraph_definition
+local animation_definitions = var_0_0.animation_definitions
 
 KillConfirmationUI = class(KillConfirmationUI)
 
-function KillConfirmationUI.init(arg_1_0, arg_1_1, arg_1_2)
-	arg_1_0._parent = arg_1_1
-	arg_1_0._ui_renderer = arg_1_2.ui_renderer
-	arg_1_0._input_manager = arg_1_2.input_manager
-	arg_1_0._player_manager = arg_1_2.player_manager
-	arg_1_0._local_unique_id = arg_1_2.player:unique_id()
-	arg_1_0._world = arg_1_2.world_manager:world("level_world")
-	arg_1_0._wwise_world = arg_1_2.world_manager:wwise_world(arg_1_0._world)
-	arg_1_0._render_settings = {
+KillConfirmationUI.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	self._parent = arg_1_1
+	self._ui_renderer = arg_1_2.ui_renderer
+	self._input_manager = arg_1_2.input_manager
+	self._player_manager = arg_1_2.player_manager
+	self._local_unique_id = arg_1_2.player:unique_id()
+	self._world = arg_1_2.world_manager:world("level_world")
+	self._wwise_world = arg_1_2.world_manager:wwise_world(self._world)
+	self._render_settings = {
 		alpha_multiplier = 1,
 		snap_pixel_positions = true
 	}
-	arg_1_0._ingame_ui_context = arg_1_2
-	arg_1_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
-	arg_1_0._ui_animator = UIAnimator:new(arg_1_0._ui_scenegraph, var_0_3)
-	arg_1_0._has_active_kill_confirm = false
-	arg_1_0._animations = {}
-	arg_1_0._badges_queue = {}
+	self._ingame_ui_context = arg_1_2
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
+	self._has_active_kill_confirm = false
+	self._animations = {}
+	self._badges_queue = {}
 
-	arg_1_0:_create_ui_elements()
-	Managers.state.event:register(arg_1_0, "add_player_kill_confirmation", "event_add_player_kill_confirmation")
-	Managers.state.event:register(arg_1_0, "add_player_knock_confirmation", "event_add_player_knock_confirmation")
+	self:_create_ui_elements()
+	Managers.state.event:register(self, "add_player_kill_confirmation", "event_add_player_kill_confirmation")
+	Managers.state.event:register(self, "add_player_knock_confirmation", "event_add_player_knock_confirmation")
 end
 
-function KillConfirmationUI.destroy(arg_2_0)
-	GarbageLeakDetector.register_object(arg_2_0, "kill_confiramtion")
+KillConfirmationUI.destroy = function (self)
+	-- function 2
+	GarbageLeakDetector.register_object(self, "kill_confiramtion")
 
-	local var_2_0 = Managers.state.event
+	local event = Managers.state.event
 
-	var_2_0:unregister("add_player_kill_confirmation", arg_2_0)
-	var_2_0:unregister("add_player_knock_confirmation", arg_2_0)
+	event:unregister("add_player_kill_confirmation", self)
+	event:unregister("add_player_knock_confirmation", self)
 
-	arg_2_0.ui_animator = nil
+	self.ui_animator = nil
 end
 
-function KillConfirmationUI._create_ui_elements(arg_3_0)
-	UIRenderer.clear_scenegraph_queue(arg_3_0._ui_renderer)
+KillConfirmationUI._create_ui_elements = function (self)
+	-- function 3
+	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
 
-	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
-	arg_3_0._kill_confirm_widget = UIWidget.init(var_0_1)
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+	self._kill_confirm_widget = UIWidget.init(badge_widget_definition)
 end
 
-function KillConfirmationUI.update(arg_4_0, arg_4_1, arg_4_2)
-	local var_4_0 = arg_4_0._animations
-	local var_4_1 = arg_4_0._ui_animator
+KillConfirmationUI.update = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	local _animations = self._animations
+	local _ui_animator = self._ui_animator
 
-	var_4_1:update(arg_4_1)
+	_ui_animator:update(arg_4_1)
 
-	for iter_4_0, iter_4_1 in pairs(var_4_0) do
-		local var_4_2 = iter_4_1.id
+	for k, v in pairs(_animations) do
+		local id = v.id
 
-		if var_4_1:is_animation_completed(var_4_2) then
-			var_4_1:stop_animation(var_4_2)
-			arg_4_0:_remove_active_badge(iter_4_0)
-			arg_4_0:_add_badge_from_queue()
+		if not _ui_animator:is_animation_completed(id) then
+			_ui_animator:stop_animation(id)
+			self:_remove_active_badge(k)
+			self:_add_badge_from_queue()
 		end
 	end
 
-	arg_4_0:_draw(arg_4_1)
+	self:_draw(arg_4_1)
 end
 
-function KillConfirmationUI._draw(arg_5_0, arg_5_1)
-	if not arg_5_0._has_active_kill_confirm then
+KillConfirmationUI._draw = function (self, arg_5_1)
+	-- function 5
+	if not self._has_active_kill_confirm then
 		return
 	end
 
-	local var_5_0 = arg_5_0._ui_renderer
-	local var_5_1 = arg_5_0._ui_scenegraph
-	local var_5_2 = arg_5_0._input_manager:get_service("ingame_menu")
-	local var_5_3 = arg_5_0._render_settings
+	local _ui_renderer = self._ui_renderer
+	local _ui_scenegraph = self._ui_scenegraph
+	local get_service = self._input_manager:get_service("ingame_menu")
+	local _render_settings = self._render_settings
 
-	UIRenderer.begin_pass(var_5_0, var_5_1, var_5_2, arg_5_1, nil, var_5_3)
-	UIRenderer.draw_widget(var_5_0, arg_5_0._kill_confirm_widget)
-	UIRenderer.end_pass(var_5_0)
+	UIRenderer.begin_pass(_ui_renderer, _ui_scenegraph, get_service, arg_5_1, nil, _render_settings)
+	UIRenderer.draw_widget(_ui_renderer, self._kill_confirm_widget)
+	UIRenderer.end_pass(_ui_renderer)
 end
 
-function KillConfirmationUI._get_badge(arg_6_0, arg_6_1)
+KillConfirmationUI._get_badge = function (arg_6_0, arg_6_1)
+	-- function 6
 	local var_6_0 = NetworkLookup.badges[arg_6_1]
 	local var_6_1 = BadgeDefinitions[var_6_0]
 
@@ -92,115 +98,136 @@ function KillConfirmationUI._get_badge(arg_6_0, arg_6_1)
 	return var_6_1
 end
 
-function KillConfirmationUI.event_add_player_kill_confirmation(arg_7_0, arg_7_1, arg_7_2)
-	local var_7_0 = arg_7_1 == "dark_pact" and NetworkLookup.badges.kill_hero or NetworkLookup.badges.kill_pactsworn
-	local var_7_1 = arg_7_0:_get_badge(var_7_0)
+KillConfirmationUI.event_add_player_kill_confirmation = function (self, arg_7_1, arg_7_2)
+	-- function 7
+	local kill_hero
 
-	var_7_1.victim_player = arg_7_2
+	if arg_7_1 == "dark_pact" then
+		kill_hero = NetworkLookup.badges.kill_hero
 
-	arg_7_0:add_badge(arg_7_0._local_unique_id .. "_" .. var_7_0, var_7_1)
+		if not kill_hero then
+			-- Nothing
+		end
+	end
+
+	kill_hero = NetworkLookup.badges.kill_pactsworn
+
+	::label_7_0::
+
+	local _get_badge = self:_get_badge(kill_hero)
+
+	_get_badge.victim_player = arg_7_2
+
+	self:add_badge(self._local_unique_id .. "_" .. kill_hero, _get_badge)
 end
 
-function KillConfirmationUI.event_add_player_knock_confirmation(arg_8_0, arg_8_1, arg_8_2)
+KillConfirmationUI.event_add_player_knock_confirmation = function (self, arg_8_1, arg_8_2)
+	-- function 8
 	if not Managers.state.side:is_enemy_by_player(arg_8_1, arg_8_2) then
 		return
 	end
 
-	local var_8_0 = NetworkLookup.badges.knock_down_hero
-	local var_8_1 = arg_8_0:_get_badge(var_8_0)
+	local knock_down_hero = NetworkLookup.badges.knock_down_hero
+	local _get_badge = self:_get_badge(knock_down_hero)
 
-	var_8_1.victim_player = arg_8_2
+	_get_badge.victim_player = arg_8_2
 
-	arg_8_0:add_badge(arg_8_0._local_unique_id .. "_" .. var_8_0, var_8_1)
+	self:add_badge(self._local_unique_id .. "_" .. knock_down_hero, _get_badge)
 end
 
-function KillConfirmationUI._add_to_queue(arg_9_0, arg_9_1, arg_9_2)
-	local var_9_0 = arg_9_0._badges_queue
+KillConfirmationUI._add_to_queue = function (self, arg_9_1, arg_9_2)
+	-- function 9
+	local _badges_queue = self._badges_queue
 
-	for iter_9_0, iter_9_1 in ipairs(var_9_0) do
-		if iter_9_1.hash == arg_9_1 then
-			iter_9_1.amount = iter_9_1.amount + 1
+	for i, v in ipairs(_badges_queue) do
+		if v.hash == arg_9_1 then
+			v.amount = v.amount + 1
 
 			return
 		end
 	end
 
-	var_9_0[#var_9_0 + 1] = {
+	_badges_queue[#_badges_queue + 1] = {
 		amount = 1,
 		hash = arg_9_1,
 		badge = arg_9_2
 	}
 end
 
-function KillConfirmationUI.add_badge(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
-	arg_10_3 = arg_10_3 == nil and true or arg_10_3
-	arg_10_4 = arg_10_4 == nil and 1 or arg_10_4
+KillConfirmationUI.add_badge = function (self, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+	-- function 10
+	arg_10_3 = arg_10_3 ~= nil or not true or arg_10_3
+	arg_10_4 = arg_10_4 ~= nil or not 1 or arg_10_4
 
-	if arg_10_3 and arg_10_0._has_active_kill_confirm then
-		arg_10_0:_add_to_queue(arg_10_1, arg_10_2)
+	if not arg_10_3 and not self._has_active_kill_confirm then
+		self:_add_to_queue(arg_10_1, arg_10_2)
 
 		return
 	end
 
-	arg_10_0._has_active_kill_confirm = true
+	self._has_active_kill_confirm = true
 
-	local var_10_0 = arg_10_0._kill_confirm_widget
-	local var_10_1 = var_10_0.content
-	local var_10_2 = arg_10_0._ui_renderer.gui
+	local _kill_confirm_widget = self._kill_confirm_widget
+	local content = _kill_confirm_widget.content
+	local gui = self._ui_renderer.gui
 
-	Material.set_texture(Gui.material(var_10_2, "versus_badge_icon"), "diffuse_map", "gui/1080p/single_textures/carousel/badge_icons/" .. arg_10_2.texture_id .. "_icon")
-	Material.set_texture(Gui.material(var_10_2, "versus_badge_glow"), "diffuse_map", "gui/1080p/single_textures/carousel/badge_icons/" .. arg_10_2.texture_id .. "_glow")
+	Material.set_texture(Gui.material(gui, "versus_badge_icon"), "diffuse_map", "gui/1080p/single_textures/carousel/badge_icons/" .. arg_10_2.texture_id .. "_icon")
+	Material.set_texture(Gui.material(gui, "versus_badge_glow"), "diffuse_map", "gui/1080p/single_textures/carousel/badge_icons/" .. arg_10_2.texture_id .. "_glow")
 
-	local var_10_3 = arg_10_2.bg_color
-	local var_10_4 = arg_10_2.victim_text_color
+	local bg_color = arg_10_2.bg_color
+	local victim_text_color = arg_10_2.victim_text_color
 
-	var_10_0.style.frame_glow.color = var_10_3
-	var_10_0.style.icon_glow.color = var_10_3
-	var_10_0.content.badge = arg_10_2
+	_kill_confirm_widget.style.frame_glow.color = bg_color
+	_kill_confirm_widget.style.icon_glow.color = bg_color
+	_kill_confirm_widget.content.badge = arg_10_2
 
-	local var_10_5 = arg_10_2.victim_player:name()
+	local name = arg_10_2.victim_player:name()
 
-	var_10_1.text_name = string.format(Localize(arg_10_2.text), var_10_4[2], var_10_4[3], var_10_4[4], var_10_4[1], var_10_5)
+	content.text_name = string.format(Localize(arg_10_2.text), victim_text_color[2], victim_text_color[3], victim_text_color[4], victim_text_color[1], name)
 
-	arg_10_0:_start_animation("on_enter", 1, var_10_0)
+	self:_start_animation("on_enter", 1, _kill_confirm_widget)
 end
 
-function KillConfirmationUI._start_animation(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
-	local var_11_0 = {
-		wwise_world = arg_11_0._wwise_world,
-		render_settings = arg_11_0._render_settings,
-		ui_scenegraph = arg_11_0._ui_scenegraph
+KillConfirmationUI._start_animation = function (self, arg_11_1, arg_11_2, arg_11_3)
+	-- function 11
+	local tbl = {
+		wwise_world = self._wwise_world,
+		render_settings = self._render_settings,
+		ui_scenegraph = self._ui_scenegraph
 	}
-	local var_11_1 = arg_11_0._ui_animator:start_animation(arg_11_1, arg_11_3, var_0_2, var_11_0)
+	local start_animation = self._ui_animator:start_animation(arg_11_1, arg_11_3, scenegraph_definition, tbl)
 
-	arg_11_0._animations[arg_11_2] = {
-		id = var_11_1,
+	self._animations[arg_11_2] = {
+		id = start_animation,
 		name = arg_11_1
 	}
 end
 
-function KillConfirmationUI._remove_active_badge(arg_12_0, arg_12_1)
-	arg_12_0._animations[arg_12_1] = nil
-	arg_12_0._has_active_kill_confirm = false
+KillConfirmationUI._remove_active_badge = function (self, arg_12_1)
+	-- function 12
+	self._animations[arg_12_1] = nil
+	self._has_active_kill_confirm = false
 end
 
-function KillConfirmationUI._add_badge_from_queue(arg_13_0)
-	if arg_13_0._has_active_kill_confirm then
+KillConfirmationUI._add_badge_from_queue = function (self)
+	-- function 13
+	if not self._has_active_kill_confirm then
 		return
 	end
 
-	local var_13_0 = table.remove(arg_13_0._badges_queue, 1)
+	local remove = table.remove(self._badges_queue, 1)
 
-	if not var_13_0 then
+	if not remove then
 		return
 	end
 
-	local var_13_1 = var_13_0.badge
-	local var_13_2 = var_13_0.hash
+	local badge = remove.badge
+	local hash = remove.hash
 
-	arg_13_0:add_badge(var_13_2, var_13_1, false, var_13_0.amount)
+	self:add_badge(hash, badge, false, remove.amount)
 end
 
-function KillConfirmationUI._play_sound(arg_14_0, arg_14_1)
-	return WwiseWorld.trigger_event(arg_14_0._wwise_world, arg_14_1)
+KillConfirmationUI._play_sound = function (self, arg_14_1)
+	-- function 14
+	return WwiseWorld.trigger_event(self._wwise_world, arg_14_1)
 end

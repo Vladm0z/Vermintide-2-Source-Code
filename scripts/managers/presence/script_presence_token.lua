@@ -2,36 +2,41 @@
 
 ScriptPresenceToken = class(ScriptPresenceToken)
 
-function ScriptPresenceToken.init(arg_1_0, arg_1_1)
-	arg_1_0._token = arg_1_1
-	arg_1_0._result = {}
-	arg_1_0._done = false
+ScriptPresenceToken.init = function (self, arg_1_1)
+	-- function 1
+	self._token = arg_1_1
+	self._result = {}
+	self._done = false
 end
 
-function ScriptPresenceToken.update(arg_2_0)
-	local var_2_0, var_2_1, var_2_2 = Presence.status(arg_2_0._token)
+ScriptPresenceToken.update = function (self)
+	-- function 2
+	local status, var_2_1, var_2_2 = Presence.status(self._token)
 
-	arg_2_0._done = var_2_0
-	arg_2_0._presence = var_2_1
-	arg_2_0._error_code = var_2_2
+	self._done = status
+	self._presence = var_2_1
+	self._error_code = var_2_2
 end
 
-function ScriptPresenceToken.info(arg_3_0)
-	local var_3_0 = {}
+ScriptPresenceToken.info = function (self)
+	-- function 3
+	local tbl = {}
 
-	if arg_3_0._error_code then
-		var_3_0.error_code = arg_3_0._error_code
-	elseif arg_3_0._presence then
-		var_3_0.presence = arg_3_0._presence
+	if not self._error_code then
+		tbl.error_code = self._error_code
+	elseif not self._presence then
+		tbl.presence = self._presence
 	end
 
-	return var_3_0
+	return tbl
 end
 
-function ScriptPresenceToken.done(arg_4_0)
-	return arg_4_0._done
+ScriptPresenceToken.done = function (self)
+	-- function 4
+	return self._done
 end
 
-function ScriptPresenceToken.close(arg_5_0)
-	Presence.close(arg_5_0._token)
+ScriptPresenceToken.close = function (self)
+	-- function 5
+	Presence.close(self._token)
 end

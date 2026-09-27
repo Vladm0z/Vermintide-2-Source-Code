@@ -4,22 +4,24 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTThrowWeaponAction = class(BTThrowWeaponAction, BTNode)
 
-function BTThrowWeaponAction.init(arg_1_0, ...)
+BTThrowWeaponAction.init = function (arg_1_0, ...)
+	-- function 1
 	BTThrowWeaponAction.super.init(arg_1_0, ...)
 end
 
 BTThrowWeaponAction.name = "BTThrowWeaponAction"
 
-function BTThrowWeaponAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
-	local var_2_0 = arg_2_0._tree_node.action_data
+BTThrowWeaponAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+	-- function 2
+	local action_data = self._tree_node.action_data
 
-	arg_2_2.action = var_2_0
+	arg_2_2.action = action_data
 	arg_2_2.active_node = BTThrowWeaponAction
 	arg_2_2.move_state = "attacking"
 
-	local var_2_1 = var_2_0.throw_animation
+	local throw_animation = action_data.throw_animation
 
-	Managers.state.network:anim_event(arg_2_1, var_2_1)
+	Managers.state.network:anim_event(arg_2_1, throw_animation)
 	Unit.flow_event(arg_2_1, "throw_animation_started")
 
 	arg_2_2.inventory_extension = ScriptUnit.extension(arg_2_1, "ai_inventory_system")
@@ -30,30 +32,31 @@ function BTThrowWeaponAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.thrown_weapon_displaced_units = {}
 	arg_2_2.pushed_position_override = Vector3Box()
 	arg_2_2.hit_units = {}
-	arg_2_2.rotation_timer = arg_2_3 + var_2_0.rotation_time
+	arg_2_2.rotation_timer = arg_2_3 + action_data.rotation_time
 
-	if var_2_0.close_attack_time then
-		arg_2_2.close_attack_timer = arg_2_3 + var_2_0.close_attack_time
+	if not action_data.close_attack_time then
+		arg_2_2.close_attack_timer = arg_2_3 + action_data.close_attack_time
 	end
 end
 
-function BTThrowWeaponAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTThrowWeaponAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	-- function 3
 	if not arg_3_5 then
 		arg_3_2.locomotion_extension:set_rotation_speed(nil)
 	end
 
 	arg_3_2.navigation_extension:set_enabled(true)
 
-	if arg_3_2.thrown_unit and Unit.alive(arg_3_2.thrown_unit) then
+	if not arg_3_2.thrown_unit and not Unit.alive(arg_3_2.thrown_unit) then
 		Managers.state.entity:system("audio_system"):play_audio_unit_event(arg_3_2.action.stop_sound_id, arg_3_2.thrown_unit)
 		Managers.state.unit_spawner:mark_for_deletion(arg_3_2.thrown_unit)
 
 		arg_3_2.thrown_unit = nil
 
-		local var_3_0 = Managers.state.network
-		local var_3_1 = var_3_0:unit_game_object_id(arg_3_1)
+		local network = Managers.state.network
+		local unit_game_object_id = network:unit_game_object_id(arg_3_1)
 
-		var_3_0.network_transmit:send_rpc_all("rpc_ai_show_single_item", var_3_1, 1, true)
+		network.network_transmit:send_rpc_all("rpc_ai_show_single_item", unit_game_object_id, 1, true)
 	end
 
 	arg_3_2.action = nil
@@ -69,60 +72,63 @@ function BTThrowWeaponAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, 
 	Managers.state.network:anim_event(arg_3_1, "move_fwd")
 end
 
-function BTThrowWeaponAction.anim_cb_throw_weapon(arg_4_0, arg_4_1, arg_4_2)
-	local var_4_0 = arg_4_2.action
-	local var_4_1 = Unit.local_rotation(arg_4_1, 0)
-	local var_4_2 = POSITION_LOOKUP[arg_4_1] + Vector3.up() * 2
-	local var_4_3 = Quaternion.forward(var_4_1)
-	local var_4_4 = arg_4_2.world
-	local var_4_5 = World.physics_world(var_4_4)
-	local var_4_6, var_4_7, var_4_8 = PhysicsWorld.immediate_raycast(var_4_5, var_4_2, var_4_3, 40, "closest", "collision_filter", "filter_ai_line_of_sight_check")
+BTThrowWeaponAction.anim_cb_throw_weapon = function (arg_4_0, arg_4_1, arg_4_2)
+	-- function 4
+	local action = arg_4_2.action
+	local local_rotation = Unit.local_rotation(arg_4_1, 0)
+	local num = POSITION_LOOKUP[arg_4_1] + Vector3.up() * 2
+	local forward = Quaternion.forward(local_rotation)
+	local world = arg_4_2.world
+	local physics_world = World.physics_world(world)
+	local immediate_raycast, var_4_7, var_4_8 = PhysicsWorld.immediate_raycast(physics_world, num, forward, 40, "closest", "collision_filter", "filter_ai_line_of_sight_check")
 
-	if var_4_6 then
-		local var_4_9 = Managers.state.network
-		local var_4_10 = var_4_9:unit_game_object_id(arg_4_1)
+	if not immediate_raycast then
+		local network = Managers.state.network
+		local unit_game_object_id = network:unit_game_object_id(arg_4_1)
 
-		var_4_9.network_transmit:send_rpc_all("rpc_ai_show_single_item", var_4_10, 1, false)
+		network.network_transmit:send_rpc_all("rpc_ai_show_single_item", unit_game_object_id, 1, false)
 
 		arg_4_2.throw_weapon_goal_position = Vector3Box(var_4_7)
 
-		local var_4_11 = var_4_0.throw_unit_name
-		local var_4_12 = Managers.state.unit_spawner:spawn_network_unit(var_4_11, "thrown_weapon_unit", nil, var_4_2)
+		local throw_unit_name = action.throw_unit_name
+		local spawn_network_unit = Managers.state.unit_spawner:spawn_network_unit(throw_unit_name, "thrown_weapon_unit", nil, num)
 
-		arg_4_2.thrown_unit = var_4_12
+		arg_4_2.thrown_unit = spawn_network_unit
 		arg_4_2.thrown_state = "moving_towards_target"
 
-		Unit.flow_event(var_4_12, "axe_thrown")
+		Unit.flow_event(spawn_network_unit, "axe_thrown")
 
-		arg_4_2.initial_throw_direction = Vector3Box(var_4_3)
+		arg_4_2.initial_throw_direction = Vector3Box(forward)
 
-		Managers.state.entity:system("audio_system"):play_audio_unit_event(var_4_0.running_sound_id, arg_4_2.thrown_unit)
+		Managers.state.entity:system("audio_system"):play_audio_unit_event(action.running_sound_id, arg_4_2.thrown_unit)
 
-		local var_4_13, var_4_14, var_4_15 = AiUtils.calculate_oobb(var_4_8, POSITION_LOOKUP[arg_4_1], var_4_1, 2, var_4_0.radius * 1.2)
-		local var_4_16 = var_4_8 * 0.25
+		local calculate_oobb, var_4_14, var_4_15 = AiUtils.calculate_oobb(var_4_8, POSITION_LOOKUP[arg_4_1], local_rotation, 2, action.radius * 1.2)
+		local num_2 = var_4_8 * 0.25
 
-		Managers.state.entity:system("ai_bot_group_system"):aoe_threat_created(var_4_13, "oobb", var_4_15, var_4_14, var_4_16, "Throw Weapon")
+		Managers.state.entity:system("ai_bot_group_system"):aoe_threat_created(calculate_oobb, "oobb", var_4_15, var_4_14, num_2, "Throw Weapon")
 	else
 		arg_4_2.throw_finished = true
 	end
 end
 
-function BTThrowWeaponAction.anim_cb_throw_finished(arg_5_0, arg_5_1, arg_5_2)
+BTThrowWeaponAction.anim_cb_throw_finished = function (arg_5_0, arg_5_1, arg_5_2)
+	-- function 5
 	arg_5_2.throw_finished = true
 end
 
-function BTThrowWeaponAction.catch_weapon(arg_6_0, arg_6_1, arg_6_2)
-	local var_6_0 = Managers.state.network
-	local var_6_1 = var_6_0:unit_game_object_id(arg_6_1)
+BTThrowWeaponAction.catch_weapon = function (arg_6_0, arg_6_1, arg_6_2)
+	-- function 6
+	local network = Managers.state.network
+	local unit_game_object_id = network:unit_game_object_id(arg_6_1)
 
-	var_6_0.network_transmit:send_rpc_all("rpc_ai_show_single_item", var_6_1, 1, true)
+	network.network_transmit:send_rpc_all("rpc_ai_show_single_item", unit_game_object_id, 1, true)
 	Managers.state.entity:system("audio_system"):play_audio_unit_event(arg_6_2.action.stop_sound_id, arg_6_2.thrown_unit)
 
-	local var_6_2 = arg_6_2.action.catch_animation
+	local catch_animation = arg_6_2.action.catch_animation
 
-	Managers.state.network:anim_event(arg_6_1, var_6_2)
+	Managers.state.network:anim_event(arg_6_1, catch_animation)
 
-	if arg_6_2.thrown_unit then
+	if not arg_6_2.thrown_unit then
 		Managers.state.unit_spawner:mark_for_deletion(arg_6_2.thrown_unit)
 	end
 
@@ -133,169 +139,185 @@ function BTThrowWeaponAction.catch_weapon(arg_6_0, arg_6_1, arg_6_2)
 	arg_6_2.close_attack_target = nil
 end
 
-function BTThrowWeaponAction.run(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+BTThrowWeaponAction.run = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	-- function 7
 	if arg_7_3 < arg_7_2.rotation_timer then
-		local var_7_0 = arg_7_2.target_unit
+		local target_unit = arg_7_2.target_unit
 
-		if var_7_0 then
-			local var_7_1 = LocomotionUtils.rotation_towards_unit_flat(arg_7_1, var_7_0)
+		if not target_unit then
+			local rotation_towards_unit_flat = LocomotionUtils.rotation_towards_unit_flat(arg_7_1, target_unit)
 
-			arg_7_2.locomotion_extension:set_wanted_rotation(var_7_1)
+			arg_7_2.locomotion_extension:set_wanted_rotation(rotation_towards_unit_flat)
 		end
-	elseif arg_7_2.close_attack_target then
-		local var_7_2 = LocomotionUtils.rotation_towards_unit_flat(arg_7_1, arg_7_2.close_attack_target)
+	elseif not arg_7_2.close_attack_target then
+		local rotation_towards_unit_flat_2 = LocomotionUtils.rotation_towards_unit_flat(arg_7_1, arg_7_2.close_attack_target)
 
-		arg_7_2.locomotion_extension:set_wanted_rotation(var_7_2)
-	elseif arg_7_2.initial_throw_direction and (arg_7_2.catched_weapon or arg_7_3 > arg_7_2.rotation_timer) then
-		local var_7_3 = Quaternion.look(arg_7_2.initial_throw_direction:unbox())
+		arg_7_2.locomotion_extension:set_wanted_rotation(rotation_towards_unit_flat_2)
+	elseif not (not arg_7_2.initial_throw_direction and arg_7_2.catched_weapon or not (arg_7_3 > arg_7_2.rotation_timer)) then
+		local look = Quaternion.look(arg_7_2.initial_throw_direction:unbox())
 
-		arg_7_2.locomotion_extension:set_wanted_rotation(var_7_3)
+		arg_7_2.locomotion_extension:set_wanted_rotation(look)
 	end
 
-	if arg_7_2.throw_finished then
+	if not arg_7_2.throw_finished then
 		return "done"
 	else
 		local var_7_4
 
-		if arg_7_2.throw_weapon_goal_position then
-			var_7_4 = arg_7_0:update_thrown_weapon(arg_7_1, arg_7_2, arg_7_4, arg_7_3)
+		if not arg_7_2.throw_weapon_goal_position then
+			var_7_4 = self:update_thrown_weapon(arg_7_1, arg_7_2, arg_7_4, arg_7_3)
 		end
 
-		if var_7_4 and arg_7_2.thrown_unit then
-			arg_7_0:catch_weapon(arg_7_1, arg_7_2)
+		if not var_7_4 and not arg_7_2.thrown_unit then
+			self:catch_weapon(arg_7_1, arg_7_2)
 		end
 
 		return "running"
 	end
 end
 
-function BTThrowWeaponAction.update_thrown_weapon(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
-	local var_8_0 = arg_8_2.thrown_unit
+BTThrowWeaponAction.update_thrown_weapon = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+	-- function 8
+	local thrown_unit = arg_8_2.thrown_unit
 
-	if not var_8_0 or not Unit.alive(var_8_0) then
+	if not (not thrown_unit and Unit.alive(thrown_unit)) then
 		return
 	end
 
-	local var_8_1 = arg_8_2.thrown_state
-	local var_8_2 = arg_8_2.action
-	local var_8_3 = var_8_1 == "moving_towards_target" and var_8_2.throw_speed or var_8_1 == "returning_to_owner" and var_8_2.return_speed
-	local var_8_4 = POSITION_LOOKUP[arg_8_1] + Vector3.up() * 2
-	local var_8_5 = arg_8_2.throw_weapon_goal_position:unbox()
-	local var_8_6 = Unit.local_position(var_8_0, 0)
-	local var_8_7 = Vector3.distance(var_8_5, var_8_6)
-	local var_8_8 = Vector3.normalize(var_8_5 - var_8_6)
+	local thrown_state = arg_8_2.thrown_state
+	local action = arg_8_2.action
+	local throw_speed
+
+	if thrown_state == "moving_towards_target" then
+		throw_speed = action.throw_speed
+
+		if not throw_speed then
+			-- Nothing
+		end
+	end
+
+	throw_speed = thrown_state ~= "returning_to_owner" or action.return_speed
+
+	::label_8_0::
+
+	local num = POSITION_LOOKUP[arg_8_1] + Vector3.up() * 2
+	local unbox = arg_8_2.throw_weapon_goal_position:unbox()
+	local local_position = Unit.local_position(thrown_unit, 0)
+	local distance = Vector3.distance(unbox, local_position)
+	local normalize = Vector3.normalize(unbox - local_position)
 
 	if not arg_8_2.thrown_weapon_direction then
-		arg_8_2.thrown_weapon_direction = Vector3Box(var_8_8)
+		arg_8_2.thrown_weapon_direction = Vector3Box(normalize)
 		arg_8_2.thrown_weapon_angle = 1
 	end
 
-	if var_8_1 == "lingering" then
+	if thrown_state == "lingering" then
 		if arg_8_4 > arg_8_2.thrown_linger_timer then
 			arg_8_2.thrown_state = "returning_to_owner"
 
-			Managers.state.entity:system("audio_system"):play_audio_unit_event(var_8_2.pull_sound_id, arg_8_2.thrown_unit)
+			Managers.state.entity:system("audio_system"):play_audio_unit_event(action.pull_sound_id, arg_8_2.thrown_unit)
 		end
-	elseif var_8_7 < 1.5 then
-		if var_8_1 == "returning_to_owner" then
-			if not var_8_2.hit_targets_on_return then
+	elseif distance < 1.5 then
+		if thrown_state == "returning_to_owner" then
+			if not action.hit_targets_on_return then
 				arg_8_2.ignore_thrown_weapon_overlap = true
 			end
 
 			return true
 		end
 
-		local var_8_9 = var_8_6 + var_8_8 * var_8_3 * arg_8_3
+		local num_2 = local_position + normalize * throw_speed * arg_8_3
 
-		Unit.set_local_position(var_8_0, 0, var_8_9)
-		arg_8_2.throw_weapon_goal_position:store(var_8_4)
+		Unit.set_local_position(thrown_unit, 0, num_2)
+		arg_8_2.throw_weapon_goal_position:store(num)
 
 		arg_8_2.thrown_state = "lingering"
-		arg_8_2.thrown_linger_timer = arg_8_4 + var_8_2.arrival_linger_time
+		arg_8_2.thrown_linger_timer = arg_8_4 + action.arrival_linger_time
 
-		Managers.state.entity:system("audio_system"):play_audio_unit_event(var_8_2.impact_sound_id, arg_8_2.thrown_unit)
+		Managers.state.entity:system("audio_system"):play_audio_unit_event(action.impact_sound_id, arg_8_2.thrown_unit)
 	else
-		local var_8_10 = var_8_6 + var_8_8 * var_8_3 * arg_8_3
+		local num_3 = local_position + normalize * throw_speed * arg_8_3
 
-		Unit.set_local_position(var_8_0, 0, var_8_10)
+		Unit.set_local_position(thrown_unit, 0, num_3)
 	end
 
-	if var_8_1 == "moving_towards_target" then
-		arg_8_2.thrown_weapon_angle = arg_8_2.thrown_weapon_angle + arg_8_3 * var_8_2.rotation_speed
+	if thrown_state == "moving_towards_target" then
+		arg_8_2.thrown_weapon_angle = arg_8_2.thrown_weapon_angle + arg_8_3 * action.rotation_speed
 
-		local var_8_11 = Unit.local_rotation(var_8_0, 0)
-		local var_8_12 = Vector3.make_axes(var_8_8)
-		local var_8_13 = Quaternion.look(var_8_8)
-		local var_8_14 = Quaternion.multiply(Quaternion.axis_angle(var_8_12, arg_8_2.thrown_weapon_angle), var_8_13)
+		local local_rotation = Unit.local_rotation(thrown_unit, 0)
+		local make_axes = Vector3.make_axes(normalize)
+		local look = Quaternion.look(normalize)
+		local multiply = Quaternion.multiply(Quaternion.axis_angle(make_axes, arg_8_2.thrown_weapon_angle), look)
 
-		Unit.set_local_rotation(var_8_0, 0, var_8_14)
+		Unit.set_local_rotation(thrown_unit, 0, multiply)
 	else
-		local var_8_15 = Vector3.make_axes(-var_8_8)
-		local var_8_16 = Quaternion.look(-var_8_8)
-		local var_8_17 = Quaternion.multiply(Quaternion.axis_angle(var_8_15, 45), var_8_16)
+		local make_axes_2 = Vector3.make_axes(-normalize)
+		local look_2 = Quaternion.look(-normalize)
+		local multiply_2 = Quaternion.multiply(Quaternion.axis_angle(make_axes_2, 45), look_2)
 
-		Unit.set_local_rotation(var_8_0, 0, var_8_17)
+		Unit.set_local_rotation(thrown_unit, 0, multiply_2)
 	end
 
-	local var_8_18 = Managers.state.network
-	local var_8_19 = var_8_18:unit_game_object_id(var_8_0)
-	local var_8_20 = var_8_18:game()
-	local var_8_21 = Unit.local_position(var_8_0, 0)
+	local network = Managers.state.network
+	local unit_game_object_id = network:unit_game_object_id(thrown_unit)
+	local game = network:game()
+	local local_position_2 = Unit.local_position(thrown_unit, 0)
 
-	GameSession.set_game_object_field(var_8_20, var_8_19, "position", var_8_21)
+	GameSession.set_game_object_field(game, unit_game_object_id, "position", local_position_2)
 
-	local var_8_22 = Unit.local_rotation(var_8_0, 0)
+	local local_rotation_2 = Unit.local_rotation(thrown_unit, 0)
 
-	GameSession.set_game_object_field(var_8_20, var_8_19, "rotation", var_8_22)
+	GameSession.set_game_object_field(game, unit_game_object_id, "rotation", local_rotation_2)
 
-	local var_8_23 = arg_8_2.side.ENEMY_PLAYER_AND_BOT_UNITS
+	local ENEMY_PLAYER_AND_BOT_UNITS = arg_8_2.side.ENEMY_PLAYER_AND_BOT_UNITS
 
-	for iter_8_0 = 1, #var_8_23 do
-		local var_8_24 = var_8_23[iter_8_0]
+	for i = 1, #ENEMY_PLAYER_AND_BOT_UNITS do
+		local var_8_24 = ENEMY_PLAYER_AND_BOT_UNITS[i]
 
-		if Unit.alive(var_8_24) and not arg_8_2.ignore_thrown_weapon_overlap then
-			arg_8_0:check_overlap(var_8_2, arg_8_2.thrown_unit, arg_8_1, arg_8_2, var_8_24)
+		if not (not Unit.alive(var_8_24) and arg_8_2.ignore_thrown_weapon_overlap) then
+			self:check_overlap(action, arg_8_2.thrown_unit, arg_8_1, arg_8_2, var_8_24)
 		end
 
-		if var_8_2.use_close_attack and arg_8_4 > arg_8_2.close_attack_timer then
-			arg_8_0:attack_close_units(var_8_2, arg_8_1, arg_8_2, var_8_24, arg_8_4)
+		if not (not action.use_close_attack and not (arg_8_4 > arg_8_2.close_attack_timer)) then
+			self:attack_close_units(action, arg_8_1, arg_8_2, var_8_24, arg_8_4)
 		end
 	end
 
 	return false
 end
 
-function BTThrowWeaponAction.check_overlap(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
-	local var_9_0 = arg_9_1.radius
-	local var_9_1 = arg_9_1.push_speed
-	local var_9_2 = arg_9_1.push_speed_z
-	local var_9_3 = arg_9_4.hit_units
+BTThrowWeaponAction.check_overlap = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+	-- function 9
+	local radius = arg_9_1.radius
+	local push_speed = arg_9_1.push_speed
+	local push_speed_z = arg_9_1.push_speed_z
+	local hit_units = arg_9_4.hit_units
 	local var_9_4 = POSITION_LOOKUP[arg_9_5]
-	local var_9_5 = Vector3.flat(Unit.local_position(arg_9_2, 0))
-	local var_9_6 = var_9_4 - Vector3(var_9_5[1], var_9_5[2], var_9_4[3])
-	local var_9_7 = Vector3.length(Vector3.flat(var_9_6))
+	local flat = Vector3.flat(Unit.local_position(arg_9_2, 0))
+	local num = var_9_4 - Vector3(flat[1], flat[2], var_9_4[3])
+	local length = Vector3.length(Vector3.flat(num))
 
-	if not var_9_3[arg_9_5] then
-		local var_9_8 = ScriptUnit.extension(arg_9_5, "status_system")
+	if not hit_units[arg_9_5] then
+		local extension = ScriptUnit.extension(arg_9_5, "status_system")
 
-		if var_9_8 and var_9_8:get_is_dodging() then
-			var_9_0 = arg_9_1.target_dodged_radius
+		if not extension and not extension:get_is_dodging() then
+			radius = arg_9_1.target_dodged_radius
 		end
 
-		if var_9_7 < var_9_0 and var_9_8 and not var_9_8:is_invisible() then
-			local var_9_9 = var_9_1 * Vector3.normalize(var_9_6)
+		if not ((not (length < radius) or not extension) and extension:is_invisible()) then
+			local num_2 = push_speed * Vector3.normalize(num)
 
-			if var_9_2 then
-				Vector3.set_z(var_9_9, var_9_2)
+			if not push_speed_z then
+				Vector3.set_z(num_2, push_speed_z)
 			end
 
-			if arg_9_1.catapult_players then
-				StatusUtils.set_catapulted_network(arg_9_5, true, var_9_9)
+			if not arg_9_1.catapult_players then
+				StatusUtils.set_catapulted_network(arg_9_5, true, num_2)
 			else
-				ScriptUnit.extension(arg_9_5, "locomotion_system"):add_external_velocity(var_9_9)
+				ScriptUnit.extension(arg_9_5, "locomotion_system"):add_external_velocity(num_2)
 			end
 
-			var_9_3[arg_9_5] = true
+			hit_units[arg_9_5] = true
 
 			if not DamageUtils.check_block(arg_9_3, arg_9_5, arg_9_1.fatigue_type) then
 				AiUtils.damage_target(arg_9_5, arg_9_3, arg_9_1, arg_9_1.damage)
@@ -304,11 +326,12 @@ function BTThrowWeaponAction.check_overlap(arg_9_0, arg_9_1, arg_9_2, arg_9_3, a
 	end
 end
 
-function BTThrowWeaponAction.attack_close_units(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
-	local var_10_0 = arg_10_1.attack_close_range
-	local var_10_1 = POSITION_LOOKUP[arg_10_4] - Vector3.flat(Unit.local_position(arg_10_2, 0))
+BTThrowWeaponAction.attack_close_units = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+	-- function 10
+	local attack_close_range = arg_10_1.attack_close_range
+	local num = POSITION_LOOKUP[arg_10_4] - Vector3.flat(Unit.local_position(arg_10_2, 0))
 
-	if var_10_0 > Vector3.length(Vector3.flat(var_10_1)) then
+	if attack_close_range > Vector3.length(Vector3.flat(num)) then
 		Managers.state.network:anim_event(arg_10_2, arg_10_1.close_attack_animation)
 
 		arg_10_3.close_attack_timer = arg_10_5 + 3
@@ -316,14 +339,15 @@ function BTThrowWeaponAction.attack_close_units(arg_10_0, arg_10_1, arg_10_2, ar
 	end
 end
 
-function BTThrowWeaponAction.anim_cb_damage(arg_11_0, arg_11_1, arg_11_2)
+BTThrowWeaponAction.anim_cb_damage = function (arg_11_0, arg_11_1, arg_11_2)
+	-- function 11
 	if not Unit.alive(arg_11_2.close_attack_target) then
 		return
 	end
 
-	local var_11_0 = POSITION_LOOKUP[arg_11_2.close_attack_target] - Vector3.flat(Unit.local_position(arg_11_1, 0))
-	local var_11_1 = 10 * Vector3.normalize(var_11_0)
+	local num = POSITION_LOOKUP[arg_11_2.close_attack_target] - Vector3.flat(Unit.local_position(arg_11_1, 0))
+	local num_2 = 10 * Vector3.normalize(num)
 
-	ScriptUnit.extension(arg_11_2.close_attack_target, "locomotion_system"):add_external_velocity(var_11_1)
+	ScriptUnit.extension(arg_11_2.close_attack_target, "locomotion_system"):add_external_velocity(num_2)
 	AiUtils.damage_target(arg_11_2.close_attack_target, arg_11_1, arg_11_2.action, arg_11_2.action.close_attack_damage)
 end

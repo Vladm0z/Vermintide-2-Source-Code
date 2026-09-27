@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/statues.lua
 
-local var_0_0 = 2
-local var_0_1 = {
+local num = 2
+local tbl = {
 	actions = {
 		action_one = {
 			default = {
@@ -17,8 +17,9 @@ local var_0_1 = {
 				uninterruptible = true,
 				anim_event = "attack_throw",
 				total_time = 0.7249999999999999,
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
-					return arg_1_1 ~= "new_interupting_action" and arg_1_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
+					-- function 1
+					return arg_1_1 == "new_interupting_action" or arg_1_1 ~= "action_complete"
 				end,
 				buff_data = {
 					{
@@ -62,8 +63,9 @@ local var_0_1 = {
 				anim_event = "attack_push",
 				damage_profile_inner = "medium_push",
 				total_time = 0.8,
-				anim_end_event_condition_func = function(arg_2_0, arg_2_1)
-					return arg_2_1 ~= "new_interupting_action" and arg_2_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_2_0, arg_2_1)
+					-- function 2
+					return arg_2_1 == "new_interupting_action" or arg_2_1 ~= "action_complete"
 				end,
 				allowed_chain_actions = {
 					{
@@ -74,8 +76,9 @@ local var_0_1 = {
 						input = "action_one"
 					}
 				},
-				push_radius = var_0_0,
-				condition_func = function(arg_3_0, arg_3_1)
+				push_radius = num,
+				condition_func = function (arg_3_0, arg_3_1)
+					-- function 3
 					return not ScriptUnit.extension(arg_3_0, "status_system"):fatigued()
 				end
 			}
@@ -94,8 +97,9 @@ local var_0_1 = {
 				uninterruptible = true,
 				anim_event = "attack_throw",
 				total_time = 0.7249999999999999,
-				anim_end_event_condition_func = function(arg_4_0, arg_4_1)
-					return arg_4_1 ~= "new_interupting_action" and arg_4_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_4_0, arg_4_1)
+					-- function 4
+					return arg_4_1 == "new_interupting_action" or arg_4_1 ~= "action_complete"
 				end,
 				buff_data = {
 					{
@@ -136,16 +140,16 @@ local var_0_1 = {
 	pickup_data = {}
 }
 
-var_0_1.left_hand_unit = nil
-var_0_1.left_hand_attachment_node_linking = AttachmentNodeLinking.barrel
-var_0_1.wield_anim_3p = "to_statue"
-var_0_1.wield_anim = "to_statue"
-var_0_1.state_machine = "units/beings/player/first_person_base/state_machines/common"
-var_0_1.load_state_machine = false
-var_0_1.block_wielding = true
-var_0_1.max_fatigue_points = 1
-var_0_1.dodge_count = 1
-var_0_1.buffs = {
+tbl.left_hand_unit = nil
+tbl.left_hand_attachment_node_linking = AttachmentNodeLinking.barrel
+tbl.wield_anim_3p = "to_statue"
+tbl.wield_anim = "to_statue"
+tbl.state_machine = "units/beings/player/first_person_base/state_machines/common"
+tbl.load_state_machine = false
+tbl.block_wielding = true
+tbl.max_fatigue_points = 1
+tbl.dodge_count = 1
+tbl.buffs = {
 	statue_decrease_movement = {
 		variable_value = 1
 	},
@@ -157,17 +161,17 @@ var_0_1.buffs = {
 	}
 }
 
-local var_0_2 = table.clone(var_0_1)
+local clone = table.clone(tbl)
 
-var_0_2.left_hand_unit = "units/weapons/player/wpn_cannon_ball_01/wpn_cannon_ball_01"
-var_0_2.actions.action_one.default.speed = 8
-var_0_2.actions.action_one.default.throw_time = 0.35000000000000003
-var_0_2.actions.action_one.default.throw_offset = {
+clone.left_hand_unit = "units/weapons/player/wpn_cannon_ball_01/wpn_cannon_ball_01"
+clone.actions.action_one.default.speed = 8
+clone.actions.action_one.default.throw_time = 0.35000000000000003
+clone.actions.action_one.default.throw_offset = {
 	0.3,
 	0.5,
 	0
 }
-var_0_2.actions.action_one.default.buff_data = {
+clone.actions.action_one.default.buff_data = {
 	{
 		start_time = 0,
 		external_multiplier = 0.5,
@@ -175,41 +179,41 @@ var_0_2.actions.action_one.default.buff_data = {
 		buff_name = "planted_fast_decrease_movement"
 	}
 }
-var_0_2.actions.action_one.default.projectile_info = {
+clone.actions.action_one.default.projectile_info = {
 	projectile_unit_template_name = "pickup_projectile_unit",
 	pickup_name = "cannon_ball",
 	drop_on_player_destroyed = true,
 	projectile_unit_name = "units/weapons/player/pup_cannon_ball_01/pup_cannon_ball_01"
 }
-var_0_2.actions.action_dropped.default.projectile_info = {
+clone.actions.action_dropped.default.projectile_info = {
 	projectile_unit_template_name = "pickup_projectile_unit",
 	pickup_name = "cannon_ball",
 	drop_on_player_destroyed = true,
 	projectile_unit_name = "units/weapons/player/pup_cannon_ball_01/pup_cannon_ball_01"
 }
 
-local var_0_3 = table.clone(var_0_1)
+local clone_2 = table.clone(tbl)
 
-var_0_3.wield_anim_3p = "to_cog"
-var_0_3.wield_anim = "to_cog"
-var_0_3.left_hand_unit = "units/weapons/player/wpn_trail_cog_02/wpn_trail_cog_02"
-var_0_3.actions.action_inspect = ActionTemplates.action_inspect
-var_0_3.actions.action_one.default.speed = 8
-var_0_3.actions.action_one.default.throw_time = 0.35000000000000003
-var_0_3.actions.action_one.default.throw_offset = {
+clone_2.wield_anim_3p = "to_cog"
+clone_2.wield_anim = "to_cog"
+clone_2.left_hand_unit = "units/weapons/player/wpn_trail_cog_02/wpn_trail_cog_02"
+clone_2.actions.action_inspect = ActionTemplates.action_inspect
+clone_2.actions.action_one.default.speed = 8
+clone_2.actions.action_one.default.throw_time = 0.35000000000000003
+clone_2.actions.action_one.default.throw_offset = {
 	0.4,
 	0.9,
 	0
 }
-var_0_3.actions.action_one.default.angular_velocity = {
+clone_2.actions.action_one.default.angular_velocity = {
 	0,
 	0,
 	0
 }
-var_0_3.actions.action_inspect = ActionTemplates.action_inspect
-var_0_3.wield_anim = "to_cog"
-var_0_3.wield_anim_3p = "to_cog"
-var_0_3.actions.action_one.default.buff_data = {
+clone_2.actions.action_inspect = ActionTemplates.action_inspect
+clone_2.wield_anim = "to_cog"
+clone_2.wield_anim_3p = "to_cog"
+clone_2.actions.action_one.default.buff_data = {
 	{
 		start_time = 0,
 		external_multiplier = 0.5,
@@ -217,30 +221,30 @@ var_0_3.actions.action_one.default.buff_data = {
 		buff_name = "planted_fast_decrease_movement"
 	}
 }
-var_0_3.actions.action_one.default.projectile_info = {
+clone_2.actions.action_one.default.projectile_info = {
 	projectile_unit_template_name = "pickup_projectile_unit_limited",
 	pickup_name = "trail_cog",
 	drop_on_player_destroyed = true,
 	projectile_unit_name = "units/weapons/player/wpn_trail_cog_02/pup_trail_cog_02"
 }
-var_0_3.actions.action_dropped.default.projectile_info = {
+clone_2.actions.action_dropped.default.projectile_info = {
 	projectile_unit_template_name = "pickup_projectile_unit_limited",
 	pickup_name = "trail_cog",
 	drop_on_player_destroyed = true,
 	projectile_unit_name = "units/weapons/player/wpn_trail_cog_02/pup_trail_cog_02"
 }
 
-local var_0_4 = table.clone(var_0_1)
+local clone_3 = table.clone(tbl)
 
-var_0_4.left_hand_unit = "units/weapons/player/wpn_gargoyle_head/wpn_gargoyle_head"
-var_0_4.actions.action_one.default.speed = 8
-var_0_4.actions.action_one.default.throw_time = 0.35000000000000003
-var_0_4.actions.action_one.default.throw_offset = {
+clone_3.left_hand_unit = "units/weapons/player/wpn_gargoyle_head/wpn_gargoyle_head"
+clone_3.actions.action_one.default.speed = 8
+clone_3.actions.action_one.default.throw_time = 0.35000000000000003
+clone_3.actions.action_one.default.throw_offset = {
 	0.3,
 	0.5,
 	0
 }
-var_0_4.actions.action_one.default.buff_data = {
+clone_3.actions.action_one.default.buff_data = {
 	{
 		start_time = 0,
 		external_multiplier = 1,
@@ -248,30 +252,30 @@ var_0_4.actions.action_one.default.buff_data = {
 		buff_name = "planted_fast_decrease_movement"
 	}
 }
-var_0_4.actions.action_one.default.projectile_info = {
+clone_3.actions.action_one.default.projectile_info = {
 	projectile_unit_template_name = "pickup_projectile_unit",
 	pickup_name = "gargoyle_head",
 	drop_on_player_destroyed = true,
 	projectile_unit_name = "units/weapons/player/pup_gargoyle_head/pup_gargoyle_head_01"
 }
-var_0_4.actions.action_dropped.default.projectile_info = {
+clone_3.actions.action_dropped.default.projectile_info = {
 	projectile_unit_template_name = "pickup_projectile_unit",
 	pickup_name = "gargoyle_head",
 	drop_on_player_destroyed = true,
 	projectile_unit_name = "units/weapons/player/pup_gargoyle_head/pup_gargoyle_head_01"
 }
 
-local var_0_5 = table.clone(var_0_1)
+local clone_4 = table.clone(tbl)
 
-var_0_5.left_hand_unit = "units/weapons/player/wpn_shadow_gargoyle_head/wpn_shadow_gargoyle_head"
-var_0_5.actions.action_one.default.speed = 8
-var_0_5.actions.action_one.default.throw_time = 0.35000000000000003
-var_0_5.actions.action_one.default.throw_offset = {
+clone_4.left_hand_unit = "units/weapons/player/wpn_shadow_gargoyle_head/wpn_shadow_gargoyle_head"
+clone_4.actions.action_one.default.speed = 8
+clone_4.actions.action_one.default.throw_time = 0.35000000000000003
+clone_4.actions.action_one.default.throw_offset = {
 	0.3,
 	0.5,
 	0
 }
-var_0_5.actions.action_one.default.buff_data = {
+clone_4.actions.action_one.default.buff_data = {
 	{
 		start_time = 0,
 		external_multiplier = 1,
@@ -279,109 +283,109 @@ var_0_5.actions.action_one.default.buff_data = {
 		buff_name = "planted_fast_decrease_movement"
 	}
 }
-var_0_5.actions.action_one.default.projectile_info = {
+clone_4.actions.action_one.default.projectile_info = {
 	projectile_unit_template_name = "pickup_projectile_unit",
 	pickup_name = "shadow_gargoyle_head",
 	drop_on_player_destroyed = true,
 	projectile_unit_name = "units/weapons/player/pup_shadow_gargoyle_head/pup_shadow_gargoyle_head_01"
 }
-var_0_5.actions.action_dropped.default.projectile_info = {
+clone_4.actions.action_dropped.default.projectile_info = {
 	projectile_unit_template_name = "pickup_projectile_unit",
 	pickup_name = "shadow_gargoyle_head",
 	drop_on_player_destroyed = true,
 	projectile_unit_name = "units/weapons/player/pup_shadow_gargoyle_head/pup_shadow_gargoyle_head_01"
 }
 
-local var_0_6 = table.clone(var_0_1)
+local clone_5 = table.clone(tbl)
 
-var_0_6.left_hand_unit = "units/weapons/player/wpn_magic_crystal/wpn_magic_crystal"
-var_0_6.actions.action_one.default.speed = 8
-var_0_6.actions.action_one.default.throw_time = 0.35000000000000003
-var_0_6.actions.action_one.default.throw_offset = {
+clone_5.left_hand_unit = "units/weapons/player/wpn_magic_crystal/wpn_magic_crystal"
+clone_5.actions.action_one.default.speed = 8
+clone_5.actions.action_one.default.throw_time = 0.35000000000000003
+clone_5.actions.action_one.default.throw_offset = {
 	-0.2,
 	0.5,
 	0
 }
-var_0_6.actions.action_one.default.buff_data = {}
-var_0_6.wield_anim_3p = "to_crystal"
-var_0_6.wield_anim = "to_crystal"
-var_0_6.left_hand_attachment_node_linking = AttachmentNodeLinking.magic_crystal
-var_0_6.buffs = {}
-var_0_6.actions.action_one.default.projectile_info = {
+clone_5.actions.action_one.default.buff_data = {}
+clone_5.wield_anim_3p = "to_crystal"
+clone_5.wield_anim = "to_crystal"
+clone_5.left_hand_attachment_node_linking = AttachmentNodeLinking.magic_crystal
+clone_5.buffs = {}
+clone_5.actions.action_one.default.projectile_info = {
 	projectile_unit_template_name = "pickup_projectile_unit",
 	pickup_name = "magic_crystal",
 	drop_on_player_destroyed = true,
 	projectile_unit_name = "units/weapons/player/pup_magic_crystal/pup_magic_crystal"
 }
-var_0_6.actions.action_dropped.default.projectile_info = {
+clone_5.actions.action_dropped.default.projectile_info = {
 	projectile_unit_template_name = "pickup_projectile_unit",
 	pickup_name = "magic_crystal",
 	drop_on_player_destroyed = true,
 	projectile_unit_name = "units/weapons/player/pup_magic_crystal/pup_magic_crystal"
 }
 
-local var_0_7 = table.clone(var_0_1)
+local clone_6 = table.clone(tbl)
 
-var_0_7.buffs = nil
-var_0_7.left_hand_unit = "units/gameplay/training_dummy/wpn_training_dummy"
-var_0_7.actions.action_one.default.speed = 2
-var_0_7.actions.action_one.default.angular_velocity = {
+clone_6.buffs = nil
+clone_6.left_hand_unit = "units/gameplay/training_dummy/wpn_training_dummy"
+clone_6.actions.action_one.default.speed = 2
+clone_6.actions.action_one.default.angular_velocity = {
 	0,
 	0,
 	0
 }
-var_0_7.actions.action_one.default.throw_offset = {
+clone_6.actions.action_one.default.throw_offset = {
 	0,
 	1,
 	-0.2
 }
-var_0_7.actions.action_one.default.rotate_towards_owner_unit = true
-var_0_7.wield_anim = "to_statue"
-var_0_7.wield_anim_3p = "to_statue"
+clone_6.actions.action_one.default.rotate_towards_owner_unit = true
+clone_6.wield_anim = "to_statue"
+clone_6.wield_anim_3p = "to_statue"
 
-local var_0_8 = table.clone(var_0_7)
+local clone_7 = table.clone(clone_6)
 
-var_0_8.left_hand_unit = "units/gameplay/training_dummy/wpn_training_dummy"
-var_0_8.actions.action_one.default.projectile_info.projectile_unit_name = "units/gameplay/training_dummy/training_dummy_bob"
-var_0_8.actions.action_one.default.projectile_info.projectile_unit_template_name = "ai_unit_training_dummy_bob"
-var_0_8.actions.action_one.default.projectile_info.pickup_name = "training_dummy_bob"
-var_0_8.actions.action_one.default.projectile_info.disable_throwing_dialogue = true
-var_0_8.actions.action_dropped.default.projectile_info.projectile_unit_name = "units/gameplay/training_dummy/training_dummy_bob"
-var_0_8.actions.action_dropped.default.projectile_info.projectile_unit_template_name = "ai_unit_training_dummy_bob"
-var_0_8.actions.action_dropped.default.projectile_info.pickup_name = "training_dummy_bob"
-var_0_8.actions.action_dropped.default.projectile_info.disable_throwing_dialogue = true
+clone_7.left_hand_unit = "units/gameplay/training_dummy/wpn_training_dummy"
+clone_7.actions.action_one.default.projectile_info.projectile_unit_name = "units/gameplay/training_dummy/training_dummy_bob"
+clone_7.actions.action_one.default.projectile_info.projectile_unit_template_name = "ai_unit_training_dummy_bob"
+clone_7.actions.action_one.default.projectile_info.pickup_name = "training_dummy_bob"
+clone_7.actions.action_one.default.projectile_info.disable_throwing_dialogue = true
+clone_7.actions.action_dropped.default.projectile_info.projectile_unit_name = "units/gameplay/training_dummy/training_dummy_bob"
+clone_7.actions.action_dropped.default.projectile_info.projectile_unit_template_name = "ai_unit_training_dummy_bob"
+clone_7.actions.action_dropped.default.projectile_info.pickup_name = "training_dummy_bob"
+clone_7.actions.action_dropped.default.projectile_info.disable_throwing_dialogue = true
 
-local var_0_9 = table.clone(var_0_7)
+local clone_8 = table.clone(clone_6)
 
-var_0_9.left_hand_unit = "units/gameplay/training_dummy/wpn_training_dummy_armored"
-var_0_9.actions.action_one.default.projectile_info.projectile_unit_name = "units/gameplay/training_dummy/training_dummy_bob"
-var_0_9.actions.action_one.default.projectile_info.projectile_unit_template_name = "ai_unit_training_dummy_bob"
-var_0_9.actions.action_one.default.projectile_info.pickup_name = "training_dummy_armored_bob"
-var_0_9.actions.action_one.default.projectile_info.disable_throwing_dialogue = true
-var_0_9.actions.action_dropped.default.projectile_info.projectile_unit_name = "units/gameplay/training_dummy/training_dummy_bob"
-var_0_9.actions.action_dropped.default.projectile_info.projectile_unit_template_name = "ai_unit_training_dummy_bob"
-var_0_9.actions.action_dropped.default.projectile_info.pickup_name = "training_dummy_armored_bob"
-var_0_9.actions.action_dropped.default.projectile_info.disable_throwing_dialogue = true
+clone_8.left_hand_unit = "units/gameplay/training_dummy/wpn_training_dummy_armored"
+clone_8.actions.action_one.default.projectile_info.projectile_unit_name = "units/gameplay/training_dummy/training_dummy_bob"
+clone_8.actions.action_one.default.projectile_info.projectile_unit_template_name = "ai_unit_training_dummy_bob"
+clone_8.actions.action_one.default.projectile_info.pickup_name = "training_dummy_armored_bob"
+clone_8.actions.action_one.default.projectile_info.disable_throwing_dialogue = true
+clone_8.actions.action_dropped.default.projectile_info.projectile_unit_name = "units/gameplay/training_dummy/training_dummy_bob"
+clone_8.actions.action_dropped.default.projectile_info.projectile_unit_template_name = "ai_unit_training_dummy_bob"
+clone_8.actions.action_dropped.default.projectile_info.pickup_name = "training_dummy_armored_bob"
+clone_8.actions.action_dropped.default.projectile_info.disable_throwing_dialogue = true
 
-local var_0_10 = table.clone(var_0_4)
+local clone_9 = table.clone(clone_3)
 
-var_0_10.left_hand_unit = "units/weapons/player/pup_waystone_piece_01/wpn_waystone_piece_01"
-var_0_10.wield_anim_3p = "to_statue"
-var_0_10.wield_anim = "to_statue"
-var_0_10.actions.action_one.default.speed = 4
-var_0_10.actions.action_one.default.throw_time = 0.35000000000000003
-var_0_10.actions.action_one.default.throw_offset = {
+clone_9.left_hand_unit = "units/weapons/player/pup_waystone_piece_01/wpn_waystone_piece_01"
+clone_9.wield_anim_3p = "to_statue"
+clone_9.wield_anim = "to_statue"
+clone_9.actions.action_one.default.speed = 4
+clone_9.actions.action_one.default.throw_time = 0.35000000000000003
+clone_9.actions.action_one.default.throw_offset = {
 	0.35,
 	0.5,
 	0
 }
-var_0_10.actions.action_one.default.projectile_info = {
+clone_9.actions.action_one.default.projectile_info = {
 	projectile_unit_template_name = "pickup_projectile_unit",
 	pickup_name = "waystone_piece",
 	drop_on_player_destroyed = true,
 	projectile_unit_name = "units/weapons/player/pup_waystone_piece_01/pup_waystone_piece_01"
 }
-var_0_10.actions.action_dropped.default.projectile_info = {
+clone_9.actions.action_dropped.default.projectile_info = {
 	projectile_unit_template_name = "pickup_projectile_unit",
 	pickup_name = "waystone_piece",
 	drop_on_player_destroyed = true,
@@ -389,12 +393,12 @@ var_0_10.actions.action_dropped.default.projectile_info = {
 }
 
 return {
-	cannon_ball = var_0_2,
-	trail_cog = var_0_3,
-	gargoyle_head = var_0_4,
-	shadow_gargoyle_head = var_0_5,
-	magic_crystal = var_0_6,
-	training_dummy_bob = var_0_8,
-	training_dummy_armored_bob = var_0_9,
-	waystone_piece = var_0_10
+	cannon_ball = clone,
+	trail_cog = clone_2,
+	gargoyle_head = clone_3,
+	shadow_gargoyle_head = clone_4,
+	magic_crystal = clone_5,
+	training_dummy_bob = clone_7,
+	training_dummy_armored_bob = clone_8,
+	waystone_piece = clone_9
 }

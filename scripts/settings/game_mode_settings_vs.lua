@@ -42,8 +42,16 @@ GameModeSettings.versus.ping_mode = {
 	}
 }
 
-function GameModeSettings.versus.positive_reinforcement_check(arg_1_0, arg_1_1, arg_1_2)
-	return arg_1_2.is_player or arg_1_2.boss or arg_1_2.special
+GameModeSettings.versus.positive_reinforcement_check = function (arg_1_0, arg_1_1, arg_1_2)
+	-- function 1
+	local is_player = arg_1_2.is_player
+
+	if not is_player then
+		is_player = arg_1_2.boss
+		is_player = is_player or arg_1_2.special
+	end
+
+	return is_player
 end
 
 GameModeSettings.versus.display_character_picking_view = true
@@ -434,10 +442,12 @@ GameModeSettings.versus.initial_set_pre_start_duration = 45
 GameModeSettings.versus.side_settings = {
 	heroes = {
 		observe_sides = {
-			heroes = function()
+			heroes = function ()
+				-- function 2
 				return true
 			end,
-			dark_pact = function()
+			dark_pact = function ()
+				-- function 3
 				return false
 			end
 		},
@@ -445,18 +455,22 @@ GameModeSettings.versus.side_settings = {
 	},
 	dark_pact = {
 		observe_sides = {
-			heroes = function()
+			heroes = function ()
+				-- function 4
 				return true
 			end,
-			dark_pact = function()
+			dark_pact = function ()
+				-- function 5
 				return true
 			end
 		},
 		spawn_at_players_on_side = {
-			heroes = function()
+			heroes = function ()
+				-- function 6
 				return Managers.state.game_mode:is_round_started()
 			end,
-			dark_pact = function()
+			dark_pact = function ()
+				-- function 7
 				return true
 			end
 		},
@@ -480,10 +494,12 @@ GameModeSettings.versus.side_settings = {
 	},
 	spectators = {
 		observe_sides = {
-			heroes = function()
+			heroes = function ()
+				-- function 8
 				return true
 			end,
-			dark_pact = function()
+			dark_pact = function ()
+				-- function 9
 				return true
 			end
 		}
@@ -491,7 +507,7 @@ GameModeSettings.versus.side_settings = {
 }
 GameModeSettings.versus.dark_pact_minimum_spawn_time = 5
 
-local var_0_0 = GameModeSettings.versus.side_settings.dark_pact.spawn_times.delayed_death_time
+local delayed_death_time = GameModeSettings.versus.side_settings.dark_pact.spawn_times.delayed_death_time
 
 GameModeSettings.versus.dark_pact_respawn_timers = {
 	{

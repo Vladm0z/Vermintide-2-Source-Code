@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/hud_ui/level_countdown_ui_definitions.lua
 
-local var_0_0 = {
+local tbl = {
 	fullscreen_countdown = {
 		scale = "fit",
 		size = {
@@ -14,7 +14,7 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	fullscreen_countdown = {
 		scenegraph_id = "fullscreen_countdown",
 		element = {
@@ -83,6 +83,6 @@ local var_0_1 = {
 }
 
 return {
-	scenegraph_definition = var_0_0,
-	widgets = var_0_1
+	scenegraph_definition = tbl,
+	widgets = tbl_2
 }

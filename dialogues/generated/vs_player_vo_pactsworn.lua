@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/vs_player_vo_pactsworn.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "ebt_vs_low_on_health",

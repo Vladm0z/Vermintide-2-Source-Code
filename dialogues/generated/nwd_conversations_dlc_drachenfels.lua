@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/nwd_conversations_dlc_drachenfels.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		response = "ndw_daemon_whispers_bright_wizard",
 		name = "ndw_daemon_whispers_bright_wizard",

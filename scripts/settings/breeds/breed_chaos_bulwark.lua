@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/breeds/breed_chaos_bulwark.lua
 
-local var_0_0 = {
+local tbl = {
 	ranged_medium = 5,
 	heavy = 3,
 	weak = 1,
@@ -13,23 +13,23 @@ local var_0_0 = {
 	shield_block_stagger = 10,
 	weakspot = 8
 }
-local var_0_1 = {
+local tbl_2 = {
 	exploosion = 6,
 	medium = 5.6,
 	weak = 7,
 	heavy = 2
 }
-local var_0_2 = {
+local tbl_3 = {
 	ahead_dist = 1.5,
 	push_width = 1.25,
 	push_forward_offset = 1.5,
 	push_stagger_distance = 1,
 	player_pushed_speed = 4,
 	push_stagger_impact = {
-		var_0_0.medium,
-		var_0_0.medium,
-		var_0_0.none,
-		var_0_0.none
+		tbl.medium,
+		tbl.medium,
+		tbl.none,
+		tbl.none
 	},
 	push_stagger_duration = {
 		1.5,
@@ -38,7 +38,7 @@ local var_0_2 = {
 		0
 	}
 }
-local var_0_3 = {
+local tbl_4 = {
 	shield_burning_block_sound = "Play_weapon_fire_torch_metal_shield_hit",
 	push_sound_event = "Play_generic_pushed_impact_large_armour",
 	walk_speed = 2,
@@ -141,7 +141,7 @@ local var_0_3 = {
 	weapon_reach = 2,
 	trigger_dialogue_on_target_switch = true,
 	shield_stab_block_sound = "stab_hit_shield_metal",
-	displace_players_data = var_0_2,
+	displace_players_data = tbl_3,
 	infighting = InfightingSettings.large,
 	shield_opening_event = {
 		"idle_shield_down",
@@ -209,35 +209,40 @@ local var_0_3 = {
 	},
 	run_on_spawn = AiBreedSnippets.on_chaos_warrior_spawn,
 	run_on_update = AiBreedSnippets.on_chaos_warrior_update,
-	hit_reaction_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	hit_reaction_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+		-- function 1
 		return arg_1_1.hit_reactions.bwd
 	end,
-	handle_stagger_anim_cb = function(arg_2_0, arg_2_1, arg_2_2)
-		local var_2_0 = arg_2_1.stagger_level
-		local var_2_1 = false
+	handle_stagger_anim_cb = function (arg_2_0, arg_2_1, arg_2_2)
+		-- function 2
+		local stagger_level = arg_2_1.stagger_level
+		local flag = false
 
-		if arg_2_2 == "anim_cb_stagger_light_finished" and var_2_0 == var_0_0.shield_block_stagger then
-			var_2_1 = true
-		elseif arg_2_2 == "anim_cb_stagger_medium_finished" and var_2_0 == var_0_0.shield_open_stagger then
-			var_2_1 = true
+		if not (arg_2_2 ~= "anim_cb_stagger_light_finished" or stagger_level ~= tbl.shield_block_stagger) then
+			flag = true
+		elseif not (arg_2_2 ~= "anim_cb_stagger_medium_finished" or stagger_level ~= tbl.shield_open_stagger) then
+			flag = true
 		elseif arg_2_2 == "anim_cb_stagger_heavy_finished" then
-			var_2_1 = true
+			flag = true
 		end
 
-		arg_2_1.stagger_anim_done = var_2_1
+		arg_2_1.stagger_anim_done = flag
 	end,
-	stagger_modifier_function = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
-		local var_3_0 = arg_3_6 and arg_3_6.damage_profile
+	stagger_modifier_function = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+		-- function 3
+		local flag = not arg_3_6 and arg_3_6.damage_profile
+		local flag_2
 
-		arg_3_4.latest_hit_charge_value = arg_3_6 and arg_3_6.is_ranged and "ranged_attack" or var_3_0 and var_3_0.charge_value
+		flag_2 = not (not arg_3_6 and arg_3_6.is_ranged) and "ranged_attack" and not flag or flag.charge_value
+		arg_3_4.latest_hit_charge_value = flag_2
 
-		local var_3_1 = Managers.time:time("game")
+		local time = Managers.time:time("game")
 
 		if arg_3_3 == "weakspot" then
 			arg_3_4.weakspot_hit = true
 			arg_3_0 = 8
-		elseif arg_3_4.stagger_recover_time and var_3_1 < arg_3_4.stagger_recover_time then
-			return var_0_0.none, 0, 0, true
+		elseif not (not arg_3_4.stagger_recover_time and not (time < arg_3_4.stagger_recover_time)) then
+			return tbl.none, 0, 0, true
 		end
 
 		arg_3_4.spawn_exit_time = nil
@@ -318,67 +323,90 @@ local var_0_3 = {
 			}
 		}
 	},
-	before_stagger_enter_function = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
-		local var_4_0 = ScriptUnit.extension(arg_4_0, "ai_shield_system")
-		local var_4_1 = Managers.time:time("game")
-		local var_4_2 = arg_4_1.breed
-		local var_4_3 = var_4_2.stagger_modifiers[arg_4_1.latest_hit_charge_value] or var_4_2.stagger_modifiers.default
+	before_stagger_enter_function = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
+		-- function 4
+		local extension = ScriptUnit.extension(arg_4_0, "ai_shield_system")
+		local time = Managers.time:time("game")
+		local breed = arg_4_1.breed
+		local var_4_3 = breed.stagger_modifiers[arg_4_1.latest_hit_charge_value]
 
-		arg_4_1.stagger_level = arg_4_1.stagger_level or var_0_0.none
+		var_4_3 = var_4_3 or breed.stagger_modifiers.default
 
-		local var_4_4 = Managers.state.difficulty:get_difficulty_rank()
-		local var_4_5 = var_4_2.stagger_difficulty_tweak_index[var_4_4]
-		local var_4_6 = var_4_5.shield_open_stagger_threshold
-		local var_4_7 = var_4_5.shield_block_threshold
-		local var_4_8 = var_4_5.stagger_regen_rate
-		local var_4_9
+		local stagger_level = arg_4_1.stagger_level
 
-		if arg_4_1.weakspot_hit and not arg_4_1.weakspot_exploded and not var_4_0.is_blocking then
-			var_4_9 = true
+		stagger_level = stagger_level or tbl.none
+		arg_4_1.stagger_level = stagger_level
+
+		local get_difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
+		local var_4_6 = breed.stagger_difficulty_tweak_index[get_difficulty_rank]
+		local shield_open_stagger_threshold = var_4_6.shield_open_stagger_threshold
+		local shield_block_threshold = var_4_6.shield_block_threshold
+		local stagger_regen_rate = var_4_6.stagger_regen_rate
+		local var_4_10
+
+		if not (not arg_4_1.weakspot_hit and arg_4_1.weakspot_exploded or extension.is_blocking) then
+			var_4_10 = true
 			arg_4_1.weakspot_exploded = true
 		end
 
-		local var_4_10 = ScriptUnit.has_extension(arg_4_2, "career_system")
+		local has_extension = ScriptUnit.has_extension(arg_4_2, "career_system")
 
 		if arg_4_6 == "career_ability" then
-			arg_4_4 = var_4_5.shield_open_stagger_threshold - var_0_1.medium
+			arg_4_4 = var_4_6.shield_open_stagger_threshold - tbl_2.medium
 		elseif arg_4_6 == "charge_ability_hit" then
-			arg_4_4 = var_4_5.shield_open_stagger_threshold - var_0_1.heavy
-		elseif arg_4_6 == "charge_ability_hit_blast" and not var_4_10._career_name == "wh_zealot" then
-			arg_4_4 = var_4_5.shield_open_stagger_threshold - var_0_1.exploosion
+			arg_4_4 = var_4_6.shield_open_stagger_threshold - tbl_2.heavy
+		elseif not (arg_4_6 ~= "charge_ability_hit_blast" or not has_extension._career_name ~= "wh_zealot") then
+			arg_4_4 = var_4_6.shield_open_stagger_threshold - tbl_2.exploosion
 		elseif arg_4_6 == "buff" then
-			arg_4_4 = var_4_5.shield_open_stagger_threshold - var_0_1.weak
+			arg_4_4 = var_4_6.shield_open_stagger_threshold - tbl_2.weak
 		end
 
 		arg_4_5 = arg_4_5 or 0.1
 
-		local var_4_11 = {
+		local tbl_3 = {
 			0,
 			10
 		}
-		local var_4_12 = (arg_4_4 + (arg_4_5 - var_4_11[1]) / (var_4_11[2] - var_4_11[1])) * var_4_3
-		local var_4_13 = math.lerp(var_4_8[1], var_4_8[2], (arg_4_1.cached_stagger or 0.1) / var_4_6)
-		local var_4_14 = math.clamp(var_4_1 - (arg_4_1.shield_regen_time_stamp or var_4_1), 0, math.huge) * var_4_13
+		local num = (arg_4_4 + (arg_4_5 - tbl_3[1]) / (tbl_3[2] - tbl_3[1])) * var_4_3
+		local lerp = math.lerp
+		local var_4_15 = stagger_regen_rate[1]
+		local var_4_16 = stagger_regen_rate[2]
+		local cached_stagger = arg_4_1.cached_stagger
 
-		arg_4_1.stagger = math.clamp((arg_4_1.cached_stagger or 0) - var_4_14, 0, math.huge) + var_4_12
-		arg_4_1.shield_regen_time_stamp = var_4_1
+		cached_stagger = cached_stagger or 0.1
 
-		local var_4_15 = var_4_7 <= var_4_12
-		local var_4_16 = var_4_6 <= arg_4_1.stagger
+		local var_4_18 = lerp(var_4_15, var_4_16, cached_stagger / shield_open_stagger_threshold)
+		local clamp = math.clamp
+		local shield_regen_time_stamp = arg_4_1.shield_regen_time_stamp
 
-		arg_4_1.override_stagger = arg_4_1.max_stagger_reached and not var_4_9
+		shield_regen_time_stamp = shield_regen_time_stamp or time
 
-		if arg_4_1.stagger_level == var_0_0.shield_open_stagger or var_4_9 then
-			arg_4_1.stagger_level = var_0_0.heavy
-		elseif var_4_16 then
-			arg_4_1.stagger_level = var_0_0.shield_open_stagger
-		elseif var_4_15 then
-			arg_4_1.stagger_level = var_0_0.shield_block_stagger
+		local num_2 = clamp(time - shield_regen_time_stamp, 0, math.huge) * var_4_18
+		local clamp_2 = math.clamp
+		local cached_stagger_2 = arg_4_1.cached_stagger
+
+		cached_stagger_2 = cached_stagger_2 or 0
+		arg_4_1.stagger = clamp_2(cached_stagger_2 - num_2, 0, math.huge) + num
+		arg_4_1.shield_regen_time_stamp = time
+
+		local flag = shield_block_threshold <= num
+		local flag_2 = shield_open_stagger_threshold <= arg_4_1.stagger
+		local max_stagger_reached = arg_4_1.max_stagger_reached
+
+		max_stagger_reached = not max_stagger_reached and not var_4_10
+		arg_4_1.override_stagger = max_stagger_reached
+
+		if arg_4_1.stagger_level == tbl.shield_open_stagger or not var_4_10 then
+			arg_4_1.stagger_level = tbl.heavy
+		elseif not flag_2 then
+			arg_4_1.stagger_level = tbl.shield_open_stagger
+		elseif not flag then
+			arg_4_1.stagger_level = tbl.shield_block_stagger
 		else
 			arg_4_1.override_stagger = true
 		end
 
-		if arg_4_1.override_stagger then
+		if not arg_4_1.override_stagger then
 			arg_4_1.staggering_id = arg_4_1.stagger
 		else
 			arg_4_1.stagger_activated = true
@@ -386,8 +414,8 @@ local var_0_3 = {
 
 		arg_4_1.cached_stagger = arg_4_1.stagger
 
-		if not arg_4_1.max_stagger_reached and arg_4_1.stagger_level ~= var_0_0.heavy then
-			var_4_0:play_shield_hit_sfx(arg_4_1.stagger_level == var_0_0.shield_open_stagger, arg_4_1.cached_stagger, var_4_6)
+		if not (arg_4_1.max_stagger_reached or arg_4_1.stagger_level == tbl.heavy) then
+			extension:play_shield_hit_sfx(arg_4_1.stagger_level == tbl.shield_open_stagger, arg_4_1.cached_stagger, shield_open_stagger_threshold)
 		end
 	end,
 	hitzone_multiplier_types = {
@@ -588,9 +616,9 @@ local var_0_3 = {
 	}
 }
 
-Breeds.chaos_bulwark = table.create_copy(Breeds.chaos_bulwark, var_0_3)
+Breeds.chaos_bulwark = table.create_copy(Breeds.chaos_bulwark, tbl_4)
 
-local var_0_4 = {
+local tbl_5 = {
 	normal = {
 		easy = {
 			normal = 3
@@ -717,7 +745,7 @@ local var_0_4 = {
 		}
 	}
 }
-local var_0_5 = {
+local tbl_6 = {
 	idle = {
 		idle = {
 			"idle",
@@ -804,7 +832,7 @@ local var_0_5 = {
 		step_attack_distance = 0.2,
 		bot_threat_start_time_step = 0.5,
 		step_attack_distance_override = 0.7,
-		difficulty_attack_intensity = var_0_4,
+		difficulty_attack_intensity = tbl_5,
 		considerations = UtilityConsiderations.chaos_bulwark_sweep_attack,
 		attack_anim = {
 			"attack_sweep_01",
@@ -855,7 +883,7 @@ local var_0_5 = {
 		player_push_speed_blocked = 8,
 		step_attack_distance_override = 0.7,
 		width = 0.4,
-		difficulty_attack_intensity = var_0_4,
+		difficulty_attack_intensity = tbl_5,
 		considerations = UtilityConsiderations.chaos_bulwark_push_attack,
 		attack_anim = {
 			"attack_quick_01"
@@ -885,7 +913,7 @@ local var_0_5 = {
 		target_running_velocity_threshold = 0,
 		attack_intensity_type = "running",
 		action_weight = 1,
-		difficulty_attack_intensity = var_0_4,
+		difficulty_attack_intensity = tbl_5,
 		considerations = UtilityConsiderations.chaos_bulwark_running_attack,
 		difficulty_damage = BreedTweaks.difficulty_damage.elite_attack,
 		fatigue_type = BreedTweaks.fatigue_types.elite_sweep.running_attack,
@@ -941,7 +969,7 @@ local var_0_5 = {
 		attack_intensity_type = "running",
 		action_weight = 1,
 		no_block_stagger = true,
-		difficulty_attack_intensity = var_0_4,
+		difficulty_attack_intensity = tbl_5,
 		considerations = UtilityConsiderations.chaos_bulwark_running_attack_charging,
 		difficulty_damage = BreedTweaks.difficulty_damage.elite_shield_push,
 		attacks = {
@@ -996,7 +1024,7 @@ local var_0_5 = {
 		damage_type = "blunt",
 		unblockable = true,
 		max_impact_push_speed = 9,
-		difficulty_attack_intensity = var_0_4,
+		difficulty_attack_intensity = tbl_5,
 		considerations = UtilityConsiderations.chaos_bulwark_push_attack,
 		attack_anim = {
 			"attack_push"
@@ -1030,46 +1058,47 @@ local var_0_5 = {
 		difficulty_duration = BreedTweaks.blocked_duration.chaos_elite
 	},
 	stagger = {
-		custom_enter_function = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+		custom_enter_function = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			-- function 5
 			assert(ScriptUnit.has_extension(arg_5_0, "ai_shield_system"), "chaos bulwark dont have ai_shield_user_extension")
 
-			local var_5_0 = ScriptUnit.extension(arg_5_0, "ai_shield_system")
-			local var_5_1 = arg_5_1.breed
-			local var_5_2 = arg_5_1.stagger
-			local var_5_3 = "idle_shield_down"
-			local var_5_4 = Quaternion.forward(Unit.local_rotation(arg_5_0, 0))
-			local var_5_5 = Quaternion.look(var_5_4)
+			local extension = ScriptUnit.extension(arg_5_0, "ai_shield_system")
+			local breed = arg_5_1.breed
+			local stagger = arg_5_1.stagger
+			local str = "idle_shield_down"
+			local forward = Quaternion.forward(Unit.local_rotation(arg_5_0, 0))
+			local look = Quaternion.look(forward)
 			local var_5_6
 			local var_5_7
 
-			if arg_5_1.stagger_level == var_0_0.shield_block_stagger then
-				var_5_7 = arg_5_1.stagger_time + math.max(0.5, var_5_2 * 0.3) * var_5_1.block_stagger_mod
-				var_5_6 = arg_5_3.stagger_anims[var_0_0.shield_block_stagger]
+			if arg_5_1.stagger_level == tbl.shield_block_stagger then
+				var_5_7 = arg_5_1.stagger_time + math.max(0.5, stagger * 0.3) * breed.block_stagger_mod
+				var_5_6 = arg_5_3.stagger_anims[tbl.shield_block_stagger]
 
-				arg_5_1.stagger_direction:store(var_5_4)
-				var_5_0:set_is_blocking(true)
-			elseif arg_5_1.stagger_level == var_0_0.shield_open_stagger then
-				var_5_7 = arg_5_1.stagger_time + var_5_2 * 0.3 * var_5_1.block_stagger_mod_2
-				var_5_6 = arg_5_3.stagger_anims[var_0_0.shield_open_stagger]
+				arg_5_1.stagger_direction:store(forward)
+				extension:set_is_blocking(true)
+			elseif arg_5_1.stagger_level == tbl.shield_open_stagger then
+				var_5_7 = arg_5_1.stagger_time + stagger * 0.3 * breed.block_stagger_mod_2
+				var_5_6 = arg_5_3.stagger_anims[tbl.shield_open_stagger]
 
-				arg_5_1.stagger_direction:store(var_5_4)
+				arg_5_1.stagger_direction:store(forward)
 
 				arg_5_1.reset_after_stagger = true
 
-				var_5_0:set_is_blocking(false)
+				extension:set_is_blocking(false)
 			else
 				var_5_6 = arg_5_3.stagger_anims[arg_5_1.stagger_type]
-				var_5_7 = arg_5_1.stagger_time + var_5_2 * 0.5 * var_5_1.block_stagger_mod_2
-				var_5_5 = nil
+				var_5_7 = arg_5_1.stagger_time + stagger * 0.5 * breed.block_stagger_mod_2
+				look = nil
 				arg_5_1.max_stagger_reached = true
 				arg_5_1.reset_after_stagger = true
 
-				var_5_0:set_is_blocking(false)
+				extension:set_is_blocking(false)
 			end
 
 			arg_5_1.stagger_time = var_5_7
 
-			return var_5_6, var_5_3, var_5_3, var_5_5
+			return var_5_6, str, str, look
 		end,
 		stagger_anims = {
 			{
@@ -1382,4 +1411,4 @@ local var_0_5 = {
 	}
 }
 
-BreedActions.chaos_bulwark = table.create_copy(BreedActions.chaos_bulwark, var_0_5)
+BreedActions.chaos_bulwark = table.create_copy(BreedActions.chaos_bulwark, tbl_6)

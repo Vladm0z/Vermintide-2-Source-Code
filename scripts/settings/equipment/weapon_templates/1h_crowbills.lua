@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/1h_crowbills.lua
 
-local var_0_0 = 2
-local var_0_1 = 0.95
-local var_0_2 = {
+local num = 2
+local num_2 = 0.95
+local tbl = {
 	actions = {
 		action_one = {
 			default = {
@@ -10,8 +10,9 @@ local var_0_2 = {
 				anim_end_event = "attack_finished",
 				anim_event = "attack_swing_charge_left",
 				attack_hold_input = "action_one_hold",
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
-					return arg_1_1 ~= "new_interupting_action" and arg_1_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
+					-- function 1
+					return arg_1_1 == "new_interupting_action" or arg_1_1 ~= "action_complete"
 				end,
 				total_time = math.huge,
 				buff_data = {
@@ -65,8 +66,9 @@ local var_0_2 = {
 				kind = "melee_start",
 				anim_end_event = "attack_finished",
 				anim_event = "attack_swing_charge_left_pose",
-				anim_end_event_condition_func = function(arg_2_0, arg_2_1)
-					return arg_2_1 ~= "new_interupting_action" and arg_2_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_2_0, arg_2_1)
+					-- function 2
+					return arg_2_1 == "new_interupting_action" or arg_2_1 ~= "action_complete"
 				end,
 				total_time = math.huge,
 				buff_data = {
@@ -120,8 +122,9 @@ local var_0_2 = {
 				kind = "melee_start",
 				anim_end_event = "attack_finished",
 				anim_event = "attack_swing_charge_right_pose",
-				anim_end_event_condition_func = function(arg_3_0, arg_3_1)
-					return arg_3_1 ~= "new_interupting_action" and arg_3_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_3_0, arg_3_1)
+					-- function 3
+					return arg_3_1 == "new_interupting_action" or arg_3_1 ~= "action_complete"
 				end,
 				total_time = math.huge,
 				buff_data = {
@@ -175,8 +178,9 @@ local var_0_2 = {
 				kind = "melee_start",
 				anim_end_event = "attack_finished",
 				anim_event = "attack_swing_charge_left_pose",
-				anim_end_event_condition_func = function(arg_4_0, arg_4_1)
-					return arg_4_1 ~= "new_interupting_action" and arg_4_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_4_0, arg_4_1)
+					-- function 4
+					return arg_4_1 == "new_interupting_action" or arg_4_1 ~= "action_complete"
 				end,
 				total_time = math.huge,
 				buff_data = {
@@ -248,10 +252,11 @@ local var_0_2 = {
 				anim_event = "attack_swing_heavy_left_up",
 				hit_stop_anim = "attack_hit",
 				total_time = 1.5,
-				anim_end_event_condition_func = function(arg_5_0, arg_5_1)
-					return arg_5_1 ~= "new_interupting_action" and arg_5_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_5_0, arg_5_1)
+					-- function 5
+					return arg_5_1 == "new_interupting_action" or arg_5_1 ~= "action_complete"
 				end,
-				anim_time_scale = var_0_1 * 1.2,
+				anim_time_scale = num_2 * 1.2,
 				buff_data = {
 					{
 						start_time = 0,
@@ -300,7 +305,8 @@ local var_0_2 = {
 						input = "action_wield"
 					}
 				},
-				enter_function = function(arg_6_0, arg_6_1)
+				enter_function = function (arg_6_0, arg_6_1)
+					-- function 6
 					return arg_6_1:reset_release_input()
 				end,
 				baked_sweep = {
@@ -398,10 +404,11 @@ local var_0_2 = {
 				anim_event = "attack_swing_heavy_right",
 				hit_stop_anim = "attack_hit",
 				total_time = 1.5,
-				anim_end_event_condition_func = function(arg_7_0, arg_7_1)
-					return arg_7_1 ~= "new_interupting_action" and arg_7_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_7_0, arg_7_1)
+					-- function 7
+					return arg_7_1 == "new_interupting_action" or arg_7_1 ~= "action_complete"
 				end,
-				anim_time_scale = var_0_1 * 1.15,
+				anim_time_scale = num_2 * 1.15,
 				buff_data = {
 					{
 						start_time = 0,
@@ -450,7 +457,8 @@ local var_0_2 = {
 						input = "action_wield"
 					}
 				},
-				enter_function = function(arg_8_0, arg_8_1)
+				enter_function = function (arg_8_0, arg_8_1)
+					-- function 8
 					return arg_8_1:reset_release_input()
 				end,
 				baked_sweep = {
@@ -548,10 +556,11 @@ local var_0_2 = {
 				anim_event = "attack_swing_heavy_left_diagonal",
 				hit_stop_anim = "attack_hit",
 				total_time = 1.5,
-				anim_end_event_condition_func = function(arg_9_0, arg_9_1)
-					return arg_9_1 ~= "new_interupting_action" and arg_9_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_9_0, arg_9_1)
+					-- function 9
+					return arg_9_1 == "new_interupting_action" or arg_9_1 ~= "action_complete"
 				end,
-				anim_time_scale = var_0_1 * 1,
+				anim_time_scale = num_2 * 1,
 				buff_data = {
 					{
 						start_time = 0,
@@ -600,7 +609,8 @@ local var_0_2 = {
 						input = "action_wield"
 					}
 				},
-				enter_function = function(arg_10_0, arg_10_1)
+				enter_function = function (arg_10_0, arg_10_1)
+					-- function 10
 					return arg_10_1:reset_release_input()
 				end,
 				baked_sweep = {
@@ -694,10 +704,11 @@ local var_0_2 = {
 				anim_event = "attack_swing_stab",
 				hit_stop_anim = "attack_hit",
 				total_time = 1.5,
-				anim_end_event_condition_func = function(arg_11_0, arg_11_1)
-					return arg_11_1 ~= "new_interupting_action" and arg_11_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_11_0, arg_11_1)
+					-- function 11
+					return arg_11_1 == "new_interupting_action" or arg_11_1 ~= "action_complete"
 				end,
-				anim_time_scale = var_0_1 * 0.95,
+				anim_time_scale = num_2 * 0.95,
 				buff_data = {
 					{
 						start_time = 0,
@@ -823,10 +834,11 @@ local var_0_2 = {
 				anim_event = "attack_swing_right_diagonal",
 				hit_stop_anim = "attack_hit",
 				total_time = 1.5,
-				anim_end_event_condition_func = function(arg_12_0, arg_12_1)
-					return arg_12_1 ~= "new_interupting_action" and arg_12_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_12_0, arg_12_1)
+					-- function 12
+					return arg_12_1 == "new_interupting_action" or arg_12_1 ~= "action_complete"
 				end,
-				anim_time_scale = var_0_1 * 1.1,
+				anim_time_scale = num_2 * 1.1,
 				buff_data = {
 					{
 						start_time = 0,
@@ -956,10 +968,11 @@ local var_0_2 = {
 				anim_event = "attack_swing_down",
 				hit_stop_anim = "attack_hit",
 				total_time = 1.5,
-				anim_end_event_condition_func = function(arg_13_0, arg_13_1)
-					return arg_13_1 ~= "new_interupting_action" and arg_13_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_13_0, arg_13_1)
+					-- function 13
+					return arg_13_1 == "new_interupting_action" or arg_13_1 ~= "action_complete"
 				end,
-				anim_time_scale = var_0_1 * 1.15,
+				anim_time_scale = num_2 * 1.15,
 				buff_data = {
 					{
 						start_time = 0,
@@ -1096,10 +1109,11 @@ local var_0_2 = {
 				anim_event = "attack_swing_left",
 				hit_stop_anim = "attack_hit",
 				total_time = 1.5,
-				anim_end_event_condition_func = function(arg_14_0, arg_14_1)
-					return arg_14_1 ~= "new_interupting_action" and arg_14_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_14_0, arg_14_1)
+					-- function 14
+					return arg_14_1 == "new_interupting_action" or arg_14_1 ~= "action_complete"
 				end,
-				anim_time_scale = var_0_1 * 1.15,
+				anim_time_scale = num_2 * 1.15,
 				buff_data = {
 					{
 						start_time = 0,
@@ -1226,10 +1240,11 @@ local var_0_2 = {
 				anim_event = "attack_swing_up_left",
 				hit_stop_anim = "attack_hit",
 				total_time = 1.5,
-				anim_end_event_condition_func = function(arg_15_0, arg_15_1)
-					return arg_15_1 ~= "new_interupting_action" and arg_15_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_15_0, arg_15_1)
+					-- function 15
+					return arg_15_1 == "new_interupting_action" or arg_15_1 ~= "action_complete"
 				end,
-				anim_time_scale = var_0_1 * 1,
+				anim_time_scale = num_2 * 1,
 				buff_data = {
 					{
 						start_time = 0,
@@ -1364,8 +1379,9 @@ local var_0_2 = {
 				anim_event = "attack_push",
 				damage_profile_inner = "medium_push",
 				total_time = 0.8,
-				anim_end_event_condition_func = function(arg_16_0, arg_16_1)
-					return arg_16_1 ~= "new_interupting_action" and arg_16_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_16_0, arg_16_1)
+					-- function 16
+					return arg_16_1 == "new_interupting_action" or arg_16_1 ~= "action_complete"
 				end,
 				buff_data = {
 					{
@@ -1417,8 +1433,9 @@ local var_0_2 = {
 						input = "action_wield"
 					}
 				},
-				push_radius = var_0_0,
-				chain_condition_func = function(arg_17_0, arg_17_1)
+				push_radius = num,
+				chain_condition_func = function (arg_17_0, arg_17_1)
+					-- function 17
 					return not ScriptUnit.extension(arg_17_0, "status_system"):fatigued()
 				end
 			}
@@ -1431,11 +1448,13 @@ local var_0_2 = {
 				kind = "block",
 				hold_input = "action_two_hold",
 				anim_event = "parry_pose",
-				anim_end_event_condition_func = function(arg_18_0, arg_18_1)
+				anim_end_event_condition_func = function (arg_18_0, arg_18_1)
+					-- function 18
 					return arg_18_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
-				enter_function = function(arg_19_0, arg_19_1, arg_19_2)
+				enter_function = function (arg_19_0, arg_19_1, arg_19_2)
+					-- function 19
 					return arg_19_1:reset_release_input_with_delay(arg_19_2)
 				end,
 				buff_data = {
@@ -1543,20 +1562,20 @@ local var_0_2 = {
 	}
 }
 
-var_0_2.right_hand_unit = "units/weapons/player/wpn_empire_short_sword/wpn_empire_short_sword"
-var_0_2.right_hand_attachment_node_linking = AttachmentNodeLinking.one_handed_melee_weapon.right
-var_0_2.display_unit = "units/weapons/weapon_display/display_1h_crowbills"
-var_0_2.wield_anim = "to_1h_crowbill"
-var_0_2.state_machine = "units/beings/player/first_person_base/state_machines/melee/1h_crowbill"
-var_0_2.buff_type = "MELEE_1H"
-var_0_2.weapon_type = "MACE_1H"
-var_0_2.max_fatigue_points = 6
-var_0_2.dodge_count = 3
-var_0_2.block_angle = 90
-var_0_2.outer_block_angle = 360
-var_0_2.block_fatigue_point_multiplier = 0.5
-var_0_2.outer_block_fatigue_point_multiplier = 2
-var_0_2.buffs = {
+tbl.right_hand_unit = "units/weapons/player/wpn_empire_short_sword/wpn_empire_short_sword"
+tbl.right_hand_attachment_node_linking = AttachmentNodeLinking.one_handed_melee_weapon.right
+tbl.display_unit = "units/weapons/weapon_display/display_1h_crowbills"
+tbl.wield_anim = "to_1h_crowbill"
+tbl.state_machine = "units/beings/player/first_person_base/state_machines/melee/1h_crowbill"
+tbl.buff_type = "MELEE_1H"
+tbl.weapon_type = "MACE_1H"
+tbl.max_fatigue_points = 6
+tbl.dodge_count = 3
+tbl.block_angle = 90
+tbl.outer_block_angle = 360
+tbl.block_fatigue_point_multiplier = 0.5
+tbl.outer_block_fatigue_point_multiplier = 2
+tbl.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1.25
 	},
@@ -1564,10 +1583,10 @@ var_0_2.buffs = {
 		external_optional_multiplier = 1.25
 	}
 }
-var_0_2.wwise_dep_right_hand = {
+tbl.wwise_dep_right_hand = {
 	"wwise/one_handed_crowbills"
 }
 
 return {
-	one_handed_crowbill = var_0_2
+	one_handed_crowbill = tbl
 }

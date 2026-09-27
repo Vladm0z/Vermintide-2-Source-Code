@@ -1,8 +1,8 @@
 -- chunkname: @scripts/ui/hud_ui/component_list_definitions/hud_component_list_deus.lua
 
 local var_0_0 = local_require("scripts/ui/hud_ui/component_list_definitions/hud_component_list_adventure")
-local var_0_1 = require("scripts/ui/hud_ui/component_list_definitions/hud_component_list_deus_common")
-local var_0_2 = {
+local scripts_ui_hud_ui_component_list_definitions_hud_component_list_deus_common = require("scripts/ui/hud_ui/component_list_definitions/hud_component_list_deus_common")
+local tbl = {
 	{
 		use_hud_scale = true,
 		class_name = "DeusCurseUI",
@@ -23,22 +23,22 @@ local var_0_2 = {
 		}
 	}
 }
-local var_0_3 = {}
+local tbl_2 = {}
 
-table.append(var_0_3, var_0_0.components)
-table.append(var_0_3, var_0_1.components)
-table.append(var_0_3, var_0_2)
+table.append(tbl_2, var_0_0.components)
+table.append(tbl_2, scripts_ui_hud_ui_component_list_definitions_hud_component_list_deus_common.components)
+table.append(tbl_2, tbl)
 
-local var_0_4 = {}
+local tbl_3 = {}
 
-table.append(var_0_4, var_0_1.visibility_groups)
-table.append(var_0_4, var_0_0.visibility_groups)
+table.append(tbl_3, scripts_ui_hud_ui_component_list_definitions_hud_component_list_deus_common.visibility_groups)
+table.append(tbl_3, var_0_0.visibility_groups)
 
-for iter_0_0 = 1, #var_0_2 do
-	require(var_0_2[iter_0_0].filename)
+for i = 1, #tbl do
+	require(tbl[i].filename)
 end
 
 return {
-	components = var_0_3,
-	visibility_groups = var_0_4
+	components = tbl_2,
+	visibility_groups = tbl_3
 }

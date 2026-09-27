@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/profiles/vs_profiles.lua
 
-local var_0_0 = {
+local tbl = {
 	"EnemyCharacterStateDead",
 	"EnemyCharacterStateInteracting",
 	"EnemyCharacterStateInspecting",
@@ -17,7 +17,7 @@ local var_0_0 = {
 	"EnemyCharacterStateJumpAcross",
 	"EnemyCharacterStateStaggered"
 }
-local var_0_1 = {
+local tbl_2 = {
 	"CameraStateIdle",
 	"CameraStateFollow",
 	"CameraStateFollowThirdPerson",
@@ -46,7 +46,7 @@ return {
 		base_character_states = {
 			"PlayerCharacterStateDead"
 		},
-		base_camera_states = var_0_1
+		base_camera_states = tbl_2
 	},
 	{
 		career_voice_parameter = "dwarf_career_voice_effect",
@@ -83,8 +83,8 @@ return {
 		careers = {
 			CareerSettings.vs_poison_wind_globadier
 		},
-		base_character_states = var_0_0,
-		base_camera_states = var_0_1
+		base_character_states = tbl,
+		base_camera_states = tbl_2
 	},
 	{
 		career_voice_parameter = "victor_career_voice_effect",
@@ -122,8 +122,8 @@ return {
 		careers = {
 			CareerSettings.vs_gutter_runner
 		},
-		base_character_states = var_0_0,
-		base_camera_states = var_0_1
+		base_character_states = tbl,
+		base_camera_states = tbl_2
 	},
 	{
 		career_voice_parameter = "kerillian_career_voice_effect",
@@ -160,8 +160,8 @@ return {
 		careers = {
 			CareerSettings.vs_packmaster
 		},
-		base_character_states = var_0_0,
-		base_camera_states = var_0_1
+		base_character_states = tbl,
+		base_camera_states = tbl_2
 	},
 	{
 		career_voice_parameter = "dwarf_career_voice_effect",
@@ -198,8 +198,8 @@ return {
 		careers = {
 			CareerSettings.vs_ratling_gunner
 		},
-		base_character_states = var_0_0,
-		base_camera_states = var_0_1
+		base_character_states = tbl,
+		base_camera_states = tbl_2
 	},
 	{
 		career_voice_parameter = "dwarf_career_voice_effect",
@@ -236,8 +236,8 @@ return {
 		careers = {
 			CareerSettings.vs_warpfire_thrower
 		},
-		base_character_states = var_0_0,
-		base_camera_states = var_0_1
+		base_character_states = tbl,
+		base_camera_states = tbl_2
 	},
 	{
 		career_voice_parameter = "dwarf_career_voice_effect",
@@ -275,8 +275,8 @@ return {
 		careers = {
 			CareerSettings.vs_chaos_troll
 		},
-		base_character_states = var_0_0,
-		base_camera_states = var_0_1
+		base_character_states = tbl,
+		base_camera_states = tbl_2
 	},
 	{
 		career_voice_parameter = "dwarf_career_voice_effect",
@@ -312,8 +312,8 @@ return {
 		careers = {
 			CareerSettings.vs_rat_ogre
 		},
-		base_character_states = var_0_0,
-		base_camera_states = var_0_1
+		base_character_states = tbl,
+		base_camera_states = tbl_2
 	},
 	{
 		role = "spectator",

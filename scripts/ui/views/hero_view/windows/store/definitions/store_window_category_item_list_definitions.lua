@@ -1,25 +1,25 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/store/definitions/store_window_category_item_list_definitions.lua
 
-local var_0_0 = UISettings.console_menu_scenegraphs
-local var_0_1 = {
+local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
+local tbl = {
 	800,
 	700
 }
-local var_0_2 = {
+local tbl_2 = {
 	800,
 	220
 }
-local var_0_3 = {
+local tbl_3 = {
 	16,
-	var_0_1[2]
+	tbl[2]
 }
-local var_0_4 = {
-	screen = var_0_0.screen,
+local tbl_4 = {
+	screen = console_menu_scenegraphs.screen,
 	list_window = {
 		vertical_alignment = "top",
 		parent = "screen",
 		horizontal_alignment = "right",
-		size = var_0_1,
+		size = tbl,
 		position = {
 			-130,
 			-215,
@@ -30,10 +30,10 @@ local var_0_4 = {
 		vertical_alignment = "top",
 		parent = "list_window",
 		horizontal_alignment = "right",
-		size = var_0_1,
+		size = tbl,
 		position = {
 			0,
-			-var_0_1[2],
+			-tbl[2],
 			0
 		}
 	},
@@ -41,7 +41,7 @@ local var_0_4 = {
 		vertical_alignment = "top",
 		parent = "list_window",
 		horizontal_alignment = "right",
-		size = var_0_3,
+		size = tbl_3,
 		position = {
 			58,
 			0,
@@ -161,7 +161,7 @@ local var_0_4 = {
 		}
 	}
 }
-local var_0_5 = {
+local tbl_5 = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -179,10 +179,11 @@ local var_0_5 = {
 	}
 }
 
-local function var_0_6(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	local var_1_0 = true
+local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	local flag = true
 	local var_1_1 = UIFrameSettings.frame_outer_glow_04_big.texture_sizes.horizontal[2]
-	local var_1_2 = {
+	local tbl = {
 		passes = {
 			{
 				style_id = "hotspot",
@@ -211,7 +212,7 @@ local function var_0_6(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			}
 		}
 	}
-	local var_1_3 = {
+	local tbl_2 = {
 		mask_edge = "mask_rect_edge_fade",
 		mask_texture = "mask_rect",
 		list_hotspot = {},
@@ -222,7 +223,7 @@ local function var_0_6(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			scroll_value = 1
 		}
 	}
-	local var_1_4 = {
+	local tbl_3 = {
 		hotspot = {
 			size = {
 				arg_1_2[1],
@@ -316,9 +317,9 @@ local function var_0_6(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	}
 
 	return {
-		element = var_1_2,
-		content = var_1_3,
-		style = var_1_4,
+		element = tbl,
+		content = tbl_2,
+		style = tbl_3,
 		offset = {
 			0,
 			0,
@@ -328,10 +329,10 @@ local function var_0_6(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	}
 end
 
-local var_0_7 = {
-	title_text = UIWidgets.create_simple_text("n/a", "title_text", nil, nil, var_0_5),
-	list = var_0_6("list_window", "list", var_0_1, var_0_2),
-	list_scrollbar = UIWidgets.create_chain_scrollbar("list_scrollbar", "list_window", var_0_4.list_scrollbar.size, "gold"),
+local tbl_6 = {
+	title_text = UIWidgets.create_simple_text("n/a", "title_text", nil, nil, tbl_5),
+	list = fn("list_window", "list", tbl, tbl_2),
+	list_scrollbar = UIWidgets.create_chain_scrollbar("list_scrollbar", "list_window", tbl_4.list_scrollbar.size, "gold"),
 	list_detail_top_left = UIWidgets.create_simple_uv_texture("divider_skull_left", {
 		{
 			1,
@@ -381,21 +382,24 @@ local var_0_7 = {
 		}
 	}, "list_detail_bottom_right")
 }
-local var_0_8 = {
+local tbl_7 = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0.3,
 			end_progress = 0.6,
-			init = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+				-- function 2
 				arg_2_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
-				local var_3_0 = math.easeOutCubic(arg_3_3)
+			update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+				-- function 3
+				local easeOutCubic = math.easeOutCubic(arg_3_3)
 
-				arg_3_4.render_settings.alpha_multiplier = var_3_0
+				arg_3_4.render_settings.alpha_multiplier = easeOutCubic
 			end,
-			on_complete = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			on_complete = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				-- function 4
 				return
 			end
 		}
@@ -405,13 +409,16 @@ local var_0_8 = {
 			name = "delay",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+				-- function 5
 				return
 			end,
-			update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+				-- function 6
 				return
 			end,
-			on_complete = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			on_complete = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+				-- function 7
 				return
 			end
 		},
@@ -419,40 +426,43 @@ local var_0_8 = {
 			name = "fade_in",
 			start_progress = 0.3,
 			end_progress = 0.6,
-			init = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			init = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+				-- function 8
 				arg_8_3.render_settings.list_alpha_multiplier = 0
 				arg_8_3.mask_default_width = arg_8_2.widgets_by_name.list.style.mask.texture_size[1]
 			end,
-			update = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
-				local var_9_0 = math.easeOutCubic(arg_9_3)
+			update = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+				-- function 9
+				local easeOutCubic = math.easeOutCubic(arg_9_3)
 
-				arg_9_4.render_settings.list_alpha_multiplier = var_9_0
+				arg_9_4.render_settings.list_alpha_multiplier = easeOutCubic
 
-				local var_9_1 = arg_9_2.widgets_by_name
-				local var_9_2 = arg_9_2.list_widgets
-				local var_9_3 = 0
+				local widgets_by_name = arg_9_2.widgets_by_name
+				local list_widgets = arg_9_2.list_widgets
+				local num = 0
 
-				for iter_9_0, iter_9_1 in ipairs(var_9_2) do
-					local var_9_4 = iter_9_1.content
-					local var_9_5 = iter_9_1.offset
-					local var_9_6 = iter_9_1.default_offset
-					local var_9_7 = var_9_4.row
-					local var_9_8 = var_9_4.column
-					local var_9_9 = math.min(var_9_7 * 50 + (4 - var_9_8) * 20, 300)
+				for i, v in ipairs(list_widgets) do
+					local content = v.content
+					local offset = v.offset
+					local default_offset = v.default_offset
+					local row = content.row
+					local column = content.column
+					local min = math.min(row * 50 + (4 - column) * 20, 300)
 
-					var_9_5[1] = math.floor(var_9_6[1] - var_9_9 + var_9_9 * var_9_0)
-					var_9_3 = math.max(var_9_3, var_9_9)
+					offset[1] = math.floor(default_offset[1] - min + min * easeOutCubic)
+					num = math.max(num, min)
 				end
 
-				local var_9_10 = arg_9_4.mask_default_width
-				local var_9_11 = math.floor(var_9_10 + var_9_3 - var_9_3 * var_9_0)
-				local var_9_12 = var_9_1.list.style
+				local mask_default_width = arg_9_4.mask_default_width
+				local floor = math.floor(mask_default_width + num - num * easeOutCubic)
+				local style = widgets_by_name.list.style
 
-				var_9_12.mask.texture_size[1] = var_9_11
-				var_9_12.mask_top.texture_size[1] = var_9_11
-				var_9_12.mask_bottom.texture_size[1] = var_9_11
+				style.mask.texture_size[1] = floor
+				style.mask_top.texture_size[1] = floor
+				style.mask_bottom.texture_size[1] = floor
 			end,
-			on_complete = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			on_complete = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+				-- function 10
 				return
 			end
 		}
@@ -462,40 +472,43 @@ local var_0_8 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+			init = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+				-- function 11
 				arg_11_3.render_settings.list_alpha_multiplier = 0
 				arg_11_3.mask_default_width = arg_11_2.widgets_by_name.list.style.mask.texture_size[1]
 			end,
-			update = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
-				local var_12_0 = math.easeOutCubic(arg_12_3)
+			update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+				-- function 12
+				local easeOutCubic = math.easeOutCubic(arg_12_3)
 
-				arg_12_4.render_settings.list_alpha_multiplier = var_12_0
+				arg_12_4.render_settings.list_alpha_multiplier = easeOutCubic
 
-				local var_12_1 = arg_12_2.widgets_by_name
-				local var_12_2 = arg_12_2.list_widgets
-				local var_12_3 = 0
+				local widgets_by_name = arg_12_2.widgets_by_name
+				local list_widgets = arg_12_2.list_widgets
+				local num = 0
 
-				for iter_12_0, iter_12_1 in ipairs(var_12_2) do
-					local var_12_4 = iter_12_1.content
-					local var_12_5 = iter_12_1.offset
-					local var_12_6 = iter_12_1.default_offset
-					local var_12_7 = var_12_4.row
-					local var_12_8 = var_12_4.column
-					local var_12_9 = math.min(var_12_7 * 50 + (4 - var_12_8) * 20, 300)
+				for i, v in ipairs(list_widgets) do
+					local content = v.content
+					local offset = v.offset
+					local default_offset = v.default_offset
+					local row = content.row
+					local column = content.column
+					local min = math.min(row * 50 + (4 - column) * 20, 300)
 
-					var_12_5[1] = math.floor(var_12_6[1] - var_12_9 + var_12_9 * var_12_0)
-					var_12_3 = math.max(var_12_3, var_12_9)
+					offset[1] = math.floor(default_offset[1] - min + min * easeOutCubic)
+					num = math.max(num, min)
 				end
 
-				local var_12_10 = arg_12_4.mask_default_width
-				local var_12_11 = math.floor(var_12_10 + var_12_3 - var_12_3 * var_12_0)
-				local var_12_12 = var_12_1.list.style
+				local mask_default_width = arg_12_4.mask_default_width
+				local floor = math.floor(mask_default_width + num - num * easeOutCubic)
+				local style = widgets_by_name.list.style
 
-				var_12_12.mask.texture_size[1] = var_12_11
-				var_12_12.mask_top.texture_size[1] = var_12_11
-				var_12_12.mask_bottom.texture_size[1] = var_12_11
+				style.mask.texture_size[1] = floor
+				style.mask_top.texture_size[1] = floor
+				style.mask_bottom.texture_size[1] = floor
 			end,
-			on_complete = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			on_complete = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+				-- function 13
 				return
 			end
 		}
@@ -503,8 +516,8 @@ local var_0_8 = {
 }
 
 return {
-	widgets = var_0_7,
+	widgets = tbl_6,
 	title_button_definitions = title_button_definitions,
-	scenegraph_definition = var_0_4,
-	animation_definitions = var_0_8
+	scenegraph_definition = tbl_4,
+	animation_definitions = tbl_7
 }

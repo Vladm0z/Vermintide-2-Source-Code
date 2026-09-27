@@ -1,9 +1,9 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/staff_necromancy.lua
 
-local var_0_0 = {}
-local var_0_1 = 5
+local tbl = {}
+local num = 5
 
-var_0_0.actions = {
+tbl.actions = {
 	action_one = {
 		default = {
 			charge_sound_stop_event = "player_combat_weapon_staff_charge_down",
@@ -25,7 +25,8 @@ var_0_0.actions = {
 			hold_input = "action_one_hold",
 			anim_event = "attack_charge",
 			charge_sound_name = "player_combat_weapon_staff_charge_fireball",
-			anim_end_event_condition_func = function(arg_1_0, arg_1_1)
+			anim_end_event_condition_func = function (arg_1_0, arg_1_1)
+				-- function 1
 				return arg_1_1 ~= "new_interupting_action"
 			end,
 			total_time = math.huge,
@@ -76,7 +77,8 @@ var_0_0.actions = {
 			hold_input = "action_one_hold",
 			anim_event = "attack_charge",
 			charge_sound_name = "player_combat_weapon_staff_charge_fireball",
-			anim_end_event_condition_func = function(arg_2_0, arg_2_1)
+			anim_end_event_condition_func = function (arg_2_0, arg_2_1)
+				-- function 2
 				return arg_2_1 ~= "new_interupting_action"
 			end,
 			total_time = math.huge,
@@ -162,15 +164,16 @@ var_0_0.actions = {
 					input = "weapon_reload"
 				}
 			},
-			enter_function = function(arg_3_0, arg_3_1)
-				local var_3_0 = Managers.state.entity:system("projectile_system")
+			enter_function = function (arg_3_0, arg_3_1)
+				-- function 3
+				local system = Managers.state.entity:system("projectile_system")
 
-				if var_3_0:get_indexed_projectile_count(arg_3_0) >= var_0_1 then
-					local var_3_1 = var_3_0:get_and_delete_indexed_projectile(arg_3_0, 1, true)
-					local var_3_2 = ScriptUnit.has_extension(var_3_1, "projectile_system")
+				if system:get_indexed_projectile_count(arg_3_0) >= num then
+					local get_and_delete_indexed_projectile = system:get_and_delete_indexed_projectile(arg_3_0, 1, true)
+					local has_extension = ScriptUnit.has_extension(get_and_delete_indexed_projectile, "projectile_system")
 
-					if var_3_2 then
-						var_3_2:trigger_external_event("detonate", true)
+					if not has_extension then
+						has_extension:trigger_external_event("detonate", true)
 					end
 				end
 
@@ -178,7 +181,8 @@ var_0_0.actions = {
 
 				return arg_3_1:reset_release_input()
 			end,
-			generate_seed = function()
+			generate_seed = function ()
+				-- function 4
 				return math.random(0, 127)
 			end,
 			projectile_info = Projectiles.skull,
@@ -259,15 +263,16 @@ var_0_0.actions = {
 					input = "weapon_reload"
 				}
 			},
-			enter_function = function(arg_5_0, arg_5_1)
-				local var_5_0 = Managers.state.entity:system("projectile_system")
+			enter_function = function (arg_5_0, arg_5_1)
+				-- function 5
+				local system = Managers.state.entity:system("projectile_system")
 
-				if var_5_0:get_indexed_projectile_count(arg_5_0) >= var_0_1 then
-					local var_5_1 = var_5_0:get_and_delete_indexed_projectile(arg_5_0, 1, true)
-					local var_5_2 = ScriptUnit.has_extension(var_5_1, "projectile_system")
+				if system:get_indexed_projectile_count(arg_5_0) >= num then
+					local get_and_delete_indexed_projectile = system:get_and_delete_indexed_projectile(arg_5_0, 1, true)
+					local has_extension = ScriptUnit.has_extension(get_and_delete_indexed_projectile, "projectile_system")
 
-					if var_5_2 then
-						var_5_2:trigger_external_event("detonate", true)
+					if not has_extension then
+						has_extension:trigger_external_event("detonate", true)
 					end
 				end
 
@@ -275,7 +280,8 @@ var_0_0.actions = {
 
 				return arg_5_1:reset_release_input()
 			end,
-			generate_seed = function()
+			generate_seed = function ()
+				-- function 6
 				return math.random(128, 255)
 			end,
 			projectile_info = Projectiles.skull,
@@ -356,15 +362,16 @@ var_0_0.actions = {
 					input = "weapon_reload"
 				}
 			},
-			enter_function = function(arg_7_0, arg_7_1)
-				local var_7_0 = Managers.state.entity:system("projectile_system")
+			enter_function = function (arg_7_0, arg_7_1)
+				-- function 7
+				local system = Managers.state.entity:system("projectile_system")
 
-				if var_7_0:get_indexed_projectile_count(arg_7_0) >= var_0_1 then
-					local var_7_1 = var_7_0:get_and_delete_indexed_projectile(arg_7_0, 1, true)
-					local var_7_2 = ScriptUnit.has_extension(var_7_1, "projectile_system")
+				if system:get_indexed_projectile_count(arg_7_0) >= num then
+					local get_and_delete_indexed_projectile = system:get_and_delete_indexed_projectile(arg_7_0, 1, true)
+					local has_extension = ScriptUnit.has_extension(get_and_delete_indexed_projectile, "projectile_system")
 
-					if var_7_2 then
-						var_7_2:trigger_external_event("detonate", true)
+					if not has_extension then
+						has_extension:trigger_external_event("detonate", true)
 					end
 				end
 
@@ -372,7 +379,8 @@ var_0_0.actions = {
 
 				return arg_7_1:reset_release_input()
 			end,
-			generate_seed = function()
+			generate_seed = function ()
+				-- function 8
 				return math.random(128, 255)
 			end,
 			projectile_info = Projectiles.skull,
@@ -453,15 +461,16 @@ var_0_0.actions = {
 					input = "weapon_reload"
 				}
 			},
-			enter_function = function(arg_9_0, arg_9_1)
-				local var_9_0 = Managers.state.entity:system("projectile_system")
+			enter_function = function (arg_9_0, arg_9_1)
+				-- function 9
+				local system = Managers.state.entity:system("projectile_system")
 
-				if var_9_0:get_indexed_projectile_count(arg_9_0) >= var_0_1 then
-					local var_9_1 = var_9_0:get_and_delete_indexed_projectile(arg_9_0, 1, true)
-					local var_9_2 = ScriptUnit.has_extension(var_9_1, "projectile_system")
+				if system:get_indexed_projectile_count(arg_9_0) >= num then
+					local get_and_delete_indexed_projectile = system:get_and_delete_indexed_projectile(arg_9_0, 1, true)
+					local has_extension = ScriptUnit.has_extension(get_and_delete_indexed_projectile, "projectile_system")
 
-					if var_9_2 then
-						var_9_2:trigger_external_event("detonate", true)
+					if not has_extension then
+						has_extension:trigger_external_event("detonate", true)
 					end
 				end
 
@@ -469,7 +478,8 @@ var_0_0.actions = {
 
 				return arg_9_1:reset_release_input()
 			end,
-			generate_seed = function()
+			generate_seed = function ()
+				-- function 10
 				return math.random(128, 255)
 			end,
 			projectile_info = Projectiles.skull,
@@ -503,8 +513,9 @@ var_0_0.actions = {
 			conditional_actions = {
 				{
 					sub_action = "dummy",
-					condition = function(arg_11_0, arg_11_1, arg_11_2)
-						if arg_11_2 then
+					condition = function (arg_11_0, arg_11_1, arg_11_2)
+						-- function 11
+						if not arg_11_2 then
 							return Managers.state.entity:system("projectile_system"):get_indexed_projectile_count(arg_11_2.owner_unit) <= 0
 						end
 
@@ -513,8 +524,9 @@ var_0_0.actions = {
 				},
 				{
 					sub_action = "detonate_one",
-					condition = function(arg_12_0, arg_12_1, arg_12_2)
-						if arg_12_2 then
+					condition = function (arg_12_0, arg_12_1, arg_12_2)
+						-- function 12
+						if not arg_12_2 then
 							return Managers.state.entity:system("projectile_system"):get_indexed_projectile_count(arg_12_2.owner_unit) == 1
 						end
 
@@ -563,7 +575,8 @@ var_0_0.actions = {
 					input = "weapon_reload"
 				}
 			},
-			enter_function = function(arg_13_0, arg_13_1)
+			enter_function = function (arg_13_0, arg_13_1)
+				-- function 13
 				arg_13_1:clear_input_buffer()
 
 				return arg_13_1:reset_release_input()
@@ -613,7 +626,8 @@ var_0_0.actions = {
 					end_time = math.huge
 				}
 			},
-			enter_function = function(arg_14_0, arg_14_1)
+			enter_function = function (arg_14_0, arg_14_1)
+				-- function 14
 				arg_14_1:clear_input_buffer()
 
 				return arg_14_1:reset_release_input()
@@ -651,7 +665,8 @@ var_0_0.actions = {
 					input = "weapon_reload"
 				}
 			},
-			enter_function = function(arg_15_0, arg_15_1)
+			enter_function = function (arg_15_0, arg_15_1)
+				-- function 15
 				arg_15_1:clear_input_buffer()
 
 				return arg_15_1:reset_release_input()
@@ -675,7 +690,8 @@ var_0_0.actions = {
 			uninterruptible = true,
 			anim_event = "cooldown_start",
 			charge_sound_name = "player_combat_weapon_staff_cooldown",
-			anim_end_event_condition_func = function(arg_16_0, arg_16_1)
+			anim_end_event_condition_func = function (arg_16_0, arg_16_1)
+				-- function 16
 				return arg_16_1 ~= "new_interupting_action"
 			end,
 			total_time = math.huge,
@@ -687,7 +703,8 @@ var_0_0.actions = {
 					end_time = math.huge
 				}
 			},
-			enter_function = function(arg_17_0, arg_17_1)
+			enter_function = function (arg_17_0, arg_17_1)
+				-- function 17
 				arg_17_1:reset_release_input()
 				arg_17_1:clear_input_buffer()
 			end,
@@ -699,10 +716,12 @@ var_0_0.actions = {
 					input = "action_wield"
 				}
 			},
-			condition_func = function(arg_18_0, arg_18_1)
+			condition_func = function (arg_18_0, arg_18_1)
+				-- function 18
 				return ScriptUnit.extension(arg_18_0, "overcharge_system"):get_overcharge_value() ~= 0
 			end,
-			chain_condition_func = function(arg_19_0, arg_19_1)
+			chain_condition_func = function (arg_19_0, arg_19_1)
+				-- function 19
 				return ScriptUnit.extension(arg_19_0, "overcharge_system"):get_overcharge_value() ~= 0
 			end
 		}
@@ -713,8 +732,9 @@ var_0_0.actions = {
 			conditional_actions = {
 				{
 					sub_action = "dummy",
-					condition = function(arg_20_0, arg_20_1, arg_20_2)
-						if arg_20_2 then
+					condition = function (arg_20_0, arg_20_1, arg_20_2)
+						-- function 20
+						if not arg_20_2 then
 							return Managers.state.entity:system("projectile_system"):get_indexed_projectile_count(arg_20_2.owner_unit) <= 0
 						end
 
@@ -770,7 +790,8 @@ var_0_0.actions = {
 					end_time = math.huge
 				}
 			},
-			enter_function = function(arg_21_0, arg_21_1)
+			enter_function = function (arg_21_0, arg_21_1)
+				-- function 21
 				arg_21_1:clear_input_buffer()
 
 				return arg_21_1:reset_release_input()
@@ -808,7 +829,8 @@ var_0_0.actions = {
 					input = "weapon_reload"
 				}
 			},
-			enter_function = function(arg_22_0, arg_22_1)
+			enter_function = function (arg_22_0, arg_22_1)
+				-- function 22
 				arg_22_1:clear_input_buffer()
 
 				return arg_22_1:reset_release_input()
@@ -818,15 +840,15 @@ var_0_0.actions = {
 	action_inspect = ActionTemplates.action_inspect,
 	action_wield = ActionTemplates.wield
 }
-var_0_0.default_spread_template = "spear"
-var_0_0.overcharge_data = {
+tbl.default_spread_template = "spear"
+tbl.overcharge_data = {
 	explosion_template = "overcharge_explosion_brw",
 	overcharge_threshold = 10,
 	hit_overcharge_threshold_sound = "ui_special_attack_ready",
 	time_until_overcharge_decreases = 0.5,
 	overcharge_value_decrease_rate = 1
 }
-var_0_0.attack_meta_data = {
+tbl.attack_meta_data = {
 	max_range = 50,
 	charged_attack_action_name = "shoot_charged",
 	can_charge_shot = true,
@@ -855,7 +877,7 @@ var_0_0.attack_meta_data = {
 	},
 	effective_against = bit.bor(BreedCategory.Infantry, BreedCategory.Berserker, BreedCategory.Special, BreedCategory.Armored)
 }
-var_0_0.aim_assist_settings = {
+tbl.aim_assist_settings = {
 	max_range = 50,
 	no_aim_input_multiplier = 0,
 	always_auto_aim = true,
@@ -868,18 +890,18 @@ var_0_0.aim_assist_settings = {
 		skaven_slave = 1
 	}
 }
-var_0_0.right_hand_unit = "units/weapons/player/wpn_brw_skullstaff/wpn_brw_skullstaff"
-var_0_0.right_hand_attachment_node_linking = AttachmentNodeLinking.spear_staff
-var_0_0.left_hand_unit = "units/weapons/player/wpn_necromancy_skull/wpn_necromancy_skull"
-var_0_0.left_hand_attachment_node_linking = AttachmentNodeLinking.necro_skull
-var_0_0.display_unit = "units/weapons/weapon_display/display_staff"
-var_0_0.wield_anim = "to_necro_staff"
-var_0_0.state_machine = "units/beings/player/first_person_base/state_machines/ranged/necro_staff"
-var_0_0.crosshair_style = "arrows"
-var_0_0.buff_type = "RANGED"
-var_0_0.weapon_type = "FIRE_STAFF"
-var_0_0.destroy_indexed_projectiles = true
-var_0_0.buffs = {
+tbl.right_hand_unit = "units/weapons/player/wpn_brw_skullstaff/wpn_brw_skullstaff"
+tbl.right_hand_attachment_node_linking = AttachmentNodeLinking.spear_staff
+tbl.left_hand_unit = "units/weapons/player/wpn_necromancy_skull/wpn_necromancy_skull"
+tbl.left_hand_attachment_node_linking = AttachmentNodeLinking.necro_skull
+tbl.display_unit = "units/weapons/weapon_display/display_staff"
+tbl.wield_anim = "to_necro_staff"
+tbl.state_machine = "units/beings/player/first_person_base/state_machines/ranged/necro_staff"
+tbl.crosshair_style = "arrows"
+tbl.buff_type = "RANGED"
+tbl.weapon_type = "FIRE_STAFF"
+tbl.destroy_indexed_projectiles = true
+tbl.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1
 	},
@@ -887,7 +909,7 @@ var_0_0.buffs = {
 		external_optional_multiplier = 1
 	}
 }
-var_0_0.weapon_diagram = {
+tbl.weapon_diagram = {
 	light_attack = {
 		[DamageTypes.ARMOR_PIERCING] = 2,
 		[DamageTypes.CLEAVE] = 1,
@@ -903,12 +925,12 @@ var_0_0.weapon_diagram = {
 		[DamageTypes.DAMAGE] = 2
 	}
 }
-var_0_0.tooltip_keywords = {
+tbl.tooltip_keywords = {
 	"weapon_keyword_high_damage",
 	"weapon_keyword_charged_attack",
 	"weapon_keyword_damage_over_time"
 }
-var_0_0.tooltip_compare = {
+tbl.tooltip_compare = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -918,7 +940,7 @@ var_0_0.tooltip_compare = {
 		sub_action_name = "shoot_charged"
 	}
 }
-var_0_0.tooltip_detail = {
+tbl.tooltip_detail = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -928,10 +950,10 @@ var_0_0.tooltip_detail = {
 		sub_action_name = "shoot_charged"
 	}
 }
-var_0_0.wwise_dep_right_hand = {
+tbl.wwise_dep_right_hand = {
 	"wwise/staff"
 }
 
 return {
-	staff_necromancy = var_0_0
+	staff_necromancy = tbl
 }

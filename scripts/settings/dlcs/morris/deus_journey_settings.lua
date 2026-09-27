@@ -6,12 +6,19 @@ AvailableJourneyOrder = {
 	"journey_ice",
 	"journey_citadel"
 }
+
+local DeusJourneyCycleGods = DeusJourneyCycleGods
+
 DeusJourneyCycleGods = DeusJourneyCycleGods or {
 	"nurgle",
 	"tzeentch",
 	"khorne",
 	"slaanesh"
 }
+DeusJourneyCycleGods = DeusJourneyCycleGods
+
+local DeusJourneySettings = DeusJourneySettings
+
 DeusJourneySettings = DeusJourneySettings or {
 	journey_ruin = {
 		description = "journey_ruin_desc",
@@ -59,5 +66,6 @@ DeusJourneySettings = DeusJourneySettings or {
 		}
 	}
 }
+DeusJourneySettings = DeusJourneySettings
 DeusJourneySettings.default = table.clone(DeusJourneySettings.journey_ruin)
 DeusJourneySettings.default.default = true

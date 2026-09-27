@@ -1,6 +1,9 @@
 -- chunkname: @scripts/settings/equipment/item_master_list_exported.lua
 
+local ItemMasterList = ItemMasterList
+
 ItemMasterList = ItemMasterList or Script.new_map(4096)
+ItemMasterList = ItemMasterList
 ItemMasterList.skin_dr_default = {
 	description = "description_skin_dr_ranger",
 	temporary_template = "skin_dr_default",

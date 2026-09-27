@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/start_game_view/states/start_game_window_layout_console.lua
 
-local var_0_0 = {
+local tbl = {
 	panel = {
 		ignore_alignment = true,
 		name = "panel",
@@ -67,7 +67,7 @@ local var_0_0 = {
 		class_name = "StartGameWindowLobbyBrowserConsole"
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	{
 		sound_event_enter = "play_gui_lobby_button_00_quickplay",
 		display_name = "start_game_window_adventure_title",
@@ -85,8 +85,9 @@ local var_0_1 = {
 			panel = 1,
 			background = 2
 		},
-		can_add_function = function(arg_1_0)
-			return arg_1_0:is_in_mechanism("adventure")
+		can_add_function = function (self)
+			-- function 1
+			return self:is_in_mechanism("adventure")
 		end
 	},
 	{
@@ -107,8 +108,9 @@ local var_0_1 = {
 			background = 2,
 			additional_settings = 4
 		},
-		can_add_function = function(arg_2_0)
-			return arg_2_0:is_in_mechanism("adventure")
+		can_add_function = function (self)
+			-- function 2
+			return self:is_in_mechanism("adventure")
 		end
 	},
 	{
@@ -129,8 +131,9 @@ local var_0_1 = {
 			background = 2,
 			mutator_summary = 4
 		},
-		can_add_function = function(arg_3_0)
-			return arg_3_0:is_in_mechanism("adventure")
+		can_add_function = function (self)
+			-- function 3
+			return self:is_in_mechanism("adventure")
 		end
 	},
 	{
@@ -150,8 +153,13 @@ local var_0_1 = {
 			panel = 1,
 			background = 2
 		},
-		can_add_function = function(arg_4_0)
-			return arg_4_0:is_in_mechanism("adventure") and arg_4_0:can_use_streaming()
+		can_add_function = function (self)
+			-- function 4
+			local is_in_mechanism = self:is_in_mechanism("adventure")
+
+			is_in_mechanism = not is_in_mechanism and self:can_use_streaming()
+
+			return is_in_mechanism
 		end
 	},
 	{
@@ -169,8 +177,13 @@ local var_0_1 = {
 			panel = 1,
 			background = 2
 		},
-		can_add_function = function(arg_5_0)
-			return arg_5_0:is_in_mechanism("adventure") and not IS_XB1
+		can_add_function = function (self)
+			-- function 5
+			local is_in_mechanism = self:is_in_mechanism("adventure")
+
+			is_in_mechanism = not is_in_mechanism and not IS_XB1
+
+			return is_in_mechanism
 		end
 	},
 	{
@@ -236,7 +249,7 @@ local var_0_1 = {
 		}
 	}
 }
-local var_0_2 = {
+local tbl_3 = {
 	default = {
 		{
 			input_action = "confirm",
@@ -252,16 +265,18 @@ local var_0_2 = {
 			input_action = "right_stick_press",
 			priority = 4,
 			description_text = "input_description_level_preferences",
-			content_check_function = function()
-				return PLATFORM == "xb1" and DLCSettings.quick_play_preferences
+			content_check_function = function ()
+				-- function 6
+				return PLATFORM ~= "xb1" or DLCSettings.quick_play_preferences
 			end
 		},
 		{
 			input_action = "show_gamercard",
 			priority = 5,
 			description_text = "map_friend_button_tooltip",
-			content_check_function = function()
-				return not IS_WINDOWS and not Managers.account:offline_mode()
+			content_check_function = function ()
+				-- function 7
+				return not not IS_WINDOWS or not Managers.account:offline_mode()
 			end
 		}
 	},
@@ -291,8 +306,9 @@ local var_0_2 = {
 			input_action = "show_gamercard",
 			priority = 5,
 			description_text = "map_friend_button_tooltip",
-			content_check_function = function()
-				return not IS_WINDOWS and not Managers.account:offline_mode()
+			content_check_function = function ()
+				-- function 8
+				return not not IS_WINDOWS or not Managers.account:offline_mode()
 			end
 		}
 	},
@@ -340,8 +356,9 @@ local var_0_2 = {
 			input_action = "show_gamercard",
 			priority = 5,
 			description_text = "map_friend_button_tooltip",
-			content_check_function = function()
-				return not IS_WINDOWS and not Managers.account:offline_mode()
+			content_check_function = function ()
+				-- function 9
+				return not not IS_WINDOWS or not Managers.account:offline_mode()
 			end
 		}
 	},
@@ -371,8 +388,9 @@ local var_0_2 = {
 			input_action = "show_gamercard",
 			priority = 5,
 			description_text = "map_friend_button_tooltip",
-			content_check_function = function()
-				return not IS_WINDOWS and not Managers.account:offline_mode()
+			content_check_function = function ()
+				-- function 10
+				return not not IS_WINDOWS or not Managers.account:offline_mode()
 			end
 		}
 	},
@@ -391,8 +409,9 @@ local var_0_2 = {
 			input_action = "show_gamercard",
 			priority = 3,
 			description_text = "map_friend_button_tooltip",
-			content_check_function = function()
-				return not IS_WINDOWS and not Managers.account:offline_mode()
+			content_check_function = function ()
+				-- function 11
+				return not not IS_WINDOWS or not Managers.account:offline_mode()
 			end
 		}
 	},
@@ -411,8 +430,9 @@ local var_0_2 = {
 			input_action = "show_gamercard",
 			priority = 3,
 			description_text = "map_friend_button_tooltip",
-			content_check_function = function()
-				return not IS_WINDOWS and not Managers.account:offline_mode()
+			content_check_function = function ()
+				-- function 12
+				return not not IS_WINDOWS or not Managers.account:offline_mode()
 			end
 		}
 	},
@@ -437,8 +457,9 @@ local var_0_2 = {
 			input_action = "show_gamercard",
 			priority = 4,
 			description_text = "map_friend_button_tooltip",
-			content_check_function = function()
-				return not IS_WINDOWS and not Managers.account:offline_mode()
+			content_check_function = function ()
+				-- function 13
+				return not not IS_WINDOWS or not Managers.account:offline_mode()
 			end
 		},
 		{
@@ -463,8 +484,9 @@ local var_0_2 = {
 			input_action = "show_gamercard",
 			priority = 3,
 			description_text = "map_friend_button_tooltip",
-			content_check_function = function()
-				return not IS_WINDOWS and not Managers.account:offline_mode()
+			content_check_function = function ()
+				-- function 14
+				return not not IS_WINDOWS or not Managers.account:offline_mode()
 			end
 		},
 		{
@@ -483,8 +505,9 @@ local var_0_2 = {
 			input_action = "show_gamercard",
 			priority = 3,
 			description_text = "map_friend_button_tooltip",
-			content_check_function = function()
-				return not IS_WINDOWS and not Managers.account:offline_mode()
+			content_check_function = function ()
+				-- function 15
+				return not not IS_WINDOWS or not Managers.account:offline_mode()
 			end
 		}
 	},
@@ -545,467 +568,483 @@ local var_0_2 = {
 				description_text = "input_description_back"
 			}
 		}
-	},
-	select_area_buy = {
-		ignore_generic_actions = true,
-		actions = {
-			{
-				input_action = "d_horizontal",
-				priority = 1,
-				description_text = "input_description_navigate",
-				ignore_keybinding = true
-			},
-			{
-				input_action = "confirm",
-				priority = 2,
-				description_text = IS_XB1 and "dlc1_4_input_description_storepage" or "buy_now"
-			},
-			{
-				input_action = "back",
-				priority = 3,
-				description_text = "input_description_back"
-			}
-		}
-	},
-	select_area_base = {
-		ignore_generic_actions = true,
-		actions = {
-			{
-				input_action = "d_horizontal",
-				priority = 1,
-				description_text = "input_description_navigate",
-				ignore_keybinding = true
-			},
-			{
-				input_action = "back",
-				priority = 3,
-				description_text = "input_description_back"
-			}
-		}
-	},
-	select_area_confirm = {
-		ignore_generic_actions = true,
-		actions = {
-			{
-				input_action = "d_horizontal",
-				priority = 1,
-				description_text = "input_description_navigate",
-				ignore_keybinding = true
-			},
-			{
-				input_action = "confirm",
-				priority = 2,
-				description_text = "input_description_select"
-			},
-			{
-				input_action = "back",
-				priority = 3,
-				description_text = "input_description_back"
-			}
-		}
-	},
-	select_mission = {
-		ignore_generic_actions = true,
-		actions = {
-			{
-				input_action = "d_pad",
-				priority = 1,
-				description_text = "input_description_navigate",
-				ignore_keybinding = true
-			},
-			{
-				input_action = "back",
-				priority = 3,
-				description_text = "input_description_back"
-			}
-		}
-	},
-	select_mission_confirm = {
-		ignore_generic_actions = true,
-		actions = {
-			{
-				input_action = "d_pad",
-				priority = 1,
-				description_text = "input_description_navigate",
-				ignore_keybinding = true
-			},
-			{
-				input_action = "confirm",
-				priority = 2,
-				description_text = "input_description_select"
-			},
-			{
-				input_action = "back",
-				priority = 3,
-				description_text = "input_description_back"
-			}
-		}
-	},
-	select_heroic_deed = {
-		ignore_generic_actions = true,
-		actions = {
-			{
-				input_action = "d_pad",
-				priority = 1,
-				description_text = "input_description_navigate",
-				ignore_keybinding = true
-			},
-			{
-				input_action = "confirm",
-				priority = 2,
-				description_text = "input_description_select"
-			},
-			{
-				input_action = "back",
-				priority = 3,
-				description_text = "input_description_back"
-			},
-			{
-				input_action = "right_stick_press",
-				priority = 4,
-				description_text = "input_description_mark_delete"
-			},
-			{
-				input_action = "special_1",
-				priority = 5,
-				description_text = "input_description_delete_selection"
-			},
-			{
-				input_action = "refresh",
-				priority = 6,
-				description_text = "input_description_clear_all"
-			}
-		}
-	},
-	play_available = {
-		actions = {
-			{
-				input_action = "refresh",
-				priority = 6,
-				description_text = "input_description_play"
-			}
-		}
-	},
-	play_available_lock = {
-		actions = {
-			{
-				input_action = "refresh",
-				priority = 6,
-				description_text = "input_description_play"
-			},
-			{
-				input_action = "right_stick_press",
-				priority = 7,
-				description_text = "start_game_window_disallow_join"
-			}
-		}
-	},
-	search_available = {
-		actions = {
-			{
-				input_action = "refresh",
-				priority = 6,
-				description_text = "lb_search"
-			}
-		}
-	},
-	cancel_matchmaking = {
-		actions = {
-			{
-				input_action = "refresh",
-				priority = 6,
-				description_text = "cancel_matchmaking"
-			}
-		}
-	},
-	cancel_matchmaking_lock = {
-		actions = {
-			{
-				input_action = "refresh",
-				priority = 6,
-				description_text = "cancel_matchmaking"
-			},
-			{
-				input_action = "right_stick_press",
-				priority = 7,
-				description_text = "start_game_window_disallow_join"
-			}
-		}
-	},
-	set_next_weave_available = {
-		actions = {
-			{
-				input_action = "refresh",
-				priority = 1,
-				description_text = "input_description_play"
-			}
-		}
-	},
-	play_available_set_next_weave_available = {
-		actions = {
-			{
-				input_action = "special_1",
-				priority = 1,
-				description_text = "input_description_set_next_weave"
-			},
-			{
-				input_action = "refresh",
-				priority = 6,
-				description_text = "input_description_play"
-			}
-		}
-	},
-	cancel_available_set_next_weave_available = {
-		actions = {
-			{
-				input_action = "special_1",
-				priority = 1,
-				description_text = "input_description_set_next_weave"
-			},
-			{
-				input_action = "refresh",
-				priority = 6,
-				description_text = "cancel_matchmaking"
-			}
-		}
-	},
-	set_next_weave_available = {
-		actions = {
-			{
-				input_action = "special_1",
-				priority = 1,
-				description_text = "input_description_set_next_weave"
-			}
-		}
-	},
-	set_next_weave_available_lock = {
-		actions = {
-			{
-				input_action = "refresh",
-				priority = 1,
-				description_text = "input_description_play"
-			},
-			{
-				input_action = "right_stick_press",
-				priority = 7,
-				description_text = "start_game_window_disallow_join"
-			}
-		}
-	},
-	play_available_set_next_weave_available_lock = {
-		actions = {
-			{
-				input_action = "special_1",
-				priority = 1,
-				description_text = "input_description_set_next_weave"
-			},
-			{
-				input_action = "refresh",
-				priority = 6,
-				description_text = "input_description_play"
-			},
-			{
-				input_action = "right_stick_press",
-				priority = 7,
-				description_text = "start_game_window_disallow_join"
-			}
-		}
-	},
-	cancel_available_set_next_weave_available_lock = {
-		actions = {
-			{
-				input_action = "special_1",
-				priority = 1,
-				description_text = "input_description_set_next_weave"
-			},
-			{
-				input_action = "refresh",
-				priority = 6,
-				description_text = "cancel_matchmaking"
-			},
-			{
-				input_action = "right_stick_press",
-				priority = 7,
-				description_text = "start_game_window_disallow_join"
-			}
-		}
-	},
-	set_next_weave_available_lock = {
-		actions = {
-			{
-				input_action = "special_1",
-				priority = 1,
-				description_text = "input_description_set_next_weave"
-			},
-			{
-				input_action = "right_stick_press",
-				priority = 7,
-				description_text = "start_game_window_disallow_join"
-			}
-		}
-	},
-	default_lobby_browser = {
+	}
+}
+local tbl_4 = {
+	ignore_generic_actions = true
+}
+local tbl_5 = {
+	{
+		input_action = "d_horizontal",
+		priority = 1,
+		description_text = "input_description_navigate",
+		ignore_keybinding = true
+	}
+}
+local tbl_6 = {
+	input_action = "confirm",
+	priority = 2
+}
+local flag
+
+flag = not IS_XB1 and "dlc1_4_input_description_storepage" and "buy_now"
+tbl_6.description_text = flag
+tbl_5[2] = tbl_6
+tbl_5[3] = {
+	input_action = "back",
+	priority = 3,
+	description_text = "input_description_back"
+}
+tbl_4.actions = tbl_5
+tbl_3.select_area_buy = tbl_4
+tbl_3.select_area_base = {
+	ignore_generic_actions = true,
+	actions = {
 		{
-			input_action = "left_stick",
+			input_action = "d_horizontal",
 			priority = 1,
 			description_text = "input_description_navigate",
 			ignore_keybinding = true
 		},
 		{
 			input_action = "back",
-			priority = 10,
-			description_text = "input_description_close"
+			priority = 3,
+			description_text = "input_description_back"
 		}
-	},
-	filter = {
-		actions = {
-			{
-				input_action = "special_1",
-				priority = 2,
-				description_text = "menu_description_refresh"
-			},
-			{
-				input_action = "left_stick_press",
-				priority = 3,
-				description_text = "lb_reset_filters"
-			},
-			{
-				input_action = "right_stick_press",
-				priority = 4,
-				description_text = "input_description_filter"
-			}
+	}
+}
+tbl_3.select_area_confirm = {
+	ignore_generic_actions = true,
+	actions = {
+		{
+			input_action = "d_horizontal",
+			priority = 1,
+			description_text = "input_description_navigate",
+			ignore_keybinding = true
+		},
+		{
+			input_action = "confirm",
+			priority = 2,
+			description_text = "input_description_select"
+		},
+		{
+			input_action = "back",
+			priority = 3,
+			description_text = "input_description_back"
 		}
-	},
-	join_filter = {
-		actions = {
-			{
-				input_action = "special_1",
-				priority = 2,
-				description_text = "menu_description_refresh"
-			},
-			{
-				input_action = "left_stick_press",
-				priority = 3,
-				description_text = "lb_reset_filters"
-			},
-			{
-				input_action = "right_stick_press",
-				priority = 4,
-				description_text = "input_description_filter"
-			},
-			{
-				input_action = "refresh",
-				priority = 5,
-				description_text = "join_menu_button_name"
-			}
+	}
+}
+tbl_3.select_mission = {
+	ignore_generic_actions = true,
+	actions = {
+		{
+			input_action = "d_pad",
+			priority = 1,
+			description_text = "input_description_navigate",
+			ignore_keybinding = true
+		},
+		{
+			input_action = "back",
+			priority = 3,
+			description_text = "input_description_back"
 		}
+	}
+}
+tbl_3.select_mission_confirm = {
+	ignore_generic_actions = true,
+	actions = {
+		{
+			input_action = "d_pad",
+			priority = 1,
+			description_text = "input_description_navigate",
+			ignore_keybinding = true
+		},
+		{
+			input_action = "confirm",
+			priority = 2,
+			description_text = "input_description_select"
+		},
+		{
+			input_action = "back",
+			priority = 3,
+			description_text = "input_description_back"
+		}
+	}
+}
+tbl_3.select_heroic_deed = {
+	ignore_generic_actions = true,
+	actions = {
+		{
+			input_action = "d_pad",
+			priority = 1,
+			description_text = "input_description_navigate",
+			ignore_keybinding = true
+		},
+		{
+			input_action = "confirm",
+			priority = 2,
+			description_text = "input_description_select"
+		},
+		{
+			input_action = "back",
+			priority = 3,
+			description_text = "input_description_back"
+		},
+		{
+			input_action = "right_stick_press",
+			priority = 4,
+			description_text = "input_description_mark_delete"
+		},
+		{
+			input_action = "special_1",
+			priority = 5,
+			description_text = "input_description_delete_selection"
+		},
+		{
+			input_action = "refresh",
+			priority = 6,
+			description_text = "input_description_clear_all"
+		}
+	}
+}
+tbl_3.play_available = {
+	actions = {
+		{
+			input_action = "refresh",
+			priority = 6,
+			description_text = "input_description_play"
+		}
+	}
+}
+tbl_3.play_available_lock = {
+	actions = {
+		{
+			input_action = "refresh",
+			priority = 6,
+			description_text = "input_description_play"
+		},
+		{
+			input_action = "right_stick_press",
+			priority = 7,
+			description_text = "start_game_window_disallow_join"
+		}
+	}
+}
+tbl_3.search_available = {
+	actions = {
+		{
+			input_action = "refresh",
+			priority = 6,
+			description_text = "lb_search"
+		}
+	}
+}
+tbl_3.cancel_matchmaking = {
+	actions = {
+		{
+			input_action = "refresh",
+			priority = 6,
+			description_text = "cancel_matchmaking"
+		}
+	}
+}
+tbl_3.cancel_matchmaking_lock = {
+	actions = {
+		{
+			input_action = "refresh",
+			priority = 6,
+			description_text = "cancel_matchmaking"
+		},
+		{
+			input_action = "right_stick_press",
+			priority = 7,
+			description_text = "start_game_window_disallow_join"
+		}
+	}
+}
+tbl_3.set_next_weave_available = {
+	actions = {
+		{
+			input_action = "refresh",
+			priority = 1,
+			description_text = "input_description_play"
+		}
+	}
+}
+tbl_3.play_available_set_next_weave_available = {
+	actions = {
+		{
+			input_action = "special_1",
+			priority = 1,
+			description_text = "input_description_set_next_weave"
+		},
+		{
+			input_action = "refresh",
+			priority = 6,
+			description_text = "input_description_play"
+		}
+	}
+}
+tbl_3.cancel_available_set_next_weave_available = {
+	actions = {
+		{
+			input_action = "special_1",
+			priority = 1,
+			description_text = "input_description_set_next_weave"
+		},
+		{
+			input_action = "refresh",
+			priority = 6,
+			description_text = "cancel_matchmaking"
+		}
+	}
+}
+tbl_3.set_next_weave_available = {
+	actions = {
+		{
+			input_action = "special_1",
+			priority = 1,
+			description_text = "input_description_set_next_weave"
+		}
+	}
+}
+tbl_3.set_next_weave_available_lock = {
+	actions = {
+		{
+			input_action = "refresh",
+			priority = 1,
+			description_text = "input_description_play"
+		},
+		{
+			input_action = "right_stick_press",
+			priority = 7,
+			description_text = "start_game_window_disallow_join"
+		}
+	}
+}
+tbl_3.play_available_set_next_weave_available_lock = {
+	actions = {
+		{
+			input_action = "special_1",
+			priority = 1,
+			description_text = "input_description_set_next_weave"
+		},
+		{
+			input_action = "refresh",
+			priority = 6,
+			description_text = "input_description_play"
+		},
+		{
+			input_action = "right_stick_press",
+			priority = 7,
+			description_text = "start_game_window_disallow_join"
+		}
+	}
+}
+tbl_3.cancel_available_set_next_weave_available_lock = {
+	actions = {
+		{
+			input_action = "special_1",
+			priority = 1,
+			description_text = "input_description_set_next_weave"
+		},
+		{
+			input_action = "refresh",
+			priority = 6,
+			description_text = "cancel_matchmaking"
+		},
+		{
+			input_action = "right_stick_press",
+			priority = 7,
+			description_text = "start_game_window_disallow_join"
+		}
+	}
+}
+tbl_3.set_next_weave_available_lock = {
+	actions = {
+		{
+			input_action = "special_1",
+			priority = 1,
+			description_text = "input_description_set_next_weave"
+		},
+		{
+			input_action = "right_stick_press",
+			priority = 7,
+			description_text = "start_game_window_disallow_join"
+		}
+	}
+}
+tbl_3.default_lobby_browser = {
+	{
+		input_action = "left_stick",
+		priority = 1,
+		description_text = "input_description_navigate",
+		ignore_keybinding = true
 	},
-	set_filter = {
-		actions = {
-			{
-				input_action = "confirm",
-				priority = 2,
-				description_text = "input_description_select"
-			}
+	{
+		input_action = "back",
+		priority = 10,
+		description_text = "input_description_close"
+	}
+}
+tbl_3.filter = {
+	actions = {
+		{
+			input_action = "special_1",
+			priority = 2,
+			description_text = "menu_description_refresh"
+		},
+		{
+			input_action = "left_stick_press",
+			priority = 3,
+			description_text = "lb_reset_filters"
+		},
+		{
+			input_action = "right_stick_press",
+			priority = 4,
+			description_text = "input_description_filter"
+		}
+	}
+}
+tbl_3.join_filter = {
+	actions = {
+		{
+			input_action = "special_1",
+			priority = 2,
+			description_text = "menu_description_refresh"
+		},
+		{
+			input_action = "left_stick_press",
+			priority = 3,
+			description_text = "lb_reset_filters"
+		},
+		{
+			input_action = "right_stick_press",
+			priority = 4,
+			description_text = "input_description_filter"
+		},
+		{
+			input_action = "refresh",
+			priority = 5,
+			description_text = "join_menu_button_name"
+		}
+	}
+}
+tbl_3.set_filter = {
+	actions = {
+		{
+			input_action = "confirm",
+			priority = 2,
+			description_text = "input_description_select"
 		}
 	}
 }
 
-DLCUtils.merge("start_game_layout_console_generic_inputs", var_0_2)
+DLCUtils.merge("start_game_layout_console_generic_inputs", tbl_3)
 
-local var_0_3 = {
+local tbl_7 = {
 	adventure = {
 		game_mode_type = "custom",
 		difficulty_index_getter_name = "completed_level_difficulty_index",
 		layout_name = "area_selection"
 	}
 }
-local var_0_4 = {
+local tbl_8 = {
 	adventure = {
 		game_mode_type = "twitch",
 		difficulty_index_getter_name = "completed_level_difficulty_index",
 		layout_name = "area_selection"
 	}
 }
-local var_0_5 = {
+local tbl_9 = {
 	adventure = {
 		game_mode_type = "adventure",
 		layout_name = "area_selection"
 	}
 }
-local var_0_6 = {}
+local tbl_10 = {}
 
-DLCUtils.map("start_game_window_layout_console", function(arg_16_0)
-	local var_16_0 = arg_16_0.windows
+DLCUtils.map("start_game_window_layout_console", function (self)
+	-- function 16
+	local windows = self.windows
 
-	if var_16_0 then
-		for iter_16_0, iter_16_1 in pairs(var_16_0) do
-			var_0_0[iter_16_0] = iter_16_1
+	if not windows then
+		for k, v in pairs(windows) do
+			tbl[k] = v
 		end
 	end
 
-	local var_16_1 = arg_16_0.window_layouts
+	local window_layouts = self.window_layouts
 
-	if var_16_1 then
-		for iter_16_2 = 1, #var_16_1 do
-			var_0_1[#var_0_1 + 1] = var_16_1[iter_16_2]
+	if not window_layouts then
+		for k_2 = 1, #window_layouts do
+			tbl_2[#tbl_2 + 1] = window_layouts[k_2]
 		end
 	end
 
-	local var_16_2 = arg_16_0.mechanism_custom_game
+	local mechanism_custom_game = self.mechanism_custom_game
 
-	if var_16_2 then
-		local var_16_3 = var_16_2.mechanism_name
+	if not mechanism_custom_game then
+		local mechanism_name = mechanism_custom_game.mechanism_name
 
-		fassert(var_0_3[var_16_3] == nil, "Trying to set custom_game for the mechanism '%s' which is already set.", var_16_3)
+		fassert(tbl_7[mechanism_name] == nil, "Trying to set custom_game for the mechanism '%s' which is already set.", mechanism_name)
 
-		var_0_3[var_16_3] = var_16_2
+		tbl_7[mechanism_name] = mechanism_custom_game
 	end
 
-	local var_16_4 = arg_16_0.mechanism_twitch
+	local mechanism_twitch = self.mechanism_twitch
 
-	if var_16_4 then
-		local var_16_5 = var_16_4.mechanism_name
+	if not mechanism_twitch then
+		local mechanism_name_2 = mechanism_twitch.mechanism_name
 
-		fassert(var_0_4[var_16_5] == nil, "Trying to set twitch for the mechanism '%s' which is already set.", var_16_5)
+		fassert(tbl_8[mechanism_name_2] == nil, "Trying to set twitch for the mechanism '%s' which is already set.", mechanism_name_2)
 
-		var_0_4[var_16_5] = var_16_4
+		tbl_8[mechanism_name_2] = mechanism_twitch
 	end
 
-	local var_16_6 = arg_16_0.mechanism_quickplay
+	local mechanism_quickplay = self.mechanism_quickplay
 
-	if var_16_6 then
-		local var_16_7 = var_16_6.mechanism_name
+	if not mechanism_quickplay then
+		local mechanism_name_3 = mechanism_quickplay.mechanism_name
 
-		fassert(var_0_5[var_16_7] == nil, "Trying to set twitch for the mechanism '%s' which is already set.", var_16_7)
+		fassert(tbl_9[mechanism_name_3] == nil, "Trying to set twitch for the mechanism '%s' which is already set.", mechanism_name_3)
 
-		var_0_5[var_16_7] = var_16_6
+		tbl_9[mechanism_name_3] = mechanism_quickplay
 	end
 end)
-DLCUtils.merge("start_game_save_data_table_map_console", var_0_6)
+DLCUtils.merge("start_game_save_data_table_map_console", tbl_10)
 
-local var_0_7 = math.huge
+local huge = math.huge
 
-table.sort(var_0_1, function(arg_17_0, arg_17_1)
-	return (arg_17_0.panel_sorting or var_0_7) < (arg_17_1.panel_sorting or var_0_7)
+table.sort(tbl_2, function (self, arg_17_1)
+	-- function 17
+	local panel_sorting = self.panel_sorting
+
+	panel_sorting = panel_sorting or huge
+
+	local panel_sorting_2 = arg_17_1.panel_sorting
+
+	panel_sorting_2 = panel_sorting_2 or huge
+
+	return panel_sorting < panel_sorting_2
 end)
 
-local var_0_8 = {}
+local tbl_11 = {}
 
-for iter_0_0, iter_0_1 in pairs(AreaSettings) do
-	var_0_8[iter_0_0] = iter_0_1.video_settings
+for k, v in pairs(AreaSettings) do
+	tbl_11[k] = v.video_settings
 end
 
-local var_0_9 = 5
+local num = 5
 
 return {
-	max_active_windows = var_0_9,
-	windows = var_0_0,
-	window_layouts = var_0_1,
-	generic_input_actions = var_0_2,
-	video_resources = var_0_8,
-	mechanism_custom_game_settings = var_0_3,
-	mechanism_twitch_settings = var_0_4,
-	mechanism_quickplay_settings = var_0_5,
-	save_data_table_maps = var_0_6
+	max_active_windows = num,
+	windows = tbl,
+	window_layouts = tbl_2,
+	generic_input_actions = tbl_3,
+	video_resources = tbl_11,
+	mechanism_custom_game_settings = tbl_7,
+	mechanism_twitch_settings = tbl_8,
+	mechanism_quickplay_settings = tbl_9,
+	save_data_table_maps = tbl_10
 }

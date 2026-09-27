@@ -1,733 +1,837 @@
 -- chunkname: @scripts/ui/views/start_game_view/windows/start_game_window_area_selection_console_v2.lua
 
 local var_0_0 = local_require("scripts/ui/views/start_game_view/windows/definitions/start_game_window_area_selection_console_v2_definitions")
-local var_0_1 = var_0_0.widgets
-local var_0_2 = var_0_0.area_widgets
-local var_0_3 = var_0_0.scenegraph_definition
-local var_0_4 = var_0_0.animation_definitions
-local var_0_5 = true
+local widgets = var_0_0.widgets
+local area_widgets = var_0_0.area_widgets
+local scenegraph_definition = var_0_0.scenegraph_definition
+local animation_definitions = var_0_0.animation_definitions
+local flag = true
 
 StartGameWindowAreaSelectionConsoleV2 = class(StartGameWindowAreaSelectionConsoleV2)
 StartGameWindowAreaSelectionConsoleV2.NAME = "StartGameWindowAreaSelectionConsoleV2"
 
-function StartGameWindowAreaSelectionConsoleV2.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowAreaSelectionConsoleV2.on_enter = function (self, arg_1_1, arg_1_2)
+	-- function 1
 	print("[StartGameWindow] Enter Substate StartGameWindowAreaSelectionConsoleV2")
 
-	arg_1_0.parent = arg_1_1.parent
+	self.parent = arg_1_1.parent
 
-	local var_1_0 = arg_1_1.ingame_ui_context
+	local ingame_ui_context = arg_1_1.ingame_ui_context
 
-	arg_1_0.ui_renderer = var_1_0.ui_renderer
-	arg_1_0.ui_top_renderer = var_1_0.ui_top_renderer
-	arg_1_0.input_manager = var_1_0.input_manager
-	arg_1_0.statistics_db = var_1_0.statistics_db
-	arg_1_0.world_manager = var_1_0.world_manager
-	arg_1_0.render_settings = {
+	self.ui_renderer = ingame_ui_context.ui_renderer
+	self.ui_top_renderer = ingame_ui_context.ui_top_renderer
+	self.input_manager = ingame_ui_context.input_manager
+	self.statistics_db = ingame_ui_context.statistics_db
+	self.world_manager = ingame_ui_context.world_manager
+	self.render_settings = {
 		snap_pixel_positions = true
 	}
-	arg_1_0._has_exited = false
-	arg_1_0._params = arg_1_1
-	arg_1_0._offset = arg_1_2
+	self._has_exited = false
+	self._params = arg_1_1
+	self._offset = arg_1_2
 
-	local var_1_1 = Managers.player
+	local player = Managers.player
 
-	arg_1_0._stats_id = var_1_1:local_player():stats_id()
-	arg_1_0.player_manager = var_1_1
-	arg_1_0.peer_id = var_1_0.peer_id
-	arg_1_0._animations = {}
-	arg_1_0._ui_animations = {}
-	arg_1_0._ui_animation_callbacks = {}
+	self._stats_id = player:local_player():stats_id()
+	self.player_manager = player
+	self.peer_id = ingame_ui_context.peer_id
+	self._animations = {}
+	self._ui_animations = {}
+	self._ui_animation_callbacks = {}
 
-	arg_1_0:create_ui_elements(arg_1_1, arg_1_2)
+	self:create_ui_elements(arg_1_1, arg_1_2)
 
-	arg_1_0._area_unavailable = true
+	self._area_unavailable = true
 
-	arg_1_0.parent:set_input_description("select_area_confirm")
-	arg_1_0:_setup_area_widgets()
-	arg_1_0:_update_area_option()
+	self.parent:set_input_description("select_area_confirm")
+	self:_setup_area_widgets()
+	self:_update_area_option()
 end
 
-function StartGameWindowAreaSelectionConsoleV2.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
-	local var_2_0 = UISceneGraph.init_scenegraph(var_0_3)
+StartGameWindowAreaSelectionConsoleV2.create_ui_elements = function (self, arg_2_1, arg_2_2)
+	-- function 2
+	local init_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	arg_2_0.ui_scenegraph = var_2_0
+	self.ui_scenegraph = init_scenegraph
 
-	local var_2_1 = {}
-	local var_2_2 = {}
+	local tbl = {}
+	local tbl_2 = {}
 
-	for iter_2_0, iter_2_1 in pairs(var_0_1) do
-		local var_2_3 = UIWidget.init(iter_2_1)
+	for k, v in pairs(widgets) do
+		local var_2_3 = UIWidget.init(v)
 
-		var_2_1[#var_2_1 + 1] = var_2_3
-		var_2_2[iter_2_0] = var_2_3
+		tbl[#tbl + 1] = var_2_3
+		tbl_2[k] = var_2_3
 	end
 
-	arg_2_0._widgets = var_2_1
-	arg_2_0._widgets_by_name = var_2_2
+	self._widgets = tbl
+	self._widgets_by_name = tbl_2
 
-	local var_2_4 = {}
-	local var_2_5 = {}
+	local tbl_3 = {}
+	local tbl_4 = {}
 	local var_2_6 = UIWidget.init(var_0_0.main_campaign_widget)
 
-	var_2_4[#var_2_4 + 1] = var_2_6
-	var_2_5.main_campaign = var_2_6
+	tbl_3[#tbl_3 + 1] = var_2_6
+	tbl_4.main_campaign = var_2_6
 
-	for iter_2_2, iter_2_3 in pairs(var_0_2) do
-		local var_2_7 = UIWidget.init(iter_2_3)
+	for k_2, v_2 in pairs(area_widgets) do
+		local var_2_7 = UIWidget.init(v_2)
 
-		var_2_4[#var_2_4 + 1] = var_2_7
-		var_2_5[iter_2_2] = var_2_7
+		tbl_3[#tbl_3 + 1] = var_2_7
+		tbl_4[k_2] = var_2_7
 	end
 
-	arg_2_0._area_widgets = var_2_4
-	arg_2_0._area_widgets_by_name = var_2_5
-	arg_2_0._level_image_widgets = {}
+	self._area_widgets = tbl_3
+	self._area_widgets_by_name = tbl_4
+	self._level_image_widgets = {}
 
-	UIRenderer.clear_scenegraph_queue(arg_2_0.ui_top_renderer)
+	UIRenderer.clear_scenegraph_queue(self.ui_top_renderer)
 
-	arg_2_0.ui_animator = UIAnimator:new(var_2_0, var_0_4)
+	self.ui_animator = UIAnimator:new(init_scenegraph, animation_definitions)
 
-	if arg_2_2 then
-		local var_2_8 = var_2_0.window.local_position
+	if not arg_2_2 then
+		local local_position = init_scenegraph.window.local_position
 
-		var_2_8[1] = var_2_8[1] + arg_2_2[1]
-		var_2_8[2] = var_2_8[2] + arg_2_2[2]
-		var_2_8[3] = var_2_8[3] + arg_2_2[3]
+		local_position[1] = local_position[1] + arg_2_2[1]
+		local_position[2] = local_position[2] + arg_2_2[2]
+		local_position[3] = local_position[3] + arg_2_2[3]
 	end
 end
 
-function StartGameWindowAreaSelectionConsoleV2._setup_area_widgets(arg_3_0)
-	local var_3_0 = {}
-	local var_3_1 = var_0_0.grid_settings[1] * var_0_0.grid_settings[2]
+StartGameWindowAreaSelectionConsoleV2._setup_area_widgets = function (self)
+	-- function 3
+	local tbl = {}
+	local num = var_0_0.grid_settings[1] * var_0_0.grid_settings[2]
 
-	for iter_3_0, iter_3_1 in pairs(AreaSettings) do
-		if not iter_3_1.exclude_from_area_selection then
-			var_3_0[#var_3_0 + 1] = iter_3_1
+	for k, v in pairs(AreaSettings) do
+		if not v.exclude_from_area_selection then
+			tbl[#tbl + 1] = v
 		end
 
-		if #var_3_0 == var_3_1 then
+		if #tbl == num then
 			break
 		end
 	end
 
-	local function var_3_2(arg_4_0, arg_4_1)
-		return arg_4_0.sort_order < arg_4_1.sort_order
+	local function fn(self, arg_4_1)
+		-- function 4
+		return self.sort_order < arg_4_1.sort_order
 	end
 
-	table.sort(var_3_0, var_3_2)
+	table.sort(tbl, fn)
 
-	local var_3_3 = #var_3_0
-	local var_3_4 = var_0_3.area_root_1.size[1]
-	local var_3_5 = 30
-	local var_3_6 = -705
-	local var_3_7 = 280
-	local var_3_8 = var_3_7
-	local var_3_9 = var_0_0.grid_settings
-	local var_3_10 = {}
-	local var_3_11 = arg_3_0.statistics_db
-	local var_3_12 = arg_3_0._stats_id
-	local var_3_13 = {}
+	local count = #tbl
+	local var_3_4 = scenegraph_definition.area_root_1.size[1]
+	local num_2 = 30
+	local num_3 = -705
+	local num_4 = 280
+	local var_3_8 = num_4
+	local grid_settings = var_0_0.grid_settings
+	local tbl_2 = {}
+	local statistics_db = self.statistics_db
+	local _stats_id = self._stats_id
+	local tbl_3 = {}
 
-	for iter_3_2 = 1, var_3_3 do
-		local var_3_14 = var_3_0[iter_3_2]
-		local var_3_15 = iter_3_2 == 1 and arg_3_0._widgets_by_name.main_campaign or arg_3_0._area_widgets[iter_3_2]
+	for k_2 = 1, count do
+		local var_3_14 = tbl[k_2]
+		local main_campaign
 
-		var_3_13[iter_3_2] = var_3_15
+		if k_2 == 1 then
+			main_campaign = self._widgets_by_name.main_campaign
 
-		local var_3_16 = var_3_14.level_image
-		local var_3_17 = var_3_15.content
-		local var_3_18 = var_3_15.style
-
-		var_3_17.icon = var_3_16
-
-		local var_3_19 = true
-		local var_3_20 = var_3_14.dlc_name
-
-		if var_3_20 then
-			var_3_19 = Managers.unlock:is_dlc_unlocked(var_3_20)
-		end
-
-		var_3_17.area_name, var_3_17.locked = var_3_14.name, not var_3_19
-		var_3_17.area_desc = var_3_14.long_description_text or arg_3_0:_create_random_desc()
-
-		local var_3_21 = math.huge
-		local var_3_22 = var_3_14.acts
-
-		for iter_3_3 = 1, #var_3_22 do
-			local var_3_23 = var_3_22[iter_3_3]
-			local var_3_24 = LevelUnlockUtils.highest_completed_difficulty_index_by_act(var_3_11, var_3_12, var_3_23)
-
-			if var_3_24 < var_3_21 then
-				var_3_21 = var_3_24
+			if not main_campaign then
+				-- Nothing
 			end
 		end
 
-		var_3_17.frame = UIWidgetUtils.get_level_frame_by_difficulty_index(var_3_21)
+		main_campaign = self._area_widgets[k_2]
 
-		local var_3_25 = var_3_15.offset
+		::label_3_0::
 
-		if iter_3_2 == 1 then
-			local var_3_26 = math.floor(math.max(0, var_3_3 - 2) / var_3_9[1])
+		tbl_3[k_2] = main_campaign
 
-			var_3_25[1] = var_3_6
-			var_3_25[2] = -var_3_26 * (var_3_4 + var_3_5) * 0.5
-			var_3_18.divider.texture_size[2] = (var_3_26 + 1) * (var_3_4 + var_3_5)
-			var_3_10[iter_3_2] = {}
-			var_3_10[iter_3_2][#var_3_10[iter_3_2] + 1] = var_3_15
+		local level_image = var_3_14.level_image
+		local content = main_campaign.content
+		local style = main_campaign.style
+
+		content.icon = level_image
+
+		local flag = true
+		local dlc_name = var_3_14.dlc_name
+
+		if not dlc_name then
+			flag = Managers.unlock:is_dlc_unlocked(dlc_name)
+		end
+
+		content.area_name, content.locked = var_3_14.name, not flag
+
+		local long_description_text = var_3_14.long_description_text
+
+		long_description_text = long_description_text or self:_create_random_desc()
+		content.area_desc = long_description_text
+
+		local huge = math.huge
+		local acts = var_3_14.acts
+
+		for l = 1, #acts do
+			local var_3_24 = acts[l]
+			local highest_completed_difficulty_index_by_act = LevelUnlockUtils.highest_completed_difficulty_index_by_act(statistics_db, _stats_id, var_3_24)
+
+			if highest_completed_difficulty_index_by_act < huge then
+				huge = highest_completed_difficulty_index_by_act
+			end
+		end
+
+		content.frame = UIWidgetUtils.get_level_frame_by_difficulty_index(huge)
+
+		local offset = main_campaign.offset
+
+		if k_2 == 1 then
+			local floor = math.floor(math.max(0, count - 2) / grid_settings[1])
+
+			offset[1] = num_3
+			offset[2] = -floor * (var_3_4 + num_2) * 0.5
+			style.divider.texture_size[2] = (floor + 1) * (var_3_4 + num_2)
+			tbl_2[k_2] = {}
+			tbl_2[k_2][#tbl_2[k_2] + 1] = main_campaign
 		else
-			local var_3_27 = (iter_3_2 - 2) % var_3_9[1]
-			local var_3_28 = math.floor((iter_3_2 - 2) / var_3_9[1])
+			local num_5 = (k_2 - 2) % grid_settings[1]
+			local floor_2 = math.floor((k_2 - 2) / grid_settings[1])
 
-			var_3_25[1] = var_3_6 + var_3_27 * (var_3_4 + var_3_5) + var_3_7 * math.sign(iter_3_2 - 1)
-			var_3_25[2] = -var_3_28 * (var_3_4 + var_3_5)
-			var_3_8 = var_3_8 + var_3_4 + var_3_5
+			offset[1] = num_3 + num_5 * (var_3_4 + num_2) + num_4 * math.sign(k_2 - 1)
+			offset[2] = -floor_2 * (var_3_4 + num_2)
+			var_3_8 = var_3_8 + var_3_4 + num_2
 
-			local var_3_29 = 2 + (iter_3_2 - 2) % var_3_9[1]
+			local num_6 = 2 + (k_2 - 2) % grid_settings[1]
+			local var_3_31 = tbl_2[num_6]
 
-			var_3_10[var_3_29] = var_3_10[var_3_29] or {}
-			var_3_10[var_3_29][#var_3_10[var_3_29] + 1] = var_3_15
+			var_3_31 = var_3_31 or {}
+			tbl_2[num_6] = var_3_31
+			tbl_2[num_6][#tbl_2[num_6] + 1] = main_campaign
 		end
 	end
 
-	arg_3_0._active_area_widgets = var_3_13
-	arg_3_0._selection_grid = var_3_10
-	arg_3_0._selected_grid_index = {
+	self._active_area_widgets = tbl_3
+	self._selection_grid = tbl_2
+	self._selected_grid_index = {
 		1,
 		1
 	}
 end
 
-function StartGameWindowAreaSelectionConsoleV2._create_random_desc(arg_5_0)
-	local var_5_0 = 1 + Math.random(5)
-	local var_5_1 = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut fringilla in nulla eu rutrum. "
-	local var_5_2 = ""
+StartGameWindowAreaSelectionConsoleV2._create_random_desc = function (arg_5_0)
+	-- function 5
+	local num = 1 + Math.random(5)
+	local str = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut fringilla in nulla eu rutrum. "
+	local str_2 = ""
 
-	for iter_5_0 = 1, var_5_0 do
-		var_5_2 = var_5_2 .. var_5_1
+	for i = 1, num do
+		str_2 = str_2 .. str
 	end
 
-	return var_5_2
+	return str_2
 end
 
-function StartGameWindowAreaSelectionConsoleV2._select_area_by_name(arg_6_0, arg_6_1)
-	local var_6_0 = arg_6_0._selection_grid
-	local var_6_1 = " "
-	local var_6_2 = arg_6_0._selected_grid_index
+StartGameWindowAreaSelectionConsoleV2._select_area_by_name = function (self, arg_6_1)
+	-- function 6
+	local _selection_grid = self._selection_grid
+	local str = " "
+	local _selected_grid_index = self._selected_grid_index
 
-	if var_6_0 then
-		for iter_6_0 = 1, #var_6_0 do
-			local var_6_3 = var_6_0[iter_6_0]
+	if not _selection_grid then
+		for i = 1, #_selection_grid do
+			local var_6_3 = _selection_grid[i]
 
-			for iter_6_1 = 1, #var_6_3 do
-				local var_6_4 = var_6_3[iter_6_1]
-				local var_6_5 = var_6_4.content
-				local var_6_6 = var_6_5.area_name == arg_6_1
+			for j = 1, #var_6_3 do
+				local var_6_4 = var_6_3[j]
+				local content = var_6_4.content
+				local flag = content.area_name == arg_6_1
 
-				var_6_4.content.button_hotspot.is_selected = var_6_6
-				var_6_2 = var_6_6 and {
-					iter_6_0,
-					iter_6_1
-				} or var_6_2
-				var_6_1 = var_6_6 and var_6_5.area_desc or var_6_1
+				var_6_4.content.button_hotspot.is_selected = flag
+				_selected_grid_index = not flag and {
+					i,
+					j
+				} and _selected_grid_index
+				str = not flag and content.area_desc and str
 			end
 		end
 	end
 
-	arg_6_0._selected_area_name = arg_6_1
-	arg_6_0._selected_grid_index = var_6_2
+	self._selected_area_name = arg_6_1
+	self._selected_grid_index = _selected_grid_index
 
-	arg_6_0:_set_area_presentation_info(arg_6_1, var_6_1)
+	self:_set_area_presentation_info(arg_6_1, str)
 
-	arg_6_0._area_unavailable = arg_6_1 == nil
+	self._area_unavailable = arg_6_1 == nil
 end
 
-function StartGameWindowAreaSelectionConsoleV2._set_area_presentation_info(arg_7_0, arg_7_1, arg_7_2)
-	local var_7_0 = ""
-	local var_7_1 = ""
-	local var_7_2 = ""
-	local var_7_3 = true
-	local var_7_4 = Managers.player:local_player():stats_id()
-	local var_7_5 = Managers.player:statistics_db()
+StartGameWindowAreaSelectionConsoleV2._set_area_presentation_info = function (self, arg_7_1, arg_7_2)
+	-- function 7
+	local str = ""
+	local str_2 = ""
+	local str_3 = ""
+	local flag_2 = true
+	local stats_id = Managers.player:local_player():stats_id()
+	local statistics_db = Managers.player:statistics_db()
 	local var_7_6 = AreaSettings[arg_7_1]
 
-	if var_7_6 then
-		local var_7_7 = var_7_6.dlc_name
+	if not var_7_6 then
+		local dlc_name = var_7_6.dlc_name
 
-		if var_7_7 then
-			var_7_3 = Managers.unlock:is_dlc_unlocked(var_7_7)
+		if not dlc_name then
+			flag_2 = Managers.unlock:is_dlc_unlocked(dlc_name)
 		end
 
-		var_7_0 = Localize(var_7_6.display_name)
+		str = Localize(var_7_6.display_name)
 
 		local var_7_8 = Localize(var_7_6.description_text)
 
-		var_7_2 = var_7_3 and (var_7_6.area_type or var_7_6.sort_order == 1 and "area_selection_campaign" or "area_selection_side_quest") or "dlc1_2_dlc_level_locked_tooltip"
+		str_3 = not flag_2 and var_7_6.area_type and (var_7_6.sort_order ~= 1 or not "area_selection_campaign" or "area_selection_side_quest") and "dlc1_2_dlc_level_locked_tooltip"
 	end
 
-	local var_7_9 = arg_7_0._widgets_by_name
+	local _widgets_by_name = self._widgets_by_name
 
-	var_7_9.area_title.content.text = var_7_0
-	var_7_9.area_desc.content.text = arg_7_2
-	var_7_9.area_type.content.text = var_7_2
-	var_7_9.area_type.content.dlc_locked = not var_7_3
-	var_7_9.area_type.content.locked = not var_7_3
+	_widgets_by_name.area_title.content.text = str
+	_widgets_by_name.area_desc.content.text = arg_7_2
+	_widgets_by_name.area_type.content.text = str_3
+	_widgets_by_name.area_type.content.dlc_locked = not flag_2
+	_widgets_by_name.area_type.content.locked = not flag_2
 
-	if var_0_5 then
-		local var_7_10 = var_7_9.area_desc.style
+	if not flag then
+		local style = _widgets_by_name.area_desc.style
 
-		var_7_10.text.area_size = {
+		style.text.area_size = {
 			1200,
 			225
 		}
-		var_7_10.text.vertical_alignment = "top"
-		var_7_10.text.dynamic_font_size_word_wrap = true
-		var_7_10.text_shadow.area_size = {
+		style.text.vertical_alignment = "top"
+		style.text.dynamic_font_size_word_wrap = true
+		style.text_shadow.area_size = {
 			1200,
 			225
 		}
-		var_7_10.text_shadow.vertical_alignment = "top"
-		var_7_10.text_shadow.dynamic_font_size_word_wrap = true
-		var_7_9.area_title.offset[2] = 200
-		var_7_9.title_divider.offset[2] = 200
-		var_7_9.area_type.offset[2] = 200
+		style.text_shadow.vertical_alignment = "top"
+		style.text_shadow.dynamic_font_size_word_wrap = true
+		_widgets_by_name.area_title.offset[2] = 200
+		_widgets_by_name.title_divider.offset[2] = 200
+		_widgets_by_name.area_type.offset[2] = 200
 	else
-		local var_7_11 = UIUtils.get_text_height(arg_7_0.ui_renderer, var_7_9.area_desc.style.text.area_size, var_7_9.area_desc.style.text, arg_7_2)
+		local get_text_height = UIUtils.get_text_height(self.ui_renderer, _widgets_by_name.area_desc.style.text.area_size, _widgets_by_name.area_desc.style.text, arg_7_2)
 
-		var_7_9.area_title.offset[2] = var_7_11
-		var_7_9.title_divider.offset[2] = var_7_11
-		var_7_9.area_type.offset[2] = var_7_11
+		_widgets_by_name.area_title.offset[2] = get_text_height
+		_widgets_by_name.title_divider.offset[2] = get_text_height
+		_widgets_by_name.area_type.offset[2] = get_text_height
 	end
 
-	local var_7_12 = 40
-	local var_7_13 = 5
-	local var_7_14 = var_7_6.acts
-	local var_7_15 = 0
+	local num = 40
+	local num_2 = 5
+	local acts = var_7_6.acts
+	local num_3 = 0
 
-	table.clear(arg_7_0._level_image_widgets)
+	table.clear(self._level_image_widgets)
 
-	for iter_7_0, iter_7_1 in ipairs(var_7_14) do
-		local var_7_16 = GameActs[iter_7_1]
+	for i, v in ipairs(acts) do
+		local var_7_16 = GameActs[v]
 
-		for iter_7_2, iter_7_3 in ipairs(var_7_16) do
-			local var_7_17 = LevelSettings[iter_7_3]
-			local var_7_18 = LevelUnlockUtils.level_unlocked(var_7_5, var_7_4, var_7_17.level_id)
-			local var_7_19 = LevelUnlockUtils.completed_level_difficulty_index(var_7_5, var_7_4, var_7_17.level_id)
-			local var_7_20 = UIWidget.init(var_0_0.create_level_image_func(var_7_17.small_level_image or var_7_17.level_id .. "_small_image", var_7_19 > 0))
+		for i_2, v_2 in ipairs(var_7_16) do
+			local var_7_17 = LevelSettings[v_2]
+			local level_unlocked = LevelUnlockUtils.level_unlocked(statistics_db, stats_id, var_7_17.level_id)
+			local completed_level_difficulty_index = LevelUnlockUtils.completed_level_difficulty_index(statistics_db, stats_id, var_7_17.level_id)
+			local init = UIWidget.init
+			local create_level_image_func = var_0_0.create_level_image_func
+			local small_level_image = var_7_17.small_level_image
 
-			var_7_20.offset[1] = var_7_15
-			var_7_15 = var_7_15 + var_7_13 + var_7_20.style.level_image.texture_size[1]
-			var_7_20.style.level_image.saturated = not var_7_18
-			var_7_20.style.level_image.color = var_7_18 and var_7_20.style.level_image.unlocked_color or var_7_20.style.level_image.locked_color
-			var_7_20.content.completed = var_7_19 > 0
-			var_7_20.content.boss_level = var_7_17.boss_level
-			arg_7_0._level_image_widgets[#arg_7_0._level_image_widgets + 1] = var_7_20
-		end
+			small_level_image = small_level_image or var_7_17.level_id .. "_small_image"
 
-		var_7_15 = var_7_15 + var_7_12
-	end
+			local var_7_23 = init(create_level_image_func(small_level_image, completed_level_difficulty_index > 0))
 
-	if not var_7_3 then
-		arg_7_0.parent:set_input_description("select_area_buy")
-	else
-		local var_7_21 = true
+			var_7_23.offset[1] = num_3
+			num_3 = num_3 + num_2 + var_7_23.style.level_image.texture_size[1]
+			var_7_23.style.level_image.saturated = not level_unlocked
 
-		if var_7_6.unlock_requirement_function then
-			local var_7_22 = Managers.player:local_player():stats_id()
-			local var_7_23 = Managers.player:statistics_db()
+			local level_image = var_7_23.style.level_image
+			local unlocked_color
 
-			var_7_21 = var_7_6.unlock_requirement_function(var_7_23, var_7_22)
-		end
+			if not level_unlocked then
+				unlocked_color = var_7_23.style.level_image.unlocked_color
 
-		if var_7_21 then
-			arg_7_0.parent:set_input_description("select_area_confirm")
-
-			var_7_9.area_type.content.locked = false
-		else
-			arg_7_0.parent:set_input_description("select_area_base")
-
-			var_7_9.area_type.content.text = var_7_6.unlock_requirement_description
-			var_7_9.area_type.content.locked = true
-		end
-	end
-
-	local var_7_24 = arg_7_0.parent:get_video_player_by_name(arg_7_1)
-	local var_7_25 = var_7_6.video_settings
-
-	if var_7_25 then
-		local var_7_26 = var_7_25.material_name
-
-		arg_7_0:_assign_video_player(var_7_26, var_7_24)
-	end
-
-	local var_7_27 = var_7_6.menu_sound_event
-
-	arg_7_0:_play_sound(var_7_27)
-end
-
-function StartGameWindowAreaSelectionConsoleV2.on_exit(arg_8_0, arg_8_1)
-	print("[StartGameWindow] Exit Substate StartGameWindowAreaSelectionConsoleV2")
-
-	arg_8_0.ui_animator = nil
-
-	arg_8_0.parent:set_input_description(nil)
-
-	arg_8_0._has_exited = true
-
-	arg_8_0:_destroy_video_widget()
-	arg_8_0:_play_sound("Stop_hud_menu_area_music")
-end
-
-function StartGameWindowAreaSelectionConsoleV2.update(arg_9_0, arg_9_1, arg_9_2)
-	arg_9_0:_update_animations(arg_9_1)
-	arg_9_0:_handle_input(arg_9_1, arg_9_2)
-end
-
-function StartGameWindowAreaSelectionConsoleV2.post_update(arg_10_0, arg_10_1, arg_10_2)
-	arg_10_0:draw(arg_10_1)
-end
-
-function StartGameWindowAreaSelectionConsoleV2._update_animations(arg_11_0, arg_11_1)
-	local var_11_0 = arg_11_0.ui_animator
-
-	var_11_0:update(arg_11_1)
-
-	local var_11_1 = arg_11_0._animations
-
-	for iter_11_0, iter_11_1 in pairs(var_11_1) do
-		if var_11_0:is_animation_completed(iter_11_1) then
-			var_11_0:stop_animation(iter_11_1)
-
-			var_11_1[iter_11_0] = nil
-		end
-	end
-
-	local var_11_2 = arg_11_0._active_area_widgets
-
-	if var_11_2 then
-		for iter_11_2 = 1, #var_11_2 do
-			local var_11_3 = var_11_2[iter_11_2]
-
-			arg_11_0:_animate_area_widget(var_11_3, arg_11_1)
-		end
-	end
-
-	local var_11_4 = arg_11_0._ui_animations
-	local var_11_5 = arg_11_0._ui_animation_callbacks
-
-	for iter_11_3, iter_11_4 in pairs(var_11_4) do
-		UIAnimation.update(iter_11_4, arg_11_1)
-
-		if UIAnimation.completed(iter_11_4) then
-			var_11_4[iter_11_3] = nil
-
-			if var_11_5[iter_11_3] then
-				var_11_5[iter_11_3]()
-
-				var_11_5[iter_11_3] = nil
-			end
-		end
-	end
-end
-
-function StartGameWindowAreaSelectionConsoleV2._is_button_pressed(arg_12_0, arg_12_1)
-	local var_12_0 = arg_12_1.content.button_hotspot
-
-	if var_12_0.on_release then
-		var_12_0.on_release = false
-
-		return true
-	end
-end
-
-function StartGameWindowAreaSelectionConsoleV2._is_button_hovered(arg_13_0, arg_13_1)
-	if arg_13_1.content.button_hotspot.on_hover_enter then
-		return true
-	end
-end
-
-function StartGameWindowAreaSelectionConsoleV2._update_area_option(arg_14_0)
-	local var_14_0 = arg_14_0.parent:get_selected_area_name()
-
-	if var_14_0 ~= arg_14_0._selected_area_name then
-		arg_14_0:_select_area_by_name(var_14_0)
-	end
-end
-
-function StartGameWindowAreaSelectionConsoleV2._handle_input(arg_15_0, arg_15_1, arg_15_2)
-	local var_15_0 = arg_15_0.parent:window_input_service()
-	local var_15_1 = arg_15_0._active_area_widgets
-	local var_15_2 = arg_15_0._selection_grid
-	local var_15_3 = Managers.input:is_device_active("mouse")
-
-	if not var_15_3 then
-		local var_15_4 = arg_15_0._selected_grid_index[1]
-		local var_15_5 = arg_15_0._selected_grid_index[2]
-		local var_15_6 = #var_15_2
-		local var_15_7 = #var_15_2[var_15_4]
-
-		if var_15_0:get("move_left") then
-			local var_15_8 = math.clamp(var_15_4 - 1, 1, var_15_6)
-			local var_15_9 = #var_15_2[var_15_8]
-			local var_15_10 = var_15_2[var_15_8][math.min(var_15_5, var_15_9)].content.area_name
-
-			if arg_15_0._selected_area_name ~= var_15_10 then
-				arg_15_0:_select_area_by_name(var_15_10)
-			end
-		elseif var_15_0:get("move_right") then
-			local var_15_11 = math.clamp(var_15_4 + 1, 1, var_15_6)
-			local var_15_12 = #var_15_2[var_15_11]
-			local var_15_13 = var_15_2[var_15_11][math.min(var_15_5, var_15_12)].content.area_name
-
-			if arg_15_0._selected_area_name ~= var_15_13 then
-				arg_15_0:_select_area_by_name(var_15_13)
-			end
-		elseif var_15_0:get("move_down") then
-			local var_15_14 = var_15_5 + 1
-			local var_15_15 = var_15_2[var_15_4][var_15_14]
-
-			while not var_15_15 and var_15_4 > 1 do
-				var_15_4 = var_15_4 - 1
-				var_15_15 = var_15_2[var_15_4][var_15_14]
-			end
-
-			local var_15_16 = var_15_15 and var_15_15.content
-			local var_15_17 = var_15_16 and var_15_16.area_name or arg_15_0._selected_area_name
-
-			if arg_15_0._selected_area_name ~= var_15_17 then
-				arg_15_0:_select_area_by_name(var_15_17)
-			end
-		elseif var_15_0:get("move_up") then
-			local var_15_18 = math.clamp(var_15_5 - 1, 1, var_15_7)
-			local var_15_19 = var_15_2[var_15_4][var_15_18].content.area_name
-
-			if arg_15_0._selected_area_name ~= var_15_19 then
-				arg_15_0:_select_area_by_name(var_15_19)
-			end
-		end
-	elseif var_15_1 then
-		for iter_15_0 = 1, #var_15_1 do
-			local var_15_20 = var_15_1[iter_15_0]
-
-			if arg_15_0:_is_button_hovered(var_15_20) then
-				local var_15_21 = var_15_20.content.area_name
-
-				if arg_15_0._selected_area_name ~= var_15_21 then
-					arg_15_0:_select_area_by_name(var_15_21)
+				if not unlocked_color then
+					-- Nothing
 				end
 			end
 
-			if arg_15_0:_is_button_pressed(var_15_20) and not arg_15_0._area_unavailable then
-				arg_15_0:_on_select_button_pressed()
+			unlocked_color = var_7_23.style.level_image.locked_color
+
+			::label_7_0::
+
+			level_image.color = unlocked_color
+			var_7_23.content.completed = completed_level_difficulty_index > 0
+			var_7_23.content.boss_level = var_7_17.boss_level
+			self._level_image_widgets[#self._level_image_widgets + 1] = var_7_23
+		end
+
+		num_3 = num_3 + num
+	end
+
+	if not flag_2 then
+		self.parent:set_input_description("select_area_buy")
+	else
+		local flag_3 = true
+
+		if not var_7_6.unlock_requirement_function then
+			local stats_id_2 = Managers.player:local_player():stats_id()
+			local statistics_db_2 = Managers.player:statistics_db()
+
+			flag_3 = var_7_6.unlock_requirement_function(statistics_db_2, stats_id_2)
+		end
+
+		if not flag_3 then
+			self.parent:set_input_description("select_area_confirm")
+
+			_widgets_by_name.area_type.content.locked = false
+		else
+			self.parent:set_input_description("select_area_base")
+
+			_widgets_by_name.area_type.content.text = var_7_6.unlock_requirement_description
+			_widgets_by_name.area_type.content.locked = true
+		end
+	end
+
+	local get_video_player_by_name = self.parent:get_video_player_by_name(arg_7_1)
+	local video_settings = var_7_6.video_settings
+
+	if not video_settings then
+		local material_name = video_settings.material_name
+
+		self:_assign_video_player(material_name, get_video_player_by_name)
+	end
+
+	local menu_sound_event = var_7_6.menu_sound_event
+
+	self:_play_sound(menu_sound_event)
+end
+
+StartGameWindowAreaSelectionConsoleV2.on_exit = function (self, arg_8_1)
+	-- function 8
+	print("[StartGameWindow] Exit Substate StartGameWindowAreaSelectionConsoleV2")
+
+	self.ui_animator = nil
+
+	self.parent:set_input_description(nil)
+
+	self._has_exited = true
+
+	self:_destroy_video_widget()
+	self:_play_sound("Stop_hud_menu_area_music")
+end
+
+StartGameWindowAreaSelectionConsoleV2.update = function (self, arg_9_1, arg_9_2)
+	-- function 9
+	self:_update_animations(arg_9_1)
+	self:_handle_input(arg_9_1, arg_9_2)
+end
+
+StartGameWindowAreaSelectionConsoleV2.post_update = function (self, arg_10_1, arg_10_2)
+	-- function 10
+	self:draw(arg_10_1)
+end
+
+StartGameWindowAreaSelectionConsoleV2._update_animations = function (self, arg_11_1)
+	-- function 11
+	local ui_animator = self.ui_animator
+
+	ui_animator:update(arg_11_1)
+
+	local _animations = self._animations
+
+	for k, v in pairs(_animations) do
+		if not ui_animator:is_animation_completed(v) then
+			ui_animator:stop_animation(v)
+
+			_animations[k] = nil
+		end
+	end
+
+	local _active_area_widgets = self._active_area_widgets
+
+	if not _active_area_widgets then
+		for k_2 = 1, #_active_area_widgets do
+			local var_11_3 = _active_area_widgets[k_2]
+
+			self:_animate_area_widget(var_11_3, arg_11_1)
+		end
+	end
+
+	local _ui_animations = self._ui_animations
+	local _ui_animation_callbacks = self._ui_animation_callbacks
+
+	for k_3, v_2 in pairs(_ui_animations) do
+		UIAnimation.update(v_2, arg_11_1)
+
+		if not UIAnimation.completed(v_2) then
+			_ui_animations[k_3] = nil
+
+			if not _ui_animation_callbacks[k_3] then
+				_ui_animation_callbacks[k_3]()
+
+				_ui_animation_callbacks[k_3] = nil
+			end
+		end
+	end
+end
+
+StartGameWindowAreaSelectionConsoleV2._is_button_pressed = function (arg_12_0, arg_12_1)
+	-- function 12
+	local button_hotspot = arg_12_1.content.button_hotspot
+
+	if not button_hotspot.on_release then
+		button_hotspot.on_release = false
+
+		return true
+	end
+end
+
+StartGameWindowAreaSelectionConsoleV2._is_button_hovered = function (arg_13_0, arg_13_1)
+	-- function 13
+	if not arg_13_1.content.button_hotspot.on_hover_enter then
+		return true
+	end
+end
+
+StartGameWindowAreaSelectionConsoleV2._update_area_option = function (self)
+	-- function 14
+	local get_selected_area_name = self.parent:get_selected_area_name()
+
+	if get_selected_area_name ~= self._selected_area_name then
+		self:_select_area_by_name(get_selected_area_name)
+	end
+end
+
+StartGameWindowAreaSelectionConsoleV2._handle_input = function (self, arg_15_1, arg_15_2)
+	-- function 15
+	local window_input_service = self.parent:window_input_service()
+	local _active_area_widgets = self._active_area_widgets
+	local _selection_grid = self._selection_grid
+	local is_device_active = Managers.input:is_device_active("mouse")
+
+	if not is_device_active then
+		local var_15_4 = self._selected_grid_index[1]
+		local var_15_5 = self._selected_grid_index[2]
+		local count = #_selection_grid
+		local count_2 = #_selection_grid[var_15_4]
+
+		if not window_input_service:get("move_left") then
+			local clamp = math.clamp(var_15_4 - 1, 1, count)
+			local count_3 = #_selection_grid[clamp]
+			local area_name = _selection_grid[clamp][math.min(var_15_5, count_3)].content.area_name
+
+			if self._selected_area_name ~= area_name then
+				self:_select_area_by_name(area_name)
+			end
+		elseif not window_input_service:get("move_right") then
+			local clamp_2 = math.clamp(var_15_4 + 1, 1, count)
+			local count_4 = #_selection_grid[clamp_2]
+			local area_name_2 = _selection_grid[clamp_2][math.min(var_15_5, count_4)].content.area_name
+
+			if self._selected_area_name ~= area_name_2 then
+				self:_select_area_by_name(area_name_2)
+			end
+		elseif not window_input_service:get("move_down") then
+			local num = var_15_5 + 1
+			local var_15_15 = _selection_grid[var_15_4][num]
+
+			while not (var_15_15 or not (var_15_4 > 1)) do
+				var_15_4 = var_15_4 - 1
+				var_15_15 = _selection_grid[var_15_4][num]
+			end
+
+			local flag = not var_15_15 and var_15_15.content
+			local area_name_3
+
+			if not flag then
+				area_name_3 = flag.area_name
+
+				if not area_name_3 then
+					-- Nothing
+				end
+			end
+
+			area_name_3 = self._selected_area_name
+
+			::label_15_0::
+
+			if self._selected_area_name ~= area_name_3 then
+				self:_select_area_by_name(area_name_3)
+			end
+		elseif not window_input_service:get("move_up") then
+			local clamp_3 = math.clamp(var_15_5 - 1, 1, count_2)
+			local area_name_4 = _selection_grid[var_15_4][clamp_3].content.area_name
+
+			if self._selected_area_name ~= area_name_4 then
+				self:_select_area_by_name(area_name_4)
+			end
+		end
+	elseif not _active_area_widgets then
+		for i = 1, #_active_area_widgets do
+			local var_15_20 = _active_area_widgets[i]
+
+			if not self:_is_button_hovered(var_15_20) then
+				local area_name_5 = var_15_20.content.area_name
+
+				if self._selected_area_name ~= area_name_5 then
+					self:_select_area_by_name(area_name_5)
+				end
+			end
+
+			if not (not self:_is_button_pressed(var_15_20) and self._area_unavailable) then
+				self:_on_select_button_pressed()
 
 				return
 			end
 		end
 	end
 
-	local var_15_22 = not var_15_3 and var_15_0:get("confirm_press", true)
+	local flag_2 = not not is_device_active or window_input_service:get("confirm_press", true)
 
-	if not arg_15_0._area_unavailable and var_15_22 then
-		arg_15_0:_on_select_button_pressed()
+	if self._area_unavailable or not flag_2 then
+		self:_on_select_button_pressed()
 	end
 end
 
-function StartGameWindowAreaSelectionConsoleV2._on_select_button_pressed(arg_16_0)
-	local var_16_0 = arg_16_0._selected_area_name
-	local var_16_1 = AreaSettings[var_16_0]
-	local var_16_2 = true
-	local var_16_3 = var_16_1.dlc_name
+StartGameWindowAreaSelectionConsoleV2._on_select_button_pressed = function (self)
+	-- function 16
+	local _selected_area_name = self._selected_area_name
+	local var_16_1 = AreaSettings[_selected_area_name]
+	local flag = true
+	local dlc_name = var_16_1.dlc_name
 
-	if var_16_3 then
-		var_16_2 = Managers.unlock:is_dlc_unlocked(var_16_3)
+	if not dlc_name then
+		flag = Managers.unlock:is_dlc_unlocked(dlc_name)
 	end
 
-	if var_16_2 then
-		local var_16_4 = true
+	if not flag then
+		local flag_2 = true
 
-		if var_16_1.unlock_requirement_function then
-			local var_16_5 = Managers.player:local_player():stats_id()
-			local var_16_6 = Managers.player:statistics_db()
+		if not var_16_1.unlock_requirement_function then
+			local stats_id = Managers.player:local_player():stats_id()
+			local statistics_db = Managers.player:statistics_db()
 
-			var_16_4 = var_16_1.unlock_requirement_function(var_16_6, var_16_5)
+			flag_2 = var_16_1.unlock_requirement_function(statistics_db, stats_id)
 		end
 
-		if var_16_4 then
-			local var_16_7 = arg_16_0.parent
-			local var_16_8 = "mission_selection"
+		if not flag_2 then
+			local parent = self.parent
+			local str = "mission_selection"
 
-			var_16_7:set_selected_area_name(var_16_0)
-			var_16_7:set_layout_by_name(var_16_8)
+			parent:set_selected_area_name(_selected_area_name)
+			parent:set_layout_by_name(str)
 		end
 	else
-		local var_16_9 = var_16_1.store_page_url
+		local store_page_url = var_16_1.store_page_url
 
-		arg_16_0:_show_storepage(var_16_9, var_16_3)
+		self:_show_storepage(store_page_url, dlc_name)
 	end
 
-	arg_16_0:_play_sound("Play_hud_menu_area_start")
+	self:_play_sound("Play_hud_menu_area_start")
 end
 
-function StartGameWindowAreaSelectionConsoleV2.draw(arg_17_0, arg_17_1)
-	local var_17_0 = arg_17_0.ui_top_renderer
-	local var_17_1 = arg_17_0.ui_scenegraph
-	local var_17_2 = arg_17_0.parent:window_input_service()
+StartGameWindowAreaSelectionConsoleV2.draw = function (self, arg_17_1)
+	-- function 17
+	local ui_top_renderer = self.ui_top_renderer
+	local ui_scenegraph = self.ui_scenegraph
+	local window_input_service = self.parent:window_input_service()
 
-	UIRenderer.begin_pass(var_17_0, var_17_1, var_17_2, arg_17_1, nil, arg_17_0.render_settings)
+	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, window_input_service, arg_17_1, nil, self.render_settings)
 
-	local var_17_3 = arg_17_0._widgets
+	local _widgets = self._widgets
 
-	for iter_17_0 = 1, #var_17_3 do
-		local var_17_4 = var_17_3[iter_17_0]
+	for i = 1, #_widgets do
+		local var_17_4 = _widgets[i]
 
-		UIRenderer.draw_widget(var_17_0, var_17_4)
+		UIRenderer.draw_widget(ui_top_renderer, var_17_4)
 	end
 
-	local var_17_5 = arg_17_0._active_area_widgets
+	local _active_area_widgets = self._active_area_widgets
 
-	if var_17_5 then
-		for iter_17_1 = 1, #var_17_5 do
-			local var_17_6 = var_17_5[iter_17_1]
+	if not _active_area_widgets then
+		for j = 1, #_active_area_widgets do
+			local var_17_6 = _active_area_widgets[j]
 
-			UIRenderer.draw_widget(var_17_0, var_17_6)
+			UIRenderer.draw_widget(ui_top_renderer, var_17_6)
 		end
 	end
 
-	local var_17_7 = arg_17_0._level_image_widgets
+	local _level_image_widgets = self._level_image_widgets
 
-	if var_17_7 then
-		for iter_17_2 = 1, #var_17_7 do
-			local var_17_8 = var_17_7[iter_17_2]
+	if not _level_image_widgets then
+		for k = 1, #_level_image_widgets do
+			local var_17_8 = _level_image_widgets[k]
 
-			UIRenderer.draw_widget(var_17_0, var_17_8)
+			UIRenderer.draw_widget(ui_top_renderer, var_17_8)
 		end
 	end
 
-	if not arg_17_0._draw_video_next_frame then
-		if arg_17_0._video_widget and not arg_17_0._has_exited then
-			if not arg_17_0._video_created then
-				UIRenderer.draw_widget(var_17_0, arg_17_0._video_widget)
+	if not self._draw_video_next_frame then
+		if not (not self._video_widget and self._has_exited) then
+			if not self._video_created then
+				UIRenderer.draw_widget(ui_top_renderer, self._video_widget)
 			else
-				arg_17_0._video_created = nil
+				self._video_created = nil
 			end
 		end
-	elseif arg_17_0._draw_video_next_frame then
-		arg_17_0._draw_video_next_frame = nil
+	elseif not self._draw_video_next_frame then
+		self._draw_video_next_frame = nil
 	end
 
-	UIRenderer.end_pass(var_17_0)
+	UIRenderer.end_pass(ui_top_renderer)
 end
 
-function StartGameWindowAreaSelectionConsoleV2._play_sound(arg_18_0, arg_18_1)
-	arg_18_0.parent:play_sound(arg_18_1)
+StartGameWindowAreaSelectionConsoleV2._play_sound = function (self, arg_18_1)
+	-- function 18
+	self.parent:play_sound(arg_18_1)
 end
 
-function StartGameWindowAreaSelectionConsoleV2._assign_video_player(arg_19_0, arg_19_1, arg_19_2)
-	arg_19_0:_destroy_video_widget()
+StartGameWindowAreaSelectionConsoleV2._assign_video_player = function (self, arg_19_1, arg_19_2)
+	-- function 19
+	self:_destroy_video_widget()
 
-	local var_19_0 = "video"
-	local var_19_1 = UIWidgets.create_fixed_aspect_video(var_19_0, arg_19_1)
-	local var_19_2 = UIWidget.init(var_19_1)
+	local str = "video"
+	local create_fixed_aspect_video = UIWidgets.create_fixed_aspect_video(str, arg_19_1)
+	local var_19_2 = UIWidget.init(create_fixed_aspect_video)
 
 	var_19_2.content.video_content.video_player = arg_19_2
 
-	local var_19_3 = arg_19_0.ui_top_renderer.world
+	local world = self.ui_top_renderer.world
 
-	World.add_video_player(var_19_3, arg_19_2)
+	World.add_video_player(world, arg_19_2)
 
-	arg_19_0._video_widget = var_19_2
-	arg_19_0._video_created = true
-	arg_19_0._draw_video_next_frame = true
+	self._video_widget = var_19_2
+	self._video_created = true
+	self._draw_video_next_frame = true
 
-	local var_19_4 = arg_19_0._widgets_by_name.foreground.style.rect.color
+	local color = self._widgets_by_name.foreground.style.rect.color
 
-	arg_19_0._ui_animations.fade_in = UIAnimation.init(UIAnimation.function_by_time, var_19_4, 1, 255, 0, 0.5, math.easeInCubic)
+	self._ui_animations.fade_in = UIAnimation.init(UIAnimation.function_by_time, color, 1, 255, 0, 0.5, math.easeInCubic)
 end
 
-function StartGameWindowAreaSelectionConsoleV2._destroy_video_widget(arg_20_0)
-	local var_20_0 = arg_20_0._video_widget
+StartGameWindowAreaSelectionConsoleV2._destroy_video_widget = function (self)
+	-- function 20
+	local _video_widget = self._video_widget
 
-	if var_20_0 then
-		local var_20_1 = arg_20_0.ui_top_renderer
-		local var_20_2 = var_20_0.content.video_content.video_player
-		local var_20_3 = var_20_1.world
+	if not _video_widget then
+		local ui_top_renderer = self.ui_top_renderer
+		local video_player = _video_widget.content.video_content.video_player
+		local world = ui_top_renderer.world
 
-		World.remove_video_player(var_20_3, var_20_2)
+		World.remove_video_player(world, video_player)
 
-		arg_20_0._video_widget = nil
+		self._video_widget = nil
 	end
 
-	arg_20_0._video_created = nil
+	self._video_created = nil
 end
 
-function StartGameWindowAreaSelectionConsoleV2._animate_area_widget(arg_21_0, arg_21_1, arg_21_2)
-	local var_21_0 = arg_21_1.content
-	local var_21_1 = arg_21_1.style
-	local var_21_2 = var_21_0.button_hotspot
-	local var_21_3 = 20
-	local var_21_4 = var_21_2.is_selected
-	local var_21_5 = var_21_2.input_progress or 0
+StartGameWindowAreaSelectionConsoleV2._animate_area_widget = function (arg_21_0, arg_21_1, arg_21_2)
+	-- function 21
+	local content = arg_21_1.content
+	local style = arg_21_1.style
+	local button_hotspot = content.button_hotspot
+	local num = 20
+	local is_selected = button_hotspot.is_selected
+	local input_progress = button_hotspot.input_progress
 
-	if not var_21_4 and var_21_2.is_clicked and var_21_2.is_clicked == 0 then
-		var_21_5 = math.min(var_21_5 + arg_21_2 * var_21_3, 1)
-	else
-		var_21_5 = math.max(var_21_5 - arg_21_2 * var_21_3, 0)
+	input_progress = input_progress or 0
+
+	local is_clicked
+
+	if not is_selected then
+		is_clicked = button_hotspot.is_clicked
+
+		if not is_clicked then
+			-- Nothing
+		end
+
+		if button_hotspot.is_clicked ~= 0 then
+			-- Nothing
+		end
 	end
 
-	local var_21_6 = 8
-	local var_21_7 = var_21_2.hover_progress or 0
+	is_clicked = false
 
-	if var_21_2.is_hover then
-		var_21_7 = math.min(var_21_7 + arg_21_2 * var_21_6, 1)
+	goto label_21_1
+
+	::label_21_0::
+
+	is_clicked = true
+
+	::label_21_1::
+
+	if not is_clicked then
+		input_progress = math.min(input_progress + arg_21_2 * num, 1)
 	else
-		var_21_7 = math.max(var_21_7 - arg_21_2 * var_21_6, 0)
+		input_progress = math.max(input_progress - arg_21_2 * num, 0)
 	end
 
-	local var_21_8 = var_21_2.selection_progress or 0
+	local num_2 = 8
+	local hover_progress = button_hotspot.hover_progress
 
-	if var_21_4 then
-		var_21_8 = math.min(var_21_8 + arg_21_2 * var_21_6, 1)
+	hover_progress = hover_progress or 0
+
+	if not button_hotspot.is_hover then
+		hover_progress = math.min(hover_progress + arg_21_2 * num_2, 1)
 	else
-		var_21_8 = math.max(var_21_8 - arg_21_2 * var_21_6, 0)
+		hover_progress = math.max(hover_progress - arg_21_2 * num_2, 0)
 	end
 
-	local var_21_9 = 255 * math.max(var_21_7, var_21_8)
+	local selection_progress = button_hotspot.selection_progress
 
-	var_21_1.icon_glow.color[1] = var_21_9
-	var_21_2.hover_progress = var_21_7
-	var_21_2.input_progress = var_21_5
-	var_21_2.selection_progress = var_21_8
+	selection_progress = selection_progress or 0
+
+	if not is_selected then
+		selection_progress = math.min(selection_progress + arg_21_2 * num_2, 1)
+	else
+		selection_progress = math.max(selection_progress - arg_21_2 * num_2, 0)
+	end
+
+	local num_3 = 255 * math.max(hover_progress, selection_progress)
+
+	style.icon_glow.color[1] = num_3
+	button_hotspot.hover_progress = hover_progress
+	button_hotspot.input_progress = input_progress
+	button_hotspot.selection_progress = selection_progress
 end
 
-function StartGameWindowAreaSelectionConsoleV2._show_storepage(arg_22_0, arg_22_1, arg_22_2)
-	local var_22_0 = PLATFORM
+StartGameWindowAreaSelectionConsoleV2._show_storepage = function (arg_22_0, arg_22_1, arg_22_2)
+	-- function 22
+	local PLATFORM = PLATFORM
 
-	if IS_WINDOWS and rawget(_G, "Steam") then
-		if arg_22_1 then
+	if not IS_WINDOWS and not rawget(_G, "Steam") then
+		if not arg_22_1 then
 			Steam.open_url(arg_22_1)
 		end
-	elseif IS_XB1 then
-		local var_22_1 = Managers.account:user_id()
+	elseif not IS_XB1 then
+		local user_id = Managers.account:user_id()
 
-		if arg_22_2 then
-			local var_22_2 = Managers.unlock:dlc_id(arg_22_2)
+		if not arg_22_2 then
+			local dlc_id = Managers.unlock:dlc_id(arg_22_2)
 
-			if var_22_2 then
-				XboxLive.show_product_details(var_22_1, var_22_2)
+			if not dlc_id then
+				XboxLive.show_product_details(user_id, dlc_id)
 			else
 				Application.error(string.format("[StartGameWindowAreaSelection:_show_storepage] No product_id for dlc: %s", arg_22_2))
 			end
 		else
 			Application.error("[StartGameWindowAreaSelection:_show_storepage] No dlc name")
 		end
-	elseif IS_PS4 then
-		local var_22_3 = Managers.account:user_id()
+	elseif not IS_PS4 then
+		local user_id_2 = Managers.account:user_id()
 
-		if arg_22_2 then
-			local var_22_4 = Managers.unlock:ps4_dlc_product_label(arg_22_2)
+		if not arg_22_2 then
+			local ps4_dlc_product_label = Managers.unlock:ps4_dlc_product_label(arg_22_2)
 
-			if var_22_4 then
-				Managers.system_dialog:open_commerce_dialog(NpCommerceDialog.MODE_PRODUCT, var_22_3, {
-					var_22_4
+			if not ps4_dlc_product_label then
+				Managers.system_dialog:open_commerce_dialog(NpCommerceDialog.MODE_PRODUCT, user_id_2, {
+					ps4_dlc_product_label
 				})
 			else
 				Application.error(string.format("[StartGameWindowAreaSelection:_show_storepage] No product_id for dlc: %s", arg_22_2))

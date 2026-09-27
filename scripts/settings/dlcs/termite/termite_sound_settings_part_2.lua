@@ -1,9 +1,9 @@
 -- chunkname: @scripts/settings/dlcs/termite/termite_sound_settings_part_2.lua
 
-local var_0_0 = DLCSettings.termite_part_2
+local termite_part_2 = DLCSettings.termite_part_2
 
-var_0_0.network_sound_events = {}
-var_0_0.dialogue_lookup = {
+termite_part_2.network_sound_events = {}
+termite_part_2.dialogue_lookup = {
 	"dialogues/generated/lookup_witch_hunter_dlc_termite_2",
 	"dialogues/generated/lookup_bright_wizard_dlc_termite_2",
 	"dialogues/generated/lookup_dwarf_ranger_dlc_termite_2",
@@ -12,7 +12,7 @@ var_0_0.dialogue_lookup = {
 	"dialogues/generated/lookup_hero_conversations_dlc_termite_2",
 	"dialogues/generated/lookup_npc_dlc_termite_2"
 }
-var_0_0.dialogue_settings = {
+termite_part_2.dialogue_settings = {
 	dlc_termite_2 = {
 		"dialogues/generated/witch_hunter_dlc_termite_2",
 		"dialogues/generated/bright_wizard_dlc_termite_2",

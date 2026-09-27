@@ -1,8 +1,11 @@
 -- chunkname: @scripts/managers/talents/talent_settings_empty.lua
 
-TalentTrees = TalentTrees or {}
+local TalentTrees = TalentTrees
 
-local var_0_0 = {
+TalentTrees = TalentTrees or {}
+TalentTrees = TalentTrees
+
+local tbl = {
 	{
 		{
 			"empty",
@@ -37,13 +40,13 @@ local var_0_0 = {
 	}
 }
 
-TalentTrees.vs_gutter_runner = var_0_0
-TalentTrees.vs_poison_wind_globadier = var_0_0
-TalentTrees.vs_packmaster = var_0_0
-TalentTrees.vs_ratling_gunner = var_0_0
-TalentTrees.vs_warpfire_thrower = var_0_0
-TalentTrees.vs_chaos_troll = var_0_0
-TalentTrees.vs_rat_ogre = var_0_0
+TalentTrees.vs_gutter_runner = tbl
+TalentTrees.vs_poison_wind_globadier = tbl
+TalentTrees.vs_packmaster = tbl
+TalentTrees.vs_ratling_gunner = tbl
+TalentTrees.vs_warpfire_thrower = tbl
+TalentTrees.vs_chaos_troll = tbl
+TalentTrees.vs_rat_ogre = tbl
 Talents.vs_gutter_runner = {
 	{
 		description = "empty",

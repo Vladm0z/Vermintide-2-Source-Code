@@ -4,66 +4,71 @@ require("scripts/helpers/talent_utils")
 
 TalentSystem = class(TalentSystem, ExtensionSystemBase)
 
-local var_0_0 = {
+local tbl = {
 	"rpc_sync_talents"
 }
-local var_0_1 = {
+local tbl_2 = {
 	"TalentExtension",
 	"HuskTalentExtension"
 }
 
-function TalentSystem.init(arg_1_0, arg_1_1, arg_1_2)
-	TalentSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
+TalentSystem.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	TalentSystem.super.init(self, arg_1_1, arg_1_2, tbl_2)
 
-	local var_1_0 = arg_1_1.network_event_delegate
+	local network_event_delegate = arg_1_1.network_event_delegate
 
-	arg_1_0.network_event_delegate = var_1_0
+	self.network_event_delegate = network_event_delegate
 
-	var_1_0:register(arg_1_0, unpack(var_0_0))
+	network_event_delegate:register(self, unpack(tbl))
 end
 
-function TalentSystem.destroy(arg_2_0)
-	arg_2_0.network_event_delegate:unregister(arg_2_0)
+TalentSystem.destroy = function (self)
+	-- function 2
+	self.network_event_delegate:unregister(self)
 
-	arg_2_0.network_event_delegate = nil
+	self.network_event_delegate = nil
 end
 
-function TalentSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+TalentSystem.on_add_extension = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	-- function 3
 	return (TalentSystem.super.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4))
 end
 
-function TalentSystem.rpc_sync_talents(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+TalentSystem.rpc_sync_talents = function (self, arg_4_1, arg_4_2, arg_4_3)
+	-- function 4
 	printf("TalentSystem:rpc_sync_talents %d %d", arg_4_1, arg_4_2)
 
-	local var_4_0 = arg_4_0.unit_storage:unit(arg_4_2)
-	local var_4_1 = ScriptUnit.extension(var_4_0, "talent_system")
+	local unit = self.unit_storage:unit(arg_4_2)
+	local extension = ScriptUnit.extension(unit, "talent_system")
 
-	var_4_1:set_talent_ids(arg_4_3)
-	var_4_1:apply_buffs_from_talents()
+	extension:set_talent_ids(arg_4_3)
+	extension:apply_buffs_from_talents()
 
-	if arg_4_0.is_server then
+	if not self.is_server then
 		local var_4_2 = CHANNEL_TO_PEER_ID[arg_4_1]
 
-		arg_4_0.network_transmit:send_rpc_clients_except("rpc_sync_talents", var_4_2, arg_4_2, arg_4_3)
+		self.network_transmit:send_rpc_clients_except("rpc_sync_talents", var_4_2, arg_4_2, arg_4_3)
 	end
 end
 
-function TalentSystem.hot_join_sync(arg_5_0, arg_5_1)
-	if not arg_5_0.is_server then
+TalentSystem.hot_join_sync = function (self, arg_5_1)
+	-- function 5
+	if not self.is_server then
 		return
 	end
 
-	local var_5_0 = arg_5_0.network_transmit
-	local var_5_1 = arg_5_0.unit_storage
+	local network_transmit = self.network_transmit
+	local unit_storage = self.unit_storage
 
-	for iter_5_0, iter_5_1 in ipairs(var_0_1) do
-		local var_5_2 = arg_5_0.entity_manager:get_entities(iter_5_1)
+	for i, v in ipairs(tbl_2) do
+		local get_entities = self.entity_manager:get_entities(v)
 
-		for iter_5_2, iter_5_3 in pairs(var_5_2) do
-			local var_5_3 = var_5_1:go_id(iter_5_2)
-			local var_5_4 = iter_5_3:get_talent_ids()
+		for k, v_2 in pairs(get_entities) do
+			local go_id = unit_storage:go_id(k)
+			local get_talent_ids = v_2:get_talent_ids()
 
-			var_5_0:send_rpc("rpc_sync_talents", arg_5_1, var_5_3, var_5_4)
+			network_transmit:send_rpc("rpc_sync_talents", arg_5_1, go_id, get_talent_ids)
 		end
 	end
 end

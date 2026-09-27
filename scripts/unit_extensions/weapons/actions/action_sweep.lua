@@ -2,7 +2,7 @@
 
 ActionSweep = class(ActionSweep, ActionBase)
 
-local var_0_0 = {
+local tbl = {
 	"damage_profile",
 	"impact_sound_event",
 	"no_damage_impact_sound_event",
@@ -14,252 +14,296 @@ local var_0_0 = {
 	"additional_critical_strike_chance",
 	"hit_stop_anim"
 }
-local var_0_1 = #var_0_0
-local var_0_2 = Unit.alive
-local var_0_3 = Unit.get_data
-local var_0_4 = Unit.world_position
-local var_0_5 = Unit.world_rotation
-local var_0_6 = Unit.local_rotation
-local var_0_7 = Unit.flow_event
-local var_0_8 = Unit.set_flow_variable
-local var_0_9 = Unit.node
-local var_0_10 = Unit.has_node
-local var_0_11 = Unit.actor
-local var_0_12 = Unit.animation_event
-local var_0_13 = Unit.has_animation_event
-local var_0_14 = Unit.has_animation_state_machine
-local var_0_15 = Actor.node
-local var_0_16 = math.degrees_to_radians(120)
-local var_0_17 = math.degrees_to_radians(115.55)
-local var_0_18 = 1
-local var_0_19 = 2
-local var_0_20 = 5
+local count = #tbl
+local alive = Unit.alive
+local get_data = Unit.get_data
+local world_position = Unit.world_position
+local world_rotation = Unit.world_rotation
+local local_rotation = Unit.local_rotation
+local flow_event = Unit.flow_event
+local set_flow_variable = Unit.set_flow_variable
+local node = Unit.node
+local has_node = Unit.has_node
+local actor = Unit.actor
+local animation_event = Unit.animation_event
+local has_animation_event = Unit.has_animation_event
+local has_animation_state_machine = Unit.has_animation_state_machine
+local node_2 = Actor.node
+local degrees_to_radians = math.degrees_to_radians(120)
+local degrees_to_radians_2 = math.degrees_to_radians(115.55)
+local num = 1
+local num_2 = 2
+local num_3 = 5
 
-local function var_0_21(arg_1_0, arg_1_1)
-	local var_1_0 = #arg_1_1
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
+	local count = #arg_1_1
 
-	for iter_1_0 = 1, var_1_0 do
-		local var_1_1 = arg_1_1[iter_1_0]
-		local var_1_2 = arg_1_1[math.min(iter_1_0 + 1, var_1_0)]
+	for i = 1, count do
+		local var_1_1 = arg_1_1[i]
+		local var_1_2 = arg_1_1[math.min(i + 1, count)]
 
-		if var_1_1 == var_1_2 or iter_1_0 == 1 and arg_1_0 <= var_1_1[var_0_18] then
-			local var_1_3 = Vector3(var_1_1[var_0_19], var_1_1[var_0_19 + 1], var_1_1[var_0_19 + 2])
-			local var_1_4 = Quaternion.from_elements(var_1_1[var_0_20], var_1_1[var_0_20 + 1], var_1_1[var_0_20 + 2], var_1_1[var_0_20 + 3])
+		if not (var_1_1 == var_1_2 or i ~= 1 or not (arg_1_0 <= var_1_1[num])) then
+			local var_1_3 = Vector3(var_1_1[num_2], var_1_1[num_2 + 1], var_1_1[num_2 + 2])
+			local from_elements = Quaternion.from_elements(var_1_1[num_3], var_1_1[num_3 + 1], var_1_1[num_3 + 2], var_1_1[num_3 + 3])
 
-			return Matrix4x4.from_quaternion_position(var_1_4, var_1_3)
-		elseif arg_1_0 >= var_1_1[var_0_18] and arg_1_0 <= var_1_2[var_0_18] then
-			local var_1_5 = math.max(var_1_2[var_0_18] - var_1_1[var_0_18], 0.0001)
-			local var_1_6 = (arg_1_0 - var_1_1[var_0_18]) / var_1_5
-			local var_1_7 = Vector3(var_1_1[var_0_19], var_1_1[var_0_19 + 1], var_1_1[var_0_19 + 2])
-			local var_1_8 = Quaternion.from_elements(var_1_1[var_0_20], var_1_1[var_0_20 + 1], var_1_1[var_0_20 + 2], var_1_1[var_0_20 + 3])
-			local var_1_9 = Vector3(var_1_2[var_0_19], var_1_2[var_0_19 + 1], var_1_2[var_0_19 + 2])
-			local var_1_10 = Quaternion.from_elements(var_1_2[var_0_20], var_1_2[var_0_20 + 1], var_1_2[var_0_20 + 2], var_1_2[var_0_20 + 3])
-			local var_1_11 = Vector3.lerp(var_1_7, var_1_9, var_1_6)
-			local var_1_12 = Quaternion.lerp(var_1_8, var_1_10, var_1_6)
+			return Matrix4x4.from_quaternion_position(from_elements, var_1_3)
+		elseif not (not (arg_1_0 >= var_1_1[num]) or not (arg_1_0 <= var_1_2[num])) then
+			local max = math.max(var_1_2[num] - var_1_1[num], 0.0001)
+			local num_4 = (arg_1_0 - var_1_1[num]) / max
+			local var_1_7 = Vector3(var_1_1[num_2], var_1_1[num_2 + 1], var_1_1[num_2 + 2])
+			local from_elements_2 = Quaternion.from_elements(var_1_1[num_3], var_1_1[num_3 + 1], var_1_1[num_3 + 2], var_1_1[num_3 + 3])
+			local var_1_9 = Vector3(var_1_2[num_2], var_1_2[num_2 + 1], var_1_2[num_2 + 2])
+			local from_elements_3 = Quaternion.from_elements(var_1_2[num_3], var_1_2[num_3 + 1], var_1_2[num_3 + 2], var_1_2[num_3 + 3])
+			local lerp = Vector3.lerp(var_1_7, var_1_9, num_4)
+			local lerp_2 = Quaternion.lerp(from_elements_2, from_elements_3, num_4)
 
-			return Matrix4x4.from_quaternion_position(var_1_12, var_1_11)
+			return Matrix4x4.from_quaternion_position(lerp_2, lerp)
 		end
 	end
 
 	return nil, nil
 end
 
-local function var_0_22(arg_2_0)
-	if arg_2_0 then
+local function fn_2(arg_2_0)
+	-- function 2
+	if not arg_2_0 then
 		return "baked_sweep_" .. arg_2_0
 	else
 		return "baked_sweep"
 	end
 end
 
-function ActionSweep.init(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8)
-	ActionSweep.super.init(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8)
+ActionSweep.init = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8)
+	-- function 3
+	ActionSweep.super.init(self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8)
 
-	arg_3_0.stored_half_extents = Vector3Box()
-	arg_3_0._stored_position = Vector3Box()
-	arg_3_0._stored_rotation = QuaternionBox()
+	self.stored_half_extents = Vector3Box()
+	self._stored_position = Vector3Box()
+	self._stored_rotation = QuaternionBox()
 
-	local var_3_0, var_3_1 = Unit.box(arg_3_5)
+	local box, var_3_1 = Unit.box(arg_3_5)
 
-	arg_3_0.stored_half_extents:store(var_3_1)
+	self.stored_half_extents:store(var_3_1)
 
-	arg_3_0._hit_units = {}
-	arg_3_0._overridable_settings = {}
-	arg_3_0._could_damage_last_update = false
-	arg_3_0._has_played_rumble_effect = false
-	arg_3_0._status_extension = ScriptUnit.extension(arg_3_4, "status_system")
-	arg_3_0._weapon_extension = ScriptUnit.extension(arg_3_7, "weapon_system")
-	arg_3_0._stored_attack_data = {}
-	arg_3_0._dt = 0
+	self._hit_units = {}
+	self._overridable_settings = {}
+	self._could_damage_last_update = false
+	self._has_played_rumble_effect = false
+	self._status_extension = ScriptUnit.extension(arg_3_4, "status_system")
+	self._weapon_extension = ScriptUnit.extension(arg_3_7, "weapon_system")
+	self._stored_attack_data = {}
+	self._dt = 0
 end
 
-function ActionSweep.check_precision_target(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
-	local var_4_0 = arg_4_0._precision_target_unit
+ActionSweep.check_precision_target = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	-- function 4
+	local _precision_target_unit = self._precision_target_unit
 
-	if not HEALTH_ALIVE[var_4_0] then
+	if not HEALTH_ALIVE[_precision_target_unit] then
 		return nil
 	end
 
-	local var_4_1 = ScriptUnit.extension(arg_4_1, "first_person_system")
+	local extension = ScriptUnit.extension(arg_4_1, "first_person_system")
 
-	var_4_1:disable_rig_movement()
+	extension:disable_rig_movement()
 
-	local var_4_2 = var_4_1:current_position()
-	local var_4_3 = var_4_1:current_rotation()
-	local var_4_4 = Quaternion.forward(var_4_3)
-	local var_4_5 = "j_spine"
-	local var_4_6 = var_0_10(var_4_0, "j_spine") and var_0_4(var_4_0, var_0_9(var_4_0, var_4_5)) or var_0_4(var_4_0, 0)
-	local var_4_7 = false
-	local var_4_8 = var_4_6 - var_4_2
-	local var_4_9 = Vector3.length(var_4_8)
-	local var_4_10 = Vector3.normalize(var_4_8)
+	local current_position = extension:current_position()
+	local current_rotation = extension:current_rotation()
+	local forward = Quaternion.forward(current_rotation)
+	local str = "j_spine"
+	local var_4_6
 
-	if Vector3.dot(var_4_10, var_4_4) < 0.9 or arg_4_3 < var_4_9 then
-		var_4_7 = false
-	elseif HEALTH_ALIVE[var_4_0] then
-		var_4_7 = true
+	if not has_node(_precision_target_unit, "j_spine") then
+		var_4_6 = world_position(_precision_target_unit, node(_precision_target_unit, str))
+
+		if not var_4_6 then
+			-- Nothing
+		end
 	end
 
-	return var_4_7 and var_4_0 or nil
+	var_4_6 = world_position(_precision_target_unit, 0)
+
+	::label_4_0::
+
+	local flag = false
+	local num = var_4_6 - current_position
+	local length = Vector3.length(num)
+	local normalize = Vector3.normalize(num)
+
+	if not (Vector3.dot(normalize, forward) < 0.9 or not (arg_4_3 < length)) then
+		flag = false
+	elseif not HEALTH_ALIVE[_precision_target_unit] then
+		flag = true
+	end
+
+	return not flag and _precision_target_unit and nil
 end
 
-function ActionSweep.client_owner_start_action(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
-	ActionSweep.super.client_owner_start_action(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+ActionSweep.client_owner_start_action = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	-- function 5
+	ActionSweep.super.client_owner_start_action(self, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 
-	arg_5_0._has_played_rumble_effect = false
-	arg_5_0._current_action = arg_5_1
-	arg_5_0._action_time_started = arg_5_2
-	arg_5_0._has_hit_environment = false
-	arg_5_0._has_hit_precision_target = true
-	arg_5_0._precision_target_unit = nil
-	arg_5_0._number_of_hit_enemies = 0
-	arg_5_0._this_attack_killed_enemy = false
-	arg_5_0._amount_of_mass_hit = 0
-	arg_5_0._number_of_potential_hit_results = 0
-	arg_5_0._hit_mass_of_potential_hit_results = 0
-	arg_5_0._network_manager = Managers.state.network
-	arg_5_0._last_potential_hit_result_has_result = false
-	arg_5_0._last_potential_hit_result = {}
-	arg_5_0.has_been_within_damage_window = false
+	self._has_played_rumble_effect = false
+	self._current_action = arg_5_1
+	self._action_time_started = arg_5_2
+	self._has_hit_environment = false
+	self._has_hit_precision_target = true
+	self._precision_target_unit = nil
+	self._number_of_hit_enemies = 0
+	self._this_attack_killed_enemy = false
+	self._amount_of_mass_hit = 0
+	self._number_of_potential_hit_results = 0
+	self._hit_mass_of_potential_hit_results = 0
+	self._network_manager = Managers.state.network
+	self._last_potential_hit_result_has_result = false
+	self._last_potential_hit_result = {}
+	self.has_been_within_damage_window = false
 
-	local var_5_0 = arg_5_0.owner_unit
-	local var_5_1 = ScriptUnit.extension(var_5_0, "buff_system")
-	local var_5_2 = ScriptUnit.has_extension(var_5_0, "hud_system")
+	local owner_unit = self.owner_unit
+	local extension = ScriptUnit.extension(owner_unit, "buff_system")
+	local has_extension = ScriptUnit.has_extension(owner_unit, "hud_system")
 
-	arg_5_0._owner_buff_extension = var_5_1
-	arg_5_0._owner_hud_extension = var_5_2
+	self._owner_buff_extension = extension
+	self._owner_hud_extension = has_extension
 
-	local var_5_3 = ActionUtils.get_action_time_scale(var_5_0, arg_5_1)
+	local get_action_time_scale = ActionUtils.get_action_time_scale(owner_unit, arg_5_1)
 
-	arg_5_0._anim_time_scale = var_5_3
-	arg_5_0._time_to_hit = arg_5_2 + (arg_5_1.hit_time or 0) / var_5_3
+	self._anim_time_scale = get_action_time_scale
 
-	local var_5_4
-	local var_5_5 = arg_5_1.weapon_mode_key
-	local var_5_6 = arg_5_1.weapon_mode_overrides
+	local hit_time = arg_5_1.hit_time
 
-	if var_5_5 then
-		var_5_4 = var_5_6[arg_5_0._weapon_extension:get_custom_data(var_5_5)]
+	hit_time = hit_time or 0
+	self._time_to_hit = arg_5_2 + hit_time / get_action_time_scale
+
+	local var_5_5
+	local weapon_mode_key = arg_5_1.weapon_mode_key
+	local weapon_mode_overrides = arg_5_1.weapon_mode_overrides
+
+	if not weapon_mode_key then
+		var_5_5 = weapon_mode_overrides[self._weapon_extension:get_custom_data(weapon_mode_key)]
 	end
 
-	arg_5_0:_populate_sweep_action_data(arg_5_1, var_5_4)
+	self:_populate_sweep_action_data(arg_5_1, var_5_5)
 
-	local var_5_7 = arg_5_5 and arg_5_5.action_hand
-	local var_5_8 = arg_5_0:_get_damage_profile_name(var_5_7, arg_5_1)
+	local flag = not arg_5_5 and arg_5_5.action_hand
+	local _get_damage_profile_name = self:_get_damage_profile_name(flag, arg_5_1)
 
-	arg_5_0._action_hand = var_5_7
-	arg_5_0._baked_sweep_data = arg_5_1[var_0_22(arg_5_0._action_hand)]
-	arg_5_0._baked_data_dt_recip = arg_5_0._baked_sweep_data and 1 / #arg_5_0._baked_sweep_data or 1
-	arg_5_0._damage_profile_id = NetworkLookup.damage_profiles[var_5_8]
+	self._action_hand = flag
+	self._baked_sweep_data = arg_5_1[fn_2(self._action_hand)]
 
-	local var_5_9 = DamageProfileTemplates[var_5_8]
+	local num
 
-	arg_5_0._damage_profile = var_5_9
-	arg_5_0._has_starting_melee_boost = nil
-	arg_5_0._starting_melee_boost_curve_multiplier = nil
+	if not self._baked_sweep_data then
+		num = 1 / #self._baked_sweep_data
 
-	local var_5_10, var_5_11 = arg_5_0:_get_power_boost()
-	local var_5_12 = ActionUtils.is_critical_strike(var_5_0, arg_5_1, arg_5_2, var_5_4) or var_5_10
-	local var_5_13 = Managers.state.difficulty:get_difficulty()
-	local var_5_14 = ActionUtils.scale_power_levels(arg_5_4, "cleave", var_5_0, var_5_13)
-	local var_5_15 = var_5_1:apply_buffs_to_value(var_5_14, "power_level_melee")
-	local var_5_16 = var_5_1:apply_buffs_to_value(var_5_15, "power_level_melee_cleave")
-
-	arg_5_0._power_level = arg_5_4
-
-	local var_5_17, var_5_18 = ActionUtils.get_max_targets(var_5_9, var_5_16)
-	local var_5_19 = var_5_1:apply_buffs_to_value(var_5_17 or 1, "increased_max_targets")
-	local var_5_20 = var_5_1:apply_buffs_to_value(var_5_18 or 1, "increased_max_targets")
-
-	if var_5_1:has_buff_perk("potion_armor_penetration") then
-		var_5_20 = var_5_20 * 2
+		if not num then
+			-- Nothing
+		end
 	end
 
-	arg_5_0._max_targets_attack = var_5_19
-	arg_5_0._max_targets_impact = var_5_20
-	arg_5_0._max_targets = var_5_20 < var_5_19 and var_5_19 or var_5_20
-	arg_5_0._down_offset = arg_5_1.sweep_z_offset or 0.1
-	arg_5_0._auto_aim_reset = false
+	num = 1
 
-	if not Managers.player:owner(arg_5_0.owner_unit).bot_player and var_5_9.charge_value == "heavy_attack" then
+	::label_5_0::
+
+	self._baked_data_dt_recip = num
+	self._damage_profile_id = NetworkLookup.damage_profiles[_get_damage_profile_name]
+
+	local var_5_11 = DamageProfileTemplates[_get_damage_profile_name]
+
+	self._damage_profile = var_5_11
+	self._has_starting_melee_boost = nil
+	self._starting_melee_boost_curve_multiplier = nil
+
+	local _get_power_boost, var_5_13 = self:_get_power_boost()
+	local is_critical_strike = ActionUtils.is_critical_strike(owner_unit, arg_5_1, arg_5_2, var_5_5)
+
+	is_critical_strike = is_critical_strike or _get_power_boost
+
+	local get_difficulty = Managers.state.difficulty:get_difficulty()
+	local scale_power_levels = ActionUtils.scale_power_levels(arg_5_4, "cleave", owner_unit, get_difficulty)
+	local apply_buffs_to_value = extension:apply_buffs_to_value(scale_power_levels, "power_level_melee")
+	local apply_buffs_to_value_2 = extension:apply_buffs_to_value(apply_buffs_to_value, "power_level_melee_cleave")
+
+	self._power_level = arg_5_4
+
+	local get_max_targets, var_5_20 = ActionUtils.get_max_targets(var_5_11, apply_buffs_to_value_2)
+	local apply_buffs_to_value_3 = extension:apply_buffs_to_value(get_max_targets or 1, "increased_max_targets")
+	local apply_buffs_to_value_4 = extension:apply_buffs_to_value(var_5_20 or 1, "increased_max_targets")
+
+	if not extension:has_buff_perk("potion_armor_penetration") then
+		apply_buffs_to_value_4 = apply_buffs_to_value_4 * 2
+	end
+
+	self._max_targets_attack = apply_buffs_to_value_3
+	self._max_targets_impact = apply_buffs_to_value_4
+	self._max_targets = not (apply_buffs_to_value_4 < apply_buffs_to_value_3) or not apply_buffs_to_value_3 or apply_buffs_to_value_4
+
+	local sweep_z_offset = arg_5_1.sweep_z_offset
+
+	sweep_z_offset = sweep_z_offset or 0.1
+	self._down_offset = sweep_z_offset
+	self._auto_aim_reset = false
+
+	if not (Managers.player:owner(self.owner_unit).bot_player or var_5_11.charge_value ~= "heavy_attack") then
 		Managers.state.controller_features:add_effect("rumble", {
 			rumble_effect = "light_swing"
 		})
 	end
 
-	local var_5_21 = arg_5_0.first_person_unit
+	local first_person_unit = self.first_person_unit
 
-	if global_is_inside_inn then
-		arg_5_0._down_offset = 0
+	if not global_is_inside_inn then
+		self._down_offset = 0
 	end
 
-	arg_5_0._attack_aborted = false
-	arg_5_0._send_delayed_hit_rpc = false
+	self._attack_aborted = false
+	self._send_delayed_hit_rpc = false
 
-	table.clear(arg_5_0._hit_units)
-	var_5_1:trigger_procs("on_sweep")
+	table.clear(self._hit_units)
+	extension:trigger_procs("on_sweep")
 
-	arg_5_0._unlimited_cleave = not not arg_5_1.unlimited_cleave
+	self._unlimited_cleave = not not arg_5_1.unlimited_cleave
 
-	if not arg_5_0._unlimited_cleave and var_5_12 then
-		arg_5_0._unlimited_cleave = var_5_1:has_buff_perk("crit_unlimited_cleave")
+	if self._unlimited_cleave or not is_critical_strike then
+		self._unlimited_cleave = extension:has_buff_perk("crit_unlimited_cleave")
 	end
 
-	local var_5_22 = ScriptUnit.extension(var_5_0, "first_person_system")
+	local extension_2 = ScriptUnit.extension(owner_unit, "first_person_system")
 
-	arg_5_0:_handle_critical_strike(var_5_12, var_5_1, var_5_2, var_5_22, "on_critical_sweep", "Play_player_combat_crit_swing_2D")
+	self:_handle_critical_strike(is_critical_strike, extension, has_extension, extension_2, "on_critical_sweep", "Play_player_combat_crit_swing_2D")
 
-	arg_5_0._is_critical_strike = var_5_12
-	arg_5_0._started_damage_window = false
+	self._is_critical_strike = is_critical_strike
+	self._started_damage_window = false
 
-	var_0_7(var_5_21, "sfx_swing_started")
+	flow_event(first_person_unit, "sfx_swing_started")
 
-	if arg_5_0._overridable_settings.use_precision_sweep then
-		var_5_22:disable_rig_movement()
+	if not self._overridable_settings.use_precision_sweep then
+		extension_2:disable_rig_movement()
 
-		local var_5_23 = World.get_data(arg_5_0.world, "physics_world")
-		local var_5_24 = var_5_22:current_position()
-		local var_5_25 = var_5_22:current_rotation()
-		local var_5_26 = Quaternion.forward(var_5_25)
-		local var_5_27 = "filter_melee_sweep"
-		local var_5_28 = PhysicsWorld.immediate_raycast(var_5_23, var_5_24, var_5_26, arg_5_1.dedicated_target_range, "all", "collision_filter", var_5_27)
+		local get_data_2 = World.get_data(self.world, "physics_world")
+		local current_position = extension_2:current_position()
+		local current_rotation = extension_2:current_rotation()
+		local forward = Quaternion.forward(current_rotation)
+		local str = "filter_melee_sweep"
+		local immediate_raycast = PhysicsWorld.immediate_raycast(get_data_2, current_position, forward, arg_5_1.dedicated_target_range, "all", "collision_filter", str)
 
-		if var_5_28 then
-			local var_5_29 = Managers.state.side.side_by_unit[var_5_0].enemy_units_lookup
-			local var_5_30 = #var_5_28
+		if not immediate_raycast then
+			local enemy_units_lookup = Managers.state.side.side_by_unit[owner_unit].enemy_units_lookup
+			local count = #immediate_raycast
 
-			for iter_5_0 = 1, var_5_30 do
-				local var_5_31 = var_5_28[iter_5_0][4]
-				local var_5_32 = Actor.unit(var_5_31)
-				local var_5_33 = var_0_3(var_5_32, "breed")
-				local var_5_34 = not var_5_29[var_5_32]
+			for i = 1, count do
+				local var_5_34 = immediate_raycast[i][4]
+				local unit = Actor.unit(var_5_34)
+				local var_5_36 = get_data(unit, "breed")
+				local flag_2 = not enemy_units_lookup[unit]
 
-				if var_5_33 and not var_5_34 then
-					local var_5_35 = var_0_15(var_5_31)
+				if not (not var_5_36 and flag_2) then
+					local var_5_38 = node_2(var_5_34)
 
-					if var_5_33.hit_zones_lookup[var_5_35].name ~= "afro" and HEALTH_ALIVE[var_5_32] then
-						arg_5_0._precision_target_unit = var_5_32
-						arg_5_0._has_hit_precision_target = false
+					if var_5_36.hit_zones_lookup[var_5_38].name == "afro" or not HEALTH_ALIVE[unit] then
+						self._precision_target_unit = unit
+						self._has_hit_precision_target = false
 
 						break
 					end
@@ -267,468 +311,613 @@ function ActionSweep.client_owner_start_action(arg_5_0, arg_5_1, arg_5_2, arg_5_
 			end
 		end
 
-		if not arg_5_0._precision_target_unit and ScriptUnit.has_extension(var_5_0, "smart_targeting_system") then
-			local var_5_36 = ScriptUnit.extension(var_5_0, "smart_targeting_system"):get_targeting_data().unit
+		if self._precision_target_unit or not ScriptUnit.has_extension(owner_unit, "smart_targeting_system") then
+			local unit_2 = ScriptUnit.extension(owner_unit, "smart_targeting_system"):get_targeting_data().unit
 
-			if HEALTH_ALIVE[var_5_36] then
-				arg_5_0._precision_target_unit = var_5_36
-				arg_5_0._has_hit_precision_target = false
+			if not HEALTH_ALIVE[unit_2] then
+				self._precision_target_unit = unit_2
+				self._has_hit_precision_target = false
 			end
 		end
 	end
 
-	local var_5_37 = arg_5_0.weapon_unit
-	local var_5_38 = arg_5_0:_weapon_sweep_rotation(arg_5_1, var_5_37)
-	local var_5_39 = Quaternion.up(var_5_38) * (arg_5_1.weapon_up_offset_mod or 0)
-	local var_5_40 = POSITION_LOOKUP[var_5_37]
-	local var_5_41 = Vector3(var_5_40.x, var_5_40.y, var_5_40.z - arg_5_0._down_offset) + var_5_39
+	local weapon_unit = self.weapon_unit
+	local _weapon_sweep_rotation = self:_weapon_sweep_rotation(arg_5_1, weapon_unit)
+	local up = Quaternion.up(_weapon_sweep_rotation)
+	local weapon_up_offset_mod = arg_5_1.weapon_up_offset_mod
 
-	arg_5_0._stored_position:store(var_5_41)
-	arg_5_0._stored_rotation:store(var_5_38)
+	weapon_up_offset_mod = weapon_up_offset_mod or 0
 
-	arg_5_0._could_damage_last_update = false
+	local num_2 = up * weapon_up_offset_mod
+	local var_5_45 = POSITION_LOOKUP[weapon_unit]
+	local num_3 = Vector3(var_5_45.x, var_5_45.y, var_5_45.z - self._down_offset) + num_2
+
+	self._stored_position:store(num_3)
+	self._stored_rotation:store(_weapon_sweep_rotation)
+
+	self._could_damage_last_update = false
 
 	if arg_5_1.lookup_data.sub_action_name == "assassinate" then
-		local var_5_42 = var_5_1:get_non_stacking_buff("assassinate")
+		local get_non_stacking_buff = extension:get_non_stacking_buff("assassinate")
 
-		var_5_1:remove_buff(var_5_42.id)
+		extension:remove_buff(get_non_stacking_buff.id)
 	end
 end
 
-local var_0_23 = {}
+local tbl_2 = {}
 
-if PhysicsWorld.stop_reusing_sweep_tables then
+if not PhysicsWorld.stop_reusing_sweep_tables then
 	PhysicsWorld.stop_reusing_sweep_tables()
 end
 
-function ActionSweep.client_owner_post_update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
-	local var_6_0 = arg_6_0.owner_unit
-	local var_6_1 = arg_6_0._current_action
+ActionSweep.client_owner_post_update = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+	-- function 6
+	local owner_unit = self.owner_unit
+	local _current_action = self._current_action
 
-	arg_6_0.current_time_in_action = arg_6_5
-	arg_6_0._dt = arg_6_1
+	self.current_time_in_action = arg_6_5
+	self._dt = arg_6_1
 
-	local var_6_2 = false
+	local flag = false
 
-	if (var_6_2 or arg_6_0._attack_aborted) and var_6_1.reset_aim_on_attack and not arg_6_0._auto_aim_reset then
-		ScriptUnit.extension(var_6_0, "first_person_system"):reset_aim_assist_multiplier()
+	if not ((flag or not self._attack_aborted or not _current_action.reset_aim_on_attack) and self._auto_aim_reset) then
+		ScriptUnit.extension(owner_unit, "first_person_system"):reset_aim_assist_multiplier()
 
-		arg_6_0._auto_aim_reset = true
+		self._auto_aim_reset = true
 	end
 
-	local var_6_3 = arg_6_5 - 2 * arg_6_1
-	local var_6_4 = arg_6_0:_update_sweep(arg_6_1, arg_6_2, var_6_1, var_6_3)
+	local num = arg_6_5 - 2 * arg_6_1
+	local _update_sweep = self:_update_sweep(arg_6_1, arg_6_2, _current_action, num)
+	local _started_damage_window = self._started_damage_window
 
-	arg_6_0._started_damage_window = arg_6_0._started_damage_window or var_6_4
+	_started_damage_window = _started_damage_window or _update_sweep
+	self._started_damage_window = _started_damage_window
 
-	if arg_6_0._is_critical_strike then
-		local var_6_5 = arg_6_0._owner_hud_extension
+	if not self._is_critical_strike then
+		local _owner_hud_extension = self._owner_hud_extension
 
-		if var_6_5 and var_6_5.show_critical_indication and not var_6_4 and arg_6_0._started_damage_window then
-			var_6_5.show_critical_indication = false
+		if not _owner_hud_extension and not _owner_hud_extension.show_critical_indication and _update_sweep or not self._started_damage_window then
+			_owner_hud_extension.show_critical_indication = false
 		end
 	end
 end
 
-function ActionSweep._update_sweep(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+ActionSweep._update_sweep = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	-- function 7
 	local var_7_0
 
-	if arg_7_0._baked_sweep_data then
-		var_7_0 = arg_7_0:_update_sweep_baked(arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	if not self._baked_sweep_data then
+		var_7_0 = self:_update_sweep_baked(arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	else
-		var_7_0 = arg_7_0:_update_sweep_runtime(arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+		var_7_0 = self:_update_sweep_runtime(arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	end
 
-	if arg_7_0._send_delayed_hit_rpc and arg_7_2 >= arg_7_0._time_to_hit then
-		local var_7_1 = arg_7_0._stored_attack_data
+	if not (not self._send_delayed_hit_rpc and not (arg_7_2 >= self._time_to_hit)) then
+		local _stored_attack_data = self._stored_attack_data
 
-		arg_7_0:_send_attack_hit(arg_7_2, var_7_1.damage_source_id, var_7_1.attacker_unit_id, var_7_1.hit_unit_id, var_7_1.hit_zone_id, var_7_1.hit_position:unbox(), var_7_1.attack_direction:unbox(), var_7_1.damage_profile_id, unpack(var_7_1.optional_parameters))
+		self:_send_attack_hit(arg_7_2, _stored_attack_data.damage_source_id, _stored_attack_data.attacker_unit_id, _stored_attack_data.hit_unit_id, _stored_attack_data.hit_zone_id, _stored_attack_data.hit_position:unbox(), _stored_attack_data.attack_direction:unbox(), _stored_attack_data.damage_profile_id, unpack(_stored_attack_data.optional_parameters))
 
-		arg_7_0._send_delayed_hit_rpc = false
+		self._send_delayed_hit_rpc = false
 	end
 
 	return var_7_0
 end
 
-function ActionSweep._update_sweep_baked(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+ActionSweep._update_sweep_baked = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+	-- function 8
 	local var_8_0
-	local var_8_1 = arg_8_3.damage_window_start / arg_8_0._anim_time_scale
+	local num = arg_8_3.damage_window_start / self._anim_time_scale
 
-	if arg_8_4 + arg_8_1 >= var_8_1 - 0.03333333333333333 then
-		local var_8_2 = arg_8_0.owner_unit
-		local var_8_3 = arg_8_0.weapon_unit
-		local var_8_4 = arg_8_0.physics_world
-		local var_8_5 = arg_8_0._baked_sweep_data
-		local var_8_6 = false
-		local var_8_7 = 0
-		local var_8_8 = 0.016666666666666666
-		local var_8_9 = ScriptUnit.extension(var_8_2, "first_person_system"):get_first_person_unit()
-		local var_8_10 = Unit.world_pose(var_8_9, 0)
+	if arg_8_4 + arg_8_1 >= num - 0.03333333333333333 then
+		local owner_unit = self.owner_unit
+		local weapon_unit = self.weapon_unit
+		local physics_world = self.physics_world
+		local _baked_sweep_data = self._baked_sweep_data
+		local flag = false
+		local num_2 = 0
+		local num_3 = 0.016666666666666666
+		local get_first_person_unit = ScriptUnit.extension(owner_unit, "first_person_system"):get_first_person_unit()
+		local world_pose = Unit.world_pose(get_first_person_unit, 0)
 
-		while not var_8_6 and not arg_8_0._attack_aborted and var_8_7 < arg_8_1 do
-			local var_8_11 = math.min(var_8_8, arg_8_1 - var_8_7)
+		while not (flag or self._attack_aborted or not (num_2 < arg_8_1)) do
+			local min = math.min(num_3, arg_8_1 - num_2)
 
-			var_8_7 = math.min(var_8_7 + var_8_8, arg_8_1)
+			num_2 = math.min(num_2 + num_3, arg_8_1)
 
-			local var_8_12 = (arg_8_4 + var_8_7) * arg_8_0._anim_time_scale
-			local var_8_13 = var_0_21(var_8_12, var_8_5)
-			local var_8_14 = Matrix4x4.multiply(var_8_13, var_8_10)
-			local var_8_15 = Matrix4x4.translation(var_8_14)
-			local var_8_16 = Matrix4x4.rotation(var_8_14)
+			local num_4 = (arg_8_4 + num_2) * self._anim_time_scale
+			local var_8_13 = fn(num_4, _baked_sweep_data)
+			local multiply = Matrix4x4.multiply(var_8_13, world_pose)
+			local translation = Matrix4x4.translation(multiply)
+			local rotation = Matrix4x4.rotation(multiply)
 
-			var_8_0 = arg_8_0:_is_within_damage_window(arg_8_4 + var_8_7, arg_8_3, var_8_2)
-			var_8_6 = arg_8_0:_do_overlap(var_8_11, arg_8_2, var_8_3, var_8_2, arg_8_3, var_8_4, var_8_0, var_8_15, var_8_16)
+			var_8_0 = self:_is_within_damage_window(arg_8_4 + num_2, arg_8_3, owner_unit)
+			flag = self:_do_overlap(min, arg_8_2, weapon_unit, owner_unit, arg_8_3, physics_world, var_8_0, translation, rotation)
 		end
 	end
 
 	return var_8_0
 end
 
-function ActionSweep._update_sweep_runtime(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
-	local var_9_0 = arg_9_0.owner_unit
-	local var_9_1 = arg_9_0.weapon_unit
-	local var_9_2 = arg_9_0.physics_world
-	local var_9_3 = arg_9_3.forced_interpolation or 0.016666666666666666
-	local var_9_4 = 0
-	local var_9_5 = arg_9_0._stored_position:unbox()
-	local var_9_6 = arg_9_0._stored_rotation:unbox()
-	local var_9_7 = POSITION_LOOKUP[var_9_1]
-	local var_9_8 = arg_9_0:_weapon_sweep_rotation(arg_9_3, var_9_1)
-	local var_9_9 = false
+ActionSweep._update_sweep_runtime = function (self, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	-- function 9
+	local owner_unit = self.owner_unit
+	local weapon_unit = self.weapon_unit
+	local physics_world = self.physics_world
+	local forced_interpolation = arg_9_3.forced_interpolation
+
+	forced_interpolation = forced_interpolation or 0.016666666666666666
+
+	local num = 0
+	local unbox = self._stored_position:unbox()
+	local unbox_2 = self._stored_rotation:unbox()
+	local var_9_7 = POSITION_LOOKUP[weapon_unit]
+	local _weapon_sweep_rotation = self:_weapon_sweep_rotation(arg_9_3, weapon_unit)
+	local flag = false
 	local var_9_10
 
-	while not var_9_9 and not arg_9_0._attack_aborted and var_9_4 < arg_9_1 do
-		local var_9_11 = math.min(var_9_3, arg_9_1 - var_9_4)
+	while not (flag or self._attack_aborted or not (num < arg_9_1)) do
+		local min = math.min(forced_interpolation, arg_9_1 - num)
 
-		var_9_4 = math.min(var_9_4 + var_9_3, arg_9_1)
+		num = math.min(num + forced_interpolation, arg_9_1)
 
-		local var_9_12 = var_9_4 / arg_9_1
-		local var_9_13 = Vector3.lerp(var_9_5, var_9_7, var_9_12)
-		local var_9_14 = Quaternion.lerp(var_9_6, var_9_8, var_9_12)
+		local num_2 = num / arg_9_1
+		local lerp = Vector3.lerp(unbox, var_9_7, num_2)
+		local lerp_2 = Quaternion.lerp(unbox_2, _weapon_sweep_rotation, num_2)
 
-		var_9_10 = arg_9_0:_is_within_damage_window(arg_9_4 + var_9_4, arg_9_3, var_9_0)
-		var_9_9 = arg_9_0:_do_overlap(var_9_11, arg_9_2, var_9_1, var_9_0, arg_9_3, var_9_2, var_9_10, var_9_13, var_9_14)
+		var_9_10 = self:_is_within_damage_window(arg_9_4 + num, arg_9_3, owner_unit)
+		flag = self:_do_overlap(min, arg_9_2, weapon_unit, owner_unit, arg_9_3, physics_world, var_9_10, lerp, lerp_2)
 	end
 
 	return var_9_10
 end
 
-function ActionSweep._get_power_boost(arg_10_0)
-	local var_10_0 = arg_10_0._has_starting_melee_boost
-	local var_10_1 = arg_10_0._starting_melee_boost_curve_multiplier
+ActionSweep._get_power_boost = function (self)
+	-- function 10
+	local _has_starting_melee_boost = self._has_starting_melee_boost
+	local _starting_melee_boost_curve_multiplier = self._starting_melee_boost_curve_multiplier
 
-	if not var_10_0 then
-		local var_10_2 = arg_10_0.owner_unit
-		local var_10_3 = arg_10_0._damage_profile
-		local var_10_4 = var_10_3 and var_10_3.melee_boost_override
+	if not _has_starting_melee_boost then
+		local owner_unit = self.owner_unit
+		local _damage_profile = self._damage_profile
+		local flag = not _damage_profile and _damage_profile.melee_boost_override
 
-		var_10_0, var_10_1 = ActionUtils.get_melee_boost(var_10_2, var_10_4)
-		arg_10_0._has_starting_melee_boost, arg_10_0._starting_melee_boost_curve_multiplier = var_10_0, var_10_1
+		_has_starting_melee_boost, _starting_melee_boost_curve_multiplier = ActionUtils.get_melee_boost(owner_unit, flag)
+		self._has_starting_melee_boost, self._starting_melee_boost_curve_multiplier = _has_starting_melee_boost, _starting_melee_boost_curve_multiplier
 	end
 
-	return var_10_0, var_10_1
+	return _has_starting_melee_boost, _starting_melee_boost_curve_multiplier
 end
 
-function ActionSweep._is_within_damage_window(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
-	local var_11_0 = arg_11_2.damage_window_start
-	local var_11_1 = arg_11_2.damage_window_end
+ActionSweep._is_within_damage_window = function (self, arg_11_1, arg_11_2, arg_11_3)
+	-- function 11
+	local damage_window_start = arg_11_2.damage_window_start
+	local damage_window_end = arg_11_2.damage_window_end
 
-	if not var_11_0 and not var_11_1 then
+	if not (damage_window_start or damage_window_end) then
 		return false
 	end
 
-	local var_11_2 = arg_11_0._anim_time_scale
-	local var_11_3 = var_11_0 / var_11_2
+	local _anim_time_scale = self._anim_time_scale
+	local num = damage_window_start / _anim_time_scale
 
-	var_11_1 = var_11_1 or arg_11_2.total_time or math.huge
+	damage_window_end = damage_window_end or arg_11_2.total_time or math.huge
 
-	local var_11_4 = var_11_1 / var_11_2
-	local var_11_5 = var_11_3 < arg_11_1
-	local var_11_6 = arg_11_1 < var_11_4
+	local num_2 = damage_window_end / _anim_time_scale
+	local flag = num < arg_11_1
+	local flag_2 = arg_11_1 < num_2
 
-	return var_11_5 and var_11_6
+	return not flag and flag_2
 end
 
-function ActionSweep._get_target_hit_mass(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
-	local var_12_0 = arg_12_2 and (arg_12_4.hit_mass_counts_block and (arg_12_4.hit_mass_counts_block[arg_12_1] or arg_12_4.hit_mass_counts_block[2]) or arg_12_4.hit_mass_count_block) or arg_12_4.hit_mass_counts and (arg_12_4.hit_mass_counts[arg_12_1] or arg_12_4.hit_mass_counts[2]) or arg_12_4.hit_mass_count or 1
-	local var_12_1 = arg_12_0._overridable_settings.hit_mass_count
+ActionSweep._get_target_hit_mass = function (self, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
+	-- function 12
+	local var_12_0
 
-	if arg_12_0._unlimited_cleave then
+	if not arg_12_2 then
+		if not arg_12_4.hit_mass_counts_block then
+			var_12_0 = arg_12_4.hit_mass_counts_block[arg_12_1]
+
+			if not var_12_0 then
+				-- Nothing
+			end
+
+			var_12_0 = arg_12_4.hit_mass_counts_block[2]
+
+			if not var_12_0 then
+				-- Nothing
+			end
+		end
+
+		var_12_0 = arg_12_4.hit_mass_count_block
+
+		if not var_12_0 then
+			-- Nothing
+		end
+	end
+
+	if not arg_12_4.hit_mass_counts then
+		var_12_0 = arg_12_4.hit_mass_counts[arg_12_1]
+
+		if not var_12_0 then
+			-- Nothing
+		end
+
+		var_12_0 = arg_12_4.hit_mass_counts[2]
+
+		if not var_12_0 then
+			-- Nothing
+		end
+	end
+
+	var_12_0 = arg_12_4.hit_mass_count
+	var_12_0 = var_12_0 or 1
+
+	::label_12_0::
+
+	local hit_mass_count = self._overridable_settings.hit_mass_count
+
+	if not self._unlimited_cleave then
 		var_12_0 = 0
 
 		return var_12_0
-	elseif var_12_1 and var_12_1[arg_12_4.name] then
-		var_12_0 = var_12_0 * (var_12_1[arg_12_4.name] or 1)
+	elseif not hit_mass_count and not hit_mass_count[arg_12_4.name] then
+		var_12_0 = var_12_0 * (hit_mass_count[arg_12_4.name] or 1)
 	end
 
-	local var_12_2 = arg_12_0._network_manager:game()
+	local game = self._network_manager:game()
 
 	if not arg_12_4.is_player then
-		local var_12_3 = GameSession.game_object_field(var_12_2, arg_12_5, "bt_action_name")
+		local game_object_field = GameSession.game_object_field(game, arg_12_5, "bt_action_name")
 
-		if NetworkLookup.bt_action_names[var_12_3] == "stagger" then
+		if NetworkLookup.bt_action_names[game_object_field] == "stagger" then
 			var_12_0 = var_12_0 * 0.75
 		end
 	end
 
-	local var_12_4 = ScriptUnit.has_extension(arg_12_6, "buff_system")
+	local has_extension = ScriptUnit.has_extension(arg_12_6, "buff_system")
 
-	if var_12_4 then
-		var_12_0 = var_12_4:apply_buffs_to_value(var_12_0, "hit_mass_amount")
+	if not has_extension then
+		var_12_0 = has_extension:apply_buffs_to_value(var_12_0, "hit_mass_amount")
 	end
 
-	return (arg_12_0._owner_buff_extension:apply_buffs_to_value(var_12_0, "hit_mass_reduction"))
+	return (self._owner_buff_extension:apply_buffs_to_value(var_12_0, "hit_mass_reduction"))
 end
 
-function ActionSweep._calculate_hit_mass(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7)
-	local var_13_0 = false
-	local var_13_1 = false
+ActionSweep._calculate_hit_mass = function (self, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7)
+	-- function 13
+	local flag = false
+	local flag_2 = false
 
-	if HEALTH_ALIVE[arg_13_7] then
-		var_13_0 = arg_13_0._amount_of_mass_hit <= arg_13_0._max_targets_attack
-		var_13_1 = arg_13_0._amount_of_mass_hit <= arg_13_0._max_targets_impact
+	if not HEALTH_ALIVE[arg_13_7] then
+		flag = self._amount_of_mass_hit <= self._max_targets_attack
+		flag_2 = self._amount_of_mass_hit <= self._max_targets_impact
 
-		local var_13_2 = arg_13_0:_get_target_hit_mass(arg_13_1, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7)
+		local _get_target_hit_mass = self:_get_target_hit_mass(arg_13_1, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7)
 
-		arg_13_0._amount_of_mass_hit = arg_13_0._amount_of_mass_hit + var_13_2
-		arg_13_0._number_of_hit_enemies = arg_13_0._number_of_hit_enemies + 1
-		arg_13_2 = arg_13_0._number_of_hit_enemies
+		self._amount_of_mass_hit = self._amount_of_mass_hit + _get_target_hit_mass
+		self._number_of_hit_enemies = self._number_of_hit_enemies + 1
+		arg_13_2 = self._number_of_hit_enemies
 	else
 		arg_13_3 = false
 	end
 
-	return math.ceil(arg_13_2), arg_13_3, var_13_0, var_13_1
+	return math.ceil(arg_13_2), arg_13_3, flag, flag_2
 end
 
-function ActionSweep._calculate_hit_mass_level_object(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
-	if HEALTH_ALIVE[arg_14_1] then
-		local var_14_0 = var_0_3(arg_14_1, "hit_mass")
+ActionSweep._calculate_hit_mass_level_object = function (self, arg_14_1, arg_14_2, arg_14_3)
+	-- function 14
+	if not HEALTH_ALIVE[arg_14_1] then
+		local var_14_0 = get_data(arg_14_1, "hit_mass")
 
-		if arg_14_0._unlimited_cleave then
+		if not self._unlimited_cleave then
 			var_14_0 = 0
 		end
 
-		arg_14_0._amount_of_mass_hit = arg_14_0._amount_of_mass_hit + var_14_0
-		arg_14_0._number_of_hit_enemies = arg_14_0._number_of_hit_enemies + 1
+		self._amount_of_mass_hit = self._amount_of_mass_hit + var_14_0
+		self._number_of_hit_enemies = self._number_of_hit_enemies + 1
 	end
 end
 
-function ActionSweep._calculate_attack_direction(arg_15_0, arg_15_1, arg_15_2)
-	local var_15_0 = arg_15_1.attack_direction or "forward"
-	local var_15_1 = Quaternion[var_15_0](arg_15_2)
+ActionSweep._calculate_attack_direction = function (self, arg_15_1, arg_15_2)
+	-- function 15
+	local attack_direction = arg_15_1.attack_direction
 
-	return arg_15_0._overridable_settings.invert_attack_direction and -var_15_1 or var_15_1
+	attack_direction = attack_direction or "forward"
+
+	local var_15_1 = Quaternion[attack_direction](arg_15_2)
+	local num
+
+	if not self._overridable_settings.invert_attack_direction then
+		num = -var_15_1
+
+		if not num then
+			-- Nothing
+		end
+	end
+
+	num = var_15_1
+
+	::label_15_0::
+
+	return num
 end
 
-function ActionSweep._check_backstab(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
-	local var_16_0 = 1
+ActionSweep._check_backstab = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
+	-- function 16
+	local num = 1
 
-	if arg_16_1 and HEALTH_ALIVE[arg_16_2] then
+	if not arg_16_1 and not HEALTH_ALIVE[arg_16_2] then
 		local var_16_1 = POSITION_LOOKUP[arg_16_3]
-		local var_16_2 = var_0_4(arg_16_2, 0)
-		local var_16_3 = Vector3.normalize(var_16_2 - var_16_1)
-		local var_16_4 = Quaternion.forward(var_0_6(arg_16_2, 0))
-		local var_16_5 = Vector3.dot(var_16_4, var_16_3)
+		local var_16_2 = world_position(arg_16_2, 0)
+		local normalize = Vector3.normalize(var_16_2 - var_16_1)
+		local forward = Quaternion.forward(local_rotation(arg_16_2, 0))
+		local dot = Vector3.dot(forward, normalize)
 
-		if var_16_5 >= 0.55 and var_16_5 <= 1 or arg_16_4 and arg_16_4:has_buff_perk("guaranteed_backstab") then
-			var_16_0 = arg_16_4:apply_buffs_to_value(var_16_0, "backstab_multiplier")
+		if not (dot >= 0.55) or dot <= 1 or not arg_16_4 or not arg_16_4:has_buff_perk("guaranteed_backstab") then
+			num = arg_16_4:apply_buffs_to_value(num, "backstab_multiplier")
 
-			if script_data.debug_legendary_traits then
-				var_16_0 = 1.5
+			if not script_data.debug_legendary_traits then
+				num = 1.5
 			end
 
-			if var_16_0 > 1 then
+			if num > 1 then
 				arg_16_5:play_hud_sound_event("hud_player_buff_backstab")
 
-				local var_16_6 = Managers.state.side.side_by_unit[arg_16_3].PLAYER_AND_BOT_UNITS
+				local PLAYER_AND_BOT_UNITS = Managers.state.side.side_by_unit[arg_16_3].PLAYER_AND_BOT_UNITS
 
-				for iter_16_0 = 1, #var_16_6 do
-					local var_16_7 = var_16_6[iter_16_0]
-					local var_16_8 = ScriptUnit.has_extension(var_16_7, "buff_system")
+				for i = 1, #PLAYER_AND_BOT_UNITS do
+					local var_16_7 = PLAYER_AND_BOT_UNITS[i]
+					local has_extension = ScriptUnit.has_extension(var_16_7, "buff_system")
 
-					if var_16_8 then
-						var_16_8:trigger_procs("on_backstab", arg_16_2)
+					if not has_extension then
+						has_extension:trigger_procs("on_backstab", arg_16_2)
 					end
 				end
 			end
 		end
 	end
 
-	return var_16_0
+	return num
 end
 
-function ActionSweep._send_attack_hit(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, ...)
-	if arg_17_1 < arg_17_0._time_to_hit then
+ActionSweep._send_attack_hit = function (self, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, ...)
+	-- function 17
+	if arg_17_1 < self._time_to_hit then
 		local var_17_0 = Vector3Box(arg_17_6)
 		local var_17_1 = Vector3Box(arg_17_7)
 
-		table.clear(arg_17_0._stored_attack_data)
+		table.clear(self._stored_attack_data)
 
-		arg_17_0._stored_attack_data.damage_source_id = arg_17_2
-		arg_17_0._stored_attack_data.attacker_unit_id = arg_17_3
-		arg_17_0._stored_attack_data.hit_unit_id = arg_17_4
-		arg_17_0._stored_attack_data.hit_zone_id = arg_17_5
-		arg_17_0._stored_attack_data.hit_position = var_17_0
-		arg_17_0._stored_attack_data.attack_direction = var_17_1
-		arg_17_0._stored_attack_data.damage_profile_id = arg_17_8
-		arg_17_0._stored_attack_data.optional_parameters = {
+		self._stored_attack_data.damage_source_id = arg_17_2
+		self._stored_attack_data.attacker_unit_id = arg_17_3
+		self._stored_attack_data.hit_unit_id = arg_17_4
+		self._stored_attack_data.hit_zone_id = arg_17_5
+		self._stored_attack_data.hit_position = var_17_0
+		self._stored_attack_data.attack_direction = var_17_1
+		self._stored_attack_data.damage_profile_id = arg_17_8
+		self._stored_attack_data.optional_parameters = {
 			...
 		}
-		arg_17_0._send_delayed_hit_rpc = true
+		self._send_delayed_hit_rpc = true
 	else
-		arg_17_0.weapon_system:send_rpc_attack_hit(arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, ...)
+		self.weapon_system:send_rpc_attack_hit(arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, ...)
 
-		local var_17_2 = arg_17_0._current_action.impact_explosion_template
+		local impact_explosion_template = self._current_action.impact_explosion_template
 
-		if var_17_2 then
-			local var_17_3 = arg_17_0._network_manager:game_object_or_level_unit(arg_17_4)
-			local var_17_4 = Unit.has_node(var_17_3, "c_spine") and Unit.node(var_17_3, "c_spine")
-			local var_17_5 = var_17_4 and Unit.world_position(var_17_3, var_17_4) or arg_17_6
-			local var_17_6 = arg_17_0.world
-			local var_17_7 = arg_17_0.owner_unit
-			local var_17_8 = arg_17_0._stored_rotation:unbox()
-			local var_17_9 = 1
-			local var_17_10 = arg_17_0.item_name
-			local var_17_11 = arg_17_0._power_level
-			local var_17_12 = arg_17_0.is_server
-			local var_17_13 = false
-			local var_17_14 = false
-			local var_17_15 = arg_17_0.weapon_unit
-			local var_17_16 = Managers.state.network
-			local var_17_17 = var_17_16.network_transmit
-			local var_17_18 = ExplosionUtils.get_template(var_17_2)
-			local var_17_19 = var_17_16:unit_game_object_id(var_17_7)
-			local var_17_20 = NetworkLookup.explosion_templates[var_17_2]
+		if not impact_explosion_template then
+			local game_object_or_level_unit = self._network_manager:game_object_or_level_unit(arg_17_4)
+			local has_node = Unit.has_node(game_object_or_level_unit, "c_spine")
 
-			if var_17_12 then
-				var_17_17:send_rpc_clients("rpc_create_explosion", var_17_19, false, var_17_5, var_17_8, var_17_20, var_17_9, arg_17_2, var_17_11, var_17_14, var_17_19)
-			else
-				var_17_17:send_rpc_server("rpc_create_explosion", var_17_19, false, var_17_5, var_17_8, var_17_20, var_17_9, arg_17_2, var_17_11, var_17_14, var_17_19)
+			has_node = not has_node and Unit.node(game_object_or_level_unit, "c_spine")
+
+			local world_position
+
+			if not has_node then
+				world_position = Unit.world_position(game_object_or_level_unit, has_node)
+
+				if not world_position then
+					-- Nothing
+				end
 			end
 
-			DamageUtils.create_explosion(var_17_6, var_17_7, var_17_5, var_17_8, var_17_18, var_17_9, var_17_10, var_17_12, var_17_13, var_17_15, var_17_11, var_17_14)
+			world_position = arg_17_6
+
+			::label_17_0::
+
+			local world = self.world
+			local owner_unit = self.owner_unit
+			local unbox = self._stored_rotation:unbox()
+			local num = 1
+			local item_name = self.item_name
+			local _power_level = self._power_level
+			local is_server = self.is_server
+			local flag = false
+			local flag_2 = false
+			local weapon_unit = self.weapon_unit
+			local network = Managers.state.network
+			local network_transmit = network.network_transmit
+			local get_template = ExplosionUtils.get_template(impact_explosion_template)
+			local unit_game_object_id = network:unit_game_object_id(owner_unit)
+			local var_17_20 = NetworkLookup.explosion_templates[impact_explosion_template]
+
+			if not is_server then
+				network_transmit:send_rpc_clients("rpc_create_explosion", unit_game_object_id, false, world_position, unbox, var_17_20, num, arg_17_2, _power_level, flag_2, unit_game_object_id)
+			else
+				network_transmit:send_rpc_server("rpc_create_explosion", unit_game_object_id, false, world_position, unbox, var_17_20, num, arg_17_2, _power_level, flag_2, unit_game_object_id)
+			end
+
+			DamageUtils.create_explosion(world, owner_unit, world_position, unbox, get_template, num, item_name, is_server, flag, weapon_unit, _power_level, flag_2)
 		end
 	end
 end
 
 function _revalidate_actor_and_get_unit(arg_18_0)
-	return Script.type_name(arg_18_0) == "Actor" and Actor.unit(arg_18_0) or nil
+	-- function 18
+	local unit
+
+	if Script.type_name(arg_18_0) == "Actor" then
+		unit = Actor.unit(arg_18_0)
+
+		if not unit then
+			-- Nothing
+		end
+	end
+
+	unit = nil
+
+	::label_18_0::
+
+	return unit
 end
 
-function ActionSweep._do_overlap(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7, arg_19_8, arg_19_9)
-	if arg_19_0._attack_aborted then
+ActionSweep._do_overlap = function (self, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7, arg_19_8, arg_19_9)
+	-- function 19
+	if not self._attack_aborted then
 		return
 	end
 
-	local var_19_0 = Quaternion.up(arg_19_9)
-	local var_19_1 = false
-	local var_19_2 = arg_19_0._network_manager
-	local var_19_3 = arg_19_0.weapon_system
-	local var_19_4 = Quaternion.up(arg_19_9) * (arg_19_5.weapon_up_offset_mod or 0)
+	local up = Quaternion.up(arg_19_9)
+	local flag = false
+	local _network_manager = self._network_manager
+	local weapon_system = self.weapon_system
+	local up_2 = Quaternion.up(arg_19_9)
+	local weapon_up_offset_mod = arg_19_5.weapon_up_offset_mod
 
-	if not arg_19_7 and not arg_19_0._could_damage_last_update then
-		local var_19_5 = arg_19_8
-		local var_19_6 = Vector3(var_19_5.x, var_19_5.y, var_19_5.z - arg_19_0._down_offset) + var_19_4
+	weapon_up_offset_mod = weapon_up_offset_mod or 0
 
-		arg_19_0._stored_position:store(var_19_6)
-		arg_19_0._stored_rotation:store(arg_19_9)
+	local num = up_2 * weapon_up_offset_mod
+
+	if not (arg_19_7 or self._could_damage_last_update) then
+		local var_19_7 = arg_19_8
+		local num_2 = Vector3(var_19_7.x, var_19_7.y, var_19_7.z - self._down_offset) + num
+
+		self._stored_position:store(num_2)
+		self._stored_rotation:store(arg_19_9)
 
 		return
 	end
 
-	local var_19_7 = not arg_19_7 and arg_19_0._could_damage_last_update
+	local flag_2 = not not arg_19_7 or self._could_damage_last_update
 
-	arg_19_0._could_damage_last_update = arg_19_7
-	arg_19_0.has_been_within_damage_window = arg_19_0.has_been_within_damage_window or arg_19_7
+	self._could_damage_last_update = arg_19_7
 
-	local var_19_8 = arg_19_0._stored_position:unbox()
-	local var_19_9 = arg_19_0._stored_rotation:unbox()
-	local var_19_10 = Quaternion.up(var_19_9)
-	local var_19_11 = arg_19_8
-	local var_19_12 = Vector3(var_19_11.x, var_19_11.y, var_19_11.z - arg_19_0._down_offset) + var_19_4
-	local var_19_13 = arg_19_9
+	local has_been_within_damage_window = self.has_been_within_damage_window
 
-	arg_19_0._stored_position:store(var_19_12)
-	arg_19_0._stored_rotation:store(var_19_13)
+	has_been_within_damage_window = has_been_within_damage_window or arg_19_7
+	self.has_been_within_damage_window = has_been_within_damage_window
 
-	local var_19_14 = arg_19_0.stored_half_extents:unbox()
-	local var_19_15 = var_19_14.z
-	local var_19_16 = arg_19_5.range_mod and arg_19_5.range_mod * SweepRangeMod or SweepRangeMod
-	local var_19_17 = arg_19_5.width_mod and arg_19_5.width_mod * SweepWidthMod or 20 * SweepWidthMod
-	local var_19_18 = arg_19_5.height_mod and arg_19_5.height_mod * SweepHeigthMod or 4 * SweepHeigthMod
-	local var_19_19 = arg_19_5.range_mod_add or 0
+	local unbox = self._stored_position:unbox()
+	local unbox_2 = self._stored_rotation:unbox()
+	local up_3 = Quaternion.up(unbox_2)
+	local var_19_14 = arg_19_8
+	local num_3 = Vector3(var_19_14.x, var_19_14.y, var_19_14.z - self._down_offset) + num
+	local var_19_16 = arg_19_9
 
-	if global_is_inside_inn then
-		var_19_16 = 0.65 * var_19_16
-		var_19_17 = var_19_17 / 4
+	self._stored_position:store(num_3)
+	self._stored_rotation:store(var_19_16)
+
+	local unbox_3 = self.stored_half_extents:unbox()
+	local z = unbox_3.z
+	local num_4
+
+	if not arg_19_5.range_mod then
+		num_4 = arg_19_5.range_mod * SweepRangeMod
+
+		if not num_4 then
+			-- Nothing
+		end
 	end
 
-	local var_19_20 = var_19_15 * var_19_16 + var_19_19 / 2
+	num_4 = SweepRangeMod
 
-	var_19_14.x = var_19_14.x * var_19_17
-	var_19_14.y = var_19_14.y * var_19_18
-	var_19_14.z = var_19_20
+	do
+		local num_5
+	end
 
-	local var_19_21 = arg_19_9
-	local var_19_22 = var_19_8 + var_19_10 * var_19_20
-	local var_19_23 = var_19_8 + var_19_0 * var_19_20 * 2 - Quaternion.up(var_19_9) * var_19_20
-	local var_19_24 = 5
-	local var_19_25 = 20
-	local var_19_26 = 5
-	local var_19_27 = arg_19_0:_calculate_attack_direction(arg_19_5, var_19_21)
-	local var_19_28 = Managers.player:owner(arg_19_4)
-	local var_19_29 = Vector3(var_19_14.x, var_19_14.y, 0.0001)
-	local var_19_30 = Managers.state.difficulty:get_difficulty_rank()
-	local var_19_31 = "filter_melee_sweep"
+	::label_19_0::
 
-	if PhysicsWorld.start_reusing_sweep_tables then
+	if not arg_19_5.width_mod then
+		num_5 = arg_19_5.width_mod * SweepWidthMod
+
+		if not num_5 then
+			-- Nothing
+		end
+	end
+
+	num_5 = 20 * SweepWidthMod
+
+	do
+		local num_6
+	end
+
+	::label_19_1::
+
+	if not arg_19_5.height_mod then
+		num_6 = arg_19_5.height_mod * SweepHeigthMod
+
+		if not num_6 then
+			-- Nothing
+		end
+	end
+
+	num_6 = 4 * SweepHeigthMod
+
+	::label_19_2::
+
+	local range_mod_add = arg_19_5.range_mod_add
+
+	range_mod_add = range_mod_add or 0
+
+	if not global_is_inside_inn then
+		num_4 = 0.65 * num_4
+		num_5 = num_5 / 4
+	end
+
+	local num_7 = z * num_4 + range_mod_add / 2
+
+	unbox_3.x = unbox_3.x * num_5
+	unbox_3.y = unbox_3.y * num_6
+	unbox_3.z = num_7
+
+	local var_19_24 = arg_19_9
+	local num_8 = unbox + up_3 * num_7
+	local num_9 = unbox + up * num_7 * 2 - Quaternion.up(unbox_2) * num_7
+	local num_10 = 5
+	local num_11 = 20
+	local num_12 = 5
+	local _calculate_attack_direction = self:_calculate_attack_direction(arg_19_5, var_19_24)
+	local owner = Managers.player:owner(arg_19_4)
+	local var_19_32 = Vector3(unbox_3.x, unbox_3.y, 0.0001)
+	local get_difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
+	local str = "filter_melee_sweep"
+
+	if not PhysicsWorld.start_reusing_sweep_tables then
 		PhysicsWorld.start_reusing_sweep_tables()
 	end
 
-	local var_19_32 = PhysicsWorld.linear_obb_sweep(arg_19_6, var_19_8, var_19_8 + var_19_10 * var_19_20 * 2, var_19_29, var_19_9, var_19_24, "collision_filter", var_19_31, "report_initial_overlap")
-	local var_19_33 = PhysicsWorld.linear_obb_sweep(arg_19_6, var_19_22, var_19_23, var_19_14, var_19_9, var_19_25, "collision_filter", var_19_31, "report_initial_overlap")
-	local var_19_34 = PhysicsWorld.linear_obb_sweep(arg_19_6, var_19_8 + var_19_0 * var_19_20, var_19_12 + var_19_0 * var_19_20, var_19_14, var_19_13, var_19_26, "collision_filter", var_19_31, "report_initial_overlap")
-	local var_19_35 = 0
-	local var_19_36 = 0
-	local var_19_37 = 0
+	local linear_obb_sweep = PhysicsWorld.linear_obb_sweep(arg_19_6, unbox, unbox + up_3 * num_7 * 2, var_19_32, unbox_2, num_10, "collision_filter", str, "report_initial_overlap")
+	local linear_obb_sweep_2 = PhysicsWorld.linear_obb_sweep(arg_19_6, num_8, num_9, unbox_3, unbox_2, num_11, "collision_filter", str, "report_initial_overlap")
+	local linear_obb_sweep_3 = PhysicsWorld.linear_obb_sweep(arg_19_6, unbox + up * num_7, num_3 + up * num_7, unbox_3, var_19_16, num_12, "collision_filter", str, "report_initial_overlap")
+	local num_13 = 0
+	local num_14 = 0
+	local num_15 = 0
 
-	if var_19_32 then
-		var_19_35 = #var_19_32
+	if not linear_obb_sweep then
+		num_13 = #linear_obb_sweep
 
-		for iter_19_0 = 1, var_19_35 do
-			var_0_23[iter_19_0] = var_19_32[iter_19_0]
+		for i = 1, num_13 do
+			tbl_2[i] = linear_obb_sweep[i]
 		end
 	end
 
-	if var_19_33 then
-		for iter_19_1 = 1, #var_19_33 do
-			local var_19_38 = var_19_33[iter_19_1]
-			local var_19_39 = var_19_38.actor
-			local var_19_40
-
-			for iter_19_2 = 1, var_19_35 do
-				if var_0_23[iter_19_2].actor == var_19_39 then
-					var_19_40 = true
-
-					break
-				end
-			end
-
-			if not var_19_40 then
-				var_19_36 = var_19_36 + 1
-				var_0_23[var_19_35 + var_19_36] = var_19_38
-			end
-		end
-	end
-
-	if var_19_34 then
-		for iter_19_3 = 1, #var_19_34 do
-			local var_19_41 = var_19_34[iter_19_3]
-			local var_19_42 = var_19_41.actor
+	if not linear_obb_sweep_2 then
+		for j = 1, #linear_obb_sweep_2 do
+			local var_19_41 = linear_obb_sweep_2[j]
+			local actor = var_19_41.actor
 			local var_19_43
 
-			for iter_19_4 = 1, var_19_35 + var_19_36 do
-				if var_0_23[iter_19_4].actor == var_19_42 then
+			for k = 1, num_13 do
+				if tbl_2[k].actor == actor then
 					var_19_43 = true
 
 					break
@@ -736,490 +925,550 @@ function ActionSweep._do_overlap(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_
 			end
 
 			if not var_19_43 then
-				var_19_37 = var_19_37 + 1
-				var_0_23[var_19_35 + var_19_36 + var_19_37] = var_19_41
+				num_14 = num_14 + 1
+				tbl_2[num_13 + num_14] = var_19_41
 			end
 		end
 	end
 
-	for iter_19_5 = var_19_35 + var_19_36 + var_19_37 + 1, #var_0_23 do
-		var_0_23[iter_19_5] = nil
-	end
+	if not linear_obb_sweep_3 then
+		for l = 1, #linear_obb_sweep_3 do
+			local var_19_44 = linear_obb_sweep_3[l]
+			local actor_2 = var_19_44.actor
+			local var_19_46
 
-	local var_19_44 = ScriptUnit.extension(arg_19_4, "first_person_system")
-	local var_19_45 = ScriptUnit.has_extension(arg_19_4, "sound_effect_system")
-	local var_19_46 = arg_19_0._damage_profile
-	local var_19_47 = arg_19_0._hit_units
-	local var_19_48 = false
-	local var_19_49 = var_19_12 + var_19_0 * (var_19_20 * 2)
-	local var_19_50
+			for i4 = 1, num_13 + num_14 do
+				if tbl_2[i4].actor == actor_2 then
+					var_19_46 = true
 
-	if arg_19_0._overridable_settings.use_precision_sweep and arg_19_0._precision_target_unit then
-		local var_19_51 = arg_19_0:check_precision_target(arg_19_4, var_19_28, arg_19_5.dedicated_target_range, true, var_19_49)
+					break
+				end
+			end
 
-		if arg_19_0._precision_target_unit ~= var_19_51 then
-			var_19_50 = true
-			arg_19_0._precision_target_unit = nil
+			if not var_19_46 then
+				num_15 = num_15 + 1
+				tbl_2[num_13 + num_14 + num_15] = var_19_44
+			end
 		end
 	end
 
-	local var_19_52 = var_19_35 + var_19_36 + var_19_37
+	for i5 = num_13 + num_14 + num_15 + 1, #tbl_2 do
+		tbl_2[i5] = nil
+	end
 
-	if var_19_7 and arg_19_0._last_potential_hit_result_has_result then
-		local var_19_53 = 0
-		local var_19_54 = 1
+	local extension = ScriptUnit.extension(arg_19_4, "first_person_system")
+	local has_extension = ScriptUnit.has_extension(arg_19_4, "sound_effect_system")
+	local _damage_profile = self._damage_profile
+	local _hit_units = self._hit_units
+	local flag_3 = false
+	local num_16 = num_3 + up * (num_7 * 2)
+	local var_19_53
 
-		for iter_19_6 = 1, #arg_19_0._last_potential_hit_result do
-			if not arg_19_0._last_potential_hit_result[iter_19_6].already_hit then
-				local var_19_55 = {}
+	if not self._overridable_settings.use_precision_sweep and not self._precision_target_unit then
+		local check_precision_target = self:check_precision_target(arg_19_4, owner, arg_19_5.dedicated_target_range, true, num_16)
 
-				if arg_19_0._last_potential_hit_result[iter_19_6].actor:unbox() then
-					var_19_55.actor = arg_19_0._last_potential_hit_result[iter_19_6].actor:unbox()
-					var_19_55.position = arg_19_0._last_potential_hit_result[iter_19_6].hit_position:unbox()
-					var_19_55.normal = arg_19_0._last_potential_hit_result[iter_19_6].hit_normal:unbox()
+		if self._precision_target_unit ~= check_precision_target then
+			var_19_53 = true
+			self._precision_target_unit = nil
+		end
+	end
 
-					table.insert(var_0_23, var_19_54, var_19_55)
+	local num_17 = num_13 + num_14 + num_15
 
-					var_19_47[arg_19_0._last_potential_hit_result[iter_19_6].hit_unit] = nil
-					var_19_54 = var_19_54 + 1
-					var_19_53 = var_19_53 + 1
+	if not flag_2 and not self._last_potential_hit_result_has_result then
+		local num_18 = 0
+		local num_19 = 1
+
+		for i6 = 1, #self._last_potential_hit_result do
+			if not self._last_potential_hit_result[i6].already_hit then
+				local tbl = {}
+
+				if not self._last_potential_hit_result[i6].actor:unbox() then
+					tbl.actor = self._last_potential_hit_result[i6].actor:unbox()
+					tbl.position = self._last_potential_hit_result[i6].hit_position:unbox()
+					tbl.normal = self._last_potential_hit_result[i6].hit_normal:unbox()
+
+					table.insert(tbl_2, num_19, tbl)
+
+					_hit_units[self._last_potential_hit_result[i6].hit_unit] = nil
+					num_19 = num_19 + 1
+					num_18 = num_18 + 1
 				end
 			end
 		end
 
-		var_19_52 = var_19_52 + var_19_53
+		num_17 = num_17 + num_18
 	end
 
-	local var_19_56 = Managers.state.side.side_by_unit[arg_19_4].enemy_units_lookup
-	local var_19_57 = arg_19_0._this_attack_killed_enemy
-	local var_19_58, var_19_59 = var_19_44:camera_position_rotation()
+	local enemy_units_lookup = Managers.state.side.side_by_unit[arg_19_4].enemy_units_lookup
+	local _this_attack_killed_enemy = self._this_attack_killed_enemy
+	local camera_position_rotation, var_19_62 = extension:camera_position_rotation()
 
-	for iter_19_7 = 1, var_19_52 do
-		local var_19_60 = arg_19_0._last_potential_hit_result_has_result
-		local var_19_61 = arg_19_0._has_hit_precision_target
-		local var_19_62 = var_19_60 and (var_19_61 or var_19_50)
-		local var_19_63 = var_0_23[iter_19_7]
-		local var_19_64 = var_19_63.actor
-		local var_19_65 = _revalidate_actor_and_get_unit(var_19_64)
-		local var_19_66 = var_19_63.position
-		local var_19_67 = var_19_63.normal
-		local var_19_68 = false
+	for i7 = 1, num_17 do
+		local _last_potential_hit_result_has_result = self._last_potential_hit_result_has_result
+		local _has_hit_precision_target = self._has_hit_precision_target
+		local flag_4 = not _last_potential_hit_result_has_result and _has_hit_precision_target and var_19_53
+		local var_19_66 = tbl_2[i7]
+		local actor_3 = var_19_66.actor
+		local var_19_68 = _revalidate_actor_and_get_unit(actor_3)
+		local position = var_19_66.position
+		local normal = var_19_66.normal
+		local flag_5 = false
 
-		if var_19_62 then
-			local var_19_69 = #arg_19_0._last_potential_hit_result
+		if not flag_4 then
+			local count = #self._last_potential_hit_result
 
-			if var_19_50 then
-				var_19_68 = true
-				var_19_50 = false
-			elseif arg_19_0._last_potential_hit_result[var_19_69].hit_mass_budget then
-				var_19_68 = true
+			if not var_19_53 then
+				flag_5 = true
+				var_19_53 = false
+			elseif not self._last_potential_hit_result[count].hit_mass_budget then
+				flag_5 = true
 			end
 
-			if var_19_68 then
-				local var_19_70 = arg_19_0._last_potential_hit_result[var_19_69].actor:unbox()
+			if not flag_5 then
+				local unbox_4 = self._last_potential_hit_result[count].actor:unbox()
 
-				if var_19_70 then
-					local var_19_71 = var_19_70
-					local var_19_72 = _revalidate_actor_and_get_unit(var_19_71)
+				if not unbox_4 then
+					local var_19_74 = unbox_4
+					local var_19_75 = _revalidate_actor_and_get_unit(var_19_74)
 
-					if var_0_2(var_19_72) then
-						var_19_64 = var_19_71
-						var_19_65 = var_19_72
-						var_19_66 = arg_19_0._last_potential_hit_result[var_19_69].hit_position:unbox()
-						var_19_67 = arg_19_0._last_potential_hit_result[var_19_69].hit_normal:unbox()
-						var_19_63.actor = var_19_64
-						var_19_63.position = var_19_66
-						var_19_63.normal = var_19_67
-						var_19_47[arg_19_0._last_potential_hit_result[var_19_69].hit_unit] = nil
-						arg_19_0._last_potential_hit_result[var_19_69].already_hit = true
+					if not alive(var_19_75) then
+						actor_3 = var_19_74
+						var_19_68 = var_19_75
+						position = self._last_potential_hit_result[count].hit_position:unbox()
+						normal = self._last_potential_hit_result[count].hit_normal:unbox()
+						var_19_66.actor = actor_3
+						var_19_66.position = position
+						var_19_66.normal = normal
+						_hit_units[self._last_potential_hit_result[count].hit_unit] = nil
+						self._last_potential_hit_result[count].already_hit = true
 					end
 				end
 			end
 
-			arg_19_0._last_potential_hit_result_has_result = false
+			self._last_potential_hit_result_has_result = false
 		end
 
-		local var_19_73 = false
+		local flag_6 = false
 
-		if var_0_2(var_19_65) and Vector3.is_valid(var_19_66) then
-			fassert(Vector3.is_valid(var_19_66), "The hit position is not valid! Actor: %s, Unit: %s", var_19_64, var_19_65)
-			assert(var_19_65, "hit_unit is nil.")
+		if not alive(var_19_68) and not Vector3.is_valid(position) then
+			fassert(Vector3.is_valid(position), "The hit position is not valid! Actor: %s, Unit: %s", actor_3, var_19_68)
+			assert(var_19_68, "hit_unit is nil.")
 
-			local var_19_74, var_19_75 = ActionUtils.redirect_shield_hit(var_19_65, var_19_64)
-			local var_19_76 = AiUtils.unit_breed(var_19_74)
-			local var_19_77 = false
-			local var_19_78 = var_19_44:is_within_custom_view(var_19_66, var_19_58, var_19_59, var_0_16, var_0_17)
-			local var_19_79 = var_19_76 ~= nil
-			local var_19_80 = var_19_76 and var_19_76.is_hero
-			local var_19_81
+			local redirect_shield_hit, var_19_78 = ActionUtils.redirect_shield_hit(var_19_68, actor_3)
+			local unit_breed = AiUtils.unit_breed(redirect_shield_hit)
+			local flag_7 = false
+			local is_within_custom_view = extension:is_within_custom_view(position, camera_position_rotation, var_19_62, degrees_to_radians, degrees_to_radians_2)
+			local flag_8 = unit_breed ~= nil
+			local flag_9 = not unit_breed and unit_breed.is_hero
+			local flag_10
 
-			var_19_81 = var_19_76 and var_19_76.is_ai
+			flag_10 = not unit_breed and unit_breed.is_ai
 
-			local var_19_82 = var_19_74 == arg_19_4
-			local var_19_83 = not var_19_56[var_19_74]
-			local var_19_84 = false
-			local var_19_85 = false
+			local flag_11 = redirect_shield_hit == arg_19_4
+			local flag_12 = not enemy_units_lookup[redirect_shield_hit]
+			local flag_13 = false
+			local flag_14 = false
 
-			if var_19_76 and var_19_76.can_dodge then
-				var_19_77 = AiUtils.attack_is_dodged(var_19_74)
+			if not unit_breed and not unit_breed.can_dodge then
+				flag_7 = AiUtils.attack_is_dodged(redirect_shield_hit)
 			end
 
-			if var_19_79 and not var_19_83 and not var_19_82 and var_19_78 and (var_19_62 or arg_19_0._hit_units[var_19_74] == nil) then
-				var_19_47[var_19_74] = true
+			if not (not flag_8 and flag_12 and flag_11 and not is_within_custom_view and flag_4 and self._hit_units[redirect_shield_hit] ~= nil) then
+				_hit_units[redirect_shield_hit] = true
 
-				local var_19_86 = arg_19_0._status_extension
+				local _status_extension = self._status_extension
 
-				var_19_84 = var_19_77 or not arg_19_0._unlimited_cleave and AiUtils.attack_is_shield_blocked(var_19_74, arg_19_4) and not arg_19_5.ignore_armour_hit and not var_19_86:is_invisible()
+				flag_13 = flag_7 or not not self._unlimited_cleave or not AiUtils.attack_is_shield_blocked(redirect_shield_hit, arg_19_4) or not not arg_19_5.ignore_armour_hit or not _status_extension:is_invisible()
 
-				if var_19_80 then
-					var_19_85 = ScriptUnit.extension(var_19_74, "status_system"):is_blocking()
+				if not flag_9 then
+					flag_14 = ScriptUnit.extension(redirect_shield_hit, "status_system"):is_blocking()
 				end
 
-				local var_19_87 = false
-				local var_19_88 = false
-				local var_19_89 = var_19_2:unit_game_object_id(var_19_74)
-				local var_19_90 = 1
-				local var_19_91
+				local flag_15 = false
+				local flag_16 = false
+				local unit_game_object_id = _network_manager:unit_game_object_id(redirect_shield_hit)
+				local num_20 = 1
+				local var_19_94
 
-				if arg_19_0._overridable_settings.use_precision_sweep and arg_19_0._precision_target_unit ~= nil and not arg_19_0._has_hit_precision_target and not var_19_7 then
-					if var_19_74 == arg_19_0._precision_target_unit then
-						arg_19_0._has_hit_precision_target = true
-						var_19_90, var_19_84, var_19_87, var_19_88 = arg_19_0:_calculate_hit_mass(var_19_30, var_19_90, var_19_84, arg_19_5, var_19_76, var_19_89, var_19_74)
-						var_19_91 = var_19_46.default_target
-					elseif HEALTH_ALIVE[var_19_74] then
-						local var_19_92 = arg_19_0:_get_target_hit_mass(var_19_30, var_19_84, arg_19_5, var_19_76, var_19_89, var_19_74)
-						local var_19_93 = arg_19_0._number_of_potential_hit_results + 1
-						local var_19_94 = {}
+				if not (not self._overridable_settings.use_precision_sweep and self._precision_target_unit == nil or self._has_hit_precision_target or flag_2) then
+					if redirect_shield_hit == self._precision_target_unit then
+						self._has_hit_precision_target = true
+						num_20, flag_13, flag_15, flag_16 = self:_calculate_hit_mass(get_difficulty_rank, num_20, flag_13, arg_19_5, unit_breed, unit_game_object_id, redirect_shield_hit)
+						var_19_94 = _damage_profile.default_target
+					elseif not HEALTH_ALIVE[redirect_shield_hit] then
+						local _get_target_hit_mass = self:_get_target_hit_mass(get_difficulty_rank, flag_13, arg_19_5, unit_breed, unit_game_object_id, redirect_shield_hit)
+						local num_21 = self._number_of_potential_hit_results + 1
+						local tbl_3 = {}
 
-						arg_19_0._last_potential_hit_result_has_result = true
-						var_19_94.hit_unit = var_19_74
-						var_19_94.actor = ActorBox(var_19_75)
-						var_19_94.hit_position = Vector3Box(var_19_66)
-						var_19_94.hit_normal = Vector3Box(var_19_67)
-						var_19_94.hit_mass_budget = arg_19_0._max_targets - (arg_19_0._amount_of_mass_hit + var_19_92) >= 0
-						arg_19_0._last_potential_hit_result[var_19_93] = var_19_94
-						arg_19_0._number_of_potential_hit_results = var_19_93
+						self._last_potential_hit_result_has_result = true
+						tbl_3.hit_unit = redirect_shield_hit
+						tbl_3.actor = ActorBox(var_19_78)
+						tbl_3.hit_position = Vector3Box(position)
+						tbl_3.hit_normal = Vector3Box(normal)
+						tbl_3.hit_mass_budget = self._max_targets - (self._amount_of_mass_hit + _get_target_hit_mass) >= 0
+						self._last_potential_hit_result[num_21] = tbl_3
+						self._number_of_potential_hit_results = num_21
 					end
-				elseif arg_19_0._amount_of_mass_hit < arg_19_0._max_targets or var_19_62 then
-					if not var_19_83 then
-						var_19_90, var_19_84, var_19_87, var_19_88 = arg_19_0:_calculate_hit_mass(var_19_30, var_19_90, var_19_84, arg_19_5, var_19_76, var_19_89, var_19_74)
+				elseif self._amount_of_mass_hit < self._max_targets or not flag_4 then
+					if not flag_12 then
+						num_20, flag_13, flag_15, flag_16 = self:_calculate_hit_mass(get_difficulty_rank, num_20, flag_13, arg_19_5, unit_breed, unit_game_object_id, redirect_shield_hit)
 					end
 
-					local var_19_95 = var_19_46.targets
+					local targets = _damage_profile.targets
 
-					var_19_91 = var_19_95 and var_19_95[var_19_90] or var_19_46.default_target
+					var_19_94 = not targets and targets[num_20] and _damage_profile.default_target
 				end
 
-				if var_19_91 then
-					local var_19_96 = arg_19_0._owner_buff_extension
-					local var_19_97 = arg_19_0._damage_profile_id
-					local var_19_98
+				if not var_19_94 then
+					local _owner_buff_extension = self._owner_buff_extension
+					local _damage_profile_id = self._damage_profile_id
+					local var_19_101
 
-					if var_19_76 then
-						local var_19_99 = var_0_15(var_19_75)
+					if not unit_breed then
+						local var_19_102 = node_2(var_19_78)
 
-						var_19_98 = var_19_76.hit_zones_lookup[var_19_99].name
+						var_19_101 = unit_breed.hit_zones_lookup[var_19_102].name
 
-						if var_19_98 == "afro" then
-							var_19_98 = "torso"
+						if var_19_101 == "afro" then
+							var_19_101 = "torso"
 						end
 
-						var_19_73 = HEALTH_ALIVE[var_19_74] and (var_19_76.armor_category == 2 or var_19_76.stagger_armor_category == 2) or var_19_76.armor_category == 3
+						flag_6 = not HEALTH_ALIVE[redirect_shield_hit] and unit_breed.armor_category == 2 and unit_breed.stagger_armor_category == 2 and unit_breed.armor_category == 3
 					else
-						var_19_98 = "torso"
+						var_19_101 = "torso"
 					end
 
-					local var_19_100 = not arg_19_0._unlimited_cleave and (arg_19_0._number_of_hit_enemies >= arg_19_0._max_targets or arg_19_0._amount_of_mass_hit >= arg_19_0._max_targets or var_19_73 and not arg_19_0._overridable_settings.slide_armour_hit and not arg_19_5.ignore_armour_hit)
+					local flag_17 = (not not self._unlimited_cleave or self._number_of_hit_enemies >= self._max_targets or self._amount_of_mass_hit >= self._max_targets or not flag_6) and not not self._overridable_settings.slide_armour_hit or not arg_19_5.ignore_armour_hit
 
-					if var_19_84 then
-						var_19_100 = not arg_19_0._unlimited_cleave and (arg_19_0._amount_of_mass_hit + 3 >= arg_19_0._max_targets or var_19_73 and not arg_19_0._overridable_settings.slide_armour_hit and not arg_19_5.ignore_armour_hit)
+					if not flag_13 then
+						flag_17 = (not not self._unlimited_cleave or self._amount_of_mass_hit + 3 >= self._max_targets or not flag_6) and not not self._overridable_settings.slide_armour_hit or not arg_19_5.ignore_armour_hit
 					end
 
-					if var_19_45 and HEALTH_ALIVE[var_19_74] then
-						var_19_45:add_hit()
+					if not has_extension and not HEALTH_ALIVE[redirect_shield_hit] then
+						has_extension:add_hit()
 					end
 
-					local var_19_101 = arg_19_0.item_name
-					local var_19_102 = NetworkLookup.damage_sources[var_19_101]
-					local var_19_103 = var_19_2:unit_game_object_id(arg_19_4)
-					local var_19_104 = NetworkLookup.hit_zones[var_19_98]
-					local var_19_105 = arg_19_0.is_server
-					local var_19_106 = arg_19_0:_check_backstab(var_19_76, var_19_74, arg_19_4, var_19_96, var_19_44)
-					local var_19_107 = var_19_84 or var_19_85
+					local item_name = self.item_name
+					local var_19_105 = NetworkLookup.damage_sources[item_name]
+					local unit_game_object_id_2 = _network_manager:unit_game_object_id(arg_19_4)
+					local var_19_107 = NetworkLookup.hit_zones[var_19_101]
+					local is_server = self.is_server
+					local _check_backstab = self:_check_backstab(unit_breed, redirect_shield_hit, arg_19_4, _owner_buff_extension, extension)
+					local flag_18 = flag_13 or flag_14
 
-					if var_19_76 and not var_19_77 then
-						local var_19_108, var_19_109 = arg_19_0:_get_power_boost()
-						local var_19_110 = arg_19_0._power_level
-						local var_19_111 = arg_19_0._is_critical_strike or var_19_108
-						local var_19_112 = arg_19_0:_play_character_impact(var_19_105, arg_19_4, var_19_74, var_19_76, var_19_66, var_19_98, arg_19_5, var_19_46, var_19_90, var_19_110, var_19_27, var_19_107, var_19_109, var_19_111, var_19_106)
+					if not (not unit_breed and flag_7) then
+						local _get_power_boost, var_19_112 = self:_get_power_boost()
+						local _power_level = self._power_level
+						local _is_critical_strike = self._is_critical_strike
 
-						var_19_57 = var_19_57 or var_19_112
+						_is_critical_strike = _is_critical_strike or _get_power_boost
+
+						local _play_character_impact = self:_play_character_impact(is_server, arg_19_4, redirect_shield_hit, unit_breed, position, var_19_101, arg_19_5, _damage_profile, num_20, _power_level, _calculate_attack_direction, flag_18, var_19_112, _is_critical_strike, _check_backstab)
+
+						_this_attack_killed_enemy = _this_attack_killed_enemy or _play_character_impact
 					end
 
-					local var_19_113 = var_19_76.armor_category
+					local armor_category = unit_breed.armor_category
 
-					arg_19_0:_play_hit_animations(arg_19_4, arg_19_5, var_19_100, var_19_98, var_19_113, var_19_107, var_19_57)
+					self:_play_hit_animations(arg_19_4, arg_19_5, flag_17, var_19_101, armor_category, flag_18, _this_attack_killed_enemy)
 
-					if var_19_77 then
-						var_19_100 = false
+					if not flag_7 then
+						flag_17 = false
 					end
 
-					if Managers.state.controller_features and arg_19_0.owner.local_player and not arg_19_0._has_played_rumble_effect then
-						if var_19_73 then
+					if not (not Managers.state.controller_features and not self.owner.local_player and self._has_played_rumble_effect) then
+						if not flag_6 then
 							Managers.state.controller_features:add_effect("rumble", {
 								rumble_effect = "hit_armor"
 							})
 						else
-							local var_19_114 = arg_19_5.hit_rumble_effect or "hit_character"
+							local hit_rumble_effect = arg_19_5.hit_rumble_effect
+
+							hit_rumble_effect = hit_rumble_effect or "hit_character"
 
 							Managers.state.controller_features:add_effect("rumble", {
-								rumble_effect = var_19_114
+								rumble_effect = hit_rumble_effect
 							})
 						end
 
-						if var_19_100 then
-							arg_19_0._has_played_rumble_effect = true
+						if not flag_17 then
+							self._has_played_rumble_effect = true
 						end
 					end
 
-					local var_19_115, var_19_116 = arg_19_0:_get_power_boost()
-					local var_19_117 = arg_19_0._power_level
-					local var_19_118 = arg_19_0._is_critical_strike or var_19_115
-					local var_19_119 = var_19_46.charge_value
-					local var_19_120 = false
-					local var_19_121 = "no_buff"
+					local _get_power_boost_2, var_19_119 = self:_get_power_boost()
+					local _power_level_2 = self._power_level
+					local _is_critical_strike_2 = self._is_critical_strike
 
-					if var_19_84 or var_19_85 then
-						if var_19_119 == "heavy_attack" and var_19_96:has_buff_perk("shield_break") or var_19_96:has_buff_perk("potion_armor_penetration") then
-							var_19_120 = true
+					_is_critical_strike_2 = _is_critical_strike_2 or _get_power_boost_2
+
+					local charge_value = _damage_profile.charge_value
+					local flag_19 = false
+					local str_2 = "no_buff"
+
+					if flag_13 or not flag_14 then
+						if (charge_value ~= "heavy_attack" or not _owner_buff_extension:has_buff_perk("shield_break")) and not _owner_buff_extension:has_buff_perk("potion_armor_penetration") then
+							flag_19 = true
 						end
 
-						local var_19_122 = not var_19_76.unbreakable_shield and (var_19_46.shield_break or var_19_120)
+						local shield_break
 
-						DamageUtils.handle_hit_indication(arg_19_4, var_19_74, 0, var_19_98, false, not var_19_122, var_19_122)
+						if not unit_breed.unbreakable_shield then
+							shield_break = _damage_profile.shield_break
+
+							if not shield_break then
+								shield_break = flag_19
+							end
+						else
+							shield_break = false
+						end
+
+						if false then
+							shield_break = true
+						end
+
+						DamageUtils.handle_hit_indication(arg_19_4, redirect_shield_hit, 0, var_19_101, false, not shield_break, shield_break)
 					else
-						local var_19_123 = true
-						local var_19_124 = arg_19_0._number_of_hit_enemies
-						local var_19_125 = DamageUtils.get_item_buff_type(arg_19_0.item_name)
+						local flag_20 = true
+						local _number_of_hit_enemies = self._number_of_hit_enemies
+						local get_item_buff_type = DamageUtils.get_item_buff_type(self.item_name)
 
-						var_19_121 = DamageUtils.buff_on_attack(arg_19_4, var_19_74, var_19_119, var_19_118, var_19_98, var_19_124, var_19_123, var_19_125, nil, var_19_101)
+						str_2 = DamageUtils.buff_on_attack(arg_19_4, redirect_shield_hit, charge_value, _is_critical_strike_2, var_19_101, _number_of_hit_enemies, flag_20, get_item_buff_type, nil, item_name)
 
-						local var_19_126 = NetworkLookup.attack_templates[var_19_91.attack_template]
+						local var_19_129 = NetworkLookup.attack_templates[var_19_94.attack_template]
 
-						var_19_3:rpc_weapon_blood(nil, var_19_103, var_19_126)
+						weapon_system:rpc_weapon_blood(nil, unit_game_object_id_2, var_19_129)
 
-						local var_19_127 = Vector3(var_19_63.position.x, var_19_63.position.y, var_19_63.position.z + arg_19_0._down_offset)
+						local var_19_130 = Vector3(var_19_66.position.x, var_19_66.position.y, var_19_66.position.z + self._down_offset)
 
-						Managers.state.blood:add_enemy_blood(var_19_127, var_19_74)
+						Managers.state.blood:add_enemy_blood(var_19_130, redirect_shield_hit)
 					end
 
-					if var_19_121 ~= "killing_blow" then
-						arg_19_0:_send_attack_hit(arg_19_2, var_19_102, var_19_103, var_19_89, var_19_104, var_19_66, var_19_27, var_19_97, "power_level", var_19_117, "hit_target_index", var_19_90, "blocking", var_19_84 or var_19_85, "shield_break_procced", var_19_120, "boost_curve_multiplier", var_19_116, "is_critical_strike", var_19_118, "can_damage", var_19_87, "can_stagger", var_19_88, "backstab_multiplier", var_19_106, "first_hit", arg_19_0._number_of_hit_enemies == 1)
+					if str_2 ~= "killing_blow" then
+						self:_send_attack_hit(arg_19_2, var_19_105, unit_game_object_id_2, unit_game_object_id, var_19_107, position, _calculate_attack_direction, _damage_profile_id, "power_level", _power_level_2, "hit_target_index", num_20, "blocking", flag_13 or flag_14, "shield_break_procced", flag_19, "boost_curve_multiplier", var_19_119, "is_critical_strike", _is_critical_strike_2, "can_damage", flag_15, "can_stagger", flag_16, "backstab_multiplier", _check_backstab, "first_hit", self._number_of_hit_enemies == 1)
 
-						if not var_19_107 and not arg_19_0.is_server then
-							local var_19_128 = NetworkLookup.attack_templates[var_19_91.attack_template]
+						if not (flag_18 or self.is_server) then
+							local var_19_131 = NetworkLookup.attack_templates[var_19_94.attack_template]
 
-							var_19_2.network_transmit:send_rpc_server("rpc_weapon_blood", var_19_103, var_19_128)
+							_network_manager.network_transmit:send_rpc_server("rpc_weapon_blood", unit_game_object_id_2, var_19_131)
 						end
 
-						var_0_7(arg_19_0.first_person_unit, "sfx_swing_hit")
+						flow_event(self.first_person_unit, "sfx_swing_hit")
 
-						if arg_19_5.add_fatigue_on_hit then
-							arg_19_0:_handle_fatigue(var_19_96, arg_19_0._status_extension, arg_19_5, false)
+						if not arg_19_5.add_fatigue_on_hit then
+							self:_handle_fatigue(_owner_buff_extension, self._status_extension, arg_19_5, false)
 						end
 					else
-						var_19_44:play_hud_sound_event("Play_hud_matchmaking_countdown")
+						extension:play_hud_sound_event("Play_hud_matchmaking_countdown")
 					end
 
-					if arg_19_5.knockback_data then
-						local var_19_129 = ScriptUnit.has_extension(var_19_74, "status_system")
+					if not arg_19_5.knockback_data then
+						local has_extension_2 = ScriptUnit.has_extension(redirect_shield_hit, "status_system")
 
-						if var_19_129 and not var_19_129:is_knocked_down() then
-							arg_19_0:_push_target(arg_19_4, var_19_74, arg_19_5.knockback_data, var_19_107, var_19_80)
+						if not (not has_extension_2 and has_extension_2:is_knocked_down()) then
+							self:_push_target(arg_19_4, redirect_shield_hit, arg_19_5.knockback_data, flag_18, flag_9)
 						end
 					end
 
-					if var_19_100 then
+					if not flag_17 then
 						break
 					end
 				end
-			elseif not var_19_79 and var_19_78 then
-				if ScriptUnit.has_extension(var_19_74, "ai_inventory_item_system") then
-					if not arg_19_0._hit_units[var_19_74] then
-						var_0_7(var_19_74, "break_shield")
+			elseif flag_8 or not is_within_custom_view then
+				if not ScriptUnit.has_extension(redirect_shield_hit, "ai_inventory_item_system") then
+					if not self._hit_units[redirect_shield_hit] then
+						flow_event(redirect_shield_hit, "break_shield")
 
-						arg_19_0._hit_units[var_19_74] = true
+						self._hit_units[redirect_shield_hit] = true
 					end
 
-					if Managers.state.controller_features and arg_19_0.owner.local_player and not arg_19_0._has_played_rumble_effect then
+					if not (not Managers.state.controller_features and not self.owner.local_player and self._has_played_rumble_effect) then
 						Managers.state.controller_features:add_effect("rumble", {
 							rumble_effect = "hit_shield"
 						})
 
-						arg_19_0._has_played_rumble_effect = true
+						self._has_played_rumble_effect = true
 					end
-				elseif var_19_47[var_19_74] == nil and ScriptUnit.has_extension(var_19_74, "health_system") then
-					local var_19_130, var_19_131 = Managers.state.network:game_object_or_level_id(var_19_74)
+				elseif _hit_units[redirect_shield_hit] ~= nil or not ScriptUnit.has_extension(redirect_shield_hit, "health_system") then
+					local game_object_or_level_id, var_19_134 = Managers.state.network:game_object_or_level_id(redirect_shield_hit)
 
-					if var_19_131 then
-						arg_19_0:hit_level_object(var_19_47, var_19_74, arg_19_4, arg_19_5, var_19_66, var_19_27, var_19_130)
-						arg_19_0:_play_environmental_effect(arg_19_9, arg_19_5, var_19_74, var_19_66, var_19_67, var_19_75)
+					if not var_19_134 then
+						self:hit_level_object(_hit_units, redirect_shield_hit, arg_19_4, arg_19_5, position, _calculate_attack_direction, game_object_or_level_id)
+						self:_play_environmental_effect(arg_19_9, arg_19_5, redirect_shield_hit, position, normal, var_19_78)
 
-						var_19_1 = true
+						flag = true
 					else
-						arg_19_0._hit_units[var_19_74] = var_19_74
+						self._hit_units[redirect_shield_hit] = redirect_shield_hit
 
-						local var_19_132 = math.ceil(arg_19_0._amount_of_mass_hit + 1)
-						local var_19_133 = arg_19_0.item_name
-						local var_19_134 = NetworkLookup.damage_sources[var_19_133]
-						local var_19_135 = var_19_2:unit_game_object_id(arg_19_4)
-						local var_19_136 = var_19_2:unit_game_object_id(var_19_74)
-						local var_19_137 = NetworkLookup.hit_zones.full
-						local var_19_138 = arg_19_0._damage_profile_id
-						local var_19_139, var_19_140 = arg_19_0:_get_power_boost()
-						local var_19_141 = arg_19_0._power_level
-						local var_19_142 = arg_19_0._is_critical_strike or var_19_139
+						local ceil = math.ceil(self._amount_of_mass_hit + 1)
+						local item_name_2 = self.item_name
+						local var_19_137 = NetworkLookup.damage_sources[item_name_2]
+						local unit_game_object_id_3 = _network_manager:unit_game_object_id(arg_19_4)
+						local unit_game_object_id_4 = _network_manager:unit_game_object_id(redirect_shield_hit)
+						local full = NetworkLookup.hit_zones.full
+						local _damage_profile_id_2 = self._damage_profile_id
+						local _get_power_boost_3, var_19_143 = self:_get_power_boost()
+						local _power_level_3 = self._power_level
+						local _is_critical_strike_3 = self._is_critical_strike
 
-						if var_0_3(var_19_74, "allow_melee_damage") ~= false then
-							arg_19_0:_send_attack_hit(arg_19_2, var_19_134, var_19_135, var_19_136, var_19_137, var_19_66, var_19_27, var_19_138, "power_level", var_19_141, "hit_target_index", var_19_132, "blocking", var_19_84, "boost_curve_multiplier", var_19_140, "is_critical_strike", var_19_142)
+						_is_critical_strike_3 = _is_critical_strike_3 or _get_power_boost_3
 
-							local var_19_143 = not var_0_3(var_19_74, "weapon_hit_through")
+						if get_data(redirect_shield_hit, "allow_melee_damage") ~= false then
+							self:_send_attack_hit(arg_19_2, var_19_137, unit_game_object_id_3, unit_game_object_id_4, full, position, _calculate_attack_direction, _damage_profile_id_2, "power_level", _power_level_3, "hit_target_index", ceil, "blocking", flag_13, "boost_curve_multiplier", var_19_143, "is_critical_strike", _is_critical_strike_3)
 
-							arg_19_0:_play_hit_animations(arg_19_4, arg_19_5, var_19_143)
-							arg_19_0:_play_environmental_effect(arg_19_9, arg_19_5, var_19_74, var_19_66, var_19_67, var_19_75)
+							local flag_21 = not get_data(redirect_shield_hit, "weapon_hit_through")
 
-							var_19_1 = true
+							self:_play_hit_animations(arg_19_4, arg_19_5, flag_21)
+							self:_play_environmental_effect(arg_19_9, arg_19_5, redirect_shield_hit, position, normal, var_19_78)
+
+							flag = true
 						end
 					end
-				elseif var_19_47[var_19_74] == nil then
-					if global_is_inside_inn then
-						local var_19_144 = true
+				elseif _hit_units[redirect_shield_hit] == nil then
+					if not global_is_inside_inn then
+						local flag_22 = true
 
-						arg_19_0:_play_hit_animations(arg_19_4, arg_19_5, var_19_144)
+						self:_play_hit_animations(arg_19_4, arg_19_5, flag_22)
 					end
 
-					var_19_48 = iter_19_7
-					var_19_1 = true
+					flag_3 = i7
+					flag = true
 				end
 			end
 
-			if var_19_84 or var_19_85 then
-				arg_19_0._amount_of_mass_hit = arg_19_0._amount_of_mass_hit + 3
+			if flag_13 or not flag_14 then
+				self._amount_of_mass_hit = self._amount_of_mass_hit + 3
 			end
 		end
 	end
 
-	arg_19_0._this_attack_killed_enemy = var_19_57
+	self._this_attack_killed_enemy = _this_attack_killed_enemy
 
-	if var_19_48 and not arg_19_0._has_hit_environment and var_19_35 + var_19_36 > 0 then
-		arg_19_0._has_hit_environment = true
+	if not (not flag_3 and self._has_hit_environment or not (num_13 + num_14 > 0)) then
+		self._has_hit_environment = true
 
-		local var_19_145 = var_0_23[var_19_48]
-		local var_19_146 = var_19_145.actor
-		local var_19_147 = _revalidate_actor_and_get_unit(var_19_146)
+		local var_19_148 = tbl_2[flag_3]
+		local actor_4 = var_19_148.actor
+		local var_19_150 = _revalidate_actor_and_get_unit(actor_4)
 
-		if var_0_2(var_19_147) and arg_19_3 ~= var_19_147 then
-			local var_19_148 = var_19_145.position
-			local var_19_149 = var_19_145.normal
-			local var_19_150 = var_19_27
+		if not (not alive(var_19_150) and arg_19_3 == var_19_150) then
+			local position_2 = var_19_148.position
+			local normal_2 = var_19_148.normal
+			local var_19_153 = _calculate_attack_direction
 
-			arg_19_0:_play_environmental_effect(arg_19_9, arg_19_5, var_19_147, var_19_148, var_19_149, var_19_146)
+			self:_play_environmental_effect(arg_19_9, arg_19_5, var_19_150, position_2, normal_2, actor_4)
 
-			if Managers.state.controller_features and global_is_inside_inn and arg_19_0.owner.local_player and not arg_19_0._has_played_rumble_effect then
+			if not (not Managers.state.controller_features and not global_is_inside_inn and not self.owner.local_player and self._has_played_rumble_effect) then
 				Managers.state.controller_features:add_effect("rumble", {
 					rumble_effect = "hit_environment"
 				})
 
-				arg_19_0._has_played_rumble_effect = true
+				self._has_played_rumble_effect = true
 			end
 
-			if var_19_147 and var_0_2(var_19_147) and var_19_146 then
-				var_0_8(var_19_147, "hit_actor", var_19_146)
-				var_0_8(var_19_147, "hit_direction", var_19_150)
-				var_0_8(var_19_147, "hit_position", var_19_148)
-				var_0_7(var_19_147, "lua_simple_damage")
+			if not var_19_150 and not alive(var_19_150) and not actor_4 then
+				set_flow_variable(var_19_150, "hit_actor", actor_4)
+				set_flow_variable(var_19_150, "hit_direction", var_19_153)
+				set_flow_variable(var_19_150, "hit_position", position_2)
+				flow_event(var_19_150, "lua_simple_damage")
 			end
 		end
 	end
 
-	if var_19_7 then
-		arg_19_0._attack_aborted = true
+	if not flag_2 then
+		self._attack_aborted = true
 	end
 
-	if Managers.state.controller_features and global_is_inside_inn and var_19_1 and arg_19_0.owner.local_player and not arg_19_0._has_played_rumble_effect then
+	if not (not Managers.state.controller_features and not global_is_inside_inn and not flag and not self.owner.local_player and self._has_played_rumble_effect) then
 		Managers.state.controller_features:add_effect("rumble", {
 			rumble_effect = "hit_environment"
 		})
 
-		arg_19_0._has_played_rumble_effect = true
+		self._has_played_rumble_effect = true
 	end
 
-	if PhysicsWorld.stop_reusing_sweep_tables then
+	if not PhysicsWorld.stop_reusing_sweep_tables then
 		PhysicsWorld.stop_reusing_sweep_tables()
 	end
 end
 
-function ActionSweep._push_target(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
-	local var_20_0 = arg_20_3.catapult
-	local var_20_1 = arg_20_3.catapult_players
+ActionSweep._push_target = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+	-- function 20
+	local catapult = arg_20_3.catapult
+	local catapult_players = arg_20_3.catapult_players
 
-	if var_20_0 then
-		if var_20_1 and arg_20_5 then
-			local var_20_2 = arg_20_3.player_catapult_speed
-			local var_20_3 = arg_20_3.player_catapult_speed_z
+	if not catapult then
+		if not catapult_players and not arg_20_5 then
+			local player_catapult_speed = arg_20_3.player_catapult_speed
+			local player_catapult_speed_z = arg_20_3.player_catapult_speed_z
 
-			if arg_20_4 then
-				var_20_2 = arg_20_3.player_catapult_speed_blocked
-				var_20_3 = arg_20_3.player_catapult_speed_blocked_z
+			if not arg_20_4 then
+				player_catapult_speed = arg_20_3.player_catapult_speed_blocked
+				player_catapult_speed_z = arg_20_3.player_catapult_speed_blocked_z
 			end
 
 			local var_20_4 = POSITION_LOOKUP[arg_20_1]
-			local var_20_5 = POSITION_LOOKUP[arg_20_2] - var_20_4
-			local var_20_6 = var_20_2 * Vector3.normalize(var_20_5)
+			local num = POSITION_LOOKUP[arg_20_2] - var_20_4
+			local num_2 = player_catapult_speed * Vector3.normalize(num)
 
-			if var_20_3 then
-				Vector3.set_z(var_20_6, var_20_3)
+			if not player_catapult_speed_z then
+				Vector3.set_z(num_2, player_catapult_speed_z)
 			end
 
-			if var_20_1 then
-				StatusUtils.set_catapulted_network(arg_20_2, true, var_20_6)
+			if not catapult_players then
+				StatusUtils.set_catapulted_network(arg_20_2, true, num_2)
 			end
 		end
 	else
-		local var_20_7 = arg_20_3.player_knockback_speed
+		local player_knockback_speed = arg_20_3.player_knockback_speed
 
-		if arg_20_4 then
-			var_20_7 = arg_20_3.player_knockback_speed_blocked
+		if not arg_20_4 then
+			player_knockback_speed = arg_20_3.player_knockback_speed_blocked
 		end
 
 		local var_20_8 = POSITION_LOOKUP[arg_20_1]
-		local var_20_9 = POSITION_LOOKUP[arg_20_2] - var_20_8
-		local var_20_10 = var_20_7 * Vector3.normalize(var_20_9)
+		local num_3 = POSITION_LOOKUP[arg_20_2] - var_20_8
+		local num_4 = player_knockback_speed * Vector3.normalize(num_3)
 
-		ScriptUnit.extension(arg_20_2, "locomotion_system"):add_external_velocity(var_20_10)
+		ScriptUnit.extension(arg_20_2, "locomotion_system"):add_external_velocity(num_4)
 	end
 end
 
-function ActionSweep._play_environmental_effect(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6)
-	local var_21_0 = Quaternion.forward(arg_21_1)
-	local var_21_1 = Quaternion.right(arg_21_1)
-	local var_21_2 = Quaternion.up(arg_21_1)
-	local var_21_3 = arg_21_0.world
-	local var_21_4 = arg_21_2.impact_axis and arg_21_2.impact_axis:unbox() or Vector3.forward()
-	local var_21_5 = arg_21_0._overridable_settings.hit_effect
-	local var_21_6 = var_21_1 * var_21_4.x + var_21_0 * var_21_4.y + var_21_2 * var_21_4.z
-	local var_21_7 = Quaternion.look(var_21_6, -var_21_1)
-	local var_21_8 = arg_21_0.owner_unit
-	local var_21_9 = Managers.player:owner(var_21_8).bot_player
+ActionSweep._play_environmental_effect = function (self, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6)
+	-- function 21
+	local forward = Quaternion.forward(arg_21_1)
+	local right = Quaternion.right(arg_21_1)
+	local up = Quaternion.up(arg_21_1)
+	local world = self.world
+	local unbox
 
-	EffectHelper.play_surface_material_effects(var_21_5, var_21_3, arg_21_3, arg_21_4, var_21_7, arg_21_5, nil, var_21_9, nil, arg_21_6)
+	if not arg_21_2.impact_axis then
+		unbox = arg_21_2.impact_axis:unbox()
 
-	if Managers.state.network:game() then
-		EffectHelper.remote_play_surface_material_effects(var_21_5, var_21_3, arg_21_3, arg_21_4, var_21_7, arg_21_5, arg_21_0.is_server, arg_21_6)
+		if not unbox then
+			-- Nothing
+		end
+	end
+
+	unbox = Vector3.forward()
+
+	::label_21_0::
+
+	local hit_effect = self._overridable_settings.hit_effect
+	local num = right * unbox.x + forward * unbox.y + up * unbox.z
+	local look = Quaternion.look(num, -right)
+	local owner_unit = self.owner_unit
+	local bot_player = Managers.player:owner(owner_unit).bot_player
+
+	EffectHelper.play_surface_material_effects(hit_effect, world, arg_21_3, arg_21_4, look, arg_21_5, nil, bot_player, nil, arg_21_6)
+
+	if not Managers.state.network:game() then
+		EffectHelper.remote_play_surface_material_effects(hit_effect, world, arg_21_3, arg_21_4, look, arg_21_5, self.is_server, arg_21_6)
 	end
 end
 
-local var_0_24 = {
+local tbl_3 = {
 	javelin_stab_hit = "stab_hit",
 	slashing_hit = "slashing_hit",
 	stab_hit = "stab_hit",
@@ -1233,289 +1482,435 @@ local var_0_24 = {
 	blunt_hit = "blunt_hit"
 }
 
-function ActionSweep._play_character_impact(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8, arg_22_9, arg_22_10, arg_22_11, arg_22_12, arg_22_13, arg_22_14, arg_22_15)
-	local var_22_0 = Managers.player:owner(arg_22_2).bot_player
-	local var_22_1 = arg_22_0.world
-	local var_22_2 = arg_22_0.owner_unit
-	local var_22_3 = arg_22_8.targets and arg_22_8.targets[arg_22_9] or arg_22_8.default_target
-	local var_22_4 = var_22_3.attack_template
-	local var_22_5 = DamageUtils.get_attack_template(var_22_4)
-	local var_22_6 = 0
-	local var_22_7 = false
+ActionSweep._play_character_impact = function (self, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8, arg_22_9, arg_22_10, arg_22_11, arg_22_12, arg_22_13, arg_22_14, arg_22_15)
+	-- function 22
+	local bot_player = Managers.player:owner(arg_22_2).bot_player
+	local world = self.world
+	local owner_unit = self.owner_unit
+	local var_22_3
 
-	if var_22_3 then
-		local var_22_8 = arg_22_0.item_name
+	if not arg_22_8.targets then
+		var_22_3 = arg_22_8.targets[arg_22_9]
+
+		if not var_22_3 then
+			-- Nothing
+		end
+	end
+
+	var_22_3 = arg_22_8.default_target
+
+	::label_22_0::
+
+	local attack_template = var_22_3.attack_template
+	local get_attack_template = DamageUtils.get_attack_template(attack_template)
+	local num = 0
+	local flag = false
+
+	if not var_22_3 then
+		local item_name = self.item_name
 		local var_22_9 = BoostCurves[var_22_3.boost_curve_type]
 
-		var_22_6, var_22_7 = DamageUtils.calculate_damage(DamageOutput, arg_22_3, arg_22_2, arg_22_6, arg_22_10, var_22_9, arg_22_13, arg_22_14, arg_22_8, arg_22_9, arg_22_15, var_22_8)
+		num, flag = DamageUtils.calculate_damage(DamageOutput, arg_22_3, arg_22_2, arg_22_6, arg_22_10, var_22_9, arg_22_13, arg_22_14, arg_22_8, arg_22_9, arg_22_15, item_name)
 	end
 
-	local var_22_10 = var_22_6 <= 0
-	local var_22_11 = arg_22_4.hitzone_armor_categories
-	local var_22_12 = var_22_11 and var_22_11[arg_22_6] or arg_22_4.armor_category
-	local var_22_13 = var_22_10 and arg_22_7.stagger_impact_sound_event or arg_22_0._overridable_settings.impact_sound_event
+	local flag_2 = num <= 0
+	local hitzone_armor_categories = arg_22_4.hitzone_armor_categories
+	local var_22_12
 
-	if arg_22_12 then
-		if var_0_24[var_22_13] == "blunt_hit" then
-			var_22_13 = arg_22_4.shield_blunt_block_sound or "blunt_hit_shield_wood"
-		elseif var_0_24[var_22_13] == "slashing_hit" then
-			var_22_13 = arg_22_4.shield_slashing_block_sound or "slashing_hit_shield_wood"
-		elseif var_0_24[var_22_13] == "stab_hit" then
-			var_22_13 = arg_22_4.shield_stab_block_sound or "stab_hit_shield_wood"
-		elseif var_0_24[var_22_13] == "burning_hit" then
-			var_22_13 = arg_22_4.shield_stab_block_sound or "Play_weapon_fire_torch_wood_shield_hit"
-		elseif var_0_24[var_22_13] == "axe_boss_1h_hit" then
-			var_22_13 = arg_22_4.boss_blocked_sound or "slashing_hit_shield_wood"
+	if not hitzone_armor_categories then
+		var_22_12 = hitzone_armor_categories[arg_22_6]
+
+		if not var_22_12 then
+			-- Nothing
+		end
+	end
+
+	var_22_12 = arg_22_4.armor_category
+
+	do
+		local stagger_impact_sound_event
+	end
+
+	::label_22_1::
+
+	if not flag_2 then
+		stagger_impact_sound_event = arg_22_7.stagger_impact_sound_event
+
+		if not stagger_impact_sound_event then
+			-- Nothing
+		end
+	end
+
+	stagger_impact_sound_event = self._overridable_settings.impact_sound_event
+
+	::label_22_2::
+
+	if not arg_22_12 then
+		if tbl_3[stagger_impact_sound_event] == "blunt_hit" then
+			stagger_impact_sound_event = arg_22_4.shield_blunt_block_sound or "blunt_hit_shield_wood"
+		elseif tbl_3[stagger_impact_sound_event] == "slashing_hit" then
+			stagger_impact_sound_event = arg_22_4.shield_slashing_block_sound or "slashing_hit_shield_wood"
+		elseif tbl_3[stagger_impact_sound_event] == "stab_hit" then
+			stagger_impact_sound_event = arg_22_4.shield_stab_block_sound or "stab_hit_shield_wood"
+		elseif tbl_3[stagger_impact_sound_event] == "burning_hit" then
+			stagger_impact_sound_event = arg_22_4.shield_stab_block_sound or "Play_weapon_fire_torch_wood_shield_hit"
+		elseif tbl_3[stagger_impact_sound_event] == "axe_boss_1h_hit" then
+			stagger_impact_sound_event = arg_22_4.boss_blocked_sound or "slashing_hit_shield_wood"
 		end
 	elseif var_22_12 == 2 then
-		var_22_13 = var_22_10 and arg_22_0._overridable_settings.no_damage_impact_sound_event or arg_22_7.armor_impact_sound_event or arg_22_0._overridable_settings.impact_sound_event
+		stagger_impact_sound_event = not flag_2 and self._overridable_settings.no_damage_impact_sound_event and arg_22_7.armor_impact_sound_event or self._overridable_settings.impact_sound_event
 	end
 
-	local var_22_14 = "default"
+	local str = "default"
 	local var_22_15
 
-	if arg_22_12 then
-		if arg_22_4.blocking_hit_effect then
+	if not arg_22_12 then
+		if not arg_22_4.blocking_hit_effect then
 			var_22_15 = arg_22_4.blocking_hit_effect
 		else
-			var_22_15 = var_22_12 == 2 and "fx/hit_enemy_shield_metal" or "fx/hit_enemy_shield"
+			var_22_15 = var_22_12 ~= 2 or not "fx/hit_enemy_shield_metal" or "fx/hit_enemy_shield"
 		end
 
-		var_22_14 = "no_damage"
-	elseif var_22_7 then
+		str = "no_damage"
+	elseif not flag then
 		var_22_15 = "fx/hit_enemy_shield_metal"
-	elseif not var_22_14 or var_22_14 == "no_damage" then
+	elseif not (not str and str ~= "no_damage") then
 		var_22_15 = arg_22_7.no_damage_impact_particle_effect
-	elseif var_22_6 <= 0 and var_22_12 == 2 then
+	elseif not (not (num <= 0) or var_22_12 ~= 2) then
 		var_22_15 = arg_22_7.armour_impact_particle_effect or "fx/hit_armored"
-	elseif var_22_6 <= 0 then
+	elseif num <= 0 then
 		var_22_15 = arg_22_7.no_damage_impact_particle_effect
 	elseif not arg_22_4.no_blood_splatter_on_damage then
 		var_22_15 = arg_22_7.impact_particle_effect or BloodSettings:get_hit_effect_for_race(arg_22_4.race) or arg_22_4.hit_effect
 
-		EffectHelper.player_critical_hit(var_22_1, arg_22_14, arg_22_2, arg_22_3, arg_22_5)
+		EffectHelper.player_critical_hit(world, arg_22_14, arg_22_2, arg_22_3, arg_22_5)
 	end
 
-	local var_22_16 = arg_22_7.additional_hit_effects
+	local additional_hit_effects = arg_22_7.additional_hit_effects
 
-	if var_22_16 then
-		for iter_22_0 = 1, #var_22_16 do
-			EffectHelper.player_melee_hit_particles(var_22_1, var_22_16[iter_22_0], arg_22_5, arg_22_11, var_22_14, arg_22_3, var_22_6)
+	if not additional_hit_effects then
+		for i = 1, #additional_hit_effects do
+			EffectHelper.player_melee_hit_particles(world, additional_hit_effects[i], arg_22_5, arg_22_11, str, arg_22_3, num)
 		end
 	end
 
-	if var_22_6 <= 0 then
-		var_22_14 = "no_damage"
+	if num <= 0 then
+		str = "no_damage"
 	end
 
-	if var_22_15 then
-		EffectHelper.player_melee_hit_particles(var_22_1, var_22_15, arg_22_5, arg_22_11, var_22_14, arg_22_3, var_22_6)
+	if not var_22_15 then
+		EffectHelper.player_melee_hit_particles(world, var_22_15, arg_22_5, arg_22_11, str, arg_22_3, num)
 	end
 
-	if (arg_22_6 == "head" or arg_22_6 == "neck") and var_22_5.headshot_sound then
-		var_22_13 = var_22_5.headshot_sound
+	if arg_22_6 == "head" or arg_22_6 == "neck" or not get_attack_template.headshot_sound then
+		stagger_impact_sound_event = get_attack_template.headshot_sound
 	end
 
-	if var_22_7 then
-		var_22_13 = "enemy_grudge_deflect"
+	if not flag then
+		stagger_impact_sound_event = "enemy_grudge_deflect"
 
-		DamageUtils.handle_hit_indication(arg_22_0.owner_unit, arg_22_3, 0, arg_22_6, false, true)
+		DamageUtils.handle_hit_indication(self.owner_unit, arg_22_3, 0, arg_22_6, false, true)
 	end
 
-	local var_22_17 = var_22_5.sound_type
+	local sound_type = get_attack_template.sound_type
 
-	if var_22_13 then
-		if not var_22_17 then
+	if not stagger_impact_sound_event then
+		if not sound_type then
 			return
 		end
 
-		EffectHelper.play_melee_hit_effects(var_22_13, var_22_1, arg_22_5, var_22_17, var_22_0, arg_22_3)
+		EffectHelper.play_melee_hit_effects(stagger_impact_sound_event, world, arg_22_5, sound_type, bot_player, arg_22_3)
 
-		local var_22_18 = Managers.state.network
-		local var_22_19 = NetworkLookup.sound_events[var_22_13]
-		local var_22_20 = NetworkLookup.melee_impact_sound_types[var_22_17]
-		local var_22_21 = var_22_18:unit_game_object_id(arg_22_3)
+		local network = Managers.state.network
+		local var_22_19 = NetworkLookup.sound_events[stagger_impact_sound_event]
+		local var_22_20 = NetworkLookup.melee_impact_sound_types[sound_type]
+		local unit_game_object_id = network:unit_game_object_id(arg_22_3)
 
-		if arg_22_1 then
-			var_22_18.network_transmit:send_rpc_clients("rpc_play_melee_hit_effects", var_22_19, arg_22_5, var_22_20, var_22_21)
+		if not arg_22_1 then
+			network.network_transmit:send_rpc_clients("rpc_play_melee_hit_effects", var_22_19, arg_22_5, var_22_20, unit_game_object_id)
 		else
-			var_22_18.network_transmit:send_rpc_server("rpc_play_melee_hit_effects", var_22_19, arg_22_5, var_22_20, var_22_21)
+			network.network_transmit:send_rpc_server("rpc_play_melee_hit_effects", var_22_19, arg_22_5, var_22_20, unit_game_object_id)
 		end
 	else
-		Application.warning("[ActionSweep] Missing sound event for sweep action in unit %q.", arg_22_0.weapon_unit)
+		Application.warning("[ActionSweep] Missing sound event for sweep action in unit %q.", self.weapon_unit)
 	end
 
-	local var_22_22 = DamageUtils.get_breed_damage_multiplier_type(arg_22_4, arg_22_6)
+	local get_breed_damage_multiplier_type = DamageUtils.get_breed_damage_multiplier_type(arg_22_4, arg_22_6)
 
-	if (var_22_22 == "headshot" or var_22_22 == "weakspot" and not arg_22_12) and not arg_22_7.no_headshot_sound and HEALTH_ALIVE[arg_22_3] then
-		ScriptUnit.extension(var_22_2, "first_person_system"):play_hud_sound_event("Play_hud_melee_headshot", nil, false)
+	if get_breed_damage_multiplier_type == "headshot" or get_breed_damage_multiplier_type ~= "weakspot" or not arg_22_12 or arg_22_7.no_headshot_sound or not HEALTH_ALIVE[arg_22_3] then
+		ScriptUnit.extension(owner_unit, "first_person_system"):play_hud_sound_event("Play_hud_melee_headshot", nil, false)
 	end
 
-	local var_22_23 = arg_22_7.on_hit_hud_sound_event
+	local on_hit_hud_sound_event = arg_22_7.on_hit_hud_sound_event
 
-	if var_22_23 then
-		ScriptUnit.extension(var_22_2, "first_person_system"):play_hud_sound_event(var_22_23, nil, false)
+	if not on_hit_hud_sound_event then
+		ScriptUnit.extension(owner_unit, "first_person_system"):play_hud_sound_event(on_hit_hud_sound_event, nil, false)
 	end
 
-	local var_22_24 = var_22_6 >= ScriptUnit.extension(arg_22_3, "health_system"):current_health()
-	local var_22_25 = ScriptUnit.has_extension(arg_22_0.owner_unit, "sound_effect_system")
+	local flag_3 = num >= ScriptUnit.extension(arg_22_3, "health_system"):current_health()
+	local has_extension = ScriptUnit.has_extension(self.owner_unit, "sound_effect_system")
 
-	if var_22_25 and var_22_24 then
-		var_22_25:melee_kill()
+	if not has_extension and not flag_3 then
+		has_extension:melee_kill()
 	end
 
-	if not arg_22_12 or arg_22_4.play_hit_reacts_when_blocking then
-		DamageUtils.add_hit_reaction(arg_22_3, arg_22_4, var_22_0, arg_22_11, var_22_24)
+	if not arg_22_12 and not arg_22_4.play_hit_reacts_when_blocking then
+		DamageUtils.add_hit_reaction(arg_22_3, arg_22_4, bot_player, arg_22_11, flag_3)
 	end
 
-	if arg_22_12 then
+	if not arg_22_12 then
 		return false
 	end
 
-	return var_22_24
+	return flag_3
 end
 
-function ActionSweep.hit_level_object(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8)
+ActionSweep.hit_level_object = function (self, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8)
+	-- function 23
 	arg_23_1[arg_23_2] = true
-	arg_23_0._has_hit_environment = true
+	self._has_hit_environment = true
 
-	local var_23_0 = "full"
+	local str = "full"
 
-	arg_23_0._amount_of_mass_hit = arg_23_0._amount_of_mass_hit + 1
+	self._amount_of_mass_hit = self._amount_of_mass_hit + 1
 
-	local var_23_1 = math.ceil(arg_23_0._amount_of_mass_hit)
-	local var_23_2 = arg_23_0._damage_profile
-	local var_23_3 = arg_23_0.item_name
-	local var_23_4, var_23_5 = arg_23_0:_get_power_boost()
-	local var_23_6 = arg_23_0._power_level
-	local var_23_7 = arg_23_0._is_critical_strike or var_23_4
+	local ceil = math.ceil(self._amount_of_mass_hit)
+	local _damage_profile = self._damage_profile
+	local item_name = self.item_name
+	local _get_power_boost, var_23_5 = self:_get_power_boost()
+	local _power_level = self._power_level
+	local _is_critical_strike = self._is_critical_strike
 
-	DamageUtils.damage_level_unit(arg_23_2, arg_23_3, var_23_0, var_23_6, var_23_5, var_23_7, var_23_2, var_23_1, arg_23_6, var_23_3)
+	_is_critical_strike = _is_critical_strike or _get_power_boost
 
-	local var_23_8 = arg_23_4.first_person_hit_anim
+	DamageUtils.damage_level_unit(arg_23_2, arg_23_3, str, _power_level, var_23_5, _is_critical_strike, _damage_profile, ceil, arg_23_6, item_name)
 
-	if var_23_8 then
-		local var_23_9 = ScriptUnit.extension(arg_23_3, "first_person_system"):get_first_person_unit()
+	local first_person_hit_anim = arg_23_4.first_person_hit_anim
 
-		var_0_12(var_23_9, var_23_8)
+	if not first_person_hit_anim then
+		local get_first_person_unit = ScriptUnit.extension(arg_23_3, "first_person_system"):get_first_person_unit()
+
+		animation_event(get_first_person_unit, first_person_hit_anim)
 	end
 end
 
-function ActionSweep.finish(arg_24_0, arg_24_1, arg_24_2)
-	local var_24_0 = arg_24_0._current_action
+ActionSweep.finish = function (self, arg_24_1, arg_24_2)
+	-- function 24
+	local _current_action = self._current_action
 
 	if arg_24_1 == "new_interupting_action" then
-		local var_24_1 = arg_24_0.current_time_in_action or 0
-		local var_24_2 = arg_24_0._dt
-		local var_24_3 = Managers.time:time("game")
+		local current_time_in_action = self.current_time_in_action
 
-		arg_24_0:_update_sweep(var_24_2 * 2, var_24_3, var_24_0, var_24_1 - var_24_2)
+		current_time_in_action = current_time_in_action or 0
+
+		local _dt = self._dt
+		local time = Managers.time:time("game")
+
+		self:_update_sweep(_dt * 2, time, _current_action, current_time_in_action - _dt)
 	end
 
 	if arg_24_1 == "interacting" then
-		var_0_7(arg_24_0.weapon_unit, "lua_finish_interacting")
+		flow_event(self.weapon_unit, "lua_finish_interacting")
 	end
 
-	local var_24_4 = arg_24_0.owner_unit
-	local var_24_5 = var_24_0.action_aborted_flow_event
+	local owner_unit = self.owner_unit
+	local action_aborted_flow_event = _current_action.action_aborted_flow_event
 
-	if var_24_5 and not arg_24_0.action_aborted_flow_event_sent then
-		var_0_7(arg_24_0.weapon_unit, var_24_5)
+	if not (not action_aborted_flow_event and self.action_aborted_flow_event_sent) then
+		flow_event(self.weapon_unit, action_aborted_flow_event)
 	end
 
-	arg_24_0.action_aborted_flow_event_sent = nil
+	self.action_aborted_flow_event_sent = nil
 
-	if var_24_0.keep_block then
-		local var_24_6 = arg_24_2 and arg_24_2.new_action_settings
+	if not _current_action.keep_block then
+		local flag = not arg_24_2 and arg_24_2.new_action_settings
 
-		if not var_24_6 or not var_24_6.keep_block then
+		if not (not flag and flag.keep_block) then
 			if not LEVEL_EDITOR_TEST then
-				local var_24_7 = Managers.state.unit_storage:go_id(var_24_4)
+				local go_id = Managers.state.unit_storage:go_id(owner_unit)
 
-				if arg_24_0.is_server then
-					Managers.state.network.network_transmit:send_rpc_clients("rpc_set_blocking", var_24_7, false)
+				if not self.is_server then
+					Managers.state.network.network_transmit:send_rpc_clients("rpc_set_blocking", go_id, false)
 				else
-					Managers.state.network.network_transmit:send_rpc_server("rpc_set_blocking", var_24_7, false)
+					Managers.state.network.network_transmit:send_rpc_server("rpc_set_blocking", go_id, false)
 				end
 			end
 
-			ScriptUnit.extension(var_24_4, "status_system"):set_blocking(false)
+			ScriptUnit.extension(owner_unit, "status_system"):set_blocking(false)
 		end
 	end
 
-	local var_24_8 = arg_24_0._owner_hud_extension
+	local _owner_hud_extension = self._owner_hud_extension
 
-	if var_24_8 then
-		var_24_8.show_critical_indication = false
+	if not _owner_hud_extension then
+		_owner_hud_extension.show_critical_indication = false
 	end
 
-	local var_24_9 = ScriptUnit.extension(var_24_4, "first_person_system")
+	local extension = ScriptUnit.extension(owner_unit, "first_person_system")
 
-	var_24_9:enable_rig_movement()
+	extension:enable_rig_movement()
 
-	if arg_24_0._is_critical_strike then
-		local var_24_10 = "Stop_player_combat_crit_swing_2D"
+	if not self._is_critical_strike then
+		local str = "Stop_player_combat_crit_swing_2D"
 
-		var_24_9:play_hud_sound_event(var_24_10, nil, false)
+		extension:play_hud_sound_event(str, nil, false)
 	end
 end
 
-function ActionSweep.destroy(arg_25_0)
+ActionSweep.destroy = function (arg_25_0)
+	-- function 25
 	return
 end
 
-function ActionSweep._play_hit_animations(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6, arg_26_7)
-	local var_26_0 = arg_26_2.dual_hit_stop_anims and arg_26_0._action_hand and arg_26_2.dual_hit_stop_anims[arg_26_0._action_hand] or arg_26_0._overridable_settings.hit_stop_anim
-	local var_26_1 = arg_26_3 and arg_26_7 and arg_26_2.hit_stop_kill_anim or arg_26_4 ~= "head" and arg_26_5 == 2 and arg_26_3 and arg_26_2.hit_armor_anim or arg_26_3 and arg_26_6 and arg_26_2.hit_shield_stop_anim or arg_26_3 and var_26_0 or arg_26_2.first_person_hit_anim
-	local var_26_2 = arg_26_3 and arg_26_0._overridable_settings.hit_stop_anim
+ActionSweep._play_hit_animations = function (self, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6, arg_26_7)
+	-- function 26
+	local var_26_0
 
-	arg_26_0._attack_aborted = arg_26_0._attack_aborted or arg_26_3
+	if not arg_26_2.dual_hit_stop_anims and not self._action_hand then
+		var_26_0 = arg_26_2.dual_hit_stop_anims[self._action_hand]
 
-	if var_26_1 then
-		local var_26_3 = ScriptUnit.extension(arg_26_1, "first_person_system"):get_first_person_unit()
-
-		var_0_12(var_26_3, var_26_1)
+		if not var_26_0 then
+			-- Nothing
+		end
 	end
 
-	local var_26_4 = arg_26_2.action_aborted_flow_event
+	var_26_0 = self._overridable_settings.hit_stop_anim
 
-	if var_26_4 and arg_26_3 then
-		arg_26_0.action_aborted_flow_event_sent = true
-
-		var_0_7(arg_26_0.weapon_unit, var_26_4)
+	do
+		local hit_stop_kill_anim
 	end
 
-	if var_26_2 then
-		CharacterStateHelper.play_animation_event(arg_26_1, var_26_2)
+	::label_26_0::
+
+	if not arg_26_3 and not arg_26_7 then
+		hit_stop_kill_anim = arg_26_2.hit_stop_kill_anim
+
+		if not hit_stop_kill_anim then
+			-- Nothing
+		end
+	end
+
+	if arg_26_4 == "head" or arg_26_5 ~= 2 or not arg_26_3 then
+		hit_stop_kill_anim = arg_26_2.hit_armor_anim
+
+		if not hit_stop_kill_anim then
+			-- Nothing
+		end
+	end
+
+	if not arg_26_3 and not arg_26_6 then
+		hit_stop_kill_anim = arg_26_2.hit_shield_stop_anim
+
+		if not hit_stop_kill_anim then
+			-- Nothing
+		end
+	end
+
+	hit_stop_kill_anim = not arg_26_3 and var_26_0 and arg_26_2.first_person_hit_anim
+
+	::label_26_1::
+
+	local flag = not arg_26_3 and self._overridable_settings.hit_stop_anim
+	local _attack_aborted = self._attack_aborted
+
+	_attack_aborted = _attack_aborted or arg_26_3
+	self._attack_aborted = _attack_aborted
+
+	if not hit_stop_kill_anim then
+		local get_first_person_unit = ScriptUnit.extension(arg_26_1, "first_person_system"):get_first_person_unit()
+
+		animation_event(get_first_person_unit, hit_stop_kill_anim)
+	end
+
+	local action_aborted_flow_event = arg_26_2.action_aborted_flow_event
+
+	if not action_aborted_flow_event and not arg_26_3 then
+		self.action_aborted_flow_event_sent = true
+
+		flow_event(self.weapon_unit, action_aborted_flow_event)
+	end
+
+	if not flag then
+		CharacterStateHelper.play_animation_event(arg_26_1, flag)
 	end
 end
 
-function ActionSweep._get_damage_profile_name(arg_27_0, arg_27_1, arg_27_2)
-	return arg_27_1 and arg_27_2["damage_profile_" .. arg_27_1] or arg_27_0._overridable_settings.damage_profile or "default"
+ActionSweep._get_damage_profile_name = function (self, arg_27_1, arg_27_2)
+	-- function 27
+	local var_27_0
+
+	if not arg_27_1 then
+		var_27_0 = arg_27_2["damage_profile_" .. arg_27_1]
+
+		if not var_27_0 then
+			-- Nothing
+		end
+	end
+
+	var_27_0 = self._overridable_settings.damage_profile
+	var_27_0 = var_27_0 or "default"
+
+	::label_27_0::
+
+	return var_27_0
 end
 
-function ActionSweep._populate_sweep_action_data(arg_28_0, arg_28_1, arg_28_2)
-	local var_28_0 = arg_28_0._overridable_settings
+ActionSweep._populate_sweep_action_data = function (self, arg_28_1, arg_28_2)
+	-- function 28
+	local _overridable_settings = self._overridable_settings
 
-	table.clear(arg_28_0._overridable_settings)
+	table.clear(self._overridable_settings)
 
-	for iter_28_0 = 1, var_0_1 do
-		local var_28_1 = var_0_0[iter_28_0]
+	for i = 1, count do
+		local var_28_1 = tbl[i]
+		local var_28_2
 
-		var_28_0[var_28_1] = arg_28_2 and arg_28_2[var_28_1] or arg_28_1[var_28_1]
+		if not arg_28_2 then
+			var_28_2 = arg_28_2[var_28_1]
+
+			if not var_28_2 then
+				-- Nothing
+			end
+		end
+
+		var_28_2 = arg_28_1[var_28_1]
+
+		::label_28_0::
+
+		_overridable_settings[var_28_1] = var_28_2
 	end
 end
 
-function ActionSweep._weapon_sweep_rotation(arg_29_0, arg_29_1, arg_29_2)
-	local var_29_0 = var_0_5(arg_29_2, 0)
-	local var_29_1 = arg_29_1.sweep_rotation_offset
+ActionSweep._weapon_sweep_rotation = function (arg_29_0, arg_29_1, arg_29_2)
+	-- function 29
+	local var_29_0 = world_rotation(arg_29_2, 0)
+	local sweep_rotation_offset = arg_29_1.sweep_rotation_offset
 
-	if var_29_1 then
+	if not sweep_rotation_offset then
 		local var_29_2 = var_29_0
-		local var_29_3 = Quaternion.multiply(Quaternion.axis_angle(Quaternion.up(var_29_0), var_29_1.yaw or 0), var_29_2)
-		local var_29_4 = Quaternion.multiply(Quaternion.axis_angle(Quaternion.right(var_29_0), var_29_1.pitch or 0), var_29_3)
+		local multiply = Quaternion.multiply
+		local axis_angle = Quaternion.axis_angle
+		local up = Quaternion.up(var_29_0)
+		local yaw = sweep_rotation_offset.yaw
 
-		var_29_0 = Quaternion.multiply(Quaternion.axis_angle(Quaternion.forward(var_29_0), var_29_1.roll or 0), var_29_4)
+		yaw = yaw or 0
+
+		local var_29_7 = multiply(axis_angle(up, yaw), var_29_2)
+		local multiply_2 = Quaternion.multiply
+		local axis_angle_2 = Quaternion.axis_angle
+		local right = Quaternion.right(var_29_0)
+		local pitch = sweep_rotation_offset.pitch
+
+		pitch = pitch or 0
+
+		local var_29_12 = multiply_2(axis_angle_2(right, pitch), var_29_7)
+		local multiply_3 = Quaternion.multiply
+		local axis_angle_3 = Quaternion.axis_angle
+		local forward = Quaternion.forward(var_29_0)
+		local roll = sweep_rotation_offset.roll
+
+		roll = roll or 0
+		var_29_0 = multiply_3(axis_angle_3(forward, roll), var_29_12)
 	end
 
 	return var_29_0

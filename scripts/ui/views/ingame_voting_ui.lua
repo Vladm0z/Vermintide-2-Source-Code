@@ -4,554 +4,630 @@ local var_0_0 = local_require("scripts/ui/views/ingame_voting_ui_definitions")
 
 IngameVotingUI = class(IngameVotingUI)
 
-function IngameVotingUI.init(arg_1_0, arg_1_1, arg_1_2)
-	arg_1_0._parent = arg_1_1
-	arg_1_0.ui_renderer = arg_1_2.ui_renderer
-	arg_1_0.ui_top_renderer = arg_1_2.ui_top_renderer
-	arg_1_0.ingame_ui = arg_1_2.ingame_ui
-	arg_1_0.input_manager = arg_1_2.input_manager
-	arg_1_0.voting_manager = arg_1_2.voting_manager
-	arg_1_0.platform = PLATFORM
-	arg_1_0.world_manager = arg_1_2.world_manager
+IngameVotingUI.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	self._parent = arg_1_1
+	self.ui_renderer = arg_1_2.ui_renderer
+	self.ui_top_renderer = arg_1_2.ui_top_renderer
+	self.ingame_ui = arg_1_2.ingame_ui
+	self.input_manager = arg_1_2.input_manager
+	self.voting_manager = arg_1_2.voting_manager
+	self.platform = PLATFORM
+	self.world_manager = arg_1_2.world_manager
 
-	local var_1_0 = arg_1_0.world_manager:world("level_world")
+	local world = self.world_manager:world("level_world")
 
-	arg_1_0.wwise_world = Managers.world:wwise_world(var_1_0)
-	arg_1_0.peer_id = Network.peer_id()
+	self.wwise_world = Managers.world:wwise_world(world)
+	self.peer_id = Network.peer_id()
 
-	arg_1_0:create_ui_elements()
+	self:create_ui_elements()
 end
 
-local var_0_1 = false
+local flag = false
 
-function IngameVotingUI.create_ui_elements(arg_2_0)
-	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
-	arg_2_0.scenegraph_definition = var_0_0.scenegraph_definition
+IngameVotingUI.create_ui_elements = function (self)
+	-- function 2
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
+	self.scenegraph_definition = var_0_0.scenegraph_definition
 
-	local var_2_0 = var_0_0.widget_definitions
+	local widget_definitions = var_0_0.widget_definitions
 
-	arg_2_0.background = UIWidget.init(var_2_0.background)
-	arg_2_0.option_yes = UIWidget.init(var_2_0.option_yes)
-	arg_2_0.option_no = UIWidget.init(var_2_0.option_no)
-	var_0_1 = false
+	self.background = UIWidget.init(widget_definitions.background)
+	self.option_yes = UIWidget.init(widget_definitions.option_yes)
+	self.option_no = UIWidget.init(widget_definitions.option_no)
+	flag = false
 end
 
-function IngameVotingUI.destroy(arg_3_0)
-	arg_3_0.voting_manager:allow_vote_input(false)
+IngameVotingUI.destroy = function (self)
+	-- function 3
+	self.voting_manager:allow_vote_input(false)
 
-	arg_3_0.voting_manager = nil
+	self.voting_manager = nil
 end
 
-function IngameVotingUI.get_text_width(arg_4_0, arg_4_1, arg_4_2)
+IngameVotingUI.get_text_width = function (self, arg_4_1, arg_4_2)
+	-- function 4
 	local var_4_0 = UIFontByResolution(arg_4_2)
-	local var_4_1 = arg_4_2.font_size
-	local var_4_2, var_4_3 = UIRenderer.text_size(arg_4_0.ui_top_renderer, arg_4_1, var_4_0[1], var_4_1)
+	local font_size = arg_4_2.font_size
+	local text_size, var_4_3 = UIRenderer.text_size(self.ui_top_renderer, arg_4_1, var_4_0[1], font_size)
 
-	return var_4_2
+	return text_size
 end
 
-function IngameVotingUI.setup_option_input(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
-	local var_5_0 = 0
-	local var_5_1 = arg_5_2.text
-	local var_5_2 = arg_5_2.input
-	local var_5_3 = arg_5_0.input_manager
-	local var_5_4 = var_5_3:get_service("ingame_menu")
-	local var_5_5 = var_5_3:is_device_active("gamepad")
-	local var_5_6, var_5_7 = UISettings.get_gamepad_input_texture_data(var_5_4, var_5_2, var_5_5)
+IngameVotingUI.setup_option_input = function (self, arg_5_1, arg_5_2, arg_5_3)
+	-- function 5
+	local num = 0
+	local text = arg_5_2.text
+	local input = arg_5_2.input
+	local input_manager = self.input_manager
+	local get_service = input_manager:get_service("ingame_menu")
+	local is_device_active = input_manager:is_device_active("gamepad")
+	local get_gamepad_input_texture_data, var_5_7 = UISettings.get_gamepad_input_texture_data(get_service, input, is_device_active)
 
-	if not var_5_5 then
-		var_5_6 = nil
+	if not is_device_active then
+		get_gamepad_input_texture_data = nil
 	end
 
-	arg_5_1.content.input_text = var_5_6 and "" or sprintf("[%s]", var_5_7)
-	arg_5_1.content.input_icon = var_5_6 and var_5_6.texture or nil
+	local content = arg_5_1.content
+	local flag
 
-	local var_5_8 = Localize(var_5_1)
+	flag = not get_gamepad_input_texture_data and "" and sprintf("[%s]", var_5_7)
+	content.input_text = flag
 
-	arg_5_1.content.option_text = var_5_8
+	local content_2 = arg_5_1.content
+	local texture
 
-	local var_5_9 = arg_5_1.style.option_text
-	local var_5_10 = arg_5_1.style.option_text_shadow
-	local var_5_11 = var_5_0 + arg_5_0:get_text_width(var_5_8, var_5_9)
+	if not get_gamepad_input_texture_data then
+		texture = get_gamepad_input_texture_data.texture
 
-	if var_5_6 then
-		local var_5_12 = arg_5_1.style.input_icon.scenegraph_id
-		local var_5_13 = arg_5_0.ui_scenegraph[var_5_12]
-		local var_5_14 = var_5_13.size
-		local var_5_15 = var_5_13.local_position
+		if not texture then
+			-- Nothing
+		end
+	end
 
-		var_5_14[1] = var_5_6.size[1]
-		var_5_14[2] = var_5_6.size[2]
-		var_5_15[1] = -var_5_11 / 2
-		var_5_9.offset[1] = var_5_14[1] / 2
-		var_5_10.offset[1] = var_5_14[1] / 2 + 2
-		var_5_11 = var_5_11 + var_5_14[1]
+	texture = nil
+
+	::label_5_0::
+
+	content_2.input_icon = texture
+
+	local var_5_12 = Localize(text)
+
+	arg_5_1.content.option_text = var_5_12
+
+	local option_text = arg_5_1.style.option_text
+	local option_text_shadow = arg_5_1.style.option_text_shadow
+	local num_2 = num + self:get_text_width(var_5_12, option_text)
+
+	if not get_gamepad_input_texture_data then
+		local scenegraph_id = arg_5_1.style.input_icon.scenegraph_id
+		local var_5_17 = self.ui_scenegraph[scenegraph_id]
+		local size = var_5_17.size
+		local local_position = var_5_17.local_position
+
+		size[1] = get_gamepad_input_texture_data.size[1]
+		size[2] = get_gamepad_input_texture_data.size[2]
+		local_position[1] = -num_2 / 2
+		option_text.offset[1] = size[1] / 2
+		option_text_shadow.offset[1] = size[1] / 2 + 2
+		num_2 = num_2 + size[1]
 	else
-		local var_5_16 = arg_5_1.style.input_text
-		local var_5_17 = arg_5_1.style.input_text_shadow
-		local var_5_18 = arg_5_0:get_text_width(arg_5_1.content.input_text, var_5_16)
+		local input_text = arg_5_1.style.input_text
+		local input_text_shadow = arg_5_1.style.input_text_shadow
+		local get_text_width = self:get_text_width(arg_5_1.content.input_text, input_text)
 
-		var_5_16.offset[1] = -var_5_11 / 2
-		var_5_17.offset[1] = -var_5_11 / 2 + 2
-		var_5_9.offset[1] = var_5_18 / 2
-		var_5_10.offset[1] = var_5_18 / 2 + 2
-		var_5_11 = var_5_11 + var_5_18
+		input_text.offset[1] = -num_2 / 2
+		input_text_shadow.offset[1] = -num_2 / 2 + 2
+		option_text.offset[1] = get_text_width / 2
+		option_text_shadow.offset[1] = get_text_width / 2 + 2
+		num_2 = num_2 + get_text_width
 	end
 
-	local var_5_19 = arg_5_1.content.left_side
-	local var_5_20 = arg_5_1.scenegraph_id
-	local var_5_21 = math.max(var_5_11 / 2 + 10, 50)
+	local left_side = arg_5_1.content.left_side
+	local scenegraph_id_2 = arg_5_1.scenegraph_id
+	local max = math.max(num_2 / 2 + 10, 50)
+	local local_position_2 = self.ui_scenegraph[scenegraph_id_2].local_position
+	local num_3
 
-	arg_5_0.ui_scenegraph[var_5_20].local_position[1] = var_5_19 and -var_5_21 or var_5_21
+	if not left_side then
+		num_3 = -max
+
+		if not num_3 then
+			-- Nothing
+		end
+	end
+
+	num_3 = max
+
+	::label_5_1::
+
+	local_position_2[1] = num_3
 end
 
-function IngameVotingUI.align_option_inputs(arg_6_0)
+IngameVotingUI.align_option_inputs = function (arg_6_0)
+	-- function 6
 	return
 end
 
-function IngameVotingUI.start_vote(arg_7_0, arg_7_1)
-	arg_7_0:clear_input_progress()
+IngameVotingUI.start_vote = function (self, arg_7_1)
+	-- function 7
+	self:clear_input_progress()
 
-	local var_7_0 = arg_7_1.template
-	local var_7_1 = var_7_0.text
+	local template = arg_7_1.template
+	local text = template.text
 
-	if var_7_0.modify_title_text then
-		var_7_1 = var_7_0.modify_title_text(Localize(var_7_1), arg_7_1.data)
+	if not template.modify_title_text then
+		text = template.modify_title_text(Localize(text), arg_7_1.data)
 	end
 
-	arg_7_0.background.content.info_text = var_7_1
-	arg_7_0.voters = {}
-	arg_7_0.vote_results = {
+	self.background.content.info_text = text
+	self.voters = {}
+	self.vote_results = {
 		[1] = 0,
 		[2] = 0
 	}
-	arg_7_0.vote_started = true
-	arg_7_0.has_voted = false
+	self.vote_started = true
+	self.has_voted = false
 
-	local var_7_2 = arg_7_0.input_manager:is_device_active("gamepad")
+	local is_device_active = self.input_manager:is_device_active("gamepad")
 
-	if var_7_2 then
-		arg_7_0:on_gamepad_activated(arg_7_1)
+	if not is_device_active then
+		self:on_gamepad_activated(arg_7_1)
 	else
-		local var_7_3 = var_7_0.vote_options
+		local vote_options = template.vote_options
 
-		arg_7_0:setup_option_input(arg_7_0.option_yes, var_7_3[1], var_7_2)
-		arg_7_0:setup_option_input(arg_7_0.option_no, var_7_3[2], var_7_2)
+		self:setup_option_input(self.option_yes, vote_options[1], is_device_active)
+		self:setup_option_input(self.option_no, vote_options[2], is_device_active)
 	end
 
-	arg_7_0.option_yes.content.has_voted = false
-	arg_7_0.option_no.content.has_voted = false
-	arg_7_0.background.content.has_voted = false
-	arg_7_0.option_yes.content.result_text = tostring(0)
-	arg_7_0.option_no.content.result_text = tostring(0)
-	arg_7_0.gamepad_active = arg_7_0.input_manager:is_device_active("gamepad")
-	arg_7_0.is_minimized = RESOLUTION_LOOKUP.minimized
-	arg_7_0.vote_successful = nil
+	self.option_yes.content.has_voted = false
+	self.option_no.content.has_voted = false
+	self.background.content.has_voted = false
+	self.option_yes.content.result_text = tostring(0)
+	self.option_no.content.result_text = tostring(0)
+	self.gamepad_active = self.input_manager:is_device_active("gamepad")
+	self.is_minimized = RESOLUTION_LOOKUP.minimized
+	self.vote_successful = nil
 
-	arg_7_0:play_sound("play_gui_ban_popup")
-	arg_7_0:update_can_vote(not arg_7_0.menu_active)
+	self:play_sound("play_gui_ban_popup")
+	self:update_can_vote(not self.menu_active)
 end
 
-function IngameVotingUI.update_vote(arg_8_0, arg_8_1)
-	local var_8_0 = arg_8_0.result_boxes
-	local var_8_1 = arg_8_0.voters
+IngameVotingUI.update_vote = function (self, arg_8_1)
+	-- function 8
+	local result_boxes = self.result_boxes
+	local voters = self.voters
 
-	for iter_8_0, iter_8_1 in pairs(arg_8_1) do
-		if not var_8_1[iter_8_0] then
-			var_8_1[iter_8_0] = iter_8_0
-			arg_8_0.vote_results[iter_8_1] = arg_8_0.vote_results[iter_8_1] + 1
+	for k, v in pairs(arg_8_1) do
+		if not voters[k] then
+			voters[k] = k
+			self.vote_results[v] = self.vote_results[v] + 1
 
-			local var_8_2 = iter_8_0 == arg_8_0.peer_id
+			local flag = k == self.peer_id
 
-			if var_8_2 then
-				arg_8_0.has_voted = true
-				arg_8_0.option_yes.content.has_voted = true
-				arg_8_0.option_no.content.has_voted = true
-				arg_8_0.background.content.has_voted = true
+			if not flag then
+				self.has_voted = true
+				self.option_yes.content.has_voted = true
+				self.option_no.content.has_voted = true
+				self.background.content.has_voted = true
 
-				arg_8_0.voting_manager:allow_vote_input(false)
+				self.voting_manager:allow_vote_input(false)
 			end
 
 			local var_8_3
 
-			if iter_8_1 == 1 then
-				var_8_3 = arg_8_0.option_yes
+			if v == 1 then
+				var_8_3 = self.option_yes
 
-				arg_8_0:play_sound("play_gui_ban_vote_yes")
-			elseif iter_8_1 == 2 then
-				var_8_3 = arg_8_0.option_no
+				self:play_sound("play_gui_ban_vote_yes")
+			elseif v == 2 then
+				var_8_3 = self.option_no
 
-				arg_8_0:play_sound("play_gui_ban_vote_no")
+				self:play_sound("play_gui_ban_vote_no")
 			else
 				error("You done wrong.")
 			end
 
-			var_8_3.content.result_text = tostring(arg_8_0.vote_results[iter_8_1])
-			var_8_3.content.option_text = sprintf("[%s]", tostring(arg_8_0.vote_results[iter_8_1]))
+			var_8_3.content.result_text = tostring(self.vote_results[v])
+			var_8_3.content.option_text = sprintf("[%s]", tostring(self.vote_results[v]))
 
-			if arg_8_0.has_voted and var_8_2 then
-				arg_8_0:animate_option_get_vote(var_8_3)
+			if not self.has_voted and not flag then
+				self:animate_option_get_vote(var_8_3)
 			end
 		end
 	end
 
-	local var_8_4 = arg_8_0.voting_manager:vote_time_left()
-	local var_8_5 = var_8_4 and string.format(" %02d:%02d", math.floor(var_8_4 / 60), var_8_4 % 60) or "00:00"
+	local vote_time_left = self.voting_manager:vote_time_left()
+	local format
 
-	arg_8_0.background.content.time_text = var_8_5
+	if not vote_time_left then
+		format = string.format(" %02d:%02d", math.floor(vote_time_left / 60), vote_time_left % 60)
+
+		if not format then
+			-- Nothing
+		end
+	end
+
+	format = "00:00"
+
+	::label_8_0::
+
+	self.background.content.time_text = format
 end
 
-function IngameVotingUI.start_finish(arg_9_0, arg_9_1, arg_9_2)
-	arg_9_0:clear_input_progress()
+IngameVotingUI.start_finish = function (self, arg_9_1, arg_9_2)
+	-- function 9
+	self:clear_input_progress()
 
-	arg_9_0.on_finish = true
-	arg_9_0.finish_time = arg_9_2 + 2
-	arg_9_0.finish_anim_t = 0
+	self.on_finish = true
+	self.finish_time = arg_9_2 + 2
+	self.finish_anim_t = 0
 
 	local var_9_0
 
 	if arg_9_1.vote_result == 1 then
-		var_9_0 = arg_9_0.option_yes
-		arg_9_0.vote_successful = true
-	elseif arg_9_1.vote_result == 2 or arg_9_1.vote_result == 0 then
-		var_9_0 = arg_9_0.option_no
+		var_9_0 = self.option_yes
+		self.vote_successful = true
+	elseif not (arg_9_1.vote_result == 2 or arg_9_1.vote_result ~= 0) then
+		var_9_0 = self.option_no
 	else
 		error("Sillybillywilly")
 	end
 
-	arg_9_0.finish_option = var_9_0
+	self.finish_option = var_9_0
 
-	arg_9_0:animate_option_get_vote(arg_9_0.finish_option)
+	self:animate_option_get_vote(self.finish_option)
 
-	arg_9_0.option_yes.content.has_voted = true
-	arg_9_0.option_no.content.has_voted = true
-	arg_9_0.background.content.has_voted = true
+	self.option_yes.content.has_voted = true
+	self.option_no.content.has_voted = true
+	self.background.content.has_voted = true
 
-	arg_9_0.voting_manager:allow_vote_input(false)
-	arg_9_0:update_can_vote(false)
+	self.voting_manager:allow_vote_input(false)
+	self:update_can_vote(false)
 
-	arg_9_0.menu_active = nil
+	self.menu_active = nil
 end
 
-function IngameVotingUI.stop_finish(arg_10_0)
-	arg_10_0.option_no.style.result_text.text_color[1] = 255
-	arg_10_0.option_yes.style.result_text.text_color[1] = 255
-	arg_10_0.finish_option = nil
-	arg_10_0.on_finish = nil
+IngameVotingUI.stop_finish = function (self)
+	-- function 10
+	self.option_no.style.result_text.text_color[1] = 255
+	self.option_yes.style.result_text.text_color[1] = 255
+	self.finish_option = nil
+	self.on_finish = nil
 
-	if arg_10_0.vote_successful then
-		arg_10_0:play_sound("play_gui_ban_player_banned")
+	if not self.vote_successful then
+		self:play_sound("play_gui_ban_player_banned")
 
-		arg_10_0.vote_successful = nil
+		self.vote_successful = nil
 	end
 end
 
-function IngameVotingUI.update_finish(arg_11_0, arg_11_1, arg_11_2)
-	if arg_11_2 >= arg_11_0.finish_time then
-		arg_11_0:stop_finish()
+IngameVotingUI.update_finish = function (self, arg_11_1, arg_11_2)
+	-- function 11
+	if arg_11_2 >= self.finish_time then
+		self:stop_finish()
 	else
-		arg_11_0.finish_anim_t = arg_11_0.finish_anim_t + arg_11_1 * 8
+		self.finish_anim_t = self.finish_anim_t + arg_11_1 * 8
 
-		if math.sirp(0, 1, arg_11_0.finish_anim_t) > 0.5 then
-			arg_11_0.finish_option.style.result_text.text_color[1] = 255
+		if math.sirp(0, 1, self.finish_anim_t) > 0.5 then
+			self.finish_option.style.result_text.text_color[1] = 255
 		else
-			arg_11_0.finish_option.style.result_text.text_color[1] = 180
+			self.finish_option.style.result_text.text_color[1] = 180
 		end
 	end
 end
 
-function IngameVotingUI.update(arg_12_0, arg_12_1, arg_12_2)
-	local var_12_0 = arg_12_0._parent:parent().menu_active
+IngameVotingUI.update = function (self, arg_12_1, arg_12_2)
+	-- function 12
+	local menu_active = self._parent:parent().menu_active
 
-	if var_0_1 then
-		arg_12_0:create_ui_elements()
+	if not flag then
+		self:create_ui_elements()
 
-		arg_12_0.vote_started = false
+		self.vote_started = false
 	end
 
-	local var_12_1 = false
-	local var_12_2 = arg_12_0.voting_manager
-	local var_12_3 = false
+	local flag_2 = false
+	local voting_manager = self.voting_manager
+	local flag_3 = false
 
-	if var_12_2:vote_in_progress() and var_12_2:is_ingame_vote() then
-		if var_12_2:active_vote_data().kick_peer_id == arg_12_0.peer_id then
+	if not voting_manager:vote_in_progress() and not voting_manager:is_ingame_vote() then
+		if voting_manager:active_vote_data().kick_peer_id == self.peer_id then
 			return
 		end
 
-		if var_12_0 ~= arg_12_0.menu_active then
-			arg_12_0.menu_active = var_12_0
+		if menu_active ~= self.menu_active then
+			self.menu_active = menu_active
 
-			arg_12_0:update_can_vote(not var_12_0)
+			self:update_can_vote(not menu_active)
 		end
 
-		if not arg_12_0.vote_started then
-			if arg_12_0.on_finish then
-				arg_12_0:stop_finish()
+		if not self.vote_started then
+			if not self.on_finish then
+				self:stop_finish()
 			end
 
-			arg_12_0:start_vote(var_12_2.active_voting)
+			self:start_vote(voting_manager.active_voting)
 		end
 
-		var_12_3 = arg_12_0:update_input_progress(var_12_2.active_voting)
+		flag_3 = self:update_input_progress(voting_manager.active_voting)
 
-		arg_12_0:update_vote(var_12_2.active_voting.votes)
+		self:update_vote(voting_manager.active_voting.votes)
 
-		if not arg_12_0.has_voted then
-			local var_12_4 = false
+		if not self.has_voted then
+			local flag_4 = false
 
-			if arg_12_0.is_minimized and not RESOLUTION_LOOKUP.minimized then
-				var_12_4 = true
+			if not (not self.is_minimized and RESOLUTION_LOOKUP.minimized) then
+				flag_4 = true
 			end
 
-			local var_12_5 = arg_12_0.input_manager:is_device_active("gamepad")
+			local is_device_active = self.input_manager:is_device_active("gamepad")
 
-			if arg_12_0.gamepad_active ~= var_12_5 then
-				arg_12_0.gamepad_active = var_12_5
-				var_12_4 = true
+			if self.gamepad_active ~= is_device_active then
+				self.gamepad_active = is_device_active
+				flag_4 = true
 			end
 
-			if var_12_4 then
-				local var_12_6 = var_12_2.active_voting
-				local var_12_7 = var_12_6 and var_12_6.template
+			if not flag_4 then
+				local active_voting = voting_manager.active_voting
+				local flag_5 = not active_voting and active_voting.template
 
-				if var_12_7 then
-					local var_12_8 = var_12_7.vote_options
+				if not flag_5 then
+					local vote_options = flag_5.vote_options
 
-					arg_12_0:setup_option_input(arg_12_0.option_yes, var_12_8[1])
-					arg_12_0:setup_option_input(arg_12_0.option_no, var_12_8[2])
+					self:setup_option_input(self.option_yes, vote_options[1])
+					self:setup_option_input(self.option_no, vote_options[2])
 
-					arg_12_0.gamepad_active = var_12_5
+					self.gamepad_active = is_device_active
 				end
 			end
 		end
 
-		var_12_1 = true
-	elseif arg_12_0.vote_started then
-		local var_12_9 = var_12_2:previous_vote_info()
+		flag_2 = true
+	elseif not self.vote_started then
+		local previous_vote_info = voting_manager:previous_vote_info()
 
-		arg_12_0:start_finish(var_12_9, arg_12_2)
+		self:start_finish(previous_vote_info, arg_12_2)
 
-		arg_12_0.vote_started = nil
+		self.vote_started = nil
 	end
 
-	if arg_12_0.on_finish then
-		arg_12_0:update_finish(arg_12_1, arg_12_2)
+	if not self.on_finish then
+		self:update_finish(arg_12_1, arg_12_2)
 
-		var_12_1 = true
+		flag_2 = true
 	end
 
-	if var_12_1 and not arg_12_0.menu_active then
-		if arg_12_0.input_manager:is_device_active("gamepad") then
-			if not arg_12_0.gamepad_active_last_frame then
-				arg_12_0.gamepad_active_last_frame = true
+	if not (not flag_2 and self.menu_active) then
+		if not self.input_manager:is_device_active("gamepad") then
+			if not self.gamepad_active_last_frame then
+				self.gamepad_active_last_frame = true
 
-				arg_12_0:on_gamepad_activated(var_12_2.active_voting)
+				self:on_gamepad_activated(voting_manager.active_voting)
 			end
-		elseif arg_12_0.gamepad_active_last_frame then
-			arg_12_0.gamepad_active_last_frame = false
+		elseif not self.gamepad_active_last_frame then
+			self.gamepad_active_last_frame = false
 
-			arg_12_0:on_gamepad_deactivated(var_12_2.active_voting)
+			self:on_gamepad_deactivated(voting_manager.active_voting)
 		end
 
-		arg_12_0:draw(arg_12_1, var_12_3)
+		self:draw(arg_12_1, flag_3)
 	end
 end
 
-function IngameVotingUI.on_gamepad_activated(arg_13_0, arg_13_1)
-	if not arg_13_0.has_voted then
-		-- block empty
+IngameVotingUI.on_gamepad_activated = function (self, arg_13_1)
+	-- function 13
+	if not self.has_voted then
+		-- Nothing
 	end
 
-	local var_13_0 = PLATFORM
+	local PLATFORM = PLATFORM
 
-	if IS_WINDOWS then
-		var_13_0 = "xb1"
+	if not IS_WINDOWS then
+		PLATFORM = "xb1"
 	end
 
-	local var_13_1 = ButtonTextureByName("d_vertical", var_13_0).texture
+	local texture = ButtonTextureByName("d_vertical", PLATFORM).texture
 
-	arg_13_0.background.content.gamepad_input_icon = var_13_1
-	arg_13_0.background.content.gamepad_active = true
+	self.background.content.gamepad_input_icon = texture
+	self.background.content.gamepad_active = true
 
-	if arg_13_1 then
-		local var_13_2 = arg_13_1.template.vote_options
+	if not arg_13_1 then
+		local vote_options = arg_13_1.template.vote_options
 
-		arg_13_0:setup_option_input(arg_13_0.option_yes, var_13_2[1], true)
-		arg_13_0:setup_option_input(arg_13_0.option_no, var_13_2[2], true)
-	end
-end
-
-function IngameVotingUI.on_gamepad_deactivated(arg_14_0, arg_14_1)
-	if not arg_14_0.has_voted then
-		-- block empty
-	end
-
-	arg_14_0.background.content.gamepad_active = false
-
-	if arg_14_1 then
-		local var_14_0 = arg_14_1.template.vote_options
-
-		arg_14_0:setup_option_input(arg_14_0.option_yes, var_14_0[1])
-		arg_14_0:setup_option_input(arg_14_0.option_no, var_14_0[2])
+		self:setup_option_input(self.option_yes, vote_options[1], true)
+		self:setup_option_input(self.option_no, vote_options[2], true)
 	end
 end
 
-function IngameVotingUI.draw(arg_15_0, arg_15_1, arg_15_2)
-	local var_15_0 = arg_15_0.ui_top_renderer
-	local var_15_1 = arg_15_0.ui_scenegraph
-	local var_15_2 = arg_15_0.input_manager:get_service("ingame_menu")
+IngameVotingUI.on_gamepad_deactivated = function (self, arg_14_1)
+	-- function 14
+	if not self.has_voted then
+		-- Nothing
+	end
 
-	arg_15_0:update_pulse_animations(arg_15_1, arg_15_2)
-	UIRenderer.begin_pass(var_15_0, var_15_1, var_15_2, arg_15_1)
-	UIRenderer.draw_widget(var_15_0, arg_15_0.background)
-	UIRenderer.draw_widget(var_15_0, arg_15_0.option_yes)
-	UIRenderer.draw_widget(var_15_0, arg_15_0.option_no)
-	UIRenderer.end_pass(var_15_0)
+	self.background.content.gamepad_active = false
+
+	if not arg_14_1 then
+		local vote_options = arg_14_1.template.vote_options
+
+		self:setup_option_input(self.option_yes, vote_options[1])
+		self:setup_option_input(self.option_no, vote_options[2])
+	end
 end
 
-function IngameVotingUI.update_pulse_animations(arg_16_0, arg_16_1, arg_16_2)
-	if arg_16_0.has_voted then
+IngameVotingUI.draw = function (self, arg_15_1, arg_15_2)
+	-- function 15
+	local ui_top_renderer = self.ui_top_renderer
+	local ui_scenegraph = self.ui_scenegraph
+	local get_service = self.input_manager:get_service("ingame_menu")
+
+	self:update_pulse_animations(arg_15_1, arg_15_2)
+	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, get_service, arg_15_1)
+	UIRenderer.draw_widget(ui_top_renderer, self.background)
+	UIRenderer.draw_widget(ui_top_renderer, self.option_yes)
+	UIRenderer.draw_widget(ui_top_renderer, self.option_no)
+	UIRenderer.end_pass(ui_top_renderer)
+end
+
+IngameVotingUI.update_pulse_animations = function (self, arg_16_1, arg_16_2)
+	-- function 16
+	if not self.has_voted then
 		return
 	end
 
-	local var_16_0 = arg_16_0.menu_active
-	local var_16_1 = var_16_0 and 8 or 5
-	local var_16_2 = not var_16_0 and arg_16_2 and 0 or 0.5 + math.sin(Managers.time:time("ui") * var_16_1) * 0.5
+	local menu_active = self.menu_active
+	local flag
 
-	if not var_16_0 then
-		local var_16_3 = 50 + var_16_2 * 50
+	flag = not menu_active and 8 and 5
+
+	local flag_2
+
+	flag_2 = menu_active or arg_16_2 or not 0 or 0.5 + math.sin(Managers.time:time("ui") * flag) * 0.5
+
+	if not menu_active then
+		local num = 50 + flag_2 * 50
 	else
-		local var_16_4 = 100 + var_16_2 * 155
+		local num_2 = 100 + flag_2 * 155
 
-		arg_16_0.background.style.input_glow.color[1] = var_16_4
+		self.background.style.input_glow.color[1] = num_2
 	end
 end
 
-function IngameVotingUI.update_can_vote(arg_17_0, arg_17_1)
-	arg_17_0.background.content.can_vote = arg_17_1
-	arg_17_0.option_yes.content.can_vote = arg_17_1
-	arg_17_0.option_no.content.can_vote = arg_17_1
+IngameVotingUI.update_can_vote = function (self, arg_17_1)
+	-- function 17
+	self.background.content.can_vote = arg_17_1
+	self.option_yes.content.can_vote = arg_17_1
+	self.option_no.content.can_vote = arg_17_1
 
-	arg_17_0.voting_manager:allow_vote_input(arg_17_1)
+	self.voting_manager:allow_vote_input(arg_17_1)
 end
 
-local var_0_2 = math.easeCubic
+local easeCubic = math.easeCubic
 
-function IngameVotingUI.animate_option_get_vote(arg_18_0, arg_18_1)
-	local var_18_0 = 0.1
-	local var_18_1 = 0.1
-	local var_18_2 = var_18_0 + var_18_1
-	local var_18_3 = var_18_0 / var_18_2
-	local var_18_4 = var_18_1 / var_18_2
+IngameVotingUI.animate_option_get_vote = function (arg_18_0, arg_18_1)
+	-- function 18
+	local num = 0.1
+	local num_2 = 0.1
+	local num_3 = num + num_2
+	local num_4 = num / num_3
+	local num_5 = num_2 / num_3
 
-	local function var_18_5(arg_19_0)
-		if arg_19_0 < var_18_3 then
-			return var_0_2(arg_19_0 / var_18_3)
-		elseif var_18_4 > 0 then
-			return var_0_2((1 - arg_19_0) / var_18_4)
+	local function fn(arg_19_0)
+		-- function 19
+		if arg_19_0 < num_4 then
+			return easeCubic(arg_19_0 / num_4)
+		elseif num_5 > 0 then
+			return easeCubic((1 - arg_19_0) / num_5)
 		else
 			return 0
 		end
 	end
 
-	local var_18_6 = 36
-	local var_18_7 = 40
-	local var_18_8 = arg_18_1.style.result_text
-	local var_18_9 = arg_18_1.style.result_text_shadow
-	local var_18_10 = "font_size"
-	local var_18_11 = UIAnimation.init(UIAnimation.function_by_time, var_18_8, var_18_10, var_18_6, var_18_7, var_18_2, var_18_5)
+	local num_6 = 36
+	local num_7 = 40
+	local result_text = arg_18_1.style.result_text
+	local result_text_shadow = arg_18_1.style.result_text_shadow
+	local str = "font_size"
+	local var_18_11 = UIAnimation.init(UIAnimation.function_by_time, result_text, str, num_6, num_7, num_3, fn)
 
 	UIWidget.animate(arg_18_1, var_18_11)
 
-	local var_18_12 = UIAnimation.init(UIAnimation.function_by_time, var_18_9, var_18_10, var_18_6, var_18_7, var_18_2, var_18_5)
+	local var_18_12 = UIAnimation.init(UIAnimation.function_by_time, result_text_shadow, str, num_6, num_7, num_3, fn)
 
 	UIWidget.animate(arg_18_1, var_18_12)
 end
 
-function IngameVotingUI.update_input_progress(arg_20_0, arg_20_1)
-	local var_20_0 = false
-	local var_20_1 = arg_20_1.current_hold_input
+IngameVotingUI.update_input_progress = function (self, arg_20_1)
+	-- function 20
+	local flag = false
+	local current_hold_input = arg_20_1.current_hold_input
 	local var_20_2
 	local var_20_3
 	local var_20_4
 
-	if var_20_1 == "ingame_vote_yes" then
-		var_20_3 = arg_20_0.option_yes
-		var_20_4 = arg_20_0.option_no
+	if current_hold_input == "ingame_vote_yes" then
+		var_20_3 = self.option_yes
+		var_20_4 = self.option_no
 		var_20_2 = "left"
-	elseif var_20_1 == "ingame_vote_no" then
-		var_20_3 = arg_20_0.option_no
-		var_20_4 = arg_20_0.option_yes
+	elseif current_hold_input == "ingame_vote_no" then
+		var_20_3 = self.option_no
+		var_20_4 = self.option_yes
 		var_20_2 = "right"
 	end
 
-	local var_20_5 = arg_20_1.input_hold_progress or 0
-	local var_20_6 = math.smoothstep(var_20_5, 0, 1)
+	local input_hold_progress = arg_20_1.input_hold_progress
 
-	if var_20_3 then
-		local var_20_7 = var_20_3.style.bar
-		local var_20_8 = var_20_7.default_width
-		local var_20_9 = var_20_7.offset
-		local var_20_10 = var_20_7.default_offset
-		local var_20_11 = var_20_7.size
+	input_hold_progress = input_hold_progress or 0
 
-		if var_20_2 == "left" then
-			var_20_11[1] = var_20_6 * var_20_8
-			var_20_9[1] = var_20_10[1] + (var_20_8 - var_20_11[1])
-		else
-			var_20_11[1] = var_20_6 * var_20_8
-		end
+	local smoothstep = math.smoothstep(input_hold_progress, 0, 1)
 
-		var_20_0 = true
-	end
-
-	if var_20_4 then
-		local var_20_12 = var_20_4.style.bar
-		local var_20_13 = var_20_12.default_width
-		local var_20_14 = var_20_12.offset
-		local var_20_15 = var_20_12.default_offset
-		local var_20_16 = var_20_12.size
+	if not var_20_3 then
+		local bar = var_20_3.style.bar
+		local default_width = bar.default_width
+		local offset = bar.offset
+		local default_offset = bar.default_offset
+		local size = bar.size
 
 		if var_20_2 == "left" then
-			var_20_16[1] = 0
+			size[1] = smoothstep * default_width
+			offset[1] = default_offset[1] + (default_width - size[1])
 		else
-			var_20_16[1] = 0
-			var_20_14[1] = var_20_15[1]
+			size[1] = smoothstep * default_width
 		end
 
-		var_20_0 = true
+		flag = true
 	end
 
-	if not var_20_1 then
-		arg_20_0.option_no.style.bar.size[1] = 0
-		arg_20_0.option_yes.style.bar.size[1] = 0
-		arg_20_0.option_yes.style.bar.offset[1] = arg_20_0.option_yes.style.bar.default_offset[1]
+	if not var_20_4 then
+		local bar_2 = var_20_4.style.bar
+		local default_width_2 = bar_2.default_width
+		local offset_2 = bar_2.offset
+		local default_offset_2 = bar_2.default_offset
+		local size_2 = bar_2.size
+
+		if var_20_2 == "left" then
+			size_2[1] = 0
+		else
+			size_2[1] = 0
+			offset_2[1] = default_offset_2[1]
+		end
+
+		flag = true
 	end
 
-	return var_20_0
+	if not current_hold_input then
+		self.option_no.style.bar.size[1] = 0
+		self.option_yes.style.bar.size[1] = 0
+		self.option_yes.style.bar.offset[1] = self.option_yes.style.bar.default_offset[1]
+	end
+
+	return flag
 end
 
-function IngameVotingUI.clear_input_progress(arg_21_0)
-	if arg_21_0.option_yes then
-		local var_21_0 = arg_21_0.option_yes.style.bar
-		local var_21_1 = arg_21_0.option_yes.style.bar_bg
-		local var_21_2 = var_21_0.default_width
-		local var_21_3 = var_21_0.offset
-		local var_21_4 = var_21_0.default_offset
+IngameVotingUI.clear_input_progress = function (self)
+	-- function 21
+	if not self.option_yes then
+		local bar = self.option_yes.style.bar
+		local bar_bg = self.option_yes.style.bar_bg
+		local default_width = bar.default_width
+		local offset = bar.offset
+		local default_offset = bar.default_offset
 
-		var_21_0.size[1] = 0
-		var_21_3[1] = var_21_4[1]
+		bar.size[1] = 0
+		offset[1] = default_offset[1]
 	end
 
-	if arg_21_0.option_no then
-		local var_21_5 = arg_21_0.option_no.style.bar
-		local var_21_6 = arg_21_0.option_no.style.bar_bg
-		local var_21_7 = var_21_5.default_width
+	if not self.option_no then
+		local bar_2 = self.option_no.style.bar
+		local bar_bg_2 = self.option_no.style.bar_bg
+		local default_width_2 = bar_2.default_width
 
-		var_21_5.size[1] = 0
+		bar_2.size[1] = 0
 	end
 end
 
-function IngameVotingUI.play_sound(arg_22_0, arg_22_1)
-	WwiseWorld.trigger_event(arg_22_0.wwise_world, arg_22_1)
+IngameVotingUI.play_sound = function (self, arg_22_1)
+	-- function 22
+	WwiseWorld.trigger_event(self.wwise_world, arg_22_1)
 end

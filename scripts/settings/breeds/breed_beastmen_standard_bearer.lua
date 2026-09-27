@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/breeds/breed_beastmen_standard_bearer.lua
 
-local var_0_0 = {
+local tbl = {
 	detection_radius = 60,
 	radius = 1,
 	walk_speed = 2.75,
@@ -301,42 +301,43 @@ local var_0_0 = {
 		j_lefthand = 0.2,
 		j_rightforearm = 0.2
 	},
-	additional_breed_packages_to_load = function(arg_1_0)
+	additional_breed_packages_to_load = function (arg_1_0)
+		-- function 1
 		local var_1_0 = BreedTweaks.standard_bearer_spawn_list[arg_1_0]
-		local var_1_1 = {}
+		local tbl = {}
 
-		if var_1_0 and #var_1_0 > 0 then
-			for iter_1_0 = 1, #var_1_0 do
-				var_1_1[#var_1_1 + 1] = var_1_0[iter_1_0]
+		if not (not var_1_0 and not (#var_1_0 > 0)) then
+			for i = 1, #var_1_0 do
+				tbl[#tbl + 1] = var_1_0[i]
 			end
 		end
 
-		return var_1_1
+		return tbl
 	end
 }
 
-Breeds.beastmen_standard_bearer = table.create_copy(Breeds.beastmen_standard_bearer, var_0_0)
+Breeds.beastmen_standard_bearer = table.create_copy(Breeds.beastmen_standard_bearer, tbl)
 
-local var_0_1 = {
+local tbl_2 = {
 	dialogue_source_name = "beastmen_standard_bearer_crater",
 	debug_spawn_category = "Misc"
 }
 
-for iter_0_0, iter_0_1 in pairs(var_0_0) do
-	local var_0_2 = var_0_1[iter_0_0]
+for k, v in pairs(tbl) do
+	local var_0_2 = tbl_2[k]
 
 	if var_0_2 == "SET_TO_NIL" then
-		var_0_1[iter_0_0] = nil
+		tbl_2[k] = nil
 	elseif var_0_2 ~= nil then
-		var_0_1[iter_0_0] = var_0_2
+		tbl_2[k] = var_0_2
 	else
-		var_0_1[iter_0_0] = iter_0_1
+		tbl_2[k] = v
 	end
 end
 
-Breeds.beastmen_standard_bearer_crater = table.create_copy(Breeds.beastmen_standard_bearer_crater, var_0_1)
+Breeds.beastmen_standard_bearer_crater = table.create_copy(Breeds.beastmen_standard_bearer_crater, tbl_2)
 
-local var_0_3 = {
+local tbl_3 = {
 	sweep = {
 		easy = {
 			normal = 1.5,
@@ -472,7 +473,7 @@ local var_0_3 = {
 		}
 	}
 }
-local var_0_4 = {
+local tbl_4 = {
 	alerted = {
 		no_hesitation = true,
 		cooldown = -1,
@@ -609,7 +610,7 @@ local var_0_4 = {
 		attack_intensity_type = "cleave",
 		move_anim = "move_fwd",
 		width = 0.4,
-		difficulty_attack_intensity = var_0_3,
+		difficulty_attack_intensity = tbl_3,
 		knocked_down_attack_anim = {
 			"attack_downed"
 		},
@@ -641,7 +642,7 @@ local var_0_4 = {
 		attack_intensity_type = "sweep",
 		move_anim = "move_fwd",
 		width = 2,
-		difficulty_attack_intensity = var_0_3,
+		difficulty_attack_intensity = tbl_3,
 		attack_anim = {
 			"attack_pounce",
 			"attack_pounce_2"
@@ -675,7 +676,7 @@ local var_0_4 = {
 		damage_type = "blunt",
 		unblockable = true,
 		attack_anim = "attack_push",
-		difficulty_attack_intensity = var_0_3,
+		difficulty_attack_intensity = tbl_3,
 		considerations = UtilityConsiderations.storm_vermin_push_attack,
 		ignore_staggers = {
 			true,
@@ -710,21 +711,22 @@ local var_0_4 = {
 		difficulty_duration = BreedTweaks.blocked_duration.beastmen_elite
 	},
 	stagger = {
-		custom_enter_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
-			local var_2_0 = arg_2_1.charge_stagger
+		custom_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			-- function 2
+			local charge_stagger = arg_2_1.charge_stagger
 			local var_2_1
 			local var_2_2
 
-			if var_2_0 then
+			if not charge_stagger then
 				var_2_1 = arg_2_3.charge_stagger_anims[arg_2_1.stagger_type]
 				arg_2_1.charge_stagger = nil
 
-				local var_2_3 = arg_2_1.stagger_direction:unbox()
-				local var_2_4 = Quaternion.forward(Unit.local_rotation(arg_2_0, 0)) + Vector3.flat(var_2_3) * 0.5
+				local unbox = arg_2_1.stagger_direction:unbox()
+				local num = Quaternion.forward(Unit.local_rotation(arg_2_0, 0)) + Vector3.flat(unbox) * 0.5
 
-				arg_2_1.stagger_direction:store(Vector3.normalize(var_2_4))
+				arg_2_1.stagger_direction:store(Vector3.normalize(num))
 
-				var_2_2 = Quaternion.look(Vector3.normalize(var_2_4))
+				var_2_2 = Quaternion.look(Vector3.normalize(num))
 			else
 				var_2_1 = arg_2_3.stagger_anims[arg_2_1.stagger_type]
 			end
@@ -991,4 +993,4 @@ local var_0_4 = {
 	}
 }
 
-BreedActions.beastmen_standard_bearer = table.create_copy(BreedActions.beastmen_standard_bearer, var_0_4)
+BreedActions.beastmen_standard_bearer = table.create_copy(BreedActions.beastmen_standard_bearer, tbl_4)

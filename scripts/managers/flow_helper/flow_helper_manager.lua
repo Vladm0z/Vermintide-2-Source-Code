@@ -2,54 +2,59 @@
 
 FlowHelperManager = class(FlowHelperManager)
 
-function FlowHelperManager.init(arg_1_0, arg_1_1)
-	arg_1_0._line_of_sight_checks = {}
-	arg_1_0._physics_world = World.physics_world(arg_1_1)
+FlowHelperManager.init = function (self, arg_1_1)
+	-- function 1
+	self._line_of_sight_checks = {}
+	self._physics_world = World.physics_world(arg_1_1)
 end
 
-function FlowHelperManager.update(arg_2_0, arg_2_1)
-	arg_2_0:_update_line_of_sight_checks(arg_2_1)
+FlowHelperManager.update = function (self, arg_2_1)
+	-- function 2
+	self:_update_line_of_sight_checks(arg_2_1)
 end
 
-local var_0_0 = 1
-local var_0_1 = 4
+local num = 1
+local num_2 = 4
 
-function FlowHelperManager._update_line_of_sight_checks(arg_3_0, arg_3_1)
-	for iter_3_0, iter_3_1 in pairs(arg_3_0._line_of_sight_checks) do
-		for iter_3_2, iter_3_3 in pairs(iter_3_1) do
-			local var_3_0 = iter_3_3.source_unit
+FlowHelperManager._update_line_of_sight_checks = function (self, arg_3_1)
+	-- function 3
+	for k, v in pairs(self._line_of_sight_checks) do
+		for k_2, v_2 in pairs(v) do
+			local source_unit = v_2.source_unit
 
-			if arg_3_1 > iter_3_3.last_t + iter_3_3.time_between_checks then
-				iter_3_3.last_t = arg_3_1
+			if not (arg_3_1 > v_2.last_t + v_2.time_between_checks) then
+				v_2.last_t = arg_3_1
 
-				if not Unit.alive(var_3_0) or not Unit.alive(iter_3_2) then
-					arg_3_0:unregister_line_of_sight_check(var_3_0, iter_3_2)
+				if not (not Unit.alive(source_unit) and Unit.alive(k_2)) then
+					self:unregister_line_of_sight_check(source_unit, k_2)
 				else
-					local var_3_1 = Unit.world_position(var_3_0, iter_3_3.source_node)
-					local var_3_2 = Unit.world_position(iter_3_2, iter_3_3.target_node)
-					local var_3_3 = var_3_2 - var_3_1
-					local var_3_4 = Vector3.length(var_3_3)
-					local var_3_5 = Vector3.normalize(var_3_3)
-					local var_3_6 = var_3_2
-					local var_3_7 = true
-					local var_3_8 = iter_3_3.is_in_los
-					local var_3_9 = iter_3_3.ignore_if_invisible and ScriptUnit.has_extension(iter_3_2, "status_system")
+					local world_position = Unit.world_position(source_unit, v_2.source_node)
+					local world_position_2 = Unit.world_position(k_2, v_2.target_node)
+					local num_3 = world_position_2 - world_position
+					local length = Vector3.length(num_3)
+					local normalize = Vector3.normalize(num_3)
+					local var_3_6 = world_position_2
+					local flag = true
+					local is_in_los = v_2.is_in_los
+					local ignore_if_invisible = v_2.ignore_if_invisible
 
-					if var_3_9 and var_3_9:is_invisible() then
-						var_3_7 = false
+					ignore_if_invisible = not ignore_if_invisible and ScriptUnit.has_extension(k_2, "status_system")
+
+					if not ignore_if_invisible and not ignore_if_invisible:is_invisible() then
+						flag = false
 					else
-						local var_3_10 = PhysicsWorld.immediate_raycast(arg_3_0._physics_world, var_3_1, var_3_5, var_3_4, "all", "collision_filter", iter_3_3.collision_filter)
+						local immediate_raycast = PhysicsWorld.immediate_raycast(self._physics_world, world_position, normalize, length, "all", "collision_filter", v_2.collision_filter)
 
-						if var_3_10 then
-							for iter_3_4 = 1, #var_3_10 do
-								local var_3_11 = var_3_10[iter_3_4]
-								local var_3_12 = var_3_11[var_0_1]
-								local var_3_13 = Actor.unit(var_3_12)
+						if not immediate_raycast then
+							for i4 = 1, #immediate_raycast do
+								local var_3_11 = immediate_raycast[i4]
+								local var_3_12 = var_3_11[num_2]
+								local unit = Actor.unit(var_3_12)
 
-								if var_3_13 ~= var_3_0 then
-									var_3_7 = var_3_13 == iter_3_2
+								if unit ~= source_unit then
+									flag = unit == k_2
 
-									local var_3_14 = var_3_11[var_0_0]
+									local var_3_14 = var_3_11[num]
 
 									break
 								end
@@ -57,10 +62,26 @@ function FlowHelperManager._update_line_of_sight_checks(arg_3_0, arg_3_1)
 						end
 					end
 
-					if var_3_8 ~= var_3_7 then
-						iter_3_3.is_in_los = var_3_7
+					if is_in_los ~= flag then
+						v_2.is_in_los = flag
 
-						Unit.flow_event(iter_3_0, var_3_7 and iter_3_3.flow_cb_enter or iter_3_3.flow_cb_leave)
+						local flow_event = Unit.flow_event
+						local var_3_16 = k
+						local flow_cb_enter
+
+						if not flag then
+							flow_cb_enter = v_2.flow_cb_enter
+
+							if not flow_cb_enter then
+								-- Nothing
+							end
+						end
+
+						flow_cb_enter = v_2.flow_cb_leave
+
+						::label_3_0::
+
+						flow_event(var_3_16, flow_cb_enter)
 					end
 				end
 			end
@@ -68,12 +89,15 @@ function FlowHelperManager._update_line_of_sight_checks(arg_3_0, arg_3_1)
 	end
 end
 
-function FlowHelperManager.register_line_of_sight_check(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7, arg_4_8, arg_4_9)
-	local var_4_0 = arg_4_0._line_of_sight_checks
-	local var_4_1 = var_4_0[arg_4_1] or {}
+FlowHelperManager.register_line_of_sight_check = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7, arg_4_8, arg_4_9)
+	-- function 4
+	local _line_of_sight_checks = self._line_of_sight_checks
+	local var_4_1 = _line_of_sight_checks[arg_4_1]
 
-	var_4_0[arg_4_1] = var_4_1
-	var_4_1[arg_4_4] = {
+	var_4_1 = var_4_1 or {}
+	_line_of_sight_checks[arg_4_1] = var_4_1
+
+	local tbl = {
 		is_in_los = false,
 		last_t = 0,
 		time_between_checks = 0.3,
@@ -82,24 +106,40 @@ function FlowHelperManager.register_line_of_sight_check(arg_4_0, arg_4_1, arg_4_
 		ignore_if_invisible = arg_4_5,
 		source_unit = arg_4_2,
 		source_node = arg_4_3,
-		collision_filter = arg_4_8,
-		target_node = Unit.has_node(arg_4_4, "j_spine") and Unit.node(arg_4_4, "j_spine") or 0,
-		debug_draw = arg_4_9 and {
-			from = Vector3Box(),
-			to = Vector3Box()
-		}
+		collision_filter = arg_4_8
 	}
+	local node
+
+	if not Unit.has_node(arg_4_4, "j_spine") then
+		node = Unit.node(arg_4_4, "j_spine")
+
+		if not node then
+			-- Nothing
+		end
+	end
+
+	node = 0
+
+	::label_4_0::
+
+	tbl.target_node = node
+	tbl.debug_draw = not arg_4_9 and {
+		from = Vector3Box(),
+		to = Vector3Box()
+	}
+	var_4_1[arg_4_4] = tbl
 end
 
-function FlowHelperManager.unregister_line_of_sight_check(arg_5_0, arg_5_1, arg_5_2)
-	local var_5_0 = arg_5_0._line_of_sight_checks
-	local var_5_1 = var_5_0[arg_5_1]
+FlowHelperManager.unregister_line_of_sight_check = function (self, arg_5_1, arg_5_2)
+	-- function 5
+	local _line_of_sight_checks = self._line_of_sight_checks
+	local var_5_1 = _line_of_sight_checks[arg_5_1]
 
-	if var_5_1 then
+	if not var_5_1 then
 		var_5_1[arg_5_2] = nil
 
-		if table.is_empty(var_5_1) then
-			var_5_0[arg_5_1] = nil
+		if not table.is_empty(var_5_1) then
+			_line_of_sight_checks[arg_5_1] = nil
 		end
 	end
 end

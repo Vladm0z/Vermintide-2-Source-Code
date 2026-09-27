@@ -1,16 +1,16 @@
 -- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_mutator_grid_definitions.lua
 
-local var_0_0 = UISettings.game_start_windows
-local var_0_1 = var_0_0.frame
-local var_0_2 = var_0_0.size
-local var_0_3 = var_0_0.spacing
-local var_0_4 = UIFrameSettings[var_0_1].texture_sizes.vertical[1]
-local var_0_5 = var_0_2[1] - (var_0_4 * 2 + 60)
-local var_0_6 = {
-	var_0_2[1] * 2 + var_0_3,
-	var_0_2[2]
+local game_start_windows = UISettings.game_start_windows
+local frame = game_start_windows.frame
+local size = game_start_windows.size
+local spacing = game_start_windows.spacing
+local var_0_4 = UIFrameSettings[frame].texture_sizes.vertical[1]
+local num = size[1] - (var_0_4 * 2 + 60)
+local tbl = {
+	size[1] * 2 + spacing,
+	size[2]
 }
-local var_0_7 = {
+local tbl_2 = {
 	root = {
 		is_root = true,
 		size = {
@@ -53,7 +53,7 @@ local var_0_7 = {
 		vertical_alignment = "center",
 		parent = "menu_root",
 		horizontal_alignment = "center",
-		size = var_0_2,
+		size = size,
 		position = {
 			0,
 			0,
@@ -64,7 +64,7 @@ local var_0_7 = {
 		vertical_alignment = "center",
 		parent = "window",
 		horizontal_alignment = "left",
-		size = var_0_6,
+		size = tbl,
 		position = {
 			0,
 			0,
@@ -75,7 +75,7 @@ local var_0_7 = {
 		vertical_alignment = "center",
 		parent = "actual_window",
 		horizontal_alignment = "center",
-		size = var_0_6,
+		size = tbl,
 		position = {
 			0,
 			20,
@@ -115,7 +115,7 @@ local var_0_7 = {
 		parent = "title_text_detail",
 		horizontal_alignment = "center",
 		size = {
-			var_0_2[1],
+			size[1],
 			50
 		},
 		position = {
@@ -129,8 +129,8 @@ local var_0_7 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_5,
-			var_0_2[2] / 2
+			num,
+			size[2] / 2
 		},
 		position = {
 			0,
@@ -143,7 +143,7 @@ local var_0_7 = {
 		parent = "actual_window",
 		horizontal_alignment = "right",
 		size = {
-			var_0_6[1] * 0.4,
+			tbl[1] * 0.4,
 			42
 		},
 		position = {
@@ -171,7 +171,7 @@ local var_0_7 = {
 		parent = "actual_window",
 		horizontal_alignment = "left",
 		size = {
-			var_0_6[1] * 0.4,
+			tbl[1] * 0.4,
 			42
 		},
 		position = {
@@ -199,7 +199,7 @@ local var_0_7 = {
 		parent = "actual_window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_6[1],
+			tbl[1],
 			0
 		},
 		position = {
@@ -213,7 +213,7 @@ local var_0_7 = {
 		parent = "actual_window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_6[1] * 0.2,
+			tbl[1] * 0.2,
 			42
 		},
 		position = {
@@ -223,7 +223,7 @@ local var_0_7 = {
 		}
 	}
 }
-local var_0_8 = {
+local tbl_3 = {
 	vertical_alignment = "center",
 	font_size = 20,
 	localize = false,
@@ -232,12 +232,12 @@ local var_0_8 = {
 	font_type = "hell_shark",
 	text_color = Colors.get_color_table_with_alpha("font_default", 255),
 	offset = {
-		-(var_0_6[1] * 0.1 + 5),
+		-(tbl[1] * 0.1 + 5),
 		4,
 		2
 	}
 }
-local var_0_9 = {
+local tbl_4 = {
 	vertical_alignment = "center",
 	font_size = 20,
 	localize = false,
@@ -246,12 +246,12 @@ local var_0_9 = {
 	font_type = "hell_shark",
 	text_color = Colors.get_color_table_with_alpha("font_default", 255),
 	offset = {
-		var_0_6[1] * 0.1 + 4,
+		tbl[1] * 0.1 + 4,
 		4,
 		2
 	}
 }
-local var_0_10 = {
+local tbl_5 = {
 	vertical_alignment = "center",
 	font_size = 20,
 	localize = false,
@@ -266,7 +266,8 @@ local var_0_10 = {
 	}
 }
 
-local function var_0_11(arg_1_0, arg_1_1)
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
 	return {
 		element = {
 			passes = {
@@ -358,7 +359,8 @@ local function var_0_11(arg_1_0, arg_1_1)
 	}
 end
 
-local function var_0_12(arg_2_0, arg_2_1)
+local function fn_2(arg_2_0, arg_2_1)
+	-- function 2
 	return {
 		element = {
 			passes = {
@@ -450,9 +452,9 @@ local function var_0_12(arg_2_0, arg_2_1)
 	}
 end
 
-local var_0_13 = {
-	item_grid = UIWidgets.create_grid("item_grid", var_0_7.item_grid.size, 8, 11, 12, 12, true),
-	window_frame = UIWidgets.create_frame("actual_window", var_0_6, var_0_1, 10),
+local tbl_6 = {
+	item_grid = UIWidgets.create_grid("item_grid", tbl_2.item_grid.size, 8, 11, 12, 12, true),
+	window_frame = UIWidgets.create_frame("actual_window", tbl, frame, 10),
 	window = UIWidgets.create_tiled_texture("actual_window", "background_leather_02", {
 		520,
 		820
@@ -463,14 +465,14 @@ local var_0_13 = {
 		255
 	}),
 	window_background_fade = UIWidgets.create_simple_texture("options_window_fade_01", "actual_window", nil, nil, nil, 1),
-	page_button_next = UIWidgets.create_simple_window_button("page_button_next", var_0_7.page_button_next.size, Localize("menu_next"), 16),
-	page_button_previous = UIWidgets.create_simple_window_button("page_button_previous", var_0_7.page_button_previous.size, Localize("menu_previous"), 16),
-	page_button_divider = var_0_11("page_button_divider", var_0_7.page_button_divider.size),
-	page_button_edge_left = var_0_12("page_button_edge_left", var_0_7.page_button_edge_left.size),
-	page_button_edge_right = var_0_12("page_button_edge_right", var_0_7.page_button_edge_right.size),
-	page_text_center = UIWidgets.create_simple_text("/", "page_text_area", nil, nil, var_0_10),
-	page_text_left = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, var_0_8),
-	page_text_right = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, var_0_9),
+	page_button_next = UIWidgets.create_simple_window_button("page_button_next", tbl_2.page_button_next.size, Localize("menu_next"), 16),
+	page_button_previous = UIWidgets.create_simple_window_button("page_button_previous", tbl_2.page_button_previous.size, Localize("menu_previous"), 16),
+	page_button_divider = fn("page_button_divider", tbl_2.page_button_divider.size),
+	page_button_edge_left = fn_2("page_button_edge_left", tbl_2.page_button_edge_left.size),
+	page_button_edge_right = fn_2("page_button_edge_right", tbl_2.page_button_edge_right.size),
+	page_text_center = UIWidgets.create_simple_text("/", "page_text_area", nil, nil, tbl_5),
+	page_text_left = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, tbl_3),
+	page_text_right = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, tbl_4),
 	page_text_area = UIWidgets.create_simple_rect("page_text_area", {
 		255,
 		0,
@@ -480,6 +482,6 @@ local var_0_13 = {
 }
 
 return {
-	widgets = var_0_13,
-	scenegraph_definition = var_0_7
+	widgets = tbl_6,
+	scenegraph_definition = tbl_2
 }

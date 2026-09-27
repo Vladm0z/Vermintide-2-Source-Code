@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/breeds/breed_skaven_stormfiend_demo.lua
 
-local var_0_0 = {
+local tbl = {
 	target_selection = "pick_rat_ogre_target_idle",
 	target_selection_angry = "pick_closest_target_with_filter",
 	is_of_interest_func = "is_of_interest_stormfiend_demo",
@@ -133,22 +133,22 @@ local var_0_0 = {
 	run_on_despawn = AiBreedSnippets.on_stormfiend_demo_despawn
 }
 
-for iter_0_0, iter_0_1 in pairs(Breeds.skaven_stormfiend) do
-	local var_0_1 = var_0_0[iter_0_0]
+for k, v in pairs(Breeds.skaven_stormfiend) do
+	local var_0_1 = tbl[k]
 
 	if var_0_1 == "SET_TO_NIL" then
-		var_0_0[iter_0_0] = nil
+		tbl[k] = nil
 	elseif var_0_1 ~= nil then
-		var_0_0[iter_0_0] = var_0_1
+		tbl[k] = var_0_1
 	else
-		var_0_0[iter_0_0] = iter_0_1
+		tbl[k] = v
 	end
 end
 
-Breeds.skaven_stormfiend_demo = table.create_copy(Breeds.skaven_stormfiend_demo, var_0_0)
+Breeds.skaven_stormfiend_demo = table.create_copy(Breeds.skaven_stormfiend_demo, tbl)
 Breeds.skaven_stormfiend_demo.is_always_spawnable = nil
 
-local var_0_2 = {
+local tbl_2 = {
 	follow = {
 		follow_target_function_name = "_follow_target_stormfiend",
 		move_anim = "move_start_fwd",
@@ -331,16 +331,16 @@ local var_0_2 = {
 	}
 }
 
-for iter_0_2, iter_0_3 in pairs(BreedActions.skaven_stormfiend) do
-	local var_0_3 = var_0_2[iter_0_2]
+for k_2, v_2 in pairs(BreedActions.skaven_stormfiend) do
+	local var_0_3 = tbl_2[k_2]
 
 	if var_0_3 == "SET_TO_NIL" then
-		var_0_2[iter_0_2] = nil
+		tbl_2[k_2] = nil
 	elseif var_0_3 ~= nil then
-		var_0_2[iter_0_2] = var_0_3
+		tbl_2[k_2] = var_0_3
 	else
-		var_0_2[iter_0_2] = iter_0_3
+		tbl_2[k_2] = v_2
 	end
 end
 
-BreedActions.skaven_stormfiend_demo = table.create_copy(BreedActions.skaven_stormfiend_demo, var_0_2)
+BreedActions.skaven_stormfiend_demo = table.create_copy(BreedActions.skaven_stormfiend_demo, tbl_2)

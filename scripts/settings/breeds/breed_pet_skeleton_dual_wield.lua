@@ -1,31 +1,32 @@
 -- chunkname: @scripts/settings/breeds/breed_pet_skeleton_dual_wield.lua
 
-local var_0_0 = require("scripts/utils/stagger_types")
-local var_0_1 = {
-	[var_0_0.none] = false,
-	[var_0_0.weak] = false,
-	[var_0_0.medium] = false,
-	[var_0_0.heavy] = false,
-	[var_0_0.ranged_weak] = false,
-	[var_0_0.ranged_medium] = false,
-	[var_0_0.explosion] = true,
-	[var_0_0.weakspot] = false,
-	[var_0_0.pulling] = false
+local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
+local tbl = {
+	[scripts_utils_stagger_types.none] = false,
+	[scripts_utils_stagger_types.weak] = false,
+	[scripts_utils_stagger_types.medium] = false,
+	[scripts_utils_stagger_types.heavy] = false,
+	[scripts_utils_stagger_types.ranged_weak] = false,
+	[scripts_utils_stagger_types.ranged_medium] = false,
+	[scripts_utils_stagger_types.explosion] = true,
+	[scripts_utils_stagger_types.weakspot] = false,
+	[scripts_utils_stagger_types.pulling] = false
 }
 
-local function var_0_2(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	-- function 1
 	if arg_1_2 ~= arg_1_1.attacking_target then
-		local var_1_0 = 0
+		local num = 0
 
-		ScriptUnit.extension(arg_1_0, "buff_system"):trigger_procs("on_damage_dealt", arg_1_2, arg_1_0, var_1_0, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+		ScriptUnit.extension(arg_1_0, "buff_system"):trigger_procs("on_damage_dealt", arg_1_2, arg_1_0, num, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 
 		if not Managers.state.network:in_game_session() then
-			Managers.state.achievement:trigger_event("on_damage_dealt", arg_1_2, arg_1_0, var_1_0, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+			Managers.state.achievement:trigger_event("on_damage_dealt", arg_1_2, arg_1_0, num, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 		end
 	end
 end
 
-local var_0_3 = {
+local tbl_2 = {
 	detection_radius = 18,
 	leave_walk_distance = 5,
 	walk_speed = 4,
@@ -181,13 +182,14 @@ local var_0_3 = {
 		40,
 		40
 	},
-	stagger_modifier_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	stagger_modifier_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+		-- function 2
 		if arg_2_4.stagger_type == 3 then
-			if arg_2_0 == 3 and arg_2_4.heavy_stagger_immune_time then
+			if arg_2_0 ~= 3 or not arg_2_4.heavy_stagger_immune_time then
 				arg_2_0 = 0
 				arg_2_1 = 0
 				arg_2_2 = 0
-			elseif arg_2_0 ~= 3 and arg_2_4.stagger_immune_time then
+			elseif arg_2_0 == 3 or not arg_2_4.stagger_immune_time then
 				arg_2_0 = 0
 				arg_2_1 = 0
 				arg_2_2 = 0
@@ -443,9 +445,9 @@ local var_0_3 = {
 	}
 }
 
-Breeds.pet_skeleton_dual_wield = table.create_copy(Breeds.pet_skeleton_dual_wield, var_0_3)
+Breeds.pet_skeleton_dual_wield = table.create_copy(Breeds.pet_skeleton_dual_wield, tbl_2)
 
-local var_0_4 = {
+local tbl_3 = {
 	normal = {
 		easy = {
 			normal = 2
@@ -543,7 +545,7 @@ local var_0_4 = {
 		}
 	}
 }
-local var_0_5 = {
+local tbl_4 = {
 	idle = {
 		anim_cycle_index = 0,
 		animations = {
@@ -756,7 +758,8 @@ local var_0_5 = {
 	},
 	stagger = {
 		scale_animation_speeds = true,
-		custom_enter_function = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+		custom_enter_function = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			-- function 3
 			if arg_3_1.stagger_type == 3 then
 				arg_3_1.stagger_immune_time = arg_3_2 + 2.25
 				arg_3_1.heavy_stagger_immune_time = arg_3_2 + 1.5
@@ -1021,7 +1024,7 @@ local var_0_5 = {
 		action_weight = 1,
 		ignore_ai_damage = true,
 		damage_type = "cutting",
-		difficulty_attack_intensity = var_0_4,
+		difficulty_attack_intensity = tbl_3,
 		considerations = UtilityConsiderations.marauder_attack,
 		attacks = {
 			{
@@ -1044,10 +1047,10 @@ local var_0_5 = {
 				push_ai = {
 					stagger_distance = 0,
 					stagger_impact = {
-						var_0_0.weak,
-						var_0_0.none,
-						var_0_0.none,
-						var_0_0.none
+						scripts_utils_stagger_types.weak,
+						scripts_utils_stagger_types.none,
+						scripts_utils_stagger_types.none,
+						scripts_utils_stagger_types.none
 					},
 					stagger_duration = {
 						1,
@@ -1079,10 +1082,10 @@ local var_0_5 = {
 				push_ai = {
 					stagger_distance = 0.5,
 					stagger_impact = {
-						var_0_0.weak,
-						var_0_0.none,
-						var_0_0.none,
-						var_0_0.none
+						scripts_utils_stagger_types.weak,
+						scripts_utils_stagger_types.none,
+						scripts_utils_stagger_types.none,
+						scripts_utils_stagger_types.none
 					},
 					stagger_duration = {
 						1,
@@ -1115,10 +1118,10 @@ local var_0_5 = {
 				push_ai = {
 					stagger_distance = 0.5,
 					stagger_impact = {
-						var_0_0.weak,
-						var_0_0.none,
-						var_0_0.none,
-						var_0_0.none
+						scripts_utils_stagger_types.weak,
+						scripts_utils_stagger_types.none,
+						scripts_utils_stagger_types.none,
+						scripts_utils_stagger_types.none
 					},
 					stagger_duration = {
 						1,
@@ -1151,10 +1154,10 @@ local var_0_5 = {
 				push_ai = {
 					stagger_distance = 0.5,
 					stagger_impact = {
-						var_0_0.weak,
-						var_0_0.none,
-						var_0_0.none,
-						var_0_0.none
+						scripts_utils_stagger_types.weak,
+						scripts_utils_stagger_types.none,
+						scripts_utils_stagger_types.none,
+						scripts_utils_stagger_types.none
 					},
 					stagger_duration = {
 						1,
@@ -1187,10 +1190,10 @@ local var_0_5 = {
 				push_ai = {
 					stagger_distance = 0.5,
 					stagger_impact = {
-						var_0_0.weak,
-						var_0_0.none,
-						var_0_0.none,
-						var_0_0.none
+						scripts_utils_stagger_types.weak,
+						scripts_utils_stagger_types.none,
+						scripts_utils_stagger_types.none,
+						scripts_utils_stagger_types.none
 					},
 					stagger_duration = {
 						1,
@@ -1222,10 +1225,10 @@ local var_0_5 = {
 				push_ai = {
 					stagger_distance = 0.5,
 					stagger_impact = {
-						var_0_0.weak,
-						var_0_0.none,
-						var_0_0.none,
-						var_0_0.none
+						scripts_utils_stagger_types.weak,
+						scripts_utils_stagger_types.none,
+						scripts_utils_stagger_types.none,
+						scripts_utils_stagger_types.none
 					},
 					stagger_duration = {
 						1,
@@ -1314,11 +1317,11 @@ local var_0_5 = {
 				2
 			}
 		},
-		hit_ai_func = var_0_2
+		hit_ai_func = fn
 	}
 }
 
-var_0_5.command_attack = table.clone(var_0_5.sweep_attack)
-var_0_5.command_attack.considerations = UtilityConsiderations.command_attack
-var_0_5.fallback_idle = var_0_5.idle
-BreedActions.pet_skeleton_dual_wield = table.create_copy(BreedActions.pet_skeleton_dual_wield, var_0_5)
+tbl_4.command_attack = table.clone(tbl_4.sweep_attack)
+tbl_4.command_attack.considerations = UtilityConsiderations.command_attack
+tbl_4.fallback_idle = tbl_4.idle
+BreedActions.pet_skeleton_dual_wield = table.create_copy(BreedActions.pet_skeleton_dual_wield, tbl_4)

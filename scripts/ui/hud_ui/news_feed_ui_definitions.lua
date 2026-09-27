@@ -1,14 +1,14 @@
 -- chunkname: @scripts/ui/hud_ui/news_feed_ui_definitions.lua
 
-local var_0_0 = 1920
-local var_0_1 = 1080
-local var_0_2 = {
+local num = 1920
+local num_2 = 1080
+local tbl = {
 	420,
 	120
 }
-local var_0_3 = 5
-local var_0_4 = 10
-local var_0_5 = {
+local num_3 = 5
+local num_4 = 10
+local tbl_2 = {
 	root = {
 		scale = "hud_scale_fit",
 		position = {
@@ -17,8 +17,8 @@ local var_0_5 = {
 			UILayer.hud
 		},
 		size = {
-			var_0_0,
-			var_0_1
+			num,
+			num_2
 		}
 	},
 	pivot = {
@@ -38,22 +38,23 @@ local var_0_5 = {
 }
 
 if not IS_WINDOWS then
-	var_0_5.root.scale = "hud_fit"
-	var_0_5.root.is_root = false
+	tbl_2.root.scale = "hud_fit"
+	tbl_2.root.is_root = false
 end
 
-local function var_0_6(arg_1_0, arg_1_1)
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
 	local var_1_0 = arg_1_1
 
 	if not var_1_0 then
 		var_1_0 = "news_pivot_" .. arg_1_0
-		var_0_5[var_1_0] = {
+		tbl_2[var_1_0] = {
 			vertical_alignment = "top",
 			parent = "pivot",
 			horizontal_alignment = "right",
 			size = {
-				var_0_2[1],
-				var_0_2[2]
+				tbl[1],
+				tbl[2]
 			},
 			position = {
 				0,
@@ -90,8 +91,9 @@ local function var_0_6(arg_1_0, arg_1_1)
 					pass_type = "texture",
 					style_id = "icon",
 					texture_id = "icon",
-					content_check_function = function(arg_2_0, arg_2_1)
-						return arg_2_0.icon ~= nil
+					content_check_function = function (self, arg_2_1)
+						-- function 2
+						return self.icon ~= nil
 					end
 				},
 				{
@@ -217,16 +219,16 @@ local function var_0_6(arg_1_0, arg_1_1)
 	}
 end
 
-local var_0_7 = {}
+local tbl_3 = {}
 
-for iter_0_0 = 1, var_0_3 do
-	var_0_7[iter_0_0] = var_0_6(iter_0_0)
+for i = 1, num_3 do
+	tbl_3[i] = fn(i)
 end
 
 return {
-	WIDGET_SIZE = var_0_2,
-	NEWS_SPACING = var_0_4,
-	MAX_NUMBER_OF_NEWS = var_0_3,
-	scenegraph_definition = var_0_5,
-	buff_widget_definitions = var_0_7
+	WIDGET_SIZE = tbl,
+	NEWS_SPACING = num_4,
+	MAX_NUMBER_OF_NEWS = num_3,
+	scenegraph_definition = tbl_2,
+	buff_widget_definitions = tbl_3
 }

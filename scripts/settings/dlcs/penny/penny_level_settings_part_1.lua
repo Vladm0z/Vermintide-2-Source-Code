@@ -1,10 +1,10 @@
 -- chunkname: @scripts/settings/dlcs/penny/penny_level_settings_part_1.lua
 
-local var_0_0 = DLCSettings.penny_part_1
+local penny_part_1 = DLCSettings.penny_part_1
 
-var_0_0.level_settings = "levels/honduras_dlcs/penny/level_settings_penny_part_1"
-var_0_0.level_unlock_settings = "levels/honduras_dlcs/penny/level_unlock_settings_penny_part_1"
-var_0_0.weighted_random_terror_events = {
+penny_part_1.level_settings = "levels/honduras_dlcs/penny/level_settings_penny_part_1"
+penny_part_1.level_unlock_settings = "levels/honduras_dlcs/penny/level_unlock_settings_penny_part_1"
+penny_part_1.weighted_random_terror_events = {
 	dlc_portals_end_event = {
 		"dlc_portals_end_event_a",
 		1,
@@ -18,7 +18,7 @@ var_0_0.weighted_random_terror_events = {
 		1
 	}
 }
-var_0_0.missions = {
+penny_part_1.missions = {
 	portals_enter_village = {
 		mission_template_name = "goal",
 		text = "mission_portals_enter_village"

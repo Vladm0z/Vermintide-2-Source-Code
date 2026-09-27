@@ -1,23 +1,23 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/definitions/hero_window_character_summary_definitions.lua
 
-local var_0_0 = UISettings.console_menu_scenegraphs
-local var_0_1 = 2
-local var_0_2 = {
+local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
+local num = 2
+local tbl = {
 	400,
 	20
 }
-local var_0_3 = {
+local tbl_2 = {
 	450,
 	170
 }
-local var_0_4 = {
-	screen = var_0_0.screen,
+local tbl_3 = {
+	screen = console_menu_scenegraphs.screen,
 	item_list_window = {
 		vertical_alignment = "top",
 		parent = "screen",
 		horizontal_alignment = "right",
 		size = {
-			var_0_2[1] + 60,
+			tbl[1] + 60,
 			740
 		},
 		position = {
@@ -31,7 +31,7 @@ local var_0_4 = {
 		parent = "item_list_window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_2[1] + 60,
+			tbl[1] + 60,
 			690
 		},
 		position = {
@@ -45,7 +45,7 @@ local var_0_4 = {
 		parent = "item_list_mask",
 		horizontal_alignment = "center",
 		size = {
-			var_0_2[1] + 60,
+			tbl[1] + 60,
 			672
 		},
 		position = {
@@ -86,7 +86,7 @@ local var_0_4 = {
 		vertical_alignment = "top",
 		parent = "list_scroll_root",
 		horizontal_alignment = "left",
-		size = var_0_2,
+		size = tbl,
 		position = {
 			12,
 			-10,
@@ -98,7 +98,7 @@ local var_0_4 = {
 		parent = "item_list_window",
 		horizontal_alignment = "left",
 		size = {
-			var_0_2[1] + 40,
+			tbl[1] + 40,
 			40
 		},
 		position = {
@@ -111,7 +111,7 @@ local var_0_4 = {
 		vertical_alignment = "top",
 		parent = "item_list_window",
 		horizontal_alignment = "left",
-		size = var_0_3,
+		size = tbl_2,
 		position = {
 			0,
 			-60,
@@ -151,7 +151,7 @@ local var_0_4 = {
 		parent = "passive_window",
 		horizontal_alignment = "left",
 		size = {
-			var_0_3[1] * 0.6,
+			tbl_2[1] * 0.6,
 			50
 		},
 		position = {
@@ -179,7 +179,7 @@ local var_0_4 = {
 		parent = "passive_window",
 		horizontal_alignment = "right",
 		size = {
-			var_0_3[1] * 0.3,
+			tbl_2[1] * 0.3,
 			50
 		},
 		position = {
@@ -193,8 +193,8 @@ local var_0_4 = {
 		parent = "passive_icon",
 		horizontal_alignment = "left",
 		size = {
-			var_0_3[1] - 110,
-			var_0_3[2] - 90
+			tbl_2[1] - 110,
+			tbl_2[2] - 90
 		},
 		position = {
 			90,
@@ -206,10 +206,10 @@ local var_0_4 = {
 		vertical_alignment = "top",
 		parent = "passive_window",
 		horizontal_alignment = "left",
-		size = var_0_3,
+		size = tbl_2,
 		position = {
 			0,
-			-var_0_3[2],
+			-tbl_2[2],
 			1
 		}
 	},
@@ -246,7 +246,7 @@ local var_0_4 = {
 		parent = "active_window",
 		horizontal_alignment = "left",
 		size = {
-			var_0_3[1] * 0.6,
+			tbl_2[1] * 0.6,
 			50
 		},
 		position = {
@@ -274,7 +274,7 @@ local var_0_4 = {
 		parent = "active_window",
 		horizontal_alignment = "right",
 		size = {
-			var_0_3[1] * 0.3,
+			tbl_2[1] * 0.3,
 			50
 		},
 		position = {
@@ -288,8 +288,8 @@ local var_0_4 = {
 		parent = "active_icon",
 		horizontal_alignment = "left",
 		size = {
-			var_0_3[1] - 110,
-			var_0_3[2] - 90
+			tbl_2[1] - 110,
+			tbl_2[2] - 90
 		},
 		position = {
 			90,
@@ -302,7 +302,7 @@ local var_0_4 = {
 		parent = "active_window",
 		horizontal_alignment = "left",
 		size = {
-			var_0_3[1] * 0.6,
+			tbl_2[1] * 0.6,
 			50
 		},
 		position = {
@@ -439,21 +439,23 @@ local var_0_4 = {
 	}
 }
 
-local function var_0_5(arg_1_0)
-	local var_1_0 = var_0_4[arg_1_0].size
-	local var_1_1 = "shadow_frame_02"
-	local var_1_2 = UIFrameSettings[var_1_1]
+local function fn(arg_1_0)
+	-- function 1
+	local size = tbl_3[arg_1_0].size
+	local str = "shadow_frame_02"
+	local var_1_2 = UIFrameSettings[str]
 	local var_1_3 = var_1_2.texture_sizes.horizontal[2]
-	local var_1_4 = "frame_outer_glow_04"
-	local var_1_5 = UIFrameSettings[var_1_4]
+	local str_2 = "frame_outer_glow_04"
+	local var_1_5 = UIFrameSettings[str_2]
 	local var_1_6 = var_1_5.texture_sizes.horizontal[2]
-	local var_1_7 = {
+	local tbl = {
 		{
 			style_id = "button_hotspot",
 			pass_type = "hotspot",
 			content_id = "button_hotspot",
-			content_check_function = function(arg_2_0)
-				return not arg_2_0.parent.locked
+			content_check_function = function (self)
+				-- function 2
+				return not self.parent.locked
 			end
 		},
 		{
@@ -470,40 +472,45 @@ local function var_0_5(arg_1_0)
 			pass_type = "texture",
 			style_id = "icon",
 			texture_id = "icon",
-			content_check_function = function(arg_3_0)
-				return not arg_3_0.locked
+			content_check_function = function (self)
+				-- function 3
+				return not self.locked
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "selected_frame",
 			texture_id = "selected_frame",
-			content_check_function = function(arg_4_0)
-				return arg_4_0.selected
+			content_check_function = function (self)
+				-- function 4
+				return self.selected
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "lock",
 			texture_id = "lock",
-			content_check_function = function(arg_5_0)
-				return arg_5_0.locked
+			content_check_function = function (self)
+				-- function 5
+				return self.locked
 			end
 		},
 		{
 			style_id = "level_text",
 			pass_type = "text",
 			text_id = "level_text",
-			content_check_function = function(arg_6_0)
-				return arg_6_0.locked
+			content_check_function = function (self)
+				-- function 6
+				return self.locked
 			end
 		},
 		{
 			style_id = "level_text_shadow",
 			pass_type = "text",
 			text_id = "level_text",
-			content_check_function = function(arg_7_0)
-				return arg_7_0.locked
+			content_check_function = function (self)
+				-- function 7
+				return self.locked
 			end
 		},
 		{
@@ -520,12 +527,17 @@ local function var_0_5(arg_1_0)
 			style_id = "talent",
 			talent_id = "talent",
 			pass_type = "talent_tooltip",
-			content_check_function = function(arg_8_0)
-				return arg_8_0.talent and arg_8_0.button_hotspot.is_hover
+			content_check_function = function (self)
+				-- function 8
+				local talent = self.talent
+
+				talent = not talent and self.button_hotspot.is_hover
+
+				return talent
 			end
 		}
 	}
-	local var_1_8 = {
+	local tbl_2 = {
 		selected = false,
 		locked = false,
 		icon = "talent_lock_fg",
@@ -537,9 +549,9 @@ local function var_0_5(arg_1_0)
 		button_hotspot = {},
 		shadow_frame = var_1_2.texture,
 		hover_frame = var_1_5.texture,
-		size = var_1_0
+		size = size
 	}
-	local var_1_9 = {
+	local tbl_4 = {
 		talent = {
 			offset = {
 				-244,
@@ -690,10 +702,10 @@ local function var_0_5(arg_1_0)
 
 	return {
 		element = {
-			passes = var_1_7
+			passes = tbl
 		},
-		content = var_1_8,
-		style = var_1_9,
+		content = tbl_2,
+		style = tbl_4,
 		offset = {
 			0,
 			0,
@@ -703,9 +715,10 @@ local function var_0_5(arg_1_0)
 	}
 end
 
-local function var_0_6(arg_9_0, arg_9_1)
-	local var_9_0 = var_0_4[arg_9_0].size
-	local var_9_1 = {
+local function fn_2(arg_9_0, arg_9_1)
+	-- function 9
+	local size = tbl_3[arg_9_0].size
+	local tbl = {
 		{
 			style_id = "button_hotspot",
 			pass_type = "hotspot",
@@ -742,15 +755,15 @@ local function var_0_6(arg_9_0, arg_9_1)
 			text_id = "value"
 		}
 	}
-	local var_9_2 = {
+	local tbl_2 = {
 		name = "n/a",
 		background = "headline_bg_40",
 		value = "n/a",
 		title = "n/a",
 		button_hotspot = {},
-		size = var_9_0
+		size = size
 	}
-	local var_9_3 = {
+	local tbl_4 = {
 		button_hotspot = {
 			offset = {
 				0,
@@ -771,95 +784,124 @@ local function var_0_6(arg_9_0, arg_9_1)
 				0,
 				0
 			}
-		},
-		name = {
-			vertical_alignment = "center",
-			horizontal_alignment = "left",
-			localize = false,
-			font_size = 20,
-			font_type = arg_9_1 and "hell_shark_masked" or "hell_shark",
-			text_color = Colors.get_color_table_with_alpha("font_default", 255),
-			offset = {
-				0,
-				0,
-				2
-			}
-		},
-		name_shadow = {
-			vertical_alignment = "center",
-			horizontal_alignment = "left",
-			localize = false,
-			font_size = 20,
-			font_type = arg_9_1 and "hell_shark_masked" or "hell_shark",
-			text_color = Colors.get_color_table_with_alpha("black", 255),
-			offset = {
-				1,
-				-1,
-				1
-			}
-		},
-		title = {
-			vertical_alignment = "center",
-			upper_case = true,
-			localize = false,
-			horizontal_alignment = "left",
-			font_size = 24,
-			font_type = arg_9_1 and "hell_shark_header_masked" or "hell_shark_header",
-			text_color = Colors.get_color_table_with_alpha("font_title", 255),
-			offset = {
-				0,
-				0,
-				2
-			}
-		},
-		title_shadow = {
-			vertical_alignment = "center",
-			upper_case = true,
-			localize = false,
-			horizontal_alignment = "left",
-			font_size = 24,
-			font_type = arg_9_1 and "hell_shark_header_masked" or "hell_shark_header",
-			text_color = Colors.get_color_table_with_alpha("black", 255),
-			offset = {
-				2,
-				-2,
-				1
-			}
-		},
-		value = {
-			vertical_alignment = "center",
-			horizontal_alignment = "right",
-			localize = false,
-			font_size = 20,
-			font_type = arg_9_1 and "hell_shark_masked" or "hell_shark",
-			text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
-			offset = {
-				0,
-				0,
-				2
-			}
-		},
-		value_shadow = {
-			vertical_alignment = "center",
-			horizontal_alignment = "right",
-			localize = false,
-			font_size = 20,
-			font_type = arg_9_1 and "hell_shark_masked" or "hell_shark",
-			text_color = Colors.get_color_table_with_alpha("black", 255),
-			offset = {
-				1,
-				-1,
-				1
-			}
 		}
 	}
+	local tbl_5 = {
+		vertical_alignment = "center",
+		horizontal_alignment = "left",
+		localize = false,
+		font_size = 20
+	}
+	local flag
+
+	flag = not arg_9_1 and "hell_shark_masked" and "hell_shark"
+	tbl_5.font_type = flag
+	tbl_5.text_color = Colors.get_color_table_with_alpha("font_default", 255)
+	tbl_5.offset = {
+		0,
+		0,
+		2
+	}
+	tbl_4.name = tbl_5
+
+	local tbl_6 = {
+		vertical_alignment = "center",
+		horizontal_alignment = "left",
+		localize = false,
+		font_size = 20
+	}
+	local flag_2
+
+	flag_2 = not arg_9_1 and "hell_shark_masked" and "hell_shark"
+	tbl_6.font_type = flag_2
+	tbl_6.text_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_6.offset = {
+		1,
+		-1,
+		1
+	}
+	tbl_4.name_shadow = tbl_6
+
+	local tbl_7 = {
+		vertical_alignment = "center",
+		upper_case = true,
+		localize = false,
+		horizontal_alignment = "left",
+		font_size = 24
+	}
+	local flag_3
+
+	flag_3 = not arg_9_1 and "hell_shark_header_masked" and "hell_shark_header"
+	tbl_7.font_type = flag_3
+	tbl_7.text_color = Colors.get_color_table_with_alpha("font_title", 255)
+	tbl_7.offset = {
+		0,
+		0,
+		2
+	}
+	tbl_4.title = tbl_7
+
+	local tbl_8 = {
+		vertical_alignment = "center",
+		upper_case = true,
+		localize = false,
+		horizontal_alignment = "left",
+		font_size = 24
+	}
+	local flag_4
+
+	flag_4 = not arg_9_1 and "hell_shark_header_masked" and "hell_shark_header"
+	tbl_8.font_type = flag_4
+	tbl_8.text_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_8.offset = {
+		2,
+		-2,
+		1
+	}
+	tbl_4.title_shadow = tbl_8
+
+	local tbl_9 = {
+		vertical_alignment = "center",
+		horizontal_alignment = "right",
+		localize = false,
+		font_size = 20
+	}
+	local flag_5
+
+	flag_5 = not arg_9_1 and "hell_shark_masked" and "hell_shark"
+	tbl_9.font_type = flag_5
+	tbl_9.text_color = Colors.get_color_table_with_alpha("font_button_normal", 255)
+	tbl_9.offset = {
+		0,
+		0,
+		2
+	}
+	tbl_4.value = tbl_9
+
+	local tbl_10 = {
+		vertical_alignment = "center",
+		horizontal_alignment = "right",
+		localize = false,
+		font_size = 20
+	}
+	local flag_6
+
+	flag_6 = not arg_9_1 and "hell_shark_masked" and "hell_shark"
+	tbl_10.font_type = flag_6
+	tbl_10.text_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_10.offset = {
+		1,
+		-1,
+		1
+	}
+	tbl_4.value_shadow = tbl_10
 
 	return {
 		element = {
-			passes = var_9_1
+			passes = tbl
 		},
-		content = var_9_2,
-		style = var_9_3,
+		content = tbl_2,
+		style = tbl_4,
 		offset = {
 			0,
 			0,
@@ -869,10 +911,11 @@ local function var_0_6(arg_9_0, arg_9_1)
 	}
 end
 
-local function var_0_7(arg_10_0, arg_10_1, arg_10_2)
-	local var_10_0 = var_0_4[arg_10_0].size
-	local var_10_1 = 10
-	local var_10_2 = {
+local function fn_3(arg_10_0, arg_10_1, arg_10_2)
+	-- function 10
+	local size = tbl_3[arg_10_0].size
+	local num = 10
+	local tbl = {
 		{
 			pass_type = "hotspot",
 			content_id = "hotspot"
@@ -913,7 +956,7 @@ local function var_0_7(arg_10_0, arg_10_1, arg_10_2)
 			text_id = "divider"
 		}
 	}
-	local var_10_3 = {
+	local tbl_2 = {
 		background = "headline_bg_40",
 		divider = "  /  ",
 		hotspot = {},
@@ -921,14 +964,14 @@ local function var_0_7(arg_10_0, arg_10_1, arg_10_2)
 		title_text1 = arg_10_1,
 		default_title_text2 = arg_10_2,
 		title_text2 = arg_10_2,
-		size = var_10_0,
-		text_spacing = var_10_1
+		size = size,
+		text_spacing = num
 	}
-	local var_10_4 = {
+	local tbl_4 = {
 		background = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
-			texture_size = var_10_0,
+			texture_size = size,
 			color = {
 				120,
 				10,
@@ -1065,10 +1108,10 @@ local function var_0_7(arg_10_0, arg_10_1, arg_10_2)
 
 	return {
 		element = {
-			passes = var_10_2
+			passes = tbl
 		},
-		content = var_10_3,
-		style = var_10_4,
+		content = tbl_2,
+		style = tbl_4,
 		offset = {
 			0,
 			0,
@@ -1078,10 +1121,11 @@ local function var_0_7(arg_10_0, arg_10_1, arg_10_2)
 	}
 end
 
-local function var_0_8(arg_11_0, arg_11_1)
-	local var_11_0 = var_0_4[arg_11_0].size
-	local var_11_1 = 10
-	local var_11_2 = {
+local function fn_4(arg_11_0, arg_11_1)
+	-- function 11
+	local size = tbl_3[arg_11_0].size
+	local num = 10
+	local tbl = {
 		{
 			pass_type = "texture",
 			style_id = "background",
@@ -1098,18 +1142,18 @@ local function var_0_8(arg_11_0, arg_11_1)
 			text_id = "title_text"
 		}
 	}
-	local var_11_3 = {
+	local tbl_2 = {
 		background = "headline_bg_40",
 		default_title_text = arg_11_1,
 		title_text = arg_11_1,
-		size = var_11_0,
-		text_spacing = var_11_1
+		size = size,
+		text_spacing = num
 	}
-	local var_11_4 = {
+	local tbl_4 = {
 		background = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
-			texture_size = var_11_0,
+			texture_size = size,
 			color = {
 				120,
 				10,
@@ -1130,13 +1174,13 @@ local function var_0_8(arg_11_0, arg_11_1)
 			font_type = "hell_shark_header",
 			text_color = Colors.get_color_table_with_alpha("font_title", 255),
 			offset = {
-				var_11_1,
+				num,
 				-3,
 				2
 			},
 			size = {
-				var_11_0[1] - var_11_1,
-				var_11_0[2]
+				size[1] - num,
+				size[2]
 			}
 		},
 		title_text_shadow = {
@@ -1147,23 +1191,23 @@ local function var_0_8(arg_11_0, arg_11_1)
 			font_type = "hell_shark_header",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			offset = {
-				var_11_1 + 2,
+				num + 2,
 				-5,
 				1
 			},
 			size = {
-				var_11_0[1] - var_11_1,
-				var_11_0[2]
+				size[1] - num,
+				size[2]
 			}
 		}
 	}
 
 	return {
 		element = {
-			passes = var_11_2
+			passes = tbl
 		},
-		content = var_11_3,
-		style = var_11_4,
+		content = tbl_2,
+		style = tbl_4,
 		offset = {
 			0,
 			0,
@@ -1173,11 +1217,12 @@ local function var_0_8(arg_11_0, arg_11_1)
 	}
 end
 
-local function var_0_9(arg_12_0)
-	local var_12_0 = var_0_4[arg_12_0].size
-	local var_12_1 = UIFrameSettings.frame_outer_glow_01
-	local var_12_2 = var_12_1.texture_sizes.horizontal[2]
-	local var_12_3 = {
+local function fn_5(arg_12_0)
+	-- function 12
+	local size = tbl_3[arg_12_0].size
+	local frame_outer_glow_01 = UIFrameSettings.frame_outer_glow_01
+	local var_12_2 = frame_outer_glow_01.texture_sizes.horizontal[2]
+	local tbl = {
 		{
 			pass_type = "rect",
 			style_id = "background"
@@ -1218,7 +1263,7 @@ local function var_0_9(arg_12_0)
 			content_id = "bottom_corner"
 		}
 	}
-	local var_12_4 = {
+	local tbl_2 = {
 		pattern_mask = "background_pattern_fade_write_mask",
 		background = "headline_bg_40",
 		pattern = "background_pattern_01_transparent",
@@ -1249,10 +1294,10 @@ local function var_0_9(arg_12_0)
 				}
 			}
 		},
-		frame = var_12_1.texture,
-		size = var_12_0
+		frame = frame_outer_glow_01.texture,
+		size = size
 	}
-	local var_12_5 = {
+	local tbl_4 = {
 		background = {
 			color = {
 				0,
@@ -1294,8 +1339,8 @@ local function var_0_9(arg_12_0)
 				0,
 				0
 			},
-			texture_size = var_12_1.texture_size,
-			texture_sizes = var_12_1.texture_sizes
+			texture_size = frame_outer_glow_01.texture_size,
+			texture_sizes = frame_outer_glow_01.texture_sizes
 		},
 		pattern = {
 			texture_tiling_size = {
@@ -1455,10 +1500,10 @@ local function var_0_9(arg_12_0)
 
 	return {
 		element = {
-			passes = var_12_3
+			passes = tbl
 		},
-		content = var_12_4,
-		style = var_12_5,
+		content = tbl_2,
+		style = tbl_4,
 		offset = {
 			0,
 			0,
@@ -1468,8 +1513,9 @@ local function var_0_9(arg_12_0)
 	}
 end
 
-local function var_0_10(arg_13_0)
-	local var_13_0 = {
+local function fn_6(arg_13_0)
+	-- function 13
+	local tbl = {
 		passes = {
 			{
 				pass_type = "hotspot",
@@ -1482,11 +1528,11 @@ local function var_0_10(arg_13_0)
 			}
 		}
 	}
-	local var_13_1 = {
+	local tbl_2 = {
 		mask_texture = "mask_rect",
 		hotspot = {}
 	}
-	local var_13_2 = {
+	local tbl_3 = {
 		mask = {
 			color = {
 				255,
@@ -1509,9 +1555,9 @@ local function var_0_10(arg_13_0)
 	}
 
 	return {
-		element = var_13_0,
-		content = var_13_1,
-		style = var_13_2,
+		element = tbl,
+		content = tbl_2,
+		style = tbl_3,
 		offset = {
 			0,
 			0,
@@ -1521,7 +1567,8 @@ local function var_0_10(arg_13_0)
 	}
 end
 
-local function var_0_11(arg_14_0)
+local function fn_7(arg_14_0)
+	-- function 14
 	return {
 		element = {
 			passes = {
@@ -1643,15 +1690,16 @@ local function var_0_11(arg_14_0)
 	}
 end
 
-local function var_0_12(arg_15_0)
-	local var_15_0 = var_0_4[arg_15_0].size
-	local var_15_1 = "menu_frame_12"
-	local var_15_2 = UIFrameSettings[var_15_1]
-	local var_15_3 = "shadow_frame_02"
-	local var_15_4 = UIFrameSettings[var_15_3]
+local function fn_8(arg_15_0)
+	-- function 15
+	local size = tbl_3[arg_15_0].size
+	local str = "menu_frame_12"
+	local var_15_2 = UIFrameSettings[str]
+	local str_2 = "shadow_frame_02"
+	local var_15_4 = UIFrameSettings[str_2]
 	local var_15_5 = var_15_4.texture_sizes.horizontal[2]
-	local var_15_6 = "frame_outer_glow_04"
-	local var_15_7 = UIFrameSettings[var_15_6]
+	local str_3 = "frame_outer_glow_04"
+	local var_15_7 = UIFrameSettings[str_3]
 	local var_15_8 = var_15_7.texture_sizes.horizontal[2]
 
 	return {
@@ -1674,16 +1722,22 @@ local function var_0_12(arg_15_0)
 					texture_id = "lock_texture",
 					style_id = "lock_texture",
 					pass_type = "texture",
-					content_check_function = function(arg_16_0)
-						return arg_16_0.locked
+					content_check_function = function (self)
+						-- function 16
+						return self.locked
 					end
 				},
 				{
 					texture_id = "taken_texture",
 					style_id = "taken_texture",
 					pass_type = "texture",
-					content_check_function = function(arg_17_0)
-						return arg_17_0.taken and not arg_17_0.locked
+					content_check_function = function (self)
+						-- function 17
+						local taken = self.taken
+
+						taken = not taken and not self.locked
+
+						return taken
 					end
 				},
 				{
@@ -1694,10 +1748,11 @@ local function var_0_12(arg_15_0)
 				{
 					style_id = "overlay_locked",
 					pass_type = "rect",
-					content_check_function = function(arg_18_0)
-						local var_18_0 = arg_18_0.button_hotspot
+					content_check_function = function (self)
+						-- function 18
+						local button_hotspot = self.button_hotspot
 
-						return arg_18_0.locked
+						return self.locked
 					end
 				},
 				{
@@ -1722,13 +1777,13 @@ local function var_0_12(arg_15_0)
 			frame = var_15_2.texture,
 			hover_frame = var_15_7.texture,
 			shadow_frame = var_15_4.texture,
-			size = var_15_0
+			size = size
 		},
 		style = {
 			rect = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				texture_size = var_15_0,
+				texture_size = size,
 				color = {
 					200,
 					0,
@@ -1744,7 +1799,7 @@ local function var_0_12(arg_15_0)
 			portrait = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				texture_size = var_15_0,
+				texture_size = size,
 				color = {
 					255,
 					255,
@@ -1798,7 +1853,7 @@ local function var_0_12(arg_15_0)
 			overlay_locked = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				texture_size = var_15_0,
+				texture_size = size,
 				color = {
 					200,
 					0,
@@ -1874,8 +1929,9 @@ local function var_0_12(arg_15_0)
 	}
 end
 
-local function var_0_13(arg_19_0)
-	local var_19_0 = var_0_4[arg_19_0].size
+local function fn_9(arg_19_0)
+	-- function 19
+	local size = tbl_3[arg_19_0].size
 
 	return {
 		element = {
@@ -1895,13 +1951,13 @@ local function var_0_13(arg_19_0)
 		content = {
 			icon_highlight = "hero_icon_large_bright_wizard",
 			icon = "hero_icon_large_bright_wizard",
-			size = var_19_0
+			size = size
 		},
 		style = {
 			icon = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				texture_size = var_19_0,
+				texture_size = size,
 				color = {
 					200,
 					80,
@@ -1917,7 +1973,7 @@ local function var_0_13(arg_19_0)
 			icon_highlight = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				texture_size = var_19_0,
+				texture_size = size,
 				color = {
 					0,
 					255,
@@ -1940,7 +1996,7 @@ local function var_0_13(arg_19_0)
 	}
 end
 
-local var_0_14 = {
+local tbl_4 = {
 	word_wrap = true,
 	font_size = 18,
 	localize = false,
@@ -1955,7 +2011,7 @@ local var_0_14 = {
 		2
 	}
 }
-local var_0_15 = {
+local tbl_5 = {
 	word_wrap = true,
 	use_shadow = true,
 	localize = false,
@@ -1971,7 +2027,7 @@ local var_0_15 = {
 		2
 	}
 }
-local var_0_16 = {
+local tbl_6 = {
 	font_size = 32,
 	upper_case = false,
 	localize = false,
@@ -1988,7 +2044,7 @@ local var_0_16 = {
 		2
 	}
 }
-local var_0_17 = {
+local tbl_7 = {
 	font_size = 32,
 	upper_case = true,
 	localize = false,
@@ -2005,51 +2061,54 @@ local var_0_17 = {
 		2
 	}
 }
-local var_0_18 = {
-	summary_title = var_0_7("window_title", "Overview", "Statistics"),
-	hero_selection_title = var_0_8("window_title", Localize("popup_choice_switch_hero")),
-	item_list_window = var_0_9("item_list_window"),
-	item_list_mask = var_0_10("item_list_mask", var_0_4.item_list_mask.size, 20),
-	list_scrollbar = UIWidgets.create_chain_scrollbar("list_scrollbar", "item_list_window", var_0_4.list_scrollbar.size),
+local tbl_8 = {
+	summary_title = fn_3("window_title", "Overview", "Statistics"),
+	hero_selection_title = fn_4("window_title", Localize("popup_choice_switch_hero")),
+	item_list_window = fn_5("item_list_window"),
+	item_list_mask = fn_6("item_list_mask", tbl_3.item_list_mask.size, 20),
+	list_scrollbar = UIWidgets.create_chain_scrollbar("list_scrollbar", "item_list_window", tbl_3.list_scrollbar.size),
 	hero_selection_button = UIWidgets.create_simple_hotspot("hero_selection_button"),
 	window_button = UIWidgets.create_simple_hotspot("item_list_window"),
-	hero_selection_warning = UIWidgets.create_simple_text("Currently playing as another hero", "hero_selection_warning", nil, nil, var_0_17)
+	hero_selection_warning = UIWidgets.create_simple_text("Currently playing as another hero", "hero_selection_warning", nil, nil, tbl_7)
 }
-local var_0_19 = {
-	perk_title_text = UIWidgets.create_simple_text(Localize("hero_view_perk_title"), "perk_title_text", nil, nil, var_0_16),
+local tbl_9 = {
+	perk_title_text = UIWidgets.create_simple_text(Localize("hero_view_perk_title"), "perk_title_text", nil, nil, tbl_6),
 	perk_title_divider = UIWidgets.create_simple_texture("infoslate_frame_02_horizontal", "perk_title_divider"),
-	career_perk_1 = var_0_11("career_perk_1"),
-	career_perk_2 = var_0_11("career_perk_2"),
-	career_perk_3 = var_0_11("career_perk_3"),
-	passive_title_text = UIWidgets.create_simple_text("n/a", "passive_title_text", nil, nil, var_0_16),
-	passive_type_title = UIWidgets.create_simple_text(Localize("hero_view_passive_ability"), "passive_type_title", nil, nil, var_0_15),
+	career_perk_1 = fn_7("career_perk_1"),
+	career_perk_2 = fn_7("career_perk_2"),
+	career_perk_3 = fn_7("career_perk_3"),
+	passive_title_text = UIWidgets.create_simple_text("n/a", "passive_title_text", nil, nil, tbl_6),
+	passive_type_title = UIWidgets.create_simple_text(Localize("hero_view_passive_ability"), "passive_type_title", nil, nil, tbl_5),
 	passive_title_divider = UIWidgets.create_simple_texture("infoslate_frame_02_horizontal", "passive_title_divider"),
-	passive_description_text = UIWidgets.create_simple_text("n/a", "passive_description_text", nil, nil, var_0_14),
+	passive_description_text = UIWidgets.create_simple_text("n/a", "passive_description_text", nil, nil, tbl_4),
 	passive_icon = UIWidgets.create_simple_texture("icons_placeholder", "passive_icon"),
 	passive_icon_frame = UIWidgets.create_simple_texture("talent_frame", "passive_icon_frame"),
-	active_title_text = UIWidgets.create_simple_text("n/a", "active_title_text", nil, nil, var_0_16),
-	active_type_title = UIWidgets.create_simple_text(Localize("hero_view_activated_ability"), "active_type_title", nil, nil, var_0_15),
+	active_title_text = UIWidgets.create_simple_text("n/a", "active_title_text", nil, nil, tbl_6),
+	active_type_title = UIWidgets.create_simple_text(Localize("hero_view_activated_ability"), "active_type_title", nil, nil, tbl_5),
 	active_title_divider = UIWidgets.create_simple_texture("infoslate_frame_02_horizontal", "active_title_divider"),
-	active_description_text = UIWidgets.create_simple_text("n/a", "active_description_text", nil, nil, var_0_14),
+	active_description_text = UIWidgets.create_simple_text("n/a", "active_description_text", nil, nil, tbl_4),
 	active_icon = UIWidgets.create_simple_texture("icons_placeholder", "active_icon"),
 	active_icon_frame = UIWidgets.create_simple_texture("talent_frame", "active_icon_frame")
 }
-local var_0_20 = {
+local tbl_10 = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+			init = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+				-- function 20
 				arg_20_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
-				local var_21_0 = math.easeOutCubic(arg_21_3)
+			update = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+				-- function 21
+				local easeOutCubic = math.easeOutCubic(arg_21_3)
 
-				arg_21_4.render_settings.alpha_multiplier = var_21_0
-				arg_21_0.item_list_window.local_position[1] = arg_21_1.item_list_window.position[1] + math.floor(100 * (1 - var_21_0))
+				arg_21_4.render_settings.alpha_multiplier = easeOutCubic
+				arg_21_0.item_list_window.local_position[1] = arg_21_1.item_list_window.position[1] + math.floor(100 * (1 - easeOutCubic))
 			end,
-			on_complete = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+			on_complete = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+				-- function 22
 				return
 			end
 		}
@@ -2057,13 +2116,13 @@ local var_0_20 = {
 }
 
 return {
-	widgets = var_0_18,
-	career_info_widgets = var_0_19,
-	list_spacing = var_0_1,
-	create_hero_icon_widget = var_0_13,
-	create_hero_widget = var_0_12,
-	create_stat_widget = var_0_6,
-	create_talent_widget = var_0_5,
-	scenegraph_definition = var_0_4,
-	animation_definitions = var_0_20
+	widgets = tbl_8,
+	career_info_widgets = tbl_9,
+	list_spacing = num,
+	create_hero_icon_widget = fn_9,
+	create_hero_widget = fn_8,
+	create_stat_widget = fn_2,
+	create_talent_widget = fn,
+	scenegraph_definition = tbl_3,
+	animation_definitions = tbl_10
 }

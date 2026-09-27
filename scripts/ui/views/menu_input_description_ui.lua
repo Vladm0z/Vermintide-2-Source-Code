@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/menu_input_description_ui.lua
 
-local var_0_0 = {
+local tbl = {
 	screen = {
 		vertical_alignment = "center",
 		scale = "fit",
@@ -50,16 +50,18 @@ local var_0_0 = {
 }
 
 if not IS_WINDOWS then
-	var_0_0.screen.scale = "hud_fit"
+	tbl.screen.scale = "hud_fit"
 end
 
-local function var_0_1(arg_1_0, arg_1_1)
-	return arg_1_0.priority < arg_1_1.priority
+local function fn(self, arg_1_1)
+	-- function 1
+	return self.priority < arg_1_1.priority
 end
 
-local var_0_2 = UIAtlasHelper.get_atlas_settings_by_texture_name("tab_menu_bg_02")
+local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name("tab_menu_bg_02")
 
-local function var_0_3(arg_2_0)
+local function fn_2(arg_2_0)
+	-- function 2
 	return {
 		scenegraph_id = "background",
 		element = {
@@ -79,15 +81,16 @@ local function var_0_3(arg_2_0)
 				vertical_alignment = "bottom",
 				horizontal_alignment = "center",
 				texture_size = {
-					var_0_2.size[1] * arg_2_0,
-					var_0_2.size[2] * 1.2
+					get_atlas_settings_by_texture_name.size[1] * arg_2_0,
+					get_atlas_settings_by_texture_name.size[2] * 1.2
 				}
 			}
 		}
 	}
 end
 
-local function var_0_4()
+local function fn_3()
+	-- function 3
 	return UIWidgets.create_simple_uv_texture("menu_panel_bg", {
 		{
 			0,
@@ -105,16 +108,17 @@ local function var_0_4()
 	})
 end
 
-local function var_0_5(arg_4_0)
-	local var_4_0 = {}
+local function fn_4(arg_4_0)
+	-- function 4
+	local tbl_2 = {}
 
-	for iter_4_0 = 1, arg_4_0 do
-		local var_4_1 = "input_description_root_" .. iter_4_0
-		local var_4_2 = "input_description_" .. iter_4_0
-		local var_4_3 = "input_description_icon_" .. iter_4_0
-		local var_4_4 = "input_description_text_" .. iter_4_0
+	for i = 1, arg_4_0 do
+		local str = "input_description_root_" .. i
+		local str_2 = "input_description_" .. i
+		local str_3 = "input_description_icon_" .. i
+		local str_4 = "input_description_text_" .. i
 
-		var_0_0[var_4_1] = {
+		tbl[str] = {
 			vertical_alignment = "center",
 			parent = "input_description_field",
 			horizontal_alignment = "left",
@@ -128,10 +132,10 @@ local function var_0_5(arg_4_0)
 				1
 			}
 		}
-		var_0_0[var_4_2] = {
+		tbl[str_2] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
-			parent = var_4_1,
+			parent = str,
 			size = {
 				200,
 				40
@@ -142,10 +146,10 @@ local function var_0_5(arg_4_0)
 				1
 			}
 		}
-		var_0_0[var_4_3] = {
+		tbl[str_3] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
-			parent = var_4_2,
+			parent = str_2,
 			size = {
 				40,
 				40
@@ -156,10 +160,10 @@ local function var_0_5(arg_4_0)
 				1
 			}
 		}
-		var_0_0[var_4_4] = {
+		tbl[str_4] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
-			parent = var_4_3,
+			parent = str_3,
 			size = {
 				500,
 				40
@@ -171,7 +175,7 @@ local function var_0_5(arg_4_0)
 			}
 		}
 
-		local var_4_5 = {
+		local tbl_3 = {
 			element = {
 				passes = {
 					{
@@ -210,7 +214,7 @@ local function var_0_5(arg_4_0)
 						0,
 						2
 					},
-					scenegraph_id = var_4_4
+					scenegraph_id = str_4
 				},
 				text_shadow = {
 					font_size = 24,
@@ -226,102 +230,125 @@ local function var_0_5(arg_4_0)
 						-2,
 						1
 					},
-					scenegraph_id = var_4_4
+					scenegraph_id = str_4
 				},
 				icon = {
-					scenegraph_id = var_4_3
+					scenegraph_id = str_3
 				}
 			},
-			scenegraph_id = var_4_2
+			scenegraph_id = str_2
 		}
 
-		var_4_0[#var_4_0 + 1] = UIWidget.init(var_4_5)
+		tbl_2[#tbl_2 + 1] = UIWidget.init(tbl_3)
 	end
 
-	return var_4_0
+	return tbl_2
 end
 
 MenuInputDescriptionUI = class(MenuInputDescriptionUI)
 
-function MenuInputDescriptionUI.init(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8)
-	arg_5_0:clear_input_descriptions()
+MenuInputDescriptionUI.init = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8)
+	-- function 5
+	self:clear_input_descriptions()
 
-	arg_5_0.input_service = arg_5_3
-	arg_5_0.ui_renderer = arg_5_2
-	arg_5_0.generic_actions = arg_5_6
-	arg_5_0.render_settings = {
+	self.input_service = arg_5_3
+	self.ui_renderer = arg_5_2
+	self.generic_actions = arg_5_6
+	self.render_settings = {
 		snap_pixel_positions = true
 	}
-	arg_5_0._max_width = arg_5_8 or math.huge
-	arg_5_0._use_fullscreen_layout = arg_5_7
-	var_0_0.screen.position[3] = arg_5_5 and arg_5_5 + 10 or UILayer.controller_description
+	self._max_width = arg_5_8 or math.huge
+	self._use_fullscreen_layout = arg_5_7
 
-	arg_5_0:create_ui_elements(arg_5_2, arg_5_4, arg_5_7)
-end
+	local position = tbl.screen.position
+	local num
 
-function MenuInputDescriptionUI.create_ui_elements(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
-	arg_6_0.console_input_description_widgets = var_0_5(arg_6_2 or 5)
+	if not arg_5_5 then
+		num = arg_5_5 + 10
 
-	if arg_6_3 then
-		arg_6_0.background_widget = nil
-	else
-		arg_6_0.background_widget = UIWidget.init(var_0_3(arg_6_2 or 3))
+		if not num then
+			-- Nothing
+		end
 	end
 
-	arg_6_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0)
+	num = UILayer.controller_description
+
+	::label_5_0::
+
+	position[3] = num
+
+	self:create_ui_elements(arg_5_2, arg_5_4, arg_5_7)
+end
+
+MenuInputDescriptionUI.create_ui_elements = function (self, arg_6_1, arg_6_2, arg_6_3)
+	-- function 6
+	self.console_input_description_widgets = fn_4(arg_6_2 or 5)
+
+	if not arg_6_3 then
+		self.background_widget = nil
+	else
+		self.background_widget = UIWidget.init(fn_2(arg_6_2 or 3))
+	end
+
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(tbl)
 
 	UIRenderer.clear_scenegraph_queue(arg_6_1)
 end
 
-function MenuInputDescriptionUI._verify_input(arg_7_0)
-	if Managers.input:get_most_recent_device() ~= arg_7_0._most_recent_device then
-		arg_7_0:set_input_description(arg_7_0.current_console_selection_data)
+MenuInputDescriptionUI._verify_input = function (self)
+	-- function 7
+	if Managers.input:get_most_recent_device() ~= self._most_recent_device then
+		self:set_input_description(self.current_console_selection_data)
 	end
 end
 
-function MenuInputDescriptionUI.draw(arg_8_0, arg_8_1, arg_8_2)
-	arg_8_0:_verify_input()
+MenuInputDescriptionUI.draw = function (self, arg_8_1, arg_8_2)
+	-- function 8
+	self:_verify_input()
 
-	local var_8_0 = arg_8_0.ui_scenegraph
-	local var_8_1 = arg_8_0.input_service
-	local var_8_2 = arg_8_0.ui_renderer
+	local ui_scenegraph = self.ui_scenegraph
+	local input_service = self.input_service
+	local ui_renderer = self.ui_renderer
 
-	UIRenderer.begin_pass(var_8_2, var_8_0, var_8_1, arg_8_2, nil, arg_8_0.render_settings)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, arg_8_2, nil, self.render_settings)
 
-	local var_8_3 = arg_8_0.number_of_descriptions_in_use
-	local var_8_4 = arg_8_0.console_input_description_widgets
+	local number_of_descriptions_in_use = self.number_of_descriptions_in_use
+	local console_input_description_widgets = self.console_input_description_widgets
 
-	if var_8_3 then
-		for iter_8_0 = 1, var_8_3 do
-			UIRenderer.draw_widget(var_8_2, var_8_4[iter_8_0])
+	if not number_of_descriptions_in_use then
+		for i = 1, number_of_descriptions_in_use do
+			UIRenderer.draw_widget(ui_renderer, console_input_description_widgets[i])
 		end
 
-		if arg_8_0.background_widget then
-			UIRenderer.draw_widget(var_8_2, arg_8_0.background_widget)
+		if not self.background_widget then
+			UIRenderer.draw_widget(ui_renderer, self.background_widget)
 		end
 	end
 
-	UIRenderer.end_pass(var_8_2)
+	UIRenderer.end_pass(ui_renderer)
 end
 
-function MenuInputDescriptionUI.destroy(arg_9_0)
+MenuInputDescriptionUI.destroy = function (arg_9_0)
+	-- function 9
 	return
 end
 
-function MenuInputDescriptionUI.change_generic_actions(arg_10_0, arg_10_1)
-	arg_10_0.generic_actions = arg_10_1
+MenuInputDescriptionUI.change_generic_actions = function (self, arg_10_1)
+	-- function 10
+	self.generic_actions = arg_10_1
 
-	arg_10_0:set_input_description(arg_10_0.current_console_selection_data)
+	self:set_input_description(self.current_console_selection_data)
 end
 
-function MenuInputDescriptionUI.setup_console_widget_selections(arg_11_0)
-	local var_11_0 = arg_11_0.steppers
+MenuInputDescriptionUI.setup_console_widget_selections = function (self)
+	-- function 11
+	local steppers = self.steppers
 
 	return {
 		{
 			name = "difficulty",
 			gamepad_support = true,
-			widget = var_11_0.difficulty.widget,
+			widget = steppers.difficulty.widget,
 			actions = {
 				{
 					hotspot_id = "left_button_hotspot",
@@ -338,7 +365,7 @@ function MenuInputDescriptionUI.setup_console_widget_selections(arg_11_0)
 		{
 			name = "privacy",
 			gamepad_support = true,
-			widget = var_11_0.privacy.widget,
+			widget = steppers.privacy.widget,
 			actions = {
 				{
 					hotspot_id = "left_button_hotspot",
@@ -355,7 +382,7 @@ function MenuInputDescriptionUI.setup_console_widget_selections(arg_11_0)
 		{
 			name = "level",
 			gamepad_support = true,
-			widget = var_11_0.level.widget,
+			widget = steppers.level.widget,
 			actions = {
 				{
 					hotspot_id = "left_button_hotspot",
@@ -372,7 +399,7 @@ function MenuInputDescriptionUI.setup_console_widget_selections(arg_11_0)
 		{
 			name = "play_button",
 			gamepad_support = false,
-			widget = arg_11_0.play_button_console_widget,
+			widget = self.play_button_console_widget,
 			actions = {
 				{
 					hotspot_id = "button_hotspot",
@@ -384,7 +411,7 @@ function MenuInputDescriptionUI.setup_console_widget_selections(arg_11_0)
 		{
 			name = "quickmatch_button",
 			gamepad_support = false,
-			widget = arg_11_0.quickmatch_button_console_widget,
+			widget = self.quickmatch_button_console_widget,
 			actions = {
 				{
 					hotspot_id = "button_hotspot",
@@ -396,153 +423,172 @@ function MenuInputDescriptionUI.setup_console_widget_selections(arg_11_0)
 	}
 end
 
-function MenuInputDescriptionUI.set_input_description(arg_12_0, arg_12_1, arg_12_2)
-	arg_12_0:clear_input_descriptions()
+MenuInputDescriptionUI.set_input_description = function (self, arg_12_1, arg_12_2)
+	-- function 12
+	self:clear_input_descriptions()
 
-	local var_12_0 = arg_12_2 or 1
-	local var_12_1 = arg_12_0.ui_renderer
-	local var_12_2 = arg_12_0.ui_scenegraph
-	local var_12_3 = arg_12_0.console_input_description_widgets
-	local var_12_4 = 30 * var_12_0
-	local var_12_5 = {}
-	local var_12_6 = 0
-	local var_12_7 = 0
+	local flag = arg_12_2 or 1
+	local ui_renderer = self.ui_renderer
+	local ui_scenegraph = self.ui_scenegraph
+	local console_input_description_widgets = self.console_input_description_widgets
+	local num = 30 * flag
+	local tbl = {}
+	local num_2 = 0
+	local num_3 = 0
 
-	arg_12_0.current_console_selection_data = arg_12_1
+	self.current_console_selection_data = arg_12_1
 
-	local var_12_8 = arg_12_1 and arg_12_1.actions and table.clone(arg_12_1.actions) or {}
-	local var_12_9 = arg_12_1 and arg_12_1.ignore_generic_actions
-	local var_12_10 = {}
+	local clone
 
-	if not var_12_9 then
-		local var_12_11 = arg_12_0.generic_actions
+	if not arg_12_1 and not arg_12_1.actions then
+		clone = table.clone(arg_12_1.actions)
 
-		if var_12_11 then
-			for iter_12_0, iter_12_1 in ipairs(var_12_11) do
-				if not iter_12_1.content_check_function or iter_12_1.content_check_function() then
-					var_12_10[#var_12_10 + 1] = iter_12_1
+		if not clone then
+			-- Nothing
+		end
+	end
+
+	clone = {}
+
+	::label_12_0::
+
+	local flag_2 = not arg_12_1 and arg_12_1.ignore_generic_actions
+	local tbl_2 = {}
+
+	if not flag_2 then
+		local generic_actions = self.generic_actions
+
+		if not generic_actions then
+			for i, v in ipairs(generic_actions) do
+				if not v.content_check_function and not v.content_check_function() then
+					tbl_2[#tbl_2 + 1] = v
 				end
 			end
 		end
 	end
 
-	for iter_12_2, iter_12_3 in pairs(var_12_8) do
-		if not iter_12_3.content_check_function or iter_12_3.content_check_function() then
-			var_12_10[#var_12_10 + 1] = iter_12_3
+	for k, v_2 in pairs(clone) do
+		if not v_2.content_check_function and not v_2.content_check_function() then
+			tbl_2[#tbl_2 + 1] = v_2
 		end
 	end
 
-	table.sort(var_12_10, var_0_1)
+	table.sort(tbl_2, fn)
 
-	for iter_12_4, iter_12_5 in pairs(var_12_10) do
-		local var_12_12 = iter_12_5.input_action
-		local var_12_13 = iter_12_5.description_text
-		local var_12_14 = iter_12_5.ignore_keybinding
+	for k_2, v_3 in pairs(tbl_2) do
+		local input_action = v_3.input_action
+		local description_text = v_3.description_text
+		local ignore_keybinding = v_3.ignore_keybinding
 
-		if var_12_13 then
-			var_12_7 = var_12_7 + 1
-			var_12_13 = iter_12_5.ignore_localization and var_12_13 or Localize(var_12_13)
+		if not description_text then
+			num_3 = num_3 + 1
+			description_text = not v_3.ignore_localization and description_text and Localize(description_text)
 
-			local var_12_15 = arg_12_0:get_gamepad_input_texture_data(var_12_12, var_12_14)
-			local var_12_16 = var_12_3[var_12_7]
-			local var_12_17 = var_12_16.content
-			local var_12_18 = var_12_16.style
-			local var_12_19 = "input_description_" .. var_12_7
-			local var_12_20 = "input_description_icon_" .. var_12_7
-			local var_12_21 = "input_description_text_" .. var_12_7
-			local var_12_22 = table.shallow_copy(var_12_15.size)
+			local get_gamepad_input_texture_data = self:get_gamepad_input_texture_data(input_action, ignore_keybinding)
+			local var_12_16 = console_input_description_widgets[num_3]
+			local content = var_12_16.content
+			local style = var_12_16.style
+			local str = "input_description_" .. num_3
+			local str_2 = "input_description_icon_" .. num_3
+			local str_3 = "input_description_text_" .. num_3
+			local shallow_copy = table.shallow_copy(get_gamepad_input_texture_data.size)
 
-			var_12_22[1] = var_12_22[1] * var_12_0
-			var_12_22[2] = var_12_22[2] * var_12_0
-			var_12_2[var_12_20].size = var_12_22
-			var_12_2[var_12_21].local_position[1] = var_12_22[1]
-			var_12_17.icon = var_12_15.texture
+			shallow_copy[1] = shallow_copy[1] * flag
+			shallow_copy[2] = shallow_copy[2] * flag
+			ui_scenegraph[str_2].size = shallow_copy
+			ui_scenegraph[str_3].local_position[1] = shallow_copy[1]
+			content.icon = get_gamepad_input_texture_data.texture
 
-			local var_12_23 = " " .. var_12_13
+			local str_4 = " " .. description_text
 
-			var_12_17.text = var_12_23
+			content.text = str_4
 
-			local var_12_24 = var_12_18.text
+			local text = style.text
+			local _original_font_size = text._original_font_size
 
-			var_12_24._original_font_size = var_12_24._original_font_size or var_12_24.font_size
-			var_12_24.font_size = var_12_24._original_font_size * var_12_0
+			_original_font_size = _original_font_size or text.font_size
+			text._original_font_size = _original_font_size
+			text.font_size = text._original_font_size * flag
 
-			local var_12_25, var_12_26 = UIFontByResolution(var_12_24)
-			local var_12_27 = UIRenderer.text_size(var_12_1, var_12_23, var_12_25[1], var_12_26)
-			local var_12_28 = var_12_22[1] + var_12_27
+			local var_12_26, var_12_27 = UIFontByResolution(text)
+			local text_size = UIRenderer.text_size(ui_renderer, str_4, var_12_26[1], var_12_27)
+			local num_4 = shallow_copy[1] + text_size
 
-			if arg_12_0._use_fullscreen_layout then
-				var_12_2[var_12_19].local_position[1] = 0
+			if not self._use_fullscreen_layout then
+				ui_scenegraph[str].local_position[1] = 0
 			else
-				var_12_2[var_12_19].local_position[1] = -var_12_28 / 2
+				ui_scenegraph[str].local_position[1] = -num_4 / 2
 			end
 
-			var_12_18.text_shadow.font_size = var_12_24._original_font_size * var_12_0
-			var_12_6 = var_12_6 + var_12_28 + var_12_4
-			var_12_5[var_12_7] = var_12_28
+			style.text_shadow.font_size = text._original_font_size * flag
+			num_2 = num_2 + num_4 + num
+			tbl[num_3] = num_4
 		end
 	end
 
-	if not arg_12_2 and var_12_6 > arg_12_0._max_width then
-		return arg_12_0:set_input_description(arg_12_1, arg_12_0._max_width / var_12_6)
+	if not (arg_12_2 or not (num_2 > self._max_width)) then
+		return self:set_input_description(arg_12_1, self._max_width / num_2)
 	end
 
-	arg_12_0.number_of_descriptions_in_use = var_12_7 ~= 0 and var_12_7 or nil
+	self.number_of_descriptions_in_use = num_3 == 0 or not num_3 or nil
 
-	arg_12_0:_align_inputs(var_12_6, var_12_4, var_12_5)
+	self:_align_inputs(num_2, num, tbl)
 
-	arg_12_0._most_recent_device = Managers.input:get_most_recent_device()
+	self._most_recent_device = Managers.input:get_most_recent_device()
 end
 
-function MenuInputDescriptionUI.clear_input_descriptions(arg_13_0)
-	arg_13_0.number_of_descriptions_in_use = nil
+MenuInputDescriptionUI.clear_input_descriptions = function (self)
+	-- function 13
+	self.number_of_descriptions_in_use = nil
 end
 
-function MenuInputDescriptionUI.get_gamepad_input_texture_data(arg_14_0, arg_14_1, arg_14_2)
-	local var_14_0 = PLATFORM
+MenuInputDescriptionUI.get_gamepad_input_texture_data = function (self, arg_14_1, arg_14_2)
+	-- function 14
+	local PLATFORM = PLATFORM
 
-	if IS_WINDOWS then
-		var_14_0 = "xb1"
+	if not IS_WINDOWS then
+		PLATFORM = "xb1"
 	end
 
-	if arg_14_2 then
-		return ButtonTextureByName(arg_14_1, var_14_0)
+	if not arg_14_2 then
+		return ButtonTextureByName(arg_14_1, PLATFORM)
 	else
-		local var_14_1 = arg_14_0.input_service
+		local input_service = self.input_service
 
-		return UISettings.get_gamepad_input_texture_data(var_14_1, arg_14_1, true)
+		return UISettings.get_gamepad_input_texture_data(input_service, arg_14_1, true)
 	end
 end
 
-function MenuInputDescriptionUI._align_inputs(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
-	local var_15_0 = arg_15_0.ui_scenegraph
+MenuInputDescriptionUI._align_inputs = function (self, arg_15_1, arg_15_2, arg_15_3)
+	-- function 15
+	local ui_scenegraph = self.ui_scenegraph
 
 	arg_15_1 = arg_15_1 - arg_15_2
 
-	local var_15_1 = var_15_0.input_description_field.size[1]
-	local var_15_2 = arg_15_0.number_of_descriptions_in_use
+	local var_15_1 = ui_scenegraph.input_description_field.size[1]
+	local number_of_descriptions_in_use = self.number_of_descriptions_in_use
 
-	if var_15_2 then
-		if arg_15_0._use_fullscreen_layout then
-			local var_15_3 = 50
-			local var_15_4 = math.min(arg_15_0._max_width, var_15_1)
-			local var_15_5 = math.clamp(var_15_4 - (arg_15_1 + var_15_3 * 2), 0, var_15_3)
+	if not number_of_descriptions_in_use then
+		if not self._use_fullscreen_layout then
+			local num = 50
+			local min = math.min(self._max_width, var_15_1)
+			local clamp = math.clamp(min - (arg_15_1 + num * 2), 0, num)
 
-			for iter_15_0 = 1, var_15_2 do
-				local var_15_6 = arg_15_3[iter_15_0]
+			for i = 1, number_of_descriptions_in_use do
+				local var_15_6 = arg_15_3[i]
 
-				var_15_0["input_description_root_" .. iter_15_0].local_position[1] = var_15_5
-				var_15_5 = var_15_5 + var_15_6 + arg_15_2
+				ui_scenegraph["input_description_root_" .. i].local_position[1] = clamp
+				clamp = clamp + var_15_6 + arg_15_2
 			end
 		else
-			local var_15_7 = var_15_1 / 2 - arg_15_1 / 2
+			local num_2 = var_15_1 / 2 - arg_15_1 / 2
 
-			for iter_15_1 = 1, var_15_2 do
-				local var_15_8 = arg_15_3[iter_15_1]
-				local var_15_9 = var_15_7 + var_15_8 / 2
+			for j = 1, number_of_descriptions_in_use do
+				local var_15_8 = arg_15_3[j]
+				local num_3 = num_2 + var_15_8 / 2
 
-				var_15_0["input_description_root_" .. iter_15_1].local_position[1] = var_15_9
-				var_15_7 = var_15_9 + var_15_8 / 2 + arg_15_2
+				ui_scenegraph["input_description_root_" .. j].local_position[1] = num_3
+				num_2 = num_3 + var_15_8 / 2 + arg_15_2
 			end
 		end
 	end

@@ -2,32 +2,37 @@
 
 ScriptReceiveAppTicketToken = class(ScriptReceiveAppTicketToken)
 
-function ScriptReceiveAppTicketToken.init(arg_1_0)
-	arg_1_0._done = false
-	arg_1_0._error = true
+ScriptReceiveAppTicketToken.init = function (self)
+	-- function 1
+	self._done = false
+	self._error = true
 end
 
-function ScriptReceiveAppTicketToken.update(arg_2_0)
-	local var_2_0 = Steam.poll_encrypted_app_ticket()
+ScriptReceiveAppTicketToken.update = function (self)
+	-- function 2
+	local poll_encrypted_app_ticket = Steam.poll_encrypted_app_ticket()
 
-	if var_2_0 then
-		arg_2_0._encrypted_app_ticket = string.tohex(var_2_0)
-		arg_2_0._done = true
-		arg_2_0._error = false
+	if not poll_encrypted_app_ticket then
+		self._encrypted_app_ticket = string.tohex(poll_encrypted_app_ticket)
+		self._done = true
+		self._error = false
 	end
 end
 
-function ScriptReceiveAppTicketToken.info(arg_3_0)
+ScriptReceiveAppTicketToken.info = function (self)
+	-- function 3
 	return {
-		encrypted_app_ticket = arg_3_0._encrypted_app_ticket,
-		error = arg_3_0._error
+		encrypted_app_ticket = self._encrypted_app_ticket,
+		error = self._error
 	}
 end
 
-function ScriptReceiveAppTicketToken.done(arg_4_0)
-	return arg_4_0._done
+ScriptReceiveAppTicketToken.done = function (self)
+	-- function 4
+	return self._done
 end
 
-function ScriptReceiveAppTicketToken.close(arg_5_0)
+ScriptReceiveAppTicketToken.close = function (arg_5_0)
+	-- function 5
 	return
 end

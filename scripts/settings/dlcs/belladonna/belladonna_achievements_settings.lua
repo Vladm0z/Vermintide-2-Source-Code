@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/belladonna/belladonna_achievements_settings.lua
 
-local var_0_0 = DLCSettings.belladonna
+local belladonna = DLCSettings.belladonna
 
-var_0_0.achievement_outline = {
+belladonna.achievement_outline = {
 	enemies = {
 		entries = {
 			"scorpion_slay_gors_warpfire_damage",
@@ -13,6 +13,6 @@ var_0_0.achievement_outline = {
 		}
 	}
 }
-var_0_0.achievement_template_file_names = {
+belladonna.achievement_template_file_names = {
 	"scripts/managers/achievements/achievement_templates_belladonna"
 }

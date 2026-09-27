@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/infighting_settings.lua
 
-local var_0_0 = table.set({
+local set = table.set({
 	"chaos_dummy_exalted_sorcerer_drachenfels",
 	"chaos_dummy_sorcerer",
 	"chaos_greed_pinata",
@@ -16,7 +16,7 @@ InfightingSettings = {
 		max_slots = 0,
 		crowded_slots = 0,
 		boid_radius = 1,
-		ignored_breed_filter = table.merge({}, var_0_0)
+		ignored_breed_filter = table.merge({}, set)
 	},
 	small = {
 		trigger_minion_target_search = 100,
@@ -24,7 +24,7 @@ InfightingSettings = {
 		max_slots = 12,
 		crowded_slots = 10,
 		boid_radius = 0.3,
-		ignored_breed_filter = table.merge({}, var_0_0)
+		ignored_breed_filter = table.merge({}, set)
 	},
 	medium = {
 		trigger_minion_target_search = 100,
@@ -32,7 +32,7 @@ InfightingSettings = {
 		max_slots = 12,
 		crowded_slots = 10,
 		boid_radius = 0.4,
-		ignored_breed_filter = table.merge({}, var_0_0)
+		ignored_breed_filter = table.merge({}, set)
 	},
 	large = {
 		trigger_minion_target_search = 100,
@@ -40,7 +40,7 @@ InfightingSettings = {
 		max_slots = 12,
 		crowded_slots = 10,
 		boid_radius = 0.5,
-		ignored_breed_filter = table.merge({}, var_0_0)
+		ignored_breed_filter = table.merge({}, set)
 	},
 	boss = {
 		trigger_minion_target_search = 100,
@@ -53,7 +53,7 @@ InfightingSettings = {
 			"pet_skeleton_dual_wield",
 			"pet_skeleton_armored",
 			"pet_skeleton_with_shield"
-		}), var_0_0)
+		}), set)
 	},
 	skeleton_pet = {
 		trigger_minion_target_search = 100,
@@ -61,7 +61,7 @@ InfightingSettings = {
 		max_slots = 4,
 		crowded_slots = 4,
 		boid_radius = 0.3,
-		ignored_breed_filter = table.merge({}, var_0_0)
+		ignored_breed_filter = table.merge({}, set)
 	},
 	skeleton_pet_shield = {
 		trigger_minion_target_search = 100,
@@ -69,6 +69,6 @@ InfightingSettings = {
 		max_slots = 7,
 		crowded_slots = 7,
 		boid_radius = 0.4,
-		ignored_breed_filter = table.merge({}, var_0_0)
+		ignored_breed_filter = table.merge({}, set)
 	}
 }

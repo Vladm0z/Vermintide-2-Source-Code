@@ -1,21 +1,21 @@
 -- chunkname: @scripts/settings/dlcs/scorpion/scorpion_common_settings.lua
 
-local var_0_0 = DLCSettings.scorpion
+local scorpion = DLCSettings.scorpion
 
-var_0_0.unlock_settings = {
+scorpion.unlock_settings = {
 	scorpion_beta_extended_access = {
 		class = "UnlockDlc",
 		id = "1093530"
 	}
 }
-var_0_0.unlock_settings_xb1 = {
+scorpion.unlock_settings_xb1 = {
 	scorpion = {
 		id = "633879CB-F38D-409B-BBFE-48EA39EF3277",
 		backend_reward_id = "scorpion",
 		class = "UnlockDlc"
 	}
 }
-var_0_0.unlock_settings_ps4 = {
+scorpion.unlock_settings_ps4 = {
 	CUSA13595_00 = {
 		scorpion = {
 			id = "39bf75fa504440fa967c4cdd16772fc6",
@@ -33,7 +33,7 @@ var_0_0.unlock_settings_ps4 = {
 		}
 	}
 }
-var_0_0.statistics_lookup = {
+scorpion.statistics_lookup = {
 	"scorpion_weaves_heavens_season_1",
 	"weave_beasts_destroyed_totems",
 	"weave_light_low_curse",
@@ -42,7 +42,7 @@ var_0_0.statistics_lookup = {
 	"weave_death_hit_by_spirit",
 	"scorpion_keep_standard_bearer_alive"
 }
-var_0_0.husk_lookup = {
+scorpion.husk_lookup = {
 	"units/weapons/player/wpn_dw_thrown_axe_01_t2/wpn_dw_thrown_axe_01_t2_magic_01_3p",
 	"units/weapons/player/wpn_dw_thrown_axe_01_t2/prj_dw_thrown_axe_01_t2_magic_01_3ps",
 	"units/weapons/player/wpn_dw_thrown_axe_01_t2/pup_dw_thrown_axe_01_t2_magic_01",
@@ -54,15 +54,15 @@ var_0_0.husk_lookup = {
 	"units/props/generic/weave_target",
 	"units/gameplay/weave/weave_prop_skaven_doom_wheel_01"
 }
-var_0_0.statistics_definitions = {
+scorpion.statistics_definitions = {
 	"scripts/managers/backend/statistics_definitions_scorpion"
 }
-var_0_0.end_view = {
+scorpion.end_view = {
 	"scripts/ui/views/level_end/level_end_view_weave"
 }
-var_0_0.end_view_state = {
+scorpion.end_view_state = {
 	"scripts/ui/views/level_end/states/end_view_state_weave"
 }
-var_0_0.interactions_filenames = {
+scorpion.interactions_filenames = {
 	"scripts/settings/dlcs/scorpion/scorpion_interactions"
 }

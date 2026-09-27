@@ -4,96 +4,98 @@ require("core/gwnav/lua/safe_require")
 
 local var_0_0 = safe_require_guard()
 local var_0_1 = safe_require("core/gwnav/lua/runtime/navclass")(var_0_0)
-local var_0_2 = stingray.Math
-local var_0_3 = stingray.Vector2
-local var_0_4 = stingray.Vector3
-local var_0_5 = stingray.Vector3Box
-local var_0_6 = stingray.Matrix4x4
-local var_0_7 = stingray.Matrix4x4Box
-local var_0_8 = stingray.Quaternion
-local var_0_9 = stingray.QuaternionBox
-local var_0_10 = stingray.Gui
-local var_0_11 = stingray.World
-local var_0_12 = stingray.Unit
-local var_0_13 = stingray.Camera
-local var_0_14 = stingray.ShadingEnvironment
-local var_0_15 = stingray.Application
-local var_0_16 = stingray.Color
-local var_0_17 = stingray.LineObject
-local var_0_18 = stingray.PhysicsWorld
-local var_0_19 = stingray.Level
+local Math = stingray.Math
+local Vector2 = stingray.Vector2
+local Vector3 = stingray.Vector3
+local Vector3Box = stingray.Vector3Box
+local Matrix4x4 = stingray.Matrix4x4
+local Matrix4x4Box = stingray.Matrix4x4Box
+local Quaternion = stingray.Quaternion
+local QuaternionBox = stingray.QuaternionBox
+local Gui = stingray.Gui
+local World = stingray.World
+local Unit = stingray.Unit
+local Camera = stingray.Camera
+local ShadingEnvironment = stingray.ShadingEnvironment
+local Application = stingray.Application
+local Color = stingray.Color
+local LineObject = stingray.LineObject
+local PhysicsWorld = stingray.PhysicsWorld
+local Level = stingray.Level
 local var_0_20
 
-if stingray.Window then
-	local var_0_21 = stingray.Window
+if not stingray.Window then
+	local Window = stingray.Window
 end
 
-local var_0_22 = stingray.Script
-local var_0_23 = stingray.BakedLighting
-local var_0_24 = stingray.Keyboard
-local var_0_25 = stingray.Mouse
-local var_0_26 = stingray.GwNavWorld
-local var_0_27 = stingray.GwNavBot
-local var_0_28 = stingray.GwNavSmartObjectInterval
-local var_0_29 = stingray.GwNavQueries
-local var_0_30 = stingray.GwNavAStar
-local var_0_31 = stingray.GwNavTagVolume
-local var_0_32 = stingray.GwNavBoxObstacle
-local var_0_33 = stingray.GwNavCylinderObstacle
-local var_0_34 = stingray.GwNavGraph
-local var_0_35 = stingray.GwNavTraversal
-local var_0_36 = stingray.GwNavGeneration
+local Script = stingray.Script
+local BakedLighting = stingray.BakedLighting
+local Keyboard = stingray.Keyboard
+local Mouse = stingray.Mouse
+local GwNavWorld = stingray.GwNavWorld
+local GwNavBot = stingray.GwNavBot
+local GwNavSmartObjectInterval = stingray.GwNavSmartObjectInterval
+local GwNavQueries = stingray.GwNavQueries
+local GwNavAStar = stingray.GwNavAStar
+local GwNavTagVolume = stingray.GwNavTagVolume
+local GwNavBoxObstacle = stingray.GwNavBoxObstacle
+local GwNavCylinderObstacle = stingray.GwNavCylinderObstacle
+local GwNavGraph = stingray.GwNavGraph
+local GwNavTraversal = stingray.GwNavTraversal
+local GwNavGeneration = stingray.GwNavGeneration
 
-function var_0_1.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	arg_1_0.camera = arg_1_1
-	arg_1_0.unit = arg_1_2
-	arg_1_0.nav_world = arg_1_3
-	arg_1_0.translation_speed = 3
+var_0_1.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	self.camera = arg_1_1
+	self.unit = arg_1_2
+	self.nav_world = arg_1_3
+	self.translation_speed = 3
 
-	if var_0_15.platform() == "win32" then
-		arg_1_0.rotation_speed = 0.003
+	if Application.platform() == "win32" then
+		self.rotation_speed = 0.003
 	else
-		arg_1_0.rotation_speed = 0.03
+		self.rotation_speed = 0.03
 	end
 end
 
-function var_0_1.update(arg_2_0, arg_2_1)
-	local var_2_0 = {}
+var_0_1.update = function (self, arg_2_1)
+	-- function 2
+	local tbl = {}
 
-	if var_0_15.platform() == "win32" or var_0_15.platform() == "macosx" then
-		var_2_0.pan = var_0_25.axis(var_0_25.axis_id("mouse"))
-		var_2_0.accelerate = var_0_4.y(var_0_25.axis(var_0_25.axis_id("wheel")))
-		var_2_0.move = var_0_4(var_0_24.button(var_0_24.button_id("d")) - var_0_24.button(var_0_24.button_id("a")), var_0_24.button(var_0_24.button_id("w")) - var_0_24.button(var_0_24.button_id("s")), var_0_24.button(var_0_24.button_id("e")) - var_0_24.button(var_0_24.button_id("q")))
+	if not (Application.platform() == "win32" or Application.platform() ~= "macosx") then
+		tbl.pan = Mouse.axis(Mouse.axis_id("mouse"))
+		tbl.accelerate = Vector3.y(Mouse.axis(Mouse.axis_id("wheel")))
+		tbl.move = Vector3(Keyboard.button(Keyboard.button_id("d")) - Keyboard.button(Keyboard.button_id("a")), Keyboard.button(Keyboard.button_id("w")) - Keyboard.button(Keyboard.button_id("s")), Keyboard.button(Keyboard.button_id("e")) - Keyboard.button(Keyboard.button_id("q")))
 	else
 		return
 	end
 
-	local var_2_1 = arg_2_0.translation_speed * 0.1
+	local num = self.translation_speed * 0.1
 
-	arg_2_0.translation_speed = arg_2_0.translation_speed + var_2_0.accelerate * var_2_1
+	self.translation_speed = self.translation_speed + tbl.accelerate * num
 
-	if arg_2_0.translation_speed < 0.001 then
-		arg_2_0.translation_speed = 0.001
+	if self.translation_speed < 0.001 then
+		self.translation_speed = 0.001
 	end
 
-	if arg_2_0.translation_speed > 1000 then
-		arg_2_0.translation_speed = 1000
+	if self.translation_speed > 1000 then
+		self.translation_speed = 1000
 	end
 
-	local var_2_2 = var_0_13.local_pose(arg_2_0.camera)
-	local var_2_3 = var_0_6.translation(var_2_2)
+	local local_pose = Camera.local_pose(self.camera)
+	local translation = Matrix4x4.translation(local_pose)
 
-	var_0_6.set_translation(var_2_2, var_0_4(0, 0, 0))
+	Matrix4x4.set_translation(local_pose, Vector3(0, 0, 0))
 
-	local var_2_4 = var_0_8(var_0_4(0, 0, 1), -var_0_4.x(var_2_0.pan) * arg_2_0.rotation_speed)
-	local var_2_5 = var_0_8(var_0_6.x(var_2_2), -var_0_4.y(var_2_0.pan) * arg_2_0.rotation_speed)
-	local var_2_6 = var_0_8.multiply(var_2_4, var_2_5)
-	local var_2_7 = var_0_6.multiply(var_2_2, var_0_6.from_quaternion(var_2_6))
-	local var_2_8 = var_0_6.transform(var_2_7, var_2_0.move * arg_2_0.translation_speed)
-	local var_2_9 = var_0_29.move_on_navmesh(arg_2_0.nav_world, var_2_3, var_2_8, arg_2_1)
+	local var_2_4 = Quaternion(Vector3(0, 0, 1), -Vector3.x(tbl.pan) * self.rotation_speed)
+	local var_2_5 = Quaternion(Matrix4x4.x(local_pose), -Vector3.y(tbl.pan) * self.rotation_speed)
+	local multiply = Quaternion.multiply(var_2_4, var_2_5)
+	local multiply_2 = Matrix4x4.multiply(local_pose, Matrix4x4.from_quaternion(multiply))
+	local transform = Matrix4x4.transform(multiply_2, tbl.move * self.translation_speed)
+	local move_on_navmesh = GwNavQueries.move_on_navmesh(self.nav_world, translation, transform, arg_2_1)
 
-	var_0_6.set_translation(var_2_7, var_2_9)
-	var_0_13.set_local_pose(arg_2_0.camera, arg_2_0.unit, var_2_7)
+	Matrix4x4.set_translation(multiply_2, move_on_navmesh)
+	Camera.set_local_pose(self.camera, self.unit, multiply_2)
 end
 
 return var_0_1

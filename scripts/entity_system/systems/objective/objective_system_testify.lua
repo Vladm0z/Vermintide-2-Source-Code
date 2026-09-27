@@ -1,100 +1,109 @@
 -- chunkname: @scripts/entity_system/systems/objective/objective_system_testify.lua
 
 return {
-	versus_objective_add_time = function(arg_1_0, arg_1_1)
+	versus_objective_add_time = function (arg_1_0, arg_1_1)
+		-- function 1
 		Managers.mechanism:game_mechanism():win_conditions():add_time(arg_1_1)
 	end,
-	versus_current_objective_position = function(arg_2_0)
-		local var_2_0, var_2_1 = next(arg_2_0:active_leaf_objectives())
+	versus_current_objective_position = function (self)
+		-- function 2
+		local var_2_0, var_2_1 = next(self:active_leaf_objectives())
 
-		if not arg_2_0:extension_by_objective_name(var_2_1) then
+		if not self:extension_by_objective_name(var_2_1) then
 			return
 		end
 
-		local var_2_2 = {}
-		local var_2_3 = arg_2_0:current_objectives_position()
-		local var_2_4, var_2_5 = next(var_2_3)
-		local var_2_6 = Math.random_range(-10, 10)
-		local var_2_7 = Math.random_range(-10, 10)
-		local var_2_8 = var_2_5 + Vector3(var_2_6, var_2_7, 0)
-		local var_2_9, var_2_10, var_2_11, var_2_12, var_2_13 = EngineOptimized.closest_pos_at_main_path(var_2_8)
+		local tbl = {}
+		local current_objectives_position = self:current_objectives_position()
+		local var_2_4, var_2_5 = next(current_objectives_position)
+		local random_range = Math.random_range(-10, 10)
+		local random_range_2 = Math.random_range(-10, 10)
+		local num = var_2_5 + Vector3(random_range, random_range_2, 0)
+		local closest_pos_at_main_path, var_2_10, var_2_11, var_2_12, var_2_13 = EngineOptimized.closest_pos_at_main_path(num)
 
-		var_2_2.objective_position = var_2_5
-		var_2_2.random_position = var_2_8
-		var_2_2.main_path_position = var_2_9
+		tbl.objective_position = var_2_5
+		tbl.random_position = num
+		tbl.main_path_position = closest_pos_at_main_path
 
-		return var_2_2
+		return tbl
 	end,
-	versus_complete_objectives = function(arg_3_0)
-		local var_3_0 = arg_3_0:active_objectives()
+	versus_complete_objectives = function (self)
+		-- function 3
+		local active_objectives = self:active_objectives()
 
-		for iter_3_0, iter_3_1 in ipairs(var_3_0) do
-			arg_3_0:extension_by_objective_name(iter_3_1)._completed = true
+		for i, v in ipairs(active_objectives) do
+			self:extension_by_objective_name(v)._completed = true
 		end
 	end,
-	versus_objective_name = function(arg_4_0)
-		local var_4_0, var_4_1 = next(arg_4_0:active_objectives())
+	versus_objective_name = function (self)
+		-- function 4
+		local var_4_0, var_4_1 = next(self:active_objectives())
 
-		return arg_4_0:extension_by_objective_name(var_4_1):objective_name()
+		return self:extension_by_objective_name(var_4_1):objective_name()
 	end,
-	versus_objective_type = function(arg_5_0)
-		local var_5_0, var_5_1 = next(arg_5_0:active_objectives())
-		local var_5_2 = arg_5_0:extension_by_objective_name(var_5_1)
+	versus_objective_type = function (self)
+		-- function 5
+		local var_5_0, var_5_1 = next(self:active_objectives())
+		local extension_by_objective_name = self:extension_by_objective_name(var_5_1)
 
-		if not var_5_2 then
-			local var_5_3, var_5_4 = next(arg_5_0._objective_lists[#arg_5_0._objective_lists])
+		if not extension_by_objective_name then
+			local var_5_3, var_5_4 = next(self._objective_lists[#self._objective_lists])
 
-			if not var_5_2 then
+			if not extension_by_objective_name then
 				return "objective_not_supported"
 			end
 		end
 
-		local var_5_5 = var_5_2.NAME
+		local NAME = extension_by_objective_name.NAME
 
-		if var_5_5 == "VersusCapturePointObjectiveExtension" then
+		if NAME == "VersusCapturePointObjectiveExtension" then
 			return "objective_capture_point"
 		end
 
-		if var_5_5 == "VersusInteractObjectiveExtension" then
+		if NAME == "VersusInteractObjectiveExtension" then
 			return "objective_interact"
 		end
 
-		if var_5_5 == "VersusVolumeObjectiveExtension" then
+		if NAME == "VersusVolumeObjectiveExtension" then
 			return "objective_volume"
 		end
 
 		return "objective_not_supported"
 	end,
-	weave_spawn_essence_on_first_bot_position = function(arg_6_0)
-		local var_6_0 = Managers.player:bots()[1].player_unit
+	weave_spawn_essence_on_first_bot_position = function (self)
+		-- function 6
+		local player_unit = Managers.player:bots()[1].player_unit
 
-		if var_6_0 then
-			local var_6_1 = Unit.local_position(var_6_0, 0) + Vector3(0, 0, 0.2)
+		if not player_unit then
+			local num = Unit.local_position(player_unit, 0) + Vector3(0, 0, 0.2)
 
-			arg_6_0:weave_essence_handler():spawn_essence_unit(var_6_1)
+			self:weave_essence_handler():spawn_essence_unit(num)
 		end
 
 		Managers.weave:increase_bar_score(2)
 	end,
-	get_num_main_objectives = function(arg_7_0)
-		return arg_7_0:num_main_objectives()
+	get_num_main_objectives = function (self)
+		-- function 7
+		return self:num_main_objectives()
 	end,
-	get_current_main_objective = function(arg_8_0)
-		local var_8_0 = arg_8_0:current_objective_index()
+	get_current_main_objective = function (self)
+		-- function 8
+		local current_objective_index = self:current_objective_index()
 
-		if var_8_0 < arg_8_0:num_main_objectives() then
-			return var_8_0
+		if current_objective_index < self:num_main_objectives() then
+			return current_objective_index
 		end
 
-		local var_8_1 = next(arg_8_0._objective_lists[var_8_0])
+		local var_8_1 = next(self._objective_lists[current_objective_index])
 
-		if arg_8_0:extension_by_objective_name(var_8_1):is_done() then
+		if not self:extension_by_objective_name(var_8_1):is_done() then
 			return
 		end
 
-		return var_8_0
+		return current_objective_index
 	end,
-	wait_for_objectives_to_activate = function(arg_9_0)
-		return arg_9_0:is_active()
+	wait_for_objectives_to_activate = function (self)
+		-- function 9
+		return self:is_active()
 	end
 }

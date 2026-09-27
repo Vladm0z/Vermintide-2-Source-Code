@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/witch_hunter_dlc_termite_3.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		response = "pwh_gateway_accidental_bell_ring_a",
 		name = "pwh_gateway_accidental_bell_ring_a",

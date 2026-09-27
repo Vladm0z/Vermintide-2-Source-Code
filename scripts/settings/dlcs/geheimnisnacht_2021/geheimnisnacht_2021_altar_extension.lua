@@ -2,366 +2,398 @@
 
 Geheimnisnacht2021AltarExtension = class(Geheimnisnacht2021AltarExtension)
 
-local var_0_0 = "fx/halloween_event_ambient"
-local var_0_1 = "fx/halloween_event_final_explosion"
-local var_0_2 = "units/decals/decal_halloween_2021"
-local var_0_3 = 3
-local var_0_4 = math.degrees_to_radians(78.5)
-local var_0_5 = {
+local str = "fx/halloween_event_ambient"
+local str_2 = "fx/halloween_event_final_explosion"
+local str_3 = "units/decals/decal_halloween_2021"
+local num = 3
+local degrees_to_radians = math.degrees_to_radians(78.5)
+local tbl = {
 	-0.04,
 	-0.1
 }
-local var_0_6 = 0
-local var_0_7 = 1
-local var_0_8 = 2
-local var_0_9 = 3
-local var_0_10 = "to_interactable"
-local var_0_11 = "to_destructible"
-local var_0_12 = "hit_start"
-local var_0_13 = "hit_end"
-local var_0_14 = GameSession.set_game_object_field
-local var_0_15 = GameSession.game_object_field
+local num_2 = 0
+local num_3 = 1
+local num_4 = 2
+local num_5 = 3
+local str_4 = "to_interactable"
+local str_5 = "to_destructible"
+local str_6 = "hit_start"
+local str_7 = "hit_end"
+local set_game_object_field = GameSession.set_game_object_field
+local game_object_field = GameSession.game_object_field
 
-function Geheimnisnacht2021AltarExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	arg_1_0._unit = arg_1_2
-	arg_1_0._is_server = Managers.state.network.is_server
-	arg_1_0.world = arg_1_1.world
-	arg_1_0._state = arg_1_3.state or var_0_6
-	arg_1_0._audio_system = Managers.state.entity:system("audio_system")
-	arg_1_0._unit_spawner = Managers.state.unit_spawner
+Geheimnisnacht2021AltarExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	self._unit = arg_1_2
+	self._is_server = Managers.state.network.is_server
+	self.world = arg_1_1.world
 
-	arg_1_0:_init_state()
+	local state = arg_1_3.state
+
+	state = state or num_2
+	self._state = state
+	self._audio_system = Managers.state.entity:system("audio_system")
+	self._unit_spawner = Managers.state.unit_spawner
+
+	self:_init_state()
 end
 
-function Geheimnisnacht2021AltarExtension.destroy(arg_2_0)
-	arg_2_0:unregister_events()
+Geheimnisnacht2021AltarExtension.destroy = function (self)
+	-- function 2
+	self:unregister_events()
 end
 
-function Geheimnisnacht2021AltarExtension.assign_cultist_group_id(arg_3_0, arg_3_1)
-	arg_3_0._cultist_group_id = arg_3_1
+Geheimnisnacht2021AltarExtension.assign_cultist_group_id = function (self, arg_3_1)
+	-- function 3
+	self._cultist_group_id = arg_3_1
 end
 
-function Geheimnisnacht2021AltarExtension.get_current_state(arg_4_0)
-	return arg_4_0._state
+Geheimnisnacht2021AltarExtension.get_current_state = function (self)
+	-- function 4
+	return self._state
 end
 
-function Geheimnisnacht2021AltarExtension.can_interact(arg_5_0)
-	return arg_5_0._state == var_0_8
+Geheimnisnacht2021AltarExtension.can_interact = function (self)
+	-- function 5
+	return self._state == num_4
 end
 
-function Geheimnisnacht2021AltarExtension.on_interact(arg_6_0, arg_6_1, arg_6_2)
+Geheimnisnacht2021AltarExtension.on_interact = function (self, arg_6_1, arg_6_2)
+	-- function 6
 	if not arg_6_1 then
-		Unit.animation_event(arg_6_0._unit, var_0_13)
+		Unit.animation_event(self._unit, str_7)
 	end
 
-	if arg_6_1 and arg_6_2 then
-		arg_6_0:change_state(var_0_9)
+	if not arg_6_1 and not arg_6_2 then
+		self:change_state(num_5)
 	end
 end
 
-function Geheimnisnacht2021AltarExtension.on_interact_start(arg_7_0, arg_7_1)
+Geheimnisnacht2021AltarExtension.on_interact_start = function (self, arg_7_1)
+	-- function 7
 	if not arg_7_1 then
-		Unit.animation_event(arg_7_0._unit, var_0_12)
+		Unit.animation_event(self._unit, str_6)
 	end
 end
 
-function Geheimnisnacht2021AltarExtension.update(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
-	local var_8_0 = Managers.state.network:game()
-	local var_8_1 = arg_8_0._go_id or Managers.state.unit_storage:go_id(arg_8_1)
+Geheimnisnacht2021AltarExtension.update = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+	-- function 8
+	local game = Managers.state.network:game()
+	local _go_id = self._go_id
 
-	if var_8_0 and var_8_1 then
-		if arg_8_0._is_server then
-			var_0_14(var_8_0, var_8_1, "state", arg_8_0._state)
+	_go_id = _go_id or Managers.state.unit_storage:go_id(arg_8_1)
+
+	if not game and not _go_id then
+		if not self._is_server then
+			set_game_object_field(game, _go_id, "state", self._state)
 		else
-			local var_8_2 = var_0_15(var_8_0, var_8_1, "state")
+			local var_8_2 = game_object_field(game, _go_id, "state")
 
-			arg_8_0:change_state(var_8_2)
+			self:change_state(var_8_2)
 		end
 
-		arg_8_0._go_id = var_8_1
+		self._go_id = _go_id
 	end
 
-	if not arg_8_0._check_time then
-		arg_8_0._check_time = 0
+	if not self._check_time then
+		self._check_time = 0
 	end
 
-	if not arg_8_0._hero_close and arg_8_5 > arg_8_0._check_time then
-		local var_8_3 = FrameTable.alloc_table()
-		local var_8_4 = Managers.state.entity:system("proximity_system").player_units_broadphase
+	if not (self._hero_close or not (arg_8_5 > self._check_time)) then
+		local alloc_table = FrameTable.alloc_table()
+		local player_units_broadphase = Managers.state.entity:system("proximity_system").player_units_broadphase
 
-		Broadphase.query(var_8_4, POSITION_LOOKUP[arg_8_1], 35, var_8_3)
+		Broadphase.query(player_units_broadphase, POSITION_LOOKUP[arg_8_1], 35, alloc_table)
 
-		for iter_8_0, iter_8_1 in pairs(var_8_3) do
-			local var_8_5 = Managers.player:owner(iter_8_1)
+		for k, v in pairs(alloc_table) do
+			local owner = Managers.player:owner(v)
 
-			if not (var_8_5 and not var_8_5:is_player_controlled()) then
-				arg_8_0:play_relevant_faction_sound()
-				arg_8_0:set_ritual_sound(true)
+			if not (not owner and not owner:is_player_controlled()) then
+				self:play_relevant_faction_sound()
+				self:set_ritual_sound(true)
 
-				arg_8_0._hero_close = true
+				self._hero_close = true
 
-				if not arg_8_0.nurglings_spawned and arg_8_0._is_server then
-					arg_8_0:spawn_nurglings()
+				if self.nurglings_spawned or not self._is_server then
+					self:spawn_nurglings()
 				end
 			end
 		end
 
-		arg_8_0._check_time = arg_8_5 + 1
+		self._check_time = arg_8_5 + 1
 	end
 end
 
-function Geheimnisnacht2021AltarExtension.die(arg_9_0)
-	if arg_9_0._is_server then
-		local var_9_0 = Unit.node(arg_9_0._unit, "j_skull_anim")
-		local var_9_1 = Unit.world_position(arg_9_0._unit, var_9_0)
+Geheimnisnacht2021AltarExtension.die = function (self)
+	-- function 9
+	if not self._is_server then
+		local node = Unit.node(self._unit, "j_skull_anim")
+		local world_position = Unit.world_position(self._unit, node)
 
-		Managers.state.entity:system("pickup_system"):buff_spawn_pickup("geheimnisnacht_2021_side_objective", var_9_1, true)
+		Managers.state.entity:system("pickup_system"):buff_spawn_pickup("geheimnisnacht_2021_side_objective", world_position, true)
 	end
 
 	Managers.state.achievement:trigger_event("altar_destroyed")
-	Unit.flow_event(arg_9_0._unit, "lua_dead")
-	World.create_particles(arg_9_0.world, var_0_1, POSITION_LOOKUP[arg_9_0._unit] + Vector3.up())
+	Unit.flow_event(self._unit, "lua_dead")
+	World.create_particles(self.world, str_2, POSITION_LOOKUP[self._unit] + Vector3.up())
 
-	if arg_9_0._ambient_vfx then
-		World.destroy_particles(arg_9_0.world, arg_9_0._ambient_vfx)
+	if not self._ambient_vfx then
+		World.destroy_particles(self.world, self._ambient_vfx)
 
-		arg_9_0._ambient_vfx = nil
+		self._ambient_vfx = nil
 	end
 
-	arg_9_0:set_ritual_sound(false)
-	arg_9_0:unregister_events()
+	self:set_ritual_sound(false)
+	self:unregister_events()
 end
 
-function Geheimnisnacht2021AltarExtension.register_events(arg_10_0)
-	local var_10_0 = Managers.state.event
+Geheimnisnacht2021AltarExtension.register_events = function (self)
+	-- function 10
+	local event = Managers.state.event
 
-	if var_10_0 then
-		arg_10_0._registered_events = true
+	if not event then
+		self._registered_events = true
 
-		var_10_0:register(arg_10_0, "geheimnisnacht_2021_altar_cultists_killed", "on_cultists_killed")
-		var_10_0:register(arg_10_0, "geheimnisnacht_2021_altar_cultists_aggroed", "on_cultists_aggroed")
+		event:register(self, "geheimnisnacht_2021_altar_cultists_killed", "on_cultists_killed")
+		event:register(self, "geheimnisnacht_2021_altar_cultists_aggroed", "on_cultists_aggroed")
 
-		if arg_10_0._is_server then
-			var_10_0:register(arg_10_0, "nurgling_killed", "nurglings_flee")
+		if not self._is_server then
+			event:register(self, "nurgling_killed", "nurglings_flee")
 		end
 	end
 end
 
-function Geheimnisnacht2021AltarExtension.unregister_events(arg_11_0)
-	local var_11_0 = Managers.state.event
+Geheimnisnacht2021AltarExtension.unregister_events = function (self)
+	-- function 11
+	local event = Managers.state.event
 
-	if var_11_0 and arg_11_0._registered_events then
-		arg_11_0._registered_events = nil
+	if not event and not self._registered_events then
+		self._registered_events = nil
 
-		var_11_0:unregister("geheimnisnacht_2021_altar_cultists_killed", arg_11_0)
-		var_11_0:unregister("geheimnisnacht_2021_altar_cultists_aggroed", arg_11_0)
+		event:unregister("geheimnisnacht_2021_altar_cultists_killed", self)
+		event:unregister("geheimnisnacht_2021_altar_cultists_aggroed", self)
 
-		if arg_11_0._is_server then
-			var_11_0:unregister("nurgling_killed", arg_11_0)
+		if not self._is_server then
+			event:unregister("nurgling_killed", self)
 		end
 	end
 end
 
-function Geheimnisnacht2021AltarExtension.on_cultists_killed(arg_12_0, arg_12_1)
-	if arg_12_1 == arg_12_0._cultist_group_id then
-		arg_12_0:change_state(var_0_8)
-		arg_12_0:stop_relevant_faction_sound()
+Geheimnisnacht2021AltarExtension.on_cultists_killed = function (self, arg_12_1)
+	-- function 12
+	if arg_12_1 == self._cultist_group_id then
+		self:change_state(num_4)
+		self:stop_relevant_faction_sound()
 	end
 end
 
-function Geheimnisnacht2021AltarExtension.on_cultists_aggroed(arg_13_0, arg_13_1)
-	if arg_13_1 == arg_13_0._cultist_group_id then
-		arg_13_0:stop_relevant_faction_sound()
-		arg_13_0:change_state(var_0_7)
-		arg_13_0:nurglings_flee()
+Geheimnisnacht2021AltarExtension.on_cultists_aggroed = function (self, arg_13_1)
+	-- function 13
+	if arg_13_1 == self._cultist_group_id then
+		self:stop_relevant_faction_sound()
+		self:change_state(num_3)
+		self:nurglings_flee()
 	end
 end
 
-function Geheimnisnacht2021AltarExtension.stop_relevant_faction_sound(arg_14_0)
-	local var_14_0 = arg_14_0._faction
+Geheimnisnacht2021AltarExtension.stop_relevant_faction_sound = function (self)
+	-- function 14
+	local _faction = self._faction
 
-	if var_14_0 then
-		local var_14_1 = arg_14_0._audio_system
-		local var_14_2 = arg_14_0._unit
+	if not _faction then
+		local _audio_system = self._audio_system
+		local _unit = self._unit
 
-		if not ALIVE[var_14_2] then
+		if not ALIVE[_unit] then
 			return
 		end
 
-		if var_14_0 == "chaos" then
-			var_14_1:play_audio_unit_event("enemy_marauder_halloween_ritual_loop_stop", var_14_2)
+		if _faction == "chaos" then
+			_audio_system:play_audio_unit_event("enemy_marauder_halloween_ritual_loop_stop", _unit)
 		else
-			var_14_1:play_audio_unit_event("enemy_skaven_halloween_ritual_loop_stop", var_14_2)
+			_audio_system:play_audio_unit_event("enemy_skaven_halloween_ritual_loop_stop", _unit)
 		end
 	end
 end
 
-function Geheimnisnacht2021AltarExtension.play_relevant_faction_sound(arg_15_0)
-	local var_15_0 = arg_15_0._faction
+Geheimnisnacht2021AltarExtension.play_relevant_faction_sound = function (self)
+	-- function 15
+	local _faction = self._faction
 
-	if var_15_0 then
-		local var_15_1 = arg_15_0._unit
+	if not _faction then
+		local _unit = self._unit
 
-		if not ALIVE[var_15_1] then
+		if not ALIVE[_unit] then
 			return
 		end
 
-		local var_15_2 = arg_15_0._audio_system
+		local _audio_system = self._audio_system
 
-		if var_15_0 == "chaos" then
-			var_15_2:play_audio_unit_event("enemy_marauder_halloween_ritual_loop", var_15_1)
+		if _faction == "chaos" then
+			_audio_system:play_audio_unit_event("enemy_marauder_halloween_ritual_loop", _unit)
 		else
-			var_15_2:play_audio_unit_event("enemy_skaven_halloween_ritual_loop", var_15_1)
+			_audio_system:play_audio_unit_event("enemy_skaven_halloween_ritual_loop", _unit)
 		end
 	end
 end
 
-function Geheimnisnacht2021AltarExtension.set_ritual_sound(arg_16_0, arg_16_1)
-	local var_16_0 = arg_16_0._audio_system
-	local var_16_1 = arg_16_0._unit
+Geheimnisnacht2021AltarExtension.set_ritual_sound = function (self, arg_16_1)
+	-- function 16
+	local _audio_system = self._audio_system
+	local _unit = self._unit
 
-	if arg_16_1 then
-		var_16_0:play_audio_unit_event("halloween_event_ritual_loop", var_16_1)
+	if not arg_16_1 then
+		_audio_system:play_audio_unit_event("halloween_event_ritual_loop", _unit)
 	else
-		var_16_0:play_audio_unit_event("halloween_event_ritual_loop_stop", var_16_1)
+		_audio_system:play_audio_unit_event("halloween_event_ritual_loop_stop", _unit)
 	end
 end
 
-function Geheimnisnacht2021AltarExtension.setup_faction(arg_17_0, arg_17_1)
-	if arg_17_1 then
-		arg_17_0._faction = arg_17_1
+Geheimnisnacht2021AltarExtension.setup_faction = function (self, arg_17_1)
+	-- function 17
+	if not arg_17_1 then
+		self._faction = arg_17_1
 	end
 end
 
-function Geheimnisnacht2021AltarExtension.change_state(arg_18_0, arg_18_1)
-	local var_18_0 = arg_18_0._state
+Geheimnisnacht2021AltarExtension.change_state = function (self, arg_18_1)
+	-- function 18
+	local _state = self._state
 
-	if var_18_0 < arg_18_1 then
-		for iter_18_0 = var_18_0 + 1, arg_18_1 do
-			arg_18_0:_increment_state(iter_18_0)
+	if _state < arg_18_1 then
+		for i = _state + 1, arg_18_1 do
+			self:_increment_state(i)
 		end
 
-		arg_18_0._state = arg_18_1
+		self._state = arg_18_1
 	end
 end
 
-function Geheimnisnacht2021AltarExtension._init_state(arg_19_0)
-	local var_19_0 = arg_19_0.world
-	local var_19_1 = arg_19_0._unit
+Geheimnisnacht2021AltarExtension._init_state = function (self)
+	-- function 19
+	local world = self.world
+	local _unit = self._unit
 
-	arg_19_0._health_extension = ScriptUnit.extension(var_19_1, "health_system")
-	arg_19_0._health_extension.is_invincible = true
+	self._health_extension = ScriptUnit.extension(_unit, "health_system")
+	self._health_extension.is_invincible = true
 
-	if arg_19_0._state == var_0_6 then
-		arg_19_0:register_events()
+	if self._state == num_2 then
+		self:register_events()
 	end
 
-	if arg_19_0._state ~= var_0_9 then
-		local var_19_2 = Unit.world_position(var_19_1, 0)
-		local var_19_3 = Unit.world_rotation(var_19_1, 0)
+	if self._state ~= num_5 then
+		local world_position = Unit.world_position(_unit, 0)
+		local world_rotation = Unit.world_rotation(_unit, 0)
 
-		arg_19_0._ambient_vfx = World.create_particles(var_19_0, var_0_0, var_19_2, var_19_3)
+		self._ambient_vfx = World.create_particles(world, str, world_position, world_rotation)
 
-		World.link_particles(var_19_0, arg_19_0._ambient_vfx, var_19_1, 0, Matrix4x4.identity(), "stop")
+		World.link_particles(world, self._ambient_vfx, _unit, 0, Matrix4x4.identity(), "stop")
 
-		if var_0_2 then
-			arg_19_0._decal_unit = arg_19_0._unit_spawner:spawn_local_unit(var_0_2)
+		if not str_3 then
+			self._decal_unit = self._unit_spawner:spawn_local_unit(str_3)
 
-			Unit.set_local_position(arg_19_0._decal_unit, 0, var_19_2 + Vector3(var_0_5[1], var_0_5[2], 0))
-			Unit.set_local_rotation(arg_19_0._decal_unit, 0, Quaternion.multiply(var_19_3, Quaternion(Vector3.up(), var_0_4)))
-			Unit.set_local_scale(arg_19_0._decal_unit, 0, Vector3(var_0_3, var_0_3, 2))
+			Unit.set_local_position(self._decal_unit, 0, world_position + Vector3(tbl[1], tbl[2], 0))
+			Unit.set_local_rotation(self._decal_unit, 0, Quaternion.multiply(world_rotation, Quaternion(Vector3.up(), degrees_to_radians)))
+			Unit.set_local_scale(self._decal_unit, 0, Vector3(num, num, 2))
 		end
 	end
 end
 
-function Geheimnisnacht2021AltarExtension._increment_state(arg_20_0, arg_20_1)
-	if arg_20_1 == var_0_7 then
-		arg_20_0:_mark_aggroed()
-	elseif arg_20_1 == var_0_8 then
-		arg_20_0:_mark_interactable()
-	elseif arg_20_1 == var_0_9 then
-		arg_20_0:_mark_destructible()
+Geheimnisnacht2021AltarExtension._increment_state = function (self, arg_20_1)
+	-- function 20
+	if arg_20_1 == num_3 then
+		self:_mark_aggroed()
+	elseif arg_20_1 == num_4 then
+		self:_mark_interactable()
+	elseif arg_20_1 == num_5 then
+		self:_mark_destructible()
 	end
 end
 
-function Geheimnisnacht2021AltarExtension._mark_aggroed(arg_21_0)
-	Unit.animation_event(arg_21_0._unit, var_0_10)
+Geheimnisnacht2021AltarExtension._mark_aggroed = function (self)
+	-- function 21
+	Unit.animation_event(self._unit, str_4)
 end
 
-function Geheimnisnacht2021AltarExtension._mark_interactable(arg_22_0)
-	arg_22_0:unregister_events()
-	Unit.animation_event(arg_22_0._unit, var_0_11)
+Geheimnisnacht2021AltarExtension._mark_interactable = function (self)
+	-- function 22
+	self:unregister_events()
+	Unit.animation_event(self._unit, str_5)
 end
 
-function Geheimnisnacht2021AltarExtension._mark_destructible(arg_23_0)
-	if arg_23_0._decal_unit then
-		Unit.flow_event(arg_23_0._decal_unit, "despawn")
+Geheimnisnacht2021AltarExtension._mark_destructible = function (self)
+	-- function 23
+	if not self._decal_unit then
+		Unit.flow_event(self._decal_unit, "despawn")
 
-		arg_23_0._decal_unit = nil
+		self._decal_unit = nil
 	end
 
-	arg_23_0:die()
+	self:die()
 end
 
-function Geheimnisnacht2021AltarExtension.nurglings_flee(arg_24_0)
-	local var_24_0 = Managers.state.entity:system("ai_group_system"):get_ai_group(arg_24_0.nurgling_group_id)
+Geheimnisnacht2021AltarExtension.nurglings_flee = function (self)
+	-- function 24
+	local get_ai_group = Managers.state.entity:system("ai_group_system"):get_ai_group(self.nurgling_group_id)
 
-	if var_24_0 then
-		AIGroupTemplates.critter_nurglings.wake_up_group(var_24_0)
+	if not get_ai_group then
+		AIGroupTemplates.critter_nurglings.wake_up_group(get_ai_group)
 	end
 end
 
-function Geheimnisnacht2021AltarExtension.spawn_nurglings(arg_25_0)
-	if arg_25_0.nurglings_spawned then
+Geheimnisnacht2021AltarExtension.spawn_nurglings = function (self)
+	-- function 25
+	if not self.nurglings_spawned then
 		return
 	end
 
-	local var_25_0 = arg_25_0._unit
-	local var_25_1 = Unit.local_position(var_25_0, 0)
-	local var_25_2 = Vector3Box(var_25_1)
+	local _unit = self._unit
+	local local_position = Unit.local_position(_unit, 0)
+	local var_25_2 = Vector3Box(local_position)
 
-	arg_25_0.nurgling_group_id = Managers.state.entity:system("ai_group_system"):generate_group_id()
+	self.nurgling_group_id = Managers.state.entity:system("ai_group_system"):generate_group_id()
 
-	local var_25_3 = {
-		spawned_func = function(arg_26_0, arg_26_1, arg_26_2)
+	local tbl = {
+		spawned_func = function (arg_26_0, arg_26_1, arg_26_2)
+			-- function 26
 			local var_26_0 = BLACKBOARDS[arg_26_0]
 
 			ScriptUnit.extension(arg_26_0, "ai_system"):set_perception("perception_regular", "pick_no_targets")
 
-			if var_26_0 then
+			if not var_26_0 then
 				var_26_0.altar_pos = var_25_2
 				var_26_0.is_fleeing = false
 				var_26_0.nurgling_spawned_by_altar = true
 			end
 		end
 	}
-	local var_25_4 = 15
-	local var_25_5 = 20
-	local var_25_6 = math.random(var_25_4, var_25_5)
-	local var_25_7 = 1
-	local var_25_8 = 1
-	local var_25_9 = 15
-	local var_25_10 = {
+	local num = 15
+	local num_2 = 20
+	local random = math.random(num, num_2)
+	local num_3 = 1
+	local num_4 = 1
+	local num_5 = 15
+	local tbl_2 = {
 		template = "critter_nurglings",
-		id = arg_25_0.nurgling_group_id,
-		size = var_25_6
+		id = self.nurgling_group_id,
+		size = random
 	}
-	local var_25_11 = Quaternion.identity()
-	local var_25_12 = "critter_nurgling"
-	local var_25_13 = "event"
-	local var_25_14 = "event"
+	local identity = Quaternion.identity()
+	local str = "critter_nurgling"
+	local str_2 = "event"
+	local str_3 = "event"
 	local var_25_15
-	local var_25_16 = Breeds[var_25_12]
-	local var_25_17 = Managers.state.conflict
-	local var_25_18 = Managers.state.entity:system("ai_system"):nav_world()
+	local var_25_16 = Breeds[str]
+	local conflict = Managers.state.conflict
+	local nav_world = Managers.state.entity:system("ai_system"):nav_world()
 
-	for iter_25_0 = 1, var_25_6 do
-		local var_25_19 = ConflictUtils.get_spawn_pos_on_circle(var_25_18, var_25_1, var_25_7, var_25_8, var_25_9)
+	for i = 1, random do
+		local get_spawn_pos_on_circle = ConflictUtils.get_spawn_pos_on_circle(nav_world, local_position, num_3, num_4, num_5)
 
-		if var_25_19 then
-			var_25_17:spawn_queued_unit(var_25_16, Vector3Box(var_25_19), QuaternionBox(var_25_11), var_25_13, var_25_15, var_25_14, var_25_3, var_25_10)
+		if not get_spawn_pos_on_circle then
+			conflict:spawn_queued_unit(var_25_16, Vector3Box(get_spawn_pos_on_circle), QuaternionBox(identity), str_2, var_25_15, str_3, tbl, tbl_2)
 		end
 	end
 
-	arg_25_0.nurglings_spawned = true
+	self.nurglings_spawned = true
 end

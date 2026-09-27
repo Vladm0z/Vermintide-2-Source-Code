@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/mutator_statue_01.lua
 
-local var_0_0 = 2
-local var_0_1 = {
+local num = 2
+local tbl = {
 	actions = {
 		action_one = {
 			default = {
@@ -17,8 +17,9 @@ local var_0_1 = {
 				uninterruptible = true,
 				anim_event = "attack_throw",
 				total_time = 0.7249999999999999,
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
-					return arg_1_1 ~= "new_interupting_action" and arg_1_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
+					-- function 1
+					return arg_1_1 == "new_interupting_action" or arg_1_1 ~= "action_complete"
 				end,
 				buff_data = {
 					{
@@ -62,8 +63,9 @@ local var_0_1 = {
 				anim_event = "attack_push",
 				damage_profile_inner = "medium_push",
 				total_time = 0.8,
-				anim_end_event_condition_func = function(arg_2_0, arg_2_1)
-					return arg_2_1 ~= "new_interupting_action" and arg_2_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_2_0, arg_2_1)
+					-- function 2
+					return arg_2_1 == "new_interupting_action" or arg_2_1 ~= "action_complete"
 				end,
 				allowed_chain_actions = {
 					{
@@ -74,8 +76,9 @@ local var_0_1 = {
 						input = "action_one"
 					}
 				},
-				push_radius = var_0_0,
-				condition_func = function(arg_3_0, arg_3_1)
+				push_radius = num,
+				condition_func = function (arg_3_0, arg_3_1)
+					-- function 3
 					return not ScriptUnit.extension(arg_3_0, "status_system"):fatigued()
 				end
 			}
@@ -94,8 +97,9 @@ local var_0_1 = {
 				uninterruptible = true,
 				anim_event = "attack_throw",
 				total_time = 0.7249999999999999,
-				anim_end_event_condition_func = function(arg_4_0, arg_4_1)
-					return arg_4_1 ~= "new_interupting_action" and arg_4_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_4_0, arg_4_1)
+					-- function 4
+					return arg_4_1 == "new_interupting_action" or arg_4_1 ~= "action_complete"
 				end,
 				buff_data = {
 					{
@@ -136,16 +140,16 @@ local var_0_1 = {
 	pickup_data = {}
 }
 
-var_0_1.left_hand_unit = nil
-var_0_1.left_hand_attachment_node_linking = AttachmentNodeLinking.barrel
-var_0_1.wield_anim_3p = "to_statue"
-var_0_1.wield_anim = "to_statue"
-var_0_1.state_machine = "units/beings/player/first_person_base/state_machines/common"
-var_0_1.load_state_machine = false
-var_0_1.block_wielding = true
-var_0_1.max_fatigue_points = 1
-var_0_1.dodge_count = 1
-var_0_1.buffs = {
+tbl.left_hand_unit = nil
+tbl.left_hand_attachment_node_linking = AttachmentNodeLinking.barrel
+tbl.wield_anim_3p = "to_statue"
+tbl.wield_anim = "to_statue"
+tbl.state_machine = "units/beings/player/first_person_base/state_machines/common"
+tbl.load_state_machine = false
+tbl.block_wielding = true
+tbl.max_fatigue_points = 1
+tbl.dodge_count = 1
+tbl.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 0.45
 	},
@@ -154,17 +158,17 @@ var_0_1.buffs = {
 	}
 }
 
-local var_0_2 = table.clone(var_0_1)
+local clone = table.clone(tbl)
 
-var_0_2.left_hand_unit = "units/weapons/player/pup_mutator_statue_01/wpn_mutator_statue_01"
-var_0_2.actions.action_one.default.speed = 8
-var_0_2.actions.action_one.default.throw_time = 0.35000000000000003
-var_0_2.actions.action_one.default.throw_offset = {
+clone.left_hand_unit = "units/weapons/player/pup_mutator_statue_01/wpn_mutator_statue_01"
+clone.actions.action_one.default.speed = 8
+clone.actions.action_one.default.throw_time = 0.35000000000000003
+clone.actions.action_one.default.throw_offset = {
 	0.3,
 	0.5,
 	0
 }
-var_0_2.actions.action_one.default.buff_data = {
+clone.actions.action_one.default.buff_data = {
 	{
 		start_time = 0,
 		external_multiplier = 1,
@@ -172,13 +176,13 @@ var_0_2.actions.action_one.default.buff_data = {
 		buff_name = "planted_fast_decrease_movement"
 	}
 }
-var_0_2.actions.action_one.default.projectile_info = {
+clone.actions.action_one.default.projectile_info = {
 	projectile_unit_template_name = "pickup_projectile_unit",
 	pickup_name = "mutator_statue_01",
 	drop_on_player_destroyed = true,
 	projectile_unit_name = "units/weapons/player/pup_mutator_statue_01/pup_mutator_statue_01"
 }
-var_0_2.actions.action_dropped.default.projectile_info = {
+clone.actions.action_dropped.default.projectile_info = {
 	projectile_unit_template_name = "pickup_projectile_unit",
 	pickup_name = "mutator_statue_01",
 	drop_on_player_destroyed = true,
@@ -186,5 +190,5 @@ var_0_2.actions.action_dropped.default.projectile_info = {
 }
 
 return {
-	mutator_statue_01 = var_0_2
+	mutator_statue_01 = clone
 }

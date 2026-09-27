@@ -1,203 +1,228 @@
 -- chunkname: @scripts/ui/ui_unit_previewer.lua
 
-local var_0_0 = 0
+local num = 0
 
 UIUnitPreviewer = class(UIUnitPreviewer)
 
-function UIUnitPreviewer.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6)
-	arg_1_0._background_world = arg_1_4
-	arg_1_0._background_viewport = arg_1_5
-	arg_1_0._unique_id = arg_1_6
-	arg_1_0._loaded_packages = {}
-	arg_1_0._packages_to_load = {}
-	arg_1_0._camera_xy_angle_target = var_0_0
-	arg_1_0._camera_xy_angle_current = var_0_0
-	arg_1_0._spawn_position = arg_1_3
-	arg_1_0._unit_to_spawn = arg_1_1
-	arg_1_0._package_name = arg_1_2
+UIUnitPreviewer.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6)
+	-- function 1
+	self._background_world = arg_1_4
+	self._background_viewport = arg_1_5
+	self._unique_id = arg_1_6
+	self._loaded_packages = {}
+	self._packages_to_load = {}
+	self._camera_xy_angle_target = num
+	self._camera_xy_angle_current = num
+	self._spawn_position = arg_1_3
+	self._unit_to_spawn = arg_1_1
+	self._package_name = arg_1_2
 
-	arg_1_0:_load_package(arg_1_2)
+	self:_load_package(arg_1_2)
 end
 
-function UIUnitPreviewer.register_spawn_callback(arg_2_0, arg_2_1)
-	arg_2_0._spawn_callback = arg_2_1
+UIUnitPreviewer.register_spawn_callback = function (self, arg_2_1)
+	-- function 2
+	self._spawn_callback = arg_2_1
 end
 
-function UIUnitPreviewer.activate_auto_spin(arg_3_0)
-	arg_3_0._auto_spin_random_seed = math.random(5, 30000)
+UIUnitPreviewer.activate_auto_spin = function (self)
+	-- function 3
+	self._auto_spin_random_seed = math.random(5, 30000)
 end
 
-function UIUnitPreviewer.destroy(arg_4_0)
-	arg_4_0:_destroy_unit()
-	arg_4_0:_unload_package()
-	table.clear(arg_4_0._loaded_packages)
-	table.clear(arg_4_0._packages_to_load)
+UIUnitPreviewer.destroy = function (self)
+	-- function 4
+	self:_destroy_unit()
+	self:_unload_package()
+	table.clear(self._loaded_packages)
+	table.clear(self._packages_to_load)
 
-	arg_4_0._background_viewport = nil
-	arg_4_0._background_world = nil
+	self._background_viewport = nil
+	self._background_world = nil
 end
 
-function UIUnitPreviewer._destroy_unit(arg_5_0)
-	local var_5_0 = arg_5_0._background_world
-	local var_5_1 = arg_5_0._spawned_unit
+UIUnitPreviewer._destroy_unit = function (self)
+	-- function 5
+	local _background_world = self._background_world
+	local _spawned_unit = self._spawned_unit
 
-	if var_5_1 then
-		World.destroy_unit(var_5_0, var_5_1)
+	if not _spawned_unit then
+		World.destroy_unit(_background_world, _spawned_unit)
 
-		arg_5_0._spawned_unit = nil
+		self._spawned_unit = nil
 	end
 end
 
-function UIUnitPreviewer.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
-	if arg_6_0._unit_spawned then
-		if arg_6_3 then
-			local var_6_0 = Managers.input
+UIUnitPreviewer.update = function (self, arg_6_1, arg_6_2, arg_6_3)
+	-- function 6
+	if not self._unit_spawned then
+		if not arg_6_3 then
+			local input = Managers.input
 
-			if var_6_0:is_device_active("mouse") then
-				arg_6_0:_handle_mouse_input(arg_6_3, arg_6_1)
-			elseif var_6_0:is_device_active("gamepad") then
-				arg_6_0:_handle_controller_input(arg_6_3, arg_6_1)
+			if not input:is_device_active("mouse") then
+				self:_handle_mouse_input(arg_6_3, arg_6_1)
+			elseif not input:is_device_active("gamepad") then
+				self:_handle_controller_input(arg_6_3, arg_6_1)
 			end
 		end
 
-		if arg_6_0._camera_xy_angle_target > math.pi * 2 then
-			arg_6_0._camera_xy_angle_current = arg_6_0._camera_xy_angle_current - math.pi * 2
-			arg_6_0._camera_xy_angle_target = arg_6_0._camera_xy_angle_target - math.pi * 2
+		if self._camera_xy_angle_target > math.pi * 2 then
+			self._camera_xy_angle_current = self._camera_xy_angle_current - math.pi * 2
+			self._camera_xy_angle_target = self._camera_xy_angle_target - math.pi * 2
 		end
 
-		local var_6_1 = math.lerp(arg_6_0._camera_xy_angle_current, arg_6_0._camera_xy_angle_target, 0.1)
+		local lerp = math.lerp(self._camera_xy_angle_current, self._camera_xy_angle_target, 0.1)
 
-		arg_6_0._camera_xy_angle_current = var_6_1
+		self._camera_xy_angle_current = lerp
 
-		local var_6_2, var_6_3 = arg_6_0:_auto_spin_values(arg_6_1, arg_6_2)
-		local var_6_4 = Quaternion.axis_angle(Vector3(0, var_6_2, 1), -(var_6_1 + var_6_3))
-		local var_6_5 = arg_6_0._spawned_unit
+		local _auto_spin_values, var_6_3 = self:_auto_spin_values(arg_6_1, arg_6_2)
+		local axis_angle = Quaternion.axis_angle(Vector3(0, _auto_spin_values, 1), -(lerp + var_6_3))
+		local _spawned_unit = self._spawned_unit
 
-		Unit.set_local_rotation(var_6_5, 0, var_6_4)
+		Unit.set_local_rotation(_spawned_unit, 0, axis_angle)
 
-		if arg_6_0._zoom_dirty then
-			local var_6_6 = arg_6_0._zoom_fraction or 0
-			local var_6_7 = arg_6_0._unit_start_position_boxed:unbox()
+		if not self._zoom_dirty then
+			local _zoom_fraction = self._zoom_fraction
 
-			var_6_7[1] = var_6_7[1] * (1 - var_6_6)
-			var_6_7[2] = var_6_7[2] * (1 - var_6_6)
+			_zoom_fraction = _zoom_fraction or 0
 
-			Unit.set_local_position(var_6_5, 0, var_6_7)
+			local unbox = self._unit_start_position_boxed:unbox()
 
-			arg_6_0._zoom_dirty = nil
+			unbox[1] = unbox[1] * (1 - _zoom_fraction)
+			unbox[2] = unbox[2] * (1 - _zoom_fraction)
+
+			Unit.set_local_position(_spawned_unit, 0, unbox)
+
+			self._zoom_dirty = nil
 		end
 	end
 end
 
-function UIUnitPreviewer.set_zoom_fraction(arg_7_0, arg_7_1)
-	arg_7_0._zoom_fraction = math.clamp(arg_7_1, 0, 1)
-	arg_7_0._zoom_dirty = true
+UIUnitPreviewer.set_zoom_fraction = function (self, arg_7_1)
+	-- function 7
+	self._zoom_fraction = math.clamp(arg_7_1, 0, 1)
+	self._zoom_dirty = true
 end
 
-function UIUnitPreviewer.set_zoom_fraction_unclamped(arg_8_0, arg_8_1)
-	arg_8_0._zoom_fraction = arg_8_1
-	arg_8_0._zoom_dirty = true
+UIUnitPreviewer.set_zoom_fraction_unclamped = function (self, arg_8_1)
+	-- function 8
+	self._zoom_fraction = arg_8_1
+	self._zoom_dirty = true
 end
 
-function UIUnitPreviewer.zoom_fraction(arg_9_0)
-	return arg_9_0._zoom_fraction or 0
+UIUnitPreviewer.zoom_fraction = function (self)
+	-- function 9
+	local _zoom_fraction = self._zoom_fraction
+
+	_zoom_fraction = _zoom_fraction or 0
+
+	return _zoom_fraction
 end
 
-function UIUnitPreviewer._auto_spin_values(arg_10_0, arg_10_1, arg_10_2)
-	local var_10_0 = arg_10_0._auto_spin_random_seed
+UIUnitPreviewer._auto_spin_values = function (self, arg_10_1, arg_10_2)
+	-- function 10
+	local _auto_spin_random_seed = self._auto_spin_random_seed
 
-	if not var_10_0 then
+	if not _auto_spin_random_seed then
 		return 0, 0
 	end
 
-	local var_10_1 = 0.2
-	local var_10_2 = 0.3
-	local var_10_3 = math.sin((var_10_0 + arg_10_2) * var_10_1) * var_10_2
-	local var_10_4 = -(var_10_3 * 0.5)
-	local var_10_5 = -(var_10_3 * math.pi / 2)
+	local num = 0.2
+	local num_2 = 0.3
+	local num_3 = math.sin((_auto_spin_random_seed + arg_10_2) * num) * num_2
+	local num_4 = -(num_3 * 0.5)
+	local num_5 = -(num_3 * math.pi / 2)
 
-	return var_10_4, var_10_5
+	return num_4, num_5
 end
 
-local var_0_1 = {}
+local tbl = {}
 
-function UIUnitPreviewer._handle_mouse_input(arg_11_0, arg_11_1, arg_11_2)
-	local var_11_0 = arg_11_1:get("cursor")
+UIUnitPreviewer._handle_mouse_input = function (self, arg_11_1, arg_11_2)
+	-- function 11
+	local get = arg_11_1:get("cursor")
 
-	if not var_11_0 then
+	if not get then
 		return
 	end
 
-	if arg_11_1:get("left_press") then
-		arg_11_0._is_moving_camera = true
-		arg_11_0._last_mouse_position = nil
-	elseif arg_11_1:get("right_press") then
-		arg_11_0._camera_xy_angle_target = var_0_0
+	if not arg_11_1:get("left_press") then
+		self._is_moving_camera = true
+		self._last_mouse_position = nil
+	elseif not arg_11_1:get("right_press") then
+		self._camera_xy_angle_target = num
 	end
 
-	local var_11_1 = arg_11_0._is_moving_camera
-	local var_11_2 = arg_11_1:get("left_hold")
+	local _is_moving_camera = self._is_moving_camera
+	local get_2 = arg_11_1:get("left_hold")
 
-	if var_11_1 and var_11_2 then
-		if arg_11_0._last_mouse_position then
-			arg_11_0._camera_xy_angle_target = arg_11_0._camera_xy_angle_target - (var_11_0.x - arg_11_0._last_mouse_position[1]) * 0.01
+	if not _is_moving_camera and not get_2 then
+		if not self._last_mouse_position then
+			self._camera_xy_angle_target = self._camera_xy_angle_target - (get.x - self._last_mouse_position[1]) * 0.01
 		end
 
-		var_0_1[1] = var_11_0.x
-		var_0_1[2] = var_11_0.y
-		arg_11_0._last_mouse_position = var_0_1
-	elseif var_11_1 then
-		arg_11_0._is_moving_camera = false
+		tbl[1] = get.x
+		tbl[2] = get.y
+		self._last_mouse_position = tbl
+	elseif not _is_moving_camera then
+		self._is_moving_camera = false
 	end
 end
 
-function UIUnitPreviewer._handle_controller_input(arg_12_0, arg_12_1, arg_12_2)
-	local var_12_0 = arg_12_1:get("gamepad_right_axis")
+UIUnitPreviewer._handle_controller_input = function (self, arg_12_1, arg_12_2)
+	-- function 12
+	local get = arg_12_1:get("gamepad_right_axis")
 
-	if var_12_0 and Vector3.length(var_12_0) > 0.01 then
-		arg_12_0._camera_xy_angle_target = arg_12_0._camera_xy_angle_target + -var_12_0.x * arg_12_2 * 5
+	if not (not get and not (Vector3.length(get) > 0.01)) then
+		self._camera_xy_angle_target = self._camera_xy_angle_target + -get.x * arg_12_2 * 5
 	end
 end
 
-function UIUnitPreviewer.post_update(arg_13_0, arg_13_1, arg_13_2)
-	if arg_13_0._spawn_callback and arg_13_0._unit_spawned then
-		arg_13_0._spawn_callback()
+UIUnitPreviewer.post_update = function (self, arg_13_1, arg_13_2)
+	-- function 13
+	if not self._spawn_callback and not self._unit_spawned then
+		self._spawn_callback()
 
-		arg_13_0._spawn_callback = nil
+		self._spawn_callback = nil
 	end
 end
 
-function UIUnitPreviewer._trigger_unit_flow_event(arg_14_0, arg_14_1, arg_14_2)
-	if arg_14_1 and Unit.alive(arg_14_1) then
+UIUnitPreviewer._trigger_unit_flow_event = function (arg_14_0, arg_14_1, arg_14_2)
+	-- function 14
+	if not arg_14_1 and not Unit.alive(arg_14_1) then
 		Unit.flow_event(arg_14_1, arg_14_2)
 	end
 end
 
-function UIUnitPreviewer._get_world(arg_15_0)
-	return arg_15_0._background_world, arg_15_0._background_viewport
+UIUnitPreviewer._get_world = function (self)
+	-- function 15
+	return self._background_world, self._background_viewport
 end
 
-function UIUnitPreviewer._get_camera_position(arg_16_0)
-	local var_16_0 = arg_16_0._background_viewport
-	local var_16_1 = ScriptViewport.camera(var_16_0)
+UIUnitPreviewer._get_camera_position = function (self)
+	-- function 16
+	local _background_viewport = self._background_viewport
+	local camera = ScriptViewport.camera(_background_viewport)
 
-	return ScriptCamera.position(var_16_1)
+	return ScriptCamera.position(camera)
 end
 
-function UIUnitPreviewer._get_camera_rotation(arg_17_0)
-	local var_17_0 = arg_17_0._background_viewport
-	local var_17_1 = ScriptViewport.camera(var_17_0)
+UIUnitPreviewer._get_camera_rotation = function (self)
+	-- function 17
+	local _background_viewport = self._background_viewport
+	local camera = ScriptViewport.camera(_background_viewport)
 
-	return ScriptCamera.rotation(var_17_1)
+	return ScriptCamera.rotation(camera)
 end
 
-function UIUnitPreviewer._packages_loaded(arg_18_0)
-	local var_18_0 = arg_18_0.units_to_spawn
-	local var_18_1 = arg_18_0._loaded_packages
+UIUnitPreviewer._packages_loaded = function (self)
+	-- function 18
+	local units_to_spawn = self.units_to_spawn
+	local _loaded_packages = self._loaded_packages
 
-	for iter_18_0, iter_18_1 in ipairs(var_18_0) do
-		for iter_18_2, iter_18_3 in ipairs(iter_18_1) do
-			if not var_18_1[iter_18_3.unit_name] then
+	for i, v in ipairs(units_to_spawn) do
+		for i_2, v_2 in ipairs(v) do
+			if not _loaded_packages[v_2.unit_name] then
 				return false
 			end
 		end
@@ -206,55 +231,59 @@ function UIUnitPreviewer._packages_loaded(arg_18_0)
 	return true
 end
 
-function UIUnitPreviewer._load_package(arg_19_0, arg_19_1)
-	local var_19_0 = Managers.package
-	local var_19_1 = callback(arg_19_0, "_on_load_complete", arg_19_1)
-	local var_19_2 = "UIUnitPreviewer"
+UIUnitPreviewer._load_package = function (self, arg_19_1)
+	-- function 19
+	local package = Managers.package
+	local var_19_1 = callback(self, "_on_load_complete", arg_19_1)
+	local str = "UIUnitPreviewer"
 
-	if arg_19_0._unique_id then
-		var_19_2 = var_19_2 .. tostring(arg_19_0._unique_id)
+	if not self._unique_id then
+		str = str .. tostring(self._unique_id)
 	end
 
-	var_19_0:load(arg_19_1, var_19_2, var_19_1, true)
+	package:load(arg_19_1, str, var_19_1, true)
 end
 
-function UIUnitPreviewer._on_load_complete(arg_20_0, arg_20_1)
-	arg_20_0._package_loaded = true
+UIUnitPreviewer._on_load_complete = function (self, arg_20_1)
+	-- function 20
+	self._package_loaded = true
 
-	if arg_20_0._unit_to_spawn and arg_20_0._background_viewport then
-		arg_20_0._spawned_unit = arg_20_0:_spawn_unit(arg_20_0._unit_to_spawn, true)
-		arg_20_0._unit_to_spawn = nil
-		arg_20_0._unit_spawned = true
+	if not self._unit_to_spawn and not self._background_viewport then
+		self._spawned_unit = self:_spawn_unit(self._unit_to_spawn, true)
+		self._unit_to_spawn = nil
+		self._unit_spawned = true
 	end
 end
 
-function UIUnitPreviewer._unload_package(arg_21_0)
-	local var_21_0 = arg_21_0._package_name
-	local var_21_1 = "UIUnitPreviewer"
+UIUnitPreviewer._unload_package = function (self)
+	-- function 21
+	local _package_name = self._package_name
+	local str = "UIUnitPreviewer"
 
-	if arg_21_0._unique_id then
-		var_21_1 = var_21_1 .. tostring(arg_21_0._unique_id)
+	if not self._unique_id then
+		str = str .. tostring(self._unique_id)
 	end
 
-	Managers.package:unload(var_21_0, var_21_1)
+	Managers.package:unload(_package_name, str)
 end
 
-function UIUnitPreviewer._spawn_unit(arg_22_0, arg_22_1, arg_22_2)
-	local var_22_0 = arg_22_0:_get_camera_rotation()
-	local var_22_1 = Quaternion.forward(var_22_0)
-	local var_22_2 = Quaternion.look(var_22_1, Vector3.up())
-	local var_22_3 = Quaternion.axis_angle(Vector3.up(), 0)
-	local var_22_4 = Quaternion.multiply(var_22_2, var_22_3)
-	local var_22_5 = arg_22_0._spawn_position
-	local var_22_6 = arg_22_0:_get_camera_position() + var_22_1 + Vector3(var_22_5[1], var_22_5[2], var_22_5[3])
-	local var_22_7 = arg_22_0._background_world
-	local var_22_8 = World.spawn_unit(var_22_7, arg_22_1, var_22_6, var_22_4)
+UIUnitPreviewer._spawn_unit = function (self, arg_22_1, arg_22_2)
+	-- function 22
+	local _get_camera_rotation = self:_get_camera_rotation()
+	local forward = Quaternion.forward(_get_camera_rotation)
+	local look = Quaternion.look(forward, Vector3.up())
+	local axis_angle = Quaternion.axis_angle(Vector3.up(), 0)
+	local multiply = Quaternion.multiply(look, axis_angle)
+	local _spawn_position = self._spawn_position
+	local num = self:_get_camera_position() + forward + Vector3(_spawn_position[1], _spawn_position[2], _spawn_position[3])
+	local _background_world = self._background_world
+	local spawn_unit = World.spawn_unit(_background_world, arg_22_1, num, multiply)
 
-	Unit.set_unit_visibility(var_22_8, arg_22_2)
+	Unit.set_unit_visibility(spawn_unit, arg_22_2)
 
-	local var_22_9 = Unit.world_position(var_22_8, 0)
+	local world_position = Unit.world_position(spawn_unit, 0)
 
-	arg_22_0._unit_start_position_boxed = Vector3Box(var_22_9)
+	self._unit_start_position_boxed = Vector3Box(world_position)
 
-	return var_22_8
+	return spawn_unit
 end

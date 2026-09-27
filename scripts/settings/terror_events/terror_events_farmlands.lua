@@ -1,10 +1,10 @@
 -- chunkname: @scripts/settings/terror_events/terror_events_farmlands.lua
 
-local var_0_0 = require("scripts/settings/terror_events/terror_event_utils")
-local var_0_1 = var_0_0.count_event_breed
-local var_0_2 = var_0_0.HARDER
-local var_0_3 = var_0_0.HARDEST
-local var_0_4 = {
+local scripts_settings_terror_events_terror_event_utils = require("scripts/settings/terror_events/terror_event_utils")
+local count_event_breed = scripts_settings_terror_events_terror_event_utils.count_event_breed
+local HARDER = scripts_settings_terror_events_terror_event_utils.HARDER
+local HARDEST = scripts_settings_terror_events_terror_event_utils.HARDEST
+local tbl = {
 	farmlands_rat_ogre = {
 		{
 			"set_master_event_running",
@@ -26,8 +26,9 @@ local var_0_4 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_1_0)
-				return var_0_1("skaven_rat_ogre") == 1 or var_0_1("skaven_stormfiend") == 1 or var_0_1("chaos_troll") == 1 or var_0_1("chaos_spawn") == 1
+			condition = function (arg_1_0)
+				-- function 1
+				return count_event_breed("skaven_rat_ogre") == 1 or count_event_breed("skaven_stormfiend") == 1 or count_event_breed("chaos_troll") == 1 or count_event_breed("chaos_spawn") == 1
 			end
 		},
 		{
@@ -40,8 +41,9 @@ local var_0_4 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_2_0)
-				return var_0_1("skaven_rat_ogre") < 1 and var_0_1("skaven_stormfiend") < 1 and var_0_1("chaos_troll") < 1 and var_0_1("chaos_spawn") < 1
+			condition = function (arg_2_0)
+				-- function 2
+				return not (count_event_breed("skaven_rat_ogre") < 1) or not (count_event_breed("skaven_stormfiend") < 1) or not (count_event_breed("chaos_troll") < 1) or count_event_breed("chaos_spawn") < 1
 			end
 		},
 		{
@@ -65,8 +67,9 @@ local var_0_4 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_3_0)
-				return var_0_1("skaven_stormfiend") == 1
+			condition = function (arg_3_0)
+				-- function 3
+				return count_event_breed("skaven_stormfiend") == 1
 			end
 		},
 		{
@@ -79,8 +82,9 @@ local var_0_4 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_4_0)
-				return var_0_1("skaven_stormfiend") < 1
+			condition = function (arg_4_0)
+				-- function 4
+				return count_event_breed("skaven_stormfiend") < 1
 			end
 		},
 		{
@@ -104,8 +108,9 @@ local var_0_4 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_5_0)
-				return var_0_1("chaos_troll") == 1
+			condition = function (arg_5_0)
+				-- function 5
+				return count_event_breed("chaos_troll") == 1
 			end
 		},
 		{
@@ -118,8 +123,9 @@ local var_0_4 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_6_0)
-				return var_0_1("chaos_troll") < 1
+			condition = function (arg_6_0)
+				-- function 6
+				return count_event_breed("chaos_troll") < 1
 			end
 		},
 		{
@@ -143,8 +149,9 @@ local var_0_4 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_7_0)
-				return var_0_1("chaos_spawn") == 1
+			condition = function (arg_7_0)
+				-- function 7
+				return count_event_breed("chaos_spawn") == 1
 			end
 		},
 		{
@@ -157,8 +164,9 @@ local var_0_4 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_8_0)
-				return var_0_1("chaos_spawn") < 1
+			condition = function (arg_8_0)
+				-- function 8
+				return count_event_breed("chaos_spawn") < 1
 			end
 		},
 		{
@@ -182,8 +190,9 @@ local var_0_4 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_9_0)
-				return var_0_1("beastmen_minotaur") == 1
+			condition = function (arg_9_0)
+				-- function 9
+				return count_event_breed("beastmen_minotaur") == 1
 			end
 		},
 		{
@@ -196,8 +205,9 @@ local var_0_4 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_10_0)
-				return var_0_1("beastmen_minotaur") < 1
+			condition = function (arg_10_0)
+				-- function 10
+				return count_event_breed("beastmen_minotaur") < 1
 			end
 		},
 		{
@@ -280,7 +290,7 @@ local var_0_4 = {
 				"chaos_corruptor_sorcerer",
 				"chaos_vortex_sorcerer"
 			},
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
@@ -298,8 +308,9 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_11_0)
-				return var_0_1("chaos_marauder") < 3
+			condition = function (arg_11_0)
+				-- function 11
+				return count_event_breed("chaos_marauder") < 3
 			end
 		},
 		{
@@ -315,7 +326,7 @@ local var_0_4 = {
 				"skaven_ratling_gunner",
 				"skaven_poison_wind_globadier"
 			},
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
@@ -324,8 +335,9 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_12_0)
-				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 5
+			condition = function (arg_12_0)
+				-- function 12
+				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -340,7 +352,7 @@ local var_0_4 = {
 				"skaven_gutter_runner",
 				"skaven_pack_master"
 			},
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"delay",
@@ -349,8 +361,9 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_13_0)
-				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 5
+			condition = function (arg_13_0)
+				-- function 13
+				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
 			end
 		}
 	},
@@ -452,8 +465,9 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_14_0)
-				return var_0_1("chaos_marauder") < 5
+			condition = function (arg_14_0)
+				-- function 14
+				return count_event_breed("chaos_marauder") < 5
 			end
 		},
 		{
@@ -468,8 +482,9 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_15_0)
-				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 5
+			condition = function (arg_15_0)
+				-- function 15
+				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -484,7 +499,7 @@ local var_0_4 = {
 				"skaven_pack_master",
 				"skaven_warpfire_thrower"
 			},
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"delay",
@@ -493,8 +508,9 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_16_0)
-				return var_0_1("skaven_clan_rat") < 4 and var_0_1("skaven_slave") < 4
+			condition = function (arg_16_0)
+				-- function 16
+				return not (count_event_breed("skaven_clan_rat") < 4) or count_event_breed("skaven_slave") < 4
 			end
 		},
 		{
@@ -508,8 +524,9 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_17_0)
-				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 5
+			condition = function (arg_17_0)
+				-- function 17
+				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -523,7 +540,7 @@ local var_0_4 = {
 				"skaven_gutter_runner",
 				"skaven_pack_master"
 			},
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
@@ -532,8 +549,9 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_18_0)
-				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 5
+			condition = function (arg_18_0)
+				-- function 18
+				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
 			end
 		}
 	},
@@ -587,7 +605,7 @@ local var_0_4 = {
 				"skaven_warpfire_thrower",
 				"skaven_ratling_gunner"
 			},
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"event_horde",
@@ -601,8 +619,9 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_19_0)
-				return var_0_1("chaos_marauder") < 3
+			condition = function (arg_19_0)
+				-- function 19
+				return count_event_breed("chaos_marauder") < 3
 			end
 		},
 		{
@@ -617,7 +636,7 @@ local var_0_4 = {
 				"chaos_vortex_sorcerer",
 				"chaos_corruptor_sorcerer"
 			},
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"delay",
@@ -626,8 +645,9 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_20_0)
-				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 5
+			condition = function (arg_20_0)
+				-- function 20
+				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -642,8 +662,9 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_21_0)
-				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 5
+			condition = function (arg_21_0)
+				-- function 21
+				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
 			end
 		}
 	},
@@ -686,8 +707,9 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_22_0)
-				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 5
+			condition = function (arg_22_0)
+				-- function 22
+				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
 			end
 		}
 	},
@@ -737,13 +759,14 @@ local var_0_4 = {
 				"skaven_pack_master",
 				"skaven_gutter_runner"
 			},
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_23_0)
-				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 5
+			condition = function (arg_23_0)
+				-- function 23
+				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -761,13 +784,14 @@ local var_0_4 = {
 				"skaven_poison_wind_globadier",
 				"skaven_warpfire_thrower"
 			},
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_24_0)
-				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 5
+			condition = function (arg_24_0)
+				-- function 24
+				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -795,8 +819,9 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_25_0)
-				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 5
+			condition = function (arg_25_0)
+				-- function 25
+				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -807,7 +832,7 @@ local var_0_4 = {
 				"skaven_pack_master",
 				"skaven_gutter_runner"
 			},
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"event_horde",
@@ -821,8 +846,9 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_26_0)
-				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 5
+			condition = function (arg_26_0)
+				-- function 26
+				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -837,8 +863,9 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_27_0)
-				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 5
+			condition = function (arg_27_0)
+				-- function 27
+				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
 			end
 		}
 	},
@@ -881,7 +908,7 @@ local var_0_4 = {
 				"skaven_gutter_runner",
 				"skaven_pack_master"
 			},
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"control_pacing",
@@ -895,5 +922,5 @@ local var_0_4 = {
 }
 
 return {
-	var_0_4
+	tbl
 }

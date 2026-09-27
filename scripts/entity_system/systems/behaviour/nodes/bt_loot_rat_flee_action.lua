@@ -4,63 +4,66 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTLootRatFleeAction = class(BTLootRatFleeAction, BTNode)
 
-function BTLootRatFleeAction.init(arg_1_0, ...)
+BTLootRatFleeAction.init = function (arg_1_0, ...)
+	-- function 1
 	BTLootRatFleeAction.super.init(arg_1_0, ...)
 end
 
 BTLootRatFleeAction.name = "BTLootRatFleeAction"
 
-local var_0_0 = 2
-local var_0_1 = 400
-local var_0_2 = 14
+local num = 2
+local num_2 = 400
+local num_3 = 14
 
-function BTLootRatFleeAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
-	arg_2_2.action = arg_2_0._tree_node.action_data
+BTLootRatFleeAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+	-- function 2
+	arg_2_2.action = self._tree_node.action_data
 	arg_2_2.is_fleeing = true
-	arg_2_2.check_escaped_players_time = arg_2_3 + var_0_0
+	arg_2_2.check_escaped_players_time = arg_2_3 + num
 
 	if not arg_2_2.flee_node_data then
-		local var_2_0 = Managers.state.conflict.main_path_info.merged_main_paths
+		local merged_main_paths = Managers.state.conflict.main_path_info.merged_main_paths
 
 		arg_2_2.flee_node_data = {
 			direction = "fwd",
 			nodes = {
-				fwd = var_2_0.forward_list,
-				bwd = var_2_0.reversed_list
+				fwd = merged_main_paths.forward_list,
+				bwd = merged_main_paths.reversed_list
 			},
 			break_nodes = {
-				fwd = var_2_0.forward_break_list,
-				bwd = var_2_0.reversed_break_list
+				fwd = merged_main_paths.forward_break_list,
+				bwd = merged_main_paths.reversed_break_list
 			}
 		}
 	end
 
 	if not arg_2_2.flee_astar_data then
-		local var_2_1 = arg_2_2.navigation_extension
+		local navigation_extension = arg_2_2.navigation_extension
 
 		arg_2_2.astar_id = "flee_astar"
 
-		local var_2_2 = var_2_1:get_reusable_astar(arg_2_2.astar_id)
-		local var_2_3 = var_2_1:traverse_logic()
+		local get_reusable_astar = navigation_extension:get_reusable_astar(arg_2_2.astar_id)
+		local traverse_logic = navigation_extension:traverse_logic()
 
 		arg_2_2.flee_astar_data = {
 			doing_astar = false,
-			astar = var_2_2,
-			traverse_logic = var_2_3
+			astar = get_reusable_astar,
+			traverse_logic = traverse_logic
 		}
 	end
 
-	arg_2_0:enter_state_moving_to_level_end(arg_2_1, arg_2_2)
+	self:enter_state_moving_to_level_end(arg_2_1, arg_2_2)
 end
 
-function BTLootRatFleeAction.run(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
-	if arg_3_2.spawn_to_running then
+BTLootRatFleeAction.run = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	-- function 3
+	if not arg_3_2.spawn_to_running then
 		arg_3_2.spawn_to_running = nil
 		arg_3_2.start_anim_done = true
 		arg_3_2.move_state = "moving"
 		arg_3_2.start_anim_locked = nil
 
-		arg_3_0:toggle_start_move_animation_lock(arg_3_1, false, arg_3_2)
+		self:toggle_start_move_animation_lock(arg_3_1, false, arg_3_2)
 	elseif not arg_3_2.movement_inited then
 		arg_3_2.spawn_to_running = nil
 		arg_3_2.start_anim_done = true
@@ -69,36 +72,37 @@ function BTLootRatFleeAction.run(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 		arg_3_2.movement_inited = true
 
 		Managers.state.network:anim_event(arg_3_1, "move_fwd")
-		arg_3_0:toggle_start_move_animation_lock(arg_3_1, false, arg_3_2)
+		self:toggle_start_move_animation_lock(arg_3_1, false, arg_3_2)
 	end
 
 	if arg_3_2.flee_state == "moving_to_level_end" then
-		arg_3_0:update_state_moving_to_level_end(arg_3_1, arg_3_2, arg_3_3)
+		self:update_state_moving_to_level_end(arg_3_1, arg_3_2, arg_3_3)
 	end
 
 	if arg_3_3 > arg_3_2.check_escaped_players_time then
-		if arg_3_0:has_escaped_players(arg_3_1, arg_3_2) then
-			arg_3_0:despawn(arg_3_1, arg_3_2, "escaped_players")
+		if not self:has_escaped_players(arg_3_1, arg_3_2) then
+			self:despawn(arg_3_1, arg_3_2, "escaped_players")
 		end
 
-		arg_3_2.check_escaped_players_time = arg_3_3 + var_0_0
+		arg_3_2.check_escaped_players_time = arg_3_3 + num
 	end
 
 	return "running"
 end
 
-function BTLootRatFleeAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
-	local var_4_0 = arg_4_2.flee_astar_data
+BTLootRatFleeAction.leave = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	-- function 4
+	local flee_astar_data = arg_4_2.flee_astar_data
 
-	if not GwNavAStar.processing_finished(var_4_0.astar) then
-		GwNavAStar.cancel(var_4_0.astar)
+	if not GwNavAStar.processing_finished(flee_astar_data.astar) then
+		GwNavAStar.cancel(flee_astar_data.astar)
 	end
 
 	arg_4_2.action = nil
 	arg_4_2.check_escaped_players_time = nil
 
 	if not arg_4_5 then
-		arg_4_0:toggle_start_move_animation_lock(arg_4_1, false, arg_4_2)
+		self:toggle_start_move_animation_lock(arg_4_1, false, arg_4_2)
 	end
 
 	arg_4_2.start_anim_locked = nil
@@ -108,117 +112,131 @@ function BTLootRatFleeAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, 
 	arg_4_2.movement_inited = nil
 end
 
-function BTLootRatFleeAction.enter_state_moving_to_level_end(arg_5_0, arg_5_1, arg_5_2)
-	arg_5_0:set_state(arg_5_2, "moving_to_level_end")
+BTLootRatFleeAction.enter_state_moving_to_level_end = function (self, arg_5_1, arg_5_2)
+	-- function 5
+	self:set_state(arg_5_2, "moving_to_level_end")
 
 	local var_5_0 = POSITION_LOOKUP[arg_5_1]
-	local var_5_1 = arg_5_2.flee_node_data
-	local var_5_2 = var_5_1.nodes[var_5_1.direction]
+	local flee_node_data = arg_5_2.flee_node_data
+	local var_5_2 = flee_node_data.nodes[flee_node_data.direction]
 	local var_5_3
 
-	if var_5_1.target_node_index then
-		var_5_3 = var_5_1.target_node_index
+	if not flee_node_data.target_node_index then
+		var_5_3 = flee_node_data.target_node_index
 	else
 		var_5_3 = MainPathUtils.closest_node_in_node_list(var_5_2, var_5_0)
 	end
 
-	arg_5_0:move_to_main_path_node(arg_5_2, var_5_3)
+	self:move_to_main_path_node(arg_5_2, var_5_3)
 end
 
-function BTLootRatFleeAction.update_state_moving_to_level_end(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
-	local var_6_0 = arg_6_2.flee_astar_data
+BTLootRatFleeAction.update_state_moving_to_level_end = function (self, arg_6_1, arg_6_2, arg_6_3)
+	-- function 6
+	local flee_astar_data = arg_6_2.flee_astar_data
 
-	if var_6_0.doing_astar then
-		local var_6_1 = var_6_0.astar
+	if not flee_astar_data.doing_astar then
+		local astar = flee_astar_data.astar
 
-		if GwNavAStar.processing_finished(var_6_1) then
-			var_6_0.doing_astar = false
+		if not GwNavAStar.processing_finished(astar) then
+			flee_astar_data.doing_astar = false
 
-			local var_6_2 = arg_6_2.flee_node_data
-			local var_6_3 = var_6_2.target_node_index
+			local flee_node_data = arg_6_2.flee_node_data
+			local target_node_index = flee_node_data.target_node_index
 			local var_6_4
 
-			if GwNavAStar.path_found(var_6_1) and GwNavAStar.node_count(var_6_1) > 0 then
-				var_6_4 = var_6_3 + 1
+			if not (not GwNavAStar.path_found(astar) and not (GwNavAStar.node_count(astar) > 0)) then
+				var_6_4 = target_node_index + 1
 			else
-				var_6_2.direction = var_6_2.direction == "fwd" and "bwd" or "fwd"
-				var_6_4 = #var_6_2.nodes[var_6_2.direction] - var_6_3 + 2
+				local flag
+
+				flag = flee_node_data.direction ~= "fwd" or not "bwd" or "fwd"
+				flee_node_data.direction = flag
+				var_6_4 = #flee_node_data.nodes[flee_node_data.direction] - target_node_index + 2
 			end
 
-			arg_6_0:move_to_main_path_node(arg_6_2, var_6_4)
+			self:move_to_main_path_node(arg_6_2, var_6_4)
 		else
 			return
 		end
 	end
 
-	local var_6_5 = POSITION_LOOKUP[arg_6_1]
-	local var_6_6 = arg_6_2.flee_node_data
-	local var_6_7 = var_6_6.target_node_index
-	local var_6_8 = var_6_6.nodes[var_6_6.direction]
-	local var_6_9 = var_6_6.break_nodes[var_6_6.direction]
-	local var_6_10 = var_6_8[var_6_7]
+	local var_6_6 = POSITION_LOOKUP[arg_6_1]
+	local flee_node_data_2 = arg_6_2.flee_node_data
+	local target_node_index_2 = flee_node_data_2.target_node_index
+	local var_6_9 = flee_node_data_2.nodes[flee_node_data_2.direction]
+	local var_6_10 = flee_node_data_2.break_nodes[flee_node_data_2.direction]
+	local var_6_11 = var_6_9[target_node_index_2]
 
-	if script_data.ai_loot_rat_behavior then
-		arg_6_0:debug_draw_path_nodes(arg_6_2.nav_world, var_6_8, var_6_9, var_6_7, arg_6_3)
+	if not script_data.ai_loot_rat_behavior then
+		self:debug_draw_path_nodes(arg_6_2.nav_world, var_6_9, var_6_10, target_node_index_2, arg_6_3)
 	end
 
-	if Vector3.length_squared(var_6_5 - var_6_10:unbox()) < 0.25 then
-		local var_6_11 = var_6_7 + 1
-		local var_6_12 = var_6_8[var_6_11]
+	if Vector3.length_squared(var_6_6 - var_6_11:unbox()) < 0.25 then
+		local num = target_node_index_2 + 1
+		local var_6_13 = var_6_9[num]
 
-		if var_6_12 then
-			if var_6_9[var_6_10] then
-				local var_6_13 = var_6_12:unbox()
+		if not var_6_13 then
+			if not var_6_10[var_6_11] then
+				local unbox = var_6_13:unbox()
 
-				if Vector3.length_squared(var_6_5 - var_6_13) < var_0_1 then
-					arg_6_0:do_astar_to_between_main_path_nodes(arg_6_2, var_6_7)
+				if Vector3.length_squared(var_6_6 - unbox) < num_2 then
+					self:do_astar_to_between_main_path_nodes(arg_6_2, target_node_index_2)
 
 					return
 				else
-					var_6_6.direction = var_6_6.direction == "fwd" and "bwd" or "fwd"
-					var_6_11 = #var_6_6.nodes[var_6_6.direction] - var_6_7 + 2
+					local flag_2
+
+					flag_2 = flee_node_data_2.direction ~= "fwd" or not "bwd" or "fwd"
+					flee_node_data_2.direction = flag_2
+					num = #flee_node_data_2.nodes[flee_node_data_2.direction] - target_node_index_2 + 2
 				end
 			end
 		else
-			var_6_6.direction = var_6_6.direction == "fwd" and "bwd" or "fwd"
-			var_6_11 = 2
+			local flag_3
+
+			flag_3 = flee_node_data_2.direction ~= "fwd" or not "bwd" or "fwd"
+			flee_node_data_2.direction = flag_3
+			num = 2
 		end
 
-		arg_6_0:move_to_main_path_node(arg_6_2, var_6_11)
+		self:move_to_main_path_node(arg_6_2, num)
 	end
 end
 
-function BTLootRatFleeAction.move_to_main_path_node(arg_7_0, arg_7_1, arg_7_2)
-	local var_7_0 = arg_7_1.flee_node_data
-	local var_7_1 = var_7_0.nodes[var_7_0.direction][arg_7_2]
+BTLootRatFleeAction.move_to_main_path_node = function (arg_7_0, arg_7_1, arg_7_2)
+	-- function 7
+	local flee_node_data = arg_7_1.flee_node_data
+	local var_7_1 = flee_node_data.nodes[flee_node_data.direction][arg_7_2]
 
-	var_7_0.target_node_index = arg_7_2
+	flee_node_data.target_node_index = arg_7_2
 
 	arg_7_1.navigation_extension:move_to(var_7_1:unbox())
 end
 
-function BTLootRatFleeAction.do_astar_to_between_main_path_nodes(arg_8_0, arg_8_1, arg_8_2)
-	local var_8_0 = arg_8_1.flee_node_data
-	local var_8_1 = var_8_0.nodes[var_8_0.direction]
-	local var_8_2 = var_8_1[arg_8_2]:unbox()
-	local var_8_3 = var_8_1[arg_8_2 + 1]:unbox()
-	local var_8_4 = arg_8_1.flee_astar_data
+BTLootRatFleeAction.do_astar_to_between_main_path_nodes = function (arg_8_0, arg_8_1, arg_8_2)
+	-- function 8
+	local flee_node_data = arg_8_1.flee_node_data
+	local var_8_1 = flee_node_data.nodes[flee_node_data.direction]
+	local unbox = var_8_1[arg_8_2]:unbox()
+	local unbox_2 = var_8_1[arg_8_2 + 1]:unbox()
+	local flee_astar_data = arg_8_1.flee_astar_data
 
-	var_8_4.doing_astar = true
+	flee_astar_data.doing_astar = true
 
-	GwNavAStar.start_with_propagation_box(var_8_4.astar, arg_8_1.nav_world, var_8_2, var_8_3, var_0_2, var_8_4.traverse_logic)
+	GwNavAStar.start_with_propagation_box(flee_astar_data.astar, arg_8_1.nav_world, unbox, unbox_2, num_3, flee_astar_data.traverse_logic)
 end
 
-function BTLootRatFleeAction.has_escaped_players(arg_9_0, arg_9_1, arg_9_2)
-	local var_9_0 = arg_9_2.action.escaped_players_distance_sq
+BTLootRatFleeAction.has_escaped_players = function (arg_9_0, arg_9_1, arg_9_2)
+	-- function 9
+	local escaped_players_distance_sq = arg_9_2.action.escaped_players_distance_sq
 	local var_9_1 = POSITION_LOOKUP[arg_9_1]
-	local var_9_2 = arg_9_2.side.ENEMY_PLAYER_AND_BOT_UNITS
+	local ENEMY_PLAYER_AND_BOT_UNITS = arg_9_2.side.ENEMY_PLAYER_AND_BOT_UNITS
 
-	for iter_9_0 = 1, #var_9_2 do
-		local var_9_3 = var_9_2[iter_9_0]
+	for i = 1, #ENEMY_PLAYER_AND_BOT_UNITS do
+		local var_9_3 = ENEMY_PLAYER_AND_BOT_UNITS[i]
 		local var_9_4 = POSITION_LOOKUP[var_9_3]
 
-		if var_9_0 > Vector3.distance_squared(var_9_1, var_9_4) then
+		if escaped_players_distance_sq > Vector3.distance_squared(var_9_1, var_9_4) then
 			return false
 		end
 	end
@@ -226,44 +244,48 @@ function BTLootRatFleeAction.has_escaped_players(arg_9_0, arg_9_1, arg_9_2)
 	return true
 end
 
-function BTLootRatFleeAction.despawn(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+BTLootRatFleeAction.despawn = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	-- function 10
 	Managers.state.conflict:destroy_unit(arg_10_1, arg_10_2, arg_10_3)
 end
 
-function BTLootRatFleeAction.set_state(arg_11_0, arg_11_1, arg_11_2)
+BTLootRatFleeAction.set_state = function (arg_11_0, arg_11_1, arg_11_2)
+	-- function 11
 	arg_11_1.flee_state = arg_11_2
 end
 
-function BTLootRatFleeAction.toggle_start_move_animation_lock(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
-	local var_12_0 = arg_12_3.locomotion_extension
+BTLootRatFleeAction.toggle_start_move_animation_lock = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+	-- function 12
+	local locomotion_extension = arg_12_3.locomotion_extension
 
-	if arg_12_2 then
-		var_12_0:use_lerp_rotation(false)
+	if not arg_12_2 then
+		locomotion_extension:use_lerp_rotation(false)
 		LocomotionUtils.set_animation_driven_movement(arg_12_1, true, false, false)
 	else
-		var_12_0:use_lerp_rotation(true)
+		locomotion_extension:use_lerp_rotation(true)
 		LocomotionUtils.set_animation_driven_movement(arg_12_1, false)
 		LocomotionUtils.set_animation_rotation_scale(arg_12_1, 1)
 	end
 end
 
-function BTLootRatFleeAction.debug_draw_path_nodes(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
-	for iter_13_0 = 1, #arg_13_2 do
-		local var_13_0 = arg_13_2[iter_13_0]
-		local var_13_1 = var_13_0:unbox()
+BTLootRatFleeAction.debug_draw_path_nodes = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+	-- function 13
+	for i = 1, #arg_13_2 do
+		local var_13_0 = arg_13_2[i]
+		local unbox = var_13_0:unbox()
 
-		if iter_13_0 == arg_13_4 then
-			if arg_13_3[var_13_0] then
-				QuickDrawer:sphere(var_13_1, 0.25 + math.sin(arg_13_5) * 0.15, Colors.get("dark_blue"))
-			elseif GwNavQueries.triangle_from_position(arg_13_1, var_13_1, 1, 1) then
-				QuickDrawer:sphere(var_13_1, 0.25 + math.sin(arg_13_5) * 0.15, Colors.get("pink"))
+		if i == arg_13_4 then
+			if not arg_13_3[var_13_0] then
+				QuickDrawer:sphere(unbox, 0.25 + math.sin(arg_13_5) * 0.15, Colors.get("dark_blue"))
+			elseif not GwNavQueries.triangle_from_position(arg_13_1, unbox, 1, 1) then
+				QuickDrawer:sphere(unbox, 0.25 + math.sin(arg_13_5) * 0.15, Colors.get("pink"))
 			else
-				QuickDrawer:sphere(var_13_1, 0.25 + math.sin(arg_13_5) * 0.15, Colors.get("dark_red"))
+				QuickDrawer:sphere(unbox, 0.25 + math.sin(arg_13_5) * 0.15, Colors.get("dark_red"))
 			end
-		elseif arg_13_3[var_13_0] then
-			QuickDrawer:sphere(var_13_1, 0.25, Colors.get("orange"))
+		elseif not arg_13_3[var_13_0] then
+			QuickDrawer:sphere(unbox, 0.25, Colors.get("orange"))
 		else
-			QuickDrawer:sphere(var_13_1, 0.25, Colors.get("dark_green"))
+			QuickDrawer:sphere(unbox, 0.25, Colors.get("dark_green"))
 		end
 	end
 end

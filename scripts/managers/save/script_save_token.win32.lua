@@ -2,24 +2,29 @@
 
 ScriptSaveToken = class(ScriptSaveToken)
 
-function ScriptSaveToken.init(arg_1_0, arg_1_1, arg_1_2)
-	arg_1_0._adapter = arg_1_1
-	arg_1_0._token = arg_1_2
-	arg_1_0._info = {}
+ScriptSaveToken.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	self._adapter = arg_1_1
+	self._token = arg_1_2
+	self._info = {}
 end
 
-function ScriptSaveToken.update(arg_2_0)
-	arg_2_0._info = arg_2_0._adapter.progress(arg_2_0._token)
+ScriptSaveToken.update = function (self)
+	-- function 2
+	self._info = self._adapter.progress(self._token)
 end
 
-function ScriptSaveToken.info(arg_3_0)
-	return arg_3_0._info
+ScriptSaveToken.info = function (self)
+	-- function 3
+	return self._info
 end
 
-function ScriptSaveToken.done(arg_4_0)
-	return arg_4_0._info.done
+ScriptSaveToken.done = function (self)
+	-- function 4
+	return self._info.done
 end
 
-function ScriptSaveToken.close(arg_5_0)
-	arg_5_0._adapter.close(arg_5_0._token)
+ScriptSaveToken.close = function (self)
+	-- function 5
+	self._adapter.close(self._token)
 end

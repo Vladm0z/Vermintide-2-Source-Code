@@ -4,239 +4,300 @@ require("scripts/network/lobby_aux")
 
 LobbyClient = class(LobbyClient)
 
-function LobbyClient.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	arg_1_0.lobby = arg_1_3 or LobbyInternal.join_lobby(arg_1_2)
-	arg_1_0.stored_lobby_data = arg_1_2
+LobbyClient.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	self.lobby = arg_1_3 or LobbyInternal.join_lobby(arg_1_2)
+	self.stored_lobby_data = arg_1_2
 
-	local var_1_0 = arg_1_1.config_file_name
-	local var_1_1 = arg_1_1.project_hash
+	local config_file_name = arg_1_1.config_file_name
+	local project_hash = arg_1_1.project_hash
 
-	arg_1_0.network_hash = LobbyAux.create_network_hash(var_1_0, var_1_1)
-	arg_1_0.peer_id = Network.peer_id()
-	arg_1_0._host_peer_id = nil
-	arg_1_0._host_channel_id = nil
-	arg_1_0.is_host = false
+	self.network_hash = LobbyAux.create_network_hash(config_file_name, project_hash)
+	self.peer_id = Network.peer_id()
+	self._host_peer_id = nil
+	self._host_channel_id = nil
+	self.is_host = false
 
-	if HAS_STEAM then
-		arg_1_0:set_steam_lobby_reconnectable(true)
+	if not HAS_STEAM then
+		self:set_steam_lobby_reconnectable(true)
 	end
 
 	mm_printf("LobbyClient Created")
 end
 
-function LobbyClient.destroy(arg_2_0)
-	local var_2_0 = arg_2_0._host_peer_id
-	local var_2_1 = arg_2_0._host_channel_id
+LobbyClient.destroy = function (self)
+	-- function 2
+	local _host_peer_id = self._host_peer_id
+	local _host_channel_id = self._host_channel_id
 
-	if var_2_1 then
-		printf("LobbyClient close server channel %s to %s", tostring(var_2_1), var_2_0)
-		LobbyInternal.close_channel(arg_2_0.lobby, var_2_1)
+	if not _host_channel_id then
+		printf("LobbyClient close server channel %s to %s", tostring(_host_channel_id), _host_peer_id)
+		LobbyInternal.close_channel(self.lobby, _host_channel_id)
 
-		PEER_ID_TO_CHANNEL[var_2_0] = nil
-		CHANNEL_TO_PEER_ID[var_2_1] = nil
+		PEER_ID_TO_CHANNEL[_host_peer_id] = nil
+		CHANNEL_TO_PEER_ID[_host_channel_id] = nil
 	end
 
 	mm_printf("LobbyClient Destroyed")
 
-	arg_2_0._host_peer_id = nil
-	arg_2_0._host_channel_id = nil
+	self._host_peer_id = nil
+	self._host_channel_id = nil
 
-	LobbyInternal.leave_lobby(arg_2_0.lobby)
+	LobbyInternal.leave_lobby(self.lobby)
 
-	arg_2_0.lobby_members = nil
-	arg_2_0.lobby = nil
-	arg_2_0.has_sent_join = false
+	self.lobby_members = nil
+	self.lobby = nil
+	self.has_sent_join = false
 
-	GarbageLeakDetector.register_object(arg_2_0, "Lobby Client")
+	GarbageLeakDetector.register_object(self, "Lobby Client")
 end
 
-function LobbyClient.update(arg_3_0, arg_3_1)
-	local var_3_0 = arg_3_0.lobby
-	local var_3_1 = var_3_0:lobby_host()
-	local var_3_2 = var_3_0.state(var_3_0)
-	local var_3_3 = arg_3_0.state
+LobbyClient.update = function (self, arg_3_1)
+	-- function 3
+	local lobby = self.lobby
+	local lobby_host = lobby:lobby_host()
+	local state = lobby.state(lobby)
+	local state_2 = self.state
 
-	if var_3_2 ~= var_3_3 then
-		printf("[LobbyClient] Changed state from %s to %s", tostring(var_3_3), var_3_2)
+	if state ~= state_2 then
+		printf("[LobbyClient] Changed state from %s to %s", tostring(state_2), state)
 
-		arg_3_0.state = var_3_2
+		self.state = state
 
-		if var_3_2 == LobbyState.JOINED then
-			arg_3_0.lobby_members = arg_3_0.lobby_members or LobbyMembers:new(var_3_0, arg_3_0.client)
+		if state == LobbyState.JOINED then
+			local lobby_members = self.lobby_members
 
-			Managers.party:set_leader(var_3_1)
+			lobby_members = lobby_members or LobbyMembers:new(lobby, self.client)
+			self.lobby_members = lobby_members
 
-			arg_3_0._look_for_host = true
-			arg_3_0._reconnecting_to_lobby = nil
-			arg_3_0._try_reconnecting = nil
-			arg_3_0._reconnect_times = nil
+			Managers.party:set_leader(lobby_host)
+
+			self._look_for_host = true
+			self._reconnecting_to_lobby = nil
+			self._try_reconnecting = nil
+			self._reconnect_times = nil
 
 			Managers.account:update_presence()
-			print("[LobbyClient] connected to lobby, id:", arg_3_0.stored_lobby_data.id)
+			print("[LobbyClient] connected to lobby, id:", self.stored_lobby_data.id)
 		end
 
-		if var_3_3 == LobbyState.JOINED then
+		if state_2 == LobbyState.JOINED then
 			Managers.party:set_leader(nil)
 
-			if arg_3_0.lobby_members then
-				arg_3_0.lobby_members:clear()
+			if not self.lobby_members then
+				self.lobby_members:clear()
 
-				arg_3_0.has_sent_join = false
+				self.has_sent_join = false
 			end
 		end
 
-		if arg_3_0._reconnecting_to_lobby and var_3_2 == LobbyState.FAILED then
-			arg_3_0._reconnecting_to_lobby = false
-			arg_3_0._try_reconnecting = not arg_3_0._reconnect_times or arg_3_0._reconnect_times < 10
+		if not (not self._reconnecting_to_lobby and state ~= LobbyState.FAILED) then
+			self._reconnecting_to_lobby = false
+			self._try_reconnecting = not self._reconnect_times and self._reconnect_times < 10
 		end
 	end
 
-	if arg_3_0._look_for_host then
-		local var_3_4 = var_3_0:lobby_host()
+	if not self._look_for_host then
+		local lobby_host_2 = lobby:lobby_host()
 
-		printf("====== Looking for host: %s", tostring(var_3_4))
+		printf("====== Looking for host: %s", tostring(lobby_host_2))
 
-		if var_3_4 ~= nil then
-			local var_3_5 = LobbyInternal.open_channel(var_3_0, var_3_4)
+		if lobby_host_2 ~= nil then
+			local open_channel = LobbyInternal.open_channel(lobby, lobby_host_2)
 
-			arg_3_0._host_peer_id = var_3_4
-			arg_3_0._host_channel_id = var_3_5
-			PEER_ID_TO_CHANNEL[var_3_4] = var_3_5
-			CHANNEL_TO_PEER_ID[var_3_5] = var_3_4
+			self._host_peer_id = lobby_host_2
+			self._host_channel_id = open_channel
+			PEER_ID_TO_CHANNEL[lobby_host_2] = open_channel
+			CHANNEL_TO_PEER_ID[open_channel] = lobby_host_2
 
-			printf("Connected to host: %s, using channel: %d", var_3_4, var_3_5)
+			printf("Connected to host: %s, using channel: %d", lobby_host_2, open_channel)
 
-			arg_3_0._look_for_host = nil
+			self._look_for_host = nil
 		end
 	end
 
-	if arg_3_0.lobby_members then
-		arg_3_0.lobby_members:update()
+	if not self.lobby_members then
+		self.lobby_members:update()
 
-		local var_3_6 = arg_3_0.peer_id
-		local var_3_7 = arg_3_0.lobby_members:get_members_left()
+		local peer_id = self.peer_id
+		local get_members_left = self.lobby_members:get_members_left()
 
-		for iter_3_0 = 1, #var_3_7 do
-			local var_3_8 = var_3_7[iter_3_0]
+		for i = 1, #get_members_left do
+			local var_3_9 = get_members_left[i]
 
-			if var_3_8 == var_3_6 then
-				arg_3_0._lost_connection_to_lobby = true
-				arg_3_0._try_reconnecting = var_3_8 == var_3_6
+			if var_3_9 == peer_id then
+				self._lost_connection_to_lobby = true
+				self._try_reconnecting = var_3_9 == peer_id
 
 				print("[LobbyClient] Lost connection to the lobby")
 			end
 		end
 	end
 
-	if HAS_STEAM and arg_3_0._lobby_reconnectable_on_disconnect and arg_3_0:lost_connection_to_lobby() and not arg_3_0._reconnecting_to_lobby and arg_3_0._try_reconnecting then
-		print("[LobbyClient] Attempting to rejoin lobby", arg_3_0.stored_lobby_data.id, "Retries:", arg_3_0._reconnect_times or 0)
+	if not HAS_STEAM and not self._lobby_reconnectable_on_disconnect and not self:lost_connection_to_lobby() and self._reconnecting_to_lobby or not self._try_reconnecting then
+		local print = print
+		local str = "[LobbyClient] Attempting to rejoin lobby"
+		local id = self.stored_lobby_data.id
+		local str_2 = "Retries:"
+		local _reconnect_times = self._reconnect_times
 
-		local var_3_9 = arg_3_0._host_peer_id
-		local var_3_10 = arg_3_0._host_channel_id
+		_reconnect_times = _reconnect_times or 0
 
-		if var_3_10 then
-			printf("LobbyClient close server channel %s to %s", tostring(var_3_10), var_3_9)
-			LobbyInternal.close_channel(arg_3_0.lobby, var_3_10)
+		print(str, id, str_2, _reconnect_times)
 
-			PEER_ID_TO_CHANNEL[var_3_9] = nil
-			CHANNEL_TO_PEER_ID[var_3_10] = nil
+		local _host_peer_id = self._host_peer_id
+		local _host_channel_id = self._host_channel_id
+
+		if not _host_channel_id then
+			printf("LobbyClient close server channel %s to %s", tostring(_host_channel_id), _host_peer_id)
+			LobbyInternal.close_channel(self.lobby, _host_channel_id)
+
+			PEER_ID_TO_CHANNEL[_host_peer_id] = nil
+			CHANNEL_TO_PEER_ID[_host_channel_id] = nil
 		end
 
-		LobbyInternal.leave_lobby(arg_3_0.lobby)
+		LobbyInternal.leave_lobby(self.lobby)
 
-		arg_3_0.lobby = LobbyInternal.join_lobby(arg_3_0.stored_lobby_data)
-		arg_3_0.state = nil
+		self.lobby = LobbyInternal.join_lobby(self.stored_lobby_data)
+		self.state = nil
 
-		if arg_3_0.lobby_members then
-			arg_3_0.lobby_members:clear()
+		if not self.lobby_members then
+			self.lobby_members:clear()
 
-			arg_3_0.has_sent_join = false
+			self.has_sent_join = false
 		end
 
-		arg_3_0._reconnect_times = (arg_3_0._reconnect_times or 0) + 1
-		arg_3_0._reconnecting_to_lobby = true
-		arg_3_0._try_reconnecting = false
+		local _reconnect_times_2 = self._reconnect_times
+
+		_reconnect_times_2 = _reconnect_times_2 or 0
+		self._reconnect_times = _reconnect_times_2 + 1
+		self._reconnecting_to_lobby = true
+		self._try_reconnecting = false
 	end
 end
 
-function LobbyClient.set_steam_lobby_reconnectable(arg_4_0, arg_4_1)
-	print(arg_4_1 and "Enabled" or "Disabled", "live steam lobby reconnecting")
+LobbyClient.set_steam_lobby_reconnectable = function (self, arg_4_1)
+	-- function 4
+	local print = print
+	local flag
 
-	arg_4_0._lobby_reconnectable_on_disconnect = arg_4_1
+	flag = not arg_4_1 and "Enabled" and "Disabled"
+
+	print(flag, "live steam lobby reconnecting")
+
+	self._lobby_reconnectable_on_disconnect = arg_4_1
 end
 
-function LobbyClient.get_stored_lobby_data(arg_5_0)
-	return arg_5_0.stored_lobby_data
+LobbyClient.get_stored_lobby_data = function (self)
+	-- function 5
+	return self.stored_lobby_data
 end
 
-function LobbyClient.update_user_names(arg_6_0)
-	if IS_PS4 then
-		arg_6_0.lobby:update_user_names()
+LobbyClient.update_user_names = function (self)
+	-- function 6
+	if not IS_PS4 then
+		self.lobby:update_user_names()
 	end
 end
 
-function LobbyClient.members(arg_7_0)
-	return arg_7_0.lobby_members
+LobbyClient.members = function (self)
+	-- function 7
+	return self.lobby_members
 end
 
-function LobbyClient.invite_target(arg_8_0)
-	return arg_8_0.lobby
+LobbyClient.invite_target = function (self)
+	-- function 8
+	return self.lobby
 end
 
-function LobbyClient.is_dedicated_server(arg_9_0)
+LobbyClient.is_dedicated_server = function (arg_9_0)
+	-- function 9
 	return false
 end
 
-function LobbyClient.lobby_host(arg_10_0)
-	return arg_10_0._host_peer_id
+LobbyClient.lobby_host = function (self)
+	-- function 10
+	return self._host_peer_id
 end
 
-function LobbyClient.lobby_data(arg_11_0, arg_11_1)
-	return arg_11_0.lobby:data(arg_11_1)
+LobbyClient.lobby_data = function (self, arg_11_1)
+	-- function 11
+	return self.lobby:data(arg_11_1)
 end
 
-function LobbyClient.has_user_name(arg_12_0, arg_12_1)
-	return arg_12_0.lobby:user_name(arg_12_1) ~= nil
+LobbyClient.has_user_name = function (self, arg_12_1)
+	-- function 12
+	return self.lobby:user_name(arg_12_1) ~= nil
 end
 
-function LobbyClient.user_name(arg_13_0, arg_13_1)
-	if HAS_STEAM then
+LobbyClient.user_name = function (self, arg_13_1)
+	-- function 13
+	if not HAS_STEAM then
 		return string.gsub(Steam.user_name(), "%c", "")
-	elseif IS_PS4 then
-		return string.gsub(arg_13_0.lobby:user_name(arg_13_1), "%c", "")
+	elseif not IS_PS4 then
+		return string.gsub(self.lobby:user_name(arg_13_1), "%c", "")
 	else
 		return arg_13_1
 	end
 end
 
-function LobbyClient.is_joined(arg_14_0)
-	return arg_14_0.state == LobbyState.JOINED
+LobbyClient.is_joined = function (self)
+	-- function 14
+	return self.state == LobbyState.JOINED
 end
 
-function LobbyClient.failed(arg_15_0)
-	return arg_15_0.state == LobbyState.FAILED
+LobbyClient.failed = function (self)
+	-- function 15
+	return self.state == LobbyState.FAILED
 end
 
-function LobbyClient.id(arg_16_0)
-	return LobbyInternal.lobby_id and LobbyInternal.lobby_id(arg_16_0.lobby) or "no_id"
+LobbyClient.id = function (self)
+	-- function 16
+	local lobby_id
+
+	if not LobbyInternal.lobby_id then
+		lobby_id = LobbyInternal.lobby_id(self.lobby)
+
+		if not lobby_id then
+			-- Nothing
+		end
+	end
+
+	lobby_id = "no_id"
+
+	::label_16_0::
+
+	return lobby_id
 end
 
-function LobbyClient.attempting_reconnect(arg_17_0)
-	return arg_17_0._reconnecting_to_lobby or arg_17_0._try_reconnecting
+LobbyClient.attempting_reconnect = function (self)
+	-- function 17
+	local _reconnecting_to_lobby = self._reconnecting_to_lobby
+
+	_reconnecting_to_lobby = _reconnecting_to_lobby or self._try_reconnecting
+
+	return _reconnecting_to_lobby
 end
 
-function LobbyClient._free_lobby(arg_18_0)
-	if arg_18_0.lobby ~= nil then
-		LobbyInternal.leave_lobby(arg_18_0.lobby)
+LobbyClient._free_lobby = function (self)
+	-- function 18
+	if self.lobby ~= nil then
+		LobbyInternal.leave_lobby(self.lobby)
 
-		arg_18_0.lobby = nil
+		self.lobby = nil
 	end
 end
 
-function LobbyClient.lost_connection_to_lobby(arg_19_0)
-	return LobbyInternal.is_orphaned(arg_19_0.lobby) or arg_19_0._lost_connection_to_lobby
+LobbyClient.lost_connection_to_lobby = function (self)
+	-- function 19
+	local is_orphaned = LobbyInternal.is_orphaned(self.lobby)
+
+	is_orphaned = is_orphaned or self._lost_connection_to_lobby
+
+	return is_orphaned
 end
 
-function LobbyClient.game_session_host(arg_20_0)
-	return LobbyInternal.game_session_host(arg_20_0.lobby)
+LobbyClient.game_session_host = function (self)
+	-- function 20
+	return LobbyInternal.game_session_host(self.lobby)
 end

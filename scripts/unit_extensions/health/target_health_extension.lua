@@ -2,129 +2,164 @@
 
 TargetHealthExtension = class(TargetHealthExtension)
 
-function TargetHealthExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	arg_1_0.unit = arg_1_2
-	arg_1_0.is_server = Managers.player.is_server
-	arg_1_0._dead = false
-	arg_1_0._out_of_combat_timer = 0
-	arg_1_0._health_regen_timer = 0
-	arg_1_0._damage_per_hit = arg_1_3.damage_per_hit or 1
-	arg_1_0._health = arg_1_3.health or Unit.get_data(arg_1_2, "health") or 1
-	arg_1_0._max_health = arg_1_0._health
-	arg_1_0._health_regen = {
+TargetHealthExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	self.unit = arg_1_2
+	self.is_server = Managers.player.is_server
+	self._dead = false
+	self._out_of_combat_timer = 0
+	self._health_regen_timer = 0
+
+	local damage_per_hit = arg_1_3.damage_per_hit
+
+	damage_per_hit = damage_per_hit or 1
+	self._damage_per_hit = damage_per_hit
+
+	local health = arg_1_3.health
+
+	if not health then
+		health = Unit.get_data(arg_1_2, "health")
+		health = health or 1
+	end
+
+	self._health = health
+	self._max_health = self._health
+	self._health_regen = {
 		interval = 1,
 		out_of_combat_only = false,
 		out_of_combat_delay = 0,
 		amount = 0
 	}
 
-	for iter_1_0, iter_1_1 in pairs(arg_1_3.health_regen or {}) do
-		arg_1_0._health_regen[iter_1_0] = iter_1_1
+	local pairs = pairs
+	local health_regen = arg_1_3.health_regen
+
+	health_regen = health_regen or {}
+
+	for iter_1_0, iter_1_1 in pairs(health_regen) do
+		self._health_regen[iter_1_0] = iter_1_1
 	end
 
-	arg_1_0.damage_buffers = {
+	self.damage_buffers = {
 		pdArray.new(),
 		pdArray.new()
 	}
 end
 
-function TargetHealthExtension.update(arg_2_0, arg_2_1, arg_2_2)
-	local var_2_0 = arg_2_0._health_regen.amount
-	local var_2_1 = arg_2_0._health_regen.interval
+TargetHealthExtension.update = function (self, arg_2_1, arg_2_2)
+	-- function 2
+	local amount = self._health_regen.amount
+	local interval = self._health_regen.interval
 
-	if var_2_0 <= 0 or var_2_1 < 0 then
+	if not (amount <= 0 or not (interval < 0)) then
 		return
 	end
 
-	local var_2_2 = arg_2_0._health_regen.out_of_combat_only
-	local var_2_3 = arg_2_0._health_regen.out_of_combat_delay
+	local out_of_combat_only = self._health_regen.out_of_combat_only
+	local out_of_combat_delay = self._health_regen.out_of_combat_delay
 
-	arg_2_0._out_of_combat_timer = math.min(arg_2_0._out_of_combat_timer + arg_2_1, var_2_3)
+	self._out_of_combat_timer = math.min(self._out_of_combat_timer + arg_2_1, out_of_combat_delay)
 
-	if var_2_2 and var_2_3 > arg_2_0._out_of_combat_timer then
+	if not (not out_of_combat_only and not (out_of_combat_delay > self._out_of_combat_timer)) then
 		return
 	end
 
-	if var_2_1 <= arg_2_0._health_regen_timer then
-		arg_2_0:add_heal(var_2_0)
+	if interval <= self._health_regen_timer then
+		self:add_heal(amount)
 
-		arg_2_0._health_regen_timer = 0
+		self._health_regen_timer = 0
 	else
-		arg_2_0._health_regen_timer = math.min(arg_2_0._health_regen_timer + arg_2_1, var_2_1)
+		self._health_regen_timer = math.min(self._health_regen_timer + arg_2_1, interval)
 	end
 end
 
-function TargetHealthExtension.add_damage(arg_3_0, ...)
-	if not arg_3_0:is_dead() then
-		arg_3_0._health = math.max(arg_3_0._health - arg_3_0._damage_per_hit, 0)
-		arg_3_0._out_of_combat_timer = 0
+TargetHealthExtension.add_damage = function (self, ...)
+	-- function 3
+	if not self:is_dead() then
+		self._health = math.max(self._health - self._damage_per_hit, 0)
+		self._out_of_combat_timer = 0
 
-		if arg_3_0:_should_die() then
-			arg_3_0:set_dead()
+		if not self:_should_die() then
+			self:set_dead()
 		end
 	end
 end
 
-function TargetHealthExtension.add_heal(arg_4_0, arg_4_1)
-	if not arg_4_0:is_dead() then
-		arg_4_0._health = math.min(arg_4_0._health + arg_4_1, arg_4_0._max_health)
+TargetHealthExtension.add_heal = function (self, arg_4_1)
+	-- function 4
+	if not self:is_dead() then
+		self._health = math.min(self._health + arg_4_1, self._max_health)
 	end
 end
 
-function TargetHealthExtension.is_dead(arg_5_0)
-	return arg_5_0._dead
+TargetHealthExtension.is_dead = function (self)
+	-- function 5
+	return self._dead
 end
 
-function TargetHealthExtension.is_alive(arg_6_0)
-	return not arg_6_0._dead
+TargetHealthExtension.is_alive = function (self)
+	-- function 6
+	return not self._dead
 end
 
-function TargetHealthExtension.set_dead(arg_7_0)
-	arg_7_0._dead = true
-	arg_7_0._health = 0
-	HEALTH_ALIVE[arg_7_0.unit] = nil
+TargetHealthExtension.set_dead = function (self)
+	-- function 7
+	self._dead = true
+	self._health = 0
+	HEALTH_ALIVE[self.unit] = nil
 end
 
-function TargetHealthExtension._should_die(arg_8_0)
-	return arg_8_0._health <= 0
+TargetHealthExtension._should_die = function (self)
+	-- function 8
+	return self._health <= 0
 end
 
-function TargetHealthExtension.current_health(arg_9_0)
-	return arg_9_0._health
+TargetHealthExtension.current_health = function (self)
+	-- function 9
+	return self._health
 end
 
-function TargetHealthExtension.current_health_percent(arg_10_0)
+TargetHealthExtension.current_health_percent = function (arg_10_0)
+	-- function 10
 	return 1
 end
 
-function TargetHealthExtension.current_max_health_percent(arg_11_0)
+TargetHealthExtension.current_max_health_percent = function (arg_11_0)
+	-- function 11
 	return 1
 end
 
-function TargetHealthExtension.get_is_invincible(arg_12_0)
+TargetHealthExtension.get_is_invincible = function (arg_12_0)
+	-- function 12
 	return false
 end
 
-function TargetHealthExtension.has_assist_shield(arg_13_0)
+TargetHealthExtension.has_assist_shield = function (arg_13_0)
+	-- function 13
 	return false
 end
 
-function TargetHealthExtension.get_damage_taken(arg_14_0)
-	return arg_14_0._max_health - arg_14_0._health
+TargetHealthExtension.get_damage_taken = function (self)
+	-- function 14
+	return self._max_health - self._health
 end
 
-function TargetHealthExtension.get_health_regen(arg_15_0)
-	return arg_15_0._health_regen
+TargetHealthExtension.get_health_regen = function (self)
+	-- function 15
+	return self._health_regen
 end
 
-function TargetHealthExtension.client_predicted_is_alive(arg_16_0)
-	return not arg_16_0:is_dead()
+TargetHealthExtension.client_predicted_is_alive = function (self)
+	-- function 16
+	return not self:is_dead()
 end
 
-function TargetHealthExtension.apply_client_predicted_damage(arg_17_0, arg_17_1)
+TargetHealthExtension.apply_client_predicted_damage = function (arg_17_0, arg_17_1)
+	-- function 17
 	return
 end
 
-function TargetHealthExtension.get_max_health(arg_18_0)
-	return arg_18_0._max_health
+TargetHealthExtension.get_max_health = function (self)
+	-- function 18
+	return self._max_health
 end

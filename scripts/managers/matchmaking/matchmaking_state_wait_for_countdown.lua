@@ -3,67 +3,73 @@
 MatchmakingStateWaitForCountdown = class(MatchmakingStateWaitForCountdown)
 MatchmakingStateWaitForCountdown.NAME = "MatchmakingStateWaitForCountdown"
 
-function MatchmakingStateWaitForCountdown.init(arg_1_0, arg_1_1)
-	arg_1_0._lobby = arg_1_1.lobby
+MatchmakingStateWaitForCountdown.init = function (self, arg_1_1)
+	-- function 1
+	self._lobby = arg_1_1.lobby
 end
 
-function MatchmakingStateWaitForCountdown.destroy(arg_2_0)
+MatchmakingStateWaitForCountdown.destroy = function (arg_2_0)
+	-- function 2
 	return
 end
 
-function MatchmakingStateWaitForCountdown.on_enter(arg_3_0, arg_3_1)
-	arg_3_0._state_context = arg_3_1
-	arg_3_0._search_config = arg_3_1.search_config
-	arg_3_0._wait_to_start_game = arg_3_0._search_config.wait_to_start_game
+MatchmakingStateWaitForCountdown.on_enter = function (self, arg_3_1)
+	-- function 3
+	self._state_context = arg_3_1
+	self._search_config = arg_3_1.search_config
+	self._wait_to_start_game = self._search_config.wait_to_start_game
 end
 
-function MatchmakingStateWaitForCountdown.on_exit(arg_4_0)
-	if not arg_4_0._wait_to_start_game then
+MatchmakingStateWaitForCountdown.on_exit = function (self)
+	-- function 4
+	if not self._wait_to_start_game then
 		Managers.matchmaking:activate_waystone_portal(nil)
 	end
 end
 
-function MatchmakingStateWaitForCountdown.update(arg_5_0, arg_5_1, arg_5_2)
+MatchmakingStateWaitForCountdown.update = function (self, arg_5_1, arg_5_2)
+	-- function 5
 	if not DEDICATED_SERVER then
-		arg_5_0:_capture_telemetry()
+		self:_capture_telemetry()
 	end
 
-	local var_5_0 = Managers.matchmaking
+	local matchmaking = Managers.matchmaking
 
-	if arg_5_0._wait_to_start_game then
-		if var_5_0.start_game_now then
-			var_5_0.start_game_now = false
+	if not self._wait_to_start_game then
+		if not matchmaking.start_game_now then
+			matchmaking.start_game_now = false
 
-			return MatchmakingStateStartGame, arg_5_0._state_context
+			return MatchmakingStateStartGame, self._state_context
 		end
 
 		return nil
 	end
 
-	if var_5_0.countdown_has_finished then
-		var_5_0.countdown_has_finished = false
+	if not matchmaking.countdown_has_finished then
+		matchmaking.countdown_has_finished = false
 
-		return MatchmakingStateStartGame, arg_5_0._state_context
+		return MatchmakingStateStartGame, self._state_context
 	end
 
 	return nil
 end
 
-function MatchmakingStateWaitForCountdown._capture_telemetry(arg_6_0)
-	local var_6_0 = arg_6_0._lobby:members():get_members_joined()
+MatchmakingStateWaitForCountdown._capture_telemetry = function (self)
+	-- function 6
+	local get_members_joined = self._lobby:members():get_members_joined()
 
-	if #var_6_0 > 0 then
-		local var_6_1 = Managers.player:local_player()
-		local var_6_2 = Managers.time:time("main") - arg_6_0._state_context.started_hosting_t
+	if #get_members_joined > 0 then
+		local local_player = Managers.player:local_player()
+		local num = Managers.time:time("main") - self._state_context.started_hosting_t
 
-		for iter_6_0, iter_6_1 in ipairs(var_6_0) do
-			local var_6_3 = false
+		for i, v in ipairs(get_members_joined) do
+			local flag = false
 
-			if rawget(_G, "Steam") and rawget(_G, "Friends") then
-				local var_6_4 = Friends.in_category(iter_6_1, Friends.FRIEND_FLAG)
+			if not rawget(_G, "Steam") and not rawget(_G, "Friends") then
+				local in_category = Friends.in_category(v, Friends.FRIEND_FLAG)
 			end
 
-			Managers.telemetry_events:matchmaking_player_joined(var_6_1, var_6_2, arg_6_0._search_config)
+			Managers.telemetry_events:matchmaking_player_joined(local_player, num, self._search_config)
 		end
 	end
 end

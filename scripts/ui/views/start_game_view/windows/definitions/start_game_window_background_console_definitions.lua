@@ -1,21 +1,24 @@
 -- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_background_console_definitions.lua
 
-local var_0_0 = UISettings.game_start_windows.size
-local var_0_1 = {
+local size = UISettings.game_start_windows.size
+local tbl = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+				-- function 1
 				arg_1_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
-				local var_2_0 = math.easeOutCubic(arg_2_3)
+			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+				-- function 2
+				local easeOutCubic = math.easeOutCubic(arg_2_3)
 
-				arg_2_4.render_settings.alpha_multiplier = var_2_0
+				arg_2_4.render_settings.alpha_multiplier = easeOutCubic
 			end,
-			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+				-- function 3
 				return
 			end
 		}
@@ -25,21 +28,24 @@ local var_0_1 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				-- function 4
 				arg_4_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
-				local var_5_0 = math.easeOutCubic(arg_5_3)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+				-- function 5
+				local easeOutCubic = math.easeOutCubic(arg_5_3)
 
-				arg_5_4.render_settings.alpha_multiplier = 1 - var_5_0
+				arg_5_4.render_settings.alpha_multiplier = 1 - easeOutCubic
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+				-- function 6
 				return
 			end
 		}
 	}
 }
-local var_0_2 = {
+local tbl_2 = {
 	root = {
 		is_root = true,
 		size = {
@@ -82,7 +88,7 @@ local var_0_2 = {
 		vertical_alignment = "center",
 		parent = "menu_root",
 		horizontal_alignment = "center",
-		size = var_0_0,
+		size = size,
 		position = {
 			0,
 			0,
@@ -94,8 +100,8 @@ local var_0_2 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_0[1],
-			var_0_0[2] - 120
+			size[1],
+			size[2] - 120
 		},
 		position = {
 			0,
@@ -122,8 +128,8 @@ local var_0_2 = {
 		parent = "detailed_button",
 		horizontal_alignment = "right",
 		size = {
-			var_0_0[1],
-			var_0_0[2] - 120 - 50
+			size[1],
+			size[2] - 120 - 50
 		},
 		position = {
 			0,
@@ -146,7 +152,7 @@ local var_0_2 = {
 		}
 	}
 }
-local var_0_3 = {
+local tbl_3 = {
 	loading_overlay = UIWidgets.create_simple_rect("root_fit", {
 		255,
 		12,
@@ -156,7 +162,7 @@ local var_0_3 = {
 	loading_overlay_loading_glow = UIWidgets.create_simple_texture("loading_title_divider", "loading_overlay", nil, nil, nil, 1),
 	loading_overlay_loading_frame = UIWidgets.create_simple_texture("loading_title_divider_background", "loading_overlay")
 }
-local var_0_4 = {
+local tbl_4 = {
 	witch_hunter = {
 		z = 0.4,
 		x = 1,
@@ -190,8 +196,8 @@ local var_0_4 = {
 }
 
 return {
-	scenegraph_definition = var_0_2,
-	animation_definitions = var_0_1,
-	camera_position_by_character = var_0_4,
-	loading_overlay_widgets = var_0_3
+	scenegraph_definition = tbl_2,
+	animation_definitions = tbl,
+	camera_position_by_character = tbl_4,
+	loading_overlay_widgets = tbl_3
 }

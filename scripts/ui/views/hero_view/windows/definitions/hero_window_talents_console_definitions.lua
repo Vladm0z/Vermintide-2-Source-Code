@@ -1,31 +1,31 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/definitions/hero_window_talents_console_definitions.lua
 
-local var_0_0 = {
+local tbl = {
 	1215,
 	820
 }
-local var_0_1 = {
+local tbl_2 = {
 	450,
 	170
 }
-local var_0_2 = {
+local tbl_3 = {
 	364,
 	80
 }
-local var_0_3 = 6
-local var_0_4 = UISettings.console_menu_scenegraphs
-local var_0_5 = {
-	screen = var_0_4.screen,
-	area = var_0_4.area,
-	area_left = var_0_4.area_left,
-	area_right = var_0_4.area_right,
-	area_divider = var_0_4.area_divider,
+local num = 6
+local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
+local tbl_4 = {
+	screen = console_menu_scenegraphs.screen,
+	area = console_menu_scenegraphs.area,
+	area_left = console_menu_scenegraphs.area_left,
+	area_right = console_menu_scenegraphs.area_right,
+	area_divider = console_menu_scenegraphs.area_divider,
 	info_window = {
 		vertical_alignment = "top",
 		parent = "area_right",
 		horizontal_alignment = "right",
 		size = {
-			var_0_1[1] + 20,
+			tbl_2[1] + 20,
 			680
 		},
 		position = {
@@ -39,7 +39,7 @@ local var_0_5 = {
 		parent = "info_window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_1[1] + 20,
+			tbl_2[1] + 20,
 			680
 		},
 		position = {
@@ -55,7 +55,7 @@ local var_0_5 = {
 		vertical_alignment = "top",
 		parent = "scrollbar_window",
 		horizontal_alignment = "center",
-		size = var_0_1,
+		size = tbl_2,
 		position = {
 			0,
 			-20,
@@ -95,7 +95,7 @@ local var_0_5 = {
 		parent = "passive_window",
 		horizontal_alignment = "left",
 		size = {
-			var_0_1[1] * 0.6,
+			tbl_2[1] * 0.6,
 			50
 		},
 		position = {
@@ -123,7 +123,7 @@ local var_0_5 = {
 		parent = "passive_window",
 		horizontal_alignment = "right",
 		size = {
-			var_0_1[1] * 0.3,
+			tbl_2[1] * 0.3,
 			50
 		},
 		position = {
@@ -137,8 +137,8 @@ local var_0_5 = {
 		parent = "passive_icon",
 		horizontal_alignment = "left",
 		size = {
-			var_0_1[1] - 110,
-			var_0_1[2] - 40
+			tbl_2[1] - 110,
+			tbl_2[2] - 40
 		},
 		position = {
 			90,
@@ -150,10 +150,10 @@ local var_0_5 = {
 		vertical_alignment = "top",
 		parent = "passive_window",
 		horizontal_alignment = "left",
-		size = var_0_1,
+		size = tbl_2,
 		position = {
 			0,
-			-var_0_1[2],
+			-tbl_2[2],
 			1
 		}
 	},
@@ -190,7 +190,7 @@ local var_0_5 = {
 		parent = "active_window",
 		horizontal_alignment = "left",
 		size = {
-			var_0_1[1] * 0.6,
+			tbl_2[1] * 0.6,
 			50
 		},
 		position = {
@@ -218,7 +218,7 @@ local var_0_5 = {
 		parent = "active_window",
 		horizontal_alignment = "right",
 		size = {
-			var_0_1[1] * 0.3,
+			tbl_2[1] * 0.3,
 			50
 		},
 		position = {
@@ -232,8 +232,8 @@ local var_0_5 = {
 		parent = "active_icon",
 		horizontal_alignment = "left",
 		size = {
-			var_0_1[1] - 110,
-			var_0_1[2] - 40
+			tbl_2[1] - 110,
+			tbl_2[2] - 40
 		},
 		position = {
 			90,
@@ -246,7 +246,7 @@ local var_0_5 = {
 		parent = "active_window",
 		horizontal_alignment = "left",
 		size = {
-			var_0_1[1] * 0.6,
+			tbl_2[1] * 0.6,
 			50
 		},
 		position = {
@@ -289,7 +289,7 @@ local var_0_5 = {
 		parent = "talent_row_2",
 		horizontal_alignment = "left",
 		size = {
-			var_0_0[1] - 20,
+			tbl[1] - 20,
 			80
 		},
 		position = {
@@ -303,7 +303,7 @@ local var_0_5 = {
 		parent = "talent_row_3",
 		horizontal_alignment = "left",
 		size = {
-			var_0_0[1] - 20,
+			tbl[1] - 20,
 			80
 		},
 		position = {
@@ -317,7 +317,7 @@ local var_0_5 = {
 		parent = "talent_row_4",
 		horizontal_alignment = "left",
 		size = {
-			var_0_0[1] - 20,
+			tbl[1] - 20,
 			80
 		},
 		position = {
@@ -331,7 +331,7 @@ local var_0_5 = {
 		parent = "talent_row_5",
 		horizontal_alignment = "left",
 		size = {
-			var_0_0[1] - 20,
+			tbl[1] - 20,
 			80
 		},
 		position = {
@@ -345,7 +345,7 @@ local var_0_5 = {
 		parent = "talent_row_6",
 		horizontal_alignment = "left",
 		size = {
-			var_0_0[1] - 20,
+			tbl[1] - 20,
 			80
 		},
 		position = {
@@ -359,7 +359,7 @@ local var_0_5 = {
 		parent = "area_left",
 		horizontal_alignment = "left",
 		size = {
-			var_0_0[1] - 20,
+			tbl[1] - 20,
 			80
 		},
 		position = {
@@ -373,7 +373,7 @@ local var_0_5 = {
 		parent = "area_left",
 		horizontal_alignment = "left",
 		size = {
-			var_0_0[1] - 20,
+			tbl[1] - 20,
 			240
 		},
 		position = {
@@ -387,7 +387,7 @@ local var_0_5 = {
 		parent = "tooltip_area",
 		horizontal_alignment = "center",
 		size = {
-			var_0_0[1] - 40,
+			tbl[1] - 40,
 			40
 		},
 		position = {
@@ -401,7 +401,7 @@ local var_0_5 = {
 		parent = "tooltip_area",
 		horizontal_alignment = "center",
 		size = {
-			var_0_0[1] - 40,
+			tbl[1] - 40,
 			40
 		},
 		position = {
@@ -415,7 +415,7 @@ local var_0_5 = {
 		parent = "tooltip_area",
 		horizontal_alignment = "center",
 		size = {
-			var_0_0[1] - 40,
+			tbl[1] - 40,
 			40
 		},
 		position = {
@@ -426,17 +426,17 @@ local var_0_5 = {
 	}
 }
 
-for iter_0_0 = 1, var_0_3 do
-	local var_0_6 = iter_0_0 - 1
+for i = 1, num do
+	local num_2 = i - 1
 
-	if iter_0_0 == 1 then
-		var_0_6 = "anchor"
+	if i == 1 then
+		num_2 = "anchor"
 	end
 
-	var_0_5["career_perk_" .. iter_0_0] = {
+	tbl_4["career_perk_" .. i] = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "left",
-		parent = "career_perk_" .. var_0_6,
+		parent = "career_perk_" .. num_2,
 		size = {
 			410,
 			1
@@ -449,7 +449,7 @@ for iter_0_0 = 1, var_0_3 do
 	}
 end
 
-local var_0_7 = {
+local tbl_5 = {
 	font_size = 42,
 	upper_case = true,
 	localize = false,
@@ -464,7 +464,7 @@ local var_0_7 = {
 		2
 	}
 }
-local var_0_8 = {
+local tbl_6 = {
 	font_size = 18,
 	use_shadow = true,
 	localize = false,
@@ -480,7 +480,7 @@ local var_0_8 = {
 		2
 	}
 }
-local var_0_9 = {
+local tbl_7 = {
 	word_wrap = true,
 	font_size = 24,
 	localize = false,
@@ -495,7 +495,7 @@ local var_0_9 = {
 		2
 	}
 }
-local var_0_10 = {
+local tbl_8 = {
 	word_wrap = true,
 	font_size = 24,
 	localize = false,
@@ -510,7 +510,7 @@ local var_0_10 = {
 		2
 	}
 }
-local var_0_11 = {
+local tbl_9 = {
 	word_wrap = true,
 	use_shadow = true,
 	localize = false,
@@ -526,7 +526,7 @@ local var_0_11 = {
 		2
 	}
 }
-local var_0_12 = {
+local tbl_10 = {
 	font_size = 32,
 	upper_case = false,
 	localize = false,
@@ -543,7 +543,7 @@ local var_0_12 = {
 		2
 	}
 }
-local var_0_13 = {
+local tbl_11 = {
 	font_size = 32,
 	upper_case = false,
 	localize = false,
@@ -561,15 +561,16 @@ local var_0_13 = {
 	}
 }
 
-local function var_0_14(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	local var_1_0 = UIFrameSettings.menu_frame_09
-	local var_1_1 = "frame_outer_glow_01"
-	local var_1_2 = UIFrameSettings[var_1_1]
+local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	local menu_frame_09 = UIFrameSettings.menu_frame_09
+	local str = "frame_outer_glow_01"
+	local var_1_2 = UIFrameSettings[str]
 	local var_1_3 = var_1_2.texture_sizes.corner[1]
-	local var_1_4 = {
+	local tbl = {
 		element = {}
 	}
-	local var_1_5 = {
+	local tbl_2 = {
 		{
 			pass_type = "texture_frame",
 			style_id = "frame",
@@ -605,18 +606,18 @@ local function var_0_14(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			pass_type = "texture_frame"
 		}
 	}
-	local var_1_6 = {
+	local tbl_3 = {
 		level_text = "0",
 		lock = "talent_lock_fg",
 		amount = arg_1_3,
-		frame = var_1_0.texture,
+		frame = menu_frame_09.texture,
 		glow_frame = var_1_2.texture
 	}
-	local var_1_7 = math.min(97, arg_1_1[2] - 8)
-	local var_1_8 = {
+	local min = math.min(97, arg_1_1[2] - 8)
+	local tbl_4 = {
 		frame = {
-			texture_size = var_1_0.texture_size,
-			texture_sizes = var_1_0.texture_sizes,
+			texture_size = menu_frame_09.texture_size,
+			texture_sizes = menu_frame_09.texture_sizes,
 			color = {
 				255,
 				255,
@@ -634,8 +635,8 @@ local function var_0_14(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			}
 		},
 		frame_lock = {
-			texture_size = var_1_0.texture_size,
-			texture_sizes = var_1_0.texture_sizes,
+			texture_size = menu_frame_09.texture_size,
+			texture_sizes = menu_frame_09.texture_sizes,
 			color = {
 				255,
 				255,
@@ -699,8 +700,8 @@ local function var_0_14(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				255
 			},
 			texture_size = {
-				var_1_7,
-				var_1_7
+				min,
+				min
 			},
 			size = {
 				100,
@@ -749,67 +750,74 @@ local function var_0_14(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			}
 		}
 	}
-	local var_1_9 = 0
-	local var_1_10 = 0
-	local var_1_11 = {
+	local num = 0
+	local num_2 = 0
+	local tbl_5 = {
 		80,
 		80
 	}
-	local var_1_12 = arg_1_1[1] - (arg_1_2[1] * arg_1_3 + var_1_9 * (arg_1_3 - 1))
+	local num_3 = arg_1_1[1] - (arg_1_2[1] * arg_1_3 + num * (arg_1_3 - 1))
 
-	for iter_1_0 = 1, arg_1_3 do
-		local var_1_13 = "_" .. tostring(iter_1_0)
-		local var_1_14 = iter_1_0 - 1
-		local var_1_15 = {
-			var_1_12,
+	for i = 1, arg_1_3 do
+		local str_2 = "_" .. tostring(i)
+		local num_4 = i - 1
+		local tbl_6 = {
+			num_3,
 			0,
-			var_1_10
+			num_2
 		}
-		local var_1_16 = "hotspot" .. var_1_13
+		local str_3 = "hotspot" .. str_2
 
-		var_1_5[#var_1_5 + 1] = {
+		tbl_2[#tbl_2 + 1] = {
 			pass_type = "hotspot",
-			content_id = var_1_16,
-			style_id = var_1_16
+			content_id = str_3,
+			style_id = str_3
 		}
-		var_1_8[var_1_16] = {
+		tbl_4[str_3] = {
 			size = arg_1_2,
-			offset = var_1_15
+			offset = tbl_6
 		}
-		var_1_6[var_1_16] = {}
+		tbl_3[str_3] = {}
 
-		local var_1_17 = var_1_6[var_1_16]
-		local var_1_18 = "background" .. var_1_13
+		local var_1_17 = tbl_3[str_3]
+		local str_4 = "background" .. str_2
 
-		var_1_5[#var_1_5 + 1] = {
+		tbl_2[#tbl_2 + 1] = {
 			pass_type = "rect",
-			style_id = var_1_18
-		}
-		var_1_8[var_1_18] = {
-			size = arg_1_2,
-			color = {
-				IS_WINDOWS and 165 or 100,
-				0,
-				0,
-				0
-			},
-			offset = {
-				var_1_15[1],
-				var_1_15[2],
-				0
-			}
+			style_id = str_4
 		}
 
-		local var_1_19 = "frame" .. var_1_13
+		local tbl_7 = {
+			size = arg_1_2
+		}
+		local tbl_8 = {
+			nil,
+			0,
+			0,
+			0
+		}
+		local flag
 
-		var_1_5[#var_1_5 + 1] = {
+		flag = not IS_WINDOWS and 165 and 100
+		tbl_8[1] = flag
+		tbl_7.color = tbl_8
+		tbl_7.offset = {
+			tbl_6[1],
+			tbl_6[2],
+			0
+		}
+		tbl_4[str_4] = tbl_7
+
+		local str_5 = "frame" .. str_2
+
+		tbl_2[#tbl_2 + 1] = {
 			pass_type = "texture_frame",
-			texture_id = var_1_19,
-			style_id = var_1_19
+			texture_id = str_5,
+			style_id = str_5
 		}
-		var_1_8[var_1_19] = {
-			texture_size = var_1_0.texture_size,
-			texture_sizes = var_1_0.texture_sizes,
+		tbl_4[str_5] = {
+			texture_size = menu_frame_09.texture_size,
+			texture_sizes = menu_frame_09.texture_sizes,
 			size = arg_1_2,
 			color = {
 				255,
@@ -818,24 +826,25 @@ local function var_0_14(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				255
 			},
 			offset = {
-				var_1_15[1],
-				var_1_15[2],
+				tbl_6[1],
+				tbl_6[2],
 				7
 			}
 		}
-		var_1_6[var_1_19] = var_1_0.texture
+		tbl_3[str_5] = menu_frame_09.texture
 
-		local var_1_20 = "selected" .. var_1_13
+		local str_6 = "selected" .. str_2
 
-		var_1_5[#var_1_5 + 1] = {
+		tbl_2[#tbl_2 + 1] = {
 			pass_type = "texture",
-			texture_id = var_1_20,
-			style_id = var_1_20,
-			content_check_function = function(arg_2_0)
-				return arg_2_0[var_1_16].is_selected
+			texture_id = str_6,
+			style_id = str_6,
+			content_check_function = function (self)
+				-- function 2
+				return self[str_3].is_selected
 			end
 		}
-		var_1_8[var_1_20] = {
+		tbl_4[str_6] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			texture_size = arg_1_2,
@@ -847,26 +856,27 @@ local function var_0_14(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				255
 			},
 			offset = {
-				var_1_15[1],
-				var_1_15[2],
+				tbl_6[1],
+				tbl_6[2],
 				28
 			}
 		}
-		var_1_6[var_1_20] = "talent_selected"
+		tbl_3[str_6] = "talent_selected"
 
-		local var_1_21 = "title_text" .. var_1_13
+		local str_7 = "title_text" .. str_2
 
-		var_1_5[#var_1_5 + 1] = {
+		tbl_2[#tbl_2 + 1] = {
 			pass_type = "text",
-			text_id = var_1_21,
-			style_id = var_1_21,
-			content_check_function = function(arg_3_0)
-				local var_3_0 = arg_3_0[var_1_16]
+			text_id = str_7,
+			style_id = str_7,
+			content_check_function = function (self)
+				-- function 3
+				local var_3_0 = self[str_3]
 
-				return not var_3_0.is_selected and not var_3_0.disabled
+				return not not var_3_0.is_selected or not var_3_0.disabled
 			end
 		}
-		var_1_8[var_1_21] = {
+		tbl_4[str_7] = {
 			word_wrap = true,
 			font_size = 24,
 			localize = false,
@@ -879,26 +889,30 @@ local function var_0_14(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				arg_1_2[2]
 			},
 			offset = {
-				var_1_15[1] + 90,
-				var_1_15[2],
+				tbl_6[1] + 90,
+				tbl_6[2],
 				3
 			}
 		}
-		var_1_6[var_1_21] = "n/a"
+		tbl_3[str_7] = "n/a"
 
-		local var_1_22 = "title_text_selected" .. var_1_13
+		local str_8 = "title_text_selected" .. str_2
 
-		var_1_5[#var_1_5 + 1] = {
+		tbl_2[#tbl_2 + 1] = {
 			pass_type = "text",
-			text_id = var_1_21,
-			style_id = var_1_22,
-			content_check_function = function(arg_4_0)
-				local var_4_0 = arg_4_0[var_1_16]
+			text_id = str_7,
+			style_id = str_8,
+			content_check_function = function (self)
+				-- function 4
+				local var_4_0 = self[str_3]
+				local is_selected = var_4_0.is_selected
 
-				return var_4_0.is_selected and not var_4_0.disabled
+				is_selected = not is_selected and not var_4_0.disabled
+
+				return is_selected
 			end
 		}
-		var_1_8[var_1_22] = {
+		tbl_4[str_8] = {
 			word_wrap = true,
 			font_size = 24,
 			localize = false,
@@ -911,23 +925,24 @@ local function var_0_14(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				arg_1_2[2]
 			},
 			offset = {
-				var_1_15[1] + 90,
-				var_1_15[2],
+				tbl_6[1] + 90,
+				tbl_6[2],
 				3
 			}
 		}
 
-		local var_1_23 = "title_text_disabled" .. var_1_13
+		local str_9 = "title_text_disabled" .. str_2
 
-		var_1_5[#var_1_5 + 1] = {
+		tbl_2[#tbl_2 + 1] = {
 			pass_type = "text",
-			text_id = var_1_21,
-			style_id = var_1_23,
-			content_check_function = function(arg_5_0)
-				return arg_5_0[var_1_16].disabled
+			text_id = str_7,
+			style_id = str_9,
+			content_check_function = function (self)
+				-- function 5
+				return self[str_3].disabled
 			end
 		}
-		var_1_8[var_1_23] = {
+		tbl_4[str_9] = {
 			word_wrap = true,
 			font_size = 24,
 			localize = false,
@@ -945,20 +960,20 @@ local function var_0_14(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				arg_1_2[2]
 			},
 			offset = {
-				var_1_15[1] + 90,
-				var_1_15[2],
+				tbl_6[1] + 90,
+				tbl_6[2],
 				3
 			}
 		}
 
-		local var_1_24 = "title_text_shadow" .. var_1_13
+		local str_10 = "title_text_shadow" .. str_2
 
-		var_1_5[#var_1_5 + 1] = {
+		tbl_2[#tbl_2 + 1] = {
 			pass_type = "text",
-			text_id = var_1_21,
-			style_id = var_1_24
+			text_id = str_7,
+			style_id = str_10
 		}
-		var_1_8[var_1_24] = {
+		tbl_4[str_10] = {
 			word_wrap = true,
 			font_size = 24,
 			localize = false,
@@ -971,25 +986,29 @@ local function var_0_14(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				arg_1_2[2]
 			},
 			offset = {
-				var_1_15[1] + 90 + 2,
-				var_1_15[2] - 2,
+				tbl_6[1] + 90 + 2,
+				tbl_6[2] - 2,
 				2
 			}
 		}
 
-		local var_1_25 = "background_glow" .. var_1_13
+		local str_11 = "background_glow" .. str_2
 
-		var_1_5[#var_1_5 + 1] = {
+		tbl_2[#tbl_2 + 1] = {
 			pass_type = "texture",
-			texture_id = var_1_25,
-			style_id = var_1_25,
-			content_check_function = function(arg_6_0)
-				local var_6_0 = arg_6_0[var_1_16]
+			texture_id = str_11,
+			style_id = str_11,
+			content_check_function = function (self)
+				-- function 6
+				local var_6_0 = self[str_3]
+				local is_hover = var_6_0.is_hover
 
-				return var_6_0.is_hover or var_6_0.focused
+				is_hover = is_hover or var_6_0.focused
+
+				return is_hover
 			end
 		}
-		var_1_8[var_1_25] = {
+		tbl_4[str_11] = {
 			size = arg_1_2,
 			color = {
 				255,
@@ -998,21 +1017,21 @@ local function var_0_14(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				255
 			},
 			offset = {
-				var_1_15[1],
-				var_1_15[2],
+				tbl_6[1],
+				tbl_6[2],
 				3
 			}
 		}
-		var_1_6[var_1_25] = "talent_bg_glow_01"
+		tbl_3[str_11] = "talent_bg_glow_01"
 
-		local var_1_26 = "glass_top" .. var_1_13
+		local str_12 = "glass_top" .. str_2
 
-		var_1_5[#var_1_5 + 1] = {
+		tbl_2[#tbl_2 + 1] = {
 			pass_type = "texture",
-			texture_id = var_1_26,
-			style_id = var_1_26
+			texture_id = str_12,
+			style_id = str_12
 		}
-		var_1_8[var_1_26] = {
+		tbl_4[str_12] = {
 			size = {
 				arg_1_2[1],
 				3
@@ -1024,45 +1043,46 @@ local function var_0_14(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				255
 			},
 			offset = {
-				var_1_15[1],
-				var_1_15[2] + arg_1_2[2] - 8,
+				tbl_6[1],
+				tbl_6[2] + arg_1_2[2] - 8,
 				5
 			}
 		}
-		var_1_6[var_1_26] = "button_glass_01"
+		tbl_3[str_12] = "button_glass_01"
 
-		local var_1_27 = "icon" .. var_1_13
+		local str_13 = "icon" .. str_2
 
-		var_1_5[#var_1_5 + 1] = {
+		tbl_2[#tbl_2 + 1] = {
 			pass_type = "texture",
-			texture_id = var_1_27,
-			style_id = var_1_27
+			texture_id = str_13,
+			style_id = str_13
 		}
-		var_1_8[var_1_27] = {
+		tbl_4[str_13] = {
 			saturated = true,
-			size = var_1_11,
+			size = tbl_5,
 			color = Colors.get_color_table_with_alpha("white", 255),
 			offset = {
-				var_1_15[1],
-				var_1_15[2] + arg_1_2[2] / 2 - var_1_11[2] / 2,
+				tbl_6[1],
+				tbl_6[2] + arg_1_2[2] / 2 - tbl_5[2] / 2,
 				3
 			}
 		}
-		var_1_6[var_1_27] = "icons_placeholder"
+		tbl_3[str_13] = "icons_placeholder"
 
-		local var_1_28 = "icon_rect" .. var_1_13
+		local str_14 = "icon_rect" .. str_2
 
-		var_1_5[#var_1_5 + 1] = {
+		tbl_2[#tbl_2 + 1] = {
 			pass_type = "rect",
-			style_id = var_1_28,
-			content_check_function = function(arg_7_0)
-				local var_7_0 = arg_7_0[var_1_16]
+			style_id = str_14,
+			content_check_function = function (self)
+				-- function 7
+				local var_7_0 = self[str_3]
 
-				return not var_7_0.disabled and not var_7_0.is_selected
+				return not not var_7_0.disabled or not var_7_0.is_selected
 			end
 		}
-		var_1_8[var_1_28] = {
-			size = var_1_11,
+		tbl_4[str_14] = {
+			size = tbl_5,
 			color = {
 				100,
 				0,
@@ -1070,23 +1090,24 @@ local function var_0_14(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				0
 			},
 			offset = {
-				var_1_15[1],
-				var_1_15[2] + arg_1_2[2] / 2 - var_1_11[2] / 2,
+				tbl_6[1],
+				tbl_6[2] + arg_1_2[2] / 2 - tbl_5[2] / 2,
 				4
 			}
 		}
 
-		local var_1_29 = "icon_disabled_rect" .. var_1_13
+		local str_15 = "icon_disabled_rect" .. str_2
 
-		var_1_5[#var_1_5 + 1] = {
+		tbl_2[#tbl_2 + 1] = {
 			pass_type = "rect",
-			style_id = var_1_29,
-			content_check_function = function(arg_8_0)
-				return arg_8_0[var_1_16].disabled
+			style_id = str_15,
+			content_check_function = function (self)
+				-- function 8
+				return self[str_3].disabled
 			end
 		}
-		var_1_8[var_1_29] = {
-			size = var_1_11,
+		tbl_4[str_15] = {
+			size = tbl_5,
 			color = {
 				200,
 				0,
@@ -1094,70 +1115,76 @@ local function var_0_14(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				0
 			},
 			offset = {
-				var_1_15[1],
-				var_1_15[2] + arg_1_2[2] / 2 - var_1_11[2] / 2,
+				tbl_6[1],
+				tbl_6[2] + arg_1_2[2] / 2 - tbl_5[2] / 2,
 				4
 			}
 		}
 
-		local var_1_30 = "icon_divider" .. var_1_13
+		local str_16 = "icon_divider" .. str_2
 
-		var_1_5[#var_1_5 + 1] = {
+		tbl_2[#tbl_2 + 1] = {
 			pass_type = "texture",
-			texture_id = var_1_30,
-			style_id = var_1_30
+			texture_id = str_16,
+			style_id = str_16
 		}
-		var_1_8[var_1_30] = {
+		tbl_4[str_16] = {
 			size = {
 				5,
-				var_1_11[2] - 2
+				tbl_5[2] - 2
 			},
 			color = Colors.get_color_table_with_alpha("white", 255),
 			offset = {
-				var_1_15[1] + var_1_11[1] - 5,
-				var_1_15[2] + arg_1_2[2] / 2 - var_1_11[2] / 2 + 1,
+				tbl_6[1] + tbl_5[1] - 5,
+				tbl_6[2] + arg_1_2[2] / 2 - tbl_5[2] / 2 + 1,
 				6
 			}
 		}
-		var_1_6[var_1_30] = "menu_frame_09_divider_vertical"
+		tbl_3[str_16] = "menu_frame_09_divider_vertical"
 
-		local var_1_31 = "tooltip" .. var_1_13
+		local str_17 = "tooltip" .. str_2
 
-		var_1_5[#var_1_5 + 1] = {
+		tbl_2[#tbl_2 + 1] = {
 			talent_id = "talent",
 			pass_type = "talent_tooltip",
-			content_id = var_1_16,
-			style_id = var_1_31,
-			content_check_function = function(arg_9_0)
-				return arg_9_0.talent and arg_9_0.is_hover
+			content_id = str_3,
+			style_id = str_17,
+			content_check_function = function (self)
+				-- function 9
+				local talent = self.talent
+
+				talent = not talent and self.is_hover
+
+				return talent
 			end
 		}
-		var_1_8[var_1_31] = {
+		tbl_4[str_17] = {
 			size = arg_1_2,
 			offset = {
-				var_1_15[1],
-				var_1_15[2],
-				var_1_15[3] + 10
+				tbl_6[1],
+				tbl_6[2],
+				tbl_6[3] + 10
 			}
 		}
-		var_1_6[var_1_31] = nil
-		var_1_12 = var_1_12 + arg_1_2[1] + var_1_9
+		tbl_3[str_17] = nil
+		num_3 = num_3 + arg_1_2[1] + num
 	end
 
-	var_1_4.element.passes = var_1_5
-	var_1_4.content = var_1_6
-	var_1_4.style = var_1_8
-	var_1_4.offset = {
+	tbl.element.passes = tbl_2
+	tbl.content = tbl_3
+	tbl.style = tbl_4
+	tbl.offset = {
 		0,
 		0,
 		0
 	}
-	var_1_4.scenegraph_id = arg_1_0
+	tbl.scenegraph_id = arg_1_0
 
-	return var_1_4
+	return tbl
 end
 
-local function var_0_15(arg_10_0)
+local function fn_2(arg_10_0)
+	-- function 10
 	return {
 		element = {
 			passes = {
@@ -1280,7 +1307,7 @@ local function var_0_15(arg_10_0)
 	}
 end
 
-local var_0_16 = {
+local tbl_12 = {
 	font_size = 32,
 	use_shadow = true,
 	localize = false,
@@ -1296,40 +1323,40 @@ local var_0_16 = {
 		2
 	}
 }
-local var_0_17 = {
-	tooltip_area = UIWidgets.create_rect_with_outer_frame("tooltip_area", var_0_5.tooltip_area.size, "frame_outer_fade_02", 0, UISettings.console_menu_rect_color),
-	tooltip_title = UIWidgets.create_simple_text("n/a", "tooltip_title", nil, nil, var_0_12),
-	tooltip_description = UIWidgets.create_simple_text("n/a", "tooltip_description", nil, nil, var_0_9),
-	tooltip_info = UIWidgets.create_simple_text("n/a", "tooltip_info", nil, nil, var_0_10),
-	talent_row_1 = var_0_14("talent_row_1", var_0_5.talent_row_1.size, var_0_2, 3),
-	talent_row_2 = var_0_14("talent_row_2", var_0_5.talent_row_2.size, var_0_2, 3),
-	talent_row_3 = var_0_14("talent_row_3", var_0_5.talent_row_3.size, var_0_2, 3),
-	talent_row_4 = var_0_14("talent_row_4", var_0_5.talent_row_4.size, var_0_2, 3),
-	talent_row_5 = var_0_14("talent_row_5", var_0_5.talent_row_5.size, var_0_2, 3),
-	talent_row_6 = var_0_14("talent_row_6", var_0_5.talent_row_6.size, var_0_2, 3),
-	info_window_background = UIWidgets.create_rect_with_outer_frame("info_window", var_0_5.info_window.size, "frame_outer_fade_02", 0, UISettings.console_menu_rect_color),
+local tbl_13 = {
+	tooltip_area = UIWidgets.create_rect_with_outer_frame("tooltip_area", tbl_4.tooltip_area.size, "frame_outer_fade_02", 0, UISettings.console_menu_rect_color),
+	tooltip_title = UIWidgets.create_simple_text("n/a", "tooltip_title", nil, nil, tbl_10),
+	tooltip_description = UIWidgets.create_simple_text("n/a", "tooltip_description", nil, nil, tbl_7),
+	tooltip_info = UIWidgets.create_simple_text("n/a", "tooltip_info", nil, nil, tbl_8),
+	talent_row_1 = fn("talent_row_1", tbl_4.talent_row_1.size, tbl_3, 3),
+	talent_row_2 = fn("talent_row_2", tbl_4.talent_row_2.size, tbl_3, 3),
+	talent_row_3 = fn("talent_row_3", tbl_4.talent_row_3.size, tbl_3, 3),
+	talent_row_4 = fn("talent_row_4", tbl_4.talent_row_4.size, tbl_3, 3),
+	talent_row_5 = fn("talent_row_5", tbl_4.talent_row_5.size, tbl_3, 3),
+	talent_row_6 = fn("talent_row_6", tbl_4.talent_row_6.size, tbl_3, 3),
+	info_window_background = UIWidgets.create_rect_with_outer_frame("info_window", tbl_4.info_window.size, "frame_outer_fade_02", 0, UISettings.console_menu_rect_color),
 	mask = UIWidgets.create_simple_texture("mask_rect", "scrollbar_anchor"),
-	perk_title_text = UIWidgets.create_simple_text(Localize("hero_view_perk_title"), "perk_title_text", nil, nil, var_0_13),
+	perk_title_text = UIWidgets.create_simple_text(Localize("hero_view_perk_title"), "perk_title_text", nil, nil, tbl_11),
 	perk_title_divider = UIWidgets.create_simple_texture("infoslate_frame_02_horizontal", "perk_title_divider", true),
-	passive_title_text = UIWidgets.create_simple_text("n/a", "passive_title_text", nil, nil, var_0_13),
-	passive_type_title = UIWidgets.create_simple_text(Localize("hero_view_passive_ability"), "passive_type_title", nil, nil, var_0_11),
+	passive_title_text = UIWidgets.create_simple_text("n/a", "passive_title_text", nil, nil, tbl_11),
+	passive_type_title = UIWidgets.create_simple_text(Localize("hero_view_passive_ability"), "passive_type_title", nil, nil, tbl_9),
 	passive_title_divider = UIWidgets.create_simple_texture("infoslate_frame_02_horizontal", "passive_title_divider", true),
-	passive_description_text = UIWidgets.create_simple_text("n/a", "passive_description_text", nil, nil, var_0_8),
+	passive_description_text = UIWidgets.create_simple_text("n/a", "passive_description_text", nil, nil, tbl_6),
 	passive_icon = UIWidgets.create_simple_texture("icons_placeholder", "passive_icon", true),
 	passive_icon_frame = UIWidgets.create_simple_texture("talent_frame", "passive_icon_frame", true),
-	active_title_text = UIWidgets.create_simple_text("n/a", "active_title_text", nil, nil, var_0_13),
-	active_type_title = UIWidgets.create_simple_text(Localize("hero_view_activated_ability"), "active_type_title", nil, nil, var_0_11),
+	active_title_text = UIWidgets.create_simple_text("n/a", "active_title_text", nil, nil, tbl_11),
+	active_type_title = UIWidgets.create_simple_text(Localize("hero_view_activated_ability"), "active_type_title", nil, nil, tbl_9),
 	active_title_divider = UIWidgets.create_simple_texture("infoslate_frame_02_horizontal", "active_title_divider", true),
-	active_description_text = UIWidgets.create_simple_text("n/a", "active_description_text", nil, nil, var_0_8),
+	active_description_text = UIWidgets.create_simple_text("n/a", "active_description_text", nil, nil, tbl_6),
 	active_icon = UIWidgets.create_simple_texture("icons_placeholder", "active_icon", true),
 	active_icon_frame = UIWidgets.create_simple_texture("talent_frame", "active_icon_frame", true)
 }
 
-for iter_0_1 = 1, var_0_3 do
-	var_0_17["career_perk_" .. iter_0_1] = UIWidgets.create_career_perk_text("career_perk_" .. iter_0_1)
+for j = 1, num do
+	tbl_13["career_perk_" .. j] = UIWidgets.create_career_perk_text("career_perk_" .. j)
 end
 
-local var_0_18 = {
+local tbl_14 = {
 	default = {
 		{
 			input_action = "d_pad",
@@ -1371,23 +1398,26 @@ local var_0_18 = {
 		}
 	}
 }
-local var_0_19 = {
+local tbl_15 = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+			init = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+				-- function 11
 				arg_11_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
-				local var_12_0 = math.easeOutCubic(arg_12_3)
+			update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+				-- function 12
+				local easeOutCubic = math.easeOutCubic(arg_12_3)
 
-				arg_12_4.render_settings.alpha_multiplier = var_12_0
-				arg_12_0.area_left.local_position[1] = arg_12_1.area_left.position[1] + -100 * (1 - var_12_0)
-				arg_12_0.area_right.local_position[1] = arg_12_1.area_right.position[1] + -100 * (1 - var_12_0)
+				arg_12_4.render_settings.alpha_multiplier = easeOutCubic
+				arg_12_0.area_left.local_position[1] = arg_12_1.area_left.position[1] + -100 * (1 - easeOutCubic)
+				arg_12_0.area_right.local_position[1] = arg_12_1.area_right.position[1] + -100 * (1 - easeOutCubic)
 			end,
-			on_complete = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			on_complete = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+				-- function 13
 				return
 			end
 		}
@@ -1397,15 +1427,18 @@ local var_0_19 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			init = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+				-- function 14
 				arg_14_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
-				local var_15_0 = math.easeOutCubic(arg_15_3)
+			update = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+				-- function 15
+				local easeOutCubic = math.easeOutCubic(arg_15_3)
 
-				arg_15_4.render_settings.alpha_multiplier = 1 - var_15_0
+				arg_15_4.render_settings.alpha_multiplier = 1 - easeOutCubic
 			end,
-			on_complete = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			on_complete = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+				-- function 16
 				return
 			end
 		}
@@ -1413,9 +1446,9 @@ local var_0_19 = {
 }
 
 return {
-	widgets = var_0_17,
-	scenegraph_definition = var_0_5,
-	animation_definitions = var_0_19,
-	generic_input_actions = var_0_18,
-	NUM_PERKS = var_0_3
+	widgets = tbl_13,
+	scenegraph_definition = tbl_4,
+	animation_definitions = tbl_15,
+	generic_input_actions = tbl_14,
+	NUM_PERKS = num
 }

@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/repeating_crossbows.lua
 
-local var_0_0 = {
+local tbl = {
 	actions = {
 		action_one = {
 			default = {
@@ -44,7 +44,8 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_1_0, arg_1_1)
+				enter_function = function (arg_1_0, arg_1_1)
+					-- function 1
 					arg_1_1:clear_input_buffer()
 
 					return arg_1_1:reset_release_input()
@@ -91,7 +92,8 @@ local var_0_0 = {
 				speed = 8000,
 				hold_input = "action_two_hold",
 				anim_event = "attack_shoot",
-				anim_end_event_condition_func = function(arg_2_0, arg_2_1)
+				anim_end_event_condition_func = function (arg_2_0, arg_2_1)
+					-- function 2
 					return arg_2_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -115,7 +117,8 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_3_0, arg_3_1)
+				enter_function = function (arg_3_0, arg_3_1)
+					-- function 3
 					arg_3_1:clear_input_buffer()
 
 					return arg_3_1:reset_release_input()
@@ -158,7 +161,8 @@ local var_0_0 = {
 				aim_at_gaze_setting = "tobii_aim_at_gaze_repeating_crossbow",
 				hold_input = "action_two_hold",
 				anim_event = "to_zoom",
-				anim_end_event_condition_func = function(arg_4_0, arg_4_1)
+				anim_end_event_condition_func = function (arg_4_0, arg_4_1)
+					-- function 4
 					return arg_4_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -189,19 +193,23 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_5_0, arg_5_1)
+				enter_function = function (arg_5_0, arg_5_1)
+					-- function 5
 					arg_5_1:clear_input_buffer()
 
 					return arg_5_1:reset_release_input()
 				end,
-				zoom_condition_function = function()
+				zoom_condition_function = function ()
+					-- function 6
 					return true
 				end,
-				unzoom_condition_function = function(arg_7_0)
+				unzoom_condition_function = function (arg_7_0)
+					-- function 7
 					return arg_7_0 ~= "new_interupting_action"
 				end,
-				condition_func = function(arg_8_0, arg_8_1, arg_8_2)
-					if arg_8_2 and (arg_8_2:total_remaining_ammo() <= 0 or arg_8_2:is_reloading()) then
+				condition_func = function (arg_8_0, arg_8_1, arg_8_2)
+					-- function 8
+					if not arg_8_2 and arg_8_2:total_remaining_ammo() <= 0 and not arg_8_2:is_reloading() then
 						return false
 					end
 
@@ -238,21 +246,21 @@ local var_0_0 = {
 	}
 }
 
-var_0_0.default_spread_template = "brace_of_pistols"
-var_0_0.spread_lerp_speed = 2
-var_0_0.left_hand_unit = ""
-var_0_0.left_hand_attachment_node_linking = AttachmentNodeLinking.repeating_crossbow
-var_0_0.display_unit = "units/weapons/weapon_display/display_1h_crossbow"
-var_0_0.wield_anim = "to_repeating_crossbow"
-var_0_0.wield_anim_no_ammo = "to_repeating_crossbow_noammo"
-var_0_0.wield_anim_not_loaded = "to_repeating_crossbow"
-var_0_0.state_machine = "units/beings/player/first_person_base/state_machines/ranged/repeating_crossbow"
-var_0_0.crosshair_style = "projectile"
-var_0_0.reload_event = "reload"
-var_0_0.buff_type = "RANGED"
-var_0_0.dodge_count = 3
-var_0_0.weapon_type = "REPEATING_CROSSBOW"
-var_0_0.buffs = {
+tbl.default_spread_template = "brace_of_pistols"
+tbl.spread_lerp_speed = 2
+tbl.left_hand_unit = ""
+tbl.left_hand_attachment_node_linking = AttachmentNodeLinking.repeating_crossbow
+tbl.display_unit = "units/weapons/weapon_display/display_1h_crossbow"
+tbl.wield_anim = "to_repeating_crossbow"
+tbl.wield_anim_no_ammo = "to_repeating_crossbow_noammo"
+tbl.wield_anim_not_loaded = "to_repeating_crossbow"
+tbl.state_machine = "units/beings/player/first_person_base/state_machines/ranged/repeating_crossbow"
+tbl.crosshair_style = "projectile"
+tbl.reload_event = "reload"
+tbl.buff_type = "RANGED"
+tbl.dodge_count = 3
+tbl.weapon_type = "REPEATING_CROSSBOW"
+tbl.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1
 	},
@@ -260,10 +268,10 @@ var_0_0.buffs = {
 		external_optional_multiplier = 1
 	}
 }
-var_0_0.wwise_dep_left_hand = {
+tbl.wwise_dep_left_hand = {
 	"wwise/repeating_crossbow"
 }
-var_0_0.weapon_diagram = {
+tbl.weapon_diagram = {
 	light_attack = {
 		[DamageTypes.ARMOR_PIERCING] = 3,
 		[DamageTypes.CLEAVE] = 2,
@@ -279,12 +287,12 @@ var_0_0.weapon_diagram = {
 		[DamageTypes.DAMAGE] = 4
 	}
 }
-var_0_0.tooltip_keywords = {
+tbl.tooltip_keywords = {
 	"weapon_keyword_high_damage",
 	"weapon_keyword_piercing_bolts",
 	"weapon_keyword_rapid_fire"
 }
-var_0_0.tooltip_compare = {
+tbl.tooltip_compare = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -294,7 +302,7 @@ var_0_0.tooltip_compare = {
 		sub_action_name = "zoomed_shot"
 	}
 }
-var_0_0.tooltip_detail = {
+tbl.tooltip_detail = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -305,12 +313,12 @@ var_0_0.tooltip_detail = {
 	}
 }
 
-local var_0_1 = table.clone(var_0_0)
+local clone = table.clone(tbl)
 
-var_0_1.actions.action_one.default.impact_data.damage_profile = "crossbow_bolt_repeating_vs"
-var_0_1.actions.action_one.zoomed_shot.impact_data.damage_profile = "crossbow_bolt_repeating_vs"
+clone.actions.action_one.default.impact_data.damage_profile = "crossbow_bolt_repeating_vs"
+clone.actions.action_one.zoomed_shot.impact_data.damage_profile = "crossbow_bolt_repeating_vs"
 
 return {
-	repeating_crossbow_template_1 = table.clone(var_0_0),
-	repeating_crossbow_template_1_vs = table.clone(var_0_1)
+	repeating_crossbow_template_1 = table.clone(tbl),
+	repeating_crossbow_template_1_vs = table.clone(clone)
 }

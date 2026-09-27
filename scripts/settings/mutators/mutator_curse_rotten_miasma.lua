@@ -1,40 +1,43 @@
 -- chunkname: @scripts/settings/mutators/mutator_curse_rotten_miasma.lua
 
-local var_0_0 = 5
-local var_0_1 = 1
+local num = 5
+local num_2 = 1
 
-local function var_0_2(arg_1_0, arg_1_1)
-	local var_1_0 = Managers.state.network:game()
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
+	local game = Managers.state.network:game()
 
-	if not Unit.alive(arg_1_0) or not Unit.alive(arg_1_1) or not var_1_0 then
+	if not (not Unit.alive(arg_1_0) and not Unit.alive(arg_1_1) and game) then
 		return
 	end
 
-	local var_1_1 = Unit.local_position(arg_1_1, 0)
+	local local_position = Unit.local_position(arg_1_1, 0)
 
-	Unit.set_local_position(arg_1_0, 0, var_1_1)
+	Unit.set_local_position(arg_1_0, 0, local_position)
 end
 
-local function var_0_3()
+local function fn_2()
+	-- function 2
 	local var_2_0 = Managers.state.entity:system("pickup_system"):get_pickups_by_type("deus_relic_01")[1]
 
-	if var_2_0 then
+	if not var_2_0 then
 		return var_2_0
 	end
 
-	local var_2_1 = Managers.state.side:get_side_from_name("heroes").PLAYER_UNITS
+	local PLAYER_UNITS = Managers.state.side:get_side_from_name("heroes").PLAYER_UNITS
 
-	for iter_2_0, iter_2_1 in ipairs(var_2_1) do
-		if ScriptUnit.extension(iter_2_1, "inventory_system"):has_inventory_item("slot_level_event", "wpn_deus_relic_01") then
-			return iter_2_1
+	for i, v in ipairs(PLAYER_UNITS) do
+		if not ScriptUnit.extension(v, "inventory_system"):has_inventory_item("slot_level_event", "wpn_deus_relic_01") then
+			return v
 		end
 	end
 
 	return nil
 end
 
-local function var_0_4(arg_3_0, arg_3_1)
-	local var_3_0 = {
+local function fn_3(arg_3_0, arg_3_1)
+	-- function 3
+	local tbl = {
 		pickup_system = {
 			has_physics = true,
 			pickup_name = "deus_relic_01",
@@ -48,42 +51,47 @@ local function var_0_4(arg_3_0, arg_3_1)
 		}
 	}
 
-	return Managers.state.unit_spawner:spawn_network_unit("units/weapons/player/pup_deus_relic_01/pup_deus_relic_01", "deus_relic", var_3_0, arg_3_0, arg_3_1)
+	return Managers.state.unit_spawner:spawn_network_unit("units/weapons/player/pup_deus_relic_01/pup_deus_relic_01", "deus_relic", tbl, arg_3_0, arg_3_1)
 end
 
-local function var_0_5()
-	local var_4_0 = Managers.state.conflict
-	local var_4_1 = var_4_0.level_analysis:get_main_paths()
+local function fn_4()
+	-- function 4
+	local conflict = Managers.state.conflict
+	local get_main_paths = conflict.level_analysis:get_main_paths()
 
-	if not var_4_1 then
+	if not get_main_paths then
 		return nil
 	end
 
-	local var_4_2 = var_4_0.main_path_info
-	local var_4_3 = var_4_0.main_path_player_info
-	local var_4_4 = MainPathUtils.get_main_path_point_between_players(var_4_1, var_4_2, var_4_3):unbox()
-	local var_4_5 = Managers.state.entity:system("ai_system"):nav_world()
-	local var_4_6 = LocomotionUtils.pos_on_mesh(var_4_5, var_4_4)
+	local main_path_info = conflict.main_path_info
+	local main_path_player_info = conflict.main_path_player_info
+	local unbox = MainPathUtils.get_main_path_point_between_players(get_main_paths, main_path_info, main_path_player_info):unbox()
+	local nav_world = Managers.state.entity:system("ai_system"):nav_world()
+	local pos_on_mesh = LocomotionUtils.pos_on_mesh(nav_world, unbox)
 
-	if not var_4_6 then
+	if not pos_on_mesh then
 		return nil
 	end
 
-	var_4_6.z = var_4_6.z + var_0_1
+	pos_on_mesh.z = pos_on_mesh.z + num_2
 
-	return var_4_6
+	return pos_on_mesh
 end
 
-local function var_0_6(arg_5_0)
-	local var_5_0 = var_0_5()
+local function fn_5(arg_5_0)
+	-- function 5
+	local var_5_0 = fn_4()
 
 	if not var_5_0 then
 		return nil, nil
 	end
 
-	local var_5_1 = Quaternion.identity()
-	local var_5_2 = var_0_3() or var_0_4(var_5_0, var_5_1)
-	local var_5_3 = {
+	local identity = Quaternion.identity()
+	local var_5_2 = fn_2()
+
+	var_5_2 = var_5_2 or fn_3(var_5_0, identity)
+
+	local tbl = {
 		buff_system = {
 			initial_buff_names = {
 				arg_5_0
@@ -91,10 +99,10 @@ local function var_0_6(arg_5_0)
 		}
 	}
 
-	return Managers.state.unit_spawner:spawn_network_unit("units/gameplay/rotten_miasma_safe_area/rotten_miasma_safe_area_01", "buff_objective_unit", var_5_3, var_5_0, var_5_1), var_5_2
+	return Managers.state.unit_spawner:spawn_network_unit("units/gameplay/rotten_miasma_safe_area/rotten_miasma_safe_area_01", "buff_objective_unit", tbl, var_5_0, identity), var_5_2
 end
 
-local var_0_7 = "curse_rotten_miasma"
+local str = "curse_rotten_miasma"
 
 return {
 	description = "curse_rotten_miasma_desc",
@@ -103,38 +111,43 @@ return {
 	packages = {
 		"resource_packages/mutators/mutator_curse_rotten_miasma"
 	},
-	server_update_function = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	server_update_function = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+		-- function 6
 		if not arg_6_1.rotten_miasma_safe_area then
-			local var_6_0, var_6_1 = var_0_6(var_0_7)
+			local var_6_0, var_6_1 = fn_5(str)
 
 			arg_6_1.rotten_miasma_safe_area = var_6_0
 			arg_6_1.target_to_follow = var_6_1
 		end
 
-		local var_6_2 = var_0_3()
+		local var_6_2 = fn_2()
 
-		if var_6_2 then
+		if not var_6_2 then
 			arg_6_1.target_to_follow = var_6_2
 			arg_6_1.target_respawn_at = nil
 		else
-			arg_6_1.target_respawn_at = arg_6_1.target_respawn_at or var_0_0 + arg_6_3
+			local target_respawn_at = arg_6_1.target_respawn_at
 
-			local var_6_3 = var_0_5()
+			target_respawn_at = target_respawn_at or num + arg_6_3
+			arg_6_1.target_respawn_at = target_respawn_at
 
-			if arg_6_3 >= arg_6_1.target_respawn_at and var_6_3 then
-				local var_6_4 = Quaternion.identity()
+			local var_6_4 = fn_4()
 
-				arg_6_1.target_to_follow = var_0_4(var_6_3, var_6_4)
+			if not (arg_6_3 >= arg_6_1.target_respawn_at) or not var_6_4 then
+				local identity = Quaternion.identity()
+
+				arg_6_1.target_to_follow = fn_3(var_6_4, identity)
 			end
 		end
 
-		var_0_2(arg_6_1.rotten_miasma_safe_area, arg_6_1.target_to_follow)
+		fn(arg_6_1.rotten_miasma_safe_area, arg_6_1.target_to_follow)
 	end,
-	server_stop_function = function(arg_7_0, arg_7_1, arg_7_2)
-		local var_7_0 = arg_7_1.rotten_miasma_safe_area
+	server_stop_function = function (arg_7_0, arg_7_1, arg_7_2)
+		-- function 7
+		local rotten_miasma_safe_area = arg_7_1.rotten_miasma_safe_area
 
-		if ALIVE[var_7_0] then
-			Managers.state.unit_spawner:mark_for_deletion(var_7_0)
+		if not ALIVE[rotten_miasma_safe_area] then
+			Managers.state.unit_spawner:mark_for_deletion(rotten_miasma_safe_area)
 		end
 	end
 }

@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/help_screen/help_screen_definitions.lua
 
-local var_0_0 = {
+local tbl = {
 	root = {
 		is_root = true,
 		position = {
@@ -85,18 +85,19 @@ local var_0_0 = {
 	}
 }
 
-local function var_0_1(arg_1_0, arg_1_1)
-	local var_1_0 = false
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
+	local flag = false
 
 	arg_1_0 = arg_1_0 or 3
 
-	local var_1_1 = {}
+	local tbl = {}
 
-	for iter_1_0 = 1, arg_1_0 do
-		if iter_1_0 == arg_1_1 then
-			var_1_1[#var_1_1 + 1] = "trait_slot_cover"
+	for i = 1, arg_1_0 do
+		if i == arg_1_1 then
+			tbl[#tbl + 1] = "trait_slot_cover"
 		else
-			var_1_1[#var_1_1 + 1] = "reroll_trait_slot_01"
+			tbl[#tbl + 1] = "reroll_trait_slot_01"
 		end
 	end
 
@@ -116,8 +117,9 @@ local function var_0_1(arg_1_0, arg_1_1)
 				{
 					style_id = "text_area",
 					pass_type = "rect",
-					content_check_function = function(arg_2_0)
-						return arg_2_0.debug
+					content_check_function = function (self)
+						-- function 2
+						return self.debug
 					end
 				},
 				{
@@ -143,8 +145,9 @@ local function var_0_1(arg_1_0, arg_1_1)
 				{
 					style_id = "image_area",
 					pass_type = "rect",
-					content_check_function = function(arg_3_0)
-						return arg_3_0.debug
+					content_check_function = function (self)
+						-- function 3
+						return self.debug
 					end
 				},
 				{
@@ -160,8 +163,9 @@ local function var_0_1(arg_1_0, arg_1_1)
 				{
 					style_id = "page_indicator_area",
 					pass_type = "rect",
-					content_check_function = function(arg_4_0)
-						return arg_4_0.debug
+					content_check_function = function (self)
+						-- function 4
+						return self.debug
 					end
 				},
 				{
@@ -177,9 +181,9 @@ local function var_0_1(arg_1_0, arg_1_1)
 			header = "Help Screen Header",
 			image = "craft_bg",
 			text_field = "Text Field",
-			indicators = var_1_1,
+			indicators = tbl,
 			num_pages = arg_1_0,
-			debug = var_1_0
+			debug = flag
 		},
 		style = {
 			background = {
@@ -334,6 +338,6 @@ local function var_0_1(arg_1_0, arg_1_1)
 end
 
 return {
-	scenegraph_definition = var_0_0,
-	help_screen_widget_func = var_0_1
+	scenegraph_definition = tbl,
+	help_screen_widget_func = fn
 }

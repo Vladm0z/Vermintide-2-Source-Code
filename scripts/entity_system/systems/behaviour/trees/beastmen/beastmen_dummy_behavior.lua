@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/beastmen/beastmen_dummy_behavior.lua
 
-local var_0_0 = BreedActions.beastmen_gor
+local beastmen_gor = BreedActions.beastmen_gor
 
 BreedBehaviors.beastmen_dummy = {
 	"BTSelector",
@@ -18,7 +18,7 @@ BreedBehaviors.beastmen_dummy = {
 		"BTIdleAction",
 		name = "idle",
 		condition = "no_target",
-		action_data = var_0_0.dummy_idle
+		action_data = beastmen_gor.dummy_idle
 	},
 	{
 		"BTFallbackIdleAction",

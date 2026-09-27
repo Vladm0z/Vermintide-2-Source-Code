@@ -3,68 +3,77 @@
 require("scripts/managers/spawn/respawn_handler")
 require("scripts/managers/game_mode/spawning_components/spawning_helper")
 
-local var_0_0 = 1
-local var_0_1 = {
+local num = 1
+local tbl = {
 	"rpc_to_server_spawn_failed"
 }
 
 AdventureSpawning = class(AdventureSpawning)
 
-function AdventureSpawning.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
-	arg_1_0._profile_synchronizer = arg_1_1
-	arg_1_0._side = arg_1_2
-	arg_1_0._is_server = arg_1_3
-	arg_1_0._network_server = arg_1_4
-	arg_1_0._respawns_enabled = true
-	arg_1_0._spawning = true
-	arg_1_0._respawn_handler = RespawnHandler:new(arg_1_1, arg_1_3)
-	arg_1_0._spawn_points = {}
-	arg_1_0._num_spawn_points_used = 0
-	arg_1_0._delayed_clients = {}
-	arg_1_0._peers_ongoing_game_object_sync = {}
-	arg_1_0._saved_game_mode_data = arg_1_5 or {}
+AdventureSpawning.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	-- function 1
+	self._profile_synchronizer = arg_1_1
+	self._side = arg_1_2
+	self._is_server = arg_1_3
+	self._network_server = arg_1_4
+	self._respawns_enabled = true
+	self._spawning = true
+	self._respawn_handler = RespawnHandler:new(arg_1_1, arg_1_3)
+	self._spawn_points = {}
+	self._num_spawn_points_used = 0
+	self._delayed_clients = {}
+	self._peers_ongoing_game_object_sync = {}
+	self._saved_game_mode_data = arg_1_5 or {}
 
-	arg_1_0:_setup_game_mode_data(arg_1_2, arg_1_0._saved_game_mode_data)
+	self:_setup_game_mode_data(arg_1_2, self._saved_game_mode_data)
 end
 
-function AdventureSpawning._setup_game_mode_data(arg_2_0, arg_2_1, arg_2_2)
-	local var_2_0 = arg_2_1.party.num_slots
+AdventureSpawning._setup_game_mode_data = function (arg_2_0, arg_2_1, arg_2_2)
+	-- function 2
+	local num_slots = arg_2_1.party.num_slots
 
-	for iter_2_0 = 1, var_2_0 do
-		arg_2_2[iter_2_0] = arg_2_2[iter_2_0] or {}
+	for i = 1, num_slots do
+		local var_2_1 = arg_2_2[i]
+
+		var_2_1 = var_2_1 or {}
+		arg_2_2[i] = var_2_1
 	end
 end
 
-function AdventureSpawning.get_saved_game_mode_data(arg_3_0)
-	return arg_3_0._saved_game_mode_data
+AdventureSpawning.get_saved_game_mode_data = function (self)
+	-- function 3
+	return self._saved_game_mode_data
 end
 
-function AdventureSpawning.register_rpcs(arg_4_0, arg_4_1, arg_4_2)
-	arg_4_1:register(arg_4_0, unpack(var_0_1))
+AdventureSpawning.register_rpcs = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	arg_4_1:register(self, unpack(tbl))
 
-	arg_4_0._network_event_delegate = arg_4_1
+	self._network_event_delegate = arg_4_1
 
-	arg_4_0._respawn_handler:register_rpcs(arg_4_1, arg_4_2)
+	self._respawn_handler:register_rpcs(arg_4_1, arg_4_2)
 end
 
-function AdventureSpawning.unregister_rpcs(arg_5_0)
-	arg_5_0._respawn_handler:unregister_rpcs()
-	arg_5_0._network_event_delegate:unregister(arg_5_0)
+AdventureSpawning.unregister_rpcs = function (self)
+	-- function 5
+	self._respawn_handler:unregister_rpcs()
+	self._network_event_delegate:unregister(self)
 
-	arg_5_0._network_event_delegate = nil
+	self._network_event_delegate = nil
 end
 
-function AdventureSpawning._assign_data_to_slot(arg_6_0, arg_6_1, arg_6_2)
-	if table.is_empty(arg_6_2) then
+AdventureSpawning._assign_data_to_slot = function (self, arg_6_1, arg_6_2)
+	-- function 6
+	if not table.is_empty(arg_6_2) then
 		local var_6_0
 		local var_6_1
 
-		if arg_6_0._spawn_groups then
-			local var_6_2 = Managers.mechanism:game_mechanism():get_current_spawn_group()
+		if not self._spawn_groups then
+			local get_current_spawn_group = Managers.mechanism:game_mechanism():get_current_spawn_group()
 
-			var_6_0, var_6_1 = arg_6_0:get_spawn_point_from_spawn_group(var_6_2)
+			var_6_0, var_6_1 = self:get_spawn_point_from_spawn_group(get_current_spawn_group)
 		else
-			var_6_0, var_6_1 = arg_6_0:get_spawn_point()
+			var_6_0, var_6_1 = self:get_spawn_point()
 		end
 
 		arg_6_2.health_state = "alive"
@@ -80,19 +89,19 @@ function AdventureSpawning._assign_data_to_slot(arg_6_0, arg_6_1, arg_6_2)
 			slot_melee = 1
 		}
 
-		local var_6_3 = Managers.state.difficulty:get_difficulty_settings()
-		local var_6_4 = Managers.state.game_mode:settings()
-		local var_6_5 = {}
+		local get_difficulty_settings = Managers.state.difficulty:get_difficulty_settings()
+		local settings = Managers.state.game_mode:settings()
+		local tbl = {}
 
-		SpawningHelper.default_spawn_items(var_6_5, var_6_3, var_6_4)
+		SpawningHelper.default_spawn_items(tbl, get_difficulty_settings, settings)
 
-		arg_6_2.consumables = var_6_5
+		arg_6_2.consumables = tbl
 	end
 
-	if not arg_6_2.position or not arg_6_2.rotation then
-		local var_6_6, var_6_7 = arg_6_0:get_spawn_point()
+	if not (not arg_6_2.position and arg_6_2.rotation) then
+		local get_spawn_point, var_6_7 = self:get_spawn_point()
 
-		arg_6_2.position = var_6_6
+		arg_6_2.position = get_spawn_point
 		arg_6_2.rotation = var_6_7
 	end
 
@@ -104,51 +113,54 @@ function AdventureSpawning._assign_data_to_slot(arg_6_0, arg_6_1, arg_6_2)
 	end
 
 	if not arg_6_2.consumables then
-		local var_6_8 = Managers.state.difficulty:get_difficulty_settings()
-		local var_6_9 = Managers.state.game_mode:settings()
-		local var_6_10 = {}
+		local get_difficulty_settings_2 = Managers.state.difficulty:get_difficulty_settings()
+		local settings_2 = Managers.state.game_mode:settings()
+		local tbl_2 = {}
 
-		SpawningHelper.default_spawn_items(var_6_10, var_6_8, var_6_9)
+		SpawningHelper.default_spawn_items(tbl_2, get_difficulty_settings_2, settings_2)
 
-		arg_6_2.consumables = var_6_10
+		arg_6_2.consumables = tbl_2
 	end
 
 	if not arg_6_2.additional_items then
 		arg_6_2.additional_items = {}
 	end
 
-	local var_6_11 = arg_6_2.health_state ~= "dead"
+	local flag = arg_6_2.health_state ~= "dead"
 
-	if arg_6_2.spawn_state == nil or var_6_11 then
-		local var_6_12 = Managers.time:time("client_ingame")
+	if arg_6_2.spawn_state == nil or not flag then
+		local time = Managers.time:time("client_ingame")
+		local flag_2
 
-		arg_6_2.spawn_state = (var_6_12 == nil or var_6_12 < 10) and "is_initial_spawn" or "spawn"
+		flag_2 = not (time == nil or time < 10) and "is_initial_spawn" and "spawn"
+		arg_6_2.spawn_state = flag_2
 	end
 
-	local var_6_13 = arg_6_1.peer_id
-	local var_6_14 = Network.peer_id()
+	local peer_id = arg_6_1.peer_id
+	local peer_id_2 = Network.peer_id()
 
-	if not var_6_11 and var_6_13 ~= var_6_14 then
-		local var_6_15 = arg_6_1.local_player_id
-		local var_6_16 = PEER_ID_TO_CHANNEL[var_6_13]
+	if not (flag or peer_id == peer_id_2) then
+		local local_player_id = arg_6_1.local_player_id
+		local var_6_17 = PEER_ID_TO_CHANNEL[peer_id]
 
-		RPC.rpc_set_observer_camera(var_6_16, var_6_15)
+		RPC.rpc_set_observer_camera(var_6_17, local_player_id)
 	end
 
 	arg_6_1.game_mode_data = arg_6_2
 end
 
-function AdventureSpawning._unassign_data_from_slot(arg_7_0, arg_7_1, arg_7_2)
-	local var_7_0 = arg_7_2.health_state
+AdventureSpawning._unassign_data_from_slot = function (arg_7_0, arg_7_1, arg_7_2)
+	-- function 7
+	local health_state = arg_7_2.health_state
 
-	if var_7_0 == "respawning" or var_7_0 == "respawn" then
+	if not (health_state == "respawning" or health_state ~= "respawn") then
 		arg_7_2.health_state = "dead"
 		arg_7_2.ready_for_respawn = true
 	end
 
-	local var_7_1 = arg_7_2.spawn_state
+	local spawn_state = arg_7_2.spawn_state
 
-	if var_7_1 == "spawned" or var_7_1 == "spawning" or var_7_1 == "spawn" then
+	if not (spawn_state == "spawned" or spawn_state == "spawning" or spawn_state ~= "spawn") then
 		arg_7_2.spawn_state = "despawned"
 	else
 		arg_7_2.spawn_state = "not_spawned"
@@ -157,532 +169,588 @@ function AdventureSpawning._unassign_data_from_slot(arg_7_0, arg_7_1, arg_7_2)
 	arg_7_1.game_mode_data = {}
 end
 
-function AdventureSpawning.player_entered_game_session(arg_8_0, arg_8_1, arg_8_2)
-	local var_8_0 = Managers.party:get_party_from_player_id(arg_8_1, arg_8_2)
-	local var_8_1 = arg_8_0._side.party
+AdventureSpawning.player_entered_game_session = function (self, arg_8_1, arg_8_2)
+	-- function 8
+	local get_party_from_player_id = Managers.party:get_party_from_player_id(arg_8_1, arg_8_2)
+	local party = self._side.party
 
-	if var_8_0 ~= var_8_1 then
+	if get_party_from_player_id ~= party then
 		return
 	end
 
-	local var_8_2 = Managers.party:get_player_status(arg_8_1, arg_8_2).slot_id
-	local var_8_3 = var_8_1.slots[var_8_2]
-	local var_8_4 = arg_8_0._saved_game_mode_data[var_8_2]
+	local slot_id = Managers.party:get_player_status(arg_8_1, arg_8_2).slot_id
+	local var_8_3 = party.slots[slot_id]
+	local var_8_4 = self._saved_game_mode_data[slot_id]
 
-	arg_8_0:_assign_data_to_slot(var_8_3, var_8_4)
+	self:_assign_data_to_slot(var_8_3, var_8_4)
 end
 
-function AdventureSpawning.player_joined_party(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
-	local var_9_0 = arg_9_0._side.party
+AdventureSpawning.player_joined_party = function (self, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	-- function 9
+	local party = self._side.party
 
-	if var_9_0.party_id ~= arg_9_3 then
+	if party.party_id ~= arg_9_3 then
 		return
 	end
 
-	local var_9_1 = var_9_0.slots[arg_9_4]
-	local var_9_2 = arg_9_0._saved_game_mode_data[arg_9_4]
+	local var_9_1 = party.slots[arg_9_4]
+	local var_9_2 = self._saved_game_mode_data[arg_9_4]
 
-	arg_9_0:_assign_data_to_slot(var_9_1, var_9_2)
+	self:_assign_data_to_slot(var_9_1, var_9_2)
 end
 
-function AdventureSpawning.player_left_party(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
-	if arg_10_0._side.party.party_id ~= arg_10_3 then
+AdventureSpawning.player_left_party = function (self, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+	-- function 10
+	if self._side.party.party_id ~= arg_10_3 then
 		return
 	end
 
-	local var_10_0 = arg_10_0._saved_game_mode_data[arg_10_4]
+	local var_10_0 = self._saved_game_mode_data[arg_10_4]
 
-	arg_10_0:_unassign_data_from_slot(arg_10_5, var_10_0)
+	self:_unassign_data_from_slot(arg_10_5, var_10_0)
 end
 
-function AdventureSpawning.update(arg_11_0, arg_11_1, arg_11_2)
-	if Managers.state.network:game() then
-		arg_11_0._respawn_handler:update(arg_11_2, arg_11_1)
+AdventureSpawning.update = function (self, arg_11_1, arg_11_2)
+	-- function 11
+	if not Managers.state.network:game() then
+		self._respawn_handler:update(arg_11_2, arg_11_1)
 	end
 end
 
-function AdventureSpawning.server_update(arg_12_0, arg_12_1, arg_12_2)
-	if Managers.state.network:game() then
-		local var_12_0 = arg_12_0._side.party
-		local var_12_1 = var_12_0.occupied_slots
+AdventureSpawning.server_update = function (self, arg_12_1, arg_12_2)
+	-- function 12
+	if not Managers.state.network:game() then
+		local party = self._side.party
+		local occupied_slots = party.occupied_slots
 
-		arg_12_0:_update_player_status(arg_12_1, arg_12_2, var_12_1)
+		self:_update_player_status(arg_12_1, arg_12_2, occupied_slots)
 
-		local var_12_2 = Managers.state.difficulty:get_difficulty_settings().allow_respawns
+		local allow_respawns = Managers.state.difficulty:get_difficulty_settings().allow_respawns
 
-		if arg_12_0._respawns_enabled and var_12_2 then
-			arg_12_0._respawn_handler:server_update(arg_12_2, arg_12_1, var_12_1)
+		if not self._respawns_enabled and not allow_respawns then
+			self._respawn_handler:server_update(arg_12_2, arg_12_1, occupied_slots)
 		end
 
-		arg_12_0:_update_spawning(arg_12_2, arg_12_1, var_12_1, var_12_0.party_id)
-		arg_12_0:_update_joining_clients(arg_12_2, arg_12_1)
+		self:_update_spawning(arg_12_2, arg_12_1, occupied_slots, party.party_id)
+		self:_update_joining_clients(arg_12_2, arg_12_1)
 	end
 end
 
-function AdventureSpawning._update_player_status(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
-	local var_13_0 = Managers.player
-	local var_13_1 = ScriptUnit.extension
+AdventureSpawning._update_player_status = function (self, arg_13_1, arg_13_2, arg_13_3)
+	-- function 13
+	local player = Managers.player
+	local extension = ScriptUnit.extension
 
-	for iter_13_0 = 1, #arg_13_3 do
-		local var_13_2 = arg_13_3[iter_13_0]
-		local var_13_3 = var_13_2.game_mode_data
-		local var_13_4 = var_13_2.peer_id
-		local var_13_5 = var_13_2.local_player_id
+	for i = 1, #arg_13_3 do
+		local var_13_2 = arg_13_3[i]
+		local game_mode_data = var_13_2.game_mode_data
+		local peer_id = var_13_2.peer_id
+		local local_player_id = var_13_2.local_player_id
 
-		if var_13_4 and var_13_5 then
-			local var_13_6 = Managers.player:player(var_13_4, var_13_5)
+		if not peer_id and not local_player_id then
+			local player_2 = Managers.player:player(peer_id, local_player_id)
 
-			if var_13_6 then
-				local var_13_7 = var_13_3.spawn_state
+			if not player_2 then
+				local spawn_state = game_mode_data.spawn_state
 
-				if var_13_7 == "force_respawn" then
-					if not ALIVE[var_13_6.player_unit] and arg_13_0._profile_synchronizer:all_ingame_synced() then
-						var_13_3.spawn_state = "spawn"
+				if spawn_state == "force_respawn" then
+					if ALIVE[player_2.player_unit] or not self._profile_synchronizer:all_ingame_synced() then
+						game_mode_data.spawn_state = "spawn"
 					end
-				elseif var_13_7 == "spawned" then
-					local var_13_8 = var_13_6.player_unit
+				elseif spawn_state == "spawned" then
+					local player_unit = player_2.player_unit
 
-					if var_13_8 then
-						local var_13_9 = var_13_1(var_13_8, "locomotion_system"):last_position_on_navmesh()
+					if not player_unit then
+						local last_position_on_navmesh = extension(player_unit, "locomotion_system"):last_position_on_navmesh()
 
-						var_13_3.position:store(var_13_9)
-						var_13_3.rotation:store(Unit.local_rotation(var_13_8, 0))
+						game_mode_data.position:store(last_position_on_navmesh)
+						game_mode_data.rotation:store(Unit.local_rotation(player_unit, 0))
 
-						local var_13_10 = var_13_1(var_13_8, "status_system")
-						local var_13_11 = var_13_3.health_state
-						local var_13_12 = var_13_10:is_dead()
+						local var_13_10 = extension(player_unit, "status_system")
+						local health_state = game_mode_data.health_state
+						local is_dead = var_13_10:is_dead()
 
-						if var_13_12 then
-							if var_13_3.health_state ~= "respawning" then
-								var_13_3.health_state = "dead"
+						if not is_dead then
+							if game_mode_data.health_state ~= "respawning" then
+								game_mode_data.health_state = "dead"
 							end
-						elseif var_13_10:is_ready_for_assisted_respawn() then
-							var_13_3.health_state = "respawn"
-						elseif var_13_10:is_knocked_down() then
-							var_13_3.health_state = "knocked_down"
-						elseif var_13_10:is_disabled() and not var_13_10:is_in_vortex() and not var_13_10:is_grabbed_by_corruptor() and not var_13_10:is_grabbed_by_chaos_spawn() and not var_13_10:is_overpowered() then
-							var_13_3.health_state = "disabled"
+						elseif not var_13_10:is_ready_for_assisted_respawn() then
+							game_mode_data.health_state = "respawn"
+						elseif not var_13_10:is_knocked_down() then
+							game_mode_data.health_state = "knocked_down"
+						elseif not (not var_13_10:is_disabled() and var_13_10:is_in_vortex() or var_13_10:is_grabbed_by_corruptor() or var_13_10:is_grabbed_by_chaos_spawn() or var_13_10:is_overpowered()) then
+							game_mode_data.health_state = "disabled"
 						else
-							var_13_3.health_state = "alive"
+							game_mode_data.health_state = "alive"
 
-							local var_13_13 = var_13_3.respawn_unit
+							local respawn_unit = game_mode_data.respawn_unit
 
-							if var_13_13 then
-								arg_13_0._respawn_handler:set_respawn_unit_available(var_13_13)
+							if not respawn_unit then
+								self._respawn_handler:set_respawn_unit_available(respawn_unit)
 
-								var_13_3.respawn_unit = nil
+								game_mode_data.respawn_unit = nil
 							end
 						end
 
-						local var_13_14 = var_13_1(var_13_8, "health_system")
-						local var_13_15 = var_13_1(var_13_8, "career_system")
+						local var_13_14 = extension(player_unit, "health_system")
+						local var_13_15 = extension(player_unit, "career_system")
 
-						if not var_13_12 or var_13_3.health_state ~= "respawning" then
-							var_13_3.health_percentage = var_13_14:current_permanent_health_percent()
-							var_13_3.temporary_health_percentage = var_13_14:current_temporary_health_percent()
-							var_13_3.ability_cooldown_percentage = var_13_15:current_ability_cooldown_percentage()
+						if not (not is_dead and game_mode_data.health_state == "respawning") then
+							game_mode_data.health_percentage = var_13_14:current_permanent_health_percent()
+							game_mode_data.temporary_health_percentage = var_13_14:current_temporary_health_percent()
+							game_mode_data.ability_cooldown_percentage = var_13_15:current_ability_cooldown_percentage()
 						end
 
 						if not DamageUtils.is_in_inn then
-							local var_13_16 = var_13_1(var_13_8, "inventory_system")
+							local var_13_16 = extension(player_unit, "inventory_system")
 
-							SpawningHelper.fill_consumable_table(var_13_3.consumables, var_13_16)
-							SpawningHelper.fill_ammo_percentage(var_13_3.ammo, var_13_16, var_13_8)
+							SpawningHelper.fill_consumable_table(game_mode_data.consumables, var_13_16)
+							SpawningHelper.fill_ammo_percentage(game_mode_data.ammo, var_13_16, player_unit)
 
-							var_13_3.additional_items = var_13_16:get_additional_items_table()
+							game_mode_data.additional_items = var_13_16:get_additional_items_table()
 						end
 					end
-				elseif var_13_7 == "spawning" or var_13_7 == "initial_spawning" then
-					if var_13_6.player_unit then
-						var_13_3.spawn_state = "spawned"
+				elseif not (spawn_state == "spawning" or spawn_state ~= "initial_spawning") then
+					if not player_2.player_unit then
+						game_mode_data.spawn_state = "spawned"
 					end
-				elseif (var_13_7 == "despawned" or var_13_7 == "not_spawned") and var_13_6.player_unit then
-					var_13_3.spawn_state = "spawned"
+				elseif spawn_state == "despawned" or spawn_state == "not_spawned" or not player_2.player_unit then
+					game_mode_data.spawn_state = "spawned"
 				end
 			end
 		end
 	end
 end
 
-function AdventureSpawning._update_spawning(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
-	if arg_14_0._spawning then
-		local var_14_0 = Network.peer_id()
-		local var_14_1 = false
-		local var_14_2, var_14_3 = Managers.state.network.network_server:peers_ongoing_game_object_sync(arg_14_0._peers_ongoing_game_object_sync)
+AdventureSpawning._update_spawning = function (self, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+	-- function 14
+	if not self._spawning then
+		local peer_id = Network.peer_id()
+		local flag = false
+		local peers_ongoing_game_object_sync, var_14_3 = Managers.state.network.network_server:peers_ongoing_game_object_sync(self._peers_ongoing_game_object_sync)
 
-		for iter_14_0 = 1, var_14_3 do
-			local var_14_4 = var_14_2[iter_14_0]
+		for i = 1, var_14_3 do
+			local var_14_4 = peers_ongoing_game_object_sync[i]
 
-			if not arg_14_0._profile_synchronizer:all_synced_for_peer(var_14_4, 1) then
+			if not self._profile_synchronizer:all_synced_for_peer(var_14_4, 1) then
 				return
 			end
 		end
 
-		local var_14_5 = Managers.party:parties()
+		local parties = Managers.party:parties()
 
-		for iter_14_1 = 1, #var_14_5 do
-			local var_14_6 = var_14_5[iter_14_1].occupied_slots
+		for j = 1, #parties do
+			local occupied_slots = parties[j].occupied_slots
 
-			for iter_14_2 = 1, #var_14_6 do
-				local var_14_7 = var_14_6[iter_14_2]
-				local var_14_8 = var_14_7.peer_id
-				local var_14_9 = var_14_7.local_player_id
+			for k = 1, #occupied_slots do
+				local var_14_7 = occupied_slots[k]
+				local peer_id_2 = var_14_7.peer_id
+				local local_player_id = var_14_7.local_player_id
 
-				if not arg_14_0._profile_synchronizer:all_synced_for_peer(var_14_8, var_14_9) then
+				if not self._profile_synchronizer:all_synced_for_peer(peer_id_2, local_player_id) then
 					return
 				end
 
-				if DEDICATED_SERVER or var_14_8 == var_14_0 and var_14_9 == var_0_0 then
-					var_14_1 = true
+				if not (DEDICATED_SERVER or peer_id_2 ~= peer_id or local_player_id ~= num) then
+					flag = true
 				end
 			end
 		end
 
-		if not var_14_1 then
+		if not flag then
 			return
 		end
 
-		local var_14_10 = arg_14_0._network_server
+		local _network_server = self._network_server
 
-		for iter_14_3 = 1, #arg_14_3 do
-			local var_14_11 = arg_14_3[iter_14_3]
-			local var_14_12 = var_14_11.game_mode_data.spawn_state
+		for l = 1, #arg_14_3 do
+			local var_14_11 = arg_14_3[l]
+			local spawn_state = var_14_11.game_mode_data.spawn_state
 			local var_14_13
 
-			if DEDICATED_SERVER then
-				var_14_13 = var_14_10.game_session ~= nil
+			if not DEDICATED_SERVER then
+				var_14_13 = _network_server.game_session ~= nil
 			else
-				var_14_13 = var_14_10:is_peer_ingame(var_14_11.peer_id)
+				var_14_13 = _network_server:is_peer_ingame(var_14_11.peer_id)
 			end
 
-			local var_14_14 = var_14_12 == "is_initial_spawn" or var_14_12 == "spawn"
+			local flag_2 = spawn_state == "is_initial_spawn" or spawn_state == "spawn"
 
-			if var_14_13 and var_14_14 then
-				if var_14_11.is_bot then
-					arg_14_0:_spawn_bot(var_14_11)
+			if not var_14_13 and not flag_2 then
+				if not var_14_11.is_bot then
+					self:_spawn_bot(var_14_11)
 				else
-					arg_14_0:_spawn_player(var_14_11)
+					self:_spawn_player(var_14_11)
 				end
 			end
 		end
 	end
 end
 
-function AdventureSpawning.add_delayed_client(arg_15_0, arg_15_1, arg_15_2)
+AdventureSpawning.add_delayed_client = function (arg_15_0, arg_15_1, arg_15_2)
+	-- function 15
 	arg_15_0._delayed_clients[#arg_15_0._delayed_clients + 1] = {
 		peer_id = arg_15_1,
 		local_player_id = arg_15_2
 	}
 end
 
-function AdventureSpawning.remove_delayed_client(arg_16_0, arg_16_1, arg_16_2)
-	for iter_16_0 = #arg_16_0._delayed_clients, 1, -1 do
-		local var_16_0 = arg_16_0._delayed_clients[iter_16_0]
+AdventureSpawning.remove_delayed_client = function (self, arg_16_1, arg_16_2)
+	-- function 16
+	for i = #self._delayed_clients, 1, -1 do
+		local var_16_0 = self._delayed_clients[i]
 
-		if var_16_0.peer_id == arg_16_1 and var_16_0.local_player_id == arg_16_2 then
-			table.remove(arg_16_0._delayed_clients, iter_16_0)
+		if not (var_16_0.peer_id ~= arg_16_1 or var_16_0.local_player_id ~= arg_16_2) then
+			table.remove(self._delayed_clients, i)
 
 			return
 		end
 	end
 end
 
-function AdventureSpawning._update_joining_clients(arg_17_0, arg_17_1, arg_17_2)
-	if arg_17_0._spawning and arg_17_0._profile_synchronizer:all_synced() then
-		local var_17_0 = arg_17_0._network_server
+AdventureSpawning._update_joining_clients = function (self, arg_17_1, arg_17_2)
+	-- function 17
+	if not self._spawning and not self._profile_synchronizer:all_synced() then
+		local _network_server = self._network_server
 
-		for iter_17_0 = #arg_17_0._delayed_clients, 1, -1 do
-			local var_17_1 = arg_17_0._delayed_clients[iter_17_0]
-			local var_17_2 = var_17_1.peer_id
-			local var_17_3 = var_17_1.local_player_id
+		for i = #self._delayed_clients, 1, -1 do
+			local var_17_1 = self._delayed_clients[i]
+			local peer_id = var_17_1.peer_id
+			local local_player_id = var_17_1.local_player_id
 
-			if var_17_0:is_peer_ingame(var_17_2) then
-				arg_17_0:_add_client_to_party(var_17_2, var_17_3)
-				table.remove(arg_17_0._delayed_clients, iter_17_0)
+			if not _network_server:is_peer_ingame(peer_id) then
+				self:_add_client_to_party(peer_id, local_player_id)
+				table.remove(self._delayed_clients, i)
 			end
 		end
 	end
 end
 
-function AdventureSpawning._add_client_to_party(arg_18_0, arg_18_1, arg_18_2)
+AdventureSpawning._add_client_to_party = function (arg_18_0, arg_18_1, arg_18_2)
+	-- function 18
 	if arg_18_1 ~= Network.peer_id() then
-		local var_18_0 = true
-		local var_18_1 = 1
-		local var_18_2 = Managers.state.game_mode:remove_bot(var_18_1, arg_18_1, arg_18_2, var_18_0)
+		local flag = true
+		local num = 1
+		local remove_bot = Managers.state.game_mode:remove_bot(num, arg_18_1, arg_18_2, flag)
 
 		if Managers.party:get_player_status(arg_18_1, arg_18_2).party_id ~= 1 then
-			Managers.party:request_join_party(arg_18_1, arg_18_2, var_18_1, nil, var_18_2)
+			Managers.party:request_join_party(arg_18_1, arg_18_2, num, nil, remove_bot)
 		end
 	end
 end
 
-function AdventureSpawning._spawn_player(arg_19_0, arg_19_1)
-	local var_19_0 = arg_19_1.game_mode_data
-	local var_19_1, var_19_2 = arg_19_0:_find_spawn_point(arg_19_1)
-	local var_19_3 = var_19_0.spawn_state == "is_initial_spawn"
+AdventureSpawning._spawn_player = function (self, arg_19_1)
+	-- function 19
+	local game_mode_data = arg_19_1.game_mode_data
+	local _find_spawn_point, var_19_2 = self:_find_spawn_point(arg_19_1)
+	local flag = game_mode_data.spawn_state == "is_initial_spawn"
 
-	if Managers.state.network:game() then
-		local var_19_4 = arg_19_1.peer_id
-		local var_19_5 = arg_19_1.local_player_id
-		local var_19_6 = arg_19_1.profile_index
-		local var_19_7 = arg_19_1.career_index
-		local var_19_8 = SpawningHelper.netpack_consumables(var_19_0.consumables)
-		local var_19_9, var_19_10, var_19_11 = unpack(var_19_8)
-		local var_19_12 = SpawningHelper.netpack_additional_items(var_19_0.additional_items)
-		local var_19_13 = {}
+	if not Managers.state.network:game() then
+		local peer_id = arg_19_1.peer_id
+		local local_player_id = arg_19_1.local_player_id
+		local profile_index = arg_19_1.profile_index
+		local career_index = arg_19_1.career_index
+		local netpack_consumables = SpawningHelper.netpack_consumables(game_mode_data.consumables)
+		local var_19_9, var_19_10, var_19_11 = unpack(netpack_consumables)
+		local netpack_additional_items = SpawningHelper.netpack_additional_items(game_mode_data.additional_items)
+		local tbl = {}
 
-		if var_19_0.persistent_buffs then
-			for iter_19_0, iter_19_1 in pairs(var_19_0.persistent_buffs.buff_names) do
-				local var_19_14 = NetworkLookup.buff_templates[iter_19_1]
+		if not game_mode_data.persistent_buffs then
+			for k, v in pairs(game_mode_data.persistent_buffs.buff_names) do
+				local var_19_14 = NetworkLookup.buff_templates[v]
 
-				table.insert(var_19_13, var_19_14)
+				table.insert(tbl, var_19_14)
 			end
 		end
 
-		local var_19_15 = var_19_0.ammo
-		local var_19_16 = math.floor(var_19_15.slot_melee * 100)
-		local var_19_17 = math.floor(var_19_15.slot_ranged * 100)
-		local var_19_18 = var_19_0.ability_cooldown_percentage or 1
-		local var_19_19 = math.floor(var_19_18 * 100)
-		local var_19_20 = arg_19_0._profile_synchronizer:cached_inventory_hash(var_19_4, var_19_5)
+		local ammo = game_mode_data.ammo
+		local floor = math.floor(ammo.slot_melee * 100)
+		local floor_2 = math.floor(ammo.slot_ranged * 100)
+		local ability_cooldown_percentage = game_mode_data.ability_cooldown_percentage
 
-		Managers.state.network.network_transmit:send_rpc("rpc_to_client_spawn_player", var_19_4, var_19_5, var_19_6, var_19_7, var_19_1, var_19_2, var_19_3, var_19_16, var_19_17, var_19_19, var_19_9, var_19_10, var_19_11, var_19_12, var_19_13, var_19_20)
+		ability_cooldown_percentage = ability_cooldown_percentage or 1
+
+		local floor_3 = math.floor(ability_cooldown_percentage * 100)
+		local cached_inventory_hash = self._profile_synchronizer:cached_inventory_hash(peer_id, local_player_id)
+
+		Managers.state.network.network_transmit:send_rpc("rpc_to_client_spawn_player", peer_id, local_player_id, profile_index, career_index, _find_spawn_point, var_19_2, flag, floor, floor_2, floor_3, var_19_9, var_19_10, var_19_11, netpack_additional_items, tbl, cached_inventory_hash)
 	end
 
-	var_19_0.spawn_state = var_19_3 and "initial_spawning" or "spawning"
+	local flag_2
+
+	flag_2 = not flag and "initial_spawning" and "spawning"
+	game_mode_data.spawn_state = flag_2
 end
 
-function AdventureSpawning._spawn_bot(arg_20_0, arg_20_1)
-	local var_20_0 = arg_20_1.game_mode_data
-	local var_20_1 = var_20_0.position:unbox()
-	local var_20_2 = var_20_0.rotation:unbox()
-	local var_20_3 = var_20_0.spawn_state == "is_initial_spawn"
-	local var_20_4 = var_20_0.consumables
-	local var_20_5 = var_20_0.ammo
-	local var_20_6 = arg_20_1.peer_id
-	local var_20_7 = arg_20_1.local_player_id
-	local var_20_8 = Managers.player:player(var_20_6, var_20_7)
+AdventureSpawning._spawn_bot = function (arg_20_0, arg_20_1)
+	-- function 20
+	local game_mode_data = arg_20_1.game_mode_data
+	local unbox = game_mode_data.position:unbox()
+	local unbox_2 = game_mode_data.rotation:unbox()
+	local flag = game_mode_data.spawn_state == "is_initial_spawn"
+	local consumables = game_mode_data.consumables
+	local ammo = game_mode_data.ammo
+	local peer_id = arg_20_1.peer_id
+	local local_player_id = arg_20_1.local_player_id
+	local player = Managers.player:player(peer_id, local_player_id)
 
-	fassert(var_20_8.bot_player, "Trying to spawn a player as a bot, status info isn't correct")
+	fassert(player.bot_player, "Trying to spawn a player as a bot, status info isn't correct")
 
-	local var_20_9 = var_20_0.ability_cooldown_percentage or 1
-	local var_20_10 = math.floor(var_20_9 * 100)
+	local ability_cooldown_percentage = game_mode_data.ability_cooldown_percentage
 
-	var_20_8:spawn(var_20_1, var_20_2, var_20_3, var_20_5.slot_melee, var_20_5.slot_ranged, var_20_4.slot_healthkit, var_20_4.slot_potion, var_20_4.slot_grenade, var_20_10)
+	ability_cooldown_percentage = ability_cooldown_percentage or 1
 
-	var_20_0.spawn_state = "spawned"
+	local floor = math.floor(ability_cooldown_percentage * 100)
+
+	player:spawn(unbox, unbox_2, flag, ammo.slot_melee, ammo.slot_ranged, consumables.slot_healthkit, consumables.slot_potion, consumables.slot_grenade, floor)
+
+	game_mode_data.spawn_state = "spawned"
 end
 
-function AdventureSpawning._find_spawn_point(arg_21_0, arg_21_1)
+AdventureSpawning._find_spawn_point = function (self, arg_21_1)
+	-- function 21
 	local var_21_0
 	local var_21_1
-	local var_21_2 = Managers.state.room
+	local room = Managers.state.room
 
-	if var_21_2 then
-		var_21_0, var_21_1 = arg_21_0:_spawn_pos_rot_from_index(var_21_2:get_spawn_point_by_peer(arg_21_1.peer_id))
+	if not room then
+		var_21_0, var_21_1 = self:_spawn_pos_rot_from_index(room:get_spawn_point_by_peer(arg_21_1.peer_id))
 	else
-		local var_21_3 = arg_21_1.game_mode_data
+		local game_mode_data = arg_21_1.game_mode_data
 
-		fassert(var_21_3.position, "This level is missing spawn-points for the players.")
+		fassert(game_mode_data.position, "This level is missing spawn-points for the players.")
 
-		var_21_0 = var_21_3.position:unbox()
-		var_21_1 = var_21_3.rotation:unbox()
+		var_21_0 = game_mode_data.position:unbox()
+		var_21_1 = game_mode_data.rotation:unbox()
 	end
 
 	return var_21_0, var_21_1
 end
 
-function AdventureSpawning.force_update_spawn_positions(arg_22_0, arg_22_1, arg_22_2)
-	local var_22_0 = arg_22_0._saved_game_mode_data
+AdventureSpawning.force_update_spawn_positions = function (self, arg_22_1, arg_22_2)
+	-- function 22
+	local _saved_game_mode_data = self._saved_game_mode_data
 
-	for iter_22_0 = 1, #var_22_0 do
-		local var_22_1 = var_22_0[iter_22_0]
+	for i = 1, #_saved_game_mode_data do
+		local var_22_1 = _saved_game_mode_data[i]
 
-		if var_22_1.position and var_22_1.rotation then
+		if not var_22_1.position and not var_22_1.rotation then
 			var_22_1.position:store(arg_22_1)
 			var_22_1.rotation:store(arg_22_2)
 		end
 	end
 end
 
-function AdventureSpawning.set_respawning_enabled(arg_23_0, arg_23_1)
-	fassert(arg_23_0._respawns_enabled ~= arg_23_1, "Respawns already enabled=%s", tostring(arg_23_1))
+AdventureSpawning.set_respawning_enabled = function (self, arg_23_1)
+	-- function 23
+	fassert(self._respawns_enabled ~= arg_23_1, "Respawns already enabled=%s", tostring(arg_23_1))
 
-	arg_23_0._respawns_enabled = arg_23_1
+	self._respawns_enabled = arg_23_1
 end
 
-function AdventureSpawning.set_spawning_disabled(arg_24_0, arg_24_1)
-	arg_24_0._spawning = not arg_24_1
+AdventureSpawning.set_spawning_disabled = function (self, arg_24_1)
+	-- function 24
+	self._spawning = not arg_24_1
 end
 
-function AdventureSpawning.add_spawn_point(arg_25_0, arg_25_1)
-	local var_25_0 = Unit.local_position(arg_25_1, 0)
-	local var_25_1 = Unit.local_rotation(arg_25_1, 0)
-	local var_25_2 = {
-		pos = Vector3Box(var_25_0),
-		rot = QuaternionBox(var_25_1)
+AdventureSpawning.add_spawn_point = function (self, arg_25_1)
+	-- function 25
+	local local_position = Unit.local_position(arg_25_1, 0)
+	local local_rotation = Unit.local_rotation(arg_25_1, 0)
+	local tbl = {
+		pos = Vector3Box(local_position),
+		rot = QuaternionBox(local_rotation)
 	}
-	local var_25_3 = Unit.get_data(arg_25_1, "from_game_mode")
-	local var_25_4 = var_25_3 ~= "" and var_25_3 or "default"
+	local get_data = Unit.get_data(arg_25_1, "from_game_mode")
+	local flag = get_data == "" or not get_data or "default"
+	local _spawn_points = self._spawn_points
+	local var_25_6 = self._spawn_points[flag]
 
-	arg_25_0._spawn_points[var_25_4] = arg_25_0._spawn_points[var_25_4] or {}
-	arg_25_0._spawn_points[var_25_4][#arg_25_0._spawn_points[var_25_4] + 1] = var_25_2
+	var_25_6 = var_25_6 or {}
+	_spawn_points[flag] = var_25_6
+	self._spawn_points[flag][#self._spawn_points[flag] + 1] = tbl
 end
 
-function AdventureSpawning.get_spawn_point(arg_26_0)
-	local var_26_0 = "default"
-	local var_26_1 = Managers.mechanism:get_last_mechanism_switch()
-	local var_26_2 = Managers.mechanism:get_prior_state() or var_26_0
-	local var_26_3 = arg_26_0._spawn_points[var_26_2] or arg_26_0._spawn_points[var_26_1] or arg_26_0._spawn_points[var_26_0]
+AdventureSpawning.get_spawn_point = function (self)
+	-- function 26
+	local str = "default"
+	local get_last_mechanism_switch = Managers.mechanism:get_last_mechanism_switch()
+	local get_prior_state = Managers.mechanism:get_prior_state()
 
-	arg_26_0._num_spawn_points_used = arg_26_0._num_spawn_points_used + 1
+	get_prior_state = get_prior_state or str
 
-	if arg_26_0._num_spawn_points_used > #var_26_3 then
-		arg_26_0._num_spawn_points_used = 1
+	local var_26_3 = self._spawn_points[get_prior_state]
+
+	if not var_26_3 then
+		var_26_3 = self._spawn_points[get_last_mechanism_switch]
+		var_26_3 = var_26_3 or self._spawn_points[str]
 	end
 
-	local var_26_4 = var_26_3[arg_26_0._num_spawn_points_used]
+	self._num_spawn_points_used = self._num_spawn_points_used + 1
+
+	if self._num_spawn_points_used > #var_26_3 then
+		self._num_spawn_points_used = 1
+	end
+
+	local var_26_4 = var_26_3[self._num_spawn_points_used]
 
 	return var_26_4.pos, var_26_4.rot
 end
 
-function AdventureSpawning.respawn_unit_spawned(arg_27_0, arg_27_1)
-	arg_27_0._respawn_handler:respawn_unit_spawned(arg_27_1)
+AdventureSpawning.respawn_unit_spawned = function (self, arg_27_1)
+	-- function 27
+	self._respawn_handler:respawn_unit_spawned(arg_27_1)
 end
 
-function AdventureSpawning.respawn_gate_unit_spawned(arg_28_0, arg_28_1)
-	arg_28_0._respawn_handler:respawn_gate_unit_spawned(arg_28_1)
+AdventureSpawning.respawn_gate_unit_spawned = function (self, arg_28_1)
+	-- function 28
+	self._respawn_handler:respawn_gate_unit_spawned(arg_28_1)
 end
 
-function AdventureSpawning.remove_respawn_units_due_to_crossroads(arg_29_0, arg_29_1, arg_29_2)
-	arg_29_0._respawn_handler:remove_respawn_units_due_to_crossroads(arg_29_1, arg_29_2)
+AdventureSpawning.remove_respawn_units_due_to_crossroads = function (self, arg_29_1, arg_29_2)
+	-- function 29
+	self._respawn_handler:remove_respawn_units_due_to_crossroads(arg_29_1, arg_29_2)
 end
 
-function AdventureSpawning.recalc_respawner_dist_due_to_crossroads(arg_30_0)
-	arg_30_0._respawn_handler:recalc_respawner_dist_due_to_crossroads()
+AdventureSpawning.recalc_respawner_dist_due_to_crossroads = function (self)
+	-- function 30
+	self._respawn_handler:recalc_respawner_dist_due_to_crossroads()
 end
 
-function AdventureSpawning.teleport_despawned_players(arg_31_0, arg_31_1)
-	local var_31_0 = arg_31_0._side.party.occupied_slots
-	local var_31_1 = Managers.player
+AdventureSpawning.teleport_despawned_players = function (self, arg_31_1)
+	-- function 31
+	local occupied_slots = self._side.party.occupied_slots
+	local player = Managers.player
 
-	for iter_31_0 = 1, #var_31_0 do
-		local var_31_2 = var_31_0[iter_31_0]
-		local var_31_3 = var_31_2.peer_id
-		local var_31_4 = var_31_2.local_player_id
-		local var_31_5 = var_31_3 and var_31_4 and var_31_1:player(var_31_3, var_31_4)
+	for i = 1, #occupied_slots do
+		local var_31_2 = occupied_slots[i]
+		local peer_id = var_31_2.peer_id
+		local local_player_id = var_31_2.local_player_id
+		local flag = not peer_id and not local_player_id and player:player(peer_id, local_player_id)
 
-		if not var_31_5 or not var_31_5.player_unit then
+		if not (not flag and flag.player_unit) then
 			var_31_2.game_mode_data.position:store(arg_31_1)
 		end
 	end
 end
 
-function AdventureSpawning.force_respawn(arg_32_0, arg_32_1, arg_32_2)
+AdventureSpawning.force_respawn = function (arg_32_0, arg_32_1, arg_32_2)
+	-- function 32
 	Managers.party:get_player_status(arg_32_1, arg_32_2).game_mode_data.spawn_state = "force_respawn"
 end
 
-function AdventureSpawning.force_respawn_dead_players(arg_33_0)
-	local var_33_0 = arg_33_0._side.party
+AdventureSpawning.force_respawn_dead_players = function (self)
+	-- function 33
+	local party = self._side.party
 
-	arg_33_0._respawn_handler:force_respawn_dead_players(var_33_0)
+	self._respawn_handler:force_respawn_dead_players(party)
 end
 
-function AdventureSpawning.set_override_respawn_group(arg_34_0, arg_34_1, arg_34_2)
-	arg_34_0._respawn_handler:set_override_respawn_group(arg_34_1, arg_34_2)
+AdventureSpawning.set_override_respawn_group = function (self, arg_34_1, arg_34_2)
+	-- function 34
+	self._respawn_handler:set_override_respawn_group(arg_34_1, arg_34_2)
 end
 
-function AdventureSpawning.set_respawn_group_enabled(arg_35_0, arg_35_1, arg_35_2)
-	arg_35_0._respawn_handler:set_respawn_group_enabled(arg_35_1, arg_35_2)
+AdventureSpawning.set_respawn_group_enabled = function (self, arg_35_1, arg_35_2)
+	-- function 35
+	self._respawn_handler:set_respawn_group_enabled(arg_35_1, arg_35_2)
 end
 
-function AdventureSpawning.set_respawn_gate_enabled(arg_36_0, arg_36_1, arg_36_2)
-	arg_36_0._respawn_handler:set_respawn_gate_enabled(arg_36_1, arg_36_2)
+AdventureSpawning.set_respawn_gate_enabled = function (self, arg_36_1, arg_36_2)
+	-- function 36
+	self._respawn_handler:set_respawn_gate_enabled(arg_36_1, arg_36_2)
 end
 
-function AdventureSpawning.get_active_respawn_units(arg_37_0)
-	return arg_37_0._respawn_handler:get_active_respawn_units()
+AdventureSpawning.get_active_respawn_units = function (self)
+	-- function 37
+	return self._respawn_handler:get_active_respawn_units()
 end
 
-function AdventureSpawning.get_available_and_active_respawn_units(arg_38_0)
-	return arg_38_0._respawn_handler:get_available_and_active_respawn_units()
+AdventureSpawning.get_available_and_active_respawn_units = function (self)
+	-- function 38
+	return self._respawn_handler:get_available_and_active_respawn_units()
 end
 
-function AdventureSpawning.set_move_dead_players_to_next_respawn(arg_39_0, arg_39_1)
-	arg_39_0._respawn_handler:set_move_dead_players_to_next_respawn(arg_39_1)
+AdventureSpawning.set_move_dead_players_to_next_respawn = function (self, arg_39_1)
+	-- function 39
+	self._respawn_handler:set_move_dead_players_to_next_respawn(arg_39_1)
 end
 
-function AdventureSpawning.get_respawn_handler(arg_40_0)
-	return arg_40_0._respawn_handler
+AdventureSpawning.get_respawn_handler = function (self)
+	-- function 40
+	return self._respawn_handler
 end
 
-function AdventureSpawning.add_spawn_point_to_spawn_group(arg_41_0, arg_41_1)
-	if not arg_41_0._spawn_groups then
-		arg_41_0._spawn_groups = {}
+AdventureSpawning.add_spawn_point_to_spawn_group = function (self, arg_41_1)
+	-- function 41
+	if not self._spawn_groups then
+		self._spawn_groups = {}
 	end
 
-	local var_41_0 = Unit.local_position(arg_41_1, 0)
-	local var_41_1 = Unit.local_rotation(arg_41_1, 0)
-	local var_41_2 = {
-		pos = Vector3Box(var_41_0),
-		rot = QuaternionBox(var_41_1)
+	local local_position = Unit.local_position(arg_41_1, 0)
+	local local_rotation = Unit.local_rotation(arg_41_1, 0)
+	local tbl = {
+		pos = Vector3Box(local_position),
+		rot = QuaternionBox(local_rotation)
 	}
-	local var_41_3 = Unit.get_data(arg_41_1, "spawn_group")
+	local get_data = Unit.get_data(arg_41_1, "spawn_group")
 
-	fassert(var_41_3, "spawn group property missing from spawn point unit")
+	fassert(get_data, "spawn group property missing from spawn point unit")
 
-	if not arg_41_0._spawn_groups[var_41_3] then
-		arg_41_0._spawn_groups[var_41_3] = {}
+	if not self._spawn_groups[get_data] then
+		self._spawn_groups[get_data] = {}
 	end
 
-	local var_41_4 = #arg_41_0._spawn_groups[var_41_3]
+	local count = #self._spawn_groups[get_data]
 
-	arg_41_0._spawn_groups[var_41_3][var_41_4 + 1] = var_41_2
+	self._spawn_groups[get_data][count + 1] = tbl
 end
 
-function AdventureSpawning.get_spawn_point_from_spawn_group(arg_42_0, arg_42_1)
-	if not arg_42_0._used_spawn_group_positions then
-		arg_42_0._used_spawn_group_positions = {}
+AdventureSpawning.get_spawn_point_from_spawn_group = function (self, arg_42_1)
+	-- function 42
+	if not self._used_spawn_group_positions then
+		self._used_spawn_group_positions = {}
 	end
 
-	local var_42_0 = arg_42_0._spawn_groups[arg_42_1]
-	local var_42_1 = var_42_0 and #var_42_0
+	local var_42_0 = self._spawn_groups[arg_42_1]
+	local flag = not var_42_0 and #var_42_0
 
-	fassert(var_42_1, "no spawn points exists for indicated spawn group: ", arg_42_1)
+	fassert(flag, "no spawn points exists for indicated spawn group: ", arg_42_1)
 
-	if arg_42_0._used_spawn_group_positions[arg_42_1] then
-		arg_42_0._used_spawn_group_positions[arg_42_1] = arg_42_0._used_spawn_group_positions[arg_42_1] + 1
+	if not self._used_spawn_group_positions[arg_42_1] then
+		self._used_spawn_group_positions[arg_42_1] = self._used_spawn_group_positions[arg_42_1] + 1
 	else
-		arg_42_0._used_spawn_group_positions[arg_42_1] = 1
+		self._used_spawn_group_positions[arg_42_1] = 1
 	end
 
-	local var_42_2 = var_42_0[arg_42_0._used_spawn_group_positions[arg_42_1]]
+	local var_42_2 = var_42_0[self._used_spawn_group_positions[arg_42_1]]
 
 	return var_42_2.pos, var_42_2.rot
 end
 
-function AdventureSpawning.rpc_to_server_spawn_failed(arg_43_0, arg_43_1, arg_43_2)
+AdventureSpawning.rpc_to_server_spawn_failed = function (self, arg_43_1, arg_43_2)
+	-- function 43
 	print("[AdventureSpawning] Client detected spawning mismatch. Trying again.")
 
 	local var_43_0 = CHANNEL_TO_PEER_ID[arg_43_1]
-	local var_43_1 = arg_43_0._side.party.occupied_slots
+	local occupied_slots = self._side.party.occupied_slots
 
-	for iter_43_0 = 1, #var_43_1 do
-		local var_43_2 = var_43_1[iter_43_0]
-		local var_43_3 = var_43_2.peer_id
-		local var_43_4 = var_43_2.local_player_id
+	for i = 1, #occupied_slots do
+		local var_43_2 = occupied_slots[i]
+		local peer_id = var_43_2.peer_id
+		local local_player_id = var_43_2.local_player_id
 
-		if var_43_0 == var_43_3 and arg_43_2 == var_43_4 then
-			local var_43_5 = var_43_2.game_mode_data
+		if not (var_43_0 ~= peer_id or arg_43_2 ~= local_player_id) then
+			local game_mode_data = var_43_2.game_mode_data
 
-			if var_43_5.spawn_state == "initial_spawning" then
-				var_43_5.spawn_state = "is_initial_spawn"
+			if game_mode_data.spawn_state == "initial_spawning" then
+				game_mode_data.spawn_state = "is_initial_spawn"
 
 				break
 			end
 
-			if var_43_5.spawn_state == "spawning" then
-				var_43_5.spawn_state = "spawn"
+			if game_mode_data.spawn_state == "spawning" then
+				game_mode_data.spawn_state = "spawn"
 
 				break
 			end

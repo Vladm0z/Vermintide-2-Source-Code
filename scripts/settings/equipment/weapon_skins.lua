@@ -3,7 +3,10 @@
 require("scripts/settings/equipment/projectile_units")
 require("scripts/settings/equipment/pickups")
 
+local WeaponSkins = WeaponSkins
+
 WeaponSkins = WeaponSkins or {}
+WeaponSkins = WeaponSkins
 WeaponSkins.skins = {
 	{
 		name = "wh_1h_axe_skin_01",
@@ -7770,45 +7773,48 @@ WeaponSkins.default_skins = {
 	dr_drakegun = "dw_drakegun_skin_02"
 }
 
-local var_0_0 = {}
-local var_0_1 = {}
+local tbl = {}
+local tbl_2 = {}
 
-for iter_0_0, iter_0_1 in pairs(WeaponSkins.skins) do
-	if not var_0_0[iter_0_1.name] then
-		var_0_0[iter_0_1.name] = iter_0_1.data
+for k, v in pairs(WeaponSkins.skins) do
+	if not tbl[v.name] then
+		tbl[v.name] = v.data
 	else
-		var_0_1[#var_0_1 + 1] = iter_0_1.name
+		tbl_2[#tbl_2 + 1] = v.name
 	end
 end
 
-WeaponSkins.skins = var_0_0
+WeaponSkins.skins = tbl
 
 DLCUtils.require_list("weapon_skins_file_names")
 
-function WeaponSkins.item_has_skin_table(arg_1_0)
+WeaponSkins.item_has_skin_table = function (arg_1_0)
+	-- function 1
 	return WeaponSkins.skins[arg_1_0] ~= nil
 end
 
-function WeaponSkins.will_have_skin(arg_2_0)
+WeaponSkins.will_have_skin = function (arg_2_0)
+	-- function 2
 	local var_2_0 = arg_2_0
 
 	return WeaponSkins.skin_weights[var_2_0] > math.random(1, 100)
 end
 
-function WeaponSkins.is_matching_skin(arg_3_0, arg_3_1)
-	local var_3_0 = ItemMasterList[arg_3_0].skin_combination_table
-	local var_3_1 = WeaponSkins.skin_combinations[var_3_0]
+WeaponSkins.is_matching_skin = function (arg_3_0, arg_3_1)
+	-- function 3
+	local skin_combination_table = ItemMasterList[arg_3_0].skin_combination_table
+	local var_3_1 = WeaponSkins.skin_combinations[skin_combination_table]
 
-	for iter_3_0, iter_3_1 in pairs(var_3_1) do
-		if table.contains(iter_3_1, arg_3_1) then
+	for k, v in pairs(var_3_1) do
+		if not table.contains(v, arg_3_1) then
 			return true
 		end
 	end
 
-	for iter_3_2, iter_3_3 in pairs(WeaponSkins.default_skins) do
-		if arg_3_1 == iter_3_3 then
-			for iter_3_4, iter_3_5 in pairs(ItemMasterList) do
-				if iter_3_5.slot_type == "weapon_skin" and iter_3_5.matching_item_key == iter_3_2 then
+	for k_2, v_2 in pairs(WeaponSkins.default_skins) do
+		if arg_3_1 == v_2 then
+			for k_3, v_3 in pairs(ItemMasterList) do
+				if not (v_3.slot_type ~= "weapon_skin" or v_3.matching_item_key ~= k_2) then
 					return true
 				end
 			end
@@ -7818,42 +7824,55 @@ function WeaponSkins.is_matching_skin(arg_3_0, arg_3_1)
 	return false
 end
 
-function WeaponSkins.matching_weapon_skin_item_key(arg_4_0)
+WeaponSkins.matching_weapon_skin_item_key = function (arg_4_0)
+	-- function 4
 	if not WeaponSkins._matching_weapon_skin_item_keys then
 		WeaponSkins._matching_weapon_skin_item_keys = {}
 
-		for iter_4_0, iter_4_1 in pairs(ItemMasterList) do
-			if iter_4_1.skin_combination_table and (not iter_4_1.mechanisms or not table.find(iter_4_1.mechanisms, "versus")) then
-				local var_4_0 = WeaponSkins.skin_combinations[iter_4_1.skin_combination_table]
-				local var_4_1 = iter_4_0 .. "_skin"
+		for k, v in pairs(ItemMasterList) do
+			if not (not v.skin_combination_table and not v.mechanisms and table.find(v.mechanisms, "versus")) then
+				local var_4_0 = WeaponSkins.skin_combinations[v.skin_combination_table]
+				local str = k .. "_skin"
 
-				for iter_4_2, iter_4_3 in pairs(var_4_0) do
-					for iter_4_4, iter_4_5 in ipairs(iter_4_3) do
-						local var_4_2 = rawget(ItemMasterList, iter_4_5)
-						local var_4_3 = var_4_2 and var_4_2.rarity or iter_4_2
+				for k_2, v_2 in pairs(var_4_0) do
+					for i, v_3 in ipairs(v_2) do
+						local var_4_2 = rawget(ItemMasterList, v_3)
+						local rarity
 
-						WeaponSkins._matching_weapon_skin_item_keys[iter_4_5] = {
-							rarity = var_4_3,
-							item_key = var_4_1
+						if not var_4_2 then
+							rarity = var_4_2.rarity
+
+							if not rarity then
+								-- Nothing
+							end
+						end
+
+						rarity = k_2
+
+						::label_4_0::
+
+						WeaponSkins._matching_weapon_skin_item_keys[v_3] = {
+							rarity = rarity,
+							item_key = str
 						}
 					end
 				end
 			end
 		end
 
-		for iter_4_6, iter_4_7 in pairs(WeaponSkins.default_skins) do
-			local var_4_4 = iter_4_6 .. "_skin"
+		for k_3, v_4 in pairs(WeaponSkins.default_skins) do
+			local str_2 = k_3 .. "_skin"
 
-			WeaponSkins._matching_weapon_skin_item_keys[iter_4_7] = {
+			WeaponSkins._matching_weapon_skin_item_keys[v_4] = {
 				rarity = "plentiful",
-				item_key = var_4_4
+				item_key = str_2
 			}
 		end
 	end
 
 	local var_4_5 = WeaponSkins._matching_weapon_skin_item_keys[arg_4_0]
 
-	if var_4_5 then
+	if not var_4_5 then
 		return var_4_5.item_key, var_4_5.rarity
 	else
 		Application.warning("Incorrectly configured weapon skins for " .. arg_4_0)

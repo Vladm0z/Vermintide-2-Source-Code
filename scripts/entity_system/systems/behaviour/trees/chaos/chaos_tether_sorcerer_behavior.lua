@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/chaos/chaos_tether_sorcerer_behavior.lua
 
-local var_0_0 = BreedActions.chaos_tether_sorcerer
+local chaos_tether_sorcerer = BreedActions.chaos_tether_sorcerer
 
 BreedBehaviors.chaos_tether_sorcerer = {
 	"BTSelector",
@@ -9,7 +9,7 @@ BreedBehaviors.chaos_tether_sorcerer = {
 		name = "spawn",
 		condition = "spawn",
 		enter_hook = "corruptor_enter",
-		action_data = var_0_0.spawn
+		action_data = chaos_tether_sorcerer.spawn
 	},
 	{
 		"BTInVortexAction",
@@ -25,7 +25,7 @@ BreedBehaviors.chaos_tether_sorcerer = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = var_0_0.stagger
+		action_data = chaos_tether_sorcerer.stagger
 	},
 	{
 		"BTSelector",
@@ -57,7 +57,7 @@ BreedBehaviors.chaos_tether_sorcerer = {
 		{
 			"BTChaosSorcererTetherSkulkAction",
 			name = "skulk_tether",
-			action_data = var_0_0.skulk_tether
+			action_data = chaos_tether_sorcerer.skulk_tether
 		},
 		name = "in_combat"
 	},

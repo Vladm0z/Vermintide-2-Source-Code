@@ -1,110 +1,126 @@
 -- chunkname: @scripts/unit_extensions/weapons/projectiles/projectile_physics_unit_locomotion_extension.lua
 
 ProjectilePhysicsUnitLocomotionExtension = class(ProjectilePhysicsUnitLocomotionExtension)
-script_data.debug_projectiles = script_data.debug_projectiles or Development.parameter("debug_projectiles")
 
-function ProjectilePhysicsUnitLocomotionExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	arg_1_0.unit = arg_1_2
-	arg_1_0.physics_world = World.get_data(arg_1_1.world, "physics_world")
-	arg_1_0.owner_unit = arg_1_3.owner_unit
-	arg_1_0.network_position = arg_1_3.network_position
-	arg_1_0.network_rotation = arg_1_3.network_rotation
-	arg_1_0.network_velocity = arg_1_3.network_velocity
-	arg_1_0.network_angular_velocity = arg_1_3.network_angular_velocity
-	arg_1_0.is_server = Managers.player.is_server
-	arg_1_0.is_husk = not arg_1_0.is_server
-	arg_1_0.stopped = false
-	arg_1_0.dropped = false
-	arg_1_0.owner_peer_id = arg_1_3.owner_peer_id
+local script_data = script_data
+local debug_projectiles = script_data.debug_projectiles
 
-	local var_1_0 = Managers.state.network
+debug_projectiles = debug_projectiles or Development.parameter("debug_projectiles")
+script_data.debug_projectiles = debug_projectiles
 
-	arg_1_0.game = var_1_0:game()
-	arg_1_0.network_manager = var_1_0
+ProjectilePhysicsUnitLocomotionExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	self.unit = arg_1_2
+	self.physics_world = World.get_data(arg_1_1.world, "physics_world")
+	self.owner_unit = arg_1_3.owner_unit
+	self.network_position = arg_1_3.network_position
+	self.network_rotation = arg_1_3.network_rotation
+	self.network_velocity = arg_1_3.network_velocity
+	self.network_angular_velocity = arg_1_3.network_angular_velocity
+	self.is_server = Managers.player.is_server
+	self.is_husk = not self.is_server
+	self.stopped = false
+	self.dropped = false
+	self.owner_peer_id = arg_1_3.owner_peer_id
 
-	local var_1_1 = AiAnimUtils.position_network_scale(arg_1_0.network_position)
-	local var_1_2 = AiAnimUtils.rotation_network_scale(arg_1_0.network_rotation)
-	local var_1_3 = AiAnimUtils.velocity_network_scale(arg_1_0.network_velocity)
-	local var_1_4 = AiAnimUtils.velocity_network_scale(arg_1_0.network_angular_velocity)
-	local var_1_5 = Unit.create_actor(arg_1_2, "throw")
+	local network = Managers.state.network
 
-	Actor.teleport_position(var_1_5, var_1_1)
-	Actor.teleport_rotation(var_1_5, var_1_2)
-	Actor.set_velocity(var_1_5, var_1_3)
-	Actor.set_angular_velocity(var_1_5, var_1_4)
+	self.game = network:game()
+	self.network_manager = network
 
-	arg_1_0.physics_actor = var_1_5
+	local position_network_scale = AiAnimUtils.position_network_scale(self.network_position)
+	local rotation_network_scale = AiAnimUtils.rotation_network_scale(self.network_rotation)
+	local velocity_network_scale = AiAnimUtils.velocity_network_scale(self.network_velocity)
+	local velocity_network_scale_2 = AiAnimUtils.velocity_network_scale(self.network_angular_velocity)
+	local create_actor = Unit.create_actor(arg_1_2, "throw")
 
-	for iter_1_0 = 1, Unit.num_actors(arg_1_2) do
-		local var_1_6 = Unit.actor(arg_1_2, iter_1_0)
+	Actor.teleport_position(create_actor, position_network_scale)
+	Actor.teleport_rotation(create_actor, rotation_network_scale)
+	Actor.set_velocity(create_actor, velocity_network_scale)
+	Actor.set_angular_velocity(create_actor, velocity_network_scale_2)
 
-		if var_1_6 and Actor.is_physical(var_1_6) and var_1_6 ~= var_1_5 then
-			Actor.set_velocity(var_1_6, var_1_3)
-			Actor.set_angular_velocity(var_1_6, var_1_4)
+	self.physics_actor = create_actor
+
+	for i = 1, Unit.num_actors(arg_1_2) do
+		local actor = Unit.actor(arg_1_2, i)
+
+		if not (not actor and not Actor.is_physical(actor) and actor == create_actor) then
+			Actor.set_velocity(actor, velocity_network_scale)
+			Actor.set_angular_velocity(actor, velocity_network_scale_2)
 		end
 	end
 end
 
-function ProjectilePhysicsUnitLocomotionExtension.destroy(arg_2_0)
+ProjectilePhysicsUnitLocomotionExtension.destroy = function (arg_2_0)
+	-- function 2
 	return
 end
 
-local var_0_0 = 0.1
-local var_0_1 = 0.5
+local num = 0.1
+local num_2 = 0.5
 
-function ProjectilePhysicsUnitLocomotionExtension.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
-	if arg_3_0.stopped then
+ProjectilePhysicsUnitLocomotionExtension.update = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	-- function 3
+	if not self.stopped then
 		return
 	end
 
-	local var_3_0 = arg_3_0.physics_actor
-	local var_3_1 = Actor.velocity(var_3_0)
+	local physics_actor = self.physics_actor
+	local velocity = Actor.velocity(physics_actor)
 
-	if not (Vector3.length(var_3_1) <= var_0_0) then
-		arg_3_0.stop_time = nil
+	if not (Vector3.length(velocity) <= num) then
+		self.stop_time = nil
 
 		return
 	end
 
-	local var_3_2 = (arg_3_0.stop_time or 0) + arg_3_3
+	local stop_time = self.stop_time
 
-	arg_3_0.stop_time = var_3_2
+	stop_time = stop_time or 0
 
-	if var_3_2 >= var_0_1 then
-		arg_3_0:stop()
+	local num_3 = stop_time + arg_3_3
+
+	self.stop_time = num_3
+
+	if num_3 >= num_2 then
+		self:stop()
 	end
 end
 
-local var_0_2 = 1
+local num_3 = 1
 
-function ProjectilePhysicsUnitLocomotionExtension.bounce(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
-	if Vector3.length(arg_4_5) > var_0_2 then
-		-- block empty
+ProjectilePhysicsUnitLocomotionExtension.bounce = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	-- function 4
+	if Vector3.length(arg_4_5) > num_3 then
+		-- Nothing
 	end
 end
 
-function ProjectilePhysicsUnitLocomotionExtension.stop(arg_5_0)
-	arg_5_0.stopped = true
+ProjectilePhysicsUnitLocomotionExtension.stop = function (self)
+	-- function 5
+	self.stopped = true
 
-	Actor.put_to_sleep(arg_5_0.physics_actor)
+	Actor.put_to_sleep(self.physics_actor)
 
-	local var_5_0 = arg_5_0.network_manager
-	local var_5_1 = var_5_0:unit_game_object_id(arg_5_0.unit)
+	local network_manager = self.network_manager
+	local unit_game_object_id = network_manager:unit_game_object_id(self.unit)
 
-	var_5_0.network_transmit:send_rpc_clients("rpc_projectile_stopped", var_5_1)
+	network_manager.network_transmit:send_rpc_clients("rpc_projectile_stopped", unit_game_object_id)
 end
 
-function ProjectilePhysicsUnitLocomotionExtension.drop(arg_6_0)
-	arg_6_0.dropped = true
+ProjectilePhysicsUnitLocomotionExtension.drop = function (self)
+	-- function 6
+	self.dropped = true
 
-	Actor.set_velocity(arg_6_0.physics_actor, Vector3(0, 0, 0))
+	Actor.set_velocity(self.physics_actor, Vector3(0, 0, 0))
 
-	local var_6_0 = arg_6_0.network_manager
-	local var_6_1 = var_6_0:unit_game_object_id(arg_6_0.unit)
+	local network_manager = self.network_manager
+	local unit_game_object_id = network_manager:unit_game_object_id(self.unit)
 
-	var_6_0.network_transmit:send_rpc_clients("rpc_drop_projectile", var_6_1)
+	network_manager.network_transmit:send_rpc_clients("rpc_drop_projectile", unit_game_object_id)
 end
 
-function ProjectilePhysicsUnitLocomotionExtension.has_stopped(arg_7_0)
-	return arg_7_0.stopped
+ProjectilePhysicsUnitLocomotionExtension.has_stopped = function (self)
+	-- function 7
+	return self.stopped
 end

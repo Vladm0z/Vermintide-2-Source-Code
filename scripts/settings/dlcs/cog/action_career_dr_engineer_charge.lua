@@ -2,82 +2,87 @@
 
 ActionCareerDREngineerCharge = class(ActionCareerDREngineerCharge, ActionBase)
 
-function ActionCareerDREngineerCharge.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
-	ActionCareerDREngineerCharge.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionCareerDREngineerCharge.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	-- function 1
+	ActionCareerDREngineerCharge.super.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
-	arg_1_0.weapon_extension = ScriptUnit.extension(arg_1_7, "weapon_system")
-	arg_1_0.career_extension = ScriptUnit.extension(arg_1_4, "career_system")
-	arg_1_0.buff_extension = ScriptUnit.extension(arg_1_4, "buff_system")
-	arg_1_0.talent_extension = ScriptUnit.extension(arg_1_4, "talent_system")
-	arg_1_0.owner_unit = arg_1_4
-	arg_1_0.audio_loop_id = "engineer_weapon_charge"
-	arg_1_0._buff_to_add = "bardin_engineer_pump_buff"
+	self.weapon_extension = ScriptUnit.extension(arg_1_7, "weapon_system")
+	self.career_extension = ScriptUnit.extension(arg_1_4, "career_system")
+	self.buff_extension = ScriptUnit.extension(arg_1_4, "buff_system")
+	self.talent_extension = ScriptUnit.extension(arg_1_4, "talent_system")
+	self.owner_unit = arg_1_4
+	self.audio_loop_id = "engineer_weapon_charge"
+	self._buff_to_add = "bardin_engineer_pump_buff"
 end
 
-function ActionCareerDREngineerCharge.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
-	ActionCareerDREngineerCharge.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
+ActionCareerDREngineerCharge.client_owner_start_action = function (self, arg_2_1, arg_2_2)
+	-- function 2
+	ActionCareerDREngineerCharge.super.client_owner_start_action(self, arg_2_1, arg_2_2)
 
-	arg_2_0.ability_charge_timer = -arg_2_1.initial_charge_delay
+	self.ability_charge_timer = -arg_2_1.initial_charge_delay
 
-	arg_2_0:start_audio_loop()
+	self:start_audio_loop()
 end
 
-function ActionCareerDREngineerCharge.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
-	local var_3_0 = arg_3_0.buff_extension
-	local var_3_1 = arg_3_0.current_action.ability_charge_interval
-	local var_3_2 = arg_3_0.ability_charge_timer + arg_3_1
+ActionCareerDREngineerCharge.client_owner_post_update = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	-- function 3
+	local buff_extension = self.buff_extension
+	local ability_charge_interval = self.current_action.ability_charge_interval
+	local num = self.ability_charge_timer + arg_3_1
 
-	if var_3_1 <= var_3_2 then
-		local var_3_3 = math.floor(var_3_2 / var_3_1)
+	if ability_charge_interval <= num then
+		local floor = math.floor(num / ability_charge_interval)
 
-		var_3_2 = var_3_2 - var_3_3 * var_3_1
+		num = num - floor * ability_charge_interval
 
-		local var_3_4 = arg_3_0.wwise_world
-		local var_3_5 = arg_3_0._buff_to_add
-		local var_3_6 = var_3_0:num_buff_type(var_3_5)
-		local var_3_7 = var_3_0:get_buff_type(var_3_5)
+		local wwise_world = self.wwise_world
+		local _buff_to_add = self._buff_to_add
+		local num_buff_type = buff_extension:num_buff_type(_buff_to_add)
+		local get_buff_type = buff_extension:get_buff_type(_buff_to_add)
 
-		if var_3_7 then
-			if not arg_3_0.last_pump_time then
-				arg_3_0.last_pump_time = arg_3_2
+		if not get_buff_type then
+			if not self.last_pump_time then
+				self.last_pump_time = arg_3_2
 			end
 
-			local var_3_8 = var_3_7.template
+			local template = get_buff_type.template
 
-			if arg_3_2 - arg_3_0.last_pump_time > 10 and var_3_6 >= var_3_8.max_stacks then
-				Managers.state.achievement:trigger_event("clutch_pump", arg_3_0.owner_unit)
+			if not (not (arg_3_2 - self.last_pump_time > 10) or not (num_buff_type >= template.max_stacks)) then
+				Managers.state.achievement:trigger_event("clutch_pump", self.owner_unit)
 			end
 
-			arg_3_0.last_pump_time = arg_3_2
+			self.last_pump_time = arg_3_2
 		end
 
-		WwiseWorld.set_global_parameter(var_3_4, "engineer_charge", var_3_6 + var_3_3)
+		WwiseWorld.set_global_parameter(wwise_world, "engineer_charge", num_buff_type + floor)
 
-		for iter_3_0 = 1, var_3_3 do
-			var_3_0:add_buff(var_3_5)
+		for i = 1, floor do
+			buff_extension:add_buff(_buff_to_add)
 		end
 	end
 
-	arg_3_0.ability_charge_timer = var_3_2
+	self.ability_charge_timer = num
 end
 
-function ActionCareerDREngineerCharge.finish(arg_4_0, arg_4_1)
+ActionCareerDREngineerCharge.finish = function (arg_4_0, arg_4_1)
+	-- function 4
 	return
 end
 
-function ActionCareerDREngineerCharge.start_audio_loop(arg_5_0)
-	local var_5_0 = arg_5_0.current_action
-	local var_5_1 = var_5_0.charge_sound_name
-	local var_5_2 = var_5_0.charge_sound_stop_event
+ActionCareerDREngineerCharge.start_audio_loop = function (self)
+	-- function 5
+	local current_action = self.current_action
+	local charge_sound_name = current_action.charge_sound_name
+	local charge_sound_stop_event = current_action.charge_sound_stop_event
 
-	if not var_5_1 or not var_5_2 then
+	if not (not charge_sound_name and charge_sound_stop_event) then
 		return
 	end
 
-	local var_5_3 = arg_5_0.weapon_extension
-	local var_5_4 = var_5_0.charge_sound_husk_name
-	local var_5_5 = var_5_0.charge_sound_husk_stop_event
+	local weapon_extension = self.weapon_extension
+	local charge_sound_husk_name = current_action.charge_sound_husk_name
+	local charge_sound_husk_stop_event = current_action.charge_sound_husk_stop_event
 
-	var_5_3:add_looping_audio(arg_5_0.audio_loop_id, var_5_1, var_5_2, var_5_4, var_5_5)
-	var_5_3:start_looping_audio(arg_5_0.audio_loop_id)
+	weapon_extension:add_looping_audio(self.audio_loop_id, charge_sound_name, charge_sound_stop_event, charge_sound_husk_name, charge_sound_husk_stop_event)
+	weapon_extension:start_looping_audio(self.audio_loop_id)
 end

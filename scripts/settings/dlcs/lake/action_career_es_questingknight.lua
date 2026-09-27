@@ -2,85 +2,126 @@
 
 ActionCareerESQuestingKnight = class(ActionCareerESQuestingKnight, ActionSweep)
 
-function ActionCareerESQuestingKnight.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
-	ActionCareerESQuestingKnight.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionCareerESQuestingKnight.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	-- function 1
+	ActionCareerESQuestingKnight.super.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
-	arg_1_0.career_extension = ScriptUnit.extension(arg_1_4, "career_system")
-	arg_1_0.inventory_extension = ScriptUnit.extension(arg_1_4, "inventory_system")
-	arg_1_0.talent_extension = ScriptUnit.extension(arg_1_4, "talent_system")
-	arg_1_0.status_extension = ScriptUnit.extension(arg_1_4, "status_system")
+	self.career_extension = ScriptUnit.extension(arg_1_4, "career_system")
+	self.inventory_extension = ScriptUnit.extension(arg_1_4, "inventory_system")
+	self.talent_extension = ScriptUnit.extension(arg_1_4, "talent_system")
+	self.status_extension = ScriptUnit.extension(arg_1_4, "status_system")
 end
 
-function ActionCareerESQuestingKnight.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ActionCareerESQuestingKnight.client_owner_start_action = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	-- function 2
 	arg_2_5 = arg_2_5 or {}
 
-	ActionCareerESQuestingKnight.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	ActionCareerESQuestingKnight.super.client_owner_start_action(self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 
-	arg_2_0._combo_no_wield = arg_2_1.combo_no_wield or false
-	arg_2_0._hit_fx_triggered = false
+	local combo_no_wield = arg_2_1.combo_no_wield
 
-	arg_2_0:_play_vo()
-	arg_2_0:_play_vfx()
-	arg_2_0.inventory_extension:check_and_drop_pickups("career_ability")
-	arg_2_0.status_extension:set_stagger_immune(true)
+	combo_no_wield = combo_no_wield or false
+	self._combo_no_wield = combo_no_wield
+	self._hit_fx_triggered = false
 
-	arg_2_0._cooldown_started = arg_2_3 and arg_2_3.cooldown_started or false
+	self:_play_vo()
+	self:_play_vfx()
+	self.inventory_extension:check_and_drop_pickups("career_ability")
+	self.status_extension:set_stagger_immune(true)
+
+	local cooldown_started
+
+	if not arg_2_3 then
+		cooldown_started = arg_2_3.cooldown_started
+
+		if not cooldown_started then
+			-- Nothing
+		end
+	end
+
+	cooldown_started = false
+
+	::label_2_0::
+
+	self._cooldown_started = cooldown_started
 end
 
-function ActionCareerESQuestingKnight.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
-	ActionCareerESQuestingKnight.super.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+ActionCareerESQuestingKnight.client_owner_post_update = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	-- function 3
+	ActionCareerESQuestingKnight.super.client_owner_post_update(self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 
-	if not arg_3_0._hit_fx_triggered and arg_3_0._started_damage_window then
-		arg_3_0._hit_fx_triggered = true
+	if self._hit_fx_triggered or not self._started_damage_window then
+		self._hit_fx_triggered = true
 
-		local var_3_0 = ScriptUnit.extension(arg_3_0.owner_unit, "first_person_system"):current_rotation()
-		local var_3_1 = Vector3.flat(Quaternion.forward(var_3_0))
-		local var_3_2 = Managers.state.network
-		local var_3_3 = "fx/grail_knight_active_ability"
-		local var_3_4 = NetworkLookup.effects[var_3_3]
-		local var_3_5 = 0
-		local var_3_6 = arg_3_0.current_action.vfx_settings
-		local var_3_7 = var_3_6.forward or 0
-		local var_3_8 = var_3_6.up or 0
-		local var_3_9 = POSITION_LOOKUP[arg_3_0.owner_unit] + var_3_1 * var_3_7 + Vector3.up() * var_3_8
-		local var_3_10 = var_3_6.pitch and Quaternion.multiply(var_3_0, Quaternion(Vector3.right(), var_3_6.pitch)) or Quaternion.identity()
+		local current_rotation = ScriptUnit.extension(self.owner_unit, "first_person_system"):current_rotation()
+		local flat = Vector3.flat(Quaternion.forward(current_rotation))
+		local network = Managers.state.network
+		local str = "fx/grail_knight_active_ability"
+		local var_3_4 = NetworkLookup.effects[str]
+		local num = 0
+		local vfx_settings = self.current_action.vfx_settings
+		local forward = vfx_settings.forward
 
-		var_3_2:rpc_play_particle_effect(nil, var_3_4, NetworkConstants.invalid_game_object_id, var_3_5, var_3_9, var_3_10, false)
+		forward = forward or 0
+
+		local up = vfx_settings.up
+
+		up = up or 0
+
+		local num_2 = POSITION_LOOKUP[self.owner_unit] + flat * forward + Vector3.up() * up
+		local multiply
+
+		if not vfx_settings.pitch then
+			multiply = Quaternion.multiply(current_rotation, Quaternion(Vector3.right(), vfx_settings.pitch))
+
+			if not multiply then
+				-- Nothing
+			end
+		end
+
+		multiply = Quaternion.identity()
+
+		::label_3_0::
+
+		network:rpc_play_particle_effect(nil, var_3_4, NetworkConstants.invalid_game_object_id, num, num_2, multiply, false)
 	end
 end
 
-function ActionCareerESQuestingKnight.finish(arg_4_0, arg_4_1, arg_4_2)
-	ActionCareerESQuestingKnight.super.finish(arg_4_0, arg_4_1, arg_4_2)
-	arg_4_0.inventory_extension:stop_weapon_fx("career_action", true)
+ActionCareerESQuestingKnight.finish = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	ActionCareerESQuestingKnight.super.finish(self, arg_4_1, arg_4_2)
+	self.inventory_extension:stop_weapon_fx("career_action", true)
 
-	local var_4_0 = arg_4_2 and arg_4_2.new_action_settings
+	local flag = not arg_4_2 and arg_4_2.new_action_settings
 
-	if var_4_0 and var_4_0.is_ability_cancel or not arg_4_0._combo_no_wield or arg_4_1 ~= "new_interupting_action" then
-		arg_4_0.status_extension:set_stagger_immune(false)
-		arg_4_0.inventory_extension:wield_previous_non_level_slot()
+	if not ((not flag and flag.is_ability_cancel or not self._combo_no_wield) and arg_4_1 == "new_interupting_action") then
+		self.status_extension:set_stagger_immune(false)
+		self.inventory_extension:wield_previous_non_level_slot()
 	end
 
-	local var_4_1 = arg_4_0.career_extension
+	local career_extension = self.career_extension
 
-	if not arg_4_0._cooldown_started and arg_4_0.has_been_within_damage_window then
-		arg_4_0._cooldown_started = true
+	if self._cooldown_started or not self.has_been_within_damage_window then
+		self._cooldown_started = true
 
-		var_4_1:start_activated_ability_cooldown()
+		career_extension:start_activated_ability_cooldown()
 	end
 
 	return {
-		cooldown_started = arg_4_0._cooldown_started
+		cooldown_started = self._cooldown_started
 	}
 end
 
-function ActionCareerESQuestingKnight._play_vo(arg_5_0)
-	local var_5_0 = arg_5_0.owner_unit
-	local var_5_1 = ScriptUnit.extension_input(var_5_0, "dialogue_system")
-	local var_5_2 = FrameTable.alloc_table()
+ActionCareerESQuestingKnight._play_vo = function (self)
+	-- function 5
+	local owner_unit = self.owner_unit
+	local extension_input = ScriptUnit.extension_input(owner_unit, "dialogue_system")
+	local alloc_table = FrameTable.alloc_table()
 
-	var_5_1:trigger_networked_dialogue_event("activate_ability", var_5_2)
+	extension_input:trigger_networked_dialogue_event("activate_ability", alloc_table)
 end
 
-function ActionCareerESQuestingKnight._play_vfx(arg_6_0)
-	arg_6_0.inventory_extension:start_weapon_fx("career_action", true)
+ActionCareerESQuestingKnight._play_vfx = function (self)
+	-- function 6
+	self.inventory_extension:start_weapon_fx("career_action", true)
 end

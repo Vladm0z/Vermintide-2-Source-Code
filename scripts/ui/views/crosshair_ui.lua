@@ -1,13 +1,13 @@
 -- chunkname: @scripts/ui/views/crosshair_ui.lua
 
 local var_0_0 = local_require("scripts/ui/views/crosshair_ui_definitions")
-local var_0_1 = var_0_0.scenegraph_definition
-local var_0_2 = var_0_0.animations_definitions
-local var_0_3 = var_0_0.MAX_SIZE
+local scenegraph_definition = var_0_0.scenegraph_definition
+local animations_definitions = var_0_0.animations_definitions
+local MAX_SIZE = var_0_0.MAX_SIZE
 
 CrosshairUI = class(CrosshairUI)
 
-local var_0_4 = {
+local tbl = {
 	default = "draw_default_style_crosshair",
 	circle = "draw_circle_style_crosshair",
 	wh_priest = "draw_wh_priest_style_crosshair",
@@ -16,588 +16,622 @@ local var_0_4 = {
 	arrows = "draw_arrows_style_crosshair",
 	projectile = "draw_projectile_style_crosshair"
 }
-local var_0_5 = UISettings.crosshair_styles.melee
-local var_0_6 = UISettings.crosshair_styles.ranged
-local var_0_7 = require("scripts/ui/views/crosshair_kill_confirm_settings")
-local var_0_8 = var_0_7.kill_confirm_enemy_types
-local var_0_9 = var_0_7.kill_confirm_group_settings
-local var_0_10 = var_0_7.kill_confirm_types
-local var_0_11 = var_0_7.kill_confirm_type_colors
-local var_0_12 = var_0_7.kill_confirm_enemy_prio
-local var_0_13 = var_0_7.kill_confirm_weakspot_zones
-local var_0_14 = var_0_7.kill_confirm_enemy_type_widget_map
-local var_0_15 = var_0_7.kill_confirm_styles
-local var_0_16 = 0.5
-local var_0_17 = 30
-local var_0_18 = 120
+local melee = UISettings.crosshair_styles.melee
+local ranged = UISettings.crosshair_styles.ranged
+local scripts_ui_views_crosshair_kill_confirm_settings = require("scripts/ui/views/crosshair_kill_confirm_settings")
+local kill_confirm_enemy_types = scripts_ui_views_crosshair_kill_confirm_settings.kill_confirm_enemy_types
+local kill_confirm_group_settings = scripts_ui_views_crosshair_kill_confirm_settings.kill_confirm_group_settings
+local kill_confirm_types = scripts_ui_views_crosshair_kill_confirm_settings.kill_confirm_types
+local kill_confirm_type_colors = scripts_ui_views_crosshair_kill_confirm_settings.kill_confirm_type_colors
+local kill_confirm_enemy_prio = scripts_ui_views_crosshair_kill_confirm_settings.kill_confirm_enemy_prio
+local kill_confirm_weakspot_zones = scripts_ui_views_crosshair_kill_confirm_settings.kill_confirm_weakspot_zones
+local kill_confirm_enemy_type_widget_map = scripts_ui_views_crosshair_kill_confirm_settings.kill_confirm_enemy_type_widget_map
+local kill_confirm_styles = scripts_ui_views_crosshair_kill_confirm_settings.kill_confirm_styles
+local num = 0.5
+local num_2 = 30
+local num_3 = 120
 
-function CrosshairUI.init(arg_1_0, arg_1_1, arg_1_2)
-	arg_1_0._parent = arg_1_1
-	arg_1_0.ui_renderer = arg_1_2.ui_renderer
-	arg_1_0.ingame_ui = arg_1_2.ingame_ui
-	arg_1_0.input_manager = arg_1_2.input_manager
-	arg_1_0.render_settings = {
+CrosshairUI.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	self._parent = arg_1_1
+	self.ui_renderer = arg_1_2.ui_renderer
+	self.ingame_ui = arg_1_2.ingame_ui
+	self.input_manager = arg_1_2.input_manager
+	self.render_settings = {
 		snap_pixel_positions = false
 	}
-	arg_1_0.local_player = Managers.player:local_player()
-	arg_1_0._small_career_portrait = "small_unit_frame_portrait_default"
+	self.local_player = Managers.player:local_player()
+	self._small_career_portrait = "small_unit_frame_portrait_default"
 
-	Managers.state.event:register(arg_1_0, "on_set_ability_target_name", "_set_crosshair_target_info")
+	Managers.state.event:register(self, "on_set_ability_target_name", "_set_crosshair_target_info")
 
-	arg_1_0._kill_confirm_enabled = false
-	arg_1_0._kill_confirm_enabled_groups = var_0_9.off
+	self._kill_confirm_enabled = false
+	self._kill_confirm_enabled_groups = kill_confirm_group_settings.off
 
-	Managers.state.event:register(arg_1_0, "on_game_options_changed", "update_game_options")
-	arg_1_0:update_game_options()
-	arg_1_0:create_ui_elements()
-	arg_1_0:update_enabled_crosshair_styles()
+	Managers.state.event:register(self, "on_game_options_changed", "update_game_options")
+	self:update_game_options()
+	self:create_ui_elements()
+	self:update_enabled_crosshair_styles()
 end
 
-function CrosshairUI.create_ui_elements(arg_2_0)
-	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
-	arg_2_0.crosshair_projectile = UIWidget.init(var_0_0.widget_definitions.crosshair_projectile)
-	arg_2_0.crosshair_shotgun = UIWidget.init(var_0_0.widget_definitions.crosshair_shotgun)
-	arg_2_0.crosshair_dot = UIWidget.init(var_0_0.widget_definitions.crosshair_dot)
-	arg_2_0.crosshair_line = UIWidget.init(var_0_0.widget_definitions.crosshair_line)
-	arg_2_0.crosshair_arrow = UIWidget.init(var_0_0.widget_definitions.crosshair_arrow)
-	arg_2_0.crosshair_circle = UIWidget.init(var_0_0.widget_definitions.crosshair_circle)
-	arg_2_0.wh_priest = UIWidget.init(var_0_0.widget_definitions.crosshair_wh_priest)
-	arg_2_0._hit_armored_markers = {
+CrosshairUI.create_ui_elements = function (self)
+	-- function 2
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+	self.crosshair_projectile = UIWidget.init(var_0_0.widget_definitions.crosshair_projectile)
+	self.crosshair_shotgun = UIWidget.init(var_0_0.widget_definitions.crosshair_shotgun)
+	self.crosshair_dot = UIWidget.init(var_0_0.widget_definitions.crosshair_dot)
+	self.crosshair_line = UIWidget.init(var_0_0.widget_definitions.crosshair_line)
+	self.crosshair_arrow = UIWidget.init(var_0_0.widget_definitions.crosshair_arrow)
+	self.crosshair_circle = UIWidget.init(var_0_0.widget_definitions.crosshair_circle)
+	self.wh_priest = UIWidget.init(var_0_0.widget_definitions.crosshair_wh_priest)
+	self._hit_armored_markers = {
 		damage = UIWidget.init(var_0_0.widget_definitions.crosshair_hit_armored_damage),
 		no_damage = UIWidget.init(var_0_0.widget_definitions.crosshair_hit_armored_no_damage),
 		armor_break = UIWidget.init(var_0_0.widget_definitions.crosshair_hit_armored_break),
 		armor_open = UIWidget.init(var_0_0.widget_definitions.crosshair_hit_armored_open)
 	}
 
-	local var_2_0 = {}
-	local var_2_1 = 4
+	local tbl = {}
+	local num = 4
 
-	for iter_2_0 = 1, var_2_1 do
-		local var_2_2 = "crosshair_hit_" .. iter_2_0
+	for i = 1, num do
+		local str = "crosshair_hit_" .. i
 
-		var_2_0[iter_2_0] = UIWidget.init(var_0_0.widget_definitions[var_2_2])
+		tbl[i] = UIWidget.init(var_0_0.widget_definitions[str])
 	end
 
-	arg_2_0._ui_animator = UIAnimator:new(var_0_1, var_0_2)
-	arg_2_0.hit_markers = var_2_0
-	arg_2_0.hit_markers_n = var_2_1
-	arg_2_0.hit_marker_animations = {}
+	self._ui_animator = UIAnimator:new(scenegraph_definition, animations_definitions)
+	self.hit_markers = tbl
+	self.hit_markers_n = num
+	self.hit_marker_animations = {}
 
-	local var_2_3 = {}
+	local tbl_2 = {}
 
-	for iter_2_1, iter_2_2 in pairs(var_0_15) do
-		var_0_0.widget_definitions.kill_confirm.content.texture_id = iter_2_2
-		var_2_3[iter_2_1] = UIWidget.init(var_0_0.widget_definitions.kill_confirm)
+	for k, v in pairs(kill_confirm_styles) do
+		var_0_0.widget_definitions.kill_confirm.content.texture_id = v
+		tbl_2[k] = UIWidget.init(var_0_0.widget_definitions.kill_confirm)
 	end
 
-	arg_2_0.kill_confirm_widgets = var_2_3
-	arg_2_0._last_kill_confirm_t = 0
+	self.kill_confirm_widgets = tbl_2
+	self._last_kill_confirm_t = 0
 end
 
-function CrosshairUI.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
-	local var_3_0 = arg_3_3.player_unit
+CrosshairUI.update = function (self, arg_3_1, arg_3_2, arg_3_3)
+	-- function 3
+	local player_unit = arg_3_3.player_unit
 
-	if not var_3_0 then
+	if not player_unit then
 		return
 	end
 
-	local var_3_1 = ScriptUnit.extension(var_3_0, "inventory_system"):equipment()
-	local var_3_2, var_3_3 = arg_3_0._parent:get_crosshair_position()
+	local equipment = ScriptUnit.extension(player_unit, "inventory_system"):equipment()
+	local get_crosshair_position, var_3_3 = self._parent:get_crosshair_position()
 
-	arg_3_0:_apply_crosshair_position(var_3_2, var_3_3)
-	arg_3_0:update_enabled_crosshair_styles()
-	arg_3_0:update_crosshair_style(var_3_1)
-	arg_3_0:update_hit_markers(arg_3_1)
-	arg_3_0:update_spread(arg_3_1, arg_3_2, var_3_1)
-	arg_3_0:_update_self_to_ally_transition()
-	arg_3_0:_update_animations(arg_3_1)
+	self:_apply_crosshair_position(get_crosshair_position, var_3_3)
+	self:update_enabled_crosshair_styles()
+	self:update_crosshair_style(equipment)
+	self:update_hit_markers(arg_3_1)
+	self:update_spread(arg_3_1, arg_3_2, equipment)
+	self:_update_self_to_ally_transition()
+	self:_update_animations(arg_3_1)
 end
 
-local var_0_19 = {}
+local tbl_2 = {}
 
-function CrosshairUI.update_enabled_crosshair_styles(arg_4_0)
-	local var_4_0 = Application.user_setting("enabled_crosshairs")
+CrosshairUI.update_enabled_crosshair_styles = function (self)
+	-- function 4
+	local user_setting = Application.user_setting("enabled_crosshairs")
 
-	if arg_4_0._enabled_style ~= var_4_0 then
-		table.clear(var_0_19)
+	if self._enabled_style ~= user_setting then
+		table.clear(tbl_2)
 
-		if var_4_0 == "melee" then
-			for iter_4_0, iter_4_1 in pairs(var_0_5) do
-				var_0_19[iter_4_0] = iter_4_1.enabled
+		if user_setting == "melee" then
+			for k, v in pairs(melee) do
+				tbl_2[k] = v.enabled
 			end
-		elseif var_4_0 == "ranged" then
-			for iter_4_2, iter_4_3 in pairs(var_0_6) do
-				var_0_19[iter_4_2] = iter_4_3.enabled
+		elseif user_setting == "ranged" then
+			for k_2, v_2 in pairs(ranged) do
+				tbl_2[k_2] = v_2.enabled
 			end
-		elseif var_4_0 == "all" then
-			for iter_4_4, iter_4_5 in pairs(var_0_5) do
-				var_0_19[iter_4_4] = iter_4_5.enabled
+		elseif user_setting == "all" then
+			for k_3, v_3 in pairs(melee) do
+				tbl_2[k_3] = v_3.enabled
 			end
 
-			for iter_4_6, iter_4_7 in pairs(var_0_6) do
-				var_0_19[iter_4_6] = iter_4_7.enabled
+			for k_4, v_4 in pairs(ranged) do
+				tbl_2[k_4] = v_4.enabled
 			end
 		end
 
-		arg_4_0._enabled_style = var_4_0
-		arg_4_0._enabled_crosshair_styles = var_0_19
+		self._enabled_style = user_setting
+		self._enabled_crosshair_styles = tbl_2
 	end
 end
 
-function CrosshairUI.update_crosshair_style(arg_5_0, arg_5_1)
-	local var_5_0 = Managers.state.game_mode
+CrosshairUI.update_crosshair_style = function (self, arg_5_1)
+	-- function 5
+	local game_mode = Managers.state.game_mode
 
-	if var_5_0 and var_5_0:has_activated_mutator("realism") then
-		arg_5_0.crosshair_style = "dot"
+	if not (not game_mode and game_mode:has_activated_mutator("realism")) then
+		self.crosshair_style = "dot"
 
 		return
 	end
 
-	local var_5_1 = arg_5_1.wielded
-	local var_5_2 = BackendUtils.get_item_template(var_5_1)
-	local var_5_3 = var_5_2.crosshair_style
-	local var_5_4 = arg_5_1.right_hand_wielded_unit or arg_5_1.left_hand_wielded_unit
-	local var_5_5 = var_5_2.fire_at_gaze_setting
+	local wielded = arg_5_1.wielded
+	local get_item_template = BackendUtils.get_item_template(wielded)
+	local crosshair_style = get_item_template.crosshair_style
+	local right_hand_wielded_unit = arg_5_1.right_hand_wielded_unit
 
-	if Unit.alive(var_5_4) then
-		local var_5_6 = ScriptUnit.extension(var_5_4, "weapon_system")
+	right_hand_wielded_unit = right_hand_wielded_unit or arg_5_1.left_hand_wielded_unit
 
-		if var_5_6:has_current_action() then
-			local var_5_7 = var_5_6:get_current_action_settings()
-			local var_5_8 = var_5_6:get_current_action()
+	local fire_at_gaze_setting = get_item_template.fire_at_gaze_setting
 
-			if var_5_8 and var_5_8.crosshair_style then
-				var_5_3 = var_5_8.crosshair_style
-			elseif var_5_7.crosshair_style then
-				var_5_3 = var_5_7.crosshair_style
+	if not Unit.alive(right_hand_wielded_unit) then
+		local extension = ScriptUnit.extension(right_hand_wielded_unit, "weapon_system")
+
+		if not extension:has_current_action() then
+			local get_current_action_settings = extension:get_current_action_settings()
+			local get_current_action = extension:get_current_action()
+
+			if not get_current_action and not get_current_action.crosshair_style then
+				crosshair_style = get_current_action.crosshair_style
+			elseif not get_current_action_settings.crosshair_style then
+				crosshair_style = get_current_action_settings.crosshair_style
 			end
 
-			if var_5_7.fire_at_gaze_setting then
-				var_5_5 = var_5_7.fire_at_gaze_setting
+			if not get_current_action_settings.fire_at_gaze_setting then
+				fire_at_gaze_setting = get_current_action_settings.fire_at_gaze_setting
 			end
 		end
 	end
 
-	if rawget(_G, "Tobii") then
-		local var_5_9 = Tobii.get_is_connected()
-		local var_5_10 = Application.user_setting("tobii_eyetracking")
-		local var_5_11 = Application.user_setting("tobii_fire_at_gaze")
+	if not rawget(_G, "Tobii") then
+		local get_is_connected = Tobii.get_is_connected()
+		local user_setting = Application.user_setting("tobii_eyetracking")
+		local user_setting_2 = Application.user_setting("tobii_fire_at_gaze")
 
-		if var_5_9 and var_5_10 and var_5_11 and var_5_5 then
-			var_5_3 = "dot"
+		if not get_is_connected and not user_setting and not user_setting_2 and not fire_at_gaze_setting then
+			crosshair_style = "dot"
 		end
 	end
 
-	arg_5_0.crosshair_style = var_5_3
+	self.crosshair_style = crosshair_style
 end
 
-function CrosshairUI._apply_crosshair_position(arg_6_0, arg_6_1, arg_6_2)
-	local var_6_0 = arg_6_0.ui_scenegraph.pivot.local_position
+CrosshairUI._apply_crosshair_position = function (self, arg_6_1, arg_6_2)
+	-- function 6
+	local local_position = self.ui_scenegraph.pivot.local_position
 
-	var_6_0[1] = arg_6_1
-	var_6_0[2] = arg_6_2
+	local_position[1] = arg_6_1
+	local_position[2] = arg_6_2
 end
 
-function CrosshairUI.update_hit_markers(arg_7_0, arg_7_1)
-	local var_7_0 = arg_7_0.hit_markers
-	local var_7_1 = arg_7_0.hit_markers_n
-	local var_7_2 = arg_7_0.hit_marker_animations
-	local var_7_3 = arg_7_0.local_player.player_unit
-	local var_7_4 = ScriptUnit.extension(var_7_3, "hud_system").hit_marker_data
+CrosshairUI.update_hit_markers = function (self, arg_7_1)
+	-- function 7
+	local hit_markers = self.hit_markers
+	local hit_markers_n = self.hit_markers_n
+	local hit_marker_animations = self.hit_marker_animations
+	local player_unit = self.local_player.player_unit
+	local hit_marker_data = ScriptUnit.extension(player_unit, "hud_system").hit_marker_data
 
-	if var_7_4.hit_enemy then
-		local var_7_5 = true
+	if not hit_marker_data.hit_enemy then
+		local flag = true
 
-		if var_7_4.friendly_fire and not Application.user_setting("friendly_fire_crosshair") then
-			var_7_5 = false
+		if not (not hit_marker_data.friendly_fire and Application.user_setting("friendly_fire_crosshair")) then
+			flag = false
 		end
 
-		if var_7_5 then
-			arg_7_0:set_hit_marker_animation(var_7_0, var_7_1, var_7_2, var_7_4)
+		if not flag then
+			self:set_hit_marker_animation(hit_markers, hit_markers_n, hit_marker_animations, hit_marker_data)
 		end
 
-		var_7_4.hit_enemy = nil
+		hit_marker_data.hit_enemy = nil
 	end
 
-	if var_7_2[1] then
-		arg_7_0:update_hit_marker_animation(var_7_0, var_7_1, var_7_2, var_7_4, arg_7_1)
-	end
-end
-
-function CrosshairUI.set_hit_marker_animation(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
-	for iter_8_0 = 1, arg_8_2 do
-		local var_8_0 = arg_8_1[iter_8_0]
-		local var_8_1 = arg_8_0:configure_hit_marker_color_and_size(var_8_0, arg_8_4)
-
-		arg_8_3[iter_8_0] = UIAnimation.init(UIAnimation.function_by_time, var_8_0.style.rotating_texture.color, 1, 255, 0, UISettings.crosshair.hit_marker_fade, math.easeInCubic)
-
-		if iter_8_0 == arg_8_2 and var_8_1 then
-			arg_8_3[5] = UIAnimation.init(UIAnimation.function_by_time, var_8_1.style.color, 1, 255, 0, UISettings.crosshair.hit_marker_fade, math.easeInCubic)
-			arg_8_0.hit_marker_armored = var_8_1
-		end
+	if not hit_marker_animations[1] then
+		self:update_hit_marker_animation(hit_markers, hit_markers_n, hit_marker_animations, hit_marker_data, arg_7_1)
 	end
 end
 
-local var_0_20 = 0.1
+CrosshairUI.set_hit_marker_animation = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+	-- function 8
+	for i = 1, arg_8_2 do
+		local var_8_0 = arg_8_1[i]
+		local configure_hit_marker_color_and_size = self:configure_hit_marker_color_and_size(var_8_0, arg_8_4)
 
-function CrosshairUI.configure_hit_marker_color_and_size(arg_9_0, arg_9_1, arg_9_2)
-	local var_9_0 = arg_9_2.damage_amount
-	local var_9_1 = arg_9_2.damage_type
-	local var_9_2 = arg_9_2.hit_zone
-	local var_9_3 = arg_9_2.hit_critical
-	local var_9_4 = arg_9_2.has_armor
-	local var_9_5 = arg_9_2.friendly_fire
-	local var_9_6 = arg_9_2.added_dot
-	local var_9_7 = arg_9_2.shield_break
-	local var_9_8 = arg_9_2.shield_open
-	local var_9_9 = arg_9_2.invulnerable
-	local var_9_10 = false
-	local var_9_11 = false
+		arg_8_3[i] = UIAnimation.init(UIAnimation.function_by_time, var_8_0.style.rotating_texture.color, 1, 255, 0, UISettings.crosshair.hit_marker_fade, math.easeInCubic)
+
+		if i ~= arg_8_2 or not configure_hit_marker_color_and_size then
+			arg_8_3[5] = UIAnimation.init(UIAnimation.function_by_time, configure_hit_marker_color_and_size.style.color, 1, 255, 0, UISettings.crosshair.hit_marker_fade, math.easeInCubic)
+			self.hit_marker_armored = configure_hit_marker_color_and_size
+		end
+	end
+end
+
+local num_4 = 0.1
+
+CrosshairUI.configure_hit_marker_color_and_size = function (self, arg_9_1, arg_9_2)
+	-- function 9
+	local damage_amount = arg_9_2.damage_amount
+	local damage_type = arg_9_2.damage_type
+	local hit_zone = arg_9_2.hit_zone
+	local hit_critical = arg_9_2.hit_critical
+	local has_armor = arg_9_2.has_armor
+	local friendly_fire = arg_9_2.friendly_fire
+	local added_dot = arg_9_2.added_dot
+	local shield_break = arg_9_2.shield_break
+	local shield_open = arg_9_2.shield_open
+	local invulnerable = arg_9_2.invulnerable
+	local flag = false
+	local flag_2 = false
 	local var_9_12
-	local var_9_13 = arg_9_0._hit_armored_markers
-	local var_9_14 = var_0_0.hit_marker_configurations
+	local _hit_armored_markers = self._hit_armored_markers
+	local hit_marker_configurations = var_0_0.hit_marker_configurations
 
-	if var_9_9 or var_9_0 <= 0 and var_9_4 and not var_9_6 then
-		var_9_11 = true
-	elseif var_9_3 then
-		var_9_10 = true
+	if not ((invulnerable or not (damage_amount <= 0) or not has_armor) and added_dot) then
+		flag_2 = true
+	elseif not hit_critical then
+		flag = true
 	end
 
 	local var_9_15
 	local var_9_16
 
-	if var_9_7 then
-		var_9_12 = var_9_13.armor_break
-	elseif var_9_8 then
-		var_9_12 = var_9_13.armor_open
-	elseif var_9_11 and var_9_0 == 0 then
-		var_9_12 = var_9_13.no_damage
+	if not shield_break then
+		var_9_12 = _hit_armored_markers.armor_break
+	elseif not shield_open then
+		var_9_12 = _hit_armored_markers.armor_open
+	elseif not (not flag_2 and damage_amount ~= 0) then
+		var_9_12 = _hit_armored_markers.no_damage
 	end
 
-	if var_9_10 then
-		var_9_15 = var_9_14.critical.color
+	if not flag then
+		var_9_15 = hit_marker_configurations.critical.color
 
-		local var_9_17 = var_9_14.critical.size
-	elseif var_9_5 then
-		local var_9_18 = var_9_14.friendly.size
+		local size = hit_marker_configurations.critical.size
+	elseif not friendly_fire then
+		local size_2 = hit_marker_configurations.friendly.size
 
-		var_9_15 = var_9_14.friendly.color
-	elseif var_9_11 then
-		local var_9_19 = var_9_14.armored.size
+		var_9_15 = hit_marker_configurations.friendly.color
+	elseif not flag_2 then
+		local size_3 = hit_marker_configurations.armored.size
 
-		var_9_15 = var_9_14.armored.color
+		var_9_15 = hit_marker_configurations.armored.color
 	else
-		local var_9_20 = var_9_14.normal.size
+		local size_4 = hit_marker_configurations.normal.size
 
-		var_9_15 = var_9_14.normal.color
+		var_9_15 = hit_marker_configurations.normal.color
 	end
 
-	if var_9_15 then
-		local var_9_21 = arg_9_1.style.rotating_texture.color
-		local var_9_22 = arg_9_1.style.rotating_texture.size
+	if not var_9_15 then
+		local color = arg_9_1.style.rotating_texture.color
+		local size_5 = arg_9_1.style.rotating_texture.size
 
-		var_9_21[2] = var_9_15[2]
-		var_9_21[3] = var_9_15[3]
-		var_9_21[4] = var_9_15[4]
+		color[2] = var_9_15[2]
+		color[3] = var_9_15[3]
+		color[4] = var_9_15[4]
 	end
 
 	return var_9_12
 end
 
-function CrosshairUI.update_hit_marker_animation(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
-	for iter_10_0 = 1, arg_10_2 do
-		local var_10_0 = arg_10_3[iter_10_0]
+CrosshairUI.update_hit_marker_animation = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+	-- function 10
+	for i = 1, arg_10_2 do
+		local var_10_0 = arg_10_3[i]
 
 		UIAnimation.update(var_10_0, arg_10_5)
 	end
 
-	if arg_10_3[5] then
+	if not arg_10_3[5] then
 		local var_10_1 = arg_10_3[5]
 
 		UIAnimation.update(var_10_1, arg_10_5)
 	end
 
-	if UIAnimation.completed(arg_10_3[1]) then
-		for iter_10_1 = 1, arg_10_2 do
-			arg_10_3[iter_10_1] = nil
+	if not UIAnimation.completed(arg_10_3[1]) then
+		for j = 1, arg_10_2 do
+			arg_10_3[j] = nil
 		end
 
 		arg_10_3[5] = nil
 	end
 end
 
-function CrosshairUI.update_spread(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
-	local var_11_0 = arg_11_3.wielded
-	local var_11_1 = BackendUtils.get_item_template(var_11_0)
-	local var_11_2 = 0
-	local var_11_3 = 0
+CrosshairUI.update_spread = function (self, arg_11_1, arg_11_2, arg_11_3)
+	-- function 11
+	local wielded = arg_11_3.wielded
+	local get_item_template = BackendUtils.get_item_template(wielded)
+	local num = 0
+	local num_2 = 0
 
-	if var_11_1.default_spread_template then
-		local var_11_4 = arg_11_3.right_hand_wielded_unit or arg_11_3.left_hand_wielded_unit
+	if not get_item_template.default_spread_template then
+		local right_hand_wielded_unit = arg_11_3.right_hand_wielded_unit
 
-		if var_11_4 and ScriptUnit.has_extension(var_11_4, "spread_system") then
-			var_11_2, var_11_3 = ScriptUnit.extension(var_11_4, "spread_system"):get_current_pitch_and_yaw()
+		right_hand_wielded_unit = right_hand_wielded_unit or arg_11_3.left_hand_wielded_unit
+
+		if not right_hand_wielded_unit and not ScriptUnit.has_extension(right_hand_wielded_unit, "spread_system") then
+			num, num_2 = ScriptUnit.extension(right_hand_wielded_unit, "spread_system"):get_current_pitch_and_yaw()
 		end
 	end
 
-	local var_11_5 = SpreadTemplates.maximum_pitch
-	local var_11_6 = SpreadTemplates.maximum_yaw
-	local var_11_7 = var_11_2 / var_11_5
-	local var_11_8 = var_11_3 / var_11_6
-	local var_11_9 = math.lerp(0, var_0_0.max_spread_pitch, var_11_7)
-	local var_11_10 = math.lerp(0, var_0_0.max_spread_yaw, var_11_8)
+	local maximum_pitch = SpreadTemplates.maximum_pitch
+	local maximum_yaw = SpreadTemplates.maximum_yaw
+	local num_3 = num / maximum_pitch
+	local num_4 = num_2 / maximum_yaw
+	local lerp = math.lerp(0, var_0_0.max_spread_pitch, num_3)
+	local lerp_2 = math.lerp(0, var_0_0.max_spread_yaw, num_4)
 
-	arg_11_0:draw(arg_11_1, arg_11_2, var_11_7, var_11_8)
+	self:draw(arg_11_1, arg_11_2, num_3, num_4)
 end
 
-function CrosshairUI.draw(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
-	local var_12_0 = arg_12_0.ui_renderer
-	local var_12_1 = arg_12_0.ui_scenegraph
-	local var_12_2 = arg_12_0.input_manager:get_service("ingame_menu")
-	local var_12_3 = arg_12_0.render_settings
+CrosshairUI.draw = function (self, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+	-- function 12
+	local ui_renderer = self.ui_renderer
+	local ui_scenegraph = self.ui_scenegraph
+	local get_service = self.input_manager:get_service("ingame_menu")
+	local render_settings = self.render_settings
 
-	UIRenderer.begin_pass(var_12_0, var_12_1, var_12_2, arg_12_1, nil, var_12_3)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, get_service, arg_12_1, nil, render_settings)
 
-	local var_12_4 = arg_12_0.crosshair_style
+	local crosshair_style = self.crosshair_style
 
-	if arg_12_0._enabled_crosshair_styles[var_12_4] then
-		arg_12_0[var_0_4[var_12_4]](arg_12_0, var_12_0, arg_12_3, arg_12_4)
+	if not self._enabled_crosshair_styles[crosshair_style] then
+		self[tbl[crosshair_style]](self, ui_renderer, arg_12_3, arg_12_4)
 	end
 
-	local var_12_5 = arg_12_0.hit_markers
-	local var_12_6 = arg_12_0.hit_markers_n
+	local hit_markers = self.hit_markers
+	local hit_markers_n = self.hit_markers_n
 
-	for iter_12_0 = 1, var_12_6 do
-		local var_12_7 = var_12_5[iter_12_0]
+	for i = 1, hit_markers_n do
+		local var_12_7 = hit_markers[i]
 
-		UIRenderer.draw_widget(var_12_0, var_12_7)
+		UIRenderer.draw_widget(ui_renderer, var_12_7)
 	end
 
-	if arg_12_0.hit_marker_armored then
-		UIRenderer.draw_widget(var_12_0, arg_12_0.hit_marker_armored)
+	if not self.hit_marker_armored then
+		UIRenderer.draw_widget(ui_renderer, self.hit_marker_armored)
 	end
 
-	arg_12_0:_draw_kill_confirm(arg_12_1, arg_12_2, var_12_0)
-	UIRenderer.end_pass(var_12_0)
+	self:_draw_kill_confirm(arg_12_1, arg_12_2, ui_renderer)
+	UIRenderer.end_pass(ui_renderer)
 end
 
-function CrosshairUI.draw_default_style_crosshair(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
-	UIRenderer.draw_widget(arg_13_1, arg_13_0.crosshair_dot)
+CrosshairUI.draw_default_style_crosshair = function (self, arg_13_1, arg_13_2, arg_13_3)
+	-- function 13
+	UIRenderer.draw_widget(arg_13_1, self.crosshair_dot)
 
-	local var_13_0 = 4
-	local var_13_1 = 45
-	local var_13_2 = 5
-	local var_13_3 = 5
+	local num = 4
+	local num_2 = 45
+	local num_3 = 5
+	local num_4 = 5
 
 	arg_13_2 = math.max(0.0001, arg_13_2)
 	arg_13_3 = math.max(0.0001, arg_13_3)
 
-	for iter_13_0 = 1, var_13_0 do
-		arg_13_0:_set_widget_point_offset(arg_13_0.crosshair_line, iter_13_0, var_13_0, arg_13_2, arg_13_3, var_13_1, var_13_2, var_13_3)
-		UIRenderer.draw_widget(arg_13_1, arg_13_0.crosshair_line)
+	for i = 1, num do
+		self:_set_widget_point_offset(self.crosshair_line, i, num, arg_13_2, arg_13_3, num_2, num_3, num_4)
+		UIRenderer.draw_widget(arg_13_1, self.crosshair_line)
 	end
 end
 
-function CrosshairUI.draw_arrows_style_crosshair(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
-	UIRenderer.draw_widget(arg_14_1, arg_14_0.crosshair_dot)
+CrosshairUI.draw_arrows_style_crosshair = function (self, arg_14_1, arg_14_2, arg_14_3)
+	-- function 14
+	UIRenderer.draw_widget(arg_14_1, self.crosshair_dot)
 
-	local var_14_0 = 4
-	local var_14_1 = 45
-	local var_14_2 = 5
-	local var_14_3 = 5
+	local num = 4
+	local num_2 = 45
+	local num_3 = 5
+	local num_4 = 5
 
 	arg_14_2 = math.max(0.0001, arg_14_2)
 	arg_14_3 = math.max(0.0001, arg_14_3)
 
-	for iter_14_0 = 1, var_14_0 do
-		arg_14_0:_set_widget_point_offset(arg_14_0.crosshair_arrow, iter_14_0, var_14_0, arg_14_2, arg_14_3, var_14_1, var_14_2, var_14_3)
-		UIRenderer.draw_widget(arg_14_1, arg_14_0.crosshair_arrow)
+	for i = 1, num do
+		self:_set_widget_point_offset(self.crosshair_arrow, i, num, arg_14_2, arg_14_3, num_2, num_3, num_4)
+		UIRenderer.draw_widget(arg_14_1, self.crosshair_arrow)
 	end
 end
 
-function CrosshairUI.draw_shotgun_style_crosshair(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
-	UIRenderer.draw_widget(arg_15_1, arg_15_0.crosshair_dot)
+CrosshairUI.draw_shotgun_style_crosshair = function (self, arg_15_1, arg_15_2, arg_15_3)
+	-- function 15
+	UIRenderer.draw_widget(arg_15_1, self.crosshair_dot)
 
-	local var_15_0 = 4
-	local var_15_1 = 45
-	local var_15_2 = 0
-	local var_15_3 = 0
+	local num = 4
+	local num_2 = 45
+	local num_3 = 0
+	local num_4 = 0
 
 	arg_15_2 = math.max(0.0001, arg_15_2)
 	arg_15_3 = math.max(0.0001, arg_15_3)
 
-	for iter_15_0 = 1, var_15_0 do
-		arg_15_0:_set_widget_point_offset(arg_15_0.crosshair_shotgun, iter_15_0, var_15_0, arg_15_2, arg_15_3, var_15_1, var_15_2, var_15_3)
-		UIRenderer.draw_widget(arg_15_1, arg_15_0.crosshair_shotgun)
+	for i = 1, num do
+		self:_set_widget_point_offset(self.crosshair_shotgun, i, num, arg_15_2, arg_15_3, num_2, num_3, num_4)
+		UIRenderer.draw_widget(arg_15_1, self.crosshair_shotgun)
 	end
 end
 
-function CrosshairUI.draw_projectile_style_crosshair(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
-	UIRenderer.draw_widget(arg_16_1, arg_16_0.crosshair_dot)
-	UIRenderer.draw_widget(arg_16_1, arg_16_0.crosshair_projectile)
+CrosshairUI.draw_projectile_style_crosshair = function (self, arg_16_1, arg_16_2, arg_16_3)
+	-- function 16
+	UIRenderer.draw_widget(arg_16_1, self.crosshair_dot)
+	UIRenderer.draw_widget(arg_16_1, self.crosshair_projectile)
 
-	local var_16_0 = 2
-	local var_16_1 = 0
-	local var_16_2 = 6
-	local var_16_3 = 0
+	local num = 2
+	local num_2 = 0
+	local num_3 = 6
+	local num_4 = 0
 
 	arg_16_2 = math.max(0.0001, arg_16_2)
 	arg_16_3 = math.max(0.0001, arg_16_3)
 
-	for iter_16_0 = 1, var_16_0 do
-		arg_16_0:_set_widget_point_offset(arg_16_0.crosshair_line, iter_16_0, var_16_0, arg_16_2, arg_16_3, var_16_1, var_16_2, var_16_3)
-		UIRenderer.draw_widget(arg_16_1, arg_16_0.crosshair_line)
+	for i = 1, num do
+		self:_set_widget_point_offset(self.crosshair_line, i, num, arg_16_2, arg_16_3, num_2, num_3, num_4)
+		UIRenderer.draw_widget(arg_16_1, self.crosshair_line)
 	end
 end
 
-function CrosshairUI.draw_dot_style_crosshair(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
-	UIRenderer.draw_widget(arg_17_1, arg_17_0.crosshair_dot)
+CrosshairUI.draw_dot_style_crosshair = function (self, arg_17_1, arg_17_2, arg_17_3)
+	-- function 17
+	UIRenderer.draw_widget(arg_17_1, self.crosshair_dot)
 end
 
-function CrosshairUI.draw_circle_style_crosshair(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
-	UIRenderer.draw_widget(arg_18_1, arg_18_0.crosshair_circle)
+CrosshairUI.draw_circle_style_crosshair = function (self, arg_18_1, arg_18_2, arg_18_3)
+	-- function 18
+	UIRenderer.draw_widget(arg_18_1, self.crosshair_circle)
 end
 
-function CrosshairUI.draw_wh_priest_style_crosshair(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
-	UIRenderer.draw_widget(arg_19_1, arg_19_0.wh_priest)
+CrosshairUI.draw_wh_priest_style_crosshair = function (self, arg_19_1, arg_19_2, arg_19_3)
+	-- function 19
+	UIRenderer.draw_widget(arg_19_1, self.wh_priest)
 end
 
-function CrosshairUI._set_widget_point_offset(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6, arg_20_7, arg_20_8)
-	local var_20_0, var_20_1, var_20_2 = arg_20_0:_get_point_offset(arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6)
-	local var_20_3 = arg_20_1.style
-	local var_20_4 = var_20_3.offset
-	local var_20_5 = var_20_3.pivot
+CrosshairUI._set_widget_point_offset = function (self, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6, arg_20_7, arg_20_8)
+	-- function 20
+	local _get_point_offset, var_20_1, var_20_2 = self:_get_point_offset(arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6)
+	local style = arg_20_1.style
+	local offset = style.offset
+	local pivot = style.pivot
 
 	arg_20_7 = arg_20_7 or 0
 	arg_20_8 = arg_20_8 or 0
-	var_20_4[1] = var_20_0 + arg_20_7 * math.sign(var_20_0)
-	var_20_4[2] = var_20_1 + arg_20_8 * math.sign(var_20_1)
-	var_20_3.angle = -var_20_2
+	offset[1] = _get_point_offset + arg_20_7 * math.sign(_get_point_offset)
+	offset[2] = var_20_1 + arg_20_8 * math.sign(var_20_1)
+	style.angle = -var_20_2
 end
 
-function CrosshairUI._get_point_offset(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
-	local var_21_0 = var_0_3
-	local var_21_1 = 0
-	local var_21_2 = 0
-	local var_21_3 = var_21_0 * arg_21_3
-	local var_21_4 = var_21_0 * arg_21_4
-	local var_21_5 = -(((arg_21_5 or 0) / 360 % 1 + (arg_21_1 - 1) / arg_21_2) % 1 * 360 * math.pi / 180)
-	local var_21_6 = var_21_2 + var_21_3 * math.sin(var_21_5)
+CrosshairUI._get_point_offset = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
+	-- function 21
+	local var_21_0 = MAX_SIZE
+	local num = 0
+	local num_2 = 0
+	local num_3 = var_21_0 * arg_21_3
+	local num_4 = var_21_0 * arg_21_4
+	local num_5 = -(((arg_21_5 or 0) / 360 % 1 + (arg_21_1 - 1) / arg_21_2) % 1 * 360 * math.pi / 180)
+	local num_6 = num_2 + num_3 * math.sin(num_5)
 
-	return var_21_1 + var_21_4 * math.cos(var_21_5), var_21_6, var_21_5
+	return num + num_4 * math.cos(num_5), num_6, num_5
 end
 
-function CrosshairUI._set_crosshair_target_info(arg_22_0, arg_22_1, arg_22_2)
-	local var_22_0 = arg_22_0.wh_priest.content
+CrosshairUI._set_crosshair_target_info = function (self, arg_22_1, arg_22_2)
+	-- function 22
+	local content = self.wh_priest.content
 
-	var_22_0.state = arg_22_2
-	var_22_0.career_portrait = arg_22_1 and arg_22_1 or arg_22_0._small_career_portrait
-	var_22_0.text_id = "$KEY;Player__action_one:"
-	arg_22_0._small_career_portrait = arg_22_1 and arg_22_1 or arg_22_0._small_career_portrait
+	content.state = arg_22_2
+	content.career_portrait = not arg_22_1 and arg_22_1 and self._small_career_portrait
+	content.text_id = "$KEY;Player__action_one:"
+	self._small_career_portrait = not arg_22_1 and arg_22_1 and self._small_career_portrait
 end
 
-function CrosshairUI._update_self_to_ally_transition(arg_23_0)
-	local var_23_0 = arg_23_0.wh_priest.content
+CrosshairUI._update_self_to_ally_transition = function (self)
+	-- function 23
+	local content = self.wh_priest.content
 
-	if var_23_0.state ~= arg_23_0.state then
-		local var_23_1 = var_23_0.state == "wh_priest_self" and "ally_to_self" or "self_to_ally"
+	if content.state ~= self.state then
+		local flag
 
-		arg_23_0.wh_crosshair_anim = arg_23_0._ui_animator:start_animation(var_23_1, arg_23_0.wh_priest, var_0_1)
+		flag = content.state ~= "wh_priest_self" or not "ally_to_self" or "self_to_ally"
+		self.wh_crosshair_anim = self._ui_animator:start_animation(flag, self.wh_priest, scenegraph_definition)
 	end
 
-	arg_23_0.state = var_23_0.state
+	self.state = content.state
 end
 
-function CrosshairUI._update_animations(arg_24_0, arg_24_1)
-	arg_24_0._ui_animator:update(arg_24_1)
+CrosshairUI._update_animations = function (self, arg_24_1)
+	-- function 24
+	self._ui_animator:update(arg_24_1)
 end
 
-function CrosshairUI.destroy(arg_25_0)
+CrosshairUI.destroy = function (arg_25_0)
+	-- function 25
 	Managers.state.event:unregister("on_set_ability_target_name", arg_25_0)
 	Managers.state.event:unregister("on_game_options_changed", arg_25_0)
 end
 
-function CrosshairUI.update_game_options(arg_26_0)
-	local var_26_0 = Application.user_setting("crosshair_kill_confirm")
-	local var_26_1 = var_26_0 ~= CrosshairKillConfirmSettingsGroups.off
+CrosshairUI.update_game_options = function (self)
+	-- function 26
+	local user_setting = Application.user_setting("crosshair_kill_confirm")
+	local flag = user_setting ~= CrosshairKillConfirmSettingsGroups.off
 
-	arg_26_0._kill_confirm_enabled_groups = var_0_9[var_26_0]
+	self._kill_confirm_enabled_groups = kill_confirm_group_settings[user_setting]
 
-	if var_26_1 and not arg_26_0._kill_confirm_enabled then
-		arg_26_0._kill_confirm_enabled = true
+	if not (not flag and self._kill_confirm_enabled) then
+		self._kill_confirm_enabled = true
 
-		Managers.state.event:register(arg_26_0, "on_player_killed_enemy", "_register_kill_confirm")
-	elseif not var_26_1 and arg_26_0._kill_confirm_enabled then
-		arg_26_0._kill_confirm_enabled = false
+		Managers.state.event:register(self, "on_player_killed_enemy", "_register_kill_confirm")
+	elseif flag or not self._kill_confirm_enabled then
+		self._kill_confirm_enabled = false
 
-		Managers.state.event:unregister("on_player_killed_enemy", arg_26_0)
+		Managers.state.event:unregister("on_player_killed_enemy", self)
 
-		arg_26_0._current_kill_confirm_widget = nil
+		self._current_kill_confirm_widget = nil
 	end
 end
 
-function CrosshairUI._register_kill_confirm(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
-	if not arg_27_0._kill_confirm_enabled_groups or arg_27_0._kill_confirm_enabled_groups == var_0_9.off then
+CrosshairUI._register_kill_confirm = function (self, arg_27_1, arg_27_2, arg_27_3)
+	-- function 27
+	if not (not self._kill_confirm_enabled_groups and self._kill_confirm_enabled_groups ~= kill_confirm_group_settings.off) then
 		return
 	end
 
-	local var_27_0 = arg_27_0.local_player.player_unit
+	local player_unit = self.local_player.player_unit
 	local var_27_1
 
-	if arg_27_1[DamageDataIndex.ATTACKER] == var_27_0 or arg_27_1[DamageDataIndex.SOURCE_ATTACKER_UNIT] == var_27_0 then
+	if not (arg_27_1[DamageDataIndex.ATTACKER] == player_unit or arg_27_1[DamageDataIndex.SOURCE_ATTACKER_UNIT] ~= player_unit) then
 		if arg_27_1[DamageDataIndex.DAMAGE_SOURCE_NAME] == "dot_debuff" then
-			var_27_1 = var_0_10.kill_dot
-		elseif var_0_13[arg_27_1[DamageDataIndex.HIT_ZONE]] then
-			var_27_1 = var_0_10.kill_weakpoint
+			var_27_1 = kill_confirm_types.kill_dot
+		elseif not kill_confirm_weakspot_zones[arg_27_1[DamageDataIndex.HIT_ZONE]] then
+			var_27_1 = kill_confirm_types.kill_weakpoint
 		else
-			var_27_1 = var_0_10.kill
+			var_27_1 = kill_confirm_types.kill
 		end
 	end
 
-	if var_27_1 then
-		local var_27_2 = var_0_8.infantry
+	if not var_27_1 then
+		local infantry = kill_confirm_enemy_types.infantry
 
-		if arg_27_2.elite then
-			var_27_2 = var_0_8.elite
-		elseif arg_27_2.special then
-			var_27_2 = var_0_8.special
-		elseif arg_27_2.boss then
-			var_27_2 = var_0_8.boss
+		if not arg_27_2.elite then
+			infantry = kill_confirm_enemy_types.elite
+		elseif not arg_27_2.special then
+			infantry = kill_confirm_enemy_types.special
+		elseif not arg_27_2.boss then
+			infantry = kill_confirm_enemy_types.boss
 		end
 
-		if arg_27_0._kill_confirm_enabled_groups[var_27_2] and (not arg_27_0._current_kill_confirm_type or not arg_27_0._current_kill_confirm_widget or var_0_12[arg_27_0._current_kill_confirm_type] <= var_0_12[var_27_2] or arg_27_0._current_kill_confirm_widget.style.color[1] <= var_0_18) then
-			local var_27_3 = var_0_14[var_27_2]
-			local var_27_4 = arg_27_0.kill_confirm_widgets[var_27_3]
+		if not (not self._kill_confirm_enabled_groups[infantry] and not self._current_kill_confirm_type and not self._current_kill_confirm_widget and kill_confirm_enemy_prio[self._current_kill_confirm_type] <= kill_confirm_enemy_prio[infantry] or not (self._current_kill_confirm_widget.style.color[1] <= num_3)) then
+			local var_27_3 = kill_confirm_enemy_type_widget_map[infantry]
+			local var_27_4 = self.kill_confirm_widgets[var_27_3]
 
-			if var_27_4 then
-				var_27_4.style.color = var_0_11[var_27_1]
+			if not var_27_4 then
+				var_27_4.style.color = kill_confirm_type_colors[var_27_1]
 			end
 
-			arg_27_0._current_kill_confirm_widget = var_27_4
-			arg_27_0._current_kill_confirm_type = var_27_2
-			arg_27_0._last_kill_confirm_t = Managers.time:time("ui")
+			self._current_kill_confirm_widget = var_27_4
+			self._current_kill_confirm_type = infantry
+			self._last_kill_confirm_t = Managers.time:time("ui")
 		end
 	end
 end
 
-function CrosshairUI._draw_kill_confirm(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
-	if not arg_28_0._current_kill_confirm_widget then
+CrosshairUI._draw_kill_confirm = function (self, arg_28_1, arg_28_2, arg_28_3)
+	-- function 28
+	if not self._current_kill_confirm_widget then
 		return
 	end
 
-	local var_28_0 = arg_28_2 - arg_28_0._last_kill_confirm_t
+	local num_2 = arg_28_2 - self._last_kill_confirm_t
 
-	if var_28_0 > var_0_16 then
-		arg_28_0._current_kill_confirm_widget = nil
-		arg_28_0._current_kill_confirm_type = nil
+	if num_2 > num then
+		self._current_kill_confirm_widget = nil
+		self._current_kill_confirm_type = nil
 
 		return
 	end
 
-	local var_28_1 = (1 - math.easeInCubic(var_28_0 / var_0_16)) * 255
-	local var_28_2 = arg_28_0._current_kill_confirm_widget
+	local num_3 = (1 - math.easeInCubic(num_2 / num)) * 255
+	local _current_kill_confirm_widget = self._current_kill_confirm_widget
 
-	var_28_2.style.color[1] = var_28_1
+	_current_kill_confirm_widget.style.color[1] = num_3
 
-	UIRenderer.draw_widget(arg_28_3, var_28_2)
+	UIRenderer.draw_widget(arg_28_3, _current_kill_confirm_widget)
 end

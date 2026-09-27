@@ -5,50 +5,56 @@ require("scripts/ui/hint_ui/hint_ui_versus_how_to_play")
 
 HintUIHandler = class(HintUIHandler)
 
-local function var_0_0()
+local function fn()
+	-- function 1
 	print("HintUIHandler - save done")
 end
 
-local function var_0_1(arg_2_0)
-	local var_2_0 = SaveData
-	local var_2_1 = var_2_0.viewed_hints or {}
+local function fn_2(arg_2_0)
+	-- function 2
+	local SaveData = SaveData
+	local viewed_hints = SaveData.viewed_hints
 
-	var_2_1[arg_2_0] = true
-	var_2_0.viewed_hints = var_2_1
+	viewed_hints = viewed_hints or {}
+	viewed_hints[arg_2_0] = true
+	SaveData.viewed_hints = viewed_hints
 
-	Managers.save:auto_save(SaveFileName, SaveData, var_0_0)
+	Managers.save:auto_save(SaveFileName, SaveData, fn)
 end
 
-function HintUIHandler.init(arg_3_0, arg_3_1)
-	arg_3_0._context = arg_3_1
-	arg_3_0._hints = {}
-	arg_3_0._n_hints = 0
-	arg_3_0._hints_ids = 0
-	arg_3_0._active_hint_lookup = {}
-	arg_3_0._unseen_hints = {}
+HintUIHandler.init = function (self, arg_3_1)
+	-- function 3
+	self._context = arg_3_1
+	self._hints = {}
+	self._n_hints = 0
+	self._hints_ids = 0
+	self._active_hint_lookup = {}
+	self._unseen_hints = {}
 
-	arg_3_0:parse_unseen_hints()
-	Managers.state.event:register(arg_3_0, "ui_show_hint", "ui_show_hint")
+	self:parse_unseen_hints()
+	Managers.state.event:register(self, "ui_show_hint", "ui_show_hint")
 end
 
-function HintUIHandler.destroy(arg_4_0)
-	Managers.state.event:unregister("ui_show_popup", arg_4_0)
+HintUIHandler.destroy = function (self)
+	-- function 4
+	Managers.state.event:unregister("ui_show_popup", self)
 
-	for iter_4_0 = 1, arg_4_0._n_hints do
-		local var_4_0 = arg_4_0._hints[iter_4_0]
+	for i = 1, self._n_hints do
+		local var_4_0 = self._hints[i]
 
-		if var_4_0 then
+		if not var_4_0 then
 			var_4_0:destroy()
 
-			arg_4_0._hints[iter_4_0] = nil
+			self._hints[i] = nil
 		end
 	end
 end
 
-function HintUIHandler.update(arg_5_0, arg_5_1, arg_5_2)
-	arg_5_0:_handle_condition_hints(arg_5_1, arg_5_2)
+HintUIHandler.update = function (self, arg_5_1, arg_5_2)
+	-- function 5
+	self:_handle_condition_hints(arg_5_1, arg_5_2)
 
-	local var_5_0 = arg_5_0._hints[arg_5_0._n_hints]
+	local var_5_0 = self._hints[self._n_hints]
 
 	if not var_5_0 then
 		return
@@ -56,49 +62,51 @@ function HintUIHandler.update(arg_5_0, arg_5_1, arg_5_2)
 
 	var_5_0:update(arg_5_1, arg_5_2)
 
-	if var_5_0:exit_done() then
-		local var_5_1 = var_5_0:get_hint_name()
-		local var_5_2 = arg_5_0:get_unseen_hint_index(var_5_1)
+	if not var_5_0:exit_done() then
+		local get_hint_name = var_5_0:get_hint_name()
+		local get_unseen_hint_index = self:get_unseen_hint_index(get_hint_name)
 
 		var_5_0:delete()
 
-		arg_5_0._hints[arg_5_0._n_hints] = nil
-		arg_5_0._n_hints = arg_5_0._n_hints - 1
+		self._hints[self._n_hints] = nil
+		self._n_hints = self._n_hints - 1
 
-		var_0_1(var_5_1)
-		table.swap_delete(arg_5_0._unseen_hints, var_5_2)
+		fn_2(get_hint_name)
+		table.swap_delete(self._unseen_hints, get_unseen_hint_index)
 
-		arg_5_0._active_hint_lookup[var_5_1] = false
+		self._active_hint_lookup[get_hint_name] = false
 	end
 end
 
-function HintUIHandler.queue_hint(arg_6_0, arg_6_1)
-	local var_6_0 = arg_6_0._n_hints
-	local var_6_1 = arg_6_0._hints
-	local var_6_2 = var_6_0 + 1
+HintUIHandler.queue_hint = function (self, arg_6_1)
+	-- function 6
+	local _n_hints = self._n_hints
+	local _hints = self._hints
+	local num = _n_hints + 1
 
-	arg_6_0._n_hints = var_6_2
-	arg_6_0._hints_ids = arg_6_0._hints_ids + 1
+	self._n_hints = num
+	self._hints_ids = self._hints_ids + 1
 
-	local var_6_3 = tostring(arg_6_0._hints_ids)
+	local var_6_3 = tostring(self._hints_ids)
 
 	arg_6_1.hint_id = var_6_3
 
-	if var_6_2 > 1 and var_6_1[var_6_2 - 1]:is_hint_showing() then
-		table.insert(var_6_1, 1, arg_6_1)
+	if not (num > 1) or not _hints[num - 1]:is_hint_showing() then
+		table.insert(_hints, 1, arg_6_1)
 
-		arg_6_0._hints = var_6_1
+		self._hints = _hints
 
 		return var_6_3
 	end
 
-	var_6_1[var_6_2] = arg_6_1
-	arg_6_0._hints = var_6_1
+	_hints[num] = arg_6_1
+	self._hints = _hints
 
 	return var_6_3
 end
 
-function HintUIHandler.ui_show_hint(arg_7_0, arg_7_1)
+HintUIHandler.ui_show_hint = function (self, arg_7_1)
+	-- function 7
 	local var_7_0 = HintTemplates[arg_7_1]
 
 	if not var_7_0 then
@@ -113,51 +121,60 @@ function HintUIHandler.ui_show_hint(arg_7_0, arg_7_1)
 		return
 	end
 
-	arg_7_0:new_hint(arg_7_1, var_7_0)
+	self:new_hint(arg_7_1, var_7_0)
 end
 
-function HintUIHandler.new_hint(arg_8_0, arg_8_1, arg_8_2)
-	local var_8_0 = arg_8_2.data
-	local var_8_1 = rawget(_G, var_8_0.class_name):new(arg_8_0._context, arg_8_1, arg_8_2)
+HintUIHandler.new_hint = function (self, arg_8_1, arg_8_2)
+	-- function 8
+	local data = arg_8_2.data
+	local var_8_1 = rawget(_G, data.class_name):new(self._context, arg_8_1, arg_8_2)
 
-	arg_8_0._active_hint_lookup[arg_8_1] = true
+	self._active_hint_lookup[arg_8_1] = true
 
-	arg_8_0:queue_hint(var_8_1)
+	self:queue_hint(var_8_1)
 end
 
-function HintUIHandler._handle_condition_hints(arg_9_0, arg_9_1, arg_9_2)
-	for iter_9_0 = 1, #arg_9_0._unseen_hints do
-		local var_9_0 = arg_9_0._unseen_hints[iter_9_0]
+HintUIHandler._handle_condition_hints = function (self, arg_9_1, arg_9_2)
+	-- function 9
+	for i = 1, #self._unseen_hints do
+		local var_9_0 = self._unseen_hints[i]
 
-		if not arg_9_0._active_hint_lookup[var_9_0] then
+		if not self._active_hint_lookup[var_9_0] then
 			local var_9_1 = HintTemplates[var_9_0]
-			local var_9_2 = var_9_1.data
+			local data = var_9_1.data
 
-			if var_9_1.condition_function(var_9_2, arg_9_1, arg_9_2) then
-				arg_9_0:new_hint(var_9_0, var_9_1)
+			if not var_9_1.condition_function(data, arg_9_1, arg_9_2) then
+				self:new_hint(var_9_0, var_9_1)
 			end
 		end
 	end
 end
 
-function HintUIHandler.is_hint_active(arg_10_0)
-	return arg_10_0._hints[arg_10_0._n_hints] and true or false
+HintUIHandler.is_hint_active = function (self)
+	-- function 10
+	local flag
+
+	flag = not self._hints[self._n_hints] and true and false
+
+	return flag
 end
 
-function HintUIHandler.parse_unseen_hints(arg_11_0)
-	table.clear(arg_11_0._unseen_hints)
+HintUIHandler.parse_unseen_hints = function (self)
+	-- function 11
+	table.clear(self._unseen_hints)
 
-	for iter_11_0, iter_11_1 in pairs(HintTemplates) do
-		if (not SaveData.viewed_hints or not SaveData.viewed_hints[iter_11_0]) and iter_11_1.condition_function then
-			arg_11_0._unseen_hints[#arg_11_0._unseen_hints + 1] = iter_11_0
+	for k, v in pairs(HintTemplates) do
+		if not SaveData.viewed_hints and SaveData.viewed_hints[k] or not v.condition_function then
+			self._unseen_hints[#self._unseen_hints + 1] = k
 		end
 	end
 end
 
-function HintUIHandler.get_unseen_hint_index(arg_12_0, arg_12_1)
-	for iter_12_0 = 1, #arg_12_0._unseen_hints do
-		if arg_12_1 == arg_12_0._unseen_hints[iter_12_0] then
-			return iter_12_0
+HintUIHandler.get_unseen_hint_index = function (self, arg_12_1)
+	-- function 12
+	for i = 1, #self._unseen_hints do
+		if arg_12_1 == self._unseen_hints[i] then
+			return i
 		end
 	end
 end

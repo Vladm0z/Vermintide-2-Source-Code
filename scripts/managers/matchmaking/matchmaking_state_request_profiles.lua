@@ -3,93 +3,102 @@
 MatchmakingStateRequestProfiles = class(MatchmakingStateRequestProfiles)
 MatchmakingStateRequestProfiles.NAME = "MatchmakingStateRequestProfiles"
 
-function MatchmakingStateRequestProfiles.init(arg_1_0, arg_1_1)
-	arg_1_0._matchmaking_manager = arg_1_1.matchmaking_manager
+MatchmakingStateRequestProfiles.init = function (self, arg_1_1)
+	-- function 1
+	self._matchmaking_manager = arg_1_1.matchmaking_manager
 end
 
-function MatchmakingStateRequestProfiles.destroy(arg_2_0)
+MatchmakingStateRequestProfiles.destroy = function (arg_2_0)
+	-- function 2
 	return
 end
 
-function MatchmakingStateRequestProfiles.on_enter(arg_3_0, arg_3_1)
-	arg_3_0.state_context = arg_3_1
-	arg_3_0.search_config = arg_3_1.search_config
-	arg_3_0._matchmaking_manager.debug.profiles_data = {}
+MatchmakingStateRequestProfiles.on_enter = function (self, arg_3_1)
+	-- function 3
+	self.state_context = arg_3_1
+	self.search_config = arg_3_1.search_config
+	self._matchmaking_manager.debug.profiles_data = {}
 
-	arg_3_0:_request_profiles_data()
+	self:_request_profiles_data()
 
-	arg_3_0.state_context.profiles_data = nil
-	arg_3_0.profiles_data = {}
+	self.state_context.profiles_data = nil
+	self.profiles_data = {}
 
-	local var_3_0 = true
+	local flag = true
 
-	Managers.chat:add_local_system_message(1, Localize("matchmaking_status_requesting_profiles"), var_3_0)
+	Managers.chat:add_local_system_message(1, Localize("matchmaking_status_requesting_profiles"), flag)
 end
 
-function MatchmakingStateRequestJoinGame.terminate(arg_4_0)
+MatchmakingStateRequestJoinGame.terminate = function (arg_4_0)
+	-- function 4
 	Managers.lobby:destroy_lobby("matchmaking_join_lobby")
 end
 
-function MatchmakingStateRequestProfiles.on_exit(arg_5_0)
+MatchmakingStateRequestProfiles.on_exit = function (arg_5_0)
+	-- function 5
 	return
 end
 
-function MatchmakingStateRequestProfiles.update(arg_6_0, arg_6_1, arg_6_2)
-	if arg_6_0._reply_timer then
-		arg_6_0._reply_timer = arg_6_0._reply_timer - arg_6_1
+MatchmakingStateRequestProfiles.update = function (self, arg_6_1, arg_6_2)
+	-- function 6
+	if not self._reply_timer then
+		self._reply_timer = self._reply_timer - arg_6_1
 
-		if arg_6_0._reply_timer < 0 then
+		if self._reply_timer < 0 then
 			mm_printf("NO REPLY WHEN REQUESTING PROFILES DATA")
 
-			if arg_6_0.search_config == nil then
-				arg_6_0._matchmaking_manager:cancel_matchmaking()
+			if self.search_config == nil then
+				self._matchmaking_manager:cancel_matchmaking()
 			else
 				Managers.lobby:destroy_lobby("matchmaking_join_lobby")
 
-				local var_6_0 = arg_6_0.search_config
+				local search_config = self.search_config
 
-				if var_6_0 and var_6_0.dedicated_server and var_6_0.join_method == "party" then
-					if var_6_0.aws then
-						arg_6_0._next_state = MatchmakingStateFlexmatchHost
+				if not (not search_config and not search_config.dedicated_server and search_config.join_method ~= "party") then
+					if not search_config.aws then
+						self._next_state = MatchmakingStateFlexmatchHost
 					else
-						arg_6_0._next_state = MatchmakingStateReserveLobby
+						self._next_state = MatchmakingStateReserveLobby
 					end
 				else
-					arg_6_0._next_state = MatchmakingStateSearchGame
+					self._next_state = MatchmakingStateSearchGame
 				end
 			end
 		end
 	end
 
-	if arg_6_0._next_state then
-		return arg_6_0._next_state, arg_6_0.state_context
+	if not self._next_state then
+		return self._next_state, self.state_context
 	end
 
 	return nil
 end
 
-function MatchmakingStateRequestProfiles._request_profiles_data(arg_7_0)
-	local var_7_0 = Managers.lobby:get_lobby("matchmaking_join_lobby"):lobby_host()
+MatchmakingStateRequestProfiles._request_profiles_data = function (self)
+	-- function 7
+	local lobby_host = Managers.lobby:get_lobby("matchmaking_join_lobby"):lobby_host()
 
-	RPC.rpc_matchmaking_request_profiles_data(PEER_ID_TO_CHANNEL[var_7_0])
+	RPC.rpc_matchmaking_request_profiles_data(PEER_ID_TO_CHANNEL[lobby_host])
 
-	arg_7_0._reply_timer = MatchmakingSettings.REQUEST_PROFILES_REPLY_TIME
-	arg_7_0._matchmaking_manager.debug.text = "requesting_profiles_data"
+	self._reply_timer = MatchmakingSettings.REQUEST_PROFILES_REPLY_TIME
+	self._matchmaking_manager.debug.text = "requesting_profiles_data"
 end
 
-function MatchmakingStateRequestProfiles.rpc_matchmaking_request_profiles_data_reply(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
-	arg_8_0._reply_timer = nil
+MatchmakingStateRequestProfiles.rpc_matchmaking_request_profiles_data_reply = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+	-- function 8
+	self._reply_timer = nil
 
-	arg_8_0:_update_profiles_data(arg_8_2, arg_8_3, arg_8_4)
+	self:_update_profiles_data(arg_8_2, arg_8_3, arg_8_4)
 
-	arg_8_0.state_context.lobby_client = Managers.lobby:free_lobby("matchmaking_join_lobby")
-	arg_8_0._next_state = MatchmakingStateJoinGame
-	arg_8_0._matchmaking_manager.debug.text = "profiles_data_received"
+	self.state_context.lobby_client = Managers.lobby:free_lobby("matchmaking_join_lobby")
+	self._next_state = MatchmakingStateJoinGame
+	self._matchmaking_manager.debug.text = "profiles_data_received"
 end
 
-function MatchmakingStateRequestProfiles._update_profiles_data(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
-	arg_9_0.profiles_data = ProfileSynchronizer.join_reservation_data_arrays(arg_9_1, arg_9_2)
-	arg_9_0.state_context.profiles_data = arg_9_0.profiles_data
-	arg_9_0.state_context.reserved_party_id = arg_9_3
-	arg_9_0._matchmaking_manager.debug.profiles_data = arg_9_0.profiles_data
+MatchmakingStateRequestProfiles._update_profiles_data = function (self, arg_9_1, arg_9_2, arg_9_3)
+	-- function 9
+	self.profiles_data = ProfileSynchronizer.join_reservation_data_arrays(arg_9_1, arg_9_2)
+	self.state_context.profiles_data = self.profiles_data
+	self.state_context.reserved_party_id = arg_9_3
+	self._matchmaking_manager.debug.profiles_data = self.profiles_data
 end

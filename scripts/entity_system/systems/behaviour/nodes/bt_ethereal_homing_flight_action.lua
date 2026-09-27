@@ -4,47 +4,51 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTEtherealHomingFlightAction = class(BTEtherealHomingFlightAction, BTNode)
 
-function BTEtherealHomingFlightAction.init(arg_1_0, ...)
+BTEtherealHomingFlightAction.init = function (arg_1_0, ...)
+	-- function 1
 	BTEtherealHomingFlightAction.super.init(arg_1_0, ...)
 end
 
 BTEtherealHomingFlightAction.name = "BTEtherealHomingFlightAction"
 
-function BTEtherealHomingFlightAction.enter(arg_2_0)
-	arg_2_0._ai_bot_group_system = Managers.state.entity:system("ai_bot_group_system")
+BTEtherealHomingFlightAction.enter = function (self)
+	-- function 2
+	self._ai_bot_group_system = Managers.state.entity:system("ai_bot_group_system")
 end
 
-function BTEtherealHomingFlightAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
-	local var_3_0 = arg_3_2.homing_target_unit
+BTEtherealHomingFlightAction.leave = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	-- function 3
+	local homing_target_unit = arg_3_2.homing_target_unit
 
-	if var_3_0 then
-		arg_3_0._ai_bot_group_system:ranged_attack_ended(arg_3_1, var_3_0, "shadow_skull")
+	if not homing_target_unit then
+		self._ai_bot_group_system:ranged_attack_ended(arg_3_1, homing_target_unit, "shadow_skull")
 
 		arg_3_2.homing_target_unit = nil
 	end
 end
 
-function BTEtherealHomingFlightAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTEtherealHomingFlightAction.run = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	-- function 4
 	if not arg_4_2.bot_target_delay then
 		arg_4_2.bot_target_delay = arg_4_3 + 6
-	elseif arg_4_3 > arg_4_2.bot_target_delay and not arg_4_2.is_target then
+	elseif not (not (arg_4_3 > arg_4_2.bot_target_delay) or arg_4_2.is_target) then
 		arg_4_2.is_target = true
 	end
 
-	local var_4_0 = arg_4_2.homing_target_unit
-	local var_4_1 = arg_4_2.target_unit
+	local homing_target_unit = arg_4_2.homing_target_unit
+	local target_unit = arg_4_2.target_unit
 
-	if var_4_1 ~= var_4_0 then
-		local var_4_2 = arg_4_0._ai_bot_group_system
+	if target_unit ~= homing_target_unit then
+		local _ai_bot_group_system = self._ai_bot_group_system
 
-		if var_4_0 then
-			var_4_2:ranged_attack_ended(arg_4_1, var_4_0, "shadow_skull")
+		if not homing_target_unit then
+			_ai_bot_group_system:ranged_attack_ended(arg_4_1, homing_target_unit, "shadow_skull")
 		end
 
-		if var_4_1 and arg_4_2.is_target then
-			var_4_2:ranged_attack_started(arg_4_1, var_4_1, "shadow_skull")
+		if not target_unit and not arg_4_2.is_target then
+			_ai_bot_group_system:ranged_attack_started(arg_4_1, target_unit, "shadow_skull")
 
-			arg_4_2.homing_target_unit = var_4_1
+			arg_4_2.homing_target_unit = target_unit
 		end
 	end
 

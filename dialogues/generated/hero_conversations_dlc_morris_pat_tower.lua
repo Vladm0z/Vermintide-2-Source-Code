@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/hero_conversations_dlc_morris_pat_tower.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pbw_morris_level_conversations_tower_twelve_01",

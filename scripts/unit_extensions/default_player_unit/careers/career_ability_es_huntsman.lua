@@ -2,92 +2,100 @@
 
 CareerAbilityESHuntsman = class(CareerAbilityESHuntsman)
 
-function CareerAbilityESHuntsman.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	arg_1_0.owner_unit = arg_1_2
-	arg_1_0.world = arg_1_1.world
-	arg_1_0.wwise_world = Managers.world:wwise_world(arg_1_0.world)
+CareerAbilityESHuntsman.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	self.owner_unit = arg_1_2
+	self.world = arg_1_1.world
+	self.wwise_world = Managers.world:wwise_world(self.world)
 
-	local var_1_0 = arg_1_3.player
+	local player = arg_1_3.player
 
-	arg_1_0.player = var_1_0
-	arg_1_0.is_server = var_1_0.is_server
-	arg_1_0.local_player = var_1_0.local_player
-	arg_1_0.bot_player = var_1_0.bot_player
-	arg_1_0.network_manager = Managers.state.network
-	arg_1_0.input_manager = Managers.input
+	self.player = player
+	self.is_server = player.is_server
+	self.local_player = player.local_player
+	self.bot_player = player.bot_player
+	self.network_manager = Managers.state.network
+	self.input_manager = Managers.input
 end
 
-function CareerAbilityESHuntsman.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
-	arg_2_0._status_extension = ScriptUnit.extension(arg_2_2, "status_system")
-	arg_2_0._career_extension = ScriptUnit.extension(arg_2_2, "career_system")
-	arg_2_0._buff_extension = ScriptUnit.extension(arg_2_2, "buff_system")
-	arg_2_0._inventory_extension = ScriptUnit.extension(arg_2_2, "inventory_system")
-	arg_2_0._input_extension = ScriptUnit.has_extension(arg_2_2, "input_system")
-	arg_2_0._first_person_extension = ScriptUnit.has_extension(arg_2_2, "first_person_system")
+CareerAbilityESHuntsman.extensions_ready = function (self, arg_2_1, arg_2_2)
+	-- function 2
+	self._status_extension = ScriptUnit.extension(arg_2_2, "status_system")
+	self._career_extension = ScriptUnit.extension(arg_2_2, "career_system")
+	self._buff_extension = ScriptUnit.extension(arg_2_2, "buff_system")
+	self._inventory_extension = ScriptUnit.extension(arg_2_2, "inventory_system")
+	self._input_extension = ScriptUnit.has_extension(arg_2_2, "input_system")
+	self._first_person_extension = ScriptUnit.has_extension(arg_2_2, "first_person_system")
 end
 
-function CareerAbilityESHuntsman.destroy(arg_3_0)
+CareerAbilityESHuntsman.destroy = function (arg_3_0)
+	-- function 3
 	return
 end
 
-function CareerAbilityESHuntsman.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
-	if not arg_4_0:_ability_available() then
+CareerAbilityESHuntsman.update = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	-- function 4
+	if not self:_ability_available() then
 		return
 	end
 
-	local var_4_0 = arg_4_0._input_extension
+	local _input_extension = self._input_extension
 
-	if not var_4_0 then
+	if not _input_extension then
 		return
 	end
 
-	if var_4_0:get("action_career") then
-		arg_4_0:_run_ability()
+	if not _input_extension:get("action_career") then
+		self:_run_ability()
 	end
 end
 
-function CareerAbilityESHuntsman.stop(arg_5_0, arg_5_1)
-	if arg_5_0._is_priming then
-		arg_5_0:_stop_priming()
+CareerAbilityESHuntsman.stop = function (self, arg_5_1)
+	-- function 5
+	if not self._is_priming then
+		self:_stop_priming()
 	end
 end
 
-function CareerAbilityESHuntsman._ability_available(arg_6_0)
-	local var_6_0 = arg_6_0._career_extension
-	local var_6_1 = arg_6_0._status_extension
-	local var_6_2 = var_6_0:can_use_activated_ability()
-	local var_6_3 = var_6_1:is_disabled()
-	local var_6_4 = "slot_ranged"
-	local var_6_5 = arg_6_0._inventory_extension:get_slot_data(var_6_4) ~= nil
+CareerAbilityESHuntsman._ability_available = function (self)
+	-- function 6
+	local _career_extension = self._career_extension
+	local _status_extension = self._status_extension
+	local can_use_activated_ability = _career_extension:can_use_activated_ability()
+	local is_disabled = _status_extension:is_disabled()
+	local str = "slot_ranged"
+	local flag = self._inventory_extension:get_slot_data(str) ~= nil
 
-	return var_6_2 and not var_6_3 and var_6_5
+	return not can_use_activated_ability and not not is_disabled or flag
 end
 
-function CareerAbilityESHuntsman.force_trigger_ability(arg_7_0)
-	local var_7_0 = true
+CareerAbilityESHuntsman.force_trigger_ability = function (self)
+	-- function 7
+	local flag = true
 
-	arg_7_0:_run_ability(var_7_0)
+	self:_run_ability(flag)
 end
 
-function CareerAbilityESHuntsman._run_ability(arg_8_0, arg_8_1)
-	local var_8_0 = arg_8_0.owner_unit
-	local var_8_1 = arg_8_0.is_server
-	local var_8_2 = arg_8_0.local_player
-	local var_8_3 = arg_8_0.bot_player
-	local var_8_4 = arg_8_0.network_manager
-	local var_8_5 = var_8_4.network_transmit
-	local var_8_6 = arg_8_0._inventory_extension
-	local var_8_7 = arg_8_0._buff_extension
-	local var_8_8 = arg_8_0._career_extension
-	local var_8_9 = ScriptUnit.extension(var_8_0, "talent_system")
-	local var_8_10 = {
+CareerAbilityESHuntsman._run_ability = function (self, arg_8_1)
+	-- function 8
+	local owner_unit = self.owner_unit
+	local is_server = self.is_server
+	local local_player = self.local_player
+	local bot_player = self.bot_player
+	local network_manager = self.network_manager
+	local network_transmit = network_manager.network_transmit
+	local _inventory_extension = self._inventory_extension
+	local _buff_extension = self._buff_extension
+	local _career_extension = self._career_extension
+	local extension = ScriptUnit.extension(owner_unit, "talent_system")
+	local tbl = {
 		"markus_huntsman_activated_ability",
 		"markus_huntsman_activated_ability_headshot_multiplier"
 	}
-	local var_8_11 = {}
+	local tbl_2 = {}
 
-	if var_8_9:has_talent("markus_huntsman_activated_ability_improved_stealth") then
-		var_8_11 = {
+	if not extension:has_talent("markus_huntsman_activated_ability_improved_stealth") then
+		tbl_2 = {
 			"markus_huntsman_activated_ability_increased_reload_speed",
 			"markus_huntsman_activated_ability_decrease_move_speed",
 			"markus_huntsman_activated_ability_decrease_crouch_move_speed",
@@ -95,8 +103,8 @@ function CareerAbilityESHuntsman._run_ability(arg_8_0, arg_8_1)
 			"markus_huntsman_activated_ability_decrease_dodge_speed",
 			"markus_huntsman_activated_ability_decrease_dodge_distance"
 		}
-	elseif var_8_9:has_talent("markus_huntsman_activated_ability_duration") then
-		var_8_11 = {
+	elseif not extension:has_talent("markus_huntsman_activated_ability_duration") then
+		tbl_2 = {
 			"markus_huntsman_activated_ability_increased_zoom_duration",
 			"markus_huntsman_activated_ability_increased_reload_speed_duration",
 			"markus_huntsman_activated_ability_decrease_move_speed_duration",
@@ -106,12 +114,12 @@ function CareerAbilityESHuntsman._run_ability(arg_8_0, arg_8_1)
 			"markus_huntsman_activated_ability_decrease_dodge_distance_duration",
 			"markus_huntsman_end_activated_on_hit_duration"
 		}
-		var_8_10 = {
+		tbl = {
 			"markus_huntsman_activated_ability_duration",
 			"markus_huntsman_activated_ability_headshot_multiplier_duration"
 		}
 	else
-		var_8_11 = {
+		tbl_2 = {
 			"markus_huntsman_activated_ability_increased_reload_speed",
 			"markus_huntsman_activated_ability_decrease_move_speed",
 			"markus_huntsman_activated_ability_decrease_crouch_move_speed",
@@ -120,113 +128,114 @@ function CareerAbilityESHuntsman._run_ability(arg_8_0, arg_8_1)
 			"markus_huntsman_activated_ability_decrease_dodge_distance",
 			"markus_huntsman_end_activated_on_hit"
 		}
-		var_8_10 = {
+		tbl = {
 			"markus_huntsman_activated_ability",
 			"markus_huntsman_activated_ability_headshot_multiplier"
 		}
 	end
 
-	local var_8_12 = var_8_4:unit_game_object_id(var_8_0)
+	local unit_game_object_id = network_manager:unit_game_object_id(owner_unit)
 
-	for iter_8_0, iter_8_1 in ipairs(var_8_10) do
-		local var_8_13 = NetworkLookup.buff_templates[iter_8_1]
+	for i, v in ipairs(tbl) do
+		local var_8_13 = NetworkLookup.buff_templates[v]
 
-		if var_8_1 then
-			var_8_7:add_buff(iter_8_1, {
-				attacker_unit = var_8_0
+		if not is_server then
+			_buff_extension:add_buff(v, {
+				attacker_unit = owner_unit
 			})
-			var_8_5:send_rpc_clients("rpc_add_buff", var_8_12, var_8_13, var_8_12, 0, false)
+			network_transmit:send_rpc_clients("rpc_add_buff", unit_game_object_id, var_8_13, unit_game_object_id, 0, false)
 		else
-			var_8_5:send_rpc_server("rpc_add_buff", var_8_12, var_8_13, var_8_12, 0, true)
+			network_transmit:send_rpc_server("rpc_add_buff", unit_game_object_id, var_8_13, unit_game_object_id, 0, true)
 		end
 	end
 
-	for iter_8_2, iter_8_3 in ipairs(var_8_11) do
-		var_8_7:add_buff(iter_8_3, {
-			attacker_unit = var_8_0
+	for i_2, v_2 in ipairs(tbl_2) do
+		_buff_extension:add_buff(v_2, {
+			attacker_unit = owner_unit
 		})
 	end
 
-	if var_8_9:has_talent("markus_huntsman_activated_ability_cooldown_2") then
-		local var_8_14 = var_8_7:get_non_stacking_buff("markus_huntsman_passive")
-		local var_8_15 = var_8_14.template.max_sub_buff_stacks
+	if not extension:has_talent("markus_huntsman_activated_ability_cooldown_2") then
+		local get_non_stacking_buff = _buff_extension:get_non_stacking_buff("markus_huntsman_passive")
+		local max_sub_buff_stacks = get_non_stacking_buff.template.max_sub_buff_stacks
 
-		if not var_8_14.buff_list then
-			var_8_14.buff_list = {}
+		if not get_non_stacking_buff.buff_list then
+			get_non_stacking_buff.buff_list = {}
 		end
 
-		for iter_8_4 = 1, var_8_15 do
-			if var_8_15 > #var_8_14.buff_list then
-				table.insert(var_8_14.buff_list, var_8_7:add_buff("markus_huntsman_auto_headshot"))
+		for i4 = 1, max_sub_buff_stacks do
+			if max_sub_buff_stacks > #get_non_stacking_buff.buff_list then
+				table.insert(get_non_stacking_buff.buff_list, _buff_extension:add_buff("markus_huntsman_auto_headshot"))
 			end
 		end
 	end
 
-	local var_8_16 = "slot_ranged"
-	local var_8_17 = var_8_6:get_slot_data(var_8_16)
-	local var_8_18 = var_8_17.right_unit_1p
-	local var_8_19 = var_8_17.left_unit_1p
-	local var_8_20 = ScriptUnit.has_extension(var_8_18, "ammo_system")
-	local var_8_21 = ScriptUnit.has_extension(var_8_19, "ammo_system")
-	local var_8_22 = var_8_20 or var_8_21
+	local str = "slot_ranged"
+	local get_slot_data = _inventory_extension:get_slot_data(str)
+	local right_unit_1p = get_slot_data.right_unit_1p
+	local left_unit_1p = get_slot_data.left_unit_1p
+	local has_extension = ScriptUnit.has_extension(right_unit_1p, "ammo_system")
+	local has_extension_2 = ScriptUnit.has_extension(left_unit_1p, "ammo_system")
+	local flag = has_extension or has_extension_2
 
-	if var_8_22 then
-		local var_8_23 = var_8_22:clip_size()
-		local var_8_24 = var_8_22:ammo_count()
-		local var_8_25 = var_8_22:remaining_ammo()
-		local var_8_26 = var_8_24 == 0
-		local var_8_27 = var_8_24 == var_8_23
-		local var_8_28 = 0
+	if not flag then
+		local clip_size = flag:clip_size()
+		local ammo_count = flag:ammo_count()
+		local remaining_ammo = flag:remaining_ammo()
+		local flag_2 = ammo_count == 0
+		local flag_3 = ammo_count == clip_size
+		local num = 0
 
-		if var_8_26 then
-			var_8_28 = var_8_23
-		elseif var_8_27 then
-			if var_8_25 == 0 then
-				var_8_28 = var_8_23
-			elseif var_8_25 < var_8_23 then
-				var_8_28 = var_8_23 - var_8_25
+		if not flag_2 then
+			num = clip_size
+		elseif not flag_3 then
+			if remaining_ammo == 0 then
+				num = clip_size
+			elseif remaining_ammo < clip_size then
+				num = clip_size - remaining_ammo
 			end
-		elseif var_8_25 == 0 then
-			var_8_28 = var_8_23 - var_8_24 + var_8_23
-		elseif var_8_25 < var_8_23 then
-			var_8_28 = var_8_23 - var_8_24 + (var_8_23 - var_8_25)
+		elseif remaining_ammo == 0 then
+			num = clip_size - ammo_count + clip_size
+		elseif remaining_ammo < clip_size then
+			num = clip_size - ammo_count + (clip_size - remaining_ammo)
 		else
-			var_8_28 = var_8_23 - var_8_24
+			num = clip_size - ammo_count
 		end
 
-		var_8_22:add_ammo_to_reserve(var_8_28)
+		flag:add_ammo_to_reserve(num)
 
-		if var_8_22:can_reload() then
-			if var_8_26 then
-				var_8_22:start_reload(true)
+		if not flag:can_reload() then
+			if not flag_2 then
+				flag:start_reload(true)
 			else
-				var_8_22:instant_reload(false, "reload")
+				flag:instant_reload(false, "reload")
 			end
 		end
 	end
 
-	local var_8_29 = arg_8_0._first_person_extension
+	local _first_person_extension = self._first_person_extension
 
-	if var_8_2 then
-		var_8_29:play_hud_sound_event("Play_career_ability_markus_huntsman_enter", nil, true)
-		var_8_29:play_hud_sound_event("Play_career_ability_markus_huntsman_loop")
-		var_8_29:animation_event("shade_stealth_ability")
-		var_8_8:set_state("markus_activate_huntsman")
+	if not local_player then
+		_first_person_extension:play_hud_sound_event("Play_career_ability_markus_huntsman_enter", nil, true)
+		_first_person_extension:play_hud_sound_event("Play_career_ability_markus_huntsman_loop")
+		_first_person_extension:animation_event("shade_stealth_ability")
+		_career_extension:set_state("markus_activate_huntsman")
 		Managers.state.camera:set_mood("skill_huntsman_surge", "skill_huntsman_surge", false)
 		Managers.state.camera:set_mood("skill_huntsman_stealth", "skill_huntsman_stealth", true)
 	end
 
 	if not arg_8_1 then
-		var_8_8:start_activated_ability_cooldown()
+		_career_extension:start_activated_ability_cooldown()
 	end
 
-	arg_8_0:_play_vo()
+	self:_play_vo()
 end
 
-function CareerAbilityESHuntsman._play_vo(arg_9_0)
-	local var_9_0 = arg_9_0.owner_unit
-	local var_9_1 = ScriptUnit.extension_input(var_9_0, "dialogue_system")
-	local var_9_2 = FrameTable.alloc_table()
+CareerAbilityESHuntsman._play_vo = function (self)
+	-- function 9
+	local owner_unit = self.owner_unit
+	local extension_input = ScriptUnit.extension_input(owner_unit, "dialogue_system")
+	local alloc_table = FrameTable.alloc_table()
 
-	var_9_1:trigger_networked_dialogue_event("activate_ability", var_9_2)
+	extension_input:trigger_networked_dialogue_event("activate_ability", alloc_table)
 end

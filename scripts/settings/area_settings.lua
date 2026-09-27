@@ -1,6 +1,9 @@
 -- chunkname: @scripts/settings/area_settings.lua
 
+local AreaSettings = AreaSettings
+
 AreaSettings = AreaSettings or {}
+AreaSettings = AreaSettings
 AreaSettings.helmgart = {
 	menu_sound_event = "Play_hud_menu_area_helmgart",
 	long_description_text = "area_selection_helmgart_description_long",

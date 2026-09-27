@@ -4,48 +4,53 @@ require("scripts/ui/ui_renderer")
 require("scripts/ui/ui_elements")
 require("scripts/ui/ui_widgets")
 
-local var_0_0 = require("scripts/ui/views/twitch_icon_view_definitions")
+local scripts_ui_views_twitch_icon_view_definitions = require("scripts/ui/views/twitch_icon_view_definitions")
 
 TwitchIconView = class(TwitchIconView)
 
-function TwitchIconView.init(arg_1_0, arg_1_1)
-	arg_1_0._world = arg_1_1
-	arg_1_0._ui_renderer = UIRenderer.create(arg_1_1, "material", "materials/ui/ui_1080p_loading")
-	arg_1_0._render_settings = {
+TwitchIconView.init = function (self, arg_1_1)
+	-- function 1
+	self._world = arg_1_1
+	self._ui_renderer = UIRenderer.create(arg_1_1, "material", "materials/ui/ui_1080p_loading")
+	self._render_settings = {
 		snap_pixel_positions = true
 	}
 
-	arg_1_0:_create_ui_elements()
+	self:_create_ui_elements()
 end
 
-function TwitchIconView._create_ui_elements(arg_2_0)
-	arg_2_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
-	arg_2_0._twitch_icon_widget = UIWidget.init(var_0_0.twitch_icon_widget)
+TwitchIconView._create_ui_elements = function (self)
+	-- function 2
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(scripts_ui_views_twitch_icon_view_definitions.scenegraph_definition)
+	self._twitch_icon_widget = UIWidget.init(scripts_ui_views_twitch_icon_view_definitions.twitch_icon_widget)
 
-	UIRenderer.clear_scenegraph_queue(arg_2_0._ui_renderer)
+	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
 end
 
-function TwitchIconView.update(arg_3_0, arg_3_1)
-	local var_3_0 = false
+TwitchIconView.update = function (self, arg_3_1)
+	-- function 3
+	local flag = false
 
-	if Managers.state.network then
-		var_3_0 = Managers.state.network:lobby():lobby_data("twitch_enabled") == "true"
+	if not Managers.state.network then
+		flag = Managers.state.network:lobby():lobby_data("twitch_enabled") == "true"
 	end
 
-	if var_3_0 or Managers.twitch and (Managers.twitch:is_connected() or Managers.twitch:is_activated()) then
-		arg_3_0:_draw(arg_3_1)
+	if flag or not Managers.twitch and Managers.twitch:is_connected() and not Managers.twitch:is_activated() then
+		self:_draw(arg_3_1)
 	end
 end
 
-function TwitchIconView._draw(arg_4_0, arg_4_1)
-	local var_4_0 = arg_4_0._ui_renderer
-	local var_4_1 = arg_4_0._ui_scenegraph
+TwitchIconView._draw = function (self, arg_4_1)
+	-- function 4
+	local _ui_renderer = self._ui_renderer
+	local _ui_scenegraph = self._ui_scenegraph
 
-	UIRenderer.begin_pass(var_4_0, var_4_1, FAKE_INPUT_SERVICE, arg_4_1, nil, arg_4_0._render_settings)
-	UIRenderer.draw_widget(var_4_0, arg_4_0._twitch_icon_widget)
-	UIRenderer.end_pass(var_4_0)
+	UIRenderer.begin_pass(_ui_renderer, _ui_scenegraph, FAKE_INPUT_SERVICE, arg_4_1, nil, self._render_settings)
+	UIRenderer.draw_widget(_ui_renderer, self._twitch_icon_widget)
+	UIRenderer.end_pass(_ui_renderer)
 end
 
-function TwitchIconView.destroy(arg_5_0)
-	UIRenderer.destroy(arg_5_0._ui_renderer, arg_5_0._world)
+TwitchIconView.destroy = function (self)
+	-- function 5
+	UIRenderer.destroy(self._ui_renderer, self._world)
 end

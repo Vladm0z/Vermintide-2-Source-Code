@@ -1,5 +1,7 @@
 -- chunkname: @scripts/managers/blood/blood_settings.lua
 
+local BloodSettingsDefault = BloodSettingsDefault
+
 BloodSettingsDefault = BloodSettingsDefault or {
 	weapon_blood = {
 		default = 0.05,
@@ -64,19 +66,26 @@ BloodSettingsDefault = BloodSettingsDefault or {
 		enabled = true
 	}
 }
+BloodSettingsDefault = BloodSettingsDefault
+
+local BloodSettings = BloodSettings
+
 BloodSettings = BloodSettings or table.clone(BloodSettingsDefault)
+BloodSettings = BloodSettings
 
-if IS_WINDOWS then
-	local var_0_0 = Application.user_setting("num_blood_decal") or BloodSettings.blood_decals.num_decals
+if not IS_WINDOWS then
+	local user_setting = Application.user_setting("num_blood_decal")
 
-	BloodSettings.blood_decals.num_decals = var_0_0
+	user_setting = user_setting or BloodSettings.blood_decals.num_decals
+	BloodSettings.blood_decals.num_decals = user_setting
 end
 
-function BloodSettings.get_hit_effect_for_race(arg_1_0, arg_1_1)
-	if arg_1_0.hit_effects.enabled then
-		local var_1_0 = arg_1_0.hit_effects.first_person_per_race[arg_1_1]
+BloodSettings.get_hit_effect_for_race = function (self, arg_1_1)
+	-- function 1
+	if not self.hit_effects.enabled then
+		local var_1_0 = self.hit_effects.first_person_per_race[arg_1_1]
 
-		return var_1_0 or var_1_0 == nil and arg_1_0.hit_effects.first_person_per_race.default
+		return var_1_0 or var_1_0 ~= nil or self.hit_effects.first_person_per_race.default
 	end
 
 	return nil

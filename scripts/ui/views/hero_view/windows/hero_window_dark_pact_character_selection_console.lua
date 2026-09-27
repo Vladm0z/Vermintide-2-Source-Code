@@ -1,586 +1,668 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/hero_window_dark_pact_character_selection_console.lua
 
 local var_0_0 = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_dark_pact_character_selection_console_definitions")
-local var_0_1 = var_0_0.widget_definitions
-local var_0_2 = var_0_0.generic_input_actions
-local var_0_3 = var_0_0.animation_definitions
-local var_0_4 = var_0_0.scenegraph_definition
-local var_0_5 = 5
-local var_0_6 = 5
+local widget_definitions = var_0_0.widget_definitions
+local generic_input_actions = var_0_0.generic_input_actions
+local animation_definitions = var_0_0.animation_definitions
+local scenegraph_definition = var_0_0.scenegraph_definition
+local num = 5
+local num_2 = 5
 
 HeroWindowDarkPactCharacterSelectionConsole = class(HeroWindowDarkPactCharacterSelectionConsole)
 HeroWindowDarkPactCharacterSelectionConsole.NAME = "HeroWindowDarkPactCharacterSelectionConsole"
 
-function HeroWindowDarkPactCharacterSelectionConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
+HeroWindowDarkPactCharacterSelectionConsole.on_enter = function (self, arg_1_1, arg_1_2)
+	-- function 1
 	print("[HeroViewWindow] Enter Substate HeroWindowDarkPactCharacterSelectionConsole")
 
-	local var_1_0 = arg_1_1.ingame_ui_context
+	local ingame_ui_context = arg_1_1.ingame_ui_context
 
-	arg_1_0._ui_renderer = var_1_0.ui_renderer
-	arg_1_0._ui_top_renderer = var_1_0.ui_top_renderer
-	arg_1_0._profile_synchronizer = var_1_0.profile_synchronizer
-	arg_1_0._ingame_ui = var_1_0.ingame_ui
-	arg_1_0._parent = arg_1_1.parent
-	arg_1_0._wwise_world = arg_1_1.wwise_world
-	arg_1_0._render_settings = {
+	self._ui_renderer = ingame_ui_context.ui_renderer
+	self._ui_top_renderer = ingame_ui_context.ui_top_renderer
+	self._profile_synchronizer = ingame_ui_context.profile_synchronizer
+	self._ingame_ui = ingame_ui_context.ingame_ui
+	self._parent = arg_1_1.parent
+	self._wwise_world = arg_1_1.wwise_world
+	self._render_settings = {
 		snap_pixel_positions = true
 	}
-	arg_1_0._hero_name = arg_1_1.hero_name
-	arg_1_0._career_index = arg_1_1.career_index or 0
-	arg_1_0._profile_index = arg_1_1.profile_index or 0
-	arg_1_0._profile_selectable = false
-	arg_1_0._animations = {}
-	arg_1_0._ui_animations = {}
+	self._hero_name = arg_1_1.hero_name
 
-	local var_1_1 = Managers.player:local_player()
+	local career_index = arg_1_1.career_index
 
-	arg_1_0._peer_id = var_1_1:network_id()
-	arg_1_0._local_player_id = var_1_1:local_player_id()
-	arg_1_0._player_stats_id = var_1_1:stats_id()
-	arg_1_0._statistics_db = var_1_0.statistics_db
+	career_index = career_index or 0
+	self._career_index = career_index
 
-	local var_1_2 = UILayer.default + 300
-	local var_1_3 = arg_1_0._parent:window_input_service()
+	local profile_index = arg_1_1.profile_index
 
-	arg_1_0._menu_input_description = MenuInputDescriptionUI:new(var_1_0, arg_1_0._ui_top_renderer, var_1_3, 4, var_1_2 + 100, var_0_2.default, true)
+	profile_index = profile_index or 0
+	self._profile_index = profile_index
+	self._profile_selectable = false
+	self._animations = {}
+	self._ui_animations = {}
 
-	arg_1_0._menu_input_description:set_input_description(nil)
+	local local_player = Managers.player:local_player()
 
-	arg_1_0._dark_pact_profiles = arg_1_0:_get_dark_pact_selectable_profiles()
+	self._peer_id = local_player:network_id()
+	self._local_player_id = local_player:local_player_id()
+	self._player_stats_id = local_player:stats_id()
+	self._statistics_db = ingame_ui_context.statistics_db
 
-	arg_1_0:_create_ui_elements(arg_1_1, arg_1_2)
-	arg_1_0:_start_transition_animation("on_enter", "on_enter")
-	arg_1_0:_first_pactsworn_setup(arg_1_0._profile_index, arg_1_0._career_index)
+	local num = UILayer.default + 300
+	local window_input_service = self._parent:window_input_service()
 
-	local var_1_4 = (DLCSettings.carousel and DLCSettings.carousel.hero_window_mood_settings).pactsworn or "default"
+	self._menu_input_description = MenuInputDescriptionUI:new(ingame_ui_context, self._ui_top_renderer, window_input_service, 4, num + 100, generic_input_actions.default, true)
 
-	arg_1_0._parent:set_background_mood(var_1_4)
+	self._menu_input_description:set_input_description(nil)
+
+	self._dark_pact_profiles = self:_get_dark_pact_selectable_profiles()
+
+	self:_create_ui_elements(arg_1_1, arg_1_2)
+	self:_start_transition_animation("on_enter", "on_enter")
+	self:_first_pactsworn_setup(self._profile_index, self._career_index)
+
+	local carousel = DLCSettings.carousel
+
+	carousel = not carousel and DLCSettings.carousel.hero_window_mood_settings
+
+	local pactsworn = carousel.pactsworn
+
+	pactsworn = pactsworn or "default"
+
+	self._parent:set_background_mood(pactsworn)
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole._first_pactsworn_setup(arg_2_0, arg_2_1, arg_2_2)
+HeroWindowDarkPactCharacterSelectionConsole._first_pactsworn_setup = function (self, arg_2_1, arg_2_2)
+	-- function 2
 	local var_2_0 = SPProfiles[arg_2_1]
-	local var_2_1 = 1
-	local var_2_2 = 1
+	local num = 1
+	local num_2 = 1
 
 	if var_2_0.affiliation ~= "dark_pact" then
-		local var_2_3 = Math.random(1, arg_2_0._num_max_rows)
-		local var_2_4 = arg_2_0._num_hero_columns[var_2_3] or 1
-		local var_2_5 = Math.random(1, var_2_4)
+		local random = Math.random(1, self._num_max_rows)
+		local var_2_4 = self._num_hero_columns[random]
 
-		arg_2_0._selected_row = var_2_3
-		arg_2_0._selected_column = var_2_5
-		arg_2_1, arg_2_2 = arg_2_0:_get_selected_dark_pact_profile_and_career_indx(var_2_3, var_2_5)
+		var_2_4 = var_2_4 or 1
+
+		local random_2 = Math.random(1, var_2_4)
+
+		self._selected_row = random
+		self._selected_column = random_2
+		arg_2_1, arg_2_2 = self:_get_selected_dark_pact_profile_and_career_indx(random, random_2)
 	end
 
-	arg_2_0._selected_dark_pact_profile_index = arg_2_1
-	arg_2_0._selected_dark_pact_career_index = arg_2_2
+	self._selected_dark_pact_profile_index = arg_2_1
+	self._selected_dark_pact_career_index = arg_2_2
 
-	arg_2_0:_set_selected_portrait(arg_2_1, arg_2_2)
+	self:_set_selected_portrait(arg_2_1, arg_2_2)
 
-	if arg_2_0._selected_dark_pact_profile_index > 0 and arg_2_0._selected_dark_pact_career_index > 0 then
-		arg_2_0:_select_hero(arg_2_0._selected_dark_pact_profile_index, arg_2_0._selected_dark_pact_career_index)
+	if not (not (self._selected_dark_pact_profile_index > 0) or not (self._selected_dark_pact_career_index > 0)) then
+		self:_select_hero(self._selected_dark_pact_profile_index, self._selected_dark_pact_career_index)
 	end
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole._set_selected_portrait(arg_3_0, arg_3_1, arg_3_2)
-	for iter_3_0 = 1, arg_3_0._num_max_rows do
-		for iter_3_1 = 1, arg_3_0._num_hero_columns[iter_3_0] do
-			local var_3_0 = arg_3_0._selection_widget_lookup[iter_3_0][iter_3_1].content
-			local var_3_1 = arg_3_1 == var_3_0.profile_index and arg_3_2 == var_3_0.career_index
+HeroWindowDarkPactCharacterSelectionConsole._set_selected_portrait = function (self, arg_3_1, arg_3_2)
+	-- function 3
+	for i = 1, self._num_max_rows do
+		for j = 1, self._num_hero_columns[i] do
+			local content = self._selection_widget_lookup[i][j].content
+			local flag = arg_3_1 ~= content.profile_index or arg_3_2 == content.career_index
 
-			var_3_0.selected = var_3_1
+			content.selected = flag
 
-			if var_3_1 then
-				arg_3_0._selected_row = iter_3_0
-				arg_3_0._selected_column = iter_3_1
+			if not flag then
+				self._selected_row = i
+				self._selected_column = j
 			end
 		end
 	end
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole._get_selected_dark_pact_profile_and_career_indx(arg_4_0, arg_4_1, arg_4_2)
-	if not arg_4_0._selection_widget_lookup then
-		return arg_4_0._dark_pact_profiles[1], 1
+HeroWindowDarkPactCharacterSelectionConsole._get_selected_dark_pact_profile_and_career_indx = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	if not self._selection_widget_lookup then
+		return self._dark_pact_profiles[1], 1
 	end
 
-	if arg_4_2 > arg_4_0._num_hero_columns[arg_4_1] then
-		arg_4_2 = arg_4_0._num_hero_columns[arg_4_1]
+	if arg_4_2 > self._num_hero_columns[arg_4_1] then
+		arg_4_2 = self._num_hero_columns[arg_4_1]
 	end
 
-	local var_4_0 = arg_4_0._selection_widget_lookup[arg_4_1][arg_4_2].content
-	local var_4_1 = var_4_0.profile_index
-	local var_4_2 = var_4_0.career_index
+	local content = self._selection_widget_lookup[arg_4_1][arg_4_2].content
+	local profile_index = content.profile_index
+	local career_index = content.career_index
 
-	return var_4_1, var_4_2
+	return profile_index, career_index
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole._select_hero(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+HeroWindowDarkPactCharacterSelectionConsole._select_hero = function (self, arg_5_1, arg_5_2, arg_5_3)
+	-- function 5
 	if not arg_5_3 then
-		arg_5_0:_play_sound("play_gui_hero_select_career_click")
+		self:_play_sound("play_gui_hero_select_career_click")
 	end
 
 	local var_5_0 = SPProfiles[arg_5_1]
 	local var_5_1 = var_5_0.careers[arg_5_2]
-	local var_5_2 = var_5_0.display_name
-	local var_5_3 = var_5_0.character_name
-	local var_5_4 = var_5_1.display_name
+	local display_name = var_5_0.display_name
+	local character_name = var_5_0.character_name
+	local display_name_2 = var_5_1.display_name
 
-	GlobalShaderFlags.set_global_shader_flag("NECROMANCER_CAREER_REMAP", var_5_4 == "bw_necromancer")
+	GlobalShaderFlags.set_global_shader_flag("NECROMANCER_CAREER_REMAP", display_name_2 == "bw_necromancer")
 
-	local var_5_5 = Localize(var_5_3)
-	local var_5_6 = Localize(var_5_4)
+	local var_5_5 = Localize(character_name)
+	local var_5_6 = Localize(display_name_2)
 
-	arg_5_0._selected_dark_pact_career_index = arg_5_2
-	arg_5_0._selected_dark_pact_profile_index = arg_5_1
-	arg_5_0._selected_hero_name = var_5_2
+	self._selected_dark_pact_career_index = arg_5_2
+	self._selected_dark_pact_profile_index = arg_5_1
+	self._selected_hero_name = display_name
 
 	Managers.state.event:trigger("respawn_hero", {
-		hero_name = var_5_2,
+		hero_name = display_name,
 		career_index = arg_5_2
 	})
-	arg_5_0:_setup_dark_pact_loadut_data(arg_5_1, arg_5_2)
-	arg_5_0._parent:change_profile(arg_5_1, arg_5_2)
+	self:_setup_dark_pact_loadut_data(arg_5_1, arg_5_2)
+	self._parent:change_profile(arg_5_1, arg_5_2)
 end
 
-local var_0_7 = 2
+local num_3 = 2
 
-function HeroWindowDarkPactCharacterSelectionConsole._setup_dark_pact_loadut_data(arg_6_0, arg_6_1, arg_6_2)
+HeroWindowDarkPactCharacterSelectionConsole._setup_dark_pact_loadut_data = function (self, arg_6_1, arg_6_2)
+	-- function 6
 	local var_6_0 = SPProfiles[arg_6_1].careers[arg_6_2]
-	local var_6_1 = arg_6_0._widgets_by_name.pactsworn_name
-	local var_6_2 = var_6_0.display_name
-	local var_6_3 = var_6_0.name
+	local pactsworn_name = self._widgets_by_name.pactsworn_name
+	local display_name = var_6_0.display_name
+	local name = var_6_0.name
 
-	var_6_1.content.text = Localize(var_6_2)
+	pactsworn_name.content.text = Localize(display_name)
 
-	local var_6_4 = "slot_skin"
-	local var_6_5 = BackendUtils.get_loadout_item(var_6_3, var_6_4)
-	local var_6_6 = DLCSettings.carousel
-	local var_6_7 = var_6_6.hero_window_pactsworn_stats_by_name[var_6_3] or var_6_6.hero_window_pactsworn_stats_by_name.default
+	local str = "slot_skin"
+	local get_loadout_item = BackendUtils.get_loadout_item(name, str)
+	local carousel = DLCSettings.carousel
+	local var_6_7 = carousel.hero_window_pactsworn_stats_by_name[name]
 
-	for iter_6_0 = 1, var_0_7 do
-		local var_6_8 = arg_6_0._widgets_by_name["pactsworn_stat_" .. iter_6_0].content
-		local var_6_9 = var_6_7[iter_6_0]
-		local var_6_10 = math.round(arg_6_0._statistics_db:get_persistent_stat(arg_6_0._player_stats_id, unpack(var_6_9)))
-		local var_6_11 = Localize(var_6_6.stats_string_lookup[var_6_9[1]])
+	var_6_7 = var_6_7 or carousel.hero_window_pactsworn_stats_by_name.default
 
-		var_6_8.text = "{#color(160,146,101,255)}" .. var_6_11 .. "{#reset()} : " .. var_6_10
-		arg_6_0._widgets_by_name["pactsworn_stat_shadow_" .. iter_6_0].content.text = var_6_11 .. " : " .. var_6_10
-		arg_6_0._widgets_by_name["pactsworn_stat_" .. iter_6_0 .. "_icon"].content.texture_id = var_6_6.stats_icons_lookup[var_6_9[1]]
+	for i = 1, num_3 do
+		local content = self._widgets_by_name["pactsworn_stat_" .. i].content
+		local var_6_9 = var_6_7[i]
+		local round = math.round(self._statistics_db:get_persistent_stat(self._player_stats_id, unpack(var_6_9)))
+		local var_6_11 = Localize(carousel.stats_string_lookup[var_6_9[1]])
+
+		content.text = "{#color(160,146,101,255)}" .. var_6_11 .. "{#reset()} : " .. round
+		self._widgets_by_name["pactsworn_stat_shadow_" .. i].content.text = var_6_11 .. " : " .. round
+		self._widgets_by_name["pactsworn_stat_" .. i .. "_icon"].content.texture_id = carousel.stats_icons_lookup[var_6_9[1]]
 	end
 
-	arg_6_0._widgets_by_name.pactsworn_description.content.text = Localize(var_6_0.description)
+	self._widgets_by_name.pactsworn_description.content.text = Localize(var_6_0.description)
 
-	local var_6_12 = arg_6_0._widgets_by_name.equipment_skin.content
+	local content_2 = self._widgets_by_name.equipment_skin.content
 
-	if var_6_5 then
-		var_6_12[var_6_4].item = var_6_5
-		var_6_12[var_6_4].icon = var_6_5.data.inventory_icon
-		var_6_12[var_6_4].profile_index = arg_6_0._selected_dark_pact_profile_index
-		var_6_12[var_6_4].career_index = arg_6_0._selected_dark_pact_career_index
-		var_6_12[var_6_4].rarity = UISettings.item_rarity_textures[var_6_5.rarity]
+	if not get_loadout_item then
+		content_2[str].item = get_loadout_item
+		content_2[str].icon = get_loadout_item.data.inventory_icon
+		content_2[str].profile_index = self._selected_dark_pact_profile_index
+		content_2[str].career_index = self._selected_dark_pact_career_index
+		content_2[str].rarity = UISettings.item_rarity_textures[get_loadout_item.rarity]
 	end
 
-	var_6_12.is_dark_pact = true
+	content_2.is_dark_pact = true
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole._update_selectable(arg_7_0, arg_7_1, arg_7_2)
+HeroWindowDarkPactCharacterSelectionConsole._update_selectable = function (arg_7_0, arg_7_1, arg_7_2)
+	-- function 7
 	return
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole._start_transition_animation(arg_8_0, arg_8_1, arg_8_2)
-	local var_8_0 = {
-		wwise_world = arg_8_0._wwise_world,
-		render_settings = arg_8_0._render_settings
+HeroWindowDarkPactCharacterSelectionConsole._start_transition_animation = function (self, arg_8_1, arg_8_2)
+	-- function 8
+	local tbl = {
+		wwise_world = self._wwise_world,
+		render_settings = self._render_settings
 	}
-	local var_8_1 = {}
-	local var_8_2 = arg_8_0._ui_animator:start_animation(arg_8_2, var_8_1, var_0_4, var_8_0)
+	local tbl_2 = {}
+	local start_animation = self._ui_animator:start_animation(arg_8_2, tbl_2, scenegraph_definition, tbl)
 
-	arg_8_0._animations[arg_8_1] = var_8_2
+	self._animations[arg_8_1] = start_animation
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole._create_ui_elements(arg_9_0, arg_9_1, arg_9_2)
-	arg_9_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_4)
+HeroWindowDarkPactCharacterSelectionConsole._create_ui_elements = function (self, arg_9_1, arg_9_2)
+	-- function 9
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	local var_9_0 = {}
-	local var_9_1 = {}
+	local tbl = {}
+	local tbl_2 = {}
 
-	for iter_9_0, iter_9_1 in pairs(var_0_1) do
-		local var_9_2 = UIWidget.init(iter_9_1)
+	for k, v in pairs(widget_definitions) do
+		local var_9_2 = UIWidget.init(v)
 
-		var_9_0[#var_9_0 + 1] = var_9_2
-		var_9_1[iter_9_0] = var_9_2
+		tbl[#tbl + 1] = var_9_2
+		tbl_2[k] = var_9_2
 	end
 
-	arg_9_0._widgets = var_9_0
-	arg_9_0._widgets_by_name = var_9_1
+	self._widgets = tbl
+	self._widgets_by_name = tbl_2
 
-	arg_9_0:_setup_dark_pact_selection_widgets()
-	UIRenderer.clear_scenegraph_queue(arg_9_0._ui_renderer)
+	self:_setup_dark_pact_selection_widgets()
+	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
 
-	arg_9_0._ui_animator = UIAnimator:new(arg_9_0._ui_scenegraph, var_0_3)
+	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
 
-	if arg_9_2 then
-		local var_9_3 = arg_9_0._ui_scenegraph.window.local_position
+	if not arg_9_2 then
+		local local_position = self._ui_scenegraph.window.local_position
 
-		var_9_3[1] = var_9_3[1] + arg_9_2[1]
-		var_9_3[2] = var_9_3[2] + arg_9_2[2]
-		var_9_3[3] = var_9_3[3] + arg_9_2[3]
+		local_position[1] = local_position[1] + arg_9_2[1]
+		local_position[2] = local_position[2] + arg_9_2[2]
+		local_position[3] = local_position[3] + arg_9_2[3]
 	end
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole._setup_dark_pact_selection_widgets(arg_10_0)
-	local var_10_0 = {}
+HeroWindowDarkPactCharacterSelectionConsole._setup_dark_pact_selection_widgets = function (self)
+	-- function 10
+	local tbl = {}
 
-	arg_10_0._pactsworn_widgets = var_10_0
+	self._pactsworn_widgets = tbl
 
-	local var_10_1 = {}
+	local tbl_2 = {}
 
-	arg_10_0._selection_widget_lookup = var_10_1
-	arg_10_0._num_hero_columns = {}
+	self._selection_widget_lookup = tbl_2
+	self._num_hero_columns = {}
 
-	local var_10_2 = 5
-	local var_10_3 = 1
-	local var_10_4 = 1
+	local num = 5
+	local num_2 = 1
+	local num_3 = 1
 
-	for iter_10_0, iter_10_1 in ipairs(arg_10_0._dark_pact_profiles) do
-		local var_10_5 = SPProfiles[iter_10_1]
-		local var_10_6 = var_10_5.display_name
+	for i, v in ipairs(self._dark_pact_profiles) do
+		local var_10_5 = SPProfiles[v]
+		local display_name = var_10_5.display_name
 		local var_10_7 = var_10_5.careers[1]
-		local var_10_8 = UIWidgets.create_dark_pact_selection_widget("selection_anchor")
-		local var_10_9 = UIWidget.init(var_10_8)
+		local create_dark_pact_selection_widget = UIWidgets.create_dark_pact_selection_widget("selection_anchor")
+		local var_10_9 = UIWidget.init(create_dark_pact_selection_widget)
 
-		var_10_0[#var_10_0 + 1] = var_10_9
-		arg_10_0._widgets_by_name["selection_widget_" .. iter_10_0] = var_10_9
+		tbl[#tbl + 1] = var_10_9
+		self._widgets_by_name["selection_widget_" .. i] = var_10_9
 
-		local var_10_10 = var_10_9.content
+		local content = var_10_9.content
 
-		var_10_10.portrait = var_10_7.picking_image_square
-		var_10_10.career_settings = var_10_7
-		var_10_10.profile_index = iter_10_1
-		var_10_10.career_index = 1
+		content.portrait = var_10_7.picking_image_square
+		content.career_settings = var_10_7
+		content.profile_index = v
+		content.career_index = 1
 
 		if var_10_5.enemy_role == "boss" then
-			var_10_10.portrait_frame = "pactsworn_frame_gold"
+			content.portrait_frame = "pactsworn_frame_gold"
 		end
 
-		if not var_10_1[var_10_4] then
-			var_10_1[var_10_4] = {}
+		if not tbl_2[num_3] then
+			tbl_2[num_3] = {}
 		end
 
-		var_10_1[var_10_4][var_10_3] = var_10_9
+		tbl_2[num_3][num_2] = var_10_9
 
-		local var_10_11 = var_10_4 % 2 == 0
-		local var_10_12 = 140 * var_10_3 - 1 + 10 * var_10_3 - 1
-		local var_10_13 = 140 * var_10_4 - 1 + 10 * var_10_4 - 1
+		local flag = num_3 % 2 == 0
+		local num_4 = 140 * num_2 - 1 + 10 * num_2 - 1
+		local num_5 = 140 * num_3 - 1 + 10 * num_3 - 1
+		local offset = var_10_9.offset
+		local num_6
 
-		var_10_9.offset[1] = var_10_11 and var_10_12 + 70 or var_10_12
-		var_10_9.offset[2] = var_10_11 and -var_10_13 + 35 or -var_10_13
-		var_10_9.offset[3] = -iter_10_0 * 10
-		arg_10_0._num_hero_columns[var_10_4] = var_10_3
+		if not flag then
+			num_6 = num_4 + 70
 
-		if var_10_3 == 5 then
-			var_10_4 = var_10_4 + 1
-			var_10_3 = 0
+			if not num_6 then
+				-- Nothing
+			end
 		end
 
-		var_10_3 = var_10_3 + 1
+		num_6 = num_4
+
+		::label_10_0::
+
+		offset[1] = num_6
+
+		local offset_2 = var_10_9.offset
+		local num_7
+
+		if not flag then
+			num_7 = -num_5 + 35
+
+			if not num_7 then
+				-- Nothing
+			end
+		end
+
+		num_7 = -num_5
+
+		::label_10_1::
+
+		offset_2[2] = num_7
+		var_10_9.offset[3] = -i * 10
+		self._num_hero_columns[num_3] = num_2
+
+		if num_2 == 5 then
+			num_3 = num_3 + 1
+			num_2 = 0
+		end
+
+		num_2 = num_2 + 1
 	end
 
-	arg_10_0._num_max_columns = var_10_2
-	arg_10_0._num_max_rows = var_10_4
+	self._num_max_columns = num
+	self._num_max_rows = num_3
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole._get_dark_pact_selectable_profiles(arg_11_0)
-	local var_11_0 = {}
+HeroWindowDarkPactCharacterSelectionConsole._get_dark_pact_selectable_profiles = function (arg_11_0)
+	-- function 11
+	local tbl = {}
 
-	for iter_11_0, iter_11_1 in ipairs(SPProfiles) do
-		if iter_11_1.affiliation == "dark_pact" and iter_11_1.role ~= nil then
-			var_11_0[#var_11_0 + 1] = iter_11_0
+	for i, v in ipairs(SPProfiles) do
+		if not (v.affiliation ~= "dark_pact" or v.role == nil) then
+			tbl[#tbl + 1] = i
 		end
 	end
 
-	return var_11_0
+	return tbl
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole.on_exit(arg_12_0, arg_12_1)
+HeroWindowDarkPactCharacterSelectionConsole.on_exit = function (self, arg_12_1)
+	-- function 12
 	print("[HeroViewWindow] Exit Substate HeroWindowDarkPactCharacterSelectionConsole")
 
-	arg_12_0._ui_animator = nil
+	self._ui_animator = nil
 
-	local var_12_0, var_12_1, var_12_2 = arg_12_0._parent:currently_selected_profile()
+	local currently_selected_profile, var_12_1, var_12_2 = self._parent:currently_selected_profile()
 
-	if arg_12_0._selected_profile_index ~= var_12_0 or arg_12_0._selected_career_index ~= var_12_1 then
+	if not (self._selected_profile_index ~= currently_selected_profile or self._selected_career_index == var_12_1) then
 		Managers.state.event:trigger("respawn_hero", {
 			hero_name = var_12_2,
 			career_index = var_12_1
 		})
 
-		local var_12_3 = SPProfiles[var_12_0].careers[var_12_1].name
+		local name = SPProfiles[currently_selected_profile].careers[var_12_1].name
 
-		GlobalShaderFlags.set_global_shader_flag("NECROMANCER_CAREER_REMAP", var_12_3 == "bw_necromancer")
+		GlobalShaderFlags.set_global_shader_flag("NECROMANCER_CAREER_REMAP", name == "bw_necromancer")
 	end
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole.update(arg_13_0, arg_13_1, arg_13_2)
-	if DO_RELOAD then
+HeroWindowDarkPactCharacterSelectionConsole.update = function (self, arg_13_1, arg_13_2)
+	-- function 13
+	if not DO_RELOAD then
 		DO_RELOAD = false
 
-		arg_13_0:_create_ui_elements()
+		self:_create_ui_elements()
 	end
 
-	arg_13_0:_update_animations(arg_13_1)
-	arg_13_0:_update_portraits(arg_13_1)
-	arg_13_0:_update_input(arg_13_1)
-	arg_13_0:_draw(arg_13_1)
+	self:_update_animations(arg_13_1)
+	self:_update_portraits(arg_13_1)
+	self:_update_input(arg_13_1)
+	self:_draw(arg_13_1)
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole.post_update(arg_14_0, arg_14_1, arg_14_2)
+HeroWindowDarkPactCharacterSelectionConsole.post_update = function (arg_14_0, arg_14_1, arg_14_2)
+	-- function 14
 	return
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole._update_animations(arg_15_0, arg_15_1)
-	local var_15_0 = arg_15_0._ui_animations
-	local var_15_1 = arg_15_0._animations
-	local var_15_2 = arg_15_0._ui_animator
+HeroWindowDarkPactCharacterSelectionConsole._update_animations = function (self, arg_15_1)
+	-- function 15
+	local _ui_animations = self._ui_animations
+	local _animations = self._animations
+	local _ui_animator = self._ui_animator
 
-	for iter_15_0, iter_15_1 in pairs(arg_15_0._ui_animations) do
-		UIAnimation.update(iter_15_1, arg_15_1)
+	for k, v in pairs(self._ui_animations) do
+		UIAnimation.update(v, arg_15_1)
 
-		if UIAnimation.completed(iter_15_1) then
-			arg_15_0._ui_animations[iter_15_0] = nil
+		if not UIAnimation.completed(v) then
+			self._ui_animations[k] = nil
 		end
 	end
 
-	var_15_2:update(arg_15_1)
+	_ui_animator:update(arg_15_1)
 
-	for iter_15_2, iter_15_3 in pairs(var_15_1) do
-		if var_15_2:is_animation_completed(iter_15_3) then
-			var_15_2:stop_animation(iter_15_3)
+	for k_2, v_2 in pairs(_animations) do
+		if not _ui_animator:is_animation_completed(v_2) then
+			_ui_animator:stop_animation(v_2)
 
-			var_15_1[iter_15_2] = nil
+			_animations[k_2] = nil
 		end
 	end
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole._update_input(arg_16_0, arg_16_1)
-	local var_16_0 = arg_16_0._parent:window_input_service()
-	local var_16_1 = Managers.input:is_device_active("gamepad")
+HeroWindowDarkPactCharacterSelectionConsole._update_input = function (self, arg_16_1)
+	-- function 16
+	local window_input_service = self._parent:window_input_service()
+	local is_device_active = Managers.input:is_device_active("gamepad")
 
-	if var_16_1 then
-		arg_16_0:_handle_gamepad_selection(var_16_0)
+	if not is_device_active then
+		self:_handle_gamepad_selection(window_input_service)
 	else
-		arg_16_0:_handle_mouse_selection()
+		self:_handle_mouse_selection()
 	end
 
-	arg_16_0._widgets_by_name.equipment_skin.content.slot_skin.highlight = arg_16_0._higlight_inventory_selection and var_16_1
+	local slot_skin = self._widgets_by_name.equipment_skin.content.slot_skin
+	local _higlight_inventory_selection = self._higlight_inventory_selection
+
+	_higlight_inventory_selection = not _higlight_inventory_selection and is_device_active
+	slot_skin.highlight = _higlight_inventory_selection
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole._handle_mouse_selection(arg_17_0)
-	local var_17_0 = arg_17_0._hero_widgets
-	local var_17_1 = arg_17_0._num_max_rows
-	local var_17_2 = arg_17_0._num_max_columns
-	local var_17_3 = arg_17_0._selected_dark_pact_profile_index
-	local var_17_4 = arg_17_0._selected_dark_pact_career_index
-	local var_17_5 = 1
+HeroWindowDarkPactCharacterSelectionConsole._handle_mouse_selection = function (self)
+	-- function 17
+	local _hero_widgets = self._hero_widgets
+	local _num_max_rows = self._num_max_rows
+	local _num_max_columns = self._num_max_columns
+	local _selected_dark_pact_profile_index = self._selected_dark_pact_profile_index
+	local _selected_dark_pact_career_index = self._selected_dark_pact_career_index
+	local num = 1
 
-	for iter_17_0 = 1, var_17_1 do
-		for iter_17_1 = 1, var_17_2 do
-			local var_17_6 = arg_17_0._selection_widget_lookup[iter_17_0][iter_17_1]
+	for i = 1, _num_max_rows do
+		for j = 1, _num_max_columns do
+			local var_17_6 = self._selection_widget_lookup[i][j]
 
 			if not var_17_6 then
 				break
 			end
 
-			local var_17_7 = var_17_6.content
-			local var_17_8 = var_17_7.hotspot
-			local var_17_9 = var_17_7.profile_index
-			local var_17_10 = var_17_7.career_index
+			local content = var_17_6.content
+			local hotspot = content.hotspot
+			local profile_index = content.profile_index
+			local career_index = content.career_index
 
-			if var_17_8.on_pressed and (var_17_9 ~= var_17_3 or var_17_10 ~= var_17_4) then
-				arg_17_0:_select_hero(var_17_9, var_17_10)
-				arg_17_0:_set_selected_portrait(var_17_9, var_17_10)
+			if not (not hotspot.on_pressed and profile_index ~= _selected_dark_pact_profile_index or career_index == _selected_dark_pact_career_index) then
+				self:_select_hero(profile_index, career_index)
+				self:_set_selected_portrait(profile_index, career_index)
 			end
 		end
 	end
 
-	local var_17_11 = arg_17_0._widgets_by_name.equipment_skin
+	local equipment_skin = self._widgets_by_name.equipment_skin
 
-	if UIUtils.is_button_pressed(var_17_11, "slot_skin") then
-		arg_17_0:_play_sound("play_gui_equipment_selection_click")
-		arg_17_0._parent:set_selected_cosmetic_slot_index(2)
-		arg_17_0._parent:set_layout_by_name("cosmetics_selection_dark_pact")
+	if not UIUtils.is_button_pressed(equipment_skin, "slot_skin") then
+		self:_play_sound("play_gui_equipment_selection_click")
+		self._parent:set_selected_cosmetic_slot_index(2)
+		self._parent:set_layout_by_name("cosmetics_selection_dark_pact")
 	end
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole._handle_gamepad_selection(arg_18_0, arg_18_1)
-	local var_18_0 = arg_18_0._selected_row
-	local var_18_1 = arg_18_0._selected_column
-	local var_18_2 = arg_18_0._num_max_rows
-	local var_18_3 = arg_18_0._num_hero_columns[var_18_0]
+HeroWindowDarkPactCharacterSelectionConsole._handle_gamepad_selection = function (self, arg_18_1)
+	-- function 18
+	local _selected_row = self._selected_row
+	local _selected_column = self._selected_column
+	local _num_max_rows = self._num_max_rows
+	local var_18_3 = self._num_hero_columns[_selected_row]
 
-	if var_18_0 and var_18_1 and not arg_18_0._higlight_inventory_selection then
-		local var_18_4 = false
+	if not (not _selected_row and not _selected_column and self._higlight_inventory_selection) then
+		local flag = false
 
-		if var_18_1 > 1 and arg_18_1:get("move_left_hold_continuous") then
-			var_18_1 = var_18_1 - 1
-			var_18_4 = true
-		elseif var_18_1 < var_18_3 and arg_18_1:get("move_right_hold_continuous") then
-			var_18_1 = var_18_1 + 1
-			var_18_4 = true
+		if not (_selected_column > 1) or not arg_18_1:get("move_left_hold_continuous") then
+			_selected_column = _selected_column - 1
+			flag = true
+		elseif not (_selected_column < var_18_3) or not arg_18_1:get("move_right_hold_continuous") then
+			_selected_column = _selected_column + 1
+			flag = true
 		end
 
-		if var_18_0 > 1 and arg_18_1:get("move_up_hold_continuous") then
-			var_18_0 = var_18_0 - 1
-			var_18_3 = arg_18_0._num_hero_columns[var_18_0]
-			var_18_4 = true
-		elseif var_18_0 < var_18_2 and arg_18_1:get("move_down_hold_continuous") then
-			var_18_0 = var_18_0 + 1
-			var_18_3 = arg_18_0._num_hero_columns[var_18_0]
-			var_18_4 = true
+		if not (_selected_row > 1) or not arg_18_1:get("move_up_hold_continuous") then
+			_selected_row = _selected_row - 1
+			var_18_3 = self._num_hero_columns[_selected_row]
+			flag = true
+		elseif not (_selected_row < _num_max_rows) or not arg_18_1:get("move_down_hold_continuous") then
+			_selected_row = _selected_row + 1
+			var_18_3 = self._num_hero_columns[_selected_row]
+			flag = true
 		end
 
-		if var_18_3 < var_18_1 then
-			var_18_1 = var_18_3
-			var_18_4 = true
+		if var_18_3 < _selected_column then
+			_selected_column = var_18_3
+			flag = true
 		end
 
-		if var_18_4 then
-			local var_18_5, var_18_6 = arg_18_0:_get_selected_dark_pact_profile_and_career_indx(var_18_0, var_18_1)
+		if not flag then
+			local _get_selected_dark_pact_profile_and_career_indx, var_18_6 = self:_get_selected_dark_pact_profile_and_career_indx(_selected_row, _selected_column)
 
-			arg_18_0:_set_selected_portrait(var_18_5, var_18_6)
+			self:_set_selected_portrait(_get_selected_dark_pact_profile_and_career_indx, var_18_6)
 		end
 	end
 
-	if arg_18_0._higlight_inventory_selection and arg_18_1:get("confirm") then
-		arg_18_0._higlight_inventory_selection = nil
+	if not self._higlight_inventory_selection and not arg_18_1:get("confirm") then
+		self._higlight_inventory_selection = nil
 
-		arg_18_0._parent:pause_input(false)
-		arg_18_0:_play_sound("play_gui_equipment_selection_click")
-		arg_18_0._parent:set_selected_cosmetic_slot_index(2)
-		arg_18_0._parent:set_layout_by_name("cosmetics_selection_dark_pact")
+		self._parent:pause_input(false)
+		self:_play_sound("play_gui_equipment_selection_click")
+		self._parent:set_selected_cosmetic_slot_index(2)
+		self._parent:set_layout_by_name("cosmetics_selection_dark_pact")
 
 		return
-	elseif arg_18_0._higlight_inventory_selection and arg_18_1:get("back") then
-		arg_18_0._higlight_inventory_selection = nil
+	elseif not self._higlight_inventory_selection and not arg_18_1:get("back") then
+		self._higlight_inventory_selection = nil
 
-		arg_18_0._menu_input_description:change_generic_actions(var_0_2.default)
-		arg_18_0._parent:pause_input(false)
+		self._menu_input_description:change_generic_actions(generic_input_actions.default)
+		self._parent:pause_input(false)
 	end
 
-	local var_18_7, var_18_8 = arg_18_0:_get_selected_dark_pact_profile_and_career_indx(arg_18_0._selected_row, arg_18_0._selected_column)
+	local _get_selected_dark_pact_profile_and_career_indx_2, var_18_8 = self:_get_selected_dark_pact_profile_and_career_indx(self._selected_row, self._selected_column)
 
-	if var_18_7 and var_18_8 and not arg_18_0._higlight_inventory_selection and arg_18_1:get("confirm") then
-		arg_18_0._higlight_inventory_selection = true
+	if not _get_selected_dark_pact_profile_and_career_indx_2 and not var_18_8 and self._higlight_inventory_selection or not arg_18_1:get("confirm") then
+		self._higlight_inventory_selection = true
 
-		arg_18_0:_select_hero(var_18_7, var_18_8)
-		arg_18_0._parent:pause_input(true)
-		arg_18_0._menu_input_description:change_generic_actions(var_0_2.select_inventory)
-	end
-end
-
-function HeroWindowDarkPactCharacterSelectionConsole.set_focus(arg_19_0, arg_19_1)
-	arg_19_0._focused = arg_19_1
-end
-
-function HeroWindowDarkPactCharacterSelectionConsole._exit(arg_20_0, arg_20_1)
-	arg_20_0.exit = true
-	arg_20_0.exit_level_id = arg_20_1
-end
-
-function HeroWindowDarkPactCharacterSelectionConsole._draw(arg_21_0, arg_21_1)
-	local var_21_0 = arg_21_0._ui_renderer
-	local var_21_1 = arg_21_0._ui_top_renderer
-	local var_21_2 = arg_21_0._ui_scenegraph
-	local var_21_3 = arg_21_0._parent:window_input_service()
-	local var_21_4 = Managers.input:is_device_active("gamepad")
-
-	UIRenderer.begin_pass(var_21_1, var_21_2, var_21_3, arg_21_1, nil, arg_21_0._render_settings)
-
-	for iter_21_0, iter_21_1 in ipairs(arg_21_0._widgets) do
-		UIRenderer.draw_widget(var_21_1, iter_21_1)
-	end
-
-	if arg_21_0._pactsworn_widgets then
-		UIRenderer.draw_all_widgets(var_21_1, arg_21_0._pactsworn_widgets)
-	end
-
-	UIRenderer.end_pass(var_21_1)
-
-	if var_21_4 then
-		arg_21_0._menu_input_description:draw(var_21_1, arg_21_1)
+		self:_select_hero(_get_selected_dark_pact_profile_and_career_indx_2, var_18_8)
+		self._parent:pause_input(true)
+		self._menu_input_description:change_generic_actions(generic_input_actions.select_inventory)
 	end
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole._play_sound(arg_22_0, arg_22_1)
-	arg_22_0._parent:play_sound(arg_22_1)
+HeroWindowDarkPactCharacterSelectionConsole.set_focus = function (self, arg_19_1)
+	-- function 19
+	self._focused = arg_19_1
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole._update_portraits(arg_23_0, arg_23_1)
-	local var_23_0 = arg_23_0._pactsworn_widgets
-	local var_23_1 = arg_23_0._selected_dark_pact_profile_index
-	local var_23_2 = arg_23_0._selected_dark_pact_career_index
-	local var_23_3 = Managers.input:is_device_active("gamepad")
+HeroWindowDarkPactCharacterSelectionConsole._exit = function (self, arg_20_1)
+	-- function 20
+	self.exit = true
+	self.exit_level_id = arg_20_1
+end
 
-	for iter_23_0 = 1, #var_23_0 do
-		local var_23_4 = var_23_0[iter_23_0]
-		local var_23_5 = var_23_4.content
-		local var_23_6 = var_23_5.hotspot
-		local var_23_7 = var_23_6.hover_progress or 0
-		local var_23_8 = var_23_6.selection_progress or 0
+HeroWindowDarkPactCharacterSelectionConsole._draw = function (self, arg_21_1)
+	-- function 21
+	local _ui_renderer = self._ui_renderer
+	local _ui_top_renderer = self._ui_top_renderer
+	local _ui_scenegraph = self._ui_scenegraph
+	local window_input_service = self._parent:window_input_service()
+	local is_device_active = Managers.input:is_device_active("gamepad")
+
+	UIRenderer.begin_pass(_ui_top_renderer, _ui_scenegraph, window_input_service, arg_21_1, nil, self._render_settings)
+
+	for i, v in ipairs(self._widgets) do
+		UIRenderer.draw_widget(_ui_top_renderer, v)
+	end
+
+	if not self._pactsworn_widgets then
+		UIRenderer.draw_all_widgets(_ui_top_renderer, self._pactsworn_widgets)
+	end
+
+	UIRenderer.end_pass(_ui_top_renderer)
+
+	if not is_device_active then
+		self._menu_input_description:draw(_ui_top_renderer, arg_21_1)
+	end
+end
+
+HeroWindowDarkPactCharacterSelectionConsole._play_sound = function (self, arg_22_1)
+	-- function 22
+	self._parent:play_sound(arg_22_1)
+end
+
+HeroWindowDarkPactCharacterSelectionConsole._update_portraits = function (self, arg_23_1)
+	-- function 23
+	local _pactsworn_widgets = self._pactsworn_widgets
+	local _selected_dark_pact_profile_index = self._selected_dark_pact_profile_index
+	local _selected_dark_pact_career_index = self._selected_dark_pact_career_index
+	local is_device_active = Managers.input:is_device_active("gamepad")
+
+	for i = 1, #_pactsworn_widgets do
+		local var_23_4 = _pactsworn_widgets[i]
+		local content = var_23_4.content
+		local hotspot = content.hotspot
+		local hover_progress = hotspot.hover_progress
+
+		hover_progress = hover_progress or 0
+
+		local selection_progress = hotspot.selection_progress
+
+		selection_progress = selection_progress or 0
+
 		local var_23_9
 		local var_23_10
 
-		if var_23_3 then
-			var_23_9 = var_23_5.profile_index == var_23_1 and var_23_5.career_index == var_23_2 and arg_23_0._higlight_inventory_selection
-			var_23_10 = var_23_5.selected
+		if not is_device_active then
+			var_23_9 = content.profile_index ~= _selected_dark_pact_profile_index or content.career_index ~= _selected_dark_pact_career_index or self._higlight_inventory_selection
+			var_23_10 = content.selected
 		else
-			var_23_9 = var_23_5.profile_index == var_23_1 and var_23_5.career_index == var_23_2
-			var_23_10 = var_23_6.is_hover or var_23_5.selected
+			var_23_9 = content.profile_index ~= _selected_dark_pact_profile_index or content.career_index == _selected_dark_pact_career_index
+			var_23_10 = hotspot.is_hover or content.selected
 		end
 
-		if var_23_10 then
-			var_23_7 = math.min(var_23_7 + arg_23_1 * var_0_6, 1)
+		if not var_23_10 then
+			hover_progress = math.min(hover_progress + arg_23_1 * num_2, 1)
 		else
-			var_23_7 = math.max(var_23_7 - arg_23_1 * var_0_6, 0)
+			hover_progress = math.max(hover_progress - arg_23_1 * num_2, 0)
 		end
 
-		if var_23_9 then
-			var_23_8 = math.min(var_23_8 + arg_23_1 * var_0_6, 1)
+		if not var_23_9 then
+			selection_progress = math.min(selection_progress + arg_23_1 * num_2, 1)
 		else
-			var_23_8 = math.max(var_23_8 - arg_23_1 * var_0_6, 0)
+			selection_progress = math.max(selection_progress - arg_23_1 * num_2, 0)
 		end
 
-		local var_23_11 = var_23_4.style
-		local var_23_12 = var_23_11.portrait_frame
-		local var_23_13 = var_23_11.portrait
-		local var_23_14 = var_23_11.portrait_frame_selected
-		local var_23_15 = var_23_12.texture_size
-		local var_23_16 = var_23_12.default_size
-		local var_23_17 = var_23_12.offset
-		local var_23_18 = var_23_12.default_offset
-		local var_23_19 = var_23_13.texture_size
-		local var_23_20 = var_23_13.default_size
-		local var_23_21 = var_23_13.offset
-		local var_23_22 = var_23_13.default_offset
-		local var_23_23 = var_23_14.texture_size
-		local var_23_24 = var_23_14.default_size
-		local var_23_25 = var_23_14.offset
-		local var_23_26 = var_23_14.default_offset
-		local var_23_27 = 0.125
-		local var_23_28 = 0.2
-		local var_23_29 = math.easeOutCubic(var_23_8)
+		local style = var_23_4.style
+		local portrait_frame = style.portrait_frame
+		local portrait = style.portrait
+		local portrait_frame_selected = style.portrait_frame_selected
+		local texture_size = portrait_frame.texture_size
+		local default_size = portrait_frame.default_size
+		local offset = portrait_frame.offset
+		local default_offset = portrait_frame.default_offset
+		local texture_size_2 = portrait.texture_size
+		local default_size_2 = portrait.default_size
+		local offset_2 = portrait.offset
+		local default_offset_2 = portrait.default_offset
+		local texture_size_3 = portrait_frame_selected.texture_size
+		local default_size_3 = portrait_frame_selected.default_size
+		local offset_3 = portrait_frame_selected.offset
+		local default_offset_3 = portrait_frame_selected.default_offset
+		local num = 0.125
+		local num_3 = 0.2
+		local easeOutCubic = math.easeOutCubic(selection_progress)
 
-		var_23_15[1] = var_23_16[1] + var_23_16[1] * var_23_27 * var_23_29
-		var_23_15[2] = var_23_16[2] + var_23_16[2] * var_23_27 * var_23_29
-		var_23_17[1] = var_23_18[1] - var_23_16[1] * var_23_27 * var_23_29 * 0.5
-		var_23_19[1] = var_23_20[1] + var_23_20[1] * var_23_28 * var_23_29
-		var_23_19[2] = var_23_20[2] + var_23_20[2] * var_23_28 * var_23_29
-		var_23_21[1] = var_23_22[1] - var_23_20[1] * var_23_28 * var_23_29 * 0.5
-		var_23_23[1] = var_23_24[1] + var_23_24[1] * var_23_27 * var_23_29
-		var_23_23[2] = var_23_24[2] + var_23_24[2] * var_23_27 * var_23_29
-		var_23_25[1] = var_23_26[1] - var_23_24[1] * var_23_27 * var_23_29 * 0.5
-		var_23_14.color[1] = 255 * var_23_7
-		var_23_6.hover_progress = var_23_7
-		var_23_6.selection_progress = var_23_8
+		texture_size[1] = default_size[1] + default_size[1] * num * easeOutCubic
+		texture_size[2] = default_size[2] + default_size[2] * num * easeOutCubic
+		offset[1] = default_offset[1] - default_size[1] * num * easeOutCubic * 0.5
+		texture_size_2[1] = default_size_2[1] + default_size_2[1] * num_3 * easeOutCubic
+		texture_size_2[2] = default_size_2[2] + default_size_2[2] * num_3 * easeOutCubic
+		offset_2[1] = default_offset_2[1] - default_size_2[1] * num_3 * easeOutCubic * 0.5
+		texture_size_3[1] = default_size_3[1] + default_size_3[1] * num * easeOutCubic
+		texture_size_3[2] = default_size_3[2] + default_size_3[2] * num * easeOutCubic
+		offset_3[1] = default_offset_3[1] - default_size_3[1] * num * easeOutCubic * 0.5
+		portrait_frame_selected.color[1] = 255 * hover_progress
+		hotspot.hover_progress = hover_progress
+		hotspot.selection_progress = selection_progress
 	end
 end

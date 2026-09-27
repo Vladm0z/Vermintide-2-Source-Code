@@ -4,70 +4,76 @@ require("scripts/settings/dlcs/morris/deus_map_populate_settings")
 require("scripts/managers/game_mode/mechanisms/deus_gen_engine")
 require("scripts/helpers/deus_gen_utils")
 
-local function var_0_0(arg_1_0, arg_1_1)
-	for iter_1_0 = #arg_1_0, 2, -1 do
-		local var_1_0 = arg_1_1(1, iter_1_0)
+local function fn(self, arg_1_1)
+	-- function 1
+	for i = #self, 2, -1 do
+		local var_1_0 = arg_1_1(1, i)
 
-		arg_1_0[var_1_0], arg_1_0[iter_1_0] = arg_1_0[iter_1_0], arg_1_0[var_1_0]
+		self[var_1_0], self[i] = self[i], self[var_1_0]
 	end
 
-	return arg_1_0
+	return self
 end
 
-local function var_0_1(arg_2_0, arg_2_1)
-	local var_2_0 = {}
+local function fn_2(arg_2_0, arg_2_1)
+	-- function 2
+	local tbl = {}
 
-	for iter_2_0, iter_2_1 in pairs(arg_2_0) do
-		var_2_0[#var_2_0 + 1] = iter_2_0
+	for k, v in pairs(arg_2_0) do
+		tbl[#tbl + 1] = k
 	end
 
-	table.sort(var_2_0)
+	table.sort(tbl)
 
-	for iter_2_2 = #var_2_0, 2, -1 do
-		local var_2_1 = arg_2_1(1, iter_2_2)
+	for k_2 = #tbl, 2, -1 do
+		local var_2_1 = arg_2_1(1, k_2)
 
-		var_2_0[var_2_1], var_2_0[iter_2_2] = var_2_0[iter_2_2], var_2_0[var_2_1]
+		tbl[var_2_1], tbl[k_2] = tbl[k_2], tbl[var_2_1]
 	end
 
-	return var_2_0
+	return tbl
 end
 
-local function var_0_2(arg_3_0)
-	local var_3_0 = {}
+local function fn_3(arg_3_0)
+	-- function 3
+	local tbl = {}
 
-	for iter_3_0, iter_3_1 in pairs(arg_3_0) do
-		var_3_0[#var_3_0 + 1] = iter_3_1
+	for k, v in pairs(arg_3_0) do
+		tbl[#tbl + 1] = v
 	end
 
-	return var_3_0
+	return tbl
 end
 
-local function var_0_3(arg_4_0, arg_4_1)
-	local var_4_0 = {}
+local function fn_4(arg_4_0, arg_4_1)
+	-- function 4
+	local tbl = {}
 
-	for iter_4_0, iter_4_1 in pairs(arg_4_0) do
-		if arg_4_1 < iter_4_1.run_progress then
-			var_4_0[#var_4_0 + 1] = iter_4_1
+	for k, v in pairs(arg_4_0) do
+		if arg_4_1 < v.run_progress then
+			tbl[#tbl + 1] = v
 		end
 	end
 
-	return var_4_0
+	return tbl
 end
 
-local function var_0_4(arg_5_0, arg_5_1)
-	local var_5_0 = {}
+local function fn_5(arg_5_0, arg_5_1)
+	-- function 5
+	local tbl = {}
 
-	for iter_5_0, iter_5_1 in ipairs(arg_5_0) do
-		if table.contains(arg_5_1, iter_5_1.type) then
-			var_5_0[#var_5_0 + 1] = iter_5_1
+	for i, v in ipairs(arg_5_0) do
+		if not table.contains(arg_5_1, v.type) then
+			tbl[#tbl + 1] = v
 		end
 	end
 
-	return var_5_0
+	return tbl
 end
 
-local function var_0_5(arg_6_0, arg_6_1)
-	if #arg_6_0[arg_6_1].prev == 0 then
+local function fn_6(self, arg_6_1)
+	-- function 6
+	if #self[arg_6_1].prev == 0 then
 		return {
 			{
 				arg_6_1
@@ -75,103 +81,109 @@ local function var_0_5(arg_6_0, arg_6_1)
 		}
 	end
 
-	local var_6_0 = {}
+	local tbl = {}
 
-	for iter_6_0, iter_6_1 in ipairs(arg_6_0[arg_6_1].prev) do
-		local var_6_1 = var_0_5(arg_6_0, iter_6_1)
+	for i, v in ipairs(self[arg_6_1].prev) do
+		local var_6_1 = fn_6(self, v)
 
-		for iter_6_2, iter_6_3 in ipairs(var_6_1) do
-			iter_6_3[#iter_6_3 + 1] = arg_6_1
-			var_6_0[#var_6_0 + 1] = iter_6_3
+		for i_2, v_2 in ipairs(var_6_1) do
+			v_2[#v_2 + 1] = arg_6_1
+			tbl[#tbl + 1] = v_2
 		end
 	end
 
-	return var_6_0
+	return tbl
 end
 
-local function var_0_6(arg_7_0, arg_7_1)
-	local var_7_0 = {}
+local function fn_7(arg_7_0, arg_7_1)
+	-- function 7
+	local tbl = {}
 
-	local function var_7_1(arg_8_0)
-		for iter_8_0, iter_8_1 in ipairs(arg_7_0[arg_8_0].next) do
-			if not var_7_0[iter_8_1] then
-				var_7_0[iter_8_1] = true
+	local function fn(arg_8_0)
+		-- function 8
+		for i, v in ipairs(arg_7_0[arg_8_0].next) do
+			if not tbl[v] then
+				tbl[v] = true
 
-				var_7_1(iter_8_1)
+				fn(v)
 			end
 		end
 	end
 
-	local function var_7_2(arg_9_0)
-		for iter_9_0, iter_9_1 in ipairs(arg_7_0[arg_9_0].prev) do
-			if not var_7_0[iter_9_1] then
-				var_7_0[iter_9_1] = true
+	local function fn_2(arg_9_0)
+		-- function 9
+		for i, v in ipairs(arg_7_0[arg_9_0].prev) do
+			if not tbl[v] then
+				tbl[v] = true
 
-				var_7_2(iter_9_1)
+				fn_2(v)
 			end
 		end
 	end
 
-	var_7_1(arg_7_1)
-	var_7_2(arg_7_1)
+	fn(arg_7_1)
+	fn_2(arg_7_1)
 
-	return var_7_0
+	return tbl
 end
 
-local function var_0_7(arg_10_0, arg_10_1)
-	if #arg_10_0[arg_10_1].next == 0 then
+local function fn_8(self, arg_10_1)
+	-- function 10
+	if #self[arg_10_1].next == 0 then
 		return {}
 	end
 
-	local var_10_0 = {}
+	local tbl = {}
 
-	for iter_10_0, iter_10_1 in ipairs(arg_10_0[arg_10_1].next) do
-		local var_10_1 = arg_10_0[iter_10_1].type
+	for i, v in ipairs(self[arg_10_1].next) do
+		local type = self[v].type
 
-		if var_10_1 == "SIGNATURE" or var_10_1 == "TRAVEL" or var_10_1 == "ARENA" then
-			var_10_0[#var_10_0 + 1] = iter_10_1
+		if not (type == "SIGNATURE" or type == "TRAVEL" or type ~= "ARENA") then
+			tbl[#tbl + 1] = v
 		else
-			local var_10_2 = var_0_7(arg_10_0, iter_10_1)
+			local var_10_2 = fn_8(self, v)
 
-			for iter_10_2, iter_10_3 in ipairs(var_10_2) do
-				var_10_0[#var_10_0 + 1] = iter_10_3
+			for i_2, v_2 in ipairs(var_10_2) do
+				tbl[#tbl + 1] = v_2
 			end
 		end
 	end
 
-	return var_10_0
+	return tbl
 end
 
-local function var_0_8(arg_11_0, arg_11_1, arg_11_2)
+local function fn_9(self, arg_11_1, arg_11_2)
+	-- function 11
 	if arg_11_2 > 1 then
 		arg_11_2 = arg_11_2 - 1
 
-		local var_11_0 = {}
+		local tbl = {}
 
-		for iter_11_0, iter_11_1 in ipairs(arg_11_0[arg_11_1].next) do
-			local var_11_1 = var_0_8(arg_11_0, iter_11_1, arg_11_2)
+		for i, v in ipairs(self[arg_11_1].next) do
+			local var_11_1 = fn_9(self, v, arg_11_2)
 
-			for iter_11_2, iter_11_3 in pairs(var_11_1) do
-				var_11_0[iter_11_2] = iter_11_3
+			for k, v_2 in pairs(var_11_1) do
+				tbl[k] = v_2
 			end
 		end
 
-		return var_11_0
+		return tbl
 	else
-		return arg_11_0[arg_11_1].next
+		return self[arg_11_1].next
 	end
 end
 
-local function var_0_9(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
-	local var_12_0 = arg_12_1[arg_12_2].prev
+local function fn_10(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+	-- function 12
+	local prev = arg_12_1[arg_12_2].prev
 
-	for iter_12_0, iter_12_1 in ipairs(var_12_0) do
-		local var_12_1 = arg_12_1[iter_12_1]
+	for i, v in ipairs(prev) do
+		local var_12_1 = arg_12_1[v]
 
-		for iter_12_2, iter_12_3 in ipairs(var_12_1.next) do
-			local var_12_2 = arg_12_1[iter_12_3]
+		for i_2, v_2 in ipairs(var_12_1.next) do
+			local var_12_2 = arg_12_1[v_2]
 
-			if iter_12_3 ~= arg_12_2 and var_12_2.level == arg_12_3 then
+			if not (v_2 == arg_12_2 or var_12_2.level ~= arg_12_3) then
 				return false
 			end
 		end
@@ -180,14 +192,15 @@ local function var_0_9(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	return true
 end
 
-local function var_0_10(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
-	local var_13_0 = var_0_5(arg_13_1, arg_13_2)
+local function fn_11(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+	-- function 13
+	local var_13_0 = fn_6(arg_13_1, arg_13_2)
 
-	for iter_13_0, iter_13_1 in ipairs(var_13_0) do
-		for iter_13_2 = #iter_13_1, 1, -1 do
-			local var_13_1 = iter_13_1[iter_13_2]
+	for i, v in ipairs(var_13_0) do
+		for k = #v, 1, -1 do
+			local var_13_1 = v[k]
 
-			if var_13_1 ~= arg_13_2 and arg_13_1[var_13_1].level == arg_13_3 then
+			if not (var_13_1 == arg_13_2 or arg_13_1[var_13_1].level ~= arg_13_3) then
 				return false
 			end
 		end
@@ -196,42 +209,45 @@ local function var_0_10(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	return true
 end
 
-local function var_0_11(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+local function fn_12(self, arg_14_1, arg_14_2, arg_14_3)
+	-- function 14
 	local var_14_0 = arg_14_1[arg_14_2]
 
-	for iter_14_0, iter_14_1 in ipairs(var_14_0.next) do
-		if #arg_14_1[iter_14_1].next == 0 then
-			return arg_14_0.SPECIFIC_SIGNATURE_LEVEL == arg_14_3
+	for i, v in ipairs(var_14_0.next) do
+		if #arg_14_1[v].next == 0 then
+			return self.SPECIFIC_SIGNATURE_LEVEL == arg_14_3
 		end
 	end
 
 	return true
 end
 
-local var_0_12 = {
+local tbl = {
 	SIGNATURE = {
-		prevent_same_level_choice = var_0_9,
-		last_signature_level_is_specific_level = var_0_11,
-		prevent_same_level_on_same_path = var_0_10
+		prevent_same_level_choice = fn_10,
+		last_signature_level_is_specific_level = fn_12,
+		prevent_same_level_on_same_path = fn_11
 	},
 	TRAVEL = {
-		prevent_same_level_choice = var_0_9,
-		prevent_same_level_on_same_path = var_0_10
+		prevent_same_level_choice = fn_10,
+		prevent_same_level_on_same_path = fn_11
 	},
 	SHOP = {
-		prevent_same_level_choice = var_0_9
+		prevent_same_level_choice = fn_10
 	},
 	ARENA = {}
 }
-local var_0_13 = {
-	lower_priority_of_already_used_levels_on_path = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
-		local function var_15_0(arg_16_0, arg_16_1)
+local tbl_2 = {
+	lower_priority_of_already_used_levels_on_path = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+		-- function 15
+		local function fn(arg_16_0, arg_16_1)
+			-- function 16
 			if arg_15_1[arg_16_0].level == arg_16_1 then
 				return true
 			end
 
-			for iter_16_0, iter_16_1 in ipairs(arg_15_1[arg_16_0].prev) do
-				if var_15_0(iter_16_1, arg_16_1) then
+			for i, v in ipairs(arg_15_1[arg_16_0].prev) do
+				if not fn(v, arg_16_1) then
 					return true
 				end
 			end
@@ -239,30 +255,31 @@ local var_0_13 = {
 			return false
 		end
 
-		local var_15_1 = #arg_15_3
+		local count = #arg_15_3
 
-		for iter_15_0 = #arg_15_3, 1, -1 do
-			local var_15_2 = arg_15_3[iter_15_0]
+		for i = #arg_15_3, 1, -1 do
+			local var_15_2 = arg_15_3[i]
 
-			if var_15_0(arg_15_2, var_15_2) then
-				arg_15_3[iter_15_0] = arg_15_3[var_15_1]
-				arg_15_3[var_15_1] = var_15_2
-				var_15_1 = var_15_1 - 1
+			if not fn(arg_15_2, var_15_2) then
+				arg_15_3[i] = arg_15_3[count]
+				arg_15_3[count] = var_15_2
+				count = count - 1
 			end
 		end
 	end
 }
-local var_0_14 = {
-	last_signature_level_is_specific_level = function(arg_17_0, arg_17_1, arg_17_2)
-		local var_17_0 = arg_17_0.config.SPECIFIC_SIGNATURE_LEVEL
+local tbl_3 = {
+	last_signature_level_is_specific_level = function (self, arg_17_1, arg_17_2)
+		-- function 17
+		local SPECIFIC_SIGNATURE_LEVEL = self.config.SPECIFIC_SIGNATURE_LEVEL
 
-		fassert(var_17_0, "you need to specify a SPECIFIC_SIGNATURE_LEVEL when using LABEL_OVERRIDES.last_signature_level_is_specific_level")
+		fassert(SPECIFIC_SIGNATURE_LEVEL, "you need to specify a SPECIFIC_SIGNATURE_LEVEL when using LABEL_OVERRIDES.last_signature_level_is_specific_level")
 
-		local var_17_1 = arg_17_2.SIGNATURE
+		local SIGNATURE = arg_17_2.SIGNATURE
 		local var_17_2
 
-		for iter_17_0, iter_17_1 in ipairs(arg_17_1.final.prev) do
-			local var_17_3 = arg_17_1[iter_17_1]
+		for i, v in ipairs(arg_17_1.final.prev) do
+			local var_17_3 = arg_17_1[v]
 
 			if var_17_3.type == "SIGNATURE" then
 				var_17_2 = var_17_3.label
@@ -275,34 +292,36 @@ local var_0_14 = {
 
 		local var_17_4
 
-		for iter_17_2, iter_17_3 in pairs(var_17_1) do
-			if iter_17_3 == var_17_0 then
-				var_17_4 = iter_17_2
+		for k, v_2 in pairs(SIGNATURE) do
+			if v_2 == SPECIFIC_SIGNATURE_LEVEL then
+				var_17_4 = k
 
 				break
 			end
 		end
 
-		fassert(var_17_4, sprintf("In LABEL_OVERRIDES.last_signature_level_is_specific_level the level %s was not found in the level availability", var_17_0))
+		fassert(var_17_4, sprintf("In LABEL_OVERRIDES.last_signature_level_is_specific_level the level %s was not found in the level availability", SPECIFIC_SIGNATURE_LEVEL))
 
-		var_17_1[var_17_4], var_17_1[var_17_2] = var_17_1[var_17_2], var_17_0
+		SIGNATURE[var_17_4], SIGNATURE[var_17_2] = SIGNATURE[var_17_2], SPECIFIC_SIGNATURE_LEVEL
 
 		return arg_17_2
 	end
 }
-local var_0_15 = {
-	prevent_modifier_on_curse_abundance_of_life = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
-		return arg_18_1[arg_18_2].curse ~= "curse_abundance_of_life" or not table.contains(arg_18_3, "increased_grenades") and not table.contains(arg_18_3, "increased_healing")
+local tbl_4 = {
+	prevent_modifier_on_curse_abundance_of_life = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+		-- function 18
+		return arg_18_1[arg_18_2].curse ~= "curse_abundance_of_life" or not not table.contains(arg_18_3, "increased_grenades") or not table.contains(arg_18_3, "increased_healing")
 	end
 }
 
-local function var_0_16(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
-	local var_19_0 = arg_19_2[arg_19_3].type
-	local var_19_1 = arg_19_0.LEVEL_VALIDATIONS[var_19_0]
-	local var_19_2 = var_0_12[var_19_0]
+local function fn_13(self, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+	-- function 19
+	local type = arg_19_2[arg_19_3].type
+	local var_19_1 = self.LEVEL_VALIDATIONS[type]
+	local var_19_2 = tbl[type]
 
-	for iter_19_0, iter_19_1 in ipairs(var_19_1) do
-		if not var_19_2[iter_19_1](arg_19_0, arg_19_2, arg_19_3, arg_19_4) then
+	for i, v in ipairs(var_19_1) do
+		if not var_19_2[v](self, arg_19_2, arg_19_3, arg_19_4) then
 			return false
 		end
 	end
@@ -310,15 +329,16 @@ local function var_0_16(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
 	return true
 end
 
-local function var_0_17(arg_20_0, arg_20_1, arg_20_2)
+local function fn_14(self, arg_20_1, arg_20_2)
+	-- function 20
 	local var_20_0 = arg_20_1[arg_20_2]
 
-	if not var_0_16(arg_20_0.config, arg_20_0.indent, arg_20_1, arg_20_2, var_20_0.level, arg_20_0.indent) then
+	if not fn_13(self.config, self.indent, arg_20_1, arg_20_2, var_20_0.level, self.indent) then
 		return false
 	end
 
-	for iter_20_0, iter_20_1 in ipairs(var_20_0.next) do
-		if not var_0_17(arg_20_0, arg_20_1, iter_20_1) then
+	for i, v in ipairs(var_20_0.next) do
+		if not fn_14(self, arg_20_1, v) then
 			return false
 		end
 	end
@@ -326,114 +346,129 @@ local function var_0_17(arg_20_0, arg_20_1, arg_20_2)
 	return true
 end
 
-local function var_0_18(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
-	local var_21_0 = arg_21_1[arg_21_2].type
-	local var_21_1 = arg_21_0.config.LEVEL_AVAILABILITY[var_21_0]
-	local var_21_2 = table.clone(var_21_1[arg_21_3].paths)
+local function fn_15(self, arg_21_1, arg_21_2, arg_21_3)
+	-- function 21
+	local type = arg_21_1[arg_21_2].type
+	local var_21_1 = self.config.LEVEL_AVAILABILITY[type]
+	local clone = table.clone(var_21_1[arg_21_3].paths)
 
-	local function var_21_3(arg_22_0)
+	local function fn(arg_22_0)
+		-- function 22
 		local var_22_0 = arg_21_1[arg_22_0]
 
 		if var_22_0.level == arg_21_3 then
-			local var_22_1 = table.index_of(var_21_2, var_22_0.path)
+			local index_of = table.index_of(clone, var_22_0.path)
 
-			if var_22_1 ~= -1 then
-				table.swap_delete(var_21_2, var_22_1)
+			if index_of ~= -1 then
+				table.swap_delete(clone, index_of)
 			end
 		end
 	end
 
-	local function var_21_4(arg_23_0)
+	local function fn_2(arg_23_0)
+		-- function 23
 		local var_23_0 = arg_21_1[arg_23_0]
 
-		for iter_23_0, iter_23_1 in ipairs(var_23_0.prev) do
-			var_21_3(iter_23_1)
-			var_21_4(iter_23_1)
+		for i, v in ipairs(var_23_0.prev) do
+			fn(v)
+			fn_2(v)
 		end
 	end
 
-	local function var_21_5(arg_24_0)
+	local function fn_3(arg_24_0)
+		-- function 24
 		local var_24_0 = arg_21_1[arg_24_0]
 
-		for iter_24_0, iter_24_1 in ipairs(var_24_0.next) do
-			var_21_3(iter_24_1)
-			var_21_5(iter_24_1)
+		for i, v in ipairs(var_24_0.next) do
+			fn(v)
+			fn_3(v)
 		end
 	end
 
-	var_21_3(arg_21_2)
-	var_21_4(arg_21_2)
-	var_21_5(arg_21_2)
+	fn(arg_21_2)
+	fn_2(arg_21_2)
+	fn_3(arg_21_2)
 
-	return var_21_2
+	return clone
 end
 
 local var_0_19
 local var_0_20
 local var_0_21
 
-local function var_0_22(arg_25_0, arg_25_1, arg_25_2)
-	local function var_25_0()
+local function fn_16(arg_25_0, arg_25_1, arg_25_2)
+	-- function 25
+	local function fn_2()
+		-- function 26
 		local var_26_0 = arg_25_1[arg_25_2]
-		local var_26_1 = var_0_0(table.clone(var_26_0.next), arg_25_0.random_generator)
-		local var_26_2 = {}
+		local var_26_1 = fn(table.clone(var_26_0.next), arg_25_0.random_generator)
+		local tbl = {}
 
-		for iter_26_0 = 1, #var_26_1 do
-			var_26_2[iter_26_0] = function()
-				return var_0_19(arg_25_0, arg_25_1, var_26_1[iter_26_0])
+		for i = 1, #var_26_1 do
+			tbl[i] = function ()
+				-- function 27
+				return var_0_19(arg_25_0, arg_25_1, var_26_1[i])
 			end
 		end
 
-		return true, var_26_2
+		return true, tbl
 	end
 
 	return {
 		name = "connections " .. arg_25_2,
-		run = function()
-			return var_25_0()
+		run = function ()
+			-- function 28
+			return fn_2()
 		end,
-		retry = function()
+		retry = function ()
+			-- function 29
 			return false
 		end
 	}
 end
 
 function var_0_19(arg_30_0, arg_30_1, arg_30_2)
+	-- function 30
 	local var_30_0 = arg_30_1[arg_30_2]
-	local var_30_1 = var_30_0.type
+	local type = var_30_0.type
 
 	return {
 		name = "node " .. arg_30_2,
-		run = function()
-			if var_30_0.level then
-				return var_0_17(arg_30_0, arg_30_1, arg_30_2)
+		run = function ()
+			-- function 31
+			if not var_30_0.level then
+				return fn_14(arg_30_0, arg_30_1, arg_30_2)
 			end
 
-			local var_31_0 = {
-				function()
+			local tbl = {
+				function ()
+					-- function 32
 					return var_0_20(arg_30_0, arg_30_1, arg_30_2)
 				end
 			}
 
-			return true, var_31_0
+			return true, tbl
 		end,
-		retry = function()
+		retry = function ()
+			-- function 33
 			return false
 		end
 	}
 end
 
-function var_0_20(arg_34_0, arg_34_1, arg_34_2)
+function var_0_20(self, arg_34_1, arg_34_2)
+	-- function 34
 	local var_34_0 = arg_34_1[arg_34_2]
-	local var_34_1 = var_34_0.type
-	local var_34_2 = var_34_0.label
-	local var_34_3 = arg_34_0.config.LEVEL_AVAILABILITY[var_34_1]
+	local type = var_34_0.type
+	local label = var_34_0.label
+	local var_34_3 = self.config.LEVEL_AVAILABILITY[type]
 
-	local function var_34_4()
-		local var_35_0 = var_0_1(var_34_3, arg_34_0.random_generator)
+	local function fn_3()
+		-- function 35
+		local var_35_0 = fn_2(var_34_3, self.random_generator)
 
-		for iter_35_0, iter_35_1 in ipairs(arg_34_0.config.LEVEL_SHUFFLERS) do
-			var_0_13[iter_35_1](arg_34_0, arg_34_1, arg_34_2, var_35_0)
+		for i, v in ipairs(self.config.LEVEL_SHUFFLERS) do
+			tbl_2[v](self, arg_34_1, arg_34_2, var_35_0)
 		end
 
 		table.reverse(var_35_0)
@@ -443,17 +478,18 @@ function var_0_20(arg_34_0, arg_34_1, arg_34_2)
 
 	local var_34_5
 
-	local function var_34_6()
-		if var_34_2 and var_34_2 ~= 0 then
-			var_34_0.level = arg_34_0.shuffled_levels_for_labels[var_34_1][var_34_2]
+	local function fn_4()
+		-- function 36
+		if not (not label and label == 0) then
+			var_34_0.level = self.shuffled_levels_for_labels[type][label]
 
-			local var_36_0 = var_34_3[var_34_0.level].paths
-			local var_36_1 = var_0_0(table.clone(var_36_0), arg_34_0.random_generator)
+			local paths = var_34_3[var_34_0.level].paths
+			local var_36_1 = fn(table.clone(paths), self.random_generator)
 
 			var_34_0.path = var_36_1[1]
 		else
 			if not var_34_5 then
-				var_34_5 = var_34_4()
+				var_34_5 = fn_3()
 			end
 
 			while #var_34_5 > 0 do
@@ -461,18 +497,18 @@ function var_0_20(arg_34_0, arg_34_1, arg_34_2)
 
 				var_34_5[#var_34_5] = nil
 
-				if var_0_16(arg_34_0.config, arg_34_0.indent, arg_34_1, arg_34_2, var_36_2) then
+				if not fn_13(self.config, self.indent, arg_34_1, arg_34_2, var_36_2) then
 					if var_34_0.type == "SHOP" then
 						var_34_0.level = var_36_2
 
 						break
 					else
-						local var_36_3 = var_0_18(arg_34_0, arg_34_1, arg_34_2, var_36_2)
+						local var_36_3 = fn_15(self, arg_34_1, arg_34_2, var_36_2)
 
 						if #var_36_3 == 0 then
-							-- block empty
+							-- Nothing
 						else
-							local var_36_4 = var_0_0(table.clone(var_36_3), arg_34_0.random_generator)
+							local var_36_4 = fn(table.clone(var_36_3), self.random_generator)
 
 							var_34_0.level = var_36_2
 							var_34_0.path = var_36_4[1]
@@ -488,111 +524,147 @@ function var_0_20(arg_34_0, arg_34_1, arg_34_2)
 			return false
 		end
 
-		local var_36_5 = {
-			function()
-				return var_0_22(arg_34_0, arg_34_1, arg_34_2)
+		local tbl = {
+			function ()
+				-- function 37
+				return fn_16(self, arg_34_1, arg_34_2)
 			end
 		}
 
-		return true, var_36_5
+		return true, tbl
 	end
 
 	return {
 		name = "level " .. arg_34_2,
-		run = function()
-			return var_34_6()
+		run = function ()
+			-- function 38
+			return fn_4()
 		end,
-		retry = function()
+		retry = function ()
+			-- function 39
 			var_34_0.level = nil
 			var_34_0.path = nil
 
-			if var_34_2 and var_34_2 ~= 0 then
+			if not (not label and label == 0) then
 				return false
 			else
-				return var_34_6()
+				return fn_4()
 			end
 		end
 	}
 end
 
-local function var_0_23(arg_40_0, arg_40_1)
-	local var_40_0 = -1
-	local var_40_1 = -1
+local function fn_17(self, arg_40_1)
+	-- function 40
+	local num = -1
+	local num_2 = -1
 
-	for iter_40_0, iter_40_1 in ipairs(arg_40_1) do
-		if not arg_40_0[iter_40_1].run_progress then
-			if var_40_0 == -1 then
-				var_40_0 = iter_40_0
+	for i, v in ipairs(arg_40_1) do
+		if not self[v].run_progress then
+			if num == -1 then
+				num = i
 			end
 
-			var_40_1 = iter_40_0
-		elseif var_40_0 ~= -1 then
-			return var_40_0, var_40_1
+			num_2 = i
+		elseif num ~= -1 then
+			return num, num_2
 		end
 	end
 
-	return var_40_0, var_40_1
+	return num, num_2
 end
 
-local function var_0_24(arg_41_0, arg_41_1)
-	local var_41_0 = {}
+local function fn_18(self, arg_41_1)
+	-- function 41
+	local tbl = {}
 
-	for iter_41_0, iter_41_1 in ipairs(arg_41_1) do
-		if arg_41_0[iter_41_1].type ~= "START" then
-			var_41_0[#var_41_0 + 1] = iter_41_1
+	for i, v in ipairs(arg_41_1) do
+		if self[v].type ~= "START" then
+			tbl[#tbl + 1] = v
 		end
 	end
 
-	return var_41_0
+	return tbl
 end
 
-local function var_0_25(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
-	local var_42_0 = arg_42_0[arg_42_1[arg_42_2 - 1]]
-	local var_42_1 = arg_42_0[arg_42_1[arg_42_3 + 1]]
-	local var_42_2 = var_42_0 and var_42_0.run_progress or 0
-	local var_42_3 = var_42_1 and var_42_1.run_progress or 0.9999
-	local var_42_4 = arg_42_3 - arg_42_2
-	local var_42_5 = 0
+local function fn_19(self, arg_42_1, arg_42_2, arg_42_3)
+	-- function 42
+	local var_42_0 = self[arg_42_1[arg_42_2 - 1]]
+	local var_42_1 = self[arg_42_1[arg_42_3 + 1]]
+	local run_progress
 
-	if var_42_0 then
-		var_42_4 = var_42_4 + 1
-		var_42_5 = 1
+	if not var_42_0 then
+		run_progress = var_42_0.run_progress
+
+		if not run_progress then
+			-- Nothing
+		end
 	end
 
-	if var_42_1 then
-		var_42_4 = var_42_4 + 1
+	run_progress = 0
+
+	do
+		local run_progress_2
 	end
 
-	for iter_42_0 = arg_42_2, arg_42_3 do
-		local var_42_6 = iter_42_0 - arg_42_2
-		local var_42_7 = math.lerp(var_42_2, var_42_3, (var_42_6 + var_42_5) / var_42_4)
+	::label_42_0::
 
-		arg_42_0[arg_42_1[iter_42_0]].run_progress = var_42_7
+	if not var_42_1 then
+		run_progress_2 = var_42_1.run_progress
+
+		if not run_progress_2 then
+			-- Nothing
+		end
+	end
+
+	run_progress_2 = 0.9999
+
+	::label_42_1::
+
+	local num = arg_42_3 - arg_42_2
+	local num_2 = 0
+
+	if not var_42_0 then
+		num = num + 1
+		num_2 = 1
+	end
+
+	if not var_42_1 then
+		num = num + 1
+	end
+
+	for i = arg_42_2, arg_42_3 do
+		local num_3 = i - arg_42_2
+		local lerp = math.lerp(run_progress, run_progress_2, (num_3 + num_2) / num)
+
+		self[arg_42_1[i]].run_progress = lerp
 	end
 end
 
-local function var_0_26(arg_43_0, arg_43_1)
-	local var_43_0 = var_0_5(arg_43_1, "final")
+local function fn_20(arg_43_0, arg_43_1)
+	-- function 43
+	local var_43_0 = fn_6(arg_43_1, "final")
 
-	table.sort(var_43_0, function(arg_44_0, arg_44_1)
+	table.sort(var_43_0, function (arg_44_0, arg_44_1)
+		-- function 44
 		return #arg_44_0 > #arg_44_1
 	end)
 
-	for iter_43_0, iter_43_1 in ipairs(var_43_0) do
-		local var_43_1 = var_0_24(arg_43_1, iter_43_1)
+	for i, v in ipairs(var_43_0) do
+		local var_43_1 = fn_18(arg_43_1, v)
 
 		while true do
-			local var_43_2, var_43_3 = var_0_23(arg_43_1, var_43_1)
+			local var_43_2, var_43_3 = fn_17(arg_43_1, var_43_1)
 
 			if var_43_2 == -1 then
 				break
 			end
 
-			var_0_25(arg_43_1, var_43_1, var_43_2, var_43_3)
+			fn_19(arg_43_1, var_43_1, var_43_2, var_43_3)
 		end
 
-		for iter_43_2, iter_43_3 in ipairs(iter_43_1) do
-			local var_43_4 = arg_43_1[iter_43_3]
+		for i_2, v_2 in ipairs(v) do
+			local var_43_4 = arg_43_1[v_2]
 
 			if var_43_4.run_progress == nil then
 				var_43_4.run_progress = 0
@@ -601,21 +673,24 @@ local function var_0_26(arg_43_0, arg_43_1)
 	end
 end
 
-local function var_0_27(arg_45_0, arg_45_1, arg_45_2)
-	local var_45_0 = arg_45_1.type
-	local var_45_1 = arg_45_0.config.AVAILABLE_CURSES[var_45_0][arg_45_2]
+local function fn_21(self, arg_45_1, arg_45_2)
+	-- function 45
+	local type = arg_45_1.type
+	local var_45_1 = self.config.AVAILABLE_CURSES[type][arg_45_2]
 
-	arg_45_1.curse = var_45_1[arg_45_0.random_generator(1, #var_45_1)]
+	arg_45_1.curse = var_45_1[self.random_generator(1, #var_45_1)]
 	arg_45_1.god = arg_45_2
 end
 
-local function var_0_28(arg_46_0, arg_46_1, arg_46_2)
+local function fn_22(self, arg_46_1, arg_46_2)
+	-- function 46
 	local var_46_0 = arg_46_1[arg_46_2]
-	local var_46_1 = var_0_0(table.clone(arg_46_0.config.AVAILABLE_MINOR_MODIFIERS), arg_46_0.random_generator)
+	local var_46_1 = fn(table.clone(self.config.AVAILABLE_MINOR_MODIFIERS), self.random_generator)
 
-	local function var_46_2(arg_47_0)
-		for iter_47_0, iter_47_1 in ipairs(arg_46_0.config.MINOR_MODIFIER_VALIDATORS) do
-			if not var_0_15[iter_47_1](arg_46_0, arg_46_1, arg_46_2, arg_47_0) then
+	local function fn_2(arg_47_0)
+		-- function 47
+		for i, v in ipairs(self.config.MINOR_MODIFIER_VALIDATORS) do
+			if not tbl_4[v](self, arg_46_1, arg_46_2, arg_47_0) then
 				return false
 			end
 		end
@@ -623,107 +698,110 @@ local function var_0_28(arg_46_0, arg_46_1, arg_46_2)
 		return true
 	end
 
-	for iter_46_0, iter_46_1 in ipairs(var_46_1) do
-		if var_46_2(iter_46_1) then
-			var_46_0.minor_modifier_group = iter_46_1
+	for i, v in ipairs(var_46_1) do
+		if not fn_2(v) then
+			var_46_0.minor_modifier_group = v
 
 			return
 		end
 	end
 end
 
-local function var_0_29(arg_48_0, arg_48_1, arg_48_2, arg_48_3, arg_48_4, arg_48_5)
-	local var_48_0 = {
+local function fn_23(arg_48_0, arg_48_1, arg_48_2, arg_48_3, arg_48_4, arg_48_5)
+	-- function 48
+	local tbl = {
 		god = arg_48_2,
 		center_key = arg_48_3,
 		nodes = {}
 	}
 	local var_48_1 = arg_48_1[arg_48_3]
 
-	var_0_27(arg_48_0, var_48_1, arg_48_2)
+	fn_21(arg_48_0, var_48_1, arg_48_2)
 	table.swap_delete(arg_48_5, table.index_of(arg_48_5, var_48_1))
 
-	var_48_0.nodes[#var_48_0.nodes + 1] = var_48_1.name
+	tbl.nodes[#tbl.nodes + 1] = var_48_1.name
 
-	for iter_48_0 = #arg_48_5, 1, -1 do
-		local var_48_2 = arg_48_5[iter_48_0]
-		local var_48_3 = var_48_1.layout_x - var_48_2.layout_x
-		local var_48_4 = var_48_1.layout_y - var_48_2.layout_y
+	for i = #arg_48_5, 1, -1 do
+		local var_48_2 = arg_48_5[i]
+		local num = var_48_1.layout_x - var_48_2.layout_x
+		local num_2 = var_48_1.layout_y - var_48_2.layout_y
 
-		if arg_48_4 > var_48_3 * var_48_3 + var_48_4 * var_48_4 then
-			var_0_27(arg_48_0, var_48_2, arg_48_2)
-			table.swap_delete(arg_48_5, iter_48_0)
+		if arg_48_4 > num * num + num_2 * num_2 then
+			fn_21(arg_48_0, var_48_2, arg_48_2)
+			table.swap_delete(arg_48_5, i)
 
-			var_48_0.nodes[#var_48_0.nodes + 1] = var_48_2.name
+			tbl.nodes[#tbl.nodes + 1] = var_48_2.name
 		end
 	end
 
-	arg_48_0.hot_spots[#arg_48_0.hot_spots + 1] = var_48_0
+	arg_48_0.hot_spots[#arg_48_0.hot_spots + 1] = tbl
 
 	return arg_48_5
 end
 
-local function var_0_30(arg_49_0, arg_49_1)
-	local var_49_0 = arg_49_0.random_generator(arg_49_0.config.CURSES_HOT_SPOTS_MIN_COUNT, arg_49_0.config.CURSES_HOT_SPOTS_MAX_COUNT)
-	local var_49_1 = var_0_3(arg_49_1, arg_49_0.config.CURSES_MIN_PROGRESS)
-	local var_49_2 = var_0_4(var_49_1, arg_49_0.config.CURSEABLE_NODE_TYPES)
+local function fn_24(self, arg_49_1)
+	-- function 49
+	local random_generator = self.random_generator(self.config.CURSES_HOT_SPOTS_MIN_COUNT, self.config.CURSES_HOT_SPOTS_MAX_COUNT)
+	local var_49_1 = fn_4(arg_49_1, self.config.CURSES_MIN_PROGRESS)
+	local var_49_2 = fn_5(var_49_1, self.config.CURSEABLE_NODE_TYPES)
 
-	if not arg_49_0.config.NO_DOMINANT_GOD then
-		local var_49_3 = arg_49_0.config.CURSES_HOT_SPOT_MAX_RANGE * arg_49_0.config.CURSES_HOT_SPOT_MAX_RANGE
+	if not self.config.NO_DOMINANT_GOD then
+		local num = self.config.CURSES_HOT_SPOT_MAX_RANGE * self.config.CURSES_HOT_SPOT_MAX_RANGE
 
-		var_49_2 = var_0_29(arg_49_0, arg_49_1, arg_49_0.dominant_god, "final", var_49_3, var_49_2)
+		var_49_2 = fn_23(self, arg_49_1, self.dominant_god, "final", num, var_49_2)
 	end
 
-	local var_49_4 = {}
-	local var_49_5 = arg_49_0.config.AVAILABLE_GODS
+	local tbl = {}
+	local AVAILABLE_GODS = self.config.AVAILABLE_GODS
 
-	for iter_49_0 = 2, var_49_0 do
-		if #var_49_4 == 0 then
-			for iter_49_1, iter_49_2 in ipairs(var_49_5) do
-				if arg_49_0.config.NO_DOMINANT_GOD or iter_49_2 ~= arg_49_0.dominant_god then
-					var_49_4[#var_49_4 + 1] = iter_49_2
+	for i = 2, random_generator do
+		if #tbl == 0 then
+			for i_2, v in ipairs(AVAILABLE_GODS) do
+				if not (self.config.NO_DOMINANT_GOD or v == self.dominant_god) then
+					tbl[#tbl + 1] = v
 				end
 			end
 		end
 
-		local var_49_6 = arg_49_0.random_generator(1, #var_49_4)
-		local var_49_7 = var_49_4[var_49_6]
+		local random_generator_2 = self.random_generator(1, #tbl)
+		local var_49_7 = tbl[random_generator_2]
 
-		table.swap_delete(var_49_4, var_49_6)
+		table.swap_delete(tbl, random_generator_2)
 
 		if #var_49_2 > 0 then
-			local var_49_8 = var_49_2[arg_49_0.random_generator(1, #var_49_2)]
-			local var_49_9 = arg_49_0.config.CURSES_HOT_SPOT_MIN_RANGE + arg_49_0.random_generator() * (arg_49_0.config.CURSES_HOT_SPOT_MAX_RANGE - arg_49_0.config.CURSES_HOT_SPOT_MAX_RANGE)
+			local var_49_8 = var_49_2[self.random_generator(1, #var_49_2)]
+			local num_2 = self.config.CURSES_HOT_SPOT_MIN_RANGE + self.random_generator() * (self.config.CURSES_HOT_SPOT_MAX_RANGE - self.config.CURSES_HOT_SPOT_MAX_RANGE)
 
-			var_49_2 = var_0_29(arg_49_0, arg_49_1, var_49_7, var_49_8.name, var_49_9 * var_49_9, var_49_2)
+			var_49_2 = fn_23(self, arg_49_1, var_49_7, var_49_8.name, num_2 * num_2, var_49_2)
 		end
 	end
 end
 
-local function var_0_31(arg_50_0, arg_50_1)
-	local var_50_0 = {}
-	local var_50_1 = arg_50_0.config.ARENA_BELAKOR_SHOWS_UP_IN_DEPTH
+local function fn_25(self, arg_50_1)
+	-- function 50
+	local tbl = {}
+	local ARENA_BELAKOR_SHOWS_UP_IN_DEPTH = self.config.ARENA_BELAKOR_SHOWS_UP_IN_DEPTH
 
-	for iter_50_0, iter_50_1 in pairs(arg_50_1) do
-		if iter_50_1.type ~= "START" and iter_50_1.type ~= "SHOP" and iter_50_1.type ~= "ARENA" then
+	for k, v in pairs(arg_50_1) do
+		if not (v.type == "START" or v.type == "SHOP" or v.type == "ARENA") then
 			local var_50_2
-			local var_50_3 = var_0_8(arg_50_1, iter_50_0, var_50_1)
-			local var_50_4 = {}
+			local var_50_3 = fn_9(arg_50_1, k, ARENA_BELAKOR_SHOWS_UP_IN_DEPTH)
+			local tbl_2 = {}
 
-			for iter_50_2, iter_50_3 in ipairs(var_50_3) do
-				if arg_50_1[iter_50_3].type == "SHOP" then
-					local var_50_5 = var_0_7(arg_50_1, iter_50_3)
+			for i, v_2 in ipairs(var_50_3) do
+				if arg_50_1[v_2].type == "SHOP" then
+					local var_50_5 = fn_8(arg_50_1, v_2)
 
-					for iter_50_4, iter_50_5 in ipairs(var_50_5) do
-						var_50_4[#var_50_4 + 1] = iter_50_5
+					for i_2, v_3 in ipairs(var_50_5) do
+						tbl_2[#tbl_2 + 1] = v_3
 					end
 				else
-					var_50_4[#var_50_4 + 1] = iter_50_3
+					tbl_2[#tbl_2 + 1] = v_2
 				end
 			end
 
-			for iter_50_6, iter_50_7 in ipairs(var_50_4) do
-				local var_50_6 = arg_50_1[iter_50_7]
+			for i_3, v_4 in ipairs(tbl_2) do
+				local var_50_6 = arg_50_1[v_4]
 
 				repeat
 					if #var_50_6.next == 0 then
@@ -733,75 +811,75 @@ local function var_0_31(arg_50_0, arg_50_1)
 					end
 
 					var_50_6 = arg_50_1[var_50_6.next[1]]
-				until var_50_6.type == "SIGNATURE" or var_50_6.type == "TRAVEL"
+				until not (var_50_6.type == "SIGNATURE" or var_50_6.type ~= "TRAVEL")
 
-				if var_50_6 then
+				if not var_50_6 then
 					var_50_2 = var_50_2 or {}
-					var_50_2[iter_50_7] = true
+					var_50_2[v_4] = true
 				end
 			end
 
-			if var_50_2 then
-				local var_50_7 = {}
+			if not var_50_2 then
+				local tbl_3 = {}
 
-				for iter_50_8, iter_50_9 in pairs(var_50_2) do
-					var_50_7[#var_50_7 + 1] = iter_50_8
+				for k_2, v_5 in pairs(var_50_2) do
+					tbl_3[#tbl_3 + 1] = k_2
 				end
 
-				iter_50_1.possible_arena_belakor_nodes = var_50_7
-				var_50_0[#var_50_0 + 1] = iter_50_0
-			end
-		end
-	end
-
-	local var_50_8 = table.mirror_array_inplace(var_50_0)
-	local var_50_9 = var_0_7(arg_50_1, "start")
-	local var_50_10 = {}
-
-	for iter_50_10 = 1, #var_50_9 do
-		local var_50_11 = var_50_9[iter_50_10]
-
-		if var_50_8[var_50_11] then
-			local var_50_12 = {}
-			local var_50_13 = 1
-
-			var_50_10[#var_50_10 + 1] = var_50_12
-			var_50_12[var_50_13] = var_50_9[iter_50_10]
-
-			local var_50_14 = var_0_8(arg_50_1, var_50_11, 1)
-
-			for iter_50_11 = 1, #var_50_14 do
-				if var_50_8[var_50_14[iter_50_11]] then
-					var_50_13 = var_50_13 + 1
-					var_50_12[var_50_13] = var_50_14[iter_50_11]
-				end
+				v.possible_arena_belakor_nodes = tbl_3
+				tbl[#tbl + 1] = k
 			end
 		end
 	end
 
-	local var_50_15 = arg_50_0.random_generator
-	local var_50_16 = {}
+	local mirror_array_inplace = table.mirror_array_inplace(tbl)
+	local var_50_9 = fn_8(arg_50_1, "start")
+	local tbl_4 = {}
 
-	for iter_50_12 = 1, #var_50_10 do
-		local var_50_17 = var_50_10[iter_50_12]
-		local var_50_18 = #var_50_17
+	for i10 = 1, #var_50_9 do
+		local var_50_11 = var_50_9[i10]
 
-		if var_50_18 > 0 then
-			local var_50_19 = var_50_17[var_50_15(1, var_50_18)]
+		if not mirror_array_inplace[var_50_11] then
+			local tbl_5 = {}
+			local num = 1
 
-			var_50_16[#var_50_16 + 1] = var_50_19
+			tbl_4[#tbl_4 + 1] = tbl_5
+			tbl_5[num] = var_50_9[i10]
 
-			for iter_50_13 = iter_50_12 + 1, #var_50_10 do
-				local var_50_20 = var_50_10[iter_50_13]
+			local var_50_14 = fn_9(arg_50_1, var_50_11, 1)
 
-				if table.contains(var_50_20, var_50_19) then
+			for i11 = 1, #var_50_14 do
+				if not mirror_array_inplace[var_50_14[i11]] then
+					num = num + 1
+					tbl_5[num] = var_50_14[i11]
+				end
+			end
+		end
+	end
+
+	local random_generator = self.random_generator
+	local tbl_6 = {}
+
+	for i12 = 1, #tbl_4 do
+		local var_50_17 = tbl_4[i12]
+		local count = #var_50_17
+
+		if count > 0 then
+			local var_50_19 = var_50_17[random_generator(1, count)]
+
+			tbl_6[#tbl_6 + 1] = var_50_19
+
+			for i13 = i12 + 1, #tbl_4 do
+				local var_50_20 = tbl_4[i13]
+
+				if not table.contains(var_50_20, var_50_19) then
 					table.clear(var_50_20)
 				else
-					for iter_50_14 = 1, #var_50_17 do
-						local var_50_21 = table.find(var_50_20, var_50_17[iter_50_14])
+					for i14 = 1, #var_50_17 do
+						local find = table.find(var_50_20, var_50_17[i14])
 
-						if var_50_21 then
-							table.remove(var_50_20, var_50_21)
+						if not find then
+							table.remove(var_50_20, find)
 						end
 					end
 				end
@@ -809,37 +887,41 @@ local function var_0_31(arg_50_0, arg_50_1)
 		end
 	end
 
-	for iter_50_15 = 1, #var_50_16 do
-		local var_50_22 = var_50_16[iter_50_15]
+	for i15 = 1, #tbl_6 do
+		local var_50_22 = tbl_6[i15]
 
-		var_0_27(arg_50_0, arg_50_1[var_50_22], "belakor")
+		fn_21(self, arg_50_1[var_50_22], "belakor")
 	end
 end
 
-local function var_0_32(arg_51_0, arg_51_1)
-	local var_51_0 = var_0_3(arg_51_1, arg_51_0.config.MINOR_MODIFIABLE_MIN_PROGRESS)
-	local var_51_1 = var_0_4(var_51_0, arg_51_0.config.MINOR_MODIFIABLE_NODE_TYPES)
+local function fn_26(self, arg_51_1)
+	-- function 51
+	local var_51_0 = fn_4(arg_51_1, self.config.MINOR_MODIFIABLE_MIN_PROGRESS)
+	local var_51_1 = fn_5(var_51_0, self.config.MINOR_MODIFIABLE_NODE_TYPES)
 
-	for iter_51_0, iter_51_1 in ipairs(var_51_1) do
-		if arg_51_0.random_generator() < arg_51_0.config.MINOR_MODIFIABLE_NODE_CHANCE then
-			var_0_28(arg_51_0, arg_51_1, iter_51_1.name)
+	for i, v in ipairs(var_51_1) do
+		if not (self.random_generator() < self.config.MINOR_MODIFIABLE_NODE_CHANCE) then
+			fn_22(self, arg_51_1, v.name)
 		end
 	end
 end
 
-local function var_0_33(arg_52_0, arg_52_1)
-	for iter_52_0, iter_52_1 in pairs(arg_52_1) do
-		if iter_52_1.type == "SIGNATURE" or iter_52_1.type == "TRAVEL" or iter_52_1.type == "ARENA" then
-			local var_52_0 = arg_52_0.config.CONFLICT_DIRECTORS[iter_52_1.god] or arg_52_0.config.CONFLICT_DIRECTORS.default
+local function fn_27(self, arg_52_1)
+	-- function 52
+	for k, v in pairs(arg_52_1) do
+		if not (v.type == "SIGNATURE" or v.type == "TRAVEL" or v.type ~= "ARENA") then
+			local var_52_0 = self.config.CONFLICT_DIRECTORS[v.god]
 
-			iter_52_1.conflict_settings = var_52_0[arg_52_0.random_generator(1, #var_52_0)]
+			var_52_0 = var_52_0 or self.config.CONFLICT_DIRECTORS.default
+			v.conflict_settings = var_52_0[self.random_generator(1, #var_52_0)]
 		end
 	end
 end
 
-local function var_0_34(arg_53_0, arg_53_1, arg_53_2)
-	for iter_53_0, iter_53_1 in pairs(arg_53_1) do
-		if arg_53_2 == arg_53_0[iter_53_0].terror_event_power_up then
+local function fn_28(self, arg_53_1, arg_53_2)
+	-- function 53
+	for k, v in pairs(arg_53_1) do
+		if arg_53_2 == self[k].terror_event_power_up then
 			return true
 		end
 	end
@@ -847,63 +929,65 @@ local function var_0_34(arg_53_0, arg_53_1, arg_53_2)
 	return false
 end
 
-local function var_0_35(arg_54_0, arg_54_1, arg_54_2)
-	local var_54_0 = arg_54_0[arg_54_1].next
+local function fn_29(self, arg_54_1, arg_54_2)
+	-- function 54
+	local next = self[arg_54_1].next
 
 	if arg_54_2 > 1 then
 		arg_54_2 = arg_54_2 - 1
 
-		local var_54_1 = {}
+		local tbl = {}
 
-		for iter_54_0, iter_54_1 in ipairs(var_54_0) do
-			var_54_1[iter_54_1] = arg_54_0[iter_54_1]
+		for i, v in ipairs(next) do
+			tbl[v] = self[v]
 
-			local var_54_2 = var_0_35(arg_54_0, iter_54_1, arg_54_2)
+			local var_54_2 = fn_29(self, v, arg_54_2)
 
-			for iter_54_2, iter_54_3 in pairs(var_54_2) do
-				var_54_1[iter_54_2] = iter_54_3
+			for k, v_2 in pairs(var_54_2) do
+				tbl[k] = v_2
 			end
 		end
 
-		return var_54_1
+		return tbl
 	else
-		local var_54_3 = {}
+		local tbl_2 = {}
 
-		for iter_54_4, iter_54_5 in ipairs(var_54_0) do
-			var_54_3[iter_54_5] = arg_54_0[iter_54_5]
+		for i_2, v_3 in ipairs(next) do
+			tbl_2[v_3] = self[v_3]
 		end
 
-		return var_54_3
+		return tbl_2
 	end
 end
 
-local function var_0_36(arg_55_0, arg_55_1)
-	local var_55_0 = arg_55_0.random_generator
-	local var_55_1 = var_0_1(arg_55_1, var_55_0)
+local function fn_30(self, arg_55_1)
+	-- function 55
+	local random_generator = self.random_generator
+	local var_55_1 = fn_2(arg_55_1, random_generator)
 
-	for iter_55_0, iter_55_1 in ipairs(var_55_1) do
-		local var_55_2 = arg_55_1[iter_55_1]
+	for i, v in ipairs(var_55_1) do
+		local var_55_2 = arg_55_1[v]
 
-		if var_55_2.type == "SIGNATURE" or var_55_2.type == "TRAVEL" then
-			local var_55_3 = var_0_6(arg_55_1, iter_55_1)
+		if not (var_55_2.type == "SIGNATURE" or var_55_2.type ~= "TRAVEL") then
+			local var_55_3 = fn_7(arg_55_1, v)
 
-			for iter_55_2, iter_55_3 in ipairs(var_55_2.prev) do
-				local var_55_4 = var_0_35(arg_55_1, iter_55_3, arg_55_0.config.POWER_UP_LOOKAHEAD)
+			for i_2, v_2 in ipairs(var_55_2.prev) do
+				local var_55_4 = fn_29(arg_55_1, v_2, self.config.POWER_UP_LOOKAHEAD)
 
-				for iter_55_4, iter_55_5 in pairs(var_55_4) do
-					if iter_55_5.type == "SIGNATURE" or iter_55_5.type == "TRAVEL" then
-						var_55_3[iter_55_4] = iter_55_5
+				for k, v_3 in pairs(var_55_4) do
+					if not (v_3.type == "SIGNATURE" or v_3.type ~= "TRAVEL") then
+						var_55_3[k] = v_3
 					end
 				end
 			end
 
-			local var_55_5 = var_0_0(table.clone(arg_55_0.config.TERROR_POWER_UPS), var_55_0)
+			local var_55_5 = fn(table.clone(self.config.TERROR_POWER_UPS), random_generator)
 
-			for iter_55_6, iter_55_7 in ipairs(var_55_5) do
-				local var_55_6 = iter_55_7[1]
-				local var_55_7 = iter_55_7[2]
+			for i_3, v_4 in ipairs(var_55_5) do
+				local var_55_6 = v_4[1]
+				local var_55_7 = v_4[2]
 
-				if not var_0_34(arg_55_1, var_55_3, var_55_6) then
+				if not fn_28(arg_55_1, var_55_3, var_55_6) then
 					var_55_2.terror_event_power_up = var_55_6
 					var_55_2.terror_event_power_up_rarity = var_55_7
 
@@ -918,17 +1002,19 @@ local function var_0_36(arg_55_0, arg_55_1)
 	end
 end
 
-local function var_0_37(arg_56_0, arg_56_1, arg_56_2)
+local function fn_31(arg_56_0, arg_56_1, arg_56_2)
+	-- function 56
 	return arg_56_0 .. "_" .. arg_56_2 .. "_path" .. arg_56_1
 end
 
 function deus_generate_seeds(arg_57_0)
-	local var_57_0 = DeusGenUtils.create_random_generator(arg_57_0)
-	local var_57_1, var_57_2 = var_57_0()
-	local var_57_3, var_57_4 = var_57_0()
-	local var_57_5, var_57_6 = var_57_0()
-	local var_57_7, var_57_8 = var_57_0()
-	local var_57_9, var_57_10 = var_57_0()
+	-- function 57
+	local create_random_generator = DeusGenUtils.create_random_generator(arg_57_0)
+	local var_57_1, var_57_2 = create_random_generator()
+	local var_57_3, var_57_4 = create_random_generator()
+	local var_57_5, var_57_6 = create_random_generator()
+	local var_57_7, var_57_8 = create_random_generator()
+	local var_57_9, var_57_10 = create_random_generator()
 
 	return {
 		weapon_pickup_seed = var_57_2,
@@ -940,53 +1026,55 @@ function deus_generate_seeds(arg_57_0)
 end
 
 function deus_populate_graph(arg_58_0, arg_58_1, arg_58_2, arg_58_3, arg_58_4)
-	local var_58_0 = DeusGenUtils.create_random_generator(arg_58_1)
-	local var_58_1 = table.clone(arg_58_0)
-	local var_58_2 = {
+	-- function 58
+	local create_random_generator = DeusGenUtils.create_random_generator(arg_58_1)
+	local clone = table.clone(arg_58_0)
+	local tbl = {
 		indent = 0,
-		random_generator = var_58_0,
+		random_generator = create_random_generator,
 		config = arg_58_2,
 		dominant_god = arg_58_3,
 		hot_spots = {}
 	}
-	local var_58_3 = {}
-	local var_58_4 = {}
+	local tbl_2 = {}
+	local tbl_4 = {}
 
-	for iter_58_0, iter_58_1 in pairs(arg_58_2.LEVEL_AVAILABILITY) do
-		var_58_4[#var_58_4 + 1] = iter_58_0
+	for k, v in pairs(arg_58_2.LEVEL_AVAILABILITY) do
+		tbl_4[#tbl_4 + 1] = k
 	end
 
-	table.sort(var_58_4)
+	table.sort(tbl_4)
 
-	for iter_58_2, iter_58_3 in pairs(var_58_4) do
-		local var_58_5 = arg_58_2.LEVEL_AVAILABILITY[iter_58_3]
+	for k_2, v_2 in pairs(tbl_4) do
+		local var_58_5 = arg_58_2.LEVEL_AVAILABILITY[v_2]
 
-		var_58_3[iter_58_3] = var_0_1(var_58_5, var_58_0)
+		tbl_2[v_2] = fn_2(var_58_5, create_random_generator)
 	end
 
-	for iter_58_4, iter_58_5 in ipairs(arg_58_2.LABEL_OVERRIDES) do
-		var_58_3 = var_0_14[iter_58_5](var_58_2, var_58_1, var_58_3)
+	for i, v_3 in ipairs(arg_58_2.LABEL_OVERRIDES) do
+		tbl_2 = tbl_3[v_3](tbl, clone, tbl_2)
 	end
 
-	var_58_2.shuffled_levels_for_labels = var_58_3
+	tbl.shuffled_levels_for_labels = tbl_2
 
-	local function var_58_6(arg_59_0, arg_59_1)
-		var_58_2.indent = #arg_59_0
+	local function fn(arg_59_0, arg_59_1)
+		-- function 59
+		tbl.indent = #arg_59_0
 	end
 
-	local var_58_7 = {
-		var_0_22(var_58_2, var_58_1, "start")
+	local tbl_5 = {
+		fn_16(tbl, clone, "start")
 	}
-	local var_58_8 = DeusGenEngine.get_generator(var_58_7, var_58_6)
+	local get_generator = DeusGenEngine.get_generator(tbl_5, fn)
 	local var_58_9
 	local var_58_10
-	local var_58_11 = 100000
+	local num = 100000
 
-	for iter_58_6 = 1, var_58_11 do
-		var_58_10, var_58_9 = var_58_8()
+	for i6 = 1, num do
+		var_58_10, var_58_9 = get_generator()
 
-		if var_58_10 then
-			if var_58_9 then
+		if not var_58_10 then
+			if not var_58_9 then
 				Application.warning("[deus_populate_graph.lua] failed to populate graph, maybe the settings are impossible to solve? error: " .. (var_58_9 or "N/A"))
 
 				return nil
@@ -1002,97 +1090,121 @@ function deus_populate_graph(arg_58_0, arg_58_1, arg_58_2, arg_58_3, arg_58_4)
 		return nil
 	end
 
-	var_0_26(var_58_2, var_58_1)
-	var_0_30(var_58_2, var_58_1)
+	fn_20(tbl, clone)
+	fn_24(tbl, clone)
 
-	if arg_58_4 then
-		var_0_31(var_58_2, var_58_1)
+	if not arg_58_4 then
+		fn_25(tbl, clone)
 	end
 
-	var_0_32(var_58_2, var_58_1)
-	var_0_33(var_58_2, var_58_1)
-	var_0_36(var_58_2, var_58_1)
+	fn_26(tbl, clone)
+	fn_27(tbl, clone)
+	fn_30(tbl, clone)
 
-	local var_58_12 = {}
+	local tbl_6 = {}
 
-	for iter_58_7, iter_58_8 in pairs(var_58_1) do
-		local var_58_13, var_58_14 = var_58_0()
+	for k_3, v_4 in pairs(clone) do
+		local var_58_13, var_58_14 = create_random_generator()
 		local var_58_15 = deus_generate_seeds(var_58_14)
-		local var_58_16 = var_58_15.weapon_pickup_seed
-		local var_58_17 = var_58_15.pickups_seed
-		local var_58_18 = var_58_15.mutator_seed
-		local var_58_19 = var_58_15.blessings_seed
-		local var_58_20 = var_58_15.power_ups_seed
-		local var_58_21 = {
-			layout_x = iter_58_8.layout_x,
-			layout_y = iter_58_8.layout_y,
+		local weapon_pickup_seed = var_58_15.weapon_pickup_seed
+		local pickups_seed = var_58_15.pickups_seed
+		local mutator_seed = var_58_15.mutator_seed
+		local blessings_seed = var_58_15.blessings_seed
+		local power_ups_seed = var_58_15.power_ups_seed
+		local tbl_7 = {
+			layout_x = v_4.layout_x,
+			layout_y = v_4.layout_y,
 			level_seed = var_58_14,
-			weapon_pickup_seed = var_58_16,
+			weapon_pickup_seed = weapon_pickup_seed,
 			system_seeds = {
-				pickups = var_58_17,
-				mutator = var_58_18,
-				blessings = var_58_19,
-				power_ups = var_58_20
-			},
-			theme = iter_58_8.god or "wastes",
-			minor_modifier_group = iter_58_8.minor_modifier_group,
-			run_progress = iter_58_8.run_progress,
-			conflict_settings = iter_58_8.conflict_settings or "disabled",
-			level_type = iter_58_8.type,
-			mutators = arg_58_2.MUTATORS[iter_58_8.type],
-			terror_event_power_up = iter_58_8.terror_event_power_up,
-			terror_event_power_up_rarity = iter_58_8.terror_event_power_up_rarity,
-			possible_arena_belakor_nodes = iter_58_8.possible_arena_belakor_nodes,
-			next = table.clone(iter_58_8.next)
+				pickups = pickups_seed,
+				mutator = mutator_seed,
+				blessings = blessings_seed,
+				power_ups = power_ups_seed
+			}
 		}
+		local god = v_4.god
 
-		if script_data.deus_shoppify_run and iter_58_8.type ~= "START" and iter_58_8.type ~= "ARENA" then
-			local var_58_22 = table.keys(DeusShopSettings.shop_types)
+		god = god or "wastes"
+		tbl_7.theme = god
+		tbl_7.minor_modifier_group = v_4.minor_modifier_group
+		tbl_7.run_progress = v_4.run_progress
 
-			iter_58_8.level = var_58_22[var_58_0(1, #var_58_22)]
-			iter_58_8.type = "SHOP"
+		local conflict_settings = v_4.conflict_settings
+
+		conflict_settings = conflict_settings or "disabled"
+		tbl_7.conflict_settings = conflict_settings
+		tbl_7.level_type = v_4.type
+		tbl_7.mutators = arg_58_2.MUTATORS[v_4.type]
+		tbl_7.terror_event_power_up = v_4.terror_event_power_up
+		tbl_7.terror_event_power_up_rarity = v_4.terror_event_power_up_rarity
+		tbl_7.possible_arena_belakor_nodes = v_4.possible_arena_belakor_nodes
+		tbl_7.next = table.clone(v_4.next)
+
+		if not (not script_data.deus_shoppify_run and v_4.type == "START" or v_4.type == "ARENA") then
+			local keys = table.keys(DeusShopSettings.shop_types)
+
+			v_4.level = keys[create_random_generator(1, #keys)]
+			v_4.type = "SHOP"
 		end
 
-		if iter_58_8.type == "SIGNATURE" or iter_58_8.type == "TRAVEL" or iter_58_8.type == "ARENA" then
-			var_58_21.base_level = iter_58_8.level
-			var_58_21.path = iter_58_8.path
+		if not (v_4.type == "SIGNATURE" or v_4.type == "TRAVEL" or v_4.type ~= "ARENA") then
+			tbl_7.base_level = v_4.level
+			tbl_7.path = v_4.path
 
-			local var_58_23 = arg_58_2.LEVEL_AVAILABILITY[iter_58_8.type][iter_58_8.level].themes
+			local themes = arg_58_2.LEVEL_AVAILABILITY[v_4.type][v_4.level].themes
+			local contains = table.contains
+			local var_58_27 = themes
+			local god_2 = v_4.god
 
-			if not table.contains(var_58_23, iter_58_8.god or "wastes") then
-				local var_58_24 = var_58_23[1]
+			god_2 = god_2 or "wastes"
 
-				Application.warning(string.format("[deus_populate_graph.lua] theme %s not found for level %s, using %s", iter_58_8.god or "wastes", iter_58_8.level, var_58_24))
+			if not contains(var_58_27, god_2) then
+				local var_58_29 = themes[1]
+				local warning = Application.warning
+				local format = string.format
+				local str = "[deus_populate_graph.lua] theme %s not found for level %s, using %s"
+				local god_3 = v_4.god
 
-				var_58_21.level = var_0_37(iter_58_8.level, iter_58_8.path, var_58_24)
+				god_3 = god_3 or "wastes"
+
+				warning(format(str, god_3, v_4.level, var_58_29))
+
+				tbl_7.level = fn_31(v_4.level, v_4.path, var_58_29)
 			else
-				var_58_21.level = var_0_37(iter_58_8.level, iter_58_8.path, iter_58_8.god or "wastes")
+				local var_58_34 = fn_31
+				local level = v_4.level
+				local path = v_4.path
+				local god_4 = v_4.god
+
+				god_4 = god_4 or "wastes"
+				tbl_7.level = var_58_34(level, path, god_4)
 			end
 
-			local var_58_25 = arg_58_2.LEVEL_ALIAS[var_58_21.level]
+			local var_58_38 = arg_58_2.LEVEL_ALIAS[tbl_7.level]
 
-			if arg_58_2.LEVEL_ALIAS[var_58_21.level] then
-				var_58_21.level = var_58_25
+			if not arg_58_2.LEVEL_ALIAS[tbl_7.level] then
+				tbl_7.level = var_58_38
 			end
 
-			var_58_21.curse = iter_58_8.curse
-			var_58_21.node_type = "ingame"
-		elseif iter_58_8.type == "SHOP" then
-			var_58_21.base_level = iter_58_8.level
-			var_58_21.level = iter_58_8.level
-			var_58_21.path = 0
-			var_58_21.node_type = "shop"
-		elseif iter_58_8.type == "START" then
-			var_58_21.level = "dlc_morris_map"
-			var_58_21.path = 0
-			var_58_21.base_level = "dlc_morris_map"
-			var_58_21.node_type = "start"
+			tbl_7.curse = v_4.curse
+			tbl_7.node_type = "ingame"
+		elseif v_4.type == "SHOP" then
+			tbl_7.base_level = v_4.level
+			tbl_7.level = v_4.level
+			tbl_7.path = 0
+			tbl_7.node_type = "shop"
+		elseif v_4.type == "START" then
+			tbl_7.level = "dlc_morris_map"
+			tbl_7.path = 0
+			tbl_7.base_level = "dlc_morris_map"
+			tbl_7.node_type = "start"
 		end
 
-		printf("Generated node with: Level <%s>, level_seed <%s>, Run progress <%s>", var_58_21.level, var_58_14, var_58_21.run_progress)
+		printf("Generated node with: Level <%s>, level_seed <%s>, Run progress <%s>", tbl_7.level, var_58_14, tbl_7.run_progress)
 
-		var_58_12[iter_58_7] = var_58_21
+		tbl_6[k_3] = tbl_7
 	end
 
-	return var_58_12
+	return tbl_6
 end

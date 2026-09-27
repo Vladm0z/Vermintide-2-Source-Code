@@ -2,25 +2,27 @@
 
 PackmasterStateJumping = class(PackmasterStateJumping, EnemyCharacterStateJumping)
 
-function PackmasterStateJumping.init(arg_1_0, arg_1_1)
-	PackmasterStateJumping.super.init(arg_1_0, arg_1_1)
+PackmasterStateJumping.init = function (self, arg_1_1)
+	-- function 1
+	PackmasterStateJumping.super.init(self, arg_1_1)
 
-	arg_1_0._grab_ability_id = arg_1_0._career_extension:ability_id("grab")
+	self._grab_ability_id = self._career_extension:ability_id("grab")
 end
 
-function PackmasterStateJumping.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
-	if arg_2_0:common_state_changes() then
+PackmasterStateJumping.update = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	-- function 2
+	if not self:common_state_changes() then
 		return
 	end
 
-	local var_2_0 = arg_2_0._csm
+	local _csm = self._csm
 
-	if arg_2_0._career_extension:ability_was_triggered(arg_2_0._grab_ability_id) then
-		var_2_0:change_state("packmaster_grabbing")
+	if not self._career_extension:ability_was_triggered(self._grab_ability_id) then
+		_csm:change_state("packmaster_grabbing")
 
 		return
 	end
 
-	local var_2_1 = arg_2_0._ghost_mode_extension:is_in_ghost_mode()
-	local var_2_2 = arg_2_0:common_movement(var_2_1, arg_2_3, arg_2_1)
+	local is_in_ghost_mode = self._ghost_mode_extension:is_in_ghost_mode()
+	local common_movement = self:common_movement(is_in_ghost_mode, arg_2_3, arg_2_1)
 end

@@ -3,73 +3,94 @@
 require("scripts/network/script_xbox_user_privilege_token")
 
 XboxUserPrivileges = class(XboxUserPrivileges)
+
+local DEFAULT_PRIVILEGES = DEFAULT_PRIVILEGES
+
 DEFAULT_PRIVILEGES = DEFAULT_PRIVILEGES or {}
+DEFAULT_PRIVILEGES = DEFAULT_PRIVILEGES
+
+local ATTEMPT_RESOLUTION_PRIVILEGES = ATTEMPT_RESOLUTION_PRIVILEGES
+
 ATTEMPT_RESOLUTION_PRIVILEGES = ATTEMPT_RESOLUTION_PRIVILEGES or {}
+ATTEMPT_RESOLUTION_PRIVILEGES = ATTEMPT_RESOLUTION_PRIVILEGES
+
+local XBOX_PRIVILEGE_LUT = XBOX_PRIVILEGE_LUT
+
 XBOX_PRIVILEGE_LUT = XBOX_PRIVILEGE_LUT or {}
+XBOX_PRIVILEGE_LUT = XBOX_PRIVILEGE_LUT
+
+local PRIVILEGES_ERROR_CODES = PRIVILEGES_ERROR_CODES
+
 PRIVILEGES_ERROR_CODES = PRIVILEGES_ERROR_CODES or {}
+PRIVILEGES_ERROR_CODES = PRIVILEGES_ERROR_CODES
 
-function XboxUserPrivileges.init(arg_1_0)
-	arg_1_0:reset()
-	arg_1_0:_setup_lookup_tables()
+XboxUserPrivileges.init = function (self)
+	-- function 1
+	self:reset()
+	self:_setup_lookup_tables()
 end
 
-function XboxUserPrivileges.reset(arg_2_0)
-	arg_2_0._current_users = {}
-	arg_2_0._initialized = false
-	arg_2_0._has_error = nil
-	arg_2_0._check_privilege_cb = {}
+XboxUserPrivileges.reset = function (self)
+	-- function 2
+	self._current_users = {}
+	self._initialized = false
+	self._has_error = nil
+	self._check_privilege_cb = {}
 end
 
-function XboxUserPrivileges.add_user(arg_3_0, arg_3_1)
-	arg_3_0:reset()
+XboxUserPrivileges.add_user = function (self, arg_3_1)
+	-- function 3
+	self:reset()
 
-	arg_3_0._current_users[arg_3_1] = {}
+	self._current_users[arg_3_1] = {}
 
-	for iter_3_0, iter_3_1 in pairs(DEFAULT_PRIVILEGES) do
-		local var_3_0 = false
+	for k, v in pairs(DEFAULT_PRIVILEGES) do
+		local flag = false
 
-		if ATTEMPT_RESOLUTION_PRIVILEGES[iter_3_1] then
-			print(XBOX_PRIVILEGE_LUT[iter_3_1] .. " using attempt_resolution=true")
+		if not ATTEMPT_RESOLUTION_PRIVILEGES[v] then
+			print(XBOX_PRIVILEGE_LUT[v] .. " using attempt_resolution=true")
 
-			var_3_0 = true
+			flag = true
 		end
 
-		local var_3_1 = UserPrivilege.has(arg_3_1, var_3_0, iter_3_1)
+		local has = UserPrivilege.has(arg_3_1, flag, v)
 
-		if var_3_1 then
-			local var_3_2 = ScriptXboxUserPrivilegeToken:new(var_3_1)
+		if not has then
+			local var_3_2 = ScriptXboxUserPrivilegeToken:new(has)
 
-			Managers.token:register_token(var_3_2, callback(arg_3_0, "cb_user_privilege_done", arg_3_1, iter_3_1, nil))
+			Managers.token:register_token(var_3_2, callback(self, "cb_user_privilege_done", arg_3_1, v, nil))
 		else
-			arg_3_0._has_error = true
+			self._has_error = true
 		end
 	end
 end
 
-function XboxUserPrivileges.get_privilege_async(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-	if not arg_4_0._current_users[arg_4_1] then
+XboxUserPrivileges.get_privilege_async = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	-- function 4
+	if not self._current_users[arg_4_1] then
 		fassert(false, "ERROR ERROR")
 
 		return
 	end
 
-	local var_4_0 = UserPrivilege.has(arg_4_1, arg_4_3, arg_4_2)
+	local has = UserPrivilege.has(arg_4_1, arg_4_3, arg_4_2)
 
-	if var_4_0 then
-		local var_4_1 = ScriptXboxUserPrivilegeToken:new(var_4_0)
+	if not has then
+		local var_4_1 = ScriptXboxUserPrivilegeToken:new(has)
 
-		Managers.token:register_token(var_4_1, callback(arg_4_0, "cb_user_privilege_done", arg_4_1, arg_4_2, arg_4_4))
+		Managers.token:register_token(var_4_1, callback(self, "cb_user_privilege_done", arg_4_1, arg_4_2, arg_4_4))
 	else
-		arg_4_0._has_error = true
+		self._has_error = true
 	end
 end
 
-function XboxUserPrivileges.update_privilege(arg_5_0, arg_5_1, arg_5_2)
+XboxUserPrivileges.update_privilege = function (self, arg_5_1, arg_5_2)
+	-- function 5
 	local var_5_0
 
-	for iter_5_0, iter_5_1 in pairs(XBOX_PRIVILEGE_LUT) do
-		if iter_5_1 == arg_5_1 then
-			var_5_0 = iter_5_0
+	for k, v in pairs(XBOX_PRIVILEGE_LUT) do
+		if v == arg_5_1 then
+			var_5_0 = k
 
 			break
 		end
@@ -78,92 +99,141 @@ function XboxUserPrivileges.update_privilege(arg_5_0, arg_5_1, arg_5_2)
 	if not var_5_0 then
 		Application.error(string.format("[XboxUserPrivileges] Couldn't find privilege called %s", arg_5_1))
 	else
-		local var_5_1 = Managers.account:user_id()
-		local var_5_2 = UserPrivilege.has(var_5_1, false, var_5_0)
+		local user_id = Managers.account:user_id()
+		local has = UserPrivilege.has(user_id, false, var_5_0)
 
-		if var_5_2 then
-			local var_5_3 = ScriptXboxUserPrivilegeToken:new(var_5_2)
+		if not has then
+			local var_5_3 = ScriptXboxUserPrivilegeToken:new(has)
 
-			Managers.token:register_token(var_5_3, callback(arg_5_0, "cb_user_privilege_done", var_5_1, var_5_0, nil))
+			Managers.token:register_token(var_5_3, callback(self, "cb_user_privilege_done", user_id, var_5_0, nil))
 
-			if arg_5_2 then
-				arg_5_0._check_privilege_cb = arg_5_0._check_privilege_cb or {}
-				arg_5_0._check_privilege_cb[var_5_0] = arg_5_0._check_privilege_cb[var_5_0] or {}
-				arg_5_0._check_privilege_cb[var_5_0][#arg_5_0._check_privilege_cb[var_5_0] + 1] = arg_5_2
+			if not arg_5_2 then
+				local _check_privilege_cb = self._check_privilege_cb
+
+				_check_privilege_cb = _check_privilege_cb or {}
+				self._check_privilege_cb = _check_privilege_cb
+
+				local _check_privilege_cb_2 = self._check_privilege_cb
+				local var_5_6 = self._check_privilege_cb[var_5_0]
+
+				var_5_6 = var_5_6 or {}
+				_check_privilege_cb_2[var_5_0] = var_5_6
+				self._check_privilege_cb[var_5_0][#self._check_privilege_cb[var_5_0] + 1] = arg_5_2
 			end
 		else
-			arg_5_0._has_error = true
+			self._has_error = true
 		end
 	end
 end
 
-function XboxUserPrivileges.cb_user_privilege_done(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
-	if arg_6_4.error then
-		Application.error(string.format("[XboxUserPrivileges] Something went wrong when trying to fetch privilege [%s] for User [%s]. Error: %s", XBOX_PRIVILEGE_LUT[arg_6_2] or "unknown", tostring(arg_6_1), PRIVILEGES_ERROR_CODES[arg_6_4.error] or "UNKNOWN"))
+XboxUserPrivileges.cb_user_privilege_done = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	-- function 6
+	if not arg_6_4.error then
+		local error = Application.error
+		local format = string.format
+		local str = "[XboxUserPrivileges] Something went wrong when trying to fetch privilege [%s] for User [%s]. Error: %s"
+		local var_6_3 = XBOX_PRIVILEGE_LUT[arg_6_2]
 
-		arg_6_0._has_error = true
-		arg_6_0._initialized = true
+		var_6_3 = var_6_3 or "unknown"
+
+		local var_6_4 = tostring(arg_6_1)
+		local var_6_5 = PRIVILEGES_ERROR_CODES[arg_6_4.error]
+
+		var_6_5 = var_6_5 or "UNKNOWN"
+
+		error(format(str, var_6_3, var_6_4, var_6_5))
+
+		self._has_error = true
+		self._initialized = true
 	elseif arg_6_4.status_code == UserPrivilege.NoIssue then
-		Application.warning(string.format("[XboxUserPrivileges] User [%s] has the privilege to [%s]", tostring(arg_6_1), XBOX_PRIVILEGE_LUT[arg_6_2] or "unknown", PRIVILEGES_ERROR_CODES[arg_6_4.status_code] or "UNKNOWN"))
+		local warning = Application.warning
+		local format_2 = string.format
+		local str_2 = "[XboxUserPrivileges] User [%s] has the privilege to [%s]"
+		local var_6_9 = tostring(arg_6_1)
+		local var_6_10 = XBOX_PRIVILEGE_LUT[arg_6_2]
 
-		arg_6_0._current_users[arg_6_1][arg_6_2] = true
+		var_6_10 = var_6_10 or "unknown"
+
+		local var_6_11 = PRIVILEGES_ERROR_CODES[arg_6_4.status_code]
+
+		var_6_11 = var_6_11 or "UNKNOWN"
+
+		warning(format_2(str_2, var_6_9, var_6_10, var_6_11))
+
+		self._current_users[arg_6_1][arg_6_2] = true
 	else
-		Application.error(string.format("[XboxUserPrivileges] User [%s] do not have the privilege to [%s]. Error: %s", tostring(arg_6_1), XBOX_PRIVILEGE_LUT[arg_6_2] or "unknown", PRIVILEGES_ERROR_CODES[arg_6_4.status_code] or "UNKNOWN"))
+		local error_2 = Application.error
+		local format_3 = string.format
+		local str_3 = "[XboxUserPrivileges] User [%s] do not have the privilege to [%s]. Error: %s"
+		local var_6_15 = tostring(arg_6_1)
+		local var_6_16 = XBOX_PRIVILEGE_LUT[arg_6_2]
 
-		arg_6_0._current_users[arg_6_1][arg_6_2] = false
+		var_6_16 = var_6_16 or "unknown"
+
+		local var_6_17 = PRIVILEGES_ERROR_CODES[arg_6_4.status_code]
+
+		var_6_17 = var_6_17 or "UNKNOWN"
+
+		error_2(format_3(str_3, var_6_15, var_6_16, var_6_17))
+
+		self._current_users[arg_6_1][arg_6_2] = false
 	end
 
-	if arg_6_0._check_privilege_cb and arg_6_0._check_privilege_cb[arg_6_2] then
-		local var_6_0 = arg_6_0._check_privilege_cb[arg_6_2]
+	if not self._check_privilege_cb and not self._check_privilege_cb[arg_6_2] then
+		local var_6_18 = self._check_privilege_cb[arg_6_2]
 
-		for iter_6_0, iter_6_1 in pairs(var_6_0) do
-			iter_6_1(XBOX_PRIVILEGE_LUT[arg_6_2])
+		for k, v in pairs(var_6_18) do
+			v(XBOX_PRIVILEGE_LUT[arg_6_2])
 		end
 
-		arg_6_0._check_privilege_cb[arg_6_2] = nil
+		self._check_privilege_cb[arg_6_2] = nil
 	end
 
-	if arg_6_3 then
+	if not arg_6_3 then
 		arg_6_3(arg_6_2)
 	end
 end
 
-function XboxUserPrivileges.has_privilege(arg_7_0, arg_7_1, arg_7_2)
-	if arg_7_1 and arg_7_0._current_users[arg_7_1] then
-		return arg_7_0._current_users[arg_7_1][arg_7_2]
+XboxUserPrivileges.has_privilege = function (self, arg_7_1, arg_7_2)
+	-- function 7
+	if not arg_7_1 and not self._current_users[arg_7_1] then
+		return self._current_users[arg_7_1][arg_7_2]
 	else
 		return false
 	end
 end
 
-function XboxUserPrivileges.is_initialized(arg_8_0)
-	if arg_8_0._initialized then
+XboxUserPrivileges.is_initialized = function (self)
+	-- function 8
+	if not self._initialized then
 		return true
 	else
-		local var_8_0 = Managers.account:user_id()
-		local var_8_1 = arg_8_0._current_users[var_8_0]
+		local user_id = Managers.account:user_id()
+		local var_8_1 = self._current_users[user_id]
 
 		if not var_8_1 then
 			return false
 		end
 
-		for iter_8_0, iter_8_1 in pairs(DEFAULT_PRIVILEGES) do
-			if var_8_1[iter_8_1] == nil then
+		for k, v in pairs(DEFAULT_PRIVILEGES) do
+			if var_8_1[v] == nil then
 				return false
 			end
 		end
 
-		arg_8_0._initialized = true
+		self._initialized = true
 
 		return true
 	end
 end
 
-function XboxUserPrivileges.has_error(arg_9_0)
-	return arg_9_0._has_error
+XboxUserPrivileges.has_error = function (self)
+	-- function 9
+	return self._has_error
 end
 
-function XboxUserPrivileges._setup_lookup_tables(arg_10_0)
+XboxUserPrivileges._setup_lookup_tables = function (arg_10_0)
+	-- function 10
 	XBOX_PRIVILEGE_LUT[UserPrivilege.ADD_FRIEND] = "ADD_FRIEND"
 	XBOX_PRIVILEGE_LUT[UserPrivilege.BROADCAST] = "BROADCAST"
 	XBOX_PRIVILEGE_LUT[UserPrivilege.CLOUD_GAMING_JOIN_SESSION] = "CLOUD_GAMING_JOIN_SESSION"

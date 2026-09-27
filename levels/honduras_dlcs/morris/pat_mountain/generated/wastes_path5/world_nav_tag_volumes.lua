@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/morris/pat_mountain/generated/wastes_path5/world_nav_tag_volumes.lua
 
-local var_0_0 = {
+local tbl = {
 	No_Spawn_Volume_003 = {
 		delay_nav_tag_volume_creation = true,
 		alt_max = 311.2626037597656,
@@ -1308,9 +1308,9 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = "1"
+local str = "1"
 
 return {
-	version = var_0_1,
-	nav_tag_volumes = var_0_0
+	version = str,
+	nav_tag_volumes = tbl
 }

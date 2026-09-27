@@ -1,68 +1,71 @@
 -- chunkname: @scripts/managers/achievements/achievement_templates_termite_part_3.lua
 
-local var_0_0 = AchievementTemplateHelper.add_event_challenge
-local var_0_1 = AchievementTemplateHelper.add_levels_complete_challenge
-local var_0_2 = AchievementTemplateHelper.add_meta_challenge
-local var_0_3 = AchievementTemplateHelper.PLACEHOLDER_ICON
-local var_0_4 = AchievementTemplates.achievements
-local var_0_5 = AchievementTemplateHelper.add_console_achievements
-local var_0_6 = {
+local add_event_challenge = AchievementTemplateHelper.add_event_challenge
+local add_levels_complete_challenge = AchievementTemplateHelper.add_levels_complete_challenge
+local add_meta_challenge = AchievementTemplateHelper.add_meta_challenge
+local PLACEHOLDER_ICON = AchievementTemplateHelper.PLACEHOLDER_ICON
+local achievements = AchievementTemplates.achievements
+local add_console_achievements = AchievementTemplateHelper.add_console_achievements
+local tbl = {
 	termite3_collectible_challenge = 129,
 	termite3_complete_legend = 128,
 	termite3_generator_challenge = 130
 }
-local var_0_7 = {
+local tbl_2 = {
 	termite3_generator_challenge = "095"
 }
-local var_0_8 = {
+local tbl_3 = {
 	LevelSettings.dlc_termite_3
 }
-local var_0_9 = {
+local tbl_4 = {
 	"normal",
 	"hard",
 	"harder",
 	"hardest",
 	"cataclysm"
 }
-local var_0_10 = {
+local tbl_5 = {
 	hardest = "legend",
 	hard = "veteran",
 	harder = "champion",
 	cataclysm = "cataclysm",
 	normal = "recruit"
 }
-local var_0_11 = {}
+local tbl_6 = {}
 
-for iter_0_0 = 1, #var_0_9 do
-	local var_0_12 = var_0_9[iter_0_0]
-	local var_0_13 = "termite3_complete_" .. var_0_10[var_0_12]
-	local var_0_14 = "achv_termite3_complete_" .. var_0_10[var_0_12] .. "_icon"
+for i = 1, #tbl_4 do
+	local var_0_12 = tbl_4[i]
+	local str = "termite3_complete_" .. tbl_5[var_0_12]
+	local str_2 = "achv_termite3_complete_" .. tbl_5[var_0_12] .. "_icon"
 
-	var_0_11[iter_0_0] = var_0_13
+	tbl_6[i] = str
 
-	var_0_1(var_0_4, var_0_13, var_0_8, DifficultySettings[var_0_12].rank, var_0_14, nil, var_0_6[var_0_13], var_0_7[var_0_13])
+	add_levels_complete_challenge(achievements, str, tbl_3, DifficultySettings[var_0_12].rank, str_2, nil, tbl[str], tbl_2[str])
 end
 
-local var_0_15 = 20
+local num = 20
 
-var_0_4.termite3_collectible_challenge = {
+achievements.termite3_collectible_challenge = {
 	name = "achv_termite3_collectible_challenge_name",
 	display_completion_ui = true,
 	icon = "achv_termite3_collectibles",
-	desc = function()
-		return string.format(Localize("achv_termite3_collectible_challenge_desc"), var_0_15)
+	desc = function ()
+		-- function 1
+		return string.format(Localize("achv_termite3_collectible_challenge_desc"), num)
 	end,
 	events = {
 		"termite3_collectible_challenge"
 	},
-	completed = function(arg_2_0, arg_2_1, arg_2_2)
-		return arg_2_0:get_persistent_stat(arg_2_1, "termite3_collectible_challenge") >= 1
+	completed = function (self, arg_2_1, arg_2_2)
+		-- function 2
+		return self:get_persistent_stat(arg_2_1, "termite3_collectible_challenge") >= 1
 	end,
-	on_event = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
-		arg_3_0:increment_stat(arg_3_1, "termite3_collectible_challenge")
+	on_event = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+		-- function 3
+		self:increment_stat(arg_3_1, "termite3_collectible_challenge")
 	end
 }
-var_0_4.termite3_searchlight_challenge = {
+achievements.termite3_searchlight_challenge = {
 	name = "achv_termite3_searchlight_challenge_name",
 	display_completion_ui = true,
 	icon = "achv_termite3_searchlight_icon",
@@ -70,54 +73,62 @@ var_0_4.termite3_searchlight_challenge = {
 	events = {
 		"termite3_searchlight_challenge"
 	},
-	completed = function(arg_4_0, arg_4_1, arg_4_2)
-		return arg_4_0:get_persistent_stat(arg_4_1, "termite3_searchlight_challenge") >= 1
+	completed = function (self, arg_4_1, arg_4_2)
+		-- function 4
+		return self:get_persistent_stat(arg_4_1, "termite3_searchlight_challenge") >= 1
 	end,
-	on_event = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
-		arg_5_0:increment_stat(arg_5_1, "termite3_searchlight_challenge")
+	on_event = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+		-- function 5
+		self:increment_stat(arg_5_1, "termite3_searchlight_challenge")
 	end
 }
 
-local var_0_16 = 4
+local num_2 = 4
 
-var_0_4.termite3_generator_challenge = {
+achievements.termite3_generator_challenge = {
 	name = "achv_termite3_generator_challenge_name",
 	display_completion_ui = true,
 	icon = "achv_termite3_generator",
-	desc = function()
-		return string.format(Localize("achv_termite3_generator_challenge_desc"), var_0_16)
+	desc = function ()
+		-- function 6
+		return string.format(Localize("achv_termite3_generator_challenge_desc"), num_2)
 	end,
 	events = {
 		"termite3_generator_challenge"
 	},
-	completed = function(arg_7_0, arg_7_1, arg_7_2)
-		return arg_7_0:get_persistent_stat(arg_7_1, "termite3_generator_challenge") >= 1
+	completed = function (self, arg_7_1, arg_7_2)
+		-- function 7
+		return self:get_persistent_stat(arg_7_1, "termite3_generator_challenge") >= 1
 	end,
-	on_event = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
-		arg_8_0:increment_stat(arg_8_1, "termite3_generator_challenge")
+	on_event = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+		-- function 8
+		self:increment_stat(arg_8_1, "termite3_generator_challenge")
 	end
 }
 
-local var_0_17 = 3
+local num_3 = 3
 
-var_0_4.termite3_portal_challenge = {
+achievements.termite3_portal_challenge = {
 	name = "achv_termite3_portal_challenge_name",
 	display_completion_ui = true,
 	icon = "achv_termite3_portal_icon",
-	desc = function()
-		return string.format(Localize("achv_termite3_portal_challenge_desc"), var_0_17)
+	desc = function ()
+		-- function 9
+		return string.format(Localize("achv_termite3_portal_challenge_desc"), num_3)
 	end,
 	events = {
 		"termite3_portal_challenge"
 	},
-	completed = function(arg_10_0, arg_10_1, arg_10_2)
-		return arg_10_0:get_persistent_stat(arg_10_1, "termite3_portal_challenge") >= 1
+	completed = function (self, arg_10_1, arg_10_2)
+		-- function 10
+		return self:get_persistent_stat(arg_10_1, "termite3_portal_challenge") >= 1
 	end,
-	on_event = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
-		arg_11_0:increment_stat(arg_11_1, "termite3_portal_challenge")
+	on_event = function (self, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+		-- function 11
+		self:increment_stat(arg_11_1, "termite3_portal_challenge")
 	end
 }
-termite3_all_challenges = table.clone(var_0_11)
+termite3_all_challenges = table.clone(tbl_6)
 
 table.remove(termite3_all_challenges, #termite3_all_challenges)
 
@@ -125,5 +136,5 @@ termite3_all_challenges[#termite3_all_challenges + 1] = "termite3_collectible_ch
 termite3_all_challenges[#termite3_all_challenges + 1] = "termite3_searchlight_challenge"
 termite3_all_challenges[#termite3_all_challenges + 1] = "termite3_generator_challenge"
 
-var_0_2(var_0_4, "termite3_all_challenges", termite3_all_challenges, "achv_termite3_complete_all_icon", nil, nil, nil)
-var_0_5(var_0_6, var_0_7)
+add_meta_challenge(achievements, "termite3_all_challenges", termite3_all_challenges, "achv_termite3_complete_all_icon", nil, nil, nil)
+add_console_achievements(tbl, tbl_2)

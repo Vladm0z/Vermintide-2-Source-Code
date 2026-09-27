@@ -3,330 +3,372 @@
 require("scripts/unit_extensions/ai_commander/ai_commander_extension")
 
 local var_0_0 = local_require("scripts/ui/hud_ui/pet_ui_definitions")
-local var_0_1 = var_0_0.SKULL_TEXTURES
-local var_0_2 = var_0_0.SKULL_GLOW_TEXTURES
-local var_0_3 = var_0_0.RETAINED_MODE_ENABLED
+local SKULL_TEXTURES = var_0_0.SKULL_TEXTURES
+local SKULL_GLOW_TEXTURES = var_0_0.SKULL_GLOW_TEXTURES
+local RETAINED_MODE_ENABLED = var_0_0.RETAINED_MODE_ENABLED
 
 PetUI = class(PetUI)
 
-function PetUI.init(arg_1_0, arg_1_1, arg_1_2)
-	arg_1_0._parent = arg_1_1
-	arg_1_0._ui_renderer = arg_1_2.ui_renderer
-	arg_1_0._render_settings = {
+PetUI.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	self._parent = arg_1_1
+	self._ui_renderer = arg_1_2.ui_renderer
+	self._render_settings = {
 		snap_pixel_positions = true
 	}
-	arg_1_0._global_pet_counter = 0
-	arg_1_0._last_amount_pets = 0
-	arg_1_0._last_resolution = {}
+	self._global_pet_counter = 0
+	self._last_amount_pets = 0
+	self._last_resolution = {}
 
-	arg_1_0:_create_ui_elements()
+	self:_create_ui_elements()
 end
 
-function PetUI.destroy(arg_2_0, arg_2_1, arg_2_2)
-	for iter_2_0, iter_2_1 in pairs(arg_2_0._pet_widget_by_unit) do
-		local var_2_0 = iter_2_1.content.marker_id
+PetUI.destroy = function (self, arg_2_1, arg_2_2)
+	-- function 2
+	for k, v in pairs(self._pet_widget_by_unit) do
+		local marker_id = v.content.marker_id
 
-		if var_2_0 then
-			Managers.state.event:trigger("remove_world_marker", var_2_0)
+		if not marker_id then
+			Managers.state.event:trigger("remove_world_marker", marker_id)
 		end
 	end
 
-	if var_0_3 then
-		arg_2_0:_destroy_all_widgets()
+	if not RETAINED_MODE_ENABLED then
+		self:_destroy_all_widgets()
 	end
 end
 
-function PetUI._destroy_all_widgets(arg_3_0)
-	for iter_3_0, iter_3_1 in pairs(arg_3_0._pet_widget_list) do
-		UIWidget.destroy(arg_3_0._ui_renderer, iter_3_1)
+PetUI._destroy_all_widgets = function (self)
+	-- function 3
+	for k, v in pairs(self._pet_widget_list) do
+		UIWidget.destroy(self._ui_renderer, v)
 	end
 
-	UIWidget.destroy(arg_3_0._ui_renderer, arg_3_0._container_widget)
+	UIWidget.destroy(self._ui_renderer, self._container_widget)
 end
 
-function PetUI._create_ui_elements(arg_4_0)
-	UIRenderer.clear_scenegraph_queue(arg_4_0._ui_renderer)
+PetUI._create_ui_elements = function (self)
+	-- function 4
+	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
 
-	arg_4_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
-	arg_4_0._ui_animator = UIAnimator:new(arg_4_0._ui_scenegraph, var_0_0.animation_definitions)
-	arg_4_0._pet_widget_by_unit = {}
-	arg_4_0._pet_widget_list = {}
-	arg_4_0._pet_widget_animation_ids = {}
-	arg_4_0._pet_attack_status = {}
-	arg_4_0._container_widget = UIWidget.init(var_0_0.container_widget_definition)
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
+	self._ui_animator = UIAnimator:new(self._ui_scenegraph, var_0_0.animation_definitions)
+	self._pet_widget_by_unit = {}
+	self._pet_widget_list = {}
+	self._pet_widget_animation_ids = {}
+	self._pet_attack_status = {}
+	self._container_widget = UIWidget.init(var_0_0.container_widget_definition)
 
-	local var_4_0 = arg_4_0._ui_renderer.gui
-	local var_4_1 = arg_4_0._ui_renderer.gui_retained
+	local gui = self._ui_renderer.gui
+	local gui_retained = self._ui_renderer.gui_retained
 
-	arg_4_0._container_widget.content.materials = {
-		Gui.material(var_4_0, "necromancer_command_coin_follow"),
-		Gui.material(var_4_0, "necromancer_command_coin_attack"),
-		Gui.material(var_4_0, "necromancer_command_coin_defend"),
-		Gui.material(var_4_0, "necromancer_command_coin")
+	self._container_widget.content.materials = {
+		Gui.material(gui, "necromancer_command_coin_follow"),
+		Gui.material(gui, "necromancer_command_coin_attack"),
+		Gui.material(gui, "necromancer_command_coin_defend"),
+		Gui.material(gui, "necromancer_command_coin")
 	}
-	arg_4_0._container_widget.content.retained_materials = {
-		Gui.material(var_4_1, "necromancer_command_coin_follow"),
-		Gui.material(var_4_1, "necromancer_command_coin_attack"),
-		Gui.material(var_4_1, "necromancer_command_coin_defend"),
-		Gui.material(var_4_1, "necromancer_command_coin")
+	self._container_widget.content.retained_materials = {
+		Gui.material(gui_retained, "necromancer_command_coin_follow"),
+		Gui.material(gui_retained, "necromancer_command_coin_attack"),
+		Gui.material(gui_retained, "necromancer_command_coin_defend"),
+		Gui.material(gui_retained, "necromancer_command_coin")
 	}
-	arg_4_0._dirty = true
+	self._dirty = true
 end
 
-function PetUI.set_visible(arg_5_0, arg_5_1)
-	arg_5_0._is_visible = arg_5_1
+PetUI.set_visible = function (self, arg_5_1)
+	-- function 5
+	self._is_visible = arg_5_1
 
-	arg_5_0:_set_elements_visible(arg_5_1)
+	self:_set_elements_visible(arg_5_1)
 end
 
-function PetUI._set_elements_visible(arg_6_0, arg_6_1)
-	local var_6_0 = arg_6_0._ui_renderer
+PetUI._set_elements_visible = function (self, arg_6_1)
+	-- function 6
+	local _ui_renderer = self._ui_renderer
 
-	UIRenderer.set_element_visible(var_6_0, arg_6_0._container_widget.element, arg_6_1)
+	UIRenderer.set_element_visible(_ui_renderer, self._container_widget.element, arg_6_1)
 
-	for iter_6_0, iter_6_1 in ipairs(arg_6_0._pet_widget_list) do
-		UIRenderer.set_element_visible(var_6_0, iter_6_1.element)
+	for i, v in ipairs(self._pet_widget_list) do
+		UIRenderer.set_element_visible(_ui_renderer, v.element)
 	end
 
-	arg_6_0._retained_elements_visible = arg_6_1
+	self._retained_elements_visible = arg_6_1
 
-	arg_6_0:_set_all_dirty()
+	self:_set_all_dirty()
 end
 
-function PetUI._set_widget_dirty(arg_7_0, arg_7_1)
+PetUI._set_widget_dirty = function (self, arg_7_1)
+	-- function 7
 	arg_7_1.element.dirty = true
-	arg_7_0._dirty = true
+	self._dirty = true
 end
 
-function PetUI._set_all_dirty(arg_8_0)
-	UIUtils.mark_dirty(arg_8_0._pet_widget_list)
-	arg_8_0:_set_widget_dirty(arg_8_0._container_widget)
+PetUI._set_all_dirty = function (self)
+	-- function 8
+	UIUtils.mark_dirty(self._pet_widget_list)
+	self:_set_widget_dirty(self._container_widget)
 end
 
-function PetUI._create_pet_widget(arg_9_0, arg_9_1)
-	local var_9_0 = #arg_9_0._pet_widget_list + 1
+PetUI._create_pet_widget = function (self, arg_9_1)
+	-- function 9
+	local num = #self._pet_widget_list + 1
 	local var_9_1 = UIWidget.init(var_0_0.pet_widget_definition)
-	local var_9_2 = var_9_1.content
-	local var_9_3 = math.random(var_9_0, #var_0_1)
+	local content = var_9_1.content
+	local random = math.random(num, #SKULL_TEXTURES)
 
-	var_0_1[var_9_3], var_0_1[var_9_0] = var_0_1[var_9_0], var_0_1[var_9_3]
-	var_0_2[var_9_3], var_0_2[var_9_0] = var_0_2[var_9_0], var_0_2[var_9_3]
-	var_9_1.content.icon = var_0_1[var_9_0] or var_0_1[1]
-	var_9_1.content.icon_glow = var_0_2[var_9_0] or var_0_2[1]
-	arg_9_0._pet_widget_by_unit[arg_9_1] = var_9_1
-	var_9_2.unit = arg_9_1
-	arg_9_0._global_pet_counter = arg_9_0._global_pet_counter + 1
-	var_9_2.order_index = arg_9_0._global_pet_counter
-	arg_9_0._pet_widget_list[var_9_0] = var_9_1
+	SKULL_TEXTURES[random], SKULL_TEXTURES[num] = SKULL_TEXTURES[num], SKULL_TEXTURES[random]
+	SKULL_GLOW_TEXTURES[random], SKULL_GLOW_TEXTURES[num] = SKULL_GLOW_TEXTURES[num], SKULL_GLOW_TEXTURES[random]
 
-	local var_9_4 = arg_9_0._ui_animator:start_animation("spawn_skeleton", var_9_1, var_0_0.scenegraph_definition)
+	local content_2 = var_9_1.content
+	local var_9_5 = SKULL_TEXTURES[num]
 
-	arg_9_0._pet_widget_animation_ids[var_9_1] = var_9_4
+	var_9_5 = var_9_5 or SKULL_TEXTURES[1]
+	content_2.icon = var_9_5
+
+	local content_3 = var_9_1.content
+	local var_9_7 = SKULL_GLOW_TEXTURES[num]
+
+	var_9_7 = var_9_7 or SKULL_GLOW_TEXTURES[1]
+	content_3.icon_glow = var_9_7
+	self._pet_widget_by_unit[arg_9_1] = var_9_1
+	content.unit = arg_9_1
+	self._global_pet_counter = self._global_pet_counter + 1
+	content.order_index = self._global_pet_counter
+	self._pet_widget_list[num] = var_9_1
+
+	local start_animation = self._ui_animator:start_animation("spawn_skeleton", var_9_1, var_0_0.scenegraph_definition)
+
+	self._pet_widget_animation_ids[var_9_1] = start_animation
 
 	return var_9_1
 end
 
-local function var_0_4(arg_10_0, arg_10_1)
-	local var_10_0 = Managers.input:get_service(arg_10_0)
-	local var_10_1 = var_10_0 and var_10_0:get_keymapping(arg_10_1)
-	local var_10_2 = var_10_1 and var_10_1[1]
-	local var_10_3 = var_10_1 and var_10_1[2]
+local function fn(arg_10_0, arg_10_1)
+	-- function 10
+	local get_service = Managers.input:get_service(arg_10_0)
+	local flag = not get_service and get_service:get_keymapping(arg_10_1)
+	local flag_2 = not flag and flag[1]
+	local flag_3 = not flag and flag[2]
 	local var_10_4
 
-	if var_10_3 ~= UNASSIGNED_KEY then
-		if var_10_2 == "keyboard" then
-			var_10_4 = Keyboard.button_name(var_10_3)
-		elseif var_10_2 == "mouse" then
-			var_10_4 = Mouse.button_name(var_10_3)
-		elseif var_10_2 == "gamepad" then
-			var_10_4 = Pad1.button_name(var_10_3)
+	if flag_3 ~= UNASSIGNED_KEY then
+		if flag_2 == "keyboard" then
+			var_10_4 = Keyboard.button_name(flag_3)
+		elseif flag_2 == "mouse" then
+			var_10_4 = Mouse.button_name(flag_3)
+		elseif flag_2 == "gamepad" then
+			var_10_4 = Pad1.button_name(flag_3)
 		end
 	end
 
 	return var_10_4 or "???"
 end
 
-function PetUI._pet_ui_available(arg_11_0, arg_11_1)
-	local var_11_0 = arg_11_0._ui_available
-	local var_11_1 = arg_11_1 and arg_11_1:career_name()
+PetUI._pet_ui_available = function (self, arg_11_1)
+	-- function 11
+	local _ui_available = self._ui_available
+	local flag = not arg_11_1 and arg_11_1:career_name()
 
-	if not CareerSettings[var_11_1].show_pet_ui then
-		if var_0_3 and var_11_0 then
-			arg_11_0:destroy()
+	if not CareerSettings[flag].show_pet_ui then
+		if not RETAINED_MODE_ENABLED and not _ui_available then
+			self:destroy()
 		end
 
-		table.clear(arg_11_0._pet_widget_by_unit)
-		table.clear(arg_11_0._pet_widget_list)
+		table.clear(self._pet_widget_by_unit)
+		table.clear(self._pet_widget_list)
 
-		arg_11_0._ui_available = false
+		self._ui_available = false
 	else
-		if var_0_3 and not var_11_0 then
-			arg_11_0:_set_all_dirty()
+		if not (not RETAINED_MODE_ENABLED and _ui_available) then
+			self:_set_all_dirty()
 		end
 
-		arg_11_0._ui_available = true
+		self._ui_available = true
 	end
 
-	return arg_11_0._ui_available
+	return self._ui_available
 end
 
-local var_0_5 = {}
+local tbl = {}
 
-function PetUI._update_animations(arg_12_0, arg_12_1)
-	table.clear(var_0_5)
+PetUI._update_animations = function (self, arg_12_1)
+	-- function 12
+	table.clear(tbl)
 
-	local var_12_0 = arg_12_0._ui_animator
+	local _ui_animator = self._ui_animator
 
-	var_12_0:update(arg_12_1)
+	_ui_animator:update(arg_12_1)
 
-	local var_12_1 = arg_12_0._change_command_state_anim
+	local _change_command_state_anim = self._change_command_state_anim
 
-	if var_12_1 then
-		if not var_12_0:is_animation_completed(var_12_1) then
-			arg_12_0:_set_widget_dirty(arg_12_0._container_widget)
+	if not _change_command_state_anim then
+		if not _ui_animator:is_animation_completed(_change_command_state_anim) then
+			self:_set_widget_dirty(self._container_widget)
 		else
-			arg_12_0._change_command_state_anim = nil
+			self._change_command_state_anim = nil
 		end
 	end
 
-	for iter_12_0, iter_12_1 in pairs(arg_12_0._pet_widget_animation_ids) do
-		if not var_12_0:is_animation_completed(iter_12_1) then
-			arg_12_0:_set_widget_dirty(iter_12_0)
+	for k, v in pairs(self._pet_widget_animation_ids) do
+		if not _ui_animator:is_animation_completed(v) then
+			self:_set_widget_dirty(k)
 		else
-			var_0_5[#var_0_5 + 1] = iter_12_0
+			tbl[#tbl + 1] = k
 		end
 	end
 
-	for iter_12_2 = 1, #var_0_5 do
-		local var_12_2 = var_0_5[iter_12_2]
+	for k_2 = 1, #tbl do
+		local var_12_2 = tbl[k_2]
 
-		arg_12_0._pet_widget_animation_ids[var_12_2] = nil
+		self._pet_widget_animation_ids[var_12_2] = nil
 	end
 end
 
-local function var_0_6(arg_13_0, arg_13_1)
-	return arg_13_0.content.order_index < arg_13_1.content.order_index
+local function fn_2(self, arg_13_1)
+	-- function 13
+	return self.content.order_index < arg_13_1.content.order_index
 end
 
-function PetUI._update_pet_container(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
-	local var_14_0 = arg_14_3.player_unit
-	local var_14_1 = ScriptUnit.has_extension(var_14_0, "ai_commander_system")
-	local var_14_2 = var_14_1:get_controlled_units()
-	local var_14_3 = next(var_14_2)
-	local var_14_4 = var_14_3 and var_14_1:command_state(var_14_3) or CommandStates.Following
-	local var_14_5 = arg_14_0._container_widget
+PetUI._update_pet_container = function (self, arg_14_1, arg_14_2, arg_14_3)
+	-- function 14
+	local player_unit = arg_14_3.player_unit
+	local has_extension = ScriptUnit.has_extension(player_unit, "ai_commander_system")
+	local get_controlled_units = has_extension:get_controlled_units()
+	local var_14_3 = next(get_controlled_units)
+	local command_state
 
-	if var_14_4 ~= arg_14_0._last_command_state and arg_14_0._ui_animator:is_animation_completed(arg_14_0._change_command_state_anim) then
-		arg_14_0._change_command_state_anim = arg_14_0._ui_animator:start_animation("change_command_state", var_14_5, var_0_0.scenegraph_definition, var_14_4)
-		arg_14_0._last_command_state = var_14_4
-	end
+	if not var_14_3 then
+		command_state = has_extension:command_state(var_14_3)
 
-	if not var_14_5.content.initialized then
-		var_14_5.content.initialized = true
-		var_14_5.content.help_text = string.format("{#color(255,168,0)}[%s]{#reset()} to attack", Utf8.upper(var_0_4("Player", "action_one"))) .. string.format("\n{#color(255,168,0)}[%s]{#reset()} to hold a position", Utf8.upper(var_0_4("Player", "action_two_hold"))) .. string.format("\n{#color(255,168,0)}[%s]{#reset()} to dark pact", Utf8.upper(var_0_4("Player", "weapon_reload")))
-	end
-
-	local var_14_6 = ScriptUnit.has_extension(var_14_0, "buff_system")
-	local var_14_7 = var_14_5.content.show_glow
-
-	var_14_5.content.show_glow = not not var_14_6:get_buff_type("sienna_necromancer_6_3_available_charge")
-
-	if var_14_7 ~= var_14_5.content.show_glow then
-		arg_14_0:_set_widget_dirty(var_14_5)
-	end
-
-	local var_14_8 = arg_14_0._pet_widget_by_unit
-	local var_14_9 = arg_14_0._pet_widget_list
-	local var_14_10 = arg_14_0._pet_attack_status
-	local var_14_11 = ScriptUnit.has_extension(var_14_0, "inventory_system")
-	local var_14_12 = var_14_11 and var_14_11:get_wielded_slot_item_template()
-	local var_14_13 = not not var_14_12 and not not var_14_12.is_command_utility_weapon
-	local var_14_14 = false
-
-	for iter_14_0 in pairs(var_14_2) do
-		if var_14_1:pet_ui_data(iter_14_0) and HEALTH_ALIVE[iter_14_0] then
-			if not var_14_8[iter_14_0] then
-				local var_14_15 = arg_14_0:_create_pet_widget(iter_14_0)
-
-				var_14_14 = true
-
-				arg_14_0:add_pet_nameplate(iter_14_0, var_14_15)
-			end
-
-			local var_14_16 = ScriptUnit.has_extension(iter_14_0, "buff_system")
-			local var_14_17 = var_14_16 and var_14_16:has_buff_type("skeleton_command_attack_boost")
-			local var_14_18 = var_14_8[iter_14_0]
-
-			if var_14_17 and not var_14_10[iter_14_0] then
-				local var_14_19 = arg_14_0._ui_animator:start_animation("fade_in_skull_glow", var_14_18, var_0_0.scenegraph_definition)
-
-				arg_14_0._pet_widget_animation_ids[var_14_18] = var_14_19
-			elseif not var_14_17 and var_14_10[iter_14_0] then
-				local var_14_20 = arg_14_0._ui_animator:start_animation("fade_out_skull_glow", var_14_18, var_0_0.scenegraph_definition)
-
-				arg_14_0._pet_widget_animation_ids[var_14_18] = var_14_20
-			end
-
-			var_14_10[iter_14_0] = var_14_17
+		if not command_state then
+			-- Nothing
 		end
 	end
 
-	if Application.user_setting("numeric_ui") then
-		local var_14_21 = var_14_1:get_controlled_units_count()
+	command_state = CommandStates.Following
 
-		if (arg_14_0._last_amount_pets or 0) ~= var_14_21 then
-			var_14_5.content.pet_amount_text = var_14_21
-			var_14_5.content.pet_amount_text_shadow = var_14_21
-			arg_14_0._last_amount_pets = var_14_21
+	::label_14_0::
 
-			arg_14_0:_set_widget_dirty(var_14_5)
+	local _container_widget = self._container_widget
+
+	if command_state == self._last_command_state or not self._ui_animator:is_animation_completed(self._change_command_state_anim) then
+		self._change_command_state_anim = self._ui_animator:start_animation("change_command_state", _container_widget, var_0_0.scenegraph_definition, command_state)
+		self._last_command_state = command_state
+	end
+
+	if not _container_widget.content.initialized then
+		_container_widget.content.initialized = true
+		_container_widget.content.help_text = string.format("{#color(255,168,0)}[%s]{#reset()} to attack", Utf8.upper(fn("Player", "action_one"))) .. string.format("\n{#color(255,168,0)}[%s]{#reset()} to hold a position", Utf8.upper(fn("Player", "action_two_hold"))) .. string.format("\n{#color(255,168,0)}[%s]{#reset()} to dark pact", Utf8.upper(fn("Player", "weapon_reload")))
+	end
+
+	local has_extension_2 = ScriptUnit.has_extension(player_unit, "buff_system")
+	local show_glow = _container_widget.content.show_glow
+
+	_container_widget.content.show_glow = not not has_extension_2:get_buff_type("sienna_necromancer_6_3_available_charge")
+
+	if show_glow ~= _container_widget.content.show_glow then
+		self:_set_widget_dirty(_container_widget)
+	end
+
+	local _pet_widget_by_unit = self._pet_widget_by_unit
+	local _pet_widget_list = self._pet_widget_list
+	local _pet_attack_status = self._pet_attack_status
+	local has_extension_3 = ScriptUnit.has_extension(player_unit, "inventory_system")
+	local flag = not has_extension_3 and has_extension_3:get_wielded_slot_item_template()
+	local flag_2 = not flag and not not flag.is_command_utility_weapon
+	local flag_3 = false
+
+	for k in pairs(get_controlled_units) do
+		if not has_extension:pet_ui_data(k) and not HEALTH_ALIVE[k] then
+			if not _pet_widget_by_unit[k] then
+				local _create_pet_widget = self:_create_pet_widget(k)
+
+				flag_3 = true
+
+				self:add_pet_nameplate(k, _create_pet_widget)
+			end
+
+			local has_extension_4 = ScriptUnit.has_extension(k, "buff_system")
+			local flag_4 = not has_extension_4 and has_extension_4:has_buff_type("skeleton_command_attack_boost")
+			local var_14_18 = _pet_widget_by_unit[k]
+
+			if not (not flag_4 and _pet_attack_status[k]) then
+				local start_animation = self._ui_animator:start_animation("fade_in_skull_glow", var_14_18, var_0_0.scenegraph_definition)
+
+				self._pet_widget_animation_ids[var_14_18] = start_animation
+			elseif flag_4 or not _pet_attack_status[k] then
+				local start_animation_2 = self._ui_animator:start_animation("fade_out_skull_glow", var_14_18, var_0_0.scenegraph_definition)
+
+				self._pet_widget_animation_ids[var_14_18] = start_animation_2
+			end
+
+			_pet_attack_status[k] = flag_4
 		end
 	end
 
-	local var_14_22, var_14_23 = var_14_1:hovered_friendly_unit()
-	local var_14_24 = var_14_22 or var_14_23
+	if not Application.user_setting("numeric_ui") then
+		local get_controlled_units_count = has_extension:get_controlled_units_count()
+		local _last_amount_pets = self._last_amount_pets
 
-	for iter_14_1 = #var_14_9, 1, -1 do
-		local var_14_25 = var_14_9[iter_14_1]
-		local var_14_26 = var_14_25.content.unit
+		_last_amount_pets = _last_amount_pets or 0
 
-		if not (var_14_1 and arg_14_0:_update_pet_widget(var_14_25, var_14_1, var_14_13, var_14_24)) then
-			var_14_8[var_14_26] = nil
+		if _last_amount_pets ~= get_controlled_units_count then
+			_container_widget.content.pet_amount_text = get_controlled_units_count
+			_container_widget.content.pet_amount_text_shadow = get_controlled_units_count
+			self._last_amount_pets = get_controlled_units_count
 
-			local var_14_27 = var_14_25.content.marker_id
-
-			if var_14_27 then
-				Managers.state.event:trigger("remove_world_marker", var_14_27)
-
-				var_14_25.content.marker_id = false
-				var_14_25.content.marker_widget = nil
-			end
-
-			if var_0_3 then
-				UIWidget.destroy(arg_14_0._ui_renderer, var_14_25)
-			end
-
-			table.remove(var_14_9, iter_14_1)
-
-			var_14_14 = true
+			self:_set_widget_dirty(_container_widget)
 		end
 	end
 
-	if var_14_14 then
-		table.sort(arg_14_0._pet_widget_list, var_0_6)
+	local hovered_friendly_unit, var_14_24 = has_extension:hovered_friendly_unit()
+	local flag_5 = hovered_friendly_unit or var_14_24
 
-		local var_14_28 = #arg_14_0._pet_widget_list
+	for j = #_pet_widget_list, 1, -1 do
+		local var_14_26 = _pet_widget_list[j]
+		local unit = var_14_26.content.unit
 
-		for iter_14_2, iter_14_3 in pairs(arg_14_0._pet_widget_list) do
-			var_0_0.reposition_widget(iter_14_3, iter_14_2, var_14_28)
-			arg_14_0:_set_widget_dirty(iter_14_3)
+		if not (not has_extension and self:_update_pet_widget(var_14_26, has_extension, flag_2, flag_5)) then
+			_pet_widget_by_unit[unit] = nil
+
+			local marker_id = var_14_26.content.marker_id
+
+			if not marker_id then
+				Managers.state.event:trigger("remove_world_marker", marker_id)
+
+				var_14_26.content.marker_id = false
+				var_14_26.content.marker_widget = nil
+			end
+
+			if not RETAINED_MODE_ENABLED then
+				UIWidget.destroy(self._ui_renderer, var_14_26)
+			end
+
+			table.remove(_pet_widget_list, j)
+
+			flag_3 = true
+		end
+	end
+
+	if not flag_3 then
+		table.sort(self._pet_widget_list, fn_2)
+
+		local count = #self._pet_widget_list
+
+		for k_2, v in pairs(self._pet_widget_list) do
+			var_0_0.reposition_widget(v, k_2, count)
+			self:_set_widget_dirty(v)
 		end
 	end
 end
 
-function PetUI.add_pet_nameplate(arg_15_0, arg_15_1, arg_15_2)
-	if arg_15_0._show_nameplates then
-		Managers.state.event:trigger("add_world_marker_unit", "pet_nameplate", arg_15_1, function(arg_16_0, arg_16_1)
+PetUI.add_pet_nameplate = function (self, arg_15_1, arg_15_2)
+	-- function 15
+	if not self._show_nameplates then
+		Managers.state.event:trigger("add_world_marker_unit", "pet_nameplate", arg_15_1, function (arg_16_0, arg_16_1)
+			-- function 16
 			if arg_15_2.content.marker_id ~= false then
 				arg_15_2.content.marker_id = arg_16_0
 				arg_15_2.content.marker_widget = arg_16_1
@@ -336,99 +378,105 @@ function PetUI.add_pet_nameplate(arg_15_0, arg_15_1, arg_15_2)
 	end
 end
 
-function PetUI.update(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
-	if not arg_17_0._is_visible then
+PetUI.update = function (self, arg_17_1, arg_17_2, arg_17_3)
+	-- function 17
+	if not self._is_visible then
 		return
 	end
 
-	if not arg_17_0:_pet_ui_available(arg_17_3) then
+	if not self:_pet_ui_available(arg_17_3) then
 		return
 	end
 
-	arg_17_0:_update_animations(arg_17_1, arg_17_2, arg_17_3)
-	arg_17_0:_update_pet_container(arg_17_1, arg_17_2, arg_17_3)
-	arg_17_0:_handle_resolution_modified()
-	arg_17_0:_handle_gamepad_activity()
-	arg_17_0:_draw(arg_17_1, arg_17_2)
+	self:_update_animations(arg_17_1, arg_17_2, arg_17_3)
+	self:_update_pet_container(arg_17_1, arg_17_2, arg_17_3)
+	self:_handle_resolution_modified()
+	self:_handle_gamepad_activity()
+	self:_draw(arg_17_1, arg_17_2)
 end
 
-function PetUI._handle_gamepad_activity(arg_18_0)
-	local var_18_0 = Managers.input:is_device_active("gamepad")
-	local var_18_1 = arg_18_0._gamepad_active_last_frame == nil
+PetUI._handle_gamepad_activity = function (self)
+	-- function 18
+	local is_device_active = Managers.input:is_device_active("gamepad")
+	local flag = self._gamepad_active_last_frame == nil
 
-	if var_18_0 then
-		if not arg_18_0._gamepad_active_last_frame or var_18_1 then
-			arg_18_0._gamepad_active_last_frame = true
-			arg_18_0._ui_scenegraph.container.local_position[1] = 435
-			arg_18_0._ui_scenegraph.container.local_position[2] = 10
+	if not is_device_active then
+		if not self._gamepad_active_last_frame and not flag then
+			self._gamepad_active_last_frame = true
+			self._ui_scenegraph.container.local_position[1] = 435
+			self._ui_scenegraph.container.local_position[2] = 10
 
-			arg_18_0:_set_all_dirty()
+			self:_set_all_dirty()
 		end
-	elseif arg_18_0._gamepad_active_last_frame or var_18_1 then
-		arg_18_0._gamepad_active_last_frame = false
-		arg_18_0._ui_scenegraph.container.local_position[1] = 460
-		arg_18_0._ui_scenegraph.container.local_position[2] = 0
+	elseif self._gamepad_active_last_frame or not flag then
+		self._gamepad_active_last_frame = false
+		self._ui_scenegraph.container.local_position[1] = 460
+		self._ui_scenegraph.container.local_position[2] = 0
 
-		arg_18_0:_set_all_dirty()
+		self:_set_all_dirty()
 	end
 end
 
-function PetUI._handle_resolution_modified(arg_19_0)
-	local var_19_0 = RESOLUTION_LOOKUP.res_w
-	local var_19_1 = RESOLUTION_LOOKUP.res_h
+PetUI._handle_resolution_modified = function (self)
+	-- function 19
+	local res_w = RESOLUTION_LOOKUP.res_w
+	local res_h = RESOLUTION_LOOKUP.res_h
 
-	if arg_19_0._last_resolution.res_w ~= var_19_0 or arg_19_0._last_resolution.res_h ~= var_19_1 then
-		arg_19_0:_set_all_dirty()
+	if not (self._last_resolution.res_w ~= res_w or self._last_resolution.res_h == res_h) then
+		self:_set_all_dirty()
 
-		arg_19_0._last_resolution.res_w = var_19_0
-		arg_19_0._last_resolution.res_h = var_19_1
+		self._last_resolution.res_w = res_w
+		self._last_resolution.res_h = res_h
 	end
 end
 
-function PetUI.resolution_modified(arg_20_0)
-	arg_20_0:_set_all_dirty()
+PetUI.resolution_modified = function (self)
+	-- function 20
+	self:_set_all_dirty()
 end
 
-function PetUI._draw(arg_21_0, arg_21_1, arg_21_2)
-	if not arg_21_0._dirty and var_0_3 then
+PetUI._draw = function (self, arg_21_1, arg_21_2)
+	-- function 21
+	if self._dirty or not RETAINED_MODE_ENABLED then
 		return
 	end
 
-	local var_21_0 = arg_21_0._ui_renderer
+	local _ui_renderer = self._ui_renderer
 
-	UIRenderer.begin_pass(var_21_0, arg_21_0._ui_scenegraph, FAKE_INPUT_SERVICE, arg_21_1, nil, arg_21_0._render_settings)
-	UIRenderer.draw_widget(var_21_0, arg_21_0._container_widget)
-	UIRenderer.draw_all_widgets(var_21_0, arg_21_0._pet_widget_list)
-	UIRenderer.end_pass(var_21_0)
+	UIRenderer.begin_pass(_ui_renderer, self._ui_scenegraph, FAKE_INPUT_SERVICE, arg_21_1, nil, self._render_settings)
+	UIRenderer.draw_widget(_ui_renderer, self._container_widget)
+	UIRenderer.draw_all_widgets(_ui_renderer, self._pet_widget_list)
+	UIRenderer.end_pass(_ui_renderer)
 
-	arg_21_0._dirty = false
+	self._dirty = false
 end
 
-function PetUI._update_pet_widget(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
-	local var_22_0 = arg_22_1.content
-	local var_22_1 = var_22_0.unit
-	local var_22_2, var_22_3, var_22_4 = arg_22_2:pet_ui_data(var_22_1)
+PetUI._update_pet_widget = function (self, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+	-- function 22
+	local content = arg_22_1.content
+	local unit = content.unit
+	local pet_ui_data, var_22_3, var_22_4 = arg_22_2:pet_ui_data(unit)
 
-	if not var_22_2 then
+	if not pet_ui_data then
 		return false
 	end
 
-	local var_22_5 = var_22_0.marker_widget
+	local marker_widget = content.marker_widget
 
-	if var_22_5 then
-		var_22_5.content.visible = arg_22_3
+	if not marker_widget then
+		marker_widget.content.visible = arg_22_3
 
-		if var_22_2.pet_ui_type == "health" then
-			var_22_5.content.progress = var_22_3 / var_22_4
+		if pet_ui_data.pet_ui_type == "health" then
+			marker_widget.content.progress = var_22_3 / var_22_4
 		end
 	end
 
-	local var_22_6 = var_22_0.is_highlighted
+	local is_highlighted = content.is_highlighted
 
-	var_22_0.is_highlighted = arg_22_3 and var_22_1 == arg_22_4
+	content.is_highlighted = not arg_22_3 and unit == arg_22_4
 
-	if var_22_6 ~= var_22_0.is_highlighted then
-		arg_22_0:_set_widget_dirty(arg_22_1)
+	if is_highlighted ~= content.is_highlighted then
+		self:_set_widget_dirty(arg_22_1)
 	end
 
 	return true

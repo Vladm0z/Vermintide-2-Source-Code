@@ -5,7 +5,7 @@ local var_0_0 = local_require("scripts/ui/views/start_game_view/windows/definiti
 StartGameWindowVersusLobbyBrowser = class(StartGameWindowVersusLobbyBrowser, StartGameWindowLobbyBrowserConsole)
 StartGameWindowVersusLobbyBrowser.NAME = "StartGameWindowVersusLobbyBrowser"
 
-local var_0_1 = {
+local tbl = {
 	project_hash = "bulldozer",
 	config_file_name = "global",
 	lobby_port = GameSettingsDevelopment.network_port,
@@ -13,47 +13,59 @@ local var_0_1 = {
 	max_members = MatchmakingSettingsOverrides.versus.MAX_NUMBER_OF_PLAYERS
 }
 
-function StartGameWindowVersusLobbyBrowser.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowVersusLobbyBrowser.on_enter = function (self, arg_1_1, arg_1_2)
+	-- function 1
 	print("[StartGameWindowVersusLobbyBrowser] Enter Substate StartGameWindowVersusLobbyBrowser")
 
-	arg_1_0._max_num_members = MatchmakingSettingsOverrides.versus.MAX_NUMBER_OF_PLAYERS
-	arg_1_0._parent = arg_1_1.parent
+	self._max_num_members = MatchmakingSettingsOverrides.versus.MAX_NUMBER_OF_PLAYERS
+	self._parent = arg_1_1.parent
 
-	local var_1_0 = arg_1_1.ingame_ui_context
+	local ingame_ui_context = arg_1_1.ingame_ui_context
 
-	arg_1_0._statistics_db = var_1_0.statistics_db
+	self._statistics_db = ingame_ui_context.statistics_db
 
-	local var_1_1 = Managers.player:local_player()
+	local local_player = Managers.player:local_player()
 
-	arg_1_0._profile_name = var_1_1:profile_display_name()
-	arg_1_0._career_name = var_1_1:career_name()
-	arg_1_0._stats_id = var_1_1:stats_id()
-	arg_1_0._friend_names = {}
-	arg_1_0._lobby_finder = LobbyFinder:new(var_0_1, MatchmakingSettings.MAX_NUM_LOBBIES, IS_WINDOWS and true)
+	self._profile_name = local_player:profile_display_name()
+	self._career_name = local_player:career_name()
+	self._stats_id = local_player:stats_id()
+	self._friend_names = {}
 
-	local var_1_2 = false
+	local LobbyFinder = LobbyFinder
+	local var_1_3 = LobbyFinder
+	local new = LobbyFinder.new
+	local var_1_5 = tbl
+	local MAX_NUM_LOBBIES = MatchmakingSettings.MAX_NUM_LOBBIES
+	local IS_WINDOWS = IS_WINDOWS
 
-	arg_1_0._current_weave = LevelUnlockUtils.current_weave(arg_1_0._statistics_db, arg_1_0._stats_id, var_1_2)
-	arg_1_0._game_mode_data = var_0_0.setup_game_mode_data(arg_1_0._statistics_db, arg_1_0._stats_id)
-	arg_1_0._lobby_browser_console_ui = LobbyBrowserConsoleUI:new(arg_1_0, var_1_0, arg_1_0._game_mode_data, var_0_0.show_lobbies_table, var_0_0.distance_table)
+	IS_WINDOWS = not IS_WINDOWS and true
+	self._lobby_finder = new(var_1_3, var_1_5, MAX_NUM_LOBBIES, IS_WINDOWS)
 
-	arg_1_0:reset_filters("versus")
-	Managers.matchmaking:set_active_lobby_browser(arg_1_0)
-	arg_1_0:_populate_lobby_list()
-	arg_1_0:change_generic_actions("default_lobby_browser")
-	arg_1_0:set_input_description(nil)
-	Managers.account:get_friends(2000, callback(arg_1_0, "cb_friends_collected"))
+	local flag = false
+
+	self._current_weave = LevelUnlockUtils.current_weave(self._statistics_db, self._stats_id, flag)
+	self._game_mode_data = var_0_0.setup_game_mode_data(self._statistics_db, self._stats_id)
+	self._lobby_browser_console_ui = LobbyBrowserConsoleUI:new(self, ingame_ui_context, self._game_mode_data, var_0_0.show_lobbies_table, var_0_0.distance_table)
+
+	self:reset_filters("versus")
+	Managers.matchmaking:set_active_lobby_browser(self)
+	self:_populate_lobby_list()
+	self:change_generic_actions("default_lobby_browser")
+	self:set_input_description(nil)
+	Managers.account:get_friends(2000, callback(self, "cb_friends_collected"))
 end
 
-function StartGameWindowVersusLobbyBrowser._join(arg_2_0, arg_2_1, arg_2_2)
+StartGameWindowVersusLobbyBrowser._join = function (self, arg_2_1, arg_2_2)
+	-- function 2
 	Managers.matchmaking:request_join_lobby(arg_2_1, arg_2_2)
 
-	arg_2_0.join_lobby_data_id = arg_2_1.id
+	self.join_lobby_data_id = arg_2_1.id
 
-	arg_2_0._parent:set_layout_by_name("versus_player_hosted_lobby")
+	self._parent:set_layout_by_name("versus_player_hosted_lobby")
 end
 
-function StartGameWindowVersusLobbyBrowser.is_lobby_joinable(arg_3_0, arg_3_1)
+StartGameWindowVersusLobbyBrowser.is_lobby_joinable = function (arg_3_0, arg_3_1)
+	-- function 3
 	if not Managers.player.is_server then
 		return false, "matchmaking_promotion_popup_no_wom_title"
 	end
@@ -61,18 +73,29 @@ function StartGameWindowVersusLobbyBrowser.is_lobby_joinable(arg_3_0, arg_3_1)
 	return StartGameWindowVersusLobbyBrowser.super.is_lobby_joinable(arg_3_0, arg_3_1)
 end
 
-function StartGameWindowVersusLobbyBrowser.update(arg_4_0, arg_4_1, arg_4_2)
-	arg_4_0._lobby_finder:update(arg_4_1)
+StartGameWindowVersusLobbyBrowser.update = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	self._lobby_finder:update(arg_4_1)
 
-	if not arg_4_0:_is_refreshing() then
-		if arg_4_0._do_populate then
-			arg_4_0:_populate_lobby_list()
+	if not self:_is_refreshing() then
+		if not self._do_populate then
+			self:_populate_lobby_list()
 		end
 
-		arg_4_0._searching = false
-		arg_4_0._do_populate = false
+		self._searching = false
+		self._do_populate = false
 	end
 
-	arg_4_0:_update_auto_refresh(arg_4_1)
-	arg_4_0._lobby_browser_console_ui:update(arg_4_1, arg_4_2, arg_4_0._searching and arg_4_0._do_populate)
+	self:_update_auto_refresh(arg_4_1)
+
+	local _lobby_browser_console_ui = self._lobby_browser_console_ui
+	local var_4_1 = _lobby_browser_console_ui
+	local update = _lobby_browser_console_ui.update
+	local var_4_3 = arg_4_1
+	local var_4_4 = arg_4_2
+	local _searching = self._searching
+
+	_searching = not _searching and self._do_populate
+
+	update(var_4_1, var_4_3, var_4_4, _searching)
 end

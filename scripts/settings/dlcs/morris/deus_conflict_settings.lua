@@ -776,7 +776,7 @@ BossSettings.deus_chaos_beastmen = {
 	}
 }
 
-local var_0_0 = {
+local tbl = {
 	hard = {
 		max_specials = 3,
 		breeds = {
@@ -944,7 +944,7 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	hard = {
 		max_specials = 3,
 		breeds = {
@@ -1100,7 +1100,7 @@ local var_0_1 = {
 		}
 	}
 }
-local var_0_2 = {
+local tbl_3 = {
 	hard = {
 		max_specials = 2,
 		breeds = {
@@ -1266,7 +1266,7 @@ local var_0_2 = {
 		}
 	}
 }
-local var_0_3 = {
+local tbl_4 = {
 	hard = {
 		max_specials = 2,
 		breeds = {
@@ -1529,7 +1529,7 @@ SpecialsSettings.deus_default = {
 			320
 		}
 	},
-	difficulty_overrides = var_0_0
+	difficulty_overrides = tbl
 }
 SpecialsSettings.deus_skaven = {
 	spawn_method = "specials_by_slots",
@@ -1570,7 +1570,7 @@ SpecialsSettings.deus_skaven = {
 			"skaven_ratling_gunner"
 		}
 	},
-	difficulty_overrides = var_0_1
+	difficulty_overrides = tbl_2
 }
 SpecialsSettings.deus_chaos = {
 	spawn_method = "specials_by_slots",
@@ -1621,7 +1621,7 @@ SpecialsSettings.deus_chaos = {
 			"chaos_corruptor_sorcerer"
 		}
 	},
-	difficulty_overrides = var_0_2
+	difficulty_overrides = tbl_3
 }
 SpecialsSettings.deus_beastmen = {
 	spawn_method = "specials_by_slots",
@@ -1680,7 +1680,7 @@ SpecialsSettings.deus_beastmen = {
 			"chaos_corruptor_sorcerer"
 		}
 	},
-	difficulty_overrides = var_0_3
+	difficulty_overrides = tbl_4
 }
 SpecialsSettings.deus_skaven_beastmen = {
 	spawn_method = "specials_by_slots",
@@ -1859,7 +1859,7 @@ SpecialsSettings.deus_chaos_beastmen = {
 			"chaos_corruptor_sorcerer"
 		}
 	},
-	difficulty_overrides = var_0_2
+	difficulty_overrides = tbl_3
 }
 RoamingSettings.deus_default = {
 	despawn_distance = 45,
@@ -3131,7 +3131,7 @@ HordeSettings.deus_beastmen = {
 	}
 }
 
-local var_0_4 = {
+local tbl_5 = {
 	description = {
 		skaven_chaos = "deus_conflict_director_skaven_chaos_name",
 		skaven_beastmen = "deus_conflict_director_skaven_beastmen_name",
@@ -3154,7 +3154,7 @@ ConflictDirectors.deus_skaven_chaos = {
 	roaming = RoamingSettings.deus_default,
 	pack_spawning = PackSpawningSettings.deus_default,
 	horde = HordeSettings.deus_default,
-	description = var_0_4.description.skaven_chaos,
+	description = tbl_5.description.skaven_chaos,
 	factions = {
 		"chaos",
 		"skaven"
@@ -3173,7 +3173,7 @@ ConflictDirectors.deus_skaven = {
 	factions = {
 		"skaven"
 	},
-	description = var_0_4.description.skaven_chaos
+	description = tbl_5.description.skaven_chaos
 }
 ConflictDirectors.deus_chaos = {
 	debug_color = "purple",
@@ -3215,7 +3215,7 @@ ConflictDirectors.deus_skaven_beastmen = {
 	roaming = RoamingSettings.deus_default,
 	pack_spawning = PackSpawningSettings.deus_skaven_beastmen,
 	horde = HordeSettings.deus_beastmen,
-	description = var_0_4.description.skaven_beastmen,
+	description = tbl_5.description.skaven_beastmen,
 	factions = {
 		"beastmen",
 		"skaven"
@@ -3232,7 +3232,7 @@ ConflictDirectors.deus_chaos_beastmen = {
 	roaming = RoamingSettings.deus_default,
 	pack_spawning = PackSpawningSettings.deus_chaos_beastmen,
 	horde = HordeSettings.deus_beastmen,
-	description = var_0_4.description.chaos_beastmen,
+	description = tbl_5.description.chaos_beastmen,
 	factions = {
 		"chaos",
 		"beastmen"

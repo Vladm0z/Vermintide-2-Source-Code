@@ -1,6 +1,6 @@
 -- chunkname: @levels/debug/ai_benchmark_cycle/world_spawn_zones.lua
 
-local var_0_0 = {
+local tbl = {
 	{
 		main_path_index = 1,
 		marker_type = "normal",
@@ -72,7 +72,7 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	{
 		path_length = 27.85140609741211,
 		nodes = {
@@ -394,7 +394,7 @@ local var_0_1 = {
 		}
 	}
 }
-local var_0_2 = {
+local tbl_3 = {
 	{
 		sub_zone_length = 10,
 		sub_areas = {
@@ -9737,7 +9737,7 @@ local var_0_2 = {
 		}
 	}
 }
-local var_0_3 = {
+local tbl_4 = {
 	5.319999694824219,
 	-7.029999732971191,
 	0.09218524396419525,
@@ -12339,7 +12339,7 @@ local var_0_3 = {
 	0.2821665108203888,
 	-0.9593654870986938
 }
-local var_0_4 = {
+local tbl_5 = {
 	{
 		-45.570884704589844,
 		29.281652450561523,
@@ -55506,17 +55506,17 @@ local var_0_4 = {
 		8.306609153747559
 	}
 }
-local var_0_5 = 8633
-local var_0_6 = 30
-local var_0_7 = "1"
+local num = 8633
+local num_2 = 30
+local str = "1"
 
 return {
-	version = var_0_7,
-	number_of_spawns = var_0_5,
-	path_markers = var_0_0,
-	zones = var_0_2,
-	cover_points = var_0_3,
-	num_main_zones = var_0_6,
-	position_lookup = var_0_4,
-	main_paths = var_0_1
+	version = str,
+	number_of_spawns = num,
+	path_markers = tbl,
+	zones = tbl_3,
+	cover_points = tbl_4,
+	num_main_zones = num_2,
+	position_lookup = tbl_5,
+	main_paths = tbl_2
 }

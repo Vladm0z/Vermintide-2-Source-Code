@@ -2,110 +2,129 @@
 
 ActionCareerWEThornsisterWall = class(ActionCareerWEThornsisterWall, ActionBase)
 
-local var_0_0 = "thornsister_thorn_wall_unit"
-local var_0_1 = 0.1
-local var_0_2 = 0.05
-local var_0_3 = 0.5
+local str = "thornsister_thorn_wall_unit"
+local num = 0.1
+local num_2 = 0.05
+local num_3 = 0.5
 
-function ActionCareerWEThornsisterWall.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
-	ActionCareerWEThornsisterWall.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionCareerWEThornsisterWall.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	-- function 1
+	ActionCareerWEThornsisterWall.super.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
-	arg_1_0.career_extension = ScriptUnit.extension(arg_1_4, "career_system")
-	arg_1_0.inventory_extension = ScriptUnit.extension(arg_1_4, "inventory_system")
-	arg_1_0.talent_extension = ScriptUnit.extension(arg_1_4, "talent_system")
-	arg_1_0._wall_index = 0
+	self.career_extension = ScriptUnit.extension(arg_1_4, "career_system")
+	self.inventory_extension = ScriptUnit.extension(arg_1_4, "inventory_system")
+	self.talent_extension = ScriptUnit.extension(arg_1_4, "talent_system")
+	self._wall_index = 0
 end
 
-function ActionCareerWEThornsisterWall.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ActionCareerWEThornsisterWall.client_owner_start_action = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	-- function 2
 	arg_2_5 = arg_2_5 or {}
 
-	ActionCareerWEThornsisterWall.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	ActionCareerWEThornsisterWall.super.client_owner_start_action(self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 
 	local var_2_0 = arg_2_3
-	local var_2_1 = var_2_0 and var_2_0.num_segments or 0
+	local num_segments
 
-	if var_2_1 > 0 then
-		arg_2_0:_play_vo()
+	if not var_2_0 then
+		num_segments = var_2_0.num_segments
 
-		local var_2_2 = var_2_0.position:unbox()
-		local var_2_3 = var_2_0.rotation:unbox()
-		local var_2_4 = var_2_0.segments
-		local var_2_5 = "we_thornsister_career_skill_wall_explosion"
-		local var_2_6 = 1
-		local var_2_7 = arg_2_0.career_extension
-		local var_2_8 = var_2_7:get_career_power_level()
-		local var_2_9 = Managers.state.entity:system("area_damage_system")
+		if not num_segments then
+			-- Nothing
+		end
+	end
 
-		if arg_2_0.talent_extension:has_talent("kerillian_thorn_sister_debuff_wall") then
-			if arg_2_0.talent_extension:has_talent("kerillian_thorn_sister_double_poison") then
-				var_2_5 = "we_thornsister_career_skill_explosive_wall_explosion_improved"
+	num_segments = 0
+
+	::label_2_0::
+
+	if num_segments > 0 then
+		self:_play_vo()
+
+		local unbox = var_2_0.position:unbox()
+		local unbox_2 = var_2_0.rotation:unbox()
+		local segments = var_2_0.segments
+		local str = "we_thornsister_career_skill_wall_explosion"
+		local num_3 = 1
+		local career_extension = self.career_extension
+		local get_career_power_level = career_extension:get_career_power_level()
+		local system = Managers.state.entity:system("area_damage_system")
+
+		if not self.talent_extension:has_talent("kerillian_thorn_sister_debuff_wall") then
+			if not self.talent_extension:has_talent("kerillian_thorn_sister_double_poison") then
+				str = "we_thornsister_career_skill_explosive_wall_explosion_improved"
 			else
-				var_2_5 = "we_thornsister_career_skill_explosive_wall_explosion"
+				str = "we_thornsister_career_skill_explosive_wall_explosion"
 			end
-		elseif arg_2_0.talent_extension:has_talent("kerillian_thorn_sister_wall_push") then
-			var_2_5 = nil
+		elseif not self.talent_extension:has_talent("kerillian_thorn_sister_wall_push") then
+			str = nil
 		end
 
-		if var_2_5 then
-			arg_2_0:_spawn_wall(var_2_1, var_2_4, var_2_3)
-			var_2_9:create_explosion(arg_2_0.owner_unit, var_2_2, var_2_3, var_2_5, var_2_6, "career_ability", var_2_8, false)
+		if not str then
+			self:_spawn_wall(num_segments, segments, unbox_2)
+			system:create_explosion(self.owner_unit, unbox, unbox_2, str, num_3, "career_ability", get_career_power_level, false)
 		else
-			local var_2_10 = "thornsister_thorn_wall_push"
-			local var_2_11 = NetworkLookup.damage_wave_templates[var_2_10]
-			local var_2_12 = Managers.state.network
-			local var_2_13 = var_2_12:unit_game_object_id(arg_2_0.owner_unit)
-			local var_2_14 = Quaternion.forward(var_2_3)
-			local var_2_15 = Quaternion.right(var_2_3)
-			local var_2_16 = {}
+			local str_2 = "thornsister_thorn_wall_push"
+			local var_2_11 = NetworkLookup.damage_wave_templates[str_2]
+			local network = Managers.state.network
+			local unit_game_object_id = network:unit_game_object_id(self.owner_unit)
+			local forward = Quaternion.forward(unbox_2)
+			local right = Quaternion.right(unbox_2)
+			local tbl = {}
 
-			for iter_2_0 = 1, var_2_1 do
-				var_2_16[iter_2_0] = var_2_4[iter_2_0]:unbox() + var_2_14 * (math.random() * var_0_1 * 2 - var_0_1) + var_2_15 * (math.random() * var_0_2 * 2 - var_0_2)
+			for i = 1, num_segments do
+				tbl[i] = segments[i]:unbox() + forward * (math.random() * num * 2 - num) + right * (math.random() * num_2 * 2 - num_2)
 			end
 
-			local var_2_17 = arg_2_0:_get_next_wall_index()
+			local _get_next_wall_index = self:_get_next_wall_index()
 
-			var_2_12.network_transmit:send_rpc_server("rpc_create_thornsister_push_wave", var_2_13, POSITION_LOOKUP[arg_2_0.owner_unit], var_2_2, var_2_11, var_2_8, var_2_16, var_2_17)
+			network.network_transmit:send_rpc_server("rpc_create_thornsister_push_wave", unit_game_object_id, POSITION_LOOKUP[self.owner_unit], unbox, var_2_11, get_career_power_level, tbl, _get_next_wall_index)
 		end
 
-		var_2_7:start_activated_ability_cooldown()
+		career_extension:start_activated_ability_cooldown()
 	end
 end
 
-function ActionCareerWEThornsisterWall.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+ActionCareerWEThornsisterWall.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	-- function 3
 	return
 end
 
-function ActionCareerWEThornsisterWall.finish(arg_4_0, arg_4_1)
-	arg_4_0.inventory_extension:wield_previous_non_level_slot()
+ActionCareerWEThornsisterWall.finish = function (self, arg_4_1)
+	-- function 4
+	self.inventory_extension:wield_previous_non_level_slot()
 end
 
-function ActionCareerWEThornsisterWall._play_vo(arg_5_0)
-	local var_5_0 = arg_5_0.owner_unit
-	local var_5_1 = ScriptUnit.extension_input(var_5_0, "dialogue_system")
-	local var_5_2 = FrameTable.alloc_table()
+ActionCareerWEThornsisterWall._play_vo = function (self)
+	-- function 5
+	local owner_unit = self.owner_unit
+	local extension_input = ScriptUnit.extension_input(owner_unit, "dialogue_system")
+	local alloc_table = FrameTable.alloc_table()
 
-	var_5_1:trigger_networked_dialogue_event("activate_ability", var_5_2)
+	extension_input:trigger_networked_dialogue_event("activate_ability", alloc_table)
 end
 
-function ActionCareerWEThornsisterWall._get_next_wall_index(arg_6_0)
-	local var_6_0 = arg_6_0._wall_index % 16 + 1
+ActionCareerWEThornsisterWall._get_next_wall_index = function (self)
+	-- function 6
+	local num = self._wall_index % 16 + 1
 
-	arg_6_0._wall_index = var_6_0
+	self._wall_index = num
 
-	return var_6_0
+	return num
 end
 
-function ActionCareerWEThornsisterWall._spawn_wall(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
-	local var_7_0 = arg_7_0:_get_next_wall_index()
-	local var_7_1 = arg_7_0.owner_unit
-	local var_7_2 = Quaternion.forward(arg_7_3)
-	local var_7_3 = Quaternion.right(arg_7_3)
+ActionCareerWEThornsisterWall._spawn_wall = function (self, arg_7_1, arg_7_2, arg_7_3)
+	-- function 7
+	local _get_next_wall_index = self:_get_next_wall_index()
+	local owner_unit = self.owner_unit
+	local forward = Quaternion.forward(arg_7_3)
+	local right = Quaternion.right(arg_7_3)
 
-	for iter_7_0 = 1, arg_7_1 do
-		local var_7_4 = arg_7_2[iter_7_0]:unbox()
+	for i = 1, arg_7_1 do
+		local unbox = arg_7_2[i]:unbox()
 		local var_7_5 = arg_7_3
-		local var_7_6 = var_7_4 + var_7_2 * (math.random() * var_0_1 * 2 - var_0_1) + var_7_3 * (math.random() * var_0_2 * 2 - var_0_2)
+		local num_3 = unbox + forward * (math.random() * num * 2 - num) + right * (math.random() * num_2 * 2 - num_2)
 
-		Managers.state.unit_spawner:request_spawn_template_unit(var_0_0, var_7_6, var_7_5, var_7_1, var_7_0, iter_7_0)
+		Managers.state.unit_spawner:request_spawn_template_unit(str, num_3, var_7_5, owner_unit, _get_next_wall_index, i)
 	end
 end

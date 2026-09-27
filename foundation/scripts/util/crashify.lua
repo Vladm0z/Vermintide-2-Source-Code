@@ -1,7 +1,8 @@
 -- chunkname: @foundation/scripts/util/crashify.lua
 
 return {
-	print_property = function(arg_1_0, arg_1_1)
+	print_property = function (arg_1_0, arg_1_1)
+		-- function 1
 		if arg_1_0 == nil then
 			Application.warning("[Crashify] Property key can't be nil")
 
@@ -14,27 +15,29 @@ return {
 			return
 		end
 
-		local var_1_0 = string.format("%s = %s", arg_1_0, arg_1_1)
-		local var_1_1 = string.format("<<crashify-property>>%s<</crashify-property>>", var_1_0)
+		local format = string.format("%s = %s", arg_1_0, arg_1_1)
+		local format_2 = string.format("<<crashify-property>>%s<</crashify-property>>", format)
 
 		if not IS_WINDOWS then
 			Application.add_crash_property(arg_1_0, tostring(arg_1_1))
 		end
 
-		print(var_1_1)
+		print(format_2)
 	end,
-	print_breadcrumb = function(arg_2_0)
+	print_breadcrumb = function (arg_2_0)
+		-- function 2
 		if arg_2_0 == nil then
 			Application.warning("[Crashify] Breadcrumb can't be nil")
 
 			return
 		end
 
-		local var_2_0 = string.format("<<crashify-breadcrumb>>\n\t\t\t<<timestamp>%f<</timestamp>>\n\t\t\t<<value>>%s<</value>>\n\t\t<</crashify-breadcrumb>>", Application.time_since_launch(), arg_2_0)
+		local format = string.format("<<crashify-breadcrumb>>\n\t\t\t<<timestamp>%f<</timestamp>>\n\t\t\t<<value>>%s<</value>>\n\t\t<</crashify-breadcrumb>>", Application.time_since_launch(), arg_2_0)
 
-		print(var_2_0)
+		print(format)
 	end,
-	print_exception = function(arg_3_0, arg_3_1, ...)
+	print_exception = function (arg_3_0, arg_3_1, ...)
+		-- function 3
 		Application.set_exit_code(1, "silent_limited")
 
 		if arg_3_0 == nil then
@@ -57,11 +60,11 @@ return {
 			return
 		end
 
-		local var_3_2 = string.format("<<crashify-exception>>\n\t\t\t<<system>>%s<</system>>\n\t\t\t<<message>>%s<</message>>\n\t\t\t<<callstack>>%s<</callstack>>\n\t\t<</crashify-exception>>", arg_3_0, var_3_1, Script.callstack())
+		local format = string.format("<<crashify-exception>>\n\t\t\t<<system>>%s<</system>>\n\t\t\t<<message>>%s<</message>>\n\t\t\t<<callstack>>%s<</callstack>>\n\t\t<</crashify-exception>>", arg_3_0, var_3_1, Script.callstack())
 
-		print(var_3_2)
+		print(format)
 
-		if Script.do_break then
+		if not Script.do_break then
 			Script.do_break(script_data.break_on_crashify_exceptions)
 		end
 	end

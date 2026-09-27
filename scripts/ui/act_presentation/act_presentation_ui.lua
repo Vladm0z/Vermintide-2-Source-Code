@@ -1,196 +1,255 @@
 -- chunkname: @scripts/ui/act_presentation/act_presentation_ui.lua
 
 local var_0_0 = local_require("scripts/ui/act_presentation/act_presentation_ui_definitions")
-local var_0_1 = var_0_0.scenegraph_definition
-local var_0_2 = var_0_0.widgets
-local var_0_3 = var_0_0.animations
+local scenegraph_definition = var_0_0.scenegraph_definition
+local widgets = var_0_0.widgets
+local animations = var_0_0.animations
 
 ActPresentationUI = class(ActPresentationUI)
 
-local var_0_4 = false
+local flag = false
 
-function ActPresentationUI.init(arg_1_0, arg_1_1)
-	arg_1_0.ui_renderer = arg_1_1.ui_renderer
-	arg_1_0.ui_top_renderer = arg_1_1.ui_top_renderer
-	arg_1_0.ingame_ui = arg_1_1.ingame_ui
-	arg_1_0.statistics_db = arg_1_1.statistics_db
-	arg_1_0.stats_id = arg_1_1.stats_id
-	arg_1_0.input_manager = arg_1_1.input_manager
-	arg_1_0.render_settings = {
+ActPresentationUI.init = function (self, arg_1_1)
+	-- function 1
+	self.ui_renderer = arg_1_1.ui_renderer
+	self.ui_top_renderer = arg_1_1.ui_top_renderer
+	self.ingame_ui = arg_1_1.ingame_ui
+	self.statistics_db = arg_1_1.statistics_db
+	self.stats_id = arg_1_1.stats_id
+	self.input_manager = arg_1_1.input_manager
+	self.render_settings = {
 		alpha_multiplier = 1,
 		snap_pixel_positions = true
 	}
-	arg_1_0.platform = PLATFORM
-	arg_1_0.world = arg_1_1.world_manager:world("level_world")
-	arg_1_0.wwise_world = Managers.world:wwise_world(arg_1_0.world)
+	self.platform = PLATFORM
+	self.world = arg_1_1.world_manager:world("level_world")
+	self.wwise_world = Managers.world:wwise_world(self.world)
 
-	arg_1_0:create_ui_elements()
+	self:create_ui_elements()
 
-	local var_1_0 = arg_1_0.input_manager
+	local input_manager = self.input_manager
 
-	var_1_0:create_input_service("act_presentation", "IngameMenuKeymaps", "IngameMenuFilters")
-	var_1_0:map_device_to_service("act_presentation", "keyboard")
-	var_1_0:map_device_to_service("act_presentation", "mouse")
-	var_1_0:map_device_to_service("act_presentation", "gamepad")
+	input_manager:create_input_service("act_presentation", "IngameMenuKeymaps", "IngameMenuFilters")
+	input_manager:map_device_to_service("act_presentation", "keyboard")
+	input_manager:map_device_to_service("act_presentation", "mouse")
+	input_manager:map_device_to_service("act_presentation", "gamepad")
 end
 
-function ActPresentationUI.create_ui_elements(arg_2_0)
-	local var_2_0 = {}
-	local var_2_1 = {}
+ActPresentationUI.create_ui_elements = function (self)
+	-- function 2
+	local tbl = {}
+	local tbl_2 = {}
 
-	for iter_2_0, iter_2_1 in pairs(var_0_2) do
-		if iter_2_1 then
-			local var_2_2 = UIWidget.init(iter_2_1)
+	for k, v in pairs(widgets) do
+		if not v then
+			local var_2_2 = UIWidget.init(v)
 
-			var_2_0[#var_2_0 + 1] = var_2_2
-			var_2_1[iter_2_0] = var_2_2
+			tbl[#tbl + 1] = var_2_2
+			tbl_2[k] = var_2_2
 		end
 	end
 
-	arg_2_0._widgets = var_2_0
-	arg_2_0._widgets_by_name = var_2_1
-	arg_2_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
-	arg_2_0._ui_animator = UIAnimator:new(arg_2_0._ui_scenegraph, var_0_3)
-	arg_2_0._animations = {}
-	var_0_4 = false
+	self._widgets = tbl
+	self._widgets_by_name = tbl_2
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animations)
+	self._animations = {}
+	flag = false
 end
 
-function ActPresentationUI.start(arg_3_0, arg_3_1, arg_3_2)
-	local var_3_0 = LevelUnlockUtils.get_act_key_by_level(arg_3_1)
+ActPresentationUI.start = function (self, arg_3_1, arg_3_2)
+	-- function 3
+	local get_act_key_by_level = LevelUnlockUtils.get_act_key_by_level(arg_3_1)
 
-	if not var_3_0 then
-		arg_3_0.active = true
-		arg_3_0._presentation_aborted = true
+	if not get_act_key_by_level then
+		self.active = true
+		self._presentation_aborted = true
 
 		return false
 	end
 
-	arg_3_0._presentation_aborted = nil
+	self._presentation_aborted = nil
 
-	arg_3_0:_set_presentation_info(var_3_0, arg_3_1)
+	self:_set_presentation_info(get_act_key_by_level, arg_3_1)
 
-	local var_3_1, var_3_2 = arg_3_0:_setup_level(var_3_0, arg_3_1, arg_3_2)
-	local var_3_3 = {
-		wwise_world = arg_3_0.wwise_world,
+	local _setup_level, var_3_2 = self:_setup_level(get_act_key_by_level, arg_3_1, arg_3_2)
+	local tbl = {
+		wwise_world = self.wwise_world,
 		level_key = arg_3_1,
-		widget = arg_3_0._widgets_by_name.level,
-		first_time = var_3_1,
+		widget = self._widgets_by_name.level,
+		first_time = _setup_level,
 		previous_difficulty_index = arg_3_2,
 		difficulty_index = var_3_2,
-		render_settings = arg_3_0.render_settings
+		render_settings = self.render_settings
 	}
 
-	arg_3_0.animation_params = var_3_3
+	self.animation_params = tbl
 
-	local var_3_4 = var_3_1 and "enter_first_time" or "enter"
+	local flag
 
-	arg_3_0:start_presentation_animation(var_3_4, var_3_3)
+	flag = not _setup_level and "enter_first_time" and "enter"
 
-	arg_3_0.active = true
+	self:start_presentation_animation(flag, tbl)
+
+	self.active = true
 end
 
-function ActPresentationUI._set_presentation_info(arg_4_0, arg_4_1, arg_4_2)
+ActPresentationUI._set_presentation_info = function (self, arg_4_1, arg_4_2)
+	-- function 4
 	local var_4_0 = LevelSettings[arg_4_2]
-	local var_4_1 = var_4_0.display_name
-	local var_4_2 = var_4_0.level_image
-	local var_4_3 = Managers.state.difficulty:get_difficulty_settings().display_name
-	local var_4_4 = ActSettings[arg_4_1].display_name
-	local var_4_5 = arg_4_0._widgets_by_name
+	local display_name = var_4_0.display_name
+	local level_image = var_4_0.level_image
+	local display_name_2 = Managers.state.difficulty:get_difficulty_settings().display_name
+	local display_name_3 = ActSettings[arg_4_1].display_name
+	local _widgets_by_name = self._widgets_by_name
 
-	var_4_5.level.content.icon = var_4_2
-	var_4_5.act_title.content.text = var_4_4 and Localize(var_4_4) or ""
-	var_4_5.level_title.content.text = Localize(var_4_1)
+	_widgets_by_name.level.content.icon = level_image
+
+	local content = _widgets_by_name.act_title.content
+	local var_4_7
+
+	if not display_name_3 then
+		var_4_7 = Localize(display_name_3)
+
+		if not var_4_7 then
+			-- Nothing
+		end
+	end
+
+	var_4_7 = ""
+
+	::label_4_0::
+
+	content.text = var_4_7
+	_widgets_by_name.level_title.content.text = Localize(display_name)
 end
 
-function ActPresentationUI._setup_level(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
-	local var_5_0 = arg_5_0._widgets_by_name
-	local var_5_1 = arg_5_0.statistics_db
-	local var_5_2 = arg_5_0.stats_id
-	local var_5_3 = (var_5_1:get_persistent_stat(var_5_2, "completed_levels", arg_5_2) or 0) ~= 0
-	local var_5_4 = var_5_3 and LevelUnlockUtils.completed_level_difficulty_index(var_5_1, var_5_2, arg_5_2) or 0
-	local var_5_5 = arg_5_3 < var_5_4
-	local var_5_6 = var_5_0.level
-	local var_5_7 = var_5_6.content
-	local var_5_8 = var_5_6.style
+ActPresentationUI._setup_level = function (self, arg_5_1, arg_5_2, arg_5_3)
+	-- function 5
+	local _widgets_by_name = self._widgets_by_name
+	local statistics_db = self.statistics_db
+	local stats_id = self.stats_id
+	local get_persistent_stat = statistics_db:get_persistent_stat(stats_id, "completed_levels", arg_5_2)
 
-	var_5_7.locked = var_5_5 or not var_5_3
+	get_persistent_stat = get_persistent_stat or 0
 
-	return var_5_5, var_5_4
+	local flag = get_persistent_stat ~= 0
+	local completed_level_difficulty_index
+
+	if not flag then
+		completed_level_difficulty_index = LevelUnlockUtils.completed_level_difficulty_index(statistics_db, stats_id, arg_5_2)
+
+		if not completed_level_difficulty_index then
+			-- Nothing
+		end
+	end
+
+	completed_level_difficulty_index = 0
+
+	::label_5_0::
+
+	local flag_2 = arg_5_3 < completed_level_difficulty_index
+	local level = _widgets_by_name.level
+	local content = level.content
+	local style = level.style
+
+	content.locked = flag_2 or not flag
+
+	return flag_2, completed_level_difficulty_index
 end
 
-function ActPresentationUI.destroy(arg_6_0)
-	arg_6_0._ui_animator = nil
+ActPresentationUI.destroy = function (self)
+	-- function 6
+	self._ui_animator = nil
 end
 
-function ActPresentationUI._update_animations(arg_7_0, arg_7_1)
-	local var_7_0 = arg_7_0._animations
-	local var_7_1 = arg_7_0._ui_animator
+ActPresentationUI._update_animations = function (self, arg_7_1)
+	-- function 7
+	local _animations = self._animations
+	local _ui_animator = self._ui_animator
 
-	var_7_1:update(arg_7_1)
+	_ui_animator:update(arg_7_1)
 
-	for iter_7_0, iter_7_1 in pairs(var_7_0) do
-		if var_7_1:is_animation_completed(iter_7_1) then
-			var_7_1:stop_animation(iter_7_1)
+	for k, v in pairs(_animations) do
+		if not _ui_animator:is_animation_completed(v) then
+			_ui_animator:stop_animation(v)
 
-			var_7_0[iter_7_0] = nil
+			_animations[k] = nil
 
-			local var_7_2 = arg_7_0.animation_params
+			local animation_params = self.animation_params
 
-			if var_7_2 then
-				var_7_2.presentation_completed = true
-				arg_7_0.active = false
+			if not animation_params then
+				animation_params.presentation_completed = true
+				self.active = false
 			end
 		end
 	end
 end
 
-function ActPresentationUI.presentation_completed(arg_8_0)
-	local var_8_0 = arg_8_0.animation_params
+ActPresentationUI.presentation_completed = function (self)
+	-- function 8
+	local animation_params = self.animation_params
+	local presentation_completed
 
-	return var_8_0 and var_8_0.presentation_completed or arg_8_0._presentation_aborted
-end
+	if not animation_params then
+		presentation_completed = animation_params.presentation_completed
 
-function ActPresentationUI.update(arg_9_0, arg_9_1, arg_9_2)
-	if var_0_4 then
-		arg_9_0:create_ui_elements()
+		if not presentation_completed then
+			-- Nothing
+		end
 	end
 
-	arg_9_0:_update_animations(arg_9_1)
-	arg_9_0:draw(arg_9_1)
+	presentation_completed = self._presentation_aborted
+
+	::label_8_0::
+
+	return presentation_completed
 end
 
-function ActPresentationUI.draw(arg_10_0, arg_10_1)
-	local var_10_0 = arg_10_0.ui_top_renderer
-	local var_10_1 = arg_10_0.render_settings
-	local var_10_2 = arg_10_0._ui_scenegraph
-	local var_10_3 = arg_10_0.input_manager:get_service("act_presentation")
-	local var_10_4 = var_10_1.alpha_multiplier
+ActPresentationUI.update = function (self, arg_9_1, arg_9_2)
+	-- function 9
+	if not flag then
+		self:create_ui_elements()
+	end
 
-	UIRenderer.begin_pass(var_10_0, var_10_2, var_10_3, arg_10_1, nil, var_10_1)
+	self:_update_animations(arg_9_1)
+	self:draw(arg_9_1)
+end
 
-	local var_10_5 = var_10_1.snap_pixel_positions
+ActPresentationUI.draw = function (self, arg_10_1)
+	-- function 10
+	local ui_top_renderer = self.ui_top_renderer
+	local render_settings = self.render_settings
+	local _ui_scenegraph = self._ui_scenegraph
+	local get_service = self.input_manager:get_service("act_presentation")
+	local alpha_multiplier = render_settings.alpha_multiplier
 
-	for iter_10_0, iter_10_1 in ipairs(arg_10_0._widgets) do
-		if iter_10_1.snap_pixel_positions ~= nil then
-			var_10_1.snap_pixel_positions = iter_10_1.snap_pixel_positions
+	UIRenderer.begin_pass(ui_top_renderer, _ui_scenegraph, get_service, arg_10_1, nil, render_settings)
+
+	local snap_pixel_positions = render_settings.snap_pixel_positions
+
+	for i, v in ipairs(self._widgets) do
+		if v.snap_pixel_positions ~= nil then
+			render_settings.snap_pixel_positions = v.snap_pixel_positions
 		end
 
-		UIRenderer.draw_widget(var_10_0, iter_10_1)
+		UIRenderer.draw_widget(ui_top_renderer, v)
 
-		var_10_1.snap_pixel_positions = var_10_5
+		render_settings.snap_pixel_positions = snap_pixel_positions
 	end
 
-	UIRenderer.end_pass(var_10_0)
+	UIRenderer.end_pass(ui_top_renderer)
 end
 
-function ActPresentationUI.start_presentation_animation(arg_11_0, arg_11_1, arg_11_2)
-	local var_11_0 = arg_11_2 or {
-		wwise_world = arg_11_0.wwise_world
+ActPresentationUI.start_presentation_animation = function (self, arg_11_1, arg_11_2)
+	-- function 11
+	local flag = arg_11_2 or {
+		wwise_world = self.wwise_world
 	}
-	local var_11_1 = arg_11_0._ui_animator:start_animation(arg_11_1, arg_11_0._widgets_by_name, var_0_1, var_11_0)
+	local start_animation = self._ui_animator:start_animation(arg_11_1, self._widgets_by_name, scenegraph_definition, flag)
 	local var_11_2 = arg_11_1
 
-	arg_11_0._animations[var_11_2] = var_11_1
+	self._animations[var_11_2] = start_animation
 
 	return var_11_2
 end

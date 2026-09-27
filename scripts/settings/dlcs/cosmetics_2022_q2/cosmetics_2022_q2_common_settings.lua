@@ -1,9 +1,9 @@
 -- chunkname: @scripts/settings/dlcs/cosmetics_2022_q2/cosmetics_2022_q2_common_settings.lua
 
-local var_0_0 = DLCSettings.cosmetics_2022_q2
+local cosmetics_2022_q2 = DLCSettings.cosmetics_2022_q2
 
-var_0_0.unlock_settings = {}
-var_0_0.unlock_settings_xb1 = {
+cosmetics_2022_q2.unlock_settings = {}
+cosmetics_2022_q2.unlock_settings_xb1 = {
 	ironbreaker_bundle_0002 = {
 		id = "39325039-4B32-3033-C050-56373038E900",
 		backend_reward_id = "ironbreaker_bundle_0002",
@@ -35,7 +35,7 @@ var_0_0.unlock_settings_xb1 = {
 		class = "UnlockDlc"
 	}
 }
-var_0_0.unlock_settings_ps4 = {
+cosmetics_2022_q2.unlock_settings_ps4 = {
 	CUSA13595_00 = {
 		ironbreaker_bundle_0002 = {
 			id = "54d6df5062d14215bfa28e7caa6cfd5e",

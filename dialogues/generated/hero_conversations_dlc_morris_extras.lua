@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/hero_conversations_dlc_morris_extras.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		response = "pbw_morris_bardin_song_sienna_13",
 		name = "pbw_morris_bardin_song_sienna_13",

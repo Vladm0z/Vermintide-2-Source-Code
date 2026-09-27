@@ -4,284 +4,310 @@ require("scripts/ui/views/menu_world_previewer")
 
 local var_0_0, var_0_1, var_0_2 = dofile("scripts/settings/crafting/crafting_recipes")
 local var_0_3 = local_require("scripts/ui/views/hero_view/craft_pages/definitions/craft_page_roll_properties_definitions")
-local var_0_4 = var_0_3.widgets
-local var_0_5 = var_0_3.category_settings
-local var_0_6 = var_0_3.scenegraph_definition
-local var_0_7 = var_0_3.animation_definitions
-local var_0_8 = false
-local var_0_9 = 1
+local widgets = var_0_3.widgets
+local category_settings = var_0_3.category_settings
+local scenegraph_definition = var_0_3.scenegraph_definition
+local animation_definitions = var_0_3.animation_definitions
+local flag = false
+local num = 1
 
 CraftPageRollProperties = class(CraftPageRollProperties)
 CraftPageRollProperties.NAME = "CraftPageRollProperties"
 
-function CraftPageRollProperties.on_enter(arg_1_0, arg_1_1, arg_1_2)
+CraftPageRollProperties.on_enter = function (self, arg_1_1, arg_1_2)
+	-- function 1
 	print("[HeroWindowCraft] Enter Substate CraftPageRollProperties")
 
-	arg_1_0.parent = arg_1_1.parent
-	arg_1_0.super_parent = arg_1_0.parent.parent
+	self.parent = arg_1_1.parent
+	self.super_parent = self.parent.parent
 
-	local var_1_0 = arg_1_1.ingame_ui_context
+	local ingame_ui_context = arg_1_1.ingame_ui_context
 
-	arg_1_0.ingame_ui_context = var_1_0
-	arg_1_0.ui_renderer = var_1_0.ui_renderer
-	arg_1_0.ui_top_renderer = var_1_0.ui_top_renderer
-	arg_1_0.input_manager = var_1_0.input_manager
-	arg_1_0.statistics_db = var_1_0.statistics_db
-	arg_1_0.render_settings = {
+	self.ingame_ui_context = ingame_ui_context
+	self.ui_renderer = ingame_ui_context.ui_renderer
+	self.ui_top_renderer = ingame_ui_context.ui_top_renderer
+	self.input_manager = ingame_ui_context.input_manager
+	self.statistics_db = ingame_ui_context.statistics_db
+	self.render_settings = {
 		snap_pixel_positions = true
 	}
-	arg_1_0.crafting_manager = Managers.state.crafting
+	self.crafting_manager = Managers.state.crafting
 
-	local var_1_1 = Managers.player
+	local player = Managers.player
 
-	arg_1_0._stats_id = var_1_1:local_player():stats_id()
-	arg_1_0.player_manager = var_1_1
-	arg_1_0.peer_id = var_1_0.peer_id
-	arg_1_0.hero_name = arg_1_1.hero_name
-	arg_1_0.career_index = arg_1_1.career_index
-	arg_1_0.profile_index = arg_1_1.profile_index
-	arg_1_0.wwise_world = arg_1_1.wwise_world
-	arg_1_0.settings = arg_1_2
-	arg_1_0._recipe_name = arg_1_2.name
-	arg_1_0._animations = {}
+	self._stats_id = player:local_player():stats_id()
+	self.player_manager = player
+	self.peer_id = ingame_ui_context.peer_id
+	self.hero_name = arg_1_1.hero_name
+	self.career_index = arg_1_1.career_index
+	self.profile_index = arg_1_1.profile_index
+	self.wwise_world = arg_1_1.wwise_world
+	self.settings = arg_1_2
+	self._recipe_name = arg_1_2.name
+	self._animations = {}
 
-	arg_1_0:create_ui_elements(arg_1_1)
+	self:create_ui_elements(arg_1_1)
 
-	arg_1_0._craft_items = {}
-	arg_1_0._material_items = {}
-	arg_1_0._item_grid = ItemGridUI:new(var_0_5, arg_1_0._widgets_by_name.item_grid, arg_1_0.hero_name, arg_1_0.career_index)
-	arg_1_0._recipe_grid = ItemGridUI:new(var_0_5, arg_1_0._widgets_by_name.recipe_grid, arg_1_0.hero_name, arg_1_0.career_index)
+	self._craft_items = {}
+	self._material_items = {}
+	self._item_grid = ItemGridUI:new(category_settings, self._widgets_by_name.item_grid, self.hero_name, self.career_index)
+	self._recipe_grid = ItemGridUI:new(category_settings, self._widgets_by_name.recipe_grid, self.hero_name, self.career_index)
 
-	arg_1_0._item_grid:disable_locked_items(true)
-	arg_1_0._item_grid:mark_locked_items(true)
-	arg_1_0._item_grid:hide_slots(true)
-	arg_1_0._item_grid:disable_item_drag()
-	arg_1_0._recipe_grid:disable_item_drag()
-	arg_1_0.super_parent:clear_disabled_backend_ids()
-	arg_1_0:setup_recipe_requirements()
+	self._item_grid:disable_locked_items(true)
+	self._item_grid:mark_locked_items(true)
+	self._item_grid:hide_slots(true)
+	self._item_grid:disable_item_drag()
+	self._recipe_grid:disable_item_drag()
+	self.super_parent:clear_disabled_backend_ids()
+	self:setup_recipe_requirements()
 end
 
-function CraftPageRollProperties.setup_recipe_requirements(arg_2_0)
-	local var_2_0 = arg_2_0._recipe_grid
-	local var_2_1 = arg_2_0.settings.name
-	local var_2_2 = var_0_1[var_2_1].ingredients
-	local var_2_3 = arg_2_0._material_items
+CraftPageRollProperties.setup_recipe_requirements = function (self)
+	-- function 2
+	local _recipe_grid = self._recipe_grid
+	local name = self.settings.name
+	local ingredients = var_0_1[name].ingredients
+	local _material_items = self._material_items
 
-	table.clear(var_2_3)
+	table.clear(_material_items)
 
-	local var_2_4 = Managers.backend:get_interface("items")
-	local var_2_5 = var_2_4:get_filtered_items("item_type == crafting_material")
-	local var_2_6 = true
-	local var_2_7 = 1
+	local get_interface = Managers.backend:get_interface("items")
+	local get_filtered_items = get_interface:get_filtered_items("item_type == crafting_material")
+	local flag = true
+	local num = 1
 
-	for iter_2_0, iter_2_1 in ipairs(var_2_2) do
-		if not iter_2_1.catergory then
-			local var_2_8 = iter_2_1.name
-			local var_2_9 = iter_2_1.amount
-			local var_2_10 = 0
+	for i, v in ipairs(ingredients) do
+		if not v.catergory then
+			local name_2 = v.name
+			local amount = v.amount
+			local num_2 = 0
 			local var_2_11
 
-			for iter_2_2, iter_2_3 in ipairs(var_2_5) do
-				local var_2_12 = iter_2_3.backend_id
+			for i_2, v_2 in ipairs(get_filtered_items) do
+				local backend_id = v_2.backend_id
 
-				if iter_2_3.data.key == var_2_8 then
-					var_2_11 = var_2_12
-					var_2_10 = var_2_4:get_item_amount(var_2_12)
+				if v_2.data.key == name_2 then
+					var_2_11 = backend_id
+					num_2 = get_interface:get_item_amount(backend_id)
 
 					break
 				end
 			end
 
-			local var_2_13 = var_2_9 <= var_2_10
-			local var_2_14 = (var_2_10 < UISettings.max_craft_material_presentation_amount and tostring(var_2_10) or "*") .. "/" .. tostring(var_2_9)
-			local var_2_15 = {
-				data = table.clone(ItemMasterList[var_2_8]),
-				amount = var_2_14,
-				insufficient_amount = not var_2_13
+			local flag_2 = amount <= num_2
+			local var_2_14
+
+			if num_2 < UISettings.max_craft_material_presentation_amount then
+				var_2_14 = tostring(num_2)
+
+				if not var_2_14 then
+					-- Nothing
+				end
+			end
+
+			var_2_14 = "*"
+
+			::label_2_0::
+
+			local str = var_2_14 .. "/" .. tostring(amount)
+			local tbl = {
+				data = table.clone(ItemMasterList[name_2]),
+				amount = str,
+				insufficient_amount = not flag_2
 			}
 
-			var_2_0:add_item_to_slot_index(var_2_7, var_2_15)
+			_recipe_grid:add_item_to_slot_index(num, tbl)
 
-			var_2_7 = var_2_7 + 1
+			num = num + 1
 
-			if var_2_13 then
-				var_2_3[#var_2_3 + 1] = var_2_11
+			if not flag_2 then
+				_material_items[#_material_items + 1] = var_2_11
 			else
-				var_2_6 = false
+				flag = false
 			end
 		end
 	end
 
-	arg_2_0._has_all_requirements = var_2_6
+	self._has_all_requirements = flag
 end
 
-function CraftPageRollProperties.create_ui_elements(arg_3_0, arg_3_1)
-	arg_3_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_6)
+CraftPageRollProperties.create_ui_elements = function (self, arg_3_1)
+	-- function 3
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	local var_3_0 = {}
-	local var_3_1 = {}
+	local tbl = {}
+	local tbl_2 = {}
 
-	for iter_3_0, iter_3_1 in pairs(var_0_4) do
-		local var_3_2 = UIWidget.init(iter_3_1)
+	for k, v in pairs(widgets) do
+		local var_3_2 = UIWidget.init(v)
 
-		var_3_0[#var_3_0 + 1] = var_3_2
-		var_3_1[iter_3_0] = var_3_2
+		tbl[#tbl + 1] = var_3_2
+		tbl_2[k] = var_3_2
 	end
 
-	arg_3_0._widgets = var_3_0
-	arg_3_0._widgets_by_name = var_3_1
+	self._widgets = tbl
+	self._widgets_by_name = tbl_2
 
-	UIRenderer.clear_scenegraph_queue(arg_3_0.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
-	arg_3_0.ui_animator = UIAnimator:new(arg_3_0.ui_scenegraph, var_0_7)
+	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
 
-	arg_3_0:_set_craft_button_disabled(true)
-	arg_3_0:_handle_craft_input_progress(0)
+	self:_set_craft_button_disabled(true)
+	self:_handle_craft_input_progress(0)
 end
 
-function CraftPageRollProperties.on_exit(arg_4_0, arg_4_1)
+CraftPageRollProperties.on_exit = function (self, arg_4_1)
+	-- function 4
 	print("[HeroWindowCraft] Exit Substate CraftPageRollProperties")
 
-	arg_4_0.ui_animator = nil
+	self.ui_animator = nil
 
-	if arg_4_0._craft_input_time then
-		arg_4_0:_play_sound("play_gui_craft_forge_button_aborted")
+	if not self._craft_input_time then
+		self:_play_sound("play_gui_craft_forge_button_aborted")
 	end
 end
 
-function CraftPageRollProperties.update(arg_5_0, arg_5_1, arg_5_2)
-	if var_0_8 then
-		var_0_8 = false
+CraftPageRollProperties.update = function (self, arg_5_1, arg_5_2)
+	-- function 5
+	if not flag then
+		flag = false
 
-		arg_5_0:create_ui_elements()
+		self:create_ui_elements()
 	end
 
-	arg_5_0:_handle_input(arg_5_1, arg_5_2)
-	arg_5_0:_update_animations(arg_5_1)
-	arg_5_0:_update_craft_items()
-	arg_5_0:draw(arg_5_1)
+	self:_handle_input(arg_5_1, arg_5_2)
+	self:_update_animations(arg_5_1)
+	self:_update_craft_items()
+	self:draw(arg_5_1)
 end
 
-function CraftPageRollProperties.post_update(arg_6_0, arg_6_1, arg_6_2)
+CraftPageRollProperties.post_update = function (arg_6_0, arg_6_1, arg_6_2)
+	-- function 6
 	return
 end
 
-function CraftPageRollProperties._update_animations(arg_7_0, arg_7_1)
-	arg_7_0.ui_animator:update(arg_7_1)
+CraftPageRollProperties._update_animations = function (self, arg_7_1)
+	-- function 7
+	self.ui_animator:update(arg_7_1)
 
-	local var_7_0 = arg_7_0._animations
-	local var_7_1 = arg_7_0.ui_animator
+	local _animations = self._animations
+	local ui_animator = self.ui_animator
 
-	for iter_7_0, iter_7_1 in pairs(var_7_0) do
-		if var_7_1:is_animation_completed(iter_7_1) then
-			var_7_1:stop_animation(iter_7_1)
+	for k, v in pairs(_animations) do
+		if not ui_animator:is_animation_completed(v) then
+			ui_animator:stop_animation(v)
 
-			var_7_0[iter_7_0] = nil
+			_animations[k] = nil
 		end
 	end
 
-	local var_7_2 = arg_7_0._widgets_by_name
+	local _widgets_by_name = self._widgets_by_name
 
-	UIWidgetUtils.animate_default_button(var_7_2.craft_button, arg_7_1)
+	UIWidgetUtils.animate_default_button(_widgets_by_name.craft_button, arg_7_1)
 end
 
-function CraftPageRollProperties._is_button_pressed(arg_8_0, arg_8_1)
-	local var_8_0 = arg_8_1.content.button_hotspot
+CraftPageRollProperties._is_button_pressed = function (arg_8_0, arg_8_1)
+	-- function 8
+	local button_hotspot = arg_8_1.content.button_hotspot
 
-	if var_8_0.on_release then
-		var_8_0.on_release = false
+	if not button_hotspot.on_release then
+		button_hotspot.on_release = false
 
 		return true
 	end
 end
 
-function CraftPageRollProperties._is_button_hovered(arg_9_0, arg_9_1)
-	if arg_9_1.content.button_hotspot.on_hover_enter then
+CraftPageRollProperties._is_button_hovered = function (arg_9_0, arg_9_1)
+	-- function 9
+	if not arg_9_1.content.button_hotspot.on_hover_enter then
 		return true
 	end
 end
 
-function CraftPageRollProperties._is_button_held(arg_10_0, arg_10_1)
-	local var_10_0 = arg_10_1.content.button_hotspot
+CraftPageRollProperties._is_button_held = function (arg_10_0, arg_10_1)
+	-- function 10
+	local button_hotspot = arg_10_1.content.button_hotspot
 
-	if var_10_0.is_clicked then
-		return var_10_0.is_clicked
+	if not button_hotspot.is_clicked then
+		return button_hotspot.is_clicked
 	end
 end
 
-function CraftPageRollProperties._handle_input(arg_11_0, arg_11_1, arg_11_2)
-	local var_11_0 = arg_11_0.parent
+CraftPageRollProperties._handle_input = function (self, arg_11_1, arg_11_2)
+	-- function 11
+	local parent = self.parent
 
-	if var_11_0:waiting_for_craft() or arg_11_0._craft_result then
+	if parent:waiting_for_craft() or not self._craft_result then
 		return
 	end
 
-	local var_11_1 = arg_11_0._widgets_by_name
-	local var_11_2 = arg_11_0.super_parent
-	local var_11_3 = Managers.input:is_device_active("gamepad")
-	local var_11_4 = arg_11_0.super_parent:window_input_service()
-	local var_11_5 = not var_11_1.craft_button.content.button_hotspot.disable_button
-	local var_11_6 = arg_11_0:_is_button_held(var_11_1.craft_button)
-	local var_11_7 = var_11_5 and var_11_3 and var_11_4:get("refresh_hold")
-	local var_11_8 = false
+	local _widgets_by_name = self._widgets_by_name
+	local super_parent = self.super_parent
+	local is_device_active = Managers.input:is_device_active("gamepad")
+	local window_input_service = self.super_parent:window_input_service()
+	local flag = not _widgets_by_name.craft_button.content.button_hotspot.disable_button
+	local _is_button_held = self:_is_button_held(_widgets_by_name.craft_button)
+	local flag_2 = not flag and not is_device_active and window_input_service:get("refresh_hold")
+	local flag_3 = false
 
-	if (var_11_6 == 0 or var_11_7) and arg_11_0._has_all_requirements then
-		if not arg_11_0._craft_input_time then
-			arg_11_0._craft_input_time = 0
+	if _is_button_held == 0 or not flag_2 or not self._has_all_requirements then
+		if not self._craft_input_time then
+			self._craft_input_time = 0
 
-			arg_11_0:_play_sound("play_gui_craft_forge_button_begin")
+			self:_play_sound("play_gui_craft_forge_button_begin")
 		else
-			arg_11_0._craft_input_time = arg_11_0._craft_input_time + arg_11_1
+			self._craft_input_time = self._craft_input_time + arg_11_1
 		end
 
-		local var_11_9 = UISettings.crafting_progress_time
-		local var_11_10 = math.min(arg_11_0._craft_input_time / var_11_9, 1)
+		local crafting_progress_time = UISettings.crafting_progress_time
+		local min = math.min(self._craft_input_time / crafting_progress_time, 1)
 
-		var_11_8 = arg_11_0:_handle_craft_input_progress(var_11_10)
+		flag_3 = self:_handle_craft_input_progress(min)
 
-		WwiseWorld.set_global_parameter(arg_11_0.wwise_world, "craft_forge_button_progress", var_11_10)
-	elseif arg_11_0._craft_input_time then
-		arg_11_0._craft_input_time = nil
+		WwiseWorld.set_global_parameter(self.wwise_world, "craft_forge_button_progress", min)
+	elseif not self._craft_input_time then
+		self._craft_input_time = nil
 
-		arg_11_0:_handle_craft_input_progress(0)
-		arg_11_0:_play_sound("play_gui_craft_forge_button_aborted")
+		self:_handle_craft_input_progress(0)
+		self:_play_sound("play_gui_craft_forge_button_aborted")
 	end
 
-	if var_11_8 then
-		local var_11_11 = arg_11_0._craft_items
-		local var_11_12 = arg_11_0._material_items
-		local var_11_13 = {}
+	if not flag_3 then
+		local _craft_items = self._craft_items
+		local _material_items = self._material_items
+		local tbl = {}
 
-		for iter_11_0, iter_11_1 in ipairs(var_11_11) do
-			var_11_13[#var_11_13 + 1] = iter_11_1
+		for i, v in ipairs(_craft_items) do
+			tbl[#tbl + 1] = v
 		end
 
-		for iter_11_2, iter_11_3 in ipairs(var_11_12) do
-			var_11_13[#var_11_13 + 1] = iter_11_3
+		for i_2, v_2 in ipairs(_material_items) do
+			tbl[#tbl + 1] = v_2
 		end
 
-		if var_11_0:craft(var_11_13, arg_11_0._recipe_name) then
-			arg_11_0:_set_craft_button_disabled(true)
+		if not parent:craft(tbl, self._recipe_name) then
+			self:_set_craft_button_disabled(true)
 
-			local var_11_14 = arg_11_0._item_grid
+			local _item_grid = self._item_grid
 
-			for iter_11_4, iter_11_5 in pairs(var_11_13) do
-				var_11_14:lock_item_by_id(iter_11_5, true)
+			for k, v_3 in pairs(tbl) do
+				_item_grid:lock_item_by_id(v_3, true)
 			end
 
-			var_11_14:update_items_status()
-			arg_11_0:_play_sound("play_gui_craft_forge_button_completed")
-			arg_11_0:_play_sound("play_gui_craft_forge_begin")
+			_item_grid:update_items_status()
+			self:_play_sound("play_gui_craft_forge_button_completed")
+			self:_play_sound("play_gui_craft_forge_begin")
 		end
 	end
 end
 
-function CraftPageRollProperties._handle_craft_input_progress(arg_12_0, arg_12_1)
-	local var_12_0
+CraftPageRollProperties._handle_craft_input_progress = function (arg_12_0, arg_12_1)
+	-- function 12
+	local flag
 
-	var_12_0 = arg_12_1 ~= 0
+	flag = arg_12_1 ~= 0
 
-	local var_12_1 = var_0_6.craft_bar.size[1]
+	local var_12_1 = scenegraph_definition.craft_bar.size[1]
 
 	arg_12_0.ui_scenegraph.craft_bar.size[1] = var_12_1 * arg_12_1
 
@@ -290,179 +316,217 @@ function CraftPageRollProperties._handle_craft_input_progress(arg_12_0, arg_12_1
 	end
 end
 
-function CraftPageRollProperties.craft_result(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+CraftPageRollProperties.craft_result = function (self, arg_13_1, arg_13_2, arg_13_3)
+	-- function 13
 	if not arg_13_2 then
-		arg_13_0._craft_result = arg_13_1
+		self._craft_result = arg_13_1
 	end
 end
 
-function CraftPageRollProperties.reset(arg_14_0)
-	local var_14_0 = arg_14_0._item_grid
+CraftPageRollProperties.reset = function (self)
+	-- function 14
+	local _item_grid = self._item_grid
 
-	var_14_0:clear_locked_items()
-	var_14_0:update_items_status()
+	_item_grid:clear_locked_items()
+	_item_grid:update_items_status()
 end
 
-function CraftPageRollProperties.on_craft_completed(arg_15_0)
-	local var_15_0 = arg_15_0._craft_result
-	local var_15_1 = arg_15_0._item_grid
+CraftPageRollProperties.on_craft_completed = function (self)
+	-- function 15
+	local _craft_result = self._craft_result
+	local _item_grid = self._item_grid
 
-	arg_15_0.super_parent:clear_disabled_backend_ids()
-	arg_15_0.super_parent:update_inventory_items()
-	arg_15_0:setup_recipe_requirements()
+	self.super_parent:clear_disabled_backend_ids()
+	self.super_parent:update_inventory_items()
+	self:setup_recipe_requirements()
 
-	local var_15_2 = true
+	local flag = true
 
-	for iter_15_0 = 1, var_0_9 do
-		local var_15_3 = arg_15_0._craft_items[iter_15_0]
+	for i = 1, num do
+		local var_15_3 = self._craft_items[i]
 
-		arg_15_0:_remove_craft_item(var_15_3, iter_15_0, var_15_2)
-		arg_15_0:_add_craft_item(var_15_3, iter_15_0, var_15_2)
+		self:_remove_craft_item(var_15_3, i, flag)
+		self:_add_craft_item(var_15_3, i, flag)
 	end
 
-	arg_15_0._craft_result = nil
+	self._craft_result = nil
 end
 
-function CraftPageRollProperties._update_craft_items(arg_16_0)
-	local var_16_0 = arg_16_0.super_parent
-	local var_16_1 = arg_16_0._item_grid
-	local var_16_2 = var_16_1:is_dragging_item() or var_16_1:is_item_dragged() ~= nil
-	local var_16_3, var_16_4 = var_16_0:get_pressed_item_backend_id()
+CraftPageRollProperties._update_craft_items = function (self)
+	-- function 16
+	local super_parent = self.super_parent
+	local _item_grid = self._item_grid
+	local is_dragging_item = _item_grid:is_dragging_item()
 
-	if var_16_3 then
-		if var_16_4 then
-			if not var_16_2 then
-				local var_16_5 = var_16_1:is_slot_hovered()
+	is_dragging_item = is_dragging_item or _item_grid:is_item_dragged() ~= nil
 
-				if var_16_5 then
-					arg_16_0:_add_craft_item(var_16_3, var_16_5)
+	local get_pressed_item_backend_id, var_16_4 = super_parent:get_pressed_item_backend_id()
+
+	if not get_pressed_item_backend_id then
+		if not var_16_4 then
+			if not is_dragging_item then
+				local is_slot_hovered = _item_grid:is_slot_hovered()
+
+				if not is_slot_hovered then
+					self:_add_craft_item(get_pressed_item_backend_id, is_slot_hovered)
 				end
 			end
 		else
-			arg_16_0:_add_craft_item(var_16_3)
+			self:_add_craft_item(get_pressed_item_backend_id)
 		end
 	end
 
-	local var_16_6 = var_16_1:is_item_pressed()
+	local is_item_pressed = _item_grid:is_item_pressed()
 
-	if var_16_6 then
-		local var_16_7 = var_16_6.backend_id
+	if not is_item_pressed then
+		local backend_id = is_item_pressed.backend_id
 
-		arg_16_0:_remove_craft_item(var_16_7)
+		self:_remove_craft_item(backend_id)
 	end
 end
 
-function CraftPageRollProperties._remove_craft_item(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
-	local var_17_0 = arg_17_0._craft_items
+CraftPageRollProperties._remove_craft_item = function (self, arg_17_1, arg_17_2, arg_17_3)
+	-- function 17
+	local _craft_items = self._craft_items
 
-	if arg_17_2 then
-		if var_17_0[arg_17_2] then
-			arg_17_1 = var_17_0[arg_17_2]
+	if not arg_17_2 then
+		if not _craft_items[arg_17_2] then
+			arg_17_1 = _craft_items[arg_17_2]
 		end
 	else
-		for iter_17_0, iter_17_1 in pairs(var_17_0) do
-			if iter_17_1 == arg_17_1 then
-				arg_17_2 = iter_17_0
+		for k, v in pairs(_craft_items) do
+			if v == arg_17_1 then
+				arg_17_2 = k
 
 				break
 			end
 		end
 	end
 
-	if arg_17_1 and arg_17_2 then
-		arg_17_0.super_parent:set_disabled_backend_id(arg_17_1, false)
-		arg_17_0._item_grid:add_item_to_slot_index(arg_17_2, nil)
+	if not arg_17_1 and not arg_17_2 then
+		self.super_parent:set_disabled_backend_id(arg_17_1, false)
+		self._item_grid:add_item_to_slot_index(arg_17_2, nil)
 
-		var_17_0[arg_17_2] = nil
-		arg_17_0._num_craft_items = math.max((arg_17_0._num_craft_items or 0) - 1, 0)
+		_craft_items[arg_17_2] = nil
 
-		if arg_17_0._num_craft_items == 0 then
-			arg_17_0:_set_craft_button_disabled(true)
+		local max = math.max
+		local _num_craft_items = self._num_craft_items
+
+		_num_craft_items = _num_craft_items or 0
+		self._num_craft_items = max(_num_craft_items - 1, 0)
+
+		if self._num_craft_items == 0 then
+			self:_set_craft_button_disabled(true)
 		end
 
 		if not arg_17_3 then
-			arg_17_0:_play_sound("play_gui_craft_item_drag")
+			self:_play_sound("play_gui_craft_item_drag")
 		end
 
-		arg_17_0._recipe_name = arg_17_0.settings.name
+		self._recipe_name = self.settings.name
 	end
 end
 
-function CraftPageRollProperties._add_craft_item(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
-	if arg_18_0._num_craft_items == 0 then
-		arg_18_0._item_grid:clear_item_grid()
-		table.clear(arg_18_0._craft_items)
+CraftPageRollProperties._add_craft_item = function (self, arg_18_1, arg_18_2, arg_18_3)
+	-- function 18
+	if self._num_craft_items == 0 then
+		self._item_grid:clear_item_grid()
+		table.clear(self._craft_items)
 	end
 
-	local var_18_0 = arg_18_0._craft_items
+	local _craft_items = self._craft_items
 
 	if not arg_18_2 then
-		for iter_18_0 = 1, 1 do
-			if not var_18_0[iter_18_0] then
-				arg_18_2 = iter_18_0
+		for i = 1, 1 do
+			if not _craft_items[i] then
+				arg_18_2 = i
 
 				break
 			end
 		end
 	end
 
-	if arg_18_2 then
-		var_18_0[arg_18_2] = arg_18_1
+	if not arg_18_2 then
+		_craft_items[arg_18_2] = arg_18_1
 
-		local var_18_1 = Managers.backend:get_interface("items")
-		local var_18_2 = arg_18_1 and var_18_1:get_item_from_id(arg_18_1)
-		local var_18_3 = arg_18_1 and var_18_1:get_item_masterlist_data(arg_18_1)
-		local var_18_4 = var_18_3 and var_18_3.slot_type
+		local get_interface = Managers.backend:get_interface("items")
+		local flag = not arg_18_1 and get_interface:get_item_from_id(arg_18_1)
+		local flag_2 = not arg_18_1 and get_interface:get_item_masterlist_data(arg_18_1)
+		local flag_3 = not flag_2 and flag_2.slot_type
 
-		if var_18_4 == "ranged" or var_18_4 == "melee" then
-			arg_18_0._recipe_name = "reroll_weapon_properties"
-		elseif var_18_4 == "trinket" or var_18_4 == "ring" or var_18_4 == "necklace" then
-			arg_18_0._recipe_name = "reroll_jewellery_properties"
+		if not (flag_3 == "ranged" or flag_3 ~= "melee") then
+			self._recipe_name = "reroll_weapon_properties"
+		elseif not (flag_3 == "trinket" or flag_3 == "ring" or flag_3 ~= "necklace") then
+			self._recipe_name = "reroll_jewellery_properties"
 		end
 
-		arg_18_0._item_grid:add_item_to_slot_index(arg_18_2, var_18_2)
-		arg_18_0.super_parent:set_disabled_backend_id(arg_18_1, true)
+		self._item_grid:add_item_to_slot_index(arg_18_2, flag)
+		self.super_parent:set_disabled_backend_id(arg_18_1, true)
 
-		arg_18_0._num_craft_items = math.min((arg_18_0._num_craft_items or 0) + 1, var_0_9)
+		local min = math.min
+		local _num_craft_items = self._num_craft_items
 
-		if arg_18_0._num_craft_items > 0 and arg_18_0._has_all_requirements then
-			arg_18_0:_set_craft_button_disabled(false)
+		_num_craft_items = _num_craft_items or 0
+		self._num_craft_items = min(_num_craft_items + 1, num)
+
+		if not (self._num_craft_items > 0) or not self._has_all_requirements then
+			self:_set_craft_button_disabled(false)
 		end
 
-		if arg_18_1 and not arg_18_3 then
-			arg_18_0:_play_sound("play_gui_craft_item_drop")
+		if not (not arg_18_1 and arg_18_3) then
+			self:_play_sound("play_gui_craft_item_drop")
 		end
 	end
 end
 
-function CraftPageRollProperties._set_craft_button_disabled(arg_19_0, arg_19_1)
+CraftPageRollProperties._set_craft_button_disabled = function (arg_19_0, arg_19_1)
+	-- function 19
 	arg_19_0._widgets_by_name.craft_button.content.button_hotspot.disable_button = arg_19_1
 end
 
-function CraftPageRollProperties._exit(arg_20_0, arg_20_1)
-	arg_20_0.exit = true
-	arg_20_0.exit_level_id = arg_20_1
+CraftPageRollProperties._exit = function (self, arg_20_1)
+	-- function 20
+	self.exit = true
+	self.exit_level_id = arg_20_1
 end
 
-function CraftPageRollProperties.draw(arg_21_0, arg_21_1)
-	local var_21_0 = arg_21_0.ui_renderer
-	local var_21_1 = arg_21_0.ui_top_renderer
-	local var_21_2 = arg_21_0.ui_scenegraph
-	local var_21_3 = arg_21_0.super_parent:window_input_service()
+CraftPageRollProperties.draw = function (self, arg_21_1)
+	-- function 21
+	local ui_renderer = self.ui_renderer
+	local ui_top_renderer = self.ui_top_renderer
+	local ui_scenegraph = self.ui_scenegraph
+	local window_input_service = self.super_parent:window_input_service()
 
-	UIRenderer.begin_pass(var_21_1, var_21_2, var_21_3, arg_21_1, nil, arg_21_0.render_settings)
+	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, window_input_service, arg_21_1, nil, self.render_settings)
 
-	for iter_21_0, iter_21_1 in ipairs(arg_21_0._widgets) do
-		UIRenderer.draw_widget(var_21_1, iter_21_1)
+	for i, v in ipairs(self._widgets) do
+		UIRenderer.draw_widget(ui_top_renderer, v)
 	end
 
-	UIRenderer.end_pass(var_21_1)
+	UIRenderer.end_pass(ui_top_renderer)
 end
 
-function CraftPageRollProperties._play_sound(arg_22_0, arg_22_1)
-	arg_22_0.super_parent:play_sound(arg_22_1)
+CraftPageRollProperties._play_sound = function (self, arg_22_1)
+	-- function 22
+	self.super_parent:play_sound(arg_22_1)
 end
 
-function CraftPageRollProperties._set_craft_button_text(arg_23_0, arg_23_1, arg_23_2)
-	arg_23_0._widgets_by_name.craft_button.content.button_text = arg_23_2 and Localize(arg_23_1) or arg_23_1
+CraftPageRollProperties._set_craft_button_text = function (self, arg_23_1, arg_23_2)
+	-- function 23
+	local content = self._widgets_by_name.craft_button.content
+	local var_23_1
+
+	if not arg_23_2 then
+		var_23_1 = Localize(arg_23_1)
+
+		if not var_23_1 then
+			-- Nothing
+		end
+	end
+
+	var_23_1 = arg_23_1
+
+	::label_23_0::
+
+	content.button_text = var_23_1
 end

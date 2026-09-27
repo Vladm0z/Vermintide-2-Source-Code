@@ -4,131 +4,138 @@ require("scripts/ui/hint_ui/hint_ui")
 
 HintUIVersusHowToPlay = class(HintUIVersusHowToPlay, HintUI)
 
-function HintUIVersusHowToPlay.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	HintUIVersusHowToPlay.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+HintUIVersusHowToPlay.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	HintUIVersusHowToPlay.super.init(self, arg_1_1, arg_1_2, arg_1_3)
 
-	arg_1_0._shown = false
-	arg_1_0._duration = arg_1_0._hint_data.duration
-	arg_1_0._gamepad_active = Managers.input:is_device_active("gamepad")
+	self._shown = false
+	self._duration = self._hint_data.duration
+	self._gamepad_active = Managers.input:is_device_active("gamepad")
 end
 
-function HintUIVersusHowToPlay.create_ui_elements(arg_2_0)
-	local var_2_0 = arg_2_0._hint_settings.data
+HintUIVersusHowToPlay.create_ui_elements = function (self)
+	-- function 2
+	local data = self._hint_settings.data
 
-	var_2_0.definitions.widget_definitions.hint_widgets = UIWidgets.create_versus_gameplay_hint_widget("hint_anchor", var_2_0)
+	data.definitions.widget_definitions.hint_widgets = UIWidgets.create_versus_gameplay_hint_widget("hint_anchor", data)
 
-	HintUIVersusHowToPlay.super.create_ui_elements(arg_2_0)
+	HintUIVersusHowToPlay.super.create_ui_elements(self)
 end
 
-function HintUIVersusHowToPlay.update(arg_3_0, arg_3_1, arg_3_2)
-	if arg_3_0._shown then
+HintUIVersusHowToPlay.update = function (self, arg_3_1, arg_3_2)
+	-- function 3
+	if not self._shown then
 		return
 	end
 
-	if arg_3_0._duration and not arg_3_0._shown and not arg_3_0._start_t then
-		arg_3_0._start_t = arg_3_2
+	if not (not self._duration and self._shown or self._start_t) then
+		self._start_t = arg_3_2
 
-		arg_3_0:start_animation("enter", arg_3_0._widgets_by_name.hint_widgets)
+		self:start_animation("enter", self._widgets_by_name.hint_widgets)
 	end
 
-	if arg_3_0._duration and arg_3_2 <= arg_3_0._start_t + arg_3_0._duration then
-		local var_3_0 = arg_3_0._widgets_by_name.hint_widgets
-		local var_3_1 = var_3_0.content
+	if not (not self._duration and not (arg_3_2 <= self._start_t + self._duration)) then
+		local hint_widgets = self._widgets_by_name.hint_widgets
+		local content = hint_widgets.content
 
-		if var_3_1.duration_bar then
-			local var_3_2 = var_3_1.duration_bar.uvs
-			local var_3_3 = arg_3_0._duration
-			local var_3_4 = 1 - (arg_3_0._start_t + arg_3_0._duration - arg_3_2) / var_3_3
+		if not content.duration_bar then
+			local uvs = content.duration_bar.uvs
+			local _duration = self._duration
+			local num = 1 - (self._start_t + self._duration - arg_3_2) / _duration
 
-			var_3_2[2][1] = var_3_4
-			var_3_0.style.duration_bar.texture_size[1] = 400 * var_3_4
+			uvs[2][1] = num
+			hint_widgets.style.duration_bar.texture_size[1] = 400 * num
 		end
 	end
 
-	if arg_3_0._hint_data.input_data then
-		arg_3_0:_update_input(arg_3_1, arg_3_2, arg_3_0._hint_data.input_data)
+	if not self._hint_data.input_data then
+		self:_update_input(arg_3_1, arg_3_2, self._hint_data.input_data)
 	end
 
-	HintUIVersusHowToPlay.super.update(arg_3_0, arg_3_1, arg_3_2)
+	HintUIVersusHowToPlay.super.update(self, arg_3_1, arg_3_2)
 
-	if arg_3_0._start_t then
-		if arg_3_2 > arg_3_0._start_t + arg_3_0._duration and not arg_3_0._is_exiting then
-			local var_3_5 = {
-				wwise_world = arg_3_0._wwise_world,
-				render_settings = arg_3_0._render_settings,
-				self = arg_3_0
+	if not self._start_t then
+		if not (not (arg_3_2 > self._start_t + self._duration) or self._is_exiting) then
+			local tbl = {
+				wwise_world = self._wwise_world,
+				render_settings = self._render_settings,
+				self = self
 			}
 
-			arg_3_0:start_animation("exit", arg_3_0._widgets_by_name.hint_widgets, var_3_5)
+			self:start_animation("exit", self._widgets_by_name.hint_widgets, tbl)
 
-			arg_3_0._is_exiting = true
+			self._is_exiting = true
 		end
 
-		if arg_3_0:should_show() and not arg_3_0._has_widget_been_closed then
-			arg_3_0:show()
+		if not (not self:should_show() and self._has_widget_been_closed) then
+			self:show()
 		end
 	end
 end
 
-function HintUIVersusHowToPlay.show(arg_4_0)
-	HintUIVersusHowToPlay.super.show(arg_4_0)
-	arg_4_0:_set_hint_widget_size()
+HintUIVersusHowToPlay.show = function (self)
+	-- function 4
+	HintUIVersusHowToPlay.super.show(self)
+	self:_set_hint_widget_size()
 end
 
-function HintUIVersusHowToPlay._set_hint_widget_size(arg_5_0)
-	local var_5_0 = arg_5_0._widgets_by_name.hint_widgets
-	local var_5_1 = var_5_0.content
-	local var_5_2 = var_5_0.style
-	local var_5_3 = var_5_2.title_text
-	local var_5_4 = var_5_2.body_text
-	local var_5_5 = UIUtils.get_text_height(arg_5_0._ui_top_renderer, var_5_3.size, var_5_3, var_5_1.title_text)
-	local var_5_6, var_5_7 = UIUtils.get_text_height(arg_5_0._ui_top_renderer, var_5_4.size, var_5_4, var_5_1.body_text)
-	local var_5_8 = var_5_5 + var_5_6 + var_5_7 * 2 + 10
+HintUIVersusHowToPlay._set_hint_widget_size = function (self)
+	-- function 5
+	local hint_widgets = self._widgets_by_name.hint_widgets
+	local content = hint_widgets.content
+	local style = hint_widgets.style
+	local title_text = style.title_text
+	local body_text = style.body_text
+	local get_text_height = UIUtils.get_text_height(self._ui_top_renderer, title_text.size, title_text, content.title_text)
+	local get_text_height_2, var_5_7 = UIUtils.get_text_height(self._ui_top_renderer, body_text.size, body_text, content.body_text)
+	local num = get_text_height + get_text_height_2 + var_5_7 * 2 + 10
 
-	if arg_5_0._duration then
-		var_5_8 = var_5_8 + 8
+	if not self._duration then
+		num = num + 8
 	end
 
-	if arg_5_0._hint_data.foot_text then
-		local var_5_9 = var_5_2.foot_text
-		local var_5_10, var_5_11 = UIUtils.get_text_height(arg_5_0._ui_top_renderer, var_5_9.size, var_5_9, var_5_1.foot_text)
+	if not self._hint_data.foot_text then
+		local foot_text = style.foot_text
+		local get_text_height_3, var_5_11 = UIUtils.get_text_height(self._ui_top_renderer, foot_text.size, foot_text, content.foot_text)
 
-		var_5_8 = var_5_8 + var_5_10 + var_5_11 * 2
+		num = num + get_text_height_3 + var_5_11 * 2
 	end
 
-	if arg_5_0._hint_data.icon then
-		var_5_8 = var_5_8 + var_5_2.foot_icon.texture_size[2] / 2 - 5
+	if not self._hint_data.icon then
+		num = num + style.foot_icon.texture_size[2] / 2 - 5
 	end
 
-	var_5_1.size[2] = var_5_8
-	var_5_0.offset[2] = -(var_5_8 / 2)
+	content.size[2] = num
+	hint_widgets.offset[2] = -(num / 2)
 end
 
-function HintUIVersusHowToPlay._update_input(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+HintUIVersusHowToPlay._update_input = function (self, arg_6_1, arg_6_2, arg_6_3)
+	-- function 6
 	if not arg_6_3.input_action then
 		return
 	end
 
-	local var_6_0 = Managers.input:is_device_active("gamepad")
+	local is_device_active = Managers.input:is_device_active("gamepad")
 
-	if arg_6_0._gamepad_active ~= var_6_0 then
-		arg_6_0._gamepad_active = var_6_0
+	if self._gamepad_active ~= is_device_active then
+		self._gamepad_active = is_device_active
 
-		local var_6_1 = arg_6_3.input_action
+		local input_action = arg_6_3.input_action
 
-		var_6_1 = var_6_1 and (var_6_0 and arg_6_3.gamepad_action or var_6_1)
+		input_action = not input_action and not is_device_active and arg_6_3.gamepad_action and input_action
 
-		local var_6_2 = "$KEY;" .. arg_6_3.input_service_name .. "__" .. var_6_1 .. ":"
-		local var_6_3 = string.format(Localize(arg_6_0._hint_data.foot_text), var_6_2)
+		local str = "$KEY;" .. arg_6_3.input_service_name .. "__" .. input_action .. ":"
+		local format = string.format(Localize(self._hint_data.foot_text), str)
 
-		arg_6_0._widgets_by_name.hint_widgets.content.foot_text = var_6_3
+		self._widgets_by_name.hint_widgets.content.foot_text = format
 	end
 end
 
-function HintUIVersusHowToPlay.hide(arg_7_0)
-	arg_7_0._shown = true
-	arg_7_0._has_widget_been_closed = true
-	arg_7_0._exit_anim_id = nil
+HintUIVersusHowToPlay.hide = function (self)
+	-- function 7
+	self._shown = true
+	self._has_widget_been_closed = true
+	self._exit_anim_id = nil
 
-	HintUIVersusHowToPlay.super.hide(arg_7_0)
+	HintUIVersusHowToPlay.super.hide(self)
 end

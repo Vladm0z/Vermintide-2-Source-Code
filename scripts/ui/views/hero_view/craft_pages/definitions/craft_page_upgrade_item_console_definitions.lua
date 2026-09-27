@@ -1,17 +1,17 @@
 -- chunkname: @scripts/ui/views/hero_view/craft_pages/definitions/craft_page_upgrade_item_console_definitions.lua
 
-local var_0_0 = 1
-local var_0_1 = 1
-local var_0_2 = var_0_0 * var_0_1
-local var_0_3 = UISettings.console_menu_scenegraphs
-local var_0_4 = {
-	screen = var_0_3.screen,
-	area = var_0_3.area,
-	area_left = var_0_3.area_left,
-	area_right = var_0_3.area_right,
-	area_divider = var_0_3.area_divider,
-	craft_bg_root = var_0_3.craft_bg_root,
-	craft_button = var_0_3.craft_button,
+local num = 1
+local num_2 = 1
+local num_3 = num * num_2
+local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
+local tbl = {
+	screen = console_menu_scenegraphs.screen,
+	area = console_menu_scenegraphs.area,
+	area_left = console_menu_scenegraphs.area_left,
+	area_right = console_menu_scenegraphs.area_right,
+	area_divider = console_menu_scenegraphs.area_divider,
+	craft_bg_root = console_menu_scenegraphs.craft_bg_root,
+	craft_button = console_menu_scenegraphs.craft_button,
 	item_grid = {
 		vertical_alignment = "center",
 		parent = "craft_bg_root",
@@ -125,10 +125,10 @@ local var_0_4 = {
 		}
 	}
 }
-local var_0_5 = true
-local var_0_6 = {
+local flag = true
+local tbl_2 = {
 	item_grid_bg = UIWidgets.create_simple_texture("console_crafting_slot_01", "item_grid", nil, nil, nil, -1),
-	item_grid = UIWidgets.create_grid("item_grid", var_0_4.item_grid.size, var_0_1, var_0_0, 20, 20),
+	item_grid = UIWidgets.create_grid("item_grid", tbl.item_grid.size, num_2, num, 20, 20),
 	craft_button = UIWidgets.create_console_craft_button("craft_button", "console_crafting_recipe_icon_upgrade"),
 	material_text_1 = UIWidgets.create_craft_material_widget("material_text_1"),
 	material_text_2 = UIWidgets.create_craft_material_widget("material_text_2"),
@@ -138,21 +138,24 @@ local var_0_6 = {
 	material_text_6 = UIWidgets.create_craft_material_widget("material_text_6"),
 	material_text_7 = UIWidgets.create_craft_material_widget("material_text_7")
 }
-local var_0_7 = {
+local tbl_3 = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+				-- function 1
 				arg_1_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
-				local var_2_0 = math.easeOutCubic(arg_2_3)
+			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+				-- function 2
+				local easeOutCubic = math.easeOutCubic(arg_2_3)
 
-				arg_2_4.render_settings.alpha_multiplier = var_2_0
+				arg_2_4.render_settings.alpha_multiplier = easeOutCubic
 			end,
-			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+				-- function 3
 				return
 			end
 		}
@@ -162,15 +165,18 @@ local var_0_7 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				-- function 4
 				arg_4_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
-				local var_5_0 = math.easeOutCubic(arg_5_3)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+				-- function 5
+				local easeOutCubic = math.easeOutCubic(arg_5_3)
 
-				arg_5_4.render_settings.alpha_multiplier = 1 - var_5_0
+				arg_5_4.render_settings.alpha_multiplier = 1 - easeOutCubic
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+				-- function 6
 				return
 			end
 		}
@@ -178,7 +184,7 @@ local var_0_7 = {
 }
 
 return {
-	widgets = var_0_6,
-	scenegraph_definition = var_0_4,
-	animation_definitions = var_0_7
+	widgets = tbl_2,
+	scenegraph_definition = tbl,
+	animation_definitions = tbl_3
 }

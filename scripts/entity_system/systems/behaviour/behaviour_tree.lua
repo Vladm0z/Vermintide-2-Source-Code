@@ -199,71 +199,81 @@ DLCUtils.require_list("behaviour_trees_precompiled")
 BehaviorTree = class(BehaviorTree)
 BehaviorTree.types = {}
 
-function BehaviorTree.init(arg_1_0, arg_1_1, arg_1_2)
-	arg_1_0._root = nil
-	arg_1_0._name = arg_1_2
-	arg_1_0._action_data = {}
+BehaviorTree.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	self._root = nil
+	self._name = arg_1_2
+	self._action_data = {}
 
-	arg_1_0:parse_lua_tree(arg_1_1)
+	self:parse_lua_tree(arg_1_1)
 end
 
-function BehaviorTree.action_data(arg_2_0)
-	return arg_2_0._action_data
+BehaviorTree.action_data = function (self)
+	-- function 2
+	return self._action_data
 end
 
-function BehaviorTree.root(arg_3_0)
-	return arg_3_0._root
+BehaviorTree.root = function (self)
+	-- function 3
+	return self._root
 end
 
-function BehaviorTree.name(arg_4_0)
-	return arg_4_0._name
+BehaviorTree.name = function (self)
+	-- function 4
+	return self._name
 end
 
-local var_0_0 = 1
+local num = 1
 
-local function var_0_1(arg_5_0, arg_5_1)
-	local var_5_0 = arg_5_0[var_0_0]
-	local var_5_1 = arg_5_0.name
-	local var_5_2 = arg_5_0.condition or "always_true"
-	local var_5_3 = arg_5_0.enter_hook
-	local var_5_4 = arg_5_0.leave_hook
-	local var_5_5 = arg_5_0.action_data
+local function fn(self, arg_5_1)
+	-- function 5
+	local var_5_0 = self[num]
+	local name = self.name
+	local condition = self.condition
+
+	condition = condition or "always_true"
+
+	local enter_hook = self.enter_hook
+	local leave_hook = self.leave_hook
+	local action_data = self.action_data
 	local var_5_6 = rawget(_G, var_5_0)
 
 	if not var_5_6 then
 		fassert(false, "BehaviorTree: no class registered named( %q )", tostring(var_5_0))
 	else
-		return var_5_6:new(var_5_1, arg_5_1, var_5_2, var_5_3, var_5_4, arg_5_0), var_5_5
+		return var_5_6:new(name, arg_5_1, condition, enter_hook, leave_hook, self), action_data
 	end
 end
 
-function BehaviorTree.parse_lua_tree(arg_6_0, arg_6_1)
-	arg_6_0._root = var_0_1(arg_6_1)
+BehaviorTree.parse_lua_tree = function (self, arg_6_1)
+	-- function 6
+	self._root = fn(arg_6_1)
 
-	arg_6_0:parse_lua_node(arg_6_1, arg_6_0._root)
+	self:parse_lua_node(arg_6_1, self._root)
 end
 
-function BehaviorTree.parse_lua_node(arg_7_0, arg_7_1, arg_7_2)
-	local var_7_0 = #arg_7_1
+BehaviorTree.parse_lua_node = function (self, arg_7_1, arg_7_2)
+	-- function 7
+	local count = #arg_7_1
 
-	for iter_7_0 = 2, var_7_0 do
-		local var_7_1 = arg_7_1[iter_7_0]
-		local var_7_2, var_7_3 = var_0_1(var_7_1, arg_7_2)
+	for i = 2, count do
+		local var_7_1 = arg_7_1[i]
+		local var_7_2, var_7_3 = fn(var_7_1, arg_7_2)
 
-		if var_7_3 then
-			arg_7_0._action_data[var_7_3.name] = var_7_3
+		if not var_7_3 then
+			self._action_data[var_7_3.name] = var_7_3
 		end
 
 		fassert(var_7_2.name, "Behaviour tree node with parent %q is missing name", arg_7_1.name)
 
-		if arg_7_2 then
+		if not arg_7_2 then
 			arg_7_2:add_child(var_7_2)
 		end
 
-		arg_7_0:parse_lua_node(var_7_1, var_7_2)
+		self:parse_lua_node(var_7_1, var_7_2)
 	end
 
-	if arg_7_2.ready then
+	if not arg_7_2.ready then
 		arg_7_2:ready(arg_7_1)
 	end
 end

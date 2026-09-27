@@ -2,67 +2,70 @@
 
 require("scripts/managers/backend_playfab/playfab_mirror_base")
 
-local var_0_0 = require("PlayFab.PlayFabClientApi")
+local PlayFabClientApi = require("PlayFab.PlayFabClientApi")
 
 PlayFabMirrorAdventure = class(PlayFabMirrorAdventure, PlayFabMirrorBase)
 
-function PlayFabMirrorAdventure.init(arg_1_0, arg_1_1)
-	local var_1_0 = Managers.mechanism:current_mechanism_name()
+PlayFabMirrorAdventure.init = function (self, arg_1_1)
+	-- function 1
+	local current_mechanism_name = Managers.mechanism:current_mechanism_name()
 
-	arg_1_0:set_mechanism(var_1_0)
-	PlayFabMirrorBase.init(arg_1_0, arg_1_1)
+	self:set_mechanism(current_mechanism_name)
+	PlayFabMirrorBase.init(self, arg_1_1)
 end
 
-function PlayFabMirrorAdventure.set_mechanism(arg_2_0, arg_2_1)
+PlayFabMirrorAdventure.set_mechanism = function (self, arg_2_1)
+	-- function 2
 	printf("[PlayFabMirrorAdventure] Setting mechanism %s", arg_2_1)
-	rawset(_G, "debug_characters_data_unsafe_write", arg_2_0._mechanism_key and arg_2_0._mechanism_key ~= arg_2_1 or nil)
+	rawset(_G, "debug_characters_data_unsafe_write", not self._mechanism_key and self._mechanism_key ~= arg_2_1 or nil)
 
-	arg_2_0._mechanism_key = arg_2_1
+	self._mechanism_key = arg_2_1
 
-	local var_2_0 = table.clone(InventorySettings.slots_per_affiliation)
+	local clone = table.clone(InventorySettings.slots_per_affiliation)
 
-	table.insert(var_2_0.heroes, "talents")
+	table.insert(clone.heroes, "talents")
 
 	if arg_2_1 == "versus" then
-		arg_2_0._characters_data_key = "vs_characters_data"
+		self._characters_data_key = "vs_characters_data"
 	else
-		arg_2_0._characters_data_key = "characters_data"
-		var_2_0 = {
-			heroes = var_2_0.heroes
+		self._characters_data_key = "characters_data"
+		clone = {
+			heroes = clone.heroes
 		}
 	end
 
-	arg_2_0._verify_slot_keys_per_affiliation = var_2_0
+	self._verify_slot_keys_per_affiliation = clone
 end
 
-function PlayFabMirrorAdventure.request_characters(arg_3_0, arg_3_1)
-	arg_3_1 = arg_3_1 or arg_3_0._mechanism_key
+PlayFabMirrorAdventure.request_characters = function (self, arg_3_1)
+	-- function 3
+	arg_3_1 = arg_3_1 or self._mechanism_key
 
 	if arg_3_1 == "versus" then
-		local var_3_0 = false
-		local var_3_1 = arg_3_0:get_read_only_data("vs_characters_data")
+		local flag = false
+		local get_read_only_data = self:get_read_only_data("vs_characters_data")
 
-		if not var_3_1 or arg_3_0:get_read_only_data("vs_profile_data") == nil then
-			var_3_0 = true
-		elseif var_3_1 then
-			local var_3_2 = cjson.decode(var_3_1)
+		if not (not get_read_only_data and self:get_read_only_data("vs_profile_data") ~= nil) then
+			flag = true
+		elseif not get_read_only_data then
+			local decode = cjson.decode(get_read_only_data)
 
-			for iter_3_0, iter_3_1 in pairs(var_3_2) do
-				if table.is_empty(iter_3_1.careers) then
-					var_3_0 = true
+			for k, v in pairs(decode) do
+				if not table.is_empty(v.careers) then
+					flag = true
 
 					break
 				end
 			end
 
-			if not var_3_0 then
-				local var_3_3 = PROFILES_BY_AFFILIATION.dark_pact
+			if not flag then
+				local dark_pact = PROFILES_BY_AFFILIATION.dark_pact
 
-				for iter_3_2 = 1, #var_3_3 do
-					local var_3_4 = var_3_3[iter_3_2]
+				for k_2 = 1, #dark_pact do
+					local var_3_4 = dark_pact[k_2]
 
-					if var_3_4 ~= "vs_undecided" and not var_3_2[var_3_4] then
-						var_3_0 = true
+					if not (var_3_4 == "vs_undecided" or decode[var_3_4]) then
+						flag = true
 
 						break
 					end
@@ -70,145 +73,163 @@ function PlayFabMirrorAdventure.request_characters(arg_3_0, arg_3_1)
 			end
 		end
 
-		if var_3_0 then
-			arg_3_0._num_items_to_load = arg_3_0._num_items_to_load + 1
+		if not flag then
+			self._num_items_to_load = self._num_items_to_load + 1
 
-			local var_3_5 = {
+			local tbl = {
 				FunctionName = "versusPlayerSetup",
 				FunctionParameter = {}
 			}
-			local var_3_6 = callback(arg_3_0, "versus_player_setup_cb")
+			local var_3_6 = callback(self, "versus_player_setup_cb")
 
-			arg_3_0._request_queue:enqueue(var_3_5, var_3_6)
+			self._request_queue:enqueue(tbl, var_3_6)
 		else
-			arg_3_0:_verify_career_loadouts()
+			self:_verify_career_loadouts()
 		end
 	else
-		arg_3_0:_verify_career_loadouts()
+		self:_verify_career_loadouts()
 	end
 end
 
-function PlayFabMirrorAdventure._verify_career_loadouts(arg_4_0)
-	arg_4_0._num_items_to_load = arg_4_0._num_items_to_load + 1
+PlayFabMirrorAdventure._verify_career_loadouts = function (self)
+	-- function 4
+	self._num_items_to_load = self._num_items_to_load + 1
 
-	local var_4_0 = {
+	local tbl = {
 		FunctionName = "verifyCareerLoadouts",
 		FunctionParameter = {}
 	}
-	local var_4_1 = callback(arg_4_0, "verify_career_loadouts_cb")
+	local var_4_1 = callback(self, "verify_career_loadouts_cb")
 
-	arg_4_0._request_queue:enqueue(var_4_0, var_4_1)
+	self._request_queue:enqueue(tbl, var_4_1)
 end
 
-function PlayFabMirrorAdventure.verify_career_loadouts_cb(arg_5_0, arg_5_1)
-	local var_5_0 = arg_5_1.FunctionResult
-	local var_5_1 = var_5_0.characters_data
-	local var_5_2 = var_5_0.vs_characters_data
+PlayFabMirrorAdventure.verify_career_loadouts_cb = function (self, arg_5_1)
+	-- function 5
+	local FunctionResult = arg_5_1.FunctionResult
+	local characters_data = FunctionResult.characters_data
+	local vs_characters_data = FunctionResult.vs_characters_data
 
-	if var_5_1 then
-		arg_5_0:set_read_only_data("characters_data", var_5_1, true)
+	if not characters_data then
+		self:set_read_only_data("characters_data", characters_data, true)
 	end
 
-	if var_5_2 then
-		arg_5_0:set_read_only_data("vs_characters_data", var_5_2, true)
+	if not vs_characters_data then
+		self:set_read_only_data("vs_characters_data", vs_characters_data, true)
 	end
 
-	arg_5_0._num_items_to_load = arg_5_0._num_items_to_load - 1
+	self._num_items_to_load = self._num_items_to_load - 1
 
-	arg_5_0:_verify_dlc_careers()
+	self:_verify_dlc_careers()
 end
 
-function PlayFabMirrorAdventure.versus_player_setup_cb(arg_6_0, arg_6_1)
-	local var_6_0 = arg_6_1.FunctionResult
-	local var_6_1 = var_6_0.vs_characters_data
-	local var_6_2 = var_6_0.vs_profile_data
-	local var_6_3 = var_6_0.num_items_granted
+PlayFabMirrorAdventure.versus_player_setup_cb = function (self, arg_6_1)
+	-- function 6
+	local FunctionResult = arg_6_1.FunctionResult
+	local vs_characters_data = FunctionResult.vs_characters_data
+	local vs_profile_data = FunctionResult.vs_profile_data
+	local num_items_granted = FunctionResult.num_items_granted
 
-	arg_6_0:set_read_only_data("vs_characters_data", var_6_1, true)
-	arg_6_0:set_read_only_data("vs_profile_data", var_6_2, true)
+	self:set_read_only_data("vs_characters_data", vs_characters_data, true)
+	self:set_read_only_data("vs_profile_data", vs_profile_data, true)
 
-	arg_6_0._num_items_to_load = arg_6_0._num_items_to_load - 1
+	self._num_items_to_load = self._num_items_to_load - 1
 
-	local var_6_4 = var_6_0.unlocked_cosmetics
+	local unlocked_cosmetics = FunctionResult.unlocked_cosmetics
 
-	if var_6_4 then
-		arg_6_0:set_read_only_data("unlocked_cosmetics", var_6_4, true)
+	if not unlocked_cosmetics then
+		self:set_read_only_data("unlocked_cosmetics", unlocked_cosmetics, true)
 
-		arg_6_0._unlocked_cosmetics = arg_6_0:_parse_unlocked_cosmetics()
+		self._unlocked_cosmetics = self:_parse_unlocked_cosmetics()
 	end
 
-	if var_6_3 > 0 then
-		arg_6_0:_request_user_inventory()
+	if num_items_granted > 0 then
+		self:_request_user_inventory()
 	else
-		arg_6_0:_verify_career_loadouts()
+		self:_verify_career_loadouts()
 	end
 end
 
-function PlayFabMirrorAdventure._set_inital_career_data_weaves(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
-	local var_7_0 = {}
+PlayFabMirrorAdventure._set_inital_career_data_weaves = function (self, arg_7_1, arg_7_2, arg_7_3)
+	-- function 7
+	local tbl = {}
 
-	for iter_7_0 = 1, #arg_7_3 do
-		local var_7_1 = arg_7_3[iter_7_0]
+	for i = 1, #arg_7_3 do
+		local var_7_1 = arg_7_3[i]
 		local var_7_2 = arg_7_2[var_7_1]
-		local var_7_3 = type(var_7_2) == "table" and var_7_2.Value or var_7_2
+		local Value
 
-		if not var_7_3 then
-			var_7_0[var_7_1] = true
-		elseif not arg_7_0._inventory_items[var_7_3] then
-			var_7_0[var_7_1] = true
+		if type(var_7_2) == "table" then
+			Value = var_7_2.Value
+
+			if not Value then
+				-- Nothing
+			end
+		end
+
+		Value = var_7_2
+
+		::label_7_0::
+
+		if not Value then
+			tbl[var_7_1] = true
+		elseif not self._inventory_items[Value] then
+			tbl[var_7_1] = true
 		end
 	end
 
-	if table.size(var_7_0) > 0 then
-		return var_7_0
+	if table.size(tbl) > 0 then
+		return tbl
 	end
 end
 
-function PlayFabMirrorAdventure._check_weaves_loadout(arg_8_0)
-	local var_8_0 = arg_8_0:get_read_only_data(arg_8_0._characters_data_key)
-	local var_8_1 = cjson.decode(var_8_0)
-	local var_8_2 = {}
+PlayFabMirrorAdventure._check_weaves_loadout = function (self)
+	-- function 8
+	local get_read_only_data = self:get_read_only_data(self._characters_data_key)
+	local decode = cjson.decode(get_read_only_data)
+	local tbl = {}
 
-	for iter_8_0, iter_8_1 in pairs(var_8_1) do
-		for iter_8_2, iter_8_3 in pairs(iter_8_1.careers) do
-			local var_8_3 = "weaves_loadout_" .. iter_8_2
-			local var_8_4 = arg_8_0:get_read_only_data(var_8_3)
-			local var_8_5 = cjson.decode(var_8_4)
-			local var_8_6 = arg_8_0:_set_inital_career_data_weaves(iter_8_2, var_8_5, {
+	for k, v in pairs(decode) do
+		for k_2, v_2 in pairs(v.careers) do
+			local str = "weaves_loadout_" .. k_2
+			local get_read_only_data_2 = self:get_read_only_data(str)
+			local decode_2 = cjson.decode(get_read_only_data_2)
+			local _set_inital_career_data_weaves = self:_set_inital_career_data_weaves(k_2, decode_2, {
 				"slot_melee",
 				"slot_ranged"
 			})
 
-			if var_8_6 then
-				var_8_2[iter_8_2] = var_8_6
+			if not _set_inital_career_data_weaves then
+				tbl[k_2] = _set_inital_career_data_weaves
 
-				print("Broken item slots for career", var_8_3)
-				table.dump(var_8_6)
+				print("Broken item slots for career", str)
+				table.dump(_set_inital_career_data_weaves)
 			end
 		end
 	end
 
-	if not table.is_empty(var_8_2) then
-		arg_8_0:_fix_career_data(var_8_2, "weaves", "fix_weaves_career_data_request_cb")
+	if not table.is_empty(tbl) then
+		self:_fix_career_data(tbl, "weaves", "fix_weaves_career_data_request_cb")
 	else
-		arg_8_0:unequip_disabled_items()
+		self:unequip_disabled_items()
 	end
 end
 
-function PlayFabMirrorAdventure.fix_weaves_career_data_request_cb(arg_9_0, arg_9_1)
-	arg_9_0.broken_slots_data = nil
-	arg_9_0._num_items_to_load = arg_9_0._num_items_to_load - 1
+PlayFabMirrorAdventure.fix_weaves_career_data_request_cb = function (self, arg_9_1)
+	-- function 9
+	self.broken_slots_data = nil
+	self._num_items_to_load = self._num_items_to_load - 1
 
-	local var_9_0 = arg_9_1.FunctionResult
+	local FunctionResult = arg_9_1.FunctionResult
 
-	if var_9_0.num_items_granted > 0 then
-		arg_9_0:_request_user_inventory()
+	if FunctionResult.num_items_granted > 0 then
+		self:_request_user_inventory()
 
 		return
 	end
 
-	local var_9_1 = var_9_0.character_starting_gear
+	local character_starting_gear = FunctionResult.character_starting_gear
 
-	arg_9_0:merge_read_only_data(var_9_1, true)
-	arg_9_0:unequip_disabled_items()
+	self:merge_read_only_data(character_starting_gear, true)
+	self:unequip_disabled_items()
 end

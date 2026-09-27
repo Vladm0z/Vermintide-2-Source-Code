@@ -2,62 +2,84 @@
 
 require("scripts/managers/game_mode/game_modes/game_mode_base")
 
-script_data.disable_gamemode_end = script_data.disable_gamemode_end or Development.parameter("disable_gamemode_end")
+local script_data = script_data
+local disable_gamemode_end = script_data.disable_gamemode_end
+
+disable_gamemode_end = disable_gamemode_end or Development.parameter("disable_gamemode_end")
+script_data.disable_gamemode_end = disable_gamemode_end
 GameModeDemo = class(GameModeDemo, GameModeBase)
 
-local var_0_0 = false
-local var_0_1 = false
+local flag = false
+local flag_2 = false
 
-function GameModeDemo.init(arg_1_0, arg_1_1, arg_1_2, ...)
+GameModeDemo.init = function (arg_1_0, arg_1_1, arg_1_2, ...)
+	-- function 1
 	GameModeDemo.super.init(arg_1_0, arg_1_1, arg_1_2, ...)
 end
 
-function GameModeDemo.evaluate_end_conditions(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
-	local var_2_0 = true
-	local var_2_1 = GameModeHelper.side_is_dead("heroes", var_2_0)
-	local var_2_2 = GameModeHelper.side_is_disabled("heroes")
-	local var_2_3 = var_2_1 or var_2_2 or arg_2_0._level_failed or arg_2_0:_is_time_up()
+GameModeDemo.evaluate_end_conditions = function (self, arg_2_1, arg_2_2, arg_2_3)
+	-- function 2
+	local flag_3 = true
+	local side_is_dead = GameModeHelper.side_is_dead("heroes", flag_3)
+	local side_is_disabled = GameModeHelper.side_is_disabled("heroes")
 
-	if arg_2_0._level_completed or var_2_3 or arg_2_0:update_end_level_areas() then
-		arg_2_0:complete_level()
+	if not (side_is_dead or side_is_disabled) then
+		-- Nothing
+	end
 
-		var_0_0 = false
-		var_0_1 = false
+	::label_2_1::
+
+	local _level_failed = self._level_failed
+
+	_level_failed = _level_failed or self:_is_time_up()
+
+	::label_2_2::
+
+	if self._level_completed or _level_failed or not self:update_end_level_areas() then
+		self:complete_level()
+
+		flag = false
+		flag_2 = false
 	end
 end
 
-function GameModeDemo.complete_level(arg_3_0)
-	if arg_3_0._transition ~= "demo_completed" then
-		if script_data.disable_video_player then
-			arg_3_0._transition = "return_to_demo_title_screen"
+GameModeDemo.complete_level = function (self)
+	-- function 3
+	if self._transition ~= "demo_completed" then
+		if not script_data.disable_video_player then
+			self._transition = "return_to_demo_title_screen"
 		else
-			arg_3_0._transition = "demo_completed"
+			self._transition = "demo_completed"
 		end
 
 		Managers.music:trigger_event("Play_stinger_ending_demo")
 		Managers.time:set_global_time_scale(1)
 
-		local var_3_0 = arg_3_0._world
-		local var_3_1 = Managers.world:wwise_world(var_3_0)
+		local _world = self._world
+		local wwise_world = Managers.world:wwise_world(_world)
 
-		WwiseWorld.set_global_parameter(var_3_1, "demo_slowmo", 0)
+		WwiseWorld.set_global_parameter(wwise_world, "demo_slowmo", 0)
 	end
 end
 
-function GameModeDemo.ended(arg_4_0, arg_4_1)
-	if not arg_4_0._network_server:are_all_peers_ingame() then
-		arg_4_0._network_server:disconnect_joining_peers()
+GameModeDemo.ended = function (self, arg_4_1)
+	-- function 4
+	if not self._network_server:are_all_peers_ingame() then
+		self._network_server:disconnect_joining_peers()
 	end
 end
 
-function GameModeDemo.wanted_transition(arg_5_0)
-	return arg_5_0._transition
+GameModeDemo.wanted_transition = function (self)
+	-- function 5
+	return self._transition
 end
 
-function GameModeDemo.COMPLETE_LEVEL(arg_6_0)
-	var_0_0 = true
+GameModeDemo.COMPLETE_LEVEL = function (arg_6_0)
+	-- function 6
+	flag = true
 end
 
-function GameModeDemo.FAIL_LEVEL(arg_7_0)
-	var_0_1 = true
+GameModeDemo.FAIL_LEVEL = function (arg_7_0)
+	-- function 7
+	flag_2 = true
 end

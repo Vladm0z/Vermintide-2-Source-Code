@@ -1,28 +1,32 @@
 -- chunkname: @scripts/ui/hud_ui/world_marker_templates/world_marker_template_versus_climbing.lua
 
-local var_0_0 = "climbing"
+local str = "climbing"
+local WorldMarkerTemplates = WorldMarkerTemplates
 
 WorldMarkerTemplates = WorldMarkerTemplates or {}
+WorldMarkerTemplates = WorldMarkerTemplates
 
-local var_0_1 = WorldMarkerTemplates[var_0_0] or {}
+local var_0_2 = WorldMarkerTemplates[str]
 
-WorldMarkerTemplates[var_0_0] = var_0_1
-var_0_1.check_line_of_sight = true
-var_0_1.position_offset = {
+var_0_2 = var_0_2 or {}
+WorldMarkerTemplates[str] = var_0_2
+var_0_2.check_line_of_sight = true
+var_0_2.position_offset = {
 	0,
 	0,
 	0
 }
-var_0_1.screen_clamp = false
-var_0_1.max_distance = 15
-var_0_1.fade_distance = 3
-var_0_1.scale_settings = {
+var_0_2.screen_clamp = false
+var_0_2.max_distance = 15
+var_0_2.fade_distance = 3
+var_0_2.scale_settings = {
 	end_scale_distance = 4,
 	start_scale_distance = 2,
 	min_scale = 0.25
 }
 
-function var_0_1.create_widget_definition(arg_1_0)
+var_0_2.create_widget_definition = function (arg_1_0)
+	-- function 1
 	return {
 		scenegraph_id = arg_1_0,
 		offset = {
@@ -128,41 +132,43 @@ function var_0_1.create_widget_definition(arg_1_0)
 	}
 end
 
-function var_0_1.on_enter(arg_2_0)
+var_0_2.on_enter = function (arg_2_0)
+	-- function 2
 	arg_2_0.content.progress = 0
 end
 
-function var_0_1.update_function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
-	local var_3_0 = arg_3_1.content
-	local var_3_1 = arg_3_1.style
-	local var_3_2 = var_3_1.icon
-	local var_3_3 = var_3_0.distance
-	local var_3_4 = var_3_0.progress
-	local var_3_5 = arg_3_2.unit
-	local var_3_6 = ScriptUnit.extension(var_3_5, "interactable_system"):is_enabled()
-	local var_3_7 = Managers.input:get_service("Player"):get("action_one_hold")
+var_0_2.update_function = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	-- function 3
+	local content = arg_3_1.content
+	local style = arg_3_1.style
+	local icon = style.icon
+	local distance = content.distance
+	local progress = content.progress
+	local unit = arg_3_2.unit
+	local is_enabled = ScriptUnit.extension(unit, "interactable_system"):is_enabled()
+	local get = Managers.input:get_service("Player"):get("action_one_hold")
 
-	if var_3_3 <= 3 and not arg_3_2.raycast_result and not var_3_7 and var_3_6 then
-		var_3_4 = math.min(1, var_3_4 + arg_3_4 * 3.5)
+	if not (distance <= 3) or arg_3_2.raycast_result or get or not is_enabled then
+		progress = math.min(1, progress + arg_3_4 * 3.5)
 	else
-		var_3_4 = math.max(0, var_3_4 - arg_3_4 * 15)
+		progress = math.max(0, progress - arg_3_4 * 15)
 	end
 
-	var_3_0.progress = var_3_4
-	var_3_1.background.color[1] = 175 * var_3_4
+	content.progress = progress
+	style.background.color[1] = 175 * progress
 
-	if not var_3_6 then
-		Colors.copy_to(var_3_2.color, var_3_2.color_disabled)
-	elseif arg_3_2.raycast_result or var_3_7 or not var_3_6 then
-		Colors.copy_to(var_3_2.color, var_3_2.color_occluded)
+	if not is_enabled then
+		Colors.copy_to(icon.color, icon.color_disabled)
+	elseif not (arg_3_2.raycast_result or get or is_enabled) then
+		Colors.copy_to(icon.color, icon.color_occluded)
 	else
-		Colors.lerp_color_tables(var_3_2.color_inactive, var_3_2.color_active, var_3_4, var_3_2.color)
+		Colors.lerp_color_tables(icon.color_inactive, icon.color_active, progress, icon.color)
 	end
 
-	local var_3_8 = (arg_3_3.max_distance - var_3_3) / arg_3_3.fade_distance
+	local num = (arg_3_3.max_distance - distance) / arg_3_3.fade_distance
 
-	if var_3_8 < 1 then
-		var_3_2.color[1] = var_3_2.color[1] * var_3_8
+	if num < 1 then
+		icon.color[1] = icon.color[1] * num
 	end
 
 	return false

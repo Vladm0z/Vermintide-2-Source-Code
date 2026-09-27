@@ -1,18 +1,18 @@
 -- chunkname: @scripts/ui/dlc_versus/views/start_game_view/windows/start_game_window_versus_player_hosted_lobby.lua
 
 local var_0_0 = local_require("scripts/ui/dlc_versus/views/start_game_view/windows/definitions/start_game_window_versus_player_hosted_lobby_definitions")
-local var_0_1 = var_0_0.animation_definitions
-local var_0_2 = var_0_0.scenegraph_definition
-local var_0_3 = require("scripts/managers/game_mode/mechanisms/reservation_handler_types")
-local var_0_4 = 2
-local var_0_5 = 4
-local var_0_6 = "gui/1080p/single_textures/generic/transparent_placeholder_texture"
-local var_0_7 = true
+local animation_definitions = var_0_0.animation_definitions
+local scenegraph_definition = var_0_0.scenegraph_definition
+local scripts_managers_game_mode_mechanisms_reservation_handler_types = require("scripts/managers/game_mode/mechanisms/reservation_handler_types")
+local num = 2
+local num_2 = 4
+local str = "gui/1080p/single_textures/generic/transparent_placeholder_texture"
+local flag = true
 
 StartGameWindowVersusPlayerHostedLobby = class(StartGameWindowVersusPlayerHostedLobby)
 StartGameWindowVersusPlayerHostedLobby.NAME = "StartGameWindowPlayerHostedLobby"
 
-local var_0_8 = {
+local tbl = {
 	"selection",
 	"panel_focus",
 	panel_focus = 2,
@@ -20,441 +20,506 @@ local var_0_8 = {
 	selection = 1,
 	custom_settings = 3
 }
-local var_0_9 = 3
-local var_0_10 = {
+local num_3 = 3
+local tbl_2 = {
 	4,
 	2,
 	4
 }
-local var_0_11 = {
+local tbl_3 = {
 	[2] = {
 		[1] = "mission_setting",
 		[2] = "toggle_custom_settings_button"
 	}
 }
-local var_0_12 = {
+local tbl_4 = {
 	[1] = 1,
 	[3] = 2
 }
 
-function StartGameWindowVersusPlayerHostedLobby.on_enter(arg_1_0, arg_1_1, arg_1_2)
-	arg_1_0._parent = arg_1_1.parent
+StartGameWindowVersusPlayerHostedLobby.on_enter = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	self._parent = arg_1_1.parent
 
-	local var_1_0 = arg_1_1.ingame_ui_context
+	local ingame_ui_context = arg_1_1.ingame_ui_context
 
-	arg_1_0._ingame_ui_context = var_1_0
-	arg_1_0._ui_renderer = var_1_0.ui_renderer
-	arg_1_0._ui_top_renderer = var_1_0.ui_top_renderer
-	arg_1_0._matchmaking_manager = var_1_0.matchmaking_manager
-	arg_1_0._is_server = var_1_0.is_server
-	arg_1_0._peer_id = var_1_0.peer_id
-	arg_1_0._is_loading = true
-	arg_1_0._match_handler = Managers.mechanism:network_handler():get_match_handler()
-	arg_1_0._options_view = var_1_0.ingame_ui.views.options_view
-	arg_1_0._render_settings = {
+	self._ingame_ui_context = ingame_ui_context
+	self._ui_renderer = ingame_ui_context.ui_renderer
+	self._ui_top_renderer = ingame_ui_context.ui_top_renderer
+	self._matchmaking_manager = ingame_ui_context.matchmaking_manager
+	self._is_server = ingame_ui_context.is_server
+	self._peer_id = ingame_ui_context.peer_id
+	self._is_loading = true
+	self._match_handler = Managers.mechanism:network_handler():get_match_handler()
+	self._options_view = ingame_ui_context.ingame_ui.views.options_view
+	self._render_settings = {
 		alpha_multiplier = 1,
 		snap_pixel_positions = true
 	}
 
-	local var_1_1 = Managers.mechanism:game_mechanism()
+	local game_mechanism = Managers.mechanism:game_mechanism()
+	local custom_settings_enabled
 
-	arg_1_0._custom_settings_toggled = var_1_1:is_hosting_versus_custom_game() and var_1_1:custom_settings_enabled() or false
-	arg_1_0._game_mechanism = var_1_1
+	if not game_mechanism:is_hosting_versus_custom_game() then
+		custom_settings_enabled = game_mechanism:custom_settings_enabled()
 
-	arg_1_0:_create_ui_elements()
+		if not custom_settings_enabled then
+			-- Nothing
+		end
+	end
 
-	arg_1_0._enter_animation = arg_1_0:_play_animation("on_enter")
+	custom_settings_enabled = false
 
-	arg_1_0._parent:set_hide_panel_title_butttons(true)
-	arg_1_0._parent:set_input_description("versus_player_hosted_lobby")
+	::label_1_0::
 
-	arg_1_0._input_focus_mode = var_0_8.selection
-	arg_1_0._focus_panel_button_idx = 1
+	self._custom_settings_toggled = custom_settings_enabled
+	self._game_mechanism = game_mechanism
 
-	Managers.state.event:register(arg_1_0, "event_focus_versus_hosted_lobby_input", "focus_versus_hosted_lobby_input")
-	Managers.state.event:register(arg_1_0, "lobby_member_game_mode_custom_settings_handler_enabled", "_lobby_member_game_mode_custom_settings_handler_enabled")
+	self:_create_ui_elements()
+
+	self._enter_animation = self:_play_animation("on_enter")
+
+	self._parent:set_hide_panel_title_butttons(true)
+	self._parent:set_input_description("versus_player_hosted_lobby")
+
+	self._input_focus_mode = tbl.selection
+	self._focus_panel_button_idx = 1
+
+	Managers.state.event:register(self, "event_focus_versus_hosted_lobby_input", "focus_versus_hosted_lobby_input")
+	Managers.state.event:register(self, "lobby_member_game_mode_custom_settings_handler_enabled", "_lobby_member_game_mode_custom_settings_handler_enabled")
 end
 
-function StartGameWindowVersusPlayerHostedLobby._play_animation(arg_2_0, arg_2_1)
-	local var_2_0 = {
-		render_settings = arg_2_0._render_settings
+StartGameWindowVersusPlayerHostedLobby._play_animation = function (self, arg_2_1)
+	-- function 2
+	local tbl = {
+		render_settings = self._render_settings
 	}
 
-	return (arg_2_0._ui_animator:start_animation(arg_2_1, arg_2_0._widgets_by_name, var_0_2, var_2_0))
+	return (self._ui_animator:start_animation(arg_2_1, self._widgets_by_name, scenegraph_definition, tbl))
 end
 
-function StartGameWindowVersusPlayerHostedLobby._create_ui_elements(arg_3_0)
-	UIRenderer.clear_scenegraph_queue(arg_3_0._ui_renderer)
-	UIRenderer.clear_scenegraph_queue(arg_3_0._ui_top_renderer)
+StartGameWindowVersusPlayerHostedLobby._create_ui_elements = function (self)
+	-- function 3
+	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
+	UIRenderer.clear_scenegraph_queue(self._ui_top_renderer)
 
-	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 
-	local var_3_0 = {}
-	local var_3_1 = {}
-	local var_3_2 = var_0_0.widget_definitions
+	local tbl = {}
+	local tbl_2 = {}
+	local widget_definitions = var_0_0.widget_definitions
 
-	UIUtils.create_widgets(var_3_2, var_3_0, var_3_1)
+	UIUtils.create_widgets(widget_definitions, tbl, tbl_2)
 
-	local var_3_3 = {}
-	local var_3_4 = var_0_0.host_widget_definitions
+	local tbl_3 = {}
+	local host_widget_definitions = var_0_0.host_widget_definitions
 
-	UIUtils.create_widgets(var_3_4, var_3_3, var_3_1)
+	UIUtils.create_widgets(host_widget_definitions, tbl_3, tbl_2)
 
-	arg_3_0._widgets = var_3_0
-	arg_3_0._host_widgets = var_3_3
-	arg_3_0._widgets_by_name = var_3_1
+	self._widgets = tbl
+	self._host_widgets = tbl_3
+	self._widgets_by_name = tbl_2
 
-	local var_3_5 = Managers.lobby:query_lobby("matchmaking_join_lobby") or Managers.lobby:query_lobby("matchmaking_join_lobby") or Managers.matchmaking.lobby
-	local var_3_6 = var_3_5 and var_3_5:lobby_data("custom_server_name") or ""
-	local var_3_7 = rawget(_G, "Steam") and Steam.user_name() ~= var_3_6 and var_3_6 ~= "n/a" and var_3_6 ~= ""
+	local query_lobby = Managers.lobby:query_lobby("matchmaking_join_lobby")
 
-	arg_3_0._widgets_by_name.lobby_name.content.input.default_text = var_3_7 and var_3_6 or Localize("start_game_window_custom_lobby_name_hint")
-	arg_3_0._widgets_by_name.toggle_custom_settings_button.content.button_hotspot.is_selected = arg_3_0._custom_settings_toggled
-	arg_3_0._loading_spinner_widget = UIWidget.init(var_0_0.loading_spinner_definition)
-	arg_3_0._console_cursor = UIWidget.init(var_0_0.console_cursor_definition)
+	if not query_lobby then
+		query_lobby = Managers.lobby:query_lobby("matchmaking_join_lobby")
+		query_lobby = query_lobby or Managers.matchmaking.lobby
+	end
 
-	arg_3_0:_create_player_slots()
+	local lobby_data
 
-	arg_3_0._ui_animator = UIAnimator:new(arg_3_0._ui_scenegraph, var_0_1)
+	if not query_lobby then
+		lobby_data = query_lobby:lobby_data("custom_server_name")
+
+		if not lobby_data then
+			-- Nothing
+		end
+	end
+
+	lobby_data = ""
+
+	::label_3_0::
+
+	local var_3_7 = rawget(_G, "Steam")
+
+	var_3_7 = not var_3_7 and Steam.user_name() == lobby_data and lobby_data == "n/a" or lobby_data ~= ""
+	self._widgets_by_name.lobby_name.content.input.default_text = not var_3_7 and lobby_data and Localize("start_game_window_custom_lobby_name_hint")
+	self._widgets_by_name.toggle_custom_settings_button.content.button_hotspot.is_selected = self._custom_settings_toggled
+	self._loading_spinner_widget = UIWidget.init(var_0_0.loading_spinner_definition)
+	self._console_cursor = UIWidget.init(var_0_0.console_cursor_definition)
+
+	self:_create_player_slots()
+
+	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
 end
 
-function StartGameWindowVersusPlayerHostedLobby.on_exit(arg_4_0, arg_4_1)
-	arg_4_0._ui_animator = nil
+StartGameWindowVersusPlayerHostedLobby.on_exit = function (self, arg_4_1)
+	-- function 4
+	self._ui_animator = nil
 
-	arg_4_0._parent:play_sound("Play_vs_hud_play_menu_leave_lobby")
-	arg_4_0:_remove_all_players()
-	Managers.state.event:unregister("event_focus_versus_hosted_lobby_input", arg_4_0)
-	Managers.state.event:unregister("lobby_member_game_mode_custom_settings_handler_enabled", arg_4_0)
+	self._parent:play_sound("Play_vs_hud_play_menu_leave_lobby")
+	self:_remove_all_players()
+	Managers.state.event:unregister("event_focus_versus_hosted_lobby_input", self)
+	Managers.state.event:unregister("lobby_member_game_mode_custom_settings_handler_enabled", self)
 end
 
-function StartGameWindowVersusPlayerHostedLobby._exit_layout(arg_5_0)
-	local var_5_0 = arg_5_0._match_handler:query_peer_data(arg_5_0._peer_id, "is_match_owner") and "versus_custom_game" or "versus_lobby_browser"
-	local var_5_1 = arg_5_0._parent
+StartGameWindowVersusPlayerHostedLobby._exit_layout = function (self)
+	-- function 5
+	local flag
 
-	var_5_1:set_layout_by_name(var_5_0)
-	var_5_1:set_hide_panel_title_butttons(false)
+	flag = not self._match_handler:query_peer_data(self._peer_id, "is_match_owner") and "versus_custom_game" and "versus_lobby_browser"
+
+	local _parent = self._parent
+
+	_parent:set_layout_by_name(flag)
+	_parent:set_hide_panel_title_butttons(false)
 end
 
-function StartGameWindowVersusPlayerHostedLobby.on_exit(arg_6_0, arg_6_1)
-	arg_6_0._ui_animator = nil
+StartGameWindowVersusPlayerHostedLobby.on_exit = function (self, arg_6_1)
+	-- function 6
+	self._ui_animator = nil
 
-	arg_6_0._parent:play_sound("Play_vs_hud_play_menu_leave_lobby")
-	arg_6_0:_remove_all_players()
+	self._parent:play_sound("Play_vs_hud_play_menu_leave_lobby")
+	self:_remove_all_players()
 
 	arg_6_1.return_layout_name = nil
 end
 
-function StartGameWindowVersusPlayerHostedLobby.update(arg_7_0, arg_7_1, arg_7_2)
-	local var_7_0 = Managers.input:is_device_active("gamepad")
+StartGameWindowVersusPlayerHostedLobby.update = function (self, arg_7_1, arg_7_2)
+	-- function 7
+	local is_device_active = Managers.input:is_device_active("gamepad")
 
-	if not arg_7_0._matchmaking_manager:is_game_matchmaking() then
-		arg_7_0:_exit_layout()
+	if not self._matchmaking_manager:is_game_matchmaking() then
+		self:_exit_layout()
 
 		return
 	end
 
-	if not arg_7_0._is_loading then
-		arg_7_0:_update_options_view(arg_7_1, arg_7_2)
-		arg_7_0:_update_mission_option()
-		arg_7_0:_update_animations(arg_7_1, arg_7_2)
-		arg_7_0:_update_can_play()
-		arg_7_0:_update_play_button_texture(var_7_0)
+	if not self._is_loading then
+		self:_update_options_view(arg_7_1, arg_7_2)
+		self:_update_mission_option()
+		self:_update_animations(arg_7_1, arg_7_2)
+		self:_update_can_play()
+		self:_update_play_button_texture(is_device_active)
 
-		if var_7_0 then
-			arg_7_0:_handle_gamepad_input(arg_7_1, arg_7_2)
+		if not is_device_active then
+			self:_handle_gamepad_input(arg_7_1, arg_7_2)
 		else
-			arg_7_0:_handle_input(arg_7_2)
+			self:_handle_input(arg_7_2)
 		end
 
-		arg_7_0:_update_toggle_settings_button(arg_7_1, arg_7_2, var_7_0)
-		arg_7_0:_update_server_name()
-		arg_7_0:_update_avatars()
-		arg_7_0:_update_custom_lobby_slots()
+		self:_update_toggle_settings_button(arg_7_1, arg_7_2, is_device_active)
+		self:_update_server_name()
+		self:_update_avatars()
+		self:_update_custom_lobby_slots()
 	end
 
-	arg_7_0:_draw(arg_7_1)
+	self:_draw(arg_7_1)
 
-	local var_7_1 = Managers.mechanism:network_handler():get_match_handler():get_match_owner()
+	local get_match_owner = Managers.mechanism:network_handler():get_match_handler():get_match_owner()
 
-	arg_7_0._is_loading = not Managers.mechanism:mechanism_try_call("get_all_reservation_handlers_by_owner", var_7_1) or not arg_7_0._matchmaking_manager:is_in_versus_custom_game_lobby()
+	self._is_loading = not Managers.mechanism:mechanism_try_call("get_all_reservation_handlers_by_owner", get_match_owner) and not self._matchmaking_manager:is_in_versus_custom_game_lobby()
 end
 
-function StartGameWindowVersusPlayerHostedLobby.post_update(arg_8_0, arg_8_1, arg_8_2)
+StartGameWindowVersusPlayerHostedLobby.post_update = function (arg_8_0, arg_8_1, arg_8_2)
+	-- function 8
 	return
 end
 
-function StartGameWindowVersusPlayerHostedLobby._update_avatars(arg_9_0)
-	for iter_9_0, iter_9_1 in pairs(arg_9_0._player_slots_by_peer_id) do
-		if not iter_9_1.has_avatar then
-			local var_9_0, var_9_1 = Friends.get_avatar(iter_9_0)
+StartGameWindowVersusPlayerHostedLobby._update_avatars = function (self)
+	-- function 9
+	for k, v in pairs(self._player_slots_by_peer_id) do
+		if not v.has_avatar then
+			local get_avatar, var_9_1 = Friends.get_avatar(k)
 
-			if var_9_0 > 0 and var_9_1 then
-				local var_9_2 = arg_9_0._ui_top_renderer.gui
-				local var_9_3 = Gui.clone_material_from_template(var_9_2, iter_9_0, "template_store_diffuse")
+			if not (get_avatar > 0) or not var_9_1 then
+				local gui = self._ui_top_renderer.gui
+				local clone_material_from_template = Gui.clone_material_from_template(gui, k, "template_store_diffuse")
 
-				Material.set_resource(var_9_3, "diffuse_map", var_9_1)
+				Material.set_resource(clone_material_from_template, "diffuse_map", var_9_1)
 
-				iter_9_1.panel_widget.content.player_avatar = var_9_3
-				iter_9_1.has_avatar = true
-			elseif var_9_0 == 0 then
-				iter_9_1.has_avatar = true
+				v.panel_widget.content.player_avatar = clone_material_from_template
+				v.has_avatar = true
+			elseif get_avatar == 0 then
+				v.has_avatar = true
 			end
 		end
 	end
 end
 
-function StartGameWindowVersusPlayerHostedLobby._can_play(arg_10_0)
-	local var_10_0 = true
-	local var_10_1 = "tutorial_no_text"
+StartGameWindowVersusPlayerHostedLobby._can_play = function (self)
+	-- function 10
+	local flag = true
+	local str = "tutorial_no_text"
 
-	if arg_10_0._matchmaking_manager:is_player_hosting() then
-		local var_10_2 = arg_10_0._match_handler:get_match_owner()
-		local var_10_3 = var_10_2 == Network.peer_id()
-		local var_10_4 = Managers.mechanism:game_mechanism()
-		local var_10_5 = (var_10_4:get_slot_reservation_handler(var_10_2, var_0_3.pending_custom_game) or var_10_4:get_slot_reservation_handler(var_10_2, var_0_3.session)):all_teams_have_members()
-		local var_10_6 = Managers.state.network.network_server
-		local var_10_7 = var_10_3 and var_10_6:are_all_peers_ingame(nil, true)
+	if not self._matchmaking_manager:is_player_hosting() then
+		local get_match_owner = self._match_handler:get_match_owner()
+		local flag_2 = get_match_owner == Network.peer_id()
+		local game_mechanism = Managers.mechanism:game_mechanism()
+		local get_slot_reservation_handler = game_mechanism:get_slot_reservation_handler(get_match_owner, scripts_managers_game_mode_mechanisms_reservation_handler_types.pending_custom_game)
 
-		if not var_10_5 and not Development.parameter("allow_versus_force_start_single_player") or not var_10_7 then
-			var_10_0 = false
-			var_10_1 = "interaction_action_missing_players"
+		get_slot_reservation_handler = get_slot_reservation_handler or game_mechanism:get_slot_reservation_handler(get_match_owner, scripts_managers_game_mode_mechanisms_reservation_handler_types.session)
+
+		local all_teams_have_members = get_slot_reservation_handler:all_teams_have_members()
+		local network_server = Managers.state.network.network_server
+		local flag_3 = not flag_2 and network_server:are_all_peers_ingame(nil, true)
+
+		if not (all_teams_have_members or not Development.parameter("allow_versus_force_start_single_player") or flag_3) then
+			flag = false
+			str = "interaction_action_missing_players"
 		end
 	end
 
-	return var_10_0, var_10_1
+	return flag, str
 end
 
-function StartGameWindowVersusPlayerHostedLobby._update_can_play(arg_11_0)
-	local var_11_0, var_11_1 = arg_11_0:_can_play()
-	local var_11_2 = arg_11_0._widgets_by_name
+StartGameWindowVersusPlayerHostedLobby._update_can_play = function (self)
+	-- function 11
+	local _can_play, var_11_1 = self:_can_play()
+	local _widgets_by_name = self._widgets_by_name
 
-	var_11_2.force_start_button.content.button_hotspot.disable_button = not var_11_0
-	var_11_2.locked_reason.content.text = var_11_1
+	_widgets_by_name.force_start_button.content.button_hotspot.disable_button = not _can_play
+	_widgets_by_name.locked_reason.content.text = var_11_1
 end
 
-function StartGameWindowVersusPlayerHostedLobby._update_play_button_texture(arg_12_0, arg_12_1)
-	local var_12_0 = arg_12_0._widgets_by_name
+StartGameWindowVersusPlayerHostedLobby._update_play_button_texture = function (self, arg_12_1)
+	-- function 12
+	local _widgets_by_name = self._widgets_by_name
 
-	if arg_12_0._gamepad_active ~= arg_12_1 then
-		arg_12_0._gamepad_active = arg_12_1
+	if self._gamepad_active ~= arg_12_1 then
+		self._gamepad_active = arg_12_1
 
-		if arg_12_1 then
-			local var_12_1 = arg_12_0._parent:window_input_service()
-			local var_12_2 = "refresh"
-			local var_12_3 = UISettings.get_gamepad_input_texture_data(var_12_1, var_12_2, arg_12_1)
+		if not arg_12_1 then
+			local window_input_service = self._parent:window_input_service()
+			local str = "refresh"
+			local get_gamepad_input_texture_data = UISettings.get_gamepad_input_texture_data(window_input_service, str, arg_12_1)
 
-			if var_12_3 then
-				var_12_0.force_start_button.content.texture_icon_id = var_12_3.texture
+			if not get_gamepad_input_texture_data then
+				_widgets_by_name.force_start_button.content.texture_icon_id = get_gamepad_input_texture_data.texture
 			end
 		else
-			var_12_0.force_start_button.content.texture_icon_id = "options_button_icon_quickplay"
+			_widgets_by_name.force_start_button.content.texture_icon_id = "options_button_icon_quickplay"
 		end
 
-		var_12_0.force_start_button.content.is_selected = arg_12_1
+		_widgets_by_name.force_start_button.content.is_selected = arg_12_1
 	end
 end
 
-function StartGameWindowVersusPlayerHostedLobby._update_animations(arg_13_0, arg_13_1, arg_13_2)
-	arg_13_0._ui_animator:update(arg_13_1)
+StartGameWindowVersusPlayerHostedLobby._update_animations = function (self, arg_13_1, arg_13_2)
+	-- function 13
+	self._ui_animator:update(arg_13_1)
 
-	local var_13_0 = arg_13_0._widgets_by_name.force_start_button
+	local force_start_button = self._widgets_by_name.force_start_button
 
-	if not var_13_0.content.button_hotspot.disable_button then
-		UIWidgetUtils.animate_play_button(var_13_0, arg_13_1)
+	if not force_start_button.content.button_hotspot.disable_button then
+		UIWidgetUtils.animate_play_button(force_start_button, arg_13_1)
 	end
 
-	UIWidgetUtils.animate_start_game_console_setting_button(arg_13_0._widgets_by_name.mission_setting, arg_13_1)
+	UIWidgetUtils.animate_start_game_console_setting_button(self._widgets_by_name.mission_setting, arg_13_1)
 
-	local var_13_1 = arg_13_0._widgets_by_name.leave_game_button
+	local leave_game_button = self._widgets_by_name.leave_game_button
 
-	UIWidgetUtils.animate_default_button(var_13_1, arg_13_1)
+	UIWidgetUtils.animate_default_button(leave_game_button, arg_13_1)
 end
 
-function StartGameWindowVersusPlayerHostedLobby._draw(arg_14_0, arg_14_1)
-	local var_14_0 = arg_14_0._ui_top_renderer
-	local var_14_1 = arg_14_0._ui_scenegraph
-	local var_14_2 = arg_14_0._parent:window_input_service()
-	local var_14_3 = arg_14_0._render_settings
+StartGameWindowVersusPlayerHostedLobby._draw = function (self, arg_14_1)
+	-- function 14
+	local _ui_top_renderer = self._ui_top_renderer
+	local _ui_scenegraph = self._ui_scenegraph
+	local window_input_service = self._parent:window_input_service()
+	local _render_settings = self._render_settings
 
-	UIRenderer.begin_pass(var_14_0, var_14_1, var_14_2, arg_14_1, nil, var_14_3)
+	UIRenderer.begin_pass(_ui_top_renderer, _ui_scenegraph, window_input_service, arg_14_1, nil, _render_settings)
 
-	if arg_14_0._is_loading then
-		UIRenderer.draw_widget(var_14_0, arg_14_0._loading_spinner_widget)
+	if not self._is_loading then
+		UIRenderer.draw_widget(_ui_top_renderer, self._loading_spinner_widget)
 	else
-		UIRenderer.draw_all_widgets(var_14_0, arg_14_0._widgets)
-		UIRenderer.draw_all_widgets(var_14_0, arg_14_0._panel_widgets)
+		UIRenderer.draw_all_widgets(_ui_top_renderer, self._widgets)
+		UIRenderer.draw_all_widgets(_ui_top_renderer, self._panel_widgets)
 
-		if arg_14_0._matchmaking_manager:is_player_hosting() then
-			UIRenderer.draw_all_widgets(var_14_0, arg_14_0._host_widgets)
+		if not self._matchmaking_manager:is_player_hosting() then
+			UIRenderer.draw_all_widgets(_ui_top_renderer, self._host_widgets)
 		end
 	end
 
-	UIRenderer.end_pass(var_14_0)
+	UIRenderer.end_pass(_ui_top_renderer)
 end
 
-function StartGameWindowVersusPlayerHostedLobby._handle_input(arg_15_0, arg_15_1)
-	local var_15_0 = arg_15_0._parent:window_input_service()
-	local var_15_1 = arg_15_0._matchmaking_manager
-	local var_15_2 = arg_15_0._widgets_by_name.force_start_button
+StartGameWindowVersusPlayerHostedLobby._handle_input = function (self, arg_15_1)
+	-- function 15
+	local window_input_service = self._parent:window_input_service()
+	local _matchmaking_manager = self._matchmaking_manager
+	local force_start_button = self._widgets_by_name.force_start_button
 
-	if arg_15_0:_can_play() and (UIUtils.is_button_pressed(var_15_2) or var_15_0:get("force_start")) then
-		var_15_1:force_start_game()
-		arg_15_0._parent:play_sound("versus_hud_player_lobby_searching_for_match")
+	if not self:_can_play() and UIUtils.is_button_pressed(force_start_button) and not window_input_service:get("force_start") then
+		_matchmaking_manager:force_start_game()
+		self._parent:play_sound("versus_hud_player_lobby_searching_for_match")
 	end
 
-	if UIUtils.is_button_hover_enter(var_15_2) then
-		arg_15_0._parent:play_sound("Play_hud_hover")
+	if not UIUtils.is_button_hover_enter(force_start_button) then
+		self._parent:play_sound("Play_hud_hover")
 	end
 
-	local var_15_3 = arg_15_0._widgets_by_name.leave_game_button
-	local var_15_4 = Managers.state.network.is_server
+	local leave_game_button = self._widgets_by_name.leave_game_button
+	local is_server = Managers.state.network.is_server
 
-	var_15_3.content.button_hotspot.disable_button = not var_15_4
+	leave_game_button.content.button_hotspot.disable_button = not is_server
 
-	if var_15_4 and (UIUtils.is_button_pressed(var_15_3) or var_15_0:get("cancel_matchmaking")) then
-		var_15_1:cancel_matchmaking()
-		var_15_1:pause_matchmaking_for_seconds(2)
-		arg_15_0:_exit_layout()
+	if not is_server and UIUtils.is_button_pressed(leave_game_button) and not window_input_service:get("cancel_matchmaking") then
+		_matchmaking_manager:cancel_matchmaking()
+		_matchmaking_manager:pause_matchmaking_for_seconds(2)
+		self:_exit_layout()
 
 		return
 	end
 
-	local var_15_5 = arg_15_0._widgets_by_name.mission_setting
+	local mission_setting = self._widgets_by_name.mission_setting
+	local color = mission_setting.style.bg_effect.color
+	local flag
 
-	var_15_5.style.bg_effect.color[1] = arg_15_0._is_match_host and 255 or 0
+	flag = not self._is_match_host and 255 and 0
+	color[1] = flag
 
-	if arg_15_0._is_match_host then
-		var_15_5.content.is_selected = UIUtils.is_button_hover(var_15_5)
+	if not self._is_match_host then
+		mission_setting.content.is_selected = UIUtils.is_button_hover(mission_setting)
 
-		if UIUtils.is_button_pressed(var_15_5) then
-			local var_15_6 = arg_15_0._parent
-			local var_15_7 = Managers.mechanism:current_mechanism_name()
-			local var_15_8 = var_15_6:get_custom_game_settings(var_15_7)
+		if not UIUtils.is_button_pressed(mission_setting) then
+			local _parent = self._parent
+			local current_mechanism_name = Managers.mechanism:current_mechanism_name()
+			local get_custom_game_settings = _parent:get_custom_game_settings(current_mechanism_name)
 
-			var_15_6:set_layout_by_name(var_15_8.layout_name)
+			_parent:set_layout_by_name(get_custom_game_settings.layout_name)
 		end
 	end
 
-	for iter_15_0, iter_15_1 in pairs(arg_15_0._panel_widgets) do
-		local var_15_9 = iter_15_1.content
+	for k, v in pairs(self._panel_widgets) do
+		local content = v.content
 
-		if var_15_9.empty then
-			if UIUtils.is_button_pressed(iter_15_1) then
-				local var_15_10 = var_15_9.team_index
-				local var_15_11 = arg_15_0._match_handler:get_match_owner()
-				local var_15_12 = Managers.mechanism:game_mechanism()
+		if not content.empty then
+			if not UIUtils.is_button_pressed(v) then
+				local team_index = content.team_index
+				local get_match_owner = self._match_handler:get_match_owner()
+				local game_mechanism = Managers.mechanism:game_mechanism()
+				local get_slot_reservation_handler = game_mechanism:get_slot_reservation_handler(get_match_owner, scripts_managers_game_mode_mechanisms_reservation_handler_types.pending_custom_game)
 
-				;(var_15_12:get_slot_reservation_handler(var_15_11, var_0_3.pending_custom_game) or var_15_12:get_slot_reservation_handler(var_15_11, var_0_3.session)):request_party_change(var_15_10)
-				arg_15_0._parent:play_sound("versus_hud_player_lobby_switch_slot")
+				get_slot_reservation_handler = get_slot_reservation_handler or game_mechanism:get_slot_reservation_handler(get_match_owner, scripts_managers_game_mode_mechanisms_reservation_handler_types.session)
+
+				get_slot_reservation_handler:request_party_change(team_index)
+				self._parent:play_sound("versus_hud_player_lobby_switch_slot")
 			end
 		else
-			if UIUtils.is_button_pressed(iter_15_1, "profile_button_hotspot") then
-				Managers.account:show_player_profile(var_15_9.peer_id)
+			if not UIUtils.is_button_pressed(v, "profile_button_hotspot") then
+				Managers.account:show_player_profile(content.peer_id)
 			end
 
-			if UIUtils.is_button_pressed(iter_15_1, "kick_button_hotspot") then
-				local var_15_13 = Managers.party:server_get_friend_party_from_peer(var_15_9.peer_id)
+			if not UIUtils.is_button_pressed(v, "kick_button_hotspot") then
+				local server_get_friend_party_from_peer = Managers.party:server_get_friend_party_from_peer(content.peer_id)
 
-				arg_15_0._matchmaking_manager:cancel_matchmaking_for_peer(var_15_13.leader)
+				self._matchmaking_manager:cancel_matchmaking_for_peer(server_get_friend_party_from_peer.leader)
 			end
 
-			if UIUtils.is_button_pressed(iter_15_1, "chat_button_hotspot") then
-				local var_15_14 = var_15_9.peer_id
-				local var_15_15 = Managers.chat:ignoring_peer_id(var_15_14)
+			if not UIUtils.is_button_pressed(v, "chat_button_hotspot") then
+				local peer_id = content.peer_id
+				local ignoring_peer_id = Managers.chat:ignoring_peer_id(peer_id)
 
-				if var_15_15 then
-					Managers.chat:remove_ignore_peer_id(var_15_14)
+				if not ignoring_peer_id then
+					Managers.chat:remove_ignore_peer_id(peer_id)
 				else
-					Managers.chat:ignore_peer_id(var_15_14)
+					Managers.chat:ignore_peer_id(peer_id)
 				end
 
-				var_15_9.chat_button_hotspot.is_selected = var_15_15
+				content.chat_button_hotspot.is_selected = ignoring_peer_id
 			end
 		end
 	end
 end
 
-function StartGameWindowVersusPlayerHostedLobby._update_toggle_settings_button(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
-	local var_16_0 = arg_16_0._widgets_by_name.toggle_custom_settings_button
+StartGameWindowVersusPlayerHostedLobby._update_toggle_settings_button = function (self, arg_16_1, arg_16_2, arg_16_3)
+	-- function 16
+	local toggle_custom_settings_button = self._widgets_by_name.toggle_custom_settings_button
 
-	UIWidgetUtils.animate_default_checkbox_button_console(var_16_0, arg_16_1)
+	UIWidgetUtils.animate_default_checkbox_button_console(toggle_custom_settings_button, arg_16_1)
 
-	var_16_0.content.button_hotspot.disable_button = not arg_16_0._game_mechanism:is_hosting_versus_custom_game()
+	toggle_custom_settings_button.content.button_hotspot.disable_button = not self._game_mechanism:is_hosting_versus_custom_game()
 
-	if UIUtils.is_button_hover_enter(var_16_0) then
-		arg_16_0._parent:play_sound("play_gui_lobby_button_01_difficulty_confirm_hover")
+	if not UIUtils.is_button_hover_enter(toggle_custom_settings_button) then
+		self._parent:play_sound("play_gui_lobby_button_01_difficulty_confirm_hover")
 	end
 
-	if arg_16_0._game_mechanism:is_hosting_versus_custom_game() then
-		local var_16_1 = arg_16_0:_is_other_option_button_selected(var_16_0, arg_16_0._custom_settings_toggled)
+	if not self._game_mechanism:is_hosting_versus_custom_game() then
+		local _is_other_option_button_selected = self:_is_other_option_button_selected(toggle_custom_settings_button, self._custom_settings_toggled)
 
-		if var_16_1 ~= nil then
-			arg_16_0._custom_settings_toggled = var_16_1
-			var_16_0.content.button_hotspot.is_selected = var_16_1
+		if _is_other_option_button_selected ~= nil then
+			self._custom_settings_toggled = _is_other_option_button_selected
+			toggle_custom_settings_button.content.button_hotspot.is_selected = _is_other_option_button_selected
 
-			Managers.state.event:trigger("event_focus_custom_game_settings_input", var_16_1)
-			arg_16_0:_enable_custom_game_settings(var_16_1)
+			Managers.state.event:trigger("event_focus_custom_game_settings_input", _is_other_option_button_selected)
+			self:_enable_custom_game_settings(_is_other_option_button_selected)
 		end
 	else
-		local var_16_2 = arg_16_0._game_mechanism:custom_settings_enabled()
+		local custom_settings_enabled = self._game_mechanism:custom_settings_enabled()
 
-		if arg_16_0._custom_settings_toggled ~= var_16_2 then
-			var_16_0.content.button_hotspot.is_selected = var_16_2
-			arg_16_0._custom_settings_toggled = var_16_2
+		if self._custom_settings_toggled ~= custom_settings_enabled then
+			toggle_custom_settings_button.content.button_hotspot.is_selected = custom_settings_enabled
+			self._custom_settings_toggled = custom_settings_enabled
 		end
 	end
 end
 
-function StartGameWindowVersusPlayerHostedLobby._enable_custom_game_settings(arg_17_0, arg_17_1)
+StartGameWindowVersusPlayerHostedLobby._enable_custom_game_settings = function (arg_17_0, arg_17_1)
+	-- function 17
 	Managers.mechanism:game_mechanism():get_custom_game_settings_handler():set_enabled(arg_17_1, true)
 	Managers.state.event:trigger("event_reset_host_settings", not arg_17_1)
 end
 
-function StartGameWindowVersusPlayerHostedLobby._create_player_slots(arg_18_0)
-	local var_18_0 = {}
-	local var_18_1 = {}
+StartGameWindowVersusPlayerHostedLobby._create_player_slots = function (self)
+	-- function 18
+	local tbl = {}
+	local tbl_2 = {}
 
-	for iter_18_0 = 1, var_0_4 do
-		local var_18_2 = {}
+	for i = 1, num do
+		local tbl_3 = {}
 
-		var_18_1[iter_18_0] = var_18_2
+		tbl_2[i] = tbl_3
 
-		for iter_18_1 = 1, var_0_5 do
-			local var_18_3 = {}
+		for j = 1, num_2 do
+			local tbl_4 = {}
 
-			var_18_2[iter_18_1] = var_18_3
+			tbl_3[j] = tbl_4
 
-			local var_18_4 = var_0_0.create_player_panel_widget(iter_18_0, iter_18_1)
-			local var_18_5 = UIWidget.init(var_18_4)
+			local create_player_panel_widget = var_0_0.create_player_panel_widget(i, j)
+			local var_18_5 = UIWidget.init(create_player_panel_widget)
 
 			var_18_5.content.empty = true
-			var_18_5.content.team_index = iter_18_0
-			var_18_5.content.player_index = iter_18_1
-			var_18_3.panel_widget = var_18_5
-			var_18_0[#var_18_0 + 1] = var_18_5
+			var_18_5.content.team_index = i
+			var_18_5.content.player_index = j
+			tbl_4.panel_widget = var_18_5
+			tbl[#tbl + 1] = var_18_5
 		end
 	end
 
-	arg_18_0._num_players_by_team = {}
-	arg_18_0._player_slots_by_team = var_18_1
-	arg_18_0._player_slots_by_peer_id = {}
-	arg_18_0._panel_widgets = var_18_0
+	self._num_players_by_team = {}
+	self._player_slots_by_team = tbl_2
+	self._player_slots_by_peer_id = {}
+	self._panel_widgets = tbl
 end
 
-function StartGameWindowVersusPlayerHostedLobby._find_first_available_slot(arg_19_0, arg_19_1, arg_19_2)
+StartGameWindowVersusPlayerHostedLobby._find_first_available_slot = function (self, arg_19_1, arg_19_2)
+	-- function 19
 	assert(arg_19_1)
 
-	local var_19_0 = arg_19_0._player_slots_by_team[arg_19_1]
+	local var_19_0 = self._player_slots_by_team[arg_19_1]
 	local var_19_1 = var_19_0[arg_19_2]
 
-	if var_19_1 and var_19_1.panel_widget.content.empty then
+	if not var_19_1 and not var_19_1.panel_widget.content.empty then
 		return var_19_1
 	end
 
-	for iter_19_0 = 1, var_0_5 do
-		local var_19_2 = var_19_0[iter_19_0]
+	for i = 1, num_2 do
+		local var_19_2 = var_19_0[i]
 
-		if var_19_2.panel_widget.content.empty then
+		if not var_19_2.panel_widget.content.empty then
 			return var_19_2
 		end
 	end
@@ -462,500 +527,586 @@ function StartGameWindowVersusPlayerHostedLobby._find_first_available_slot(arg_1
 	fassert(false, "No available slots!")
 end
 
-function StartGameWindowVersusPlayerHostedLobby._remove_all_players(arg_20_0)
-	for iter_20_0, iter_20_1 in pairs(arg_20_0._player_slots_by_peer_id) do
-		arg_20_0:_remove_player(iter_20_1)
+StartGameWindowVersusPlayerHostedLobby._remove_all_players = function (self)
+	-- function 20
+	for k, v in pairs(self._player_slots_by_peer_id) do
+		self:_remove_player(v)
 	end
 end
 
-function StartGameWindowVersusPlayerHostedLobby._remove_player(arg_21_0, arg_21_1)
-	local var_21_0 = arg_21_1.panel_widget
-	local var_21_1 = arg_21_1.peer_id
+StartGameWindowVersusPlayerHostedLobby._remove_player = function (arg_21_0, arg_21_1)
+	-- function 21
+	local panel_widget = arg_21_1.panel_widget
+	local peer_id = arg_21_1.peer_id
 
-	var_21_0.content.empty = true
-	var_21_0.content.show_profile_button = false
-	var_21_0.content.show_kick_button = false
-	var_21_0.content.show_chat_button = false
-	var_21_0.content.chat_button_hotspot.is_selected = false
+	panel_widget.content.empty = true
+	panel_widget.content.show_profile_button = false
+	panel_widget.content.show_kick_button = false
+	panel_widget.content.show_chat_button = false
+	panel_widget.content.chat_button_hotspot.is_selected = false
 	arg_21_1.slot_id = nil
 
-	local var_21_2 = var_21_0.content.player_avatar
+	local player_avatar = panel_widget.content.player_avatar
 
-	if var_21_2 then
-		Material.set_texture(var_21_2, "diffuse_map", var_0_6)
+	if not player_avatar then
+		Material.set_texture(player_avatar, "diffuse_map", str)
 
-		var_21_0.content.player_avatar = nil
+		panel_widget.content.player_avatar = nil
 	end
 
-	if var_0_7 then
-		Friends.delete_avatar(var_21_1)
+	if not flag then
+		Friends.delete_avatar(peer_id)
 	end
 
-	arg_21_0._player_slots_by_peer_id[var_21_1] = nil
+	arg_21_0._player_slots_by_peer_id[peer_id] = nil
 end
 
-function StartGameWindowVersusPlayerHostedLobby._update_custom_lobby_slots(arg_22_0)
-	local var_22_0 = false
-	local var_22_1 = arg_22_0._match_handler
-	local var_22_2 = var_22_1:get_match_owner()
-	local var_22_3 = Managers.mechanism:game_mechanism()
-	local var_22_4 = var_22_3:get_slot_reservation_handler(var_22_2, var_0_3.pending_custom_game) or var_22_3:get_slot_reservation_handler(var_22_2, var_0_3.session)
-	local var_22_5 = false
+StartGameWindowVersusPlayerHostedLobby._update_custom_lobby_slots = function (self)
+	-- function 22
+	local flag_2 = false
+	local _match_handler = self._match_handler
+	local get_match_owner = _match_handler:get_match_owner()
+	local game_mechanism = Managers.mechanism:game_mechanism()
+	local get_slot_reservation_handler = game_mechanism:get_slot_reservation_handler(get_match_owner, scripts_managers_game_mode_mechanisms_reservation_handler_types.pending_custom_game)
 
-	for iter_22_0, iter_22_1 in pairs(arg_22_0._player_slots_by_peer_id) do
-		if var_22_1:query_peer_data(iter_22_0, "is_synced") then
-			local var_22_6, var_22_7 = var_22_4:get_peer_reserved_indices(iter_22_0)
+	get_slot_reservation_handler = get_slot_reservation_handler or game_mechanism:get_slot_reservation_handler(get_match_owner, scripts_managers_game_mode_mechanisms_reservation_handler_types.session)
 
-			if var_22_6 ~= iter_22_1.party_id or var_22_7 ~= iter_22_1.slot_id then
-				arg_22_0:_remove_all_players()
+	local flag_3 = false
 
-				var_22_5 = true
-				var_22_0 = true
+	for k, v in pairs(self._player_slots_by_peer_id) do
+		if not _match_handler:query_peer_data(k, "is_synced") then
+			local get_peer_reserved_indices, var_22_7 = get_slot_reservation_handler:get_peer_reserved_indices(k)
+
+			if not (get_peer_reserved_indices ~= v.party_id or var_22_7 == v.slot_id) then
+				self:_remove_all_players()
+
+				flag_3 = true
+				flag_2 = true
 
 				break
 			end
 		else
-			arg_22_0._parent:play_sound("versus_hud_player_lobby_friend_leaves_lobby")
-			arg_22_0:_remove_player(iter_22_1)
+			self._parent:play_sound("versus_hud_player_lobby_friend_leaves_lobby")
+			self:_remove_player(v)
 
-			var_22_0 = true
+			flag_2 = true
 		end
 	end
 
-	if not arg_22_0._matchmaking_manager:is_in_versus_custom_game_lobby() then
+	if not self._matchmaking_manager:is_in_versus_custom_game_lobby() then
 		return
 	end
 
-	local var_22_8 = var_22_1:get_match_owner()
-	local var_22_9 = var_22_1:query_peer_data(arg_22_0._peer_id, "is_match_owner")
-	local var_22_10 = var_22_4:get_peer_reserved_indices(arg_22_0._peer_id)
-	local var_22_11 = "local_player_team_lighter"
-	local var_22_12 = "opponent_team_lighter"
+	local get_match_owner_2 = _match_handler:get_match_owner()
+	local query_peer_data = _match_handler:query_peer_data(self._peer_id, "is_match_owner")
+	local get_peer_reserved_indices_2 = get_slot_reservation_handler:get_peer_reserved_indices(self._peer_id)
+	local str = "local_player_team_lighter"
+	local str_2 = "opponent_team_lighter"
 
-	if var_22_10 ~= 1 then
-		var_22_11, var_22_12 = var_22_12, var_22_11
+	if get_peer_reserved_indices_2 ~= 1 then
+		str, str_2 = str_2, str
 	end
 
-	arg_22_0._is_match_host = var_22_9
-	arg_22_0._widgets_by_name.leave_game_button.content.title_text = var_22_9 and Localize("vs_ui_cancel_hosting") or Localize("leave_game_menu_button_name")
+	self._is_match_host = query_peer_data
 
-	local var_22_13 = var_22_4:peers()
+	local content = self._widgets_by_name.leave_game_button.content
+	local var_22_14
 
-	for iter_22_2 = 1, #var_22_13 do
-		local var_22_14 = var_22_13[iter_22_2]
+	if not query_peer_data then
+		var_22_14 = Localize("vs_ui_cancel_hosting")
 
-		if arg_22_0._player_slots_by_peer_id[var_22_14] then
-			-- block empty
-		elseif not var_22_1:query_peer_data(var_22_14, "is_synced") then
-			-- block empty
+		if not var_22_14 then
+			-- Nothing
+		end
+	end
+
+	var_22_14 = Localize("leave_game_menu_button_name")
+
+	::label_22_0::
+
+	content.title_text = var_22_14
+
+	local peers = get_slot_reservation_handler:peers()
+
+	for k_2 = 1, #peers do
+		local var_22_16 = peers[k_2]
+
+		if not self._player_slots_by_peer_id[var_22_16] then
+			-- Nothing
+		elseif not _match_handler:query_peer_data(var_22_16, "is_synced") then
+			-- Nothing
 		else
-			local var_22_15, var_22_16 = var_22_4:get_peer_reserved_indices(var_22_14)
+			local get_peer_reserved_indices_3, var_22_18 = get_slot_reservation_handler:get_peer_reserved_indices(var_22_16)
 
-			if not var_22_15 then
-				-- block empty
+			if not get_peer_reserved_indices_3 then
+				-- Nothing
 			else
-				if not var_22_5 then
-					arg_22_0._parent:play_sound("versus_hud_player_lobby_friend_joins_lobby")
+				if not flag_3 then
+					self._parent:play_sound("versus_hud_player_lobby_friend_joins_lobby")
 				end
 
-				local var_22_17 = arg_22_0:_find_first_available_slot(var_22_15, var_22_16)
+				local _find_first_available_slot = self:_find_first_available_slot(get_peer_reserved_indices_3, var_22_18)
 
-				arg_22_0._player_slots_by_peer_id[var_22_14] = var_22_17
-				var_22_17.peer_id = var_22_14
-				var_22_17.party_id = var_22_15
-				var_22_17.slot_id = var_22_17.panel_widget.content.player_index
+				self._player_slots_by_peer_id[var_22_16] = _find_first_available_slot
+				_find_first_available_slot.peer_id = var_22_16
+				_find_first_available_slot.party_id = get_peer_reserved_indices_3
+				_find_first_available_slot.slot_id = _find_first_available_slot.panel_widget.content.player_index
 
-				local var_22_18 = var_22_17.panel_widget
-				local var_22_19 = var_22_14 == var_22_8
+				local panel_widget = _find_first_available_slot.panel_widget
+				local flag_4 = var_22_16 == get_match_owner_2
 
-				var_22_18.content.show_host = var_22_19
-				var_22_18.content.empty = false
-				var_22_18.content.peer_id = var_22_14
+				panel_widget.content.show_host = flag_4
+				panel_widget.content.empty = false
+				panel_widget.content.peer_id = var_22_16
 
-				local var_22_20 = var_22_1:query_peer_data(var_22_14, "player_name")
+				local query_peer_data_2 = _match_handler:query_peer_data(var_22_16, "player_name")
 
-				if not var_22_20 or var_22_20 == "" then
-					var_22_20 = PlayerUtils.player_name(var_22_14, nil)
+				if not (not query_peer_data_2 and query_peer_data_2 ~= "") then
+					query_peer_data_2 = PlayerUtils.player_name(var_22_16, nil)
 				end
 
-				var_22_18.content.player_name = UIRenderer.crop_text(var_22_20, 18)
-				var_22_17.has_avatar = not var_0_7
+				panel_widget.content.player_name = UIRenderer.crop_text(query_peer_data_2, 18)
+				_find_first_available_slot.has_avatar = not flag
 
-				arg_22_0:_apply_team_color(var_22_18, var_22_15 == 1 and var_22_11 or var_22_12)
+				self:_apply_team_color(panel_widget, get_peer_reserved_indices_3 ~= 1 or not str or str_2)
 
-				if var_22_14 == arg_22_0._peer_id then
-					arg_22_0:_apply_team_color(arg_22_0._widgets_by_name.team_1, var_22_11)
-					arg_22_0:_apply_team_color(arg_22_0._widgets_by_name.team_2, var_22_12)
+				if var_22_16 == self._peer_id then
+					self:_apply_team_color(self._widgets_by_name.team_1, str)
+					self:_apply_team_color(self._widgets_by_name.team_2, str_2)
 				end
 
-				var_22_18.content.show_profile_button = true
-				var_22_18.content.show_chat_button = var_22_14 ~= arg_22_0._peer_id
-				var_22_18.content.chat_button_hotspot.is_selected = Managers.chat:ignoring_peer_id(var_22_14)
+				panel_widget.content.show_profile_button = true
+				panel_widget.content.show_chat_button = var_22_16 ~= self._peer_id
+				panel_widget.content.chat_button_hotspot.is_selected = Managers.chat:ignoring_peer_id(var_22_16)
 
-				local var_22_21 = var_22_9 and var_22_1:query_peer_data(var_22_14, "leader_peer_id") == arg_22_0._peer_id
+				local flag_5 = not query_peer_data and _match_handler:query_peer_data(var_22_16, "leader_peer_id") == self._peer_id
 
-				var_22_18.content.show_kick_button = var_22_9 and not var_22_19 and not var_22_21
+				panel_widget.content.show_kick_button = not query_peer_data and not not flag_4 or not flag_5
 
-				local var_22_22 = var_22_1:query_peer_data(var_22_14, "versus_level")
+				local query_peer_data_3 = _match_handler:query_peer_data(var_22_16, "versus_level")
 
-				var_22_18.content.player_level = string.format(Localize("versus_level"), var_22_22)
+				panel_widget.content.player_level = string.format(Localize("versus_level"), query_peer_data_3)
 
-				local var_22_23, var_22_24 = UIAtlasHelper.get_insignia_texture_settings_from_level(var_22_22)
+				local get_insignia_texture_settings_from_level, var_22_26 = UIAtlasHelper.get_insignia_texture_settings_from_level(query_peer_data_3)
 
-				var_22_18.content.insignia_main.uvs = var_22_23
-				var_22_18.content.insignia_addon.uvs = var_22_24
+				panel_widget.content.insignia_main.uvs = get_insignia_texture_settings_from_level
+				panel_widget.content.insignia_addon.uvs = var_22_26
 
-				local var_22_25 = Managers.party:get_friend_party_id_from_peer(var_22_14) or 1
+				local get_friend_party_id_from_peer = Managers.party:get_friend_party_id_from_peer(var_22_16)
 
-				var_22_18.style.party_color.color = Colors.get_categorical_color(var_22_25 - 1)
-				var_22_0 = true
+				get_friend_party_id_from_peer = get_friend_party_id_from_peer or 1
+				panel_widget.style.party_color.color = Colors.get_categorical_color(get_friend_party_id_from_peer - 1)
+				flag_2 = true
 			end
 		end
 	end
 
-	if var_22_0 then
-		for iter_22_3 = 1, var_0_4 do
-			local var_22_26 = 0
+	if not flag_2 then
+		for l = 1, num do
+			local num_3 = 0
 
-			for iter_22_4, iter_22_5 in pairs(arg_22_0._player_slots_by_team[iter_22_3]) do
-				if not iter_22_5.panel_widget.content.empty then
-					var_22_26 = var_22_26 + 1
+			for k_3, v_2 in pairs(self._player_slots_by_team[l]) do
+				if not v_2.panel_widget.content.empty then
+					num_3 = num_3 + 1
 				end
 			end
 
-			local var_22_27 = arg_22_0._widgets_by_name["team_" .. iter_22_3]
+			local var_22_29 = self._widgets_by_name["team_" .. l]
 
-			if var_22_27 then
-				local var_22_28 = string.format("%s %d/%d", Localize("lb_players"), var_22_26, var_0_5)
+			if not var_22_29 then
+				local format = string.format("%s %d/%d", Localize("lb_players"), num_3, num_2)
 
-				var_22_27.content.player_count = var_22_28
+				var_22_29.content.player_count = format
 			end
 		end
 	end
 end
 
-function StartGameWindowVersusPlayerHostedLobby._apply_team_color(arg_23_0, arg_23_1, arg_23_2)
+StartGameWindowVersusPlayerHostedLobby._apply_team_color = function (arg_23_0, arg_23_1, arg_23_2)
+	-- function 23
 	local var_23_0 = Colors.color_definitions[arg_23_2]
-	local var_23_1 = arg_23_1.style
+	local style = arg_23_1.style
 
-	for iter_23_0, iter_23_1 in pairs(arg_23_1.content.styles_with_team_color) do
-		local var_23_2 = var_23_1[iter_23_1]
-		local var_23_3 = var_23_2.color or var_23_2.text_color
+	for k, v in pairs(arg_23_1.content.styles_with_team_color) do
+		local var_23_2 = style[v]
+		local color = var_23_2.color
 
-		if var_23_3 then
-			Colors.copy_no_alpha_to(var_23_3, var_23_0)
+		color = color or var_23_2.text_color
+
+		if not color then
+			Colors.copy_no_alpha_to(color, var_23_0)
 		end
 	end
 end
 
-function StartGameWindowVersusPlayerHostedLobby._update_options_view(arg_24_0, arg_24_1, arg_24_2)
-	if arg_24_0._is_options_view_active then
-		arg_24_0._options_view:update(arg_24_1, arg_24_2)
+StartGameWindowVersusPlayerHostedLobby._update_options_view = function (self, arg_24_1, arg_24_2)
+	-- function 24
+	if not self._is_options_view_active then
+		self._options_view:update(arg_24_1, arg_24_2)
 	end
 end
 
-function StartGameWindowVersusPlayerHostedLobby._update_mission_option(arg_25_0)
-	local var_25_0 = arg_25_0._match_handler:query_peer_data(arg_25_0._peer_id, "is_match_owner")
+StartGameWindowVersusPlayerHostedLobby._update_mission_option = function (self)
+	-- function 25
+	local query_peer_data = self._match_handler:query_peer_data(self._peer_id, "is_match_owner")
 	local var_25_1
 
-	if var_25_0 then
-		var_25_1 = arg_25_0._parent:get_selected_level_id()
+	if not query_peer_data then
+		var_25_1 = self._parent:get_selected_level_id()
 	else
-		local var_25_2 = Managers.lobby:query_lobby("matchmaking_join_lobby") or Managers.lobby:query_lobby("matchmaking_join_lobby") or Managers.matchmaking.lobby
+		local query_lobby = Managers.lobby:query_lobby("matchmaking_join_lobby")
 
-		var_25_1 = var_25_2 and var_25_2:lobby_data("selected_mission_id")
+		if not query_lobby then
+			query_lobby = Managers.lobby:query_lobby("matchmaking_join_lobby")
+			query_lobby = query_lobby or Managers.matchmaking.lobby
+		end
+
+		var_25_1 = not query_lobby and query_lobby:lobby_data("selected_mission_id")
 	end
 
 	var_25_1 = var_25_1 or "any"
 
-	if var_25_1 == arg_25_0._selected_level_id then
+	if var_25_1 == self._selected_level_id then
 		return
 	end
 
-	arg_25_0._selected_level_id = var_25_1
+	self._selected_level_id = var_25_1
 
-	local var_25_3 = var_25_1 and var_25_1 ~= "any" and LevelSettings[var_25_1] or DummyAnyLevel
-	local var_25_4 = var_25_3.display_name
-	local var_25_5 = var_25_3.level_image
-	local var_25_6 = 0
-	local var_25_7 = arg_25_0._widgets_by_name.mission_setting
+	local var_25_3
 
-	var_25_7.content.input_text = Localize(var_25_4)
-	var_25_7.content.icon_texture = var_25_5
-	var_25_7.content.icon_frame_texture = UIWidgetUtils.get_level_frame_by_difficulty_index(var_25_6)
+	if not (not var_25_1 and var_25_1 == "any") then
+		var_25_3 = LevelSettings[var_25_1]
+
+		if not var_25_3 then
+			-- Nothing
+		end
+	end
+
+	var_25_3 = DummyAnyLevel
+
+	::label_25_0::
+
+	local display_name = var_25_3.display_name
+	local level_image = var_25_3.level_image
+	local num = 0
+	local mission_setting = self._widgets_by_name.mission_setting
+
+	mission_setting.content.input_text = Localize(display_name)
+	mission_setting.content.icon_texture = level_image
+	mission_setting.content.icon_frame_texture = UIWidgetUtils.get_level_frame_by_difficulty_index(num)
 end
 
-function StartGameWindowVersusPlayerHostedLobby._handle_gamepad_input(arg_26_0, arg_26_1, arg_26_2)
-	if not arg_26_0._player_slots_by_team then
+StartGameWindowVersusPlayerHostedLobby._handle_gamepad_input = function (self, arg_26_1, arg_26_2)
+	-- function 26
+	if not self._player_slots_by_team then
 		return
 	end
 
-	if not arg_26_0._ui_animator:is_animation_completed(arg_26_0._enter_animation) then
+	if not self._ui_animator:is_animation_completed(self._enter_animation) then
 		return
 	end
 
-	local var_26_0 = arg_26_0._parent
-	local var_26_1 = var_26_0:window_input_service()
-	local var_26_2 = Managers.mechanism:game_mechanism()
-	local var_26_3 = arg_26_0._match_handler:get_match_owner()
-	local var_26_4 = var_26_2:get_slot_reservation_handler(var_26_3, var_0_3.pending_custom_game) or var_26_2:get_slot_reservation_handler(var_26_3, var_0_3.session)
-	local var_26_5 = arg_26_0._selected_row or 1
-	local var_26_6 = arg_26_0._selected_column or 1
-	local var_26_7 = arg_26_0._widgets_by_name.mission_setting.content
-	local var_26_8 = arg_26_0._widgets_by_name.toggle_custom_settings_button.content
+	local _parent = self._parent
+	local window_input_service = _parent:window_input_service()
+	local game_mechanism = Managers.mechanism:game_mechanism()
+	local get_match_owner = self._match_handler:get_match_owner()
+	local get_slot_reservation_handler = game_mechanism:get_slot_reservation_handler(get_match_owner, scripts_managers_game_mode_mechanisms_reservation_handler_types.pending_custom_game)
 
-	if arg_26_0._input_focus_mode == var_0_8.selection then
-		if var_26_5 > var_0_10[var_26_6] then
-			var_26_5 = 1
+	get_slot_reservation_handler = get_slot_reservation_handler or game_mechanism:get_slot_reservation_handler(get_match_owner, scripts_managers_game_mode_mechanisms_reservation_handler_types.session)
+
+	local _selected_row = self._selected_row
+
+	_selected_row = _selected_row or 1
+
+	local _selected_column = self._selected_column
+
+	_selected_column = _selected_column or 1
+
+	local content = self._widgets_by_name.mission_setting.content
+	local content_2 = self._widgets_by_name.toggle_custom_settings_button.content
+
+	if self._input_focus_mode == tbl.selection then
+		if _selected_row > tbl_2[_selected_column] then
+			_selected_row = 1
 		end
 
-		if var_26_1:get("move_up") then
-			if var_26_5 - 1 >= 1 then
-				var_26_5 = var_26_5 - 1
+		if not window_input_service:get("move_up") then
+			if _selected_row - 1 >= 1 then
+				_selected_row = _selected_row - 1
 			else
-				var_26_5 = var_0_10[var_26_6]
+				_selected_row = tbl_2[_selected_column]
 			end
-		elseif var_26_1:get("move_down") then
-			if var_26_5 + 1 <= var_0_10[var_26_6] then
-				var_26_5 = var_26_5 + 1
+		elseif not window_input_service:get("move_down") then
+			if _selected_row + 1 <= tbl_2[_selected_column] then
+				_selected_row = _selected_row + 1
 			else
-				var_26_5 = 1
-			end
-		end
-
-		if var_26_1:get("move_right") then
-			if var_26_6 + 1 <= var_0_9 then
-				var_26_6 = var_26_6 + 1
-			else
-				var_26_6 = 1
-			end
-		elseif var_26_1:get("move_left") then
-			if var_26_6 - 1 >= 1 then
-				var_26_6 = var_26_6 - 1
-			else
-				var_26_6 = var_0_9
+				_selected_row = 1
 			end
 		end
 
-		if arg_26_0._selected_row ~= var_26_5 or arg_26_0._selected_column ~= var_26_6 then
-			arg_26_0._selected_row = var_26_5
-			arg_26_0._selected_column = var_26_6
+		if not window_input_service:get("move_right") then
+			if _selected_column + 1 <= num_3 then
+				_selected_column = _selected_column + 1
+			else
+				_selected_column = 1
+			end
+		elseif not window_input_service:get("move_left") then
+			if _selected_column - 1 >= 1 then
+				_selected_column = _selected_column - 1
+			else
+				_selected_column = num_3
+			end
 		end
 
-		for iter_26_0 = 1, var_0_9 do
-			local var_26_9 = var_0_12[iter_26_0]
-			local var_26_10 = var_0_10[iter_26_0]
+		if not (self._selected_row ~= _selected_row or self._selected_column == _selected_column) then
+			self._selected_row = _selected_row
+			self._selected_column = _selected_column
+		end
 
-			if var_26_9 then
-				local var_26_11 = arg_26_0._player_slots_by_team[var_26_9]
+		for i = 1, num_3 do
+			local var_26_9 = tbl_4[i]
+			local var_26_10 = tbl_2[i]
 
-				for iter_26_1 = 1, var_26_10 do
-					var_26_11[iter_26_1].panel_widget.content.is_selected = var_26_5 == iter_26_1 and var_0_12[var_26_6] == var_26_9
+			if not var_26_9 then
+				local var_26_11 = self._player_slots_by_team[var_26_9]
+
+				for j = 1, var_26_10 do
+					var_26_11[j].panel_widget.content.is_selected = _selected_row ~= j or tbl_4[_selected_column] == var_26_9
 				end
 			else
-				local var_26_12 = var_0_10[iter_26_0]
-				local var_26_13 = var_0_11[iter_26_0]
+				local var_26_12 = tbl_2[i]
+				local var_26_13 = tbl_3[i]
 
-				if var_26_13 then
-					for iter_26_2 = 1, var_26_12 do
-						local var_26_14 = var_26_13[iter_26_2]
+				if not var_26_13 then
+					for k = 1, var_26_12 do
+						local var_26_14 = var_26_13[k]
 
-						if var_26_14 then
-							local var_26_15 = arg_26_0._widgets_by_name[var_26_14]
-							local var_26_16 = var_26_6 == iter_26_0 and var_26_5 == iter_26_2
+						if not var_26_14 then
+							local var_26_15 = self._widgets_by_name[var_26_14]
+							local flag = _selected_column ~= i or _selected_row == k
 
-							var_26_15.content.is_selected = var_26_16
-							var_26_15.content.button_hotspot.is_hover = var_26_16
+							var_26_15.content.is_selected = flag
+							var_26_15.content.button_hotspot.is_hover = flag
 						end
 					end
 				end
 			end
 
-			if var_26_6 ~= var_26_4:get_peer_reserved_indices(arg_26_0._peer_id) and var_0_12[var_26_6] then
-				var_26_0:set_input_description("versus_player_hosted_lobby_change_team")
-			elseif not var_0_12[var_26_6] then
-				var_26_0:set_input_description("versus_player_hosted_lobby_select_mission")
+			if _selected_column == get_slot_reservation_handler:get_peer_reserved_indices(self._peer_id) or not tbl_4[_selected_column] then
+				_parent:set_input_description("versus_player_hosted_lobby_change_team")
+			elseif not tbl_4[_selected_column] then
+				_parent:set_input_description("versus_player_hosted_lobby_select_mission")
 			else
-				var_26_0:set_input_description("versus_player_hosted_lobby")
+				_parent:set_input_description("versus_player_hosted_lobby")
 			end
 		end
 
-		if var_26_1:get("confirm") and var_0_12[arg_26_0._selected_column] then
-			local var_26_17 = arg_26_0._selected_row
-			local var_26_18 = arg_26_0._selected_column
-			local var_26_19 = var_0_12[var_26_18]
-			local var_26_20 = arg_26_0._player_slots_by_team[var_26_19][var_26_17].panel_widget.content
+		if not window_input_service:get("confirm") and not tbl_4[self._selected_column] then
+			local _selected_row_2 = self._selected_row
+			local _selected_column_2 = self._selected_column
+			local var_26_19 = tbl_4[_selected_column_2]
+			local content_3 = self._player_slots_by_team[var_26_19][_selected_row_2].panel_widget.content
 
-			if var_26_20.empty then
-				local var_26_21 = var_26_20.team_index
+			if not content_3.empty then
+				local team_index = content_3.team_index
 
-				var_26_4:request_party_change(var_26_21)
-				var_26_0:play_sound("versus_hud_player_lobby_switch_slot")
+				get_slot_reservation_handler:request_party_change(team_index)
+				_parent:play_sound("versus_hud_player_lobby_switch_slot")
 			else
-				arg_26_0._input_focus_mode = var_0_8.panel_focus
+				self._input_focus_mode = tbl.panel_focus
 
-				var_26_0:pause_input(true)
-				arg_26_0:_set_player_panel_focused(var_26_18, var_26_17, true)
-				var_26_0:set_input_description("versus_player_hosted_lobby_player_panel_focused")
+				_parent:pause_input(true)
+				self:_set_player_panel_focused(_selected_column_2, _selected_row_2, true)
+				_parent:set_input_description("versus_player_hosted_lobby_player_panel_focused")
 			end
-		elseif var_26_1:get("confirm") and var_26_7.is_selected then
-			local var_26_22 = Managers.mechanism:current_mechanism_name()
-			local var_26_23 = var_26_0:get_custom_game_settings(var_26_22)
+		elseif not window_input_service:get("confirm") and not content.is_selected then
+			local current_mechanism_name = Managers.mechanism:current_mechanism_name()
+			local get_custom_game_settings = _parent:get_custom_game_settings(current_mechanism_name)
 
-			var_26_0:set_layout_by_name(var_26_23.layout_name)
-		elseif var_26_8.is_selected and arg_26_0._is_server and arg_26_0._game_mechanism:is_hosting_versus_custom_game() and var_26_1:get("confirm") then
-			local var_26_24 = not arg_26_0._custom_settings_toggled
+			_parent:set_layout_by_name(get_custom_game_settings.layout_name)
+		elseif not content_2.is_selected and not self._is_server and not self._game_mechanism:is_hosting_versus_custom_game() and not window_input_service:get("confirm") then
+			local flag_2 = not self._custom_settings_toggled
 
-			var_26_8.button_hotspot.is_selected = var_26_24
+			content_2.button_hotspot.is_selected = flag_2
 
-			arg_26_0:_enable_custom_game_settings(var_26_24)
+			self:_enable_custom_game_settings(flag_2)
 
-			arg_26_0._custom_settings_toggled = var_26_24
+			self._custom_settings_toggled = flag_2
 		end
 
-		if var_26_1:get("right_stick_press") and arg_26_0._custom_settings_toggled then
+		if not window_input_service:get("right_stick_press") and not self._custom_settings_toggled then
 			Managers.state.event:trigger("event_focus_custom_game_settings_input", true)
 
-			arg_26_0._input_focus_mode = var_0_8.custom_settings
+			self._input_focus_mode = tbl.custom_settings
 		end
-	elseif arg_26_0._input_focus_mode == var_0_8.panel_focus then
-		local var_26_25 = arg_26_0:_get_player_panel_widget(arg_26_0._selected_column, arg_26_0._selected_row)
+	elseif self._input_focus_mode == tbl.panel_focus then
+		local _get_player_panel_widget = self:_get_player_panel_widget(self._selected_column, self._selected_row)
 
-		if var_26_25 then
-			local var_26_26 = var_26_25.content
+		if not _get_player_panel_widget then
+			local content_4 = _get_player_panel_widget.content
 
-			if var_26_26.show_profile_button and var_26_1:get("toggle_menu") then
-				Managers.account:show_player_profile(var_26_26.peer_id)
+			if not content_4.show_profile_button and not window_input_service:get("toggle_menu") then
+				Managers.account:show_player_profile(content_4.peer_id)
 			end
 
-			if var_26_26.show_kick_button and var_26_1:get("refresh_press") then
-				local var_26_27 = Managers.party:server_get_friend_party_from_peer(var_26_26.peer_id)
+			if not content_4.show_kick_button and not window_input_service:get("refresh_press") then
+				local server_get_friend_party_from_peer = Managers.party:server_get_friend_party_from_peer(content_4.peer_id)
 
-				arg_26_0._matchmaking_manager:cancel_matchmaking_for_peer(var_26_27.leader)
+				self._matchmaking_manager:cancel_matchmaking_for_peer(server_get_friend_party_from_peer.leader)
 			end
 
-			if var_26_26.show_chat_button and var_26_1:get("special_1_press") then
-				local var_26_28 = var_26_26.peer_id
-				local var_26_29 = Managers.chat:ignoring_peer_id(var_26_28)
+			if not content_4.show_chat_button and not window_input_service:get("special_1_press") then
+				local peer_id = content_4.peer_id
+				local ignoring_peer_id = Managers.chat:ignoring_peer_id(peer_id)
 
-				if var_26_29 then
-					Managers.chat:remove_ignore_peer_id(var_26_28)
+				if not ignoring_peer_id then
+					Managers.chat:remove_ignore_peer_id(peer_id)
 				else
-					Managers.chat:ignore_peer_id(var_26_28)
+					Managers.chat:ignore_peer_id(peer_id)
 				end
 
-				var_26_26.chat_button_hotspot.is_selected = var_26_29
+				content_4.chat_button_hotspot.is_selected = ignoring_peer_id
 			end
 		end
 
-		if var_26_1:get("back") then
-			arg_26_0._input_focus_mode = var_0_8.selection
+		if not window_input_service:get("back") then
+			self._input_focus_mode = tbl.selection
 
-			var_26_0:pause_input(false)
-			arg_26_0:_set_player_panel_focused(arg_26_0._selected_column, arg_26_0._selected_row, false)
-			var_26_0:set_input_description("versus_player_hosted_lobby")
+			_parent:pause_input(false)
+			self:_set_player_panel_focused(self._selected_column, self._selected_row, false)
+			_parent:set_input_description("versus_player_hosted_lobby")
 		end
 	end
 end
 
-function StartGameWindowVersusPlayerHostedLobby._update_server_name(arg_27_0)
-	local var_27_0 = arg_27_0._widgets_by_name.lobby_name
-	local var_27_1 = var_27_0.content.input
-	local var_27_2 = Managers.lobby:query_lobby("matchmaking_join_lobby") or Managers.lobby:query_lobby("matchmaking_join_lobby") or Managers.matchmaking.lobby
+StartGameWindowVersusPlayerHostedLobby._update_server_name = function (self)
+	-- function 27
+	local lobby_name = self._widgets_by_name.lobby_name
+	local input = lobby_name.content.input
+	local query_lobby = Managers.lobby:query_lobby("matchmaking_join_lobby")
 
-	if not arg_27_0._match_handler:query_peer_data(arg_27_0._peer_id, "is_match_owner") then
-		local var_27_3 = var_27_2 and var_27_2:lobby_data("custom_server_name") or ""
+	if not query_lobby then
+		query_lobby = Managers.lobby:query_lobby("matchmaking_join_lobby")
+		query_lobby = query_lobby or Managers.matchmaking.lobby
+	end
 
-		if var_27_3 == "n/a" then
-			var_27_3 = Localize("lb_game_type_versus_custom_game")
+	if not self._match_handler:query_peer_data(self._peer_id, "is_match_owner") then
+		local lobby_data
+
+		if not query_lobby then
+			lobby_data = query_lobby:lobby_data("custom_server_name")
+
+			if not lobby_data then
+				-- Nothing
+			end
 		end
 
-		var_27_1.text = var_27_3
-		var_27_1.default_text = ""
+		lobby_data = ""
+
+		::label_27_0::
+
+		if lobby_data == "n/a" then
+			lobby_data = Localize("lb_game_type_versus_custom_game")
+		end
+
+		input.text = lobby_data
+		input.default_text = ""
 
 		return
 	end
 
-	if var_27_1.active then
-		local var_27_4 = arg_27_0._parent:window_input_service()
-		local var_27_5 = var_27_4:get("toggle_menu", true) or var_27_4:get("back", true)
-		local var_27_6 = var_27_4:get("execute_chat_input", true)
+	if not input.active then
+		local window_input_service = self._parent:window_input_service()
+		local get = window_input_service:get("toggle_menu", true)
 
-		if var_27_5 or var_27_6 then
-			local var_27_7 = var_27_2:get_stored_lobby_data()
+		get = get or window_input_service:get("back", true)
 
-			var_27_1.text = cjson.decode(cjson.encode(var_27_1.text))
+		local get_2 = window_input_service:get("execute_chat_input", true)
 
-			if not string.find(var_27_1.text, "%S") then
-				var_27_1.text = ""
+		if get or not get_2 then
+			local get_stored_lobby_data = query_lobby:get_stored_lobby_data()
+
+			input.text = cjson.decode(cjson.encode(input.text))
+
+			if not string.find(input.text, "%S") then
+				input.text = ""
 			end
 
-			var_27_7.custom_server_name = var_27_1.text
+			get_stored_lobby_data.custom_server_name = input.text
 
-			var_27_2:set_lobby_data(var_27_7)
+			query_lobby:set_lobby_data(get_stored_lobby_data)
 
-			var_27_1.active = false
+			input.active = false
 
-			arg_27_0._parent.parent:set_input_blocked(false)
+			self._parent.parent:set_input_blocked(false)
 		end
-	elseif UIUtils.is_button_pressed(var_27_0) then
-		var_27_1.caret_index = 1 + Utf8.length(var_27_1.text)
-		var_27_1.active = true
+	elseif not UIUtils.is_button_pressed(lobby_name) then
+		input.caret_index = 1 + Utf8.length(input.text)
+		input.active = true
 
-		arg_27_0._parent.parent:set_input_blocked(true)
+		self._parent.parent:set_input_blocked(true)
 	end
 end
 
-function StartGameWindowVersusPlayerHostedLobby._set_player_panel_focused(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
-	local var_28_0 = var_0_12[arg_28_1]
+StartGameWindowVersusPlayerHostedLobby._set_player_panel_focused = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+	-- function 28
+	local var_28_0 = tbl_4[arg_28_1]
 
-	if var_28_0 then
+	if not var_28_0 then
 		arg_28_0._player_slots_by_team[var_28_0][arg_28_2].panel_widget.content.focused = arg_28_3
 	end
 end
 
-function StartGameWindowVersusPlayerHostedLobby._get_player_panel_widget(arg_29_0, arg_29_1, arg_29_2)
-	local var_29_0 = var_0_12[arg_29_1]
+StartGameWindowVersusPlayerHostedLobby._get_player_panel_widget = function (self, arg_29_1, arg_29_2)
+	-- function 29
+	local var_29_0 = tbl_4[arg_29_1]
 
-	if var_29_0 then
-		return arg_29_0._player_slots_by_team[var_29_0][arg_29_2].panel_widget
+	if not var_29_0 then
+		return self._player_slots_by_team[var_29_0][arg_29_2].panel_widget
 	end
 
 	return nil
 end
 
-function StartGameWindowVersusPlayerHostedLobby.focus_versus_hosted_lobby_input(arg_30_0)
-	arg_30_0._input_focus_mode = var_0_8.selection
+StartGameWindowVersusPlayerHostedLobby.focus_versus_hosted_lobby_input = function (self)
+	-- function 30
+	self._input_focus_mode = tbl.selection
 
-	arg_30_0._parent:set_input_description("versus_player_hosted_lobby")
+	self._parent:set_input_description("versus_player_hosted_lobby")
 
-	local var_30_0 = Managers.mechanism:game_mechanism():get_custom_game_settings_handler()
+	local get_custom_game_settings_handler = Managers.mechanism:game_mechanism():get_custom_game_settings_handler()
 end
 
-function StartGameWindowVersusPlayerHostedLobby._is_other_option_button_selected(arg_31_0, arg_31_1, arg_31_2)
-	if arg_31_0._is_server and arg_31_0._game_mechanism:is_hosting_versus_custom_game() and UIUtils.is_button_pressed(arg_31_1) then
-		local var_31_0 = not arg_31_2
+StartGameWindowVersusPlayerHostedLobby._is_other_option_button_selected = function (self, arg_31_1, arg_31_2)
+	-- function 31
+	if not self._is_server and not self._game_mechanism:is_hosting_versus_custom_game() and not UIUtils.is_button_pressed(arg_31_1) then
+		local flag = not arg_31_2
 
-		if var_31_0 then
-			arg_31_0._parent:play_sound("play_gui_lobby_button_03_private")
+		if not flag then
+			self._parent:play_sound("play_gui_lobby_button_03_private")
 		else
-			arg_31_0._parent:play_sound("play_gui_lobby_button_03_public")
+			self._parent:play_sound("play_gui_lobby_button_03_public")
 		end
 
-		return var_31_0
+		return flag
 	end
 
 	return nil
 end
 
-function StartGameWindowVersusPlayerHostedLobby._lobby_member_game_mode_custom_settings_handler_enabled(arg_32_0, arg_32_1)
-	if not arg_32_0._is_server and not arg_32_0._game_mechanism:is_hosting_versus_custom_game() then
-		local var_32_0 = arg_32_0._widgets_by_name.toggle_custom_settings_button
+StartGameWindowVersusPlayerHostedLobby._lobby_member_game_mode_custom_settings_handler_enabled = function (self, arg_32_1)
+	-- function 32
+	if not (self._is_server or self._game_mechanism:is_hosting_versus_custom_game()) then
+		local toggle_custom_settings_button = self._widgets_by_name.toggle_custom_settings_button
 
-		arg_32_0._custom_settings_toggled = arg_32_1
-		var_32_0.content.button_hotspot.is_selected = arg_32_1
+		self._custom_settings_toggled = arg_32_1
+		toggle_custom_settings_button.content.button_hotspot.is_selected = arg_32_1
 
-		if not (Managers.input and Managers.input:is_device_active("gamepad")) then
+		local input = Managers.input
+
+		input = not input and Managers.input:is_device_active("gamepad")
+
+		if not input then
 			Managers.state.event:trigger("event_focus_custom_game_settings_input", arg_32_1)
 		end
 	end

@@ -1,15 +1,15 @@
 -- chunkname: @scripts/settings/dlcs/geheimnisnacht_2021/geheimnisnacht_2021_ai_settings.lua
 
-local var_0_0 = DLCSettings.geheimnisnacht_2021
+local geheimnisnacht_2021 = DLCSettings.geheimnisnacht_2021
 
-var_0_0.behaviour_trees_precompiled = {
+geheimnisnacht_2021.behaviour_trees_precompiled = {
 	"scripts/entity_system/systems/behaviour/nodes/generated/bt_selector_critter_nurgling"
 }
-var_0_0.behaviour_tree_nodes = {
+geheimnisnacht_2021.behaviour_tree_nodes = {
 	"scripts/entity_system/systems/behaviour/nodes/bt_critter_nurgling_roam_action",
 	"scripts/entity_system/systems/behaviour/nodes/bt_critter_nurgling_wait_action",
 	"scripts/entity_system/systems/behaviour/nodes/bt_critter_nurgling_flee_action"
 }
-var_0_0.behaviour_trees = {
+geheimnisnacht_2021.behaviour_trees = {
 	"scripts/entity_system/systems/behaviour/trees/critters/critter_nurgling_behavior"
 }

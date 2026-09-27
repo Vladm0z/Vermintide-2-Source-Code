@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/gdc_start_ui.lua
 
-local var_0_0 = {
+local tbl = {
 	root = {
 		is_root = true,
 		size = {
@@ -94,7 +94,7 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	input = {
 		scenegraph_id = "input",
 		element = {
@@ -108,24 +108,27 @@ local var_0_1 = {
 					style_id = "button_text",
 					pass_type = "text",
 					text_id = "button_text",
-					content_check_function = function(arg_1_0)
-						return arg_1_0.text ~= ""
+					content_check_function = function (self)
+						-- function 1
+						return self.text ~= ""
 					end
 				},
 				{
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_2_0)
-						return arg_2_0.text
+					content_check_function = function (self)
+						-- function 2
+						return self.text
 					end
 				},
 				{
 					style_id = "prefix_text",
 					pass_type = "text",
 					text_id = "prefix_text",
-					content_check_function = function(arg_3_0)
-						return arg_3_0.text
+					content_check_function = function (self)
+						-- function 3
+						return self.text
 					end
 				}
 			}
@@ -227,241 +230,270 @@ local var_0_1 = {
 
 GDCStartUI = class(GDCStartUI)
 
-function GDCStartUI.init(arg_4_0, arg_4_1)
-	arg_4_0.ui_renderer = arg_4_1.ui_renderer
-	arg_4_0.ingame_ui = arg_4_1.ingame_ui
-	arg_4_0.camera_manager = arg_4_1.camera_manager
-	arg_4_0.network_event_delegate = arg_4_1.network_event_delegate
-	arg_4_0.player_manager = arg_4_1.player_manager
-	arg_4_0.peer_id = arg_4_1.peer_id
-	arg_4_0.world_manager = arg_4_1.world_manager
-	arg_4_0.input_manager = arg_4_1.input_manager
-	arg_4_0.ui_animations = {}
+GDCStartUI.init = function (self, arg_4_1)
+	-- function 4
+	self.ui_renderer = arg_4_1.ui_renderer
+	self.ingame_ui = arg_4_1.ingame_ui
+	self.camera_manager = arg_4_1.camera_manager
+	self.network_event_delegate = arg_4_1.network_event_delegate
+	self.player_manager = arg_4_1.player_manager
+	self.peer_id = arg_4_1.peer_id
+	self.world_manager = arg_4_1.world_manager
+	self.input_manager = arg_4_1.input_manager
+	self.ui_animations = {}
 
-	arg_4_0.network_event_delegate:register(arg_4_0, "rpc_on_skip_gdc_intro")
-	rawset(_G, "GDCStartUI_pointer", arg_4_0)
-	arg_4_0:create_ui_elements()
+	self.network_event_delegate:register(self, "rpc_on_skip_gdc_intro")
+	rawset(_G, "GDCStartUI_pointer", self)
+	self:create_ui_elements()
 end
 
-function GDCStartUI.create_ui_elements(arg_5_0)
-	arg_5_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0)
-	arg_5_0.logo_widget = UIWidget.init(var_0_1.logo)
-	arg_5_0.input_widget = UIWidget.init(var_0_1.input)
+GDCStartUI.create_ui_elements = function (self)
+	-- function 5
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(tbl)
+	self.logo_widget = UIWidget.init(tbl_2.logo)
+	self.input_widget = UIWidget.init(tbl_2.input)
 
-	UIRenderer.clear_scenegraph_queue(arg_5_0.ui_renderer)
-	arg_5_0:set_input_text("waiting_for_other_players")
+	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
+	self:set_input_text("waiting_for_other_players")
 
-	local var_5_0 = arg_5_0.input_widget.style
+	local style = self.input_widget.style
 
-	arg_5_0.ui_animations.button_text_pulse = UIAnimation.init(UIAnimation.pulse_animation, var_5_0.button_text.text_color, 1, 100, 255, 2)
-	arg_5_0.ui_animations.button_texture_pulse = UIAnimation.init(UIAnimation.pulse_animation, var_5_0.icon_styles.color, 1, 100, 255, 2)
+	self.ui_animations.button_text_pulse = UIAnimation.init(UIAnimation.pulse_animation, style.button_text.text_color, 1, 100, 255, 2)
+	self.ui_animations.button_texture_pulse = UIAnimation.init(UIAnimation.pulse_animation, style.icon_styles.color, 1, 100, 255, 2)
 end
 
-function GDCStartUI.update(arg_6_0, arg_6_1)
-	local var_6_0 = arg_6_0.peer_id
-	local var_6_1 = arg_6_0.player_manager:player_from_peer_id(var_6_0).player_unit
+GDCStartUI.update = function (self, arg_6_1)
+	-- function 6
+	local peer_id = self.peer_id
+	local player_unit = self.player_manager:player_from_peer_id(peer_id).player_unit
 
-	for iter_6_0, iter_6_1 in pairs(arg_6_0.ui_animations) do
-		UIAnimation.update(iter_6_1, arg_6_1)
+	for k, v in pairs(self.ui_animations) do
+		UIAnimation.update(v, arg_6_1)
 
-		if UIAnimation.completed(iter_6_1) then
-			arg_6_0.ui_animations[iter_6_0] = nil
+		if not UIAnimation.completed(v) then
+			self.ui_animations[k] = nil
 		end
 	end
 
-	if not arg_6_0.intro_complete then
-		if not arg_6_0.draw_intro then
-			if var_6_1 and Unit.alive(var_6_1) and ScriptUnit.extension(var_6_1, "hud_system").show_gdc_intro then
-				arg_6_0:start_gdc_intro()
+	if not self.intro_complete then
+		if not self.draw_intro then
+			if not player_unit and not Unit.alive(player_unit) and not ScriptUnit.extension(player_unit, "hud_system").show_gdc_intro then
+				self:start_gdc_intro()
 			end
 		else
-			local var_6_2 = arg_6_0.input_manager:get_service("cutscene")
+			local get_service = self.input_manager:get_service("cutscene")
 
-			arg_6_0:check_start_input(var_6_2)
+			self:check_start_input(get_service)
 		end
 	end
 
-	arg_6_0:draw(arg_6_1)
+	self:draw(arg_6_1)
 end
 
-function GDCStartUI.draw(arg_7_0, arg_7_1)
-	local var_7_0 = arg_7_0.ui_renderer
-	local var_7_1 = arg_7_0.ui_scenegraph
-	local var_7_2 = arg_7_0.input_manager:get_service("cutscene")
+GDCStartUI.draw = function (self, arg_7_1)
+	-- function 7
+	local ui_renderer = self.ui_renderer
+	local ui_scenegraph = self.ui_scenegraph
+	local get_service = self.input_manager:get_service("cutscene")
 
-	UIRenderer.begin_pass(var_7_0, var_7_1, var_7_2, arg_7_1)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, get_service, arg_7_1)
 
-	if not arg_7_0.intro_complete and arg_7_0.draw_intro then
-		UIRenderer.draw_widget(var_7_0, arg_7_0.input_widget)
-		UIRenderer.draw_widget(var_7_0, arg_7_0.logo_widget)
+	if self.intro_complete or not self.draw_intro then
+		UIRenderer.draw_widget(ui_renderer, self.input_widget)
+		UIRenderer.draw_widget(ui_renderer, self.logo_widget)
 	end
 
-	UIRenderer.end_pass(var_7_0)
+	UIRenderer.end_pass(ui_renderer)
 end
 
-function GDCStartUI.destroy(arg_8_0)
-	arg_8_0.network_event_delegate:unregister(arg_8_0)
+GDCStartUI.destroy = function (self)
+	-- function 8
+	self.network_event_delegate:unregister(self)
 	rawset(_G, "GDCStartUI_pointer", nil)
-	GarbageLeakDetector.register_object(arg_8_0, "GDCStartUI")
+	GarbageLeakDetector.register_object(self, "GDCStartUI")
 end
 
-function GDCStartUI.start_gdc_intro(arg_9_0)
-	arg_9_0.draw_intro = true
+GDCStartUI.start_gdc_intro = function (self)
+	-- function 9
+	self.draw_intro = true
 end
 
-function GDCStartUI.end_gdc_intro(arg_10_0)
-	arg_10_0.draw_intro = nil
-	arg_10_0.intro_complete = true
+GDCStartUI.end_gdc_intro = function (self)
+	-- function 10
+	self.draw_intro = nil
+	self.intro_complete = true
 end
 
-function GDCStartUI.rpc_on_skip_gdc_intro(arg_11_0, arg_11_1)
-	if Managers.player.is_server then
-		Managers.state.network.network_transmit:send_rpc_clients_except("rpc_on_skip_gdc_intro", arg_11_0.peer_id)
+GDCStartUI.rpc_on_skip_gdc_intro = function (self, arg_11_1)
+	-- function 11
+	if not Managers.player.is_server then
+		Managers.state.network.network_transmit:send_rpc_clients_except("rpc_on_skip_gdc_intro", self.peer_id)
 	end
 
-	if not arg_11_0.input_pressed then
-		arg_11_0.input_pressed = true
+	if not self.input_pressed then
+		self.input_pressed = true
 
-		arg_11_0:end_gdc_intro()
+		self:end_gdc_intro()
 
-		local var_11_0 = "level_world"
-		local var_11_1 = arg_11_0.world_manager
+		local str = "level_world"
+		local world_manager = self.world_manager
 
-		if var_11_1:has_world(var_11_0) then
-			local var_11_2 = var_11_1:world(var_11_0)
+		if not world_manager:has_world(str) then
+			local world = world_manager:world(str)
 
-			LevelHelper:flow_event(var_11_2, "gdc_intro_complete")
+			LevelHelper:flow_event(world, "gdc_intro_complete")
 		end
 	end
 end
 
-function GDCStartUI.check_start_input(arg_12_0, arg_12_1)
-	if arg_12_0.input_pressed or not arg_12_0.input_widget then
+GDCStartUI.check_start_input = function (self, arg_12_1)
+	-- function 12
+	if not (self.input_pressed or self.input_widget) then
 		return
 	end
 
-	local var_12_0 = Development.parameter("gdc_ignore_minimum_players")
-	local var_12_1 = Development.parameter("gdc_player_count") or 1
+	local parameter = Development.parameter("gdc_ignore_minimum_players")
+	local parameter_2 = Development.parameter("gdc_player_count")
 
-	var_12_1 = var_12_0 and 1 or var_12_1
+	parameter_2 = parameter_2 or 1
+	parameter_2 = not parameter and 1 and parameter_2
 
-	local var_12_2 = Managers.player:human_players()
-	local var_12_3 = 0
+	local human_players = Managers.player:human_players()
+	local num = 0
 
-	for iter_12_0, iter_12_1 in pairs(var_12_2) do
-		local var_12_4 = iter_12_1.player_unit
+	for k, v in pairs(human_players) do
+		local player_unit = v.player_unit
 
-		if var_12_4 and Unit.alive(var_12_4) then
-			var_12_3 = var_12_3 + 1
+		if not player_unit and not Unit.alive(player_unit) then
+			num = num + 1
 		end
 	end
 
-	if arg_12_1 and (var_12_1 <= var_12_3 and arg_12_1:get("gdc_skip") or arg_12_1:has("gdc_debug_skip") and arg_12_1:get("gdc_debug_skip")) then
-		if Managers.player.is_server then
-			arg_12_0:rpc_on_skip_gdc_intro()
+	if not arg_12_1 and not (parameter_2 <= num) and not arg_12_1:get("gdc_skip") and not arg_12_1:has("gdc_debug_skip") and not arg_12_1:get("gdc_debug_skip") then
+		if not Managers.player.is_server then
+			self:rpc_on_skip_gdc_intro()
 		else
 			Managers.state.network.network_transmit:send_rpc_server("rpc_on_skip_gdc_intro")
 		end
 	end
 
-	if arg_12_0.num_of_human_players ~= var_12_3 then
-		local var_12_5 = var_12_3 < var_12_1 and Localize("waiting_for_other_players") .. " - " .. var_12_3 .. "/" .. var_12_1 or nil
+	if self.num_of_human_players ~= num then
+		local str
 
-		arg_12_0:set_input_text(var_12_5)
+		if num < parameter_2 then
+			str = Localize("waiting_for_other_players") .. " - " .. num .. "/" .. parameter_2
 
-		arg_12_0.num_of_human_players = var_12_3
+			if not str then
+				-- Nothing
+			end
+		end
+
+		str = nil
+
+		::label_12_0::
+
+		self:set_input_text(str)
+
+		self.num_of_human_players = num
 	end
 end
 
-function GDCStartUI.set_input_text(arg_13_0, arg_13_1)
-	local var_13_0 = arg_13_0.ui_renderer
-	local var_13_1 = arg_13_0.ui_scenegraph
-	local var_13_2 = arg_13_0.input_widget
-	local var_13_3 = var_13_2.content
-	local var_13_4 = var_13_2.style
-	local var_13_5 = ""
-	local var_13_6 = ""
-	local var_13_7 = ""
+GDCStartUI.set_input_text = function (self, arg_13_1)
+	-- function 13
+	local ui_renderer = self.ui_renderer
+	local ui_scenegraph = self.ui_scenegraph
+	local input_widget = self.input_widget
+	local content = input_widget.content
+	local style = input_widget.style
+	local str = ""
+	local str_2 = ""
+	local str_3 = ""
 	local var_13_8
 
 	if not arg_13_1 then
-		local var_13_9 = "jump"
-		local var_13_10 = arg_13_0.input_manager
-		local var_13_11 = var_13_10:get_service("Player")
-		local var_13_12 = var_13_10:is_device_active("gamepad")
-		local var_13_13, var_13_14 = UISettings.get_gamepad_input_texture_data(var_13_11, var_13_9, var_13_12)
+		local str_4 = "jump"
+		local input_manager = self.input_manager
+		local get_service = input_manager:get_service("Player")
+		local is_device_active = input_manager:is_device_active("gamepad")
+		local get_gamepad_input_texture_data, var_13_14 = UISettings.get_gamepad_input_texture_data(get_service, str_4, is_device_active)
 
-		assert(var_13_13, "Could not find button texture(s) for action: jump")
+		assert(get_gamepad_input_texture_data, "Could not find button texture(s) for action: jump")
 
-		var_13_5 = Localize("to_start_game")
-		var_13_6 = Localize("interaction_prefix_press")
+		str = Localize("to_start_game")
+		str_2 = Localize("interaction_prefix_press")
 	else
-		var_13_5 = arg_13_1
-		var_13_6 = ""
+		str = arg_13_1
+		str_2 = ""
 	end
 
-	local var_13_15 = 0
-	local var_13_16 = 0
+	local num = 0
+	local num_2 = 0
 
-	if var_13_8 then
-		if var_13_8.texture then
-			var_13_3.button_text = ""
-			var_13_3.icon_textures = {
+	if not var_13_8 then
+		if not var_13_8.texture then
+			content.button_text = ""
+			content.icon_textures = {
 				var_13_8.texture
 			}
-			var_13_4.icon_styles.texture_sizes = {
+			style.icon_styles.texture_sizes = {
 				var_13_8.size
 			}
-			var_13_15 = var_13_8.size[1]
-			var_13_16 = var_13_8.size[2]
+			num = var_13_8.size[1]
+			num_2 = var_13_8.size[2]
 		else
-			local var_13_17 = {}
-			local var_13_18 = {}
-			local var_13_19 = var_13_4.button_text
-			local var_13_20, var_13_21 = UIFontByResolution(var_13_19)
-			local var_13_22, var_13_23, var_13_24 = UIRenderer.text_size(var_13_0, var_13_7, var_13_20[1], var_13_21)
+			local tbl = {}
+			local tbl_2 = {}
+			local button_text = style.button_text
+			local var_13_20, var_13_21 = UIFontByResolution(button_text)
+			local text_size, var_13_23, var_13_24 = UIRenderer.text_size(ui_renderer, str_3, var_13_20[1], var_13_21)
 
-			for iter_13_0 = 1, #var_13_8 do
-				var_13_17[iter_13_0] = var_13_8[iter_13_0].texture
-				var_13_18[iter_13_0] = var_13_8[iter_13_0].size
+			for i = 1, #var_13_8 do
+				tbl[i] = var_13_8[i].texture
+				tbl_2[i] = var_13_8[i].size
 
-				if iter_13_0 == 2 then
-					var_13_18[iter_13_0][1] = var_13_22
+				if i == 2 then
+					tbl_2[i][1] = text_size
 				end
 
-				var_13_15 = var_13_15 + var_13_18[iter_13_0][1]
-				var_13_16 = var_13_16 < var_13_18[iter_13_0][2] and var_13_18[iter_13_0][2] or var_13_16
+				num = num + tbl_2[i][1]
+				num_2 = not (num_2 < tbl_2[i][2]) or not tbl_2[i][2] or num_2
 			end
 
-			var_13_3.icon_textures = var_13_17
-			var_13_3.button_text = var_13_7
-			var_13_4.icon_styles.texture_sizes = var_13_18
+			content.icon_textures = tbl
+			content.button_text = str_3
+			style.icon_styles.texture_sizes = tbl_2
 		end
 
-		var_13_1.input_text.local_position[1] = var_13_15
-		var_13_1.input_icon.size[1] = var_13_15
-		var_13_1.input_icon.size[2] = var_13_16
+		ui_scenegraph.input_text.local_position[1] = num
+		ui_scenegraph.input_icon.size[1] = num
+		ui_scenegraph.input_icon.size[2] = num_2
 	else
-		var_13_3.icon_textures = {}
-		var_13_3.button_text = ""
-		var_13_3.prefix_text = ""
-		var_13_1.input_text.local_position[1] = 0
+		content.icon_textures = {}
+		content.button_text = ""
+		content.prefix_text = ""
+		ui_scenegraph.input_text.local_position[1] = 0
 	end
 
-	local var_13_25 = var_13_4.text
-	local var_13_26, var_13_27 = arg_13_0:get_text_width(var_13_25, var_13_5)
-	local var_13_28 = arg_13_0:get_text_width(var_13_4.prefix_text, var_13_6)
+	local text = style.text
+	local get_text_width, var_13_27 = self:get_text_width(text, str)
+	local get_text_width_2 = self:get_text_width(style.prefix_text, str_2)
 
-	var_13_3.text = var_13_5
-	var_13_3.prefix_text = var_13_6
-	var_13_1.input_text.position[2] = var_13_27 == var_13_25.font_size and 3 or 0
-	var_13_1.input_prefix_text.position[2] = var_13_1.input_text.position[2]
-	var_13_1.input.position[1] = -((var_13_26 + var_13_15) * 0.5) + var_13_28
+	content.text = str
+	content.prefix_text = str_2
+
+	local position = ui_scenegraph.input_text.position
+	local flag
+
+	flag = var_13_27 ~= text.font_size or not 3 or 0
+	position[2] = flag
+	ui_scenegraph.input_prefix_text.position[2] = ui_scenegraph.input_text.position[2]
+	ui_scenegraph.input.position[1] = -((get_text_width + num) * 0.5) + get_text_width_2
 end
 
-function GDCStartUI.get_text_width(arg_14_0, arg_14_1, arg_14_2)
+GDCStartUI.get_text_width = function (self, arg_14_1, arg_14_2)
+	-- function 14
 	local var_14_0, var_14_1 = UIFontByResolution(arg_14_1)
-	local var_14_2, var_14_3, var_14_4 = UIRenderer.text_size(arg_14_0.ui_renderer, arg_14_2, var_14_0[1], var_14_1)
+	local text_size, var_14_3, var_14_4 = UIRenderer.text_size(self.ui_renderer, arg_14_2, var_14_0[1], var_14_1)
 
-	return var_14_2, var_14_1
+	return text_size, var_14_1
 end

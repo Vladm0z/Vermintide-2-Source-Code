@@ -1,205 +1,225 @@
 -- chunkname: @scripts/managers/game_mode/mechanisms/deus_run_state_spec.lua
 
-local var_0_0 = require("scripts/utils/lib_deflate")
-local var_0_1 = require("scripts/utils/byte_array")
-local var_0_2 = 100000
+local scripts_utils_lib_deflate = require("scripts/utils/lib_deflate")
+local scripts_utils_byte_array = require("scripts/utils/byte_array")
+local num = 100000
 
-local function var_0_3(arg_1_0)
+local function fn(arg_1_0)
+	-- function 1
 	return table.concat(arg_1_0, ",")
 end
 
-local function var_0_4(arg_2_0)
-	return (arg_2_0.split_deprecated(arg_2_0, ","))
+local function fn_2(self)
+	-- function 2
+	return (self.split_deprecated(self, ","))
 end
 
-local function var_0_5(arg_3_0)
-	local var_3_0 = {}
+local function fn_3(arg_3_0)
+	-- function 3
+	local tbl = {}
 
-	for iter_3_0, iter_3_1 in pairs(arg_3_0) do
-		var_3_0[#var_3_0 + 1] = iter_3_0
-		var_3_0[#var_3_0 + 1] = iter_3_1
+	for k, v in pairs(arg_3_0) do
+		tbl[#tbl + 1] = k
+		tbl[#tbl + 1] = v
 	end
 
-	return table.concat(var_3_0, ",")
+	return table.concat(tbl, ",")
 end
 
-local function var_0_6(arg_4_0)
-	local var_4_0 = string.split_deprecated(arg_4_0, ",")
-	local var_4_1 = {}
+local function fn_4(arg_4_0)
+	-- function 4
+	local split_deprecated = string.split_deprecated(arg_4_0, ",")
+	local tbl = {}
 
-	for iter_4_0 = 1, #var_4_0, 2 do
-		var_4_1[var_4_0[iter_4_0]] = var_4_0[iter_4_0 + 1]
+	for i = 1, #split_deprecated, 2 do
+		tbl[split_deprecated[i]] = split_deprecated[i + 1]
 	end
 
-	return var_4_1
+	return tbl
 end
 
-local function var_0_7(arg_5_0)
+local function fn_5(arg_5_0)
+	-- function 5
 	return cjson.encode(arg_5_0)
 end
 
-local function var_0_8(arg_6_0)
+local function fn_6(arg_6_0)
+	-- function 6
 	return (cjson.decode(arg_6_0))
 end
 
-local var_0_9 = {}
+local tbl = {}
 
-local function var_0_10(arg_7_0)
-	table.clear(var_0_9)
+local function fn_7(self)
+	-- function 7
+	table.clear(tbl)
 
-	for iter_7_0 = 1, #arg_7_0 do
-		local var_7_0 = arg_7_0[iter_7_0]
+	for i = 1, #self do
+		local var_7_0 = self[i]
 
-		var_0_1.write_int32(var_0_9, NetworkLookup.deus_power_up_templates[var_7_0.name])
-		var_0_1.write_int32(var_0_9, NetworkLookup.rarities[var_7_0.rarity])
-		var_0_1.write_int32(var_0_9, var_7_0.client_id)
+		scripts_utils_byte_array.write_int32(tbl, NetworkLookup.deus_power_up_templates[var_7_0.name])
+		scripts_utils_byte_array.write_int32(tbl, NetworkLookup.rarities[var_7_0.rarity])
+		scripts_utils_byte_array.write_int32(tbl, var_7_0.client_id)
 	end
 
-	local var_7_1 = var_0_1.read_string(var_0_9)
+	local read_string = scripts_utils_byte_array.read_string(tbl)
 
-	return (var_0_0:CompressDeflate(var_7_1))
+	return (scripts_utils_lib_deflate:CompressDeflate(read_string))
 end
 
-local function var_0_11(arg_8_0)
-	local var_8_0 = var_0_0:DecompressDeflate(arg_8_0)
+local function fn_8(arg_8_0)
+	-- function 8
+	local DecompressDeflate = scripts_utils_lib_deflate:DecompressDeflate(arg_8_0)
 
-	table.clear(var_0_9)
-	var_0_1.write_string(var_0_9, var_8_0)
+	table.clear(tbl)
+	scripts_utils_byte_array.write_string(tbl, DecompressDeflate)
 
-	local var_8_1 = {}
-	local var_8_2 = 1
+	local tbl_2 = {}
+	local num = 1
 
-	while var_8_2 < #var_0_9 do
-		local var_8_3 = var_0_1.read_int32(var_0_9, var_8_2)
+	while num < #tbl do
+		local read_int32 = scripts_utils_byte_array.read_int32(tbl, num)
 
-		var_8_2 = var_8_2 + 4
+		num = num + 4
 
-		local var_8_4 = NetworkLookup.deus_power_up_templates[var_8_3]
-		local var_8_5 = var_0_1.read_int32(var_0_9, var_8_2)
+		local var_8_4 = NetworkLookup.deus_power_up_templates[read_int32]
+		local read_int32_2 = scripts_utils_byte_array.read_int32(tbl, num)
 
-		var_8_2 = var_8_2 + 4
+		num = num + 4
 
-		local var_8_6 = NetworkLookup.rarities[var_8_5]
-		local var_8_7 = var_0_1.read_int32(var_0_9, var_8_2)
+		local var_8_6 = NetworkLookup.rarities[read_int32_2]
+		local read_int32_3 = scripts_utils_byte_array.read_int32(tbl, num)
 
-		var_8_2 = var_8_2 + 4
-		var_8_1[#var_8_1 + 1] = {
+		num = num + 4
+		tbl_2[#tbl_2 + 1] = {
 			name = var_8_4,
 			rarity = var_8_6,
-			client_id = var_8_7
+			client_id = read_int32_3
 		}
 	end
 
-	return var_8_1
+	return tbl_2
 end
 
-local function var_0_12(arg_9_0)
-	return math.round(arg_9_0 * var_0_2)
+local function fn_9(arg_9_0)
+	-- function 9
+	return math.round(arg_9_0 * num)
 end
 
-local function var_0_13(arg_10_0)
-	return arg_10_0 / var_0_2
+local function fn_10(arg_10_0)
+	-- function 10
+	return arg_10_0 / num
 end
 
-local function var_0_14(arg_11_0)
-	local var_11_0 = SpawningHelper.netpack_additional_items(arg_11_0)
+local function fn_11(arg_11_0)
+	-- function 11
+	local netpack_additional_items = SpawningHelper.netpack_additional_items(arg_11_0)
 
-	return table.concat(var_11_0, ",")
+	return table.concat(netpack_additional_items, ",")
 end
 
-local function var_0_15(arg_12_0)
-	local var_12_0 = string.split_deprecated(arg_12_0, ",")
-	local var_12_1 = SpawningHelper.unnetpack_additional_items(var_12_0)
+local function fn_12(arg_12_0)
+	-- function 12
+	local split_deprecated = string.split_deprecated(arg_12_0, ",")
+	local unnetpack_additional_items = SpawningHelper.unnetpack_additional_items(split_deprecated)
 
-	return (table.clone(var_12_1))
+	return (table.clone(unnetpack_additional_items))
 end
 
-local function var_0_16(arg_13_0)
-	local var_13_0 = {}
+local function fn_13(self)
+	-- function 13
+	local tbl = {}
 
-	for iter_13_0 = 1, #arg_13_0 do
-		local var_13_1 = arg_13_0[iter_13_0]
+	for i = 1, #self do
+		local var_13_1 = self[i]
 
-		table.insert(var_13_0, NetworkLookup.deus_power_up_templates[var_13_1])
+		table.insert(tbl, NetworkLookup.deus_power_up_templates[var_13_1])
 	end
 
-	return table.concat(var_13_0, ",")
+	return table.concat(tbl, ",")
 end
 
-local function var_0_17(arg_14_0)
-	local var_14_0 = {}
-	local var_14_1 = string.split_deprecated(arg_14_0, ",")
+local function fn_14(arg_14_0)
+	-- function 14
+	local tbl = {}
+	local split_deprecated = string.split_deprecated(arg_14_0, ",")
 
-	for iter_14_0 = 1, #var_14_1 do
-		local var_14_2 = var_14_1[iter_14_0]
+	for i = 1, #split_deprecated do
+		local var_14_2 = split_deprecated[i]
 		local var_14_3 = NetworkLookup.deus_power_up_templates[tonumber(var_14_2)]
 
-		var_14_0[#var_14_0 + 1] = var_14_3
+		tbl[#tbl + 1] = var_14_3
 	end
 
-	return var_14_0
+	return tbl
 end
 
-local function var_0_18(arg_15_0)
-	local var_15_0 = {}
+local function fn_15(self)
+	-- function 15
+	local tbl = {}
 
-	for iter_15_0 = 1, #arg_15_0 do
-		local var_15_1 = arg_15_0[iter_15_0]
+	for i = 1, #self do
+		local var_15_1 = self[i]
 
-		table.insert(var_15_0, NetworkLookup.deus_blessings[var_15_1])
+		table.insert(tbl, NetworkLookup.deus_blessings[var_15_1])
 	end
 
-	return table.concat(var_15_0, ",")
+	return table.concat(tbl, ",")
 end
 
-local function var_0_19(arg_16_0)
-	local var_16_0 = {}
-	local var_16_1 = string.split_deprecated(arg_16_0, ",")
+local function fn_16(arg_16_0)
+	-- function 16
+	local tbl = {}
+	local split_deprecated = string.split_deprecated(arg_16_0, ",")
 
-	for iter_16_0 = 1, #var_16_1 do
-		local var_16_2 = var_16_1[iter_16_0]
+	for i = 1, #split_deprecated do
+		local var_16_2 = split_deprecated[i]
 		local var_16_3 = NetworkLookup.deus_blessings[tonumber(var_16_2)]
 
-		var_16_0[#var_16_0 + 1] = var_16_3
+		tbl[#tbl + 1] = var_16_3
 	end
 
-	return var_16_0
+	return tbl
 end
 
-local function var_0_20(arg_17_0)
-	local var_17_0 = {}
+local function fn_17(arg_17_0)
+	-- function 17
+	local tbl = {}
 
-	for iter_17_0, iter_17_1 in pairs(arg_17_0) do
-		var_17_0[#var_17_0 + 1] = NetworkLookup.rarities[iter_17_0]
-		var_17_0[#var_17_0 + 1] = tostring(iter_17_1)
+	for k, v in pairs(arg_17_0) do
+		tbl[#tbl + 1] = NetworkLookup.rarities[k]
+		tbl[#tbl + 1] = tostring(v)
 	end
 
-	return table.concat(var_17_0, ",")
+	return table.concat(tbl, ",")
 end
 
-local function var_0_21(arg_18_0)
-	local var_18_0 = string.split_deprecated(arg_18_0, ",")
-	local var_18_1 = {}
+local function fn_18(arg_18_0)
+	-- function 18
+	local split_deprecated = string.split_deprecated(arg_18_0, ",")
+	local tbl = {}
 
-	for iter_18_0 = 1, #var_18_0, 2 do
-		local var_18_2 = var_18_0[iter_18_0]
-		local var_18_3 = var_18_0[iter_18_0 + 1]
+	for i = 1, #split_deprecated, 2 do
+		local var_18_2 = split_deprecated[i]
+		local var_18_3 = split_deprecated[i + 1]
 
-		var_18_1[NetworkLookup.rarities[tonumber(var_18_2)]] = tonumber(var_18_3)
+		tbl[NetworkLookup.rarities[tonumber(var_18_2)]] = tonumber(var_18_3)
 	end
 
-	return var_18_1
+	return tbl
 end
 
-local function var_0_22(arg_19_0)
-	return var_0_0:CompressDeflate(arg_19_0)
+local function fn_19(arg_19_0)
+	-- function 19
+	return scripts_utils_lib_deflate:CompressDeflate(arg_19_0)
 end
 
-local function var_0_23(arg_20_0)
-	return var_0_0:DecompressDeflate(arg_20_0)
+local function fn_20(arg_20_0)
+	-- function 20
+	return scripts_utils_lib_deflate:DecompressDeflate(arg_20_0)
 end
 
-local var_0_24 = {
+local tbl_2 = {
 	server = {
 		run_node_key = {
 			default_value = "start",
@@ -220,22 +240,22 @@ local var_0_24 = {
 			type = "table",
 			default_value = {},
 			composite_keys = {},
-			encode = var_0_3,
-			decode = var_0_4
+			encode = fn,
+			decode = fn_2
 		},
 		blessings_with_buyer = {
 			type = "table",
 			default_value = {},
 			composite_keys = {},
-			encode = var_0_5,
-			decode = var_0_6
+			encode = fn_3,
+			decode = fn_4
 		},
 		blessing_lifetimes = {
 			type = "table",
 			default_value = {},
 			composite_keys = {},
-			encode = var_0_7,
-			decode = var_0_8
+			encode = fn_5,
+			decode = fn_6
 		},
 		peer_initialized = {
 			default_value = false,
@@ -294,15 +314,15 @@ local var_0_24 = {
 				profile_index = true,
 				local_player_id = true
 			},
-			encode = var_0_10,
-			decode = var_0_11
+			encode = fn_7,
+			decode = fn_8
 		},
 		party_power_ups = {
 			type = "table",
 			default_value = {},
 			composite_keys = {},
-			encode = var_0_10,
-			decode = var_0_11
+			encode = fn_7,
+			decode = fn_8
 		},
 		persistent_buffs = {
 			type = "table",
@@ -313,8 +333,8 @@ local var_0_24 = {
 				profile_index = true,
 				local_player_id = true
 			},
-			encode = var_0_3,
-			decode = var_0_4
+			encode = fn,
+			decode = fn_2
 		},
 		soft_currency = {
 			default_value = 0,
@@ -333,8 +353,8 @@ local var_0_24 = {
 				profile_index = true,
 				local_player_id = true
 			},
-			encode = var_0_12,
-			decode = var_0_13
+			encode = fn_9,
+			decode = fn_10
 		},
 		health_state = {
 			default_value = "alive",
@@ -355,8 +375,8 @@ local var_0_24 = {
 				profile_index = true,
 				local_player_id = true
 			},
-			encode = var_0_12,
-			decode = var_0_13
+			encode = fn_9,
+			decode = fn_10
 		},
 		ranged_ammo = {
 			type = "number",
@@ -367,8 +387,8 @@ local var_0_24 = {
 				profile_index = true,
 				local_player_id = true
 			},
-			encode = var_0_12,
-			decode = var_0_13
+			encode = fn_9,
+			decode = fn_10
 		},
 		healthkit = {
 			default_value = "",
@@ -409,8 +429,8 @@ local var_0_24 = {
 				profile_index = true,
 				local_player_id = true
 			},
-			encode = var_0_14,
-			decode = var_0_15
+			encode = fn_11,
+			decode = fn_12
 		},
 		slot_melee = {
 			type = "string",
@@ -421,8 +441,8 @@ local var_0_24 = {
 				profile_index = true,
 				local_player_id = true
 			},
-			encode = var_0_22,
-			decode = var_0_23
+			encode = fn_19,
+			decode = fn_20
 		},
 		slot_ranged = {
 			type = "string",
@@ -433,8 +453,8 @@ local var_0_24 = {
 				profile_index = true,
 				local_player_id = true
 			},
-			encode = var_0_22,
-			decode = var_0_23
+			encode = fn_19,
+			decode = fn_20
 		},
 		twitch_vote = {
 			default_value = "",
@@ -448,22 +468,22 @@ local var_0_24 = {
 				peer_id = true,
 				local_player_id = true
 			},
-			encode = var_0_7,
-			decode = var_0_8
+			encode = fn_5,
+			decode = fn_6
 		},
 		bought_power_ups = {
 			type = "table",
 			default_value = {},
 			composite_keys = {},
-			encode = var_0_16,
-			decode = var_0_17
+			encode = fn_13,
+			decode = fn_14
 		},
 		bought_blessings = {
 			type = "table",
 			default_value = {},
 			composite_keys = {},
-			encode = var_0_18,
-			decode = var_0_19
+			encode = fn_15,
+			decode = fn_16
 		},
 		ground_coins_picked_up = {
 			default_value = 0,
@@ -479,22 +499,22 @@ local var_0_24 = {
 			type = "table",
 			default_value = {},
 			composite_keys = {},
-			encode = var_0_20,
-			decode = var_0_21
+			encode = fn_17,
+			decode = fn_18
 		},
 		ranged_swap_chests_used = {
 			type = "table",
 			default_value = {},
 			composite_keys = {},
-			encode = var_0_20,
-			decode = var_0_21
+			encode = fn_17,
+			decode = fn_18
 		},
 		upgrade_chests_used = {
 			type = "table",
 			default_value = {},
 			composite_keys = {},
-			encode = var_0_20,
-			decode = var_0_21
+			encode = fn_17,
+			decode = fn_18
 		},
 		power_up_chests_used = {
 			default_value = 0,
@@ -537,8 +557,8 @@ local var_0_24 = {
 				profile_index = true,
 				local_player_id = true
 			},
-			encode = var_0_3,
-			decode = var_0_4
+			encode = fn,
+			decode = fn_2
 		}
 	},
 	peer = {
@@ -570,6 +590,6 @@ local var_0_24 = {
 	}
 }
 
-SharedState.validate_spec(var_0_24)
+SharedState.validate_spec(tbl_2)
 
-return var_0_24
+return tbl_2

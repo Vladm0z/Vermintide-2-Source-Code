@@ -2,357 +2,397 @@
 
 ChaosTrollHealthExtension = class(ChaosTrollHealthExtension, GenericHealthExtension)
 
-local var_0_0 = AiUtils.set_material_property
+local set_material_property = AiUtils.set_material_property
 
-function ChaosTrollHealthExtension.init(arg_1_0, arg_1_1, arg_1_2, ...)
-	ChaosTrollHealthExtension.super.init(arg_1_0, arg_1_1, arg_1_2, ...)
+ChaosTrollHealthExtension.init = function (self, arg_1_1, arg_1_2, ...)
+	-- function 1
+	ChaosTrollHealthExtension.super.init(self, arg_1_1, arg_1_2, ...)
 
-	local var_1_0 = Managers.time:time("game")
+	local time = Managers.time:time("game")
 
-	arg_1_0._regen_time = var_1_0 + 1
-	arg_1_0._regen_paused_time = var_1_0
-	arg_1_0.pulse_time = 0
-	arg_1_0.state = "unhurt"
-	arg_1_0.skin_unit = nil
+	self._regen_time = time + 1
+	self._regen_paused_time = time
+	self.pulse_time = 0
+	self.state = "unhurt"
+	self.skin_unit = nil
 
-	local var_1_1 = ScriptUnit.has_extension(arg_1_0.unit, "ai_inventory_system")
+	local has_extension = ScriptUnit.has_extension(self.unit, "ai_inventory_system")
 
-	if var_1_1 then
-		arg_1_0.skin_unit = var_1_1:get_skin_unit()
+	if not has_extension then
+		self.skin_unit = has_extension:get_skin_unit()
 	end
 end
 
-function ChaosTrollHealthExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+ChaosTrollHealthExtension.extensions_ready = function (self, arg_2_1, arg_2_2, arg_2_3)
+	-- function 2
 	local var_2_0 = BLACKBOARDS[arg_2_2]
 	local var_2_1 = Breeds[var_2_0.breed.name]
 
-	arg_2_0.action, arg_2_0.breed = BreedActions[var_2_0.breed.name].downed, var_2_1
+	self.action, self.breed = BreedActions[var_2_0.breed.name].downed, var_2_1
 
-	arg_2_0:_setup_initial_health_variables(arg_2_0.health)
+	self:_setup_initial_health_variables(self.health)
 end
 
-function ChaosTrollHealthExtension.current_max_health_percent(arg_3_0)
-	return arg_3_0.health / arg_3_0.current_max_health
+ChaosTrollHealthExtension.current_max_health_percent = function (self)
+	-- function 3
+	return self.health / self.current_max_health
 end
 
-local var_0_1 = 0.0001
+local num = 0.0001
 
-function ChaosTrollHealthExtension.respawn_thresholds(arg_4_0, arg_4_1, arg_4_2)
-	local var_4_0 = arg_4_0.action
-	local var_4_1 = arg_4_1 or arg_4_0.current_max_health
-	local var_4_2 = arg_4_2 or arg_4_0.health
+ChaosTrollHealthExtension.respawn_thresholds = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	local action = self.action
+	local flag = arg_4_1 or self.current_max_health
+	local flag_2 = arg_4_2 or self.health
 	local var_4_3
 	local var_4_4
 	local var_4_5
 
-	if var_4_0.fixed_hp_chunks then
-		local var_4_6 = var_4_1 / var_4_0.fixed_hp_chunks
+	if not action.fixed_hp_chunks then
+		local num_2 = flag / action.fixed_hp_chunks
 
-		if var_4_6 % 1 ~= 0 then
-			var_4_2 = math.round_to_closest_multiple(var_4_2, var_4_6 % 1)
+		if num_2 % 1 ~= 0 then
+			flag_2 = math.round_to_closest_multiple(flag_2, num_2 % 1)
 		end
 
-		local var_4_7 = math.ceil(math.round_to_closest_multiple(var_4_2 / var_4_6, var_0_1) - var_0_1)
+		local ceil = math.ceil(math.round_to_closest_multiple(flag_2 / num_2, num) - num)
 
-		var_4_3 = math.clamp(var_4_7 - 1, 0, var_4_0.fixed_hp_chunks) * var_4_6
-		var_4_4 = var_4_3 + var_4_6 * var_4_0.respawn_hp_chunk_percent
-		var_4_5 = var_4_0.fixed_hp_chunks - var_4_7 + 1
+		var_4_3 = math.clamp(ceil - 1, 0, action.fixed_hp_chunks) * num_2
+		var_4_4 = var_4_3 + num_2 * action.respawn_hp_chunk_percent
+		var_4_5 = action.fixed_hp_chunks - ceil + 1
 	else
-		var_4_3 = var_4_2 * var_4_0.become_downed_hp_percent
-		var_4_4 = var_4_2 * var_4_0.respawn_hp_min_percent
+		var_4_3 = flag_2 * action.become_downed_hp_percent
+		var_4_4 = flag_2 * action.respawn_hp_min_percent
 	end
 
-	return var_4_3, var_4_4, var_4_3 / var_4_1, var_4_4 / var_4_1, var_4_5
+	return var_4_3, var_4_4, var_4_3 / flag, var_4_4 / flag, var_4_5
 end
 
-function ChaosTrollHealthExtension.chunk_size(arg_5_0)
-	return arg_5_0.current_max_health / arg_5_0.action.fixed_hp_chunks
+ChaosTrollHealthExtension.chunk_size = function (self)
+	-- function 5
+	return self.current_max_health / self.action.fixed_hp_chunks
 end
 
-function ChaosTrollHealthExtension.set_max_health(arg_6_0, arg_6_1)
-	arg_6_1 = ChaosTrollHealthExtension.super.set_max_health(arg_6_0, arg_6_1)
+ChaosTrollHealthExtension.set_max_health = function (self, arg_6_1)
+	-- function 6
+	arg_6_1 = ChaosTrollHealthExtension.super.set_max_health(self, arg_6_1)
 
-	arg_6_0:_setup_initial_health_variables(arg_6_1)
+	self:_setup_initial_health_variables(arg_6_1)
 
-	local var_6_0 = arg_6_0._game_object_id or Managers.state.unit_storage:go_id(arg_6_0.unit)
+	local _game_object_id = self._game_object_id
 
-	if var_6_0 then
-		local var_6_1 = arg_6_0.current_max_health
+	_game_object_id = _game_object_id or Managers.state.unit_storage:go_id(self.unit)
 
-		arg_6_0.network_transmit:send_rpc_clients("rpc_sync_current_max_health", var_6_0, var_6_1)
+	if not _game_object_id then
+		local current_max_health = self.current_max_health
+
+		self.network_transmit:send_rpc_clients("rpc_sync_current_max_health", _game_object_id, current_max_health)
 	end
 
 	return arg_6_1
 end
 
-function ChaosTrollHealthExtension._setup_initial_health_variables(arg_7_0, arg_7_1)
-	if not arg_7_0.action then
+ChaosTrollHealthExtension._setup_initial_health_variables = function (self, arg_7_1)
+	-- function 7
+	if not self.action then
 		return
 	end
 
-	local var_7_0, var_7_1 = arg_7_0:respawn_thresholds(arg_7_1)
+	local respawn_thresholds, var_7_1 = self:respawn_thresholds(arg_7_1)
 
-	arg_7_0.go_down_health = var_7_0
-	arg_7_0.respawn_hp_min = var_7_1
-	arg_7_0.respawn_hp_max = arg_7_1
-	arg_7_0.regen_pulse_interval = arg_7_0.breed.regen_pulse_interval
-	arg_7_0.downed_pulse_interval = arg_7_0.breed.downed_pulse_interval
-	arg_7_0.regen_pulse_intensity = arg_7_0.breed.regen_pulse_intensity
-	arg_7_0.downed_pulse_intensity = arg_7_0.breed.downed_pulse_intensity
-	arg_7_0.regen_taken_damage_pause_time = arg_7_0.breed.regen_taken_damage_pause_time
-	arg_7_0.current_max_health = DamageUtils.networkify_health(arg_7_1)
-	arg_7_0._initial_sync = false
+	self.go_down_health = respawn_thresholds
+	self.respawn_hp_min = var_7_1
+	self.respawn_hp_max = arg_7_1
+	self.regen_pulse_interval = self.breed.regen_pulse_interval
+	self.downed_pulse_interval = self.breed.downed_pulse_interval
+	self.regen_pulse_intensity = self.breed.regen_pulse_intensity
+	self.downed_pulse_intensity = self.breed.downed_pulse_intensity
+	self.regen_taken_damage_pause_time = self.breed.regen_taken_damage_pause_time
+	self.current_max_health = DamageUtils.networkify_health(arg_7_1)
+	self._initial_sync = false
 end
 
-function ChaosTrollHealthExtension.hot_join_sync(arg_8_0, arg_8_1)
-	local var_8_0 = arg_8_0._game_object_id or Managers.state.unit_storage:go_id(arg_8_0.unit)
+ChaosTrollHealthExtension.hot_join_sync = function (self, arg_8_1)
+	-- function 8
+	local _game_object_id = self._game_object_id
 
-	if var_8_0 then
-		local var_8_1 = NetworkLookup.health_statuses[arg_8_0.state]
-		local var_8_2 = false
-		local var_8_3 = true
+	_game_object_id = _game_object_id or Managers.state.unit_storage:go_id(self.unit)
 
-		arg_8_0.network_transmit:send_rpc("rpc_sync_damage_taken", arg_8_1, var_8_0, var_8_2, var_8_3, arg_8_0.current_max_health, var_8_1)
-		arg_8_0.network_transmit:send_rpc("rpc_sync_damage_taken", arg_8_1, var_8_0, var_8_2, var_8_3, arg_8_0.health, var_8_1)
+	if not _game_object_id then
+		local var_8_1 = NetworkLookup.health_statuses[self.state]
+		local flag = false
+		local flag_2 = true
+
+		self.network_transmit:send_rpc("rpc_sync_damage_taken", arg_8_1, _game_object_id, flag, flag_2, self.current_max_health, var_8_1)
+		self.network_transmit:send_rpc("rpc_sync_damage_taken", arg_8_1, _game_object_id, flag, flag_2, self.health, var_8_1)
 	end
 
-	ChaosTrollHealthExtension.super.hot_join_sync(arg_8_0, arg_8_1)
+	ChaosTrollHealthExtension.super.hot_join_sync(self, arg_8_1)
 end
 
-function ChaosTrollHealthExtension.update_regen_effect(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
-	arg_9_0.pulse_time = arg_9_0.pulse_time + arg_9_2
+ChaosTrollHealthExtension.update_regen_effect = function (self, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	-- function 9
+	self.pulse_time = self.pulse_time + arg_9_2
 
-	local var_9_0 = (arg_9_0._regen_time - arg_9_1) / arg_9_3
-	local var_9_1 = math.sin(var_9_0 * math.pi) * arg_9_4
+	local num = (self._regen_time - arg_9_1) / arg_9_3
+	local num_2 = math.sin(num * math.pi) * arg_9_4
 
-	if arg_9_0.skin_unit ~= nil then
-		var_0_0(arg_9_0.skin_unit, "regen_value", "mtr_skin", var_9_1, true)
+	if self.skin_unit ~= nil then
+		set_material_property(self.skin_unit, "regen_value", "mtr_skin", num_2, true)
 	else
-		var_0_0(arg_9_0.unit, "regen_value", "mtr_skin", var_9_1, true)
+		set_material_property(self.unit, "regen_value", "mtr_skin", num_2, true)
 	end
 end
 
-local var_0_2 = 0
+local num_2 = 0
 
-function ChaosTrollHealthExtension.update(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
-	if arg_10_0.state == "dead" then
+ChaosTrollHealthExtension.update = function (self, arg_10_1, arg_10_2, arg_10_3)
+	-- function 10
+	if self.state == "dead" then
 		return
 	end
 
-	if not arg_10_0._initial_sync then
-		arg_10_0._initial_sync = true
+	if not self._initial_sync then
+		self._initial_sync = true
 
-		arg_10_0:sync_health_to_clients(true)
+		self:sync_health_to_clients(true)
 	end
 
-	if arg_10_0.state == "down" then
-		arg_10_0:update_regen_effect(arg_10_3, arg_10_1, arg_10_0.downed_pulse_interval, arg_10_0.downed_pulse_intensity)
+	if self.state == "down" then
+		self:update_regen_effect(arg_10_3, arg_10_1, self.downed_pulse_interval, self.downed_pulse_intensity)
 
-		if arg_10_3 > arg_10_0.start_reset_time then
-			arg_10_0.down_reset_timer = arg_10_0.down_reset_timer + arg_10_1
+		if arg_10_3 > self.start_reset_time then
+			self.down_reset_timer = self.down_reset_timer + arg_10_1
 
-			local var_10_0 = 1 - (arg_10_0.action.reset_duration > 0 and arg_10_0.down_reset_timer / arg_10_0.action.reset_duration or 0)
+			local num
 
-			if arg_10_0.skin_unit ~= nil then
-				var_0_0(arg_10_0.skin_unit, "damage_value", "mtr_skin", var_10_0, true)
+			if self.action.reset_duration > 0 then
+				num = self.down_reset_timer / self.action.reset_duration
+
+				if not num then
+					-- Nothing
+				end
+			end
+
+			num = 0
+
+			::label_10_0::
+
+			local num_2 = 1 - num
+
+			if self.skin_unit ~= nil then
+				set_material_property(self.skin_unit, "damage_value", "mtr_skin", num_2, true)
 			else
-				var_0_0(arg_10_0.unit, "damage_value", "mtr_skin", var_10_0, true)
+				set_material_property(self.unit, "damage_value", "mtr_skin", num_2, true)
 			end
 		end
-	elseif arg_10_0.state == "unhurt" or arg_10_0.state == "wounded" then
-		arg_10_0:update_regen_effect(arg_10_3, arg_10_1, arg_10_0.regen_pulse_interval, arg_10_0.regen_pulse_intensity)
+	elseif not (self.state == "unhurt" or self.state ~= "wounded") then
+		self:update_regen_effect(arg_10_3, arg_10_1, self.regen_pulse_interval, self.regen_pulse_intensity)
 
-		if arg_10_3 > arg_10_0._regen_time and arg_10_3 > arg_10_0._regen_paused_time then
-			local var_10_1 = BLACKBOARDS[arg_10_0.unit]
-			local var_10_2 = arg_10_3 - arg_10_0._regen_paused_time
-			local var_10_3 = var_10_1.max_health_regen_time
-			local var_10_4 = math.min(var_10_2 / var_10_3, 1)
-			local var_10_5 = var_10_1.max_health_regen_per_sec * var_10_4
-			local var_10_6 = DamageUtils.networkify_health(var_10_5)
+		if not (not (arg_10_3 > self._regen_time) or not (arg_10_3 > self._regen_paused_time)) then
+			local var_10_2 = BLACKBOARDS[self.unit]
+			local num_3 = arg_10_3 - self._regen_paused_time
+			local max_health_regen_time = var_10_2.max_health_regen_time
+			local min = math.min(num_3 / max_health_regen_time, 1)
+			local num_4 = var_10_2.max_health_regen_per_sec * min
+			local networkify_health = DamageUtils.networkify_health(num_4)
 
-			if var_10_6 > 0 and arg_10_0.damage > 0 then
-				arg_10_0:add_heal(arg_10_0.unit, var_10_6 * arg_10_0.regen_pulse_interval, nil, "buff")
+			if not (not (networkify_health > 0) or not (self.damage > 0)) then
+				self:add_heal(self.unit, networkify_health * self.regen_pulse_interval, nil, "buff")
 			end
 
-			arg_10_0._regen_time = arg_10_3 + arg_10_0.regen_pulse_interval
-			arg_10_0.pulse_time = 0
+			self._regen_time = arg_10_3 + self.regen_pulse_interval
+			self.pulse_time = 0
 		end
 	end
 end
 
-function ChaosTrollHealthExtension._should_die(arg_11_0)
-	return arg_11_0.state == "wounded" and arg_11_0.damage >= arg_11_0.health
+ChaosTrollHealthExtension._should_die = function (self)
+	-- function 11
+	return self.state ~= "wounded" or self.damage >= self.health
 end
 
-function ChaosTrollHealthExtension.apply_client_predicted_damage(arg_12_0, arg_12_1)
+ChaosTrollHealthExtension.apply_client_predicted_damage = function (arg_12_0, arg_12_1)
+	-- function 12
 	return
 end
 
-function ChaosTrollHealthExtension.add_damage(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7, arg_13_8, arg_13_9, arg_13_10, arg_13_11, arg_13_12, arg_13_13, arg_13_14, arg_13_15, arg_13_16, arg_13_17)
-	ChaosTrollHealthExtension.super.add_damage(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7, arg_13_8, arg_13_9, arg_13_10, arg_13_11, arg_13_12, arg_13_13, arg_13_14, arg_13_15, arg_13_16, arg_13_17)
+ChaosTrollHealthExtension.add_damage = function (self, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7, arg_13_8, arg_13_9, arg_13_10, arg_13_11, arg_13_12, arg_13_13, arg_13_14, arg_13_15, arg_13_16, arg_13_17)
+	-- function 13
+	ChaosTrollHealthExtension.super.add_damage(self, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7, arg_13_8, arg_13_9, arg_13_10, arg_13_11, arg_13_12, arg_13_13, arg_13_14, arg_13_15, arg_13_16, arg_13_17)
 
-	arg_13_0._first_damage_occured = true
+	self._first_damage_occured = true
 
-	if arg_13_0.state == "dead" then
+	if self.state == "dead" then
 		return
 	end
 
-	local var_13_0 = Managers.time:time("game")
+	local time = Managers.time:time("game")
 
-	if arg_13_0.state == "unhurt" then
-		local var_13_1 = 1
+	if self.state == "unhurt" then
+		local num = 1
 
-		if arg_13_0.health - arg_13_0.damage < arg_13_0.go_down_health then
-			local var_13_2 = BLACKBOARDS[arg_13_0.unit]
+		if self.health - self.damage < self.go_down_health then
+			local var_13_2 = BLACKBOARDS[self.unit]
 
-			arg_13_0.damage = 0
-			arg_13_0.state = "down"
+			self.damage = 0
+			self.state = "down"
 			var_13_2.downed_state = "downed"
-			arg_13_0.start_reset_time = var_13_0 + (AiUtils.downed_duration(arg_13_0.action) + arg_13_0.action.standup_anim_duration - arg_13_0.action.reset_duration)
-			arg_13_0.down_reset_timer = 0
+			self.start_reset_time = time + (AiUtils.downed_duration(self.action) + self.action.standup_anim_duration - self.action.reset_duration)
+			self.down_reset_timer = 0
 		else
-			local var_13_3 = arg_13_0.health - arg_13_0.go_down_health
+			local num_2 = self.health - self.go_down_health
 
-			var_13_1 = var_13_3 ~= 0 and arg_13_0.damage / var_13_3 or 0
+			num = num_2 == 0 or not (self.damage / num_2) or 0
 		end
 
-		if arg_13_0.skin_unit ~= nil then
-			var_0_0(arg_13_0.skin_unit, "damage_value", "mtr_skin", var_13_1, true)
+		if self.skin_unit ~= nil then
+			set_material_property(self.skin_unit, "damage_value", "mtr_skin", num, true)
 		else
-			var_0_0(arg_13_0.unit, "damage_value", "mtr_skin", var_13_1, true)
+			set_material_property(self.unit, "damage_value", "mtr_skin", num, true)
 		end
-	elseif arg_13_0.state == "down" then
-		if arg_13_0.health - arg_13_0.damage < arg_13_0.respawn_hp_min then
-			arg_13_0.damage = arg_13_0.health - arg_13_0.respawn_hp_min
+	elseif self.state == "down" then
+		if self.health - self.damage < self.respawn_hp_min then
+			self.damage = self.health - self.respawn_hp_min
 
-			if not arg_13_0.action.fixed_hp_chunks then
-				arg_13_0.wounded = true
+			if not self.action.fixed_hp_chunks then
+				self.wounded = true
 			end
 		end
-	elseif arg_13_0.state == "wounded" then
-		if arg_13_0.damage >= arg_13_0.health then
-			arg_13_0.state = "dead"
+	elseif self.state == "wounded" then
+		if self.damage >= self.health then
+			self.state = "dead"
 
-			if arg_13_0.skin_unit ~= nil then
-				var_0_0(arg_13_0.skin_unit, "regen_value", "mtr_skin", 0, true)
+			if self.skin_unit ~= nil then
+				set_material_property(self.skin_unit, "regen_value", "mtr_skin", 0, true)
 			else
-				var_0_0(arg_13_0.unit, "regen_value", "mtr_skin", 0, true)
+				set_material_property(self.unit, "regen_value", "mtr_skin", 0, true)
 			end
 		else
-			local var_13_4 = arg_13_0.damage / (arg_13_0.health - arg_13_0.damage)
+			local num_3 = self.damage / (self.health - self.damage)
 
-			if arg_13_0.skin_unit ~= nil then
-				var_0_0(arg_13_0.skin_unit, "damage_value", "mtr_skin", var_13_4, true)
+			if self.skin_unit ~= nil then
+				set_material_property(self.skin_unit, "damage_value", "mtr_skin", num_3, true)
 			else
-				var_0_0(arg_13_0.unit, "damage_value", "mtr_skin", var_13_4, true)
+				set_material_property(self.unit, "damage_value", "mtr_skin", num_3, true)
 			end
 		end
 	end
 
-	arg_13_0._regen_paused_time = var_13_0 + arg_13_0.regen_taken_damage_pause_time
+	self._regen_paused_time = time + self.regen_taken_damage_pause_time
 
-	arg_13_0:sync_health_to_clients(nil)
+	self:sync_health_to_clients(nil)
 end
 
-function ChaosTrollHealthExtension.set_downed_finished(arg_14_0)
-	if arg_14_0.state == "down" then
-		local var_14_0 = BLACKBOARDS[arg_14_0.unit]
-		local var_14_1 = var_14_0.running_downed_chunk_events
+ChaosTrollHealthExtension.set_downed_finished = function (self)
+	-- function 14
+	if self.state == "down" then
+		local var_14_0 = BLACKBOARDS[self.unit]
+		local running_downed_chunk_events = var_14_0.running_downed_chunk_events
 
-		if var_14_1 then
-			for iter_14_0, iter_14_1 in pairs(var_14_1) do
-				if iter_14_1.before_down_end then
-					iter_14_1.before_down_end(arg_14_0.unit, var_14_0)
+		if not running_downed_chunk_events then
+			for k, v in pairs(running_downed_chunk_events) do
+				if not v.before_down_end then
+					v.before_down_end(self.unit, var_14_0)
 				end
 			end
 		end
 
-		local var_14_2 = arg_14_0.action
-		local var_14_3 = arg_14_0:current_health()
+		local action = self.action
+		local current_health = self:current_health()
 
-		if var_14_2.reset_health_on_fail and var_14_3 - arg_14_0.respawn_hp_min > 0.25 then
-			arg_14_0.damage = 0
-		elseif var_14_2.respawn_hp_max_percent then
-			arg_14_0.respawn_hp_max = arg_14_0.health * var_14_2.respawn_hp_max_percent
+		if not (not action.reset_health_on_fail and not (current_health - self.respawn_hp_min > 0.25)) then
+			self.damage = 0
+		elseif not action.respawn_hp_max_percent then
+			self.respawn_hp_max = self.health * action.respawn_hp_max_percent
 
-			if arg_14_0.health - arg_14_0.damage > arg_14_0.respawn_hp_max then
-				arg_14_0.damage = arg_14_0.health - arg_14_0.respawn_hp_max
+			if self.health - self.damage > self.respawn_hp_max then
+				self.damage = self.health - self.respawn_hp_max
 			end
 		end
 
-		if var_14_2.reduce_hp_permanently then
-			local var_14_4 = arg_14_0.health - arg_14_0.damage
-			local var_14_5, var_14_6, var_14_7, var_14_8, var_14_9 = arg_14_0:respawn_thresholds(nil, var_14_4)
+		if not action.reduce_hp_permanently then
+			local num = self.health - self.damage
+			local respawn_thresholds, var_14_6, var_14_7, var_14_8, var_14_9 = self:respawn_thresholds(nil, num)
 
-			if var_14_9 and var_14_9 == var_14_2.fixed_hp_chunks then
-				arg_14_0.wounded = true
+			if not (not var_14_9 and var_14_9 ~= action.fixed_hp_chunks) then
+				self.wounded = true
 			end
 
-			arg_14_0.respawn_hp_min = var_14_6
-			arg_14_0.go_down_health = var_14_5
+			self.respawn_hp_min = var_14_6
+			self.go_down_health = respawn_thresholds
 
-			ChaosTrollHealthExtension.super.set_max_health(arg_14_0, var_14_4)
-			arg_14_0:sync_health_to_clients(true)
+			ChaosTrollHealthExtension.super.set_max_health(self, num)
+			self:sync_health_to_clients(true)
 
-			arg_14_0.damage = 0
+			self.damage = 0
 		end
 
-		if arg_14_0.wounded then
-			arg_14_0.state = "wounded"
+		if not self.wounded then
+			self.state = "wounded"
 		else
-			arg_14_0.wounded = false
-			arg_14_0.state = "unhurt"
+			self.wounded = false
+			self.state = "unhurt"
 		end
 
-		arg_14_0.down_reset_timer = nil
+		self.down_reset_timer = nil
 
-		if arg_14_0.skin_unit ~= nil then
-			var_0_0(arg_14_0.skin_unit, "damage_value", "mtr_skin", 1, true)
+		if self.skin_unit ~= nil then
+			set_material_property(self.skin_unit, "damage_value", "mtr_skin", 1, true)
 		else
-			var_0_0(arg_14_0.unit, "damage_value", "mtr_skin", 1, true)
+			set_material_property(self.unit, "damage_value", "mtr_skin", 1, true)
 		end
 
-		arg_14_0:sync_health_to_clients(false)
+		self:sync_health_to_clients(false)
 	end
 end
 
-function ChaosTrollHealthExtension.die(arg_15_0, arg_15_1)
-	local var_15_0 = arg_15_0.unit
+ChaosTrollHealthExtension.die = function (self, arg_15_1)
+	-- function 15
+	local unit = self.unit
 
-	if ScriptUnit.has_extension(var_15_0, "ai_system") then
+	if not ScriptUnit.has_extension(unit, "ai_system") then
 		arg_15_1 = arg_15_1 or "undefined"
 
-		arg_15_0:force_set_wounded()
-		AiUtils.kill_unit(var_15_0, nil, nil, arg_15_1, nil)
+		self:force_set_wounded()
+		AiUtils.kill_unit(unit, nil, nil, arg_15_1, nil)
 	end
 end
 
-function ChaosTrollHealthExtension.sync_health_to_clients(arg_16_0, arg_16_1)
-	arg_16_0._game_object_id = arg_16_0._game_object_id or Managers.state.unit_storage:go_id(arg_16_0.unit)
+ChaosTrollHealthExtension.sync_health_to_clients = function (self, arg_16_1)
+	-- function 16
+	local _game_object_id = self._game_object_id
 
-	local var_16_0 = NetworkLookup.health_statuses[arg_16_0.state]
-	local var_16_1 = false
-	local var_16_2
+	_game_object_id = _game_object_id or Managers.state.unit_storage:go_id(self.unit)
+	self._game_object_id = _game_object_id
 
-	if arg_16_1 then
-		var_16_2 = arg_16_0.health
+	local var_16_1 = NetworkLookup.health_statuses[self.state]
+	local flag = false
+	local var_16_3
+
+	if not arg_16_1 then
+		var_16_3 = self.health
 	else
-		var_16_2 = math.max(0, arg_16_0.damage)
+		var_16_3 = math.max(0, self.damage)
 	end
 
-	arg_16_0.network_transmit:send_rpc_clients("rpc_sync_damage_taken", arg_16_0._game_object_id, var_16_1, arg_16_1 or false, var_16_2, var_16_0)
+	self.network_transmit:send_rpc_clients("rpc_sync_damage_taken", self._game_object_id, flag, arg_16_1 or false, var_16_3, var_16_1)
 end
 
-function ChaosTrollHealthExtension.min_health_reached(arg_17_0)
-	return arg_17_0.health - arg_17_0.damage <= arg_17_0.respawn_hp_min
+ChaosTrollHealthExtension.min_health_reached = function (self)
+	-- function 17
+	return self.health - self.damage <= self.respawn_hp_min
 end
 
-function ChaosTrollHealthExtension.force_set_wounded(arg_18_0)
-	arg_18_0.wounded = true
-	arg_18_0.state = "wounded"
+ChaosTrollHealthExtension.force_set_wounded = function (self)
+	-- function 18
+	self.wounded = true
+	self.state = "wounded"
 end
 
-function ChaosTrollHealthExtension.add_heal(arg_19_0, ...)
-	ChaosTrollHealthExtension.super.add_heal(arg_19_0, ...)
-	arg_19_0:sync_health_to_clients(false)
+ChaosTrollHealthExtension.add_heal = function (self, ...)
+	-- function 19
+	ChaosTrollHealthExtension.super.add_heal(self, ...)
+	self:sync_health_to_clients(false)
 end

@@ -1,5 +1,7 @@
 -- chunkname: @scripts/settings/dlcs/morris/deus_terror_event_tags.lua
 
+local DeusTerrorEventTags = DeusTerrorEventTags
+
 DeusTerrorEventTags = DeusTerrorEventTags or {
 	LESS_HORDES = "DEUS_LESS_HORDES",
 	MORE_SPECIALS = "DEUS_MORE_SPECIALS",
@@ -11,3 +13,4 @@ DeusTerrorEventTags = DeusTerrorEventTags or {
 	LESS_ELITES = "DEUS_LESS_ELITES",
 	LESS_SPECIALS = "DEUS_LESS_SPECIALS"
 }
+DeusTerrorEventTags = DeusTerrorEventTags

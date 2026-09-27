@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/empire_soldier_dlc_termite_1.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pes_temple_lake_crossing_destroy_bell_complete_a",

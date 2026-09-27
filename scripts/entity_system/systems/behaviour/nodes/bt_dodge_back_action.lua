@@ -4,36 +4,39 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTDodgeBackAction = class(BTDodgeBackAction, BTNode)
 
-function BTDodgeBackAction.init(arg_1_0, ...)
+BTDodgeBackAction.init = function (arg_1_0, ...)
+	-- function 1
 	BTDodgeBackAction.super.init(arg_1_0, ...)
 end
 
 BTDodgeBackAction.name = "BTDodgeBackAction"
 
-local function var_0_0(arg_2_0)
-	if type(arg_2_0) == "table" then
-		return arg_2_0[Math.random(1, #arg_2_0)]
+local function fn(self)
+	-- function 2
+	if type(self) == "table" then
+		return self[Math.random(1, #self)]
 	else
-		return arg_2_0
+		return self
 	end
 end
 
-function BTDodgeBackAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
-	arg_3_2.action = arg_3_0._tree_node.action_data
+BTDodgeBackAction.enter = function (self, arg_3_1, arg_3_2, arg_3_3)
+	-- function 3
+	arg_3_2.action = self._tree_node.action_data
 	arg_3_2.active_node = BTDodgeBackAction
 	arg_3_2.start_finished = nil
 	arg_3_2.start_started_since = arg_3_3
 
-	local var_3_0 = arg_3_2.navigation_extension
-	local var_3_1 = arg_3_2.action
-	local var_3_2 = var_3_1.dodge_back_animation
-	local var_3_3 = var_3_1.move_speed
+	local navigation_extension = arg_3_2.navigation_extension
+	local action = arg_3_2.action
+	local dodge_back_animation = action.dodge_back_animation
+	local move_speed = action.move_speed
 
-	if var_3_3 then
-		var_3_0:set_max_speed(var_3_3)
+	if not move_speed then
+		navigation_extension:set_max_speed(move_speed)
 	end
 
-	local var_3_4 = var_0_0(var_3_2)
+	local var_3_4 = fn(dodge_back_animation)
 
 	Managers.state.network:anim_event(arg_3_1, var_3_4)
 
@@ -41,30 +44,31 @@ function BTDodgeBackAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 
 	local var_3_5 = POSITION_LOOKUP[arg_3_1]
 	local var_3_6 = POSITION_LOOKUP[arg_3_2.target_unit]
-	local var_3_7 = var_3_5 + Vector3.normalize(var_3_5 - var_3_6) * var_3_1.dodge_distance
-	local var_3_8 = 2
-	local var_3_9 = 2
-	local var_3_10 = arg_3_2.nav_world
-	local var_3_11, var_3_12 = GwNavQueries.triangle_from_position(var_3_10, var_3_7, var_3_8, var_3_9)
+	local num = var_3_5 + Vector3.normalize(var_3_5 - var_3_6) * action.dodge_distance
+	local num_2 = 2
+	local num_3 = 2
+	local nav_world = arg_3_2.nav_world
+	local triangle_from_position, var_3_12 = GwNavQueries.triangle_from_position(nav_world, num, num_2, num_3)
 	local var_3_13
 
-	if var_3_11 then
-		var_3_13 = Vector3.copy(var_3_7)
+	if not triangle_from_position then
+		var_3_13 = Vector3.copy(num)
 		var_3_13.z = var_3_12
 	else
-		local var_3_14 = 1
-		local var_3_15 = 0.05
+		local num_4 = 1
+		local num_5 = 0.05
 
-		var_3_13 = GwNavQueries.inside_position_from_outside_position(var_3_10, var_3_7, var_3_8, var_3_9, var_3_14, var_3_15)
+		var_3_13 = GwNavQueries.inside_position_from_outside_position(nav_world, num, num_2, num_3, num_4, num_5)
 	end
 
-	if var_3_13 then
-		var_3_0:move_to(var_3_13)
+	if not var_3_13 then
+		navigation_extension:move_to(var_3_13)
 		Managers.state.entity:system("ai_slot_system"):do_slot_search(arg_3_1, false)
 	end
 end
 
-function BTDodgeBackAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTDodgeBackAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	-- function 4
 	arg_4_2.start_finished = nil
 	arg_4_2.start_started_since = nil
 
@@ -72,27 +76,29 @@ function BTDodgeBackAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, ar
 
 	arg_4_2.active_node = nil
 
-	local var_4_0 = AiUtils.get_default_breed_move_speed(arg_4_1, arg_4_2)
+	local get_default_breed_move_speed = AiUtils.get_default_breed_move_speed(arg_4_1, arg_4_2)
 
-	arg_4_2.navigation_extension:set_max_speed(var_4_0)
+	arg_4_2.navigation_extension:set_max_speed(get_default_breed_move_speed)
 end
 
-function BTDodgeBackAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
-	if arg_5_2.start_finished or arg_5_3 - arg_5_2.start_started_since > 10 then
+BTDodgeBackAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	-- function 5
+	if not (arg_5_2.start_finished or not (arg_5_3 - arg_5_2.start_started_since > 10)) then
 		return "done"
 	end
 
-	local var_5_0 = LocomotionUtils.rotation_towards_unit_flat(arg_5_1, arg_5_2.target_unit)
+	local rotation_towards_unit_flat = LocomotionUtils.rotation_towards_unit_flat(arg_5_1, arg_5_2.target_unit)
 
-	arg_5_2.locomotion_extension:set_wanted_rotation(var_5_0)
+	arg_5_2.locomotion_extension:set_wanted_rotation(rotation_towards_unit_flat)
 
 	return "running"
 end
 
-function BTDodgeBackAction.anim_cb_combat_step_stop(arg_6_0, arg_6_1, arg_6_2)
-	local var_6_0 = arg_6_2.navigation_extension
+BTDodgeBackAction.anim_cb_combat_step_stop = function (arg_6_0, arg_6_1, arg_6_2)
+	-- function 6
+	local navigation_extension = arg_6_2.navigation_extension
 
-	if var_6_0:is_following_path() then
-		var_6_0:stop()
+	if not navigation_extension:is_following_path() then
+		navigation_extension:stop()
 	end
 end

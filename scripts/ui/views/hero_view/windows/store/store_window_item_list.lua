@@ -1,113 +1,120 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/store/store_window_item_list.lua
 
 local var_0_0 = local_require("scripts/ui/views/hero_view/windows/store/definitions/store_window_item_list_definitions")
-local var_0_1 = var_0_0.widgets
-local var_0_2 = var_0_0.scenegraph_definition
-local var_0_3 = var_0_0.animation_definitions
-local var_0_4 = 10
-local var_0_5 = 800
+local widgets = var_0_0.widgets
+local scenegraph_definition = var_0_0.scenegraph_definition
+local animation_definitions = var_0_0.animation_definitions
+local num = 10
+local num_2 = 800
 
 StoreWindowItemList = class(StoreWindowItemList)
 StoreWindowItemList.NAME = "StoreWindowItemList"
 
-function StoreWindowItemList.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StoreWindowItemList.on_enter = function (self, arg_1_1, arg_1_2)
+	-- function 1
 	print("[HeroViewWindow] Enter Substate StoreWindowItemList")
 
-	arg_1_0._params = arg_1_1
-	arg_1_0._parent = arg_1_1.parent
+	self._params = arg_1_1
+	self._parent = arg_1_1.parent
 
-	local var_1_0, var_1_1 = arg_1_0._parent:get_renderers()
+	local get_renderers, var_1_1 = self._parent:get_renderers()
 
-	arg_1_0._ui_renderer = var_1_0
-	arg_1_0._ui_top_renderer = var_1_1
-	arg_1_0._render_settings = {
+	self._ui_renderer = get_renderers
+	self._ui_top_renderer = var_1_1
+	self._render_settings = {
 		alpha_multiplier = 0,
 		snap_pixel_positions = true
 	}
-	arg_1_0._layout_settings = arg_1_1.layout_settings
-	arg_1_0._animations = {}
-	arg_1_0._ui_animations = {}
+	self._layout_settings = arg_1_1.layout_settings
+	self._animations = {}
+	self._ui_animations = {}
 
-	arg_1_0:_create_ui_elements(arg_1_1, arg_1_2)
-	arg_1_0._parent:set_list_details_visibility(true)
-	arg_1_0._parent:set_list_details_length(930, 0.3)
-	arg_1_0._parent:change_generic_actions("default")
+	self:_create_ui_elements(arg_1_1, arg_1_2)
+	self._parent:set_list_details_visibility(true)
+	self._parent:set_list_details_length(930, 0.3)
+	self._parent:change_generic_actions("default")
 end
 
-function StoreWindowItemList._start_transition_animation(arg_2_0, arg_2_1)
-	local var_2_0 = {
-		render_settings = arg_2_0._render_settings
+StoreWindowItemList._start_transition_animation = function (self, arg_2_1)
+	-- function 2
+	local tbl = {
+		render_settings = self._render_settings
 	}
-	local var_2_1 = {
-		widgets_by_name = arg_2_0._widgets_by_name,
-		list_widgets = arg_2_0._list_widgets
+	local tbl_2 = {
+		widgets_by_name = self._widgets_by_name,
+		list_widgets = self._list_widgets
 	}
-	local var_2_2 = arg_2_0._ui_animator:start_animation(arg_2_1, var_2_1, var_0_2, var_2_0)
+	local start_animation = self._ui_animator:start_animation(arg_2_1, tbl_2, scenegraph_definition, tbl)
 
-	arg_2_0._animations[arg_2_1] = var_2_2
+	self._animations[arg_2_1] = start_animation
 end
 
-function StoreWindowItemList._create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
-	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
+StoreWindowItemList._create_ui_elements = function (self, arg_3_1, arg_3_2)
+	-- function 3
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	local var_3_0 = {}
-	local var_3_1 = {}
+	local tbl = {}
+	local tbl_2 = {}
 
-	for iter_3_0, iter_3_1 in pairs(var_0_1) do
-		local var_3_2 = UIWidget.init(iter_3_1)
+	for k, v in pairs(widgets) do
+		local var_3_2 = UIWidget.init(v)
 
-		var_3_0[#var_3_0 + 1] = var_3_2
-		var_3_1[iter_3_0] = var_3_2
+		tbl[#tbl + 1] = var_3_2
+		tbl_2[k] = var_3_2
 	end
 
-	arg_3_0._widgets = var_3_0
-	arg_3_0._widgets_by_name = var_3_1
+	self._widgets = tbl
+	self._widgets_by_name = tbl_2
 
-	UIRenderer.clear_scenegraph_queue(arg_3_0._ui_top_renderer)
+	UIRenderer.clear_scenegraph_queue(self._ui_top_renderer)
 
-	arg_3_0._ui_animator = UIAnimator:new(arg_3_0._ui_scenegraph, var_0_3)
+	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
 
-	local var_3_3 = arg_3_0._widgets_by_name.list_scrollbar
+	local list_scrollbar = self._widgets_by_name.list_scrollbar
 
-	arg_3_0._scrollbar_logic = ScrollBarLogic:new(var_3_3)
+	self._scrollbar_logic = ScrollBarLogic:new(list_scrollbar)
 end
 
-function StoreWindowItemList.on_exit(arg_4_0, arg_4_1, arg_4_2)
+StoreWindowItemList.on_exit = function (self, arg_4_1, arg_4_2)
+	-- function 4
 	print("[HeroViewWindow] Exit Substate StoreWindowItemList")
 
-	arg_4_0._ui_animator = nil
+	self._ui_animator = nil
 
-	arg_4_0:_destroy_product_widgets(arg_4_2)
+	self:_destroy_product_widgets(arg_4_2)
 end
 
-function StoreWindowItemList.update(arg_5_0, arg_5_1, arg_5_2)
-	arg_5_0:_handle_gamepad_activity()
+StoreWindowItemList.update = function (self, arg_5_1, arg_5_2)
+	-- function 5
+	self:_handle_gamepad_activity()
 
-	if arg_5_0:_sync_products_version() then
-		arg_5_0:_update_item_list()
+	if not self:_sync_products_version() then
+		self:_update_item_list()
 
-		if not arg_5_0._initialized then
-			arg_5_0._initialized = true
+		if not self._initialized then
+			self._initialized = true
 
-			arg_5_0:_start_transition_animation("on_enter")
+			self:_start_transition_animation("on_enter")
 		end
 	end
 
-	arg_5_0:_update_animations(arg_5_1)
-	arg_5_0:_draw(arg_5_1)
+	self:_update_animations(arg_5_1)
+	self:_draw(arg_5_1)
 end
 
-function StoreWindowItemList.post_update(arg_6_0, arg_6_1, arg_6_2)
-	if arg_6_0._initialized then
-		arg_6_0:_handle_input(arg_6_1, arg_6_2)
+StoreWindowItemList.post_update = function (self, arg_6_1, arg_6_2)
+	-- function 6
+	if not self._initialized then
+		self:_handle_input(arg_6_1, arg_6_2)
 	end
 end
 
-function StoreWindowItemList._sync_products_version(arg_7_0)
-	local var_7_0 = arg_7_0._parent:products_version_id()
+StoreWindowItemList._sync_products_version = function (self)
+	-- function 7
+	local products_version_id = self._parent:products_version_id()
 
-	if var_7_0 ~= arg_7_0._products_version_id then
-		arg_7_0._products_version_id = var_7_0
+	if products_version_id ~= self._products_version_id then
+		self._products_version_id = products_version_id
 
 		return true
 	end
@@ -115,265 +122,293 @@ function StoreWindowItemList._sync_products_version(arg_7_0)
 	return false
 end
 
-function StoreWindowItemList._update_animations(arg_8_0, arg_8_1)
-	local var_8_0 = arg_8_0._ui_animations
-	local var_8_1 = arg_8_0._animations
-	local var_8_2 = arg_8_0._ui_animator
+StoreWindowItemList._update_animations = function (self, arg_8_1)
+	-- function 8
+	local _ui_animations = self._ui_animations
+	local _animations = self._animations
+	local _ui_animator = self._ui_animator
 
-	for iter_8_0, iter_8_1 in pairs(arg_8_0._ui_animations) do
-		UIAnimation.update(iter_8_1, arg_8_1)
+	for k, v in pairs(self._ui_animations) do
+		UIAnimation.update(v, arg_8_1)
 
-		if UIAnimation.completed(iter_8_1) then
-			arg_8_0._ui_animations[iter_8_0] = nil
+		if not UIAnimation.completed(v) then
+			self._ui_animations[k] = nil
 		end
 	end
 
-	var_8_2:update(arg_8_1)
+	_ui_animator:update(arg_8_1)
 
-	for iter_8_2, iter_8_3 in pairs(var_8_1) do
-		if var_8_2:is_animation_completed(iter_8_3) then
-			var_8_2:stop_animation(iter_8_3)
+	for k_2, v_2 in pairs(_animations) do
+		if not _ui_animator:is_animation_completed(v_2) then
+			_ui_animator:stop_animation(v_2)
 
-			var_8_1[iter_8_2] = nil
+			_animations[k_2] = nil
 		end
 	end
 
-	if arg_8_0._list_initialized then
-		arg_8_0:_animate_list_entries(arg_8_1)
+	if not self._list_initialized then
+		self:_animate_list_entries(arg_8_1)
 	end
 end
 
-function StoreWindowItemList._is_list_hovered(arg_9_0)
-	return arg_9_0._widgets_by_name.list.content.list_hotspot.is_hover or false
+StoreWindowItemList._is_list_hovered = function (self)
+	-- function 9
+	local is_hover = self._widgets_by_name.list.content.list_hotspot.is_hover
+
+	is_hover = is_hover or false
+
+	return is_hover
 end
 
-function StoreWindowItemList._handle_input(arg_10_0, arg_10_1, arg_10_2)
-	local var_10_0 = arg_10_0._parent
-	local var_10_1 = arg_10_0._widgets_by_name
-	local var_10_2 = arg_10_0._parent:window_input_service()
+StoreWindowItemList._handle_input = function (self, arg_10_1, arg_10_2)
+	-- function 10
+	local _parent = self._parent
+	local _widgets_by_name = self._widgets_by_name
+	local window_input_service = self._parent:window_input_service()
 
-	if arg_10_0._list_initialized then
-		if arg_10_0:_is_list_hovered() then
-			local var_10_3 = arg_10_0:_list_index_pressed()
+	if not self._list_initialized then
+		if not self:_is_list_hovered() then
+			local _list_index_pressed = self:_list_index_pressed()
 
-			if var_10_3 then
-				arg_10_0:_play_sound("Play_hud_store_button_select")
-				arg_10_0:_on_list_index_selected(var_10_3)
+			if not _list_index_pressed then
+				self:_play_sound("Play_hud_store_button_select")
+				self:_on_list_index_selected(_list_index_pressed)
 			end
 		end
 
-		if arg_10_0._gamepad_active_last_frame then
-			arg_10_0:_handle_gamepad_grid_selection(var_10_2)
+		if not self._gamepad_active_last_frame then
+			self:_handle_gamepad_grid_selection(window_input_service)
 		end
 
-		arg_10_0._scrollbar_logic:update(arg_10_1, arg_10_2)
-		arg_10_0:_update_scroll_position()
+		self._scrollbar_logic:update(arg_10_1, arg_10_2)
+		self:_update_scroll_position()
 	end
 end
 
-function StoreWindowItemList._draw(arg_11_0, arg_11_1)
-	local var_11_0 = arg_11_0._ui_top_renderer
-	local var_11_1 = arg_11_0._ui_scenegraph
-	local var_11_2 = arg_11_0._parent:window_input_service()
-	local var_11_3 = arg_11_0._render_settings
+StoreWindowItemList._draw = function (self, arg_11_1)
+	-- function 11
+	local _ui_top_renderer = self._ui_top_renderer
+	local _ui_scenegraph = self._ui_scenegraph
+	local window_input_service = self._parent:window_input_service()
+	local _render_settings = self._render_settings
 
-	UIRenderer.begin_pass(var_11_0, var_11_1, var_11_2, arg_11_1, nil, var_11_3)
+	UIRenderer.begin_pass(_ui_top_renderer, _ui_scenegraph, window_input_service, arg_11_1, nil, _render_settings)
 
-	for iter_11_0, iter_11_1 in ipairs(arg_11_0._widgets) do
-		UIRenderer.draw_widget(var_11_0, iter_11_1)
+	for i, v in ipairs(self._widgets) do
+		UIRenderer.draw_widget(_ui_top_renderer, v)
 	end
 
-	if arg_11_0._list_initialized then
-		local var_11_4 = arg_11_0._list_widgets
+	if not self._list_initialized then
+		local _list_widgets = self._list_widgets
 
-		if var_11_4 then
-			local var_11_5 = arg_11_0:_update_visible_list_entries()
+		if not _list_widgets then
+			local _update_visible_list_entries = self:_update_visible_list_entries()
 
-			for iter_11_2, iter_11_3 in ipairs(var_11_4) do
-				if var_11_5 or iter_11_3.content.visible then
-					UIRenderer.draw_widget(var_11_0, iter_11_3)
+			for i_2, v_2 in ipairs(_list_widgets) do
+				if _update_visible_list_entries or not v_2.content.visible then
+					UIRenderer.draw_widget(_ui_top_renderer, v_2)
 				end
 			end
 		end
 	end
 
-	UIRenderer.end_pass(var_11_0)
+	UIRenderer.end_pass(_ui_top_renderer)
 end
 
-function StoreWindowItemList._play_sound(arg_12_0, arg_12_1)
-	arg_12_0._parent:play_sound(arg_12_1)
+StoreWindowItemList._play_sound = function (self, arg_12_1)
+	-- function 12
+	self._parent:play_sound(arg_12_1)
 end
 
-function StoreWindowItemList._handle_gamepad_activity(arg_13_0)
-	local var_13_0 = Managers.input:is_device_active("mouse")
-	local var_13_1 = arg_13_0._gamepad_active_last_frame == nil
+StoreWindowItemList._handle_gamepad_activity = function (self)
+	-- function 13
+	local is_device_active = Managers.input:is_device_active("mouse")
+	local flag = self._gamepad_active_last_frame == nil
 
-	if not var_13_0 then
-		if not arg_13_0._gamepad_active_last_frame or var_13_1 then
-			arg_13_0._gamepad_active_last_frame = true
+	if not is_device_active then
+		if not self._gamepad_active_last_frame and not flag then
+			self._gamepad_active_last_frame = true
 		end
-	elseif arg_13_0._gamepad_active_last_frame or var_13_1 then
-		arg_13_0._gamepad_active_last_frame = false
+	elseif self._gamepad_active_last_frame or not flag then
+		self._gamepad_active_last_frame = false
 	end
 end
 
-function StoreWindowItemList._list_index_pressed(arg_14_0)
-	local var_14_0 = arg_14_0._list_widgets
+StoreWindowItemList._list_index_pressed = function (self)
+	-- function 14
+	local _list_widgets = self._list_widgets
 
-	if var_14_0 then
-		for iter_14_0, iter_14_1 in ipairs(var_14_0) do
-			local var_14_1 = iter_14_1.content
-			local var_14_2 = var_14_1.hotspot or var_14_1.button_hotspot
+	if not _list_widgets then
+		for i, v in ipairs(_list_widgets) do
+			local content = v.content
+			local hotspot = content.hotspot
 
-			if var_14_2 and var_14_2.on_release then
-				var_14_2.on_release = false
+			hotspot = hotspot or content.button_hotspot
 
-				return iter_14_0
+			if not hotspot and not hotspot.on_release then
+				hotspot.on_release = false
+
+				return i
 			end
 		end
 	end
 end
 
-function StoreWindowItemList._animate_list_entries(arg_15_0, arg_15_1)
-	local var_15_0 = arg_15_0._parent
-	local var_15_1 = arg_15_0:_is_list_hovered()
+StoreWindowItemList._animate_list_entries = function (self, arg_15_1)
+	-- function 15
+	local _parent = self._parent
+	local _is_list_hovered = self:_is_list_hovered()
 
-	if arg_15_0._gamepad_active_last_frame then
-		var_15_1 = true
+	if not self._gamepad_active_last_frame then
+		_is_list_hovered = true
 	end
 
-	local var_15_2 = arg_15_0._list_widgets
+	local _list_widgets = self._list_widgets
 
-	for iter_15_0, iter_15_1 in ipairs(var_15_2) do
-		local var_15_3 = iter_15_1.content
-		local var_15_4 = iter_15_1.style
-		local var_15_5 = var_15_3.button_hotspot or var_15_3.hotspot
+	for i, v in ipairs(_list_widgets) do
+		local content = v.content
+		local style = v.style
+		local button_hotspot = content.button_hotspot
 
-		if var_15_5.on_hover_enter then
-			arg_15_0:_play_sound("Play_hud_store_button_hover")
+		button_hotspot = button_hotspot or content.hotspot
 
-			var_15_5.on_hover_enter = false
+		if not button_hotspot.on_hover_enter then
+			self:_play_sound("Play_hud_store_button_hover")
+
+			button_hotspot.on_hover_enter = false
 		end
 
-		var_15_0:animate_store_product(iter_15_1, arg_15_1, var_15_1)
+		_parent:animate_store_product(v, arg_15_1, _is_list_hovered)
 	end
 end
 
-function StoreWindowItemList._get_items_by_filter(arg_16_0, arg_16_1)
+StoreWindowItemList._get_items_by_filter = function (arg_16_0, arg_16_1)
+	-- function 16
 	return (Managers.backend:get_interface("peddler"):get_filtered_items(arg_16_1))
 end
 
-function StoreWindowItemList._get_all_items(arg_17_0)
+StoreWindowItemList._get_all_items = function (arg_17_0)
+	-- function 17
 	return (Managers.backend:get_interface("peddler"):get_peddler_stock())
 end
 
-function StoreWindowItemList._update_item_list(arg_18_0)
-	if arg_18_0._initialized then
-		local var_18_0 = arg_18_0._params.selected_product.item
+StoreWindowItemList._update_item_list = function (self)
+	-- function 18
+	if not self._initialized then
+		local item = self._params.selected_product.item
 
-		if arg_18_0._params.selected_product.product_type == "collection" then
-			local var_18_1 = Managers.backend:get_interface("items")
-			local var_18_2 = arg_18_0._params.selected_product.product_item.data.bundle
-			local var_18_3 = var_18_2 and var_18_2.BundledItems
-			local var_18_4 = true
+		if self._params.selected_product.product_type == "collection" then
+			local get_interface = Managers.backend:get_interface("items")
+			local bundle = self._params.selected_product.product_item.data.bundle
+			local flag = not bundle and bundle.BundledItems
+			local flag_2 = true
 
-			for iter_18_0 = 1, #var_18_3 do
-				local var_18_5 = var_18_3[iter_18_0]
+			for i = 1, #flag do
+				local var_18_5 = flag[i]
 
-				if not var_18_1:has_item(var_18_5) then
-					var_18_4 = false
+				if not get_interface:has_item(var_18_5) then
+					flag_2 = false
 
 					break
 				end
 			end
 
-			if var_18_4 then
-				for iter_18_1 = 1, #arg_18_0._list_widgets do
-					arg_18_0._list_widgets[iter_18_1].content.owned = true
+			if not flag_2 then
+				for j = 1, #self._list_widgets do
+					self._list_widgets[j].content.owned = true
 				end
 			end
-		elseif var_18_0 then
-			local var_18_6 = Managers.backend:get_interface("items")
-			local var_18_7 = var_18_0.key
-			local var_18_8 = var_18_6:has_item(var_18_7) or var_18_6:has_weapon_illusion(var_18_7) or var_18_6:has_bundle_contents(var_18_0.data.bundle_contains)
-			local var_18_9 = var_18_0.data.item_type
+		elseif not item then
+			local get_interface_2 = Managers.backend:get_interface("items")
+			local key = item.key
+			local has_item = get_interface_2:has_item(key)
 
-			var_18_0.owned = var_18_8
-			arg_18_0._list_widgets[arg_18_0._selected_gamepad_grid_index].content.owned = var_18_8
+			if not has_item then
+				has_item = get_interface_2:has_weapon_illusion(key)
+				has_item = has_item or get_interface_2:has_bundle_contents(item.data.bundle_contains)
+			end
+
+			local item_type = item.data.item_type
+
+			item.owned = has_item
+			self._list_widgets[self._selected_gamepad_grid_index].content.owned = has_item
 		end
 
 		return
 	end
 
-	arg_18_0:_destroy_product_widgets()
+	self:_destroy_product_widgets()
 
-	local var_18_10 = arg_18_0._parent:get_store_path()
-	local var_18_11 = StoreLayoutConfig.pages
-	local var_18_12 = var_18_10[#var_18_10]
-	local var_18_13 = var_18_11[var_18_12] or arg_18_0._parent:get_temporary_page(var_18_12)
-	local var_18_14 = var_18_13.type
-	local var_18_15 = var_18_13.content
-	local var_18_16 = {}
+	local get_store_path = self._parent:get_store_path()
+	local pages = StoreLayoutConfig.pages
+	local var_18_12 = get_store_path[#get_store_path]
+	local var_18_13 = pages[var_18_12]
 
-	if var_18_14 == "item" then
-		local var_18_17 = StoreLayoutConfig.get_item_filter(var_18_10, callback(arg_18_0._parent.get_temporary_page, arg_18_0))
-		local var_18_18 = arg_18_0:_get_items_by_filter(var_18_17)
-		local var_18_19 = 0
+	var_18_13 = var_18_13 or self._parent:get_temporary_page(var_18_12)
 
-		for iter_18_2, iter_18_3 in pairs(var_18_18) do
-			local var_18_20 = iter_18_3.data
-			local var_18_21 = var_18_20 and var_18_20.bundle
+	local type = var_18_13.type
+	local content = var_18_13.content
+	local tbl = {}
 
-			if var_18_21 then
-				for iter_18_4, iter_18_5 in ipairs(var_18_21.BundledItems) do
-					local var_18_22 = table.clone(ItemMasterList[iter_18_5])
+	if type == "item" then
+		local get_item_filter = StoreLayoutConfig.get_item_filter(get_store_path, callback(self._parent.get_temporary_page, self))
+		local _get_items_by_filter = self:_get_items_by_filter(get_item_filter)
+		local num = 0
 
-					var_18_22.data = var_18_22
+		for k, v in pairs(_get_items_by_filter) do
+			local data = v.data
+			local flag_3 = not data and data.bundle
 
-					local var_18_23 = {
-						item = var_18_22,
-						type = var_18_14,
-						product_id = var_18_20.key,
-						sort_key = var_18_22.key,
+			if not flag_3 then
+				for i_2, v_2 in ipairs(flag_3.BundledItems) do
+					local clone = table.clone(ItemMasterList[v_2])
+
+					clone.data = clone
+
+					local tbl_2 = {
+						item = clone,
+						type = type,
+						product_id = data.key,
+						sort_key = clone.key,
 						settings = {
 							hide_price = true,
-							icon_size = var_18_20.icon_size
+							icon_size = data.icon_size
 						}
 					}
 
-					var_18_16[#var_18_16 + 1] = var_18_23
+					tbl[#tbl + 1] = tbl_2
 				end
 			else
-				var_18_16[var_18_19], var_18_19 = {
-					item = iter_18_3,
-					type = var_18_14,
-					product_id = iter_18_3.key,
-					sort_key = StoreLayoutConfig.make_sort_key(iter_18_3)
-				}, var_18_19 + 1
+				tbl[num], num = {
+					item = v,
+					type = type,
+					product_id = v.key,
+					sort_key = StoreLayoutConfig.make_sort_key(v)
+				}, num + 1
 			end
 		end
 
-		table.sort(var_18_16, StoreLayoutConfig.compare_sort_key)
-	elseif var_18_14 == "dlc" then
-		for iter_18_6, iter_18_7 in ipairs(var_18_15) do
-			local var_18_24 = table.find_by_key(StoreDlcSettings, "dlc_name", iter_18_7)
-			local var_18_25 = StoreDlcSettings[var_18_24]
+		table.sort(tbl, StoreLayoutConfig.compare_sort_key)
+	elseif type == "dlc" then
+		for i_3, v_3 in ipairs(content) do
+			local find_by_key = table.find_by_key(StoreDlcSettings, "dlc_name", v_3)
+			local var_18_25 = StoreDlcSettings[find_by_key]
 
-			if var_18_25 then
-				var_18_16[#var_18_16 + 1] = {
+			if not var_18_25 then
+				tbl[#tbl + 1] = {
 					dlc_settings = var_18_25,
-					type = var_18_14,
+					type = type,
 					product_id = var_18_25.dlc_name
 				}
 			end
 		end
-	elseif var_18_14 == "bundle_items" then
-		local var_18_26 = var_18_13.bundle_contains
+	elseif type == "bundle_items" then
+		local bundle_contains = var_18_13.bundle_contains
 
-		for iter_18_8, iter_18_9 in pairs(var_18_26) do
-			local var_18_27 = ItemMasterList[iter_18_9]
+		for k_2, v_4 in pairs(bundle_contains) do
+			local var_18_27 = ItemMasterList[v_4]
 
-			var_18_16[#var_18_16 + 1] = {
+			tbl[#tbl + 1] = {
 				type = "item",
 				item = {
 					dlc_name = var_18_13.dlc_name,
@@ -386,68 +421,70 @@ function StoreWindowItemList._update_item_list(arg_18_0)
 				}
 			}
 		end
-	elseif var_18_14 == "collection_item" then
-		local var_18_28 = ""
-		local var_18_29 = 0
-		local var_18_30 = var_18_10[#var_18_10]
-		local var_18_31 = var_18_11[var_18_30] or arg_18_0._parent:get_temporary_page(var_18_30)
+	elseif type == "collection_item" then
+		local str = ""
+		local num_2 = 0
+		local var_18_30 = get_store_path[#get_store_path]
+		local var_18_31 = pages[var_18_30]
 
-		if var_18_31.item_filter then
-			if var_18_29 > 0 then
-				var_18_28 = var_18_28 .. " and "
+		var_18_31 = var_18_31 or self._parent:get_temporary_page(var_18_30)
+
+		if not var_18_31.item_filter then
+			if num_2 > 0 then
+				str = str .. " and "
 			end
 
-			var_18_28 = var_18_28 .. var_18_31.item_filter
-			var_18_29 = var_18_29 + 1
+			str = str .. var_18_31.item_filter
+			num_2 = num_2 + 1
 		end
 
 		local var_18_32
 
-		if var_18_29 > 0 then
-			var_18_32 = arg_18_0:_get_items_by_filter(var_18_28)
+		if num_2 > 0 then
+			var_18_32 = self:_get_items_by_filter(str)
 		else
-			var_18_32 = arg_18_0:_get_all_items()
+			var_18_32 = self:_get_all_items()
 		end
 
-		for iter_18_10, iter_18_11 in pairs(var_18_32) do
-			local var_18_33 = iter_18_11.data
-			local var_18_34 = var_18_33 and var_18_33.bundle
+		for k_3, v_5 in pairs(var_18_32) do
+			local data_2 = v_5.data
+			local flag_4 = not data_2 and data_2.bundle
 
-			for iter_18_12, iter_18_13 in ipairs(var_18_34.BundledItems) do
-				local var_18_35 = table.clone(ItemMasterList[iter_18_13])
+			for i_4, v_6 in ipairs(flag_4.BundledItems) do
+				local clone_2 = table.clone(ItemMasterList[v_6])
 
-				var_18_35.data = table.clone(var_18_35)
-				var_18_16[#var_18_16 + 1] = {
+				clone_2.data = table.clone(clone_2)
+				tbl[#tbl + 1] = {
 					product_type = "collection",
-					item = var_18_35,
-					product_item = iter_18_11,
-					type = var_18_35.item_type,
-					product_id = iter_18_11.key,
+					item = clone_2,
+					product_item = v_5,
+					type = clone_2.item_type,
+					product_id = v_5.key,
 					settings = {
 						hide_price = true,
 						part_of_bundle = true,
 						hide_new = true,
-						icon_size = var_18_33.icon_size
+						icon_size = data_2.icon_size
 					},
 					parent_settings = {
-						icon_size = var_18_33.icon_size
+						icon_size = data_2.icon_size
 					},
-					sort_key = StoreLayoutConfig.make_sort_key(var_18_35)
+					sort_key = StoreLayoutConfig.make_sort_key(clone_2)
 				}
 			end
 
-			table.sort(var_18_16, StoreLayoutConfig.compare_sort_key)
+			table.sort(tbl, StoreLayoutConfig.compare_sort_key)
 		end
 	end
 
-	arg_18_0._layout = var_18_16
+	self._layout = tbl
 
-	arg_18_0:_create_product_widgets(var_18_16)
+	self:_create_product_widgets(tbl)
 
-	arg_18_0._list_initialized = true
+	self._list_initialized = true
 end
 
-local var_0_6 = {
+local tbl = {
 	common = 2,
 	promo = 7,
 	magic = 5,
@@ -457,408 +494,501 @@ local var_0_6 = {
 	unique = 6
 }
 
-function StoreWindowItemList._sort_peddler_items_by_type(arg_19_0, arg_19_1)
-	local var_19_0 = {}
+StoreWindowItemList._sort_peddler_items_by_type = function (arg_19_0, arg_19_1)
+	-- function 19
+	local tbl_2 = {}
 
-	table.clear(var_19_0)
+	table.clear(tbl_2)
 
-	local var_19_1 = {}
+	local tbl_3 = {}
 	local var_19_2
 
-	for iter_19_0, iter_19_1 in pairs(arg_19_1) do
-		local var_19_3 = iter_19_1.data and iter_19_1.data.item_type or "unknown"
+	for k, v in pairs(arg_19_1) do
+		local flag = not v.data and v.data.item_type and "unknown"
 
-		if var_19_3 == "weapon_skin" then
-			var_19_3 = iter_19_1.data and iter_19_1.data.matching_item_key or "unknown"
+		if flag == "weapon_skin" then
+			flag = not v.data and v.data.matching_item_key and "unknown"
 		end
 
-		var_19_0[var_19_3] = var_19_0[var_19_3] or {}
-		var_19_0[var_19_3][#var_19_0[var_19_3] + 1] = iter_19_1
+		local var_19_4 = tbl_2[flag]
+
+		var_19_4 = var_19_4 or {}
+		tbl_2[flag] = var_19_4
+		tbl_2[flag][#tbl_2[flag] + 1] = v
 	end
 
-	local function var_19_4(arg_20_0, arg_20_1)
-		return (arg_20_0.data and arg_20_0.data.rarity and var_0_6[arg_20_0.data.rarity] or 1) > (arg_20_1.data and arg_20_1.data.rarity and var_0_6[arg_20_1.data.rarity] or 1)
+	local function fn(self, arg_20_1)
+		-- function 20
+		local var_20_0
+
+		if not self.data and not self.data.rarity then
+			var_20_0 = tbl[self.data.rarity]
+
+			if not var_20_0 then
+				-- Nothing
+			end
+		end
+
+		var_20_0 = 1
+
+		do
+			local var_20_1
+		end
+
+		::label_20_0::
+
+		if not arg_20_1.data and not arg_20_1.data.rarity then
+			var_20_1 = tbl[arg_20_1.data.rarity]
+
+			if not var_20_1 then
+				-- Nothing
+			end
+		end
+
+		var_20_1 = 1
+
+		::label_20_1::
+
+		return var_20_1 < var_20_0
 	end
 
-	for iter_19_2, iter_19_3 in pairs(var_19_0) do
-		table.sort(iter_19_3, var_19_4)
-		table.append(var_19_1, iter_19_3)
-		print(iter_19_2)
+	for k_2, v_2 in pairs(tbl_2) do
+		table.sort(v_2, fn)
+		table.append(tbl_3, v_2)
+		print(k_2)
 	end
 
-	return var_19_1
+	return tbl_3
 end
 
-function StoreWindowItemList._sort_peddler_items_by_price(arg_21_0, arg_21_1)
-	local function var_21_0(arg_22_0, arg_22_1)
-		return (arg_22_0.current_prices and arg_22_0.current_prices.SM or 0) > (arg_22_1.current_prices and arg_22_1.current_prices.SM or 0)
+StoreWindowItemList._sort_peddler_items_by_price = function (arg_21_0, arg_21_1)
+	-- function 21
+	local function fn(self, arg_22_1)
+		-- function 22
+		local SM
+
+		if not self.current_prices then
+			SM = self.current_prices.SM
+
+			if not SM then
+				-- Nothing
+			end
+		end
+
+		SM = 0
+
+		do
+			local SM_2
+		end
+
+		::label_22_0::
+
+		if not arg_22_1.current_prices then
+			SM_2 = arg_22_1.current_prices.SM
+
+			if not SM_2 then
+				-- Nothing
+			end
+		end
+
+		SM_2 = 0
+
+		::label_22_1::
+
+		return SM_2 < SM
 	end
 
-	table.sort(arg_21_1, var_21_0)
+	table.sort(arg_21_1, fn)
 
 	return arg_21_1
 end
 
-function StoreWindowItemList._get_list_index_by_product_id(arg_23_0, arg_23_1)
-	local var_23_0 = arg_23_0._layout
-	local var_23_1 = 1
+StoreWindowItemList._get_list_index_by_product_id = function (self, arg_23_1)
+	-- function 23
+	local _layout = self._layout
+	local num = 1
 
-	for iter_23_0, iter_23_1 in ipairs(var_23_0) do
-		if iter_23_1.product_id == arg_23_1 then
-			return iter_23_0
+	for i, v in ipairs(_layout) do
+		if v.product_id == arg_23_1 then
+			return i
 		end
 	end
 end
 
-function StoreWindowItemList._on_list_index_selected(arg_24_0, arg_24_1, arg_24_2)
-	local var_24_0 = arg_24_0._layout[arg_24_1]
+StoreWindowItemList._on_list_index_selected = function (self, arg_24_1, arg_24_2)
+	-- function 24
+	local var_24_0 = self._layout[arg_24_1]
 
-	arg_24_0._params.selected_product = var_24_0
+	self._params.selected_product = var_24_0
 
-	local var_24_1 = arg_24_0._list_widgets
+	local _list_widgets = self._list_widgets
 
-	if var_24_0.item then
-		local var_24_2 = var_24_0.item.data
+	if not var_24_0.item then
+		local data = var_24_0.item.data
 
-		ItemHelper.set_shop_item_seen(var_24_0.product_id, var_24_2.item_type, arg_24_0._parent.tab_cat)
-	elseif var_24_0.dlc_settings then
-		ItemHelper.set_shop_item_seen(var_24_0.product_id, "dlc", arg_24_0._parent.tab_cat)
+		ItemHelper.set_shop_item_seen(var_24_0.product_id, data.item_type, self._parent.tab_cat)
+	elseif not var_24_0.dlc_settings then
+		ItemHelper.set_shop_item_seen(var_24_0.product_id, "dlc", self._parent.tab_cat)
 	end
 
 	local var_24_3
 	local var_24_4
 
-	if var_24_1 then
-		for iter_24_0, iter_24_1 in ipairs(var_24_1) do
-			local var_24_5 = iter_24_1.content
-			local var_24_6 = var_24_5.hotspot or var_24_5.button_hotspot
+	if not _list_widgets then
+		for i, v in ipairs(_list_widgets) do
+			local content = v.content
+			local hotspot = content.hotspot
 
-			if var_24_6 then
-				local var_24_7 = iter_24_0 == arg_24_1
+			hotspot = hotspot or content.button_hotspot
 
-				var_24_6.is_selected = var_24_7
+			if not hotspot then
+				local flag = i == arg_24_1
 
-				if var_24_7 then
-					var_24_3 = var_24_5.row
-					var_24_4 = var_24_5.column
-					var_24_6.on_hover_enter = true
+				hotspot.is_selected = flag
+
+				if not flag then
+					var_24_3 = content.row
+					var_24_4 = content.column
+					hotspot.on_hover_enter = true
 				end
 			end
 		end
 	end
 
-	arg_24_0._previous_gamepad_grid_index = arg_24_0._selected_gamepad_grid_index
-	arg_24_0._previous_gamepad_grid_row = arg_24_0._selected_gamepad_grid_row
-	arg_24_0._previous_gamepad_grid_column = arg_24_0._selected_gamepad_grid_column
-	arg_24_0._selected_gamepad_grid_index = arg_24_1
-	arg_24_0._selected_gamepad_grid_row = var_24_3
-	arg_24_0._selected_gamepad_grid_column = var_24_4
+	self._previous_gamepad_grid_index = self._selected_gamepad_grid_index
+	self._previous_gamepad_grid_row = self._selected_gamepad_grid_row
+	self._previous_gamepad_grid_column = self._selected_gamepad_grid_column
+	self._selected_gamepad_grid_index = arg_24_1
+	self._selected_gamepad_grid_row = var_24_3
+	self._selected_gamepad_grid_column = var_24_4
 
-	if arg_24_2 then
-		local var_24_8 = arg_24_0._widgets_by_name.list_scrollbar.content.scroll_bar_info
-		local var_24_9 = UIAnimation.function_by_time
-		local var_24_10 = var_24_8
-		local var_24_11 = "scroll_value"
-		local var_24_12 = var_24_8.scroll_value
+	if not arg_24_2 then
+		local scroll_bar_info = self._widgets_by_name.list_scrollbar.content.scroll_bar_info
+		local function_by_time = UIAnimation.function_by_time
+		local var_24_10 = scroll_bar_info
+		local str = "scroll_value"
+		local scroll_value = scroll_bar_info.scroll_value
 		local var_24_13 = arg_24_2
-		local var_24_14 = 0.3
-		local var_24_15 = math.easeOutCubic
+		local num = 0.3
+		local easeOutCubic = math.easeOutCubic
 
-		arg_24_0._ui_animations.scrollbar = UIAnimation.init(var_24_9, var_24_10, var_24_11, var_24_12, var_24_13, var_24_14, var_24_15)
+		self._ui_animations.scrollbar = UIAnimation.init(function_by_time, var_24_10, str, scroll_value, var_24_13, num, easeOutCubic)
 	else
-		arg_24_0._ui_animations.scrollbar = nil
+		self._ui_animations.scrollbar = nil
 	end
 end
 
-function StoreWindowItemList._create_product_widgets(arg_25_0, arg_25_1)
-	local var_25_0 = {}
-	local var_25_1 = arg_25_0._parent
-	local var_25_2 = "item_root"
-	local var_25_3 = true
+StoreWindowItemList._create_product_widgets = function (self, arg_25_1)
+	-- function 25
+	local tbl = {}
+	local _parent = self._parent
+	local str = "item_root"
+	local flag = true
 
-	for iter_25_0, iter_25_1 in ipairs(arg_25_1) do
-		local var_25_4 = var_25_1:create_item_widget(iter_25_1, var_25_2, var_25_3)
+	for i, v in ipairs(arg_25_1) do
+		local create_item_widget = _parent:create_item_widget(v, str, flag)
 
-		var_25_1:populate_product_widget(var_25_4, iter_25_1)
+		_parent:populate_product_widget(create_item_widget, v)
 
-		var_25_0[iter_25_0] = var_25_4
+		tbl[i] = create_item_widget
 	end
 
-	arg_25_0._list_widgets = var_25_0
+	self._list_widgets = tbl
 
-	arg_25_0:_align_item_widgets()
-	arg_25_0:_initialize_scrollbar()
+	self:_align_item_widgets()
+	self:_initialize_scrollbar()
 
-	if #var_25_0 > 0 then
-		local var_25_5 = arg_25_0._params.last_selected_product or arg_25_0._params.selected_product
-		local var_25_6 = var_25_5 and var_25_5.product_id
-		local var_25_7 = arg_25_0:_get_list_index_by_product_id(var_25_6) or 1
+	if #tbl > 0 then
+		local last_selected_product = self._params.last_selected_product
 
-		arg_25_0:_on_list_index_selected(var_25_7)
-		arg_25_0:_scroll_to_list_index(var_25_7)
+		last_selected_product = last_selected_product or self._params.selected_product
+
+		local flag_2 = not last_selected_product and last_selected_product.product_id
+		local _get_list_index_by_product_id = self:_get_list_index_by_product_id(flag_2)
+
+		_get_list_index_by_product_id = _get_list_index_by_product_id or 1
+
+		self:_on_list_index_selected(_get_list_index_by_product_id)
+		self:_scroll_to_list_index(_get_list_index_by_product_id)
 	else
-		arg_25_0._params.selected_product = nil
+		self._params.selected_product = nil
 	end
 end
 
-function StoreWindowItemList._destroy_product_widgets(arg_26_0, arg_26_1)
-	local var_26_0 = arg_26_0._parent
-	local var_26_1 = arg_26_0._layout
-	local var_26_2 = arg_26_0._list_widgets
+StoreWindowItemList._destroy_product_widgets = function (self, arg_26_1)
+	-- function 26
+	local _parent = self._parent
+	local _layout = self._layout
+	local _list_widgets = self._list_widgets
 
-	if var_26_2 and var_26_1 then
-		for iter_26_0, iter_26_1 in ipairs(var_26_1) do
-			local var_26_3 = var_26_2[iter_26_0]
+	if not _list_widgets and not _layout then
+		for i, v in ipairs(_layout) do
+			local var_26_3 = _list_widgets[i]
 
-			var_26_0:destroy_product_widget(var_26_3, iter_26_1, arg_26_1)
+			_parent:destroy_product_widget(var_26_3, v, arg_26_1)
 		end
 	end
 end
 
-function StoreWindowItemList._align_item_widgets(arg_27_0)
-	local var_27_0 = 0
-	local var_27_1 = 0
-	local var_27_2 = 0
-	local var_27_3 = 1
-	local var_27_4 = 1
-	local var_27_5 = {}
-	local var_27_6 = arg_27_0._list_widgets
-	local var_27_7 = #var_27_6
+StoreWindowItemList._align_item_widgets = function (self)
+	-- function 27
+	local num_3 = 0
+	local num_4 = 0
+	local num_5 = 0
+	local num_6 = 1
+	local num_7 = 1
+	local tbl = {}
+	local _list_widgets = self._list_widgets
+	local count = #_list_widgets
 
-	for iter_27_0, iter_27_1 in ipairs(var_27_6) do
-		local var_27_8 = iter_27_1.offset
-		local var_27_9 = iter_27_1.content
-		local var_27_10 = var_27_9.size
-		local var_27_11 = var_27_10[1]
-		local var_27_12 = var_27_10[2]
+	for i, v in ipairs(_list_widgets) do
+		local offset = v.offset
+		local content = v.content
+		local size = content.size
+		local var_27_11 = size[1]
+		local var_27_12 = size[2]
 
-		if var_27_1 + var_27_11 > var_0_5 then
-			var_27_4 = 1
-			var_27_3 = var_27_3 + 1
-			var_27_1 = 0
-			var_27_2 = var_27_2 - (var_27_12 + var_0_4)
+		if not (num_4 + var_27_11 > num_2) then
+			num_7 = 1
+			num_6 = num_6 + 1
+			num_4 = 0
+			num_5 = num_5 - (var_27_12 + num)
 		end
 
-		var_27_8[1] = var_27_1
-		var_27_8[2] = var_27_2
-		iter_27_1.default_offset = table.clone(var_27_8)
-		var_27_9.row = var_27_3
-		var_27_9.column = var_27_4
-		var_27_1 = var_27_1 + (var_27_11 + var_0_4)
+		offset[1] = num_4
+		offset[2] = num_5
+		v.default_offset = table.clone(offset)
+		content.row = num_6
+		content.column = num_7
+		num_4 = num_4 + (var_27_11 + num)
 
-		if iter_27_0 == var_27_7 then
-			var_27_0 = math.abs(var_27_2 - var_27_12)
+		if i == count then
+			num_3 = math.abs(num_5 - var_27_12)
 		end
 
-		if not var_27_5[var_27_3] then
-			var_27_5[var_27_3] = {}
+		if not tbl[num_6] then
+			tbl[num_6] = {}
 		end
 
-		var_27_5[var_27_3][var_27_4] = iter_27_0
-		var_27_4 = var_27_4 + 1
+		tbl[num_6][num_7] = i
+		num_7 = num_7 + 1
 	end
 
-	arg_27_0._gamepad_navigation = var_27_5
-	arg_27_0._total_list_height = var_27_0
+	self._gamepad_navigation = tbl
+	self._total_list_height = num_3
 end
 
-function StoreWindowItemList._handle_gamepad_grid_selection(arg_28_0, arg_28_1)
-	if not arg_28_0._selected_gamepad_grid_index then
+StoreWindowItemList._handle_gamepad_grid_selection = function (self, arg_28_1)
+	-- function 28
+	if not self._selected_gamepad_grid_index then
 		return
 	end
 
-	local var_28_0 = arg_28_0._gamepad_navigation
-	local var_28_1 = #var_28_0
-	local var_28_2 = arg_28_0._selected_gamepad_grid_index
-	local var_28_3 = arg_28_0._selected_gamepad_grid_row
-	local var_28_4 = arg_28_0._selected_gamepad_grid_column
-	local var_28_5 = var_28_0[var_28_3]
-	local var_28_6 = #var_28_5
+	local _gamepad_navigation = self._gamepad_navigation
+	local count = #_gamepad_navigation
+	local _selected_gamepad_grid_index = self._selected_gamepad_grid_index
+	local _selected_gamepad_grid_row = self._selected_gamepad_grid_row
+	local _selected_gamepad_grid_column = self._selected_gamepad_grid_column
+	local var_28_5 = _gamepad_navigation[_selected_gamepad_grid_row]
+	local count_2 = #var_28_5
 	local var_28_7
 	local var_28_8
 
-	if arg_28_1:get("move_left_hold_continuous") then
-		if var_28_4 > 1 then
-			var_28_8 = var_28_5[var_28_4 - 1]
+	if not arg_28_1:get("move_left_hold_continuous") then
+		if _selected_gamepad_grid_column > 1 then
+			var_28_8 = var_28_5[_selected_gamepad_grid_column - 1]
 		end
-	elseif arg_28_1:get("move_right_hold_continuous") then
-		if var_28_4 < var_28_6 then
-			var_28_8 = var_28_5[var_28_4 + 1]
+	elseif not arg_28_1:get("move_right_hold_continuous") then
+		if _selected_gamepad_grid_column < count_2 then
+			var_28_8 = var_28_5[_selected_gamepad_grid_column + 1]
 		end
-	elseif arg_28_1:get("move_up_hold_continuous") then
-		var_28_7 = math.max(var_28_3 - 1, 1)
-	elseif arg_28_1:get("move_down_hold_continuous") then
-		var_28_7 = math.min(var_28_3 + 1, var_28_1)
+	elseif not arg_28_1:get("move_up_hold_continuous") then
+		var_28_7 = math.max(_selected_gamepad_grid_row - 1, 1)
+	elseif not arg_28_1:get("move_down_hold_continuous") then
+		var_28_7 = math.min(_selected_gamepad_grid_row + 1, count)
 	end
 
-	if var_28_7 and var_28_7 ~= var_28_3 then
-		local var_28_9 = var_28_0[var_28_7]
+	if not (not var_28_7 and var_28_7 == _selected_gamepad_grid_row) then
+		local var_28_9 = _gamepad_navigation[var_28_7]
 
-		var_28_8 = arg_28_0:_find_closest_neighbour(var_28_9, var_28_2, 1)
+		var_28_8 = self:_find_closest_neighbour(var_28_9, _selected_gamepad_grid_index, 1)
 	end
 
-	if var_28_8 then
-		local var_28_10 = arg_28_0:_get_scrollbar_percentage_by_index(var_28_8)
+	if not var_28_8 then
+		local _get_scrollbar_percentage_by_index = self:_get_scrollbar_percentage_by_index(var_28_8)
 
-		arg_28_0:_on_list_index_selected(var_28_8, var_28_10)
+		self:_on_list_index_selected(var_28_8, _get_scrollbar_percentage_by_index)
 	end
 end
 
-function StoreWindowItemList._find_closest_neighbour(arg_29_0, arg_29_1, arg_29_2)
-	local var_29_0 = arg_29_0._list_widgets
-	local var_29_1 = var_29_0[arg_29_2]
-	local var_29_2 = var_29_1.content.size
-	local var_29_3 = var_29_1.offset
-	local var_29_4 = var_29_2[1] * 0.5 + var_29_3[1]
-	local var_29_5 = math.huge
+StoreWindowItemList._find_closest_neighbour = function (self, arg_29_1, arg_29_2)
+	-- function 29
+	local _list_widgets = self._list_widgets
+	local var_29_1 = _list_widgets[arg_29_2]
+	local size = var_29_1.content.size
+	local offset = var_29_1.offset
+	local num = size[1] * 0.5 + offset[1]
+	local huge = math.huge
 	local var_29_6
 
-	for iter_29_0, iter_29_1 in pairs(arg_29_1) do
-		local var_29_7 = var_29_0[iter_29_1]
-		local var_29_8 = var_29_7.offset
-		local var_29_9 = var_29_7.content.size[1] * 0.5 + var_29_8[1]
-		local var_29_10 = math.abs(var_29_9 - var_29_4)
+	for k, v in pairs(arg_29_1) do
+		local var_29_7 = _list_widgets[v]
+		local offset_2 = var_29_7.offset
+		local num_2 = var_29_7.content.size[1] * 0.5 + offset_2[1]
+		local abs = math.abs(num_2 - num)
 
-		if var_29_10 < var_29_5 then
-			var_29_5 = var_29_10
-			var_29_6 = iter_29_1
+		if abs < huge then
+			huge = abs
+			var_29_6 = v
 		end
 	end
 
-	if var_29_6 then
+	if not var_29_6 then
 		return var_29_6
 	end
 end
 
-function StoreWindowItemList._initialize_scrollbar(arg_30_0)
-	local var_30_0 = var_0_2.list_window.size
-	local var_30_1 = var_0_2.list_scrollbar.size
-	local var_30_2 = var_30_0[2]
-	local var_30_3 = arg_30_0._total_list_height
-	local var_30_4 = var_30_1[2]
-	local var_30_5 = 220 + var_0_4 * 1.5
-	local var_30_6 = 1
-	local var_30_7 = arg_30_0._scrollbar_logic
+StoreWindowItemList._initialize_scrollbar = function (self)
+	-- function 30
+	local size = scenegraph_definition.list_window.size
+	local size_2 = scenegraph_definition.list_scrollbar.size
+	local var_30_2 = size[2]
+	local _total_list_height = self._total_list_height
+	local var_30_4 = size_2[2]
+	local num_2 = 220 + num * 1.5
+	local num_3 = 1
+	local _scrollbar_logic = self._scrollbar_logic
 
-	var_30_7:set_scrollbar_values(var_30_2, var_30_3, var_30_4, var_30_5, var_30_6)
-	var_30_7:set_scroll_percentage(var_30_7._scroll_value or 0)
+	_scrollbar_logic:set_scrollbar_values(var_30_2, _total_list_height, var_30_4, num_2, num_3)
+
+	local var_30_8 = _scrollbar_logic
+	local set_scroll_percentage = _scrollbar_logic.set_scroll_percentage
+	local _scroll_value = _scrollbar_logic._scroll_value
+
+	_scroll_value = _scroll_value or 0
+
+	set_scroll_percentage(var_30_8, _scroll_value)
 end
 
-function StoreWindowItemList._update_scroll_position(arg_31_0)
-	local var_31_0 = arg_31_0._scrollbar_logic:get_scrolled_length()
+StoreWindowItemList._update_scroll_position = function (self)
+	-- function 31
+	local get_scrolled_length = self._scrollbar_logic:get_scrolled_length()
 
-	if var_31_0 ~= arg_31_0._scrolled_length then
-		arg_31_0._ui_scenegraph.list.local_position[2] = var_31_0
-		arg_31_0._scrolled_length = var_31_0
+	if get_scrolled_length ~= self._scrolled_length then
+		self._ui_scenegraph.list.local_position[2] = get_scrolled_length
+		self._scrolled_length = get_scrolled_length
 	end
 end
 
-function StoreWindowItemList._update_visible_list_entries(arg_32_0)
-	local var_32_0 = arg_32_0._scrollbar_logic
+StoreWindowItemList._update_visible_list_entries = function (self)
+	-- function 32
+	local _scrollbar_logic = self._scrollbar_logic
 
-	if not var_32_0:enabled() then
+	if not _scrollbar_logic:enabled() then
 		return true
 	end
 
-	local var_32_1 = var_32_0:get_scroll_percentage()
-	local var_32_2 = var_32_0:get_scrolled_length()
-	local var_32_3 = var_32_0:get_scroll_length()
-	local var_32_4 = var_0_2.list_window.size
-	local var_32_5 = var_0_4 * 2
-	local var_32_6 = var_32_4[2] + var_32_5
-	local var_32_7 = arg_32_0._list_widgets
-	local var_32_8 = #var_32_7
+	local get_scroll_percentage = _scrollbar_logic:get_scroll_percentage()
+	local get_scrolled_length = _scrollbar_logic:get_scrolled_length()
+	local get_scroll_length = _scrollbar_logic:get_scroll_length()
+	local size = scenegraph_definition.list_window.size
+	local num_2 = num * 2
+	local num_3 = size[2] + num_2
+	local _list_widgets = self._list_widgets
+	local count = #_list_widgets
 
-	for iter_32_0, iter_32_1 in ipairs(var_32_7) do
-		local var_32_9 = iter_32_1.offset
-		local var_32_10 = iter_32_1.content
-		local var_32_11 = var_32_10.size
-		local var_32_12 = math.abs(var_32_9[2]) + var_32_11[2]
-		local var_32_13 = false
+	for i, v in ipairs(_list_widgets) do
+		local offset = v.offset
+		local content = v.content
+		local size_2 = content.size
+		local num_4 = math.abs(offset[2]) + size_2[2]
+		local flag = false
 
-		if var_32_12 < var_32_2 - var_32_5 then
-			var_32_13 = true
-		elseif var_32_6 < math.abs(var_32_9[2]) - var_32_2 then
-			var_32_13 = true
+		if num_4 < get_scrolled_length - num_2 then
+			flag = true
+		elseif num_3 < math.abs(offset[2]) - get_scrolled_length then
+			flag = true
 		end
 
-		var_32_10.visible = not var_32_13
+		content.visible = not flag
 	end
 end
 
-function StoreWindowItemList._scroll_to_list_index(arg_33_0, arg_33_1)
-	local var_33_0 = arg_33_0._scrollbar_logic
+StoreWindowItemList._scroll_to_list_index = function (self, arg_33_1)
+	-- function 33
+	local _scrollbar_logic = self._scrollbar_logic
 
-	if var_33_0:enabled() then
-		local var_33_1 = var_33_0:get_scroll_percentage()
-		local var_33_2 = var_33_0:get_scrolled_length()
-		local var_33_3 = var_33_0:get_scroll_length()
-		local var_33_4 = var_0_2.list_window.size[2]
-		local var_33_5 = var_33_2
-		local var_33_6 = var_33_5 + var_33_4
-		local var_33_7 = arg_33_0._list_widgets
+	if not _scrollbar_logic:enabled() then
+		local get_scroll_percentage = _scrollbar_logic:get_scroll_percentage()
+		local get_scrolled_length = _scrollbar_logic:get_scrolled_length()
+		local get_scroll_length = _scrollbar_logic:get_scroll_length()
+		local var_33_4 = scenegraph_definition.list_window.size[2]
+		local var_33_5 = get_scrolled_length
+		local num = var_33_5 + var_33_4
+		local _list_widgets = self._list_widgets
 
-		if var_33_7 then
-			local var_33_8 = var_33_7[arg_33_1]
-			local var_33_9 = var_33_8.content
-			local var_33_10 = var_33_8.offset
-			local var_33_11 = var_33_9.size[2]
-			local var_33_12 = math.abs(var_33_10[2])
-			local var_33_13 = var_33_12 + var_33_11
+		if not _list_widgets then
+			local var_33_8 = _list_widgets[arg_33_1]
+			local content = var_33_8.content
+			local offset = var_33_8.offset
+			local var_33_11 = content.size[2]
+			local abs = math.abs(offset[2])
+			local num_2 = abs + var_33_11
 			local var_33_14
 
-			if var_33_6 < var_33_13 then
-				local var_33_15 = var_33_13 - var_33_6
+			if num < num_2 then
+				local num_3 = num_2 - num
 
-				var_33_14 = math.clamp(var_33_15 / var_33_3, 0, 1)
-			elseif var_33_12 < var_33_5 then
-				local var_33_16 = var_33_5 - var_33_12
+				var_33_14 = math.clamp(num_3 / get_scroll_length, 0, 1)
+			elseif abs < var_33_5 then
+				local num_4 = var_33_5 - abs
 
-				var_33_14 = -math.clamp(var_33_16 / var_33_3, 0, 1)
+				var_33_14 = -math.clamp(num_4 / get_scroll_length, 0, 1)
 			end
 
-			if var_33_14 then
-				local var_33_17 = math.clamp(var_33_1 + var_33_14, 0, 1)
+			if not var_33_14 then
+				local clamp = math.clamp(get_scroll_percentage + var_33_14, 0, 1)
 
-				var_33_0:set_scroll_percentage(var_33_17)
+				_scrollbar_logic:set_scroll_percentage(clamp)
 			end
 		end
 	end
 end
 
-function StoreWindowItemList._get_scrollbar_percentage_by_index(arg_34_0, arg_34_1)
-	local var_34_0 = arg_34_0._scrollbar_logic
+StoreWindowItemList._get_scrollbar_percentage_by_index = function (self, arg_34_1)
+	-- function 34
+	local _scrollbar_logic = self._scrollbar_logic
 
-	if var_34_0:enabled() then
-		local var_34_1 = var_34_0:get_scroll_percentage()
-		local var_34_2 = var_34_0:get_scrolled_length()
-		local var_34_3 = var_34_0:get_scroll_length()
-		local var_34_4 = var_0_2.list_window.size[2]
-		local var_34_5 = var_34_2
-		local var_34_6 = var_34_5 + var_34_4
-		local var_34_7 = arg_34_0._list_widgets
+	if not _scrollbar_logic:enabled() then
+		local get_scroll_percentage = _scrollbar_logic:get_scroll_percentage()
+		local get_scrolled_length = _scrollbar_logic:get_scrolled_length()
+		local get_scroll_length = _scrollbar_logic:get_scroll_length()
+		local var_34_4 = scenegraph_definition.list_window.size[2]
+		local var_34_5 = get_scrolled_length
+		local num = var_34_5 + var_34_4
+		local _list_widgets = self._list_widgets
 
-		if var_34_7 then
-			local var_34_8 = var_34_7[arg_34_1]
-			local var_34_9 = var_34_8.content
-			local var_34_10 = var_34_8.offset
-			local var_34_11 = var_34_9.size[2]
-			local var_34_12 = math.abs(var_34_10[2])
-			local var_34_13 = var_34_12 + var_34_11
-			local var_34_14 = 0
+		if not _list_widgets then
+			local var_34_8 = _list_widgets[arg_34_1]
+			local content = var_34_8.content
+			local offset = var_34_8.offset
+			local var_34_11 = content.size[2]
+			local abs = math.abs(offset[2])
+			local num_2 = abs + var_34_11
+			local num_3 = 0
 
-			if var_34_6 < var_34_13 then
-				local var_34_15 = var_34_13 - var_34_6
+			if num < num_2 then
+				local num_4 = num_2 - num
 
-				var_34_14 = math.clamp(var_34_15 / var_34_3, 0, 1)
-			elseif var_34_12 < var_34_5 then
-				local var_34_16 = var_34_5 - var_34_12
+				num_3 = math.clamp(num_4 / get_scroll_length, 0, 1)
+			elseif abs < var_34_5 then
+				local num_5 = var_34_5 - abs
 
-				var_34_14 = -math.clamp(var_34_16 / var_34_3, 0, 1)
+				num_3 = -math.clamp(num_5 / get_scroll_length, 0, 1)
 			end
 
-			if var_34_14 then
-				return (math.clamp(var_34_1 + var_34_14, 0, 1))
+			if not num_3 then
+				return (math.clamp(get_scroll_percentage + num_3, 0, 1))
 			end
 		end
 	end

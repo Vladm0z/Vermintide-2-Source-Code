@@ -3,81 +3,90 @@
 require("scripts/network/game_server/game_server_aux")
 require("scripts/network/lobby_members")
 
-local var_0_0 = script_data.testify and require("scripts/network/game_server/testify/game_server_testify")
+local testify = script_data.testify
 
+testify = not testify and require("scripts/network/game_server/testify/game_server_testify")
 GameServer = class(GameServer)
 
-local function var_0_1(arg_1_0, ...)
-	local var_1_0 = arg_1_0.format(arg_1_0, ...)
+local function fn(self, ...)
+	-- function 1
+	local format = self.format(self, ...)
 
-	printf("[GameServer]: %s", var_1_0)
+	printf("[GameServer]: %s", format)
 end
 
-function GameServer.init(arg_2_0, arg_2_1, arg_2_2)
-	var_0_1("Initializing game server...")
+GameServer.init = function (self, arg_2_1, arg_2_2)
+	-- function 2
+	fn("Initializing game server...")
 
-	local var_2_0 = arg_2_1.config_file_name
-	local var_2_1 = arg_2_1.project_hash
+	local config_file_name = arg_2_1.config_file_name
+	local project_hash = arg_2_1.project_hash
 
-	arg_2_0._network_hash = GameServerAux.create_network_hash(var_2_0, var_2_1)
+	self._network_hash = GameServerAux.create_network_hash(config_file_name, project_hash)
 
 	assert(arg_2_1.max_members, "Has to pass max_members to GameServer")
 
-	arg_2_0._max_members = arg_2_1.max_members
-	arg_2_0._game_server = GameServerInternal.init_server(arg_2_1, arg_2_2)
-	arg_2_0._data_table = {}
-	arg_2_0._server_name = arg_2_2
-	arg_2_0._network_initialized = false
-	arg_2_0.is_host = true
+	self._max_members = arg_2_1.max_members
+	self._game_server = GameServerInternal.init_server(arg_2_1, arg_2_2)
+	self._data_table = {}
+	self._server_name = arg_2_2
+	self._network_initialized = false
+	self.is_host = true
 end
 
-function GameServer.kick_all_except(arg_3_0, arg_3_1)
-	if GameServerInternal.remove_member then
+GameServer.kick_all_except = function (self, arg_3_1)
+	-- function 3
+	if not GameServerInternal.remove_member then
 		arg_3_1 = arg_3_1 or {}
 
-		local var_3_0 = arg_3_0._data_table.host
+		local host = self._data_table.host
 
-		for iter_3_0, iter_3_1 in ipairs(arg_3_0._members) do
-			if iter_3_1 ~= var_3_0 and not arg_3_1[iter_3_1] then
-				GameServerInternal.remove_member(arg_3_0._game_server, iter_3_1)
+		for i, v in ipairs(self._members) do
+			if not (v == host or arg_3_1[v]) then
+				GameServerInternal.remove_member(self._game_server, v)
 			end
 		end
 	end
 end
 
-function GameServer.destroy(arg_4_0)
-	var_0_1("Shutting down game server")
+GameServer.destroy = function (self)
+	-- function 4
+	fn("Shutting down game server")
 
-	arg_4_0._members = nil
-	arg_4_0._data_table = nil
+	self._members = nil
+	self._data_table = nil
 
-	GameServerInternal.shutdown_server(arg_4_0._game_server)
+	GameServerInternal.shutdown_server(self._game_server)
 
-	arg_4_0._game_server = nil
+	self._game_server = nil
 
-	GarbageLeakDetector.register_object(arg_4_0, "Game Server")
+	GarbageLeakDetector.register_object(self, "Game Server")
 end
 
-function GameServer.update(arg_5_0, arg_5_1, arg_5_2)
-	local var_5_0 = arg_5_0._game_server
-	local var_5_1 = var_5_0:state()
-	local var_5_2 = arg_5_0._state
+GameServer.update = function (self, arg_5_1, arg_5_2)
+	-- function 5
+	local _game_server = self._game_server
+	local state = _game_server:state()
+	local _state = self._state
 
-	if var_5_1 ~= var_5_2 then
-		var_0_1("Changing state from %s to %s", var_5_2, var_5_1)
+	if state ~= _state then
+		fn("Changing state from %s to %s", _state, state)
 
-		arg_5_0._state = var_5_1
+		self._state = state
 
-		if var_5_1 == "connected" then
-			local var_5_3 = arg_5_0._data_table
+		if state == "connected" then
+			local _data_table = self._data_table
 
-			var_5_3.network_hash = arg_5_0._network_hash
+			_data_table.network_hash = self._network_hash
 
-			for iter_5_0, iter_5_1 in pairs(var_5_3) do
-				var_5_0:set_data(iter_5_0, iter_5_1)
+			for k, v in pairs(_data_table) do
+				_game_server:set_data(k, v)
 			end
 
-			arg_5_0._members = arg_5_0._members or LobbyMembers:new(var_5_0)
+			local _members = self._members
+
+			_members = _members or LobbyMembers:new(_game_server)
+			self._members = _members
 
 			if not GameServer._peer_id_property_set then
 				GameServer._peer_id_property_set = true
@@ -86,135 +95,173 @@ function GameServer.update(arg_5_0, arg_5_1, arg_5_2)
 			end
 		end
 
-		if var_5_2 == "connected" and arg_5_0._members then
-			arg_5_0._members:clear()
+		if _state ~= "connected" or not self._members then
+			self._members:clear()
 		end
 	end
 
-	local var_5_4 = arg_5_0._members
+	local _members_2 = self._members
 
-	if var_5_4 then
-		var_5_4:update()
+	if not _members_2 then
+		_members_2:update()
 	end
 
-	GameServerInternal.run_callbacks(arg_5_0._game_server, arg_5_0)
+	GameServerInternal.run_callbacks(self._game_server, self)
 
-	if script_data.testify then
-		Testify:poll_requests_through_handler(var_0_0, arg_5_0)
+	if not script_data.testify then
+		Testify:poll_requests_through_handler(testify, self)
 	end
 
-	return arg_5_0._state
+	return self._state
 end
 
-function GameServer.ping_by_peer(arg_6_0, arg_6_1)
+GameServer.ping_by_peer = function (arg_6_0, arg_6_1)
+	-- function 6
 	return GameServerInternal.ping(arg_6_1)
 end
 
-function GameServer.remove_peer(arg_7_0, arg_7_1)
-	arg_7_0._game_server:remove_member(arg_7_1)
+GameServer.remove_peer = function (self, arg_7_1)
+	-- function 7
+	self._game_server:remove_member(arg_7_1)
 end
 
-function GameServer.close_channel(arg_8_0, arg_8_1)
-	GameServerInternal.close_channel(arg_8_0._game_server, arg_8_1)
+GameServer.close_channel = function (self, arg_8_1)
+	-- function 8
+	GameServerInternal.close_channel(self._game_server, arg_8_1)
 end
 
-function GameServer.set_level_name(arg_9_0, arg_9_1)
-	GameServerInternal.set_level_name(arg_9_0._game_server, arg_9_1)
+GameServer.set_level_name = function (self, arg_9_1)
+	-- function 9
+	GameServerInternal.set_level_name(self._game_server, arg_9_1)
 end
 
-function GameServer.set_lobby_data(arg_10_0, arg_10_1)
+GameServer.set_lobby_data = function (self, arg_10_1)
+	-- function 10
 	print("Set lobby begin:")
 
-	local var_10_0 = arg_10_0._data_table
-	local var_10_1 = arg_10_0._game_server
+	local _data_table = self._data_table
+	local _game_server = self._game_server
 
-	for iter_10_0, iter_10_1 in pairs(arg_10_1) do
-		print(string.format("  Lobby data %s = %s", iter_10_0, tostring(iter_10_1)))
+	for k, v in pairs(arg_10_1) do
+		print(string.format("  Lobby data %s = %s", k, tostring(v)))
 
-		var_10_0[iter_10_0] = iter_10_1
+		_data_table[k] = v
 
-		var_10_1:set_data(iter_10_0, iter_10_1)
+		_game_server:set_data(k, v)
 	end
 
 	print("Set lobby end.")
 end
 
-function GameServer.get_stored_lobby_data(arg_11_0)
-	return arg_11_0._data_table
+GameServer.get_stored_lobby_data = function (self)
+	-- function 11
+	return self._data_table
 end
 
-function GameServer.attempting_reconnect(arg_12_0)
+GameServer.attempting_reconnect = function (arg_12_0)
+	-- function 12
 	return false
 end
 
-function GameServer.is_dedicated_server(arg_13_0)
+GameServer.is_dedicated_server = function (arg_13_0)
+	-- function 13
 	return true
 end
 
-function GameServer.lobby_data(arg_14_0, arg_14_1)
-	return arg_14_0._game_server:data(arg_14_1)
+GameServer.lobby_data = function (self, arg_14_1)
+	-- function 14
+	return self._game_server:data(arg_14_1)
 end
 
-function GameServer.lobby_host(arg_15_0)
+GameServer.lobby_host = function (arg_15_0)
+	-- function 15
 	return Network.peer_id()
 end
 
-function GameServer.state(arg_16_0)
-	return arg_16_0._state
+GameServer.state = function (self)
+	-- function 16
+	return self._state
 end
 
-function GameServer.members(arg_17_0)
-	return arg_17_0._members
+GameServer.members = function (self)
+	-- function 17
+	return self._members
 end
 
-function GameServer.user_name(arg_18_0, arg_18_1)
-	return GameServerInternal.user_name(arg_18_0._game_server, arg_18_1)
+GameServer.user_name = function (self, arg_18_1)
+	-- function 18
+	return GameServerInternal.user_name(self._game_server, arg_18_1)
 end
 
-function GameServer.get_max_members(arg_19_0)
-	return arg_19_0._max_members
+GameServer.get_max_members = function (self)
+	-- function 19
+	return self._max_members
 end
 
-function GameServer.set_max_members(arg_20_0, arg_20_1)
-	arg_20_0._max_members = arg_20_1
+GameServer.set_max_members = function (self, arg_20_1)
+	-- function 20
+	self._max_members = arg_20_1
 
-	GameServerInternal.set_max_members(arg_20_0._game_server, arg_20_1)
+	GameServerInternal.set_max_members(self._game_server, arg_20_1)
 end
 
-function GameServer.is_joined(arg_21_0)
-	return arg_21_0._state == "connected"
+GameServer.is_joined = function (self)
+	-- function 21
+	return self._state == "connected"
 end
 
-function GameServer.id(arg_22_0)
-	return GameServerInternal.server_id and GameServerInternal.server_id(arg_22_0._game_server) or "no_id"
+GameServer.id = function (self)
+	-- function 22
+	local server_id
+
+	if not GameServerInternal.server_id then
+		server_id = GameServerInternal.server_id(self._game_server)
+
+		if not server_id then
+			-- Nothing
+		end
+	end
+
+	server_id = "no_id"
+
+	::label_22_0::
+
+	return server_id
 end
 
-function GameServer.server_name(arg_23_0)
-	return arg_23_0._server_name
+GameServer.server_name = function (self)
+	-- function 23
+	return self._server_name
 end
 
-function GameServer.set_server_name(arg_24_0, arg_24_1)
-	arg_24_0._server_name = arg_24_1
+GameServer.set_server_name = function (self, arg_24_1)
+	-- function 24
+	self._server_name = arg_24_1
 end
 
-function GameServer.set_network_initialized(arg_25_0, arg_25_1)
-	arg_25_0._network_initialized = arg_25_1
+GameServer.set_network_initialized = function (self, arg_25_1)
+	-- function 25
+	self._network_initialized = arg_25_1
 end
 
-function GameServer.network_initialized(arg_26_0)
-	return arg_26_0._network_initialized
+GameServer.network_initialized = function (self)
+	-- function 26
+	return self._network_initialized
 end
 
-function GameServer.failed(arg_27_0)
-	return arg_27_0._state == "disconnected"
+GameServer.failed = function (self)
+	-- function 27
+	return self._state == "disconnected"
 end
 
-function GameServer.server_member_added(arg_28_0, arg_28_1)
+GameServer.server_member_added = function (arg_28_0, arg_28_1)
+	-- function 28
 	printf("Member %s was added", arg_28_1)
 end
 
-function GameServer.server_slot_allocation_request(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
-	if Managers.mechanism:try_reserve_game_server_slots(arg_29_1, arg_29_2, arg_29_3) then
+GameServer.server_slot_allocation_request = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+	-- function 29
+	if not Managers.mechanism:try_reserve_game_server_slots(arg_29_1, arg_29_2, arg_29_3) then
 		printf("Request by %s to allocate %d slots was approved", arg_29_1, #arg_29_2)
 
 		return true
@@ -225,11 +272,13 @@ function GameServer.server_slot_allocation_request(arg_29_0, arg_29_1, arg_29_2,
 	end
 end
 
-function GameServer.server_slot_expired(arg_30_0, arg_30_1)
+GameServer.server_slot_expired = function (arg_30_0, arg_30_1)
+	-- function 30
 	Managers.mechanism:game_server_slot_reservation_expired(arg_30_1)
 	printf("Server slot %s was deallocated", arg_30_1)
 end
 
-function GameServer.lost_connection_to_lobby(arg_31_0)
+GameServer.lost_connection_to_lobby = function (arg_31_0)
+	-- function 31
 	return false
 end

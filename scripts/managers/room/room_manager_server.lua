@@ -4,107 +4,120 @@ require("scripts/managers/room/room_handler")
 
 RoomManagerServer = class(RoomManagerServer)
 
-function RoomManagerServer.init(arg_1_0, arg_1_1)
-	arg_1_0._peer_rooms = {}
-	arg_1_0._room_order = {}
-	arg_1_0._room_handler = RoomHandler:new(arg_1_1)
+RoomManagerServer.init = function (self, arg_1_1)
+	-- function 1
+	self._peer_rooms = {}
+	self._room_order = {}
+	self._room_handler = RoomHandler:new(arg_1_1)
 end
 
-function RoomManagerServer.setup_level_anchor_points(arg_2_0, arg_2_1)
-	arg_2_0._room_handler:setup_level_anchor_points(arg_2_1)
+RoomManagerServer.setup_level_anchor_points = function (self, arg_2_1)
+	-- function 2
+	self._room_handler:setup_level_anchor_points(arg_2_1)
 end
 
-function RoomManagerServer.create_room(arg_3_0, arg_3_1, arg_3_2)
-	local var_3_0 = Managers.state.spawn._profile_synchronizer:profile_by_peer(arg_3_1, arg_3_2)
-	local var_3_1 = SPProfiles[var_3_0].room_profile
-	local var_3_2 = arg_3_0._room_handler:create_room(var_3_1)
+RoomManagerServer.create_room = function (self, arg_3_1, arg_3_2)
+	-- function 3
+	local profile_by_peer = Managers.state.spawn._profile_synchronizer:profile_by_peer(arg_3_1, arg_3_2)
+	local room_profile = SPProfiles[profile_by_peer].room_profile
+	local create_room = self._room_handler:create_room(room_profile)
 
-	arg_3_0._peer_rooms[arg_3_1] = {
-		room_id = var_3_2,
-		profile_index = var_3_0
+	self._peer_rooms[arg_3_1] = {
+		room_id = create_room,
+		profile_index = profile_by_peer
 	}
-	arg_3_0._room_order[var_3_2] = arg_3_1
+	self._room_order[create_room] = arg_3_1
 
-	Managers.state.network.network_transmit:send_rpc_clients("rpc_inn_room_created", arg_3_1, var_3_2, var_3_0)
+	Managers.state.network.network_transmit:send_rpc_clients("rpc_inn_room_created", arg_3_1, create_room, profile_by_peer)
 end
 
-function RoomManagerServer.get_spawn_point_by_peer(arg_4_0, arg_4_1)
-	return arg_4_0._peer_rooms[arg_4_1].room_id
+RoomManagerServer.get_spawn_point_by_peer = function (self, arg_4_1)
+	-- function 4
+	return self._peer_rooms[arg_4_1].room_id
 end
 
-function RoomManagerServer.has_room(arg_5_0, arg_5_1)
-	return arg_5_0._peer_rooms[arg_5_1] and true or false
+RoomManagerServer.has_room = function (self, arg_5_1)
+	-- function 5
+	local flag
+
+	flag = not self._peer_rooms[arg_5_1] and true and false
+
+	return flag
 end
 
-function RoomManagerServer.destroy_room(arg_6_0, arg_6_1, arg_6_2)
-	local var_6_0 = arg_6_0._peer_rooms[arg_6_1].room_id
+RoomManagerServer.destroy_room = function (self, arg_6_1, arg_6_2)
+	-- function 6
+	local room_id = self._peer_rooms[arg_6_1].room_id
 
-	if arg_6_2 and arg_6_2 == true or arg_6_2 == nil then
-		arg_6_0:move_players_from_room(var_6_0)
+	if not (not arg_6_2 and arg_6_2 == true or arg_6_2 ~= nil) then
+		self:move_players_from_room(room_id)
 	end
 
-	arg_6_0._room_handler:destroy_room(var_6_0)
+	self._room_handler:destroy_room(room_id)
 
-	arg_6_0._room_order[var_6_0] = nil
-	arg_6_0._peer_rooms[arg_6_1] = nil
+	self._room_order[room_id] = nil
+	self._peer_rooms[arg_6_1] = nil
 
 	Managers.state.network.network_transmit:send_rpc_clients("rpc_inn_room_destroyed", arg_6_1)
 end
 
-function RoomManagerServer.move_players_from_room(arg_7_0, arg_7_1)
-	local var_7_0 = arg_7_0._room_handler:room_from_id(arg_7_1).level
-	local var_7_1 = Managers.state.network
-	local var_7_2 = Managers.state.spawn.spawn_points
-	local var_7_3 = Managers.player:human_players()
+RoomManagerServer.move_players_from_room = function (self, arg_7_1)
+	-- function 7
+	local level = self._room_handler:room_from_id(arg_7_1).level
+	local network = Managers.state.network
+	local spawn_points = Managers.state.spawn.spawn_points
+	local human_players = Managers.player:human_players()
 
-	for iter_7_0, iter_7_1 in pairs(var_7_3) do
+	for k, v in pairs(human_players) do
 		repeat
-			local var_7_4 = iter_7_1.player_unit
+			local player_unit = v.player_unit
 
-			if not Unit.alive(var_7_4) then
+			if not Unit.alive(player_unit) then
 				break
 			end
 
-			if not var_7_1:unit_game_object_id(var_7_4) then
+			if not network:unit_game_object_id(player_unit) then
 				break
 			end
 
-			local var_7_5 = POSITION_LOOKUP[var_7_4]
+			local var_7_5 = POSITION_LOOKUP[player_unit]
 
-			if Level.is_point_inside_volume(var_7_0, "room_volume", var_7_5) then
-				local var_7_6 = iter_7_1.peer_id
-				local var_7_7 = var_7_2[arg_7_0:get_spawn_point_by_peer(var_7_6)]
-				local var_7_8 = var_7_7.pos:unbox()
-				local var_7_9 = var_7_7.rot:unbox()
+			if not Level.is_point_inside_volume(level, "room_volume", var_7_5) then
+				local peer_id = v.peer_id
+				local var_7_7 = spawn_points[self:get_spawn_point_by_peer(peer_id)]
+				local unbox = var_7_7.pos:unbox()
+				local unbox_2 = var_7_7.rot:unbox()
 
-				if iter_7_1.local_player then
-					ScriptUnit.extension(var_7_4, "locomotion_system"):teleport_to(var_7_8, var_7_9)
+				if not v.local_player then
+					ScriptUnit.extension(player_unit, "locomotion_system"):teleport_to(unbox, unbox_2)
 
 					break
 				end
 
-				local var_7_10 = var_7_1:unit_game_object_id(var_7_4)
-				local var_7_11 = PEER_ID_TO_CHANNEL[var_7_6]
+				local unit_game_object_id = network:unit_game_object_id(player_unit)
+				local var_7_11 = PEER_ID_TO_CHANNEL[peer_id]
 
-				RPC.rpc_teleport_unit_to(var_7_11, var_7_10, var_7_8, var_7_9)
+				RPC.rpc_teleport_unit_to(var_7_11, unit_game_object_id, unbox, unbox_2)
 			end
 		until true
 	end
 end
 
-function RoomManagerServer.hot_join_sync(arg_8_0, arg_8_1)
+RoomManagerServer.hot_join_sync = function (self, arg_8_1)
+	-- function 8
 	local var_8_0 = PEER_ID_TO_CHANNEL[arg_8_1]
 
-	for iter_8_0, iter_8_1 in pairs(arg_8_0._peer_rooms) do
-		local var_8_1 = iter_8_1.room_id
-		local var_8_2 = iter_8_1.profile_index
+	for k, v in pairs(self._peer_rooms) do
+		local room_id = v.room_id
+		local profile_index = v.profile_index
 
-		RPC.rpc_inn_room_created(var_8_0, iter_8_0, var_8_1, var_8_2)
+		RPC.rpc_inn_room_created(var_8_0, k, room_id, profile_index)
 	end
 end
 
-function RoomManagerServer.destroy(arg_9_0)
-	arg_9_0._room_handler:destroy()
+RoomManagerServer.destroy = function (self)
+	-- function 9
+	self._room_handler:destroy()
 
-	arg_9_0._room_handler = nil
+	self._room_handler = nil
 end

@@ -1,12 +1,12 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/store/definitions/store_window_panel_definitions.lua
 
-local var_0_0 = UISettings.console_menu_scenegraphs
-local var_0_1 = {
-	screen = var_0_0.screen,
-	area = var_0_0.area,
-	area_left = var_0_0.area_left,
-	area_right = var_0_0.area_right,
-	area_divider = var_0_0.area_divider,
+local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
+local tbl = {
+	screen = console_menu_scenegraphs.screen,
+	area = console_menu_scenegraphs.area,
+	area_left = console_menu_scenegraphs.area_left,
+	area_right = console_menu_scenegraphs.area_right,
+	area_divider = console_menu_scenegraphs.area_divider,
 	panel = {
 		vertical_alignment = "top",
 		scale = "fit_width",
@@ -267,7 +267,7 @@ local var_0_1 = {
 		}
 	}
 }
-local var_0_2 = {
+local tbl_2 = {
 	word_wrap = false,
 	upper_case = true,
 	localize = false,
@@ -285,7 +285,8 @@ local var_0_2 = {
 	}
 }
 
-local function var_0_3(arg_1_0, arg_1_1)
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
 	return {
 		element = {
 			passes = {
@@ -361,7 +362,7 @@ local function var_0_3(arg_1_0, arg_1_1)
 	}
 end
 
-local var_0_4 = {
+local tbl_3 = {
 	panel_input_area_1 = UIWidgets.create_simple_texture("xbone_button_icon_lt", "panel_input_area_1"),
 	panel_input_area_2 = UIWidgets.create_simple_texture("xbone_button_icon_rt", "panel_input_area_2"),
 	panel = UIWidgets.create_simple_rect("panel", {
@@ -398,24 +399,27 @@ local var_0_4 = {
 	}),
 	back_button = UIWidgets.create_layout_button("back_button", "layout_button_back", "layout_button_back_glow"),
 	close_button = UIWidgets.create_layout_button("close_button", "layout_button_close", "layout_button_close_glow"),
-	entry_panel_selection = var_0_3("entry_panel_selection", var_0_1.entry_panel_selection.size),
-	mark_all_seen_button = UIWidgets.create_store_panel_button("mark_all_as_seen", var_0_1.mark_all_as_seen.size, "mark_all_as_seen", 22)
+	entry_panel_selection = fn("entry_panel_selection", tbl.entry_panel_selection.size),
+	mark_all_seen_button = UIWidgets.create_store_panel_button("mark_all_as_seen", tbl.mark_all_as_seen.size, "mark_all_as_seen", 22)
 }
-local var_0_5 = {
+local tbl_4 = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+				-- function 2
 				arg_2_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
-				local var_3_0 = math.easeOutCubic(arg_3_3)
+			update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+				-- function 3
+				local easeOutCubic = math.easeOutCubic(arg_3_3)
 
-				arg_3_4.render_settings.alpha_multiplier = var_3_0
+				arg_3_4.render_settings.alpha_multiplier = easeOutCubic
 			end,
-			on_complete = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			on_complete = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				-- function 4
 				return
 			end
 		}
@@ -425,15 +429,18 @@ local var_0_5 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+				-- function 5
 				arg_5_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
-				local var_6_0 = math.easeOutCubic(arg_6_3)
+			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+				-- function 6
+				local easeOutCubic = math.easeOutCubic(arg_6_3)
 
-				arg_6_4.render_settings.alpha_multiplier = 1 - var_6_0
+				arg_6_4.render_settings.alpha_multiplier = 1 - easeOutCubic
 			end,
-			on_complete = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			on_complete = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+				-- function 7
 				return
 			end
 		}
@@ -441,7 +448,7 @@ local var_0_5 = {
 }
 
 return {
-	widgets = var_0_4,
-	scenegraph_definition = var_0_1,
-	animation_definitions = var_0_5
+	widgets = tbl_3,
+	scenegraph_definition = tbl,
+	animation_definitions = tbl_4
 }

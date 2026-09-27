@@ -1,21 +1,21 @@
 -- chunkname: @scripts/ui/views/hero_view/states/definitions/hero_view_state_overview_definitions.lua
 
-local var_0_0 = UISettings.game_start_windows
-local var_0_1 = var_0_0.background
-local var_0_2 = var_0_0.frame
-local var_0_3 = var_0_0.size
-local var_0_4 = var_0_0.spacing
-local var_0_5 = var_0_0.large_window_frame
-local var_0_6 = UIFrameSettings[var_0_5].texture_sizes.vertical[1]
-local var_0_7 = {
-	var_0_3[1] * 3 + var_0_4 * 2 + var_0_6 * 2,
-	var_0_3[2] + 80
+local game_start_windows = UISettings.game_start_windows
+local background = game_start_windows.background
+local frame = game_start_windows.frame
+local size = game_start_windows.size
+local spacing = game_start_windows.spacing
+local large_window_frame = game_start_windows.large_window_frame
+local var_0_6 = UIFrameSettings[large_window_frame].texture_sizes.vertical[1]
+local tbl = {
+	size[1] * 3 + spacing * 2 + var_0_6 * 2,
+	size[2] + 80
 }
-local var_0_8 = {
-	var_0_7[1] + 50,
-	var_0_7[2]
+local tbl_2 = {
+	tbl[1] + 50,
+	tbl[2]
 }
-local var_0_9 = {
+local tbl_3 = {
 	root = {
 		is_root = true,
 		size = {
@@ -72,7 +72,7 @@ local var_0_9 = {
 		vertical_alignment = "center",
 		parent = "screen",
 		horizontal_alignment = "center",
-		size = var_0_8,
+		size = tbl_2,
 		position = {
 			0,
 			0,
@@ -84,8 +84,8 @@ local var_0_9 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_8[1] - 5,
-			var_0_8[2] - 5
+			tbl_2[1] - 5,
+			tbl_2[2] - 5
 		},
 		position = {
 			0,
@@ -97,7 +97,7 @@ local var_0_9 = {
 		vertical_alignment = "center",
 		parent = "window",
 		horizontal_alignment = "center",
-		size = var_0_7,
+		size = tbl,
 		position = {
 			0,
 			0,
@@ -109,7 +109,7 @@ local var_0_9 = {
 		parent = "inner_window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_7[1],
+			tbl[1],
 			50
 		},
 		position = {
@@ -175,7 +175,7 @@ local var_0_9 = {
 		}
 	}
 }
-local var_0_10 = {
+local tbl_4 = {
 	options = {
 		class_name = "HeroWindowOptions",
 		name = "options"
@@ -219,7 +219,7 @@ local var_0_10 = {
 		name = "cosmetics_inventory"
 	}
 }
-local var_0_11 = {
+local tbl_5 = {
 	{
 		sound_event_enter = "play_gui_equipment_button",
 		name = "equipment",
@@ -274,7 +274,7 @@ local var_0_11 = {
 		}
 	}
 }
-local var_0_12 = {
+local tbl_6 = {
 	use_shadow = true,
 	upper_case = true,
 	localize = false,
@@ -290,9 +290,9 @@ local var_0_12 = {
 		2
 	}
 }
-local var_0_13 = true
-local var_0_14 = {
-	window = UIWidgets.create_frame("window", var_0_9.window.size, "menu_frame_11"),
+local flag = true
+local tbl_7 = {
+	window = UIWidgets.create_frame("window", tbl_3.window.size, "menu_frame_11"),
 	window_background_mask = UIWidgets.create_tiled_texture("window_background", "menu_frame_bg_01", {
 		960,
 		1080
@@ -306,27 +306,30 @@ local var_0_14 = {
 		100,
 		100
 	}),
-	exit_button = UIWidgets.create_default_button("exit_button", var_0_9.exit_button.size, nil, nil, Localize("menu_close"), 24, nil, "button_detail_04", 34, var_0_13),
-	back_button = UIWidgets.create_default_button("exit_button", var_0_9.exit_button.size, nil, nil, Localize("menu_back"), 24, nil, "button_detail_03", 34, var_0_13),
+	exit_button = UIWidgets.create_default_button("exit_button", tbl_3.exit_button.size, nil, nil, Localize("menu_close"), 24, nil, "button_detail_04", 34, flag),
+	back_button = UIWidgets.create_default_button("exit_button", tbl_3.exit_button.size, nil, nil, Localize("menu_back"), 24, nil, "button_detail_03", 34, flag),
 	title = UIWidgets.create_simple_texture("frame_title_bg", "title"),
-	title_bg = UIWidgets.create_background("title_bg", var_0_9.title_bg.size, "menu_frame_bg_02"),
-	title_text = UIWidgets.create_simple_text(Localize("hero_view_title"), "title_text", nil, nil, var_0_12)
+	title_bg = UIWidgets.create_background("title_bg", tbl_3.title_bg.size, "menu_frame_bg_02"),
+	title_text = UIWidgets.create_simple_text(Localize("hero_view_title"), "title_text", nil, nil, tbl_6)
 }
-local var_0_15 = {
+local tbl_8 = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+				-- function 1
 				arg_1_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
-				local var_2_0 = math.easeOutCubic(arg_2_3)
+			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+				-- function 2
+				local easeOutCubic = math.easeOutCubic(arg_2_3)
 
 				arg_2_4.render_settings.alpha_multiplier = 1
 			end,
-			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+				-- function 3
 				return
 			end
 		}
@@ -336,15 +339,18 @@ local var_0_15 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				-- function 4
 				arg_4_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
-				local var_5_0 = math.easeOutCubic(arg_5_3)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+				-- function 5
+				local easeOutCubic = math.easeOutCubic(arg_5_3)
 
 				arg_5_4.render_settings.alpha_multiplier = 1
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+				-- function 6
 				return
 			end
 		}
@@ -352,9 +358,9 @@ local var_0_15 = {
 }
 
 return {
-	windows = var_0_10,
-	widgets = var_0_14,
-	window_layouts = var_0_11,
-	scenegraph_definition = var_0_9,
-	animation_definitions = var_0_15
+	windows = tbl_4,
+	widgets = tbl_7,
+	window_layouts = tbl_5,
+	scenegraph_definition = tbl_3,
+	animation_definitions = tbl_8
 }

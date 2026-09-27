@@ -1,13 +1,13 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/definitions/hero_window_character_info_definitions.lua
 
-local var_0_0 = UISettings.game_start_windows.size
-local var_0_1 = UISettings.console_menu_scenegraphs
-local var_0_2 = {
-	screen = var_0_1.screen,
-	area = var_0_1.area,
-	area_left = var_0_1.area_left,
-	area_right = var_0_1.area_right,
-	area_divider = var_0_1.area_divider,
+local size = UISettings.game_start_windows.size
+local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
+local tbl = {
+	screen = console_menu_scenegraphs.screen,
+	area = console_menu_scenegraphs.area,
+	area_left = console_menu_scenegraphs.area_left,
+	area_right = console_menu_scenegraphs.area_right,
+	area_divider = console_menu_scenegraphs.area_divider,
 	portrait_root = {
 		vertical_alignment = "bottom",
 		parent = "screen",
@@ -149,7 +149,7 @@ local var_0_2 = {
 		}
 	}
 }
-local var_0_3 = {
+local tbl_2 = {
 	use_shadow = true,
 	upper_case = true,
 	localize = true,
@@ -165,7 +165,7 @@ local var_0_3 = {
 		2
 	}
 }
-local var_0_4 = {
+local tbl_3 = {
 	font_size = 24,
 	use_shadow = true,
 	localize = true,
@@ -180,7 +180,7 @@ local var_0_4 = {
 		2
 	}
 }
-local var_0_5 = {
+local tbl_4 = {
 	use_shadow = true,
 	vertical_alignment = "bottom",
 	localize = true,
@@ -194,7 +194,7 @@ local var_0_5 = {
 		2
 	}
 }
-local var_0_6 = {
+local tbl_5 = {
 	font_size = 24,
 	use_shadow = true,
 	localize = false,
@@ -210,7 +210,8 @@ local var_0_6 = {
 	}
 }
 
-local function var_0_7(arg_1_0, arg_1_1)
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
 	return {
 		element = {
 			passes = {
@@ -302,7 +303,7 @@ local function var_0_7(arg_1_0, arg_1_1)
 	}
 end
 
-local var_0_8 = {
+local tbl_6 = {
 	divider_1 = UIWidgets.create_simple_uv_texture("menu_divider", {
 		{
 			0,
@@ -336,25 +337,28 @@ local var_0_8 = {
 			1
 		}
 	}, "experience_bar"),
-	career_name = UIWidgets.create_simple_text("n/a", "career_name", 22, nil, var_0_3),
-	hero_name = UIWidgets.create_simple_text("n/a", "hero_name", 22, nil, var_0_4),
-	level_text = UIWidgets.create_simple_text("n/a", "level_text", 22, nil, var_0_6)
+	career_name = UIWidgets.create_simple_text("n/a", "career_name", 22, nil, tbl_2),
+	hero_name = UIWidgets.create_simple_text("n/a", "hero_name", 22, nil, tbl_3),
+	level_text = UIWidgets.create_simple_text("n/a", "level_text", 22, nil, tbl_5)
 }
-local var_0_9 = {
+local tbl_7 = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+				-- function 2
 				arg_2_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
-				local var_3_0 = math.easeOutCubic(arg_3_3)
+			update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+				-- function 3
+				local easeOutCubic = math.easeOutCubic(arg_3_3)
 
-				arg_3_4.render_settings.alpha_multiplier = var_3_0
+				arg_3_4.render_settings.alpha_multiplier = easeOutCubic
 			end,
-			on_complete = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			on_complete = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				-- function 4
 				return
 			end
 		}
@@ -364,15 +368,18 @@ local var_0_9 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+				-- function 5
 				arg_5_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
-				local var_6_0 = math.easeOutCubic(arg_6_3)
+			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+				-- function 6
+				local easeOutCubic = math.easeOutCubic(arg_6_3)
 
-				arg_6_4.render_settings.alpha_multiplier = 1 - var_6_0
+				arg_6_4.render_settings.alpha_multiplier = 1 - easeOutCubic
 			end,
-			on_complete = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			on_complete = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+				-- function 7
 				return
 			end
 		}
@@ -380,9 +387,9 @@ local var_0_9 = {
 }
 
 return {
-	widgets = var_0_8,
+	widgets = tbl_6,
 	node_widgets = node_widgets,
 	category_settings = category_settings,
-	scenegraph_definition = var_0_2,
-	animation_definitions = var_0_9
+	scenegraph_definition = tbl,
+	animation_definitions = tbl_7
 }

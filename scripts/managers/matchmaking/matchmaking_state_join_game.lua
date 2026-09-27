@@ -3,171 +3,180 @@
 MatchmakingStateJoinGame = class(MatchmakingStateJoinGame)
 MatchmakingStateJoinGame.NAME = "MatchmakingStateJoinGame"
 
-function MatchmakingStateJoinGame.init(arg_1_0, arg_1_1)
-	arg_1_0._lobby = arg_1_1.lobby
-	arg_1_0._network_transmit = arg_1_1.network_transmit
-	arg_1_0._matchmaking_manager = arg_1_1.matchmaking_manager
-	arg_1_0._network_transmit = arg_1_1.network_transmit
-	arg_1_0._statistics_db = arg_1_1.statistics_db
-	arg_1_0._ingame_ui = arg_1_1.ingame_ui
-	arg_1_0._matchmaking_manager.selected_profile_index = nil
-	arg_1_0._matchmaking_loading_context = {}
-	arg_1_0._hero_popup_at_t = nil
-	arg_1_0._selected_hero_at_t = nil
-	arg_1_0._show_popup = false
-	arg_1_0._wwise_world = arg_1_1.wwise_world
+MatchmakingStateJoinGame.init = function (self, arg_1_1)
+	-- function 1
+	self._lobby = arg_1_1.lobby
+	self._network_transmit = arg_1_1.network_transmit
+	self._matchmaking_manager = arg_1_1.matchmaking_manager
+	self._network_transmit = arg_1_1.network_transmit
+	self._statistics_db = arg_1_1.statistics_db
+	self._ingame_ui = arg_1_1.ingame_ui
+	self._matchmaking_manager.selected_profile_index = nil
+	self._matchmaking_loading_context = {}
+	self._hero_popup_at_t = nil
+	self._selected_hero_at_t = nil
+	self._show_popup = false
+	self._wwise_world = arg_1_1.wwise_world
 end
 
-function MatchmakingStateJoinGame.destroy(arg_2_0)
+MatchmakingStateJoinGame.destroy = function (arg_2_0)
+	-- function 2
 	return
 end
 
-function MatchmakingStateJoinGame.on_enter(arg_3_0, arg_3_1)
-	arg_3_0.state_context = arg_3_1
-	arg_3_0.search_config = arg_3_1.search_config
-	arg_3_0.lobby_client = arg_3_1.lobby_client
-	arg_3_0._makeshift_lobby_data = arg_3_1.profiles_data
-	arg_3_0._join_lobby_data = arg_3_1.join_lobby_data
-	arg_3_0._reserved_party_id = arg_3_1.reserved_party_id or 1
-	arg_3_0._makeshift_lobby_data.selected_mission_id = arg_3_0._join_lobby_data.selected_mission_id
-	arg_3_0._makeshift_lobby_data.difficulty = arg_3_0._join_lobby_data.difficulty
-	arg_3_0._makeshift_lobby_data.reserved_profiles = arg_3_0.lobby_client:lobby_data("reserved_profiles")
+MatchmakingStateJoinGame.on_enter = function (self, arg_3_1)
+	-- function 3
+	self.state_context = arg_3_1
+	self.search_config = arg_3_1.search_config
+	self.lobby_client = arg_3_1.lobby_client
+	self._makeshift_lobby_data = arg_3_1.profiles_data
+	self._join_lobby_data = arg_3_1.join_lobby_data
 
-	if Managers.mechanism:mechanism_setting("check_matchmaking_hero_availability") then
-		local var_3_0 = arg_3_0._matchmaking_manager
-		local var_3_1, var_3_2, var_3_3 = arg_3_0:_current_hero()
+	local reserved_party_id = arg_3_1.reserved_party_id
 
-		fassert(var_3_1, "no hero index? this is wrong")
+	reserved_party_id = reserved_party_id or 1
+	self._reserved_party_id = reserved_party_id
+	self._makeshift_lobby_data.selected_mission_id = self._join_lobby_data.selected_mission_id
+	self._makeshift_lobby_data.difficulty = self._join_lobby_data.difficulty
+	self._makeshift_lobby_data.reserved_profiles = self.lobby_client:lobby_data("reserved_profiles")
 
-		if var_3_0:hero_available_in_lobby_data(var_3_1, arg_3_0._makeshift_lobby_data, arg_3_0._reserved_party_id) and not Application.user_setting("always_ask_hero_when_joining") then
-			arg_3_0._selected_hero_name = var_3_2
+	if not Managers.mechanism:mechanism_setting("check_matchmaking_hero_availability") then
+		local _matchmaking_manager = self._matchmaking_manager
+		local _current_hero, var_3_3, var_3_4 = self:_current_hero()
 
-			arg_3_0:_request_profile_from_host(var_3_1, var_3_3)
+		fassert(_current_hero, "no hero index? this is wrong")
+
+		if not (not _matchmaking_manager:hero_available_in_lobby_data(_current_hero, self._makeshift_lobby_data, self._reserved_party_id) and Application.user_setting("always_ask_hero_when_joining")) then
+			self._selected_hero_name = var_3_3
+
+			self:_request_profile_from_host(_current_hero, var_3_4)
 		else
-			arg_3_0._show_popup = true
+			self._show_popup = true
 		end
 
-		local var_3_4 = true
+		local flag = true
 
-		Managers.chat:add_local_system_message(1, Localize("matchmaking_status_aquiring_profiles"), var_3_4)
+		Managers.chat:add_local_system_message(1, Localize("matchmaking_status_aquiring_profiles"), flag)
 	else
-		WwiseWorld.trigger_event(arg_3_0._wwise_world, "menu_wind_countdown_warning")
-		arg_3_0:_set_state_to_start_lobby()
+		WwiseWorld.trigger_event(self._wwise_world, "menu_wind_countdown_warning")
+		self:_set_state_to_start_lobby()
 	end
 
-	if Managers.mechanism:mechanism_setting("sync_backend_id") then
-		arg_3_0:_sync_backend_id()
+	if not Managers.mechanism:mechanism_setting("sync_backend_id") then
+		self:_sync_backend_id()
 	end
 
-	arg_3_0._update_lobby_data_timer = 0
+	self._update_lobby_data_timer = 0
 end
 
-function MatchmakingStateJoinGame.on_exit(arg_4_0)
-	local var_4_0 = Managers.ui
+MatchmakingStateJoinGame.on_exit = function (arg_4_0)
+	-- function 4
+	local ui = Managers.ui
 
-	if var_4_0:get_active_popup("profile_picker") then
-		var_4_0:close_popup("profile_picker")
+	if not ui:get_active_popup("profile_picker") then
+		ui:close_popup("profile_picker")
 	end
 end
 
-function MatchmakingStateJoinGame.update(arg_5_0, arg_5_1, arg_5_2)
-	local var_5_0 = Managers.ui:get_active_popup("profile_picker")
+MatchmakingStateJoinGame.update = function (self, arg_5_1, arg_5_2)
+	-- function 5
+	local get_active_popup = Managers.ui:get_active_popup("profile_picker")
 
-	if var_5_0 then
-		local var_5_1 = var_5_0:query_result()
+	if not get_active_popup then
+		local query_result = get_active_popup:query_result()
 
-		if var_5_1 then
-			arg_5_0._profile_picker_shown = false
-			arg_5_0._selected_hero_at_t = arg_5_2
+		if not query_result then
+			self._profile_picker_shown = false
+			self._selected_hero_at_t = arg_5_2
 
-			if arg_5_0:_handle_popup_result(var_5_1, arg_5_2) then
-				arg_5_0._matchmaking_manager:cancel_matchmaking()
+			if not self:_handle_popup_result(query_result, arg_5_2) then
+				self._matchmaking_manager:cancel_matchmaking()
 
 				return nil
 			end
 		end
 
-		arg_5_0:_update_lobby_data(arg_5_1, arg_5_2)
-	elseif arg_5_0._profile_picker_shown then
-		arg_5_0._profile_picker_shown = false
+		self:_update_lobby_data(arg_5_1, arg_5_2)
+	elseif not self._profile_picker_shown then
+		self._profile_picker_shown = false
 
-		arg_5_0._matchmaking_manager:cancel_matchmaking()
+		self._matchmaking_manager:cancel_matchmaking()
 
 		return nil
 	end
 
 	if not Managers.state.network then
-		arg_5_0._matchmaking_manager:cancel_matchmaking()
+		self._matchmaking_manager:cancel_matchmaking()
 
 		return nil
 	end
 
-	if arg_5_0._exit_to_search_game then
+	if not self._exit_to_search_game then
 		mm_printf_force("Search was aborted")
 
-		local var_5_2 = arg_5_0._matchmaking_manager
+		local _matchmaking_manager = self._matchmaking_manager
 
-		var_5_2:add_broken_lobby_client(arg_5_0.lobby_client, arg_5_2, false)
+		_matchmaking_manager:add_broken_lobby_client(self.lobby_client, arg_5_2, false)
 
-		if arg_5_0.lobby_client then
-			arg_5_0.lobby_client:destroy()
+		if not self.lobby_client then
+			self.lobby_client:destroy()
 
-			arg_5_0.lobby_client = nil
+			self.lobby_client = nil
 		end
 
-		arg_5_0.state_context.lobby_client = nil
-		arg_5_0.state_context.join_lobby_data = nil
+		self.state_context.lobby_client = nil
+		self.state_context.join_lobby_data = nil
 
-		arg_5_0._matchmaking_manager:reset_joining()
+		self._matchmaking_manager:reset_joining()
 
-		if arg_5_0.state_context.join_by_lobby_browser then
+		if not self.state_context.join_by_lobby_browser then
 			mm_printf_force("Abort from lobby browser or invite")
-			var_5_2:cancel_join_lobby("cancelled")
+			_matchmaking_manager:cancel_join_lobby("cancelled")
 
-			return MatchmakingStateIdle, arg_5_0.state_context
-		elseif Managers.account:user_detached() then
+			return MatchmakingStateIdle, self.state_context
+		elseif not Managers.account:user_detached() then
 			mm_printf_force("User detached - > Cancel Matchmaking")
-			var_5_2:cancel_matchmaking()
+			_matchmaking_manager:cancel_matchmaking()
 
-			return MatchmakingStateIdle, arg_5_0.state_context
+			return MatchmakingStateIdle, self.state_context
 		else
 			mm_printf_force("Abort for other reason")
 
-			local var_5_3 = Managers.state.network:lobby()
+			local lobby = Managers.state.network:lobby()
 
-			if var_5_3 then
-				Managers.party:set_leader(var_5_3:lobby_host())
+			if not lobby then
+				Managers.party:set_leader(lobby:lobby_host())
 			end
 
-			local var_5_4 = arg_5_0.search_config
+			local search_config = self.search_config
 
-			if var_5_4 and var_5_4.dedicated_server and var_5_4.join_method == "party" then
-				if var_5_4.aws then
-					return MatchmakingStateFlexmatchHost, arg_5_0.state_context
+			if not (not search_config and not search_config.dedicated_server and search_config.join_method ~= "party") then
+				if not search_config.aws then
+					return MatchmakingStateFlexmatchHost, self.state_context
 				end
 
-				return MatchmakingStateReserveLobby, arg_5_0.state_context
+				return MatchmakingStateReserveLobby, self.state_context
 			else
-				return MatchmakingStateSearchGame, arg_5_0.state_context
+				return MatchmakingStateSearchGame, self.state_context
 			end
 		end
 	end
 
-	if arg_5_0._show_popup then
-		arg_5_0._makeshift_lobby_data.reserved_profiles = arg_5_0.lobby_client:lobby_data("reserved_profiles")
+	if not self._show_popup then
+		self._makeshift_lobby_data.reserved_profiles = self.lobby_client:lobby_data("reserved_profiles")
 
-		local var_5_5 = Managers.backend
-		local var_5_6 = var_5_5:is_waiting_for_user_input()
-		local var_5_7 = var_5_5:get_interface("items"):num_current_item_server_requests() ~= 0
+		local backend = Managers.backend
+		local is_waiting_for_user_input = backend:is_waiting_for_user_input()
+		local flag = backend:get_interface("items"):num_current_item_server_requests() ~= 0
 
-		if not var_5_6 and not var_5_7 then
-			arg_5_0:_spawn_join_popup(arg_5_1, arg_5_2)
+		if not (is_waiting_for_user_input or flag) then
+			self:_spawn_join_popup(arg_5_1, arg_5_2)
 		end
 	end
 
-	if Managers.state.network.is_server and not Managers.state.network.network_server:are_all_peers_ingame(nil, true) then
+	if not (not Managers.state.network.is_server and Managers.state.network.network_server:are_all_peers_ingame(nil, true)) then
 		Managers.simple_popup:queue_popup(Localize("player_join_block_exit_game"), Localize("popup_error_topic"), "ok", Localize("popup_choice_ok"))
-		arg_5_0._matchmaking_manager:cancel_matchmaking()
+		self._matchmaking_manager:cancel_matchmaking()
 
 		return nil
 	end
@@ -175,232 +184,257 @@ function MatchmakingStateJoinGame.update(arg_5_0, arg_5_1, arg_5_2)
 	return nil
 end
 
-function MatchmakingStateJoinGame._update_lobby_data(arg_6_0, arg_6_1, arg_6_2)
-	arg_6_0._update_lobby_data_timer = arg_6_0._update_lobby_data_timer - arg_6_1
+MatchmakingStateJoinGame._update_lobby_data = function (self, arg_6_1, arg_6_2)
+	-- function 6
+	self._update_lobby_data_timer = self._update_lobby_data_timer - arg_6_1
 
-	if arg_6_0._update_lobby_data_timer < 0 then
-		arg_6_0._update_lobby_data_timer = 0.5
+	if self._update_lobby_data_timer < 0 then
+		self._update_lobby_data_timer = 0.5
 
-		local var_6_0 = arg_6_0._makeshift_lobby_data
-		local var_6_1 = arg_6_0.lobby_client
-		local var_6_2 = var_6_1:lobby_data("selected_mission_id")
+		local _makeshift_lobby_data = self._makeshift_lobby_data
+		local lobby_client = self.lobby_client
+		local lobby_data = lobby_client:lobby_data("selected_mission_id")
 
-		if var_6_0.selected_mission_id ~= var_6_2 then
-			var_6_0.selected_mission_id = var_6_2
+		if _makeshift_lobby_data.selected_mission_id ~= lobby_data then
+			_makeshift_lobby_data.selected_mission_id = lobby_data
 		end
 
-		local var_6_3 = var_6_1:lobby_data("difficulty")
+		local lobby_data_2 = lobby_client:lobby_data("difficulty")
 
-		var_6_0.difficulty_tweak = var_6_1:lobby_data("difficulty_tweak")
+		_makeshift_lobby_data.difficulty_tweak = lobby_client:lobby_data("difficulty_tweak")
 
-		if var_6_0.difficulty ~= var_6_3 then
-			var_6_0.difficulty = var_6_3
+		if _makeshift_lobby_data.difficulty ~= lobby_data_2 then
+			_makeshift_lobby_data.difficulty = lobby_data_2
 
-			if arg_6_0._popup_profile_picker then
-				arg_6_0._popup_profile_picker:set_difficulty(var_6_3)
+			if not self._popup_profile_picker then
+				self._popup_profile_picker:set_difficulty(lobby_data_2)
 			end
 		end
 	end
 end
 
-function MatchmakingStateJoinGame._handle_popup_result(arg_7_0, arg_7_1, arg_7_2)
+MatchmakingStateJoinGame._handle_popup_result = function (self, arg_7_1, arg_7_2)
+	-- function 7
 	local var_7_0
-	local var_7_1 = false
+	local flag = false
 
-	if arg_7_1.accepted then
+	if not arg_7_1.accepted then
 		mm_printf_force("Popup accepted")
 
-		local var_7_2 = arg_7_1.selected_hero_name
-		local var_7_3 = FindProfileIndex(var_7_2)
+		local selected_hero_name = arg_7_1.selected_hero_name
+		local var_7_3 = FindProfileIndex(selected_hero_name)
 
-		arg_7_0._selected_hero_name = var_7_2
-		arg_7_0._selected_career_name = arg_7_1.selected_career_name
+		self._selected_hero_name = selected_hero_name
+		self._selected_career_name = arg_7_1.selected_career_name
 
-		local var_7_4 = career_index_from_name(var_7_3, arg_7_0._selected_career_name)
+		local var_7_4 = career_index_from_name(var_7_3, self._selected_career_name)
 
-		arg_7_0:_request_profile_from_host(var_7_3, var_7_4)
+		self:_request_profile_from_host(var_7_3, var_7_4)
 	else
 		mm_printf_force("Popup cancelled")
 
-		local var_7_5 = Managers.player:local_player(1)
-		local var_7_6 = arg_7_1.reason or "timed_out"
+		local local_player = Managers.player:local_player(1)
+		local reason = arg_7_1.reason
 
-		if not arg_7_0._selected_hero_at_t or not (arg_7_0._selected_hero_at_t - arg_7_0._hero_popup_at_t) then
-			local var_7_7 = 0
+		reason = reason or "timed_out"
+
+		if not (not self._selected_hero_at_t and self._selected_hero_at_t - self._hero_popup_at_t) then
+			local num = 0
 		end
 
-		local var_7_8 = false
+		local flag_2 = false
 
-		arg_7_0._matchmaking_manager:add_broken_lobby_client(arg_7_0.lobby_client, arg_7_2, var_7_8)
+		self._matchmaking_manager:add_broken_lobby_client(self.lobby_client, arg_7_2, flag_2)
 
-		if var_7_6 == "cancelled" then
-			var_7_1 = true
+		if reason == "cancelled" then
+			flag = true
 		else
-			arg_7_0._exit_to_search_game = true
+			self._exit_to_search_game = true
 		end
 
-		local var_7_9 = "matchmaking_status_character_select_" .. var_7_6
+		local str = "matchmaking_status_character_select_" .. reason
 
-		arg_7_0._matchmaking_manager:send_system_chat_message(var_7_9)
+		self._matchmaking_manager:send_system_chat_message(str)
 	end
 
 	Managers.ui:close_popup("profile_picker")
 
-	return var_7_1
+	return flag
 end
 
-function MatchmakingStateJoinGame.get_transition(arg_8_0)
-	if arg_8_0._join_lobby_data and arg_8_0._next_transition_state then
-		local var_8_0 = arg_8_0._join_lobby_data.join_method or arg_8_0.search_config and arg_8_0.search_config.join_method
-		local var_8_1 = {
-			lobby_client = arg_8_0.lobby_client,
-			join_method = var_8_0
+MatchmakingStateJoinGame.get_transition = function (self)
+	-- function 8
+	if not self._join_lobby_data and not self._next_transition_state then
+		local join_method = self._join_lobby_data.join_method
+
+		if not join_method then
+			join_method = self.search_config
+			join_method = not join_method and self.search_config.join_method
+		end
+
+		local tbl = {
+			lobby_client = self.lobby_client,
+			join_method = join_method
 		}
 
-		return arg_8_0._next_transition_state, var_8_1
+		return self._next_transition_state, tbl
 	end
 end
 
-function MatchmakingStateJoinGame._spawn_join_popup(arg_9_0, arg_9_1, arg_9_2)
-	if Managers.popup:has_popup() then
-		arg_9_0:_update_popup_timeout(arg_9_1, arg_9_2)
+MatchmakingStateJoinGame._spawn_join_popup = function (self, arg_9_1, arg_9_2)
+	-- function 9
+	if not Managers.popup:has_popup() then
+		self:_update_popup_timeout(arg_9_1, arg_9_2)
 
 		return
 	end
 
-	local var_9_0 = arg_9_0.state_context
-	local var_9_1 = Network.peer_id()
-	local var_9_2 = Managers.player:player_from_peer_id(var_9_1)
-	local var_9_3 = var_9_2:profile_index()
-	local var_9_4 = var_9_2:career_index()
-	local var_9_5 = MatchmakingSettings.JOIN_LOBBY_TIME_UNTIL_AUTO_CANCEL
-	local var_9_6 = arg_9_0.state_context.join_by_lobby_browser
-	local var_9_7 = arg_9_0.lobby_client:lobby_data("difficulty")
+	local state_context = self.state_context
+	local peer_id = Network.peer_id()
+	local player_from_peer_id = Managers.player:player_from_peer_id(peer_id)
+	local profile_index = player_from_peer_id:profile_index()
+	local career_index = player_from_peer_id:career_index()
+	local JOIN_LOBBY_TIME_UNTIL_AUTO_CANCEL = MatchmakingSettings.JOIN_LOBBY_TIME_UNTIL_AUTO_CANCEL
+	local join_by_lobby_browser = self.state_context.join_by_lobby_browser
+	local lobby_data = self.lobby_client:lobby_data("difficulty")
 	local var_9_8
 
-	if arg_9_0._denied_reason == "profile_locked" then
-		var_9_8 = var_9_3
+	if self._denied_reason == "profile_locked" then
+		var_9_8 = profile_index
 	end
 
-	Managers.ui:open_popup("profile_picker", var_9_3, var_9_4, var_9_5, var_9_6, var_9_7, arg_9_0.lobby_client, arg_9_0._reserved_party_id, var_9_8)
+	Managers.ui:open_popup("profile_picker", profile_index, career_index, JOIN_LOBBY_TIME_UNTIL_AUTO_CANCEL, join_by_lobby_browser, lobby_data, self.lobby_client, self._reserved_party_id, var_9_8)
 
-	arg_9_0._profile_picker_shown = true
-	arg_9_0._hero_popup_at_t = Managers.time:time("game")
-	arg_9_0._show_popup = false
-	arg_9_0._popup_auto_cancel_time = nil
+	self._profile_picker_shown = true
+	self._hero_popup_at_t = Managers.time:time("game")
+	self._show_popup = false
+	self._popup_auto_cancel_time = nil
 end
 
-function MatchmakingStateJoinGame._update_popup_timeout(arg_10_0, arg_10_1, arg_10_2)
-	arg_10_0._popup_auto_cancel_time = arg_10_0._popup_auto_cancel_time or arg_10_2 + MatchmakingSettings.JOIN_LOBBY_TIME_UNTIL_AUTO_CANCEL
+MatchmakingStateJoinGame._update_popup_timeout = function (self, arg_10_1, arg_10_2)
+	-- function 10
+	local _popup_auto_cancel_time = self._popup_auto_cancel_time
 
-	if arg_10_2 > arg_10_0._popup_auto_cancel_time then
-		local var_10_0 = "matchmaking_status_character_select_timed_out"
+	_popup_auto_cancel_time = _popup_auto_cancel_time or arg_10_2 + MatchmakingSettings.JOIN_LOBBY_TIME_UNTIL_AUTO_CANCEL
+	self._popup_auto_cancel_time = _popup_auto_cancel_time
 
-		arg_10_0._matchmaking_manager:send_system_chat_message(var_10_0)
-		arg_10_0._matchmaking_manager:cancel_matchmaking()
+	if arg_10_2 > self._popup_auto_cancel_time then
+		local str = "matchmaking_status_character_select_timed_out"
+
+		self._matchmaking_manager:send_system_chat_message(str)
+		self._matchmaking_manager:cancel_matchmaking()
 	end
 end
 
-function MatchmakingStateJoinGame._request_profile_from_host(arg_11_0, arg_11_1, arg_11_2)
-	local var_11_0 = arg_11_0.lobby_client
-	local var_11_1 = var_11_0:lobby_host()
+MatchmakingStateJoinGame._request_profile_from_host = function (self, arg_11_1, arg_11_2)
+	-- function 11
+	local lobby_client = self.lobby_client
+	local lobby_host = lobby_client:lobby_host()
 
-	arg_11_0._matchmaking_manager.selected_profile_index = arg_11_1
+	self._matchmaking_manager.selected_profile_index = arg_11_1
 
-	RPC.rpc_matchmaking_request_profile(PEER_ID_TO_CHANNEL[var_11_1], arg_11_1, arg_11_2)
+	RPC.rpc_matchmaking_request_profile(PEER_ID_TO_CHANNEL[lobby_host], arg_11_1, arg_11_2)
 
-	local var_11_2 = var_11_1
+	local var_11_2 = lobby_host
 
-	if rawget(_G, "Steam") and GameSettingsDevelopment.network_mode == "steam" then
-		var_11_2 = Steam.user_name(var_11_1)
+	if not (not rawget(_G, "Steam") and GameSettingsDevelopment.network_mode ~= "steam") then
+		var_11_2 = Steam.user_name(lobby_host)
 	end
 
-	arg_11_0._matchmaking_manager.debug.text = "requesting_profile"
-	arg_11_0._matchmaking_manager.debug.state = "hosted by: " .. (var_11_2 or "unknown")
-	arg_11_0._matchmaking_manager.debug.level = var_11_0:lobby_data("selected_mission_id")
+	self._matchmaking_manager.debug.text = "requesting_profile"
+	self._matchmaking_manager.debug.state = "hosted by: " .. (var_11_2 or "unknown")
+	self._matchmaking_manager.debug.level = lobby_client:lobby_data("selected_mission_id")
 end
 
-function MatchmakingStateJoinGame.rpc_matchmaking_request_profile_reply(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+MatchmakingStateJoinGame.rpc_matchmaking_request_profile_reply = function (self, arg_12_1, arg_12_2, arg_12_3)
+	-- function 12
 	local var_12_0 = NetworkLookup.request_profile_replies[arg_12_3]
-	local var_12_1 = arg_12_0._selected_hero_name
-	local var_12_2 = FindProfileIndex(var_12_1)
+	local _selected_hero_name = self._selected_hero_name
+	local var_12_2 = FindProfileIndex(_selected_hero_name)
 
-	arg_12_0._denied_reason = nil
+	self._denied_reason = nil
 
 	fassert(arg_12_2 == var_12_2 or var_12_0 == "previous_profile_accepted", "wrong profile in rpc_matchmaking_request_profile_reply")
 
 	if var_12_0 == "profile_accepted" then
-		arg_12_0._matchmaking_manager.debug.text = var_12_0
-		arg_12_0._denied_reason = var_12_0
+		self._matchmaking_manager.debug.text = var_12_0
+		self._denied_reason = var_12_0
 
-		if arg_12_0._selected_career_name then
-			local var_12_3 = Managers.backend:get_interface("hero_attributes")
-			local var_12_4 = career_index_from_name(var_12_2, arg_12_0._selected_career_name)
+		if not self._selected_career_name then
+			local get_interface = Managers.backend:get_interface("hero_attributes")
+			local var_12_4 = career_index_from_name(var_12_2, self._selected_career_name)
 
-			var_12_3:set(var_12_1, "career", var_12_4)
+			get_interface:set(_selected_hero_name, "career", var_12_4)
 		end
 
-		arg_12_0:_set_state_to_start_lobby()
+		self:_set_state_to_start_lobby()
 	elseif var_12_0 == "previous_profile_accepted" then
-		arg_12_0._matchmaking_manager.debug.text = var_12_0
-		arg_12_0._denied_reason = var_12_0
+		self._matchmaking_manager.debug.text = var_12_0
+		self._denied_reason = var_12_0
 
-		arg_12_0:_set_state_to_start_lobby()
+		self:_set_state_to_start_lobby()
 	elseif var_12_0 == "profile_declined" then
-		arg_12_0._denied_reason = var_12_0
-		arg_12_0._matchmaking_manager.debug.text = var_12_0
-		arg_12_0._show_popup = true
+		self._denied_reason = var_12_0
+		self._matchmaking_manager.debug.text = var_12_0
+		self._show_popup = true
 	elseif var_12_0 == "profile_locked" then
-		arg_12_0._denied_reason = var_12_0
-		arg_12_0._matchmaking_manager.debug.text = var_12_0
-		arg_12_0._show_popup = true
+		self._denied_reason = var_12_0
+		self._matchmaking_manager.debug.text = var_12_0
+		self._show_popup = true
 	end
 end
 
-function MatchmakingStateJoinGame._current_hero(arg_13_0)
-	local var_13_0 = Network.peer_id()
-	local var_13_1 = Managers.player:player_from_peer_id(var_13_0)
-	local var_13_2 = var_13_1:profile_index()
-	local var_13_3 = var_13_1:career_index()
-	local var_13_4 = SPProfiles[var_13_2].display_name
+MatchmakingStateJoinGame._current_hero = function (arg_13_0)
+	-- function 13
+	local peer_id = Network.peer_id()
+	local player_from_peer_id = Managers.player:player_from_peer_id(peer_id)
+	local profile_index = player_from_peer_id:profile_index()
+	local career_index = player_from_peer_id:career_index()
+	local display_name = SPProfiles[profile_index].display_name
 
-	return var_13_2, var_13_4, var_13_3
+	return profile_index, display_name, career_index
 end
 
-function MatchmakingStateJoinGame._level_started(arg_14_0)
-	local var_14_0 = arg_14_0.lobby_client
-	local var_14_1 = var_14_0:lobby_data("selected_mission_id")
-	local var_14_2 = var_14_0:lobby_data("mission_id")
+MatchmakingStateJoinGame._level_started = function (self)
+	-- function 14
+	local lobby_client = self.lobby_client
+	local lobby_data = lobby_client:lobby_data("selected_mission_id")
+	local lobby_data_2 = lobby_client:lobby_data("mission_id")
 
-	return var_14_1 == var_14_2, var_14_2
+	return lobby_data == lobby_data_2, lobby_data_2
 end
 
-function MatchmakingStateJoinGame.loading_context(arg_15_0)
-	return arg_15_0._matchmaking_loading_context
+MatchmakingStateJoinGame.loading_context = function (self)
+	-- function 15
+	return self._matchmaking_loading_context
 end
 
-function MatchmakingStateJoinGame.rpc_matchmaking_join_game(arg_16_0, arg_16_1)
+MatchmakingStateJoinGame.rpc_matchmaking_join_game = function (self, arg_16_1)
+	-- function 16
 	mm_printf_force("Transition from join due to rpc_matchmaking_join_game")
-	arg_16_0:_set_state_to_start_lobby()
+	self:_set_state_to_start_lobby()
 	Managers.mechanism:network_handler():get_match_handler():send_rpc_down("rpc_matchmaking_join_game")
 end
 
-function MatchmakingStateJoinGame._sync_backend_id(arg_17_0)
-	local var_17_0 = arg_17_0.lobby_client:lobby_host()
-	local var_17_1 = Managers.backend:player_id()
+MatchmakingStateJoinGame._sync_backend_id = function (self)
+	-- function 17
+	local lobby_host = self.lobby_client:lobby_host()
+	local player_id = Managers.backend:player_id()
 
-	if var_17_1 and arg_17_0._network_transmit then
-		arg_17_0._network_transmit:send_rpc("rpc_set_peer_backend_id", var_17_0, var_17_1)
+	if not player_id and not self._network_transmit then
+		self._network_transmit:send_rpc("rpc_set_peer_backend_id", lobby_host, player_id)
 	end
 end
 
-function MatchmakingStateJoinGame.active_lobby(arg_18_0)
-	return arg_18_0.lobby_client
+MatchmakingStateJoinGame.active_lobby = function (self)
+	-- function 18
+	return self.lobby_client
 end
 
-function MatchmakingStateJoinGame._set_state_to_start_lobby(arg_19_0)
-	arg_19_0._matchmaking_manager:send_system_chat_message("matchmaking_status_joining_game")
+MatchmakingStateJoinGame._set_state_to_start_lobby = function (self)
+	-- function 19
+	self._matchmaking_manager:send_system_chat_message("matchmaking_status_joining_game")
 
-	arg_19_0._matchmaking_manager.debug.text = "starting_game"
-	arg_19_0._next_transition_state = "start_lobby"
+	self._matchmaking_manager.debug.text = "starting_game"
+	self._next_transition_state = "start_lobby"
 end

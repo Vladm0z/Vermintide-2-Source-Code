@@ -2,140 +2,154 @@
 
 require("scripts/managers/backend_playfab/backend_interface_crafting_base")
 
-local var_0_0 = require("PlayFab.PlayFabClientApi")
+local PlayFabClientApi = require("PlayFab.PlayFabClientApi")
 
 BackendInterfaceCraftingPlayfab = class(BackendInterfaceCraftingPlayfab, BackendInterfaceCraftingBase)
 
-function BackendInterfaceCraftingPlayfab.init(arg_1_0, arg_1_1)
-	BackendInterfaceCraftingPlayfab.super.init(arg_1_0)
+BackendInterfaceCraftingPlayfab.init = function (self, arg_1_1)
+	-- function 1
+	BackendInterfaceCraftingPlayfab.super.init(self)
 
-	arg_1_0.is_local = false
-	arg_1_0._backend_mirror = arg_1_1
-	arg_1_0._last_id = 0
-	arg_1_0._craft_requests = {}
+	self.is_local = false
+	self._backend_mirror = arg_1_1
+	self._last_id = 0
+	self._craft_requests = {}
 end
 
-function BackendInterfaceCraftingPlayfab.ready(arg_2_0)
+BackendInterfaceCraftingPlayfab.ready = function (arg_2_0)
+	-- function 2
 	return true
 end
 
-function BackendInterfaceCraftingPlayfab.update(arg_3_0, arg_3_1)
+BackendInterfaceCraftingPlayfab.update = function (arg_3_0, arg_3_1)
+	-- function 3
 	return
 end
 
-function BackendInterfaceCraftingPlayfab._new_id(arg_4_0)
-	arg_4_0._last_id = arg_4_0._last_id + 1
+BackendInterfaceCraftingPlayfab._new_id = function (self)
+	-- function 4
+	self._last_id = self._last_id + 1
 
-	return arg_4_0._last_id
+	return self._last_id
 end
 
-function BackendInterfaceCraftingPlayfab.craft(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
-	local var_5_0, var_5_1 = arg_5_0:_get_valid_recipe(arg_5_2, arg_5_3)
-	local var_5_2 = CareerSettings[arg_5_1].profile_name
+BackendInterfaceCraftingPlayfab.craft = function (self, arg_5_1, arg_5_2, arg_5_3)
+	-- function 5
+	local _get_valid_recipe, var_5_1 = self:_get_valid_recipe(arg_5_2, arg_5_3)
+	local profile_name = CareerSettings[arg_5_1].profile_name
 
-	if var_5_0 and var_5_0.result_function_playfab then
-		local var_5_3 = arg_5_0:_new_id()
-		local var_5_4 = {
-			FunctionName = var_5_0.result_function_playfab,
+	if not _get_valid_recipe and not _get_valid_recipe.result_function_playfab then
+		local _new_id = self:_new_id()
+		local tbl = {
+			FunctionName = _get_valid_recipe.result_function_playfab,
 			FunctionParameter = {
 				item_backend_ids_and_amounts = var_5_1,
-				hero_name = var_5_2
+				hero_name = profile_name
 			}
 		}
-		local var_5_5 = callback(arg_5_0, "craft_request_cb", var_5_3)
+		local var_5_5 = callback(self, "craft_request_cb", _new_id)
 
-		arg_5_0._backend_mirror:request_queue():enqueue(var_5_4, var_5_5, true)
+		self._backend_mirror:request_queue():enqueue(tbl, var_5_5, true)
 
-		return var_5_3, var_5_0
+		return _new_id, _get_valid_recipe
 	end
 
 	return nil
 end
 
-function BackendInterfaceCraftingPlayfab.craft_request_cb(arg_6_0, arg_6_1, arg_6_2)
-	local var_6_0 = Managers.backend
-	local var_6_1 = var_6_0:get_interface("items")
-	local var_6_2 = arg_6_0._backend_mirror
-	local var_6_3 = arg_6_2.FunctionResult
-	local var_6_4 = var_6_3.items
-	local var_6_5 = var_6_3.consumed_items
-	local var_6_6 = var_6_3.modified_items
-	local var_6_7 = var_6_3.unlocked_weapon_skins
-	local var_6_8 = {}
+BackendInterfaceCraftingPlayfab.craft_request_cb = function (self, arg_6_1, arg_6_2)
+	-- function 6
+	local backend = Managers.backend
+	local get_interface = backend:get_interface("items")
+	local _backend_mirror = self._backend_mirror
+	local FunctionResult = arg_6_2.FunctionResult
+	local items = FunctionResult.items
+	local consumed_items = FunctionResult.consumed_items
+	local modified_items = FunctionResult.modified_items
+	local unlocked_weapon_skins = FunctionResult.unlocked_weapon_skins
+	local tbl = {}
 
-	if var_6_4 then
-		for iter_6_0 = 1, #var_6_4 do
-			local var_6_9 = var_6_4[iter_6_0]
-			local var_6_10 = var_6_9.ItemInstanceId
-			local var_6_11 = var_6_9.UsesIncrementedBy or 1
+	if not items then
+		for i = 1, #items do
+			local var_6_9 = items[i]
+			local ItemInstanceId = var_6_9.ItemInstanceId
+			local UsesIncrementedBy = var_6_9.UsesIncrementedBy
 
-			var_6_2:add_item(var_6_10, var_6_9)
+			UsesIncrementedBy = UsesIncrementedBy or 1
 
-			var_6_8[iter_6_0] = {
-				var_6_10,
-				[3] = var_6_11
+			_backend_mirror:add_item(ItemInstanceId, var_6_9)
+
+			tbl[i] = {
+				ItemInstanceId,
+				[3] = UsesIncrementedBy
 			}
 		end
 	end
 
-	if var_6_5 then
-		for iter_6_1 = 1, #var_6_5 do
-			local var_6_12 = var_6_5[iter_6_1]
-			local var_6_13 = var_6_12.ItemInstanceId
-			local var_6_14 = var_6_12.RemainingUses
+	if not consumed_items then
+		for j = 1, #consumed_items do
+			local var_6_12 = consumed_items[j]
+			local ItemInstanceId_2 = var_6_12.ItemInstanceId
+			local RemainingUses = var_6_12.RemainingUses
 
-			if var_6_14 > 0 then
-				var_6_2:update_item_field(var_6_13, "RemainingUses", var_6_14)
+			if RemainingUses > 0 then
+				_backend_mirror:update_item_field(ItemInstanceId_2, "RemainingUses", RemainingUses)
 			else
-				var_6_2:remove_item(var_6_13)
+				_backend_mirror:remove_item(ItemInstanceId_2)
 			end
 		end
 	end
 
-	if var_6_6 then
-		for iter_6_2 = 1, #var_6_6 do
-			local var_6_15 = var_6_6[iter_6_2]
-			local var_6_16 = var_6_15.ItemInstanceId
-			local var_6_17 = var_6_15.UsesIncrementedBy or 1
+	if not modified_items then
+		for k = 1, #modified_items do
+			local var_6_15 = modified_items[k]
+			local ItemInstanceId_3 = var_6_15.ItemInstanceId
+			local UsesIncrementedBy_2 = var_6_15.UsesIncrementedBy
 
-			var_6_2:update_item(var_6_16, var_6_15)
+			UsesIncrementedBy_2 = UsesIncrementedBy_2 or 1
 
-			var_6_8[iter_6_2] = {
-				var_6_16,
-				[3] = var_6_17
+			_backend_mirror:update_item(ItemInstanceId_3, var_6_15)
+
+			tbl[k] = {
+				ItemInstanceId_3,
+				[3] = UsesIncrementedBy_2
 			}
 		end
 	end
 
-	if var_6_7 then
-		for iter_6_3 = 1, #var_6_7 do
-			local var_6_18 = var_6_7[iter_6_3]
+	if not unlocked_weapon_skins then
+		for l = 1, #unlocked_weapon_skins do
+			local var_6_18 = unlocked_weapon_skins[l]
 
-			var_6_2:add_unlocked_weapon_skin(var_6_18)
+			_backend_mirror:add_unlocked_weapon_skin(var_6_18)
 		end
 	end
 
-	var_6_0:dirtify_interfaces()
+	backend:dirtify_interfaces()
 
-	arg_6_0._craft_requests[arg_6_1] = var_6_8
+	self._craft_requests[arg_6_1] = tbl
 end
 
-function BackendInterfaceCraftingPlayfab.is_craft_complete(arg_7_0, arg_7_1)
-	if arg_7_0._craft_requests[arg_7_1] then
+BackendInterfaceCraftingPlayfab.is_craft_complete = function (self, arg_7_1)
+	-- function 7
+	if not self._craft_requests[arg_7_1] then
 		return true
 	end
 
 	return false
 end
 
-function BackendInterfaceCraftingPlayfab.get_craft_result(arg_8_0, arg_8_1)
-	return arg_8_0._craft_requests[arg_8_1]
+BackendInterfaceCraftingPlayfab.get_craft_result = function (self, arg_8_1)
+	-- function 8
+	return self._craft_requests[arg_8_1]
 end
 
-function BackendInterfaceCraftingPlayfab.get_unlocked_weapon_skins(arg_9_0)
-	return arg_9_0._backend_mirror:get_unlocked_weapon_skins()
+BackendInterfaceCraftingPlayfab.get_unlocked_weapon_skins = function (self)
+	-- function 9
+	return self._backend_mirror:get_unlocked_weapon_skins()
 end
 
-function BackendInterfaceCraftingPlayfab.get_unlocked_cosmetics(arg_10_0)
-	return arg_10_0._backend_mirror:get_unlocked_cosmetics()
+BackendInterfaceCraftingPlayfab.get_unlocked_cosmetics = function (self)
+	-- function 10
+	return self._backend_mirror:get_unlocked_cosmetics()
 end

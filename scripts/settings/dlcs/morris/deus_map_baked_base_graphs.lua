@@ -1,14 +1,14 @@
 -- chunkname: @scripts/settings/dlcs/morris/deus_map_baked_base_graphs.lua
 
-local var_0_0 = require("scripts/settings/dlcs/morris/deus_map_baked_base_graphs_journey_ruin")
-local var_0_1 = require("scripts/settings/dlcs/morris/deus_map_baked_base_graphs_journey_cave")
-local var_0_2 = require("scripts/settings/dlcs/morris/deus_map_baked_base_graphs_journey_ice")
-local var_0_3 = require("scripts/settings/dlcs/morris/deus_map_baked_base_graphs_journey_citadel")
+local scripts_settings_dlcs_morris_deus_map_baked_base_graphs_journey_ruin = require("scripts/settings/dlcs/morris/deus_map_baked_base_graphs_journey_ruin")
+local scripts_settings_dlcs_morris_deus_map_baked_base_graphs_journey_cave = require("scripts/settings/dlcs/morris/deus_map_baked_base_graphs_journey_cave")
+local scripts_settings_dlcs_morris_deus_map_baked_base_graphs_journey_ice = require("scripts/settings/dlcs/morris/deus_map_baked_base_graphs_journey_ice")
+local scripts_settings_dlcs_morris_deus_map_baked_base_graphs_journey_citadel = require("scripts/settings/dlcs/morris/deus_map_baked_base_graphs_journey_citadel")
 
 return {
-	default = var_0_0,
-	journey_ruin = var_0_0,
-	journey_cave = var_0_1,
-	journey_ice = var_0_2,
-	journey_citadel = var_0_3
+	default = scripts_settings_dlcs_morris_deus_map_baked_base_graphs_journey_ruin,
+	journey_ruin = scripts_settings_dlcs_morris_deus_map_baked_base_graphs_journey_ruin,
+	journey_cave = scripts_settings_dlcs_morris_deus_map_baked_base_graphs_journey_cave,
+	journey_ice = scripts_settings_dlcs_morris_deus_map_baked_base_graphs_journey_ice,
+	journey_citadel = scripts_settings_dlcs_morris_deus_map_baked_base_graphs_journey_citadel
 }

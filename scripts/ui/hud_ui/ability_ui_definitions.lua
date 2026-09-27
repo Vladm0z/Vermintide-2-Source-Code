@@ -1,9 +1,9 @@
 -- chunkname: @scripts/ui/hud_ui/ability_ui_definitions.lua
 
-local var_0_0 = 1920
-local var_0_1 = 1080
-local var_0_2 = true
-local var_0_3 = {
+local num = 1920
+local num_2 = 1080
+local flag = true
+local tbl = {
 	screen = {
 		scale = "hud_scale_fit",
 		position = {
@@ -12,8 +12,8 @@ local var_0_3 = {
 			UILayer.hud
 		},
 		size = {
-			var_0_0,
-			var_0_1
+			num,
+			num_2
 		}
 	},
 	ability_root = {
@@ -45,7 +45,7 @@ local var_0_3 = {
 		}
 	}
 }
-local var_0_4 = {
+local tbl_2 = {
 	scenegraph_id = "ability_root",
 	element = {
 		passes = {
@@ -54,9 +54,10 @@ local var_0_4 = {
 				style_id = "ability_effect_right",
 				texture_id = "texture_id",
 				content_id = "ability_effect",
-				retained_mode = var_0_2,
-				content_check_function = function(arg_1_0)
-					return arg_1_0.parent.can_use
+				retained_mode = flag,
+				content_check_function = function (self)
+					-- function 1
+					return self.parent.can_use
 				end
 			},
 			{
@@ -64,44 +65,49 @@ local var_0_4 = {
 				style_id = "ability_effect_top_right",
 				texture_id = "texture_id",
 				content_id = "ability_effect_top",
-				retained_mode = var_0_2,
-				content_check_function = function(arg_2_0)
-					return arg_2_0.parent.can_use
+				retained_mode = flag,
+				content_check_function = function (self)
+					-- function 2
+					return self.parent.can_use
 				end
 			},
 			{
 				style_id = "ability_effect_left",
 				pass_type = "texture_uv",
 				content_id = "ability_effect",
-				retained_mode = var_0_2,
-				content_check_function = function(arg_3_0)
-					return arg_3_0.parent.can_use
+				retained_mode = flag,
+				content_check_function = function (self)
+					-- function 3
+					return self.parent.can_use
 				end
 			},
 			{
 				style_id = "ability_effect_top_left",
 				pass_type = "texture_uv",
 				content_id = "ability_effect_top",
-				retained_mode = var_0_2,
-				content_check_function = function(arg_4_0)
-					return arg_4_0.parent.can_use
+				retained_mode = flag,
+				content_check_function = function (self)
+					-- function 4
+					return self.parent.can_use
 				end
 			},
 			{
 				pass_type = "texture",
 				style_id = "ability_bar_highlight",
 				texture_id = "ability_bar_highlight",
-				retained_mode = var_0_2,
-				content_check_function = function(arg_5_0)
-					return not arg_5_0.on_cooldown
+				retained_mode = flag,
+				content_check_function = function (self)
+					-- function 5
+					return not self.on_cooldown
 				end
 			},
 			{
 				style_id = "input_text",
 				pass_type = "text",
 				text_id = "input_text",
-				retained_mode = var_0_2,
-				content_check_function = function(arg_6_0, arg_6_1)
+				retained_mode = flag,
+				content_check_function = function (arg_6_0, arg_6_1)
+					-- function 6
 					return not Managers.input:is_device_active("gamepad")
 				end
 			},
@@ -109,8 +115,9 @@ local var_0_4 = {
 				style_id = "input_text_shadow",
 				pass_type = "text",
 				text_id = "input_text",
-				retained_mode = var_0_2,
-				content_check_function = function(arg_7_0, arg_7_1)
+				retained_mode = flag,
+				content_check_function = function (arg_7_0, arg_7_1)
+					-- function 7
 					return not Managers.input:is_device_active("gamepad")
 				end
 			},
@@ -118,8 +125,9 @@ local var_0_4 = {
 				style_id = "input_text_gamepad",
 				pass_type = "text",
 				text_id = "input_text_gamepad",
-				retained_mode = var_0_2,
-				content_check_function = function(arg_8_0, arg_8_1)
+				retained_mode = flag,
+				content_check_function = function (arg_8_0, arg_8_1)
+					-- function 8
 					return Managers.input:is_device_active("gamepad")
 				end
 			},
@@ -127,18 +135,28 @@ local var_0_4 = {
 				style_id = "ability_cooldown",
 				pass_type = "text",
 				text_id = "ability_cooldown",
-				retained_mode = var_0_2,
-				content_check_function = function(arg_9_0)
-					return Application.user_setting("numeric_ui") and not arg_9_0.can_use_ability
+				retained_mode = flag,
+				content_check_function = function (self)
+					-- function 9
+					local user_setting = Application.user_setting("numeric_ui")
+
+					user_setting = not user_setting and not self.can_use_ability
+
+					return user_setting
 				end
 			},
 			{
 				style_id = "ability_cooldown_shadow",
 				pass_type = "text",
 				text_id = "ability_cooldown",
-				retained_mode = var_0_2,
-				content_check_function = function(arg_10_0)
-					return Application.user_setting("numeric_ui") and not arg_10_0.can_use_ability
+				retained_mode = flag,
+				content_check_function = function (self)
+					-- function 10
+					local user_setting = Application.user_setting("numeric_ui")
+
+					user_setting = not user_setting and not self.can_use_ability
+
+					return user_setting
 				end
 			}
 		}
@@ -367,12 +385,12 @@ local var_0_4 = {
 		0
 	}
 }
-local var_0_5 = {
-	ability = var_0_4,
+local tbl_3 = {
+	ability = tbl_2,
 	thornsister_passive = thornsister_passive_widget_definition
 }
 
 return {
-	scenegraph_definition = var_0_3,
-	widget_definitions = var_0_5
+	scenegraph_definition = tbl,
+	widget_definitions = tbl_3
 }

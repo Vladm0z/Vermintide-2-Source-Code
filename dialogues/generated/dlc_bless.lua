@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/dlc_bless.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pbw_bless_conversation_eight_01",

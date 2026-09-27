@@ -1,8 +1,8 @@
 -- chunkname: @scripts/ui/social_wheel/social_wheel_ui_definitions.lua
 
-local var_0_0 = 1920
-local var_0_1 = 1080
-local var_0_2 = {
+local num = 1920
+local num_2 = 1080
+local tbl = {
 	root = {
 		is_root = true,
 		position = {
@@ -11,8 +11,8 @@ local var_0_2 = {
 			UILayer.hud
 		},
 		size = {
-			var_0_0,
-			var_0_1
+			num,
+			num_2
 		}
 	},
 	screen = {
@@ -23,8 +23,8 @@ local var_0_2 = {
 			UILayer.hud
 		},
 		size = {
-			var_0_0,
-			var_0_1
+			num,
+			num_2
 		}
 	},
 	root_screen = {
@@ -35,8 +35,8 @@ local var_0_2 = {
 			UILayer.hud
 		},
 		size = {
-			var_0_0,
-			var_0_1
+			num,
+			num_2
 		}
 	},
 	pivot_console = {
@@ -112,50 +112,65 @@ local var_0_2 = {
 }
 
 if not IS_WINDOWS then
-	var_0_2.screen.scale = "hud_fit"
+	tbl.screen.scale = "hud_fit"
 end
 
-local function var_0_3(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
-	local var_1_0 = arg_1_2.size
+local function fn(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	-- function 1
+	local size = arg_1_2.size
 	local var_1_1 = Vector3(math.cos(arg_1_1), math.sin(arg_1_1), 0)
-	local var_1_2 = arg_1_4 and #arg_1_2[arg_1_4] or #arg_1_2
-	local var_1_3 = arg_1_1 + 2 * math.pi * (1 / var_1_2) * 0.5
-	local var_1_4 = Vector3(math.cos(var_1_3), math.sin(var_1_3), 0)
-	local var_1_5 = 1 / var_1_2 * 360 / 90 * arg_1_2.wedge_adjustment
-	local var_1_6 = 3
-	local var_1_7 = true
+	local count
 
-	if arg_1_0.localize == false then
-		var_1_7 = false
+	if not arg_1_4 then
+		count = #arg_1_2[arg_1_4]
+
+		if not count then
+			-- Nothing
+		end
 	end
 
-	local var_1_8 = var_1_0[1] / var_1_0[2]
+	count = #arg_1_2
 
-	return {
+	::label_1_0::
+
+	local num = arg_1_1 + 2 * math.pi * (1 / count) * 0.5
+	local var_1_4 = Vector3(math.cos(num), math.sin(num), 0)
+	local num_2 = 1 / count * 360 / 90 * arg_1_2.wedge_adjustment
+	local num_3 = 3
+	local flag = true
+
+	if self.localize == false then
+		flag = false
+	end
+
+	local num_4 = size[1] / size[2]
+	local tbl = {
 		element = {
 			passes = {
 				{
 					style_id = "divider",
 					pass_type = "rotated_texture",
 					texture_id = "divider_id",
-					content_change_function = function(arg_2_0, arg_2_1)
-						if arg_2_0.activated then
+					content_change_function = function (self, arg_2_1)
+						-- function 2
+						if not self.activated then
 							arg_2_1.color[1] = 0
 						else
-							arg_2_1.texture_size[2] = arg_2_1.base_texture_size[2] * arg_2_0.size_multiplier
-							arg_2_1.pivot[2] = arg_2_1.base_texture_size[2] * arg_2_0.size_multiplier * 0.5
-							arg_2_1.color[1] = math.clamp(255 * arg_2_0.size_multiplier, 0, 255)
+							arg_2_1.texture_size[2] = arg_2_1.base_texture_size[2] * self.size_multiplier
+							arg_2_1.pivot[2] = arg_2_1.base_texture_size[2] * self.size_multiplier * 0.5
+							arg_2_1.color[1] = math.clamp(255 * self.size_multiplier, 0, 255)
 						end
 
-						local var_2_0 = arg_2_0.settings
-						local var_2_1 = var_2_0.is_valid_func
+						local settings = self.settings
+						local is_valid_func = settings.is_valid_func
 						local var_2_2 = arg_1_3()
 
-						if var_2_1 and var_2_2 then
-							arg_2_0.is_valid = var_2_1(var_2_0.data, var_2_2, arg_2_0, arg_2_1)
+						if not is_valid_func and not var_2_2 then
+							self.is_valid = is_valid_func(settings.data, var_2_2, self, arg_2_1)
 						end
 					end,
-					content_check_function = function(arg_3_0, arg_3_1)
+					content_check_function = function (arg_3_0, arg_3_1)
+						-- function 3
 						return not arg_1_2.individual_bg
 					end
 				},
@@ -163,28 +178,42 @@ local function var_0_3(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 					pass_type = "rotated_texture",
 					style_id = "fade",
 					texture_id = "fade_texture_id",
-					content_check_function = function(arg_4_0, arg_4_1)
-						return arg_4_0.selected and arg_4_0.is_valid and not arg_1_2.individual_bg
+					content_check_function = function (self, arg_4_1)
+						-- function 4
+						local selected = self.selected
+
+						if not selected then
+							selected = self.is_valid
+							selected = not selected and not arg_1_2.individual_bg
+						end
+
+						return selected
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "icon_bg",
 					texture_id = "icon_bg_id",
-					content_check_function = function(arg_5_0, arg_5_1)
-						return arg_1_2.individual_bg and arg_5_0.is_valid
+					content_check_function = function (self, arg_5_1)
+						-- function 5
+						local individual_bg = arg_1_2.individual_bg
+
+						individual_bg = not individual_bg and self.is_valid
+
+						return individual_bg
 					end
 				},
 				{
 					style_id = "icon",
 					texture_id = "icon_id",
 					pass_type = "texture",
-					content_change_function = function(arg_6_0, arg_6_1)
-						if arg_6_0.activated then
+					content_change_function = function (self, arg_6_1)
+						-- function 6
+						if not self.activated then
 							arg_6_1.color[2] = arg_6_1.activated_color[2]
 							arg_6_1.color[3] = arg_6_1.activated_color[3]
 							arg_6_1.color[4] = arg_6_1.activated_color[4]
-						elseif arg_6_0.selected and arg_6_0.is_valid then
+						elseif not self.selected and not self.is_valid then
 							arg_6_1.color[1] = 255
 							arg_6_1.color[2] = 255
 							arg_6_1.color[3] = 255
@@ -201,9 +230,10 @@ local function var_0_3(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 					style_id = "icon_shadow",
 					texture_id = "icon_id",
 					pass_type = "texture",
-					content_change_function = function(arg_7_0, arg_7_1)
-						if not arg_7_0.activated then
-							if arg_7_0.selected and arg_7_0.is_valid then
+					content_change_function = function (self, arg_7_1)
+						-- function 7
+						if not self.activated then
+							if not self.selected and not self.is_valid then
 								arg_7_1.color[1] = 255
 							else
 								arg_7_1.color[1] = 96
@@ -215,23 +245,30 @@ local function var_0_3(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 					pass_type = "texture",
 					style_id = "icon_unavailable",
 					texture_id = "icon_unavailable_id",
-					content_check_function = function(arg_8_0, arg_8_1)
-						return not arg_8_0.is_valid
+					content_check_function = function (self, arg_8_1)
+						-- function 8
+						return not self.is_valid
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "icon_glow",
 					texture_id = "icon_glow_id",
-					content_check_function = function(arg_9_0, arg_9_1)
-						return arg_9_0.selected and not arg_9_0.activated
+					content_check_function = function (self, arg_9_1)
+						-- function 9
+						local selected = self.selected
+
+						selected = not selected and not self.activated
+
+						return selected
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "bg_top_right",
 					texture_id = "fade_bg",
-					content_check_function = function(arg_10_0, arg_10_1)
+					content_check_function = function (arg_10_0, arg_10_1)
+						-- function 10
 						return not arg_1_2.individual_bg
 					end
 				},
@@ -239,325 +276,421 @@ local function var_0_3(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text_id",
-					content_check_function = function(arg_11_0, arg_11_1)
-						if arg_11_0.selected then
+					content_check_function = function (self, arg_11_1)
+						-- function 11
+						if not self.selected then
 							arg_11_1.text_color = arg_11_1.selected_color
 						else
 							arg_11_1.text_color = arg_11_1.base_color
 						end
 
-						return IS_WINDOWS or arg_1_0.disable_input_text
+						local IS_WINDOWS = IS_WINDOWS
+
+						IS_WINDOWS = IS_WINDOWS or self.disable_input_text
+
+						return IS_WINDOWS
 					end
 				},
 				{
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "text_id",
-					content_check_function = function(arg_12_0, arg_12_1)
-						if arg_12_0.selected then
+					content_check_function = function (self, arg_12_1)
+						-- function 12
+						if not self.selected then
 							arg_12_1.text_color = arg_12_1.selected_color
 						else
 							arg_12_1.text_color = arg_12_1.base_color
 						end
 
-						return IS_WINDOWS or arg_1_0.disable_input_text
+						local IS_WINDOWS = IS_WINDOWS
+
+						IS_WINDOWS = IS_WINDOWS or self.disable_input_text
+
+						return IS_WINDOWS
 					end
 				}
 			}
-		},
-		content = {
-			fade_texture_id = "radial_chat_wedge",
-			divider_id = "radial_chat_bg_line",
-			selected = false,
-			is_valid = true,
-			fade_bg = "radial_chat_bg",
-			icon_unavailable_id = "radial_chat_icon_unavailable",
-			size_multiplier = 0,
-			final_size_multiplier = 1,
-			icon_bg_id = "radial_chat_icon_bg",
-			icon_id = arg_1_0.icon or "radial_chat_icon_boss",
-			icon_glow_id = arg_1_0.icon and (arg_1_0.icon_glow or arg_1_0.icon .. "_glow") or "radial_chat_icon_boss_glow",
-			settings = arg_1_0,
-			category_settings = arg_1_2,
-			text_id = arg_1_0.text,
-			dir = Vector3Box(var_1_1),
-			final_offset = var_1_0
-		},
-		style = {
-			icon = {
-				vertical_alignment = "center",
-				horizontal_alignment = "center",
-				base_texture_size = arg_1_2.icon_size or {
-					128,
-					128
-				},
-				texture_size = arg_1_2.icon_size or {
-					128,
-					128
-				},
-				activated_color = Colors.get_color_table_with_alpha("font_title", 255),
-				color = Colors.get_color_table_with_alpha("white", 255),
-				offset = {
-					0,
-					0,
-					10
-				}
-			},
-			icon_shadow = {
-				vertical_alignment = "center",
-				horizontal_alignment = "center",
-				base_texture_size = arg_1_2.icon_size or {
-					128,
-					128
-				},
-				texture_size = arg_1_2.icon_size or {
-					128,
-					128
-				},
-				activated_color = Colors.get_color_table_with_alpha("black", 255),
-				color = Colors.get_color_table_with_alpha("black", 255),
-				offset = {
-					2,
-					-2,
-					9
-				}
-			},
-			icon_bg = {
-				vertical_alignment = "center",
-				horizontal_alignment = "center",
-				base_texture_size = arg_1_2.icon_size or {
-					128,
-					128
-				},
-				texture_size = arg_1_2.icon_size or {
-					128,
-					128
-				},
-				color = Colors.get_color_table_with_alpha("black", 125),
-				offset = {
-					0,
-					0,
-					8
-				}
-			},
-			icon_glow = {
-				vertical_alignment = "center",
-				horizontal_alignment = "center",
-				base_texture_size = arg_1_2.icon_size or {
-					128,
-					128
-				},
-				texture_size = arg_1_2.icon_size or {
-					128,
-					128
-				},
-				color = {
-					255,
-					232,
-					86,
-					14
-				},
-				offset = {
-					0,
-					0,
-					11
-				}
-			},
-			icon_unavailable = {
-				vertical_alignment = "center",
-				horizontal_alignment = "center",
-				base_texture_size = arg_1_2.icon_size or {
-					128,
-					128
-				},
-				texture_size = arg_1_2.icon_size or {
-					128,
-					128
-				},
-				color = {
-					255,
-					128,
-					60,
-					60
-				},
-				offset = {
-					0,
-					0,
-					12
-				}
-			},
-			divider = {
-				vertical_alignment = "center",
-				horizontal_alignment = "center",
-				base_texture_size = {
-					4,
-					250
-				},
-				texture_size = {
-					4,
-					250
-				},
-				pivot = {
-					2,
-					125
-				},
-				angle = 2 * math.pi - var_1_3 + math.pi * 0.5,
-				color = Colors.get_color_table_with_alpha("black", 255),
-				offset = {
-					-var_1_1[1] * var_1_0[1] + var_1_4[1] * 227,
-					-var_1_1[2] * var_1_0[2] + var_1_4[2] * 227,
-					1
-				}
-			},
-			fade = {
-				vertical_alignment = "center",
-				horizontal_alignment = "center",
-				texture_size = {
-					389 * var_1_5 * var_1_6,
-					195 * var_1_6
-				},
-				pivot = {
-					389 * var_1_5 * 0.5 * var_1_6,
-					97.5 * var_1_6
-				},
-				angle = 2 * math.pi - arg_1_1 + math.pi * 0.5,
-				color = Colors.get_color_table_with_alpha("white", 30),
-				offset = {
-					-var_1_1[1] * var_1_0[1] + var_1_1[1] * 195 * 0.5 * var_1_6,
-					-var_1_1[2] * var_1_0[2] + var_1_1[2] * 195 * 0.5 * var_1_6,
-					10
-				}
-			},
-			text = {
-				word_wrap = false,
-				font_size = 32,
-				pixel_perfect = true,
-				horizontal_alignment = "center",
-				vertical_alignment = "center",
-				dynamic_font = true,
-				font_type = "hell_shark_header",
-				localize = var_1_7,
-				selected_color = Colors.get_color_table_with_alpha("font_title", 255),
-				base_color = Colors.get_color_table_with_alpha("white", 128),
-				text_color = Colors.get_color_table_with_alpha("white", 255),
-				offset = {
-					0,
-					-80,
-					2
-				}
-			},
-			text_shadow = {
-				word_wrap = false,
-				font_size = 32,
-				pixel_perfect = true,
-				horizontal_alignment = "center",
-				vertical_alignment = "center",
-				dynamic_font = true,
-				font_type = "hell_shark_header",
-				localize = var_1_7,
-				selected_color = Colors.get_color_table_with_alpha("black", 255),
-				base_color = Colors.get_color_table_with_alpha("black", 128),
-				text_color = Colors.get_color_table_with_alpha("black", 255),
-				offset = {
-					2,
-					-82,
-					1
-				}
-			},
-			bg_top_right = {}
-		},
-		offset = {
-			var_1_1[1] * var_1_0[1],
-			var_1_1[2] * var_1_0[2],
-			1
-		},
-		scenegraph_id = IS_WINDOWS and "pivot" or "pivot_console"
+		}
 	}
+	local tbl_2 = {
+		fade_texture_id = "radial_chat_wedge",
+		divider_id = "radial_chat_bg_line",
+		selected = false,
+		is_valid = true,
+		fade_bg = "radial_chat_bg",
+		icon_unavailable_id = "radial_chat_icon_unavailable",
+		size_multiplier = 0,
+		final_size_multiplier = 1,
+		icon_bg_id = "radial_chat_icon_bg"
+	}
+	local icon = self.icon
+
+	icon = icon or "radial_chat_icon_boss"
+	tbl_2.icon_id = icon
+
+	local icon_glow
+
+	if not self.icon then
+		icon_glow = self.icon_glow
+
+		if not icon_glow then
+			-- Nothing
+		end
+
+		icon_glow = self.icon .. "_glow"
+
+		if not icon_glow then
+			-- Nothing
+		end
+	end
+
+	icon_glow = "radial_chat_icon_boss_glow"
+
+	::label_1_1::
+
+	tbl_2.icon_glow_id = icon_glow
+	tbl_2.settings = self
+	tbl_2.category_settings = arg_1_2
+	tbl_2.text_id = self.text
+	tbl_2.dir = Vector3Box(var_1_1)
+	tbl_2.final_offset = size
+	tbl.content = tbl_2
+
+	local tbl_3 = {}
+	local tbl_4 = {
+		vertical_alignment = "center",
+		horizontal_alignment = "center"
+	}
+	local icon_size = arg_1_2.icon_size
+
+	icon_size = icon_size or {
+		128,
+		128
+	}
+	tbl_4.base_texture_size = icon_size
+
+	local icon_size_2 = arg_1_2.icon_size
+
+	icon_size_2 = icon_size_2 or {
+		128,
+		128
+	}
+	tbl_4.texture_size = icon_size_2
+	tbl_4.activated_color = Colors.get_color_table_with_alpha("font_title", 255)
+	tbl_4.color = Colors.get_color_table_with_alpha("white", 255)
+	tbl_4.offset = {
+		0,
+		0,
+		10
+	}
+	tbl_3.icon = tbl_4
+
+	local tbl_5 = {
+		vertical_alignment = "center",
+		horizontal_alignment = "center"
+	}
+	local icon_size_3 = arg_1_2.icon_size
+
+	icon_size_3 = icon_size_3 or {
+		128,
+		128
+	}
+	tbl_5.base_texture_size = icon_size_3
+
+	local icon_size_4 = arg_1_2.icon_size
+
+	icon_size_4 = icon_size_4 or {
+		128,
+		128
+	}
+	tbl_5.texture_size = icon_size_4
+	tbl_5.activated_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_5.color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_5.offset = {
+		2,
+		-2,
+		9
+	}
+	tbl_3.icon_shadow = tbl_5
+
+	local tbl_6 = {
+		vertical_alignment = "center",
+		horizontal_alignment = "center"
+	}
+	local icon_size_5 = arg_1_2.icon_size
+
+	icon_size_5 = icon_size_5 or {
+		128,
+		128
+	}
+	tbl_6.base_texture_size = icon_size_5
+
+	local icon_size_6 = arg_1_2.icon_size
+
+	icon_size_6 = icon_size_6 or {
+		128,
+		128
+	}
+	tbl_6.texture_size = icon_size_6
+	tbl_6.color = Colors.get_color_table_with_alpha("black", 125)
+	tbl_6.offset = {
+		0,
+		0,
+		8
+	}
+	tbl_3.icon_bg = tbl_6
+
+	local tbl_7 = {
+		vertical_alignment = "center",
+		horizontal_alignment = "center"
+	}
+	local icon_size_7 = arg_1_2.icon_size
+
+	icon_size_7 = icon_size_7 or {
+		128,
+		128
+	}
+	tbl_7.base_texture_size = icon_size_7
+
+	local icon_size_8 = arg_1_2.icon_size
+
+	icon_size_8 = icon_size_8 or {
+		128,
+		128
+	}
+	tbl_7.texture_size = icon_size_8
+	tbl_7.color = {
+		255,
+		232,
+		86,
+		14
+	}
+	tbl_7.offset = {
+		0,
+		0,
+		11
+	}
+	tbl_3.icon_glow = tbl_7
+
+	local tbl_8 = {
+		vertical_alignment = "center",
+		horizontal_alignment = "center"
+	}
+	local icon_size_9 = arg_1_2.icon_size
+
+	icon_size_9 = icon_size_9 or {
+		128,
+		128
+	}
+	tbl_8.base_texture_size = icon_size_9
+
+	local icon_size_10 = arg_1_2.icon_size
+
+	icon_size_10 = icon_size_10 or {
+		128,
+		128
+	}
+	tbl_8.texture_size = icon_size_10
+	tbl_8.color = {
+		255,
+		128,
+		60,
+		60
+	}
+	tbl_8.offset = {
+		0,
+		0,
+		12
+	}
+	tbl_3.icon_unavailable = tbl_8
+	tbl_3.divider = {
+		vertical_alignment = "center",
+		horizontal_alignment = "center",
+		base_texture_size = {
+			4,
+			250
+		},
+		texture_size = {
+			4,
+			250
+		},
+		pivot = {
+			2,
+			125
+		},
+		angle = 2 * math.pi - num + math.pi * 0.5,
+		color = Colors.get_color_table_with_alpha("black", 255),
+		offset = {
+			-var_1_1[1] * size[1] + var_1_4[1] * 227,
+			-var_1_1[2] * size[2] + var_1_4[2] * 227,
+			1
+		}
+	}
+	tbl_3.fade = {
+		vertical_alignment = "center",
+		horizontal_alignment = "center",
+		texture_size = {
+			389 * num_2 * num_3,
+			195 * num_3
+		},
+		pivot = {
+			389 * num_2 * 0.5 * num_3,
+			97.5 * num_3
+		},
+		angle = 2 * math.pi - arg_1_1 + math.pi * 0.5,
+		color = Colors.get_color_table_with_alpha("white", 30),
+		offset = {
+			-var_1_1[1] * size[1] + var_1_1[1] * 195 * 0.5 * num_3,
+			-var_1_1[2] * size[2] + var_1_1[2] * 195 * 0.5 * num_3,
+			10
+		}
+	}
+	tbl_3.text = {
+		word_wrap = false,
+		font_size = 32,
+		pixel_perfect = true,
+		horizontal_alignment = "center",
+		vertical_alignment = "center",
+		dynamic_font = true,
+		font_type = "hell_shark_header",
+		localize = flag,
+		selected_color = Colors.get_color_table_with_alpha("font_title", 255),
+		base_color = Colors.get_color_table_with_alpha("white", 128),
+		text_color = Colors.get_color_table_with_alpha("white", 255),
+		offset = {
+			0,
+			-80,
+			2
+		}
+	}
+	tbl_3.text_shadow = {
+		word_wrap = false,
+		font_size = 32,
+		pixel_perfect = true,
+		horizontal_alignment = "center",
+		vertical_alignment = "center",
+		dynamic_font = true,
+		font_type = "hell_shark_header",
+		localize = flag,
+		selected_color = Colors.get_color_table_with_alpha("black", 255),
+		base_color = Colors.get_color_table_with_alpha("black", 128),
+		text_color = Colors.get_color_table_with_alpha("black", 255),
+		offset = {
+			2,
+			-82,
+			1
+		}
+	}
+	tbl_3.bg_top_right = {}
+	tbl.style = tbl_3
+	tbl.offset = {
+		var_1_1[1] * size[1],
+		var_1_1[2] * size[2],
+		1
+	}
+
+	local flag_2
+
+	flag_2 = not IS_WINDOWS and "pivot" and "pivot_console"
+	tbl.scenegraph_id = flag_2
+
+	return tbl
 end
 
-local function var_0_4()
-	return {
+local function fn_2()
+	-- function 13
+	local tbl = {
 		element = {
 			passes = {
 				{
 					style_id = "bg_top_right",
 					texture_id = "fade_bg",
 					pass_type = "texture",
-					content_change_function = function(arg_14_0, arg_14_1)
-						arg_14_1.texture_size[1] = arg_14_1.base_texture_size[1] * arg_14_0.size_multiplier
-						arg_14_1.texture_size[2] = arg_14_1.base_texture_size[2] * arg_14_0.size_multiplier
+					content_change_function = function (self, arg_14_1)
+						-- function 14
+						arg_14_1.texture_size[1] = arg_14_1.base_texture_size[1] * self.size_multiplier
+						arg_14_1.texture_size[2] = arg_14_1.base_texture_size[2] * self.size_multiplier
 					end
 				},
 				{
 					style_id = "bg_top_left",
 					texture_id = "fade_bg",
 					pass_type = "rotated_texture",
-					content_change_function = function(arg_15_0, arg_15_1)
-						arg_15_1.texture_size[1] = arg_15_1.base_texture_size[1] * arg_15_0.size_multiplier
-						arg_15_1.texture_size[2] = arg_15_1.base_texture_size[2] * arg_15_0.size_multiplier
+					content_change_function = function (self, arg_15_1)
+						-- function 15
+						arg_15_1.texture_size[1] = arg_15_1.base_texture_size[1] * self.size_multiplier
+						arg_15_1.texture_size[2] = arg_15_1.base_texture_size[2] * self.size_multiplier
 					end
 				},
 				{
 					style_id = "bg_bottom_right",
 					texture_id = "fade_bg",
 					pass_type = "rotated_texture",
-					content_change_function = function(arg_16_0, arg_16_1)
-						arg_16_1.texture_size[1] = arg_16_1.base_texture_size[1] * arg_16_0.size_multiplier
-						arg_16_1.texture_size[2] = arg_16_1.base_texture_size[2] * arg_16_0.size_multiplier
+					content_change_function = function (self, arg_16_1)
+						-- function 16
+						arg_16_1.texture_size[1] = arg_16_1.base_texture_size[1] * self.size_multiplier
+						arg_16_1.texture_size[2] = arg_16_1.base_texture_size[2] * self.size_multiplier
 					end
 				},
 				{
 					style_id = "bg_bottom_left",
 					texture_id = "fade_bg",
 					pass_type = "rotated_texture",
-					content_change_function = function(arg_17_0, arg_17_1)
-						arg_17_1.texture_size[1] = arg_17_1.base_texture_size[1] * arg_17_0.size_multiplier
-						arg_17_1.texture_size[2] = arg_17_1.base_texture_size[2] * arg_17_0.size_multiplier
+					content_change_function = function (self, arg_17_1)
+						-- function 17
+						arg_17_1.texture_size[1] = arg_17_1.base_texture_size[1] * self.size_multiplier
+						arg_17_1.texture_size[2] = arg_17_1.base_texture_size[2] * self.size_multiplier
 					end
 				},
 				{
 					style_id = "bg_top_right_masked",
 					texture_id = "fade_bg",
 					pass_type = "texture",
-					content_change_function = function(arg_18_0, arg_18_1)
-						arg_18_1.texture_size[1] = arg_18_1.base_texture_size[1] * arg_18_0.size_multiplier
-						arg_18_1.texture_size[2] = arg_18_1.base_texture_size[2] * arg_18_0.size_multiplier
+					content_change_function = function (self, arg_18_1)
+						-- function 18
+						arg_18_1.texture_size[1] = arg_18_1.base_texture_size[1] * self.size_multiplier
+						arg_18_1.texture_size[2] = arg_18_1.base_texture_size[2] * self.size_multiplier
 					end
 				},
 				{
 					style_id = "bg_top_left_masked",
 					texture_id = "fade_bg",
 					pass_type = "rotated_texture",
-					content_change_function = function(arg_19_0, arg_19_1)
-						arg_19_1.texture_size[1] = arg_19_1.base_texture_size[1] * arg_19_0.size_multiplier
-						arg_19_1.texture_size[2] = arg_19_1.base_texture_size[2] * arg_19_0.size_multiplier
+					content_change_function = function (self, arg_19_1)
+						-- function 19
+						arg_19_1.texture_size[1] = arg_19_1.base_texture_size[1] * self.size_multiplier
+						arg_19_1.texture_size[2] = arg_19_1.base_texture_size[2] * self.size_multiplier
 					end
 				},
 				{
 					style_id = "bg_bottom_right_masked",
 					texture_id = "fade_bg",
 					pass_type = "rotated_texture",
-					content_change_function = function(arg_20_0, arg_20_1)
-						arg_20_1.texture_size[1] = arg_20_1.base_texture_size[1] * arg_20_0.size_multiplier
-						arg_20_1.texture_size[2] = arg_20_1.base_texture_size[2] * arg_20_0.size_multiplier
+					content_change_function = function (self, arg_20_1)
+						-- function 20
+						arg_20_1.texture_size[1] = arg_20_1.base_texture_size[1] * self.size_multiplier
+						arg_20_1.texture_size[2] = arg_20_1.base_texture_size[2] * self.size_multiplier
 					end
 				},
 				{
 					style_id = "bg_bottom_left_masked",
 					texture_id = "fade_bg",
 					pass_type = "rotated_texture",
-					content_change_function = function(arg_21_0, arg_21_1)
-						arg_21_1.texture_size[1] = arg_21_1.base_texture_size[1] * arg_21_0.size_multiplier
-						arg_21_1.texture_size[2] = arg_21_1.base_texture_size[2] * arg_21_0.size_multiplier
+					content_change_function = function (self, arg_21_1)
+						-- function 21
+						arg_21_1.texture_size[1] = arg_21_1.base_texture_size[1] * self.size_multiplier
+						arg_21_1.texture_size[2] = arg_21_1.base_texture_size[2] * self.size_multiplier
 					end
 				},
 				{
 					style_id = "circle",
 					texture_id = "circle_id",
 					pass_type = "texture",
-					content_change_function = function(arg_22_0, arg_22_1)
-						arg_22_1.texture_size[1] = arg_22_1.base_texture_size[1] * arg_22_0.size_multiplier
-						arg_22_1.texture_size[2] = arg_22_1.base_texture_size[2] * arg_22_0.size_multiplier
+					content_change_function = function (self, arg_22_1)
+						-- function 22
+						arg_22_1.texture_size[1] = arg_22_1.base_texture_size[1] * self.size_multiplier
+						arg_22_1.texture_size[2] = arg_22_1.base_texture_size[2] * self.size_multiplier
 					end
 				},
 				{
@@ -793,13 +926,19 @@ local function var_0_4()
 			0,
 			0,
 			0
-		},
-		scenegraph_id = IS_WINDOWS and "pivot" or "pivot_console"
+		}
 	}
+	local flag
+
+	flag = not IS_WINDOWS and "pivot" and "pivot_console"
+	tbl.scenegraph_id = flag
+
+	return tbl
 end
 
-local function var_0_5()
-	return {
+local function fn_3()
+	-- function 23
+	local tbl = {
 		element = {
 			passes = {
 				{
@@ -872,12 +1011,18 @@ local function var_0_5()
 			0,
 			0,
 			10
-		},
-		scenegraph_id = IS_WINDOWS and "pivot" or "pivot_console"
+		}
 	}
+	local flag
+
+	flag = not IS_WINDOWS and "pivot" and "pivot_console"
+	tbl.scenegraph_id = flag
+
+	return tbl
 end
 
-local function var_0_6()
+local function fn_4()
+	-- function 24
 	return {
 		scenegraph_id = "next_page_input",
 		element = {
@@ -961,10 +1106,11 @@ local function var_0_6()
 	}
 end
 
-local function var_0_7(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+local function fn_5(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+	-- function 25
 	local var_25_0
 
-	if arg_25_3 then
+	if not arg_25_3 then
 		var_25_0 = Colors.get_color_table_with_alpha("medium_purple", 255)
 	else
 		var_25_0 = Colors.get_color_table_with_alpha("light_sky_blue", 255)
@@ -1041,8 +1187,9 @@ local function var_0_7(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
 	}
 end
 
-local function var_0_8(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5)
-	return {
+local function fn_6(self, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5)
+	-- function 26
+	local tbl = {
 		scenegraph_id = "icon",
 		element = {
 			passes = {
@@ -1050,62 +1197,64 @@ local function var_0_8(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_
 					style_id = "texture",
 					texture_id = "icon_id",
 					pass_type = "texture",
-					content_check_function = function(arg_27_0, arg_27_1)
-						local var_27_0 = Managers.player:player_from_peer_id(arg_27_0.peer_id)
-						local var_27_1 = var_27_0 and var_27_0.player_unit
+					content_check_function = function (self, arg_27_1)
+						-- function 27
+						local player_from_peer_id = Managers.player:player_from_peer_id(self.peer_id)
+						local flag = not player_from_peer_id and player_from_peer_id.player_unit
 
-						if not Unit.alive(var_27_1) then
-							arg_27_0.is_visible = false
-
-							return false
-						end
-
-						local var_27_2 = Camera.world_pose(arg_27_0.camera)
-						local var_27_3 = Matrix4x4.translation(var_27_2)
-						local var_27_4 = Unit.world_position(var_27_1, 0) - var_27_3
-						local var_27_5 = Vector3.normalize(Vector3.flat(var_27_4))
-						local var_27_6 = Matrix4x4.forward(var_27_2)
-						local var_27_7 = Vector3.normalize(Vector3.flat(var_27_6))
-
-						if Vector3.dot(var_27_7, var_27_5) <= 0 then
-							arg_27_0.is_visible = false
+						if not Unit.alive(flag) then
+							self.is_visible = false
 
 							return false
 						end
 
-						arg_27_0.is_visible = true
+						local world_pose = Camera.world_pose(self.camera)
+						local translation = Matrix4x4.translation(world_pose)
+						local num = Unit.world_position(flag, 0) - translation
+						local normalize = Vector3.normalize(Vector3.flat(num))
+						local forward = Matrix4x4.forward(world_pose)
+						local normalize_2 = Vector3.normalize(Vector3.flat(forward))
+
+						if Vector3.dot(normalize_2, normalize) <= 0 then
+							self.is_visible = false
+
+							return false
+						end
+
+						self.is_visible = true
 
 						return true
 					end,
-					content_change_function = function(arg_28_0, arg_28_1)
-						local var_28_0 = Managers.player:player_from_peer_id(arg_28_0.peer_id)
-						local var_28_1 = var_28_0 and var_28_0.player_unit
+					content_change_function = function (self, arg_28_1)
+						-- function 28
+						local player_from_peer_id = Managers.player:player_from_peer_id(self.peer_id)
+						local flag = not player_from_peer_id and player_from_peer_id.player_unit
 
-						if Unit.alive(var_28_1) and Unit.has_node(var_28_1, "j_head") then
-							local var_28_2 = Camera.world_position(arg_28_0.camera)
-							local var_28_3 = RESOLUTION_LOOKUP.inv_scale
-							local var_28_4 = Unit.node(var_28_1, "j_head")
-							local var_28_5 = Unit.world_position(var_28_1, var_28_4)
-							local var_28_6 = Vector3.distance_squared(var_28_2, var_28_5)
-							local var_28_7 = math.lerp(1, 0.5, math.clamp(var_28_6 / 49, 0, 1))
-							local var_28_8 = var_28_5 + Vector3(0, 0, 0.5) + Vector3(0, 0, 0.5) * (1 - var_28_7)
-							local var_28_9 = Camera.world_to_screen(arg_28_0.camera, var_28_8)
-							local var_28_10 = Managers.time:time("game")
-							local var_28_11 = math.sin(var_28_10 * 15) * 0.1
+						if not Unit.alive(flag) and not Unit.has_node(flag, "j_head") then
+							local world_position = Camera.world_position(self.camera)
+							local inv_scale = RESOLUTION_LOOKUP.inv_scale
+							local node = Unit.node(flag, "j_head")
+							local world_position_2 = Unit.world_position(flag, node)
+							local distance_squared = Vector3.distance_squared(world_position, world_position_2)
+							local lerp = math.lerp(1, 0.5, math.clamp(distance_squared / 49, 0, 1))
+							local num = world_position_2 + Vector3(0, 0, 0.5) + Vector3(0, 0, 0.5) * (1 - lerp)
+							local world_to_screen = Camera.world_to_screen(self.camera, num)
+							local time = Managers.time:time("game")
+							local num_2 = math.sin(time * 15) * 0.1
 
-							arg_28_1.texture_size[1] = arg_28_1.base_texture_size[1] * var_28_7 + arg_28_1.base_texture_size[1] * var_28_7 * var_28_11
-							arg_28_1.texture_size[2] = arg_28_1.base_texture_size[2] * var_28_7 + arg_28_1.base_texture_size[2] * var_28_7 * var_28_11
-							arg_28_1.offset[1] = var_28_9[1] * var_28_3 - arg_28_1.texture_size[1] * 0.5
-							arg_28_1.offset[2] = var_28_9[2] * var_28_3 - arg_28_1.texture_size[1] * 0.5
-							arg_28_0.offset = arg_28_1.offset
-							arg_28_0.distance_scale = var_28_7
-							arg_28_0.scale = var_28_11
+							arg_28_1.texture_size[1] = arg_28_1.base_texture_size[1] * lerp + arg_28_1.base_texture_size[1] * lerp * num_2
+							arg_28_1.texture_size[2] = arg_28_1.base_texture_size[2] * lerp + arg_28_1.base_texture_size[2] * lerp * num_2
+							arg_28_1.offset[1] = world_to_screen[1] * inv_scale - arg_28_1.texture_size[1] * 0.5
+							arg_28_1.offset[2] = world_to_screen[2] * inv_scale - arg_28_1.texture_size[1] * 0.5
+							self.offset = arg_28_1.offset
+							self.distance_scale = lerp
+							self.scale = num_2
 
-							if var_28_10 > arg_28_0.end_time - arg_28_0.fade_time then
-								local var_28_12 = arg_28_0.end_time - var_28_10
+							if time > self.end_time - self.fade_time then
+								local num_3 = self.end_time - time
 
-								arg_28_0.alpha = math.lerp(0, 255, math.clamp(var_28_12 / arg_28_0.fade_time, 0, 1))
-								arg_28_1.color[1] = arg_28_0.alpha
+								self.alpha = math.lerp(0, 255, math.clamp(num_3 / self.fade_time, 0, 1))
+								arg_28_1.color[1] = self.alpha
 							end
 						end
 					end
@@ -1114,130 +1263,155 @@ local function var_0_8(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_
 					style_id = "texture_glow",
 					texture_id = "icon_glow_id",
 					pass_type = "texture",
-					content_check_function = function(arg_29_0, arg_29_1)
-						return arg_29_0.is_visible
+					content_check_function = function (self, arg_29_1)
+						-- function 29
+						return self.is_visible
 					end,
-					content_change_function = function(arg_30_0, arg_30_1)
-						local var_30_0 = arg_30_0.offset
-						local var_30_1 = arg_30_0.distance_scale
-						local var_30_2 = arg_30_0.scale
-						local var_30_3 = arg_30_0.alpha
+					content_change_function = function (self, arg_30_1)
+						-- function 30
+						local offset = self.offset
+						local distance_scale = self.distance_scale
+						local scale = self.scale
+						local alpha = self.alpha
 
-						arg_30_1.offset[1] = var_30_0[1]
-						arg_30_1.offset[2] = var_30_0[2]
-						arg_30_1.texture_size[1] = arg_30_1.base_texture_size[1] * var_30_1 + arg_30_1.base_texture_size[1] * var_30_1 * var_30_2
-						arg_30_1.texture_size[2] = arg_30_1.base_texture_size[2] * var_30_1 + arg_30_1.base_texture_size[2] * var_30_1 * var_30_2
-						arg_30_1.color[1] = var_30_3
+						arg_30_1.offset[1] = offset[1]
+						arg_30_1.offset[2] = offset[2]
+						arg_30_1.texture_size[1] = arg_30_1.base_texture_size[1] * distance_scale + arg_30_1.base_texture_size[1] * distance_scale * scale
+						arg_30_1.texture_size[2] = arg_30_1.base_texture_size[2] * distance_scale + arg_30_1.base_texture_size[2] * distance_scale * scale
+						arg_30_1.color[1] = alpha
 					end
 				},
 				{
 					style_id = "texture_shadow",
 					texture_id = "icon_id",
 					pass_type = "texture",
-					content_check_function = function(arg_31_0, arg_31_1)
-						return arg_31_0.is_visible
+					content_check_function = function (self, arg_31_1)
+						-- function 31
+						return self.is_visible
 					end,
-					content_change_function = function(arg_32_0, arg_32_1)
-						local var_32_0 = arg_32_0.offset
-						local var_32_1 = arg_32_0.distance_scale
-						local var_32_2 = arg_32_0.scale
-						local var_32_3 = arg_32_0.alpha
+					content_change_function = function (self, arg_32_1)
+						-- function 32
+						local offset = self.offset
+						local distance_scale = self.distance_scale
+						local scale = self.scale
+						local alpha = self.alpha
 
-						arg_32_1.offset[1] = var_32_0[1] + 2
-						arg_32_1.offset[2] = var_32_0[2] - 2
-						arg_32_1.texture_size[1] = arg_32_1.base_texture_size[1] * var_32_1 + arg_32_1.base_texture_size[1] * var_32_1 * var_32_2
-						arg_32_1.texture_size[2] = arg_32_1.base_texture_size[2] * var_32_1 + arg_32_1.base_texture_size[2] * var_32_1 * var_32_2
-						arg_32_1.color[1] = var_32_3
+						arg_32_1.offset[1] = offset[1] + 2
+						arg_32_1.offset[2] = offset[2] - 2
+						arg_32_1.texture_size[1] = arg_32_1.base_texture_size[1] * distance_scale + arg_32_1.base_texture_size[1] * distance_scale * scale
+						arg_32_1.texture_size[2] = arg_32_1.base_texture_size[2] * distance_scale + arg_32_1.base_texture_size[2] * distance_scale * scale
+						arg_32_1.color[1] = alpha
 					end
 				}
 			}
-		},
-		content = {
-			alpha = 255,
-			icon_bg_id = "radial_chat_icon_bg",
-			icon_id = arg_26_0.icon or "radial_chat_icon_boss",
-			icon_glow_id = arg_26_0.icon and arg_26_0.icon .. "_glow" or "radial_chat_icon_boss_glow",
-			peer_id = arg_26_1,
-			camera = arg_26_2,
-			world = arg_26_3,
-			end_time = arg_26_4 or Managers.time:time("game") + 5,
-			fade_time = arg_26_5 or 0.5
-		},
-		style = {
-			texture = {
-				vertical_alignment = "bottom",
-				horizontal_alignment = "left",
-				base_texture_size = {
-					128,
-					128
-				},
-				texture_size = {
-					128,
-					128
-				},
-				color = {
-					255,
-					255,
-					255,
-					255
-				},
-				offset = {
-					0,
-					0,
-					10
-				}
-			},
-			texture_glow = {
-				vertical_alignment = "bottom",
-				horizontal_alignment = "left",
-				texture_size = {
-					128,
-					128
-				},
-				base_texture_size = {
-					128,
-					128
-				},
-				color = Colors.get_color_table_with_alpha("font_title", 255),
-				offset = {
-					0,
-					0,
-					10
-				}
-			},
-			texture_shadow = {
-				vertical_alignment = "bottom",
-				horizontal_alignment = "left",
-				base_texture_size = {
-					128,
-					128
-				},
-				texture_size = {
-					128,
-					128
-				},
-				color = Colors.get_color_table_with_alpha("black", 255),
-				offset = {
-					2,
-					-2,
-					0
-				}
-			}
-		},
-		offset = {
-			0,
-			0,
-			0
 		}
 	}
+	local tbl_2 = {
+		alpha = 255,
+		icon_bg_id = "radial_chat_icon_bg"
+	}
+	local icon = self.icon
+
+	icon = icon or "radial_chat_icon_boss"
+	tbl_2.icon_id = icon
+
+	local str
+
+	if not self.icon then
+		str = self.icon .. "_glow"
+
+		if not str then
+			-- Nothing
+		end
+	end
+
+	str = "radial_chat_icon_boss_glow"
+
+	::label_26_0::
+
+	tbl_2.icon_glow_id = str
+	tbl_2.peer_id = arg_26_1
+	tbl_2.camera = arg_26_2
+	tbl_2.world = arg_26_3
+	tbl_2.end_time = arg_26_4 or Managers.time:time("game") + 5
+	tbl_2.fade_time = arg_26_5 or 0.5
+	tbl.content = tbl_2
+	tbl.style = {
+		texture = {
+			vertical_alignment = "bottom",
+			horizontal_alignment = "left",
+			base_texture_size = {
+				128,
+				128
+			},
+			texture_size = {
+				128,
+				128
+			},
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				0,
+				0,
+				10
+			}
+		},
+		texture_glow = {
+			vertical_alignment = "bottom",
+			horizontal_alignment = "left",
+			texture_size = {
+				128,
+				128
+			},
+			base_texture_size = {
+				128,
+				128
+			},
+			color = Colors.get_color_table_with_alpha("font_title", 255),
+			offset = {
+				0,
+				0,
+				10
+			}
+		},
+		texture_shadow = {
+			vertical_alignment = "bottom",
+			horizontal_alignment = "left",
+			base_texture_size = {
+				128,
+				128
+			},
+			texture_size = {
+				128,
+				128
+			},
+			color = Colors.get_color_table_with_alpha("black", 255),
+			offset = {
+				2,
+				-2,
+				0
+			}
+		}
+	}
+	tbl.offset = {
+		0,
+		0,
+		0
+	}
+
+	return tbl
 end
 
 return {
-	scenegraph_definition = var_0_2,
-	create_social_widget = var_0_3,
-	arrow_widget = var_0_5(),
-	create_social_text_event = var_0_7,
-	create_social_icon = var_0_8,
-	create_bg_widget = var_0_4,
-	page_input_widget = var_0_6()
+	scenegraph_definition = tbl,
+	create_social_widget = fn,
+	arrow_widget = fn_3(),
+	create_social_text_event = fn_5,
+	create_social_icon = fn_6,
+	create_bg_widget = fn_2,
+	page_input_widget = fn_4()
 }

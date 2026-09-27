@@ -2,92 +2,102 @@
 
 ImguiBoonsDebug = class(ImguiBoonsDebug)
 
-local var_0_0 = true
+local flag = true
 
-function ImguiBoonsDebug.init(arg_1_0)
-	arg_1_0._selected_boon_id = 1
-	arg_1_0._filter_text = ""
-	arg_1_0._boon_list = {}
-	arg_1_0._filtered_boon_list = {}
+ImguiBoonsDebug.init = function (self)
+	-- function 1
+	self._selected_boon_id = 1
+	self._filter_text = ""
+	self._boon_list = {}
+	self._filtered_boon_list = {}
 
-	arg_1_0:_get_boons()
+	self:_get_boons()
 
-	arg_1_0._filtered_boon_list = arg_1_0:_apply_boon_filter(arg_1_0._filter_text, arg_1_0._boon_list)
+	self._filtered_boon_list = self:_apply_boon_filter(self._filter_text, self._boon_list)
 end
 
-function ImguiBoonsDebug._get_boons(arg_2_0)
-	table.clear(arg_2_0._boon_list)
+ImguiBoonsDebug._get_boons = function (self)
+	-- function 2
+	table.clear(self._boon_list)
 
-	for iter_2_0, iter_2_1 in pairs(DeusPowerUpTemplates) do
-		table.insert(arg_2_0._boon_list, iter_2_0)
+	for k, v in pairs(DeusPowerUpTemplates) do
+		table.insert(self._boon_list, k)
 	end
 
-	table.sort(arg_2_0._boon_list)
+	table.sort(self._boon_list)
 end
 
-function ImguiBoonsDebug._apply_boon_filter(arg_3_0, arg_3_1, arg_3_2)
+ImguiBoonsDebug._apply_boon_filter = function (arg_3_0, arg_3_1, arg_3_2)
+	-- function 3
 	if arg_3_1 == "" then
 		return arg_3_2
 	end
 
-	local var_3_0 = {}
-	local var_3_1 = string.gsub(arg_3_1, "[_ ]", "")
+	local tbl = {}
+	local gsub = string.gsub(arg_3_1, "[_ ]", "")
 
-	for iter_3_0 = 1, #arg_3_2 do
-		local var_3_2 = arg_3_2[iter_3_0]
+	for i = 1, #arg_3_2 do
+		local var_3_2 = arg_3_2[i]
 
-		if string.gsub(var_3_2, "[_ ]", ""):find(var_3_1, 1, true) then
-			table.insert(var_3_0, var_3_2)
+		if not string.gsub(var_3_2, "[_ ]", ""):find(gsub, 1, true) then
+			table.insert(tbl, var_3_2)
 		end
 	end
 
-	return var_3_0
+	return tbl
 end
 
-function ImguiBoonsDebug.update(arg_4_0)
-	if var_0_0 then
-		arg_4_0:init()
+ImguiBoonsDebug.update = function (self)
+	-- function 4
+	if not flag then
+		self:init()
 
-		var_0_0 = false
+		flag = false
 	end
 end
 
-function ImguiBoonsDebug.on_round_start(arg_5_0)
+ImguiBoonsDebug.on_round_start = function (arg_5_0)
+	-- function 5
 	return
 end
 
-function ImguiBoonsDebug.is_persistent(arg_6_0)
+ImguiBoonsDebug.is_persistent = function (arg_6_0)
+	-- function 6
 	return true
 end
 
-function ImguiBoonsDebug.draw(arg_7_0, arg_7_1)
-	local var_7_0 = Imgui.begin_window("Boons Debug", "always_auto_resize")
+ImguiBoonsDebug.draw = function (self, arg_7_1)
+	-- function 7
+	local begin_window = Imgui.begin_window("Boons Debug", "always_auto_resize")
 
-	arg_7_0:_update_controls()
+	self:_update_controls()
 	Imgui.end_window()
 
-	return var_7_0
+	return begin_window
 end
 
-function ImguiBoonsDebug._update_controls(arg_8_0)
+ImguiBoonsDebug._update_controls = function (self)
+	-- function 8
 	if Managers.mechanism:current_mechanism_name() ~= "deus" then
 		Imgui.text("This UI only works when playing with the deus mechanism.")
 
 		return
 	end
 
-	local var_8_0 = arg_8_0:_fetch_aliases(arg_8_0._boon_list)
+	local _fetch_aliases = self:_fetch_aliases(self._boon_list)
 
-	arg_8_0._selected_boon_id, arg_8_0._filtered_boon_list, arg_8_0._filter_text = ImguiX.combo_search(arg_8_0._selected_boon_id, arg_8_0._filtered_boon_list, arg_8_0._filter_text, arg_8_0._boon_list, var_8_0)
+	self._selected_boon_id, self._filtered_boon_list, self._filter_text = ImguiX.combo_search(self._selected_boon_id, self._filtered_boon_list, self._filter_text, self._boon_list, _fetch_aliases)
 
-	if Imgui.button("Add", 100, 20) then
-		local var_8_1 = Managers.player and Managers.player:local_player()
+	if not Imgui.button("Add", 100, 20) then
+		local player = Managers.player
 
-		if not var_8_1 then
+		player = not player and Managers.player:local_player()
+
+		if not player then
 			return
 		end
 
-		local var_8_2 = arg_8_0._filtered_boon_list[arg_8_0._selected_boon_id]
+		local var_8_2 = self._filtered_boon_list[self._selected_boon_id]
 
 		if not var_8_2 then
 			return
@@ -95,16 +105,16 @@ function ImguiBoonsDebug._update_controls(arg_8_0)
 
 		local var_8_3
 
-		for iter_8_0, iter_8_1 in pairs(DeusPowerUpRarityPool) do
-			for iter_8_2 = 1, #iter_8_1 do
-				if iter_8_1[iter_8_2][1] == var_8_2 then
-					var_8_3 = iter_8_0
+		for k, v in pairs(DeusPowerUpRarityPool) do
+			for k_2 = 1, #v do
+				if v[k_2][1] == var_8_2 then
+					var_8_3 = k
 
 					break
 				end
 			end
 
-			if var_8_3 then
+			if not var_8_3 then
 				break
 			end
 		end
@@ -113,53 +123,96 @@ function ImguiBoonsDebug._update_controls(arg_8_0)
 			return
 		end
 
-		local var_8_4 = Managers.mechanism:game_mechanism():get_deus_run_controller()
-		local var_8_5 = DeusPowerUpUtils.generate_specific_power_up(var_8_2, var_8_3)
-		local var_8_6 = var_8_1:local_player_id()
+		local get_deus_run_controller = Managers.mechanism:game_mechanism():get_deus_run_controller()
+		local generate_specific_power_up = DeusPowerUpUtils.generate_specific_power_up(var_8_2, var_8_3)
+		local local_player_id = player:local_player_id()
 
-		var_8_4:add_power_ups({
-			var_8_5
-		}, var_8_6, true)
+		get_deus_run_controller:add_power_ups({
+			generate_specific_power_up
+		}, local_player_id, true)
 	end
 end
 
-function ImguiBoonsDebug._fetch_aliases(arg_9_0, arg_9_1)
-	local var_9_0 = {}
-	local var_9_1 = {}
+ImguiBoonsDebug._fetch_aliases = function (arg_9_0, arg_9_1)
+	-- function 9
+	local tbl = {}
+	local tbl_2 = {}
 	local var_9_2
 	local var_9_3
-	local var_9_4 = Managers.player:local_player()
+	local local_player = Managers.player:local_player()
 
-	if var_9_4 then
-		local var_9_5 = var_9_4:profile_index()
-		local var_9_6 = var_9_4:career_index()
+	if not local_player then
+		local profile_index = local_player:profile_index()
+		local career_index = local_player:career_index()
 
-		if (var_9_5 or 0) * (var_9_6 or 0) > 0 then
-			var_9_3 = SPProfiles[var_9_5].display_name
-			var_9_2 = TalentTrees[var_9_3][var_9_6]
+		if (profile_index or 0) * (career_index or 0) > 0 then
+			var_9_3 = SPProfiles[profile_index].display_name
+			var_9_2 = TalentTrees[var_9_3][career_index]
 		end
 	end
 
-	for iter_9_0, iter_9_1 in ipairs(arg_9_1) do
-		local var_9_7 = DeusPowerUpTemplates[iter_9_1]
+	for i, v in ipairs(arg_9_1) do
+		local var_9_7 = DeusPowerUpTemplates[v]
 
-		if var_9_2 and string.gmatch(iter_9_1, "%a+_%d+_%d+")() then
-			local var_9_8 = string.split(iter_9_1, "_")
-			local var_9_9 = tonumber(var_9_8[2])
-			local var_9_10 = tonumber(var_9_8[3])
+		if not var_9_2 and not string.gmatch(v, "%a+_%d+_%d+")() then
+			local split = string.split(v, "_")
+			local var_9_9 = tonumber(split[2])
+			local var_9_10 = tonumber(split[3])
 			local var_9_11 = var_9_2[var_9_9][var_9_10]
-			local var_9_12 = TalentUtils.get_talent(var_9_3, var_9_11)
+			local get_talent = TalentUtils.get_talent(var_9_3, var_9_11)
+			local var_9_13
 
-			var_9_0[iter_9_0] = var_9_12.display_name and Localize(var_9_12.display_name) or Localize(var_9_12.name)
-			var_9_1[iter_9_0] = UIUtils.get_talent_description(var_9_12)
+			if not get_talent.display_name then
+				var_9_13 = Localize(get_talent.display_name)
+
+				if not var_9_13 then
+					-- Nothing
+				end
+			end
+
+			var_9_13 = Localize(get_talent.name)
+
+			::label_9_0::
+
+			tbl[i] = var_9_13
+			tbl_2[i] = UIUtils.get_talent_description(get_talent)
 		else
-			var_9_0[iter_9_0] = var_9_7.display_name and Localize(var_9_7.display_name) or ""
-			var_9_1[iter_9_0] = var_9_7.advanced_description and UIUtils.get_trait_description(nil, var_9_7) or ""
+			local var_9_14
+
+			if not var_9_7.display_name then
+				var_9_14 = Localize(var_9_7.display_name)
+
+				if not var_9_14 then
+					-- Nothing
+				end
+			end
+
+			var_9_14 = ""
+
+			::label_9_1::
+
+			tbl[i] = var_9_14
+
+			local get_trait_description
+
+			if not var_9_7.advanced_description then
+				get_trait_description = UIUtils.get_trait_description(nil, var_9_7)
+
+				if not get_trait_description then
+					-- Nothing
+				end
+			end
+
+			get_trait_description = ""
+
+			::label_9_2::
+
+			tbl_2[i] = get_trait_description
 		end
 	end
 
 	return {
-		var_9_0,
-		var_9_1
+		tbl,
+		tbl_2
 	}
 end

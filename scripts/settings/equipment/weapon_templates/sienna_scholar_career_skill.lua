@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/sienna_scholar_career_skill.lua
 
-local var_0_0 = 1
-local var_0_1 = {
+local num = 1
+local tbl = {
 	actions = {
 		action_career_hold = {
 			default = {
@@ -18,16 +18,18 @@ local var_0_1 = {
 				uninterruptible = true,
 				aim_obstructed_by_walls = true,
 				charge_sound_name = "Play_weapon_ability_pyromancer_skull_spawn",
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
+					-- function 1
 					return arg_1_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
-				num_projectiles = var_0_0,
+				num_projectiles = num,
 				zoom_thresholds = {
 					"zoom_in_trueflight",
 					"zoom_in"
 				},
-				zoom_condition_function = function()
+				zoom_condition_function = function ()
+					-- function 2
 					return true
 				end,
 				allowed_chain_actions = {
@@ -89,16 +91,18 @@ local var_0_1 = {
 				uninterruptible = true,
 				ignore_shield_hit = true,
 				total_time = 1,
-				anim_end_event_condition_func = function(arg_3_0, arg_3_1)
+				anim_end_event_condition_func = function (arg_3_0, arg_3_1)
+					-- function 3
 					return arg_3_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {},
-				num_projectiles = var_0_0,
+				num_projectiles = num,
 				zoom_thresholds = {
 					"zoom_in_trueflight",
 					"zoom_in"
 				},
-				zoom_condition_function = function()
+				zoom_condition_function = function ()
+					-- function 4
 					return true
 				end,
 				hit_mass_count = LINESMAN_HIT_MASS_COUNT,
@@ -125,7 +129,8 @@ local var_0_1 = {
 				anim_end_event = "ability_finished",
 				anim_event = "scholar_burning_head_ability_cancel",
 				total_time = 0.65,
-				anim_end_event_condition_func = function(arg_5_0, arg_5_1)
+				anim_end_event_condition_func = function (arg_5_0, arg_5_1)
+					-- function 5
 					return arg_5_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {}
@@ -160,17 +165,17 @@ local var_0_1 = {
 	}
 }
 
-var_0_1.default_spread_template = "sparks"
-var_0_1.left_hand_unit = "units/weapons/player/wpn_invisible_weapon"
-var_0_1.left_hand_attachment_node_linking = AttachmentNodeLinking.one_handed_melee_weapon.left
-var_0_1.display_unit = "units/weapons/weapon_display/display_staff"
-var_0_1.wield_anim = "to_staff"
-var_0_1.state_machine = "units/beings/player/first_person_base/state_machines/career/skill_scholar"
-var_0_1.load_state_machine = false
-var_0_1.crosshair_style = "default"
-var_0_1.buff_type = "RANGED_ABILITY"
-var_0_1.weapon_type = "FIRE_STAFF"
-var_0_1.buffs = {
+tbl.default_spread_template = "sparks"
+tbl.left_hand_unit = "units/weapons/player/wpn_invisible_weapon"
+tbl.left_hand_attachment_node_linking = AttachmentNodeLinking.one_handed_melee_weapon.left
+tbl.display_unit = "units/weapons/weapon_display/display_staff"
+tbl.wield_anim = "to_staff"
+tbl.state_machine = "units/beings/player/first_person_base/state_machines/career/skill_scholar"
+tbl.load_state_machine = false
+tbl.crosshair_style = "default"
+tbl.buff_type = "RANGED_ABILITY"
+tbl.weapon_type = "FIRE_STAFF"
+tbl.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1
 	},
@@ -178,7 +183,7 @@ var_0_1.buffs = {
 		external_optional_multiplier = 1
 	}
 }
-var_0_1.aim_assist_settings = {
+tbl.aim_assist_settings = {
 	max_range = 22,
 	no_aim_input_multiplier = 0,
 	aim_at_node = "j_neck",
@@ -194,5 +199,5 @@ var_0_1.aim_assist_settings = {
 }
 
 return {
-	sienna_scholar_career_skill_weapon = table.clone(var_0_1)
+	sienna_scholar_career_skill_weapon = table.clone(tbl)
 }

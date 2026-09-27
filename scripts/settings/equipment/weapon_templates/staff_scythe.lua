@@ -1,12 +1,12 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/staff_scythe.lua
 
-local var_0_0 = 2.5
-local var_0_1 = 0.9
-local var_0_2 = "staff"
-local var_0_3 = "scythe"
-local var_0_4 = 0.5
-local var_0_5 = "to_quarter_staff_auto"
-local var_0_6 = {
+local num = 2.5
+local num_2 = 0.9
+local str = "staff"
+local str_2 = "scythe"
+local num_3 = 0.5
+local str_3 = "to_quarter_staff_auto"
+local tbl = {
 	actions = {
 		action_one = {
 			default = {
@@ -14,8 +14,9 @@ local var_0_6 = {
 				kind = "melee_start",
 				attack_hold_input = "action_one_hold",
 				anim_event = "attack_swing_charge_left",
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
-					return arg_1_1 ~= "new_interupting_action" and arg_1_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
+					-- function 1
+					return arg_1_1 == "new_interupting_action" or arg_1_1 ~= "action_complete"
 				end,
 				total_time = math.huge,
 				buff_data = {
@@ -65,7 +66,8 @@ local var_0_6 = {
 						auto_chain = true
 					}
 				},
-				enter_function = function(arg_2_0, arg_2_1)
+				enter_function = function (arg_2_0, arg_2_1)
+					-- function 2
 					return arg_2_1:reset_release_input()
 				end
 			},
@@ -74,8 +76,9 @@ local var_0_6 = {
 				kind = "melee_start",
 				attack_hold_input = "action_one_hold",
 				anim_event = "attack_swing_charge_right",
-				anim_end_event_condition_func = function(arg_3_0, arg_3_1)
-					return arg_3_1 ~= "new_interupting_action" and arg_3_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_3_0, arg_3_1)
+					-- function 3
+					return arg_3_1 == "new_interupting_action" or arg_3_1 ~= "action_complete"
 				end,
 				total_time = math.huge,
 				buff_data = {
@@ -125,7 +128,8 @@ local var_0_6 = {
 						auto_chain = true
 					}
 				},
-				enter_function = function(arg_4_0, arg_4_1)
+				enter_function = function (arg_4_0, arg_4_1)
+					-- function 4
 					return arg_4_1:reset_release_input()
 				end
 			},
@@ -133,8 +137,9 @@ local var_0_6 = {
 				kind = "melee_start",
 				anim_end_event = "attack_finished",
 				anim_event = "attack_swing_charge_left_diagonal",
-				anim_end_event_condition_func = function(arg_5_0, arg_5_1)
-					return arg_5_1 ~= "new_interupting_action" and arg_5_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_5_0, arg_5_1)
+					-- function 5
+					return arg_5_1 == "new_interupting_action" or arg_5_1 ~= "action_complete"
 				end,
 				total_time = math.huge,
 				buff_data = {
@@ -188,8 +193,9 @@ local var_0_6 = {
 				kind = "melee_start",
 				anim_end_event = "attack_finished",
 				anim_event = "attack_swing_charge_right",
-				anim_end_event_condition_func = function(arg_6_0, arg_6_1)
-					return arg_6_1 ~= "new_interupting_action" and arg_6_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_6_0, arg_6_1)
+					-- function 6
+					return arg_6_1 == "new_interupting_action" or arg_6_1 ~= "action_complete"
 				end,
 				total_time = math.huge,
 				buff_data = {
@@ -264,10 +270,11 @@ local var_0_6 = {
 				anim_event = "attack_swing_left_diagonal",
 				height_mod = 10,
 				total_time = 2.5,
-				anim_end_event_condition_func = function(arg_7_0, arg_7_1)
-					return arg_7_1 ~= "new_interupting_action" and arg_7_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_7_0, arg_7_1)
+					-- function 7
+					return arg_7_1 == "new_interupting_action" or arg_7_1 ~= "action_complete"
 				end,
-				anim_time_scale = var_0_1 * 1,
+				anim_time_scale = num_2 * 1,
 				buff_data = {
 					{
 						start_time = 0,
@@ -336,7 +343,7 @@ local var_0_6 = {
 					}
 				},
 				weapon_mode_overrides = {
-					[var_0_3] = {
+					[str_2] = {
 						additional_critical_strike_chance = 0,
 						impact_sound_event = "axe_2h_hit",
 						use_precision_sweep = true,
@@ -443,10 +450,11 @@ local var_0_6 = {
 				anim_event = "attack_swing_up_right",
 				height_mod = 10,
 				total_time = 2.5,
-				anim_end_event_condition_func = function(arg_8_0, arg_8_1)
-					return arg_8_1 ~= "new_interupting_action" and arg_8_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_8_0, arg_8_1)
+					-- function 8
+					return arg_8_1 == "new_interupting_action" or arg_8_1 ~= "action_complete"
 				end,
-				anim_time_scale = var_0_1 * 1,
+				anim_time_scale = num_2 * 1,
 				buff_data = {
 					{
 						start_time = 0,
@@ -515,7 +523,7 @@ local var_0_6 = {
 					}
 				},
 				weapon_mode_overrides = {
-					[var_0_3] = {
+					[str_2] = {
 						additional_critical_strike_chance = 0,
 						impact_sound_event = "slashing_hit",
 						use_precision_sweep = true,
@@ -622,10 +630,11 @@ local var_0_6 = {
 				anim_event = "attack_swing_left",
 				height_mod = 10,
 				total_time = 2.5,
-				anim_end_event_condition_func = function(arg_9_0, arg_9_1)
-					return arg_9_1 ~= "new_interupting_action" and arg_9_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_9_0, arg_9_1)
+					-- function 9
+					return arg_9_1 == "new_interupting_action" or arg_9_1 ~= "action_complete"
 				end,
-				anim_time_scale = var_0_1 * 1,
+				anim_time_scale = num_2 * 1,
 				buff_data = {
 					{
 						start_time = 0,
@@ -694,7 +703,7 @@ local var_0_6 = {
 					}
 				},
 				weapon_mode_overrides = {
-					[var_0_3] = {
+					[str_2] = {
 						additional_critical_strike_chance = 0,
 						impact_sound_event = "slashing_hit",
 						use_precision_sweep = false,
@@ -801,10 +810,11 @@ local var_0_6 = {
 				anim_event = "attack_swing_right",
 				height_mod = 10,
 				total_time = 2.5,
-				anim_end_event_condition_func = function(arg_10_0, arg_10_1)
-					return arg_10_1 ~= "new_interupting_action" and arg_10_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_10_0, arg_10_1)
+					-- function 10
+					return arg_10_1 == "new_interupting_action" or arg_10_1 ~= "action_complete"
 				end,
-				anim_time_scale = var_0_1 * 1,
+				anim_time_scale = num_2 * 1,
 				buff_data = {
 					{
 						start_time = 0,
@@ -873,7 +883,7 @@ local var_0_6 = {
 					}
 				},
 				weapon_mode_overrides = {
-					[var_0_3] = {
+					[str_2] = {
 						additional_critical_strike_chance = 0,
 						impact_sound_event = "slashing_hit",
 						use_precision_sweep = false,
@@ -978,8 +988,9 @@ local var_0_6 = {
 				anim_event = "attack_swing_heavy",
 				height_mod = 10,
 				total_time = 2.25,
-				anim_end_event_condition_func = function(arg_11_0, arg_11_1)
-					return arg_11_1 ~= "new_interupting_action" and arg_11_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_11_0, arg_11_1)
+					-- function 11
+					return arg_11_1 == "new_interupting_action" or arg_11_1 ~= "action_complete"
 				end,
 				buff_data = {
 					{
@@ -1029,7 +1040,8 @@ local var_0_6 = {
 						input = "action_three"
 					}
 				},
-				enter_function = function(arg_12_0, arg_12_1)
+				enter_function = function (arg_12_0, arg_12_1)
+					-- function 12
 					return arg_12_1:reset_release_input()
 				end,
 				hit_mass_count = LINESMAN_HIT_MASS_COUNT,
@@ -1129,8 +1141,9 @@ local var_0_6 = {
 				anim_event = "attack_swing_heavy_right",
 				height_mod = 10,
 				total_time = 2.25,
-				anim_end_event_condition_func = function(arg_13_0, arg_13_1)
-					return arg_13_1 ~= "new_interupting_action" and arg_13_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_13_0, arg_13_1)
+					-- function 13
+					return arg_13_1 == "new_interupting_action" or arg_13_1 ~= "action_complete"
 				end,
 				buff_data = {
 					{
@@ -1180,7 +1193,8 @@ local var_0_6 = {
 						input = "action_three"
 					}
 				},
-				enter_function = function(arg_14_0, arg_14_1)
+				enter_function = function (arg_14_0, arg_14_1)
+					-- function 14
 					return arg_14_1:reset_release_input()
 				end,
 				critical_strike = {},
@@ -1280,8 +1294,9 @@ local var_0_6 = {
 				anim_event = "attack_swing_heavy_left_diagonal",
 				height_mod = 10,
 				total_time = 2.25,
-				anim_end_event_condition_func = function(arg_15_0, arg_15_1)
-					return arg_15_1 ~= "new_interupting_action" and arg_15_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_15_0, arg_15_1)
+					-- function 15
+					return arg_15_1 == "new_interupting_action" or arg_15_1 ~= "action_complete"
 				end,
 				buff_data = {
 					{
@@ -1331,7 +1346,8 @@ local var_0_6 = {
 						input = "action_three"
 					}
 				},
-				enter_function = function(arg_16_0, arg_16_1)
+				enter_function = function (arg_16_0, arg_16_1)
+					-- function 16
 					return arg_16_1:reset_release_input()
 				end,
 				critical_strike = {}
@@ -1358,8 +1374,9 @@ local var_0_6 = {
 				anim_event = "attack_swing_heavy_left_diagonal",
 				height_mod = 10,
 				total_time = 2.25,
-				anim_end_event_condition_func = function(arg_17_0, arg_17_1)
-					return arg_17_1 ~= "new_interupting_action" and arg_17_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_17_0, arg_17_1)
+					-- function 17
+					return arg_17_1 == "new_interupting_action" or arg_17_1 ~= "action_complete"
 				end,
 				buff_data = {
 					{
@@ -1409,12 +1426,13 @@ local var_0_6 = {
 						input = "action_three"
 					}
 				},
-				enter_function = function(arg_18_0, arg_18_1)
+				enter_function = function (arg_18_0, arg_18_1)
+					-- function 18
 					return arg_18_1:reset_release_input()
 				end,
 				critical_strike = {},
 				weapon_mode_overrides = {
-					[var_0_3] = {
+					[str_2] = {
 						damage_profile = "heavy_slashing_smiter_executioner",
 						impact_sound_event = "slashing_hit",
 						use_precision_sweep = true,
@@ -1521,10 +1539,11 @@ local var_0_6 = {
 				anim_event = "attack_swing_left_diagonal_last",
 				hit_stop_anim = "attack_hit_alt_effect",
 				total_time = 2.5,
-				anim_end_event_condition_func = function(arg_19_0, arg_19_1)
-					return arg_19_1 ~= "new_interupting_action" and arg_19_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_19_0, arg_19_1)
+					-- function 19
+					return arg_19_1 == "new_interupting_action" or arg_19_1 ~= "action_complete"
 				end,
-				anim_time_scale = var_0_1 * 1,
+				anim_time_scale = num_2 * 1,
 				buff_data = {
 					{
 						start_time = 0,
@@ -1586,7 +1605,7 @@ local var_0_6 = {
 					}
 				},
 				weapon_mode_overrides = {
-					[var_0_3] = {
+					[str_2] = {
 						additional_critical_strike_chance = 0,
 						impact_sound_event = "slashing_hit",
 						use_precision_sweep = false,
@@ -1694,10 +1713,11 @@ local var_0_6 = {
 				anim_event = "attack_swing_up_right",
 				hit_stop_anim = "attack_hit_alt_effect",
 				total_time = 2.5,
-				anim_end_event_condition_func = function(arg_20_0, arg_20_1)
-					return arg_20_1 ~= "new_interupting_action" and arg_20_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_20_0, arg_20_1)
+					-- function 20
+					return arg_20_1 == "new_interupting_action" or arg_20_1 ~= "action_complete"
 				end,
-				anim_time_scale = var_0_1 * 1,
+				anim_time_scale = num_2 * 1,
 				buff_data = {
 					{
 						start_time = 0,
@@ -1759,7 +1779,7 @@ local var_0_6 = {
 					}
 				},
 				weapon_mode_overrides = {
-					[var_0_3] = {
+					[str_2] = {
 						additional_critical_strike_chance = 0,
 						impact_sound_event = "slashing_hit",
 						use_precision_sweep = true,
@@ -1858,8 +1878,9 @@ local var_0_6 = {
 				anim_event = "attack_push",
 				damage_profile_inner = "medium_push",
 				total_time = 0.8,
-				anim_end_event_condition_func = function(arg_21_0, arg_21_1)
-					return arg_21_1 ~= "new_interupting_action" and arg_21_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_21_0, arg_21_1)
+					-- function 21
+					return arg_21_1 == "new_interupting_action" or arg_21_1 ~= "action_complete"
 				end,
 				buff_data = {
 					{
@@ -1917,8 +1938,9 @@ local var_0_6 = {
 						input = "action_three"
 					}
 				},
-				push_radius = var_0_0,
-				chain_condition_func = function(arg_22_0, arg_22_1)
+				push_radius = num,
+				chain_condition_func = function (arg_22_0, arg_22_1)
+					-- function 22
 					return not ScriptUnit.extension(arg_22_0, "status_system"):fatigued()
 				end
 			}
@@ -1931,11 +1953,13 @@ local var_0_6 = {
 				kind = "block",
 				hold_input = "action_two_hold",
 				anim_event = "parry_pose",
-				anim_end_event_condition_func = function(arg_23_0, arg_23_1)
+				anim_end_event_condition_func = function (arg_23_0, arg_23_1)
+					-- function 23
 					return arg_23_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
-				enter_function = function(arg_24_0, arg_24_1, arg_24_2)
+				enter_function = function (arg_24_0, arg_24_1, arg_24_2)
+					-- function 24
 					return arg_24_1:reset_release_input_with_delay(arg_24_2)
 				end,
 				buff_data = {
@@ -1985,8 +2009,9 @@ local var_0_6 = {
 				kind = "melee_start",
 				attack_hold_input = "action_three_hold",
 				anim_event = "special_action",
-				anim_end_event_condition_func = function(arg_25_0, arg_25_1)
-					return arg_25_1 ~= "new_interupting_action" and arg_25_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_25_0, arg_25_1)
+					-- function 25
+					return arg_25_1 == "new_interupting_action" or arg_25_1 ~= "action_complete"
 				end,
 				total_time = math.huge,
 				buff_data = {
@@ -2023,19 +2048,22 @@ local var_0_6 = {
 						auto_chain = true
 					}
 				},
-				enter_function = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+				enter_function = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+					-- function 26
 					return arg_26_1:reset_release_input()
 				end,
-				condition_func = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
-					if arg_27_3 then
-						return arg_27_3:get_custom_data("scythe_state") == var_0_3
+				condition_func = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+					-- function 27
+					if not arg_27_3 then
+						return arg_27_3:get_custom_data("scythe_state") == str_2
 					end
 
 					return false
 				end,
-				chain_condition_func = function(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
-					if arg_28_3 then
-						return arg_28_3:get_custom_data("scythe_state") == var_0_3
+				chain_condition_func = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+					-- function 28
+					if not arg_28_3 then
+						return arg_28_3:get_custom_data("scythe_state") == str_2
 					end
 
 					return false
@@ -2066,10 +2094,11 @@ local var_0_6 = {
 				uninterruptible = true,
 				anim_event = "special_action_02",
 				total_time = 0.8,
-				anim_end_event_condition_func = function(arg_29_0, arg_29_1)
-					return arg_29_1 ~= "new_interupting_action" and arg_29_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_29_0, arg_29_1)
+					-- function 29
+					return arg_29_1 == "new_interupting_action" or arg_29_1 ~= "action_complete"
 				end,
-				anim_time_scale = var_0_1 * 1,
+				anim_time_scale = num_2 * 1,
 				buff_data = {
 					{
 						start_time = 0,
@@ -2131,14 +2160,16 @@ local var_0_6 = {
 						input = "action_wield"
 					}
 				},
-				finish_function = function(arg_30_0, arg_30_1, arg_30_2)
-					if arg_30_2 then
+				finish_function = function (arg_30_0, arg_30_1, arg_30_2)
+					-- function 30
+					if not arg_30_2 then
 						arg_30_2:set_custom_data("activation_t", Managers.time:time("game"))
-						arg_30_2:set_custom_data("scythe_state", var_0_2)
+						arg_30_2:set_custom_data("scythe_state", str)
 						Unit.flow_event(arg_30_2.unit, "close")
 					end
 				end,
-				enter_function = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+				enter_function = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+					-- function 31
 					return
 				end
 			}
@@ -2146,48 +2177,50 @@ local var_0_6 = {
 		action_inspect = ActionTemplates.action_inspect,
 		action_wield = ActionTemplates.wield
 	},
-	update = function(arg_32_0, arg_32_1, arg_32_2)
-		if not arg_32_0 then
+	update = function (self, arg_32_1, arg_32_2)
+		-- function 32
+		if not self then
 			return
 		end
 
-		if arg_32_0:get_custom_data("scythe_state") == var_0_2 and arg_32_2 > arg_32_0:get_custom_data("activation_t") + var_0_4 and (not arg_32_0:has_current_action() or arg_32_0:is_after_damage_window() or arg_32_0:get_current_action_settings().kind == "melee_start") then
-			Unit.flow_event(arg_32_0.unit, "open")
-			arg_32_0:set_custom_data("scythe_state", var_0_3)
-			arg_32_0:trigger_anim_event(var_0_5)
+		if not (self:get_custom_data("scythe_state") ~= str or not (arg_32_2 > self:get_custom_data("activation_t") + num_3) or not self:has_current_action() or self:is_after_damage_window() or self:get_current_action_settings().kind ~= "melee_start") then
+			Unit.flow_event(self.unit, "open")
+			self:set_custom_data("scythe_state", str_2)
+			self:trigger_anim_event(str_3)
 		end
 	end,
-	on_wield = function(arg_33_0, arg_33_1)
-		if not arg_33_0 then
+	on_wield = function (self, arg_33_1)
+		-- function 33
+		if not self then
 			return
 		end
 
-		local var_33_0 = arg_33_0:get_custom_data("scythe_state")
+		local get_custom_data = self:get_custom_data("scythe_state")
 
-		if not var_33_0 or var_33_0 == var_0_2 then
-			Unit.flow_event(arg_33_0.unit, "close")
-			arg_33_0:set_custom_data("scythe_state", var_0_2)
+		if not (not get_custom_data and get_custom_data ~= str) then
+			Unit.flow_event(self.unit, "close")
+			self:set_custom_data("scythe_state", str)
 		else
-			Unit.flow_event(arg_33_0.unit, "open")
+			Unit.flow_event(self.unit, "open")
 		end
 	end
 }
 
-var_0_6.right_hand_unit = "units/weapons/player/wpn_empire_short_sword/wpn_empire_short_sword"
-var_0_6.right_hand_attachment_node_linking = AttachmentNodeLinking.ghost_scythe
-var_0_6.display_unit = "units/weapons/weapon_display/display_2h_hammers"
-var_0_6.wield_anim = "to_quarter_staff_wield"
-var_0_6.state_machine = "units/beings/player/first_person_base/state_machines/melee/ghost_scythe"
-var_0_6.buff_type = "MELEE_2H"
-var_0_6.weapon_type = "MACE_2H"
-var_0_6.max_fatigue_points = 6
-var_0_6.dodge_count = 2
-var_0_6.block_angle = 90
-var_0_6.outer_block_angle = 360
-var_0_6.block_fatigue_point_multiplier = 0.5
-var_0_6.outer_block_fatigue_point_multiplier = 2
-var_0_6.sound_event_block_within_arc = "weapon_foley_blunt_2h_block_wood"
-var_0_6.buffs = {
+tbl.right_hand_unit = "units/weapons/player/wpn_empire_short_sword/wpn_empire_short_sword"
+tbl.right_hand_attachment_node_linking = AttachmentNodeLinking.ghost_scythe
+tbl.display_unit = "units/weapons/weapon_display/display_2h_hammers"
+tbl.wield_anim = "to_quarter_staff_wield"
+tbl.state_machine = "units/beings/player/first_person_base/state_machines/melee/ghost_scythe"
+tbl.buff_type = "MELEE_2H"
+tbl.weapon_type = "MACE_2H"
+tbl.max_fatigue_points = 6
+tbl.dodge_count = 2
+tbl.block_angle = 90
+tbl.outer_block_angle = 360
+tbl.block_fatigue_point_multiplier = 0.5
+tbl.outer_block_fatigue_point_multiplier = 2
+tbl.sound_event_block_within_arc = "weapon_foley_blunt_2h_block_wood"
+tbl.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1
 	},
@@ -2195,11 +2228,11 @@ var_0_6.buffs = {
 		external_optional_multiplier = 1
 	}
 }
-var_0_6.custom_data = {
+tbl.custom_data = {
 	activation_t = 0,
-	scythe_state = var_0_3
+	scythe_state = str_2
 }
-var_0_6.attack_meta_data = {
+tbl.attack_meta_data = {
 	tap_attack = {
 		max_range = 2.75,
 		arc = 0
@@ -2209,7 +2242,7 @@ var_0_6.attack_meta_data = {
 		arc = 2
 	}
 }
-var_0_6.aim_assist_settings = {
+tbl.aim_assist_settings = {
 	max_range = 5,
 	no_aim_input_multiplier = 0,
 	base_multiplier = 0,
@@ -2220,7 +2253,7 @@ var_0_6.aim_assist_settings = {
 		skaven_slave = 0.5
 	}
 }
-var_0_6.weapon_diagram = {
+tbl.weapon_diagram = {
 	light_attack = {
 		[DamageTypes.ARMOR_PIERCING] = 3,
 		[DamageTypes.CLEAVE] = 3,
@@ -2236,12 +2269,12 @@ var_0_6.weapon_diagram = {
 		[DamageTypes.DAMAGE] = 4
 	}
 }
-var_0_6.tooltip_keywords = {
+tbl.tooltip_keywords = {
 	"weapon_keyword_wide_sweeps",
 	"weapon_keyword_crowd_control",
 	"weapon_keyword_damage_over_time"
 }
-var_0_6.tooltip_compare = {
+tbl.tooltip_compare = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "light_attack_01"
@@ -2251,7 +2284,7 @@ var_0_6.tooltip_compare = {
 		sub_action_name = "heavy_attack_01"
 	}
 }
-var_0_6.tooltip_detail = {
+tbl.tooltip_detail = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -2265,11 +2298,11 @@ var_0_6.tooltip_detail = {
 		sub_action_name = "push"
 	}
 }
-var_0_6.wwise_dep_right_hand = {
+tbl.wwise_dep_right_hand = {
 	"wwise/two_handed_hammers",
 	"wwise/scythe"
 }
 
 return {
-	staff_scythe = table.clone(var_0_6)
+	staff_scythe = table.clone(tbl)
 }

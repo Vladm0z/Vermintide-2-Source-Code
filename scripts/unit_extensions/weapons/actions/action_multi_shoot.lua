@@ -2,139 +2,159 @@
 
 ActionMultiShoot = class(ActionMultiShoot, ActionShotgun)
 
-local var_0_0 = Unit.set_flow_variable
-local var_0_1 = Unit.flow_event
+local set_flow_variable = Unit.set_flow_variable
+local flow_event = Unit.flow_event
 
-function ActionMultiShoot._use_ammo(arg_1_0)
-	local var_1_0 = arg_1_0.current_action
-	local var_1_1 = arg_1_0.ammo_extension
-	local var_1_2 = var_1_0.ammo_usage
-	local var_1_3 = arg_1_0:_get_total_shots()
+ActionMultiShoot._use_ammo = function (self)
+	-- function 1
+	local current_action = self.current_action
+	local ammo_extension = self.ammo_extension
+	local ammo_usage = current_action.ammo_usage
+	local _get_total_shots = self:_get_total_shots()
 
-	if var_1_0.special_ammo_thing and not arg_1_0.extra_buff_shot then
-		var_1_2 = var_1_1:current_ammo()
-		var_1_3 = var_1_2
+	if not (not current_action.special_ammo_thing and self.extra_buff_shot) then
+		ammo_usage = ammo_extension:current_ammo()
+		_get_total_shots = ammo_usage
 	end
 
-	if var_1_1 and not arg_1_0.extra_buff_shot and not arg_1_0.infinite_ammo then
-		var_1_1:use_ammo(var_1_2)
+	if not (not ammo_extension and self.extra_buff_shot or self.infinite_ammo) then
+		ammo_extension:use_ammo(ammo_usage)
 	end
 
-	arg_1_0._num_shots_total = var_1_3
+	self._num_shots_total = _get_total_shots
 end
 
-function ActionMultiShoot._get_barrel_data(arg_2_0, arg_2_1)
-	local var_2_0 = arg_2_0.current_action.barrels
-	local var_2_1 = 0
+ActionMultiShoot._get_barrel_data = function (self, arg_2_1)
+	-- function 2
+	local barrels = self.current_action.barrels
+	local num = 0
 
-	for iter_2_0, iter_2_1 in ipairs(var_2_0) do
-		local var_2_2 = var_2_1 + iter_2_1.shot_count
+	for i, v in ipairs(barrels) do
+		local num_2 = num + v.shot_count
 
-		if var_2_1 <= arg_2_1 and arg_2_1 <= var_2_2 then
-			return iter_2_1
+		if not (not (num <= arg_2_1) or arg_2_1 <= num_2) then
+			return v
 		end
 
-		var_2_1 = var_2_2
+		num = num_2
 	end
 
-	return var_2_0[1]
+	return barrels[1]
 end
 
-function ActionMultiShoot._get_total_shots(arg_3_0)
-	local var_3_0 = 0
-	local var_3_1 = arg_3_0.current_action.barrels
+ActionMultiShoot._get_total_shots = function (self)
+	-- function 3
+	local num = 0
+	local barrels = self.current_action.barrels
 
-	for iter_3_0, iter_3_1 in ipairs(var_3_1) do
-		var_3_0 = var_3_0 + iter_3_1.shot_count
+	for i, v in ipairs(barrels) do
+		num = num + v.shot_count
 	end
 
-	return var_3_0
+	return num
 end
 
-function ActionMultiShoot._combine_rotations(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+ActionMultiShoot._combine_rotations = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	-- function 4
 	local var_4_0 = Quaternion(Vector3.up(), arg_4_1)
 	local var_4_1 = Quaternion(Vector3.right(), arg_4_2)
-	local var_4_2 = Quaternion.multiply(arg_4_3, var_4_0)
+	local multiply = Quaternion.multiply(arg_4_3, var_4_0)
 
-	return (Quaternion.multiply(var_4_2, var_4_1))
+	return (Quaternion.multiply(multiply, var_4_1))
 end
 
-function ActionMultiShoot._get_spread_rotation(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
-	local var_5_0 = arg_5_0.spread_extension
+ActionMultiShoot._get_spread_rotation = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	-- function 5
+	local spread_extension = self.spread_extension
 
-	if var_5_0 then
-		local var_5_1 = arg_5_0:_get_barrel_data(arg_5_0._shots_fired)
-		local var_5_2 = math.degrees_to_radians(var_5_1.yaw)
-		local var_5_3 = math.degrees_to_radians(var_5_1.pitch)
-		local var_5_4 = arg_5_0:_combine_rotations(var_5_2, var_5_3, arg_5_2)
+	if not spread_extension then
+		local _get_barrel_data = self:_get_barrel_data(self._shots_fired)
+		local degrees_to_radians = math.degrees_to_radians(_get_barrel_data.yaw)
+		local degrees_to_radians_2 = math.degrees_to_radians(_get_barrel_data.pitch)
+		local _combine_rotations = self:_combine_rotations(degrees_to_radians, degrees_to_radians_2, arg_5_2)
 
-		return var_5_0:get_target_style_spread(arg_5_0._shots_fired, arg_5_1, var_5_4, arg_5_3, arg_5_4, arg_5_5)
+		return spread_extension:get_target_style_spread(self._shots_fired, arg_5_1, _combine_rotations, arg_5_3, arg_5_4, arg_5_5)
 	else
 		return arg_5_2
 	end
 end
 
-function ActionMultiShoot._shoot(arg_6_0, arg_6_1, arg_6_2)
-	local var_6_0 = arg_6_0.current_action
-	local var_6_1 = arg_6_0._fire_position:unbox()
-	local var_6_2 = arg_6_0._fire_rotation:unbox()
-	local var_6_3 = arg_6_0.world
-	local var_6_4 = arg_6_0.physics_world
-	local var_6_5 = arg_6_0._check_buffs
-	local var_6_6 = var_6_0.num_layers_spread or 1
-	local var_6_7 = var_6_0.bullseye or false
-	local var_6_8 = var_6_0.spread_pitch or 0.8
-	local var_6_9 = arg_6_0.weapon_unit
-	local var_6_10 = arg_6_0.item_name
-	local var_6_11 = arg_6_0.owner_unit
-	local var_6_12 = arg_6_0.is_server
+ActionMultiShoot._shoot = function (self, arg_6_1, arg_6_2)
+	-- function 6
+	local current_action = self.current_action
+	local unbox = self._fire_position:unbox()
+	local unbox_2 = self._fire_rotation:unbox()
+	local world = self.world
+	local physics_world = self.physics_world
+	local _check_buffs = self._check_buffs
+	local num_layers_spread = current_action.num_layers_spread
 
-	for iter_6_0 = 1, arg_6_2 do
-		arg_6_0._shots_fired = arg_6_0._shots_fired + 1
+	num_layers_spread = num_layers_spread or 1
 
-		local var_6_13 = arg_6_0:_get_spread_rotation(arg_6_1, var_6_2, var_6_6, var_6_7, var_6_8)
-		local var_6_14 = Quaternion.forward(var_6_13)
-		local var_6_15 = PhysicsWorld.immediate_raycast_actors(var_6_4, var_6_1, var_6_14, var_6_0.range, "static_collision_filter", "filter_player_ray_projectile_static_only", "dynamic_collision_filter", "filter_player_ray_projectile_ai_only", "dynamic_collision_filter", "filter_player_ray_projectile_hitbox_only")
+	local bullseye = current_action.bullseye
 
-		if var_6_15 then
-			local var_6_16 = DamageUtils.process_projectile_hit(var_6_3, var_6_10, var_6_11, var_6_12, var_6_15, var_6_0, var_6_14, var_6_5, nil, arg_6_0.shield_users_blocking, arg_6_0._is_critical_strike, arg_6_0.power_level)
+	bullseye = bullseye or false
 
-			if var_6_16.buffs_checked then
-				var_6_5 = var_6_5 and false
+	local spread_pitch = current_action.spread_pitch
+
+	spread_pitch = spread_pitch or 0.8
+
+	local weapon_unit = self.weapon_unit
+	local item_name = self.item_name
+	local owner_unit = self.owner_unit
+	local is_server = self.is_server
+
+	for i = 1, arg_6_2 do
+		self._shots_fired = self._shots_fired + 1
+
+		local _get_spread_rotation = self:_get_spread_rotation(arg_6_1, unbox_2, num_layers_spread, bullseye, spread_pitch)
+		local forward = Quaternion.forward(_get_spread_rotation)
+		local immediate_raycast_actors = PhysicsWorld.immediate_raycast_actors(physics_world, unbox, forward, current_action.range, "static_collision_filter", "filter_player_ray_projectile_static_only", "dynamic_collision_filter", "filter_player_ray_projectile_ai_only", "dynamic_collision_filter", "filter_player_ray_projectile_hitbox_only")
+
+		if not immediate_raycast_actors then
+			local process_projectile_hit = DamageUtils.process_projectile_hit(world, item_name, owner_unit, is_server, immediate_raycast_actors, current_action, forward, _check_buffs, nil, self.shield_users_blocking, self._is_critical_strike, self.power_level)
+
+			if not process_projectile_hit.buffs_checked then
+				_check_buffs = not _check_buffs and false
 			end
 
-			if var_6_16.blocked_by_unit then
-				arg_6_0.shield_users_blocking[var_6_16.blocked_by_unit] = true
+			if not process_projectile_hit.blocked_by_unit then
+				self.shield_users_blocking[process_projectile_hit.blocked_by_unit] = true
 			end
 
-			local var_6_17 = var_6_15[#var_6_15][1] or var_6_1 + var_6_14 * var_6_0.range
+			local var_6_17 = immediate_raycast_actors[#immediate_raycast_actors][1]
 
-			var_0_0(var_6_9, "hit_position", var_6_17)
-			var_0_0(var_6_9, "fire_position", var_6_1)
-			var_0_0(var_6_9, "fire_direction", var_6_14)
-			var_0_0(var_6_9, "trail_life", Vector3.length(var_6_17 - var_6_1) * 0.1)
-			var_0_1(var_6_9, "lua_bullet_trail")
+			var_6_17 = var_6_17 or unbox + forward * current_action.range
+
+			set_flow_variable(weapon_unit, "hit_position", var_6_17)
+			set_flow_variable(weapon_unit, "fire_position", unbox)
+			set_flow_variable(weapon_unit, "fire_direction", forward)
+			set_flow_variable(weapon_unit, "trail_life", Vector3.length(var_6_17 - unbox) * 0.1)
+			flow_event(weapon_unit, "lua_bullet_trail")
 		end
 	end
 
-	arg_6_0._check_buffs = var_6_5
+	self._check_buffs = _check_buffs
 end
 
-function ActionMultiShoot.finish(arg_7_0, arg_7_1)
-	ActionMultiShoot.super.finish(arg_7_0, arg_7_1)
+ActionMultiShoot.finish = function (self, arg_7_1)
+	-- function 7
+	ActionMultiShoot.super.finish(self, arg_7_1)
 
-	local var_7_0 = arg_7_0.ammo_extension
-	local var_7_1 = arg_7_0.current_action
-	local var_7_2 = arg_7_0.owner_unit
+	local ammo_extension = self.ammo_extension
+	local current_action = self.current_action
+	local owner_unit = self.owner_unit
 
 	if arg_7_1 ~= "new_interupting_action" then
-		ScriptUnit.extension(var_7_2, "status_system"):set_zooming(false)
+		ScriptUnit.extension(owner_unit, "status_system"):set_zooming(false)
 
-		local var_7_3 = var_7_1.reload_when_out_of_ammo_condition_func
-		local var_7_4 = not var_7_3 and true or var_7_3(var_7_2, arg_7_1)
+		local reload_when_out_of_ammo_condition_func = current_action.reload_when_out_of_ammo_condition_func
+		local flag
 
-		if var_7_0 and var_7_1.reload_when_out_of_ammo and var_7_4 and var_7_0:ammo_count() == 0 and var_7_0:can_reload() then
-			var_7_0:start_reload(true)
+		flag = reload_when_out_of_ammo_condition_func or not true or reload_when_out_of_ammo_condition_func(owner_unit, arg_7_1)
+
+		if not ammo_extension and not current_action.reload_when_out_of_ammo and not flag and ammo_extension:ammo_count() ~= 0 or not ammo_extension:can_reload() then
+			ammo_extension:start_reload(true)
 		end
 	end
 end

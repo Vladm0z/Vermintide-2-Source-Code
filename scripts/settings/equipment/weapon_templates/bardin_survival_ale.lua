@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/bardin_survival_ale.lua
 
-local var_0_0 = {
+local tbl = {
 	actions = {
 		action_one = {
 			default = {
@@ -13,8 +13,9 @@ local var_0_0 = {
 				uninterruptible = true,
 				buff_template = "bardin_survival_ale_buff",
 				total_time = 1.9,
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
-					return arg_1_1 ~= "new_interupting_action" and arg_1_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
+					-- function 1
+					return arg_1_1 == "new_interupting_action" or arg_1_1 ~= "action_complete"
 				end,
 				allowed_chain_actions = {}
 			}
@@ -33,8 +34,9 @@ local var_0_0 = {
 				uninterruptible = true,
 				anim_event = "attack_throw",
 				total_time = 0.7,
-				anim_end_event_condition_func = function(arg_2_0, arg_2_1)
-					return arg_2_1 ~= "new_interupting_action" and arg_2_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_2_0, arg_2_1)
+					-- function 2
+					return arg_2_1 == "new_interupting_action" or arg_2_1 ~= "action_complete"
 				end,
 				allowed_chain_actions = {},
 				angular_velocity = {
@@ -67,18 +69,18 @@ local var_0_0 = {
 	}
 }
 
-var_0_0.right_hand_unit = "units/weapons/player/wpn_ale/wpn_ale"
-var_0_0.right_hand_attachment_node_linking = AttachmentNodeLinking.potion_right
-var_0_0.wield_anim = "to_potion"
-var_0_0.state_machine = "units/beings/player/first_person_base/state_machines/common"
-var_0_0.load_state_machine = false
-var_0_0.gui_texture = "hud_consumable_icon_potion"
-var_0_0.gui_texture = "hud_consumable_icon_potion"
-var_0_0.pickup_data = {
+tbl.right_hand_unit = "units/weapons/player/wpn_ale/wpn_ale"
+tbl.right_hand_attachment_node_linking = AttachmentNodeLinking.potion_right
+tbl.wield_anim = "to_potion"
+tbl.state_machine = "units/beings/player/first_person_base/state_machines/common"
+tbl.load_state_machine = false
+tbl.gui_texture = "hud_consumable_icon_potion"
+tbl.gui_texture = "hud_consumable_icon_potion"
+tbl.pickup_data = {
 	pickup_name = "bardin_survival_ale"
 }
-var_0_0.max_fatigue_points = 4
-var_0_0.buffs = {
+tbl.max_fatigue_points = 4
+tbl.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1
 	},
@@ -88,5 +90,5 @@ var_0_0.buffs = {
 }
 
 return {
-	bardin_survival_ale = table.clone(var_0_0)
+	bardin_survival_ale = table.clone(tbl)
 }

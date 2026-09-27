@@ -1,11 +1,11 @@
 -- chunkname: @scripts/ui/hud_ui/team_member_unit_frame_ui_definitions.lua
 
-local var_0_0 = 1920
-local var_0_1 = 1080
-local var_0_2 = true
-local var_0_3 = 1
-local var_0_4 = 1
-local var_0_5 = {
+local num = 1920
+local num_2 = 1080
+local flag = true
+local num_3 = 1
+local num_4 = 1
+local tbl = {
 	root = {
 		scale = "hud_scale_fit",
 		position = {
@@ -14,8 +14,8 @@ local var_0_5 = {
 			UILayer.hud
 		},
 		size = {
-			var_0_0,
-			var_0_1
+			num,
+			num_2
 		}
 	},
 	portrait_pivot_parent = {
@@ -115,28 +115,38 @@ local var_0_5 = {
 }
 
 if PLATFORM ~= "win32" then
-	var_0_5.root.scale = "hud_fit"
-	var_0_5.root.is_root = nil
+	tbl.root.scale = "hud_fit"
+	tbl.root.is_root = nil
 end
 
-local var_0_6 = IS_WINDOWS and {
-	wpn_grimoire_01 = "teammate_consumable_icon_grimoire",
-	potion_cooldown_reduction_01 = "teammate_consumable_icon_speed",
-	potion_healing_draught_01 = "teammate_consumable_icon_potion_01",
-	grenade_frag_02 = "teammate_consumable_icon_frag",
-	[3] = "teammate_consumable_icon_grenade_empty",
-	grenade_frag_01 = "teammate_consumable_icon_frag",
-	grenade_smoke_02 = "teammate_consumable_icon_smoke",
-	grenade_smoke_01 = "teammate_consumable_icon_smoke",
-	grenade_fire_01 = "teammate_consumable_icon_fire",
-	grenade_fire_02 = "teammate_consumable_icon_fire",
-	[1] = "teammate_consumable_icon_medpack_empty",
-	[2] = "teammate_consumable_icon_potion_empty",
-	wpn_side_objective_tome_01 = "teammate_consumable_icon_book",
-	potion_damage_boost_01 = "teammate_consumable_icon_strength",
-	healthkit_first_aid_kit_01 = "teammate_consumable_icon_medpack",
-	potion_speed_boost_01 = "teammate_consumable_icon_speed"
-} or {
+local tbl_2
+
+if not IS_WINDOWS then
+	tbl_2 = {
+		wpn_grimoire_01 = "teammate_consumable_icon_grimoire",
+		potion_cooldown_reduction_01 = "teammate_consumable_icon_speed",
+		potion_healing_draught_01 = "teammate_consumable_icon_potion_01",
+		grenade_frag_02 = "teammate_consumable_icon_frag",
+		[3] = "teammate_consumable_icon_grenade_empty",
+		grenade_frag_01 = "teammate_consumable_icon_frag",
+		grenade_smoke_02 = "teammate_consumable_icon_smoke",
+		grenade_smoke_01 = "teammate_consumable_icon_smoke",
+		grenade_fire_01 = "teammate_consumable_icon_fire",
+		grenade_fire_02 = "teammate_consumable_icon_fire",
+		[1] = "teammate_consumable_icon_medpack_empty",
+		[2] = "teammate_consumable_icon_potion_empty",
+		wpn_side_objective_tome_01 = "teammate_consumable_icon_book",
+		potion_damage_boost_01 = "teammate_consumable_icon_strength",
+		healthkit_first_aid_kit_01 = "teammate_consumable_icon_medpack",
+		potion_speed_boost_01 = "teammate_consumable_icon_speed"
+	}
+
+	if not tbl_2 then
+		-- Nothing
+	end
+end
+
+tbl_2 = {
 	wpn_grimoire_01 = "consumables_grimoire",
 	potion_cooldown_reduction_01 = "consumables_speed",
 	potion_healing_draught_01 = "consumables_potion_01",
@@ -154,34 +164,53 @@ local var_0_6 = IS_WINDOWS and {
 	healthkit_first_aid_kit_01 = "consumables_medpack",
 	potion_speed_boost_01 = "consumables_speed"
 }
-local var_0_7 = IS_WINDOWS and {
-	slot_healthkit = 1,
-	slot_grenade = 3,
-	slot_potion = 2
-} or {
+
+do
+	local tbl_3
+end
+
+::label_0_0::
+
+if not IS_WINDOWS then
+	tbl_3 = {
+		slot_healthkit = 1,
+		slot_grenade = 3,
+		slot_potion = 2
+	}
+
+	if not tbl_3 then
+		-- Nothing
+	end
+end
+
+tbl_3 = {
 	slot_potion = 3,
 	slot_grenade = 2,
 	slot_healthkit = 1
 }
-local var_0_8 = {
+
+::label_0_1::
+
+local tbl_4 = {
 	ammo_fields = {
 		slot_ranged = "ammo_text_weapon_slot_2",
 		slot_melee = "ammo_text_weapon_slot_1"
 	}
 }
-local var_0_9 = 1
-local var_0_10 = {
-	var_0_9 * 92,
-	var_0_9 * 9
+local num_5 = 1
+local tbl_5 = {
+	num_5 * 92,
+	num_5 * 9
 }
-local var_0_11 = {
-	-(var_0_10[1] / 2),
-	-25 * var_0_9,
+local tbl_6 = {
+	-(tbl_5[1] / 2),
+	-25 * num_5,
 	0
 }
 
-local function var_0_12()
-	return {
+local function fn()
+	-- function 1
+	local tbl = {
 		scenegraph_id = "pivot",
 		element = {
 			passes = {
@@ -189,52 +218,53 @@ local function var_0_12()
 					pass_type = "texture",
 					style_id = "character_portrait",
 					texture_id = "character_portrait",
-					retained_mode = var_0_2
+					retained_mode = flag
 				},
 				{
 					style_id = "player_level",
 					pass_type = "text",
 					text_id = "player_level",
-					retained_mode = var_0_2
+					retained_mode = flag
 				},
 				{
 					pass_type = "texture",
 					style_id = "host_icon",
 					texture_id = "host_icon",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_2_0)
-						return arg_2_0.is_host
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 2
+						return self.is_host
 					end
 				},
 				{
 					style_id = "player_name",
 					pass_type = "text",
 					text_id = "player_name",
-					retained_mode = var_0_2
+					retained_mode = flag
 				},
 				{
 					style_id = "player_name_shadow",
 					pass_type = "text",
 					text_id = "player_name",
-					retained_mode = var_0_2
+					retained_mode = flag
 				},
 				{
 					pass_type = "texture",
 					style_id = "hp_bar_bg",
 					texture_id = "hp_bar_bg",
-					retained_mode = var_0_2
+					retained_mode = flag
 				},
 				{
 					pass_type = "texture",
 					style_id = "hp_bar_fg",
 					texture_id = "hp_bar_fg",
-					retained_mode = var_0_2
+					retained_mode = flag
 				},
 				{
 					pass_type = "texture",
 					style_id = "ability_bar_bg",
 					texture_id = "ability_bar_bg",
-					retained_mode = var_0_2
+					retained_mode = flag
 				}
 			}
 		},
@@ -247,139 +277,182 @@ local function var_0_12()
 			player_level = "",
 			hp_bar_fg = "hud_teammate_hp_bar_frame",
 			ability_bar_bg = "hud_teammate_ability_bar_bg"
-		},
-		style = {
-			character_portrait = {
-				size = {
-					86 * var_0_3,
-					108 * var_0_3
-				},
-				offset = {
-					-43 * var_0_3,
-					-54 * var_0_3 + 55 * var_0_3,
-					0
-				},
-				color = {
-					255,
-					255,
-					255,
-					255
-				}
-			},
-			host_icon = {
-				size = {
-					40,
-					40
-				},
-				offset = {
-					-65,
-					-2,
-					50
-				},
-				color = {
-					150,
-					255,
-					255,
-					255
-				}
-			},
-			player_level = {
-				vertical_alignment = "top",
-				font_type = "hell_shark",
-				font_size = 14,
-				horizontal_alignment = "center",
-				text_color = Colors.get_table("cheeseburger"),
-				offset = {
-					var_0_11[1],
-					var_0_11[2] - 130,
-					var_0_11[3] + 15
-				}
-			},
-			player_name = {
-				vertical_alignment = "bottom",
-				font_type = "arial",
-				font_size = 18,
-				text_color = Colors.get_table("white"),
-				horizontal_alignment = IS_PS4 and "left" or "center",
-				offset = {
-					IS_PS4 and -43 * var_0_3 or 0,
-					110 * var_0_3,
-					var_0_11[3] + 15
-				}
-			},
-			player_name_shadow = {
-				vertical_alignment = "bottom",
-				font_type = "arial",
-				font_size = 18,
-				text_color = Colors.get_table("black"),
-				horizontal_alignment = IS_PS4 and "left" or "center",
-				offset = {
-					(IS_PS4 and -43 * var_0_3 or 0) + 2,
-					110 * var_0_3 - 2,
-					var_0_11[3] + 14
-				}
-			},
-			hp_bar_bg = {
-				size = {
-					100,
-					17
-				},
-				offset = {
-					var_0_11[1] + var_0_10[1] / 2 - 50,
-					var_0_11[2] + var_0_10[2] / 2 - 8.5,
-					var_0_11[3] + 15
-				},
-				color = {
-					255,
-					255,
-					255,
-					255
-				}
-			},
-			hp_bar_fg = {
-				size = {
-					100,
-					24
-				},
-				offset = {
-					var_0_11[1] + var_0_10[1] / 2 - 50,
-					var_0_11[2] + var_0_10[2] / 2 - 8.5 - 7,
-					var_0_11[3] + 20
-				},
-				color = {
-					255,
-					255,
-					255,
-					255
-				}
-			},
-			ability_bar_bg = {
-				size = {
-					92,
-					5
-				},
-				offset = {
-					var_0_11[1] + var_0_10[1] / 2 - 46,
-					var_0_11[2] - 9,
-					var_0_11[3] + 15
-				},
-				color = {
-					255,
-					255,
-					255,
-					255
-				}
-			}
-		},
-		offset = {
-			0,
-			-55 * var_0_3,
-			0
 		}
 	}
+	local tbl_2 = {
+		character_portrait = {
+			size = {
+				86 * num_3,
+				108 * num_3
+			},
+			offset = {
+				-43 * num_3,
+				-54 * num_3 + 55 * num_3,
+				0
+			},
+			color = {
+				255,
+				255,
+				255,
+				255
+			}
+		},
+		host_icon = {
+			size = {
+				40,
+				40
+			},
+			offset = {
+				-65,
+				-2,
+				50
+			},
+			color = {
+				150,
+				255,
+				255,
+				255
+			}
+		},
+		player_level = {
+			vertical_alignment = "top",
+			font_type = "hell_shark",
+			font_size = 14,
+			horizontal_alignment = "center",
+			text_color = Colors.get_table("cheeseburger"),
+			offset = {
+				tbl_6[1],
+				tbl_6[2] - 130,
+				tbl_6[3] + 15
+			}
+		}
+	}
+	local tbl_3 = {
+		vertical_alignment = "bottom",
+		font_type = "arial",
+		font_size = 18,
+		text_color = Colors.get_table("white")
+	}
+	local flag_2
+
+	flag_2 = not IS_PS4 and "left" and "center"
+	tbl_3.horizontal_alignment = flag_2
+
+	local tbl_4 = {}
+	local num
+
+	if not IS_PS4 then
+		num = -43 * num_3
+
+		if not num then
+			-- Nothing
+		end
+	end
+
+	num = 0
+
+	::label_1_0::
+
+	tbl_4[1] = num
+	tbl_4[2] = 110 * num_3
+	tbl_4[3] = tbl_6[3] + 15
+	tbl_3.offset = tbl_4
+	tbl_2.player_name = tbl_3
+
+	local tbl_7 = {
+		vertical_alignment = "bottom",
+		font_type = "arial",
+		font_size = 18,
+		text_color = Colors.get_table("black")
+	}
+	local flag_3
+
+	flag_3 = not IS_PS4 and "left" and "center"
+	tbl_7.horizontal_alignment = flag_3
+
+	local tbl_8 = {}
+	local num_2
+
+	if not IS_PS4 then
+		num_2 = -43 * num_3
+
+		if not num_2 then
+			-- Nothing
+		end
+	end
+
+	num_2 = 0
+
+	::label_1_1::
+
+	tbl_8[1] = num_2 + 2
+	tbl_8[2] = 110 * num_3 - 2
+	tbl_8[3] = tbl_6[3] + 14
+	tbl_7.offset = tbl_8
+	tbl_2.player_name_shadow = tbl_7
+	tbl_2.hp_bar_bg = {
+		size = {
+			100,
+			17
+		},
+		offset = {
+			tbl_6[1] + tbl_5[1] / 2 - 50,
+			tbl_6[2] + tbl_5[2] / 2 - 8.5,
+			tbl_6[3] + 15
+		},
+		color = {
+			255,
+			255,
+			255,
+			255
+		}
+	}
+	tbl_2.hp_bar_fg = {
+		size = {
+			100,
+			24
+		},
+		offset = {
+			tbl_6[1] + tbl_5[1] / 2 - 50,
+			tbl_6[2] + tbl_5[2] / 2 - 8.5 - 7,
+			tbl_6[3] + 20
+		},
+		color = {
+			255,
+			255,
+			255,
+			255
+		}
+	}
+	tbl_2.ability_bar_bg = {
+		size = {
+			92,
+			5
+		},
+		offset = {
+			tbl_6[1] + tbl_5[1] / 2 - 46,
+			tbl_6[2] - 9,
+			tbl_6[3] + 15
+		},
+		color = {
+			255,
+			255,
+			255,
+			255
+		}
+	}
+	tbl.style = tbl_2
+	tbl.offset = {
+		0,
+		-55 * num_3,
+		0
+	}
+
+	return tbl
 end
 
-local function var_0_13()
+local function fn_2()
+	-- function 3
 	return {
 		scenegraph_id = "pivot",
 		element = {
@@ -388,64 +461,68 @@ local function var_0_13()
 					pass_type = "texture",
 					style_id = "portrait_icon",
 					texture_id = "portrait_icon",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_4_0)
-						return arg_4_0.display_portrait_icon
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 4
+						return self.display_portrait_icon
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "talk_indicator",
 					texture_id = "talk_indicator",
-					retained_mode = var_0_2
+					retained_mode = flag
 				},
 				{
 					pass_type = "texture",
 					style_id = "talk_indicator_glow",
 					texture_id = "talk_indicator_glow",
-					retained_mode = var_0_2
+					retained_mode = flag
 				},
 				{
 					pass_type = "texture",
 					style_id = "talk_indicator_highlight",
 					texture_id = "talk_indicator_highlight",
-					retained_mode = var_0_2
+					retained_mode = flag
 				},
 				{
 					pass_type = "texture",
 					style_id = "talk_indicator_highlight_glow",
 					texture_id = "talk_indicator_highlight_glow",
-					retained_mode = var_0_2
+					retained_mode = flag
 				},
 				{
 					pass_type = "rotated_texture",
 					style_id = "connecting_icon",
 					texture_id = "connecting_icon",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_5_0)
-						return arg_5_0.connecting
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 5
+						return self.connecting
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "ammo_indicator",
 					texture_id = "ammo_indicator",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_6_0)
-						local var_6_0 = arg_6_0.ammo_percent
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 6
+						local ammo_percent = self.ammo_percent
 
-						return var_6_0 and var_6_0 > 0 and var_6_0 <= 0.33
+						return not ammo_percent and not (ammo_percent > 0) or ammo_percent <= 0.33
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "ammo_indicator",
 					texture_id = "ammo_indicator_empty",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_7_0)
-						local var_7_0 = arg_7_0.ammo_percent
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 7
+						local ammo_percent = self.ammo_percent
 
-						return var_7_0 and var_7_0 <= 0
+						return not ammo_percent and ammo_percent <= 0
 					end
 				},
 				{
@@ -453,7 +530,8 @@ local function var_0_13()
 					pass_type = "text",
 					text_id = "respawn_countdown_text",
 					retained_mode = false,
-					content_check_function = function(arg_8_0)
+					content_check_function = function (arg_8_0)
+						-- function 8
 						return true
 					end
 				},
@@ -461,65 +539,98 @@ local function var_0_13()
 					pass_type = "texture",
 					style_id = "ammo_indicator",
 					texture_id = "numeric_ui_ammo_indicator",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_9_0)
-						local var_9_0 = arg_9_0.ammo_percent
-						local var_9_1 = var_9_0 and (var_9_0 > 0 and var_9_0 <= 0.33 or var_9_0 <= 0)
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 9
+						local ammo_percent = self.ammo_percent
+						local flag = not ammo_percent and not (ammo_percent > 0) and not (ammo_percent <= 0.33) and ammo_percent <= 0
+						local user_setting = Application.user_setting("numeric_ui")
 
-						return Application.user_setting("numeric_ui") and arg_9_0.has_ranged_weapon and not var_9_1
+						if not user_setting then
+							user_setting = self.has_ranged_weapon
+							user_setting = not user_setting and not flag
+						end
+
+						return user_setting
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "ability_cooldown_indicator",
 					texture_id = "ability_cooldown_indicator",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_10_0)
-						return Application.user_setting("numeric_ui") and arg_10_0.on_cooldown
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 10
+						local user_setting = Application.user_setting("numeric_ui")
+
+						user_setting = not user_setting and self.on_cooldown
+
+						return user_setting
 					end
 				},
 				{
 					style_id = "ammo_count",
 					pass_type = "text",
 					text_id = "ammo_count",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_11_0)
-						return Application.user_setting("numeric_ui") and arg_11_0.has_ranged_weapon
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 11
+						local user_setting = Application.user_setting("numeric_ui")
+
+						user_setting = not user_setting and self.has_ranged_weapon
+
+						return user_setting
 					end
 				},
 				{
 					style_id = "ammo_count_shadow",
 					pass_type = "text",
 					text_id = "ammo_count",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_12_0)
-						return Application.user_setting("numeric_ui") and arg_12_0.has_ranged_weapon
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 12
+						local user_setting = Application.user_setting("numeric_ui")
+
+						user_setting = not user_setting and self.has_ranged_weapon
+
+						return user_setting
 					end
 				},
 				{
 					style_id = "ability_cooldown",
 					pass_type = "text",
 					text_id = "ability_cooldown",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_13_0)
-						return Application.user_setting("numeric_ui") and arg_13_0.on_cooldown
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 13
+						local user_setting = Application.user_setting("numeric_ui")
+
+						user_setting = not user_setting and self.on_cooldown
+
+						return user_setting
 					end
 				},
 				{
 					style_id = "ability_cooldown_shadow",
 					pass_type = "text",
 					text_id = "ability_cooldown",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_14_0)
-						return Application.user_setting("numeric_ui") and arg_14_0.on_cooldown
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 14
+						local user_setting = Application.user_setting("numeric_ui")
+
+						user_setting = not user_setting and self.on_cooldown
+
+						return user_setting
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "brush_stroke",
 					texture_id = "brush_stroke",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_15_0)
+					retained_mode = flag,
+					content_check_function = function (arg_15_0)
+						-- function 15
 						return Application.user_setting("numeric_ui")
 					end
 				}
@@ -677,11 +788,11 @@ local function var_0_13()
 			},
 			portrait_icon = {
 				size = {
-					86 * var_0_3,
-					108 * var_0_3
+					86 * num_3,
+					108 * num_3
 				},
 				offset = {
-					-(86 * var_0_3) / 2,
+					-(86 * num_3) / 2,
 					0,
 					1
 				},
@@ -717,7 +828,7 @@ local function var_0_13()
 				},
 				offset = {
 					60,
-					var_0_11[2] + var_0_10[2] / 2 - 6 - 1 + 1 - 45,
+					tbl_6[2] + tbl_5[2] / 2 - 6 - 1 + 1 - 45,
 					5
 				},
 				color = {
@@ -739,11 +850,11 @@ local function var_0_13()
 					250
 				},
 				offset = {
-					var_0_11[1] + var_0_10[1] + 50,
-					var_0_11[2] + var_0_10[2] / 2 - 8.5 - 1 + 1,
-					var_0_11[3] + 22
+					tbl_6[1] + tbl_5[1] + 50,
+					tbl_6[2] + tbl_5[2] / 2 - 8.5 - 1 + 1,
+					tbl_6[3] + 22
 				},
-				size = var_0_10
+				size = tbl_5
 			},
 			ammo_count_shadow = {
 				vertical_alignment = "center",
@@ -757,11 +868,11 @@ local function var_0_13()
 					0
 				},
 				offset = {
-					var_0_11[1] + var_0_10[1] + 50 + 1,
-					var_0_11[2] + var_0_10[2] / 2 - 8.5 - 1 + 1,
-					var_0_11[3] + 21
+					tbl_6[1] + tbl_5[1] + 50 + 1,
+					tbl_6[2] + tbl_5[2] / 2 - 8.5 - 1 + 1,
+					tbl_6[3] + 21
 				},
-				size = var_0_10
+				size = tbl_5
 			},
 			ability_cooldown = {
 				vertical_alignment = "center",
@@ -776,11 +887,11 @@ local function var_0_13()
 					250
 				},
 				offset = {
-					var_0_11[1] + var_0_10[1] + 50,
-					var_0_11[2] + var_0_10[2] / 2 - 6 - 1 + 1 - 32,
-					var_0_11[3] + 22
+					tbl_6[1] + tbl_5[1] + 50,
+					tbl_6[2] + tbl_5[2] / 2 - 6 - 1 + 1 - 32,
+					tbl_6[3] + 22
 				},
-				size = var_0_10
+				size = tbl_5
 			},
 			ability_cooldown_shadow = {
 				vertical_alignment = "center",
@@ -795,11 +906,11 @@ local function var_0_13()
 					0
 				},
 				offset = {
-					var_0_11[1] + var_0_10[1] + 50 + 1,
-					var_0_11[2] + var_0_10[2] / 2 - 6 - 1 + 1 - 32,
-					var_0_11[3] + 21
+					tbl_6[1] + tbl_5[1] + 50 + 1,
+					tbl_6[2] + tbl_5[2] / 2 - 6 - 1 + 1 - 32,
+					tbl_6[3] + 21
 				},
-				size = var_0_10
+				size = tbl_5
 			},
 			brush_stroke = {
 				size = {
@@ -821,13 +932,14 @@ local function var_0_13()
 		},
 		offset = {
 			0,
-			-55 * var_0_3,
+			-55 * num_3,
 			0
 		}
 	}
 end
 
-local function var_0_14()
+local function fn_3()
+	-- function 16
 	return {
 		scenegraph_id = "pivot",
 		element = {
@@ -843,7 +955,8 @@ local function var_0_14()
 	}
 end
 
-local function var_0_15()
+local function fn_4()
+	-- function 17
 	return {
 		scenegraph_id = "pivot",
 		element = {
@@ -852,162 +965,204 @@ local function var_0_15()
 					pass_type = "texture",
 					style_id = "item_slot_1",
 					texture_id = "item_slot_1",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_18_0)
-						return arg_18_0.draw_health_bar
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 18
+						return self.draw_health_bar
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "item_slot_bg_1",
 					texture_id = "item_slot_bg_1",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_19_0)
-						return arg_19_0.draw_health_bar
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 19
+						return self.draw_health_bar
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "item_slot_frame_1",
 					texture_id = "slot_frame",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_20_0)
-						return arg_20_0.draw_health_bar
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 20
+						return self.draw_health_bar
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "item_slot_highlight_1",
 					texture_id = "item_slot_highlight",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_21_0)
-						return arg_21_0.draw_health_bar
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 21
+						return self.draw_health_bar
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "item_slot_2",
 					texture_id = "item_slot_2",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_22_0)
-						return arg_22_0.draw_health_bar
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 22
+						return self.draw_health_bar
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "item_slot_bg_2",
 					texture_id = "item_slot_bg_2",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_23_0)
-						return arg_23_0.draw_health_bar
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 23
+						return self.draw_health_bar
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "item_slot_frame_2",
 					texture_id = "slot_frame",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_24_0)
-						return arg_24_0.draw_health_bar
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 24
+						return self.draw_health_bar
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "item_slot_highlight_2",
 					texture_id = "item_slot_highlight",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_25_0)
-						return arg_25_0.draw_health_bar
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 25
+						return self.draw_health_bar
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "item_slot_3",
 					texture_id = "item_slot_3",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_26_0)
-						return arg_26_0.draw_health_bar
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 26
+						return self.draw_health_bar
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "item_slot_bg_3",
 					texture_id = "item_slot_bg_3",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_27_0)
-						return arg_27_0.draw_health_bar
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 27
+						return self.draw_health_bar
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "item_slot_frame_3",
 					texture_id = "slot_frame",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_28_0)
-						return arg_28_0.draw_health_bar
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 28
+						return self.draw_health_bar
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "item_slot_highlight_3",
 					texture_id = "item_slot_highlight",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_29_0)
-						return arg_29_0.draw_health_bar
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 29
+						return self.draw_health_bar
 					end
 				},
 				{
 					style_id = "item_count_1",
 					pass_type = "text",
 					text_id = "item_count_1",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_30_0, arg_30_1)
-						return arg_30_0.draw_health_bar and arg_30_0.item_count_1
+					retained_mode = flag,
+					content_check_function = function (self, arg_30_1)
+						-- function 30
+						local draw_health_bar = self.draw_health_bar
+
+						draw_health_bar = not draw_health_bar and self.item_count_1
+
+						return draw_health_bar
 					end
 				},
 				{
 					style_id = "item_count_shadow_1",
 					pass_type = "text",
 					text_id = "item_count_1",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_31_0, arg_31_1)
-						return arg_31_0.draw_health_bar and arg_31_0.item_count_1
+					retained_mode = flag,
+					content_check_function = function (self, arg_31_1)
+						-- function 31
+						local draw_health_bar = self.draw_health_bar
+
+						draw_health_bar = not draw_health_bar and self.item_count_1
+
+						return draw_health_bar
 					end
 				},
 				{
 					style_id = "item_count_2",
 					pass_type = "text",
 					text_id = "item_count_2",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_32_0, arg_32_1)
-						return arg_32_0.draw_health_bar and arg_32_0.item_count_2
+					retained_mode = flag,
+					content_check_function = function (self, arg_32_1)
+						-- function 32
+						local draw_health_bar = self.draw_health_bar
+
+						draw_health_bar = not draw_health_bar and self.item_count_2
+
+						return draw_health_bar
 					end
 				},
 				{
 					style_id = "item_count_shadow_2",
 					pass_type = "text",
 					text_id = "item_count_2",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_33_0, arg_33_1)
-						return arg_33_0.draw_health_bar and arg_33_0.item_count_2
+					retained_mode = flag,
+					content_check_function = function (self, arg_33_1)
+						-- function 33
+						local draw_health_bar = self.draw_health_bar
+
+						draw_health_bar = not draw_health_bar and self.item_count_2
+
+						return draw_health_bar
 					end
 				},
 				{
 					style_id = "item_count_3",
 					pass_type = "text",
 					text_id = "item_count_3",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_34_0, arg_34_1)
-						return arg_34_0.draw_health_bar and arg_34_0.item_count_3
+					retained_mode = flag,
+					content_check_function = function (self, arg_34_1)
+						-- function 34
+						local draw_health_bar = self.draw_health_bar
+
+						draw_health_bar = not draw_health_bar and self.item_count_3
+
+						return draw_health_bar
 					end
 				},
 				{
 					style_id = "item_count_shadow_3",
 					pass_type = "text",
 					text_id = "item_count_3",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_35_0, arg_35_1)
-						return arg_35_0.draw_health_bar and arg_35_0.item_count_3
+					retained_mode = flag,
+					content_check_function = function (self, arg_35_1)
+						-- function 35
+						local draw_health_bar = self.draw_health_bar
+
+						draw_health_bar = not draw_health_bar and self.item_count_3
+
+						return draw_health_bar
 					end
 				}
 			}
@@ -1026,8 +1181,8 @@ local function var_0_15()
 		style = {
 			item_slot_bg_1 = {
 				size = {
-					29 * var_0_4,
-					29 * var_0_4
+					29 * num_4,
+					29 * num_4
 				},
 				offset = {
 					-35,
@@ -1043,8 +1198,8 @@ local function var_0_15()
 			},
 			item_slot_frame_1 = {
 				size = {
-					29 * var_0_4,
-					29 * var_0_4
+					29 * num_4,
+					29 * num_4
 				},
 				offset = {
 					-35,
@@ -1077,8 +1232,8 @@ local function var_0_15()
 			},
 			item_slot_highlight_1 = {
 				size = {
-					29 * var_0_4,
-					29 * var_0_4
+					29 * num_4,
+					29 * num_4
 				},
 				offset = {
 					-35,
@@ -1094,8 +1249,8 @@ local function var_0_15()
 			},
 			item_slot_bg_2 = {
 				size = {
-					29 * var_0_4,
-					29 * var_0_4
+					29 * num_4,
+					29 * num_4
 				},
 				offset = {
 					0,
@@ -1111,8 +1266,8 @@ local function var_0_15()
 			},
 			item_slot_frame_2 = {
 				size = {
-					29 * var_0_4,
-					29 * var_0_4
+					29 * num_4,
+					29 * num_4
 				},
 				offset = {
 					0,
@@ -1145,8 +1300,8 @@ local function var_0_15()
 			},
 			item_slot_highlight_2 = {
 				size = {
-					29 * var_0_4,
-					29 * var_0_4
+					29 * num_4,
+					29 * num_4
 				},
 				offset = {
 					0,
@@ -1162,8 +1317,8 @@ local function var_0_15()
 			},
 			item_slot_bg_3 = {
 				size = {
-					29 * var_0_4,
-					29 * var_0_4
+					29 * num_4,
+					29 * num_4
 				},
 				offset = {
 					35,
@@ -1179,8 +1334,8 @@ local function var_0_15()
 			},
 			item_slot_frame_3 = {
 				size = {
-					29 * var_0_4,
-					29 * var_0_4
+					29 * num_4,
+					29 * num_4
 				},
 				offset = {
 					35,
@@ -1213,8 +1368,8 @@ local function var_0_15()
 			},
 			item_slot_highlight_3 = {
 				size = {
-					29 * var_0_4,
-					29 * var_0_4
+					29 * num_4,
+					29 * num_4
 				},
 				offset = {
 					35,
@@ -1315,13 +1470,14 @@ local function var_0_15()
 		},
 		offset = {
 			-15,
-			var_0_11[2] - 96,
+			tbl_6[2] - 96,
 			0
 		}
 	}
 end
 
-local function var_0_16()
+local function fn_5()
+	-- function 36
 	return {
 		scenegraph_id = "pivot",
 		element = {
@@ -1330,25 +1486,31 @@ local function var_0_16()
 					pass_type = "texture",
 					style_id = "hp_bar_highlight",
 					texture_id = "hp_bar_highlight",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_37_0, arg_37_1)
-						return not arg_37_0.has_shield
+					retained_mode = flag,
+					content_check_function = function (self, arg_37_1)
+						-- function 37
+						return not self.has_shield
 					end
 				},
 				{
 					style_id = "grimoire_debuff_divider",
 					texture_id = "grimoire_debuff_divider",
 					pass_type = "texture",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_38_0)
-						return arg_38_0.hp_bar.draw_health_bar
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 38
+						return self.hp_bar.draw_health_bar
 					end,
-					content_change_function = function(arg_39_0, arg_39_1)
-						local var_39_0 = arg_39_0.hp_bar.internal_bar_value
-						local var_39_1 = arg_39_0.actual_active_percentage or 1
-						local var_39_2 = math.max(var_39_0, var_39_1)
+					content_change_function = function (self, arg_39_1)
+						-- function 39
+						local internal_bar_value = self.hp_bar.internal_bar_value
+						local actual_active_percentage = self.actual_active_percentage
 
-						arg_39_1.offset[1] = var_0_11[1] + var_0_10[1] * var_39_2
+						actual_active_percentage = actual_active_percentage or 1
+
+						local max = math.max(internal_bar_value, actual_active_percentage)
+
+						arg_39_1.offset[1] = tbl_6[1] + tbl_5[1] * max
 					end
 				},
 				{
@@ -1356,9 +1518,10 @@ local function var_0_16()
 					style_id = "hp_bar",
 					texture_id = "texture_id",
 					content_id = "hp_bar",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_40_0)
-						return arg_40_0.draw_health_bar
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 40
+						return self.draw_health_bar
 					end
 				},
 				{
@@ -1366,54 +1529,62 @@ local function var_0_16()
 					style_id = "total_health_bar",
 					texture_id = "texture_id",
 					content_id = "total_health_bar",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_41_0)
-						return arg_41_0.draw_health_bar
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 41
+						return self.draw_health_bar
 					end
 				},
 				{
 					style_id = "grimoire_bar",
 					pass_type = "texture_uv",
 					content_id = "grimoire_bar",
-					retained_mode = var_0_2,
-					content_change_function = function(arg_42_0, arg_42_1)
-						local var_42_0 = arg_42_0.parent
-						local var_42_1 = var_42_0.hp_bar.internal_bar_value
-						local var_42_2 = var_42_0.actual_active_percentage or 1
-						local var_42_3 = math.max(var_42_1, var_42_2)
-						local var_42_4 = arg_42_1.size
-						local var_42_5 = arg_42_0.uvs
-						local var_42_6 = arg_42_1.offset
-						local var_42_7 = var_0_10[1]
+					retained_mode = flag,
+					content_change_function = function (self, arg_42_1)
+						-- function 42
+						local parent = self.parent
+						local internal_bar_value = parent.hp_bar.internal_bar_value
+						local actual_active_percentage = parent.actual_active_percentage
 
-						var_42_5[1][1] = var_42_3
-						var_42_4[1] = var_42_7 * (1 - var_42_3)
-						var_42_6[1] = 2 + var_0_11[1] + var_42_7 * var_42_3
+						actual_active_percentage = actual_active_percentage or 1
+
+						local max = math.max(internal_bar_value, actual_active_percentage)
+						local size = arg_42_1.size
+						local uvs = self.uvs
+						local offset = arg_42_1.offset
+						local var_42_7 = tbl_5[1]
+
+						uvs[1][1] = max
+						size[1] = var_42_7 * (1 - max)
+						offset[1] = 2 + tbl_6[1] + var_42_7 * max
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "hp_bar",
 					texture_id = "hp_bar_mask",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_43_0)
-						return arg_43_0.hp_bar.draw_health_bar
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 43
+						return self.hp_bar.draw_health_bar
 					end
 				},
 				{
 					pass_type = "texture",
 					texture_id = "portrait_icon",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_44_0)
-						return arg_44_0.display_portrait_icon
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 44
+						return self.display_portrait_icon
 					end
 				},
 				{
 					style_id = "numeric_health",
 					pass_type = "text",
 					text_id = "numeric_health",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_45_0)
+					retained_mode = flag,
+					content_check_function = function (arg_45_0)
+						-- function 45
 						return Application.user_setting("numeric_ui")
 					end
 				},
@@ -1421,8 +1592,9 @@ local function var_0_16()
 					style_id = "numeric_health_shadow",
 					pass_type = "text",
 					text_id = "numeric_health",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_46_0)
+					retained_mode = flag,
+					content_check_function = function (arg_46_0)
+						-- function 46
 						return Application.user_setting("numeric_ui")
 					end
 				}
@@ -1464,8 +1636,8 @@ local function var_0_16()
 			total_health_bar = {
 				gradient_threshold = 1,
 				size = {
-					var_0_10[1],
-					var_0_10[2]
+					tbl_5[1],
+					tbl_5[2]
 				},
 				color = {
 					255,
@@ -1474,16 +1646,16 @@ local function var_0_16()
 					255
 				},
 				offset = {
-					var_0_11[1],
-					var_0_11[2],
-					var_0_11[3] + 17
+					tbl_6[1],
+					tbl_6[2],
+					tbl_6[3] + 17
 				}
 			},
 			hp_bar = {
 				gradient_threshold = 1,
 				size = {
-					var_0_10[1],
-					var_0_10[2]
+					tbl_5[1],
+					tbl_5[2]
 				},
 				color = {
 					255,
@@ -1492,15 +1664,15 @@ local function var_0_16()
 					255
 				},
 				offset = {
-					var_0_11[1],
-					var_0_11[2],
-					var_0_11[3] + 18
+					tbl_6[1],
+					tbl_6[2],
+					tbl_6[3] + 18
 				}
 			},
 			grimoire_bar = {
 				size = {
-					var_0_10[1],
-					var_0_10[2]
+					tbl_5[1],
+					tbl_5[2]
 				},
 				color = {
 					255,
@@ -1509,9 +1681,9 @@ local function var_0_16()
 					255
 				},
 				offset = {
-					var_0_11[1],
-					var_0_11[2],
-					var_0_11[3] + 19
+					tbl_6[1],
+					tbl_6[2],
+					tbl_6[3] + 19
 				}
 			},
 			grimoire_debuff_divider = {
@@ -1527,8 +1699,8 @@ local function var_0_16()
 					255
 				},
 				offset = {
-					var_0_11[1],
-					var_0_11[2],
+					tbl_6[1],
+					tbl_6[2],
 					23
 				}
 			},
@@ -1538,9 +1710,9 @@ local function var_0_16()
 					17
 				},
 				offset = {
-					var_0_11[1] + var_0_10[1] / 2 - 50,
-					var_0_11[2] - 7,
-					var_0_11[3] + 20
+					tbl_6[1] + tbl_5[1] / 2 - 50,
+					tbl_6[2] - 7,
+					tbl_6[3] + 20
 				},
 				color = {
 					0,
@@ -1562,9 +1734,9 @@ local function var_0_16()
 					250
 				},
 				offset = {
-					var_0_11[1] - 4,
-					var_0_11[2] - 10,
-					var_0_11[3] + 22
+					tbl_6[1] - 4,
+					tbl_6[2] - 10,
+					tbl_6[3] + 22
 				},
 				size = {
 					100,
@@ -1584,9 +1756,9 @@ local function var_0_16()
 					0
 				},
 				offset = {
-					var_0_11[1] - 4 + 1,
-					var_0_11[2] - 10 + 1,
-					var_0_11[3] + 21
+					tbl_6[1] - 4 + 1,
+					tbl_6[2] - 10 + 1,
+					tbl_6[3] + 21
 				},
 				size = {
 					100,
@@ -1596,13 +1768,14 @@ local function var_0_16()
 		},
 		offset = {
 			0,
-			-55 * var_0_3,
+			-55 * num_3,
 			0
 		}
 	}
 end
 
-local function var_0_17()
+local function fn_6()
+	-- function 47
 	return {
 		scenegraph_id = "pivot",
 		element = {
@@ -1611,15 +1784,16 @@ local function var_0_17()
 					style_id = "ability_bar",
 					pass_type = "texture_uv",
 					content_id = "ability_bar",
-					retained_mode = var_0_2,
-					content_change_function = function(arg_48_0, arg_48_1)
-						local var_48_0 = arg_48_0.bar_value
-						local var_48_1 = arg_48_1.size
-						local var_48_2 = arg_48_0.uvs
-						local var_48_3 = 92
+					retained_mode = flag,
+					content_change_function = function (self, arg_48_1)
+						-- function 48
+						local bar_value = self.bar_value
+						local size = arg_48_1.size
+						local uvs = self.uvs
+						local num = 92
 
-						var_48_2[2][2] = var_48_0
-						var_48_1[1] = var_48_3 * var_48_0
+						uvs[2][2] = bar_value
+						size[1] = num * bar_value
 					end
 				}
 			}
@@ -1654,36 +1828,36 @@ local function var_0_17()
 					255
 				},
 				offset = {
-					var_0_11[1] + var_0_10[1] / 2 - 46,
-					var_0_11[2] - 9,
-					var_0_11[3] + 18
+					tbl_6[1] + tbl_5[1] / 2 - 46,
+					tbl_6[2] - 9,
+					tbl_6[3] + 18
 				}
 			}
 		},
 		offset = {
 			0,
-			-55 * var_0_3,
+			-55 * num_3,
 			0
 		}
 	}
 end
 
-local var_0_18 = {
-	loadout_dynamic = var_0_15(),
-	portrait_static = UIWidgets.create_portrait_frame("portrait_pivot", "default", "-", var_0_3, var_0_2),
-	default_dynamic = var_0_13(),
-	default_static = var_0_12(),
-	health_dynamic = var_0_16(),
-	ability_dynamic = var_0_17(),
-	versus_insignia_static = UIWidgets.create_small_insignia("insignia_pivot", 0, nil, nil, nil, var_0_2)
+local tbl_7 = {
+	loadout_dynamic = fn_4(),
+	portrait_static = UIWidgets.create_portrait_frame("portrait_pivot", "default", "-", num_3, flag),
+	default_dynamic = fn_2(),
+	default_static = fn(),
+	health_dynamic = fn_5(),
+	ability_dynamic = fn_6(),
+	versus_insignia_static = UIWidgets.create_small_insignia("insignia_pivot", 0, nil, nil, nil, flag)
 }
-local var_0_19 = {
+local tbl_8 = {
 	equipment = true,
 	ammo = true,
 	damage = false,
 	ability = true
 }
-local var_0_20 = {
+local tbl_9 = {
 	static = {
 		default = "default_static",
 		player_name = "default_static",
@@ -1704,11 +1878,11 @@ local var_0_20 = {
 }
 
 return {
-	weapon_slot_widget_settings = var_0_8,
-	inventory_index_by_slot = var_0_7,
-	inventory_consumable_icons = var_0_6,
-	features_list = var_0_19,
-	widget_name_by_feature = var_0_20,
-	scenegraph_definition = var_0_5,
-	widget_definitions = var_0_18
+	weapon_slot_widget_settings = tbl_4,
+	inventory_index_by_slot = tbl_3,
+	inventory_consumable_icons = tbl_2,
+	features_list = tbl_8,
+	widget_name_by_feature = tbl_9,
+	scenegraph_definition = tbl,
+	widget_definitions = tbl_7
 }

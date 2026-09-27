@@ -1,70 +1,80 @@
 -- chunkname: @scripts/managers/backend_playfab/backend_interface_keep_decorations_playfab.lua
 
-local var_0_0 = require("PlayFab.PlayFabClientApi")
+local PlayFabClientApi = require("PlayFab.PlayFabClientApi")
 
 BackendInterfaceKeepDecorationsPlayFab = class(BackendInterfaceKeepDecorationsPlayFab)
 
-function BackendInterfaceKeepDecorationsPlayFab.init(arg_1_0, arg_1_1)
-	arg_1_0._backend_mirror = arg_1_1
-	arg_1_0._keep_decorations = {}
+BackendInterfaceKeepDecorationsPlayFab.init = function (self, arg_1_1)
+	-- function 1
+	self._backend_mirror = arg_1_1
+	self._keep_decorations = {}
 
-	local var_1_0 = arg_1_1:get_read_only_data("keep_decorations") or "{}"
+	local get_read_only_data = arg_1_1:get_read_only_data("keep_decorations")
 
-	arg_1_0._keep_decorations = cjson.decode(var_1_0)
+	get_read_only_data = get_read_only_data or "{}"
+	self._keep_decorations = cjson.decode(get_read_only_data)
 
-	arg_1_0:_refresh()
+	self:_refresh()
 
-	for iter_1_0, iter_1_1 in pairs(arg_1_0._keep_decorations) do
-		if iter_1_1 ~= "hidden" and iter_1_1 ~= "hor_none" and not table.contains(arg_1_0._unlocked_keep_decorations, iter_1_1) then
-			arg_1_0._keep_decorations[iter_1_0] = "hor_none"
+	for k, v in pairs(self._keep_decorations) do
+		if not (v == "hidden" or v == "hor_none" or table.contains(self._unlocked_keep_decorations, v)) then
+			self._keep_decorations[k] = "hor_none"
 		end
 	end
 end
 
-function BackendInterfaceKeepDecorationsPlayFab.dirtify(arg_2_0)
-	arg_2_0._dirty = true
+BackendInterfaceKeepDecorationsPlayFab.dirtify = function (self)
+	-- function 2
+	self._dirty = true
 end
 
-function BackendInterfaceKeepDecorationsPlayFab.ready(arg_3_0)
+BackendInterfaceKeepDecorationsPlayFab.ready = function (arg_3_0)
+	-- function 3
 	return true
 end
 
-function BackendInterfaceKeepDecorationsPlayFab._refresh(arg_4_0)
-	local var_4_0 = arg_4_0._backend_mirror:get_unlocked_keep_decorations()
+BackendInterfaceKeepDecorationsPlayFab._refresh = function (self)
+	-- function 4
+	local get_unlocked_keep_decorations = self._backend_mirror:get_unlocked_keep_decorations()
 
-	arg_4_0._unlocked_keep_decorations = var_4_0
+	self._unlocked_keep_decorations = get_unlocked_keep_decorations
 
-	local var_4_1 = ItemHelper.get_new_keep_decoration_ids()
+	local get_new_keep_decoration_ids = ItemHelper.get_new_keep_decoration_ids()
 
-	if var_4_1 then
-		for iter_4_0, iter_4_1 in pairs(var_4_1) do
-			if not var_4_0[iter_4_0] then
-				ItemHelper.unmark_keep_decoration_as_new(iter_4_0)
+	if not get_new_keep_decoration_ids then
+		for k, v in pairs(get_new_keep_decoration_ids) do
+			if not get_unlocked_keep_decorations[k] then
+				ItemHelper.unmark_keep_decoration_as_new(k)
 			end
 		end
 	end
 end
 
-function BackendInterfaceKeepDecorationsPlayFab.update(arg_5_0, arg_5_1)
+BackendInterfaceKeepDecorationsPlayFab.update = function (arg_5_0, arg_5_1)
+	-- function 5
 	return
 end
 
-function BackendInterfaceKeepDecorationsPlayFab.get_decoration(arg_6_0, arg_6_1)
-	return arg_6_0._keep_decorations[arg_6_1]
+BackendInterfaceKeepDecorationsPlayFab.get_decoration = function (self, arg_6_1)
+	-- function 6
+	return self._keep_decorations[arg_6_1]
 end
 
-function BackendInterfaceKeepDecorationsPlayFab.set_decoration(arg_7_0, arg_7_1, arg_7_2)
+BackendInterfaceKeepDecorationsPlayFab.set_decoration = function (arg_7_0, arg_7_1, arg_7_2)
+	-- function 7
 	arg_7_0._keep_decorations[arg_7_1] = arg_7_2
 end
 
-function BackendInterfaceKeepDecorationsPlayFab.get_keep_decorations_json(arg_8_0)
-	return cjson.encode(arg_8_0._keep_decorations)
+BackendInterfaceKeepDecorationsPlayFab.get_keep_decorations_json = function (self)
+	-- function 8
+	return cjson.encode(self._keep_decorations)
 end
 
-function BackendInterfaceKeepDecorationsPlayFab.get_unlocked_keep_decorations(arg_9_0)
-	if arg_9_0._dirty then
-		arg_9_0:_refresh()
+BackendInterfaceKeepDecorationsPlayFab.get_unlocked_keep_decorations = function (self)
+	-- function 9
+	if not self._dirty then
+		self:_refresh()
 	end
 
-	return arg_9_0._unlocked_keep_decorations
+	return self._unlocked_keep_decorations
 end

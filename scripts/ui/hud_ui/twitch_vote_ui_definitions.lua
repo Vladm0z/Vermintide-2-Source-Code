@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/hud_ui/twitch_vote_ui_definitions.lua
 
-local var_0_0 = {
+local tbl = {
 	root = {
 		is_root = true,
 		size = {
@@ -741,73 +741,74 @@ local var_0_0 = {
 	}
 }
 
-local function var_0_1(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6)
+local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6)
+	-- function 1
 	arg_1_3 = arg_1_3 or 1
 
-	local var_1_0 = UIWidgets.create_portrait_frame(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
-	local var_1_1 = var_1_0.element.passes
-	local var_1_2 = var_1_0.content
-	local var_1_3 = var_1_0.style
-	local var_1_4 = {
+	local create_portrait_frame = UIWidgets.create_portrait_frame(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	local passes = create_portrait_frame.element.passes
+	local content = create_portrait_frame.content
+	local style = create_portrait_frame.style
+	local tbl = {
 		255,
 		255,
 		255,
 		255
 	}
-	local var_1_5 = {
+	local tbl_2 = {
 		0,
 		0,
 		0
 	}
-	local var_1_6 = {
+	local tbl_3 = {
 		86,
 		108
 	}
 
-	var_1_6[1] = var_1_6[1] * arg_1_3
-	var_1_6[2] = var_1_6[2] * arg_1_3
+	tbl_3[1] = tbl_3[1] * arg_1_3
+	tbl_3[2] = tbl_3[2] * arg_1_3
 
-	local var_1_7 = table.clone(var_1_5)
+	local clone = table.clone(tbl_2)
 
-	var_1_7[1] = -(var_1_6[1] / 2) + var_1_7[1] * arg_1_3
-	var_1_7[2] = -(var_1_6[2] / 2) + var_1_7[2] * arg_1_3
-	var_1_7[3] = 2
+	clone[1] = -(tbl_3[1] / 2) + clone[1] * arg_1_3
+	clone[2] = -(tbl_3[2] / 2) + clone[2] * arg_1_3
+	clone[3] = 2
 
-	local var_1_8 = "masked_portrait"
+	local str = "masked_portrait"
 
-	var_1_2[var_1_8] = arg_1_6
-	var_1_1[#var_1_1 + 1] = {
+	content[str] = arg_1_6
+	passes[#passes + 1] = {
 		pass_type = "texture",
-		texture_id = var_1_8,
-		style_id = var_1_8,
+		texture_id = str,
+		style_id = str,
 		retained_mode = arg_1_4
 	}
-	var_1_3[var_1_8] = {
-		color = var_1_4,
-		offset = var_1_7,
-		size = var_1_6,
-		texture_size = var_1_6
+	style[str] = {
+		color = tbl,
+		offset = clone,
+		size = tbl_3,
+		texture_size = tbl_3
 	}
 
-	local var_1_9 = "mask"
+	local str_2 = "mask"
 
-	var_1_2[var_1_9] = "mask_rect"
-	var_1_1[#var_1_1 + 1] = {
+	content[str_2] = "mask_rect"
+	passes[#passes + 1] = {
 		pass_type = "texture",
-		texture_id = var_1_9,
-		style_id = var_1_9,
+		texture_id = str_2,
+		style_id = str_2,
 		retained_mode = arg_1_4
 	}
-	var_1_3[var_1_9] = {
-		offset = var_1_7,
-		texture_size = var_1_6,
-		base_size = var_1_6
+	style[str_2] = {
+		offset = clone,
+		texture_size = tbl_3,
+		base_size = tbl_3
 	}
 
-	return var_1_0
+	return create_portrait_frame
 end
 
-local var_0_2 = {
+local tbl_2 = {
 	font_size = 60,
 	upper_case = true,
 	localize = false,
@@ -822,7 +823,7 @@ local var_0_2 = {
 		2
 	}
 }
-local var_0_3 = {
+local tbl_3 = {
 	font_size = 26,
 	upper_case = true,
 	localize = false,
@@ -837,7 +838,7 @@ local var_0_3 = {
 		2
 	}
 }
-local var_0_4 = {
+local tbl_4 = {
 	font_size = 28,
 	upper_case = true,
 	localize = true,
@@ -853,41 +854,41 @@ local var_0_4 = {
 		2
 	}
 }
-local var_0_5 = table.clone(var_0_4)
+local clone = table.clone(tbl_4)
 
-var_0_5.font_size = 24
-var_0_5.text_color = Colors.get_color_table_with_alpha("twitch", 255)
+clone.font_size = 24
+clone.text_color = Colors.get_color_table_with_alpha("twitch", 255)
 
-local var_0_6 = table.clone(var_0_4)
+local clone_2 = table.clone(tbl_4)
 
-var_0_6.font_size = 20
-var_0_6.text_color = Colors.get_color_table_with_alpha("white", 255)
+clone_2.font_size = 20
+clone_2.text_color = Colors.get_color_table_with_alpha("white", 255)
 
-local var_0_7 = table.clone(var_0_4)
+local clone_3 = table.clone(tbl_4)
 
-var_0_7.localize = false
-var_0_7.font_size = 24
+clone_3.localize = false
+clone_3.font_size = 24
 
-local var_0_8 = table.clone(var_0_4)
+local clone_4 = table.clone(tbl_4)
 
-var_0_8.horizontal_alignment = "left"
-var_0_8.font_size = 24
+clone_4.horizontal_alignment = "left"
+clone_4.font_size = 24
 
-local var_0_9 = table.clone(var_0_4)
+local clone_5 = table.clone(tbl_4)
 
-var_0_9.horizontal_alignment = "right"
-var_0_9.font_size = 24
+clone_5.horizontal_alignment = "right"
+clone_5.font_size = 24
 
-local var_0_10 = 0.8
-local var_0_11 = {
+local num = 0.8
+local tbl_5 = {
 	offset = {
-		-54 * var_0_10,
-		-64 * var_0_10,
+		-54 * num,
+		-64 * num,
 		0
 	},
 	texture_size = {
-		108 * var_0_10,
-		130 * var_0_10
+		108 * num,
+		130 * num
 	},
 	color = {
 		255,
@@ -897,7 +898,8 @@ local var_0_11 = {
 	}
 }
 
-local function var_0_12(arg_2_0, arg_2_1)
+local function fn_2(arg_2_0, arg_2_1)
+	-- function 2
 	return {
 		element = {
 			passes = {
@@ -989,7 +991,7 @@ local function var_0_12(arg_2_0, arg_2_1)
 	}
 end
 
-local var_0_13 = {
+local tbl_6 = {
 	standard_vote = {
 		"#A",
 		"#B"
@@ -1002,81 +1004,81 @@ local var_0_13 = {
 		"#E"
 	}
 }
-local var_0_14 = "twitch_icon_small"
+local str = "twitch_icon_small"
 
 return {
-	vote_texts = var_0_13,
-	scenegraph_definition = var_0_0,
+	vote_texts = tbl_6,
+	scenegraph_definition = tbl,
 	settings = {
 		vote_icon_padding = 10
 	},
 	widgets = {
 		multiple_choice = {
 			background = UIWidgets.create_simple_texture("tab_menu_bg_02", "base_area"),
-			timer = UIWidgets.create_simple_text("timer_default_text", "timer_rect", nil, nil, var_0_2),
+			timer = UIWidgets.create_simple_text("timer_default_text", "timer_rect", nil, nil, tbl_2),
 			vote_icon_rect = UIWidgets.create_simple_texture("item_frame", "vote_icon_rect"),
 			vote_icon = UIWidgets.create_simple_texture("markus_mercenary_crit_chance", "vote_icon"),
-			vote_text = UIWidgets.create_simple_text("heal_all", "vote_text_rect", nil, nil, var_0_4),
-			vote_input_rect_a = UIWidgets.create_rect_with_frame("vote_input_a", var_0_0.vote_input_a.size, {
+			vote_text = UIWidgets.create_simple_text("heal_all", "vote_text_rect", nil, nil, tbl_4),
+			vote_input_rect_a = UIWidgets.create_rect_with_frame("vote_input_a", tbl.vote_input_a.size, {
 				255,
 				0,
 				0,
 				0
 			}, "menu_frame_12"),
-			vote_input_rect_b = UIWidgets.create_rect_with_frame("vote_input_b", var_0_0.vote_input_b.size, {
+			vote_input_rect_b = UIWidgets.create_rect_with_frame("vote_input_b", tbl.vote_input_b.size, {
 				255,
 				0,
 				0,
 				0
 			}, "menu_frame_12"),
-			vote_input_rect_c = UIWidgets.create_rect_with_frame("vote_input_c", var_0_0.vote_input_c.size, {
+			vote_input_rect_c = UIWidgets.create_rect_with_frame("vote_input_c", tbl.vote_input_c.size, {
 				255,
 				0,
 				0,
 				0
 			}, "menu_frame_12"),
-			vote_input_rect_d = UIWidgets.create_rect_with_frame("vote_input_d", var_0_0.vote_input_d.size, {
+			vote_input_rect_d = UIWidgets.create_rect_with_frame("vote_input_d", tbl.vote_input_d.size, {
 				255,
 				0,
 				0,
 				0
 			}, "menu_frame_12"),
-			hero_1 = var_0_1("portrait_a", "default", "-", var_0_10, nil, "unit_frame_portrait_default", "unit_frame_portrait_default"),
-			hero_2 = var_0_1("portrait_b", "default", "-", var_0_10, nil, "unit_frame_portrait_default", "unit_frame_portrait_default"),
-			hero_3 = var_0_1("portrait_c", "default", "-", var_0_10, nil, "unit_frame_portrait_default", "unit_frame_portrait_default"),
-			hero_4 = var_0_1("portrait_d", "default", "-", var_0_10, nil, "unit_frame_portrait_default", "unit_frame_portrait_default"),
-			hero_glow_1 = UIWidgets.create_texture_with_style("portrait_glow", "portrait_a", var_0_11),
-			hero_glow_2 = UIWidgets.create_texture_with_style("portrait_glow", "portrait_b", var_0_11),
-			hero_glow_3 = UIWidgets.create_texture_with_style("portrait_glow", "portrait_c", var_0_11),
-			hero_glow_4 = UIWidgets.create_texture_with_style("portrait_glow", "portrait_d", var_0_11),
-			hero_vote_1 = UIWidgets.create_simple_text(var_0_13.multiple_choice[1], "vote_input_a", nil, nil, var_0_3),
-			hero_vote_2 = UIWidgets.create_simple_text(var_0_13.multiple_choice[2], "vote_input_b", nil, nil, var_0_3),
-			hero_vote_3 = UIWidgets.create_simple_text(var_0_13.multiple_choice[3], "vote_input_c", nil, nil, var_0_3),
-			hero_vote_4 = UIWidgets.create_simple_text(var_0_13.multiple_choice[4], "vote_input_d", nil, nil, var_0_3),
+			hero_1 = fn("portrait_a", "default", "-", num, nil, "unit_frame_portrait_default", "unit_frame_portrait_default"),
+			hero_2 = fn("portrait_b", "default", "-", num, nil, "unit_frame_portrait_default", "unit_frame_portrait_default"),
+			hero_3 = fn("portrait_c", "default", "-", num, nil, "unit_frame_portrait_default", "unit_frame_portrait_default"),
+			hero_4 = fn("portrait_d", "default", "-", num, nil, "unit_frame_portrait_default", "unit_frame_portrait_default"),
+			hero_glow_1 = UIWidgets.create_texture_with_style("portrait_glow", "portrait_a", tbl_5),
+			hero_glow_2 = UIWidgets.create_texture_with_style("portrait_glow", "portrait_b", tbl_5),
+			hero_glow_3 = UIWidgets.create_texture_with_style("portrait_glow", "portrait_c", tbl_5),
+			hero_glow_4 = UIWidgets.create_texture_with_style("portrait_glow", "portrait_d", tbl_5),
+			hero_vote_1 = UIWidgets.create_simple_text(tbl_6.multiple_choice[1], "vote_input_a", nil, nil, tbl_3),
+			hero_vote_2 = UIWidgets.create_simple_text(tbl_6.multiple_choice[2], "vote_input_b", nil, nil, tbl_3),
+			hero_vote_3 = UIWidgets.create_simple_text(tbl_6.multiple_choice[3], "vote_input_c", nil, nil, tbl_3),
+			hero_vote_4 = UIWidgets.create_simple_text(tbl_6.multiple_choice[4], "vote_input_d", nil, nil, tbl_3),
 			divider = UIWidgets.create_simple_texture("divider_01_top", "mc_divider"),
-			twitch_icon_small = UIWidgets.create_simple_texture(var_0_14, "mc_twitch_icon_small")
+			twitch_icon_small = UIWidgets.create_simple_texture(str, "mc_twitch_icon_small")
 		},
 		multiple_choice_result = {
 			background = UIWidgets.create_simple_texture("tab_menu_bg_02", "result_area"),
 			divider = UIWidgets.create_simple_texture("divider_01_top", "mcr_divider"),
-			twitch_icon_small = UIWidgets.create_simple_texture(var_0_14, "mcr_twitch_icon_small"),
+			twitch_icon_small = UIWidgets.create_simple_texture(str, "mcr_twitch_icon_small"),
 			result_icon_rect = UIWidgets.create_simple_texture("item_frame", "result_icon_rect"),
 			result_icon = UIWidgets.create_simple_texture("markus_mercenary_crit_chance", "result_icon"),
-			result_text = UIWidgets.create_simple_text("heal_all", "result_text", nil, nil, var_0_5),
-			winner_portrait = UIWidgets.create_portrait_frame("winner_portrait", "hero_selection", "-", var_0_10, nil, "unit_frame_portrait_default"),
-			winner_text = UIWidgets.create_simple_text("draw", "winner_name", nil, nil, var_0_7)
+			result_text = UIWidgets.create_simple_text("heal_all", "result_text", nil, nil, clone),
+			winner_portrait = UIWidgets.create_portrait_frame("winner_portrait", "hero_selection", "-", num, nil, "unit_frame_portrait_default"),
+			winner_text = UIWidgets.create_simple_text("draw", "winner_name", nil, nil, clone_3)
 		},
 		standard_vote = {
 			background = UIWidgets.create_simple_texture("tab_menu_bg_02", "base_area"),
-			timer = UIWidgets.create_simple_text("timer_default_text", "sv_timer_rect", nil, nil, var_0_2),
+			timer = UIWidgets.create_simple_text("timer_default_text", "sv_timer_rect", nil, nil, tbl_2),
 			vote_icon_rect_a = UIWidgets.create_simple_texture("item_frame", "vote_icon_rect_a"),
 			vote_icon_a = UIWidgets.create_simple_texture("markus_mercenary_crit_chance", "vote_icon_a"),
-			vote_text_a = UIWidgets.create_simple_text("vote_text_a_default_text", "vote_text_rect_a", nil, nil, var_0_8),
-			vote_input_text_a = UIWidgets.create_simple_text(var_0_13.standard_vote[1], "vote_input_text_a", nil, nil, var_0_3),
+			vote_text_a = UIWidgets.create_simple_text("vote_text_a_default_text", "vote_text_rect_a", nil, nil, clone_4),
+			vote_input_text_a = UIWidgets.create_simple_text(tbl_6.standard_vote[1], "vote_input_text_a", nil, nil, tbl_3),
 			vote_icon_rect_b = UIWidgets.create_simple_texture("item_frame", "vote_icon_rect_b"),
 			vote_icon_b = UIWidgets.create_simple_texture("markus_mercenary_activated_ability_clear_wounds", "vote_icon_b"),
-			vote_text_b = UIWidgets.create_simple_text("vote_text_b_default_text", "vote_text_rect_b", nil, nil, var_0_9),
-			vote_input_text_b = UIWidgets.create_simple_text(var_0_13.standard_vote[2], "vote_input_text_b", nil, nil, var_0_3),
+			vote_text_b = UIWidgets.create_simple_text("vote_text_b_default_text", "vote_text_rect_b", nil, nil, clone_5),
+			vote_input_text_b = UIWidgets.create_simple_text(tbl_6.standard_vote[2], "vote_input_text_b", nil, nil, tbl_3),
 			result_bar_fg = UIWidgets.create_simple_texture("crafting_button_fg", "result_bar_fg"),
 			result_bar_glass = UIWidgets.create_simple_texture("button_glass_01", "result_bar_glass"),
 			result_bar_bg = UIWidgets.create_simple_rect("result_bar_bg", {
@@ -1085,13 +1087,13 @@ return {
 				0,
 				0
 			}),
-			result_bar_fg2 = UIWidgets.create_rect_with_frame("result_bar_fg2", var_0_0.result_bar_fg2.size, {
+			result_bar_fg2 = UIWidgets.create_rect_with_frame("result_bar_fg2", tbl.result_bar_fg2.size, {
 				0,
 				0,
 				0,
 				0
 			}, "menu_frame_09"),
-			result_bar_divier = var_0_12("result_bar_mid", {
+			result_bar_divier = fn_2("result_bar_mid", {
 				4,
 				40
 			}),
@@ -1137,16 +1139,16 @@ return {
 				}
 			}, "result_b_bar", nil, nil, Colors.get_table("yellow")),
 			result_bar_b_eyes = UIWidgets.create_simple_texture("mission_objective_glow_02", "result_bar_b_eyes"),
-			twitch_icon_small = UIWidgets.create_simple_texture(var_0_14, "sv_twitch_icon_small")
+			twitch_icon_small = UIWidgets.create_simple_texture(str, "sv_twitch_icon_small")
 		},
 		standard_vote_result = {
 			background = UIWidgets.create_simple_texture("tab_menu_bg_02", "sv_result_area"),
 			divider = UIWidgets.create_simple_texture("divider_01_top", "sv_divider"),
-			twitch_icon_small = UIWidgets.create_simple_texture(var_0_14, "svr_twitch_icon_small"),
+			twitch_icon_small = UIWidgets.create_simple_texture(str, "svr_twitch_icon_small"),
 			result_icon_rect = UIWidgets.create_simple_texture("item_frame", "sv_result_icon_rect"),
 			result_icon = UIWidgets.create_simple_texture("markus_mercenary_crit_chance", "sv_result_icon"),
-			result_text = UIWidgets.create_simple_text("default_result_text", "sv_result_text", nil, nil, var_0_5),
-			result_description_text = UIWidgets.create_simple_text("", "result_description_text", nil, nil, var_0_6)
+			result_text = UIWidgets.create_simple_text("default_result_text", "sv_result_text", nil, nil, clone),
+			result_description_text = UIWidgets.create_simple_text("", "result_description_text", nil, nil, clone_2)
 		}
 	}
 }

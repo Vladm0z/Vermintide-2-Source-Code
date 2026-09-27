@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/sound_quality_settings.lua
 
-local var_0_0 = PLATFORM
+local PLATFORM = PLATFORM
 
-if IS_WINDOWS then
+if not IS_WINDOWS then
 	SoundQualitySettings = {
 		templates = {
 			low = {
@@ -22,7 +22,7 @@ if IS_WINDOWS then
 			}
 		}
 	}
-elseif IS_LINUX then
+elseif not IS_LINUX then
 	SoundQualitySettings = {
 		templates = {
 			low = {
@@ -42,7 +42,7 @@ elseif IS_LINUX then
 			}
 		}
 	}
-elseif IS_XB1 then
+elseif not IS_XB1 then
 	SoundQualitySettings = {
 		templates = {
 			low = {
@@ -62,7 +62,7 @@ elseif IS_XB1 then
 			}
 		}
 	}
-elseif IS_PS4 then
+elseif not IS_PS4 then
 	SoundQualitySettings = {
 		templates = {
 			low = {
@@ -86,31 +86,33 @@ end
 
 assert(SoundQualitySettings, "No SoundQualitySettings set?")
 
-function SoundQualitySettings.get_quality_template(arg_1_0)
+SoundQualitySettings.get_quality_template = function (arg_1_0)
+	-- function 1
 	local var_1_0 = SoundQualitySettings.templates[arg_1_0]
 
 	if not var_1_0 then
-		local var_1_1 = DefaultUserSettings.get("user_settings", "sound_quality")
+		local get = DefaultUserSettings.get("user_settings", "sound_quality")
 
-		var_1_0 = SoundQualitySettings.templates[var_1_1]
+		var_1_0 = SoundQualitySettings.templates[get]
 
 		if not LEVEL_EDITOR_TEST then
-			printf("[SoundQualitySettings] No quality template for %q, using default %q", arg_1_0, var_1_1)
+			printf("[SoundQualitySettings] No quality template for %q, using default %q", arg_1_0, get)
 		end
 	end
 
 	return var_1_0
 end
 
-function SoundQualitySettings.set_sound_quality(arg_2_0, arg_2_1)
-	local var_2_0 = SoundQualitySettings.get_quality_template(arg_2_1)
-	local var_2_1 = var_2_0.sound_performance
+SoundQualitySettings.set_sound_quality = function (arg_2_0, arg_2_1)
+	-- function 2
+	local get_quality_template = SoundQualitySettings.get_quality_template(arg_2_1)
+	local sound_performance = get_quality_template.sound_performance
 
-	WwiseWorld.set_global_parameter(arg_2_0, "sound_performance", var_2_1)
+	WwiseWorld.set_global_parameter(arg_2_0, "sound_performance", sound_performance)
 
-	local var_2_2 = var_2_0.max_num_voices
+	local max_num_voices = get_quality_template.max_num_voices
 
-	Wwise.set_max_num_voices(var_2_2)
+	Wwise.set_max_num_voices(max_num_voices)
 
-	local var_2_3 = var_2_0.occlusion
+	local occlusion = get_quality_template.occlusion
 end

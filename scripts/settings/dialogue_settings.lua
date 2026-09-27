@@ -1,6 +1,9 @@
 -- chunkname: @scripts/settings/dialogue_settings.lua
 
+local DialogueSettings = DialogueSettings
+
 DialogueSettings = DialogueSettings or {}
+DialogueSettings = DialogueSettings
 DialogueSettings.auto_load_files = {
 	"dialogues/generated/witch_hunter_honduras",
 	"dialogues/generated/bright_wizard_honduras",
@@ -216,26 +219,26 @@ DialogueSettings.blocked_auto_load_files = {
 DLCUtils.append("auto_load_files", DialogueSettings.auto_load_files)
 DLCUtils.merge("auto_load_files_mechanism", DialogueSettings.auto_load_files_mechanism, true)
 
-for iter_0_0, iter_0_1 in pairs(DLCSettings) do
-	local var_0_0 = iter_0_1.dialogue_settings
+for k, v in pairs(DLCSettings) do
+	local dialogue_settings = v.dialogue_settings
 
-	if var_0_0 then
-		for iter_0_2, iter_0_3 in pairs(var_0_0) do
-			local var_0_1 = DialogueSettings.level_specific_load_files[iter_0_2]
+	if not dialogue_settings then
+		for k_2, v_2 in pairs(dialogue_settings) do
+			local var_0_2 = DialogueSettings.level_specific_load_files[k_2]
 
-			if var_0_1 then
-				table.append(var_0_1, iter_0_3)
+			if not var_0_2 then
+				table.append(var_0_2, v_2)
 			else
-				DialogueSettings.level_specific_load_files[iter_0_2] = iter_0_3
+				DialogueSettings.level_specific_load_files[k_2] = v_2
 			end
 		end
 	end
 
-	local var_0_2 = iter_0_1.blocked_auto_load_files
+	local blocked_auto_load_files = v.blocked_auto_load_files
 
-	if var_0_2 then
-		for iter_0_4, iter_0_5 in pairs(var_0_2) do
-			DialogueSettings.blocked_auto_load_files[iter_0_4] = iter_0_5
+	if not blocked_auto_load_files then
+		for k_3, v_3 in pairs(blocked_auto_load_files) do
+			DialogueSettings.blocked_auto_load_files[k_3] = v_3
 		end
 	end
 end
@@ -1271,13 +1274,13 @@ SpecialSubtitleEvents = {
 	}
 }
 
-local var_0_3 = {
+local tbl = {
 	255,
 	255,
 	217,
 	192
 }
-local var_0_4 = {
+local tbl_2 = {
 	255,
 	180,
 	37,
@@ -1285,7 +1288,7 @@ local var_0_4 = {
 }
 
 DialogueSettings.speaker_color_lookup = {
-	default = var_0_3,
+	default = tbl,
 	bright_wizard = {
 		255,
 		255,
@@ -1316,23 +1319,23 @@ DialogueSettings.speaker_color_lookup = {
 		235,
 		30
 	},
-	inn_keeper = var_0_3,
-	ferry_lady = var_0_3,
-	catrinne = var_0_3,
-	npc_cage_villager = var_0_3,
-	player_gods = var_0_3,
-	chaos_exalted_sorcerer_drachenfels = var_0_4,
-	npc_gatekeeper_daemon = var_0_4,
-	npc_whisper_daemon = var_0_4,
-	blightreaper = var_0_4,
-	blightreaper_alt = var_0_4,
-	chaos_exalted_champion = var_0_4,
-	chaos_exalted_champion2 = var_0_4,
-	chaos_exalted_champion_norsca = var_0_4,
-	chaos_exalted_champion_warcamp = var_0_4,
-	chaos_exalted_sorcerer = var_0_4,
-	grey_seer = var_0_4,
-	skaven_storm_vermin_warlord = var_0_4,
+	inn_keeper = tbl,
+	ferry_lady = tbl,
+	catrinne = tbl,
+	npc_cage_villager = tbl,
+	player_gods = tbl,
+	chaos_exalted_sorcerer_drachenfels = tbl_2,
+	npc_gatekeeper_daemon = tbl_2,
+	npc_whisper_daemon = tbl_2,
+	blightreaper = tbl_2,
+	blightreaper_alt = tbl_2,
+	chaos_exalted_champion = tbl_2,
+	chaos_exalted_champion2 = tbl_2,
+	chaos_exalted_champion_norsca = tbl_2,
+	chaos_exalted_champion_warcamp = tbl_2,
+	chaos_exalted_sorcerer = tbl_2,
+	grey_seer = tbl_2,
+	skaven_storm_vermin_warlord = tbl_2,
 	sofia_necromancer = {
 		255,
 		0,

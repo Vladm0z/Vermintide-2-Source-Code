@@ -1,39 +1,44 @@
 -- chunkname: @scripts/ui/hud_ui/world_marker_templates/world_marker_template_ping.lua
 
+local WorldMarkerTemplates = WorldMarkerTemplates
+
 WorldMarkerTemplates = WorldMarkerTemplates or {}
+WorldMarkerTemplates = WorldMarkerTemplates
 
-local var_0_0 = "ping"
-local var_0_1 = WorldMarkerTemplates[var_0_0] or {}
+local str = "ping"
+local var_0_2 = WorldMarkerTemplates[str]
 
-WorldMarkerTemplates[var_0_0] = var_0_1
-var_0_1.max_distance = 200
-var_0_1.screen_clamp = true
-var_0_1.life_time = 15
-var_0_1.position_offset = {
+var_0_2 = var_0_2 or {}
+WorldMarkerTemplates[str] = var_0_2
+var_0_2.max_distance = 200
+var_0_2.screen_clamp = true
+var_0_2.life_time = 15
+var_0_2.position_offset = {
 	0,
 	0,
 	0.5
 }
-var_0_1.screen_margins = {
+var_0_2.screen_margins = {
 	down = 150,
 	up = 150,
 	left = 150,
 	right = 150
 }
 
-local var_0_2 = {
+local tbl = {
 	"world_marker_response_1",
 	"world_marker_response_2",
 	"world_marker_response_3"
 }
-local var_0_3 = {
+local tbl_2 = {
 	"world_marker_icon_response_1",
 	"world_marker_icon_response_2",
 	"world_marker_icon_response_3"
 }
 
-function var_0_1.create_widget_definition(arg_1_0)
-	local var_1_0 = 25
+var_0_2.create_widget_definition = function (arg_1_0)
+	-- function 1
+	local num = 25
 
 	return {
 		element = {
@@ -52,24 +57,27 @@ function var_0_1.create_widget_definition(arg_1_0)
 					pass_type = "texture",
 					style_id = "world_marker_icon_response_1",
 					texture_id = "world_marker_icon_response_1",
-					content_check_function = function(arg_2_0)
-						return arg_2_0.world_marker_response_1.show
+					content_check_function = function (self)
+						-- function 2
+						return self.world_marker_response_1.show
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "world_marker_icon_response_2",
 					texture_id = "world_marker_icon_response_2",
-					content_check_function = function(arg_3_0)
-						return arg_3_0.world_marker_response_2.show
+					content_check_function = function (self)
+						-- function 3
+						return self.world_marker_response_2.show
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "world_marker_icon_response_3",
 					texture_id = "world_marker_icon_response_3",
-					content_check_function = function(arg_4_0)
-						return arg_4_0.world_marker_response_3.show
+					content_check_function = function (self)
+						-- function 4
+						return self.world_marker_response_3.show
 					end
 				},
 				{
@@ -81,15 +89,17 @@ function var_0_1.create_widget_definition(arg_1_0)
 					pass_type = "rotated_texture",
 					style_id = "arrow",
 					texture_id = "arrow",
-					content_check_function = function(arg_5_0)
-						return arg_5_0.is_clamped
+					content_check_function = function (self)
+						-- function 5
+						return self.is_clamped
 					end
 				},
 				{
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_6_0)
+					content_check_function = function (arg_6_0)
+						-- function 6
 						return Managers.mechanism:current_mechanism_name() ~= "versus"
 					end
 				},
@@ -293,7 +303,7 @@ function var_0_1.create_widget_definition(arg_1_0)
 				horizontal_alignment = "center",
 				angle = 0,
 				pivot = {
-					7 + var_1_0,
+					7 + num,
 					15
 				},
 				texture_size = {
@@ -311,7 +321,7 @@ function var_0_1.create_widget_definition(arg_1_0)
 					160
 				},
 				offset = {
-					-var_1_0,
+					-num,
 					0,
 					0
 				}
@@ -372,91 +382,110 @@ function var_0_1.create_widget_definition(arg_1_0)
 	}
 end
 
-function var_0_1.on_enter(arg_7_0)
-	local var_7_0 = arg_7_0.content
+var_0_2.on_enter = function (self)
+	-- function 7
+	local content = self.content
 
-	var_7_0.spawn_progress_timer = 0
-	var_7_0.world_marker_response_1 = {}
-	var_7_0.world_marker_response_2 = {}
-	var_7_0.world_marker_response_3 = {}
+	content.spawn_progress_timer = 0
+	content.world_marker_response_1 = {}
+	content.world_marker_response_2 = {}
+	content.world_marker_response_3 = {}
 end
 
-local function var_0_4(arg_8_0, arg_8_1, arg_8_2)
+local function fn(arg_8_0, arg_8_1, arg_8_2)
+	-- function 8
 	arg_8_0 = arg_8_0 + arg_8_1
 
-	local var_8_0 = math.min(arg_8_0 / 1, 1)
-	local var_8_1 = math.easeOutCubic(var_8_0)
-	local var_8_2 = arg_8_2.color
-	local var_8_3 = arg_8_2.default_color
-	local var_8_4 = arg_8_2.texture_size
-	local var_8_5 = arg_8_2.default_size
+	local min = math.min(arg_8_0 / 1, 1)
+	local easeOutCubic = math.easeOutCubic(min)
+	local color = arg_8_2.color
+	local default_color = arg_8_2.default_color
+	local texture_size = arg_8_2.texture_size
+	local default_size = arg_8_2.default_size
 
-	var_8_4[1] = var_8_5[1] + var_8_5[1] * var_8_1
-	var_8_4[2] = var_8_5[2] + var_8_5[2] * var_8_1
-	var_8_2[1] = var_8_3[1] - var_8_3[1] * var_8_1
+	texture_size[1] = default_size[1] + default_size[1] * easeOutCubic
+	texture_size[2] = default_size[2] + default_size[2] * easeOutCubic
+	color[1] = default_color[1] - default_color[1] * easeOutCubic
 
-	return var_8_0, var_8_0 ~= 1
+	return min, min ~= 1
 end
 
-local function var_0_5(arg_9_0, arg_9_1, arg_9_2)
+local function fn_2(arg_9_0, arg_9_1, arg_9_2)
+	-- function 9
 	arg_9_0 = arg_9_0 + arg_9_1 * 10
 
-	local var_9_0 = math.min(arg_9_0 / 1, 1)
-	local var_9_1 = 1 - math.easeOutCubic(var_9_0)
-	local var_9_2 = arg_9_2.color
-	local var_9_3 = arg_9_2.default_color
-	local var_9_4 = arg_9_2.texture_size
-	local var_9_5 = arg_9_2.default_size
-	local var_9_6 = arg_9_2.offset
-	local var_9_7 = arg_9_2.default_offset
+	local min = math.min(arg_9_0 / 1, 1)
+	local num = 1 - math.easeOutCubic(min)
+	local color = arg_9_2.color
+	local default_color = arg_9_2.default_color
+	local texture_size = arg_9_2.texture_size
+	local default_size = arg_9_2.default_size
+	local offset = arg_9_2.offset
+	local default_offset = arg_9_2.default_offset
 
-	var_9_6[1] = var_9_7[1] + var_9_7[1] * 100 * var_9_1
-	var_9_6[2] = var_9_7[2] + var_9_7[2] * 100 * var_9_1
-	var_9_4[1] = var_9_5[1] + var_9_5[1] * 2 * var_9_1
-	var_9_4[2] = var_9_5[2] + var_9_5[2] * 2 * var_9_1
-	var_9_2[1] = var_9_3[1] - var_9_3[1] * var_9_1
+	offset[1] = default_offset[1] + default_offset[1] * 100 * num
+	offset[2] = default_offset[2] + default_offset[2] * 100 * num
+	texture_size[1] = default_size[1] + default_size[1] * 2 * num
+	texture_size[2] = default_size[2] + default_size[2] * 2 * num
+	color[1] = default_color[1] - default_color[1] * num
 
-	return var_9_0, var_9_0 ~= 1
+	return min, min ~= 1
 end
 
-function var_0_1.update_function(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
-	local var_10_0 = arg_10_1.content
-	local var_10_1 = arg_10_1.style
-	local var_10_2 = var_10_0.is_inside_frustum
-	local var_10_3 = var_10_0.is_under
-	local var_10_4 = var_10_0.distance
-	local var_10_5 = var_10_0.angle
+var_0_2.update_function = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+	-- function 10
+	local content = arg_10_1.content
+	local style = arg_10_1.style
+	local is_inside_frustum = content.is_inside_frustum
+	local is_under = content.is_under
+	local distance = content.distance
+	local angle = content.angle
 
-	if var_10_0.spawn_progress_timer then
-		local var_10_6, var_10_7 = var_0_4(var_10_0.spawn_progress_timer, arg_10_4, var_10_1.icon_spawn_pulse)
+	if not content.spawn_progress_timer then
+		local var_10_6, var_10_7 = fn(content.spawn_progress_timer, arg_10_4, style.icon_spawn_pulse)
 
-		var_10_0.spawn_progress_timer = var_10_7 and var_10_6 or nil
+		content.spawn_progress_timer = not var_10_7 and var_10_6 and nil
 	end
 
-	for iter_10_0 = 1, 3 do
-		local var_10_8 = var_0_2[iter_10_0]
-		local var_10_9 = var_10_0[var_10_8]
+	for i = 1, 3 do
+		local var_10_8 = tbl[i]
+		local var_10_9 = content[var_10_8]
 
-		if var_10_9.timer then
-			local var_10_10 = var_0_3[iter_10_0]
-			local var_10_11, var_10_12 = var_0_5(var_10_9.timer, arg_10_4, var_10_1[var_10_10])
+		if not var_10_9.timer then
+			local var_10_10 = tbl_2[i]
+			local var_10_11, var_10_12 = fn_2(var_10_9.timer, arg_10_4, style[var_10_10])
 
-			var_10_0[var_10_8].timer = var_10_12 and var_10_11 or nil
+			content[var_10_8].timer = not var_10_12 and var_10_11 and nil
 		end
 	end
 
-	var_10_1.arrow.angle = var_10_5 + math.pi * 0.5
-	var_10_0.distance_text = var_10_4 > 1 and tostring(UIUtils.comma_value(math.floor(var_10_4))) .. "m" or ""
+	style.arrow.angle = angle + math.pi * 0.5
 
-	local var_10_13 = math.clamp(0.3 + (1 - var_10_0.forward_dot_dir) * 499.99999999999955, 0, 1)
+	local str
 
-	if var_10_13 ~= 1 then
-		local var_10_14 = 255 * var_10_13
+	if distance > 1 then
+		str = tostring(UIUtils.comma_value(math.floor(distance))) .. "m"
 
-		var_10_1.icon.color[1] = var_10_14
-		var_10_1.icon_bg.color[1] = var_10_14
-		var_10_1.arrow.color[1] = var_10_14
-		var_10_1.text.text_color[1] = var_10_14
+		if not str then
+			-- Nothing
+		end
+	end
+
+	str = ""
+
+	::label_10_0::
+
+	content.distance_text = str
+
+	local clamp = math.clamp(0.3 + (1 - content.forward_dot_dir) * 499.99999999999955, 0, 1)
+
+	if clamp ~= 1 then
+		local num = 255 * clamp
+
+		style.icon.color[1] = num
+		style.icon_bg.color[1] = num
+		style.arrow.color[1] = num
+		style.text.text_color[1] = num
 	end
 
 	return true

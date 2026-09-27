@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/divine/dlc_reikwald_river_achievements_settings.lua
 
-local var_0_0 = DLCSettings.divine
+local divine = DLCSettings.divine
 
-var_0_0.achievement_outline = {
+divine.achievement_outline = {
 	levels = {
 		entries = {},
 		categories = {
@@ -26,6 +26,6 @@ var_0_0.achievement_outline = {
 		}
 	}
 }
-var_0_0.achievement_template_file_names = {
+divine.achievement_template_file_names = {
 	"scripts/managers/achievements/achievement_templates_divine"
 }

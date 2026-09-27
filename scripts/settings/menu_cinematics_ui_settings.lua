@@ -1,11 +1,11 @@
 -- chunkname: @scripts/settings/menu_cinematics_ui_settings.lua
 
-local var_0_0 = DLCSettings.menu_cinematics
+local menu_cinematics = DLCSettings.menu_cinematics
 
-var_0_0.ui_materials = {
+menu_cinematics.ui_materials = {
 	"materials/ui/ui_1080p_menu_cinematics_atlas"
 }
-var_0_0.ui_texture_settings = {
+menu_cinematics.ui_texture_settings = {
 	filenames = {
 		"scripts/ui/atlas_settings/gui_menu_cinematics_atlas"
 	},

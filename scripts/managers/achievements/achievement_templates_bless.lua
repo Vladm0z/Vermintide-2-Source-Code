@@ -1,37 +1,37 @@
 -- chunkname: @scripts/managers/achievements/achievement_templates_bless.lua
 
-local var_0_0 = AchievementTemplateHelper.PLACEHOLDER_ICON
-local var_0_1 = AchievementTemplates.achievements
-local var_0_2 = DLCSettings.bless
-local var_0_3 = AchievementTemplateHelper.rpc_increment_stat
-local var_0_4 = AchievementTemplateHelper.rpc_modify_stat
-local var_0_5 = AchievementTemplateHelper.add_levels_complete_per_hero_challenge
-local var_0_6 = AchievementTemplateHelper.add_career_mission_count_challenge
-local var_0_7 = AchievementTemplateHelper.add_meta_challenge
-local var_0_8 = {}
-local var_0_9 = {}
-local var_0_10 = 1
-local var_0_11 = 2
-local var_0_12 = 3
-local var_0_13 = 4
-local var_0_14 = 5
-local var_0_15 = 1
-local var_0_16 = 2
-local var_0_17 = 3
-local var_0_18 = 4
-local var_0_19 = 1
-local var_0_20 = 2
-local var_0_21 = 3
-local var_0_22 = 4
-local var_0_23 = 5
-local var_0_24 = 6
-local var_0_25 = 7
-local var_0_26 = 8
-local var_0_27 = HelmgartLevels
+local PLACEHOLDER_ICON = AchievementTemplateHelper.PLACEHOLDER_ICON
+local achievements = AchievementTemplates.achievements
+local bless = DLCSettings.bless
+local rpc_increment_stat = AchievementTemplateHelper.rpc_increment_stat
+local rpc_modify_stat = AchievementTemplateHelper.rpc_modify_stat
+local add_levels_complete_per_hero_challenge = AchievementTemplateHelper.add_levels_complete_per_hero_challenge
+local add_career_mission_count_challenge = AchievementTemplateHelper.add_career_mission_count_challenge
+local add_meta_challenge = AchievementTemplateHelper.add_meta_challenge
+local tbl = {}
+local tbl_2 = {}
+local num = 1
+local num_2 = 2
+local num_3 = 3
+local num_4 = 4
+local num_5 = 5
+local num_6 = 1
+local num_7 = 2
+local num_8 = 3
+local num_9 = 4
+local num_10 = 1
+local num_11 = 2
+local num_12 = 3
+local num_13 = 4
+local num_14 = 5
+local num_15 = 6
+local num_16 = 7
+local num_17 = 8
+local HelmgartLevels = HelmgartLevels
 
-var_0_5(var_0_1, "bless_complete_all_helmgart_levels", var_0_27, 2, "wh_priest", false, "achievement_trophy_bless_complete_all_helmgart_levels_wh_priest", "bless", nil, nil)
+add_levels_complete_per_hero_challenge(achievements, "bless_complete_all_helmgart_levels", HelmgartLevels, 2, "wh_priest", false, "achievement_trophy_bless_complete_all_helmgart_levels_wh_priest", "bless", nil, nil)
 
-local var_0_28 = {
+local tbl_3 = {
 	"normal",
 	"hard",
 	"harder",
@@ -39,11 +39,11 @@ local var_0_28 = {
 	"cataclysm"
 }
 
-var_0_6(var_0_1, "bless_complete_25_missions", "completed_career_levels", "wh_priest", var_0_28, 25, nil, "achievement_trophy_bless_complete_25_missions_wh_priest", "bless", nil, nil)
+add_career_mission_count_challenge(achievements, "bless_complete_25_missions", "completed_career_levels", "wh_priest", tbl_3, 25, nil, "achievement_trophy_bless_complete_25_missions_wh_priest", "bless", nil, nil)
 
-local var_0_29 = 1500
+local num_18 = 1500
 
-var_0_1.bless_heal_allies = {
+achievements.bless_heal_allies = {
 	name = "achv_bless_heal_allies_name",
 	desc = "achv_bless_heal_allies_desc",
 	display_completion_ui = true,
@@ -52,25 +52,28 @@ var_0_1.bless_heal_allies = {
 	events = {
 		"register_heal"
 	},
-	progress = function(arg_1_0, arg_1_1, arg_1_2)
-		local var_1_0 = arg_1_0:get_persistent_stat(arg_1_1, "bless_heal_allies")
+	progress = function (self, arg_1_1, arg_1_2)
+		-- function 1
+		local get_persistent_stat = self:get_persistent_stat(arg_1_1, "bless_heal_allies")
 
 		return {
-			var_1_0,
-			var_0_29
+			get_persistent_stat,
+			num_18
 		}
 	end,
-	completed = function(arg_2_0, arg_2_1, arg_2_2)
-		return arg_2_0:get_persistent_stat(arg_2_1, "bless_heal_allies") >= var_0_29
+	completed = function (self, arg_2_1, arg_2_2)
+		-- function 2
+		return self:get_persistent_stat(arg_2_1, "bless_heal_allies") >= num_18
 	end,
-	on_event = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	on_event = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+		-- function 3
 		local var_3_0 = arg_3_4[1]
 		local var_3_1 = arg_3_4[2]
 		local var_3_2 = arg_3_4[3]
 		local var_3_3 = arg_3_4[4]
-		local var_3_4 = Managers.player:local_player().player_unit
+		local player_unit = Managers.player:local_player().player_unit
 
-		if not var_3_1 or var_3_4 ~= var_3_0 then
+		if not (not var_3_1 and player_unit == var_3_0) then
 			return
 		end
 
@@ -78,19 +81,19 @@ var_0_1.bless_heal_allies = {
 			return
 		end
 
-		local var_3_5 = ScriptUnit.has_extension(var_3_0, "career_system")
+		local has_extension = ScriptUnit.has_extension(var_3_0, "career_system")
 
-		if not var_3_5 or var_3_5:career_name() ~= "wh_priest" then
+		if not (not has_extension and has_extension:career_name() == "wh_priest") then
 			return
 		end
 
-		arg_3_0:modify_stat_by_amount(arg_3_1, "bless_heal_allies", var_3_2)
+		self:modify_stat_by_amount(arg_3_1, "bless_heal_allies", var_3_2)
 	end
 }
 
-local var_0_30 = 5
+local num_19 = 5
 
-var_0_1.bless_saved_by_perk = {
+achievements.bless_saved_by_perk = {
 	name = "achv_bless_saved_by_perk_name",
 	desc = "achv_bless_saved_by_perk_desc",
 	display_completion_ui = true,
@@ -101,18 +104,21 @@ var_0_1.bless_saved_by_perk = {
 		"player_dead",
 		"player_knocked_down"
 	},
-	progress = function(arg_4_0, arg_4_1, arg_4_2)
-		local var_4_0 = arg_4_0:get_persistent_stat(arg_4_1, "bless_saved_by_perk")
+	progress = function (self, arg_4_1, arg_4_2)
+		-- function 4
+		local get_persistent_stat = self:get_persistent_stat(arg_4_1, "bless_saved_by_perk")
 
 		return {
-			var_4_0,
-			var_0_30
+			get_persistent_stat,
+			num_19
 		}
 	end,
-	completed = function(arg_5_0, arg_5_1, arg_5_2)
-		return arg_5_0:get_persistent_stat(arg_5_1, "bless_saved_by_perk") >= var_0_30
+	completed = function (self, arg_5_1, arg_5_2)
+		-- function 5
+		return self:get_persistent_stat(arg_5_1, "bless_saved_by_perk") >= num_19
 	end,
-	on_event = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	on_event = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+		-- function 6
 		if arg_6_3 == "register_damage_taken" then
 			local var_6_0 = arg_6_4[1]
 			local var_6_1 = arg_6_4[2]
@@ -121,58 +127,60 @@ var_0_1.bless_saved_by_perk = {
 				return
 			end
 
-			local var_6_2 = Managers.player:local_player().player_unit
+			local player_unit = Managers.player:local_player().player_unit
 
-			if not var_6_0 or var_6_2 ~= var_6_0 then
+			if not (not var_6_0 and player_unit == var_6_0) then
 				return
 			end
 
-			local var_6_3 = ScriptUnit.has_extension(var_6_0, "career_system")
+			local has_extension = ScriptUnit.has_extension(var_6_0, "career_system")
 
-			if not var_6_3 or var_6_3:career_name() ~= "wh_priest" then
+			if not (not has_extension and has_extension:career_name() == "wh_priest") then
 				return
 			end
 
-			local var_6_4 = ScriptUnit.extension(var_6_0, "health_system"):current_health()
+			local current_health = ScriptUnit.extension(var_6_0, "health_system"):current_health()
 			local var_6_5 = var_6_1[DamageDataIndex.DAMAGE_AMOUNT]
 			local var_6_6 = var_6_1[DamageDataIndex.DAMAGE_TYPE]
 
-			if var_6_4 - var_6_5 < 6 and var_6_6 == "life_tap" then
-				local var_6_7 = arg_6_2.timer_handles or {}
+			if not (not (current_health - var_6_5 < 6) or var_6_6 ~= "life_tap") then
+				local timer_handles = arg_6_2.timer_handles
 
-				arg_6_2.timer_handles = var_6_7
+				timer_handles = timer_handles or {}
+				arg_6_2.timer_handles = timer_handles
 
-				local var_6_8 = var_6_7[var_6_0]
+				local var_6_8 = timer_handles[var_6_0]
 
-				if not var_6_8 or not var_6_8.valid then
-					var_6_7[var_6_0] = Managers.state.achievement:register_timed_event("bless_saved_by_perk", "on_timed_event", 5, var_6_0)
+				if not (not var_6_8 and var_6_8.valid) then
+					timer_handles[var_6_0] = Managers.state.achievement:register_timed_event("bless_saved_by_perk", "on_timed_event", 5, var_6_0)
 				end
 			end
-		elseif arg_6_2.timer_handles then
+		elseif not arg_6_2.timer_handles then
 			local var_6_9 = arg_6_4[1]
-			local var_6_10 = var_6_9 and var_6_9.player_unit
-			local var_6_11 = arg_6_2.timer_handles
-			local var_6_12 = var_6_11[var_6_10]
+			local flag = not var_6_9 and var_6_9.player_unit
+			local timer_handles_2 = arg_6_2.timer_handles
+			local var_6_12 = timer_handles_2[flag]
 
-			if var_6_12 and var_6_12.valid then
+			if not var_6_12 and not var_6_12.valid then
 				Managers.state.achievement:cancel_timed_event(var_6_12)
 
-				var_6_11[var_6_10] = nil
+				timer_handles_2[flag] = nil
 			end
 		end
 	end,
-	on_timed_event = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	on_timed_event = function (self, arg_7_1, arg_7_2, arg_7_3)
+		-- function 7
 		local var_7_0 = arg_7_3
 
-		if HEALTH_ALIVE[var_7_0] then
-			arg_7_0:increment_stat(arg_7_1, "bless_saved_by_perk")
+		if not HEALTH_ALIVE[var_7_0] then
+			self:increment_stat(arg_7_1, "bless_saved_by_perk")
 
 			arg_7_2.timer_handles[var_7_0] = nil
 		end
 	end
 }
 bless_book_run_amount = 5
-var_0_1.bless_book_run = {
+achievements.bless_book_run = {
 	name = "achv_bless_book_run_name",
 	desc = "achv_bless_book_run_desc",
 	display_completion_ui = true,
@@ -181,51 +189,54 @@ var_0_1.bless_book_run = {
 	events = {
 		"register_completed_level"
 	},
-	progress = function(arg_8_0, arg_8_1, arg_8_2)
-		local var_8_0 = arg_8_0:get_persistent_stat(arg_8_1, "bless_book_run")
+	progress = function (self, arg_8_1, arg_8_2)
+		-- function 8
+		local get_persistent_stat = self:get_persistent_stat(arg_8_1, "bless_book_run")
 
 		return {
-			var_8_0,
+			get_persistent_stat,
 			bless_book_run_amount
 		}
 	end,
-	completed = function(arg_9_0, arg_9_1, arg_9_2)
-		return arg_9_0:get_persistent_stat(arg_9_1, "bless_book_run") >= bless_book_run_amount
+	completed = function (self, arg_9_1, arg_9_2)
+		-- function 9
+		return self:get_persistent_stat(arg_9_1, "bless_book_run") >= bless_book_run_amount
 	end,
-	on_event = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+	on_event = function (self, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+		-- function 10
 		if arg_10_4[3] == "wh_priest" then
 			local var_10_0 = arg_10_4[4]
 
-			if var_10_0 and not var_10_0.bot_player then
-				local var_10_1 = var_10_0.player_unit
-				local var_10_2 = ScriptUnit.has_extension(var_10_1, "inventory_system")
+			if not (not var_10_0 and var_10_0.bot_player) then
+				local player_unit = var_10_0.player_unit
+				local has_extension = ScriptUnit.has_extension(player_unit, "inventory_system")
 
-				if not var_10_2 then
+				if not has_extension then
 					return
 				end
 
-				local var_10_3 = var_10_2:get_slot_data("slot_healthkit")
-				local var_10_4 = var_10_2:get_slot_data("slot_potion")
+				local get_slot_data = has_extension:get_slot_data("slot_healthkit")
+				local get_slot_data_2 = has_extension:get_slot_data("slot_potion")
 
-				if not var_10_4 or not var_10_3 then
+				if not (not get_slot_data_2 and get_slot_data) then
 					return
 				end
 
-				local var_10_5 = var_10_2:get_item_template(var_10_3)
-				local var_10_6 = var_10_2:get_item_template(var_10_4)
+				local get_item_template = has_extension:get_item_template(get_slot_data)
+				local get_item_template_2 = has_extension:get_item_template(get_slot_data_2)
 
-				if var_10_5.is_grimoire and var_10_6.is_grimoire then
-					arg_10_0:increment_stat(arg_10_1, "bless_book_run")
+				if not get_item_template.is_grimoire and not get_item_template_2.is_grimoire then
+					self:increment_stat(arg_10_1, "bless_book_run")
 				end
 			end
 		end
 	end
 }
 
-local var_0_31 = 10
-local var_0_32 = 1
+local num_20 = 10
+local num_21 = 1
 
-var_0_1.bless_fast_shield = {
+achievements.bless_fast_shield = {
 	name = "achv_bless_fast_shield_name",
 	desc = "achv_bless_fast_shield_desc",
 	display_completion_ui = true,
@@ -235,67 +246,80 @@ var_0_1.bless_fast_shield = {
 		"register_shield_applied",
 		"register_player_disabled"
 	},
-	progress = function(arg_11_0, arg_11_1, arg_11_2)
-		local var_11_0 = arg_11_0:get_persistent_stat(arg_11_1, "bless_fast_shield")
+	progress = function (self, arg_11_1, arg_11_2)
+		-- function 11
+		local get_persistent_stat = self:get_persistent_stat(arg_11_1, "bless_fast_shield")
 
 		return {
-			var_11_0,
-			var_0_31
+			get_persistent_stat,
+			num_20
 		}
 	end,
-	completed = function(arg_12_0, arg_12_1, arg_12_2)
-		return arg_12_0:get_persistent_stat(arg_12_1, "bless_fast_shield") >= var_0_31
+	completed = function (self, arg_12_1, arg_12_2)
+		-- function 12
+		return self:get_persistent_stat(arg_12_1, "bless_fast_shield") >= num_20
 	end,
-	on_event = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+	on_event = function (self, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+		-- function 13
 		if arg_13_3 == "register_shield_applied" then
 			local var_13_0 = arg_13_4[1]
 			local var_13_1 = arg_13_4[2]
-			local var_13_2 = Managers.player:local_player().player_unit
+			local player_unit = Managers.player:local_player().player_unit
 
-			if not var_13_0 or var_13_2 ~= var_13_1 then
+			if not (not var_13_0 and player_unit == var_13_1) then
 				return
 			end
 
-			local var_13_3 = ScriptUnit.has_extension(var_13_0, "status_system")
+			local has_extension = ScriptUnit.has_extension(var_13_0, "status_system")
 
-			if not var_13_3 then
+			if not has_extension then
 				return
 			end
 
-			if not (var_13_3:is_pounced_down() or var_13_3:is_grabbed_by_pack_master() or var_13_3:is_grabbed_by_corruptor()) then
+			local is_pounced_down = has_extension:is_pounced_down()
+
+			if not is_pounced_down then
+				is_pounced_down = has_extension:is_grabbed_by_pack_master()
+				is_pounced_down = is_pounced_down or has_extension:is_grabbed_by_corruptor()
+			end
+
+			if not is_pounced_down then
 				return
 			end
 
-			local var_13_4 = arg_13_2.incapacitated_units[var_13_0]
+			local var_13_5 = arg_13_2.incapacitated_units[var_13_0]
 
-			if not var_13_4 then
+			if not var_13_5 then
 				return
 			end
 
-			local var_13_5 = Managers.time:time("game") - var_13_4
+			local num = Managers.time:time("game") - var_13_5
 
-			if var_13_5 <= var_0_32 and var_13_5 >= 0 then
-				arg_13_0:increment_stat(arg_13_1, "bless_fast_shield")
+			if not (not (num <= num_21) or not (num >= 0)) then
+				self:increment_stat(arg_13_1, "bless_fast_shield")
 			end
 		else
-			local var_13_6 = arg_13_2.incapacitated_units or {}
-			local var_13_7 = Managers.time:time("game")
+			local incapacitated_units = arg_13_2.incapacitated_units
 
-			for iter_13_0, iter_13_1 in pairs(var_13_6) do
-				if not ALIVE[iter_13_0] or var_13_7 - iter_13_1 > var_0_32 then
-					var_13_6[iter_13_0] = nil
+			incapacitated_units = incapacitated_units or {}
+
+			local time = Managers.time:time("game")
+
+			for k, v in pairs(incapacitated_units) do
+				if not (not ALIVE[k] and not (time - v > num_21)) then
+					incapacitated_units[k] = nil
 				end
 			end
 
-			var_13_6[arg_13_4[1]] = var_13_7
-			arg_13_2.incapacitated_units = var_13_6
+			incapacitated_units[arg_13_4[1]] = time
+			arg_13_2.incapacitated_units = incapacitated_units
 		end
 	end
 }
 
-local var_0_33 = 500
+local num_22 = 500
 
-var_0_1.bless_unbreakable_damage_block = {
+achievements.bless_unbreakable_damage_block = {
 	always_run = true,
 	name = "achv_bless_unbreakable_damage_block_name",
 	display_completion_ui = true,
@@ -306,44 +330,47 @@ var_0_1.bless_unbreakable_damage_block = {
 	events = {
 		"bless_delay_damage"
 	},
-	progress = function(arg_14_0, arg_14_1, arg_14_2)
-		local var_14_0 = arg_14_0:get_persistent_stat(arg_14_1, "bless_unbreakable_damage_block")
+	progress = function (self, arg_14_1, arg_14_2)
+		-- function 14
+		local get_persistent_stat = self:get_persistent_stat(arg_14_1, "bless_unbreakable_damage_block")
 
 		return {
-			var_14_0,
-			var_0_33
+			get_persistent_stat,
+			num_22
 		}
 	end,
-	completed = function(arg_15_0, arg_15_1, arg_15_2)
-		return arg_15_0:get_persistent_stat(arg_15_1, "bless_unbreakable_damage_block") >= var_0_33
+	completed = function (self, arg_15_1, arg_15_2)
+		-- function 15
+		return self:get_persistent_stat(arg_15_1, "bless_unbreakable_damage_block") >= num_22
 	end,
-	on_event = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+	on_event = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+		-- function 16
 		local var_16_0 = arg_16_4[1]
 		local var_16_1 = arg_16_4[2]
 
-		if not var_16_1 or not var_16_0 then
+		if not (not var_16_1 and var_16_0) then
 			return
 		end
 
-		local var_16_2 = ScriptUnit.has_extension(var_16_0, "buff_system")
+		local has_extension = ScriptUnit.has_extension(var_16_0, "buff_system")
 
-		if not var_16_2 then
+		if not has_extension then
 			return
 		end
 
-		if var_16_2:num_buff_stacks("victor_priest_activated_ability_invincibility") <= 0 then
+		if has_extension:num_buff_stacks("victor_priest_activated_ability_invincibility") <= 0 then
 			return
 		end
 
-		local var_16_3 = DamageUtils.networkify_damage(var_16_1)
+		local networkify_damage = DamageUtils.networkify_damage(var_16_1)
 
-		var_0_4(var_16_0, "bless_unbreakable_damage_block", var_16_3)
+		rpc_modify_stat(var_16_0, "bless_unbreakable_damage_block", networkify_damage)
 	end
 }
 
-local var_0_34 = 3
+local num_23 = 3
 
-var_0_1.bless_punch_back = {
+achievements.bless_punch_back = {
 	always_run = true,
 	name = "achv_bless_punch_back_name",
 	display_completion_ui = true,
@@ -355,10 +382,12 @@ var_0_1.bless_punch_back = {
 		"register_damage_taken",
 		"register_damage"
 	},
-	completed = function(arg_17_0, arg_17_1, arg_17_2)
-		return arg_17_0:get_persistent_stat(arg_17_1, "bless_punch_back") >= 1
+	completed = function (self, arg_17_1, arg_17_2)
+		-- function 17
+		return self:get_persistent_stat(arg_17_1, "bless_punch_back") >= 1
 	end,
-	on_event = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+	on_event = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+		-- function 18
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -366,70 +395,70 @@ var_0_1.bless_punch_back = {
 		if arg_18_3 == "register_damage_taken" then
 			local var_18_0 = arg_18_4[1]
 			local var_18_1 = arg_18_4[2]
-			local var_18_2 = var_18_1 and var_18_1[DamageDataIndex.ATTACKER]
+			local flag = not var_18_1 and var_18_1[DamageDataIndex.ATTACKER]
 
-			if not ALIVE[var_18_2] or not ALIVE[var_18_0] then
+			if not (not ALIVE[flag] and ALIVE[var_18_0]) then
 				return
 			end
 
-			local var_18_3 = ScriptUnit.has_extension(var_18_0, "career_system")
+			local has_extension = ScriptUnit.has_extension(var_18_0, "career_system")
 
-			if not var_18_3 or var_18_3:career_name() ~= "wh_priest" then
+			if not (not has_extension and has_extension:career_name() == "wh_priest") then
 				return
 			end
 
-			local var_18_4 = BLACKBOARDS[var_18_2]
-			local var_18_5 = var_18_4 and var_18_4.breed
+			local var_18_4 = BLACKBOARDS[flag]
+			local flag_2 = not var_18_4 and var_18_4.breed
 
-			if var_18_5 and var_18_5.name ~= "chaos_warrior" then
+			if not (not flag_2 and flag_2.name == "chaos_warrior") then
 				return
 			end
 
-			local var_18_6 = ScriptUnit.has_extension(var_18_2, "ai_system")
+			local has_extension_2 = ScriptUnit.has_extension(flag, "ai_system")
 
-			if (var_18_6 and var_18_6:current_action_name()) == "special_attack_quick" then
-				local var_18_7 = Managers.time:time("game")
+			if (not has_extension_2 and has_extension_2:current_action_name()) == "special_attack_quick" then
+				local time = Managers.time:time("game")
 
 				if not arg_18_2.last_hit then
 					arg_18_2.last_hit = {
-						[var_18_2] = var_18_7
+						[flag] = time
 					}
 					arg_18_2.last_hit_n = 1
 				else
-					arg_18_2.last_hit[var_18_2] = var_18_7
+					arg_18_2.last_hit[flag] = time
 					arg_18_2.last_hit_n = arg_18_2.last_hit_n + 1
 				end
 
 				if arg_18_2.last_hit_n >= 10 then
-					local var_18_8 = arg_18_2.last_hit
-					local var_18_9 = arg_18_2.last_hit_n
+					local last_hit = arg_18_2.last_hit
+					local last_hit_n = arg_18_2.last_hit_n
 
-					for iter_18_0, iter_18_1 in pairs(var_18_8) do
-						if not ALIVE[iter_18_0] or var_18_7 > iter_18_1 + var_0_34 then
-							var_18_8[iter_18_0] = nil
-							var_18_9 = var_18_9 - 1
+					for k, v in pairs(last_hit) do
+						if not (not ALIVE[k] and not (time > v + num_23)) then
+							last_hit[k] = nil
+							last_hit_n = last_hit_n - 1
 						end
 					end
 
-					arg_18_2.last_hit_n = var_18_9
+					arg_18_2.last_hit_n = last_hit_n
 				end
 			end
-		elseif arg_18_2.last_hit then
-			local var_18_10 = arg_18_4[var_0_11]
+		elseif not arg_18_2.last_hit then
+			local var_18_10 = arg_18_4[num_2]
 			local var_18_11 = arg_18_2.last_hit[var_18_10]
 
-			if var_18_11 then
-				local var_18_12 = arg_18_4[var_0_12]
+			if not var_18_11 then
+				local var_18_12 = arg_18_4[num_3]
 				local var_18_13 = var_18_12[DamageDataIndex.DAMAGE_TYPE]
 				local var_18_14 = var_18_12[DamageDataIndex.DAMAGE_SOURCE_NAME]
 				local var_18_15 = rawget(ItemMasterList, var_18_14)
-				local var_18_16 = var_18_15 and var_18_15.item_type == "wh_2h_hammer" and var_18_13 == "stab_smiter"
-				local var_18_17 = Managers.time:time("game")
+				local flag_3 = not (not var_18_15 and var_18_15.item_type == "wh_2h_hammer") and var_18_13 == "stab_smiter"
+				local time_2 = Managers.time:time("game")
 
-				if var_18_16 and var_18_17 - var_18_11 <= var_0_34 then
-					local var_18_18 = arg_18_4[var_0_13]
+				if not (not flag_3 and not (time_2 - var_18_11 <= num_23)) then
+					local var_18_18 = arg_18_4[num_4]
 
-					var_0_3(var_18_18, "bless_punch_back")
+					rpc_increment_stat(var_18_18, "bless_punch_back")
 				else
 					arg_18_2.last_hit[var_18_10] = nil
 					arg_18_2.last_hit_n = arg_18_2.last_hit_n - 1
@@ -438,7 +467,7 @@ var_0_1.bless_punch_back = {
 		end
 	end
 }
-var_0_1.bless_cluch_revive = {
+achievements.bless_cluch_revive = {
 	display_completion_ui = true,
 	name = "achv_bless_cluch_revive_name",
 	desc = "achv_bless_cluch_revive_desc",
@@ -448,32 +477,34 @@ var_0_1.bless_cluch_revive = {
 	events = {
 		"register_revive"
 	},
-	completed = function(arg_19_0, arg_19_1, arg_19_2)
-		return arg_19_0:get_persistent_stat(arg_19_1, "bless_cluch_revive") >= 1
+	completed = function (self, arg_19_1, arg_19_2)
+		-- function 19
+		return self:get_persistent_stat(arg_19_1, "bless_cluch_revive") >= 1
 	end,
-	on_event = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+	on_event = function (self, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+		-- function 20
 		local var_20_0 = arg_20_4[1]
 		local var_20_1 = arg_20_4[2]
-		local var_20_2 = Managers.player:local_player()
-		local var_20_3 = var_20_2 and var_20_2.player_unit
+		local local_player = Managers.player:local_player()
+		local flag = not local_player and local_player.player_unit
 
-		if not ALIVE[var_20_1] or not ALIVE[var_20_0] or var_20_3 ~= var_20_0 then
+		if not (not ALIVE[var_20_1] and not ALIVE[var_20_0] and flag == var_20_0) then
 			return
 		end
 
-		local var_20_4 = ScriptUnit.has_extension(var_20_0, "career_system")
+		local has_extension = ScriptUnit.has_extension(var_20_0, "career_system")
 
-		if not var_20_4 or var_20_4:career_name() ~= "wh_priest" then
+		if not (not has_extension and has_extension:career_name() == "wh_priest") then
 			return
 		end
 
-		local var_20_5 = ScriptUnit.has_extension(var_20_0, "buff_system")
+		local has_extension_2 = ScriptUnit.has_extension(var_20_0, "buff_system")
 
-		if not var_20_5 then
+		if not has_extension_2 then
 			return
 		end
 
-		if var_20_5:num_buff_stacks("victor_priest_activated_ability_invincibility") <= 0 then
+		if has_extension_2:num_buff_stacks("victor_priest_activated_ability_invincibility") <= 0 then
 			return
 		end
 
@@ -483,35 +514,35 @@ var_0_1.bless_cluch_revive = {
 			return
 		end
 
-		local var_20_7 = var_20_6.PLAYER_AND_BOT_UNITS
+		local PLAYER_AND_BOT_UNITS = var_20_6.PLAYER_AND_BOT_UNITS
 
-		if not var_20_7 then
+		if not PLAYER_AND_BOT_UNITS then
 			return
 		end
 
-		for iter_20_0 = 1, #var_20_7 do
-			local var_20_8 = var_20_7[iter_20_0]
+		for i = 1, #PLAYER_AND_BOT_UNITS do
+			local var_20_8 = PLAYER_AND_BOT_UNITS[i]
 
 			if var_20_8 ~= var_20_0 then
-				local var_20_9 = ScriptUnit.has_extension(var_20_8, "status_system")
+				local has_extension_3 = ScriptUnit.has_extension(var_20_8, "status_system")
 
-				if var_20_9 and not var_20_9:is_knocked_down() and not var_20_9:is_dead() and not var_20_9:is_ready_for_assisted_respawn() then
+				if not (not has_extension_3 and has_extension_3:is_knocked_down() or has_extension_3:is_dead() or has_extension_3:is_ready_for_assisted_respawn()) then
 					return
 				end
 			end
 		end
 
-		arg_20_0:increment_stat(arg_20_1, "bless_cluch_revive")
+		self:increment_stat(arg_20_1, "bless_cluch_revive")
 	end
 }
 
-local var_0_35 = 2
-local var_0_36 = {
+local num_24 = 2
+local tbl_4 = {
 	skaven_ratling_gunner = true,
 	skaven_warpfire_thrower = true
 }
 
-var_0_1.bless_ranged_raki = {
+achievements.bless_ranged_raki = {
 	display_completion_ui = true,
 	name = "achv_bless_ranged_raki_name",
 	desc = "achv_bless_ranged_raki_desc",
@@ -521,56 +552,58 @@ var_0_1.bless_ranged_raki = {
 	events = {
 		"register_kill"
 	},
-	completed = function(arg_21_0, arg_21_1, arg_21_2)
-		return arg_21_0:get_persistent_stat(arg_21_1, "bless_ranged_raki") >= 1
+	completed = function (self, arg_21_1, arg_21_2)
+		-- function 21
+		return self:get_persistent_stat(arg_21_1, "bless_ranged_raki") >= 1
 	end,
-	on_event = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
-		local var_22_0 = Managers.player:local_player()
-		local var_22_1 = var_22_0 and var_22_0.player_unit
-		local var_22_2 = arg_22_4[var_0_17][DamageDataIndex.ATTACKER]
+	on_event = function (self, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+		-- function 22
+		local local_player = Managers.player:local_player()
+		local flag = not local_player and local_player.player_unit
+		local var_22_2 = arg_22_4[num_8][DamageDataIndex.ATTACKER]
 
-		if var_22_2 and var_22_1 ~= var_22_2 then
+		if not (not var_22_2 and flag == var_22_2) then
 			return
 		end
 
-		local var_22_3 = arg_22_4[var_0_18]
+		local var_22_3 = arg_22_4[num_9]
 
-		if not var_22_3 or not var_0_36[var_22_3.name] then
+		if not (not var_22_3 and tbl_4[var_22_3.name]) then
 			return
 		end
 
-		local var_22_4 = ScriptUnit.has_extension(var_22_2, "career_system")
+		local has_extension = ScriptUnit.has_extension(var_22_2, "career_system")
 
-		if not var_22_4 or var_22_4:career_name() ~= "wh_priest" then
+		if not (not has_extension and has_extension:career_name() == "wh_priest") then
 			return
 		end
 
-		local var_22_5 = ScriptUnit.has_extension(var_22_2, "buff_system")
+		local has_extension_2 = ScriptUnit.has_extension(var_22_2, "buff_system")
 
-		if not var_22_5 then
+		if not has_extension_2 then
 			return
 		end
 
-		local var_22_6 = var_22_5:get_buff_type("victor_priest_activated_ability_invincibility")
+		local get_buff_type = has_extension_2:get_buff_type("victor_priest_activated_ability_invincibility")
 
-		if var_22_6 then
-			if not arg_22_2.last_buff_id or not var_22_6 or arg_22_2.last_buff_id ~= var_22_6.id then
-				arg_22_2.last_buff_id = var_22_6.id
+		if not get_buff_type then
+			if not (not arg_22_2.last_buff_id and not get_buff_type and arg_22_2.last_buff_id == get_buff_type.id) then
+				arg_22_2.last_buff_id = get_buff_type.id
 				arg_22_2.kill_count = 0
 			end
 
 			arg_22_2.kill_count = arg_22_2.kill_count + 1
 
-			if arg_22_2.kill_count >= var_0_35 then
-				arg_22_0:increment_stat(arg_22_1, "bless_ranged_raki")
+			if arg_22_2.kill_count >= num_24 then
+				self:increment_stat(arg_22_1, "bless_ranged_raki")
 			end
 		end
 	end
 }
 
-local var_0_37 = 5
+local num_25 = 5
 
-var_0_1.bless_chaos_warriors = {
+achievements.bless_chaos_warriors = {
 	display_completion_ui = true,
 	name = "achv_bless_chaos_warriors_name",
 	desc = "achv_bless_chaos_warriors_desc",
@@ -583,32 +616,34 @@ var_0_1.bless_chaos_warriors = {
 		"righteous_fury_end",
 		"player_dead"
 	},
-	completed = function(arg_23_0, arg_23_1, arg_23_2)
-		return arg_23_0:get_persistent_stat(arg_23_1, "bless_chaos_warriors") >= 1
+	completed = function (self, arg_23_1, arg_23_2)
+		-- function 23
+		return self:get_persistent_stat(arg_23_1, "bless_chaos_warriors") >= 1
 	end,
-	on_event = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
-		if arg_24_3 == "righteous_fury_start" and arg_24_4[2] then
+	on_event = function (self, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+		-- function 24
+		if arg_24_3 ~= "righteous_fury_start" or not arg_24_4[2] then
 			arg_24_2.righteous_fury_active = true
 			arg_24_2.kill_count = 0
-		elseif arg_24_3 == "righteous_fury_end" and arg_24_4[2] or arg_24_3 == "player_dead" and arg_24_4[1] and arg_24_4[1].local_player then
+		elseif ((arg_24_3 ~= "righteous_fury_end" or not arg_24_4[2]) and arg_24_3 ~= "player_dead" or not arg_24_4[1]) and not arg_24_4[1].local_player then
 			arg_24_2.righteous_fury_active = false
-		elseif arg_24_2.righteous_fury_active then
-			local var_24_0 = arg_24_4[var_0_18]
+		elseif not arg_24_2.righteous_fury_active then
+			local var_24_0 = arg_24_4[num_9]
 
-			if var_24_0 and var_24_0.name == "chaos_warrior" then
+			if not (not var_24_0 and var_24_0.name ~= "chaos_warrior") then
 				arg_24_2.kill_count = arg_24_2.kill_count + 1
 
-				if arg_24_2.kill_count >= var_0_37 then
-					arg_24_0:increment_stat(arg_24_1, "bless_chaos_warriors")
+				if arg_24_2.kill_count >= num_25 then
+					self:increment_stat(arg_24_1, "bless_chaos_warriors")
 				end
 			end
 		end
 	end
 }
 
-local var_0_38 = 50
+local num_26 = 50
 
-var_0_1.bless_very_righteous = {
+achievements.bless_very_righteous = {
 	display_completion_ui = true,
 	name = "achv_bless_very_righteous_name",
 	desc = "achv_bless_very_righteous_desc",
@@ -620,27 +655,29 @@ var_0_1.bless_very_righteous = {
 		"righteous_fury_end",
 		"player_dead"
 	},
-	completed = function(arg_25_0, arg_25_1, arg_25_2)
-		return arg_25_0:get_persistent_stat(arg_25_1, "bless_very_righteous") >= 1
+	completed = function (self, arg_25_1, arg_25_2)
+		-- function 25
+		return self:get_persistent_stat(arg_25_1, "bless_very_righteous") >= 1
 	end,
-	on_event = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
-		local var_26_0 = Managers.time:time("game")
+	on_event = function (self, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+		-- function 26
+		local time = Managers.time:time("game")
 
-		if arg_26_3 == "righteous_fury_start" and arg_26_4[2] then
-			arg_26_2.righteous_fury_active = var_26_0
-		elseif arg_26_3 == "righteous_fury_end" and arg_26_4[2] or arg_26_3 == "player_dead" and arg_26_4[1] and arg_26_4[1].local_player then
-			local var_26_1 = arg_26_2.righteous_fury_active
+		if arg_26_3 ~= "righteous_fury_start" or not arg_26_4[2] then
+			arg_26_2.righteous_fury_active = time
+		elseif ((arg_26_3 ~= "righteous_fury_end" or not arg_26_4[2]) and arg_26_3 ~= "player_dead" or not arg_26_4[1]) and not arg_26_4[1].local_player then
+			local righteous_fury_active = arg_26_2.righteous_fury_active
 
-			if var_26_1 and var_26_0 - var_26_1 >= var_0_38 then
-				arg_26_0:increment_stat(arg_26_1, "bless_very_righteous")
+			if not (not righteous_fury_active and not (time - righteous_fury_active >= num_26)) then
+				self:increment_stat(arg_26_1, "bless_very_righteous")
 			end
 		end
 	end
 }
 
-local var_0_39 = 250
+local num_27 = 250
 
-var_0_1.bless_smite_enemies = {
+achievements.bless_smite_enemies = {
 	display_completion_ui = true,
 	name = "achv_bless_smite_enemies_name",
 	desc = "achv_bless_smite_enemies_desc",
@@ -650,52 +687,55 @@ var_0_1.bless_smite_enemies = {
 	events = {
 		"register_kill"
 	},
-	progress = function(arg_27_0, arg_27_1, arg_27_2)
-		local var_27_0 = arg_27_0:get_persistent_stat(arg_27_1, "bless_smite_enemies")
+	progress = function (self, arg_27_1, arg_27_2)
+		-- function 27
+		local get_persistent_stat = self:get_persistent_stat(arg_27_1, "bless_smite_enemies")
 
 		return {
-			var_27_0,
-			var_0_39
+			get_persistent_stat,
+			num_27
 		}
 	end,
-	completed = function(arg_28_0, arg_28_1, arg_28_2)
-		return arg_28_0:get_persistent_stat(arg_28_1, "bless_smite_enemies") >= var_0_39
+	completed = function (self, arg_28_1, arg_28_2)
+		-- function 28
+		return self:get_persistent_stat(arg_28_1, "bless_smite_enemies") >= num_27
 	end,
-	on_event = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
-		local var_29_0 = arg_29_4[var_0_17]
-		local var_29_1 = var_29_0 and var_29_0[DamageDataIndex.ATTACKER]
+	on_event = function (self, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
+		-- function 29
+		local var_29_0 = arg_29_4[num_8]
+		local flag = not var_29_0 and var_29_0[DamageDataIndex.ATTACKER]
 
-		if not ALIVE[var_29_1] then
+		if not ALIVE[flag] then
 			return
 		end
 
-		local var_29_2 = Managers.player:local_player()
-		local var_29_3 = var_29_2 and var_29_2.player_unit
+		local local_player = Managers.player:local_player()
+		local flag_2 = not local_player and local_player.player_unit
 
-		if not var_29_3 or var_29_3 ~= var_29_1 then
+		if not (not flag_2 and flag_2 == flag) then
 			return
 		end
 
-		local var_29_4 = var_29_0 and var_29_0[DamageDataIndex.DAMAGE_TYPE]
-		local var_29_5 = var_29_0 and var_29_0[DamageDataIndex.DAMAGE_SOURCE_NAME]
+		local flag_3 = not var_29_0 and var_29_0[DamageDataIndex.DAMAGE_TYPE]
+		local flag_4 = not var_29_0 and var_29_0[DamageDataIndex.DAMAGE_SOURCE_NAME]
 
-		if var_29_4 ~= "buff" or var_29_5 ~= "career_ability" then
+		if not (flag_3 ~= "buff" or flag_4 == "career_ability") then
 			return
 		end
 
-		local var_29_6 = ScriptUnit.has_extension(var_29_1, "career_system")
+		local has_extension = ScriptUnit.has_extension(flag, "career_system")
 
-		if not var_29_6 or var_29_6:career_name() ~= "wh_priest" then
+		if not (not has_extension and has_extension:career_name() == "wh_priest") then
 			return
 		end
 
-		arg_29_0:increment_stat(arg_29_1, "bless_smite_enemies")
+		self:increment_stat(arg_29_1, "bless_smite_enemies")
 	end
 }
 
-local var_0_40 = 40
+local num_28 = 40
 
-var_0_1.bless_great_hammer_headshots = {
+achievements.bless_great_hammer_headshots = {
 	display_completion_ui = true,
 	name = "achv_bless_great_hammer_headshots_name",
 	desc = "achv_bless_great_hammer_headshots_desc",
@@ -705,54 +745,57 @@ var_0_1.bless_great_hammer_headshots = {
 	events = {
 		"on_hit"
 	},
-	progress = function(arg_30_0, arg_30_1, arg_30_2)
-		local var_30_0 = arg_30_0:get_persistent_stat(arg_30_1, "bless_great_hammer_headshots")
+	progress = function (self, arg_30_1, arg_30_2)
+		-- function 30
+		local get_persistent_stat = self:get_persistent_stat(arg_30_1, "bless_great_hammer_headshots")
 
 		return {
-			var_30_0,
-			var_0_40
+			get_persistent_stat,
+			num_28
 		}
 	end,
-	completed = function(arg_31_0, arg_31_1, arg_31_2)
-		return arg_31_0:get_persistent_stat(arg_31_1, "bless_great_hammer_headshots") >= var_0_40
+	completed = function (self, arg_31_1, arg_31_2)
+		-- function 31
+		return self:get_persistent_stat(arg_31_1, "bless_great_hammer_headshots") >= num_28
 	end,
-	on_event = function(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
-		local var_32_0 = arg_32_4[var_0_26]
-		local var_32_1 = Managers.player:local_player()
-		local var_32_2 = var_32_1 and var_32_1.player_unit
+	on_event = function (self, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+		-- function 32
+		local var_32_0 = arg_32_4[num_17]
+		local local_player = Managers.player:local_player()
+		local flag = not local_player and local_player.player_unit
 
-		if not ALIVE[var_32_0] or not var_32_2 or var_32_2 ~= var_32_0 then
+		if not (not ALIVE[var_32_0] and not flag and flag == var_32_0) then
 			return
 		end
 
-		if arg_32_4[var_0_21] ~= "head" then
+		if arg_32_4[num_12] ~= "head" then
 			return
 		end
 
-		if arg_32_4[var_0_20] ~= "heavy_attack" then
+		if arg_32_4[num_11] ~= "heavy_attack" then
 			return
 		end
 
-		local var_32_3 = ScriptUnit.has_extension(var_32_0, "career_system")
+		local has_extension = ScriptUnit.has_extension(var_32_0, "career_system")
 
-		if not var_32_3 or var_32_3:career_name() ~= "wh_priest" then
+		if not (not has_extension and has_extension:career_name() == "wh_priest") then
 			return
 		end
 
-		local var_32_4 = ScriptUnit.has_extension(var_32_0, "inventory_system")
+		local has_extension_2 = ScriptUnit.has_extension(var_32_0, "inventory_system")
 
-		if var_32_4 then
-			local var_32_5 = var_32_4:get_wielded_slot_data()
-			local var_32_6 = var_32_5 and var_32_5.item_data
+		if not has_extension_2 then
+			local get_wielded_slot_data = has_extension_2:get_wielded_slot_data()
+			local flag_2 = not get_wielded_slot_data and get_wielded_slot_data.item_data
 
-			if var_32_6 and var_32_6.name == "wh_2h_hammer" then
-				arg_32_0:increment_stat(arg_32_1, "bless_great_hammer_headshots")
+			if not (not flag_2 and flag_2.name ~= "wh_2h_hammer") then
+				self:increment_stat(arg_32_1, "bless_great_hammer_headshots")
 			end
 		end
 	end
 }
 
-local var_0_41 = {
+local tbl_5 = {
 	skaven_ratling_gunner = 8,
 	skaven_poison_wind_globadier = 2,
 	chaos_corruptor_sorcerer = 32,
@@ -762,10 +805,10 @@ local var_0_41 = {
 	beastmen_standard_bearer = 128,
 	skaven_gutter_runner = 1
 }
-local var_0_42 = 8
-local var_0_43 = 255
+local num_29 = 8
+local num_30 = 255
 
-var_0_1.bless_kill_specials_hammer_book = {
+achievements.bless_kill_specials_hammer_book = {
 	display_completion_ui = true,
 	name = "achv_bless_kill_specials_hammer_book_name",
 	desc = "achv_bless_kill_specials_hammer_book_desc",
@@ -775,58 +818,62 @@ var_0_1.bless_kill_specials_hammer_book = {
 	events = {
 		"register_kill"
 	},
-	progress = function(arg_33_0, arg_33_1, arg_33_2)
-		local var_33_0 = 0
-		local var_33_1 = arg_33_0:get_persistent_stat(arg_33_1, "bless_kill_specials_hammer_book")
+	progress = function (self, arg_33_1, arg_33_2)
+		-- function 33
+		local num = 0
+		local get_persistent_stat = self:get_persistent_stat(arg_33_1, "bless_kill_specials_hammer_book")
 
-		for iter_33_0, iter_33_1 in pairs(var_0_41) do
-			if bit.band(var_33_1, iter_33_1) == iter_33_1 then
-				var_33_0 = var_33_0 + 1
+		for k, v in pairs(tbl_5) do
+			if bit.band(get_persistent_stat, v) == v then
+				num = num + 1
 			end
 		end
 
 		return {
-			var_33_0,
-			var_0_42
+			num,
+			num_29
 		}
 	end,
-	completed = function(arg_34_0, arg_34_1, arg_34_2)
-		return arg_34_0:get_persistent_stat(arg_34_1, "bless_kill_specials_hammer_book") >= var_0_43
+	completed = function (self, arg_34_1, arg_34_2)
+		-- function 34
+		return self:get_persistent_stat(arg_34_1, "bless_kill_specials_hammer_book") >= num_30
 	end,
-	requirements = function(arg_35_0, arg_35_1)
-		local var_35_0 = {}
-		local var_35_1 = 0
-		local var_35_2 = arg_35_0:get_persistent_stat(arg_35_1, "bless_kill_specials_hammer_book")
+	requirements = function (self, arg_35_1)
+		-- function 35
+		local tbl = {}
+		local num = 0
+		local get_persistent_stat = self:get_persistent_stat(arg_35_1, "bless_kill_specials_hammer_book")
 
-		for iter_35_0, iter_35_1 in pairs(var_0_41) do
-			local var_35_3 = bit.band(var_35_2, iter_35_1) == iter_35_1
+		for k, v in pairs(tbl_5) do
+			local flag = bit.band(get_persistent_stat, v) == v
 
-			var_35_1 = var_35_1 + 1
-			var_35_0[var_35_1] = {
-				name = iter_35_0,
-				completed = var_35_3
+			num = num + 1
+			tbl[num] = {
+				name = k,
+				completed = flag
 			}
 		end
 
-		return var_35_0
+		return tbl
 	end,
-	on_event = function(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
-		local var_36_0 = Managers.player:local_player()
-		local var_36_1 = var_36_0 and var_36_0.player_unit
-		local var_36_2 = arg_36_4[var_0_17]
+	on_event = function (self, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
+		-- function 36
+		local local_player = Managers.player:local_player()
+		local flag = not local_player and local_player.player_unit
+		local var_36_2 = arg_36_4[num_8]
 		local var_36_3 = var_36_2[DamageDataIndex.ATTACKER]
 
-		if var_36_3 and var_36_1 ~= var_36_3 then
+		if not (not var_36_3 and flag == var_36_3) then
 			return
 		end
 
-		local var_36_4 = arg_36_4[var_0_18]
+		local var_36_4 = arg_36_4[num_9]
 
 		if not var_36_4 then
 			return
 		end
 
-		local var_36_5 = var_0_41[var_36_4.name]
+		local var_36_5 = tbl_5[var_36_4.name]
 
 		if not var_36_5 then
 			return
@@ -835,40 +882,40 @@ var_0_1.bless_kill_specials_hammer_book = {
 		local var_36_6 = var_36_2[DamageDataIndex.DAMAGE_SOURCE_NAME]
 		local var_36_7 = rawget(ItemMasterList, var_36_6)
 
-		if not var_36_7 or var_36_7.item_type ~= "wh_hammer_book" then
+		if not (not var_36_7 and var_36_7.item_type == "wh_hammer_book") then
 			return
 		end
 
-		local var_36_8 = ScriptUnit.has_extension(var_36_3, "career_system")
+		local has_extension = ScriptUnit.has_extension(var_36_3, "career_system")
 
-		if not var_36_8 or var_36_8:career_name() ~= "wh_priest" then
+		if not (not has_extension and has_extension:career_name() == "wh_priest") then
 			return
 		end
 
-		local var_36_9 = ScriptUnit.has_extension(var_36_3, "inventory_system")
+		local has_extension_2 = ScriptUnit.has_extension(var_36_3, "inventory_system")
 
-		if not var_36_9 then
+		if not has_extension_2 then
 			return
 		end
 
-		local var_36_10, var_36_11, var_36_12 = CharacterStateHelper.get_item_data_and_weapon_extensions(var_36_9)
-		local var_36_13 = CharacterStateHelper.get_current_action_data(var_36_12, var_36_11)
-		local var_36_14 = var_36_13 and var_36_13.lookup_data.sub_action_name
+		local get_item_data_and_weapon_extensions, var_36_11, var_36_12 = CharacterStateHelper.get_item_data_and_weapon_extensions(has_extension_2)
+		local get_current_action_data = CharacterStateHelper.get_current_action_data(var_36_12, var_36_11)
+		local flag_2 = not get_current_action_data and get_current_action_data.lookup_data.sub_action_name
 
-		if var_36_14 ~= "heavy_attack_stab_charged" and var_36_14 ~= "heavy_attack_left_charged" then
+		if not (flag_2 == "heavy_attack_stab_charged" or flag_2 == "heavy_attack_left_charged") then
 			return
 		end
 
-		local var_36_15 = arg_36_0:get_persistent_stat(arg_36_1, "bless_kill_specials_hammer_book")
+		local get_persistent_stat = self:get_persistent_stat(arg_36_1, "bless_kill_specials_hammer_book")
 
-		if bit.band(var_36_15, var_36_5) == 0 then
-			local var_36_16 = bit.bor(var_36_15, var_36_5)
+		if bit.band(get_persistent_stat, var_36_5) == 0 then
+			local bor = bit.bor(get_persistent_stat, var_36_5)
 
-			arg_36_0:set_stat(arg_36_1, "bless_kill_specials_hammer_book", var_36_16)
+			self:set_stat(arg_36_1, "bless_kill_specials_hammer_book", bor)
 		end
 	end
 }
-var_0_1.bless_mighty_blow = {
+achievements.bless_mighty_blow = {
 	display_completion_ui = true,
 	name = "achv_bless_mighty_blow_name",
 	desc = "achv_bless_mighty_blow_desc",
@@ -878,51 +925,53 @@ var_0_1.bless_mighty_blow = {
 	events = {
 		"register_kill"
 	},
-	completed = function(arg_37_0, arg_37_1, arg_37_2)
-		return arg_37_0:get_persistent_stat(arg_37_1, "bless_mighty_blow") >= 1
+	completed = function (self, arg_37_1, arg_37_2)
+		-- function 37
+		return self:get_persistent_stat(arg_37_1, "bless_mighty_blow") >= 1
 	end,
-	on_event = function(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
-		local var_38_0 = arg_38_4[var_0_18]
+	on_event = function (self, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
+		-- function 38
+		local var_38_0 = arg_38_4[num_9]
 
-		if not var_38_0 or var_38_0.name ~= "chaos_exalted_champion_warcamp" then
+		if not (not var_38_0 and var_38_0.name == "chaos_exalted_champion_warcamp") then
 			return
 		end
 
-		local var_38_1 = arg_38_4[var_0_17]
-		local var_38_2 = var_38_1 and var_38_1[DamageDataIndex.ATTACKER]
+		local var_38_1 = arg_38_4[num_8]
+		local flag = not var_38_1 and var_38_1[DamageDataIndex.ATTACKER]
 
-		if not ALIVE[var_38_2] then
+		if not ALIVE[flag] then
 			return
 		end
 
-		local var_38_3 = Managers.player:local_player()
-		local var_38_4 = var_38_3 and var_38_3.player_unit
+		local local_player = Managers.player:local_player()
+		local flag_2 = not local_player and local_player.player_unit
 
-		if not var_38_4 or var_38_4 ~= var_38_2 then
+		if not (not flag_2 and flag_2 == flag) then
 			return
 		end
 
-		local var_38_5 = var_38_1 and var_38_1[DamageDataIndex.DAMAGE_TYPE]
+		local flag_3 = not var_38_1 and var_38_1[DamageDataIndex.DAMAGE_TYPE]
 		local var_38_6 = var_38_1[DamageDataIndex.DAMAGE_SOURCE_NAME]
 		local var_38_7 = rawget(ItemMasterList, var_38_6)
 
-		if not (var_38_7 and var_38_7.item_type == "wh_2h_hammer" and var_38_5 == "stab_smiter") then
+		if not (not (not var_38_7 and var_38_7.item_type == "wh_2h_hammer") and flag_3 == "stab_smiter") then
 			return
 		end
 
-		local var_38_8 = ScriptUnit.has_extension(var_38_2, "career_system")
+		local has_extension = ScriptUnit.has_extension(flag, "career_system")
 
-		if not var_38_8 or var_38_8:career_name() ~= "wh_priest" then
+		if not (not has_extension and has_extension:career_name() == "wh_priest") then
 			return
 		end
 
-		arg_38_0:increment_stat(arg_38_1, "bless_mighty_blow")
+		self:increment_stat(arg_38_1, "bless_mighty_blow")
 	end
 }
 
-local var_0_44 = 800
+local num_31 = 800
 
-var_0_1.bless_block_attacks = {
+achievements.bless_block_attacks = {
 	always_run = true,
 	name = "achv_bless_block_attacks_name",
 	display_completion_ui = true,
@@ -933,23 +982,26 @@ var_0_1.bless_block_attacks = {
 	events = {
 		"register_damage_resisted_immune"
 	},
-	progress = function(arg_39_0, arg_39_1, arg_39_2)
-		local var_39_0 = arg_39_0:get_persistent_stat(arg_39_1, "bless_block_attacks")
+	progress = function (self, arg_39_1, arg_39_2)
+		-- function 39
+		local get_persistent_stat = self:get_persistent_stat(arg_39_1, "bless_block_attacks")
 
 		return {
-			var_39_0,
-			var_0_44
+			get_persistent_stat,
+			num_31
 		}
 	end,
-	completed = function(arg_40_0, arg_40_1, arg_40_2)
-		return arg_40_0:get_persistent_stat(arg_40_1, "bless_block_attacks") >= var_0_44
+	completed = function (self, arg_40_1, arg_40_2)
+		-- function 40
+		return self:get_persistent_stat(arg_40_1, "bless_block_attacks") >= num_31
 	end,
-	on_event = function(arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
+	on_event = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
+		-- function 41
 		local var_41_0 = arg_41_4[1]
 		local var_41_1 = arg_41_4[2]
 		local var_41_2 = arg_41_4[3]
 
-		if not ALIVE[var_41_1] or not ALIVE[var_41_0] then
+		if not (not ALIVE[var_41_1] and ALIVE[var_41_0]) then
 			return
 		end
 
@@ -957,33 +1009,33 @@ var_0_1.bless_block_attacks = {
 			return
 		end
 
-		if var_41_2 == "buff" or var_41_2 == "push" then
+		if not (var_41_2 == "buff" or var_41_2 ~= "push") then
 			return
 		end
 
-		local var_41_3 = ScriptUnit.has_extension(var_41_0, "buff_system")
+		local has_extension = ScriptUnit.has_extension(var_41_0, "buff_system")
 
-		if not var_41_3 then
+		if not has_extension then
 			return
 		end
 
-		local var_41_4 = var_41_3:get_buff_type("victor_priest_activated_ability_invincibility")
+		local get_buff_type = has_extension:get_buff_type("victor_priest_activated_ability_invincibility")
 
-		if not var_41_4 then
+		if not get_buff_type then
 			return
 		end
 
-		local var_41_5 = var_41_4.attacker_unit
+		local attacker_unit = get_buff_type.attacker_unit
 
-		if ALIVE[var_41_5] then
-			var_0_3(var_41_5, "bless_block_attacks")
+		if not ALIVE[attacker_unit] then
+			rpc_increment_stat(attacker_unit, "bless_block_attacks")
 		end
 	end
 }
 
-local var_0_45 = 800
+local num_32 = 800
 
-var_0_1.bless_righteous_stagger = {
+achievements.bless_righteous_stagger = {
 	always_run = true,
 	name = "achv_bless_righteous_stagger_name",
 	display_completion_ui = true,
@@ -994,18 +1046,21 @@ var_0_1.bless_righteous_stagger = {
 	events = {
 		"register_ai_stagger"
 	},
-	progress = function(arg_42_0, arg_42_1, arg_42_2)
-		local var_42_0 = arg_42_0:get_persistent_stat(arg_42_1, "bless_righteous_stagger")
+	progress = function (self, arg_42_1, arg_42_2)
+		-- function 42
+		local get_persistent_stat = self:get_persistent_stat(arg_42_1, "bless_righteous_stagger")
 
 		return {
-			var_42_0,
-			var_0_45
+			get_persistent_stat,
+			num_32
 		}
 	end,
-	completed = function(arg_43_0, arg_43_1, arg_43_2)
-		return arg_43_0:get_persistent_stat(arg_43_1, "bless_righteous_stagger") >= var_0_45
+	completed = function (self, arg_43_1, arg_43_2)
+		-- function 43
+		return self:get_persistent_stat(arg_43_1, "bless_righteous_stagger") >= num_32
 	end,
-	on_event = function(arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
+	on_event = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
+		-- function 44
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -1013,28 +1068,28 @@ var_0_1.bless_righteous_stagger = {
 		local var_44_0 = arg_44_4[1]
 		local var_44_1 = arg_44_4[2]
 
-		if not ALIVE[var_44_1] or not ALIVE[var_44_0] then
+		if not (not ALIVE[var_44_1] and ALIVE[var_44_0]) then
 			return
 		end
 
-		local var_44_2 = ScriptUnit.has_extension(var_44_1, "career_system")
+		local has_extension = ScriptUnit.has_extension(var_44_1, "career_system")
 
-		if not var_44_2 or var_44_2:career_name() ~= "wh_priest" then
+		if not (not has_extension and has_extension:career_name() == "wh_priest") then
 			return
 		end
 
-		local var_44_3 = var_44_2:get_passive_ability(1)
+		local get_passive_ability = has_extension:get_passive_ability(1)
 
-		if var_44_3 and var_44_3:is_active() then
-			var_0_3(var_44_1, "bless_righteous_stagger")
+		if not get_passive_ability and not get_passive_ability:is_active() then
+			rpc_increment_stat(var_44_1, "bless_righteous_stagger")
 		end
 	end
 }
 
-local var_0_46 = 60
-local var_0_47 = 0.2
+local num_33 = 60
+local num_34 = 0.2
 
-var_0_1.bless_charged_hammer = {
+achievements.bless_charged_hammer = {
 	display_completion_ui = true,
 	name = "achv_bless_charged_hammer_name",
 	desc = "achv_bless_charged_hammer_desc",
@@ -1044,70 +1099,72 @@ var_0_1.bless_charged_hammer = {
 	events = {
 		"register_damage"
 	},
-	completed = function(arg_45_0, arg_45_1, arg_45_2)
-		return arg_45_0:get_persistent_stat(arg_45_1, "bless_charged_hammer") >= 1
+	completed = function (self, arg_45_1, arg_45_2)
+		-- function 45
+		return self:get_persistent_stat(arg_45_1, "bless_charged_hammer") >= 1
 	end,
-	on_event = function(arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4)
-		local var_46_0 = Managers.player:local_player()
-		local var_46_1 = var_46_0 and var_46_0.player_unit
-		local var_46_2 = arg_46_4[var_0_12]
+	on_event = function (self, arg_46_1, arg_46_2, arg_46_3, arg_46_4)
+		-- function 46
+		local local_player = Managers.player:local_player()
+		local flag = not local_player and local_player.player_unit
+		local var_46_2 = arg_46_4[num_3]
 		local var_46_3 = var_46_2[DamageDataIndex.ATTACKER]
 
-		if var_46_3 and var_46_1 ~= var_46_3 then
+		if not (not var_46_3 and flag == var_46_3) then
 			return
 		end
 
 		local var_46_4 = var_46_2[DamageDataIndex.DAMAGE_SOURCE_NAME]
 		local var_46_5 = rawget(ItemMasterList, var_46_4)
 
-		if not var_46_5 or var_46_5.item_type ~= "wh_hammer_book" then
+		if not (not var_46_5 and var_46_5.item_type == "wh_hammer_book") then
 			return
 		end
 
-		local var_46_6 = ScriptUnit.has_extension(var_46_3, "career_system")
+		local has_extension = ScriptUnit.has_extension(var_46_3, "career_system")
 
-		if not var_46_6 or var_46_6:career_name() ~= "wh_priest" then
+		if not (not has_extension and has_extension:career_name() == "wh_priest") then
 			return
 		end
 
-		local var_46_7 = ScriptUnit.has_extension(var_46_3, "inventory_system")
+		local has_extension_2 = ScriptUnit.has_extension(var_46_3, "inventory_system")
 
-		if not var_46_7 then
+		if not has_extension_2 then
 			return
 		end
 
-		local var_46_8, var_46_9, var_46_10 = CharacterStateHelper.get_item_data_and_weapon_extensions(var_46_7)
-		local var_46_11 = CharacterStateHelper.get_current_action_data(var_46_10, var_46_9)
-		local var_46_12 = var_46_11 and var_46_11.lookup_data.sub_action_name
+		local get_item_data_and_weapon_extensions, var_46_9, var_46_10 = CharacterStateHelper.get_item_data_and_weapon_extensions(has_extension_2)
+		local get_current_action_data = CharacterStateHelper.get_current_action_data(var_46_10, var_46_9)
+		local flag_2 = not get_current_action_data and get_current_action_data.lookup_data.sub_action_name
 
-		if var_46_12 ~= "heavy_attack_stab_charged" and var_46_12 ~= "heavy_attack_left_charged" then
+		if not (flag_2 == "heavy_attack_stab_charged" or flag_2 == "heavy_attack_left_charged") then
 			return
 		end
 
-		local var_46_13 = Managers.time:time("game")
+		local time = Managers.time:time("game")
 
-		if not arg_46_2.first_hit_t or var_46_13 > arg_46_2.first_hit_t + var_0_47 then
-			arg_46_2.first_hit_t = var_46_13
+		if not (not arg_46_2.first_hit_t and not (time > arg_46_2.first_hit_t + num_34)) then
+			arg_46_2.first_hit_t = time
 			arg_46_2.hit_count = 0
 			arg_46_2.victim_units = {}
 		end
 
-		local var_46_14 = arg_46_4[var_0_11]
+		local var_46_14 = arg_46_4[num_2]
 
-		if var_46_13 <= arg_46_2.first_hit_t + var_0_47 and not arg_46_2.victim_units[var_46_14] then
+		if not (not (time <= arg_46_2.first_hit_t + num_34) or arg_46_2.victim_units[var_46_14]) then
 			arg_46_2.hit_count = arg_46_2.hit_count + 1
 			arg_46_2.victim_units[var_46_14] = true
 
-			if arg_46_2.hit_count >= var_0_46 then
-				arg_46_0:increment_stat(arg_46_1, "bless_charged_hammer")
+			if arg_46_2.hit_count >= num_33 then
+				self:increment_stat(arg_46_1, "bless_charged_hammer")
 			end
 		end
 	end
 }
 
-local var_0_48 = 50
+local num_35 = 50
 
-var_0_1.bless_protected_killing = {
+achievements.bless_protected_killing = {
 	display_completion_ui = true,
 	name = "achv_bless_protected_killing_name",
 	desc = "achv_bless_protected_killing_desc",
@@ -1117,43 +1174,48 @@ var_0_1.bless_protected_killing = {
 	events = {
 		"register_kill"
 	},
-	completed = function(arg_47_0, arg_47_1, arg_47_2)
-		return arg_47_0:get_persistent_stat(arg_47_1, "bless_protected_killing") >= 1
+	completed = function (self, arg_47_1, arg_47_2)
+		-- function 47
+		return self:get_persistent_stat(arg_47_1, "bless_protected_killing") >= 1
 	end,
-	on_event = function(arg_48_0, arg_48_1, arg_48_2, arg_48_3, arg_48_4)
-		local var_48_0 = Managers.player:local_player()
-		local var_48_1 = var_48_0 and var_48_0.player_unit
-		local var_48_2 = ScriptUnit.has_extension(var_48_1, "career_system")
+	on_event = function (self, arg_48_1, arg_48_2, arg_48_3, arg_48_4)
+		-- function 48
+		local local_player = Managers.player:local_player()
+		local flag = not local_player and local_player.player_unit
+		local has_extension = ScriptUnit.has_extension(flag, "career_system")
 
-		if not var_48_2 or var_48_2:career_name() ~= "wh_priest" then
+		if not (not has_extension and has_extension:career_name() == "wh_priest") then
 			return
 		end
 
-		local var_48_3 = arg_48_4[var_0_17]
+		local var_48_3 = arg_48_4[num_8]
 		local var_48_4 = var_48_3[DamageDataIndex.ATTACKER]
 		local var_48_5 = var_48_3[DamageDataIndex.ATTACK_TYPE]
 
-		if var_48_5 ~= "light_attack" and var_48_5 ~= "heavy_attack" then
+		if not (var_48_5 == "light_attack" or var_48_5 == "heavy_attack") then
 			return
 		end
 
-		local var_48_6 = ScriptUnit.has_extension(var_48_4, "buff_system")
+		local has_extension_2 = ScriptUnit.has_extension(var_48_4, "buff_system")
 
-		if var_48_6 then
-			local var_48_7 = var_48_6:get_buff_type("victor_priest_activated_ability_invincibility")
+		if not has_extension_2 then
+			local get_buff_type = has_extension_2:get_buff_type("victor_priest_activated_ability_invincibility")
 
-			if var_48_7 then
-				var_48_7._bless_protected_killing_count = (var_48_7._bless_protected_killing_count or 0) + 1
+			if not get_buff_type then
+				local _bless_protected_killing_count = get_buff_type._bless_protected_killing_count
 
-				if var_48_7._bless_protected_killing_count >= var_0_48 then
-					arg_48_0:increment_stat(arg_48_1, "bless_protected_killing")
+				_bless_protected_killing_count = _bless_protected_killing_count or 0
+				get_buff_type._bless_protected_killing_count = _bless_protected_killing_count + 1
+
+				if get_buff_type._bless_protected_killing_count >= num_35 then
+					self:increment_stat(arg_48_1, "bless_protected_killing")
 				end
 			end
 		end
 	end
 }
 
-local var_0_49 = {
+local tbl_6 = {
 	"bless_complete_all_helmgart_levels_wh_priest",
 	"bless_complete_25_missions_wh_priest",
 	"bless_saved_by_perk",
@@ -1176,4 +1238,4 @@ local var_0_49 = {
 	"bless_protected_killing"
 }
 
-var_0_7(var_0_1, "complete_all_warrior_priest_challenges", var_0_49, "achievement_trophy_complete_all_warrior_priest_challenges", "bless", nil, nil)
+add_meta_challenge(achievements, "complete_all_warrior_priest_challenges", tbl_6, "achievement_trophy_complete_all_warrior_priest_challenges", "bless", nil, nil)

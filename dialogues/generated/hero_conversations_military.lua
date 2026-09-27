@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/hero_conversations_military.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pbw_level_helmgart_military_story_four_01",

@@ -1,21 +1,25 @@
 -- chunkname: @scripts/ui/hud_ui/world_marker_templates/world_marker_template_pet_nameplate.lua
 
-local var_0_0 = "pet_nameplate"
+local str = "pet_nameplate"
+local WorldMarkerTemplates = WorldMarkerTemplates
 
 WorldMarkerTemplates = WorldMarkerTemplates or {}
+WorldMarkerTemplates = WorldMarkerTemplates
 
-local var_0_1 = WorldMarkerTemplates[var_0_0] or {}
+local var_0_2 = WorldMarkerTemplates[str]
 
-WorldMarkerTemplates[var_0_0] = var_0_1
-var_0_1.position_offset = {
+var_0_2 = var_0_2 or {}
+WorldMarkerTemplates[str] = var_0_2
+var_0_2.position_offset = {
 	0,
 	0,
 	1.9
 }
-var_0_1.check_line_of_sight = true
-var_0_1.screen_clamp = false
+var_0_2.check_line_of_sight = true
+var_0_2.screen_clamp = false
 
-function var_0_1.create_widget_definition(arg_1_0)
+var_0_2.create_widget_definition = function (arg_1_0)
+	-- function 1
 	return {
 		scenegraph_id = arg_1_0,
 		offset = {
@@ -32,24 +36,27 @@ function var_0_1.create_widget_definition(arg_1_0)
 				{
 					style_id = "progress_foreground",
 					pass_type = "rect",
-					content_change_function = function(arg_2_0, arg_2_1)
-						arg_2_1.texture_size[1] = arg_2_0.progress * arg_2_1.max_width
+					content_change_function = function (self, arg_2_1)
+						-- function 2
+						arg_2_1.texture_size[1] = self.progress * arg_2_1.max_width
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "text_bg",
 					texture_id = "text_bg",
-					content_check_function = function(arg_3_0)
-						return arg_3_0.text
+					content_check_function = function (self)
+						-- function 3
+						return self.text
 					end
 				},
 				{
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_4_0)
-						return arg_4_0.text
+					content_check_function = function (self)
+						-- function 4
+						return self.text
 					end
 				}
 			}
@@ -140,6 +147,7 @@ function var_0_1.create_widget_definition(arg_1_0)
 	}
 end
 
-function var_0_1.on_enter(arg_5_0)
+var_0_2.on_enter = function (arg_5_0)
+	-- function 5
 	arg_5_0.content.progress = 1
 end

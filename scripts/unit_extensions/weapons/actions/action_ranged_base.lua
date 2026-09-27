@@ -2,386 +2,459 @@
 
 ActionRangedBase = class(ActionRangedBase, ActionBase)
 
-local var_0_0 = rawget(_G, "Tobii") and Application.user_setting("tobii_eyetracking")
-local var_0_1 = 3
-local var_0_2 = ScriptUnit.has_extension
-local var_0_3 = Unit.set_flow_variable
-local var_0_4 = Unit.flow_event
+local var_0_0 = rawget(_G, "Tobii")
 
-function ActionRangedBase.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
-	ActionRangedBase.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+var_0_0 = not var_0_0 and Application.user_setting("tobii_eyetracking")
 
-	arg_1_0.buff_extension = var_0_2(arg_1_4, "buff_system")
-	arg_1_0.overcharge_extension = var_0_2(arg_1_4, "overcharge_system")
-	arg_1_0.hud_extension = var_0_2(arg_1_4, "hud_system")
-	arg_1_0.first_person_extension = var_0_2(arg_1_4, "first_person_system")
-	arg_1_0.eyetracking_extension = var_0_0 and var_0_2(arg_1_4, "eyetracking_system")
-	arg_1_0.targeting_extension = var_0_2(arg_1_4, "smart_targeting_system")
-	arg_1_0.input_extension = var_0_2(arg_1_4, "input_system")
-	arg_1_0.status_extension = var_0_2(arg_1_4, "status_system")
-	arg_1_0.ammo_extension = var_0_2(arg_1_7, "ammo_system")
-	arg_1_0.spread_extension = var_0_2(arg_1_7, "spread_system")
-	arg_1_0._start_gaze_rotation = QuaternionBox()
-	arg_1_0._fire_position = Vector3Box()
-	arg_1_0._fire_rotation = QuaternionBox()
-	arg_1_0.shield_users_blocking = {}
+local num = 3
+local has_extension = ScriptUnit.has_extension
+local set_flow_variable = Unit.set_flow_variable
+local flow_event = Unit.flow_event
+
+ActionRangedBase.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	-- function 1
+	ActionRangedBase.super.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+
+	self.buff_extension = has_extension(arg_1_4, "buff_system")
+	self.overcharge_extension = has_extension(arg_1_4, "overcharge_system")
+	self.hud_extension = has_extension(arg_1_4, "hud_system")
+	self.first_person_extension = has_extension(arg_1_4, "first_person_system")
+
+	local var_1_0 = var_0_0
+
+	var_1_0 = not var_1_0 and has_extension(arg_1_4, "eyetracking_system")
+	self.eyetracking_extension = var_1_0
+	self.targeting_extension = has_extension(arg_1_4, "smart_targeting_system")
+	self.input_extension = has_extension(arg_1_4, "input_system")
+	self.status_extension = has_extension(arg_1_4, "status_system")
+	self.ammo_extension = has_extension(arg_1_7, "ammo_system")
+	self.spread_extension = has_extension(arg_1_7, "spread_system")
+	self._start_gaze_rotation = QuaternionBox()
+	self._fire_position = Vector3Box()
+	self._fire_rotation = QuaternionBox()
+	self.shield_users_blocking = {}
 end
 
-function ActionRangedBase.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
-	ActionRangedBase.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+ActionRangedBase.client_owner_start_action = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	-- function 2
+	ActionRangedBase.super.client_owner_start_action(self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 
-	local var_2_0 = arg_2_0.owner_unit
-	local var_2_1 = arg_2_0.buff_extension
-	local var_2_2 = arg_2_0.hud_extension
+	local owner_unit = self.owner_unit
+	local buff_extension = self.buff_extension
+	local hud_extension = self.hud_extension
 
-	arg_2_0._state = "waiting_to_shoot"
-	arg_2_0._time_to_shoot = arg_2_2 + (arg_2_1.fire_time or 0)
-	arg_2_0._active_reload_time = arg_2_1.active_reload_time and arg_2_2 + arg_2_1.active_reload_time
-	arg_2_0._power_level = arg_2_4
+	self._state = "waiting_to_shoot"
 
-	if arg_2_1.power_level then
-		arg_2_0._power_level = arg_2_1.power_level
+	local fire_time = arg_2_1.fire_time
+
+	fire_time = fire_time or 0
+	self._time_to_shoot = arg_2_2 + fire_time
+
+	local active_reload_time = arg_2_1.active_reload_time
+
+	active_reload_time = not active_reload_time and arg_2_2 + arg_2_1.active_reload_time
+	self._active_reload_time = active_reload_time
+	self._power_level = arg_2_4
+
+	if not arg_2_1.power_level then
+		self._power_level = arg_2_1.power_level
 	end
 
-	arg_2_0._num_shots_total, arg_2_0._num_projectiles_per_shot = arg_2_0:gen_num_shots()
-	arg_2_0._extra_shot_delay = arg_2_1.extra_shot_delay or 0.2
-	arg_2_0._burst_shot_delay = arg_2_1.burst_shot_delay or 0.1
-	arg_2_0._num_shots_fired = 0
-	arg_2_0._num_projectiles_spawned = 0
-	arg_2_0._check_buffs = true
-	arg_2_0._spread_done = false
-	arg_2_0._extra_buff_shot = false
-	arg_2_0._infinite_ammo = var_2_1:has_buff_perk("infinite_ammo")
-	arg_2_0._continuous_buff_check = arg_2_1.continuous_buff_check or false
-	arg_2_0._apply_shot_cost_once = arg_2_1.apply_shot_cost_once or false
-	arg_2_0._shot_cost_applied = false
-	arg_2_0._roll_crit_once = arg_2_1.roll_crit_once or false
-	arg_2_0._crit_applied = false
+	self._num_shots_total, self._num_projectiles_per_shot = self:gen_num_shots()
 
-	if not arg_2_0.is_bot then
-		local var_2_3 = arg_2_1.controller_effects and arg_2_1.controller_effects.start
+	local extra_shot_delay = arg_2_1.extra_shot_delay
 
-		if var_2_3 then
-			Managers.state.controller_features:add_effect(var_2_3.effect_type, var_2_3.params)
+	extra_shot_delay = extra_shot_delay or 0.2
+	self._extra_shot_delay = extra_shot_delay
+
+	local burst_shot_delay = arg_2_1.burst_shot_delay
+
+	burst_shot_delay = burst_shot_delay or 0.1
+	self._burst_shot_delay = burst_shot_delay
+	self._num_shots_fired = 0
+	self._num_projectiles_spawned = 0
+	self._check_buffs = true
+	self._spread_done = false
+	self._extra_buff_shot = false
+	self._infinite_ammo = buff_extension:has_buff_perk("infinite_ammo")
+
+	local continuous_buff_check = arg_2_1.continuous_buff_check
+
+	continuous_buff_check = continuous_buff_check or false
+	self._continuous_buff_check = continuous_buff_check
+
+	local apply_shot_cost_once = arg_2_1.apply_shot_cost_once
+
+	apply_shot_cost_once = apply_shot_cost_once or false
+	self._apply_shot_cost_once = apply_shot_cost_once
+	self._shot_cost_applied = false
+
+	local roll_crit_once = arg_2_1.roll_crit_once
+
+	roll_crit_once = roll_crit_once or false
+	self._roll_crit_once = roll_crit_once
+	self._crit_applied = false
+
+	if not self.is_bot then
+		local controller_effects = arg_2_1.controller_effects
+
+		controller_effects = not controller_effects and arg_2_1.controller_effects.start
+
+		if not controller_effects then
+			Managers.state.controller_features:add_effect(controller_effects.effect_type, controller_effects.params)
 		end
 	end
 
-	local var_2_4 = arg_2_1.spread_template_override
+	local spread_template_override = arg_2_1.spread_template_override
 
-	if var_2_4 then
-		arg_2_0.spread_extension:override_spread_template(var_2_4)
+	if not spread_template_override then
+		self.spread_extension:override_spread_template(spread_template_override)
 	end
 
-	arg_2_0._unhide_ammo_at_action_end = arg_2_1.unhide_ammo_on_infinite_ammo and arg_2_0._infinite_ammo
+	local unhide_ammo_on_infinite_ammo = arg_2_1.unhide_ammo_on_infinite_ammo
+
+	unhide_ammo_on_infinite_ammo = not unhide_ammo_on_infinite_ammo and self._infinite_ammo
+	self._unhide_ammo_at_action_end = unhide_ammo_on_infinite_ammo
 end
 
-function ActionRangedBase.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
-	if arg_3_0._state == "waiting_to_shoot" then
-		arg_3_0:_waiting_to_shoot(arg_3_1, arg_3_2)
+ActionRangedBase.client_owner_post_update = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	-- function 3
+	if self._state == "waiting_to_shoot" then
+		self:_waiting_to_shoot(arg_3_1, arg_3_2)
 	end
 
-	if arg_3_0._state == "start_shooting" then
-		arg_3_0:_start_shooting(arg_3_2)
+	if self._state == "start_shooting" then
+		self:_start_shooting(arg_3_2)
 	end
 
-	if arg_3_0._state == "shooting" then
-		arg_3_0:_shooting(arg_3_2, false)
+	if self._state == "shooting" then
+		self:_shooting(arg_3_2, false)
 	end
 
-	if arg_3_0._state == "finished_shooting" then
-		arg_3_0:_finished_shooting(arg_3_2)
+	if self._state == "finished_shooting" then
+		self:_finished_shooting(arg_3_2)
 	end
 end
 
-function ActionRangedBase.finish(arg_4_0, arg_4_1)
-	ActionRangedBase.super.finish(arg_4_0, arg_4_1)
+ActionRangedBase.finish = function (self, arg_4_1)
+	-- function 4
+	ActionRangedBase.super.finish(self, arg_4_1)
 
-	if arg_4_0._state == "start_shooting" then
-		arg_4_0:_start_shooting()
+	if self._state == "start_shooting" then
+		self:_start_shooting()
 	end
 
-	if arg_4_0._state == "shooting" then
-		local var_4_0 = Managers.time:time("game")
+	if self._state == "shooting" then
+		local time = Managers.time:time("game")
 
-		arg_4_0:_shooting(var_4_0, true)
+		self:_shooting(time, true)
 	end
 
-	if arg_4_0.spread_extension then
-		arg_4_0.spread_extension:reset_spread_template()
+	if not self.spread_extension then
+		self.spread_extension:reset_spread_template()
 	end
 
-	local var_4_1 = arg_4_0.hud_extension
+	local hud_extension = self.hud_extension
 
-	if var_4_1 then
-		var_4_1.show_critical_indication = false
+	if not hud_extension then
+		hud_extension.show_critical_indication = false
 	end
 
 	if arg_4_1 ~= "new_interupting_action" then
-		arg_4_0.status_extension:set_zooming(false)
-		arg_4_0:reload()
+		self.status_extension:set_zooming(false)
+		self:reload()
 	end
 
-	if arg_4_0._unhide_ammo_at_action_end then
-		Unit.flow_event(arg_4_0.first_person_unit, "anim_cb_unhide_ammo")
-	end
-end
-
-function ActionRangedBase._waiting_to_shoot(arg_5_0, arg_5_1, arg_5_2)
-	if arg_5_2 >= arg_5_0._time_to_shoot then
-		arg_5_0._state = "start_shooting"
+	if not self._unhide_ammo_at_action_end then
+		Unit.flow_event(self.first_person_unit, "anim_cb_unhide_ammo")
 	end
 end
 
-function ActionRangedBase._start_shooting(arg_6_0, arg_6_1)
-	local var_6_0 = arg_6_0.owner_unit
-	local var_6_1 = arg_6_0.current_action
-	local var_6_2 = arg_6_0.first_person_extension
+ActionRangedBase._waiting_to_shoot = function (self, arg_5_1, arg_5_2)
+	-- function 5
+	if arg_5_2 >= self._time_to_shoot then
+		self._state = "start_shooting"
+	end
+end
+
+ActionRangedBase._start_shooting = function (self, arg_6_1)
+	-- function 6
+	local owner_unit = self.owner_unit
+	local current_action = self.current_action
+	local first_person_extension = self.first_person_extension
 	local var_6_3
 	local var_6_4
 
-	if arg_6_0.get_projectile_start_position_rotation then
-		var_6_3, var_6_4 = arg_6_0:get_projectile_start_position_rotation()
+	if not self.get_projectile_start_position_rotation then
+		var_6_3, var_6_4 = self:get_projectile_start_position_rotation()
 	else
-		var_6_3, var_6_4 = var_6_2:get_projectile_start_position_rotation()
+		var_6_3, var_6_4 = first_person_extension:get_projectile_start_position_rotation()
 	end
 
-	local var_6_5 = arg_6_0.eyetracking_extension
+	local eyetracking_extension = self.eyetracking_extension
 
-	if var_6_1.fire_at_gaze_setting and var_6_5 and var_6_5:get_is_feature_enabled("tobii_fire_at_gaze") then
-		var_6_4 = arg_6_0._start_gaze_rotation:unbox()
+	if not current_action.fire_at_gaze_setting and not eyetracking_extension and not eyetracking_extension:get_is_feature_enabled("tobii_fire_at_gaze") then
+		var_6_4 = self._start_gaze_rotation:unbox()
 	end
 
-	if not arg_6_0._crit_applied or not arg_6_0._roll_crit_once then
-		local var_6_6 = ActionUtils.is_critical_strike(var_6_0, var_6_1, arg_6_1)
+	if not (not self._crit_applied and self._roll_crit_once) then
+		local is_critical_strike = ActionUtils.is_critical_strike(owner_unit, current_action, arg_6_1)
 
-		arg_6_0:_handle_critical_strike(var_6_6, arg_6_0.buff_extension, arg_6_0.hud_extension, nil, "on_critical_shot", nil)
+		self:_handle_critical_strike(is_critical_strike, self.buff_extension, self.hud_extension, nil, "on_critical_shot", nil)
 
-		arg_6_0._is_critical_strike = var_6_6
-		arg_6_0._crit_applied = true
+		self._is_critical_strike = is_critical_strike
+		self._crit_applied = true
 	end
 
-	table.clear(arg_6_0.shield_users_blocking)
-	arg_6_0._fire_position:store(var_6_3)
-	arg_6_0._fire_rotation:store(var_6_4)
+	table.clear(self.shield_users_blocking)
+	self._fire_position:store(var_6_3)
+	self._fire_rotation:store(var_6_4)
 
-	if not arg_6_0.is_bot then
-		local var_6_7 = var_6_1.controller_effects and var_6_1.controller_effects.fire
+	if not self.is_bot then
+		local controller_effects = current_action.controller_effects
 
-		if var_6_7 then
-			Managers.state.controller_features:add_effect(var_6_7.effect_type, var_6_7.params)
+		controller_effects = not controller_effects and current_action.controller_effects.fire
+
+		if not controller_effects then
+			Managers.state.controller_features:add_effect(controller_effects.effect_type, controller_effects.params)
 		end
 	end
 
-	if not arg_6_0._shot_cost_applied or not arg_6_0._apply_shot_cost_once then
-		arg_6_0:apply_shot_cost(arg_6_1)
+	if not (not self._shot_cost_applied and self._apply_shot_cost_once) then
+		self:apply_shot_cost(arg_6_1)
 
-		arg_6_0._shot_cost_applied = true
+		self._shot_cost_applied = true
 	end
 
-	arg_6_0._num_projectiles_spawned = 0
+	self._num_projectiles_spawned = 0
 
-	if var_6_1.alert_sound_range_fire then
-		Managers.state.entity:system("ai_system"):alert_enemies_within_range(var_6_0, POSITION_LOOKUP[var_6_0], var_6_1.alert_sound_range_fire)
+	if not current_action.alert_sound_range_fire then
+		Managers.state.entity:system("ai_system"):alert_enemies_within_range(owner_unit, POSITION_LOOKUP[owner_unit], current_action.alert_sound_range_fire)
 	end
 
-	local var_6_8 = arg_6_0.current_action.fire_sound_event
+	local fire_sound_event = self.current_action.fire_sound_event
 
-	if var_6_8 then
-		var_6_2:play_hud_sound_event(var_6_8)
+	if not fire_sound_event then
+		first_person_extension:play_hud_sound_event(fire_sound_event)
 	end
 
-	if not arg_6_0.is_bot then
-		Unit.flow_event(arg_6_0.weapon_unit, "lua_start_shooting")
+	if not self.is_bot then
+		Unit.flow_event(self.weapon_unit, "lua_start_shooting")
 	end
 
-	arg_6_0._state = "shooting"
+	self._state = "shooting"
 end
 
-function ActionRangedBase._shooting(arg_7_0, arg_7_1, arg_7_2)
-	local var_7_0 = arg_7_0._num_projectiles_per_shot
-	local var_7_1 = arg_7_0._num_projectiles_spawned
-	local var_7_2 = var_7_0 - var_7_1
+ActionRangedBase._shooting = function (self, arg_7_1, arg_7_2)
+	-- function 7
+	local _num_projectiles_per_shot = self._num_projectiles_per_shot
+	local _num_projectiles_spawned = self._num_projectiles_spawned
+	local num_2 = _num_projectiles_per_shot - _num_projectiles_spawned
 
 	if not arg_7_2 then
-		var_7_2 = math.min(var_7_2, var_0_1)
+		num_2 = math.min(num_2, num)
 	end
 
-	arg_7_0:_update_extra_shots(arg_7_0.buff_extension)
+	self:_update_extra_shots(self.buff_extension)
 
-	arg_7_0._num_projectiles_spawned = arg_7_0:shoot(var_7_2, var_7_1, var_7_0)
+	self._num_projectiles_spawned = self:shoot(num_2, _num_projectiles_spawned, _num_projectiles_per_shot)
 
-	if var_7_0 - arg_7_0._num_projectiles_spawned <= 0 then
-		arg_7_0._num_shots_fired = arg_7_0._num_shots_fired + 1
+	if _num_projectiles_per_shot - self._num_projectiles_spawned <= 0 then
+		self._num_shots_fired = self._num_shots_fired + 1
 
-		if arg_7_0._num_shots_fired < arg_7_0._num_shots_total then
-			arg_7_0._state = "waiting_to_shoot"
-			arg_7_0._time_to_shoot = arg_7_1 + arg_7_0._burst_shot_delay
-		elseif arg_7_0:_update_extra_shots(arg_7_0.buff_extension, 1) then
-			arg_7_0._state = "waiting_to_shoot"
-			arg_7_0._time_to_shoot = arg_7_1 + arg_7_0._extra_shot_delay
-			arg_7_0._extra_buff_shot = true
+		if self._num_shots_fired < self._num_shots_total then
+			self._state = "waiting_to_shoot"
+			self._time_to_shoot = arg_7_1 + self._burst_shot_delay
+		elseif not self:_update_extra_shots(self.buff_extension, 1) then
+			self._state = "waiting_to_shoot"
+			self._time_to_shoot = arg_7_1 + self._extra_shot_delay
+			self._extra_buff_shot = true
 		else
-			arg_7_0._state = "finished_shooting"
+			self._state = "finished_shooting"
 		end
 	end
 end
 
-function ActionRangedBase._finished_shooting(arg_8_0, arg_8_1)
-	if arg_8_0._active_reload_time then
-		local var_8_0 = not arg_8_0._extra_buff_shot
+ActionRangedBase._finished_shooting = function (self, arg_8_1)
+	-- function 8
+	if not self._active_reload_time then
+		local flag = not self._extra_buff_shot
 
-		if arg_8_0.spread_extension and var_8_0 and not arg_8_0._spread_done then
-			arg_8_0.spread_extension:set_shooting()
+		if not (not self.spread_extension and not flag and self._spread_done) then
+			self.spread_extension:set_shooting()
 
-			arg_8_0._spread_done = true
+			self._spread_done = true
 		end
 
-		local var_8_1 = arg_8_0.input_extension
+		local input_extension = self.input_extension
 
-		if arg_8_1 > arg_8_0._active_reload_time then
-			local var_8_2 = arg_8_0.ammo_extension
+		if arg_8_1 > self._active_reload_time then
+			local ammo_extension = self.ammo_extension
 
-			if (var_8_1:get("weapon_reload") or var_8_1:get_buffer("weapon_reload")) and var_8_2:can_reload() then
-				arg_8_0.status_extension:set_zooming(false)
-				ScriptUnit.extension(arg_8_0.weapon_unit, "weapon_system"):stop_action("reload")
+			if input_extension:get("weapon_reload") or not input_extension:get_buffer("weapon_reload") or not ammo_extension:can_reload() then
+				self.status_extension:set_zooming(false)
+				ScriptUnit.extension(self.weapon_unit, "weapon_system"):stop_action("reload")
 			end
-		elseif var_8_1:get("weapon_reload") then
-			var_8_1:add_buffer("weapon_reload", 0)
+		elseif not input_extension:get("weapon_reload") then
+			input_extension:add_buffer("weapon_reload", 0)
 		end
 	end
 
-	Unit.flow_event(arg_8_0.weapon_unit, "lua_finish_shooting")
+	Unit.flow_event(self.weapon_unit, "lua_finish_shooting")
 end
 
-function ActionRangedBase.shoot(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
-	local var_9_0 = arg_9_0.spread_extension
-	local var_9_1 = arg_9_0.current_action
-	local var_9_2 = arg_9_0._fire_position:unbox()
-	local var_9_3 = arg_9_0._fire_rotation:unbox()
-	local var_9_4 = var_9_1.num_layers_spread or 1
-	local var_9_5 = var_9_1.bullseye or false
-	local var_9_6 = var_9_1.spread_pitch or 0.8
+ActionRangedBase.shoot = function (self, arg_9_1, arg_9_2, arg_9_3)
+	-- function 9
+	local spread_extension = self.spread_extension
+	local current_action = self.current_action
+	local unbox = self._fire_position:unbox()
+	local unbox_2 = self._fire_rotation:unbox()
+	local num_layers_spread = current_action.num_layers_spread
 
-	for iter_9_0 = 1, arg_9_1 do
+	num_layers_spread = num_layers_spread or 1
+
+	local bullseye = current_action.bullseye
+
+	bullseye = bullseye or false
+
+	local spread_pitch = current_action.spread_pitch
+
+	spread_pitch = spread_pitch or 0.8
+
+	for i = 1, arg_9_1 do
 		arg_9_2 = arg_9_2 + 1
 
-		local var_9_7 = var_9_3
+		local var_9_7 = unbox_2
 
-		if var_9_0 then
-			var_9_7 = var_9_0:get_target_style_spread(arg_9_2, arg_9_3, var_9_3, var_9_4, var_9_5, var_9_6)
+		if not spread_extension then
+			var_9_7 = spread_extension:get_target_style_spread(arg_9_2, arg_9_3, unbox_2, num_layers_spread, bullseye, spread_pitch)
 		end
 
-		arg_9_0:spawn_projectile(var_9_2, var_9_7)
+		self:spawn_projectile(unbox, var_9_7)
 	end
 
 	return arg_9_2
 end
 
-function ActionRangedBase.reload(arg_10_0, arg_10_1)
-	local var_10_0 = arg_10_0.ammo_extension
+ActionRangedBase.reload = function (self, arg_10_1)
+	-- function 10
+	local ammo_extension = self.ammo_extension
 
-	if not var_10_0 then
+	if not ammo_extension then
 		return
 	end
 
-	local var_10_1 = arg_10_0.current_action
+	local current_action = self.current_action
 
-	if var_10_1.reload_when_out_of_ammo and var_10_0:ammo_count() == 0 and var_10_0:can_reload() then
-		local var_10_2 = arg_10_0.owner_unit
-		local var_10_3 = var_10_1.reload_when_out_of_ammo_condition_func
+	if not current_action.reload_when_out_of_ammo and ammo_extension:ammo_count() ~= 0 or not ammo_extension:can_reload() then
+		local owner_unit = self.owner_unit
+		local reload_when_out_of_ammo_condition_func = current_action.reload_when_out_of_ammo_condition_func
 
-		if not var_10_3 or var_10_3(var_10_2, arg_10_1) then
-			var_10_0:start_reload(var_10_1.play_reload_animation)
+		if not reload_when_out_of_ammo_condition_func and not reload_when_out_of_ammo_condition_func(owner_unit, arg_10_1) then
+			ammo_extension:start_reload(current_action.play_reload_animation)
 		end
 	end
 end
 
-function ActionRangedBase.spawn_projectile(arg_11_0, arg_11_1, arg_11_2)
-	local var_11_0 = arg_11_0.current_action
+ActionRangedBase.spawn_projectile = function (self, arg_11_1, arg_11_2)
+	-- function 11
+	local current_action = self.current_action
 
-	if var_11_0.projectile_info then
-		arg_11_0:fire_projectile(arg_11_1, arg_11_2)
-	elseif var_11_0.lightweight_projectile_info then
-		arg_11_0:fire_lightweight_projectile(arg_11_1, arg_11_2)
+	if not current_action.projectile_info then
+		self:fire_projectile(arg_11_1, arg_11_2)
+	elseif not current_action.lightweight_projectile_info then
+		self:fire_lightweight_projectile(arg_11_1, arg_11_2)
 	else
-		local var_11_1 = Quaternion.forward(arg_11_2)
-		local var_11_2 = arg_11_0:fire_hitscan(arg_11_1, var_11_1, var_11_0.range or 30)
+		local forward = Quaternion.forward(arg_11_2)
+		local var_11_2 = self
+		local fire_hitscan = self.fire_hitscan
+		local var_11_4 = arg_11_1
+		local var_11_5 = forward
+		local range = current_action.range
 
-		if var_11_2 then
-			local var_11_3 = arg_11_0.world
-			local var_11_4 = arg_11_0.item_name
-			local var_11_5 = arg_11_0.owner_unit
-			local var_11_6 = arg_11_0.is_server
-			local var_11_7 = arg_11_0._check_buffs
-			local var_11_8 = arg_11_0._continuous_buff_check
-			local var_11_9 = DamageUtils.process_projectile_hit(var_11_3, var_11_4, var_11_5, var_11_6, var_11_2, var_11_0, var_11_1, var_11_7, nil, arg_11_0.shield_users_blocking, arg_11_0._is_critical_strike, arg_11_0._power_level)
+		range = range or 30
 
-			if var_11_9.buffs_checked and var_11_7 and not var_11_8 then
-				arg_11_0._check_buffs = false
+		local var_11_7 = fire_hitscan(var_11_2, var_11_4, var_11_5, range)
+
+		if not var_11_7 then
+			local world = self.world
+			local item_name = self.item_name
+			local owner_unit = self.owner_unit
+			local is_server = self.is_server
+			local _check_buffs = self._check_buffs
+			local _continuous_buff_check = self._continuous_buff_check
+			local process_projectile_hit = DamageUtils.process_projectile_hit(world, item_name, owner_unit, is_server, var_11_7, current_action, forward, _check_buffs, nil, self.shield_users_blocking, self._is_critical_strike, self._power_level)
+
+			if not (not process_projectile_hit.buffs_checked and not _check_buffs and _continuous_buff_check) then
+				self._check_buffs = false
 			end
 
-			if var_11_9.blocked_by_unit then
-				arg_11_0.shield_users_blocking[var_11_9.blocked_by_unit] = true
+			if not process_projectile_hit.blocked_by_unit then
+				self.shield_users_blocking[process_projectile_hit.blocked_by_unit] = true
 			end
 		end
 	end
 end
 
-function ActionRangedBase.fire_projectile(arg_12_0, arg_12_1, arg_12_2)
-	local var_12_0 = arg_12_0.owner_unit
-	local var_12_1 = arg_12_0.current_action
-	local var_12_2 = ActionUtils.pitch_from_rotation(arg_12_2)
-	local var_12_3 = var_12_1.speed
-	local var_12_4 = Vector3.normalize(Vector3.flat(Quaternion.forward(arg_12_2)))
-	local var_12_5 = var_12_1.lookup_data
+ActionRangedBase.fire_projectile = function (self, arg_12_1, arg_12_2)
+	-- function 12
+	local owner_unit = self.owner_unit
+	local current_action = self.current_action
+	local pitch_from_rotation = ActionUtils.pitch_from_rotation(arg_12_2)
+	local speed = current_action.speed
+	local normalize = Vector3.normalize(Vector3.flat(Quaternion.forward(arg_12_2)))
+	local lookup_data = current_action.lookup_data
 
-	ActionUtils.spawn_player_projectile(var_12_0, arg_12_1, arg_12_2, 0, var_12_2, var_12_4, var_12_3, arg_12_0.item_name, var_12_5.item_template_name, var_12_5.action_name, var_12_5.sub_action_name, arg_12_0._is_critical_strike, arg_12_0._power_level)
+	ActionUtils.spawn_player_projectile(owner_unit, arg_12_1, arg_12_2, 0, pitch_from_rotation, normalize, speed, self.item_name, lookup_data.item_template_name, lookup_data.action_name, lookup_data.sub_action_name, self._is_critical_strike, self._power_level)
 end
 
-function ActionRangedBase.fire_lightweight_projectile(arg_13_0, arg_13_1, arg_13_2)
-	local var_13_0 = arg_13_0.owner_unit
-	local var_13_1 = arg_13_0.current_action.lightweight_projectile_info
-	local var_13_2 = Network.peer_id()
-	local var_13_3 = var_13_1.template_name
-	local var_13_4 = LightWeightProjectiles[var_13_3]
-	local var_13_5 = var_13_1.collision_filter
-	local var_13_6 = Quaternion.forward(arg_13_2)
-	local var_13_7 = Vector3.normalize(var_13_6)
-	local var_13_8 = math.random() * var_13_4.spread
-	local var_13_9 = Quaternion.look(var_13_7, Vector3.up())
-	local var_13_10 = Quaternion(Vector3.right(), var_13_8)
+ActionRangedBase.fire_lightweight_projectile = function (self, arg_13_1, arg_13_2)
+	-- function 13
+	local owner_unit = self.owner_unit
+	local lightweight_projectile_info = self.current_action.lightweight_projectile_info
+	local peer_id = Network.peer_id()
+	local template_name = lightweight_projectile_info.template_name
+	local var_13_4 = LightWeightProjectiles[template_name]
+	local collision_filter = lightweight_projectile_info.collision_filter
+	local forward = Quaternion.forward(arg_13_2)
+	local normalize = Vector3.normalize(forward)
+	local num = math.random() * var_13_4.spread
+	local look = Quaternion.look(normalize, Vector3.up())
+	local var_13_10 = Quaternion(Vector3.right(), num)
 	local var_13_11 = Quaternion(Vector3.forward(), math.random() * math.tau)
-	local var_13_12 = Quaternion.multiply(Quaternion.multiply(var_13_9, var_13_11), var_13_10)
-	local var_13_13 = Quaternion.forward(var_13_12)
-	local var_13_14 = {
-		power_level = arg_13_0._power_level,
+	local multiply = Quaternion.multiply(Quaternion.multiply(look, var_13_11), var_13_10)
+	local forward_2 = Quaternion.forward(multiply)
+	local tbl = {
+		power_level = self._power_level,
 		damage_profile = var_13_4.damage_profile,
 		hit_effect = var_13_4.hit_effect,
-		player_push_velocity = Vector3Box(var_13_7 * var_13_4.impact_push_speed),
+		player_push_velocity = Vector3Box(normalize * var_13_4.impact_push_speed),
 		projectile_linker = var_13_4.projectile_linker,
 		first_person_hit_flow_events = var_13_4.first_person_hit_flow_events
 	}
 
-	Managers.state.entity:system("projectile_system"):create_light_weight_projectile(arg_13_0.item_name, var_13_0, arg_13_1, var_13_13, var_13_4.projectile_speed, nil, nil, var_13_4.projectile_max_range, var_13_5, var_13_14, var_13_4.light_weight_projectile_effect, var_13_2)
+	Managers.state.entity:system("projectile_system"):create_light_weight_projectile(self.item_name, owner_unit, arg_13_1, forward_2, var_13_4.projectile_speed, nil, nil, var_13_4.projectile_max_range, collision_filter, tbl, var_13_4.light_weight_projectile_effect, peer_id)
 end
 
-function ActionRangedBase.fire_hitscan(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+ActionRangedBase.fire_hitscan = function (self, arg_14_1, arg_14_2, arg_14_3)
+	-- function 14
 	local var_14_0
 
-	if arg_14_0.current_action.ray_against_large_hitbox then
-		var_14_0 = PhysicsWorld.immediate_raycast_actors(arg_14_0.physics_world, arg_14_1, arg_14_2, arg_14_3, "static_collision_filter", "filter_player_ray_projectile_static_only", "dynamic_collision_filter", "filter_player_ray_projectile_ai_only", "dynamic_collision_filter", "filter_player_ray_projectile_hitbox_only", "dynamic_collision_filter", "filter_enemy_trigger")
+	if not self.current_action.ray_against_large_hitbox then
+		var_14_0 = PhysicsWorld.immediate_raycast_actors(self.physics_world, arg_14_1, arg_14_2, arg_14_3, "static_collision_filter", "filter_player_ray_projectile_static_only", "dynamic_collision_filter", "filter_player_ray_projectile_ai_only", "dynamic_collision_filter", "filter_player_ray_projectile_hitbox_only", "dynamic_collision_filter", "filter_enemy_trigger")
 	else
-		var_14_0 = PhysicsWorld.immediate_raycast_actors(arg_14_0.physics_world, arg_14_1, arg_14_2, arg_14_3, "static_collision_filter", "filter_player_ray_projectile_static_only", "dynamic_collision_filter", "filter_player_ray_projectile_ai_only", "dynamic_collision_filter", "filter_player_ray_projectile_hitbox_only")
+		var_14_0 = PhysicsWorld.immediate_raycast_actors(self.physics_world, arg_14_1, arg_14_2, arg_14_3, "static_collision_filter", "filter_player_ray_projectile_static_only", "dynamic_collision_filter", "filter_player_ray_projectile_ai_only", "dynamic_collision_filter", "filter_player_ray_projectile_hitbox_only")
 	end
 
 	return var_14_0
 end
 
-function ActionRangedBase.proc_extra_shot(arg_15_0, arg_15_1)
-	if not arg_15_0._extra_buff_shot then
-		local var_15_0, var_15_1 = arg_15_0.buff_extension:apply_buffs_to_value(0, "extra_shot")
+ActionRangedBase.proc_extra_shot = function (self, arg_15_1)
+	-- function 15
+	if not self._extra_buff_shot then
+		local apply_buffs_to_value, var_15_1 = self.buff_extension:apply_buffs_to_value(0, "extra_shot")
 
-		if var_15_1 then
+		if not var_15_1 then
 			return true
 		end
 	end
@@ -389,47 +462,78 @@ function ActionRangedBase.proc_extra_shot(arg_15_0, arg_15_1)
 	return false
 end
 
-function ActionRangedBase.gen_num_shots(arg_16_0)
-	local var_16_0 = arg_16_0.current_action
-	local var_16_1 = arg_16_0.ammo_extension
-	local var_16_2 = var_16_0.ammo_usage or 1
-	local var_16_3 = var_16_0.num_shots or 1
-	local var_16_4 = var_16_1 and math.floor(var_16_1:current_ammo() / var_16_2) or var_16_3
-	local var_16_5 = var_16_0.num_projectiles_per_shot or 1
+ActionRangedBase.gen_num_shots = function (self)
+	-- function 16
+	local current_action = self.current_action
+	local ammo_extension = self.ammo_extension
+	local ammo_usage = current_action.ammo_usage
 
-	if var_16_1 and var_16_0.fire_all_ammo then
-		var_16_5 = var_16_5 * var_16_4
-		var_16_3 = 1
+	ammo_usage = ammo_usage or 1
+
+	local num_shots = current_action.num_shots
+
+	num_shots = num_shots or 1
+
+	local floor
+
+	if not ammo_extension then
+		floor = math.floor(ammo_extension:current_ammo() / ammo_usage)
+
+		if not floor then
+			-- Nothing
+		end
+	end
+
+	floor = num_shots
+
+	::label_16_0::
+
+	local num_projectiles_per_shot = current_action.num_projectiles_per_shot
+
+	num_projectiles_per_shot = num_projectiles_per_shot or 1
+
+	if not ammo_extension and not current_action.fire_all_ammo then
+		num_projectiles_per_shot = num_projectiles_per_shot * floor
+		num_shots = 1
 	else
-		var_16_3 = math.min(var_16_3, var_16_4)
+		num_shots = math.min(num_shots, floor)
 	end
 
-	return var_16_3, var_16_5
+	return num_shots, num_projectiles_per_shot
 end
 
-function ActionRangedBase.apply_shot_cost(arg_17_0, arg_17_1)
-	arg_17_0:_use_ammo()
-	arg_17_0:_add_overcharge()
+ActionRangedBase.apply_shot_cost = function (self, arg_17_1)
+	-- function 17
+	self:_use_ammo()
+	self:_add_overcharge()
 end
 
-function ActionRangedBase._use_ammo(arg_18_0)
-	local var_18_0 = arg_18_0.ammo_extension
+ActionRangedBase._use_ammo = function (self)
+	-- function 18
+	local ammo_extension = self.ammo_extension
 
-	if var_18_0 and not arg_18_0._extra_buff_shot then
-		var_18_0:use_ammo(arg_18_0.current_action.ammo_usage)
+	if not (not ammo_extension and self._extra_buff_shot) then
+		ammo_extension:use_ammo(self.current_action.ammo_usage)
 	end
 end
 
-function ActionRangedBase._add_overcharge(arg_19_0)
-	local var_19_0 = arg_19_0.current_action.overcharge_type
+ActionRangedBase._add_overcharge = function (self)
+	-- function 19
+	local overcharge_type = self.current_action.overcharge_type
 
-	if var_19_0 then
-		local var_19_1 = PlayerUnitStatusSettings.overcharge_values[var_19_0]
+	if not overcharge_type then
+		local var_19_1 = PlayerUnitStatusSettings.overcharge_values[overcharge_type]
 
-		if arg_19_0._is_critical_strike and arg_19_0.buff_extension and arg_19_0.buff_extension:has_buff_perk("no_overcharge_crit") then
-			var_19_1 = 0
+		if not self._is_critical_strike then
+			local buff_extension = self.buff_extension
+
+			buff_extension = not buff_extension and self.buff_extension:has_buff_perk("no_overcharge_crit")
+
+			if not buff_extension then
+				var_19_1 = 0
+			end
 		end
 
-		arg_19_0.overcharge_extension:add_charge(var_19_1)
+		self.overcharge_extension:add_charge(var_19_1)
 	end
 end

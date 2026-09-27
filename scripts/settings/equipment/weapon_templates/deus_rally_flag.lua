@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/deus_rally_flag.lua
 
-local var_0_0 = {
+local tbl = {
 	max_fatigue_points = 4,
 	left_hand_unit = "units/weapons/player/wpn_deus_folded_rally_flag_01/wpn_deus_folded_rally_flag_01",
 	state_machine = "units/beings/player/first_person_base/state_machines/common",
@@ -22,15 +22,17 @@ local var_0_0 = {
 				interaction_priority = 4,
 				total_time = InteractionDefinitions.deus_setup_rally_flag.config.duration,
 				allowed_chain_actions = {},
-				condition_func = function(arg_1_0)
+				condition_func = function (arg_1_0)
+					-- function 1
 					return (ScriptUnit.extension(arg_1_0, "interactor_system"):can_interact(arg_1_0, "deus_setup_rally_flag"))
 				end,
-				finish_function = function(arg_2_0, arg_2_1)
+				finish_function = function (arg_2_0, arg_2_1)
+					-- function 2
 					if arg_2_1 == "action_complete" then
-						local var_2_0 = ScriptUnit.extension_input(arg_2_0, "dialogue_system")
-						local var_2_1 = FrameTable.alloc_table()
+						local extension_input = ScriptUnit.extension_input(arg_2_0, "dialogue_system")
+						local alloc_table = FrameTable.alloc_table()
 
-						var_2_0:trigger_networked_dialogue_event("blessing_rally_flag_placed", var_2_1)
+						extension_input:trigger_networked_dialogue_event("blessing_rally_flag_placed", alloc_table)
 					end
 				end
 			}
@@ -66,5 +68,5 @@ local var_0_0 = {
 }
 
 return {
-	deus_rally_flag = var_0_0
+	deus_rally_flag = tbl
 }

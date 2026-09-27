@@ -2,140 +2,174 @@
 
 require("foundation/scripts/util/table")
 
+local script_data = script_data
+
 script_data = script_data or {}
+script_data = script_data
+
+local Development = Development
+
 Development = Development or {}
+Development = Development
 Development.application_parameter = {}
 
-function Development.init_application_parameters(arg_1_0, arg_1_1)
+Development.init_application_parameters = function (arg_1_0, arg_1_1)
+	-- function 1
 	print("Development.init_application_parameters")
 
 	Development.application_parameter = {}
 
-	local var_1_0 = Development.application_parameter
+	local application_parameter = Development.application_parameter
 
-	local function var_1_1(...)
+	local function fn(...)
+		-- function 2
 		print(string.format(...))
 	end
 
-	local function var_1_2(arg_3_0)
-		return arg_3_0:sub(1, 1)
+	local function fn_2(self)
+		-- function 3
+		return self:sub(1, 1)
 	end
 
-	local function var_1_3(arg_4_0)
-		return var_1_2(arg_4_0) == "-"
+	local function fn_3(arg_4_0)
+		-- function 4
+		return fn_2(arg_4_0) == "-"
 	end
 
-	local function var_1_4(arg_5_0)
-		return arg_5_0:sub(2)
+	local function fn_4(self)
+		-- function 5
+		return self:sub(2)
 	end
 
-	local var_1_5 = #arg_1_0
-	local var_1_6 = 1
+	local count = #arg_1_0
+	local num = 1
 
-	local function var_1_7()
-		return var_1_5 >= var_1_6
+	local function fn_5()
+		-- function 6
+		return count >= num
 	end
 
-	local function var_1_8()
-		return var_1_5 >= var_1_6 + 1
+	local function fn_6()
+		-- function 7
+		return count >= num + 1
 	end
 
-	local function var_1_9()
-		var_1_6 = var_1_6 + 1
+	local function fn_7()
+		-- function 8
+		num = num + 1
 	end
 
-	local function var_1_10()
-		return arg_1_0[var_1_6]
+	local function fn_8()
+		-- function 9
+		return arg_1_0[num]
 	end
 
-	local function var_1_11()
-		return arg_1_0[var_1_6 + 1]
+	local function fn_9()
+		-- function 10
+		return arg_1_0[num + 1]
 	end
 
-	local function var_1_12()
-		assert(var_1_8())
+	local function fn_10()
+		-- function 11
+		assert(fn_6())
 
-		return var_1_3(var_1_11())
+		return fn_3(fn_9())
 	end
 
-	local function var_1_13(arg_12_0, arg_12_1)
-		local var_12_0 = var_1_0[arg_12_0]
-		local var_12_1 = type(var_12_0) == "table" and var_12_0 or {
+	local function fn_11(arg_12_0, arg_12_1)
+		-- function 12
+		local var_12_0 = application_parameter[arg_12_0]
+		local flag = type(var_12_0) ~= "table" or not var_12_0 or {
 			var_12_0
 		}
 
-		var_1_1("[parse_application_parameters] multiple defintions of '%s' using [%s]. old value [%s]", arg_12_0, table.tostring(var_12_1), table.tostring(arg_12_1))
+		fn("[parse_application_parameters] multiple defintions of '%s' using [%s]. old value [%s]", arg_12_0, table.tostring(flag), table.tostring(arg_12_1))
 	end
 
-	local function var_1_14(arg_13_0)
-		local var_13_0 = var_1_0[arg_13_0]
+	local function fn_12(arg_13_0)
+		-- function 13
+		local var_13_0 = application_parameter[arg_13_0]
 
 		if not var_13_0 then
 			return nil
 		end
 
-		local var_13_1 = {}
+		local tbl = {}
 
 		if type(var_13_0) == "table" then
-			for iter_13_0 = 1, #var_13_0 do
-				var_13_1[iter_13_0] = var_13_0[iter_13_0]
+			for i = 1, #var_13_0 do
+				tbl[i] = var_13_0[i]
 			end
 		else
-			var_13_1[1] = var_13_0
+			tbl[1] = var_13_0
 		end
 
-		return var_13_1
+		return tbl
 	end
 
-	local var_1_15 = 0
+	local num_2 = 0
 
-	while var_1_7() do
-		local var_1_16 = var_1_10()
+	while not fn_5() do
+		local var_1_16 = fn_8()
 
-		if not var_1_3(var_1_16) then
-			var_1_9()
+		if not fn_3(var_1_16) then
+			fn_7()
 		else
-			local var_1_17 = var_1_4(var_1_16)
+			local var_1_17 = fn_4(var_1_16)
 
-			var_1_15 = math.max(var_1_15, #var_1_17)
+			num_2 = math.max(num_2, #var_1_17)
 
-			if var_1_0[var_1_17] then
-				local var_1_18 = var_1_14(var_1_17)
+			if not application_parameter[var_1_17] then
+				local var_1_18 = fn_12(var_1_17)
 
-				var_1_13(var_1_17, var_1_18)
+				fn_11(var_1_17, var_1_18)
 
-				var_1_0[var_1_17] = nil
+				application_parameter[var_1_17] = nil
 			end
 
-			if var_1_8() and var_1_12() or not var_1_8() then
-				var_1_0[var_1_17] = true
+			local var_1_19
 
-				var_1_9()
+			if not fn_6() then
+				var_1_19 = fn_10()
+
+				if not var_1_19 then
+					-- Nothing
+				end
+			end
+
+			var_1_19 = not fn_6()
+
+			::label_1_0::
+
+			if not var_1_19 then
+				application_parameter[var_1_17] = true
+
+				fn_7()
 			else
-				while var_1_8() and not var_1_12() do
-					var_1_9()
+				while not (not fn_6() and fn_10()) do
+					fn_7()
 
-					local var_1_19 = var_1_10()
-					local var_1_20 = var_1_0[var_1_17]
+					local var_1_20 = fn_8()
+					local var_1_21 = application_parameter[var_1_17]
 
-					if var_1_19 == "true" then
-						var_1_19 = true
+					if var_1_20 == "true" then
+						var_1_20 = true
 					end
 
-					if var_1_19 == "false" then
-						var_1_19 = false
+					if var_1_20 == "false" then
+						var_1_20 = false
 					end
 
-					if not var_1_20 then
-						var_1_0[var_1_17] = var_1_19
-					elseif type(var_1_0[var_1_17]) == "table" then
-						local var_1_21 = var_1_0[var_1_17]
+					if not var_1_21 then
+						application_parameter[var_1_17] = var_1_20
+					elseif type(application_parameter[var_1_17]) == "table" then
+						local var_1_22 = application_parameter[var_1_17]
 
-						var_1_21[#var_1_21 + 1] = var_1_19
+						var_1_22[#var_1_22 + 1] = var_1_20
 					else
-						var_1_0[var_1_17] = {
-							var_1_20,
-							var_1_19
+						application_parameter[var_1_17] = {
+							var_1_21,
+							var_1_20
 						}
 					end
 				end
@@ -143,49 +177,53 @@ function Development.init_application_parameters(arg_1_0, arg_1_1)
 		end
 	end
 
-	local var_1_22 = var_1_0["eac-untrusted"] ~= nil or var_1_0.eac_untrusted ~= nil
+	local flag = application_parameter["eac-untrusted"] ~= nil or application_parameter.eac_untrusted ~= nil
 
-	rawset(_G, "MODDED_REALM", var_1_22)
+	rawset(_G, "MODDED_REALM", flag)
 
-	if DEDICATED_SERVER or BUILD ~= "release" then
-		if var_1_0["use-clean-settings"] then
-			script_data = {
-				build_identifier = script_data.build_identifier,
-				settings = script_data.settings or {}
+	if not (DEDICATED_SERVER or BUILD == "release") then
+		if not application_parameter["use-clean-settings"] then
+			local tbl = {
+				build_identifier = script_data.build_identifier
 			}
+			local settings = script_data.settings
+
+			settings = settings or {}
+			tbl.settings = settings
+			script_data = tbl
 		end
 
-		for iter_1_0, iter_1_1 in pairs(var_1_0) do
-			if type(iter_1_0) == "string" then
-				local var_1_23 = string.gsub(iter_1_0, "-", "_")
+		for k, v in pairs(application_parameter) do
+			if type(k) == "string" then
+				local gsub = string.gsub(k, "-", "_")
 
-				script_data[var_1_23] = iter_1_1
+				script_data[gsub] = v
 			else
-				script_data[iter_1_0] = iter_1_1
+				script_data[k] = v
 			end
 		end
 	end
 
-	if arg_1_1 then
+	if not arg_1_1 then
 		print("-----------------------------------------------------------------")
 		print("--                   Application parameters                    --")
 
-		for iter_1_2, iter_1_3 in pairs(var_1_0) do
-			if type(iter_1_3) == "table" then
-				local var_1_24 = string.format("%%-%ds = {", var_1_15)
-				local var_1_25 = string.format(var_1_24, iter_1_2)
+		for k_2, v_2 in pairs(application_parameter) do
+			if type(v_2) == "table" then
+				local format = string.format("%%-%ds = {", num_2)
+				local format_2 = string.format(format, k_2)
 
-				for iter_1_4 = 1, #iter_1_3 do
-					var_1_25 = var_1_25 .. " " .. tostring(iter_1_3[iter_1_4])
+				for i4 = 1, #v_2 do
+					format_2 = format_2 .. " " .. tostring(v_2[i4])
 				end
 
-				local var_1_26 = var_1_25 .. " }"
+				local str = format_2 .. " }"
 
-				print(var_1_26)
+				print(str)
 			else
-				local var_1_27 = string.format("%%-%ds = %%s", var_1_15)
+				local format_3 = string.format("%%-%ds = %%s", num_2)
 
-				var_1_1(var_1_27, iter_1_2, tostring(iter_1_3))
+				fn(format_3, k_2, tostring(v_2))
 			end
 		end
 

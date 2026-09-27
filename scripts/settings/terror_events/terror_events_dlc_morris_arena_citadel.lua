@@ -1,10 +1,10 @@
 -- chunkname: @scripts/settings/terror_events/terror_events_dlc_morris_arena_citadel.lua
 
-local var_0_0 = require("scripts/settings/terror_events/terror_event_utils")
-local var_0_1 = var_0_0.add_enhancements_for_difficulty
-local var_0_2 = var_0_0.HARDER
-local var_0_3 = var_0_0.HARDEST
-local var_0_4 = {
+local scripts_settings_terror_events_terror_event_utils = require("scripts/settings/terror_events/terror_event_utils")
+local add_enhancements_for_difficulty = scripts_settings_terror_events_terror_event_utils.add_enhancements_for_difficulty
+local HARDER = scripts_settings_terror_events_terror_event_utils.HARDER
+local HARDEST = scripts_settings_terror_events_terror_event_utils.HARDEST
+local tbl = {
 	citadel_arena_a1 = {
 		{
 			"inject_event",
@@ -83,8 +83,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_1_0)
-				return arg_1_0.boss <= 0 and arg_1_0.main <= 0 and arg_1_0.elite <= 0
+			condition = function (self)
+				-- function 1
+				return not (self.boss <= 0) or not (self.main <= 0) or self.elite <= 0
 			end
 		},
 		{
@@ -163,13 +164,14 @@ local var_0_4 = {
 				cataclysm = 2,
 				normal = 1
 			},
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_2_0)
-				return arg_2_0.main < 8
+			condition = function (self)
+				-- function 2
+				return self.main < 8
 			end
 		},
 		{
@@ -205,8 +207,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_3_0)
-				return arg_3_0.main < 8
+			condition = function (self)
+				-- function 3
+				return self.main < 8
 			end
 		},
 		{
@@ -268,8 +271,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_4_0)
-				return arg_4_0.main < 8
+			condition = function (self)
+				-- function 4
+				return self.main < 8
 			end
 		},
 		{
@@ -305,8 +309,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_5_0)
-				return arg_5_0.main < 8
+			condition = function (self)
+				-- function 5
+				return self.main < 8
 			end
 		},
 		{
@@ -362,8 +367,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_6_0)
-				return arg_6_0.main < 8
+			condition = function (self)
+				-- function 6
+				return self.main < 8
 			end
 		},
 		{
@@ -399,8 +405,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_7_0)
-				return arg_7_0.main < 8
+			condition = function (self)
+				-- function 7
+				return self.main < 8
 			end
 		},
 		{
@@ -502,8 +509,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_8_0)
-				return arg_8_0.boss <= 0 and arg_8_0.main <= 0 and arg_8_0.elite <= 0
+			condition = function (self)
+				-- function 8
+				return not (self.boss <= 0) or not (self.main <= 0) or self.elite <= 0
 			end
 		},
 		{
@@ -576,7 +584,7 @@ local var_0_4 = {
 		{
 			"delay",
 			duration = 1,
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
@@ -588,13 +596,14 @@ local var_0_4 = {
 				"skaven_warpfire_thrower",
 				"skaven_pack_master"
 			},
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_9_0)
-				return arg_9_0.main < 8
+			condition = function (self)
+				-- function 9
+				return self.main < 8
 			end
 		},
 		{
@@ -630,8 +639,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_10_0)
-				return arg_10_0.main < 8
+			condition = function (self)
+				-- function 10
+				return self.main < 8
 			end
 		},
 		{
@@ -693,8 +703,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_11_0)
-				return arg_11_0.main < 8
+			condition = function (self)
+				-- function 11
+				return self.main < 8
 			end
 		},
 		{
@@ -730,8 +741,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_12_0)
-				return arg_12_0.main < 8
+			condition = function (self)
+				-- function 12
+				return self.main < 8
 			end
 		},
 		{
@@ -787,8 +799,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_13_0)
-				return arg_13_0.main < 8
+			condition = function (self)
+				-- function 13
+				return self.main < 8
 			end
 		},
 		{
@@ -824,8 +837,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_14_0)
-				return arg_14_0.main < 8
+			condition = function (self)
+				-- function 14
+				return self.main < 8
 			end
 		},
 		{
@@ -927,8 +941,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_15_0)
-				return arg_15_0.boss <= 0 and arg_15_0.main <= 0 and arg_15_0.elite <= 0
+			condition = function (self)
+				-- function 15
+				return not (self.boss <= 0) or not (self.main <= 0) or self.elite <= 0
 			end
 		},
 		{
@@ -995,7 +1010,7 @@ local var_0_4 = {
 				cataclysm = 2,
 				normal = 1
 			},
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
@@ -1048,13 +1063,14 @@ local var_0_4 = {
 				cataclysm = 2,
 				normal = 1
 			},
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_16_0)
-				return arg_16_0.main < 8
+			condition = function (self)
+				-- function 16
+				return self.main < 8
 			end
 		},
 		{
@@ -1122,8 +1138,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_17_0)
-				return arg_17_0.main < 8
+			condition = function (self)
+				-- function 17
+				return self.main < 8
 			end
 		},
 		{
@@ -1241,7 +1258,7 @@ local var_0_4 = {
 				cataclysm = 2,
 				normal = 1
 			},
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
@@ -1294,13 +1311,14 @@ local var_0_4 = {
 				cataclysm = 2,
 				normal = 1
 			},
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_18_0)
-				return arg_18_0.main < 8
+			condition = function (self)
+				-- function 18
+				return self.main < 8
 			end
 		},
 		{
@@ -1360,8 +1378,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_19_0)
-				return arg_19_0.main < 8
+			condition = function (self)
+				-- function 19
+				return self.main < 8
 			end
 		},
 		{
@@ -1475,7 +1494,7 @@ local var_0_4 = {
 				cataclysm = 2,
 				normal = 1
 			},
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"event_horde",
@@ -1524,13 +1543,14 @@ local var_0_4 = {
 				cataclysm = 2,
 				normal = 1
 			},
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_20_0)
-				return arg_20_0.main < 8
+			condition = function (self)
+				-- function 20
+				return self.main < 8
 			end
 		},
 		{
@@ -1590,8 +1610,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_21_0)
-				return arg_21_0.main < 8
+			condition = function (self)
+				-- function 21
+				return self.main < 8
 			end
 		},
 		{
@@ -1731,8 +1752,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_22_0)
-				return arg_22_0.boss <= 0 and arg_22_0.main <= 0 and arg_22_0.elite <= 0
+			condition = function (self)
+				-- function 22
+				return not (self.boss <= 0) or not (self.main <= 0) or self.elite <= 0
 			end
 		},
 		{
@@ -1811,13 +1833,14 @@ local var_0_4 = {
 				cataclysm = 2,
 				normal = 1
 			},
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARDER
 		},
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_23_0)
-				return arg_23_0.main < 8
+			condition = function (self)
+				-- function 23
+				return self.main < 8
 			end
 		},
 		{
@@ -1853,8 +1876,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_24_0)
-				return arg_24_0.main < 8
+			condition = function (self)
+				-- function 24
+				return self.main < 8
 			end
 		},
 		{
@@ -1916,8 +1940,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_25_0)
-				return arg_25_0.main < 8
+			condition = function (self)
+				-- function 25
+				return self.main < 8
 			end
 		},
 		{
@@ -1953,8 +1978,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_26_0)
-				return arg_26_0.main < 8
+			condition = function (self)
+				-- function 26
+				return self.main < 8
 			end
 		},
 		{
@@ -2010,8 +2036,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_27_0)
-				return arg_27_0.main < 8
+			condition = function (self)
+				-- function 27
+				return self.main < 8
 			end
 		},
 		{
@@ -2047,8 +2074,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_28_0)
-				return arg_28_0.main < 8
+			condition = function (self)
+				-- function 28
+				return self.main < 8
 			end
 		},
 		{
@@ -2150,8 +2178,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_29_0)
-				return arg_29_0.boss <= 0 and arg_29_0.main <= 0 and arg_29_0.elite <= 0
+			condition = function (self)
+				-- function 29
+				return not (self.boss <= 0) or not (self.main <= 0) or self.elite <= 0
 			end
 		},
 		{
@@ -2277,8 +2306,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_30_0)
-				return arg_30_0.main < 15
+			condition = function (self)
+				-- function 30
+				return self.main < 15
 			end
 		},
 		{
@@ -2295,8 +2325,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_31_0)
-				return arg_31_0.main < 30
+			condition = function (self)
+				-- function 31
+				return self.main < 30
 			end
 		},
 		{
@@ -2312,8 +2343,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_32_0)
-				return arg_32_0.main < 10
+			condition = function (self)
+				-- function 32
+				return self.main < 10
 			end
 		},
 		{
@@ -2324,7 +2356,7 @@ local var_0_4 = {
 				"skaven_rat_ogre",
 				"skaven_stormfiend"
 			},
-			pre_spawn_func = var_0_1
+			pre_spawn_func = add_enhancements_for_difficulty
 		},
 		{
 			"delay",
@@ -2333,8 +2365,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_33_0)
-				return arg_33_0.main < 10
+			condition = function (self)
+				-- function 33
+				return self.main < 10
 			end
 		},
 		{
@@ -2350,8 +2383,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_34_0)
-				return arg_34_0.main < 10
+			condition = function (self)
+				-- function 34
+				return self.main < 10
 			end
 		}
 	},
@@ -2373,8 +2407,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 10,
-			condition = function(arg_35_0)
-				return arg_35_0.boss < 1
+			condition = function (self)
+				-- function 35
+				return self.boss < 1
 			end
 		},
 		{
@@ -2390,8 +2425,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_36_0)
-				return arg_36_0.boss < 1
+			condition = function (self)
+				-- function 36
+				return self.boss < 1
 			end
 		},
 		{
@@ -2402,7 +2438,7 @@ local var_0_4 = {
 				"skaven_rat_ogre",
 				"skaven_stormfiend"
 			},
-			pre_spawn_func = var_0_1
+			pre_spawn_func = add_enhancements_for_difficulty
 		},
 		{
 			"delay",
@@ -2421,8 +2457,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 10,
-			condition = function(arg_37_0)
-				return arg_37_0.boss < 1
+			condition = function (self)
+				-- function 37
+				return self.boss < 1
 			end
 		},
 		{
@@ -2438,8 +2475,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_38_0)
-				return arg_38_0.main < 10
+			condition = function (self)
+				-- function 38
+				return self.main < 10
 			end
 		},
 		{
@@ -2455,8 +2493,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_39_0)
-				return arg_39_0.main < 10
+			condition = function (self)
+				-- function 39
+				return self.main < 10
 			end
 		},
 		{
@@ -2472,8 +2511,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_40_0)
-				return arg_40_0.main < 10
+			condition = function (self)
+				-- function 40
+				return self.main < 10
 			end
 		},
 		{
@@ -2514,8 +2554,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_41_0)
-				return arg_41_0.main < 15
+			condition = function (self)
+				-- function 41
+				return self.main < 15
 			end
 		},
 		{
@@ -2532,8 +2573,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_42_0)
-				return arg_42_0.main < 30
+			condition = function (self)
+				-- function 42
+				return self.main < 30
 			end
 		},
 		{
@@ -2549,8 +2591,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_43_0)
-				return arg_43_0.main < 10
+			condition = function (self)
+				-- function 43
+				return self.main < 10
 			end
 		},
 		{
@@ -2561,7 +2604,7 @@ local var_0_4 = {
 				"chaos_troll",
 				"chaos_spawn"
 			},
-			pre_spawn_func = var_0_1
+			pre_spawn_func = add_enhancements_for_difficulty
 		},
 		{
 			"delay",
@@ -2570,8 +2613,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_44_0)
-				return arg_44_0.main < 10
+			condition = function (self)
+				-- function 44
+				return self.main < 10
 			end
 		},
 		{
@@ -2587,8 +2631,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_45_0)
-				return arg_45_0.main < 10
+			condition = function (self)
+				-- function 45
+				return self.main < 10
 			end
 		}
 	},
@@ -2610,8 +2655,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 10,
-			condition = function(arg_46_0)
-				return arg_46_0.boss < 1
+			condition = function (self)
+				-- function 46
+				return self.boss < 1
 			end
 		},
 		{
@@ -2627,8 +2673,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_47_0)
-				return arg_47_0.boss < 1
+			condition = function (self)
+				-- function 47
+				return self.boss < 1
 			end
 		},
 		{
@@ -2639,7 +2686,7 @@ local var_0_4 = {
 				"chaos_troll",
 				"chaos_spawn"
 			},
-			pre_spawn_func = var_0_1
+			pre_spawn_func = add_enhancements_for_difficulty
 		},
 		{
 			"delay",
@@ -2658,8 +2705,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 10,
-			condition = function(arg_48_0)
-				return arg_48_0.boss < 1
+			condition = function (self)
+				-- function 48
+				return self.boss < 1
 			end
 		},
 		{
@@ -2675,8 +2723,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_49_0)
-				return arg_49_0.main < 10
+			condition = function (self)
+				-- function 49
+				return self.main < 10
 			end
 		},
 		{
@@ -2692,8 +2741,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_50_0)
-				return arg_50_0.main < 10
+			condition = function (self)
+				-- function 50
+				return self.main < 10
 			end
 		},
 		{
@@ -2709,8 +2759,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_51_0)
-				return arg_51_0.main < 10
+			condition = function (self)
+				-- function 51
+				return self.main < 10
 			end
 		},
 		{
@@ -2751,8 +2802,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_52_0)
-				return arg_52_0.main < 15
+			condition = function (self)
+				-- function 52
+				return self.main < 15
 			end
 		},
 		{
@@ -2769,8 +2821,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_53_0)
-				return arg_53_0.main < 30
+			condition = function (self)
+				-- function 53
+				return self.main < 30
 			end
 		},
 		{
@@ -2786,8 +2839,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_54_0)
-				return arg_54_0.main < 10
+			condition = function (self)
+				-- function 54
+				return self.main < 10
 			end
 		},
 		{
@@ -2795,7 +2849,7 @@ local var_0_4 = {
 			breed_name = "beastmen_minotaur",
 			spawner_id = "arena_citadel_final_manual",
 			spawn_counter_category = "boss",
-			pre_spawn_func = var_0_1
+			pre_spawn_func = add_enhancements_for_difficulty
 		},
 		{
 			"delay",
@@ -2804,8 +2858,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_55_0)
-				return arg_55_0.main < 10
+			condition = function (self)
+				-- function 55
+				return self.main < 10
 			end
 		},
 		{
@@ -2821,8 +2876,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_56_0)
-				return arg_56_0.main < 10
+			condition = function (self)
+				-- function 56
+				return self.main < 10
 			end
 		}
 	},
@@ -2844,8 +2900,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 10,
-			condition = function(arg_57_0)
-				return arg_57_0.boss < 1
+			condition = function (self)
+				-- function 57
+				return self.boss < 1
 			end
 		},
 		{
@@ -2861,8 +2918,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_58_0)
-				return arg_58_0.boss < 1
+			condition = function (self)
+				-- function 58
+				return self.boss < 1
 			end
 		},
 		{
@@ -2870,7 +2928,7 @@ local var_0_4 = {
 			breed_name = "beastmen_minotaur",
 			spawner_id = "arena_citadel_final_manual",
 			spawn_counter_category = "boss",
-			pre_spawn_func = var_0_1
+			pre_spawn_func = add_enhancements_for_difficulty
 		},
 		{
 			"delay",
@@ -2889,8 +2947,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 10,
-			condition = function(arg_59_0)
-				return arg_59_0.boss < 1
+			condition = function (self)
+				-- function 59
+				return self.boss < 1
 			end
 		},
 		{
@@ -2906,8 +2965,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_60_0)
-				return arg_60_0.main < 10
+			condition = function (self)
+				-- function 60
+				return self.main < 10
 			end
 		},
 		{
@@ -2923,8 +2983,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_61_0)
-				return arg_61_0.main < 10
+			condition = function (self)
+				-- function 61
+				return self.main < 10
 			end
 		},
 		{
@@ -2940,8 +3001,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_62_0)
-				return arg_62_0.main < 10
+			condition = function (self)
+				-- function 62
+				return self.main < 10
 			end
 		},
 		{
@@ -2995,7 +3057,7 @@ local var_0_4 = {
 				cataclysm = 2,
 				normal = 1
 			},
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"delay",
@@ -3004,8 +3066,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_63_0)
-				return arg_63_0.special < 1
+			condition = function (self)
+				-- function 63
+				return self.special < 1
 			end
 		},
 		{
@@ -3047,7 +3110,7 @@ local var_0_4 = {
 				cataclysm = 2,
 				normal = 1
 			},
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDEST
 		},
 		{
 			"delay",
@@ -3056,8 +3119,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_64_0)
-				return arg_64_0.special < 1
+			condition = function (self)
+				-- function 64
+				return self.special < 1
 			end
 		},
 		{
@@ -3089,8 +3153,9 @@ local var_0_4 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_65_0)
-				return arg_65_0.special < 1
+			condition = function (self)
+				-- function 65
+				return self.special < 1
 			end
 		},
 		{
@@ -3101,5 +3166,5 @@ local var_0_4 = {
 }
 
 return {
-	var_0_4
+	tbl
 }

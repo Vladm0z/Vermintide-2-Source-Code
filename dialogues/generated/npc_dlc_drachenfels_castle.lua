@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/npc_dlc_drachenfels_castle.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		response = "nngl_castle_vo_sorcerer_intro",
 		name = "nngl_castle_vo_sorcerer_intro",

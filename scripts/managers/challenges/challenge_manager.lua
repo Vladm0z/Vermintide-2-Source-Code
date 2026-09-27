@@ -6,87 +6,92 @@ require("scripts/managers/challenges/in_game_challenge_rewards")
 
 ChallengeManager = class(ChallengeManager)
 
-local var_0_0 = 255
+local num = 255
 
-function ChallengeManager.init(arg_1_0, arg_1_1, arg_1_2)
-	arg_1_0._statistics_db = arg_1_1
-	arg_1_0._is_server = arg_1_2
-	arg_1_0._all_challenges = {}
-	arg_1_0._completed_challenges = {}
+ChallengeManager.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	self._statistics_db = arg_1_1
+	self._is_server = arg_1_2
+	self._all_challenges = {}
+	self._completed_challenges = {}
 
-	if arg_1_2 then
-		local var_1_0 = var_0_0
-		local var_1_1 = Script.new_array(var_0_0)
+	if not arg_1_2 then
+		local var_1_0 = num
+		local new_array = Script.new_array(num)
 
-		for iter_1_0 = 1, var_1_0 do
-			var_1_1[iter_1_0] = iter_1_0
+		for i = 1, var_1_0 do
+			new_array[i] = i
 		end
 
-		arg_1_0._free_ids = var_1_1
+		self._free_ids = new_array
 	end
 end
 
-function ChallengeManager.destroy(arg_2_0)
-	local var_2_0 = arg_2_0._all_challenges
+ChallengeManager.destroy = function (self)
+	-- function 2
+	local _all_challenges = self._all_challenges
 
-	for iter_2_0 = 1, #var_2_0 do
-		var_2_0[iter_2_0]:cancel()
+	for i = 1, #_all_challenges do
+		_all_challenges[i]:cancel()
 	end
 
-	table.clear(arg_2_0._all_challenges)
-	table.clear(arg_2_0._completed_challenges)
-	arg_2_0:unregister_rpcs()
+	table.clear(self._all_challenges)
+	table.clear(self._completed_challenges)
+	self:unregister_rpcs()
 end
 
-function ChallengeManager.on_round_start(arg_3_0, arg_3_1, arg_3_2)
-	arg_3_0:register_rpcs(arg_3_1)
+ChallengeManager.on_round_start = function (self, arg_3_1, arg_3_2)
+	-- function 3
+	self:register_rpcs(arg_3_1)
 
-	local var_3_0 = arg_3_0._all_challenges
+	local _all_challenges = self._all_challenges
 
-	for iter_3_0 = 1, #var_3_0 do
-		var_3_0[iter_3_0]:on_round_start()
+	for i = 1, #_all_challenges do
+		_all_challenges[i]:on_round_start()
 	end
 end
 
-function ChallengeManager.on_round_end(arg_4_0)
-	if not arg_4_0._is_server then
-		local var_4_0 = arg_4_0._all_challenges
+ChallengeManager.on_round_end = function (self)
+	-- function 4
+	if not self._is_server then
+		local _all_challenges = self._all_challenges
 
-		for iter_4_0 = 1, #var_4_0 do
-			var_4_0[iter_4_0]:cancel()
+		for i = 1, #_all_challenges do
+			_all_challenges[i]:cancel()
 		end
 
-		table.clear(arg_4_0._all_challenges)
+		table.clear(self._all_challenges)
 	else
-		local var_4_1 = arg_4_0._all_challenges
+		local _all_challenges_2 = self._all_challenges
 
-		for iter_4_1 = 1, #var_4_1 do
-			var_4_1[iter_4_1]:on_round_end()
+		for j = 1, #_all_challenges_2 do
+			_all_challenges_2[j]:on_round_end()
 		end
 	end
 
-	arg_4_0:unregister_rpcs()
+	self:unregister_rpcs()
 end
 
-function ChallengeManager.update(arg_5_0, arg_5_1, arg_5_2)
-	local var_5_0 = arg_5_0._all_challenges
+ChallengeManager.update = function (self, arg_5_1, arg_5_2)
+	-- function 5
+	local _all_challenges = self._all_challenges
 
-	for iter_5_0 = #var_5_0, 1, -1 do
-		local var_5_1 = var_5_0[iter_5_0]
+	for i = #_all_challenges, 1, -1 do
+		local var_5_1 = _all_challenges[i]
 
-		if var_5_1:pending_cleanup() then
-			if var_5_1:is_repeatable() and var_5_1:get_result() ~= InGameChallengeResult.Canceled then
+		if not var_5_1:pending_cleanup() then
+			if not (not var_5_1:is_repeatable() and var_5_1:get_result() == InGameChallengeResult.Canceled) then
 				var_5_1:reset(true)
 			else
-				if arg_5_0._is_server then
-					table.insert(arg_5_0._free_ids, var_5_1:get_unique_id())
+				if not self._is_server then
+					table.insert(self._free_ids, var_5_1:get_unique_id())
 				end
 
-				table.swap_delete(var_5_0, iter_5_0)
+				table.swap_delete(_all_challenges, i)
 			end
-		elseif var_5_1:has_ended() then
+		elseif not var_5_1:has_ended() then
 			if var_5_1:get_result() == InGameChallengeResult.Completed then
-				arg_5_0._completed_challenges[#arg_5_0._completed_challenges + 1] = var_5_1
+				self._completed_challenges[#self._completed_challenges + 1] = var_5_1
 
 				Managers.state.event:trigger("on_challenge_completed", var_5_1:get_category(), var_5_1:get_challenge_name())
 			end
@@ -94,351 +99,375 @@ function ChallengeManager.update(arg_5_0, arg_5_1, arg_5_2)
 			var_5_1:mark_for_cleanup()
 		end
 
-		if arg_5_0._is_server and var_5_1:needs_sync(true) then
-			local var_5_2 = var_5_1:get_unique_id()
-			local var_5_3 = var_5_1:get_progress()
-			local var_5_4 = var_5_1:get_status().my_index
-			local var_5_5 = var_5_1:get_result().my_index
+		if not self._is_server and not var_5_1:needs_sync(true) then
+			local get_unique_id = var_5_1:get_unique_id()
+			local get_progress = var_5_1:get_progress()
+			local my_index = var_5_1:get_status().my_index
+			local my_index_2 = var_5_1:get_result().my_index
 
-			Managers.state.network.network_transmit:send_rpc_clients("rpc_server_update_ingame_challenge", var_5_2, var_5_3, var_5_4, var_5_5)
+			Managers.state.network.network_transmit:send_rpc_clients("rpc_server_update_ingame_challenge", get_unique_id, get_progress, my_index, my_index_2)
 		end
 	end
 end
 
-function ChallengeManager.add_challenge(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7)
-	if arg_6_0._is_server then
-		local var_6_0 = arg_6_0:reserve_free_unique_id()
-		local var_6_1 = InGameChallenge:new(arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_0._is_server, arg_6_6, var_6_0, arg_6_7)
+ChallengeManager.add_challenge = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7)
+	-- function 6
+	if not self._is_server then
+		local reserve_free_unique_id = self:reserve_free_unique_id()
+		local var_6_1 = InGameChallenge:new(arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, self._is_server, arg_6_6, reserve_free_unique_id, arg_6_7)
 
 		var_6_1:start()
-		table.insert(arg_6_0._all_challenges, var_6_1)
+		table.insert(self._all_challenges, var_6_1)
 
 		local var_6_2 = NetworkLookup.challenges[arg_6_1]
 		local var_6_3 = NetworkLookup.challenge_categories[arg_6_3]
 		local var_6_4 = NetworkLookup.challenge_rewards[arg_6_4]
-		local var_6_5, var_6_6 = PlayerUtils.split_unique_player_id(arg_6_5)
-		local var_6_7, var_6_8 = var_6_1:get_progress()
+		local split_unique_player_id, var_6_6 = PlayerUtils.split_unique_player_id(arg_6_5)
+		local get_progress, var_6_8 = var_6_1:get_progress()
 
-		Managers.state.network.network_transmit:send_rpc_clients("rpc_server_add_ingame_challenge", var_6_0, var_6_2, arg_6_2, var_6_3, var_6_4, var_6_5, var_6_6, var_6_8)
+		Managers.state.network.network_transmit:send_rpc_clients("rpc_server_add_ingame_challenge", reserve_free_unique_id, var_6_2, arg_6_2, var_6_3, var_6_4, split_unique_player_id, var_6_6, var_6_8)
 
 		return var_6_1
 	end
 end
 
-function ChallengeManager.remove_challenge(arg_7_0, arg_7_1)
-	if arg_7_0._is_server and arg_7_1 then
+ChallengeManager.remove_challenge = function (self, arg_7_1)
+	-- function 7
+	if not self._is_server and not arg_7_1 then
 		arg_7_1:cancel()
 	end
 end
 
-function ChallengeManager.get_challenge_from_unique_id(arg_8_0, arg_8_1)
-	local var_8_0 = arg_8_0._all_challenges
+ChallengeManager.get_challenge_from_unique_id = function (self, arg_8_1)
+	-- function 8
+	local _all_challenges = self._all_challenges
 
-	for iter_8_0 = 1, #var_8_0 do
-		if var_8_0[iter_8_0]:get_unique_id() == arg_8_1 then
-			return var_8_0[iter_8_0]
+	for i = 1, #_all_challenges do
+		if _all_challenges[i]:get_unique_id() == arg_8_1 then
+			return _all_challenges[i]
 		end
 	end
 
 	return nil
 end
 
-local var_0_1 = {}
+local tbl = {}
 
-function ChallengeManager.remove_filtered_challenges(arg_9_0, arg_9_1, arg_9_2)
-	table.clear(var_0_1)
+ChallengeManager.remove_filtered_challenges = function (self, arg_9_1, arg_9_2)
+	-- function 9
+	table.clear(tbl)
 
-	local var_9_0 = arg_9_0._all_challenges
-	local var_9_1 = arg_9_0._completed_challenges
+	local _all_challenges = self._all_challenges
+	local _completed_challenges = self._completed_challenges
 
-	for iter_9_0 = 1, #var_9_0 do
-		local var_9_2 = var_9_0[iter_9_0]
-		local var_9_3 = not arg_9_1 or var_9_2:get_category() == arg_9_1
+	for i = 1, #_all_challenges do
+		local var_9_2 = _all_challenges[i]
+		local flag = not arg_9_1 and var_9_2:get_category() == arg_9_1
 
-		var_9_3 = var_9_3 and (not arg_9_2 or var_9_2:belongs_to(arg_9_2))
+		flag = not flag and not arg_9_2 and var_9_2:belongs_to(arg_9_2)
 
-		if var_9_3 then
-			var_0_1[#var_0_1 + 1] = var_9_2
+		if not flag then
+			tbl[#tbl + 1] = var_9_2
 		end
 	end
 
-	for iter_9_1 = 1, #var_9_1 do
-		local var_9_4 = var_9_1[iter_9_1]
-		local var_9_5 = not arg_9_1 or var_9_4:get_category() == arg_9_1
+	for j = 1, #_completed_challenges do
+		local var_9_4 = _completed_challenges[j]
+		local flag_2 = not arg_9_1 and var_9_4:get_category() == arg_9_1
 
-		var_9_5 = var_9_5 and (not arg_9_2 or var_9_4:belongs_to(arg_9_2))
+		flag_2 = not flag_2 and not arg_9_2 and var_9_4:belongs_to(arg_9_2)
 
-		if var_9_5 then
-			var_0_1[#var_0_1 + 1] = var_9_4
+		if not flag_2 then
+			tbl[#tbl + 1] = var_9_4
 		end
 	end
 
-	for iter_9_2, iter_9_3 in ipairs(var_0_1) do
-		local var_9_6 = table.index_of(var_9_0, iter_9_3)
-		local var_9_7 = table.index_of(var_9_1, iter_9_3)
+	for i_2, v in ipairs(tbl) do
+		local index_of = table.index_of(_all_challenges, v)
+		local index_of_2 = table.index_of(_completed_challenges, v)
 
-		if var_9_7 then
-			table.swap_delete(var_9_1, var_9_7)
+		if not index_of_2 then
+			table.swap_delete(_completed_challenges, index_of_2)
 		end
 
-		arg_9_0:_cancel_challenge_instant(iter_9_3)
+		self:_cancel_challenge_instant(v)
 	end
 end
 
-function ChallengeManager.get_all_challenges(arg_10_0)
-	return arg_10_0._all_challenges
+ChallengeManager.get_all_challenges = function (self)
+	-- function 10
+	return self._all_challenges
 end
 
-function ChallengeManager.get_challenges_filtered(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+ChallengeManager.get_challenges_filtered = function (self, arg_11_1, arg_11_2, arg_11_3)
+	-- function 11
 	fassert(arg_11_1, "Missing mandatory table (array) argument 'results'")
 
-	local var_11_0 = arg_11_0._all_challenges
-	local var_11_1 = #arg_11_1
+	local _all_challenges = self._all_challenges
+	local count = #arg_11_1
 
-	for iter_11_0 = 1, #var_11_0 do
-		local var_11_2 = var_11_0[iter_11_0]
-		local var_11_3 = not arg_11_2 or var_11_2:get_category() == arg_11_2
+	for i = 1, #_all_challenges do
+		local var_11_2 = _all_challenges[i]
+		local flag = not arg_11_2 and var_11_2:get_category() == arg_11_2
 
-		var_11_3 = var_11_3 and (not arg_11_3 or var_11_2:belongs_to(arg_11_3))
+		flag = not flag and not arg_11_3 and var_11_2:belongs_to(arg_11_3)
 
-		if var_11_3 then
-			var_11_1 = var_11_1 + 1
-			arg_11_1[var_11_1] = var_11_2
+		if not flag then
+			count = count + 1
+			arg_11_1[count] = var_11_2
 		end
 	end
 
-	return arg_11_1, var_11_1
+	return arg_11_1, count
 end
 
-function ChallengeManager.get_all_completed_challenges(arg_12_0)
-	return arg_12_0._completed_challenges
+ChallengeManager.get_all_completed_challenges = function (self)
+	-- function 12
+	return self._completed_challenges
 end
 
-function ChallengeManager.get_completed_challenges_filtered(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+ChallengeManager.get_completed_challenges_filtered = function (self, arg_13_1, arg_13_2, arg_13_3)
+	-- function 13
 	fassert(arg_13_1, "Missing mandatory table (array) argument 'results'")
 
-	local var_13_0 = arg_13_0._completed_challenges
-	local var_13_1 = #arg_13_1
+	local _completed_challenges = self._completed_challenges
+	local count = #arg_13_1
 
-	for iter_13_0 = 1, #var_13_0 do
-		local var_13_2 = var_13_0[iter_13_0]
-		local var_13_3 = not arg_13_2 or var_13_2:get_category() == arg_13_2
+	for i = 1, #_completed_challenges do
+		local var_13_2 = _completed_challenges[i]
+		local flag = not arg_13_2 and var_13_2:get_category() == arg_13_2
 
-		var_13_3 = var_13_3 and (not arg_13_3 or var_13_2:belongs_to(arg_13_3))
+		flag = not flag and not arg_13_3 and var_13_2:belongs_to(arg_13_3)
 
-		if var_13_3 then
-			var_13_1 = var_13_1 + 1
-			arg_13_1[var_13_1] = var_13_2
+		if not flag then
+			count = count + 1
+			arg_13_1[count] = var_13_2
 		end
 	end
 
-	return arg_13_1, var_13_1
+	return arg_13_1, count
 end
 
-function ChallengeManager.on_player_joined_party(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
-	local var_14_0 = PlayerUtils.unique_player_id(arg_14_1, arg_14_2)
-	local var_14_1 = arg_14_0._all_challenges
+ChallengeManager.on_player_joined_party = function (self, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+	-- function 14
+	local unique_player_id = PlayerUtils.unique_player_id(arg_14_1, arg_14_2)
+	local _all_challenges = self._all_challenges
 
-	for iter_14_0 = 1, #var_14_1 do
-		local var_14_2 = var_14_1[iter_14_0]
+	for i = 1, #_all_challenges do
+		local var_14_2 = _all_challenges[i]
 
-		if var_14_2:belongs_to(var_14_0) and var_14_2:auto_resume() then
+		if not var_14_2:belongs_to(unique_player_id) and not var_14_2:auto_resume() then
 			var_14_2:set_paused(false)
 		end
 	end
 end
 
-function ChallengeManager.on_player_left_party(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
-	local var_15_0 = PlayerUtils.unique_player_id(arg_15_1, arg_15_2)
-	local var_15_1 = arg_15_0._all_challenges
+ChallengeManager.on_player_left_party = function (self, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+	-- function 15
+	local unique_player_id = PlayerUtils.unique_player_id(arg_15_1, arg_15_2)
+	local _all_challenges = self._all_challenges
 
-	for iter_15_0 = 1, #var_15_1 do
-		local var_15_2 = var_15_1[iter_15_0]
+	for i = 1, #_all_challenges do
+		local var_15_2 = _all_challenges[i]
 
-		if var_15_2:belongs_to(var_15_0) then
+		if not var_15_2:belongs_to(unique_player_id) then
 			var_15_2:set_paused(true)
 		end
 	end
 end
 
-function ChallengeManager.profile_changed(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
-	local var_16_0 = PlayerUtils.unique_player_id(arg_16_1, arg_16_2)
-	local var_16_1 = SPProfiles[arg_16_3].affiliation
-	local var_16_2 = arg_16_0._all_challenges
+ChallengeManager.profile_changed = function (self, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
+	-- function 16
+	local unique_player_id = PlayerUtils.unique_player_id(arg_16_1, arg_16_2)
+	local affiliation = SPProfiles[arg_16_3].affiliation
+	local _all_challenges = self._all_challenges
 
-	for iter_16_0 = 1, #var_16_2 do
-		local var_16_3 = var_16_2[iter_16_0]
+	for i = 1, #_all_challenges do
+		local var_16_3 = _all_challenges[i]
 
-		if var_16_3:belongs_to(var_16_0) then
-			local var_16_4 = var_16_1 ~= "heroes"
+		if not var_16_3:belongs_to(unique_player_id) then
+			local flag = affiliation ~= "heroes"
 
-			var_16_3:set_paused(var_16_4)
+			var_16_3:set_paused(flag)
 		end
 	end
 end
 
-function ChallengeManager.on_bot_added(arg_17_0, arg_17_1)
-	arg_17_0:player_entered_game_session(arg_17_1:network_id(), arg_17_1:local_player_id())
+ChallengeManager.on_bot_added = function (self, arg_17_1)
+	-- function 17
+	self:player_entered_game_session(arg_17_1:network_id(), arg_17_1:local_player_id())
 end
 
-function ChallengeManager.on_bot_removed(arg_18_0, arg_18_1)
-	arg_18_0:player_left_game_session(arg_18_1:network_id(), arg_18_1:local_player_id())
+ChallengeManager.on_bot_removed = function (self, arg_18_1)
+	-- function 18
+	self:player_left_game_session(arg_18_1:network_id(), arg_18_1:local_player_id())
 end
 
-local var_0_2 = 5
+local num_2 = 5
 
-function ChallengeManager.reserve_free_unique_id(arg_19_0)
-	local var_19_0 = arg_19_0._free_ids
-	local var_19_1 = #var_19_0
+ChallengeManager.reserve_free_unique_id = function (self)
+	-- function 19
+	local _free_ids = self._free_ids
+	local count = #_free_ids
 
-	if var_19_1 == 0 then
-		var_19_1 = arg_19_0:_cleanup_orphanated_challenge_ids(var_0_2)
+	if count == 0 then
+		count = self:_cleanup_orphanated_challenge_ids(num_2)
 	end
 
-	fassert(var_19_1 > 0, "Ran out of unique ids, %i / %i (leak or too many challenges?)", #arg_19_0._all_challenges, var_0_0)
+	fassert(count > 0, "Ran out of unique ids, %i / %i (leak or too many challenges?)", #self._all_challenges, num)
 
-	local var_19_2 = var_19_0[1]
+	local var_19_2 = _free_ids[1]
 
-	table.swap_delete(var_19_0, 1)
+	table.swap_delete(_free_ids, 1)
 
 	return var_19_2
 end
 
-function ChallengeManager._cleanup_orphanated_challenge_ids(arg_20_0, arg_20_1)
-	local var_20_0 = {}
-	local var_20_1 = 0
-	local var_20_2 = arg_20_0._all_challenges
+ChallengeManager._cleanup_orphanated_challenge_ids = function (self, arg_20_1)
+	-- function 20
+	local tbl = {}
+	local num = 0
+	local _all_challenges = self._all_challenges
 
-	for iter_20_0 = 1, #var_20_2 do
-		local var_20_3 = var_20_2[iter_20_0]
+	for i = 1, #_all_challenges do
+		local var_20_3 = _all_challenges[i]
 
-		if var_20_3.paused_t then
-			var_20_1 = var_20_1 + 1
-			var_20_0[var_20_1] = var_20_3
+		if not var_20_3.paused_t then
+			num = num + 1
+			tbl[num] = var_20_3
 		end
 	end
 
-	if var_20_1 > 0 then
-		if arg_20_1 < var_20_1 then
-			table.sort(var_20_0, function(arg_21_0, arg_21_1)
-				return arg_21_0.paused_t < arg_21_1.paused_t
+	if num > 0 then
+		if arg_20_1 < num then
+			table.sort(tbl, function (self, arg_21_1)
+				-- function 21
+				return self.paused_t < arg_21_1.paused_t
 			end)
 		end
 
-		local var_20_4 = math.min(arg_20_1, var_20_1)
+		local min = math.min(arg_20_1, num)
 
-		for iter_20_1 = 1, var_20_4 do
-			local var_20_5 = var_20_0[iter_20_1]
+		for j = 1, min do
+			local var_20_5 = tbl[j]
 
-			arg_20_0:_cancel_challenge_instant(var_20_5)
+			self:_cancel_challenge_instant(var_20_5)
 		end
 
-		return var_20_4
+		return min
 	end
 
 	return 0
 end
 
-function ChallengeManager._cancel_challenge_instant(arg_22_0, arg_22_1)
+ChallengeManager._cancel_challenge_instant = function (self, arg_22_1)
+	-- function 22
 	arg_22_1:cancel()
 
-	local var_22_0 = arg_22_1:get_unique_id()
+	local get_unique_id = arg_22_1:get_unique_id()
 
-	Managers.state.network.network_transmit:send_rpc_clients("rpc_server_remove_ingame_challenge", var_22_0)
-	table.insert(arg_22_0._free_ids, arg_22_1:get_unique_id())
+	Managers.state.network.network_transmit:send_rpc_clients("rpc_server_remove_ingame_challenge", get_unique_id)
+	table.insert(self._free_ids, arg_22_1:get_unique_id())
 
-	local var_22_1 = arg_22_0._all_challenges
-	local var_22_2 = table.index_of(var_22_1, arg_22_1)
+	local _all_challenges = self._all_challenges
+	local index_of = table.index_of(_all_challenges, arg_22_1)
 
-	table.swap_delete(var_22_1, var_22_2)
+	table.swap_delete(_all_challenges, index_of)
 end
 
-local var_0_3 = {
+local tbl_2 = {
 	"rpc_server_add_ingame_challenge",
 	"rpc_server_remove_ingame_challenge",
 	"rpc_server_update_ingame_challenge",
 	"rpc_server_hot_join_sync_ingame_challenge"
 }
 
-function ChallengeManager.register_rpcs(arg_23_0, arg_23_1)
-	if not arg_23_0._network_event_delegate then
-		arg_23_0._network_event_delegate = arg_23_1
+ChallengeManager.register_rpcs = function (self, arg_23_1)
+	-- function 23
+	if not self._network_event_delegate then
+		self._network_event_delegate = arg_23_1
 
-		arg_23_1:register(arg_23_0, unpack(var_0_3))
+		arg_23_1:register(self, unpack(tbl_2))
 	end
 end
 
-function ChallengeManager.unregister_rpcs(arg_24_0)
-	if arg_24_0._network_event_delegate then
-		arg_24_0._network_event_delegate:unregister(arg_24_0)
+ChallengeManager.unregister_rpcs = function (self)
+	-- function 24
+	if not self._network_event_delegate then
+		self._network_event_delegate:unregister(self)
 
-		arg_24_0._network_event_delegate = nil
+		self._network_event_delegate = nil
 	end
 end
 
-function ChallengeManager.hot_join_sync(arg_25_0, arg_25_1)
-	local var_25_0 = arg_25_0._all_challenges
+ChallengeManager.hot_join_sync = function (self, arg_25_1)
+	-- function 25
+	local _all_challenges = self._all_challenges
 
-	for iter_25_0 = 1, #var_25_0 do
-		local var_25_1 = var_25_0[iter_25_0]
-		local var_25_2 = var_25_1:get_unique_id()
-		local var_25_3 = var_25_1:get_challenge_name()
-		local var_25_4 = NetworkLookup.challenges[var_25_3]
-		local var_25_5 = var_25_1:is_repeatable()
-		local var_25_6 = var_25_1:get_category()
-		local var_25_7 = NetworkLookup.challenge_categories[var_25_6]
-		local var_25_8 = var_25_1:get_reward_name()
-		local var_25_9 = NetworkLookup.challenge_rewards[var_25_8]
-		local var_25_10 = var_25_1:get_owner_unique_id()
-		local var_25_11, var_25_12 = PlayerUtils.split_unique_player_id(var_25_10)
-		local var_25_13, var_25_14 = var_25_1:get_progress()
-		local var_25_15 = var_25_1:get_status().my_index
-		local var_25_16 = var_25_1:get_result().my_index
+	for i = 1, #_all_challenges do
+		local var_25_1 = _all_challenges[i]
+		local get_unique_id = var_25_1:get_unique_id()
+		local get_challenge_name = var_25_1:get_challenge_name()
+		local var_25_4 = NetworkLookup.challenges[get_challenge_name]
+		local is_repeatable = var_25_1:is_repeatable()
+		local get_category = var_25_1:get_category()
+		local var_25_7 = NetworkLookup.challenge_categories[get_category]
+		local get_reward_name = var_25_1:get_reward_name()
+		local var_25_9 = NetworkLookup.challenge_rewards[get_reward_name]
+		local get_owner_unique_id = var_25_1:get_owner_unique_id()
+		local split_unique_player_id, var_25_12 = PlayerUtils.split_unique_player_id(get_owner_unique_id)
+		local get_progress, var_25_14 = var_25_1:get_progress()
+		local my_index = var_25_1:get_status().my_index
+		local my_index_2 = var_25_1:get_result().my_index
 
-		Managers.state.network.network_transmit:send_rpc("rpc_server_hot_join_sync_ingame_challenge", arg_25_1, var_25_2, var_25_4, var_25_5, var_25_7, var_25_9, var_25_11, var_25_12, var_25_13, var_25_14, var_25_15, var_25_16)
+		Managers.state.network.network_transmit:send_rpc("rpc_server_hot_join_sync_ingame_challenge", arg_25_1, get_unique_id, var_25_4, is_repeatable, var_25_7, var_25_9, split_unique_player_id, var_25_12, get_progress, var_25_14, my_index, my_index_2)
 	end
 end
 
-function ChallengeManager.rpc_server_add_ingame_challenge(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6, arg_26_7, arg_26_8, arg_26_9)
+ChallengeManager.rpc_server_add_ingame_challenge = function (self, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6, arg_26_7, arg_26_8, arg_26_9)
+	-- function 26
 	local var_26_0 = NetworkLookup.challenges[arg_26_3]
 	local var_26_1 = NetworkLookup.challenge_categories[arg_26_5]
 	local var_26_2 = NetworkLookup.challenge_rewards[arg_26_6]
-	local var_26_3 = PlayerUtils.unique_player_id(arg_26_7, arg_26_8)
-	local var_26_4 = InGameChallenge:new(var_26_0, arg_26_4, var_26_1, var_26_2, var_26_3, arg_26_0._is_server, arg_26_9, arg_26_2, false)
+	local unique_player_id = PlayerUtils.unique_player_id(arg_26_7, arg_26_8)
+	local var_26_4 = InGameChallenge:new(var_26_0, arg_26_4, var_26_1, var_26_2, unique_player_id, self._is_server, arg_26_9, arg_26_2, false)
 
 	var_26_4:start()
-	table.insert(arg_26_0._all_challenges, var_26_4)
+	table.insert(self._all_challenges, var_26_4)
 end
 
-function ChallengeManager.rpc_server_remove_ingame_challenge(arg_27_0, arg_27_1, arg_27_2)
-	local var_27_0 = arg_27_0:get_challenge_from_unique_id(arg_27_2)
+ChallengeManager.rpc_server_remove_ingame_challenge = function (self, arg_27_1, arg_27_2)
+	-- function 27
+	local get_challenge_from_unique_id = self:get_challenge_from_unique_id(arg_27_2)
 
-	if var_27_0 then
-		var_27_0:cancel()
+	if not get_challenge_from_unique_id then
+		get_challenge_from_unique_id:cancel()
 
-		local var_27_1 = arg_27_0._all_challenges
-		local var_27_2 = table.index_of(var_27_1, var_27_0)
+		local _all_challenges = self._all_challenges
+		local index_of = table.index_of(_all_challenges, get_challenge_from_unique_id)
 
-		table.swap_delete(var_27_1, var_27_2)
+		table.swap_delete(_all_challenges, index_of)
 	end
 end
 
-function ChallengeManager.rpc_server_update_ingame_challenge(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
-	local var_28_0 = arg_28_0:get_challenge_from_unique_id(arg_28_2)
+ChallengeManager.rpc_server_update_ingame_challenge = function (self, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
+	-- function 28
+	local get_challenge_from_unique_id = self:get_challenge_from_unique_id(arg_28_2)
 
-	if var_28_0 then
-		var_28_0:client_update(arg_28_3, arg_28_4, arg_28_5)
+	if not get_challenge_from_unique_id then
+		get_challenge_from_unique_id:client_update(arg_28_3, arg_28_4, arg_28_5)
 	end
 end
 
-function ChallengeManager.rpc_server_hot_join_sync_ingame_challenge(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6, arg_29_7, arg_29_8, arg_29_9, arg_29_10, arg_29_11, arg_29_12)
+ChallengeManager.rpc_server_hot_join_sync_ingame_challenge = function (self, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6, arg_29_7, arg_29_8, arg_29_9, arg_29_10, arg_29_11, arg_29_12)
+	-- function 29
 	local var_29_0 = NetworkLookup.challenges[arg_29_3]
 	local var_29_1 = NetworkLookup.challenge_categories[arg_29_5]
 	local var_29_2 = NetworkLookup.challenge_rewards[arg_29_6]
-	local var_29_3 = PlayerUtils.unique_player_id(arg_29_7, arg_29_8)
-	local var_29_4 = InGameChallenge:new(var_29_0, arg_29_4, var_29_1, var_29_2, var_29_3, arg_29_0._is_server, arg_29_10, arg_29_2, false)
+	local unique_player_id = PlayerUtils.unique_player_id(arg_29_7, arg_29_8)
+	local var_29_4 = InGameChallenge:new(var_29_0, arg_29_4, var_29_1, var_29_2, unique_player_id, self._is_server, arg_29_10, arg_29_2, false)
 
 	var_29_4:start()
 	var_29_4:client_update(arg_29_9, arg_29_11, arg_29_12)
-	table.insert(arg_29_0._all_challenges, var_29_4)
+	table.insert(self._all_challenges, var_29_4)
 end

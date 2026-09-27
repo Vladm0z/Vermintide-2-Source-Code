@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/damage_profile_templates_dlc_vs.lua
 
-local var_0_0 = {
+local tbl = {
 	shotgun_dropoff_ranges = {
 		dropoff_start = 8,
 		dropoff_end = 15
@@ -34,7 +34,7 @@ local var_0_0 = {
 		dropoff_end = 10
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	playable_boss_melee_frenzy_light_vs = {
 		charge_value = "light_attack",
 		fatigue_type = "chaos_cleave",
@@ -1005,7 +1005,7 @@ local var_0_1 = {
 				attack = 0.15,
 				impact = 0.15
 			},
-			range_modifier_settings = var_0_0.blunderbuss_dropoff_ranges
+			range_modifier_settings = tbl.blunderbuss_dropoff_ranges
 		}
 	},
 	crossbow_bolt_vs = {
@@ -1083,7 +1083,7 @@ local var_0_1 = {
 				attack = 0.6,
 				impact = 0.3
 			},
-			range_modifier_settings = var_0_0.sniper_dropoff_ranges
+			range_modifier_settings = tbl.sniper_dropoff_ranges
 		}
 	},
 	crossbow_bolt_repeating_vs = {
@@ -1160,7 +1160,7 @@ local var_0_1 = {
 				attack = 0.25,
 				impact = 0.15
 			},
-			range_modifier_settings = var_0_0.carbine_dropoff_ranges
+			range_modifier_settings = tbl.carbine_dropoff_ranges
 		}
 	},
 	shot_machinegun_vs = {
@@ -1237,7 +1237,7 @@ local var_0_1 = {
 				attack = 0.3,
 				impact = 0.075
 			},
-			range_modifier_settings = var_0_0.machinegun_dropoff_ranges
+			range_modifier_settings = tbl.machinegun_dropoff_ranges
 		}
 	},
 	shot_machinegun_shotgun_vs = {
@@ -1314,7 +1314,7 @@ local var_0_1 = {
 				attack = 0.25,
 				impact = 0.15
 			},
-			range_modifier_settings = var_0_0.machinegun_shotgun_dropoff_ranges
+			range_modifier_settings = tbl.machinegun_shotgun_dropoff_ranges
 		}
 	},
 	shot_sniper_pistol_vs = {
@@ -1670,7 +1670,7 @@ local var_0_1 = {
 				attack = 0.25,
 				impact = 0.25
 			},
-			range_modifier_settings = var_0_0.carbine_dropoff_ranges
+			range_modifier_settings = tbl.carbine_dropoff_ranges
 		}
 	},
 	beam_vs = {
@@ -2462,7 +2462,7 @@ local var_0_1 = {
 				attack = 0.125,
 				impact = 0.1
 			},
-			range_modifier_settings = var_0_0.carbine_dropoff_ranges
+			range_modifier_settings = tbl.carbine_dropoff_ranges
 		}
 	},
 	staff_suck_damage_vs = {
@@ -2626,12 +2626,12 @@ local var_0_1 = {
 	}
 }
 
-var_0_1.bile_troll_sweep = table.clone(var_0_1.playable_boss_melee_frenzy_light_vs)
-var_0_1.bile_troll_shove = table.clone(var_0_1.playable_boss_melee_frenzy_light_vs)
-var_0_1.bile_troll_smiter = table.clone(var_0_1.playable_boss_melee_scrambler_heavy_vs)
-var_0_1.rat_ogre_light_1 = table.clone(var_0_1.playable_boss_melee_frenzy_light_vs)
-var_0_1.rat_ogre_light_2 = table.clone(var_0_1.playable_boss_melee_scrambler_light_vs)
-var_0_1.rat_ogre_slam_left = table.clone(var_0_1.playable_boss_melee_frenzy_slam_vs)
-var_0_1.rat_ogre_slam_right = table.clone(var_0_1.playable_boss_melee_frenzy_slam_vs)
+tbl_2.bile_troll_sweep = table.clone(tbl_2.playable_boss_melee_frenzy_light_vs)
+tbl_2.bile_troll_shove = table.clone(tbl_2.playable_boss_melee_frenzy_light_vs)
+tbl_2.bile_troll_smiter = table.clone(tbl_2.playable_boss_melee_scrambler_heavy_vs)
+tbl_2.rat_ogre_light_1 = table.clone(tbl_2.playable_boss_melee_frenzy_light_vs)
+tbl_2.rat_ogre_light_2 = table.clone(tbl_2.playable_boss_melee_scrambler_light_vs)
+tbl_2.rat_ogre_slam_left = table.clone(tbl_2.playable_boss_melee_frenzy_slam_vs)
+tbl_2.rat_ogre_slam_right = table.clone(tbl_2.playable_boss_melee_frenzy_slam_vs)
 
-return var_0_1
+return tbl_2

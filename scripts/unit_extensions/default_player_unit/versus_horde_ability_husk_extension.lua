@@ -2,26 +2,30 @@
 
 VersusHordeAbilityHuskExtension = class(VersusHordeAbilityHuskExtension)
 
-function VersusHordeAbilityHuskExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	arg_1_0._horde_ability_system = Managers.state.entity:system("versus_horde_ability_system")
-	arg_1_0._unit = arg_1_2
-	arg_1_0.game = Managers.state.network:game()
+VersusHordeAbilityHuskExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	self._horde_ability_system = Managers.state.entity:system("versus_horde_ability_system")
+	self._unit = arg_1_2
+	self.game = Managers.state.network:game()
 end
 
-function VersusHordeAbilityHuskExtension.update(arg_2_0)
+VersusHordeAbilityHuskExtension.update = function (arg_2_0)
+	-- function 2
 	return
 end
 
-function VersusHordeAbilityHuskExtension.set_ability_game_object_id(arg_3_0, arg_3_1)
-	arg_3_0.ability_go_id = arg_3_1
+VersusHordeAbilityHuskExtension.set_ability_game_object_id = function (self, arg_3_1)
+	-- function 3
+	self.ability_go_id = arg_3_1
 end
 
-function VersusHordeAbilityHuskExtension.get_ability_charge(arg_4_0)
-	local var_4_0 = arg_4_0.game
-	local var_4_1 = arg_4_0.ability_go_id
+VersusHordeAbilityHuskExtension.get_ability_charge = function (self)
+	-- function 4
+	local game = self.game
+	local ability_go_id = self.ability_go_id
 
-	if var_4_0 and var_4_1 then
-		return (GameSession.game_object_field(var_4_0, var_4_1, "ability_charge"))
+	if not game and not ability_go_id then
+		return (GameSession.game_object_field(game, ability_go_id, "ability_charge"))
 	end
 
 	return 0

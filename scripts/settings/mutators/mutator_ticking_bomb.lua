@@ -4,7 +4,8 @@ return {
 	description = "description_mutator_ticking_bomb",
 	display_name = "display_name_mutator_ticking_bomb",
 	icon = "mutator_icon_ticking_bomb",
-	server_start_function = function(arg_1_0, arg_1_1)
+	server_start_function = function (arg_1_0, arg_1_1)
+		-- function 1
 		arg_1_1.buff_name = "mutator_ticking_bomb"
 		arg_1_1.movement_debuff_name = "ticking_bomb_decrease_movement"
 		arg_1_1.buff_system = Managers.state.entity:system("buff_system")
@@ -14,89 +15,91 @@ return {
 		arg_1_1.player_bomb_data = {}
 		arg_1_1.hero_side = Managers.state.side:get_side_from_name("heroes")
 
-		if arg_1_1.activated_by_twitch then
+		if not arg_1_1.activated_by_twitch then
 			arg_1_1.template.server_players_left_safe_zone(arg_1_0, arg_1_1)
 		end
 	end,
-	server_players_left_safe_zone = function(arg_2_0, arg_2_1)
+	server_players_left_safe_zone = function (arg_2_0, arg_2_1)
+		-- function 2
 		arg_2_1.has_left_safe_zone = true
 
-		local var_2_0 = Managers.time:time("game")
-		local var_2_1 = 20
+		local time = Managers.time:time("game")
+		local num = 20
 
-		if Managers.twitch:is_activated() then
-			var_2_1 = 5
+		if not Managers.twitch:is_activated() then
+			num = 5
 		end
 
-		arg_2_1.apply_bomb_buff_at_t = var_2_0 + var_2_1
+		arg_2_1.apply_bomb_buff_at_t = time + num
 	end,
-	server_update_function = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	server_update_function = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+		-- function 3
 		if not arg_3_1.has_left_safe_zone then
 			return
 		end
 
-		local var_3_0 = arg_3_1.player_bomb_data
-		local var_3_1 = arg_3_1.buff_system
+		local player_bomb_data = arg_3_1.player_bomb_data
+		local buff_system = arg_3_1.buff_system
 
 		if arg_3_3 > arg_3_1.apply_bomb_buff_at_t then
-			table.clear(var_3_0)
+			table.clear(player_bomb_data)
 
-			local var_3_2 = arg_3_1.hero_side.PLAYER_UNITS
-			local var_3_3 = #var_3_2
-			local var_3_4 = math.random(1, #var_3_2)
+			local PLAYER_UNITS = arg_3_1.hero_side.PLAYER_UNITS
+			local count = #PLAYER_UNITS
+			local random = math.random(1, #PLAYER_UNITS)
 
-			for iter_3_0 = 1, var_3_4 do
-				local var_3_5 = var_3_2[math.random(1, var_3_3)]
+			for i = 1, random do
+				local var_3_5 = PLAYER_UNITS[math.random(1, count)]
 
-				if HEALTH_ALIVE[var_3_5] then
-					var_3_1:add_buff(var_3_5, arg_3_1.buff_name, var_3_5)
+				if not HEALTH_ALIVE[var_3_5] then
+					buff_system:add_buff(var_3_5, arg_3_1.buff_name, var_3_5)
 
 					arg_3_1.applied_buff_at_t = arg_3_3
 
-					local var_3_6 = {
+					local tbl = {
 						player_unit = var_3_5
 					}
 
 					arg_3_1.applied_bot_threat = nil
 					arg_3_1.should_add_movement_debuff = true
-					var_3_0[#var_3_0 + 1] = var_3_6
+					player_bomb_data[#player_bomb_data + 1] = tbl
 				end
 			end
 
-			local var_3_7 = math.random(24, 40) + var_3_4
+			local num = math.random(24, 40) + random
 
-			if Managers.twitch:is_activated() then
-				var_3_7 = math.random(12, 20) + var_3_4
+			if not Managers.twitch:is_activated() then
+				num = math.random(12, 20) + random
 			end
 
-			local var_3_8 = 5 * (4 - var_3_3)
+			local num_2 = 5 * (4 - count)
 
-			arg_3_1.apply_bomb_buff_at_t = arg_3_3 + var_3_7 + var_3_8
+			arg_3_1.apply_bomb_buff_at_t = arg_3_3 + num + num_2
 		end
 
-		for iter_3_1 = 1, #var_3_0 do
-			local var_3_9 = var_3_0[iter_3_1]
-			local var_3_10 = var_3_9.player_unit
+		for j = 1, #player_bomb_data do
+			local var_3_9 = player_bomb_data[j]
+			local player_unit = var_3_9.player_unit
 
-			if not Unit.alive(var_3_10) then
-				table.remove(var_3_0, iter_3_1)
+			if not Unit.alive(player_unit) then
+				table.remove(player_bomb_data, j)
 
 				break
 			end
 
-			if arg_3_3 > arg_3_1.applied_buff_at_t + arg_3_1.apply_aoe_threat_after_t and not var_3_9.applied_bot_threat then
-				local var_3_11 = Managers.state.entity:system("ai_bot_group_system")
-				local var_3_12 = POSITION_LOOKUP[var_3_10]
-				local var_3_13 = 4
-				local var_3_14 = 5
+			if not (not (arg_3_3 > arg_3_1.applied_buff_at_t + arg_3_1.apply_aoe_threat_after_t) or var_3_9.applied_bot_threat) then
+				local system = Managers.state.entity:system("ai_bot_group_system")
+				local var_3_12 = POSITION_LOOKUP[player_unit]
+				local num_3 = 4
+				local num_4 = 5
 
-				var_3_11:aoe_threat_created(var_3_12, "sphere", var_3_13, nil, var_3_14, "Ticking Bomb")
+				system:aoe_threat_created(var_3_12, "sphere", num_3, nil, num_4, "Ticking Bomb")
 
 				var_3_9.applied_bot_threat = true
 			end
 
-			if arg_3_3 > arg_3_1.applied_buff_at_t + arg_3_1.apply_movement_debuff_after_t and not var_3_9.applied_movement_debuff then
-				var_3_1:add_buff(var_3_10, arg_3_1.movement_debuff_name, var_3_10)
+			if not (not (arg_3_3 > arg_3_1.applied_buff_at_t + arg_3_1.apply_movement_debuff_after_t) or var_3_9.applied_movement_debuff) then
+				buff_system:add_buff(player_unit, arg_3_1.movement_debuff_name, player_unit)
 
 				var_3_9.applied_movement_debuff = true
 			end

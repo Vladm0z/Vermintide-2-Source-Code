@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/potions.lua
 
-local var_0_0 = {
+local tbl = {
 	actions = {
 		action_one = {
 			default = {
@@ -15,8 +15,9 @@ local var_0_0 = {
 				uninterruptible = true,
 				anim_event = "attack_heal",
 				total_time = 1.3,
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
-					return arg_1_1 ~= "new_interupting_action" and arg_1_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
+					-- function 1
+					return arg_1_1 == "new_interupting_action" or arg_1_1 ~= "action_complete"
 				end,
 				allowed_chain_actions = {}
 			}
@@ -38,15 +39,15 @@ local var_0_0 = {
 	}
 }
 
-var_0_0.left_hand_unit = "units/weapons/player/wpn_potion/wpn_potion"
-var_0_0.left_hand_attachment_node_linking = AttachmentNodeLinking.potion
-var_0_0.wield_anim = "to_potion"
-var_0_0.state_machine = "units/beings/player/first_person_base/state_machines/common"
-var_0_0.load_state_machine = false
-var_0_0.gui_texture = "hud_consumable_icon_potion"
-var_0_0.max_fatigue_points = 4
-var_0_0.can_give_other = true
-var_0_0.buffs = {
+tbl.left_hand_unit = "units/weapons/player/wpn_potion/wpn_potion"
+tbl.left_hand_attachment_node_linking = AttachmentNodeLinking.potion
+tbl.wield_anim = "to_potion"
+tbl.state_machine = "units/beings/player/first_person_base/state_machines/common"
+tbl.load_state_machine = false
+tbl.gui_texture = "hud_consumable_icon_potion"
+tbl.max_fatigue_points = 4
+tbl.can_give_other = true
+tbl.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1
 	},
@@ -55,45 +56,45 @@ var_0_0.buffs = {
 	}
 }
 
-local var_0_1 = table.clone(var_0_0)
+local clone = table.clone(tbl)
 
-var_0_1.left_hand_unit = "units/weapons/player/wpn_potion_buff/wpn_potion_buff"
-var_0_1.actions.action_one.default.buff_template = "damage_boost_potion"
-var_0_1.gui_texture = "hud_consumable_icon_potion"
-var_0_1.pickup_data = {
+clone.left_hand_unit = "units/weapons/player/wpn_potion_buff/wpn_potion_buff"
+clone.actions.action_one.default.buff_template = "damage_boost_potion"
+clone.gui_texture = "hud_consumable_icon_potion"
+clone.pickup_data = {
 	pickup_name = "damage_boost_potion"
 }
 
-local var_0_2 = table.clone(var_0_0)
+local clone_2 = table.clone(tbl)
 
-var_0_2.left_hand_unit = "units/weapons/player/wpn_potion_buff/wpn_potion_buff"
-var_0_2.actions.action_one.default.buff_template = "speed_boost_potion"
-var_0_2.gui_texture = "hud_consumable_icon_potion"
-var_0_2.pickup_data = {
+clone_2.left_hand_unit = "units/weapons/player/wpn_potion_buff/wpn_potion_buff"
+clone_2.actions.action_one.default.buff_template = "speed_boost_potion"
+clone_2.gui_texture = "hud_consumable_icon_potion"
+clone_2.pickup_data = {
 	pickup_name = "speed_boost_potion"
 }
 
-local var_0_3 = table.clone(var_0_0)
+local clone_3 = table.clone(tbl)
 
-var_0_3.left_hand_unit = "units/weapons/player/wpn_potion_buff/wpn_potion_buff"
-var_0_3.actions.action_one.default.buff_template = "invulnerability_potion"
-var_0_3.gui_texture = "hud_consumable_icon_potion"
-var_0_3.pickup_data = {
+clone_3.left_hand_unit = "units/weapons/player/wpn_potion_buff/wpn_potion_buff"
+clone_3.actions.action_one.default.buff_template = "invulnerability_potion"
+clone_3.gui_texture = "hud_consumable_icon_potion"
+clone_3.pickup_data = {
 	pickup_name = "invulnerability_potion"
 }
 
-local var_0_4 = table.clone(var_0_0)
+local clone_4 = table.clone(tbl)
 
-var_0_4.left_hand_unit = "units/weapons/player/wpn_potion_buff/wpn_potion_buff"
-var_0_4.actions.action_one.default.buff_template = "cooldown_reduction_potion"
-var_0_4.gui_texture = "hud_consumable_icon_potion"
-var_0_4.pickup_data = {
+clone_4.left_hand_unit = "units/weapons/player/wpn_potion_buff/wpn_potion_buff"
+clone_4.actions.action_one.default.buff_template = "cooldown_reduction_potion"
+clone_4.gui_texture = "hud_consumable_icon_potion"
+clone_4.pickup_data = {
 	pickup_name = "cooldown_reduction_potion"
 }
 
 return {
-	damage_boost_potion = var_0_1,
-	speed_boost_potion = var_0_2,
-	invulnerability_potion = var_0_3,
-	cooldown_reduction_potion = var_0_4
+	damage_boost_potion = clone,
+	speed_boost_potion = clone_2,
+	invulnerability_potion = clone_3,
+	cooldown_reduction_potion = clone_4
 }

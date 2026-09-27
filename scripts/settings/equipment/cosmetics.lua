@@ -3407,14 +3407,15 @@ Cosmetics.frame_dwarf_fest = {
 	texture_package_name = "resource_packages/store/item_icons/store_item_icon_frame_dwarf_fest"
 }
 
-DLCUtils.map_list("cosmetics_files", function(arg_1_0)
+DLCUtils.map_list("cosmetics_files", function (arg_1_0)
+	-- function 1
 	local var_1_0 = require(arg_1_0)
 
-	if var_1_0 then
+	if not var_1_0 then
 		table.merge(Cosmetics, var_1_0)
 	end
 end)
 
-for iter_0_0, iter_0_1 in pairs(Cosmetics) do
-	iter_0_1.name = iter_0_0
+for k, v in pairs(Cosmetics) do
+	v.name = k
 end

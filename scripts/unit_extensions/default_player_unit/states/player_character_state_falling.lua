@@ -1,6 +1,6 @@
 -- chunkname: @scripts/unit_extensions/default_player_unit/states/player_character_state_falling.lua
 
-local var_0_0 = {
+local tbl = {
 	"Double",
 	"Triple",
 	"Quad",
@@ -21,217 +21,233 @@ local var_0_0 = {
 	"Enneadeca",
 	"Icosa"
 }
+local script_data = script_data
+local ledge_hanging_turned_off = script_data.ledge_hanging_turned_off
 
-script_data.ledge_hanging_turned_off = script_data.ledge_hanging_turned_off or Development.parameter("ledge_hanging_turned_off")
+ledge_hanging_turned_off = ledge_hanging_turned_off or Development.parameter("ledge_hanging_turned_off")
+script_data.ledge_hanging_turned_off = ledge_hanging_turned_off
 TimesJumpedInAir = 0
 PlayerCharacterStateFalling = class(PlayerCharacterStateFalling, PlayerCharacterState)
 
-local var_0_1 = POSITION_LOOKUP
+local POSITION_LOOKUP = POSITION_LOOKUP
 
-function PlayerCharacterStateFalling.init(arg_1_0, arg_1_1)
-	PlayerCharacterState.init(arg_1_0, arg_1_1, "falling")
+PlayerCharacterStateFalling.init = function (self, arg_1_1)
+	-- function 1
+	PlayerCharacterState.init(self, arg_1_1, "falling")
 
-	arg_1_0.last_valid_nav_position = Vector3Box()
-	arg_1_0.shaking_ladder_unit = false
+	self.last_valid_nav_position = Vector3Box()
+	self.shaking_ladder_unit = false
 end
 
-function PlayerCharacterStateFalling.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
-	arg_2_0.falling_reason = arg_2_6
+PlayerCharacterStateFalling.on_enter = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	-- function 2
+	self.falling_reason = arg_2_6
 
-	local var_2_0 = arg_2_0.input_extension
-	local var_2_1 = arg_2_0.status_extension
-	local var_2_2 = arg_2_0.locomotion_extension
-	local var_2_3 = arg_2_0.first_person_extension
-	local var_2_4 = arg_2_0.inventory_extension
+	local input_extension = self.input_extension
+	local status_extension = self.status_extension
+	local locomotion_extension = self.locomotion_extension
+	local first_person_extension = self.first_person_extension
+	local inventory_extension = self.inventory_extension
 
-	var_2_1:set_falling_height()
-	var_2_2:set_maximum_upwards_velocity(math.huge)
+	status_extension:set_falling_height()
+	locomotion_extension:set_maximum_upwards_velocity(math.huge)
 
-	local var_2_5 = var_2_4:get_wielded_slot_item_template()
+	local get_wielded_slot_item_template = inventory_extension:get_wielded_slot_item_template()
 
-	arg_2_0._play_fp_anim = var_2_5 and var_2_5.jump_anim_enabled_1p
+	self._play_fp_anim = not get_wielded_slot_item_template and get_wielded_slot_item_template.jump_anim_enabled_1p
 
 	if arg_2_6 ~= "jumping" then
 		local var_2_6
 		local var_2_7
-		local var_2_8 = CharacterStateHelper.is_moving(var_2_2) and "jump_fwd" or "jump_idle"
-		local var_2_9 = arg_2_0._play_fp_anim and "to_falling" or "idle"
+		local flag
 
-		CharacterStateHelper.play_animation_event(arg_2_1, var_2_8)
-		CharacterStateHelper.play_animation_event_first_person(var_2_3, var_2_9)
+		flag = not CharacterStateHelper.is_moving(locomotion_extension) and "jump_fwd" and "jump_idle"
+
+		local flag_2
+
+		flag_2 = not self._play_fp_anim and "to_falling" and "idle"
+
+		CharacterStateHelper.play_animation_event(arg_2_1, flag)
+		CharacterStateHelper.play_animation_event_first_person(first_person_extension, flag_2)
 	end
 
-	arg_2_0.jumped = arg_2_7.jumped
+	self.jumped = arg_2_7.jumped
 
-	CharacterStateHelper.look(var_2_0, arg_2_0.player.viewport_name, var_2_3, var_2_1, arg_2_0.inventory_extension)
-	CharacterStateHelper.update_weapon_actions(arg_2_5, arg_2_1, var_2_0, var_2_4, arg_2_0.health_extension)
+	CharacterStateHelper.look(input_extension, self.player.viewport_name, first_person_extension, status_extension, self.inventory_extension)
+	CharacterStateHelper.update_weapon_actions(arg_2_5, arg_2_1, input_extension, inventory_extension, self.health_extension)
 
-	arg_2_0.is_active = true
-	arg_2_0.times_jumped_in_air = 0
-	arg_2_0.shaking_ladder_unit = arg_2_7.shaking_ladder_unit or nil
+	self.is_active = true
+	self.times_jumped_in_air = 0
 
-	if arg_2_6 ~= "jumping" and arg_2_6 ~= "leaping" and arg_2_6 ~= "overcharge_exploding" and arg_2_6 ~= "lunging" then
+	local shaking_ladder_unit = arg_2_7.shaking_ladder_unit
+
+	shaking_ladder_unit = shaking_ladder_unit or nil
+	self.shaking_ladder_unit = shaking_ladder_unit
+
+	if not (arg_2_6 == "jumping" or arg_2_6 == "leaping" or arg_2_6 == "overcharge_exploding" or arg_2_6 == "lunging") then
 		ScriptUnit.extension(arg_2_1, "whereabouts_system"):set_fell()
 	end
 
-	local var_2_10 = Managers.player:owner(arg_2_1)
+	local owner = Managers.player:owner(arg_2_1)
 
-	arg_2_0.is_bot = var_2_10 and var_2_10.bot_player
+	self.is_bot = not owner and owner.bot_player
 end
 
-function PlayerCharacterStateFalling.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
-	if not Managers.state.network:game() or not arg_3_6 then
+PlayerCharacterStateFalling.on_exit = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+	-- function 3
+	if not (not Managers.state.network:game() and arg_3_6) then
 		return
 	end
 
-	local var_3_0 = arg_3_0.status_extension
+	local status_extension = self.status_extension
 
-	arg_3_0.locomotion_extension:reset_maximum_upwards_velocity()
+	self.locomotion_extension:reset_maximum_upwards_velocity()
 	CharacterStateHelper.play_animation_event(arg_3_1, "land_still")
 	CharacterStateHelper.play_animation_event(arg_3_1, "to_onground")
 
-	if arg_3_0._play_fp_anim then
-		CharacterStateHelper.play_animation_event_first_person(arg_3_0.first_person_extension, "to_onground")
+	if not self._play_fp_anim then
+		CharacterStateHelper.play_animation_event_first_person(self.first_person_extension, "to_onground")
 	end
 
-	arg_3_0.is_active = false
-	arg_3_0.jumped = nil
+	self.is_active = false
+	self.jumped = nil
 
-	if arg_3_6 == "walking" or arg_3_6 == "standing" then
+	if not (arg_3_6 == "walking" or arg_3_6 ~= "standing") then
 		ScriptUnit.extension(arg_3_1, "whereabouts_system"):set_landed()
 	else
 		ScriptUnit.extension(arg_3_1, "whereabouts_system"):set_no_landing()
 	end
 end
 
-function PlayerCharacterStateFalling.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
-	local var_4_0 = arg_4_0.world
-	local var_4_1 = arg_4_0.locomotion_extension
-	local var_4_2 = arg_4_0.first_person_extension
-	local var_4_3 = var_4_1:current_velocity()
+PlayerCharacterStateFalling.update = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	-- function 4
+	local world = self.world
+	local locomotion_extension = self.locomotion_extension
+	local first_person_extension = self.first_person_extension
+	local current_velocity = locomotion_extension:current_velocity()
 	local var_4_4 = POSITION_LOOKUP[arg_4_1]
 
-	if var_4_3.z > 0 then
-		arg_4_0.start_fall_height = var_0_1[arg_4_1].z
+	if current_velocity.z > 0 then
+		self.start_fall_height = POSITION_LOOKUP[arg_4_1].z
 	end
 
-	CharacterStateHelper.update_dodge_lock(arg_4_1, arg_4_0.input_extension, arg_4_0.status_extension)
+	CharacterStateHelper.update_dodge_lock(arg_4_1, self.input_extension, self.status_extension)
 
-	if var_0_1[arg_4_1].z < -240 then
-		if arg_4_0.is_server then
+	if POSITION_LOOKUP[arg_4_1].z < -240 then
+		if not self.is_server then
 			Managers.state.entity:system("health_system"):suicide(arg_4_1)
 		else
-			local var_4_5 = arg_4_0.unit_storage:go_id(arg_4_1)
+			local go_id = self.unit_storage:go_id(arg_4_1)
 
-			arg_4_0.network_transmit:send_rpc_server("rpc_suicide", var_4_5)
+			self.network_transmit:send_rpc_server("rpc_suicide", go_id)
 		end
 	end
 
-	local var_4_6 = arg_4_0.csm
-	local var_4_7 = arg_4_0.unit
-	local var_4_8 = arg_4_0.input_extension
-	local var_4_9 = arg_4_0.status_extension
+	local csm = self.csm
+	local unit = self.unit
+	local input_extension = self.input_extension
+	local status_extension = self.status_extension
 
-	if CharacterStateHelper.do_common_state_transitions(var_4_9, var_4_6) then
+	if not CharacterStateHelper.do_common_state_transitions(status_extension, csm) then
 		return
 	end
 
-	if CharacterStateHelper.is_overcharge_exploding(var_4_9) then
-		var_4_6:change_state("overcharge_exploding")
-
-		return
-	end
-
-	local var_4_10 = PlayerUnitMovementSettings.get_movement_settings_table(var_4_7)
-
-	if CharacterStateHelper.is_pushed(var_4_9) then
-		var_4_9:set_pushed(false)
-
-		local var_4_11 = var_4_10.stun_settings.pushed
-
-		var_4_11.hit_react_type = var_4_9:hit_react_type() .. "_push"
-
-		var_4_6:change_state("stunned", var_4_11)
+	if not CharacterStateHelper.is_overcharge_exploding(status_extension) then
+		csm:change_state("overcharge_exploding")
 
 		return
 	end
 
-	if CharacterStateHelper.is_charged(var_4_9) then
-		local var_4_12 = var_4_10.charged_settings.charged
+	local get_movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
 
-		var_4_12.hit_react_type = "charged"
+	if not CharacterStateHelper.is_pushed(status_extension) then
+		status_extension:set_pushed(false)
 
-		var_4_6:change_state("charged", var_4_12)
+		local pushed = get_movement_settings_table.stun_settings.pushed
 
-		return
-	end
+		pushed.hit_react_type = status_extension:hit_react_type() .. "_push"
 
-	if CharacterStateHelper.is_block_broken(var_4_9) then
-		var_4_9:set_block_broken(false)
-
-		local var_4_13 = var_4_10.stun_settings.parry_broken
-
-		var_4_13.hit_react_type = "medium_push"
-
-		var_4_6:change_state("stunned", var_4_13)
+		csm:change_state("stunned", pushed)
 
 		return
 	end
 
-	if not var_4_6.state_next and var_4_1:is_on_ground() then
-		if CharacterStateHelper.is_moving(var_4_1) then
-			var_4_6:change_state("walking")
-			var_4_2:change_state("walking")
+	if not CharacterStateHelper.is_charged(status_extension) then
+		local charged = get_movement_settings_table.charged_settings.charged
+
+		charged.hit_react_type = "charged"
+
+		csm:change_state("charged", charged)
+
+		return
+	end
+
+	if not CharacterStateHelper.is_block_broken(status_extension) then
+		status_extension:set_block_broken(false)
+
+		local parry_broken = get_movement_settings_table.stun_settings.parry_broken
+
+		parry_broken.hit_react_type = "medium_push"
+
+		csm:change_state("stunned", parry_broken)
+
+		return
+	end
+
+	if csm.state_next or not locomotion_extension:is_on_ground() then
+		if not CharacterStateHelper.is_moving(locomotion_extension) then
+			csm:change_state("walking")
+			first_person_extension:change_state("walking")
 		else
-			var_4_6:change_state("standing")
-			var_4_2:change_state("standing")
+			csm:change_state("standing")
+			first_person_extension:change_state("standing")
 		end
 
 		return
 	end
 
-	local var_4_14, var_4_15 = CharacterStateHelper.is_colliding_with_gameplay_collision_box(var_4_0, var_4_7, "filter_ladder_collision")
-	local var_4_16 = CharacterStateHelper.recently_left_ladder(var_4_9, arg_4_5)
+	local is_colliding_with_gameplay_collision_box, var_4_15 = CharacterStateHelper.is_colliding_with_gameplay_collision_box(world, unit, "filter_ladder_collision")
+	local recently_left_ladder = CharacterStateHelper.recently_left_ladder(status_extension, arg_4_5)
 	local var_4_17
 	local var_4_18
 	local var_4_19
 
-	if var_4_14 and not var_4_16 and (not arg_4_0.shaking_ladder_unit or arg_4_0.shaking_ladder_unit ~= var_4_15) then
-		local var_4_20 = Unit.node(var_4_15, "c_platform")
-		local var_4_21 = Unit.local_rotation(var_4_15, 0)
-		local var_4_22 = Quaternion.forward(var_4_21)
-		local var_4_23 = Unit.local_position(var_4_15, 0) - var_4_4
+	if not (not is_colliding_with_gameplay_collision_box and recently_left_ladder or not self.shaking_ladder_unit or self.shaking_ladder_unit == var_4_15) then
+		local node = Unit.node(var_4_15, "c_platform")
+		local local_rotation = Unit.local_rotation(var_4_15, 0)
+		local forward = Quaternion.forward(local_rotation)
+		local num = Unit.local_position(var_4_15, 0) - var_4_4
 
-		var_4_19 = Vector3.dot(var_4_22, var_4_23)
+		var_4_19 = Vector3.dot(forward, num)
 
-		local var_4_24 = 0.1
+		local num_2 = 0.1
 
-		var_4_17 = var_4_4.z < Vector3.z(Unit.world_position(var_4_15, var_4_20))
-		var_4_18 = var_4_19 > 0 and var_4_19 < 0.7 + var_4_24
-		can_climb_ladder = var_4_17 and var_4_18
+		var_4_17 = var_4_4.z < Vector3.z(Unit.world_position(var_4_15, node))
+		var_4_18 = not (var_4_19 > 0) or var_4_19 < 0.7 + num_2
+		can_climb_ladder = not var_4_17 and var_4_18
 
-		if can_climb_ladder then
-			local var_4_25 = arg_4_0.temp_params
+		if not can_climb_ladder then
+			local temp_params = self.temp_params
 
-			var_4_25.ladder_unit = var_4_15
+			temp_params.ladder_unit = var_4_15
 
-			var_4_6:change_state("climbing_ladder", var_4_25)
+			csm:change_state("climbing_ladder", temp_params)
 
 			return
 		end
 	end
 
-	if script_data.debug_ladder_climbing then
+	if not script_data.debug_ladder_climbing then
 		Debug.text("CAN CLIMB: %s", can_climb_ladder)
 
 		if not can_climb_ladder then
 			Debug.text("Can't climb because:")
 
-			if var_4_16 then
-				Debug.text("\tRecently left ladder: %s", arg_4_5 - ScriptUnit.extension(var_4_7, "status_system").left_ladder_timer)
+			if not recently_left_ladder then
+				Debug.text("\tRecently left ladder: %s", arg_4_5 - ScriptUnit.extension(unit, "status_system").left_ladder_timer)
 			end
 
-			if var_4_14 == false then
+			if is_colliding_with_gameplay_collision_box == false then
 				Debug.text("\tNot colliding with ladder")
 			end
 
@@ -243,78 +259,95 @@ function PlayerCharacterStateFalling.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, 
 				Debug.text("\tToo far from ladder. Is %s, needs %s", var_4_19, 0.8)
 			end
 
-			if arg_4_0.shaking_ladder_unit and var_4_15 == arg_4_0.shaking_ladder_unit then
+			if not (not self.shaking_ladder_unit and var_4_15 ~= self.shaking_ladder_unit) then
 				Debug.text("\tAttempting to latch onto shaking ladder")
 			end
 		end
 	end
 
-	if CharacterStateHelper.is_ledge_hanging(var_4_0, var_4_7, arg_4_0.temp_params) and not CharacterStateHelper.handle_bot_ledge_hanging_failsafe(var_4_7, arg_4_0.is_bot) then
-		var_4_6:change_state("ledge_hanging", arg_4_0.temp_params)
+	if not (not CharacterStateHelper.is_ledge_hanging(world, unit, self.temp_params) and CharacterStateHelper.handle_bot_ledge_hanging_failsafe(unit, self.is_bot)) then
+		csm:change_state("ledge_hanging", self.temp_params)
 
 		return
 	end
 
-	if script_data.use_super_jumps and (var_4_8:get("jump") or var_4_8:get("jump_only")) then
-		arg_4_0.times_jumped_in_air = math.min(#var_0_0, arg_4_0.times_jumped_in_air + 1)
+	if not script_data.use_super_jumps and input_extension:get("jump") and not input_extension:get("jump_only") then
+		self.times_jumped_in_air = math.min(#tbl, self.times_jumped_in_air + 1)
 
-		local var_4_26 = string.format("%sjump!", var_0_0[arg_4_0.times_jumped_in_air])
+		local format = string.format("%sjump!", tbl[self.times_jumped_in_air])
 
-		Debug.sticky_text(var_4_26)
+		Debug.sticky_text(format)
 
-		local var_4_27 = var_4_10.jump.initial_vertical_speed
-		local var_4_28 = arg_4_0.locomotion_extension:current_velocity()
-		local var_4_29 = Vector3(var_4_28.x, var_4_28.y, var_4_28.z < -3 and var_4_27 * 0.5 or var_4_27 * 1.5)
+		local initial_vertical_speed = get_movement_settings_table.jump.initial_vertical_speed
+		local current_velocity_2 = self.locomotion_extension:current_velocity()
+		local Vector3 = Vector3
+		local x = current_velocity_2.x
+		local y = current_velocity_2.y
+		local num_3
 
-		arg_4_0.locomotion_extension:set_forced_velocity(var_4_29)
-		arg_4_0.locomotion_extension:set_wanted_velocity(var_4_29)
+		if current_velocity_2.z < -3 then
+			num_3 = initial_vertical_speed * 0.5
+
+			if not num_3 then
+				-- Nothing
+			end
+		end
+
+		num_3 = initial_vertical_speed * 1.5
+
+		::label_4_0::
+
+		local var_4_33 = Vector3(x, y, num_3)
+
+		self.locomotion_extension:set_forced_velocity(var_4_33)
+		self.locomotion_extension:set_wanted_velocity(var_4_33)
 	end
 
-	local var_4_30 = arg_4_0.inventory_extension
-	local var_4_31 = var_4_10.move_speed * var_4_9:current_move_speed_multiplier() * var_4_10.player_speed_scale * var_4_10.player_air_speed_scale
+	local inventory_extension = self.inventory_extension
+	local num_4 = get_movement_settings_table.move_speed * status_extension:current_move_speed_multiplier() * get_movement_settings_table.player_speed_scale * get_movement_settings_table.player_air_speed_scale
 
-	CharacterStateHelper.move_in_air(arg_4_0.first_person_extension, var_4_8, arg_4_0.locomotion_extension, var_4_31, var_4_7)
-	CharacterStateHelper.look(var_4_8, arg_4_0.player.viewport_name, arg_4_0.first_person_extension, var_4_9, arg_4_0.inventory_extension)
-	CharacterStateHelper.update_weapon_actions(arg_4_5, var_4_7, var_4_8, var_4_30, arg_4_0.health_extension)
+	CharacterStateHelper.move_in_air(self.first_person_extension, input_extension, self.locomotion_extension, num_4, unit)
+	CharacterStateHelper.look(input_extension, self.player.viewport_name, self.first_person_extension, status_extension, self.inventory_extension)
+	CharacterStateHelper.update_weapon_actions(arg_4_5, unit, input_extension, inventory_extension, self.health_extension)
 
-	local var_4_32 = arg_4_0.interactor_extension
+	local interactor_extension = self.interactor_extension
 
-	if CharacterStateHelper.is_starting_interaction(var_4_8, var_4_32) then
-		local var_4_33, var_4_34 = InteractionHelper.interaction_action_names(var_4_7)
+	if not CharacterStateHelper.is_starting_interaction(input_extension, interactor_extension) then
+		local interaction_action_names, var_4_38 = InteractionHelper.interaction_action_names(unit)
 
-		var_4_32:start_interaction(var_4_34)
+		interactor_extension:start_interaction(var_4_38)
 
-		if var_4_32:allow_movement_during_interaction() then
+		if not interactor_extension:allow_movement_during_interaction() then
 			return
 		end
 
-		local var_4_35 = var_4_32:interaction_config()
-		local var_4_36 = arg_4_0.temp_params
+		local interaction_config = interactor_extension:interaction_config()
+		local temp_params_2 = self.temp_params
 
-		var_4_36.swap_to_3p = var_4_35.swap_to_3p
-		var_4_36.show_weapons = var_4_35.show_weapons
-		var_4_36.activate_block = var_4_35.activate_block
-		var_4_36.allow_rotation_update = var_4_35.allow_rotation_update
+		temp_params_2.swap_to_3p = interaction_config.swap_to_3p
+		temp_params_2.show_weapons = interaction_config.show_weapons
+		temp_params_2.activate_block = interaction_config.activate_block
+		temp_params_2.allow_rotation_update = interaction_config.allow_rotation_update
 
-		var_4_6:change_state("interacting", var_4_36)
+		csm:change_state("interacting", temp_params_2)
 
 		return
 	end
 
-	if CharacterStateHelper.is_interacting(var_4_32) then
-		if var_4_32:allow_movement_during_interaction() then
+	if not CharacterStateHelper.is_interacting(interactor_extension) then
+		if not interactor_extension:allow_movement_during_interaction() then
 			return
 		end
 
-		local var_4_37 = var_4_32:interaction_config()
-		local var_4_38 = arg_4_0.temp_params
+		local interaction_config_2 = interactor_extension:interaction_config()
+		local temp_params_3 = self.temp_params
 
-		var_4_38.swap_to_3p = var_4_37.swap_to_3p
-		var_4_38.show_weapons = var_4_37.show_weapons
-		var_4_38.activate_block = var_4_37.activate_block
-		var_4_38.allow_rotation_update = var_4_37.allow_rotation_update
+		temp_params_3.swap_to_3p = interaction_config_2.swap_to_3p
+		temp_params_3.show_weapons = interaction_config_2.show_weapons
+		temp_params_3.activate_block = interaction_config_2.activate_block
+		temp_params_3.allow_rotation_update = interaction_config_2.allow_rotation_update
 
-		var_4_6:change_state("interacting", var_4_38)
+		csm:change_state("interacting", temp_params_3)
 
 		return
 	end

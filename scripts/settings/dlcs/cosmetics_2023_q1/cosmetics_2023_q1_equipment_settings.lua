@@ -1,14 +1,14 @@
 -- chunkname: @scripts/settings/dlcs/cosmetics_2023_q1/cosmetics_2023_q1_equipment_settings.lua
 
-local var_0_0 = DLCSettings.cosmetics_2023_q1
+local cosmetics_2023_q1 = DLCSettings.cosmetics_2023_q1
 
-var_0_0.cosmetics_files = {
+cosmetics_2023_q1.cosmetics_files = {
 	"scripts/settings/dlcs/cosmetics_2023_q1/cosmetics_cosmetics_2023_q1"
 }
-var_0_0.item_master_list_file_names = {
+cosmetics_2023_q1.item_master_list_file_names = {
 	"scripts/settings/equipment/item_master_list_cosmetics_2023_q1"
 }
-var_0_0.inventory_package_list = {
+cosmetics_2023_q1.inventory_package_list = {
 	"units/beings/player/bright_wizard_adept/headpiece/bw_a_hat_15",
 	"units/beings/player/dwarf_ranger_engineer/headpiece/dr_e_hat_04",
 	"units/beings/player/empire_soldier_breton/headpiece/es_gk_hat_04",

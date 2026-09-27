@@ -1,180 +1,222 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/hero_window_gotwf_panel.lua
 
 local var_0_0 = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_gotwf_panel_definitions")
-local var_0_1 = var_0_0.widgets
-local var_0_2 = var_0_0.scenegraph_definition
-local var_0_3 = var_0_0.animation_definitions
+local widgets = var_0_0.widgets
+local scenegraph_definition = var_0_0.scenegraph_definition
+local animation_definitions = var_0_0.animation_definitions
 
 HeroWindowGotwfPanel = class(HeroWindowGotwfPanel)
 HeroWindowGotwfPanel.NAME = "HeroWindowGotwfPanel"
 
-function HeroWindowGotwfPanel.on_enter(arg_1_0, arg_1_1, arg_1_2)
+HeroWindowGotwfPanel.on_enter = function (self, arg_1_1, arg_1_2)
+	-- function 1
 	print("[HeroViewWindow] Enter Substate HeroWindowGotwfPanel")
 
-	local var_1_0 = arg_1_1.ingame_ui_context
+	local ingame_ui_context = arg_1_1.ingame_ui_context
 
-	arg_1_0._parent = arg_1_1.parent
-	arg_1_0._ui_renderer = var_1_0.ui_top_renderer
-	arg_1_0._render_settings = {
+	self._parent = arg_1_1.parent
+	self._ui_renderer = ingame_ui_context.ui_top_renderer
+	self._render_settings = {
 		snap_pixel_positions = true
 	}
-	arg_1_0._animations = {}
-	arg_1_0._ui_animations = {}
+	self._animations = {}
+	self._ui_animations = {}
 
-	arg_1_0:_create_ui_elements(arg_1_1, arg_1_2)
+	self:_create_ui_elements(arg_1_1, arg_1_2)
 end
 
-function HeroWindowGotwfPanel._create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
-	arg_2_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
+HeroWindowGotwfPanel._create_ui_elements = function (self, arg_2_1, arg_2_2)
+	-- function 2
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	local var_2_0 = {}
-	local var_2_1 = {}
+	local tbl = {}
+	local tbl_2 = {}
 
-	for iter_2_0, iter_2_1 in pairs(var_0_1) do
-		local var_2_2 = UIWidget.init(iter_2_1)
+	for k, v in pairs(widgets) do
+		local var_2_2 = UIWidget.init(v)
 
-		var_2_0[#var_2_0 + 1] = var_2_2
-		var_2_1[iter_2_0] = var_2_2
+		tbl[#tbl + 1] = var_2_2
+		tbl_2[k] = var_2_2
 	end
 
-	arg_2_0._widgets = var_2_0
-	arg_2_0._widgets_by_name = var_2_1
+	self._widgets = tbl
+	self._widgets_by_name = tbl_2
 
-	UIRenderer.clear_scenegraph_queue(arg_2_0._ui_renderer)
+	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
 
-	arg_2_0._ui_animator = UIAnimator:new(arg_2_0._ui_scenegraph, var_0_3)
+	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
 end
 
-function HeroWindowGotwfPanel.on_exit(arg_3_0, arg_3_1)
+HeroWindowGotwfPanel.on_exit = function (self, arg_3_1)
+	-- function 3
 	print("[HeroViewWindow] Exit Substate HeroWindowGotwfPanel")
 
-	arg_3_0._ui_animator = nil
+	self._ui_animator = nil
 end
 
-function HeroWindowGotwfPanel.update(arg_4_0, arg_4_1, arg_4_2)
-	arg_4_0:_handle_gamepad_activity()
-	arg_4_0:_update_animations(arg_4_1)
-	arg_4_0:_draw(arg_4_1)
+HeroWindowGotwfPanel.update = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	self:_handle_gamepad_activity()
+	self:_update_animations(arg_4_1)
+	self:_draw(arg_4_1)
 end
 
-function HeroWindowGotwfPanel.post_update(arg_5_0, arg_5_1, arg_5_2)
-	arg_5_0:_handle_input(arg_5_1, arg_5_2)
+HeroWindowGotwfPanel.post_update = function (self, arg_5_1, arg_5_2)
+	-- function 5
+	self:_handle_input(arg_5_1, arg_5_2)
 end
 
-function HeroWindowGotwfPanel._update_animations(arg_6_0, arg_6_1)
-	local var_6_0 = arg_6_0._ui_animations
-	local var_6_1 = arg_6_0._animations
-	local var_6_2 = arg_6_0._ui_animator
+HeroWindowGotwfPanel._update_animations = function (self, arg_6_1)
+	-- function 6
+	local _ui_animations = self._ui_animations
+	local _animations = self._animations
+	local _ui_animator = self._ui_animator
 
-	for iter_6_0, iter_6_1 in pairs(arg_6_0._ui_animations) do
-		UIAnimation.update(iter_6_1, arg_6_1)
+	for k, v in pairs(self._ui_animations) do
+		UIAnimation.update(v, arg_6_1)
 
-		if UIAnimation.completed(iter_6_1) then
-			arg_6_0._ui_animations[iter_6_0] = nil
+		if not UIAnimation.completed(v) then
+			self._ui_animations[k] = nil
 		end
 	end
 
-	var_6_2:update(arg_6_1)
+	_ui_animator:update(arg_6_1)
 
-	for iter_6_2, iter_6_3 in pairs(var_6_1) do
-		if var_6_2:is_animation_completed(iter_6_3) then
-			var_6_2:stop_animation(iter_6_3)
+	for k_2, v_2 in pairs(_animations) do
+		if not _ui_animator:is_animation_completed(v_2) then
+			_ui_animator:stop_animation(v_2)
 
-			var_6_1[iter_6_2] = nil
+			_animations[k_2] = nil
 		end
 	end
 
-	arg_6_0:_animate_button(arg_6_0._widgets_by_name.close_button, arg_6_1)
+	self:_animate_button(self._widgets_by_name.close_button, arg_6_1)
 end
 
-function HeroWindowGotwfPanel._handle_input(arg_7_0, arg_7_1, arg_7_2)
-	local var_7_0 = arg_7_0._parent
-	local var_7_1 = arg_7_0._widgets_by_name
-	local var_7_2 = arg_7_0._parent:window_input_service()
-	local var_7_3 = var_7_1.close_button
+HeroWindowGotwfPanel._handle_input = function (self, arg_7_1, arg_7_2)
+	-- function 7
+	local _parent = self._parent
+	local _widgets_by_name = self._widgets_by_name
+	local window_input_service = self._parent:window_input_service()
+	local close_button = _widgets_by_name.close_button
 
-	if UIUtils.is_button_pressed(var_7_3) then
-		var_7_0:set_layout_by_name("featured")
+	if not UIUtils.is_button_pressed(close_button) then
+		_parent:set_layout_by_name("featured")
 	end
 end
 
-function HeroWindowGotwfPanel._draw(arg_8_0, arg_8_1)
-	local var_8_0 = arg_8_0._ui_renderer
-	local var_8_1 = arg_8_0._ui_scenegraph
-	local var_8_2 = arg_8_0._parent:window_input_service()
+HeroWindowGotwfPanel._draw = function (self, arg_8_1)
+	-- function 8
+	local _ui_renderer = self._ui_renderer
+	local _ui_scenegraph = self._ui_scenegraph
+	local window_input_service = self._parent:window_input_service()
 
-	UIRenderer.begin_pass(var_8_0, var_8_1, var_8_2, arg_8_1, nil, arg_8_0._render_settings)
+	UIRenderer.begin_pass(_ui_renderer, _ui_scenegraph, window_input_service, arg_8_1, nil, self._render_settings)
 
-	for iter_8_0, iter_8_1 in ipairs(arg_8_0._widgets) do
-		UIRenderer.draw_widget(var_8_0, iter_8_1)
+	for i, v in ipairs(self._widgets) do
+		UIRenderer.draw_widget(_ui_renderer, v)
 	end
 
-	UIRenderer.end_pass(var_8_0)
+	UIRenderer.end_pass(_ui_renderer)
 end
 
-function HeroWindowGotwfPanel._handle_gamepad_activity(arg_9_0)
-	local var_9_0 = Managers.input:is_device_active("gamepad")
-	local var_9_1 = arg_9_0._gamepad_active_last_frame == nil
+HeroWindowGotwfPanel._handle_gamepad_activity = function (self)
+	-- function 9
+	local is_device_active = Managers.input:is_device_active("gamepad")
+	local flag = self._gamepad_active_last_frame == nil
 
-	if var_9_0 then
-		if not arg_9_0._gamepad_active_last_frame or var_9_1 then
-			arg_9_0._gamepad_active_last_frame = true
-			arg_9_0._widgets_by_name.close_button.content.visible = false
+	if not is_device_active then
+		if not self._gamepad_active_last_frame and not flag then
+			self._gamepad_active_last_frame = true
+			self._widgets_by_name.close_button.content.visible = false
 		end
-	elseif arg_9_0._gamepad_active_last_frame or var_9_1 then
-		arg_9_0._gamepad_active_last_frame = false
-		arg_9_0._widgets_by_name.close_button.content.visible = true
+	elseif self._gamepad_active_last_frame or not flag then
+		self._gamepad_active_last_frame = false
+		self._widgets_by_name.close_button.content.visible = true
 	end
 end
 
-function HeroWindowGotwfPanel._animate_button(arg_10_0, arg_10_1, arg_10_2)
-	local var_10_0 = arg_10_1.content
-	local var_10_1 = arg_10_1.style
-	local var_10_2 = var_10_0.button_hotspot
-	local var_10_3 = var_10_2.is_hover
-	local var_10_4 = var_10_2.is_selected
-	local var_10_5 = not var_10_4 and var_10_2.is_clicked and var_10_2.is_clicked == 0
-	local var_10_6 = var_10_2.input_progress or 0
-	local var_10_7 = var_10_2.hover_progress or 0
-	local var_10_8 = var_10_2.selection_progress or 0
-	local var_10_9 = 8
-	local var_10_10 = 20
+HeroWindowGotwfPanel._animate_button = function (arg_10_0, arg_10_1, arg_10_2)
+	-- function 10
+	local content = arg_10_1.content
+	local style = arg_10_1.style
+	local button_hotspot = content.button_hotspot
+	local is_hover = button_hotspot.is_hover
+	local is_selected = button_hotspot.is_selected
+	local is_clicked
 
-	if var_10_5 then
-		var_10_6 = math.min(var_10_6 + arg_10_2 * var_10_10, 1)
-	else
-		var_10_6 = math.max(var_10_6 - arg_10_2 * var_10_10, 0)
+	if not is_selected then
+		is_clicked = button_hotspot.is_clicked
+
+		if not is_clicked then
+			-- Nothing
+		end
+
+		if button_hotspot.is_clicked ~= 0 then
+			-- Nothing
+		end
 	end
 
-	local var_10_11 = math.easeOutCubic(var_10_6)
-	local var_10_12 = math.easeInCubic(var_10_6)
+	is_clicked = false
 
-	if var_10_3 then
-		var_10_7 = math.min(var_10_7 + arg_10_2 * var_10_9, 1)
+	goto label_10_1
+
+	::label_10_0::
+
+	is_clicked = true
+
+	::label_10_1::
+
+	local input_progress = button_hotspot.input_progress
+
+	input_progress = input_progress or 0
+
+	local hover_progress = button_hotspot.hover_progress
+
+	hover_progress = hover_progress or 0
+
+	local selection_progress = button_hotspot.selection_progress
+
+	selection_progress = selection_progress or 0
+
+	local num = 8
+	local num_2 = 20
+
+	if not is_clicked then
+		input_progress = math.min(input_progress + arg_10_2 * num_2, 1)
 	else
-		var_10_7 = math.max(var_10_7 - arg_10_2 * var_10_9, 0)
+		input_progress = math.max(input_progress - arg_10_2 * num_2, 0)
 	end
 
-	local var_10_13 = math.easeOutCubic(var_10_7)
-	local var_10_14 = math.easeInCubic(var_10_7)
+	local easeOutCubic = math.easeOutCubic(input_progress)
+	local easeInCubic = math.easeInCubic(input_progress)
 
-	if var_10_4 then
-		var_10_8 = math.min(var_10_8 + arg_10_2 * var_10_9, 1)
+	if not is_hover then
+		hover_progress = math.min(hover_progress + arg_10_2 * num, 1)
 	else
-		var_10_8 = math.max(var_10_8 - arg_10_2 * var_10_9, 0)
+		hover_progress = math.max(hover_progress - arg_10_2 * num, 0)
 	end
 
-	local var_10_15 = math.easeOutCubic(var_10_8)
-	local var_10_16 = math.easeInCubic(var_10_8)
-	local var_10_17 = math.max(var_10_7, var_10_8)
-	local var_10_18 = math.max(var_10_15, var_10_13)
-	local var_10_19 = math.max(var_10_14, var_10_16)
-	local var_10_20 = 255 * var_10_17
+	local easeOutCubic_2 = math.easeOutCubic(hover_progress)
+	local easeInCubic_2 = math.easeInCubic(hover_progress)
 
-	var_10_1.texture_id.color[1] = 255 - var_10_20
-	var_10_1.texture_hover_id.color[1] = var_10_20
-	var_10_1.selected_texture.color[1] = var_10_20
-	var_10_2.hover_progress = var_10_7
-	var_10_2.input_progress = var_10_6
-	var_10_2.selection_progress = var_10_8
+	if not is_selected then
+		selection_progress = math.min(selection_progress + arg_10_2 * num, 1)
+	else
+		selection_progress = math.max(selection_progress - arg_10_2 * num, 0)
+	end
+
+	local easeOutCubic_3 = math.easeOutCubic(selection_progress)
+	local easeInCubic_3 = math.easeInCubic(selection_progress)
+	local max = math.max(hover_progress, selection_progress)
+	local max_2 = math.max(easeOutCubic_3, easeOutCubic_2)
+	local max_3 = math.max(easeInCubic_2, easeInCubic_3)
+	local num_3 = 255 * max
+
+	style.texture_id.color[1] = 255 - num_3
+	style.texture_hover_id.color[1] = num_3
+	style.selected_texture.color[1] = num_3
+	button_hotspot.hover_progress = hover_progress
+	button_hotspot.input_progress = input_progress
+	button_hotspot.selection_progress = selection_progress
 end

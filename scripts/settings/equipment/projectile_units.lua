@@ -1,6 +1,9 @@
 -- chunkname: @scripts/settings/equipment/projectile_units.lua
 
+local ProjectileUnits = ProjectileUnits
+
 ProjectileUnits = ProjectileUnits or {}
+ProjectileUnits = ProjectileUnits
 ProjectileUnits.we_arrow = {
 	dummy_linker_unit_name = "units/weapons/player/wpn_we_quiver_t1/wpn_we_arrow_t1_3p",
 	projectile_unit_name = "units/weapons/player/wpn_we_quiver_t1/wpn_we_arrow_t1_3ps",
@@ -56,8 +59,11 @@ ProjectileUnits.necromancer_trapped_soul = {
 
 DLCUtils.merge("projectile_units", ProjectileUnits)
 
-ProjectileUnitsFromUnitName = ProjectileUnitsFromUnitName or {}
+local ProjectileUnitsFromUnitName = ProjectileUnitsFromUnitName
 
-for iter_0_0, iter_0_1 in pairs(ProjectileUnits) do
-	ProjectileUnitsFromUnitName[iter_0_1.projectile_unit_name] = iter_0_0
+ProjectileUnitsFromUnitName = ProjectileUnitsFromUnitName or {}
+ProjectileUnitsFromUnitName = ProjectileUnitsFromUnitName
+
+for k, v in pairs(ProjectileUnits) do
+	ProjectileUnitsFromUnitName[v.projectile_unit_name] = k
 end

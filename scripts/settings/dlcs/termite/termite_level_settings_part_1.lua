@@ -1,10 +1,10 @@
 -- chunkname: @scripts/settings/dlcs/termite/termite_level_settings_part_1.lua
 
-local var_0_0 = DLCSettings.termite_part_1
+local termite_part_1 = DLCSettings.termite_part_1
 
-var_0_0.level_settings = "levels/honduras_dlcs/termite/level_settings_termite_part_1"
-var_0_0.level_unlock_settings = "levels/honduras_dlcs/termite/level_unlock_settings_termite"
-var_0_0.missions = {
+termite_part_1.level_settings = "levels/honduras_dlcs/termite/level_settings_termite_part_1"
+termite_part_1.level_unlock_settings = "levels/honduras_dlcs/termite/level_unlock_settings_termite"
+termite_part_1.missions = {
 	termite_lvl1_follow_stream = {
 		mission_template_name = "goal",
 		text = "termite_lvl1_follow_stream"

@@ -1,5 +1,7 @@
 -- chunkname: @scripts/settings/dlcs/morris/deus_shop_settings.lua
 
+local DeusShopSettings = DeusShopSettings
+
 DeusShopSettings = DeusShopSettings or {
 	heal_amount = 0.1,
 	heal_cost = 10,
@@ -38,3 +40,4 @@ DeusShopSettings = DeusShopSettings or {
 		}
 	}
 }
+DeusShopSettings = DeusShopSettings

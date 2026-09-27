@@ -3,142 +3,150 @@
 require("scripts/ui/views/menu_world_previewer")
 
 local var_0_0 = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_weave_forge_background_definitions")
-local var_0_1 = var_0_0.widgets
-local var_0_2 = var_0_0.scenegraph_definition
-local var_0_3 = var_0_0.animation_definitions
-local var_0_4 = false
+local widgets = var_0_0.widgets
+local scenegraph_definition = var_0_0.scenegraph_definition
+local animation_definitions = var_0_0.animation_definitions
+local flag = false
 
 HeroWindowWeaveForgeBackground = class(HeroWindowWeaveForgeBackground)
 HeroWindowWeaveForgeBackground.NAME = "HeroWindowWeaveForgeBackground"
 
-function HeroWindowWeaveForgeBackground.on_enter(arg_1_0, arg_1_1, arg_1_2)
+HeroWindowWeaveForgeBackground.on_enter = function (self, arg_1_1, arg_1_2)
+	-- function 1
 	print("[HeroViewWindow] Enter Substate HeroWindowWeaveForgeBackground")
 
-	arg_1_0._params = arg_1_1
-	arg_1_0._parent = arg_1_1.parent
+	self._params = arg_1_1
+	self._parent = arg_1_1.parent
 
-	local var_1_0 = arg_1_1.ingame_ui_context
+	local ingame_ui_context = arg_1_1.ingame_ui_context
 
-	arg_1_0._ui_renderer = var_1_0.ui_renderer
-	arg_1_0._ui_top_renderer = var_1_0.ui_top_renderer
-	arg_1_0._render_settings = {
+	self._ui_renderer = ingame_ui_context.ui_renderer
+	self._ui_top_renderer = ingame_ui_context.ui_top_renderer
+	self._render_settings = {
 		snap_pixel_positions = true
 	}
-	arg_1_0._ingame_ui_context = var_1_0
-	arg_1_0._animations = {}
-	arg_1_0._ui_animations = {}
+	self._ingame_ui_context = ingame_ui_context
+	self._animations = {}
+	self._ui_animations = {}
 
-	arg_1_0:create_ui_elements(arg_1_1, arg_1_2)
+	self:create_ui_elements(arg_1_1, arg_1_2)
 
-	local var_1_1 = arg_1_1.hero_name
-	local var_1_2 = arg_1_1.career_index
-	local var_1_3 = arg_1_1.profile_index
+	local hero_name = arg_1_1.hero_name
+	local career_index = arg_1_1.career_index
+	local profile_index = arg_1_1.profile_index
 
-	arg_1_0._career_name = SPProfiles[var_1_3].careers[var_1_2].name
-	arg_1_0._hero_name = var_1_1
+	self._career_name = SPProfiles[profile_index].careers[career_index].name
+	self._hero_name = hero_name
 end
 
-function HeroWindowWeaveForgeBackground._setup_definitions(arg_2_0)
-	if arg_2_0._parent:gamepad_style_active() then
+HeroWindowWeaveForgeBackground._setup_definitions = function (self)
+	-- function 2
+	if not self._parent:gamepad_style_active() then
 		var_0_0 = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_weave_forge_background_console_definitions")
 	else
 		var_0_0 = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_weave_forge_background_definitions")
 	end
 
-	var_0_1 = var_0_0.widgets
-	var_0_2 = var_0_0.scenegraph_definition
-	var_0_3 = var_0_0.animation_definitions
+	widgets = var_0_0.widgets
+	scenegraph_definition = var_0_0.scenegraph_definition
+	animation_definitions = var_0_0.animation_definitions
 end
 
-function HeroWindowWeaveForgeBackground.create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
-	arg_3_0:_setup_definitions()
+HeroWindowWeaveForgeBackground.create_ui_elements = function (self, arg_3_1, arg_3_2)
+	-- function 3
+	self:_setup_definitions()
 
-	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	local var_3_0 = {}
-	local var_3_1 = {}
+	local tbl = {}
+	local tbl_2 = {}
 
-	for iter_3_0, iter_3_1 in pairs(var_0_1) do
-		local var_3_2 = UIWidget.init(iter_3_1)
+	for k, v in pairs(widgets) do
+		local var_3_2 = UIWidget.init(v)
 
-		var_3_0[#var_3_0 + 1] = var_3_2
-		var_3_1[iter_3_0] = var_3_2
+		tbl[#tbl + 1] = var_3_2
+		tbl_2[k] = var_3_2
 	end
 
-	arg_3_0._widgets = var_3_0
-	arg_3_0._widgets_by_name = var_3_1
-	arg_3_0._ui_animator = UIAnimator:new(arg_3_0._ui_scenegraph, var_0_3)
+	self._widgets = tbl
+	self._widgets_by_name = tbl_2
+	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
 
-	if arg_3_2 then
-		local var_3_3 = arg_3_0._ui_scenegraph.window.local_position
+	if not arg_3_2 then
+		local local_position = self._ui_scenegraph.window.local_position
 
-		var_3_3[1] = var_3_3[1] + arg_3_2[1]
-		var_3_3[2] = var_3_3[2] + arg_3_2[2]
-		var_3_3[3] = var_3_3[3] + arg_3_2[3]
+		local_position[1] = local_position[1] + arg_3_2[1]
+		local_position[2] = local_position[2] + arg_3_2[2]
+		local_position[3] = local_position[3] + arg_3_2[3]
 	end
 
-	UIRenderer.clear_scenegraph_queue(arg_3_0._ui_renderer)
+	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
 end
 
-function HeroWindowWeaveForgeBackground.on_exit(arg_4_0, arg_4_1)
+HeroWindowWeaveForgeBackground.on_exit = function (self, arg_4_1)
+	-- function 4
 	print("[HeroViewWindow] Exit Substate HeroWindowWeaveForgeBackground")
 
-	arg_4_0._ui_animator = nil
+	self._ui_animator = nil
 end
 
-function HeroWindowWeaveForgeBackground.update(arg_5_0, arg_5_1, arg_5_2)
-	if var_0_4 then
-		var_0_4 = false
+HeroWindowWeaveForgeBackground.update = function (self, arg_5_1, arg_5_2)
+	-- function 5
+	if not flag then
+		flag = false
 
-		arg_5_0:create_ui_elements()
+		self:create_ui_elements()
 	end
 
-	arg_5_0:_update_animations(arg_5_1)
-	arg_5_0:_draw(arg_5_1)
+	self:_update_animations(arg_5_1)
+	self:_draw(arg_5_1)
 end
 
-function HeroWindowWeaveForgeBackground.post_update(arg_6_0, arg_6_1, arg_6_2)
+HeroWindowWeaveForgeBackground.post_update = function (arg_6_0, arg_6_1, arg_6_2)
+	-- function 6
 	return
 end
 
-function HeroWindowWeaveForgeBackground._update_animations(arg_7_0, arg_7_1)
-	local var_7_0 = arg_7_0._ui_animations
-	local var_7_1 = arg_7_0._animations
-	local var_7_2 = arg_7_0._ui_animator
+HeroWindowWeaveForgeBackground._update_animations = function (self, arg_7_1)
+	-- function 7
+	local _ui_animations = self._ui_animations
+	local _animations = self._animations
+	local _ui_animator = self._ui_animator
 
-	for iter_7_0, iter_7_1 in pairs(arg_7_0._ui_animations) do
-		UIAnimation.update(iter_7_1, arg_7_1)
+	for k, v in pairs(self._ui_animations) do
+		UIAnimation.update(v, arg_7_1)
 
-		if UIAnimation.completed(iter_7_1) then
-			arg_7_0._ui_animations[iter_7_0] = nil
+		if not UIAnimation.completed(v) then
+			self._ui_animations[k] = nil
 		end
 	end
 
-	var_7_2:update(arg_7_1)
+	_ui_animator:update(arg_7_1)
 
-	for iter_7_2, iter_7_3 in pairs(var_7_1) do
-		if var_7_2:is_animation_completed(iter_7_3) then
-			var_7_2:stop_animation(iter_7_3)
+	for k_2, v_2 in pairs(_animations) do
+		if not _ui_animator:is_animation_completed(v_2) then
+			_ui_animator:stop_animation(v_2)
 
-			var_7_1[iter_7_2] = nil
+			_animations[k_2] = nil
 		end
 	end
 end
 
-function HeroWindowWeaveForgeBackground._draw(arg_8_0, arg_8_1)
-	local var_8_0 = arg_8_0._parent:get_ui_renderer()
-	local var_8_1 = arg_8_0._ui_scenegraph
-	local var_8_2 = arg_8_0._parent:window_input_service()
-	local var_8_3 = arg_8_0._render_settings
+HeroWindowWeaveForgeBackground._draw = function (self, arg_8_1)
+	-- function 8
+	local get_ui_renderer = self._parent:get_ui_renderer()
+	local _ui_scenegraph = self._ui_scenegraph
+	local window_input_service = self._parent:window_input_service()
+	local _render_settings = self._render_settings
 
-	UIRenderer.begin_pass(var_8_0, var_8_1, var_8_2, arg_8_1, nil, var_8_3)
+	UIRenderer.begin_pass(get_ui_renderer, _ui_scenegraph, window_input_service, arg_8_1, nil, _render_settings)
 
-	local var_8_4 = var_8_3.snap_pixel_positions
-	local var_8_5 = var_8_3.alpha_multiplier
+	local snap_pixel_positions = _render_settings.snap_pixel_positions
+	local alpha_multiplier = _render_settings.alpha_multiplier
 
-	for iter_8_0, iter_8_1 in ipairs(arg_8_0._widgets) do
-		UIRenderer.draw_widget(var_8_0, iter_8_1)
+	for i, v in ipairs(self._widgets) do
+		UIRenderer.draw_widget(get_ui_renderer, v)
 	end
 
-	UIRenderer.end_pass(var_8_0)
+	UIRenderer.end_pass(get_ui_renderer)
 end

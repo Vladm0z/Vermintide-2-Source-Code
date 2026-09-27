@@ -4,434 +4,522 @@ require("scripts/unit_extensions/default_player_unit/third_person_idle_fullbody_
 
 PlayerHuskLocomotionExtension = class(PlayerHuskLocomotionExtension)
 
-local var_0_0 = POSITION_LOOKUP
+local POSITION_LOOKUP = POSITION_LOOKUP
 
-function PlayerHuskLocomotionExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	arg_1_0.world = arg_1_1.world
-	arg_1_0.unit = arg_1_2
-	arg_1_0.game = arg_1_3.game
-	arg_1_0.id = arg_1_3.id
-	arg_1_0.player = arg_1_3.player
-	arg_1_0.is_server = Managers.player.is_server
-	arg_1_0.velocity_current = Vector3Box(0, 0, 0)
-	arg_1_0._current_rotation = QuaternionBox(Quaternion.identity())
-	arg_1_0.has_moved_from_start_position = arg_1_3.has_moved_from_start_position
-	arg_1_0.anim_move_speed = 0
-	arg_1_0.move_speed_anim_var = Unit.animation_find_variable(arg_1_2, "move_speed")
+PlayerHuskLocomotionExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	self.world = arg_1_1.world
+	self.unit = arg_1_2
+	self.game = arg_1_3.game
+	self.id = arg_1_3.id
+	self.player = arg_1_3.player
+	self.is_server = Managers.player.is_server
+	self.velocity_current = Vector3Box(0, 0, 0)
+	self._current_rotation = QuaternionBox(Quaternion.identity())
+	self.has_moved_from_start_position = arg_1_3.has_moved_from_start_position
+	self.anim_move_speed = 0
+	self.move_speed_anim_var = Unit.animation_find_variable(arg_1_2, "move_speed")
 
-	Managers.player:assign_unit_ownership(arg_1_2, arg_1_0.player, true)
+	Managers.player:assign_unit_ownership(arg_1_2, self.player, true)
 
-	local var_1_0 = LevelHelper:current_level_settings().on_spawn_flow_event
+	local on_spawn_flow_event = LevelHelper:current_level_settings().on_spawn_flow_event
 
-	if var_1_0 then
-		Unit.flow_event(arg_1_2, var_1_0)
+	if not on_spawn_flow_event then
+		Unit.flow_event(arg_1_2, on_spawn_flow_event)
 	end
 
-	local var_1_1 = Unit.animation_find_variable(arg_1_2, "anim_run_speed")
-	local var_1_2 = Unit.animation_find_variable(arg_1_2, "anim_walk_speed")
+	local animation_find_variable = Unit.animation_find_variable(arg_1_2, "anim_run_speed")
+	local animation_find_variable_2 = Unit.animation_find_variable(arg_1_2, "anim_walk_speed")
 
-	arg_1_0.movement_scale_animation_id = Unit.animation_find_variable(arg_1_2, "movement_scale")
-	arg_1_0.run_speed_treshold = Unit.animation_get_variable(arg_1_2, var_1_1)
-	arg_1_0.walk_speed_treshold = Unit.animation_get_variable(arg_1_2, var_1_2)
+	self.movement_scale_animation_id = Unit.animation_find_variable(arg_1_2, "movement_scale")
+	self.run_speed_treshold = Unit.animation_get_variable(arg_1_2, animation_find_variable)
+	self.walk_speed_treshold = Unit.animation_get_variable(arg_1_2, animation_find_variable_2)
 
-	if arg_1_0.is_server then
-		local var_1_3 = GwNavCostMap.create_tag_cost_table()
+	if not self.is_server then
+		local create_tag_cost_table = GwNavCostMap.create_tag_cost_table()
 
-		AiUtils.initialize_nav_cost_map_cost_table(var_1_3, nil, 1)
+		AiUtils.initialize_nav_cost_map_cost_table(create_tag_cost_table, nil, 1)
 
-		arg_1_0._latest_position_on_navmesh = Vector3Box(Unit.world_position(arg_1_2, 0))
-		arg_1_0._nav_world = Managers.state.entity:system("ai_system"):nav_world()
-		arg_1_0._nav_traverse_logic = GwNavTraverseLogic.create(arg_1_0._nav_world, var_1_3)
-		arg_1_0._nav_cost_map_cost_table = var_1_3
+		self._latest_position_on_navmesh = Vector3Box(Unit.world_position(arg_1_2, 0))
+		self._nav_world = Managers.state.entity:system("ai_system"):nav_world()
+		self._nav_traverse_logic = GwNavTraverseLogic.create(self._nav_world, create_tag_cost_table)
+		self._nav_cost_map_cost_table = create_tag_cost_table
 	end
 
-	arg_1_0.third_person_idle_fullbody_animation_control = ThirdPersonIdleFullbodyAnimationControl:new(arg_1_2)
+	self.third_person_idle_fullbody_animation_control = ThirdPersonIdleFullbodyAnimationControl:new(arg_1_2)
 end
 
-function PlayerHuskLocomotionExtension.destroy(arg_2_0)
-	if arg_2_0.is_server then
-		GwNavCostMap.destroy_tag_cost_table(arg_2_0._nav_cost_map_cost_table)
-		GwNavTraverseLogic.destroy(arg_2_0._nav_traverse_logic)
+PlayerHuskLocomotionExtension.destroy = function (self)
+	-- function 2
+	if not self.is_server then
+		GwNavCostMap.destroy_tag_cost_table(self._nav_cost_map_cost_table)
+		GwNavTraverseLogic.destroy(self._nav_traverse_logic)
 	end
 end
 
-function PlayerHuskLocomotionExtension.current_velocity(arg_3_0)
-	return GameSession.game_object_field(arg_3_0.game, arg_3_0.id, "velocity")
+PlayerHuskLocomotionExtension.current_velocity = function (self)
+	-- function 3
+	return GameSession.game_object_field(self.game, self.id, "velocity")
 end
 
-function PlayerHuskLocomotionExtension.average_velocity(arg_4_0)
-	return GameSession.game_object_field(arg_4_0.game, arg_4_0.id, "average_velocity")
+PlayerHuskLocomotionExtension.average_velocity = function (self)
+	-- function 4
+	return GameSession.game_object_field(self.game, self.id, "average_velocity")
 end
 
-function PlayerHuskLocomotionExtension.small_sample_size_average_velocity(arg_5_0)
-	return GameSession.game_object_field(arg_5_0.game, arg_5_0.id, "small_sample_size_average_velocity")
+PlayerHuskLocomotionExtension.small_sample_size_average_velocity = function (self)
+	-- function 5
+	return GameSession.game_object_field(self.game, self.id, "small_sample_size_average_velocity")
 end
 
-function PlayerHuskLocomotionExtension.get_script_driven_gravity_scale(arg_6_0)
+PlayerHuskLocomotionExtension.get_script_driven_gravity_scale = function (arg_6_0)
+	-- function 6
 	return 1
 end
 
-function PlayerHuskLocomotionExtension.extensions_ready(arg_7_0, arg_7_1, arg_7_2)
-	arg_7_0.status_extension = ScriptUnit.extension(arg_7_0.unit, "status_system")
+PlayerHuskLocomotionExtension.extensions_ready = function (self, arg_7_1, arg_7_2)
+	-- function 7
+	self.status_extension = ScriptUnit.extension(self.unit, "status_system")
 
-	arg_7_0.third_person_idle_fullbody_animation_control:extensions_ready(arg_7_1, arg_7_2)
+	self.third_person_idle_fullbody_animation_control:extensions_ready(arg_7_1, arg_7_2)
 end
 
-function PlayerHuskLocomotionExtension.add_external_velocity(arg_8_0, arg_8_1, arg_8_2)
+PlayerHuskLocomotionExtension.add_external_velocity = function (self, arg_8_1, arg_8_2)
+	-- function 8
 	if not Managers.state.network:game() then
 		return
 	end
 
-	local var_8_0 = arg_8_2 and "rpc_add_external_velocity_with_upper_limit" or "rpc_add_external_velocity"
+	local flag
 
-	if arg_8_0.is_server then
-		Managers.state.network.network_transmit:send_rpc(var_8_0, arg_8_0.player:network_id(), arg_8_0.id, arg_8_1, arg_8_2)
+	flag = not arg_8_2 and "rpc_add_external_velocity_with_upper_limit" and "rpc_add_external_velocity"
+
+	if not self.is_server then
+		Managers.state.network.network_transmit:send_rpc(flag, self.player:network_id(), self.id, arg_8_1, arg_8_2)
 	else
-		Managers.state.network.network_transmit:send_rpc_server(var_8_0, arg_8_0.id, arg_8_1, arg_8_2)
+		Managers.state.network.network_transmit:send_rpc_server(flag, self.id, arg_8_1, arg_8_2)
 	end
 end
 
-function PlayerHuskLocomotionExtension.set_forced_velocity(arg_9_0, arg_9_1)
-	if not arg_9_0.disabled then
-		if arg_9_0.is_server or DEDICATED_SERVER then
-			Managers.state.network.network_transmit:send_rpc("rpc_set_forced_velocity", arg_9_0.player:network_id(), arg_9_0.id, arg_9_1)
+PlayerHuskLocomotionExtension.set_forced_velocity = function (self, arg_9_1)
+	-- function 9
+	if not self.disabled then
+		if self.is_server or not DEDICATED_SERVER then
+			Managers.state.network.network_transmit:send_rpc("rpc_set_forced_velocity", self.player:network_id(), self.id, arg_9_1)
 		else
-			Managers.state.network.network_transmit:send_rpc_server("rpc_set_forced_velocity", arg_9_0.id, arg_9_1)
+			Managers.state.network.network_transmit:send_rpc_server("rpc_set_forced_velocity", self.id, arg_9_1)
 		end
 	end
 end
 
-function PlayerHuskLocomotionExtension.set_disabled(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
-	arg_10_0._disabled = arg_10_1
-	arg_10_0._run_func = arg_10_2
-	arg_10_0.master_unit = arg_10_3
+PlayerHuskLocomotionExtension.set_disabled = function (self, arg_10_1, arg_10_2, arg_10_3)
+	-- function 10
+	self._disabled = arg_10_1
+	self._run_func = arg_10_2
+	self.master_unit = arg_10_3
 
 	if not arg_10_1 then
-		local var_10_0 = arg_10_0.unit
-		local var_10_1 = var_0_0[var_10_0] or Unit.local_position(var_10_0, 0)
+		local unit = self.unit
+		local var_10_1 = POSITION_LOOKUP[unit]
 
-		arg_10_0._pos_lerp_time = 0
+		var_10_1 = var_10_1 or Unit.local_position(unit, 0)
+		self._pos_lerp_time = 0
 
-		Unit.set_data(var_10_0, "last_lerp_position", var_10_1)
-		Unit.set_data(var_10_0, "last_lerp_position_offset", Vector3(0, 0, 0))
-		Unit.set_data(var_10_0, "accumulated_movement", Vector3(0, 0, 0))
+		Unit.set_data(unit, "last_lerp_position", var_10_1)
+		Unit.set_data(unit, "last_lerp_position_offset", Vector3(0, 0, 0))
+		Unit.set_data(unit, "accumulated_movement", Vector3(0, 0, 0))
 
-		local var_10_2 = Unit.mover(var_10_0)
+		local mover = Unit.mover(unit)
 
-		Mover.set_position(var_10_2, var_10_1)
-		Unit.set_local_position(var_10_0, 0, var_10_1)
+		Mover.set_position(mover, var_10_1)
+		Unit.set_local_position(unit, 0, var_10_1)
 	end
 end
 
-function PlayerHuskLocomotionExtension.post_update(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
-	if arg_11_0._disabled then
+PlayerHuskLocomotionExtension.post_update = function (self, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+	-- function 11
+	if not self._disabled then
 		return
 	end
 
-	local var_11_0 = Managers.state.network:game()
+	local game = Managers.state.network:game()
 
-	if var_11_0 and GameSession.game_object_exists(var_11_0, arg_11_0.id) then
-		if HEALTH_ALIVE[arg_11_1] then
-			local var_11_1 = "onground"
+	if not game and not GameSession.game_object_exists(game, self.id) then
+		if not HEALTH_ALIVE[arg_11_1] then
+			local str = "onground"
 
-			arg_11_0:update_movement(arg_11_3, arg_11_1, var_11_1)
+			self:update_movement(arg_11_3, arg_11_1, str)
 		end
 
-		arg_11_0:_update_last_position_on_navmesh()
+		self:_update_last_position_on_navmesh()
 	end
 end
 
-function PlayerHuskLocomotionExtension.update(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
-	if arg_12_0._disabled then
-		arg_12_0._run_func(arg_12_1, arg_12_3, arg_12_0)
+PlayerHuskLocomotionExtension.update = function (self, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
+	-- function 12
+	if not self._disabled then
+		self._run_func(arg_12_1, arg_12_3, self)
 
 		return
 	end
 
-	local var_12_0, var_12_1 = arg_12_0.status_extension:get_is_on_ladder()
+	local get_is_on_ladder, var_12_1 = self.status_extension:get_is_on_ladder()
 
-	if var_12_0 and var_12_1 then
-		arg_12_0:update_ladder_animation_position(var_12_1)
+	if not get_is_on_ladder and not var_12_1 then
+		self:update_ladder_animation_position(var_12_1)
 	end
 
-	arg_12_0.third_person_idle_fullbody_animation_control:update(arg_12_5)
+	self.third_person_idle_fullbody_animation_control:update(arg_12_5)
 end
 
-function PlayerHuskLocomotionExtension.last_position_on_navmesh(arg_13_0)
-	assert(arg_13_0.is_server, "last position on nav mesh is only saved on server")
+PlayerHuskLocomotionExtension.last_position_on_navmesh = function (self)
+	-- function 13
+	assert(self.is_server, "last position on nav mesh is only saved on server")
 
-	return arg_13_0._latest_position_on_navmesh:unbox()
+	return self._latest_position_on_navmesh:unbox()
 end
 
-function PlayerHuskLocomotionExtension._update_last_position_on_navmesh(arg_14_0)
-	if arg_14_0.is_server then
-		local var_14_0 = GameSession.game_object_field(arg_14_0.game, arg_14_0.id, "position")
-		local var_14_1, var_14_2 = GwNavQueries.triangle_from_position(arg_14_0._nav_world, var_14_0, 0.1, 0.3, arg_14_0._nav_traverse_logic)
+PlayerHuskLocomotionExtension._update_last_position_on_navmesh = function (self)
+	-- function 14
+	if not self.is_server then
+		local game_object_field = GameSession.game_object_field(self.game, self.id, "position")
+		local triangle_from_position, var_14_2 = GwNavQueries.triangle_from_position(self._nav_world, game_object_field, 0.1, 0.3, self._nav_traverse_logic)
 
-		if var_14_1 then
-			arg_14_0._latest_position_on_navmesh:store(Vector3(var_14_0.x, var_14_0.y, var_14_0.z))
+		if not triangle_from_position then
+			self._latest_position_on_navmesh:store(Vector3(game_object_field.x, game_object_field.y, game_object_field.z))
 		end
 	end
 end
 
-local var_0_1 = 0.01
-local var_0_2 = 0.1
-local var_0_3 = 0.01
-local var_0_4 = 1
+local num = 0.01
+local num_2 = 0.1
+local num_3 = 0.01
+local num_4 = 1
 
-function PlayerHuskLocomotionExtension.update_movement(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
-	local var_15_0 = Unit.local_position(arg_15_2, 0)
+PlayerHuskLocomotionExtension.update_movement = function (self, arg_15_1, arg_15_2, arg_15_3)
+	-- function 15
+	local local_position = Unit.local_position(arg_15_2, 0)
 	local var_15_1
-	local var_15_2 = GameSession.game_object_field(arg_15_0.game, arg_15_0.id, "linked_movement")
-	local var_15_3 = GameSession.game_object_field(arg_15_0.game, arg_15_0.id, "moving_platform")
+	local game_object_field = GameSession.game_object_field(self.game, self.id, "linked_movement")
+	local game_object_field_2 = GameSession.game_object_field(self.game, self.id, "moving_platform")
 
-	if var_15_2 then
-		local var_15_4 = GameSession.game_object_field(arg_15_0.game, arg_15_0.id, "link_parent_is_level_unit")
-		local var_15_5 = GameSession.game_object_field(arg_15_0.game, arg_15_0.id, "link_parent_id")
-		local var_15_6 = GameSession.game_object_field(arg_15_0.game, arg_15_0.id, "link_node")
-		local var_15_7 = GameSession.game_object_field(arg_15_0.game, arg_15_0.id, "link_offset")
-		local var_15_8 = Managers.state.network:game_object_or_level_unit(var_15_5, var_15_4)
+	if not game_object_field then
+		local game_object_field_3 = GameSession.game_object_field(self.game, self.id, "link_parent_is_level_unit")
+		local game_object_field_4 = GameSession.game_object_field(self.game, self.id, "link_parent_id")
+		local game_object_field_5 = GameSession.game_object_field(self.game, self.id, "link_node")
+		local game_object_field_6 = GameSession.game_object_field(self.game, self.id, "link_offset")
+		local game_object_or_level_unit = Managers.state.network:game_object_or_level_unit(game_object_field_4, game_object_field_3)
 
-		if Unit.alive(var_15_8) then
-			var_15_1 = Unit.world_position(var_15_8, var_15_6) + var_15_7
+		if not Unit.alive(game_object_or_level_unit) then
+			var_15_1 = Unit.world_position(game_object_or_level_unit, game_object_field_5) + game_object_field_6
 		else
-			var_15_1 = GameSession.game_object_field(arg_15_0.game, arg_15_0.id, "position")
+			var_15_1 = GameSession.game_object_field(self.game, self.id, "position")
 		end
 	else
-		var_15_1 = GameSession.game_object_field(arg_15_0.game, arg_15_0.id, "position")
+		var_15_1 = GameSession.game_object_field(self.game, self.id, "position")
 	end
 
-	local var_15_9 = GameSession.game_object_field(arg_15_0.game, arg_15_0.id, "yaw")
-	local var_15_10 = GameSession.game_object_field(arg_15_0.game, arg_15_0.id, "pitch")
-	local var_15_11 = Quaternion(Vector3.up(), var_15_9)
-	local var_15_12 = Quaternion(Vector3.right(), var_15_10)
-	local var_15_13 = Quaternion.multiply(var_15_11, var_15_12)
-	local var_15_14 = GameSession.game_object_field(arg_15_0.game, arg_15_0.id, "velocity")
+	local game_object_field_7 = GameSession.game_object_field(self.game, self.id, "yaw")
+	local game_object_field_8 = GameSession.game_object_field(self.game, self.id, "pitch")
+	local var_15_11 = Quaternion(Vector3.up(), game_object_field_7)
+	local var_15_12 = Quaternion(Vector3.right(), game_object_field_8)
+	local multiply = Quaternion.multiply(var_15_11, var_15_12)
+	local game_object_field_9 = GameSession.game_object_field(self.game, self.id, "velocity")
 
-	if Vector3.length(var_15_14) < NetworkConstants.VELOCITY_EPSILON then
-		var_15_14 = Vector3(0, 0, 0)
+	if Vector3.length(game_object_field_9) < NetworkConstants.VELOCITY_EPSILON then
+		game_object_field_9 = Vector3(0, 0, 0)
 	end
 
-	arg_15_0.has_moved_from_start_position = GameSession.game_object_field(arg_15_0.game, arg_15_0.id, "has_moved_from_start_position")
+	self.has_moved_from_start_position = GameSession.game_object_field(self.game, self.id, "has_moved_from_start_position")
 
-	arg_15_0:_extrapolation_movement(arg_15_2, arg_15_1, var_15_0, var_15_1, var_15_13, arg_15_3, var_15_14, var_15_2, var_15_3)
-	arg_15_0.velocity_current:store(var_15_14)
-	arg_15_0._current_rotation:store(var_15_13)
-	arg_15_0:_update_speed_variable(arg_15_1)
+	self:_extrapolation_movement(arg_15_2, arg_15_1, local_position, var_15_1, multiply, arg_15_3, game_object_field_9, game_object_field, game_object_field_2)
+	self.velocity_current:store(game_object_field_9)
+	self._current_rotation:store(multiply)
+	self:_update_speed_variable(arg_15_1)
 end
 
-function PlayerHuskLocomotionExtension.get_moving_platform(arg_16_0)
+PlayerHuskLocomotionExtension.get_moving_platform = function (self)
+	-- function 16
 	if not Managers.state.network:game() then
 		return
 	end
 
-	if GameSession.game_object_exists(arg_16_0.game, arg_16_0.id) then
-		local var_16_0 = GameSession.game_object_field(arg_16_0.game, arg_16_0.id, "moving_platform")
-		local var_16_1 = var_16_0 ~= 0 and Managers.state.network:game_object_or_level_unit(var_16_0, true) or nil
-		local var_16_2 = ScriptUnit.has_extension(var_16_1, "transportation_system")
-		local var_16_3 = var_16_1 and GameSession.game_object_field(arg_16_0.game, arg_16_0.id, "moving_platform_soft_linked") or nil
+	if not GameSession.game_object_exists(self.game, self.id) then
+		local game_object_field = GameSession.game_object_field(self.game, self.id, "moving_platform")
+		local game_object_or_level_unit
 
-		return var_16_1, var_16_2, var_16_3
+		if game_object_field ~= 0 then
+			game_object_or_level_unit = Managers.state.network:game_object_or_level_unit(game_object_field, true)
+
+			if not game_object_or_level_unit then
+				-- Nothing
+			end
+		end
+
+		game_object_or_level_unit = nil
+
+		::label_16_0::
+
+		local has_extension = ScriptUnit.has_extension(game_object_or_level_unit, "transportation_system")
+		local game_object_field_2
+
+		if not game_object_or_level_unit then
+			game_object_field_2 = GameSession.game_object_field(self.game, self.id, "moving_platform_soft_linked")
+
+			if not game_object_field_2 then
+				-- Nothing
+			end
+		end
+
+		game_object_field_2 = nil
+
+		::label_16_1::
+
+		return game_object_or_level_unit, has_extension, game_object_field_2
 	end
 
 	return nil, nil, nil
 end
 
-function PlayerHuskLocomotionExtension.update_ladder_animation_position(arg_17_0, arg_17_1)
-	local var_17_0 = arg_17_0.unit
-	local var_17_1 = Unit.world_position(arg_17_1, 0)
-	local var_17_2 = CharacterStateHelper.time_in_ladder_move_animation(var_17_0, Vector3.z(var_17_1))
-	local var_17_3 = Unit.animation_find_variable(var_17_0, "climb_time")
+PlayerHuskLocomotionExtension.update_ladder_animation_position = function (self, arg_17_1)
+	-- function 17
+	local unit = self.unit
+	local world_position = Unit.world_position(arg_17_1, 0)
+	local time_in_ladder_move_animation = CharacterStateHelper.time_in_ladder_move_animation(unit, Vector3.z(world_position))
+	local animation_find_variable = Unit.animation_find_variable(unit, "climb_time")
 
-	Unit.animation_set_variable(var_17_0, var_17_3, var_17_2)
+	Unit.animation_set_variable(unit, animation_find_variable, time_in_ladder_move_animation)
 end
 
-function PlayerHuskLocomotionExtension._extrapolation_movement(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7, arg_18_8, arg_18_9)
-	local var_18_0 = Unit.get_data(arg_18_1, "last_lerp_position") or arg_18_3
-	local var_18_1 = Unit.get_data(arg_18_1, "last_lerp_position_offset") or Vector3(0, 0, 0)
-	local var_18_2 = Unit.get_data(arg_18_1, "accumulated_movement") or Vector3(0, 0, 0)
+PlayerHuskLocomotionExtension._extrapolation_movement = function (self, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7, arg_18_8, arg_18_9)
+	-- function 18
+	local get_data = Unit.get_data(arg_18_1, "last_lerp_position")
 
-	if arg_18_0._moving_platform ~= arg_18_9 then
-		local var_18_3 = (arg_18_0._moving_platform or 0) ~= 0 and Managers.state.network:game_object_or_level_unit(arg_18_0._moving_platform, true)
-		local var_18_4 = arg_18_9 ~= 0 and Managers.state.network:game_object_or_level_unit(arg_18_9, true)
+	get_data = get_data or arg_18_3
 
-		if var_18_3 and var_18_4 then
-			local var_18_5 = ScriptUnit.extension(var_18_3, "transportation_system")
+	local get_data_2 = Unit.get_data(arg_18_1, "last_lerp_position_offset")
 
-			var_18_0 = var_18_0 + (Unit.local_position(var_18_3, 0) + var_18_5:visual_delta())
+	get_data_2 = get_data_2 or Vector3(0, 0, 0)
 
-			local var_18_6 = ScriptUnit.extension(var_18_4, "transportation_system")
+	local get_data_3 = Unit.get_data(arg_18_1, "accumulated_movement")
 
-			var_18_0 = var_18_0 - (Unit.local_position(var_18_4, 0) + var_18_6:visual_delta())
+	get_data_3 = get_data_3 or Vector3(0, 0, 0)
+
+	if self._moving_platform ~= arg_18_9 then
+		local _moving_platform = self._moving_platform
+
+		_moving_platform = _moving_platform or 0
+
+		local flag = _moving_platform == 0 or Managers.state.network:game_object_or_level_unit(self._moving_platform, true)
+		local flag_2 = arg_18_9 == 0 or Managers.state.network:game_object_or_level_unit(arg_18_9, true)
+
+		if not flag and not flag_2 then
+			local extension = ScriptUnit.extension(flag, "transportation_system")
+
+			get_data = get_data + (Unit.local_position(flag, 0) + extension:visual_delta())
+
+			local extension_2 = ScriptUnit.extension(flag_2, "transportation_system")
+
+			get_data = get_data - (Unit.local_position(flag_2, 0) + extension_2:visual_delta())
 		end
 
-		arg_18_0._moving_platform = arg_18_9
+		self._moving_platform = arg_18_9
 	end
 
-	if arg_18_9 ~= 0 and not arg_18_8 then
-		local var_18_7 = Managers.state.network:game_object_or_level_unit(arg_18_9, true)
-		local var_18_8 = Unit.local_position(var_18_7, 0)
-		local var_18_9 = ScriptUnit.extension(var_18_7, "transportation_system")
+	if not (arg_18_9 == 0 or arg_18_8) then
+		local game_object_or_level_unit = Managers.state.network:game_object_or_level_unit(arg_18_9, true)
+		local local_position = Unit.local_position(game_object_or_level_unit, 0)
+		local extension_3 = ScriptUnit.extension(game_object_or_level_unit, "transportation_system")
 
-		arg_18_4 = arg_18_4 + var_18_8 + var_18_9:visual_delta()
+		arg_18_4 = arg_18_4 + local_position + extension_3:visual_delta()
 	end
 
-	arg_18_0._pos_lerp_time = (arg_18_0._pos_lerp_time or 0) + arg_18_2
-	arg_18_0._velocity_lerp_time = (arg_18_0._velocity_lerp_time or 0) + arg_18_2
+	local _pos_lerp_time = self._pos_lerp_time
 
-	local var_18_10 = arg_18_8 and var_0_3 or var_0_2
-	local var_18_11 = arg_18_0._pos_lerp_time / var_18_10
-	local var_18_12 = arg_18_7 * arg_18_2
-	local var_18_13 = var_18_2 + var_18_12
-	local var_18_14 = Vector3.lerp(var_18_1, Vector3(0, 0, 0), math.min(var_18_11, 1))
-	local var_18_15 = var_18_0 + var_18_13 + var_18_14
+	_pos_lerp_time = _pos_lerp_time or 0
+	self._pos_lerp_time = _pos_lerp_time + arg_18_2
 
-	Profiler.record_statistics("move_delta", Vector3.length(var_18_12))
+	local _velocity_lerp_time = self._velocity_lerp_time
+
+	_velocity_lerp_time = _velocity_lerp_time or 0
+	self._velocity_lerp_time = _velocity_lerp_time + arg_18_2
+
+	local var_18_13
+
+	if not arg_18_8 then
+		var_18_13 = num_3
+
+		if not var_18_13 then
+			-- Nothing
+		end
+	end
+
+	var_18_13 = num_2
+
+	::label_18_0::
+
+	local num_5 = self._pos_lerp_time / var_18_13
+	local num_6 = arg_18_7 * arg_18_2
+	local num_7 = get_data_3 + num_6
+	local lerp = Vector3.lerp(get_data_2, Vector3(0, 0, 0), math.min(num_5, 1))
+	local num_8 = get_data + num_7 + lerp
+
+	Profiler.record_statistics("move_delta", Vector3.length(num_6))
 	Profiler.record_statistics("husk_speed", Vector3.length(arg_18_7))
 	Profiler.record_statistics("dt", arg_18_2)
-	Unit.set_data(arg_18_1, "accumulated_movement", var_18_13)
+	Unit.set_data(arg_18_1, "accumulated_movement", num_7)
 
-	if Vector3.length(arg_18_4 - var_18_0) > var_0_1 then
-		arg_18_0._pos_lerp_time = 0
+	if Vector3.length(arg_18_4 - get_data) > num then
+		self._pos_lerp_time = 0
 
 		Unit.set_data(arg_18_1, "last_lerp_position", arg_18_4)
-		Unit.set_data(arg_18_1, "last_lerp_position_offset", var_18_15 - arg_18_4)
+		Unit.set_data(arg_18_1, "last_lerp_position_offset", num_8 - arg_18_4)
 		Unit.set_data(arg_18_1, "accumulated_movement", Vector3(0, 0, 0))
 	end
 
-	local var_18_16 = arg_18_0.velocity_current:unbox()
+	local unbox = self.velocity_current:unbox()
 
-	if Vector3.length(arg_18_7 - var_18_16) > NetworkConstants.VELOCITY_EPSILON then
-		arg_18_0._velocity_lerp_time = 0
+	if Vector3.length(arg_18_7 - unbox) > NetworkConstants.VELOCITY_EPSILON then
+		self._velocity_lerp_time = 0
 	end
 
-	if arg_18_0._pos_lerp_time > var_0_4 and arg_18_0._velocity_lerp_time > var_0_4 then
-		var_18_15 = arg_18_4
+	if not (not (self._pos_lerp_time > num_4) or not (self._velocity_lerp_time > num_4)) then
+		num_8 = arg_18_4
 
 		Unit.set_data(arg_18_1, "accumulated_movement", Vector3(0, 0, 0))
 	end
 
-	local var_18_17 = Unit.mover(arg_18_1)
+	local mover = Unit.mover(arg_18_1)
 
-	Mover.set_position(var_18_17, var_18_15)
-	Unit.set_local_position(arg_18_1, 0, var_18_15)
+	Mover.set_position(mover, num_8)
+	Unit.set_local_position(arg_18_1, 0, num_8)
 
-	local var_18_18 = Unit.local_rotation(arg_18_1, 0)
+	local local_rotation = Unit.local_rotation(arg_18_1, 0)
 
-	Unit.set_local_rotation(arg_18_1, 0, Quaternion.lerp(var_18_18, arg_18_5, math.min(arg_18_2 * 15, 1)))
+	Unit.set_local_rotation(arg_18_1, 0, Quaternion.lerp(local_rotation, arg_18_5, math.min(arg_18_2 * 15, 1)))
 end
 
-local var_0_5 = 0.97
-local var_0_6 = 3.23
-local var_0_7 = 6.14
-local var_0_8 = 0.3
-local var_0_9 = 1.5
-local var_0_10 = 99.9999
-local var_0_11 = 0.3
+local num_5 = 0.97
+local num_6 = 3.23
+local num_7 = 6.14
+local num_8 = 0.3
+local num_9 = 1.5
+local num_10 = 99.9999
+local num_11 = 0.3
 
-function PlayerHuskLocomotionExtension._update_speed_variable(arg_19_0, arg_19_1)
-	local var_19_0 = arg_19_0.velocity_current:unbox()
-	local var_19_1 = Vector3(var_19_0.x, var_19_0.y, 0)
-	local var_19_2 = Vector3.length(var_19_1)
-	local var_19_3 = arg_19_0.anim_move_speed
-	local var_19_4 = math.abs(var_19_3 - var_19_2)
+PlayerHuskLocomotionExtension._update_speed_variable = function (self, arg_19_1)
+	-- function 19
+	local unbox = self.velocity_current:unbox()
+	local var_19_1 = Vector3(unbox.x, unbox.y, 0)
+	local length = Vector3.length(var_19_1)
+	local anim_move_speed = self.anim_move_speed
+	local abs = math.abs(anim_move_speed - length)
 
-	if var_19_3 < var_19_2 then
-		local var_19_5 = math.min(var_19_2 / var_0_11 * arg_19_1, var_19_4)
+	if anim_move_speed < length then
+		local min = math.min(length / num_11 * arg_19_1, abs)
 
-		var_19_3 = math.clamp(var_19_3 + var_19_5, 0, var_19_2)
-		arg_19_0._move_speed_top = var_19_3
+		anim_move_speed = math.clamp(anim_move_speed + min, 0, length)
+		self._move_speed_top = anim_move_speed
 	else
-		local var_19_6 = arg_19_0._move_speed_top or var_19_2
-		local var_19_7 = math.min(var_19_6 / var_0_11 * arg_19_1, var_19_4)
+		local _move_speed_top = self._move_speed_top
 
-		var_19_3 = math.clamp(var_19_3 - var_19_7, 0, var_19_3)
+		_move_speed_top = _move_speed_top or length
+
+		local min_2 = math.min(_move_speed_top / num_11 * arg_19_1, abs)
+
+		anim_move_speed = math.clamp(anim_move_speed - min_2, 0, anim_move_speed)
 	end
 
-	arg_19_0.anim_move_speed = var_19_3
+	self.anim_move_speed = anim_move_speed
 
-	local var_19_8 = arg_19_0.unit
+	local unit = self.unit
 
-	Unit.animation_set_variable(var_19_8, arg_19_0.move_speed_anim_var, math.min(var_19_3, var_0_10))
+	Unit.animation_set_variable(unit, self.move_speed_anim_var, math.min(anim_move_speed, num_10))
 
 	local var_19_9
 
-	if var_19_2 < arg_19_0.walk_speed_treshold then
-		var_19_9 = var_19_2 / arg_19_0.walk_speed_treshold
-	elseif var_19_2 > arg_19_0.run_speed_treshold then
-		var_19_9 = var_19_2 / arg_19_0.run_speed_treshold
+	if length < self.walk_speed_treshold then
+		var_19_9 = length / self.walk_speed_treshold
+	elseif length > self.run_speed_treshold then
+		var_19_9 = length / self.run_speed_treshold
 	else
 		var_19_9 = 1
 	end
 
-	local var_19_10 = math.clamp(var_19_9, var_0_8, var_0_9)
+	local clamp = math.clamp(var_19_9, num_8, num_9)
 
-	Unit.animation_set_variable(var_19_8, arg_19_0.movement_scale_animation_id, var_19_10)
+	Unit.animation_set_variable(unit, self.movement_scale_animation_id, clamp)
 end
 
-function PlayerHuskLocomotionExtension._calculate_move_speed_var_from_mps(arg_20_0, arg_20_1)
+PlayerHuskLocomotionExtension._calculate_move_speed_var_from_mps = function (arg_20_0, arg_20_1)
+	-- function 20
 	local var_20_0
-	local var_20_1 = 1
+	local num = 1
 
-	if arg_20_1 <= var_0_5 then
+	if arg_20_1 <= num_5 then
 		var_20_0 = 0
-		var_20_1 = arg_20_1 / var_0_5
-	elseif arg_20_1 <= var_0_6 then
-		var_20_0 = (arg_20_1 - var_0_5) / (var_0_6 - var_0_5)
-	elseif arg_20_1 <= var_0_7 then
-		var_20_0 = 1 + (arg_20_1 - var_0_6) / (var_0_7 - var_0_6)
+		num = arg_20_1 / num_5
+	elseif arg_20_1 <= num_6 then
+		var_20_0 = (arg_20_1 - num_5) / (num_6 - num_5)
+	elseif arg_20_1 <= num_7 then
+		var_20_0 = 1 + (arg_20_1 - num_6) / (num_7 - num_6)
 	else
 		var_20_0 = 3
-		var_20_1 = arg_20_1 / var_0_7
+		num = arg_20_1 / num_7
 	end
 
-	return var_20_0, var_20_1
+	return var_20_0, num
 end
 
-function PlayerHuskLocomotionExtension.rpc_animation_set_variable(arg_21_0, arg_21_1, arg_21_2)
-	Unit.animation_set_variable(arg_21_0.unit, arg_21_1, arg_21_2)
+PlayerHuskLocomotionExtension.rpc_animation_set_variable = function (self, arg_21_1, arg_21_2)
+	-- function 21
+	Unit.animation_set_variable(self.unit, arg_21_1, arg_21_2)
 end
 
-function PlayerHuskLocomotionExtension.hot_join_sync(arg_22_0, arg_22_1)
-	local var_22_0 = arg_22_0.unit
+PlayerHuskLocomotionExtension.hot_join_sync = function (self, arg_22_1)
+	-- function 22
+	local unit = self.unit
 
-	if Managers.state.unit_spawner:is_marked_for_deletion(var_22_0) then
+	if not Managers.state.unit_spawner:is_marked_for_deletion(unit) then
 		return
 	end
 
-	local var_22_1 = arg_22_0.id
+	local id = self.id
 	local var_22_2 = PEER_ID_TO_CHANNEL[arg_22_1]
 
-	RPC.rpc_sync_anim_state_3(var_22_2, var_22_1, Unit.animation_get_state(var_22_0))
+	RPC.rpc_sync_anim_state_3(var_22_2, id, Unit.animation_get_state(unit))
 end
 
-function PlayerHuskLocomotionExtension.current_rotation(arg_23_0)
-	return arg_23_0._current_rotation:unbox()
+PlayerHuskLocomotionExtension.current_rotation = function (self)
+	-- function 23
+	return self._current_rotation:unbox()
 end
 
-local var_0_12 = 1
+local num_12 = 1
 
-function PlayerHuskLocomotionExtension.move_to_non_intersecting_position(arg_24_0)
-	local var_24_0 = arg_24_0.unit
-	local var_24_1 = Unit.mover(var_24_0)
-	local var_24_2, var_24_3, var_24_4, var_24_5 = Mover.separate(var_24_1, var_0_12)
+PlayerHuskLocomotionExtension.move_to_non_intersecting_position = function (self)
+	-- function 24
+	local unit = self.unit
+	local mover = Unit.mover(unit)
+	local separate, var_24_3, var_24_4, var_24_5 = Mover.separate(mover, num_12)
 
-	if var_24_2 and var_24_5 then
-		Mover.set_position(var_24_1, var_24_5)
-		Unit.set_local_position(var_24_0, 0, var_24_5)
+	if not separate and not var_24_5 then
+		Mover.set_position(mover, var_24_5)
+		Unit.set_local_position(unit, 0, var_24_5)
 	end
 end
 
-function PlayerHuskLocomotionExtension.teleport_to(arg_25_0, arg_25_1, arg_25_2)
-	local var_25_0 = arg_25_0.unit
-	local var_25_1 = Unit.mover(var_25_0)
+PlayerHuskLocomotionExtension.teleport_to = function (self, arg_25_1, arg_25_2)
+	-- function 25
+	local unit = self.unit
+	local mover = Unit.mover(unit)
 
-	Mover.set_position(var_25_1, arg_25_1)
-	Unit.set_local_position(var_25_0, 0, arg_25_1)
+	Mover.set_position(mover, arg_25_1)
+	Unit.set_local_position(unit, 0, arg_25_1)
 
-	if arg_25_2 then
-		Unit.set_local_rotation(var_25_0, 0, arg_25_2)
+	if not arg_25_2 then
+		Unit.set_local_rotation(unit, 0, arg_25_2)
 	end
 
-	arg_25_0:move_to_non_intersecting_position()
+	self:move_to_non_intersecting_position()
 end

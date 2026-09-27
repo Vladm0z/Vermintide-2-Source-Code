@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/premium_career_bundle/premium_career_bundle_common_settings.lua
 
-local var_0_0 = DLCSettings.premium_career_bundle
+local premium_career_bundle = DLCSettings.premium_career_bundle
 
-var_0_0.unlock_settings = {
+premium_career_bundle.unlock_settings = {
 	premium_career_bundle = {
 		id = "38849",
 		class = "UnlockDlcBundle",
@@ -33,7 +33,7 @@ var_0_0.unlock_settings = {
 		}
 	}
 }
-var_0_0.unlock_settings_xb1 = {
+premium_career_bundle.unlock_settings_xb1 = {
 	premium_career_bundle = {
 		id = "51445039-3837-3035-C032-42353531D100",
 		backend_reward_id = "premium_career_bundle",
@@ -41,7 +41,7 @@ var_0_0.unlock_settings_xb1 = {
 		requires_restart = true
 	}
 }
-var_0_0.unlock_settings_ps4 = {
+premium_career_bundle.unlock_settings_ps4 = {
 	CUSA13595_00 = {
 		premium_career_bundle = {
 			backend_reward_id = "premium_career_bundle",

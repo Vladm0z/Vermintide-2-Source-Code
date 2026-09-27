@@ -1,19 +1,19 @@
 -- chunkname: @scripts/settings/dlcs/shovel/additional_career_info_ui.lua
 
-local var_0_0 = {
+local tbl = {
 	440,
 	250
 }
-local var_0_1 = 580
-local var_0_2 = {
+local num = 580
+local tbl_2 = {
 	bw_necromancer_special_window = {
 		vertical_alignment = "top",
 		parent = "career_perk_3",
 		horizontal_alignment = "left",
-		size = var_0_0,
+		size = tbl,
 		position = {
 			-20,
-			-var_0_0[2],
+			-tbl[2],
 			1
 		}
 	},
@@ -50,7 +50,7 @@ local var_0_2 = {
 		parent = "bw_necromancer_special_window",
 		horizontal_alignment = "left",
 		size = {
-			var_0_0[1] * 0.6,
+			tbl[1] * 0.6,
 			50
 		},
 		position = {
@@ -78,7 +78,7 @@ local var_0_2 = {
 		parent = "bw_necromancer_special_window",
 		horizontal_alignment = "right",
 		size = {
-			var_0_0[1] * 0.3,
+			tbl[1] * 0.3,
 			50
 		},
 		position = {
@@ -92,7 +92,7 @@ local var_0_2 = {
 		parent = "bw_necromancer_special_icon",
 		horizontal_alignment = "left",
 		size = {
-			var_0_0[1] - 110,
+			tbl[1] - 110,
 			100
 		},
 		position = {
@@ -106,8 +106,8 @@ local var_0_2 = {
 		parent = "bw_necromancer_special_icon",
 		horizontal_alignment = "left",
 		size = {
-			var_0_0[1] * 0.8,
-			var_0_0[2]
+			tbl[1] * 0.8,
+			tbl[2]
 		},
 		position = {
 			10,
@@ -148,7 +148,7 @@ local var_0_2 = {
 		parent = "bw_necromancer_attack_icon",
 		horizontal_alignment = "left",
 		size = {
-			var_0_0[1] * 0.6,
+			tbl[1] * 0.6,
 			50
 		},
 		position = {
@@ -162,7 +162,7 @@ local var_0_2 = {
 		parent = "bw_necromancer_attack_icon",
 		horizontal_alignment = "left",
 		size = {
-			var_0_0[1] - 20,
+			tbl[1] - 20,
 			80
 		},
 		position = {
@@ -176,8 +176,8 @@ local var_0_2 = {
 		parent = "bw_necromancer_attack_icon",
 		horizontal_alignment = "left",
 		size = {
-			var_0_0[1] * 0.8,
-			var_0_0[2]
+			tbl[1] * 0.8,
+			tbl[2]
 		},
 		position = {
 			0,
@@ -218,7 +218,7 @@ local var_0_2 = {
 		parent = "bw_necromancer_defend_icon",
 		horizontal_alignment = "left",
 		size = {
-			var_0_0[1] * 0.6,
+			tbl[1] * 0.6,
 			50
 		},
 		position = {
@@ -232,7 +232,7 @@ local var_0_2 = {
 		parent = "bw_necromancer_defend_icon",
 		horizontal_alignment = "left",
 		size = {
-			var_0_0[1] - 20,
+			tbl[1] - 20,
 			80
 		},
 		position = {
@@ -246,8 +246,8 @@ local var_0_2 = {
 		parent = "bw_necromancer_defend_icon",
 		horizontal_alignment = "left",
 		size = {
-			var_0_0[1] * 0.8,
-			var_0_0[2]
+			tbl[1] * 0.8,
+			tbl[2]
 		},
 		position = {
 			0,
@@ -288,7 +288,7 @@ local var_0_2 = {
 		parent = "bw_necromancer_release_icon",
 		horizontal_alignment = "left",
 		size = {
-			var_0_0[1] * 0.6,
+			tbl[1] * 0.6,
 			50
 		},
 		position = {
@@ -302,7 +302,7 @@ local var_0_2 = {
 		parent = "bw_necromancer_release_icon",
 		horizontal_alignment = "left",
 		size = {
-			var_0_0[1] - 20,
+			tbl[1] - 20,
 			80
 		},
 		position = {
@@ -312,7 +312,7 @@ local var_0_2 = {
 		}
 	}
 }
-local var_0_3 = {
+local tbl_3 = {
 	word_wrap = true,
 	use_shadow = true,
 	localize = false,
@@ -328,7 +328,7 @@ local var_0_3 = {
 		2
 	}
 }
-local var_0_4 = {
+local tbl_4 = {
 	word_wrap = true,
 	use_shadow = true,
 	localize = true,
@@ -344,7 +344,7 @@ local var_0_4 = {
 		2
 	}
 }
-local var_0_5 = {
+local tbl_5 = {
 	font_size = 32,
 	upper_case = false,
 	localize = true,
@@ -361,7 +361,7 @@ local var_0_5 = {
 		2
 	}
 }
-local var_0_6 = {
+local tbl_6 = {
 	font_size = 28,
 	upper_case = false,
 	localize = true,
@@ -378,7 +378,7 @@ local var_0_6 = {
 		2
 	}
 }
-local var_0_7 = {
+local tbl_7 = {
 	font_size = 18,
 	upper_case = false,
 	localize = true,
@@ -394,7 +394,7 @@ local var_0_7 = {
 		2
 	}
 }
-local var_0_8 = {
+local tbl_8 = {
 	font_size = 24,
 	use_shadow = false,
 	localize = false,
@@ -411,18 +411,46 @@ local var_0_8 = {
 	}
 }
 
-local function var_0_9(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
-	local var_1_0 = arg_1_5 and arg_1_5.offset or {
+local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	-- function 1
+	local offset
+
+	if not arg_1_5 then
+		offset = arg_1_5.offset
+
+		if not offset then
+			-- Nothing
+		end
+	end
+
+	offset = {
 		0,
 		0,
 		2
 	}
-	local var_1_1 = arg_1_5 and arg_1_5.text_color or arg_1_4 or {
+
+	do
+		local text_color
+	end
+
+	::label_1_0::
+
+	if not arg_1_5 then
+		text_color = arg_1_5.text_color
+
+		if not text_color then
+			-- Nothing
+		end
+	end
+
+	text_color = arg_1_4 or {
 		255,
 		255,
 		255,
 		255
 	}
+
+	::label_1_1::
 
 	arg_1_5 = arg_1_5 or {
 		vertical_alignment = "center",
@@ -431,40 +459,45 @@ local function var_0_9(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 		word_wrap = true,
 		font_type = "hell_shark",
 		font_size = arg_1_3,
-		text_color = var_1_1,
-		offset = var_1_0
+		text_color = text_color,
+		offset = offset
 	}
 
-	local var_1_2 = table.clone(arg_1_5)
-	local var_1_3 = arg_1_5.shadow_color or {
+	local clone = table.clone(arg_1_5)
+	local shadow_color = arg_1_5.shadow_color
+
+	shadow_color = shadow_color or {
 		255,
 		0,
 		0,
 		0
 	}
-	local var_1_4 = arg_1_5.shadow_offset or {
+
+	local shadow_offset = arg_1_5.shadow_offset
+
+	shadow_offset = shadow_offset or {
 		2,
 		2,
 		0
 	}
-
-	var_1_3[1] = var_1_1[1]
-	var_1_2.text_color = var_1_3
-	var_1_2.offset = {
-		var_1_0[1] + var_1_4[1],
-		var_1_0[2] - var_1_4[2],
-		var_1_0[3] - 1
+	shadow_color[1] = text_color[1]
+	clone.text_color = shadow_color
+	clone.offset = {
+		offset[1] + shadow_offset[1],
+		offset[2] - shadow_offset[2],
+		offset[3] - 1
 	}
-	var_1_2.skip_button_rendering = true
+	clone.skip_button_rendering = true
 
-	return {
+	local tbl = {
 		element = {
 			passes = {
 				{
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
+						-- function 2
 						return not Managers.input:is_device_active("gamepad")
 					end
 				},
@@ -472,17 +505,22 @@ local function var_0_9(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_3_0)
-						local var_3_0 = Managers.input:is_device_active("gamepad")
+					content_check_function = function (self)
+						-- function 3
+						local is_device_active = Managers.input:is_device_active("gamepad")
+						local use_shadow = self.use_shadow
 
-						return arg_3_0.use_shadow and not var_3_0
+						use_shadow = not use_shadow and not is_device_active
+
+						return use_shadow
 					end
 				},
 				{
 					style_id = "gamepad_text",
 					pass_type = "text",
 					text_id = "gamepad_text",
-					content_check_function = function(arg_4_0)
+					content_check_function = function (arg_4_0)
+						-- function 4
 						return (Managers.input:is_device_active("gamepad"))
 					end
 				},
@@ -490,47 +528,68 @@ local function var_0_9(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 					style_id = "gamepad_text_shadow",
 					pass_type = "text",
 					text_id = "gamepad_text",
-					content_check_function = function(arg_5_0)
-						local var_5_0 = Managers.input:is_device_active("gamepad")
+					content_check_function = function (self)
+						-- function 5
+						local is_device_active = Managers.input:is_device_active("gamepad")
+						local use_shadow = self.use_shadow
 
-						return arg_5_0.use_shadow and var_5_0
+						use_shadow = not use_shadow and is_device_active
+
+						return use_shadow
 					end
 				}
 			}
-		},
-		content = {
-			text = arg_1_0,
-			gamepad_text = arg_1_1,
-			original_text = arg_1_0,
-			color = var_1_1,
-			use_shadow = arg_1_5 and arg_1_5.use_shadow or false
-		},
-		style = {
-			text = arg_1_5,
-			text_shadow = var_1_2,
-			gamepad_text = table.clone(arg_1_5),
-			gamepad_text_shadow = table.clone(var_1_2)
-		},
-		offset = {
-			0,
-			0,
-			0
-		},
-		scenegraph_id = arg_1_2
+		}
 	}
+	local tbl_2 = {
+		text = arg_1_0,
+		gamepad_text = arg_1_1,
+		original_text = arg_1_0,
+		color = text_color
+	}
+	local use_shadow
+
+	if not arg_1_5 then
+		use_shadow = arg_1_5.use_shadow
+
+		if not use_shadow then
+			-- Nothing
+		end
+	end
+
+	use_shadow = false
+
+	::label_1_2::
+
+	tbl_2.use_shadow = use_shadow
+	tbl.content = tbl_2
+	tbl.style = {
+		text = arg_1_5,
+		text_shadow = clone,
+		gamepad_text = table.clone(arg_1_5),
+		gamepad_text_shadow = table.clone(clone)
+	}
+	tbl.offset = {
+		0,
+		0,
+		0
+	}
+	tbl.scenegraph_id = arg_1_2
+
+	return tbl
 end
 
-local var_0_10 = SHOVEL_BUFF_TWEAK_DATA.sienna_necromancer_command_item_attack.multiplier * 100
-local var_0_11 = SHOVEL_BUFF_TWEAK_DATA.sienna_necromancer_command_item_attack.duration
-local var_0_12 = string.format(Localize("skeleton_command_attack_desc"), var_0_10, var_0_11)
-local var_0_13 = SHOVEL_BUFF_TWEAK_DATA.sienna_necromancer_command_item_defend.multiplier * 100
-local var_0_14 = string.format(Localize("skeleton_command_defend_desc"), var_0_13)
-local var_0_15 = SHOVEL_BUFF_TWEAK_DATA.sienna_necromancer_command_item_sacrifice.multiplier * 100
-local var_0_16 = string.format(Localize("skeleton_command_release_desc"), var_0_15)
-local var_0_17 = {
-	special_title_text = UIWidgets.create_simple_text("skeleton_command_item_name", "bw_necromancer_special_title_text", nil, nil, var_0_5),
+local num_2 = SHOVEL_BUFF_TWEAK_DATA.sienna_necromancer_command_item_attack.multiplier * 100
+local duration = SHOVEL_BUFF_TWEAK_DATA.sienna_necromancer_command_item_attack.duration
+local format = string.format(Localize("skeleton_command_attack_desc"), num_2, duration)
+local num_3 = SHOVEL_BUFF_TWEAK_DATA.sienna_necromancer_command_item_defend.multiplier * 100
+local format_2 = string.format(Localize("skeleton_command_defend_desc"), num_3)
+local num_4 = SHOVEL_BUFF_TWEAK_DATA.sienna_necromancer_command_item_sacrifice.multiplier * 100
+local format_3 = string.format(Localize("skeleton_command_release_desc"), num_4)
+local tbl_9 = {
+	special_title_text = UIWidgets.create_simple_text("skeleton_command_item_name", "bw_necromancer_special_title_text", nil, nil, tbl_5),
 	special_title_divider = UIWidgets.create_simple_texture("infoslate_frame_02_horizontal", "bw_necromancer_special_title_divider", true),
-	special_description_text = UIWidgets.create_simple_text(Localize("skeleton_command_item_desc"), "bw_necromancer_special_description_text", nil, nil, var_0_3),
+	special_description_text = UIWidgets.create_simple_text(Localize("skeleton_command_item_desc"), "bw_necromancer_special_description_text", nil, nil, tbl_3),
 	special_icon = UIWidgets.create_simple_texture("hud_inventory_icon_necromancer_utility", "bw_necromancer_special_icon", true),
 	special_icon_frame = UIWidgets.create_simple_texture("talent_frame", "bw_necromancer_special_icon_frame", true),
 	special_icon_bg = UIWidgets.create_simple_texture("rect_masked", "bw_necromancer_special_icon_frame", true, false, {
@@ -539,30 +598,31 @@ local var_0_17 = {
 		0,
 		0
 	}, -5),
-	attack_icon_text = UIWidgets.create_simple_text("$KEY;Player__action_one:" .. " {#color(193,91,36)}" .. Localize("shovel_command_attack"), "bw_necromancer_attack_icon", nil, nil, var_0_8),
-	attack_description_text = UIWidgets.create_simple_text(var_0_12, "bw_necromancer_attack_description_text", nil, nil, var_0_3),
-	defend_icon_text = UIWidgets.create_simple_text("$KEY;Player__action_two:" .. " {#color(193,91,36)}" .. Localize("shovel_command_defend"), "bw_necromancer_defend_icon", nil, nil, var_0_8),
-	defend_description_text = UIWidgets.create_simple_text(var_0_14, "bw_necromancer_defend_description_text", nil, nil, var_0_3),
-	release_icon_text = var_0_9("$KEY;Player__weapon_reload:" .. "{#color(193,91,36)}" .. Localize("shovel_command_sacrifice"), "$KEY;Player__weapon_reload_input:" .. "{#color(193,91,36)}" .. Localize("shovel_command_sacrifice"), "bw_necromancer_release_icon", nil, nil, var_0_8),
-	release_description_text = UIWidgets.create_simple_text(var_0_16, "bw_necromancer_release_description_text", nil, nil, var_0_3)
+	attack_icon_text = UIWidgets.create_simple_text("$KEY;Player__action_one:" .. " {#color(193,91,36)}" .. Localize("shovel_command_attack"), "bw_necromancer_attack_icon", nil, nil, tbl_8),
+	attack_description_text = UIWidgets.create_simple_text(format, "bw_necromancer_attack_description_text", nil, nil, tbl_3),
+	defend_icon_text = UIWidgets.create_simple_text("$KEY;Player__action_two:" .. " {#color(193,91,36)}" .. Localize("shovel_command_defend"), "bw_necromancer_defend_icon", nil, nil, tbl_8),
+	defend_description_text = UIWidgets.create_simple_text(format_2, "bw_necromancer_defend_description_text", nil, nil, tbl_3),
+	release_icon_text = fn("$KEY;Player__weapon_reload:" .. "{#color(193,91,36)}" .. Localize("shovel_command_sacrifice"), "$KEY;Player__weapon_reload_input:" .. "{#color(193,91,36)}" .. Localize("shovel_command_sacrifice"), "bw_necromancer_release_icon", nil, nil, tbl_8),
+	release_description_text = UIWidgets.create_simple_text(format_3, "bw_necromancer_release_description_text", nil, nil, tbl_3)
 }
 
-local function var_0_18(arg_6_0)
-	local var_6_0 = {}
-	local var_6_1 = {}
-	local var_6_2 = 500
+local function fn_2(arg_6_0)
+	-- function 6
+	local tbl = {}
+	local tbl_2 = {}
+	local num_2 = 500
 
-	for iter_6_0, iter_6_1 in pairs(var_0_17) do
-		local var_6_3 = UIWidget.init(iter_6_1)
+	for k, v in pairs(tbl_9) do
+		local var_6_3 = UIWidget.init(v)
 
-		var_6_0[#var_6_0 + 1] = var_6_3
-		var_6_1[iter_6_0] = var_6_3
+		tbl[#tbl + 1] = var_6_3
+		tbl_2[k] = var_6_3
 	end
 
-	return var_6_0, var_6_1, var_0_1
+	return tbl, tbl_2, num
 end
 
 return {
-	setup = var_0_18,
-	scenegraph_definition_to_inject = var_0_2
+	setup = fn_2,
+	scenegraph_definition_to_inject = tbl_2
 }

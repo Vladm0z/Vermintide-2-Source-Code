@@ -1,25 +1,25 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/store/definitions/store_window_item_details_definitions.lua
 
-local var_0_0 = UISettings.console_menu_scenegraphs
-local var_0_1 = {
+local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
+local tbl = {
 	550,
 	700
 }
-local var_0_2 = {
-	var_0_1[1] - 84,
-	var_0_1[2] - 84
+local tbl_2 = {
+	tbl[1] - 84,
+	tbl[2] - 84
 }
-local var_0_3 = {
-	screen = var_0_0.screen,
-	area = var_0_0.area,
-	area_left = var_0_0.area_left,
-	area_right = var_0_0.area_right,
-	area_divider = var_0_0.area_divider,
+local tbl_3 = {
+	screen = console_menu_scenegraphs.screen,
+	area = console_menu_scenegraphs.area,
+	area_left = console_menu_scenegraphs.area_left,
+	area_right = console_menu_scenegraphs.area_right,
+	area_divider = console_menu_scenegraphs.area_divider,
 	window = {
 		vertical_alignment = "top",
 		parent = "screen",
 		horizontal_alignment = "left",
-		size = var_0_1,
+		size = tbl,
 		position = {
 			130,
 			-215,
@@ -30,7 +30,7 @@ local var_0_3 = {
 		vertical_alignment = "center",
 		parent = "window",
 		horizontal_alignment = "center",
-		size = var_0_2,
+		size = tbl_2,
 		position = {
 			0,
 			0,
@@ -126,7 +126,7 @@ local var_0_3 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_1[1] - 42,
+			tbl[1] - 42,
 			42
 		},
 		position = {
@@ -140,7 +140,7 @@ local var_0_3 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_1[1] - 42,
+			tbl[1] - 42,
 			42
 		},
 		position = {
@@ -155,7 +155,7 @@ local var_0_3 = {
 		horizontal_alignment = "left",
 		size = {
 			42,
-			var_0_1[2] - 42
+			tbl[2] - 42
 		},
 		position = {
 			0,
@@ -169,7 +169,7 @@ local var_0_3 = {
 		horizontal_alignment = "right",
 		size = {
 			42,
-			var_0_1[2] - 42
+			tbl[2] - 42
 		},
 		position = {
 			0,
@@ -388,7 +388,7 @@ local var_0_3 = {
 		}
 	}
 }
-local var_0_4 = {
+local tbl_4 = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -405,7 +405,7 @@ local var_0_4 = {
 		2
 	}
 }
-local var_0_5 = {
+local tbl_5 = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -427,7 +427,7 @@ local var_0_5 = {
 		2
 	}
 }
-local var_0_6 = {
+local tbl_6 = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -450,7 +450,8 @@ local var_0_6 = {
 	}
 }
 
-local function var_0_7(arg_1_0)
+local function fn(arg_1_0)
+	-- function 1
 	return {
 		element = {
 			passes = {
@@ -466,8 +467,13 @@ local function var_0_7(arg_1_0)
 					content_passes = {
 						"additional_option_info"
 					},
-					content_check_function = function(arg_2_0)
-						return arg_2_0.tooltip and arg_2_0.button_hotspot.is_hover
+					content_check_function = function (self)
+						-- function 2
+						local tooltip = self.tooltip
+
+						tooltip = not tooltip and self.button_hotspot.is_hover
+
+						return tooltip
 					end
 				},
 				{
@@ -567,7 +573,7 @@ local function var_0_7(arg_1_0)
 	}
 end
 
-local var_0_8 = {
+local tbl_7 = {
 	window_background = UIWidgets.create_tiled_texture("window_background", "menu_frame_bg_03", {
 		256,
 		256
@@ -623,8 +629,8 @@ local var_0_8 = {
 	title_text_background = UIWidgets.create_simple_texture("store_preview_info_text_backdrop", "title_text"),
 	title_text_edge_top = UIWidgets.create_simple_texture("store_preview_info_backdrop_border", "title_text_edge_top"),
 	title_text_edge_bottom = UIWidgets.create_simple_texture("store_preview_info_backdrop_border", "title_text_edge_bottom"),
-	title_text = UIWidgets.create_simple_text("n/a", "title_text", nil, nil, var_0_4),
-	sub_title_text = UIWidgets.create_simple_text("n/a", "sub_title_text", nil, nil, var_0_5),
+	title_text = UIWidgets.create_simple_text("n/a", "title_text", nil, nil, tbl_4),
+	sub_title_text = UIWidgets.create_simple_text("n/a", "sub_title_text", nil, nil, tbl_5),
 	sub_title_text_edge_right = UIWidgets.create_simple_uv_texture("store_preview_info_arrow", {
 		{
 			1,
@@ -637,31 +643,34 @@ local var_0_8 = {
 	}, "sub_title_text_edge_right"),
 	sub_title_text_edge_left = UIWidgets.create_simple_texture("store_preview_info_arrow", "sub_title_text_edge_left"),
 	sub_title_divider = UIWidgets.create_simple_texture("journal_content_divider_medium", "sub_title_divider"),
-	description_text = UIWidgets.create_simple_text("n/a", "description_text", nil, nil, var_0_6),
+	description_text = UIWidgets.create_simple_text("n/a", "description_text", nil, nil, tbl_6),
 	hero_text_divider = UIWidgets.create_simple_texture("journal_content_divider_medium", "hero_text_divider"),
-	hero_text = UIWidgets.create_simple_text("n/a", "hero_text", nil, nil, var_0_5)
+	hero_text = UIWidgets.create_simple_text("n/a", "hero_text", nil, nil, tbl_5)
 }
-local var_0_9 = {
+local tbl_8 = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			init = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+				-- function 3
 				arg_3_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-				local var_4_0 = math.easeOutCubic(arg_4_3)
+			update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+				-- function 4
+				local easeOutCubic = math.easeOutCubic(arg_4_3)
 
-				arg_4_4.render_settings.alpha_multiplier = var_4_0
+				arg_4_4.render_settings.alpha_multiplier = easeOutCubic
 
-				local var_4_1 = 250
-				local var_4_2 = var_4_1 * var_4_0
-				local var_4_3 = arg_4_1.window.position
+				local num = 250
+				local num_2 = num * easeOutCubic
+				local position = arg_4_1.window.position
 
-				arg_4_0.window.local_position[1] = math.floor(var_4_3[1] + var_4_1 - var_4_2)
+				arg_4_0.window.local_position[1] = math.floor(position[1] + num - num_2)
 			end,
-			on_complete = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			on_complete = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+				-- function 5
 				return
 			end
 		}
@@ -671,15 +680,18 @@ local var_0_9 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			init = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+				-- function 6
 				arg_6_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
-				local var_7_0 = math.easeOutCubic(arg_7_3)
+			update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+				-- function 7
+				local easeOutCubic = math.easeOutCubic(arg_7_3)
 
-				arg_7_4.render_settings.alpha_multiplier = 1 - var_7_0
+				arg_7_4.render_settings.alpha_multiplier = 1 - easeOutCubic
 			end,
-			on_complete = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			on_complete = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+				-- function 8
 				return
 			end
 		}
@@ -687,9 +699,9 @@ local var_0_9 = {
 }
 
 return {
-	widgets = var_0_8,
-	create_career_icon = var_0_7,
+	widgets = tbl_7,
+	create_career_icon = fn,
 	title_button_definitions = title_button_definitions,
-	scenegraph_definition = var_0_3,
-	animation_definitions = var_0_9
+	scenegraph_definition = tbl_3,
+	animation_definitions = tbl_8
 }

@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/loading_icon_view_definitions.lua
 
-local var_0_0 = {
+local tbl = {
 	screen = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
@@ -31,7 +31,8 @@ local var_0_0 = {
 	}
 }
 
-local function var_0_1(arg_1_0, arg_1_1)
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
 	return {
 		element = {
 			passes = {
@@ -88,6 +89,6 @@ local function var_0_1(arg_1_0, arg_1_1)
 end
 
 return {
-	scenegraph_definition = var_0_0,
-	loading_icon = var_0_1("default", "loading_icon")
+	scenegraph_definition = tbl,
+	loading_icon = fn("default", "loading_icon")
 }

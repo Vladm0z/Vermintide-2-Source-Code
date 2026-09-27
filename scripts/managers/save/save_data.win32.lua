@@ -3,13 +3,26 @@
 require("scripts/settings/player_data")
 
 local var_0_0 = rawget(_G, "Steam")
-local var_0_1 = var_0_0 and var_0_0.branch_name and var_0_0.branch_name()
 
-if var_0_1 and var_0_1 ~= "public" then
-	SaveFileName = "save_data_" .. tostring(var_0_1)
+if not var_0_0 then
+	-- Nothing
+end
+
+::label_0_0::
+
+local branch_name = var_0_0.branch_name
+
+branch_name = not branch_name and var_0_0.branch_name()
+
+::label_0_1::
+
+if not (not branch_name and branch_name == "public") then
+	SaveFileName = "save_data_" .. tostring(branch_name)
 else
 	SaveFileName = "save_data"
 end
+
+local SaveData = SaveData
 
 SaveData = SaveData or {
 	profiles_version = 45,
@@ -19,54 +32,58 @@ SaveData = SaveData or {
 	video_version = 1,
 	version = 7
 }
+SaveData = SaveData
 
-function populate_save_data(arg_1_0)
-	local var_1_0 = SaveData.version == arg_1_0.version
+function populate_save_data(self)
+	-- function 1
+	local flag = SaveData.version == self.version
 
-	if var_1_0 then
-		if SaveData.profiles_version ~= arg_1_0.profiles_version then
-			arg_1_0.profiles = nil
+	if not flag then
+		if SaveData.profiles_version ~= self.profiles_version then
+			self.profiles = nil
 
-			print("Wrong profiles_version for save file, saved: ", arg_1_0.profiles_version, " current: ", SaveData.profiles_version)
+			print("Wrong profiles_version for save file, saved: ", self.profiles_version, " current: ", SaveData.profiles_version)
 
-			arg_1_0.profiles_version = SaveData.profiles_version
+			self.profiles_version = SaveData.profiles_version
 		end
 
-		if SaveData.player_data_version ~= arg_1_0.player_data_version then
-			arg_1_0.player_data = nil
+		if SaveData.player_data_version ~= self.player_data_version then
+			self.player_data = nil
 
-			print("Wrong player_data_version for save file, saved: ", arg_1_0.player_data_version, " current: ", SaveData.player_data_version)
+			print("Wrong player_data_version for save file, saved: ", self.player_data_version, " current: ", SaveData.player_data_version)
 
-			arg_1_0.player_data_version = SaveData.player_data_version
+			self.player_data_version = SaveData.player_data_version
 		end
 
-		if SaveData.video_version ~= arg_1_0.video_version then
+		if SaveData.video_version ~= self.video_version then
 			print("User haven't seen the latest video yet - Show instead of loading screen")
 
-			arg_1_0.video_version = SaveData.video_version
+			self.video_version = SaveData.video_version
 		end
 
-		if SaveData.talents_version ~= arg_1_0.talents_version then
-			arg_1_0.talents = nil
+		if SaveData.talents_version ~= self.talents_version then
+			self.talents = nil
 
-			print("Wrong talents_version for save file, saved: ", arg_1_0.talents_version, " current: ", SaveData.talents_version)
+			print("Wrong talents_version for save file, saved: ", self.talents_version, " current: ", SaveData.talents_version)
 
-			arg_1_0.talents_version = SaveData.talents_version
+			self.talents_version = SaveData.talents_version
 		end
 
-		if not arg_1_0.backend_profile_hash then
-			arg_1_0.backend_profile_hash = SaveData.backend_profile_hash
+		if not self.backend_profile_hash then
+			self.backend_profile_hash = SaveData.backend_profile_hash
 		end
 
-		SaveData = arg_1_0
+		SaveData = self
 	else
-		print("Wrong version for save file, saved: ", arg_1_0.version, " current: ", SaveData.version)
+		print("Wrong version for save file, saved: ", self.version, " current: ", SaveData.version)
 	end
 
 	local var_1_1
-	local var_1_2 = (script_data.use_local_backend or not rawget(_G, "Steam")) and "local_save" or Steam.user_id()
+	local flag_2
 
-	populate_player_data_from_save(SaveData, var_1_2, var_1_0)
+	flag_2 = script_data.use_local_backend or not rawget(_G, "Steam") or "local_save" or Steam.user_id()
+
+	populate_player_data_from_save(SaveData, flag_2, flag)
 
 	SaveData.save_loaded = true
 end

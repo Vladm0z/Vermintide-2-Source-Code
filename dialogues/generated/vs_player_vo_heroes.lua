@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/vs_player_vo_heroes.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pbw_gameplay_pinging_monster_a_VS",

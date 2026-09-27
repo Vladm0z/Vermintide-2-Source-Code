@@ -1,37 +1,42 @@
 -- chunkname: @foundation/scripts/util/error.lua
 
-local function var_0_0(arg_1_0, ...)
-	local var_1_0 = {}
+local function fn(arg_1_0, ...)
+	-- function 1
+	local tbl = {}
 
-	for iter_1_0 = 1, select("#", ...) do
-		var_1_0[iter_1_0] = tostring(select(iter_1_0, ...))
+	for i = 1, select("#", ...) do
+		tbl[i] = tostring(select(i, ...))
 	end
 
-	return string.format(arg_1_0, unpack(var_1_0))
+	return string.format(arg_1_0, unpack(tbl))
 end
 
-function Application.warning(...)
-	print_warning(var_0_0(...))
+Application.warning = function (...)
+	-- function 2
+	print_warning(fn(...))
 end
 
-function Application.error(...)
-	if Crashify and script_data.testify then
-		Crashify.print_exception("Lua", var_0_0(...))
+Application.error = function (...)
+	-- function 3
+	if not Crashify and not script_data.testify then
+		Crashify.print_exception("Lua", fn(...))
 	else
-		print_error(var_0_0(...))
+		print_error(fn(...))
 	end
 end
 
 function fassert(arg_4_0, arg_4_1, ...)
+	-- function 4
 	if not arg_4_0 then
-		local var_4_0 = var_0_0(arg_4_1, ...)
+		local var_4_0 = fn(arg_4_1, ...)
 
 		assert(false, var_4_0)
 	end
 end
 
 function ferror(arg_5_0, ...)
-	local var_5_0 = var_0_0(arg_5_0, ...)
+	-- function 5
+	local var_5_0 = fn(arg_5_0, ...)
 
 	error(var_5_0)
 end

@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/morris/morris_common_settings.lua
 
-local var_0_0 = DLCSettings.morris
+local morris = DLCSettings.morris
 
-var_0_0.unlock_settings = {
+morris.unlock_settings = {
 	morris = {
 		class = "AlwaysUnlocked"
 	},
@@ -15,7 +15,7 @@ var_0_0.unlock_settings = {
 		id = "1592630"
 	}
 }
-var_0_0.unlock_settings_xb1 = {
+morris.unlock_settings_xb1 = {
 	morris = {
 		class = "AlwaysUnlocked"
 	},
@@ -60,7 +60,7 @@ var_0_0.unlock_settings_xb1 = {
 		class = "UnlockDlc"
 	}
 }
-var_0_0.unlock_settings_ps4 = {
+morris.unlock_settings_ps4 = {
 	CUSA13595_00 = {
 		morris = {
 			class = "AlwaysUnlocked"
@@ -168,22 +168,22 @@ var_0_0.unlock_settings_ps4 = {
 		}
 	}
 }
-var_0_0.statistics_definitions = {
+morris.statistics_definitions = {
 	"scripts/managers/backend/statistics_definitions_morris"
 }
-var_0_0.statistics_util = {
+morris.statistics_util = {
 	"scripts/managers/backend/statistics_util_morris"
 }
-var_0_0.attachment_node_linking = {
+morris.attachment_node_linking = {
 	"scripts/settings/dlcs/morris/attachment_node_linking_morris"
 }
-var_0_0.anim_lookup = {
+morris.anim_lookup = {
 	"to_dr_deus_01",
 	"to_dr_deus_01_loaded",
 	"to_dr_deus_01_noammo",
 	"parry_stab_02"
 }
-var_0_0.mutators = {
+morris.mutators = {
 	"no_sorcerers",
 	"curse_corrupted_flesh",
 	"curse_skulls_of_fury",
@@ -225,12 +225,12 @@ var_0_0.mutators = {
 	"pacing_frozen",
 	"escape"
 }
-var_0_0.mutator_common_settings = {
+morris.mutator_common_settings = {
 	deus = {
 		initial_activation_delay = 10
 	}
 }
-var_0_0.interactions = {
+morris.interactions = {
 	"deus_access",
 	"deus_weapon_chest",
 	"deus_cursed_chest",
@@ -239,10 +239,10 @@ var_0_0.interactions = {
 	"deus_setup_rally_flag",
 	"deus_arena_interactable"
 }
-var_0_0.interactions_filenames = {
+morris.interactions_filenames = {
 	"scripts/settings/dlcs/morris/morris_interactions"
 }
-var_0_0.interaction_ui_components = {
+morris.interaction_ui_components = {
 	swap_melee = {
 		class_name = "DeusSwapWeaponInteractionUI",
 		filename = "scripts/settings/dlcs/morris/deus_swap_weapon_interaction_ui"
@@ -260,10 +260,10 @@ var_0_0.interaction_ui_components = {
 		filename = "scripts/settings/dlcs/morris/deus_power_up_interaction_ui"
 	}
 }
-var_0_0.vote_template_filenames = {
+morris.vote_template_filenames = {
 	"scripts/settings/dlcs/morris/morris_vote_templates"
 }
-var_0_0.mechanism_settings = {
+morris.mechanism_settings = {
 	deus = {
 		disable_difficulty_check = true,
 		display_name = "area_selection_morris_name",
@@ -307,37 +307,38 @@ var_0_0.mechanism_settings = {
 		},
 		progress_loss_warning_message_data = {
 			message = "exit_warning",
-			is_allowed = function()
+			is_allowed = function ()
+				-- function 1
 				return Managers.mechanism:get_state() ~= "inn_deus"
 			end
 		},
 		gamemode_lookup = {}
 	}
 }
-var_0_0.game_mode_files = {
+morris.game_mode_files = {
 	"scripts/managers/game_mode/game_modes/game_mode_inn_deus",
 	"scripts/managers/game_mode/game_modes/game_mode_map_deus",
 	"scripts/managers/game_mode/game_modes/game_mode_deus"
 }
-var_0_0.game_modes = {
+morris.game_modes = {
 	"inn_deus",
 	"map_deus",
 	"deus"
 }
-var_0_0.mechanisms = {
+morris.mechanisms = {
 	"deus"
 }
-var_0_0.matchmaking_types = {
+morris.matchmaking_types = {
 	"inn_deus",
 	"map_deus",
 	"deus",
 	"deus_weekly"
 }
-var_0_0.game_mode = "scripts/settings/dlcs/morris/game_mode_settings_morris"
-var_0_0.end_view = {
+morris.game_mode = "scripts/settings/dlcs/morris/game_mode_settings_morris"
+morris.end_view = {
 	"scripts/ui/views/level_end/level_end_view_deus"
 }
-var_0_0.husk_lookup = {
+morris.husk_lookup = {
 	"units/props/inn/deus/deus_chest_01",
 	"units/props/inn/deus/deus_cursed_chest",
 	"units/props/deus_pickups/deus_loot_pyramide_01",
@@ -360,57 +361,60 @@ var_0_0.husk_lookup = {
 	"units/props/level_hero_assets/deus_portal_02",
 	"units/decals/deus_decal_aoe_cursedchest_01"
 }
-var_0_0.hit_effects = {
+morris.hit_effects = {
 	"scripts/settings/hit_effects/hit_effects_chaos_greed_pinata"
 }
-var_0_0.effects = {
+morris.effects = {
 	"fx/deus_prop_pinata_teleport",
 	"fx/cw_chain_lightning"
 }
-var_0_0.unit_extension_templates = {
+morris.unit_extension_templates = {
 	"scripts/settings/dlcs/morris/morris_unit_extension_templates"
 }
-var_0_0.game_object_initializers = {
-	deus_weapon_chest = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
-		local var_2_0 = ScriptUnit.extension(arg_2_0, "pickup_system")
-		local var_2_1 = var_2_0.pickup_name
-		local var_2_2 = var_2_0.has_physics
-		local var_2_3 = var_2_0.spawn_type
+morris.game_object_initializers = {
+	deus_weapon_chest = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+		-- function 2
+		local extension = ScriptUnit.extension(arg_2_0, "pickup_system")
+		local pickup_name = extension.pickup_name
+		local has_physics = extension.has_physics
+		local spawn_type = extension.spawn_type
 
 		return {
 			go_type = NetworkLookup.go_types.deus_weapon_chest,
 			husk_unit = NetworkLookup.husks[arg_2_1],
-			pickup_name = NetworkLookup.pickup_names[var_2_1],
-			has_physics = var_2_2,
-			spawn_type = NetworkLookup.pickup_spawn_types[var_2_3],
+			pickup_name = NetworkLookup.pickup_names[pickup_name],
+			has_physics = has_physics,
+			spawn_type = NetworkLookup.pickup_spawn_types[spawn_type],
 			position = Unit.local_position(arg_2_0, 0),
 			rotation = Unit.local_rotation(arg_2_0, 0)
 		}
 	end,
-	deus_cursed_chest = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
-		local var_3_0 = ScriptUnit.extension(arg_3_0, "pickup_system")
-		local var_3_1 = var_3_0.pickup_name
-		local var_3_2 = var_3_0.has_physics
-		local var_3_3 = var_3_0.spawn_type
+	deus_cursed_chest = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+		-- function 3
+		local extension = ScriptUnit.extension(arg_3_0, "pickup_system")
+		local pickup_name = extension.pickup_name
+		local has_physics = extension.has_physics
+		local spawn_type = extension.spawn_type
 
 		return {
 			go_type = NetworkLookup.go_types.deus_cursed_chest,
 			husk_unit = NetworkLookup.husks[arg_3_1],
-			pickup_name = NetworkLookup.pickup_names[var_3_1],
-			has_physics = var_3_2,
-			spawn_type = NetworkLookup.pickup_spawn_types[var_3_3],
+			pickup_name = NetworkLookup.pickup_names[pickup_name],
+			has_physics = has_physics,
+			spawn_type = NetworkLookup.pickup_spawn_types[spawn_type],
 			position = Unit.local_position(arg_3_0, 0),
 			rotation = Unit.local_rotation(arg_3_0, 0)
 		}
 	end,
-	buff_objective_unit = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
-		local var_4_0 = {}
-		local var_4_1 = ScriptUnit.extension(arg_4_0, "buff_system"):initial_buff_names()
+	buff_objective_unit = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+		-- function 4
+		local tbl = {}
+		local initial_buff_names = ScriptUnit.extension(arg_4_0, "buff_system"):initial_buff_names()
 
-		for iter_4_0, iter_4_1 in pairs(var_4_1) do
-			local var_4_2 = NetworkLookup.buff_templates[iter_4_1]
+		for k, v in pairs(initial_buff_names) do
+			local var_4_2 = NetworkLookup.buff_templates[v]
 
-			table.insert(var_4_0, var_4_2)
+			table.insert(tbl, var_4_2)
 		end
 
 		return {
@@ -418,188 +422,196 @@ var_0_0.game_object_initializers = {
 			husk_unit = NetworkLookup.husks[arg_4_1],
 			position = Unit.local_position(arg_4_0, 0),
 			rotation = Unit.local_rotation(arg_4_0, 0),
-			network_buff_ids = var_4_0
+			network_buff_ids = tbl
 		}
 	end,
-	egg_of_tzeentch_unit = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
-		local var_5_0 = {}
-		local var_5_1 = ScriptUnit.extension(arg_5_0, "buff_system"):initial_buff_names()
+	egg_of_tzeentch_unit = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+		-- function 5
+		local tbl = {}
+		local initial_buff_names = ScriptUnit.extension(arg_5_0, "buff_system"):initial_buff_names()
 
-		for iter_5_0, iter_5_1 in pairs(var_5_1) do
-			local var_5_2 = NetworkLookup.buff_templates[iter_5_1]
+		for k, v in pairs(initial_buff_names) do
+			local var_5_2 = NetworkLookup.buff_templates[v]
 
-			table.insert(var_5_0, var_5_2)
+			table.insert(tbl, var_5_2)
 		end
 
-		local var_5_3 = ScriptUnit.has_extension(arg_5_0, "health_system")
-		local var_5_4 = ScriptUnit.has_extension(arg_5_0, "timed_spawner_system")
-		local var_5_5 = var_5_4:get_spawn_rate()
-		local var_5_6 = {}
-		local var_5_7 = var_5_4:get_spawnable_breeds()
+		local has_extension = ScriptUnit.has_extension(arg_5_0, "health_system")
+		local has_extension_2 = ScriptUnit.has_extension(arg_5_0, "timed_spawner_system")
+		local get_spawn_rate = has_extension_2:get_spawn_rate()
+		local tbl_2 = {}
+		local get_spawnable_breeds = has_extension_2:get_spawnable_breeds()
 
-		for iter_5_2, iter_5_3 in pairs(var_5_7) do
-			local var_5_8 = NetworkLookup.breeds[iter_5_3]
+		for k_2, v_2 in pairs(get_spawnable_breeds) do
+			local var_5_8 = NetworkLookup.breeds[v_2]
 
-			table.insert(var_5_6, var_5_8)
+			table.insert(tbl_2, var_5_8)
 		end
 
-		local var_5_9 = var_5_4:get_max_spawn_amount()
+		local get_max_spawn_amount = has_extension_2:get_max_spawn_amount()
 
 		return {
 			go_type = NetworkLookup.go_types.egg_of_tzeentch_unit,
 			husk_unit = NetworkLookup.husks[arg_5_1],
 			position = Unit.local_position(arg_5_0, 0),
 			rotation = Unit.local_rotation(arg_5_0, 0),
-			network_buff_ids = var_5_0,
-			health = var_5_3:get_max_health(),
-			max_spawn_amount = var_5_9,
-			spawnable_breeds = var_5_6,
-			spawn_rate = var_5_5
+			network_buff_ids = tbl,
+			health = has_extension:get_max_health(),
+			max_spawn_amount = get_max_spawn_amount,
+			spawnable_breeds = tbl_2,
+			spawn_rate = get_spawn_rate
 		}
 	end,
-	deus_relic = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
-		local var_6_0 = ScriptUnit.extension(arg_6_0, "projectile_locomotion_system")
-		local var_6_1 = var_6_0.network_position
-		local var_6_2 = var_6_0.network_rotation
-		local var_6_3 = var_6_0.network_velocity
-		local var_6_4 = var_6_0.network_angular_velocity
-		local var_6_5 = ScriptUnit.extension(arg_6_0, "pickup_system")
-		local var_6_6 = var_6_5.pickup_name
-		local var_6_7 = var_6_5.has_physics
-		local var_6_8 = var_6_5.spawn_type
+	deus_relic = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+		-- function 6
+		local extension = ScriptUnit.extension(arg_6_0, "projectile_locomotion_system")
+		local network_position = extension.network_position
+		local network_rotation = extension.network_rotation
+		local network_velocity = extension.network_velocity
+		local network_angular_velocity = extension.network_angular_velocity
+		local extension_2 = ScriptUnit.extension(arg_6_0, "pickup_system")
+		local pickup_name = extension_2.pickup_name
+		local has_physics = extension_2.has_physics
+		local spawn_type = extension_2.spawn_type
 
 		return {
 			go_type = NetworkLookup.go_types.deus_relic,
 			husk_unit = NetworkLookup.husks[arg_6_1],
 			position = Unit.local_position(arg_6_0, 0),
 			rotation = Unit.local_rotation(arg_6_0, 0),
-			network_position = var_6_1,
-			network_rotation = var_6_2,
-			network_velocity = var_6_3,
-			network_angular_velocity = var_6_4,
+			network_position = network_position,
+			network_rotation = network_rotation,
+			network_velocity = network_velocity,
+			network_angular_velocity = network_angular_velocity,
 			debug_pos = Unit.local_position(arg_6_0, 0),
-			pickup_name = NetworkLookup.pickup_names[var_6_6],
-			has_physics = var_6_7,
-			spawn_type = NetworkLookup.pickup_spawn_types[var_6_8]
+			pickup_name = NetworkLookup.pickup_names[pickup_name],
+			has_physics = has_physics,
+			spawn_type = NetworkLookup.pickup_spawn_types[spawn_type]
 		}
 	end,
-	buffed_timed_explosion_unit = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
-		local var_7_0 = ScriptUnit.extension(arg_7_0, "area_damage_system")
-		local var_7_1 = var_7_0.follow_unit
-		local var_7_2 = var_7_0.explosion_template_name
-		local var_7_3 = Managers.state.network
-		local var_7_4 = {}
-		local var_7_5 = ScriptUnit.extension(arg_7_0, "buff_system"):initial_buff_names()
+	buffed_timed_explosion_unit = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+		-- function 7
+		local extension = ScriptUnit.extension(arg_7_0, "area_damage_system")
+		local follow_unit = extension.follow_unit
+		local explosion_template_name = extension.explosion_template_name
+		local network = Managers.state.network
+		local tbl = {}
+		local initial_buff_names = ScriptUnit.extension(arg_7_0, "buff_system"):initial_buff_names()
 
-		for iter_7_0, iter_7_1 in pairs(var_7_5) do
-			local var_7_6 = NetworkLookup.buff_templates[iter_7_1]
+		for k, v in pairs(initial_buff_names) do
+			local var_7_6 = NetworkLookup.buff_templates[v]
 
-			table.insert(var_7_4, var_7_6)
+			table.insert(tbl, var_7_6)
 		end
 
 		return {
 			go_type = NetworkLookup.go_types.buffed_timed_explosion_unit,
 			husk_unit = NetworkLookup.husks[arg_7_1],
-			follow_unit = var_7_3:unit_game_object_id(var_7_1),
-			explosion_template_name = NetworkLookup.explosion_templates[var_7_2],
+			follow_unit = network:unit_game_object_id(follow_unit),
+			explosion_template_name = NetworkLookup.explosion_templates[explosion_template_name],
 			position = Unit.local_position(arg_7_0, 0),
 			rotation = Unit.local_rotation(arg_7_0, 0),
-			network_buff_ids = var_7_4
+			network_buff_ids = tbl
 		}
 	end
 }
-var_0_0.game_object_extractors = {
-	deus_weapon_chest = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
-		local var_8_0 = GameSession.game_object_field(arg_8_0, arg_8_1, "pickup_name")
-		local var_8_1 = GameSession.game_object_field(arg_8_0, arg_8_1, "has_physics")
-		local var_8_2 = GameSession.game_object_field(arg_8_0, arg_8_1, "spawn_type")
-		local var_8_3 = {
+morris.game_object_extractors = {
+	deus_weapon_chest = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+		-- function 8
+		local game_object_field = GameSession.game_object_field(arg_8_0, arg_8_1, "pickup_name")
+		local game_object_field_2 = GameSession.game_object_field(arg_8_0, arg_8_1, "has_physics")
+		local game_object_field_3 = GameSession.game_object_field(arg_8_0, arg_8_1, "spawn_type")
+		local tbl = {
 			pickup_system = {
-				pickup_name = NetworkLookup.pickup_names[var_8_0],
-				has_physics = var_8_1,
-				spawn_type = NetworkLookup.pickup_spawn_types[var_8_2]
+				pickup_name = NetworkLookup.pickup_names[game_object_field],
+				has_physics = game_object_field_2,
+				spawn_type = NetworkLookup.pickup_spawn_types[game_object_field_3]
 			}
 		}
 
-		return "deus_weapon_chest", var_8_3
+		return "deus_weapon_chest", tbl
 	end,
-	deus_cursed_chest = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
-		local var_9_0 = GameSession.game_object_field(arg_9_0, arg_9_1, "pickup_name")
-		local var_9_1 = GameSession.game_object_field(arg_9_0, arg_9_1, "has_physics")
-		local var_9_2 = GameSession.game_object_field(arg_9_0, arg_9_1, "spawn_type")
-		local var_9_3 = {
+	deus_cursed_chest = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+		-- function 9
+		local game_object_field = GameSession.game_object_field(arg_9_0, arg_9_1, "pickup_name")
+		local game_object_field_2 = GameSession.game_object_field(arg_9_0, arg_9_1, "has_physics")
+		local game_object_field_3 = GameSession.game_object_field(arg_9_0, arg_9_1, "spawn_type")
+		local tbl = {
 			pickup_system = {
-				pickup_name = NetworkLookup.pickup_names[var_9_0],
-				has_physics = var_9_1,
-				spawn_type = NetworkLookup.pickup_spawn_types[var_9_2]
+				pickup_name = NetworkLookup.pickup_names[game_object_field],
+				has_physics = game_object_field_2,
+				spawn_type = NetworkLookup.pickup_spawn_types[game_object_field_3]
 			}
 		}
 
-		return "deus_cursed_chest", var_9_3
+		return "deus_cursed_chest", tbl
 	end,
-	buff_objective_unit = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
-		local var_10_0 = {}
-		local var_10_1 = GameSession.game_object_field(arg_10_0, arg_10_1, "network_buff_ids")
+	buff_objective_unit = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+		-- function 10
+		local tbl = {}
+		local game_object_field = GameSession.game_object_field(arg_10_0, arg_10_1, "network_buff_ids")
 
-		if var_10_1 then
-			for iter_10_0, iter_10_1 in ipairs(var_10_1) do
-				local var_10_2 = NetworkLookup.buff_templates[iter_10_1]
+		if not game_object_field then
+			for i, v in ipairs(game_object_field) do
+				local var_10_2 = NetworkLookup.buff_templates[v]
 
-				table.insert(var_10_0, var_10_2)
+				table.insert(tbl, var_10_2)
 			end
 		end
 
-		local var_10_3 = {
+		local tbl_2 = {
 			buff_system = {
-				initial_buff_names = var_10_0
+				initial_buff_names = tbl
 			}
 		}
 
-		return "buff_objective_unit", var_10_3
+		return "buff_objective_unit", tbl_2
 	end,
-	deus_relic = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
-		local var_11_0 = GameSession.game_object_field(arg_11_0, arg_11_1, "network_position")
-		local var_11_1 = GameSession.game_object_field(arg_11_0, arg_11_1, "network_rotation")
-		local var_11_2 = GameSession.game_object_field(arg_11_0, arg_11_1, "network_velocity")
-		local var_11_3 = GameSession.game_object_field(arg_11_0, arg_11_1, "network_angular_velocity")
-		local var_11_4 = GameSession.game_object_field(arg_11_0, arg_11_1, "pickup_name")
-		local var_11_5 = GameSession.game_object_field(arg_11_0, arg_11_1, "has_physics")
-		local var_11_6 = GameSession.game_object_field(arg_11_0, arg_11_1, "spawn_type")
-		local var_11_7 = {
+	deus_relic = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+		-- function 11
+		local game_object_field = GameSession.game_object_field(arg_11_0, arg_11_1, "network_position")
+		local game_object_field_2 = GameSession.game_object_field(arg_11_0, arg_11_1, "network_rotation")
+		local game_object_field_3 = GameSession.game_object_field(arg_11_0, arg_11_1, "network_velocity")
+		local game_object_field_4 = GameSession.game_object_field(arg_11_0, arg_11_1, "network_angular_velocity")
+		local game_object_field_5 = GameSession.game_object_field(arg_11_0, arg_11_1, "pickup_name")
+		local game_object_field_6 = GameSession.game_object_field(arg_11_0, arg_11_1, "has_physics")
+		local game_object_field_7 = GameSession.game_object_field(arg_11_0, arg_11_1, "spawn_type")
+		local tbl = {
 			projectile_locomotion_system = {
-				network_position = var_11_0,
-				network_rotation = var_11_1,
-				network_velocity = var_11_2,
-				network_angular_velocity = var_11_3
+				network_position = game_object_field,
+				network_rotation = game_object_field_2,
+				network_velocity = game_object_field_3,
+				network_angular_velocity = game_object_field_4
 			},
 			pickup_system = {
-				pickup_name = NetworkLookup.pickup_names[var_11_4],
-				has_physics = var_11_5,
-				spawn_type = NetworkLookup.pickup_spawn_types[var_11_6]
+				pickup_name = NetworkLookup.pickup_names[game_object_field_5],
+				has_physics = game_object_field_6,
+				spawn_type = NetworkLookup.pickup_spawn_types[game_object_field_7]
 			}
 		}
 
-		return "deus_relic", var_11_7
+		return "deus_relic", tbl
 	end,
-	egg_of_tzeentch_unit = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
-		local var_12_0 = {}
-		local var_12_1 = GameSession.game_object_field(arg_12_0, arg_12_1, "network_buff_ids")
+	egg_of_tzeentch_unit = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+		-- function 12
+		local tbl = {}
+		local game_object_field = GameSession.game_object_field(arg_12_0, arg_12_1, "network_buff_ids")
 
-		if var_12_1 then
-			for iter_12_0, iter_12_1 in ipairs(var_12_1) do
-				local var_12_2 = NetworkLookup.buff_templates[iter_12_1]
+		if not game_object_field then
+			for i, v in ipairs(game_object_field) do
+				local var_12_2 = NetworkLookup.buff_templates[v]
 
-				table.insert(var_12_0, var_12_2)
+				table.insert(tbl, var_12_2)
 			end
 		end
 
-		local var_12_3 = GameSession.game_object_field(arg_12_0, arg_12_1, "health")
-		local var_12_4 = GameSession.game_object_field(arg_12_0, arg_12_1, "spawn_rate")
-		local var_12_5 = GameSession.game_object_field(arg_12_0, arg_12_1, "spawnable_breeds")
-		local var_12_6 = GameSession.game_object_field(arg_12_0, arg_12_1, "max_spawn_amount")
-		local var_12_7 = {
+		local game_object_field_2 = GameSession.game_object_field(arg_12_0, arg_12_1, "health")
+		local game_object_field_3 = GameSession.game_object_field(arg_12_0, arg_12_1, "spawn_rate")
+		local game_object_field_4 = GameSession.game_object_field(arg_12_0, arg_12_1, "spawnable_breeds")
+		local game_object_field_5 = GameSession.game_object_field(arg_12_0, arg_12_1, "max_spawn_amount")
+		local tbl_2 = {
 			health_system = {
-				health = var_12_3
+				health = game_object_field_2
 			},
 			death_system = {
 				death_reaction_template = "destructible_buff_objective_unit",
@@ -610,45 +622,46 @@ var_0_0.game_object_extractors = {
 				hit_reaction_template = "level_object"
 			},
 			buff_system = {
-				initial_buff_names = var_12_0
+				initial_buff_names = tbl
 			},
 			timed_spawner_system = {
-				spawn_rate = var_12_4,
-				spawnable_breeds = var_12_5,
-				max_spawn_amount = var_12_6
+				spawn_rate = game_object_field_3,
+				spawnable_breeds = game_object_field_4,
+				max_spawn_amount = game_object_field_5
 			}
 		}
 
-		return "egg_of_tzeentch_unit", var_12_7
+		return "egg_of_tzeentch_unit", tbl_2
 	end,
-	buffed_timed_explosion_unit = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
-		local var_13_0 = GameSession.game_object_field(arg_13_0, arg_13_1, "follow_unit")
-		local var_13_1 = GameSession.game_object_field(arg_13_0, arg_13_1, "explosion_template_name")
-		local var_13_2 = {}
-		local var_13_3 = GameSession.game_object_field(arg_13_0, arg_13_1, "network_buff_ids")
+	buffed_timed_explosion_unit = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+		-- function 13
+		local game_object_field = GameSession.game_object_field(arg_13_0, arg_13_1, "follow_unit")
+		local game_object_field_2 = GameSession.game_object_field(arg_13_0, arg_13_1, "explosion_template_name")
+		local tbl = {}
+		local game_object_field_3 = GameSession.game_object_field(arg_13_0, arg_13_1, "network_buff_ids")
 
-		if var_13_3 then
-			for iter_13_0, iter_13_1 in ipairs(var_13_3) do
-				local var_13_4 = NetworkLookup.buff_templates[iter_13_1]
+		if not game_object_field_3 then
+			for i, v in ipairs(game_object_field_3) do
+				local var_13_4 = NetworkLookup.buff_templates[v]
 
-				table.insert(var_13_2, var_13_4)
+				table.insert(tbl, var_13_4)
 			end
 		end
 
-		local var_13_5 = {
+		local tbl_2 = {
 			area_damage_system = {
-				follow_unit = Managers.state.unit_storage:unit(var_13_0),
-				explosion_template_name = NetworkLookup.explosion_templates[var_13_1]
+				follow_unit = Managers.state.unit_storage:unit(game_object_field),
+				explosion_template_name = NetworkLookup.explosion_templates[game_object_field_2]
 			},
 			buff_system = {
-				initial_buff_names = var_13_2
+				initial_buff_names = tbl
 			}
 		}
 
-		return "buffed_timed_explosion_unit", var_13_5
+		return "buffed_timed_explosion_unit", tbl_2
 	end
 }
-var_0_0.game_object_templates = {
+morris.game_object_templates = {
 	deus_weapon_chest = {
 		game_object_created_func_name = "game_object_created_network_unit",
 		syncs_position = true,
@@ -691,7 +704,7 @@ var_0_0.game_object_templates = {
 		is_level_unit = false
 	}
 }
-var_0_0.network_go_types = {
+morris.network_go_types = {
 	"deus_weapon_chest",
 	"deus_cursed_chest",
 	"buff_objective_unit",
@@ -699,41 +712,41 @@ var_0_0.network_go_types = {
 	"egg_of_tzeentch_unit",
 	"buffed_timed_explosion_unit"
 }
-var_0_0.conflict_settings_files = {
+morris.conflict_settings_files = {
 	"scripts/settings/dlcs/morris/deus_conflict_settings"
 }
-var_0_0.generic_terror_event_files = {
+morris.generic_terror_event_files = {
 	"scripts/settings/dlcs/morris/deus_generic_terror_events"
 }
-var_0_0.weapon_skins_file_names = {
+morris.weapon_skins_file_names = {
 	"scripts/settings/equipment/weapon_skins_morris"
 }
-var_0_0.weapon_traits_file_names = {
+morris.weapon_traits_file_names = {
 	"scripts/settings/equipment/weapon_traits_morris"
 }
-var_0_0.weapon_properties_file_names = {
+morris.weapon_properties_file_names = {
 	"scripts/settings/equipment/weapon_properties_morris"
 }
-var_0_0.hero_hud_components = {
+morris.hero_hud_components = {
 	"DeusSoftCurrencyIndicatorUI",
 	"DeusCurseUI",
 	"EnergyBarUI"
 }
 
-if BUILD ~= "release" or script_data.debug_enabled then
-	table.insert(var_0_0.hero_hud_components, "DeusDebugUI")
-	table.insert(var_0_0.hero_hud_components, "DeusDebugMapUI")
+if BUILD ~= "release" or not script_data.debug_enabled then
+	table.insert(morris.hero_hud_components, "DeusDebugUI")
+	table.insert(morris.hero_hud_components, "DeusDebugMapUI")
 end
 
-var_0_0.horde_composition_file = "scripts/settings/dlcs/morris/morris_horde_compositions"
-var_0_0.horde_compositions_pacing_file = "scripts/settings/dlcs/morris/morris_horde_compositions_pacing"
-var_0_0.material_effect_mappings_file_names = {
+morris.horde_composition_file = "scripts/settings/dlcs/morris/morris_horde_compositions"
+morris.horde_compositions_pacing_file = "scripts/settings/dlcs/morris/morris_horde_compositions_pacing"
+morris.material_effect_mappings_file_names = {
 	"scripts/settings/material_effect_mappings_morris"
 }
-var_0_0.systems = {
+morris.systems = {
 	"scripts/entity_system/systems/deus_chest/deus_chest_preload_system"
 }
-var_0_0.entity_extensions = {
+morris.entity_extensions = {
 	"scripts/unit_extensions/deus/deus_chest_preload_extension",
 	"scripts/unit_extensions/deus/deus_cursed_chest_extension",
 	"scripts/unit_extensions/deus/deus_relic_extension",
@@ -742,7 +755,7 @@ var_0_0.entity_extensions = {
 	"scripts/unit_extensions/generic/timed_spawner_extension",
 	"scripts/unit_extensions/ai_supplementary/curse_corruptor_beam_extension"
 }
-var_0_0.entity_system_params = {
+morris.entity_system_params = {
 	deus_chest_preload_system = {
 		system_class_name = "DeusChestPreloadSystem",
 		system_name = "deus_chest_preload_system",
@@ -786,7 +799,7 @@ var_0_0.entity_system_params = {
 		}
 	}
 }
-var_0_0.additional_system_extensions = {
+morris.additional_system_extensions = {
 	pickup_system = {
 		{
 			require = "scripts/unit_extensions/pickups/deus_chest_extension",
@@ -794,23 +807,23 @@ var_0_0.additional_system_extensions = {
 		}
 	}
 }
-var_0_0.network_damage_types = {
+morris.network_damage_types = {
 	"curse_empathy",
 	"skulls_of_fury",
 	"blood_storm",
 	"bolt_of_change"
 }
-var_0_0.network_damage_sources = {
+morris.network_damage_sources = {
 	"poison_dot"
 }
-var_0_0.network_lookups = {
+morris.network_lookups = {
 	deus_blessings = "DeusBlessingSettings",
 	deus_themes = "DeusThemeSettings",
 	deus_power_up_templates = "DeusPowerUpTemplates",
 	deus_journeys = "DeusJourneySettings",
 	deus_chest_types = "DEUS_CHEST_TYPES"
 }
-var_0_0.twitch_settings = {
+morris.twitch_settings = {
 	vote_templates_file = "scripts/settings/dlcs/morris/twitch_vote_templates_morris",
 	supported_game_modes = {
 		map_deus = true,
@@ -855,7 +868,7 @@ var_0_0.twitch_settings = {
 		}
 	}
 }
-var_0_0.camera_shake_settings = {
+morris.camera_shake_settings = {
 	holy_hand_grenade_explosion = {
 		persistance = 1.2,
 		amplitude = 1.5,
@@ -864,10 +877,10 @@ var_0_0.camera_shake_settings = {
 		octaves = 7
 	}
 }
-var_0_0.death_reactions = {
+morris.death_reactions = {
 	"scripts/settings/dlcs/morris/morris_death_reactions"
 }
-var_0_0.dot_type_lookup = {
+morris.dot_type_lookup = {
 	we_deus_01_dot_fast = "burning_dot",
 	burning_magma_dot = "burning_dot",
 	boon_career_ability_poison_aoe = "poison_dot",
@@ -877,11 +890,11 @@ var_0_0.dot_type_lookup = {
 	boon_career_ability_bleed_aoe = "poison_dot",
 	we_deus_01_dot_charged = "burning_dot"
 }
-var_0_0.end_view_state = {
+morris.end_view_state = {
 	"scripts/ui/views/level_end/states/end_view_state_summary_deus"
 }
-var_0_0.loading_tips_file = "scripts/settings/dlcs/morris/morris_loading_tips"
-var_0_0.drone_templates = {
+morris.loading_tips_file = "scripts/settings/dlcs/morris/morris_loading_tips"
+morris.drone_templates = {
 	deus_damage_drone = {
 		impact_vfx = "fx/skulls_2024/boons_drone_projectile_impact_fx",
 		impact_sfx = "Play_boon_drone_impact",

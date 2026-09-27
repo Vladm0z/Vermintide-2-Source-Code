@@ -4,32 +4,46 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTPackMasterSkulkAroundAction = class(BTPackMasterSkulkAroundAction, BTNode)
 
-function BTPackMasterSkulkAroundAction.init(arg_1_0, ...)
-	BTPackMasterSkulkAroundAction.super.init(arg_1_0, ...)
+BTPackMasterSkulkAroundAction.init = function (self, ...)
+	-- function 1
+	BTPackMasterSkulkAroundAction.super.init(self, ...)
 
-	arg_1_0.navigation_group_manager = Managers.state.conflict.navigation_group_manager
+	self.navigation_group_manager = Managers.state.conflict.navigation_group_manager
 end
 
 BTPackMasterSkulkAroundAction.name = "BTPackMasterSkulkAroundAction"
 
-function BTPackMasterSkulkAroundAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTPackMasterSkulkAroundAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+	-- function 2
 	LocomotionUtils.set_animation_driven_movement(arg_2_1, false)
 	arg_2_2.navigation_extension:set_max_speed(arg_2_2.breed.run_speed)
 
-	local var_2_0 = arg_2_0._tree_node.action_data
+	local action_data = self._tree_node.action_data
 
-	arg_2_2.action = var_2_0
-	arg_2_2.skulk_time = arg_2_2.skulk_time or arg_2_3 + var_2_0.skulk_time
-	arg_2_2.skulk_time_force_attack = arg_2_2.skulk_time_force_attack or arg_2_3 + var_2_0.skulk_time_force_attack
+	arg_2_2.action = action_data
+
+	local skulk_time = arg_2_2.skulk_time
+
+	skulk_time = skulk_time or arg_2_3 + action_data.skulk_time
+	arg_2_2.skulk_time = skulk_time
+
+	local skulk_time_force_attack = arg_2_2.skulk_time_force_attack
+
+	skulk_time_force_attack = skulk_time_force_attack or arg_2_3 + action_data.skulk_time_force_attack
+	arg_2_2.skulk_time_force_attack = skulk_time_force_attack
 	arg_2_2.skulk_goal_get_fails = 0
 	arg_2_2.skulk_debug_state = "enter"
 
 	arg_2_2.locomotion_extension:set_rotation_speed(5)
 
-	arg_2_2.attack_cooldown = arg_2_2.attack_cooldown or 0
+	local attack_cooldown = arg_2_2.attack_cooldown
+
+	attack_cooldown = attack_cooldown or 0
+	arg_2_2.attack_cooldown = attack_cooldown
 end
 
-function BTPackMasterSkulkAroundAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTPackMasterSkulkAroundAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	-- function 3
 	arg_3_2.action = nil
 	arg_3_2.skulk_pos = nil
 	arg_3_2.skulk_around_dir = nil
@@ -44,90 +58,98 @@ function BTPackMasterSkulkAroundAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3,
 		arg_3_2.skulk_time_left = nil
 	end
 
-	local var_3_0 = AiUtils.get_default_breed_move_speed(arg_3_1, arg_3_2)
+	local get_default_breed_move_speed = AiUtils.get_default_breed_move_speed(arg_3_1, arg_3_2)
 
-	arg_3_2.navigation_extension:set_max_speed(var_3_0)
+	arg_3_2.navigation_extension:set_max_speed(get_default_breed_move_speed)
 end
 
-local var_0_0 = {}
+local tbl = {}
 
-function BTPackMasterSkulkAroundAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTPackMasterSkulkAroundAction.run = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	-- function 4
 	if not AiUtils.is_of_interest_to_packmaster(arg_4_1, arg_4_2.target_unit) then
 		return "failed"
 	end
 
-	local var_4_0 = arg_4_2.locomotion_extension
-	local var_4_1 = arg_4_2.breed
+	local locomotion_extension = arg_4_2.locomotion_extension
+	local breed = arg_4_2.breed
 	local var_4_2 = POSITION_LOOKUP[arg_4_2.target_unit]
 
-	if script_data.debug_ai_movement then
+	if not script_data.debug_ai_movement then
 		arg_4_2.skulk_time_left = string.format("%.2f", arg_4_2.skulk_time - arg_4_3)
 
-		arg_4_0:debug(arg_4_1, arg_4_2)
+		self:debug(arg_4_1, arg_4_2)
 	end
 
-	if arg_4_3 > arg_4_2.skulk_time and arg_4_3 > arg_4_2.attack_cooldown then
-		local var_4_3 = arg_4_2.action
-		local var_4_4 = arg_4_3 > arg_4_2.skulk_time_force_attack
-		local var_4_5 = Managers.state.entity:system("ai_slot_system"):slots_count(arg_4_2.target_unit)
+	if not (not (arg_4_3 > arg_4_2.skulk_time) or not (arg_4_3 > arg_4_2.attack_cooldown)) then
+		local action = arg_4_2.action
+		local flag = arg_4_3 > arg_4_2.skulk_time_force_attack
+		local slots_count = Managers.state.entity:system("ai_slot_system"):slots_count(arg_4_2.target_unit)
 
-		if var_4_5 >= var_4_3.dogpile_aggro_needed or script_data.ai_packmaster_ignore_dogpile or var_4_4 then
+		if slots_count >= action.dogpile_aggro_needed or script_data.ai_packmaster_ignore_dogpile or not flag then
 			arg_4_2.skulk_pos = nil
 			arg_4_2.skulk_around_dir = nil
 
 			return "done"
 		end
 
-		arg_4_2.skulk_dogpile = var_4_5
+		arg_4_2.skulk_dogpile = slots_count
 		arg_4_2.skulk_time = arg_4_3 + 1
 	end
 
 	if not arg_4_2.skulk_pos then
-		arg_4_0:get_new_goal(arg_4_1, arg_4_2)
+		self:get_new_goal(arg_4_1, arg_4_2)
 
 		arg_4_2.skulk_debug_state = "get_new_goal"
 
 		return "running"
 	end
 
-	local var_4_6 = arg_4_2.navigation_extension
-	local var_4_7 = var_4_6:is_computing_path()
+	local navigation_extension = arg_4_2.navigation_extension
+	local is_computing_path = navigation_extension:is_computing_path()
 
-	if arg_4_2.move_state ~= "moving" and not var_4_7 then
-		local var_4_8 = Managers.state.network
+	if not (arg_4_2.move_state == "moving" or is_computing_path) then
+		local network = Managers.state.network
 
 		arg_4_2.move_state = "moving"
 
-		var_4_8:anim_event(arg_4_1, arg_4_2.action.skulk_animation or "move_fwd")
-		var_4_6:set_enabled(true)
+		local var_4_9 = network
+		local anim_event = network.anim_event
+		local var_4_11 = arg_4_1
+		local skulk_animation = arg_4_2.action.skulk_animation
+
+		skulk_animation = skulk_animation or "move_fwd"
+
+		anim_event(var_4_9, var_4_11, skulk_animation)
+		navigation_extension:set_enabled(true)
 	end
 
-	local var_4_9 = arg_4_2.skulk_pos:unbox()
-	local var_4_10 = POSITION_LOOKUP[arg_4_1]
-	local var_4_11 = Vector3.distance_squared(var_4_9, var_4_10)
+	local unbox = arg_4_2.skulk_pos:unbox()
+	local var_4_14 = POSITION_LOOKUP[arg_4_1]
+	local distance_squared = Vector3.distance_squared(unbox, var_4_14)
 
-	var_4_0:set_wanted_rotation(nil)
+	locomotion_extension:set_wanted_rotation(nil)
 
-	if var_4_11 < 9 then
-		if arg_4_0:get_new_goal(arg_4_1, arg_4_2) then
+	if distance_squared < 9 then
+		if not self:get_new_goal(arg_4_1, arg_4_2) then
 			arg_4_2.skulk_debug_state = "new goal found"
 		else
-			table.clear(var_0_0)
+			table.clear(tbl)
 
-			local var_4_12 = LocomotionUtils.new_random_goal(arg_4_2.nav_world, arg_4_2, var_4_2, 15, 30, 10, var_0_0)
+			local new_random_goal = LocomotionUtils.new_random_goal(arg_4_2.nav_world, arg_4_2, var_4_2, 15, 30, 10, tbl)
 
-			if var_4_12 then
+			if not new_random_goal then
 				arg_4_2.skulk_debug_state = "fallback"
-				arg_4_2.skulk_pos = Vector3Box(var_4_12)
+				arg_4_2.skulk_pos = Vector3Box(new_random_goal)
 
-				var_4_6:move_to(var_4_12)
+				navigation_extension:move_to(new_random_goal)
 			else
 				arg_4_2.skulk_debug_state = "fallback fail"
 			end
 		end
 	end
 
-	if Vector3.distance_squared(var_4_2, var_4_10) < arg_4_2.action.melee_override_distance_sqr and arg_4_3 > arg_4_2.attack_cooldown then
+	if not (not (Vector3.distance_squared(var_4_2, var_4_14) < arg_4_2.action.melee_override_distance_sqr) or not (arg_4_3 > arg_4_2.attack_cooldown)) then
 		arg_4_2.skulk_pos = nil
 		arg_4_2.skulk_around_dir = nil
 
@@ -137,47 +159,50 @@ function BTPackMasterSkulkAroundAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, a
 	return "running"
 end
 
-function BTPackMasterSkulkAroundAction.get_new_goal(arg_5_0, arg_5_1, arg_5_2)
-	local var_5_0 = arg_5_2.target_unit
+BTPackMasterSkulkAroundAction.get_new_goal = function (arg_5_0, arg_5_1, arg_5_2)
+	-- function 5
+	local target_unit = arg_5_2.target_unit
 
-	if Unit.alive(var_5_0) then
-		local var_5_1 = arg_5_2.skulk_goal_get_fails
+	if not Unit.alive(target_unit) then
+		local skulk_goal_get_fails = arg_5_2.skulk_goal_get_fails
 		local var_5_2
-		local var_5_3 = 10
-		local var_5_4 = 25
-		local var_5_5 = arg_5_2.skulk_around_dir or 1 - math.random(0, 1) * 2
+		local num = 10
+		local num_2 = 25
+		local skulk_around_dir = arg_5_2.skulk_around_dir
 
-		arg_5_2.skulk_around_dir = var_5_5
+		skulk_around_dir = skulk_around_dir or 1 - math.random(0, 1) * 2
+		arg_5_2.skulk_around_dir = skulk_around_dir
 
-		local var_5_6 = math.random(10, 180) * var_5_5
-		local var_5_7 = 5 + var_5_1 * 5
-		local var_5_8 = LocomotionUtils.outside_goal(arg_5_2.nav_world, POSITION_LOOKUP[arg_5_1], POSITION_LOOKUP[var_5_0], var_5_3, var_5_4, var_5_6, 5, var_5_7, var_5_7)
+		local num_3 = math.random(10, 180) * skulk_around_dir
+		local num_4 = 5 + skulk_goal_get_fails * 5
+		local outside_goal = LocomotionUtils.outside_goal(arg_5_2.nav_world, POSITION_LOOKUP[arg_5_1], POSITION_LOOKUP[target_unit], num, num_2, num_3, 5, num_4, num_4)
 
-		if var_5_8 then
+		if not outside_goal then
 			arg_5_2.skulk_goal_get_fails = 0
-			arg_5_2.skulk_pos = Vector3Box(var_5_8)
+			arg_5_2.skulk_pos = Vector3Box(outside_goal)
 
-			arg_5_2.navigation_extension:move_to(var_5_8)
+			arg_5_2.navigation_extension:move_to(outside_goal)
 
 			return true
 		else
-			arg_5_2.skulk_goal_get_fails = var_5_1 + 1
+			arg_5_2.skulk_goal_get_fails = skulk_goal_get_fails + 1
 		end
 	end
 end
 
-function BTPackMasterSkulkAroundAction.debug(arg_6_0, arg_6_1, arg_6_2)
+BTPackMasterSkulkAroundAction.debug = function (arg_6_0, arg_6_1, arg_6_2)
+	-- function 6
 	local var_6_0 = POSITION_LOOKUP[arg_6_1]
 
-	if arg_6_2.skulk_pos then
-		local var_6_1 = arg_6_2.skulk_pos:unbox()
+	if not arg_6_2.skulk_pos then
+		local unbox = arg_6_2.skulk_pos:unbox()
 
-		QuickDrawer:sphere(var_6_1 + Vector3(0, 0, 1), 0.5, Color(255, 144, 43, 207))
-		QuickDrawer:sphere(var_6_1 + Vector3(0, 0, 1.5), 0.25, Color(255, 144, 43, 207))
-		QuickDrawer:sphere(var_6_1 + Vector3(0, 0, 1.725), 0.125, Color(255, 144, 43, 207))
+		QuickDrawer:sphere(unbox + Vector3(0, 0, 1), 0.5, Color(255, 144, 43, 207))
+		QuickDrawer:sphere(unbox + Vector3(0, 0, 1.5), 0.25, Color(255, 144, 43, 207))
+		QuickDrawer:sphere(unbox + Vector3(0, 0, 1.725), 0.125, Color(255, 144, 43, 207))
 
-		if arg_6_2.in_los then
-			QuickDrawer:sphere(var_6_1 + Vector3(0, 0, 2), 0.25, Color(255, 144, 43, 43))
+		if not arg_6_2.in_los then
+			QuickDrawer:sphere(unbox + Vector3(0, 0, 2), 0.25, Color(255, 144, 43, 43))
 		end
 	else
 		QuickDrawer:sphere(var_6_0 + Vector3(0, 0, 1), 0.5, Color(255, 144, 43, 207))
@@ -189,9 +214,9 @@ function BTPackMasterSkulkAroundAction.debug(arg_6_0, arg_6_1, arg_6_2)
 		QuickDrawer:sphere(var_6_0 + Vector3(0, 0, 2), 0.25, Colors.get("red"))
 	end
 
-	for iter_6_0 = 1, #var_0_0 do
-		local var_6_2 = var_0_0[iter_6_0]:unbox()
+	for i = 1, #tbl do
+		local unbox_2 = tbl[i]:unbox()
 
-		QuickDrawer:sphere(var_6_2 + Vector3(0, 0, 2), 0.5, Color(255, 43, 43, 207))
+		QuickDrawer:sphere(unbox_2 + Vector3(0, 0, 2), 0.5, Color(255, 43, 43, 207))
 	end
 end

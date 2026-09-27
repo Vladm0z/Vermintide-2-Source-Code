@@ -2,16 +2,17 @@
 
 GameModeHelper = class(GameModeHelper)
 
-function GameModeHelper.side_is_dead(arg_1_0, arg_1_1)
-	local var_1_0 = Managers.state.side:get_party_from_side_name(arg_1_0).occupied_slots
+GameModeHelper.side_is_dead = function (arg_1_0, arg_1_1)
+	-- function 1
+	local occupied_slots = Managers.state.side:get_party_from_side_name(arg_1_0).occupied_slots
 
-	for iter_1_0 = 1, #var_1_0 do
-		local var_1_1 = var_1_0[iter_1_0]
-		local var_1_2 = var_1_1.game_mode_data.health_state
-		local var_1_3 = var_1_2 ~= "dead" and var_1_2 ~= "respawn" and var_1_2 ~= "respawning"
-		local var_1_4 = arg_1_1 and var_1_1.is_bot
+	for i = 1, #occupied_slots do
+		local var_1_1 = occupied_slots[i]
+		local health_state = var_1_1.game_mode_data.health_state
+		local flag = health_state == "dead" or health_state == "respawn" or health_state ~= "respawning"
+		local flag_2 = not arg_1_1 and var_1_1.is_bot
 
-		if var_1_3 and not var_1_4 then
+		if not (not flag and flag_2) then
 			return false
 		end
 	end
@@ -19,13 +20,14 @@ function GameModeHelper.side_is_dead(arg_1_0, arg_1_1)
 	return true
 end
 
-function GameModeHelper.side_is_disabled(arg_2_0)
-	local var_2_0 = Managers.state.side:get_party_from_side_name(arg_2_0).occupied_slots
+GameModeHelper.side_is_disabled = function (arg_2_0)
+	-- function 2
+	local occupied_slots = Managers.state.side:get_party_from_side_name(arg_2_0).occupied_slots
 
-	for iter_2_0 = 1, #var_2_0 do
-		local var_2_1 = var_2_0[iter_2_0].game_mode_data.health_state
+	for i = 1, #occupied_slots do
+		local health_state = occupied_slots[i].game_mode_data.health_state
 
-		if not var_2_1 or var_2_1 == "alive" then
+		if not (not health_state and health_state ~= "alive") then
 			return false
 		end
 	end
@@ -33,15 +35,16 @@ function GameModeHelper.side_is_disabled(arg_2_0)
 	return true
 end
 
-function GameModeHelper.side_delaying_loss(arg_3_0)
-	local var_3_0 = Managers.state.side:get_side_from_name(arg_3_0).PLAYER_AND_BOT_UNITS
-	local var_3_1 = #var_3_0
+GameModeHelper.side_delaying_loss = function (arg_3_0)
+	-- function 3
+	local PLAYER_AND_BOT_UNITS = Managers.state.side:get_side_from_name(arg_3_0).PLAYER_AND_BOT_UNITS
+	local count = #PLAYER_AND_BOT_UNITS
 
-	for iter_3_0 = 1, var_3_1 do
-		local var_3_2 = var_3_0[iter_3_0]
-		local var_3_3 = ScriptUnit.has_extension(var_3_2, "buff_system")
+	for i = 1, count do
+		local var_3_2 = PLAYER_AND_BOT_UNITS[i]
+		local has_extension = ScriptUnit.has_extension(var_3_2, "buff_system")
 
-		if var_3_3 and var_3_3:has_buff_perk("invulnerable") then
+		if not has_extension and not has_extension:has_buff_perk("invulnerable") then
 			return true
 		end
 	end
@@ -49,56 +52,57 @@ function GameModeHelper.side_delaying_loss(arg_3_0)
 	return false
 end
 
-function GameModeHelper.get_object_sets(arg_4_0, arg_4_1)
-	local var_4_0 = GameModeSettings[arg_4_1].object_sets
-	local var_4_1 = {}
-	local var_4_2 = {}
+GameModeHelper.get_object_sets = function (arg_4_0, arg_4_1)
+	-- function 4
+	local object_sets = GameModeSettings[arg_4_1].object_sets
+	local tbl = {}
+	local tbl_2 = {}
 
 	if LevelResource.nested_level_count(arg_4_0) > 0 then
-		local var_4_3 = LevelResource.nested_level_object_set_names(arg_4_0, 1)
+		local nested_level_object_set_names = LevelResource.nested_level_object_set_names(arg_4_0, 1)
 
-		for iter_4_0, iter_4_1 in ipairs(var_4_3) do
-			local var_4_4 = {
+		for i, v in ipairs(nested_level_object_set_names) do
+			local tbl_3 = {
 				type = "",
-				key = iter_4_0,
-				units = LevelResource.nested_level_unit_indices_in_object_set(arg_4_0, 1, iter_4_1)
+				key = i,
+				units = LevelResource.nested_level_unit_indices_in_object_set(arg_4_0, 1, v)
 			}
 
-			if var_4_0[iter_4_1] or iter_4_1 == "shadow_lights" then
-				var_4_1[#var_4_1 + 1] = iter_4_1
-			elseif string.sub(iter_4_1, 1, 5) == "flow_" then
-				var_4_1[#var_4_1 + 1] = iter_4_1
-				var_4_4.type = "flow"
-			elseif string.sub(iter_4_1, 1, 5) == "team_" then
-				var_4_1[#var_4_1 + 1] = iter_4_1
-				var_4_4.type = "team"
+			if not (object_sets[v] or v ~= "shadow_lights") then
+				tbl[#tbl + 1] = v
+			elseif string.sub(v, 1, 5) == "flow_" then
+				tbl[#tbl + 1] = v
+				tbl_3.type = "flow"
+			elseif string.sub(v, 1, 5) == "team_" then
+				tbl[#tbl + 1] = v
+				tbl_3.type = "team"
 			end
 
-			var_4_2[iter_4_1] = var_4_4
+			tbl_2[v] = tbl_3
 		end
 	else
-		local var_4_5 = LevelResource.object_set_names(arg_4_0)
+		local object_set_names = LevelResource.object_set_names(arg_4_0)
 
-		for iter_4_2, iter_4_3 in ipairs(var_4_5) do
-			local var_4_6 = {
+		for i_2, v_2 in ipairs(object_set_names) do
+			local tbl_4 = {
 				type = "",
-				key = iter_4_2,
-				units = LevelResource.unit_indices_in_object_set(arg_4_0, iter_4_3)
+				key = i_2,
+				units = LevelResource.unit_indices_in_object_set(arg_4_0, v_2)
 			}
 
-			if var_4_0[iter_4_3] or iter_4_3 == "shadow_lights" then
-				var_4_1[#var_4_1 + 1] = iter_4_3
-			elseif string.sub(iter_4_3, 1, 5) == "flow_" then
-				var_4_1[#var_4_1 + 1] = iter_4_3
-				var_4_6.type = "flow"
-			elseif string.sub(iter_4_3, 1, 5) == "team_" then
-				var_4_1[#var_4_1 + 1] = iter_4_3
-				var_4_6.type = "team"
+			if not (object_sets[v_2] or v_2 ~= "shadow_lights") then
+				tbl[#tbl + 1] = v_2
+			elseif string.sub(v_2, 1, 5) == "flow_" then
+				tbl[#tbl + 1] = v_2
+				tbl_4.type = "flow"
+			elseif string.sub(v_2, 1, 5) == "team_" then
+				tbl[#tbl + 1] = v_2
+				tbl_4.type = "team"
 			end
 
-			var_4_2[iter_4_3] = var_4_6
+			tbl_2[v_2] = tbl_4
 		end
 	end
 
-	return var_4_2, var_4_1
+	return tbl_2, tbl
 end

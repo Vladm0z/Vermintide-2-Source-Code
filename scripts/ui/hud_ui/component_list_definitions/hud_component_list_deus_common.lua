@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/hud_ui/component_list_definitions/hud_component_list_deus_common.lua
 
-local var_0_0 = {
+local tbl = {
 	{
 		use_hud_scale = true,
 		class_name = "DeusSoftCurrencyIndicatorUI",
@@ -12,8 +12,8 @@ local var_0_0 = {
 	}
 }
 
-if BUILD ~= "release" or script_data.debug_enabled then
-	table.insert(var_0_0, {
+if BUILD ~= "release" or not script_data.debug_enabled then
+	table.insert(tbl, {
 		use_hud_scale = true,
 		class_name = "DeusDebugUI",
 		filename = "scripts/ui/hud_ui/deus_debug_ui",
@@ -22,7 +22,7 @@ if BUILD ~= "release" or script_data.debug_enabled then
 			"alive"
 		}
 	})
-	table.insert(var_0_0, {
+	table.insert(tbl, {
 		use_hud_scale = true,
 		class_name = "DeusDebugMapUI",
 		filename = "scripts/ui/hud_ui/deus_debug_map_ui",
@@ -33,23 +33,24 @@ if BUILD ~= "release" or script_data.debug_enabled then
 	})
 end
 
-local var_0_1 = {
+local tbl_2 = {
 	{
 		name = "deus_run_stats",
 		order = 7,
-		validation_function = function(arg_1_0)
-			local var_1_0 = arg_1_0:component("DeusRunStatsView")
+		validation_function = function (self)
+			-- function 1
+			local component = self:component("DeusRunStatsView")
 
-			return var_1_0 and var_1_0:is_ui_active()
+			return not component and component:is_ui_active()
 		end
 	}
 }
 
-for iter_0_0 = 1, #var_0_0 do
-	require(var_0_0[iter_0_0].filename)
+for i = 1, #tbl do
+	require(tbl[i].filename)
 end
 
 return {
-	components = var_0_0,
-	visibility_groups = var_0_1
+	components = tbl,
+	visibility_groups = tbl_2
 }

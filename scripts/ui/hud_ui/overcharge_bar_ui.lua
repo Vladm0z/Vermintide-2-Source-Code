@@ -4,11 +4,11 @@ local var_0_0 = local_require("scripts/ui/hud_ui/overcharge_bar_ui_definitions")
 
 OverchargeBarUI = class(OverchargeBarUI)
 
-local var_0_1 = {
+local tbl = {
 	slot_ranged = true,
 	slot_melee = true
 }
-local var_0_2 = {
+local tbl_2 = {
 	material = "overcharge_bar",
 	color_normal = {
 		255,
@@ -29,106 +29,111 @@ local var_0_2 = {
 		0
 	}
 }
-local var_0_3 = 0.5
+local num = 0.5
 
-function OverchargeBarUI.init(arg_1_0, arg_1_1, arg_1_2)
-	arg_1_0._parent = arg_1_1
-	arg_1_0.platform = PLATFORM
-	arg_1_0.ui_renderer = arg_1_2.ui_renderer
-	arg_1_0.input_manager = arg_1_2.input_manager
-	arg_1_0.slot_equip_animations = {}
-	arg_1_0.slot_animations = {}
-	arg_1_0.ui_animations = {}
+OverchargeBarUI.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	self._parent = arg_1_1
+	self.platform = PLATFORM
+	self.ui_renderer = arg_1_2.ui_renderer
+	self.input_manager = arg_1_2.input_manager
+	self.slot_equip_animations = {}
+	self.slot_animations = {}
+	self.ui_animations = {}
 
-	arg_1_0:create_ui_elements()
+	self:create_ui_elements()
 
-	arg_1_0.peer_id = arg_1_2.peer_id
-	arg_1_0.player_manager = arg_1_2.player_manager
-	arg_1_0.render_settings = {
+	self.peer_id = arg_1_2.peer_id
+	self.player_manager = arg_1_2.player_manager
+	self.render_settings = {
 		alpha_multiplier = 1,
 		snap_pixel_positions = true
 	}
-	arg_1_0._previous_overcharge_fraction = 0
-	arg_1_0._keep_at_0_t = 0
-	arg_1_0._is_spectator = false
-	arg_1_0._spectated_player = nil
-	arg_1_0._spectated_player_unit = nil
+	self._previous_overcharge_fraction = 0
+	self._keep_at_0_t = 0
+	self._is_spectator = false
+	self._spectated_player = nil
+	self._spectated_player_unit = nil
 
-	Managers.state.event:register(arg_1_0, "on_spectator_target_changed", "on_spectator_target_changed")
+	Managers.state.event:register(self, "on_spectator_target_changed", "on_spectator_target_changed")
 end
 
-local function var_0_4(arg_2_0)
-	local var_2_0 = ScriptUnit.extension(arg_2_0, "overcharge_system")
-	local var_2_1 = var_2_0:lerped_overcharge_fraction()
-	local var_2_2 = var_2_0:threshold_fraction()
-	local var_2_3 = var_2_0:get_anim_blend_overcharge()
+local function fn(arg_2_0)
+	-- function 2
+	local extension = ScriptUnit.extension(arg_2_0, "overcharge_system")
+	local lerped_overcharge_fraction = extension:lerped_overcharge_fraction()
+	local threshold_fraction = extension:threshold_fraction()
+	local get_anim_blend_overcharge = extension:get_anim_blend_overcharge()
 
-	return var_2_1, var_2_2, 0.8, var_2_3
+	return lerped_overcharge_fraction, threshold_fraction, 0.8, get_anim_blend_overcharge
 end
 
-function OverchargeBarUI.on_spectator_target_changed(arg_3_0, arg_3_1)
-	arg_3_0._spectated_player_unit = arg_3_1
-	arg_3_0._spectated_player = Managers.player:owner(arg_3_1)
-	arg_3_0._is_spectator = true
+OverchargeBarUI.on_spectator_target_changed = function (self, arg_3_1)
+	-- function 3
+	self._spectated_player_unit = arg_3_1
+	self._spectated_player = Managers.player:owner(arg_3_1)
+	self._is_spectator = true
 end
 
-function OverchargeBarUI._set_player_extensions(arg_4_0, arg_4_1)
-	arg_4_0.inventory_extension = ScriptUnit.extension(arg_4_1, "inventory_system")
-	arg_4_0.initialize_charge_bar = true
+OverchargeBarUI._set_player_extensions = function (self, arg_4_1)
+	-- function 4
+	self.inventory_extension = ScriptUnit.extension(arg_4_1, "inventory_system")
+	self.initialize_charge_bar = true
 end
 
-function OverchargeBarUI._update_overcharge(arg_5_0, arg_5_1, arg_5_2)
+OverchargeBarUI._update_overcharge = function (self, arg_5_1, arg_5_2)
+	-- function 5
 	if not arg_5_1 then
 		return
 	end
 
-	local var_5_0 = arg_5_1.player_unit
+	local player_unit = arg_5_1.player_unit
 
-	if not Unit.alive(var_5_0) then
+	if not Unit.alive(player_unit) then
 		return
 	end
 
-	if not ScriptUnit.has_extension(var_5_0, "overcharge_system") then
+	if not ScriptUnit.has_extension(player_unit, "overcharge_system") then
 		return
 	end
 
-	local var_5_1 = ScriptUnit.extension(var_5_0, "inventory_system"):equipment()
+	local equipment = ScriptUnit.extension(player_unit, "inventory_system"):equipment()
 
-	if not var_5_1 then
+	if not equipment then
 		return
 	end
 
-	local var_5_2 = var_5_1.wielded
-	local var_5_3 = InventorySettings.slots
+	local wielded = equipment.wielded
+	local slots = InventorySettings.slots
 
-	for iter_5_0, iter_5_1 in ipairs(var_5_3) do
-		local var_5_4 = iter_5_1.name
+	for i, v in ipairs(slots) do
+		local name = v.name
 
-		if var_0_1[var_5_4] then
-			local var_5_5 = var_5_1.slots[var_5_4]
+		if not tbl[name] then
+			local var_5_5 = equipment.slots[name]
 
-			if var_5_5 then
-				local var_5_6 = var_5_5.item_data
-				local var_5_7 = var_5_6.name
-				local var_5_8
+			if not var_5_5 then
+				local item_data = var_5_5.item_data
+				local name_2 = item_data.name
+				local flag
 
-				var_5_8 = var_5_2 == var_5_6
+				flag = wielded == item_data
 
-				local var_5_9, var_5_10, var_5_11, var_5_12 = var_0_4(var_5_0)
-				local var_5_13 = var_5_9 and var_5_9 > 0
+				local var_5_9, var_5_10, var_5_11, var_5_12 = fn(player_unit)
+				local flag_2 = not var_5_9 and var_5_9 > 0
 
-				if var_5_13 or arg_5_2 < arg_5_0._keep_at_0_t then
-					if not arg_5_0.wielded_item_name or arg_5_0.wielded_item_name ~= var_5_7 then
-						arg_5_0.wielded_item_name = var_5_7
+				if not (flag_2 or not (arg_5_2 < self._keep_at_0_t)) then
+					if not (not self.wielded_item_name and self.wielded_item_name == name_2) then
+						self.wielded_item_name = name_2
 					end
 
-					local var_5_14 = ScriptUnit.extension(var_5_0, "overcharge_system"):get_max_value()
+					local get_max_value = ScriptUnit.extension(player_unit, "overcharge_system"):get_max_value()
 
-					arg_5_0:update_bar_size(var_5_14, var_5_10, var_5_11)
-					arg_5_0:set_charge_bar_fraction(arg_5_1, var_5_9, var_5_10, var_5_11, var_5_12)
+					self:update_bar_size(get_max_value, var_5_10, var_5_11)
+					self:set_charge_bar_fraction(arg_5_1, var_5_9, var_5_10, var_5_11, var_5_12)
 
-					if var_5_13 then
-						arg_5_0._keep_at_0_t = arg_5_2 + var_0_3
+					if not flag_2 then
+						self._keep_at_0_t = arg_5_2 + num
 					end
 
 					return true
@@ -138,154 +143,205 @@ function OverchargeBarUI._update_overcharge(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function OverchargeBarUI.create_ui_elements(arg_6_0)
-	UIRenderer.clear_scenegraph_queue(arg_6_0.ui_renderer)
+OverchargeBarUI.create_ui_elements = function (self)
+	-- function 6
+	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
-	arg_6_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 
 	local var_6_0
 
-	arg_6_0._party = Managers.party:get_local_player_party()
-	arg_6_0._side = Managers.state.side.side_by_party[arg_6_0._party]
+	self._party = Managers.party:get_local_player_party()
+	self._side = Managers.state.side.side_by_party[self._party]
 
-	if arg_6_0._side and arg_6_0._side:name() == "dark_pact" then
+	if not (not self._side and self._side:name() ~= "dark_pact") then
 		var_6_0 = UIWidgets.create_dark_pact_overcharge_bar_widget("charge_bar_dark_pact", nil, nil, nil, nil, var_0_0.DEFAULT_DARK_PACT_BAR_SIZE)
 	else
 		var_6_0 = UIWidgets.create_overcharge_bar_widget("charge_bar", nil, nil, nil, nil, var_0_0.DEFAULT_BAR_SIZE)
 	end
 
-	arg_6_0.charge_bar = UIWidget.init(var_6_0)
+	self.charge_bar = UIWidget.init(var_6_0)
 end
 
-local var_0_5 = {
+local tbl_3 = {
 	root_scenegraph_id = "screen_bottom_pivot_parent",
 	label = "Overcharge",
 	registry_key = "overcharge",
 	drag_scenegraph_id = "charge_bar"
 }
 
-function OverchargeBarUI.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
-	local var_7_0 = arg_7_0.ui_renderer
-	local var_7_1 = arg_7_0.ui_scenegraph
-	local var_7_2 = arg_7_0.input_manager
-	local var_7_3 = var_7_2:get_service("ingame_menu")
-	local var_7_4 = var_7_2:is_device_active("gamepad")
-	local var_7_5 = arg_7_0._is_spectator and arg_7_0._spectated_player or arg_7_3
+OverchargeBarUI.update = function (self, arg_7_1, arg_7_2, arg_7_3)
+	-- function 7
+	local ui_renderer = self.ui_renderer
+	local ui_scenegraph = self.ui_scenegraph
+	local input_manager = self.input_manager
+	local get_service = input_manager:get_service("ingame_menu")
+	local is_device_active = input_manager:is_device_active("gamepad")
+	local _spectated_player
 
-	if HudCustomizer.run(var_7_0, var_7_1, var_0_5) then
-		UISceneGraph.update_scenegraph(var_7_1)
+	if not self._is_spectator then
+		_spectated_player = self._spectated_player
+
+		if not _spectated_player then
+			-- Nothing
+		end
 	end
 
-	local var_7_6 = arg_7_0:_update_overcharge(var_7_5, arg_7_2)
-	local var_7_7 = Managers.twitch:is_activated()
+	_spectated_player = arg_7_3
 
-	if var_7_7 ~= arg_7_0._has_twitch then
-		arg_7_0.charge_bar.offset[2] = var_7_7 and 140 or 0
-		arg_7_0._has_twitch = var_7_7
-		var_7_6 = true
+	::label_7_0::
+
+	if not HudCustomizer.run(ui_renderer, ui_scenegraph, tbl_3) then
+		UISceneGraph.update_scenegraph(ui_scenegraph)
 	end
 
-	if var_7_6 then
-		local var_7_8, var_7_9 = arg_7_0._parent:get_crosshair_position()
+	local _update_overcharge = self:_update_overcharge(_spectated_player, arg_7_2)
+	local is_activated = Managers.twitch:is_activated()
 
-		arg_7_0:_apply_crosshair_position(var_7_8, var_7_9)
-		UIRenderer.begin_pass(var_7_0, var_7_1, var_7_3, arg_7_1, nil, arg_7_0.render_settings)
-		UIRenderer.draw_widget(var_7_0, arg_7_0.charge_bar)
-		UIRenderer.end_pass(var_7_0)
+	if is_activated ~= self._has_twitch then
+		local offset = self.charge_bar.offset
+		local flag
+
+		flag = not is_activated and 140 and 0
+		offset[2] = flag
+		self._has_twitch = is_activated
+		_update_overcharge = true
+	end
+
+	if not _update_overcharge then
+		local get_crosshair_position, var_7_11 = self._parent:get_crosshair_position()
+
+		self:_apply_crosshair_position(get_crosshair_position, var_7_11)
+		UIRenderer.begin_pass(ui_renderer, ui_scenegraph, get_service, arg_7_1, nil, self.render_settings)
+		UIRenderer.draw_widget(ui_renderer, self.charge_bar)
+		UIRenderer.end_pass(ui_renderer)
 	end
 end
 
-function OverchargeBarUI.update_bar_size(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
-	local var_8_0 = arg_8_0._side:name() == "dark_pact" and var_0_0.DEFAULT_DARK_PACT_BAR_SIZE[1] or var_0_0.DEFAULT_BAR_SIZE[1]
-	local var_8_1 = math.remap(0, 40, 0, var_8_0, arg_8_1)
-	local var_8_2 = arg_8_0.charge_bar
+OverchargeBarUI.update_bar_size = function (self, arg_8_1, arg_8_2, arg_8_3)
+	-- function 8
+	local var_8_0
 
-	var_8_2.content.size[1] = var_8_1 - 6
+	if self._side:name() == "dark_pact" then
+		var_8_0 = var_0_0.DEFAULT_DARK_PACT_BAR_SIZE[1]
 
-	local var_8_3 = var_8_2.style
-
-	if var_8_3.frame then
-		var_8_3.frame.size[1] = var_8_1
+		if not var_8_0 then
+			-- Nothing
+		end
 	end
 
-	var_8_3.bar_1.size[1] = var_8_1 - 6
-	var_8_3.icon.offset[1] = var_8_1
-	var_8_3.icon_shadow.offset[1] = var_8_1 + 2
+	var_8_0 = var_0_0.DEFAULT_BAR_SIZE[1]
 
-	if var_8_3.bar_bg then
-		var_8_3.bar_bg.size[1] = var_8_1 - 6
+	::label_8_0::
+
+	local remap = math.remap(0, 40, 0, var_8_0, arg_8_1)
+	local charge_bar = self.charge_bar
+
+	charge_bar.content.size[1] = remap - 6
+
+	local style = charge_bar.style
+
+	if not style.frame then
+		style.frame.size[1] = remap
 	end
 
-	var_8_3.bar_fg.size[1] = var_8_1
+	style.bar_1.size[1] = remap - 6
+	style.icon.offset[1] = remap
+	style.icon_shadow.offset[1] = remap + 2
 
-	if var_8_3.min_threshold or var_8_3.max_threshold then
-		var_8_3.min_threshold.offset[1] = 3 + arg_8_2 * var_8_1
-		var_8_3.max_threshold.offset[1] = 3 + arg_8_3 * var_8_1
+	if not style.bar_bg then
+		style.bar_bg.size[1] = remap - 6
 	end
 
-	arg_8_0.ui_scenegraph.charge_bar.size[1] = var_8_1
+	style.bar_fg.size[1] = remap
+
+	if style.min_threshold or not style.max_threshold then
+		style.min_threshold.offset[1] = 3 + arg_8_2 * remap
+		style.max_threshold.offset[1] = 3 + arg_8_3 * remap
+	end
+
+	self.ui_scenegraph.charge_bar.size[1] = remap
 end
 
-function OverchargeBarUI.set_charge_bar_fraction(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
-	local var_9_0 = arg_9_0.charge_bar
-	local var_9_1 = var_9_0.style
-	local var_9_2 = var_9_0.content
+OverchargeBarUI.set_charge_bar_fraction = function (self, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+	-- function 9
+	local charge_bar = self.charge_bar
+	local style = charge_bar.style
+	local content = charge_bar.content
+	local lerp = math.lerp
+	local internal_gradient_threshold = content.internal_gradient_threshold
 
-	arg_9_2 = math.lerp(var_9_2.internal_gradient_threshold or 0, math.min(arg_9_2, 1), 0.3)
-	var_9_2.internal_gradient_threshold = arg_9_2
-	var_9_1.bar_1.gradient_threshold = arg_9_2
+	internal_gradient_threshold = internal_gradient_threshold or 0
+	arg_9_2 = lerp(internal_gradient_threshold, math.min(arg_9_2, 1), 0.3)
+	content.internal_gradient_threshold = arg_9_2
+	style.bar_1.gradient_threshold = arg_9_2
 
-	local var_9_3 = 1
-	local var_9_4
-	local var_9_5 = var_9_1.icon.color
-	local var_9_6 = var_9_1.bar_1.color
-	local var_9_7 = arg_9_1:career_name()
-	local var_9_8 = OverchargeData[var_9_7]
-	local var_9_9 = var_9_8 and var_9_8.overcharge_ui or var_0_2
+	local num = 1
+	local var_9_6
+	local color = style.icon.color
+	local color_2 = style.bar_1.color
+	local career_name = arg_9_1:career_name()
+	local var_9_10 = OverchargeData[career_name]
+	local overcharge_ui
 
-	var_9_2.bar_1 = var_9_9.material
+	if not var_9_10 then
+		overcharge_ui = var_9_10.overcharge_ui
+
+		if not overcharge_ui then
+			-- Nothing
+		end
+	end
+
+	overcharge_ui = tbl_2
+
+	::label_9_0::
+
+	content.bar_1 = overcharge_ui.material
 
 	if arg_9_2 <= arg_9_3 then
-		var_9_4 = var_9_9.color_normal
-		var_9_3 = 0.6
+		var_9_6 = overcharge_ui.color_normal
+		num = 0.6
 	elseif arg_9_2 <= arg_9_4 then
-		var_9_3 = 0.8
-		var_9_4 = var_9_9.color_medium
+		num = 0.8
+		var_9_6 = overcharge_ui.color_medium
 	else
-		var_9_4 = var_9_9.color_high
+		var_9_6 = overcharge_ui.color_high
 	end
 
-	var_9_6[1] = var_9_4[1] * var_9_3
-	var_9_6[2] = var_9_4[2]
-	var_9_6[3] = var_9_4[3]
-	var_9_6[4] = var_9_4[4]
+	color_2[1] = var_9_6[1] * num
+	color_2[2] = var_9_6[2]
+	color_2[3] = var_9_6[3]
+	color_2[4] = var_9_6[4]
 
-	local var_9_10 = 10
-	local var_9_11 = math.min(math.max(arg_9_2 - arg_9_4, 0) / (1 - arg_9_4) * 1.3, 1)
-	local var_9_12 = (100 + (0.5 + math.sin(Managers.time:time("ui") * var_9_10) * 0.5) * 155) * var_9_11
+	local num_2 = 10
+	local min = math.min(math.max(arg_9_2 - arg_9_4, 0) / (1 - arg_9_4) * 1.3, 1)
+	local num_3 = (100 + (0.5 + math.sin(Managers.time:time("ui") * num_2) * 0.5) * 155) * min
 
-	if var_9_1.frame then
-		var_9_1.frame.color[1] = var_9_12
+	if not style.frame then
+		style.frame.color[1] = num_3
 	end
 
-	var_9_5[1] = var_9_12
-	var_9_5[2] = var_9_4[2]
-	var_9_5[3] = var_9_4[3]
-	var_9_5[4] = var_9_4[4]
+	color[1] = num_3
+	color[2] = var_9_6[2]
+	color[3] = var_9_6[3]
+	color[4] = var_9_6[4]
 end
 
-function OverchargeBarUI.destroy(arg_10_0)
+OverchargeBarUI.destroy = function (arg_10_0)
+	-- function 10
 	Managers.state.event:unregister("on_spectator_target_changed", arg_10_0)
 end
 
-function OverchargeBarUI.set_alpha(arg_11_0, arg_11_1)
+OverchargeBarUI.set_alpha = function (arg_11_0, arg_11_1)
+	-- function 11
 	arg_11_0.render_settings.alpha_multiplier = arg_11_1
 end
 
-function OverchargeBarUI._apply_crosshair_position(arg_12_0, arg_12_1, arg_12_2)
-	local var_12_0 = "screen_bottom_pivot"
-	local var_12_1 = arg_12_0.ui_scenegraph[var_12_0].local_position
+OverchargeBarUI._apply_crosshair_position = function (self, arg_12_1, arg_12_2)
+	-- function 12
+	local str = "screen_bottom_pivot"
+	local local_position = self.ui_scenegraph[str].local_position
 
-	var_12_1[1] = arg_12_1
-	var_12_1[2] = arg_12_2
+	local_position[1] = arg_12_1
+	local_position[2] = arg_12_2
 end

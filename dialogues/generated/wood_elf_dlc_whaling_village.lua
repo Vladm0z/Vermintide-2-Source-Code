@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/wood_elf_dlc_whaling_village.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pwe_village_01_opening_cinematic_a",

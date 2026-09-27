@@ -1,52 +1,56 @@
 -- chunkname: @scripts/ui/hud_ui/gamepad_ability_ui_definitions.lua
 
-local var_0_0 = 1920
-local var_0_1 = 1080
-local var_0_2 = true
-local var_0_3 = {
-	root = {
-		position = {
-			0,
-			0,
-			UILayer.hud
-		},
-		size = {
-			var_0_0,
-			var_0_1
-		},
-		scale = IS_WINDOWS and "hud_scale_fit" or "hud_fit"
+local num = 1920
+local num_2 = 1080
+local flag = true
+local tbl = {}
+local tbl_2 = {
+	position = {
+		0,
+		0,
+		UILayer.hud
 	},
-	ability_root = {
-		vertical_alignment = "bottom",
-		parent = "root",
-		horizontal_alignment = "right",
-		position = {
-			0,
-			60,
-			0
-		},
-		size = {
-			0,
-			0
-		}
+	size = {
+		num,
+		num_2
+	}
+}
+local flag_2
+
+flag_2 = not IS_WINDOWS and "hud_scale_fit" and "hud_fit"
+tbl_2.scale = flag_2
+tbl.root = tbl_2
+tbl.ability_root = {
+	vertical_alignment = "bottom",
+	parent = "root",
+	horizontal_alignment = "right",
+	position = {
+		0,
+		60,
+		0
 	},
-	ability_charges = {
-		vertical_alignment = "top",
-		parent = "ability_root",
-		horizontal_alignment = "left",
-		position = {
-			-134,
-			92,
-			11
-		},
-		size = {
-			0,
-			0
-		}
+	size = {
+		0,
+		0
+	}
+}
+tbl.ability_charges = {
+	vertical_alignment = "top",
+	parent = "ability_root",
+	horizontal_alignment = "left",
+	position = {
+		-134,
+		92,
+		11
+	},
+	size = {
+		0,
+		0
 	}
 }
 
-local function var_0_4()
+local function fn()
+	-- function 1
 	return {
 		scenegraph_id = "ability_root",
 		element = {
@@ -55,25 +59,43 @@ local function var_0_4()
 					style_id = "ability_effect",
 					texture_id = "ability_effect",
 					pass_type = "texture",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_2_0)
-						arg_2_0.gamepad_active = Managers.input:is_device_active("gamepad")
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 2
+						self.gamepad_active = Managers.input:is_device_active("gamepad")
 
-						return (not arg_2_0.on_cooldown or arg_2_0.usable) and not arg_2_0.hide_effect
+						local usable
+
+						if not self.on_cooldown then
+							usable = self.usable
+
+							if not usable then
+								-- Nothing
+							end
+						end
+
+						usable = not self.hide_effect
+
+						::label_2_0::
+
+						return usable
 					end,
-					content_change_function = function(arg_3_0, arg_3_1)
-						local var_3_0 = Managers.player:local_player()
-						local var_3_1 = var_3_0 and var_3_0.player_unit
+					content_change_function = function (self, arg_3_1)
+						-- function 3
+						local local_player = Managers.player:local_player()
+						local flag = not local_player and local_player.player_unit
 
-						if not ALIVE[var_3_1] then
+						if not ALIVE[flag] then
 							return
 						end
 
-						local var_3_2 = ScriptUnit.extension(var_3_1, "career_system"):career_name()
-						local var_3_3 = UISettings.gamepad_ability_ui_data[var_3_2] or UISettings.gamepad_ability_ui_data.default
+						local career_name = ScriptUnit.extension(flag, "career_system"):career_name()
+						local var_3_3 = UISettings.gamepad_ability_ui_data[career_name]
 
-						for iter_3_0, iter_3_1 in pairs(var_3_3) do
-							arg_3_0[iter_3_0] = iter_3_1
+						var_3_3 = var_3_3 or UISettings.gamepad_ability_ui_data.default
+
+						for k, v in pairs(var_3_3) do
+							self[k] = v
 						end
 					end
 				},
@@ -81,63 +103,149 @@ local function var_0_4()
 					pass_type = "texture",
 					style_id = "ability_effect_top",
 					texture_id = "ability_top_texture_id",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_4_0)
-						return (not arg_4_0.on_cooldown or arg_4_0.usable) and not arg_4_0.hide_effect
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 4
+						local usable
+
+						if not self.on_cooldown then
+							usable = self.usable
+
+							if not usable then
+								-- Nothing
+							end
+						end
+
+						usable = not self.hide_effect
+
+						::label_4_0::
+
+						return usable
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "ability_effect_top",
 					texture_id = "lit_frame_id",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_5_0)
-						return (not arg_5_0.on_cooldown or arg_5_0.usable) and arg_5_0.lit_frame_id
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 5
+						local usable
+
+						if not self.on_cooldown then
+							usable = self.usable
+
+							if not usable then
+								-- Nothing
+							end
+						end
+
+						usable = self.lit_frame_id
+
+						::label_5_0::
+
+						return usable
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "activate_ability",
 					texture_id = "activate_ability_id",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_6_0, arg_6_1)
-						return (not arg_6_0.on_cooldown or arg_6_0.always_show_activated_ability_input or arg_6_0.usable) and arg_6_0.activate_ability_id and arg_6_0.gamepad_active
+					retained_mode = flag,
+					content_check_function = function (self, arg_6_1)
+						-- function 6
+						local usable
+
+						if not (not self.on_cooldown and self.always_show_activated_ability_input) then
+							usable = self.usable
+
+							if not usable then
+								-- Nothing
+							end
+						end
+
+						usable = self.activate_ability_id
+						usable = not usable and self.gamepad_active
+
+						::label_6_0::
+
+						return usable
 					end
 				},
 				{
 					style_id = "input_text",
 					pass_type = "text",
 					text_id = "input_text",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_7_0)
-						return (not arg_7_0.on_cooldown or arg_7_0.always_show_activated_ability_input or arg_7_0.usable or arg_7_0.usable) and not arg_7_0.gamepad_active
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 7
+						local usable
+
+						if not (not self.on_cooldown and self.always_show_activated_ability_input or self.usable) then
+							usable = self.usable
+
+							if not usable then
+								-- Nothing
+							end
+						end
+
+						usable = not self.gamepad_active
+
+						::label_7_0::
+
+						return usable
 					end
 				},
 				{
 					style_id = "input_text_shadow",
 					pass_type = "text",
 					text_id = "input_text",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_8_0)
-						return (not arg_8_0.on_cooldown or arg_8_0.always_show_activated_ability_input or arg_8_0.usable or arg_8_0.usable) and not arg_8_0.gamepad_active
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 8
+						local usable
+
+						if not (not self.on_cooldown and self.always_show_activated_ability_input or self.usable) then
+							usable = self.usable
+
+							if not usable then
+								-- Nothing
+							end
+						end
+
+						usable = not self.gamepad_active
+
+						::label_8_0::
+
+						return usable
 					end
 				},
 				{
 					style_id = "ability_cooldown",
 					pass_type = "text",
 					text_id = "ability_cooldown",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_9_0)
-						return Application.user_setting("numeric_ui") and not arg_9_0.can_use_ability
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 9
+						local user_setting = Application.user_setting("numeric_ui")
+
+						user_setting = not user_setting and not self.can_use_ability
+
+						return user_setting
 					end
 				},
 				{
 					style_id = "ability_cooldown_shadow",
 					pass_type = "text",
 					text_id = "ability_cooldown",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_10_0)
-						return Application.user_setting("numeric_ui") and not arg_10_0.can_use_ability
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 10
+						local user_setting = Application.user_setting("numeric_ui")
+
+						user_setting = not user_setting and not self.can_use_ability
+
+						return user_setting
 					end
 				}
 			}
@@ -295,7 +403,7 @@ local function var_0_4()
 	}
 end
 
-local var_0_5 = {
+local tbl_3 = {
 	scenegraph_id = "ability_root",
 	element = {
 		passes = {
@@ -303,18 +411,24 @@ local var_0_5 = {
 				pass_type = "texture",
 				style_id = "ability_effect",
 				texture_id = "ability_effect",
-				retained_mode = var_0_2,
-				content_check_function = function(arg_11_0)
-					return arg_11_0.is_active
+				retained_mode = flag,
+				content_check_function = function (self)
+					-- function 11
+					return self.is_active
 				end
 			},
 			{
 				pass_type = "texture",
 				style_id = "ability_effect_top",
 				texture_id = "ability_top_texture_id",
-				retained_mode = var_0_2,
-				content_check_function = function(arg_12_0)
-					return arg_12_0.is_active and not arg_12_0.hide_top_effect
+				retained_mode = flag,
+				content_check_function = function (self)
+					-- function 12
+					local is_active = self.is_active
+
+					is_active = not is_active and not self.hide_top_effect
+
+					return is_active
 				end
 			}
 		}
@@ -370,12 +484,12 @@ local var_0_5 = {
 		0
 	}
 }
-local var_0_6 = {
-	ability = var_0_4(),
-	thornsister_passive = var_0_5
+local tbl_4 = {
+	ability = fn(),
+	thornsister_passive = tbl_3
 }
 
 return {
-	scenegraph_definition = var_0_3,
-	widget_definitions = var_0_6
+	scenegraph_definition = tbl,
+	widget_definitions = tbl_4
 }

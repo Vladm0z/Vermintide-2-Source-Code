@@ -3,599 +3,787 @@
 require("scripts/helpers/pseudo_random_distribution")
 dofile("scripts/settings/bpc")
 
-local var_0_0 = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_functions")
-local var_0_1 = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
+local scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_functions = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_functions")
+local scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
+local script_data = script_data
+local buff_debug = script_data.buff_debug
 
-script_data.buff_debug = script_data.buff_debug or Development.parameter("buff_debug")
+buff_debug = buff_debug or Development.parameter("buff_debug")
+script_data.buff_debug = buff_debug
 
-local function var_0_2(...)
-	if script_data.debug_synced_buffs then
+local function fn(...)
+	-- function 1
+	if not script_data.debug_synced_buffs then
 		print(...)
 	end
 end
 
 BuffExtension = class(BuffExtension)
-buff_extension_function_params = buff_extension_function_params or Script.new_map(15)
 
-local var_0_3 = {
+local buff_extension_function_params = buff_extension_function_params
+
+buff_extension_function_params = buff_extension_function_params or Script.new_map(15)
+buff_extension_function_params = buff_extension_function_params
+
+local tbl = {
 	removed = true
 }
 
-function BuffExtension.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
-	arg_2_0._unit = arg_2_2
-	arg_2_0.world = arg_2_1.world
-	arg_2_0._breed = arg_2_3.breed
-	arg_2_0._initial_buff_names = arg_2_3.initial_buff_names
-	arg_2_0._buffs = {}
-	arg_2_0._num_buffs = 0
-	arg_2_0._stat_buffs = {}
-	arg_2_0._event_buffs = {}
-	arg_2_0._event_buffs_index = 1
-	arg_2_0._any_buff_removed = false
-	arg_2_0._deactivation_sounds = {}
-	arg_2_0._deactivation_sounds_3p = {}
-	arg_2_0._continuous_screen_effects = {}
-	arg_2_0._deactivation_screen_effects = {}
-	arg_2_0._vfx = {}
-	arg_2_0._vfx_update = {}
+BuffExtension.init = function (self, arg_2_1, arg_2_2, arg_2_3)
+	-- function 2
+	self._unit = arg_2_2
+	self.world = arg_2_1.world
+	self._breed = arg_2_3.breed
+	self._initial_buff_names = arg_2_3.initial_buff_names
+	self._buffs = {}
+	self._num_buffs = 0
+	self._stat_buffs = {}
+	self._event_buffs = {}
+	self._event_buffs_index = 1
+	self._any_buff_removed = false
+	self._deactivation_sounds = {}
+	self._deactivation_sounds_3p = {}
+	self._continuous_screen_effects = {}
+	self._deactivation_screen_effects = {}
+	self._vfx = {}
+	self._vfx_update = {}
 
-	for iter_2_0, iter_2_1 in pairs(StatBuffApplicationMethods) do
-		arg_2_0._stat_buffs[iter_2_0] = {}
+	for k, v in pairs(StatBuffApplicationMethods) do
+		self._stat_buffs[k] = {}
 	end
 
-	for iter_2_2 = 1, #ProcEvents do
-		local var_2_0 = ProcEvents[iter_2_2]
+	for k_2 = 1, #ProcEvents do
+		local var_2_0 = ProcEvents[k_2]
 
-		arg_2_0._event_buffs[var_2_0] = {}
+		self._event_buffs[var_2_0] = {}
 	end
 
-	arg_2_0.is_server = Managers.player.is_server
+	self.is_server = Managers.player.is_server
 
-	local var_2_1 = arg_2_3.breed and arg_2_3.breed.is_player
+	local breed = arg_2_3.breed
 
-	arg_2_0.is_local = not var_2_1 and arg_2_0.is_server or var_2_1 and not arg_2_3.is_husk
-	arg_2_0.is_husk = arg_2_3.is_husk
-	arg_2_0.id = 1
-	arg_2_0.individual_stat_buff_index = 1
-	arg_2_0._prd_states = {}
-	arg_2_0._perks = {}
-	arg_2_0._buff_id_refs = {}
-	arg_2_0._stacking_buffs = {}
-	arg_2_0.reset_material_cache = nil
+	breed = not breed and arg_2_3.breed.is_player
+
+	local is_server
+
+	if not breed then
+		is_server = self.is_server
+
+		if not is_server then
+			-- Nothing
+		end
+	end
+
+	is_server = not breed and not arg_2_3.is_husk
+
+	::label_2_0::
+
+	self.is_local = is_server
+	self.is_husk = arg_2_3.is_husk
+	self.id = 1
+	self.individual_stat_buff_index = 1
+	self._prd_states = {}
+	self._perks = {}
+	self._buff_id_refs = {}
+	self._stacking_buffs = {}
+	self.reset_material_cache = nil
 end
 
-function BuffExtension.extensions_ready(arg_3_0, arg_3_1, arg_3_2)
-	arg_3_0:_activate_initial_buffs()
+BuffExtension.extensions_ready = function (self, arg_3_1, arg_3_2)
+	-- function 3
+	self:_activate_initial_buffs()
 
-	local var_3_0 = Unit.get_data(arg_3_2, "breed")
+	local get_data = Unit.get_data(arg_3_2, "breed")
 
-	if not var_3_0 or not var_3_0.is_player then
+	if not (not get_data and get_data.is_player) then
 		return
 	end
 
-	if var_3_0.is_hero then
-		local var_3_1 = Managers.state.entity:system("buff_system"):get_player_group_buffs()
-		local var_3_2 = #var_3_1
+	if not get_data.is_hero then
+		local get_player_group_buffs = Managers.state.entity:system("buff_system"):get_player_group_buffs()
+		local count = #get_player_group_buffs
 
-		if var_3_2 > 0 then
-			for iter_3_0 = 1, var_3_2 do
-				local var_3_3 = var_3_1[iter_3_0]
-				local var_3_4 = var_3_3.group_buff_template_name
-				local var_3_5 = GroupBuffTemplates[var_3_4].buff_per_instance
+		if count > 0 then
+			for i = 1, count do
+				local var_3_3 = get_player_group_buffs[i]
+				local group_buff_template_name = var_3_3.group_buff_template_name
+				local buff_per_instance = GroupBuffTemplates[group_buff_template_name].buff_per_instance
 
-				var_3_3.recipients[arg_3_2] = arg_3_0:add_buff(var_3_5)
+				var_3_3.recipients[arg_3_2] = self:add_buff(buff_per_instance)
 			end
 		end
 	end
 
-	if arg_3_0._num_buffs > 0 then
-		Managers.state.entity:system("buff_system"):set_buff_ext_active(arg_3_0._unit, true)
+	if self._num_buffs > 0 then
+		Managers.state.entity:system("buff_system"):set_buff_ext_active(self._unit, true)
 	end
 
-	arg_3_0.debug_buff_names = {}
+	self.debug_buff_names = {}
 end
 
-function BuffExtension.destroy(arg_4_0)
-	arg_4_0:clear()
+BuffExtension.destroy = function (self)
+	-- function 4
+	self:clear()
 end
 
-function BuffExtension.freeze(arg_5_0)
-	arg_5_0:clear()
+BuffExtension.freeze = function (self)
+	-- function 5
+	self:clear()
 
-	arg_5_0._ai_frozen = true
+	self._ai_frozen = true
 end
 
-function BuffExtension.unfreeze(arg_6_0)
-	arg_6_0._ai_frozen = nil
+BuffExtension.unfreeze = function (self)
+	-- function 6
+	self._ai_frozen = nil
 end
 
-function BuffExtension.clear(arg_7_0)
-	local var_7_0 = arg_7_0._buffs
-	local var_7_1 = Managers.time:time("game")
-	local var_7_2 = buff_extension_function_params
+BuffExtension.clear = function (self)
+	-- function 7
+	local _buffs = self._buffs
+	local time = Managers.time:time("game")
+	local buff_extension_function_params = buff_extension_function_params
 
-	var_7_2.t = var_7_1
-	var_7_2.end_time = var_7_1
+	buff_extension_function_params.t = time
+	buff_extension_function_params.end_time = time
 
-	for iter_7_0 = 1, arg_7_0._num_buffs do
-		local var_7_3 = var_7_0[iter_7_0]
+	for i = 1, self._num_buffs do
+		local var_7_3 = _buffs[i]
 
 		if not var_7_3.removed then
-			var_7_2.bonus = var_7_3.bonus
-			var_7_2.multiplier = var_7_3.multiplier
-			var_7_2.value = var_7_3.value
-			var_7_2.attacker_unit = var_7_3.attacker_unit
-			var_7_2.source_attacker_unit = var_7_3.source_attacker_unit
+			buff_extension_function_params.bonus = var_7_3.bonus
+			buff_extension_function_params.multiplier = var_7_3.multiplier
+			buff_extension_function_params.value = var_7_3.value
+			buff_extension_function_params.attacker_unit = var_7_3.attacker_unit
+			buff_extension_function_params.source_attacker_unit = var_7_3.source_attacker_unit
 
-			arg_7_0:_remove_sub_buff(var_7_3, iter_7_0, var_7_2, false)
+			self:_remove_sub_buff(var_7_3, i, buff_extension_function_params, false)
 		end
 	end
 
-	table.clear(var_7_0)
-	table.clear(arg_7_0._perks)
-	table.clear(arg_7_0._buff_id_refs)
-	table.clear(arg_7_0._stacking_buffs)
+	table.clear(_buffs)
+	table.clear(self._perks)
+	table.clear(self._buff_id_refs)
+	table.clear(self._stacking_buffs)
 
-	arg_7_0._num_buffs = 0
-	arg_7_0._id_to_local_sync = nil
-	arg_7_0._local_sync_to_id = nil
-	arg_7_0._synced_buff_owner = nil
-	arg_7_0._buff_to_sync_type = nil
-	arg_7_0._id_to_server_sync = nil
-	arg_7_0._server_sync_to_id = nil
-	arg_7_0._remove_buff_queue = nil
+	self._num_buffs = 0
+	self._id_to_local_sync = nil
+	self._local_sync_to_id = nil
+	self._synced_buff_owner = nil
+	self._buff_to_sync_type = nil
+	self._id_to_server_sync = nil
+	self._server_sync_to_id = nil
+	self._remove_buff_queue = nil
 
-	if arg_7_0._shared_buff_units then
-		for iter_7_1, iter_7_2 in pairs(arg_7_0._shared_buff_units) do
-			if ALIVE[iter_7_2] then
-				Managers.state.unit_spawner:mark_for_deletion(iter_7_2)
+	if not self._shared_buff_units then
+		for k, v in pairs(self._shared_buff_units) do
+			if not ALIVE[v] then
+				Managers.state.unit_spawner:mark_for_deletion(v)
 			end
 		end
 
-		arg_7_0._shared_buff_units = nil
+		self._shared_buff_units = nil
 	end
 
-	Managers.state.entity:system("buff_system"):set_buff_ext_active(arg_7_0._unit, false)
+	Managers.state.entity:system("buff_system"):set_buff_ext_active(self._unit, false)
 end
 
-function BuffExtension.add_buff(arg_8_0, arg_8_1, arg_8_2)
-	local var_8_0 = arg_8_0._unit
+BuffExtension.add_buff = function (self, arg_8_1, arg_8_2)
+	-- function 8
+	local _unit = self._unit
 
-	if FROZEN[var_8_0] or arg_8_0._ai_frozen then
+	if FROZEN[_unit] or not self._ai_frozen then
 		return
 	end
 
-	local var_8_1 = arg_8_0._buffs
-	local var_8_2 = BuffUtils.get_buff_template(arg_8_1)
-	local var_8_3 = var_8_2.buffs
-	local var_8_4 = arg_8_2 and arg_8_2._hot_join_sync_buff_age or 0
-	local var_8_5 = Managers.time:time("game") - var_8_4
-	local var_8_6 = arg_8_0:claim_buff_id(arg_8_1)
-	local var_8_7 = arg_8_0.world
-	local var_8_8 = arg_8_0.is_server
+	local _buffs = self._buffs
+	local get_buff_template = BuffUtils.get_buff_template(arg_8_1)
+	local buffs = get_buff_template.buffs
+	local _hot_join_sync_buff_age
+
+	if not arg_8_2 then
+		_hot_join_sync_buff_age = arg_8_2._hot_join_sync_buff_age
+
+		if not _hot_join_sync_buff_age then
+			-- Nothing
+		end
+	end
+
+	_hot_join_sync_buff_age = 0
+
+	::label_8_0::
+
+	local num = Managers.time:time("game") - _hot_join_sync_buff_age
+	local claim_buff_id = self:claim_buff_id(arg_8_1)
+	local world = self.world
+	local is_server = self.is_server
 	local var_8_9
-	local var_8_10 = var_8_2.create_parent_buff_shared_table and {}
-	local var_8_11 = 0
+	local create_parent_buff_shared_table = get_buff_template.create_parent_buff_shared_table
 
-	for iter_8_0 = 1, #var_8_3 do
+	create_parent_buff_shared_table = not create_parent_buff_shared_table and {}
+
+	local num_2 = 0
+
+	for i = 1, #buffs do
 		repeat
-			local var_8_12 = var_8_3[iter_8_0]
-			local var_8_13 = var_8_12.apply_condition
+			local var_8_12 = buffs[i]
+			local apply_condition = var_8_12.apply_condition
 
-			if var_8_13 and not var_8_13(var_8_0, var_8_12, arg_8_2) then
+			if not (not apply_condition and apply_condition(_unit, var_8_12, arg_8_2)) then
 				break
 			end
 
-			local var_8_14 = var_8_12.duration
-			local var_8_15 = var_8_12.ticks
-			local var_8_16 = var_8_12.update_frequency
-			local var_8_17 = var_8_12.max_stacks_func and var_8_12.max_stacks_func(arg_8_0._unit, var_8_12) or var_8_12.max_stacks
-			local var_8_18 = var_8_17
-			local var_8_19 = var_8_12.bonus
-			local var_8_20 = var_8_12.value
-			local var_8_21 = var_8_12.multiplier
-			local var_8_22 = var_8_12.proc_chance
-			local var_8_23 = var_8_12.proc_cooldown
-			local var_8_24 = var_8_12.range
+			local duration = var_8_12.duration
+			local ticks = var_8_12.ticks
+			local update_frequency = var_8_12.update_frequency
+			local max_stacks_func
+
+			if not var_8_12.max_stacks_func then
+				max_stacks_func = var_8_12.max_stacks_func(self._unit, var_8_12)
+
+				if not max_stacks_func then
+					-- Nothing
+				end
+			end
+
+			max_stacks_func = var_8_12.max_stacks
+
+			::label_8_1::
+
+			local var_8_18 = max_stacks_func
+			local bonus = var_8_12.bonus
+			local value = var_8_12.value
+			local multiplier = var_8_12.multiplier
+			local proc_chance = var_8_12.proc_chance
+			local proc_cooldown = var_8_12.proc_cooldown
+			local range = var_8_12.range
 			local var_8_25
 			local var_8_26
 			local var_8_27
 			local var_8_28
 
-			if arg_8_2 then
-				local var_8_29 = arg_8_2.variable_value
+			if not arg_8_2 then
+				local variable_value = arg_8_2.variable_value
 
-				if var_8_29 then
-					local var_8_30 = var_8_12.variable_bonus
+				if not variable_value then
+					local variable_bonus = var_8_12.variable_bonus
 
-					if var_8_30 then
-						var_8_19 = var_8_30[var_8_29 == 1 and #var_8_30 or 1 + math.floor(var_8_29 / (1 / #var_8_30))]
+					if not variable_bonus then
+						local count
+
+						if variable_value == 1 then
+							count = #variable_bonus
+
+							if not count then
+								-- Nothing
+							end
+						end
+
+						count = 1 + math.floor(variable_value / (1 / #variable_bonus))
+
+						::label_8_2::
+
+						bonus = variable_bonus[count]
 					end
 
-					local var_8_31 = var_8_12.variable_bonus_max
+					local variable_bonus_max = var_8_12.variable_bonus_max
 
-					if var_8_31 then
-						var_8_19 = math.lerp(0, var_8_31, var_8_29)
+					if not variable_bonus_max then
+						bonus = math.lerp(0, variable_bonus_max, variable_value)
 					end
 
-					local var_8_32 = var_8_12.variable_multiplier
+					local variable_multiplier = var_8_12.variable_multiplier
 
-					if var_8_32 then
-						local var_8_33 = var_8_32[1]
-						local var_8_34 = var_8_32[2]
+					if not variable_multiplier then
+						local var_8_34 = variable_multiplier[1]
+						local var_8_35 = variable_multiplier[2]
 
-						var_8_21 = math.lerp(var_8_33, var_8_34, var_8_29)
+						multiplier = math.lerp(var_8_34, var_8_35, variable_value)
 					end
 
-					local var_8_35 = var_8_12.variable_multiplier_max
+					local variable_multiplier_max = var_8_12.variable_multiplier_max
 
-					if var_8_35 then
-						var_8_21 = math.lerp(0, var_8_35, var_8_29)
+					if not variable_multiplier_max then
+						multiplier = math.lerp(0, variable_multiplier_max, variable_value)
 					end
 				end
 
-				var_8_19 = arg_8_2.external_optional_bonus or var_8_19
-				var_8_21 = arg_8_2.external_optional_multiplier or var_8_21
-				var_8_20 = arg_8_2.external_optional_value or var_8_20
-				var_8_22 = arg_8_2.external_optional_proc_chance or var_8_22
-				var_8_14 = arg_8_2.external_optional_duration or var_8_14
-				var_8_15 = arg_8_2.external_optional_ticks or var_8_15
-				var_8_24 = arg_8_2.external_optional_range or var_8_24
+				bonus = arg_8_2.external_optional_bonus or bonus
+				multiplier = arg_8_2.external_optional_multiplier or multiplier
+				value = arg_8_2.external_optional_value or value
+				proc_chance = arg_8_2.external_optional_proc_chance or proc_chance
+				duration = arg_8_2.external_optional_duration or duration
+				ticks = arg_8_2.external_optional_ticks or ticks
+				range = arg_8_2.external_optional_range or range
 				var_8_25 = arg_8_2.damage_source or var_8_25
 				var_8_26 = arg_8_2.power_level or var_8_26
 				var_8_27 = arg_8_2.attacker_unit or var_8_27
 				var_8_28 = arg_8_2.source_attacker_unit or var_8_28
 			end
 
-			if var_8_12.duration_modifier_func then
-				var_8_14, var_8_15 = var_8_12.duration_modifier_func(var_8_0, var_8_12, var_8_14, arg_8_0, arg_8_2)
+			if not var_8_12.duration_modifier_func then
+				duration, ticks = var_8_12.duration_modifier_func(_unit, var_8_12, duration, self, arg_8_2)
 			end
 
-			local var_8_36 = var_8_12.perks
+			local perks = var_8_12.perks
 
-			if var_8_36 and table.find(var_8_36, var_0_1.burning_balefire) then
-				local var_8_37 = var_8_28 or var_8_27
-				local var_8_38 = ScriptUnit.has_extension(var_8_37, "buff_system")
+			if not perks and not table.find(perks, scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.burning_balefire) then
+				local flag = var_8_28 or var_8_27
+				local has_extension = ScriptUnit.has_extension(flag, "buff_system")
 
-				if var_8_38 and not Managers.state.side:is_ally(var_8_0, var_8_37) then
-					local var_8_39 = var_8_38:apply_buffs_to_value(1, "increased_balefire_dot_duration")
+				if not (not has_extension and Managers.state.side:is_ally(_unit, flag)) then
+					local apply_buffs_to_value = has_extension:apply_buffs_to_value(1, "increased_balefire_dot_duration")
 
-					var_8_14 = var_8_14 and var_8_14 * var_8_39
-					var_8_15 = var_8_15 and math.floor(var_8_15 * var_8_39)
-					var_8_16 = var_8_16 and var_8_16 * var_8_39
+					duration = not duration and duration * apply_buffs_to_value
+					ticks = not ticks and math.floor(ticks * apply_buffs_to_value)
+					update_frequency = not update_frequency and update_frequency * apply_buffs_to_value
 				end
 			end
 
-			local var_8_40 = var_8_14 and var_8_5 + var_8_14
+			local flag_2 = not duration and num + duration
 
-			if var_8_18 and not arg_8_0:_add_stacking_buff(var_8_12, var_8_17, var_8_5, var_8_14, var_8_40, arg_8_2) then
+			if not (not var_8_18 and self:_add_stacking_buff(var_8_12, max_stacks_func, num, duration, flag_2, arg_8_2)) then
 				break
 			end
 
-			local var_8_41 = var_8_12.refresh_duration_of_buffs_on_apply
+			local refresh_duration_of_buffs_on_apply = var_8_12.refresh_duration_of_buffs_on_apply
 
-			if var_8_41 then
-				for iter_8_1 = 1, #var_8_41 do
-					local var_8_42 = var_8_41[iter_8_1]
-					local var_8_43 = arg_8_0:get_stacking_buff(var_8_42)
+			if not refresh_duration_of_buffs_on_apply then
+				for j = 1, #refresh_duration_of_buffs_on_apply do
+					local var_8_43 = refresh_duration_of_buffs_on_apply[j]
+					local get_stacking_buff = self:get_stacking_buff(var_8_43)
 
-					if var_8_43 then
-						for iter_8_2 = 1, #var_8_43 do
-							local var_8_44 = var_8_43[iter_8_2]
+					if not get_stacking_buff then
+						for k = 1, #get_stacking_buff do
+							local var_8_45 = get_stacking_buff[k]
 
-							arg_8_0:_refresh_duration(var_8_44, var_8_5, var_8_44.duration, var_8_5 + var_8_44.duration, arg_8_2, var_8_44.template)
+							self:_refresh_duration(var_8_45, num, var_8_45.duration, num + var_8_45.duration, arg_8_2, var_8_45.template)
 						end
 					else
-						local var_8_45 = arg_8_0:get_buff_type(var_8_42)
+						local get_buff_type = self:get_buff_type(var_8_43)
 
-						if var_8_45 then
-							arg_8_0:_refresh_duration(var_8_45, var_8_5, var_8_45.duration, var_8_5 + var_8_45.duration, arg_8_2, var_8_45.template)
+						if not get_buff_type then
+							self:_refresh_duration(get_buff_type, num, get_buff_type.duration, num + get_buff_type.duration, arg_8_2, get_buff_type.template)
 						end
 					end
 				end
 			end
 
-			local var_8_46 = {
-				id = var_8_6,
-				start_time = var_8_5,
+			local tbl = {
+				id = claim_buff_id,
+				start_time = num,
 				template = var_8_12,
 				buff_type = var_8_12.name,
 				buff_template_name = arg_8_1,
-				bonus = var_8_19,
-				multiplier = var_8_21,
-				value = var_8_20,
-				proc_chance = var_8_22,
-				proc_cooldown = var_8_23,
-				duration = var_8_14,
-				ticks = var_8_15,
-				current_ticks = var_8_15 and 0 or nil,
-				update_frequency = var_8_16,
-				range = var_8_24,
-				damage_source = var_8_25,
-				power_level = var_8_26,
-				attacker_unit = var_8_27,
-				source_attacker_unit = var_8_28,
-				max_stacks = var_8_17,
-				parent_buff_shared_table = var_8_10
+				bonus = bonus,
+				multiplier = multiplier,
+				value = value,
+				proc_chance = proc_chance,
+				proc_cooldown = proc_cooldown,
+				duration = duration,
+				ticks = ticks
 			}
+			local flag_3
 
-			var_8_9 = var_8_9 or var_8_46
-			arg_8_0._num_buffs = arg_8_0._num_buffs + 1
-			var_8_1[arg_8_0._num_buffs] = var_8_46
-			var_8_11 = var_8_11 + 1
+			flag_3 = not ticks and 0 and nil
+			tbl.current_ticks = flag_3
+			tbl.update_frequency = update_frequency
+			tbl.range = range
+			tbl.damage_source = var_8_25
+			tbl.power_level = var_8_26
+			tbl.attacker_unit = var_8_27
+			tbl.source_attacker_unit = var_8_28
+			tbl.max_stacks = max_stacks_func
+			tbl.parent_buff_shared_table = create_parent_buff_shared_table
+			var_8_9 = var_8_9 or tbl
+			self._num_buffs = self._num_buffs + 1
+			_buffs[self._num_buffs] = tbl
+			num_2 = num_2 + 1
 
-			if var_8_18 then
-				local var_8_47 = arg_8_0._stacking_buffs[var_8_12.name]
+			if not var_8_18 then
+				local var_8_49 = self._stacking_buffs[var_8_12.name]
 
-				if not var_8_47 then
-					var_8_47 = {}
-					arg_8_0._stacking_buffs[var_8_12.name] = var_8_47
+				if not var_8_49 then
+					var_8_49 = {}
+					self._stacking_buffs[var_8_12.name] = var_8_49
 
-					local var_8_48 = StackingBuffFunctions[var_8_12.on_stack_buff_first_add]
+					local var_8_50 = StackingBuffFunctions[var_8_12.on_stack_buff_first_add]
 
-					if var_8_48 then
-						var_8_48(arg_8_0._unit, var_8_12, arg_8_2)
+					if not var_8_50 then
+						var_8_50(self._unit, var_8_12, arg_8_2)
 					end
 				end
 
-				var_8_47[#var_8_47 + 1] = var_8_46
+				var_8_49[#var_8_49 + 1] = tbl
 			end
 
-			if var_8_36 then
-				for iter_8_3 = 1, #var_8_36 do
-					local var_8_49 = var_8_36[iter_8_3]
-					local var_8_50 = arg_8_0._perks[var_8_49] or 0
+			if not perks then
+				for l = 1, #perks do
+					local var_8_51 = perks[l]
+					local var_8_52 = self._perks[var_8_51]
 
-					if var_8_50 == 0 then
-						local var_8_51 = var_0_0[var_8_49]
+					var_8_52 = var_8_52 or 0
 
-						if var_8_51 and var_8_51.added then
-							var_8_51.added(arg_8_0, var_8_0, var_8_46, var_8_8)
+					if var_8_52 == 0 then
+						local var_8_53 = scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_functions[var_8_51]
+
+						if not var_8_53 and not var_8_53.added then
+							var_8_53.added(self, _unit, tbl, is_server)
 						end
 					end
 
-					arg_8_0._perks[var_8_49] = var_8_50 + 1
+					self._perks[var_8_51] = var_8_52 + 1
 				end
 			end
 
-			if var_8_12.buff_area then
-				local var_8_52 = Managers.state.unit_spawner
-				local var_8_53 = Managers.state.side.side_by_unit
-				local var_8_54 = var_8_53[var_8_28] or var_8_53[var_8_0]
-				local var_8_55 = {
-					buff_area_system = {
-						duration = var_8_14,
-						radius = var_8_12.area_radius,
-						sub_buff_template = var_8_12,
-						sub_buff_id = iter_8_0,
-						owner_unit = var_8_0,
-						source_unit = var_8_28,
-						side_id = var_8_54 and var_8_54.side_id or 0
-					}
+			if not var_8_12.buff_area then
+				local unit_spawner = Managers.state.unit_spawner
+				local side_by_unit = Managers.state.side.side_by_unit
+				local var_8_56 = side_by_unit[var_8_28]
+
+				var_8_56 = var_8_56 or side_by_unit[_unit]
+
+				local tbl_2 = {}
+				local tbl_3 = {
+					duration = duration,
+					radius = var_8_12.area_radius,
+					sub_buff_template = var_8_12,
+					sub_buff_id = i,
+					owner_unit = _unit,
+					source_unit = var_8_28
 				}
-				local var_8_56 = arg_8_2 and arg_8_2.buff_area_position or POSITION_LOOKUP[arg_8_0._unit]
+				local side_id
 
-				var_8_46.area_buff_unit = var_8_52:spawn_network_unit(var_8_12.area_unit_name, "buff_aoe_unit", var_8_55, var_8_56, Quaternion.identity(), nil)
-			end
+				if not var_8_56 then
+					side_id = var_8_56.side_id
 
-			if var_8_12.status_effect then
-				Managers.state.status_effect:set_status(var_8_0, var_8_12.status_effect, var_8_46, true)
-			end
-
-			local var_8_57 = var_8_12.apply_buff_func
-
-			if var_8_57 then
-				buff_extension_function_params.bonus = var_8_19
-				buff_extension_function_params.multiplier = var_8_21
-				buff_extension_function_params.value = var_8_20
-				buff_extension_function_params.t = var_8_5
-				buff_extension_function_params.end_time = var_8_40
-				buff_extension_function_params.attacker_unit = var_8_46.attacker_unit
-				buff_extension_function_params.source_attacker_unit = var_8_46.source_attacker_unit
-
-				BuffFunctionTemplates.functions[var_8_57](var_8_0, var_8_46, buff_extension_function_params, var_8_7)
-			end
-
-			if var_8_12.delayed_apply_buff_func then
-				local var_8_58 = arg_8_0._delayed_apply_funcs or {}
-
-				var_8_58[#var_8_58 + 1] = var_8_46
-				arg_8_0._delayed_apply_funcs = var_8_58
-			end
-
-			if var_8_12.stat_buff then
-				var_8_46.stat_buff_index = arg_8_0:_add_stat_buff(var_8_12, var_8_46)
-			end
-
-			local var_8_59 = var_8_12.event
-
-			if var_8_59 then
-				var_8_46.buff_func = var_8_12.buff_func
-
-				local var_8_60 = arg_8_0._event_buffs_index
-
-				var_8_46.event_buff_index = var_8_60
-				arg_8_0._event_buffs[var_8_59][var_8_60] = var_8_46
-				arg_8_0._event_buffs_index = var_8_60 + 1
-			end
-
-			if var_8_12.duration_end_func then
-				var_8_46.delayed_remove_func_name = var_8_12.duration_end_func
-			end
-
-			if var_8_12.continuous_effect then
-				arg_8_0._continuous_screen_effects[var_8_6] = arg_8_0:_play_screen_effect(var_8_12.continuous_effect)
-			end
-
-			local var_8_61 = var_8_12.particles
-
-			if var_8_61 then
-				local var_8_62 = var_8_0
-				local var_8_63 = false
-
-				if arg_8_0.is_local and not arg_8_0.is_husk then
-					local var_8_64 = ScriptUnit.has_extension(var_8_62, "first_person_system")
-
-					if var_8_64 and var_8_64.first_person_unit then
-						var_8_62 = var_8_64.first_person_unit
-						var_8_63 = true
+					if not side_id then
+						-- Nothing
 					end
 				end
 
-				local var_8_65 = BuffUtils.create_attached_particles(var_8_7, var_8_61, var_8_62, var_8_63, var_8_0, var_8_40)
+				side_id = 0
 
-				arg_8_0._vfx[var_8_6] = var_8_65
+				::label_8_3::
 
-				if var_8_65.update_fx then
-					arg_8_0._vfx_update[var_8_6] = var_8_65
+				tbl_3.side_id = side_id
+				tbl_2.buff_area_system = tbl_3
+
+				local buff_area_position
+
+				if not arg_8_2 then
+					buff_area_position = arg_8_2.buff_area_position
+
+					if not buff_area_position then
+						-- Nothing
+					end
+				end
+
+				buff_area_position = POSITION_LOOKUP[self._unit]
+
+				::label_8_4::
+
+				tbl.area_buff_unit = unit_spawner:spawn_network_unit(var_8_12.area_unit_name, "buff_aoe_unit", tbl_2, buff_area_position, Quaternion.identity(), nil)
+			end
+
+			if not var_8_12.status_effect then
+				Managers.state.status_effect:set_status(_unit, var_8_12.status_effect, tbl, true)
+			end
+
+			local apply_buff_func = var_8_12.apply_buff_func
+
+			if not apply_buff_func then
+				buff_extension_function_params.bonus = bonus
+				buff_extension_function_params.multiplier = multiplier
+				buff_extension_function_params.value = value
+				buff_extension_function_params.t = num
+				buff_extension_function_params.end_time = flag_2
+				buff_extension_function_params.attacker_unit = tbl.attacker_unit
+				buff_extension_function_params.source_attacker_unit = tbl.source_attacker_unit
+
+				BuffFunctionTemplates.functions[apply_buff_func](_unit, tbl, buff_extension_function_params, world)
+			end
+
+			if not var_8_12.delayed_apply_buff_func then
+				local _delayed_apply_funcs = self._delayed_apply_funcs
+
+				_delayed_apply_funcs = _delayed_apply_funcs or {}
+				_delayed_apply_funcs[#_delayed_apply_funcs + 1] = tbl
+				self._delayed_apply_funcs = _delayed_apply_funcs
+			end
+
+			if not var_8_12.stat_buff then
+				tbl.stat_buff_index = self:_add_stat_buff(var_8_12, tbl)
+			end
+
+			local event = var_8_12.event
+
+			if not event then
+				tbl.buff_func = var_8_12.buff_func
+
+				local _event_buffs_index = self._event_buffs_index
+
+				tbl.event_buff_index = _event_buffs_index
+				self._event_buffs[event][_event_buffs_index] = tbl
+				self._event_buffs_index = _event_buffs_index + 1
+			end
+
+			if not var_8_12.duration_end_func then
+				tbl.delayed_remove_func_name = var_8_12.duration_end_func
+			end
+
+			if not var_8_12.continuous_effect then
+				self._continuous_screen_effects[claim_buff_id] = self:_play_screen_effect(var_8_12.continuous_effect)
+			end
+
+			local particles = var_8_12.particles
+
+			if not particles then
+				local var_8_66 = _unit
+				local flag_4 = false
+
+				if not (not self.is_local and self.is_husk) then
+					local has_extension_2 = ScriptUnit.has_extension(var_8_66, "first_person_system")
+
+					if not has_extension_2 and not has_extension_2.first_person_unit then
+						var_8_66 = has_extension_2.first_person_unit
+						flag_4 = true
+					end
+				end
+
+				local create_attached_particles = BuffUtils.create_attached_particles(world, particles, var_8_66, flag_4, _unit, flag_2)
+
+				self._vfx[claim_buff_id] = create_attached_particles
+
+				if not create_attached_particles.update_fx then
+					self._vfx_update[claim_buff_id] = create_attached_particles
 				end
 			end
 
-			local var_8_66 = var_8_12.sfx
+			local sfx = var_8_12.sfx
 
-			if var_8_66 then
-				local var_8_67 = var_8_66.activation_sound
+			if not sfx then
+				local activation_sound = sfx.activation_sound
 
-				if var_8_67 then
-					arg_8_0:_play_buff_sound(var_8_67, var_8_66.activation_sound_3p)
+				if not activation_sound then
+					self:_play_buff_sound(activation_sound, sfx.activation_sound_3p)
 				end
 			end
 		until true
 	end
 
-	local var_8_68 = var_8_2.activation_sound
+	local activation_sound_2 = get_buff_template.activation_sound
 
-	if var_8_68 then
-		arg_8_0:_play_buff_sound(var_8_68, var_8_2.activation_sound_3p)
+	if not activation_sound_2 then
+		self:_play_buff_sound(activation_sound_2, get_buff_template.activation_sound_3p)
 	end
 
-	local var_8_69 = var_8_2.activation_effect
+	local activation_effect = get_buff_template.activation_effect
 
-	if var_8_69 then
-		arg_8_0:_play_screen_effect(var_8_69)
+	if not activation_effect then
+		self:_play_screen_effect(activation_effect)
 	end
 
-	if var_8_11 > 0 then
-		if arg_8_0._num_buffs == var_8_11 then
-			Managers.state.entity:system("buff_system"):set_buff_ext_active(var_8_0, true)
+	if num_2 > 0 then
+		if self._num_buffs == num_2 then
+			Managers.state.entity:system("buff_system"):set_buff_ext_active(_unit, true)
 		end
 
-		arg_8_0._buff_id_refs[var_8_6] = var_8_11
+		self._buff_id_refs[claim_buff_id] = num_2
 
-		local var_8_70 = var_8_2.deactivation_effect
+		local deactivation_effect = get_buff_template.deactivation_effect
 
-		if var_8_70 then
-			arg_8_0._deactivation_screen_effects[var_8_6] = var_8_70
+		if not deactivation_effect then
+			self._deactivation_screen_effects[claim_buff_id] = deactivation_effect
 		end
 
-		local var_8_71 = var_8_2.deactivation_sound
+		local deactivation_sound = get_buff_template.deactivation_sound
 
-		if var_8_71 then
-			arg_8_0._deactivation_sounds[var_8_6] = var_8_71
+		if not deactivation_sound then
+			self._deactivation_sounds[claim_buff_id] = deactivation_sound
 
-			if var_8_2.activation_sound_3p then
-				arg_8_0._deactivation_sounds_3p[var_8_6] = var_8_2.activation_sound_3p
+			if not get_buff_template.activation_sound_3p then
+				self._deactivation_sounds_3p[claim_buff_id] = get_buff_template.activation_sound_3p
 			end
 		end
 	end
 
-	return var_8_6, var_8_11, var_8_9
+	return claim_buff_id, num_2, var_8_9
 end
 
-function BuffExtension._add_stacking_buff(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6)
-	local var_9_0 = arg_9_0._stacking_buffs[arg_9_1.name]
-	local var_9_1 = var_9_0 and #var_9_0 or 0
+BuffExtension._add_stacking_buff = function (self, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6)
+	-- function 9
+	local var_9_0 = self._stacking_buffs[arg_9_1.name]
+	local count
 
-	if arg_9_4 and (arg_9_1.refresh_durations_func and arg_9_1.refresh_durations_func(arg_9_0._unit, arg_9_1) or arg_9_1.refresh_durations) then
-		for iter_9_0 = 1, var_9_1 do
-			local var_9_2 = var_9_0[iter_9_0]
+	if not var_9_0 then
+		count = #var_9_0
 
-			arg_9_0:_refresh_duration(var_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_1)
+		if not count then
+			-- Nothing
 		end
 	end
 
-	if arg_9_1.refresh_buff_area_position then
-		for iter_9_1 = 1, var_9_1 do
-			local var_9_3 = var_9_0[iter_9_1].area_buff_unit
+	count = 0
 
-			if var_9_3 then
-				local var_9_4 = ScriptUnit.has_extension(var_9_3, "buff_area_system")
+	::label_9_0::
 
-				if var_9_4 then
-					var_9_4:set_unit_position(POSITION_LOOKUP[arg_9_0._unit])
+	if not arg_9_4 then
+		local refresh_durations_func
+
+		if not arg_9_1.refresh_durations_func then
+			refresh_durations_func = arg_9_1.refresh_durations_func(self._unit, arg_9_1)
+
+			if not refresh_durations_func then
+				-- Nothing
+			end
+		end
+
+		refresh_durations_func = arg_9_1.refresh_durations
+
+		::label_9_1::
+
+		if not refresh_durations_func then
+			for i = 1, count do
+				local var_9_3 = var_9_0[i]
+
+				self:_refresh_duration(var_9_3, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_1)
+			end
+		end
+	end
+
+	if not arg_9_1.refresh_buff_area_position then
+		for j = 1, count do
+			local area_buff_unit = var_9_0[j].area_buff_unit
+
+			if not area_buff_unit then
+				local has_extension = ScriptUnit.has_extension(area_buff_unit, "buff_area_system")
+
+				if not has_extension then
+					has_extension:set_unit_position(POSITION_LOOKUP[self._unit])
 				end
 			end
 		end
 	end
 
-	if arg_9_6 and arg_9_6.refresh_duration_only and var_9_1 > 0 then
+	if not (not arg_9_6 and not arg_9_6.refresh_duration_only and not (count > 0)) then
 		return false
 	end
 
-	local var_9_5 = true
+	local flag = true
 
-	if arg_9_2 <= var_9_1 then
-		local var_9_6 = StackingBuffFunctions[arg_9_1.on_max_stacks_overflow_func]
+	if arg_9_2 <= count then
+		local var_9_7 = StackingBuffFunctions[arg_9_1.on_max_stacks_overflow_func]
 
-		if var_9_6 then
-			local var_9_7 = true
+		if not var_9_7 then
+			local flag_2 = true
 
 			arg_9_6 = arg_9_6 or FrameTable.alloc_table()
-			var_9_5 = var_9_5 and var_9_6(arg_9_0._unit, arg_9_1, arg_9_6, var_9_7)
+			flag = not flag and var_9_7(self._unit, arg_9_1, arg_9_6, flag_2)
 		else
-			var_9_5 = false
+			flag = false
 		end
-	elseif var_9_1 == arg_9_2 - 1 then
-		local var_9_8 = StackingBuffFunctions[arg_9_1.on_max_stacks_func]
+	elseif count == arg_9_2 - 1 then
+		local var_9_9 = StackingBuffFunctions[arg_9_1.on_max_stacks_func]
 
-		if var_9_8 then
-			var_9_8(arg_9_0._unit, arg_9_1, arg_9_6)
+		if not var_9_9 then
+			var_9_9(self._unit, arg_9_1, arg_9_6)
 		end
 
-		if arg_9_1.reset_on_max_stacks_func and arg_9_1.reset_on_max_stacks_func(arg_9_0._unit, arg_9_1) or arg_9_1.reset_on_max_stacks then
-			local var_9_9 = arg_9_0._buffs
+		local reset_on_max_stacks_func
 
-			for iter_9_2 = 1, arg_9_0._num_buffs do
-				local var_9_10 = var_9_9[iter_9_2]
+		if not arg_9_1.reset_on_max_stacks_func then
+			reset_on_max_stacks_func = arg_9_1.reset_on_max_stacks_func(self._unit, arg_9_1)
 
-				if var_9_10.buff_type == arg_9_1.name then
-					buff_extension_function_params.bonus = var_9_10.bonus
-					buff_extension_function_params.multiplier = var_9_10.multiplier
-					buff_extension_function_params.value = var_9_10.value
+			if not reset_on_max_stacks_func then
+				-- Nothing
+			end
+		end
+
+		reset_on_max_stacks_func = arg_9_1.reset_on_max_stacks
+
+		::label_9_2::
+
+		if not reset_on_max_stacks_func then
+			local _buffs = self._buffs
+
+			for k = 1, self._num_buffs do
+				local var_9_12 = _buffs[k]
+
+				if var_9_12.buff_type == arg_9_1.name then
+					buff_extension_function_params.bonus = var_9_12.bonus
+					buff_extension_function_params.multiplier = var_9_12.multiplier
+					buff_extension_function_params.value = var_9_12.value
 					buff_extension_function_params.t = arg_9_3
-					buff_extension_function_params.end_time = var_9_10.duration and var_9_10.start_time + var_9_10.duration
-					buff_extension_function_params.attacker_unit = var_9_10.attacker_unit
-					buff_extension_function_params.source_attacker_unit = var_9_10.source_attacker_unit
 
-					arg_9_0:_remove_sub_buff(var_9_10, iter_9_2, buff_extension_function_params, true)
+					local buff_extension_function_params = buff_extension_function_params
+					local duration = var_9_12.duration
+
+					duration = not duration and var_9_12.start_time + var_9_12.duration
+					buff_extension_function_params.end_time = duration
+					buff_extension_function_params.attacker_unit = var_9_12.attacker_unit
+					buff_extension_function_params.source_attacker_unit = var_9_12.source_attacker_unit
+
+					self:_remove_sub_buff(var_9_12, k, buff_extension_function_params, true)
 				end
 			end
 
-			var_9_5 = false
+			flag = false
 		end
 	end
 
-	return var_9_5
+	return flag
 end
 
-function BuffExtension._refresh_duration(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6)
-	if arg_10_1.area_buff_unit then
-		local var_10_0 = ScriptUnit.has_extension(arg_10_1.area_buff_unit, "buff_area_system")
+BuffExtension._refresh_duration = function (self, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6)
+	-- function 10
+	if not arg_10_1.area_buff_unit then
+		local has_extension = ScriptUnit.has_extension(arg_10_1.area_buff_unit, "buff_area_system")
 
-		if var_10_0 then
-			var_10_0:set_duration(arg_10_3)
+		if not has_extension then
+			has_extension:set_duration(arg_10_3)
 		end
 	end
 
 	arg_10_1.start_time = arg_10_2
 	arg_10_1.duration = arg_10_3
 	arg_10_1.end_time = arg_10_4
-	arg_10_1.attacker_unit = arg_10_5 and arg_10_5.attacker_unit or nil
-	arg_10_1.source_attacker_unit = arg_10_5 and arg_10_5.source_attacker_unit or nil
 
-	local var_10_1 = arg_10_6.reapply_buff_func
+	local attacker_unit
 
-	if var_10_1 then
+	if not arg_10_5 then
+		attacker_unit = arg_10_5.attacker_unit
+
+		if not attacker_unit then
+			-- Nothing
+		end
+	end
+
+	attacker_unit = nil
+
+	::label_10_0::
+
+	arg_10_1.attacker_unit = attacker_unit
+
+	local source_attacker_unit
+
+	if not arg_10_5 then
+		source_attacker_unit = arg_10_5.source_attacker_unit
+
+		if not source_attacker_unit then
+			-- Nothing
+		end
+	end
+
+	source_attacker_unit = nil
+
+	::label_10_1::
+
+	arg_10_1.source_attacker_unit = source_attacker_unit
+
+	local reapply_buff_func = arg_10_6.reapply_buff_func
+
+	if not reapply_buff_func then
 		buff_extension_function_params.bonus = arg_10_1.bonus
 		buff_extension_function_params.multiplier = arg_10_1.multiplier
 		buff_extension_function_params.value = arg_10_1.value
@@ -604,70 +792,80 @@ function BuffExtension._refresh_duration(arg_10_0, arg_10_1, arg_10_2, arg_10_3,
 		buff_extension_function_params.attacker_unit = arg_10_1.attacker_unit
 		buff_extension_function_params.source_attacker_unit = arg_10_1.source_attacker_unit
 
-		local var_10_2 = arg_10_0.world
+		local world = self.world
 
-		BuffFunctionTemplates.functions[var_10_1](arg_10_0._unit, arg_10_1, buff_extension_function_params, var_10_2)
+		BuffFunctionTemplates.functions[reapply_buff_func](self._unit, arg_10_1, buff_extension_function_params, world)
 	end
 end
 
-function BuffExtension._add_stat_buff(arg_11_0, arg_11_1, arg_11_2)
-	if FROZEN[arg_11_0._unit] or arg_11_0._ai_frozen then
+BuffExtension._add_stat_buff = function (self, arg_11_1, arg_11_2)
+	-- function 11
+	if FROZEN[self._unit] or not self._ai_frozen then
 		return
 	end
 
-	local var_11_0 = arg_11_2.bonus or 0
-	local var_11_1 = arg_11_2.multiplier or 0
-	local var_11_2 = arg_11_2.proc_chance or 1
-	local var_11_3 = arg_11_2.value
-	local var_11_4 = arg_11_0._stat_buffs
-	local var_11_5 = arg_11_1.stat_buff
-	local var_11_6 = var_11_4[var_11_5]
-	local var_11_7 = StatBuffApplicationMethods[var_11_5]
+	local bonus = arg_11_2.bonus
 
-	if arg_11_1.wind_mutator then
-		local var_11_8 = Managers.weave:get_wind_strength()
-		local var_11_9 = Managers.state.difficulty:get_difficulty()
-		local var_11_10 = Managers.weave:get_active_wind_settings()
+	bonus = bonus or 0
 
-		if var_11_10 and var_11_9 and var_11_8 then
-			var_11_1 = var_11_10[arg_11_1.stat_buff][var_11_9][var_11_8]
+	local multiplier = arg_11_2.multiplier
+
+	multiplier = multiplier or 0
+
+	local proc_chance = arg_11_2.proc_chance
+
+	proc_chance = proc_chance or 1
+
+	local value = arg_11_2.value
+	local _stat_buffs = self._stat_buffs
+	local stat_buff = arg_11_1.stat_buff
+	local var_11_6 = _stat_buffs[stat_buff]
+	local var_11_7 = StatBuffApplicationMethods[stat_buff]
+
+	if not arg_11_1.wind_mutator then
+		local get_wind_strength = Managers.weave:get_wind_strength()
+		local get_difficulty = Managers.state.difficulty:get_difficulty()
+		local get_active_wind_settings = Managers.weave:get_active_wind_settings()
+
+		if not get_active_wind_settings and not get_difficulty and not get_wind_strength then
+			multiplier = get_active_wind_settings[arg_11_1.stat_buff][get_difficulty][get_wind_strength]
 		end
 	end
 
 	local var_11_11
 
-	if var_11_7 == "proc" or type(var_11_1) == "function" then
-		var_11_11 = arg_11_0.individual_stat_buff_index
+	if not (var_11_7 == "proc" or type(multiplier) ~= "function") then
+		var_11_11 = self.individual_stat_buff_index
 		var_11_6[var_11_11] = {
-			bonus = var_11_0,
-			multiplier = var_11_1,
-			proc_chance = var_11_2
+			bonus = bonus,
+			multiplier = multiplier,
+			proc_chance = proc_chance
 		}
-		arg_11_0.individual_stat_buff_index = var_11_11 + 1
+		self.individual_stat_buff_index = var_11_11 + 1
 	else
-		var_11_11 = var_11_7 == "stacking_multiplier_multiplicative" and (arg_11_1.stacking_name or arg_11_1.name) or 0
+		var_11_11 = var_11_7 ~= "stacking_multiplier_multiplicative" or arg_11_1.stacking_name or not arg_11_1.name or 0
 
 		if not var_11_6[var_11_11] then
 			var_11_6[var_11_11] = {
-				bonus = var_11_0,
-				multiplier = var_11_1,
-				proc_chance = var_11_2,
-				value = var_11_3
+				bonus = bonus,
+				multiplier = multiplier,
+				proc_chance = proc_chance,
+				value = value
 			}
 		elseif var_11_7 == "stacking_bonus" then
-			local var_11_12 = var_11_6[var_11_11].bonus
+			local bonus_2 = var_11_6[var_11_11].bonus
 
-			var_11_6[var_11_11].bonus = var_11_12 + var_11_0
-		elseif var_11_7 == "stacking_multiplier" or var_11_7 == "stacking_multiplier_multiplicative" then
-			local var_11_13 = var_11_6[var_11_11].multiplier
+			var_11_6[var_11_11].bonus = bonus_2 + bonus
+		elseif not (var_11_7 == "stacking_multiplier" or var_11_7 ~= "stacking_multiplier_multiplicative") then
+			local multiplier_2 = var_11_6[var_11_11].multiplier
 
-			var_11_6[var_11_11].multiplier = var_11_13 + var_11_1
+			var_11_6[var_11_11].multiplier = multiplier_2 + multiplier
 		elseif var_11_7 == "stacking_bonus_and_multiplier" then
-			local var_11_14 = var_11_6[var_11_11].bonus
-			local var_11_15 = var_11_6[var_11_11].multiplier
+			local bonus_3 = var_11_6[var_11_11].bonus
+			local multiplier_3 = var_11_6[var_11_11].multiplier
 
-			var_11_6[var_11_11].bonus = var_11_14 + var_11_0
-			var_11_6[var_11_11].multiplier = var_11_15 + var_11_1
+			var_11_6[var_11_11].bonus = bonus_3 + bonus
+			var_11_6[var_11_11].multiplier = multiplier_3 + multiplier
 		elseif var_11_7 == "min" then
 			local var_11_16 = var_11_6[var_11_11]
 
@@ -677,98 +875,123 @@ function BuffExtension._add_stat_buff(arg_11_0, arg_11_1, arg_11_2)
 				}
 			end
 
-			var_11_16.all_values[#var_11_16.all_values + 1] = var_11_3
+			var_11_16.all_values[#var_11_16.all_values + 1] = value
 
-			local var_11_17 = var_11_16.value or math.huge
+			local value_2 = var_11_16.value
 
-			var_11_16.value = math.min(var_11_17, var_11_3)
+			value_2 = value_2 or math.huge
+			var_11_16.value = math.min(value_2, value)
 		end
 	end
 
 	return var_11_11
 end
 
-function BuffExtension.update(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
-	local var_12_0 = arg_12_0.world
-	local var_12_1 = arg_12_0._buffs
-	local var_12_2 = buff_extension_function_params
+BuffExtension.update = function (self, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
+	-- function 12
+	local world = self.world
+	local _buffs = self._buffs
+	local buff_extension_function_params = buff_extension_function_params
 
-	var_12_2.t = arg_12_5
+	buff_extension_function_params.t = arg_12_5
 
-	local var_12_3 = arg_12_0._delayed_apply_funcs
+	local _delayed_apply_funcs = self._delayed_apply_funcs
 
-	if var_12_3 then
-		arg_12_0._delayed_apply_funcs = nil
+	if not _delayed_apply_funcs then
+		self._delayed_apply_funcs = nil
 
-		for iter_12_0 = 1, #var_12_3 do
-			local var_12_4 = var_12_3[iter_12_0]
+		for i = 1, #_delayed_apply_funcs do
+			local var_12_4 = _delayed_apply_funcs[i]
 
 			if not var_12_4.is_stale then
-				local var_12_5 = var_12_4.template.delayed_apply_buff_func
+				local delayed_apply_buff_func = var_12_4.template.delayed_apply_buff_func
 
-				BuffFunctionTemplates.functions[var_12_5](arg_12_1, var_12_4)
+				BuffFunctionTemplates.functions[delayed_apply_buff_func](arg_12_1, var_12_4)
 			end
 		end
 	end
 
-	local var_12_6 = arg_12_0._remove_buff_queue
+	local _remove_buff_queue = self._remove_buff_queue
 
-	if var_12_6 then
-		arg_12_0._remove_buff_queue = nil
+	if not _remove_buff_queue then
+		self._remove_buff_queue = nil
 
-		for iter_12_1 = 1, #var_12_6 do
-			arg_12_0:remove_buff(var_12_6[iter_12_1])
+		for j = 1, #_remove_buff_queue do
+			self:remove_buff(_remove_buff_queue[j])
 		end
 	end
 
-	for iter_12_2 = 1, arg_12_0._num_buffs do
-		local var_12_7 = var_12_1[iter_12_2]
+	for k = 1, self._num_buffs do
+		local var_12_7 = _buffs[k]
 
 		if not var_12_7.removed then
-			local var_12_8 = var_12_7.template
-			local var_12_9 = var_12_7.duration and var_12_7.start_time + var_12_7.duration
-			local var_12_10 = var_12_7.ticks
-			local var_12_11 = var_12_7.current_ticks
+			local template = var_12_7.template
+			local duration = var_12_7.duration
 
-			var_12_2.bonus = var_12_7.bonus
-			var_12_2.multiplier = var_12_7.multiplier
-			var_12_2.value = var_12_7.value
-			var_12_2.end_time = var_12_9
-			var_12_2.attacker_unit = var_12_7.attacker_unit
-			var_12_2.source_attacker_unit = var_12_7.source_attacker_unit
+			duration = not duration and var_12_7.start_time + var_12_7.duration
 
-			local var_12_12 = var_12_10 and var_12_10 <= var_12_11
+			local ticks = var_12_7.ticks
+			local current_ticks = var_12_7.current_ticks
 
-			if var_12_9 and var_12_9 <= arg_12_5 or not var_12_9 and var_12_12 then
-				if var_12_8.remove_buff_on_duration_end then
-					arg_12_0:remove_buff(var_12_7.id)
+			buff_extension_function_params.bonus = var_12_7.bonus
+			buff_extension_function_params.multiplier = var_12_7.multiplier
+			buff_extension_function_params.value = var_12_7.value
+			buff_extension_function_params.end_time = duration
+			buff_extension_function_params.attacker_unit = var_12_7.attacker_unit
+			buff_extension_function_params.source_attacker_unit = var_12_7.source_attacker_unit
+
+			local flag = not ticks and ticks <= current_ticks
+
+			if not duration and duration <= arg_12_5 and duration or not flag then
+				if not template.remove_buff_on_duration_end then
+					self:remove_buff(var_12_7.id)
 				else
-					arg_12_0:_remove_sub_buff(var_12_7, iter_12_2, var_12_2, true)
+					self:_remove_sub_buff(var_12_7, k, buff_extension_function_params, true)
 				end
 
-				local var_12_13 = var_12_7.delayed_remove_func_name
+				local delayed_remove_func_name = var_12_7.delayed_remove_func_name
 
-				if var_12_13 and not var_12_7.aborted then
-					BuffFunctionTemplates.functions[var_12_13](arg_12_1, var_12_7, var_12_2, var_12_0)
+				if not (not delayed_remove_func_name and var_12_7.aborted) then
+					BuffFunctionTemplates.functions[delayed_remove_func_name](arg_12_1, var_12_7, buff_extension_function_params, world)
 				end
-			elseif not var_12_12 then
-				local var_12_14 = var_12_8.update_func
+			elseif not flag then
+				local update_func = template.update_func
 
-				if var_12_14 then
-					local var_12_15 = var_12_7._next_update_t
+				if not update_func then
+					local _next_update_t = var_12_7._next_update_t
 
-					if not var_12_15 then
-						var_12_15 = arg_12_5 + (var_12_7.template.update_start_delay or 0)
-						var_12_7._next_update_t = var_12_15
+					if not _next_update_t then
+						local update_start_delay = var_12_7.template.update_start_delay
+
+						update_start_delay = update_start_delay or 0
+						_next_update_t = arg_12_5 + update_start_delay
+						var_12_7._next_update_t = _next_update_t
 					end
 
-					if var_12_15 <= arg_12_5 then
-						var_12_2.time_into_buff = arg_12_5 - var_12_7.start_time
-						var_12_2.time_left_on_buff = var_12_9 and var_12_9 - arg_12_5
-						var_12_7._next_update_t = BuffFunctionTemplates.functions[var_12_14](arg_12_1, var_12_7, var_12_2, var_12_0) or arg_12_5 + (var_12_7.update_frequency or 0)
+					if _next_update_t <= arg_12_5 then
+						buff_extension_function_params.time_into_buff = arg_12_5 - var_12_7.start_time
+						buff_extension_function_params.time_left_on_buff = not duration and duration - arg_12_5
 
-						if var_12_11 then
-							var_12_7.current_ticks = var_12_11 + 1
+						if not BuffFunctionTemplates.functions[update_func](arg_12_1, var_12_7, buff_extension_function_params, world) then
+							-- Nothing
+						end
+
+						::label_12_0::
+
+						do
+							local update_frequency = var_12_7.update_frequency
+
+							update_frequency = update_frequency or 0
+
+							local num = arg_12_5 + update_frequency
+						end
+
+						::label_12_1::
+
+						var_12_7._next_update_t = num
+
+						if not current_ticks then
+							var_12_7.current_ticks = current_ticks + 1
 						end
 					end
 				end
@@ -776,52 +999,53 @@ function BuffExtension.update(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, 
 		end
 	end
 
-	for iter_12_3, iter_12_4 in pairs(arg_12_0._vfx_update) do
-		BuffUtils.update_attached_particles(var_12_0, iter_12_4, arg_12_5)
+	for k_2, v in pairs(self._vfx_update) do
+		BuffUtils.update_attached_particles(world, v, arg_12_5)
 	end
 
-	local var_12_16 = 1
-	local var_12_17 = 0
+	local num_2 = 1
+	local num_3 = 0
 
-	while var_12_16 <= arg_12_0._num_buffs - var_12_17 do
-		var_12_1[var_12_16] = var_12_1[var_12_16 + var_12_17]
+	while num_2 <= self._num_buffs - num_3 do
+		_buffs[num_2] = _buffs[num_2 + num_3]
 
-		if not var_12_1[var_12_16] then
+		if not _buffs[num_2] then
 			break
-		elseif var_12_1[var_12_16].removed then
-			var_12_17 = var_12_17 + 1
+		elseif not _buffs[num_2].removed then
+			num_3 = num_3 + 1
 		else
-			var_12_16 = var_12_16 + 1
+			num_2 = num_2 + 1
 		end
 	end
 
-	for iter_12_5 = var_12_16, arg_12_0._num_buffs do
-		var_12_1[iter_12_5] = nil
+	for i5 = num_2, self._num_buffs do
+		_buffs[i5] = nil
 	end
 
-	arg_12_0._num_buffs = arg_12_0._num_buffs - var_12_17
+	self._num_buffs = self._num_buffs - num_3
 
-	if arg_12_0._num_buffs == 0 then
+	if self._num_buffs == 0 then
 		Managers.state.entity:system("buff_system"):set_buff_ext_active(arg_12_1, false)
 	end
 end
 
-function BuffExtension.update_stat_buff(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
-	local var_13_0 = arg_13_0._stat_buffs[arg_13_1]
+BuffExtension.update_stat_buff = function (self, arg_13_1, arg_13_2, arg_13_3)
+	-- function 13
+	local var_13_0 = self._stat_buffs[arg_13_1]
 	local var_13_1 = StatBuffApplicationMethods[arg_13_1]
 
 	arg_13_3 = arg_13_3 or 0
 
 	if var_13_1 == "stacking_bonus" then
-		local var_13_2 = var_13_0[arg_13_3].bonus
+		local bonus = var_13_0[arg_13_3].bonus
 
-		var_13_0[arg_13_3].bonus = var_13_2 + arg_13_2
+		var_13_0[arg_13_3].bonus = bonus + arg_13_2
 
 		return var_13_0[arg_13_3].bonus
-	elseif var_13_1 == "stacking_multiplier" or var_13_1 == "stacking_multiplier_multiplicative" then
-		local var_13_3 = var_13_0[arg_13_3].multiplier
+	elseif not (var_13_1 == "stacking_multiplier" or var_13_1 ~= "stacking_multiplier_multiplicative") then
+		local multiplier = var_13_0[arg_13_3].multiplier
 
-		var_13_0[arg_13_3].multiplier = var_13_3 + arg_13_2
+		var_13_0[arg_13_3].multiplier = multiplier + arg_13_2
 
 		return var_13_0[arg_13_3].multiplier
 	else
@@ -829,324 +1053,343 @@ function BuffExtension.update_stat_buff(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	end
 end
 
-function BuffExtension.num_sub_buffs(arg_14_0, arg_14_1)
-	local var_14_0 = arg_14_0._buffs
-	local var_14_1 = table.find_by_key(var_14_0, "id", arg_14_1)
+BuffExtension.num_sub_buffs = function (self, arg_14_1)
+	-- function 14
+	local _buffs = self._buffs
+	local find_by_key = table.find_by_key(_buffs, "id", arg_14_1)
 
-	if not var_14_1 then
+	if not find_by_key then
 		return -1
 	end
 
-	local var_14_2 = var_14_0[var_14_1].template.buff_to_add
+	local buff_to_add = _buffs[find_by_key].template.buff_to_add
 
-	if not var_14_2 then
+	if not buff_to_add then
 		return -1
 	end
 
-	local var_14_3 = 0
+	local num = 0
 
-	for iter_14_0 = 1, arg_14_0._num_buffs do
-		if var_14_0[iter_14_0].buff_type == var_14_2 then
-			var_14_3 = var_14_3 + 1
+	for i = 1, self._num_buffs do
+		if _buffs[i].buff_type == buff_to_add then
+			num = num + 1
 		end
 	end
 
-	return var_14_3
+	return num
 end
 
-function BuffExtension.remove_buff(arg_15_0, arg_15_1, arg_15_2)
+BuffExtension.remove_buff = function (self, arg_15_1, arg_15_2)
+	-- function 15
 	if not arg_15_1 then
 		return 0
 	end
 
-	local var_15_0 = arg_15_0._buffs
-	local var_15_1 = Managers.time:time("game")
-	local var_15_2 = buff_extension_function_params
+	local _buffs = self._buffs
+	local time = Managers.time:time("game")
+	local buff_extension_function_params = buff_extension_function_params
 
-	var_15_2.t = var_15_1
-	var_15_2.end_time = var_15_1
+	buff_extension_function_params.t = time
+	buff_extension_function_params.end_time = time
 
-	local var_15_3 = 0
+	local num = 0
 
-	for iter_15_0 = 1, arg_15_0._num_buffs do
-		local var_15_4 = var_15_0[iter_15_0]
+	for i = 1, self._num_buffs do
+		local var_15_4 = _buffs[i]
 
 		if var_15_4.id == arg_15_1 then
-			var_15_2.bonus = var_15_4.bonus
-			var_15_2.multiplier = var_15_4.multiplier
-			var_15_2.value = var_15_4.value
-			var_15_2.attacker_unit = var_15_4.attacker_unit
-			var_15_2.source_attacker_unit = var_15_4.source_attacker_unit
+			buff_extension_function_params.bonus = var_15_4.bonus
+			buff_extension_function_params.multiplier = var_15_4.multiplier
+			buff_extension_function_params.value = var_15_4.value
+			buff_extension_function_params.attacker_unit = var_15_4.attacker_unit
+			buff_extension_function_params.source_attacker_unit = var_15_4.source_attacker_unit
 
-			arg_15_0:_remove_sub_buff(var_15_4, iter_15_0, var_15_2, false)
+			self:_remove_sub_buff(var_15_4, i, buff_extension_function_params, false)
 
-			var_15_3 = var_15_3 + 1
+			num = num + 1
 		end
 	end
 
-	if arg_15_0._num_buffs == 0 then
-		Managers.state.entity:system("buff_system"):set_buff_ext_active(arg_15_0._unit, false)
+	if self._num_buffs == 0 then
+		Managers.state.entity:system("buff_system"):set_buff_ext_active(self._unit, false)
 	end
 
 	if not arg_15_2 then
-		arg_15_0:_remove_buff_synced(arg_15_1)
+		self:_remove_buff_synced(arg_15_1)
 	end
 
-	arg_15_0:_free_sync_id(arg_15_1)
+	self:_free_sync_id(arg_15_1)
 
-	return var_15_3
+	return num
 end
 
-function BuffExtension.queue_remove_buff(arg_16_0, arg_16_1)
-	local var_16_0 = arg_16_0._remove_buff_queue or {}
+BuffExtension.queue_remove_buff = function (self, arg_16_1)
+	-- function 16
+	local _remove_buff_queue = self._remove_buff_queue
 
-	var_16_0[#var_16_0 + 1] = arg_16_1
-	arg_16_0._remove_buff_queue = var_16_0
+	_remove_buff_queue = _remove_buff_queue or {}
+	_remove_buff_queue[#_remove_buff_queue + 1] = arg_16_1
+	self._remove_buff_queue = _remove_buff_queue
 end
 
-function BuffExtension._remove_sub_buff(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
-	local var_17_0 = arg_17_0.world
-	local var_17_1 = arg_17_0._buffs
-	local var_17_2 = arg_17_1.template
-	local var_17_3 = var_17_2.remove_buff_func
-	local var_17_4 = var_17_2.buffs_to_remove_on_remove
+BuffExtension._remove_sub_buff = function (self, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+	-- function 17
+	local world = self.world
+	local _buffs = self._buffs
+	local template = arg_17_1.template
+	local remove_buff_func = template.remove_buff_func
+	local buffs_to_remove_on_remove = template.buffs_to_remove_on_remove
 
-	if var_17_3 then
-		BuffFunctionTemplates.functions[var_17_3](arg_17_0._unit, arg_17_1, arg_17_3, var_17_0)
+	if not remove_buff_func then
+		BuffFunctionTemplates.functions[remove_buff_func](self._unit, arg_17_1, arg_17_3, world)
 	end
 
-	if var_17_2.status_effect then
-		Managers.state.status_effect:set_status(arg_17_0._unit, var_17_2.status_effect, arg_17_1, false)
+	if not template.status_effect then
+		Managers.state.status_effect:set_status(self._unit, template.status_effect, arg_17_1, false)
 	end
 
-	if var_17_4 then
-		for iter_17_0 = 1, #var_17_4 do
-			if arg_17_1.buff_type ~= var_17_4[iter_17_0] then
-				for iter_17_1 = 1, arg_17_0._num_buffs do
-					local var_17_5 = var_17_1[iter_17_1]
+	if not buffs_to_remove_on_remove then
+		for i = 1, #buffs_to_remove_on_remove do
+			if arg_17_1.buff_type ~= buffs_to_remove_on_remove[i] then
+				for j = 1, self._num_buffs do
+					local var_17_5 = _buffs[j]
 
-					if var_17_5 and var_17_5.buff_type == var_17_4[iter_17_0] then
-						if var_17_5.delayed_remove_func_name then
+					if not (not var_17_5 and var_17_5.buff_type ~= buffs_to_remove_on_remove[i]) then
+						if not var_17_5.delayed_remove_func_name then
 							var_17_5.aborted = true
 						end
 
-						arg_17_0:remove_buff(var_17_5.id)
+						self:remove_buff(var_17_5.id)
 					end
 				end
 			end
 		end
 	end
 
-	if var_17_2.stat_buff then
-		arg_17_0:_remove_stat_buff(arg_17_1)
+	if not template.stat_buff then
+		self:_remove_stat_buff(arg_17_1)
 	end
 
-	local var_17_6 = var_17_2.buff_to_add
+	local buff_to_add = template.buff_to_add
 
-	if var_17_6 and var_17_3 ~= "add_buff" then
-		for iter_17_2 = 1, arg_17_0._num_buffs do
-			local var_17_7 = var_17_1[iter_17_2]
+	if not (not buff_to_add and remove_buff_func == "add_buff") then
+		for k = 1, self._num_buffs do
+			local var_17_7 = _buffs[k]
 
-			if var_17_7.buff_type == var_17_6 and not var_17_7.duration then
+			if not (var_17_7.buff_type ~= buff_to_add or var_17_7.duration) then
 				var_17_7.duration = 0
 				var_17_7.is_stale = true
 			end
 		end
 	end
 
-	local var_17_8 = var_17_2.event
+	local event = template.event
 
-	if var_17_8 then
-		local var_17_9 = arg_17_1.event_buff_index
+	if not event then
+		local event_buff_index = arg_17_1.event_buff_index
 
-		arg_17_0._event_buffs[var_17_8][var_17_9] = nil
+		self._event_buffs[event][event_buff_index] = nil
 	end
 
-	local var_17_10 = var_17_2.perks
+	local perks = template.perks
 
-	if var_17_10 then
-		for iter_17_3 = 1, #var_17_10 do
-			local var_17_11 = var_17_10[iter_17_3]
-			local var_17_12 = arg_17_0._perks[var_17_11] - 1
+	if not perks then
+		for l = 1, #perks do
+			local var_17_11 = perks[l]
+			local num = self._perks[var_17_11] - 1
 
-			if var_17_12 == 0 then
-				local var_17_13 = var_0_0[var_17_11]
+			if num == 0 then
+				local var_17_13 = scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_functions[var_17_11]
 
-				if var_17_13 and var_17_13.removed then
-					var_17_13.removed(arg_17_0, arg_17_0._unit, arg_17_1, arg_17_0.is_server)
+				if not var_17_13 and not var_17_13.removed then
+					var_17_13.removed(self, self._unit, arg_17_1, self.is_server)
 				end
 			end
 
-			arg_17_0._perks[var_17_11] = var_17_12
+			self._perks[var_17_11] = num
 		end
 	end
 
-	var_17_1[arg_17_2] = var_0_3
-	arg_17_0._any_buff_removed = true
+	_buffs[arg_17_2] = tbl
+	self._any_buff_removed = true
 
-	local var_17_14 = var_17_2.max_stacks or var_17_2.max_stacks_func
+	local max_stacks = template.max_stacks
 
-	if var_17_14 then
-		local var_17_15 = arg_17_0._stacking_buffs[arg_17_1.template.name]
-		local var_17_16 = table.index_of(var_17_15, arg_17_1)
+	max_stacks = max_stacks or template.max_stacks_func
 
-		if var_17_16 > 0 then
-			table.swap_delete(var_17_15, var_17_16)
+	if not max_stacks then
+		local var_17_15 = self._stacking_buffs[arg_17_1.template.name]
+		local index_of = table.index_of(var_17_15, arg_17_1)
+
+		if index_of > 0 then
+			table.swap_delete(var_17_15, index_of)
 		end
 
-		if var_17_2.refresh_other_stacks_on_remove then
-			local var_17_17 = Managers.time:time("game")
+		if not template.refresh_other_stacks_on_remove then
+			local time = Managers.time:time("game")
 
-			for iter_17_4 = 1, #var_17_15 do
-				local var_17_18 = var_17_15[iter_17_4]
-				local var_17_19 = var_17_17
-				local var_17_20 = var_17_18.duration
-				local var_17_21 = var_17_20 and var_17_19 + var_17_20
+			for i4 = 1, #var_17_15 do
+				local var_17_18 = var_17_15[i4]
+				local var_17_19 = time
+				local duration = var_17_18.duration
+				local flag = not duration and var_17_19 + duration
 
-				arg_17_0:_refresh_duration(var_17_18, var_17_19, var_17_20, var_17_21, arg_17_3, var_17_2)
+				self:_refresh_duration(var_17_18, var_17_19, duration, flag, arg_17_3, template)
 			end
 		end
 
 		if #var_17_15 == 0 then
-			local var_17_22 = StackingBuffFunctions[var_17_2.on_last_stack_removed]
+			local var_17_22 = StackingBuffFunctions[template.on_last_stack_removed]
 
-			if var_17_22 then
-				var_17_22(arg_17_0._unit, var_17_2, arg_17_3)
+			if not var_17_22 then
+				var_17_22(self._unit, template, arg_17_3)
 			end
 
-			arg_17_0._stacking_buffs[var_17_2.name] = nil
+			self._stacking_buffs[template.name] = nil
 		end
 	end
 
 	arg_17_1.is_stale = true
 
-	if arg_17_0._num_buffs == 0 then
-		Managers.state.entity:system("buff_system"):set_buff_ext_active(arg_17_0._unit, false)
+	if self._num_buffs == 0 then
+		Managers.state.entity:system("buff_system"):set_buff_ext_active(self._unit, false)
 	end
 
-	local var_17_23 = arg_17_1.id
-	local var_17_24 = (arg_17_0._buff_id_refs[var_17_23] or 0) - 1
+	local id = arg_17_1.id
+	local var_17_24 = self._buff_id_refs[id]
 
-	if var_17_24 > 0 then
-		arg_17_0._buff_id_refs[var_17_23] = var_17_24
+	var_17_24 = var_17_24 or 0
+
+	local num_2 = var_17_24 - 1
+
+	if num_2 > 0 then
+		self._buff_id_refs[id] = num_2
 		arg_17_4 = false
 	else
-		arg_17_0._buff_id_refs[var_17_23] = nil
+		self._buff_id_refs[id] = nil
 	end
 
-	if arg_17_4 and arg_17_0._id_to_local_sync then
-		if arg_17_0._buff_to_sync_type and arg_17_0._buff_to_sync_type[var_17_23] == BuffSyncType.Client or not var_17_2.duration and not var_17_2.ticks then
-			arg_17_0:_remove_buff_synced(var_17_23)
+	if not arg_17_4 and not self._id_to_local_sync then
+		if not (not self._buff_to_sync_type and self._buff_to_sync_type[id] == BuffSyncType.Client or template.duration or template.ticks) then
+			self:_remove_buff_synced(id)
 		end
 
-		arg_17_0:_free_sync_id(var_17_23)
+		self:_free_sync_id(id)
 	end
 
-	local var_17_25 = arg_17_0._deactivation_sounds[var_17_23]
+	local var_17_26 = self._deactivation_sounds[id]
 
-	if var_17_25 then
-		arg_17_0:_play_buff_sound(var_17_25, arg_17_0._deactivation_sounds_3p[var_17_23])
+	if not var_17_26 then
+		self:_play_buff_sound(var_17_26, self._deactivation_sounds_3p[id])
 
-		arg_17_0._deactivation_sounds[var_17_23] = nil
-		arg_17_0._deactivation_sounds_3p[var_17_23] = nil
+		self._deactivation_sounds[id] = nil
+		self._deactivation_sounds_3p[id] = nil
 	end
 
-	local var_17_26 = arg_17_0._continuous_screen_effects[var_17_23]
+	local var_17_27 = self._continuous_screen_effects[id]
 
-	if var_17_26 then
-		arg_17_0:_stop_screen_effect(var_17_26)
+	if not var_17_27 then
+		self:_stop_screen_effect(var_17_27)
 
-		arg_17_0._continuous_screen_effects[var_17_23] = nil
+		self._continuous_screen_effects[id] = nil
 	end
 
-	local var_17_27 = arg_17_0._deactivation_screen_effects[var_17_23]
+	local var_17_28 = self._deactivation_screen_effects[id]
 
-	if var_17_27 then
-		arg_17_0:_play_screen_effect(var_17_27)
+	if not var_17_28 then
+		self:_play_screen_effect(var_17_28)
 
-		arg_17_0._deactivation_screen_effects[var_17_23] = nil
+		self._deactivation_screen_effects[id] = nil
 	end
 
-	if not var_17_14 or not arg_17_0._stacking_buffs[arg_17_1.template.name] then
-		local var_17_28 = arg_17_0._vfx[var_17_23]
+	if not (not max_stacks and self._stacking_buffs[arg_17_1.template.name]) then
+		local var_17_29 = self._vfx[id]
 
-		if var_17_28 then
-			BuffUtils.destroy_attached_particles(var_17_0, var_17_28)
+		if not var_17_29 then
+			BuffUtils.destroy_attached_particles(world, var_17_29)
 
-			arg_17_0._vfx[var_17_23] = nil
-			arg_17_0._vfx_update[var_17_23] = nil
+			self._vfx[id] = nil
+			self._vfx_update[id] = nil
 		end
 	end
 end
 
-function BuffExtension._remove_stat_buff(arg_18_0, arg_18_1)
-	local var_18_0 = arg_18_1.template
-	local var_18_1 = arg_18_1.bonus or 0
-	local var_18_2 = arg_18_1.multiplier or 0
-	local var_18_3 = arg_18_1.value
-	local var_18_4 = var_18_0.stat_buff
-	local var_18_5 = arg_18_0._stat_buffs[var_18_4]
-	local var_18_6 = StatBuffApplicationMethods[var_18_4]
+BuffExtension._remove_stat_buff = function (self, arg_18_1)
+	-- function 18
+	local template = arg_18_1.template
+	local bonus = arg_18_1.bonus
 
-	if var_18_0.wind_mutator then
-		local var_18_7 = Managers.weave:get_wind_strength()
-		local var_18_8 = Managers.state.difficulty:get_difficulty()
-		local var_18_9 = Managers.weave:get_active_wind_settings()
+	bonus = bonus or 0
 
-		if var_18_9 and var_18_8 and var_18_7 then
-			var_18_2 = var_18_9[var_18_0.stat_buff][var_18_8][var_18_7]
+	local multiplier = arg_18_1.multiplier
+
+	multiplier = multiplier or 0
+
+	local value = arg_18_1.value
+	local stat_buff = template.stat_buff
+	local var_18_5 = self._stat_buffs[stat_buff]
+	local var_18_6 = StatBuffApplicationMethods[stat_buff]
+
+	if not template.wind_mutator then
+		local get_wind_strength = Managers.weave:get_wind_strength()
+		local get_difficulty = Managers.state.difficulty:get_difficulty()
+		local get_active_wind_settings = Managers.weave:get_active_wind_settings()
+
+		if not get_active_wind_settings and not get_difficulty and not get_wind_strength then
+			multiplier = get_active_wind_settings[template.stat_buff][get_difficulty][get_wind_strength]
 		end
 	end
 
-	local var_18_10 = arg_18_1.stat_buff_index
+	local stat_buff_index = arg_18_1.stat_buff_index
 
-	if var_18_6 == "proc" or type(var_18_5[var_18_10].multiplier) == "function" then
-		var_18_5[var_18_10] = nil
+	if not (var_18_6 == "proc" or type(var_18_5[stat_buff_index].multiplier) ~= "function") then
+		var_18_5[stat_buff_index] = nil
 	elseif var_18_6 == "stacking_bonus" then
-		local var_18_11 = var_18_5[var_18_10].bonus
+		local bonus_2 = var_18_5[stat_buff_index].bonus
 
-		var_18_5[var_18_10].bonus = var_18_11 - var_18_1
-	elseif var_18_6 == "stacking_multiplier" or var_18_6 == "stacking_multiplier_multiplicative" then
-		local var_18_12 = var_18_5[var_18_10].multiplier
+		var_18_5[stat_buff_index].bonus = bonus_2 - bonus
+	elseif not (var_18_6 == "stacking_multiplier" or var_18_6 ~= "stacking_multiplier_multiplicative") then
+		local multiplier_2 = var_18_5[stat_buff_index].multiplier
 
-		var_18_5[var_18_10].multiplier = var_18_12 - var_18_2
+		var_18_5[stat_buff_index].multiplier = multiplier_2 - multiplier
 	elseif var_18_6 == "stacking_bonus_and_multiplier" then
-		local var_18_13 = var_18_5[var_18_10].bonus
-		local var_18_14 = var_18_5[var_18_10].multiplier
+		local bonus_3 = var_18_5[stat_buff_index].bonus
+		local multiplier_3 = var_18_5[stat_buff_index].multiplier
 
-		var_18_5[var_18_10].bonus = var_18_13 - var_18_1
-		var_18_5[var_18_10].multiplier = var_18_14 - var_18_2
+		var_18_5[stat_buff_index].bonus = bonus_3 - bonus
+		var_18_5[stat_buff_index].multiplier = multiplier_3 - multiplier
 	elseif var_18_6 == "min" then
-		local var_18_15 = var_18_5[var_18_10]
+		local var_18_15 = var_18_5[stat_buff_index]
 
-		if var_18_15.all_values then
-			local var_18_16 = table.index_of(var_18_15.all_values, var_18_3)
+		if not var_18_15.all_values then
+			local index_of = table.index_of(var_18_15.all_values, value)
 
-			fassert(var_18_16 ~= -1, "buff needs to be there when removed, if it's not then something went wrong")
-			table.swap_delete(var_18_15.all_values, var_18_16)
+			fassert(index_of ~= -1, "buff needs to be there when removed, if it's not then something went wrong")
+			table.swap_delete(var_18_15.all_values, index_of)
 
 			if #var_18_15.all_values == 0 then
 				var_18_15.value = nil
 			else
 				var_18_15.value = var_18_15.all_values[1]
 
-				for iter_18_0, iter_18_1 in ipairs(var_18_15.all_values) do
-					var_18_15.value = math.min(var_18_15.value, iter_18_1)
+				for i, v in ipairs(var_18_15.all_values) do
+					var_18_15.value = math.min(var_18_15.value, v)
 				end
 			end
 		else
-			fassert(var_18_15.value == var_18_3, "buff needs to be there when removed, if it's not then something went wrong")
+			fassert(var_18_15.value == value, "buff needs to be there when removed, if it's not then something went wrong")
 
 			var_18_15.value = nil
 		end
 	end
 end
 
-function BuffExtension.get_buff_type(arg_19_0, arg_19_1)
-	local var_19_0 = arg_19_0._buffs
+BuffExtension.get_buff_type = function (self, arg_19_1)
+	-- function 19
+	local _buffs = self._buffs
 
-	for iter_19_0 = 1, arg_19_0._num_buffs do
-		local var_19_1 = var_19_0[iter_19_0]
+	for i = 1, self._num_buffs do
+		local var_19_1 = _buffs[i]
 
 		if var_19_1.buff_type == arg_19_1 then
 			return var_19_1
@@ -1156,15 +1399,16 @@ function BuffExtension.get_buff_type(arg_19_0, arg_19_1)
 	return nil
 end
 
-function BuffExtension.get_buff_by_id(arg_20_0, arg_20_1)
+BuffExtension.get_buff_by_id = function (self, arg_20_1)
+	-- function 20
 	if not arg_20_1 then
 		return nil
 	end
 
-	local var_20_0 = arg_20_0._buffs
+	local _buffs = self._buffs
 
-	for iter_20_0 = 1, arg_20_0._num_buffs do
-		local var_20_1 = var_20_0[iter_20_0]
+	for i = 1, self._num_buffs do
+		local var_20_1 = _buffs[i]
 
 		if var_20_1.id == arg_20_1 then
 			return var_20_1
@@ -1174,11 +1418,12 @@ function BuffExtension.get_buff_by_id(arg_20_0, arg_20_1)
 	return nil
 end
 
-function BuffExtension.has_buff_type(arg_21_0, arg_21_1)
-	local var_21_0 = arg_21_0._buffs
+BuffExtension.has_buff_type = function (self, arg_21_1)
+	-- function 21
+	local _buffs = self._buffs
 
-	for iter_21_0 = 1, arg_21_0._num_buffs do
-		if var_21_0[iter_21_0].buff_type == arg_21_1 then
+	for i = 1, self._num_buffs do
+		if _buffs[i].buff_type == arg_21_1 then
 			return true
 		end
 	end
@@ -1186,21 +1431,28 @@ function BuffExtension.has_buff_type(arg_21_0, arg_21_1)
 	return false
 end
 
-function BuffExtension.has_buff_perk(arg_22_0, arg_22_1)
-	local var_22_0 = arg_22_0._perks[arg_22_1]
+BuffExtension.has_buff_perk = function (self, arg_22_1)
+	-- function 22
+	local var_22_0 = self._perks[arg_22_1]
 
-	return var_22_0 and var_22_0 > 0
+	return not var_22_0 and var_22_0 > 0
 end
 
-function BuffExtension.num_buff_perk(arg_23_0, arg_23_1)
-	return arg_23_0._perks[arg_23_1] or 0
+BuffExtension.num_buff_perk = function (self, arg_23_1)
+	-- function 23
+	local var_23_0 = self._perks[arg_23_1]
+
+	var_23_0 = var_23_0 or 0
+
+	return var_23_0
 end
 
-function BuffExtension.get_non_stacking_buff(arg_24_0, arg_24_1)
-	local var_24_0 = arg_24_0._buffs
+BuffExtension.get_non_stacking_buff = function (self, arg_24_1)
+	-- function 24
+	local _buffs = self._buffs
 
-	for iter_24_0 = 1, arg_24_0._num_buffs do
-		local var_24_1 = var_24_0[iter_24_0]
+	for i = 1, self._num_buffs do
+		local var_24_1 = _buffs[i]
 
 		if var_24_1.buff_type == arg_24_1 then
 			fassert(var_24_1.max_stacks == 1, "Tried getting a stacking buff!")
@@ -1212,268 +1464,313 @@ function BuffExtension.get_non_stacking_buff(arg_24_0, arg_24_1)
 	return nil
 end
 
-function BuffExtension.get_stacking_buff(arg_25_0, arg_25_1)
-	return arg_25_0._stacking_buffs[arg_25_1]
+BuffExtension.get_stacking_buff = function (self, arg_25_1)
+	-- function 25
+	return self._stacking_buffs[arg_25_1]
 end
 
-function BuffExtension.num_buff_stacks(arg_26_0, arg_26_1)
-	local var_26_0 = arg_26_0._stacking_buffs[arg_26_1]
+BuffExtension.num_buff_stacks = function (self, arg_26_1)
+	-- function 26
+	local var_26_0 = self._stacking_buffs[arg_26_1]
+	local count
 
-	return var_26_0 and #var_26_0 or 0
-end
+	if not var_26_0 then
+		count = #var_26_0
 
-function BuffExtension.num_buff_type(arg_27_0, arg_27_1)
-	local var_27_0 = arg_27_0._stacking_buffs[arg_27_1]
-
-	if var_27_0 then
-		return #var_27_0
-	end
-
-	local var_27_1 = arg_27_0._buffs
-	local var_27_2 = 0
-
-	for iter_27_0 = 1, arg_27_0._num_buffs do
-		if var_27_1[iter_27_0].buff_type == arg_27_1 then
-			var_27_2 = var_27_2 + 1
+		if not count then
+			-- Nothing
 		end
 	end
 
-	return var_27_2
+	count = 0
+
+	::label_26_0::
+
+	return count
 end
 
-function BuffExtension.has_procced(arg_28_0, arg_28_1, arg_28_2)
-	local var_28_0 = arg_28_0._prd_states
+BuffExtension.num_buff_type = function (self, arg_27_1)
+	-- function 27
+	local var_27_0 = self._stacking_buffs[arg_27_1]
+
+	if not var_27_0 then
+		return #var_27_0
+	end
+
+	local _buffs = self._buffs
+	local num = 0
+
+	for i = 1, self._num_buffs do
+		if _buffs[i].buff_type == arg_27_1 then
+			num = num + 1
+		end
+	end
+
+	return num
+end
+
+BuffExtension.has_procced = function (self, arg_28_1, arg_28_2)
+	-- function 28
+	local _prd_states = self._prd_states
 	local var_28_1
-	local var_28_2 = var_28_0[arg_28_2]
-	local var_28_3, var_28_4 = PseudoRandomDistribution.flip_coin(var_28_2, arg_28_1)
+	local var_28_2 = _prd_states[arg_28_2]
+	local flip_coin, var_28_4 = PseudoRandomDistribution.flip_coin(var_28_2, arg_28_1)
 
-	var_28_0[arg_28_2] = var_28_4
+	_prd_states[arg_28_2] = var_28_4
 
-	return var_28_3
+	return flip_coin
 end
 
-local function var_0_4(arg_29_0, arg_29_1)
-	return arg_29_0.proc_weight > arg_29_1.proc_weight
+local function fn_2(self, arg_29_1)
+	-- function 29
+	return self.proc_weight > arg_29_1.proc_weight
 end
 
-local function var_0_5(arg_30_0, arg_30_1, arg_30_2)
-	local var_30_0 = arg_30_0.template.authority
+local function fn_3(self, arg_30_1, arg_30_2)
+	-- function 30
+	local authority = self.template.authority
 
-	return not var_30_0 or var_30_0 == "server" and arg_30_1 or var_30_0 == "client" and arg_30_2
+	return (not authority and authority ~= "server" or not arg_30_1 or authority ~= "client") and arg_30_2
 end
 
-function BuffExtension.trigger_procs(arg_31_0, arg_31_1, ...)
-	local var_31_0 = arg_31_0._event_buffs[arg_31_1]
+BuffExtension.trigger_procs = function (self, arg_31_1, ...)
+	-- function 31
+	local var_31_0 = self._event_buffs[arg_31_1]
 
 	if table.size(var_31_0) == 0 then
 		return
 	end
 
-	local var_31_1 = arg_31_0.is_server
-	local var_31_2 = arg_31_0.is_local
-	local var_31_3 = arg_31_0.world
+	local is_server = self.is_server
+	local is_local = self.is_local
+	local world = self.world
 	local var_31_4 = select("#", ...)
-	local var_31_5 = Managers.time:time("game")
-	local var_31_6 = FrameTable.alloc_table()
-	local var_31_7 = FrameTable.alloc_table()
+	local time = Managers.time:time("game")
+	local alloc_table = FrameTable.alloc_table()
+	local alloc_table_2 = FrameTable.alloc_table()
 
-	for iter_31_0 = 1, var_31_4 do
-		var_31_6[iter_31_0] = select(iter_31_0, ...)
+	for i = 1, var_31_4 do
+		alloc_table[i] = select(i, ...)
 	end
 
-	local var_31_8 = 1
-	local var_31_9 = FrameTable.alloc_table()
+	local num = 1
+	local alloc_table_3 = FrameTable.alloc_table()
 
-	for iter_31_1, iter_31_2 in pairs(var_31_0) do
-		local var_31_10 = iter_31_2.proc_chance or 1
+	for k, v in pairs(var_31_0) do
+		local proc_chance = v.proc_chance
 
-		if var_0_5(iter_31_2, var_31_1, var_31_2) and var_31_5 > (iter_31_2._next_proc_t or 0) and arg_31_0:has_procced(var_31_10, iter_31_2) then
-			iter_31_2._next_proc_t = iter_31_2.template.proc_cooldown and iter_31_2.template.proc_cooldown + var_31_5
+		proc_chance = proc_chance or 1
 
-			local var_31_11 = iter_31_2.template.proc_weight or 0
+		if not fn_3(v, is_server, is_local) then
+			local _next_proc_t = v._next_proc_t
 
-			var_31_9[var_31_8] = {
-				buff = iter_31_2,
-				proc_weight = var_31_11
-			}
-			var_31_8 = var_31_8 + 1
+			_next_proc_t = _next_proc_t or 0
+
+			if not (_next_proc_t < time) or not self:has_procced(proc_chance, v) then
+				local proc_cooldown = v.template.proc_cooldown
+
+				proc_cooldown = not proc_cooldown and v.template.proc_cooldown + time
+				v._next_proc_t = proc_cooldown
+
+				local proc_weight = v.template.proc_weight
+
+				proc_weight = proc_weight or 0
+				alloc_table_3[num] = {
+					buff = v,
+					proc_weight = proc_weight
+				}
+				num = num + 1
+			end
 		end
 	end
 
-	table.sort(var_31_9, var_0_4)
+	table.sort(alloc_table_3, fn_2)
 
-	local var_31_12 = arg_31_0._unit
+	local _unit = self._unit
 
-	for iter_31_3 = 1, #var_31_9 do
-		local var_31_13 = var_31_9[iter_31_3].buff
-		local var_31_14 = var_31_13.buff_func
-		local var_31_15 = ProcFunctions[var_31_14]
+	for l = 1, #alloc_table_3 do
+		local buff = alloc_table_3[l].buff
+		local buff_func = buff.buff_func
+		local var_31_17 = ProcFunctions[buff_func]
 
-		if (not var_31_15 or var_31_15(var_31_12, var_31_13, var_31_6, var_31_3, ProcEventParams[arg_31_1])) and var_31_13.template.remove_on_proc then
-			var_31_7[#var_31_7 + 1] = var_31_13
+		if not (not var_31_17 and var_31_17(_unit, buff, alloc_table, world, ProcEventParams[arg_31_1])) and not buff.template.remove_on_proc then
+			alloc_table_2[#alloc_table_2 + 1] = buff
 		end
 	end
 
-	for iter_31_4 = 1, #var_31_7 do
-		local var_31_16 = var_31_7[iter_31_4].id
+	for i4 = 1, #alloc_table_2 do
+		local id = alloc_table_2[i4].id
 
-		arg_31_0:remove_buff(var_31_16)
+		self:remove_buff(id)
 	end
 end
 
-function BuffExtension.get_buff_value(arg_32_0, arg_32_1)
-	local var_32_0 = arg_32_0._stat_buffs[arg_32_1]
-	local var_32_1 = false
-	local var_32_2 = StatBuffApplicationMethods[arg_32_1] == "proc"
+BuffExtension.get_buff_value = function (self, arg_32_1)
+	-- function 32
+	local var_32_0 = self._stat_buffs[arg_32_1]
+	local flag = false
+	local flag_2 = StatBuffApplicationMethods[arg_32_1] == "proc"
 	local var_32_3
 	local var_32_4
 
-	for iter_32_0, iter_32_1 in pairs(var_32_0) do
-		if iter_32_1.proc_chance >= math.random() then
-			var_32_3 = iter_32_1.value
+	for k, v in pairs(var_32_0) do
+		if v.proc_chance >= math.random() then
+			var_32_3 = v.value
 
-			if var_32_2 then
-				var_32_1 = true
-				var_32_4 = iter_32_1.id
+			if not flag_2 then
+				flag = true
+				var_32_4 = v.id
 
 				break
 			end
 		end
 	end
 
-	return var_32_3, var_32_1, var_32_4
+	return var_32_3, flag, var_32_4
 end
 
-function BuffExtension.apply_buffs_to_value(arg_33_0, arg_33_1, arg_33_2)
-	local var_33_0 = arg_33_0._stat_buffs[arg_33_2]
+BuffExtension.apply_buffs_to_value = function (self, arg_33_1, arg_33_2)
+	-- function 33
+	local var_33_0 = self._stat_buffs[arg_33_2]
 	local var_33_1 = arg_33_1
-	local var_33_2 = false
-	local var_33_3 = StatBuffApplicationMethods[arg_33_2] == "proc"
+	local flag = false
+	local flag_2 = StatBuffApplicationMethods[arg_33_2] == "proc"
 	local var_33_4
-	local var_33_5 = 1
-	local var_33_6 = 0
+	local num = 1
+	local num_2 = 0
 
-	for iter_33_0, iter_33_1 in pairs(var_33_0) do
-		local var_33_7 = iter_33_1.proc_chance
+	for k, v in pairs(var_33_0) do
+		local proc_chance = v.proc_chance
 
-		if arg_33_0:has_procced(var_33_7, arg_33_2) then
-			local var_33_8 = iter_33_1.bonus
-			local var_33_9 = iter_33_1.multiplier
-			local var_33_10 = type(var_33_9)
+		if not self:has_procced(proc_chance, arg_33_2) then
+			local bonus = v.bonus
+			local multiplier = v.multiplier
+			local var_33_10 = type(multiplier)
 
 			if var_33_10 == "function" then
-				var_33_9 = var_33_9(arg_33_0._unit, arg_33_0)
+				multiplier = multiplier(self._unit, self)
 
 				local var_33_11 = StatBuffApplicationMethods[arg_33_2]
 
-				if var_33_11 == "stacking_multiplier" or var_33_11 == "stacking_multiplier_multiplicative" then
-					var_33_5 = var_33_5 + var_33_9
-					var_33_1 = var_33_1 + var_33_8
+				if not (var_33_11 == "stacking_multiplier" or var_33_11 ~= "stacking_multiplier_multiplicative") then
+					num = num + multiplier
+					var_33_1 = var_33_1 + bonus
 				elseif var_33_11 == "stacking_bonus_and_multiplier" then
-					var_33_6 = var_33_6 + var_33_8
-					var_33_5 = var_33_5 + var_33_9
+					num_2 = num_2 + bonus
+					num = num + multiplier
 				end
 			else
 				if var_33_10 == "table" then
-					var_33_9 = var_33_9[Managers.weave:get_wind_strength()]
+					multiplier = multiplier[Managers.weave:get_wind_strength()]
 				end
 
-				if iter_33_0 == 0 then
-					var_33_5 = var_33_5 + var_33_9
-					var_33_6 = var_33_6 + var_33_8
+				if k == 0 then
+					num = num + multiplier
+					num_2 = num_2 + bonus
 				else
-					var_33_1 = var_33_1 * (var_33_9 + 1) + var_33_8
+					var_33_1 = var_33_1 * (multiplier + 1) + bonus
 				end
 			end
 
-			if var_33_3 then
-				var_33_2 = true
-				var_33_4 = iter_33_1.id
+			if not flag_2 then
+				flag = true
+				var_33_4 = v.id
 
 				break
 			end
 		end
 	end
 
-	return var_33_1 * var_33_5 + var_33_6, var_33_2, var_33_4
+	return var_33_1 * num + num_2, flag, var_33_4
 end
 
-function BuffExtension._play_buff_sound(arg_34_0, arg_34_1, arg_34_2)
-	local var_34_0 = arg_34_0._unit
+BuffExtension._play_buff_sound = function (self, arg_34_1, arg_34_2)
+	-- function 34
+	local _unit = self._unit
 
-	if arg_34_2 then
-		Managers.state.entity:system("audio_system"):play_audio_unit_event(arg_34_1, var_34_0)
-	elseif ScriptUnit.has_extension(var_34_0, "first_person_system") then
-		ScriptUnit.extension(var_34_0, "first_person_system"):play_hud_sound_event(arg_34_1)
+	if not arg_34_2 then
+		Managers.state.entity:system("audio_system"):play_audio_unit_event(arg_34_1, _unit)
+	elseif not ScriptUnit.has_extension(_unit, "first_person_system") then
+		ScriptUnit.extension(_unit, "first_person_system"):play_hud_sound_event(arg_34_1)
 	end
 end
 
-function BuffExtension._play_screen_effect(arg_35_0, arg_35_1)
-	local var_35_0 = arg_35_0._unit
+BuffExtension._play_screen_effect = function (self, arg_35_1)
+	-- function 35
+	local _unit = self._unit
 
-	if ScriptUnit.has_extension(var_35_0, "first_person_system") then
-		return (ScriptUnit.extension(var_35_0, "first_person_system"):create_screen_particles(arg_35_1))
+	if not ScriptUnit.has_extension(_unit, "first_person_system") then
+		return (ScriptUnit.extension(_unit, "first_person_system"):create_screen_particles(arg_35_1))
 	end
 
 	return nil
 end
 
-function BuffExtension._stop_screen_effect(arg_36_0, arg_36_1)
-	local var_36_0 = arg_36_0._unit
+BuffExtension._stop_screen_effect = function (self, arg_36_1)
+	-- function 36
+	local _unit = self._unit
 
-	if arg_36_1 and ScriptUnit.has_extension(var_36_0, "first_person_system") then
-		ScriptUnit.extension(var_36_0, "first_person_system"):stop_spawning_screen_particles(arg_36_1)
+	if not arg_36_1 and not ScriptUnit.has_extension(_unit, "first_person_system") then
+		ScriptUnit.extension(_unit, "first_person_system"):stop_spawning_screen_particles(arg_36_1)
 	end
 end
 
-function BuffExtension.active_buffs(arg_37_0)
-	return arg_37_0._buffs, arg_37_0._num_buffs
+BuffExtension.active_buffs = function (self)
+	-- function 37
+	return self._buffs, self._num_buffs
 end
 
-function BuffExtension.initial_buff_names(arg_38_0)
-	return arg_38_0._initial_buff_names
+BuffExtension.initial_buff_names = function (self)
+	-- function 38
+	return self._initial_buff_names
 end
 
-function BuffExtension.get_persistent_buff_names(arg_39_0)
-	local var_39_0 = {}
+BuffExtension.get_persistent_buff_names = function (self)
+	-- function 39
+	local tbl = {}
 
-	for iter_39_0, iter_39_1 in pairs(arg_39_0._buffs) do
-		local var_39_1 = iter_39_1.template
+	for k, v in pairs(self._buffs) do
+		local template = v.template
 
-		if var_39_1.is_persistent then
-			table.insert(var_39_0, var_39_1.name)
+		if not template.is_persistent then
+			table.insert(tbl, template.name)
 		end
 	end
 
-	return var_39_0
+	return tbl
 end
 
-function BuffExtension._activate_initial_buffs(arg_40_0)
-	local var_40_0 = arg_40_0._initial_buff_names
+BuffExtension._activate_initial_buffs = function (self)
+	-- function 40
+	local _initial_buff_names = self._initial_buff_names
 
-	if var_40_0 then
-		for iter_40_0, iter_40_1 in ipairs(var_40_0) do
-			arg_40_0:add_buff(iter_40_1)
+	if not _initial_buff_names then
+		for i, v in ipairs(_initial_buff_names) do
+			self:add_buff(v)
 		end
 	end
 end
 
-function BuffExtension.set_pending_sync_id(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
-	arg_41_0:_initalize_sync_tables()
+BuffExtension.set_pending_sync_id = function (self, arg_41_1, arg_41_2, arg_41_3)
+	-- function 41
+	self:_initalize_sync_tables()
 
-	arg_41_0._id_to_local_sync[arg_41_1] = arg_41_2
-	arg_41_0._local_sync_to_id[arg_41_2] = arg_41_1
-	arg_41_0._buff_to_sync_type[arg_41_1] = arg_41_3
+	self._id_to_local_sync[arg_41_1] = arg_41_2
+	self._local_sync_to_id[arg_41_2] = arg_41_1
+	self._buff_to_sync_type[arg_41_1] = arg_41_3
 end
 
-function BuffExtension.apply_sync_id(arg_42_0, arg_42_1, arg_42_2)
-	local var_42_0 = arg_42_0._local_sync_to_id and arg_42_0._local_sync_to_id[arg_42_1]
+BuffExtension.apply_sync_id = function (self, arg_42_1, arg_42_2)
+	-- function 42
+	local _local_sync_to_id = self._local_sync_to_id
 
-	if var_42_0 then
-		arg_42_0:_initalize_sync_tables()
+	_local_sync_to_id = not _local_sync_to_id and self._local_sync_to_id[arg_42_1]
 
-		arg_42_0._id_to_server_sync[var_42_0] = arg_42_2
-		arg_42_0._server_sync_to_id[arg_42_2] = var_42_0
+	if not _local_sync_to_id then
+		self:_initalize_sync_tables()
+
+		self._id_to_server_sync[_local_sync_to_id] = arg_42_2
+		self._server_sync_to_id[arg_42_2] = _local_sync_to_id
 
 		return true
 	end
@@ -1481,28 +1778,31 @@ function BuffExtension.apply_sync_id(arg_42_0, arg_42_1, arg_42_2)
 	return false
 end
 
-function BuffExtension.apply_remote_sync_id(arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4)
-	if arg_43_1 then
-		arg_43_0:_initalize_sync_tables()
+BuffExtension.apply_remote_sync_id = function (self, arg_43_1, arg_43_2, arg_43_3, arg_43_4)
+	-- function 43
+	if not arg_43_1 then
+		self:_initalize_sync_tables()
 
-		arg_43_0._id_to_server_sync[arg_43_1] = arg_43_2
-		arg_43_0._server_sync_to_id[arg_43_2] = arg_43_1
-		arg_43_0._buff_to_sync_type[arg_43_1] = arg_43_3
-		arg_43_0._synced_buff_owner[arg_43_1] = arg_43_4
+		self._id_to_server_sync[arg_43_1] = arg_43_2
+		self._server_sync_to_id[arg_43_2] = arg_43_1
+		self._buff_to_sync_type[arg_43_1] = arg_43_3
+		self._synced_buff_owner[arg_43_1] = arg_43_4
 	end
 end
 
-function BuffExtension.generate_sync_id(arg_44_0)
+BuffExtension.generate_sync_id = function (self)
+	-- function 44
 	local var_44_0
-	local var_44_1 = arg_44_0._free_sync_ids
+	local _free_sync_ids = self._free_sync_ids
 
-	if var_44_1 then
-		var_44_0 = var_44_1[1]
+	if not _free_sync_ids then
+		var_44_0 = _free_sync_ids[1]
 
 		if not var_44_0 then
-			if arg_44_0.debug_buff_names then
-				table.dump(table.select_map(arg_44_0._local_sync_to_id, function(arg_45_0, arg_45_1)
-					return string.format("(id: %s) %s", arg_45_0, arg_44_0.debug_buff_names[arg_45_1])
+			if not self.debug_buff_names then
+				table.dump(table.select_map(self._local_sync_to_id, function (arg_45_0, arg_45_1)
+					-- function 45
+					return string.format("(id: %s) %s", arg_45_0, self.debug_buff_names[arg_45_1])
 				end), "Synced Buffs")
 			else
 				print("[BuffExtension] Not a player")
@@ -1511,150 +1811,170 @@ function BuffExtension.generate_sync_id(arg_44_0)
 			error("[BuffExtension] Too many synced buffs, no free sync ids left!")
 		end
 
-		table.swap_delete(var_44_1, 1)
+		table.swap_delete(_free_sync_ids, 1)
 	else
-		var_44_0 = arg_44_0._next_sync_id or 1
+		var_44_0 = self._next_sync_id or 1
 
 		if var_44_0 > NetworkConstants.server_controlled_buff_id.max then
-			arg_44_0:_build_free_sync_ids_array()
+			self:_build_free_sync_ids_array()
 
-			return arg_44_0:generate_sync_id()
+			return self:generate_sync_id()
 		else
-			arg_44_0._next_sync_id = var_44_0 + 1
+			self._next_sync_id = var_44_0 + 1
 		end
 	end
 
 	return var_44_0
 end
 
-function BuffExtension.claim_buff_id(arg_46_0, arg_46_1)
-	local var_46_0 = arg_46_0.id
+BuffExtension.claim_buff_id = function (self, arg_46_1)
+	-- function 46
+	local id = self.id
 
-	arg_46_0.id = var_46_0 + 1
+	self.id = id + 1
 
-	if arg_46_0.debug_buff_names then
-		arg_46_0.debug_buff_names[var_46_0] = arg_46_1
+	if not self.debug_buff_names then
+		self.debug_buff_names[id] = arg_46_1
 	end
 
-	return var_46_0
+	return id
 end
 
-function BuffExtension.sync_id_to_id(arg_47_0, arg_47_1)
-	return arg_47_0._server_sync_to_id and arg_47_0._server_sync_to_id[arg_47_1]
+BuffExtension.sync_id_to_id = function (self, arg_47_1)
+	-- function 47
+	local _server_sync_to_id = self._server_sync_to_id
+
+	_server_sync_to_id = not _server_sync_to_id and self._server_sync_to_id[arg_47_1]
+
+	return _server_sync_to_id
 end
 
-function BuffExtension.id_to_sync_id(arg_48_0, arg_48_1)
-	return arg_48_0._id_to_server_sync and arg_48_0._id_to_server_sync[arg_48_1]
+BuffExtension.id_to_sync_id = function (self, arg_48_1)
+	-- function 48
+	local _id_to_server_sync = self._id_to_server_sync
+
+	_id_to_server_sync = not _id_to_server_sync and self._id_to_server_sync[arg_48_1]
+
+	return _id_to_server_sync
 end
 
-function BuffExtension.buff_sync_type(arg_49_0, arg_49_1)
-	return arg_49_0._buff_to_sync_type[arg_49_1]
+BuffExtension.buff_sync_type = function (self, arg_49_1)
+	-- function 49
+	return self._buff_to_sync_type[arg_49_1]
 end
 
-function BuffExtension._free_sync_id(arg_50_0, arg_50_1)
-	local var_50_0 = arg_50_0._buff_to_sync_type
+BuffExtension._free_sync_id = function (self, arg_50_1)
+	-- function 50
+	local _buff_to_sync_type = self._buff_to_sync_type
 
-	if not var_50_0 or not var_50_0[arg_50_1] then
+	if not (not _buff_to_sync_type and _buff_to_sync_type[arg_50_1]) then
 		return
 	end
 
-	local var_50_1 = arg_50_0._id_to_local_sync[arg_50_1]
+	local var_50_1 = self._id_to_local_sync[arg_50_1]
 
-	if var_50_1 then
-		arg_50_0._local_sync_to_id[var_50_1] = nil
+	if not var_50_1 then
+		self._local_sync_to_id[var_50_1] = nil
 
-		local var_50_2 = arg_50_0._free_sync_ids
+		local _free_sync_ids = self._free_sync_ids
 
-		if var_50_2 then
-			var_50_2[#var_50_2 + 1] = var_50_1
+		if not _free_sync_ids then
+			_free_sync_ids[#_free_sync_ids + 1] = var_50_1
 		end
 	end
 
-	local var_50_3 = arg_50_0._id_to_server_sync[arg_50_1]
+	local var_50_3 = self._id_to_server_sync[arg_50_1]
 
-	if var_50_3 then
-		arg_50_0._server_sync_to_id[var_50_3] = nil
+	if not var_50_3 then
+		self._server_sync_to_id[var_50_3] = nil
 	end
 
-	arg_50_0._id_to_local_sync[arg_50_1] = nil
-	arg_50_0._id_to_server_sync[arg_50_1] = nil
-	arg_50_0._buff_to_sync_type[arg_50_1] = nil
-	arg_50_0._synced_buff_owner[arg_50_1] = nil
+	self._id_to_local_sync[arg_50_1] = nil
+	self._id_to_server_sync[arg_50_1] = nil
+	self._buff_to_sync_type[arg_50_1] = nil
+	self._synced_buff_owner[arg_50_1] = nil
 end
 
-function BuffExtension._build_free_sync_ids_array(arg_51_0)
-	local var_51_0 = NetworkConstants.server_controlled_buff_id.max
+BuffExtension._build_free_sync_ids_array = function (self)
+	-- function 51
+	local max = NetworkConstants.server_controlled_buff_id.max
 
-	arg_51_0._free_sync_ids = Script.new_array(var_51_0)
+	self._free_sync_ids = Script.new_array(max)
 
-	local var_51_1 = arg_51_0._local_sync_to_id
-	local var_51_2 = 1
+	local _local_sync_to_id = self._local_sync_to_id
+	local num = 1
 
-	for iter_51_0 = 1, var_51_0 do
-		if not var_51_1[iter_51_0] then
-			arg_51_0._free_sync_ids[var_51_2] = iter_51_0
-			var_51_2 = var_51_2 + 1
+	for i = 1, max do
+		if not _local_sync_to_id[i] then
+			self._free_sync_ids[num] = i
+			num = num + 1
 		end
 	end
 end
 
-function BuffExtension._initalize_sync_tables(arg_52_0)
-	if not arg_52_0._id_to_local_sync then
-		arg_52_0._id_to_local_sync = {}
-		arg_52_0._local_sync_to_id = {}
-		arg_52_0._synced_buff_owner = {}
-		arg_52_0._buff_to_sync_type = {}
-		arg_52_0._id_to_server_sync = {}
-		arg_52_0._server_sync_to_id = {}
+BuffExtension._initalize_sync_tables = function (self)
+	-- function 52
+	if not self._id_to_local_sync then
+		self._id_to_local_sync = {}
+		self._local_sync_to_id = {}
+		self._synced_buff_owner = {}
+		self._buff_to_sync_type = {}
+		self._id_to_server_sync = {}
+		self._server_sync_to_id = {}
 	end
 end
 
-function BuffExtension.create_shared_lifetime_buff_unit(arg_53_0, arg_53_1)
-	arg_53_0._shared_buff_units = arg_53_0._shared_buff_units or {}
-	arg_53_0._shared_buff_units[#arg_53_0._shared_buff_units + 1] = Managers.state.unit_spawner:spawn_network_unit("units/hub_elements/empty", "buff_unit", arg_53_0._buff_unit_params, arg_53_1, Quaternion.identity(), nil)
+BuffExtension.create_shared_lifetime_buff_unit = function (self, arg_53_1)
+	-- function 53
+	local _shared_buff_units = self._shared_buff_units
 
-	return arg_53_0._shared_buff_units[#arg_53_0._shared_buff_units]
+	_shared_buff_units = _shared_buff_units or {}
+	self._shared_buff_units = _shared_buff_units
+	self._shared_buff_units[#self._shared_buff_units + 1] = Managers.state.unit_spawner:spawn_network_unit("units/hub_elements/empty", "buff_unit", self._buff_unit_params, arg_53_1, Quaternion.identity(), nil)
+
+	return self._shared_buff_units[#self._shared_buff_units]
 end
 
-local var_0_6 = Managers
+local Managers = Managers
 
-function BuffExtension._remove_buff_synced(arg_54_0, arg_54_1)
-	local var_54_0 = arg_54_0._id_to_server_sync
+BuffExtension._remove_buff_synced = function (self, arg_54_1)
+	-- function 54
+	local _id_to_server_sync = self._id_to_server_sync
 
-	if not var_54_0 then
+	if not _id_to_server_sync then
 		return
 	end
 
-	local var_54_1 = var_54_0[arg_54_1]
+	local var_54_1 = _id_to_server_sync[arg_54_1]
 
 	if not var_54_1 then
 		return
 	end
 
-	local var_54_2 = var_0_6.state.network
-	local var_54_3 = var_54_2:unit_game_object_id(arg_54_0._unit)
+	local network = Managers.state.network
+	local unit_game_object_id = network:unit_game_object_id(self._unit)
 
-	if not var_54_3 then
+	if not unit_game_object_id then
 		return
 	end
 
-	if not var_54_2:game() then
+	if not network:game() then
 		return
 	end
 
-	local var_54_4 = var_54_2.network_transmit
+	local network_transmit = network.network_transmit
 
-	if arg_54_0.is_server then
-		if arg_54_0._buff_to_sync_type[arg_54_1] == BuffSyncType.All then
-			var_54_4:send_rpc_clients("rpc_remove_buff_synced", var_54_3, var_54_1)
+	if not self.is_server then
+		if self._buff_to_sync_type[arg_54_1] == BuffSyncType.All then
+			network_transmit:send_rpc_clients("rpc_remove_buff_synced", unit_game_object_id, var_54_1)
 		else
-			local var_54_5 = arg_54_0._synced_buff_owner[arg_54_1]
+			local var_54_5 = self._synced_buff_owner[arg_54_1]
 
-			if PEER_ID_TO_CHANNEL[var_54_5] then
-				var_54_4:send_rpc("rpc_remove_buff_synced", var_54_5, var_54_3, var_54_1)
+			if not PEER_ID_TO_CHANNEL[var_54_5] then
+				network_transmit:send_rpc("rpc_remove_buff_synced", var_54_5, unit_game_object_id, var_54_1)
 			end
 		end
 	else
-		var_54_4:send_rpc_server("rpc_remove_buff_synced", var_54_3, var_54_1)
+		network_transmit:send_rpc_server("rpc_remove_buff_synced", unit_game_object_id, var_54_1)
 	end
 end

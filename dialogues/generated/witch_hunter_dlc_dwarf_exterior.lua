@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/witch_hunter_dlc_dwarf_exterior.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pwh_dwarf_beacons_bridge_stuck_b",

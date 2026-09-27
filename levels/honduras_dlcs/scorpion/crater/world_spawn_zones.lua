@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/scorpion/crater/world_spawn_zones.lua
 
-local var_0_0 = {
+local tbl = {
 	{
 		roaming_set = "skaven",
 		main_path_index = 1,
@@ -532,7 +532,7 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	{
 		path_length = 81.43326568603516,
 		travel_dist = {
@@ -2489,8 +2489,8 @@ local var_0_1 = {
 		}
 	}
 }
-local var_0_2 = {}
-local var_0_3 = {
+local tbl_3 = {}
+local tbl_4 = {
 	{
 		unique_zone_id = 1,
 		roaming_set = "skaven",
@@ -60084,7 +60084,7 @@ local var_0_3 = {
 		}
 	}
 }
-local var_0_4 = {
+local tbl_5 = {
 	38.031158447265625,
 	-411.3438720703125,
 	39.3643798828125,
@@ -64461,7 +64461,7 @@ local var_0_4 = {
 	0,
 	-1
 }
-local var_0_5 = {
+local tbl_6 = {
 	{
 		204.73828125,
 		-403.6827392578125,
@@ -335758,20 +335758,20 @@ local var_0_5 = {
 		17.144758224487305
 	}
 }
-local var_0_6 = 54259
-local var_0_7 = 144
-local var_0_8 = 1536.4687576294
-local var_0_9 = "1"
+local num = 54259
+local num_2 = 144
+local num_3 = 1536.4687576294
+local str = "1"
 
 return {
-	version = var_0_9,
-	number_of_spawns = var_0_6,
-	path_markers = var_0_0,
-	zones = var_0_3,
-	cover_points = var_0_4,
-	num_main_zones = var_0_7,
-	position_lookup = var_0_5,
-	main_paths = var_0_1,
-	crossroads = var_0_2,
-	total_main_path_length = var_0_8
+	version = str,
+	number_of_spawns = num,
+	path_markers = tbl,
+	zones = tbl_4,
+	cover_points = tbl_5,
+	num_main_zones = num_2,
+	position_lookup = tbl_6,
+	main_paths = tbl_2,
+	crossroads = tbl_3,
+	total_main_path_length = num_3
 }

@@ -17,7 +17,8 @@ AreaSettings.bogenhafen = {
 	acts = {
 		"act_bogenhafen"
 	},
-	create_mission_background_widget = function()
+	create_mission_background_widget = function ()
+		-- function 1
 		return {
 			scenegraph_id = "dlc_background",
 			element = {

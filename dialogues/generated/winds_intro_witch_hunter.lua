@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/winds_intro_witch_hunter.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pwh_wind_beast_intro_banter_a",

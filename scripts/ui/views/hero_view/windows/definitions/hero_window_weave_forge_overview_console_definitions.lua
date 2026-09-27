@@ -1,28 +1,28 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/definitions/hero_window_weave_forge_overview_console_definitions.lua
 
-local var_0_0 = UISettings.game_start_windows
-local var_0_1 = var_0_0.size
-local var_0_2 = var_0_0.spacing
-local var_0_3 = var_0_0.large_window_frame
-local var_0_4 = UIFrameSettings[var_0_3].texture_sizes.vertical[1]
-local var_0_5 = {
-	var_0_1[1] * 3 + var_0_2 * 2 + var_0_4 * 2,
-	var_0_1[2] + 80
+local game_start_windows = UISettings.game_start_windows
+local size = game_start_windows.size
+local spacing = game_start_windows.spacing
+local large_window_frame = game_start_windows.large_window_frame
+local var_0_4 = UIFrameSettings[large_window_frame].texture_sizes.vertical[1]
+local tbl = {
+	size[1] * 3 + spacing * 2 + var_0_4 * 2,
+	size[2] + 80
 }
-local var_0_6 = {
-	var_0_5[1] + 50,
-	var_0_5[2]
+local tbl_2 = {
+	tbl[1] + 50,
+	tbl[2]
 }
-local var_0_7 = "menu_frame_11"
-local var_0_8 = UIFrameSettings[var_0_7].texture_sizes.vertical[1]
-local var_0_9 = UISettings.game_start_windows
-local var_0_10 = 30
-local var_0_11 = 0
-local var_0_12 = {
+local str = "menu_frame_11"
+local var_0_8 = UIFrameSettings[str].texture_sizes.vertical[1]
+local game_start_windows_2 = UISettings.game_start_windows
+local num = 30
+local num_2 = 0
+local tbl_3 = {
 	1920,
 	1080
 }
-local var_0_13 = {
+local tbl_4 = {
 	root = {
 		is_root = true,
 		size = {
@@ -65,7 +65,7 @@ local var_0_13 = {
 		vertical_alignment = "center",
 		parent = "screen_center",
 		horizontal_alignment = "center",
-		size = var_0_12,
+		size = tbl_3,
 		position = {
 			0,
 			0,
@@ -77,12 +77,12 @@ local var_0_13 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_12[1] - var_0_11 * 2,
-			var_0_12[2] - var_0_11 * 2
+			tbl_3[1] - num_2 * 2,
+			tbl_3[2] - num_2 * 2
 		},
 		position = {
 			0,
-			var_0_11,
+			num_2,
 			3
 		}
 	},
@@ -91,12 +91,12 @@ local var_0_13 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_12[1] - var_0_11 * 2,
-			var_0_12[2] - var_0_11 * 2
+			tbl_3[1] - num_2 * 2,
+			tbl_3[2] - num_2 * 2
 		},
 		position = {
 			0,
-			var_0_11,
+			num_2,
 			3
 		}
 	},
@@ -105,12 +105,12 @@ local var_0_13 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_12[1] - var_0_11 * 2,
-			var_0_12[2] - var_0_11 * 2
+			tbl_3[1] - num_2 * 2,
+			tbl_3[2] - num_2 * 2
 		},
 		position = {
 			0,
-			var_0_11,
+			num_2,
 			3
 		}
 	},
@@ -204,11 +204,11 @@ local var_0_13 = {
 		horizontal_alignment = "center",
 		size = {
 			545,
-			var_0_12[2] - var_0_11 * 2
+			tbl_3[2] - num_2 * 2
 		},
 		position = {
 			-545,
-			var_0_11,
+			num_2,
 			1
 		}
 	},
@@ -218,11 +218,11 @@ local var_0_13 = {
 		horizontal_alignment = "center",
 		size = {
 			545,
-			var_0_12[2] - var_0_11 * 2
+			tbl_3[2] - num_2 * 2
 		},
 		position = {
 			0,
-			var_0_11,
+			num_2,
 			1
 		}
 	},
@@ -232,11 +232,11 @@ local var_0_13 = {
 		horizontal_alignment = "center",
 		size = {
 			545,
-			var_0_12[2] - var_0_11 * 2
+			tbl_3[2] - num_2 * 2
 		},
 		position = {
 			545,
-			var_0_11,
+			num_2,
 			1
 		}
 	},
@@ -250,7 +250,7 @@ local var_0_13 = {
 		},
 		position = {
 			0,
-			var_0_10,
+			num,
 			1
 		}
 	},
@@ -264,7 +264,7 @@ local var_0_13 = {
 		},
 		position = {
 			0,
-			var_0_10,
+			num,
 			1
 		}
 	},
@@ -278,7 +278,7 @@ local var_0_13 = {
 		},
 		position = {
 			0,
-			var_0_10,
+			num,
 			1
 		}
 	},
@@ -376,7 +376,7 @@ local var_0_13 = {
 		},
 		position = {
 			-90,
-			0 + var_0_10,
+			0 + num,
 			2
 		}
 	},
@@ -390,7 +390,7 @@ local var_0_13 = {
 		},
 		position = {
 			-90,
-			-30 + var_0_10,
+			-30 + num,
 			2
 		}
 	},
@@ -404,7 +404,7 @@ local var_0_13 = {
 		},
 		position = {
 			90,
-			0 + var_0_10,
+			0 + num,
 			2
 		}
 	},
@@ -418,7 +418,7 @@ local var_0_13 = {
 		},
 		position = {
 			90,
-			-30 + var_0_10,
+			-30 + num,
 			2
 		}
 	},
@@ -432,7 +432,7 @@ local var_0_13 = {
 		},
 		position = {
 			-90,
-			0 + var_0_10,
+			0 + num,
 			2
 		}
 	},
@@ -446,7 +446,7 @@ local var_0_13 = {
 		},
 		position = {
 			-90,
-			-30 + var_0_10,
+			-30 + num,
 			2
 		}
 	},
@@ -460,7 +460,7 @@ local var_0_13 = {
 		},
 		position = {
 			90,
-			0 + var_0_10,
+			0 + num,
 			2
 		}
 	},
@@ -474,7 +474,7 @@ local var_0_13 = {
 		},
 		position = {
 			90,
-			-30 + var_0_10,
+			-30 + num,
 			2
 		}
 	},
@@ -488,7 +488,7 @@ local var_0_13 = {
 		},
 		position = {
 			-90,
-			0 + var_0_10,
+			0 + num,
 			2
 		}
 	},
@@ -502,7 +502,7 @@ local var_0_13 = {
 		},
 		position = {
 			-90,
-			-30 + var_0_10,
+			-30 + num,
 			2
 		}
 	},
@@ -516,7 +516,7 @@ local var_0_13 = {
 		},
 		position = {
 			90,
-			0 + var_0_10,
+			0 + num,
 			2
 		}
 	},
@@ -530,7 +530,7 @@ local var_0_13 = {
 		},
 		position = {
 			90,
-			-30 + var_0_10,
+			-30 + num,
 			2
 		}
 	},
@@ -628,7 +628,7 @@ local var_0_13 = {
 		},
 		position = {
 			0,
-			70 + var_0_10,
+			70 + num,
 			3
 		}
 	},
@@ -642,7 +642,7 @@ local var_0_13 = {
 		},
 		position = {
 			0,
-			70 + var_0_10,
+			70 + num,
 			3
 		}
 	},
@@ -656,7 +656,7 @@ local var_0_13 = {
 		},
 		position = {
 			0,
-			70 + var_0_10,
+			70 + num,
 			3
 		}
 	},
@@ -670,7 +670,7 @@ local var_0_13 = {
 		},
 		position = {
 			0,
-			40 + var_0_10,
+			40 + num,
 			3
 		}
 	},
@@ -684,7 +684,7 @@ local var_0_13 = {
 		},
 		position = {
 			0,
-			40 + var_0_10,
+			40 + num,
 			3
 		}
 	},
@@ -698,7 +698,7 @@ local var_0_13 = {
 		},
 		position = {
 			0,
-			40 + var_0_10,
+			40 + num,
 			3
 		}
 	},
@@ -712,7 +712,7 @@ local var_0_13 = {
 		},
 		position = {
 			0,
-			0 + var_0_10,
+			0 + num,
 			1
 		}
 	},
@@ -726,7 +726,7 @@ local var_0_13 = {
 		},
 		position = {
 			0,
-			0 + var_0_10,
+			0 + num,
 			1
 		}
 	},
@@ -740,7 +740,7 @@ local var_0_13 = {
 		},
 		position = {
 			0,
-			0 + var_0_10,
+			0 + num,
 			1
 		}
 	},
@@ -753,8 +753,8 @@ local var_0_13 = {
 			126
 		},
 		position = {
-			-var_0_11,
-			-var_0_11,
+			-num_2,
+			-num_2,
 			4
 		}
 	},
@@ -871,7 +871,7 @@ local var_0_13 = {
 		}
 	}
 }
-local var_0_14 = {
+local tbl_5 = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -893,7 +893,7 @@ local var_0_14 = {
 		2
 	}
 }
-local var_0_15 = {
+local tbl_6 = {
 	font_size = 36,
 	upper_case = true,
 	localize = false,
@@ -909,7 +909,7 @@ local var_0_15 = {
 		2
 	}
 }
-local var_0_16 = {
+local tbl_7 = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -926,7 +926,7 @@ local var_0_16 = {
 		2
 	}
 }
-local var_0_17 = {
+local tbl_8 = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -943,7 +943,7 @@ local var_0_17 = {
 		2
 	}
 }
-local var_0_18 = {
+local tbl_9 = {
 	font_size = 62,
 	upper_case = true,
 	localize = false,
@@ -959,7 +959,7 @@ local var_0_18 = {
 		2
 	}
 }
-local var_0_19 = {
+local tbl_10 = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -981,7 +981,7 @@ local var_0_19 = {
 		2
 	}
 }
-local var_0_20 = {
+local tbl_11 = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -998,7 +998,7 @@ local var_0_20 = {
 		2
 	}
 }
-local var_0_21 = {
+local tbl_12 = {
 	font_size = 22,
 	upper_case = true,
 	localize = false,
@@ -1014,7 +1014,7 @@ local var_0_21 = {
 		2
 	}
 }
-local var_0_22 = {
+local tbl_13 = {
 	font_size = 36,
 	upper_case = true,
 	localize = false,
@@ -1030,7 +1030,7 @@ local var_0_22 = {
 		2
 	}
 }
-local var_0_23 = {
+local tbl_14 = {
 	word_wrap = false,
 	upper_case = true,
 	localize = true,
@@ -1047,7 +1047,7 @@ local var_0_23 = {
 		2
 	}
 }
-local var_0_24 = {
+local tbl_15 = {
 	word_wrap = true,
 	upper_case = true,
 	localize = true,
@@ -1065,7 +1065,8 @@ local var_0_24 = {
 	}
 }
 
-local function var_0_25(arg_1_0)
+local function fn(arg_1_0)
+	-- function 1
 	return {
 		element = {
 			passes = {
@@ -1264,7 +1265,8 @@ local function var_0_25(arg_1_0)
 	}
 end
 
-local function var_0_26(arg_2_0)
+local function fn_2(arg_2_0)
+	-- function 2
 	return {
 		element = {
 			passes = {
@@ -1448,11 +1450,12 @@ local function var_0_26(arg_2_0)
 	}
 end
 
-local function var_0_27(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
-	local var_3_0 = "athanor_icon_upgrade"
-	local var_3_1 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_3_0).size
-	local var_3_2 = "athanor_icon_loading"
-	local var_3_3 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_3_2).size
+local function fn_3(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	-- function 3
+	local str = "athanor_icon_upgrade"
+	local size = UIAtlasHelper.get_atlas_settings_by_texture_name(str).size
+	local str_2 = "athanor_icon_loading"
+	local size_2 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_2).size
 
 	return {
 		element = {
@@ -1475,54 +1478,73 @@ local function var_0_27(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 						"weave_progression_slot_titles",
 						"athanor_upgrade_tooltip"
 					},
-					content_check_function = function(arg_4_0)
-						return arg_4_0.tooltip and arg_4_0.tooltip_hotspot.is_hover
+					content_check_function = function (self)
+						-- function 4
+						local tooltip = self.tooltip
+
+						tooltip = not tooltip and self.tooltip_hotspot.is_hover
+
+						return tooltip
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "price_icon",
 					texture_id = "price_icon",
-					content_check_function = function(arg_5_0)
-						return not arg_5_0.button_hotspot.disable_button
+					content_check_function = function (self)
+						-- function 5
+						return not self.button_hotspot.disable_button
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "price_icon_disabled",
 					texture_id = "price_icon",
-					content_check_function = function(arg_6_0)
-						return arg_6_0.button_hotspot.disable_button
+					content_check_function = function (self)
+						-- function 6
+						return self.button_hotspot.disable_button
 					end
 				},
 				{
 					style_id = "loading_icon",
 					texture_id = "loading_icon",
 					pass_type = "rotated_texture",
-					content_check_function = function(arg_7_0)
-						return arg_7_0.upgrading
+					content_check_function = function (self)
+						-- function 7
+						return self.upgrading
 					end,
-					content_change_function = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
-						local var_8_0 = ((arg_8_1.progress or 0) + arg_8_3) % 1
+					content_change_function = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+						-- function 8
+						local progress = arg_8_1.progress
 
-						arg_8_1.angle = math.pow(2, math.smoothstep(var_8_0, 0, 1)) * (math.pi * 2)
-						arg_8_1.progress = var_8_0
+						progress = progress or 0
+
+						local num = (progress + arg_8_3) % 1
+
+						arg_8_1.angle = math.pow(2, math.smoothstep(num, 0, 1)) * (math.pi * 2)
+						arg_8_1.progress = num
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "icon",
 					texture_id = "icon",
-					content_check_function = function(arg_9_0)
-						return not arg_9_0.button_hotspot.disable_button and not arg_9_0.upgrading
+					content_check_function = function (self)
+						-- function 9
+						return not not self.button_hotspot.disable_button or not self.upgrading
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "icon_disabled",
 					texture_id = "icon",
-					content_check_function = function(arg_10_0)
-						return arg_10_0.button_hotspot.disable_button and not arg_10_0.upgrading
+					content_check_function = function (self)
+						-- function 10
+						local disable_button = self.button_hotspot.disable_button
+
+						disable_button = not disable_button and not self.upgrading
+
+						return disable_button
 					end
 				},
 				{
@@ -1539,8 +1561,9 @@ local function var_0_27(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 					pass_type = "texture",
 					style_id = "texture_highlight",
 					texture_id = "texture_highlight",
-					content_check_function = function(arg_11_0)
-						return arg_11_0.highlighted
+					content_check_function = function (self)
+						-- function 11
+						return self.highlighted
 					end
 				},
 				{
@@ -1552,24 +1575,27 @@ local function var_0_27(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 					pass_type = "texture",
 					style_id = "disabled_rect",
 					texture_id = "overlay",
-					content_check_function = function(arg_12_0)
-						return arg_12_0.button_hotspot.disable_button
+					content_check_function = function (self)
+						-- function 12
+						return self.button_hotspot.disable_button
 					end
 				},
 				{
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_13_0)
-						return not arg_13_0.button_hotspot.disable_button
+					content_check_function = function (self)
+						-- function 13
+						return not self.button_hotspot.disable_button
 					end
 				},
 				{
 					style_id = "title_text_disabled",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_14_0)
-						return arg_14_0.button_hotspot.disable_button
+					content_check_function = function (self)
+						-- function 14
+						return self.button_hotspot.disable_button
 					end
 				},
 				{
@@ -1581,16 +1607,18 @@ local function var_0_27(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 					pass_type = "texture",
 					style_id = "button_icon",
 					texture_id = "button_icon",
-					content_check_function = function(arg_15_0)
-						return arg_15_0.button_hotspot.disable_button
+					content_check_function = function (self)
+						-- function 15
+						return self.button_hotspot.disable_button
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "button_icon_glow",
 					texture_id = "button_icon_glow",
-					content_check_function = function(arg_16_0)
-						return not arg_16_0.button_hotspot.disable_button
+					content_check_function = function (self)
+						-- function 16
+						return not self.button_hotspot.disable_button
 					end
 				}
 			}
@@ -1610,8 +1638,8 @@ local function var_0_27(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				allow_multi_hover = true
 			},
 			tooltip_hotspot = {},
-			icon = var_3_0,
-			loading_icon = var_3_2,
+			icon = str,
+			loading_icon = str_2,
 			title_text = arg_3_2 or "n/a"
 		},
 		style = {
@@ -1648,12 +1676,12 @@ local function var_0_27(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				horizontal_alignment = "left",
 				angle = 0,
 				pivot = {
-					var_3_3[1] / 2,
-					var_3_3[2] / 2
+					size_2[1] / 2,
+					size_2[2] / 2
 				},
 				texture_size = {
-					var_3_3[1],
-					var_3_3[2]
+					size_2[1],
+					size_2[2]
 				},
 				color = {
 					255,
@@ -1671,8 +1699,8 @@ local function var_0_27(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				vertical_alignment = "center",
 				horizontal_alignment = "left",
 				texture_size = {
-					var_3_1[1],
-					var_3_1[2]
+					size[1],
+					size[2]
 				},
 				color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				default_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
@@ -1687,8 +1715,8 @@ local function var_0_27(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				vertical_alignment = "center",
 				horizontal_alignment = "left",
 				texture_size = {
-					var_3_1[1],
-					var_3_1[2]
+					size[1],
+					size[2]
 				},
 				color = {
 					255,
@@ -1936,24 +1964,24 @@ local function var_0_27(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	}
 end
 
-local var_0_28 = {
-	viewport_button_highlight_1 = var_0_25("viewport_button_highlight_1"),
-	viewport_button_highlight_2 = var_0_25("viewport_button_highlight_2"),
-	viewport_button_highlight_3 = var_0_25("viewport_button_highlight_3")
+local tbl_16 = {
+	viewport_button_highlight_1 = fn("viewport_button_highlight_1"),
+	viewport_button_highlight_2 = fn("viewport_button_highlight_2"),
+	viewport_button_highlight_3 = fn("viewport_button_highlight_3")
 }
-local var_0_29 = {
+local tbl_17 = {
 	top_hdr_background_write_mask = UIWidgets.create_simple_texture("ui_write_mask", "window"),
 	upgrade_bg = UIWidgets.create_simple_texture("weave_menu_athanor_upgrade_bg", "upgrade_bg")
 }
-local var_0_30 = {
+local tbl_18 = {
 	skull_circle = UIWidgets.create_simple_texture("weave_menu_upgrade_skull_circle", "skull_circle"),
 	skull_circle_shade = UIWidgets.create_simple_texture("weave_menu_upgrade_skull_circle_shade", "skull_circle_shade")
 }
-local var_0_31 = {
-	upgrade_text = UIWidgets.create_simple_text(Localize("menu_weave_forge_upgraded_effect_title"), "upgrade_text", nil, nil, var_0_14),
-	viewport_button_text_highlight_1 = var_0_26("viewport_button_highlight_1"),
-	viewport_button_text_highlight_2 = var_0_26("viewport_button_highlight_2"),
-	viewport_button_text_highlight_3 = var_0_26("viewport_button_highlight_3"),
+local tbl_19 = {
+	upgrade_text = UIWidgets.create_simple_text(Localize("menu_weave_forge_upgraded_effect_title"), "upgrade_text", nil, nil, tbl_5),
+	viewport_button_text_highlight_1 = fn_2("viewport_button_highlight_1"),
+	viewport_button_text_highlight_2 = fn_2("viewport_button_highlight_2"),
+	viewport_button_text_highlight_3 = fn_2("viewport_button_highlight_3"),
 	viewport_button_1 = UIWidgets.create_simple_hotspot("viewport_button_1"),
 	viewport_button_2 = UIWidgets.create_simple_hotspot("viewport_button_2"),
 	viewport_button_3 = UIWidgets.create_simple_hotspot("viewport_button_3"),
@@ -1993,27 +2021,27 @@ local var_0_31 = {
 		}
 	}, "viewport_panel_divider_left_3"),
 	viewport_panel_divider_right_3 = UIWidgets.create_simple_texture("athanor_item_divider_edge", "viewport_panel_divider_right_3"),
-	viewport_level_title_1 = UIWidgets.create_simple_text(Localize("menu_weave_forge_magic_level_title"), "panel_level_title_1", nil, nil, var_0_19),
-	viewport_level_value_1 = UIWidgets.create_simple_text("0", "panel_level_value_1", nil, nil, var_0_20),
-	viewport_power_title_1 = UIWidgets.create_simple_text(Localize("menu_weave_forge_loadout_power_title"), "panel_power_title_1", nil, nil, var_0_19),
-	viewport_power_value_1 = UIWidgets.create_simple_text("0", "panel_power_value_1", nil, nil, var_0_20),
-	viewport_level_title_2 = UIWidgets.create_simple_text(Localize("menu_weave_forge_magic_level_title"), "panel_level_title_2", nil, nil, var_0_19),
-	viewport_level_value_2 = UIWidgets.create_simple_text("0", "panel_level_value_2", nil, nil, var_0_20),
-	viewport_power_title_2 = UIWidgets.create_simple_text(Localize("menu_weave_forge_loadout_power_title"), "panel_power_title_2", nil, nil, var_0_19),
-	viewport_power_value_2 = UIWidgets.create_simple_text("0", "panel_power_value_2", nil, nil, var_0_20),
-	viewport_level_title_3 = UIWidgets.create_simple_text(Localize("menu_weave_forge_magic_level_title"), "panel_level_title_3", nil, nil, var_0_19),
-	viewport_level_value_3 = UIWidgets.create_simple_text("0", "panel_level_value_3", nil, nil, var_0_20),
-	viewport_power_title_3 = UIWidgets.create_simple_text(Localize("menu_weave_forge_loadout_power_title"), "panel_power_title_3", nil, nil, var_0_19),
-	viewport_power_value_3 = UIWidgets.create_simple_text("0", "panel_power_value_3", nil, nil, var_0_20),
-	viewport_title_1 = UIWidgets.create_simple_text("", "viewport_title_1", nil, nil, var_0_16),
-	viewport_title_2 = UIWidgets.create_simple_text("", "viewport_title_2", nil, nil, var_0_16),
-	viewport_title_3 = UIWidgets.create_simple_text("", "viewport_title_3", nil, nil, var_0_16),
-	viewport_sub_title_1 = UIWidgets.create_simple_text("", "viewport_sub_title_1", nil, nil, var_0_17),
-	viewport_sub_title_2 = UIWidgets.create_simple_text("", "viewport_sub_title_2", nil, nil, var_0_17),
-	viewport_sub_title_3 = UIWidgets.create_simple_text("", "viewport_sub_title_3", nil, nil, var_0_17),
+	viewport_level_title_1 = UIWidgets.create_simple_text(Localize("menu_weave_forge_magic_level_title"), "panel_level_title_1", nil, nil, tbl_10),
+	viewport_level_value_1 = UIWidgets.create_simple_text("0", "panel_level_value_1", nil, nil, tbl_11),
+	viewport_power_title_1 = UIWidgets.create_simple_text(Localize("menu_weave_forge_loadout_power_title"), "panel_power_title_1", nil, nil, tbl_10),
+	viewport_power_value_1 = UIWidgets.create_simple_text("0", "panel_power_value_1", nil, nil, tbl_11),
+	viewport_level_title_2 = UIWidgets.create_simple_text(Localize("menu_weave_forge_magic_level_title"), "panel_level_title_2", nil, nil, tbl_10),
+	viewport_level_value_2 = UIWidgets.create_simple_text("0", "panel_level_value_2", nil, nil, tbl_11),
+	viewport_power_title_2 = UIWidgets.create_simple_text(Localize("menu_weave_forge_loadout_power_title"), "panel_power_title_2", nil, nil, tbl_10),
+	viewport_power_value_2 = UIWidgets.create_simple_text("0", "panel_power_value_2", nil, nil, tbl_11),
+	viewport_level_title_3 = UIWidgets.create_simple_text(Localize("menu_weave_forge_magic_level_title"), "panel_level_title_3", nil, nil, tbl_10),
+	viewport_level_value_3 = UIWidgets.create_simple_text("0", "panel_level_value_3", nil, nil, tbl_11),
+	viewport_power_title_3 = UIWidgets.create_simple_text(Localize("menu_weave_forge_loadout_power_title"), "panel_power_title_3", nil, nil, tbl_10),
+	viewport_power_value_3 = UIWidgets.create_simple_text("0", "panel_power_value_3", nil, nil, tbl_11),
+	viewport_title_1 = UIWidgets.create_simple_text("", "viewport_title_1", nil, nil, tbl_7),
+	viewport_title_2 = UIWidgets.create_simple_text("", "viewport_title_2", nil, nil, tbl_7),
+	viewport_title_3 = UIWidgets.create_simple_text("", "viewport_title_3", nil, nil, tbl_7),
+	viewport_sub_title_1 = UIWidgets.create_simple_text("", "viewport_sub_title_1", nil, nil, tbl_8),
+	viewport_sub_title_2 = UIWidgets.create_simple_text("", "viewport_sub_title_2", nil, nil, tbl_8),
+	viewport_sub_title_3 = UIWidgets.create_simple_text("", "viewport_sub_title_3", nil, nil, tbl_8),
 	change_button_1 = UIWidgets.create_weave_equipment_button("change_button_1"),
 	change_button_3 = UIWidgets.create_weave_equipment_button("change_button_3"),
-	change_button_1_tooltip = UIWidgets.create_additional_option_tooltip("change_button_1", var_0_13.change_button_1.size, nil, {
+	change_button_1_tooltip = UIWidgets.create_additional_option_tooltip("change_button_1", tbl_4.change_button_1.size, nil, {
 		title = Localize("menu_weave_forge_tooltip_choose_weapon_title"),
 		description = Localize("menu_weave_forge_tooltip_choose_weapon_description")
 	}, nil, nil, "top", nil, {
@@ -2021,7 +2049,7 @@ local var_0_31 = {
 		7,
 		0
 	}),
-	change_button_3_tooltip = UIWidgets.create_additional_option_tooltip("change_button_3", var_0_13.change_button_3.size, nil, {
+	change_button_3_tooltip = UIWidgets.create_additional_option_tooltip("change_button_3", tbl_4.change_button_3.size, nil, {
 		title = Localize("menu_weave_forge_tooltip_choose_weapon_title"),
 		description = Localize("menu_weave_forge_tooltip_choose_weapon_description")
 	}, nil, nil, "top", nil, {
@@ -2029,44 +2057,47 @@ local var_0_31 = {
 		7,
 		0
 	}),
-	upgrade_button = var_0_27("upgrade_button", var_0_13.upgrade_button.size, Localize("menu_weave_forge_upgrade_button"), 20),
-	forge_level_title = UIWidgets.create_simple_text(Localize("menu_weave_forge_level_title"), "forge_level_title", nil, nil, var_0_21),
-	forge_level_text = UIWidgets.create_simple_text("0", "forge_level_text", nil, nil, var_0_22)
+	upgrade_button = fn_3("upgrade_button", tbl_4.upgrade_button.size, Localize("menu_weave_forge_upgrade_button"), 20),
+	forge_level_title = UIWidgets.create_simple_text(Localize("menu_weave_forge_level_title"), "forge_level_title", nil, nil, tbl_12),
+	forge_level_text = UIWidgets.create_simple_text("0", "forge_level_text", nil, nil, tbl_13)
 }
-local var_0_32 = {
-	tutorial_title = UIWidgets.create_simple_text("menu_weave_tutorial_athanor_01_empty_state_info_title", "tutorial_text_title", nil, nil, var_0_23),
-	tutorial_body = UIWidgets.create_simple_text("menu_weave_tutorial_athanor_01_empty_state_info_body", "tutorial_text_body", nil, nil, var_0_24)
+local tbl_20 = {
+	tutorial_title = UIWidgets.create_simple_text("menu_weave_tutorial_athanor_01_empty_state_info_title", "tutorial_text_title", nil, nil, tbl_14),
+	tutorial_body = UIWidgets.create_simple_text("menu_weave_tutorial_athanor_01_empty_state_info_body", "tutorial_text_body", nil, nil, tbl_15)
 }
-local var_0_33 = {
+local tbl_21 = {
 	upgrade = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 1,
-			init = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
-				local var_17_0 = arg_17_2.upgrade_bg
-				local var_17_1 = arg_17_2.skull_circle
-				local var_17_2 = arg_17_2.upgrade_text
-				local var_17_3 = arg_17_2.skull_circle_shade
+			init = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+				-- function 17
+				local upgrade_bg = arg_17_2.upgrade_bg
+				local skull_circle = arg_17_2.skull_circle
+				local upgrade_text = arg_17_2.upgrade_text
+				local skull_circle_shade = arg_17_2.skull_circle_shade
 
-				var_17_0.alpha_multiplier = 0
-				var_17_1.alpha_multiplier = 0
-				var_17_2.alpha_multiplier = 0
-				var_17_3.alpha_multiplier = 0
+				upgrade_bg.alpha_multiplier = 0
+				skull_circle.alpha_multiplier = 0
+				upgrade_text.alpha_multiplier = 0
+				skull_circle_shade.alpha_multiplier = 0
 			end,
-			update = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
-				local var_18_0 = math.easeOutCubic(arg_18_3)
-				local var_18_1 = arg_18_2.upgrade_bg
-				local var_18_2 = arg_18_2.skull_circle
-				local var_18_3 = arg_18_2.skull_circle_shade
-				local var_18_4 = arg_18_2.upgrade_text
+			update = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+				-- function 18
+				local easeOutCubic = math.easeOutCubic(arg_18_3)
+				local upgrade_bg = arg_18_2.upgrade_bg
+				local skull_circle = arg_18_2.skull_circle
+				local skull_circle_shade = arg_18_2.skull_circle_shade
+				local upgrade_text = arg_18_2.upgrade_text
 
-				var_18_1.alpha_multiplier = var_18_0
-				var_18_2.alpha_multiplier = var_18_0
-				var_18_4.alpha_multiplier = var_18_0
-				var_18_3.alpha_multiplier = 0.02 * var_18_0
+				upgrade_bg.alpha_multiplier = easeOutCubic
+				skull_circle.alpha_multiplier = easeOutCubic
+				upgrade_text.alpha_multiplier = easeOutCubic
+				skull_circle_shade.alpha_multiplier = 0.02 * easeOutCubic
 			end,
-			on_complete = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			on_complete = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+				-- function 19
 				return
 			end
 		},
@@ -2074,19 +2105,22 @@ local var_0_33 = {
 			name = "fade_out",
 			start_progress = 1,
 			end_progress = 2,
-			init = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+			init = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+				-- function 20
 				return
 			end,
-			update = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
-				local var_21_0 = math.easeInCubic(1 - arg_21_3)
-				local var_21_1 = arg_21_2.upgrade_bg
-				local var_21_2 = arg_21_2.skull_circle
-				local var_21_3 = arg_21_2.upgrade_text
+			update = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+				-- function 21
+				local easeInCubic = math.easeInCubic(1 - arg_21_3)
+				local upgrade_bg = arg_21_2.upgrade_bg
+				local skull_circle = arg_21_2.skull_circle
+				local upgrade_text = arg_21_2.upgrade_text
 
-				var_21_1.alpha_multiplier = var_21_0
-				var_21_3.alpha_multiplier = var_21_0
+				upgrade_bg.alpha_multiplier = easeInCubic
+				upgrade_text.alpha_multiplier = easeInCubic
 			end,
-			on_complete = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+			on_complete = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+				-- function 22
 				return
 			end
 		},
@@ -2094,15 +2128,18 @@ local var_0_33 = {
 			name = "font_size_increase",
 			start_progress = 0,
 			end_progress = 2,
-			init = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+			init = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+				-- function 23
 				return
 			end,
-			update = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
-				local var_24_0 = math.easeOutCubic(arg_24_3)
+			update = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+				-- function 24
+				local easeOutCubic = math.easeOutCubic(arg_24_3)
 
-				arg_24_2.upgrade_text.offset[2] = -40 + 50 * var_24_0
+				arg_24_2.upgrade_text.offset[2] = -40 + 50 * easeOutCubic
 			end,
-			on_complete = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+			on_complete = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+				-- function 25
 				return
 			end
 		},
@@ -2110,36 +2147,39 @@ local var_0_33 = {
 			name = "dissolve_in",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
-				local var_26_0 = arg_26_3.parent:hdr_renderer().gui
-				local var_26_1 = arg_26_2.skull_circle_shade
-				local var_26_2 = arg_26_2.skull_circle
-				local var_26_3 = var_26_1.content.texture_id
-				local var_26_4 = var_26_2.content.texture_id
-				local var_26_5 = Gui.material(var_26_0, var_26_3)
-				local var_26_6 = Gui.material(var_26_0, var_26_4)
-				local var_26_7 = 0
+			init = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+				-- function 26
+				local gui = arg_26_3.parent:hdr_renderer().gui
+				local skull_circle_shade = arg_26_2.skull_circle_shade
+				local skull_circle = arg_26_2.skull_circle
+				local texture_id = skull_circle_shade.content.texture_id
+				local texture_id_2 = skull_circle.content.texture_id
+				local material = Gui.material(gui, texture_id)
+				local material_2 = Gui.material(gui, texture_id_2)
+				local num = 0
 
-				Material.set_scalar(var_26_5, "progress", var_26_7)
-				Material.set_scalar(var_26_6, "progress", var_26_7)
+				Material.set_scalar(material, "progress", num)
+				Material.set_scalar(material_2, "progress", num)
 			end,
-			update = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
-				local var_27_0 = math.easeInCubic(arg_27_3)
-				local var_27_1 = arg_27_4.parent:hdr_renderer().gui
-				local var_27_2 = arg_27_2.upgrade_bg
-				local var_27_3 = arg_27_2.skull_circle
-				local var_27_4 = arg_27_2.skull_circle_shade
-				local var_27_5 = var_27_2.content.texture_id
-				local var_27_6 = var_27_3.content.texture_id
-				local var_27_7 = var_27_4.content.texture_id
-				local var_27_8 = Gui.material(var_27_1, var_27_5)
-				local var_27_9 = Gui.material(var_27_1, var_27_6)
-				local var_27_10 = Gui.material(var_27_1, var_27_7)
+			update = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+				-- function 27
+				local easeInCubic = math.easeInCubic(arg_27_3)
+				local gui = arg_27_4.parent:hdr_renderer().gui
+				local upgrade_bg = arg_27_2.upgrade_bg
+				local skull_circle = arg_27_2.skull_circle
+				local skull_circle_shade = arg_27_2.skull_circle_shade
+				local texture_id = upgrade_bg.content.texture_id
+				local texture_id_2 = skull_circle.content.texture_id
+				local texture_id_3 = skull_circle_shade.content.texture_id
+				local material = Gui.material(gui, texture_id)
+				local material_2 = Gui.material(gui, texture_id_2)
+				local material_3 = Gui.material(gui, texture_id_3)
 
-				Material.set_scalar(var_27_9, "progress", arg_27_3)
-				Material.set_scalar(var_27_10, "progress", arg_27_3)
+				Material.set_scalar(material_2, "progress", arg_27_3)
+				Material.set_scalar(material_3, "progress", arg_27_3)
 			end,
-			on_complete = function(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+			on_complete = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+				-- function 28
 				return
 			end
 		},
@@ -2147,26 +2187,29 @@ local var_0_33 = {
 			name = "intensity",
 			start_progress = 0.5,
 			end_progress = 2,
-			init = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
-				local var_29_0 = arg_29_3.parent:hdr_renderer().gui
-				local var_29_1 = arg_29_2.skull_circle.content.texture_id
-				local var_29_2 = Gui.material(var_29_0, var_29_1)
-				local var_29_3 = 2
+			init = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+				-- function 29
+				local gui = arg_29_3.parent:hdr_renderer().gui
+				local texture_id = arg_29_2.skull_circle.content.texture_id
+				local material = Gui.material(gui, texture_id)
+				local num = 2
 
-				Material.set_scalar(var_29_2, "intensity", var_29_3)
+				Material.set_scalar(material, "intensity", num)
 			end,
-			update = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
-				local var_30_0 = math.easeInCubic(arg_30_3)
-				local var_30_1 = arg_30_4.parent:hdr_renderer().gui
-				local var_30_2 = arg_30_2.skull_circle.content.texture_id
-				local var_30_3 = Gui.material(var_30_1, var_30_2)
-				local var_30_4 = 2
-				local var_30_5 = 10
-				local var_30_6 = var_30_4 + math.clamp(arg_30_3, 0, 1) * var_30_5
+			update = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+				-- function 30
+				local easeInCubic = math.easeInCubic(arg_30_3)
+				local gui = arg_30_4.parent:hdr_renderer().gui
+				local texture_id = arg_30_2.skull_circle.content.texture_id
+				local material = Gui.material(gui, texture_id)
+				local num = 2
+				local num_2 = 10
+				local num_3 = num + math.clamp(arg_30_3, 0, 1) * num_2
 
-				Material.set_scalar(var_30_3, "intensity", var_30_6)
+				Material.set_scalar(material, "intensity", num_3)
 			end,
-			on_complete = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+			on_complete = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+				-- function 31
 				return
 			end
 		},
@@ -2174,25 +2217,28 @@ local var_0_33 = {
 			name = "dissolve_out",
 			start_progress = 1,
 			end_progress = 2.5,
-			init = function(arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+			init = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+				-- function 32
 				return
 			end,
-			update = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
-				local var_33_0 = math.easeInCubic(1 - arg_33_3)
-				local var_33_1 = arg_33_4.parent:hdr_renderer().gui
-				local var_33_2 = arg_33_2.skull_circle_shade
-				local var_33_3 = arg_33_2.skull_circle
-				local var_33_4 = var_33_2.content.texture_id
-				local var_33_5 = var_33_3.content.texture_id
-				local var_33_6 = Gui.material(var_33_1, var_33_4)
-				local var_33_7 = Gui.material(var_33_1, var_33_5)
+			update = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
+				-- function 33
+				local easeInCubic = math.easeInCubic(1 - arg_33_3)
+				local gui = arg_33_4.parent:hdr_renderer().gui
+				local skull_circle_shade = arg_33_2.skull_circle_shade
+				local skull_circle = arg_33_2.skull_circle
+				local texture_id = skull_circle_shade.content.texture_id
+				local texture_id_2 = skull_circle.content.texture_id
+				local material = Gui.material(gui, texture_id)
+				local material_2 = Gui.material(gui, texture_id_2)
 
-				Material.set_scalar(var_33_7, "progress", var_33_0)
-				Material.set_scalar(var_33_6, "progress", var_33_0)
+				Material.set_scalar(material_2, "progress", easeInCubic)
+				Material.set_scalar(material, "progress", easeInCubic)
 
-				var_33_2.alpha_multiplier = 0.02 * var_33_0
+				skull_circle_shade.alpha_multiplier = 0.02 * easeInCubic
 			end,
-			on_complete = function(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+			on_complete = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+				-- function 34
 				return
 			end
 		},
@@ -2200,64 +2246,67 @@ local var_0_33 = {
 			name = "size_increase",
 			start_progress = 0,
 			end_progress = 4,
-			init = function(arg_35_0, arg_35_1, arg_35_2, arg_35_3)
-				local var_35_0 = arg_35_2.upgrade_bg
-				local var_35_1 = arg_35_2.skull_circle
-				local var_35_2 = arg_35_2.skull_circle_shade
-				local var_35_3 = var_35_0.scenegraph_id
-				local var_35_4 = var_35_1.scenegraph_id
-				local var_35_5 = var_35_2.scenegraph_id
-				local var_35_6 = arg_35_1[var_35_3]
-				local var_35_7 = arg_35_1[var_35_4]
-				local var_35_8 = arg_35_1[var_35_5]
-				local var_35_9 = var_35_6.size
-				local var_35_10 = var_35_7.size
-				local var_35_11 = var_35_8.size
-				local var_35_12 = arg_35_0[var_35_3]
-				local var_35_13 = arg_35_0[var_35_4]
-				local var_35_14 = arg_35_0[var_35_5]
-				local var_35_15 = var_35_12.size
-				local var_35_16 = var_35_13.size
-				local var_35_17 = var_35_14.size
+			init = function (self, arg_35_1, arg_35_2, arg_35_3)
+				-- function 35
+				local upgrade_bg = arg_35_2.upgrade_bg
+				local skull_circle = arg_35_2.skull_circle
+				local skull_circle_shade = arg_35_2.skull_circle_shade
+				local scenegraph_id = upgrade_bg.scenegraph_id
+				local scenegraph_id_2 = skull_circle.scenegraph_id
+				local scenegraph_id_3 = skull_circle_shade.scenegraph_id
+				local var_35_6 = arg_35_1[scenegraph_id]
+				local var_35_7 = arg_35_1[scenegraph_id_2]
+				local var_35_8 = arg_35_1[scenegraph_id_3]
+				local size = var_35_6.size
+				local size_2 = var_35_7.size
+				local size_3 = var_35_8.size
+				local var_35_12 = self[scenegraph_id]
+				local var_35_13 = self[scenegraph_id_2]
+				local var_35_14 = self[scenegraph_id_3]
+				local size_4 = var_35_12.size
+				local size_5 = var_35_13.size
+				local size_6 = var_35_14.size
 
-				var_35_16[1] = var_35_10[1]
-				var_35_16[2] = var_35_10[2]
-				var_35_17[1] = var_35_11[1]
-				var_35_17[2] = var_35_11[2]
-				var_35_15[1] = var_35_9[1]
-				var_35_15[2] = var_35_9[2]
+				size_5[1] = size_2[1]
+				size_5[2] = size_2[2]
+				size_6[1] = size_3[1]
+				size_6[2] = size_3[2]
+				size_4[1] = size[1]
+				size_4[2] = size[2]
 			end,
-			update = function(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
-				local var_36_0 = math.easeOutCubic(arg_36_3)
-				local var_36_1 = arg_36_2.upgrade_bg
-				local var_36_2 = arg_36_2.skull_circle
-				local var_36_3 = arg_36_2.skull_circle_shade
-				local var_36_4 = var_36_1.scenegraph_id
-				local var_36_5 = var_36_2.scenegraph_id
-				local var_36_6 = var_36_3.scenegraph_id
-				local var_36_7 = arg_36_1[var_36_4]
-				local var_36_8 = arg_36_1[var_36_5]
-				local var_36_9 = arg_36_1[var_36_6]
-				local var_36_10 = var_36_7.size
-				local var_36_11 = var_36_8.size
-				local var_36_12 = var_36_9.size
-				local var_36_13 = arg_36_0[var_36_4]
-				local var_36_14 = arg_36_0[var_36_5]
-				local var_36_15 = arg_36_0[var_36_6]
-				local var_36_16 = var_36_13.size
-				local var_36_17 = var_36_14.size
-				local var_36_18 = var_36_15.size
-				local var_36_19 = 600
-				local var_36_20 = 2200
+			update = function (self, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
+				-- function 36
+				local easeOutCubic = math.easeOutCubic(arg_36_3)
+				local upgrade_bg = arg_36_2.upgrade_bg
+				local skull_circle = arg_36_2.skull_circle
+				local skull_circle_shade = arg_36_2.skull_circle_shade
+				local scenegraph_id = upgrade_bg.scenegraph_id
+				local scenegraph_id_2 = skull_circle.scenegraph_id
+				local scenegraph_id_3 = skull_circle_shade.scenegraph_id
+				local var_36_7 = arg_36_1[scenegraph_id]
+				local var_36_8 = arg_36_1[scenegraph_id_2]
+				local var_36_9 = arg_36_1[scenegraph_id_3]
+				local size = var_36_7.size
+				local size_2 = var_36_8.size
+				local size_3 = var_36_9.size
+				local var_36_13 = self[scenegraph_id]
+				local var_36_14 = self[scenegraph_id_2]
+				local var_36_15 = self[scenegraph_id_3]
+				local size_4 = var_36_13.size
+				local size_5 = var_36_14.size
+				local size_6 = var_36_15.size
+				local num = 600
+				local num_2 = 2200
 
-				var_36_17[1] = var_36_11[1] + var_36_19 * var_36_0
-				var_36_17[2] = var_36_11[2] + var_36_19 * var_36_0
-				var_36_18[1] = var_36_12[1] + var_36_20 * var_36_0
-				var_36_18[2] = var_36_12[2] + var_36_20 * var_36_0
-				var_36_16[1] = var_36_10[1] + 200 * (1 - var_36_0)
-				var_36_16[2] = var_36_10[2] + 200 * (1 - var_36_0)
+				size_5[1] = size_2[1] + num * easeOutCubic
+				size_5[2] = size_2[2] + num * easeOutCubic
+				size_6[1] = size_3[1] + num_2 * easeOutCubic
+				size_6[2] = size_3[2] + num_2 * easeOutCubic
+				size_4[1] = size[1] + 200 * (1 - easeOutCubic)
+				size_4[2] = size[2] + 200 * (1 - easeOutCubic)
 			end,
-			on_complete = function(arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+			on_complete = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+				-- function 37
 				return
 			end
 		}
@@ -2267,15 +2316,18 @@ local var_0_33 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+			init = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+				-- function 38
 				arg_38_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
-				local var_39_0 = math.easeOutCubic(arg_39_3)
+			update = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
+				-- function 39
+				local easeOutCubic = math.easeOutCubic(arg_39_3)
 
-				arg_39_4.render_settings.alpha_multiplier = var_39_0
+				arg_39_4.render_settings.alpha_multiplier = easeOutCubic
 			end,
-			on_complete = function(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+			on_complete = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+				-- function 40
 				return
 			end
 		}
@@ -2285,15 +2337,18 @@ local var_0_33 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+			init = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+				-- function 41
 				arg_41_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4)
-				local var_42_0 = math.easeOutCubic(arg_42_3)
+			update = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4)
+				-- function 42
+				local easeOutCubic = math.easeOutCubic(arg_42_3)
 
-				arg_42_4.render_settings.alpha_multiplier = 1 - var_42_0
+				arg_42_4.render_settings.alpha_multiplier = 1 - easeOutCubic
 			end,
-			on_complete = function(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+			on_complete = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+				-- function 43
 				return
 			end
 		}
@@ -2301,11 +2356,11 @@ local var_0_33 = {
 }
 
 return {
-	top_widgets = var_0_31,
-	bottom_widgets = var_0_28,
-	top_hdr_widgets = var_0_29,
-	bottom_hdr_widgets = var_0_30,
-	scenegraph_definition = var_0_13,
-	animation_definitions = var_0_33,
-	weapon_crafting_tutorial_definitions = var_0_32
+	top_widgets = tbl_19,
+	bottom_widgets = tbl_16,
+	top_hdr_widgets = tbl_17,
+	bottom_hdr_widgets = tbl_18,
+	scenegraph_definition = tbl_4,
+	animation_definitions = tbl_21,
+	weapon_crafting_tutorial_definitions = tbl_20
 }

@@ -1,46 +1,53 @@
 -- chunkname: @scripts/ui/views/store_welcome_popup.lua
 
-local function var_0_0(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
-	local var_1_0 = {
+local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	-- function 1
+	local tbl = {
 		arg_1_1,
 		math.min(arg_1_2, 400)
 	}
-	local var_1_1 = {
+	local tbl_2 = {
 		arg_1_0,
-		var_1_0[2] + 350
+		tbl[2] + 350
 	}
-	local var_1_2 = {
+	local tbl_3 = {
 		arg_1_1 - 50,
 		50
 	}
-	local var_1_3 = {
+	local tbl_4 = {
 		5,
-		var_1_0[2]
+		tbl[2]
 	}
-	local var_1_4 = DLCSettings.store.currency_ui_settings
-	local var_1_5 = var_1_4[arg_1_3] or var_1_4.SM
-	local var_1_6 = {
+	local currency_ui_settings = DLCSettings.store.currency_ui_settings
+	local var_1_5 = currency_ui_settings[arg_1_3]
+
+	var_1_5 = var_1_5 or currency_ui_settings.SM
+
+	local tbl_5 = {
 		on_enter = {
 			{
 				name = "fade_in",
 				start_progress = 0,
 				end_progress = 0.5,
-				init = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+				init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+					-- function 2
 					arg_2_3.render_settings.alpha_multiplier = 0
 				end,
-				update = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
-					local var_3_0 = math.easeOutCubic(arg_3_3)
+				update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+					-- function 3
+					local easeOutCubic = math.easeOutCubic(arg_3_3)
 
-					arg_3_4.render_settings.alpha_multiplier = var_3_0
-					arg_3_0.window.position[2] = arg_3_1.window.position[2] + 100 * (1 - var_3_0)
+					arg_3_4.render_settings.alpha_multiplier = easeOutCubic
+					arg_3_0.window.position[2] = arg_3_1.window.position[2] + 100 * (1 - easeOutCubic)
 				end,
-				on_complete = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				on_complete = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+					-- function 4
 					return
 				end
 			}
 		}
 	}
-	local var_1_7 = {
+	local tbl_6 = {
 		root = {
 			is_root = true,
 			size = {
@@ -81,7 +88,7 @@ local function var_0_0(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 			vertical_alignment = "center",
 			parent = "screen_overlay",
 			horizontal_alignment = "center",
-			size = var_1_1,
+			size = tbl_2,
 			position = {
 				0,
 				0,
@@ -107,7 +114,7 @@ local function var_0_0(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 			parent = "window",
 			horizontal_alignment = "center",
 			size = {
-				var_1_1[1] - 40,
+				tbl_2[1] - 40,
 				50
 			},
 			position = {
@@ -121,7 +128,7 @@ local function var_0_0(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 			parent = "window",
 			horizontal_alignment = "center",
 			size = {
-				var_1_1[1] + 20,
+				tbl_2[1] + 20,
 				64
 			},
 			position = {
@@ -135,7 +142,7 @@ local function var_0_0(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 			parent = "currency_area",
 			horizontal_alignment = "center",
 			size = {
-				var_1_1[1] + 20 + 12,
+				tbl_2[1] + 20 + 12,
 				76
 			},
 			position = {
@@ -218,7 +225,7 @@ local function var_0_0(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 			vertical_alignment = "top",
 			parent = "window",
 			horizontal_alignment = "center",
-			size = var_1_0,
+			size = tbl,
 			position = {
 				0,
 				-115,
@@ -229,10 +236,10 @@ local function var_0_0(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 			vertical_alignment = "top",
 			parent = "list_window",
 			horizontal_alignment = "right",
-			size = var_1_0,
+			size = tbl,
 			position = {
 				0,
-				-var_1_0[2],
+				-tbl[2],
 				0
 			}
 		},
@@ -240,7 +247,7 @@ local function var_0_0(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 			vertical_alignment = "center",
 			parent = "list_window",
 			horizontal_alignment = "right",
-			size = var_1_3,
+			size = tbl_4,
 			position = {
 				-20,
 				0,
@@ -262,7 +269,7 @@ local function var_0_0(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 			}
 		}
 	}
-	local var_1_8 = {
+	local tbl_7 = {
 		use_shadow = true,
 		upper_case = false,
 		localize = true,
@@ -278,7 +285,7 @@ local function var_0_0(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 			2
 		}
 	}
-	local var_1_9 = {
+	local tbl_8 = {
 		word_wrap = false,
 		upper_case = true,
 		localize = false,
@@ -295,7 +302,7 @@ local function var_0_0(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 			2
 		}
 	}
-	local var_1_10 = {
+	local tbl_9 = {
 		word_wrap = false,
 		upper_case = false,
 		localize = false,
@@ -313,9 +320,10 @@ local function var_0_0(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 		}
 	}
 
-	local function var_1_11(arg_5_0, arg_5_1, arg_5_2)
-		local var_5_0 = 10
-		local var_5_1 = {
+	local function fn(arg_5_0, arg_5_1, arg_5_2)
+		-- function 5
+		local num = 10
+		local tbl = {
 			passes = {
 				{
 					style_id = "hotspot",
@@ -344,7 +352,7 @@ local function var_0_0(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 				}
 			}
 		}
-		local var_5_2 = {
+		local tbl_2 = {
 			mask_edge = "mask_rect_edge_fade",
 			mask_texture = "mask_rect",
 			list_hotspot = {},
@@ -355,7 +363,7 @@ local function var_0_0(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 				scroll_value = 1
 			}
 		}
-		local var_5_3 = {
+		local tbl_3 = {
 			hotspot = {
 				size = {
 					arg_5_2[1],
@@ -370,7 +378,7 @@ local function var_0_0(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 			list_hotspot = {
 				size = {
 					arg_5_2[1],
-					arg_5_2[2] + var_5_0 * 2
+					arg_5_2[2] + num * 2
 				},
 				color = {
 					255,
@@ -380,7 +388,7 @@ local function var_0_0(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 				},
 				offset = {
 					0,
-					-var_5_0,
+					-num,
 					0
 				}
 			},
@@ -404,7 +412,7 @@ local function var_0_0(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 			mask_top = {
 				size = {
 					arg_5_2[1],
-					var_5_0
+					num
 				},
 				color = {
 					255,
@@ -421,7 +429,7 @@ local function var_0_0(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 			mask_bottom = {
 				size = {
 					arg_5_2[1],
-					var_5_0
+					num
 				},
 				color = {
 					255,
@@ -431,21 +439,21 @@ local function var_0_0(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 				},
 				offset = {
 					0,
-					-var_5_0,
+					-num,
 					0
 				},
 				angle = math.pi,
 				pivot = {
 					arg_5_2[1] / 2,
-					var_5_0 / 2
+					num / 2
 				}
 			}
 		}
 
 		return {
-			element = var_5_1,
-			content = var_5_2,
-			style = var_5_3,
+			element = tbl,
+			content = tbl_2,
+			style = tbl_3,
 			offset = {
 				0,
 				0,
@@ -455,47 +463,50 @@ local function var_0_0(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 		}
 	end
 
-	local var_1_12 = true
-	local var_1_13 = "shadow_frame_02"
-	local var_1_14 = UIFrameSettings[var_1_13].texture_sizes.horizontal[2]
-	local var_1_15 = {
+	local flag = true
+	local str = "shadow_frame_02"
+	local var_1_14 = UIFrameSettings[str].texture_sizes.horizontal[2]
+	local tbl_10 = {
 		220,
 		10,
 		10,
 		10
 	}
-	local var_1_16 = {
+	local tbl_11 = {
 		220,
 		0,
 		0,
 		0
 	}
-	local var_1_17 = var_1_5.icon_big
+	local icon_big = var_1_5.icon_big
 	local var_1_18
-	local var_1_19 = arg_1_4 and "welcome_currency_popup_amount_summary_title" or var_1_5.name
-	local var_1_20 = {
+	local flag_2
+
+	flag_2 = not arg_1_4 and "welcome_currency_popup_amount_summary_title" and var_1_5.name
+
+	local tbl_12 = {
 		screen_overlay = UIWidgets.create_simple_rect("screen_overlay", {
 			50,
 			10,
 			10,
 			10
 		}),
-		window_background = UIWidgets.create_simple_rect("window", var_1_15),
-		window_drop_shadow = UIWidgets.create_frame("window", var_1_7.window.size, var_1_13, 0, var_1_16, {
+		window_background = UIWidgets.create_simple_rect("window", tbl_10),
+		window_drop_shadow = UIWidgets.create_frame("window", tbl_6.window.size, str, 0, tbl_11, {
 			-var_1_14,
 			-var_1_14
 		}),
-		window_frame = UIWidgets.create_frame("window", var_1_7.window.size, "menu_frame_12_gold", 1, {
+		window_frame = UIWidgets.create_frame("window", tbl_6.window.size, "menu_frame_12_gold", 1, {
 			255,
 			255,
 			255,
 			255
 		}),
-		window_button = UIWidgets.create_default_button("window_button", var_1_7.window_button.size, "button_frame_02_gold", nil, Localize("welcome_currency_popup_button_claim"), 30, nil, "button_detail_01_gold", nil, var_1_12),
-		window_title = UIWidgets.create_simple_text("interact_open_store", "window_title", var_1_7.window_title.size, nil, var_1_8),
-		currency_icon = UIWidgets.create_simple_texture(var_1_17, "currency_icon"),
-		currency_title = UIWidgets.create_simple_text(Localize(var_1_19), "currency_title", nil, nil, var_1_10),
-		currency_text = UIWidgets.create_simple_text("-", "currency_text", nil, nil, var_1_9),
+		window_button = UIWidgets.create_default_button("window_button", tbl_6.window_button.size, "button_frame_02_gold", nil, Localize("welcome_currency_popup_button_claim"), 30, nil, "button_detail_01_gold", nil, flag),
+		window_title = UIWidgets.create_simple_text("interact_open_store", "window_title", tbl_6.window_title.size, nil, tbl_7),
+		currency_icon = UIWidgets.create_simple_texture(icon_big, "currency_icon"),
+		currency_title = UIWidgets.create_simple_text(Localize(flag_2), "currency_title", nil, nil, tbl_9),
+		currency_text = UIWidgets.create_simple_text("-", "currency_text", nil, nil, tbl_8),
 		currency_area = UIWidgets.create_tiled_texture("currency_area", "menu_frame_bg_07", {
 			512,
 			256
@@ -505,7 +516,7 @@ local function var_0_0(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 			255,
 			255
 		}),
-		currency_area_frame = UIWidgets.create_frame("currency_area_frame", var_1_7.currency_area_frame.size, "button_frame_01_gold", 1),
+		currency_area_frame = UIWidgets.create_frame("currency_area_frame", tbl_6.currency_area_frame.size, "button_frame_01_gold", 1),
 		currency_area_detail_left = UIWidgets.create_simple_uv_texture("button_detail_08_gold", {
 			{
 				0,
@@ -526,8 +537,8 @@ local function var_0_0(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 				1
 			}
 		}, "currency_area_detail_right"),
-		list = var_1_11("list_window", "list", var_1_0, var_1_2),
-		list_scrollbar = UIWidgets.create_scrollbar("list_scrollbar", var_1_3, "window", {
+		list = fn("list_window", "list", tbl, tbl_3),
+		list_scrollbar = UIWidgets.create_scrollbar("list_scrollbar", tbl_4, "window", {
 			255,
 			120,
 			120,
@@ -540,114 +551,120 @@ local function var_0_0(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 		})
 	}
 
-	return var_1_7, var_1_20, var_1_6
+	return tbl_6, tbl_12, tbl_5
 end
 
-local var_0_1 = 10
-local var_0_2 = 800
+local num = 10
+local num_2 = 800
 
 StoreWelcomePopup = class(StoreWelcomePopup)
 
-function StoreWelcomePopup.init(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
-	arg_6_0._ingame_ui = arg_6_1
-	arg_6_0._top_world = arg_6_1.top_world
-	arg_6_0._render_settings = {
+StoreWelcomePopup.init = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+	-- function 6
+	self._ingame_ui = arg_6_1
+	self._top_world = arg_6_1.top_world
+	self._render_settings = {
 		alpha_multiplier = 1
 	}
-	arg_6_0._animations = {}
-	arg_6_0._ui_animations = {}
+	self._animations = {}
+	self._ui_animations = {}
 
-	arg_6_0:_setup_renderers()
+	self:_setup_renderers()
 
-	local var_6_0 = Managers.world:world("level_world")
+	local world = Managers.world:world("level_world")
 
-	arg_6_0._wwise_world = Managers.world:wwise_world(var_6_0)
-	arg_6_0._level_world = var_6_0
+	self._wwise_world = Managers.world:wwise_world(world)
+	self._level_world = world
 
-	local var_6_1 = 700
-	local var_6_2 = var_6_1 - 70
+	local num = 700
+	local num_2 = num - 70
 
-	arg_6_0._entry_size = {
-		var_6_2 - 50,
+	self._entry_size = {
+		num_2 - 50,
 		50
 	}
 
-	arg_6_0:_setup_list_widgets(arg_6_2)
+	self:_setup_list_widgets(arg_6_2)
 
-	arg_6_0._scenegraph_definition, arg_6_0._widget_definitions, arg_6_0._animation_definitions = var_0_0(var_6_1, var_6_2, arg_6_0._total_list_height, arg_6_3, arg_6_5)
+	self._scenegraph_definition, self._widget_definitions, self._animation_definitions = fn(num, num_2, self._total_list_height, arg_6_3, arg_6_5)
 
-	arg_6_0:_create_ui_elements()
+	self:_create_ui_elements()
 
-	arg_6_0._blur_progress = 1
+	self._blur_progress = 1
 
-	arg_6_0:_initialize_scrollbar()
+	self:_initialize_scrollbar()
 
-	arg_6_0._list_initialized = true
+	self._list_initialized = true
 
-	arg_6_0:_set_total_amount(arg_6_4)
-	arg_6_0:_start_transition_animation("on_enter", "on_enter")
+	self:_set_total_amount(arg_6_4)
+	self:_start_transition_animation("on_enter", "on_enter")
 end
 
-function StoreWelcomePopup._setup_renderers(arg_7_0)
-	local var_7_0 = "store_welcome_ui_world"
-	local var_7_1 = 999
+StoreWelcomePopup._setup_renderers = function (self)
+	-- function 7
+	local str = "store_welcome_ui_world"
+	local num = 999
 
-	arg_7_0._welcome_ui_world_viewport_name = "store_welcome_ui_world_viewport"
-	arg_7_0._welcome_ui_world = Managers.world:create_world(var_7_0, GameSettingsDevelopment.default_environment, nil, var_7_1, Application.DISABLE_PHYSICS, Application.DISABLE_APEX_CLOTH)
+	self._welcome_ui_world_viewport_name = "store_welcome_ui_world_viewport"
+	self._welcome_ui_world = Managers.world:create_world(str, GameSettingsDevelopment.default_environment, nil, num, Application.DISABLE_PHYSICS, Application.DISABLE_APEX_CLOTH)
 
-	ScriptWorld.create_viewport(arg_7_0._welcome_ui_world, arg_7_0._welcome_ui_world_viewport_name, "overlay", 1)
+	ScriptWorld.create_viewport(self._welcome_ui_world, self._welcome_ui_world_viewport_name, "overlay", 1)
 
-	arg_7_0._welcome_ui_renderer = arg_7_0._ingame_ui:create_ui_renderer(arg_7_0._welcome_ui_world, false, true)
+	self._welcome_ui_renderer = self._ingame_ui:create_ui_renderer(self._welcome_ui_world, false, true)
 
-	local var_7_2 = 998
-	local var_7_3 = "store_welcome_ui_blur_world"
-	local var_7_4 = "environment/ui_store_default"
+	local num_2 = 998
+	local str_2 = "store_welcome_ui_blur_world"
+	local str_3 = "environment/ui_store_default"
 
-	arg_7_0._blur_welcome_ui_world_viewport_name = "store_welcome_ui_blur_world_viewport"
-	arg_7_0._blur_welcome_ui_world = Managers.world:create_world(var_7_3, var_7_4, nil, var_7_2, Application.DISABLE_PHYSICS, Application.DISABLE_APEX_CLOTH)
+	self._blur_welcome_ui_world_viewport_name = "store_welcome_ui_blur_world_viewport"
+	self._blur_welcome_ui_world = Managers.world:create_world(str_2, str_3, nil, num_2, Application.DISABLE_PHYSICS, Application.DISABLE_APEX_CLOTH)
 
-	ScriptWorld.create_viewport(arg_7_0._blur_welcome_ui_world, arg_7_0._blur_welcome_ui_world_viewport_name, "overlay", 1)
+	ScriptWorld.create_viewport(self._blur_welcome_ui_world, self._blur_welcome_ui_world_viewport_name, "overlay", 1)
 
-	arg_7_0._blur_welcome_ui_renderer = arg_7_0._ingame_ui:create_ui_renderer(arg_7_0._blur_welcome_ui_world, false, true)
+	self._blur_welcome_ui_renderer = self._ingame_ui:create_ui_renderer(self._blur_welcome_ui_world, false, true)
 end
 
-function StoreWelcomePopup._destroy_renderers(arg_8_0)
-	UIRenderer.destroy(arg_8_0._welcome_ui_renderer, arg_8_0._welcome_ui_world)
-	ScriptWorld.destroy_viewport(arg_8_0._welcome_ui_world, arg_8_0._welcome_ui_world_viewport_name)
-	Managers.world:destroy_world(arg_8_0._welcome_ui_world)
+StoreWelcomePopup._destroy_renderers = function (self)
+	-- function 8
+	UIRenderer.destroy(self._welcome_ui_renderer, self._welcome_ui_world)
+	ScriptWorld.destroy_viewport(self._welcome_ui_world, self._welcome_ui_world_viewport_name)
+	Managers.world:destroy_world(self._welcome_ui_world)
 
-	arg_8_0._welcome_ui_world = nil
-	arg_8_0._welcome_ui_renderer = nil
-	arg_8_0._welcome_ui_world_viewport_name = nil
+	self._welcome_ui_world = nil
+	self._welcome_ui_renderer = nil
+	self._welcome_ui_world_viewport_name = nil
 
-	UIRenderer.destroy(arg_8_0._blur_welcome_ui_renderer, arg_8_0._blur_welcome_ui_world)
-	ScriptWorld.destroy_viewport(arg_8_0._blur_welcome_ui_world, arg_8_0._blur_welcome_ui_world_viewport_name)
-	Managers.world:destroy_world(arg_8_0._blur_welcome_ui_world)
+	UIRenderer.destroy(self._blur_welcome_ui_renderer, self._blur_welcome_ui_world)
+	ScriptWorld.destroy_viewport(self._blur_welcome_ui_world, self._blur_welcome_ui_world_viewport_name)
+	Managers.world:destroy_world(self._blur_welcome_ui_world)
 
-	arg_8_0._blur_welcome_ui_world = nil
-	arg_8_0._blur_welcome_ui_renderer = nil
-	arg_8_0._blur_welcome_ui_world_viewport_name = nil
+	self._blur_welcome_ui_world = nil
+	self._blur_welcome_ui_renderer = nil
+	self._blur_welcome_ui_world_viewport_name = nil
 end
 
-function StoreWelcomePopup._start_transition_animation(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
-	local var_9_0 = {
-		wwise_world = arg_9_0._wwise_world,
-		render_settings = arg_9_0._render_settings
+StoreWelcomePopup._start_transition_animation = function (self, arg_9_1, arg_9_2, arg_9_3)
+	-- function 9
+	local tbl = {
+		wwise_world = self._wwise_world,
+		render_settings = self._render_settings
 	}
-	local var_9_1 = arg_9_3 or arg_9_0._widgets_by_name
-	local var_9_2 = arg_9_0._ui_animator:start_animation(arg_9_2, var_9_1, arg_9_0._scenegraph_definition, var_9_0)
+	local flag = arg_9_3 or self._widgets_by_name
+	local start_animation = self._ui_animator:start_animation(arg_9_2, flag, self._scenegraph_definition, tbl)
 
-	arg_9_0._animations[arg_9_1] = var_9_2
+	self._animations[arg_9_1] = start_animation
 
-	return var_9_0
+	return tbl
 end
 
-function StoreWelcomePopup.completed(arg_10_0)
-	return arg_10_0._done
+StoreWelcomePopup.completed = function (self)
+	-- function 10
+	return self._done
 end
 
-function StoreWelcomePopup._create_gamepad_input_description(arg_11_0, arg_11_1)
-	local var_11_0 = {
+StoreWelcomePopup._create_gamepad_input_description = function (self, arg_11_1)
+	-- function 11
+	local tbl = {
 		{
 			input_action = "confirm",
 			priority = 2,
@@ -655,444 +672,504 @@ function StoreWelcomePopup._create_gamepad_input_description(arg_11_0, arg_11_1)
 		}
 	}
 
-	arg_11_0._menu_input_description = MenuInputDescriptionUI:new(nil, arg_11_0._welcome_ui_renderer, arg_11_1, 6, nil, var_11_0, true)
+	self._menu_input_description = MenuInputDescriptionUI:new(nil, self._welcome_ui_renderer, arg_11_1, 6, nil, tbl, true)
 
-	arg_11_0._menu_input_description:set_input_description(nil)
+	self._menu_input_description:set_input_description(nil)
 end
 
-function StoreWelcomePopup._set_fullscreen_effect_enable_state(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
-	local var_12_0 = World.get_data(arg_12_3, "shading_environment")
+StoreWelcomePopup._set_fullscreen_effect_enable_state = function (self, arg_12_1, arg_12_2, arg_12_3)
+	-- function 12
+	local get_data = World.get_data(arg_12_3, "shading_environment")
 
-	arg_12_2 = arg_12_2 or arg_12_1 and 1 or 0
+	arg_12_2 = arg_12_2 or not arg_12_1 or 1 or 0
 
-	if var_12_0 then
-		ShadingEnvironment.set_scalar(var_12_0, "fullscreen_blur_enabled", arg_12_1 and 1 or 0)
-		ShadingEnvironment.set_scalar(var_12_0, "fullscreen_blur_amount", arg_12_1 and arg_12_2 * 0.8 or 0)
-		ShadingEnvironment.apply(var_12_0)
-	end
+	if not get_data then
+		local set_scalar = ShadingEnvironment.set_scalar
+		local var_12_2 = get_data
+		local str = "fullscreen_blur_enabled"
+		local flag
 
-	arg_12_0._fullscreen_effect_enabled = arg_12_1
-end
+		flag = not arg_12_1 and 1 and 0
 
-function StoreWelcomePopup.is_complete(arg_13_0)
-	return arg_13_0._state == "exit"
-end
+		set_scalar(var_12_2, str, flag)
 
-function StoreWelcomePopup.destroy(arg_14_0)
-	if arg_14_0._blur_welcome_ui_world and arg_14_0._fullscreen_effect_enabled then
-		arg_14_0:_set_fullscreen_effect_enable_state(false, 0, arg_14_0._blur_welcome_ui_world)
-	end
+		local set_scalar_2 = ShadingEnvironment.set_scalar
+		local var_12_6 = get_data
+		local str_2 = "fullscreen_blur_amount"
+		local num
 
-	arg_14_0:_destroy_renderers()
-end
+		if not arg_12_1 then
+			num = arg_12_2 * 0.8
 
-function StoreWelcomePopup._create_ui_elements(arg_15_0, arg_15_1)
-	arg_15_0._ui_scenegraph = UISceneGraph.init_scenegraph(arg_15_0._scenegraph_definition)
-
-	local var_15_0 = {}
-	local var_15_1 = {}
-	local var_15_2 = {}
-
-	for iter_15_0, iter_15_1 in pairs(arg_15_0._widget_definitions) do
-		local var_15_3 = UIWidget.init(iter_15_1)
-
-		var_15_2[#var_15_2 + 1] = var_15_3
-		var_15_0[iter_15_0] = var_15_3
-	end
-
-	arg_15_0._widgets = var_15_2
-	arg_15_0._widgets_by_name = var_15_0
-	arg_15_0._widgets_by_state = var_15_1
-
-	UIRenderer.clear_scenegraph_queue(arg_15_0._welcome_ui_renderer)
-
-	arg_15_0._ui_animator = UIAnimator:new(arg_15_0._ui_scenegraph, arg_15_0._animation_definitions)
-end
-
-function StoreWelcomePopup._draw(arg_16_0, arg_16_1, arg_16_2)
-	local var_16_0 = arg_16_0._welcome_ui_renderer
-	local var_16_1 = arg_16_0._blur_welcome_ui_renderer
-	local var_16_2 = arg_16_0._ui_scenegraph
-	local var_16_3 = arg_16_0._render_settings
-	local var_16_4 = Managers.input:is_device_active("gamepad")
-
-	UIRenderer.begin_pass(var_16_0, var_16_2, arg_16_1, arg_16_2, nil, var_16_3)
-
-	local var_16_5 = var_16_3.snap_pixel_positions
-	local var_16_6 = var_16_3.alpha_multiplier or 1
-
-	for iter_16_0, iter_16_1 in ipairs(arg_16_0._widgets) do
-		if iter_16_1.snap_pixel_positions ~= nil then
-			var_16_3.snap_pixel_positions = iter_16_1.snap_pixel_positions
+			if not num then
+				-- Nothing
+			end
 		end
 
-		var_16_3.alpha_multiplier = iter_16_1.alpha_multiplier or var_16_6
+		num = 0
 
-		UIRenderer.draw_widget(var_16_0, iter_16_1)
+		::label_12_0::
 
-		var_16_3.snap_pixel_positions = var_16_5
+		set_scalar_2(var_12_6, str_2, num)
+		ShadingEnvironment.apply(get_data)
 	end
 
-	if arg_16_0._list_initialized then
-		local var_16_7 = arg_16_0._list_widgets
+	self._fullscreen_effect_enabled = arg_12_1
+end
 
-		if var_16_7 then
-			arg_16_0:_update_visible_list_entries()
+StoreWelcomePopup.is_complete = function (self)
+	-- function 13
+	return self._state == "exit"
+end
 
-			for iter_16_2, iter_16_3 in ipairs(var_16_7) do
-				var_16_3.alpha_multiplier = iter_16_3.alpha_multiplier or var_16_6
+StoreWelcomePopup.destroy = function (self)
+	-- function 14
+	if not self._blur_welcome_ui_world and not self._fullscreen_effect_enabled then
+		self:_set_fullscreen_effect_enable_state(false, 0, self._blur_welcome_ui_world)
+	end
 
-				UIRenderer.draw_widget(var_16_0, iter_16_3)
+	self:_destroy_renderers()
+end
+
+StoreWelcomePopup._create_ui_elements = function (self, arg_15_1)
+	-- function 15
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(self._scenegraph_definition)
+
+	local tbl = {}
+	local tbl_2 = {}
+	local tbl_3 = {}
+
+	for k, v in pairs(self._widget_definitions) do
+		local var_15_3 = UIWidget.init(v)
+
+		tbl_3[#tbl_3 + 1] = var_15_3
+		tbl[k] = var_15_3
+	end
+
+	self._widgets = tbl_3
+	self._widgets_by_name = tbl
+	self._widgets_by_state = tbl_2
+
+	UIRenderer.clear_scenegraph_queue(self._welcome_ui_renderer)
+
+	self._ui_animator = UIAnimator:new(self._ui_scenegraph, self._animation_definitions)
+end
+
+StoreWelcomePopup._draw = function (self, arg_16_1, arg_16_2)
+	-- function 16
+	local _welcome_ui_renderer = self._welcome_ui_renderer
+	local _blur_welcome_ui_renderer = self._blur_welcome_ui_renderer
+	local _ui_scenegraph = self._ui_scenegraph
+	local _render_settings = self._render_settings
+	local is_device_active = Managers.input:is_device_active("gamepad")
+
+	UIRenderer.begin_pass(_welcome_ui_renderer, _ui_scenegraph, arg_16_1, arg_16_2, nil, _render_settings)
+
+	local snap_pixel_positions = _render_settings.snap_pixel_positions
+	local alpha_multiplier = _render_settings.alpha_multiplier
+
+	alpha_multiplier = alpha_multiplier or 1
+
+	for i, v in ipairs(self._widgets) do
+		if v.snap_pixel_positions ~= nil then
+			_render_settings.snap_pixel_positions = v.snap_pixel_positions
+		end
+
+		local alpha_multiplier_2 = v.alpha_multiplier
+
+		alpha_multiplier_2 = alpha_multiplier_2 or alpha_multiplier
+		_render_settings.alpha_multiplier = alpha_multiplier_2
+
+		UIRenderer.draw_widget(_welcome_ui_renderer, v)
+
+		_render_settings.snap_pixel_positions = snap_pixel_positions
+	end
+
+	if not self._list_initialized then
+		local _list_widgets = self._list_widgets
+
+		if not _list_widgets then
+			self:_update_visible_list_entries()
+
+			for i_2, v_2 in ipairs(_list_widgets) do
+				local alpha_multiplier_3 = v_2.alpha_multiplier
+
+				alpha_multiplier_3 = alpha_multiplier_3 or alpha_multiplier
+				_render_settings.alpha_multiplier = alpha_multiplier_3
+
+				UIRenderer.draw_widget(_welcome_ui_renderer, v_2)
 			end
 		end
 	end
 
-	var_16_3.alpha_multiplier = var_16_6
+	_render_settings.alpha_multiplier = alpha_multiplier
 
-	UIRenderer.end_pass(var_16_0)
+	UIRenderer.end_pass(_welcome_ui_renderer)
 
-	if var_16_4 then
-		arg_16_0._menu_input_description:draw(var_16_0, arg_16_2)
+	if not is_device_active then
+		self._menu_input_description:draw(_welcome_ui_renderer, arg_16_2)
 	end
 end
 
-function StoreWelcomePopup._handle_input(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
-	local var_17_0 = Managers.input:is_device_active("gamepad") and arg_17_1:get("confirm", true)
-	local var_17_1 = arg_17_0._widgets_by_name.window_button
+StoreWelcomePopup._handle_input = function (self, arg_17_1, arg_17_2, arg_17_3)
+	-- function 17
+	local flag = not Managers.input:is_device_active("gamepad") and arg_17_1:get("confirm", true)
+	local window_button = self._widgets_by_name.window_button
 
-	UIWidgetUtils.animate_default_button(var_17_1, arg_17_2)
+	UIWidgetUtils.animate_default_button(window_button, arg_17_2)
 
-	if arg_17_0:_is_button_hover_enter(var_17_1) then
-		arg_17_0:_play_sound("Play_hud_hover")
+	if not self:_is_button_hover_enter(window_button) then
+		self:_play_sound("Play_hud_hover")
 	end
 
-	if arg_17_0:_is_button_pressed(var_17_1) or var_17_0 then
-		arg_17_0:_play_sound("Play_hud_store_button_buy")
+	if self:_is_button_pressed(window_button) or not flag then
+		self:_play_sound("Play_hud_store_button_buy")
 
-		arg_17_0._done = true
+		self._done = true
 	end
 end
 
-function StoreWelcomePopup.update(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
-	if not arg_18_0._menu_input_description then
-		arg_18_0:_create_gamepad_input_description(arg_18_1)
+StoreWelcomePopup.update = function (self, arg_18_1, arg_18_2, arg_18_3)
+	-- function 18
+	if not self._menu_input_description then
+		self:_create_gamepad_input_description(arg_18_1)
 	end
 
-	if arg_18_0._list_initialized then
-		local var_18_0 = arg_18_0._scrollbar_logic
+	if not self._list_initialized then
+		local _scrollbar_logic = self._scrollbar_logic
 
-		if var_18_0 then
-			var_18_0:update(arg_18_2, arg_18_3)
-			arg_18_0:_update_scroll_position()
+		if not _scrollbar_logic then
+			_scrollbar_logic:update(arg_18_2, arg_18_3)
+			self:_update_scroll_position()
 		end
 	end
 
-	arg_18_0:_handle_input(arg_18_1, arg_18_2, arg_18_3)
+	self:_handle_input(arg_18_1, arg_18_2, arg_18_3)
 
-	local var_18_1 = arg_18_0._blur_progress or arg_18_0._render_settings.alpha_multiplier
+	local _blur_progress = self._blur_progress
 
-	if var_18_1 then
-		arg_18_0:_set_fullscreen_effect_enable_state(true, var_18_1, arg_18_0._blur_welcome_ui_world)
-	elseif arg_18_0._fullscreen_effect_enabled then
-		arg_18_0:_set_fullscreen_effect_enable_state(false, 0, arg_18_0._blur_welcome_ui_world)
+	_blur_progress = _blur_progress or self._render_settings.alpha_multiplier
+
+	if not _blur_progress then
+		self:_set_fullscreen_effect_enable_state(true, _blur_progress, self._blur_welcome_ui_world)
+	elseif not self._fullscreen_effect_enabled then
+		self:_set_fullscreen_effect_enable_state(false, 0, self._blur_welcome_ui_world)
 	end
 
-	arg_18_0:_update_animations(arg_18_2)
-	arg_18_0:_draw(arg_18_1, arg_18_2)
+	self:_update_animations(arg_18_2)
+	self:_draw(arg_18_1, arg_18_2)
 end
 
-function StoreWelcomePopup._update_animations(arg_19_0, arg_19_1)
-	for iter_19_0, iter_19_1 in pairs(arg_19_0._ui_animations) do
-		UIAnimation.update(iter_19_1, arg_19_1)
+StoreWelcomePopup._update_animations = function (self, arg_19_1)
+	-- function 19
+	for k, v in pairs(self._ui_animations) do
+		UIAnimation.update(v, arg_19_1)
 
-		if UIAnimation.completed(iter_19_1) then
-			arg_19_0._ui_animations[iter_19_0] = nil
+		if not UIAnimation.completed(v) then
+			self._ui_animations[k] = nil
 		end
 	end
 
-	local var_19_0 = arg_19_0._animations
-	local var_19_1 = arg_19_0._ui_animator
+	local _animations = self._animations
+	local _ui_animator = self._ui_animator
 
-	var_19_1:update(arg_19_1)
+	_ui_animator:update(arg_19_1)
 
-	for iter_19_2, iter_19_3 in pairs(var_19_0) do
-		if var_19_1:is_animation_completed(iter_19_3) then
-			var_19_1:stop_animation(iter_19_3)
+	for k_2, v_2 in pairs(_animations) do
+		if not _ui_animator:is_animation_completed(v_2) then
+			_ui_animator:stop_animation(v_2)
 
-			var_19_0[iter_19_2] = nil
+			_animations[k_2] = nil
 		end
 	end
 end
 
-function StoreWelcomePopup._is_button_hover_enter(arg_20_0, arg_20_1)
-	local var_20_0 = arg_20_1.content
+StoreWelcomePopup._is_button_hover_enter = function (arg_20_0, arg_20_1)
+	-- function 20
+	local content = arg_20_1.content
+	local button_hotspot = content.button_hotspot
 
-	return (var_20_0.button_hotspot or var_20_0.hotspot).on_hover_enter
+	button_hotspot = button_hotspot or content.hotspot
+
+	return button_hotspot.on_hover_enter
 end
 
-function StoreWelcomePopup._is_button_pressed(arg_21_0, arg_21_1)
-	local var_21_0 = arg_21_1.content
-	local var_21_1 = var_21_0.button_hotspot or var_21_0.hotspot
+StoreWelcomePopup._is_button_pressed = function (arg_21_0, arg_21_1)
+	-- function 21
+	local content = arg_21_1.content
+	local button_hotspot = content.button_hotspot
 
-	if var_21_1.on_release then
-		var_21_1.on_release = false
+	button_hotspot = button_hotspot or content.hotspot
+
+	if not button_hotspot.on_release then
+		button_hotspot.on_release = false
 
 		return true
 	end
 end
 
-function StoreWelcomePopup._play_sound(arg_22_0, arg_22_1)
-	WwiseWorld.trigger_event(arg_22_0._wwise_world, arg_22_1)
+StoreWelcomePopup._play_sound = function (self, arg_22_1)
+	-- function 22
+	WwiseWorld.trigger_event(self._wwise_world, arg_22_1)
 end
 
-function StoreWelcomePopup._setup_list_widgets(arg_23_0, arg_23_1)
-	local var_23_0 = {}
-	local var_23_1 = "list_root"
-	local var_23_2 = true
-	local var_23_3 = arg_23_0._entry_size
+StoreWelcomePopup._setup_list_widgets = function (self, arg_23_1)
+	-- function 23
+	local tbl = {}
+	local str = "list_root"
+	local flag = true
+	local _entry_size = self._entry_size
 
-	for iter_23_0, iter_23_1 in ipairs(arg_23_1) do
-		local var_23_4 = iter_23_1.type
-		local var_23_5 = iter_23_1.settings
+	for i, v in ipairs(arg_23_1) do
+		local type = v.type
+		local settings = v.settings
 		local var_23_6
 
-		if var_23_4 == "body" then
-			local var_23_7 = 5
-			local var_23_8 = UIWidgets.create_store_body_text_definition(var_23_1, var_23_3, var_23_2)
+		if type == "body" then
+			local num = 5
+			local create_store_body_text_definition = UIWidgets.create_store_body_text_definition(str, _entry_size, flag)
 
-			var_23_6 = UIWidget.init(var_23_8)
+			var_23_6 = UIWidget.init(create_store_body_text_definition)
 
-			arg_23_0:_populate_text_widget(var_23_6, var_23_5, var_23_7)
-		elseif var_23_4 == "summary_title" then
-			local var_23_9 = 5
-			local var_23_10 = UIWidgets.create_store_currency_summary_title_definition(var_23_1, var_23_3, var_23_2)
+			self:_populate_text_widget(var_23_6, settings, num)
+		elseif type == "summary_title" then
+			local num_2 = 5
+			local create_store_currency_summary_title_definition = UIWidgets.create_store_currency_summary_title_definition(str, _entry_size, flag)
 
-			var_23_6 = UIWidget.init(var_23_10)
+			var_23_6 = UIWidget.init(create_store_currency_summary_title_definition)
 
-			arg_23_0:_populate_text_widget(var_23_6, var_23_5, var_23_9)
-			arg_23_0:_populate_currency_title_widget(var_23_6, var_23_5)
-		elseif var_23_4 == "summary_entry" then
-			local var_23_11 = UIWidgets.create_store_currency_summary_entry_definition(var_23_1, var_23_3, var_23_2)
-			local var_23_12 = -5
+			self:_populate_text_widget(var_23_6, settings, num_2)
+			self:_populate_currency_title_widget(var_23_6, settings)
+		elseif type == "summary_entry" then
+			local create_store_currency_summary_entry_definition = UIWidgets.create_store_currency_summary_entry_definition(str, _entry_size, flag)
+			local num_3 = -5
 
-			var_23_6 = UIWidget.init(var_23_11)
+			var_23_6 = UIWidget.init(create_store_currency_summary_entry_definition)
 
-			arg_23_0:_populate_text_widget(var_23_6, var_23_5, var_23_12)
-			arg_23_0:_populate_currency_entry_widget(var_23_6, var_23_5)
+			self:_populate_text_widget(var_23_6, settings, num_3)
+			self:_populate_currency_entry_widget(var_23_6, settings)
 		end
 
-		var_23_0[#var_23_0 + 1] = var_23_6
+		tbl[#tbl + 1] = var_23_6
 	end
 
-	arg_23_0._list_widgets = var_23_0
+	self._list_widgets = tbl
 
-	arg_23_0:_align_dlc_widgets()
+	self:_align_dlc_widgets()
 end
 
-function StoreWelcomePopup._populate_text_widget(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
-	local var_24_0 = arg_24_1.content
-	local var_24_1 = arg_24_1.style
-	local var_24_2 = arg_24_2.text
+StoreWelcomePopup._populate_text_widget = function (self, arg_24_1, arg_24_2, arg_24_3)
+	-- function 24
+	local content = arg_24_1.content
+	local style = arg_24_1.style
+	local text = arg_24_2.text
 
-	if arg_24_2.localize then
-		var_24_2 = Localize(var_24_2)
+	if not arg_24_2.localize then
+		text = Localize(text)
 	end
 
-	local var_24_3 = var_24_1.text
-	local var_24_4 = var_24_3.size
-	local var_24_5 = var_24_3.offset
-	local var_24_6 = arg_24_0._welcome_ui_renderer
-	local var_24_7 = UIUtils.get_text_height(var_24_6, var_24_4, var_24_3, var_24_2)
+	local text_2 = style.text
+	local size = text_2.size
+	local offset = text_2.offset
+	local _welcome_ui_renderer = self._welcome_ui_renderer
+	local get_text_height = UIUtils.get_text_height(_welcome_ui_renderer, size, text_2, text)
 
-	if arg_24_3 then
-		var_24_4[2] = var_24_7 + arg_24_3
+	if not arg_24_3 then
+		size[2] = get_text_height + arg_24_3
 	else
-		var_24_4[2] = var_24_7
+		size[2] = get_text_height
 	end
 
-	var_24_5[2] = -var_24_4[2]
-	var_24_0.size[2] = var_24_4[2]
+	offset[2] = -size[2]
+	content.size[2] = size[2]
 
-	local var_24_8 = var_24_1.text_shadow
+	local text_shadow = style.text_shadow
 
-	var_24_8.size[2] = var_24_4[2]
-	var_24_8.offset[2] = -(var_24_4[2] + 2)
-	var_24_0.text = var_24_2
+	text_shadow.size[2] = size[2]
+	text_shadow.offset[2] = -(size[2] + 2)
+	content.text = text
 end
 
-function StoreWelcomePopup._populate_currency_title_widget(arg_25_0, arg_25_1, arg_25_2)
-	local var_25_0 = arg_25_1.content
-	local var_25_1 = arg_25_1.style
-	local var_25_2 = var_25_1.text.size
+StoreWelcomePopup._populate_currency_title_widget = function (arg_25_0, arg_25_1, arg_25_2)
+	-- function 25
+	local content = arg_25_1.content
+	local style = arg_25_1.style
+	local size = style.text.size
 
-	var_25_1.divider.offset[2] = -var_25_2[2]
-	var_25_1.divider_shadow.offset[2] = -(var_25_2[2] + 2)
+	style.divider.offset[2] = -size[2]
+	style.divider_shadow.offset[2] = -(size[2] + 2)
 
-	local var_25_3 = var_25_1.text2
-	local var_25_4 = var_25_3.size
-	local var_25_5 = var_25_3.offset
+	local text2 = style.text2
+	local size_2 = text2.size
+	local offset = text2.offset
 
-	var_25_4[2] = var_25_2[2]
-	var_25_5[2] = -var_25_2[2]
+	size_2[2] = size[2]
+	offset[2] = -size[2]
 
-	local var_25_6 = var_25_1.text2_shadow
+	local text2_shadow = style.text2_shadow
 
-	var_25_6.size[2] = var_25_2[2]
-	var_25_6.offset[2] = -(var_25_2[2] + 2)
+	text2_shadow.size[2] = size[2]
+	text2_shadow.offset[2] = -(size[2] + 2)
 
-	local var_25_7 = arg_25_2.text2
+	local text2_2 = arg_25_2.text2
 
-	if arg_25_2.localize then
-		var_25_7 = Localize(var_25_7)
+	if not arg_25_2.localize then
+		text2_2 = Localize(text2_2)
 	end
 
-	var_25_0.text2 = var_25_7
+	content.text2 = text2_2
 end
 
-function StoreWelcomePopup._populate_currency_entry_widget(arg_26_0, arg_26_1, arg_26_2)
-	local var_26_0 = arg_26_1.content
-	local var_26_1 = arg_26_1.style
-	local var_26_2 = var_26_1.text.size
-	local var_26_3 = var_26_1.text2
-	local var_26_4 = var_26_3.size
-	local var_26_5 = var_26_3.offset
+StoreWelcomePopup._populate_currency_entry_widget = function (arg_26_0, arg_26_1, arg_26_2)
+	-- function 26
+	local content = arg_26_1.content
+	local style = arg_26_1.style
+	local size = style.text.size
+	local text2 = style.text2
+	local size_2 = text2.size
+	local offset = text2.offset
 
-	var_26_4[2] = var_26_2[2]
-	var_26_5[2] = -var_26_2[2]
+	size_2[2] = size[2]
+	offset[2] = -size[2]
 
-	local var_26_6 = var_26_1.text2_shadow
+	local text2_shadow = style.text2_shadow
 
-	var_26_6.size[2] = var_26_2[2]
-	var_26_6.offset[2] = -(var_26_2[2] + 2)
+	text2_shadow.size[2] = size[2]
+	text2_shadow.offset[2] = -(size[2] + 2)
 
-	local var_26_7 = arg_26_2.value
+	local value = arg_26_2.value
 
-	var_26_0.text2 = UIUtils.comma_value(var_26_7)
+	content.text2 = UIUtils.comma_value(value)
 end
 
-function StoreWelcomePopup._align_dlc_widgets(arg_27_0)
-	local var_27_0 = 0
-	local var_27_1 = 0
-	local var_27_2 = 0
-	local var_27_3 = 1
-	local var_27_4 = 1
-	local var_27_5 = 0
-	local var_27_6 = 0
-	local var_27_7 = arg_27_0._list_widgets
-	local var_27_8 = #var_27_7
+StoreWelcomePopup._align_dlc_widgets = function (self)
+	-- function 27
+	local num_3 = 0
+	local num_4 = 0
+	local num_5 = 0
+	local num_6 = 1
+	local num_7 = 1
+	local num_8 = 0
+	local num_9 = 0
+	local _list_widgets = self._list_widgets
+	local count = #_list_widgets
 
-	for iter_27_0, iter_27_1 in ipairs(var_27_7) do
-		local var_27_9 = iter_27_1.offset
-		local var_27_10 = iter_27_1.content
-		local var_27_11 = var_27_10.size
-		local var_27_12 = var_27_11[1]
-		local var_27_13 = var_27_11[2]
+	for i, v in ipairs(_list_widgets) do
+		local offset = v.offset
+		local content = v.content
+		local size = content.size
+		local var_27_12 = size[1]
+		local var_27_13 = size[2]
 
-		if var_27_1 + var_27_12 > var_0_2 then
-			var_27_4 = 1
-			var_27_3 = var_27_3 + 1
-			var_27_1 = 0
-			var_27_2 = var_27_2 - (var_27_6 + var_0_1)
-			var_27_6 = 0
+		if not (num_4 + var_27_12 > num_2) then
+			num_7 = 1
+			num_6 = num_6 + 1
+			num_4 = 0
+			num_5 = num_5 - (num_9 + num)
+			num_9 = 0
 		end
 
-		var_27_9[1] = var_27_1
-		var_27_9[2] = var_27_2
-		iter_27_1.default_offset = table.clone(var_27_9)
-		var_27_10.row = var_27_3
-		var_27_10.column = var_27_4
-		var_27_1 = var_27_1 + (var_27_12 + var_0_1)
+		offset[1] = num_4
+		offset[2] = num_5
+		v.default_offset = table.clone(offset)
+		content.row = num_6
+		content.column = num_7
+		num_4 = num_4 + (var_27_12 + num)
 
-		if iter_27_0 == var_27_8 then
-			var_27_0 = math.abs(var_27_2 - var_27_13)
+		if i == count then
+			num_3 = math.abs(num_5 - var_27_13)
 		end
 
-		var_27_4 = var_27_4 + 1
+		num_7 = num_7 + 1
 
 		local var_27_14 = var_27_13
 
-		if var_27_6 < var_27_13 then
-			var_27_6 = var_27_13
+		if num_9 < var_27_13 then
+			num_9 = var_27_13
 		end
 	end
 
-	arg_27_0._total_list_height = var_27_0
+	self._total_list_height = num_3
 end
 
-function StoreWelcomePopup._initialize_scrollbar(arg_28_0)
-	local var_28_0 = arg_28_0._widgets_by_name.list_scrollbar
+StoreWelcomePopup._initialize_scrollbar = function (self)
+	-- function 28
+	local list_scrollbar = self._widgets_by_name.list_scrollbar
 
-	arg_28_0._scrollbar_logic = ScrollBarLogic:new(var_28_0)
+	self._scrollbar_logic = ScrollBarLogic:new(list_scrollbar)
 
-	local var_28_1 = arg_28_0._scenegraph_definition.list_window.size
-	local var_28_2 = arg_28_0._scenegraph_definition.list_scrollbar.size
-	local var_28_3 = var_28_1[2]
-	local var_28_4 = arg_28_0._total_list_height
-	local var_28_5 = var_28_2[2]
-	local var_28_6 = 220 + var_0_1 * 1.5
-	local var_28_7 = 1
-	local var_28_8 = arg_28_0._scrollbar_logic
+	local size = self._scenegraph_definition.list_window.size
+	local size_2 = self._scenegraph_definition.list_scrollbar.size
+	local var_28_3 = size[2]
+	local _total_list_height = self._total_list_height
+	local var_28_5 = size_2[2]
+	local num_2 = 220 + num * 1.5
+	local num_3 = 1
+	local _scrollbar_logic = self._scrollbar_logic
 
-	var_28_8:set_scrollbar_values(var_28_3, var_28_4, var_28_5, var_28_6, var_28_7)
-	var_28_8:set_scroll_percentage(0)
+	_scrollbar_logic:set_scrollbar_values(var_28_3, _total_list_height, var_28_5, num_2, num_3)
+	_scrollbar_logic:set_scroll_percentage(0)
 
-	var_28_0.content.visible = var_28_3 < var_28_4
+	list_scrollbar.content.visible = var_28_3 < _total_list_height
 end
 
-function StoreWelcomePopup._update_scroll_position(arg_29_0)
-	local var_29_0 = arg_29_0._scrollbar_logic:get_scrolled_length()
+StoreWelcomePopup._update_scroll_position = function (self)
+	-- function 29
+	local get_scrolled_length = self._scrollbar_logic:get_scrolled_length()
 
-	if var_29_0 ~= arg_29_0._scrolled_length then
-		arg_29_0._ui_scenegraph.list.local_position[2] = var_29_0
-		arg_29_0._scrolled_length = var_29_0
+	if get_scrolled_length ~= self._scrolled_length then
+		self._ui_scenegraph.list.local_position[2] = get_scrolled_length
+		self._scrolled_length = get_scrolled_length
 	end
 end
 
-function StoreWelcomePopup._update_visible_list_entries(arg_30_0)
-	local var_30_0 = arg_30_0._scrollbar_logic
+StoreWelcomePopup._update_visible_list_entries = function (self)
+	-- function 30
+	local _scrollbar_logic = self._scrollbar_logic
 
-	if not var_30_0:enabled() then
+	if not _scrollbar_logic:enabled() then
 		return
 	end
 
-	local var_30_1 = var_30_0:get_scroll_percentage()
-	local var_30_2 = var_30_0:get_scrolled_length()
-	local var_30_3 = var_30_0:get_scroll_length()
-	local var_30_4 = arg_30_0._scenegraph_definition.list_window.size
-	local var_30_5 = var_0_1 * 2
-	local var_30_6 = var_30_4[2] + var_30_5
-	local var_30_7 = arg_30_0._list_widgets
-	local var_30_8 = #var_30_7
+	local get_scroll_percentage = _scrollbar_logic:get_scroll_percentage()
+	local get_scrolled_length = _scrollbar_logic:get_scrolled_length()
+	local get_scroll_length = _scrollbar_logic:get_scroll_length()
+	local size = self._scenegraph_definition.list_window.size
+	local num_2 = num * 2
+	local num_3 = size[2] + num_2
+	local _list_widgets = self._list_widgets
+	local count = #_list_widgets
 
-	for iter_30_0, iter_30_1 in ipairs(var_30_7) do
-		local var_30_9 = iter_30_1.offset
-		local var_30_10 = iter_30_1.content
-		local var_30_11 = var_30_10.size
-		local var_30_12 = math.abs(var_30_9[2]) + var_30_11[2]
-		local var_30_13 = false
+	for i, v in ipairs(_list_widgets) do
+		local offset = v.offset
+		local content = v.content
+		local size_2 = content.size
+		local num_4 = math.abs(offset[2]) + size_2[2]
+		local flag = false
 
-		if var_30_12 < var_30_2 - var_30_5 then
-			var_30_13 = true
-		elseif var_30_6 < math.abs(var_30_9[2]) - var_30_2 then
-			var_30_13 = true
+		if num_4 < get_scrolled_length - num_2 then
+			flag = true
+		elseif num_3 < math.abs(offset[2]) - get_scrolled_length then
+			flag = true
 		end
 
-		var_30_10.visible = not var_30_13
+		content.visible = not flag
 	end
 end
 
-function StoreWelcomePopup._set_total_amount(arg_31_0, arg_31_1)
-	local var_31_0 = arg_31_0._widgets_by_name
-	local var_31_1 = var_31_0.currency_icon
-	local var_31_2 = var_31_0.currency_text
-	local var_31_3 = UIUtils.comma_value(tostring(arg_31_1))
+StoreWelcomePopup._set_total_amount = function (self, arg_31_1)
+	-- function 31
+	local _widgets_by_name = self._widgets_by_name
+	local currency_icon = _widgets_by_name.currency_icon
+	local currency_text = _widgets_by_name.currency_text
+	local comma_value = UIUtils.comma_value(tostring(arg_31_1))
 
-	var_31_2.content.text = var_31_3
+	currency_text.content.text = comma_value
 
-	local var_31_4 = arg_31_0._welcome_ui_renderer
-	local var_31_5 = UIUtils.get_text_width(var_31_4, var_31_2.style.text, var_31_3)
-	local var_31_6 = arg_31_0._scenegraph_definition.currency_icon.size[1]
-	local var_31_7 = var_31_5 + 5
+	local _welcome_ui_renderer = self._welcome_ui_renderer
+	local get_text_width = UIUtils.get_text_width(_welcome_ui_renderer, currency_text.style.text, comma_value)
+	local var_31_6 = self._scenegraph_definition.currency_icon.size[1]
+	local num = get_text_width + 5
 
-	arg_31_0._ui_scenegraph[var_31_2.scenegraph_id].size[1] = var_31_7
+	self._ui_scenegraph[currency_text.scenegraph_id].size[1] = num
 end

@@ -4,296 +4,327 @@ local var_0_0 = local_require("scripts/ui/views/cutscene_overlay_ui_definitions"
 
 CutsceneOverlayUI = class(CutsceneOverlayUI)
 
-function CutsceneOverlayUI.init(arg_1_0, arg_1_1, arg_1_2)
-	arg_1_0._parent = arg_1_1
-	arg_1_0._ui_renderer = arg_1_2.ui_renderer
+CutsceneOverlayUI.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	self._parent = arg_1_1
+	self._ui_renderer = arg_1_2.ui_renderer
 
-	local var_1_0 = Managers.world
+	local world = Managers.world
 
-	if var_1_0 and var_1_0:has_world("level_world") then
-		local var_1_1 = var_1_0:world("level_world")
+	if not (not world and world:has_world("level_world")) then
+		local world_2 = world:world("level_world")
 
-		arg_1_0._wwise_world = var_1_0:wwise_world(var_1_1)
+		self._wwise_world = world:wwise_world(world_2)
 	end
 
-	local var_1_2 = Managers.state.event
+	local event = Managers.state.event
 
-	if var_1_2 then
-		arg_1_0._registered_event = true
+	if not event then
+		self._registered_event = true
 
-		var_1_2:register(arg_1_0, "event_start_cutscene_overlay", "event_start_function")
+		event:register(self, "event_start_cutscene_overlay", "event_start_function")
 	end
 
-	arg_1_0._render_settings = {
+	self._render_settings = {
 		alpha_multiplier = 1
 	}
 end
 
-function CutsceneOverlayUI.force_unregister_event_listener(arg_2_0)
-	local var_2_0 = Managers.state.event
+CutsceneOverlayUI.force_unregister_event_listener = function (self)
+	-- function 2
+	local event = Managers.state.event
 
-	if var_2_0 and arg_2_0._registered_event then
-		var_2_0:unregister("event_start_cutscene_overlay", arg_2_0)
+	if not event and not self._registered_event then
+		event:unregister("event_start_cutscene_overlay", self)
 	end
 
-	arg_2_0._registered_event = nil
+	self._registered_event = nil
 end
 
-function CutsceneOverlayUI._create_ui_elements(arg_3_0)
-	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
+CutsceneOverlayUI._create_ui_elements = function (self)
+	-- function 3
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 
-	local var_3_0 = {}
-	local var_3_1 = {}
+	local tbl = {}
+	local tbl_2 = {}
 
-	for iter_3_0, iter_3_1 in pairs(arg_3_0._templates) do
-		var_3_1[iter_3_0] = {
+	for k, v in pairs(self._templates) do
+		tbl_2[k] = {
 			text_widget = UIWidget.init(var_0_0.widget_definitions.text),
 			image_widget = UIWidget.init(var_0_0.widget_definitions.image)
 		}
-		var_3_0[iter_3_0] = {}
+		tbl[k] = {}
 	end
 
-	arg_3_0._active_template_lists = var_3_0
-	arg_3_0._widgets_by_template = var_3_1
+	self._active_template_lists = tbl
+	self._widgets_by_template = tbl_2
 end
 
-function CutsceneOverlayUI.destroy(arg_4_0)
-	local var_4_0 = Managers.state.event
+CutsceneOverlayUI.destroy = function (self)
+	-- function 4
+	local event = Managers.state.event
 
-	if var_4_0 and arg_4_0._registered_event then
-		var_4_0:unregister("event_start_cutscene_overlay", arg_4_0)
+	if not event and not self._registered_event then
+		event:unregister("event_start_cutscene_overlay", self)
 	end
 end
 
-function CutsceneOverlayUI.event_start_function(arg_5_0, arg_5_1)
-	arg_5_0:start(arg_5_1)
+CutsceneOverlayUI.event_start_function = function (self, arg_5_1)
+	-- function 5
+	self:start(arg_5_1)
 end
 
-function CutsceneOverlayUI.start(arg_6_0, arg_6_1)
-	local var_6_0 = arg_6_1.templates
+CutsceneOverlayUI.start = function (self, arg_6_1)
+	-- function 6
+	local templates = arg_6_1.templates
 
-	arg_6_0._templates = table.clone(var_6_0)
-	arg_6_0._start_time = Managers.time:time("ui")
-	arg_6_0._complete = false
+	self._templates = table.clone(templates)
+	self._start_time = Managers.time:time("ui")
+	self._complete = false
 
-	arg_6_0:_create_ui_elements()
+	self:_create_ui_elements()
 end
 
-function CutsceneOverlayUI._present_template_entry(arg_7_0, arg_7_1, arg_7_2)
-	local var_7_0 = arg_7_2.text
-	local var_7_1 = arg_7_2.image
-	local var_7_2 = 255
-	local var_7_3 = arg_7_2.duration
-	local var_7_4 = arg_7_2.start_time
-	local var_7_5 = arg_7_2.end_time
-	local var_7_6 = arg_7_2.fade_in_duration
-	local var_7_7 = arg_7_2.fade_out_duration
-	local var_7_8 = arg_7_0._widgets_by_template[arg_7_1]
+CutsceneOverlayUI._present_template_entry = function (self, arg_7_1, arg_7_2)
+	-- function 7
+	local text = arg_7_2.text
+	local image = arg_7_2.image
+	local num = 255
+	local duration = arg_7_2.duration
+	local start_time = arg_7_2.start_time
+	local end_time = arg_7_2.end_time
+	local fade_in_duration = arg_7_2.fade_in_duration
+	local fade_out_duration = arg_7_2.fade_out_duration
+	local var_7_8 = self._widgets_by_template[arg_7_1]
 	local var_7_9
 
-	if var_7_0 then
+	if not text then
 		var_7_9 = var_7_8.text_widget
 
-		local var_7_10 = var_7_9.content
+		local content = var_7_9.content
+		local var_7_11
 
-		var_7_10.text = arg_7_2.localize and Localize(var_7_0) or var_7_0
+		if not arg_7_2.localize then
+			var_7_11 = Localize(text)
 
-		local var_7_11 = arg_7_2.font_size
-		local var_7_12 = arg_7_2.font_type
-		local var_7_13 = arg_7_2.word_wrap
-		local var_7_14 = arg_7_2.font_upper_case
-		local var_7_15 = arg_7_2.vertical_alignment or "center"
+			if not var_7_11 then
+				-- Nothing
+			end
+		end
+
+		var_7_11 = text
+
+		::label_7_0::
+
+		content.text = var_7_11
+
+		local font_size = arg_7_2.font_size
+		local font_type = arg_7_2.font_type
+		local word_wrap = arg_7_2.word_wrap
+		local font_upper_case = arg_7_2.font_upper_case
+		local vertical_alignment = arg_7_2.vertical_alignment
+
+		vertical_alignment = vertical_alignment or "center"
 
 		if not arg_7_2.horizontal_alignment then
-			local var_7_16 = "center"
+			local str = "center"
 		end
 
-		local var_7_17 = arg_7_2.color or Colors.get_color_table_with_alpha("white", 255)
-		local var_7_18 = arg_7_2.offset
-		local var_7_19 = arg_7_2.use_shadow
-		local var_7_20 = arg_7_2.inject_alpha
-		local var_7_21 = var_7_9.style
-		local var_7_22 = var_7_21.text
-		local var_7_23 = var_7_21.text_shadow
-		local var_7_24 = var_7_22.text_color
+		local color = arg_7_2.color
 
-		var_7_2 = var_7_17[1]
-		var_7_24[2] = var_7_17[2]
-		var_7_24[3] = var_7_17[3]
-		var_7_24[4] = var_7_17[4]
-		var_7_22.inject_alpha = var_7_20
-		var_7_22.font_size = var_7_11
-		var_7_23.font_size = var_7_11
-		var_7_22.font_type = var_7_12
-		var_7_23.font_type = var_7_12
-		var_7_22.word_wrap = var_7_13
-		var_7_23.word_wrap = var_7_13
-		var_7_22.upper_case = var_7_14
-		var_7_23.upper_case = var_7_14
-		var_7_22.vertical_alignment = var_7_15
-		var_7_23.vertical_alignment = var_7_15
+		color = color or Colors.get_color_table_with_alpha("white", 255)
 
-		if var_7_19 ~= nil then
-			var_7_10.use_shadow = var_7_19
+		local offset = arg_7_2.offset
+		local use_shadow = arg_7_2.use_shadow
+		local inject_alpha = arg_7_2.inject_alpha
+		local style = var_7_9.style
+		local text_2 = style.text
+		local text_shadow = style.text_shadow
+		local text_color = text_2.text_color
+
+		num = color[1]
+		text_color[2] = color[2]
+		text_color[3] = color[3]
+		text_color[4] = color[4]
+		text_2.inject_alpha = inject_alpha
+		text_2.font_size = font_size
+		text_shadow.font_size = font_size
+		text_2.font_type = font_type
+		text_shadow.font_type = font_type
+		text_2.word_wrap = word_wrap
+		text_shadow.word_wrap = word_wrap
+		text_2.upper_case = font_upper_case
+		text_shadow.upper_case = font_upper_case
+		text_2.vertical_alignment = vertical_alignment
+		text_shadow.vertical_alignment = vertical_alignment
+
+		if use_shadow ~= nil then
+			content.use_shadow = use_shadow
 		end
 
-		local var_7_25 = var_7_22.offset
-		local var_7_26 = var_7_23.offset
+		local offset_2 = text_2.offset
+		local offset_3 = text_shadow.offset
 
-		var_7_25[1] = var_7_18[1]
-		var_7_25[2] = var_7_18[2]
-		var_7_25[3] = var_7_18[3]
-		var_7_26[1] = var_7_18[1] + 2
-		var_7_26[2] = var_7_18[2] - 2
-		var_7_26[3] = var_7_18[3] - 1
-	elseif var_7_1 then
+		offset_2[1] = offset[1]
+		offset_2[2] = offset[2]
+		offset_2[3] = offset[3]
+		offset_3[1] = offset[1] + 2
+		offset_3[2] = offset[2] - 2
+		offset_3[3] = offset[3] - 1
+	elseif not image then
 		var_7_9 = var_7_8.image_widget
-		var_7_9.content.texture_id = var_7_1
+		var_7_9.content.texture_id = image
 
-		local var_7_27 = var_7_9.style.texture_id
-		local var_7_28 = var_7_27.offset
-		local var_7_29 = arg_7_2.offset
+		local texture_id = var_7_9.style.texture_id
+		local offset_4 = texture_id.offset
+		local offset_5 = arg_7_2.offset
 
-		var_7_28[1] = var_7_29[1]
-		var_7_28[2] = var_7_29[2]
-		var_7_28[3] = var_7_29[3]
+		offset_4[1] = offset_5[1]
+		offset_4[2] = offset_5[2]
+		offset_4[3] = offset_5[3]
 
-		local var_7_30 = arg_7_2.image_size
-		local var_7_31 = var_7_27.texture_size
+		local image_size = arg_7_2.image_size
+		local texture_size = texture_id.texture_size
 
-		var_7_31[1] = var_7_30[1]
-		var_7_31[2] = var_7_30[2]
+		texture_size[1] = image_size[1]
+		texture_size[2] = image_size[2]
 	end
 
 	return {
 		initialized = false,
-		text = var_7_0,
-		image = var_7_1,
-		duration = var_7_3,
+		text = text,
+		image = image,
+		duration = duration,
 		widget = var_7_9,
-		max_alpha = var_7_2,
-		start_time = var_7_4,
-		end_time = var_7_5,
-		fade_in_duration = var_7_6 and var_7_6 > 0 and var_7_6,
-		fade_out_duration = var_7_7 and var_7_7 > 0 and var_7_7
+		max_alpha = num,
+		start_time = start_time,
+		end_time = end_time,
+		fade_in_duration = not fade_in_duration and not (fade_in_duration > 0) or fade_in_duration,
+		fade_out_duration = not fade_out_duration and not (fade_out_duration > 0) or fade_out_duration
 	}
 end
 
-function CutsceneOverlayUI._convert_string_timestamp_to_float(arg_8_0, arg_8_1)
-	local var_8_0, var_8_1, var_8_2 = string.match(arg_8_1, "(%d+)%:(%d+)%:(%d+)")
-	local var_8_3 = var_8_0 * 60 + var_8_1 + var_8_2 * 0.01
+CutsceneOverlayUI._convert_string_timestamp_to_float = function (arg_8_0, arg_8_1)
+	-- function 8
+	local match, var_8_1, var_8_2 = string.match(arg_8_1, "(%d+)%:(%d+)%:(%d+)")
+	local num = match * 60 + var_8_1 + var_8_2 * 0.01
 end
 
-function CutsceneOverlayUI._has_list_entries(arg_9_0, arg_9_1)
-	return #arg_9_0._templates[arg_9_1] > 0
+CutsceneOverlayUI._has_list_entries = function (self, arg_9_1)
+	-- function 9
+	return #self._templates[arg_9_1] > 0
 end
 
-function CutsceneOverlayUI._get_entry_by_time(arg_10_0, arg_10_1, arg_10_2)
-	local var_10_0 = arg_10_0._templates[arg_10_1]
+CutsceneOverlayUI._get_entry_by_time = function (self, arg_10_1, arg_10_2)
+	-- function 10
+	local var_10_0 = self._templates[arg_10_1]
 	local var_10_1 = var_10_0[1]
 
 	if not var_10_1 then
 		return
 	end
 
-	local var_10_2 = var_10_1.start_time
+	local start_time = var_10_1.start_time
 
 	if arg_10_2 >= var_10_1.end_time then
 		table.remove(var_10_0, 1)
 
-		return arg_10_0:_get_entry_by_time(arg_10_1, arg_10_2)
+		return self:_get_entry_by_time(arg_10_1, arg_10_2)
 	end
 
-	if var_10_2 <= arg_10_2 then
+	if start_time <= arg_10_2 then
 		return table.remove(var_10_0, 1)
 	end
 end
 
-function CutsceneOverlayUI.update(arg_11_0, arg_11_1)
-	if not arg_11_0._start_time or arg_11_0._complete then
+CutsceneOverlayUI.update = function (self, arg_11_1)
+	-- function 11
+	if not self._start_time and not self._complete then
 		return
 	end
 
-	local var_11_0 = Managers.time:time("ui") - arg_11_0._start_time
-	local var_11_1 = true
+	local num = Managers.time:time("ui") - self._start_time
+	local flag = true
 
-	for iter_11_0, iter_11_1 in pairs(arg_11_0._active_template_lists) do
-		local var_11_2 = false
-		local var_11_3 = iter_11_1.active_entry_data
+	for k, v in pairs(self._active_template_lists) do
+		local flag_2 = false
+		local active_entry_data = v.active_entry_data
 
-		if var_11_3 then
-			local var_11_4 = var_11_3.start_time
-			local var_11_5 = var_11_3.end_time
-			local var_11_6 = var_11_3.duration
+		if not active_entry_data then
+			local start_time = active_entry_data.start_time
+			local end_time = active_entry_data.end_time
+			local duration = active_entry_data.duration
 
-			if var_11_0 > var_11_4 + var_11_6 then
-				iter_11_1.active_entry_data = nil
+			if num > start_time + duration then
+				v.active_entry_data = nil
 			else
-				local var_11_7 = var_11_3.widget
-				local var_11_8 = var_11_3.fade_out_duration
-				local var_11_9 = var_11_3.fade_in_duration
-				local var_11_10 = var_11_3.max_alpha
-				local var_11_11 = 1
+				local widget = active_entry_data.widget
+				local fade_out_duration = active_entry_data.fade_out_duration
+				local fade_in_duration = active_entry_data.fade_in_duration
+				local max_alpha = active_entry_data.max_alpha
+				local num_2 = 1
 
-				if var_11_9 and var_11_0 <= var_11_4 + var_11_9 then
-					var_11_11 = math.min((var_11_0 - var_11_4) / var_11_9, 1)
-				elseif var_11_8 and var_11_0 >= var_11_4 + var_11_6 - var_11_8 then
-					var_11_11 = 1 - math.min((var_11_0 - (var_11_5 - var_11_8)) / var_11_8, 1)
+				if not (not fade_in_duration and not (num <= start_time + fade_in_duration)) then
+					num_2 = math.min((num - start_time) / fade_in_duration, 1)
+				elseif not (not fade_out_duration and not (num >= start_time + duration - fade_out_duration)) then
+					num_2 = 1 - math.min((num - (end_time - fade_out_duration)) / fade_out_duration, 1)
 				end
 
-				arg_11_0:_fade(var_11_7, var_11_10, var_11_11)
-				arg_11_0:_draw(var_11_7, arg_11_1)
+				self:_fade(widget, max_alpha, num_2)
+				self:_draw(widget, arg_11_1)
 			end
-		elseif not arg_11_0:_has_list_entries(iter_11_0) then
-			arg_11_0._active_template_lists[iter_11_0] = nil
-			var_11_2 = true
+		elseif not self:_has_list_entries(k) then
+			self._active_template_lists[k] = nil
+			flag_2 = true
 		else
-			local var_11_12 = arg_11_0:_get_entry_by_time(iter_11_0, var_11_0)
-			local var_11_13 = var_11_12 and arg_11_0:_present_template_entry(iter_11_0, var_11_12)
+			local _get_entry_by_time = self:_get_entry_by_time(k, num)
+			local flag_3 = not _get_entry_by_time and self:_present_template_entry(k, _get_entry_by_time)
 
-			iter_11_1.active_entry_data = var_11_13
+			v.active_entry_data = flag_3
 
-			if var_11_13 and not var_11_13.initialized then
-				var_11_13.initialized = true
+			if not (not flag_3 and flag_3.initialized) then
+				flag_3.initialized = true
 
-				local var_11_14 = var_11_13.sound_event
+				local sound_event = flag_3.sound_event
 
-				if var_11_14 and arg_11_0._wwise_world then
-					WwiseWorld.trigger_event(arg_11_0._wwise_world, var_11_14)
+				if not sound_event and not self._wwise_world then
+					WwiseWorld.trigger_event(self._wwise_world, sound_event)
 				end
 			end
 		end
 
-		if not var_11_2 then
-			var_11_1 = false
+		if not flag_2 then
+			flag = false
 		end
 	end
 
-	arg_11_0._complete = var_11_1
+	self._complete = flag
 end
 
-function CutsceneOverlayUI._fade(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
-	local var_12_0 = arg_12_3 * arg_12_2
-	local var_12_1 = arg_12_1.style
+CutsceneOverlayUI._fade = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+	-- function 12
+	local num = arg_12_3 * arg_12_2
+	local style = arg_12_1.style
 
-	if var_12_1.text then
-		local var_12_2 = var_12_1.text.text_color
-		local var_12_3 = var_12_1.text_shadow.text_color
+	if not style.text then
+		local text_color = style.text.text_color
+		local text_color_2 = style.text_shadow.text_color
 
-		var_12_2[1] = var_12_0
-		var_12_3[1] = var_12_0
+		text_color[1] = num
+		text_color_2[1] = num
 	else
-		var_12_1.texture_id.color[1] = var_12_0
+		style.texture_id.color[1] = num
 	end
 end
 
-function CutsceneOverlayUI._draw(arg_13_0, arg_13_1, arg_13_2)
-	local var_13_0 = arg_13_0._ui_renderer
-	local var_13_1 = arg_13_0._ui_scenegraph
-	local var_13_2 = FAKE_INPUT_SERVICE
-	local var_13_3 = arg_13_0.render_settings
+CutsceneOverlayUI._draw = function (self, arg_13_1, arg_13_2)
+	-- function 13
+	local _ui_renderer = self._ui_renderer
+	local _ui_scenegraph = self._ui_scenegraph
+	local FAKE_INPUT_SERVICE = FAKE_INPUT_SERVICE
+	local render_settings = self.render_settings
 
-	UIRenderer.begin_pass(var_13_0, var_13_1, var_13_2, arg_13_2, var_13_3)
-	UIRenderer.draw_widget(var_13_0, arg_13_1)
-	UIRenderer.end_pass(var_13_0)
+	UIRenderer.begin_pass(_ui_renderer, _ui_scenegraph, FAKE_INPUT_SERVICE, arg_13_2, render_settings)
+	UIRenderer.draw_widget(_ui_renderer, arg_13_1)
+	UIRenderer.end_pass(_ui_renderer)
 end

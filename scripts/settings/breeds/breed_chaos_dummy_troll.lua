@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/breeds/breed_chaos_dummy_troll.lua
 
-local var_0_0 = {
+local tbl = {
 	not_bot_target = true,
 	no_autoaim = true,
 	show_health_bar = false,
@@ -19,38 +19,38 @@ local var_0_0 = {
 	run_on_despawn = AiBreedSnippets.on_chaos_dummy_troll_death
 }
 
-for iter_0_0, iter_0_1 in pairs(Breeds.chaos_troll) do
-	local var_0_1 = var_0_0[iter_0_0]
+for k, v in pairs(Breeds.chaos_troll) do
+	local var_0_1 = tbl[k]
 
 	if var_0_1 == "SET_TO_NIL" then
-		var_0_0[iter_0_0] = nil
+		tbl[k] = nil
 	elseif var_0_1 ~= nil then
-		var_0_0[iter_0_0] = var_0_1
+		tbl[k] = var_0_1
 	else
-		var_0_0[iter_0_0] = iter_0_1
+		tbl[k] = v
 	end
 end
 
-for iter_0_2, iter_0_3 in pairs(var_0_0) do
-	if iter_0_3 == "SET_TO_NIL" then
-		var_0_0[iter_0_2] = nil
+for k_2, v_2 in pairs(tbl) do
+	if v_2 == "SET_TO_NIL" then
+		tbl[k_2] = nil
 	end
 end
 
-Breeds.chaos_dummy_troll = var_0_0
+Breeds.chaos_dummy_troll = tbl
 
-local var_0_2 = {}
+local tbl_2 = {}
 
-for iter_0_4, iter_0_5 in pairs(BreedActions.chaos_troll) do
-	local var_0_3 = var_0_2[iter_0_4]
+for k_3, v_3 in pairs(BreedActions.chaos_troll) do
+	local var_0_3 = tbl_2[k_3]
 
 	if var_0_3 == "SET_TO_NIL" then
-		var_0_2[iter_0_4] = nil
+		tbl_2[k_3] = nil
 	elseif var_0_3 ~= nil then
-		var_0_2[iter_0_4] = var_0_3
+		tbl_2[k_3] = var_0_3
 	else
-		var_0_2[iter_0_4] = iter_0_5
+		tbl_2[k_3] = v_3
 	end
 end
 
-BreedActions.chaos_dummy_troll = table.create_copy(BreedActions.chaos_dummy_troll, var_0_2)
+BreedActions.chaos_dummy_troll = table.create_copy(BreedActions.chaos_dummy_troll, tbl_2)

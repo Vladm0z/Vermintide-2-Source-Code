@@ -1,12 +1,15 @@
 -- chunkname: @scripts/settings/weaves/weave_loadout/weave_loadout_settings_dr_slayer.lua
 
-WeaveLoadoutSettings = WeaveLoadoutSettings or {}
+local WeaveLoadoutSettings = WeaveLoadoutSettings
 
-local var_0_0 = "dwarf_ranger"
-local var_0_1 = CareerSettings.dr_slayer.talent_tree_index
+WeaveLoadoutSettings = WeaveLoadoutSettings or {}
+WeaveLoadoutSettings = WeaveLoadoutSettings
+
+local str = "dwarf_ranger"
+local talent_tree_index = CareerSettings.dr_slayer.talent_tree_index
 
 WeaveLoadoutSettings.dr_slayer = {
-	talent_tree = TalentTrees[var_0_0][var_0_1],
+	talent_tree = TalentTrees[str][talent_tree_index],
 	properties = {},
 	traits = {}
 }

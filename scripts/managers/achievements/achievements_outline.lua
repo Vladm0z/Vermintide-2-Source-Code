@@ -1,6 +1,6 @@
 -- chunkname: @scripts/managers/achievements/achievements_outline.lua
 
-local var_0_0 = {
+local tbl = {
 	name = "achv_menu_heroes_category_title",
 	present_progression = true,
 	entries = {
@@ -146,7 +146,7 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	name = "achv_menu_levels_category_title",
 	present_progression = true,
 	entries = {
@@ -242,7 +242,7 @@ local var_0_1 = {
 		}
 	}
 }
-local var_0_2 = {
+local tbl_3 = {
 	name = "achv_menu_crafting_category_title",
 	present_progression = true,
 	entries = {
@@ -252,7 +252,7 @@ local var_0_2 = {
 		"salvage_hundred_items"
 	}
 }
-local var_0_3 = {
+local tbl_4 = {
 	name = "achv_menu_items_category_title",
 	present_progression = true,
 	entries = {
@@ -264,7 +264,7 @@ local var_0_3 = {
 		"equip_all_veteran_quality"
 	}
 }
-local var_0_4 = {
+local tbl_5 = {
 	name = "achv_menu_deeds_category_title",
 	present_progression = true,
 	entries = {
@@ -278,7 +278,7 @@ local var_0_4 = {
 		"complete_deeds_8"
 	}
 }
-local var_0_5 = {
+local tbl_6 = {
 	name = "achv_menu_enemies_category_title",
 	present_progression = true,
 	entries = {
@@ -314,81 +314,81 @@ local var_0_5 = {
 		"helmgart_lord_1"
 	}
 }
-local var_0_6 = {
+local tbl_7 = {
 	name = "achv_menu_weaves_category_title",
 	present_progression = false,
 	entries = {},
 	categories = {}
 }
-local var_0_7 = {
+local tbl_8 = {
 	name = "achv_menu_achievements_category_title",
 	categories = {
-		var_0_1,
-		var_0_0,
-		var_0_5,
-		var_0_3,
-		var_0_2,
-		var_0_4,
-		var_0_6
+		tbl_2,
+		tbl,
+		tbl_6,
+		tbl_4,
+		tbl_3,
+		tbl_5,
+		tbl_7
 	}
 }
 
-DLCUtils.append("achievement_categories", var_0_7.categories)
+DLCUtils.append("achievement_categories", tbl_8.categories)
 
-for iter_0_0, iter_0_1 in pairs(DLCSettings) do
-	local var_0_8 = iter_0_1.achievement_outline
+for k, v in pairs(DLCSettings) do
+	local achievement_outline = v.achievement_outline
 
-	if var_0_8 then
-		for iter_0_2, iter_0_3 in pairs(var_0_8) do
+	if not achievement_outline then
+		for k_2, v_2 in pairs(achievement_outline) do
 			local var_0_9
 
-			if iter_0_2 == "levels" then
-				var_0_9 = var_0_1
-			elseif iter_0_2 == "heroes" then
-				var_0_9 = var_0_0
-			elseif iter_0_2 == "enemies" then
-				var_0_9 = var_0_5
-			elseif iter_0_2 == "items" then
-				var_0_9 = var_0_3
-			elseif iter_0_2 == "crafting" then
-				var_0_9 = var_0_2
-			elseif iter_0_2 == "deeds" then
-				var_0_9 = var_0_4
-			elseif iter_0_2 == "weaves" then
-				var_0_9 = var_0_6
+			if k_2 == "levels" then
+				var_0_9 = tbl_2
+			elseif k_2 == "heroes" then
+				var_0_9 = tbl
+			elseif k_2 == "enemies" then
+				var_0_9 = tbl_6
+			elseif k_2 == "items" then
+				var_0_9 = tbl_4
+			elseif k_2 == "crafting" then
+				var_0_9 = tbl_3
+			elseif k_2 == "deeds" then
+				var_0_9 = tbl_5
+			elseif k_2 == "weaves" then
+				var_0_9 = tbl_7
 			else
 				var_0_9 = {}
 			end
 
-			if iter_0_3.entries then
-				if var_0_9.entries then
-					table.append(var_0_9.entries, iter_0_3.entries)
+			if not v_2.entries then
+				if not var_0_9.entries then
+					table.append(var_0_9.entries, v_2.entries)
 				else
-					var_0_9.entries = table.clone(iter_0_3.entries)
+					var_0_9.entries = table.clone(v_2.entries)
 				end
 			end
 
-			local var_0_10 = iter_0_3.categories
+			local categories = v_2.categories
 
-			if var_0_10 then
-				for iter_0_4 = 1, #var_0_10 do
-					local var_0_11 = var_0_10[iter_0_4]
-					local var_0_12 = var_0_11.name
-					local var_0_13 = var_0_9.categories
-					local var_0_14 = false
+			if not categories then
+				for i4 = 1, #categories do
+					local var_0_11 = categories[i4]
+					local name = var_0_11.name
+					local categories_2 = var_0_9.categories
+					local flag = false
 
-					for iter_0_5 = 1, #var_0_13 do
-						local var_0_15 = var_0_13[iter_0_5]
+					for i5 = 1, #categories_2 do
+						local var_0_15 = categories_2[i5]
 
-						if var_0_12 == var_0_15.name and not var_0_14 then
+						if not (name ~= var_0_15.name or flag) then
 							table.append(var_0_15.entries, var_0_11.entries)
 
-							var_0_14 = true
+							flag = true
 						end
 					end
 
-					if not var_0_14 then
-						var_0_13[#var_0_13 + 1] = table.clone(var_0_11)
+					if not flag then
+						categories_2[#categories_2 + 1] = table.clone(var_0_11)
 					end
 				end
 			end
@@ -396,26 +396,28 @@ for iter_0_0, iter_0_1 in pairs(DLCSettings) do
 	end
 end
 
-for iter_0_6, iter_0_7 in ipairs(var_0_7.categories) do
-	local var_0_16 = iter_0_7.categories
+for i, v_3 in ipairs(tbl_8.categories) do
+	local categories_3 = v_3.categories
 
-	if var_0_16 then
-		table.sort(var_0_16, function(arg_1_0, arg_1_1)
-			return arg_1_0.sorting < arg_1_1.sorting
+	if not categories_3 then
+		table.sort(categories_3, function (self, arg_1_1)
+			-- function 1
+			return self.sorting < arg_1_1.sorting
 		end)
 	end
 end
 
-local function var_0_17(arg_2_0, arg_2_1)
-	arg_2_0.type = arg_2_1
+local function fn(self, arg_2_1)
+	-- function 2
+	self.type = arg_2_1
 
-	if arg_2_0.categories then
-		for iter_2_0, iter_2_1 in ipairs(arg_2_0.categories) do
-			var_0_17(iter_2_1, arg_2_1)
+	if not self.categories then
+		for i, v in ipairs(self.categories) do
+			fn(v, arg_2_1)
 		end
 	end
 end
 
-var_0_17(var_0_7, "achievements")
+fn(tbl_8, "achievements")
 
-return var_0_7
+return tbl_8

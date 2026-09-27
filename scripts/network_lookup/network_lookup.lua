@@ -31,40 +31,42 @@ require("scripts/unit_extensions/weapons/area_damage/liquid/damage_wave_template
 require("scripts/unit_extensions/weapons/area_damage/liquid/liquid_area_damage_templates")
 require("scripts/settings/equipment/weapon_skins")
 
-local var_0_0 = require("scripts/managers/game_mode/mechanisms/reservation_handler_types")
+local scripts_managers_game_mode_mechanisms_reservation_handler_types = require("scripts/managers/game_mode/mechanisms/reservation_handler_types")
 
 NetworkLookup = {}
 
-function create_lookup(arg_1_0, arg_1_1)
-	local var_1_0 = #arg_1_0
+function create_lookup(self, arg_1_1)
+	-- function 1
+	local count = #self
 
-	for iter_1_0, iter_1_1 in pairs(arg_1_1) do
-		var_1_0 = var_1_0 + 1
-		arg_1_0[var_1_0] = iter_1_0
+	for k, v in pairs(arg_1_1) do
+		count = count + 1
+		self[count] = k
 	end
 
-	return arg_1_0
+	return self
 end
 
-for iter_0_0, iter_0_1 in pairs(DLCSettings) do
-	local var_0_1 = iter_0_1.network_lookups
+for k, v in pairs(DLCSettings) do
+	local network_lookups = v.network_lookups
 
-	if var_0_1 then
-		for iter_0_2, iter_0_3 in pairs(var_0_1) do
-			if type(iter_0_3) == "table" then
-				local var_0_2 = iter_0_3.table_name
-				local var_0_3 = iter_0_3.base_table or {}
+	if not network_lookups then
+		for k_2, v_2 in pairs(network_lookups) do
+			if type(v_2) == "table" then
+				local table_name = v_2.table_name
+				local base_table = v_2.base_table
 
-				NetworkLookup[iter_0_2] = create_lookup(var_0_3, rawget(_G, var_0_2))
+				base_table = base_table or {}
+				NetworkLookup[k_2] = create_lookup(base_table, rawget(_G, table_name))
 			else
-				local var_0_4 = string.split_deprecated(iter_0_3, ".")
-				local var_0_5 = rawget(_G, var_0_4[1])
+				local split_deprecated = string.split_deprecated(v_2, ".")
+				local var_0_5 = rawget(_G, split_deprecated[1])
 
-				for iter_0_4 = 2, #var_0_4 do
-					var_0_5 = var_0_5[var_0_4[iter_0_4]]
+				for i4 = 2, #split_deprecated do
+					var_0_5 = var_0_5[split_deprecated[i4]]
 				end
 
-				NetworkLookup[iter_0_2] = create_lookup({}, var_0_5)
+				NetworkLookup[k_2] = create_lookup({}, var_0_5)
 			end
 		end
 	end
@@ -76,7 +78,7 @@ if not DialogueLookup then
 	MarkerLookup = {}
 	MarkerLookup_n = 0
 
-	local var_0_6 = {
+	local tbl = {
 		"dialogues/generated/lookup_bright_wizard_honduras",
 		"dialogues/generated/lookup_dwarf_ranger_honduras",
 		"dialogues/generated/lookup_empire_soldier_honduras",
@@ -191,15 +193,15 @@ if not DialogueLookup then
 		"dialogues/generated/lookup_bright_wizard_dlc_reikwald_river"
 	}
 
-	DLCUtils.append("dialogue_lookup", var_0_6)
+	DLCUtils.append("dialogue_lookup", tbl)
 
-	for iter_0_5, iter_0_6 in ipairs(var_0_6) do
-		if Application.can_get("lua", iter_0_6) then
-			dofile(iter_0_6)
+	for i, v_3 in ipairs(tbl) do
+		if not Application.can_get("lua", v_3) then
+			dofile(v_3)
 		end
 
-		if Application.can_get("lua", iter_0_6 .. "_markers") then
-			dofile(iter_0_6 .. "_markers")
+		if not Application.can_get("lua", v_3 .. "_markers") then
+			dofile(v_3 .. "_markers")
 		end
 	end
 end
@@ -214,32 +216,32 @@ NetworkLookup.item_drop_reasons = {
 	"shield_break"
 }
 
-local var_0_7 = {}
+local tbl_2 = {}
 
-for iter_0_7, iter_0_8 in pairs(Attachments) do
-	var_0_7[#var_0_7 + 1] = iter_0_7
+for k_3, v_4 in pairs(Attachments) do
+	tbl_2[#tbl_2 + 1] = k_3
 end
 
 NetworkLookup.cosmetics = create_lookup({
 	"default"
 }, Cosmetics)
 
-local var_0_8 = {}
+local tbl_3 = {}
 
 NetworkLookup.actions = {}
 NetworkLookup.sub_actions = {}
 
-for iter_0_9, iter_0_10 in pairs(Weapons) do
-	var_0_8[#var_0_8 + 1] = iter_0_9
+for k_4, v_5 in pairs(Weapons) do
+	tbl_3[#tbl_3 + 1] = k_4
 
-	for iter_0_11, iter_0_12 in pairs(iter_0_10.actions) do
-		if not table.contains(NetworkLookup.actions, iter_0_11) then
-			NetworkLookup.actions[#NetworkLookup.actions + 1] = iter_0_11
+	for k_5, v_6 in pairs(v_5.actions) do
+		if not table.contains(NetworkLookup.actions, k_5) then
+			NetworkLookup.actions[#NetworkLookup.actions + 1] = k_5
 		end
 
-		for iter_0_13, iter_0_14 in pairs(iter_0_12) do
-			if not table.contains(NetworkLookup.sub_actions, iter_0_13) then
-				NetworkLookup.sub_actions[#NetworkLookup.sub_actions + 1] = iter_0_13
+		for k_6, v_7 in pairs(v_6) do
+			if not table.contains(NetworkLookup.sub_actions, k_6) then
+				NetworkLookup.sub_actions[#NetworkLookup.sub_actions + 1] = k_6
 			end
 		end
 	end
@@ -252,47 +254,47 @@ NetworkLookup.item_template_names = {
 	"n/a"
 }
 
-table.append(NetworkLookup.item_template_names, var_0_8)
-table.append(NetworkLookup.item_template_names, var_0_7)
+table.append(NetworkLookup.item_template_names, tbl_3)
+table.append(NetworkLookup.item_template_names, tbl_2)
 
 NetworkLookup.equipment_slots = {}
 
-for iter_0_15, iter_0_16 in ipairs(InventorySettings.slots) do
-	NetworkLookup.equipment_slots[#NetworkLookup.equipment_slots + 1] = iter_0_16.name
+for i_2, v_8 in ipairs(InventorySettings.slots) do
+	NetworkLookup.equipment_slots[#NetworkLookup.equipment_slots + 1] = v_8.name
 end
 
 NetworkLookup.mutator_templates = create_lookup({}, MutatorTemplates)
 NetworkLookup.breeds = create_lookup({}, Breeds)
 
-for iter_0_17, iter_0_18 in pairs(PlayerBreeds) do
-	NetworkLookup.breeds[#NetworkLookup.breeds + 1] = iter_0_17
+for k_7, v_9 in pairs(PlayerBreeds) do
+	NetworkLookup.breeds[#NetworkLookup.breeds + 1] = k_7
 end
 
-NetworkLookup.reservation_handler_types = create_lookup({}, var_0_0)
+NetworkLookup.reservation_handler_types = create_lookup({}, scripts_managers_game_mode_mechanisms_reservation_handler_types)
 
-local var_0_9 = {}
+local tbl_4 = {}
 
-for iter_0_19, iter_0_20 in pairs(Breeds) do
-	local var_0_10 = iter_0_20.hitbox_ragdoll_translation
+for k_8, v_10 in pairs(Breeds) do
+	local hitbox_ragdoll_translation = v_10.hitbox_ragdoll_translation
 
-	if var_0_10 then
-		for iter_0_21, iter_0_22 in pairs(var_0_10) do
-			var_0_9[iter_0_22] = true
+	if not hitbox_ragdoll_translation then
+		for k_9, v_11 in pairs(hitbox_ragdoll_translation) do
+			tbl_4[v_11] = true
 		end
 	end
 end
 
-local var_0_11 = {
+local tbl_5 = {
 	"n/a"
 }
 
-for iter_0_23, iter_0_24 in pairs(var_0_9) do
-	var_0_11[#var_0_11 + 1] = iter_0_23
+for k_10, v_12 in pairs(tbl_4) do
+	tbl_5[#tbl_5 + 1] = k_10
 end
 
-NetworkLookup.hit_ragdoll_actors = var_0_11
+NetworkLookup.hit_ragdoll_actors = tbl_5
 
-local var_0_12 = {
+local tbl_6 = {
 	"undefined",
 	"debug",
 	"ground_impact",
@@ -312,19 +314,19 @@ local var_0_12 = {
 	"life_tap"
 }
 
-for iter_0_25, iter_0_26 in pairs(EnvironmentalHazards) do
-	var_0_12[#var_0_12 + 1] = iter_0_25
+for k_11, v_13 in pairs(EnvironmentalHazards) do
+	tbl_6[#tbl_6 + 1] = k_11
 end
 
-for iter_0_27, iter_0_28 in pairs(LiquidAreaDamageTemplates.templates) do
-	var_0_12[#var_0_12 + 1] = iter_0_27
+for k_12, v_14 in pairs(LiquidAreaDamageTemplates.templates) do
+	tbl_6[#tbl_6 + 1] = k_12
 end
 
-table.append(var_0_12, NetworkLookup.item_names)
-table.append(var_0_12, NetworkLookup.breeds)
-DLCUtils.append("network_damage_sources", var_0_12)
+table.append(tbl_6, NetworkLookup.item_names)
+table.append(tbl_6, NetworkLookup.breeds)
+DLCUtils.append("network_damage_sources", tbl_6)
 
-NetworkLookup.damage_sources = var_0_12
+NetworkLookup.damage_sources = tbl_6
 NetworkLookup.breeds[#NetworkLookup.breeds + 1] = "n/a"
 NetworkLookup.husks = {
 	"units/decals/decal_vortex_circle_inner",
@@ -824,121 +826,121 @@ NetworkLookup.keep_decoration_trophies = {
 	"hub_trophy_rasknitt"
 }
 
-local var_0_13 = {}
-local var_0_14 = {}
+local tbl_7 = {}
+local tbl_8 = {}
 
-for iter_0_29, iter_0_30 in pairs(BreedActions) do
-	for iter_0_31, iter_0_32 in pairs(iter_0_30) do
-		var_0_14[iter_0_31] = true
+for k_13, v_15 in pairs(BreedActions) do
+	for k_14, v_16 in pairs(v_15) do
+		tbl_8[k_14] = true
 
-		if iter_0_32.rage_event then
-			var_0_13[iter_0_32.rage_event] = iter_0_32.rage_event
+		if not v_16.rage_event then
+			tbl_7[v_16.rage_event] = v_16.rage_event
 		end
 
-		if iter_0_31 == "stagger" then
-			local var_0_15 = iter_0_32.stagger_anims
+		if k_14 == "stagger" then
+			local stagger_anims = v_16.stagger_anims
 
-			if var_0_15 then
-				for iter_0_33, iter_0_34 in ipairs(var_0_15) do
-					for iter_0_35, iter_0_36 in pairs(iter_0_34) do
-						for iter_0_37, iter_0_38 in ipairs(iter_0_36) do
-							var_0_13[iter_0_38] = iter_0_38
+			if not stagger_anims then
+				for i_3, v_17 in ipairs(stagger_anims) do
+					for k_15, v_18 in pairs(v_17) do
+						for i_4, v_19 in ipairs(v_18) do
+							tbl_7[v_19] = v_19
 						end
 					end
 				end
 			else
-				local var_0_16 = iter_0_32.health_based_stagger_anims
+				local health_based_stagger_anims = v_16.health_based_stagger_anims
 
-				for iter_0_39, iter_0_40 in pairs(var_0_16) do
-					local var_0_17 = iter_0_40.stagger_anims
+				for k_16, v_20 in pairs(health_based_stagger_anims) do
+					local stagger_anims_2 = v_20.stagger_anims
 
-					for iter_0_41, iter_0_42 in ipairs(var_0_17) do
-						for iter_0_43, iter_0_44 in pairs(iter_0_42) do
-							for iter_0_45, iter_0_46 in ipairs(iter_0_44) do
-								var_0_13[iter_0_46] = iter_0_46
+					for i_5, v_21 in ipairs(stagger_anims_2) do
+						for k_17, v_22 in pairs(v_21) do
+							for i_6, v_23 in ipairs(v_22) do
+								tbl_7[v_23] = v_23
 							end
 						end
 					end
 				end
 			end
 
-			local var_0_18 = iter_0_32.shield_stagger_anims
+			local shield_stagger_anims = v_16.shield_stagger_anims
 
-			if var_0_18 then
-				for iter_0_47, iter_0_48 in ipairs(var_0_18) do
-					for iter_0_49, iter_0_50 in pairs(iter_0_48) do
-						for iter_0_51, iter_0_52 in ipairs(iter_0_50) do
-							var_0_13[iter_0_52] = iter_0_52
+			if not shield_stagger_anims then
+				for i_7, v_24 in ipairs(shield_stagger_anims) do
+					for k_18, v_25 in pairs(v_24) do
+						for i_8, v_26 in ipairs(v_25) do
+							tbl_7[v_26] = v_26
 						end
 					end
 				end
 			end
 
-			local var_0_19 = iter_0_32.shield_block_anims
+			local shield_block_anims = v_16.shield_block_anims
 
-			if var_0_19 then
-				for iter_0_53, iter_0_54 in ipairs(var_0_19) do
-					for iter_0_55, iter_0_56 in pairs(iter_0_54) do
-						for iter_0_57, iter_0_58 in ipairs(iter_0_56) do
-							var_0_13[iter_0_58] = iter_0_58
+			if not shield_block_anims then
+				for i_9, v_27 in ipairs(shield_block_anims) do
+					for k_19, v_28 in pairs(v_27) do
+						for i_10, v_29 in ipairs(v_28) do
+							tbl_7[v_29] = v_29
 						end
 					end
 				end
 			end
 
-			local var_0_20 = iter_0_32.shield_break_anims
+			local shield_break_anims = v_16.shield_break_anims
 
-			if var_0_20 then
-				for iter_0_59, iter_0_60 in ipairs(var_0_20) do
-					for iter_0_61, iter_0_62 in pairs(iter_0_60) do
-						for iter_0_63, iter_0_64 in ipairs(iter_0_62) do
-							var_0_13[iter_0_64] = iter_0_64
+			if not shield_break_anims then
+				for i_11, v_30 in ipairs(shield_break_anims) do
+					for k_20, v_31 in pairs(v_30) do
+						for i_12, v_32 in ipairs(v_31) do
+							tbl_7[v_32] = v_32
 						end
 					end
 				end
 			end
 
-			local var_0_21 = iter_0_32.dodge_anims
+			local dodge_anims = v_16.dodge_anims
 
-			if var_0_21 then
-				for iter_0_65, iter_0_66 in ipairs(var_0_21) do
-					for iter_0_67, iter_0_68 in pairs(iter_0_66) do
-						for iter_0_69, iter_0_70 in ipairs(iter_0_68) do
-							var_0_13[iter_0_70] = iter_0_70
+			if not dodge_anims then
+				for i_13, v_33 in ipairs(dodge_anims) do
+					for k_21, v_34 in pairs(v_33) do
+						for i_14, v_35 in ipairs(v_34) do
+							tbl_7[v_35] = v_35
 						end
 					end
 				end
 			end
-		elseif iter_0_31 == "blocked" then
-			local var_0_22 = iter_0_32.blocked_anims
+		elseif k_14 == "blocked" then
+			local blocked_anims = v_16.blocked_anims
 
-			for iter_0_71, iter_0_72 in ipairs(var_0_22) do
-				var_0_13[iter_0_72] = iter_0_72
+			for i_15, v_36 in ipairs(blocked_anims) do
+				tbl_7[v_36] = v_36
 			end
 		end
 	end
 end
 
-local var_0_23 = {
+local tbl_9 = {
 	"animation_edge",
 	"animation_fence",
 	"animation_land",
 	"animation_jump"
 }
 
-for iter_0_73, iter_0_74 in pairs(SmartObjectSettings.templates) do
-	for iter_0_75, iter_0_76 in pairs(iter_0_74) do
-		for iter_0_77, iter_0_78 in ipairs(iter_0_76) do
-			for iter_0_79, iter_0_80 in ipairs(var_0_23) do
-				local var_0_24 = iter_0_78[iter_0_80]
+for k_22, v_37 in pairs(SmartObjectSettings.templates) do
+	for k_23, v_38 in pairs(v_37) do
+		for i_16, v_39 in ipairs(v_38) do
+			for i_17, v_40 in ipairs(tbl_9) do
+				local var_0_24 = v_39[v_40]
 
-				if var_0_24 then
+				if not var_0_24 then
 					if type(var_0_24) == "table" then
-						for iter_0_81, iter_0_82 in ipairs(var_0_24) do
-							var_0_13[iter_0_82] = iter_0_82
+						for i_18, v_41 in ipairs(var_0_24) do
+							tbl_7[v_41] = v_41
 						end
 					else
-						var_0_13[var_0_24] = var_0_24
+						tbl_7[var_0_24] = var_0_24
 					end
 				end
 			end
@@ -946,34 +948,34 @@ for iter_0_73, iter_0_74 in pairs(SmartObjectSettings.templates) do
 	end
 end
 
-for iter_0_83, iter_0_84 in pairs(PlayerUnitMovementSettings.catapulted.directions) do
-	for iter_0_85, iter_0_86 in pairs(iter_0_84) do
-		var_0_13[iter_0_86] = iter_0_86
+for k_24, v_42 in pairs(PlayerUnitMovementSettings.catapulted.directions) do
+	for k_25, v_43 in pairs(v_42) do
+		tbl_7[v_43] = v_43
 	end
 end
 
 NetworkLookup.bt_action_names = create_lookup({
 	"n/a"
-}, var_0_14)
+}, tbl_8)
 
-for iter_0_87, iter_0_88 in pairs(BTHesitationVariations) do
-	for iter_0_89, iter_0_90 in pairs(iter_0_88) do
-		var_0_13[iter_0_90] = iter_0_90
+for k_26, v_44 in pairs(BTHesitationVariations) do
+	for k_27, v_45 in pairs(v_44) do
+		tbl_7[v_45] = v_45
 	end
 end
 
-for iter_0_91, iter_0_92 in pairs(SPProfiles) do
-	if iter_0_92.unit_name then
-		local var_0_25 = "attack_grab_hang_" .. iter_0_92.unit_name
+for k_28, v_46 in pairs(SPProfiles) do
+	if not v_46.unit_name then
+		local str = "attack_grab_hang_" .. v_46.unit_name
 
-		var_0_13[var_0_25] = var_0_25
+		tbl_7[str] = str
 	end
 end
 
-NetworkLookup.anims = create_lookup(NetworkLookup.anims, var_0_13)
+NetworkLookup.anims = create_lookup(NetworkLookup.anims, tbl_7)
 
-table.clear(var_0_13)
-table.clear(var_0_14)
+table.clear(tbl_7)
+table.clear(tbl_8)
 
 NetworkLookup.damage_types = {
 	"buff",
@@ -1096,11 +1098,11 @@ NetworkLookup.damage_types = {
 	"gas"
 }
 
-for iter_0_93, iter_0_94 in pairs(DLCSettings) do
-	local var_0_26 = iter_0_94.network_damage_types
+for k_29, v_47 in pairs(DLCSettings) do
+	local network_damage_types = v_47.network_damage_types
 
-	if var_0_26 then
-		table.append(NetworkLookup.damage_types, var_0_26)
+	if not network_damage_types then
+		table.append(NetworkLookup.damage_types, network_damage_types)
 	end
 end
 
@@ -1111,7 +1113,7 @@ NetworkLookup.objective_names = create_lookup({
 	"n/a"
 }, WeaveSettings.weave_objective_names)
 
-if GameModeSettings.versus then
+if not GameModeSettings.versus then
 	table.append(NetworkLookup.objective_names, table.keys(GameModeSettings.versus.objective_names))
 
 	NetworkLookup.versus_dark_pact_profile_order = table.shallow_copy(GameModeSettings.versus.dark_pact_profile_order)
@@ -1191,11 +1193,11 @@ NetworkLookup.projectile_templates = {
 	"spiral_trajectory"
 }
 
-for iter_0_95, iter_0_96 in pairs(DLCSettings) do
-	local var_0_27 = iter_0_96.projectile_templates
+for k_30, v_48 in pairs(DLCSettings) do
+	local projectile_templates = v_48.projectile_templates
 
-	if var_0_27 then
-		table.append(NetworkLookup.projectile_templates, var_0_27)
+	if not projectile_templates then
+		table.append(NetworkLookup.projectile_templates, projectile_templates)
 	end
 end
 
@@ -1220,10 +1222,10 @@ NetworkLookup.game_end_reasons = {
 	"reload"
 }
 
-for iter_0_97, iter_0_98 in pairs(GameModeSettings) do
-	if iter_0_98.additional_game_end_reasons then
-		for iter_0_99, iter_0_100 in ipairs(iter_0_98.additional_game_end_reasons) do
-			NetworkLookup.game_end_reasons[#NetworkLookup.game_end_reasons + 1] = iter_0_100
+for k_31, v_49 in pairs(GameModeSettings) do
+	if not v_49.additional_game_end_reasons then
+		for i_19, v_50 in ipairs(v_49.additional_game_end_reasons) do
+			NetworkLookup.game_end_reasons[#NetworkLookup.game_end_reasons + 1] = v_50
 		end
 	end
 end
@@ -1339,12 +1341,12 @@ NetworkLookup.effects = {
 	"fx/wpnfx_poison_wind_globe_impact_death_01"
 }
 
-for iter_0_101, iter_0_102 in pairs(DLCSettings) do
-	local var_0_28 = iter_0_102.effects
+for k_32, v_51 in pairs(DLCSettings) do
+	local effects = v_51.effects
 
-	if var_0_28 then
-		for iter_0_103 = 1, #var_0_28 do
-			local var_0_29 = var_0_28[iter_0_103]
+	if not effects then
+		for i103 = 1, #effects do
+			local var_0_29 = effects[i103]
 
 			if not table.contains(NetworkLookup.effects, var_0_29) then
 				NetworkLookup.effects[#NetworkLookup.effects + 1] = var_0_29
@@ -1629,49 +1631,63 @@ NetworkLookup.sound_events = {
 	"Play_dwarf_fest_boss_sorcerer_shield_spawn"
 }
 
-local var_0_30 = {
+local tbl_10 = {
 	"attack_player_sound_event",
 	"attack_general_sound_event",
 	"backstab_player_sound_event",
 	"death_sound_event"
 }
-local var_0_31 = #var_0_30
-local var_0_32 = {}
+local count = #tbl_10
+local tbl_11 = {}
 
-for iter_0_104, iter_0_105 in pairs(Breeds) do
-	for iter_0_106 = 1, var_0_31 do
-		local var_0_33 = var_0_30[iter_0_106]
+for k_33, v_52 in pairs(Breeds) do
+	for i106 = 1, count do
+		local var_0_33 = tbl_10[i106]
 
-		if iter_0_105[var_0_33] then
-			local var_0_34 = iter_0_105[var_0_33]
+		if not v_52[var_0_33] then
+			local var_0_34 = v_52[var_0_33]
 
-			if not var_0_32[var_0_34] then
-				var_0_32[var_0_34] = true
+			if not tbl_11[var_0_34] then
+				tbl_11[var_0_34] = true
 				NetworkLookup.sound_events[#NetworkLookup.sound_events + 1] = var_0_34
 			end
 		end
 	end
 end
 
-for iter_0_107, iter_0_108 in pairs(PatrolFormationSettings) do
-	local var_0_35 = type(iter_0_108) == "table" and iter_0_108.settings and iter_0_108.settings.sounds
+for k_34, v_53 in pairs(PatrolFormationSettings) do
+	local settings
 
-	if var_0_35 then
-		for iter_0_109, iter_0_110 in pairs(var_0_35) do
-			if not var_0_32[iter_0_110] then
-				var_0_32[iter_0_110] = true
-				NetworkLookup.sound_events[#NetworkLookup.sound_events + 1] = iter_0_110
+	if type(v_53) == "table" then
+		settings = v_53.settings
+
+		if not settings then
+			settings = v_53.settings.sounds
+		end
+	else
+		settings = false
+	end
+
+	if false then
+		settings = true
+	end
+
+	if not settings then
+		for k_35, v_54 in pairs(settings) do
+			if not tbl_11[v_54] then
+				tbl_11[v_54] = true
+				NetworkLookup.sound_events[#NetworkLookup.sound_events + 1] = v_54
 			end
 		end
 	end
 end
 
-for iter_0_111, iter_0_112 in pairs(DLCSettings) do
-	local var_0_36 = iter_0_112.network_sound_events
+for k_36, v_55 in pairs(DLCSettings) do
+	local network_sound_events = v_55.network_sound_events
 
-	if var_0_36 then
-		for iter_0_113 = 1, #var_0_36 do
-			local var_0_37 = var_0_36[iter_0_113]
+	if not network_sound_events then
+		for i113 = 1, #network_sound_events do
+			local var_0_37 = network_sound_events[i113]
 
 			NetworkLookup.sound_events[#NetworkLookup.sound_events + 1] = var_0_37
 		end
@@ -1688,47 +1704,47 @@ NetworkLookup.global_parameter_names = {
 	"morris_music_intensity"
 }
 
-local var_0_38 = {}
-local var_0_39 = {}
+local tbl_12 = {}
+local tbl_13 = {}
 
-for iter_0_114, iter_0_115 in pairs(Weapons) do
-	for iter_0_116, iter_0_117 in pairs(iter_0_115.actions) do
-		for iter_0_118, iter_0_119 in pairs(iter_0_117) do
-			if iter_0_119.impact_sound_event then
-				var_0_38[iter_0_119.impact_sound_event] = true
+for k_37, v_56 in pairs(Weapons) do
+	for k_38, v_57 in pairs(v_56.actions) do
+		for k_39, v_58 in pairs(v_57) do
+			if not v_58.impact_sound_event then
+				tbl_12[v_58.impact_sound_event] = true
 			end
 
-			if iter_0_119.no_damage_impact_sound_event then
-				var_0_38[iter_0_119.no_damage_impact_sound_event] = true
+			if not v_58.no_damage_impact_sound_event then
+				tbl_12[v_58.no_damage_impact_sound_event] = true
 			end
 		end
 	end
 
-	if iter_0_115.synced_states then
-		for iter_0_120, iter_0_121 in pairs(iter_0_115.synced_states) do
-			var_0_39[iter_0_120] = true
+	if not v_56.synced_states then
+		for k_40, v_59 in pairs(v_56.synced_states) do
+			tbl_13[k_40] = true
 		end
 	end
 end
 
-NetworkLookup.sound_events = create_lookup(NetworkLookup.sound_events, var_0_38)
+NetworkLookup.sound_events = create_lookup(NetworkLookup.sound_events, tbl_12)
 NetworkLookup.weapon_synced_states = create_lookup({
 	"n/a"
-}, var_0_39)
+}, tbl_13)
 
-local var_0_40 = {}
+local tbl_14 = {}
 
-for iter_0_122, iter_0_123 in pairs(AttackTemplates) do
-	local var_0_41 = iter_0_123.sound_type
+for k_41, v_60 in pairs(AttackTemplates) do
+	local sound_type = v_60.sound_type
 
-	if var_0_41 then
-		var_0_40[var_0_41] = true
+	if not sound_type then
+		tbl_14[sound_type] = true
 	end
 end
 
 NetworkLookup.melee_impact_sound_types = create_lookup({
 	"n/a"
-}, var_0_40)
+}, tbl_14)
 NetworkLookup.sound_event_param_names = {
 	"drakegun_charge_fire",
 	"enemy_vo",
@@ -2038,11 +2054,11 @@ NetworkLookup.statistics = {
 
 DLCUtils.append("statistics_lookup", NetworkLookup.statistics)
 
-local var_0_42 = {}
-local var_0_43 = NetworkLookup.music_group_states
+local tbl_15 = {}
+local music_group_states = NetworkLookup.music_group_states
 
-for iter_0_124, iter_0_125 in ipairs(var_0_43) do
-	var_0_42[iter_0_125] = true
+for i_20, v_61 in ipairs(music_group_states) do
+	tbl_15[v_61] = true
 end
 
 NetworkLookup.locations = {
@@ -2050,24 +2066,24 @@ NetworkLookup.locations = {
 	"test2"
 }
 
-local var_0_44 = {}
+local tbl_16 = {}
 
-for iter_0_126, iter_0_127 in pairs(LevelSettings) do
-	if type(iter_0_127) == "table" then
-		for iter_0_128, iter_0_129 in ipairs(iter_0_127.locations) do
-			var_0_44[iter_0_129] = true
+for k_42, v_62 in pairs(LevelSettings) do
+	if type(v_62) == "table" then
+		for i_21, v_63 in ipairs(v_62.locations) do
+			tbl_16[v_63] = true
 		end
 
-		local var_0_45 = iter_0_127.music_won_state
+		local music_won_state = v_62.music_won_state
 
-		if var_0_45 and not var_0_42[var_0_45] then
-			var_0_43[#var_0_43 + 1] = var_0_45
-			var_0_42[var_0_45] = true
+		if not (not music_won_state and tbl_15[music_won_state]) then
+			music_group_states[#music_group_states + 1] = music_won_state
+			tbl_15[music_won_state] = true
 		end
 	end
 end
 
-NetworkLookup.locations = create_lookup(NetworkLookup.locations, var_0_44)
+NetworkLookup.locations = create_lookup(NetworkLookup.locations, tbl_16)
 NetworkLookup.tutorials = {
 	"skaven_loot_rat",
 	"skaven_storm_vermin",
@@ -2219,9 +2235,9 @@ NetworkLookup.material_settings_templates = create_lookup({
 }, MaterialSettingsTemplates)
 
 if not SocialWheelEventLookup then
-	local var_0_46 = table.clone(SocialWheelSettingsNetworkLookupBase)
+	local clone = table.clone(SocialWheelSettingsNetworkLookupBase)
 
-	SocialWheelEventLookup = create_lookup(var_0_46, SocialWheelSettingsLookup)
+	SocialWheelEventLookup = create_lookup(clone, SocialWheelSettingsLookup)
 end
 
 NetworkLookup.social_wheel_events = SocialWheelEventLookup
@@ -2244,76 +2260,82 @@ NetworkLookup.request_profile_replies = {
 	"previous_profile_accepted"
 }
 
-local function var_0_47(arg_2_0)
-	if arg_2_0.value then
-		return arg_2_0.sync_on_hot_join or arg_2_0.sync_to_host
+local function fn(self)
+	-- function 2
+	if not self.value then
+		local sync_on_hot_join = self.sync_on_hot_join
+
+		sync_on_hot_join = sync_on_hot_join or self.sync_to_host
+
+		return sync_on_hot_join
 	else
-		for iter_2_0, iter_2_1 in pairs(arg_2_0) do
-			if var_0_47(iter_2_1) then
+		for k, v in pairs(self) do
+			if not fn(v) then
 				return true
 			end
 		end
 	end
 end
 
-local function var_0_48(arg_3_0, arg_3_1)
+local function fn_2(self, arg_3_1)
+	-- function 3
 	if not arg_3_1.value then
-		for iter_3_0, iter_3_1 in pairs(arg_3_1) do
-			if var_0_47(iter_3_1) then
-				arg_3_0[iter_3_0] = true
+		for k, v in pairs(arg_3_1) do
+			if not fn(v) then
+				self[k] = true
 
-				var_0_48(arg_3_0, iter_3_1)
+				fn_2(self, v)
 			end
 		end
 	end
 end
 
-local var_0_49 = {}
+local tbl_17 = {}
 
-for iter_0_130, iter_0_131 in pairs(StatisticsDefinitions) do
-	var_0_48(var_0_49, iter_0_131)
+for k_43, v_64 in pairs(StatisticsDefinitions) do
+	fn_2(tbl_17, v_64)
 end
 
-NetworkLookup.statistics_path_names = create_lookup({}, var_0_49)
+NetworkLookup.statistics_path_names = create_lookup({}, tbl_17)
 NetworkLookup.mission_names = create_lookup({}, Missions)
 NetworkLookup.projectile_gravity_settings = create_lookup({}, ProjectileGravitySettings)
 NetworkLookup.projectile_units = create_lookup({}, ProjectileUnits)
 NetworkLookup.voting_types = create_lookup({}, VoteTemplates)
 
-local var_0_50 = {}
+local tbl_18 = {}
 
-for iter_0_132, iter_0_133 in pairs(AttributeDefinition) do
-	create_lookup(var_0_50, iter_0_133)
+for k_44, v_65 in pairs(AttributeDefinition) do
+	create_lookup(tbl_18, v_65)
 end
 
-NetworkLookup.attributes = var_0_50
+NetworkLookup.attributes = tbl_18
 NetworkLookup.attribute_categories = create_lookup({}, AttributeDefinition)
 
-local var_0_51 = {}
+local tbl_19 = {}
 
-for iter_0_134, iter_0_135 in pairs(TerrorEventBlueprints) do
-	for iter_0_136, iter_0_137 in pairs(iter_0_135) do
-		for iter_0_138, iter_0_139 in ipairs(iter_0_137) do
-			local var_0_52 = iter_0_139.flow_event_name
+for k_45, v_66 in pairs(TerrorEventBlueprints) do
+	for k_46, v_67 in pairs(v_66) do
+		for i_22, v_68 in ipairs(v_67) do
+			local flow_event_name = v_68.flow_event_name
 
-			if var_0_52 and not iter_0_139.disable_network_send then
-				var_0_51[var_0_52] = true
+			if not (not flow_event_name and v_68.disable_network_send) then
+				tbl_19[flow_event_name] = true
 			end
 		end
 	end
 end
 
-for iter_0_140, iter_0_141 in pairs(GenericTerrorEvents) do
-	for iter_0_142, iter_0_143 in ipairs(iter_0_141) do
-		local var_0_53 = iter_0_143.flow_event_name
+for k_47, v_69 in pairs(GenericTerrorEvents) do
+	for i_23, v_70 in ipairs(v_69) do
+		local flow_event_name_2 = v_70.flow_event_name
 
-		if var_0_53 and not iter_0_143.disable_network_send then
-			var_0_51[var_0_53] = true
+		if not (not flow_event_name_2 and v_70.disable_network_send) then
+			tbl_19[flow_event_name_2] = true
 		end
 	end
 end
 
-NetworkLookup.terror_flow_events = create_lookup({}, var_0_51)
+NetworkLookup.terror_flow_events = create_lookup({}, tbl_19)
 NetworkLookup.inventory_packages = dofile("scripts/network_lookup/inventory_package_list")
 
 local var_0_54 = dofile("scripts/network_lookup/career_package_list")
@@ -2323,46 +2345,50 @@ DLCUtils.append("inventory_package_list", NetworkLookup.inventory_packages)
 
 NetworkLookup.network_packages = {}
 
-for iter_0_144, iter_0_145 in pairs(MutatorTemplates) do
-	if iter_0_145.packages then
-		table.append(NetworkLookup.network_packages, iter_0_145.packages)
+for k_48, v_71 in pairs(MutatorTemplates) do
+	if not v_71.packages then
+		table.append(NetworkLookup.network_packages, v_71.packages)
 	end
 end
 
 DLCUtils.append("network_packages", NetworkLookup.network_packages)
 
-local var_0_55 = {
+local tbl_20 = {
 	dialogues = true,
 	markers = true,
 	social_wheel_events = true
 }
+local NetworkLookupInitialized = NetworkLookupInitialized
 
 NetworkLookupInitialized = NetworkLookupInitialized or {}
+NetworkLookupInitialized = NetworkLookupInitialized
 
-local function var_0_56(arg_4_0, arg_4_1)
-	if not var_0_55[arg_4_1] or not NetworkLookupInitialized[arg_4_1] then
-		for iter_4_0, iter_4_1 in ipairs(arg_4_0) do
-			if not arg_4_0[iter_4_1] then
-				arg_4_0[iter_4_1] = iter_4_0
+local function fn_3(self, arg_4_1)
+	-- function 4
+	if not (not tbl_20[arg_4_1] and NetworkLookupInitialized[arg_4_1]) then
+		for i, v in ipairs(self) do
+			if not self[v] then
+				self[v] = i
 			else
-				printf("[NetworkLookup.lua] Duplicate entry %q in %q.", iter_4_1, arg_4_1)
-				ferror("[NetworkLookup.lua] Duplicate entry %q in %q.", iter_4_1, arg_4_1)
+				printf("[NetworkLookup.lua] Duplicate entry %q in %q.", v, arg_4_1)
+				ferror("[NetworkLookup.lua] Duplicate entry %q in %q.", v, arg_4_1)
 			end
 		end
 	end
 
 	NetworkLookupInitialized[arg_4_1] = true
 
-	local var_4_0 = "[NetworkLookup.lua] Table " .. arg_4_1 .. " does not contain key: "
-	local var_4_1 = {
-		__index = function(arg_5_0, arg_5_1)
-			error(var_4_0 .. tostring(arg_5_1))
+	local str = "[NetworkLookup.lua] Table " .. arg_4_1 .. " does not contain key: "
+	local tbl = {
+		__index = function (arg_5_0, arg_5_1)
+			-- function 5
+			error(str .. tostring(arg_5_1))
 		end
 	}
 
-	setmetatable(arg_4_0, var_4_1)
+	setmetatable(self, tbl)
 
-	return var_4_1
+	return tbl
 end
 
 NetworkLookup.dialogue_profiles = {
@@ -2375,17 +2401,18 @@ NetworkLookup.dialogue_profiles = {
 	"npc_empire_soldier"
 }
 
-table.append_unique(NetworkLookup.dialogue_profiles, table.values(table.select_map(SPProfiles, function(arg_6_0, arg_6_1)
+table.append_unique(NetworkLookup.dialogue_profiles, table.values(table.select_map(SPProfiles, function (arg_6_0, arg_6_1)
+	-- function 6
 	return arg_6_1.character_vo
 end)))
 
-for iter_0_146, iter_0_147 in pairs(NetworkLookup) do
-	var_0_56(iter_0_147, iter_0_146)
+for k_49, v_72 in pairs(NetworkLookup) do
+	fn_3(v_72, k_49)
 end
 
-for iter_0_148, iter_0_149 in pairs(Boot.temp_network_lookup_package_handles) do
-	ResourcePackage.unload(iter_0_149)
-	Application.release_resource_package(iter_0_149)
+for k_50, v_73 in pairs(Boot.temp_network_lookup_package_handles) do
+	ResourcePackage.unload(v_73)
+	Application.release_resource_package(v_73)
 
-	Boot.temp_network_lookup_package_handles[iter_0_148] = nil
+	Boot.temp_network_lookup_package_handles[k_50] = nil
 end

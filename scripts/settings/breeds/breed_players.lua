@@ -2,8 +2,15 @@
 
 require("scripts/helpers/breed_utils")
 
+local PlayerBreeds = PlayerBreeds
+
 PlayerBreeds = PlayerBreeds or {}
+PlayerBreeds = PlayerBreeds
+
+local PlayerBreedHitZones = PlayerBreedHitZones
+
 PlayerBreedHitZones = PlayerBreedHitZones or {}
+PlayerBreedHitZones = PlayerBreedHitZones
 PlayerBreedHitZones.player_breed_hit_zones = {
 	full = {
 		prio = 1,
@@ -306,9 +313,9 @@ PlayerBreeds.hero_wh_captain = {
 
 DLCUtils.dofile_list("player_breeds")
 
-for iter_0_0, iter_0_1 in pairs(PlayerBreeds) do
-	iter_0_1.is_ai = false
-	iter_0_1.is_player = true
+for k, v in pairs(PlayerBreeds) do
+	v.is_ai = false
+	v.is_player = true
 
-	BreedUtils.inject_breed_category_mask(iter_0_1)
+	BreedUtils.inject_breed_category_mask(v)
 end

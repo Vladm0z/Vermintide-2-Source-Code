@@ -3,66 +3,104 @@
 VersusSurviveEventObjectiveExtension = class(VersusSurviveEventObjectiveExtension, BaseObjectiveExtension)
 VersusSurviveEventObjectiveExtension.NAME = "VersusSurviveEventObjectiveExtension"
 
-function VersusSurviveEventObjectiveExtension.init(arg_1_0, ...)
-	VersusSurviveEventObjectiveExtension.super.init(arg_1_0, ...)
+VersusSurviveEventObjectiveExtension.init = function (self, ...)
+	-- function 1
+	VersusSurviveEventObjectiveExtension.super.init(self, ...)
 
-	arg_1_0._survive_time_done = 0
-	arg_1_0._remaining_survive_time = 0
-	arg_1_0._current_time_survived = 0
-	arg_1_0._percentage = 0
+	self._survive_time_done = 0
+	self._remaining_survive_time = 0
+	self._current_time_survived = 0
+	self._percentage = 0
 end
 
-function VersusSurviveEventObjectiveExtension._set_objective_data(arg_2_0, arg_2_1)
-	local var_2_0 = GameModeSettings.versus.objectives.survive_event
+VersusSurviveEventObjectiveExtension._set_objective_data = function (self, arg_2_1)
+	-- function 2
+	local survive_event = GameModeSettings.versus.objectives.survive_event
+	local num_sections = arg_2_1.num_sections
 
-	arg_2_0._num_sections = arg_2_1.num_sections or var_2_0.num_sections
-	arg_2_0._score_per_section = arg_2_1.score_per_section or var_2_0.score_per_section
-	arg_2_0._time_per_section = arg_2_1.time_per_section or var_2_0.time_per_section
-	arg_2_0._score_for_completion = arg_2_1.score_for_completion or var_2_0.score_for_completion
-	arg_2_0._time_for_completion = arg_2_1.time_for_completion or var_2_0.time_for_completion
-	arg_2_0._on_last_leaf_complete_sound_event = arg_2_1.on_last_leaf_complete_sound_event or var_2_0.on_last_leaf_complete_sound_event
-	arg_2_0._on_leaf_complete_sound_event = arg_2_1.on_leaf_complete_sound_event or var_2_0.on_leaf_complete_sound_event
-	arg_2_0._on_section_progress_sound_event = arg_2_1.on_section_progress_sound_event or var_2_0.on_section_progress_sound_event
+	num_sections = num_sections or survive_event.num_sections
+	self._num_sections = num_sections
+
+	local score_per_section = arg_2_1.score_per_section
+
+	score_per_section = score_per_section or survive_event.score_per_section
+	self._score_per_section = score_per_section
+
+	local time_per_section = arg_2_1.time_per_section
+
+	time_per_section = time_per_section or survive_event.time_per_section
+	self._time_per_section = time_per_section
+
+	local score_for_completion = arg_2_1.score_for_completion
+
+	score_for_completion = score_for_completion or survive_event.score_for_completion
+	self._score_for_completion = score_for_completion
+
+	local time_for_completion = arg_2_1.time_for_completion
+
+	time_for_completion = time_for_completion or survive_event.time_for_completion
+	self._time_for_completion = time_for_completion
+
+	local on_last_leaf_complete_sound_event = arg_2_1.on_last_leaf_complete_sound_event
+
+	on_last_leaf_complete_sound_event = on_last_leaf_complete_sound_event or survive_event.on_last_leaf_complete_sound_event
+	self._on_last_leaf_complete_sound_event = on_last_leaf_complete_sound_event
+
+	local on_leaf_complete_sound_event = arg_2_1.on_leaf_complete_sound_event
+
+	on_leaf_complete_sound_event = on_leaf_complete_sound_event or survive_event.on_leaf_complete_sound_event
+	self._on_leaf_complete_sound_event = on_leaf_complete_sound_event
+
+	local on_section_progress_sound_event = arg_2_1.on_section_progress_sound_event
+
+	on_section_progress_sound_event = on_section_progress_sound_event or survive_event.on_section_progress_sound_event
+	self._on_section_progress_sound_event = on_section_progress_sound_event
 end
 
-function VersusSurviveEventObjectiveExtension._activate(arg_3_0)
-	arg_3_0._survive_time_done = Managers.time:time("game") + arg_3_0._time_for_completion
+VersusSurviveEventObjectiveExtension._activate = function (self)
+	-- function 3
+	self._survive_time_done = Managers.time:time("game") + self._time_for_completion
 end
 
-function VersusSurviveEventObjectiveExtension._deactivate(arg_4_0)
+VersusSurviveEventObjectiveExtension._deactivate = function (arg_4_0)
+	-- function 4
 	return
 end
 
-function VersusSurviveEventObjectiveExtension._server_update(arg_5_0, arg_5_1, arg_5_2)
-	local var_5_0 = math.clamp(arg_5_0._survive_time_done - arg_5_2, 0, arg_5_0._time_for_completion)
+VersusSurviveEventObjectiveExtension._server_update = function (self, arg_5_1, arg_5_2)
+	-- function 5
+	local clamp = math.clamp(self._survive_time_done - arg_5_2, 0, self._time_for_completion)
 
-	if var_5_0 ~= arg_5_0._remaining_survive_time then
-		arg_5_0._remaining_survive_time = var_5_0
+	if clamp ~= self._remaining_survive_time then
+		self._remaining_survive_time = clamp
 
-		local var_5_1 = arg_5_0:get_percentage_done()
+		local get_percentage_done = self:get_percentage_done()
 
-		arg_5_0:server_set_value(var_5_1)
+		self:server_set_value(get_percentage_done)
 
-		if var_5_1 >= (arg_5_0._current_section + 1) * (1 / arg_5_0._num_sections) then
-			arg_5_0:on_section_completed()
+		if get_percentage_done >= (self._current_section + 1) * (1 / self._num_sections) then
+			self:on_section_completed()
 		end
 	end
 end
 
-function VersusSurviveEventObjectiveExtension._client_update(arg_6_0, arg_6_1, arg_6_2)
-	arg_6_0._percentage = arg_6_0:client_get_value()
+VersusSurviveEventObjectiveExtension._client_update = function (self, arg_6_1, arg_6_2)
+	-- function 6
+	self._percentage = self:client_get_value()
 end
 
-function VersusSurviveEventObjectiveExtension.update_testify(arg_7_0, arg_7_1, arg_7_2)
+VersusSurviveEventObjectiveExtension.update_testify = function (arg_7_0, arg_7_1, arg_7_2)
+	-- function 7
 	return
 end
 
-function VersusSurviveEventObjectiveExtension.get_percentage_done(arg_8_0)
-	if arg_8_0._is_server then
-		local var_8_0 = 1 - arg_8_0._remaining_survive_time / arg_8_0._time_for_completion
+VersusSurviveEventObjectiveExtension.get_percentage_done = function (self)
+	-- function 8
+	if not self._is_server then
+		local num = 1 - self._remaining_survive_time / self._time_for_completion
 
-		return math.clamp(var_8_0, 0, 1)
+		return math.clamp(num, 0, 1)
 	end
 
-	return arg_8_0._percentage
+	return self._percentage
 end

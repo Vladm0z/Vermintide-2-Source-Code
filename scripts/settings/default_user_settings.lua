@@ -8,8 +8,8 @@ require("scripts/settings/sound_quality_settings")
 require("scripts/managers/player/player_sync_data")
 require("scripts/ui/views/crosshair_kill_confirm_settings")
 
-local var_0_0, var_0_1, var_0_2 = Application.render_caps("dlss_supported", "dlss_g_supported", "reflex_supported")
-local var_0_3 = {
+local render_caps, var_0_1, var_0_2 = Application.render_caps("dlss_supported", "dlss_g_supported", "reflex_supported")
+local tbl = {
 	gamepad_left_handed = false,
 	gamepad_auto_aim_enabled = true,
 	play_intro_cinematic = true,
@@ -125,24 +125,61 @@ local var_0_3 = {
 	weapon_trails = "normal",
 	chat_font_size = 20,
 	char_texture_quality = TextureQuality.default_characters,
-	env_texture_quality = TextureQuality.default_environment,
-	local_light_shadow_quality = script_data.settings.default_local_light_shadow_quality or "high",
-	particles_quality = script_data.settings.default_particles_quality or "high",
-	sun_shadow_quality = script_data.settings.default_sun_shadow_quality or "high",
-	use_physic_debris = script_data.settings.default_use_physic_debris or true,
-	num_blood_decals = BloodSettings.blood_decals.num_decals or 100,
-	volumetric_fog_quality = script_data.settings.default_volumetric_fog_quality or "lowest",
-	ambient_light_quality = script_data.settings.default_ambient_light_quality or "high",
-	ao_quality = script_data.settings.default_ao_quality or "medium",
-	playerlist_build_privacy = PrivacyLevels.friends,
-	crosshair_kill_confirm = CrosshairKillConfirmSettingsGroups.off,
-	sound_channel_configuration = Wwise.AK_SPEAKER_SETUP_AUTO,
-	overriden_settings = {
-		dlss_frame_generation = not not var_0_1,
-		dlss_super_resolution = var_0_0 and "auto" or "none"
-	}
+	env_texture_quality = TextureQuality.default_environment
 }
-local var_0_4 = {
+local default_local_light_shadow_quality = script_data.settings.default_local_light_shadow_quality
+
+default_local_light_shadow_quality = default_local_light_shadow_quality or "high"
+tbl.local_light_shadow_quality = default_local_light_shadow_quality
+
+local default_particles_quality = script_data.settings.default_particles_quality
+
+default_particles_quality = default_particles_quality or "high"
+tbl.particles_quality = default_particles_quality
+
+local default_sun_shadow_quality = script_data.settings.default_sun_shadow_quality
+
+default_sun_shadow_quality = default_sun_shadow_quality or "high"
+tbl.sun_shadow_quality = default_sun_shadow_quality
+
+local default_use_physic_debris = script_data.settings.default_use_physic_debris
+
+default_use_physic_debris = default_use_physic_debris or true
+tbl.use_physic_debris = default_use_physic_debris
+
+local num_decals = BloodSettings.blood_decals.num_decals
+
+num_decals = num_decals or 100
+tbl.num_blood_decals = num_decals
+
+local default_volumetric_fog_quality = script_data.settings.default_volumetric_fog_quality
+
+default_volumetric_fog_quality = default_volumetric_fog_quality or "lowest"
+tbl.volumetric_fog_quality = default_volumetric_fog_quality
+
+local default_ambient_light_quality = script_data.settings.default_ambient_light_quality
+
+default_ambient_light_quality = default_ambient_light_quality or "high"
+tbl.ambient_light_quality = default_ambient_light_quality
+
+local default_ao_quality = script_data.settings.default_ao_quality
+
+default_ao_quality = default_ao_quality or "medium"
+tbl.ao_quality = default_ao_quality
+tbl.playerlist_build_privacy = PrivacyLevels.friends
+tbl.crosshair_kill_confirm = CrosshairKillConfirmSettingsGroups.off
+tbl.sound_channel_configuration = Wwise.AK_SPEAKER_SETUP_AUTO
+
+local tbl_2 = {
+	dlss_frame_generation = not not var_0_1
+}
+local flag
+
+flag = not render_caps and "auto" and "none"
+tbl_2.dlss_super_resolution = flag
+tbl.overriden_settings = tbl_2
+
+local tbl_3 = {
 	lod_scatter_density = 1,
 	local_probes_enabled = true,
 	upscaling_mode = "none",
@@ -172,12 +209,20 @@ local var_0_4 = {
 	sharpen_enabled = false,
 	nv_low_latency_boost = false,
 	upscaling_enabled = false,
-	motion_blur_enabled = true,
-	max_shadow_casting_lights = IS_WINDOWS and 1 or 2,
-	fov = script_data.settings.default_fov or CameraSettings.first_person._node.vertical_fov,
-	nv_low_latency_mode = not not var_0_2
+	motion_blur_enabled = true
 }
-local var_0_5 = {
+local flag_2
+
+flag_2 = not IS_WINDOWS and 1 and 2
+tbl_3.max_shadow_casting_lights = flag_2
+
+local default_fov = script_data.settings.default_fov
+
+default_fov = default_fov or CameraSettings.first_person._node.vertical_fov
+tbl_3.fov = default_fov
+tbl_3.nv_low_latency_mode = not not var_0_2
+
+local tbl_4 = {
 	tagging_enabled = true,
 	early_win_enabled = true,
 	custom_loadout_enabled = true,
@@ -203,131 +248,134 @@ local var_0_5 = {
 	globadier_enabled = true,
 	hero_rescues_enabled = false
 }
-local var_0_6 = {}
-local var_0_7 = TextureQuality.characters[var_0_3.char_texture_quality]
-local var_0_8 = TextureQuality.environment[var_0_3.env_texture_quality]
+local tbl_5 = {}
+local var_0_19 = TextureQuality.characters[tbl.char_texture_quality]
+local var_0_20 = TextureQuality.environment[tbl.env_texture_quality]
 
-for iter_0_0 = 1, #var_0_7 do
-	local var_0_9 = var_0_7[iter_0_0]
+for i = 1, #var_0_19 do
+	local var_0_21 = var_0_19[i]
 
-	var_0_6[var_0_9.texture_setting] = var_0_9.mip_level
+	tbl_5[var_0_21.texture_setting] = var_0_21.mip_level
 end
 
-for iter_0_1 = 1, #var_0_8 do
-	local var_0_10 = var_0_8[iter_0_1]
+for j = 1, #var_0_20 do
+	local var_0_22 = var_0_20[j]
 
-	var_0_6[var_0_10.texture_setting] = var_0_10.mip_level
+	tbl_5[var_0_22.texture_setting] = var_0_22.mip_level
 end
 
-local var_0_11 = SunShadowQuality[var_0_3.sun_shadow_quality]
+local var_0_23 = SunShadowQuality[tbl.sun_shadow_quality]
 
-for iter_0_2, iter_0_3 in pairs(var_0_11) do
-	var_0_4[iter_0_2] = iter_0_3
+for k, v in pairs(var_0_23) do
+	tbl_3[k] = v
 end
 
-local var_0_12 = ParticlesQuality[var_0_3.particles_quality]
+local var_0_24 = ParticlesQuality[tbl.particles_quality]
 
-for iter_0_4, iter_0_5 in pairs(var_0_12) do
-	var_0_4[iter_0_4] = iter_0_5
+for k_2, v_2 in pairs(var_0_24) do
+	tbl_3[k_2] = v_2
 end
 
-local var_0_13 = AmbientLightQuality[var_0_3.ambient_light_quality]
+local var_0_25 = AmbientLightQuality[tbl.ambient_light_quality]
 
-for iter_0_6, iter_0_7 in pairs(var_0_13) do
-	var_0_4[iter_0_6] = iter_0_7
+for k_3, v_3 in pairs(var_0_25) do
+	tbl_3[k_3] = v_3
 end
 
-local var_0_14 = AmbientOcclusionQuality[var_0_3.ao_quality]
+local var_0_26 = AmbientOcclusionQuality[tbl.ao_quality]
 
-for iter_0_8, iter_0_9 in pairs(var_0_14) do
-	var_0_4[iter_0_8] = iter_0_9
+for k_4, v_4 in pairs(var_0_26) do
+	tbl_3[k_4] = v_4
 end
 
-local var_0_15 = LocalLightShadowQuality[var_0_3.local_light_shadow_quality]
+local var_0_27 = LocalLightShadowQuality[tbl.local_light_shadow_quality]
 
-for iter_0_10, iter_0_11 in pairs(var_0_15) do
-	var_0_4[iter_0_10] = iter_0_11
+for k_5, v_5 in pairs(var_0_27) do
+	tbl_3[k_5] = v_5
 end
 
-local var_0_16 = VolumetricFogQuality[var_0_3.volumetric_fog_quality]
+local var_0_28 = VolumetricFogQuality[tbl.volumetric_fog_quality]
 
-for iter_0_12, iter_0_13 in pairs(var_0_16) do
-	var_0_4[iter_0_12] = iter_0_13
+for k_6, v_6 in pairs(var_0_28) do
+	tbl_3[k_6] = v_6
 end
 
 DefaultUserSettings = {}
 
-function DefaultUserSettings.set_default_user_settings()
-	if LEVEL_EDITOR_TEST then
+DefaultUserSettings.set_default_user_settings = function ()
+	-- function 1
+	if not LEVEL_EDITOR_TEST then
 		return
 	end
 
-	local var_1_0 = false
+	local flag = false
 
-	for iter_1_0, iter_1_1 in pairs(var_0_3) do
-		if Application.user_setting(iter_1_0) == nil then
-			Application.set_user_setting(iter_1_0, iter_1_1)
+	for k, v in pairs(tbl) do
+		if Application.user_setting(k) == nil then
+			Application.set_user_setting(k, v)
 
-			var_1_0 = true
+			flag = true
 		end
 	end
 
-	local var_1_1 = false
+	local flag_2 = false
 
-	for iter_1_2, iter_1_3 in pairs(var_0_4) do
-		if Application.user_setting("render_settings", iter_1_2) == nil then
-			Application.set_user_setting("render_settings", iter_1_2, iter_1_3)
+	for k_2, v_2 in pairs(tbl_3) do
+		if Application.user_setting("render_settings", k_2) == nil then
+			Application.set_user_setting("render_settings", k_2, v_2)
 
-			var_1_0 = true
-			var_1_1 = true
+			flag = true
+			flag_2 = true
 		end
 	end
 
-	for iter_1_4, iter_1_5 in pairs(var_0_6) do
-		if Application.user_setting("texture_settings", iter_1_4) == nil then
-			Application.set_user_setting("texture_settings", iter_1_4, iter_1_5)
+	for k_3, v_3 in pairs(tbl_5) do
+		if Application.user_setting("texture_settings", k_3) == nil then
+			Application.set_user_setting("texture_settings", k_3, v_3)
 
-			var_1_0 = true
-			var_1_1 = true
+			flag = true
+			flag_2 = true
 		end
 	end
 
-	for iter_1_6, iter_1_7 in pairs(var_0_5) do
-		if Application.user_setting("versus_settings", iter_1_6) == nil then
-			Application.set_user_setting("versus_settings", iter_1_6, iter_1_7)
+	for k_4, v_4 in pairs(tbl_4) do
+		if Application.user_setting("versus_settings", k_4) == nil then
+			Application.set_user_setting("versus_settings", k_4, v_4)
 
-			var_1_0 = true
+			flag = true
 		end
 	end
 
-	if var_1_1 then
+	if not flag_2 then
 		Application.apply_user_settings()
 
-		if rawget(_G, "GlobalShaderFlags") then
+		if not rawget(_G, "GlobalShaderFlags") then
 			GlobalShaderFlags.apply_settings()
 		end
 	end
 
-	if var_1_0 then
+	if not flag then
 		Application.save_user_settings()
 	end
 end
 
-function DefaultUserSettings.clone_default_settings()
-	return table.clone(var_0_3)
+DefaultUserSettings.clone_default_settings = function ()
+	-- function 2
+	return table.clone(tbl)
 end
 
-function DefaultUserSettings.get(arg_3_0, arg_3_1)
+DefaultUserSettings.get = function (arg_3_0, arg_3_1)
+	-- function 3
 	local var_3_0
 
 	if arg_3_0 == "user_settings" then
-		var_3_0 = var_0_3[arg_3_1]
+		var_3_0 = tbl[arg_3_1]
 	elseif arg_3_0 == "render_settings" then
-		var_3_0 = var_0_4[arg_3_1]
+		var_3_0 = tbl_3[arg_3_1]
 	elseif arg_3_0 == "texture_settings" then
-		var_3_0 = var_0_6[arg_3_1]
+		var_3_0 = tbl_5[arg_3_1]
 	elseif arg_3_0 == "versus_settings" then
-		var_3_0 = var_0_5[arg_3_1]
+		var_3_0 = tbl_4[arg_3_1]
 	end
 
 	fassert(var_3_0 ~= nil, "No default setting set for setting %s", arg_3_1)
@@ -335,74 +383,79 @@ function DefaultUserSettings.get(arg_3_0, arg_3_1)
 	return var_3_0
 end
 
-function DefaultUserSettings.setup_resolution()
-	local var_4_0 = Application.user_setting
-	local var_4_1 = Application.set_user_setting
-	local var_4_2 = Application.save_user_settings
-	local var_4_3 = Application.apply_user_settings
-	local var_4_4 = Application:settings() or {}
+DefaultUserSettings.setup_resolution = function ()
+	-- function 4
+	local user_setting = Application.user_setting
+	local set_user_setting = Application.set_user_setting
+	local save_user_settings = Application.save_user_settings
+	local apply_user_settings = Application.apply_user_settings
+	local settings = Application:settings()
 
-	table.dump(var_4_4, "Application Settings", 4)
+	settings = settings or {}
 
-	local var_4_5 = var_4_0("user_settings")
+	table.dump(settings, "Application Settings", 4)
+
+	local var_4_5 = user_setting("user_settings")
 
 	print("HAS USER_SETTINGS: " .. tostring(var_4_5))
 
-	local var_4_6 = false
-	local var_4_7 = {
+	local flag = false
+	local tbl = {
 		Application.argv()
 	}
 
-	for iter_4_0, iter_4_1 in pairs(var_4_7) do
-		if iter_4_1 == "-safe-mode" then
-			var_4_6 = true
+	for k, v in pairs(tbl) do
+		if v == "-safe-mode" then
+			flag = true
 		end
 	end
 
-	print("SAFE MODE:", var_4_6)
+	print("SAFE MODE:", flag)
 
-	if var_4_4.auto_detect_video and not var_4_5 or var_4_6 then
+	if not settings.auto_detect_video and var_4_5 and not flag then
 		print("################### AUTO DETECT VIDEO ###################")
 
-		local var_4_8 = var_4_0("screen_resolution")
+		local var_4_8 = user_setting("screen_resolution")
 
 		table.dump(var_4_8, "resolution", 2)
 
-		local var_4_9 = 0
-		local var_4_10 = Application.enum_display_modes() or {}
+		local num = 0
+		local enum_display_modes = Application.enum_display_modes()
 
-		if #var_4_10 == 0 then
-			var_4_10 = DefaultDisplayModes
+		enum_display_modes = enum_display_modes or {}
+
+		if #enum_display_modes == 0 then
+			enum_display_modes = DefaultDisplayModes
 
 			print("Could not fetch display modes ... using default")
 		end
 
-		table.dump(var_4_10, "display_modes", 2)
+		table.dump(enum_display_modes, "display_modes", 2)
 
-		local var_4_11 = false
-		local var_4_12 = var_4_10[1]
+		local flag_2 = false
+		local var_4_12 = enum_display_modes[1]
 
 		print("lowest available", var_4_12)
 
-		for iter_4_2, iter_4_3 in ipairs(var_4_10) do
-			if (iter_4_3[1] >= var_4_12[1] or iter_4_3[2] >= var_4_12[2]) and iter_4_3[3] == var_4_9 then
-				var_4_12 = iter_4_3
+		for i, v_2 in ipairs(enum_display_modes) do
+			if not ((v_2[1] >= var_4_12[1] or v_2[2] >= var_4_12[2]) and v_2[3] ~= num) then
+				var_4_12 = v_2
 			end
 		end
 
 		print("highest available", var_4_12)
 
-		if var_4_6 then
+		if not flag then
 			print("¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤ SETTING LOWEST RESOLUTION ¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤")
 
-			local var_4_13 = var_4_10[1]
+			local var_4_13 = enum_display_modes[1]
 
 			var_4_8[1] = var_4_13[1]
 			var_4_8[2] = var_4_13[2]
 			var_4_8[3] = var_4_13[3]
 
 			table.dump(var_4_8, "res", 1)
-			var_4_1("borderless_fullscreen", false)
+			set_user_setting("borderless_fullscreen", false)
 		else
 			print("¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤ SETTING MAX RESOLUTION ¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤")
 
@@ -411,23 +464,23 @@ function DefaultUserSettings.setup_resolution()
 			var_4_8[3] = var_4_12[3]
 
 			table.dump(var_4_8, "res", 1)
-			var_4_1("borderless_fullscreen", true)
+			set_user_setting("borderless_fullscreen", true)
 		end
 
-		local var_4_14 = {
+		local tbl_2 = {
 			var_4_8[1],
 			var_4_8[2],
 			var_4_8[3]
 		}
 
-		var_4_1("screen_resolution", var_4_14)
-		var_4_1("fullscreen", false)
-		var_4_1("fullscreen_output", var_4_14[3])
-		var_4_1("adapter_index", 0)
-		var_4_1("aspect_ratio", -1)
-		var_4_1("user_settings", true)
-		var_4_2()
-		var_4_3()
+		set_user_setting("screen_resolution", tbl_2)
+		set_user_setting("fullscreen", false)
+		set_user_setting("fullscreen_output", tbl_2[3])
+		set_user_setting("adapter_index", 0)
+		set_user_setting("aspect_ratio", -1)
+		set_user_setting("user_settings", true)
+		save_user_settings()
+		apply_user_settings()
 		print("################### AUTO DETECT VIDEO END ###################")
 
 		return true

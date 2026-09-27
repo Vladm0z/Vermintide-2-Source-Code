@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/dwarf_ranger_dlc_termite_3.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		response = "pdr_gateway_accidental_bell_ring_a",
 		name = "pdr_gateway_accidental_bell_ring_a",

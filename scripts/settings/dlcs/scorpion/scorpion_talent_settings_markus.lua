@@ -1,10 +1,16 @@
 -- chunkname: @scripts/settings/dlcs/scorpion/scorpion_talent_settings_markus.lua
 
-local var_0_0 = {}
+local tbl = {}
+local TalentBuffTemplates = TalentBuffTemplates
 
 TalentBuffTemplates = TalentBuffTemplates or {}
+TalentBuffTemplates = TalentBuffTemplates
 TalentBuffTemplates.empire_soldier = {}
+
+local TalentTrees = TalentTrees
+
 TalentTrees = TalentTrees or {}
+TalentTrees = TalentTrees
 TalentTrees.empire_soldier = {
 	{},
 	{},
@@ -12,12 +18,12 @@ TalentTrees.empire_soldier = {
 }
 Talents.empire_soldier = {}
 
-for iter_0_0, iter_0_1 in pairs(TalentBuffTemplates.empire_soldier) do
-	local var_0_1 = iter_0_1.buffs
+for k, v in pairs(TalentBuffTemplates.empire_soldier) do
+	local buffs = v.buffs
 
-	fassert(#var_0_1 == 1, "talent buff has more than one sub buff, add multiple buffs from the talent instead")
+	fassert(#buffs == 1, "talent buff has more than one sub buff, add multiple buffs from the talent instead")
 
-	var_0_1[1].name = iter_0_0
+	buffs[1].name = k
 end
 
-BuffUtils.apply_buff_tweak_data(TalentBuffTemplates.empire_soldier, var_0_0)
+BuffUtils.apply_buff_tweak_data(TalentBuffTemplates.empire_soldier, tbl)

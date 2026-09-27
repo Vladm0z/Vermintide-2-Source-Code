@@ -2,14 +2,17 @@
 
 PlayRecordingInputDevice = {}
 
-function PlayRecordingInputDevice.name()
+PlayRecordingInputDevice.name = function ()
+	-- function 1
 	return "PlayRecordingInputDevice"
 end
 
-function PlayRecordingInputDevice.category()
+PlayRecordingInputDevice.category = function ()
+	-- function 2
 	return "recording"
 end
 
-function PlayRecordingInputDevice.active()
+PlayRecordingInputDevice.active = function ()
+	-- function 3
 	return true
 end

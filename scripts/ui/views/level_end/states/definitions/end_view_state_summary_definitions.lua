@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/level_end/states/definitions/end_view_state_summary_definitions.lua
 
-local var_0_0 = {
+local tbl = {
 	screen = {
 		scale = "fit",
 		size = {
@@ -350,14 +350,14 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = {}
-local var_0_2 = 10
+local tbl_2 = {}
+local num = 10
 
-for iter_0_0 = 1, var_0_2 do
-	var_0_1["summary_entry_" .. iter_0_0] = UIWidgets.create_summary_entry("summary_entry_root", var_0_0.summary_entry_root.size, iter_0_0)
+for i = 1, num do
+	tbl_2["summary_entry_" .. i] = UIWidgets.create_summary_entry("summary_entry_root", tbl.summary_entry_root.size, i)
 end
 
-local var_0_3 = {
+local tbl_3 = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -374,7 +374,7 @@ local var_0_3 = {
 		2
 	}
 }
-local var_0_4 = {
+local tbl_4 = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -390,7 +390,7 @@ local var_0_4 = {
 		-2
 	}
 }
-local var_0_5 = {
+local tbl_5 = {
 	font_size = 32,
 	upper_case = true,
 	word_wrap = true,
@@ -410,7 +410,7 @@ local var_0_5 = {
 		2
 	}
 }
-local var_0_6 = {
+local tbl_6 = {
 	font_size = 32,
 	upper_case = true,
 	word_wrap = true,
@@ -430,7 +430,7 @@ local var_0_6 = {
 		2
 	}
 }
-local var_0_7 = {
+local tbl_7 = {
 	font_size = 32,
 	upper_case = true,
 	word_wrap = true,
@@ -445,7 +445,7 @@ local var_0_7 = {
 		2
 	}
 }
-local var_0_8 = {
+local tbl_8 = {
 	font_size = 32,
 	upper_case = true,
 	word_wrap = true,
@@ -460,7 +460,7 @@ local var_0_8 = {
 		2
 	}
 }
-local var_0_9 = {
+local tbl_9 = {
 	font_size = 40,
 	upper_case = true,
 	word_wrap = true,
@@ -475,7 +475,7 @@ local var_0_9 = {
 		10
 	}
 }
-local var_0_10 = {
+local tbl_10 = {
 	font_size = 32,
 	upper_case = true,
 	word_wrap = true,
@@ -490,7 +490,7 @@ local var_0_10 = {
 		2
 	}
 }
-local var_0_11 = {
+local tbl_11 = {
 	font_size = 32,
 	upper_case = true,
 	use_shadow = true,
@@ -506,7 +506,7 @@ local var_0_11 = {
 		2
 	}
 }
-local var_0_12 = {
+local tbl_12 = {
 	font_size = 32,
 	upper_case = true,
 	use_shadow = true,
@@ -527,18 +527,18 @@ local var_0_12 = {
 		2
 	}
 }
-local var_0_13 = {
-	objective_title = UIWidgets.create_simple_text(Localize("summary_screen_objective_title"), "summary_entry_title", nil, nil, var_0_5),
-	experience_title = UIWidgets.create_simple_text(Localize("summary_screen_experience_title"), "summary_entry_title", nil, nil, var_0_6),
-	total_title = UIWidgets.create_simple_text(Localize("summary_screen_total_title"), "summary_entry_total_title", nil, nil, var_0_7),
-	experience_total_text = UIWidgets.create_simple_text("", "summary_entry_total_title", nil, nil, var_0_8),
-	next_level_text = UIWidgets.create_simple_text("0", "next_level_text", nil, nil, var_0_4),
-	current_level_text = UIWidgets.create_simple_text("0", "current_level_text", nil, nil, var_0_4),
-	summary_title = UIWidgets.create_simple_text(Localize("end_screen_mission_summary"), "summary_title", nil, nil, var_0_3),
-	level_up_text = UIWidgets.create_simple_text(Localize("summary_screen_level_up"), "experience_bar", nil, nil, var_0_9),
+local tbl_13 = {
+	objective_title = UIWidgets.create_simple_text(Localize("summary_screen_objective_title"), "summary_entry_title", nil, nil, tbl_5),
+	experience_title = UIWidgets.create_simple_text(Localize("summary_screen_experience_title"), "summary_entry_title", nil, nil, tbl_6),
+	total_title = UIWidgets.create_simple_text(Localize("summary_screen_total_title"), "summary_entry_total_title", nil, nil, tbl_7),
+	experience_total_text = UIWidgets.create_simple_text("", "summary_entry_total_title", nil, nil, tbl_8),
+	next_level_text = UIWidgets.create_simple_text("0", "next_level_text", nil, nil, tbl_4),
+	current_level_text = UIWidgets.create_simple_text("0", "current_level_text", nil, nil, tbl_4),
+	summary_title = UIWidgets.create_simple_text(Localize("end_screen_mission_summary"), "summary_title", nil, nil, tbl_3),
+	level_up_text = UIWidgets.create_simple_text(Localize("summary_screen_level_up"), "experience_bar", nil, nil, tbl_9),
 	background = UIWidgets.create_simple_texture("summary_screen", "background"),
 	experience_fg = UIWidgets.create_simple_texture("summary_screen_fg", "experience_fg"),
-	experience_bar = UIWidgets.create_summary_experience_bar("experience_bar", var_0_0.experience_bar.size),
+	experience_bar = UIWidgets.create_summary_experience_bar("experience_bar", tbl.experience_bar.size),
 	sparkle_effect = UIWidgets.create_simple_rotated_texture("sparkle_effect", 0, {
 		128,
 		128
@@ -579,34 +579,37 @@ local var_0_13 = {
 		255,
 		255
 	}),
-	essence_background_frame = UIWidgets.create_frame("summary_entry_essence_background", var_0_0.summary_entry_essence_background.size, "button_frame_01", 3),
-	total_essence_title = UIWidgets.create_simple_text(Localize("summary_total_essence_title"), "summary_entry_total_essence_title", nil, nil, var_0_10),
-	essence_total_text = UIWidgets.create_simple_text("", "summary_entry_total_essence_gained", nil, nil, var_0_11),
-	essence_total_text_max = UIWidgets.create_simple_text(Localize("weave_endscreen_max_essence"), "summary_entry_total_essence_gained", nil, nil, var_0_12),
+	essence_background_frame = UIWidgets.create_frame("summary_entry_essence_background", tbl.summary_entry_essence_background.size, "button_frame_01", 3),
+	total_essence_title = UIWidgets.create_simple_text(Localize("summary_total_essence_title"), "summary_entry_total_essence_title", nil, nil, tbl_10),
+	essence_total_text = UIWidgets.create_simple_text("", "summary_entry_total_essence_gained", nil, nil, tbl_11),
+	essence_total_text_max = UIWidgets.create_simple_text(Localize("weave_endscreen_max_essence"), "summary_entry_total_essence_gained", nil, nil, tbl_12),
 	icon_essence = UIWidgets.create_simple_texture("icon_crafting_essence_small", "summary_entry_essence_icon")
 }
-local var_0_14 = 10
+local num_2 = 10
 
-for iter_0_1 = 1, var_0_14 do
-	var_0_13["experience_entry_" .. iter_0_1] = UIWidgets.create_experience_entry("experience_entry_root", var_0_0.experience_entry_root.size)
+for j = 1, num_2 do
+	tbl_13["experience_entry_" .. j] = UIWidgets.create_experience_entry("experience_entry_root", tbl.experience_entry_root.size)
 end
 
-local var_0_15 = {
+local tbl_14 = {
 	transition_enter_fast = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+				-- function 1
 				arg_1_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
-				local var_2_0 = math.easeOutCubic(arg_2_3)
+			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+				-- function 2
+				local easeOutCubic = math.easeOutCubic(arg_2_3)
 
-				arg_2_4.render_settings.alpha_multiplier = var_2_0
-				arg_2_0.background.local_position[2] = 400 * (1 - var_2_0)
+				arg_2_4.render_settings.alpha_multiplier = easeOutCubic
+				arg_2_0.background.local_position[2] = 400 * (1 - easeOutCubic)
 			end,
-			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+				-- function 3
 				return
 			end
 		}
@@ -616,16 +619,19 @@ local var_0_15 = {
 			name = "fade_in",
 			start_progress = 2,
 			end_progress = 2.3,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				-- function 4
 				arg_4_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
-				local var_5_0 = math.easeOutCubic(arg_5_3)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+				-- function 5
+				local easeOutCubic = math.easeOutCubic(arg_5_3)
 
-				arg_5_4.render_settings.alpha_multiplier = var_5_0
-				arg_5_0.background.local_position[2] = 400 * (1 - var_5_0)
+				arg_5_4.render_settings.alpha_multiplier = easeOutCubic
+				arg_5_0.background.local_position[2] = 400 * (1 - easeOutCubic)
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+				-- function 6
 				return
 			end
 		}
@@ -635,16 +641,19 @@ local var_0_15 = {
 			name = "fade_out",
 			start_progress = 1,
 			end_progress = 1.3,
-			init = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			init = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+				-- function 7
 				arg_7_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
-				local var_8_0 = math.easeInCubic(arg_8_3)
+			update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+				-- function 8
+				local easeInCubic = math.easeInCubic(arg_8_3)
 
-				arg_8_4.render_settings.alpha_multiplier = 1 - var_8_0
-				arg_8_0.background.local_position[2] = -400 * var_8_0
+				arg_8_4.render_settings.alpha_multiplier = 1 - easeInCubic
+				arg_8_0.background.local_position[2] = -400 * easeInCubic
 			end,
-			on_complete = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			on_complete = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+				-- function 9
 				return
 			end
 		}
@@ -654,31 +663,34 @@ local var_0_15 = {
 			name = "move",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
-				local var_10_0 = arg_10_3.widget
-				local var_10_1 = var_10_0.content
-				local var_10_2 = var_10_0.style
-				local var_10_3 = var_10_0.offset
-				local var_10_4 = arg_10_1[var_10_0.scenegraph_id].size
-				local var_10_5 = arg_10_3.list_index
-				local var_10_6 = arg_10_3.spacing
-				local var_10_7 = (var_10_4[2] + var_10_6) * (var_10_5 - 1)
-				local var_10_8 = var_10_4[2] + var_10_6
+			init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+				-- function 10
+				local widget = arg_10_3.widget
+				local content = widget.content
+				local style = widget.style
+				local offset = widget.offset
+				local size = arg_10_1[widget.scenegraph_id].size
+				local list_index = arg_10_3.list_index
+				local spacing = arg_10_3.spacing
+				local num = (size[2] + spacing) * (list_index - 1)
+				local num_2 = size[2] + spacing
 
-				var_10_3[2] = -var_10_7
-				var_10_3[2] = -var_10_7
+				offset[2] = -num
+				offset[2] = -num
 			end,
-			update = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
-				local var_11_0 = arg_11_1.entry_window.position
-				local var_11_1 = arg_11_1.entry_window.size
-				local var_11_2 = arg_11_0.entry_window.local_position
-				local var_11_3 = arg_11_4.widget
-				local var_11_4 = var_11_3.content
-				local var_11_5 = var_11_3.style
+			update = function (self, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+				-- function 11
+				local position = arg_11_1.entry_window.position
+				local size = arg_11_1.entry_window.size
+				local local_position = self.entry_window.local_position
+				local widget = arg_11_4.widget
+				local content = widget.content
+				local style = widget.style
 
-				var_11_3.offset[1] = -30 * math.easeInCubic(1 - arg_11_3)
+				widget.offset[1] = -30 * math.easeInCubic(1 - arg_11_3)
 			end,
-			on_complete = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			on_complete = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+				-- function 12
 				return
 			end
 		},
@@ -686,28 +698,35 @@ local var_0_15 = {
 			name = "description_entry",
 			start_progress = 0,
 			end_progress = 1,
-			init = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
-				local var_13_0 = arg_13_3.widget
-				local var_13_1 = var_13_0.content
-				local var_13_2 = var_13_0.style
-				local var_13_3 = var_13_2.summary_text
-				local var_13_4 = var_13_2.summary_text_shadow
+			init = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+				-- function 13
+				local widget = arg_13_3.widget
+				local content = widget.content
+				local style = widget.style
+				local summary_text = style.summary_text
+				local summary_text_shadow = style.summary_text_shadow
 
-				var_13_3.text_color[1] = 0
-				var_13_4.text_color[1] = 0
-				var_13_1.summary_text = arg_13_3.title_text or "n/a"
-			end,
-			update = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
-				local var_14_0 = arg_14_4.widget.style
-				local var_14_1 = var_14_0.summary_text
-				local var_14_2 = var_14_0.summary_text_shadow
-				local var_14_3 = var_14_0.background
-				local var_14_4 = math.easeOutCubic(arg_14_3) * 255
+				summary_text.text_color[1] = 0
+				summary_text_shadow.text_color[1] = 0
 
-				var_14_1.text_color[1] = var_14_4
-				var_14_2.text_color[1] = var_14_4
+				local title_text = arg_13_3.title_text
+
+				title_text = title_text or "n/a"
+				content.summary_text = title_text
 			end,
-			on_complete = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+			update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+				-- function 14
+				local style = arg_14_4.widget.style
+				local summary_text = style.summary_text
+				local summary_text_shadow = style.summary_text_shadow
+				local background = style.background
+				local num = math.easeOutCubic(arg_14_3) * 255
+
+				summary_text.text_color[1] = num
+				summary_text_shadow.text_color[1] = num
+			end,
+			on_complete = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+				-- function 15
 				return
 			end
 		},
@@ -715,40 +734,43 @@ local var_0_15 = {
 			name = "xp_entry",
 			start_progress = 0.5,
 			end_progress = 1,
-			init = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
-				local var_16_0 = arg_16_3.widget
-				local var_16_1 = var_16_0.content
-				local var_16_2 = var_16_0.style
-				local var_16_3 = var_16_2.xp_text
-				local var_16_4 = var_16_2.xp_text_shadow
+			init = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+				-- function 16
+				local widget = arg_16_3.widget
+				local content = widget.content
+				local style = widget.style
+				local xp_text = style.xp_text
+				local xp_text_shadow = style.xp_text_shadow
 
-				var_16_3.text_color[1] = 0
-				var_16_4.text_color[1] = 0
-				var_16_1.xp_text = ""
+				xp_text.text_color[1] = 0
+				xp_text_shadow.text_color[1] = 0
+				content.xp_text = ""
 			end,
-			update = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
-				local var_17_0 = arg_17_4.widget
-				local var_17_1 = var_17_0.style
-				local var_17_2 = var_17_0.content
-				local var_17_3 = arg_17_4.experience
-				local var_17_4 = arg_17_4.value
-				local var_17_5 = math.floor((var_17_3 or var_17_4) * arg_17_3)
+			update = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+				-- function 17
+				local widget = arg_17_4.widget
+				local style = widget.style
+				local content = widget.content
+				local experience = arg_17_4.experience
+				local value = arg_17_4.value
+				local floor = math.floor((experience or value) * arg_17_3)
 
-				if not var_17_2.xp_count or var_17_2.xp_count ~= var_17_5 then
+				if not (not content.xp_count and content.xp_count == floor) then
 					WwiseWorld.trigger_event(arg_17_4.wwise_world, "play_gui_mission_summary_entry_count")
 				end
 
-				var_17_2.xp_count = var_17_5
-				var_17_2.xp_text = tostring(var_17_5)
+				content.xp_count = floor
+				content.xp_text = tostring(floor)
 
-				local var_17_6 = var_17_1.xp_text
-				local var_17_7 = var_17_1.xp_text_shadow
-				local var_17_8 = math.easeOutCubic(arg_17_3) * 255
+				local xp_text = style.xp_text
+				local xp_text_shadow = style.xp_text_shadow
+				local num = math.easeOutCubic(arg_17_3) * 255
 
-				var_17_6.text_color[1] = var_17_8
-				var_17_7.text_color[1] = var_17_8
+				xp_text.text_color[1] = num
+				xp_text_shadow.text_color[1] = num
 			end,
-			on_complete = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			on_complete = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+				-- function 18
 				return
 			end
 		}
@@ -758,41 +780,48 @@ local var_0_15 = {
 			name = "bump",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
-				local var_19_0 = arg_19_2.experience_total_text
-				local var_19_1 = var_19_0.content
-				local var_19_2 = var_19_0.style
-				local var_19_3 = arg_19_3.experience
+			init = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+				-- function 19
+				local experience_total_text = arg_19_2.experience_total_text
+				local content = experience_total_text.content
+				local style = experience_total_text.style
+				local experience = arg_19_3.experience
 
-				if var_19_3 then
-					local var_19_4 = (var_19_1.experience or 0) + var_19_3
+				if not experience then
+					local experience_2 = content.experience
 
-					var_19_1.text = tostring(var_19_4)
-					var_19_1.experience = var_19_4
-					var_19_1.animate = true
+					experience_2 = experience_2 or 0
+
+					local num = experience_2 + experience
+
+					content.text = tostring(num)
+					content.experience = num
+					content.animate = true
 
 					WwiseWorld.trigger_event(arg_19_3.wwise_world, "play_gui_mission_summary_entry_total_sum")
 				else
-					var_19_1.animate = false
+					content.animate = false
 				end
 			end,
-			update = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
-				local var_20_0 = arg_20_2.experience_total_text
-				local var_20_1 = var_20_0.style
+			update = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+				-- function 20
+				local experience_total_text = arg_20_2.experience_total_text
+				local style = experience_total_text.style
 
-				if var_20_0.content.animate then
-					local var_20_2 = var_20_1.text
-					local var_20_3 = var_20_1.text_shadow
-					local var_20_4 = 32
-					local var_20_5 = 40
-					local var_20_6 = math.ease_pulse(arg_20_3)
-					local var_20_7 = var_20_4 + (var_20_5 - var_20_4) * var_20_6
+				if not experience_total_text.content.animate then
+					local text = style.text
+					local text_shadow = style.text_shadow
+					local num = 32
+					local num_2 = 40
+					local ease_pulse = math.ease_pulse(arg_20_3)
+					local num_3 = num + (num_2 - num) * ease_pulse
 
-					var_20_2.font_size = var_20_7
-					var_20_3.font_size = var_20_7
+					text.font_size = num_3
+					text_shadow.font_size = num_3
 				end
 			end,
-			on_complete = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			on_complete = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+				-- function 21
 				return
 			end
 		}
@@ -802,24 +831,27 @@ local var_0_15 = {
 			name = "in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+			init = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+				-- function 22
 				WwiseWorld.trigger_event(arg_22_3.wwise_world, "play_gui_mission_summary_level_up")
 			end,
-			update = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
-				local var_23_0 = arg_23_2.level_up_text
-				local var_23_1 = var_23_0.style
-				local var_23_2 = var_23_0.content
-				local var_23_3 = var_23_0.offset
-				local var_23_4 = math.easeOutCubic(1 - arg_23_3)
+			update = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+				-- function 23
+				local level_up_text = arg_23_2.level_up_text
+				local style = level_up_text.style
+				local content = level_up_text.content
+				local offset = level_up_text.offset
+				local easeOutCubic = math.easeOutCubic(1 - arg_23_3)
 
-				var_23_3[1] = -(30 + 220 * var_23_4)
+				offset[1] = -(30 + 220 * easeOutCubic)
 
-				local var_23_5 = 255 - var_23_4 * 255
+				local num = 255 - easeOutCubic * 255
 
-				var_23_1.text.text_color[1] = var_23_5
-				var_23_1.text_shadow.text_color[1] = var_23_5
+				style.text.text_color[1] = num
+				style.text_shadow.text_color[1] = num
 			end,
-			on_complete = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+			on_complete = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+				-- function 24
 				return
 			end
 		},
@@ -827,17 +859,20 @@ local var_0_15 = {
 			name = "move",
 			start_progress = 0.3,
 			end_progress = 1.3,
-			init = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+			init = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+				-- function 25
 				return
 			end,
-			update = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
-				local var_26_0 = arg_26_2.level_up_text
-				local var_26_1 = var_26_0.style
-				local var_26_2 = var_26_0.content
+			update = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+				-- function 26
+				local level_up_text = arg_26_2.level_up_text
+				local style = level_up_text.style
+				local content = level_up_text.content
 
-				var_26_0.offset[1] = -30 + 30 * math.easeOutCubic(arg_26_3)
+				level_up_text.offset[1] = -30 + 30 * math.easeOutCubic(arg_26_3)
 			end,
-			on_complete = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+			on_complete = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+				-- function 27
 				return
 			end
 		},
@@ -845,24 +880,27 @@ local var_0_15 = {
 			name = "out",
 			start_progress = 1.3,
 			end_progress = 1.6,
-			init = function(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+			init = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+				-- function 28
 				return
 			end,
-			update = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
-				local var_29_0 = arg_29_2.level_up_text
-				local var_29_1 = var_29_0.style
-				local var_29_2 = var_29_0.content
-				local var_29_3 = var_29_0.offset
-				local var_29_4 = math.easeOutCubic(arg_29_3)
+			update = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
+				-- function 29
+				local level_up_text = arg_29_2.level_up_text
+				local style = level_up_text.style
+				local content = level_up_text.content
+				local offset = level_up_text.offset
+				local easeOutCubic = math.easeOutCubic(arg_29_3)
 
-				var_29_3[1] = 250 * var_29_4
+				offset[1] = 250 * easeOutCubic
 
-				local var_29_5 = 255 - var_29_4 * 255
+				local num = 255 - easeOutCubic * 255
 
-				var_29_1.text.text_color[1] = var_29_5
-				var_29_1.text_shadow.text_color[1] = var_29_5
+				style.text.text_color[1] = num
+				style.text_shadow.text_color[1] = num
 			end,
-			on_complete = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+			on_complete = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+				-- function 30
 				return
 			end
 		},
@@ -870,21 +908,24 @@ local var_0_15 = {
 			name = "spark",
 			start_progress = 1.2,
 			end_progress = 1.9,
-			init = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+			init = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+				-- function 31
 				return
 			end,
-			update = function(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
-				local var_32_0 = arg_32_2.sparkle_effect
-				local var_32_1 = var_32_0.style
-				local var_32_2 = var_32_0.content
-				local var_32_3 = var_32_0.offset
-				local var_32_4 = 180 * math.easeOutCubic(arg_32_3)
-				local var_32_5 = var_32_1.texture_id
+			update = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+				-- function 32
+				local sparkle_effect = arg_32_2.sparkle_effect
+				local style = sparkle_effect.style
+				local content = sparkle_effect.content
+				local offset = sparkle_effect.offset
+				local num = 180 * math.easeOutCubic(arg_32_3)
+				local texture_id = style.texture_id
 
-				var_32_5.angle = math.degrees_to_radians(var_32_4)
-				var_32_5.color[1] = 255 * math.ease_pulse(arg_32_3)
+				texture_id.angle = math.degrees_to_radians(num)
+				texture_id.color[1] = 255 * math.ease_pulse(arg_32_3)
 			end,
-			on_complete = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+			on_complete = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+				-- function 33
 				return
 			end
 		},
@@ -892,25 +933,28 @@ local var_0_15 = {
 			name = "bump_next_level",
 			start_progress = 1.3,
 			end_progress = 1.6,
-			init = function(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+			init = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+				-- function 34
 				return
 			end,
-			update = function(arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
-				local var_35_0 = arg_35_2.next_level_text
-				local var_35_1 = var_35_0.style
-				local var_35_2 = var_35_0.content
-				local var_35_3 = var_35_1.text
-				local var_35_4 = var_35_1.text_shadow
-				local var_35_5 = 42
-				local var_35_6 = 60
-				local var_35_7 = math.easeOutCubic(arg_35_3)
-				local var_35_8 = math.ease_pulse(var_35_7)
-				local var_35_9 = var_35_5 + (var_35_6 - var_35_5) * var_35_8
+			update = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
+				-- function 35
+				local next_level_text = arg_35_2.next_level_text
+				local style = next_level_text.style
+				local content = next_level_text.content
+				local text = style.text
+				local text_shadow = style.text_shadow
+				local num = 42
+				local num_2 = 60
+				local easeOutCubic = math.easeOutCubic(arg_35_3)
+				local ease_pulse = math.ease_pulse(easeOutCubic)
+				local num_3 = num + (num_2 - num) * ease_pulse
 
-				var_35_3.font_size = var_35_9
-				var_35_4.font_size = var_35_9
+				text.font_size = num_3
+				text_shadow.font_size = num_3
 			end,
-			on_complete = function(arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+			on_complete = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+				-- function 36
 				return
 			end
 		},
@@ -918,25 +962,28 @@ local var_0_15 = {
 			name = "bump_current_level",
 			start_progress = 1.3,
 			end_progress = 1.6,
-			init = function(arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+			init = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+				-- function 37
 				return
 			end,
-			update = function(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
-				local var_38_0 = arg_38_2.current_level_text
-				local var_38_1 = var_38_0.style
-				local var_38_2 = var_38_0.content
-				local var_38_3 = var_38_1.text
-				local var_38_4 = var_38_1.text_shadow
-				local var_38_5 = 42
-				local var_38_6 = 60
-				local var_38_7 = math.easeOutCubic(arg_38_3)
-				local var_38_8 = math.ease_pulse(var_38_7)
-				local var_38_9 = var_38_5 + (var_38_6 - var_38_5) * var_38_8
+			update = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
+				-- function 38
+				local current_level_text = arg_38_2.current_level_text
+				local style = current_level_text.style
+				local content = current_level_text.content
+				local text = style.text
+				local text_shadow = style.text_shadow
+				local num = 42
+				local num_2 = 60
+				local easeOutCubic = math.easeOutCubic(arg_38_3)
+				local ease_pulse = math.ease_pulse(easeOutCubic)
+				local num_3 = num + (num_2 - num) * ease_pulse
 
-				var_38_3.font_size = var_38_9
-				var_38_4.font_size = var_38_9
+				text.font_size = num_3
+				text_shadow.font_size = num_3
 			end,
-			on_complete = function(arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+			on_complete = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+				-- function 39
 				return
 			end
 		}
@@ -946,16 +993,19 @@ local var_0_15 = {
 			name = "description",
 			start_progress = 1.2,
 			end_progress = 1.6,
-			init = function(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+			init = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+				-- function 40
 				return
 			end,
-			update = function(arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
-				local var_41_0 = arg_41_4.widget.style.summary_text_shadow
-				local var_41_1 = math.easeOutCubic(1 - arg_41_3) * 255
+			update = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
+				-- function 41
+				local summary_text_shadow = arg_41_4.widget.style.summary_text_shadow
+				local num = math.easeOutCubic(1 - arg_41_3) * 255
 
-				var_41_0.text_color[1] = var_41_1
+				summary_text_shadow.text_color[1] = num
 			end,
-			on_complete = function(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+			on_complete = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+				-- function 42
 				return
 			end
 		},
@@ -963,16 +1013,19 @@ local var_0_15 = {
 			name = "xp",
 			start_progress = 1.2,
 			end_progress = 1.6,
-			init = function(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+			init = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+				-- function 43
 				return
 			end,
-			update = function(arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
-				local var_44_0 = arg_44_4.widget.style.xp_text_shadow
-				local var_44_1 = math.easeOutCubic(1 - arg_44_3) * 255
+			update = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
+				-- function 44
+				local xp_text_shadow = arg_44_4.widget.style.xp_text_shadow
+				local num = math.easeOutCubic(1 - arg_44_3) * 255
 
-				var_44_0.text_color[1] = var_44_1
+				xp_text_shadow.text_color[1] = num
 			end,
-			on_complete = function(arg_45_0, arg_45_1, arg_45_2, arg_45_3)
+			on_complete = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3)
+				-- function 45
 				return
 			end
 		}
@@ -980,8 +1033,8 @@ local var_0_15 = {
 }
 
 return {
-	widgets = var_0_13,
-	summary_entry_widgets = var_0_1,
-	scenegraph_definition = var_0_0,
-	animation_definitions = var_0_15
+	widgets = tbl_13,
+	summary_entry_widgets = tbl_2,
+	scenegraph_definition = tbl,
+	animation_definitions = tbl_14
 }

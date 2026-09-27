@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/skaven/skaven_plague_monk_behavior.lua
 
-local var_0_0 = BreedActions.skaven_plague_monk
+local skaven_plague_monk = BreedActions.skaven_plague_monk
 
 BreedBehaviors.plague_monk = {
 	"BTSelector",
@@ -23,13 +23,13 @@ BreedBehaviors.plague_monk = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = var_0_0.stagger
+		action_data = skaven_plague_monk.stagger
 	},
 	{
 		"BTBlockedAction",
 		name = "blocked",
 		condition = "blocked",
-		action_data = var_0_0.blocked
+		action_data = skaven_plague_monk.blocked
 	},
 	{
 		"BTSelector",
@@ -52,7 +52,7 @@ BreedBehaviors.plague_monk = {
 			"BTSmashDoorAction",
 			name = "smash_door",
 			condition = "at_door_smartobject",
-			action_data = var_0_0.smash_door
+			action_data = skaven_plague_monk.smash_door
 		},
 		condition = "at_smartobject",
 		name = "smartobject"
@@ -61,33 +61,33 @@ BreedBehaviors.plague_monk = {
 		"BTHesitateAction",
 		name = "hesitate",
 		condition = "is_alerted",
-		action_data = var_0_0.alerted
+		action_data = skaven_plague_monk.alerted
 	},
 	{
 		"BTUtilityNode",
-		action_data = var_0_0.utility_action,
+		action_data = skaven_plague_monk.utility_action,
 		{
 			"BTClanRatFollowAction",
 			name = "follow",
-			action_data = var_0_0.follow
+			action_data = skaven_plague_monk.follow
 		},
 		{
 			"BTComboAttackAction",
 			name = "frenzy_attack_ranged",
 			condition = "ask_target_before_attacking",
-			action_data = var_0_0.frenzy_attack_ranged
+			action_data = skaven_plague_monk.frenzy_attack_ranged
 		},
 		{
 			"BTComboAttackAction",
 			name = "frenzy_attack",
 			condition = "ask_target_before_attacking",
-			action_data = var_0_0.frenzy_attack
+			action_data = skaven_plague_monk.frenzy_attack
 		},
 		{
 			"BTAttackAction",
 			name = "normal_attack",
 			condition = "ask_target_before_attacking",
-			action_data = var_0_0.normal_attack
+			action_data = skaven_plague_monk.normal_attack
 		},
 		name = "in_combat",
 		condition = "confirmed_player_sighting"
@@ -96,13 +96,13 @@ BreedBehaviors.plague_monk = {
 		"BTAlertedAction",
 		name = "alerted",
 		condition = "player_spotted",
-		action_data = var_0_0.alerted
+		action_data = skaven_plague_monk.alerted
 	},
 	{
 		"BTMoveToGoalAction",
 		name = "move_to_goal",
 		condition = "has_goal_destination",
-		action_data = var_0_0.follow
+		action_data = skaven_plague_monk.follow
 	},
 	{
 		"BTIdleAction",

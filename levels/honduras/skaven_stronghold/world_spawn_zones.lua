@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras/skaven_stronghold/world_spawn_zones.lua
 
-local var_0_0 = {
+local tbl = {
 	{
 		roaming_set = "skaven",
 		main_path_index = 1,
@@ -582,7 +582,7 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	{
 		path_length = 30.07558822631836,
 		travel_dist = {
@@ -3132,7 +3132,7 @@ local var_0_1 = {
 		}
 	}
 }
-local var_0_2 = {
+local tbl_3 = {
 	A = {
 		main_path_index = 11,
 		num_roads = 4,
@@ -3142,7 +3142,7 @@ local var_0_2 = {
 		}
 	}
 }
-local var_0_3 = {
+local tbl_4 = {
 	{
 		unique_zone_id = 1,
 		roaming_set = "skaven",
@@ -18176,7 +18176,7 @@ local var_0_3 = {
 		}
 	}
 }
-local var_0_4 = {
+local tbl_5 = {
 	-103.2236099243164,
 	118.35279083251953,
 	36.142189025878906,
@@ -20463,7 +20463,7 @@ local var_0_4 = {
 	-0.7071067690849304,
 	-0.7071067690849304
 }
-local var_0_5 = {
+local tbl_6 = {
 	{
 		-67.35655975341797,
 		-150.2902374267578,
@@ -80060,20 +80060,20 @@ local var_0_5 = {
 		8.405655860900879
 	}
 }
-local var_0_6 = 11919
-local var_0_7 = 177
-local var_0_8 = 1872.5343222618
-local var_0_9 = "1"
+local num = 11919
+local num_2 = 177
+local num_3 = 1872.5343222618
+local str = "1"
 
 return {
-	version = var_0_9,
-	number_of_spawns = var_0_6,
-	path_markers = var_0_0,
-	zones = var_0_3,
-	cover_points = var_0_4,
-	num_main_zones = var_0_7,
-	position_lookup = var_0_5,
-	main_paths = var_0_1,
-	crossroads = var_0_2,
-	total_main_path_length = var_0_8
+	version = str,
+	number_of_spawns = num,
+	path_markers = tbl,
+	zones = tbl_4,
+	cover_points = tbl_5,
+	num_main_zones = num_2,
+	position_lookup = tbl_6,
+	main_paths = tbl_2,
+	crossroads = tbl_3,
+	total_main_path_length = num_3
 }

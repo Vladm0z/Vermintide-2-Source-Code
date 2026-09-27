@@ -1,6 +1,9 @@
 -- chunkname: @scripts/settings/dlcs/belladonna/belladonna_utility_considerations.lua
 
+local UtilityConsiderations = UtilityConsiderations
+
 UtilityConsiderations = UtilityConsiderations or {}
+UtilityConsiderations = UtilityConsiderations
 UtilityConsiderations.beastmen_ungor_archer_find_ranged_position = {
 	does_not_have_line_of_sight = {
 		blackboard_input = "has_line_of_sight",

@@ -2,9 +2,9 @@
 
 local_require("scripts/ui/ui_widgets")
 
-local var_0_0 = 18
-local var_0_1 = 1
-local var_0_2 = {
+local num = 18
+local num_2 = 1
+local tbl = {
 	root = {
 		is_root = true,
 		size = {
@@ -56,7 +56,7 @@ local var_0_2 = {
 		}
 	}
 }
-local var_0_3 = {
+local tbl_2 = {
 	message_animated = {
 		scenegraph_id = "message_animated",
 		element = {
@@ -65,8 +65,9 @@ local var_0_3 = {
 					pass_type = "texture",
 					style_id = "icon_1",
 					texture_id = "icon_1",
-					content_check_function = function(arg_1_0)
-						if not arg_1_0.icon_1 then
+					content_check_function = function (self)
+						-- function 1
+						if not self.icon_1 then
 							return false
 						end
 
@@ -77,8 +78,9 @@ local var_0_3 = {
 					pass_type = "texture",
 					style_id = "icon_2",
 					texture_id = "icon_2",
-					content_check_function = function(arg_2_0)
-						if not arg_2_0.icon_2 then
+					content_check_function = function (self)
+						-- function 2
+						if not self.icon_2 then
 							return false
 						end
 
@@ -89,8 +91,9 @@ local var_0_3 = {
 					pass_type = "texture",
 					style_id = "icon_3",
 					texture_id = "icon_3",
-					content_check_function = function(arg_3_0)
-						if not arg_3_0.icon_3 then
+					content_check_function = function (self)
+						-- function 3
+						if not self.icon_3 then
 							return false
 						end
 
@@ -110,7 +113,7 @@ local var_0_3 = {
 				dynamic_font = true,
 				horizontal_alignment = "right",
 				font_type = "hell_shark",
-				font_size = var_0_0,
+				font_size = num,
 				text_color = Colors.get_table("white"),
 				offset = {
 					0,
@@ -158,11 +161,12 @@ local var_0_3 = {
 	}
 }
 
-local function var_0_4(arg_4_0)
-	local var_4_0 = {}
+local function fn(arg_4_0)
+	-- function 4
+	local tbl = {}
 
-	for iter_4_0 = 1, arg_4_0 do
-		var_4_0[iter_4_0] = {
+	for i = 1, arg_4_0 do
+		tbl[i] = {
 			scenegraph_id = "message_animated",
 			element = {
 				passes = {
@@ -170,8 +174,9 @@ local function var_0_4(arg_4_0)
 						pass_type = "texture",
 						style_id = "icon_1",
 						texture_id = "icon_1",
-						content_check_function = function(arg_5_0)
-							if not arg_5_0.icon_1 then
+						content_check_function = function (self)
+							-- function 5
+							if not self.icon_1 then
 								return false
 							end
 
@@ -182,8 +187,9 @@ local function var_0_4(arg_4_0)
 						pass_type = "texture",
 						style_id = "icon_2",
 						texture_id = "icon_2",
-						content_check_function = function(arg_6_0)
-							if not arg_6_0.icon_2 then
+						content_check_function = function (self)
+							-- function 6
+							if not self.icon_2 then
 								return false
 							end
 
@@ -194,8 +200,9 @@ local function var_0_4(arg_4_0)
 						pass_type = "texture",
 						style_id = "icon_3",
 						texture_id = "icon_3",
-						content_check_function = function(arg_7_0)
-							if not arg_7_0.icon_3 then
+						content_check_function = function (self)
+							-- function 7
+							if not self.icon_3 then
 								return false
 							end
 
@@ -215,7 +222,7 @@ local function var_0_4(arg_4_0)
 					dynamic_font = true,
 					horizontal_alignment = "right",
 					font_type = "hell_shark",
-					font_size = var_0_0,
+					font_size = num,
 					text_color = Colors.get_table("white"),
 					offset = {
 						0,
@@ -268,48 +275,49 @@ local function var_0_4(arg_4_0)
 		}
 	end
 
-	return var_4_0
+	return tbl
 end
 
-local function var_0_5(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+local function fn_2(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+	-- function 8
 	arg_8_3 = arg_8_3 or 1
 
 	local var_8_0 = UIPlayerPortraitFrameSettings[arg_8_2]
-	local var_8_1 = {
+	local tbl = {
 		255,
 		255,
 		255,
 		255
 	}
-	local var_8_2 = {
+	local tbl_2 = {
 		0,
 		0,
 		0
 	}
-	local var_8_3 = {
+	local tbl_3 = {
 		element = {}
 	}
-	local var_8_4 = {}
-	local var_8_5 = {
+	local tbl_4 = {}
+	local tbl_5 = {
 		scale = arg_8_3,
 		frame_settings_name = arg_8_2
 	}
-	local var_8_6 = {}
-	local var_8_7 = {}
-	local var_8_8 = 150
-	local var_8_9 = "icon"
+	local tbl_6 = {}
+	local tbl_7 = {}
+	local num = 150
+	local str = "icon"
 
-	var_8_4[#var_8_4 + 1] = {
+	tbl_4[#tbl_4 + 1] = {
 		pass_type = "texture",
-		texture_id = var_8_9,
-		style_id = var_8_9,
+		texture_id = str,
+		style_id = str,
 		retained_mode = arg_8_4
 	}
-	var_8_5[var_8_9] = "icons_placeholder"
-	var_8_6[var_8_9] = {
-		color = table.clone(var_8_1),
+	tbl_5[str] = "icons_placeholder"
+	tbl_6[str] = {
+		color = table.clone(tbl),
 		offset = {
-			var_8_8 / 2 - 20 - 8,
+			num / 2 - 20 - 8,
 			-20,
 			2
 		},
@@ -318,19 +326,19 @@ local function var_0_5(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 			40
 		}
 	}
-	var_8_7[#var_8_7 + 1] = var_8_9
+	tbl_7[#tbl_7 + 1] = str
 
-	local var_8_10 = "arrow"
+	local str_2 = "arrow"
 
-	var_8_4[#var_8_4 + 1] = {
+	tbl_4[#tbl_4 + 1] = {
 		pass_type = "texture",
-		texture_id = var_8_10,
-		style_id = var_8_10,
+		texture_id = str_2,
+		style_id = str_2,
 		retained_mode = arg_8_4
 	}
-	var_8_5[var_8_10] = "reinforcement_arrow"
-	var_8_6[var_8_10] = {
-		color = table.clone(var_8_1),
+	tbl_5[str_2] = "reinforcement_arrow"
+	tbl_6[str_2] = {
+		color = table.clone(tbl),
 		offset = {
 			0,
 			-13,
@@ -341,48 +349,58 @@ local function var_0_5(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 			26
 		}
 	}
-	var_8_7[#var_8_7 + 1] = var_8_10
+	tbl_7[#tbl_7 + 1] = str_2
 
-	for iter_8_0 = 1, 1 do
-		local var_8_11 = {
+	for i = 1, 1 do
+		local tbl_8 = {
 			0,
 			0,
 			3
 		}
-		local var_8_12 = "icons_placeholder"
-		local var_8_13 = {
+		local str_3 = "icons_placeholder"
+		local tbl_9 = {
 			86,
 			108
 		}
 
-		var_8_13[1] = var_8_13[1] * arg_8_3
-		var_8_13[2] = var_8_13[2] * arg_8_3
+		tbl_9[1] = tbl_9[1] * arg_8_3
+		tbl_9[2] = tbl_9[2] * arg_8_3
 
-		local var_8_14 = table.clone(var_8_2)
+		local clone = table.clone(tbl_2)
 
-		var_8_14[1] = var_8_11[1] - var_8_13[1] / 2 + var_8_14[1] * arg_8_3
-		var_8_14[2] = var_8_11[2] - var_8_13[2] / 2 + var_8_14[2] * arg_8_3
-		var_8_14[3] = var_8_11[3]
+		clone[1] = tbl_8[1] - tbl_9[1] / 2 + clone[1] * arg_8_3
+		clone[2] = tbl_8[2] - tbl_9[2] / 2 + clone[2] * arg_8_3
+		clone[3] = tbl_8[3]
 
-		local var_8_15 = "portrait_" .. iter_8_0
+		local str_4 = "portrait_" .. i
 
-		var_8_4[#var_8_4 + 1] = {
+		tbl_4[#tbl_4 + 1] = {
 			pass_type = "texture_uv",
-			content_id = var_8_15,
-			style_id = var_8_15,
+			content_id = str_4,
+			style_id = str_4,
 			retained_mode = arg_8_4
 		}
 
-		local var_8_16 = iter_8_0 == 1 and {
-			{
-				0,
-				0
-			},
-			{
-				1,
-				1
+		local tbl_10
+
+		if i == 1 then
+			tbl_10 = {
+				{
+					0,
+					0
+				},
+				{
+					1,
+					1
+				}
 			}
-		} or {
+
+			if not tbl_10 then
+				-- Nothing
+			end
+		end
+
+		tbl_10 = {
 			{
 				1,
 				0
@@ -393,42 +411,44 @@ local function var_0_5(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 			}
 		}
 
-		var_8_5[var_8_15] = {
-			texture_id = var_8_12,
-			uvs = var_8_16
+		::label_8_0::
+
+		tbl_5[str_4] = {
+			texture_id = str_3,
+			uvs = tbl_10
 		}
-		var_8_6[var_8_15] = {
-			color = var_8_1,
-			offset = var_8_14,
-			size = var_8_13,
-			portrait_offset = var_8_11
+		tbl_6[str_4] = {
+			color = tbl,
+			offset = clone,
+			size = tbl_9,
+			portrait_offset = tbl_8
 		}
-		var_8_7[#var_8_7 + 1] = var_8_15
+		tbl_7[#tbl_7 + 1] = str_4
 	end
 
-	var_8_5.text_style_ids = var_8_7
-	var_8_3.element.passes = var_8_4
-	var_8_3.content = var_8_5
-	var_8_3.style = var_8_6
-	var_8_3.offset = {
+	tbl_5.text_style_ids = tbl_7
+	tbl_3.element.passes = tbl_4
+	tbl_3.content = tbl_5
+	tbl_3.style = tbl_6
+	tbl_3.offset = {
 		0,
 		0,
 		(arg_8_0 - 1) * 10
 	}
-	var_8_3.scenegraph_id = arg_8_1
+	tbl_3.scenegraph_id = arg_8_1
 
-	return var_8_3
+	return tbl_3
 end
 
-local var_0_6 = {}
+local tbl_3 = {}
 
-for iter_0_0 = 1, var_0_1 do
-	var_0_6[iter_0_0] = var_0_5(iter_0_0, "message_animated", "positive_reinforcement", 1)
+for i = 1, num_2 do
+	tbl_3[i] = fn_2(i, "message_animated", "positive_reinforcement", 1)
 end
 
 return {
-	scenegraph_definition = var_0_2,
-	animated_message_widget = var_0_3.message_animated,
-	message_widgets = var_0_6,
-	MAX_NUMBER_OF_MESSAGES = var_0_1
+	scenegraph_definition = tbl,
+	animated_message_widget = tbl_2.message_animated,
+	message_widgets = tbl_3,
+	MAX_NUMBER_OF_MESSAGES = num_2
 }

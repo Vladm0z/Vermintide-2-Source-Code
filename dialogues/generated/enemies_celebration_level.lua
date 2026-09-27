@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/enemies_celebration_level.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		response = "ecb_gameplay_running_towards_players_celebration_level",
 		name = "ecb_gameplay_running_towards_players_celebration_level",

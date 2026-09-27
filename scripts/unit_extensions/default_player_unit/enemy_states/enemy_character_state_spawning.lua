@@ -2,7 +2,7 @@
 
 EnemyCharacterStateSpawning = class(EnemyCharacterStateSpawning, EnemyCharacterState)
 
-local var_0_0 = {
+local tbl = {
 	chimney = {
 		"exit_teleporter_chimney",
 		0,
@@ -30,143 +30,149 @@ local var_0_0 = {
 	}
 }
 
-function EnemyCharacterStateSpawning.init(arg_1_0, arg_1_1)
+EnemyCharacterStateSpawning.init = function (arg_1_0, arg_1_1)
+	-- function 1
 	EnemyCharacterStateSpawning.super.init(arg_1_0, arg_1_1, "spawning")
 end
 
-function EnemyCharacterStateSpawning.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
-	local var_2_0 = arg_2_0._input_extension
-	local var_2_1 = arg_2_0._first_person_extension
-	local var_2_2 = arg_2_0._status_extension
-	local var_2_3 = arg_2_0._inventory_extension
-	local var_2_4 = arg_2_0._health_extension
-	local var_2_5 = arg_2_0._locomotion_extension
-	local var_2_6 = arg_2_0._interactor_extension:interactable_unit()
-	local var_2_7 = ScriptUnit.extension(var_2_6, "door_system")
+EnemyCharacterStateSpawning.on_enter = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	-- function 2
+	local _input_extension = self._input_extension
+	local _first_person_extension = self._first_person_extension
+	local _status_extension = self._status_extension
+	local _inventory_extension = self._inventory_extension
+	local _health_extension = self._health_extension
+	local _locomotion_extension = self._locomotion_extension
+	local interactable_unit = self._interactor_extension:interactable_unit()
+	local extension = ScriptUnit.extension(interactable_unit, "door_system")
 
-	arg_2_0.enter_unit = var_2_6
-	arg_2_0.transition_manager = Managers.transition
-	arg_2_0.enter_pos = var_2_7.enter_pos
-	arg_2_0.enter_rot = var_2_7.enter_rot
+	self.enter_unit = interactable_unit
+	self.transition_manager = Managers.transition
+	self.enter_pos = extension.enter_pos
+	self.enter_rot = extension.enter_rot
 
-	local var_2_8 = Vector3Box.unbox(arg_2_0.enter_rot)
+	local unbox = Vector3Box.unbox(self.enter_rot)
 
-	arg_2_0.exit_rot = QuaternionBox(Quaternion.look(-var_2_8))
-	arg_2_0.wanted_rot = arg_2_0.enter_rot
+	self.exit_rot = QuaternionBox(Quaternion.look(-unbox))
+	self.wanted_rot = self.enter_rot
 
-	local var_2_9 = var_2_7.entrance_type
+	local entrance_type = extension.entrance_type
 
-	arg_2_0._player = Managers.player:owner(arg_2_1)
-	arg_2_0.exit_anim = var_0_0[var_2_9][1]
-	arg_2_0.forward_offset = var_0_0[var_2_9][2]
-	arg_2_0.height_offset = var_0_0[var_2_9][3]
-	arg_2_0.fade_t = arg_2_5 + 0.5
+	self._player = Managers.player:owner(arg_2_1)
+	self.exit_anim = tbl[entrance_type][1]
+	self.forward_offset = tbl[entrance_type][2]
+	self.height_offset = tbl[entrance_type][3]
+	self.fade_t = arg_2_5 + 0.5
 
-	local var_2_10 = 5
+	local num = 5
 
-	arg_2_0.transition_manager:fade_in(var_2_10)
-	var_2_5:enable_animation_driven_movement_with_rotation_no_mover()
+	self.transition_manager:fade_in(num)
+	_locomotion_extension:enable_animation_driven_movement_with_rotation_no_mover()
 
-	local var_2_11 = false
+	local flag = false
 	local var_2_12
-	local var_2_13 = false
+	local flag_2 = false
 
-	if var_2_2:get_unarmed() then
-		var_2_13 = true
+	if not _status_extension:get_unarmed() then
+		flag_2 = true
 	end
 
-	var_2_1:set_first_person_mode(var_2_11, var_2_12, var_2_13)
-	CharacterStateHelper.update_weapon_actions(arg_2_5, arg_2_1, var_2_0, var_2_3, var_2_4)
-	var_2_2:set_should_spawn(false)
-	arg_2_0:set_breed_action("spawning")
+	_first_person_extension:set_first_person_mode(flag, var_2_12, flag_2)
+	CharacterStateHelper.update_weapon_actions(arg_2_5, arg_2_1, _input_extension, _inventory_extension, _health_extension)
+	_status_extension:set_should_spawn(false)
+	self:set_breed_action("spawning")
 end
 
-function EnemyCharacterStateSpawning.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+EnemyCharacterStateSpawning.update = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	-- function 3
 	local var_3_0 = BLACKBOARDS[arg_3_1]
-	local var_3_1 = arg_3_0._input_extension
-	local var_3_2 = arg_3_0._status_extension
-	local var_3_3 = arg_3_0._first_person_extension
-	local var_3_4 = arg_3_0._inventory_extension
+	local _input_extension = self._input_extension
+	local _status_extension = self._status_extension
+	local _first_person_extension = self._first_person_extension
+	local _inventory_extension = self._inventory_extension
 
-	CharacterStateHelper.look(var_3_1, arg_3_0._player.viewport_name, var_3_3, var_3_2, var_3_4)
+	CharacterStateHelper.look(_input_extension, self._player.viewport_name, _first_person_extension, _status_extension, _inventory_extension)
 
-	if arg_3_0.fade_t and arg_3_5 > arg_3_0.fade_t then
-		local var_3_5 = QuaternionBox.unbox(arg_3_0.exit_rot)
+	if not (not self.fade_t and not (arg_3_5 > self.fade_t)) then
+		local unbox = QuaternionBox.unbox(self.exit_rot)
 
-		arg_3_0._first_person_extension:force_look_rotation(var_3_5)
+		self._first_person_extension:force_look_rotation(unbox)
 
-		local var_3_6 = Quaternion.forward(var_3_5)
+		local forward = Quaternion.forward(unbox)
 
-		arg_3_0.wanted_rot = Vector3Box(var_3_6)
+		self.wanted_rot = Vector3Box(forward)
 
-		local var_3_7 = var_3_6 * arg_3_0.forward_offset + Vector3.up() * arg_3_0.height_offset
-		local var_3_8 = Unit.local_position(arg_3_0.enter_unit, 0) + var_3_7
-		local var_3_9 = Unit.mover(arg_3_1)
+		local num = forward * self.forward_offset + Vector3.up() * self.height_offset
+		local num_2 = Unit.local_position(self.enter_unit, 0) + num
+		local mover = Unit.mover(arg_3_1)
 
-		Mover.set_position(var_3_9, var_3_8)
-		Unit.set_local_position(arg_3_1, 0, var_3_8)
-		CharacterStateHelper.change_camera_state(arg_3_0._player, "follow_third_person_tunneling")
+		Mover.set_position(mover, num_2)
+		Unit.set_local_position(arg_3_1, 0, num_2)
+		CharacterStateHelper.change_camera_state(self._player, "follow_third_person_tunneling")
 
-		local var_3_10 = arg_3_0.exit_anim
+		local exit_anim = self.exit_anim
 
-		CharacterStateHelper.play_animation_event(arg_3_1, var_3_10)
-		CharacterStateHelper.look(var_3_1, arg_3_0._player.viewport_name, var_3_3, var_3_2, var_3_4, nil, Vector3(-2, 0, 0))
+		CharacterStateHelper.play_animation_event(arg_3_1, exit_anim)
+		CharacterStateHelper.look(_input_extension, self._player.viewport_name, _first_person_extension, _status_extension, _inventory_extension, nil, Vector3(-2, 0, 0))
 
-		local var_3_11 = Managers.state.entity:system("camera_system")
-		local var_3_12 = -var_3_6 + Vector3.up()
-		local var_3_13 = Vector3Box.unbox(arg_3_0.enter_pos) + var_3_12 * 2
+		local system = Managers.state.entity:system("camera_system")
+		local num_3 = -forward + Vector3.up()
+		local num_4 = Vector3Box.unbox(self.enter_pos) + num_3 * 2
 
-		var_3_11:update_tunnel_camera_position(arg_3_0._player, var_3_13)
+		system:update_tunnel_camera_position(self._player, num_4)
 
-		local var_3_14 = ScriptUnit.extension(arg_3_1, "ghost_mode_system")
-		local var_3_15 = true
+		local extension = ScriptUnit.extension(arg_3_1, "ghost_mode_system")
+		local flag = true
 
-		var_3_14:try_leave_ghost_mode(var_3_15)
+		extension:try_leave_ghost_mode(flag)
 
-		local var_3_16 = 5
+		local num_5 = 5
 
-		arg_3_0.transition_manager:fade_out(var_3_16)
+		self.transition_manager:fade_out(num_5)
 
-		arg_3_0.fade_t = nil
+		self.fade_t = nil
 	end
 
-	if var_3_0.tunneling_finished then
-		var_3_3:force_look_rotation(QuaternionBox.unbox(arg_3_0.exit_rot), 0.1)
-		arg_3_0:start_camera_transition()
-		arg_3_0:to_movement_state()
+	if not var_3_0.tunneling_finished then
+		_first_person_extension:force_look_rotation(QuaternionBox.unbox(self.exit_rot), 0.1)
+		self:start_camera_transition()
+		self:to_movement_state()
 
 		var_3_0.tunneling_finished = nil
 	end
 
-	Unit.set_local_rotation(arg_3_1, 0, Quaternion.look(Vector3Box.unbox(arg_3_0.wanted_rot)))
+	Unit.set_local_rotation(arg_3_1, 0, Quaternion.look(Vector3Box.unbox(self.wanted_rot)))
 end
 
-function EnemyCharacterStateSpawning.on_exit(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
-	if arg_4_0._status_extension:get_unarmed() then
+EnemyCharacterStateSpawning.on_exit = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
+	-- function 4
+	if not self._status_extension:get_unarmed() then
 		CharacterStateHelper.play_animation_event(arg_4_1, "to_unarmed")
 	end
 
-	arg_4_0:grant_control_to_player()
-	arg_4_0:set_breed_action("n/a")
+	self:grant_control_to_player()
+	self:set_breed_action("n/a")
 
 	ScriptUnit.extension(arg_4_1, "hit_reaction_system").force_ragdoll_on_death = nil
 end
 
-function EnemyCharacterStateSpawning.grant_control_to_player(arg_5_0)
-	local var_5_0 = arg_5_0._locomotion_extension
-	local var_5_1 = Unit.animation_wanted_root_pose(arg_5_0._unit)
+EnemyCharacterStateSpawning.grant_control_to_player = function (self)
+	-- function 5
+	local _locomotion_extension = self._locomotion_extension
+	local animation_wanted_root_pose = Unit.animation_wanted_root_pose(self._unit)
 
-	var_5_0:teleport_to(Matrix4x4.translation(var_5_1))
-	var_5_0:set_wanted_velocity(Vector3.zero())
-	var_5_0:enable_script_driven_movement()
-	var_5_0:set_animation_translation_scale(Vector3(1, 1, 1))
-	var_5_0:force_on_ground(true)
+	_locomotion_extension:teleport_to(Matrix4x4.translation(animation_wanted_root_pose))
+	_locomotion_extension:set_wanted_velocity(Vector3.zero())
+	_locomotion_extension:enable_script_driven_movement()
+	_locomotion_extension:set_animation_translation_scale(Vector3(1, 1, 1))
+	_locomotion_extension:force_on_ground(true)
 end
 
-function EnemyCharacterStateSpawning.start_camera_transition(arg_6_0)
-	local var_6_0 = arg_6_0._first_person_extension
+EnemyCharacterStateSpawning.start_camera_transition = function (self)
+	-- function 6
+	local _first_person_extension = self._first_person_extension
 
-	CharacterStateHelper.change_camera_state(arg_6_0._player, "follow")
-	CharacterStateHelper.play_animation_event_first_person(var_6_0, "idle")
-	var_6_0:toggle_visibility(0.4)
+	CharacterStateHelper.change_camera_state(self._player, "follow")
+	CharacterStateHelper.play_animation_event_first_person(_first_person_extension, "idle")
+	_first_person_extension:toggle_visibility(0.4)
 end

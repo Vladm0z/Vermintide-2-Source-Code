@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/breeds/breed_chaos_skeleton.lua
 
-local var_0_0 = {
+local tbl = {
 	detection_radius = 18,
 	ai_strength = 1,
 	walk_speed = 1.6,
@@ -123,13 +123,14 @@ local var_0_0 = {
 		40,
 		40
 	},
-	stagger_modifier_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	stagger_modifier_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+		-- function 1
 		if arg_1_4.stagger_type == 3 then
-			if arg_1_0 == 3 and arg_1_4.heavy_stagger_immune_time then
+			if arg_1_0 ~= 3 or not arg_1_4.heavy_stagger_immune_time then
 				arg_1_0 = 0
 				arg_1_1 = 0
 				arg_1_2 = 0
-			elseif arg_1_0 ~= 3 and arg_1_4.stagger_immune_time then
+			elseif arg_1_0 == 3 or not arg_1_4.stagger_immune_time then
 				arg_1_0 = 0
 				arg_1_1 = 0
 				arg_1_2 = 0
@@ -326,9 +327,9 @@ local var_0_0 = {
 	}
 }
 
-Breeds.chaos_skeleton = table.create_copy(Breeds.chaos_skeleton, var_0_0)
+Breeds.chaos_skeleton = table.create_copy(Breeds.chaos_skeleton, tbl)
 
-local var_0_1 = {
+local tbl_2 = {
 	normal = {
 		easy = {
 			normal = 2
@@ -382,7 +383,7 @@ local var_0_1 = {
 		}
 	}
 }
-local var_0_2 = {
+local tbl_3 = {
 	idle = {
 		anim_cycle_index = 0,
 		animations = {
@@ -560,7 +561,7 @@ local var_0_2 = {
 		player_push_speed = 3,
 		attack_intensity_type = "running",
 		action_weight = 10,
-		difficulty_attack_intensity = var_0_1,
+		difficulty_attack_intensity = tbl_2,
 		considerations = UtilityConsiderations.marauder_running_attack,
 		default_attack = {
 			anims = {
@@ -588,7 +589,7 @@ local var_0_2 = {
 		player_push_speed = 5,
 		attack_intensity_type = "normal",
 		action_weight = 1,
-		difficulty_attack_intensity = var_0_1,
+		difficulty_attack_intensity = tbl_2,
 		considerations = UtilityConsiderations.marauder_attack,
 		dodge_window_start = BreedTweaks.dodge_windows.normal_attack,
 		dodge_window_duration = BreedTweaks.dodge_window_durations.normal_attack,
@@ -730,7 +731,7 @@ local var_0_2 = {
 		player_push_speed = 5,
 		attack_intensity_type = "normal",
 		action_weight = 1,
-		difficulty_attack_intensity = var_0_1,
+		difficulty_attack_intensity = tbl_2,
 		considerations = UtilityConsiderations.marauder_attack,
 		default_attack = {
 			anims = {
@@ -797,7 +798,8 @@ local var_0_2 = {
 	},
 	stagger = {
 		scale_animation_speeds = true,
-		custom_enter_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+		custom_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			-- function 2
 			if arg_2_1.stagger_type == 3 then
 				arg_2_1.stagger_immune_time = arg_2_2 + 2.25
 				arg_2_1.heavy_stagger_immune_time = arg_2_2 + 1.5
@@ -1057,5 +1059,5 @@ local var_0_2 = {
 	}
 }
 
-var_0_2.fallback_idle = var_0_2.idle
-BreedActions.chaos_skeleton = table.create_copy(BreedActions.chaos_skeleton, var_0_2)
+tbl_3.fallback_idle = tbl_3.idle
+BreedActions.chaos_skeleton = table.create_copy(BreedActions.chaos_skeleton, tbl_3)

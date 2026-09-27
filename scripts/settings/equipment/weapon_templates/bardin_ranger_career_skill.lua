@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/bardin_ranger_career_skill.lua
 
-local var_0_0 = {
+local tbl = {
 	actions = {
 		action_career_hold = {
 			default = {
@@ -9,7 +9,8 @@ local var_0_0 = {
 				kind = "career_dummy",
 				uninterruptible = true,
 				anim_event = "veteran_ranger_ability_grenade",
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
+					-- function 1
 					return arg_1_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -52,7 +53,8 @@ local var_0_0 = {
 				kind = "career_dummy",
 				uninterruptible = true,
 				anim_event = "veteran_ranger_ability_grenade_hold",
-				anim_end_event_condition_func = function(arg_2_0, arg_2_1)
+				anim_end_event_condition_func = function (arg_2_0, arg_2_1)
+					-- function 2
 					return arg_2_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -93,7 +95,8 @@ local var_0_0 = {
 				uninterruptible = true,
 				anim_event = "veteran_ranger_ability_grenade_throw",
 				total_time = 0.25,
-				anim_end_event_condition_func = function(arg_3_0, arg_3_1)
+				anim_end_event_condition_func = function (arg_3_0, arg_3_1)
+					-- function 3
 					return arg_3_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {}
@@ -105,7 +108,8 @@ local var_0_0 = {
 				anim_end_event = "ability_finished",
 				anim_event = "veteran_ranger_ability_grenade_cancel",
 				total_time = 0.67,
-				anim_end_event_condition_func = function(arg_4_0, arg_4_1)
+				anim_end_event_condition_func = function (arg_4_0, arg_4_1)
+					-- function 4
 					return arg_4_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {}
@@ -116,19 +120,19 @@ local var_0_0 = {
 	}
 }
 
-var_0_0.right_hand_unit = "units/weapons/player/wpn_emp_grenade_02_t2/wpn_emp_grenade_02_t2"
-var_0_0.right_hand_attachment_node_linking = AttachmentNodeLinking.one_handed_melee_weapon.right
-var_0_0.left_hand_unit = "units/weapons/player/wpn_emp_grenade_01_t1/wpn_emp_grenade_lighter_01_t1"
-var_0_0.left_hand_attachment_node_linking = AttachmentNodeLinking.one_handed_melee_weapon.left
-var_0_0.wield_anim = "to_grenade"
-var_0_0.state_machine = "units/beings/player/first_person_base/state_machines/career/skill_ranger"
-var_0_0.load_state_machine = false
-var_0_0.gui_texture = "hud_consumable_icon_grenade"
-var_0_0.crosshair_style = "default"
-var_0_0.max_fatigue_points = 4
-var_0_0.dodge_count = 3
-var_0_0.can_give_other = true
-var_0_0.buffs = {
+tbl.right_hand_unit = "units/weapons/player/wpn_emp_grenade_02_t2/wpn_emp_grenade_02_t2"
+tbl.right_hand_attachment_node_linking = AttachmentNodeLinking.one_handed_melee_weapon.right
+tbl.left_hand_unit = "units/weapons/player/wpn_emp_grenade_01_t1/wpn_emp_grenade_lighter_01_t1"
+tbl.left_hand_attachment_node_linking = AttachmentNodeLinking.one_handed_melee_weapon.left
+tbl.wield_anim = "to_grenade"
+tbl.state_machine = "units/beings/player/first_person_base/state_machines/career/skill_ranger"
+tbl.load_state_machine = false
+tbl.gui_texture = "hud_consumable_icon_grenade"
+tbl.crosshair_style = "default"
+tbl.max_fatigue_points = 4
+tbl.dodge_count = 3
+tbl.can_give_other = true
+tbl.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1
 	},
@@ -138,5 +142,5 @@ var_0_0.buffs = {
 }
 
 return {
-	bardin_ranger_career_skill_weapon = table.clone(var_0_0)
+	bardin_ranger_career_skill_weapon = table.clone(tbl)
 }

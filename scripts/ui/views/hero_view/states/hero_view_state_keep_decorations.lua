@@ -3,1038 +3,1241 @@
 require("scripts/ui/helpers/scrollbar_logic")
 
 local var_0_0 = local_require("scripts/ui/views/hero_view/states/definitions/hero_view_state_keep_decorations_definitions")
-local var_0_1 = var_0_0.widgets_definitions
-local var_0_2 = var_0_0.scenegraph_definition
-local var_0_3 = var_0_0.generic_input_actions
-local var_0_4 = var_0_0.animation_definitions
-local var_0_5 = var_0_0.entry_widget_definition
-local var_0_6 = var_0_0.dummy_entry_widget_definition
-local var_0_7 = var_0_0.input_actions
-local var_0_8 = false
-local var_0_9 = 4
-local var_0_10 = 800
-local var_0_11 = 1
+local widgets_definitions = var_0_0.widgets_definitions
+local scenegraph_definition = var_0_0.scenegraph_definition
+local generic_input_actions = var_0_0.generic_input_actions
+local animation_definitions = var_0_0.animation_definitions
+local entry_widget_definition = var_0_0.entry_widget_definition
+local dummy_entry_widget_definition = var_0_0.dummy_entry_widget_definition
+local input_actions = var_0_0.input_actions
+local flag = false
+local num = 4
+local num_2 = 800
+local num_3 = 1
 
 HeroViewStateKeepDecorations = class(HeroViewStateKeepDecorations)
 HeroViewStateKeepDecorations.NAME = "HeroViewStateKeepDecorations"
 
-function HeroViewStateKeepDecorations.on_enter(arg_1_0, arg_1_1)
+HeroViewStateKeepDecorations.on_enter = function (self, arg_1_1)
+	-- function 1
 	print("[HeroViewState] Enter Substate HeroViewStateKeepDecorations")
 
-	arg_1_0.parent = arg_1_1.parent
+	self.parent = arg_1_1.parent
 
-	local var_1_0 = arg_1_1.ingame_ui_context
+	local ingame_ui_context = arg_1_1.ingame_ui_context
 
-	arg_1_0.ingame_ui_context = var_1_0
-	arg_1_0._ui_renderer = var_1_0.ui_renderer
-	arg_1_0._ui_top_renderer = var_1_0.ui_top_renderer
-	arg_1_0._input_manager = var_1_0.input_manager
-	arg_1_0._voting_manager = var_1_0.voting_manager
-	arg_1_0._render_settings = {
+	self.ingame_ui_context = ingame_ui_context
+	self._ui_renderer = ingame_ui_context.ui_renderer
+	self._ui_top_renderer = ingame_ui_context.ui_top_renderer
+	self._input_manager = ingame_ui_context.input_manager
+	self._voting_manager = ingame_ui_context.voting_manager
+	self._render_settings = {
 		snap_pixel_positions = true
 	}
-	arg_1_0._wwise_world = arg_1_1.wwise_world
-	arg_1_0._is_server = var_1_0.is_server
+	self._wwise_world = arg_1_1.wwise_world
+	self._is_server = ingame_ui_context.is_server
 
-	local var_1_1 = arg_1_0:input_service()
+	local input_service = self:input_service()
 
-	arg_1_0._menu_input_description = MenuInputDescriptionUI:new(var_1_0, arg_1_0._ui_top_renderer, var_1_1, 3, 100, var_0_3)
+	self._menu_input_description = MenuInputDescriptionUI:new(ingame_ui_context, self._ui_top_renderer, input_service, 3, 100, generic_input_actions)
 
-	arg_1_0._menu_input_description:set_input_description(nil)
+	self._menu_input_description:set_input_description(nil)
 
-	arg_1_0._animations = {}
-	arg_1_0._ui_animations = {}
-	arg_1_0._decoration_system = Managers.state.entity:system("keep_decoration_system")
-	arg_1_0._keep_decoration_backend_interface = Managers.backend:get_interface("keep_decorations")
+	self._animations = {}
+	self._ui_animations = {}
+	self._decoration_system = Managers.state.entity:system("keep_decoration_system")
+	self._keep_decoration_backend_interface = Managers.backend:get_interface("keep_decorations")
 
-	arg_1_0:_create_ui_elements(arg_1_1)
+	self:_create_ui_elements(arg_1_1)
 
-	if arg_1_1.initial_state then
+	if not arg_1_1.initial_state then
 		arg_1_1.initial_state = nil
 
-		arg_1_0:_start_transition_animation("on_enter", "on_enter")
+		self:_start_transition_animation("on_enter", "on_enter")
 	end
 
-	arg_1_0:_play_sound("Play_hud_trophy_open")
+	self:_play_sound("Play_hud_trophy_open")
 
-	local var_1_2 = arg_1_1.state_params
-	local var_1_3 = var_1_2.interactable_unit
+	local state_params = arg_1_1.state_params
+	local interactable_unit = state_params.interactable_unit
 
-	arg_1_0._interactable_unit = var_1_3
-	arg_1_0._type = var_1_2.type
+	self._interactable_unit = interactable_unit
+	self._type = state_params.type
 
-	if arg_1_0._type == "painting" then
-		arg_1_0._default_table = DefaultPaintings
-		arg_1_0._main_table = Paintings
-		arg_1_0._ordered_table = PaintingOrder
-		arg_1_0._empty_decoration_name = "hor_none"
-	elseif arg_1_0._type == "trophy" then
-		arg_1_0._default_table = DefaultTrophies
-		arg_1_0._main_table = Trophies
-		arg_1_0._ordered_table = TrophyOrder
-		arg_1_0._empty_decoration_name = "hub_trophy_empty"
+	if self._type == "painting" then
+		self._default_table = DefaultPaintings
+		self._main_table = Paintings
+		self._ordered_table = PaintingOrder
+		self._empty_decoration_name = "hor_none"
+	elseif self._type == "trophy" then
+		self._default_table = DefaultTrophies
+		self._main_table = Trophies
+		self._ordered_table = TrophyOrder
+		self._empty_decoration_name = "hub_trophy_empty"
 	end
 
-	arg_1_0._default_decorations = {}
+	self._default_decorations = {}
 
-	table.append(arg_1_0._default_decorations, DefaultPaintings)
-	table.append(arg_1_0._default_decorations, DefaultTrophies)
+	table.append(self._default_decorations, DefaultPaintings)
+	table.append(self._default_decorations, DefaultTrophies)
 
-	local var_1_4 = Unit.get_data(var_1_3, "interaction_data", "camera_interaction_name")
-	local var_1_5 = Unit.get_data(var_1_3, "interaction_data", "hide_character")
+	local get_data = Unit.get_data(interactable_unit, "interaction_data", "camera_interaction_name")
+	local get_data_2 = Unit.get_data(interactable_unit, "interaction_data", "hide_character")
 
-	arg_1_0._hide_character = var_1_5
+	self._hide_character = get_data_2
 
-	local var_1_6 = Managers.player:local_player()
+	local local_player = Managers.player:local_player()
 
-	if var_1_6 then
-		UISettings.map.camera_time_enter = Unit.get_data(var_1_3, "interaction_data", "camera_transition_time_in") or 0.5
-		UISettings.map.camera_time_exit = Unit.get_data(var_1_3, "interaction_data", "camera_transition_time_out") or 0.5
+	if not local_player then
+		local map = UISettings.map
+		local get_data_3 = Unit.get_data(interactable_unit, "interaction_data", "camera_transition_time_in")
 
-		local var_1_7 = {
-			camera_interaction_name = var_1_4
+		get_data_3 = get_data_3 or 0.5
+		map.camera_time_enter = get_data_3
+
+		local map_2 = UISettings.map
+		local get_data_4 = Unit.get_data(interactable_unit, "interaction_data", "camera_transition_time_out")
+
+		get_data_4 = get_data_4 or 0.5
+		map_2.camera_time_exit = get_data_4
+
+		local tbl = {
+			camera_interaction_name = get_data
 		}
 
-		CharacterStateHelper.change_camera_state(var_1_6, "camera_state_interaction", var_1_7)
+		CharacterStateHelper.change_camera_state(local_player, "camera_state_interaction", tbl)
 
-		local var_1_8 = var_1_6.player_unit
+		local player_unit = local_player.player_unit
 
-		if Unit.alive(var_1_8) then
-			local var_1_9 = ScriptUnit.extension(var_1_8, "first_person_system")
+		if not Unit.alive(player_unit) then
+			local extension = ScriptUnit.extension(player_unit, "first_person_system")
 
-			var_1_9:abort_toggle_visibility_timer()
-			var_1_9:abort_first_person_units_visibility_timer()
+			extension:abort_toggle_visibility_timer()
+			extension:abort_first_person_units_visibility_timer()
 
-			if var_1_5 then
-				if not var_1_9:first_person_mode_active() then
-					var_1_9:set_first_person_mode(true)
+			if not get_data_2 then
+				if not extension:first_person_mode_active() then
+					extension:set_first_person_mode(true)
 				end
 
-				if var_1_9:first_person_units_visible() then
-					var_1_9:toggle_first_person_units_visibility("third_person_mode")
+				if not extension:first_person_units_visible() then
+					extension:toggle_first_person_units_visibility("third_person_mode")
 				end
-			elseif var_1_9:first_person_mode_active() then
-				var_1_9:set_first_person_mode(false)
+			elseif not extension:first_person_mode_active() then
+				extension:set_first_person_mode(false)
 			end
 		end
 	end
 
-	if Unit.get_data(var_1_3, "decoration_settings_key") then
-		local var_1_10 = ScriptUnit.extension(var_1_3, "keep_decoration_system")
-		local var_1_11 = var_1_10:get_selected_decoration()
+	if not Unit.get_data(interactable_unit, "decoration_settings_key") then
+		local extension_2 = ScriptUnit.extension(interactable_unit, "keep_decoration_system")
+		local get_selected_decoration = extension_2:get_selected_decoration()
 
-		arg_1_0._keep_decoration_extension = var_1_10
+		self._keep_decoration_extension = extension_2
 
-		if Unit.get_data(var_1_3, "interaction_data", "view_only") or not arg_1_0._is_server then
-			arg_1_0:_set_info_by_decoration_key(var_1_11, false)
+		local get_data_5 = Unit.get_data(interactable_unit, "interaction_data", "view_only")
+
+		get_data_5 = get_data_5 or not self._is_server
+
+		if not get_data_5 then
+			self:_set_info_by_decoration_key(get_selected_decoration, false)
 		else
-			arg_1_0._customizable_decoration = true
+			self._customizable_decoration = true
 
-			arg_1_0:_setup_decorations_list()
+			self:_setup_decorations_list()
 
-			local var_1_12 = 1
-			local var_1_13 = arg_1_0._list_widgets
+			local num = 1
+			local _list_widgets = self._list_widgets
 
-			for iter_1_0 = 1, #var_1_13 do
-				if var_1_13[iter_1_0].content.key == var_1_11 then
-					var_1_12 = iter_1_0
+			for i = 1, #_list_widgets do
+				if _list_widgets[i].content.key == get_selected_decoration then
+					num = i
 
 					break
 				end
 			end
 
-			arg_1_0:_on_list_index_selected(var_1_12)
+			self:_on_list_index_selected(num)
 
-			local var_1_14 = arg_1_0:_get_scrollbar_percentage_by_index(var_1_12)
+			local _get_scrollbar_percentage_by_index = self:_get_scrollbar_percentage_by_index(num)
 
-			arg_1_0._scrollbar_logic:set_scroll_percentage(var_1_14)
+			self._scrollbar_logic:set_scroll_percentage(_get_scrollbar_percentage_by_index)
 		end
 	else
-		arg_1_0:_initialize_simple_decoration_preview()
+		self:_initialize_simple_decoration_preview()
 	end
 
-	if not arg_1_0._customizable_decoration then
-		arg_1_0:_disable_list_widgets()
+	if not self._customizable_decoration then
+		self:_disable_list_widgets()
 	end
 end
 
-function HeroViewStateKeepDecorations._disable_list_widgets(arg_2_0)
-	local var_2_0 = arg_2_0._widgets_by_name
+HeroViewStateKeepDecorations._disable_list_widgets = function (self)
+	-- function 2
+	local _widgets_by_name = self._widgets_by_name
 
-	var_2_0.list_mask.content.visible = false
-	var_2_0.list_scrollbar.content.visible = false
-	var_2_0.confirm_button.content.visible = false
-	var_2_0.list_detail_top.content.visible = false
-	var_2_0.list_detail_bottom.content.visible = false
+	_widgets_by_name.list_mask.content.visible = false
+	_widgets_by_name.list_scrollbar.content.visible = false
+	_widgets_by_name.confirm_button.content.visible = false
+	_widgets_by_name.list_detail_top.content.visible = false
+	_widgets_by_name.list_detail_bottom.content.visible = false
 end
 
-function HeroViewStateKeepDecorations._initialize_simple_decoration_preview(arg_3_0)
-	local var_3_0 = arg_3_0._interactable_unit
-	local var_3_1 = Unit.get_data(var_3_0, "interaction_data", "hud_text_line_1")
-	local var_3_2 = Unit.get_data(var_3_0, "interaction_data", "hud_text_line_2")
-	local var_3_3 = Unit.get_data(var_3_0, "interaction_data", "sound_event")
+HeroViewStateKeepDecorations._initialize_simple_decoration_preview = function (self)
+	-- function 3
+	local _interactable_unit = self._interactable_unit
+	local get_data = Unit.get_data(_interactable_unit, "interaction_data", "hud_text_line_1")
+	local get_data_2 = Unit.get_data(_interactable_unit, "interaction_data", "hud_text_line_2")
+	local get_data_3 = Unit.get_data(_interactable_unit, "interaction_data", "sound_event")
 
-	if var_3_3 and var_3_3 ~= "" then
-		arg_3_0._sound_event = var_3_3
-		arg_3_0._sound_event_delay = arg_3_0._sound_event and var_0_11 or nil
+	if not (not get_data_3 and get_data_3 == "") then
+		self._sound_event = get_data_3
+
+		local var_3_4
+
+		if not self._sound_event then
+			var_3_4 = num_3
+
+			if not var_3_4 then
+				-- Nothing
+			end
+		end
+
+		var_3_4 = nil
+
+		::label_3_0::
+
+		self._sound_event_delay = var_3_4
 	end
 
-	local var_3_4 = Localize(var_3_1)
-	local var_3_5 = Localize(var_3_2)
+	local var_3_5 = Localize(get_data)
+	local var_3_6 = Localize(get_data_2)
 
-	arg_3_0:_set_info_texts(var_3_4, var_3_5)
+	self:_set_info_texts(var_3_5, var_3_6)
 end
 
-function HeroViewStateKeepDecorations.on_exit(arg_4_0, arg_4_1)
+HeroViewStateKeepDecorations.on_exit = function (self, arg_4_1)
+	-- function 4
 	print("[HeroViewState] Exit Substate HeroViewStateKeepDecorations")
 
-	arg_4_0.ui_animator = nil
+	self.ui_animator = nil
 
-	if arg_4_0._customizable_decoration then
-		local var_4_0 = arg_4_0._interactable_unit
+	if not self._customizable_decoration then
+		local _interactable_unit = self._interactable_unit
 
-		ScriptUnit.extension(var_4_0, "keep_decoration_system"):reset_selection()
+		ScriptUnit.extension(_interactable_unit, "keep_decoration_system"):reset_selection()
 	end
 
-	if arg_4_0._fullscreen_effect_enabled then
-		arg_4_0:set_fullscreen_effect_enable_state(false)
+	if not self._fullscreen_effect_enabled then
+		self:set_fullscreen_effect_enable_state(false)
 	end
 
-	arg_4_0:_play_sound("Stop_all_keep_decorations_desc_vo")
-	arg_4_0:_play_sound("Stop_trophy_music")
+	self:_play_sound("Stop_all_keep_decorations_desc_vo")
+	self:_play_sound("Stop_trophy_music")
 
-	local var_4_1 = Managers.player:local_player()
+	local local_player = Managers.player:local_player()
 
-	if var_4_1 then
-		CharacterStateHelper.change_camera_state(var_4_1, "follow")
+	if not local_player then
+		CharacterStateHelper.change_camera_state(local_player, "follow")
 
-		local var_4_2 = var_4_1.player_unit
+		local player_unit = local_player.player_unit
 
-		if Unit.alive(var_4_2) then
-			local var_4_3 = ScriptUnit.extension(var_4_2, "first_person_system")
+		if not Unit.alive(player_unit) then
+			local extension = ScriptUnit.extension(player_unit, "first_person_system")
 
-			var_4_3:abort_toggle_visibility_timer()
-			var_4_3:abort_first_person_units_visibility_timer()
+			extension:abort_toggle_visibility_timer()
+			extension:abort_first_person_units_visibility_timer()
 
-			local var_4_4 = UISettings.map.camera_time_exit or 0.5
+			local camera_time_exit = UISettings.map.camera_time_exit
 
-			if not var_4_3:first_person_mode_active() then
-				var_4_3:toggle_visibility(var_4_4)
-			elseif not var_4_3:first_person_units_visible() then
-				var_4_3:toggle_first_person_units_visibility("third_person_mode", var_4_4)
+			camera_time_exit = camera_time_exit or 0.5
+
+			if not extension:first_person_mode_active() then
+				extension:toggle_visibility(camera_time_exit)
+			elseif not extension:first_person_units_visible() then
+				extension:toggle_first_person_units_visibility("third_person_mode", camera_time_exit)
 			end
 		end
 	end
 end
 
-function HeroViewStateKeepDecorations._create_ui_elements(arg_5_0, arg_5_1)
-	arg_5_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
+HeroViewStateKeepDecorations._create_ui_elements = function (self, arg_5_1)
+	-- function 5
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	local var_5_0 = {}
-	local var_5_1 = {}
+	local tbl = {}
+	local tbl_2 = {}
 
-	for iter_5_0, iter_5_1 in pairs(var_0_1) do
-		if iter_5_1 then
-			local var_5_2 = UIWidget.init(iter_5_1)
+	for k, v in pairs(widgets_definitions) do
+		if not v then
+			local var_5_2 = UIWidget.init(v)
 
-			var_5_0[#var_5_0 + 1] = var_5_2
-			var_5_1[iter_5_0] = var_5_2
+			tbl[#tbl + 1] = var_5_2
+			tbl_2[k] = var_5_2
 		end
 	end
 
-	arg_5_0._widgets = var_5_0
-	arg_5_0._widgets_by_name = var_5_1
+	self._widgets = tbl
+	self._widgets_by_name = tbl_2
 
-	UIRenderer.clear_scenegraph_queue(arg_5_0._ui_renderer)
+	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
 
-	arg_5_0.ui_animator = UIAnimator:new(arg_5_0._ui_scenegraph, var_0_4)
+	self.ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
 
-	local var_5_3 = arg_5_0._widgets_by_name.list_scrollbar
+	local list_scrollbar = self._widgets_by_name.list_scrollbar
 
-	arg_5_0._scrollbar_logic = ScrollBarLogic:new(var_5_3)
+	self._scrollbar_logic = ScrollBarLogic:new(list_scrollbar)
 end
 
-function HeroViewStateKeepDecorations._set_color_alpha_intensity(arg_6_0, arg_6_1, arg_6_2)
-	arg_6_0:_set_color_values(arg_6_1, arg_6_1[1] * arg_6_2)
+HeroViewStateKeepDecorations._set_color_alpha_intensity = function (self, arg_6_1, arg_6_2)
+	-- function 6
+	self:_set_color_values(arg_6_1, arg_6_1[1] * arg_6_2)
 end
 
-function HeroViewStateKeepDecorations._set_color_intensity(arg_7_0, arg_7_1, arg_7_2)
-	arg_7_0:_set_color_values(arg_7_1, nil, arg_7_1[2] * arg_7_2, arg_7_1[3] * arg_7_2, arg_7_1[4] * arg_7_2)
+HeroViewStateKeepDecorations._set_color_intensity = function (self, arg_7_1, arg_7_2)
+	-- function 7
+	self:_set_color_values(arg_7_1, nil, arg_7_1[2] * arg_7_2, arg_7_1[3] * arg_7_2, arg_7_1[4] * arg_7_2)
 end
 
-function HeroViewStateKeepDecorations._set_color_values(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+HeroViewStateKeepDecorations._set_color_values = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+	-- function 8
 	arg_8_1[1] = arg_8_2 or arg_8_1[1]
 	arg_8_1[2] = arg_8_3 or arg_8_1[2]
 	arg_8_1[3] = arg_8_4 or arg_8_1[3]
 	arg_8_1[4] = arg_8_5 or arg_8_1[4]
 end
 
-function HeroViewStateKeepDecorations.transitioning(arg_9_0)
-	if arg_9_0.exiting then
+HeroViewStateKeepDecorations.transitioning = function (self)
+	-- function 9
+	if not self.exiting then
 		return true
 	else
 		return false
 	end
 end
 
-function HeroViewStateKeepDecorations._wanted_state(arg_10_0)
-	return (arg_10_0.parent:wanted_state())
+HeroViewStateKeepDecorations._wanted_state = function (self)
+	-- function 10
+	return (self.parent:wanted_state())
 end
 
-function HeroViewStateKeepDecorations.wanted_menu_state(arg_11_0)
-	return arg_11_0._wanted_menu_state
+HeroViewStateKeepDecorations.wanted_menu_state = function (self)
+	-- function 11
+	return self._wanted_menu_state
 end
 
-function HeroViewStateKeepDecorations.clear_wanted_menu_state(arg_12_0)
-	arg_12_0._wanted_menu_state = nil
+HeroViewStateKeepDecorations.clear_wanted_menu_state = function (self)
+	-- function 12
+	self._wanted_menu_state = nil
 end
 
-function HeroViewStateKeepDecorations._update_transition_timer(arg_13_0, arg_13_1)
-	if not arg_13_0._transition_timer then
+HeroViewStateKeepDecorations._update_transition_timer = function (self, arg_13_1)
+	-- function 13
+	if not self._transition_timer then
 		return
 	end
 
-	if arg_13_0._transition_timer == 0 then
-		arg_13_0._transition_timer = nil
+	if self._transition_timer == 0 then
+		self._transition_timer = nil
 	else
-		arg_13_0._transition_timer = math.max(arg_13_0._transition_timer - arg_13_1, 0)
+		self._transition_timer = math.max(self._transition_timer - arg_13_1, 0)
 	end
 end
 
-function HeroViewStateKeepDecorations.input_service(arg_14_0)
-	return arg_14_0.parent:input_service()
+HeroViewStateKeepDecorations.input_service = function (self)
+	-- function 14
+	return self.parent:input_service()
 end
 
-function HeroViewStateKeepDecorations._is_list_hovered(arg_15_0)
-	return arg_15_0._widgets_by_name.list_mask.content.hotspot.is_hover or false
+HeroViewStateKeepDecorations._is_list_hovered = function (self)
+	-- function 15
+	local is_hover = self._widgets_by_name.list_mask.content.hotspot.is_hover
+
+	is_hover = is_hover or false
+
+	return is_hover
 end
 
-function HeroViewStateKeepDecorations.update(arg_16_0, arg_16_1, arg_16_2)
-	arg_16_0:_handle_gamepad_activity()
+HeroViewStateKeepDecorations.update = function (self, arg_16_1, arg_16_2)
+	-- function 16
+	self:_handle_gamepad_activity()
 
-	if var_0_8 then
-		var_0_8 = false
+	if not flag then
+		flag = false
 
-		arg_16_0:_create_ui_elements()
+		self:_create_ui_elements()
 	end
 
-	local var_16_0 = arg_16_0._input_blocked and FAKE_INPUT_SERVICE or arg_16_0:input_service()
+	local FAKE_INPUT_SERVICE
 
-	if arg_16_0._type == "painting" then
-		arg_16_0:_update_client_paintings(arg_16_1)
+	if not self._input_blocked then
+		FAKE_INPUT_SERVICE = FAKE_INPUT_SERVICE
+
+		if not FAKE_INPUT_SERVICE then
+			-- Nothing
+		end
 	end
 
-	arg_16_0:_update_sound_trigger_delay(arg_16_1)
-	arg_16_0:_update_scroll_position()
-	arg_16_0:draw(var_16_0, arg_16_1)
-	arg_16_0:_update_transition_timer(arg_16_1)
+	FAKE_INPUT_SERVICE = self:input_service()
 
-	local var_16_1 = arg_16_0.parent:transitioning()
-	local var_16_2 = arg_16_0:_wanted_state()
+	::label_16_0::
 
-	if not arg_16_0._transition_timer then
-		if not var_16_1 then
-			if arg_16_0:_has_active_level_vote() then
-				local var_16_3 = true
+	if self._type == "painting" then
+		self:_update_client_paintings(arg_16_1)
+	end
 
-				arg_16_0:close_menu(var_16_3)
+	self:_update_sound_trigger_delay(arg_16_1)
+	self:_update_scroll_position()
+	self:draw(FAKE_INPUT_SERVICE, arg_16_1)
+	self:_update_transition_timer(arg_16_1)
+
+	local transitioning = self.parent:transitioning()
+	local _wanted_state = self:_wanted_state()
+
+	if not self._transition_timer then
+		if not transitioning then
+			if not self:_has_active_level_vote() then
+				local flag_2 = true
+
+				self:close_menu(flag_2)
 			else
-				arg_16_0:_handle_input(arg_16_1, arg_16_2)
+				self:_handle_input(arg_16_1, arg_16_2)
 			end
 		end
 
-		if var_16_2 or arg_16_0._new_state then
-			arg_16_0.parent:clear_wanted_state()
+		if _wanted_state or not self._new_state then
+			self.parent:clear_wanted_state()
 
-			return var_16_2 or arg_16_0._new_state
+			return _wanted_state or self._new_state
 		end
 	end
 end
 
-function HeroViewStateKeepDecorations._update_client_paintings(arg_17_0, arg_17_1)
-	if not Unit.alive(arg_17_0._interactable_unit) or not arg_17_0._keep_decoration_extension or not arg_17_0._keep_decoration_extension.get_selected_decoration then
+HeroViewStateKeepDecorations._update_client_paintings = function (self, arg_17_1)
+	-- function 17
+	if not (not Unit.alive(self._interactable_unit) and not self._keep_decoration_extension and self._keep_decoration_extension.get_selected_decoration) then
 		return
 	end
 
-	if arg_17_0._is_server then
-		if arg_17_0._keep_decoration_extension:get_selected_decoration() == "hidden" then
-			arg_17_0:close_menu()
+	if not self._is_server then
+		if self._keep_decoration_extension:get_selected_decoration() == "hidden" then
+			self:close_menu()
 		end
 	else
-		local var_17_0 = arg_17_0._keep_decoration_extension:get_selected_decoration()
+		local get_selected_decoration = self._keep_decoration_extension:get_selected_decoration()
 
-		if var_17_0 ~= arg_17_0._selected_decoration then
-			arg_17_0:_set_info_by_decoration_key(var_17_0, false)
+		if get_selected_decoration ~= self._selected_decoration then
+			self:_set_info_by_decoration_key(get_selected_decoration, false)
 		end
 	end
 end
 
-function HeroViewStateKeepDecorations._has_active_level_vote(arg_18_0)
-	local var_18_0 = arg_18_0._voting_manager
+HeroViewStateKeepDecorations._has_active_level_vote = function (self)
+	-- function 18
+	local _voting_manager = self._voting_manager
+	local vote_in_progress = _voting_manager:vote_in_progress()
 
-	return var_18_0:vote_in_progress() and var_18_0:is_mission_vote() and not var_18_0:has_voted(Network.peer_id())
+	vote_in_progress = not vote_in_progress and _voting_manager:is_mission_vote()
+
+	return not vote_in_progress and not _voting_manager:has_voted(Network.peer_id())
 end
 
-function HeroViewStateKeepDecorations.post_update(arg_19_0, arg_19_1, arg_19_2)
-	arg_19_0.ui_animator:update(arg_19_1)
-	arg_19_0:_update_animations(arg_19_1)
+HeroViewStateKeepDecorations.post_update = function (self, arg_19_1, arg_19_2)
+	-- function 19
+	self.ui_animator:update(arg_19_1)
+	self:_update_animations(arg_19_1)
 end
 
-function HeroViewStateKeepDecorations._update_animations(arg_20_0, arg_20_1)
-	for iter_20_0, iter_20_1 in pairs(arg_20_0._ui_animations) do
-		UIAnimation.update(iter_20_1, arg_20_1)
+HeroViewStateKeepDecorations._update_animations = function (self, arg_20_1)
+	-- function 20
+	for k, v in pairs(self._ui_animations) do
+		UIAnimation.update(v, arg_20_1)
 
-		if UIAnimation.completed(iter_20_1) then
-			arg_20_0._ui_animations[iter_20_0] = nil
+		if not UIAnimation.completed(v) then
+			self._ui_animations[k] = nil
 		end
 	end
 
-	local var_20_0 = arg_20_0._animations
-	local var_20_1 = arg_20_0.ui_animator
+	local _animations = self._animations
+	local ui_animator = self.ui_animator
 
-	for iter_20_2, iter_20_3 in pairs(var_20_0) do
-		if var_20_1:is_animation_completed(iter_20_3) then
-			var_20_1:stop_animation(iter_20_3)
+	for k_2, v_2 in pairs(_animations) do
+		if not ui_animator:is_animation_completed(v_2) then
+			ui_animator:stop_animation(v_2)
 
-			var_20_0[iter_20_2] = nil
+			_animations[k_2] = nil
 		end
 	end
 
-	local var_20_2 = arg_20_0._widgets_by_name
-	local var_20_3 = var_20_2.close_button
-	local var_20_4 = var_20_2.confirm_button
+	local _widgets_by_name = self._widgets_by_name
+	local close_button = _widgets_by_name.close_button
+	local confirm_button = _widgets_by_name.confirm_button
 
-	UIWidgetUtils.animate_default_button(var_20_3, arg_20_1)
-	UIWidgetUtils.animate_default_button(var_20_4, arg_20_1)
+	UIWidgetUtils.animate_default_button(close_button, arg_20_1)
+	UIWidgetUtils.animate_default_button(confirm_button, arg_20_1)
 end
 
-function HeroViewStateKeepDecorations._is_button_hover_enter(arg_21_0, arg_21_1)
-	local var_21_0 = arg_21_1.content
+HeroViewStateKeepDecorations._is_button_hover_enter = function (arg_21_0, arg_21_1)
+	-- function 21
+	local content = arg_21_1.content
+	local button_hotspot = content.button_hotspot
 
-	return (var_21_0.button_hotspot or var_21_0.hotspot).on_hover_enter
+	button_hotspot = button_hotspot or content.hotspot
+
+	return button_hotspot.on_hover_enter
 end
 
-function HeroViewStateKeepDecorations._is_button_hover_exit(arg_22_0, arg_22_1)
-	local var_22_0 = arg_22_1.content
+HeroViewStateKeepDecorations._is_button_hover_exit = function (arg_22_0, arg_22_1)
+	-- function 22
+	local content = arg_22_1.content
+	local button_hotspot = content.button_hotspot
 
-	return (var_22_0.button_hotspot or var_22_0.hotspot).on_hover_exit
+	button_hotspot = button_hotspot or content.hotspot
+
+	return button_hotspot.on_hover_exit
 end
 
-function HeroViewStateKeepDecorations._is_button_hover(arg_23_0, arg_23_1)
-	local var_23_0 = arg_23_1.content
+HeroViewStateKeepDecorations._is_button_hover = function (arg_23_0, arg_23_1)
+	-- function 23
+	local content = arg_23_1.content
+	local button_hotspot = content.button_hotspot
 
-	return (var_23_0.button_hotspot or var_23_0.hotspot).is_hover
+	button_hotspot = button_hotspot or content.hotspot
+
+	return button_hotspot.is_hover
 end
 
-function HeroViewStateKeepDecorations._handle_input(arg_24_0, arg_24_1, arg_24_2)
-	local var_24_0 = arg_24_0._input_blocked and FAKE_INPUT_SERVICE or arg_24_0:input_service()
-	local var_24_1 = Managers.input:is_device_active("mouse")
-	local var_24_2 = var_24_0:get("toggle_menu")
-	local var_24_3 = not var_24_1 and var_24_0:get("back")
-	local var_24_4 = arg_24_0._widgets_by_name
+HeroViewStateKeepDecorations._handle_input = function (self, arg_24_1, arg_24_2)
+	-- function 24
+	local FAKE_INPUT_SERVICE
 
-	arg_24_0._scrollbar_logic:update(arg_24_1, arg_24_2)
+	if not self._input_blocked then
+		FAKE_INPUT_SERVICE = FAKE_INPUT_SERVICE
 
-	local var_24_5 = var_24_4.close_button
-	local var_24_6 = var_24_4.confirm_button
-
-	if arg_24_0:_is_button_hover_enter(var_24_5) or arg_24_0:_is_button_hover_enter(var_24_6) then
-		arg_24_0:_play_sound("Play_hud_hover")
+		if not FAKE_INPUT_SERVICE then
+			-- Nothing
+		end
 	end
 
-	if arg_24_0._customizable_decoration then
-		local var_24_7 = arg_24_0._interactable_unit
+	FAKE_INPUT_SERVICE = self:input_service()
 
-		if arg_24_0:_is_button_pressed(var_24_6) or var_24_0:get("confirm") then
-			local var_24_8 = ScriptUnit.extension(var_24_7, "keep_decoration_system")
+	::label_24_0::
 
-			if arg_24_0._selected_equipped_decoration then
-				var_24_8:unequip_decoration()
+	local is_device_active = Managers.input:is_device_active("mouse")
+	local get = FAKE_INPUT_SERVICE:get("toggle_menu")
+	local flag = not not is_device_active or FAKE_INPUT_SERVICE:get("back")
+	local _widgets_by_name = self._widgets_by_name
 
-				arg_24_0._selected_equipped_decoration = false
+	self._scrollbar_logic:update(arg_24_1, arg_24_2)
 
-				arg_24_0:_update_confirm_button()
-				arg_24_0:_update_equipped_widget()
-				arg_24_0._menu_input_description:set_input_description(var_0_7.default)
-				arg_24_0:_play_sound("Play_hud_select")
+	local close_button = _widgets_by_name.close_button
+	local confirm_button = _widgets_by_name.confirm_button
+
+	if self:_is_button_hover_enter(close_button) or not self:_is_button_hover_enter(confirm_button) then
+		self:_play_sound("Play_hud_hover")
+	end
+
+	if not self._customizable_decoration then
+		local _interactable_unit = self._interactable_unit
+
+		if self:_is_button_pressed(confirm_button) or not FAKE_INPUT_SERVICE:get("confirm") then
+			local extension = ScriptUnit.extension(_interactable_unit, "keep_decoration_system")
+
+			if not self._selected_equipped_decoration then
+				extension:unequip_decoration()
+
+				self._selected_equipped_decoration = false
+
+				self:_update_confirm_button()
+				self:_update_equipped_widget()
+				self._menu_input_description:set_input_description(input_actions.default)
+				self:_play_sound("Play_hud_select")
 			else
-				arg_24_0:_verify_decoration_selection()
-				var_24_8:confirm_selection()
-				arg_24_0:_play_sound("hud_add_painting")
+				self:_verify_decoration_selection()
+				extension:confirm_selection()
+				self:_play_sound("hud_add_painting")
 
-				arg_24_0._selected_equipped_decoration = true
+				self._selected_equipped_decoration = true
 
-				arg_24_0:_update_confirm_button()
-				arg_24_0:_update_equipped_widget()
-				arg_24_0._menu_input_description:set_input_description(var_0_7.remove)
+				self:_update_confirm_button()
+				self:_update_equipped_widget()
+				self._menu_input_description:set_input_description(input_actions.remove)
 			end
 		end
 
-		local var_24_9 = false
+		local flag_2 = false
 
-		if not var_24_1 then
-			var_24_9 = true
+		if not is_device_active then
+			flag_2 = true
 
-			arg_24_0:_handle_gamepad_list_selection(var_24_0)
+			self:_handle_gamepad_list_selection(FAKE_INPUT_SERVICE)
 		else
-			var_24_9 = arg_24_0:_is_list_hovered()
+			flag_2 = self:_is_list_hovered()
 
-			local var_24_10 = arg_24_0._list_widgets
+			local _list_widgets = self._list_widgets
 
-			if var_24_10 and var_24_9 then
-				for iter_24_0, iter_24_1 in ipairs(var_24_10) do
-					if arg_24_0:_is_button_hover_enter(iter_24_1) then
-						arg_24_0:_play_sound("play_gui_equipment_button_hover")
+			if not _list_widgets and not flag_2 then
+				for i, v in ipairs(_list_widgets) do
+					if not self:_is_button_hover_enter(v) then
+						self:_play_sound("play_gui_equipment_button_hover")
 					end
 				end
 			end
 
-			local var_24_11 = arg_24_0:_list_index_pressed()
+			local _list_index_pressed = self:_list_index_pressed()
 
-			if var_24_11 and var_24_11 ~= arg_24_0._selected_list_index then
-				arg_24_0:_on_list_index_selected(var_24_11)
-				arg_24_0:_play_sound("Play_hud_select")
+			if not (not _list_index_pressed and _list_index_pressed == self._selected_list_index) then
+				self:_on_list_index_selected(_list_index_pressed)
+				self:_play_sound("Play_hud_select")
 			end
 		end
 
-		arg_24_0:_animate_list_entries(arg_24_1, var_24_9)
+		self:_animate_list_entries(arg_24_1, flag_2)
 	end
 
-	if var_24_2 or arg_24_0:_is_button_pressed(var_24_5) or var_24_3 then
-		arg_24_0:_play_sound("Play_hud_select")
-		arg_24_0:close_menu()
+	if get or self:_is_button_pressed(close_button) or not flag then
+		self:_play_sound("Play_hud_select")
+		self:close_menu()
 
 		return
 	end
 end
 
-function HeroViewStateKeepDecorations._verify_decoration_selection(arg_25_0)
-	local var_25_0 = ScriptUnit.extension(arg_25_0._interactable_unit, "keep_decoration_system")
-	local var_25_1 = var_25_0:get_selected_decoration()
+HeroViewStateKeepDecorations._verify_decoration_selection = function (self)
+	-- function 25
+	local extension = ScriptUnit.extension(self._interactable_unit, "keep_decoration_system")
+	local get_selected_decoration = extension:get_selected_decoration()
 
-	if not table.find(arg_25_0._default_decorations, var_25_1) then
+	if not table.find(self._default_decorations, get_selected_decoration) then
 		return
 	end
 
-	local var_25_2 = arg_25_0._selected_list_index
-	local var_25_3 = arg_25_0._list_widgets
+	local _selected_list_index = self._selected_list_index
+	local _list_widgets = self._list_widgets
 
-	if not var_25_2 or var_25_2 > #var_25_3 then
+	if not (not _selected_list_index and not (_selected_list_index > #_list_widgets)) then
 		return
 	end
 
-	local var_25_4 = var_25_3[var_25_2].content
-	local var_25_5 = var_25_4.key
+	local content = _list_widgets[_selected_list_index].content
+	local key = content.key
 
-	if var_25_4.locked then
+	if not content.locked then
 		return
 	else
-		var_25_0:decoration_selected(var_25_5)
+		extension:decoration_selected(key)
 	end
 end
 
-function HeroViewStateKeepDecorations.close_menu(arg_26_0, arg_26_1)
+HeroViewStateKeepDecorations.close_menu = function (self, arg_26_1)
+	-- function 26
 	arg_26_1 = true
 
-	arg_26_0.parent:close_menu(nil, arg_26_1)
+	self.parent:close_menu(nil, arg_26_1)
 end
 
-function HeroViewStateKeepDecorations.draw(arg_27_0, arg_27_1, arg_27_2)
-	arg_27_0:_update_visible_list_entries()
+HeroViewStateKeepDecorations.draw = function (self, arg_27_1, arg_27_2)
+	-- function 27
+	self:_update_visible_list_entries()
 
-	local var_27_0 = arg_27_0._ui_renderer
-	local var_27_1 = arg_27_0._ui_top_renderer
-	local var_27_2 = arg_27_0._ui_scenegraph
-	local var_27_3 = arg_27_0._input_manager
-	local var_27_4 = arg_27_0._render_settings
-	local var_27_5 = var_27_3:is_device_active("gamepad")
+	local _ui_renderer = self._ui_renderer
+	local _ui_top_renderer = self._ui_top_renderer
+	local _ui_scenegraph = self._ui_scenegraph
+	local _input_manager = self._input_manager
+	local _render_settings = self._render_settings
+	local is_device_active = _input_manager:is_device_active("gamepad")
 
-	UIRenderer.begin_pass(var_27_0, var_27_2, arg_27_1, arg_27_2, nil, var_27_4)
+	UIRenderer.begin_pass(_ui_renderer, _ui_scenegraph, arg_27_1, arg_27_2, nil, _render_settings)
 
-	local var_27_6 = var_27_4.snap_pixel_positions
-	local var_27_7 = var_27_4.alpha_multiplier or 1
-	local var_27_8 = arg_27_0._list_widgets
+	local snap_pixel_positions = _render_settings.snap_pixel_positions
+	local alpha_multiplier = _render_settings.alpha_multiplier
 
-	if var_27_8 then
-		for iter_27_0, iter_27_1 in ipairs(var_27_8) do
-			UIRenderer.draw_widget(var_27_0, iter_27_1)
+	alpha_multiplier = alpha_multiplier or 1
+
+	local _list_widgets = self._list_widgets
+
+	if not _list_widgets then
+		for i, v in ipairs(_list_widgets) do
+			UIRenderer.draw_widget(_ui_renderer, v)
 		end
 	end
 
-	local var_27_9 = arg_27_0._dummy_list_widgets
+	local _dummy_list_widgets = self._dummy_list_widgets
 
-	if var_27_9 then
-		for iter_27_2, iter_27_3 in ipairs(var_27_9) do
-			UIRenderer.draw_widget(var_27_0, iter_27_3)
+	if not _dummy_list_widgets then
+		for i_2, v_2 in ipairs(_dummy_list_widgets) do
+			UIRenderer.draw_widget(_ui_renderer, v_2)
 		end
 	end
 
-	for iter_27_4, iter_27_5 in ipairs(arg_27_0._widgets) do
-		if iter_27_5.snap_pixel_positions ~= nil then
-			var_27_4.snap_pixel_positions = iter_27_5.snap_pixel_positions
+	for i_3, v_3 in ipairs(self._widgets) do
+		if v_3.snap_pixel_positions ~= nil then
+			_render_settings.snap_pixel_positions = v_3.snap_pixel_positions
 		end
 
-		var_27_4.alpha_multiplier = iter_27_5.alpha_multiplier or var_27_7
+		local alpha_multiplier_2 = v_3.alpha_multiplier
 
-		UIRenderer.draw_widget(var_27_0, iter_27_5)
+		alpha_multiplier_2 = alpha_multiplier_2 or alpha_multiplier
+		_render_settings.alpha_multiplier = alpha_multiplier_2
 
-		var_27_4.snap_pixel_positions = var_27_6
+		UIRenderer.draw_widget(_ui_renderer, v_3)
+
+		_render_settings.snap_pixel_positions = snap_pixel_positions
 	end
 
-	UIRenderer.end_pass(var_27_0)
+	UIRenderer.end_pass(_ui_renderer)
 
-	var_27_4.alpha_multiplier = var_27_7
+	_render_settings.alpha_multiplier = alpha_multiplier
 
-	if var_27_5 then
-		arg_27_0._menu_input_description:draw(var_27_1, arg_27_2)
+	if not is_device_active then
+		self._menu_input_description:draw(_ui_top_renderer, arg_27_2)
 	end
 end
 
-function HeroViewStateKeepDecorations._is_button_pressed(arg_28_0, arg_28_1)
-	local var_28_0 = arg_28_1.content
-	local var_28_1 = var_28_0.button_hotspot or var_28_0.hotspot
+HeroViewStateKeepDecorations._is_button_pressed = function (arg_28_0, arg_28_1)
+	-- function 28
+	local content = arg_28_1.content
+	local button_hotspot = content.button_hotspot
 
-	if var_28_1.on_release then
-		var_28_1.on_release = false
+	button_hotspot = button_hotspot or content.hotspot
+
+	if not button_hotspot.on_release then
+		button_hotspot.on_release = false
 
 		return true
 	end
 end
 
-function HeroViewStateKeepDecorations._play_sound(arg_29_0, arg_29_1)
-	arg_29_0.parent:play_sound(arg_29_1)
+HeroViewStateKeepDecorations._play_sound = function (self, arg_29_1)
+	-- function 29
+	self.parent:play_sound(arg_29_1)
 end
 
-function HeroViewStateKeepDecorations._start_transition_animation(arg_30_0, arg_30_1, arg_30_2)
-	local var_30_0 = {
-		wwise_world = arg_30_0._wwise_world,
-		render_settings = arg_30_0._render_settings
+HeroViewStateKeepDecorations._start_transition_animation = function (self, arg_30_1, arg_30_2)
+	-- function 30
+	local tbl = {
+		wwise_world = self._wwise_world,
+		render_settings = self._render_settings
 	}
-	local var_30_1 = {}
-	local var_30_2 = arg_30_0.ui_animator:start_animation(arg_30_2, var_30_1, var_0_2, var_30_0)
+	local tbl_2 = {}
+	local start_animation = self.ui_animator:start_animation(arg_30_2, tbl_2, scenegraph_definition, tbl)
 
-	arg_30_0._animations[arg_30_1] = var_30_2
+	self._animations[arg_30_1] = start_animation
 end
 
-function HeroViewStateKeepDecorations.set_fullscreen_effect_enable_state(arg_31_0, arg_31_1)
-	local var_31_0 = arg_31_0._ui_renderer.world
-	local var_31_1 = World.get_data(var_31_0, "shading_environment")
+HeroViewStateKeepDecorations.set_fullscreen_effect_enable_state = function (self, arg_31_1)
+	-- function 31
+	local world = self._ui_renderer.world
+	local get_data = World.get_data(world, "shading_environment")
 
-	if var_31_1 then
-		ShadingEnvironment.set_scalar(var_31_1, "fullscreen_blur_enabled", arg_31_1 and 1 or 0)
-		ShadingEnvironment.set_scalar(var_31_1, "fullscreen_blur_amount", arg_31_1 and 0.75 or 0)
-		ShadingEnvironment.apply(var_31_1)
+	if not get_data then
+		local set_scalar = ShadingEnvironment.set_scalar
+		local var_31_3 = get_data
+		local str = "fullscreen_blur_enabled"
+		local flag
+
+		flag = not arg_31_1 and 1 and 0
+
+		set_scalar(var_31_3, str, flag)
+
+		local set_scalar_2 = ShadingEnvironment.set_scalar
+		local var_31_7 = get_data
+		local str_2 = "fullscreen_blur_amount"
+		local flag_2
+
+		flag_2 = not arg_31_1 and 0.75 and 0
+
+		set_scalar_2(var_31_7, str_2, flag_2)
+		ShadingEnvironment.apply(get_data)
 	end
 
-	arg_31_0._fullscreen_effect_enabled = arg_31_1
+	self._fullscreen_effect_enabled = arg_31_1
 end
 
-function HeroViewStateKeepDecorations.block_input(arg_32_0)
-	arg_32_0._input_blocked = true
+HeroViewStateKeepDecorations.block_input = function (self)
+	-- function 32
+	self._input_blocked = true
 end
 
-function HeroViewStateKeepDecorations.unblock_input(arg_33_0)
-	arg_33_0._input_blocked = false
+HeroViewStateKeepDecorations.unblock_input = function (self)
+	-- function 33
+	self._input_blocked = false
 end
 
-function HeroViewStateKeepDecorations.input_blocked(arg_34_0)
-	return arg_34_0._input_blocked
+HeroViewStateKeepDecorations.input_blocked = function (self)
+	-- function 34
+	return self._input_blocked
 end
 
-function HeroViewStateKeepDecorations._set_info_by_decoration_key(arg_35_0, arg_35_1, arg_35_2)
-	local var_35_0 = arg_35_0._main_table[arg_35_1]
-	local var_35_1 = var_35_0.display_name
-	local var_35_2 = var_35_0.description
-	local var_35_3 = var_35_0.artist
-	local var_35_4 = arg_35_2 and Localize("interaction_unavailable") or Localize(var_35_2)
-	local var_35_5 = var_35_3 and not arg_35_2 and Localize(var_35_3) or ""
-
-	arg_35_0._selected_decoration = arg_35_1
-
-	arg_35_0:_set_info_texts(Localize(var_35_1), var_35_4, var_35_5)
-	arg_35_0:_play_sound("Stop_all_keep_decorations_desc_vo")
+HeroViewStateKeepDecorations._set_info_by_decoration_key = function (self, arg_35_1, arg_35_2)
+	-- function 35
+	local var_35_0 = self._main_table[arg_35_1]
+	local display_name = var_35_0.display_name
+	local description = var_35_0.description
+	local artist = var_35_0.artist
+	local var_35_4
 
 	if not arg_35_2 then
-		arg_35_0._sound_event_delay = var_35_0.sound_event and var_0_11 or nil
+		var_35_4 = Localize("interaction_unavailable")
+
+		if not var_35_4 then
+			-- Nothing
+		end
+	end
+
+	var_35_4 = Localize(description)
+
+	do
+		local var_35_5
+	end
+
+	::label_35_0::
+
+	if not (not artist and arg_35_2) then
+		var_35_5 = Localize(artist)
+
+		if not var_35_5 then
+			-- Nothing
+		end
+	end
+
+	var_35_5 = ""
+
+	::label_35_1::
+
+	self._selected_decoration = arg_35_1
+
+	self:_set_info_texts(Localize(display_name), var_35_4, var_35_5)
+	self:_play_sound("Stop_all_keep_decorations_desc_vo")
+
+	if not arg_35_2 then
+		local var_35_6
+
+		if not var_35_0.sound_event then
+			var_35_6 = num_3
+
+			if not var_35_6 then
+				-- Nothing
+			end
+		end
+
+		var_35_6 = nil
+
+		::label_35_2::
+
+		self._sound_event_delay = var_35_6
 	end
 end
 
-function HeroViewStateKeepDecorations._update_sound_trigger_delay(arg_36_0, arg_36_1)
-	local var_36_0 = arg_36_0._sound_event_delay
+HeroViewStateKeepDecorations._update_sound_trigger_delay = function (self, arg_36_1)
+	-- function 36
+	local _sound_event_delay = self._sound_event_delay
 
-	if not var_36_0 then
+	if not _sound_event_delay then
 		return
 	end
 
-	local var_36_1 = math.max(var_36_0 - arg_36_1, 0)
+	local max = math.max(_sound_event_delay - arg_36_1, 0)
 
-	if var_36_1 == 0 then
-		arg_36_0._sound_event_delay = nil
+	if max == 0 then
+		self._sound_event_delay = nil
 
-		local var_36_2 = arg_36_0._selected_list_index
+		local _selected_list_index = self._selected_list_index
 
-		if arg_36_0._selected_decoration and var_36_2 then
-			local var_36_3 = arg_36_0._list_widgets[var_36_2].content.key
-			local var_36_4 = arg_36_0._main_table[var_36_3].sound_event
+		if not self._selected_decoration and not _selected_list_index then
+			local key = self._list_widgets[_selected_list_index].content.key
+			local sound_event = self._main_table[key].sound_event
 
-			if var_36_4 then
-				arg_36_0:_play_sound(var_36_4)
+			if not sound_event then
+				self:_play_sound(sound_event)
 			end
-		elseif arg_36_0._sound_event then
-			arg_36_0:_play_sound(arg_36_0._sound_event)
+		elseif not self._sound_event then
+			self:_play_sound(self._sound_event)
 		end
 	else
-		arg_36_0._sound_event_delay = var_36_1
+		self._sound_event_delay = max
 	end
 end
 
-function HeroViewStateKeepDecorations._update_confirm_button(arg_37_0)
-	local var_37_0 = arg_37_0._selected_equipped_decoration == true
-	local var_37_1 = arg_37_0._widgets_by_name.confirm_button
+HeroViewStateKeepDecorations._update_confirm_button = function (self)
+	-- function 37
+	local flag = self._selected_equipped_decoration == true
+	local confirm_button = self._widgets_by_name.confirm_button
 
-	if var_37_0 then
-		var_37_1.content.title_text = Localize("input_description_remove")
+	if not flag then
+		confirm_button.content.title_text = Localize("input_description_remove")
 	else
-		var_37_1.content.title_text = Localize("menu_settings_apply")
+		confirm_button.content.title_text = Localize("menu_settings_apply")
 	end
 end
 
-function HeroViewStateKeepDecorations._on_list_index_selected(arg_38_0, arg_38_1, arg_38_2)
-	local var_38_0 = arg_38_0._interactable_unit
-	local var_38_1 = ScriptUnit.extension(var_38_0, "keep_decoration_system")
-	local var_38_2 = var_38_1:get_selected_decoration()
-	local var_38_3 = arg_38_0._list_widgets
+HeroViewStateKeepDecorations._on_list_index_selected = function (self, arg_38_1, arg_38_2)
+	-- function 38
+	local _interactable_unit = self._interactable_unit
+	local extension = ScriptUnit.extension(_interactable_unit, "keep_decoration_system")
+	local get_selected_decoration = extension:get_selected_decoration()
+	local _list_widgets = self._list_widgets
 
-	if not arg_38_1 or arg_38_1 > #var_38_3 then
+	if not (not arg_38_1 and not (arg_38_1 > #_list_widgets)) then
 		return
 	end
 
-	local var_38_4 = var_38_3[arg_38_1].content
-	local var_38_5 = var_38_4.key
+	local content = _list_widgets[arg_38_1].content
+	local key = content.key
 
-	if ItemHelper.is_new_keep_decoration_id(var_38_5) then
-		ItemHelper.unmark_keep_decoration_as_new(var_38_5)
+	if not ItemHelper.is_new_keep_decoration_id(key) then
+		ItemHelper.unmark_keep_decoration_as_new(key)
 
-		var_38_4.new = false
+		content.new = false
 	end
 
-	local var_38_6 = var_38_4.locked
+	local locked = content.locked
 
-	arg_38_0:_set_info_by_decoration_key(var_38_5, var_38_6)
+	self:_set_info_by_decoration_key(key, locked)
 
-	if var_38_6 then
-		var_38_1:decoration_selected(arg_38_0._empty_decoration_name)
+	if not locked then
+		extension:decoration_selected(self._empty_decoration_name)
 	else
-		var_38_1:decoration_selected(var_38_5)
+		extension:decoration_selected(key)
 	end
 
-	arg_38_0._selected_equipped_decoration = var_38_2 == var_38_5
+	self._selected_equipped_decoration = get_selected_decoration == key
 
-	arg_38_0:_update_confirm_button()
+	self:_update_confirm_button()
 
-	local var_38_7 = arg_38_0._selected_equipped_decoration and "remove" or "default"
+	local flag
 
-	arg_38_0._menu_input_description:set_input_description(var_38_7 and var_0_7[var_38_7])
+	flag = not self._selected_equipped_decoration and "remove" and "default"
 
-	if var_38_3 then
-		for iter_38_0, iter_38_1 in ipairs(var_38_3) do
-			local var_38_8 = iter_38_1.content
-			local var_38_9 = var_38_8.hotspot or var_38_8.button_hotspot
+	self._menu_input_description:set_input_description(not flag and input_actions[flag])
 
-			if var_38_9 then
-				local var_38_10 = iter_38_0 == arg_38_1
+	if not _list_widgets then
+		for i, v in ipairs(_list_widgets) do
+			local content_2 = v.content
+			local hotspot = content_2.hotspot
 
-				var_38_9.is_selected = var_38_10
+			hotspot = hotspot or content_2.button_hotspot
 
-				if var_38_10 then
-					var_38_9.on_hover_enter = true
+			if not hotspot then
+				local flag_2 = i == arg_38_1
+
+				hotspot.is_selected = flag_2
+
+				if not flag_2 then
+					hotspot.on_hover_enter = true
 				end
 			end
 		end
 	end
 
-	arg_38_0._previous_selected_list_index = arg_38_0._selected_list_index
-	arg_38_0._selected_list_index = arg_38_1
+	self._previous_selected_list_index = self._selected_list_index
+	self._selected_list_index = arg_38_1
 
-	if arg_38_2 then
-		local var_38_11 = arg_38_0._widgets_by_name.list_scrollbar.content.scroll_bar_info
-		local var_38_12 = UIAnimation.function_by_time
-		local var_38_13 = var_38_11
-		local var_38_14 = "scroll_value"
-		local var_38_15 = var_38_11.scroll_value
+	if not arg_38_2 then
+		local scroll_bar_info = self._widgets_by_name.list_scrollbar.content.scroll_bar_info
+		local function_by_time = UIAnimation.function_by_time
+		local var_38_13 = scroll_bar_info
+		local str = "scroll_value"
+		local scroll_value = scroll_bar_info.scroll_value
 		local var_38_16 = arg_38_2
-		local var_38_17 = 0.3
-		local var_38_18 = math.easeOutCubic
+		local num = 0.3
+		local easeOutCubic = math.easeOutCubic
 
-		arg_38_0._ui_animations.scrollbar = UIAnimation.init(var_38_12, var_38_13, var_38_14, var_38_15, var_38_16, var_38_17, var_38_18)
+		self._ui_animations.scrollbar = UIAnimation.init(function_by_time, var_38_13, str, scroll_value, var_38_16, num, easeOutCubic)
 	else
-		arg_38_0._ui_animations.scrollbar = nil
+		self._ui_animations.scrollbar = nil
 	end
 end
 
-function HeroViewStateKeepDecorations._update_scrollbar_progress_animation(arg_39_0, arg_39_1, arg_39_2)
-	local var_39_0 = arg_39_0._chest_zoom_in_duration
+HeroViewStateKeepDecorations._update_scrollbar_progress_animation = function (self, arg_39_1, arg_39_2)
+	-- function 39
+	local _chest_zoom_in_duration = self._chest_zoom_in_duration
 
-	if not var_39_0 then
+	if not _chest_zoom_in_duration then
 		return
 	end
 
-	local var_39_1 = var_39_0 + arg_39_1
-	local var_39_2 = math.min(var_39_1 / CHEST_PRESENTATION_ZOOM_IN_TIME, 1)
-	local var_39_3 = math.easeOutCubic(var_39_2)
+	local num = _chest_zoom_in_duration + arg_39_1
+	local min = math.min(num / CHEST_PRESENTATION_ZOOM_IN_TIME, 1)
+	local easeOutCubic = math.easeOutCubic(min)
 
-	arg_39_0:set_camera_zoom(var_39_3)
-	arg_39_0:set_grid_animation_progress(var_39_3)
-	arg_39_0:set_chest_title_alpha_progress(1 - var_39_3)
+	self:set_camera_zoom(easeOutCubic)
+	self:set_grid_animation_progress(easeOutCubic)
+	self:set_chest_title_alpha_progress(1 - easeOutCubic)
 
-	if var_39_2 == 1 then
-		arg_39_0._chest_zoom_in_duration = nil
-		arg_39_0._chest_open_wait_duration = 0
+	if min == 1 then
+		self._chest_zoom_in_duration = nil
+		self._chest_open_wait_duration = 0
 	else
-		arg_39_0._chest_zoom_in_duration = var_39_1
+		self._chest_zoom_in_duration = num
 	end
 end
 
-function HeroViewStateKeepDecorations._set_info_texts(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
-	local var_40_0 = arg_40_0:_set_selected_title(arg_40_1)
-	local var_40_1 = arg_40_0:_set_selected_description(arg_40_2)
-	local var_40_2 = arg_40_3 and arg_40_0:_set_selected_artist(arg_40_3) or 0
-	local var_40_3 = arg_40_0._ui_scenegraph
+HeroViewStateKeepDecorations._set_info_texts = function (self, arg_40_1, arg_40_2, arg_40_3)
+	-- function 40
+	local _set_selected_title = self:_set_selected_title(arg_40_1)
+	local _set_selected_description = self:_set_selected_description(arg_40_2)
+	local _set_selected_artist
 
-	var_40_3.title_text.size[2] = var_40_0
-	var_40_3.artist_text.size[2] = var_40_2
+	if not arg_40_3 then
+		_set_selected_artist = self:_set_selected_artist(arg_40_3)
 
-	local var_40_4 = var_40_3.info_window
-	local var_40_5 = var_40_4.position
-	local var_40_6 = var_40_4.size[2] - var_40_0 - var_40_2 - 110
+		if not _set_selected_artist then
+			-- Nothing
+		end
+	end
 
-	var_40_3.description_text.size[2] = var_40_6
+	_set_selected_artist = 0
+
+	::label_40_0::
+
+	local _ui_scenegraph = self._ui_scenegraph
+
+	_ui_scenegraph.title_text.size[2] = _set_selected_title
+	_ui_scenegraph.artist_text.size[2] = _set_selected_artist
+
+	local info_window = _ui_scenegraph.info_window
+	local position = info_window.position
+	local num = info_window.size[2] - _set_selected_title - _set_selected_artist - 110
+
+	_ui_scenegraph.description_text.size[2] = num
 end
 
-function HeroViewStateKeepDecorations._set_selected_title(arg_41_0, arg_41_1)
-	local var_41_0 = arg_41_0._widgets_by_name.title_text
+HeroViewStateKeepDecorations._set_selected_title = function (self, arg_41_1)
+	-- function 41
+	local title_text = self._widgets_by_name.title_text
 
-	var_41_0.content.text = arg_41_1
+	title_text.content.text = arg_41_1
 
-	local var_41_1 = var_41_0.scenegraph_id
-	local var_41_2 = var_41_0.style.text
-	local var_41_3 = var_0_2[var_41_1].size
+	local scenegraph_id = title_text.scenegraph_id
+	local text = title_text.style.text
+	local size = scenegraph_definition[scenegraph_id].size
 
-	return (UIUtils.get_text_height(arg_41_0._ui_renderer, var_41_3, var_41_2, arg_41_1))
+	return (UIUtils.get_text_height(self._ui_renderer, size, text, arg_41_1))
 end
 
-function HeroViewStateKeepDecorations._set_selected_description(arg_42_0, arg_42_1)
-	local var_42_0 = arg_42_0._widgets_by_name.description_text
+HeroViewStateKeepDecorations._set_selected_description = function (self, arg_42_1)
+	-- function 42
+	local description_text = self._widgets_by_name.description_text
 
-	var_42_0.content.text = arg_42_1
+	description_text.content.text = arg_42_1
 
-	local var_42_1 = var_42_0.scenegraph_id
-	local var_42_2 = var_42_0.style.text
-	local var_42_3 = var_0_2[var_42_1].size
+	local scenegraph_id = description_text.scenegraph_id
+	local text = description_text.style.text
+	local size = scenegraph_definition[scenegraph_id].size
 
-	return (UIUtils.get_text_height(arg_42_0._ui_renderer, var_42_3, var_42_2, arg_42_1))
+	return (UIUtils.get_text_height(self._ui_renderer, size, text, arg_42_1))
 end
 
-function HeroViewStateKeepDecorations._set_selected_artist(arg_43_0, arg_43_1)
-	local var_43_0 = arg_43_0._widgets_by_name.artist_text
+HeroViewStateKeepDecorations._set_selected_artist = function (self, arg_43_1)
+	-- function 43
+	local artist_text = self._widgets_by_name.artist_text
 
-	var_43_0.content.text = arg_43_1
+	artist_text.content.text = arg_43_1
 
-	local var_43_1 = var_43_0.scenegraph_id
-	local var_43_2 = var_43_0.style.text
-	local var_43_3 = var_0_2[var_43_1].size
+	local scenegraph_id = artist_text.scenegraph_id
+	local text = artist_text.style.text
+	local size = scenegraph_definition[scenegraph_id].size
 
-	return (UIUtils.get_text_height(arg_43_0._ui_renderer, var_43_3, var_43_2, arg_43_1))
+	return (UIUtils.get_text_height(self._ui_renderer, size, text, arg_43_1))
 end
 
-function HeroViewStateKeepDecorations._update_equipped_widget(arg_44_0)
-	local var_44_0 = arg_44_0._interactable_unit
-	local var_44_1 = ScriptUnit.extension(var_44_0, "keep_decoration_system"):get_selected_decoration()
-	local var_44_2 = arg_44_0._decoration_system
+HeroViewStateKeepDecorations._update_equipped_widget = function (self)
+	-- function 44
+	local _interactable_unit = self._interactable_unit
+	local get_selected_decoration = ScriptUnit.extension(_interactable_unit, "keep_decoration_system"):get_selected_decoration()
+	local _decoration_system = self._decoration_system
 
-	for iter_44_0, iter_44_1 in pairs(arg_44_0._list_widgets) do
-		local var_44_3 = iter_44_1.content.key
+	for k, v in pairs(self._list_widgets) do
+		local key = v.content.key
 
-		iter_44_1.content.in_use = var_44_2:is_decoration_in_use(var_44_3)
-		iter_44_1.content.equipped = var_44_1 == var_44_3
+		v.content.in_use = _decoration_system:is_decoration_in_use(key)
+		v.content.equipped = get_selected_decoration == key
 	end
 end
 
-function HeroViewStateKeepDecorations._align_list_widgets(arg_45_0)
-	local var_45_0 = 0
-	local var_45_1 = arg_45_0._list_widgets
-	local var_45_2 = arg_45_0._dummy_list_widgets
-	local var_45_3 = #var_45_1 + #var_45_2
+HeroViewStateKeepDecorations._align_list_widgets = function (self)
+	-- function 45
+	local num_2 = 0
+	local _list_widgets = self._list_widgets
+	local _dummy_list_widgets = self._dummy_list_widgets
+	local num_3 = #_list_widgets + #_dummy_list_widgets
 
-	for iter_45_0 = 1, var_45_3 do
+	for i = 1, num_3 do
 		local var_45_4
 
-		if iter_45_0 <= #var_45_1 then
-			var_45_4 = var_45_1[iter_45_0]
+		if i <= #_list_widgets then
+			var_45_4 = _list_widgets[i]
 		else
-			var_45_4 = var_45_2[iter_45_0 - #var_45_1]
+			var_45_4 = _dummy_list_widgets[i - #_list_widgets]
 		end
 
-		local var_45_5 = var_45_4.offset
-		local var_45_6 = var_45_4.content.size
+		local offset = var_45_4.offset
+		local size = var_45_4.content.size
 
-		var_45_4.default_offset = table.clone(var_45_5)
+		var_45_4.default_offset = table.clone(offset)
 
-		local var_45_7 = var_45_6[2]
+		local var_45_7 = size[2]
 
-		var_45_5[2] = -var_45_0
-		var_45_0 = var_45_0 + var_45_7
+		offset[2] = -num_2
+		num_2 = num_2 + var_45_7
 
-		if iter_45_0 ~= var_45_3 then
-			var_45_0 = var_45_0 + var_0_9
+		if i ~= num_3 then
+			num_2 = num_2 + num
 		end
 	end
 
-	arg_45_0._total_list_height = var_45_0
+	self._total_list_height = num_2
 end
 
-function HeroViewStateKeepDecorations._handle_gamepad_list_selection(arg_46_0, arg_46_1)
-	local var_46_0 = arg_46_0._selected_list_index
+HeroViewStateKeepDecorations._handle_gamepad_list_selection = function (self, arg_46_1)
+	-- function 46
+	local _selected_list_index = self._selected_list_index
 
-	if not var_46_0 then
+	if not _selected_list_index then
 		return
 	end
 
-	local var_46_1 = #arg_46_0._list_widgets
+	local count = #self._list_widgets
 	local var_46_2
 	local var_46_3
 
-	if arg_46_1:get("move_up_hold_continuous") then
-		var_46_2 = math.max(var_46_0 - 1, 1)
+	if not arg_46_1:get("move_up_hold_continuous") then
+		var_46_2 = math.max(_selected_list_index - 1, 1)
 		var_46_3 = math.max(var_46_2 - 3, 1)
-	elseif arg_46_1:get("move_down_hold_continuous") then
-		var_46_2 = math.min(var_46_0 + 1, var_46_1)
-		var_46_3 = math.min(var_46_2 + 3, var_46_1)
+	elseif not arg_46_1:get("move_down_hold_continuous") then
+		var_46_2 = math.min(_selected_list_index + 1, count)
+		var_46_3 = math.min(var_46_2 + 3, count)
 	end
 
-	if var_46_2 and var_46_2 ~= var_46_0 then
-		local var_46_4 = arg_46_0:_get_scrollbar_percentage_by_index(var_46_3)
+	if not (not var_46_2 and var_46_2 == _selected_list_index) then
+		local _get_scrollbar_percentage_by_index = self:_get_scrollbar_percentage_by_index(var_46_3)
 
-		arg_46_0:_on_list_index_selected(var_46_2, var_46_4)
-		arg_46_0:_play_sound("Play_hud_hover")
+		self:_on_list_index_selected(var_46_2, _get_scrollbar_percentage_by_index)
+		self:_play_sound("Play_hud_hover")
 	end
 end
 
-function HeroViewStateKeepDecorations._find_closest_neighbour(arg_47_0, arg_47_1, arg_47_2)
-	local var_47_0 = arg_47_0._list_widgets
-	local var_47_1 = var_47_0[arg_47_2]
-	local var_47_2 = var_47_1.content.size
-	local var_47_3 = var_47_1.offset
-	local var_47_4 = var_47_2[1] * 0.5 + var_47_3[1]
-	local var_47_5 = math.huge
+HeroViewStateKeepDecorations._find_closest_neighbour = function (self, arg_47_1, arg_47_2)
+	-- function 47
+	local _list_widgets = self._list_widgets
+	local var_47_1 = _list_widgets[arg_47_2]
+	local size = var_47_1.content.size
+	local offset = var_47_1.offset
+	local num = size[1] * 0.5 + offset[1]
+	local huge = math.huge
 	local var_47_6
 
-	for iter_47_0, iter_47_1 in pairs(arg_47_1) do
-		local var_47_7 = var_47_0[iter_47_1]
-		local var_47_8 = var_47_7.offset
-		local var_47_9 = var_47_7.content.size[1] * 0.5 + var_47_8[1]
-		local var_47_10 = math.abs(var_47_9 - var_47_4)
+	for k, v in pairs(arg_47_1) do
+		local var_47_7 = _list_widgets[v]
+		local offset_2 = var_47_7.offset
+		local num_2 = var_47_7.content.size[1] * 0.5 + offset_2[1]
+		local abs = math.abs(num_2 - num)
 
-		if var_47_10 < var_47_5 then
-			var_47_5 = var_47_10
-			var_47_6 = iter_47_1
+		if abs < huge then
+			huge = abs
+			var_47_6 = v
 		end
 	end
 
-	if var_47_6 then
+	if not var_47_6 then
 		return var_47_6
 	end
 end
 
-function HeroViewStateKeepDecorations._initialize_scrollbar(arg_48_0)
-	local var_48_0 = var_0_2.list_window.size
-	local var_48_1 = var_0_2.list_scrollbar.size
-	local var_48_2 = var_48_0[2]
-	local var_48_3 = arg_48_0._total_list_height
-	local var_48_4 = var_48_1[2]
-	local var_48_5 = 220 + var_0_9 * 1.5
-	local var_48_6 = 1
-	local var_48_7 = arg_48_0._scrollbar_logic
+HeroViewStateKeepDecorations._initialize_scrollbar = function (self)
+	-- function 48
+	local size = scenegraph_definition.list_window.size
+	local size_2 = scenegraph_definition.list_scrollbar.size
+	local var_48_2 = size[2]
+	local _total_list_height = self._total_list_height
+	local var_48_4 = size_2[2]
+	local num_2 = 220 + num * 1.5
+	local num_3 = 1
+	local _scrollbar_logic = self._scrollbar_logic
 
-	var_48_7:set_scrollbar_values(var_48_2, var_48_3, var_48_4, var_48_5, var_48_6)
-	var_48_7:set_scroll_percentage(0)
+	_scrollbar_logic:set_scrollbar_values(var_48_2, _total_list_height, var_48_4, num_2, num_3)
+	_scrollbar_logic:set_scroll_percentage(0)
 end
 
-function HeroViewStateKeepDecorations._update_scroll_position(arg_49_0)
-	local var_49_0 = arg_49_0._scrollbar_logic:get_scrolled_length()
+HeroViewStateKeepDecorations._update_scroll_position = function (self)
+	-- function 49
+	local get_scrolled_length = self._scrollbar_logic:get_scrolled_length()
 
-	if var_49_0 ~= arg_49_0._scrolled_length then
-		arg_49_0._ui_scenegraph.list_scroll_root.local_position[2] = math.round(var_49_0)
-		arg_49_0._scrolled_length = var_49_0
+	if get_scrolled_length ~= self._scrolled_length then
+		self._ui_scenegraph.list_scroll_root.local_position[2] = math.round(get_scrolled_length)
+		self._scrolled_length = get_scrolled_length
 	end
 end
 
-function HeroViewStateKeepDecorations._update_visible_list_entries(arg_50_0)
-	local var_50_0 = arg_50_0._scrollbar_logic
+HeroViewStateKeepDecorations._update_visible_list_entries = function (self)
+	-- function 50
+	local _scrollbar_logic = self._scrollbar_logic
 
-	if not var_50_0:enabled() then
+	if not _scrollbar_logic:enabled() then
 		return
 	end
 
-	local var_50_1 = var_50_0:get_scroll_percentage()
-	local var_50_2 = var_50_0:get_scrolled_length()
-	local var_50_3 = var_50_0:get_scroll_length()
-	local var_50_4 = var_0_2.list_window.size
-	local var_50_5 = var_0_9 * 2
-	local var_50_6 = var_50_4[2] + var_50_5
-	local var_50_7 = arg_50_0._list_widgets
-	local var_50_8 = #var_50_7
+	local get_scroll_percentage = _scrollbar_logic:get_scroll_percentage()
+	local get_scrolled_length = _scrollbar_logic:get_scrolled_length()
+	local get_scroll_length = _scrollbar_logic:get_scroll_length()
+	local size = scenegraph_definition.list_window.size
+	local num_2 = num * 2
+	local num_3 = size[2] + num_2
+	local _list_widgets = self._list_widgets
+	local count = #_list_widgets
 
-	for iter_50_0, iter_50_1 in ipairs(var_50_7) do
-		local var_50_9 = iter_50_1.offset
-		local var_50_10 = iter_50_1.content
-		local var_50_11 = var_50_10.size
-		local var_50_12 = math.abs(var_50_9[2]) + var_50_11[2]
-		local var_50_13 = false
+	for i, v in ipairs(_list_widgets) do
+		local offset = v.offset
+		local content = v.content
+		local size_2 = content.size
+		local num_4 = math.abs(offset[2]) + size_2[2]
+		local flag = false
 
-		if var_50_12 < var_50_2 - var_50_5 then
-			var_50_13 = true
-		elseif var_50_6 < math.abs(var_50_9[2]) - var_50_2 then
-			var_50_13 = true
+		if num_4 < get_scrolled_length - num_2 then
+			flag = true
+		elseif num_3 < math.abs(offset[2]) - get_scrolled_length then
+			flag = true
 		end
 
-		var_50_10.visible = not var_50_13
+		content.visible = not flag
 	end
 end
 
-function HeroViewStateKeepDecorations._get_scrollbar_percentage_by_index(arg_51_0, arg_51_1)
-	local var_51_0 = arg_51_0._scrollbar_logic
+HeroViewStateKeepDecorations._get_scrollbar_percentage_by_index = function (self, arg_51_1)
+	-- function 51
+	local _scrollbar_logic = self._scrollbar_logic
 
-	if var_51_0:enabled() then
-		local var_51_1 = var_51_0:get_scroll_percentage()
-		local var_51_2 = var_51_0:get_scrolled_length()
-		local var_51_3 = var_51_0:get_scroll_length()
-		local var_51_4 = var_0_2.list_window.size[2]
-		local var_51_5 = var_51_2
-		local var_51_6 = var_51_5 + var_51_4
-		local var_51_7 = arg_51_0._list_widgets
+	if not _scrollbar_logic:enabled() then
+		local get_scroll_percentage = _scrollbar_logic:get_scroll_percentage()
+		local get_scrolled_length = _scrollbar_logic:get_scrolled_length()
+		local get_scroll_length = _scrollbar_logic:get_scroll_length()
+		local var_51_4 = scenegraph_definition.list_window.size[2]
+		local var_51_5 = get_scrolled_length
+		local num = var_51_5 + var_51_4
+		local _list_widgets = self._list_widgets
 
-		if var_51_7 then
-			local var_51_8 = var_51_7[arg_51_1]
-			local var_51_9 = var_51_8.content
-			local var_51_10 = var_51_8.offset
-			local var_51_11 = var_51_9.size[2]
-			local var_51_12 = math.abs(var_51_10[2])
-			local var_51_13 = var_51_12 + var_51_11
-			local var_51_14 = 0
+		if not _list_widgets then
+			local var_51_8 = _list_widgets[arg_51_1]
+			local content = var_51_8.content
+			local offset = var_51_8.offset
+			local var_51_11 = content.size[2]
+			local abs = math.abs(offset[2])
+			local num_2 = abs + var_51_11
+			local num_3 = 0
 
-			if var_51_6 < var_51_13 then
-				local var_51_15 = var_51_13 - var_51_6
+			if num < num_2 then
+				local num_4 = num_2 - num
 
-				var_51_14 = math.clamp(var_51_15 / var_51_3, 0, 1)
-			elseif var_51_12 < var_51_5 then
-				local var_51_16 = var_51_5 - var_51_12
+				num_3 = math.clamp(num_4 / get_scroll_length, 0, 1)
+			elseif abs < var_51_5 then
+				local num_5 = var_51_5 - abs
 
-				var_51_14 = -math.clamp(var_51_16 / var_51_3, 0, 1)
+				num_3 = -math.clamp(num_5 / get_scroll_length, 0, 1)
 			end
 
-			if var_51_14 then
-				return (math.clamp(var_51_1 + var_51_14, 0, 1))
+			if not num_3 then
+				return (math.clamp(get_scroll_percentage + num_3, 0, 1))
 			end
 		end
 	end
@@ -1042,219 +1245,284 @@ function HeroViewStateKeepDecorations._get_scrollbar_percentage_by_index(arg_51_
 	return 0
 end
 
-function HeroViewStateKeepDecorations._list_index_pressed(arg_52_0)
-	local var_52_0 = arg_52_0._list_widgets
+HeroViewStateKeepDecorations._list_index_pressed = function (self)
+	-- function 52
+	local _list_widgets = self._list_widgets
 
-	if var_52_0 then
-		for iter_52_0, iter_52_1 in ipairs(var_52_0) do
-			local var_52_1 = iter_52_1.content
-			local var_52_2 = var_52_1.hotspot or var_52_1.button_hotspot
+	if not _list_widgets then
+		for i, v in ipairs(_list_widgets) do
+			local content = v.content
+			local hotspot = content.hotspot
 
-			if var_52_2 and var_52_2.on_release then
-				var_52_2.on_release = false
+			hotspot = hotspot or content.button_hotspot
 
-				return iter_52_0
+			if not hotspot and not hotspot.on_release then
+				hotspot.on_release = false
+
+				return i
 			end
 		end
 	end
 end
 
-function HeroViewStateKeepDecorations._setup_decorations_list(arg_53_0)
-	local var_53_0 = arg_53_0._keep_decoration_backend_interface
-	local var_53_1 = var_53_0 and var_53_0:get_unlocked_keep_decorations() or {}
-	local var_53_2 = {}
-	local var_53_3 = 0
+HeroViewStateKeepDecorations._setup_decorations_list = function (self)
+	-- function 53
+	local _keep_decoration_backend_interface = self._keep_decoration_backend_interface
+	local get_unlocked_keep_decorations
 
-	for iter_53_0, iter_53_1 in ipairs(arg_53_0._ordered_table) do
-		if not table.contains(arg_53_0._default_table, iter_53_1) then
-			local var_53_4 = arg_53_0._main_table[iter_53_1]
+	if not _keep_decoration_backend_interface then
+		get_unlocked_keep_decorations = _keep_decoration_backend_interface:get_unlocked_keep_decorations()
 
-			if var_53_4 then
-				local var_53_5 = table.contains(var_53_1, iter_53_1)
+		if not get_unlocked_keep_decorations then
+			-- Nothing
+		end
+	end
+
+	get_unlocked_keep_decorations = {}
+
+	::label_53_0::
+
+	local tbl = {}
+	local num_2 = 0
+
+	for i, v in ipairs(self._ordered_table) do
+		if not table.contains(self._default_table, v) then
+			local var_53_4 = self._main_table[v]
+
+			if not var_53_4 then
+				local contains = table.contains(get_unlocked_keep_decorations, v)
 				local var_53_6 = Localize(var_53_4.display_name)
-				local var_53_7 = ItemHelper.is_new_keep_decoration_id(iter_53_1)
+				local is_new_keep_decoration_id = ItemHelper.is_new_keep_decoration_id(v)
 
-				if var_53_5 then
-					local var_53_8 = UIWidget.init(var_0_5)
+				if not contains then
+					local var_53_8 = UIWidget.init(entry_widget_definition)
 
-					var_53_3 = var_53_3 + 1
-					var_53_2[var_53_3] = var_53_8
+					num_2 = num_2 + 1
+					tbl[num_2] = var_53_8
 
-					local var_53_9 = var_53_8.content
-					local var_53_10 = var_53_8.style
+					local content = var_53_8.content
+					local style = var_53_8.style
 					local var_53_11 = var_53_6
-					local var_53_12 = var_53_10.title
-					local var_53_13 = var_53_12.size[1] - 10
+					local title = style.title
+					local num_3 = title.size[1] - 10
 
-					var_53_9.title = UIRenderer.crop_text_width(arg_53_0._ui_renderer, var_53_11, var_53_13, var_53_12)
-					var_53_9.key = iter_53_1
-					var_53_9.locked = false
-					var_53_9.new = var_53_7
-					var_53_9.in_use = arg_53_0._decoration_system:is_decoration_in_use(iter_53_1)
+					content.title = UIRenderer.crop_text_width(self._ui_renderer, var_53_11, num_3, title)
+					content.key = v
+					content.locked = false
+					content.new = is_new_keep_decoration_id
+					content.in_use = self._decoration_system:is_decoration_in_use(v)
 				end
 			end
 		end
 	end
 
-	table.sort(var_53_2, function(arg_54_0, arg_54_1)
-		local var_54_0 = arg_54_0.content
-		local var_54_1 = arg_54_1.content
+	table.sort(tbl, function (self, arg_54_1)
+		-- function 54
+		local content = self.content
+		local content_2 = arg_54_1.content
 
-		if var_54_0.new ~= var_54_1.new then
-			return var_54_0.new
+		if content.new ~= content_2.new then
+			return content.new
 		end
 
-		return Localize(var_54_0.title) < Localize(var_54_1.title)
+		return Localize(content.title) < Localize(content_2.title)
 	end)
 
-	arg_53_0._list_widgets = var_53_2
-	arg_53_0._dummy_list_widgets = {}
+	self._list_widgets = tbl
+	self._dummy_list_widgets = {}
 
-	arg_53_0:_align_list_widgets()
+	self:_align_list_widgets()
 
-	local var_53_14 = arg_53_0._total_list_height
-	local var_53_15 = var_0_2.list_scrollbar.size[2]
-	local var_53_16 = {}
+	local _total_list_height = self._total_list_height
+	local var_53_15 = scenegraph_definition.list_scrollbar.size[2]
+	local tbl_2 = {}
 
-	if var_53_14 < var_53_15 then
-		local var_53_17 = 0
-		local var_53_18 = var_0_9
+	if _total_list_height < var_53_15 then
+		local num_4 = 0
+		local var_53_18 = num
 
-		while var_53_15 > var_53_14 + var_53_18 do
-			var_53_17 = var_53_17 + 1
+		while var_53_15 > _total_list_height + var_53_18 do
+			num_4 = num_4 + 1
 
-			local var_53_19 = UIWidget.init(var_0_6)
+			local var_53_19 = UIWidget.init(dummy_entry_widget_definition)
 
-			table.insert(var_53_16, var_53_19)
+			table.insert(tbl_2, var_53_19)
 
-			var_53_18 = var_53_18 + var_53_19.content.size[2] + var_0_9
+			var_53_18 = var_53_18 + var_53_19.content.size[2] + num
 		end
 	end
 
-	arg_53_0._dummy_list_widgets = var_53_16
+	self._dummy_list_widgets = tbl_2
 
-	arg_53_0:_align_list_widgets()
-	arg_53_0:_initialize_scrollbar()
-	arg_53_0:_update_equipped_widget()
+	self:_align_list_widgets()
+	self:_initialize_scrollbar()
+	self:_update_equipped_widget()
 end
 
-function HeroViewStateKeepDecorations._animate_list_entries(arg_55_0, arg_55_1, arg_55_2)
-	local var_55_0 = arg_55_0._list_widgets
+HeroViewStateKeepDecorations._animate_list_entries = function (self, arg_55_1, arg_55_2)
+	-- function 55
+	local _list_widgets = self._list_widgets
 
-	if not var_55_0 then
+	if not _list_widgets then
 		return
 	end
 
-	for iter_55_0, iter_55_1 in ipairs(var_55_0) do
-		arg_55_0:_animate_list_widget(iter_55_1, arg_55_1, arg_55_2)
+	for i, v in ipairs(_list_widgets) do
+		self:_animate_list_widget(v, arg_55_1, arg_55_2)
 	end
 end
 
-function HeroViewStateKeepDecorations._animate_list_widget(arg_56_0, arg_56_1, arg_56_2, arg_56_3)
-	local var_56_0 = arg_56_1.offset
-	local var_56_1 = arg_56_1.content
-	local var_56_2 = arg_56_1.style
-	local var_56_3 = var_56_1.button_hotspot or var_56_1.hotspot
-	local var_56_4 = var_56_3.on_hover_enter
-	local var_56_5 = var_56_3.is_hover
+HeroViewStateKeepDecorations._animate_list_widget = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3)
+	-- function 56
+	local offset = arg_56_1.offset
+	local content = arg_56_1.content
+	local style = arg_56_1.style
+	local button_hotspot = content.button_hotspot
 
-	if arg_56_3 ~= nil and not arg_56_3 then
-		var_56_5 = false
-		var_56_4 = false
+	button_hotspot = button_hotspot or content.hotspot
+
+	local on_hover_enter = button_hotspot.on_hover_enter
+	local is_hover = button_hotspot.is_hover
+
+	if not (arg_56_3 == nil or arg_56_3) then
+		is_hover = false
+		on_hover_enter = false
 	end
 
-	local var_56_6 = var_56_3.is_selected
-	local var_56_7 = not var_56_6 and var_56_3.is_clicked and var_56_3.is_clicked == 0
-	local var_56_8 = var_56_3.input_progress or 0
-	local var_56_9 = var_56_3.hover_progress or 0
-	local var_56_10 = var_56_3.pulse_progress or 1
-	local var_56_11 = var_56_3.offset_progress or 1
-	local var_56_12 = var_56_3.selection_progress or 0
-	local var_56_13 = (var_56_5 or var_56_6) and 14 or 3
-	local var_56_14 = 3
-	local var_56_15 = 20
-	local var_56_16 = 5
+	local is_selected = button_hotspot.is_selected
+	local is_clicked
 
-	if var_56_7 then
-		var_56_8 = math.min(var_56_8 + arg_56_2 * var_56_15, 1)
+	if not is_selected then
+		is_clicked = button_hotspot.is_clicked
+
+		if not is_clicked then
+			-- Nothing
+		end
+
+		if button_hotspot.is_clicked ~= 0 then
+			-- Nothing
+		end
+	end
+
+	is_clicked = false
+
+	goto label_56_1
+
+	::label_56_0::
+
+	is_clicked = true
+
+	::label_56_1::
+
+	local input_progress = button_hotspot.input_progress
+
+	input_progress = input_progress or 0
+
+	local hover_progress = button_hotspot.hover_progress
+
+	hover_progress = hover_progress or 0
+
+	local pulse_progress = button_hotspot.pulse_progress
+
+	pulse_progress = pulse_progress or 1
+
+	local offset_progress = button_hotspot.offset_progress
+
+	offset_progress = offset_progress or 1
+
+	local selection_progress = button_hotspot.selection_progress
+
+	selection_progress = selection_progress or 0
+
+	local flag
+
+	flag = is_hover or not is_selected or 14 or 3
+
+	local num = 3
+	local num_2 = 20
+	local num_3 = 5
+
+	if not is_clicked then
+		input_progress = math.min(input_progress + arg_56_2 * num_2, 1)
 	else
-		var_56_8 = math.max(var_56_8 - arg_56_2 * var_56_15, 0)
+		input_progress = math.max(input_progress - arg_56_2 * num_2, 0)
 	end
 
-	local var_56_17 = math.easeOutCubic(var_56_8)
-	local var_56_18 = math.easeInCubic(var_56_8)
+	local easeOutCubic = math.easeOutCubic(input_progress)
+	local easeInCubic = math.easeInCubic(input_progress)
 
-	if var_56_4 then
-		var_56_10 = 0
+	if not on_hover_enter then
+		pulse_progress = 0
 	end
 
-	local var_56_19 = math.min(var_56_10 + arg_56_2 * var_56_14, 1)
-	local var_56_20 = math.easeOutCubic(var_56_19)
-	local var_56_21 = math.easeInCubic(var_56_19)
+	local min = math.min(pulse_progress + arg_56_2 * num, 1)
+	local easeOutCubic_2 = math.easeOutCubic(min)
+	local easeInCubic_2 = math.easeInCubic(min)
 
-	if var_56_5 then
-		var_56_9 = math.min(var_56_9 + arg_56_2 * var_56_13, 1)
+	if not is_hover then
+		hover_progress = math.min(hover_progress + arg_56_2 * flag, 1)
 	else
-		var_56_9 = math.max(var_56_9 - arg_56_2 * var_56_13, 0)
+		hover_progress = math.max(hover_progress - arg_56_2 * flag, 0)
 	end
 
-	local var_56_22 = math.easeOutCubic(var_56_9)
-	local var_56_23 = math.easeInCubic(var_56_9)
+	local easeOutCubic_3 = math.easeOutCubic(hover_progress)
+	local easeInCubic_3 = math.easeInCubic(hover_progress)
 
-	if var_56_6 then
-		var_56_12 = math.min(var_56_12 + arg_56_2 * var_56_13, 1)
-		var_56_11 = math.min(var_56_11 + arg_56_2 * var_56_16, 1)
+	if not is_selected then
+		selection_progress = math.min(selection_progress + arg_56_2 * flag, 1)
+		offset_progress = math.min(offset_progress + arg_56_2 * num_3, 1)
 	else
-		var_56_12 = math.max(var_56_12 - arg_56_2 * var_56_13, 0)
-		var_56_11 = math.max(var_56_11 - arg_56_2 * var_56_16, 0)
+		selection_progress = math.max(selection_progress - arg_56_2 * flag, 0)
+		offset_progress = math.max(offset_progress - arg_56_2 * num_3, 0)
 	end
 
-	local var_56_24 = math.easeOutCubic(var_56_12)
-	local var_56_25 = math.easeInCubic(var_56_12)
-	local var_56_26 = math.max(var_56_9, var_56_12)
-	local var_56_27 = math.max(var_56_24, var_56_22)
-	local var_56_28 = math.max(var_56_23, var_56_25)
-	local var_56_29 = 255 * var_56_26
+	local easeOutCubic_4 = math.easeOutCubic(selection_progress)
+	local easeInCubic_4 = math.easeInCubic(selection_progress)
+	local max = math.max(hover_progress, selection_progress)
+	local max_2 = math.max(easeOutCubic_4, easeOutCubic_3)
+	local max_3 = math.max(easeInCubic_3, easeInCubic_4)
+	local num_4 = 255 * max
 
-	var_56_2.hover_frame.color[1] = var_56_29
+	style.hover_frame.color[1] = num_4
 
-	local var_56_30 = var_56_2.title
-	local var_56_31 = var_56_30.text_color
-	local var_56_32 = var_56_30.default_text_color
-	local var_56_33 = var_56_30.hover_text_color
+	local title = style.title
+	local text_color = title.text_color
+	local default_text_color = title.default_text_color
+	local hover_text_color = title.hover_text_color
 
-	Colors.lerp_color_tables(var_56_32, var_56_33, var_56_26, var_56_31)
+	Colors.lerp_color_tables(default_text_color, hover_text_color, max, text_color)
 
-	local var_56_34 = 255 - 255 * var_56_19
+	local num_5 = 255 - 255 * min
 
-	var_56_2.pulse_frame.color[1] = var_56_34
-	var_56_0[1] = 10 * math.ease_in_exp(var_56_11)
-	var_56_3.offset_progress = var_56_11
-	var_56_3.pulse_progress = var_56_19
-	var_56_3.hover_progress = var_56_9
-	var_56_3.input_progress = var_56_8
-	var_56_3.selection_progress = var_56_12
+	style.pulse_frame.color[1] = num_5
+	offset[1] = 10 * math.ease_in_exp(offset_progress)
+	button_hotspot.offset_progress = offset_progress
+	button_hotspot.pulse_progress = min
+	button_hotspot.hover_progress = hover_progress
+	button_hotspot.input_progress = input_progress
+	button_hotspot.selection_progress = selection_progress
 end
 
-function HeroViewStateKeepDecorations._handle_gamepad_activity(arg_57_0)
-	local var_57_0 = Managers.input:is_device_active("mouse")
-	local var_57_1 = arg_57_0._gamepad_active_last_frame == nil
+HeroViewStateKeepDecorations._handle_gamepad_activity = function (self)
+	-- function 57
+	local is_device_active = Managers.input:is_device_active("mouse")
+	local flag = self._gamepad_active_last_frame == nil
 
-	if not var_57_0 then
-		if not arg_57_0._gamepad_active_last_frame or var_57_1 then
-			arg_57_0._gamepad_active_last_frame = true
+	if not is_device_active then
+		if not self._gamepad_active_last_frame and not flag then
+			self._gamepad_active_last_frame = true
 
-			if arg_57_0._customizable_decoration then
-				local var_57_2 = arg_57_0._selected_list_index
+			if not self._customizable_decoration then
+				local _selected_list_index = self._selected_list_index
 
-				if var_57_2 then
-					local var_57_3 = arg_57_0:_get_scrollbar_percentage_by_index(var_57_2)
+				if not _selected_list_index then
+					local _get_scrollbar_percentage_by_index = self:_get_scrollbar_percentage_by_index(_selected_list_index)
 
-					arg_57_0._scrollbar_logic:set_scroll_percentage(var_57_3)
+					self._scrollbar_logic:set_scroll_percentage(_get_scrollbar_percentage_by_index)
 				end
 			end
 		end
-	elseif arg_57_0._gamepad_active_last_frame or var_57_1 then
-		arg_57_0._gamepad_active_last_frame = false
+	elseif self._gamepad_active_last_frame or not flag then
+		self._gamepad_active_last_frame = false
 	end
 end

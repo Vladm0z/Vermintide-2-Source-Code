@@ -2,30 +2,33 @@
 
 local var_0_0 = rawget(_G, "LevelSettings")
 
-for iter_0_0, iter_0_1 in pairs(var_0_0) do
-	if table.contains(UnlockableLevels, iter_0_0) then
-		local var_0_1 = #QuestSettings.scrap_count_level
+for k, v in pairs(var_0_0) do
+	if not table.contains(UnlockableLevels, k) then
+		local count = #QuestSettings.scrap_count_level
 
-		for iter_0_2 = 1, var_0_1 do
-			local var_0_2 = "gecko_scraps_" .. iter_0_0 .. "_" .. iter_0_2
-			local var_0_3 = "collected_painting_scraps"
+		for k_2 = 1, count do
+			local str = "gecko_scraps_" .. k .. "_" .. k_2
+			local str_2 = "collected_painting_scraps"
 
-			AchievementTemplates.achievements[var_0_2] = {
-				name = "achv_" .. var_0_2 .. "_name",
-				icon = "achievement_trophy_gecko_scraps_" .. iter_0_0,
-				desc = function()
-					return string.format(Localize("achv_" .. var_0_2 .. "_desc"), QuestSettings.scrap_count_level[iter_0_2])
+			AchievementTemplates.achievements[str] = {
+				name = "achv_" .. str .. "_name",
+				icon = "achievement_trophy_gecko_scraps_" .. k,
+				desc = function ()
+					-- function 1
+					return string.format(Localize("achv_" .. str .. "_desc"), QuestSettings.scrap_count_level[k_2])
 				end,
-				completed = function(arg_2_0, arg_2_1)
-					return arg_2_0:get_persistent_stat(arg_2_1, var_0_3, iter_0_0) >= QuestSettings.scrap_count_level[iter_0_2]
+				completed = function (self, arg_2_1)
+					-- function 2
+					return self:get_persistent_stat(arg_2_1, str_2, k) >= QuestSettings.scrap_count_level[k_2]
 				end,
-				progress = function(arg_3_0, arg_3_1)
-					local var_3_0 = arg_3_0:get_persistent_stat(arg_3_1, var_0_3, iter_0_0)
-					local var_3_1 = math.min(var_3_0, QuestSettings.scrap_count_level[iter_0_2])
+				progress = function (self, arg_3_1)
+					-- function 3
+					local get_persistent_stat = self:get_persistent_stat(arg_3_1, str_2, k)
+					local min = math.min(get_persistent_stat, QuestSettings.scrap_count_level[k_2])
 
 					return {
-						var_3_1,
-						QuestSettings.scrap_count_level[iter_0_2]
+						min,
+						QuestSettings.scrap_count_level[k_2]
 					}
 				end
 			}
@@ -33,33 +36,36 @@ for iter_0_0, iter_0_1 in pairs(var_0_0) do
 	end
 end
 
-local var_0_4 = #QuestSettings.scrap_count_generic
+local count_2 = #QuestSettings.scrap_count_generic
 
-for iter_0_3 = 1, var_0_4 do
-	local var_0_5 = "gecko_scraps_generic_" .. iter_0_3
+for l = 1, count_2 do
+	local str_3 = "gecko_scraps_generic_" .. l
 
-	AchievementTemplates.achievements[var_0_5] = {
+	AchievementTemplates.achievements[str_3] = {
 		icon = "achievement_trophy_gecko_scraps_generic",
-		name = "achv_" .. var_0_5 .. "_name",
-		desc = function()
-			return string.format(Localize("achv_" .. var_0_5 .. "_desc"), QuestSettings.scrap_count_generic[iter_0_3])
+		name = "achv_" .. str_3 .. "_name",
+		desc = function ()
+			-- function 4
+			return string.format(Localize("achv_" .. str_3 .. "_desc"), QuestSettings.scrap_count_generic[l])
 		end,
-		completed = function(arg_5_0, arg_5_1)
+		completed = function (self, arg_5_1)
+			-- function 5
 			local var_5_0
-			local var_5_1 = "collected_painting_scraps_generic"
-			local var_5_2 = arg_5_0:get_persistent_stat(arg_5_1, var_5_1)
+			local str = "collected_painting_scraps_generic"
+			local get_persistent_stat = self:get_persistent_stat(arg_5_1, str)
 
-			return var_5_2 and var_5_2 >= QuestSettings.scrap_count_generic[iter_0_3]
+			return not get_persistent_stat and get_persistent_stat >= QuestSettings.scrap_count_generic[l]
 		end,
-		progress = function(arg_6_0, arg_6_1)
+		progress = function (self, arg_6_1)
+			-- function 6
 			local var_6_0
-			local var_6_1 = "collected_painting_scraps_generic"
-			local var_6_2 = arg_6_0:get_persistent_stat(arg_6_1, var_6_1)
-			local var_6_3 = math.min(var_6_2, QuestSettings.scrap_count_generic[iter_0_3])
+			local str = "collected_painting_scraps_generic"
+			local get_persistent_stat = self:get_persistent_stat(arg_6_1, str)
+			local min = math.min(get_persistent_stat, QuestSettings.scrap_count_generic[l])
 
 			return {
-				var_6_3,
-				QuestSettings.scrap_count_generic[iter_0_3]
+				min,
+				QuestSettings.scrap_count_generic[l]
 			}
 		end
 	}

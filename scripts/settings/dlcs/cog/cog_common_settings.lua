@@ -1,39 +1,39 @@
 -- chunkname: @scripts/settings/dlcs/cog/cog_common_settings.lua
 
-local var_0_0 = DLCSettings.cog
+local cog = DLCSettings.cog
 
-var_0_0.career_setting_files = {
+cog.career_setting_files = {
 	"scripts/settings/dlcs/cog/career_settings_cog"
 }
-var_0_0.player_breeds = {
+cog.player_breeds = {
 	"scripts/settings/dlcs/cog/player_breeds_cog"
 }
-var_0_0.career_ability_settings = {
+cog.career_ability_settings = {
 	"scripts/settings/dlcs/cog/passive_ability_engineer",
 	"scripts/settings/dlcs/cog/career_ability_settings_cog"
 }
-var_0_0.action_template_files = {
+cog.action_template_files = {
 	"scripts/settings/dlcs/cog/action_templates_cog"
 }
-var_0_0.talent_settings = {
+cog.talent_settings = {
 	"scripts/settings/dlcs/cog/talent_settings_cog_dwarf_ranger"
 }
-var_0_0.profile_files = {
+cog.profile_files = {
 	"scripts/settings/dlcs/cog/cog_profiles"
 }
-var_0_0.statistics_definitions = {
+cog.statistics_definitions = {
 	"scripts/managers/backend/statistics_definitions_cog"
 }
-var_0_0.attachment_node_linking = {
+cog.attachment_node_linking = {
 	"scripts/settings/dlcs/cog/attachment_node_linking_cog"
 }
-var_0_0.interactions = {
+cog.interactions = {
 	"cog_missing_cog_pickup"
 }
-var_0_0.interactions_filenames = {
+cog.interactions_filenames = {
 	"scripts/settings/dlcs/cog/cog_interactions"
 }
-var_0_0.statistics_lookup = {
+cog.statistics_lookup = {
 	"cog_mission_streak_act1_legend_dr_engineer",
 	"cog_mission_streak_act2_legend_dr_engineer",
 	"cog_mission_streak_act3_legend_dr_engineer",
@@ -67,7 +67,7 @@ var_0_0.statistics_lookup = {
 	"cog_missing_cog",
 	"complete_all_engineer_challenges"
 }
-var_0_0.anim_lookup = {
+cog.anim_lookup = {
 	"to_steam_pistol",
 	"to_steam_pistol_noammo",
 	"to_cog_hammer",
@@ -76,8 +76,8 @@ var_0_0.anim_lookup = {
 	"cog_hammer_mode",
 	"to_engineer_career_skill"
 }
-var_0_0.effects = {}
-var_0_0._tracked_weapon_kill_stats = {
+cog.effects = {}
+cog._tracked_weapon_kill_stats = {
 	bardin_engineer_career_skill_weapon = {
 		"cog"
 	},
@@ -88,7 +88,7 @@ var_0_0._tracked_weapon_kill_stats = {
 		"cog"
 	}
 }
-var_0_0.unlock_settings = {
+cog.unlock_settings = {
 	cog = {
 		id = "1443780",
 		class = "UnlockDlc",
@@ -100,7 +100,7 @@ var_0_0.unlock_settings = {
 		requires_restart = true
 	}
 }
-var_0_0.unlock_settings_xb1 = {
+cog.unlock_settings_xb1 = {
 	cog = {
 		id = "48544E39-5A31-3058-C047-324D54486800",
 		backend_reward_id = "cog",
@@ -113,7 +113,7 @@ var_0_0.unlock_settings_xb1 = {
 		class = "UnlockDlc"
 	}
 }
-var_0_0.unlock_settings_ps4 = {
+cog.unlock_settings_ps4 = {
 	CUSA13595_00 = {
 		cog = {
 			product_label = "V2USENGINEERCARB",
@@ -145,7 +145,7 @@ var_0_0.unlock_settings_ps4 = {
 		}
 	}
 }
-var_0_0.progression_unlocks = {
+cog.progression_unlocks = {
 	dr_engineer = {
 		description = "end_screen_career_unlocked",
 		profile = "dwarf_ranger",

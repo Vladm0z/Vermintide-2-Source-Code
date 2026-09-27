@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/deus_grenades.lua
 
-local var_0_0 = {
+local tbl = {
 	crosshair_style = "default",
 	max_fatigue_points = 4,
 	left_hand_unit = "units/weapons/player/wpn_emp_grenade_01_t1/wpn_emp_grenade_lighter_01_t1",
@@ -27,8 +27,9 @@ local var_0_0 = {
 				block_pickup = true,
 				uninterruptible = true,
 				anim_event = "grenade_charge",
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
-					return arg_1_1 ~= "new_interupting_action" and arg_1_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
+					-- function 1
+					return arg_1_1 == "new_interupting_action" or arg_1_1 ~= "action_complete"
 				end,
 				total_time = math.huge,
 				allowed_chain_actions = {
@@ -81,8 +82,9 @@ local var_0_0 = {
 				throw_offset_length_in_target_direction = 0.1,
 				anim_event = "attack_throw",
 				total_time = 0.5,
-				anim_end_event_condition_func = function(arg_2_0, arg_2_1)
-					return arg_2_1 ~= "new_interupting_action" and arg_2_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_2_0, arg_2_1)
+					-- function 2
+					return arg_2_1 == "new_interupting_action" or arg_2_1 ~= "action_complete"
 				end,
 				throw_offset = Vector3Box(0, 0, 0.9),
 				allowed_chain_actions = {},
@@ -137,10 +139,12 @@ local var_0_0 = {
 				throw_offset_length_in_target_direction = 0.1,
 				anim_event = "attack_throw",
 				total_time = 0.5,
-				anim_end_event_condition_func = function(arg_3_0, arg_3_1)
-					return arg_3_1 ~= "new_interupting_action" and arg_3_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_3_0, arg_3_1)
+					-- function 3
+					return arg_3_1 == "new_interupting_action" or arg_3_1 ~= "action_complete"
 				end,
-				condition_func = function(arg_4_0)
+				condition_func = function (arg_4_0)
+					-- function 4
 					return true
 				end,
 				throw_offset = Vector3Box(0, 0, 0.9),
@@ -196,9 +200,9 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = table.clone(var_0_0)
+local clone = table.clone(tbl)
 
-var_0_1.actions.action_one.throw = {
+clone.actions.action_one.throw = {
 	uninterruptible = true,
 	anim_end_event = "attack_finished",
 	hide_weapon_after_fire = true,
@@ -216,14 +220,16 @@ var_0_1.actions.action_one.throw = {
 	throw_offset_length_in_target_direction = 0.1,
 	anim_event = "attack_throw",
 	total_time = 0.5,
-	anim_end_event_condition_func = function(arg_5_0, arg_5_1)
-		return arg_5_1 ~= "new_interupting_action" and arg_5_1 ~= "action_complete"
+	anim_end_event_condition_func = function (arg_5_0, arg_5_1)
+		-- function 5
+		return arg_5_1 == "new_interupting_action" or arg_5_1 ~= "action_complete"
 	end,
-	enter_function = function(arg_6_0, arg_6_1)
-		local var_6_0 = ScriptUnit.extension_input(arg_6_0, "dialogue_system")
-		local var_6_1 = FrameTable.alloc_table()
+	enter_function = function (arg_6_0, arg_6_1)
+		-- function 6
+		local extension_input = ScriptUnit.extension_input(arg_6_0, "dialogue_system")
+		local alloc_table = FrameTable.alloc_table()
 
-		var_6_0:trigger_networked_dialogue_event("on_holy_grenade", var_6_1)
+		extension_input:trigger_networked_dialogue_event("on_holy_grenade", alloc_table)
 	end,
 	throw_offset = Vector3Box(0, 0, 0.9),
 	allowed_chain_actions = {},
@@ -244,12 +250,12 @@ var_0_1.actions.action_one.throw = {
 		0
 	}
 }
-var_0_1.left_hand_unit = var_0_0.left_hand_unit
-var_0_1.wield_anim = var_0_0.wield_anim
-var_0_1.right_hand_unit = "units/weapons/player/wpn_emp_holy_hand_grenade_01_t1/wpn_emp_holy_hand_grenade_01_t1"
-var_0_1.left_hand_unit = "units/weapons/player/wpn_emp_holy_hand_grenade_01_t1/wpn_emp_holy_hand_grenade_lighter_01_t1"
-var_0_1.pickup_data.pickup_name = "holy_hand_grenade"
+clone.left_hand_unit = tbl.left_hand_unit
+clone.wield_anim = tbl.wield_anim
+clone.right_hand_unit = "units/weapons/player/wpn_emp_holy_hand_grenade_01_t1/wpn_emp_holy_hand_grenade_01_t1"
+clone.left_hand_unit = "units/weapons/player/wpn_emp_holy_hand_grenade_01_t1/wpn_emp_holy_hand_grenade_lighter_01_t1"
+clone.pickup_data.pickup_name = "holy_hand_grenade"
 
 return {
-	holy_hand_grenade = var_0_1
+	holy_hand_grenade = clone
 }

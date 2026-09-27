@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/hit_effects/hit_effects_storm_vermin.lua
 
-local var_0_0 = {
+local tbl = {
 	"light_stab_fencer",
 	"light_stab_smiter",
 	"stab_fencer",
@@ -13,7 +13,7 @@ local var_0_0 = {
 	"heavy_slashing_fencer",
 	"heavy_slashing_smiter"
 }
-local var_0_1 = {
+local tbl_2 = {
 	"heavy_stab_smiter",
 	"light_slashing_smiter",
 	"slashing_smiter",
@@ -2152,7 +2152,7 @@ HitEffectsStormVermin = {
 		armour_type = "metal_hollow",
 		extra_conditions = {
 			death = false,
-			damage_type = var_0_0
+			damage_type = tbl
 		}
 	},
 	wound_tail = {
@@ -2162,7 +2162,7 @@ HitEffectsStormVermin = {
 		extra_conditions = {
 			death = false,
 			is_critical_strike = true,
-			damage_type = var_0_1,
+			damage_type = tbl_2,
 			hit_zone = {
 				"tail"
 			}

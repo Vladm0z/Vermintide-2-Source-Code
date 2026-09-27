@@ -20,22 +20,24 @@ DLCSettings.celebrate.pickups = {
 				action = "action_one",
 				sub_action = "default"
 			},
-			on_pick_up_func = function(arg_1_0, arg_1_1, arg_1_2)
+			on_pick_up_func = function (arg_1_0, arg_1_1, arg_1_2)
+				-- function 1
 				ScriptUnit.extension(arg_1_1, "buff_system"):add_buff("intoxication_base")
 
-				local var_1_0 = Managers.player
-				local var_1_1 = var_1_0:local_player()
-				local var_1_2 = var_1_0:statistics_db()
-				local var_1_3 = var_1_1:stats_id()
+				local player = Managers.player
+				local local_player = player:local_player()
+				local statistics_db = player:statistics_db()
+				local stats_id = local_player:stats_id()
 
-				var_1_2:increment_stat(var_1_3, "crawl_total_ales_drunk")
+				statistics_db:increment_stat(stats_id, "crawl_total_ales_drunk")
 			end,
-			can_interact_func = function(arg_2_0, arg_2_1, arg_2_2)
-				local var_2_0 = ScriptUnit.extension(arg_2_0, "buff_system")
-				local var_2_1 = var_2_0:has_buff_type("beer_bottle_pickup_cooldown")
-				local var_2_2 = var_2_0:has_buff_perk("falling_down")
+			can_interact_func = function (arg_2_0, arg_2_1, arg_2_2)
+				-- function 2
+				local extension = ScriptUnit.extension(arg_2_0, "buff_system")
+				local has_buff_type = extension:has_buff_type("beer_bottle_pickup_cooldown")
+				local has_buff_perk = extension:has_buff_perk("falling_down")
 
-				return not var_2_1 and not var_2_2
+				return not not has_buff_type or not has_buff_perk
 			end
 		},
 		beer_bottle_unique = {
@@ -56,18 +58,20 @@ DLCSettings.celebrate.pickups = {
 				action = "action_one",
 				sub_action = "default"
 			},
-			on_pick_up_func = function(arg_3_0, arg_3_1, arg_3_2)
-				local var_3_0 = ScriptUnit.extension(arg_3_1, "buff_system")
+			on_pick_up_func = function (arg_3_0, arg_3_1, arg_3_2)
+				-- function 3
+				local extension = ScriptUnit.extension(arg_3_1, "buff_system")
 
-				var_3_0:add_buff("intoxication_base")
-				var_3_0:add_buff("hinder_career_ability")
+				extension:add_buff("intoxication_base")
+				extension:add_buff("hinder_career_ability")
 			end,
-			can_interact_func = function(arg_4_0, arg_4_1, arg_4_2)
-				local var_4_0 = ScriptUnit.extension(arg_4_0, "buff_system")
-				local var_4_1 = var_4_0:has_buff_type("beer_bottle_pickup_cooldown")
-				local var_4_2 = var_4_0:has_buff_perk("falling_down")
+			can_interact_func = function (arg_4_0, arg_4_1, arg_4_2)
+				-- function 4
+				local extension = ScriptUnit.extension(arg_4_0, "buff_system")
+				local has_buff_type = extension:has_buff_type("beer_bottle_pickup_cooldown")
+				local has_buff_perk = extension:has_buff_perk("falling_down")
 
-				return not var_4_1 and not var_4_2
+				return not not has_buff_type or not has_buff_perk
 			end
 		}
 	}

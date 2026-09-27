@@ -1,58 +1,58 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/chaos/chaos_warrior_behavior.lua
 
-local var_0_0 = BreedActions.chaos_warrior
-local var_0_1 = {
+local chaos_warrior = BreedActions.chaos_warrior
+local tbl = {
 	"BTUtilityNode",
 	{
 		"BTCombatStepAction",
 		name = "combat_step",
-		action_data = var_0_0.combat_step
+		action_data = chaos_warrior.combat_step
 	},
 	{
 		"BTClanRatFollowAction",
 		name = "follow",
-		action_data = var_0_0.follow
+		action_data = chaos_warrior.follow
 	},
 	{
 		"BTStormVerminAttackAction",
 		name = "running_attack_right",
 		condition = "ask_target_before_attacking",
-		action_data = var_0_0.running_attack_right
+		action_data = chaos_warrior.running_attack_right
 	},
 	{
 		"BTStormVerminAttackAction",
 		name = "special_attack_cleave",
 		condition = "ask_target_before_attacking",
-		action_data = var_0_0.special_attack_cleave
+		action_data = chaos_warrior.special_attack_cleave
 	},
 	{
 		"BTStormVerminAttackAction",
 		name = "special_attack_sweep",
 		condition = "ask_target_before_attacking",
-		action_data = var_0_0.special_attack_sweep
+		action_data = chaos_warrior.special_attack_sweep
 	},
 	{
 		"BTStormVerminAttackAction",
 		name = "special_attack_launch",
 		condition = "ask_target_before_attacking",
-		action_data = var_0_0.special_attack_launch
+		action_data = chaos_warrior.special_attack_launch
 	},
 	{
 		"BTStormVerminPushAction",
 		name = "push_attack",
 		condition = "ask_target_before_attacking",
-		action_data = var_0_0.push_attack
+		action_data = chaos_warrior.push_attack
 	},
 	{
 		"BTStormVerminAttackAction",
 		name = "special_attack_quick",
 		condition = "ask_target_before_attacking",
-		action_data = var_0_0.special_attack_quick
+		action_data = chaos_warrior.special_attack_quick
 	},
 	condition = "confirmed_player_sighting",
 	name = "in_combat"
 }
-local var_0_2 = {
+local tbl_2 = {
 	"BTSelector",
 	{
 		"BTTeleportAction",
@@ -73,7 +73,7 @@ local var_0_2 = {
 		"BTSmashDoorAction",
 		name = "smash_door",
 		condition = "at_door_smartobject",
-		action_data = var_0_0.smash_door
+		action_data = chaos_warrior.smash_door
 	},
 	condition = "at_smartobject",
 	name = "smartobject"
@@ -100,27 +100,27 @@ BreedBehaviors.chaos_warrior = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = var_0_0.stagger
+		action_data = chaos_warrior.stagger
 	},
 	{
 		"BTBlockedAction",
 		name = "blocked",
 		condition = "blocked",
-		action_data = var_0_0.blocked
+		action_data = chaos_warrior.blocked
 	},
-	var_0_2,
-	var_0_1,
+	tbl_2,
+	tbl,
 	{
 		"BTAlertedAction",
 		name = "alerted",
 		condition = "player_spotted",
-		action_data = var_0_0.alerted
+		action_data = chaos_warrior.alerted
 	},
 	{
 		"BTMoveToGoalAction",
 		name = "move_to_goal",
 		condition = "has_goal_destination",
-		action_data = var_0_0.follow
+		action_data = chaos_warrior.follow
 	},
 	{
 		"BTIdleAction",

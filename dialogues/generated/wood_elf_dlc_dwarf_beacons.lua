@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/wood_elf_dlc_dwarf_beacons.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pwe_dummy_memory_trigger_beacons",

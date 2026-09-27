@@ -2,42 +2,48 @@
 
 HitReactionSystem = class(HitReactionSystem, ExtensionSystemBase)
 
-local var_0_0 = {
+local tbl = {
 	"GenericHitReactionExtension"
 }
 
-function HitReactionSystem.init(arg_1_0, arg_1_1, arg_1_2)
-	HitReactionSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_0)
+HitReactionSystem.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	HitReactionSystem.super.init(self, arg_1_1, arg_1_2, tbl)
 
-	arg_1_0.unit_extensions = {}
-	arg_1_0.frozen_unit_extensions = {}
+	self.unit_extensions = {}
+	self.frozen_unit_extensions = {}
 end
 
-function HitReactionSystem.destroy(arg_2_0)
+HitReactionSystem.destroy = function (arg_2_0)
+	-- function 2
 	return
 end
 
-function HitReactionSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
-	local var_3_0 = ScriptUnit.add_extension(arg_3_0.extension_init_context, arg_3_2, arg_3_3, arg_3_0.NAME, arg_3_4)
+HitReactionSystem.on_add_extension = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	-- function 3
+	local add_extension = ScriptUnit.add_extension(self.extension_init_context, arg_3_2, arg_3_3, self.NAME, arg_3_4)
 
-	arg_3_0.unit_extensions[arg_3_2] = var_3_0
+	self.unit_extensions[arg_3_2] = add_extension
 
-	return var_3_0
+	return add_extension
 end
 
-function HitReactionSystem.extensions_ready(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+HitReactionSystem.extensions_ready = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	-- function 4
 	return
 end
 
-function HitReactionSystem.on_remove_extension(arg_5_0, arg_5_1, arg_5_2)
-	arg_5_0.frozen_unit_extensions[arg_5_1] = nil
+HitReactionSystem.on_remove_extension = function (self, arg_5_1, arg_5_2)
+	-- function 5
+	self.frozen_unit_extensions[arg_5_1] = nil
 
-	arg_5_0:_cleanup_extension(arg_5_1, arg_5_2)
-	ScriptUnit.remove_extension(arg_5_1, arg_5_0.NAME)
+	self:_cleanup_extension(arg_5_1, arg_5_2)
+	ScriptUnit.remove_extension(arg_5_1, self.NAME)
 end
 
-function HitReactionSystem.on_freeze_extension(arg_6_0, arg_6_1, arg_6_2)
-	local var_6_0 = arg_6_0.unit_extensions[arg_6_1]
+HitReactionSystem.on_freeze_extension = function (self, arg_6_1, arg_6_2)
+	-- function 6
+	local var_6_0 = self.unit_extensions[arg_6_1]
 
 	fassert(var_6_0, "Unit was already frozen.")
 
@@ -45,45 +51,50 @@ function HitReactionSystem.on_freeze_extension(arg_6_0, arg_6_1, arg_6_2)
 		return
 	end
 
-	arg_6_0.frozen_unit_extensions[arg_6_1] = var_6_0
+	self.frozen_unit_extensions[arg_6_1] = var_6_0
 
-	arg_6_0:_cleanup_extension(arg_6_1, arg_6_2)
+	self:_cleanup_extension(arg_6_1, arg_6_2)
 end
 
-function HitReactionSystem._cleanup_extension(arg_7_0, arg_7_1, arg_7_2)
+HitReactionSystem._cleanup_extension = function (arg_7_0, arg_7_1, arg_7_2)
+	-- function 7
 	arg_7_0.unit_extensions[arg_7_1] = nil
 end
 
-function HitReactionSystem.freeze(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
-	fassert(arg_8_0.frozen_unit_extensions[arg_8_1] == nil, "Tried to freeze an already frozen unit.")
+HitReactionSystem.freeze = function (self, arg_8_1, arg_8_2, arg_8_3)
+	-- function 8
+	fassert(self.frozen_unit_extensions[arg_8_1] == nil, "Tried to freeze an already frozen unit.")
 
-	local var_8_0 = arg_8_0.unit_extensions[arg_8_1]
+	local var_8_0 = self.unit_extensions[arg_8_1]
 
 	fassert(var_8_0, "Unit to freeze didn't have unfrozen extension")
 
-	arg_8_0.unit_extensions[arg_8_1] = nil
-	arg_8_0.frozen_unit_extensions[arg_8_1] = var_8_0
+	self.unit_extensions[arg_8_1] = nil
+	self.frozen_unit_extensions[arg_8_1] = var_8_0
 end
 
-function HitReactionSystem.unfreeze(arg_9_0, arg_9_1)
-	local var_9_0 = arg_9_0.frozen_unit_extensions[arg_9_1]
+HitReactionSystem.unfreeze = function (self, arg_9_1)
+	-- function 9
+	local var_9_0 = self.frozen_unit_extensions[arg_9_1]
 
 	fassert(var_9_0, "Unit to unfreeze didn't have frozen extension")
 
-	arg_9_0.frozen_unit_extensions[arg_9_1] = nil
-	arg_9_0.unit_extensions[arg_9_1] = var_9_0
+	self.frozen_unit_extensions[arg_9_1] = nil
+	self.unit_extensions[arg_9_1] = var_9_0
 
 	var_9_0:unfreeze()
 end
 
-function HitReactionSystem.hot_join_sync(arg_10_0, arg_10_1)
+HitReactionSystem.hot_join_sync = function (arg_10_0, arg_10_1)
+	-- function 10
 	return
 end
 
-function HitReactionSystem.update(arg_11_0, arg_11_1, arg_11_2)
-	local var_11_0 = arg_11_1.dt
+HitReactionSystem.update = function (self, arg_11_1, arg_11_2)
+	-- function 11
+	local dt = arg_11_1.dt
 
-	for iter_11_0, iter_11_1 in pairs(arg_11_0.unit_extensions) do
-		iter_11_1:update(iter_11_0, nil, var_11_0, arg_11_1, arg_11_2)
+	for k, v in pairs(self.unit_extensions) do
+		v:update(k, nil, dt, arg_11_1, arg_11_2)
 	end
 end

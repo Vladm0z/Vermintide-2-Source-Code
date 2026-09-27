@@ -2,60 +2,64 @@
 
 ActionThrowGrimoire = class(ActionThrowGrimoire, ActionBase)
 
-function ActionThrowGrimoire.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionThrowGrimoire.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	-- function 1
 	ActionThrowGrimoire.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 end
 
-function ActionThrowGrimoire.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
-	ActionThrowGrimoire.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
+ActionThrowGrimoire.client_owner_start_action = function (self, arg_2_1, arg_2_2)
+	-- function 2
+	ActionThrowGrimoire.super.client_owner_start_action(self, arg_2_1, arg_2_2)
 
-	arg_2_0.current_action = arg_2_1
-	arg_2_0.ammo_extension = ScriptUnit.extension(arg_2_0.weapon_unit, "ammo_system")
+	self.current_action = arg_2_1
+	self.ammo_extension = ScriptUnit.extension(self.weapon_unit, "ammo_system")
 end
 
-function ActionThrowGrimoire.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+ActionThrowGrimoire.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	-- function 3
 	return
 end
 
-function ActionThrowGrimoire.finish(arg_4_0, arg_4_1)
+ActionThrowGrimoire.finish = function (self, arg_4_1)
+	-- function 4
 	if arg_4_1 ~= "action_complete" then
 		return
 	end
 
-	local var_4_0 = arg_4_0.current_action.ammo_usage
+	local ammo_usage = self.current_action.ammo_usage
 
-	arg_4_0.ammo_extension:use_ammo(var_4_0)
+	self.ammo_extension:use_ammo(ammo_usage)
 
-	local var_4_1 = ScriptUnit.extension_input(arg_4_0.owner_unit, "dialogue_system")
-	local var_4_2 = FrameTable.alloc_table()
+	local extension_input = ScriptUnit.extension_input(self.owner_unit, "dialogue_system")
+	local alloc_table = FrameTable.alloc_table()
 
-	var_4_2.item_type = "grimoire"
+	alloc_table.item_type = "grimoire"
 
-	var_4_1:trigger_networked_dialogue_event("throwing_item", var_4_2)
+	extension_input:trigger_networked_dialogue_event("throwing_item", alloc_table)
 
-	local var_4_3 = Managers.player:unit_owner(arg_4_0.owner_unit)
-	local var_4_4 = POSITION_LOOKUP[arg_4_0.owner_unit]
+	local unit_owner = Managers.player:unit_owner(self.owner_unit)
+	local var_4_4 = POSITION_LOOKUP[self.owner_unit]
 
-	Managers.telemetry_events:player_used_item(var_4_3, arg_4_0.item_name, var_4_4)
+	Managers.telemetry_events:player_used_item(unit_owner, self.item_name, var_4_4)
 
-	local var_4_5 = var_4_3:is_player_controlled()
-	local var_4_6 = var_4_3.peer_id
-	local var_4_7 = "discarded_grimoire"
-	local var_4_8 = var_4_3:name()
+	local is_player_controlled = unit_owner:is_player_controlled()
+	local peer_id = unit_owner.peer_id
+	local str = "discarded_grimoire"
+	local name = unit_owner:name()
 
 	if not IS_CONSOLE then
-		var_4_8 = var_4_5 and (rawget(_G, "Steam") and Steam.user_name(var_4_6) or tostring(var_4_6)) or var_4_3:name()
+		name = not is_player_controlled and not rawget(_G, "Steam") and Steam.user_name(peer_id) and tostring(peer_id) or unit_owner:name()
 	end
 
-	local var_4_9 = true
-	local var_4_10 = string.format(Localize("system_chat_player_discarded_grimoire"), var_4_8)
+	local flag = true
+	local format = string.format(Localize("system_chat_player_discarded_grimoire"), name)
 
-	Managers.chat:add_local_system_message(1, var_4_10, var_4_9)
-	Managers.state.event:trigger("add_coop_feedback", var_4_3:stats_id(), not var_4_3.bot_player, var_4_7, var_4_3)
+	Managers.chat:add_local_system_message(1, format, flag)
+	Managers.state.event:trigger("add_coop_feedback", unit_owner:stats_id(), not unit_owner.bot_player, str, unit_owner)
 
-	if arg_4_0.is_server then
-		Managers.state.network.network_transmit:send_rpc_clients("rpc_coop_feedback", var_4_3:network_id(), var_4_3:local_player_id(), NetworkLookup.coop_feedback[var_4_7], var_4_3:network_id(), var_4_3:local_player_id())
+	if not self.is_server then
+		Managers.state.network.network_transmit:send_rpc_clients("rpc_coop_feedback", unit_owner:network_id(), unit_owner:local_player_id(), NetworkLookup.coop_feedback[str], unit_owner:network_id(), unit_owner:local_player_id())
 	else
-		Managers.state.network.network_transmit:send_rpc_server("rpc_coop_feedback", var_4_3:network_id(), var_4_3:local_player_id(), NetworkLookup.coop_feedback[var_4_7], var_4_3:network_id(), var_4_3:local_player_id())
+		Managers.state.network.network_transmit:send_rpc_server("rpc_coop_feedback", unit_owner:network_id(), unit_owner:local_player_id(), NetworkLookup.coop_feedback[str], unit_owner:network_id(), unit_owner:local_player_id())
 	end
 end

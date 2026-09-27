@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/chaos/chaos_vortex_behavior.lua
 
-local var_0_0 = BreedActions.chaos_vortex
+local chaos_vortex = BreedActions.chaos_vortex
 
 BreedBehaviors.chaos_vortex = {
 	"BTSelector",
@@ -20,7 +20,7 @@ BreedBehaviors.chaos_vortex = {
 			"BTSmashDoorAction",
 			name = "smash_door",
 			condition = "at_door_smartobject",
-			action_data = var_0_0.smash_door
+			action_data = chaos_vortex.smash_door
 		},
 		condition = "at_smartobject",
 		name = "smartobject"

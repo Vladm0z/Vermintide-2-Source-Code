@@ -2,56 +2,59 @@
 
 ScriptConnectedStorageToken = class(ScriptConnectedStorageToken, ScriptSaveToken)
 
-function ScriptConnectedStorageToken.info(arg_1_0)
-	local var_1_0 = {}
+ScriptConnectedStorageToken.info = function (self)
+	-- function 1
+	local tbl = {}
 
-	if arg_1_0._status == arg_1_0._adapter.COMPLETED then
-		print("GET STORAGE ID SUCCESS", arg_1_0._status)
+	if self._status == self._adapter.COMPLETED then
+		print("GET STORAGE ID SUCCESS", self._status)
 
-		var_1_0 = {
-			storage_id = arg_1_0._token
+		tbl = {
+			storage_id = self._token
 		}
 	else
-		print("GET STORAGE ID ERROR", arg_1_0._status)
+		print("GET STORAGE ID ERROR", self._status)
 
-		var_1_0 = {
-			error = arg_1_0:_parse_error(arg_1_0._status)
+		tbl = {
+			error = self:_parse_error(self._status)
 		}
 	end
 
-	return var_1_0
+	return tbl
 end
 
 ScriptConnectedStorageQueryToken = class(ScriptConnectedStorageQueryToken, ScriptSaveToken)
 
-function ScriptConnectedStorageQueryToken.info(arg_2_0)
-	local var_2_0 = {}
+ScriptConnectedStorageQueryToken.info = function (self)
+	-- function 2
+	local tbl = {}
 
-	if arg_2_0._status == arg_2_0._adapter.COMPLETED then
-		var_2_0 = arg_2_0._adapter.query_result(arg_2_0._token)
+	if self._status == self._adapter.COMPLETED then
+		tbl = self._adapter.query_result(self._token)
 	else
 		print("QUERY ERROR")
 
-		var_2_0 = {
-			error = arg_2_0:_parse_error(arg_2_0._status)
+		tbl = {
+			error = self:_parse_error(self._status)
 		}
 	end
 
-	return var_2_0
+	return tbl
 end
 
 ScriptConnectedStorageDeleteToken = class(ScriptConnectedStorageDeleteToken, ScriptSaveToken)
 
-function ScriptConnectedStorageDeleteToken.info(arg_3_0)
-	local var_3_0 = {}
+ScriptConnectedStorageDeleteToken.info = function (self)
+	-- function 3
+	local tbl = {}
 
-	if arg_3_0._status == arg_3_0._adapter.ERROR then
+	if self._status == self._adapter.ERROR then
 		print("DELETE ERROR")
 
-		var_3_0 = {
-			error = arg_3_0:_parse_error(arg_3_0._status)
+		tbl = {
+			error = self:_parse_error(self._status)
 		}
 	end
 
-	return var_3_0
+	return tbl
 end

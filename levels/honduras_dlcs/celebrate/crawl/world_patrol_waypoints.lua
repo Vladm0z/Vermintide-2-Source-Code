@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/celebrate/crawl/world_patrol_waypoints.lua
 
-local var_0_0 = {
+local tbl = {
 	{
 		{
 			one_directional = false,
@@ -14261,7 +14261,7 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	{
 		travel_dist = 109.25184431672096,
 		id = "roaming_29",
@@ -28001,12 +28001,12 @@ local var_0_1 = {
 		}
 	}
 }
-local var_0_2 = {}
-local var_0_3 = "1"
+local tbl_3 = {}
+local str = "1"
 
 return {
-	version = var_0_3,
-	boss_waypoints = var_0_0,
-	patrol_waypoints = var_0_1,
-	event_waypoints = var_0_2
+	version = str,
+	boss_waypoints = tbl,
+	patrol_waypoints = tbl_2,
+	event_waypoints = tbl_3
 }

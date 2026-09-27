@@ -4,228 +4,239 @@ require("scripts/ui/views/menu_world_previewer")
 
 local var_0_0, var_0_1, var_0_2 = dofile("scripts/settings/crafting/crafting_recipes")
 local var_0_3 = local_require("scripts/ui/views/hero_view/craft_pages/definitions/craft_page_extract_skin_definitions")
-local var_0_4 = var_0_3.widgets
-local var_0_5 = var_0_3.category_settings
-local var_0_6 = var_0_3.scenegraph_definition
-local var_0_7 = var_0_3.animation_definitions
-local var_0_8 = false
-local var_0_9 = 1
+local widgets = var_0_3.widgets
+local category_settings = var_0_3.category_settings
+local scenegraph_definition = var_0_3.scenegraph_definition
+local animation_definitions = var_0_3.animation_definitions
+local flag = false
+local num = 1
 
 CraftPageExtractSkin = class(CraftPageExtractSkin)
 CraftPageExtractSkin.NAME = "CraftPageExtractSkin"
 
-function CraftPageExtractSkin.on_enter(arg_1_0, arg_1_1, arg_1_2)
+CraftPageExtractSkin.on_enter = function (self, arg_1_1, arg_1_2)
+	-- function 1
 	print("[HeroWindowCraft] Enter Substate CraftPageExtractSkin")
 
-	arg_1_0.parent = arg_1_1.parent
-	arg_1_0.super_parent = arg_1_0.parent.parent
+	self.parent = arg_1_1.parent
+	self.super_parent = self.parent.parent
 
-	local var_1_0 = arg_1_1.ingame_ui_context
+	local ingame_ui_context = arg_1_1.ingame_ui_context
 
-	arg_1_0.ingame_ui_context = var_1_0
-	arg_1_0.ui_renderer = var_1_0.ui_renderer
-	arg_1_0.ui_top_renderer = var_1_0.ui_top_renderer
-	arg_1_0.input_manager = var_1_0.input_manager
-	arg_1_0.statistics_db = var_1_0.statistics_db
-	arg_1_0.render_settings = {
+	self.ingame_ui_context = ingame_ui_context
+	self.ui_renderer = ingame_ui_context.ui_renderer
+	self.ui_top_renderer = ingame_ui_context.ui_top_renderer
+	self.input_manager = ingame_ui_context.input_manager
+	self.statistics_db = ingame_ui_context.statistics_db
+	self.render_settings = {
 		snap_pixel_positions = true
 	}
-	arg_1_0.crafting_manager = Managers.state.crafting
+	self.crafting_manager = Managers.state.crafting
 
-	local var_1_1 = Managers.player
+	local player = Managers.player
 
-	arg_1_0._stats_id = var_1_1:local_player():stats_id()
-	arg_1_0.player_manager = var_1_1
-	arg_1_0.peer_id = var_1_0.peer_id
-	arg_1_0.hero_name = arg_1_1.hero_name
-	arg_1_0.career_index = arg_1_1.career_index
-	arg_1_0.profile_index = arg_1_1.profile_index
-	arg_1_0.wwise_world = arg_1_1.wwise_world
-	arg_1_0.settings = arg_1_2
-	arg_1_0._animations = {}
+	self._stats_id = player:local_player():stats_id()
+	self.player_manager = player
+	self.peer_id = ingame_ui_context.peer_id
+	self.hero_name = arg_1_1.hero_name
+	self.career_index = arg_1_1.career_index
+	self.profile_index = arg_1_1.profile_index
+	self.wwise_world = arg_1_1.wwise_world
+	self.settings = arg_1_2
+	self._animations = {}
 
-	arg_1_0:create_ui_elements(arg_1_1)
+	self:create_ui_elements(arg_1_1)
 
-	arg_1_0._craft_items = {}
-	arg_1_0._material_items = {}
-	arg_1_0._item_grid = ItemGridUI:new(var_0_5, arg_1_0._widgets_by_name.item_grid, arg_1_0.hero_name, arg_1_0.career_index)
+	self._craft_items = {}
+	self._material_items = {}
+	self._item_grid = ItemGridUI:new(category_settings, self._widgets_by_name.item_grid, self.hero_name, self.career_index)
 
-	arg_1_0._item_grid:disable_locked_items(true)
-	arg_1_0._item_grid:mark_locked_items(true)
-	arg_1_0._item_grid:hide_slots(true)
-	arg_1_0._item_grid:disable_item_drag()
-	arg_1_0.super_parent:clear_disabled_backend_ids()
+	self._item_grid:disable_locked_items(true)
+	self._item_grid:mark_locked_items(true)
+	self._item_grid:hide_slots(true)
+	self._item_grid:disable_item_drag()
+	self.super_parent:clear_disabled_backend_ids()
 end
 
-function CraftPageExtractSkin.create_ui_elements(arg_2_0, arg_2_1)
-	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_6)
+CraftPageExtractSkin.create_ui_elements = function (self, arg_2_1)
+	-- function 2
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	local var_2_0 = {}
-	local var_2_1 = {}
+	local tbl = {}
+	local tbl_2 = {}
 
-	for iter_2_0, iter_2_1 in pairs(var_0_4) do
-		local var_2_2 = UIWidget.init(iter_2_1)
+	for k, v in pairs(widgets) do
+		local var_2_2 = UIWidget.init(v)
 
-		var_2_0[#var_2_0 + 1] = var_2_2
-		var_2_1[iter_2_0] = var_2_2
+		tbl[#tbl + 1] = var_2_2
+		tbl_2[k] = var_2_2
 	end
 
-	arg_2_0._widgets = var_2_0
-	arg_2_0._widgets_by_name = var_2_1
+	self._widgets = tbl
+	self._widgets_by_name = tbl_2
 
-	UIRenderer.clear_scenegraph_queue(arg_2_0.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
-	arg_2_0.ui_animator = UIAnimator:new(arg_2_0.ui_scenegraph, var_0_7)
+	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
 
-	arg_2_0:_set_craft_button_disabled(true)
-	arg_2_0:_handle_craft_input_progress(0)
+	self:_set_craft_button_disabled(true)
+	self:_handle_craft_input_progress(0)
 end
 
-function CraftPageExtractSkin.on_exit(arg_3_0, arg_3_1)
+CraftPageExtractSkin.on_exit = function (self, arg_3_1)
+	-- function 3
 	print("[HeroWindowCraft] Exit Substate CraftPageExtractSkin")
 
-	arg_3_0.ui_animator = nil
+	self.ui_animator = nil
 
-	if arg_3_0._craft_input_time then
-		arg_3_0:_play_sound("play_gui_craft_forge_button_aborted")
+	if not self._craft_input_time then
+		self:_play_sound("play_gui_craft_forge_button_aborted")
 	end
 end
 
-function CraftPageExtractSkin.update(arg_4_0, arg_4_1, arg_4_2)
-	if var_0_8 then
-		var_0_8 = false
+CraftPageExtractSkin.update = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	if not flag then
+		flag = false
 
-		arg_4_0:create_ui_elements()
+		self:create_ui_elements()
 	end
 
-	arg_4_0:_handle_input(arg_4_1, arg_4_2)
-	arg_4_0:_update_animations(arg_4_1)
-	arg_4_0:_update_craft_items()
-	arg_4_0:draw(arg_4_1)
+	self:_handle_input(arg_4_1, arg_4_2)
+	self:_update_animations(arg_4_1)
+	self:_update_craft_items()
+	self:draw(arg_4_1)
 end
 
-function CraftPageExtractSkin.post_update(arg_5_0, arg_5_1, arg_5_2)
+CraftPageExtractSkin.post_update = function (arg_5_0, arg_5_1, arg_5_2)
+	-- function 5
 	return
 end
 
-function CraftPageExtractSkin._update_animations(arg_6_0, arg_6_1)
-	arg_6_0.ui_animator:update(arg_6_1)
+CraftPageExtractSkin._update_animations = function (self, arg_6_1)
+	-- function 6
+	self.ui_animator:update(arg_6_1)
 
-	local var_6_0 = arg_6_0._animations
-	local var_6_1 = arg_6_0.ui_animator
+	local _animations = self._animations
+	local ui_animator = self.ui_animator
 
-	for iter_6_0, iter_6_1 in pairs(var_6_0) do
-		if var_6_1:is_animation_completed(iter_6_1) then
-			var_6_1:stop_animation(iter_6_1)
+	for k, v in pairs(_animations) do
+		if not ui_animator:is_animation_completed(v) then
+			ui_animator:stop_animation(v)
 
-			var_6_0[iter_6_0] = nil
+			_animations[k] = nil
 		end
 	end
 
-	local var_6_2 = arg_6_0._widgets_by_name
+	local _widgets_by_name = self._widgets_by_name
 
-	UIWidgetUtils.animate_default_button(var_6_2.craft_button, arg_6_1)
+	UIWidgetUtils.animate_default_button(_widgets_by_name.craft_button, arg_6_1)
 end
 
-function CraftPageExtractSkin._is_button_pressed(arg_7_0, arg_7_1)
-	local var_7_0 = arg_7_1.content.button_hotspot
+CraftPageExtractSkin._is_button_pressed = function (arg_7_0, arg_7_1)
+	-- function 7
+	local button_hotspot = arg_7_1.content.button_hotspot
 
-	if var_7_0.on_release then
-		var_7_0.on_release = false
+	if not button_hotspot.on_release then
+		button_hotspot.on_release = false
 
 		return true
 	end
 end
 
-function CraftPageExtractSkin._is_button_hovered(arg_8_0, arg_8_1)
-	if arg_8_1.content.button_hotspot.on_hover_enter then
+CraftPageExtractSkin._is_button_hovered = function (arg_8_0, arg_8_1)
+	-- function 8
+	if not arg_8_1.content.button_hotspot.on_hover_enter then
 		return true
 	end
 end
 
-function CraftPageExtractSkin._is_button_held(arg_9_0, arg_9_1)
-	local var_9_0 = arg_9_1.content.button_hotspot
+CraftPageExtractSkin._is_button_held = function (arg_9_0, arg_9_1)
+	-- function 9
+	local button_hotspot = arg_9_1.content.button_hotspot
 
-	if var_9_0.is_clicked then
-		return var_9_0.is_clicked
+	if not button_hotspot.is_clicked then
+		return button_hotspot.is_clicked
 	end
 end
 
-function CraftPageExtractSkin._handle_input(arg_10_0, arg_10_1, arg_10_2)
-	local var_10_0 = arg_10_0.parent
+CraftPageExtractSkin._handle_input = function (self, arg_10_1, arg_10_2)
+	-- function 10
+	local parent = self.parent
 
-	if var_10_0:waiting_for_craft() or arg_10_0._craft_result then
+	if parent:waiting_for_craft() or not self._craft_result then
 		return
 	end
 
-	local var_10_1 = arg_10_0._widgets_by_name
-	local var_10_2 = arg_10_0.super_parent
-	local var_10_3 = Managers.input:is_device_active("gamepad")
-	local var_10_4 = arg_10_0.super_parent:window_input_service()
-	local var_10_5 = not var_10_1.craft_button.content.button_hotspot.disable_button
-	local var_10_6 = arg_10_0:_is_button_held(var_10_1.craft_button)
-	local var_10_7 = var_10_5 and var_10_3 and var_10_4:get("refresh_hold")
-	local var_10_8 = false
+	local _widgets_by_name = self._widgets_by_name
+	local super_parent = self.super_parent
+	local is_device_active = Managers.input:is_device_active("gamepad")
+	local window_input_service = self.super_parent:window_input_service()
+	local flag = not _widgets_by_name.craft_button.content.button_hotspot.disable_button
+	local _is_button_held = self:_is_button_held(_widgets_by_name.craft_button)
+	local flag_2 = not flag and not is_device_active and window_input_service:get("refresh_hold")
+	local flag_3 = false
 
-	if var_10_6 == 0 or var_10_7 then
-		if not arg_10_0._craft_input_time then
-			arg_10_0._craft_input_time = 0
+	if _is_button_held == 0 or not flag_2 then
+		if not self._craft_input_time then
+			self._craft_input_time = 0
 
-			arg_10_0:_play_sound("play_gui_craft_forge_button_begin")
+			self:_play_sound("play_gui_craft_forge_button_begin")
 		else
-			arg_10_0._craft_input_time = arg_10_0._craft_input_time + arg_10_1
+			self._craft_input_time = self._craft_input_time + arg_10_1
 		end
 
-		local var_10_9 = UISettings.crafting_progress_time
-		local var_10_10 = math.min(arg_10_0._craft_input_time / var_10_9, 1)
+		local crafting_progress_time = UISettings.crafting_progress_time
+		local min = math.min(self._craft_input_time / crafting_progress_time, 1)
 
-		var_10_8 = arg_10_0:_handle_craft_input_progress(var_10_10)
+		flag_3 = self:_handle_craft_input_progress(min)
 
-		WwiseWorld.set_global_parameter(arg_10_0.wwise_world, "craft_forge_button_progress", var_10_10)
-	elseif arg_10_0._craft_input_time then
-		arg_10_0._craft_input_time = nil
+		WwiseWorld.set_global_parameter(self.wwise_world, "craft_forge_button_progress", min)
+	elseif not self._craft_input_time then
+		self._craft_input_time = nil
 
-		arg_10_0:_handle_craft_input_progress(0)
-		arg_10_0:_play_sound("play_gui_craft_forge_button_aborted")
+		self:_handle_craft_input_progress(0)
+		self:_play_sound("play_gui_craft_forge_button_aborted")
 	end
 
-	if var_10_8 then
-		local var_10_11 = arg_10_0._craft_items
-		local var_10_12 = arg_10_0._material_items
-		local var_10_13 = {}
+	if not flag_3 then
+		local _craft_items = self._craft_items
+		local _material_items = self._material_items
+		local tbl = {}
 
-		for iter_10_0, iter_10_1 in ipairs(var_10_11) do
-			var_10_13[#var_10_13 + 1] = iter_10_1
+		for i, v in ipairs(_craft_items) do
+			tbl[#tbl + 1] = v
 		end
 
-		for iter_10_2, iter_10_3 in ipairs(var_10_12) do
-			var_10_13[#var_10_13 + 1] = iter_10_3
+		for i_2, v_2 in ipairs(_material_items) do
+			tbl[#tbl + 1] = v_2
 		end
 
-		local var_10_14 = arg_10_0.settings.name
+		local name = self.settings.name
 
-		if var_10_0:craft(var_10_13, var_10_14) then
-			arg_10_0:_set_craft_button_disabled(true)
+		if not parent:craft(tbl, name) then
+			self:_set_craft_button_disabled(true)
 
-			local var_10_15 = arg_10_0._item_grid
+			local _item_grid = self._item_grid
 
-			for iter_10_4, iter_10_5 in pairs(var_10_13) do
-				var_10_15:lock_item_by_id(iter_10_5, true)
+			for k, v_3 in pairs(tbl) do
+				_item_grid:lock_item_by_id(v_3, true)
 			end
 
-			var_10_15:update_items_status()
-			arg_10_0:_play_sound("play_gui_craft_forge_button_completed")
-			arg_10_0:_play_sound("play_gui_craft_forge_begin")
+			_item_grid:update_items_status()
+			self:_play_sound("play_gui_craft_forge_button_completed")
+			self:_play_sound("play_gui_craft_forge_begin")
 		end
 	end
 end
 
-function CraftPageExtractSkin._handle_craft_input_progress(arg_11_0, arg_11_1)
-	local var_11_0
+CraftPageExtractSkin._handle_craft_input_progress = function (arg_11_0, arg_11_1)
+	-- function 11
+	local flag
 
-	var_11_0 = arg_11_1 ~= 0
+	flag = arg_11_1 ~= 0
 
-	local var_11_1 = var_0_6.craft_bar.size[1]
+	local var_11_1 = scenegraph_definition.craft_bar.size[1]
 
 	arg_11_0.ui_scenegraph.craft_bar.size[1] = var_11_1 * arg_11_1
 
@@ -234,191 +245,229 @@ function CraftPageExtractSkin._handle_craft_input_progress(arg_11_0, arg_11_1)
 	end
 end
 
-function CraftPageExtractSkin.craft_result(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+CraftPageExtractSkin.craft_result = function (self, arg_12_1, arg_12_2, arg_12_3)
+	-- function 12
 	if not arg_12_2 then
-		arg_12_0._craft_result = arg_12_1
+		self._craft_result = arg_12_1
 	end
 end
 
-function CraftPageExtractSkin.reset(arg_13_0)
-	local var_13_0 = arg_13_0._item_grid
+CraftPageExtractSkin.reset = function (self)
+	-- function 13
+	local _item_grid = self._item_grid
 
-	var_13_0:clear_locked_items()
-	var_13_0:update_items_status()
+	_item_grid:clear_locked_items()
+	_item_grid:update_items_status()
 end
 
-function CraftPageExtractSkin.on_craft_completed(arg_14_0)
-	local var_14_0 = arg_14_0._craft_result
-	local var_14_1 = arg_14_0._item_grid
+CraftPageExtractSkin.on_craft_completed = function (self)
+	-- function 14
+	local _craft_result = self._craft_result
+	local _item_grid = self._item_grid
 
-	table.clear(arg_14_0._craft_items)
+	table.clear(self._craft_items)
 
-	for iter_14_0 = 1, var_0_9 do
-		arg_14_0._craft_items[iter_14_0] = nil
+	for i = 1, num do
+		self._craft_items[i] = nil
 	end
 
-	var_14_1:clear_item_grid()
-	arg_14_0.super_parent:clear_disabled_backend_ids()
-	arg_14_0.super_parent:update_inventory_items()
+	_item_grid:clear_item_grid()
+	self.super_parent:clear_disabled_backend_ids()
+	self.super_parent:update_inventory_items()
 
-	local var_14_2 = 0
+	local num_2 = 0
 
-	for iter_14_1, iter_14_2 in pairs(var_14_0) do
-		var_14_2 = var_14_2 + 1
+	for k, v in pairs(_craft_result) do
+		num_2 = num_2 + 1
 	end
 
-	local var_14_3 = true
+	local flag = true
 
-	for iter_14_3, iter_14_4 in pairs(var_14_0) do
-		local var_14_4 = iter_14_4[1]
-		local var_14_5 = iter_14_4[3]
+	for k_2, v_2 in pairs(_craft_result) do
+		local var_14_4 = v_2[1]
+		local var_14_5 = v_2[3]
 
-		arg_14_0:_add_craft_item(var_14_4, iter_14_3, var_14_3)
+		self:_add_craft_item(var_14_4, k_2, flag)
 	end
 
-	var_14_1:clear_locked_items()
+	_item_grid:clear_locked_items()
 
-	for iter_14_5, iter_14_6 in pairs(arg_14_0._craft_items) do
-		var_14_1:lock_item_by_id(iter_14_6, true)
+	for k_3, v_3 in pairs(self._craft_items) do
+		_item_grid:lock_item_by_id(v_3, true)
 	end
 
-	var_14_1:update_items_status()
+	_item_grid:update_items_status()
 
-	arg_14_0._num_craft_items = 0
+	self._num_craft_items = 0
 
-	arg_14_0:_set_craft_button_disabled(true)
+	self:_set_craft_button_disabled(true)
 
-	arg_14_0._craft_result = nil
+	self._craft_result = nil
 end
 
-function CraftPageExtractSkin._update_craft_items(arg_15_0)
-	local var_15_0 = arg_15_0.super_parent
-	local var_15_1 = arg_15_0._item_grid
-	local var_15_2 = var_15_1:is_dragging_item() or var_15_1:is_item_dragged() ~= nil
-	local var_15_3, var_15_4 = var_15_0:get_pressed_item_backend_id()
+CraftPageExtractSkin._update_craft_items = function (self)
+	-- function 15
+	local super_parent = self.super_parent
+	local _item_grid = self._item_grid
+	local is_dragging_item = _item_grid:is_dragging_item()
 
-	if var_15_3 then
-		if var_15_4 then
-			if not var_15_2 then
-				local var_15_5 = var_15_1:is_slot_hovered()
+	is_dragging_item = is_dragging_item or _item_grid:is_item_dragged() ~= nil
 
-				if var_15_5 then
-					arg_15_0:_add_craft_item(var_15_3, var_15_5)
+	local get_pressed_item_backend_id, var_15_4 = super_parent:get_pressed_item_backend_id()
+
+	if not get_pressed_item_backend_id then
+		if not var_15_4 then
+			if not is_dragging_item then
+				local is_slot_hovered = _item_grid:is_slot_hovered()
+
+				if not is_slot_hovered then
+					self:_add_craft_item(get_pressed_item_backend_id, is_slot_hovered)
 				end
 			end
 		else
-			arg_15_0:_add_craft_item(var_15_3)
+			self:_add_craft_item(get_pressed_item_backend_id)
 		end
 	end
 
-	local var_15_6 = var_15_1:is_item_pressed()
+	local is_item_pressed = _item_grid:is_item_pressed()
 
-	if var_15_6 then
-		local var_15_7 = var_15_6.backend_id
+	if not is_item_pressed then
+		local backend_id = is_item_pressed.backend_id
 
-		arg_15_0:_remove_craft_item(var_15_7)
+		self:_remove_craft_item(backend_id)
 	end
 end
 
-function CraftPageExtractSkin._remove_craft_item(arg_16_0, arg_16_1, arg_16_2)
-	local var_16_0 = arg_16_0._craft_items
+CraftPageExtractSkin._remove_craft_item = function (self, arg_16_1, arg_16_2)
+	-- function 16
+	local _craft_items = self._craft_items
 
-	if arg_16_2 then
-		if var_16_0[arg_16_2] then
-			arg_16_1 = var_16_0[arg_16_2]
+	if not arg_16_2 then
+		if not _craft_items[arg_16_2] then
+			arg_16_1 = _craft_items[arg_16_2]
 		end
 	else
-		for iter_16_0, iter_16_1 in pairs(var_16_0) do
-			if iter_16_1 == arg_16_1 then
-				arg_16_2 = iter_16_0
+		for k, v in pairs(_craft_items) do
+			if v == arg_16_1 then
+				arg_16_2 = k
 
 				break
 			end
 		end
 	end
 
-	if arg_16_1 and arg_16_2 then
-		arg_16_0.super_parent:set_disabled_backend_id(arg_16_1, false)
-		arg_16_0._item_grid:add_item_to_slot_index(arg_16_2, nil)
+	if not arg_16_1 and not arg_16_2 then
+		self.super_parent:set_disabled_backend_id(arg_16_1, false)
+		self._item_grid:add_item_to_slot_index(arg_16_2, nil)
 
-		var_16_0[arg_16_2] = nil
-		arg_16_0._num_craft_items = math.max((arg_16_0._num_craft_items or 0) - 1, 0)
+		_craft_items[arg_16_2] = nil
 
-		if arg_16_0._num_craft_items == 0 then
-			arg_16_0:_set_craft_button_disabled(true)
+		local max = math.max
+		local _num_craft_items = self._num_craft_items
+
+		_num_craft_items = _num_craft_items or 0
+		self._num_craft_items = max(_num_craft_items - 1, 0)
+
+		if self._num_craft_items == 0 then
+			self:_set_craft_button_disabled(true)
 		end
 
-		arg_16_0:_play_sound("play_gui_craft_item_drag")
+		self:_play_sound("play_gui_craft_item_drag")
 	end
 end
 
-function CraftPageExtractSkin._add_craft_item(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
-	if arg_17_0._num_craft_items == 0 then
-		arg_17_0._item_grid:clear_item_grid()
-		table.clear(arg_17_0._craft_items)
+CraftPageExtractSkin._add_craft_item = function (self, arg_17_1, arg_17_2, arg_17_3)
+	-- function 17
+	if self._num_craft_items == 0 then
+		self._item_grid:clear_item_grid()
+		table.clear(self._craft_items)
 	end
 
-	local var_17_0 = arg_17_0._craft_items
+	local _craft_items = self._craft_items
 
 	if not arg_17_2 then
-		for iter_17_0 = 1, 1 do
-			if not var_17_0[iter_17_0] then
-				arg_17_2 = iter_17_0
+		for i = 1, 1 do
+			if not _craft_items[i] then
+				arg_17_2 = i
 
 				break
 			end
 		end
 	end
 
-	if arg_17_2 then
-		var_17_0[arg_17_2] = arg_17_1
+	if not arg_17_2 then
+		_craft_items[arg_17_2] = arg_17_1
 
-		local var_17_1 = Managers.backend:get_interface("items")
-		local var_17_2 = arg_17_1 and var_17_1:get_item_from_id(arg_17_1)
+		local get_interface = Managers.backend:get_interface("items")
+		local flag = not arg_17_1 and get_interface:get_item_from_id(arg_17_1)
 
-		arg_17_0._item_grid:add_item_to_slot_index(arg_17_2, var_17_2)
-		arg_17_0.super_parent:set_disabled_backend_id(arg_17_1, true)
+		self._item_grid:add_item_to_slot_index(arg_17_2, flag)
+		self.super_parent:set_disabled_backend_id(arg_17_1, true)
 
-		arg_17_0._num_craft_items = math.min((arg_17_0._num_craft_items or 0) + 1, var_0_9)
+		local min = math.min
+		local _num_craft_items = self._num_craft_items
 
-		if arg_17_0._num_craft_items > 0 then
-			arg_17_0:_set_craft_button_disabled(false)
+		_num_craft_items = _num_craft_items or 0
+		self._num_craft_items = min(_num_craft_items + 1, num)
+
+		if self._num_craft_items > 0 then
+			self:_set_craft_button_disabled(false)
 		end
 
-		if arg_17_1 and not arg_17_3 then
-			arg_17_0:_play_sound("play_gui_craft_item_drop")
+		if not (not arg_17_1 and arg_17_3) then
+			self:_play_sound("play_gui_craft_item_drop")
 		end
 	end
 end
 
-function CraftPageExtractSkin._set_craft_button_disabled(arg_18_0, arg_18_1)
+CraftPageExtractSkin._set_craft_button_disabled = function (arg_18_0, arg_18_1)
+	-- function 18
 	arg_18_0._widgets_by_name.craft_button.content.button_hotspot.disable_button = arg_18_1
 end
 
-function CraftPageExtractSkin._exit(arg_19_0, arg_19_1)
-	arg_19_0.exit = true
-	arg_19_0.exit_level_id = arg_19_1
+CraftPageExtractSkin._exit = function (self, arg_19_1)
+	-- function 19
+	self.exit = true
+	self.exit_level_id = arg_19_1
 end
 
-function CraftPageExtractSkin.draw(arg_20_0, arg_20_1)
-	local var_20_0 = arg_20_0.ui_renderer
-	local var_20_1 = arg_20_0.ui_top_renderer
-	local var_20_2 = arg_20_0.ui_scenegraph
-	local var_20_3 = arg_20_0.super_parent:window_input_service()
+CraftPageExtractSkin.draw = function (self, arg_20_1)
+	-- function 20
+	local ui_renderer = self.ui_renderer
+	local ui_top_renderer = self.ui_top_renderer
+	local ui_scenegraph = self.ui_scenegraph
+	local window_input_service = self.super_parent:window_input_service()
 
-	UIRenderer.begin_pass(var_20_1, var_20_2, var_20_3, arg_20_1, nil, arg_20_0.render_settings)
+	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, window_input_service, arg_20_1, nil, self.render_settings)
 
-	for iter_20_0, iter_20_1 in ipairs(arg_20_0._widgets) do
-		UIRenderer.draw_widget(var_20_1, iter_20_1)
+	for i, v in ipairs(self._widgets) do
+		UIRenderer.draw_widget(ui_top_renderer, v)
 	end
 
-	UIRenderer.end_pass(var_20_1)
+	UIRenderer.end_pass(ui_top_renderer)
 end
 
-function CraftPageExtractSkin._play_sound(arg_21_0, arg_21_1)
-	arg_21_0.super_parent:play_sound(arg_21_1)
+CraftPageExtractSkin._play_sound = function (self, arg_21_1)
+	-- function 21
+	self.super_parent:play_sound(arg_21_1)
 end
 
-function CraftPageExtractSkin._set_craft_button_text(arg_22_0, arg_22_1, arg_22_2)
-	arg_22_0._widgets_by_name.craft_button.content.button_text = arg_22_2 and Localize(arg_22_1) or arg_22_1
+CraftPageExtractSkin._set_craft_button_text = function (self, arg_22_1, arg_22_2)
+	-- function 22
+	local content = self._widgets_by_name.craft_button.content
+	local var_22_1
+
+	if not arg_22_2 then
+		var_22_1 = Localize(arg_22_1)
+
+		if not var_22_1 then
+			-- Nothing
+		end
+	end
+
+	var_22_1 = arg_22_1
+
+	::label_22_0::
+
+	content.button_text = var_22_1
 end

@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/shovel/talent_settings_shovel.lua
 
-local var_0_0 = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
+local scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
 
 require("scripts/entity_system/systems/buff/buff_sync_type")
 require("scripts/settings/profiles/career_constants")
@@ -74,7 +74,7 @@ SHOVEL_BUFF_TWEAK_DATA = {
 	}
 }
 
-local var_0_1 = {
+local tbl = {
 	sienna_necromancer_passive_balefire = {
 		buffs = {
 			{
@@ -116,7 +116,7 @@ local var_0_1 = {
 				event = "on_player_damage_dealt",
 				bonus = 0.25,
 				perks = {
-					var_0_0.linesman_healing
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.linesman_healing
 				}
 			}
 		}
@@ -129,7 +129,7 @@ local var_0_1 = {
 				buff_func = "heal_percentage_of_enemy_hp_on_melee_kill",
 				event = "on_kill",
 				perks = {
-					var_0_0.smiter_healing
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.smiter_healing
 				}
 			}
 		}
@@ -195,7 +195,7 @@ local var_0_1 = {
 			{
 				stat_buff = "power_level_critical_strike",
 				perks = {
-					var_0_0.crit_unlimited_cleave
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.crit_unlimited_cleave
 				}
 			}
 		}
@@ -253,7 +253,7 @@ local var_0_1 = {
 				icon = "sienna_necromancer_4_2",
 				priority_buff = true,
 				perks = {
-					var_0_0.guaranteed_crit
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.guaranteed_crit
 				},
 				max_stacks = math.huge
 			}
@@ -284,7 +284,7 @@ local var_0_1 = {
 				max_stacks = 3,
 				duration = 4,
 				perks = {
-					var_0_0.burning_balefire
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.burning_balefire
 				}
 			}
 		}
@@ -431,7 +431,7 @@ local var_0_1 = {
 		}
 	}
 }
-local var_0_2 = {
+local tbl_2 = {
 	{
 		{
 			"sienna_necromancer_thp_linesman",
@@ -465,7 +465,7 @@ local var_0_2 = {
 		}
 	}
 }
-local var_0_3 = {
+local tbl_3 = {
 	{
 		description = "reaper_desc",
 		name = "sienna_necromancer_1_1",
@@ -807,25 +807,28 @@ local var_0_3 = {
 		buffs = {}
 	}
 }
-local var_0_4 = "bright_wizard"
+local str = "bright_wizard"
 
-table.merge(TalentBuffTemplates[var_0_4], var_0_1)
-table.append(TalentTrees[var_0_4], var_0_2)
-table.append(Talents[var_0_4], var_0_3)
+table.merge(TalentBuffTemplates[str], tbl)
+table.append(TalentTrees[str], tbl_2)
+table.append(Talents[str], tbl_3)
+
+local WeaveLoadoutSettings = WeaveLoadoutSettings
 
 WeaveLoadoutSettings = WeaveLoadoutSettings or {}
+WeaveLoadoutSettings = WeaveLoadoutSettings
 WeaveLoadoutSettings.bw_necromancer = {
-	talent_tree = var_0_2[1],
+	talent_tree = tbl_2[1],
 	properties = {},
 	traits = {}
 }
 
-for iter_0_0, iter_0_1 in pairs(var_0_1) do
-	local var_0_5 = iter_0_1.buffs
+for k, v in pairs(tbl) do
+	local buffs = v.buffs
 
-	fassert(#var_0_5 == 1, "talent buff has more than one sub buff, add multiple buffs from the talent instead")
+	fassert(#buffs == 1, "talent buff has more than one sub buff, add multiple buffs from the talent instead")
 
-	var_0_5[1].name = iter_0_0
+	buffs[1].name = k
 end
 
-BuffUtils.apply_buff_tweak_data(var_0_1, SHOVEL_BUFF_TWEAK_DATA)
+BuffUtils.apply_buff_tweak_data(tbl, SHOVEL_BUFF_TWEAK_DATA)

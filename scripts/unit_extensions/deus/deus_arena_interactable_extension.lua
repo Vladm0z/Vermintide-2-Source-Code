@@ -2,106 +2,116 @@
 
 DeusArenaInteractableExtension = class(DeusArenaInteractableExtension)
 
-local var_0_0 = {
+local tbl = {
 	INTERACTED = 2,
 	WAITING = 1
 }
-local var_0_1 = {
+local tbl_2 = {
 	"rpc_deus_set_arena_interactable_state"
 }
 
-function DeusArenaInteractableExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	arg_1_0._unit = arg_1_2
-	arg_1_0._is_server = arg_1_1.is_server
-	arg_1_0._world = arg_1_1.world
-	arg_1_0._state = var_0_0.WAITING
-	arg_1_0._override_interactable_action = Unit.get_data(arg_1_2, "override_interactable_action")
-	arg_1_0._level_unit_id = Level.unit_index(LevelHelper:current_level(arg_1_0._world), arg_1_2)
+DeusArenaInteractableExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	self._unit = arg_1_2
+	self._is_server = arg_1_1.is_server
+	self._world = arg_1_1.world
+	self._state = tbl.WAITING
+	self._override_interactable_action = Unit.get_data(arg_1_2, "override_interactable_action")
+	self._level_unit_id = Level.unit_index(LevelHelper:current_level(self._world), arg_1_2)
 
-	arg_1_0:register_rpcs(arg_1_1.network_transmit.network_event_delegate)
+	self:register_rpcs(arg_1_1.network_transmit.network_event_delegate)
 end
 
-function DeusArenaInteractableExtension.register_rpcs(arg_2_0, arg_2_1)
-	arg_2_0._network_event_delegate = arg_2_1
+DeusArenaInteractableExtension.register_rpcs = function (self, arg_2_1)
+	-- function 2
+	self._network_event_delegate = arg_2_1
 
-	arg_2_1:register(arg_2_0, unpack(var_0_1))
+	arg_2_1:register(self, unpack(tbl_2))
 end
 
-function DeusArenaInteractableExtension.unregister_rpcs(arg_3_0)
-	if arg_3_0._network_event_delegate then
-		arg_3_0._network_event_delegate:unregister(arg_3_0)
+DeusArenaInteractableExtension.unregister_rpcs = function (self)
+	-- function 3
+	if not self._network_event_delegate then
+		self._network_event_delegate:unregister(self)
 	end
 
-	arg_3_0._network_event_delegate = nil
+	self._network_event_delegate = nil
 end
 
-function DeusArenaInteractableExtension.destroy(arg_4_0)
-	arg_4_0:unregister_rpcs()
+DeusArenaInteractableExtension.destroy = function (self)
+	-- function 4
+	self:unregister_rpcs()
 end
 
-function DeusArenaInteractableExtension.hot_join_sync(arg_5_0, arg_5_1)
-	local var_5_0 = arg_5_0:_get_state()
+DeusArenaInteractableExtension.hot_join_sync = function (self, arg_5_1)
+	-- function 5
+	local _get_state = self:_get_state()
 
-	Managers.state.network.network_transmit:send_rpc("rpc_deus_set_arena_interactable_state", arg_5_1, arg_5_0._level_unit_id, var_5_0)
+	Managers.state.network.network_transmit:send_rpc("rpc_deus_set_arena_interactable_state", arg_5_1, self._level_unit_id, _get_state)
 end
 
-function DeusArenaInteractableExtension.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
-	local var_6_0 = arg_6_0._prev_state
-	local var_6_1 = arg_6_0:_get_state()
+DeusArenaInteractableExtension.update = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+	-- function 6
+	local _prev_state = self._prev_state
+	local _get_state = self:_get_state()
 
-	if var_6_0 ~= var_6_1 then
-		arg_6_0:_on_state_changed(var_6_0, var_6_1)
+	if _prev_state ~= _get_state then
+		self:_on_state_changed(_prev_state, _get_state)
 
-		arg_6_0._prev_state = var_6_1
+		self._prev_state = _get_state
 	end
 
-	local var_6_2 = arg_6_0._timer
+	local _timer = self._timer
 
-	if var_6_2 and var_6_2 < arg_6_5 then
-		var_6_2 = nil
+	if not (not _timer and not (_timer < arg_6_5)) then
+		_timer = nil
 
-		if Unit.get_data(arg_6_0._unit, "arena_interactable_data", "end_game") then
+		if not Unit.get_data(self._unit, "arena_interactable_data", "end_game") then
 			Managers.state.game_mode:complete_level()
 		end
 
-		if Unit.get_data(arg_6_0._unit, "arena_interactable_data", "activate_end_zone") then
-			local var_6_3 = Unit.get_data(arg_6_0._unit, "arena_interactable_data", "end_zone_name")
+		if not Unit.get_data(self._unit, "arena_interactable_data", "activate_end_zone") then
+			local get_data = Unit.get_data(self._unit, "arena_interactable_data", "end_zone_name")
 
-			assert(var_6_3, "[DeusArenaInteractableExtension] - [end_zone_name] is not set while [activate_end_zone]")
-			Managers.state.entity:system("end_zone_system"):activate_end_zone_by_name(var_6_3)
+			assert(get_data, "[DeusArenaInteractableExtension] - [end_zone_name] is not set while [activate_end_zone]")
+			Managers.state.entity:system("end_zone_system"):activate_end_zone_by_name(get_data)
 		end
 	end
 
-	arg_6_0._timer = var_6_2
+	self._timer = _timer
 end
 
-function DeusArenaInteractableExtension._on_state_changed(arg_7_0, arg_7_1, arg_7_2)
-	local var_7_0 = arg_7_0._unit
+DeusArenaInteractableExtension._on_state_changed = function (self, arg_7_1, arg_7_2)
+	-- function 7
+	local _unit = self._unit
 
-	if arg_7_2 == var_0_0.WAITING then
-		Unit.flow_event(var_7_0, "state_WAITING")
-	elseif arg_7_2 == var_0_0.INTERACTED then
-		Unit.flow_event(var_7_0, "state_INTERACTED")
+	if arg_7_2 == tbl.WAITING then
+		Unit.flow_event(_unit, "state_WAITING")
+	elseif arg_7_2 == tbl.INTERACTED then
+		Unit.flow_event(_unit, "state_INTERACTED")
 
-		local var_7_1 = Unit.get_data(var_7_0, "arena_interactable_data", "interact_level_event_name")
+		local get_data = Unit.get_data(_unit, "arena_interactable_data", "interact_level_event_name")
 
-		if var_7_1 ~= "default" then
-			LevelHelper:flow_event(arg_7_0._world, var_7_1)
+		if get_data ~= "default" then
+			LevelHelper:flow_event(self._world, get_data)
 		end
 	end
 end
 
-function DeusArenaInteractableExtension.rpc_deus_set_arena_interactable_state(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
-	if arg_8_0._level_unit_id == arg_8_2 then
-		arg_8_0._state = arg_8_3
+DeusArenaInteractableExtension.rpc_deus_set_arena_interactable_state = function (self, arg_8_1, arg_8_2, arg_8_3)
+	-- function 8
+	if self._level_unit_id == arg_8_2 then
+		self._state = arg_8_3
 	end
 end
 
-function DeusArenaInteractableExtension.can_interact(arg_9_0)
-	return arg_9_0:_get_state() == var_0_0.WAITING
+DeusArenaInteractableExtension.can_interact = function (self)
+	-- function 9
+	return self:_get_state() == tbl.WAITING
 end
 
-function DeusArenaInteractableExtension.get_interact_hud_description(arg_10_0)
+DeusArenaInteractableExtension.get_interact_hud_description = function (arg_10_0)
+	-- function 10
 	if Managers.mechanism:game_mechanism():get_deus_run_controller():get_current_node().base_level == DEUS_LEVEL_SETTINGS.arena_citadel.base_level_name then
 		return "deus_altar_hud_desc"
 	else
@@ -109,39 +119,44 @@ function DeusArenaInteractableExtension.get_interact_hud_description(arg_10_0)
 	end
 end
 
-function DeusArenaInteractableExtension.on_server_interact(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7)
-	if arg_11_0:_get_state() == var_0_0.WAITING then
-		if HEALTH_ALIVE[arg_11_2] then
-			local var_11_0 = ScriptUnit.extension_input(arg_11_2, "dialogue_system")
-			local var_11_1 = FrameTable.alloc_table()
-			local var_11_2 = Unit.get_data(arg_11_0._unit, "arena_interactable_data", "interactor_vo_line")
+DeusArenaInteractableExtension.on_server_interact = function (self, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7)
+	-- function 11
+	if self:_get_state() == tbl.WAITING then
+		if not HEALTH_ALIVE[arg_11_2] then
+			local extension_input = ScriptUnit.extension_input(arg_11_2, "dialogue_system")
+			local alloc_table = FrameTable.alloc_table()
+			local get_data = Unit.get_data(self._unit, "arena_interactable_data", "interactor_vo_line")
 
-			var_11_0:trigger_dialogue_event(var_11_2, var_11_1)
+			extension_input:trigger_dialogue_event(get_data, alloc_table)
 		end
 
-		arg_11_0._timer = arg_11_6 + Unit.get_data(arg_11_0._unit, "arena_interactable_data", "delay")
+		self._timer = arg_11_6 + Unit.get_data(self._unit, "arena_interactable_data", "delay")
 
-		LevelHelper:flow_event(arg_11_0._world, "on_arena_end_triggered")
-		arg_11_0:_set_state(var_0_0.INTERACTED)
+		LevelHelper:flow_event(self._world, "on_arena_end_triggered")
+		self:_set_state(tbl.INTERACTED)
 	end
 end
 
-function DeusArenaInteractableExtension.on_client_interact(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6, arg_12_7)
-	if not arg_12_0._is_server then
-		arg_12_0._state = var_0_0.INTERACTED
+DeusArenaInteractableExtension.on_client_interact = function (self, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6, arg_12_7)
+	-- function 12
+	if not self._is_server then
+		self._state = tbl.INTERACTED
 	end
 end
 
-function DeusArenaInteractableExtension._get_state(arg_13_0)
-	return arg_13_0._state
+DeusArenaInteractableExtension._get_state = function (self)
+	-- function 13
+	return self._state
 end
 
-function DeusArenaInteractableExtension._set_state(arg_14_0, arg_14_1)
-	Managers.state.network.network_transmit:send_rpc_clients("rpc_deus_set_arena_interactable_state", arg_14_0._level_unit_id, arg_14_1)
+DeusArenaInteractableExtension._set_state = function (self, arg_14_1)
+	-- function 14
+	Managers.state.network.network_transmit:send_rpc_clients("rpc_deus_set_arena_interactable_state", self._level_unit_id, arg_14_1)
 
-	arg_14_0._state = arg_14_1
+	self._state = arg_14_1
 end
 
-function DeusArenaInteractableExtension.override_interactable_action(arg_15_0)
-	return arg_15_0._override_interactable_action
+DeusArenaInteractableExtension.override_interactable_action = function (self)
+	-- function 15
+	return self._override_interactable_action
 end

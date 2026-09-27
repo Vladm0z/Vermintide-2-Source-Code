@@ -1,113 +1,165 @@
 -- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_lobby_browser_console_definitions.lua
 
-local function var_0_0(arg_1_0, arg_1_1)
-	local var_1_0 = LevelSettings
-	local var_1_1 = var_1_0[arg_1_0].map_settings
-	local var_1_2 = var_1_0[arg_1_1].map_settings
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
+	local LevelSettings = LevelSettings
+	local map_settings = LevelSettings[arg_1_0].map_settings
+	local map_settings_2 = LevelSettings[arg_1_1].map_settings
+	local sorting
 
-	return (var_1_1 and var_1_1.sorting or 0) < (var_1_2 and var_1_2.sorting or 0)
+	if not map_settings then
+		sorting = map_settings.sorting
+
+		if not sorting then
+			-- Nothing
+		end
+	end
+
+	sorting = 0
+
+	do
+		local sorting_2
+	end
+
+	::label_1_0::
+
+	if not map_settings_2 then
+		sorting_2 = map_settings_2.sorting
+
+		if not sorting_2 then
+			-- Nothing
+		end
+	end
+
+	sorting_2 = 0
+
+	::label_1_1::
+
+	return sorting < sorting_2
 end
 
-local function var_0_1(arg_2_0, arg_2_1)
-	local var_2_0 = {}
-	local var_2_1 = {}
-	local var_2_2 = GameSettingsDevelopment.release_levels_only
+local function fn_2(arg_2_0, arg_2_1)
+	-- function 2
+	local tbl = {}
+	local tbl_2 = {}
+	local release_levels_only = GameSettingsDevelopment.release_levels_only
 
-	for iter_2_0, iter_2_1 in pairs(LevelSettings) do
-		if type(iter_2_1) == "table" and (not var_2_2 or not DebugLevels[iter_2_0]) then
-			local var_2_3 = iter_2_1.game_mode or iter_2_1.mechanism
+	for k, v in pairs(LevelSettings) do
+		if not (type(v) ~= "table" or not release_levels_only or DebugLevels[k]) then
+			local game_mode = v.game_mode
 
-			if var_2_3 and var_2_3 ~= "tutorial" and var_2_3 ~= "demo" and iter_2_1.unlockable and not iter_2_1.default and LevelUnlockUtils.level_unlocked(arg_2_0, arg_2_1, iter_2_0) then
-				if not var_2_1[var_2_3] then
-					local var_2_4 = GameModeSettings[var_2_3]
-					local var_2_5 = var_2_4.difficulties
-					local var_2_6 = var_2_4.display_name
-					local var_2_7 = table.clone(var_2_5)
+			game_mode = game_mode or v.mechanism
 
-					var_2_7[#var_2_7 + 1] = "any"
-					var_2_0[#var_2_0 + 1] = {
-						levels = {},
-						difficulties = var_2_7,
-						game_mode_key = var_2_3,
-						game_mode_display_name = var_2_6
-					}
-					var_2_1[var_2_3] = #var_2_0
-				end
+			if not (not game_mode and game_mode == "tutorial" or game_mode == "demo") then
+				local unlockable = v.unlockable
 
-				if (not iter_2_1.supported_game_modes or iter_2_1.supported_game_modes[var_2_3]) and not iter_2_1.ommit_from_lobby_browser then
-					local var_2_8 = var_2_0[var_2_1[var_2_3]].levels
+				unlockable = not unlockable and not v.default
 
-					var_2_8[#var_2_8 + 1] = iter_2_0
+				if not unlockable and not LevelUnlockUtils.level_unlocked(arg_2_0, arg_2_1, k) then
+					if not tbl_2[game_mode] then
+						local var_2_5 = GameModeSettings[game_mode]
+						local difficulties = var_2_5.difficulties
+						local display_name = var_2_5.display_name
+						local clone = table.clone(difficulties)
+
+						clone[#clone + 1] = "any"
+						tbl[#tbl + 1] = {
+							levels = {},
+							difficulties = clone,
+							game_mode_key = game_mode,
+							game_mode_display_name = display_name
+						}
+						tbl_2[game_mode] = #tbl
+					end
+
+					if not (not v.supported_game_modes and v.supported_game_modes[game_mode] and v.ommit_from_lobby_browser) then
+						local levels = tbl[tbl_2[game_mode]].levels
+
+						levels[#levels + 1] = k
+					end
 				end
 			end
 		end
 	end
 
-	for iter_2_2 = 1, #var_2_0 do
-		local var_2_9 = var_2_0[iter_2_2].levels
+	for k_2 = 1, #tbl do
+		local levels_2 = tbl[k_2].levels
 
-		table.sort(var_2_9, var_0_0)
+		table.sort(levels_2, fn)
 
-		var_2_9[#var_2_9 + 1] = "any"
+		levels_2[#levels_2 + 1] = "any"
 	end
 
-	local function var_2_10(arg_3_0, arg_3_1)
-		return Localize(arg_3_0.game_mode_display_name) < Localize(arg_3_1.game_mode_display_name)
+	local function fn_2(self, arg_3_1)
+		-- function 3
+		return Localize(self.game_mode_display_name) < Localize(arg_3_1.game_mode_display_name)
 	end
 
-	table.sort(var_2_0, var_2_10)
+	table.sort(tbl, fn_2)
 
-	local var_2_11 = {}
+	local tbl_3 = {}
 
-	for iter_2_3 = 1, #var_2_0 do
-		local var_2_12 = var_2_0[iter_2_3].game_mode_key
-		local var_2_13 = #var_2_11 + 1
+	for l = 1, #tbl do
+		local game_mode_key = tbl[l].game_mode_key
+		local num = #tbl_3 + 1
 
-		var_2_11[var_2_13] = var_2_12
-		var_2_11[var_2_12] = var_2_13
+		tbl_3[num] = game_mode_key
+		tbl_3[game_mode_key] = num
 	end
 
-	local var_2_14 = "weave"
-	local var_2_15 = GameModeSettings[var_2_14].display_name
+	local str = "weave"
+	local display_name_2 = GameModeSettings[str].display_name
 
-	var_2_0[#var_2_0 + 1] = {
+	tbl[#tbl + 1] = {
 		levels = {
 			"any"
 		},
 		difficulties = {
 			"any"
 		},
-		game_mode_key = var_2_14,
-		game_mode_display_name = var_2_15
+		game_mode_key = str,
+		game_mode_display_name = display_name_2
 	}
-	var_2_11[var_2_14] = #var_2_11 + 1
-	var_2_11[#var_2_11 + 1] = var_2_14
-	var_2_0.game_modes = var_2_11
+	tbl_3[str] = #tbl_3 + 1
+	tbl_3[#tbl_3 + 1] = str
+	tbl.game_modes = tbl_3
 
-	return var_2_0
+	return tbl
 end
 
-local var_0_2 = {
+local tbl = {
 	"lb_show_joinable",
 	"lb_show_all"
 }
 
-if IS_PS4 then
-	table.insert(var_0_2, 2, "lb_search_type_friends")
+if not IS_PS4 then
+	table.insert(tbl, 2, "lb_search_type_friends")
 end
 
-local var_0_3 = IS_PS4 and {
-	"map_zone_options_2",
-	"map_zone_options_3",
-	"map_zone_options_5"
-} or {
+local tbl_2
+
+if not IS_PS4 then
+	tbl_2 = {
+		"map_zone_options_2",
+		"map_zone_options_3",
+		"map_zone_options_5"
+	}
+
+	if not tbl_2 then
+		-- Nothing
+	end
+end
+
+tbl_2 = {
 	"map_zone_options_2",
 	"map_zone_options_4",
 	"map_zone_options_5"
 }
 
+::label_0_0::
+
 return {
-	show_lobbies_table = var_0_2,
-	distance_table = var_0_3,
-	setup_game_mode_data = var_0_1
+	show_lobbies_table = tbl,
+	distance_table = tbl_2,
+	setup_game_mode_data = fn_2
 }

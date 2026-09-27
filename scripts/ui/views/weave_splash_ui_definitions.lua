@@ -2,7 +2,7 @@
 
 local_require("scripts/ui/ui_widgets")
 
-local var_0_0 = {
+local tbl = {
 	root = {
 		is_root = true,
 		position = {
@@ -43,7 +43,8 @@ local var_0_0 = {
 	}
 }
 
-local function var_0_1(arg_1_0, arg_1_1)
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
 	return {
 		scenegraph_id = "background_image",
 		element = {
@@ -76,7 +77,7 @@ local function var_0_1(arg_1_0, arg_1_1)
 	}
 end
 
-local var_0_2 = {
+local tbl_2 = {
 	dead_space_filler = UIWidgets.create_simple_rect("root", {
 		255,
 		0,
@@ -86,7 +87,7 @@ local var_0_2 = {
 }
 
 return {
-	scenegraph_definition = var_0_0,
-	widget_definitions = var_0_2,
-	create_weave_image_func = var_0_1
+	scenegraph_definition = tbl,
+	widget_definitions = tbl_2,
+	create_weave_image_func = fn
 }

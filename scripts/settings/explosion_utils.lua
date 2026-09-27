@@ -1,8 +1,12 @@
 -- chunkname: @scripts/settings/explosion_utils.lua
 
-ExplosionUtils = ExplosionUtils or {}
+local ExplosionUtils = ExplosionUtils
 
-function ExplosionUtils.get_template(arg_1_0)
+ExplosionUtils = ExplosionUtils or {}
+ExplosionUtils = ExplosionUtils
+
+ExplosionUtils.get_template = function (arg_1_0)
+	-- function 1
 	if not arg_1_0 then
 		return
 	end

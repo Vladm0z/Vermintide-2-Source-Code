@@ -1,13 +1,13 @@
 -- chunkname: @scripts/ui/views/character_selection_view/states/definitions/character_selection_state_character_definitions.lua
 
-local var_0_0 = 426
-local var_0_1 = 240
-local var_0_2 = {
+local num = 426
+local num_2 = 240
+local tbl = {
 	450,
 	170
 }
-local var_0_3 = 6
-local var_0_4 = {
+local num_3 = 6
+local tbl_2 = {
 	screen = {
 		scale = "fit",
 		size = {
@@ -206,7 +206,7 @@ local var_0_4 = {
 		parent = "right_side_root",
 		horizontal_alignment = "right",
 		size = {
-			var_0_2[1] + 20,
+			tbl[1] + 20,
 			885
 		},
 		position = {
@@ -220,8 +220,8 @@ local var_0_4 = {
 		parent = "info_window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_0,
-			var_0_1
+			num,
+			num_2
 		},
 		position = {
 			0,
@@ -262,7 +262,7 @@ local var_0_4 = {
 		parent = "info_window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_2[1] + 20,
+			tbl[1] + 20,
 			625
 		},
 		position = {
@@ -278,7 +278,7 @@ local var_0_4 = {
 		vertical_alignment = "top",
 		parent = "scrollbar_window",
 		horizontal_alignment = "center",
-		size = var_0_2,
+		size = tbl,
 		position = {
 			0,
 			0,
@@ -318,7 +318,7 @@ local var_0_4 = {
 		parent = "passive_window",
 		horizontal_alignment = "left",
 		size = {
-			var_0_2[1] * 0.65,
+			tbl[1] * 0.65,
 			50
 		},
 		position = {
@@ -346,7 +346,7 @@ local var_0_4 = {
 		parent = "passive_window",
 		horizontal_alignment = "right",
 		size = {
-			var_0_2[1] * 0.3,
+			tbl[1] * 0.3,
 			50
 		},
 		position = {
@@ -360,8 +360,8 @@ local var_0_4 = {
 		parent = "passive_icon",
 		horizontal_alignment = "left",
 		size = {
-			var_0_2[1] - 110,
-			var_0_2[2] - 90
+			tbl[1] - 110,
+			tbl[2] - 90
 		},
 		position = {
 			90,
@@ -373,10 +373,10 @@ local var_0_4 = {
 		vertical_alignment = "top",
 		parent = "passive_window",
 		horizontal_alignment = "left",
-		size = var_0_2,
+		size = tbl,
 		position = {
 			0,
-			-var_0_2[2],
+			-tbl[2],
 			1
 		}
 	},
@@ -413,7 +413,7 @@ local var_0_4 = {
 		parent = "active_window",
 		horizontal_alignment = "left",
 		size = {
-			var_0_2[1] * 0.6,
+			tbl[1] * 0.6,
 			50
 		},
 		position = {
@@ -441,7 +441,7 @@ local var_0_4 = {
 		parent = "active_window",
 		horizontal_alignment = "right",
 		size = {
-			var_0_2[1] * 0.3,
+			tbl[1] * 0.3,
 			50
 		},
 		position = {
@@ -455,8 +455,8 @@ local var_0_4 = {
 		parent = "active_icon",
 		horizontal_alignment = "left",
 		size = {
-			var_0_2[1] - 110,
-			var_0_2[2] - 90
+			tbl[1] - 110,
+			tbl[2] - 90
 		},
 		position = {
 			90,
@@ -469,7 +469,7 @@ local var_0_4 = {
 		parent = "active_window",
 		horizontal_alignment = "left",
 		size = {
-			var_0_2[1] * 0.6,
+			tbl[1] * 0.6,
 			50
 		},
 		position = {
@@ -551,17 +551,17 @@ local var_0_4 = {
 	}
 }
 
-for iter_0_0 = 1, var_0_3 do
-	local var_0_5 = iter_0_0 - 1
+for i = 1, num_3 do
+	local num_4 = i - 1
 
-	if iter_0_0 == 1 then
-		var_0_5 = "anchor"
+	if i == 1 then
+		num_4 = "anchor"
 	end
 
-	var_0_4["career_perk_" .. iter_0_0] = {
+	tbl_2["career_perk_" .. i] = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "left",
-		parent = "career_perk_" .. var_0_5,
+		parent = "career_perk_" .. num_4,
 		size = {
 			410,
 			1
@@ -574,7 +574,7 @@ for iter_0_0 = 1, var_0_3 do
 	}
 end
 
-local var_0_6 = {
+local tbl_3 = {
 	word_wrap = true,
 	use_shadow = true,
 	localize = false,
@@ -590,7 +590,7 @@ local var_0_6 = {
 		2
 	}
 }
-local var_0_7 = {
+local tbl_4 = {
 	word_wrap = true,
 	use_shadow = true,
 	localize = false,
@@ -606,7 +606,7 @@ local var_0_7 = {
 		2
 	}
 }
-local var_0_8 = {
+local tbl_5 = {
 	font_size = 32,
 	upper_case = false,
 	localize = false,
@@ -623,7 +623,7 @@ local var_0_8 = {
 		2
 	}
 }
-local var_0_9 = {
+local tbl_6 = {
 	font_size = 40,
 	upper_case = true,
 	localize = false,
@@ -640,7 +640,7 @@ local var_0_9 = {
 		2
 	}
 }
-local var_0_10 = {
+local tbl_7 = {
 	word_wrap = true,
 	font_size = 30,
 	localize = false,
@@ -655,7 +655,7 @@ local var_0_10 = {
 		2
 	}
 }
-local var_0_11 = {
+local tbl_8 = {
 	word_wrap = true,
 	font_size = 52,
 	localize = false,
@@ -670,7 +670,7 @@ local var_0_11 = {
 		2
 	}
 }
-local var_0_12 = {
+local tbl_9 = {
 	word_wrap = false,
 	upper_case = true,
 	localize = true,
@@ -686,11 +686,11 @@ local var_0_12 = {
 		20
 	}
 }
-local var_0_13 = {
+local tbl_10 = {
 	110,
 	130
 }
-local var_0_14 = {
+local tbl_11 = {
 	scenegraph_id = "hero_root",
 	offset = {
 		0,
@@ -711,10 +711,12 @@ local var_0_14 = {
 				style_id = "icon",
 				texture_id = "icon",
 				pass_type = "texture",
-				content_change_function = function(arg_1_0, arg_1_1)
-					local var_1_0 = arg_1_0.is_hover and 255 or 184
+				content_change_function = function (self, arg_1_1)
+					-- function 1
+					local flag
 
-					arg_1_1.color[1] = math.ceil(arg_1_1.color[1] + 0.1 * (var_1_0 - arg_1_1.color[1]))
+					flag = not self.is_hover and 255 and 184
+					arg_1_1.color[1] = math.ceil(arg_1_1.color[1] + 0.1 * (flag - arg_1_1.color[1]))
 				end
 			}
 		}
@@ -725,7 +727,7 @@ local var_0_14 = {
 	},
 	style = {
 		bg = {
-			texture_size = var_0_13,
+			texture_size = tbl_10,
 			offset = {
 				0,
 				0,
@@ -746,7 +748,8 @@ local var_0_14 = {
 	}
 }
 
-local function var_0_15(arg_2_0, arg_2_1)
+local function fn(arg_2_0, arg_2_1)
+	-- function 2
 	return {
 		element = {
 			passes = {
@@ -754,16 +757,32 @@ local function var_0_15(arg_2_0, arg_2_1)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_change_function = function(arg_3_0, arg_3_1)
-						arg_3_1.text_color = arg_3_0.locked and arg_3_1.locked_text_color or arg_3_1.default_text_color
+					content_change_function = function (self, arg_3_1)
+						-- function 3
+						local locked_text_color
+
+						if not self.locked then
+							locked_text_color = arg_3_1.locked_text_color
+
+							if not locked_text_color then
+								-- Nothing
+							end
+						end
+
+						locked_text_color = arg_3_1.default_text_color
+
+						::label_3_0::
+
+						arg_3_1.text_color = locked_text_color
 					end
 				},
 				{
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_4_0)
-						return arg_4_0.use_shadow
+					content_check_function = function (self)
+						-- function 4
+						return self.use_shadow
 					end
 				}
 			}
@@ -817,8 +836,8 @@ local function var_0_15(arg_2_0, arg_2_1)
 	}
 end
 
-local var_0_16 = true
-local var_0_17 = {
+local flag = true
+local tbl_12 = {
 	background = UIWidgets.create_simple_rect("screen", {
 		0,
 		0,
@@ -835,9 +854,9 @@ local var_0_17 = {
 			0
 		}
 	}, "bottom_panel", nil, nil, UISettings.console_menu_rect_color),
-	info_window_background = UIWidgets.create_rect_with_outer_frame("info_window", var_0_4.info_window.size, "frame_outer_fade_02", 0, UISettings.console_menu_rect_color),
+	info_window_background = UIWidgets.create_rect_with_outer_frame("info_window", tbl_2.info_window.size, "frame_outer_fade_02", 0, UISettings.console_menu_rect_color),
 	mask = UIWidgets.create_simple_texture("mask_rect", "scrollbar_anchor"),
-	info_window_video = UIWidgets.create_frame("info_window_video", var_0_4.info_window_video.size, "menu_frame_06"),
+	info_window_video = UIWidgets.create_frame("info_window_video", tbl_2.info_window_video.size, "menu_frame_06"),
 	info_video_edge_left = UIWidgets.create_simple_texture("frame_detail_03", "info_video_edge_left"),
 	info_video_edge_right = UIWidgets.create_simple_uv_texture("frame_detail_03", {
 		{
@@ -849,28 +868,28 @@ local var_0_17 = {
 			1
 		}
 	}, "info_video_edge_right"),
-	perk_title_text = UIWidgets.create_simple_text(Localize("hero_view_perk_title"), "perk_title_text", nil, nil, var_0_8),
+	perk_title_text = UIWidgets.create_simple_text(Localize("hero_view_perk_title"), "perk_title_text", nil, nil, tbl_5),
 	perk_title_divider = UIWidgets.create_simple_texture("infoslate_frame_02_horizontal", "perk_title_divider", true),
-	passive_title_text = UIWidgets.create_simple_text("n/a", "passive_title_text", nil, nil, var_0_8),
-	passive_type_title = UIWidgets.create_simple_text(Localize("hero_view_passive_ability"), "passive_type_title", nil, nil, var_0_7),
+	passive_title_text = UIWidgets.create_simple_text("n/a", "passive_title_text", nil, nil, tbl_5),
+	passive_type_title = UIWidgets.create_simple_text(Localize("hero_view_passive_ability"), "passive_type_title", nil, nil, tbl_4),
 	passive_title_divider = UIWidgets.create_simple_texture("infoslate_frame_02_horizontal", "passive_title_divider", true),
-	passive_description_text = UIWidgets.create_simple_text("n/a", "passive_description_text", nil, nil, var_0_6),
+	passive_description_text = UIWidgets.create_simple_text("n/a", "passive_description_text", nil, nil, tbl_3),
 	passive_icon = UIWidgets.create_simple_texture("icons_placeholder", "passive_icon", true),
 	passive_icon_frame = UIWidgets.create_simple_texture("talent_frame", "passive_icon_frame", true),
-	active_title_text = UIWidgets.create_simple_text("n/a", "active_title_text", nil, nil, var_0_8),
-	active_type_title = UIWidgets.create_simple_text(Localize("hero_view_activated_ability"), "active_type_title", nil, nil, var_0_7),
+	active_title_text = UIWidgets.create_simple_text("n/a", "active_title_text", nil, nil, tbl_5),
+	active_type_title = UIWidgets.create_simple_text(Localize("hero_view_activated_ability"), "active_type_title", nil, nil, tbl_4),
 	active_title_divider = UIWidgets.create_simple_texture("infoslate_frame_02_horizontal", "active_title_divider", true),
-	active_description_text = UIWidgets.create_simple_text("n/a", "active_description_text", nil, nil, var_0_6),
+	active_description_text = UIWidgets.create_simple_text("n/a", "active_description_text", nil, nil, tbl_3),
 	active_icon = UIWidgets.create_simple_texture("icons_placeholder", "active_icon", true),
 	active_icon_frame = UIWidgets.create_simple_texture("talent_frame", "active_icon_frame", true)
 }
 
-for iter_0_1 = 1, var_0_3 do
-	var_0_17["career_perk_" .. iter_0_1] = UIWidgets.create_career_perk_text("career_perk_" .. iter_0_1)
+for j = 1, num_3 do
+	tbl_12["career_perk_" .. j] = UIWidgets.create_career_perk_text("career_perk_" .. j)
 end
 
-local var_0_18 = {
-	locked_info_text = var_0_15(Localize("career_locked_info"), "locked_info_text"),
+local tbl_13 = {
+	locked_info_text = fn(Localize("career_locked_info"), "locked_info_text"),
 	hero_info_panel = UIWidgets.create_simple_texture("item_slot_side_fade", "hero_info_panel", nil, nil, {
 		255,
 		0,
@@ -881,18 +900,18 @@ local var_0_18 = {
 	hero_info_level_bg = UIWidgets.create_simple_texture("hero_level_bg", "hero_info_level_bg"),
 	hero_info_divider = UIWidgets.create_simple_texture("divider_vertical_hero_middle", "hero_info_divider"),
 	hero_info_divider_edge = UIWidgets.create_simple_texture("divider_vertical_hero_end", "hero_info_divider_edge"),
-	info_career_name = UIWidgets.create_simple_text("n/a", "info_career_name", nil, nil, var_0_9),
-	info_hero_name = UIWidgets.create_simple_text("n/a", "info_hero_name", nil, nil, var_0_10),
-	info_hero_level = UIWidgets.create_simple_text("n/a", "info_hero_level", nil, nil, var_0_11),
-	select_button = UIWidgets.create_default_button("select_button", var_0_4.select_button.size, nil, nil, Localize("input_description_confirm"), nil, nil, nil, nil, var_0_16),
-	bot_priority_button = UIWidgets.create_default_button("bot_priority_button", var_0_4.bot_priority_button.size, nil, nil, Localize("input_description_prio_bot"), nil, nil, nil, nil, var_0_16)
+	info_career_name = UIWidgets.create_simple_text("n/a", "info_career_name", nil, nil, tbl_6),
+	info_hero_name = UIWidgets.create_simple_text("n/a", "info_hero_name", nil, nil, tbl_7),
+	info_hero_level = UIWidgets.create_simple_text("n/a", "info_hero_level", nil, nil, tbl_8),
+	select_button = UIWidgets.create_default_button("select_button", tbl_2.select_button.size, nil, nil, Localize("input_description_confirm"), nil, nil, nil, nil, flag),
+	bot_priority_button = UIWidgets.create_default_button("bot_priority_button", tbl_2.bot_priority_button.size, nil, nil, Localize("input_description_prio_bot"), nil, nil, nil, nil, flag)
 }
-local var_0_19 = {
-	bot_header_text = UIWidgets.create_simple_text("input_description_prio_bot", "locked_info_text", nil, nil, var_0_12),
-	bot_info_text = var_0_15(Localize("assign_career_tooltip"), "locked_info_text"),
-	back_button = UIWidgets.create_default_button("back_button", var_0_4.back_button.size, nil, nil, Localize("back_menu_button_name"), nil, nil, nil, nil, var_0_16)
+local tbl_14 = {
+	bot_header_text = UIWidgets.create_simple_text("input_description_prio_bot", "locked_info_text", nil, nil, tbl_9),
+	bot_info_text = fn(Localize("assign_career_tooltip"), "locked_info_text"),
+	back_button = UIWidgets.create_default_button("back_button", tbl_2.back_button.size, nil, nil, Localize("back_menu_button_name"), nil, nil, nil, nil, flag)
 }
-local var_0_20 = {
+local tbl_15 = {
 	default = {
 		{
 			input_action = "refresh",
@@ -952,27 +971,30 @@ local var_0_20 = {
 		}
 	}
 }
-local var_0_21 = {
+local tbl_16 = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+				-- function 5
 				arg_5_3.render_settings.main_alpha_multiplier = 0
 				arg_5_3.render_settings.info_alpha_multiplier = 0
 				arg_5_3.render_settings.bot_selection_window_multiplier = 0
 			end,
-			update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
-				local var_6_0 = math.easeOutCubic(arg_6_3)
+			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+				-- function 6
+				local easeOutCubic = math.easeOutCubic(arg_6_3)
 
-				arg_6_4.render_settings.main_alpha_multiplier = var_6_0
-				arg_6_4.render_settings.info_alpha_multiplier = var_6_0
+				arg_6_4.render_settings.main_alpha_multiplier = easeOutCubic
+				arg_6_4.render_settings.info_alpha_multiplier = easeOutCubic
 				arg_6_4.render_settings.bot_selection_alpha_multiplier = 0
-				arg_6_0.left_side_root.local_position[1] = arg_6_1.left_side_root.position[1] + -100 * (1 - var_6_0)
-				arg_6_0.right_side_root.local_position[1] = arg_6_1.right_side_root.position[1] + 100 * (1 - var_6_0)
+				arg_6_0.left_side_root.local_position[1] = arg_6_1.left_side_root.position[1] + -100 * (1 - easeOutCubic)
+				arg_6_0.right_side_root.local_position[1] = arg_6_1.right_side_root.position[1] + 100 * (1 - easeOutCubic)
 			end,
-			on_complete = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			on_complete = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+				-- function 7
 				return
 			end
 		}
@@ -982,21 +1004,24 @@ local var_0_21 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 1,
-			init = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			init = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+				-- function 8
 				arg_8_3.render_settings.main_alpha_multiplier = 1
 				arg_8_3.render_settings.info_alpha_multiplier = 1
 				arg_8_3.render_settings.bot_selection_alpha_multiplier = 0
 			end,
-			update = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
-				local var_9_0 = math.easeOutCubic(arg_9_3)
+			update = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+				-- function 9
+				local easeOutCubic = math.easeOutCubic(arg_9_3)
 
-				arg_9_4.render_settings.main_alpha_multiplier = 1 - var_9_0
-				arg_9_4.render_settings.info_alpha_multiplier = 1 - var_9_0
+				arg_9_4.render_settings.main_alpha_multiplier = 1 - easeOutCubic
+				arg_9_4.render_settings.info_alpha_multiplier = 1 - easeOutCubic
 				arg_9_4.render_settings.bot_selection_alpha_multiplier = 0
-				arg_9_0.left_side_root.local_position[1] = arg_9_1.left_side_root.position[1] + -100 * var_9_0
-				arg_9_0.right_side_root.local_position[1] = arg_9_1.right_side_root.position[1] + 100 * var_9_0
+				arg_9_0.left_side_root.local_position[1] = arg_9_1.left_side_root.position[1] + -100 * easeOutCubic
+				arg_9_0.right_side_root.local_position[1] = arg_9_1.right_side_root.position[1] + 100 * easeOutCubic
 			end,
-			on_complete = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			on_complete = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+				-- function 10
 				return
 			end
 		}
@@ -1006,18 +1031,21 @@ local var_0_21 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+			init = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+				-- function 11
 				arg_11_3.render_settings.info_alpha_multiplier = 0
 				arg_11_3.render_settings.bot_selection_alpha_multiplier = 0
 			end,
-			update = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
-				local var_12_0 = math.easeOutCubic(arg_12_3)
+			update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+				-- function 12
+				local easeOutCubic = math.easeOutCubic(arg_12_3)
 
-				arg_12_4.render_settings.bot_selection_alpha_multiplier = var_12_0
+				arg_12_4.render_settings.bot_selection_alpha_multiplier = easeOutCubic
 				arg_12_4.render_settings.info_alpha_multiplier = 0
-				arg_12_0.left_side_root.local_position[1] = arg_12_1.left_side_root.position[1] + -100 * (1 - var_12_0)
+				arg_12_0.left_side_root.local_position[1] = arg_12_1.left_side_root.position[1] + -100 * (1 - easeOutCubic)
 			end,
-			on_complete = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			on_complete = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+				-- function 13
 				return
 			end
 		}
@@ -1027,18 +1055,21 @@ local var_0_21 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			init = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+				-- function 14
 				arg_14_3.render_settings.info_alpha_multiplier = 0
 				arg_14_3.render_settings.bot_selection_alpha_multiplier = 0
 			end,
-			update = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
-				local var_15_0 = math.easeOutCubic(arg_15_3)
+			update = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+				-- function 15
+				local easeOutCubic = math.easeOutCubic(arg_15_3)
 
-				arg_15_4.render_settings.info_alpha_multiplier = var_15_0
+				arg_15_4.render_settings.info_alpha_multiplier = easeOutCubic
 				arg_15_4.render_settings.bot_selection_alpha_multiplier = 0
-				arg_15_0.left_side_root.local_position[1] = arg_15_1.left_side_root.position[1] + -100 * (1 - var_15_0)
+				arg_15_0.left_side_root.local_position[1] = arg_15_1.left_side_root.position[1] + -100 * (1 - easeOutCubic)
 			end,
-			on_complete = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			on_complete = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+				-- function 16
 				return
 			end
 		}
@@ -1046,15 +1077,15 @@ local var_0_21 = {
 }
 
 return {
-	widgets = var_0_17,
-	info_widgets = var_0_18,
-	bot_selection_widgets = var_0_19,
-	hero_widget = UIWidgets.create_hero_widget("hero_root", var_0_4.hero_root.size),
-	empty_hero_widget = var_0_14,
-	hero_icon_widget = UIWidgets.create_hero_icon_widget("hero_icon_root", var_0_4.hero_icon_root.size),
-	character_selection_widgets = var_0_17,
-	generic_input_actions = var_0_20,
-	scenegraph_definition = var_0_4,
-	animation_definitions = var_0_21,
-	NUM_PERKS = var_0_3
+	widgets = tbl_12,
+	info_widgets = tbl_13,
+	bot_selection_widgets = tbl_14,
+	hero_widget = UIWidgets.create_hero_widget("hero_root", tbl_2.hero_root.size),
+	empty_hero_widget = tbl_11,
+	hero_icon_widget = UIWidgets.create_hero_icon_widget("hero_icon_root", tbl_2.hero_icon_root.size),
+	character_selection_widgets = tbl_12,
+	generic_input_actions = tbl_15,
+	scenegraph_definition = tbl_2,
+	animation_definitions = tbl_16,
+	NUM_PERKS = num_3
 }

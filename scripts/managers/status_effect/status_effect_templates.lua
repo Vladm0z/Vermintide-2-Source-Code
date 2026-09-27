@@ -2,172 +2,204 @@
 
 StatusEffectTemplates = {}
 
-local function var_0_0(arg_1_0)
-	local var_1_0 = Managers.player:owner(arg_1_0)
+local function fn(arg_1_0)
+	-- function 1
+	local owner = Managers.player:owner(arg_1_0)
 
-	return var_1_0 and var_1_0.bot_player
+	return not owner and owner.bot_player
 end
 
-local var_0_1 = {
+local tbl = {
 	default_timed_duration = 7,
-	on_applied = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
-		local var_2_0 = {}
-		local var_2_1 = arg_2_2.link_object
-		local var_2_2 = var_2_1 and Unit.has_node(arg_2_0, var_2_1) and Unit.node(arg_2_0, var_2_1) or 0
-		local var_2_3 = Unit.get_data(arg_2_0, "breed")
-		local var_2_4 = var_2_3 and var_2_3.status_effect_settings
+	on_applied = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+		-- function 2
+		local tbl = {}
+		local link_object = arg_2_2.link_object
+		local node
 
-		if not var_2_4 then
+		if not link_object and not Unit.has_node(arg_2_0, link_object) then
+			node = Unit.node(arg_2_0, link_object)
+
+			if not node then
+				-- Nothing
+			end
+		end
+
+		node = 0
+
+		::label_2_0::
+
+		local get_data = Unit.get_data(arg_2_0, "breed")
+		local flag = not get_data and get_data.status_effect_settings
+
+		if not flag then
 			return
 		end
 
-		local var_2_5 = var_2_4 and var_2_4.category or "small"
-		local var_2_6 = arg_2_2.particle_by_category
-		local var_2_7 = var_2_6 and var_2_6[var_2_5]
+		local category
 
-		if var_2_7 then
+		if not flag then
+			category = flag.category
+
+			if not category then
+				-- Nothing
+			end
+		end
+
+		category = "small"
+
+		::label_2_1::
+
+		local particle_by_category = arg_2_2.particle_by_category
+		local flag_2 = not particle_by_category and particle_by_category[category]
+
+		if not flag_2 then
 			local var_2_8 = arg_2_0
-			local var_2_9 = ScriptUnit.has_extension(arg_2_0, "cosmetic_system")
+			local has_extension = ScriptUnit.has_extension(arg_2_0, "cosmetic_system")
 
-			var_2_8 = var_2_9 and var_2_9:get_third_person_mesh_unit() or var_2_8
+			var_2_8 = not has_extension and has_extension:get_third_person_mesh_unit() and var_2_8
 
-			local var_2_10 = ScriptUnit.has_extension(arg_2_0, "ai_inventory_system")
+			local has_extension_2 = ScriptUnit.has_extension(arg_2_0, "ai_inventory_system")
 
-			var_2_8 = var_2_10 and var_2_10:get_skin_unit() or var_2_8
+			var_2_8 = not has_extension_2 and has_extension_2:get_skin_unit() and var_2_8
 
-			local var_2_11 = arg_2_2.unit_material_variable
+			local unit_material_variable = arg_2_2.unit_material_variable
 
-			if var_2_11 then
-				ScriptUnit.set_material_variable(var_2_8, var_2_11.variable_name, var_2_11.value, true)
+			if not unit_material_variable then
+				ScriptUnit.set_material_variable(var_2_8, unit_material_variable.variable_name, unit_material_variable.value, true)
 			end
 
-			local var_2_12 = ScriptWorld.create_particles_linked(arg_2_3, var_2_7, var_2_8, var_2_2, "destroy")
+			local create_particles_linked = ScriptWorld.create_particles_linked(arg_2_3, flag_2, var_2_8, node, "destroy")
 
-			var_2_0.particle_id = var_2_12
-			var_2_0.attach_unit = var_2_8
+			tbl.particle_id = create_particles_linked
+			tbl.attach_unit = var_2_8
 
-			local var_2_13 = arg_2_2.particle_material_variable
+			local particle_material_variable = arg_2_2.particle_material_variable
 
-			if arg_2_2.particle_material_variable then
-				local var_2_14 = var_2_13.cloud_name
-				local var_2_15 = var_2_13.variable_name
-				local var_2_16 = var_2_13.value
+			if not arg_2_2.particle_material_variable then
+				local cloud_name = particle_material_variable.cloud_name
+				local variable_name = particle_material_variable.variable_name
+				local value = particle_material_variable.value
 
-				ScriptWorld.set_material_variable_for_particles(arg_2_3, var_2_12, var_2_14, var_2_15, var_2_16)
+				ScriptWorld.set_material_variable_for_particles(arg_2_3, create_particles_linked, cloud_name, variable_name, value)
 			end
 
-			local var_2_17 = arg_2_2.sfx
+			local sfx = arg_2_2.sfx
 
-			if var_2_17 then
-				local var_2_18 = Managers.world:wwise_world(arg_2_3)
+			if not sfx then
+				local wwise_world = Managers.world:wwise_world(arg_2_3)
 
-				WwiseWorld.trigger_event(var_2_18, var_2_17, arg_2_0)
-			end
-		end
-
-		local var_2_19 = ScriptUnit.has_extension(arg_2_0, "first_person_system")
-
-		if var_2_19 and not var_0_0(arg_2_0) then
-			local var_2_20 = arg_2_2.screen_space_fx
-
-			if var_2_20 then
-				var_2_0.screen_space_fx_id = var_2_19:create_screen_particles(var_2_20)
-			end
-
-			local var_2_21 = arg_2_2.mood
-
-			if var_2_21 then
-				Managers.state.camera:set_mood(var_2_21, arg_2_1, true)
-			end
-
-			local var_2_22 = arg_2_2.hud_sound
-
-			if var_2_22 then
-				var_2_19:play_hud_sound_event(var_2_22)
+				WwiseWorld.trigger_event(wwise_world, sfx, arg_2_0)
 			end
 		end
 
-		if arg_2_2.career_state then
+		local has_extension_3 = ScriptUnit.has_extension(arg_2_0, "first_person_system")
+
+		if not (not has_extension_3 and fn(arg_2_0)) then
+			local screen_space_fx = arg_2_2.screen_space_fx
+
+			if not screen_space_fx then
+				tbl.screen_space_fx_id = has_extension_3:create_screen_particles(screen_space_fx)
+			end
+
+			local mood = arg_2_2.mood
+
+			if not mood then
+				Managers.state.camera:set_mood(mood, arg_2_1, true)
+			end
+
+			local hud_sound = arg_2_2.hud_sound
+
+			if not hud_sound then
+				has_extension_3:play_hud_sound_event(hud_sound)
+			end
+		end
+
+		if not arg_2_2.career_state then
 			ScriptUnit.extension(arg_2_0, "career_system"):set_state(arg_2_2.career_state)
 		end
 
-		return var_2_0
+		return tbl
 	end,
-	on_increment = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	on_increment = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+		-- function 3
 		if not arg_3_4 then
 			return
 		end
 
-		if not arg_3_4.death and not HEALTH_ALIVE[arg_3_0] then
-			local var_3_0 = arg_3_2.death_unit_material_variable
+		if not (arg_3_4.death or HEALTH_ALIVE[arg_3_0]) then
+			local death_unit_material_variable = arg_3_2.death_unit_material_variable
 
-			if var_3_0 then
-				local var_3_1 = var_3_0.variable_name
-				local var_3_2 = var_3_0.value
-				local var_3_3 = arg_3_4.attach_unit or arg_3_0
+			if not death_unit_material_variable then
+				local variable_name = death_unit_material_variable.variable_name
+				local value = death_unit_material_variable.value
+				local attach_unit = arg_3_4.attach_unit
 
-				ScriptUnit.set_material_variable(var_3_3, var_3_1, var_3_2, true)
+				attach_unit = attach_unit or arg_3_0
+
+				ScriptUnit.set_material_variable(attach_unit, variable_name, value, true)
 			end
 
-			if arg_3_2.death_flow_event then
+			if not arg_3_2.death_flow_event then
 				UNIT_FLOW_EVENT(arg_3_0, arg_3_2.death_flow_event)
 			end
 
 			arg_3_4.death = true
 		end
 	end,
-	on_removed = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	on_removed = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+		-- function 4
 		if not arg_4_4 then
 			return
 		end
 
-		local var_4_0 = arg_4_4.particle_id
+		local particle_id = arg_4_4.particle_id
 
-		if var_4_0 then
-			World.destroy_particles(arg_4_3, var_4_0)
+		if not particle_id then
+			World.destroy_particles(arg_4_3, particle_id)
 
-			if arg_4_4.stop_sfx then
-				local var_4_1 = Managers.world:wwise_world(arg_4_3)
+			if not arg_4_4.stop_sfx then
+				local wwise_world = Managers.world:wwise_world(arg_4_3)
 
-				WwiseWorld.trigger_event(var_4_1, arg_4_4.stop_sfx, arg_4_0)
+				WwiseWorld.trigger_event(wwise_world, arg_4_4.stop_sfx, arg_4_0)
 			end
 		end
 
-		if arg_4_2.career_state then
+		if not arg_4_2.career_state then
 			ScriptUnit.extension(arg_4_0, "career_system"):set_state("default")
 		end
 
-		local var_4_2 = ScriptUnit.has_extension(arg_4_0, "first_person_system")
+		local has_extension = ScriptUnit.has_extension(arg_4_0, "first_person_system")
 
-		if var_4_2 and not var_0_0(arg_4_0) then
-			local var_4_3 = arg_4_4.screen_space_fx_id
+		if not (not has_extension and fn(arg_4_0)) then
+			local screen_space_fx_id = arg_4_4.screen_space_fx_id
 
-			if var_4_3 then
-				var_4_2:stop_spawning_screen_particles(var_4_3)
+			if not screen_space_fx_id then
+				has_extension:stop_spawning_screen_particles(screen_space_fx_id)
 			end
 
-			local var_4_4 = arg_4_2.remove_screen_space_fx
+			local remove_screen_space_fx = arg_4_2.remove_screen_space_fx
 
-			if var_4_4 then
-				var_4_2:create_screen_particles(var_4_4)
+			if not remove_screen_space_fx then
+				has_extension:create_screen_particles(remove_screen_space_fx)
 			end
 
-			local var_4_5 = arg_4_2.mood
+			local mood = arg_4_2.mood
 
-			if var_4_5 then
-				Managers.state.camera:set_mood(var_4_5, arg_4_1, false)
+			if not mood then
+				Managers.state.camera:set_mood(mood, arg_4_1, false)
 			end
 
-			local var_4_6 = arg_4_2.remove_hud_sound
+			local remove_hud_sound = arg_4_2.remove_hud_sound
 
-			if var_4_6 then
-				var_4_2:play_hud_sound_event(var_4_6)
+			if not remove_hud_sound then
+				has_extension:play_hud_sound_event(remove_hud_sound)
 			end
 		end
 	end
 }
 
-StatusEffectTemplates.burning = table.clone(var_0_1)
+StatusEffectTemplates.burning = table.clone(tbl)
 StatusEffectTemplates.burning.link_object = "j_hips"
 StatusEffectTemplates.burning.unit_material_variable = {
 	variable_name = "dissolve_emissive",
@@ -201,46 +233,51 @@ StatusEffectTemplates.burning.particle_by_category = {
 StatusEffectTemplates.burning_death_critical = table.clone(StatusEffectTemplates.burning)
 StatusEffectTemplates.burning_death_critical.default_timed_duration = 2
 
-function StatusEffectTemplates.burning_death_critical.on_applied(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
-	local var_5_0 = StatusEffectTemplates.burning.on_applied(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+StatusEffectTemplates.burning_death_critical.on_applied = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	-- function 5
+	local on_applied = StatusEffectTemplates.burning.on_applied(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 
 	UNIT_FLOW_EVENT(arg_5_0, "burn_death_critical")
 
-	return var_5_0
+	return on_applied
 end
 
-function StatusEffectTemplates.burning_death_critical.on_decrement(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
-	if arg_6_4.burning_death_decremented then
+StatusEffectTemplates.burning_death_critical.on_decrement = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	-- function 6
+	if not arg_6_4.burning_death_decremented then
 		return
 	end
 
 	arg_6_4.burning_death_decremented = true
 
-	local var_6_0 = Unit.get_data(arg_6_0, "breed")
-	local var_6_1 = var_6_0 and var_6_0.status_effect_settings
+	local get_data = Unit.get_data(arg_6_0, "breed")
+	local flag = not get_data and get_data.status_effect_settings
 
-	if not var_6_1 or var_6_1.category ~= "small" then
+	if not (not flag and flag.category == "small") then
 		return
 	end
 
-	local var_6_2 = StatusEffectTemplates.burning_death_critical
-	local var_6_3 = arg_6_4.attach_unit or arg_6_0
-	local var_6_4 = 0
-	local var_6_5 = var_6_2.link_object
+	local burning_death_critical = StatusEffectTemplates.burning_death_critical
+	local attach_unit = arg_6_4.attach_unit
 
-	if var_6_5 then
-		var_6_4 = Unit.has_node(var_6_3, var_6_5) and Unit.node(var_6_3, var_6_5) or 0
+	attach_unit = attach_unit or arg_6_0
+
+	local num = 0
+	local link_object = burning_death_critical.link_object
+
+	if not link_object then
+		num = not Unit.has_node(attach_unit, link_object) and Unit.node(attach_unit, link_object) and 0
 	end
 
-	local var_6_6 = ScriptWorld.create_particles_linked(arg_6_3, "fx/chr_impact_burnup_fire_small_remap", var_6_3, var_6_4, "destroy")
-	local var_6_7 = arg_6_2.particle_material_variable
+	local create_particles_linked = ScriptWorld.create_particles_linked(arg_6_3, "fx/chr_impact_burnup_fire_small_remap", attach_unit, num, "destroy")
+	local particle_material_variable = arg_6_2.particle_material_variable
 
-	if arg_6_2.particle_material_variable then
-		local var_6_8 = var_6_7.value
-		local var_6_9 = var_6_7.variable_name
+	if not arg_6_2.particle_material_variable then
+		local value = particle_material_variable.value
+		local variable_name = particle_material_variable.variable_name
 
-		ScriptWorld.set_material_variable_for_particles(arg_6_3, var_6_6, "remap_fire", var_6_9, var_6_8)
-		ScriptWorld.set_material_variable_for_particles(arg_6_3, var_6_6, "remap_fire2", var_6_9, var_6_8)
+		ScriptWorld.set_material_variable_for_particles(arg_6_3, create_particles_linked, "remap_fire", variable_name, value)
+		ScriptWorld.set_material_variable_for_particles(arg_6_3, create_particles_linked, "remap_fire2", variable_name, value)
 	end
 
 	Managers.state.status_effect:remove_all_statuses(arg_6_0, true)
@@ -297,13 +334,13 @@ StatusEffectTemplates.burning_balefire_death_critical.unit_material_variable.val
 }
 StatusEffectTemplates.burning_balefire_death_critical.death_unit_material_variable = nil
 StatusEffectTemplates.burning_balefire_death_critical.particle_material_variable.value = 1
-StatusEffectTemplates.poisoned = table.clone(var_0_1)
+StatusEffectTemplates.poisoned = table.clone(tbl)
 StatusEffectTemplates.poisoned.particle_by_category = {
 	small = "fx/chr_impact_poison_small",
 	medium = "fx/chr_impact_poison_medium"
 }
 StatusEffectTemplates.poisoned.link_object = "root_point"
-StatusEffectTemplates.invis_ranger = table.clone(var_0_1)
+StatusEffectTemplates.invis_ranger = table.clone(tbl)
 StatusEffectTemplates.invis_ranger.screen_space_fx = "fx/screenspace_ranger_skill_01"
 StatusEffectTemplates.invis_ranger.remove_screen_space_fx = "fx/screenspace_ranger_skill_02"
 StatusEffectTemplates.invis_ranger.mood = "skill_ranger"
@@ -311,9 +348,9 @@ StatusEffectTemplates.invis_ranger.hud_sound = "Play_career_ability_bardin_range
 StatusEffectTemplates.invis_ranger.remove_hud_sound = "Stop_career_ability_bardin_ranger_loop"
 StatusEffectTemplates.invis_ranger.career_state = "bardin_activate_ranger"
 
-local var_0_2 = table.keys(StatusEffectTemplates)
+local keys = table.keys(StatusEffectTemplates)
 
-StatusEffectNames = table.enum(unpack(var_0_2))
+StatusEffectNames = table.enum(unpack(keys))
 StatusEffectBalefireOverrides = {
 	[StatusEffectNames.burning] = StatusEffectNames.burning_balefire,
 	[StatusEffectNames.burning_death_critical] = StatusEffectNames.burning_balefire_death_critical

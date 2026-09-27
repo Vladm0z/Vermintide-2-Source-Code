@@ -2,277 +2,391 @@
 
 ImguiProfiler = class(ImguiProfiler)
 
-function ImguiProfiler.init(arg_1_0)
-	arg_1_0._filter = ""
-	arg_1_0._filter_applied = false
-	arg_1_0._auto_update_filter = false
-	arg_1_0._pause_on_frame_spike = false
+ImguiProfiler.init = function (self)
+	-- function 1
+	self._filter = ""
+	self._filter_applied = false
+	self._auto_update_filter = false
+	self._pause_on_frame_spike = false
 end
 
-function ImguiProfiler.is_persistent(arg_2_0)
+ImguiProfiler.is_persistent = function (arg_2_0)
+	-- function 2
 	return true
 end
 
-function ImguiProfiler.on_show(arg_3_0)
+ImguiProfiler.on_show = function (arg_3_0)
+	-- function 3
 	CALCULATE_AVERAGE = true
 end
 
-function ImguiProfiler.on_hide(arg_4_0)
+ImguiProfiler.on_hide = function (arg_4_0)
+	-- function 4
 	CALCULATE_AVERAGE = false
 end
 
-function ImguiProfiler.update(arg_5_0, arg_5_1, arg_5_2)
+ImguiProfiler.update = function (arg_5_0, arg_5_1, arg_5_2)
+	-- function 5
 	CALCULATE_AVERAGE = true
 end
 
-function ImguiProfiler.draw(arg_6_0)
+ImguiProfiler.draw = function (arg_6_0)
+	-- function 6
 	return
 end
 
-local var_0_0 = 1
+local num = 1
 
 FILTERED_SCOPES = {}
 FILTERED_SCOPES_INDEX = 1
 
-function ImguiProfiler.post_draw(arg_7_0)
-	local var_7_0 = Imgui.begin_window("Profiler")
+ImguiProfiler.post_draw = function (self)
+	-- function 7
+	local begin_window = Imgui.begin_window("Profiler")
 
 	Imgui.set_window_size(700, 512, "once")
 
-	local var_7_1, var_7_2 = Imgui.input_int("Average over number of frames", PROFILE_FRAMES)
+	local input_int, var_7_2 = Imgui.input_int("Average over number of frames", PROFILE_FRAMES)
 
-	if var_7_2 then
-		PROFILE_FRAMES = var_7_1
+	if not var_7_2 then
+		PROFILE_FRAMES = input_int
 	end
 
-	local var_7_3 = false
-	local var_7_4, var_7_5 = Imgui.input_text("Filter", arg_7_0._filter)
+	local flag = false
+	local input_text, var_7_5 = Imgui.input_text("Filter", self._filter)
 
-	if var_7_5 then
-		arg_7_0._filter = var_7_4
-		arg_7_0._filter_applied = arg_7_0._filter ~= ""
-		var_7_3 = true
+	if not var_7_5 then
+		self._filter = input_text
+		self._filter_applied = self._filter ~= ""
+		flag = true
 	end
 
-	arg_7_0._auto_update_filter = Imgui.checkbox("Auto Update Filter (affects performance)", arg_7_0._auto_update_filter)
+	self._auto_update_filter = Imgui.checkbox("Auto Update Filter (affects performance)", self._auto_update_filter)
 
-	if var_7_3 or arg_7_0._auto_update_filter then
+	if flag or not self._auto_update_filter then
 		FILTERED_SCOPES_INDEX = 1
 
-		local var_7_6 = arg_7_0._paused_scope or PROFILER_SCOPE_LOOKUP
+		local _paused_scope = self._paused_scope
 
-		if arg_7_0._filter ~= "" then
-			arg_7_0:_apply_filter(var_7_6, false)
+		_paused_scope = _paused_scope or PROFILER_SCOPE_LOOKUP
+
+		if self._filter ~= "" then
+			self:_apply_filter(_paused_scope, false)
 		end
 	end
 
-	arg_7_0._pause_on_frame_spike = Imgui.checkbox("Pause on frame spike", arg_7_0._pause_on_frame_spike)
+	self._pause_on_frame_spike = Imgui.checkbox("Pause on frame spike", self._pause_on_frame_spike)
 
-	if arg_7_0._pause_on_frame_spike then
-		arg_7_0._pause_on_frame_time_text = Imgui.input_text("Pause At Frametime (ms)", arg_7_0._pause_on_frame_time_text or "200")
+	if not self._pause_on_frame_spike then
+		local input_text_2 = Imgui.input_text
+		local str = "Pause At Frametime (ms)"
+		local _pause_on_frame_time_text = self._pause_on_frame_time_text
 
-		local var_7_7 = arg_7_0._pause_on_frame_time
+		_pause_on_frame_time_text = _pause_on_frame_time_text or "200"
+		self._pause_on_frame_time_text = input_text_2(str, _pause_on_frame_time_text)
 
-		arg_7_0._pause_on_frame_time = tonumber(arg_7_0._pause_on_frame_time_text)
+		local _pause_on_frame_time = self._pause_on_frame_time
 
-		if arg_7_0._pause_on_frame_time ~= var_7_7 then
-			arg_7_0._paused_scope = nil
-			arg_7_0._paused_frame_index = nil
+		self._pause_on_frame_time = tonumber(self._pause_on_frame_time_text)
+
+		if self._pause_on_frame_time ~= _pause_on_frame_time then
+			self._paused_scope = nil
+			self._paused_frame_index = nil
 		end
 	else
-		arg_7_0._pause_on_frame_time = nil
-		arg_7_0._paused_scope = nil
-		arg_7_0._paused_frame_index = nil
+		self._pause_on_frame_time = nil
+		self._paused_scope = nil
+		self._paused_frame_index = nil
 	end
 
 	Imgui.begin_child_window("Profiler Tree", 0, 0, true)
 
-	var_0_0 = 1
+	num = 1
 
-	if arg_7_0._filter_applied then
-		arg_7_0:_draw_filtered_scopes()
+	if not self._filter_applied then
+		self:_draw_filtered_scopes()
 	else
-		arg_7_0:_draw_lookup_table(arg_7_0._paused_scope or PROFILER_SCOPE_LOOKUP, false)
+		local var_7_11 = self
+		local _draw_lookup_table = self._draw_lookup_table
+		local _paused_scope_2 = self._paused_scope
+
+		_paused_scope_2 = _paused_scope_2 or PROFILER_SCOPE_LOOKUP
+
+		_draw_lookup_table(var_7_11, _paused_scope_2, false)
 	end
 
 	Imgui.end_child_window()
 	Imgui.end_window()
 
-	return var_7_0
+	return begin_window
 end
 
-function ImguiProfiler._draw_filtered_scopes(arg_8_0)
+ImguiProfiler._draw_filtered_scopes = function (self)
+	-- function 8
 	if FILTERED_SCOPES_INDEX > 1 then
-		local var_8_0 = Imgui.tree_node("root", true)
+		local tree_node = Imgui.tree_node("root", true)
 
-		for iter_8_0 = 1, FILTERED_SCOPES_INDEX - 1 do
-			local var_8_1 = FILTERED_SCOPES[iter_8_0]
+		for i = 1, FILTERED_SCOPES_INDEX - 1 do
+			local var_8_1 = FILTERED_SCOPES[i]
 
-			arg_8_0:_draw_lookup_table(var_8_1, false)
+			self:_draw_lookup_table(var_8_1, false)
 		end
 
 		Imgui.tree_pop()
 	else
-		Imgui.text_colored(string.format("No scope includes the text %q", arg_8_0._filter), 255, 128, 128, 255)
+		Imgui.text_colored(string.format("No scope includes the text %q", self._filter), 255, 128, 128, 255)
 	end
 end
 
-function ImguiProfiler._draw_lookup_table(arg_9_0, arg_9_1, arg_9_2)
-	local var_9_0 = arg_9_1.name
+ImguiProfiler._draw_lookup_table = function (self, arg_9_1, arg_9_2)
+	-- function 9
+	local name = arg_9_1.name
 
-	if arg_9_1.frame_index and arg_9_1.frame_index < (arg_9_0._paused_frame_index or CURRENT_FRAME_INDEX) then
-		return
+	if not arg_9_1.frame_index then
+		local frame_index = arg_9_1.frame_index
+		local _paused_frame_index = self._paused_frame_index
+
+		_paused_frame_index = _paused_frame_index or CURRENT_FRAME_INDEX
+
+		if frame_index < _paused_frame_index then
+			return
+		end
 	end
 
-	local var_9_1 = false
-	local var_9_2 = arg_9_1.is_leaf ~= false
-	local var_9_3 = arg_9_0._paused_scope and arg_9_1.profiler_scope or arg_9_1.average_profiler_scope
-	local var_9_4 = var_9_3 and string.format("%.3f", var_9_3) or ""
-	local var_9_5
+	local flag = false
+	local flag_2 = arg_9_1.is_leaf ~= false
+	local profiler_scope
 
-	if var_9_2 then
-		var_9_5 = string.format("%s", arg_9_1.name, var_0_0)
+	if not self._paused_scope then
+		profiler_scope = arg_9_1.profiler_scope
 
-		if arg_9_2 then
-			Imgui.text_colored(var_9_5, 0, 255, 0, 255)
+		if not profiler_scope then
+			-- Nothing
+		end
+	end
+
+	profiler_scope = arg_9_1.average_profiler_scope
+
+	do
+		local format
+	end
+
+	::label_9_0::
+
+	if not profiler_scope then
+		format = string.format("%.3f", profiler_scope)
+
+		if not format then
+			-- Nothing
+		end
+	end
+
+	format = ""
+
+	::label_9_1::
+
+	local var_9_7
+
+	if not flag_2 then
+		var_9_7 = string.format("%s", arg_9_1.name, num)
+
+		if not arg_9_2 then
+			Imgui.text_colored(var_9_7, 0, 255, 0, 255)
 		else
-			Imgui.text(var_9_5)
+			Imgui.text(var_9_7)
 		end
 
 		Imgui.same_line()
 
-		if arg_9_2 then
-			Imgui.text_colored(var_9_4, 0, 255, 0, 255)
+		if not arg_9_2 then
+			Imgui.text_colored(format, 0, 255, 0, 255)
 		else
-			Imgui.text_colored(var_9_4, 192, 128, 128, 255)
+			Imgui.text_colored(format, 192, 128, 128, 255)
 		end
 
 		return
-	elseif arg_9_1.name then
-		var_9_5 = string.format("%s ##%s", arg_9_1.name, var_0_0)
+	elseif not arg_9_1.name then
+		var_9_7 = string.format("%s ##%s", arg_9_1.name, num)
 	else
-		var_9_5 = "root"
-		var_9_1 = true
+		var_9_7 = "root"
+		flag = true
 	end
 
-	var_0_0 = var_0_0 + 1
+	num = num + 1
 
-	local var_9_6 = Imgui.tree_node(var_9_5, var_9_1)
+	local tree_node = Imgui.tree_node(var_9_7, flag)
 
 	Imgui.same_line()
 
-	if arg_9_2 then
-		Imgui.text_colored(var_9_4, 0, 255, 0, 255)
+	if not arg_9_2 then
+		Imgui.text_colored(format, 0, 255, 0, 255)
 	else
-		Imgui.text_colored(var_9_4, 192, 128, 128, 255)
+		Imgui.text_colored(format, 192, 128, 128, 255)
 	end
 
-	if var_9_6 then
-		local var_9_7 = -1
-		local var_9_8 = ""
-		local var_9_9 = 0
-		local var_9_10 = {}
+	if not tree_node then
+		local num_2 = -1
+		local str = ""
+		local num_3 = 0
+		local tbl = {}
 
-		for iter_9_0, iter_9_1 in pairs(arg_9_1) do
-			if type(iter_9_1) == "table" then
-				if iter_9_1.parent == var_9_0 and iter_9_1.frame_index == (arg_9_0._paused_frame_index or CURRENT_FRAME_INDEX) then
-					var_9_10[#var_9_10 + 1] = iter_9_1
+		for k, v in pairs(arg_9_1) do
+			if type(v) == "table" then
+				if v.parent == name then
+					local frame_index_2 = v.frame_index
+					local _paused_frame_index_2 = self._paused_frame_index
 
-					local var_9_11 = arg_9_0._paused_scope and iter_9_1.profiler_scope or iter_9_1.average_profiler_scope or 0
+					_paused_frame_index_2 = _paused_frame_index_2 or CURRENT_FRAME_INDEX
 
-					if var_9_7 < var_9_11 then
-						var_9_7 = var_9_11
-						var_9_8 = iter_9_1
+					if frame_index_2 == _paused_frame_index_2 then
+						tbl[#tbl + 1] = v
+
+						local profiler_scope_2
+
+						if not self._paused_scope then
+							profiler_scope_2 = v.profiler_scope
+
+							if not profiler_scope_2 then
+								-- Nothing
+							end
+						end
+
+						profiler_scope_2 = v.average_profiler_scope
+						profiler_scope_2 = profiler_scope_2 or 0
+
+						::label_9_2::
+
+						if num_2 < profiler_scope_2 then
+							num_2 = profiler_scope_2
+							str = v
+						end
+
+						num_3 = num_3 + v.profiler_scope
 					end
-
-					var_9_9 = var_9_9 + iter_9_1.profiler_scope
 				end
 
-				local var_9_12 = iter_9_1.stack
+				local stack = v.stack
 
-				if var_9_12 then
-					for iter_9_2 = 1, var_9_12.stack_index do
-						local var_9_13 = var_9_12[iter_9_2]
+				if not stack then
+					for k_2 = 1, stack.stack_index do
+						local var_9_17 = stack[k_2]
 
-						var_9_10[#var_9_10 + 1] = var_9_13
+						tbl[#tbl + 1] = var_9_17
 
-						local var_9_14 = arg_9_0._paused_scope and var_9_13.profiler_scope or var_9_13.average_profiler_scope or 0
+						local profiler_scope_3
 
-						if var_9_7 < var_9_14 then
-							var_9_7 = var_9_14
-							var_9_8 = var_9_13
+						if not self._paused_scope then
+							profiler_scope_3 = var_9_17.profiler_scope
+
+							if not profiler_scope_3 then
+								-- Nothing
+							end
+						end
+
+						profiler_scope_3 = var_9_17.average_profiler_scope
+						profiler_scope_3 = profiler_scope_3 or 0
+
+						::label_9_3::
+
+						if num_2 < profiler_scope_3 then
+							num_2 = profiler_scope_3
+							str = var_9_17
 						end
 					end
 				end
 			end
 		end
 
-		local function var_9_15(arg_10_0, arg_10_1)
-			return arg_10_0.name < arg_10_1.name
+		local function fn(self, arg_10_1)
+			-- function 10
+			return self.name < arg_10_1.name
 		end
 
-		table.sort(var_9_10, var_9_15)
+		table.sort(tbl, fn)
 
-		for iter_9_3, iter_9_4 in ipairs(var_9_10) do
-			arg_9_0:_draw_lookup_table(iter_9_4, iter_9_4 == var_9_8)
+		for i, v_2 in ipairs(tbl) do
+			self:_draw_lookup_table(v_2, v_2 == str)
 		end
 
-		if var_9_1 and not arg_9_0._paused_scope and var_9_9 >= (arg_9_0._pause_on_frame_time or math.huge) then
-			arg_9_0._paused_scope = table.clone(arg_9_1)
-			arg_9_0._paused_frame_index = CURRENT_FRAME_INDEX
+		if not (not flag and self._paused_scope) then
+			local _pause_on_frame_time = self._pause_on_frame_time
+
+			_pause_on_frame_time = _pause_on_frame_time or math.huge
+
+			if _pause_on_frame_time <= num_3 then
+				self._paused_scope = table.clone(arg_9_1)
+				self._paused_frame_index = CURRENT_FRAME_INDEX
+			end
 		end
 
 		Imgui.tree_pop()
 	end
 end
 
-function ImguiProfiler._apply_filter(arg_11_0, arg_11_1)
-	local var_11_0 = arg_11_1.name
+ImguiProfiler._apply_filter = function (self, arg_11_1)
+	-- function 11
+	local name = arg_11_1.name
 
-	if arg_11_1.frame_index and arg_11_1.frame_index < (arg_11_0._paused_frame_index or CURRENT_FRAME_INDEX) then
-		return
+	if not arg_11_1.frame_index then
+		local frame_index = arg_11_1.frame_index
+		local _paused_frame_index = self._paused_frame_index
+
+		_paused_frame_index = _paused_frame_index or CURRENT_FRAME_INDEX
+
+		if frame_index < _paused_frame_index then
+			return
+		end
 	end
 
-	var_0_0 = var_0_0 + 1
+	num = num + 1
 
-	if var_11_0 and string.find(string.lower(var_11_0), string.lower(arg_11_0._filter)) ~= nil then
+	if not (not name and string.find(string.lower(name), string.lower(self._filter)) == nil) then
 		FILTERED_SCOPES[FILTERED_SCOPES_INDEX] = arg_11_1
 		FILTERED_SCOPES_INDEX = FILTERED_SCOPES_INDEX + 1
 
 		return
 	end
 
-	local var_11_1 = {}
+	local tbl = {}
 
-	for iter_11_0, iter_11_1 in pairs(arg_11_1) do
-		if type(iter_11_1) == "table" then
-			if iter_11_1.parent == var_11_0 and iter_11_1.frame_index == (arg_11_0._paused_frame_index or CURRENT_FRAME_INDEX) then
-				var_11_1[#var_11_1 + 1] = iter_11_1
+	for k, v in pairs(arg_11_1) do
+		if type(v) == "table" then
+			if v.parent == name then
+				local frame_index_2 = v.frame_index
+				local _paused_frame_index_2 = self._paused_frame_index
+
+				_paused_frame_index_2 = _paused_frame_index_2 or CURRENT_FRAME_INDEX
+
+				if frame_index_2 == _paused_frame_index_2 then
+					tbl[#tbl + 1] = v
+				end
 			end
 
-			local var_11_2 = iter_11_1.stack
+			local stack = v.stack
 
-			if var_11_2 then
-				for iter_11_2 = 1, var_11_2.stack_index do
-					local var_11_3 = var_11_2[iter_11_2]
+			if not stack then
+				for k_2 = 1, stack.stack_index do
+					local var_11_7 = stack[k_2]
 
-					var_11_1[#var_11_1 + 1] = var_11_3
+					tbl[#tbl + 1] = var_11_7
 				end
 			end
 		end
 	end
 
-	local function var_11_4(arg_12_0, arg_12_1)
-		return arg_12_0.name < arg_12_1.name
+	local function fn(self, arg_12_1)
+		-- function 12
+		return self.name < arg_12_1.name
 	end
 
-	table.sort(var_11_1, var_11_4)
+	table.sort(tbl, fn)
 
-	for iter_11_3, iter_11_4 in ipairs(var_11_1) do
-		arg_11_0:_apply_filter(iter_11_4)
+	for i, v_2 in ipairs(tbl) do
+		self:_apply_filter(v_2)
 	end
 end
 
-function ImguiProfiler.post_update(arg_13_0, arg_13_1, arg_13_2)
+ImguiProfiler.post_update = function (arg_13_0, arg_13_1, arg_13_2)
+	-- function 13
 	return
 end

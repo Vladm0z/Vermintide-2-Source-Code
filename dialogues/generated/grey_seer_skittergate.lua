@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/grey_seer_skittergate.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		response = "egs_death_scene_01",
 		name = "egs_death_scene_01",

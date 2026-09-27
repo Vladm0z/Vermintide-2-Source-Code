@@ -1,9 +1,9 @@
 -- chunkname: @scripts/settings/dlcs/cosmetics_2023_q2/cosmetics_2023_q2_common_settings.lua
 
-local var_0_0 = DLCSettings.cosmetics_2023_q2
+local cosmetics_2023_q2 = DLCSettings.cosmetics_2023_q2
 
-var_0_0.unlock_settings = {}
-var_0_0.unlock_settings_xb1 = {
+cosmetics_2023_q2.unlock_settings = {}
+cosmetics_2023_q2.unlock_settings_xb1 = {
 	adept_hat_1003 = {
 		id = "34334E39-3750-3035-C030-46513737DF00",
 		backend_reward_id = "adept_hat_1003",
@@ -41,7 +41,7 @@ var_0_0.unlock_settings_xb1 = {
 		cosmetic = true
 	}
 }
-var_0_0.unlock_settings_ps4 = {
+cosmetics_2023_q2.unlock_settings_ps4 = {
 	CUSA13595_00 = {
 		adept_hat_1003 = {
 			product_label = "0498267996978332",

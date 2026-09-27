@@ -1,14 +1,14 @@
 -- chunkname: @scripts/ui/hud_ui/gameplay_info_ui_definitions.lua
 
-local var_0_0 = 1920
-local var_0_1 = 1080
-local var_0_2 = false
-local var_0_3 = {
+local num = 1920
+local num_2 = 1080
+local flag = false
+local tbl = {
 	screen = {
 		scale = "hud_scale_fit",
 		size = {
-			var_0_0,
-			var_0_1
+			num,
+			num_2
 		},
 		position = {
 			0,
@@ -26,7 +26,7 @@ local var_0_3 = {
 		},
 		position = {
 			0,
-			-var_0_1 * 0.3,
+			-num_2 * 0.3,
 			15
 		}
 	},
@@ -101,7 +101,7 @@ local var_0_3 = {
 		}
 	}
 }
-local var_0_4 = {
+local tbl_2 = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -125,7 +125,7 @@ local var_0_4 = {
 		0
 	}
 }
-local var_0_5 = {
+local tbl_3 = {
 	font_size = 40,
 	upper_case = false,
 	localize = false,
@@ -148,7 +148,7 @@ local var_0_5 = {
 		0
 	}
 }
-local var_0_6 = {
+local tbl_4 = {
 	font_size = 24,
 	upper_case = false,
 	localize = false,
@@ -171,18 +171,18 @@ local var_0_6 = {
 		0
 	}
 }
-local var_0_7 = {
-	teleport_text = UIWidgets.create_simple_text("", "teleport_text", nil, nil, var_0_4, nil, var_0_2)
+local tbl_5 = {
+	teleport_text = UIWidgets.create_simple_text("", "teleport_text", nil, nil, tbl_2, nil, flag)
 }
-local var_0_8 = {
-	spawn_text = UIWidgets.create_simple_text("", "spawn_text", nil, nil, var_0_5, nil, var_0_2),
-	spawn_reason = UIWidgets.create_simple_text("", "spawn_reason", nil, nil, var_0_6, nil, var_0_2)
+local tbl_6 = {
+	spawn_text = UIWidgets.create_simple_text("", "spawn_text", nil, nil, tbl_3, nil, flag),
+	spawn_reason = UIWidgets.create_simple_text("", "spawn_reason", nil, nil, tbl_4, nil, flag)
 }
-local var_0_9 = {}
+local tbl_7 = {}
 
 return {
-	scenegraph = var_0_3,
-	widgets = var_0_7,
-	spawn_info_widgets = var_0_8,
-	animation_definitions = var_0_9
+	scenegraph = tbl,
+	widgets = tbl_5,
+	spawn_info_widgets = tbl_6,
+	animation_definitions = tbl_7
 }

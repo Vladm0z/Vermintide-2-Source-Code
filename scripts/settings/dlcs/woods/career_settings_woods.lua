@@ -46,36 +46,39 @@ CareerSettings.we_thornsister = {
 			item_name = "thornsister_hat_0000"
 		}
 	},
-	is_unlocked_function = function(arg_1_0, arg_1_1, arg_1_2)
-		local var_1_0, var_1_1 = arg_1_0:override_available_for_mechanism()
+	is_unlocked_function = function (self, arg_1_1, arg_1_2)
+		-- function 1
+		local override_available_for_mechanism, var_1_1 = self:override_available_for_mechanism()
 
-		if not var_1_0 then
-			return var_1_0, var_1_1
+		if not override_available_for_mechanism then
+			return override_available_for_mechanism, var_1_1
 		end
 
 		local var_1_2
-		local var_1_3, var_1_4, var_1_5 = arg_1_0:is_dlc_unlocked()
+		local is_dlc_unlocked, var_1_4, var_1_5 = self:is_dlc_unlocked()
 		local var_1_6 = var_1_5
 		local var_1_7 = var_1_4
 
-		if not var_1_3 then
+		if not is_dlc_unlocked then
 			return false, var_1_7, var_1_6
 		end
 
 		return true, var_1_7, var_1_6
 	end,
-	is_dlc_unlocked = function(arg_2_0)
-		if Managers.unlock:is_dlc_unlocked("woods") then
+	is_dlc_unlocked = function (arg_2_0)
+		-- function 2
+		if not Managers.unlock:is_dlc_unlocked("woods") then
 			return true, nil, "woods"
 		else
 			return false, "dlc_not_owned", "woods"
 		end
 	end,
-	override_available_for_mechanism = function(arg_3_0)
-		local var_3_0 = Managers.mechanism:mechanism_setting_for_title("override_career_availability")
-		local var_3_1 = arg_3_0.display_name
+	override_available_for_mechanism = function (self)
+		-- function 3
+		local mechanism_setting_for_title = Managers.mechanism:mechanism_setting_for_title("override_career_availability")
+		local display_name = self.display_name
 
-		if var_3_0 and var_3_0[var_3_1] == false then
+		if not (not mechanism_setting_for_title and mechanism_setting_for_title[display_name] ~= false) then
 			return false, "disabled_for_mechanism"
 		end
 
@@ -124,7 +127,11 @@ CareerSettings.we_thornsister = {
 		"weapon_pose"
 	}
 }
+
+local OverchargeData = OverchargeData
+
 OverchargeData = OverchargeData or {}
+OverchargeData = OverchargeData
 OverchargeData.we_thornsister = {
 	overcharge_value_decrease_rate = 1,
 	overcharge_warning_critical_sound_event = "weapon_life_staff_overcharge_warning_critical",
@@ -163,8 +170,18 @@ OverchargeData.we_thornsister = {
 		}
 	}
 }
+
+local PlayerUnitStatusSettings = PlayerUnitStatusSettings
+
 PlayerUnitStatusSettings = PlayerUnitStatusSettings or {}
-PlayerUnitStatusSettings.overcharge_values = table.merge(PlayerUnitStatusSettings.overcharge_values or {}, {
+PlayerUnitStatusSettings = PlayerUnitStatusSettings
+
+local PlayerUnitStatusSettings_2 = PlayerUnitStatusSettings
+local merge = table.merge
+local overcharge_values = PlayerUnitStatusSettings.overcharge_values
+
+overcharge_values = overcharge_values or {}
+PlayerUnitStatusSettings_2.overcharge_values = merge(overcharge_values, {
 	life_staff_light = 4
 })
 CareerNameAchievementMapping.we_thornsister = "thornsister"

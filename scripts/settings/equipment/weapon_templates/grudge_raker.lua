@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/grudge_raker.lua
 
-local var_0_0 = 0.8
-local var_0_1 = {
+local num = 0.8
+local tbl = {
 	actions = {
 		action_one = {
 			default = {
@@ -64,7 +64,8 @@ local var_0_1 = {
 						auto_chain = true
 					}
 				},
-				enter_function = function(arg_1_0, arg_1_1)
+				enter_function = function (arg_1_0, arg_1_1)
+					-- function 1
 					arg_1_1:clear_input_buffer()
 
 					return arg_1_1:reset_release_input()
@@ -101,10 +102,11 @@ local var_0_1 = {
 				dedicated_target_range = 3.5,
 				anim_event = "attack_push",
 				total_time = 1,
-				anim_end_event_condition_func = function(arg_2_0, arg_2_1)
-					return arg_2_1 ~= "new_interupting_action" and arg_2_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_2_0, arg_2_1)
+					-- function 2
+					return arg_2_1 == "new_interupting_action" or arg_2_1 ~= "action_complete"
 				end,
-				anim_time_scale = var_0_0 * 1.25,
+				anim_time_scale = num * 1.25,
 				allowed_chain_actions = {
 					{
 						sub_action = "default",
@@ -138,7 +140,8 @@ local var_0_1 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_3_0, arg_3_1)
+				enter_function = function (arg_3_0, arg_3_1)
+					-- function 3
 					arg_3_1:clear_input_buffer()
 				end,
 				critical_strike = {}
@@ -166,20 +169,20 @@ local var_0_1 = {
 	}
 }
 
-var_0_1.default_spread_template = "rake_shot"
-var_0_1.right_hand_unit = ""
-var_0_1.right_hand_attachment_node_linking = AttachmentNodeLinking.grudge_raker
-var_0_1.display_unit = "units/weapons/weapon_display/display_1h_grudge_raker"
-var_0_1.wield_anim = "to_grudge_raker"
-var_0_1.state_machine = "units/beings/player/first_person_base/state_machines/ranged/grudgeraker"
-var_0_1.wield_anim_no_ammo = "to_grudge_raker_noammo"
-var_0_1.crosshair_style = "shotgun"
-var_0_1.fire_at_gaze_setting = "tobii_fire_at_gaze_grudgeraker"
-var_0_1.reload_event = "reload"
-var_0_1.buff_type = "RANGED"
-var_0_1.weapon_type = "SHOTGUN"
-var_0_1.dodge_count = 3
-var_0_1.buffs = {
+tbl.default_spread_template = "rake_shot"
+tbl.right_hand_unit = ""
+tbl.right_hand_attachment_node_linking = AttachmentNodeLinking.grudge_raker
+tbl.display_unit = "units/weapons/weapon_display/display_1h_grudge_raker"
+tbl.wield_anim = "to_grudge_raker"
+tbl.state_machine = "units/beings/player/first_person_base/state_machines/ranged/grudgeraker"
+tbl.wield_anim_no_ammo = "to_grudge_raker_noammo"
+tbl.crosshair_style = "shotgun"
+tbl.fire_at_gaze_setting = "tobii_fire_at_gaze_grudgeraker"
+tbl.reload_event = "reload"
+tbl.buff_type = "RANGED"
+tbl.weapon_type = "SHOTGUN"
+tbl.dodge_count = 3
+tbl.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1
 	},
@@ -187,10 +190,10 @@ var_0_1.buffs = {
 		external_optional_multiplier = 1
 	}
 }
-var_0_1.wwise_dep_right_hand = {
+tbl.wwise_dep_right_hand = {
 	"wwise/rakegun"
 }
-var_0_1.weapon_diagram = {
+tbl.weapon_diagram = {
 	light_attack = {
 		[DamageTypes.ARMOR_PIERCING] = 4,
 		[DamageTypes.CLEAVE] = 7,
@@ -206,12 +209,12 @@ var_0_1.weapon_diagram = {
 		[DamageTypes.DAMAGE] = 2
 	}
 }
-var_0_1.tooltip_keywords = {
+tbl.tooltip_keywords = {
 	"weapon_keyword_high_damage",
 	"weapon_keyword_crowd_control",
 	"weapon_keyword_close_range"
 }
-var_0_1.tooltip_compare = {
+tbl.tooltip_compare = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -221,7 +224,7 @@ var_0_1.tooltip_compare = {
 		sub_action_name = "default"
 	}
 }
-var_0_1.tooltip_detail = {
+tbl.tooltip_detail = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -232,11 +235,11 @@ var_0_1.tooltip_detail = {
 	}
 }
 
-local var_0_2 = table.clone(var_0_1)
+local clone = table.clone(tbl)
 
-var_0_2.actions.action_one.default.damage_profile = "shot_shotgun_vs"
+clone.actions.action_one.default.damage_profile = "shot_shotgun_vs"
 
 return {
-	grudge_raker_template_1 = table.clone(var_0_1),
-	grudge_raker_template_1_vs = table.clone(var_0_2)
+	grudge_raker_template_1 = table.clone(tbl),
+	grudge_raker_template_1_vs = table.clone(clone)
 }

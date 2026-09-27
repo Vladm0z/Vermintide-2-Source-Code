@@ -4,35 +4,38 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTBotInteractAction = class(BTBotInteractAction, BTNode)
 
-function BTBotInteractAction.init(arg_1_0, ...)
+BTBotInteractAction.init = function (arg_1_0, ...)
+	-- function 1
 	BTBotInteractAction.super.init(arg_1_0, ...)
 end
 
 BTBotInteractAction.name = "BTBotInteractAction"
 
-local var_0_0 = Unit.alive
+local alive = Unit.alive
 
-function BTBotInteractAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
-	local var_2_0 = arg_2_2.interaction_unit
+BTBotInteractAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	-- function 2
+	local interaction_unit = arg_2_2.interaction_unit
 
-	arg_2_2.current_interaction_unit = var_2_0
+	arg_2_2.current_interaction_unit = interaction_unit
 
-	local var_2_1 = arg_2_2.interaction_extension
+	local interaction_extension = arg_2_2.interaction_extension
 
-	var_2_1:set_exclusive_interaction_unit(var_2_0)
+	interaction_extension:set_exclusive_interaction_unit(interaction_unit)
 
 	arg_2_2.interact = {
 		tried = false,
-		wait_on_previous_interaction = var_2_1:is_interacting()
+		wait_on_previous_interaction = interaction_extension:is_interacting()
 	}
 
-	local var_2_2 = arg_2_2.input_extension
-	local var_2_3 = true
+	local input_extension = arg_2_2.input_extension
+	local flag = true
 
-	var_2_2:set_aiming(true, var_2_3)
+	input_extension:set_aiming(true, flag)
 end
 
-function BTBotInteractAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTBotInteractAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	-- function 3
 	arg_3_2.interact = false
 
 	arg_3_2.interaction_extension:set_exclusive_interaction_unit(nil)
@@ -41,52 +44,65 @@ function BTBotInteractAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, 
 	arg_3_2.current_interaction_unit = nil
 end
 
-function BTBotInteractAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-	local var_4_0 = arg_4_2.current_interaction_unit
+BTBotInteractAction.run = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	-- function 4
+	local current_interaction_unit = arg_4_2.current_interaction_unit
 
-	if not var_0_0(var_4_0) or var_4_0 ~= arg_4_2.interaction_unit and arg_4_2.interaction_unit then
+	if not alive(current_interaction_unit) and current_interaction_unit == arg_4_2.interaction_unit or not arg_4_2.interaction_unit then
 		return "failed"
 	end
 
-	local var_4_1 = arg_4_0._tree_node.action_data
-	local var_4_2 = arg_4_2.status_extension
-	local var_4_3 = arg_4_2.interaction_extension
-	local var_4_4 = arg_4_2.input_extension
-	local var_4_5 = var_4_3.state
-	local var_4_6 = arg_4_2.interact
-	local var_4_7 = true
+	local action_data = self._tree_node.action_data
+	local status_extension = arg_4_2.status_extension
+	local interaction_extension = arg_4_2.interaction_extension
+	local input_extension = arg_4_2.input_extension
+	local state = interaction_extension.state
+	local interact = arg_4_2.interact
+	local flag = true
 
-	if var_4_1 and var_4_1.use_block_interaction then
-		var_4_4:defend()
+	if not action_data and not action_data.use_block_interaction then
+		input_extension:defend()
 
-		var_4_7 = var_4_2:is_blocking()
+		flag = status_extension:is_blocking()
 	end
 
-	if var_4_7 then
-		local var_4_8 = var_4_1 and var_4_1.input or InteractionHelper.interaction_action_names(arg_4_1)
+	if not flag then
+		local input
 
-		if var_4_6.wait_on_previous_interaction then
-			var_4_6.wait_on_previous_interaction = false
-		elseif var_4_5 == "waiting_to_interact" and not var_4_6.tried then
-			var_4_4[var_4_8](var_4_4)
+		if not action_data then
+			input = action_data.input
 
-			var_4_6.tried = true
-		elseif var_4_5 == "waiting_to_interact" then
-			var_4_6.tried = false
+			if not input then
+				-- Nothing
+			end
+		end
+
+		input = InteractionHelper.interaction_action_names(arg_4_1)
+
+		::label_4_0::
+
+		if not interact.wait_on_previous_interaction then
+			interact.wait_on_previous_interaction = false
+		elseif not (state ~= "waiting_to_interact" or interact.tried) then
+			input_extension[input](input_extension)
+
+			interact.tried = true
+		elseif state == "waiting_to_interact" then
+			interact.tried = false
 		else
-			var_4_4[var_4_8](var_4_4)
+			input_extension[input](input_extension)
 		end
 	end
 
 	local var_4_9
 
-	if var_4_1 and Unit.has_node(var_4_0, var_4_1.aim_node) then
-		var_4_9 = Unit.world_position(var_4_0, Unit.node(var_4_0, var_4_1.aim_node))
+	if not action_data and not Unit.has_node(current_interaction_unit, action_data.aim_node) then
+		var_4_9 = Unit.world_position(current_interaction_unit, Unit.node(current_interaction_unit, action_data.aim_node))
 	else
-		var_4_9 = Unit.world_position(var_4_0, 0)
+		var_4_9 = Unit.world_position(current_interaction_unit, 0)
 	end
 
-	var_4_4:set_aim_position(var_4_9)
+	input_extension:set_aim_position(var_4_9)
 
 	return "running"
 end

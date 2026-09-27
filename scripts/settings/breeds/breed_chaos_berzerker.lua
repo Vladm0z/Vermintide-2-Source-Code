@@ -1,13 +1,13 @@
 -- chunkname: @scripts/settings/breeds/breed_chaos_berzerker.lua
 
-local var_0_0 = require("scripts/utils/stagger_types")
-local var_0_1 = {
+local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
+local tbl = {
 	"run_stagger_left"
 }
-local var_0_2 = {
+local tbl_2 = {
 	"run_stagger_right"
 }
-local var_0_3 = {
+local tbl_3 = {
 	proximity_system_check = true,
 	walk_speed = 2.25,
 	bone_lod_level = 0,
@@ -99,14 +99,15 @@ local var_0_3 = {
 		"move_fwd_5",
 		"move_fwd_6"
 	},
-	stagger_modifier_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
-		if arg_1_4.stagger_type == var_0_0.heavy then
-			if arg_1_0 == var_0_0.heavy and arg_1_4.heavy_stagger_immune_time then
-				arg_1_0 = var_0_0.none
+	stagger_modifier_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+		-- function 1
+		if arg_1_4.stagger_type == scripts_utils_stagger_types.heavy then
+			if arg_1_0 ~= scripts_utils_stagger_types.heavy or not arg_1_4.heavy_stagger_immune_time then
+				arg_1_0 = scripts_utils_stagger_types.none
 				arg_1_1 = 0
 				arg_1_2 = 0
-			elseif arg_1_0 ~= var_0_0.heavy and arg_1_4.stagger_immune_time then
-				arg_1_0 = var_0_0.none
+			elseif arg_1_0 == scripts_utils_stagger_types.heavy or not arg_1_4.stagger_immune_time then
+				arg_1_0 = scripts_utils_stagger_types.none
 				arg_1_1 = 0
 				arg_1_2 = 0
 			end
@@ -306,9 +307,9 @@ local var_0_3 = {
 	}
 }
 
-Breeds.chaos_berzerker = table.create_copy(Breeds.chaos_berzerker, var_0_3)
+Breeds.chaos_berzerker = table.create_copy(Breeds.chaos_berzerker, tbl_3)
 
-local var_0_4 = {
+local tbl_4 = {
 	normal = {
 		easy = {
 			normal = 2
@@ -406,7 +407,7 @@ local var_0_4 = {
 		}
 	}
 }
-local var_0_5 = {
+local tbl_5 = {
 	true,
 	false,
 	false,
@@ -415,7 +416,7 @@ local var_0_5 = {
 	false,
 	true
 }
-local var_0_6 = {
+local tbl_6 = {
 	true,
 	true,
 	false,
@@ -424,7 +425,7 @@ local var_0_6 = {
 	false,
 	true
 }
-local var_0_7 = {
+local tbl_7 = {
 	true,
 	true,
 	true,
@@ -433,7 +434,7 @@ local var_0_7 = {
 	false,
 	true
 }
-local var_0_8 = {
+local tbl_8 = {
 	alerted = {
 		no_hesitation = true,
 		cooldown = -1,
@@ -466,8 +467,9 @@ local var_0_8 = {
 		cooldown = -1,
 		action_weight = 1,
 		alt_tired_anim = "move_fwd_jog",
-		custom_is_tired_function = function(arg_2_0, arg_2_1)
-			if arg_2_1.time_since_last_combo and arg_2_1.time_since_last_combo <= 8 then
+		custom_is_tired_function = function (arg_2_0, arg_2_1)
+			-- function 2
+			if not (not arg_2_1.time_since_last_combo and not (arg_2_1.time_since_last_combo <= 8)) then
 				return true
 			end
 
@@ -522,7 +524,7 @@ local var_0_8 = {
 		action_weight = 10,
 		moving_attack = true,
 		damage_type = "cutting",
-		difficulty_attack_intensity = var_0_4,
+		difficulty_attack_intensity = tbl_4,
 		default_attack = {
 			anims = "attack_lunge"
 		},
@@ -530,7 +532,7 @@ local var_0_8 = {
 		considerations = UtilityConsiderations.chaos_berzerker_running_attack,
 		fatigue_type = BreedTweaks.fatigue_types.roamer.running_attack,
 		difficulty_diminishing_damage = BreedTweaks.diminishing_damage_and_cooldown.berzerker,
-		ignore_staggers = var_0_7,
+		ignore_staggers = tbl_7,
 		attack_finished_duration = BreedTweaks.attack_finished_duration.chaos_elite,
 		dodge_window_start = BreedTweaks.dodge_windows.running_attack,
 		dodge_window_duration = BreedTweaks.dodge_window_durations.running_attack
@@ -542,7 +544,7 @@ local var_0_8 = {
 		player_push_speed = 3,
 		attack_intensity_type = "normal",
 		action_weight = 1,
-		difficulty_attack_intensity = var_0_4,
+		difficulty_attack_intensity = tbl_4,
 		default_attack = {
 			anims = {
 				"attack_pounce",
@@ -657,22 +659,35 @@ local var_0_8 = {
 		moving_stagger_minimum_destination_distance = 4,
 		scale_animation_speeds = true,
 		moving_stagger_threshold = 2.5,
-		custom_enter_function = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
-			local var_3_0 = arg_3_1.combo_attack_data
+		custom_enter_function = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			-- function 3
+			local combo_attack_data = arg_3_1.combo_attack_data
 
-			if var_3_0 and var_3_0.aborted then
-				local var_3_1 = arg_3_1.stagger_type < var_0_0.heavy and math.clamp(arg_3_1.stagger_type - 1, 1, 1.5) or 1
+			if not combo_attack_data and not combo_attack_data.aborted then
+				local clamp
 
-				if arg_3_1.stagger_type ~= var_0_0.explosion and arg_3_1.stagger_type ~= var_0_0.heavy then
+				if arg_3_1.stagger_type < scripts_utils_stagger_types.heavy then
+					clamp = math.clamp(arg_3_1.stagger_type - 1, 1, 1.5)
+
+					if not clamp then
+						-- Nothing
+					end
+				end
+
+				clamp = 1
+
+				::label_3_0::
+
+				if not (arg_3_1.stagger_type == scripts_utils_stagger_types.explosion or arg_3_1.stagger_type == scripts_utils_stagger_types.heavy) then
 					arg_3_1.stagger_ignore_anim_cb = true
-					arg_3_1.stagger_time = arg_3_2 + arg_3_1.breed.berzerking_stagger_time * var_3_1
+					arg_3_1.stagger_time = arg_3_2 + arg_3_1.breed.berzerking_stagger_time * clamp
 				end
 			end
 
-			if arg_3_1.stagger_type == var_0_0.heavy then
+			if arg_3_1.stagger_type == scripts_utils_stagger_types.heavy then
 				arg_3_1.stagger_immune_time = arg_3_2 + 2.25
 				arg_3_1.heavy_stagger_immune_time = arg_3_2 + 1.5
-			elseif arg_3_1.stagger_type == var_0_0.explosion then
+			elseif arg_3_1.stagger_type == scripts_utils_stagger_types.explosion then
 				arg_3_1.stagger_immune_time = arg_3_2 + 3.5
 			end
 
@@ -713,11 +728,11 @@ local var_0_8 = {
 				dwn = {
 					"stun_down"
 				},
-				moving_fwd = var_0_1,
-				moving_bwd = var_0_1,
-				moving_left = var_0_1,
-				moving_right = var_0_1,
-				moving_dwn = var_0_1
+				moving_fwd = tbl,
+				moving_bwd = tbl,
+				moving_left = tbl,
+				moving_right = tbl,
+				moving_dwn = tbl
 			},
 			{
 				fwd = {
@@ -751,11 +766,11 @@ local var_0_8 = {
 					"stagger_medium_downward_2",
 					"stagger_medium_downward_3"
 				},
-				moving_fwd = var_0_1,
-				moving_bwd = var_0_1,
-				moving_left = var_0_1,
-				moving_right = var_0_1,
-				moving_dwn = var_0_1
+				moving_fwd = tbl,
+				moving_bwd = tbl,
+				moving_left = tbl,
+				moving_right = tbl,
+				moving_dwn = tbl
 			},
 			{
 				fwd = {
@@ -790,11 +805,11 @@ local var_0_8 = {
 					"stagger_bwd_heavy_3",
 					"stagger_bwd_heavy_4"
 				},
-				moving_fwd = var_0_2,
-				moving_bwd = var_0_2,
-				moving_left = var_0_2,
-				moving_right = var_0_2,
-				moving_dwn = var_0_2
+				moving_fwd = tbl_2,
+				moving_bwd = tbl_2,
+				moving_left = tbl_2,
+				moving_right = tbl_2,
+				moving_dwn = tbl_2
 			},
 			{
 				fwd = {
@@ -817,11 +832,11 @@ local var_0_8 = {
 					"stun_right_ranged_light_2",
 					"stun_right_ranged_light_3"
 				},
-				moving_fwd = var_0_1,
-				moving_bwd = var_0_1,
-				moving_left = var_0_1,
-				moving_right = var_0_1,
-				moving_dwn = var_0_1
+				moving_fwd = tbl,
+				moving_bwd = tbl,
+				moving_left = tbl,
+				moving_right = tbl,
+				moving_dwn = tbl
 			},
 			{
 				fwd = {
@@ -855,11 +870,11 @@ local var_0_8 = {
 					"stagger_medium_downward_2",
 					"stagger_medium_downward_3"
 				},
-				moving_fwd = var_0_1,
-				moving_bwd = var_0_1,
-				moving_left = var_0_1,
-				moving_right = var_0_1,
-				moving_dwn = var_0_1
+				moving_fwd = tbl,
+				moving_bwd = tbl,
+				moving_left = tbl,
+				moving_right = tbl,
+				moving_dwn = tbl
 			},
 			{
 				fwd = {
@@ -875,11 +890,11 @@ local var_0_8 = {
 				right = {
 					"stagger_explosion_right"
 				},
-				moving_fwd = var_0_2,
-				moving_bwd = var_0_2,
-				moving_left = var_0_2,
-				moving_right = var_0_2,
-				moving_dwn = var_0_2
+				moving_fwd = tbl_2,
+				moving_bwd = tbl_2,
+				moving_left = tbl_2,
+				moving_right = tbl_2,
+				moving_dwn = tbl_2
 			},
 			{
 				fwd = {
@@ -915,11 +930,11 @@ local var_0_8 = {
 				dwn = {
 					"stun_down"
 				},
-				moving_fwd = var_0_1,
-				moving_bwd = var_0_1,
-				moving_left = var_0_1,
-				moving_right = var_0_1,
-				moving_dwn = var_0_1
+				moving_fwd = tbl,
+				moving_bwd = tbl,
+				moving_left = tbl,
+				moving_right = tbl,
+				moving_dwn = tbl
 			},
 			{
 				fwd = {},
@@ -964,16 +979,16 @@ local var_0_8 = {
 					"stagger_medium_downward_2",
 					"stagger_medium_downward_3"
 				},
-				moving_fwd = var_0_1,
-				moving_bwd = var_0_1,
-				moving_left = var_0_1,
-				moving_right = var_0_1,
-				moving_dwn = var_0_1
+				moving_fwd = tbl,
+				moving_bwd = tbl,
+				moving_left = tbl,
+				moving_right = tbl,
+				moving_dwn = tbl
 			}
 		}
 	}
 }
-local var_0_9 = {
+local tbl_9 = {
 	action_weight = 10,
 	attack_intensity = 5,
 	combo_anim_variations = 3,
@@ -988,9 +1003,9 @@ local var_0_9 = {
 	player_push_speed = 4,
 	attack_intensity_type = "frenzy",
 	move_anim = "move_fwd",
-	difficulty_attack_intensity = var_0_4,
+	difficulty_attack_intensity = tbl_4,
 	considerations = UtilityConsiderations.berzerker_frenzy_attack,
-	ignore_staggers = var_0_5,
+	ignore_staggers = tbl_5,
 	attack_directions = {
 		attack_combo_1_01 = "left",
 		attack_combo_1_02 = "left",
@@ -1037,7 +1052,7 @@ local var_0_9 = {
 				"attack_combo_2_01",
 				"attack_combo_3_01"
 			},
-			ignore_staggers = var_0_5
+			ignore_staggers = tbl_5
 		},
 		attack_2 = {
 			attack_start_slow_fraction = 0.65,
@@ -1057,7 +1072,7 @@ local var_0_9 = {
 				"attack_combo_2_02",
 				"attack_combo_3_02"
 			},
-			ignore_staggers = var_0_5
+			ignore_staggers = tbl_5
 		},
 		attack_3 = {
 			attack_start_slow_fraction = 0.5,
@@ -1077,7 +1092,7 @@ local var_0_9 = {
 				"attack_combo_2_03",
 				"attack_combo_3_03"
 			},
-			ignore_staggers = var_0_5
+			ignore_staggers = tbl_5
 		},
 		attack_3b = {
 			attack_start_slow_fraction = 0.5,
@@ -1097,7 +1112,7 @@ local var_0_9 = {
 				"attack_combo_2_04",
 				"attack_combo_3_04"
 			},
-			ignore_staggers = var_0_5
+			ignore_staggers = tbl_5
 		},
 		attack_4 = {
 			attack_start_slow_fraction = 0.5,
@@ -1116,7 +1131,7 @@ local var_0_9 = {
 				"attack_combo_2_04",
 				"attack_combo_3_04"
 			},
-			ignore_staggers = var_0_5,
+			ignore_staggers = tbl_5,
 			next = {
 				"attack_5",
 				"attack_5",
@@ -1141,7 +1156,7 @@ local var_0_9 = {
 				"attack_combo_2_05",
 				"attack_combo_3_05"
 			},
-			ignore_staggers = var_0_5
+			ignore_staggers = tbl_5
 		},
 		attack_heavy = {
 			rotation_scheme = "continuous",
@@ -1163,7 +1178,7 @@ local var_0_9 = {
 				"attack_combo_2_finish",
 				"attack_combo_3_finish"
 			},
-			ignore_staggers = var_0_6,
+			ignore_staggers = tbl_6,
 			damage_done_time = {
 				attack_combo_2_finish = 1.2463768115942029,
 				attack_combo_3_finish = 1
@@ -1180,9 +1195,9 @@ local var_0_9 = {
 	}
 }
 
-var_0_8.frenzy_attack = table.create_copy(var_0_8.frenzy_attack, var_0_9)
-var_0_8.frenzy_attack.considerations = UtilityConsiderations.berzerker_frenzy_attack
-var_0_8.frenzy_attack.combo_attacks.attack_1 = {
+tbl_8.frenzy_attack = table.create_copy(tbl_8.frenzy_attack, tbl_9)
+tbl_8.frenzy_attack.considerations = UtilityConsiderations.berzerker_frenzy_attack
+tbl_8.frenzy_attack.combo_attacks.attack_1 = {
 	run_speed = 5,
 	rotation_scheme = "continuous",
 	fatigue_type = "blocked_berzerker",
@@ -1191,7 +1206,7 @@ var_0_8.frenzy_attack.combo_attacks.attack_1 = {
 	attack_intensity_type = "frenzy",
 	combo_cooldown_start = true,
 	next = "attack_2",
-	difficulty_attack_intensity = var_0_4,
+	difficulty_attack_intensity = tbl_4,
 	anim = {
 		"attack_combo_1_01",
 		"attack_combo_2_01",
@@ -1202,6 +1217,6 @@ var_0_8.frenzy_attack.combo_attacks.attack_1 = {
 		"attack_combo_2_01",
 		"attack_combo_3_01"
 	},
-	ignore_staggers = var_0_5
+	ignore_staggers = tbl_5
 }
-BreedActions.chaos_berzerker = table.create_copy(BreedActions.chaos_berzerker, var_0_8)
+BreedActions.chaos_berzerker = table.create_copy(BreedActions.chaos_berzerker, tbl_8)

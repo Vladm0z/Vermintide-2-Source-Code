@@ -4,48 +4,49 @@ require("scripts/settings/equipment/power_level_templates")
 
 DamageProfileTemplates = {}
 
-local function var_0_0(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, ...)
+local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, ...)
+	-- function 1
 	local var_1_0 = DamageProfileTemplates[arg_1_0]
-	local var_1_1 = table.clone(var_1_0)
+	local clone = table.clone(var_1_0)
 	local var_1_2 = select("#", ...)
 
-	if arg_1_4 then
-		if type(var_1_1.default_target) == "string" then
-			var_1_1.default_target = PowerLevelTemplates[var_1_1.default_target]
+	if not arg_1_4 then
+		if type(clone.default_target) == "string" then
+			clone.default_target = PowerLevelTemplates[clone.default_target]
 		end
 
-		var_1_1.default_target = table.clone(var_1_1.default_target)
-		var_1_1.default_target.attack_template = arg_1_4
+		clone.default_target = table.clone(clone.default_target)
+		clone.default_target.attack_template = arg_1_4
 
-		if type(var_1_1.targets) == "string" then
-			var_1_1.targets = PowerLevelTemplates[var_1_1.targets]
+		if type(clone.targets) == "string" then
+			clone.targets = PowerLevelTemplates[clone.targets]
 		end
 
-		var_1_1.targets = table.clone(var_1_1.targets)
+		clone.targets = table.clone(clone.targets)
 
-		local var_1_3 = var_1_1.targets
+		local targets = clone.targets
 
-		if var_1_3 then
-			for iter_1_0, iter_1_1 in ipairs(var_1_3) do
-				if iter_1_0 <= var_1_2 then
-					iter_1_1.attack_template = select(iter_1_0, ...)
+		if not targets then
+			for i, v in ipairs(targets) do
+				if i <= var_1_2 then
+					v.attack_template = select(i, ...)
 				else
-					iter_1_1.attack_template = arg_1_4
+					v.attack_template = arg_1_4
 				end
 			end
 		end
 	end
 
-	if arg_1_3 then
-		var_1_1.charge_value = arg_1_3
+	if not arg_1_3 then
+		clone.charge_value = arg_1_3
 	end
 
-	if arg_1_2 then
-		DamageProfileTemplates[arg_1_2] = var_1_1
-	elseif arg_1_1 then
-		local var_1_4 = arg_1_0 .. arg_1_1
+	if not arg_1_2 then
+		DamageProfileTemplates[arg_1_2] = clone
+	elseif not arg_1_1 then
+		local str = arg_1_0 .. arg_1_1
 
-		DamageProfileTemplates[var_1_4] = var_1_1
+		DamageProfileTemplates[str] = clone
 	end
 end
 
@@ -95,7 +96,7 @@ DamageProfileTemplates.light_slashing_axe_linesman = {
 	targets = "targets_axe_linesman_L"
 }
 
-var_0_0("light_slashing_axe_linesman", "_upper", nil, nil, "slashing_upper", "slashing_upper")
+fn("light_slashing_axe_linesman", "_upper", nil, nil, "slashing_upper", "slashing_upper")
 
 DamageProfileTemplates.medium_slashing_axe_linesman = {
 	armor_modifier = "armor_modifier_axe_linesman_M",
@@ -106,12 +107,12 @@ DamageProfileTemplates.medium_slashing_axe_linesman = {
 	targets = "targets_axe_linesman_M"
 }
 
-var_0_0("medium_slashing_axe_linesman", "_1h", nil, "heavy_attack")
+fn("medium_slashing_axe_linesman", "_1h", nil, "heavy_attack")
 
 DamageProfileTemplates.medium_slashing_axe_linesman_1h.targets = "targets_axe_linesman_M_1h"
 DamageProfileTemplates.medium_slashing_axe_linesman_1h.melee_boost_override = 6
 
-var_0_0("medium_slashing_axe_linesman_1h", nil, "medium_slashing_axe_linesman_dual", nil)
+fn("medium_slashing_axe_linesman_1h", nil, "medium_slashing_axe_linesman_dual", nil)
 
 DamageProfileTemplates.medium_slashing_axe_linesman_dual.targets = "targets_axe_linesman_M_dual"
 DamageProfileTemplates.heavy_slashing_axe_linesman = {
@@ -147,17 +148,17 @@ DamageProfileTemplates.light_slashing_linesman_dual = {
 	targets = "targets_linesman_dual_L"
 }
 
-var_0_0("light_slashing_linesman", nil, "light_slashing_linesman_elf", nil, nil)
+fn("light_slashing_linesman", nil, "light_slashing_linesman_elf", nil, nil)
 
 DamageProfileTemplates.light_slashing_linesman_elf.armor_modifier = "armor_modifier_linesman_elf_L"
 DamageProfileTemplates.light_slashing_linesman_elf.targets = "targets_linesman_L_finesse"
 
-var_0_0("light_slashing_linesman", "_finesse", nil, nil, nil)
+fn("light_slashing_linesman", "_finesse", nil, nil, nil)
 
 DamageProfileTemplates.light_slashing_linesman_finesse.targets = "targets_linesman_L_finesse"
 
-var_0_0("light_slashing_linesman_dual", "_medium", nil, "heavy_attack")
-var_0_0("light_slashing_linesman_dual", "_swords", nil, nil, nil)
+fn("light_slashing_linesman_dual", "_medium", nil, "heavy_attack")
+fn("light_slashing_linesman_dual", "_swords", nil, nil, nil)
 
 DamageProfileTemplates.light_slashing_linesman_dual_swords.armor_modifier = "armor_modifier_linesman_dual_L_swords"
 DamageProfileTemplates.light_slashing_linesman_dual_swords.targets = "targets_linesman_dual_L_swords"
@@ -175,8 +176,8 @@ DamageProfileTemplates.light_slashing_linesman_fencer = {
 	targets = "targets_linesman_fencer_L"
 }
 
-var_0_0("light_slashing_linesman", "_flat", nil, nil, "light_slashing_tank", "light_slashing_tank")
-var_0_0("light_slashing_linesman", "_burn", nil, nil, "burning_linesman", "light_burning_linesman")
+fn("light_slashing_linesman", "_flat", nil, nil, "light_slashing_tank", "light_slashing_tank")
+fn("light_slashing_linesman", "_burn", nil, nil, "burning_linesman", "light_burning_linesman")
 
 DamageProfileTemplates.light_slashing_linesman_burn.targets = "targets_linesman_burn_L"
 DamageProfileTemplates.medium_slashing_linesman = {
@@ -204,16 +205,16 @@ DamageProfileTemplates.medium_slashing_linesman_uppercut = {
 	targets = "targets_linesman_uppercut_M"
 }
 
-var_0_0("light_slashing_linesman", nil, "medium_slashing_linesman_spear", nil)
+fn("light_slashing_linesman", nil, "medium_slashing_linesman_spear", nil)
 
 DamageProfileTemplates.medium_slashing_linesman_spear.targets = "targets_linesman_spear_M"
 
-var_0_0("medium_slashing_linesman", "_2h", nil, nil)
+fn("medium_slashing_linesman", "_2h", nil, nil)
 
 DamageProfileTemplates.medium_slashing_linesman_2h.targets = "targets_linesman_M_2h"
 
-var_0_0("medium_slashing_linesman", "_1h", nil, "heavy_attack")
-var_0_0("medium_slashing_linesman", "_finesse", nil, nil)
+fn("medium_slashing_linesman", "_1h", nil, "heavy_attack")
+fn("medium_slashing_linesman", "_finesse", nil, nil)
 
 DamageProfileTemplates.medium_slashing_linesman_finesse.targets = "targets_linesman_M_finesse"
 DamageProfileTemplates.heavy_slashing_linesman = {
@@ -258,8 +259,8 @@ DamageProfileTemplates.light_blunt_tank = {
 	armor_modifier = "armor_modifier_tank_L"
 }
 
-var_0_0("light_blunt_tank", "_diag", nil, nil, "light_blunt_linesman", "blunt_linesman")
-var_0_0("light_blunt_tank", "_upper", nil, nil, "light_blunt_linesman", "blunt_tank_uppercut")
+fn("light_blunt_tank", "_diag", nil, nil, "light_blunt_linesman", "blunt_linesman")
+fn("light_blunt_tank", "_upper", nil, nil, "light_blunt_linesman", "blunt_tank_uppercut")
 
 DamageProfileTemplates.light_blunt_tank_dual = {
 	armor_modifier = "armor_modifier_tank_L",
@@ -270,8 +271,8 @@ DamageProfileTemplates.light_blunt_tank_dual = {
 	targets = "targets_tank_dual_L"
 }
 
-var_0_0("light_blunt_tank_dual", "_diag", nil, nil, "light_blunt_linesman", "blunt_linesman")
-var_0_0("light_blunt_tank_dual", "_upper", nil, nil, "light_blunt_linesman", "blunt_tank_uppercut")
+fn("light_blunt_tank_dual", "_diag", nil, nil, "light_blunt_linesman", "blunt_linesman")
+fn("light_blunt_tank_dual", "_upper", nil, nil, "light_blunt_linesman", "blunt_tank_uppercut")
 
 DamageProfileTemplates.light_blunt_tank_spiked = {
 	stagger_duration_modifier = 1.5,
@@ -301,21 +302,21 @@ DamageProfileTemplates.medium_blunt_tank = {
 	armor_modifier = "armor_modifier_tank_M"
 }
 
-var_0_0("medium_blunt_tank", "_1h", nil, "heavy_attack")
+fn("medium_blunt_tank", "_1h", nil, "heavy_attack")
 
 DamageProfileTemplates.medium_blunt_tank_1h.targets = "targets_tank_M_1h"
 DamageProfileTemplates.medium_blunt_tank_1h.armor_modifier = "armor_modifier_tank_M_1h"
 
-var_0_0("medium_blunt_tank", "_impact", nil, nil)
+fn("medium_blunt_tank", "_impact", nil, nil)
 
 DamageProfileTemplates.medium_blunt_tank_impact.stagger_distance_modifier = 1.15
 
-var_0_0("medium_blunt_tank_1h", nil, "medium_slashing_tank_1h", "heavy_attack", "light_slashing_tank", "slashing_tank", "slashing_tank", "light_slashing_tank")
-var_0_0("medium_blunt_tank_1h", nil, "medium_blunt_tank_dual", nil, nil)
+fn("medium_blunt_tank_1h", nil, "medium_slashing_tank_1h", "heavy_attack", "light_slashing_tank", "slashing_tank", "slashing_tank", "light_slashing_tank")
+fn("medium_blunt_tank_1h", nil, "medium_blunt_tank_dual", nil, nil)
 
 DamageProfileTemplates.medium_blunt_tank_dual.targets = "targets_tank_M_dual"
 
-var_0_0("medium_slashing_tank_1h", "_finesse", nil, nil, nil)
+fn("medium_slashing_tank_1h", "_finesse", nil, nil, nil)
 
 DamageProfileTemplates.medium_slashing_tank_1h_finesse.targets = "targets_tank_M_1h_finesse"
 DamageProfileTemplates.medium_blunt_tank_spiked = {
@@ -328,7 +329,7 @@ DamageProfileTemplates.medium_blunt_tank_spiked = {
 	armor_modifier = "armor_modifier_tank_spiked_M"
 }
 
-var_0_0("medium_blunt_tank_spiked", nil, "medium_blunt_tank_upper_1h", "heavy_attack", "light_blunt_linesman", "blunt_tank_uppercut")
+fn("medium_blunt_tank_spiked", nil, "medium_blunt_tank_upper_1h", "heavy_attack", "light_blunt_linesman", "blunt_tank_uppercut")
 
 DamageProfileTemplates.heavy_blunt_tank = {
 	stagger_duration_modifier = 1.8,
@@ -340,8 +341,8 @@ DamageProfileTemplates.heavy_blunt_tank = {
 	armor_modifier = "armor_modifier_tank_H"
 }
 
-var_0_0("heavy_blunt_tank", nil, "heavy_blunt_tank_light", "light_attack", nil)
-var_0_0("heavy_blunt_tank", nil, "heavy_slashing_tank", "heavy_attack", "heavy_slashing_tank", "slashing_tank", "slashing_tank", "light_slashing_tank")
+fn("heavy_blunt_tank", nil, "heavy_blunt_tank_light", "light_attack", nil)
+fn("heavy_blunt_tank", nil, "heavy_slashing_tank", "heavy_attack", "heavy_slashing_tank", "slashing_tank", "slashing_tank", "light_slashing_tank")
 
 DamageProfileTemplates.light_slashing_smiter = {
 	armor_modifier = "armor_modifier_smiter_L",
@@ -361,40 +362,40 @@ DamageProfileTemplates.light_pointy_smiter = {
 	targets = "targets_smiter_L"
 }
 
-var_0_0("light_slashing_smiter", "_diag", nil, nil, "slashing_linesman")
-var_0_0("light_slashing_smiter_diag", "_1h", nil, nil)
+fn("light_slashing_smiter", "_diag", nil, nil, "slashing_linesman")
+fn("light_slashing_smiter_diag", "_1h", nil, nil)
 
 DamageProfileTemplates.light_slashing_smiter_diag_1h.default_target = "light_slashing_smiter_diag_1h"
 
-var_0_0("light_slashing_smiter", "_flat", nil, nil, "slashing_tank")
-var_0_0("light_slashing_smiter", "_upper", nil, nil, "slashing_upper")
-var_0_0("light_slashing_smiter", "_heavy", nil, "heavy")
-var_0_0("light_pointy_smiter", "_diag", nil, nil, "blunt_linesman")
-var_0_0("light_pointy_smiter", "_flat", nil, nil, "blunt_tank")
-var_0_0("light_pointy_smiter", "_upper", nil, nil, "blunt_tank_uppercut")
-var_0_0("light_slashing_smiter_diag", "_dual_L", nil, nil)
+fn("light_slashing_smiter", "_flat", nil, nil, "slashing_tank")
+fn("light_slashing_smiter", "_upper", nil, nil, "slashing_upper")
+fn("light_slashing_smiter", "_heavy", nil, "heavy")
+fn("light_pointy_smiter", "_diag", nil, nil, "blunt_linesman")
+fn("light_pointy_smiter", "_flat", nil, nil, "blunt_tank")
+fn("light_pointy_smiter", "_upper", nil, nil, "blunt_tank_uppercut")
+fn("light_slashing_smiter_diag", "_dual_L", nil, nil)
 
 DamageProfileTemplates.light_slashing_smiter_diag_dual_L.default_target = "default_target_smiter_L_dual_light"
 DamageProfileTemplates.light_slashing_smiter_diag_dual_L.armor_modifier = "armor_modifier_smiter_L_dual_light"
 DamageProfileTemplates.light_slashing_smiter_diag_dual_L.critical_strike = "critical_strike_smiter_L_dual_light"
 DamageProfileTemplates.light_slashing_smiter_diag_dual_L.ignore_stagger_reduction = false
 
-var_0_0("light_slashing_smiter", "_dual", nil, "heavy_attack")
+fn("light_slashing_smiter", "_dual", nil, "heavy_attack")
 
 DamageProfileTemplates.light_slashing_smiter_dual.default_target = "default_target_smiter_L_dual_heavy"
 DamageProfileTemplates.light_slashing_smiter_dual.ignore_stagger_reduction = false
 
-var_0_0("light_slashing_smiter", "_dual_bopp", nil, "light_attack")
+fn("light_slashing_smiter", "_dual_bopp", nil, "light_attack")
 
 DamageProfileTemplates.light_slashing_smiter_dual_bopp.default_target = "default_target_smiter_L_dual_light"
 DamageProfileTemplates.light_slashing_smiter_dual_bopp.critical_strike = "critical_strike_smiter_L_dual_light"
 DamageProfileTemplates.light_slashing_smiter_dual_bopp.ignore_stagger_reduction = false
 
-var_0_0("light_slashing_smiter", nil, "light_blunt_smiter", nil, "light_blunt_smiter")
-var_0_0("light_slashing_smiter_dual", nil, "light_blunt_smiter_dual", nil, "blunt_smiter")
-var_0_0("light_slashing_smiter_dual", nil, "light_blunt_smiter_dual_diag", nil, "blunt_linesman")
-var_0_0("light_slashing_smiter_dual", nil, "light_blunt_smiter_dual_flat", nil, "blunt_tank")
-var_0_0("light_slashing_smiter", "_finesse", nil, nil, nil)
+fn("light_slashing_smiter", nil, "light_blunt_smiter", nil, "light_blunt_smiter")
+fn("light_slashing_smiter_dual", nil, "light_blunt_smiter_dual", nil, "blunt_smiter")
+fn("light_slashing_smiter_dual", nil, "light_blunt_smiter_dual_diag", nil, "blunt_linesman")
+fn("light_slashing_smiter_dual", nil, "light_blunt_smiter_dual_flat", nil, "blunt_tank")
+fn("light_slashing_smiter", "_finesse", nil, nil, nil)
 
 DamageProfileTemplates.light_slashing_smiter_finesse.default_target = "default_target_smiter_L_finesse"
 DamageProfileTemplates.light_slashing_smiter_finesse.targets = "targets_smiter_L_finesse"
@@ -408,59 +409,59 @@ DamageProfileTemplates.medium_slashing_smiter = {
 	shield_break = true
 }
 
-var_0_0("medium_slashing_smiter", "_diag", nil, nil, "heavy_slashing_linesman")
-var_0_0("medium_slashing_smiter", "_1h", nil, "heavy_attack")
-var_0_0("medium_slashing_smiter", "_upper", nil, "heavy_attack", "slashing_upper")
+fn("medium_slashing_smiter", "_diag", nil, nil, "heavy_slashing_linesman")
+fn("medium_slashing_smiter", "_1h", nil, "heavy_attack")
+fn("medium_slashing_smiter", "_upper", nil, "heavy_attack", "slashing_upper")
 
 DamageProfileTemplates.medium_slashing_smiter_1h.melee_boost_override = 5
 
-var_0_0("medium_slashing_smiter", "_2h")
+fn("medium_slashing_smiter", "_2h")
 
 DamageProfileTemplates.medium_slashing_smiter_2h.default_target = "default_target_smiter_M_2H"
 DamageProfileTemplates.medium_slashing_smiter_2h.critical_strike = "critical_strike_smiter_M_2h"
 
-var_0_0("medium_slashing_smiter_2h", "_upper", nil, nil, "slashing_upper")
-var_0_0("medium_slashing_smiter_2h", "_flat", nil, nil, "slashing_tank")
-var_0_0("medium_slashing_smiter_2h", nil, "medium_blunt_smiter_2h", nil, "blunt_tank")
-var_0_0("medium_slashing_smiter", "_flat", nil, nil, "slashing_tank")
-var_0_0("medium_slashing_smiter", "_flat_1h", nil, "heavy_attack", "slashing_tank")
-var_0_0("medium_slashing_smiter", nil, "medium_blunt_smiter", nil, "blunt_smiter")
-var_0_0("medium_blunt_smiter", "_diag", nil, nil, "blunt_linesman")
-var_0_0("medium_blunt_smiter", "_flat", nil, nil, "blunt_tank")
-var_0_0("medium_blunt_smiter", "_flat_2h", nil, "light_attack", "blunt_tank")
-var_0_0("medium_blunt_smiter", "_upper", nil, nil, "blunt_tank_uppercut")
-var_0_0("medium_blunt_smiter_upper", "_1h", nil, "heavy_attack")
-var_0_0("medium_blunt_smiter", "_1h", nil, "heavy_attack")
-var_0_0("medium_blunt_smiter_upper", nil, "medium_pointy_smiter_upper_1h", "heavy_attack")
-var_0_0("medium_blunt_smiter_flat", nil, "medium_pointy_smiter_flat_1h", "heavy_attack")
-var_0_0("medium_blunt_smiter_diag", nil, "medium_pointy_smiter_diag_1h", "heavy_attack")
+fn("medium_slashing_smiter_2h", "_upper", nil, nil, "slashing_upper")
+fn("medium_slashing_smiter_2h", "_flat", nil, nil, "slashing_tank")
+fn("medium_slashing_smiter_2h", nil, "medium_blunt_smiter_2h", nil, "blunt_tank")
+fn("medium_slashing_smiter", "_flat", nil, nil, "slashing_tank")
+fn("medium_slashing_smiter", "_flat_1h", nil, "heavy_attack", "slashing_tank")
+fn("medium_slashing_smiter", nil, "medium_blunt_smiter", nil, "blunt_smiter")
+fn("medium_blunt_smiter", "_diag", nil, nil, "blunt_linesman")
+fn("medium_blunt_smiter", "_flat", nil, nil, "blunt_tank")
+fn("medium_blunt_smiter", "_flat_2h", nil, "light_attack", "blunt_tank")
+fn("medium_blunt_smiter", "_upper", nil, nil, "blunt_tank_uppercut")
+fn("medium_blunt_smiter_upper", "_1h", nil, "heavy_attack")
+fn("medium_blunt_smiter", "_1h", nil, "heavy_attack")
+fn("medium_blunt_smiter_upper", nil, "medium_pointy_smiter_upper_1h", "heavy_attack")
+fn("medium_blunt_smiter_flat", nil, "medium_pointy_smiter_flat_1h", "heavy_attack")
+fn("medium_blunt_smiter_diag", nil, "medium_pointy_smiter_diag_1h", "heavy_attack")
 
 DamageProfileTemplates.medium_pointy_smiter_upper_1h.armor_modifier = "armor_modifier_pointy_smiter_M"
 DamageProfileTemplates.medium_pointy_smiter_flat_1h.armor_modifier = "armor_modifier_pointy_smiter_M"
 DamageProfileTemplates.medium_pointy_smiter_flat_1h.critical_strike = "critical_strike_pointy_smiter_L"
 
-var_0_0("medium_blunt_smiter_upper", nil, "medium_blunt_smiter_2h_hammer_upper", nil, nil)
+fn("medium_blunt_smiter_upper", nil, "medium_blunt_smiter_2h_hammer_upper", nil, nil)
 
 DamageProfileTemplates.medium_blunt_smiter_2h_hammer_upper.armor_modifier = "armor_modifier_blunt_smiter_2h_hammer_H"
 DamageProfileTemplates.medium_blunt_smiter_2h_hammer_upper.critical_strike = "critical_strike_blunt_smiter_2h_hammer_H"
 
-var_0_0("medium_blunt_smiter_diag", nil, "medium_blunt_smiter_2h_hammer_diag", nil, nil)
+fn("medium_blunt_smiter_diag", nil, "medium_blunt_smiter_2h_hammer_diag", nil, nil)
 
 DamageProfileTemplates.medium_blunt_smiter_2h_hammer_diag.armor_modifier = "armor_modifier_blunt_smiter_2h_hammer_H"
 DamageProfileTemplates.medium_blunt_smiter_2h_hammer_diag.critical_strike = "critical_strike_blunt_smiter_2h_hammer_H"
 
-var_0_0("medium_blunt_smiter", nil, "medium_blunt_smiter_2h_hammer", nil, nil)
+fn("medium_blunt_smiter", nil, "medium_blunt_smiter_2h_hammer", nil, nil)
 
 DamageProfileTemplates.medium_blunt_smiter_2h_hammer.armor_modifier = "armor_modifier_blunt_smiter_2h_hammer_H"
 DamageProfileTemplates.medium_blunt_smiter_2h_hammer.critical_strike = "critical_strike_blunt_smiter_2h_hammer_H"
 
-var_0_0("medium_blunt_smiter", nil, "medium_blunt_smiter_heavy", "heavy_attack", nil)
+fn("medium_blunt_smiter", nil, "medium_blunt_smiter_heavy", "heavy_attack", nil)
 
 DamageProfileTemplates.medium_blunt_smiter_heavy.armor_modifier = "armor_modifier_blunt_smiter_2h_hammer_H"
 DamageProfileTemplates.medium_blunt_smiter_heavy.critical_strike = "critical_strike_blunt_smiter_2h_hammer_H"
 DamageProfileTemplates.medium_blunt_smiter_heavy.default_target = "default_target_slashing_smiter_burn_M"
 
-var_0_0("medium_slashing_smiter", nil, "medium_slashing_smiter_1h_axe", "heavy_attack", nil)
+fn("medium_slashing_smiter", nil, "medium_slashing_smiter_1h_axe", "heavy_attack", nil)
 
 DamageProfileTemplates.medium_slashing_smiter_1h_axe.armor_modifier = "armor_modifier_blunt_smiter_2h_hammer_H"
 DamageProfileTemplates.medium_slashing_smiter_1h_axe.critical_strike = "critical_strike_blunt_smiter_2h_hammer_H"
@@ -484,7 +485,7 @@ DamageProfileTemplates.heavy_blunt_smiter_burn = {
 	shield_break = true
 }
 
-var_0_0("heavy_blunt_smiter_burn", "_charge", nil, nil, nil)
+fn("heavy_blunt_smiter_burn", "_charge", nil, nil, nil)
 
 DamageProfileTemplates.heavy_blunt_smiter_burn_charge.critical_strike = "critical_strike_blunt_smiter_2h_hammer_H"
 DamageProfileTemplates.heavy_blunt_smiter_burn_charge.armor_modifier = "armor_modifier_blunt_smiter_2h_hammer_H"
@@ -498,21 +499,21 @@ DamageProfileTemplates.light_slashing_smiter_stab = {
 	targets = "targets_stab_smiter_L"
 }
 
-var_0_0("light_slashing_smiter_stab", nil, "light_blunt_smiter_stab", nil, "heavy_blunt_fencer")
+fn("light_slashing_smiter_stab", nil, "light_blunt_smiter_stab", nil, "heavy_blunt_fencer")
 
 DamageProfileTemplates.light_blunt_smiter_stab.targets = "targets_blunt_smiter_stab_L"
 
-var_0_0("light_slashing_smiter_stab", "_burn", nil, nil)
+fn("light_slashing_smiter_stab", "_burn", nil, nil)
 
 DamageProfileTemplates.light_slashing_smiter_stab_burn.targets = "targets_burning_stab_smiter_L"
 
-var_0_0("light_slashing_smiter_stab", "_swords", nil, nil)
+fn("light_slashing_smiter_stab", "_swords", nil, nil)
 
 DamageProfileTemplates.light_slashing_smiter_stab_swords.targets = "targets_stab_smiter_L_swords"
 DamageProfileTemplates.light_slashing_smiter_stab_swords.critical_strike = "critical_strike_stab_smiter_L_swords"
 DamageProfileTemplates.light_slashing_smiter_stab_swords.armor_modifier = "armor_modifier_stab_smiter_L_swords"
 
-var_0_0("light_slashing_smiter_stab_burn", nil, "light_blunt_smiter_stab_burn", nil)
+fn("light_slashing_smiter_stab_burn", nil, "light_blunt_smiter_stab_burn", nil)
 
 DamageProfileTemplates.light_blunt_smiter_stab_burn.targets = "targets_burning_punch_smiter_L"
 DamageProfileTemplates.light_blunt_smiter_stab_burn.armor_modifier = "armor_modifier_burning_punch_smiter_L"
@@ -525,15 +526,15 @@ DamageProfileTemplates.medium_slashing_smiter_stab = {
 }
 DamageProfileTemplates.medium_slashing_smiter_stab.melee_boost_override = 2.5
 
-var_0_0("medium_slashing_smiter_stab", nil, "medium_spear_smiter_stab", "heavy_attack")
+fn("medium_slashing_smiter_stab", nil, "medium_spear_smiter_stab", "heavy_attack")
 
 DamageProfileTemplates.medium_spear_smiter_stab.default_target = "default_target_spear_stab_smiter_M"
 
-var_0_0("medium_slashing_smiter_stab", "_elf", nil, "light_attack")
+fn("medium_slashing_smiter_stab", "_elf", nil, "light_attack")
 
 DamageProfileTemplates.medium_slashing_smiter_stab_elf.default_target = "default_target_stab_smiter_M_elf"
 
-var_0_0("medium_blunt_smiter_burn", nil, "medium_burning_smiter_stab_H", "heavy_attack")
+fn("medium_blunt_smiter_burn", nil, "medium_burning_smiter_stab_H", "heavy_attack")
 
 DamageProfileTemplates.medium_burning_smiter_stab_H.default_target = "default_target_burning_stab_smiter_M"
 DamageProfileTemplates.medium_burning_smiter_stab_H.ignore_stagger_reduction = true
@@ -545,14 +546,14 @@ DamageProfileTemplates.medium_slashing_smiter_stab_1h = {
 	default_target = "default_target_stab_smiter_M_1h"
 }
 
-var_0_0("light_slashing_smiter_stab", nil, "light_slashing_smiter_stab_dual", "heavy_attack")
+fn("light_slashing_smiter_stab", nil, "light_slashing_smiter_stab_dual", "heavy_attack")
 
 DamageProfileTemplates.light_slashing_smiter_stab_dual.armor_modifier = "armor_modifier_stab_smiter_M_1h"
 DamageProfileTemplates.light_slashing_smiter_stab_dual.targets = "targets_stab_dual_smiter_L"
 DamageProfileTemplates.light_slashing_smiter_stab_dual.critical_strike = "critical_strike_stab_smiter_M_1h"
 DamageProfileTemplates.light_slashing_smiter_stab_dual.melee_boost_override = 4
 
-var_0_0("light_slashing_smiter_stab_dual", nil, "light_slashing_smiter_stab_dual_dagger", "heavy_attack")
+fn("light_slashing_smiter_stab_dual", nil, "light_slashing_smiter_stab_dual_dagger", "heavy_attack")
 
 DamageProfileTemplates.light_slashing_smiter_stab_dual_dagger.critical_strike = "critical_strike_stab_dual_smiter_L_dagger"
 DamageProfileTemplates.heavy_slashing_smiter_stab = {
@@ -600,7 +601,7 @@ DamageProfileTemplates.light_fencer_stab = {
 	require_damage_for_dot = true
 }
 
-var_0_0("light_fencer_stab", "_diag", nil, nil, "light_slashing_linesman_hs")
+fn("light_fencer_stab", "_diag", nil, nil, "light_slashing_linesman_hs")
 
 DamageProfileTemplates.light_fencer_stab_diag.armor_modifier = "armor_modifier_fencer_stab_L"
 DamageProfileTemplates.light_fencer_stab_diag.cleave_distribution = "cleave_distribution_smiter_fencer"
@@ -613,7 +614,7 @@ DamageProfileTemplates.medium_fencer_stab = {
 	targets = "targets_fencer_stab_M"
 }
 
-var_0_0("medium_fencer_stab", "_charged", nil, nil)
+fn("medium_fencer_stab", "_charged", nil, nil)
 
 DamageProfileTemplates.medium_fencer_stab_charged.default_target = "default_target_fencer_stab_M_charged"
 DamageProfileTemplates.heavy_slashing_smiter = {
@@ -626,28 +627,28 @@ DamageProfileTemplates.heavy_slashing_smiter = {
 	shield_break = true
 }
 
-var_0_0("heavy_slashing_smiter", "_polearm", nil)
+fn("heavy_slashing_smiter", "_polearm", nil)
 
 DamageProfileTemplates.heavy_slashing_smiter_polearm.no_stagger_damage_reduction = false
 DamageProfileTemplates.heavy_slashing_smiter_polearm.shield_break = false
 
-var_0_0("heavy_slashing_smiter", nil, "heavy_slashing_smiter_executioner")
+fn("heavy_slashing_smiter", nil, "heavy_slashing_smiter_executioner")
 
 DamageProfileTemplates.heavy_slashing_smiter_executioner.default_target = "default_target_smiter_executioner_H"
 DamageProfileTemplates.heavy_slashing_smiter_executioner.critical_strike = "critical_strike_smiter_executioner_H"
 
-var_0_0("heavy_slashing_smiter", nil, "heavy_slashing_smiter_glaive")
+fn("heavy_slashing_smiter", nil, "heavy_slashing_smiter_glaive")
 
 DamageProfileTemplates.heavy_slashing_smiter_glaive.default_target = "default_target_smiter_glaive_H"
 DamageProfileTemplates.heavy_slashing_smiter_glaive.melee_boost_override = 3
 DamageProfileTemplates.heavy_slashing_smiter_glaive.critical_strike = "critical_strike_smiter_glaive_H"
 
-var_0_0("heavy_slashing_smiter", nil, "heavy_blunt_smiter", nil, "heavy_blunt_smiter")
-var_0_0("heavy_blunt_smiter", nil, "heavy_blunt_smiter_pick")
+fn("heavy_slashing_smiter", nil, "heavy_blunt_smiter", nil, "heavy_blunt_smiter")
+fn("heavy_blunt_smiter", nil, "heavy_blunt_smiter_pick")
 
 DamageProfileTemplates.heavy_blunt_smiter_pick.critical_strike = nil
 
-var_0_0("heavy_blunt_smiter", "_charged", nil, nil, "heavy_blunt_smiter_pick")
+fn("heavy_blunt_smiter", "_charged", nil, nil, "heavy_blunt_smiter_pick")
 
 DamageProfileTemplates.heavy_blunt_smiter_charged.default_target = "default_target_smiter_H_charged"
 DamageProfileTemplates.heavy_blunt_smiter_charged.armor_modifier = "armor_modifier_smiter_pick_H_charged"
@@ -1227,27 +1228,27 @@ DamageProfileTemplates.mace_1h_light_tank_horizontal = {
 	armor_modifier = "mace_1h_light_tank_horizontal_armor_modifier"
 }
 
-local var_0_1 = {
+local tbl = {
 	dropoff_start = 8,
 	dropoff_end = 15
 }
-local var_0_2 = {
+local tbl_2 = {
 	dropoff_start = 10,
 	dropoff_end = 30
 }
-local var_0_3 = {
+local tbl_3 = {
 	dropoff_start = 15,
 	dropoff_end = 30
 }
-local var_0_4 = {
+local tbl_4 = {
 	dropoff_start = 30,
 	dropoff_end = 50
 }
-local var_0_5 = {
+local tbl_5 = {
 	dropoff_start = 4,
 	dropoff_end = 8
 }
-local var_0_6 = {
+local tbl_6 = {
 	dropoff_start = 5,
 	dropoff_end = 10
 }
@@ -1327,7 +1328,7 @@ DamageProfileTemplates.crossbow_bolt = {
 			attack = 0.6,
 			impact = 0.3
 		},
-		range_modifier_settings = var_0_4
+		range_modifier_settings = tbl_4
 	}
 }
 DamageProfileTemplates.longbow_empire = {
@@ -1405,7 +1406,7 @@ DamageProfileTemplates.longbow_empire = {
 			attack = 0.35,
 			impact = 0.2
 		},
-		range_modifier_settings = var_0_4
+		range_modifier_settings = tbl_4
 	}
 }
 DamageProfileTemplates.crossbow_bolt_repeating = {
@@ -1482,7 +1483,7 @@ DamageProfileTemplates.crossbow_bolt_repeating = {
 			attack = 0.25,
 			impact = 0.15
 		},
-		range_modifier_settings = var_0_3
+		range_modifier_settings = tbl_3
 	}
 }
 DamageProfileTemplates.crossbow_bolt_repeating_multishot = {
@@ -1559,7 +1560,7 @@ DamageProfileTemplates.crossbow_bolt_repeating_multishot = {
 			attack = 0.25,
 			impact = 0.15
 		},
-		range_modifier_settings = var_0_3
+		range_modifier_settings = tbl_3
 	}
 }
 DamageProfileTemplates.crossbow_bolt_repeating_elf = {
@@ -1636,7 +1637,7 @@ DamageProfileTemplates.crossbow_bolt_repeating_elf = {
 			attack = 0.3,
 			impact = 0.15
 		},
-		range_modifier_settings = var_0_3
+		range_modifier_settings = tbl_3
 	}
 }
 DamageProfileTemplates.shot_shotgun = {
@@ -1714,7 +1715,7 @@ DamageProfileTemplates.shot_shotgun = {
 			attack = 0.15,
 			impact = 0.15
 		},
-		range_modifier_settings = var_0_2
+		range_modifier_settings = tbl_2
 	}
 }
 DamageProfileTemplates.shot_machinegun = {
@@ -1791,7 +1792,7 @@ DamageProfileTemplates.shot_machinegun = {
 			attack = 0.2,
 			impact = 0.075
 		},
-		range_modifier_settings = var_0_2
+		range_modifier_settings = tbl_2
 	}
 }
 DamageProfileTemplates.shot_machinegun_shotgun = {
@@ -1868,7 +1869,7 @@ DamageProfileTemplates.shot_machinegun_shotgun = {
 			attack = 0.25,
 			impact = 0.05
 		},
-		range_modifier_settings = var_0_2
+		range_modifier_settings = tbl_2
 	}
 }
 DamageProfileTemplates.shot_carbine = {
@@ -1945,7 +1946,7 @@ DamageProfileTemplates.shot_carbine = {
 			attack = 0.3,
 			impact = 0.25
 		},
-		range_modifier_settings = var_0_3
+		range_modifier_settings = tbl_3
 	}
 }
 DamageProfileTemplates.shot_carbine_rapier = {
@@ -2022,7 +2023,7 @@ DamageProfileTemplates.shot_carbine_rapier = {
 			attack = 0.05,
 			impact = 0.125
 		},
-		range_modifier_settings = var_0_6
+		range_modifier_settings = tbl_6
 	}
 }
 DamageProfileTemplates.shot_drakefire = {
@@ -2101,7 +2102,7 @@ DamageProfileTemplates.shot_drakefire = {
 			attack = 0.175,
 			impact = 0.1
 		},
-		range_modifier_settings = var_0_3
+		range_modifier_settings = tbl_3
 	}
 }
 DamageProfileTemplates.shot_repeating = {
@@ -2179,7 +2180,7 @@ DamageProfileTemplates.shot_repeating = {
 			attack = 0.36,
 			impact = 0.25
 		},
-		range_modifier_settings = var_0_3
+		range_modifier_settings = tbl_3
 	}
 }
 DamageProfileTemplates.shot_sniper = {
@@ -2258,7 +2259,7 @@ DamageProfileTemplates.shot_sniper = {
 			attack = 0.8,
 			impact = 0.5
 		},
-		range_modifier_settings = var_0_4
+		range_modifier_settings = tbl_4
 	}
 }
 DamageProfileTemplates.shot_sniper_ability = {
@@ -2315,7 +2316,7 @@ DamageProfileTemplates.shot_sniper_ability = {
 			attack = 2,
 			impact = 2
 		},
-		range_modifier_settings = var_0_4
+		range_modifier_settings = tbl_4
 	}
 }
 DamageProfileTemplates.shot_shotgun_ability = {
@@ -2394,7 +2395,7 @@ DamageProfileTemplates.shot_shotgun_ability = {
 			attack = 0.25,
 			impact = 0.25
 		},
-		range_modifier_settings = var_0_4
+		range_modifier_settings = tbl_4
 	}
 }
 DamageProfileTemplates.arrow_sniper_kruber = {
@@ -2472,7 +2473,7 @@ DamageProfileTemplates.arrow_sniper_kruber = {
 			attack = 0.5,
 			impact = 0.5
 		},
-		range_modifier_settings = var_0_4
+		range_modifier_settings = tbl_4
 	}
 }
 DamageProfileTemplates.throwing_axe = {
@@ -2550,7 +2551,7 @@ DamageProfileTemplates.throwing_axe = {
 			attack = 0.5,
 			impact = 0.75
 		},
-		range_modifier_settings = var_0_3
+		range_modifier_settings = tbl_3
 	}
 }
 DamageProfileTemplates.throwing_axe_charged = {
@@ -2628,7 +2629,7 @@ DamageProfileTemplates.throwing_axe_charged = {
 			attack = 0.5,
 			impact = 0.75
 		},
-		range_modifier_settings = var_0_4
+		range_modifier_settings = tbl_4
 	}
 }
 DamageProfileTemplates.arrow_machinegun = {
@@ -2705,7 +2706,7 @@ DamageProfileTemplates.arrow_machinegun = {
 			attack = 0.125,
 			impact = 0.05
 		},
-		range_modifier_settings = var_0_2
+		range_modifier_settings = tbl_2
 	}
 }
 DamageProfileTemplates.arrow_carbine = {
@@ -2782,7 +2783,7 @@ DamageProfileTemplates.arrow_carbine = {
 			attack = 0.3,
 			impact = 0.1
 		},
-		range_modifier_settings = var_0_3
+		range_modifier_settings = tbl_3
 	}
 }
 DamageProfileTemplates.arrow_carbine_shortbow = {
@@ -2859,7 +2860,7 @@ DamageProfileTemplates.arrow_carbine_shortbow = {
 			attack = 0.3,
 			impact = 0.1
 		},
-		range_modifier_settings = var_0_3
+		range_modifier_settings = tbl_3
 	}
 }
 DamageProfileTemplates.arrow_sniper = {
@@ -2936,7 +2937,7 @@ DamageProfileTemplates.arrow_sniper = {
 			attack = 0.4,
 			impact = 0.15
 		},
-		range_modifier_settings = var_0_4
+		range_modifier_settings = tbl_4
 	}
 }
 DamageProfileTemplates.arrow_sniper_trueflight = {
@@ -3013,7 +3014,7 @@ DamageProfileTemplates.arrow_sniper_trueflight = {
 			attack = 0.5,
 			impact = 0.25
 		},
-		range_modifier_settings = var_0_4
+		range_modifier_settings = tbl_4
 	}
 }
 DamageProfileTemplates.arrow_sniper_ability_piercing = {
@@ -3090,7 +3091,7 @@ DamageProfileTemplates.arrow_sniper_ability_piercing = {
 			attack = 0.75,
 			impact = 0.25
 		},
-		range_modifier_settings = var_0_4
+		range_modifier_settings = tbl_4
 	}
 }
 DamageProfileTemplates.shortbow_hagbane = {
@@ -3316,7 +3317,7 @@ DamageProfileTemplates.staff_fireball = {
 			attack = 0.15,
 			impact = 0.15
 		},
-		range_modifier_settings = var_0_3
+		range_modifier_settings = tbl_3
 	}
 }
 DamageProfileTemplates.fire_spark = {
@@ -3393,7 +3394,7 @@ DamageProfileTemplates.fire_spark = {
 			attack = 0.05,
 			impact = 0.05
 		},
-		range_modifier_settings = var_0_2
+		range_modifier_settings = tbl_2
 	}
 }
 DamageProfileTemplates.fire_spear = {
@@ -3470,7 +3471,7 @@ DamageProfileTemplates.fire_spear = {
 			attack = 0.25,
 			impact = 0.15
 		},
-		range_modifier_settings = var_0_4
+		range_modifier_settings = tbl_4
 	}
 }
 DamageProfileTemplates.fire_spear_2 = {
@@ -3547,7 +3548,7 @@ DamageProfileTemplates.fire_spear_2 = {
 			attack = 0.3,
 			impact = 0.25
 		},
-		range_modifier_settings = var_0_4
+		range_modifier_settings = tbl_4
 	}
 }
 DamageProfileTemplates.fire_spear_trueflight = {
@@ -3625,7 +3626,7 @@ DamageProfileTemplates.fire_spear_trueflight = {
 			attack = 0.75,
 			impact = 1
 		},
-		range_modifier_settings = var_0_4
+		range_modifier_settings = tbl_4
 	}
 }
 DamageProfileTemplates.fire_spear_3 = {
@@ -3702,7 +3703,7 @@ DamageProfileTemplates.fire_spear_3 = {
 			attack = 1,
 			impact = 0.5
 		},
-		range_modifier_settings = var_0_4
+		range_modifier_settings = tbl_4
 	}
 }
 DamageProfileTemplates.staff_fireball_charged = {
@@ -3762,7 +3763,7 @@ DamageProfileTemplates.staff_fireball_charged = {
 			attack = 0.3,
 			impact = 0.25
 		},
-		range_modifier_settings = var_0_1
+		range_modifier_settings = tbl
 	}
 }
 DamageProfileTemplates.flamethrower_spray = {
@@ -3821,7 +3822,7 @@ DamageProfileTemplates.flamethrower_spray = {
 			attack = 0.1,
 			impact = 0.25
 		},
-		range_modifier_settings = var_0_5
+		range_modifier_settings = tbl_5
 	}
 }
 DamageProfileTemplates.flamethrower = {
@@ -3882,7 +3883,7 @@ DamageProfileTemplates.flamethrower = {
 			attack = 0.05,
 			impact = 0.05
 		},
-		range_modifier_settings = var_0_5
+		range_modifier_settings = tbl_5
 	}
 }
 DamageProfileTemplates.flamethrower_initial = {
@@ -3943,7 +3944,7 @@ DamageProfileTemplates.flamethrower_initial = {
 			attack = 0.075,
 			impact = 0.1
 		},
-		range_modifier_settings = var_0_5
+		range_modifier_settings = tbl_5
 	}
 }
 DamageProfileTemplates.beam = {
@@ -4005,7 +4006,7 @@ DamageProfileTemplates.beam = {
 			attack = 0.025,
 			impact = 0.05
 		},
-		range_modifier_settings = var_0_4
+		range_modifier_settings = tbl_4
 	}
 }
 DamageProfileTemplates.beam_initial = {
@@ -4083,7 +4084,7 @@ DamageProfileTemplates.beam_initial = {
 			attack = 0.025,
 			impact = 0.05
 		},
-		range_modifier_settings = var_0_3
+		range_modifier_settings = tbl_3
 	}
 }
 DamageProfileTemplates.blast = {
@@ -4144,7 +4145,7 @@ DamageProfileTemplates.blast = {
 			attack = 0.05,
 			impact = 0.15
 		},
-		range_modifier_settings = var_0_3
+		range_modifier_settings = tbl_3
 	}
 }
 DamageProfileTemplates.beam_shot = {
@@ -4223,7 +4224,7 @@ DamageProfileTemplates.beam_shot = {
 			attack = 0.5,
 			impact = 0.2
 		},
-		range_modifier_settings = var_0_4
+		range_modifier_settings = tbl_4
 	}
 }
 DamageProfileTemplates.geiser = {
@@ -4307,8 +4308,8 @@ DamageProfileTemplates.geiser = {
 	}
 }
 
-var_0_0("arrow_carbine", nil, "tutorial_longbow")
-var_0_0("crossbow_bolt", nil, "tutorial_longbow_charged")
+fn("arrow_carbine", nil, "tutorial_longbow")
+fn("crossbow_bolt", nil, "tutorial_longbow_charged")
 
 DamageProfileTemplates.tutorial_longbow.no_headshot_boost = true
 DamageProfileTemplates.tutorial_longbow.no_crit_boost = true
@@ -5562,87 +5563,88 @@ DamageProfileTemplates.ratling_gunner_backdrop = {
 	}
 }
 
-DLCUtils.map_list("damage_profile_template_files_names", function(arg_2_0)
+DLCUtils.map_list("damage_profile_template_files_names", function (arg_2_0)
+	-- function 2
 	table.merge(DamageProfileTemplates, local_require(arg_2_0))
 end)
 
-for iter_0_0, iter_0_1 in pairs(DamageProfileTemplates) do
-	if not iter_0_1.targets then
-		iter_0_1.targets = {}
+for k, v in pairs(DamageProfileTemplates) do
+	if not v.targets then
+		v.targets = {}
 	end
 
-	fassert(iter_0_1.default_target, "damage profile [\"%s\"] missing default_target", iter_0_0)
-	fassert(iter_0_1.charge_value, "damage profile [\"%s\"] missing charge_value", iter_0_0)
+	fassert(v.default_target, "damage profile [\"%s\"] missing default_target", k)
+	fassert(v.charge_value, "damage profile [\"%s\"] missing charge_value", k)
 
-	if type(iter_0_1.critical_strike) == "string" then
-		local var_0_7 = PowerLevelTemplates[iter_0_1.critical_strike]
+	if type(v.critical_strike) == "string" then
+		local var_0_7 = PowerLevelTemplates[v.critical_strike]
 
-		fassert(var_0_7, "damage profile [\"%s\"] has no corresponding template defined in PowerLevelTemplates. Wanted template name is [\"%s\"] ", iter_0_0, iter_0_1.critical_strike)
+		fassert(var_0_7, "damage profile [\"%s\"] has no corresponding template defined in PowerLevelTemplates. Wanted template name is [\"%s\"] ", k, v.critical_strike)
 
-		iter_0_1.critical_strike = var_0_7
+		v.critical_strike = var_0_7
 	end
 
-	if type(iter_0_1.cleave_distribution) == "string" then
-		local var_0_8 = PowerLevelTemplates[iter_0_1.cleave_distribution]
+	if type(v.cleave_distribution) == "string" then
+		local var_0_8 = PowerLevelTemplates[v.cleave_distribution]
 
-		fassert(var_0_8, "damage profile [\"%s\"] has no corresponding template defined in PowerLevelTemplates. Wanted template name is [\"%s\"] ", iter_0_0, iter_0_1.cleave_distribution)
+		fassert(var_0_8, "damage profile [\"%s\"] has no corresponding template defined in PowerLevelTemplates. Wanted template name is [\"%s\"] ", k, v.cleave_distribution)
 
-		iter_0_1.cleave_distribution = var_0_8
+		v.cleave_distribution = var_0_8
 	end
 
-	if type(iter_0_1.armor_modifier) == "string" then
-		local var_0_9 = PowerLevelTemplates[iter_0_1.armor_modifier]
+	if type(v.armor_modifier) == "string" then
+		local var_0_9 = PowerLevelTemplates[v.armor_modifier]
 
-		fassert(var_0_9, "damage profile [\"%s\"] has no corresponding template defined in PowerLevelTemplates. Wanted template name is [\"%s\"] ", iter_0_0, iter_0_1.armor_modifier)
+		fassert(var_0_9, "damage profile [\"%s\"] has no corresponding template defined in PowerLevelTemplates. Wanted template name is [\"%s\"] ", k, v.armor_modifier)
 
-		iter_0_1.armor_modifier = var_0_9
+		v.armor_modifier = var_0_9
 	end
 
-	if type(iter_0_1.default_target) == "string" then
-		local var_0_10 = PowerLevelTemplates[iter_0_1.default_target]
+	if type(v.default_target) == "string" then
+		local var_0_10 = PowerLevelTemplates[v.default_target]
 
-		fassert(var_0_10, "damage profile [\"%s\"] has no corresponding template defined in PowerLevelTemplates. Wanted template name is [\"%s\"] ", iter_0_0, iter_0_1.default_target)
+		fassert(var_0_10, "damage profile [\"%s\"] has no corresponding template defined in PowerLevelTemplates. Wanted template name is [\"%s\"] ", k, v.default_target)
 
-		iter_0_1.default_target = var_0_10
+		v.default_target = var_0_10
 	end
 
-	if type(iter_0_1.targets) == "string" then
-		local var_0_11 = PowerLevelTemplates[iter_0_1.targets]
+	if type(v.targets) == "string" then
+		local var_0_11 = PowerLevelTemplates[v.targets]
 
-		fassert(var_0_11, "damage profile [\"%s\"] has no corresponding template defined in PowerLevelTemplates. Wanted template name is [\"%s\"] ", iter_0_0, iter_0_1.targets)
+		fassert(var_0_11, "damage profile [\"%s\"] has no corresponding template defined in PowerLevelTemplates. Wanted template name is [\"%s\"] ", k, v.targets)
 
-		iter_0_1.targets = var_0_11
+		v.targets = var_0_11
 	end
 end
 
-local var_0_12 = {}
+local tbl_7 = {}
 
-for iter_0_2, iter_0_3 in pairs(DamageProfileTemplates) do
-	local var_0_13 = iter_0_2 .. "_no_damage"
+for k_2, v_2 in pairs(DamageProfileTemplates) do
+	local str = k_2 .. "_no_damage"
 
-	if not DamageProfileTemplates[var_0_13] then
-		local var_0_14 = table.clone(iter_0_3)
+	if not DamageProfileTemplates[str] then
+		local clone = table.clone(v_2)
 
-		if var_0_14.targets then
-			for iter_0_4, iter_0_5 in ipairs(var_0_14.targets) do
-				if iter_0_5.power_distribution then
-					iter_0_5.power_distribution.attack = 0
+		if not clone.targets then
+			for i, v_3 in ipairs(clone.targets) do
+				if not v_3.power_distribution then
+					v_3.power_distribution.attack = 0
 				end
 			end
 		end
 
-		if var_0_14.default_target.power_distribution then
-			var_0_14.default_target.power_distribution.attack = 0
+		if not clone.default_target.power_distribution then
+			clone.default_target.power_distribution.attack = 0
 		end
 
-		var_0_12[var_0_13] = var_0_14
+		tbl_7[str] = clone
 	end
 end
 
-DamageProfileTemplates = table.merge(DamageProfileTemplates, var_0_12)
+DamageProfileTemplates = table.merge(DamageProfileTemplates, tbl_7)
 
-for iter_0_6, iter_0_7 in pairs(DamageProfileTemplates) do
-	assert(not iter_0_7.name or iter_0_6 == iter_0_7.name, "Name '%s' does not match name of damage profile '%s'", iter_0_7.name, iter_0_6)
+for k_3, v_4 in pairs(DamageProfileTemplates) do
+	assert(not v_4.name and k_3 == v_4.name, "Name '%s' does not match name of damage profile '%s'", v_4.name, k_3)
 
-	iter_0_7.name = iter_0_6
+	v_4.name = k_3
 end

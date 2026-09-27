@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/vs_mission_giver_pactsworn.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		response = "vmg_b_vs_heroes_objective_almost_completed_b",
 		name = "vmg_b_vs_heroes_objective_almost_completed_b",

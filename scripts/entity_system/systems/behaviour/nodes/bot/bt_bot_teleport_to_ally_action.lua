@@ -4,92 +4,99 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTBotTeleportToAllyAction = class(BTBotTeleportToAllyAction, BTNode)
 
-function BTBotTeleportToAllyAction.init(arg_1_0, ...)
+BTBotTeleportToAllyAction.init = function (arg_1_0, ...)
+	-- function 1
 	BTBotTeleportToAllyAction.super.init(arg_1_0, ...)
 end
 
 BTBotTeleportToAllyAction.name = "BTBotTeleportToAllyAction"
 
-function BTBotTeleportToAllyAction.leave(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+BTBotTeleportToAllyAction.leave = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	-- function 2
 	return
 end
 
-function BTBotTeleportToAllyAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTBotTeleportToAllyAction.enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	-- function 3
 	return
 end
 
-local var_0_0 = 5
-local var_0_1 = math.pi / (2 * var_0_0)
-local var_0_2 = 5
+local num = 5
+local num_2 = math.pi / (2 * num)
+local num_3 = 5
 
-function BTBotTeleportToAllyAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-	local var_4_0 = arg_4_2.ai_bot_group_extension.data.follow_unit
-	local var_4_1 = arg_4_2.nav_world
-	local var_4_2 = arg_4_2.navigation_extension
-	local var_4_3 = var_4_2:traverse_logic()
+BTBotTeleportToAllyAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	-- function 4
+	local follow_unit = arg_4_2.ai_bot_group_extension.data.follow_unit
+	local nav_world = arg_4_2.nav_world
+	local navigation_extension = arg_4_2.navigation_extension
+	local traverse_logic = navigation_extension:traverse_logic()
 	local var_4_4
-	local var_4_5 = Managers.state.network:game()
+	local game = Managers.state.network:game()
 
-	if var_4_5 then
-		local var_4_6 = Managers.state.unit_storage:go_id(var_4_0)
+	if not game then
+		local go_id = Managers.state.unit_storage:go_id(follow_unit)
 
-		var_4_4 = -GameSession.game_object_field(var_4_5, var_4_6, "aim_direction")
+		var_4_4 = -GameSession.game_object_field(game, go_id, "aim_direction")
 	else
-		local var_4_7 = Unit.local_rotation(var_4_0, 0)
+		local local_rotation = Unit.local_rotation(follow_unit, 0)
 
-		var_4_4 = -Quaternion.forward(var_4_7)
+		var_4_4 = -Quaternion.forward(local_rotation)
 	end
 
-	local var_4_8 = ScriptUnit.extension(var_4_0, "whereabouts_system"):last_position_on_navmesh()
+	local last_position_on_navmesh = ScriptUnit.extension(follow_unit, "whereabouts_system"):last_position_on_navmesh()
 	local var_4_9
-	local var_4_10 = -math.huge
-	local var_4_11 = 1
+	local num_4 = -math.huge
+	local num_5 = 1
 
-	for iter_4_0 = 0, var_0_0 do
-		local var_4_12 = iter_4_0 > 0 and 2 or 1
-		local var_4_13 = false
+	for i = 0, num do
+		local flag
 
-		for iter_4_1 = 1, var_4_12 do
-			local var_4_14 = var_4_11 * var_0_1 * iter_4_0
-			local var_4_15 = Quaternion.axis_angle(Vector3.up(), var_4_14)
-			local var_4_16 = var_4_8 + Quaternion.rotate(var_4_15, var_4_4) * var_0_2
-			local var_4_17, var_4_18 = GwNavQueries.raycast(var_4_1, var_4_8, var_4_16, var_4_3)
+		flag = not (i > 0) or not 2 or 1
 
-			if var_4_17 then
+		local flag_2 = false
+
+		for j = 1, flag do
+			local num_6 = num_5 * num_2 * i
+			local axis_angle = Quaternion.axis_angle(Vector3.up(), num_6)
+			local num_7 = last_position_on_navmesh + Quaternion.rotate(axis_angle, var_4_4) * num_3
+			local raycast, var_4_18 = GwNavQueries.raycast(nav_world, last_position_on_navmesh, num_7, traverse_logic)
+
+			if not raycast then
 				var_4_9 = var_4_18
-				var_4_10 = var_0_2
-				var_4_13 = true
+				num_4 = num_3
+				flag_2 = true
 
 				break
 			end
 
-			local var_4_19 = Vector3.distance_squared(var_4_8, var_4_18)
+			local distance_squared = Vector3.distance_squared(last_position_on_navmesh, var_4_18)
 
-			if var_4_10 < var_4_19 then
+			if num_4 < distance_squared then
 				var_4_9 = var_4_18
-				var_4_10 = var_4_19
+				num_4 = distance_squared
 			end
 
-			var_4_11 = -var_4_11
+			num_5 = -num_5
 		end
 
-		if var_4_13 then
+		if not flag_2 then
 			break
 		end
 	end
 
 	arg_4_2.locomotion_extension:teleport_to(var_4_9)
 
-	local var_4_20 = arg_4_2.status_extension
+	local status_extension = arg_4_2.status_extension
 
-	if var_4_20 then
-		var_4_20:set_falling_height(true, var_4_9.z)
-		var_4_20:set_ignore_next_fall_damage(true)
+	if not status_extension then
+		status_extension:set_falling_height(true, var_4_9.z)
+		status_extension:set_ignore_next_fall_damage(true)
 	end
 
 	arg_4_2.has_teleported = true
 
-	var_4_2:teleport(var_4_9)
+	navigation_extension:teleport(var_4_9)
 	arg_4_2.ai_extension:clear_failed_paths()
 
 	arg_4_2.follow.needs_target_position_refresh = true

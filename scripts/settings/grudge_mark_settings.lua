@@ -1,5 +1,7 @@
 -- chunkname: @scripts/settings/grudge_mark_settings.lua
 
+local BreedEnhancements = BreedEnhancements
+
 BreedEnhancements = BreedEnhancements or {
 	base = {
 		"grudge_mark_health",
@@ -118,9 +120,10 @@ BreedEnhancements = BreedEnhancements or {
 		display_name = "display_name_invincibility_aura"
 	}
 }
+BreedEnhancements = BreedEnhancements
 
-for iter_0_0, iter_0_1 in pairs(BreedEnhancements) do
-	iter_0_1.name = iter_0_0
+for k, v in pairs(BreedEnhancements) do
+	v.name = k
 end
 
 BossGrudgeMarks = {

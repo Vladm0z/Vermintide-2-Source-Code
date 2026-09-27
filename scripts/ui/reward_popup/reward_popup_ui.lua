@@ -1,634 +1,765 @@
 -- chunkname: @scripts/ui/reward_popup/reward_popup_ui.lua
 
 local var_0_0 = local_require("scripts/ui/reward_popup/reward_popup_ui_definitions")
-local var_0_1 = var_0_0.scenegraph_definition
-local var_0_2 = var_0_0.animations
-local var_0_3 = var_0_0.item_list_padding
+local scenegraph_definition = var_0_0.scenegraph_definition
+local animations = var_0_0.animations
+local item_list_padding = var_0_0.item_list_padding
 
 RewardPopupUI = class(RewardPopupUI)
 
-local var_0_4 = 10
-local var_0_5 = 2.5
-local var_0_6 = "rewards_popups"
+local num = 10
+local num_2 = 2.5
+local str = "rewards_popups"
 
-local function var_0_7(arg_1_0)
-	return arg_1_0:get("toggle_menu", true) or arg_1_0:get("back", true) or arg_1_0:get("skip_pressed", true) or arg_1_0:get("left_press")
+local function fn(self)
+	-- function 1
+	local get = self:get("toggle_menu", true)
+
+	if not get then
+		get = self:get("back", true)
+
+		if not get then
+			get = self:get("skip_pressed", true)
+			get = get or self:get("left_press")
+		end
+	end
+
+	return get
 end
 
-function RewardPopupUI.init(arg_2_0, arg_2_1)
-	arg_2_0._ui_top_renderer = arg_2_1.ui_top_renderer
-	arg_2_0._input_manager = arg_2_1.input_manager
-	arg_2_0.world = arg_2_1.world or arg_2_1.ui_renderer.world
-	arg_2_0._wwise_world = arg_2_1.wwise_world or arg_2_1.world_manager:wwise_world(arg_2_0.world)
-	arg_2_0._render_settings = {
+RewardPopupUI.init = function (self, arg_2_1)
+	-- function 2
+	self._ui_top_renderer = arg_2_1.ui_top_renderer
+	self._input_manager = arg_2_1.input_manager
+
+	local world = arg_2_1.world
+
+	world = world or arg_2_1.ui_renderer.world
+	self.world = world
+	self._wwise_world = arg_2_1.wwise_world or arg_2_1.world_manager:wwise_world(self.world)
+	self._render_settings = {
 		snap_pixel_positions = true
 	}
-	arg_2_0._skip_blur = false
+	self._skip_blur = false
 
-	arg_2_0:create_ui_elements()
-	arg_2_0:_setup_input()
+	self:create_ui_elements()
+	self:_setup_input()
 end
 
-function RewardPopupUI.create_ui_elements(arg_3_0)
-	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
+RewardPopupUI.create_ui_elements = function (self)
+	-- function 3
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	local var_3_0 = var_0_0.widget_definitions
+	local widget_definitions = var_0_0.widget_definitions
 
-	arg_3_0.background_top_widget = UIWidget.init(var_3_0.background_top)
-	arg_3_0.background_center_widget = UIWidget.init(var_3_0.background_center)
-	arg_3_0.background_bottom_widget = UIWidget.init(var_3_0.background_bottom)
-	arg_3_0.background_bottom_glow_widget = UIWidget.init(var_3_0.background_bottom_glow)
-	arg_3_0.background_top_glow_widget = UIWidget.init(var_3_0.background_top_glow)
-	arg_3_0.screen_background_widget = UIWidget.init(var_3_0.screen_background)
-	arg_3_0.deus_background_top_widget = UIWidget.init(var_3_0.deus_background_top)
-	arg_3_0.deus_background_bottom_widget = UIWidget.init(var_3_0.deus_background_bottom)
-	arg_3_0.deus_background_top_glow_widget = UIWidget.init(var_3_0.deus_background_top_glow)
-	arg_3_0.deus_background_bottom_glow_widget = UIWidget.init(var_3_0.deus_background_bottom_glow)
-	arg_3_0.claim_button_widget = UIWidget.init(var_3_0.claim_button)
-	arg_3_0._ui_animator = UIAnimator:new(arg_3_0._ui_scenegraph, var_0_2)
-	arg_3_0._animations = {}
-	arg_3_0._is_visible = true
-	arg_3_0._speed_up_popup = false
-	arg_3_0._done_reset_speed_up_popup = false
+	self.background_top_widget = UIWidget.init(widget_definitions.background_top)
+	self.background_center_widget = UIWidget.init(widget_definitions.background_center)
+	self.background_bottom_widget = UIWidget.init(widget_definitions.background_bottom)
+	self.background_bottom_glow_widget = UIWidget.init(widget_definitions.background_bottom_glow)
+	self.background_top_glow_widget = UIWidget.init(widget_definitions.background_top_glow)
+	self.screen_background_widget = UIWidget.init(widget_definitions.screen_background)
+	self.deus_background_top_widget = UIWidget.init(widget_definitions.deus_background_top)
+	self.deus_background_bottom_widget = UIWidget.init(widget_definitions.deus_background_bottom)
+	self.deus_background_top_glow_widget = UIWidget.init(widget_definitions.deus_background_top_glow)
+	self.deus_background_bottom_glow_widget = UIWidget.init(widget_definitions.deus_background_bottom_glow)
+	self.claim_button_widget = UIWidget.init(widget_definitions.claim_button)
+	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animations)
+	self._animations = {}
+	self._is_visible = true
+	self._speed_up_popup = false
+	self._done_reset_speed_up_popup = false
 end
 
-function RewardPopupUI.set_input_manager(arg_4_0, arg_4_1)
-	arg_4_0._input_manager = arg_4_1
+RewardPopupUI.set_input_manager = function (self, arg_4_1)
+	-- function 4
+	self._input_manager = arg_4_1
 
-	arg_4_0:_setup_input()
+	self:_setup_input()
 end
 
-function RewardPopupUI.destroy(arg_5_0)
-	arg_5_0:_release_input()
+RewardPopupUI.destroy = function (self)
+	-- function 5
+	self:_release_input()
 
-	arg_5_0._ui_animator = nil
+	self._ui_animator = nil
 
-	arg_5_0:set_visible(false)
+	self:set_visible(false)
 
-	if arg_5_0._fullscreen_effect_enabled then
-		arg_5_0:set_fullscreen_effect_enable_state(false)
+	if not self._fullscreen_effect_enabled then
+		self:set_fullscreen_effect_enable_state(false)
 	end
 end
 
-function RewardPopupUI.set_visible(arg_6_0, arg_6_1)
-	arg_6_0._is_visible = arg_6_1
+RewardPopupUI.set_visible = function (self, arg_6_1)
+	-- function 6
+	self._is_visible = arg_6_1
 end
 
-function RewardPopupUI.update(arg_7_0, arg_7_1, arg_7_2)
-	if arg_7_0.input_acquired and arg_7_0:is_presentation_complete() then
-		arg_7_0:_release_input()
+RewardPopupUI.update = function (self, arg_7_1, arg_7_2)
+	-- function 7
+	if not self.input_acquired and not self:is_presentation_complete() then
+		self:_release_input()
 	end
 
-	if not arg_7_0._is_visible or not arg_7_0._draw_widgets then
+	if not (not self._is_visible and self._draw_widgets) then
 		return
 	end
 
-	if not arg_7_0._speed_up_popup and not arg_7_0._handling_claim_button then
-		local var_7_0 = arg_7_0._input_manager:get_service(var_0_6)
+	if not (self._speed_up_popup or self._handling_claim_button) then
+		local get_service = self._input_manager:get_service(str)
 
-		if var_0_7(var_7_0) then
-			arg_7_0._speed_up_popup = true
+		if not fn(get_service) then
+			self._speed_up_popup = true
 		end
 	else
-		local var_7_1 = arg_7_0._animation_presentation_data
+		local _animation_presentation_data = self._animation_presentation_data
 
-		if var_7_1 then
-			if var_7_1.end_animation_key then
-				arg_7_1 = arg_7_1 * var_0_5
+		if not _animation_presentation_data then
+			if not _animation_presentation_data.end_animation_key then
+				arg_7_1 = arg_7_1 * num_2
 			else
-				arg_7_1 = arg_7_1 * var_0_4
+				arg_7_1 = arg_7_1 * num
 			end
 		end
 	end
 
-	arg_7_0:_update_presentation_animation(arg_7_1)
-	arg_7_0:_update_animations(arg_7_1)
+	self:_update_presentation_animation(arg_7_1)
+	self:_update_animations(arg_7_1)
 
-	local var_7_2 = arg_7_0._animation_params
+	local _animation_params = self._animation_params
 
-	if var_7_2 then
-		local var_7_3 = var_7_2.blur_progress or 1
+	if not _animation_params then
+		local blur_progress = _animation_params.blur_progress
 
-		arg_7_0:set_fullscreen_effect_enable_state(true, var_7_3)
+		blur_progress = blur_progress or 1
+
+		self:set_fullscreen_effect_enable_state(true, blur_progress)
 	end
 
-	arg_7_0:draw(arg_7_1)
+	self:draw(arg_7_1)
 end
 
-function RewardPopupUI._update_animations(arg_8_0, arg_8_1)
-	local var_8_0 = arg_8_0._animations
-	local var_8_1 = arg_8_0._ui_animator
+RewardPopupUI._update_animations = function (self, arg_8_1)
+	-- function 8
+	local _animations = self._animations
+	local _ui_animator = self._ui_animator
 
-	var_8_1:update(arg_8_1)
+	_ui_animator:update(arg_8_1)
 
-	local var_8_2 = false
+	local flag = false
 
-	for iter_8_0, iter_8_1 in pairs(var_8_0) do
-		if var_8_1:is_animation_completed(iter_8_1) then
-			var_8_1:stop_animation(iter_8_1)
+	for k, v in pairs(_animations) do
+		if not _ui_animator:is_animation_completed(v) then
+			_ui_animator:stop_animation(v)
 
-			var_8_0[iter_8_0] = nil
+			_animations[k] = nil
 		end
 
-		var_8_2 = true
+		flag = true
 	end
 
-	return var_8_2
+	return flag
 end
 
-function RewardPopupUI.draw(arg_9_0, arg_9_1)
-	local var_9_0 = arg_9_0._ui_top_renderer
-	local var_9_1 = arg_9_0._ui_scenegraph
-	local var_9_2 = arg_9_0._input_manager:get_service(var_0_6)
-	local var_9_3 = arg_9_0._render_settings
+RewardPopupUI.draw = function (self, arg_9_1)
+	-- function 9
+	local _ui_top_renderer = self._ui_top_renderer
+	local _ui_scenegraph = self._ui_scenegraph
+	local get_service = self._input_manager:get_service(str)
+	local _render_settings = self._render_settings
 
-	UIRenderer.begin_pass(var_9_0, var_9_1, var_9_2, arg_9_1, nil, var_9_3)
-	UIRenderer.draw_widget(var_9_0, arg_9_0.background_top_widget)
-	UIRenderer.draw_widget(var_9_0, arg_9_0.background_center_widget)
-	UIRenderer.draw_widget(var_9_0, arg_9_0.background_bottom_widget)
-	UIRenderer.draw_widget(var_9_0, arg_9_0.background_bottom_glow_widget)
-	UIRenderer.draw_widget(var_9_0, arg_9_0.background_top_glow_widget)
-	UIRenderer.draw_widget(var_9_0, arg_9_0.screen_background_widget)
-	UIRenderer.draw_widget(var_9_0, arg_9_0.deus_background_top_widget)
-	UIRenderer.draw_widget(var_9_0, arg_9_0.deus_background_bottom_widget)
-	UIRenderer.draw_widget(var_9_0, arg_9_0.deus_background_bottom_glow_widget)
-	UIRenderer.draw_widget(var_9_0, arg_9_0.deus_background_top_glow_widget)
+	UIRenderer.begin_pass(_ui_top_renderer, _ui_scenegraph, get_service, arg_9_1, nil, _render_settings)
+	UIRenderer.draw_widget(_ui_top_renderer, self.background_top_widget)
+	UIRenderer.draw_widget(_ui_top_renderer, self.background_center_widget)
+	UIRenderer.draw_widget(_ui_top_renderer, self.background_bottom_widget)
+	UIRenderer.draw_widget(_ui_top_renderer, self.background_bottom_glow_widget)
+	UIRenderer.draw_widget(_ui_top_renderer, self.background_top_glow_widget)
+	UIRenderer.draw_widget(_ui_top_renderer, self.screen_background_widget)
+	UIRenderer.draw_widget(_ui_top_renderer, self.deus_background_top_widget)
+	UIRenderer.draw_widget(_ui_top_renderer, self.deus_background_bottom_widget)
+	UIRenderer.draw_widget(_ui_top_renderer, self.deus_background_bottom_glow_widget)
+	UIRenderer.draw_widget(_ui_top_renderer, self.deus_background_top_glow_widget)
 
-	local var_9_4 = arg_9_0._animation_presentation_data
+	local _animation_presentation_data = self._animation_presentation_data
 
-	if var_9_4 and not var_9_4.complete then
-		local var_9_5 = var_9_4.entries[var_9_4.entry_play_index]
+	if not (not _animation_presentation_data and _animation_presentation_data.complete) then
+		local var_9_5 = _animation_presentation_data.entries[_animation_presentation_data.entry_play_index]
 
-		if var_9_5 then
-			local var_9_6 = var_9_5.widgets_data
+		if not var_9_5 then
+			local widgets_data = var_9_5.widgets_data
 
-			for iter_9_0, iter_9_1 in ipairs(var_9_6) do
-				var_9_3.alpha_multiplier = iter_9_1.alpha_multiplier
+			for i, v in ipairs(widgets_data) do
+				_render_settings.alpha_multiplier = v.alpha_multiplier
 
-				local var_9_7 = iter_9_1.widget
+				local widget = v.widget
 
-				UIRenderer.draw_widget(var_9_0, var_9_7)
+				UIRenderer.draw_widget(_ui_top_renderer, widget)
 
-				var_9_3.alpha_multiplier = nil
+				_render_settings.alpha_multiplier = nil
 			end
 		end
 
-		if IS_WINDOWS and var_9_4.claim_button then
-			local var_9_8 = arg_9_0.claim_button_widget
+		if not IS_WINDOWS and not _animation_presentation_data.claim_button then
+			local claim_button_widget = self.claim_button_widget
 
-			UIWidgetUtils.animate_default_button(var_9_8, arg_9_1)
+			UIWidgetUtils.animate_default_button(claim_button_widget, arg_9_1)
 
-			var_9_3.alpha_multiplier = var_9_8.content.alpha_multiplier
+			_render_settings.alpha_multiplier = claim_button_widget.content.alpha_multiplier
 
-			UIRenderer.draw_widget(var_9_0, var_9_8)
+			UIRenderer.draw_widget(_ui_top_renderer, claim_button_widget)
 		end
 	end
 
-	UIRenderer.end_pass(var_9_0)
+	UIRenderer.end_pass(_ui_top_renderer)
 
-	if arg_9_0._handling_claim_button and arg_9_0._menu_input_description and arg_9_0._input_manager:is_device_active("gamepad") then
-		arg_9_0._menu_input_description:set_input_description(nil)
-		arg_9_0._menu_input_description:draw(var_9_0, arg_9_1)
+	if not self._handling_claim_button and not self._menu_input_description and not self._input_manager:is_device_active("gamepad") then
+		self._menu_input_description:set_input_description(nil)
+		self._menu_input_description:draw(_ui_top_renderer, arg_9_1)
 	end
 end
 
-function RewardPopupUI.display_presentation(arg_10_0, arg_10_1, arg_10_2)
-	arg_10_0._draw_widgets = true
-	arg_10_0._ui_animator = UIAnimator:new(arg_10_0._ui_scenegraph, var_0_2)
-	arg_10_0._animations = {}
-	arg_10_0._animation_presentation_data = arg_10_0:_setup_presentation(arg_10_1)
+RewardPopupUI.display_presentation = function (self, arg_10_1, arg_10_2)
+	-- function 10
+	self._draw_widgets = true
+	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animations)
+	self._animations = {}
+	self._animation_presentation_data = self:_setup_presentation(arg_10_1)
 
-	arg_10_0:set_visible(true)
+	self:set_visible(true)
 
-	arg_10_0._presentation_complete = false
-	arg_10_0._speed_up_popup = false
-	arg_10_0._done_reset_speed_up_popup = false
-	arg_10_0._reward_complete_cb = arg_10_2
+	self._presentation_complete = false
+	self._speed_up_popup = false
+	self._done_reset_speed_up_popup = false
+	self._reward_complete_cb = arg_10_2
 
 	if not arg_10_1.keep_input then
-		arg_10_0:_acquire_input()
+		self:_acquire_input()
 	end
 end
 
-function RewardPopupUI.is_presentation_active(arg_11_0)
-	return arg_11_0._animation_presentation_data ~= nil
+RewardPopupUI.is_presentation_active = function (self)
+	-- function 11
+	return self._animation_presentation_data ~= nil
 end
 
-function RewardPopupUI.is_presentation_complete(arg_12_0)
-	return arg_12_0._presentation_complete
+RewardPopupUI.is_presentation_complete = function (self)
+	-- function 12
+	return self._presentation_complete
 end
 
-function RewardPopupUI.on_presentation_complete(arg_13_0)
-	arg_13_0._presentation_complete = true
-	arg_13_0._draw_widgets = false
+RewardPopupUI.on_presentation_complete = function (self)
+	-- function 13
+	self._presentation_complete = true
+	self._draw_widgets = false
 
-	arg_13_0:set_visible(false)
-	arg_13_0:set_fullscreen_effect_enable_state(false)
+	self:set_visible(false)
+	self:set_fullscreen_effect_enable_state(false)
 
-	arg_13_0._animation_presentation_data = nil
+	self._animation_presentation_data = nil
 
-	if arg_13_0._reward_complete_cb then
-		arg_13_0._reward_complete_cb()
+	if not self._reward_complete_cb then
+		self._reward_complete_cb()
 
-		arg_13_0._reward_complete_cb = nil
+		self._reward_complete_cb = nil
 	end
 end
 
-function RewardPopupUI.start_presentation_animation(arg_14_0, arg_14_1, arg_14_2)
-	local var_14_0 = {
-		wwise_world = arg_14_0._wwise_world
+RewardPopupUI.start_presentation_animation = function (self, arg_14_1, arg_14_2)
+	-- function 14
+	local tbl = {
+		wwise_world = self._wwise_world
 	}
 
 	arg_14_2 = arg_14_2 or {
-		background_top = arg_14_0.background_top_widget,
-		background_center = arg_14_0.background_center_widget,
-		background_bottom = arg_14_0.background_bottom_widget,
-		background_bottom_glow = arg_14_0.background_bottom_glow_widget,
-		background_top_glow = arg_14_0.background_top_glow_widget,
-		claim_button = arg_14_0.claim_button_widget,
-		deus_background_top = arg_14_0.deus_background_top_widget,
-		deus_background_bottom = arg_14_0.deus_background_bottom_widget,
-		deus_background_bottom_glow = arg_14_0.deus_background_bottom_glow_widget,
-		deus_background_top_glow = arg_14_0.deus_background_top_glow_widget
+		background_top = self.background_top_widget,
+		background_center = self.background_center_widget,
+		background_bottom = self.background_bottom_widget,
+		background_bottom_glow = self.background_bottom_glow_widget,
+		background_top_glow = self.background_top_glow_widget,
+		claim_button = self.claim_button_widget,
+		deus_background_top = self.deus_background_top_widget,
+		deus_background_bottom = self.deus_background_bottom_widget,
+		deus_background_bottom_glow = self.deus_background_bottom_glow_widget,
+		deus_background_top_glow = self.deus_background_top_glow_widget
 	}
 
-	local var_14_1 = arg_14_0._ui_animator:start_animation(arg_14_1, arg_14_2, var_0_1, var_14_0)
-	local var_14_2 = arg_14_1 .. var_14_1
+	local start_animation = self._ui_animator:start_animation(arg_14_1, arg_14_2, scenegraph_definition, tbl)
+	local str = arg_14_1 .. start_animation
 
-	arg_14_0._animations[var_14_2] = var_14_1
-	arg_14_0._animation_params = var_14_0
+	self._animations[str] = start_animation
+	self._animation_params = tbl
 
-	return var_14_2
+	return str
 end
 
-local function var_0_8(arg_15_0, arg_15_1, arg_15_2)
-	local var_15_0 = arg_15_0.offset
+local function fn_2(self, arg_15_1, arg_15_2)
+	-- function 15
+	local offset = self.offset
 
-	var_15_0[1] = arg_15_1
-	var_15_0[2] = arg_15_2
+	offset[1] = arg_15_1
+	offset[2] = arg_15_2
 end
 
-function RewardPopupUI._hacky_get_tooltip_size(arg_16_0, arg_16_1)
-	local var_16_0 = arg_16_0._ui_top_renderer
-	local var_16_1 = arg_16_0._render_settings
-	local var_16_2 = var_16_1.alpha_multiplier
+RewardPopupUI._hacky_get_tooltip_size = function (self, arg_16_1)
+	-- function 16
+	local _ui_top_renderer = self._ui_top_renderer
+	local _render_settings = self._render_settings
+	local alpha_multiplier = _render_settings.alpha_multiplier
 
-	var_16_1.alpha_multiplier = 0
+	_render_settings.alpha_multiplier = 0
 
-	UIRenderer.begin_pass(var_16_0, arg_16_0._ui_scenegraph, FAKE_INPUT_SERVICE, 0, nil, var_16_1)
-	UIRenderer.draw_widget(var_16_0, arg_16_1)
-	UIRenderer.end_pass(var_16_0)
+	UIRenderer.begin_pass(_ui_top_renderer, self._ui_scenegraph, FAKE_INPUT_SERVICE, 0, nil, _render_settings)
+	UIRenderer.draw_widget(_ui_top_renderer, arg_16_1)
+	UIRenderer.end_pass(_ui_top_renderer)
 
-	var_16_1.alpha_multiplier = var_16_2
+	_render_settings.alpha_multiplier = alpha_multiplier
 
 	return arg_16_1.style.item.item_presentation_height
 end
 
-function RewardPopupUI._setup_entry_widget(arg_17_0, arg_17_1, arg_17_2)
-	local var_17_0 = var_0_0.widget_definitions
-	local var_17_1 = arg_17_1.value
-	local var_17_2 = arg_17_1.widget_type and var_17_0[arg_17_1.widget_type] and arg_17_1.widget_type or "item"
-	local var_17_3 = arg_17_1.ignore_height
-	local var_17_4 = UIWidget.init(var_17_0[var_17_2])
-	local var_17_5 = var_17_4.scenegraph_id
-	local var_17_6 = var_0_1[var_17_5].size
-	local var_17_7 = arg_17_0._ui_scenegraph[var_17_5].size
-	local var_17_8 = 0
+RewardPopupUI._setup_entry_widget = function (self, arg_17_1, arg_17_2)
+	-- function 17
+	local widget_definitions = var_0_0.widget_definitions
+	local value = arg_17_1.value
+	local widget_type
 
-	if var_17_2 == "title" or var_17_2 == "level" then
-		var_17_4.content.text = var_17_1
+	if not arg_17_1.widget_type and not widget_definitions[arg_17_1.widget_type] then
+		widget_type = arg_17_1.widget_type
 
-		local var_17_9 = var_17_4.style.text
+		if not widget_type then
+			-- Nothing
+		end
+	end
 
-		var_17_7[2] = UIUtils.get_text_height(arg_17_0._ui_top_renderer, var_17_6, var_17_9, var_17_1)
-		var_17_8 = var_17_7[2]
-	elseif var_17_2 == "description" then
-		var_17_4.content.title_text = var_17_1[1]
-		var_17_4.content.text = var_17_1[2]
+	widget_type = "item"
 
-		local var_17_10 = var_17_4.style.text
-		local var_17_11 = var_17_4.style.title_text
-		local var_17_12 = arg_17_0._ui_top_renderer
+	::label_17_0::
 
-		var_17_7[2] = UIUtils.get_text_height(var_17_12, var_17_6, var_17_10, var_17_1[1]) + UIUtils.get_text_height(var_17_12, var_17_6, var_17_11, var_17_1[2])
-		var_17_8 = var_17_7[2]
-	elseif var_17_2 == "texture" or var_17_2 == "icon" then
-		var_17_4.content.texture_id = var_17_1
+	local ignore_height = arg_17_1.ignore_height
+	local var_17_4 = UIWidget.init(widget_definitions[widget_type])
+	local scenegraph_id = var_17_4.scenegraph_id
+	local size = scenegraph_definition[scenegraph_id].size
+	local size_2 = self._ui_scenegraph[scenegraph_id].size
+	local num = 0
 
-		local var_17_13 = var_17_4.style.texture_id
-		local var_17_14 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_17_1).size
-		local var_17_15 = var_17_13.texture_size
+	if not (widget_type == "title" or widget_type ~= "level") then
+		var_17_4.content.text = value
 
-		var_17_15[1] = var_17_14[1]
-		var_17_15[2] = var_17_14[2]
-		var_17_13.offset[3] = arg_17_2
+		local text = var_17_4.style.text
 
-		if var_17_4.style.frame then
+		size_2[2] = UIUtils.get_text_height(self._ui_top_renderer, size, text, value)
+		num = size_2[2]
+	elseif widget_type == "description" then
+		var_17_4.content.title_text = value[1]
+		var_17_4.content.text = value[2]
+
+		local text_2 = var_17_4.style.text
+		local title_text = var_17_4.style.title_text
+		local _ui_top_renderer = self._ui_top_renderer
+
+		size_2[2] = UIUtils.get_text_height(_ui_top_renderer, size, text_2, value[1]) + UIUtils.get_text_height(_ui_top_renderer, size, title_text, value[2])
+		num = size_2[2]
+	elseif not (widget_type == "texture" or widget_type ~= "icon") then
+		var_17_4.content.texture_id = value
+
+		local texture_id = var_17_4.style.texture_id
+		local size_3 = UIAtlasHelper.get_atlas_settings_by_texture_name(value).size
+		local texture_size = texture_id.texture_size
+
+		texture_size[1] = size_3[1]
+		texture_size[2] = size_3[2]
+		texture_id.offset[3] = arg_17_2
+
+		if not var_17_4.style.frame then
 			var_17_4.style.frame.offset[3] = arg_17_2 + 1
 		end
 
-		var_17_8 = var_17_15[2] / 2
-	elseif var_17_2 == "weapon_skin" or var_17_2 == "skin" or var_17_2 == "keep_decoration_painting" then
-		local var_17_16 = var_17_1.data
-		local var_17_17 = var_17_1.rarity or var_17_16.rarity
+		num = texture_size[2] / 2
+	elseif not (widget_type == "weapon_skin" or widget_type == "skin" or widget_type ~= "keep_decoration_painting") then
+		local data = value.data
+		local rarity = value.rarity
 
-		var_17_4.content.texture_id = var_17_1.icon or var_17_16.inventory_icon
-		var_17_4.content.rarity_texture = UISettings.item_rarity_textures[var_17_17]
-		var_17_8 = 0
-	elseif var_17_2 == "career" then
-		local var_17_18 = CareerSettings[var_17_1]
-		local var_17_19 = "small_" .. var_17_18.portrait_image
+		rarity = rarity or data.rarity
 
-		var_17_4.content.texture_id = var_17_19
-	elseif var_17_2 == "item" or var_17_2 == "frame" then
-		local var_17_20 = var_17_1.backend_id
-		local var_17_21 = Managers.backend:get_interface("items"):get_item_from_id(var_17_20)
-		local var_17_22 = var_17_21.rarity or var_17_21.data and var_17_21.data.rarity or "plentiful"
-		local var_17_23 = UIUtils.get_ui_information_from_item(var_17_21)
+		local content = var_17_4.content
+		local icon = value.icon
 
-		var_17_4.content.texture_id = var_17_23
-		var_17_4.content.rarity_texture = UISettings.item_rarity_textures[var_17_22]
-		var_17_8 = 0
-	elseif var_17_2 == "item_list" then
-		local var_17_24 = var_17_4.content
-		local var_17_25 = var_17_4.style
-		local var_17_26 = #var_17_1
-		local var_17_27 = var_0_0.item_list_max_columns
-		local var_17_28 = math.ceil(var_17_26 / var_17_27) - 1
+		icon = icon or data.inventory_icon
+		content.texture_id = icon
+		var_17_4.content.rarity_texture = UISettings.item_rarity_textures[rarity]
+		num = 0
+	elseif widget_type == "career" then
+		local var_17_20 = CareerSettings[value]
+		local str = "small_" .. var_17_20.portrait_image
 
-		var_17_24.cursor_x = 1
-		var_17_24.cursor_y = 1
-		var_17_24.rows = var_17_28 + 1
-		var_17_24.cols = math.min(var_17_27, var_17_26)
-		var_17_24.item_count = var_17_26
+		var_17_4.content.texture_id = str
+	elseif not (widget_type == "item" or widget_type ~= "frame") then
+		local backend_id = value.backend_id
+		local get_item_from_id = Managers.backend:get_interface("items"):get_item_from_id(backend_id)
+		local rarity_2 = get_item_from_id.rarity
 
-		for iter_17_0 = 1, var_17_26 do
-			local var_17_29 = "rarity" .. iter_17_0
-			local var_17_30 = "icon" .. iter_17_0
-			local var_17_31 = "frame" .. iter_17_0
-			local var_17_32 = "illusion" .. iter_17_0
-			local var_17_33 = "tooltip" .. iter_17_0
-			local var_17_34 = "item" .. iter_17_0
-			local var_17_35 = 80 + var_0_3
-			local var_17_36 = var_17_35 * ((iter_17_0 - 1) % var_17_27)
-			local var_17_37 = var_17_35 * (var_17_28 - math.floor((iter_17_0 - 1) / var_17_27))
+		if not rarity_2 then
+			if not get_item_from_id.data then
+				rarity_2 = get_item_from_id.data.rarity
 
-			if iter_17_0 > var_17_28 * var_17_27 then
-				var_17_36 = var_17_36 + var_17_35 * 0.5 * (-var_17_26 % var_17_27)
-			end
-
-			var_0_8(var_17_25[var_17_29], var_17_36, var_17_37)
-			var_0_8(var_17_25[var_17_30], var_17_36, var_17_37)
-			var_0_8(var_17_25[var_17_31], var_17_36, var_17_37)
-			var_0_8(var_17_25[var_17_32], var_17_36, var_17_37)
-			var_0_8(var_17_25[var_17_33], var_17_36, var_17_37)
-
-			if iter_17_0 == 1 then
-				var_0_8(var_17_25.cursor, var_17_36, var_17_37)
-			end
-
-			local var_17_38 = var_17_1[iter_17_0]
-			local var_17_39 = var_17_38.data
-			local var_17_40 = var_17_38.rarity or var_17_39 and var_17_39.rarity or "plentiful"
-
-			var_17_24[var_17_30] = UIUtils.get_ui_information_from_item(var_17_38) or "icons_placeholder"
-			var_17_24[var_17_29] = UISettings.item_rarity_textures[var_17_40] or "icons_placeholder"
-			var_17_24[var_17_34] = var_17_38
-			var_17_24[var_17_32] = var_17_39 and var_17_39.item_type == "weapon_skin"
-		end
-
-		for iter_17_1 = var_17_26 + 1, var_0_0.item_list_max_rows * var_17_27 do
-			var_17_24["item_" .. iter_17_1] = nil
-		end
-
-		var_17_8 = 210 + (80 + var_0_3) * var_17_28
-	elseif var_17_2 == "deus_item" then
-		local var_17_41 = var_17_1.backend_id
-		local var_17_42 = Managers.backend:get_interface("items"):get_item_from_id(var_17_41)
-		local var_17_43 = var_17_42.rarity or var_17_42.data and var_17_42.data.rarity or "plentiful"
-		local var_17_44, var_17_45, var_17_46 = UIUtils.get_ui_information_from_item(var_17_42)
-
-		var_17_4.content.texture_id = var_17_44
-		var_17_4.content.rarity_texture = UISettings.item_rarity_textures[var_17_43]
-		var_17_8 = 0
-	elseif var_17_2 == "deus_icon" then
-		local var_17_47 = Managers.player:local_player()
-		local var_17_48 = var_17_47:profile_index()
-		local var_17_49 = var_17_47:career_index()
-
-		var_17_4.content.icon = DeusPowerUpUtils.get_power_up_icon(var_17_1, var_17_48, var_17_49)
-		var_17_8 = 0
-	elseif var_17_2 == "deus_item_tooltip" or var_17_2 == "item_tooltip" then
-		local var_17_50 = var_17_1.backend_id
-		local var_17_51 = Managers.backend:get_interface("items"):get_item_from_id(var_17_50)
-
-		var_17_4.content.item = var_17_51
-		var_17_4.style.item.draw_end_passes = true
-		var_17_8 = arg_17_0:_hacky_get_tooltip_size(var_17_4) - 20
-	elseif var_17_2 == "deus_power_up" then
-		local var_17_52 = DeusPowerUps[var_17_1.rarity][var_17_1.name]
-		local var_17_53 = Managers.player:local_player()
-		local var_17_54 = var_17_53:profile_index()
-		local var_17_55 = var_17_53:career_index()
-		local var_17_56 = var_17_52.rarity
-		local var_17_57 = RaritySettings[var_17_56]
-		local var_17_58 = var_17_4.content
-
-		var_17_58.title_text = DeusPowerUpUtils.get_power_up_name_text(var_17_52.name, var_17_52.talent_index, var_17_52.talent_tier, var_17_54, var_17_55)
-		var_17_58.rarity_text = Localize(var_17_57.display_name)
-		var_17_4.style.icon_frame.color = var_17_57.frame_color
-		var_17_4.style.icon_glow.color = var_17_57.color
-		var_17_58.description_text = DeusPowerUpUtils.get_power_up_description(var_17_52, var_17_54, var_17_55)
-		var_17_58.icon = DeusPowerUpUtils.get_power_up_icon(var_17_52, var_17_54, var_17_55)
-
-		local var_17_59 = var_17_4.style
-		local var_17_60 = Colors.get_table(var_17_56)
-
-		var_17_59.rarity_text.text_color = var_17_60
-
-		local var_17_61 = DeusPowerUpSetLookup[var_17_52.rarity] and DeusPowerUpSetLookup[var_17_52.rarity][var_17_52.name]
-		local var_17_62 = false
-
-		if var_17_61 then
-			local var_17_63 = var_17_61[1]
-			local var_17_64 = 0
-			local var_17_65 = var_17_63.pieces
-			local var_17_66 = Managers.mechanism:game_mechanism():get_deus_run_controller()
-
-			for iter_17_2, iter_17_3 in ipairs(var_17_65) do
-				local var_17_67 = iter_17_3.name
-				local var_17_68 = iter_17_3.rarity
-				local var_17_69 = var_17_66:get_own_peer_id()
-
-				if var_17_66:has_power_up_by_name(var_17_69, var_17_67, var_17_68) then
-					var_17_64 = var_17_64 + 1
+				if not rarity_2 then
+					-- Nothing
 				end
 			end
 
-			var_17_62 = true
+			rarity_2 = "plentiful"
+		end
 
-			local var_17_70 = var_17_63.num_required_pieces or #var_17_65
+		::label_17_1::
 
-			var_17_4.content.set_progression = Localize("set_bonus_boons") .. " " .. string.format(Localize("set_counter_boons"), var_17_64, var_17_70)
+		local get_ui_information_from_item = UIUtils.get_ui_information_from_item(get_item_from_id)
 
-			if #var_17_65 == var_17_64 then
-				var_17_59.set_progression.text_color = var_17_59.set_progression.progression_colors.complete
+		var_17_4.content.texture_id = get_ui_information_from_item
+		var_17_4.content.rarity_texture = UISettings.item_rarity_textures[rarity_2]
+		num = 0
+	elseif widget_type == "item_list" then
+		local content_2 = var_17_4.content
+		local style = var_17_4.style
+		local count = #value
+		local item_list_max_columns = var_0_0.item_list_max_columns
+		local num_2 = math.ceil(count / item_list_max_columns) - 1
+
+		content_2.cursor_x = 1
+		content_2.cursor_y = 1
+		content_2.rows = num_2 + 1
+		content_2.cols = math.min(item_list_max_columns, count)
+		content_2.item_count = count
+
+		for i = 1, count do
+			local str_2 = "rarity" .. i
+			local str_3 = "icon" .. i
+			local str_4 = "frame" .. i
+			local str_5 = "illusion" .. i
+			local str_6 = "tooltip" .. i
+			local str_7 = "item" .. i
+			local num_3 = 80 + item_list_padding
+			local num_4 = num_3 * ((i - 1) % item_list_max_columns)
+			local num_5 = num_3 * (num_2 - math.floor((i - 1) / item_list_max_columns))
+
+			if i > num_2 * item_list_max_columns then
+				num_4 = num_4 + num_3 * 0.5 * (-count % item_list_max_columns)
+			end
+
+			fn_2(style[str_2], num_4, num_5)
+			fn_2(style[str_3], num_4, num_5)
+			fn_2(style[str_4], num_4, num_5)
+			fn_2(style[str_5], num_4, num_5)
+			fn_2(style[str_6], num_4, num_5)
+
+			if i == 1 then
+				fn_2(style.cursor, num_4, num_5)
+			end
+
+			local var_17_40 = value[i]
+			local data_2 = var_17_40.data
+			local rarity_3 = var_17_40.rarity
+
+			if not rarity_3 then
+				if not data_2 then
+					rarity_3 = data_2.rarity
+
+					if not rarity_3 then
+						-- Nothing
+					end
+				end
+
+				rarity_3 = "plentiful"
+			end
+
+			::label_17_2::
+
+			local get_ui_information_from_item_2 = UIUtils.get_ui_information_from_item(var_17_40)
+
+			get_ui_information_from_item_2 = get_ui_information_from_item_2 or "icons_placeholder"
+			content_2[str_3] = get_ui_information_from_item_2
+
+			local var_17_44 = UISettings.item_rarity_textures[rarity_3]
+
+			var_17_44 = var_17_44 or "icons_placeholder"
+			content_2[str_2] = var_17_44
+			content_2[str_7] = var_17_40
+			content_2[str_5] = not data_2 and data_2.item_type == "weapon_skin"
+		end
+
+		for j = count + 1, var_0_0.item_list_max_rows * item_list_max_columns do
+			content_2["item_" .. j] = nil
+		end
+
+		num = 210 + (80 + item_list_padding) * num_2
+	elseif widget_type == "deus_item" then
+		local backend_id_2 = value.backend_id
+		local get_item_from_id_2 = Managers.backend:get_interface("items"):get_item_from_id(backend_id_2)
+		local rarity_4 = get_item_from_id_2.rarity
+
+		if not rarity_4 then
+			if not get_item_from_id_2.data then
+				rarity_4 = get_item_from_id_2.data.rarity
+
+				if not rarity_4 then
+					-- Nothing
+				end
+			end
+
+			rarity_4 = "plentiful"
+		end
+
+		::label_17_3::
+
+		local get_ui_information_from_item_3, var_17_49, var_17_50 = UIUtils.get_ui_information_from_item(get_item_from_id_2)
+
+		var_17_4.content.texture_id = get_ui_information_from_item_3
+		var_17_4.content.rarity_texture = UISettings.item_rarity_textures[rarity_4]
+		num = 0
+	elseif widget_type == "deus_icon" then
+		local local_player = Managers.player:local_player()
+		local profile_index = local_player:profile_index()
+		local career_index = local_player:career_index()
+
+		var_17_4.content.icon = DeusPowerUpUtils.get_power_up_icon(value, profile_index, career_index)
+		num = 0
+	elseif not (widget_type == "deus_item_tooltip" or widget_type ~= "item_tooltip") then
+		local backend_id_3 = value.backend_id
+		local get_item_from_id_3 = Managers.backend:get_interface("items"):get_item_from_id(backend_id_3)
+
+		var_17_4.content.item = get_item_from_id_3
+		var_17_4.style.item.draw_end_passes = true
+		num = self:_hacky_get_tooltip_size(var_17_4) - 20
+	elseif widget_type == "deus_power_up" then
+		local var_17_56 = DeusPowerUps[value.rarity][value.name]
+		local local_player_2 = Managers.player:local_player()
+		local profile_index_2 = local_player_2:profile_index()
+		local career_index_2 = local_player_2:career_index()
+		local rarity_5 = var_17_56.rarity
+		local var_17_61 = RaritySettings[rarity_5]
+		local content_3 = var_17_4.content
+
+		content_3.title_text = DeusPowerUpUtils.get_power_up_name_text(var_17_56.name, var_17_56.talent_index, var_17_56.talent_tier, profile_index_2, career_index_2)
+		content_3.rarity_text = Localize(var_17_61.display_name)
+		var_17_4.style.icon_frame.color = var_17_61.frame_color
+		var_17_4.style.icon_glow.color = var_17_61.color
+		content_3.description_text = DeusPowerUpUtils.get_power_up_description(var_17_56, profile_index_2, career_index_2)
+		content_3.icon = DeusPowerUpUtils.get_power_up_icon(var_17_56, profile_index_2, career_index_2)
+
+		local style_2 = var_17_4.style
+		local get_table = Colors.get_table(rarity_5)
+
+		style_2.rarity_text.text_color = get_table
+
+		local var_17_65 = DeusPowerUpSetLookup[var_17_56.rarity]
+
+		var_17_65 = not var_17_65 and DeusPowerUpSetLookup[var_17_56.rarity][var_17_56.name]
+
+		local flag = false
+
+		if not var_17_65 then
+			local var_17_67 = var_17_65[1]
+			local num_6 = 0
+			local pieces = var_17_67.pieces
+			local get_deus_run_controller = Managers.mechanism:game_mechanism():get_deus_run_controller()
+
+			for i_2, v in ipairs(pieces) do
+				local name = v.name
+				local rarity_6 = v.rarity
+				local get_own_peer_id = get_deus_run_controller:get_own_peer_id()
+
+				if not get_deus_run_controller:has_power_up_by_name(get_own_peer_id, name, rarity_6) then
+					num_6 = num_6 + 1
+				end
+			end
+
+			flag = true
+
+			local num_required_pieces = var_17_67.num_required_pieces
+
+			num_required_pieces = num_required_pieces or #pieces
+			var_17_4.content.set_progression = Localize("set_bonus_boons") .. " " .. string.format(Localize("set_counter_boons"), num_6, num_required_pieces)
+
+			if #pieces == num_6 then
+				style_2.set_progression.text_color = style_2.set_progression.progression_colors.complete
 			end
 		end
 
-		var_17_4.content.is_part_of_set = var_17_62
-		var_17_8 = 160
-	elseif var_17_2 == "loot_chest" then
-		local var_17_71 = ItemMasterList[var_17_1].inventory_icon
+		var_17_4.content.is_part_of_set = flag
+		num = 160
+	elseif widget_type == "loot_chest" then
+		local inventory_icon = ItemMasterList[value].inventory_icon
 
-		var_17_4.content.texture_id = var_17_71
-		var_17_8 = 0
+		var_17_4.content.texture_id = inventory_icon
+		num = 0
 	end
 
-	return var_17_4, var_17_3 and 0 or var_17_8
+	local var_17_76 = var_17_4
+	local flag_2
+
+	flag_2 = not ignore_height and 0 and num
+
+	return var_17_76, flag_2
 end
 
-function RewardPopupUI._setup_presentation(arg_18_0, arg_18_1)
-	local var_18_0 = #arg_18_1
-	local var_18_1 = {}
-	local var_18_2 = {
+RewardPopupUI._setup_presentation = function (self, arg_18_1)
+	-- function 18
+	local count = #arg_18_1
+	local tbl = {}
+	local tbl_2 = {
 		end_animation = "close",
 		start_animation = "open",
 		started = false,
 		animations_played = 0,
 		entry_play_index = 1,
-		amount = var_18_0,
-		entries = var_18_1
+		amount = count,
+		entries = tbl
 	}
-	local var_18_3 = arg_18_1.animation_data or {}
+	local animation_data = arg_18_1.animation_data
 
-	for iter_18_0, iter_18_1 in pairs(var_18_3) do
-		var_18_2[iter_18_0] = iter_18_1
+	animation_data = animation_data or {}
+
+	for k, v in pairs(animation_data) do
+		tbl_2[k] = v
 	end
 
-	local var_18_4 = var_18_3.animation_wait_time or var_18_2.claim_button and 0 or 2
-	local var_18_5 = 20
-	local var_18_6 = 80
+	local animation_wait_time = animation_data.animation_wait_time
 
-	arg_18_0._skip_blur = arg_18_1.skip_blur
-	arg_18_0._bg_alpha = arg_18_1.bg_alpha or 100
+	animation_wait_time = animation_wait_time or not tbl_2.claim_button or 0 or 2
 
-	for iter_18_2 = 1, #arg_18_1 do
-		local var_18_7 = arg_18_1[iter_18_2]
-		local var_18_8 = {}
-		local var_18_9 = {
+	local num = 20
+	local num_2 = 80
+
+	self._skip_blur = arg_18_1.skip_blur
+
+	local bg_alpha = arg_18_1.bg_alpha
+
+	bg_alpha = bg_alpha or 100
+	self._bg_alpha = bg_alpha
+
+	for k_2 = 1, #arg_18_1 do
+		local var_18_8 = arg_18_1[k_2]
+		local tbl_3 = {}
+		local tbl_4 = {
 			enter_animation = "entry_enter",
 			exit_animation = "entry_exit",
-			index = iter_18_2,
-			widgets_data = var_18_8,
-			animation_wait_time = var_18_4
+			index = k_2,
+			widgets_data = tbl_3,
+			animation_wait_time = animation_wait_time
 		}
-		local var_18_10 = 0
+		local num_3 = 0
 
-		for iter_18_3 = 1, #var_18_7 do
-			local var_18_11 = var_18_7[iter_18_3]
-			local var_18_12, var_18_13 = arg_18_0:_setup_entry_widget(var_18_11, iter_18_3)
+		for l = 1, #var_18_8 do
+			local var_18_12 = var_18_8[l]
+			local _setup_entry_widget, var_18_14 = self:_setup_entry_widget(var_18_12, l)
 
-			var_18_8[iter_18_3] = {
+			tbl_3[l] = {
 				alpha_multiplier = 0,
-				widget = var_18_12,
-				height = var_18_13,
-				value = var_18_11.value,
-				widget_type = var_18_11.widget_type
+				widget = _setup_entry_widget,
+				height = var_18_14,
+				value = var_18_12.value,
+				widget_type = var_18_12.widget_type
 			}
 
-			if var_18_10 < var_18_13 then
-				var_18_10 = var_18_13
+			if num_3 < var_18_14 then
+				num_3 = var_18_14
 			end
 		end
 
-		var_18_9.highest_height = var_18_10
-		var_18_1[iter_18_2] = var_18_9
+		tbl_4.highest_height = num_3
+		tbl[k_2] = tbl_4
 
-		if var_18_6 < var_18_10 then
-			var_18_6 = var_18_10
+		if num_2 < num_3 then
+			num_2 = num_3
 		end
 	end
 
-	var_0_1.background_center.size[2] = var_18_6 + var_18_5
-	arg_18_0._ui_scenegraph.background.local_position = arg_18_1.offset or {
+	scenegraph_definition.background_center.size[2] = num_2 + num
+
+	local background = self._ui_scenegraph.background
+	local offset = arg_18_1.offset
+
+	offset = offset or {
 		0,
 		0,
 		1
 	}
+	background.local_position = offset
 
-	return var_18_2
+	return tbl_2
 end
 
-function RewardPopupUI._align_entry_widgets(arg_19_0, arg_19_1)
-	local var_19_0 = arg_19_0._ui_scenegraph
-	local var_19_1 = arg_19_1.widgets_data
+RewardPopupUI._align_entry_widgets = function (self, arg_19_1)
+	-- function 19
+	local _ui_scenegraph = self._ui_scenegraph
+	local widgets_data = arg_19_1.widgets_data
 
-	for iter_19_0 = 1, #var_19_1 do
-		var_19_0[var_19_1[iter_19_0].widget.scenegraph_id].local_position[2] = 0
+	for i = 1, #widgets_data do
+		_ui_scenegraph[widgets_data[i].widget.scenegraph_id].local_position[2] = 0
 	end
 end
 
-function RewardPopupUI._play_animation(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
-	local var_20_0 = arg_20_2 .. "_key"
-	local var_20_1 = arg_20_1[var_20_0]
+RewardPopupUI._play_animation = function (self, arg_20_1, arg_20_2, arg_20_3)
+	-- function 20
+	local str = arg_20_2 .. "_key"
+	local var_20_1 = arg_20_1[str]
 
 	if not var_20_1 then
-		arg_20_1[var_20_0] = arg_20_0:start_presentation_animation(arg_20_1[arg_20_2], arg_20_3)
+		arg_20_1[str] = self:start_presentation_animation(arg_20_1[arg_20_2], arg_20_3)
 
 		return true
-	elseif arg_20_0._animations[var_20_1] then
+	elseif not self._animations[var_20_1] then
 		return true
 	end
 end
 
-function RewardPopupUI._update_presentation_animation(arg_21_0, arg_21_1)
-	local var_21_0 = arg_21_0._animation_presentation_data
+RewardPopupUI._update_presentation_animation = function (self, arg_21_1)
+	-- function 21
+	local _animation_presentation_data = self._animation_presentation_data
 
-	if not var_21_0 or var_21_0.complete then
+	if not _animation_presentation_data and not _animation_presentation_data.complete then
 		return
 	end
 
-	if arg_21_0:_play_animation(var_21_0, "start_animation") then
+	if not self:_play_animation(_animation_presentation_data, "start_animation") then
 		return
 	end
 
-	local var_21_1 = var_21_0.entry_play_index
-	local var_21_2 = var_21_0.entries
-	local var_21_3 = var_21_2[var_21_1]
+	local entry_play_index = _animation_presentation_data.entry_play_index
+	local entries = _animation_presentation_data.entries
+	local var_21_3 = entries[entry_play_index]
 
 	if not var_21_3.aligned then
-		arg_21_0:_align_entry_widgets(var_21_3)
+		self:_align_entry_widgets(var_21_3)
 
 		var_21_3.aligned = true
 	end
 
-	if arg_21_0:_play_animation(var_21_3, "enter_animation", var_21_3.widgets_data) then
+	if not self:_play_animation(var_21_3, "enter_animation", var_21_3.widgets_data) then
 		return
 	end
 
-	if var_21_0.claim_button then
-		arg_21_0._handling_claim_button = true
+	if not _animation_presentation_data.claim_button then
+		self._handling_claim_button = true
 
 		if not var_21_3.claimed then
-			return arg_21_0:_handle_input(var_21_3)
+			return self:_handle_input(var_21_3)
 		end
 
-		arg_21_0._handling_claim_button = false
+		self._handling_claim_button = false
 	end
 
-	if not arg_21_0._done_reset_speed_up_popup then
-		arg_21_0._done_reset_speed_up_popup = true
-		arg_21_0._speed_up_popup = false
+	if not self._done_reset_speed_up_popup then
+		self._done_reset_speed_up_popup = true
+		self._speed_up_popup = false
 	end
 
-	local var_21_4 = var_21_3.animation_wait_time
+	local animation_wait_time = var_21_3.animation_wait_time
 
-	if var_21_4 then
-		local var_21_5 = var_21_4 - arg_21_1
+	if not animation_wait_time then
+		local num = animation_wait_time - arg_21_1
 
-		if var_21_5 > 0 then
-			var_21_3.animation_wait_time = var_21_5
+		if num > 0 then
+			var_21_3.animation_wait_time = num
 		else
 			var_21_3.animation_wait_time = nil
 		end
@@ -636,174 +767,215 @@ function RewardPopupUI._update_presentation_animation(arg_21_0, arg_21_1)
 		return
 	end
 
-	if arg_21_0:_play_animation(var_21_3, "exit_animation", var_21_3.widgets_data) then
+	if not self:_play_animation(var_21_3, "exit_animation", var_21_3.widgets_data) then
 		return
-	elseif var_21_1 < #var_21_2 then
-		var_21_0.entry_play_index = var_21_1 + 1
+	elseif entry_play_index < #entries then
+		_animation_presentation_data.entry_play_index = entry_play_index + 1
 
-		return
-	end
-
-	if arg_21_0:_play_animation(var_21_0, "end_animation") then
 		return
 	end
 
-	var_21_0.complete = true
+	if not self:_play_animation(_animation_presentation_data, "end_animation") then
+		return
+	end
 
-	arg_21_0:on_presentation_complete()
+	_animation_presentation_data.complete = true
+
+	self:on_presentation_complete()
 end
 
-function RewardPopupUI._handle_input(arg_22_0, arg_22_1)
-	local var_22_0 = arg_22_0:input_service()
+RewardPopupUI._handle_input = function (self, arg_22_1)
+	-- function 22
+	local input_service = self:input_service()
+	local claimed = arg_22_1.claimed
 
-	arg_22_1.claimed = arg_22_1.claimed or var_22_0:get("skip_pressed", true) or var_22_0:get("confirm_press", true) or UIUtils.is_button_pressed(arg_22_0.claim_button_widget)
+	if not claimed then
+		claimed = input_service:get("skip_pressed", true)
 
-	local var_22_1 = table.find_by_key(arg_22_1.widgets_data, "widget_type", "item_list")
+		if not claimed then
+			claimed = input_service:get("confirm_press", true)
+			claimed = claimed or UIUtils.is_button_pressed(self.claim_button_widget)
+		end
+	end
 
-	if not var_22_1 then
+	arg_22_1.claimed = claimed
+
+	local find_by_key = table.find_by_key(arg_22_1.widgets_data, "widget_type", "item_list")
+
+	if not find_by_key then
 		return
 	end
 
-	local var_22_2 = arg_22_1.widgets_data[var_22_1].widget
-	local var_22_3 = var_22_2.content
-	local var_22_4 = false
-	local var_22_5 = var_22_3.cursor_x
-	local var_22_6 = var_22_3.cursor_y
-	local var_22_7 = var_0_0.item_list_max_columns
-	local var_22_8 = var_22_3.rows
-	local var_22_9 = var_22_3.item_count % var_22_7
+	local widget = arg_22_1.widgets_data[find_by_key].widget
+	local content = widget.content
+	local flag = false
+	local cursor_x = content.cursor_x
+	local cursor_y = content.cursor_y
+	local item_list_max_columns = var_0_0.item_list_max_columns
+	local rows = content.rows
+	local num = content.item_count % item_list_max_columns
 
-	if var_22_9 == 0 then
-		var_22_9 = var_22_7
+	if num == 0 then
+		num = item_list_max_columns
 	end
 
-	if var_22_6 < var_22_8 and var_22_0:get("move_down") then
-		var_22_6 = var_22_6 + 1
-		var_22_4 = true
+	if not (cursor_y < rows) or not input_service:get("move_down") then
+		cursor_y = cursor_y + 1
+		flag = true
 
-		if var_22_6 == var_22_8 then
-			var_22_5 = math.clamp(var_22_5 - math.floor(0.5 * (var_22_7 - var_22_9)), 1, var_22_9)
+		if cursor_y == rows then
+			cursor_x = math.clamp(cursor_x - math.floor(0.5 * (item_list_max_columns - num)), 1, num)
 		end
-	elseif var_22_6 > 1 and var_22_0:get("move_up") then
-		if var_22_6 == var_22_8 then
-			var_22_5 = var_22_5 + math.floor(0.5 * (var_22_7 - var_22_9))
+	elseif not (cursor_y > 1) or not input_service:get("move_up") then
+		if cursor_y == rows then
+			cursor_x = cursor_x + math.floor(0.5 * (item_list_max_columns - num))
 		end
 
-		var_22_6 = var_22_6 - 1
-		var_22_4 = true
+		cursor_y = cursor_y - 1
+		flag = true
 	end
 
-	if var_22_5 > 1 and var_22_0:get("move_left") then
-		var_22_5 = var_22_5 - 1
-		var_22_4 = true
-	elseif var_22_5 < (var_22_6 == var_22_8 and var_22_9 or var_22_7) and var_22_0:get("move_right") then
-		var_22_5 = var_22_5 + 1
-		var_22_4 = true
+	if not (cursor_x > 1) or not input_service:get("move_left") then
+		cursor_x = cursor_x - 1
+		flag = true
+	elseif not (cursor_x < (cursor_y ~= rows or not num or item_list_max_columns)) or not input_service:get("move_right") then
+		cursor_x = cursor_x + 1
+		flag = true
 	end
 
-	if var_22_4 then
-		var_22_3.cursor_x = var_22_5
-		var_22_3.cursor_y = var_22_6
+	if not flag then
+		content.cursor_x = cursor_x
+		content.cursor_y = cursor_y
 
-		local var_22_10 = 1 + (var_22_5 - 1) + (var_22_6 - 1) * var_22_7
+		local num_2 = 1 + (cursor_x - 1) + (cursor_y - 1) * item_list_max_columns
 
-		var_22_3.selected_i = var_22_10
+		content.selected_i = num_2
 
-		local var_22_11 = var_22_2.style["icon" .. var_22_10].offset
+		local offset = widget.style["icon" .. num_2].offset
 
-		var_0_8(var_22_2.style.cursor, var_22_11[1], var_22_11[2])
-	elseif var_22_0:get("right_stick_press") then
-		if var_22_3.selected_i then
-			var_22_3.selected_i = nil
+		fn_2(widget.style.cursor, offset[1], offset[2])
+	elseif not input_service:get("right_stick_press") then
+		if not content.selected_i then
+			content.selected_i = nil
 		else
-			var_22_3.selected_i = 1 + (var_22_5 - 1) + (var_22_6 - 1) * var_22_7
+			content.selected_i = 1 + (cursor_x - 1) + (cursor_y - 1) * item_list_max_columns
 		end
 	end
 
 	return true
 end
 
-function RewardPopupUI.set_fullscreen_effect_enable_state(arg_23_0, arg_23_1, arg_23_2)
-	if arg_23_0._skip_blur then
+RewardPopupUI.set_fullscreen_effect_enable_state = function (self, arg_23_1, arg_23_2)
+	-- function 23
+	if not self._skip_blur then
 		return
 	end
 
-	local var_23_0 = arg_23_0.world
-	local var_23_1 = World.get_data(var_23_0, "shading_environment")
+	local world = self.world
+	local get_data = World.get_data(world, "shading_environment")
 
-	arg_23_2 = arg_23_2 or arg_23_1 and 1 or 0
+	arg_23_2 = arg_23_2 or not arg_23_1 or 1 or 0
 
-	if var_23_1 then
-		ShadingEnvironment.set_scalar(var_23_1, "fullscreen_blur_enabled", arg_23_1 and 1 or 0)
-		ShadingEnvironment.set_scalar(var_23_1, "fullscreen_blur_amount", arg_23_1 and arg_23_2 * 0.75 or 0)
-		ShadingEnvironment.apply(var_23_1)
+	if not get_data then
+		local set_scalar = ShadingEnvironment.set_scalar
+		local var_23_3 = get_data
+		local str = "fullscreen_blur_enabled"
+		local flag
 
-		arg_23_0.screen_background_widget.style.rect.color[1] = arg_23_0._bg_alpha * arg_23_2
-	end
+		flag = not arg_23_1 and 1 and 0
 
-	arg_23_0._fullscreen_effect_enabled = arg_23_1
-end
+		set_scalar(var_23_3, str, flag)
 
-function RewardPopupUI._setup_input(arg_24_0)
-	local var_24_0 = arg_24_0._input_manager
+		local set_scalar_2 = ShadingEnvironment.set_scalar
+		local var_23_7 = get_data
+		local str_2 = "fullscreen_blur_amount"
+		local num
 
-	if var_24_0 and not arg_24_0._input_set_up then
-		var_24_0:create_input_service(var_0_6, "IngameMenuKeymaps", "IngameMenuFilters")
-		var_24_0:map_device_to_service(var_0_6, "keyboard")
-		var_24_0:map_device_to_service(var_0_6, "mouse")
-		var_24_0:map_device_to_service(var_0_6, "gamepad")
+		if not arg_23_1 then
+			num = arg_23_2 * 0.75
 
-		arg_24_0._input_set_up = true
-	end
-end
-
-function RewardPopupUI._acquire_input(arg_25_0)
-	if not arg_25_0.input_acquired then
-		local var_25_0 = arg_25_0._input_manager
-
-		if var_25_0 and arg_25_0._input_set_up then
-			var_25_0:capture_input(ALL_INPUT_METHODS, 1, var_0_6, "RewardPopupUI")
-
-			if arg_25_0._animation_presentation_data.claim_button then
-				ShowCursorStack.show("RewardPopupUI")
-
-				arg_25_0._cursor_shown = true
-
-				local var_25_1 = var_25_0:get_service(var_0_6)
-
-				arg_25_0._menu_input_description = MenuInputDescriptionUI:new(nil, arg_25_0._ui_top_renderer, var_25_1, 5, 900, var_0_0.generic_input_actions.default)
-
-				arg_25_0._menu_input_description:set_input_description(nil)
+			if not num then
+				-- Nothing
 			end
 		end
 
-		arg_25_0.input_acquired = true
+		num = 0
+
+		::label_23_0::
+
+		set_scalar_2(var_23_7, str_2, num)
+		ShadingEnvironment.apply(get_data)
+
+		self.screen_background_widget.style.rect.color[1] = self._bg_alpha * arg_23_2
+	end
+
+	self._fullscreen_effect_enabled = arg_23_1
+end
+
+RewardPopupUI._setup_input = function (self)
+	-- function 24
+	local _input_manager = self._input_manager
+
+	if not (not _input_manager and self._input_set_up) then
+		_input_manager:create_input_service(str, "IngameMenuKeymaps", "IngameMenuFilters")
+		_input_manager:map_device_to_service(str, "keyboard")
+		_input_manager:map_device_to_service(str, "mouse")
+		_input_manager:map_device_to_service(str, "gamepad")
+
+		self._input_set_up = true
 	end
 end
 
-function RewardPopupUI._release_input(arg_26_0)
-	if arg_26_0.input_acquired then
-		local var_26_0 = arg_26_0._input_manager
+RewardPopupUI._acquire_input = function (self)
+	-- function 25
+	if not self.input_acquired then
+		local _input_manager = self._input_manager
 
-		if var_26_0 and arg_26_0._input_set_up then
-			var_26_0:release_input(ALL_INPUT_METHODS, 1, var_0_6, "RewardPopupUI")
+		if not _input_manager and not self._input_set_up then
+			_input_manager:capture_input(ALL_INPUT_METHODS, 1, str, "RewardPopupUI")
 
-			arg_26_0._menu_input_description = nil
+			if not self._animation_presentation_data.claim_button then
+				ShowCursorStack.show("RewardPopupUI")
+
+				self._cursor_shown = true
+
+				local get_service = _input_manager:get_service(str)
+
+				self._menu_input_description = MenuInputDescriptionUI:new(nil, self._ui_top_renderer, get_service, 5, 900, var_0_0.generic_input_actions.default)
+
+				self._menu_input_description:set_input_description(nil)
+			end
 		end
 
-		arg_26_0.input_acquired = false
-	end
-
-	if arg_26_0._cursor_shown then
-		ShowCursorStack.hide("RewardPopupUI")
-
-		arg_26_0._cursor_shown = false
+		self.input_acquired = true
 	end
 end
 
-function RewardPopupUI.input_service(arg_27_0)
-	if arg_27_0._input_set_up and arg_27_0.input_acquired then
-		return arg_27_0._input_manager:get_service(var_0_6)
+RewardPopupUI._release_input = function (self)
+	-- function 26
+	if not self.input_acquired then
+		local _input_manager = self._input_manager
+
+		if not _input_manager and not self._input_set_up then
+			_input_manager:release_input(ALL_INPUT_METHODS, 1, str, "RewardPopupUI")
+
+			self._menu_input_description = nil
+		end
+
+		self.input_acquired = false
+	end
+
+	if not self._cursor_shown then
+		ShowCursorStack.hide("RewardPopupUI")
+
+		self._cursor_shown = false
+	end
+end
+
+RewardPopupUI.input_service = function (self)
+	-- function 27
+	if not self._input_set_up and not self.input_acquired then
+		return self._input_manager:get_service(str)
 	else
 		return FAKE_INPUT_SERVICE
 	end

@@ -1,28 +1,36 @@
 -- chunkname: @scripts/managers/news_ticker/news_ticker_token.lua
 
-NewsTickerToken = NewsTickerToken or class()
+local NewsTickerToken = NewsTickerToken
 
-function NewsTickerToken.init(arg_1_0, arg_1_1, arg_1_2)
-	arg_1_0._loader = arg_1_1
-	arg_1_0._job = arg_1_2
+NewsTickerToken = NewsTickerToken or class()
+NewsTickerToken = NewsTickerToken
+
+NewsTickerToken.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	self._loader = arg_1_1
+	self._job = arg_1_2
 end
 
-function NewsTickerToken.info(arg_2_0)
-	if arg_2_0:done() and UrlLoader.success(arg_2_0._loader, arg_2_0._job) then
-		return UrlLoader.text(arg_2_0._loader, arg_2_0._job)
+NewsTickerToken.info = function (self)
+	-- function 2
+	if not self:done() and not UrlLoader.success(self._loader, self._job) then
+		return UrlLoader.text(self._loader, self._job)
 	else
 		return "Failed loading news ticker"
 	end
 end
 
-function NewsTickerToken.update(arg_3_0)
+NewsTickerToken.update = function (arg_3_0)
+	-- function 3
 	return
 end
 
-function NewsTickerToken.done(arg_4_0)
-	return UrlLoader.done(arg_4_0._loader, arg_4_0._job)
+NewsTickerToken.done = function (self)
+	-- function 4
+	return UrlLoader.done(self._loader, self._job)
 end
 
-function NewsTickerToken.close(arg_5_0)
-	UrlLoader.unload(arg_5_0._loader, arg_5_0._job)
+NewsTickerToken.close = function (self)
+	-- function 5
+	UrlLoader.unload(self._loader, self._job)
 end

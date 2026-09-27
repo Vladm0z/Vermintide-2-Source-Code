@@ -1,11 +1,11 @@
 -- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_mission_definitions.lua
 
-local var_0_0 = UISettings.game_start_windows
-local var_0_1 = var_0_0.frame
-local var_0_2 = var_0_0.size
-local var_0_3 = UIFrameSettings[var_0_1].texture_sizes.vertical[1]
-local var_0_4 = var_0_2[1] - (var_0_3 * 2 + 60)
-local var_0_5 = {
+local game_start_windows = UISettings.game_start_windows
+local frame = game_start_windows.frame
+local size = game_start_windows.size
+local var_0_3 = UIFrameSettings[frame].texture_sizes.vertical[1]
+local num = size[1] - (var_0_3 * 2 + 60)
+local tbl = {
 	root = {
 		is_root = true,
 		size = {
@@ -48,7 +48,7 @@ local var_0_5 = {
 		vertical_alignment = "center",
 		parent = "menu_root",
 		horizontal_alignment = "center",
-		size = var_0_2,
+		size = size,
 		position = {
 			0,
 			0,
@@ -60,8 +60,8 @@ local var_0_5 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_4,
-			var_0_2[2] / 2
+			num,
+			size[2] / 2
 		},
 		position = {
 			0,
@@ -116,7 +116,7 @@ local var_0_5 = {
 		parent = "mission_title_divider",
 		horizontal_alignment = "center",
 		size = {
-			var_0_4,
+			num,
 			50
 		},
 		position = {
@@ -126,7 +126,7 @@ local var_0_5 = {
 		}
 	}
 }
-local var_0_6 = {
+local tbl_2 = {
 	word_wrap = true,
 	font_size = 22,
 	localize = false,
@@ -141,7 +141,7 @@ local var_0_6 = {
 		2
 	}
 }
-local var_0_7 = {
+local tbl_3 = {
 	font_size = 36,
 	upper_case = true,
 	localize = false,
@@ -157,17 +157,17 @@ local var_0_7 = {
 		2
 	}
 }
-local var_0_8 = {
+local tbl_4 = {
 	background_fade = UIWidgets.create_simple_texture("options_window_fade_01", "window"),
 	background_mask = UIWidgets.create_simple_texture("mask_rect", "window"),
-	window = UIWidgets.create_frame("window", var_0_2, var_0_1, 20),
-	description_text = UIWidgets.create_simple_text(Localize("start_game_window_specific_desc"), "description_text", nil, nil, var_0_6),
-	mission_title = UIWidgets.create_simple_text(Localize("start_game_window_specific_title"), "mission_title", nil, nil, var_0_7),
+	window = UIWidgets.create_frame("window", size, frame, 20),
+	description_text = UIWidgets.create_simple_text(Localize("start_game_window_specific_desc"), "description_text", nil, nil, tbl_2),
+	mission_title = UIWidgets.create_simple_text(Localize("start_game_window_specific_title"), "mission_title", nil, nil, tbl_3),
 	map_texture = UIWidgets.create_simple_texture("map_icon", "map_texture"),
 	mission_title_divider = UIWidgets.create_simple_texture("divider_01_top", "mission_title_divider")
 }
 
 return {
-	widgets = var_0_8,
-	scenegraph_definition = var_0_5
+	widgets = tbl_4,
+	scenegraph_definition = tbl
 }

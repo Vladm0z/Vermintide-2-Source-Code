@@ -1,5 +1,7 @@
 -- chunkname: @scripts/settings/dlcs/morris/deus_node_settings.lua
 
+local DeusNodeSettings = DeusNodeSettings
+
 DeusNodeSettings = DeusNodeSettings or {
 	inn = {
 		game_mode_key = "inn_deus",
@@ -22,3 +24,4 @@ DeusNodeSettings = DeusNodeSettings or {
 		mechanism_state = "map_deus"
 	}
 }
+DeusNodeSettings = DeusNodeSettings

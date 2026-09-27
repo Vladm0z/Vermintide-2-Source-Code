@@ -40,6 +40,6 @@ ControlledUnitTemplates.necromancer_pet_army_client = table.clone(ControlledUnit
 ControlledUnitTemplates.necromancer_pet_army_client.disband_type = ControlledUnitDisbandType.none
 ControlledUnitTemplates.necromancer_pet_army_client.pet_ui_type = "server_controlled"
 
-for iter_0_0, iter_0_1 in pairs(ControlledUnitTemplates) do
-	iter_0_1.name = iter_0_0
+for k, v in pairs(ControlledUnitTemplates) do
+	v.name = k
 end

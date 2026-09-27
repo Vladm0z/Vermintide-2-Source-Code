@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/chaos/chaos_zombie_behavior.lua
 
-local var_0_0 = BreedActions.chaos_zombie
+local chaos_zombie = BreedActions.chaos_zombie
 
 BreedBehaviors.chaos_zombie = {
 	"BTSelector",
@@ -23,13 +23,13 @@ BreedBehaviors.chaos_zombie = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = var_0_0.stagger
+		action_data = chaos_zombie.stagger
 	},
 	{
 		"BTBlockedAction",
 		name = "blocked",
 		condition = "blocked",
-		action_data = var_0_0.blocked
+		action_data = chaos_zombie.blocked
 	},
 	{
 		"BTSelector",
@@ -47,7 +47,7 @@ BreedBehaviors.chaos_zombie = {
 			"BTZombieExplodeAction",
 			name = "explosion_attack",
 			condition = "at_door_smartobject",
-			action_data = var_0_0.explosion_attack
+			action_data = chaos_zombie.explosion_attack
 		},
 		condition = "at_smartobject",
 		name = "smartobject"
@@ -57,12 +57,12 @@ BreedBehaviors.chaos_zombie = {
 		{
 			"BTClanRatFollowAction",
 			name = "follow",
-			action_data = var_0_0.follow
+			action_data = chaos_zombie.follow
 		},
 		{
 			"BTZombieExplodeAction",
 			name = "explosion_attack",
-			action_data = var_0_0.explosion_attack
+			action_data = chaos_zombie.explosion_attack
 		},
 		condition = "confirmed_player_sighting",
 		name = "in_combat"
@@ -71,18 +71,18 @@ BreedBehaviors.chaos_zombie = {
 		"BTAlertedAction",
 		name = "alerted",
 		condition = "player_spotted",
-		action_data = var_0_0.alerted
+		action_data = chaos_zombie.alerted
 	},
 	{
 		"BTIdleAction",
 		name = "idle",
 		condition = "no_target",
-		action_data = var_0_0.idle
+		action_data = chaos_zombie.idle
 	},
 	{
 		"BTFallbackIdleAction",
 		name = "fallback_idle",
-		action_data = var_0_0.fallback_idle
+		action_data = chaos_zombie.fallback_idle
 	},
 	name = "chaos_zombie"
 }

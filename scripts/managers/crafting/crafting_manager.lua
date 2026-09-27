@@ -3,76 +3,85 @@
 CraftingManager = class(CraftingManager)
 CraftingManager.NAME = "CraftingManager"
 
-function CraftingManager.init(arg_1_0)
-	arg_1_0._crafting_interface = Managers.backend:get_interface("crafting")
+CraftingManager.init = function (self)
+	-- function 1
+	self._crafting_interface = Managers.backend:get_interface("crafting")
 end
 
-function CraftingManager.update(arg_2_0, arg_2_1)
+CraftingManager.update = function (arg_2_0, arg_2_1)
+	-- function 2
 	return
 end
 
-function CraftingManager.get_recipes(arg_3_0)
-	return arg_3_0._crafting_interface:get_recipes()
+CraftingManager.get_recipes = function (self)
+	-- function 3
+	return self._crafting_interface:get_recipes()
 end
 
-function CraftingManager.get_recipes_lookup(arg_4_0)
-	return arg_4_0._crafting_interface:get_recipes_lookup()
+CraftingManager.get_recipes_lookup = function (self)
+	-- function 4
+	return self._crafting_interface:get_recipes_lookup()
 end
 
-function CraftingManager.are_recipes_dirty(arg_5_0)
-	return (arg_5_0._crafting_interface:are_recipes_dirty())
+CraftingManager.are_recipes_dirty = function (self)
+	-- function 5
+	return (self._crafting_interface:are_recipes_dirty())
 end
 
-function CraftingManager.destroy(arg_6_0)
+CraftingManager.destroy = function (arg_6_0)
+	-- function 6
 	return
 end
 
-function CraftingManager.craft(arg_7_0, arg_7_1, arg_7_2)
-	local var_7_0 = arg_7_0._crafting_interface
-	local var_7_1 = {}
+CraftingManager.craft = function (self, arg_7_1, arg_7_2)
+	-- function 7
+	local _crafting_interface = self._crafting_interface
+	local tbl = {}
 
-	for iter_7_0, iter_7_1 in pairs(arg_7_1) do
-		var_7_1[#var_7_1 + 1] = iter_7_1
+	for k, v in pairs(arg_7_1) do
+		tbl[#tbl + 1] = v
 	end
 
-	local var_7_2 = Managers.player
-	local var_7_3 = var_7_2:local_player()
-	local var_7_4 = var_7_3:profile_index()
-	local var_7_5 = SPProfiles[var_7_4].careers[var_7_3:career_index()].name
-	local var_7_6, var_7_7 = var_7_0:craft(var_7_5, var_7_1, arg_7_2)
+	local player = Managers.player
+	local local_player = player:local_player()
+	local profile_index = local_player:profile_index()
+	local name = SPProfiles[profile_index].careers[local_player:career_index()].name
+	local craft, var_7_7 = _crafting_interface:craft(name, tbl, arg_7_2)
 
-	if var_7_6 and var_7_7 then
-		local var_7_8 = var_7_3:stats_id()
-		local var_7_9 = var_7_2:statistics_db()
+	if not craft and not var_7_7 then
+		local stats_id = local_player:stats_id()
+		local statistics_db = player:statistics_db()
 
 		if var_7_7.name == "salvage" then
-			local var_7_10 = var_7_9:get_persistent_stat(var_7_8, "salvaged_items") + #arg_7_1
+			local num = statistics_db:get_persistent_stat(stats_id, "salvaged_items") + #arg_7_1
 
-			var_7_9:set_stat(var_7_8, "salvaged_items", var_7_10)
+			statistics_db:set_stat(stats_id, "salvaged_items", num)
 		else
-			var_7_9:increment_stat(var_7_8, "crafted_items")
+			statistics_db:increment_stat(stats_id, "crafted_items")
 		end
 
 		Managers.backend:commit()
 	end
 
-	return var_7_6
+	return craft
 end
 
-function CraftingManager.debug_set_crafted_items_stat(arg_8_0, arg_8_1)
-	local var_8_0 = Managers.player
-	local var_8_1 = var_8_0:local_player():stats_id()
+CraftingManager.debug_set_crafted_items_stat = function (arg_8_0, arg_8_1)
+	-- function 8
+	local player = Managers.player
+	local stats_id = player:local_player():stats_id()
 
-	var_8_0:statistics_db():set_stat(var_8_1, "crafted_items", arg_8_1)
+	player:statistics_db():set_stat(stats_id, "crafted_items", arg_8_1)
 	Managers.backend:commit()
 	print("Number of crafted items set to", arg_8_1)
 end
 
-function CraftingManager.debug_set_salvaged_items_stat(arg_9_0, arg_9_1)
-	local var_9_0 = Managers.player
-	local var_9_1 = var_9_0:local_player():stats_id()
+CraftingManager.debug_set_salvaged_items_stat = function (arg_9_0, arg_9_1)
+	-- function 9
+	local player = Managers.player
+	local stats_id = player:local_player():stats_id()
 
-	var_9_0:statistics_db():set_stat(var_9_1, "salvaged_items", arg_9_1)
+	player:statistics_db():set_stat(stats_id, "salvaged_items", arg_9_1)
 	Managers.backend:commit()
 	print("Number of salvaged items set to", arg_9_1)
 end

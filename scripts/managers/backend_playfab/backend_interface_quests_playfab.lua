@@ -1,448 +1,471 @@
 -- chunkname: @scripts/managers/backend_playfab/backend_interface_quests_playfab.lua
 
-local var_0_0 = require("PlayFab.PlayFabClientApi")
+local PlayFabClientApi = require("PlayFab.PlayFabClientApi")
 
 BackendInterfaceQuestsPlayfab = class(BackendInterfaceQuestsPlayfab)
 
-function BackendInterfaceQuestsPlayfab.init(arg_1_0, arg_1_1)
-	arg_1_0._backend_mirror = arg_1_1
-	arg_1_0._quests = {}
-	arg_1_0._last_id = 0
-	arg_1_0._refresh_requests = {}
-	arg_1_0._quest_reward_requests = {}
-	arg_1_0._quests_updating = false
-	arg_1_0._quest_timer = 0
-	arg_1_0._event_quest_update_times = {}
+BackendInterfaceQuestsPlayfab.init = function (self, arg_1_1)
+	-- function 1
+	self._backend_mirror = arg_1_1
+	self._quests = {}
+	self._last_id = 0
+	self._refresh_requests = {}
+	self._quest_reward_requests = {}
+	self._quests_updating = false
+	self._quest_timer = 0
+	self._event_quest_update_times = {}
 
-	arg_1_0:_refresh()
+	self:_refresh()
 end
 
-function BackendInterfaceQuestsPlayfab._refresh(arg_2_0)
-	local var_2_0 = arg_2_0._talents
-	local var_2_1 = arg_2_0._backend_mirror:get_quest_data()
+BackendInterfaceQuestsPlayfab._refresh = function (self)
+	-- function 2
+	local _talents = self._talents
+	local get_quest_data = self._backend_mirror:get_quest_data()
 
-	arg_2_0._quests.daily = var_2_1.current_daily_quests
-	arg_2_0._quests.event = var_2_1.current_event_quests
+	self._quests.daily = get_quest_data.current_daily_quests
+	self._quests.event = get_quest_data.current_event_quests
 
-	local var_2_2 = {}
+	local tbl = {}
 
-	for iter_2_0, iter_2_1 in pairs(var_2_1.current_weekly_quests) do
-		local var_2_3 = table.clone(iter_2_1)
+	for k, v in pairs(get_quest_data.current_weekly_quests) do
+		local clone = table.clone(v)
 
-		if iter_2_1.difficulty then
-			var_2_3.name = iter_2_1.name .. "_" .. iter_2_1.difficulty
+		if not v.difficulty then
+			clone.name = v.name .. "_" .. v.difficulty
 		else
-			var_2_3.name = iter_2_1.name
+			clone.name = v.name
 		end
 
-		var_2_2[iter_2_0] = var_2_3
+		tbl[k] = clone
 	end
 
-	arg_2_0._quests.weekly = var_2_2
-	arg_2_0._refresh_available = var_2_1.daily_quest_refresh_available
-	arg_2_0._daily_quest_update_time = math.ceil(var_2_1.daily_quest_update_time / 1000)
+	self._quests.weekly = tbl
+	self._refresh_available = get_quest_data.daily_quest_refresh_available
+	self._daily_quest_update_time = math.ceil(get_quest_data.daily_quest_update_time / 1000)
 
-	local var_2_4 = var_2_1.weekly_quest_update_time
+	local weekly_quest_update_time = get_quest_data.weekly_quest_update_time
 
-	if var_2_4 ~= nil then
-		arg_2_0._weekly_quest_update_time = math.ceil(var_2_4 / 1000)
+	if weekly_quest_update_time ~= nil then
+		self._weekly_quest_update_time = math.ceil(weekly_quest_update_time / 1000)
 	end
 
-	for iter_2_2, iter_2_3 in pairs(arg_2_0._quests.event) do
-		if iter_2_3.end_time ~= nil then
-			arg_2_0._event_quest_update_times[iter_2_2] = math.ceil(iter_2_3.end_time / 1000)
+	for k_2, v_2 in pairs(self._quests.event) do
+		if v_2.end_time ~= nil then
+			self._event_quest_update_times[k_2] = math.ceil(v_2.end_time / 1000)
 		end
 	end
 
-	arg_2_0._dirty = false
+	self._dirty = false
 end
 
-function BackendInterfaceQuestsPlayfab.ready(arg_3_0)
+BackendInterfaceQuestsPlayfab.ready = function (arg_3_0)
+	-- function 3
 	return true
 end
 
-function BackendInterfaceQuestsPlayfab._new_id(arg_4_0)
-	arg_4_0._last_id = arg_4_0._last_id + 1
+BackendInterfaceQuestsPlayfab._new_id = function (self)
+	-- function 4
+	self._last_id = self._last_id + 1
 
-	return arg_4_0._last_id
+	return self._last_id
 end
 
-function BackendInterfaceQuestsPlayfab.make_dirty(arg_5_0)
-	arg_5_0._dirty = true
+BackendInterfaceQuestsPlayfab.make_dirty = function (self)
+	-- function 5
+	self._dirty = true
 end
 
-function BackendInterfaceQuestsPlayfab.update_quests(arg_6_0, arg_6_1)
-	if arg_6_0._quests_updating then
+BackendInterfaceQuestsPlayfab.update_quests = function (self, arg_6_1)
+	-- function 6
+	if not self._quests_updating then
 		return
 	end
 
-	local var_6_0 = false
+	local flag = false
 
-	if arg_6_0:get_daily_quest_update_time() <= 0 then
-		var_6_0 = true
+	if self:get_daily_quest_update_time() <= 0 then
+		flag = true
 	end
 
-	local var_6_1 = arg_6_0:get_weekly_quest_update_time()
+	local get_weekly_quest_update_time = self:get_weekly_quest_update_time()
 
-	if var_6_1 and var_6_1 <= 0 then
-		var_6_0 = true
+	if not (not get_weekly_quest_update_time and not (get_weekly_quest_update_time <= 0)) then
+		flag = true
 	end
 
-	for iter_6_0, iter_6_1 in pairs(arg_6_0._quests.event) do
-		local var_6_2 = arg_6_0:get_time_left_on_event_quest(iter_6_0)
+	for k, v in pairs(self._quests.event) do
+		local get_time_left_on_event_quest = self:get_time_left_on_event_quest(k)
 
-		if var_6_2 and var_6_2 <= 0 then
-			var_6_0 = true
+		if not (not get_time_left_on_event_quest and not (get_time_left_on_event_quest <= 0)) then
+			flag = true
 
 			break
 		end
 	end
 
-	if var_6_0 then
-		local var_6_3 = {
+	if not flag then
+		local tbl = {
 			FunctionName = "getQuests"
 		}
-		local var_6_4 = callback(arg_6_0, "get_quests_cb")
+		local var_6_4 = callback(self, "get_quests_cb")
 
-		arg_6_0._backend_mirror:request_queue():enqueue(var_6_3, var_6_4, false)
+		self._backend_mirror:request_queue():enqueue(tbl, var_6_4, false)
 
-		arg_6_0._quests_updated_cb = arg_6_1
-		arg_6_0._quests_updating = true
+		self._quests_updated_cb = arg_6_1
+		self._quests_updating = true
 	end
 end
 
-function BackendInterfaceQuestsPlayfab.update(arg_7_0, arg_7_1)
-	arg_7_0._quest_timer = arg_7_0._quest_timer + arg_7_1
+BackendInterfaceQuestsPlayfab.update = function (self, arg_7_1)
+	-- function 7
+	self._quest_timer = self._quest_timer + arg_7_1
 end
 
-function BackendInterfaceQuestsPlayfab.get_quests_cb(arg_8_0, arg_8_1)
-	local var_8_0 = arg_8_0._backend_mirror
-	local var_8_1 = arg_8_1.FunctionResult
-	local var_8_2 = var_8_1.current_daily_quests
-	local var_8_3 = var_8_1.daily_quest_refresh_available
-	local var_8_4 = var_8_1.daily_quest_update_time
-	local var_8_5 = var_8_1.current_weekly_quests
-	local var_8_6 = var_8_1.weekly_quest_update_time
-	local var_8_7 = var_8_1.current_event_quests
+BackendInterfaceQuestsPlayfab.get_quests_cb = function (self, arg_8_1)
+	-- function 8
+	local _backend_mirror = self._backend_mirror
+	local FunctionResult = arg_8_1.FunctionResult
+	local current_daily_quests = FunctionResult.current_daily_quests
+	local daily_quest_refresh_available = FunctionResult.daily_quest_refresh_available
+	local daily_quest_update_time = FunctionResult.daily_quest_update_time
+	local current_weekly_quests = FunctionResult.current_weekly_quests
+	local weekly_quest_update_time = FunctionResult.weekly_quest_update_time
+	local current_event_quests = FunctionResult.current_event_quests
 
-	var_8_0:set_quest_data("current_daily_quests", var_8_2)
-	var_8_0:set_quest_data("daily_quest_refresh_available", to_boolean(var_8_3))
-	var_8_0:set_quest_data("daily_quest_update_time", tonumber(var_8_4))
-	var_8_0:set_quest_data("current_weekly_quests", var_8_5)
-	var_8_0:set_quest_data("weekly_quest_update_time", tonumber(var_8_6))
-	var_8_0:set_quest_data("current_event_quests", var_8_7)
+	_backend_mirror:set_quest_data("current_daily_quests", current_daily_quests)
+	_backend_mirror:set_quest_data("daily_quest_refresh_available", to_boolean(daily_quest_refresh_available))
+	_backend_mirror:set_quest_data("daily_quest_update_time", tonumber(daily_quest_update_time))
+	_backend_mirror:set_quest_data("current_weekly_quests", current_weekly_quests)
+	_backend_mirror:set_quest_data("weekly_quest_update_time", tonumber(weekly_quest_update_time))
+	_backend_mirror:set_quest_data("current_event_quests", current_event_quests)
 
-	arg_8_0._quests_updating = false
-	arg_8_0._dirty = true
-	arg_8_0._quest_timer = 0
+	self._quests_updating = false
+	self._dirty = true
+	self._quest_timer = 0
 
-	if arg_8_0._quests_updated_cb then
-		arg_8_0._quests_updated_cb()
+	if not self._quests_updated_cb then
+		self._quests_updated_cb()
 
-		arg_8_0._quests_updated_cb = nil
+		self._quests_updated_cb = nil
 	end
 end
 
-function BackendInterfaceQuestsPlayfab.delete(arg_9_0)
+BackendInterfaceQuestsPlayfab.delete = function (arg_9_0)
+	-- function 9
 	return
 end
 
-function BackendInterfaceQuestsPlayfab.get_quests(arg_10_0)
-	if arg_10_0._dirty then
-		arg_10_0:_refresh()
+BackendInterfaceQuestsPlayfab.get_quests = function (self)
+	-- function 10
+	if not self._dirty then
+		self:_refresh()
 	end
 
-	return arg_10_0._quests
+	return self._quests
 end
 
-function BackendInterfaceQuestsPlayfab.get_daily_quest_update_time(arg_11_0)
-	if arg_11_0._dirty then
-		arg_11_0:_refresh()
+BackendInterfaceQuestsPlayfab.get_daily_quest_update_time = function (self)
+	-- function 11
+	if not self._dirty then
+		self:_refresh()
 	end
 
-	return arg_11_0._daily_quest_update_time - arg_11_0._quest_timer
+	return self._daily_quest_update_time - self._quest_timer
 end
 
-function BackendInterfaceQuestsPlayfab.get_weekly_quest_update_time(arg_12_0)
-	if arg_12_0._dirty then
-		arg_12_0:_refresh()
+BackendInterfaceQuestsPlayfab.get_weekly_quest_update_time = function (self)
+	-- function 12
+	if not self._dirty then
+		self:_refresh()
 	end
 
-	if not arg_12_0._weekly_quest_update_time then
+	if not self._weekly_quest_update_time then
 		return nil
 	end
 
-	return arg_12_0._weekly_quest_update_time - arg_12_0._quest_timer
+	return self._weekly_quest_update_time - self._quest_timer
 end
 
-function BackendInterfaceQuestsPlayfab.get_time_left_on_event_quest(arg_13_0, arg_13_1)
-	if arg_13_0._dirty then
-		arg_13_0:_refresh()
+BackendInterfaceQuestsPlayfab.get_time_left_on_event_quest = function (self, arg_13_1)
+	-- function 13
+	if not self._dirty then
+		self:_refresh()
 	end
 
-	if not arg_13_0._event_quest_update_times[arg_13_1] then
+	if not self._event_quest_update_times[arg_13_1] then
 		return nil
 	end
 
-	return arg_13_0._event_quest_update_times[arg_13_1] - arg_13_0._quest_timer
+	return self._event_quest_update_times[arg_13_1] - self._quest_timer
 end
 
-function BackendInterfaceQuestsPlayfab.can_refresh_daily_quest(arg_14_0)
-	if arg_14_0._dirty then
-		arg_14_0:_refresh()
+BackendInterfaceQuestsPlayfab.can_refresh_daily_quest = function (self)
+	-- function 14
+	if not self._dirty then
+		self:_refresh()
 	end
 
-	return arg_14_0._refresh_available
+	return self._refresh_available
 end
 
-function BackendInterfaceQuestsPlayfab.refresh_daily_quest(arg_15_0, arg_15_1)
-	local var_15_0 = arg_15_0:_new_id()
-	local var_15_1 = {
+BackendInterfaceQuestsPlayfab.refresh_daily_quest = function (self, arg_15_1)
+	-- function 15
+	local _new_id = self:_new_id()
+	local tbl = {
 		FunctionName = "refreshQuest",
 		FunctionParameter = {
 			quest_key = arg_15_1
 		}
 	}
-	local var_15_2 = callback(arg_15_0, "refresh_quest_cb", var_15_0, arg_15_1)
+	local var_15_2 = callback(self, "refresh_quest_cb", _new_id, arg_15_1)
 
-	arg_15_0._backend_mirror:request_queue():enqueue(var_15_1, var_15_2, false)
+	self._backend_mirror:request_queue():enqueue(tbl, var_15_2, false)
 
-	return var_15_0
+	return _new_id
 end
 
-function BackendInterfaceQuestsPlayfab.refresh_quest_cb(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
-	local var_16_0 = arg_16_0._backend_mirror
-	local var_16_1 = arg_16_3.FunctionResult
+BackendInterfaceQuestsPlayfab.refresh_quest_cb = function (self, arg_16_1, arg_16_2, arg_16_3)
+	-- function 16
+	local _backend_mirror = self._backend_mirror
+	local FunctionResult = arg_16_3.FunctionResult
 
-	if var_16_1 == "refresh_unavailable" then
+	if FunctionResult == "refresh_unavailable" then
 		Managers.backend:playfab_error(BACKEND_PLAYFAB_ERRORS.ERR_PLAYFAB_QUEST_REFRESH_UNAVAILABLE)
 
-		arg_16_0._refresh_requests[arg_16_1] = {}
+		self._refresh_requests[arg_16_1] = {}
 
 		return
 	end
 
-	local var_16_2 = var_16_1.current_daily_quests
-	local var_16_3 = var_16_1.daily_quest_refresh_available
+	local current_daily_quests = FunctionResult.current_daily_quests
+	local daily_quest_refresh_available = FunctionResult.daily_quest_refresh_available
 
-	var_16_0:set_quest_data("current_daily_quests", var_16_2)
-	var_16_0:set_quest_data("daily_quest_refresh_available", to_boolean(var_16_3))
+	_backend_mirror:set_quest_data("current_daily_quests", current_daily_quests)
+	_backend_mirror:set_quest_data("daily_quest_refresh_available", to_boolean(daily_quest_refresh_available))
 
-	arg_16_0._refresh_requests[arg_16_1] = {
+	self._refresh_requests[arg_16_1] = {
 		quest_key = arg_16_2
 	}
-	arg_16_0._dirty = true
+	self._dirty = true
 end
 
-function BackendInterfaceQuestsPlayfab.is_quest_refreshed(arg_17_0, arg_17_1)
-	local var_17_0 = arg_17_0._refresh_requests[arg_17_1]
+BackendInterfaceQuestsPlayfab.is_quest_refreshed = function (self, arg_17_1)
+	-- function 17
+	local var_17_0 = self._refresh_requests[arg_17_1]
 
-	if var_17_0 then
+	if not var_17_0 then
 		return true, var_17_0.quest_key
 	end
 
 	return false
 end
 
-function BackendInterfaceQuestsPlayfab.can_claim_quest_rewards(arg_18_0, arg_18_1)
-	local var_18_0 = arg_18_0:get_quests()
-	local var_18_1 = arg_18_0._quests.daily
-	local var_18_2 = arg_18_0._quests.weekly
-	local var_18_3 = arg_18_0._quests.event
+BackendInterfaceQuestsPlayfab.can_claim_quest_rewards = function (self, arg_18_1)
+	-- function 18
+	local get_quests = self:get_quests()
+	local daily = self._quests.daily
+	local weekly = self._quests.weekly
+	local event = self._quests.event
 
-	if var_18_1[arg_18_1] or var_18_2[arg_18_1] or var_18_3[arg_18_1] then
+	if daily[arg_18_1] or weekly[arg_18_1] or not event[arg_18_1] then
 		return true
 	end
 
 	return false
 end
 
-function BackendInterfaceQuestsPlayfab.can_claim_multiple_quest_rewards(arg_19_0, arg_19_1)
-	local var_19_0 = arg_19_0._quests.daily
-	local var_19_1 = arg_19_0._quests.weekly
-	local var_19_2 = arg_19_0._quests.event
-	local var_19_3 = {}
+BackendInterfaceQuestsPlayfab.can_claim_multiple_quest_rewards = function (self, arg_19_1)
+	-- function 19
+	local daily = self._quests.daily
+	local weekly = self._quests.weekly
+	local event = self._quests.event
+	local tbl = {}
 
-	for iter_19_0 = 1, #arg_19_1 do
-		local var_19_4 = arg_19_1[iter_19_0]
+	for i = 1, #arg_19_1 do
+		local var_19_4 = arg_19_1[i]
 
-		if var_19_0[var_19_4] or var_19_1[var_19_4] or var_19_2[var_19_4] then
-			var_19_3[#var_19_3 + 1] = var_19_4
+		if daily[var_19_4] or weekly[var_19_4] or not event[var_19_4] then
+			tbl[#tbl + 1] = var_19_4
 		end
 	end
 
-	if not table.is_empty(var_19_3) then
-		return true, var_19_3
+	if not table.is_empty(tbl) then
+		return true, tbl
 	end
 
 	return false, nil
 end
 
-function BackendInterfaceQuestsPlayfab.claim_quest_rewards(arg_20_0, arg_20_1)
-	local var_20_0 = arg_20_0:_new_id()
-	local var_20_1 = {
+BackendInterfaceQuestsPlayfab.claim_quest_rewards = function (self, arg_20_1)
+	-- function 20
+	local _new_id = self:_new_id()
+	local tbl = {
 		quest_key = arg_20_1,
-		id = var_20_0
+		id = _new_id
 	}
-	local var_20_2 = {
+	local tbl_2 = {
 		FunctionName = "generateQuestRewards",
-		FunctionParameter = var_20_1
+		FunctionParameter = tbl
 	}
-	local var_20_3 = callback(arg_20_0, "quest_rewards_request_cb", var_20_1)
+	local var_20_3 = callback(self, "quest_rewards_request_cb", tbl)
 
-	arg_20_0._backend_mirror:request_queue():enqueue(var_20_2, var_20_3, true)
+	self._backend_mirror:request_queue():enqueue(tbl_2, var_20_3, true)
 
-	return var_20_0
+	return _new_id
 end
 
-function BackendInterfaceQuestsPlayfab.quest_rewards_request_cb(arg_21_0, arg_21_1, arg_21_2)
-	local var_21_0 = arg_21_2.FunctionResult
+BackendInterfaceQuestsPlayfab.quest_rewards_request_cb = function (self, arg_21_1, arg_21_2)
+	-- function 21
+	local FunctionResult = arg_21_2.FunctionResult
 
-	if not var_21_0 then
+	if not FunctionResult then
 		Managers.backend:playfab_api_error(arg_21_2)
 
 		return
 	end
 
-	local var_21_1 = arg_21_1.id
-	local var_21_2 = var_21_0.items
-	local var_21_3 = var_21_0.chips
-	local var_21_4 = var_21_0.currency_added
-	local var_21_5 = arg_21_0._backend_mirror
-	local var_21_6 = {
+	local id = arg_21_1.id
+	local items = FunctionResult.items
+	local chips = FunctionResult.chips
+	local currency_added = FunctionResult.currency_added
+	local _backend_mirror = self._backend_mirror
+	local tbl = {
 		quest_key = arg_21_1.quest_key,
 		loot = {}
 	}
-	local var_21_7 = var_21_6.loot
+	local loot = tbl.loot
 
-	if var_21_2 then
-		for iter_21_0 = 1, #var_21_2 do
-			local var_21_8 = var_21_2[iter_21_0]
-			local var_21_9 = var_21_8.ItemInstanceId
-			local var_21_10 = var_21_8.UsesIncrementedBy or 1
+	if not items then
+		for i = 1, #items do
+			local var_21_8 = items[i]
+			local ItemInstanceId = var_21_8.ItemInstanceId
+			local UsesIncrementedBy = var_21_8.UsesIncrementedBy
 
-			var_21_5:add_item(var_21_9, var_21_8)
+			UsesIncrementedBy = UsesIncrementedBy or 1
 
-			var_21_7[iter_21_0] = {
+			_backend_mirror:add_item(ItemInstanceId, var_21_8)
+
+			loot[i] = {
 				type = "item",
-				backend_id = var_21_9,
-				amount = var_21_10
+				backend_id = ItemInstanceId,
+				amount = UsesIncrementedBy
 			}
 		end
 	end
 
-	local var_21_11 = var_21_0.new_keep_decorations
+	local new_keep_decorations = FunctionResult.new_keep_decorations
 
-	if var_21_11 then
-		for iter_21_1 = 1, #var_21_11 do
-			local var_21_12 = var_21_11[iter_21_1]
+	if not new_keep_decorations then
+		for j = 1, #new_keep_decorations do
+			local var_21_12 = new_keep_decorations[j]
 
-			var_21_5:add_keep_decoration(var_21_12)
+			_backend_mirror:add_keep_decoration(var_21_12)
 
-			var_21_7[#var_21_7 + 1] = {
+			loot[#loot + 1] = {
 				type = "keep_decoration_painting",
 				keep_decoration_name = var_21_12
 			}
 		end
 	end
 
-	local var_21_13 = var_21_0.new_weapon_skins
+	local new_weapon_skins = FunctionResult.new_weapon_skins
 
-	if var_21_13 then
-		for iter_21_2 = 1, #var_21_13 do
-			local var_21_14 = var_21_13[iter_21_2]
+	if not new_weapon_skins then
+		for k = 1, #new_weapon_skins do
+			local var_21_14 = new_weapon_skins[k]
 
-			var_21_5:add_unlocked_weapon_skin(var_21_14)
+			_backend_mirror:add_unlocked_weapon_skin(var_21_14)
 
-			var_21_7[#var_21_7 + 1] = {
+			loot[#loot + 1] = {
 				type = "weapon_skin",
 				weapon_skin_name = var_21_14
 			}
 		end
 	end
 
-	local var_21_15 = var_21_0.new_cosmetics
+	local new_cosmetics = FunctionResult.new_cosmetics
 
-	if var_21_15 then
-		local var_21_16 = ItemMasterList
+	if not new_cosmetics then
+		local ItemMasterList = ItemMasterList
 
-		for iter_21_3 = 1, #var_21_15 do
-			local var_21_17 = var_21_15[iter_21_3]
-			local var_21_18 = var_21_5:add_item(nil, {
+		for l = 1, #new_cosmetics do
+			local var_21_17 = new_cosmetics[l]
+			local add_item = _backend_mirror:add_item(nil, {
 				ItemId = var_21_17
 			})
 
-			if var_21_18 then
-				local var_21_19 = var_21_16[var_21_17]
+			if not add_item then
+				local var_21_19 = ItemMasterList[var_21_17]
 
-				var_21_7[#var_21_7 + 1] = {
+				loot[#loot + 1] = {
 					amount = 1,
 					type = var_21_19.slot_type,
-					backend_id = var_21_18
+					backend_id = add_item
 				}
 			end
 		end
 	end
 
-	local var_21_20 = {}
+	local tbl_2 = {}
 
-	if var_21_4 then
-		for iter_21_4, iter_21_5 in ipairs(var_21_4) do
-			local var_21_21 = iter_21_5.code
-			local var_21_22 = iter_21_5.amount
-			local var_21_23 = var_21_20[var_21_21]
+	if not currency_added then
+		for i_2, v in ipairs(currency_added) do
+			local code = v.code
+			local amount = v.amount
+			local var_21_23 = tbl_2[code]
 
-			var_21_20[var_21_21] = var_21_23 and var_21_23 or 0 + var_21_22
-			var_21_7[#var_21_7 + 1] = {
+			tbl_2[code] = not var_21_23 and var_21_23 and 0 + amount
+			loot[#loot + 1] = {
 				type = "currency",
-				currency_code = var_21_21,
-				amount = var_21_22
+				currency_code = code,
+				amount = amount
 			}
 		end
 	end
 
-	if var_21_3 then
-		local var_21_24 = Managers.backend:get_interface("peddler")
+	if not chips then
+		local get_interface = Managers.backend:get_interface("peddler")
 
-		if var_21_24 then
-			for iter_21_6, iter_21_7 in pairs(var_21_3) do
-				var_21_24:set_chips(iter_21_6, iter_21_7)
+		if not get_interface then
+			for k_2, v_2 in pairs(chips) do
+				get_interface:set_chips(k_2, v_2)
 			end
 		end
 	end
 
-	local var_21_25 = var_21_0.chest_inventory
+	local chest_inventory = FunctionResult.chest_inventory
 
-	if var_21_25 then
-		var_21_5:set_read_only_data("chest_inventory", var_21_25, true)
+	if not chest_inventory then
+		_backend_mirror:set_read_only_data("chest_inventory", chest_inventory, true)
 	end
 
 	local var_21_26
 	local var_21_27
 
-	if var_21_0.quest_name then
-		var_21_26 = var_21_0.quest_name
-		var_21_27 = var_21_0.quest_type
+	if not FunctionResult.quest_name then
+		var_21_26 = FunctionResult.quest_name
+		var_21_27 = FunctionResult.quest_type
 	else
-		local var_21_28 = {
+		local tbl_3 = {
 			"current_daily_quests",
 			"current_event_quests",
 			"current_weekly_quests"
 		}
-		local var_21_29 = {
+		local tbl_4 = {
 			current_event_quests = "event",
 			current_weekly_quests = "weekly",
 			current_daily_quests = "daily"
 		}
-		local var_21_30 = var_21_5:get_quest_data()
+		local get_quest_data = _backend_mirror:get_quest_data()
 
-		for iter_21_8 = 1, #var_21_28 do
-			local var_21_31 = var_21_28[iter_21_8]
-			local var_21_32 = var_21_30[var_21_31][arg_21_1.quest_key]
+		for i8 = 1, #tbl_3 do
+			local var_21_31 = tbl_3[i8]
+			local var_21_32 = get_quest_data[var_21_31][arg_21_1.quest_key]
 
-			if var_21_32 then
+			if not var_21_32 then
 				var_21_26 = var_21_32.name
-				var_21_27 = var_21_29[var_21_31]
+				var_21_27 = tbl_4[var_21_31]
 
 				break
 			end
@@ -450,275 +473,293 @@ function BackendInterfaceQuestsPlayfab.quest_rewards_request_cb(arg_21_0, arg_21
 	end
 
 	if var_21_27 == "event" then
-		var_21_5:add_claimed_event_quest(var_21_26)
+		_backend_mirror:add_claimed_event_quest(var_21_26)
 	end
 
-	local var_21_33 = var_21_0.current_daily_quests or {}
-	local var_21_34 = var_21_0.current_weekly_quests or {}
-	local var_21_35 = var_21_0.current_event_quests or {}
+	local current_daily_quests = FunctionResult.current_daily_quests
 
-	var_21_5:set_quest_data("current_daily_quests", var_21_33)
-	var_21_5:set_quest_data("current_weekly_quests", var_21_34)
-	var_21_5:set_quest_data("current_event_quests", var_21_35)
+	current_daily_quests = current_daily_quests or {}
 
-	local var_21_36 = Managers.player and Managers.player:local_player()
-	local var_21_37 = Managers.player:statistics_db()
+	local current_weekly_quests = FunctionResult.current_weekly_quests
 
-	if not var_21_36 or not var_21_37 then
+	current_weekly_quests = current_weekly_quests or {}
+
+	local current_event_quests = FunctionResult.current_event_quests
+
+	current_event_quests = current_event_quests or {}
+
+	_backend_mirror:set_quest_data("current_daily_quests", current_daily_quests)
+	_backend_mirror:set_quest_data("current_weekly_quests", current_weekly_quests)
+	_backend_mirror:set_quest_data("current_event_quests", current_event_quests)
+
+	local player = Managers.player
+
+	player = not player and Managers.player:local_player()
+
+	local statistics_db = Managers.player:statistics_db()
+
+	if not (not player and statistics_db) then
 		Application.warning("[BackendInterfaceQuestsPlayfab] Could not get statistics_db, skipping updating statistics...")
 	else
-		local var_21_38 = var_21_36:stats_id()
-		local var_21_39 = arg_21_0:get_quests()
-		local var_21_40 = var_21_39.daily
-		local var_21_41 = var_21_39.weekly
+		local stats_id = player:stats_id()
+		local get_quests = self:get_quests()
+		local daily = get_quests.daily
+		local weekly = get_quests.weekly
 
-		for iter_21_9, iter_21_10 in pairs(var_21_40) do
-			if iter_21_9 == arg_21_1.quest_key then
-				var_21_37:increment_stat(var_21_38, "completed_daily_quests")
+		for k_3, v_3 in pairs(daily) do
+			if k_3 == arg_21_1.quest_key then
+				statistics_db:increment_stat(stats_id, "completed_daily_quests")
 
 				break
 			end
 		end
 
-		for iter_21_11, iter_21_12 in pairs(var_21_41) do
-			if iter_21_11 == arg_21_1.quest_key then
-				var_21_37:increment_stat(var_21_38, "completed_weekly_quests")
+		for k_4, v_4 in pairs(weekly) do
+			if k_4 == arg_21_1.quest_key then
+				statistics_db:increment_stat(stats_id, "completed_weekly_quests")
 
 				break
 			end
 		end
 	end
 
-	arg_21_0._quest_reward_requests[var_21_1] = var_21_6
-	arg_21_0._dirty = true
+	self._quest_reward_requests[id] = tbl
+	self._dirty = true
 end
 
-function BackendInterfaceQuestsPlayfab.claim_multiple_quest_rewards(arg_22_0, arg_22_1)
-	local var_22_0 = {}
-	local var_22_1 = arg_22_0:_new_id()
+BackendInterfaceQuestsPlayfab.claim_multiple_quest_rewards = function (self, arg_22_1)
+	-- function 22
+	local tbl = {}
+	local _new_id = self:_new_id()
 
-	for iter_22_0 = 1, #arg_22_1 do
-		local var_22_2 = arg_22_1[iter_22_0]
-		local var_22_3 = {
+	for i = 1, #arg_22_1 do
+		local var_22_2 = arg_22_1[i]
+		local tbl_2 = {
 			quest_key = var_22_2
 		}
 
-		var_22_0[#var_22_0 + 1] = var_22_3
+		tbl[#tbl + 1] = tbl_2
 	end
 
-	local var_22_4 = {
+	local tbl_3 = {
 		FunctionName = "generateQuestRewards",
 		FunctionParameter = {
-			quest_data = var_22_0,
-			id = var_22_1
+			quest_data = tbl,
+			id = _new_id
 		}
 	}
-	local var_22_5 = callback(arg_22_0, "claim_multiple_quest_rewards_request_cb", var_22_0, var_22_1)
+	local var_22_5 = callback(self, "claim_multiple_quest_rewards_request_cb", tbl, _new_id)
 
-	arg_22_0._backend_mirror:request_queue():enqueue(var_22_4, var_22_5, true)
+	self._backend_mirror:request_queue():enqueue(tbl_3, var_22_5, true)
 
-	return var_22_1
+	return _new_id
 end
 
-function BackendInterfaceQuestsPlayfab.claim_multiple_quest_rewards_request_cb(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
-	local var_23_0 = arg_23_3.FunctionResult
+BackendInterfaceQuestsPlayfab.claim_multiple_quest_rewards_request_cb = function (self, arg_23_1, arg_23_2, arg_23_3)
+	-- function 23
+	local FunctionResult = arg_23_3.FunctionResult
 
-	if not var_23_0 then
+	if not FunctionResult then
 		Managers.backend:playfab_api_error(arg_23_3)
 
 		return
 	end
 
 	local var_23_1 = arg_23_2
-	local var_23_2 = var_23_0.items
-	local var_23_3 = var_23_0.chips
-	local var_23_4 = var_23_0.currency_added
-	local var_23_5 = arg_23_0._backend_mirror
-	local var_23_6 = var_23_0.quest_data_names
-	local var_23_7 = {}
+	local items = FunctionResult.items
+	local chips = FunctionResult.chips
+	local currency_added = FunctionResult.currency_added
+	local _backend_mirror = self._backend_mirror
+	local quest_data_names = FunctionResult.quest_data_names
+	local tbl = {}
 
-	for iter_23_0 = 1, #arg_23_1 do
-		var_23_7[#var_23_7 + 1] = arg_23_1[iter_23_0].quest_key
+	for i = 1, #arg_23_1 do
+		tbl[#tbl + 1] = arg_23_1[i].quest_key
 	end
 
-	local var_23_8 = {
-		quest_key = var_23_7,
+	local tbl_2 = {
+		quest_key = tbl,
 		loot = {}
 	}
-	local var_23_9 = var_23_8.loot
+	local loot = tbl_2.loot
 
-	if var_23_2 then
-		for iter_23_1 = 1, #var_23_2 do
-			local var_23_10 = var_23_2[iter_23_1]
-			local var_23_11 = var_23_10.ItemInstanceId
-			local var_23_12 = var_23_10.UsesIncrementedBy or 1
+	if not items then
+		for j = 1, #items do
+			local var_23_10 = items[j]
+			local ItemInstanceId = var_23_10.ItemInstanceId
+			local UsesIncrementedBy = var_23_10.UsesIncrementedBy
 
-			var_23_5:add_item(var_23_11, var_23_10)
+			UsesIncrementedBy = UsesIncrementedBy or 1
 
-			var_23_9[iter_23_1] = {
+			_backend_mirror:add_item(ItemInstanceId, var_23_10)
+
+			loot[j] = {
 				type = "item",
-				backend_id = var_23_11,
-				amount = var_23_12
+				backend_id = ItemInstanceId,
+				amount = UsesIncrementedBy
 			}
 		end
 	end
 
-	local var_23_13 = var_23_0.new_keep_decorations
+	local new_keep_decorations = FunctionResult.new_keep_decorations
 
-	if var_23_13 then
-		for iter_23_2 = 1, #var_23_13 do
-			local var_23_14 = var_23_13[iter_23_2]
+	if not new_keep_decorations then
+		for k = 1, #new_keep_decorations do
+			local var_23_14 = new_keep_decorations[k]
 
-			var_23_5:add_keep_decoration(var_23_14)
+			_backend_mirror:add_keep_decoration(var_23_14)
 
-			var_23_9[#var_23_9 + 1] = {
+			loot[#loot + 1] = {
 				type = "keep_decoration_painting",
 				keep_decoration_name = var_23_14
 			}
 		end
 	end
 
-	local var_23_15 = var_23_0.new_weapon_skins
+	local new_weapon_skins = FunctionResult.new_weapon_skins
 
-	if var_23_15 then
-		for iter_23_3 = 1, #var_23_15 do
-			local var_23_16 = var_23_15[iter_23_3]
+	if not new_weapon_skins then
+		for l = 1, #new_weapon_skins do
+			local var_23_16 = new_weapon_skins[l]
 
-			var_23_5:add_unlocked_weapon_skin(var_23_16)
+			_backend_mirror:add_unlocked_weapon_skin(var_23_16)
 
-			var_23_9[#var_23_9 + 1] = {
+			loot[#loot + 1] = {
 				type = "weapon_skin",
 				weapon_skin_name = var_23_16
 			}
 		end
 	end
 
-	local var_23_17 = var_23_0.new_cosmetics
+	local new_cosmetics = FunctionResult.new_cosmetics
 
-	if var_23_17 then
-		local var_23_18 = ItemMasterList
+	if not new_cosmetics then
+		local ItemMasterList = ItemMasterList
 
-		for iter_23_4 = 1, #var_23_17 do
-			local var_23_19 = var_23_17[iter_23_4]
-			local var_23_20 = var_23_5:add_item(nil, {
+		for i4 = 1, #new_cosmetics do
+			local var_23_19 = new_cosmetics[i4]
+			local add_item = _backend_mirror:add_item(nil, {
 				ItemId = var_23_19
 			})
 
-			if var_23_20 then
-				local var_23_21 = var_23_18[var_23_19]
+			if not add_item then
+				local var_23_21 = ItemMasterList[var_23_19]
 
-				var_23_9[#var_23_9 + 1] = {
+				loot[#loot + 1] = {
 					amount = 1,
 					type = var_23_21.slot_type,
-					backend_id = var_23_20
+					backend_id = add_item
 				}
 			end
 		end
 	end
 
-	local var_23_22 = {}
+	local tbl_3 = {}
 
-	if var_23_4 then
-		for iter_23_5, iter_23_6 in ipairs(var_23_4) do
-			local var_23_23 = iter_23_6.code
-			local var_23_24 = iter_23_6.amount
-			local var_23_25 = var_23_22[var_23_23]
+	if not currency_added then
+		for i_2, v in ipairs(currency_added) do
+			local code = v.code
+			local amount = v.amount
+			local var_23_25 = tbl_3[code]
 
-			var_23_22[var_23_23] = var_23_25 and var_23_25 or 0 + var_23_24
-			var_23_9[#var_23_9 + 1] = {
+			tbl_3[code] = not var_23_25 and var_23_25 and 0 + amount
+			loot[#loot + 1] = {
 				type = "currency",
-				currency_code = var_23_23,
-				amount = var_23_24
+				currency_code = code,
+				amount = amount
 			}
 		end
 	end
 
-	if var_23_3 then
-		local var_23_26 = Managers.backend:get_interface("peddler")
+	if not chips then
+		local get_interface = Managers.backend:get_interface("peddler")
 
-		if var_23_26 then
-			for iter_23_7, iter_23_8 in pairs(var_23_3) do
-				var_23_26:set_chips(iter_23_7, iter_23_8)
+		if not get_interface then
+			for k_2, v_2 in pairs(chips) do
+				get_interface:set_chips(k_2, v_2)
 			end
 		end
 	end
 
-	local var_23_27 = var_23_0.chest_inventory
+	local chest_inventory = FunctionResult.chest_inventory
 
-	if var_23_27 then
-		var_23_5:set_read_only_data("chest_inventory", var_23_27, true)
+	if not chest_inventory then
+		_backend_mirror:set_read_only_data("chest_inventory", chest_inventory, true)
 	end
 
-	local var_23_28 = {}
+	local tbl_4 = {}
 	local var_23_29
 
-	if var_23_6 then
-		for iter_23_9 = 1, #var_23_6 do
-			var_23_28[#var_23_28 + 1] = var_23_6[iter_23_9]
+	if not quest_data_names then
+		for i9 = 1, #quest_data_names do
+			tbl_4[#tbl_4 + 1] = quest_data_names[i9]
 		end
 
-		var_23_29 = var_23_0.quest_type
+		var_23_29 = FunctionResult.quest_type
 	else
-		local var_23_30 = {
+		local tbl_5 = {
 			"current_daily_quests",
 			"current_event_quests",
 			"current_weekly_quests"
 		}
-		local var_23_31 = {
+		local tbl_6 = {
 			current_event_quests = "event",
 			current_weekly_quests = "weekly",
 			current_daily_quests = "daily"
 		}
-		local var_23_32 = var_23_5:get_quest_data()
+		local get_quest_data = _backend_mirror:get_quest_data()
 
-		for iter_23_10 = 1, #arg_23_1 do
-			for iter_23_11 = 1, #var_23_30 do
-				local var_23_33 = var_23_30[iter_23_11]
-				local var_23_34 = var_23_32[var_23_33][arg_23_1[iter_23_10].quest_key]
+		for i10 = 1, #arg_23_1 do
+			for i11 = 1, #tbl_5 do
+				local var_23_33 = tbl_5[i11]
+				local var_23_34 = get_quest_data[var_23_33][arg_23_1[i10].quest_key]
 
-				if var_23_34 then
-					var_23_28[#var_23_28 + 1] = var_23_34.name
-					var_23_29 = var_23_29 or var_23_31[var_23_33]
+				if not var_23_34 then
+					tbl_4[#tbl_4 + 1] = var_23_34.name
+					var_23_29 = var_23_29 or tbl_6[var_23_33]
 				end
 			end
 		end
 	end
 
 	if var_23_29 == "event" then
-		var_23_5:add_claimed_multiple_event_quests(var_23_28)
+		_backend_mirror:add_claimed_multiple_event_quests(tbl_4)
 	end
 
-	local var_23_35 = var_23_0.current_daily_quests
-	local var_23_36 = var_23_0.current_weekly_quests
-	local var_23_37 = var_23_0.current_event_quests
+	local current_daily_quests = FunctionResult.current_daily_quests
+	local current_weekly_quests = FunctionResult.current_weekly_quests
+	local current_event_quests = FunctionResult.current_event_quests
 
-	var_23_5:set_quest_data("current_daily_quests", var_23_35)
-	var_23_5:set_quest_data("current_weekly_quests", var_23_36)
-	var_23_5:set_quest_data("current_event_quests", var_23_37)
+	_backend_mirror:set_quest_data("current_daily_quests", current_daily_quests)
+	_backend_mirror:set_quest_data("current_weekly_quests", current_weekly_quests)
+	_backend_mirror:set_quest_data("current_event_quests", current_event_quests)
 
-	local var_23_38 = Managers.player and Managers.player:local_player()
-	local var_23_39 = Managers.player:statistics_db()
+	local player = Managers.player
 
-	if not var_23_38 or not var_23_39 then
+	player = not player and Managers.player:local_player()
+
+	local statistics_db = Managers.player:statistics_db()
+
+	if not (not player and statistics_db) then
 		Application.warning("[BackendInterfaceQuestsPlayfab] Could not get statistics_db, skipping updating statistics...")
 	else
-		local var_23_40 = var_23_38:stats_id()
-		local var_23_41 = arg_23_0:get_quests()
-		local var_23_42 = var_23_41.daily
-		local var_23_43 = var_23_41.weekly
+		local stats_id = player:stats_id()
+		local get_quests = self:get_quests()
+		local daily = get_quests.daily
+		local weekly = get_quests.weekly
 
-		for iter_23_12 = 1, #arg_23_1 do
-			for iter_23_13, iter_23_14 in pairs(var_23_42) do
-				if iter_23_13 == arg_23_1[iter_23_12].quest_key then
-					var_23_39:increment_stat(var_23_40, "completed_daily_quests")
+		for i12 = 1, #arg_23_1 do
+			for k_3, v_3 in pairs(daily) do
+				if k_3 == arg_23_1[i12].quest_key then
+					statistics_db:increment_stat(stats_id, "completed_daily_quests")
 
 					break
 				end
 			end
 
-			for iter_23_15, iter_23_16 in pairs(var_23_43) do
-				if iter_23_15 == arg_23_1[iter_23_12].quest_key then
-					var_23_39:increment_stat(var_23_40, "completed_weekly_quests")
+			for k_4, v_4 in pairs(weekly) do
+				if k_4 == arg_23_1[i12].quest_key then
+					statistics_db:increment_stat(stats_id, "completed_weekly_quests")
 
 					break
 				end
@@ -726,76 +767,81 @@ function BackendInterfaceQuestsPlayfab.claim_multiple_quest_rewards_request_cb(a
 		end
 	end
 
-	arg_23_0._quest_reward_requests[var_23_1] = var_23_8
-	arg_23_0._dirty = true
+	self._quest_reward_requests[var_23_1] = tbl_2
+	self._dirty = true
 end
 
-function BackendInterfaceQuestsPlayfab.get_quest_key(arg_24_0, arg_24_1)
-	local var_24_0 = arg_24_0:get_quests()
-	local var_24_1 = var_24_0.daily
-	local var_24_2 = var_24_0.weekly
-	local var_24_3 = var_24_0.event
+BackendInterfaceQuestsPlayfab.get_quest_key = function (self, arg_24_1)
+	-- function 24
+	local get_quests = self:get_quests()
+	local daily = get_quests.daily
+	local weekly = get_quests.weekly
+	local event = get_quests.event
 
-	for iter_24_0, iter_24_1 in pairs(var_24_1) do
-		if iter_24_1.name == arg_24_1 then
-			return iter_24_0
+	for k, v in pairs(daily) do
+		if v.name == arg_24_1 then
+			return k
 		end
 	end
 
-	for iter_24_2, iter_24_3 in pairs(var_24_2) do
-		if iter_24_3.name == arg_24_1 then
-			return iter_24_2
+	for k_2, v_2 in pairs(weekly) do
+		if v_2.name == arg_24_1 then
+			return k_2
 		end
 	end
 
-	for iter_24_4, iter_24_5 in pairs(var_24_3) do
-		if iter_24_5.name == arg_24_1 then
-			return iter_24_4
+	for k_3, v_3 in pairs(event) do
+		if v_3.name == arg_24_1 then
+			return k_3
 		end
 	end
 
 	return nil
 end
 
-function BackendInterfaceQuestsPlayfab.get_quest_by_key(arg_25_0, arg_25_1)
-	local var_25_0 = arg_25_0:get_quests()
-	local var_25_1 = var_25_0.daily
-	local var_25_2 = var_25_0.weekly
-	local var_25_3 = var_25_0.event
+BackendInterfaceQuestsPlayfab.get_quest_by_key = function (self, arg_25_1)
+	-- function 25
+	local get_quests = self:get_quests()
+	local daily = get_quests.daily
+	local weekly = get_quests.weekly
+	local event = get_quests.event
 
-	for iter_25_0, iter_25_1 in pairs(var_25_1) do
-		if arg_25_1 == iter_25_0 then
-			return iter_25_1
+	for k, v in pairs(daily) do
+		if arg_25_1 == k then
+			return v
 		end
 	end
 
-	for iter_25_2, iter_25_3 in pairs(var_25_2) do
-		if arg_25_1 == iter_25_2 then
-			return iter_25_3
+	for k_2, v_2 in pairs(weekly) do
+		if arg_25_1 == k_2 then
+			return v_2
 		end
 	end
 
-	for iter_25_4, iter_25_5 in pairs(var_25_3) do
-		if arg_25_1 == iter_25_4 then
-			return iter_25_5
+	for k_3, v_3 in pairs(event) do
+		if arg_25_1 == k_3 then
+			return v_3
 		end
 	end
 
 	return nil
 end
 
-function BackendInterfaceQuestsPlayfab.quest_rewards_generated(arg_26_0, arg_26_1)
-	if arg_26_0._quest_reward_requests[arg_26_1] then
+BackendInterfaceQuestsPlayfab.quest_rewards_generated = function (self, arg_26_1)
+	-- function 26
+	if not self._quest_reward_requests[arg_26_1] then
 		return true
 	end
 
 	return false
 end
 
-function BackendInterfaceQuestsPlayfab.get_quest_rewards(arg_27_0, arg_27_1)
-	return arg_27_0._quest_reward_requests[arg_27_1]
+BackendInterfaceQuestsPlayfab.get_quest_rewards = function (self, arg_27_1)
+	-- function 27
+	return self._quest_reward_requests[arg_27_1]
 end
 
-function BackendInterfaceQuestsPlayfab.get_claimed_event_quests(arg_28_0)
-	return arg_28_0._backend_mirror:get_claimed_event_quests()
+BackendInterfaceQuestsPlayfab.get_claimed_event_quests = function (self)
+	-- function 28
+	return self._backend_mirror:get_claimed_event_quests()
 end

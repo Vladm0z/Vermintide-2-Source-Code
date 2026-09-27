@@ -1,96 +1,107 @@
 -- chunkname: @scripts/unit_extensions/default_player_unit/ping/context_aware_ping_extension.lua
 
-local var_0_0 = 2
-local var_0_1 = 2.5
-local var_0_2 = 0.2
-local var_0_3 = 0.15
-local var_0_4 = 50
+local num = 2
+local num_2 = 2.5
+local num_3 = 0.2
+local num_4 = 0.15
+local num_5 = 50
 
 ContextAwarePingExtension = class(ContextAwarePingExtension)
 
-function ContextAwarePingExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	arg_1_0._world = arg_1_1.world
-	arg_1_0._physics_world = World.get_data(arg_1_0._world, "physics_world")
-	arg_1_0._unit = arg_1_2
-	arg_1_0._player = arg_1_3.player
-	arg_1_0._ping_context = nil
-	arg_1_0._social_wheel_context = nil
-	arg_1_0._ping_position = Vector3Box()
-	arg_1_0._num_free_events = var_0_0
-	arg_1_0._num_free_combat_events = var_0_0
-	arg_1_0._last_update_t = 0
+ContextAwarePingExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	self._world = arg_1_1.world
+	self._physics_world = World.get_data(self._world, "physics_world")
+	self._unit = arg_1_2
+	self._player = arg_1_3.player
+	self._ping_context = nil
+	self._social_wheel_context = nil
+	self._ping_position = Vector3Box()
+	self._num_free_events = num
+	self._num_free_combat_events = num
+	self._last_update_t = 0
 
-	local var_1_0 = Managers.state.game_mode:settings().ping_mode
+	local ping_mode = Managers.state.game_mode:settings().ping_mode
 
-	if var_1_0 then
-		arg_1_0._world_markers_enabled = var_1_0.world_markers
+	if not ping_mode then
+		self._world_markers_enabled = ping_mode.world_markers
 	else
-		arg_1_0._world_markers_enabled = false
+		self._world_markers_enabled = false
 	end
 
-	arg_1_0._double_press_start_time = nil
-	arg_1_0._double_press_end_time = nil
-	arg_1_0._double_press_listen_duration = 0.25
-	arg_1_0._double_press_counter = 0
-	arg_1_0._can_ping = false
-	arg_1_0._listen_for_double_press = false
-	arg_1_0._ping_system = Managers.state.entity:system("ping_system")
+	self._double_press_start_time = nil
+	self._double_press_end_time = nil
+	self._double_press_listen_duration = 0.25
+	self._double_press_counter = 0
+	self._can_ping = false
+	self._listen_for_double_press = false
+	self._ping_system = Managers.state.entity:system("ping_system")
 end
 
-function ContextAwarePingExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
-	arg_2_0._input_extension = ScriptUnit.extension(arg_2_2, "input_system")
-	arg_2_0._first_person_extension = ScriptUnit.extension(arg_2_2, "first_person_system")
-	arg_2_0._status_extension = ScriptUnit.extension(arg_2_2, "status_system")
+ContextAwarePingExtension.extensions_ready = function (self, arg_2_1, arg_2_2)
+	-- function 2
+	self._input_extension = ScriptUnit.extension(arg_2_2, "input_system")
+	self._first_person_extension = ScriptUnit.extension(arg_2_2, "first_person_system")
+	self._status_extension = ScriptUnit.extension(arg_2_2, "status_system")
 end
 
-function ContextAwarePingExtension.ping_context(arg_3_0)
-	return arg_3_0._ping_context
+ContextAwarePingExtension.ping_context = function (self)
+	-- function 3
+	return self._ping_context
 end
 
-function ContextAwarePingExtension.social_wheel_context(arg_4_0)
-	return arg_4_0._social_wheel_context
+ContextAwarePingExtension.social_wheel_context = function (self)
+	-- function 4
+	return self._social_wheel_context
 end
 
-function ContextAwarePingExtension.destroy(arg_5_0)
+ContextAwarePingExtension.destroy = function (arg_5_0)
+	-- function 5
 	return
 end
 
-function ContextAwarePingExtension.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
-	if arg_6_0._num_free_events < var_0_0 then
-		local var_6_0 = (arg_6_5 - arg_6_0._last_update_t) / var_0_1
+ContextAwarePingExtension.update = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+	-- function 6
+	if self._num_free_events < num then
+		local num_4 = (arg_6_5 - self._last_update_t) / num_2
 
-		arg_6_0._num_free_events = math.min(arg_6_0._num_free_events + var_6_0, var_0_0)
+		self._num_free_events = math.min(self._num_free_events + num_4, num)
 	end
 
-	if arg_6_0._num_free_combat_events < var_0_0 then
-		local var_6_1 = (arg_6_5 - arg_6_0._last_update_t) / var_0_2
+	if self._num_free_combat_events < num then
+		local num_5 = (arg_6_5 - self._last_update_t) / num_3
 
-		arg_6_0._num_free_combat_events = math.min(arg_6_0._num_free_combat_events + var_6_1, var_0_0)
+		self._num_free_combat_events = math.min(self._num_free_combat_events + num_5, num)
 	end
 
-	arg_6_0:_handle_ping_input(arg_6_5, arg_6_3, arg_6_2, arg_6_1, arg_6_4)
+	self:_handle_ping_input(arg_6_5, arg_6_3, arg_6_2, arg_6_1, arg_6_4)
 
-	arg_6_0._last_update_t = arg_6_5
+	self._last_update_t = arg_6_5
 end
 
-function ContextAwarePingExtension._have_free_events(arg_7_0)
-	return arg_7_0._num_free_events > 0
+ContextAwarePingExtension._have_free_events = function (self)
+	-- function 7
+	return self._num_free_events > 0
 end
 
-function ContextAwarePingExtension._have_free_combat_events(arg_8_0)
-	return arg_8_0._num_free_combat_events > 0
+ContextAwarePingExtension._have_free_combat_events = function (self)
+	-- function 8
+	return self._num_free_combat_events > 0
 end
 
-function ContextAwarePingExtension._consume_ping_event(arg_9_0)
-	arg_9_0._num_free_events = arg_9_0._num_free_events - 1
+ContextAwarePingExtension._consume_ping_event = function (self)
+	-- function 9
+	self._num_free_events = self._num_free_events - 1
 end
 
-function ContextAwarePingExtension._consume_combat_ping_event(arg_10_0)
-	arg_10_0._num_free_combat_events = arg_10_0._num_free_combat_events - 1
+ContextAwarePingExtension._consume_combat_ping_event = function (self)
+	-- function 10
+	self._num_free_combat_events = self._num_free_combat_events - 1
 end
 
-function ContextAwarePingExtension.ping_attempt(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
-	if not IgnoreFreeEvents[arg_11_4] and not arg_11_0:_have_free_events() then
+ContextAwarePingExtension.ping_attempt = function (self, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+	-- function 11
+	if not (IgnoreFreeEvents[arg_11_4] or self:_have_free_events()) then
 		if arg_11_4 ~= nil then
 			local var_11_0 = Localize("social_wheel_too_many_messages_warning")
 
@@ -98,82 +109,88 @@ function ContextAwarePingExtension.ping_attempt(arg_11_0, arg_11_1, arg_11_2, ar
 		end
 
 		return false
-	elseif not IgnoreFreeCombatEvents[arg_11_4] and not arg_11_0:_have_free_combat_events() then
+	elseif not (IgnoreFreeCombatEvents[arg_11_4] or self:_have_free_combat_events()) then
 		return false
 	end
 
-	if not Unit.alive(arg_11_2) or LEVEL_EDITOR_TEST then
+	if not Unit.alive(arg_11_2) and not LEVEL_EDITOR_TEST then
 		return false
 	end
 
-	arg_11_5 = arg_11_4 ~= PingTypes.LOCAL_ONLY and arg_11_5 or NetworkLookup.social_wheel_events["n/a"]
+	arg_11_5 = arg_11_4 == PingTypes.LOCAL_ONLY or not arg_11_5 or NetworkLookup.social_wheel_events["n/a"]
 
-	local var_11_1 = Managers.state.network
-	local var_11_2 = var_11_1:unit_game_object_id(arg_11_1)
-	local var_11_3, var_11_4 = var_11_1:game_object_or_level_id(arg_11_2)
+	local network = Managers.state.network
+	local unit_game_object_id = network:unit_game_object_id(arg_11_1)
+	local game_object_or_level_id, var_11_4 = network:game_object_or_level_id(arg_11_2)
 
-	arg_11_4 = arg_11_4 or arg_11_0._world_markers_enabled and PingTypes.CONTEXT or PingTypes.PING_ONLY
+	arg_11_4 = arg_11_4 or not self._world_markers_enabled or PingTypes.CONTEXT or PingTypes.PING_ONLY
 
-	var_11_1.network_transmit:send_rpc_server("rpc_ping_unit", var_11_2, var_11_3, var_11_4, false, arg_11_4, arg_11_5)
+	network.network_transmit:send_rpc_server("rpc_ping_unit", unit_game_object_id, game_object_or_level_id, var_11_4, false, arg_11_4, arg_11_5)
 
 	if not IgnoreFreeEvents[arg_11_4] then
-		arg_11_0:_consume_ping_event()
+		self:_consume_ping_event()
 	elseif not IgnoreFreeCombatEvents[arg_11_4] then
-		arg_11_0:_consume_combat_ping_event()
+		self:_consume_combat_ping_event()
 	end
 
 	return true
 end
 
-function ContextAwarePingExtension.ping_world_position_attempt(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
-	if not arg_12_0._world_markers_enabled then
+ContextAwarePingExtension.ping_world_position_attempt = function (self, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
+	-- function 12
+	if not self._world_markers_enabled then
 		return
 	end
 
 	arg_12_4 = arg_12_4 or PingTypes.CONTEXT
 	arg_12_6 = not not arg_12_6
 
-	if not arg_12_0._world_markers_enabled then
+	if not self._world_markers_enabled then
 		return
 	end
 
-	if arg_12_3 < (arg_12_0._world_marker_cooldown or 0) then
+	local _world_marker_cooldown = self._world_marker_cooldown
+
+	_world_marker_cooldown = _world_marker_cooldown or 0
+
+	if arg_12_3 < _world_marker_cooldown then
 		return
 	end
 
-	if not arg_12_0:_have_free_events() then
-		local var_12_0 = Localize("social_wheel_too_many_messages_warning")
+	if not self:_have_free_events() then
+		local var_12_1 = Localize("social_wheel_too_many_messages_warning")
 
-		Managers.chat:add_local_system_message(1, var_12_0, true)
+		Managers.chat:add_local_system_message(1, var_12_1, true)
 
 		return false
-	elseif not arg_12_0:_have_free_combat_events() then
-		return false
-	end
-
-	if LEVEL_EDITOR_TEST then
+	elseif not self:_have_free_combat_events() then
 		return false
 	end
 
-	arg_12_0._world_marker_cooldown = arg_12_3 + var_0_3
+	if not LEVEL_EDITOR_TEST then
+		return false
+	end
+
+	self._world_marker_cooldown = arg_12_3 + num_4
 	arg_12_5 = arg_12_5 or NetworkLookup.social_wheel_events["n/a"]
 
-	local var_12_1 = Managers.state.network
-	local var_12_2 = var_12_1:unit_game_object_id(arg_12_1)
+	local network = Managers.state.network
+	local unit_game_object_id = network:unit_game_object_id(arg_12_1)
 
-	var_12_1.network_transmit:send_rpc_server("rpc_ping_world_position", var_12_2, arg_12_2, arg_12_4, arg_12_5, arg_12_6)
+	network.network_transmit:send_rpc_server("rpc_ping_world_position", unit_game_object_id, arg_12_2, arg_12_4, arg_12_5, arg_12_6)
 
 	if not IgnoreFreeEvents[arg_12_4] then
-		arg_12_0:_consume_ping_event()
+		self:_consume_ping_event()
 	elseif not IgnoreFreeCombatEvents[arg_12_4] then
-		arg_12_0:_consume_combat_ping_event()
+		self:_consume_combat_ping_event()
 	end
 
 	return true
 end
 
-function ContextAwarePingExtension.social_message_attempt(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
-	if not arg_13_0:_have_free_events() then
+ContextAwarePingExtension.social_message_attempt = function (self, arg_13_1, arg_13_2, arg_13_3)
+	-- function 13
+	if not self:_have_free_events() then
 		local var_13_0 = Localize("social_wheel_too_many_messages_warning")
 
 		Managers.chat:add_local_system_message(1, var_13_0, true)
@@ -181,130 +198,146 @@ function ContextAwarePingExtension.social_message_attempt(arg_13_0, arg_13_1, ar
 		return false
 	end
 
-	if LEVEL_EDITOR_TEST then
+	if not LEVEL_EDITOR_TEST then
 		return false
 	end
 
 	arg_13_2 = arg_13_2 or NetworkLookup.social_wheel_events["n/a"]
 
-	local var_13_1 = Managers.state.network
-	local var_13_2 = var_13_1:unit_game_object_id(arg_13_1)
-	local var_13_3 = arg_13_3 and Unit.alive(arg_13_3) and var_13_1:unit_game_object_id(arg_13_3) or 0
+	local network = Managers.state.network
+	local unit_game_object_id = network:unit_game_object_id(arg_13_1)
+	local unit_game_object_id_2
 
-	var_13_1.network_transmit:send_rpc_server("rpc_social_message", var_13_2, arg_13_2, var_13_3)
-	arg_13_0:_consume_ping_event()
+	if not arg_13_3 and not Unit.alive(arg_13_3) then
+		unit_game_object_id_2 = network:unit_game_object_id(arg_13_3)
+
+		if not unit_game_object_id_2 then
+			-- Nothing
+		end
+	end
+
+	unit_game_object_id_2 = 0
+
+	::label_13_0::
+
+	network.network_transmit:send_rpc_server("rpc_social_message", unit_game_object_id, arg_13_2, unit_game_object_id_2)
+	self:_consume_ping_event()
 
 	return true
 end
 
-local var_0_5 = 1
-local var_0_6 = 2
-local var_0_7 = 4
-local var_0_8 = {}
+local num_6 = 1
+local num_7 = 2
+local num_8 = 4
+local tbl = {}
 
-function ContextAwarePingExtension._check_raycast(arg_14_0, arg_14_1)
+ContextAwarePingExtension._check_raycast = function (self, arg_14_1)
+	-- function 14
 	local var_14_0
 	local var_14_1
 	local var_14_2
 	local var_14_3
 	local var_14_4
-	local var_14_5 = Managers.state.entity:system("darkness_system")
-	local var_14_6 = arg_14_0._first_person_extension
-	local var_14_7 = var_14_6:current_position()
-	local var_14_8 = var_14_6:current_rotation()
-	local var_14_9 = Quaternion.forward(var_14_8)
-	local var_14_10 = Quaternion.right(var_14_8)
-	local var_14_11 = Quaternion.up(var_14_8)
-	local var_14_12, var_14_13 = arg_14_0._physics_world:immediate_raycast(var_14_7, var_14_9, var_0_4, "all", "collision_filter", "filter_ray_ping")
-	local var_14_14 = -math.huge
-	local var_14_15 = 2000
+	local system = Managers.state.entity:system("darkness_system")
+	local _first_person_extension = self._first_person_extension
+	local current_position = _first_person_extension:current_position()
+	local current_rotation = _first_person_extension:current_rotation()
+	local forward = Quaternion.forward(current_rotation)
+	local right = Quaternion.right(current_rotation)
+	local up = Quaternion.up(current_rotation)
+	local immediate_raycast, var_14_13 = self._physics_world:immediate_raycast(current_position, forward, num_5, "all", "collision_filter", "filter_ray_ping")
+	local num = -math.huge
+	local num_2 = 2000
 
-	for iter_14_0 = 1, var_14_13 do
-		local var_14_16 = var_14_12[iter_14_0]
-		local var_14_17 = var_14_16[var_0_7]
-		local var_14_18 = var_14_16[var_0_5]
-		local var_14_19 = var_14_16[var_0_6]
+	for i = 1, var_14_13 do
+		local var_14_16 = immediate_raycast[i]
+		local var_14_17 = var_14_16[num_8]
+		local var_14_18 = var_14_16[num_6]
+		local var_14_19 = var_14_16[num_7]
 
-		if var_14_17 then
-			local var_14_20 = Actor.unit(var_14_17)
+		if not var_14_17 then
+			local unit = Actor.unit(var_14_17)
 
-			if var_14_20 ~= arg_14_1 then
-				local var_14_21 = ScriptUnit.has_extension(var_14_20, "ping_system")
+			if unit ~= arg_14_1 then
+				local has_extension = ScriptUnit.has_extension(unit, "ping_system")
 
-				if var_14_21 then
-					local var_14_22 = ScriptUnit.has_extension(var_14_20, "ghost_mode_system")
+				if not has_extension then
+					local has_extension_2 = ScriptUnit.has_extension(unit, "ghost_mode_system")
 
-					if (not var_14_22 or not var_14_22:is_in_ghost_mode()) and var_14_19 > 0.05 then
-						local var_14_23 = ScriptUnit.has_extension(var_14_20, "status_system")
-						local var_14_24 = ScriptUnit.has_extension(var_14_20, "pickup_system")
-						local var_14_25 = Unit.get_data(var_14_20, "breed")
-						local var_14_26 = var_14_25 ~= nil
-						local var_14_27 = HEALTH_ALIVE[var_14_20]
+					if not (not has_extension_2 and has_extension_2:is_in_ghost_mode() and not (var_14_19 > 0.05)) then
+						local has_extension_3 = ScriptUnit.has_extension(unit, "status_system")
+						local has_extension_4 = ScriptUnit.has_extension(unit, "pickup_system")
+						local get_data = Unit.get_data(unit, "breed")
+						local flag = get_data ~= nil
+						local var_14_27 = HEALTH_ALIVE[unit]
 						local var_14_28
 						local var_14_29
 
-						if var_14_24 then
-							local var_14_30, var_14_31 = Unit.box(var_14_20, true)
+						if not has_extension_4 then
+							local box, var_14_31 = Unit.box(unit, true)
 
 							var_14_28 = var_14_31.x * 0.75
 							var_14_29 = var_14_31.z * 0.75
-						elseif var_14_26 then
-							var_14_29 = (var_14_25.aoe_height or DEFAULT_BREED_AOE_HEIGHT) * 0.5
-							var_14_28 = var_14_25.aoe_radius or DEFAULT_BREED_AOE_RADIUS
-						elseif var_14_23 then
-							local var_14_32, var_14_33 = Unit.box(var_14_20, true)
+						elseif not flag then
+							local aoe_height = get_data.aoe_height
 
-							var_14_28 = var_14_33.x * 0.75
-							var_14_29 = var_14_33.z
+							aoe_height = aoe_height or DEFAULT_BREED_AOE_HEIGHT
+							var_14_29 = aoe_height * 0.5
+							var_14_28 = get_data.aoe_radius or DEFAULT_BREED_AOE_RADIUS
+						elseif not has_extension_3 then
+							local box_2, var_14_34 = Unit.box(unit, true)
+
+							var_14_28 = var_14_34.x * 0.75
+							var_14_29 = var_14_34.z
 						else
 							var_14_28 = 0.25
 							var_14_29 = 0.25
 						end
 
-						local var_14_34 = var_14_18 - (Unit.local_position(var_14_20, 0) + Vector3(0, 0, var_14_29))
-						local var_14_35 = math.abs(Vector3.dot(var_14_34, var_14_10))
-						local var_14_36 = math.abs(Vector3.dot(var_14_34, var_14_11))
-						local var_14_37 = 0.01
-						local var_14_38 = var_14_35 <= var_14_28 + var_14_37 and var_14_36 <= var_14_29 + var_14_37
-						local var_14_39
+						local num_3 = var_14_18 - (Unit.local_position(unit, 0) + Vector3(0, 0, var_14_29))
+						local abs = math.abs(Vector3.dot(num_3, right))
+						local abs_2 = math.abs(Vector3.dot(num_3, up))
+						local num_4 = 0.01
+						local flag_2 = not (abs <= var_14_28 + num_4) or abs_2 <= var_14_29 + num_4
+						local var_14_40
 
-						if var_14_38 then
-							var_14_39 = math.huge
+						if not flag_2 then
+							var_14_40 = math.huge
 						else
-							local var_14_40 = math.atan(var_14_28 / var_14_19)
-							local var_14_41 = math.atan(var_14_29 / var_14_19)
-							local var_14_42 = math.atan(var_14_35 / var_14_19)
-							local var_14_43 = math.atan(var_14_36 / var_14_19)
+							local atan = math.atan(var_14_28 / var_14_19)
+							local atan_2 = math.atan(var_14_29 / var_14_19)
+							local atan_3 = math.atan(abs / var_14_19)
+							local atan_4 = math.atan(abs_2 / var_14_19)
 
-							var_14_39 = 1 / (math.max(var_14_42 - var_14_40, var_14_37) / math.log(var_14_40) * (math.max(var_14_43 - var_14_41, var_14_37) / math.log(var_14_40)))
+							var_14_40 = 1 / (math.max(atan_3 - atan, num_4) / math.log(atan) * (math.max(atan_4 - atan_2, num_4) / math.log(atan)))
 						end
 
-						local var_14_44 = var_14_26 and Managers.state.side:is_enemy(arg_14_0._unit, var_14_20)
-						local var_14_45 = var_14_23 and var_14_23:is_disabled()
+						local flag_3 = not flag and Managers.state.side:is_enemy(self._unit, unit)
+						local flag_4 = not has_extension_3 and has_extension_3:is_disabled()
 
-						if (var_14_21.always_pingable or var_14_24 or var_14_27 and (var_14_44 or var_14_45)) and not var_14_5:is_in_darkness(var_14_18) and var_14_14 < var_14_39 then
-							var_14_0 = var_14_20
+						if not ((has_extension.always_pingable or has_extension_4 or not var_14_27 and flag_3 and not flag_4) and system:is_in_darkness(var_14_18) or not (num < var_14_40)) then
+							var_14_0 = unit
 							var_14_2 = var_14_19
-							var_14_14 = var_14_39
+							num = var_14_40
 							var_14_4 = var_14_18
 						end
 
-						local var_14_46 = false
+						local flag_5 = false
 
-						if var_14_24 then
-							local var_14_47 = var_14_24:get_pickup_settings()
+						if not has_extension_4 then
+							local get_pickup_settings = has_extension_4:get_pickup_settings()
 
-							var_14_46 = var_14_47.slot_name or var_14_47.type == "ammo"
+							flag_5 = get_pickup_settings.slot_name or get_pickup_settings.type == "ammo"
 						end
 
-						if (var_14_46 and var_14_19 <= INTERACT_RAY_DISTANCE or var_14_27 and var_14_23) and var_14_15 < var_14_39 then
-							var_14_1 = var_14_20
+						if not ((not flag_5 and var_14_19 <= INTERACT_RAY_DISTANCE and not var_14_27 or not has_extension_3) and not (num_2 < var_14_40)) then
+							var_14_1 = unit
 							var_14_3 = var_14_19
-							var_14_15 = var_14_39
+							num_2 = var_14_40
 						end
 					end
-				elseif Unit.get_data(var_14_20, "breed") then
-					-- block empty
+				elseif not Unit.get_data(unit, "breed") then
+					-- Nothing
 				else
 					var_14_4 = var_14_18
 
@@ -314,44 +347,44 @@ function ContextAwarePingExtension._check_raycast(arg_14_0, arg_14_1)
 		end
 	end
 
-	if not var_14_0 and var_14_4 then
-		local var_14_48 = Managers.state.side.side_by_unit[arg_14_0._unit]
+	if var_14_0 or not var_14_4 then
+		local var_14_49 = Managers.state.side.side_by_unit[self._unit]
 
-		if var_14_48:name() == "dark_pact" then
-			local var_14_49 = var_0_8
-			local var_14_50 = 0
-			local var_14_51 = var_14_48.ENEMY_PLAYER_AND_BOT_UNITS
+		if var_14_49:name() == "dark_pact" then
+			local var_14_50 = tbl
+			local num_9 = 0
+			local ENEMY_PLAYER_AND_BOT_UNITS = var_14_49.ENEMY_PLAYER_AND_BOT_UNITS
 
-			for iter_14_1 = 1, #var_14_51 do
-				local var_14_52 = var_14_51[iter_14_1]
-				local var_14_53 = POSITION_LOOKUP[var_14_52]
+			for j = 1, #ENEMY_PLAYER_AND_BOT_UNITS do
+				local var_14_53 = ENEMY_PLAYER_AND_BOT_UNITS[j]
+				local var_14_54 = POSITION_LOOKUP[var_14_53]
 
-				if var_14_53 then
-					local var_14_54 = var_14_53 + Vector3.up()
+				if not var_14_54 then
+					local num_10 = var_14_54 + Vector3.up()
 
-					if arg_14_0:_is_camera_looking_at_position(var_14_54, var_14_4, 0.075) then
-						var_14_50 = var_14_50 + 1
-						var_14_49[var_14_50] = var_14_52
+					if not self:_is_camera_looking_at_position(num_10, var_14_4, 0.075) then
+						num_9 = num_9 + 1
+						var_14_50[num_9] = var_14_53
 					end
 				end
 			end
 
-			local var_14_55
-			local var_14_56 = math.huge
+			local var_14_56
+			local huge = math.huge
 
-			for iter_14_2 = 1, var_14_50 do
-				local var_14_57 = POSITION_LOOKUP[var_14_49[iter_14_2]]
-				local var_14_58 = Vector3.distance_squared(var_14_57, var_14_7)
+			for k = 1, num_9 do
+				local var_14_58 = POSITION_LOOKUP[var_14_50[k]]
+				local distance_squared = Vector3.distance_squared(var_14_58, current_position)
 
-				if var_14_58 < var_14_56 then
-					var_14_55 = var_14_49[iter_14_2]
-					var_14_56 = var_14_58
+				if distance_squared < huge then
+					var_14_56 = var_14_50[k]
+					huge = distance_squared
 				end
 			end
 
-			if var_14_55 then
-				var_14_0 = var_14_55
-				var_14_2 = math.sqrt(var_14_56)
+			if not var_14_56 then
+				var_14_0 = var_14_56
+				var_14_2 = math.sqrt(huge)
 			end
 		end
 	end
@@ -359,151 +392,154 @@ function ContextAwarePingExtension._check_raycast(arg_14_0, arg_14_1)
 	return var_14_0, var_14_1, var_14_2, var_14_3, var_14_4
 end
 
-function ContextAwarePingExtension._is_camera_looking_at_position(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
-	local var_15_0 = arg_15_0._first_person_extension:camera()
+ContextAwarePingExtension._is_camera_looking_at_position = function (self, arg_15_1, arg_15_2, arg_15_3)
+	-- function 15
+	local camera = self._first_person_extension:camera()
 
-	if Camera.inside_frustum(var_15_0, arg_15_2) then
-		local var_15_1 = ScriptCamera.world_to_screen_uv(var_15_0, arg_15_2)
-		local var_15_2 = arg_15_3 * arg_15_3
+	if not Camera.inside_frustum(camera, arg_15_2) then
+		local world_to_screen_uv = ScriptCamera.world_to_screen_uv(camera, arg_15_2)
+		local num = arg_15_3 * arg_15_3
 
-		if Camera.inside_frustum(var_15_0, arg_15_1) then
-			local var_15_3 = ScriptCamera.world_to_screen_uv(var_15_0, arg_15_1)
+		if not Camera.inside_frustum(camera, arg_15_1) then
+			local world_to_screen_uv_2 = ScriptCamera.world_to_screen_uv(camera, arg_15_1)
 
-			if var_15_2 >= Vector3.distance_squared(var_15_3, var_15_1) then
+			if num >= Vector3.distance_squared(world_to_screen_uv_2, world_to_screen_uv) then
 				return true
 			end
 		end
 	end
 end
 
-function ContextAwarePingExtension._handle_ping_input(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
-	if arg_16_0._ping_context and arg_16_0._can_ping then
-		local var_16_0 = arg_16_0._ping_context
-		local var_16_1 = arg_16_0._input_extension:get("ping_release")
-		local var_16_2 = arg_16_0._input_extension:get("ping_hold")
+ContextAwarePingExtension._handle_ping_input = function (self, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
+	-- function 16
+	if not self._ping_context and not self._can_ping then
+		local _ping_context = self._ping_context
+		local get = self._input_extension:get("ping_release")
+		local get_2 = self._input_extension:get("ping_hold")
 
-		if var_16_1 or not var_16_2 then
-			local var_16_3 = var_16_0.unit
-			local var_16_4 = var_16_0.ping_type
+		if not (get or get_2) then
+			local unit = _ping_context.unit
+			local ping_type = _ping_context.ping_type
 
-			if arg_16_1 <= var_16_0.max_t then
-				if Unit.alive(var_16_3) then
-					arg_16_0:ping_attempt(arg_16_4, var_16_3, arg_16_1, var_16_4)
-				elseif var_16_0.fallback_to_world_marker then
+			if arg_16_1 <= _ping_context.max_t then
+				if not Unit.alive(unit) then
+					self:ping_attempt(arg_16_4, unit, arg_16_1, ping_type)
+				elseif not _ping_context.fallback_to_world_marker then
 					local var_16_5
 
-					arg_16_0:ping_world_position_attempt(arg_16_4, var_16_0.position:unbox(), arg_16_1, var_16_4 or PingTypes.CONTEXT, var_16_5, var_16_0.is_double_press)
+					self:ping_world_position_attempt(arg_16_4, _ping_context.position:unbox(), arg_16_1, ping_type or PingTypes.CONTEXT, var_16_5, _ping_context.is_double_press)
 
-					if Managers.state.game_mode:setting("allow_double_ping") then
-						arg_16_0:_start_listen_for_double_press(arg_16_1)
+					if not Managers.state.game_mode:setting("allow_double_ping") then
+						self:_start_listen_for_double_press(arg_16_1)
 					end
 				end
 			end
 
-			arg_16_0._ping_context = nil
-			arg_16_0._social_wheel_context = nil
-			arg_16_0._can_ping = false
+			self._ping_context = nil
+			self._social_wheel_context = nil
+			self._can_ping = false
 		end
-	elseif arg_16_0._social_wheel_context then
-		local var_16_6 = arg_16_0._input_extension:get("social_wheel_only_release")
-		local var_16_7 = arg_16_0._input_extension:get("social_wheel_only_hold")
-		local var_16_8 = arg_16_0._input_extension:get("weapon_poses_only_release")
-		local var_16_9 = arg_16_0._input_extension:get("weapon_poses_only_hold")
-		local var_16_10 = arg_16_0._input_extension:get("photomode_only_released")
-		local var_16_11 = arg_16_0._input_extension:get("photomode_only_hold")
+	elseif not self._social_wheel_context then
+		local get_3 = self._input_extension:get("social_wheel_only_release")
+		local get_4 = self._input_extension:get("social_wheel_only_hold")
+		local get_5 = self._input_extension:get("weapon_poses_only_release")
+		local get_6 = self._input_extension:get("weapon_poses_only_hold")
+		local get_7 = self._input_extension:get("photomode_only_released")
+		local get_8 = self._input_extension:get("photomode_only_hold")
 
-		if not arg_16_0._input_extension:get("ping_hold") or (var_16_6 or not var_16_7) and (var_16_8 or not var_16_9) and (var_16_10 or not var_16_11) then
-			arg_16_0._social_wheel_context = nil
-			arg_16_0._can_ping = false
+		if not (not self._input_extension:get("ping_hold") and get_3 and not get_4 and get_5 and not get_6 and get_7 or get_8) then
+			self._social_wheel_context = nil
+			self._can_ping = false
 		end
-	elseif not arg_16_0._can_ping then
-		local var_16_12 = arg_16_0._input_extension
-		local var_16_13 = var_16_12:get("ping")
-		local var_16_14 = var_16_12:get("ping_only")
-		local var_16_15 = var_16_12:get("social_wheel_only")
-		local var_16_16 = var_16_12:get("weapon_poses_only")
-		local var_16_17 = var_16_12:get("photomode_only")
+	elseif not self._can_ping then
+		local _input_extension = self._input_extension
+		local get_9 = _input_extension:get("ping")
+		local get_10 = _input_extension:get("ping_only")
+		local get_11 = _input_extension:get("social_wheel_only")
+		local get_12 = _input_extension:get("weapon_poses_only")
+		local get_13 = _input_extension:get("photomode_only")
 		local var_16_18
 
 		if Managers.mechanism:current_mechanism_name() == "versus" then
-			var_16_18 = var_16_12:get("ping_only_movement")
+			var_16_18 = _input_extension:get("ping_only_movement")
 		end
 
-		if var_16_13 or var_16_14 or var_16_18 or var_16_15 or var_16_16 or var_16_17 then
-			local var_16_19, var_16_20, var_16_21, var_16_22, var_16_23 = arg_16_0:_check_raycast(arg_16_4)
+		if get_9 or get_10 or var_16_18 or get_11 or get_12 or not get_13 then
+			local _check_raycast, var_16_20, var_16_21, var_16_22, var_16_23 = self:_check_raycast(arg_16_4)
 
-			if var_16_14 then
+			if not get_10 then
 				var_16_23 = nil
 			end
 
 			local var_16_24
 
-			if var_16_23 then
-				arg_16_0._ping_position:store(var_16_23)
+			if not var_16_23 then
+				self._ping_position:store(var_16_23)
 
-				var_16_24 = arg_16_0._ping_position
+				var_16_24 = self._ping_position
 			end
 
-			local var_16_25 = arg_16_0._double_press_counter >= 1
+			local flag = self._double_press_counter >= 1
 			local var_16_26
 
-			if not var_16_13 and arg_16_0._status_extension:is_ready_for_assisted_respawn() then
-				local var_16_27 = Managers.input:get_service("Player")
+			if get_9 or not self._status_extension:is_ready_for_assisted_respawn() then
+				local get_service = Managers.input:get_service("Player")
 
-				if var_16_27 then
-					var_16_15 = var_16_27:get("ping")
+				if not get_service then
+					get_11 = get_service:get("ping")
 				end
-			elseif var_16_19 then
-				local var_16_28 = ScriptUnit.has_extension(var_16_19, "status_system")
+			elseif not _check_raycast then
+				local has_extension = ScriptUnit.has_extension(_check_raycast, "status_system")
 
-				if var_16_28 and var_16_28:is_knocked_down() then
+				if not has_extension and not has_extension:is_knocked_down() then
 					var_16_26 = PingTypes.UNIT_DOWNED
 				end
-			elseif not var_16_25 and var_16_23 and arg_16_0._ping_system:is_ping_cancel(arg_16_0._player:unique_id(), var_16_23) then
+			elseif (flag or not var_16_23) and not self._ping_system:is_ping_cancel(self._player:unique_id(), var_16_23) then
 				var_16_26 = PingTypes.CANCEL
 			end
 
-			if var_16_14 and var_16_19 then
-				arg_16_0:ping_attempt(arg_16_4, var_16_19, arg_16_1, var_16_26 or PingTypes.CONTEXT)
+			if not get_10 and not _check_raycast then
+				self:ping_attempt(arg_16_4, _check_raycast, arg_16_1, var_16_26 or PingTypes.CONTEXT)
 			end
 
-			if var_16_13 then
-				local var_16_29 = Application.user_setting("social_wheel_delay") or DefaultUserSettings.get("user_settings", "social_wheel_delay")
+			if not get_9 then
+				local user_setting = Application.user_setting("social_wheel_delay")
 
-				arg_16_0._ping_context = {
-					unit = var_16_19,
-					max_t = arg_16_0:_get_ping_context_lifetime_t(arg_16_1, var_16_29),
+				user_setting = user_setting or DefaultUserSettings.get("user_settings", "social_wheel_delay")
+				self._ping_context = {
+					unit = _check_raycast,
+					max_t = self:_get_ping_context_lifetime_t(arg_16_1, user_setting),
 					distance = var_16_21,
 					position = var_16_24,
 					ping_type = var_16_26,
-					is_double_press = var_16_25,
-					fallback_to_world_marker = var_16_18 and var_16_24
+					is_double_press = flag,
+					fallback_to_world_marker = not var_16_18 and var_16_24
 				}
-				arg_16_0._social_wheel_context = {
+				self._social_wheel_context = {
 					unit = var_16_20,
-					ping_context_unit = var_16_19,
-					min_t = arg_16_0:_get_ping_context_lifetime_t(arg_16_1, var_16_29),
+					ping_context_unit = _check_raycast,
+					min_t = self:_get_ping_context_lifetime_t(arg_16_1, user_setting),
 					distance = var_16_22,
 					position = var_16_24
 				}
 
-				if Managers.state.game_mode:setting("allow_double_ping") then
-					arg_16_0:_start_listen_for_double_press(arg_16_1)
+				if not Managers.state.game_mode:setting("allow_double_ping") then
+					self:_start_listen_for_double_press(arg_16_1)
 				end
 
-				arg_16_0._can_ping = true
-			elseif var_16_18 and var_16_23 then
+				self._can_ping = true
+			elseif not var_16_18 and not var_16_23 then
 				local var_16_30
 
-				arg_16_0:ping_world_position_attempt(arg_16_4, var_16_23, arg_16_1, var_16_26 or PingTypes.CONTEXT, var_16_30, var_16_25)
+				self:ping_world_position_attempt(arg_16_4, var_16_23, arg_16_1, var_16_26 or PingTypes.CONTEXT, var_16_30, flag)
 
-				if Managers.state.game_mode:setting("allow_double_ping") then
-					arg_16_0:_start_listen_for_double_press(arg_16_1)
+				if not Managers.state.game_mode:setting("allow_double_ping") then
+					self:_start_listen_for_double_press(arg_16_1)
 				end
 			end
 
-			if var_16_15 then
-				arg_16_0._social_wheel_context = {
+			if not get_11 then
+				self._social_wheel_context = {
 					min_t = 0,
 					unit = var_16_20,
 					distance = var_16_22,
@@ -511,15 +547,15 @@ function ContextAwarePingExtension._handle_ping_input(arg_16_0, arg_16_1, arg_16
 				}
 			end
 
-			if var_16_16 then
-				arg_16_0._social_wheel_context = {
+			if not get_12 then
+				self._social_wheel_context = {
 					min_t = 0,
 					show_poses = true
 				}
 			end
 
-			if var_16_17 then
-				arg_16_0._social_wheel_context = {
+			if not get_13 then
+				self._social_wheel_context = {
 					min_t = 0,
 					show_emotes = true,
 					unit = var_16_20,
@@ -530,33 +566,36 @@ function ContextAwarePingExtension._handle_ping_input(arg_16_0, arg_16_1, arg_16
 		end
 	end
 
-	if arg_16_0._listen_for_double_press then
-		if arg_16_1 >= arg_16_0._double_press_end_time then
-			arg_16_0:_reset_listen_for_double_press()
-		elseif arg_16_0._input_extension:get("ping") or arg_16_0._input_extension:get("ping_only_movement") then
-			arg_16_0._double_press_counter = arg_16_0._double_press_counter + 1
+	if not self._listen_for_double_press then
+		if arg_16_1 >= self._double_press_end_time then
+			self:_reset_listen_for_double_press()
+		elseif self._input_extension:get("ping") or not self._input_extension:get("ping_only_movement") then
+			self._double_press_counter = self._double_press_counter + 1
 
-			arg_16_0:_start_listen_for_double_press(arg_16_1)
+			self:_start_listen_for_double_press(arg_16_1)
 		end
 	end
 end
 
-function ContextAwarePingExtension._start_listen_for_double_press(arg_17_0, arg_17_1)
-	arg_17_0._listen_for_double_press = true
-	arg_17_0._double_press_start_time = arg_17_1
-	arg_17_0._double_press_end_time = arg_17_1 + arg_17_0._double_press_listen_duration
+ContextAwarePingExtension._start_listen_for_double_press = function (self, arg_17_1)
+	-- function 17
+	self._listen_for_double_press = true
+	self._double_press_start_time = arg_17_1
+	self._double_press_end_time = arg_17_1 + self._double_press_listen_duration
 end
 
-function ContextAwarePingExtension._reset_listen_for_double_press(arg_18_0)
-	arg_18_0._double_press_start_time = nil
-	arg_18_0._double_press_end_time = nil
-	arg_18_0._double_press_counter = 0
-	arg_18_0._listen_for_double_press = false
+ContextAwarePingExtension._reset_listen_for_double_press = function (self)
+	-- function 18
+	self._double_press_start_time = nil
+	self._double_press_end_time = nil
+	self._double_press_counter = 0
+	self._listen_for_double_press = false
 end
 
-function ContextAwarePingExtension._get_ping_context_lifetime_t(arg_19_0, arg_19_1, arg_19_2)
-	if Managers.state.game_mode:setting("extended_social_wheel_time") then
-		return arg_19_1 + arg_19_2 + arg_19_0._double_press_listen_duration
+ContextAwarePingExtension._get_ping_context_lifetime_t = function (self, arg_19_1, arg_19_2)
+	-- function 19
+	if not Managers.state.game_mode:setting("extended_social_wheel_time") then
+		return arg_19_1 + arg_19_2 + self._double_press_listen_duration
 	else
 		return arg_19_1 + arg_19_2
 	end

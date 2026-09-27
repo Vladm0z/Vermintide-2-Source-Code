@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/gotwf/weapon_skins_gotwf_2025.lua
 
-local var_0_0 = {
+local tbl = {
 	{
 		name = "dr_deus_01_skin_03_runed_05",
 		data = {
@@ -162,7 +162,7 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	dr_deus_01_skins = {
 		unique = {
 			"dr_deus_01_skin_03_runed_05"
@@ -215,22 +215,22 @@ local var_0_1 = {
 	}
 }
 
-for iter_0_0, iter_0_1 in ipairs(var_0_0) do
-	WeaponSkins.skins[iter_0_1.name] = iter_0_1.data
+for i, v in ipairs(tbl) do
+	WeaponSkins.skins[v.name] = v.data
 end
 
-for iter_0_2, iter_0_3 in pairs(var_0_1) do
-	if not WeaponSkins.skin_combinations[iter_0_2] then
-		WeaponSkins.skin_combinations[iter_0_2] = {}
+for k, v_2 in pairs(tbl_2) do
+	if not WeaponSkins.skin_combinations[k] then
+		WeaponSkins.skin_combinations[k] = {}
 	end
 
-	for iter_0_4, iter_0_5 in pairs(iter_0_3) do
-		if not WeaponSkins.skin_combinations[iter_0_2][iter_0_4] then
-			WeaponSkins.skin_combinations[iter_0_2][iter_0_4] = {}
+	for k_2, v_3 in pairs(v_2) do
+		if not WeaponSkins.skin_combinations[k][k_2] then
+			WeaponSkins.skin_combinations[k][k_2] = {}
 		end
 
-		for iter_0_6, iter_0_7 in ipairs(iter_0_5) do
-			WeaponSkins.skin_combinations[iter_0_2][iter_0_4][#WeaponSkins.skin_combinations[iter_0_2][iter_0_4] + 1] = iter_0_7
+		for i_2, v_4 in ipairs(v_3) do
+			WeaponSkins.skin_combinations[k][k_2][#WeaponSkins.skin_combinations[k][k_2] + 1] = v_4
 		end
 	end
 end

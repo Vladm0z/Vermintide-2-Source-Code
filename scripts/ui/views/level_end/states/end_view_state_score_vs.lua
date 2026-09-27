@@ -5,441 +5,519 @@ local var_0_0 = local_require("scripts/ui/views/level_end/states/definitions/end
 require("scripts/ui/views/level_end/states/end_view_state_score_vs_tabs/end_view_state_score_vs_tab_details")
 require("scripts/ui/views/level_end/states/end_view_state_score_vs_tabs/end_view_state_score_vs_tab_report")
 
-local var_0_1 = var_0_0.widgets
-local var_0_2 = var_0_0.scenegraph_definition
-local var_0_3 = var_0_0.animation_definitions
-local var_0_4 = var_0_0.tab_size
-local var_0_5 = false
-local var_0_6 = 30
+local widgets = var_0_0.widgets
+local scenegraph_definition = var_0_0.scenegraph_definition
+local animation_definitions = var_0_0.animation_definitions
+local tab_size = var_0_0.tab_size
+local flag = false
+local num = 30
 
 EndViewStateScoreVS = class(EndViewStateScoreVS)
 EndViewStateScoreVS.NAME = "EndViewStateScoreVS"
 
-function EndViewStateScoreVS.on_enter(arg_1_0, arg_1_1)
+EndViewStateScoreVS.on_enter = function (self, arg_1_1)
+	-- function 1
 	print("[PlayState] Enter Substate EndViewStateScoreVS")
 
-	arg_1_0._params = arg_1_1
+	self._params = arg_1_1
 
-	local var_1_0 = arg_1_1.context
+	local context = arg_1_1.context
 
-	arg_1_0._parent = arg_1_1.parent
-	arg_1_0._context = var_1_0
-	arg_1_0._ui_renderer = var_1_0.ui_top_renderer
-	arg_1_0._input_manager = var_1_0.input_manager
-	arg_1_0._render_settings = {
+	self._parent = arg_1_1.parent
+	self._context = context
+	self._ui_renderer = context.ui_top_renderer
+	self._input_manager = context.input_manager
+	self._render_settings = {
 		alpha_multiplier = 0,
 		snap_pixel_positions = true
 	}
 
-	local var_1_1 = table.shallow_copy(var_0_0.tab_layouts)
+	local shallow_copy = table.shallow_copy(var_0_0.tab_layouts)
 
-	for iter_1_0 = #var_1_1, 1, -1 do
-		local var_1_2 = var_1_1[iter_1_0].condition_func
+	for i = #shallow_copy, 1, -1 do
+		local condition_func = shallow_copy[i].condition_func
 
-		if var_1_2 and not var_1_2() then
-			table.remove(var_1_1, iter_1_0)
+		if not (not condition_func and condition_func()) then
+			table.remove(shallow_copy, i)
 		end
 	end
 
-	arg_1_0._layout_settings = var_1_1
+	self._layout_settings = shallow_copy
 
-	arg_1_0:create_ui_elements(arg_1_1)
-	arg_1_0:_align_tabs()
-	arg_1_0:_setup_level_widget()
+	self:create_ui_elements(arg_1_1)
+	self:_align_tabs()
+	self:_setup_level_widget()
 
-	arg_1_0._ui_animator = UIAnimator:new(arg_1_0._ui_scenegraph, var_0_3)
-	arg_1_0._animations = {}
-	arg_1_0._animation_callbacks = {}
-	arg_1_0._selected_layout_name = arg_1_0._layout_settings[1].name
+	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
+	self._animations = {}
+	self._animation_callbacks = {}
+	self._selected_layout_name = self._layout_settings[1].name
 
-	arg_1_0:_update_tab_selection(1)
-	arg_1_0._parent:hide_team()
-	arg_1_0:_play_animation("transition_enter")
+	self:_update_tab_selection(1)
+	self._parent:hide_team()
+	self:_play_animation("transition_enter")
 
-	function arg_1_0._animation_callbacks.transition_enter()
-		arg_1_0:_set_initial_tab()
+	self._animation_callbacks.transition_enter = function ()
+		-- function 2
+		self:_set_initial_tab()
 	end
 
-	arg_1_0._parent:set_input_description(nil)
+	self._parent:set_input_description(nil)
 end
 
-function EndViewStateScoreVS.exit(arg_3_0, arg_3_1)
-	arg_3_0._exit_started = true
+EndViewStateScoreVS.exit = function (self, arg_3_1)
+	-- function 3
+	self._exit_started = true
 
-	arg_3_0:_play_animation("transition_exit")
+	self:_play_animation("transition_exit")
 end
 
-function EndViewStateScoreVS._play_animation(arg_4_0, arg_4_1)
-	local var_4_0 = {
-		render_settings = arg_4_0._render_settings
+EndViewStateScoreVS._play_animation = function (self, arg_4_1)
+	-- function 4
+	local tbl = {
+		render_settings = self._render_settings
 	}
-	local var_4_1 = arg_4_0._ui_animator:start_animation(arg_4_1, arg_4_0._widgets_by_name, var_0_2, var_4_0)
+	local start_animation = self._ui_animator:start_animation(arg_4_1, self._widgets_by_name, scenegraph_definition, tbl)
 
-	arg_4_0._animations[arg_4_1] = var_4_1
+	self._animations[arg_4_1] = start_animation
 end
 
-function EndViewStateScoreVS.play_sound(arg_5_0, arg_5_1)
-	arg_5_0._parent:play_sound(arg_5_1)
+EndViewStateScoreVS.play_sound = function (self, arg_5_1)
+	-- function 5
+	self._parent:play_sound(arg_5_1)
 end
 
-function EndViewStateScoreVS.exit_done(arg_6_0)
-	return arg_6_0._exit_started and table.is_empty(arg_6_0._animations)
+EndViewStateScoreVS.exit_done = function (self)
+	-- function 6
+	local _exit_started = self._exit_started
+
+	_exit_started = not _exit_started and table.is_empty(self._animations)
+
+	return _exit_started
 end
 
-function EndViewStateScoreVS.create_ui_elements(arg_7_0, arg_7_1)
-	UIRenderer.clear_scenegraph_queue(arg_7_0._ui_renderer)
+EndViewStateScoreVS.create_ui_elements = function (self, arg_7_1)
+	-- function 7
+	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
 
-	arg_7_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
-	arg_7_0._widgets, arg_7_0._widgets_by_name = UIUtils.create_widgets(var_0_1, {}, {})
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+	self._widgets, self._widgets_by_name = UIUtils.create_widgets(widgets, {}, {})
 
-	local var_7_0 = {}
-	local var_7_1 = arg_7_0._layout_settings
-	local var_7_2 = 0
+	local tbl = {}
+	local _layout_settings = self._layout_settings
+	local num_2 = 0
 
-	for iter_7_0 = 1, #var_7_1 do
-		local var_7_3 = var_7_1[iter_7_0]
-		local var_7_4 = "tab"
-		local var_7_5 = var_7_3.display_name or "n/a"
-		local var_7_6 = var_0_0.create_tab(var_7_4, var_7_5)
-		local var_7_7 = UIWidget.init(var_7_6)
-		local var_7_8 = UIUtils.get_text_width(arg_7_0._ui_renderer, var_7_7.style.text, var_7_5)
+	for i = 1, #_layout_settings do
+		local var_7_3 = _layout_settings[i]
+		local str = "tab"
+		local display_name = var_7_3.display_name
 
-		var_7_7.offset[1] = var_7_2 + (iter_7_0 > 1 and var_7_8 * 0.5 or 0)
-		var_7_2 = var_7_2 + var_7_8 * 0.5 + var_0_6
-		var_7_7.style.hotspot.area_size[1] = var_7_8 * 0.5
+		display_name = display_name or "n/a"
 
-		local var_7_9 = var_7_3.name
+		local create_tab = var_0_0.create_tab(str, display_name)
+		local var_7_7 = UIWidget.init(create_tab)
+		local get_text_width = UIUtils.get_text_width(self._ui_renderer, var_7_7.style.text, display_name)
+		local offset = var_7_7.offset
+		local num_3
 
-		var_7_7.content.layout_name = var_7_9
-		var_7_0[#var_7_0 + 1] = var_7_7
+		if i > 1 then
+			num_3 = get_text_width * 0.5
+
+			if not num_3 then
+				-- Nothing
+			end
+		end
+
+		num_3 = 0
+
+		::label_7_0::
+
+		offset[1] = num_2 + num_3
+		num_2 = num_2 + get_text_width * 0.5 + num
+		var_7_7.style.hotspot.area_size[1] = get_text_width * 0.5
+
+		local name = var_7_3.name
+
+		var_7_7.content.layout_name = name
+		tbl[#tbl + 1] = var_7_7
 	end
 
-	arg_7_0._title_button_widgets = var_7_0
-	arg_7_0._ui_animations = {}
+	self._title_button_widgets = tbl
+	self._ui_animations = {}
 
-	local var_7_10 = var_0_0.create_team_score_func
-	local var_7_11 = Network.peer_id()
-	local var_7_12 = 1
-	local var_7_13 = arg_7_0._context.party_composition[PlayerUtils.unique_player_id(var_7_11, var_7_12)]
-	local var_7_14 = var_7_13 == 1 and 2 or 1
-	local var_7_15 = GameModeSettings.versus.party_names_lookup_by_id[var_7_13]
-	local var_7_16 = GameModeSettings.versus.party_names_lookup_by_id[var_7_14]
-	local var_7_17 = arg_7_0._context.rewards.team_scores
-	local var_7_18 = var_7_17[var_7_13]
-	local var_7_19 = var_7_17[var_7_14]
-	local var_7_20 = var_7_10("local_team", var_7_15, var_7_18)
-	local var_7_21 = var_7_10("opponent_team", var_7_16, var_7_19)
-	local var_7_22 = UIWidget.init(var_7_20)
-	local var_7_23 = UIWidget.init(var_7_21)
+	local create_team_score_func = var_0_0.create_team_score_func
+	local peer_id = Network.peer_id()
+	local num_4 = 1
+	local var_7_15 = self._context.party_composition[PlayerUtils.unique_player_id(peer_id, num_4)]
+	local flag
 
-	arg_7_0._widgets[#arg_7_0._widgets + 1] = var_7_22
-	arg_7_0._widgets[#arg_7_0._widgets + 1] = var_7_23
-	arg_7_0._widgets_by_name.local_score = var_7_22
-	arg_7_0._widgets_by_name.opponent_score = var_7_23
+	flag = var_7_15 ~= 1 or not 2 or 1
 
-	local var_7_24 = #var_7_1
+	local var_7_17 = GameModeSettings.versus.party_names_lookup_by_id[var_7_15]
+	local var_7_18 = GameModeSettings.versus.party_names_lookup_by_id[flag]
+	local team_scores = self._context.rewards.team_scores
+	local var_7_20 = team_scores[var_7_15]
+	local var_7_21 = team_scores[flag]
+	local var_7_22 = create_team_score_func("local_team", var_7_17, var_7_20)
+	local var_7_23 = create_team_score_func("opponent_team", var_7_18, var_7_21)
+	local var_7_24 = UIWidget.init(var_7_22)
+	local var_7_25 = UIWidget.init(var_7_23)
 
-	arg_7_0._widgets_by_name.tab_selection.content.visible = var_7_24 > 1
-	arg_7_0._widgets_by_name.prev_tab.content.visible = var_7_24 > 1
-	arg_7_0._widgets_by_name.next_tab.content.visible = var_7_24 > 1
+	self._widgets[#self._widgets + 1] = var_7_24
+	self._widgets[#self._widgets + 1] = var_7_25
+	self._widgets_by_name.local_score = var_7_24
+	self._widgets_by_name.opponent_score = var_7_25
 
-	local var_7_25 = arg_7_0._widgets_by_name.back_to_keep_button
+	local count = #_layout_settings
 
-	UIUtils.enable_button(var_7_25, false)
+	self._widgets_by_name.tab_selection.content.visible = count > 1
+	self._widgets_by_name.prev_tab.content.visible = count > 1
+	self._widgets_by_name.next_tab.content.visible = count > 1
+
+	local back_to_keep_button = self._widgets_by_name.back_to_keep_button
+
+	UIUtils.enable_button(back_to_keep_button, false)
 end
 
-function EndViewStateScoreVS._align_tabs(arg_8_0)
-	local var_8_0 = 0
+EndViewStateScoreVS._align_tabs = function (self)
+	-- function 8
+	local num_2 = 0
 
-	for iter_8_0, iter_8_1 in pairs(arg_8_0._title_button_widgets) do
-		var_8_0 = var_8_0 + iter_8_1.style.hotspot.area_size[1] + var_0_6
+	for k, v in pairs(self._title_button_widgets) do
+		num_2 = num_2 + v.style.hotspot.area_size[1] + num
 	end
 
-	for iter_8_2, iter_8_3 in pairs(arg_8_0._title_button_widgets) do
-		iter_8_3.offset[1] = iter_8_3.offset[1] - var_8_0
+	for k_2, v_2 in pairs(self._title_button_widgets) do
+		v_2.offset[1] = v_2.offset[1] - num_2
 	end
 
-	local var_8_1 = arg_8_0._title_button_widgets[1]
-	local var_8_2 = var_8_1.content.text
-	local var_8_3 = var_8_1.style.text
-	local var_8_4 = UIUtils.get_text_width(arg_8_0._ui_renderer, var_8_3, var_8_2)
+	local var_8_1 = self._title_button_widgets[1]
+	local text = var_8_1.content.text
+	local text_2 = var_8_1.style.text
+	local get_text_width = UIUtils.get_text_width(self._ui_renderer, text_2, text)
 
-	arg_8_0._widgets_by_name.prev_tab.offset[1] = -var_8_0 - var_8_4 * 0.5 - var_0_6 * 2
+	self._widgets_by_name.prev_tab.offset[1] = -num_2 - get_text_width * 0.5 - num * 2
 
-	local var_8_5 = arg_8_0._title_button_widgets[#arg_8_0._title_button_widgets]
-	local var_8_6 = var_8_5.content.text
-	local var_8_7 = var_8_5.style.text
-	local var_8_8 = UIUtils.get_text_width(arg_8_0._ui_renderer, var_8_7, var_8_6)
-	local var_8_9 = var_8_5.offset
+	local var_8_5 = self._title_button_widgets[#self._title_button_widgets]
+	local text_3 = var_8_5.content.text
+	local text_4 = var_8_5.style.text
+	local get_text_width_2 = UIUtils.get_text_width(self._ui_renderer, text_4, text_3)
+	local offset = var_8_5.offset
 
-	arg_8_0._widgets_by_name.next_tab.offset[1] = var_8_9[1] + var_8_8 * 0.5 + var_0_6 * 2
+	self._widgets_by_name.next_tab.offset[1] = offset[1] + get_text_width_2 * 0.5 + num * 2
 end
 
-function EndViewStateScoreVS._setup_level_widget(arg_9_0)
-	local var_9_0 = arg_9_0._widgets_by_name.level.content
-	local var_9_1 = arg_9_0._context.level_key
-	local var_9_2 = LevelSettings[var_9_1]
+EndViewStateScoreVS._setup_level_widget = function (self)
+	-- function 9
+	local content = self._widgets_by_name.level.content
+	local level_key = self._context.level_key
+	local var_9_2 = LevelSettings[level_key]
+	local level_image
 
-	var_9_0.icon = var_9_2 and var_9_2.level_image or "level_image_any"
+	if not var_9_2 then
+		level_image = var_9_2.level_image
 
-	local var_9_3 = arg_9_0._context.difficulty
-	local var_9_4 = DifficultySettings[var_9_3]
+		if not level_image then
+			-- Nothing
+		end
+	end
 
-	var_9_0.frame = var_9_4 and var_9_4.completed_frame_texture or "map_frame_00"
-	arg_9_0._widgets_by_name.level_text.content.text = Localize(var_9_2.display_name)
+	level_image = "level_image_any"
+
+	::label_9_0::
+
+	content.icon = level_image
+
+	local difficulty = self._context.difficulty
+	local var_9_5 = DifficultySettings[difficulty]
+	local completed_frame_texture
+
+	if not var_9_5 then
+		completed_frame_texture = var_9_5.completed_frame_texture
+
+		if not completed_frame_texture then
+			-- Nothing
+		end
+	end
+
+	completed_frame_texture = "map_frame_00"
+
+	::label_9_1::
+
+	content.frame = completed_frame_texture
+	self._widgets_by_name.level_text.content.text = Localize(var_9_2.display_name)
 end
 
-function EndViewStateScoreVS._set_text_button_size(arg_10_0, arg_10_1, arg_10_2)
-	local var_10_0 = arg_10_1.style
+EndViewStateScoreVS._set_text_button_size = function (arg_10_0, arg_10_1, arg_10_2)
+	-- function 10
+	local style = arg_10_1.style
 
-	var_10_0.selected_texture.texture_size[1] = arg_10_2
+	style.selected_texture.texture_size[1] = arg_10_2
 
-	local var_10_1 = 5
-	local var_10_2 = arg_10_2 - var_10_1 * 2
+	local num = 5
+	local num_2 = arg_10_2 - num * 2
 
-	var_10_0.text.size[1] = var_10_2
-	var_10_0.text_shadow.size[1] = var_10_2
-	var_10_0.text_hover.size[1] = var_10_2
-	var_10_0.text_disabled.size[1] = var_10_2
-	var_10_0.text.offset[1] = var_10_0.text.default_offset[1] + var_10_1
-	var_10_0.text_shadow.offset[1] = var_10_0.text_shadow.default_offset[1] + var_10_1
-	var_10_0.text_hover.offset[1] = var_10_0.text_hover.default_offset[1] + var_10_1
-	var_10_0.text_disabled.offset[1] = var_10_0.text_disabled.default_offset[1] + var_10_1
+	style.text.size[1] = num_2
+	style.text_shadow.size[1] = num_2
+	style.text_hover.size[1] = num_2
+	style.text_disabled.size[1] = num_2
+	style.text.offset[1] = style.text.default_offset[1] + num
+	style.text_shadow.offset[1] = style.text_shadow.default_offset[1] + num
+	style.text_hover.offset[1] = style.text_hover.default_offset[1] + num
+	style.text_disabled.offset[1] = style.text_disabled.default_offset[1] + num
 end
 
-function EndViewStateScoreVS._wanted_state(arg_11_0)
-	return (arg_11_0.parent:wanted_menu_state())
+EndViewStateScoreVS._wanted_state = function (self)
+	-- function 11
+	return (self.parent:wanted_menu_state())
 end
 
-function EndViewStateScoreVS.set_input_manager(arg_12_0, arg_12_1)
-	arg_12_0.input_manager = arg_12_1
+EndViewStateScoreVS.set_input_manager = function (self, arg_12_1)
+	-- function 12
+	self.input_manager = arg_12_1
 end
 
-function EndViewStateScoreVS.on_exit(arg_13_0, arg_13_1)
+EndViewStateScoreVS.on_exit = function (self, arg_13_1)
+	-- function 13
 	print("[PlayState] Exit Substate EndViewStateScoreVS")
 
-	arg_13_0.ui_animator = nil
+	self.ui_animator = nil
 end
 
-function EndViewStateScoreVS._update_transition_timer(arg_14_0, arg_14_1)
-	if not arg_14_0._transition_timer then
+EndViewStateScoreVS._update_transition_timer = function (self, arg_14_1)
+	-- function 14
+	if not self._transition_timer then
 		return
 	end
 
-	if arg_14_0._transition_timer == 0 then
-		arg_14_0._transition_timer = nil
+	if self._transition_timer == 0 then
+		self._transition_timer = nil
 	else
-		arg_14_0._transition_timer = math.max(arg_14_0._transition_timer - arg_14_1, 0)
+		self._transition_timer = math.max(self._transition_timer - arg_14_1, 0)
 	end
 end
 
-function EndViewStateScoreVS.update(arg_15_0, arg_15_1, arg_15_2)
-	arg_15_0:_update_animations(arg_15_1, arg_15_2)
-	arg_15_0:_handle_input(arg_15_1, arg_15_2)
-	arg_15_0:_draw(arg_15_1, arg_15_2)
+EndViewStateScoreVS.update = function (self, arg_15_1, arg_15_2)
+	-- function 15
+	self:_update_animations(arg_15_1, arg_15_2)
+	self:_handle_input(arg_15_1, arg_15_2)
+	self:_draw(arg_15_1, arg_15_2)
 
-	if arg_15_0._active_tab then
-		arg_15_0._active_tab:update(arg_15_1, arg_15_2)
+	if not self._active_tab then
+		self._active_tab:update(arg_15_1, arg_15_2)
 	end
 end
 
-function EndViewStateScoreVS._update_animations(arg_16_0, arg_16_1, arg_16_2)
-	local var_16_0 = arg_16_0._animations
-	local var_16_1 = arg_16_0._ui_animator
+EndViewStateScoreVS._update_animations = function (self, arg_16_1, arg_16_2)
+	-- function 16
+	local _animations = self._animations
+	local _ui_animator = self._ui_animator
 
-	var_16_1:update(arg_16_1)
+	_ui_animator:update(arg_16_1)
 
-	for iter_16_0, iter_16_1 in pairs(var_16_0) do
-		if var_16_1:is_animation_completed(iter_16_1) then
-			var_16_1:stop_animation(iter_16_1)
+	for k, v in pairs(_animations) do
+		if not _ui_animator:is_animation_completed(v) then
+			_ui_animator:stop_animation(v)
 
-			var_16_0[iter_16_0] = nil
+			_animations[k] = nil
 
-			local var_16_2 = arg_16_0._animation_callbacks[iter_16_0]
+			local var_16_2 = self._animation_callbacks[k]
 
-			if var_16_2 then
+			if not var_16_2 then
 				var_16_2()
 
-				arg_16_0._animation_callbacks[iter_16_0] = nil
+				self._animation_callbacks[k] = nil
 			end
 		end
 	end
 
-	for iter_16_2, iter_16_3 in pairs(arg_16_0._ui_animations) do
-		UIAnimation.update(iter_16_3, arg_16_1)
+	for k_2, v_2 in pairs(self._ui_animations) do
+		UIAnimation.update(v_2, arg_16_1)
 
-		if UIAnimation.completed(iter_16_3) then
-			arg_16_0._ui_animations[iter_16_2] = nil
+		if not UIAnimation.completed(v_2) then
+			self._ui_animations[k_2] = nil
 
-			local var_16_3 = arg_16_0._animation_callbacks[iter_16_2]
+			local var_16_3 = self._animation_callbacks[k_2]
 
-			if var_16_3 then
+			if not var_16_3 then
 				var_16_3()
 
-				arg_16_0._animation_callbacks[iter_16_2] = nil
+				self._animation_callbacks[k_2] = nil
 			end
 		end
 	end
 
-	local var_16_4 = arg_16_0._widgets_by_name.back_to_keep_button
+	local back_to_keep_button = self._widgets_by_name.back_to_keep_button
 
-	UIWidgetUtils.animate_default_button(var_16_4, arg_16_1)
+	UIWidgetUtils.animate_default_button(back_to_keep_button, arg_16_1)
 end
 
-function EndViewStateScoreVS._set_initial_tab(arg_17_0)
-	arg_17_0:_change_tab(arg_17_0._selected_layout_name, 1, "")
+EndViewStateScoreVS._set_initial_tab = function (self)
+	-- function 17
+	self:_change_tab(self._selected_layout_name, 1, "")
 end
 
-function EndViewStateScoreVS._handle_input(arg_18_0, arg_18_1, arg_18_2)
-	local var_18_0 = arg_18_0._input_manager:get_service("end_of_level")
-	local var_18_1 = arg_18_0._title_button_widgets
+EndViewStateScoreVS._handle_input = function (self, arg_18_1, arg_18_2)
+	-- function 18
+	local get_service = self._input_manager:get_service("end_of_level")
+	local _title_button_widgets = self._title_button_widgets
 
-	if #var_18_1 > 1 then
-		for iter_18_0 = 1, #var_18_1 do
-			local var_18_2 = var_18_1[iter_18_0]
+	if #_title_button_widgets > 1 then
+		for i = 1, #_title_button_widgets do
+			local var_18_2 = _title_button_widgets[i]
 
-			if UIUtils.is_button_pressed(var_18_2) then
-				local var_18_3 = var_18_2.content.layout_name
+			if not UIUtils.is_button_pressed(var_18_2) then
+				local layout_name = var_18_2.content.layout_name
 
-				if var_18_3 ~= arg_18_0._selected_layout_name then
-					arg_18_0:_change_tab(var_18_3, iter_18_0, arg_18_0._selected_layout_name)
-					arg_18_0:_set_selected_option(var_18_3)
+				if layout_name ~= self._selected_layout_name then
+					self:_change_tab(layout_name, i, self._selected_layout_name)
+					self:_set_selected_option(layout_name)
 				end
 
-				arg_18_0:play_sound("Play_hud_select")
+				self:play_sound("Play_hud_select")
 
 				break
-			elseif UIUtils.is_button_hover_enter(var_18_2) then
-				arg_18_0:play_sound("Play_hud_hover")
+			elseif not UIUtils.is_button_hover_enter(var_18_2) then
+				self:play_sound("Play_hud_hover")
 			end
 		end
 	end
 
 	local var_18_4
 
-	if UIUtils.is_button_pressed(arg_18_0._widgets_by_name.prev_tab) or var_18_0:get("cycle_previous") then
-		var_18_4 = arg_18_0._selected_tab_index
-		var_18_4 = math.clamp((var_18_4 or 1) - 1, 1, #arg_18_0._title_button_widgets)
-	elseif UIUtils.is_button_pressed(arg_18_0._widgets_by_name.next_tab) or var_18_0:get("cycle_next") then
-		var_18_4 = arg_18_0._selected_tab_index
-		var_18_4 = math.clamp((var_18_4 or 1) + 1, 1, #arg_18_0._title_button_widgets)
+	if UIUtils.is_button_pressed(self._widgets_by_name.prev_tab) or not get_service:get("cycle_previous") then
+		var_18_4 = self._selected_tab_index
+		var_18_4 = math.clamp((var_18_4 or 1) - 1, 1, #self._title_button_widgets)
+	elseif UIUtils.is_button_pressed(self._widgets_by_name.next_tab) or not get_service:get("cycle_next") then
+		var_18_4 = self._selected_tab_index
+		var_18_4 = math.clamp((var_18_4 or 1) + 1, 1, #self._title_button_widgets)
 	end
 
-	if var_18_4 then
-		local var_18_5 = arg_18_0._title_button_widgets[var_18_4].content.layout_name
+	if not var_18_4 then
+		local layout_name_2 = self._title_button_widgets[var_18_4].content.layout_name
 
-		if var_18_5 ~= arg_18_0._selected_layout_name then
-			arg_18_0:_change_tab(var_18_5, var_18_4, arg_18_0._selected_layout_name)
+		if layout_name_2 ~= self._selected_layout_name then
+			self:_change_tab(layout_name_2, var_18_4, self._selected_layout_name)
 		end
 	end
 
-	local var_18_6 = arg_18_0._widgets_by_name.back_to_keep_button
-	local var_18_7 = UIUtils.is_button_enabled(var_18_6) and var_18_0:get("refresh")
+	local back_to_keep_button = self._widgets_by_name.back_to_keep_button
+	local is_button_enabled = UIUtils.is_button_enabled(back_to_keep_button)
 
-	if UIUtils.is_button_pressed(var_18_6) or var_18_7 then
-		arg_18_0._done = true
+	is_button_enabled = not is_button_enabled and get_service:get("refresh")
 
-		UIUtils.enable_button(var_18_6, false)
-		arg_18_0:play_sound("play_gui_mission_summary_button_return_to_keep_click")
+	if UIUtils.is_button_pressed(back_to_keep_button) or not is_button_enabled then
+		self._done = true
+
+		UIUtils.enable_button(back_to_keep_button, false)
+		self:play_sound("play_gui_mission_summary_button_return_to_keep_click")
 		Managers.transition:fade_in(GameSettings.transition_fade_in_speed)
-	elseif UIUtils.is_button_hover_enter(var_18_6) then
-		arg_18_0:play_sound("Play_hud_hover")
+	elseif not UIUtils.is_button_hover_enter(back_to_keep_button) then
+		self:play_sound("Play_hud_hover")
 	end
 end
 
-function EndViewStateScoreVS._change_tab(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
-	if arg_19_2 < 0 or arg_19_2 > #arg_19_0._title_button_widgets then
+EndViewStateScoreVS._change_tab = function (self, arg_19_1, arg_19_2, arg_19_3)
+	-- function 19
+	if not (arg_19_2 < 0 or not (arg_19_2 > #self._title_button_widgets)) then
 		return
 	end
 
-	local var_19_0 = arg_19_0:_get_tab_settings_by_layout_name(arg_19_3)
+	local _get_tab_settings_by_layout_name = self:_get_tab_settings_by_layout_name(arg_19_3)
 
-	if arg_19_0._active_tab and arg_19_0._active_tab.NAME == var_19_0.class_name then
-		arg_19_0._active_tab:on_exit()
+	if not (not self._active_tab and self._active_tab.NAME ~= _get_tab_settings_by_layout_name.class_name) then
+		self._active_tab:on_exit()
 
-		arg_19_0._active_tab = nil
+		self._active_tab = nil
 	end
 
-	local var_19_1 = arg_19_0._layout_settings[arg_19_2].class_name
-	local var_19_2 = rawget(_G, var_19_1):new()
+	local class_name = self._layout_settings[arg_19_2].class_name
+	local var_19_2 = rawget(_G, class_name):new()
 
-	if var_19_2.on_enter then
-		var_19_2:on_enter(arg_19_0._params)
+	if not var_19_2.on_enter then
+		var_19_2:on_enter(self._params)
 	end
 
-	arg_19_0._active_tab = var_19_2
-	arg_19_0._selected_layout_name = arg_19_1
+	self._active_tab = var_19_2
+	self._selected_layout_name = arg_19_1
 
-	arg_19_0:_update_tab_selection(arg_19_2)
-	arg_19_0:play_sound("Play_vs_hud_progression_scoreboard_appear")
+	self:_update_tab_selection(arg_19_2)
+	self:play_sound("Play_vs_hud_progression_scoreboard_appear")
 end
 
-function EndViewStateScoreVS._update_tab_selection(arg_20_0, arg_20_1)
-	arg_20_0._selected_tab_index = arg_20_1
+EndViewStateScoreVS._update_tab_selection = function (self, arg_20_1)
+	-- function 20
+	self._selected_tab_index = arg_20_1
 
-	for iter_20_0, iter_20_1 in ipairs(arg_20_0._title_button_widgets) do
-		iter_20_1.content.hotspot.is_selected = iter_20_0 == arg_20_1
+	for i, v in ipairs(self._title_button_widgets) do
+		v.content.hotspot.is_selected = i == arg_20_1
 	end
 
-	local var_20_0 = arg_20_0._title_button_widgets[arg_20_1]
-	local var_20_1 = var_20_0.content.text
-	local var_20_2 = var_20_0.style.text
+	local var_20_0 = self._title_button_widgets[arg_20_1]
+	local text = var_20_0.content.text
+	local text_2 = var_20_0.style.text
 	local var_20_3 = var_20_0.offset[1]
-	local var_20_4 = 20
-	local var_20_5 = UIUtils.get_text_width(arg_20_0._ui_renderer, var_20_2, var_20_1)
-	local var_20_6 = arg_20_0._widgets_by_name.tab_selection
-	local var_20_7 = var_20_6.style.rect
+	local num = 20
+	local get_text_width = UIUtils.get_text_width(self._ui_renderer, text_2, text)
+	local tab_selection = self._widgets_by_name.tab_selection
+	local rect = tab_selection.style.rect
 
-	arg_20_0._ui_animations.tab_selection_position = UIAnimation.init(UIAnimation.function_by_time, var_20_6.offset, 1, var_20_6.offset[1], var_20_3, 0.25, math.easeOutCubic)
-	arg_20_0._ui_animations.tab_selection_size = UIAnimation.init(UIAnimation.function_by_time, var_20_7.texture_size, 1, var_20_7.texture_size[1], var_20_5 + var_20_4, 0.25, math.easeOutCubic)
+	self._ui_animations.tab_selection_position = UIAnimation.init(UIAnimation.function_by_time, tab_selection.offset, 1, tab_selection.offset[1], var_20_3, 0.25, math.easeOutCubic)
+	self._ui_animations.tab_selection_size = UIAnimation.init(UIAnimation.function_by_time, rect.texture_size, 1, rect.texture_size[1], get_text_width + num, 0.25, math.easeOutCubic)
 end
 
-function EndViewStateScoreVS._set_selected_option(arg_21_0, arg_21_1)
-	local var_21_0 = arg_21_0._title_button_widgets
+EndViewStateScoreVS._set_selected_option = function (self, arg_21_1)
+	-- function 21
+	local _title_button_widgets = self._title_button_widgets
 
-	for iter_21_0 = 1, #var_21_0 do
-		local var_21_1 = var_21_0[iter_21_0].content
-		local var_21_2 = var_21_1.layout_name
+	for i = 1, #_title_button_widgets do
+		local content = _title_button_widgets[i].content
+		local layout_name = content.layout_name
 
-		var_21_1.hotspot.is_selected = var_21_2 == arg_21_1
+		content.hotspot.is_selected = layout_name == arg_21_1
 	end
 end
 
-function EndViewStateScoreVS.post_update(arg_22_0, arg_22_1, arg_22_2)
+EndViewStateScoreVS.post_update = function (arg_22_0, arg_22_1, arg_22_2)
+	-- function 22
 	return
 end
 
-function EndViewStateScoreVS._draw(arg_23_0, arg_23_1, arg_23_2)
-	local var_23_0 = arg_23_0._ui_renderer
-	local var_23_1 = arg_23_0._ui_scenegraph
-	local var_23_2 = arg_23_0._render_settings
-	local var_23_3 = Managers.input:is_device_active("gamepad")
-	local var_23_4 = arg_23_0._input_manager:get_service("end_of_level")
+EndViewStateScoreVS._draw = function (self, arg_23_1, arg_23_2)
+	-- function 23
+	local _ui_renderer = self._ui_renderer
+	local _ui_scenegraph = self._ui_scenegraph
+	local _render_settings = self._render_settings
+	local is_device_active = Managers.input:is_device_active("gamepad")
+	local get_service = self._input_manager:get_service("end_of_level")
 
-	UIRenderer.begin_pass(var_23_0, var_23_1, var_23_4, arg_23_1, nil, var_23_2)
-	UIRenderer.draw_all_widgets(var_23_0, arg_23_0._widgets)
+	UIRenderer.begin_pass(_ui_renderer, _ui_scenegraph, get_service, arg_23_1, nil, _render_settings)
+	UIRenderer.draw_all_widgets(_ui_renderer, self._widgets)
 
-	if #arg_23_0._title_button_widgets > 1 then
-		UIRenderer.draw_all_widgets(var_23_0, arg_23_0._title_button_widgets)
+	if #self._title_button_widgets > 1 then
+		UIRenderer.draw_all_widgets(_ui_renderer, self._title_button_widgets)
 	end
 
-	UIRenderer.end_pass(var_23_0)
+	UIRenderer.end_pass(_ui_renderer)
 end
 
-function EndViewStateScoreVS.done(arg_24_0)
-	return arg_24_0._done
+EndViewStateScoreVS.done = function (self)
+	-- function 24
+	return self._done
 end
 
-function EndViewStateScoreVS._get_tab_settings_by_layout_name(arg_25_0, arg_25_1)
-	for iter_25_0, iter_25_1 in ipairs(arg_25_0._layout_settings) do
-		if iter_25_1.name == arg_25_1 then
-			return iter_25_1
+EndViewStateScoreVS._get_tab_settings_by_layout_name = function (self, arg_25_1)
+	-- function 25
+	for i, v in ipairs(self._layout_settings) do
+		if v.name == arg_25_1 then
+			return v
 		end
 	end
 end
 
-function EndViewStateScoreVS.activate_back_to_keep_button(arg_26_0)
-	local var_26_0 = arg_26_0._widgets_by_name.back_to_keep_button
+EndViewStateScoreVS.activate_back_to_keep_button = function (self)
+	-- function 26
+	local back_to_keep_button = self._widgets_by_name.back_to_keep_button
 
-	UIUtils.enable_button(var_26_0, true)
+	UIUtils.enable_button(back_to_keep_button, true)
 end

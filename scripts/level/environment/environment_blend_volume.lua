@@ -2,106 +2,131 @@
 
 EnvironmentBlendVolume = class(EnvironmentBlendVolume)
 
-function EnvironmentBlendVolume.init(arg_1_0, arg_1_1)
-	arg_1_0._volume_name = arg_1_1.volume_name
-	arg_1_0._environment = arg_1_1.environment
-	arg_1_0._always_inside = arg_1_1.always_inside
-	arg_1_0._level = arg_1_1.level
-	arg_1_0._level_key = arg_1_1.level_key
-	arg_1_0._viewport = arg_1_1.viewport
-	arg_1_0._player = arg_1_1.player
-	arg_1_0._value = 0
-	arg_1_0._blend_time = arg_1_1.blend_time or 2
-	arg_1_0._current_timer = 0
-	arg_1_0._enabled = true
-	arg_1_0._is_inside = false
-	arg_1_0._override_values = {
-		arg_1_0._environment,
-		not arg_1_1.override_sun_snap and "sun_direction" or nil
+EnvironmentBlendVolume.init = function (self, arg_1_1)
+	-- function 1
+	self._volume_name = arg_1_1.volume_name
+	self._environment = arg_1_1.environment
+	self._always_inside = arg_1_1.always_inside
+	self._level = arg_1_1.level
+	self._level_key = arg_1_1.level_key
+	self._viewport = arg_1_1.viewport
+	self._player = arg_1_1.player
+	self._value = 0
+
+	local blend_time = arg_1_1.blend_time
+
+	blend_time = blend_time or 2
+	self._blend_time = blend_time
+	self._current_timer = 0
+	self._enabled = true
+	self._is_inside = false
+
+	local tbl = {
+		self._environment
 	}
-	arg_1_0._data = arg_1_1
+	local flag
 
-	Managers.state.event:register(arg_1_0, "enable_environment_volume", "event_enable_environment_volume")
-	Managers.state.event:register(arg_1_0, "force_blend_environment_volume", "event_force_blend_environment_volume")
+	flag = arg_1_1.override_sun_snap or not "sun_direction" or nil
+	tbl[2] = flag
+	self._override_values = tbl
+	self._data = arg_1_1
+
+	Managers.state.event:register(self, "enable_environment_volume", "event_enable_environment_volume")
+	Managers.state.event:register(self, "force_blend_environment_volume", "event_force_blend_environment_volume")
 end
 
-function EnvironmentBlendVolume.particle_light_intensity(arg_2_0)
-	return arg_2_0._data.particle_light_intensity
+EnvironmentBlendVolume.particle_light_intensity = function (self)
+	-- function 2
+	return self._data.particle_light_intensity
 end
 
-function EnvironmentBlendVolume.event_force_blend_environment_volume(arg_3_0)
-	if arg_3_0._enabled then
-		arg_3_0._force_blend = true
+EnvironmentBlendVolume.event_force_blend_environment_volume = function (self)
+	-- function 3
+	if not self._enabled then
+		self._force_blend = true
 	end
 end
 
-function EnvironmentBlendVolume.event_enable_environment_volume(arg_4_0, arg_4_1, arg_4_2)
-	if arg_4_0._volume_name == arg_4_1 then
-		arg_4_0._enabled = arg_4_2
+EnvironmentBlendVolume.event_enable_environment_volume = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	if self._volume_name == arg_4_1 then
+		self._enabled = arg_4_2
 	end
 end
 
-function EnvironmentBlendVolume.environment(arg_5_0)
-	return arg_5_0._environment
+EnvironmentBlendVolume.environment = function (self)
+	-- function 5
+	return self._environment
 end
 
-function EnvironmentBlendVolume.level_key(arg_6_0)
-	return arg_6_0._level_key
+EnvironmentBlendVolume.level_key = function (self)
+	-- function 6
+	return self._level_key
 end
 
-function EnvironmentBlendVolume.value(arg_7_0)
-	return arg_7_0._value
+EnvironmentBlendVolume.value = function (self)
+	-- function 7
+	return self._value
 end
 
-function EnvironmentBlendVolume.is_inside(arg_8_0)
-	return arg_8_0._is_inside
+EnvironmentBlendVolume.is_inside = function (self)
+	-- function 8
+	return self._is_inside
 end
 
-function EnvironmentBlendVolume.override_settings(arg_9_0)
-	return arg_9_0._override_values
+EnvironmentBlendVolume.override_settings = function (self)
+	-- function 9
+	return self._override_values
 end
 
-function EnvironmentBlendVolume.update(arg_10_0, arg_10_1)
-	if arg_10_0._enabled and arg_10_0._always_inside then
-		arg_10_0._value = 1
-		arg_10_0._current_timer = 1
+EnvironmentBlendVolume.update = function (self, arg_10_1)
+	-- function 10
+	if not self._enabled and not self._always_inside then
+		self._value = 1
+		self._current_timer = 1
 
 		return
 	end
 
-	local var_10_0 = ScriptViewport.camera(arg_10_0._viewport)
-	local var_10_1 = arg_10_0._data.volume_name
+	local camera = ScriptViewport.camera(self._viewport)
+	local volume_name = self._data.volume_name
 
-	arg_10_0._is_inside = false
+	self._is_inside = false
 
-	if arg_10_0._enabled then
-		if arg_10_0._data.is_sphere then
-			local var_10_2 = ScriptCamera.position(var_10_0)
-			local var_10_3 = arg_10_0._data.sphere_pos:unbox()
+	if not self._enabled then
+		if not self._data.is_sphere then
+			local position = ScriptCamera.position(camera)
+			local unbox = self._data.sphere_pos:unbox()
 
-			arg_10_0._is_inside = Vector3.distance_squared(var_10_2, var_10_3) < arg_10_0._data.sphere_radius * arg_10_0._data.sphere_radius
+			self._is_inside = Vector3.distance_squared(position, unbox) < self._data.sphere_radius * self._data.sphere_radius
 		else
-			arg_10_0._is_inside = Level.is_point_inside_volume(arg_10_0._level, arg_10_0._volume_name, ScriptCamera.position(var_10_0))
+			self._is_inside = Level.is_point_inside_volume(self._level, self._volume_name, ScriptCamera.position(camera))
 		end
 	end
 
-	local var_10_4 = arg_10_0._is_inside and 1 or -1
+	local flag
 
-	if arg_10_0._blend_time <= 0 or arg_10_0._force_blend then
-		arg_10_0._current_timer = arg_10_0._is_inside and 1 or 0
-		arg_10_0._force_blend = false
+	flag = not self._is_inside and 1 and -1
+
+	if self._blend_time <= 0 or not self._force_blend then
+		local flag_2
+
+		flag_2 = not self._is_inside and 1 and 0
+		self._current_timer = flag_2
+		self._force_blend = false
 	else
-		arg_10_0._current_timer = math.clamp(arg_10_0._current_timer + 1 / arg_10_0._blend_time * (arg_10_1 * var_10_4), 0, 1)
+		self._current_timer = math.clamp(self._current_timer + 1 / self._blend_time * (arg_10_1 * flag), 0, 1)
 	end
 
-	arg_10_0._value = math.smoothstep(arg_10_0._current_timer, 0, 1)
+	self._value = math.smoothstep(self._current_timer, 0, 1)
 end
 
-function EnvironmentBlendVolume.destroy(arg_11_0)
-	local var_11_0 = Managers.state.event
+EnvironmentBlendVolume.destroy = function (arg_11_0)
+	-- function 11
+	local event = Managers.state.event
 
-	if var_11_0 then
-		var_11_0:unregister("enable_environment_volume", arg_11_0)
-		var_11_0:unregister("force_blend_environment_volume", arg_11_0)
+	if not event then
+		event:unregister("enable_environment_volume", arg_11_0)
+		event:unregister("force_blend_environment_volume", arg_11_0)
 	end
 end

@@ -1,30 +1,47 @@
 -- chunkname: @scripts/utils/visual_assert_log.lua
 
-script_data.visual_assert_log_enabled = script_data.visual_assert_log_enabled or Development.parameter("visual_assert_log_enabled")
+local script_data = script_data
+local visual_assert_log_enabled = script_data.visual_assert_log_enabled
+
+visual_assert_log_enabled = visual_assert_log_enabled or Development.parameter("visual_assert_log_enabled")
+script_data.visual_assert_log_enabled = visual_assert_log_enabled
+
+local VisualAssertLog = VisualAssertLog
+
 VisualAssertLog = VisualAssertLog or {}
+VisualAssertLog = VisualAssertLog
 
-function VisualAssertLog.setup(arg_1_0)
-	local var_1_0 = VisualAssertLog
+VisualAssertLog.setup = function (arg_1_0)
+	-- function 1
+	local VisualAssertLog = VisualAssertLog
 
-	var_1_0.world = arg_1_0
-	var_1_0.console_page_up_key = Keyboard.button_index("page up")
-	var_1_0.console_page_down_key = Keyboard.button_index("page down")
-	var_1_0.console_end_key = Keyboard.button_index("insert")
+	VisualAssertLog.world = arg_1_0
+	VisualAssertLog.console_page_up_key = Keyboard.button_index("page up")
+	VisualAssertLog.console_page_down_key = Keyboard.button_index("page down")
+	VisualAssertLog.console_end_key = Keyboard.button_index("insert")
 
-	if arg_1_0 then
-		var_1_0.gui = World.create_screen_gui(arg_1_0, "material", "materials/fonts/gw_fonts", "immediate")
+	if not arg_1_0 then
+		VisualAssertLog.gui = World.create_screen_gui(arg_1_0, "material", "materials/fonts/gw_fonts", "immediate")
 	end
 
-	var_1_0.asserts = VisualAssertLog.asserts or {}
-	var_1_0.n_asserts = VisualAssertLog.n_asserts or 0
-	var_1_0.current_visualized_assert = 1
-	var_1_0.display_asserts = false
+	local asserts = VisualAssertLog.asserts
+
+	asserts = asserts or {}
+	VisualAssertLog.asserts = asserts
+
+	local n_asserts = VisualAssertLog.n_asserts
+
+	n_asserts = n_asserts or 0
+	VisualAssertLog.n_asserts = n_asserts
+	VisualAssertLog.current_visualized_assert = 1
+	VisualAssertLog.display_asserts = false
 end
 
-function VisualAssertLog.cleanup()
-	local var_2_0 = VisualAssertLog
+VisualAssertLog.cleanup = function ()
+	-- function 2
+	local VisualAssertLog = VisualAssertLog
 
-	if VisualAssertLog.world and VisualAssertLog.gui then
+	if not VisualAssertLog.world and not VisualAssertLog.gui then
 		World.destroy_gui(VisualAssertLog.world, VisualAssertLog.gui)
 
 		VisualAssertLog.world = nil
@@ -32,38 +49,39 @@ function VisualAssertLog.cleanup()
 	end
 end
 
-local var_0_0 = 16
-local var_0_1 = "arial"
-local var_0_2 = "materials/fonts/" .. var_0_1
+local num = 16
+local str = "arial"
+local str_2 = "materials/fonts/" .. str
 
-function VisualAssertLog.update()
+VisualAssertLog.update = function ()
+	-- function 3
 	if not script_data.visual_assert_log_enabled then
 		return
 	end
 
 	if VisualAssertLog.n_asserts > 0 then
-		local var_3_0 = VisualAssertLog.gui
-		local var_3_1 = RESOLUTION_LOOKUP.res_w
-		local var_3_2 = RESOLUTION_LOOKUP.res_h
+		local gui = VisualAssertLog.gui
+		local res_w = RESOLUTION_LOOKUP.res_w
+		local res_h = RESOLUTION_LOOKUP.res_h
 		local var_3_3 = Color(255, 204, 0)
 
-		if Keyboard.pressed(VisualAssertLog.console_end_key) then
+		if not Keyboard.pressed(VisualAssertLog.console_end_key) then
 			VisualAssertLog.display_asserts = not VisualAssertLog.display_asserts
 		end
 
-		if VisualAssertLog.display_asserts then
-			if DEDICATED_SERVER then
+		if not VisualAssertLog.display_asserts then
+			if not DEDICATED_SERVER then
 				print("[VisualAssertLog] Dumping VisualAssertLog.asserts")
 
-				for iter_3_0, iter_3_1 in ipairs(VisualAssertLog.asserts) do
-					local var_3_4 = iter_3_1.message
+				for i, v in ipairs(VisualAssertLog.asserts) do
+					local message = v.message
 
-					print(var_3_4)
+					print(message)
 
-					local var_3_5 = iter_3_1.traceback
+					local traceback = v.traceback
 
-					for iter_3_2, iter_3_3 in ipairs(var_3_5) do
-						print(iter_3_3)
+					for i_2, v_2 in ipairs(traceback) do
+						print(v_2)
 					end
 
 					print("=========================================================")
@@ -71,84 +89,86 @@ function VisualAssertLog.update()
 
 				VisualAssertLog.display_asserts = false
 			else
-				Gui.text(var_3_0, "VAsrt:" .. tostring(VisualAssertLog.n_asserts), var_0_2, var_0_0, var_0_1, Vector3(var_3_1 - 50, var_3_2 - 20, 999), var_3_3)
+				Gui.text(gui, "VAsrt:" .. tostring(VisualAssertLog.n_asserts), str_2, num, str, Vector3(res_w - 50, res_h - 20, 999), var_3_3)
 
-				local var_3_6 = VisualAssertLog.n_asserts
-				local var_3_7 = VisualAssertLog.current_visualized_assert
+				local n_asserts = VisualAssertLog.n_asserts
+				local current_visualized_assert = VisualAssertLog.current_visualized_assert
 
-				if Keyboard.pressed(VisualAssertLog.console_page_up_key) then
-					var_3_7 = var_3_7 + 1
-					var_3_7 = var_3_6 < var_3_7 and 1 or var_3_7
+				if not Keyboard.pressed(VisualAssertLog.console_page_up_key) then
+					current_visualized_assert = current_visualized_assert + 1
+					current_visualized_assert = not (n_asserts < current_visualized_assert) or not 1 or current_visualized_assert
 				end
 
-				if Keyboard.pressed(VisualAssertLog.console_page_down_key) then
-					var_3_7 = var_3_7 - 1
-					var_3_7 = var_3_7 <= 0 and var_3_6 or var_3_7
+				if not Keyboard.pressed(VisualAssertLog.console_page_down_key) then
+					current_visualized_assert = current_visualized_assert - 1
+					current_visualized_assert = not (current_visualized_assert <= 0) or not n_asserts or current_visualized_assert
 				end
 
-				VisualAssertLog.current_visualized_assert = var_3_7
+				VisualAssertLog.current_visualized_assert = current_visualized_assert
 
-				local var_3_8 = VisualAssertLog.asserts[var_3_7]
-				local var_3_9 = var_3_2 - 50 - var_0_0
-				local var_3_10, var_3_11 = Gui.text_extents(var_3_0, tostring(var_3_8.message), var_0_2, var_0_0)
-				local var_3_12 = var_3_11.x - var_3_10.x
+				local var_3_8 = VisualAssertLog.asserts[current_visualized_assert]
+				local num_2 = res_h - 50 - num
+				local text_extents, var_3_11 = Gui.text_extents(gui, tostring(var_3_8.message), str_2, num)
+				local num_3 = var_3_11.x - text_extents.x
 
-				Gui.text(var_3_0, tostring(var_3_8.message), var_0_2, var_0_0, var_0_1, Vector3(var_3_1 / 2 - var_3_12 / 2, var_3_9, 999), var_3_3)
+				Gui.text(gui, tostring(var_3_8.message), str_2, num, str, Vector3(res_w / 2 - num_3 / 2, num_2, 999), var_3_3)
 
-				for iter_3_4, iter_3_5 in ipairs(var_3_8.traceback) do
-					local var_3_13, var_3_14 = Gui.text_extents(var_3_0, tostring(iter_3_5), var_0_2, var_0_0)
-					local var_3_15 = var_3_14.x - var_3_13.x
+				for i_3, v_3 in ipairs(var_3_8.traceback) do
+					local text_extents_2, var_3_14 = Gui.text_extents(gui, tostring(v_3), str_2, num)
+					local num_4 = var_3_14.x - text_extents_2.x
 
-					Gui.text(var_3_0, tostring(iter_3_5), var_0_2, var_0_0, var_0_1, Vector3(50, var_3_9 - iter_3_4 * var_0_0, 999), var_3_3)
+					Gui.text(gui, tostring(v_3), str_2, num, str, Vector3(50, num_2 - i_3 * num, 999), var_3_3)
 				end
 			end
 		end
 	end
 end
 
-local function var_0_3(arg_4_0)
-	local var_4_0 = #arg_4_0
+local function fn(self)
+	-- function 4
+	local count = #self
 
-	table.remove(arg_4_0, (var_4_0 + 1) / 2 + 2)
-	table.remove(arg_4_0, 3)
-	table.remove(arg_4_0, 2)
+	table.remove(self, (count + 1) / 2 + 2)
+	table.remove(self, 3)
+	table.remove(self, 2)
 
 	local var_4_1
-	local var_4_2 = 1
+	local num = 1
 
-	for iter_4_0, iter_4_1 in ipairs(arg_4_0) do
-		if var_4_1 then
-			if string.find(iter_4_1, "^local_variables%:$") then
-				var_4_2 = 1
+	for i, v in ipairs(self) do
+		if not var_4_1 then
+			if not string.find(v, "^local_variables%:$") then
+				num = 1
 			else
-				local var_4_3 = string.gsub(iter_4_1, "^[ ]*%[(%d+)%] ([a-zA-Z0-9 :=,./%[%]]+)", "%2")
+				local gsub = string.gsub(v, "^[ ]*%[(%d+)%] ([a-zA-Z0-9 :=,./%[%]]+)", "%2")
 
-				arg_4_0[iter_4_0] = string.format("[%d] %s", var_4_2, var_4_3)
-				var_4_2 = var_4_2 + 1
+				self[i] = string.format("[%d] %s", num, gsub)
+				num = num + 1
 			end
-		elseif string.find(iter_4_1, "^stack traceback%:$") then
+		elseif not string.find(v, "^stack traceback%:$") then
 			var_4_1 = true
 		end
 	end
 
-	return arg_4_0
+	return self
 end
 
 function visual_assert(arg_5_0, arg_5_1, ...)
+	-- function 5
 	if not arg_5_0 then
-		local var_5_0 = VisualAssertLog.n_asserts + 1
+		local num = VisualAssertLog.n_asserts + 1
 
-		if var_5_0 <= 50 then
-			VisualAssertLog.n_asserts = var_5_0
+		if num <= 50 then
+			VisualAssertLog.n_asserts = num
 
-			local var_5_1 = {
+			local tbl = {
 				message = string.format(arg_5_1, ...),
-				traceback = var_0_3(string.split_deprecated(Script.callstack(), "\n"))
+				traceback = fn(string.split_deprecated(Script.callstack(), "\n"))
 			}
 
-			VisualAssertLog.asserts[var_5_0] = var_5_1
+			VisualAssertLog.asserts[num] = tbl
 
-			if DEDICATED_SERVER then
+			if not DEDICATED_SERVER then
 				arg_5_1 = string.format(arg_5_1, ...)
 
 				Application.error("Visual Assert: " .. arg_5_1)

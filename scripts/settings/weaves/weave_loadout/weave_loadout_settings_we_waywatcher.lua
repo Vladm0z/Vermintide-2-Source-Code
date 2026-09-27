@@ -1,12 +1,15 @@
 -- chunkname: @scripts/settings/weaves/weave_loadout/weave_loadout_settings_we_waywatcher.lua
 
-WeaveLoadoutSettings = WeaveLoadoutSettings or {}
+local WeaveLoadoutSettings = WeaveLoadoutSettings
 
-local var_0_0 = "wood_elf"
-local var_0_1 = CareerSettings.we_waywatcher.talent_tree_index
+WeaveLoadoutSettings = WeaveLoadoutSettings or {}
+WeaveLoadoutSettings = WeaveLoadoutSettings
+
+local str = "wood_elf"
+local talent_tree_index = CareerSettings.we_waywatcher.talent_tree_index
 
 WeaveLoadoutSettings.we_waywatcher = {
-	talent_tree = TalentTrees[var_0_0][var_0_1],
+	talent_tree = TalentTrees[str][talent_tree_index],
 	properties = {},
 	traits = {}
 }

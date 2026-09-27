@@ -1,28 +1,31 @@
 -- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_area_selection_definitions.lua
 
-local var_0_0 = UISettings.game_start_windows
-local var_0_1 = var_0_0.frame
-local var_0_2 = var_0_0.size
-local var_0_3 = var_0_0.spacing
-local var_0_4 = {
-	var_0_2[1] * 3 + var_0_3 * 2,
-	var_0_2[2]
+local game_start_windows = UISettings.game_start_windows
+local frame = game_start_windows.frame
+local size = game_start_windows.size
+local spacing = game_start_windows.spacing
+local tbl = {
+	size[1] * 3 + spacing * 2,
+	size[2]
 }
-local var_0_5 = {
+local tbl_2 = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+				-- function 1
 				arg_1_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
-				local var_2_0 = math.easeOutCubic(arg_2_3)
+			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+				-- function 2
+				local easeOutCubic = math.easeOutCubic(arg_2_3)
 
-				arg_2_4.render_settings.alpha_multiplier = var_2_0
+				arg_2_4.render_settings.alpha_multiplier = easeOutCubic
 			end,
-			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+				-- function 3
 				return
 			end
 		}
@@ -32,21 +35,24 @@ local var_0_5 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				-- function 4
 				arg_4_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
-				local var_5_0 = math.easeOutCubic(arg_5_3)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+				-- function 5
+				local easeOutCubic = math.easeOutCubic(arg_5_3)
 
-				arg_5_4.render_settings.alpha_multiplier = 1 - var_5_0
+				arg_5_4.render_settings.alpha_multiplier = 1 - easeOutCubic
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+				-- function 6
 				return
 			end
 		}
 	}
 }
-local var_0_6 = {
+local tbl_3 = {
 	root = {
 		is_root = true,
 		size = {
@@ -89,9 +95,9 @@ local var_0_6 = {
 		vertical_alignment = "center",
 		parent = "menu_root",
 		horizontal_alignment = "center",
-		size = var_0_4,
+		size = tbl,
 		position = {
-			var_0_2[1] + var_0_3,
+			size[1] + spacing,
 			0,
 			1
 		}
@@ -100,7 +106,7 @@ local var_0_6 = {
 		vertical_alignment = "center",
 		parent = "window",
 		horizontal_alignment = "center",
-		size = var_0_4,
+		size = tbl,
 		position = {
 			0,
 			0,
@@ -112,7 +118,7 @@ local var_0_6 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_4[1],
+			tbl[1],
 			770
 		},
 		position = {
@@ -220,7 +226,7 @@ local var_0_6 = {
 		}
 	}
 }
-local var_0_7 = {
+local tbl_4 = {
 	word_wrap = true,
 	upper_case = true,
 	localize = true,
@@ -236,7 +242,7 @@ local var_0_7 = {
 		3
 	}
 }
-local var_0_8 = {
+local tbl_5 = {
 	word_wrap = true,
 	upper_case = true,
 	localize = true,
@@ -252,7 +258,7 @@ local var_0_8 = {
 		3
 	}
 }
-local var_0_9 = {
+local tbl_6 = {
 	word_wrap = true,
 	localize = false,
 	font_size = 32,
@@ -268,7 +274,7 @@ local var_0_9 = {
 		3
 	}
 }
-local var_0_10 = {
+local tbl_7 = {
 	font_size = 72,
 	upper_case = true,
 	localize = false,
@@ -285,20 +291,21 @@ local var_0_10 = {
 	}
 }
 
-local function var_0_11(arg_7_0, arg_7_1)
+local function fn(arg_7_0, arg_7_1)
+	-- function 7
 	local var_7_0 = arg_7_1
-	local var_7_1 = {
+	local tbl = {
 		180,
 		180
 	}
 
 	if not var_7_0 then
 		var_7_0 = "area_root_" .. arg_7_0
-		var_0_6[var_7_0] = {
+		tbl_3[var_7_0] = {
 			vertical_alignment = "center",
 			parent = "area_root",
 			horizontal_alignment = "center",
-			size = var_7_1,
+			size = tbl,
 			position = {
 				0,
 				0,
@@ -307,10 +314,10 @@ local function var_0_11(arg_7_0, arg_7_1)
 		}
 	end
 
-	local var_7_2 = {
+	local tbl_2 = {
 		element = {}
 	}
-	local var_7_3 = {
+	local tbl_4 = {
 		{
 			style_id = "icon",
 			pass_type = "hotspot",
@@ -330,8 +337,9 @@ local function var_0_11(arg_7_0, arg_7_1)
 			pass_type = "texture",
 			style_id = "lock",
 			texture_id = "lock",
-			content_check_function = function(arg_8_0)
-				return arg_8_0.locked
+			content_check_function = function (self)
+				-- function 8
+				return self.locked
 			end
 		},
 		{
@@ -340,7 +348,7 @@ local function var_0_11(arg_7_0, arg_7_1)
 			texture_id = "frame"
 		}
 	}
-	local var_7_4 = {
+	local tbl_5 = {
 		locked = true,
 		frame = "map_frame_04",
 		icon = "level_icon_01",
@@ -348,7 +356,7 @@ local function var_0_11(arg_7_0, arg_7_1)
 		icon_glow = "map_frame_glow_02",
 		button_hotspot = {}
 	}
-	local var_7_5 = {
+	local tbl_6 = {
 		frame = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
@@ -427,22 +435,22 @@ local function var_0_11(arg_7_0, arg_7_1)
 		}
 	}
 
-	var_7_2.element.passes = var_7_3
-	var_7_2.content = var_7_4
-	var_7_2.style = var_7_5
-	var_7_2.offset = {
+	tbl_2.element.passes = tbl_4
+	tbl_2.content = tbl_5
+	tbl_2.style = tbl_6
+	tbl_2.offset = {
 		0,
 		0,
 		0
 	}
-	var_7_2.scenegraph_id = var_7_0
+	tbl_2.scenegraph_id = var_7_0
 
-	return var_7_2
+	return tbl_2
 end
 
-local var_0_12 = true
-local var_0_13 = {
-	window = UIWidgets.create_frame("window", var_0_4, var_0_1, 10),
+local flag = true
+local tbl_8 = {
+	window = UIWidgets.create_frame("window", tbl, frame, 10),
 	window_fade = UIWidgets.create_simple_texture("options_window_fade_01", "window", nil, nil, nil, 2),
 	background = UIWidgets.create_simple_rect("window", {
 		255,
@@ -450,23 +458,23 @@ local var_0_13 = {
 		0,
 		0
 	}),
-	area_title = UIWidgets.create_simple_text("area_title", "area_title", nil, nil, var_0_10),
+	area_title = UIWidgets.create_simple_text("area_title", "area_title", nil, nil, tbl_7),
 	title_divider = UIWidgets.create_simple_texture("divider_01_top", "title_divider"),
-	description_text = UIWidgets.create_simple_text("description_text", "description_text", nil, nil, var_0_9),
-	not_owned_text = UIWidgets.create_simple_text("dlc1_2_dlc_level_locked_tooltip", "not_owned_text", nil, nil, var_0_8),
-	requirements_not_met_text = UIWidgets.create_simple_text("lb_unknown", "requirements_not_met_text", nil, nil, var_0_7),
-	select_button = UIWidgets.create_default_button("select_button", var_0_6.select_button.size, nil, nil, Localize("menu_select"), 32, nil, nil, nil, var_0_12)
+	description_text = UIWidgets.create_simple_text("description_text", "description_text", nil, nil, tbl_6),
+	not_owned_text = UIWidgets.create_simple_text("dlc1_2_dlc_level_locked_tooltip", "not_owned_text", nil, nil, tbl_5),
+	requirements_not_met_text = UIWidgets.create_simple_text("lb_unknown", "requirements_not_met_text", nil, nil, tbl_4),
+	select_button = UIWidgets.create_default_button("select_button", tbl_3.select_button.size, nil, nil, Localize("menu_select"), 32, nil, nil, nil, flag)
 }
-local var_0_14 = {}
+local tbl_9 = {}
 
-for iter_0_0 = 1, 10 do
-	var_0_14[iter_0_0] = var_0_11(iter_0_0)
+for i = 1, 10 do
+	tbl_9[i] = fn(i)
 end
 
 return {
-	widgets = var_0_13,
-	area_widgets = var_0_14,
-	map_size = var_0_4,
-	scenegraph_definition = var_0_6,
-	animation_definitions = var_0_5
+	widgets = tbl_8,
+	area_widgets = tbl_9,
+	map_size = tbl,
+	scenegraph_definition = tbl_3,
+	animation_definitions = tbl_2
 }

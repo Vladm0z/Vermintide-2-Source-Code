@@ -1,6 +1,9 @@
 -- chunkname: @scripts/settings/outline_settings_vs.lua
 
+local OutlineSettingsVS = OutlineSettingsVS
+
 OutlineSettingsVS = OutlineSettingsVS or {}
+OutlineSettingsVS = OutlineSettingsVS
 OutlineSettingsVS.colors = {
 	ally = {
 		pulse_multiplier = 50,
@@ -52,6 +55,6 @@ OutlineSettingsVS.templates = {
 	}
 }
 
-for iter_0_0, iter_0_1 in pairs(OutlineSettingsVS.colors) do
-	iter_0_1.name = iter_0_0
+for k, v in pairs(OutlineSettingsVS.colors) do
+	v.name = k
 end

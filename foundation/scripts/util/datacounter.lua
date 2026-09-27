@@ -2,71 +2,73 @@
 
 DataCounter = {}
 
-local function var_0_0(arg_1_0, arg_1_1, arg_1_2)
-	if arg_1_1[arg_1_0] then
+local function fn(arg_1_0, arg_1_1, arg_1_2)
+	-- function 1
+	if not arg_1_1[arg_1_0] then
 		return 0, 0
 	end
 
 	arg_1_1[arg_1_0] = true
 
-	local var_1_0 = type
-	local var_1_1 = 0
-	local var_1_2 = 0
+	local type = type
+	local num = 0
+	local num_2 = 0
 
-	for iter_1_0, iter_1_1 in pairs(arg_1_0) do
-		local var_1_3 = var_1_0(iter_1_0)
-		local var_1_4 = var_1_0(iter_1_1)
+	for k, v in pairs(arg_1_0) do
+		local var_1_3 = type(k)
+		local var_1_4 = type(v)
 
 		if var_1_3 == "table" then
-			local var_1_5, var_1_6 = var_0_0(iter_1_0, arg_1_1, arg_1_2 + 1)
+			local var_1_5, var_1_6 = fn(k, arg_1_1, arg_1_2 + 1)
 
-			var_1_1 = var_1_1 + var_1_5 + 1
-			var_1_2 = var_1_2 + var_1_6
+			num = num + var_1_5 + 1
+			num_2 = num_2 + var_1_6
 
-			local var_1_7 = ""
+			local str = ""
 
-			for iter_1_2 = 1, arg_1_2 do
-				var_1_7 = var_1_7 .. "\t"
+			for k_2 = 1, arg_1_2 do
+				str = str .. "\t"
 			end
 
-			printf(var_1_7 .. "%s[%6d, %6d]", tostring(iter_1_0), var_1_5, var_1_6)
+			printf(str .. "%s[%6d, %6d]", tostring(k), var_1_5, var_1_6)
 		end
 
 		if var_1_4 == "table" then
-			local var_1_8, var_1_9 = var_0_0(iter_1_1, arg_1_1, arg_1_2 + 1)
+			local var_1_8, var_1_9 = fn(v, arg_1_1, arg_1_2 + 1)
 
-			var_1_1 = var_1_1 + var_1_8 + 1
-			var_1_2 = var_1_2 + var_1_9
+			num = num + var_1_8 + 1
+			num_2 = num_2 + var_1_9
 
-			local var_1_10 = ""
+			local str_2 = ""
 
-			for iter_1_3 = 1, arg_1_2 do
-				var_1_10 = var_1_10 .. "\t"
+			for l = 1, arg_1_2 do
+				str_2 = str_2 .. "\t"
 			end
 
-			printf(var_1_10 .. "%s[%6d, %6d]", tostring(iter_1_0), var_1_8, var_1_9)
+			printf(str_2 .. "%s[%6d, %6d]", tostring(k), var_1_8, var_1_9)
 		else
-			var_1_2 = var_1_2 + 1
+			num_2 = num_2 + 1
 		end
 	end
 
-	return var_1_1, var_1_2
+	return num, num_2
 end
 
-function DataCounter.analyze_table(arg_2_0, arg_2_1, ...)
-	local var_2_0 = {}
+DataCounter.analyze_table = function (arg_2_0, arg_2_1, ...)
+	-- function 2
+	local tbl = {}
 
-	for iter_2_0 = 1, select("#", ...) do
-		local var_2_1 = select(iter_2_0, ...)
+	for i = 1, select("#", ...) do
+		local var_2_1 = select(i, ...)
 
-		if var_2_1 then
-			var_2_0[var_2_1] = true
+		if not var_2_1 then
+			tbl[var_2_1] = true
 		end
 	end
 
 	print(arg_2_1)
 
-	local var_2_2, var_2_3 = var_0_0(arg_2_0, var_2_0, 1)
+	local var_2_2, var_2_3 = fn(arg_2_0, tbl, 1)
 
 	printf("Analyzed table %q with %d table counts and value counts of %d", arg_2_1 or "unknown", var_2_2, var_2_3)
 end

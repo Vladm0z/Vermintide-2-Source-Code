@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/morris/sig_snare_e/generated/wastes_path1/world_spawn_zones.lua
 
-local var_0_0 = {
+local tbl = {
 	{
 		kind = "good",
 		main_path_index = 1,
@@ -279,7 +279,7 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	{
 		path_length = 25.716758728027344,
 		travel_dist = {
@@ -1095,8 +1095,8 @@ local var_0_1 = {
 		}
 	}
 }
-local var_0_2 = {}
-local var_0_3 = {
+local tbl_3 = {}
+local tbl_4 = {
 	{
 		unique_zone_id = 1,
 		travel_dist = 9.999994039535522,
@@ -21471,7 +21471,7 @@ local var_0_3 = {
 		}
 	}
 }
-local var_0_4 = {
+local tbl_5 = {
 	76.08125305175781,
 	124.875,
 	3.185723304748535,
@@ -23543,7 +23543,7 @@ local var_0_4 = {
 	-0.995495617389679,
 	0.09480761736631393
 }
-local var_0_5 = {
+local tbl_6 = {
 	{
 		-207.09823608398438,
 		294.6540832519531,
@@ -118385,20 +118385,20 @@ local var_0_5 = {
 		37.61601638793945
 	}
 }
-local var_0_6 = 18968
-local var_0_7 = 65
-local var_0_8 = 710.76824420691
-local var_0_9 = "1"
+local num = 18968
+local num_2 = 65
+local num_3 = 710.76824420691
+local str = "1"
 
 return {
-	version = var_0_9,
-	number_of_spawns = var_0_6,
-	path_markers = var_0_0,
-	zones = var_0_3,
-	cover_points = var_0_4,
-	num_main_zones = var_0_7,
-	position_lookup = var_0_5,
-	main_paths = var_0_1,
-	crossroads = var_0_2,
-	total_main_path_length = var_0_8
+	version = str,
+	number_of_spawns = num,
+	path_markers = tbl,
+	zones = tbl_4,
+	cover_points = tbl_5,
+	num_main_zones = num_2,
+	position_lookup = tbl_6,
+	main_paths = tbl_2,
+	crossroads = tbl_3,
+	total_main_path_length = num_3
 }

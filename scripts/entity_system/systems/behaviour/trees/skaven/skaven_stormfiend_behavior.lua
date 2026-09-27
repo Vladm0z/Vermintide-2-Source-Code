@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/skaven/skaven_stormfiend_behavior.lua
 
-local var_0_0 = BreedActions.skaven_stormfiend
+local skaven_stormfiend = BreedActions.skaven_stormfiend
 
 BreedBehaviors.stormfiend = {
 	"BTSelector",
@@ -20,7 +20,7 @@ BreedBehaviors.stormfiend = {
 			"BTClimbAction",
 			name = "climb",
 			condition = "at_climb_smartobject",
-			action_data = var_0_0.climb
+			action_data = skaven_stormfiend.climb
 		},
 		{
 			"BTJumpAcrossAction",
@@ -31,7 +31,7 @@ BreedBehaviors.stormfiend = {
 			"BTSmashDoorAction",
 			name = "smash_door",
 			condition = "at_door_smartobject",
-			action_data = var_0_0.smash_door
+			action_data = skaven_stormfiend.smash_door
 		},
 		condition = "ratogre_at_smartobject",
 		name = "smartobject"
@@ -40,7 +40,7 @@ BreedBehaviors.stormfiend = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = var_0_0.stagger
+		action_data = skaven_stormfiend.stagger
 	},
 	{
 		"BTSelector",
@@ -49,14 +49,14 @@ BreedBehaviors.stormfiend = {
 			enter_hook = "rage_on_enter",
 			name = "target_rage",
 			condition = "target_changed_and_distant",
-			action_data = var_0_0.target_rage
+			action_data = skaven_stormfiend.target_rage
 		},
 		{
 			"BTMeleeOverlapAttackAction",
 			leave_hook = "reset_fling_skaven",
 			name = "fling_skaven",
 			condition = "fling_skaven",
-			action_data = var_0_0.fling_skaven
+			action_data = skaven_stormfiend.fling_skaven
 		},
 		{
 			"BTUtilityNode",
@@ -64,27 +64,27 @@ BreedBehaviors.stormfiend = {
 				"BTMeleeOverlapAttackAction",
 				name = "charge",
 				leave_hook = "reset_stormfiend_charge",
-				action_data = var_0_0.charge
+				action_data = skaven_stormfiend.charge
 			},
 			{
 				"BTBossFollowAction",
 				name = "follow",
-				action_data = var_0_0.follow
+				action_data = skaven_stormfiend.follow
 			},
 			{
 				"BTMeleeOverlapAttackAction",
 				name = "melee_shove",
-				action_data = var_0_0.melee_shove
+				action_data = skaven_stormfiend.melee_shove
 			},
 			{
 				"BTStormfiendShootAction",
 				name = "shoot",
-				action_data = var_0_0.shoot
+				action_data = skaven_stormfiend.shoot
 			},
 			{
 				"BTTargetUnreachableAction",
 				name = "target_unreachable",
-				action_data = var_0_0.target_unreachable
+				action_data = skaven_stormfiend.target_unreachable
 			},
 			name = "in_combat"
 		},

@@ -2,44 +2,49 @@
 
 EndZoneSystem = class(EndZoneSystem, ExtensionSystemBase)
 
-local var_0_0 = {
+local tbl = {
 	"EndZoneExtension"
 }
 
-function EndZoneSystem.init(arg_1_0, arg_1_1, arg_1_2)
-	PropsSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_0)
+EndZoneSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
+	-- function 1
+	PropsSystem.super.init(arg_1_0, arg_1_1, arg_1_2, tbl)
 end
 
-function EndZoneSystem.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+EndZoneSystem.on_add_extension = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	-- function 2
 	return PropsSystem.super.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 end
 
-function EndZoneSystem.on_remove_extension(arg_3_0, arg_3_1, arg_3_2)
+EndZoneSystem.on_remove_extension = function (arg_3_0, arg_3_1, arg_3_2)
+	-- function 3
 	PropsSystem.super.on_remove_extension(arg_3_0, arg_3_1, arg_3_2)
 end
 
-function EndZoneSystem.update(arg_4_0, arg_4_1, arg_4_2)
+EndZoneSystem.update = function (arg_4_0, arg_4_1, arg_4_2)
+	-- function 4
 	PropsSystem.super.update(arg_4_0, arg_4_1, arg_4_2)
 end
 
-function EndZoneSystem.activate_end_zone_by_name(arg_5_0, arg_5_1)
+EndZoneSystem.activate_end_zone_by_name = function (arg_5_0, arg_5_1)
+	-- function 5
 	if not Managers.player.is_server then
 		return
 	end
 
-	local var_5_0 = Managers.state.entity:get_entities("EndZoneExtension")
-	local var_5_1 = Unit.get_data
+	local get_entities = Managers.state.entity:get_entities("EndZoneExtension")
+	local get_data = Unit.get_data
 
-	for iter_5_0, iter_5_1 in pairs(var_5_0) do
-		local var_5_2 = var_5_1(iter_5_0, "activation_name")
+	for k, v in pairs(get_entities) do
+		local var_5_2 = get_data(k, "activation_name")
 
-		if var_5_2 and var_5_2 == arg_5_1 then
-			local var_5_3 = Unit.world_position(iter_5_0, 0)
-			local var_5_4 = "units/hub_elements/objective_unit"
-			local var_5_5 = Managers.state.unit_spawner:spawn_network_unit(var_5_4, "objective_unit", nil, var_5_3)
+		if not (not var_5_2 and var_5_2 ~= arg_5_1) then
+			local world_position = Unit.world_position(k, 0)
+			local str = "units/hub_elements/objective_unit"
+			local spawn_network_unit = Managers.state.unit_spawner:spawn_network_unit(str, "objective_unit", nil, world_position)
 
-			ScriptUnit.extension(var_5_5, "tutorial_system"):set_active(true)
-			iter_5_1:activation_allowed(true)
+			ScriptUnit.extension(spawn_network_unit, "tutorial_system"):set_active(true)
+			v:activation_allowed(true)
 		end
 	end
 end

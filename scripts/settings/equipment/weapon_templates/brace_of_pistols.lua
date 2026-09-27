@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/brace_of_pistols.lua
 
-local var_0_0 = {
+local tbl = {
 	actions = {
 		action_one = {
 			default = {
@@ -72,7 +72,8 @@ local var_0_0 = {
 						auto_chain = true
 					}
 				},
-				enter_function = function(arg_1_0, arg_1_1)
+				enter_function = function (arg_1_0, arg_1_1)
+					-- function 1
 					arg_1_1:clear_input_buffer()
 
 					return arg_1_1:reset_release_input()
@@ -160,7 +161,8 @@ local var_0_0 = {
 						auto_chain = true
 					}
 				},
-				enter_function = function(arg_2_0, arg_2_1)
+				enter_function = function (arg_2_0, arg_2_1)
+					-- function 2
 					arg_2_1:clear_input_buffer()
 
 					return arg_2_1:reset_release_input()
@@ -247,7 +249,8 @@ local var_0_0 = {
 						auto_chain = true
 					}
 				},
-				enter_function = function(arg_3_0, arg_3_1)
+				enter_function = function (arg_3_0, arg_3_1)
+					-- function 3
 					arg_3_1:clear_input_buffer()
 
 					return arg_3_1:reset_release_input()
@@ -277,7 +280,8 @@ local var_0_0 = {
 				spread_template_override = "pistol_special",
 				hold_input = "action_two_hold",
 				ammo_requirement = 1,
-				anim_end_event_condition_func = function(arg_4_0, arg_4_1)
+				anim_end_event_condition_func = function (arg_4_0, arg_4_1)
+					-- function 4
 					return arg_4_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -325,8 +329,9 @@ local var_0_0 = {
 						auto_chain = true
 					}
 				},
-				condition_func = function(arg_5_0, arg_5_1, arg_5_2)
-					if arg_5_2 and arg_5_2:total_remaining_ammo() <= 0 then
+				condition_func = function (arg_5_0, arg_5_1, arg_5_2)
+					-- function 5
+					if not (not arg_5_2 and not (arg_5_2:total_remaining_ammo() <= 0)) then
 						return false
 					end
 
@@ -342,7 +347,8 @@ local var_0_0 = {
 				kind = "dummy",
 				anim_event = "special_action",
 				total_time = 1.71,
-				anim_end_event_condition_func = function(arg_6_0, arg_6_1)
+				anim_end_event_condition_func = function (arg_6_0, arg_6_1)
+					-- function 6
 					return arg_6_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {
@@ -393,8 +399,9 @@ local var_0_0 = {
 						input = "action_three"
 					}
 				},
-				condition_func = function(arg_7_0, arg_7_1, arg_7_2)
-					if arg_7_2 and arg_7_2:total_remaining_ammo() <= 0 then
+				condition_func = function (arg_7_0, arg_7_1, arg_7_2)
+					-- function 7
+					if not (not arg_7_2 and not (arg_7_2:total_remaining_ammo() <= 0)) then
 						return false
 					end
 
@@ -407,43 +414,45 @@ local var_0_0 = {
 				weapon_action_hand = "either",
 				kind = "reload",
 				total_time = 0,
-				condition_func = function(arg_8_0, arg_8_1)
-					local var_8_0 = ScriptUnit.extension(arg_8_0, "inventory_system")
-					local var_8_1 = ScriptUnit.extension(arg_8_0, "status_system")
+				condition_func = function (arg_8_0, arg_8_1)
+					-- function 8
+					local extension = ScriptUnit.extension(arg_8_0, "inventory_system")
+					local extension_2 = ScriptUnit.extension(arg_8_0, "status_system")
 					local var_8_2
 
-					if var_8_1:is_zooming() then
+					if not extension_2:is_zooming() then
 						return false
 					end
 
-					local var_8_3 = var_8_0:equipment()
+					local equipment = extension:equipment()
 
-					if var_8_3.right_hand_wielded_unit ~= nil and ScriptUnit.has_extension(var_8_3.right_hand_wielded_unit, "ammo_system") then
-						var_8_2 = ScriptUnit.extension(var_8_3.right_hand_wielded_unit, "ammo_system")
-					elseif var_8_3.left_hand_wielded_unit ~= nil and ScriptUnit.has_extension(var_8_3.left_hand_wielded_unit, "ammo_system") then
-						var_8_2 = ScriptUnit.extension(var_8_3.left_hand_wielded_unit, "ammo_system")
+					if equipment.right_hand_wielded_unit == nil or not ScriptUnit.has_extension(equipment.right_hand_wielded_unit, "ammo_system") then
+						var_8_2 = ScriptUnit.extension(equipment.right_hand_wielded_unit, "ammo_system")
+					elseif equipment.left_hand_wielded_unit == nil or not ScriptUnit.has_extension(equipment.left_hand_wielded_unit, "ammo_system") then
+						var_8_2 = ScriptUnit.extension(equipment.left_hand_wielded_unit, "ammo_system")
 					end
 
-					return var_8_2 and var_8_2:can_reload()
+					return not var_8_2 and var_8_2:can_reload()
 				end,
-				chain_condition_func = function(arg_9_0, arg_9_1)
-					local var_9_0 = ScriptUnit.extension(arg_9_0, "inventory_system")
-					local var_9_1 = ScriptUnit.extension(arg_9_0, "status_system")
+				chain_condition_func = function (arg_9_0, arg_9_1)
+					-- function 9
+					local extension = ScriptUnit.extension(arg_9_0, "inventory_system")
+					local extension_2 = ScriptUnit.extension(arg_9_0, "status_system")
 					local var_9_2
 
-					if var_9_1:is_zooming() then
+					if not extension_2:is_zooming() then
 						return false
 					end
 
-					local var_9_3 = var_9_0:equipment()
+					local equipment = extension:equipment()
 
-					if var_9_3.right_hand_wielded_unit ~= nil and ScriptUnit.has_extension(var_9_3.right_hand_wielded_unit, "ammo_system") then
-						var_9_2 = ScriptUnit.extension(var_9_3.right_hand_wielded_unit, "ammo_system")
-					elseif var_9_3.left_hand_wielded_unit ~= nil and ScriptUnit.has_extension(var_9_3.left_hand_wielded_unit, "ammo_system") then
-						var_9_2 = ScriptUnit.extension(var_9_3.left_hand_wielded_unit, "ammo_system")
+					if equipment.right_hand_wielded_unit == nil or not ScriptUnit.has_extension(equipment.right_hand_wielded_unit, "ammo_system") then
+						var_9_2 = ScriptUnit.extension(equipment.right_hand_wielded_unit, "ammo_system")
+					elseif equipment.left_hand_wielded_unit == nil or not ScriptUnit.has_extension(equipment.left_hand_wielded_unit, "ammo_system") then
+						var_9_2 = ScriptUnit.extension(equipment.left_hand_wielded_unit, "ammo_system")
 					end
 
-					return var_9_2 and var_9_2:can_reload()
+					return not var_9_2 and var_9_2:can_reload()
 				end,
 				allowed_chain_actions = {}
 			},
@@ -451,43 +460,45 @@ local var_0_0 = {
 				weapon_action_hand = "either",
 				kind = "reload",
 				total_time = 0,
-				condition_func = function(arg_10_0, arg_10_1)
-					local var_10_0 = ScriptUnit.extension(arg_10_0, "inventory_system")
-					local var_10_1 = ScriptUnit.extension(arg_10_0, "status_system")
+				condition_func = function (arg_10_0, arg_10_1)
+					-- function 10
+					local extension = ScriptUnit.extension(arg_10_0, "inventory_system")
+					local extension_2 = ScriptUnit.extension(arg_10_0, "status_system")
 					local var_10_2
 
-					if var_10_1:is_zooming() then
+					if not extension_2:is_zooming() then
 						return false
 					end
 
-					local var_10_3 = var_10_0:equipment()
+					local equipment = extension:equipment()
 
-					if var_10_3.right_hand_wielded_unit ~= nil and ScriptUnit.has_extension(var_10_3.right_hand_wielded_unit, "ammo_system") then
-						var_10_2 = ScriptUnit.extension(var_10_3.right_hand_wielded_unit, "ammo_system")
-					elseif var_10_3.left_hand_wielded_unit ~= nil and ScriptUnit.has_extension(var_10_3.left_hand_wielded_unit, "ammo_system") then
-						var_10_2 = ScriptUnit.extension(var_10_3.left_hand_wielded_unit, "ammo_system")
+					if equipment.right_hand_wielded_unit == nil or not ScriptUnit.has_extension(equipment.right_hand_wielded_unit, "ammo_system") then
+						var_10_2 = ScriptUnit.extension(equipment.right_hand_wielded_unit, "ammo_system")
+					elseif equipment.left_hand_wielded_unit == nil or not ScriptUnit.has_extension(equipment.left_hand_wielded_unit, "ammo_system") then
+						var_10_2 = ScriptUnit.extension(equipment.left_hand_wielded_unit, "ammo_system")
 					end
 
-					return var_10_2 and var_10_2:ammo_count() == 0 and var_10_2:can_reload()
+					return not var_10_2 and var_10_2:ammo_count() ~= 0 or var_10_2:can_reload()
 				end,
-				chain_condition_func = function(arg_11_0, arg_11_1)
-					local var_11_0 = ScriptUnit.extension(arg_11_0, "inventory_system")
-					local var_11_1 = ScriptUnit.extension(arg_11_0, "status_system")
+				chain_condition_func = function (arg_11_0, arg_11_1)
+					-- function 11
+					local extension = ScriptUnit.extension(arg_11_0, "inventory_system")
+					local extension_2 = ScriptUnit.extension(arg_11_0, "status_system")
 					local var_11_2
 
-					if var_11_1:is_zooming() then
+					if not extension_2:is_zooming() then
 						return false
 					end
 
-					local var_11_3 = var_11_0:equipment()
+					local equipment = extension:equipment()
 
-					if var_11_3.right_hand_wielded_unit ~= nil and ScriptUnit.has_extension(var_11_3.right_hand_wielded_unit, "ammo_system") then
-						var_11_2 = ScriptUnit.extension(var_11_3.right_hand_wielded_unit, "ammo_system")
-					elseif var_11_3.left_hand_wielded_unit ~= nil and ScriptUnit.has_extension(var_11_3.left_hand_wielded_unit, "ammo_system") then
-						var_11_2 = ScriptUnit.extension(var_11_3.left_hand_wielded_unit, "ammo_system")
+					if equipment.right_hand_wielded_unit == nil or not ScriptUnit.has_extension(equipment.right_hand_wielded_unit, "ammo_system") then
+						var_11_2 = ScriptUnit.extension(equipment.right_hand_wielded_unit, "ammo_system")
+					elseif equipment.left_hand_wielded_unit == nil or not ScriptUnit.has_extension(equipment.left_hand_wielded_unit, "ammo_system") then
+						var_11_2 = ScriptUnit.extension(equipment.left_hand_wielded_unit, "ammo_system")
 					end
 
-					return var_11_2 and var_11_2:ammo_count() == 0 and var_11_2:can_reload()
+					return not var_11_2 and var_11_2:ammo_count() ~= 0 or var_11_2:can_reload()
 				end,
 				allowed_chain_actions = {}
 			}
@@ -515,22 +526,22 @@ local var_0_0 = {
 	}
 }
 
-var_0_0.default_spread_template = "brace_of_pistols"
-var_0_0.spread_lerp_speed = 5
-var_0_0.right_hand_unit = ""
-var_0_0.right_hand_attachment_node_linking = AttachmentNodeLinking.pistol.right
-var_0_0.left_hand_unit = ""
-var_0_0.left_hand_attachment_node_linking = AttachmentNodeLinking.pistol.left
-var_0_0.display_unit = "units/weapons/weapon_display/display_pistols"
-var_0_0.wield_anim = "to_dual_pistol"
-var_0_0.state_machine = "units/beings/player/first_person_base/state_machines/ranged/dual_pistol"
-var_0_0.reload_event = "reload"
-var_0_0.crosshair_style = "default"
-var_0_0.gui_texture = "hud_weapon_icon_repeating_handgun"
-var_0_0.buff_type = "RANGED"
-var_0_0.weapon_type = "BRACE_OF_PISTOLS"
-var_0_0.dodge_count = 100
-var_0_0.buffs = {
+tbl.default_spread_template = "brace_of_pistols"
+tbl.spread_lerp_speed = 5
+tbl.right_hand_unit = ""
+tbl.right_hand_attachment_node_linking = AttachmentNodeLinking.pistol.right
+tbl.left_hand_unit = ""
+tbl.left_hand_attachment_node_linking = AttachmentNodeLinking.pistol.left
+tbl.display_unit = "units/weapons/weapon_display/display_pistols"
+tbl.wield_anim = "to_dual_pistol"
+tbl.state_machine = "units/beings/player/first_person_base/state_machines/ranged/dual_pistol"
+tbl.reload_event = "reload"
+tbl.crosshair_style = "default"
+tbl.gui_texture = "hud_weapon_icon_repeating_handgun"
+tbl.buff_type = "RANGED"
+tbl.weapon_type = "BRACE_OF_PISTOLS"
+tbl.dodge_count = 100
+tbl.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1.25
 	},
@@ -538,7 +549,7 @@ var_0_0.buffs = {
 		external_optional_multiplier = 1.25
 	}
 }
-var_0_0.aim_assist_settings = {
+tbl.aim_assist_settings = {
 	max_range = 22,
 	no_aim_input_multiplier = 0,
 	aim_at_node = "j_spine",
@@ -551,13 +562,13 @@ var_0_0.aim_assist_settings = {
 		skaven_slave = 1
 	}
 }
-var_0_0.wwise_dep_right_hand = {
+tbl.wwise_dep_right_hand = {
 	"wwise/pistol"
 }
-var_0_0.wwise_dep_left_hand = {
+tbl.wwise_dep_left_hand = {
 	"wwise/pistol"
 }
-var_0_0.weapon_diagram = {
+tbl.weapon_diagram = {
 	light_attack = {
 		[DamageTypes.ARMOR_PIERCING] = 5,
 		[DamageTypes.CLEAVE] = 2,
@@ -573,12 +584,12 @@ var_0_0.weapon_diagram = {
 		[DamageTypes.DAMAGE] = 6
 	}
 }
-var_0_0.tooltip_keywords = {
+tbl.tooltip_keywords = {
 	"weapon_keyword_high_damage",
 	"weapon_keyword_rapid_fire",
 	"weapon_keyword_versatile"
 }
-var_0_0.tooltip_compare = {
+tbl.tooltip_compare = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -588,7 +599,7 @@ var_0_0.tooltip_compare = {
 		sub_action_name = "fast_shot"
 	}
 }
-var_0_0.tooltip_detail = {
+tbl.tooltip_detail = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -598,8 +609,8 @@ var_0_0.tooltip_detail = {
 		sub_action_name = "fast_shot"
 	}
 }
-var_0_0.tooltip_special_action_description = "special_action_brace_of_pistols"
+tbl.tooltip_special_action_description = "special_action_brace_of_pistols"
 
 return {
-	brace_of_pistols_template_1 = table.clone(var_0_0)
+	brace_of_pistols_template_1 = table.clone(tbl)
 }

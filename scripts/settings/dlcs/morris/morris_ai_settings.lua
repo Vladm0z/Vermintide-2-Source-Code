@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/morris/morris_ai_settings.lua
 
-local var_0_0 = DLCSettings.morris
+local morris = DLCSettings.morris
 
-var_0_0.vortex_templates = {
+morris.vortex_templates = {
 	blood_storm = {
 		override_movement_speed = 3,
 		outer_fx_z_scale_multiplier = 0.1,
@@ -37,32 +37,33 @@ var_0_0.vortex_templates = {
 		}
 	}
 }
-var_0_0.breeds = {
+morris.breeds = {
 	"scripts/settings/breeds/breed_chaos_greed_pinata",
 	"scripts/settings/breeds/breed_chaos_curse_mutator_sorcerer"
 }
-var_0_0.behaviour_trees = {
+morris.behaviour_trees = {
 	"scripts/entity_system/systems/behaviour/trees/chaos/chaos_greed_pinata_behavior",
 	"scripts/entity_system/systems/behaviour/trees/chaos/chaos_curse_mutator_sorcerer_behavior"
 }
-var_0_0.behaviour_trees_precompiled = {
+morris.behaviour_trees_precompiled = {
 	"scripts/entity_system/systems/behaviour/nodes/generated/bt_selector_chaos_greed_pinata",
 	"scripts/entity_system/systems/behaviour/nodes/generated/bt_selector_curse_mutator_sorcerer"
 }
-var_0_0.health_extensions = {
+morris.health_extensions = {
 	"GreedPinataHealthExtension"
 }
-var_0_0.ai_breed_snippets_file_names = {
+morris.ai_breed_snippets_file_names = {
 	"scripts/settings/dlcs/morris/morris_ai_breed_snippets"
 }
-var_0_0.bt_enter_hooks = {
-	on_skulking_sorcerer_grab = function(arg_1_0, arg_1_1, arg_1_2)
+morris.bt_enter_hooks = {
+	on_skulking_sorcerer_grab = function (arg_1_0, arg_1_1, arg_1_2)
+		-- function 1
 		ScriptUnit.extension(arg_1_0, "health_system").is_invincible = false
 
-		local var_1_0 = arg_1_1.target_unit
-		local var_1_1 = ScriptUnit.extension_input(var_1_0, "dialogue_system")
-		local var_1_2 = FrameTable.alloc_table()
+		local target_unit = arg_1_1.target_unit
+		local extension_input = ScriptUnit.extension_input(target_unit, "dialogue_system")
+		local alloc_table = FrameTable.alloc_table()
 
-		var_1_1:trigger_dialogue_event("curse_damage_taken", var_1_2)
+		extension_input:trigger_dialogue_event("curse_damage_taken", alloc_table)
 	end
 }

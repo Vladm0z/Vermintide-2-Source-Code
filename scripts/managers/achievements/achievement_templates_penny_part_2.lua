@@ -1,35 +1,35 @@
 -- chunkname: @scripts/managers/achievements/achievement_templates_penny_part_2.lua
 
-local var_0_0 = AchievementTemplateHelper.add_event_challenge
-local var_0_1 = AchievementTemplateHelper.add_levels_complete_challenge
-local var_0_2 = AchievementTemplateHelper.add_meta_challenge
-local var_0_3 = AchievementTemplateHelper.PLACEHOLDER_ICON
-local var_0_4 = AchievementTemplates.achievements
-local var_0_5 = {
+local add_event_challenge = AchievementTemplateHelper.add_event_challenge
+local add_levels_complete_challenge = AchievementTemplateHelper.add_levels_complete_challenge
+local add_meta_challenge = AchievementTemplateHelper.add_meta_challenge
+local PLACEHOLDER_ICON = AchievementTemplateHelper.PLACEHOLDER_ICON
+local achievements = AchievementTemplates.achievements
+local tbl = {
 	penny_bastion_sprinter = 89,
 	penny_bastion_torch = 88
 }
-local var_0_6 = {
+local tbl_2 = {
 	penny_bastion_sprinter = "082"
 }
-local var_0_7 = 50
+local num = 50
 
-var_0_0(var_0_4, "penny_portals_grapes", nil, nil, nil, var_0_5.penny_portals_grapes, var_0_6.penny_portals_grapes)
-var_0_0(var_0_4, "penny_portals_coop", nil, nil, nil, var_0_5.penny_portals_coop, var_0_6.penny_portals_coop)
-var_0_0(var_0_4, "penny_portals_templerun", nil, nil, nil, var_0_5.penny_portals_templerun, var_0_6.penny_portals_templerun)
-var_0_0(var_0_4, "penny_portals_careful", nil, nil, nil, var_0_5.penny_portals_careful, var_0_6.penny_portals_careful)
-var_0_0(var_0_4, "penny_bastion_journal", nil, nil, nil, var_0_5.penny_bastion_journal, var_0_6.penny_bastion_journal)
-var_0_0(var_0_4, "penny_bastion_overstay", nil, nil, nil, var_0_5.penny_bastion_overstay, var_0_6.penny_bastion_overstay)
-var_0_0(var_0_4, "penny_bastion_sprinter", nil, {
-	var_0_7
-}, nil, var_0_5.penny_bastion_sprinter, var_0_6.penny_bastion_sprinter)
-var_0_0(var_0_4, "penny_bastion_yorick", nil, nil, nil, var_0_5.penny_bastion_yorick, var_0_6.penny_bastion_yorick)
-var_0_0(var_0_4, "penny_bastion_torch", nil, nil, nil, var_0_5.penny_bastion_torch, var_0_6.penny_bastion_torch)
+add_event_challenge(achievements, "penny_portals_grapes", nil, nil, nil, tbl.penny_portals_grapes, tbl_2.penny_portals_grapes)
+add_event_challenge(achievements, "penny_portals_coop", nil, nil, nil, tbl.penny_portals_coop, tbl_2.penny_portals_coop)
+add_event_challenge(achievements, "penny_portals_templerun", nil, nil, nil, tbl.penny_portals_templerun, tbl_2.penny_portals_templerun)
+add_event_challenge(achievements, "penny_portals_careful", nil, nil, nil, tbl.penny_portals_careful, tbl_2.penny_portals_careful)
+add_event_challenge(achievements, "penny_bastion_journal", nil, nil, nil, tbl.penny_bastion_journal, tbl_2.penny_bastion_journal)
+add_event_challenge(achievements, "penny_bastion_overstay", nil, nil, nil, tbl.penny_bastion_overstay, tbl_2.penny_bastion_overstay)
+add_event_challenge(achievements, "penny_bastion_sprinter", nil, {
+	num
+}, nil, tbl.penny_bastion_sprinter, tbl_2.penny_bastion_sprinter)
+add_event_challenge(achievements, "penny_bastion_yorick", nil, nil, nil, tbl.penny_bastion_yorick, tbl_2.penny_bastion_yorick)
+add_event_challenge(achievements, "penny_bastion_torch", nil, nil, nil, tbl.penny_bastion_torch, tbl_2.penny_bastion_torch)
 
-local var_0_8 = {
+local tbl_3 = {
 	LevelSettings.dlc_bastion
 }
-local var_0_9 = {
+local tbl_4 = {
 	"normal",
 	"hard",
 	"harder",
@@ -37,15 +37,15 @@ local var_0_9 = {
 	"cataclysm"
 }
 
-for iter_0_0 = 1, #var_0_9 do
-	local var_0_10 = var_0_9[iter_0_0]
+for i = 1, #tbl_4 do
+	local var_0_10 = tbl_4[i]
 	local var_0_11 = DifficultyMapping[var_0_10]
-	local var_0_12 = "penny_complete_bastion_" .. var_0_11
+	local str = "penny_complete_bastion_" .. var_0_11
 
-	var_0_1(var_0_4, var_0_12, var_0_8, DifficultySettings[var_0_10].rank, nil, nil, var_0_5[var_0_12], var_0_6[var_0_12])
+	add_levels_complete_challenge(achievements, str, tbl_3, DifficultySettings[var_0_10].rank, nil, nil, tbl[str], tbl_2[str])
 end
 
-var_0_2(var_0_4, "penny_complete_bastion", {
+add_meta_challenge(achievements, "penny_complete_bastion", {
 	"penny_bastion_journal",
 	"penny_bastion_overstay",
 	"penny_bastion_sprinter",

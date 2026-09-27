@@ -1,28 +1,31 @@
 -- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_game_mode_definitions.lua
 
-local var_0_0 = UISettings.game_start_windows
-local var_0_1 = var_0_0.frame
-local var_0_2 = var_0_0.size
-local var_0_3 = UIFrameSettings[var_0_1].texture_sizes.horizontal[2]
-local var_0_4 = {
-	var_0_2[1] - 20,
+local game_start_windows = UISettings.game_start_windows
+local frame = game_start_windows.frame
+local size = game_start_windows.size
+local var_0_3 = UIFrameSettings[frame].texture_sizes.horizontal[2]
+local tbl = {
+	size[1] - 20,
 	108
 }
-local var_0_5 = {
+local tbl_2 = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+				-- function 1
 				arg_1_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
-				local var_2_0 = math.easeOutCubic(arg_2_3)
+			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+				-- function 2
+				local easeOutCubic = math.easeOutCubic(arg_2_3)
 
-				arg_2_4.render_settings.alpha_multiplier = var_2_0
+				arg_2_4.render_settings.alpha_multiplier = easeOutCubic
 			end,
-			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+				-- function 3
 				return
 			end
 		}
@@ -32,21 +35,24 @@ local var_0_5 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				-- function 4
 				arg_4_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
-				local var_5_0 = math.easeOutCubic(arg_5_3)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+				-- function 5
+				local easeOutCubic = math.easeOutCubic(arg_5_3)
 
-				arg_5_4.render_settings.alpha_multiplier = 1 - var_5_0
+				arg_5_4.render_settings.alpha_multiplier = 1 - easeOutCubic
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+				-- function 6
 				return
 			end
 		}
 	}
 }
-local var_0_6 = {
+local tbl_3 = {
 	root = {
 		is_root = true,
 		size = {
@@ -89,7 +95,7 @@ local var_0_6 = {
 		vertical_alignment = "center",
 		parent = "menu_root",
 		horizontal_alignment = "center",
-		size = var_0_2,
+		size = size,
 		position = {
 			0,
 			0,
@@ -101,7 +107,7 @@ local var_0_6 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_2[1],
+			size[1],
 			var_0_3
 		},
 		position = {
@@ -114,7 +120,7 @@ local var_0_6 = {
 		vertical_alignment = "top",
 		parent = "window",
 		horizontal_alignment = "center",
-		size = var_0_4,
+		size = tbl,
 		position = {
 			0,
 			0,
@@ -126,7 +132,7 @@ local var_0_6 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_4[1] - 20,
+			tbl[1] - 20,
 			70
 		},
 		position = {
@@ -141,7 +147,7 @@ local var_0_6 = {
 		horizontal_alignment = "center",
 		size = {
 			16,
-			var_0_2[2] - 260
+			size[2] - 260
 		},
 		position = {
 			195,
@@ -155,7 +161,7 @@ local var_0_6 = {
 		horizontal_alignment = "center",
 		size = {
 			16,
-			var_0_2[2] - 220
+			size[2] - 220
 		},
 		position = {
 			-195,
@@ -192,10 +198,10 @@ local var_0_6 = {
 		}
 	}
 }
-local var_0_7 = {
+local tbl_4 = {
 	background_fade = UIWidgets.create_simple_texture("options_window_fade_01", "window"),
-	window = UIWidgets.create_frame("window", var_0_2, var_0_1, 20),
-	lobby_browser_option = UIWidgets.create_default_image_button("lobby_browser_option", var_0_6.lobby_browser_option.size, nil, nil, Localize("start_game_window_lobby_browser"), 28, "lobby_browser_icon"),
+	window = UIWidgets.create_frame("window", size, frame, 20),
+	lobby_browser_option = UIWidgets.create_default_image_button("lobby_browser_option", tbl_3.lobby_browser_option.size, nil, nil, Localize("start_game_window_lobby_browser"), 28, "lobby_browser_icon"),
 	game_options_left_chain = UIWidgets.create_tiled_texture("game_options_left_chain", "chain_link_01", {
 		16,
 		19
@@ -209,7 +215,7 @@ local var_0_7 = {
 }
 
 return {
-	widgets = var_0_7,
-	scenegraph_definition = var_0_6,
-	animation_definitions = var_0_5
+	widgets = tbl_4,
+	scenegraph_definition = tbl_3,
+	animation_definitions = tbl_2
 }

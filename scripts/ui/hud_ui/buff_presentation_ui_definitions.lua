@@ -1,8 +1,8 @@
 -- chunkname: @scripts/ui/hud_ui/buff_presentation_ui_definitions.lua
 
-local var_0_0 = 1920
-local var_0_1 = 1080
-local var_0_2 = {
+local num = 1920
+local num_2 = 1080
+local tbl = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -11,8 +11,8 @@ local var_0_2 = {
 			UILayer.hud
 		},
 		size = {
-			var_0_0,
-			var_0_1
+			num,
+			num_2
 		}
 	},
 	presentation_widget_parent = {
@@ -58,7 +58,7 @@ local var_0_2 = {
 		}
 	}
 }
-local var_0_3 = {
+local tbl_2 = {
 	word_wrap = false,
 	font_size = 52,
 	localize = true,
@@ -74,7 +74,7 @@ local var_0_3 = {
 		1
 	}
 }
-local var_0_4 = {
+local tbl_3 = {
 	presentation_widget = {
 		scenegraph_id = "presentation_widget",
 		element = {
@@ -130,36 +130,39 @@ local var_0_4 = {
 		}
 	}
 }
-local var_0_5 = {
+local tbl_4 = {
 	presentation = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (self, arg_1_1, arg_1_2, arg_1_3)
+				-- function 1
 				arg_1_2.style.texture_icon.color[1] = 0
 				arg_1_2.style.texture_frame.color[1] = 0
 
-				local var_1_0 = arg_1_0.presentation_widget.size
-				local var_1_1 = arg_1_1.presentation_widget.size
+				local size = self.presentation_widget.size
+				local size_2 = arg_1_1.presentation_widget.size
 
-				var_1_0[1] = var_1_1[1]
-				var_1_0[2] = var_1_1[2]
+				size[1] = size_2[1]
+				size[2] = size_2[2]
 			end,
-			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
-				local var_2_0 = math.easeOutCubic(arg_2_3)
-				local var_2_1 = math.catmullrom(var_2_0, -2, 0, 1, -5)
+			update = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+				-- function 2
+				local easeOutCubic = math.easeOutCubic(arg_2_3)
+				local catmullrom = math.catmullrom(easeOutCubic, -2, 0, 1, -5)
 
-				arg_2_2.style.texture_icon.color[1] = var_2_0 * 255
-				arg_2_2.style.texture_frame.color[1] = var_2_0 * 255
+				arg_2_2.style.texture_icon.color[1] = easeOutCubic * 255
+				arg_2_2.style.texture_frame.color[1] = easeOutCubic * 255
 
-				local var_2_2 = arg_2_0.presentation_widget.size
-				local var_2_3 = arg_2_1.presentation_widget.size
+				local size = self.presentation_widget.size
+				local size_2 = arg_2_1.presentation_widget.size
 
-				var_2_2[1] = math.floor(var_2_3[1] * var_2_1)
-				var_2_2[2] = math.floor(var_2_3[2] * var_2_1)
+				size[1] = math.floor(size_2[1] * catmullrom)
+				size[2] = math.floor(size_2[2] * catmullrom)
 			end,
-			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+				-- function 3
 				return
 			end
 		},
@@ -167,23 +170,26 @@ local var_0_5 = {
 			name = "fade_out",
 			start_progress = 0.5,
 			end_progress = 0.8,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				-- function 4
 				return
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
-				local var_5_0 = math.easeOutCubic(arg_5_3)
-				local var_5_1 = math.catmullrom(var_5_0, 5, 0, 1, 1)
+			update = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+				-- function 5
+				local easeOutCubic = math.easeOutCubic(arg_5_3)
+				local catmullrom = math.catmullrom(easeOutCubic, 5, 0, 1, 1)
 
-				arg_5_2.style.texture_icon.color[1] = (1 - var_5_0) * 255
-				arg_5_2.style.texture_frame.color[1] = (1 - var_5_0) * 255
+				arg_5_2.style.texture_icon.color[1] = (1 - easeOutCubic) * 255
+				arg_5_2.style.texture_frame.color[1] = (1 - easeOutCubic) * 255
 
-				local var_5_2 = arg_5_0.presentation_widget.size
-				local var_5_3 = arg_5_1.presentation_widget.size
+				local size = self.presentation_widget.size
+				local size_2 = arg_5_1.presentation_widget.size
 
-				var_5_2[1] = var_5_3[1] - math.floor(20 * var_5_1)
-				var_5_2[2] = var_5_3[2] - math.floor(20 * var_5_1)
+				size[1] = size_2[1] - math.floor(20 * catmullrom)
+				size[2] = size_2[2] - math.floor(20 * catmullrom)
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+				-- function 6
 				return
 			end
 		}
@@ -191,7 +197,7 @@ local var_0_5 = {
 }
 
 return {
-	scenegraph_definition = var_0_2,
-	animation_definitions = var_0_5,
-	widget_definitions = var_0_4
+	scenegraph_definition = tbl,
+	animation_definitions = tbl_4,
+	widget_definitions = tbl_3
 }

@@ -1,11 +1,11 @@
 -- chunkname: @scripts/ui/views/console_friends_view_definitions.lua
 
-local var_0_0 = {
+local tbl = {
 	350,
 	40
 }
-local var_0_1 = 6
-local var_0_2 = {
+local num = 6
+local tbl_2 = {
 	screen = {
 		scale = "fit",
 		size = {
@@ -102,10 +102,10 @@ local var_0_2 = {
 		vertical_alignment = "bottom",
 		parent = "background",
 		horizontal_alignment = "center",
-		size = var_0_0,
+		size = tbl,
 		position = {
 			0,
-			var_0_0[2] * var_0_1 + 40,
+			tbl[2] * num + 40,
 			10
 		}
 	},
@@ -114,8 +114,8 @@ local var_0_2 = {
 		parent = "background",
 		horizontal_alignment = "center",
 		size = {
-			var_0_0[1],
-			var_0_0[2] * var_0_1
+			tbl[1],
+			tbl[2] * num
 		},
 		position = {
 			0,
@@ -167,14 +167,15 @@ local var_0_2 = {
 	}
 }
 
-local function var_0_3(arg_1_0, arg_1_1, arg_1_2)
-	local var_1_0 = "small_unit_frame_portrait_default"
+local function fn(arg_1_0, arg_1_1, arg_1_2)
+	-- function 1
+	local str = "small_unit_frame_portrait_default"
 
-	if arg_1_1 then
-		var_1_0 = "small_" .. arg_1_1.portrait_image
+	if not arg_1_1 then
+		str = "small_" .. arg_1_1.portrait_image
 	end
 
-	return {
+	local tbl = {
 		scenegraph_id = "party_header",
 		element = {
 			passes = {
@@ -192,53 +193,71 @@ local function var_0_3(arg_1_0, arg_1_1, arg_1_2)
 		},
 		content = {
 			text_id = arg_1_0 or Localize("friends_view_free_slot"),
-			texture_id = var_1_0
+			texture_id = str
+		}
+	}
+	local tbl_2 = {}
+	local tbl_3 = {
+		vertical_alignment = "center",
+		font_size = 24,
+		localize = false,
+		horizontal_alignment = "left",
+		word_wrap = true,
+		font_type = "hell_shark"
+	}
+	local get_color_table_with_alpha
+
+	if not arg_1_1 then
+		get_color_table_with_alpha = Colors.get_color_table_with_alpha("white", 255)
+
+		if not get_color_table_with_alpha then
+			-- Nothing
+		end
+	end
+
+	get_color_table_with_alpha = {
+		255,
+		80,
+		80,
+		80
+	}
+
+	::label_1_0::
+
+	tbl_3.text_color = get_color_table_with_alpha
+	tbl_3.offset = {
+		35,
+		0,
+		1
+	}
+	tbl_2.text = tbl_3
+	tbl_2.texture = {
+		vertical_alignment = "center",
+		horizontal_alignment = "left",
+		texture_size = {
+			30,
+			35
 		},
-		style = {
-			text = {
-				vertical_alignment = "center",
-				font_size = 24,
-				localize = false,
-				horizontal_alignment = "left",
-				word_wrap = true,
-				font_type = "hell_shark",
-				text_color = arg_1_1 and Colors.get_color_table_with_alpha("white", 255) or {
-					255,
-					80,
-					80,
-					80
-				},
-				offset = {
-					35,
-					0,
-					1
-				}
-			},
-			texture = {
-				vertical_alignment = "center",
-				horizontal_alignment = "left",
-				texture_size = {
-					30,
-					35
-				},
-				color = Colors.get_color_table_with_alpha("white", 255),
-				offset = {
-					0,
-					0,
-					0
-				}
-			}
-		},
+		color = Colors.get_color_table_with_alpha("white", 255),
 		offset = {
 			0,
-			arg_1_2 and arg_1_2 or 0,
+			0,
 			0
 		}
 	}
+	tbl.style = tbl_2
+	tbl.offset = {
+		0,
+		not arg_1_2 and arg_1_2 and 0,
+		0
+	}
+
+	return tbl
 end
 
-local function var_0_4(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
-	return {
+local function fn_2(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	-- function 2
+	local tbl = {
 		scenegraph_id = "friends_base",
 		element = {
 			passes = {
@@ -261,16 +280,22 @@ local function var_0_4(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 					pass_type = "texture",
 					style_id = "selected_texture",
 					texture_id = "texture_id",
-					content_check_function = function(arg_3_0)
-						return arg_3_0.selected
+					content_check_function = function (self)
+						-- function 3
+						return self.selected
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "hover",
 					texture_id = "texture_id",
-					content_check_function = function(arg_4_0)
-						return arg_4_0.entry_hotspot.is_hover and not arg_4_0.selected
+					content_check_function = function (self)
+						-- function 4
+						local is_hover = self.entry_hotspot.is_hover
+
+						is_hover = not is_hover and not self.selected
+
+						return is_hover
 					end
 				},
 				{
@@ -288,125 +313,174 @@ local function var_0_4(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 			entry_hotspot = {},
 			text_id = arg_2_0,
 			friend = arg_2_3
-		},
-		style = {
-			text = {
-				vertical_alignment = "center",
-				font_size = 20,
-				localize = false,
-				horizontal_alignment = "left",
-				word_wrap = true,
-				font_type = "hell_shark_masked",
-				text_color = arg_2_1 and Colors.get_color_table_with_alpha("font_title", 255) or {
-					255,
-					80,
-					80,
-					80
-				},
-				offset = {
-					35,
-					0,
-					2
-				}
-			},
-			texture = {
-				color = arg_2_1 and {
-					255,
-					0,
-					255,
-					0
-				} or {
-					255,
-					255,
-					0,
-					0
-				},
-				offset = {
-					0,
-					0,
-					0
-				}
-			},
-			selected_texture = {
-				color = {
-					200,
-					255,
-					255,
-					255
-				},
-				offset = {
-					0,
-					0,
-					1
-				}
-			},
-			hover = {
-				color = {
-					128,
-					255,
-					255,
-					255
-				},
-				offset = {
-					0,
-					0,
-					1
-				}
-			},
-			invite_texture = {
-				vertical_alignment = "center",
-				horizontal_alignment = "right",
-				texture_size = {
-					32,
-					32
-				},
-				color = {
-					0,
-					255,
-					255,
-					255
-				},
-				offset = {
-					40,
-					0,
-					10
-				}
-			},
-			indicator_texture = {
-				vertical_alignment = "center",
-				masked = true,
-				horizontal_alignment = "left",
-				texture_size = {
-					20,
-					20
-				},
-				color = arg_2_1 and {
-					255,
-					0,
-					255,
-					0
-				} or {
-					255,
-					255,
-					0,
-					0
-				},
-				offset = {
-					10,
-					0,
-					2
-				}
-			}
+		}
+	}
+	local tbl_2 = {}
+	local tbl_3 = {
+		vertical_alignment = "center",
+		font_size = 20,
+		localize = false,
+		horizontal_alignment = "left",
+		word_wrap = true,
+		font_type = "hell_shark_masked"
+	}
+	local get_color_table_with_alpha
+
+	if not arg_2_1 then
+		get_color_table_with_alpha = Colors.get_color_table_with_alpha("font_title", 255)
+
+		if not get_color_table_with_alpha then
+			-- Nothing
+		end
+	end
+
+	get_color_table_with_alpha = {
+		255,
+		80,
+		80,
+		80
+	}
+
+	::label_2_0::
+
+	tbl_3.text_color = get_color_table_with_alpha
+	tbl_3.offset = {
+		35,
+		0,
+		2
+	}
+	tbl_2.text = tbl_3
+
+	local tbl_4 = {}
+	local tbl_5
+
+	if not arg_2_1 then
+		tbl_5 = {
+			255,
+			0,
+			255,
+			0
+		}
+
+		if not tbl_5 then
+			-- Nothing
+		end
+	end
+
+	tbl_5 = {
+		255,
+		255,
+		0,
+		0
+	}
+
+	::label_2_1::
+
+	tbl_4.color = tbl_5
+	tbl_4.offset = {
+		0,
+		0,
+		0
+	}
+	tbl_2.texture = tbl_4
+	tbl_2.selected_texture = {
+		color = {
+			200,
+			255,
+			255,
+			255
 		},
 		offset = {
 			0,
-			arg_2_2 and arg_2_2 or 0,
-			0
+			0,
+			1
 		}
 	}
+	tbl_2.hover = {
+		color = {
+			128,
+			255,
+			255,
+			255
+		},
+		offset = {
+			0,
+			0,
+			1
+		}
+	}
+	tbl_2.invite_texture = {
+		vertical_alignment = "center",
+		horizontal_alignment = "right",
+		texture_size = {
+			32,
+			32
+		},
+		color = {
+			0,
+			255,
+			255,
+			255
+		},
+		offset = {
+			40,
+			0,
+			10
+		}
+	}
+
+	local tbl_6 = {
+		vertical_alignment = "center",
+		masked = true,
+		horizontal_alignment = "left",
+		texture_size = {
+			20,
+			20
+		}
+	}
+	local tbl_7
+
+	if not arg_2_1 then
+		tbl_7 = {
+			255,
+			0,
+			255,
+			0
+		}
+
+		if not tbl_7 then
+			-- Nothing
+		end
+	end
+
+	tbl_7 = {
+		255,
+		255,
+		0,
+		0
+	}
+
+	::label_2_2::
+
+	tbl_6.color = tbl_7
+	tbl_6.offset = {
+		10,
+		0,
+		2
+	}
+	tbl_2.indicator_texture = tbl_6
+	tbl.style = tbl_2
+	tbl.offset = {
+		0,
+		not arg_2_2 and arg_2_2 and 0,
+		0
+	}
+
+	return tbl
 end
 
 function create_selection_handler(arg_5_0)
+	-- function 5
 	return {
 		element = {
 			passes = {
@@ -425,8 +499,9 @@ function create_selection_handler(arg_5_0)
 					style_id = "down_arrow",
 					pass_type = "texture",
 					content_id = "arrow",
-					content_check_function = function(arg_6_0, arg_6_1)
-						if Managers.input:is_device_active("gamepad") then
+					content_check_function = function (arg_6_0, arg_6_1)
+						-- function 6
+						if not Managers.input:is_device_active("gamepad") then
 							return false
 						end
 
@@ -438,8 +513,9 @@ function create_selection_handler(arg_5_0)
 					style_id = "up_arrow",
 					pass_type = "texture_uv",
 					content_id = "arrow",
-					content_check_function = function(arg_7_0, arg_7_1)
-						if Managers.input:is_device_active("gamepad") then
+					content_check_function = function (arg_7_0, arg_7_1)
+						-- function 7
+						if not Managers.input:is_device_active("gamepad") then
 							return false
 						end
 
@@ -451,8 +527,9 @@ function create_selection_handler(arg_5_0)
 					style_id = "down_arrow_hover",
 					pass_type = "texture",
 					content_id = "arrow_hover_down",
-					content_check_function = function(arg_8_0)
-						return arg_8_0.parent.down_hotspot.is_hover
+					content_check_function = function (self)
+						-- function 8
+						return self.parent.down_hotspot.is_hover
 					end
 				},
 				{
@@ -460,8 +537,9 @@ function create_selection_handler(arg_5_0)
 					style_id = "up_arrow_hover",
 					pass_type = "texture_uv",
 					content_id = "arrow_hover",
-					content_check_function = function(arg_9_0)
-						return arg_9_0.parent.up_hotspot.is_hover
+					content_check_function = function (self)
+						-- function 9
+						return self.parent.up_hotspot.is_hover
 					end
 				}
 			}
@@ -604,7 +682,8 @@ function create_selection_handler(arg_5_0)
 	}
 end
 
-local function var_0_5()
+local function fn_3()
+	-- function 10
 	return {
 		scenegraph_id = "friends_mask",
 		element = {
@@ -613,7 +692,8 @@ local function var_0_5()
 					style_id = "loading_icon",
 					texture_id = "loading_icon_id",
 					pass_type = "rotated_texture",
-					content_change_function = function(arg_11_0, arg_11_1)
+					content_change_function = function (arg_11_0, arg_11_1)
+						-- function 11
 						arg_11_1.angle = arg_11_1.angle + 0.25
 					end
 				}
@@ -656,81 +736,96 @@ local function var_0_5()
 	}
 end
 
-local var_0_6 = {
+local tbl_3 = {
 	default = {
 		{
 			input_action = "back",
 			priority = 5,
 			description_text = "input_description_back"
 		}
-	},
-	only_refresh = {
-		actions = {
-			{
-				input_action = "special_1",
-				priority = 1,
-				description_text = IS_PS4 and "matchmaking_join_game" or "menu_description_refresh"
-			}
-		}
-	},
-	friend = {
-		actions = {
-			{
-				input_action = "confirm",
-				priority = 2,
-				description_text = "input_description_show_profile"
-			}
-		}
-	},
-	friend_refresh = {
-		actions = {
-			{
-				input_action = "special_1",
-				priority = 1,
-				description_text = IS_PS4 and "matchmaking_join_game" or "menu_description_refresh"
-			},
-			{
-				input_action = "confirm",
-				priority = 2,
-				description_text = "input_description_show_profile"
-			}
-		}
-	},
-	friend_invite = {
-		actions = {
-			{
-				input_action = "confirm",
-				priority = 2,
-				description_text = "input_description_show_profile"
-			},
-			{
-				input_action = "refresh",
-				priority = 3,
-				description_text = "input_description_invite"
-			}
-		}
-	},
-	friend_invite_refresh = {
-		actions = {
-			{
-				input_action = "special_1",
-				priority = 1,
-				description_text = IS_PS4 and "matchmaking_join_game" or "menu_description_refresh"
-			},
-			{
-				input_action = "confirm",
-				priority = 2,
-				description_text = "input_description_show_profile"
-			},
-			{
-				input_action = "refresh",
-				priority = 3,
-				description_text = "input_description_invite"
-			}
+	}
+}
+local tbl_4 = {}
+local tbl_5 = {}
+local tbl_6 = {
+	input_action = "special_1",
+	priority = 1
+}
+local flag
+
+flag = not IS_PS4 and "matchmaking_join_game" and "menu_description_refresh"
+tbl_6.description_text = flag
+tbl_5[1] = tbl_6
+tbl_4.actions = tbl_5
+tbl_3.only_refresh = tbl_4
+tbl_3.friend = {
+	actions = {
+		{
+			input_action = "confirm",
+			priority = 2,
+			description_text = "input_description_show_profile"
 		}
 	}
 }
-local var_0_7 = {
+
+local tbl_7 = {}
+local tbl_8 = {}
+local tbl_9 = {
+	input_action = "special_1",
+	priority = 1
+}
+local flag_2
+
+flag_2 = not IS_PS4 and "matchmaking_join_game" and "menu_description_refresh"
+tbl_9.description_text = flag_2
+tbl_8[1] = tbl_9
+tbl_8[2] = {
+	input_action = "confirm",
+	priority = 2,
+	description_text = "input_description_show_profile"
+}
+tbl_7.actions = tbl_8
+tbl_3.friend_refresh = tbl_7
+tbl_3.friend_invite = {
+	actions = {
+		{
+			input_action = "confirm",
+			priority = 2,
+			description_text = "input_description_show_profile"
+		},
+		{
+			input_action = "refresh",
+			priority = 3,
+			description_text = "input_description_invite"
+		}
+	}
+}
+
+local tbl_10 = {}
+local tbl_11 = {}
+local tbl_12 = {
+	input_action = "special_1",
+	priority = 1
+}
+local flag_3
+
+flag_3 = not IS_PS4 and "matchmaking_join_game" and "menu_description_refresh"
+tbl_12.description_text = flag_3
+tbl_11[1] = tbl_12
+tbl_11[2] = {
+	input_action = "confirm",
+	priority = 2,
+	description_text = "input_description_show_profile"
+}
+tbl_11[3] = {
+	input_action = "refresh",
+	priority = 3,
+	description_text = "input_description_invite"
+}
+tbl_10.actions = tbl_11
+tbl_3.friend_invite_refresh = tbl_10
+
+local tbl_13 = {
 	vertical_alignment = "top",
 	font_size = 56,
 	localize = true,
@@ -744,7 +839,7 @@ local var_0_7 = {
 		2
 	}
 }
-local var_0_8 = {
+local tbl_14 = {
 	vertical_alignment = "center",
 	font_size = 36,
 	localize = false,
@@ -758,38 +853,38 @@ local var_0_8 = {
 		0
 	}
 }
-local var_0_9 = true
-local var_0_10 = {
+local flag_4 = true
+local tbl_15 = {
 	background = UIWidgets.create_background_with_frame("background", {
 		500,
 		700
 	}, "mission_select_screen_bg", "menu_frame_12"),
-	header = UIWidgets.create_simple_text("friend_list_friends", "header", nil, nil, var_0_7),
-	party_header = UIWidgets.create_simple_text(string.upper(Localize("hero_view_player_list_party")), "party_header", nil, nil, var_0_8),
-	friends_header = UIWidgets.create_simple_text(string.upper(Localize("lb_search_type_friends")), "friends_header", nil, nil, var_0_8),
+	header = UIWidgets.create_simple_text("friend_list_friends", "header", nil, nil, tbl_13),
+	party_header = UIWidgets.create_simple_text(string.upper(Localize("hero_view_player_list_party")), "party_header", nil, nil, tbl_14),
+	friends_header = UIWidgets.create_simple_text(string.upper(Localize("lb_search_type_friends")), "friends_header", nil, nil, tbl_14),
 	header_divider = UIWidgets.create_simple_texture("divider_01_top", "header_divider"),
 	party_divider = UIWidgets.create_simple_texture("divider_01_top", "party_divider"),
 	mask = UIWidgets.create_simple_texture("mask_rect", "friends_mask"),
 	friends_bg = UIWidgets.create_background_with_frame("friends_mask", {
-		var_0_0[1] + 20,
-		var_0_0[2] * var_0_1 + 20
+		tbl[1] + 20,
+		tbl[2] * num + 20
 	}, "mission_select_screen_bg", "menu_frame_12"),
-	loading_icon = var_0_5(),
+	loading_icon = fn_3(),
 	screen_fade = UIWidgets.create_simple_texture("gradient_dice_game_reward", "screen"),
-	open_profile_button = UIWidgets.create_default_button("open_profile_button", var_0_2.open_profile_button.size, nil, nil, Localize("input_description_show_profile"), 22, nil, nil, nil, var_0_9),
-	invite_button = UIWidgets.create_default_button("invite_button", var_0_2.invite_button.size, nil, nil, Localize("friend_list_invite"), 22, nil, nil, nil, var_0_9),
+	open_profile_button = UIWidgets.create_default_button("open_profile_button", tbl_2.open_profile_button.size, nil, nil, Localize("input_description_show_profile"), 22, nil, nil, nil, flag_4),
+	invite_button = UIWidgets.create_default_button("invite_button", tbl_2.invite_button.size, nil, nil, Localize("friend_list_invite"), 22, nil, nil, nil, flag_4),
 	selection_handler = create_selection_handler("selection_handler")
 }
-local var_0_11 = {
-	create_party_entry = var_0_3,
-	create_friend_entry = var_0_4,
-	friend_entry_size = var_0_0
+local tbl_16 = {
+	create_party_entry = fn,
+	create_friend_entry = fn_2,
+	friend_entry_size = tbl
 }
 
 return {
-	generic_input_actions = var_0_6,
-	widget_definitions = var_0_10,
-	scenegraph_definition = var_0_2,
-	entry_definitions = var_0_11,
-	num_visible_friends = var_0_1
+	generic_input_actions = tbl_3,
+	widget_definitions = tbl_15,
+	scenegraph_definition = tbl_2,
+	entry_definitions = tbl_16,
+	num_visible_friends = num
 }

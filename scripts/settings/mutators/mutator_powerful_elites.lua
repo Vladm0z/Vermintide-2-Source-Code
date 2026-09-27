@@ -15,10 +15,12 @@ return {
 		"chaos_berzerker",
 		"beastmen_bestigor"
 	},
-	server_start_function = function(arg_1_0, arg_1_1)
+	server_start_function = function (arg_1_0, arg_1_1)
+		-- function 1
 		arg_1_1.player_units = {}
 	end,
-	server_update_function = function(arg_2_0, arg_2_1)
+	server_update_function = function (arg_2_0, arg_2_1)
+		-- function 2
 		MutatorUtils.apply_buff_to_alive_player_units(arg_2_0, arg_2_1, "damage_taken_powerful_elites")
 	end
 }

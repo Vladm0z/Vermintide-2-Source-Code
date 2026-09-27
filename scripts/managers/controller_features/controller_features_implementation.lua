@@ -2,107 +2,119 @@
 
 ControllerFeaturesImplementation = class(ControllerFeaturesImplementation)
 
-function ControllerFeaturesImplementation.init(arg_1_0, arg_1_1)
-	arg_1_0:_reset()
+ControllerFeaturesImplementation.init = function (self, arg_1_1)
+	-- function 1
+	self:_reset()
 
-	arg_1_0._is_in_inn = arg_1_1
+	self._is_in_inn = arg_1_1
 
-	if Managers.state.event then
-		Managers.state.event:register(arg_1_0, "gm_event_end_conditions_met", "event_end_conditions_met")
+	if not Managers.state.event then
+		Managers.state.event:register(self, "gm_event_end_conditions_met", "event_end_conditions_met")
 	end
 end
 
-function ControllerFeaturesImplementation._reset(arg_2_0)
-	arg_2_0._effects = {}
-	arg_2_0._current_effect_id = 1
-	arg_2_0._game_mode_ended = false
-	arg_2_0._state_data = {}
+ControllerFeaturesImplementation._reset = function (self)
+	-- function 2
+	self._effects = {}
+	self._current_effect_id = 1
+	self._game_mode_ended = false
+	self._state_data = {}
 end
 
-function ControllerFeaturesImplementation.event_end_conditions_met(arg_3_0)
-	arg_3_0._game_mode_ended = true
+ControllerFeaturesImplementation.event_end_conditions_met = function (self)
+	-- function 3
+	self._game_mode_ended = true
 end
 
-local var_0_0 = {}
+local tbl = {}
 
-function ControllerFeaturesImplementation.update(arg_4_0, arg_4_1, arg_4_2)
-	for iter_4_0, iter_4_1 in pairs(arg_4_0._effects) do
-		table.clear(var_0_0)
+ControllerFeaturesImplementation.update = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	for k, v in pairs(self._effects) do
+		table.clear(tbl)
 
-		for iter_4_2, iter_4_3 in pairs(iter_4_1) do
-			if arg_4_0._game_mode_ended or iter_4_3.effect.update(iter_4_3.state_data, arg_4_1, arg_4_2) then
-				iter_4_3.effect.destroy(iter_4_3.state_data)
+		for k_2, v_2 in pairs(v) do
+			if self._game_mode_ended or not v_2.effect.update(v_2.state_data, arg_4_1, arg_4_2) then
+				v_2.effect.destroy(v_2.state_data)
 
-				var_0_0[#var_0_0 + 1] = iter_4_2
+				tbl[#tbl + 1] = k_2
 			end
 		end
 
-		for iter_4_4, iter_4_5 in ipairs(var_0_0) do
-			iter_4_1[iter_4_5] = nil
+		for i, v_3 in ipairs(tbl) do
+			v[v_3] = nil
 		end
 	end
 end
 
-function ControllerFeaturesImplementation.add_effect(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
-	if arg_5_0._game_mode_ended or not Application.user_setting("gamepad_rumble_enabled") or arg_5_1 == "camera_shake" and arg_5_0._is_in_inn or script_data.honduras_demo or not Managers.input:is_device_active("gamepad") then
+ControllerFeaturesImplementation.add_effect = function (self, arg_5_1, arg_5_2, arg_5_3)
+	-- function 5
+	if not (self._game_mode_ended or not Application.user_setting("gamepad_rumble_enabled") or (arg_5_1 ~= "camera_shake" or not self._is_in_inn or script_data.honduras_demo) and Managers.input:is_device_active("gamepad")) then
 		return
 	end
 
-	local var_5_0 = arg_5_3 or Managers.account:user_id()
+	local flag = arg_5_3 or Managers.account:user_id()
 
-	if not var_5_0 then
+	if not flag then
 		return
 	end
 
-	local var_5_1 = Managers.account:active_controller(var_5_0)
+	local active_controller = Managers.account:active_controller(flag)
 
-	if not var_5_1 then
+	if not active_controller then
 		return
 	end
 
-	local var_5_2 = {}
+	local tbl = {}
 
-	if ControllerFeaturesSettings[arg_5_1] then
+	if not ControllerFeaturesSettings[arg_5_1] then
 		local var_5_3 = ControllerFeaturesSettings[arg_5_1]
 
-		var_5_2.controller = var_5_1
+		tbl.controller = active_controller
 
-		var_5_3.init(var_5_2, arg_5_2)
+		var_5_3.init(tbl, arg_5_2)
 
-		var_5_2.effect_id = arg_5_0._current_effect_id
-		arg_5_0._effects[var_5_0] = arg_5_0._effects[var_5_0] or {}
-		arg_5_0._effects[var_5_0][arg_5_0._current_effect_id] = {
-			state_data = var_5_2,
+		tbl.effect_id = self._current_effect_id
+
+		local _effects = self._effects
+		local var_5_5 = self._effects[flag]
+
+		var_5_5 = var_5_5 or {}
+		_effects[flag] = var_5_5
+		self._effects[flag][self._current_effect_id] = {
+			state_data = tbl,
 			effect = var_5_3
 		}
-		arg_5_0._current_effect_id = arg_5_0._current_effect_id + 1
+		self._current_effect_id = self._current_effect_id + 1
 
-		return arg_5_0._current_effect_id - 1
+		return self._current_effect_id - 1
 	end
 end
 
-function ControllerFeaturesImplementation.stop_effect(arg_6_0, arg_6_1)
-	local var_6_0 = Managers.account:user_id()
+ControllerFeaturesImplementation.stop_effect = function (self, arg_6_1)
+	-- function 6
+	local user_id = Managers.account:user_id()
 
-	if not var_6_0 then
+	if not user_id then
 		return
 	end
 
-	local var_6_1 = arg_6_0._effects[var_6_0][arg_6_1]
+	local var_6_1 = self._effects[user_id][arg_6_1]
 
-	if var_6_1 then
+	if not var_6_1 then
 		var_6_1.effect.destroy(var_6_1.state_data)
 
-		arg_6_0._effects[var_6_0][arg_6_1] = nil
+		self._effects[user_id][arg_6_1] = nil
 	end
 end
 
-function ControllerFeaturesImplementation.destroy(arg_7_0)
-	for iter_7_0, iter_7_1 in pairs(arg_7_0._effects) do
-		for iter_7_2, iter_7_3 in pairs(iter_7_1) do
-			iter_7_3.effect.destroy(iter_7_3.state_data)
+ControllerFeaturesImplementation.destroy = function (self)
+	-- function 7
+	for k, v in pairs(self._effects) do
+		for k_2, v_2 in pairs(v) do
+			v_2.effect.destroy(v_2.state_data)
 		end
 	end
 
-	arg_7_0:_reset()
+	self:_reset()
 end

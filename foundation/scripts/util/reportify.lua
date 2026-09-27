@@ -1,42 +1,56 @@
 -- chunkname: @foundation/scripts/util/reportify.lua
 
-Reportify = Reportify or {}
+local Reportify = Reportify
 
-function Reportify.setup(arg_1_0)
-	arg_1_0.has_setup = true
-	arg_1_0.content_revision = script_data.settings.content_revision or ""
-	arg_1_0.engine_revision = Application.build_identifier() or ""
-	arg_1_0.project = "HON"
+Reportify = Reportify or {}
+Reportify = Reportify
+
+Reportify.setup = function (self)
+	-- function 1
+	self.has_setup = true
+
+	local content_revision = script_data.settings.content_revision
+
+	content_revision = content_revision or ""
+	self.content_revision = content_revision
+
+	local build_identifier = Application.build_identifier()
+
+	build_identifier = build_identifier or ""
+	self.engine_revision = build_identifier
+	self.project = "HON"
 end
 
-function Reportify.get_data(arg_2_0)
-	if not arg_2_0.has_setup then
-		arg_2_0:setup()
+Reportify.get_data = function (self)
+	-- function 2
+	if not self.has_setup then
+		self:setup()
 	end
 
-	local var_2_0, var_2_1 = arg_2_0:_get_location()
-	local var_2_2 = arg_2_0:_get_player_info()
+	local _get_location, var_2_1 = self:_get_location()
+	local _get_player_info = self:_get_player_info()
 
 	Application.console_send({
 		type = "reportify",
-		project = arg_2_0.project,
+		project = self.project,
 		fields = {
-			customfield_10031 = arg_2_0.content_revision,
-			customfield_10032 = arg_2_0.engine_revision
+			customfield_10031 = self.content_revision,
+			customfield_10032 = self.engine_revision
 		},
 		custom = {
-			level = arg_2_0:_get_level(),
-			position = var_2_0,
+			level = self:_get_level(),
+			position = _get_location,
 			rotation = var_2_1,
-			archetype = var_2_2.class_name,
-			wielded_slot = var_2_2.wielded_slot,
-			primary_slot = var_2_2.primary_name,
-			secondary_slot = var_2_2.secondary_name
+			archetype = _get_player_info.class_name,
+			wielded_slot = _get_player_info.wielded_slot,
+			primary_slot = _get_player_info.primary_name,
+			secondary_slot = _get_player_info.secondary_name
 		}
 	})
 end
 
-function Reportify._get_level(arg_3_0)
+Reportify._get_level = function (arg_3_0)
+	-- function 3
 	if not Managers.state.game_mode then
 		return ""
 	end
@@ -44,48 +58,62 @@ function Reportify._get_level(arg_3_0)
 	return Managers.state.game_mode:level_key() or ""
 end
 
-function Reportify._get_location(arg_4_0)
-	local var_4_0 = arg_4_0:_get_local_player()
+Reportify._get_location = function (self)
+	-- function 4
+	local _get_local_player = self:_get_local_player()
 
-	if not var_4_0 or not Managers.state.camera then
+	if not (not _get_local_player and Managers.state.camera) then
 		return ""
 	end
 
-	return tostring(Managers.state.camera:camera_position(var_4_0.viewport_name)), tostring(Managers.state.camera:camera_rotation(var_4_0.viewport_name))
+	return tostring(Managers.state.camera:camera_position(_get_local_player.viewport_name)), tostring(Managers.state.camera:camera_rotation(_get_local_player.viewport_name))
 end
 
-function Reportify._get_player_info(arg_5_0)
-	local var_5_0 = {
+Reportify._get_player_info = function (self)
+	-- function 5
+	local tbl = {
 		wielded_slot = "",
 		primary_name = "",
 		class_name = "",
 		secondary_name = ""
 	}
-	local var_5_1 = arg_5_0:_get_local_player()
+	local _get_local_player = self:_get_local_player()
 
-	if not var_5_1 then
-		return var_5_0
+	if not _get_local_player then
+		return tbl
 	end
 
-	local var_5_2 = var_5_1:profile_index()
-	local var_5_3 = SPProfiles[var_5_2]
+	local profile_index = _get_local_player:profile_index()
+	local var_5_3 = SPProfiles[profile_index]
 
-	if var_5_3 then
-		var_5_0.class_name = var_5_3.display_name
+	if not var_5_3 then
+		tbl.class_name = var_5_3.display_name
 	end
 
-	local var_5_4 = ScriptUnit.has_extension(var_5_1.player_unit, "inventory_system")
+	local has_extension = ScriptUnit.has_extension(_get_local_player.player_unit, "inventory_system")
 
-	if var_5_4 then
-		var_5_0.wielded_slot = var_5_4:get_wielded_slot_name() or ""
-		var_5_0.primary_name = var_5_4:get_item_name("slot_melee") or ""
-		var_5_0.secondary_name = var_5_4:get_item_name("slot_ranged") or ""
+	if not has_extension then
+		local get_wielded_slot_name = has_extension:get_wielded_slot_name()
+
+		get_wielded_slot_name = get_wielded_slot_name or ""
+		tbl.wielded_slot = get_wielded_slot_name
+
+		local get_item_name = has_extension:get_item_name("slot_melee")
+
+		get_item_name = get_item_name or ""
+		tbl.primary_name = get_item_name
+
+		local get_item_name_2 = has_extension:get_item_name("slot_ranged")
+
+		get_item_name_2 = get_item_name_2 or ""
+		tbl.secondary_name = get_item_name_2
 	end
 
-	return var_5_0
+	return tbl
 end
 
-function Reportify._get_local_player(arg_6_0)
+Reportify._get_local_player = function (arg_6_0)
+	-- function 6
 	if not Managers.player then
 		return false
 	end

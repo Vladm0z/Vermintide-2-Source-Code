@@ -31,17 +31,17 @@ InterestPointUnits = {
 	}
 }
 
-local var_0_0 = InterestPointUnits
+local InterestPointUnits = InterestPointUnits
 
 InterestPointSettings = {
 	max_rats_currently_moving_to_ip = 5,
 	interest_point_spawn_chance = 0.5
 }
 
-local var_0_1 = 10
-local var_0_2 = 5
-local var_0_3 = 2
-local var_0_4 = {
+local num = 10
+local num_2 = 5
+local num_3 = 2
+local tbl = {
 	Breeds.chaos_warrior,
 	Breeds.chaos_warrior,
 	Breeds.chaos_bulwark
@@ -251,66 +251,66 @@ BreedPacks = {
 			patrol_chance = 1
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.skaven_clan_rat
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.skaven_storm_vermin_commander
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.chaos_marauder
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.chaos_raider
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.chaos_marauder,
 				Breeds.chaos_fanatic
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_clan_rat
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.chaos_raider,
 				Breeds.chaos_marauder
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_storm_vermin_commander
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
@@ -318,7 +318,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
@@ -326,7 +326,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_clan_rat,
@@ -334,7 +334,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.chaos_raider,
 				Breeds.chaos_marauder,
@@ -342,7 +342,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
@@ -351,7 +351,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
@@ -360,7 +360,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_clan_rat,
@@ -369,7 +369,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.chaos_raider,
 				Breeds.chaos_marauder,
@@ -378,7 +378,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
@@ -389,7 +389,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
@@ -400,7 +400,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.chaos_raider,
 				Breeds.chaos_raider,
@@ -411,7 +411,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_storm_vermin_commander,
@@ -422,7 +422,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
@@ -435,7 +435,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
@@ -448,7 +448,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_storm_vermin_commander,
@@ -461,7 +461,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.chaos_raider,
 				Breeds.chaos_raider,
@@ -758,66 +758,66 @@ BreedPacks = {
 			patrol_chance = 1
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.skaven_clan_rat
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.skaven_storm_vermin_commander
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.beastmen_gor
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.beastmen_bestigor
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.beastmen_gor,
 				Breeds.beastmen_ungor
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_clan_rat
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.beastmen_bestigor,
 				Breeds.beastmen_gor
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_storm_vermin_commander
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
@@ -825,7 +825,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.beastmen_gor,
 				Breeds.beastmen_gor,
@@ -833,7 +833,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_clan_rat,
@@ -841,7 +841,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.beastmen_bestigor,
 				Breeds.beastmen_gor,
@@ -849,7 +849,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
@@ -858,7 +858,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.beastmen_gor,
 				Breeds.beastmen_ungor,
@@ -867,7 +867,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_clan_rat,
@@ -876,7 +876,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.beastmen_bestigor,
 				Breeds.beastmen_gor,
@@ -885,7 +885,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.beastmen_gor,
 				Breeds.beastmen_ungor_archer,
@@ -896,7 +896,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
@@ -907,7 +907,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.beastmen_bestigor,
 				Breeds.beastmen_bestigor,
@@ -918,7 +918,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_storm_vermin_commander,
@@ -929,7 +929,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
@@ -942,7 +942,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.beastmen_gor,
 				Breeds.beastmen_ungor_archer,
@@ -955,7 +955,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_storm_vermin_commander,
@@ -968,7 +968,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.beastmen_bestigor,
 				Breeds.beastmen_bestigor,
@@ -1425,73 +1425,73 @@ BreedPacks = {
 			patrol_chance = 1
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.chaos_marauder
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.chaos_raider
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.beastmen_gor
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.beastmen_bestigor
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.beastmen_gor,
 				Breeds.beastmen_ungor
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.beastmen_ungor_archer,
 				Breeds.beastmen_ungor_archer
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.chaos_raider,
 				Breeds.chaos_marauder
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.beastmen_bestigor,
 				Breeds.beastmen_gor
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.chaos_raider,
 				Breeds.chaos_raider
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
@@ -1499,7 +1499,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.beastmen_gor,
 				Breeds.beastmen_gor,
@@ -1507,7 +1507,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.beastmen_ungor_archer,
 				Breeds.beastmen_ungor_archer,
@@ -1515,7 +1515,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.chaos_raider,
 				Breeds.chaos_marauder,
@@ -1523,7 +1523,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.beastmen_bestigor,
 				Breeds.beastmen_gor,
@@ -1531,7 +1531,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
@@ -1540,7 +1540,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.beastmen_gor,
 				Breeds.beastmen_ungor_archer,
@@ -1549,7 +1549,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.chaos_raider,
 				Breeds.chaos_marauder,
@@ -1558,7 +1558,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.beastmen_bestigor,
 				Breeds.beastmen_gor,
@@ -1567,7 +1567,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.beastmen_gor,
 				Breeds.beastmen_gor,
@@ -1578,7 +1578,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
@@ -1589,7 +1589,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.beastmen_bestigor,
 				Breeds.beastmen_bestigor,
@@ -1600,9 +1600,9 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
-				var_0_4,
+				tbl,
 				Breeds.chaos_raider,
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
@@ -1611,9 +1611,9 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
-				var_0_4,
+				tbl,
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
@@ -1624,7 +1624,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.beastmen_gor,
 				Breeds.beastmen_ungor_archer,
@@ -1637,9 +1637,9 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
-				var_0_4,
+				tbl,
 				Breeds.chaos_raider,
 				Breeds.chaos_raider,
 				Breeds.chaos_marauder,
@@ -1650,7 +1650,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.beastmen_bestigor,
 				Breeds.beastmen_bestigor,
@@ -2225,66 +2225,66 @@ BreedPacks = {
 			patrol_chance = 1
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.skaven_clan_rat
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.skaven_storm_vermin_commander
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.chaos_marauder
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.chaos_raider
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.chaos_marauder,
 				Breeds.chaos_fanatic
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_clan_rat
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.chaos_raider,
 				Breeds.chaos_marauder
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_storm_vermin_commander
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
@@ -2292,7 +2292,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
@@ -2300,7 +2300,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_clan_rat,
@@ -2308,7 +2308,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.chaos_raider,
 				Breeds.chaos_marauder,
@@ -2316,7 +2316,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
@@ -2325,7 +2325,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
@@ -2334,7 +2334,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
@@ -2343,7 +2343,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.chaos_raider,
 				Breeds.chaos_marauder,
@@ -2352,7 +2352,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
@@ -2363,7 +2363,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
@@ -2374,7 +2374,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.chaos_raider,
 				Breeds.chaos_raider,
@@ -2385,7 +2385,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_storm_vermin_commander,
@@ -2396,7 +2396,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
@@ -2409,7 +2409,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
@@ -2422,7 +2422,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_storm_vermin_commander,
@@ -2435,7 +2435,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.chaos_raider,
 				Breeds.chaos_raider,
@@ -3020,40 +3020,40 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.skaven_clan_rat
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.skaven_storm_vermin_commander
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_clan_rat
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_storm_vermin_commander
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
@@ -3061,7 +3061,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_clan_rat,
@@ -3069,7 +3069,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_storm_vermin_commander,
@@ -3077,7 +3077,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
@@ -3086,7 +3086,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_clan_rat,
@@ -3095,7 +3095,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_storm_vermin_commander,
@@ -3104,43 +3104,8 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat
-			}
-		},
-		{
-			spawn_weight = var_0_1,
-			members = {
-				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat
-			}
-		},
-		{
-			spawn_weight = var_0_1,
-			members = {
-				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat
-			}
-		},
-		{
-			spawn_weight = var_0_2,
-			members = {
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
@@ -3150,9 +3115,31 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat
+			}
+		},
+		{
+			spawn_weight = num,
+			members = {
+				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat
+			}
+		},
+		{
+			spawn_weight = num_2,
+			members = {
+				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
@@ -3163,7 +3150,20 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
+			members = {
+				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat
+			}
+		},
+		{
+			spawn_weight = num_2,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_storm_vermin_commander,
@@ -3938,27 +3938,27 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.skaven_storm_vermin_with_shield
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_clan_rat_with_shield
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.skaven_storm_vermin_with_shield,
 				Breeds.skaven_storm_vermin_commander
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_clan_rat_with_shield,
@@ -3966,55 +3966,55 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
-			members = {
-				Breeds.skaven_storm_vermin_with_shield,
-				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_clan_rat_with_shield
-			}
-		},
-		{
-			spawn_weight = var_0_2,
-			members = {
-				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_clan_rat_with_shield,
-				Breeds.skaven_clan_rat_with_shield,
-				Breeds.skaven_clan_rat_with_shield
-			}
-		},
-		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.skaven_storm_vermin_with_shield,
-				Breeds.skaven_storm_vermin_with_shield,
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_clan_rat_with_shield
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_clan_rat_with_shield,
 				Breeds.skaven_clan_rat_with_shield,
-				Breeds.skaven_clan_rat_with_shield,
-				Breeds.skaven_clan_rat_with_shield,
 				Breeds.skaven_clan_rat_with_shield
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num,
 			members = {
 				Breeds.skaven_storm_vermin_with_shield,
 				Breeds.skaven_storm_vermin_with_shield,
 				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_clan_rat_with_shield
+			}
+		},
+		{
+			spawn_weight = num_2,
+			members = {
+				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_clan_rat_with_shield,
+				Breeds.skaven_clan_rat_with_shield,
 				Breeds.skaven_clan_rat_with_shield,
 				Breeds.skaven_clan_rat_with_shield,
 				Breeds.skaven_clan_rat_with_shield
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
+			members = {
+				Breeds.skaven_storm_vermin_with_shield,
+				Breeds.skaven_storm_vermin_with_shield,
+				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_clan_rat_with_shield,
+				Breeds.skaven_clan_rat_with_shield,
+				Breeds.skaven_clan_rat_with_shield
+			}
+		},
+		{
+			spawn_weight = num_2,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_clan_rat_with_shield,
@@ -4027,7 +4027,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.skaven_storm_vermin_with_shield,
 				Breeds.skaven_storm_vermin_with_shield,
@@ -4178,27 +4178,27 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.skaven_clan_rat
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.skaven_plague_monk,
 				Breeds.skaven_plague_monk
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_clan_rat
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.skaven_plague_monk,
 				Breeds.skaven_plague_monk,
@@ -4206,7 +4206,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_clan_rat,
@@ -4214,7 +4214,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.skaven_plague_monk,
 				Breeds.skaven_plague_monk,
@@ -4223,51 +4223,51 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
-			members = {
-				Breeds.skaven_storm_vermin_commander,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat
-			}
-		},
-		{
-			spawn_weight = var_0_1,
-			members = {
-				Breeds.skaven_plague_monk,
-				Breeds.skaven_plague_monk,
-				Breeds.skaven_plague_monk,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat,
-				Breeds.skaven_clan_rat
-			}
-		},
-		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat
+			}
+		},
+		{
+			spawn_weight = num,
+			members = {
+				Breeds.skaven_plague_monk,
+				Breeds.skaven_plague_monk,
+				Breeds.skaven_plague_monk,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.skaven_storm_vermin_commander,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat
+			}
+		},
+		{
+			spawn_weight = num_2,
+			members = {
+				Breeds.skaven_storm_vermin_commander,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
+				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat,
 				Breeds.skaven_clan_rat
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.skaven_plague_monk,
 				Breeds.skaven_plague_monk,
@@ -4675,91 +4675,91 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
-				var_0_4
+				tbl
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.chaos_marauder
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
-				var_0_4,
+				tbl,
 				Breeds.chaos_marauder
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.chaos_marauder_with_shield,
 				Breeds.chaos_marauder_with_shield
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
-				var_0_4,
+				tbl,
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
-				var_0_4,
+				tbl,
 				Breeds.chaos_marauder_with_shield,
 				Breeds.chaos_marauder_with_shield
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
-				var_0_4,
+				tbl,
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
-				var_0_4,
-				Breeds.chaos_marauder_with_shield,
-				Breeds.chaos_marauder_with_shield,
-				Breeds.chaos_marauder_with_shield
-			}
-		},
-		{
-			spawn_weight = var_0_2,
-			members = {
-				var_0_4,
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder
-			}
-		},
-		{
-			spawn_weight = var_0_1,
-			members = {
-				var_0_4,
-				Breeds.chaos_marauder_with_shield,
-				Breeds.chaos_marauder_with_shield,
+				tbl,
 				Breeds.chaos_marauder_with_shield,
 				Breeds.chaos_marauder_with_shield,
 				Breeds.chaos_marauder_with_shield
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
-				var_0_4,
+				tbl,
+				Breeds.chaos_marauder,
+				Breeds.chaos_marauder,
+				Breeds.chaos_marauder,
+				Breeds.chaos_marauder,
+				Breeds.chaos_marauder
+			}
+		},
+		{
+			spawn_weight = num,
+			members = {
+				tbl,
+				Breeds.chaos_marauder_with_shield,
+				Breeds.chaos_marauder_with_shield,
+				Breeds.chaos_marauder_with_shield,
+				Breeds.chaos_marauder_with_shield,
+				Breeds.chaos_marauder_with_shield
+			}
+		},
+		{
+			spawn_weight = num_2,
+			members = {
+				tbl,
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
@@ -4770,9 +4770,9 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
-				var_0_4,
+				tbl,
 				Breeds.chaos_marauder_with_shield,
 				Breeds.chaos_marauder_with_shield,
 				Breeds.chaos_marauder_with_shield,
@@ -5164,27 +5164,27 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.chaos_marauder
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.chaos_raider,
 				Breeds.chaos_fanatic
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
-				var_0_4,
+				tbl,
 				Breeds.chaos_marauder
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.chaos_raider,
 				Breeds.chaos_marauder,
@@ -5192,55 +5192,55 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
-				var_0_4,
+				tbl,
 				Breeds.chaos_fanatic,
 				Breeds.chaos_fanatic
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
-				var_0_4,
-				Breeds.chaos_fanatic,
-				Breeds.chaos_fanatic,
-				Breeds.chaos_fanatic
-			}
-		},
-		{
-			spawn_weight = var_0_2,
-			members = {
-				Breeds.chaos_raider,
-				Breeds.chaos_raider,
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder
-			}
-		},
-		{
-			spawn_weight = var_0_2,
-			members = {
-				var_0_4,
-				Breeds.chaos_raider,
-				Breeds.chaos_marauder,
-				Breeds.chaos_marauder
-			}
-		},
-		{
-			spawn_weight = var_0_1,
-			members = {
-				Breeds.chaos_raider,
-				Breeds.chaos_raider,
-				Breeds.chaos_raider,
+				tbl,
 				Breeds.chaos_fanatic,
 				Breeds.chaos_fanatic,
 				Breeds.chaos_fanatic
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num_2,
 			members = {
-				var_0_4,
+				Breeds.chaos_raider,
+				Breeds.chaos_raider,
+				Breeds.chaos_marauder,
+				Breeds.chaos_marauder
+			}
+		},
+		{
+			spawn_weight = num_2,
+			members = {
+				tbl,
+				Breeds.chaos_raider,
+				Breeds.chaos_marauder,
+				Breeds.chaos_marauder
+			}
+		},
+		{
+			spawn_weight = num,
+			members = {
+				Breeds.chaos_raider,
+				Breeds.chaos_raider,
+				Breeds.chaos_raider,
+				Breeds.chaos_fanatic,
+				Breeds.chaos_fanatic,
+				Breeds.chaos_fanatic
+			}
+		},
+		{
+			spawn_weight = num,
+			members = {
+				tbl,
 				Breeds.chaos_raider,
 				Breeds.chaos_marauder,
 				Breeds.chaos_marauder,
@@ -5249,7 +5249,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.chaos_raider,
 				Breeds.chaos_raider,
@@ -5556,61 +5556,61 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.chaos_marauder_with_shield
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.chaos_marauder_with_shield,
 				Breeds.chaos_marauder_with_shield
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.chaos_raider,
 				Breeds.chaos_marauder_with_shield
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
+				Breeds.chaos_raider,
+				Breeds.chaos_marauder_with_shield,
+				Breeds.chaos_marauder_with_shield
+			}
+		},
+		{
+			spawn_weight = num_2,
+			members = {
+				Breeds.chaos_raider,
+				Breeds.chaos_raider,
+				Breeds.chaos_marauder_with_shield
+			}
+		},
+		{
+			spawn_weight = num_2,
+			members = {
+				Breeds.chaos_raider,
+				Breeds.chaos_marauder_with_shield,
+				Breeds.chaos_marauder_with_shield,
+				Breeds.chaos_marauder_with_shield
+			}
+		},
+		{
+			spawn_weight = num_2,
+			members = {
+				Breeds.chaos_raider,
 				Breeds.chaos_raider,
 				Breeds.chaos_marauder_with_shield,
 				Breeds.chaos_marauder_with_shield
 			}
 		},
 		{
-			spawn_weight = var_0_2,
-			members = {
-				Breeds.chaos_raider,
-				Breeds.chaos_raider,
-				Breeds.chaos_marauder_with_shield
-			}
-		},
-		{
-			spawn_weight = var_0_2,
-			members = {
-				Breeds.chaos_raider,
-				Breeds.chaos_marauder_with_shield,
-				Breeds.chaos_marauder_with_shield,
-				Breeds.chaos_marauder_with_shield
-			}
-		},
-		{
-			spawn_weight = var_0_2,
-			members = {
-				Breeds.chaos_raider,
-				Breeds.chaos_raider,
-				Breeds.chaos_marauder_with_shield,
-				Breeds.chaos_marauder_with_shield
-			}
-		},
-		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.chaos_raider,
 				Breeds.chaos_marauder_with_shield,
@@ -5621,7 +5621,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.chaos_raider,
 				Breeds.chaos_raider,
@@ -5632,7 +5632,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.chaos_marauder_with_shield,
 				Breeds.chaos_marauder_with_shield,
@@ -5645,7 +5645,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.chaos_raider,
 				Breeds.chaos_raider,
@@ -5955,20 +5955,20 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.chaos_berzerker
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.chaos_fanatic,
 				Breeds.chaos_berzerker
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.chaos_berzerker,
 				Breeds.chaos_berzerker,
@@ -5976,7 +5976,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.chaos_raider,
 				Breeds.chaos_fanatic,
@@ -5984,7 +5984,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.chaos_raider,
 				Breeds.chaos_raider,
@@ -5992,7 +5992,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.chaos_berzerker,
 				Breeds.chaos_berzerker,
@@ -6001,7 +6001,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.chaos_raider,
 				Breeds.chaos_raider,
@@ -6010,7 +6010,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.chaos_berzerker,
 				Breeds.chaos_berzerker,
@@ -6021,7 +6021,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.chaos_berzerker,
 				Breeds.chaos_berzerker,
@@ -6462,41 +6462,41 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.chaos_raider
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.chaos_berzerker,
 				Breeds.chaos_raider
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.chaos_berzerker,
 				Breeds.chaos_marauder_with_shield
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.chaos_marauder_with_shield,
 				Breeds.chaos_marauder_with_shield
 			}
 		},
 		{
-			spawn_weight = var_0_3,
+			spawn_weight = num_3,
 			members = {
 				Breeds.chaos_berzerker,
 				Breeds.chaos_berzerker
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.chaos_berzerker,
 				Breeds.chaos_marauder_with_shield,
@@ -6504,7 +6504,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.chaos_raider,
 				Breeds.chaos_raider,
@@ -6513,7 +6513,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.chaos_berzerker,
 				Breeds.chaos_berzerker,
@@ -6522,7 +6522,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.chaos_marauder_with_shield,
 				Breeds.chaos_marauder_with_shield,
@@ -6531,7 +6531,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.chaos_berzerker,
 				Breeds.chaos_berzerker,
@@ -6542,7 +6542,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.chaos_berzerker,
 				Breeds.chaos_berzerker,
@@ -6861,21 +6861,21 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.beastmen_bestigor,
 				Breeds.beastmen_gor
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.beastmen_gor,
 				Breeds.beastmen_gor
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.beastmen_ungor_archer,
 				Breeds.beastmen_ungor_archer,
@@ -6883,7 +6883,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.beastmen_bestigor,
 				Breeds.beastmen_gor,
@@ -6891,7 +6891,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.beastmen_bestigor,
 				Breeds.beastmen_ungor,
@@ -6899,7 +6899,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.beastmen_ungor_archer,
 				Breeds.beastmen_ungor_archer,
@@ -6908,7 +6908,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.beastmen_bestigor,
 				Breeds.beastmen_gor,
@@ -6917,7 +6917,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.beastmen_bestigor,
 				Breeds.beastmen_ungor_archer,
@@ -6928,7 +6928,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.beastmen_bestigor,
 				Breeds.beastmen_bestigor,
@@ -6939,7 +6939,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_2,
+			spawn_weight = num_2,
 			members = {
 				Breeds.beastmen_bestigor,
 				Breeds.beastmen_bestigor,
@@ -6952,7 +6952,7 @@ BreedPacks = {
 			}
 		},
 		{
-			spawn_weight = var_0_1,
+			spawn_weight = num,
 			members = {
 				Breeds.beastmen_ungor_archer,
 				Breeds.beastmen_ungor_archer,
@@ -7981,107 +7981,127 @@ BackupBreedPack = {
 	}
 }
 
-local function var_0_5(arg_1_0, arg_1_1)
-	local var_1_0 = #arg_1_0
+local function fn(self, arg_1_1)
+	-- function 1
+	local count = #self
 
-	for iter_1_0 = 1, var_1_0 do
-		local var_1_1 = arg_1_0[iter_1_0]
-		local var_1_2 = #var_1_1.members
+	for i = 1, count do
+		local var_1_1 = self[i]
+		local count_2 = #var_1_1.members
 
-		fassert(var_0_0[var_1_2], "The %d pack in BreedPacks[%s] is of size %d. There are no InterestPointUnits matching this size.", iter_1_0, arg_1_1, var_1_2)
+		fassert(InterestPointUnits[count_2], "The %d pack in BreedPacks[%s] is of size %d. There are no InterestPointUnits matching this size.", i, arg_1_1, count_2)
 
-		var_1_1.members_n = var_1_2
+		var_1_1.members_n = count_2
 	end
 
-	return var_1_0
+	return count
 end
 
-local function var_0_6(arg_2_0, arg_2_1)
-	local var_2_0 = var_0_5(arg_2_0, arg_2_1)
-	local var_2_1 = {}
-	local var_2_2 = {}
+local function fn_2(self, arg_2_1)
+	-- function 2
+	local var_2_0 = fn(self, arg_2_1)
+	local tbl = {}
+	local tbl_2 = {}
 
-	for iter_2_0 = 1, var_2_0 do
-		local var_2_3 = arg_2_0[iter_2_0]
-		local var_2_4 = var_2_3.members_n
+	for i = 1, var_2_0 do
+		local var_2_3 = self[i]
+		local members_n = var_2_3.members_n
 
-		if not var_2_2[var_2_4] then
-			var_2_2[var_2_4] = {
+		if not tbl_2[members_n] then
+			tbl_2[members_n] = {
 				packs = {},
 				weights = {}
 			}
 		end
 
-		local var_2_5 = var_2_2[var_2_4]
-		local var_2_6 = var_2_5.packs
+		local var_2_5 = tbl_2[members_n]
+		local packs = var_2_5.packs
 
-		var_2_6[#var_2_6 + 1] = var_2_3
+		packs[#packs + 1] = var_2_3
 		var_2_5.weights[#var_2_5.weights + 1] = var_2_3.spawn_weight
 	end
 
-	for iter_2_1, iter_2_2 in pairs(var_2_2) do
-		local var_2_7, var_2_8 = LoadedDice.create(iter_2_2.weights, false)
+	for k, v in pairs(tbl_2) do
+		local var_2_7, var_2_8 = LoadedDice.create(v.weights, false)
 
-		var_2_1[iter_2_1] = {
-			packs = iter_2_2.packs,
+		tbl[k] = {
+			packs = v.packs,
 			prob = var_2_7,
 			alias = var_2_8
 		}
 	end
 
-	return var_2_1
+	return tbl
 end
 
 BreedPacksBySize = {}
 
-for iter_0_0, iter_0_1 in pairs(BreedPacks) do
-	BreedPacksBySize[iter_0_0] = var_0_6(iter_0_1, iter_0_0)
+for k, v in pairs(BreedPacks) do
+	BreedPacksBySize[k] = fn_2(v, k)
 end
 
+local InterestPointUnitsLookup = InterestPointUnitsLookup
+
 InterestPointUnitsLookup = InterestPointUnitsLookup or false
+InterestPointUnitsLookup = InterestPointUnitsLookup
+
+local SizeOfInterestPoint = SizeOfInterestPoint
+
 SizeOfInterestPoint = SizeOfInterestPoint or {}
+SizeOfInterestPoint = SizeOfInterestPoint
+
+local InterestPointPickListIndexLookup = InterestPointPickListIndexLookup
+
 InterestPointPickListIndexLookup = InterestPointPickListIndexLookup or {}
+InterestPointPickListIndexLookup = InterestPointPickListIndexLookup
+
+local InterestPointPickList = InterestPointPickList
+
 InterestPointPickList = InterestPointPickList or false
+InterestPointPickList = InterestPointPickList
 
 if #InterestPointPickListIndexLookup == 0 then
-	local var_0_7 = InterestPointPickList or {}
-	local var_0_8 = 0
+	local InterestPointPickList_2 = InterestPointPickList
 
-	for iter_0_2, iter_0_3 in ipairs(var_0_0) do
-		if iter_0_3 then
-			for iter_0_4 = 1, iter_0_3.spawn_weight do
-				var_0_8 = var_0_8 + 1
-				var_0_7[var_0_8] = iter_0_2
+	InterestPointPickList_2 = InterestPointPickList_2 or {}
+
+	local num_4 = 0
+
+	for i, v_2 in ipairs(InterestPointUnits) do
+		if not v_2 then
+			for i4 = 1, v_2.spawn_weight do
+				num_4 = num_4 + 1
+				InterestPointPickList_2[num_4] = i
 			end
 
-			for iter_0_5 = 1, #iter_0_3 do
-				local var_0_9 = iter_0_3[iter_0_5]
+			for i5 = 1, #v_2 do
+				local var_0_13 = v_2[i5]
 
-				SizeOfInterestPoint[var_0_9] = iter_0_2
+				SizeOfInterestPoint[var_0_13] = i
 			end
 
-			InterestPointPickListIndexLookup[iter_0_2] = var_0_8
+			InterestPointPickListIndexLookup[i] = num_4
 
-			for iter_0_6, iter_0_7 in pairs(BreedPacks) do
-				fassert(BreedPacksBySize[iter_0_6][iter_0_2], "BreedPacks[%s] is missing a pack of size %d. It must be defined, since InterestPointUnits expects there to be a pack like that.", iter_0_6, iter_0_2)
+			for k_2, v_3 in pairs(BreedPacks) do
+				fassert(BreedPacksBySize[k_2][i], "BreedPacks[%s] is missing a pack of size %d. It must be defined, since InterestPointUnits expects there to be a pack like that.", k_2, i)
 			end
 		else
-			InterestPointPickListIndexLookup[iter_0_2] = InterestPointPickListIndexLookup[#InterestPointPickListIndexLookup]
+			InterestPointPickListIndexLookup[i] = InterestPointPickListIndexLookup[#InterestPointPickListIndexLookup]
 		end
 	end
 
-	InterestPointPickList = var_0_7
+	InterestPointPickList = InterestPointPickList_2
 end
 
-for iter_0_8, iter_0_9 in pairs(BreedPacks) do
-	local var_0_10 = iter_0_9.zone_checks
-	local var_0_11 = var_0_10.clamp_breeds_hi
+for k_3, v_4 in pairs(BreedPacks) do
+	local zone_checks = v_4.zone_checks
+	local clamp_breeds_hi = zone_checks.clamp_breeds_hi
 
-	fassert(not var_0_11 or var_0_11.versus_base, "[BreedPacks] '%s' is missing a 'clamp_breeds_hi' setting for versus and won't be able to limit amount of breeds.", iter_0_8)
+	fassert(not clamp_breeds_hi and clamp_breeds_hi.versus_base, "[BreedPacks] '%s' is missing a 'clamp_breeds_hi' setting for versus and won't be able to limit amount of breeds.", k_3)
 
-	local var_0_12 = var_0_10.clamp_breeds_low
+	local clamp_breeds_low = zone_checks.clamp_breeds_low
 
-	fassert(not var_0_12 or var_0_12.versus_base, "[BreedPacks] '%s' is missing a 'clamp_breeds_low' setting for versus and won't be able to limit amount of breeds.", iter_0_8)
+	fassert(not clamp_breeds_low and clamp_breeds_low.versus_base, "[BreedPacks] '%s' is missing a 'clamp_breeds_low' setting for versus and won't be able to limit amount of breeds.", k_3)
 end
 
 BenchmarkSettings.demo_mode_overrides()

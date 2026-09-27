@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/mutators/mutator_skulls_2023.lua
 
-local var_0_0 = "skulls_2023"
-local var_0_1 = 5
-local var_0_2 = {
+local str = "skulls_2023"
+local num = 5
+local tbl = {
 	"hordes_galore"
 }
 
@@ -16,43 +16,45 @@ return {
 	dialogue_settings = {
 		"dialogues/generated/npc_dlc_event_skulls"
 	},
-	server_start_function = function(arg_1_0, arg_1_1)
-		local var_1_0 = Managers.state.entity:system("pickup_system")
-		local var_1_1 = {}
-		local var_1_2 = false
-		local var_1_3 = "spawner"
-		local var_1_4 = var_1_0.primary_pickup_spawners
+	server_start_function = function (arg_1_0, arg_1_1)
+		-- function 1
+		local system = Managers.state.entity:system("pickup_system")
+		local tbl_2 = {}
+		local flag = false
+		local str_2 = "spawner"
+		local primary_pickup_spawners = system.primary_pickup_spawners
 
-		for iter_1_0 = 1, #var_1_4 do
-			local var_1_5 = var_1_4[iter_1_0]
-			local var_1_6, var_1_7 = ScriptUnit.extension(var_1_5, "pickup_system"):get_spawn_location_data()
+		for i = 1, #primary_pickup_spawners do
+			local var_1_5 = primary_pickup_spawners[i]
+			local get_spawn_location_data, var_1_7 = ScriptUnit.extension(var_1_5, "pickup_system"):get_spawn_location_data()
 
-			var_1_1[var_1_0:spawn_pickup(var_0_0, var_1_6, var_1_7, var_1_2, var_1_3)] = true
+			tbl_2[system:spawn_pickup(str, get_spawn_location_data, var_1_7, flag, str_2)] = true
 		end
 
-		local var_1_8 = var_1_0.secondary_pickup_spawners
+		local secondary_pickup_spawners = system.secondary_pickup_spawners
 
-		for iter_1_1 = 1, #var_1_8 do
-			local var_1_9 = var_1_8[iter_1_1]
-			local var_1_10, var_1_11 = ScriptUnit.extension(var_1_9, "pickup_system"):get_spawn_location_data()
+		for j = 1, #secondary_pickup_spawners do
+			local var_1_9 = secondary_pickup_spawners[j]
+			local get_spawn_location_data_2, var_1_11 = ScriptUnit.extension(var_1_9, "pickup_system"):get_spawn_location_data()
 
-			var_1_1[var_1_0:spawn_pickup(var_0_0, var_1_10, var_1_11, var_1_2, var_1_3)] = true
+			tbl_2[system:spawn_pickup(str, get_spawn_location_data_2, var_1_11, flag, str_2)] = true
 		end
 
-		arg_1_1.pickup_units = var_1_1
+		arg_1_1.pickup_units = tbl_2
 		arg_1_1.num_skulls_picked = 0
 		arg_1_1.mission_giver_unit = Managers.state.entity:system("surrounding_aware_system"):request_global_listener("inn_keeper", "player")
 
-		function arg_1_1.on_skull_picked_up()
+		arg_1_1.on_skull_picked_up = function ()
+			-- function 2
 			arg_1_1.num_skulls_picked = arg_1_1.num_skulls_picked + 1
 
-			if arg_1_1.num_skulls_picked >= var_0_1 then
-				local var_2_0 = Managers.state.game_mode._mutator_handler
+			if arg_1_1.num_skulls_picked >= num then
+				local _mutator_handler = Managers.state.game_mode._mutator_handler
 
-				var_2_0:initialize_mutators(var_0_2)
+				_mutator_handler:initialize_mutators(tbl)
 
-				for iter_2_0 = 1, #var_0_2 do
-					var_2_0:activate_mutator(var_0_2[iter_2_0])
+				for i = 1, #tbl do
+					_mutator_handler:activate_mutator(tbl[i])
 				end
 
 				Managers.state.entity:system("audio_system"):play_2d_audio_event("Play_skulls_event_mutator_extra_hordes")
@@ -62,18 +64,19 @@ return {
 
 		Managers.state.event:register(arg_1_1, "register_skulls_2023_pickup", "on_skull_picked_up")
 	end,
-	server_stop_function = function(arg_3_0, arg_3_1)
-		if arg_3_1.pickup_units then
-			for iter_3_0 in pairs(arg_3_1.pickup_units) do
-				if Unit.alive(iter_3_0) then
-					Managers.state.unit_spawner:mark_for_deletion(iter_3_0)
+	server_stop_function = function (arg_3_0, arg_3_1)
+		-- function 3
+		if not arg_3_1.pickup_units then
+			for k in pairs(arg_3_1.pickup_units) do
+				if not Unit.alive(k) then
+					Managers.state.unit_spawner:mark_for_deletion(k)
 				end
 			end
 
 			arg_3_1.pickup_units = nil
 		end
 
-		if arg_3_1.mission_giver_unit then
+		if not arg_3_1.mission_giver_unit then
 			Managers.state.unit_spawner:mark_for_deletion(arg_3_1.mission_giver_unit)
 		end
 

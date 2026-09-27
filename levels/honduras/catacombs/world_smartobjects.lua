@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras/catacombs/world_smartobjects.lua
 
-local var_0_0 = {
+local tbl = {
 	["f533da10-9581-4542-92a0-c7547967c75e"] = {
 		{
 			smart_object_index = 1180,
@@ -41747,13 +41747,13 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = 1803
-local var_0_2 = "v1"
-local var_0_3 = "2017.MAY.05.05"
+local num = 1803
+local str = "v1"
+local str_2 = "2017.MAY.05.05"
 
 return {
-	smart_objects = var_0_0,
-	smart_object_count = var_0_1,
-	version = var_0_2,
-	ledgelator_version = var_0_3
+	smart_objects = tbl,
+	smart_object_count = num,
+	version = str,
+	ledgelator_version = str_2
 }

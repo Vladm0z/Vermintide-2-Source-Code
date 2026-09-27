@@ -2,14 +2,14 @@
 
 ImguiDeusWeapons = class(ImguiDeusWeapons)
 
-local var_0_0 = {
+local tbl = {
 	"plentiful",
 	"common",
 	"rare",
 	"exotic",
 	"unique"
 }
-local var_0_1 = {
+local tbl_2 = {
 	"normal",
 	"hard",
 	"harder",
@@ -17,7 +17,8 @@ local var_0_1 = {
 	"cataclysm"
 }
 
-local function var_0_2(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6)
+local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6)
+	-- function 1
 	arg_1_1 = Imgui.combo("Select weapon group", arg_1_1, arg_1_0)
 	arg_1_3 = Imgui.combo("Select rarity", arg_1_3, arg_1_2)
 	arg_1_5 = Imgui.combo("Select difficulty (affects powerlevel)", arg_1_5, arg_1_4)
@@ -26,285 +27,346 @@ local function var_0_2(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg
 	return arg_1_1, arg_1_3, arg_1_5, arg_1_6
 end
 
-local function var_0_3(arg_2_0, arg_2_1, arg_2_2)
-	local var_2_0 = Managers.backend:get_interface("deus")
+local function fn_2(self, arg_2_1, arg_2_2)
+	-- function 2
+	local get_interface = Managers.backend:get_interface("deus")
 
-	var_2_0:grant_deus_weapon(arg_2_0)
-	var_2_0:refresh_deus_weapons_in_items_backend()
+	get_interface:grant_deus_weapon(self)
+	get_interface:refresh_deus_weapons_in_items_backend()
 
-	local var_2_1 = arg_2_0.backend_id
-	local var_2_2 = arg_2_0.data.slot_type
+	local backend_id = self.backend_id
+	local slot_type = self.data.slot_type
 	local var_2_3
-	local var_2_4 = InventorySettings.slots_by_slot_index
+	local slots_by_slot_index = InventorySettings.slots_by_slot_index
 
-	for iter_2_0, iter_2_1 in pairs(var_2_4) do
-		if var_2_2 == iter_2_1.type then
-			var_2_3 = iter_2_1.name
+	for k, v in pairs(slots_by_slot_index) do
+		if slot_type == v.type then
+			var_2_3 = v.name
 		end
 	end
 
-	BackendUtils.set_loadout_item(var_2_1, arg_2_1, var_2_3)
-	arg_2_2:create_equipment_in_slot(var_2_3, var_2_1)
+	BackendUtils.set_loadout_item(backend_id, arg_2_1, var_2_3)
+	arg_2_2:create_equipment_in_slot(var_2_3, backend_id)
 end
 
-local function var_0_4(arg_3_0)
-	local var_3_0, var_3_1, var_3_2, var_3_3 = UIUtils.get_ui_information_from_item(arg_3_0)
-	local var_3_4 = Colors.get_table(arg_3_0.rarity)
+local function fn_3(self)
+	-- function 3
+	local get_ui_information_from_item, var_3_1, var_3_2, var_3_3 = UIUtils.get_ui_information_from_item(self)
+	local get_table = Colors.get_table(self.rarity)
 
-	Imgui.text_colored(" === " .. Localize(var_3_1) .. " === ", var_3_4[2], var_3_4[3], var_3_4[4], var_3_4[1])
+	Imgui.text_colored(" === " .. Localize(var_3_1) .. " === ", get_table[2], get_table[3], get_table[4], get_table[1])
 	Imgui.spacing()
-	Imgui.text("type: " .. Localize(arg_3_0.data.item_type))
-	Imgui.text("slot: " .. arg_3_0.data.slot_type)
-	Imgui.text("rarity: " .. arg_3_0.rarity)
-	Imgui.text("power_level: " .. arg_3_0.power_level)
+	Imgui.text("type: " .. Localize(self.data.item_type))
+	Imgui.text("slot: " .. self.data.slot_type)
+	Imgui.text("rarity: " .. self.rarity)
+	Imgui.text("power_level: " .. self.power_level)
 
-	if arg_3_0.traits then
+	if not self.traits then
 		Imgui.text("traits:")
 
-		for iter_3_0, iter_3_1 in ipairs(arg_3_0.traits) do
-			Imgui.text("  - " .. iter_3_1)
+		for i, v in ipairs(self.traits) do
+			Imgui.text("  - " .. v)
 		end
 	end
 
-	if arg_3_0.properties then
+	if not self.properties then
 		Imgui.text("props:")
 
-		for iter_3_2, iter_3_3 in pairs(arg_3_0.properties) do
-			Imgui.text("  - " .. iter_3_2 .. ": " .. iter_3_3)
+		for k, v_2 in pairs(self.properties) do
+			Imgui.text("  - " .. k .. ": " .. v_2)
 		end
 	end
 
-	if arg_3_0.skin then
-		Imgui.text("skin: " .. arg_3_0.skin)
+	if not self.skin then
+		Imgui.text("skin: " .. self.skin)
 	end
 end
 
-local function var_0_5(arg_4_0, arg_4_1, arg_4_2)
-	for iter_4_0, iter_4_1 in ipairs(arg_4_0) do
-		if not arg_4_2[iter_4_1] then
-			arg_4_2[iter_4_1] = 0.75
+local function fn_4(arg_4_0, arg_4_1, arg_4_2)
+	-- function 4
+	for i, v in ipairs(arg_4_0) do
+		if not arg_4_2[v] then
+			arg_4_2[v] = 0.75
 		end
 
 		if arg_4_1 == "unique" then
-			arg_4_2[iter_4_1] = 1
+			arg_4_2[v] = 1
 		else
-			local var_4_0 = Imgui.slider_float("Set Property " .. iter_4_1 .. " power", arg_4_2[iter_4_1], 0, 1)
+			local slider_float = Imgui.slider_float("Set Property " .. v .. " power", arg_4_2[v], 0, 1)
 
-			arg_4_2[iter_4_1] = math.round_with_precision(var_4_0, 3)
+			arg_4_2[v] = math.round_with_precision(slider_float, 3)
 		end
 	end
 
 	return arg_4_2
 end
 
-local function var_0_6(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
-	local var_5_0 = arg_5_0:get_weapon_pool()
-	local var_5_1, var_5_2 = arg_5_0:get_slot_chances()
-	local var_5_3 = math.random_seed()
-	local var_5_4 = DeusWeaponGeneration.generate_weapon(arg_5_4, arg_5_3, arg_5_2, var_5_3, var_5_0, var_5_1, var_5_2)
+local function fn_5(self, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	-- function 5
+	local get_weapon_pool = self:get_weapon_pool()
+	local get_slot_chances, var_5_2 = self:get_slot_chances()
+	local random_seed = math.random_seed()
+	local generate_weapon = DeusWeaponGeneration.generate_weapon(arg_5_4, arg_5_3, arg_5_2, random_seed, get_weapon_pool, get_slot_chances, var_5_2)
 
-	arg_5_0:remove_weapon_from_pool(arg_5_2, var_5_4.deus_item_key)
-	var_0_3(var_5_4, arg_5_5, arg_5_1)
+	self:remove_weapon_from_pool(arg_5_2, generate_weapon.deus_item_key)
+	fn_2(generate_weapon, arg_5_5, arg_5_1)
 end
 
-function ImguiDeusWeapons.init(arg_6_0)
-	arg_6_0._next_weapon_time = 0
+ImguiDeusWeapons.init = function (self)
+	-- function 6
+	self._next_weapon_time = 0
 end
 
-function ImguiDeusWeapons.update(arg_7_0)
-	local var_7_0 = Managers.player:local_human_player()
+ImguiDeusWeapons.update = function (self)
+	-- function 7
+	local local_human_player = Managers.player:local_human_player()
 
-	if not var_7_0 then
+	if not local_human_player then
 		return
 	end
 
-	local var_7_1 = Managers.mechanism:game_mechanism()
-	local var_7_2 = var_7_1 and var_7_1.get_deus_run_controller and var_7_1:get_deus_run_controller()
+	local game_mechanism = Managers.mechanism:game_mechanism()
 
-	if not var_7_2 then
+	if not game_mechanism then
+		-- Nothing
+	end
+
+	::label_7_0::
+
+	local get_deus_run_controller = game_mechanism.get_deus_run_controller
+
+	get_deus_run_controller = not get_deus_run_controller and game_mechanism:get_deus_run_controller()
+
+	::label_7_1::
+
+	if not get_deus_run_controller then
 		return
 	end
 
-	local var_7_3 = var_7_0:profile_index()
-	local var_7_4 = var_7_0:career_index()
+	local profile_index = local_human_player:profile_index()
+	local career_index = local_human_player:career_index()
 
-	if not var_7_4 then
+	if not career_index then
 		return
 	end
 
-	if arg_7_0._career_index ~= var_7_4 or arg_7_0._profile_index ~= var_7_3 then
-		local var_7_5 = SPProfiles[var_7_3].careers[var_7_4].name
+	if not (self._career_index ~= career_index or self._profile_index == profile_index) then
+		local name = SPProfiles[profile_index].careers[career_index].name
 
-		arg_7_0._available_weapon_groups = {}
+		self._available_weapon_groups = {}
 
-		for iter_7_0, iter_7_1 in pairs(DeusWeaponGroups) do
-			local var_7_6 = DeusWeaponGroups[iter_7_0]
+		for k, v in pairs(DeusWeaponGroups) do
+			local var_7_6 = DeusWeaponGroups[k]
 
-			if var_7_6 and table.contains(var_7_6.can_wield, var_7_5) then
-				arg_7_0._available_weapon_groups[#arg_7_0._available_weapon_groups + 1] = iter_7_0
+			if not var_7_6 and not table.contains(var_7_6.can_wield, name) then
+				self._available_weapon_groups[#self._available_weapon_groups + 1] = k
 			end
 		end
 
-		arg_7_0._career_index = var_7_4
-		arg_7_0._profile_index = var_7_3
-		arg_7_0._career_name = var_7_5
+		self._career_index = career_index
+		self._profile_index = profile_index
+		self._career_name = name
 
-		arg_7_0:_reset_base_weapon_selection_data()
+		self:_reset_base_weapon_selection_data()
 	end
 
-	if arg_7_0._equip_random_weapon then
-		local var_7_7 = Managers.time:time("game")
+	if not self._equip_random_weapon then
+		local time = Managers.time:time("game")
 
-		if var_7_7 > arg_7_0._next_weapon_time then
-			local var_7_8 = arg_7_0:_get_inventory_extension()
+		if time > self._next_weapon_time then
+			local _get_inventory_extension = self:_get_inventory_extension()
 
-			if var_7_8 and not var_7_8:resyncing_loadout() then
-				var_0_6(var_7_2, var_7_8, var_0_0[arg_7_0._selected_rarity_index or 1], arg_7_0._run_progress or 0, var_0_1[arg_7_0._difficulty_index or 1], arg_7_0._career_name)
+			if not (not _get_inventory_extension and _get_inventory_extension:resyncing_loadout()) then
+				local var_7_9 = fn_5
+				local var_7_10 = get_deus_run_controller
+				local var_7_11 = _get_inventory_extension
+				local var_7_12 = tbl
+				local _selected_rarity_index = self._selected_rarity_index
+
+				_selected_rarity_index = _selected_rarity_index or 1
+
+				local var_7_14 = var_7_12[_selected_rarity_index]
+				local _run_progress = self._run_progress
+
+				_run_progress = _run_progress or 0
+
+				local var_7_16 = tbl_2
+				local _difficulty_index = self._difficulty_index
+
+				_difficulty_index = _difficulty_index or 1
+
+				var_7_9(var_7_10, var_7_11, var_7_14, _run_progress, var_7_16[_difficulty_index], self._career_name)
 			end
 
-			arg_7_0._next_weapon_time = var_7_7 + 2
+			self._next_weapon_time = time + 2
 		end
 	end
 end
 
-function ImguiDeusWeapons.on_round_end(arg_8_0, ...)
-	arg_8_0._equip_random_weapon = false
+ImguiDeusWeapons.on_round_end = function (self, ...)
+	-- function 8
+	self._equip_random_weapon = false
 end
 
-function ImguiDeusWeapons.on_venture_end(arg_9_0, ...)
-	arg_9_0._equip_random_weapon = false
+ImguiDeusWeapons.on_venture_end = function (self, ...)
+	-- function 9
+	self._equip_random_weapon = false
 end
 
-function ImguiDeusWeapons.is_persistent(arg_10_0)
+ImguiDeusWeapons.is_persistent = function (arg_10_0)
+	-- function 10
 	return false
 end
 
-function ImguiDeusWeapons.draw(arg_11_0, arg_11_1)
-	if not Managers.state or not Managers.state.game_mode or Managers.state.game_mode:game_mode_key() ~= "deus" then
-		local var_11_0 = Imgui.begin_window("DeusWeapons", "always_auto_resize")
+ImguiDeusWeapons.draw = function (self, arg_11_1)
+	-- function 11
+	if not (not Managers.state and not Managers.state.game_mode and Managers.state.game_mode:game_mode_key() == "deus") then
+		local begin_window = Imgui.begin_window("DeusWeapons", "always_auto_resize")
 
 		Imgui.text("This UI only works when playing a deus level.")
 		Imgui.end_window()
 
-		return var_11_0
+		return begin_window
 	end
 
-	local var_11_1 = Imgui.begin_window("DeusWeapons", "always_auto_resize")
+	local begin_window_2 = Imgui.begin_window("DeusWeapons", "always_auto_resize")
 
 	Imgui.spacing()
 	Imgui.text("Select Weapon Group:")
 
-	arg_11_0._selected_weapon_group_index, arg_11_0._selected_rarity_index, arg_11_0._difficulty_index, arg_11_0._run_progress = var_0_2(arg_11_0._available_weapon_groups, arg_11_0._selected_weapon_group_index, var_0_0, arg_11_0._selected_rarity_index, var_0_1, arg_11_0._difficulty_index, arg_11_0._run_progress)
+	self._selected_weapon_group_index, self._selected_rarity_index, self._difficulty_index, self._run_progress = fn(self._available_weapon_groups, self._selected_weapon_group_index, tbl, self._selected_rarity_index, tbl_2, self._difficulty_index, self._run_progress)
 
-	local var_11_2 = DeusWeaponGroups[arg_11_0._available_weapon_groups[arg_11_0._selected_weapon_group_index]]
-	local var_11_3 = var_0_1[arg_11_0._difficulty_index]
-	local var_11_4 = var_0_0[arg_11_0._selected_rarity_index]
+	local var_11_2 = DeusWeaponGroups[self._available_weapon_groups[self._selected_weapon_group_index]]
+	local var_11_3 = tbl_2[self._difficulty_index]
+	local var_11_4 = tbl[self._selected_rarity_index]
 	local var_11_5 = var_11_2.items_per_rarity[var_11_4]
-	local var_11_6 = var_11_5 and #var_11_5 > 0 and var_11_5 or {
+	local flag = not var_11_5 and #var_11_5 > 0 and var_11_5 and {
 		var_11_2.default
 	}
 
 	Imgui.spacing()
 	Imgui.text("Select Item From Group:")
 
-	arg_11_0._selected_item_key_index = Imgui.combo("Select item key", arg_11_0._selected_item_key_index, var_11_6)
+	self._selected_item_key_index = Imgui.combo("Select item key", self._selected_item_key_index, flag)
 
-	local var_11_7 = var_11_6[arg_11_0._selected_item_key_index]
+	local var_11_7 = flag[self._selected_item_key_index]
 
-	if arg_11_0._prev_item_key ~= var_11_7 or arg_11_0._prev_difficulty_index ~= arg_11_0._difficulty_index or arg_11_0._prev_rarity ~= var_11_4 or arg_11_0._prev_run_progress ~= arg_11_0._run_progress then
-		arg_11_0:_reset_weapon_setting_data(var_11_7, var_11_3, arg_11_0._run_progress, var_11_4)
+	if not (self._prev_item_key ~= var_11_7 or self._prev_difficulty_index ~= self._difficulty_index or self._prev_rarity ~= var_11_4 or self._prev_run_progress == self._run_progress) then
+		self:_reset_weapon_setting_data(var_11_7, var_11_3, self._run_progress, var_11_4)
 
-		arg_11_0._prev_item_key = var_11_7
-		arg_11_0._prev_difficulty_index = arg_11_0._difficulty_index
-		arg_11_0._prev_rarity = var_11_4
-		arg_11_0._prev_run_progress = arg_11_0._run_progress
+		self._prev_item_key = var_11_7
+		self._prev_difficulty_index = self._difficulty_index
+		self._prev_rarity = var_11_4
+		self._prev_run_progress = self._run_progress
 	end
 
-	local var_11_8 = arg_11_0._available_archetypes and #arg_11_0._available_archetypes > 0
-	local var_11_9 = arg_11_0._available_property_combinations and #arg_11_0._available_property_combinations > 0
-	local var_11_10 = arg_11_0._available_trait_combinations and #arg_11_0._available_trait_combinations > 0
-	local var_11_11 = arg_11_0._available_skins and #arg_11_0._available_skins > 0
+	local _available_archetypes = self._available_archetypes
 
-	if var_11_8 or var_11_9 or var_11_10 or var_11_11 then
+	_available_archetypes = not _available_archetypes and #self._available_archetypes > 0
+
+	local _available_property_combinations = self._available_property_combinations
+
+	_available_property_combinations = not _available_property_combinations and #self._available_property_combinations > 0
+
+	local _available_trait_combinations = self._available_trait_combinations
+
+	_available_trait_combinations = not _available_trait_combinations and #self._available_trait_combinations > 0
+
+	local _available_skins = self._available_skins
+
+	_available_skins = not _available_skins and #self._available_skins > 0
+
+	if _available_archetypes or _available_property_combinations or _available_trait_combinations or not _available_skins then
 		Imgui.spacing()
 		Imgui.text("Select Properties, Traits and/or Skins:")
 	end
 
-	if var_11_8 then
-		arg_11_0._selected_archetype_index = Imgui.combo("Select archetype", arg_11_0._selected_archetype_index, arg_11_0._available_archetypes)
+	if not _available_archetypes then
+		self._selected_archetype_index = Imgui.combo("Select archetype", self._selected_archetype_index, self._available_archetypes)
 
-		local var_11_12 = DeusWeaponArchetypes[arg_11_0._available_archetypes[arg_11_0._selected_archetype_index]]
+		local var_11_12 = DeusWeaponArchetypes[self._available_archetypes[self._selected_archetype_index]]
 
-		arg_11_0._properties = var_11_12.properties
-		arg_11_0._traits = var_11_12.traits
+		self._properties = var_11_12.properties
+		self._traits = var_11_12.traits
 	end
 
-	if var_11_9 then
-		arg_11_0._selected_property_index = Imgui.combo("Select property combination", arg_11_0._selected_property_index, arg_11_0._available_property_combinations_string)
+	if not _available_property_combinations then
+		self._selected_property_index = Imgui.combo("Select property combination", self._selected_property_index, self._available_property_combinations_string)
 
-		if arg_11_0._prev_selected_property_index ~= arg_11_0._selected_property_index then
-			arg_11_0._properties = {}
+		if self._prev_selected_property_index ~= self._selected_property_index then
+			self._properties = {}
 		end
 
-		arg_11_0._prev_selected_property_index = arg_11_0._selected_property_index
+		self._prev_selected_property_index = self._selected_property_index
 
-		local var_11_13 = arg_11_0._available_property_combinations[arg_11_0._selected_property_index]
+		local var_11_13 = self._available_property_combinations[self._selected_property_index]
 
-		arg_11_0._properties = var_0_5(var_11_13, var_11_4, arg_11_0._properties)
+		self._properties = fn_4(var_11_13, var_11_4, self._properties)
 	end
 
-	if var_11_10 then
-		arg_11_0._selected_trait_index = Imgui.combo("Select trait", arg_11_0._selected_trait_index, arg_11_0._available_trait_combinations_string)
-		arg_11_0._traits = arg_11_0._available_trait_combinations[arg_11_0._selected_trait_index]
+	if not _available_trait_combinations then
+		self._selected_trait_index = Imgui.combo("Select trait", self._selected_trait_index, self._available_trait_combinations_string)
+		self._traits = self._available_trait_combinations[self._selected_trait_index]
 	end
 
-	if var_11_11 then
-		arg_11_0._selected_skin_index = Imgui.combo("Select skin", arg_11_0._selected_skin_index, arg_11_0._available_skins)
-		arg_11_0._skin = arg_11_0._available_skins[arg_11_0._selected_skin_index]
+	if not _available_skins then
+		self._selected_skin_index = Imgui.combo("Select skin", self._selected_skin_index, self._available_skins)
+		self._skin = self._available_skins[self._selected_skin_index]
 	end
 
 	Imgui.spacing()
 
-	local var_11_14 = not arg_11_0._weapon or arg_11_0._weapon.deus_item_key ~= var_11_7
+	local flag_2 = not self._weapon
 
-	for iter_11_0, iter_11_1 in pairs(arg_11_0._properties) do
-		var_11_14 = var_11_14 or arg_11_0._weapon.properties[iter_11_0] ~= arg_11_0._properties[iter_11_0]
+	flag_2 = flag_2 or self._weapon.deus_item_key ~= var_11_7
+
+	for k, v in pairs(self._properties) do
+		flag_2 = flag_2 or self._weapon.properties[k] ~= self._properties[k]
 	end
 
-	var_11_14 = var_11_14 or not table.compare(arg_11_0._weapon.traits, arg_11_0._traits)
-	var_11_14 = var_11_14 or arg_11_0._weapon.skin ~= arg_11_0._skin
-	var_11_14 = var_11_14 or arg_11_0._weapon.rarity ~= var_11_4
-	var_11_14 = var_11_14 or arg_11_0._weapon.power_level ~= arg_11_0._powerlevel
+	flag_2 = flag_2 or not table.compare(self._weapon.traits, self._traits)
+	flag_2 = flag_2 or self._weapon.skin ~= self._skin
+	flag_2 = flag_2 or self._weapon.rarity ~= var_11_4
+	flag_2 = flag_2 or self._weapon.power_level ~= self._powerlevel
 
-	if var_11_14 then
-		arg_11_0._weapon = DeusWeaponGeneration.create_weapon(var_11_7, arg_11_0._properties and table.clone(arg_11_0._properties), arg_11_0._traits and table.clone(arg_11_0._traits), arg_11_0._skin, arg_11_0._powerlevel, var_11_4)
+	if not flag_2 then
+		local create_weapon = DeusWeaponGeneration.create_weapon
+		local var_11_16 = var_11_7
+		local _properties = self._properties
+
+		_properties = not _properties and table.clone(self._properties)
+
+		local _traits = self._traits
+
+		_traits = not _traits and table.clone(self._traits)
+		self._weapon = create_weapon(var_11_16, _properties, _traits, self._skin, self._powerlevel, var_11_4)
 	end
 
-	if arg_11_0._weapon then
+	if not self._weapon then
 		Imgui.text("Weapon:")
-		var_0_4(arg_11_0._weapon)
+		fn_3(self._weapon)
 	end
 
 	Imgui.spacing()
 
-	if arg_11_0._weapon and Imgui.button("Equip") then
-		local var_11_15 = arg_11_0:_get_inventory_extension()
+	if not self._weapon and not Imgui.button("Equip") then
+		local _get_inventory_extension = self:_get_inventory_extension()
 
-		if var_11_15 and not var_11_15:resyncing_loadout() then
-			var_0_3(arg_11_0._weapon, arg_11_0._career_name, var_11_15)
+		if not (not _get_inventory_extension and _get_inventory_extension:resyncing_loadout()) then
+			fn_2(self._weapon, self._career_name, _get_inventory_extension)
 
-			local var_11_16 = Managers.mechanism:game_mechanism():get_deus_run_controller()
-			local var_11_17 = arg_11_0._weapon.data.slot_type
-			local var_11_18
-			local var_11_19 = InventorySettings.slots_by_slot_index
+			local get_deus_run_controller = Managers.mechanism:game_mechanism():get_deus_run_controller()
+			local slot_type = self._weapon.data.slot_type
+			local var_11_22
+			local slots_by_slot_index = InventorySettings.slots_by_slot_index
 
-			for iter_11_2, iter_11_3 in pairs(var_11_19) do
-				if var_11_17 == iter_11_3.type then
-					var_11_18 = iter_11_3.name
+			for k_2, v_2 in pairs(slots_by_slot_index) do
+				if slot_type == v_2.type then
+					var_11_22 = v_2.name
 				end
 			end
 
-			var_11_16:save_loadout(arg_11_0._weapon, var_11_18)
+			get_deus_run_controller:save_loadout(self._weapon, var_11_22)
 		end
 	end
 
@@ -313,62 +375,70 @@ function ImguiDeusWeapons.draw(arg_11_0, arg_11_1)
 	Imgui.spacing()
 	Imgui.spacing()
 
-	arg_11_0._equip_random_weapon = Imgui.checkbox("equip random weapons automatically", arg_11_0._equip_random_weapon or false)
+	local checkbox = Imgui.checkbox
+	local str = "equip random weapons automatically"
+	local _equip_random_weapon = self._equip_random_weapon
+
+	_equip_random_weapon = _equip_random_weapon or false
+	self._equip_random_weapon = checkbox(str, _equip_random_weapon)
 
 	Imgui.end_window()
 
-	return var_11_1
+	return begin_window_2
 end
 
-function ImguiDeusWeapons._reset_base_weapon_selection_data(arg_12_0)
-	arg_12_0._selected_weapon_group_index = 1
-	arg_12_0._selected_rarity_index = 1
-	arg_12_0._selected_item_key_index = 1
-	arg_12_0._difficulty_index = 1
-	arg_12_0._run_progress = 0
-	arg_12_0._weapon = nil
+ImguiDeusWeapons._reset_base_weapon_selection_data = function (self)
+	-- function 12
+	self._selected_weapon_group_index = 1
+	self._selected_rarity_index = 1
+	self._selected_item_key_index = 1
+	self._difficulty_index = 1
+	self._run_progress = 0
+	self._weapon = nil
 end
 
-function ImguiDeusWeapons._reset_weapon_setting_data(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
-	arg_13_0._powerlevel, arg_13_0._available_archetypes, arg_13_0._available_property_combinations, arg_13_0._available_trait_combinations, arg_13_0._available_skins = DeusWeaponGeneration.get_possibilities_for_item_key(arg_13_1, arg_13_2, arg_13_3, arg_13_4)
-	arg_13_0._run_progress = arg_13_3
-	arg_13_0._available_property_combinations_string = {}
+ImguiDeusWeapons._reset_weapon_setting_data = function (self, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+	-- function 13
+	self._powerlevel, self._available_archetypes, self._available_property_combinations, self._available_trait_combinations, self._available_skins = DeusWeaponGeneration.get_possibilities_for_item_key(arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+	self._run_progress = arg_13_3
+	self._available_property_combinations_string = {}
 
-	if arg_13_0._available_property_combinations then
-		for iter_13_0, iter_13_1 in ipairs(arg_13_0._available_property_combinations) do
-			arg_13_0._available_property_combinations_string[#arg_13_0._available_property_combinations_string + 1] = table.concat(iter_13_1, ", ")
+	if not self._available_property_combinations then
+		for i, v in ipairs(self._available_property_combinations) do
+			self._available_property_combinations_string[#self._available_property_combinations_string + 1] = table.concat(v, ", ")
 		end
 	end
 
-	arg_13_0._available_trait_combinations_string = {}
+	self._available_trait_combinations_string = {}
 
-	if arg_13_0._available_trait_combinations then
-		for iter_13_2, iter_13_3 in ipairs(arg_13_0._available_trait_combinations) do
-			arg_13_0._available_trait_combinations_string[#arg_13_0._available_trait_combinations_string + 1] = table.concat(iter_13_3, ", ")
+	if not self._available_trait_combinations then
+		for i_2, v_2 in ipairs(self._available_trait_combinations) do
+			self._available_trait_combinations_string[#self._available_trait_combinations_string + 1] = table.concat(v_2, ", ")
 		end
 	end
 
-	arg_13_0._selected_archetype_index = 1
-	arg_13_0._selected_property_index = 1
-	arg_13_0._selected_trait_index = 1
-	arg_13_0._selected_skin_index = 1
-	arg_13_0._properties = {}
-	arg_13_0._traits = {}
-	arg_13_0._skin = nil
+	self._selected_archetype_index = 1
+	self._selected_property_index = 1
+	self._selected_trait_index = 1
+	self._selected_skin_index = 1
+	self._properties = {}
+	self._traits = {}
+	self._skin = nil
 end
 
-function ImguiDeusWeapons._get_inventory_extension(arg_14_0)
-	local var_14_0 = Managers.player:local_player()
+ImguiDeusWeapons._get_inventory_extension = function (arg_14_0)
+	-- function 14
+	local local_player = Managers.player:local_player()
 
-	if not var_14_0 then
+	if not local_player then
 		return
 	end
 
-	local var_14_1 = var_14_0.player_unit
+	local player_unit = local_player.player_unit
 
-	if not var_14_1 then
+	if not player_unit then
 		return
 	end
 
-	return (ScriptUnit.extension(var_14_1, "inventory_system"))
+	return (ScriptUnit.extension(player_unit, "inventory_system"))
 end

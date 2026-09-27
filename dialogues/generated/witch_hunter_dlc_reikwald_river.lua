@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/witch_hunter_dlc_reikwald_river.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		response = "pwh_reik2_beached_chaos_ship_a",
 		name = "pwh_reik2_beached_chaos_ship_a",

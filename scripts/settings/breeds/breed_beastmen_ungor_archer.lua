@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/breeds/breed_beastmen_ungor_archer.lua
 
-local var_0_0 = require("scripts/utils/stagger_types")
-local var_0_1 = {
+local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
+local tbl = {
 	detection_radius = 50,
 	death_reaction = "ai_default",
 	walk_speed = 2.75,
@@ -91,14 +91,15 @@ local var_0_1 = {
 	stagger_duration_difficulty_mod = BreedTweaks.stagger_duration_difficulty_mod.default,
 	hit_mass_counts = BreedTweaks.hit_mass_counts.ungor,
 	bloodlust_health = BreedTweaks.bloodlust_health.beastmen_horde,
-	stagger_modifier_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
-		if arg_1_4.stagger_type == var_0_0.heavy then
-			if arg_1_0 == var_0_0.heavy and arg_1_4.heavy_stagger_immune_time then
-				arg_1_0 = var_0_0.none
+	stagger_modifier_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+		-- function 1
+		if arg_1_4.stagger_type == scripts_utils_stagger_types.heavy then
+			if arg_1_0 ~= scripts_utils_stagger_types.heavy or not arg_1_4.heavy_stagger_immune_time then
+				arg_1_0 = scripts_utils_stagger_types.none
 				arg_1_1 = 0
 				arg_1_2 = 0
-			elseif arg_1_0 ~= var_0_0.heavy and arg_1_4.stagger_immune_time then
-				arg_1_0 = var_0_0.none
+			elseif arg_1_0 == scripts_utils_stagger_types.heavy or not arg_1_4.stagger_immune_time then
+				arg_1_0 = scripts_utils_stagger_types.none
 				arg_1_1 = 0
 				arg_1_2 = 0
 			end
@@ -277,9 +278,9 @@ local var_0_1 = {
 	}
 }
 
-Breeds.beastmen_ungor_archer = table.create_copy(Breeds.beastmen_ungor_archer, var_0_1)
+Breeds.beastmen_ungor_archer = table.create_copy(Breeds.beastmen_ungor_archer, tbl)
 
-local var_0_2 = {
+local tbl_2 = {
 	normal = {
 		easy = {
 			normal = 2
@@ -339,7 +340,7 @@ local var_0_2 = {
 		}
 	}
 }
-local var_0_3 = {
+local tbl_3 = {
 	alerted = {
 		no_hesitation = true,
 		cooldown = -1,
@@ -463,7 +464,7 @@ local var_0_3 = {
 		player_push_speed = 2,
 		attack_intensity_type = "normal",
 		action_weight = 1,
-		difficulty_attack_intensity = var_0_2,
+		difficulty_attack_intensity = tbl_2,
 		considerations = UtilityConsiderations.beastmen_ungor_attack,
 		dodge_window_start = BreedTweaks.dodge_windows.normal_attack,
 		dodge_window_duration = BreedTweaks.dodge_window_durations.normal_attack,
@@ -571,7 +572,7 @@ local var_0_3 = {
 		player_push_speed = 6,
 		attack_intensity_type = "running",
 		action_weight = 10,
-		difficulty_attack_intensity = var_0_2,
+		difficulty_attack_intensity = tbl_2,
 		considerations = UtilityConsiderations.beastmen_gor_running_attack,
 		default_attack = {
 			anims = {
@@ -610,8 +611,9 @@ local var_0_3 = {
 		difficulty_duration = BreedTweaks.blocked_duration.beastmen_horde
 	},
 	stagger = {
-		custom_enter_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
-			if arg_2_1.standard_bearer_stagger then
+		custom_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			-- function 2
+			if not arg_2_1.standard_bearer_stagger then
 				local var_2_0 = arg_2_3.standard_stagger_anims[arg_2_1.stagger_type]
 
 				arg_2_1.standard_bearer_stagger = nil
@@ -619,10 +621,10 @@ local var_0_3 = {
 				return var_2_0, "idle"
 			end
 
-			if arg_2_1.stagger_type == var_0_0.heavy then
+			if arg_2_1.stagger_type == scripts_utils_stagger_types.heavy then
 				arg_2_1.stagger_immune_time = arg_2_2 + 2.25
 				arg_2_1.heavy_stagger_immune_time = arg_2_2 + 1.5
-			elseif arg_2_1.stagger_type == var_0_0.explosion then
+			elseif arg_2_1.stagger_type == scripts_utils_stagger_types.explosion then
 				arg_2_1.stagger_immune_time = arg_2_2 + 3.5
 				arg_2_1.heavy_stagger_immune_time = arg_2_2 + 3
 			end
@@ -957,4 +959,4 @@ local var_0_3 = {
 	}
 }
 
-BreedActions.beastmen_ungor_archer = table.create_copy(BreedActions.beastmen_ungor_archer, var_0_3)
+BreedActions.beastmen_ungor_archer = table.create_copy(BreedActions.beastmen_ungor_archer, tbl_3)

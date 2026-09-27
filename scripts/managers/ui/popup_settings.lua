@@ -10,8 +10,8 @@ PopupSettings = {
 }
 PopupSettingsByName = {}
 
-for iter_0_0, iter_0_1 in pairs(PopupSettings) do
-	local var_0_0 = iter_0_1.name
+for k, v in pairs(PopupSettings) do
+	local name = v.name
 
-	PopupSettingsByName[var_0_0] = iter_0_1
+	PopupSettingsByName[name] = v
 end

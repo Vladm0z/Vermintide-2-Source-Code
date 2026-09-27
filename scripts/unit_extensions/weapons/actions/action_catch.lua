@@ -2,97 +2,105 @@
 
 ActionCatch = class(ActionCatch, ActionBase)
 
-function ActionCatch.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionCatch.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	-- function 1
 	ActionCatch.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 end
 
-function ActionCatch.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
-	ActionCatch.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ActionCatch.client_owner_start_action = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	-- function 2
+	ActionCatch.super.client_owner_start_action(self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 
-	local var_2_0 = arg_2_0.owner_unit
+	local owner_unit = self.owner_unit
 
-	arg_2_0._inventory_extension = ScriptUnit.extension(var_2_0, "inventory_system")
+	self._inventory_extension = ScriptUnit.extension(owner_unit, "inventory_system")
 
-	local var_2_1 = ActionUtils.get_action_time_scale(var_2_0, arg_2_1)
+	local get_action_time_scale = ActionUtils.get_action_time_scale(owner_unit, arg_2_1)
+	local catch_time = arg_2_1.catch_time
 
-	arg_2_0._catch_time = arg_2_2 + (arg_2_1.catch_time or 0) * (1 / var_2_1)
-	arg_2_0._state = "waiting_to_catch"
-	arg_2_0._should_not_remove = arg_2_1.should_not_remove
+	catch_time = catch_time or 0
+	self._catch_time = arg_2_2 + catch_time * (1 / get_action_time_scale)
+	self._state = "waiting_to_catch"
+	self._should_not_remove = arg_2_1.should_not_remove
 
-	if not arg_2_0._should_not_remove then
-		arg_2_0:_remove_pickup()
+	if not self._should_not_remove then
+		self:_remove_pickup()
 	end
 end
 
-function ActionCatch.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
-	if arg_3_0._state == "waiting_to_catch" and arg_3_2 >= arg_3_0._catch_time then
-		arg_3_0:_add_ammo()
+ActionCatch.client_owner_post_update = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	-- function 3
+	if not (self._state ~= "waiting_to_catch" or not (arg_3_2 >= self._catch_time)) then
+		self:_add_ammo()
 
-		arg_3_0._state = "caught"
+		self._state = "caught"
 	end
 end
 
-function ActionCatch._remove_pickup(arg_4_0)
-	if arg_4_0._inventory_extension then
-		local var_4_0 = false
-		local var_4_1 = Network.peer_id()
-		local var_4_2 = 1
-		local var_4_3 = Managers.state.entity:system("pickup_system"):get_and_delete_limited_owned_pickup_with_index(var_4_1, var_4_2)
+ActionCatch._remove_pickup = function (self)
+	-- function 4
+	if not self._inventory_extension then
+		local flag = false
+		local peer_id = Network.peer_id()
+		local num = 1
+		local get_and_delete_limited_owned_pickup_with_index = Managers.state.entity:system("pickup_system"):get_and_delete_limited_owned_pickup_with_index(peer_id, num)
 
-		if var_4_3 and Unit.alive(var_4_3) then
-			var_4_0 = true
+		if not get_and_delete_limited_owned_pickup_with_index and not Unit.alive(get_and_delete_limited_owned_pickup_with_index) then
+			flag = true
 
-			Unit.flow_event(var_4_3, "lua_recall")
+			Unit.flow_event(get_and_delete_limited_owned_pickup_with_index, "lua_recall")
 		end
 
-		if not var_4_0 then
-			local var_4_4 = Managers.state.entity:system("projectile_system"):get_and_delete_indexed_projectile(arg_4_0.owner_unit, var_4_2)
+		if not flag then
+			local get_and_delete_indexed_projectile = Managers.state.entity:system("projectile_system"):get_and_delete_indexed_projectile(self.owner_unit, num)
 
-			if var_4_4 and Unit.alive(var_4_4) then
-				Unit.flow_event(var_4_4, "lua_recall")
+			if not get_and_delete_indexed_projectile and not Unit.alive(get_and_delete_indexed_projectile) then
+				Unit.flow_event(get_and_delete_indexed_projectile, "lua_recall")
 			end
 		end
 	end
 end
 
-function ActionCatch._add_ammo(arg_5_0)
-	local var_5_0 = arg_5_0._inventory_extension
+ActionCatch._add_ammo = function (self)
+	-- function 5
+	local _inventory_extension = self._inventory_extension
 	local var_5_1
-	local var_5_2 = var_5_0:equipment().slots.slot_ranged
+	local slot_ranged = _inventory_extension:equipment().slots.slot_ranged
 
-	if var_5_2 then
-		local var_5_3 = var_5_2.left_unit_1p
-		local var_5_4 = var_5_3 and ScriptUnit.has_extension(var_5_3, "ammo_system")
+	if not slot_ranged then
+		local left_unit_1p = slot_ranged.left_unit_1p
+		local flag = not left_unit_1p and ScriptUnit.has_extension(left_unit_1p, "ammo_system")
 
-		if var_5_4 then
-			var_5_1 = var_5_4
+		if not flag then
+			var_5_1 = flag
 		end
 
-		local var_5_5 = var_5_2.right_unit_1p
-		local var_5_6 = var_5_5 and ScriptUnit.has_extension(var_5_5, "ammo_system")
+		local right_unit_1p = slot_ranged.right_unit_1p
+		local flag_2 = not right_unit_1p and ScriptUnit.has_extension(right_unit_1p, "ammo_system")
 
-		if var_5_6 then
-			var_5_1 = var_5_6
+		if not flag_2 then
+			var_5_1 = flag_2
 		end
 	end
 
-	if var_5_1 then
+	if not var_5_1 then
 		if var_5_1:total_remaining_ammo() == 0 then
-			Unit.animation_event(arg_5_0.first_person_unit, "to_ammo")
+			Unit.animation_event(self.first_person_unit, "to_ammo")
 		end
 
-		local var_5_7 = 1
+		local num = 1
 
-		var_5_1:add_ammo(var_5_7)
+		var_5_1:add_ammo(num)
 
 		if var_5_1:current_ammo() == 0 then
-			local var_5_8 = false
+			local flag_3 = false
 
-			var_5_1:start_reload(var_5_8)
+			var_5_1:start_reload(flag_3)
 		end
 	end
 end
 
-function ActionCatch.finish(arg_6_0, arg_6_1)
+ActionCatch.finish = function (arg_6_0, arg_6_1)
+	-- function 6
 	return
 end

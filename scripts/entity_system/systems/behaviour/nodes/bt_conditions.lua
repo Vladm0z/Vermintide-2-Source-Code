@@ -1,534 +1,841 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_conditions.lua
 
+local BTConditions = BTConditions
+
 BTConditions = BTConditions or {}
+BTConditions = BTConditions
 
 require("scripts/entity_system/systems/behaviour/nodes/bot/bt_bot_conditions")
 
-local var_0_0 = Unit.alive
-local var_0_1 = ScriptUnit
+local alive = Unit.alive
+local ScriptUnit = ScriptUnit
 
-function BTConditions.always_true(arg_1_0)
+BTConditions.always_true = function (arg_1_0)
+	-- function 1
 	return true
 end
 
-function BTConditions.always_false(arg_2_0)
+BTConditions.always_false = function (arg_2_0)
+	-- function 2
 	return false
 end
 
-function BTConditions.spawn(arg_3_0)
-	return arg_3_0.spawn
+BTConditions.spawn = function (self)
+	-- function 3
+	return self.spawn
 end
 
-function BTConditions.blocked(arg_4_0)
-	return arg_4_0.blocked
+BTConditions.blocked = function (self)
+	-- function 4
+	return self.blocked
 end
 
-function BTConditions.start_or_continue(arg_5_0)
-	return arg_5_0.attack_token == nil or arg_5_0.attack_token
+BTConditions.start_or_continue = function (self)
+	-- function 5
+	return self.attack_token == nil or self.attack_token
 end
 
-function BTConditions.ask_target_before_attacking(arg_6_0, arg_6_1, arg_6_2)
-	if arg_6_0.attack_token then
-		return arg_6_0.attack_token
+BTConditions.ask_target_before_attacking = function (self, arg_6_1, arg_6_2)
+	-- function 6
+	if not self.attack_token then
+		return self.attack_token
 	end
 
-	local var_6_0 = true
-	local var_6_1 = arg_6_0.target_unit
-	local var_6_2 = var_0_1.has_extension(var_6_1, "attack_intensity_system")
+	local flag = true
+	local target_unit = self.target_unit
+	local has_extension = ScriptUnit.has_extension(target_unit, "attack_intensity_system")
 
-	if var_6_2 then
-		local var_6_3 = arg_6_2.attack_intensity_type or "normal"
+	if not has_extension then
+		local attack_intensity_type = arg_6_2.attack_intensity_type
 
-		var_6_0 = var_6_2:want_an_attack(var_6_3)
+		attack_intensity_type = attack_intensity_type or "normal"
+		flag = has_extension:want_an_attack(attack_intensity_type)
 	end
 
-	return var_6_0
+	return flag
 end
 
-function BTConditions.first_shots_fired(arg_7_0)
-	return arg_7_0.first_shots_fired
+BTConditions.first_shots_fired = function (self)
+	-- function 7
+	return self.first_shots_fired
 end
 
-function BTConditions.stagger(arg_8_0)
-	if arg_8_0.stagger then
-		if arg_8_0.stagger_prohibited then
-			arg_8_0.stagger = false
+BTConditions.stagger = function (self)
+	-- function 8
+	if not self.stagger then
+		if not self.stagger_prohibited then
+			self.stagger = false
 		else
 			return true
 		end
 	end
 end
 
-function BTConditions.stagger_activated(arg_9_0)
-	if arg_9_0.stagger_activated then
+BTConditions.stagger_activated = function (self)
+	-- function 9
+	if not self.stagger_activated then
 		return true
 	end
 
 	return false
 end
 
-function BTConditions.grey_seer_stagger(arg_10_0)
-	if arg_10_0.stagger then
-		if arg_10_0.stagger_prohibited then
-			arg_10_0.stagger = false
+BTConditions.grey_seer_stagger = function (self)
+	-- function 10
+	if not self.stagger then
+		if not self.stagger_prohibited then
+			self.stagger = false
 		else
-			return not arg_10_0.about_to_mount
+			return not self.about_to_mount
 		end
 	end
 end
 
-function BTConditions.reset_attack(arg_11_0)
-	return arg_11_0.reset_attack
+BTConditions.reset_attack = function (self)
+	-- function 11
+	return self.reset_attack
 end
 
-function BTConditions.lord_intro(arg_12_0)
-	local var_12_0 = Managers.time:time("game")
+BTConditions.lord_intro = function (self)
+	-- function 12
+	local time = Managers.time:time("game")
+	local intro_timer = self.intro_timer
 
-	return arg_12_0.intro_timer and var_12_0 < arg_12_0.intro_timer
+	intro_timer = not intro_timer and time < self.intro_timer
+
+	return intro_timer
 end
 
-function BTConditions.warlord_jump_down(arg_13_0)
-	return arg_13_0.jump_from_pos
+BTConditions.warlord_jump_down = function (self)
+	-- function 13
+	return self.jump_from_pos
 end
 
-function BTConditions.quick_teleport(arg_14_0)
-	return arg_14_0.quick_teleport
+BTConditions.quick_teleport = function (self)
+	-- function 14
+	return self.quick_teleport
 end
 
-function BTConditions.fling_skaven(arg_15_0)
-	return arg_15_0.fling_skaven
+BTConditions.fling_skaven = function (self)
+	-- function 15
+	return self.fling_skaven
 end
 
-function BTConditions.secondary_target(arg_16_0)
-	return arg_16_0.secondary_target
+BTConditions.secondary_target = function (self)
+	-- function 16
+	return self.secondary_target
 end
 
-function BTConditions.quick_jump(arg_17_0)
-	return arg_17_0.high_ground_opportunity
+BTConditions.quick_jump = function (self)
+	-- function 17
+	return self.high_ground_opportunity
 end
 
-function BTConditions.ninja_vanish(arg_18_0)
-	return arg_18_0.ninja_vanish
+BTConditions.ninja_vanish = function (self)
+	-- function 18
+	return self.ninja_vanish
 end
 
-function BTConditions.target_changed(arg_19_0)
-	return arg_19_0.target_changed
+BTConditions.target_changed = function (self)
+	-- function 19
+	return self.target_changed
 end
 
-function BTConditions.victim_grabbed(arg_20_0)
-	return arg_20_0.has_grabbed_victim
+BTConditions.victim_grabbed = function (self)
+	-- function 20
+	return self.has_grabbed_victim
 end
 
-function BTConditions.nurgling_spawned_by_altar(arg_21_0)
-	return arg_21_0.nurgling_spawned_by_altar
+BTConditions.nurgling_spawned_by_altar = function (self)
+	-- function 21
+	return self.nurgling_spawned_by_altar
 end
 
-function BTConditions.target_changed_and_distant(arg_22_0)
-	if arg_22_0.target_changed then
-		if arg_22_0.previous_target_unit == nil then
+BTConditions.target_changed_and_distant = function (self)
+	-- function 22
+	if not self.target_changed then
+		if self.previous_target_unit == nil then
 			return true
-		elseif arg_22_0.target_dist and arg_22_0.target_dist > 15 then
-			local var_22_0 = Managers.time:time("game")
+		elseif not (not self.target_dist and not (self.target_dist > 15)) then
+			local time = Managers.time:time("game")
+			local next_rage_time = self.next_rage_time
 
-			return arg_22_0.next_rage_time and var_22_0 > arg_22_0.next_rage_time
+			next_rage_time = not next_rage_time and time > self.next_rage_time
+
+			return next_rage_time
 		else
-			arg_22_0.target_changed = nil
+			self.target_changed = nil
 		end
 	end
 
 	return false
 end
 
-function BTConditions.stormfiend_boss_rage(arg_23_0)
-	return arg_23_0.intro_rage
+BTConditions.stormfiend_boss_rage = function (self)
+	-- function 23
+	return self.intro_rage
 end
 
-function BTConditions.ratogre_target_reachable(arg_24_0)
-	return arg_24_0.jump_slam_data or not arg_24_0.target_outside_navmesh or arg_24_0.target_dist and arg_24_0.target_dist <= arg_24_0.breed.reach_distance
+BTConditions.ratogre_target_reachable = function (self)
+	-- function 24
+	local jump_slam_data = self.jump_slam_data
+
+	if not jump_slam_data then
+		if not self.target_outside_navmesh then
+			jump_slam_data = self.target_dist
+
+			if not jump_slam_data then
+				-- Nothing
+			end
+
+			if not (self.target_dist <= self.breed.reach_distance) then
+				jump_slam_data = false
+
+				goto label_24_0
+			end
+		end
+
+		jump_slam_data = true
+	end
+
+	::label_24_0::
+
+	return jump_slam_data
 end
 
-function BTConditions.chaos_spawn_grabbed_combat(arg_25_0)
-	return HEALTH_ALIVE[arg_25_0.victim_grabbed] and not AiUtils.unit_knocked_down(arg_25_0.victim_grabbed) and not arg_25_0.wants_to_throw
+BTConditions.chaos_spawn_grabbed_combat = function (self)
+	-- function 25
+	local var_25_0 = HEALTH_ALIVE[self.victim_grabbed]
+
+	var_25_0 = not var_25_0 and not not AiUtils.unit_knocked_down(self.victim_grabbed) or not self.wants_to_throw
+
+	return var_25_0
 end
 
-function BTConditions.chaos_spawn_grabbed_throw(arg_26_0)
-	local var_26_0 = AiUtils.unit_knocked_down(arg_26_0.victim_grabbed)
+BTConditions.chaos_spawn_grabbed_throw = function (self)
+	-- function 26
+	local unit_knocked_down = AiUtils.unit_knocked_down(self.victim_grabbed)
 
-	return HEALTH_ALIVE[arg_26_0.victim_grabbed] and (var_26_0 or arg_26_0.wants_to_throw)
+	return unit_knocked_down or self.wants_to_throw or not HEALTH_ALIVE[self.victim_grabbed]
 end
 
-function BTConditions.path_found(arg_27_0)
-	return not arg_27_0.no_path_found
+BTConditions.path_found = function (self)
+	-- function 27
+	return not self.no_path_found
 end
 
-function BTConditions.ratogre_jump_dist(arg_28_0)
-	return not arg_28_0.target_outside_navmesh and arg_28_0.target_dist and arg_28_0.target_dist <= 15
+BTConditions.ratogre_jump_dist = function (self)
+	-- function 28
+	local target_dist
+
+	if not self.target_outside_navmesh then
+		target_dist = self.target_dist
+
+		if not target_dist then
+			-- Nothing
+		end
+
+		if not (self.target_dist <= 15) then
+			-- Nothing
+		end
+	end
+
+	target_dist = false
+
+	goto label_28_1
+
+	::label_28_0::
+
+	target_dist = true
+
+	::label_28_1::
+
+	return target_dist
 end
 
-function BTConditions.ratogre_walking(arg_29_0)
-	return arg_29_0.ratogre_walking
+BTConditions.ratogre_walking = function (self)
+	-- function 29
+	return self.ratogre_walking
 end
 
-function BTConditions.escorting_rat_ogre(arg_30_0)
-	return arg_30_0.escorting_rat_ogre
+BTConditions.escorting_rat_ogre = function (self)
+	-- function 30
+	return self.escorting_rat_ogre
 end
 
-function BTConditions.in_vortex(arg_31_0)
-	return arg_31_0.in_vortex
+BTConditions.in_vortex = function (self)
+	-- function 31
+	return self.in_vortex
 end
 
-function BTConditions.in_gravity_well(arg_32_0)
-	return arg_32_0.gravity_well_position
+BTConditions.in_gravity_well = function (self)
+	-- function 32
+	return self.gravity_well_position
 end
 
-function BTConditions.at_smartobject(arg_33_0)
-	local var_33_0 = arg_33_0.next_smart_object_data
+BTConditions.at_smartobject = function (self)
+	-- function 33
+	local next_smart_object_data = self.next_smart_object_data
 
-	if not (var_33_0.next_smart_object_id ~= nil) then
+	if not (next_smart_object_data.next_smart_object_id ~= nil) then
 		return false
 	end
 
-	local var_33_1 = arg_33_0.is_smart_objecting
-	local var_33_2 = Managers.state.entity:system("nav_graph_system")
-	local var_33_3 = var_33_0.smart_object_data and var_33_0.smart_object_data.unit
-	local var_33_4, var_33_5 = var_33_2:has_nav_graph(var_33_3)
+	local is_smart_objecting = self.is_smart_objecting
+	local system = Managers.state.entity:system("nav_graph_system")
+	local smart_object_data = next_smart_object_data.smart_object_data
 
-	if var_33_4 and not var_33_5 and not var_33_1 then
+	smart_object_data = not smart_object_data and next_smart_object_data.smart_object_data.unit
+
+	local has_nav_graph, var_33_5 = system:has_nav_graph(smart_object_data)
+
+	if not (not has_nav_graph and var_33_5 or is_smart_objecting) then
 		return false
 	end
 
-	local var_33_6 = arg_33_0.is_in_smartobject_range
-	local var_33_7 = arg_33_0.move_state == "moving"
+	local is_in_smartobject_range = self.is_in_smartobject_range
+	local flag = self.move_state == "moving"
 
-	return var_33_6 and var_33_7 or var_33_1
+	return not is_in_smartobject_range and flag and is_smart_objecting
 end
 
-function BTConditions.gutter_runner_at_smartobject(arg_34_0)
-	if arg_34_0.jump_data then
+BTConditions.gutter_runner_at_smartobject = function (self)
+	-- function 34
+	if not self.jump_data then
 		return false
 	end
 
-	return BTConditions.at_smartobject(arg_34_0)
+	return BTConditions.at_smartobject(self)
 end
 
-function BTConditions.ratogre_at_smartobject(arg_35_0)
-	if arg_35_0.keep_target then
+BTConditions.ratogre_at_smartobject = function (self)
+	-- function 35
+	if not self.keep_target then
 		return false
 	end
 
-	return BTConditions.at_smartobject(arg_35_0)
+	return BTConditions.at_smartobject(self)
 end
 
-function BTConditions.stormfiend_boss_intro_jump_down(arg_36_0)
-	local var_36_0 = arg_36_0.jump_down_intro
+BTConditions.stormfiend_boss_intro_jump_down = function (self)
+	-- function 36
+	local jump_down_intro = self.jump_down_intro
+	local at_smartobject = BTConditions.at_smartobject(self)
 
-	return BTConditions.at_smartobject(arg_36_0) and var_36_0
+	at_smartobject = not at_smartobject and jump_down_intro
+
+	return at_smartobject
 end
 
-function BTConditions.at_teleport_smartobject(arg_37_0)
-	local var_37_0 = arg_37_0.next_smart_object_data.smart_object_type == "teleporters"
-	local var_37_1 = arg_37_0.is_teleporting
+BTConditions.at_teleport_smartobject = function (self)
+	-- function 37
+	local flag = self.next_smart_object_data.smart_object_type == "teleporters"
+	local is_teleporting = self.is_teleporting
 
-	return var_37_0 or var_37_1
+	return flag or is_teleporting
 end
 
-function BTConditions.vortex_at_climb_or_jump(arg_38_0)
-	local var_38_0 = BTConditions.at_climb_smartobject(arg_38_0)
-	local var_38_1 = BTConditions.at_jump_smartobject(arg_38_0)
+BTConditions.vortex_at_climb_or_jump = function (self)
+	-- function 38
+	local at_climb_smartobject = BTConditions.at_climb_smartobject(self)
+	local at_jump_smartobject = BTConditions.at_jump_smartobject(self)
 
-	return var_38_0 or var_38_1 or arg_38_0.is_flying
+	return at_climb_smartobject or at_jump_smartobject or self.is_flying
 end
 
-function BTConditions.at_climb_smartobject(arg_39_0)
-	local var_39_0 = arg_39_0.next_smart_object_data.smart_object_type
-	local var_39_1 = var_39_0 == "ledges" or var_39_0 == "ledges_with_fence"
-	local var_39_2 = arg_39_0.is_climbing
+BTConditions.at_climb_smartobject = function (self)
+	-- function 39
+	local smart_object_type = self.next_smart_object_data.smart_object_type
+	local flag = smart_object_type == "ledges" or smart_object_type == "ledges_with_fence"
+	local is_climbing = self.is_climbing
 
-	return var_39_1 or var_39_2
+	return flag or is_climbing
 end
 
-function BTConditions.at_jump_smartobject(arg_40_0)
-	local var_40_0 = arg_40_0.next_smart_object_data.smart_object_type == "jumps"
-	local var_40_1 = arg_40_0.is_jumping
+BTConditions.at_jump_smartobject = function (self)
+	-- function 40
+	local flag = self.next_smart_object_data.smart_object_type == "jumps"
+	local is_jumping = self.is_jumping
 
-	return var_40_0 or var_40_1
+	return flag or is_jumping
 end
 
-function BTConditions.at_door_smartobject(arg_41_0)
-	local var_41_0 = arg_41_0.next_smart_object_data.smart_object_type
-	local var_41_1 = var_41_0 == "doors" or var_41_0 == "planks" or var_41_0 == "big_boy_destructible" or var_41_0 == "destructible_wall"
-	local var_41_2 = arg_41_0.is_smashing_door
-	local var_41_3 = arg_41_0.is_scurrying_under_door
+BTConditions.at_door_smartobject = function (self)
+	-- function 41
+	local smart_object_type = self.next_smart_object_data.smart_object_type
+	local flag = smart_object_type == "doors" or smart_object_type == "planks" or smart_object_type == "big_boy_destructible" or smart_object_type == "destructible_wall"
+	local is_smashing_door = self.is_smashing_door
+	local is_scurrying_under_door = self.is_scurrying_under_door
 
-	return var_41_1 or var_41_2 or var_41_3
+	return flag or is_smashing_door or is_scurrying_under_door
 end
+
+BTConditions.at_smart_object_and_door = function (arg_42_0)
+	-- function 42
+	local at_smartobject = BTConditions.at_smartobject(arg_42_0)
+
+	at_smartobject = not at_smartobject and BTConditions.at_door_smartobject(arg_42_0)
 
-function BTConditions.at_smart_object_and_door(arg_42_0)
-	return BTConditions.at_smartobject(arg_42_0) and BTConditions.at_door_smartobject(arg_42_0)
+	return at_smartobject
 end
 
-function BTConditions.has_destructible_as_target(arg_43_0)
-	local var_43_0 = arg_43_0.target_unit
-	local var_43_1 = not var_0_1.has_extension(var_43_0, "locomotion_system")
+BTConditions.has_destructible_as_target = function (self)
+	-- function 43
+	local target_unit = self.target_unit
+	local flag = not ScriptUnit.has_extension(target_unit, "locomotion_system")
+	local var_43_2 = alive(target_unit)
 
-	return var_0_0(var_43_0) and arg_43_0.confirmed_player_sighting and var_43_1
+	if not var_43_2 then
+		var_43_2 = self.confirmed_player_sighting
+		var_43_2 = not var_43_2 and flag
+	end
+
+	return var_43_2
 end
 
-function BTConditions.can_see_player(arg_44_0)
-	return var_0_0(arg_44_0.target_unit)
+BTConditions.can_see_player = function (self)
+	-- function 44
+	return alive(self.target_unit)
 end
 
-function BTConditions.has_target(arg_45_0)
-	return var_0_0(arg_45_0.target_unit)
+BTConditions.has_target = function (self)
+	-- function 45
+	return alive(self.target_unit)
 end
 
-function BTConditions.no_target(arg_46_0)
-	return not var_0_0(arg_46_0.target_unit)
+BTConditions.no_target = function (self)
+	-- function 46
+	return not alive(self.target_unit)
 end
+
+BTConditions.tentacle_found_target = function (self)
+	-- function 47
+	local var_47_0 = alive(self.target_unit)
+
+	var_47_0 = not var_47_0 and not self.tentacle_satisfied
 
-function BTConditions.tentacle_found_target(arg_47_0)
-	return var_0_0(arg_47_0.target_unit) and not arg_47_0.tentacle_satisfied
+	return var_47_0
 end
 
-function BTConditions.at_half_health(arg_48_0)
-	return arg_48_0.current_health_percent <= 0.5
+BTConditions.at_half_health = function (self)
+	-- function 48
+	return self.current_health_percent <= 0.5
 end
 
-function BTConditions.at_one_third_health(arg_49_0)
-	return arg_49_0.current_health_percent <= 0.33
+BTConditions.at_one_third_health = function (self)
+	-- function 49
+	return self.current_health_percent <= 0.33
 end
 
-function BTConditions.at_two_thirds_health(arg_50_0)
-	return arg_50_0.current_health_percent <= 0.66
+BTConditions.at_two_thirds_health = function (self)
+	-- function 50
+	return self.current_health_percent <= 0.66
 end
 
-function BTConditions.at_one_fifth_health(arg_51_0)
-	return arg_51_0.current_health_percent <= 0.2
+BTConditions.at_one_fifth_health = function (self)
+	-- function 51
+	return self.current_health_percent <= 0.2
 end
 
-function BTConditions.at_three_fifths_health(arg_52_0)
-	return arg_52_0.current_health_percent <= 0.6
+BTConditions.at_three_fifths_health = function (self)
+	-- function 52
+	return self.current_health_percent <= 0.6
 end
 
-function BTConditions.less_than_one_health(arg_53_0)
-	return arg_53_0.current_health <= 1
+BTConditions.less_than_one_health = function (self)
+	-- function 53
+	return self.current_health <= 1
 end
 
-function BTConditions.can_transition_half_health(arg_54_0)
-	return arg_54_0.current_health_percent <= 0.5 and not arg_54_0.half_transition_done
+BTConditions.can_transition_half_health = function (self)
+	-- function 54
+	return not (self.current_health_percent <= 0.5) or not self.half_transition_done
 end
 
-function BTConditions.can_transition_one_third_health(arg_55_0)
-	return arg_55_0.current_health_percent <= 0.33 and not arg_55_0.one_third_transition_done
+BTConditions.can_transition_one_third_health = function (self)
+	-- function 55
+	return not (self.current_health_percent <= 0.33) or not self.one_third_transition_done
 end
 
-function BTConditions.dummy_not_escaped(arg_56_0)
-	return not arg_56_0.anim_cb_escape_finished
+BTConditions.dummy_not_escaped = function (self)
+	-- function 56
+	return not self.anim_cb_escape_finished
 end
 
-function BTConditions.can_transition_two_thirds_health(arg_57_0)
-	return arg_57_0.current_health_percent <= 0.66 and not arg_57_0.two_thirds_transition_done
+BTConditions.can_transition_two_thirds_health = function (self)
+	-- function 57
+	return not (self.current_health_percent <= 0.66) or not self.two_thirds_transition_done
 end
 
-function BTConditions.can_transition_one_fifth_health(arg_58_0)
-	return arg_58_0.current_health_percent <= 0.2 and not arg_58_0.one_fifth_transition_done
+BTConditions.can_transition_one_fifth_health = function (self)
+	-- function 58
+	return not (self.current_health_percent <= 0.2) or not self.one_fifth_transition_done
 end
 
-function BTConditions.can_transition_three_fifths_health(arg_59_0)
-	return arg_59_0.current_health_percent <= 0.6 and not arg_59_0.three_fifths_transition_done
+BTConditions.can_transition_three_fifths_health = function (self)
+	-- function 59
+	return not (self.current_health_percent <= 0.6) or not self.three_fifths_transition_done
 end
 
-function BTConditions.transitioned_half_health(arg_60_0)
-	return arg_60_0.current_health_percent <= 0.5 and arg_60_0.half_transition_done
+BTConditions.transitioned_half_health = function (self)
+	-- function 60
+	return not (self.current_health_percent <= 0.5) or self.half_transition_done
 end
 
-function BTConditions.transitioned_three_fifths_health(arg_61_0)
-	return arg_61_0.current_health_percent <= 0.6 and arg_61_0.three_fifths_transition_done
+BTConditions.transitioned_three_fifths_health = function (self)
+	-- function 61
+	return not (self.current_health_percent <= 0.6) or self.three_fifths_transition_done
 end
 
-function BTConditions.transitioned_one_fifth_health(arg_62_0)
-	return arg_62_0.current_health_percent <= 0.2 and arg_62_0.one_fifth_transition_done
+BTConditions.transitioned_one_fifth_health = function (self)
+	-- function 62
+	return not (self.current_health_percent <= 0.2) or self.one_fifth_transition_done
 end
 
-function BTConditions.transitioned_one_third_health(arg_63_0)
-	return arg_63_0.current_health_percent <= 0.33 and arg_63_0.one_third_transition_done
+BTConditions.transitioned_one_third_health = function (self)
+	-- function 63
+	return not (self.current_health_percent <= 0.33) or self.one_third_transition_done
 end
 
-function BTConditions.transitioned_two_thirds_health(arg_64_0)
-	return arg_64_0.current_health_percent <= 0.66 and arg_64_0.two_thirds_transition_done
+BTConditions.transitioned_two_thirds_health = function (self)
+	-- function 64
+	return not (self.current_health_percent <= 0.66) or self.two_thirds_transition_done
 end
 
-function BTConditions.sorcerer_allow_tricke_spawn(arg_65_0)
-	return arg_65_0.sorcerer_allow_tricke_spawn
+BTConditions.sorcerer_allow_tricke_spawn = function (self)
+	-- function 65
+	return self.sorcerer_allow_tricke_spawn
 end
 
-function BTConditions.spawned_allies_dead_or_time(arg_66_0)
-	return arg_66_0.spawn_allies_horde and arg_66_0.spawn_allies_horde.is_dead or arg_66_0.defensive_phase_duration == 0
+BTConditions.spawned_allies_dead_or_time = function (self)
+	-- function 66
+	local is_dead
+
+	if not self.spawn_allies_horde then
+		is_dead = self.spawn_allies_horde.is_dead
+
+		if not is_dead then
+			-- Nothing
+		end
+	end
+
+	is_dead = self.defensive_phase_duration == 0
+
+	::label_66_0::
+
+	return is_dead
 end
 
-function BTConditions.first_ring_summon(arg_67_0)
-	return arg_67_0.ring_summonings_finished == 0
+BTConditions.first_ring_summon = function (self)
+	-- function 67
+	return self.ring_summonings_finished == 0
 end
 
-function BTConditions.ready_to_summon_rings(arg_68_0)
-	return arg_68_0.ring_cooldown == 0
+BTConditions.ready_to_summon_rings = function (self)
+	-- function 68
+	return self.ring_cooldown == 0
 end
 
-function BTConditions.ready_to_charge(arg_69_0)
-	return arg_69_0.charge_cooldown == 0
+BTConditions.ready_to_charge = function (self)
+	-- function 69
+	return self.charge_cooldown == 0
 end
 
-function BTConditions.ready_to_teleport(arg_70_0)
-	return arg_70_0.teleport_cooldown == 0
+BTConditions.ready_to_teleport = function (self)
+	-- function 70
+	return self.teleport_cooldown == 0
 end
 
-function BTConditions.ready_to_summon_wave(arg_71_0)
-	return arg_71_0.wave_cooldown == 0
+BTConditions.ready_to_summon_wave = function (self)
+	-- function 71
+	return self.wave_cooldown == 0
 end
 
-function BTConditions.not_ready_to_summon_wave(arg_72_0)
-	return not arg_72_0.ready_to_summon or not arg_72_0.summoning and not Unit.alive(arg_72_0.target_unit) or arg_72_0.wave_cooldown ~= 0
+BTConditions.not_ready_to_summon_wave = function (self)
+	-- function 72
+	return not self.ready_to_summon and self.summoning and not Unit.alive(self.target_unit) and self.wave_cooldown ~= 0
 end
+
+BTConditions.ready_to_summon = function (self)
+	-- function 73
+	local ready_to_summon = self.ready_to_summon
+
+	if not ready_to_summon then
+		ready_to_summon = self.summoning
+		ready_to_summon = ready_to_summon or Unit.alive(self.target_unit)
+	end
 
-function BTConditions.ready_to_summon(arg_73_0)
-	return arg_73_0.ready_to_summon and (arg_73_0.summoning or Unit.alive(arg_73_0.target_unit))
+	return ready_to_summon
 end
 
-function BTConditions.ready_to_summon_vortex(arg_74_0)
-	return arg_74_0.current_spell_name == "vortex"
+BTConditions.ready_to_summon_vortex = function (self)
+	-- function 74
+	return self.current_spell_name == "vortex"
 end
 
-function BTConditions.ready_to_summon_plague_wave(arg_75_0)
-	return arg_75_0.current_spell_name == "plague_wave"
+BTConditions.ready_to_summon_plague_wave = function (self)
+	-- function 75
+	return self.current_spell_name == "plague_wave"
 end
 
-function BTConditions.ready_to_summon_tentacle(arg_76_0)
-	return arg_76_0.current_spell_name == "tentacle"
+BTConditions.ready_to_summon_tentacle = function (self)
+	-- function 76
+	return self.current_spell_name == "tentacle"
 end
 
-function BTConditions.ready_to_cast_missile(arg_77_0)
-	return arg_77_0.current_spell_name == "magic_missile"
+BTConditions.ready_to_cast_missile = function (self)
+	-- function 77
+	return self.current_spell_name == "magic_missile"
 end
 
-function BTConditions.ready_to_cast_seeking_bomb_missile(arg_78_0)
-	return arg_78_0.current_spell_name == "seeking_bomb_missile"
+BTConditions.ready_to_cast_seeking_bomb_missile = function (self)
+	-- function 78
+	return self.current_spell_name == "seeking_bomb_missile"
 end
 
-function BTConditions.sorcerer_in_defensive_mode(arg_79_0)
-	return arg_79_0.mode == "defensive" and not arg_79_0.is_summoning
+BTConditions.sorcerer_in_defensive_mode = function (self)
+	-- function 79
+	return self.mode ~= "defensive" or not self.is_summoning
 end
 
-function BTConditions.sorcerer_in_setup_mode(arg_80_0)
-	return arg_80_0.mode == "setup" and not arg_80_0.setup_done
+BTConditions.sorcerer_in_setup_mode = function (self)
+	-- function 80
+	return self.mode ~= "setup" or not self.setup_done
 end
 
-function BTConditions.escape_teleport(arg_81_0)
-	return arg_81_0.escape_teleport
+BTConditions.escape_teleport = function (self)
+	-- function 81
+	return self.escape_teleport
 end
 
-function BTConditions.defensive_mode_starts(arg_82_0)
-	return arg_82_0.phase == "defensive_starts"
+BTConditions.defensive_mode_starts = function (self)
+	-- function 82
+	return self.phase == "defensive_starts"
 end
 
-function BTConditions.sorcerer_defensive_combat(arg_83_0)
-	return arg_83_0.phase == "defensive_combat"
+BTConditions.sorcerer_defensive_combat = function (self)
+	-- function 83
+	return self.phase == "defensive_combat"
 end
 
-function BTConditions.defensive_mode_ends(arg_84_0)
-	return arg_84_0.phase == "defensive_ends"
+BTConditions.defensive_mode_ends = function (self)
+	-- function 84
+	return self.phase == "defensive_ends"
 end
 
-function BTConditions.ready_to_explode(arg_85_0)
-	return arg_85_0.ready_to_summon
+BTConditions.ready_to_explode = function (self)
+	-- function 85
+	return self.ready_to_summon
 end
 
-function BTConditions.player_spotted(arg_86_0)
-	return var_0_0(arg_86_0.target_unit) and not arg_86_0.confirmed_player_sighting
+BTConditions.player_spotted = function (self)
+	-- function 86
+	local var_86_0 = alive(self.target_unit)
+
+	var_86_0 = not var_86_0 and not self.confirmed_player_sighting
+
+	return var_86_0
 end
+
+BTConditions.in_melee_range = function (self)
+	-- function 87
+	local var_87_0 = alive(self.target_unit)
 
-function BTConditions.in_melee_range(arg_87_0)
-	return var_0_0(arg_87_0.target_unit) and arg_87_0.in_melee_range
+	var_87_0 = not var_87_0 and self.in_melee_range
+
+	return var_87_0
 end
 
-function BTConditions.approach_target(arg_88_0)
-	return arg_88_0.approach_target
+BTConditions.approach_target = function (self)
+	-- function 88
+	return self.approach_target
 end
+
+BTConditions.comitted_to_target = function (self)
+	-- function 89
+	local flag = Managers.time:time("game") > self.initial_pounce_timer
+	local comitted_to_target
+
+	if not self.target_unit then
+		comitted_to_target = self.comitted_to_target
 
-function BTConditions.comitted_to_target(arg_89_0)
-	local var_89_0 = Managers.time:time("game") > arg_89_0.initial_pounce_timer
+		if not comitted_to_target then
+			-- Nothing
+		end
+	end
 
-	return (arg_89_0.target_unit or arg_89_0.comitted_to_target) and var_89_0
+	comitted_to_target = flag
+
+	::label_89_0::
+
+	return comitted_to_target
 end
+
+BTConditions.in_sprint_dist = function (self)
+	-- function 90
+	local closing = self.closing
 
-function BTConditions.in_sprint_dist(arg_90_0)
-	return arg_90_0.closing or arg_90_0.target_dist > 7
+	closing = closing or self.target_dist > 7
+
+	return closing
 end
+
+BTConditions.in_run_dist = function (self)
+	-- function 91
+	local movement_inited
+
+	if not (self.target_dist <= 7) then
+		movement_inited = self.movement_inited
+
+		if not movement_inited then
+			-- Nothing
+		end
 
-function BTConditions.in_run_dist(arg_91_0)
-	return arg_91_0.target_dist <= 7 or arg_91_0.movement_inited and arg_91_0.target_dist <= 8
+		if not (self.target_dist <= 8) then
+			movement_inited = false
+
+			goto label_91_0
+		end
+	end
+
+	movement_inited = true
+
+	::label_91_0::
+
+	return movement_inited
 end
+
+BTConditions.troll_downed = function (self)
+	-- function 92
+	local can_get_downed = self.can_get_downed
+
+	can_get_downed = not can_get_downed and self.downed_state
 
-function BTConditions.troll_downed(arg_92_0)
-	return arg_92_0.can_get_downed and arg_92_0.downed_state
+	return can_get_downed
 end
 
-function BTConditions.troll_chief_phase_success(arg_93_0)
-	local var_93_0, var_93_1, var_93_2, var_93_3, var_93_4 = arg_93_0.health_extension:respawn_thresholds()
+BTConditions.troll_chief_phase_success = function (self)
+	-- function 93
+	local respawn_thresholds, var_93_1, var_93_2, var_93_3, var_93_4 = self.health_extension:respawn_thresholds()
 
-	return var_93_4 > arg_93_0.downed_phase
+	return var_93_4 > self.downed_phase
 end
 
-function BTConditions.needs_to_crouch(arg_94_0)
-	return arg_94_0.needs_to_crouch and BTConditions.ratogre_target_reachable(arg_94_0)
+BTConditions.needs_to_crouch = function (self)
+	-- function 94
+	local needs_to_crouch = self.needs_to_crouch
+
+	needs_to_crouch = not needs_to_crouch and BTConditions.ratogre_target_reachable(self)
+
+	return needs_to_crouch
 end
 
-function BTConditions.reset_utility(arg_95_0)
-	return not arg_95_0.reset_utility
+BTConditions.reset_utility = function (self)
+	-- function 95
+	return not self.reset_utility
 end
+
+BTConditions.is_alerted = function (self)
+	-- function 96
+	local var_96_0 = alive(self.target_unit)
 
-function BTConditions.is_alerted(arg_96_0)
-	local var_96_0 = var_0_0(arg_96_0.target_unit) and arg_96_0.is_alerted and (not arg_96_0.confirmed_player_sighting or arg_96_0.hesitating)
-	local var_96_1 = var_0_0(arg_96_0.taunt_unit) and not arg_96_0.taunt_hesitate_finished and not arg_96_0.no_taunt_hesitate
+	if not var_96_0 then
+		var_96_0 = self.is_alerted
+		var_96_0 = not var_96_0 and not self.confirmed_player_sighting and self.hesitating
+	end
 
-	return var_96_0 or var_96_1
+	local flag = not alive(self.taunt_unit) and not not self.taunt_hesitate_finished or not self.no_taunt_hesitate
+
+	return var_96_0 or flag
 end
+
+BTConditions.confirmed_player_sighting = function (self)
+	-- function 97
+	local var_97_0 = alive(self.target_unit)
 
-function BTConditions.confirmed_player_sighting(arg_97_0)
-	return var_0_0(arg_97_0.target_unit) and arg_97_0.confirmed_player_sighting
+	var_97_0 = not var_97_0 and self.confirmed_player_sighting
+
+	return var_97_0
 end
+
+BTConditions.commander_disabled_or_resuming = function (self)
+	-- function 98
+	local is_disabled
 
-function BTConditions.commander_disabled_or_resuming(arg_98_0)
-	return ALIVE[arg_98_0.commander_unit] and var_0_1.extension(arg_98_0.commander_unit, "status_system"):is_disabled() or arg_98_0.disabled_resume_time and Managers.time:time("game") < arg_98_0.disabled_resume_time
+	if not ALIVE[self.commander_unit] then
+		is_disabled = ScriptUnit.extension(self.commander_unit, "status_system"):is_disabled()
+
+		if not is_disabled then
+			-- Nothing
+		end
+	end
+
+	is_disabled = self.disabled_resume_time
+	is_disabled = not is_disabled and Managers.time:time("game") < self.disabled_resume_time
+
+	::label_98_0::
+
+	return is_disabled
 end
+
+BTConditions.commander_disabled = function (self)
+	-- function 99
+	local var_99_0 = ALIVE[self.commander_unit]
+
+	var_99_0 = not var_99_0 and ScriptUnit.extension(self.commander_unit, "status_system"):is_disabled()
 
-function BTConditions.commander_disabled(arg_99_0)
-	return ALIVE[arg_99_0.commander_unit] and var_0_1.extension(arg_99_0.commander_unit, "status_system"):is_disabled()
+	return var_99_0
 end
 
-function BTConditions.has_commander_and_follow_node(arg_100_0)
-	return Managers.state.entity:system("ai_commander_system"):get_commander_unit(arg_100_0.unit) and arg_100_0.is_navbot_following_path
+BTConditions.has_commander_and_follow_node = function (self)
+	-- function 100
+	return not Managers.state.entity:system("ai_commander_system"):get_commander_unit(self.unit) and self.is_navbot_following_path
 end
 
-function BTConditions.confirmed_enemy_sighting_within_commander(arg_101_0)
-	return var_0_0(arg_101_0.target_unit) and arg_101_0.dist_to_commander and arg_101_0.target_dist + arg_101_0.dist_to_commander < arg_101_0.max_combat_range
+BTConditions.confirmed_enemy_sighting_within_commander = function (self)
+	-- function 101
+	local var_101_0 = alive(self.target_unit)
+
+	if not var_101_0 then
+		var_101_0 = self.dist_to_commander
+		var_101_0 = not var_101_0 and self.target_dist + self.dist_to_commander < self.max_combat_range
+	end
+
+	return var_101_0
 end
+
+BTConditions.confirmed_enemy_sighting_within_commander_sticky = function (self)
+	-- function 102
+	local confirmed_enemy_sighting_within_commander
+
+	if not ALIVE[self.target_unit] then
+		confirmed_enemy_sighting_within_commander = self.confirmed_enemy_sighting_within_commander
+
+		if not confirmed_enemy_sighting_within_commander then
+			-- Nothing
+		end
+	end
+
+	confirmed_enemy_sighting_within_commander = self.attack_locked_in_t
+
+	::label_102_0::
 
-function BTConditions.confirmed_enemy_sighting_within_commander_sticky(arg_102_0)
-	return ALIVE[arg_102_0.target_unit] and arg_102_0.confirmed_enemy_sighting_within_commander or arg_102_0.attack_locked_in_t
+	return confirmed_enemy_sighting_within_commander
 end
 
-function BTConditions.should_teleport_to_commander(arg_103_0)
-	local var_103_0 = arg_103_0.unit
-	local var_103_1 = Managers.state.entity:system("ai_commander_system"):get_commander_unit(var_103_0)
+BTConditions.should_teleport_to_commander = function (self)
+	-- function 103
+	local unit = self.unit
+	local get_commander_unit = Managers.state.entity:system("ai_commander_system"):get_commander_unit(unit)
 
-	if var_103_1 then
-		local var_103_2 = arg_103_0.breed.max_commander_distance
+	if not get_commander_unit then
+		local max_commander_distance = self.breed.max_commander_distance
 
-		if var_103_2 then
-			local var_103_3 = POSITION_LOOKUP[var_103_1]
-			local var_103_4 = POSITION_LOOKUP[var_103_0]
+		if not max_commander_distance then
+			local var_103_3 = POSITION_LOOKUP[get_commander_unit]
+			local var_103_4 = POSITION_LOOKUP[unit]
 
-			if Vector3.distance_squared(var_103_3, var_103_4) > var_103_2 * var_103_2 then
+			if Vector3.distance_squared(var_103_3, var_103_4) > max_commander_distance * max_commander_distance then
 				return true
 			end
 		end
@@ -537,295 +844,533 @@ function BTConditions.should_teleport_to_commander(arg_103_0)
 	return false
 end
 
-function BTConditions.has_command_attack(arg_104_0)
-	return (arg_104_0.new_command_attack or arg_104_0.undergoing_command_attack) and (ALIVE[arg_104_0.target_unit] and arg_104_0.new_command_attack or (ALIVE[arg_104_0.locked_target_unit] or arg_104_0.attack_locked_in_t) and arg_104_0.undergoing_command_attack)
+BTConditions.has_command_attack = function (self)
+	-- function 104
+	local undergoing_command_attack
+
+	if not self.new_command_attack then
+		undergoing_command_attack = self.undergoing_command_attack
+
+		if not undergoing_command_attack then
+			-- Nothing
+		end
+	end
+
+	if not ALIVE[self.target_unit] then
+		undergoing_command_attack = self.new_command_attack
+
+		if not undergoing_command_attack then
+			-- Nothing
+		end
+	end
+
+	if not ALIVE[self.locked_target_unit] then
+		undergoing_command_attack = self.attack_locked_in_t
+
+		if not undergoing_command_attack then
+			-- Nothing
+		end
+	end
+
+	undergoing_command_attack = self.undergoing_command_attack
+
+	::label_104_0::
+
+	return undergoing_command_attack
 end
 
-function BTConditions.pet_skeleton_is_armored(arg_105_0)
-	return arg_105_0.breed.name == "pet_skeleton_armored"
+BTConditions.pet_skeleton_is_armored = function (self)
+	-- function 105
+	return self.breed.name == "pet_skeleton_armored"
 end
 
-function BTConditions.pet_skeleton_is_dual_wield(arg_106_0)
-	return arg_106_0.breed.name == "pet_skeleton_dual_wield"
+BTConditions.pet_skeleton_is_dual_wield = function (self)
+	-- function 106
+	return self.breed.name == "pet_skeleton_dual_wield"
 end
 
-function BTConditions.pet_skeleton_has_shield(arg_107_0)
-	return arg_107_0.breed.name == "pet_skeleton_with_shield"
+BTConditions.pet_skeleton_has_shield = function (self)
+	-- function 107
+	return self.breed.name == "pet_skeleton_with_shield"
 end
 
-function BTConditions.pet_skeleton_default(arg_108_0)
-	return arg_108_0.breed.name == "pet_skeleton"
+BTConditions.pet_skeleton_default = function (self)
+	-- function 108
+	return self.breed.name == "pet_skeleton"
 end
 
-function BTConditions.has_charge_target(arg_109_0)
-	return arg_109_0.charge_target
+BTConditions.has_charge_target = function (self)
+	-- function 109
+	return self.charge_target
 end
 
-function BTConditions.wants_stand_ground(arg_110_0)
-	return arg_110_0.command_state == CommandStates.StandingGround
+BTConditions.wants_stand_ground = function (self)
+	-- function 110
+	return self.command_state == CommandStates.StandingGround
 end
 
-function BTConditions.necromancer_not_exploded(arg_111_0)
-	return not arg_111_0.explosion_triggered
+BTConditions.necromancer_not_exploded = function (self)
+	-- function 111
+	return not self.explosion_triggered
 end
 
-function BTConditions.suiciding_whilst_staggering(arg_112_0)
-	return arg_112_0.stagger and arg_112_0.suicide_run ~= nil and arg_112_0.suicide_run.explosion_started
+BTConditions.suiciding_whilst_staggering = function (self)
+	-- function 112
+	local stagger = self.stagger
+
+	stagger = not stagger and self.suicide_run == nil or self.suicide_run.explosion_started
+
+	return stagger
 end
 
-function BTConditions.has_goal_destination(arg_113_0)
-	return arg_113_0.goal_destination ~= nil
+BTConditions.has_goal_destination = function (self)
+	-- function 113
+	return self.goal_destination ~= nil
 end
 
-function BTConditions.should_mount_unit(arg_114_0)
-	return arg_114_0.should_mount_unit ~= nil
+BTConditions.should_mount_unit = function (self)
+	-- function 114
+	return self.should_mount_unit ~= nil
 end
 
-function BTConditions.is_falling(arg_115_0)
-	return arg_115_0.is_falling or arg_115_0.fall_state ~= nil
+BTConditions.is_falling = function (self)
+	-- function 115
+	local is_falling = self.is_falling
+
+	is_falling = is_falling or self.fall_state ~= nil
+
+	return is_falling
 end
 
-function BTConditions.is_gutter_runner_falling(arg_116_0)
-	return not arg_116_0.high_ground_opportunity and not arg_116_0.pouncing_target and (arg_116_0.is_falling or arg_116_0.fall_state ~= nil)
+BTConditions.is_gutter_runner_falling = function (self)
+	-- function 116
+	local is_falling
+
+	if not (self.high_ground_opportunity or self.pouncing_target) then
+		is_falling = self.is_falling
+
+		if not is_falling then
+			-- Nothing
+		end
+
+		if self.fall_state == nil then
+			-- Nothing
+		end
+	end
+
+	is_falling = false
+
+	goto label_116_1
+
+	::label_116_0::
+
+	is_falling = true
+
+	::label_116_1::
+
+	return is_falling
 end
 
-function BTConditions.pack_master_needs_hook(arg_117_0)
-	return arg_117_0.needs_hook
+BTConditions.pack_master_needs_hook = function (self)
+	-- function 117
+	return self.needs_hook
 end
 
-function BTConditions.look_for_players(arg_118_0)
-	return arg_118_0.look_for_players
+BTConditions.look_for_players = function (self)
+	-- function 118
+	return self.look_for_players
 end
 
-function BTConditions.suicide_run(arg_119_0)
-	return arg_119_0.current_health_percent < 0.7
+BTConditions.suicide_run = function (self)
+	-- function 119
+	return self.current_health_percent < 0.7
 end
 
-function BTConditions.should_use_interest_point(arg_120_0)
-	return not arg_120_0.ignore_interest_points and not arg_120_0.confirmed_player_sighting
+BTConditions.should_use_interest_point = function (self)
+	-- function 120
+	return not not self.ignore_interest_points or not self.confirmed_player_sighting
 end
 
-function BTConditions.give_command(arg_121_0)
-	return arg_121_0.give_command and var_0_0(arg_121_0.target_unit) and arg_121_0.confirmed_player_sighting
+BTConditions.give_command = function (self)
+	-- function 121
+	local give_command = self.give_command
+
+	if not give_command then
+		give_command = alive(self.target_unit)
+		give_command = not give_command and self.confirmed_player_sighting
+	end
+
+	return give_command
 end
 
-function BTConditions.is_fleeing(arg_122_0)
-	return var_0_0(arg_122_0.target_unit) or arg_122_0.is_fleeing
+BTConditions.is_fleeing = function (self)
+	-- function 122
+	local var_122_0 = alive(self.target_unit)
+
+	var_122_0 = var_122_0 or self.is_fleeing
+
+	return var_122_0
 end
 
-function BTConditions.loot_rat_stagger(arg_123_0)
-	return BTConditions.stagger(arg_123_0) and not arg_123_0.dodge_damage_success
+BTConditions.loot_rat_stagger = function (self)
+	-- function 123
+	local stagger = BTConditions.stagger(self)
+
+	stagger = not stagger and not self.dodge_damage_success
+
+	return stagger
 end
 
-function BTConditions.loot_rat_dodge(arg_124_0)
-	return arg_124_0.dodge_vector or arg_124_0.is_dodging
+BTConditions.loot_rat_dodge = function (self)
+	-- function 124
+	local dodge_vector = self.dodge_vector
+
+	dodge_vector = dodge_vector or self.is_dodging
+
+	return dodge_vector
 end
 
-function BTConditions.loot_rat_flee(arg_125_0)
-	return BTConditions.confirmed_player_sighting(arg_125_0) or arg_125_0.is_fleeing
+BTConditions.loot_rat_flee = function (self)
+	-- function 125
+	local confirmed_player_sighting = BTConditions.confirmed_player_sighting(self)
+
+	confirmed_player_sighting = confirmed_player_sighting or self.is_fleeing
+
+	return confirmed_player_sighting
 end
 
-function BTConditions.defend(arg_126_0)
-	return arg_126_0.defend
+BTConditions.defend = function (self)
+	-- function 126
+	return self.defend
 end
 
-function BTConditions.defend_get_in_position(arg_127_0)
-	return arg_127_0.defend_get_in_position
+BTConditions.defend_get_in_position = function (self)
+	-- function 127
+	return self.defend_get_in_position
 end
 
-function BTConditions.can_trigger_move_to(arg_128_0)
-	return Managers.time:time("game") > (arg_128_0.trigger_time or 0) and var_0_0(arg_128_0.target_unit)
+BTConditions.can_trigger_move_to = function (self)
+	-- function 128
+	local time = Managers.time:time("game")
+	local trigger_time = self.trigger_time
+
+	trigger_time = trigger_time or 0
+
+	return not (trigger_time < time) or alive(self.target_unit)
 end
 
-function BTConditions.globadier_skulked_for_too_long(arg_129_0)
-	local var_129_0 = arg_129_0.advance_towards_players
-	local var_129_1 = 15
+BTConditions.globadier_skulked_for_too_long = function (self)
+	-- function 129
+	local advance_towards_players = self.advance_towards_players
+	local num = 15
 
-	if var_129_0 then
-		local var_129_2 = Managers.time:time("game")
-		local var_129_3 = arg_129_0.throw_globe_data
+	if not advance_towards_players then
+		local time = Managers.time:time("game")
+		local throw_globe_data = self.throw_globe_data
 
-		if var_129_3 and var_129_3.next_throw_at then
-			return var_129_2 > var_129_3.next_throw_at + var_129_1
+		if not throw_globe_data and not throw_globe_data.next_throw_at then
+			return time > throw_globe_data.next_throw_at + num
 		else
-			return var_129_0.timer > var_129_0.time_until_first_throw + var_129_1
+			return advance_towards_players.timer > advance_towards_players.time_until_first_throw + num
 		end
 	end
 
 	return false
 end
 
-function BTConditions.ratling_gunner_skulked_for_too_long(arg_130_0)
-	if var_0_0(arg_130_0.target_unit) then
-		local var_130_0 = 15
-		local var_130_1 = arg_130_0.attack_pattern_data
-		local var_130_2 = var_130_1 and var_130_1.last_fired
-		local var_130_3 = Managers.time:time("game")
-		local var_130_4 = arg_130_0.lurk_start
+BTConditions.ratling_gunner_skulked_for_too_long = function (self)
+	-- function 130
+	if not alive(self.target_unit) then
+		local num = 15
+		local attack_pattern_data = self.attack_pattern_data
+		local flag = not attack_pattern_data and attack_pattern_data.last_fired
+		local time = Managers.time:time("game")
+		local lurk_start = self.lurk_start
 
-		if var_130_2 then
-			return var_130_3 > var_130_2 + var_130_0
-		elseif var_130_4 then
-			return var_130_3 > var_130_4 + var_130_0
+		if not flag then
+			return time > flag + num
+		elseif not lurk_start then
+			return time > lurk_start + num
 		end
 	end
 
 	return false
 end
 
-function BTConditions.should_defensive_idle(arg_131_0)
-	local var_131_0 = Managers.time:time("game") - arg_131_0.surrounding_players_last
+BTConditions.should_defensive_idle = function (self)
+	-- function 131
+	local num = Managers.time:time("game") - self.surrounding_players_last
+	local defensive_mode_duration = self.defensive_mode_duration
 
-	return arg_131_0.defensive_mode_duration and var_131_0 >= 3
+	defensive_mode_duration = not defensive_mode_duration and num >= 3
+
+	return defensive_mode_duration
 end
 
-function BTConditions.should_be_defensive(arg_132_0)
-	return arg_132_0.defensive_mode_duration and var_0_0(arg_132_0.target_unit)
+BTConditions.should_be_defensive = function (self)
+	-- function 132
+	local defensive_mode_duration = self.defensive_mode_duration
+
+	defensive_mode_duration = not defensive_mode_duration and alive(self.target_unit)
+
+	return defensive_mode_duration
 end
 
-function BTConditions.boss_phase_two(arg_133_0)
-	return arg_133_0.current_phase == 2
+BTConditions.boss_phase_two = function (self)
+	-- function 133
+	return self.current_phase == 2
 end
 
-function BTConditions.warlord_dual_wielding(arg_134_0)
-	return arg_134_0.dual_wield_mode
+BTConditions.warlord_dual_wielding = function (self)
+	-- function 134
+	return self.dual_wield_mode
 end
 
-function BTConditions.warlord_halberding(arg_135_0)
-	return not arg_135_0.dual_wield_mode
+BTConditions.warlord_halberding = function (self)
+	-- function 135
+	return not self.dual_wield_mode
 end
 
-function BTConditions.switching_weapons(arg_136_0)
-	return arg_136_0.switching_weapons and not arg_136_0.defensive_mode_duration
+BTConditions.switching_weapons = function (self)
+	-- function 136
+	local switching_weapons = self.switching_weapons
+
+	switching_weapons = not switching_weapons and not self.defensive_mode_duration
+
+	return switching_weapons
 end
 
-function BTConditions.warcamp_retaliation_aoe(arg_137_0)
-	return Unit.alive(arg_137_0.target_unit) and arg_137_0.num_chain_stagger and arg_137_0.num_chain_stagger > 2
+BTConditions.warcamp_retaliation_aoe = function (self)
+	-- function 137
+	local alive = Unit.alive(self.target_unit)
+
+	if not alive then
+		alive = self.num_chain_stagger
+		alive = not alive and self.num_chain_stagger > 2
+	end
+
+	return alive
 end
 
-function BTConditions.is_mounted(arg_138_0)
-	local var_138_0 = arg_138_0.mounted_data.mount_unit
+BTConditions.is_mounted = function (self)
+	-- function 138
+	local mount_unit = self.mounted_data.mount_unit
 
-	return not arg_138_0.knocked_off_mount and HEALTH_ALIVE[var_138_0]
+	return not not self.knocked_off_mount or HEALTH_ALIVE[mount_unit]
 end
 
-function BTConditions.knocked_off_mount(arg_139_0)
-	return (arg_139_0.knocked_off_mount or not HEALTH_ALIVE[arg_139_0.mounted_data.mount_unit]) and HEALTH_ALIVE[arg_139_0.target_unit]
+BTConditions.knocked_off_mount = function (self)
+	-- function 139
+	return (self.knocked_off_mount or not HEALTH_ALIVE[self.mounted_data.mount_unit]) and HEALTH_ALIVE[self.target_unit]
 end
 
-function BTConditions.ready_to_cast_spell(arg_140_0)
-	return arg_140_0.ready_to_summon and not arg_140_0.about_to_mount and HEALTH_ALIVE[arg_140_0.target_unit]
+BTConditions.ready_to_cast_spell = function (self)
+	-- function 140
+	local ready_to_summon = self.ready_to_summon
+
+	ready_to_summon = not ready_to_summon and not not self.about_to_mount or HEALTH_ALIVE[self.target_unit]
+
+	return ready_to_summon
 end
 
-function BTConditions.grey_seer_teleport_spell(arg_141_0)
-	return arg_141_0.current_spell_name == "teleport" and arg_141_0.quick_teleport
+BTConditions.grey_seer_teleport_spell = function (self)
+	-- function 141
+	return self.current_spell_name ~= "teleport" or self.quick_teleport
 end
 
-function BTConditions.grey_seer_vermintide_spell(arg_142_0)
-	return arg_142_0.current_spell_name == "vermintide"
+BTConditions.grey_seer_vermintide_spell = function (self)
+	-- function 142
+	return self.current_spell_name == "vermintide"
 end
 
-function BTConditions.grey_seer_warp_lightning_spell(arg_143_0)
-	return arg_143_0.current_spell_name == "warp_lightning"
+BTConditions.grey_seer_warp_lightning_spell = function (self)
+	-- function 143
+	return self.current_spell_name == "warp_lightning"
 end
 
-function BTConditions.grey_seer_waiting_death(arg_144_0)
-	return arg_144_0.current_phase == 6
+BTConditions.grey_seer_waiting_death = function (self)
+	-- function 144
+	return self.current_phase == 6
 end
 
-function BTConditions.grey_seer_death(arg_145_0)
-	return arg_145_0.current_phase == 5
+BTConditions.grey_seer_death = function (self)
+	-- function 145
+	return self.current_phase == 5
 end
 
-function BTConditions.grey_seer_call_stormfiend(arg_146_0)
-	return arg_146_0.call_stormfiend
+BTConditions.grey_seer_call_stormfiend = function (self)
+	-- function 146
+	return self.call_stormfiend
 end
 
-function BTConditions.grey_seer_waiting_for_pickup(arg_147_0)
-	return arg_147_0.waiting_for_pickup
+BTConditions.grey_seer_waiting_for_pickup = function (self)
+	-- function 147
+	return self.waiting_for_pickup
 end
 
-function BTConditions.should_use_emote(arg_148_0)
-	return arg_148_0.should_use_emote
+BTConditions.should_use_emote = function (self)
+	-- function 148
+	return self.should_use_emote
 end
 
-function BTConditions.should_wait_idle(arg_149_0)
-	if arg_149_0.idle_time then
-		return Managers.time:time("game") - arg_149_0.idle_time >= 3
+BTConditions.should_wait_idle = function (self)
+	-- function 149
+	if not self.idle_time then
+		return Managers.time:time("game") - self.idle_time >= 3
 	else
 		return false
 	end
 end
 
-function BTConditions.beastmen_standard_bearer_place_standard(arg_150_0)
-	return var_0_0(arg_150_0.target_unit) and not arg_150_0.has_placed_standard
+BTConditions.beastmen_standard_bearer_place_standard = function (self)
+	-- function 150
+	local var_150_0 = alive(self.target_unit)
+
+	var_150_0 = not var_150_0 and not self.has_placed_standard
+
+	return var_150_0
 end
 
-function BTConditions.beastmen_standard_bearer_pickup_standard(arg_151_0)
-	if arg_151_0.ignore_standard_pickup then
+BTConditions.beastmen_standard_bearer_pickup_standard = function (self)
+	-- function 151
+	if not self.ignore_standard_pickup then
 		return false
 	end
 
-	local var_151_0 = arg_151_0.target_distance_to_standard
+	local target_distance_to_standard = self.target_distance_to_standard
 
-	if arg_151_0.moving_to_pick_up_standard then
+	if not self.moving_to_pick_up_standard then
 		return true
 	else
-		return arg_151_0.has_placed_standard and var_0_0(arg_151_0.target_unit) and HEALTH_ALIVE[arg_151_0.standard_unit] and var_151_0 and var_151_0 > arg_151_0.breed.pickup_standard_distance
+		local has_placed_standard = self.has_placed_standard
+
+		if not has_placed_standard then
+			has_placed_standard = alive(self.target_unit)
+
+			if not has_placed_standard then
+				has_placed_standard = HEALTH_ALIVE[self.standard_unit]
+				has_placed_standard = not has_placed_standard and not target_distance_to_standard and target_distance_to_standard > self.breed.pickup_standard_distance
+			end
+		end
+
+		return has_placed_standard
 	end
 end
 
-function BTConditions.beastmen_standard_bearer_move_and_place_standard(arg_152_0)
-	return arg_152_0.move_and_place_standard
+BTConditions.beastmen_standard_bearer_move_and_place_standard = function (self)
+	-- function 152
+	return self.move_and_place_standard
 end
 
-function BTConditions.ungor_archer_enter_melee_combat(arg_153_0)
-	return arg_153_0.confirmed_player_sighting and var_0_0(arg_153_0.target_unit) and (arg_153_0.has_switched_weapons or arg_153_0.target_dist and arg_153_0.target_dist < 5)
+BTConditions.ungor_archer_enter_melee_combat = function (self)
+	-- function 153
+	local confirmed_player_sighting = self.confirmed_player_sighting
+
+	if not confirmed_player_sighting then
+		confirmed_player_sighting = alive(self.target_unit)
+
+		if not confirmed_player_sighting then
+			confirmed_player_sighting = self.has_switched_weapons
+
+			if not confirmed_player_sighting then
+				confirmed_player_sighting = self.target_dist
+				confirmed_player_sighting = not confirmed_player_sighting and self.target_dist < 5
+			end
+		end
+	end
+
+	return confirmed_player_sighting
 end
 
-function BTConditions.bestigor_at_smartobject(arg_154_0)
-	return not (arg_154_0.charge_state ~= nil) and BTConditions.at_smartobject(arg_154_0)
+BTConditions.bestigor_at_smartobject = function (self)
+	-- function 154
+	return not not (self.charge_state ~= nil) or BTConditions.at_smartobject(self)
 end
 
-function BTConditions.confirmed_player_sighting_standard_bearer(arg_155_0)
-	return var_0_0(arg_155_0.target_unit) and arg_155_0.confirmed_player_sighting and arg_155_0.has_placed_standard
+BTConditions.confirmed_player_sighting_standard_bearer = function (self)
+	-- function 155
+	local var_155_0 = alive(self.target_unit)
+
+	if not var_155_0 then
+		var_155_0 = self.confirmed_player_sighting
+		var_155_0 = not var_155_0 and self.has_placed_standard
+	end
+
+	return var_155_0
 end
 
-function BTConditions.standard_bearer_should_be_defensive(arg_156_0)
-	local var_156_0 = arg_156_0.breed.pickup_standard_distance
-	local var_156_1 = arg_156_0.breed.defensive_threshold_distance
-	local var_156_2 = var_0_0(arg_156_0.target_unit) and arg_156_0.confirmed_player_sighting and arg_156_0.has_placed_standard
-	local var_156_3 = arg_156_0.target_distance_to_standard
-	local var_156_4 = var_156_3 and var_156_1 <= var_156_3 and var_156_3 <= var_156_0
-	local var_156_5 = arg_156_0.move_state ~= "attacking"
+BTConditions.standard_bearer_should_be_defensive = function (self)
+	-- function 156
+	local pickup_standard_distance = self.breed.pickup_standard_distance
+	local defensive_threshold_distance = self.breed.defensive_threshold_distance
+	local var_156_2 = alive(self.target_unit)
 
-	return var_156_2 and var_156_4 and var_156_5
+	if not var_156_2 then
+		var_156_2 = self.confirmed_player_sighting
+		var_156_2 = not var_156_2 and self.has_placed_standard
+	end
+
+	local target_distance_to_standard = self.target_distance_to_standard
+	local flag = not target_distance_to_standard and not (defensive_threshold_distance <= target_distance_to_standard) or target_distance_to_standard <= pickup_standard_distance
+	local flag_2 = self.move_state ~= "attacking"
+
+	return not var_156_2 and not flag and flag_2
 end
 
-function BTConditions.switch_to_melee_weapon(arg_157_0)
-	return BTConditions.ungor_archer_enter_melee_combat(arg_157_0) and not arg_157_0.has_switched_weapons
+BTConditions.switch_to_melee_weapon = function (self)
+	-- function 157
+	local ungor_archer_enter_melee_combat = BTConditions.ungor_archer_enter_melee_combat(self)
+
+	ungor_archer_enter_melee_combat = not ungor_archer_enter_melee_combat and not self.has_switched_weapons
+
+	return ungor_archer_enter_melee_combat
 end
 
-function BTConditions.confirmed_player_sighting_and_has_switched_weapons(arg_158_0)
-	return arg_158_0.confirmed_player_sighting and arg_158_0.has_switched_weapons
+BTConditions.confirmed_player_sighting_and_has_switched_weapons = function (self)
+	-- function 158
+	local confirmed_player_sighting = self.confirmed_player_sighting
+
+	confirmed_player_sighting = not confirmed_player_sighting and self.has_switched_weapons
+
+	return confirmed_player_sighting
 end
 
-function BTConditions.player_controller_is_alive(arg_159_0)
-	return arg_159_0.player_controller_unit and var_0_0(arg_159_0.player_controller_unit) and not arg_159_0.target_is_in_combat
+BTConditions.player_controller_is_alive = function (self)
+	-- function 159
+	local player_controller_unit = self.player_controller_unit
+
+	if not player_controller_unit then
+		player_controller_unit = alive(self.player_controller_unit)
+		player_controller_unit = not player_controller_unit and not self.target_is_in_combat
+	end
+
+	return player_controller_unit
 end
 
-function BTConditions.player_controller_is_in_combat(arg_160_0)
-	return arg_160_0.player_controller_unit and arg_160_0.target_is_in_combat
+BTConditions.player_controller_is_in_combat = function (self)
+	-- function 160
+	local player_controller_unit = self.player_controller_unit
+
+	player_controller_unit = not player_controller_unit and self.target_is_in_combat
+
+	return player_controller_unit
 end
 
-function BTConditions.is_in_inn(arg_161_0)
-	return arg_161_0.inn_idle_spots and global_is_inside_inn
+BTConditions.is_in_inn = function (self)
+	-- function 161
+	local inn_idle_spots = self.inn_idle_spots
+
+	inn_idle_spots = not inn_idle_spots and global_is_inside_inn
+
+	return inn_idle_spots
 end
 
-function BTConditions.has_no_idle_spot(arg_162_0)
-	return not arg_162_0.has_idle_spot
+BTConditions.has_no_idle_spot = function (self)
+	-- function 162
+	return not self.has_idle_spot
 end
 
-function BTConditions.is_transported(arg_163_0)
-	return arg_163_0.is_transported
+BTConditions.is_transported = function (self)
+	-- function 163
+	return self.is_transported
 end

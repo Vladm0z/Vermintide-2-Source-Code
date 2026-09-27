@@ -3,7 +3,10 @@
 require("scripts/managers/challenges/boon_reactivation_rules")
 require("scripts/managers/challenges/pickup_spawn_type")
 
+local InGameChallengeRewards = InGameChallengeRewards
+
 InGameChallengeRewards = InGameChallengeRewards or {}
+InGameChallengeRewards = InGameChallengeRewards
 InGameChallengeRewards.test_buff = {
 	target = "party",
 	type = "buff",
@@ -372,8 +375,9 @@ InGameChallengeRewards.markus_questing_knight_passive_health_regen_vs = {
 
 DLCUtils.merge("ingame_challenge_rewards", InGameChallengeRewards)
 
-local function var_0_0(arg_1_0, arg_1_1, arg_1_2)
-	if BuffUtils.get_buff_template(arg_1_1, "adventure") then
+local function fn(arg_1_0, arg_1_1, arg_1_2)
+	-- function 1
+	if not BuffUtils.get_buff_template(arg_1_1, "adventure") then
 		InGameChallengeRewards[arg_1_0].description_values = {
 			{
 				value_type = "percent",
@@ -385,102 +389,105 @@ local function var_0_0(arg_1_0, arg_1_1, arg_1_2)
 		InGameChallengeRewards[arg_1_0].description_values = {}
 	end
 
-	local var_1_0 = arg_1_0 .. "_improved"
-	local var_1_1 = arg_1_1 .. "_improved"
+	local str = arg_1_0 .. "_improved"
+	local str_2 = arg_1_1 .. "_improved"
 
-	if InGameChallengeRewards[var_1_0] then
-		if BuffUtils.get_buff_template(var_1_1, "adventure") then
-			InGameChallengeRewards[var_1_0].description_values = {
+	if not InGameChallengeRewards[str] then
+		if not BuffUtils.get_buff_template(str_2, "adventure") then
+			InGameChallengeRewards[str].description_values = {
 				{
 					value_type = "percent",
 					value_fmt = "%+d%%",
-					value = BuffUtils.get_buff_template(var_1_1, "adventure").buffs[1].multiplier
+					value = BuffUtils.get_buff_template(str_2, "adventure").buffs[1].multiplier
 				}
 			}
 		else
-			InGameChallengeRewards[var_1_0].description_values = {}
+			InGameChallengeRewards[str].description_values = {}
 		end
 	end
 end
 
-var_0_0("markus_questing_knight_passive_cooldown_reduction", "markus_questing_knight_passive_cooldown_reduction")
-var_0_0("markus_questing_knight_passive_attack_speed", "markus_questing_knight_passive_attack_speed")
-var_0_0("markus_questing_knight_passive_power_level", "markus_questing_knight_passive_power_level")
-var_0_0("markus_questing_knight_passive_damage_taken", "markus_questing_knight_passive_damage_taken")
+fn("markus_questing_knight_passive_cooldown_reduction", "markus_questing_knight_passive_cooldown_reduction")
+fn("markus_questing_knight_passive_attack_speed", "markus_questing_knight_passive_attack_speed")
+fn("markus_questing_knight_passive_power_level", "markus_questing_knight_passive_power_level")
+fn("markus_questing_knight_passive_damage_taken", "markus_questing_knight_passive_damage_taken")
 
-for iter_0_0, iter_0_1 in pairs(DLCSettings) do
-	local var_0_1 = iter_0_1.ingame_challenge_rewards_description
+for k, v in pairs(DLCSettings) do
+	local ingame_challenge_rewards_description = v.ingame_challenge_rewards_description
 
-	if var_0_1 then
-		for iter_0_2, iter_0_3 in pairs(var_0_1) do
-			var_0_0(iter_0_2, iter_0_3)
+	if not ingame_challenge_rewards_description then
+		for k_2, v_2 in pairs(ingame_challenge_rewards_description) do
+			fn(k_2, v_2)
 		end
 	end
 end
 
 InGameChallengeRewardTypes = {
-	buff = function(arg_2_0, arg_2_1, arg_2_2)
-		local var_2_0 = Managers.state.entity:system("buff_system")
-		local var_2_1 = arg_2_0.buffs
-		local var_2_2 = arg_2_0.server_controlled
-		local var_2_3 = {}
+	buff = function (self, arg_2_1, arg_2_2)
+		-- function 2
+		local system = Managers.state.entity:system("buff_system")
+		local buffs = self.buffs
+		local server_controlled = self.server_controlled
+		local tbl = {}
 
-		for iter_2_0 = 1, #arg_2_1 do
-			local var_2_4 = arg_2_1[iter_2_0]
+		for i = 1, #arg_2_1 do
+			local var_2_4 = arg_2_1[i]
 
-			if var_2_4 and Unit.alive(var_2_4) then
-				local var_2_5 = {}
+			if not var_2_4 and not Unit.alive(var_2_4) then
+				local tbl_2 = {}
 
-				for iter_2_1 = 1, #var_2_1 do
-					var_2_5[iter_2_1] = var_2_0:add_buff(var_2_4, var_2_1[iter_2_1], var_2_4, var_2_2)
+				for j = 1, #buffs do
+					tbl_2[j] = system:add_buff(var_2_4, buffs[j], var_2_4, server_controlled)
 				end
 
-				var_2_3[var_2_4] = var_2_5
+				tbl[var_2_4] = tbl_2
 			end
 		end
 
-		return var_2_3
+		return tbl
 	end,
-	pickup = function(arg_3_0, arg_3_1, arg_3_2)
-		local var_3_0 = arg_3_0.pickup_type
-		local var_3_1 = Managers.state.network.network_transmit
-		local var_3_2 = Managers.state.entity:system("pickup_system")
+	pickup = function (self, arg_3_1, arg_3_2)
+		-- function 3
+		local pickup_type = self.pickup_type
+		local network_transmit = Managers.state.network.network_transmit
+		local system = Managers.state.entity:system("pickup_system")
 
-		for iter_3_0 = 1, #arg_3_1 do
-			local var_3_3 = arg_3_1[iter_3_0]
+		for i = 1, #arg_3_1 do
+			local var_3_3 = arg_3_1[i]
 
-			if var_3_3 and Unit.alive(var_3_3) then
-				local var_3_4 = ScriptUnit.extension(var_3_3, "inventory_system")
-				local var_3_5 = AllPickups[var_3_0]
-				local var_3_6 = var_3_5.slot_name
-				local var_3_7 = var_3_5.item_name
-				local var_3_8 = var_3_4:get_slot_data(var_3_6)
+			if not var_3_3 and not Unit.alive(var_3_3) then
+				local extension = ScriptUnit.extension(var_3_3, "inventory_system")
+				local var_3_5 = AllPickups[pickup_type]
+				local slot_name = var_3_5.slot_name
+				local item_name = var_3_5.item_name
+				local get_slot_data = extension:get_slot_data(slot_name)
 
-				if arg_3_0.pickup_spawn_type ~= PickupSpawnType.Replace and (var_3_8 or arg_3_0.pickup_spawn_type == PickupSpawnType.AlwaysDrop) then
-					if arg_3_0.pickup_spawn_type ~= PickupSpawnType.NeverDrop then
+				if not (self.pickup_spawn_type == PickupSpawnType.Replace or get_slot_data or self.pickup_spawn_type ~= PickupSpawnType.AlwaysDrop) then
+					if self.pickup_spawn_type ~= PickupSpawnType.NeverDrop then
 						local var_3_9 = POSITION_LOOKUP[var_3_3]
 
-						var_3_2:buff_spawn_pickup(var_3_0, var_3_9, true)
+						system:buff_spawn_pickup(pickup_type, var_3_9, true)
 					end
 				else
-					local var_3_10 = Managers.state.unit_storage:go_id(var_3_3)
-					local var_3_11 = NetworkLookup.equipment_slots[var_3_6]
-					local var_3_12 = NetworkLookup.item_names[var_3_7]
+					local go_id = Managers.state.unit_storage:go_id(var_3_3)
+					local var_3_11 = NetworkLookup.equipment_slots[slot_name]
+					local var_3_12 = NetworkLookup.item_names[item_name]
 					local var_3_13 = NetworkLookup.weapon_skins["n/a"]
-					local var_3_14 = Managers.player:owner(var_3_3)
+					local owner = Managers.player:owner(var_3_3)
 
-					if var_3_14 and var_3_14.remote then
-						var_3_1:send_rpc("rpc_add_inventory_slot_item", var_3_14.peer_id, var_3_10, var_3_11, var_3_12, var_3_13)
+					if not (not owner and owner.remote) then
+						network_transmit:send_rpc("rpc_add_inventory_slot_item", owner.peer_id, go_id, var_3_11, var_3_12, var_3_13)
 					else
-						var_3_1:queue_local_rpc("rpc_add_inventory_slot_item", var_3_10, var_3_11, var_3_12, var_3_13)
+						network_transmit:queue_local_rpc("rpc_add_inventory_slot_item", go_id, var_3_11, var_3_12, var_3_13)
 					end
 				end
 			end
 		end
 	end,
-	boon = function(arg_4_0, arg_4_1, arg_4_2)
-		if Managers.player:player_from_unique_id(arg_4_2) then
-			Managers.boon:add_boon(arg_4_2, arg_4_0.reward_id, arg_4_0.consume_type, arg_4_0.consume_value, arg_4_0.reactivation_rule)
+	boon = function (self, arg_4_1, arg_4_2)
+		-- function 4
+		if not Managers.player:player_from_unique_id(arg_4_2) then
+			Managers.boon:add_boon(arg_4_2, self.reward_id, self.consume_type, self.consume_value, self.reactivation_rule)
 		end
 	end
 }
@@ -488,20 +495,21 @@ InGameChallengeRewardTypes = {
 DLCUtils.merge("ingame_challenge_reward_types", InGameChallengeRewardTypes)
 
 InGameChallengeRewardRevokeTypes = {
-	buff = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
-		if not arg_5_0.server_controlled then
+	buff = function (self, arg_5_1, arg_5_2, arg_5_3)
+		-- function 5
+		if not self.server_controlled then
 			return
 		end
 
-		local var_5_0 = Managers.state.entity:system("buff_system")
+		local system = Managers.state.entity:system("buff_system")
 
-		for iter_5_0 = 1, #arg_5_1 do
-			local var_5_1 = arg_5_1[iter_5_0]
+		for i = 1, #arg_5_1 do
+			local var_5_1 = arg_5_1[i]
 			local var_5_2 = arg_5_3[var_5_1]
 
-			if var_5_1 and Unit.alive(var_5_1) and var_5_2 then
-				for iter_5_1 = 1, #var_5_2 do
-					var_5_0:remove_server_controlled_buff(var_5_1, var_5_2[iter_5_1])
+			if not var_5_1 and not Unit.alive(var_5_1) and not var_5_2 then
+				for j = 1, #var_5_2 do
+					system:remove_server_controlled_buff(var_5_1, var_5_2[j])
 				end
 			end
 		end
@@ -510,43 +518,45 @@ InGameChallengeRewardRevokeTypes = {
 
 DLCUtils.merge("ingame_challenge_revoke_types", InGameChallengeRewardRevokeTypes)
 
-local var_0_2 = {}
+local tbl = {}
 
 InGameChallengeRewardTargets = {
-	owner = function(arg_6_0)
-		local var_6_0 = Managers.player:player_from_unique_id(arg_6_0)
+	owner = function (arg_6_0)
+		-- function 6
+		local player_from_unique_id = Managers.player:player_from_unique_id(arg_6_0)
 
-		if var_6_0 then
+		if not player_from_unique_id then
 			return {
-				var_6_0.player_unit
+				player_from_unique_id.player_unit
 			}
 		end
 
-		return var_0_2
+		return tbl
 	end,
-	party = function(arg_7_0)
-		local var_7_0 = Managers.party
-		local var_7_1 = var_7_0:get_status_from_unique_id(arg_7_0)
-		local var_7_2 = var_7_1 and var_7_0:get_players_in_party(var_7_1.party_id)
+	party = function (arg_7_0)
+		-- function 7
+		local party = Managers.party
+		local get_status_from_unique_id = party:get_status_from_unique_id(arg_7_0)
+		local flag = not get_status_from_unique_id and party:get_players_in_party(get_status_from_unique_id.party_id)
 
-		if var_7_2 then
-			local var_7_3 = {}
-			local var_7_4 = 0
+		if not flag then
+			local tbl_2 = {}
+			local num = 0
 
-			for iter_7_0 = 1, #var_7_2 do
-				local var_7_5 = var_7_2[iter_7_0].player
-				local var_7_6 = var_7_5 and var_7_5.player_unit
+			for i = 1, #flag do
+				local player = flag[i].player
+				local flag_2 = not player and player.player_unit
 
-				if var_7_6 then
-					var_7_4 = var_7_4 + 1
-					var_7_3[var_7_4] = var_7_6
+				if not flag_2 then
+					num = num + 1
+					tbl_2[num] = flag_2
 				end
 			end
 
-			return var_7_3
+			return tbl_2
 		end
 
-		return var_0_2
+		return tbl
 	end
 }
 

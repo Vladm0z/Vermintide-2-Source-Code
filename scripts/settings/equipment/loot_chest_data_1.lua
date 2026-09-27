@@ -1,6 +1,9 @@
 -- chunkname: @scripts/settings/equipment/loot_chest_data_1.lua
 
+local LootChestData = LootChestData
+
 LootChestData = LootChestData or {}
+LootChestData = LootChestData
 LootChestData.scores = {
 	default = {
 		loot_dice = 5,
@@ -24,8 +27,8 @@ LootChestData.score_thresholds_per_chest = {
 	0
 }
 
-for iter_0_0 = 2, #LootChestData.score_thresholds do
-	LootChestData.score_thresholds_per_chest[iter_0_0] = LootChestData.score_thresholds[iter_0_0] - LootChestData.score_thresholds[iter_0_0 - 1]
+for i = 2, #LootChestData.score_thresholds do
+	LootChestData.score_thresholds_per_chest[i] = LootChestData.score_thresholds[i] - LootChestData.score_thresholds[i - 1]
 end
 
 LootChestData.max_score = LootChestData.score_thresholds[#LootChestData.score_thresholds]
@@ -57,68 +60,69 @@ LootChestData.power_level_thresholds = {
 }
 LootChestData.LEVEL_USED_FOR_POOL_LEVELS = 30
 
-local var_0_0 = {
+local tbl = {
 	0,
 	0
 }
 
-function LootChestData.calculate_power_level(arg_1_0, arg_1_1)
-	var_0_0[1], var_0_0[2] = arg_1_1.low, arg_1_1.hi
+LootChestData.calculate_power_level = function (arg_1_0, arg_1_1)
+	-- function 1
+	tbl[1], tbl[2] = arg_1_1.low, arg_1_1.hi
 
 	local var_1_0 = arg_1_0
 
 	arg_1_0 = math.min(arg_1_0, LootChestData.LEVEL_USED_FOR_POOL_LEVELS)
 
-	local var_1_1 = Managers.backend:get_interface("loot"):get_power_level_settings()
-	local var_1_2 = math[var_1_1.easing_function]
-	local var_1_3 = math[var_1_1.inverse_easing_function]
+	local get_power_level_settings = Managers.backend:get_interface("loot"):get_power_level_settings()
+	local var_1_2 = math[get_power_level_settings.easing_function]
+	local var_1_3 = math[get_power_level_settings.inverse_easing_function]
 
-	for iter_1_0 = 1, 2 do
-		local var_1_4 = var_0_0[iter_1_0]
-		local var_1_5 = var_1_4.min
-		local var_1_6 = var_1_4.max
-		local var_1_7 = var_1_4.pivot_power
-		local var_1_8 = var_1_4.pivot_level
-		local var_1_9 = var_1_4.easing_power
-		local var_1_10 = math.max(math.inv_lerp(var_1_5, var_1_6, var_1_7), 0)
-		local var_1_11 = var_1_6
+	for i = 1, 2 do
+		local var_1_4 = tbl[i]
+		local min = var_1_4.min
+		local max = var_1_4.max
+		local pivot_power = var_1_4.pivot_power
+		local pivot_level = var_1_4.pivot_level
+		local easing_power = var_1_4.easing_power
+		local max_2 = math.max(math.inv_lerp(min, max, pivot_power), 0)
+		local var_1_11 = max
 
-		if var_1_10 > 1 then
-			var_1_11 = var_1_7
-			var_1_10 = 1 / var_1_10
+		if max_2 > 1 then
+			var_1_11 = pivot_power
+			max_2 = 1 / max_2
 		end
 
-		local var_1_12 = var_1_3(var_1_10)
-		local var_1_13 = math.inv_lerp(1, var_1_8, arg_1_0)
-		local var_1_14 = math.max(var_1_13 * var_1_12, 0)
-		local var_1_15 = var_1_2(var_1_14)
-		local var_1_16 = math.lerp(0, var_1_11 - var_1_5, var_1_15) + var_1_5
+		local var_1_12 = var_1_3(max_2)
+		local inv_lerp = math.inv_lerp(1, pivot_level, arg_1_0)
+		local max_3 = math.max(inv_lerp * var_1_12, 0)
+		local var_1_15 = var_1_2(max_3)
+		local num = math.lerp(0, var_1_11 - min, var_1_15) + min
 
-		if var_1_13 > 1 then
-			if var_1_6 < var_1_7 then
-				var_1_16 = var_1_6
+		if inv_lerp > 1 then
+			if max < pivot_power then
+				num = max
 			else
-				var_1_16 = math.max(var_1_16, var_1_7)
+				num = math.max(num, pivot_power)
 			end
 		else
-			var_1_16 = var_1_16 + (math.lerp(0, math.min(var_1_6, var_1_7) - var_1_5, var_1_13) + var_1_5 - var_1_16) * (1 - var_1_9)
+			num = num + (math.lerp(0, math.min(max, pivot_power) - min, inv_lerp) + min - num) * (1 - easing_power)
 		end
 
-		local var_1_17 = math.clamp(var_1_16, var_1_5, var_1_6)
-		local var_1_18 = var_1_4.raise_by_overflow_level
+		local clamp = math.clamp(num, min, max)
+		local raise_by_overflow_level = var_1_4.raise_by_overflow_level
 
-		if var_1_18 then
-			var_1_17 = var_1_17 + math.max(0, var_1_18 * (var_1_0 - LootChestData.LEVEL_USED_FOR_POOL_LEVELS))
+		if not raise_by_overflow_level then
+			clamp = clamp + math.max(0, raise_by_overflow_level * (var_1_0 - LootChestData.LEVEL_USED_FOR_POOL_LEVELS))
 		end
 
-		var_0_0[iter_1_0] = var_1_17
+		tbl[i] = clamp
 	end
 
-	var_0_0[1] = math.min(var_0_0[1], var_0_0[2])
+	tbl[1] = math.min(tbl[1], tbl[2])
 
-	local var_1_19 = arg_1_1.hi.max
+	local max_4 = arg_1_1.hi.max
 
-	return var_0_0[1], var_0_0[2], var_1_19
+	return tbl[1], tbl[2], max_4
 end
 
 LootChestData.chests_by_category = {

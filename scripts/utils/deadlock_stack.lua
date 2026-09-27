@@ -1,10 +1,14 @@
 -- chunkname: @scripts/utils/deadlock_stack.lua
 
+local DeadlockStack = DeadlockStack
+
 DeadlockStack = DeadlockStack or {
 	n = 0
 }
+DeadlockStack = DeadlockStack
 
-function DeadlockStack.pause()
+DeadlockStack.pause = function ()
+	-- function 1
 	if DeadlockStack.n == 0 then
 		Deadlock.pause()
 	end
@@ -12,7 +16,8 @@ function DeadlockStack.pause()
 	DeadlockStack.n = DeadlockStack.n + 1
 end
 
-function DeadlockStack.unpause()
+DeadlockStack.unpause = function ()
+	-- function 2
 	DeadlockStack.n = DeadlockStack.n - 1
 
 	assert(DeadlockStack.n >= 0, "DeadlockStack underflow")

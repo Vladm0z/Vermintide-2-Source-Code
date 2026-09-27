@@ -2,10 +2,10 @@
 
 VoiceChatUI = class(VoiceChatUI)
 
-local var_0_0 = true
-local var_0_1 = 4
-local var_0_2 = 16
-local var_0_3 = {
+local flag = true
+local num = 4
+local num_2 = 16
+local tbl = {
 	root = {
 		scale = "fit",
 		size = {
@@ -189,23 +189,23 @@ local var_0_3 = {
 }
 
 if not IS_WINDOWS then
-	var_0_3.root.scale = "hud_fit"
-	var_0_3.root.is_root = false
+	tbl.root.scale = "hud_fit"
+	tbl.root.is_root = false
 end
 
-local var_0_4 = {
-	UIWidgets.create_simple_texture("voice_chat_icon_01", "icon_slot_1", false, var_0_0),
-	UIWidgets.create_simple_texture("voice_chat_icon_01", "icon_slot_2", false, var_0_0),
-	UIWidgets.create_simple_texture("voice_chat_icon_01", "icon_slot_3", false, var_0_0),
-	UIWidgets.create_simple_texture("voice_chat_icon_01", "icon_slot_4", false, var_0_0)
+local tbl_2 = {
+	UIWidgets.create_simple_texture("voice_chat_icon_01", "icon_slot_1", false, flag),
+	UIWidgets.create_simple_texture("voice_chat_icon_01", "icon_slot_2", false, flag),
+	UIWidgets.create_simple_texture("voice_chat_icon_01", "icon_slot_3", false, flag),
+	UIWidgets.create_simple_texture("voice_chat_icon_01", "icon_slot_4", false, flag)
 }
-local var_0_5 = {
-	UIWidgets.create_simple_texture("voice_chat_bg_01", "bg_slot_1", false, var_0_0),
-	UIWidgets.create_simple_texture("voice_chat_bg_01", "bg_slot_2", false, var_0_0),
-	UIWidgets.create_simple_texture("voice_chat_bg_01", "bg_slot_3", false, var_0_0),
-	UIWidgets.create_simple_texture("voice_chat_bg_01", "bg_slot_4", false, var_0_0)
+local tbl_3 = {
+	UIWidgets.create_simple_texture("voice_chat_bg_01", "bg_slot_1", false, flag),
+	UIWidgets.create_simple_texture("voice_chat_bg_01", "bg_slot_2", false, flag),
+	UIWidgets.create_simple_texture("voice_chat_bg_01", "bg_slot_3", false, flag),
+	UIWidgets.create_simple_texture("voice_chat_bg_01", "bg_slot_4", false, flag)
 }
-local var_0_6 = {
+local tbl_4 = {
 	vertical_alignment = "center",
 	font_size = 18,
 	localize = false,
@@ -219,258 +219,344 @@ local var_0_6 = {
 		2
 	}
 }
-local var_0_7 = {
-	UIWidgets.create_simple_text("player_1", "name_slot_1", nil, nil, var_0_6, nil, var_0_0),
-	UIWidgets.create_simple_text("player_2", "name_slot_2", nil, nil, var_0_6, nil, var_0_0),
-	UIWidgets.create_simple_text("player_3", "name_slot_3", nil, nil, var_0_6, nil, var_0_0),
-	UIWidgets.create_simple_text("player_4", "name_slot_4", nil, nil, var_0_6, nil, var_0_0)
+local tbl_5 = {
+	UIWidgets.create_simple_text("player_1", "name_slot_1", nil, nil, tbl_4, nil, flag),
+	UIWidgets.create_simple_text("player_2", "name_slot_2", nil, nil, tbl_4, nil, flag),
+	UIWidgets.create_simple_text("player_3", "name_slot_3", nil, nil, tbl_4, nil, flag),
+	UIWidgets.create_simple_text("player_4", "name_slot_4", nil, nil, tbl_4, nil, flag)
 }
-local var_0_8 = false
-local var_0_9 = 0.3
+local flag_2 = false
+local num_3 = 0.3
 
-function VoiceChatUI.init(arg_1_0, arg_1_1)
-	arg_1_0.ui_top_renderer = arg_1_1.ui_top_renderer
-	arg_1_0.player_manager = arg_1_1.player_manager
-	arg_1_0._voip = arg_1_1.voip
-	arg_1_0._cached_names = {}
-	arg_1_0._talking_peers = {}
-	arg_1_0._push_to_talk_end_t = 0
-	arg_1_0._push_to_talk_talking = false
-	arg_1_0._dirty = true
-	arg_1_0._safe_rect = Application.user_setting("safe_rect") or 0
+VoiceChatUI.init = function (self, arg_1_1)
+	-- function 1
+	self.ui_top_renderer = arg_1_1.ui_top_renderer
+	self.player_manager = arg_1_1.player_manager
+	self._voip = arg_1_1.voip
+	self._cached_names = {}
+	self._talking_peers = {}
+	self._push_to_talk_end_t = 0
+	self._push_to_talk_talking = false
+	self._dirty = true
 
-	arg_1_0:create_ui_elements()
+	local user_setting = Application.user_setting("safe_rect")
+
+	user_setting = user_setting or 0
+	self._safe_rect = user_setting
+
+	self:create_ui_elements()
 end
 
-function VoiceChatUI.set_input_manager(arg_2_0, arg_2_1)
-	arg_2_0.input_manager = arg_2_1
+VoiceChatUI.set_input_manager = function (self, arg_2_1)
+	-- function 2
+	self.input_manager = arg_2_1
 end
 
-function VoiceChatUI.create_ui_elements(arg_3_0)
-	UIRenderer.clear_scenegraph_queue(arg_3_0.ui_top_renderer)
+VoiceChatUI.create_ui_elements = function (self)
+	-- function 3
+	UIRenderer.clear_scenegraph_queue(self.ui_top_renderer)
 
-	arg_3_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_3)
-	arg_3_0.icon_widgets = {}
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(tbl)
+	self.icon_widgets = {}
 
-	for iter_3_0, iter_3_1 in ipairs(var_0_4) do
-		local var_3_0 = UIWidget.init(iter_3_1)
+	for i, v in ipairs(tbl_2) do
+		local var_3_0 = UIWidget.init(v)
 
 		var_3_0.content.visible = false
 		var_3_0.style.texture_id.color = Colors.get_color_table_with_alpha("white", 150)
-		arg_3_0.icon_widgets[#arg_3_0.icon_widgets + 1] = var_3_0
+		self.icon_widgets[#self.icon_widgets + 1] = var_3_0
 	end
 
-	arg_3_0.bg_widgets = {}
+	self.bg_widgets = {}
 
-	for iter_3_2, iter_3_3 in ipairs(var_0_5) do
-		local var_3_1 = UIWidget.init(iter_3_3)
+	for i_2, v_2 in ipairs(tbl_3) do
+		local var_3_1 = UIWidget.init(v_2)
 
 		var_3_1.content.visible = false
-		arg_3_0.bg_widgets[#arg_3_0.bg_widgets + 1] = var_3_1
+		self.bg_widgets[#self.bg_widgets + 1] = var_3_1
 	end
 
-	arg_3_0.name_widgets = {}
+	self.name_widgets = {}
 
-	for iter_3_4, iter_3_5 in ipairs(var_0_7) do
-		local var_3_2 = UIWidget.init(iter_3_5)
+	for i_3, v_3 in ipairs(tbl_5) do
+		local var_3_2 = UIWidget.init(v_3)
 
 		var_3_2.content.visible = false
-		arg_3_0.name_widgets[#arg_3_0.name_widgets + 1] = var_3_2
+		self.name_widgets[#self.name_widgets + 1] = var_3_2
 	end
 
-	var_0_8 = false
+	flag_2 = false
 end
 
-function VoiceChatUI.destroy(arg_4_0)
-	if arg_4_0.icon_widgets then
-		for iter_4_0, iter_4_1 in ipairs(arg_4_0.icon_widgets) do
-			UIWidget.destroy(arg_4_0.ui_top_renderer, iter_4_1)
+VoiceChatUI.destroy = function (self)
+	-- function 4
+	if not self.icon_widgets then
+		for i, v in ipairs(self.icon_widgets) do
+			UIWidget.destroy(self.ui_top_renderer, v)
 		end
 
-		arg_4_0.icon_widget = nil
+		self.icon_widget = nil
 	end
 
-	if arg_4_0.bg_widgets then
-		for iter_4_2, iter_4_3 in ipairs(arg_4_0.bg_widgets) do
-			UIWidget.destroy(arg_4_0.ui_top_renderer, iter_4_3)
+	if not self.bg_widgets then
+		for i_2, v_2 in ipairs(self.bg_widgets) do
+			UIWidget.destroy(self.ui_top_renderer, v_2)
 		end
 
-		arg_4_0.bg_widgets = nil
+		self.bg_widgets = nil
 	end
 
-	if arg_4_0.name_widgets then
-		for iter_4_4, iter_4_5 in ipairs(arg_4_0.name_widgets) do
-			UIWidget.destroy(arg_4_0.ui_top_renderer, iter_4_5)
+	if not self.name_widgets then
+		for i_3, v_3 in ipairs(self.name_widgets) do
+			UIWidget.destroy(self.ui_top_renderer, v_3)
 		end
 
-		arg_4_0._name_widgets = nil
+		self._name_widgets = nil
 	end
 
-	GarbageLeakDetector.register_object(arg_4_0, "voice_chat_ui")
+	GarbageLeakDetector.register_object(self, "voice_chat_ui")
 end
 
-function VoiceChatUI._update_timer(arg_5_0)
-	arg_5_0._timer = Application.time_since_launch()
+VoiceChatUI._update_timer = function (self)
+	-- function 5
+	self._timer = Application.time_since_launch()
 end
 
-function VoiceChatUI._update_safe_rect(arg_6_0)
-	if IS_PS4 then
-		local var_6_0 = Application.user_setting("safe_rect") or 0
+VoiceChatUI._update_safe_rect = function (self)
+	-- function 6
+	if not IS_PS4 then
+		local user_setting = Application.user_setting("safe_rect")
 
-		if var_6_0 ~= arg_6_0._safe_rect then
-			arg_6_0._safe_rect = var_6_0
-			arg_6_0._dirty = true
+		user_setting = user_setting or 0
+
+		if user_setting ~= self._safe_rect then
+			self._safe_rect = user_setting
+			self._dirty = true
 		end
 	end
 end
 
-local var_0_10 = {}
+local tbl_6 = {}
 
-function VoiceChatUI._update_talking_state(arg_7_0)
-	local var_7_0 = arg_7_0._voip:members_in_own_room() or var_0_10
-	local var_7_1 = var_7_0.get_members and var_7_0:get_members() or var_7_0
+VoiceChatUI._update_talking_state = function (self)
+	-- function 7
+	local members_in_own_room = self._voip:members_in_own_room()
 
-	for iter_7_0, iter_7_1 in pairs(var_7_1) do
-		local var_7_2 = arg_7_0._voip:is_talking(iter_7_1)
-		local var_7_3 = arg_7_0._talking_peers[iter_7_1]
+	members_in_own_room = members_in_own_room or tbl_6
 
-		arg_7_0._talking_peers[iter_7_1] = var_7_2 and arg_7_0._timer + var_0_9 or var_7_3
-		arg_7_0._dirty = not not var_7_3 == not not var_7_2 or arg_7_0._dirty
-	end
+	local get_members
 
-	for iter_7_2, iter_7_3 in pairs(arg_7_0._talking_peers) do
-		if iter_7_3 < arg_7_0._timer or not table.find(var_7_1, iter_7_2) then
-			arg_7_0._talking_peers[iter_7_2] = nil
-			arg_7_0._dirty = true
+	if not members_in_own_room.get_members then
+		get_members = members_in_own_room:get_members()
+
+		if not get_members then
+			-- Nothing
 		end
 	end
 
-	arg_7_0:_evaluate_push_to_talk()
+	get_members = members_in_own_room
+
+	::label_7_0::
+
+	for k, v in pairs(get_members) do
+		local is_talking = self._voip:is_talking(v)
+		local var_7_3 = self._talking_peers[v]
+		local _talking_peers = self._talking_peers
+		local num
+
+		if not is_talking then
+			num = self._timer + num_3
+
+			if not num then
+				-- Nothing
+			end
+		end
+
+		num = var_7_3
+
+		::label_7_1::
+
+		_talking_peers[v] = num
+		self._dirty = not not var_7_3 == not not is_talking or self._dirty
+	end
+
+	for k_2, v_2 in pairs(self._talking_peers) do
+		if not (v_2 < self._timer or table.find(get_members, k_2)) then
+			self._talking_peers[k_2] = nil
+			self._dirty = true
+		end
+	end
+
+	self:_evaluate_push_to_talk()
 end
 
-function VoiceChatUI._evaluate_push_to_talk(arg_8_0)
-	if not arg_8_0._voip:push_to_talk_enabled() then
+VoiceChatUI._evaluate_push_to_talk = function (self)
+	-- function 8
+	if not self._voip:push_to_talk_enabled() then
 		return
 	end
 
-	local var_8_0 = Network.peer_id()
-	local var_8_1 = arg_8_0._voip:is_push_to_talk_active()
-	local var_8_2 = arg_8_0._voip:is_talking(var_8_0)
-	local var_8_3 = arg_8_0._push_to_talk_talking
+	local peer_id = Network.peer_id()
+	local is_push_to_talk_active = self._voip:is_push_to_talk_active()
+	local is_talking = self._voip:is_talking(peer_id)
+	local _push_to_talk_talking = self._push_to_talk_talking
+	local num
 
-	arg_8_0._push_to_talk_end_t = var_8_1 and var_8_2 and arg_8_0._timer + var_0_9 or arg_8_0._push_to_talk_end_t
-	arg_8_0._push_to_talk_talking = arg_8_0._push_to_talk_end_t > arg_8_0._timer
+	if not is_push_to_talk_active and not is_talking then
+		num = self._timer + num_3
 
-	local var_8_4 = arg_8_0._push_to_talk_talking
+		if not num then
+			-- Nothing
+		end
+	end
 
-	arg_8_0._talking_peers[var_8_0] = var_8_4 and arg_8_0._push_to_talk_end_t or nil
-	arg_8_0._dirty = var_8_3 ~= var_8_4 or arg_8_0._dirty
+	num = self._push_to_talk_end_t
+
+	::label_8_0::
+
+	self._push_to_talk_end_t = num
+	self._push_to_talk_talking = self._push_to_talk_end_t > self._timer
+
+	local _push_to_talk_talking_2 = self._push_to_talk_talking
+	local _talking_peers = self._talking_peers
+	local _push_to_talk_end_t
+
+	if not _push_to_talk_talking_2 then
+		_push_to_talk_end_t = self._push_to_talk_end_t
+
+		if not _push_to_talk_end_t then
+			-- Nothing
+		end
+	end
+
+	_push_to_talk_end_t = nil
+
+	::label_8_1::
+
+	_talking_peers[peer_id] = _push_to_talk_end_t
+	self._dirty = _push_to_talk_talking ~= _push_to_talk_talking_2 or self._dirty
 end
 
-function VoiceChatUI._update_widgets(arg_9_0)
-	if not arg_9_0._dirty then
+VoiceChatUI._update_widgets = function (self)
+	-- function 9
+	if not self._dirty then
 		return
 	end
 
-	local var_9_0 = Network.peer_id()
-	local var_9_1 = 1
+	local peer_id = Network.peer_id()
+	local num_3 = 1
 
-	for iter_9_0, iter_9_1 in pairs(arg_9_0._talking_peers) do
-		local var_9_2 = arg_9_0.icon_widgets[var_9_1]
-		local var_9_3 = var_9_2.content
-		local var_9_4 = var_9_2.element
+	for k, v in pairs(self._talking_peers) do
+		local var_9_2 = self.icon_widgets[num_3]
+		local content = var_9_2.content
+		local element = var_9_2.element
 
-		var_9_3.visible = true
-		var_9_4.dirty = true
+		content.visible = true
+		element.dirty = true
 
-		local var_9_5 = arg_9_0.bg_widgets[var_9_1]
-		local var_9_6 = var_9_5.content
-		local var_9_7 = var_9_5.element
+		local var_9_5 = self.bg_widgets[num_3]
+		local content_2 = var_9_5.content
+		local element_2 = var_9_5.element
 
-		var_9_6.visible = true
-		var_9_7.dirty = true
+		content_2.visible = true
+		element_2.dirty = true
 
 		local var_9_8
 
-		if HAS_STEAM then
-			var_9_8 = Steam.user_name(iter_9_0)
+		if not HAS_STEAM then
+			var_9_8 = Steam.user_name(k)
 		else
-			local var_9_9 = Managers.player:player_from_peer_id(iter_9_0, 1)
+			local player_from_peer_id = Managers.player:player_from_peer_id(k, 1)
 
-			var_9_8 = var_9_9 and var_9_9:name()
+			var_9_8 = not player_from_peer_id and player_from_peer_id:name()
 		end
 
-		if not var_9_8 or var_9_8 == "" then
-			var_9_8 = "Remote #" .. string.sub(iter_9_0, -3)
+		if not (not var_9_8 and var_9_8 ~= "") then
+			var_9_8 = "Remote #" .. string.sub(k, -3)
 		end
 
-		local var_9_10 = arg_9_0.name_widgets[var_9_1]
-		local var_9_11 = Utf8.length(var_9_8) > var_0_2 and UIRenderer.crop_text_width(arg_9_0.ui_top_renderer, var_9_8, 250, var_9_10.style.text) or var_9_8
-		local var_9_12 = var_9_10.content
-		local var_9_13 = var_9_10.element
+		local var_9_10 = self.name_widgets[num_3]
+		local crop_text_width
 
-		var_9_12.text = var_9_11
-		var_9_13.dirty = true
+		if Utf8.length(var_9_8) > num_2 then
+			crop_text_width = UIRenderer.crop_text_width(self.ui_top_renderer, var_9_8, 250, var_9_10.style.text)
 
-		if arg_9_0._voip:push_to_talk_enabled() and iter_9_0 == var_9_0 then
-			var_9_12.visible = arg_9_0._push_to_talk_end_t > arg_9_0._timer
+			if not crop_text_width then
+				-- Nothing
+			end
+		end
+
+		crop_text_width = var_9_8
+
+		::label_9_0::
+
+		local content_3 = var_9_10.content
+		local element_3 = var_9_10.element
+
+		content_3.text = crop_text_width
+		element_3.dirty = true
+
+		if not (not self._voip:push_to_talk_enabled() and k ~= peer_id) then
+			content_3.visible = self._push_to_talk_end_t > self._timer
 		else
-			var_9_12.visible = true
+			content_3.visible = true
 		end
 
-		var_9_1 = var_9_1 + 1
+		num_3 = num_3 + 1
 	end
 
-	for iter_9_2 = var_9_1, var_0_1 do
-		local var_9_14 = arg_9_0.icon_widgets[iter_9_2]
-		local var_9_15 = var_9_14.content
-		local var_9_16 = var_9_14.element
+	for k_2 = num_3, num do
+		local var_9_14 = self.icon_widgets[k_2]
+		local content_4 = var_9_14.content
+		local element_4 = var_9_14.element
 
-		var_9_15.visible = false
-		var_9_16.dirty = true
+		content_4.visible = false
+		element_4.dirty = true
 
-		local var_9_17 = arg_9_0.bg_widgets[iter_9_2]
-		local var_9_18 = var_9_17.content
-		local var_9_19 = var_9_17.element
+		local var_9_17 = self.bg_widgets[k_2]
+		local content_5 = var_9_17.content
+		local element_5 = var_9_17.element
 
-		var_9_18.visible = false
-		var_9_19.dirty = true
+		content_5.visible = false
+		element_5.dirty = true
 
-		local var_9_20 = arg_9_0.name_widgets[iter_9_2]
-		local var_9_21 = var_9_20.content
-		local var_9_22 = var_9_20.element
+		local var_9_20 = self.name_widgets[k_2]
+		local content_6 = var_9_20.content
+		local element_6 = var_9_20.element
 
-		var_9_21.visible = false
-		var_9_22.dirty = true
+		content_6.visible = false
+		element_6.dirty = true
 	end
 end
 
-function VoiceChatUI.update(arg_10_0, arg_10_1)
-	arg_10_0:_update_timer()
-	arg_10_0:_update_safe_rect()
-	arg_10_0:_update_talking_state()
-	arg_10_0:_update_widgets()
-	arg_10_0:_draw(arg_10_1)
+VoiceChatUI.update = function (self, arg_10_1)
+	-- function 10
+	self:_update_timer()
+	self:_update_safe_rect()
+	self:_update_talking_state()
+	self:_update_widgets()
+	self:_draw(arg_10_1)
 end
 
-function VoiceChatUI._draw(arg_11_0, arg_11_1)
-	if not arg_11_0._dirty then
+VoiceChatUI._draw = function (self, arg_11_1)
+	-- function 11
+	if not self._dirty then
 		return
 	end
 
-	local var_11_0 = arg_11_0.ui_top_renderer
-	local var_11_1 = arg_11_0.ui_scenegraph
-	local var_11_2 = arg_11_0.input_manager:get_service("Player")
+	local ui_top_renderer = self.ui_top_renderer
+	local ui_scenegraph = self.ui_scenegraph
+	local get_service = self.input_manager:get_service("Player")
 
-	UIRenderer.begin_pass(var_11_0, var_11_1, var_11_2, arg_11_1)
+	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, get_service, arg_11_1)
 
-	for iter_11_0 = 1, var_0_1 do
-		UIRenderer.draw_widget(var_11_0, arg_11_0.icon_widgets[iter_11_0])
-		UIRenderer.draw_widget(var_11_0, arg_11_0.bg_widgets[iter_11_0])
-		UIRenderer.draw_widget(var_11_0, arg_11_0.name_widgets[iter_11_0])
+	for i = 1, num do
+		UIRenderer.draw_widget(ui_top_renderer, self.icon_widgets[i])
+		UIRenderer.draw_widget(ui_top_renderer, self.bg_widgets[i])
+		UIRenderer.draw_widget(ui_top_renderer, self.name_widgets[i])
 	end
 
-	UIRenderer.end_pass(var_11_0)
+	UIRenderer.end_pass(ui_top_renderer)
 
-	arg_11_0._dirty = not var_0_0
+	self._dirty = not flag
 end

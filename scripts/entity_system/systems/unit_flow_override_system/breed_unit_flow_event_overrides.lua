@@ -2,7 +2,7 @@
 
 require("scripts/settings/breeds")
 
-local var_0_0 = {
+local tbl = {
 	chr_beastmen_bestigor = {
 		burn_death_critical = false,
 		burn_death = false,
@@ -285,19 +285,19 @@ local var_0_0 = {
 		poisoned = false
 	}
 }
-local var_0_1 = {}
+local tbl_2 = {}
 
-for iter_0_0, iter_0_1 in pairs(Breeds) do
-	for iter_0_2, iter_0_3 in pairs(var_0_0) do
-		local var_0_2 = iter_0_1.base_unit
-		local var_0_3 = string.reverse(var_0_2)
-		local var_0_4, var_0_5 = string.find(var_0_3, "/")
-		local var_0_6 = string.sub(var_0_3, 1, var_0_4 - 1)
+for k, v in pairs(Breeds) do
+	for k_2, v_2 in pairs(tbl) do
+		local base_unit = v.base_unit
+		local reverse = string.reverse(base_unit)
+		local find, var_0_5 = string.find(reverse, "/")
+		local sub = string.sub(reverse, 1, find - 1)
 
-		if string.reverse(var_0_6) == iter_0_2 then
-			var_0_1[iter_0_0] = iter_0_3
+		if string.reverse(sub) == k_2 then
+			tbl_2[k] = v_2
 		end
 	end
 end
 
-return var_0_1
+return tbl_2

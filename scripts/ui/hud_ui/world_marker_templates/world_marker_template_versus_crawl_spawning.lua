@@ -1,54 +1,63 @@
 -- chunkname: @scripts/ui/hud_ui/world_marker_templates/world_marker_template_versus_crawl_spawning.lua
 
-local var_0_0 = "spawning"
+local str = "spawning"
+local WorldMarkerTemplates = WorldMarkerTemplates
 
 WorldMarkerTemplates = WorldMarkerTemplates or {}
+WorldMarkerTemplates = WorldMarkerTemplates
 
 require("scripts/ui/hud_ui/world_marker_templates/world_marker_template_versus_climbing")
 
-local var_0_1 = WorldMarkerTemplates.climbing
-local var_0_2 = table.merge(WorldMarkerTemplates[var_0_0] or {}, var_0_1)
+local climbing = WorldMarkerTemplates.climbing
+local merge = table.merge
+local var_0_4 = WorldMarkerTemplates[str]
 
-WorldMarkerTemplates[var_0_0] = var_0_2
+var_0_4 = var_0_4 or {}
 
-function var_0_2.on_enter(arg_1_0)
-	var_0_1.on_enter(arg_1_0)
+local var_0_5 = merge(var_0_4, climbing)
+
+WorldMarkerTemplates[str] = var_0_5
+
+var_0_5.on_enter = function (arg_1_0)
+	-- function 1
+	climbing.on_enter(arg_1_0)
 
 	arg_1_0.content.icon = "world_marker_versus_pactsworn_interact_spawning"
 end
 
-function var_0_2.update_function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
-	local var_2_0 = arg_2_1.content
-	local var_2_1 = arg_2_1.style
-	local var_2_2 = var_2_1.icon
-	local var_2_3 = var_2_0.distance
-	local var_2_4 = var_2_0.progress
-	local var_2_5 = Managers.input:get_service("Player"):get("action_one_hold")
+var_0_5.update_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	-- function 2
+	local content = arg_2_1.content
+	local style = arg_2_1.style
+	local icon = style.icon
+	local distance = content.distance
+	local progress = content.progress
+	local get = Managers.input:get_service("Player"):get("action_one_hold")
 
-	if var_2_3 <= 3 and not arg_2_2.raycast_result and not var_2_5 then
-		var_2_4 = math.min(1, var_2_4 + arg_2_4 * 3.5)
+	if not (not (distance <= 3) or arg_2_2.raycast_result or get) then
+		progress = math.min(1, progress + arg_2_4 * 3.5)
 	else
-		var_2_4 = math.max(0, var_2_4 - arg_2_4 * 15)
+		progress = math.max(0, progress - arg_2_4 * 15)
 	end
 
-	var_2_0.progress = var_2_4
-	var_2_1.background.color[1] = 175 * var_2_4
+	content.progress = progress
+	style.background.color[1] = 175 * progress
 
-	if arg_2_2.raycast_result or var_2_5 then
-		Colors.copy_to(var_2_2.color, var_2_2.color_occluded)
+	if arg_2_2.raycast_result or not get then
+		Colors.copy_to(icon.color, icon.color_occluded)
 	else
-		Colors.lerp_color_tables(var_2_2.color_inactive, var_2_2.color_active, var_2_4, var_2_2.color)
+		Colors.lerp_color_tables(icon.color_inactive, icon.color_active, progress, icon.color)
 	end
 
-	local var_2_6 = (arg_2_3.max_distance - var_2_3) / arg_2_3.fade_distance
+	local num = (arg_2_3.max_distance - distance) / arg_2_3.fade_distance
 
-	if var_2_6 < 1 then
-		var_2_2.color[1] = var_2_2.color[1] * var_2_6
+	if num < 1 then
+		icon.color[1] = icon.color[1] * num
 	end
 
-	local var_2_7 = Managers.player:local_player().player_unit
+	local player_unit = Managers.player:local_player().player_unit
 
-	if not ScriptUnit.has_extension(var_2_7, "ghost_mode_system"):is_in_ghost_mode() then
+	if not ScriptUnit.has_extension(player_unit, "ghost_mode_system"):is_in_ghost_mode() then
 		arg_2_1.alpha_multiplier = 0
 	else
 		arg_2_1.alpha_multiplier = 1

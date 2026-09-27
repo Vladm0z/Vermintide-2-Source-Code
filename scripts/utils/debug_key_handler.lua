@@ -1,18 +1,23 @@
 -- chunkname: @scripts/utils/debug_key_handler.lua
 
-script_data.debug_key_handler_visible = script_data.debug_key_handler_visible or Development.parameter("debug_key_handler_visible")
+local script_data = script_data
+local debug_key_handler_visible = script_data.debug_key_handler_visible
 
-local var_0_0 = {}
+debug_key_handler_visible = debug_key_handler_visible or Development.parameter("debug_key_handler_visible")
+script_data.debug_key_handler_visible = debug_key_handler_visible
 
-local function var_0_1(arg_1_0)
-	if var_0_0[arg_1_0] == nil then
-		var_0_0[arg_1_0] = arg_1_0 .. "(M)"
+local tbl = {}
+
+local function fn(arg_1_0)
+	-- function 1
+	if tbl[arg_1_0] == nil then
+		tbl[arg_1_0] = arg_1_0 .. "(M)"
 	end
 
-	return var_0_0[arg_1_0]
+	return tbl[arg_1_0]
 end
 
-local var_0_2 = {
+local tbl_2 = {
 	["left shift"] = {},
 	["right shift"] = {},
 	["left ctrl"] = {},
@@ -20,8 +25,9 @@ local var_0_2 = {
 	["left alt"] = {}
 }
 
-local function var_0_3(arg_2_0, arg_2_1, arg_2_2)
-	local var_2_0 = var_0_2[arg_2_1]
+local function fn_2(arg_2_0, arg_2_1, arg_2_2)
+	-- function 2
+	local var_2_0 = tbl_2[arg_2_1]
 
 	if var_2_0[arg_2_0] == nil then
 		var_2_0[arg_2_0] = {
@@ -30,149 +36,171 @@ local function var_0_3(arg_2_0, arg_2_1, arg_2_2)
 		}
 	end
 
-	return arg_2_2 and var_2_0[arg_2_0].missing or var_2_0[arg_2_0].exist
+	local missing
+
+	if not arg_2_2 then
+		missing = var_2_0[arg_2_0].missing
+
+		if not missing then
+			-- Nothing
+		end
+	end
+
+	missing = var_2_0[arg_2_0].exist
+
+	::label_2_0::
+
+	return missing
 end
+
+local DebugKeyHandler = DebugKeyHandler
 
 DebugKeyHandler = DebugKeyHandler or {
 	num_keys = 0,
 	keys = {}
 }
+DebugKeyHandler = DebugKeyHandler
 
-local var_0_4 = DebugKeyHandler
+local DebugKeyHandler_2 = DebugKeyHandler
 
-function var_0_4.setup(arg_3_0, arg_3_1)
-	var_0_4.gui = World.create_screen_gui(arg_3_0, "material", "materials/fonts/gw_fonts", "immediate")
-	var_0_4.enabled = true
-	var_0_4.input_manager = arg_3_1
-	var_0_4.current_y = 0
+DebugKeyHandler_2.setup = function (arg_3_0, arg_3_1)
+	-- function 3
+	DebugKeyHandler_2.gui = World.create_screen_gui(arg_3_0, "material", "materials/fonts/gw_fonts", "immediate")
+	DebugKeyHandler_2.enabled = true
+	DebugKeyHandler_2.input_manager = arg_3_1
+	DebugKeyHandler_2.current_y = 0
 end
 
-function var_0_4.set_enabled(arg_4_0)
-	var_0_4.enabled = arg_4_0
+DebugKeyHandler_2.set_enabled = function (arg_4_0)
+	-- function 4
+	DebugKeyHandler_2.enabled = arg_4_0
 end
 
-local var_0_5 = {
+local tbl_3 = {
 	"left ctrl",
 	"left shift",
 	"right ctrl",
 	"left alt"
 }
 
-function var_0_4.key_pressed(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
-	if not var_0_4.enabled or IS_LINUX then
+DebugKeyHandler_2.key_pressed = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	-- function 5
+	if not DebugKeyHandler_2.enabled and not IS_LINUX then
 		return
 	end
 
-	local var_5_0 = var_0_4.input_manager:get_service(arg_5_4 or "Debug")
+	local get_service = DebugKeyHandler_2.input_manager:get_service(arg_5_4 or "Debug")
 
-	if not var_5_0 then
+	if not get_service then
 		return
 	end
 
-	if script_data.debug_key_handler_visible then
-		var_0_4.num_keys = var_0_4.num_keys + 1
+	if not script_data.debug_key_handler_visible then
+		DebugKeyHandler_2.num_keys = DebugKeyHandler_2.num_keys + 1
 		arg_5_2 = arg_5_2 or "misc"
 
-		local var_5_1 = var_0_4.keys[arg_5_2]
+		local var_5_1 = DebugKeyHandler_2.keys[arg_5_2]
 
 		if var_5_1 == nil then
 			var_5_1 = {}
-			var_0_4.keys[arg_5_2] = var_5_1
+			DebugKeyHandler_2.keys[arg_5_2] = var_5_1
 		end
 
-		local var_5_2 = var_5_0:has(arg_5_0) and arg_5_0 or var_0_1(arg_5_0)
+		local flag = not get_service:has(arg_5_0) and arg_5_0 and fn(arg_5_0)
 
-		if arg_5_3 then
-			var_5_2 = var_5_0:has(arg_5_0) and var_0_3(arg_5_0, arg_5_3) or var_0_3(arg_5_0, arg_5_3, true)
+		if not arg_5_3 then
+			flag = not get_service:has(arg_5_0) and fn_2(arg_5_0, arg_5_3) and fn_2(arg_5_0, arg_5_3, true)
 		end
 
-		var_5_1[var_5_2] = arg_5_1
+		var_5_1[flag] = arg_5_1
 	end
 
-	local var_5_3 = true
+	local flag_2 = true
 
-	if arg_5_3 then
-		var_5_3 = var_5_0:get(arg_5_3)
+	if not arg_5_3 then
+		flag_2 = get_service:get(arg_5_3)
 	else
-		for iter_5_0 = 1, #var_0_5 do
-			local var_5_4 = var_0_5[iter_5_0]
+		for i = 1, #tbl_3 do
+			local var_5_4 = tbl_3[i]
 
-			if var_5_4 ~= arg_5_0 and var_5_0:get(var_5_4) then
-				var_5_3 = false
+			if var_5_4 == arg_5_0 or not get_service:get(var_5_4) then
+				flag_2 = false
 
 				break
 			end
 		end
 	end
 
-	return var_5_3 and var_5_0:get(arg_5_0)
+	return not flag_2 and get_service:get(arg_5_0)
 end
 
-function var_0_4.frame_clear()
-	var_0_4.num_keys = 0
+DebugKeyHandler_2.frame_clear = function ()
+	-- function 6
+	DebugKeyHandler_2.num_keys = 0
 
-	for iter_6_0, iter_6_1 in pairs(var_0_4.keys) do
-		if next(iter_6_1) == nil then
-			var_0_4.keys[iter_6_0] = nil
+	for k, v in pairs(DebugKeyHandler_2.keys) do
+		if next(v) == nil then
+			DebugKeyHandler_2.keys[k] = nil
 		end
 
-		table.clear(iter_6_1)
+		table.clear(v)
 	end
 end
 
-local var_0_6 = 16
-local var_0_7 = "arial"
-local var_0_8 = "materials/fonts/" .. var_0_7
+local num = 16
+local str = "arial"
+local str_2 = "materials/fonts/" .. str
 
-function var_0_4.render()
+DebugKeyHandler_2.render = function ()
+	-- function 7
 	if not script_data.debug_key_handler_visible then
 		return
 	end
 
-	local var_7_0 = 1
+	local num_2 = 1
 
-	if not var_0_4.enabled then
-		var_7_0 = 0.3
+	if not DebugKeyHandler_2.enabled then
+		num_2 = 0.3
 	end
 
-	local var_7_1 = Color(var_7_0 * 250, 255, 255, 100)
-	local var_7_2 = Color(var_7_0 * 250, 255, 255, 255)
-	local var_7_3 = Color(var_7_0 * 250, 255, 120, 0)
-	local var_7_4 = Color(var_7_0 * 255, 150, 150, 150)
-	local var_7_5, var_7_6 = Application.resolution()
-	local var_7_7 = var_0_4.gui
-	local var_7_8 = var_0_4.current_y
+	local var_7_1 = Color(num_2 * 250, 255, 255, 100)
+	local var_7_2 = Color(num_2 * 250, 255, 255, 255)
+	local var_7_3 = Color(num_2 * 250, 255, 120, 0)
+	local var_7_4 = Color(num_2 * 255, 150, 150, 150)
+	local resolution, var_7_6 = Application.resolution()
+	local gui = DebugKeyHandler_2.gui
+	local current_y = DebugKeyHandler_2.current_y
 
-	var_0_4.current_y = math.lerp(var_7_8, var_7_6 / 2 + var_0_4.num_keys * var_0_6 / 2 + table.size(var_0_4.keys) * var_0_6 / 2, 0.1)
+	DebugKeyHandler_2.current_y = math.lerp(current_y, var_7_6 / 2 + DebugKeyHandler_2.num_keys * num / 2 + table.size(DebugKeyHandler_2.keys) * num / 2, 0.1)
 
-	local var_7_9 = Vector3(var_7_5 - 230, var_7_8, 200)
+	local var_7_9 = Vector3(resolution - 230, current_y, 200)
 
-	Gui.text(var_7_7, "Debug keys", var_0_8, var_0_6, var_0_7, var_7_9, var_7_1)
+	Gui.text(gui, "Debug keys", str_2, num, str, var_7_9, var_7_1)
 
-	var_7_9.y = var_7_9.y - var_0_6 * 1.5
+	var_7_9.y = var_7_9.y - num * 1.5
 
-	local var_7_10 = false
+	local flag = false
 
-	for iter_7_0, iter_7_1 in pairs(var_0_4.keys) do
-		local var_7_11 = var_7_9.y
+	for k, v in pairs(DebugKeyHandler_2.keys) do
+		local y = var_7_9.y
 
-		Gui.text(var_7_7, iter_7_0, var_0_8, var_0_6, var_0_7, var_7_9, var_7_2)
+		Gui.text(gui, k, str_2, num, str, var_7_9, var_7_2)
 
-		var_7_9.y = var_7_9.y - var_0_6
+		var_7_9.y = var_7_9.y - num
 
-		for iter_7_2, iter_7_3 in pairs(iter_7_1) do
-			Gui.text(var_7_7, iter_7_2, var_0_8, var_0_6, var_0_7, var_7_9, var_7_3)
-			Gui.text(var_7_7, iter_7_3, var_0_8, var_0_6, var_0_7, var_7_9 + Vector3(80, 0, 0), var_7_4)
+		for k_2, v_2 in pairs(v) do
+			Gui.text(gui, k_2, str_2, num, str, var_7_9, var_7_3)
+			Gui.text(gui, v_2, str_2, num, str, var_7_9 + Vector3(80, 0, 0), var_7_4)
 
-			var_7_9.y = var_7_9.y - var_0_6
+			var_7_9.y = var_7_9.y - num
 		end
 
-		var_7_9.y = var_7_9.y - var_0_6 / 2
+		var_7_9.y = var_7_9.y - num / 2
 	end
 
-	Gui.rect(var_7_7, Vector3(var_7_5 - 250, var_7_9.y + var_0_6, 100), Vector2(250, var_7_8 - var_7_9.y), Color(var_7_0 * 240, 25, 50, 25))
+	Gui.rect(gui, Vector3(resolution - 250, var_7_9.y + num, 100), Vector2(250, current_y - var_7_9.y), Color(num_2 * 240, 25, 50, 25))
 
-	if not var_0_4.enabled then
-		Gui.rect(var_7_7, Vector3(var_7_5 - 250, var_7_9.y + var_0_6, 300), Vector2(250, var_7_8 - var_7_9.y), Color(var_7_0 * 200, 20, 20, 20))
+	if not DebugKeyHandler_2.enabled then
+		Gui.rect(gui, Vector3(resolution - 250, var_7_9.y + num, 300), Vector2(250, current_y - var_7_9.y), Color(num_2 * 200, 20, 20, 20))
 	end
 end

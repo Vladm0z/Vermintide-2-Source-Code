@@ -33,7 +33,7 @@ SlotTypeSettings = {
 	}
 }
 
-local var_0_0 = {
+local tbl = {
 	disable_slot_search = true
 }
 
@@ -93,7 +93,7 @@ SlotTemplates = {
 			avoid_slots_behind_overwhelmed_target = false,
 			min_wait_queue_distance = 3
 		},
-		boss = var_0_0
+		boss = tbl
 	},
 	hard = {
 		skaven_horde = {
@@ -150,7 +150,7 @@ SlotTemplates = {
 			avoid_slots_behind_overwhelmed_target = false,
 			min_wait_queue_distance = 3
 		},
-		boss = var_0_0
+		boss = tbl
 	},
 	harder = {
 		skaven_horde = {
@@ -207,7 +207,7 @@ SlotTemplates = {
 			avoid_slots_behind_overwhelmed_target = false,
 			min_wait_queue_distance = 3
 		},
-		boss = var_0_0
+		boss = tbl
 	},
 	hardest = {
 		skaven_horde = {
@@ -264,7 +264,7 @@ SlotTemplates = {
 			avoid_slots_behind_overwhelmed_target = false,
 			min_wait_queue_distance = 3
 		},
-		boss = var_0_0
+		boss = tbl
 	},
 	cataclysm = {
 		skaven_horde = {
@@ -291,7 +291,7 @@ SlotTemplates = {
 			avoid_slots_behind_overwhelmed_target = false,
 			min_wait_queue_distance = 3
 		},
-		skaven_boss = var_0_0,
+		skaven_boss = tbl,
 		chaos_horde = {
 			abandon_slot_when_blocked = false,
 			abandon_slot_when_staggered = true,
@@ -322,7 +322,7 @@ SlotTemplates = {
 			avoid_slots_behind_overwhelmed_target = false,
 			min_wait_queue_distance = 3
 		},
-		boss = var_0_0
+		boss = tbl
 	},
 	cataclysm_2 = {
 		skaven_horde = {
@@ -379,7 +379,7 @@ SlotTemplates = {
 			avoid_slots_behind_overwhelmed_target = false,
 			min_wait_queue_distance = 3
 		},
-		boss = var_0_0
+		boss = tbl
 	},
 	cataclysm_3 = {
 		skaven_horde = {
@@ -436,7 +436,7 @@ SlotTemplates = {
 			avoid_slots_behind_overwhelmed_target = false,
 			min_wait_queue_distance = 3
 		},
-		boss = var_0_0
+		boss = tbl
 	},
 	versus_base = {
 		skaven_horde = {
@@ -493,10 +493,11 @@ SlotTemplates = {
 			avoid_slots_behind_overwhelmed_target = false,
 			min_wait_queue_distance = 3
 		},
-		boss = var_0_0
+		boss = tbl
 	}
 }
 
-DLCUtils.map_list("slot_templates_file_names", function(arg_1_0)
+DLCUtils.map_list("slot_templates_file_names", function (arg_1_0)
+	-- function 1
 	return table.merge_recursive(SlotTemplates, require(arg_1_0))
 end)

@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/subtitle_timed_gui.lua
 
-local var_0_0 = {
+local tbl = {
 	root = {
 		is_root = true,
 		position = {
@@ -42,7 +42,7 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	start_offset_y = 0,
 	scenegraph_id = "subtitle_row",
 	element = {
@@ -106,189 +106,195 @@ local var_0_1 = {
 		0
 	}
 }
-local var_0_2 = false
+local flag = false
 
 SubtitleTimedGui = class(SubtitleTimedGui)
 
-local function var_0_3(arg_1_0)
-	local var_1_0 = Managers.localizer:language_id() == "zh"
-	local var_1_1 = {}
-	local var_1_2 = Utf8.length(arg_1_0)
-	local var_1_3 = 1
+local function fn(arg_1_0)
+	-- function 1
+	local flag = Managers.localizer:language_id() == "zh"
+	local tbl = {}
+	local length = Utf8.length(arg_1_0)
+	local num = 1
 	local var_1_4
-	local var_1_5 = 50
+	local num_2 = 50
 
-	for iter_1_0 = 1, var_1_2 do
-		local var_1_6 = UTF8Utils.sub_string(arg_1_0, iter_1_0, iter_1_0)
+	for i = 1, length do
+		local sub_string = UTF8Utils.sub_string(arg_1_0, i, i)
 
-		if var_1_0 then
-			if (var_1_6 == " " or var_1_6 == "。" or var_1_6 == "，") and iter_1_0 >= var_1_5 / 2 then
-				var_1_4 = iter_1_0
+		if not flag then
+			if not (not (sub_string == " " or sub_string == "。" or sub_string == "，") and not (i >= num_2 / 2)) then
+				var_1_4 = i
 			end
 
-			if var_1_5 < iter_1_0 - var_1_3 and iter_1_0 < var_1_2 then
-				if var_1_4 then
-					local var_1_7 = UTF8Utils.sub_string(arg_1_0, var_1_3, var_1_4)
+			if not (not (num_2 < i - num) or not (i < length)) then
+				if not var_1_4 then
+					local sub_string_2 = UTF8Utils.sub_string(arg_1_0, num, var_1_4)
 
-					var_1_1[#var_1_1 + 1] = var_1_7
-					var_1_3 = var_1_4 + 1
-					iter_1_0 = var_1_4
+					tbl[#tbl + 1] = sub_string_2
+					num = var_1_4 + 1
+					i = var_1_4
 					var_1_4 = nil
 				else
-					local var_1_8 = UTF8Utils.sub_string(arg_1_0, var_1_3, iter_1_0)
+					local sub_string_3 = UTF8Utils.sub_string(arg_1_0, num, i)
 
-					var_1_1[#var_1_1 + 1] = var_1_8
-					var_1_3 = iter_1_0 + 1
+					tbl[#tbl + 1] = sub_string_3
+					num = i + 1
 				end
 			end
-		elseif var_1_6 == " " and var_1_5 < iter_1_0 - var_1_3 then
-			local var_1_9 = UTF8Utils.sub_string(arg_1_0, var_1_3, iter_1_0)
+		elseif not (not (sub_string == " ") and not (num_2 < i - num)) then
+			local sub_string_4 = UTF8Utils.sub_string(arg_1_0, num, i)
 
-			var_1_1[#var_1_1 + 1] = var_1_9
-			var_1_3 = iter_1_0 + 1
+			tbl[#tbl + 1] = sub_string_4
+			num = i + 1
 		end
 	end
 
-	if var_1_3 < var_1_2 then
-		local var_1_10 = UTF8Utils.sub_string(arg_1_0, var_1_3, var_1_2)
+	if num < length then
+		local sub_string_5 = UTF8Utils.sub_string(arg_1_0, num, length)
 
-		var_1_1[#var_1_1 + 1] = var_1_10
+		tbl[#tbl + 1] = sub_string_5
 	end
 
-	return var_1_1
+	return tbl
 end
 
-function SubtitleTimedGui.is_complete(arg_2_0)
-	return arg_2_0._complete
+SubtitleTimedGui.is_complete = function (self)
+	-- function 2
+	return self._complete
 end
 
-function SubtitleTimedGui.init(arg_3_0, arg_3_1, arg_3_2)
-	arg_3_0._num_rows = arg_3_2 or 5
-	arg_3_0.render_settings = {
+SubtitleTimedGui.init = function (self, arg_3_1, arg_3_2)
+	-- function 3
+	self._num_rows = arg_3_2 or 5
+	self.render_settings = {
 		snap_pixel_positions = true
 	}
 
-	local var_3_0 = ""
+	local str = ""
 
 	if type(arg_3_1) == "table" then
-		for iter_3_0, iter_3_1 in ipairs(arg_3_1) do
-			var_3_0 = var_3_0 .. Localize(iter_3_1) .. " "
+		for i, v in ipairs(arg_3_1) do
+			str = str .. Localize(v) .. " "
 		end
 	else
-		var_3_0 = arg_3_1 ~= "" and Localize(arg_3_1) or arg_3_1
+		str = arg_3_1 == "" or not Localize(arg_3_1) or arg_3_1
 	end
 
-	arg_3_0.texts = var_0_3(var_3_0)
-	arg_3_0.next_text_index = 0
-	arg_3_0.text_speed = 20
-	arg_3_0.subtitle_timing_name = var_3_0
-	var_0_2 = false
+	self.texts = fn(str)
+	self.next_text_index = 0
+	self.text_speed = 20
+	self.subtitle_timing_name = str
+	flag = false
 end
 
-function SubtitleTimedGui._create_ui_elements(arg_4_0, arg_4_1)
-	arg_4_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0)
+SubtitleTimedGui._create_ui_elements = function (self, arg_4_1)
+	-- function 4
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(tbl)
 
-	local var_4_0 = {}
+	local tbl_3 = {}
 
-	for iter_4_0 = 1, arg_4_0._num_rows do
-		local var_4_1 = UIWidget.init(var_0_1)
+	for i = 1, self._num_rows do
+		local var_4_1 = UIWidget.init(tbl_2)
 
-		var_4_0[iter_4_0] = var_4_1
+		tbl_3[i] = var_4_1
 
-		local var_4_2 = -(iter_4_0 - 1) * 50
+		local num = -(i - 1) * 50
 
-		var_4_1.start_offset_y = var_4_2
-		var_4_1.offset[2] = var_4_2
+		var_4_1.start_offset_y = num
+		var_4_1.offset[2] = num
 	end
 
-	arg_4_0._widgets = var_4_0
+	self._widgets = tbl_3
 
 	UIRenderer.clear_scenegraph_queue(arg_4_1)
 end
 
-function SubtitleTimedGui.update(arg_5_0, arg_5_1, arg_5_2)
-	if not arg_5_0._widgets_initialized then
-		arg_5_0._widgets_initialized = true
+SubtitleTimedGui.update = function (self, arg_5_1, arg_5_2)
+	-- function 5
+	if not self._widgets_initialized then
+		self._widgets_initialized = true
 
-		arg_5_0:_create_ui_elements(arg_5_1)
+		self:_create_ui_elements(arg_5_1)
 	end
 
-	local var_5_0 = arg_5_0._widgets
+	local _widgets = self._widgets
 
-	if var_0_2 then
-		var_0_2 = false
-		arg_5_0.texts = var_0_3(arg_5_0.subtitle_timing_name)
-		arg_5_0.next_text_index = 0
+	if not flag then
+		flag = false
+		self.texts = fn(self.subtitle_timing_name)
+		self.next_text_index = 0
 
-		for iter_5_0 = 1, #var_5_0 do
-			local var_5_1 = var_5_0[iter_5_0]
+		for i = 1, #_widgets do
+			local var_5_1 = _widgets[i]
 
 			var_5_1.offset[2] = var_5_1.start_offset_y
 		end
 	end
 
-	for iter_5_1 = 1, #var_5_0 do
-		local var_5_2 = var_5_0[iter_5_1]
+	for j = 1, #_widgets do
+		local var_5_2 = _widgets[j]
 		local var_5_3 = var_5_2.offset[2]
 		local var_5_4 = var_5_3
-		local var_5_5 = var_5_3 + arg_5_2 * arg_5_0.text_speed
-		local var_5_6 = var_5_2.style
-		local var_5_7 = var_5_6.text
-		local var_5_8 = var_5_6.shadow_text
+		local num = var_5_3 + arg_5_2 * self.text_speed
+		local style = var_5_2.style
+		local text = style.text
+		local shadow_text = style.shadow_text
 
-		if var_5_5 > 0 and var_5_4 <= 0 then
-			local var_5_9 = arg_5_0.next_text_index + 1
+		if not (not (num > 0) or not (var_5_4 <= 0)) then
+			local num_2 = self.next_text_index + 1
 
-			arg_5_0.next_text_index = var_5_9
+			self.next_text_index = num_2
 
-			local var_5_10 = arg_5_0.texts[var_5_9]
+			local var_5_10 = self.texts[num_2]
 
 			var_5_2.content.text = var_5_10 or ""
-			var_5_2.content.text_index = var_5_9
-		elseif var_5_5 > 200 then
-			var_5_5 = var_5_5 - #var_5_0 * 50
-			var_5_7.text_color[1] = 0
-			var_5_8.text_color[1] = 0
+			var_5_2.content.text_index = num_2
+		elseif num > 200 then
+			num = num - #_widgets * 50
+			text.text_color[1] = 0
+			shadow_text.text_color[1] = 0
 
-			if var_5_2.content.text_index > #arg_5_0.texts then
-				arg_5_0._complete = true
+			if var_5_2.content.text_index > #self.texts then
+				self._complete = true
 			end
 		end
 
-		var_5_2.offset[2] = var_5_5
+		var_5_2.offset[2] = num
 
-		if var_5_5 >= 0 and var_5_5 < 50 then
-			local var_5_11 = math.lerp(0, 255, var_5_5 / 50)
+		if not (not (num >= 0) or not (num < 50)) then
+			local lerp = math.lerp(0, 255, num / 50)
 
-			var_5_7.text_color[1] = var_5_11
-			var_5_8.text_color[1] = var_5_11
-		elseif var_5_5 >= 50 and var_5_5 < 150 then
-			var_5_7.text_color[1] = 255
-			var_5_8.text_color[1] = 255
-		elseif var_5_5 >= 150 then
-			local var_5_12 = math.lerp(255, 0, (var_5_5 - 150) / 50)
+			text.text_color[1] = lerp
+			shadow_text.text_color[1] = lerp
+		elseif not (not (num >= 50) or not (num < 150)) then
+			text.text_color[1] = 255
+			shadow_text.text_color[1] = 255
+		elseif num >= 150 then
+			local lerp_2 = math.lerp(255, 0, (num - 150) / 50)
 
-			var_5_7.text_color[1] = var_5_12
-			var_5_8.text_color[1] = var_5_12
+			text.text_color[1] = lerp_2
+			shadow_text.text_color[1] = lerp_2
 		end
 	end
 
-	arg_5_0:draw(arg_5_1, arg_5_2)
+	self:draw(arg_5_1, arg_5_2)
 end
 
-function SubtitleTimedGui.draw(arg_6_0, arg_6_1, arg_6_2)
-	local var_6_0 = arg_6_0.ui_scenegraph
-	local var_6_1 = arg_6_0.render_settings
-	local var_6_2 = arg_6_0._widgets
+SubtitleTimedGui.draw = function (self, arg_6_1, arg_6_2)
+	-- function 6
+	local ui_scenegraph = self.ui_scenegraph
+	local render_settings = self.render_settings
+	local _widgets = self._widgets
 
-	if not var_6_2 then
+	if not _widgets then
 		return
 	end
 
-	UIRenderer.begin_pass(arg_6_1, var_6_0, FAKE_INPUT_SERVICE, arg_6_2, nil, var_6_1)
+	UIRenderer.begin_pass(arg_6_1, ui_scenegraph, FAKE_INPUT_SERVICE, arg_6_2, nil, render_settings)
 
-	for iter_6_0 = 1, #var_6_2 do
-		local var_6_3 = var_6_2[iter_6_0]
+	for i = 1, #_widgets do
+		local var_6_3 = _widgets[i]
 
 		UIRenderer.draw_widget(arg_6_1, var_6_3)
 	end

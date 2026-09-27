@@ -1,11 +1,11 @@
 -- chunkname: @scripts/ui/weave_tutorial/custom_popups/new_ui_popup_definitions.lua
 
-local var_0_0 = 1920
-local var_0_1 = 1080
-local var_0_2 = 50
-local var_0_3 = 1200
-local var_0_4 = var_0_3 - var_0_2 * 2
-local var_0_5 = {
+local num = 1920
+local num_2 = 1080
+local num_3 = 50
+local num_4 = 1200
+local num_5 = num_4 - num_3 * 2
+local tbl = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -14,8 +14,8 @@ local var_0_5 = {
 			UILayer.item_display_popup
 		},
 		size = {
-			var_0_0,
-			var_0_1
+			num,
+			num_2
 		}
 	},
 	background = {
@@ -42,7 +42,7 @@ local var_0_5 = {
 			2
 		},
 		size = {
-			var_0_3,
+			num_4,
 			650
 		}
 	},
@@ -98,7 +98,7 @@ local var_0_5 = {
 			1
 		},
 		size = {
-			var_0_4,
+			num_5,
 			60
 		}
 	},
@@ -112,7 +112,7 @@ local var_0_5 = {
 			0
 		},
 		size = {
-			var_0_4,
+			num_5,
 			50
 		}
 	},
@@ -126,7 +126,7 @@ local var_0_5 = {
 			0
 		},
 		size = {
-			var_0_4,
+			num_5,
 			380
 		}
 	},
@@ -140,7 +140,7 @@ local var_0_5 = {
 			0
 		},
 		size = {
-			var_0_4,
+			num_5,
 			380
 		}
 	},
@@ -168,7 +168,7 @@ local var_0_5 = {
 			0
 		},
 		size = {
-			var_0_4,
+			num_5,
 			380
 		}
 	},
@@ -182,7 +182,7 @@ local var_0_5 = {
 			0
 		},
 		size = {
-			var_0_4,
+			num_5,
 			380
 		}
 	},
@@ -243,7 +243,7 @@ local var_0_5 = {
 		}
 	}
 }
-local var_0_6 = {
+local tbl_2 = {
 	use_shadow = true,
 	upper_case = true,
 	localize = false,
@@ -259,7 +259,7 @@ local var_0_6 = {
 		2
 	}
 }
-local var_0_7 = {
+local tbl_3 = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -275,7 +275,7 @@ local var_0_7 = {
 		2
 	}
 }
-local var_0_8 = {
+local tbl_4 = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -291,7 +291,7 @@ local var_0_8 = {
 		2
 	}
 }
-local var_0_9 = {
+local tbl_5 = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -307,7 +307,7 @@ local var_0_9 = {
 		2
 	}
 }
-local var_0_10 = {
+local tbl_6 = {
 	use_shadow = true,
 	upper_case = true,
 	localize = false,
@@ -323,7 +323,7 @@ local var_0_10 = {
 		2
 	}
 }
-local var_0_11 = {
+local tbl_7 = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -339,7 +339,7 @@ local var_0_11 = {
 		2
 	}
 }
-local var_0_12 = {
+local tbl_8 = {
 	word_wrap = false,
 	upper_case = true,
 	localize = false,
@@ -355,63 +355,65 @@ local var_0_12 = {
 		2
 	}
 }
-local var_0_13 = true
+local flag = true
 
-local function var_0_14(arg_1_0, arg_1_1, arg_1_2)
-	local var_1_0 = UIWidgets.create_default_button(arg_1_0, arg_1_1, "button_detail_03_gold", "button_bg_01", arg_1_2, nil, nil, "button_detail_03_gold", nil, var_0_13)
+local function fn(arg_1_0, arg_1_1, arg_1_2)
+	-- function 1
+	local create_default_button = UIWidgets.create_default_button(arg_1_0, arg_1_1, "button_detail_03_gold", "button_bg_01", arg_1_2, nil, nil, "button_detail_03_gold", nil, flag)
 
-	var_1_0.content.draw_frame = false
+	create_default_button.content.draw_frame = false
 
-	local var_1_1 = var_1_0.style
+	local style = create_default_button.style
 
-	var_1_1.background.size = {
+	style.background.size = {
 		arg_1_1[1],
 		arg_1_1[2] - 8
 	}
-	var_1_1.background.offset = {
+	style.background.offset = {
 		0,
 		4,
 		0
 	}
-	var_1_1.background_fade.offset = {
+	style.background_fade.offset = {
 		0,
 		4,
 		2
 	}
-	var_1_1.background_fade.size = {
+	style.background_fade.size = {
 		arg_1_1[1],
 		arg_1_1[2] - 8
 	}
-	var_1_1.hover_glow.offset = {
+	style.hover_glow.offset = {
 		0,
 		5,
 		3
 	}
-	var_1_1.clicked_rect.offset = {
+	style.clicked_rect.offset = {
 		0,
 		4,
 		7
 	}
-	var_1_1.clicked_rect.size = {
+	style.clicked_rect.size = {
 		arg_1_1[1],
 		arg_1_1[2] - 8
 	}
-	var_1_1.glass_top.offset = {
+	style.glass_top.offset = {
 		0,
 		arg_1_1[2] - 16,
 		4
 	}
-	var_1_1.glass_bottom.offset = {
+	style.glass_bottom.offset = {
 		0,
 		-4,
 		4
 	}
 
-	return var_1_0
+	return create_default_button
 end
 
-local function var_0_15()
-	local var_2_0 = "video"
+local function fn_2()
+	-- function 2
+	local str = "video"
 
 	return {
 		element = {
@@ -425,19 +427,23 @@ local function var_0_15()
 					style_id = "icon",
 					texture_id = "icon",
 					pass_type = "texture",
-					content_change_function = function(arg_3_0, arg_3_1)
-						local var_3_0 = arg_3_0.button_hotspot.is_hover and 1 or -1
-						local var_3_1 = Managers.time:mean_dt()
-						local var_3_2 = arg_3_1.progress
-						local var_3_3 = math.clamp(var_3_2 + var_3_1 * var_3_0 * 2, 0, 1)
+					content_change_function = function (self, arg_3_1)
+						-- function 3
+						local flag
 
-						if var_3_0 then
-							arg_3_1.color[1] = math.easeOutCubic(var_3_3) * 255
+						flag = not self.button_hotspot.is_hover and 1 and -1
+
+						local mean_dt = Managers.time:mean_dt()
+						local progress = arg_3_1.progress
+						local clamp = math.clamp(progress + mean_dt * flag * 2, 0, 1)
+
+						if not flag then
+							arg_3_1.color[1] = math.easeOutCubic(clamp) * 255
 						else
-							arg_3_1.color[1] = math.easeInCubic(var_3_3) * 255
+							arg_3_1.color[1] = math.easeInCubic(clamp) * 255
 						end
 
-						arg_3_1.progress = var_3_3
+						arg_3_1.progress = clamp
 					end
 				}
 			}
@@ -469,17 +475,17 @@ local function var_0_15()
 				}
 			}
 		},
-		scenegraph_id = var_2_0
+		scenegraph_id = str
 	}
 end
 
-local var_0_16 = {
+local tbl_9 = {
 	window_background = UIWidgets.create_tiled_texture("window", "menu_frame_bg_02", {
 		1065,
 		770
 	}),
 	window_top_detail = UIWidgets.create_simple_texture("tab_selection_01_bottom", "window_top_detail"),
-	window_frame = UIWidgets.create_frame("window", var_0_5.window.size, "menu_frame_12_gold", 5),
+	window_frame = UIWidgets.create_frame("window", tbl.window.size, "menu_frame_12_gold", 5),
 	screen_background = UIWidgets.create_simple_rect("screen", {
 		150,
 		0,
@@ -487,27 +493,27 @@ local var_0_16 = {
 		0
 	})
 }
-local var_0_17 = {
-	title_text = UIWidgets.create_simple_text(Localize("new_ui_popup_title"), "title", nil, nil, var_0_6),
+local tbl_10 = {
+	title_text = UIWidgets.create_simple_text(Localize("new_ui_popup_title"), "title", nil, nil, tbl_2),
 	paragraph_divider = UIWidgets.create_simple_texture("popup_divider", "paragraph_divider"),
-	info_text = UIWidgets.create_simple_text(Localize("new_ui_popup_info"), "body", nil, nil, var_0_7),
-	perk_text = UIWidgets.create_simple_text(Localize("new_ui_popup_perks"), "perks", nil, nil, var_0_8),
-	perk_list = UIWidgets.create_simple_text(Localize("new_ui_popup_perk_list"), "perk_list", nil, nil, var_0_9),
-	use_legacy_title_text = UIWidgets.create_simple_text(Localize("new_ui_popup_legacy_title"), "title", nil, nil, var_0_10),
-	use_legacy_text = UIWidgets.create_simple_text(Localize("new_ui_popup_legacy_text"), "use_legacy", nil, nil, var_0_11),
-	use_legacy_option = UIWidgets.create_simple_text(Localize("new_ui_popup_legacy_option"), "use_legacy_option", nil, nil, var_0_12),
-	video_frame = UIWidgets.create_frame("video", var_0_5.video.size, "menu_frame_12_gold", 10, {
+	info_text = UIWidgets.create_simple_text(Localize("new_ui_popup_info"), "body", nil, nil, tbl_3),
+	perk_text = UIWidgets.create_simple_text(Localize("new_ui_popup_perks"), "perks", nil, nil, tbl_4),
+	perk_list = UIWidgets.create_simple_text(Localize("new_ui_popup_perk_list"), "perk_list", nil, nil, tbl_5),
+	use_legacy_title_text = UIWidgets.create_simple_text(Localize("new_ui_popup_legacy_title"), "title", nil, nil, tbl_6),
+	use_legacy_text = UIWidgets.create_simple_text(Localize("new_ui_popup_legacy_text"), "use_legacy", nil, nil, tbl_7),
+	use_legacy_option = UIWidgets.create_simple_text(Localize("new_ui_popup_legacy_option"), "use_legacy_option", nil, nil, tbl_8),
+	video_frame = UIWidgets.create_frame("video", tbl.video.size, "menu_frame_12_gold", 10, {
 		255,
 		0,
 		0,
 		0
 	}),
-	video_hover = var_0_15(),
-	prev_button = var_0_14("prev_button", var_0_5.prev_button.size, Localize("input_description_prev_page")),
-	next_button = var_0_14("next_button", var_0_5.next_button.size, Localize("input_description_next_page")),
-	ok_button = var_0_14("ok_button", var_0_5.ok_button.size, Localize("menu_weave_tutorial_popup_confirm_button"))
+	video_hover = fn_2(),
+	prev_button = fn("prev_button", tbl.prev_button.size, Localize("input_description_prev_page")),
+	next_button = fn("next_button", tbl.next_button.size, Localize("input_description_next_page")),
+	ok_button = fn("ok_button", tbl.ok_button.size, Localize("menu_weave_tutorial_popup_confirm_button"))
 }
-local var_0_18 = {
+local tbl_11 = {
 	{
 		widgets = {
 			"title_text",
@@ -532,27 +538,30 @@ local var_0_18 = {
 		}
 	}
 }
-local var_0_19 = {
+local tbl_12 = {
 	transition_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.2,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				-- function 4
 				arg_4_3.render_settings.alpha_multiplier = 0
 
-				local var_4_0 = arg_4_3.page_data
+				local page_data = arg_4_3.page_data
 
-				for iter_4_0, iter_4_1 in ipairs(var_4_0.widgets) do
-					arg_4_2[iter_4_1].content.visible = false
+				for i, v in ipairs(page_data.widgets) do
+					arg_4_2[v].content.visible = false
 				end
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
-				local var_5_0 = math.easeOutCubic(arg_5_3)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+				-- function 5
+				local easeOutCubic = math.easeOutCubic(arg_5_3)
 
-				arg_5_4.render_settings.alpha_multiplier = var_5_0
+				arg_5_4.render_settings.alpha_multiplier = easeOutCubic
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+				-- function 6
 				return
 			end
 		}
@@ -562,25 +571,28 @@ local var_0_19 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			init = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+				-- function 7
 				arg_7_3.render_settings.alpha_multiplier = 0
 
-				local var_7_0 = arg_7_3.page_data
+				local page_data = arg_7_3.page_data
 
-				for iter_7_0, iter_7_1 in ipairs(var_7_0.widgets) do
-					arg_7_2[iter_7_1].content.visible = false
+				for i, v in ipairs(page_data.widgets) do
+					arg_7_2[v].content.visible = false
 				end
 
 				arg_7_2.next_button.content.visible = false
 				arg_7_2.prev_button.content.visible = false
 				arg_7_2.ok_button.content.visible = false
 			end,
-			update = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
-				local var_8_0 = math.easeOutCubic(arg_8_3)
+			update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+				-- function 8
+				local easeOutCubic = math.easeOutCubic(arg_8_3)
 
-				arg_8_4.render_settings.alpha_multiplier = var_8_0
+				arg_8_4.render_settings.alpha_multiplier = easeOutCubic
 			end,
-			on_complete = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			on_complete = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+				-- function 9
 				arg_9_2.title_text.content.visible = true
 			end
 		},
@@ -588,17 +600,20 @@ local var_0_19 = {
 			name = "header",
 			start_progress = 0.5,
 			end_progress = 0.8,
-			init = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+				-- function 10
 				return
 			end,
-			update = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
-				local var_11_0 = math.easeOutCubic(arg_11_3)
-				local var_11_1 = arg_11_2.title_text
+			update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+				-- function 11
+				local easeOutCubic = math.easeOutCubic(arg_11_3)
+				local title_text = arg_11_2.title_text
 
-				var_11_1.style.text.text_color[1] = var_11_0 * 255
-				var_11_1.style.text_shadow.text_color[1] = var_11_0 * 255
+				title_text.style.text.text_color[1] = easeOutCubic * 255
+				title_text.style.text_shadow.text_color[1] = easeOutCubic * 255
 			end,
-			on_complete = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			on_complete = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+				-- function 12
 				arg_12_2.info_text.content.visible = true
 				arg_12_2.paragraph_divider.content.visible = true
 			end
@@ -607,18 +622,21 @@ local var_0_19 = {
 			name = "info",
 			start_progress = 0.8,
 			end_progress = 2.8,
-			init = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			init = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+				-- function 13
 				return
 			end,
-			update = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
-				local var_14_0 = math.easeOutCubic(arg_14_3)
-				local var_14_1 = arg_14_2.info_text
+			update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+				-- function 14
+				local easeOutCubic = math.easeOutCubic(arg_14_3)
+				local info_text = arg_14_2.info_text
 
-				var_14_1.style.text.text_color[1] = var_14_0 * 255
-				var_14_1.style.text_shadow.text_color[1] = var_14_0 * 255
-				arg_14_2.paragraph_divider.style.texture_id.color[1] = var_14_0 * 255
+				info_text.style.text.text_color[1] = easeOutCubic * 255
+				info_text.style.text_shadow.text_color[1] = easeOutCubic * 255
+				arg_14_2.paragraph_divider.style.texture_id.color[1] = easeOutCubic * 255
 			end,
-			on_complete = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+			on_complete = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+				-- function 15
 				return
 			end
 		},
@@ -626,18 +644,21 @@ local var_0_19 = {
 			name = "perks",
 			start_progress = 3.5,
 			end_progress = 4,
-			init = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			init = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+				-- function 16
 				return
 			end,
-			update = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
-				local var_17_0 = math.easeOutCubic(arg_17_3)
-				local var_17_1 = arg_17_2.perk_text
+			update = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+				-- function 17
+				local easeOutCubic = math.easeOutCubic(arg_17_3)
+				local perk_text = arg_17_2.perk_text
 
-				var_17_1.content.visible = true
-				var_17_1.style.text.text_color[1] = var_17_0 * 255
-				var_17_1.style.text_shadow.text_color[1] = var_17_0 * 255
+				perk_text.content.visible = true
+				perk_text.style.text.text_color[1] = easeOutCubic * 255
+				perk_text.style.text_shadow.text_color[1] = easeOutCubic * 255
 			end,
-			on_complete = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			on_complete = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+				-- function 18
 				arg_18_2.perk_list.content.visible = true
 			end
 		},
@@ -645,17 +666,20 @@ local var_0_19 = {
 			name = "perk_list",
 			start_progress = 4,
 			end_progress = 5,
-			init = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			init = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+				-- function 19
 				return
 			end,
-			update = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
-				local var_20_0 = math.easeOutCubic(arg_20_3)
-				local var_20_1 = arg_20_2.perk_list
+			update = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+				-- function 20
+				local easeOutCubic = math.easeOutCubic(arg_20_3)
+				local perk_list = arg_20_2.perk_list
 
-				var_20_1.style.text.text_color[1] = var_20_0 * 255
-				var_20_1.style.text_shadow.text_color[1] = var_20_0 * 255
+				perk_list.style.text.text_color[1] = easeOutCubic * 255
+				perk_list.style.text_shadow.text_color[1] = easeOutCubic * 255
 			end,
-			on_complete = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			on_complete = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+				-- function 21
 				arg_21_2.next_button.content.visible = true
 			end
 		}
@@ -665,11 +689,12 @@ local var_0_19 = {
 			name = "header",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
-				local var_22_0 = arg_22_3.page_data
+			init = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+				-- function 22
+				local page_data = arg_22_3.page_data
 
-				for iter_22_0, iter_22_1 in ipairs(var_22_0.widgets) do
-					arg_22_2[iter_22_1].content.visible = false
+				for i, v in ipairs(page_data.widgets) do
+					arg_22_2[v].content.visible = false
 				end
 
 				arg_22_2.prev_button.content.visible = false
@@ -677,14 +702,16 @@ local var_0_19 = {
 				arg_22_3.video_widget.content.visible = false
 				arg_22_2.use_legacy_title_text.content.visible = true
 			end,
-			update = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
-				local var_23_0 = math.easeOutCubic(arg_23_3)
-				local var_23_1 = arg_23_2.use_legacy_title_text
+			update = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+				-- function 23
+				local easeOutCubic = math.easeOutCubic(arg_23_3)
+				local use_legacy_title_text = arg_23_2.use_legacy_title_text
 
-				var_23_1.style.text.text_color[1] = var_23_0 * 255
-				var_23_1.style.text_shadow.text_color[1] = var_23_0 * 255
+				use_legacy_title_text.style.text.text_color[1] = easeOutCubic * 255
+				use_legacy_title_text.style.text_shadow.text_color[1] = easeOutCubic * 255
 			end,
-			on_complete = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+			on_complete = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+				-- function 24
 				arg_24_2.use_legacy_text.content.visible = true
 			end
 		},
@@ -692,17 +719,20 @@ local var_0_19 = {
 			name = "info",
 			start_progress = 0.5,
 			end_progress = 1.8,
-			init = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+			init = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+				-- function 25
 				return
 			end,
-			update = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
-				local var_26_0 = math.easeOutCubic(arg_26_3)
-				local var_26_1 = arg_26_2.use_legacy_text
+			update = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+				-- function 26
+				local easeOutCubic = math.easeOutCubic(arg_26_3)
+				local use_legacy_text = arg_26_2.use_legacy_text
 
-				var_26_1.style.text.text_color[1] = var_26_0 * 255
-				var_26_1.style.text_shadow.text_color[1] = var_26_0 * 255
+				use_legacy_text.style.text.text_color[1] = easeOutCubic * 255
+				use_legacy_text.style.text_shadow.text_color[1] = easeOutCubic * 255
 			end,
-			on_complete = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+			on_complete = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+				-- function 27
 				arg_27_2.use_legacy_option.content.visible = true
 				arg_27_2.video_frame.content.visible = true
 				arg_27_2.video_hover.content.visible = true
@@ -713,28 +743,31 @@ local var_0_19 = {
 			name = "video",
 			start_progress = 1.8,
 			end_progress = 3.5,
-			init = function(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+			init = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+				-- function 28
 				return
 			end,
-			update = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
-				local var_29_0 = math.easeOutCubic(arg_29_3)
+			update = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
+				-- function 29
+				local easeOutCubic = math.easeOutCubic(arg_29_3)
 
-				arg_29_2.video_frame.style.frame.color[1] = var_29_0 * 255
+				arg_29_2.video_frame.style.frame.color[1] = easeOutCubic * 255
 
-				local var_29_1 = arg_29_2.use_legacy_option
+				local use_legacy_option = arg_29_2.use_legacy_option
 
-				var_29_1.style.text.text_color[1] = var_29_0 * 255
-				var_29_1.style.text_shadow.text_color[1] = var_29_0 * 255
-				arg_29_4.video_widget.style.video_style.color[1] = var_29_0 * 255
+				use_legacy_option.style.text.text_color[1] = easeOutCubic * 255
+				use_legacy_option.style.text_shadow.text_color[1] = easeOutCubic * 255
+				arg_29_4.video_widget.style.video_style.color[1] = easeOutCubic * 255
 			end,
-			on_complete = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+			on_complete = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+				-- function 30
 				arg_30_2.prev_button.content.visible = true
 				arg_30_2.ok_button.content.visible = true
 			end
 		}
 	}
 }
-local var_0_20 = {
+local tbl_13 = {
 	default = {
 		{
 			input_action = "confirm",
@@ -746,10 +779,10 @@ local var_0_20 = {
 
 return {
 	create_video = create_video,
-	page_data = var_0_18,
-	generic_input_actions = var_0_20,
-	scenegraph_definition = var_0_5,
-	base_widget_definitions = var_0_16,
-	page_widget_definitions = var_0_17,
-	animation_definitions = var_0_19
+	page_data = tbl_11,
+	generic_input_actions = tbl_13,
+	scenegraph_definition = tbl,
+	base_widget_definitions = tbl_9,
+	page_widget_definitions = tbl_10,
+	animation_definitions = tbl_12
 }

@@ -1,23 +1,23 @@
 -- chunkname: @scripts/ui/dlc_versus/views/start_game_view/windows/definitions/start_game_window_versus_player_hosted_lobby_definitions.lua
 
-local var_0_0 = 24
-local var_0_1 = {
+local num = 24
+local tbl = {
 	520,
 	194
 }
-local var_0_2 = {
+local tbl_2 = {
 	480,
 	80
 }
-local var_0_3 = {
+local tbl_3 = {
 	480,
 	100
 }
-local var_0_4 = {
-	var_0_3[1],
-	30 + 4 * var_0_3[2]
+local tbl_4 = {
+	tbl_3[1],
+	30 + 4 * tbl_3[2]
 }
-local var_0_5 = {
+local tbl_5 = {
 	root = {
 		is_root = true,
 		size = {
@@ -88,10 +88,10 @@ local var_0_5 = {
 		vertical_alignment = "top",
 		parent = "settings_container",
 		horizontal_alignment = "center",
-		size = var_0_1,
+		size = tbl,
 		position = {
 			0,
-			var_0_1[2] + 200,
+			tbl[2] + 200,
 			1
 		}
 	},
@@ -183,7 +183,7 @@ local var_0_5 = {
 		vertical_alignment = "center",
 		parent = "menu_root",
 		horizontal_alignment = "left",
-		size = var_0_4,
+		size = tbl_4,
 		position = {
 			100,
 			0,
@@ -194,7 +194,7 @@ local var_0_5 = {
 		vertical_alignment = "top",
 		parent = "team_1",
 		horizontal_alignment = "left",
-		size = var_0_2,
+		size = tbl_2,
 		position = {
 			0,
 			90,
@@ -205,7 +205,7 @@ local var_0_5 = {
 		vertical_alignment = "top",
 		parent = "team_1",
 		horizontal_alignment = "left",
-		size = var_0_3,
+		size = tbl_3,
 		position = {
 			0,
 			-150 * 0,
@@ -216,7 +216,7 @@ local var_0_5 = {
 		vertical_alignment = "center",
 		parent = "menu_root",
 		horizontal_alignment = "right",
-		size = var_0_4,
+		size = tbl_4,
 		position = {
 			-100,
 			0,
@@ -227,7 +227,7 @@ local var_0_5 = {
 		vertical_alignment = "top",
 		parent = "team_2",
 		horizontal_alignment = "right",
-		size = var_0_2,
+		size = tbl_2,
 		position = {
 			0,
 			90,
@@ -238,7 +238,7 @@ local var_0_5 = {
 		vertical_alignment = "top",
 		parent = "team_2",
 		horizontal_alignment = "right",
-		size = var_0_3,
+		size = tbl_3,
 		position = {
 			0,
 			-150 * 0,
@@ -260,12 +260,13 @@ local var_0_5 = {
 		}
 	}
 }
-local var_0_6 = {
+local tbl_6 = {
 	title = Localize("start_game_window_other_options_private"),
 	description = Localize("start_game_window_other_options_private_description")
 }
 
-local function var_0_7(arg_1_0, arg_1_1, arg_1_2)
+local function fn(arg_1_0, arg_1_1, arg_1_2)
+	-- function 1
 	return {
 		scenegraph_id = arg_1_0,
 		element = {
@@ -385,7 +386,7 @@ end
 
 local var_0_8
 local var_0_9
-local var_0_10 = {
+local tbl_7 = {
 	scenegraph_id = "settings_container",
 	element = {
 		passes = {
@@ -415,7 +416,7 @@ local var_0_10 = {
 		}
 	}
 }
-local var_0_11 = {
+local tbl_8 = {
 	font_size = 24,
 	upper_case = true,
 	localize = true,
@@ -436,8 +437,8 @@ local var_0_11 = {
 		2
 	}
 }
-local var_0_12 = true
-local var_0_13 = {
+local flag = true
+local tbl_9 = {
 	scenegraph_id = "lobby_name",
 	element = {
 		passes = {
@@ -445,8 +446,13 @@ local var_0_13 = {
 				style_id = "background",
 				texture_id = "background",
 				pass_type = "texture",
-				content_change_function = function(arg_2_0, arg_2_1)
-					arg_2_1.color[1] = arg_2_0.input.active and 255 or 127
+				content_change_function = function (self, arg_2_1)
+					-- function 2
+					local color = arg_2_1.color
+					local flag
+
+					flag = not self.input.active and 255 and 127
+					color[1] = flag
 				end
 			},
 			{
@@ -473,8 +479,9 @@ local var_0_13 = {
 				pass_type = "texture",
 				style_id = "top_detail_glow",
 				texture_id = "top_detail_glow",
-				content_check_function = function(arg_3_0, arg_3_1)
-					return arg_3_0.input.active
+				content_check_function = function (self, arg_3_1)
+					-- function 3
+					return self.input.active
 				end
 			},
 			{
@@ -496,8 +503,9 @@ local var_0_13 = {
 				pass_type = "text",
 				text_id = "default_text",
 				content_id = "input",
-				content_check_function = function(arg_4_0)
-					return arg_4_0.text == ""
+				content_check_function = function (self)
+					-- function 4
+					return self.text == ""
 				end
 			},
 			{
@@ -505,14 +513,15 @@ local var_0_13 = {
 				pass_type = "text",
 				text_id = "text",
 				content_id = "input",
-				content_change_function = function(arg_5_0, arg_5_1)
-					local var_5_0 = 0
+				content_change_function = function (self, arg_5_1)
+					-- function 5
+					local num = 0
 
-					if arg_5_0.active then
-						var_5_0 = 127 + 128 * math.sin(5 * Managers.time:time("ui"))
+					if not self.active then
+						num = 127 + 128 * math.sin(5 * Managers.time:time("ui"))
 					end
 
-					arg_5_1.caret_color[1] = var_5_0
+					arg_5_1.caret_color[1] = num
 				end
 			}
 		}
@@ -684,44 +693,60 @@ local var_0_13 = {
 		}
 	}
 }
-local var_0_14 = {
-	mission_setting = UIWidgets.create_start_game_console_setting_button("game_option_1", Localize("start_game_window_mission"), nil, nil, nil, var_0_5.game_option_1.size),
-	team_1 = var_0_7("team_1_panel", UISettings.teams_ui_assets.team_hammers, Colors.get_color_table_with_alpha("local_player_team_lighter", 255)),
-	team_2 = var_0_7("team_2_panel", UISettings.teams_ui_assets.team_skulls, Colors.get_color_table_with_alpha("opponent_team_lighter", 255)),
-	toggle_custom_settings_button = UIWidgets.create_default_checkbox_button_console("toggle_settings_button", var_0_5.toggle_settings_button.size, Localize("start_game_window_toggle_custom_setting"), 24, var_0_6, "menu_frame_03_morris"),
-	lobby_name = var_0_13,
-	leave_game_button = UIWidgets.create_default_button("leave_game_button", var_0_5.leave_game_button.size, nil, nil, Localize("exit"), var_0_0, nil, nil, nil, var_0_12)
+local tbl_10 = {
+	mission_setting = UIWidgets.create_start_game_console_setting_button("game_option_1", Localize("start_game_window_mission"), nil, nil, nil, tbl_5.game_option_1.size),
+	team_1 = fn("team_1_panel", UISettings.teams_ui_assets.team_hammers, Colors.get_color_table_with_alpha("local_player_team_lighter", 255)),
+	team_2 = fn("team_2_panel", UISettings.teams_ui_assets.team_skulls, Colors.get_color_table_with_alpha("opponent_team_lighter", 255)),
+	toggle_custom_settings_button = UIWidgets.create_default_checkbox_button_console("toggle_settings_button", tbl_5.toggle_settings_button.size, Localize("start_game_window_toggle_custom_setting"), 24, tbl_6, "menu_frame_03_morris"),
+	lobby_name = tbl_9,
+	leave_game_button = UIWidgets.create_default_button("leave_game_button", tbl_5.leave_game_button.size, nil, nil, Localize("exit"), num, nil, nil, nil, flag)
 }
-local var_0_15 = {
+local tbl_11 = {
 	force_start_button = UIWidgets.create_icon_and_name_button("force_start_button", "options_button_icon_quickplay", Localize("input_description_play")),
-	locked_reason = UIWidgets.create_simple_text("tutorial_no_text", "locked_reason", nil, nil, var_0_11)
+	locked_reason = UIWidgets.create_simple_text("tutorial_no_text", "locked_reason", nil, nil, tbl_8)
 }
 
-local function var_0_16(arg_6_0)
-	return arg_6_0.empty
+local function fn_2(self)
+	-- function 6
+	return self.empty
 end
 
-local function var_0_17(arg_7_0)
-	return not arg_7_0.empty
+local function fn_3(self)
+	-- function 7
+	return not self.empty
 end
 
-local function var_0_18(arg_8_0, arg_8_1)
-	local var_8_0 = "team_" .. arg_8_0 .. "_player_panel"
-	local var_8_1 = var_0_5[var_8_0].size
-	local var_8_2 = UIFrameSettings.button_frame_02
-	local var_8_3 = UIFrameSettings.shadow_frame_02
-	local var_8_4 = UIFrameSettings.frame_outer_glow_04
-	local var_8_5 = UIFrameSettings.frame_outer_glow_01
-	local var_8_6 = UIFrameSettings.frame_bevel_01
-	local var_8_7 = arg_8_0 == 1 and Colors.get_color_table_with_alpha("local_player_team_lighter", 255) or Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
-	local var_8_8 = var_8_1[2] / 138
-	local var_8_9 = {
-		50 * var_8_8,
-		138 * var_8_8
+local function fn_4(arg_8_0, arg_8_1)
+	-- function 8
+	local str = "team_" .. arg_8_0 .. "_player_panel"
+	local size = tbl_5[str].size
+	local button_frame_02 = UIFrameSettings.button_frame_02
+	local shadow_frame_02 = UIFrameSettings.shadow_frame_02
+	local frame_outer_glow_04 = UIFrameSettings.frame_outer_glow_04
+	local frame_outer_glow_01 = UIFrameSettings.frame_outer_glow_01
+	local frame_bevel_01 = UIFrameSettings.frame_bevel_01
+	local get_color_table_with_alpha
+
+	if arg_8_0 == 1 then
+		get_color_table_with_alpha = Colors.get_color_table_with_alpha("local_player_team_lighter", 255)
+
+		if not get_color_table_with_alpha then
+			-- Nothing
+		end
+	end
+
+	get_color_table_with_alpha = Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
+
+	::label_8_0::
+
+	local num = size[2] / 138
+	local tbl = {
+		50 * num,
+		138 * num
 	}
 
 	return {
-		scenegraph_id = var_8_0,
+		scenegraph_id = str,
 		offset = {
 			0,
 			-120 * (arg_8_1 - 1),
@@ -736,245 +761,352 @@ local function var_0_18(arg_8_0, arg_8_1)
 				{
 					style_id = "empty_background",
 					pass_type = "rect",
-					content_check_function = var_0_16
+					content_check_function = fn_2
 				},
 				{
 					pass_type = "texture_frame",
 					style_id = "empty_hover_frame",
 					texture_id = "empty_hover_frame",
-					content_check_function = function(arg_9_0)
-						return arg_9_0.empty and arg_9_0.button_hotspot.is_hover or arg_9_0.is_gamepad_active and arg_9_0.empty and arg_9_0.is_selected
+					content_check_function = function (self)
+						-- function 9
+						local is_hover
+
+						if not self.empty then
+							is_hover = self.button_hotspot.is_hover
+
+							if not is_hover then
+								-- Nothing
+							end
+						end
+
+						is_hover = self.is_gamepad_active
+
+						if not is_hover then
+							is_hover = self.empty
+							is_hover = not is_hover and self.is_selected
+						end
+
+						::label_9_0::
+
+						return is_hover
 					end
 				},
 				{
 					pass_type = "texture_frame",
 					style_id = "empty_frame",
 					texture_id = "empty_frame",
-					content_check_function = var_0_16
+					content_check_function = fn_2
 				},
 				{
 					style_id = "open_slot_text",
 					pass_type = "text",
 					text_id = "open_slot_text",
-					content_check_function = var_0_16
+					content_check_function = fn_2
 				},
 				{
 					style_id = "open_slot_text_shadow",
 					pass_type = "text",
 					text_id = "open_slot_text",
-					content_check_function = var_0_16
+					content_check_function = fn_2
 				},
 				{
 					style_id = "background",
 					pass_type = "rect",
-					content_check_function = var_0_17
+					content_check_function = fn_3
 				},
 				{
 					style_id = "hover_frame",
 					texture_id = "hover_frame",
 					pass_type = "texture_frame",
-					content_check_function = function(arg_10_0)
-						return not arg_10_0.empty and arg_10_0.button_hotspot.is_hover or arg_10_0.is_gamepad_active and not arg_10_0.empty and arg_10_0.is_selected
-					end,
-					content_change_function = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
-						local var_11_0 = arg_11_0.focused
+					content_check_function = function (self)
+						-- function 10
+						local is_hover
 
-						arg_11_1.color[1] = var_11_0 and 150 + 105 * math.sin(Managers.time:time("ui") * 7.5) or 255
+						if not self.empty then
+							is_hover = self.button_hotspot.is_hover
+
+							if not is_hover then
+								-- Nothing
+							end
+						end
+
+						is_hover = self.is_gamepad_active
+						is_hover = not is_hover and not not self.empty or self.is_selected
+
+						::label_10_0::
+
+						return is_hover
+					end,
+					content_change_function = function (self, arg_11_1, arg_11_2, arg_11_3)
+						-- function 11
+						local focused = self.focused
+						local color = arg_11_1.color
+						local num
+
+						if not focused then
+							num = 150 + 105 * math.sin(Managers.time:time("ui") * 7.5)
+
+							if not num then
+								-- Nothing
+							end
+						end
+
+						num = 255
+
+						::label_11_0::
+
+						color[1] = num
 					end
 				},
 				{
 					pass_type = "texture_frame",
 					style_id = "frame",
 					texture_id = "frame",
-					content_check_function = var_0_17
+					content_check_function = fn_3
 				},
 				{
 					pass_type = "texture_frame",
 					style_id = "shadow_frame",
 					texture_id = "shadow_frame",
-					content_check_function = var_0_17
+					content_check_function = fn_3
 				},
 				{
 					pass_type = "texture",
 					style_id = "player_avatar",
 					texture_id = "player_avatar",
-					content_check_function = function(arg_12_0)
-						return not arg_12_0.empty and arg_12_0.player_avatar
+					content_check_function = function (self)
+						-- function 12
+						return not not self.empty or self.player_avatar
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "host_texture",
 					texture_id = "host_texture",
-					content_check_function = function(arg_13_0)
-						return not arg_13_0.empty and arg_13_0.show_host
+					content_check_function = function (self)
+						-- function 13
+						return not not self.empty or self.show_host
 					end
 				},
 				{
 					style_id = "player_name",
 					pass_type = "text",
 					text_id = "player_name",
-					content_check_function = var_0_17
+					content_check_function = fn_3
 				},
 				{
 					style_id = "player_level",
 					pass_type = "text",
 					text_id = "player_level",
-					content_check_function = var_0_17
+					content_check_function = fn_3
 				},
 				{
 					style_id = "insignia_main",
 					pass_type = "texture_uv",
 					content_id = "insignia_main",
-					content_check_function = function(arg_14_0)
-						return not arg_14_0.parent.empty
+					content_check_function = function (self)
+						-- function 14
+						return not self.parent.empty
 					end
 				},
 				{
 					style_id = "insignia_addon",
 					pass_type = "texture_uv",
 					content_id = "insignia_addon",
-					content_check_function = function(arg_15_0)
-						return not arg_15_0.parent.empty and arg_15_0.uvs
+					content_check_function = function (self)
+						-- function 15
+						return not not self.parent.empty or self.uvs
 					end
 				},
 				{
 					style_id = "party_color",
 					pass_type = "rect",
-					content_check_function = var_0_17
+					content_check_function = fn_3
 				},
 				{
 					style_id = "kick_button_background",
 					pass_type = "rect",
-					content_check_function = function(arg_16_0, arg_16_1)
-						return arg_16_0.show_kick_button
+					content_check_function = function (self, arg_16_1)
+						-- function 16
+						return self.show_kick_button
 					end
 				},
 				{
 					texture_id = "button_frame",
 					style_id = "kick_button_frame",
 					pass_type = "texture",
-					content_check_function = function(arg_17_0, arg_17_1)
-						return arg_17_0.show_kick_button
+					content_check_function = function (self, arg_17_1)
+						-- function 17
+						return self.show_kick_button
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "kick_button_hotspot",
 					texture_id = "kick_button_texture",
-					content_check_function = function(arg_18_0, arg_18_1)
-						return arg_18_0.show_kick_button
+					content_check_function = function (self, arg_18_1)
+						-- function 18
+						return self.show_kick_button
 					end
 				},
 				{
 					style_id = "kick_button_hotspot",
 					pass_type = "hotspot",
 					content_id = "kick_button_hotspot",
-					content_check_function = function(arg_19_0)
-						return arg_19_0.parent.show_kick_button and not arg_19_0.disable_button
+					content_check_function = function (self)
+						-- function 19
+						local show_kick_button = self.parent.show_kick_button
+
+						show_kick_button = not show_kick_button and not self.disable_button
+
+						return show_kick_button
 					end
 				},
 				{
 					style_id = "tooltip_text",
 					pass_type = "tooltip_text",
 					text_id = "kick_tooltip_text",
-					content_check_function = function(arg_20_0)
-						return arg_20_0.show_kick_button and arg_20_0.kick_button_hotspot.is_hover
+					content_check_function = function (self)
+						-- function 20
+						local show_kick_button = self.show_kick_button
+
+						show_kick_button = not show_kick_button and self.kick_button_hotspot.is_hover
+
+						return show_kick_button
 					end
 				},
 				{
 					pass_type = "rect",
 					style_id = "chat_button_background",
 					texture_id = "chat_button_texture",
-					content_check_function = function(arg_21_0)
-						return arg_21_0.show_chat_button
+					content_check_function = function (self)
+						-- function 21
+						return self.show_chat_button
 					end
 				},
 				{
 					texture_id = "button_frame",
 					style_id = "chat_button_frame",
 					pass_type = "texture",
-					content_check_function = function(arg_22_0)
-						return arg_22_0.show_chat_button
+					content_check_function = function (self)
+						-- function 22
+						return self.show_chat_button
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "chat_button_hotspot",
 					texture_id = "chat_button_texture",
-					content_check_function = function(arg_23_0)
-						return arg_23_0.show_chat_button
+					content_check_function = function (self)
+						-- function 23
+						return self.show_chat_button
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "chat_button_disabled",
 					texture_id = "disabled_texture",
-					content_check_function = function(arg_24_0)
-						return arg_24_0.show_chat_button and arg_24_0.chat_button_hotspot.is_selected
+					content_check_function = function (self)
+						-- function 24
+						local show_chat_button = self.show_chat_button
+
+						show_chat_button = not show_chat_button and self.chat_button_hotspot.is_selected
+
+						return show_chat_button
 					end
 				},
 				{
 					style_id = "chat_button_hotspot",
 					pass_type = "hotspot",
 					content_id = "chat_button_hotspot",
-					content_check_function = function(arg_25_0)
-						return arg_25_0.parent.show_chat_button and not arg_25_0.disable_button
+					content_check_function = function (self)
+						-- function 25
+						local show_chat_button = self.parent.show_chat_button
+
+						show_chat_button = not show_chat_button and not self.disable_button
+
+						return show_chat_button
 					end
 				},
 				{
 					style_id = "tooltip_text",
 					pass_type = "tooltip_text",
 					text_id = "chat_tooltip_text_mute",
-					content_check_function = function(arg_26_0)
-						return arg_26_0.show_chat_button and not arg_26_0.chat_button_hotspot.is_selected and arg_26_0.chat_button_hotspot.is_hover
+					content_check_function = function (self)
+						-- function 26
+						local show_chat_button = self.show_chat_button
+
+						show_chat_button = not show_chat_button and not not self.chat_button_hotspot.is_selected or self.chat_button_hotspot.is_hover
+
+						return show_chat_button
 					end
 				},
 				{
 					style_id = "tooltip_text",
 					pass_type = "tooltip_text",
 					text_id = "chat_tooltip_text_unmute",
-					content_check_function = function(arg_27_0)
-						return arg_27_0.show_chat_button and arg_27_0.chat_button_hotspot.is_selected and arg_27_0.chat_button_hotspot.is_hover
+					content_check_function = function (self)
+						-- function 27
+						local show_chat_button = self.show_chat_button
+
+						if not show_chat_button then
+							show_chat_button = self.chat_button_hotspot.is_selected
+							show_chat_button = not show_chat_button and self.chat_button_hotspot.is_hover
+						end
+
+						return show_chat_button
 					end
 				},
 				{
 					style_id = "profile_button_background",
 					pass_type = "rect",
-					content_check_function = function(arg_28_0)
-						return arg_28_0.show_profile_button
+					content_check_function = function (self)
+						-- function 28
+						return self.show_profile_button
 					end
 				},
 				{
 					texture_id = "button_frame",
 					style_id = "profile_button_frame",
 					pass_type = "texture",
-					content_check_function = function(arg_29_0)
-						return arg_29_0.show_profile_button
+					content_check_function = function (self)
+						-- function 29
+						return self.show_profile_button
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "profile_button_hotspot",
 					texture_id = "profile_button_texture",
-					content_check_function = function(arg_30_0)
-						return arg_30_0.show_profile_button
+					content_check_function = function (self)
+						-- function 30
+						return self.show_profile_button
 					end
 				},
 				{
 					style_id = "profile_button_hotspot",
 					pass_type = "hotspot",
 					content_id = "profile_button_hotspot",
-					content_check_function = function(arg_31_0)
-						return arg_31_0.parent.show_profile_button and not arg_31_0.disable_button
+					content_check_function = function (self)
+						-- function 31
+						local show_profile_button = self.parent.show_profile_button
+
+						show_profile_button = not show_profile_button and not self.disable_button
+
+						return show_profile_button
 					end
 				},
 				{
 					style_id = "tooltip_text",
 					pass_type = "tooltip_text",
 					text_id = "profile_tooltip_text",
-					content_check_function = function(arg_32_0)
-						return arg_32_0.show_profile_button and arg_32_0.profile_button_hotspot.is_hover
+					content_check_function = function (self)
+						-- function 32
+						local show_profile_button = self.show_profile_button
+
+						show_profile_button = not show_profile_button and self.profile_button_hotspot.is_hover
+
+						return show_profile_button
 					end
 				}
 			}
@@ -1004,11 +1136,11 @@ local function var_0_18(arg_8_0, arg_8_1)
 			button_hotspot = {
 				allow_multi_hover = true
 			},
-			frame = var_8_2.texture,
-			shadow_frame = var_8_3.texture,
-			hover_frame = var_8_4.texture,
-			empty_hover_frame = var_8_5.texture,
-			empty_frame = var_8_6.texture,
+			frame = button_frame_02.texture,
+			shadow_frame = shadow_frame_02.texture,
+			hover_frame = frame_outer_glow_04.texture,
+			empty_hover_frame = frame_outer_glow_01.texture,
+			empty_frame = frame_bevel_01.texture,
 			open_slot_text = Localize("vs_lobby_slot_available"),
 			chat_button_hotspot = {},
 			kick_button_hotspot = {},
@@ -1059,8 +1191,8 @@ local function var_0_18(arg_8_0, arg_8_1)
 				}
 			},
 			frame = {
-				texture_size = var_8_2.texture_size,
-				texture_sizes = var_8_2.texture_sizes,
+				texture_size = button_frame_02.texture_size,
+				texture_sizes = button_frame_02.texture_sizes,
 				color = {
 					255,
 					255,
@@ -1074,8 +1206,8 @@ local function var_0_18(arg_8_0, arg_8_1)
 				}
 			},
 			empty_frame = {
-				texture_size = var_8_6.texture_size,
-				texture_sizes = var_8_6.texture_sizes,
+				texture_size = frame_bevel_01.texture_size,
+				texture_sizes = frame_bevel_01.texture_sizes,
 				color = {
 					255,
 					255,
@@ -1093,8 +1225,8 @@ local function var_0_18(arg_8_0, arg_8_1)
 					-14,
 					-14
 				},
-				texture_size = var_8_3.texture_size,
-				texture_sizes = var_8_3.texture_sizes,
+				texture_size = shadow_frame_02.texture_size,
+				texture_sizes = shadow_frame_02.texture_sizes,
 				color = {
 					255,
 					0,
@@ -1112,8 +1244,8 @@ local function var_0_18(arg_8_0, arg_8_1)
 					-14,
 					-14
 				},
-				texture_size = var_8_4.texture_size,
-				texture_sizes = var_8_4.texture_sizes,
+				texture_size = frame_outer_glow_04.texture_size,
+				texture_sizes = frame_outer_glow_04.texture_sizes,
 				color = {
 					255,
 					255,
@@ -1131,8 +1263,8 @@ local function var_0_18(arg_8_0, arg_8_1)
 					-14,
 					-14
 				},
-				texture_size = var_8_5.texture_size,
-				texture_sizes = var_8_5.texture_sizes,
+				texture_size = frame_outer_glow_01.texture_size,
+				texture_sizes = frame_outer_glow_01.texture_sizes,
 				color = {
 					255,
 					100,
@@ -1200,11 +1332,11 @@ local function var_0_18(arg_8_0, arg_8_1)
 				vertical_alignment = "center",
 				horizontal_alignment = "left",
 				texture_size = {
-					var_8_1[2] - 6,
-					var_8_1[2] - 6
+					size[2] - 6,
+					size[2] - 6
 				},
 				offset = {
-					20 + var_8_9[1],
+					20 + tbl[1],
 					0,
 					1
 				}
@@ -1227,9 +1359,9 @@ local function var_0_18(arg_8_0, arg_8_1)
 				font_type = "arial",
 				font_size = 22,
 				horizontal_alignment = "left",
-				text_color = var_8_7,
+				text_color = get_color_table_with_alpha,
 				offset = {
-					120 + var_8_9[1],
+					120 + tbl[1],
 					-20,
 					2
 				}
@@ -1241,7 +1373,7 @@ local function var_0_18(arg_8_0, arg_8_1)
 				horizontal_alignment = "left",
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				offset = {
-					120 + var_8_9[1],
+					120 + tbl[1],
 					-50,
 					2
 				}
@@ -1249,7 +1381,7 @@ local function var_0_18(arg_8_0, arg_8_1)
 			insignia_main = {
 				vertical_alignment = "top",
 				horizontal_alignment = "left",
-				texture_size = var_8_9,
+				texture_size = tbl,
 				color = {
 					255,
 					255,
@@ -1265,7 +1397,7 @@ local function var_0_18(arg_8_0, arg_8_1)
 			insignia_addon = {
 				vertical_alignment = "top",
 				horizontal_alignment = "left",
-				texture_size = var_8_9,
+				texture_size = tbl,
 				color = {
 					255,
 					255,
@@ -1283,7 +1415,7 @@ local function var_0_18(arg_8_0, arg_8_1)
 				horizontal_alignment = "right",
 				texture_size = {
 					5,
-					var_8_1[2] - 10
+					size[2] - 10
 				},
 				color = {
 					255,
@@ -1632,31 +1764,51 @@ local function var_0_18(arg_8_0, arg_8_1)
 	}
 end
 
-local var_0_19 = {
+local tbl_12 = {
 	on_enter = {
 		{
 			name = "entry",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
-				local var_33_0 = math.random() < 0.01
+			init = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+				-- function 33
+				local flag = math.random() < 0.01
+				local ease_out_elastic
 
-				arg_33_3.ease = var_33_0 and math.ease_out_elastic or math.easeOutCubic
-				arg_33_3.offset = var_33_0 and 100 or 200
+				if not flag then
+					ease_out_elastic = math.ease_out_elastic
 
-				local var_33_1 = arg_33_3.offset
+					if not ease_out_elastic then
+						-- Nothing
+					end
+				end
 
-				arg_33_0.team_1.position[1] = arg_33_1.team_1.position[1] - var_33_1
-				arg_33_0.team_2.position[1] = arg_33_1.team_2.position[1] + var_33_1
+				ease_out_elastic = math.easeOutCubic
+
+				::label_33_0::
+
+				arg_33_3.ease = ease_out_elastic
+
+				local flag_2
+
+				flag_2 = not flag and 100 and 200
+				arg_33_3.offset = flag_2
+
+				local offset = arg_33_3.offset
+
+				arg_33_0.team_1.position[1] = arg_33_1.team_1.position[1] - offset
+				arg_33_0.team_2.position[1] = arg_33_1.team_2.position[1] + offset
 			end,
-			update = function(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
-				local var_34_0 = (1 - arg_34_4.ease(arg_34_3)) * arg_34_4.offset
+			update = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
+				-- function 34
+				local num = (1 - arg_34_4.ease(arg_34_3)) * arg_34_4.offset
 
-				arg_34_0.team_1.position[1] = arg_34_1.team_1.position[1] - var_34_0
-				arg_34_0.team_2.position[1] = arg_34_1.team_2.position[1] + var_34_0
-				arg_34_0.leave_game_button.position[1] = arg_34_1.leave_game_button.position[1] + var_34_0
+				arg_34_0.team_1.position[1] = arg_34_1.team_1.position[1] - num
+				arg_34_0.team_2.position[1] = arg_34_1.team_2.position[1] + num
+				arg_34_0.leave_game_button.position[1] = arg_34_1.leave_game_button.position[1] + num
 			end,
-			on_complete = function(arg_35_0, arg_35_1, arg_35_2, arg_35_3)
+			on_complete = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3)
+				-- function 35
 				return
 			end
 		}
@@ -1664,11 +1816,11 @@ local var_0_19 = {
 }
 
 return {
-	create_player_panel_widget = var_0_18,
+	create_player_panel_widget = fn_4,
 	loading_spinner_definition = UIWidgets.create_loading_spinner("menu_root"),
 	console_cursor_definition = UIWidgets.create_console_cursor("console_cursor"),
-	animation_definitions = var_0_19,
-	scenegraph_definition = var_0_5,
-	widget_definitions = var_0_14,
-	host_widget_definitions = var_0_15
+	animation_definitions = tbl_12,
+	scenegraph_definition = tbl_5,
+	widget_definitions = tbl_10,
+	host_widget_definitions = tbl_11
 }

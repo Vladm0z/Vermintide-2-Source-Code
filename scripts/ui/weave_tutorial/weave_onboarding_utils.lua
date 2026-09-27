@@ -1,39 +1,48 @@
 -- chunkname: @scripts/ui/weave_tutorial/weave_onboarding_utils.lua
 
+local WeaveOnboardingUtils = WeaveOnboardingUtils
+
 WeaveOnboardingUtils = WeaveOnboardingUtils or {}
+WeaveOnboardingUtils = WeaveOnboardingUtils
 
-local var_0_0 = "scorpion_onboarding_step"
-local var_0_1 = "scorpion_ui_onboarding_state"
+local str = "scorpion_onboarding_step"
+local str_2 = "scorpion_ui_onboarding_state"
 
-function WeaveOnboardingUtils.tutorial_completed(arg_1_0, arg_1_1)
-	return arg_1_1.ui_onboarding_bit ~= 0 and bit.band(arg_1_0, arg_1_1.ui_onboarding_bit) == arg_1_1.ui_onboarding_bit
+WeaveOnboardingUtils.tutorial_completed = function (arg_1_0, arg_1_1)
+	-- function 1
+	return arg_1_1.ui_onboarding_bit == 0 or bit.band(arg_1_0, arg_1_1.ui_onboarding_bit) == arg_1_1.ui_onboarding_bit
 end
 
-function WeaveOnboardingUtils.reached_requirements(arg_2_0, arg_2_1)
+WeaveOnboardingUtils.reached_requirements = function (arg_2_0, arg_2_1)
+	-- function 2
 	return arg_2_0 >= arg_2_1.onboarding_step
 end
 
-function WeaveOnboardingUtils.complete_tutorial(arg_3_0, arg_3_1, arg_3_2)
-	if arg_3_0 and arg_3_1 and arg_3_2 then
-		local var_3_0 = WeaveOnboardingUtils.get_ui_onboarding_state(arg_3_0, arg_3_1)
-		local var_3_1 = bit.bor(var_3_0, arg_3_2.ui_onboarding_bit)
+WeaveOnboardingUtils.complete_tutorial = function (self, arg_3_1, arg_3_2)
+	-- function 3
+	if not self and not arg_3_1 and not arg_3_2 then
+		local get_ui_onboarding_state = WeaveOnboardingUtils.get_ui_onboarding_state(self, arg_3_1)
+		local bor = bit.bor(get_ui_onboarding_state, arg_3_2.ui_onboarding_bit)
 
-		arg_3_0:set_stat(arg_3_1, var_0_1, var_3_1)
+		self:set_stat(arg_3_1, str_2, bor)
 	end
 end
 
-function WeaveOnboardingUtils.get_onboarding_step(arg_4_0, arg_4_1)
-	return arg_4_0:get_persistent_stat(arg_4_1, var_0_0)
+WeaveOnboardingUtils.get_onboarding_step = function (self, arg_4_1)
+	-- function 4
+	return self:get_persistent_stat(arg_4_1, str)
 end
 
-function WeaveOnboardingUtils.get_ui_onboarding_state(arg_5_0, arg_5_1)
-	return arg_5_0:get_persistent_stat(arg_5_1, var_0_1)
+WeaveOnboardingUtils.get_ui_onboarding_state = function (self, arg_5_1)
+	-- function 5
+	return self:get_persistent_stat(arg_5_1, str_2)
 end
 
-function WeaveOnboardingUtils.complete_onboarding()
-	local var_6_0 = Managers.player:statistics_db()
-	local var_6_1 = Managers.player:local_player():stats_id()
+WeaveOnboardingUtils.complete_onboarding = function ()
+	-- function 6
+	local statistics_db = Managers.player:statistics_db()
+	local stats_id = Managers.player:local_player():stats_id()
 
-	var_6_0:set_stat(var_6_1, var_0_0, 10)
-	var_6_0:set_stat(var_6_1, var_0_1, -1)
+	statistics_db:set_stat(stats_id, str, 10)
+	statistics_db:set_stat(stats_id, str_2, -1)
 end

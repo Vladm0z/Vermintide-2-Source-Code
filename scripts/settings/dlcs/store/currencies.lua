@@ -1,7 +1,14 @@
 -- chunkname: @scripts/settings/dlcs/store/currencies.lua
 
+local Currencies = Currencies
+
 Currencies = Currencies or {}
+Currencies = Currencies
+
+local CanWieldAllItemTemplates = CanWieldAllItemTemplates
+
 CanWieldAllItemTemplates = CanWieldAllItemTemplates or {}
+CanWieldAllItemTemplates = CanWieldAllItemTemplates
 Currencies.shillings_01 = {
 	description = "shilling_bag_1_description",
 	rarity = "common",

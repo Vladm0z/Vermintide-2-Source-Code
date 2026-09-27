@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/morris/arena_cave/generated/tzeentch_path1/world_nav_tag_volumes.lua
 
-local var_0_0 = {
+local tbl = {
 	nospawn_path_001 = {
 		delay_nav_tag_volume_creation = true,
 		alt_max = 13.877443313598633,
@@ -164,9 +164,9 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = "1"
+local str = "1"
 
 return {
-	version = var_0_1,
-	nav_tag_volumes = var_0_0
+	version = str,
+	nav_tag_volumes = tbl
 }

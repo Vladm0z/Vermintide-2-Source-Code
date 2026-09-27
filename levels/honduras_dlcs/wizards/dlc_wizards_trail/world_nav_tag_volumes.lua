@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/wizards/dlc_wizards_trail/world_nav_tag_volumes.lua
 
-local var_0_0 = {
+local tbl = {
 	volume_layer_24 = {
 		delay_nav_tag_volume_creation = false,
 		alt_max = 357.9277648925781,
@@ -3191,9 +3191,9 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = "1"
+local str = "1"
 
 return {
-	version = var_0_1,
-	nav_tag_volumes = var_0_0
+	version = str,
+	nav_tag_volumes = tbl
 }

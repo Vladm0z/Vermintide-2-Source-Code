@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/morris/pat_mountain/generated/tzeentch_path3/world_smartobjects.lua
 
-local var_0_0 = {
+local tbl = {
 	["3c75a04f-271e-4b8b-98fa-1900f3ed9814"] = {
 		{
 			smart_object_index = 330,
@@ -8719,13 +8719,13 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = 368
-local var_0_2 = "v1"
-local var_0_3 = "2017.MAY.05.05"
+local num = 368
+local str = "v1"
+local str_2 = "2017.MAY.05.05"
 
 return {
-	smart_objects = var_0_0,
-	smart_object_count = var_0_1,
-	version = var_0_2,
-	ledgelator_version = var_0_3
+	smart_objects = tbl,
+	smart_object_count = num,
+	version = str,
+	ledgelator_version = str_2
 }

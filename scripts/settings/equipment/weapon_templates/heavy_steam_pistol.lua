@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/heavy_steam_pistol.lua
 
-local var_0_0 = {
+local tbl = {
 	actions = {
 		action_one = {
 			default = {
@@ -25,7 +25,8 @@ local var_0_0 = {
 				can_abort_reload = false,
 				reload_time = 0.1,
 				total_time = 1,
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
+					-- function 1
 					return arg_1_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {
@@ -76,7 +77,8 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_2_0, arg_2_1)
+				enter_function = function (arg_2_0, arg_2_1)
+					-- function 2
 					arg_2_1:clear_input_buffer()
 
 					return arg_2_1:reset_release_input()
@@ -136,7 +138,8 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_3_0, arg_3_1)
+				enter_function = function (arg_3_0, arg_3_1)
+					-- function 3
 					arg_3_1:clear_input_buffer()
 
 					return arg_3_1:reset_release_input()
@@ -234,7 +237,8 @@ local var_0_0 = {
 						input = "action_two_hold"
 					}
 				},
-				enter_function = function(arg_4_0, arg_4_1)
+				enter_function = function (arg_4_0, arg_4_1)
+					-- function 4
 					arg_4_1:clear_input_buffer()
 					Managers.state.achievement:trigger_event("steam_alt_fire", arg_4_0)
 
@@ -270,7 +274,8 @@ local var_0_0 = {
 				hold_input = "action_two_hold",
 				can_abort_reload = false,
 				allow_hold_toggle = true,
-				anim_end_event_condition_func = function(arg_5_0, arg_5_1)
+				anim_end_event_condition_func = function (arg_5_0, arg_5_1)
+					-- function 5
 					return arg_5_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -307,14 +312,16 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				condition_func = function(arg_6_0, arg_6_1, arg_6_2)
-					if arg_6_2 and arg_6_2:total_remaining_ammo() <= 0 then
+				condition_func = function (arg_6_0, arg_6_1, arg_6_2)
+					-- function 6
+					if not (not arg_6_2 and not (arg_6_2:total_remaining_ammo() <= 0)) then
 						return false
 					end
 
 					return true
 				end,
-				zoom_condition_function = function()
+				zoom_condition_function = function ()
+					-- function 7
 					return false
 				end
 			}
@@ -339,31 +346,31 @@ local var_0_0 = {
 	}
 }
 
-var_0_0.jump_anim_enabled_1p = true
-var_0_0.spread_lerp_speed = 5
-var_0_0.default_spread_template = "pistol_special"
-var_0_0.right_hand_unit = ""
-var_0_0.right_hand_attachment_node_linking = AttachmentNodeLinking.steam_pistol
-var_0_0.display_unit = "units/weapons/weapon_display/display_1h_grudge_raker"
-var_0_0.wield_anim = "to_steam_pistol"
-var_0_0.wield_anim_career = {
+tbl.jump_anim_enabled_1p = true
+tbl.spread_lerp_speed = 5
+tbl.default_spread_template = "pistol_special"
+tbl.right_hand_unit = ""
+tbl.right_hand_attachment_node_linking = AttachmentNodeLinking.steam_pistol
+tbl.display_unit = "units/weapons/weapon_display/display_1h_grudge_raker"
+tbl.wield_anim = "to_steam_pistol"
+tbl.wield_anim_career = {
 	dr_ironbreaker = "to_steam_pistol_ib",
 	dr_engineer = "to_steam_pistol_engi"
 }
-var_0_0.wield_anim_no_ammo = "to_steam_pistol_noammo"
-var_0_0.wield_anim_no_ammo_career = {
+tbl.wield_anim_no_ammo = "to_steam_pistol_noammo"
+tbl.wield_anim_no_ammo_career = {
 	dr_ironbreaker = "to_steam_pistol_noammo_ib",
 	dr_engineer = "to_steam_pistol_noammo_engi"
 }
-var_0_0.state_machine = "units/beings/player/first_person_base/state_machines/ranged/steam_pistol"
-var_0_0.no_ammo_reload_event = "reload"
-var_0_0.reload_event = "reload"
-var_0_0.crosshair_style = "default"
-var_0_0.gui_texture = "hud_weapon_icon_repeating_handgun"
-var_0_0.buff_type = "RANGED"
-var_0_0.weapon_type = "BRACE_OF_PISTOLS"
-var_0_0.dodge_count = 100
-var_0_0.buffs = {
+tbl.state_machine = "units/beings/player/first_person_base/state_machines/ranged/steam_pistol"
+tbl.no_ammo_reload_event = "reload"
+tbl.reload_event = "reload"
+tbl.crosshair_style = "default"
+tbl.gui_texture = "hud_weapon_icon_repeating_handgun"
+tbl.buff_type = "RANGED"
+tbl.weapon_type = "BRACE_OF_PISTOLS"
+tbl.dodge_count = 100
+tbl.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1.25
 	},
@@ -371,7 +378,7 @@ var_0_0.buffs = {
 		external_optional_multiplier = 1.25
 	}
 }
-var_0_0.aim_assist_settings = {
+tbl.aim_assist_settings = {
 	max_range = 22,
 	no_aim_input_multiplier = 0,
 	aim_at_node = "j_spine",
@@ -384,7 +391,7 @@ var_0_0.aim_assist_settings = {
 		skaven_slave = 1
 	}
 }
-var_0_0.attack_meta_data = {
+tbl.attack_meta_data = {
 	aim_at_node = "j_spine1",
 	fire_input = "fire_hold",
 	ignore_enemies_for_obstruction = true,
@@ -400,16 +407,17 @@ var_0_0.attack_meta_data = {
 		min_radius = math.pi / 72,
 		max_radius = math.pi / 16
 	},
-	hold_fire_condition = function(arg_8_0, arg_8_1)
-		if arg_8_1 then
-			local var_8_0 = arg_8_1.inventory_extension
-			local var_8_1, var_8_2, var_8_3 = CharacterStateHelper.get_item_data_and_weapon_extensions(var_8_0)
-			local var_8_4 = CharacterStateHelper.get_current_action_data(var_8_3, var_8_2)
+	hold_fire_condition = function (arg_8_0, arg_8_1)
+		-- function 8
+		if not arg_8_1 then
+			local inventory_extension = arg_8_1.inventory_extension
+			local get_item_data_and_weapon_extensions, var_8_2, var_8_3 = CharacterStateHelper.get_item_data_and_weapon_extensions(inventory_extension)
+			local get_current_action_data = CharacterStateHelper.get_current_action_data(var_8_3, var_8_2)
 
-			if var_8_4 then
-				local var_8_5 = var_8_4.lookup_data
+			if not get_current_action_data then
+				local lookup_data = get_current_action_data.lookup_data
 
-				return var_8_5 and var_8_5.action_name == "action_one" and var_8_5.sub_action_name == "default"
+				return not lookup_data and lookup_data.action_name ~= "action_one" or lookup_data.sub_action_name == "default"
 			end
 		end
 
@@ -417,13 +425,13 @@ var_0_0.attack_meta_data = {
 	end,
 	effective_against = bit.bor(BreedCategory.Berserker, BreedCategory.Special, BreedCategory.Armored)
 }
-var_0_0.wwise_dep_right_hand = {
+tbl.wwise_dep_right_hand = {
 	"wwise/steampistol"
 }
-var_0_0.wwise_dep_left_hand = {
+tbl.wwise_dep_left_hand = {
 	"wwise/steampistol"
 }
-var_0_0.weapon_diagram = {
+tbl.weapon_diagram = {
 	light_attack = {
 		[DamageTypes.ARMOR_PIERCING] = 6,
 		[DamageTypes.CLEAVE] = 2,
@@ -439,12 +447,12 @@ var_0_0.weapon_diagram = {
 		[DamageTypes.DAMAGE] = 7
 	}
 }
-var_0_0.tooltip_keywords = {
+tbl.tooltip_keywords = {
 	"weapon_keyword_high_damage",
 	"weapon_keyword_rapid_fire",
 	"weapon_keyword_versatile"
 }
-var_0_0.tooltip_compare = {
+tbl.tooltip_compare = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -454,7 +462,7 @@ var_0_0.tooltip_compare = {
 		sub_action_name = "fast_shot"
 	}
 }
-var_0_0.tooltip_detail = {
+tbl.tooltip_detail = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -465,13 +473,13 @@ var_0_0.tooltip_detail = {
 	}
 }
 
-local var_0_1 = table.clone(var_0_0)
+local clone = table.clone(tbl)
 
-var_0_1.actions.action_one.default.impact_data.damage_profile = "shot_sniper_pistol_vs"
-var_0_1.actions.action_one.shoot.impact_data.damage_profile = "shot_sniper_pistol_vs"
-var_0_1.actions.action_one.fast_shot.impact_data.damage_profile = "shot_sniper_pistol_vs"
+clone.actions.action_one.default.impact_data.damage_profile = "shot_sniper_pistol_vs"
+clone.actions.action_one.shoot.impact_data.damage_profile = "shot_sniper_pistol_vs"
+clone.actions.action_one.fast_shot.impact_data.damage_profile = "shot_sniper_pistol_vs"
 
 return {
-	heavy_steam_pistol_template_1 = table.clone(var_0_0),
-	heavy_steam_pistol_template_1_vs = table.clone(var_0_1)
+	heavy_steam_pistol_template_1 = table.clone(tbl),
+	heavy_steam_pistol_template_1_vs = table.clone(clone)
 }

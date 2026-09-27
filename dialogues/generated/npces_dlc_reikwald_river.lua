@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/npces_dlc_reikwald_river.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		response = "npc_reik2_barricade_a",
 		name = "npc_reik2_barricade_a",

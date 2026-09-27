@@ -1,31 +1,50 @@
 -- chunkname: @core/wwise/lua/wwise_bank_reference.lua
 
+local WwiseBankReference = WwiseBankReference
+
 WwiseBankReference = WwiseBankReference or {}
+WwiseBankReference = WwiseBankReference
 
-local function var_0_0(arg_1_0)
-	if not arg_1_0.references then
-		arg_1_0.references = {}
+local function fn(self)
+	-- function 1
+	if not self.references then
+		self.references = {}
 	end
 end
 
-function WwiseBankReference.add(arg_2_0, arg_2_1)
-	var_0_0(arg_2_0)
+WwiseBankReference.add = function (self, arg_2_1)
+	-- function 2
+	fn(self)
 
-	arg_2_0.references[arg_2_1] = (arg_2_0.references[arg_2_1] or 0) + 1
+	local references = self.references
+	local var_2_1 = self.references[arg_2_1]
+
+	var_2_1 = var_2_1 or 0
+	references[arg_2_1] = var_2_1 + 1
 end
 
-function WwiseBankReference.remove(arg_3_0, arg_3_1)
-	var_0_0(arg_3_0)
+WwiseBankReference.remove = function (self, arg_3_1)
+	-- function 3
+	fn(self)
 
-	if (arg_3_0.references[arg_3_1] or 0) - 1 <= 0 then
-		arg_3_0.references[arg_3_1] = nil
+	local var_3_0 = self.references[arg_3_1]
+
+	var_3_0 = var_3_0 or 0
+
+	if var_3_0 - 1 <= 0 then
+		self.references[arg_3_1] = nil
 	end
 end
 
-function WwiseBankReference.count(arg_4_0, arg_4_1)
-	var_0_0(arg_4_0)
+WwiseBankReference.count = function (self, arg_4_1)
+	-- function 4
+	fn(self)
 
-	return arg_4_0.references[arg_4_1] or 0
+	local var_4_0 = self.references[arg_4_1]
+
+	var_4_0 = var_4_0 or 0
+
+	return var_4_0
 end
 
 return WwiseBankReference

@@ -1,12 +1,13 @@
 -- chunkname: @scripts/ui/views/level_end/states/definitions/end_view_state_score_vs_definitions.lua
 
-local var_0_0 = 20
-local var_0_1 = {
+local num = 20
+local tbl = {
 	{
 		class_name = "EndViewStateScoreVSTabReport",
 		name = "end_view_state_score_vs_tab_report",
 		display_name = "end_view_state_score_vs_tab_report_display_name",
-		condition_func = function()
+		condition_func = function ()
+			-- function 1
 			return not GameSettingsDevelopment.read_only_backend
 		end
 	},
@@ -16,11 +17,11 @@ local var_0_1 = {
 		display_name = "end_view_state_score_vs_tab_details_display_name"
 	}
 }
-local var_0_2 = {
+local tbl_2 = {
 	210,
 	48
 }
-local var_0_3 = {
+local tbl_3 = {
 	screen = {
 		scale = "fit",
 		size = {
@@ -134,11 +135,11 @@ local var_0_3 = {
 		horizontal_alignment = "right",
 		size = {
 			0,
-			var_0_2[2]
+			tbl_2[2]
 		},
 		position = {
 			-300,
-			-110 + var_0_2[2] * 0.5,
+			-110 + tbl_2[2] * 0.5,
 			14
 		}
 	},
@@ -147,7 +148,7 @@ local var_0_3 = {
 		parent = "tab",
 		horizontal_alignment = "center",
 		size = {
-			var_0_2[1],
+			tbl_2[1],
 			2
 		},
 		position = {
@@ -239,19 +240,19 @@ local var_0_3 = {
 		}
 	}
 }
-local var_0_4 = {
+local tbl_4 = {
 	255,
 	197,
 	188,
 	175
 }
-local var_0_5 = Colors.get_color_table_with_alpha("local_player_team", 255)
-local var_0_6 = Colors.get_color_table_with_alpha("local_player_team_lighter", 255)
-local var_0_7 = Colors.get_color_table_with_alpha("local_player_team_darker", 255)
-local var_0_8 = Colors.get_color_table_with_alpha("opponent_team", 255)
-local var_0_9 = Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
-local var_0_10 = Colors.get_color_table_with_alpha("opponent_team_darkened", 255)
-local var_0_11 = {
+local get_color_table_with_alpha = Colors.get_color_table_with_alpha("local_player_team", 255)
+local get_color_table_with_alpha_2 = Colors.get_color_table_with_alpha("local_player_team_lighter", 255)
+local get_color_table_with_alpha_3 = Colors.get_color_table_with_alpha("local_player_team_darker", 255)
+local get_color_table_with_alpha_4 = Colors.get_color_table_with_alpha("opponent_team", 255)
+local get_color_table_with_alpha_5 = Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
+local get_color_table_with_alpha_6 = Colors.get_color_table_with_alpha("opponent_team_darkened", 255)
+local tbl_5 = {
 	word_wrap = true,
 	font_size = 150,
 	localize = false,
@@ -266,7 +267,7 @@ local var_0_11 = {
 		2
 	}
 }
-local var_0_12 = {
+local tbl_6 = {
 	word_wrap = true,
 	font_size = 52,
 	localize = false,
@@ -274,14 +275,14 @@ local var_0_12 = {
 	horizontal_alignment = "top",
 	vertical_alignment = "left",
 	font_type = "hell_shark_header",
-	text_color = var_0_4,
+	text_color = tbl_4,
 	offset = {
 		0,
 		0,
 		2
 	}
 }
-local var_0_13 = {
+local tbl_7 = {
 	word_wrap = true,
 	font_size = 28,
 	localize = false,
@@ -296,7 +297,7 @@ local var_0_13 = {
 		2
 	}
 }
-local var_0_14 = {
+local tbl_8 = {
 	word_wrap = true,
 	font_size = 24,
 	localize = false,
@@ -304,8 +305,8 @@ local var_0_14 = {
 	horizontal_alignment = "center",
 	vertical_alignment = "center",
 	font_type = "hell_shark_header",
-	text_color = var_0_4,
-	hover_color = var_0_4,
+	text_color = tbl_4,
+	hover_color = tbl_4,
 	base_color = {
 		255,
 		128,
@@ -318,7 +319,7 @@ local var_0_14 = {
 		2
 	}
 }
-local var_0_15 = {
+local tbl_9 = {
 	word_wrap = false,
 	upper_case = true,
 	localize = false,
@@ -339,8 +340,9 @@ local var_0_15 = {
 	}
 }
 
-local function var_0_16(arg_2_0, arg_2_1)
-	local var_2_0 = var_0_3[arg_2_0].size
+local function fn(arg_2_0, arg_2_1)
+	-- function 2
+	local size = tbl_3[arg_2_0].size
 
 	return {
 		element = {
@@ -367,7 +369,7 @@ local function var_0_16(arg_2_0, arg_2_1)
 					0,
 					0
 				},
-				texture_size = var_2_0
+				texture_size = size
 			}
 		},
 		offset = {
@@ -379,150 +381,201 @@ local function var_0_16(arg_2_0, arg_2_1)
 	}
 end
 
-local function var_0_17(arg_3_0, arg_3_1, arg_3_2)
-	local var_3_0 = arg_3_0 == "local_team"
-	local var_3_1 = var_3_0 and "team_icon_local" or "team_icon_opponent"
-	local var_3_2 = var_0_3[var_3_1]
-	local var_3_3 = table.clone(var_3_2.size)
+local function fn_2(arg_3_0, arg_3_1, arg_3_2)
+	-- function 3
+	local flag = arg_3_0 == "local_team"
+	local flag_2
 
-	var_3_3[1] = 140
+	flag_2 = not flag and "team_icon_local" and "team_icon_opponent"
+
+	local var_3_2 = tbl_3[flag_2]
+	local clone = table.clone(var_3_2.size)
+
+	clone[1] = 140
 
 	local var_3_4 = UISettings.teams_ui_assets[arg_3_1]
-	local var_3_5 = var_3_0 and Colors.get_color_table_with_alpha("local_player_team_lighter", 255) or Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
-	local var_3_6 = table.clone(var_0_15)
+	local get_color_table_with_alpha
 
-	var_3_6.size = var_3_3
-	var_3_6.text_color = var_3_5
-	var_3_6.offset = {
+	if not flag then
+		get_color_table_with_alpha = Colors.get_color_table_with_alpha("local_player_team_lighter", 255)
+
+		if not get_color_table_with_alpha then
+			-- Nothing
+		end
+	end
+
+	get_color_table_with_alpha = Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
+
+	::label_3_0::
+
+	local clone_2 = table.clone(tbl_9)
+
+	clone_2.size = clone
+	clone_2.text_color = get_color_table_with_alpha
+	clone_2.offset = {
 		70,
 		0,
 		0
 	}
 
-	local var_3_7 = {
+	local tbl = {
 		element = {
 			passes = {}
 		},
 		content = {},
 		style = {},
-		scenegraph_id = var_3_1,
+		scenegraph_id = flag_2,
 		offset = {
 			0,
 			0,
 			0
 		}
 	}
-	local var_3_8 = var_3_7.element.passes
-	local var_3_9 = var_3_7.content
-	local var_3_10 = var_3_7.style
+	local passes = tbl.element.passes
+	local content = tbl.content
+	local style = tbl.style
 
-	var_3_8[#var_3_8 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture",
 		style_id = "icon",
 		texture_id = "icon"
 	}
-	var_3_8[#var_3_8 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture",
 		style_id = "icon_bg",
 		texture_id = "icon_bg"
 	}
-	var_3_9.icon = var_3_4.team_icon
-	var_3_9.icon_bg = var_3_4.background_texture
-	var_3_10.icon = {
+	content.icon = var_3_4.team_icon
+	content.icon_bg = var_3_4.background_texture
+	style.icon = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
 		texture_size = {
 			80,
 			80
 		},
-		color = var_3_5,
+		color = get_color_table_with_alpha,
 		offset = {
 			-70,
 			0,
 			2
 		}
 	}
-	var_3_10.icon_bg = table.clone(var_3_10.icon)
-	var_3_10.icon_bg.texture_size = {
+	style.icon_bg = table.clone(style.icon)
+	style.icon_bg.texture_size = {
 		80,
 		80
 	}
-	var_3_10.icon_bg.offset[3] = 0
-	var_3_10.icon_bg.color = var_3_5
-	var_3_8[#var_3_8 + 1] = {
+	style.icon_bg.offset[3] = 0
+	style.icon_bg.color = get_color_table_with_alpha
+	passes[#passes + 1] = {
 		style_id = "score",
 		pass_type = "text",
 		text_id = "score"
 	}
-	var_3_8[#var_3_8 + 1] = {
+	passes[#passes + 1] = {
 		style_id = "score_shadow",
 		pass_type = "text",
 		text_id = "score"
 	}
-	var_3_9.score = tostring(arg_3_2)
-	var_3_10.score = var_3_6
-	var_3_10.score_shadow = table.clone(var_3_6)
-	var_3_10.score_shadow.text_color = {
+	content.score = tostring(arg_3_2)
+	style.score = clone_2
+	style.score_shadow = table.clone(clone_2)
+	style.score_shadow.text_color = {
 		255,
 		0,
 		0,
 		0
 	}
-	var_3_10.score_shadow.offset = {
-		var_3_10.score_shadow.offset[1] + 1,
+	style.score_shadow.offset = {
+		style.score_shadow.offset[1] + 1,
 		-1,
 		-1
 	}
 
-	return var_3_7
+	return tbl
 end
 
-local function var_0_18(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
-	local var_4_0 = arg_4_3 and arg_4_3.offset or {
+local function fn_3(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	-- function 4
+	local offset
+
+	if not arg_4_3 then
+		offset = arg_4_3.offset
+
+		if not offset then
+			-- Nothing
+		end
+	end
+
+	offset = {
 		0,
 		0,
 		2
 	}
-	local var_4_1 = arg_4_3 and arg_4_3.text_color or {
+
+	do
+		local text_color
+	end
+
+	::label_4_0::
+
+	if not arg_4_3 then
+		text_color = arg_4_3.text_color
+
+		if not text_color then
+			-- Nothing
+		end
+	end
+
+	text_color = {
 		255,
 		255,
 		255,
 		255
 	}
-	local var_4_2 = table.clone(arg_4_3)
-	local var_4_3 = arg_4_3.shadow_color or {
+
+	::label_4_1::
+
+	local clone = table.clone(arg_4_3)
+	local shadow_color = arg_4_3.shadow_color
+
+	shadow_color = shadow_color or {
 		255,
 		0,
 		0,
 		0
 	}
-	local var_4_4 = arg_4_3.shadow_offset or {
+
+	local shadow_offset = arg_4_3.shadow_offset
+
+	shadow_offset = shadow_offset or {
 		2,
 		2,
 		0
 	}
-
-	var_4_3[1] = var_4_1[1]
-	var_4_2.text_color = var_4_3
-	var_4_2.offset = {
-		var_4_0[1] + var_4_4[1],
-		var_4_0[2] - var_4_4[2],
-		var_4_0[3] - 1
+	shadow_color[1] = text_color[1]
+	clone.text_color = shadow_color
+	clone.offset = {
+		offset[1] + shadow_offset[1],
+		offset[2] - shadow_offset[2],
+		offset[3] - 1
 	}
-	var_4_2.skip_button_rendering = true
+	clone.skip_button_rendering = true
 
-	local var_4_5 = table.clone(arg_4_3)
+	local clone_2 = table.clone(arg_4_3)
 
-	var_4_5.offset[1] = var_4_5.font_size * 0.75
+	clone_2.offset[1] = clone_2.font_size * 0.75
 
-	return {
+	local tbl = {
 		element = {
 			passes = {
 				{
 					style_id = "hotspot",
 					pass_type = "hotspot",
 					content_id = "hotspot",
-					content_check_function = function(arg_5_0, arg_5_1)
+					content_check_function = function (arg_5_0, arg_5_1)
+						-- function 5
 						return not Managers.input:is_device_active("gamepad")
 					end
 				},
@@ -530,18 +583,35 @@ local function var_0_18(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_6_0, arg_6_1)
+					content_check_function = function (arg_6_0, arg_6_1)
+						-- function 6
 						return not Managers.input:is_device_active("gamepad")
 					end,
-					content_change_function = function(arg_7_0, arg_7_1)
-						arg_7_1.text_color = arg_7_0.hotspot.is_hover and arg_7_1.hover_color or arg_7_1.base_color
+					content_change_function = function (self, arg_7_1)
+						-- function 7
+						local hover_color
+
+						if not self.hotspot.is_hover then
+							hover_color = arg_7_1.hover_color
+
+							if not hover_color then
+								-- Nothing
+							end
+						end
+
+						hover_color = arg_7_1.base_color
+
+						::label_7_0::
+
+						arg_7_1.text_color = hover_color
 					end
 				},
 				{
 					style_id = "gamepad_text",
 					pass_type = "text",
 					text_id = "gamepad_text",
-					content_check_function = function(arg_8_0, arg_8_1)
+					content_check_function = function (arg_8_0, arg_8_1)
+						-- function 8
 						return Managers.input:is_device_active("gamepad")
 					end
 				},
@@ -549,47 +619,65 @@ local function var_0_18(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_9_0, arg_9_1)
+					content_check_function = function (arg_9_0, arg_9_1)
+						-- function 9
 						return not Managers.input:is_device_active("gamepad")
 					end
 				}
 			}
-		},
-		content = {
-			text = arg_4_0,
-			gamepad_text = arg_4_1,
-			original_text = arg_4_0,
-			color = var_4_1,
-			use_shadow = arg_4_3 and arg_4_3.use_shadow or false,
-			hotspot = {}
-		},
-		style = {
-			hotspot = {
-				vertical_alignment = "bottom",
-				horizontal_alignment = "center",
-				area_size = {
-					60,
-					60
-				}
-			},
-			text = arg_4_3,
-			gamepad_text = var_4_5,
-			text_shadow = var_4_2
-		},
-		offset = {
-			0,
-			0,
-			0
-		},
-		scenegraph_id = arg_4_2
+		}
 	}
+	local tbl_2 = {
+		text = arg_4_0,
+		gamepad_text = arg_4_1,
+		original_text = arg_4_0,
+		color = text_color
+	}
+	local use_shadow
+
+	if not arg_4_3 then
+		use_shadow = arg_4_3.use_shadow
+
+		if not use_shadow then
+			-- Nothing
+		end
+	end
+
+	use_shadow = false
+
+	::label_4_2::
+
+	tbl_2.use_shadow = use_shadow
+	tbl_2.hotspot = {}
+	tbl.content = tbl_2
+	tbl.style = {
+		hotspot = {
+			vertical_alignment = "bottom",
+			horizontal_alignment = "center",
+			area_size = {
+				60,
+				60
+			}
+		},
+		text = arg_4_3,
+		gamepad_text = clone_2,
+		text_shadow = clone
+	}
+	tbl.offset = {
+		0,
+		0,
+		0
+	}
+	tbl.scenegraph_id = arg_4_2
+
+	return tbl
 end
 
-local var_0_19 = true
-local var_0_20 = {
+local flag = true
+local tbl_10 = {
 	level = UIWidgets.create_level_widget("level"),
-	level_text = UIWidgets.create_simple_text("Righteous Stand", "level_text", nil, nil, var_0_12),
-	match_finsihed_text = UIWidgets.create_simple_text(Localize("vs_match_completed"), "match_finished_text", nil, nil, var_0_13),
+	level_text = UIWidgets.create_simple_text("Righteous Stand", "level_text", nil, nil, tbl_6),
+	match_finsihed_text = UIWidgets.create_simple_text(Localize("vs_match_completed"), "match_finished_text", nil, nil, tbl_7),
 	banner = UIWidgets.create_shader_tiled_texture("panel", "carousel_end_screen_panel", {
 		512,
 		200
@@ -608,35 +696,38 @@ local var_0_20 = {
 		0,
 		10
 	}),
-	tab_selection = var_0_16("tab_selection", {
+	tab_selection = fn("tab_selection", {
 		255,
 		201,
 		201,
 		201
 	}),
-	prev_tab = var_0_18("$KEY;ingame_menu__cycle_prev_raw:", "$KEY;ingame_menu__cycle_prev_raw:", "tab_selection", var_0_14),
-	next_tab = var_0_18("$KEY;ingame_menu__cycle_next_alt_raw:", "$KEY;ingame_menu__cycle_next_alt_raw:", "tab_selection", var_0_14),
-	back_to_keep_button = UIWidgets.create_default_button("back_to_keep_button", var_0_3.back_to_keep_button.size, nil, nil, Localize("return_to_inn"), 25, nil, nil, nil, var_0_19)
+	prev_tab = fn_3("$KEY;ingame_menu__cycle_prev_raw:", "$KEY;ingame_menu__cycle_prev_raw:", "tab_selection", tbl_8),
+	next_tab = fn_3("$KEY;ingame_menu__cycle_next_alt_raw:", "$KEY;ingame_menu__cycle_next_alt_raw:", "tab_selection", tbl_8),
+	back_to_keep_button = UIWidgets.create_default_button("back_to_keep_button", tbl_3.back_to_keep_button.size, nil, nil, Localize("return_to_inn"), 25, nil, nil, nil, flag)
 }
-local var_0_21 = {
+local tbl_11 = {
 	transition_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+				-- function 10
 				arg_10_3.render_settings.alpha_multiplier = 0
 				arg_10_0.panel.local_position[2] = arg_10_1.panel.position[2] + 200
 				arg_10_0.back_to_keep_button.local_position[2] = arg_10_1.back_to_keep_button.position[2] - 200
 			end,
-			update = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
-				local var_11_0 = math.easeOutCubic(arg_11_3)
+			update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+				-- function 11
+				local easeOutCubic = math.easeOutCubic(arg_11_3)
 
-				arg_11_4.render_settings.alpha_multiplier = var_11_0
-				arg_11_0.panel.local_position[2] = math.lerp(arg_11_1.panel.position[2] + 200, arg_11_1.panel.position[2], var_11_0)
-				arg_11_0.back_to_keep_button.local_position[2] = math.lerp(arg_11_1.back_to_keep_button.position[2] - 200, arg_11_1.back_to_keep_button.position[2], var_11_0)
+				arg_11_4.render_settings.alpha_multiplier = easeOutCubic
+				arg_11_0.panel.local_position[2] = math.lerp(arg_11_1.panel.position[2] + 200, arg_11_1.panel.position[2], easeOutCubic)
+				arg_11_0.back_to_keep_button.local_position[2] = math.lerp(arg_11_1.back_to_keep_button.position[2] - 200, arg_11_1.back_to_keep_button.position[2], easeOutCubic)
 			end,
-			on_complete = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			on_complete = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+				-- function 12
 				return
 			end
 		}
@@ -646,22 +737,26 @@ local var_0_21 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			init = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+				-- function 13
 				arg_13_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
-				local var_14_0 = math.easeInCubic(arg_14_3)
+			update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+				-- function 14
+				local easeInCubic = math.easeInCubic(arg_14_3)
 
-				arg_14_4.render_settings.alpha_multiplier = 1 - var_14_0
+				arg_14_4.render_settings.alpha_multiplier = 1 - easeInCubic
 			end,
-			on_complete = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+			on_complete = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+				-- function 15
 				return
 			end
 		}
 	}
 }
 
-local function var_0_22(arg_16_0, arg_16_1)
+local function fn_4(arg_16_0, arg_16_1)
+	-- function 16
 	return {
 		element = {
 			passes = {
@@ -674,16 +769,22 @@ local function var_0_22(arg_16_0, arg_16_1)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_17_0, arg_17_1)
-						return not arg_17_0.hotspot.is_hover and not arg_17_0.hotspot.is_selected
+					content_check_function = function (self, arg_17_1)
+						-- function 17
+						return not not self.hotspot.is_hover or not self.hotspot.is_selected
 					end
 				},
 				{
 					style_id = "hover_text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_18_0)
-						return arg_18_0.hotspot.is_hover or arg_18_0.hotspot.is_selected
+					content_check_function = function (self)
+						-- function 18
+						local is_hover = self.hotspot.is_hover
+
+						is_hover = is_hover or self.hotspot.is_selected
+
+						return is_hover
 					end
 				},
 				{
@@ -703,7 +804,7 @@ local function var_0_22(arg_16_0, arg_16_1)
 				horizontal_alignment = "center",
 				area_size = {
 					0,
-					var_0_2[2]
+					tbl_2[2]
 				}
 			},
 			text = {
@@ -728,7 +829,7 @@ local function var_0_22(arg_16_0, arg_16_1)
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				font_type = "hell_shark",
-				text_color = var_0_4,
+				text_color = tbl_4,
 				line_colors = {},
 				offset = {
 					0,
@@ -762,11 +863,11 @@ local function var_0_22(arg_16_0, arg_16_1)
 end
 
 return {
-	widgets = var_0_20,
-	tab_layouts = var_0_1,
-	scenegraph_definition = var_0_3,
-	animation_definitions = var_0_21,
-	create_tab = var_0_22,
-	tab_size = var_0_2,
-	create_team_score_func = var_0_17
+	widgets = tbl_10,
+	tab_layouts = tbl,
+	scenegraph_definition = tbl_3,
+	animation_definitions = tbl_11,
+	create_tab = fn_4,
+	tab_size = tbl_2,
+	create_team_score_func = fn_2
 }

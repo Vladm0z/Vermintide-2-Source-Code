@@ -1,30 +1,30 @@
 -- chunkname: @scripts/ui/views/options_view_definitions.lua
 
-local var_0_0 = 400
-local var_0_1 = {
+local num = 400
+local tbl = {
 	200,
 	0,
 	0,
 	0
 }
-local var_0_2 = {
+local tbl_2 = {
 	14,
 	14
 }
-local var_0_3 = {
-	var_0_0,
+local tbl_3 = {
+	num,
 	10
 }
-local var_0_4 = 2
-local var_0_5 = {
-	var_0_0,
+local num_2 = 2
+local tbl_4 = {
+	num,
 	30
 }
-local var_0_6 = 1400
-local var_0_7 = 900
-local var_0_8 = 2
-local var_0_9 = Colors.get_color_table_with_alpha("font_default", 50)
-local var_0_10 = {
+local num_3 = 1400
+local num_4 = 900
+local num_5 = 2
+local get_color_table_with_alpha = Colors.get_color_table_with_alpha("font_default", 50)
+local tbl_5 = {
 	root = {
 		scale = "fit",
 		position = {
@@ -80,8 +80,8 @@ local var_0_10 = {
 		parent = "root",
 		horizontal_alignment = "center",
 		size = {
-			var_0_6,
-			var_0_7
+			num_3,
+			num_4
 		},
 		position = {
 			0,
@@ -122,8 +122,8 @@ local var_0_10 = {
 		parent = "background",
 		horizontal_alignment = "center",
 		size = {
-			var_0_6,
-			var_0_7
+			num_3,
+			num_4
 		},
 		position = {
 			0,
@@ -136,7 +136,7 @@ local var_0_10 = {
 		parent = "background",
 		horizontal_alignment = "center",
 		size = {
-			var_0_6,
+			num_3,
 			50
 		},
 		position = {
@@ -150,7 +150,7 @@ local var_0_10 = {
 		parent = "background_top_panel",
 		horizontal_alignment = "center",
 		size = {
-			var_0_6,
+			num_3,
 			0
 		},
 		position = {
@@ -164,7 +164,7 @@ local var_0_10 = {
 		parent = "background",
 		horizontal_alignment = "center",
 		size = {
-			var_0_6,
+			num_3,
 			50
 		},
 		position = {
@@ -178,7 +178,7 @@ local var_0_10 = {
 		parent = "background_bottom_panel",
 		horizontal_alignment = "center",
 		size = {
-			var_0_6,
+			num_3,
 			0
 		},
 		position = {
@@ -281,8 +281,8 @@ local var_0_10 = {
 			2
 		},
 		size = {
-			var_0_6,
-			var_0_7 - 140
+			num_3,
+			num_4 - 140
 		}
 	},
 	list_edge_fade_bottom = {
@@ -295,7 +295,7 @@ local var_0_10 = {
 			2
 		},
 		size = {
-			var_0_6,
+			num_3,
 			15
 		}
 	},
@@ -309,7 +309,7 @@ local var_0_10 = {
 			2
 		},
 		size = {
-			var_0_6,
+			num_3,
 			15
 		}
 	},
@@ -324,7 +324,7 @@ local var_0_10 = {
 		},
 		size = {
 			8,
-			var_0_7 - 120
+			num_4 - 120
 		}
 	},
 	exit_button = {
@@ -536,20 +536,22 @@ local var_0_10 = {
 	}
 }
 
-local function var_0_11(arg_1_0)
-	if arg_1_0 then
+local function fn(arg_1_0)
+	-- function 1
+	if not arg_1_0 then
 		return 25 * arg_1_0
 	else
 		return 0
 	end
 end
 
-local function var_0_12(arg_2_0)
-	local var_2_0 = {
+local function fn_2(arg_2_0)
+	-- function 2
+	local tbl = {
 		0,
 		0
 	}
-	local var_2_1 = {
+	local tbl_2 = {
 		5,
 		5
 	}
@@ -561,85 +563,125 @@ local function var_0_12(arg_2_0)
 				{
 					style_id = "bottom_left_triangle",
 					pass_type = "triangle",
-					content_change_function = function(arg_3_0, arg_3_1)
-						local var_3_0 = (Application.user_setting("safe_rect") or 0) * 0.01
+					content_change_function = function (arg_3_0, arg_3_1)
+						-- function 3
+						local user_setting = Application.user_setting("safe_rect")
 
-						arg_3_1.offset[1] = var_2_1[1] + 1920 * var_3_0 * 0.5
-						arg_3_1.offset[2] = var_2_1[2] + 1080 * var_3_0 * 0.5
+						user_setting = user_setting or 0
+
+						local num = user_setting * 0.01
+
+						arg_3_1.offset[1] = tbl_2[1] + 1920 * num * 0.5
+						arg_3_1.offset[2] = tbl_2[2] + 1080 * num * 0.5
 					end
 				},
 				{
 					style_id = "bottom_right_triangle",
 					pass_type = "triangle",
-					content_change_function = function(arg_4_0, arg_4_1)
-						local var_4_0 = (Application.user_setting("safe_rect") or 0) * 0.01
+					content_change_function = function (arg_4_0, arg_4_1)
+						-- function 4
+						local user_setting = Application.user_setting("safe_rect")
 
-						arg_4_1.offset[1] = -var_2_1[1] - 1920 * var_4_0 * 0.5
-						arg_4_1.offset[2] = var_2_1[2] + 1080 * var_4_0 * 0.5
+						user_setting = user_setting or 0
+
+						local num = user_setting * 0.01
+
+						arg_4_1.offset[1] = -tbl_2[1] - 1920 * num * 0.5
+						arg_4_1.offset[2] = tbl_2[2] + 1080 * num * 0.5
 					end
 				},
 				{
 					style_id = "top_right_triangle",
 					pass_type = "triangle",
-					content_change_function = function(arg_5_0, arg_5_1)
-						local var_5_0 = (Application.user_setting("safe_rect") or 0) * 0.01
+					content_change_function = function (arg_5_0, arg_5_1)
+						-- function 5
+						local user_setting = Application.user_setting("safe_rect")
 
-						arg_5_1.offset[1] = -var_2_1[1] - 1920 * var_5_0 * 0.5
-						arg_5_1.offset[2] = -var_2_1[2] - 1080 * var_5_0 * 0.5
+						user_setting = user_setting or 0
+
+						local num = user_setting * 0.01
+
+						arg_5_1.offset[1] = -tbl_2[1] - 1920 * num * 0.5
+						arg_5_1.offset[2] = -tbl_2[2] - 1080 * num * 0.5
 					end
 				},
 				{
 					style_id = "top_left_triangle",
 					pass_type = "triangle",
-					content_change_function = function(arg_6_0, arg_6_1)
-						local var_6_0 = (Application.user_setting("safe_rect") or 0) * 0.01
+					content_change_function = function (arg_6_0, arg_6_1)
+						-- function 6
+						local user_setting = Application.user_setting("safe_rect")
 
-						arg_6_1.offset[1] = var_2_1[1] + 1920 * var_6_0 * 0.5
-						arg_6_1.offset[2] = -var_2_1[2] - 1080 * var_6_0 * 0.5
+						user_setting = user_setting or 0
+
+						local num = user_setting * 0.01
+
+						arg_6_1.offset[1] = tbl_2[1] + 1920 * num * 0.5
+						arg_6_1.offset[2] = -tbl_2[2] - 1080 * num * 0.5
 					end
 				},
 				{
 					style_id = "left_line",
 					pass_type = "rect",
-					content_change_function = function(arg_7_0, arg_7_1)
-						local var_7_0 = (Application.user_setting("safe_rect") or 0) * 0.01
+					content_change_function = function (arg_7_0, arg_7_1)
+						-- function 7
+						local user_setting = Application.user_setting("safe_rect")
 
-						arg_7_1.offset[1] = 1920 * var_7_0 * 0.5
-						arg_7_1.offset[2] = var_2_1[1] + 1080 * var_7_0 * 0.5
-						arg_7_1.texture_size[2] = 1080 - 1080 * var_7_0 - var_2_1[2] * 2 - var_2_0[2]
+						user_setting = user_setting or 0
+
+						local num = user_setting * 0.01
+
+						arg_7_1.offset[1] = 1920 * num * 0.5
+						arg_7_1.offset[2] = tbl_2[1] + 1080 * num * 0.5
+						arg_7_1.texture_size[2] = 1080 - 1080 * num - tbl_2[2] * 2 - tbl[2]
 					end
 				},
 				{
 					style_id = "right_line",
 					pass_type = "rect",
-					content_change_function = function(arg_8_0, arg_8_1)
-						local var_8_0 = (Application.user_setting("safe_rect") or 0) * 0.01
+					content_change_function = function (arg_8_0, arg_8_1)
+						-- function 8
+						local user_setting = Application.user_setting("safe_rect")
 
-						arg_8_1.offset[1] = -1920 * var_8_0 * 0.5
-						arg_8_1.offset[2] = var_2_1[1] + 1080 * var_8_0 * 0.5
-						arg_8_1.texture_size[2] = 1080 - 1080 * var_8_0 - var_2_1[2] * 2 - var_2_0[2]
+						user_setting = user_setting or 0
+
+						local num = user_setting * 0.01
+
+						arg_8_1.offset[1] = -1920 * num * 0.5
+						arg_8_1.offset[2] = tbl_2[1] + 1080 * num * 0.5
+						arg_8_1.texture_size[2] = 1080 - 1080 * num - tbl_2[2] * 2 - tbl[2]
 					end
 				},
 				{
 					style_id = "top_line",
 					pass_type = "rect",
-					content_change_function = function(arg_9_0, arg_9_1)
-						local var_9_0 = (Application.user_setting("safe_rect") or 0) * 0.01
+					content_change_function = function (arg_9_0, arg_9_1)
+						-- function 9
+						local user_setting = Application.user_setting("safe_rect")
 
-						arg_9_1.offset[1] = 1920 * var_9_0 * 0.5
-						arg_9_1.offset[2] = -1080 * var_9_0 * 0.5
-						arg_9_1.texture_size[1] = 1920 - 1920 * var_9_0 - var_2_0[1]
+						user_setting = user_setting or 0
+
+						local num = user_setting * 0.01
+
+						arg_9_1.offset[1] = 1920 * num * 0.5
+						arg_9_1.offset[2] = -1080 * num * 0.5
+						arg_9_1.texture_size[1] = 1920 - 1920 * num - tbl[1]
 					end
 				},
 				{
 					style_id = "bottom_line",
 					pass_type = "rect",
-					content_change_function = function(arg_10_0, arg_10_1)
-						local var_10_0 = (Application.user_setting("safe_rect") or 0) * 0.01
+					content_change_function = function (arg_10_0, arg_10_1)
+						-- function 10
+						local user_setting = Application.user_setting("safe_rect")
 
-						arg_10_1.offset[1] = 1920 * var_10_0 * 0.5
-						arg_10_1.offset[2] = 1080 * var_10_0 * 0.5
-						arg_10_1.texture_size[1] = 1920 - 1920 * var_10_0 - var_2_0[1]
+						user_setting = user_setting or 0
+
+						local num = user_setting * 0.01
+
+						arg_10_1.offset[1] = 1920 * num * 0.5
+						arg_10_1.offset[2] = 1080 * num * 0.5
+						arg_10_1.texture_size[1] = 1920 - 1920 * num - tbl[1]
 					end
 				}
 			}
@@ -811,7 +853,8 @@ local function var_0_12(arg_2_0)
 	}
 end
 
-local function var_0_13(arg_11_0, arg_11_1)
+local function fn_3(arg_11_0, arg_11_1)
+	-- function 11
 	return {
 		element = {
 			passes = {
@@ -903,7 +946,8 @@ local function var_0_13(arg_11_0, arg_11_1)
 	}
 end
 
-local function var_0_14(arg_12_0, arg_12_1)
+local function fn_4(arg_12_0, arg_12_1)
+	-- function 12
 	return {
 		element = {
 			passes = {
@@ -995,7 +1039,7 @@ local function var_0_14(arg_12_0, arg_12_1)
 	}
 end
 
-local var_0_15 = {
+local tbl_6 = {
 	word_wrap = true,
 	font_size = 28,
 	localize = true,
@@ -1012,12 +1056,12 @@ local var_0_15 = {
 		10
 	}
 }
-local var_0_16 = {
-	gamepad_tooltip_text = UIWidgets.create_simple_text("", "gamepad_tooltip_text", nil, nil, var_0_15)
+local tbl_7 = {
+	gamepad_tooltip_text = UIWidgets.create_simple_text("", "gamepad_tooltip_text", nil, nil, tbl_6)
 }
-local var_0_17 = {
+local tbl_8 = {
 	menu_symbol = UIWidgets.create_simple_texture("cogwheel_small", "menu_symbol", nil, nil, Colors.get_color_table_with_alpha("font_title", 255)),
-	background_frame = UIWidgets.create_frame("background_frame", var_0_10.background_frame.size, "menu_frame_12"),
+	background_frame = UIWidgets.create_frame("background_frame", tbl_5.background_frame.size, "menu_frame_12"),
 	background = UIWidgets.create_simple_rect("background", {
 		255,
 		15,
@@ -1030,14 +1074,14 @@ local var_0_17 = {
 		10,
 		10
 	}),
-	background_bottom_panel_edge = var_0_13("background_bottom_panel_edge", var_0_10.background_bottom_panel_edge.size),
+	background_bottom_panel_edge = fn_3("background_bottom_panel_edge", tbl_5.background_bottom_panel_edge.size),
 	background_top_panel = UIWidgets.create_simple_rect("background_top_panel", {
 		255,
 		10,
 		10,
 		10
 	}),
-	background_top_panel_edge = var_0_13("background_top_panel_edge", var_0_10.background_top_panel_edge.size),
+	background_top_panel_edge = fn_3("background_top_panel_edge", tbl_5.background_top_panel_edge.size),
 	right_frame = {
 		scenegraph_id = "right_frame",
 		element = {
@@ -1054,18 +1098,22 @@ local var_0_17 = {
 				},
 				{
 					pass_type = "scroll",
-					scroll_function = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
-						local var_13_0 = Managers.input:is_device_active("gamepad")
-						local var_13_1 = arg_13_2.scroll_step or 0.1
-						local var_13_2 = arg_13_2.internal_scroll_value
+					scroll_function = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+						-- function 13
+						local is_device_active = Managers.input:is_device_active("gamepad")
+						local scroll_step = arg_13_2.scroll_step
 
-						if not var_13_0 and IS_XB1 then
-							var_13_2 = var_13_2 + var_13_1 * -arg_13_4.x * 0.01
+						scroll_step = scroll_step or 0.1
+
+						local internal_scroll_value = arg_13_2.internal_scroll_value
+
+						if is_device_active or not IS_XB1 then
+							internal_scroll_value = internal_scroll_value + scroll_step * -arg_13_4.x * 0.01
 						else
-							var_13_2 = var_13_2 + var_13_1 * -arg_13_4.y
+							internal_scroll_value = internal_scroll_value + scroll_step * -arg_13_4.y
 						end
 
-						arg_13_2.internal_scroll_value = math.clamp(var_13_2, 0, 1)
+						arg_13_2.internal_scroll_value = math.clamp(internal_scroll_value, 0, 1)
 					end
 				}
 			}
@@ -1152,7 +1200,7 @@ local var_0_17 = {
 		}
 	}
 }
-local var_0_18 = {
+local tbl_9 = {
 	keybind_info = UIWidgets.create_simple_text("Hello world", "keybind_info", nil, nil, {
 		vertical_alignment = "center",
 		font_type = "hell_shark",
@@ -1170,30 +1218,38 @@ local var_0_18 = {
 	{
 		pass_type = "texture",
 		texture_id = "texture_id",
-		content_check_function = function(arg_14_0)
-			return not arg_14_0.hotspot.is_hover and arg_14_0.hotspot.is_clicked > 0
+		content_check_function = function (self)
+			-- function 14
+			return not not self.hotspot.is_hover or self.hotspot.is_clicked > 0
 		end
 	},
 	{
 		pass_type = "texture",
 		texture_id = "texture_hover_id",
-		content_check_function = function(arg_15_0)
-			return arg_15_0.hotspot.is_hover and arg_15_0.hotspot.is_clicked > 0
+		content_check_function = function (self)
+			-- function 15
+			local is_hover = self.hotspot.is_hover
+
+			is_hover = not is_hover and self.hotspot.is_clicked > 0
+
+			return is_hover
 		end
 	},
 	{
 		pass_type = "texture",
 		texture_id = "texture_click_id",
-		content_check_function = function(arg_16_0)
-			return arg_16_0.hotspot.is_clicked == 0 or arg_16_0.hotspot.is_selected
+		content_check_function = function (self)
+			-- function 16
+			return self.hotspot.is_clicked == 0 or self.hotspot.is_selected
 		end
 	},
 	{
 		style_id = "text",
 		pass_type = "text",
 		text_id = "text_field",
-		content_check_function = function(arg_17_0, arg_17_1)
-			if arg_17_0.hotspot.is_hover then
+		content_check_function = function (self, arg_17_1)
+			-- function 17
+			if not self.hotspot.is_hover then
 				arg_17_1.text_color = arg_17_1.hover_color
 			else
 				arg_17_1.text_color = arg_17_1.default_color
@@ -1204,9 +1260,10 @@ local var_0_18 = {
 	}
 }
 
-local function var_0_19(arg_18_0, arg_18_1)
-	local var_18_0 = var_0_10[arg_18_0].size
-	local var_18_1 = {
+local function fn_5(arg_18_0, arg_18_1)
+	-- function 18
+	local size = tbl_5[arg_18_0].size
+	local tbl = {
 		passes = {
 			{
 				pass_type = "hotspot",
@@ -1216,28 +1273,30 @@ local function var_0_19(arg_18_0, arg_18_1)
 				pass_type = "texture",
 				style_id = "button_texture",
 				texture_id = "button_texture",
-				content_check_function = function(arg_19_0)
-					return not arg_19_0.button_hotspot.is_hover
+				content_check_function = function (self)
+					-- function 19
+					return not self.button_hotspot.is_hover
 				end
 			},
 			{
 				pass_type = "texture",
 				style_id = "button_texture_hover",
 				texture_id = "button_texture",
-				content_check_function = function(arg_20_0)
-					return arg_20_0.button_hotspot.is_hover
+				content_check_function = function (self)
+					-- function 20
+					return self.button_hotspot.is_hover
 				end
 			}
 		}
 	}
-	local var_18_2 = {
+	local tbl_2 = {
 		button_texture = arg_18_1,
 		button_hotspot = {}
 	}
-	local var_18_3 = {
+	local tbl_3 = {
 		size = {
-			var_18_0[1],
-			var_18_0[2]
+			size[1],
+			size[2]
 		},
 		color = {
 			255,
@@ -1247,8 +1306,8 @@ local function var_0_19(arg_18_0, arg_18_1)
 		},
 		button_texture_hover = {
 			size = {
-				var_18_0[1],
-				var_18_0[2]
+				size[1],
+				size[2]
 			},
 			color = {
 				255,
@@ -1259,17 +1318,17 @@ local function var_0_19(arg_18_0, arg_18_1)
 		},
 		button_texture = {
 			size = {
-				var_18_0[1],
-				var_18_0[2]
+				size[1],
+				size[2]
 			},
 			color = Colors.get_color_table_with_alpha("font_button_normal", 255)
 		}
 	}
 
 	return {
-		element = var_18_1,
-		content = var_18_2,
-		style = var_18_3,
+		element = tbl,
+		content = tbl_2,
+		style = tbl_3,
 		offset = {
 			0,
 			0,
@@ -1279,25 +1338,26 @@ local function var_0_19(arg_18_0, arg_18_1)
 	}
 end
 
-local var_0_20 = {
-	exit_button = var_0_19("exit_button", "friends_icon_close"),
+local tbl_10 = {
+	exit_button = fn_5("exit_button", "friends_icon_close"),
 	back_button = UIWidgets.create_layout_button("back_button", "layout_button_back", "layout_button_back_glow"),
 	apply_button = UIWidgets.create_text_button("apply_button", "menu_settings_apply", 22, nil, "center"),
 	reset_to_default = UIWidgets.create_text_button("reset_to_default", "menu_settings_reset_to_default", 22, nil, "center")
 }
-local var_0_21 = var_0_10.list_mask.size[1]
-local var_0_22 = var_0_10.scrollbar_root.size
-local var_0_23 = UIWidgets.create_scrollbar("scrollbar_root", var_0_22)
-local var_0_24 = false
-local var_0_25 = {
+local var_0_21 = tbl_5.list_mask.size[1]
+local size = tbl_5.scrollbar_root.size
+local create_scrollbar = UIWidgets.create_scrollbar("scrollbar_root", size)
+local flag = false
+local tbl_11 = {
 	var_0_21,
 	30
 }
 
-local function var_0_26(arg_21_0, arg_21_1, arg_21_2)
-	arg_21_2[2] = arg_21_2[2] - var_0_25[2]
+local function fn_6(arg_21_0, arg_21_1, arg_21_2)
+	-- function 21
+	arg_21_2[2] = arg_21_2[2] - tbl_11[2]
 
-	local var_21_0 = {
+	local tbl = {
 		element = {
 			passes = {
 				{
@@ -1318,18 +1378,20 @@ local function var_0_26(arg_21_0, arg_21_1, arg_21_2)
 					pass_type = "texture",
 					style_id = "highlight_texture",
 					texture_id = "highlight_texture",
-					content_check_function = function(arg_22_0)
-						return arg_22_0.is_highlighted
+					content_check_function = function (self)
+						-- function 22
+						return self.is_highlighted
 					end
 				},
 				{
 					pass_type = "local_offset",
-					offset_function = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
-						if arg_23_2.hotspot.on_release then
+					offset_function = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+						-- function 23
+						if not arg_23_2.hotspot.on_release then
 							arg_23_2.flag = not arg_23_2.flag
 						end
 
-						if arg_23_2.flag then
+						if not arg_23_2.flag then
 							arg_23_2.checkbox = "checkbox_checked"
 						else
 							arg_23_2.checkbox = "checkbox_unchecked"
@@ -1348,25 +1410,28 @@ local function var_0_26(arg_21_0, arg_21_1, arg_21_2)
 				},
 				{
 					pass_type = "rect",
-					content_check_function = function(arg_24_0)
-						return var_0_24
+					content_check_function = function (arg_24_0)
+						-- function 24
+						return flag
 					end
 				},
 				{
 					pass_type = "border",
-					content_check_function = function(arg_25_0, arg_25_1)
-						if var_0_24 then
+					content_check_function = function (arg_25_0, arg_25_1)
+						-- function 25
+						if not flag then
 							arg_25_1.thickness = 1
 						end
 
-						return var_0_24
+						return flag
 					end
 				},
 				{
 					style_id = "debug_middle_line",
 					pass_type = "rect",
-					content_check_function = function(arg_26_0)
-						return var_0_24
+					content_check_function = function (arg_26_0)
+						-- function 26
+						return flag
 					end
 				}
 			}
@@ -1395,8 +1460,8 @@ local function var_0_26(arg_21_0, arg_21_1, arg_21_2)
 				},
 				color = Colors.get_table("white"),
 				size = {
-					var_0_25[1],
-					var_0_25[2]
+					tbl_11[1],
+					tbl_11[2]
 				}
 			},
 			checkbox = {
@@ -1429,7 +1494,7 @@ local function var_0_26(arg_21_0, arg_21_1, arg_21_2)
 				arg_21_2[2],
 				arg_21_2[3]
 			},
-			size = table.clone(var_0_25),
+			size = table.clone(tbl_11),
 			color = {
 				50,
 				255,
@@ -1439,11 +1504,11 @@ local function var_0_26(arg_21_0, arg_21_1, arg_21_2)
 			debug_middle_line = {
 				offset = {
 					arg_21_2[1],
-					arg_21_2[2] + var_0_25[2] / 2 - 1,
+					arg_21_2[2] + tbl_11[2] / 2 - 1,
 					arg_21_2[3] + 10
 				},
 				size = {
-					var_0_25[1],
+					tbl_11[1],
 					2
 				},
 				color = {
@@ -1459,23 +1524,24 @@ local function var_0_26(arg_21_0, arg_21_1, arg_21_2)
 					arg_21_2[2],
 					arg_21_2[3] + 1
 				},
-				color = var_0_9,
+				color = get_color_table_with_alpha,
 				size = {
-					var_0_25[1],
-					var_0_8
+					tbl_11[1],
+					num_5
 				}
 			}
 		},
 		scenegraph_id = arg_21_1
 	}
 
-	return UIWidget.init(var_21_0)
+	return UIWidget.init(tbl)
 end
 
-local function var_0_27(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+local function fn_7(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+	-- function 27
 	arg_27_3[2] = arg_27_3[2] - arg_27_1[2]
 
-	local var_27_0 = {
+	local tbl = {
 		element = {
 			passes = {
 				{
@@ -1522,61 +1588,65 @@ local function var_0_27(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 					arg_27_3[2],
 					arg_27_3[3] + 1
 				},
-				color = var_0_9,
+				color = get_color_table_with_alpha,
 				size = {
 					arg_27_1[1],
-					var_0_8
+					num_5
 				}
 			}
 		},
 		scenegraph_id = arg_27_2
 	}
 
-	return UIWidget.init(var_27_0)
+	return UIWidget.init(tbl)
 end
 
-local function var_0_28(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
+local function fn_8(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
+	-- function 28
 	arg_28_5[2] = arg_28_5[2] - arg_28_1[2]
 
-	local var_28_0 = PLATFORM
+	local PLATFORM = PLATFORM
 	local var_28_1
 
-	if IS_WINDOWS then
+	if not IS_WINDOWS then
 		var_28_1 = UIWidgets.create_gamepad_layout_win32(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_5, arg_28_4)
-	elseif IS_XB1 then
+	elseif not IS_XB1 then
 		var_28_1 = UIWidgets.create_gamepad_layout_xb1(arg_28_0, arg_28_1, arg_28_5, arg_28_4)
-	elseif IS_PS4 then
+	elseif not IS_PS4 then
 		var_28_1 = UIWidgets.create_gamepad_layout_ps4(arg_28_0, arg_28_1, arg_28_5, arg_28_4)
 	end
 
 	return UIWidget.init(var_28_1)
 end
 
-local var_0_29 = {
+local tbl_12 = {
 	var_0_21 - 100,
 	30
 }
 
-local function var_0_30(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5)
-	arg_29_3[2] = arg_29_3[2] - var_0_29[2]
+local function fn_9(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5)
+	-- function 29
+	arg_29_3[2] = arg_29_3[2] - tbl_12[2]
 
-	local var_29_0 = {
+	local tbl_2 = {
 		element = {
 			passes = {
 				{
 					pass_type = "texture",
 					style_id = "slider_box",
 					texture_id = "rect_masked",
-					content_check_function = function(arg_30_0)
-						return not arg_30_0.disabled
+					content_check_function = function (self)
+						-- function 30
+						return not self.disabled
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "disabled_slider_box",
 					texture_id = "rect_masked",
-					content_check_function = function(arg_31_0)
-						return arg_31_0.disabled
+					content_check_function = function (self)
+						-- function 31
+						return self.disabled
 					end
 				},
 				{
@@ -1607,49 +1677,60 @@ local function var_0_30(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29
 					pass_type = "texture",
 					style_id = "highlight_texture",
 					texture_id = "highlight_texture",
-					content_check_function = function(arg_32_0)
-						return arg_32_0.is_highlighted
+					content_check_function = function (self)
+						-- function 32
+						return self.is_highlighted
 					end
 				},
 				{
 					pass_type = "option_tooltip",
 					text_id = "tooltip_text",
-					content_check_function = function(arg_33_0)
-						return arg_33_0.tooltip_text and arg_33_0.highlight_hotspot.is_hover and not Managers.input:is_device_active("gamepad")
+					content_check_function = function (self)
+						-- function 33
+						local tooltip_text = self.tooltip_text
+
+						if not tooltip_text then
+							tooltip_text = self.highlight_hotspot.is_hover
+							tooltip_text = not tooltip_text and not Managers.input:is_device_active("gamepad")
+						end
+
+						return tooltip_text
 					end
 				},
 				{
 					content_check_hover = "hotspot",
 					pass_type = "held",
 					style_id = "slider_box",
-					held_function = function(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+					held_function = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+						-- function 34
 						local var_34_0
-						local var_34_1 = Managers.input:is_device_active("gamepad")
+						local is_device_active = Managers.input:is_device_active("gamepad")
 
-						if var_34_1 then
+						if not is_device_active then
 							var_34_0 = arg_34_3:get("cursor")
-						elseif IS_XB1 and GameSettingsDevelopment.allow_keyboard_mouse and not var_34_1 then
+						elseif not (not IS_XB1 and not GameSettingsDevelopment.allow_keyboard_mouse and is_device_active) then
 							var_34_0 = arg_34_3:get("cursor")
 						else
 							var_34_0 = UIInverseScaleVectorToResolution(arg_34_3:get("cursor"))
 						end
 
-						local var_34_2 = arg_34_2.scenegraph_id
-						local var_34_3 = UISceneGraph.get_world_position(arg_34_0, var_34_2)
+						local scenegraph_id = arg_34_2.scenegraph_id
+						local get_world_position = UISceneGraph.get_world_position(arg_34_0, scenegraph_id)
 						local var_34_4 = arg_34_1.size[1]
 						local var_34_5 = var_34_0[1]
-						local var_34_6 = var_34_3[1] + arg_34_1.offset[1]
-						local var_34_7 = arg_34_2.internal_value
-						local var_34_8 = var_34_5 - var_34_6
-						local var_34_9 = math.clamp(var_34_8 / var_34_4, 0, 1)
+						local num = get_world_position[1] + arg_34_1.offset[1]
+						local internal_value = arg_34_2.internal_value
+						local num_2 = var_34_5 - num
+						local clamp = math.clamp(num_2 / var_34_4, 0, 1)
 
-						arg_34_2.internal_value = var_34_9
+						arg_34_2.internal_value = clamp
 
-						if var_34_7 ~= var_34_9 and not arg_34_2.callback_on_release then
+						if not (internal_value == clamp or arg_34_2.callback_on_release) then
 							arg_34_2.callback(arg_34_2, arg_34_1.parent)
 						end
 					end,
-					release_function = function(arg_35_0, arg_35_1, arg_35_2, arg_35_3)
+					release_function = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3)
+						-- function 35
 						arg_35_2.callback(arg_35_2, arg_35_1.parent)
 					end
 				},
@@ -1657,35 +1738,43 @@ local function var_0_30(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29
 					style_id = "slider_box_hotspot",
 					pass_type = "hotspot",
 					content_id = "hotspot",
-					content_check_function = function(arg_36_0)
-						return not arg_36_0.parent.disabled
+					content_check_function = function (self)
+						-- function 36
+						return not self.parent.disabled
 					end
 				},
 				{
 					pass_type = "local_offset",
-					offset_function = function(arg_37_0, arg_37_1, arg_37_2)
-						local var_37_0 = arg_37_2.internal_value
-						local var_37_1 = arg_37_2.min
-						local var_37_2 = arg_37_2.max
-						local var_37_3 = math.round_with_precision(var_37_1 + (var_37_2 - var_37_1) * var_37_0, arg_37_2.num_decimals or 0)
+					offset_function = function (arg_37_0, arg_37_1, arg_37_2)
+						-- function 37
+						local internal_value = arg_37_2.internal_value
+						local min = arg_37_2.min
+						local max = arg_37_2.max
+						local round_with_precision = math.round_with_precision
+						local num = min + (max - min) * internal_value
+						local num_decimals = arg_37_2.num_decimals
 
-						arg_37_2.value = var_37_3
-						arg_37_2.value_text = var_37_3
+						num_decimals = num_decimals or 0
 
-						local var_37_4 = arg_37_1.slider_box
-						local var_37_5 = var_37_4.size
-						local var_37_6 = var_37_4.offset[1]
-						local var_37_7 = var_37_5[1] * var_37_0
-						local var_37_8 = arg_37_1.slider
-						local var_37_9 = arg_37_1.slider_hover
-						local var_37_10 = var_37_8.offset
-						local var_37_11 = var_37_8.size
-						local var_37_12 = math.max(0, math.min(var_37_7 - var_37_11[1], var_37_5[1] - var_37_11[1]))
+						local var_37_6 = round_with_precision(num, num_decimals)
 
-						var_37_8.offset[1] = var_37_6 + var_37_7 - var_37_8.size[1] / 2
-						var_37_9.offset[1] = var_37_8.offset[1] + var_37_11[1] / 2 - var_37_9.size[1] / 2
+						arg_37_2.value = var_37_6
+						arg_37_2.value_text = var_37_6
 
-						if arg_37_2.hotspot.is_hover or arg_37_2.altering_value then
+						local slider_box = arg_37_1.slider_box
+						local size = slider_box.size
+						local var_37_9 = slider_box.offset[1]
+						local num_2 = size[1] * internal_value
+						local slider = arg_37_1.slider
+						local slider_hover = arg_37_1.slider_hover
+						local offset = slider.offset
+						local size_2 = slider.size
+						local max_2 = math.max(0, math.min(num_2 - size_2[1], size[1] - size_2[1]))
+
+						slider.offset[1] = var_37_9 + num_2 - slider.size[1] / 2
+						slider_hover.offset[1] = slider.offset[1] + size_2[1] / 2 - slider_hover.size[1] / 2
+
+						if arg_37_2.hotspot.is_hover or not arg_37_2.altering_value then
 							arg_37_1.value_text.text_color = arg_37_1.value_text.hover_color
 						else
 							arg_37_1.value_text.text_color = arg_37_1.value_text.default_color
@@ -1696,98 +1785,110 @@ local function var_0_30(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29
 					style_id = "value_text",
 					pass_type = "text",
 					text_id = "value_text",
-					content_check_function = function(arg_38_0)
-						return not arg_38_0.disabled
+					content_check_function = function (self)
+						-- function 38
+						return not self.disabled
 					end
 				},
 				{
 					style_id = "disabled_value_text",
 					pass_type = "text",
 					text_id = "value_text",
-					content_check_function = function(arg_39_0)
-						return arg_39_0.disabled
+					content_check_function = function (self)
+						-- function 39
+						return self.disabled
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "slider",
 					texture_id = "slider",
-					content_check_function = function(arg_40_0)
-						return not arg_40_0.disabled
+					content_check_function = function (self)
+						-- function 40
+						return not self.disabled
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "slider_hover",
 					texture_id = "slider_hover",
-					content_check_function = function(arg_41_0)
-						if arg_41_0.disabled then
+					content_check_function = function (self)
+						-- function 41
+						if not self.disabled then
 							return false
 						end
 
-						return arg_41_0.hotspot.is_hover
+						return self.hotspot.is_hover
 					end
 				},
 				{
 					pass_type = "rect",
-					content_check_function = function(arg_42_0)
-						return var_0_24
+					content_check_function = function (arg_42_0)
+						-- function 42
+						return flag
 					end
 				},
 				{
 					style_id = "slider_box",
 					pass_type = "rect",
-					content_check_function = function(arg_43_0)
-						return var_0_24
+					content_check_function = function (arg_43_0)
+						-- function 43
+						return flag
 					end
 				},
 				{
 					pass_type = "border",
-					content_check_function = function(arg_44_0, arg_44_1)
-						if var_0_24 then
+					content_check_function = function (arg_44_0, arg_44_1)
+						-- function 44
+						if not flag then
 							arg_44_1.thickness = 1
 						end
 
-						return var_0_24
+						return flag
 					end
 				},
 				{
 					style_id = "debug_middle_line",
 					pass_type = "rect",
-					content_check_function = function(arg_45_0)
-						return var_0_24
+					content_check_function = function (arg_45_0)
+						-- function 45
+						return flag
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "slider_image",
 					texture_id = "slider_image",
-					content_check_function = function(arg_46_0)
-						return arg_46_0.slider_image ~= ""
+					content_check_function = function (self)
+						-- function 46
+						return self.slider_image ~= ""
 					end
 				},
 				{
 					style_id = "slider_image_text",
 					pass_type = "text",
 					text_id = "slider_image_text",
-					content_check_function = function(arg_47_0)
-						return arg_47_0.slider_image_text ~= ""
+					content_check_function = function (self)
+						-- function 47
+						return self.slider_image_text ~= ""
 					end
 				},
 				{
 					style_id = "left_arrow",
 					pass_type = "hotspot",
 					content_id = "left_hotspot",
-					content_check_function = function(arg_48_0)
-						return not arg_48_0.parent.disabled
+					content_check_function = function (self)
+						-- function 48
+						return not self.parent.disabled
 					end
 				},
 				{
 					style_id = "right_arrow",
 					pass_type = "hotspot",
 					content_id = "right_hotspot",
-					content_check_function = function(arg_49_0)
-						return not arg_49_0.parent.disabled
+					content_check_function = function (self)
+						-- function 49
+						return not self.parent.disabled
 					end
 				},
 				{
@@ -1795,8 +1896,9 @@ local function var_0_30(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29
 					style_id = "left_arrow",
 					pass_type = "texture",
 					content_id = "arrow",
-					content_check_function = function(arg_50_0)
-						return not arg_50_0.parent.disabled
+					content_check_function = function (self)
+						-- function 50
+						return not self.parent.disabled
 					end
 				},
 				{
@@ -1804,8 +1906,9 @@ local function var_0_30(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29
 					style_id = "right_arrow",
 					pass_type = "texture_uv",
 					content_id = "arrow",
-					content_check_function = function(arg_51_0)
-						return not arg_51_0.parent.disabled
+					content_check_function = function (self)
+						-- function 51
+						return not self.parent.disabled
 					end
 				},
 				{
@@ -1813,8 +1916,9 @@ local function var_0_30(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29
 					style_id = "left_arrow_hover",
 					pass_type = "texture",
 					content_id = "arrow_hover",
-					content_check_function = function(arg_52_0)
-						return not arg_52_0.parent.disabled
+					content_check_function = function (self)
+						-- function 52
+						return not self.parent.disabled
 					end
 				},
 				{
@@ -1822,503 +1926,756 @@ local function var_0_30(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29
 					style_id = "right_arrow_hover",
 					pass_type = "texture_uv",
 					content_id = "arrow_hover",
-					content_check_function = function(arg_53_0)
-						return not arg_53_0.parent.disabled
+					content_check_function = function (self)
+						-- function 53
+						return not self.parent.disabled
 					end
 				},
 				{
 					pass_type = "local_offset",
-					offset_function = function(arg_54_0, arg_54_1, arg_54_2, arg_54_3)
-						local var_54_0 = arg_54_2.left_hotspot
-						local var_54_1 = arg_54_2.right_hotspot
+					offset_function = function (arg_54_0, arg_54_1, arg_54_2, arg_54_3)
+						-- function 54
+						local left_hotspot = arg_54_2.left_hotspot
+						local right_hotspot = arg_54_2.right_hotspot
 
-						if var_54_0.on_hover_enter then
-							local var_54_2 = arg_54_2.on_hover_enter_callback
+						if not left_hotspot.on_hover_enter then
+							local on_hover_enter_callback = arg_54_2.on_hover_enter_callback
 
-							if var_54_2 then
-								var_54_2("left_arrow_hover")
+							if not on_hover_enter_callback then
+								on_hover_enter_callback("left_arrow_hover")
 							end
 						end
 
-						if var_54_0.on_hover_exit then
-							local var_54_3 = arg_54_2.on_hover_exit_callback
+						if not left_hotspot.on_hover_exit then
+							local on_hover_exit_callback = arg_54_2.on_hover_exit_callback
 
-							if var_54_3 then
-								var_54_3("left_arrow_hover")
+							if not on_hover_exit_callback then
+								on_hover_exit_callback("left_arrow_hover")
 							end
 						end
 
-						if var_54_0.on_release then
-							local var_54_4 = arg_54_2.on_pressed_callback
+						if not left_hotspot.on_release then
+							local on_pressed_callback = arg_54_2.on_pressed_callback
 
-							if var_54_4 then
-								var_54_4("left_arrow")
-								var_54_4("left_arrow_hover")
+							if not on_pressed_callback then
+								on_pressed_callback("left_arrow")
+								on_pressed_callback("left_arrow_hover")
 							end
 						end
 
-						if var_54_1.on_hover_enter then
-							local var_54_5 = arg_54_2.on_hover_enter_callback
+						if not right_hotspot.on_hover_enter then
+							local on_hover_enter_callback_2 = arg_54_2.on_hover_enter_callback
 
-							if var_54_5 then
-								var_54_5("right_arrow_hover")
+							if not on_hover_enter_callback_2 then
+								on_hover_enter_callback_2("right_arrow_hover")
 							end
 						end
 
-						if var_54_1.on_hover_exit then
-							local var_54_6 = arg_54_2.on_hover_exit_callback
+						if not right_hotspot.on_hover_exit then
+							local on_hover_exit_callback_2 = arg_54_2.on_hover_exit_callback
 
-							if var_54_6 then
-								var_54_6("right_arrow_hover")
+							if not on_hover_exit_callback_2 then
+								on_hover_exit_callback_2("right_arrow_hover")
 							end
 						end
 
-						if var_54_1.on_release then
-							local var_54_7 = arg_54_2.on_pressed_callback
+						if not right_hotspot.on_release then
+							local on_pressed_callback_2 = arg_54_2.on_pressed_callback
 
-							if var_54_7 then
-								var_54_7("right_arrow")
-								var_54_7("right_arrow_hover")
+							if not on_pressed_callback_2 then
+								on_pressed_callback_2("right_arrow")
+								on_pressed_callback_2("right_arrow_hover")
 							end
 						end
 					end
 				}
 			}
-		},
-		content = {
-			slider = "slider_thumb",
-			internal_value = 0.5,
-			rect_masked = "rect_masked",
-			slider_hover = "slider_thumb_hover",
-			value = 0.5,
-			highlight_texture = "playerlist_hover",
-			scenegraph_id = arg_29_2,
-			text = arg_29_0,
-			slider_image = arg_29_4 and arg_29_4.slider_image or "",
-			slider_image_text = arg_29_5 and arg_29_5.text or "",
-			tooltip_text = arg_29_1,
-			hotspot = {},
-			highlight_hotspot = {
-				allow_multi_hover = true
+		}
+	}
+	local tbl_3 = {
+		slider = "slider_thumb",
+		internal_value = 0.5,
+		rect_masked = "rect_masked",
+		slider_hover = "slider_thumb_hover",
+		value = 0.5,
+		highlight_texture = "playerlist_hover",
+		scenegraph_id = arg_29_2,
+		text = arg_29_0
+	}
+	local slider_image
+
+	if not arg_29_4 then
+		slider_image = arg_29_4.slider_image
+
+		if not slider_image then
+			-- Nothing
+		end
+	end
+
+	slider_image = ""
+
+	::label_29_0::
+
+	tbl_3.slider_image = slider_image
+
+	local text
+
+	if not arg_29_5 then
+		text = arg_29_5.text
+
+		if not text then
+			-- Nothing
+		end
+	end
+
+	text = ""
+
+	::label_29_1::
+
+	tbl_3.slider_image_text = text
+	tbl_3.tooltip_text = arg_29_1
+	tbl_3.hotspot = {}
+	tbl_3.highlight_hotspot = {
+		allow_multi_hover = true
+	}
+	tbl_3.hotspot_content_ids = {
+		"hotspot"
+	}
+	tbl_3.left_hotspot = {}
+	tbl_3.right_hotspot = {}
+	tbl_3.arrow = {
+		texture_id = "settings_arrow_normal",
+		uvs = {
+			{
+				1,
+				0
 			},
-			hotspot_content_ids = {
-				"hotspot"
-			},
-			left_hotspot = {},
-			right_hotspot = {},
-			arrow = {
-				texture_id = "settings_arrow_normal",
-				uvs = {
-					{
-						1,
-						0
-					},
-					{
-						0,
-						1
-					}
-				}
-			},
-			arrow_hover = {
-				texture_id = "settings_arrow_clicked",
-				uvs = {
-					{
-						1,
-						0
-					},
-					{
-						0,
-						1
-					}
-				}
+			{
+				0,
+				1
 			}
-		},
-		style = {
-			offset = {
-				arg_29_3[1],
-				arg_29_3[2] - (arg_29_4 and arg_29_4.size[2] or 0),
-				arg_29_3[3]
+		}
+	}
+	tbl_3.arrow_hover = {
+		texture_id = "settings_arrow_clicked",
+		uvs = {
+			{
+				1,
+				0
 			},
-			size = {
-				var_0_29[1],
-				var_0_29[2] + (arg_29_4 and arg_29_4.size[2] or 0)
-			},
-			color = {
-				50,
-				255,
-				255,
-				255
-			},
-			highlight_texture = {
-				masked = true,
-				offset = {
-					arg_29_3[1],
-					arg_29_3[2],
-					arg_29_3[3]
-				},
-				color = Colors.get_table("white"),
-				size = {
-					var_0_29[1],
-					var_0_29[2]
-				}
-			},
-			tooltip_text = {
-				font_size = 24,
-				width = 500,
-				localize = true,
-				horizontal_alignment = "left",
-				vertical_alignment = "top",
-				font_type = "hell_shark",
-				text_color = Colors.get_color_table_with_alpha("font_default", 255),
-				line_colors = {
-					(Colors.get_color_table_with_alpha("font_title", 255))
-				},
-				offset = {
-					0,
-					0,
-					0
-				}
-			},
-			text = {
-				upper_case = true,
-				localize = true,
-				dynamic_font = true,
-				font_size = 16,
-				font_type = "hell_shark_masked",
-				offset = {
-					arg_29_3[1],
-					arg_29_3[2] + 5,
-					arg_29_3[3]
-				},
-				text_color = Colors.get_color_table_with_alpha("font_default", 255)
-			},
-			slider_box = {
-				offset = {
-					arg_29_3[1] + var_0_29[1] - var_0_0 + 30,
-					arg_29_3[2] + var_0_29[2] / 2 - 4,
-					arg_29_3[3] + 10
-				},
-				size = {
-					var_0_0 - 112,
-					10
-				},
-				color = {
-					255,
-					5,
-					5,
-					5
-				}
-			},
-			disabled_slider_box = {
-				offset = {
-					arg_29_3[1] + var_0_29[1] - var_0_0 + 30,
-					arg_29_3[2] + var_0_29[2] / 2 - 4,
-					arg_29_3[3] + 10
-				},
-				size = {
-					var_0_0 - 112,
-					10
-				},
-				color = {
-					255,
-					20,
-					20,
-					20
-				}
-			},
-			slider_box_hotspot = {
-				offset = {
-					arg_29_3[1] + var_0_29[1] - var_0_0 + 19,
-					arg_29_3[2] + var_0_29[2] / 2 - 13.5,
-					arg_29_3[3] + 10
-				},
-				size = {
-					var_0_0 - 90,
-					27
-				}
-			},
-			slider = {
-				masked = true,
-				color = Colors.get_color_table_with_alpha("font_default", 255),
-				offset = {
-					arg_29_3[1] + var_0_29[1] - var_0_0,
-					arg_29_3[2] + var_0_29[2] / 2 - 13.5,
-					arg_29_3[3] + 15
-				},
-				size = {
-					14,
-					27
-				}
-			},
-			slider_hover = {
-				masked = true,
-				color = Colors.get_color_table_with_alpha("font_default", 255),
-				offset = {
-					arg_29_3[1] + var_0_29[1] - var_0_0,
-					arg_29_3[2] + var_0_29[2] / 2 - 12.5,
-					arg_29_3[3] + 15
-				},
-				size = {
-					34,
-					25
-				}
-			},
-			input_field_background = {
-				offset = {
-					arg_29_3[1] + var_0_29[1] - 50 - 2,
-					arg_29_3[2] + var_0_29[2] / 2 - (var_0_29[2] - 10) / 2,
-					arg_29_3[3]
-				},
-				color = var_0_1,
-				size = {
-					52,
-					var_0_29[2] - 10 + 2
-				}
-			},
-			input_field_background_2 = {
-				offset = {
-					arg_29_3[1] + var_0_29[1] - 50,
-					arg_29_3[2] + var_0_29[2] / 2 - (var_0_29[2] - 10) / 2,
-					arg_29_3[3] + 1
-				},
-				color = {
-					255,
-					10,
-					10,
-					10
-				},
-				size = {
-					50,
-					var_0_29[2] - 10
-				}
-			},
-			value_text = {
-				font_size = 16,
-				upper_case = true,
-				localize = false,
-				horizontal_alignment = "center",
-				dynamic_font = true,
-				font_type = "hell_shark_masked",
-				offset = {
-					arg_29_3[1] + var_0_29[1] - 25,
-					arg_29_3[2] + var_0_29[2] / 2 - (var_0_29[2] - 10) / 2 - 2,
-					arg_29_3[3] + 2
-				},
-				text_color = Colors.get_color_table_with_alpha("font_default", 255),
-				default_color = Colors.get_color_table_with_alpha("font_default", 255),
-				hover_color = Colors.get_color_table_with_alpha("font_default", 255)
-			},
-			disabled_value_text = {
-				font_size = 16,
-				upper_case = true,
-				localize = false,
-				horizontal_alignment = "center",
-				dynamic_font = true,
-				font_type = "hell_shark_masked",
-				offset = {
-					arg_29_3[1] + var_0_29[1] - 25,
-					arg_29_3[2] + var_0_29[2] / 2 - (var_0_29[2] - 10) / 2 - 2,
-					arg_29_3[3] + 2
-				},
-				text_color = Colors.get_color_table_with_alpha("font_default", 50),
-				default_color = Colors.get_color_table_with_alpha("font_default", 255),
-				hover_color = Colors.get_color_table_with_alpha("font_default", 255)
-			},
-			debug_middle_line = {
-				offset = {
-					arg_29_3[1],
-					arg_29_3[2] + var_0_29[2] / 2 - 1,
-					arg_29_3[3] + 10
-				},
-				size = {
-					var_0_29[1],
-					2
-				},
-				color = {
-					200,
-					0,
-					255,
-					0
-				}
-			},
-			slider_image = {
-				masked = true,
-				color = arg_29_4 and arg_29_4.color or nil,
-				size = arg_29_4 and arg_29_4.size or {
-					0,
-					0
-				},
-				offset = {
-					arg_29_3[1] + var_0_29[1] - (arg_29_4 and arg_29_4.size[1] or 0),
-					arg_29_3[2] - (arg_29_4 and arg_29_4.size[2] or 0),
-					arg_29_3[3] + 15
-				}
-			},
-			slider_image_text = {
-				horizontal_alignment = "left",
-				vertical_alignment = "center",
-				dynamic_font = true,
-				offset = {
-					arg_29_3[1] + var_0_29[1] - (arg_29_4 and arg_29_4.size[1] or 0) + 5,
-					arg_29_3[2] - (arg_29_4 and arg_29_4.size[2] / 2 or 0),
-					arg_29_3[3] + 16
-				},
-				text_color = arg_29_5 and arg_29_5.color or Colors.get_color_table_with_alpha("font_default", 255),
-				upper_case = arg_29_5 and arg_29_5.upper_case or false,
-				font_type = arg_29_5 and arg_29_5.font or "hell_shark_masked",
-				font_size = arg_29_5 and arg_29_5.font_size or 16,
-				localize = arg_29_5 and arg_29_5.localize or false
-			},
-			bottom_edge = {
-				offset = {
-					arg_29_3[1],
-					arg_29_3[2],
-					arg_29_3[3] + 1
-				},
-				color = var_0_9,
-				size = {
-					var_0_29[1],
-					var_0_8
-				}
-			},
-			left_arrow = {
-				masked = true,
-				offset = {
-					arg_29_3[1] + var_0_29[1] - var_0_0,
-					arg_29_3[2] + (var_0_29[2] / 2 - 13.5),
-					arg_29_3[3] + 1
-				},
-				size = {
-					19,
-					27
-				},
-				color = Colors.get_color_table_with_alpha("font_default", 255)
-			},
-			left_arrow_hover = {
-				masked = true,
-				offset = {
-					arg_29_3[1] + var_0_29[1] - var_0_0 + 6,
-					arg_29_3[2] + (var_0_29[2] / 2 - 17.5),
-					arg_29_3[3]
-				},
-				size = {
-					30,
-					35
-				},
-				color = {
-					0,
-					255,
-					255,
-					255
-				}
-			},
-			left_arrow_hotspot = {
-				offset = {
-					arg_29_3[1] + var_0_29[1] - var_0_0,
-					arg_29_3[2] + (var_0_29[2] / 2 - 13.5),
-					arg_29_3[3]
-				},
-				size = {
-					var_0_0 / 2,
-					27
-				}
-			},
-			right_arrow = {
-				masked = true,
-				offset = {
-					arg_29_3[1] + var_0_29[1] - 19 - 52,
-					arg_29_3[2] + (var_0_29[2] / 2 - 13.5),
-					arg_29_3[3]
-				},
-				size = {
-					19,
-					27
-				},
-				color = Colors.get_color_table_with_alpha("font_default", 255),
-				pivot = {
-					9.5,
-					13.5
-				}
-			},
-			right_arrow_hover = {
-				masked = true,
-				offset = {
-					arg_29_3[1] + var_0_29[1] - 30 - 52 - 5,
-					arg_29_3[2] + (var_0_29[2] / 2 - 17.5),
-					arg_29_3[3]
-				},
-				size = {
-					30,
-					35
-				},
-				color = {
-					0,
-					255,
-					255,
-					255
-				},
-				pivot = {
-					9.5,
-					13.5
-				}
-			},
-			right_arrow_hotspot = {
-				offset = {
-					arg_29_3[1] + var_0_29[1] - var_0_0 / 2,
-					arg_29_3[2] + (var_0_29[2] / 2 - 13.5),
-					arg_29_3[3]
-				},
-				size = {
-					var_0_0 / 2,
-					27
-				}
+			{
+				0,
+				1
 			}
+		}
+	}
+	tbl_2.content = tbl_3
+
+	local tbl_4 = {}
+	local tbl_5 = {
+		arg_29_3[1]
+	}
+	local var_29_6 = arg_29_3[2]
+	local var_29_7
+
+	if not arg_29_4 then
+		var_29_7 = arg_29_4.size[2]
+
+		if not var_29_7 then
+			-- Nothing
+		end
+	end
+
+	var_29_7 = 0
+
+	::label_29_2::
+
+	tbl_5[2] = var_29_6 - var_29_7
+	tbl_5[3] = arg_29_3[3]
+	tbl_4.offset = tbl_5
+
+	local tbl_6 = {
+		tbl_12[1]
+	}
+	local var_29_9 = tbl_12[2]
+	local var_29_10
+
+	if not arg_29_4 then
+		var_29_10 = arg_29_4.size[2]
+
+		if not var_29_10 then
+			-- Nothing
+		end
+	end
+
+	var_29_10 = 0
+
+	::label_29_3::
+
+	tbl_6[2] = var_29_9 + var_29_10
+	tbl_4.size = tbl_6
+	tbl_4.color = {
+		50,
+		255,
+		255,
+		255
+	}
+	tbl_4.highlight_texture = {
+		masked = true,
+		offset = {
+			arg_29_3[1],
+			arg_29_3[2],
+			arg_29_3[3]
 		},
-		scenegraph_id = arg_29_2
+		color = Colors.get_table("white"),
+		size = {
+			tbl_12[1],
+			tbl_12[2]
+		}
+	}
+	tbl_4.tooltip_text = {
+		font_size = 24,
+		width = 500,
+		localize = true,
+		horizontal_alignment = "left",
+		vertical_alignment = "top",
+		font_type = "hell_shark",
+		text_color = Colors.get_color_table_with_alpha("font_default", 255),
+		line_colors = {
+			(Colors.get_color_table_with_alpha("font_title", 255))
+		},
+		offset = {
+			0,
+			0,
+			0
+		}
+	}
+	tbl_4.text = {
+		upper_case = true,
+		localize = true,
+		dynamic_font = true,
+		font_size = 16,
+		font_type = "hell_shark_masked",
+		offset = {
+			arg_29_3[1],
+			arg_29_3[2] + 5,
+			arg_29_3[3]
+		},
+		text_color = Colors.get_color_table_with_alpha("font_default", 255)
+	}
+	tbl_4.slider_box = {
+		offset = {
+			arg_29_3[1] + tbl_12[1] - num + 30,
+			arg_29_3[2] + tbl_12[2] / 2 - 4,
+			arg_29_3[3] + 10
+		},
+		size = {
+			num - 112,
+			10
+		},
+		color = {
+			255,
+			5,
+			5,
+			5
+		}
+	}
+	tbl_4.disabled_slider_box = {
+		offset = {
+			arg_29_3[1] + tbl_12[1] - num + 30,
+			arg_29_3[2] + tbl_12[2] / 2 - 4,
+			arg_29_3[3] + 10
+		},
+		size = {
+			num - 112,
+			10
+		},
+		color = {
+			255,
+			20,
+			20,
+			20
+		}
+	}
+	tbl_4.slider_box_hotspot = {
+		offset = {
+			arg_29_3[1] + tbl_12[1] - num + 19,
+			arg_29_3[2] + tbl_12[2] / 2 - 13.5,
+			arg_29_3[3] + 10
+		},
+		size = {
+			num - 90,
+			27
+		}
+	}
+	tbl_4.slider = {
+		masked = true,
+		color = Colors.get_color_table_with_alpha("font_default", 255),
+		offset = {
+			arg_29_3[1] + tbl_12[1] - num,
+			arg_29_3[2] + tbl_12[2] / 2 - 13.5,
+			arg_29_3[3] + 15
+		},
+		size = {
+			14,
+			27
+		}
+	}
+	tbl_4.slider_hover = {
+		masked = true,
+		color = Colors.get_color_table_with_alpha("font_default", 255),
+		offset = {
+			arg_29_3[1] + tbl_12[1] - num,
+			arg_29_3[2] + tbl_12[2] / 2 - 12.5,
+			arg_29_3[3] + 15
+		},
+		size = {
+			34,
+			25
+		}
+	}
+	tbl_4.input_field_background = {
+		offset = {
+			arg_29_3[1] + tbl_12[1] - 50 - 2,
+			arg_29_3[2] + tbl_12[2] / 2 - (tbl_12[2] - 10) / 2,
+			arg_29_3[3]
+		},
+		color = tbl,
+		size = {
+			52,
+			tbl_12[2] - 10 + 2
+		}
+	}
+	tbl_4.input_field_background_2 = {
+		offset = {
+			arg_29_3[1] + tbl_12[1] - 50,
+			arg_29_3[2] + tbl_12[2] / 2 - (tbl_12[2] - 10) / 2,
+			arg_29_3[3] + 1
+		},
+		color = {
+			255,
+			10,
+			10,
+			10
+		},
+		size = {
+			50,
+			tbl_12[2] - 10
+		}
+	}
+	tbl_4.value_text = {
+		font_size = 16,
+		upper_case = true,
+		localize = false,
+		horizontal_alignment = "center",
+		dynamic_font = true,
+		font_type = "hell_shark_masked",
+		offset = {
+			arg_29_3[1] + tbl_12[1] - 25,
+			arg_29_3[2] + tbl_12[2] / 2 - (tbl_12[2] - 10) / 2 - 2,
+			arg_29_3[3] + 2
+		},
+		text_color = Colors.get_color_table_with_alpha("font_default", 255),
+		default_color = Colors.get_color_table_with_alpha("font_default", 255),
+		hover_color = Colors.get_color_table_with_alpha("font_default", 255)
+	}
+	tbl_4.disabled_value_text = {
+		font_size = 16,
+		upper_case = true,
+		localize = false,
+		horizontal_alignment = "center",
+		dynamic_font = true,
+		font_type = "hell_shark_masked",
+		offset = {
+			arg_29_3[1] + tbl_12[1] - 25,
+			arg_29_3[2] + tbl_12[2] / 2 - (tbl_12[2] - 10) / 2 - 2,
+			arg_29_3[3] + 2
+		},
+		text_color = Colors.get_color_table_with_alpha("font_default", 50),
+		default_color = Colors.get_color_table_with_alpha("font_default", 255),
+		hover_color = Colors.get_color_table_with_alpha("font_default", 255)
+	}
+	tbl_4.debug_middle_line = {
+		offset = {
+			arg_29_3[1],
+			arg_29_3[2] + tbl_12[2] / 2 - 1,
+			arg_29_3[3] + 10
+		},
+		size = {
+			tbl_12[1],
+			2
+		},
+		color = {
+			200,
+			0,
+			255,
+			0
+		}
 	}
 
-	arg_29_3[2] = arg_29_3[2] - var_0_29[2] - (arg_29_4 and arg_29_4.size[2] or 0)
+	local tbl_7 = {
+		masked = true
+	}
+	local color
 
-	return UIWidget.init(var_29_0)
+	if not arg_29_4 then
+		color = arg_29_4.color
+
+		if not color then
+			-- Nothing
+		end
+	end
+
+	color = nil
+
+	::label_29_4::
+
+	tbl_7.color = color
+
+	local size
+
+	if not arg_29_4 then
+		size = arg_29_4.size
+
+		if not size then
+			-- Nothing
+		end
+	end
+
+	size = {
+		0,
+		0
+	}
+
+	::label_29_5::
+
+	tbl_7.size = size
+
+	local tbl_8 = {}
+	local num_2 = arg_29_3[1] + tbl_12[1]
+	local var_29_16
+
+	if not arg_29_4 then
+		var_29_16 = arg_29_4.size[1]
+
+		if not var_29_16 then
+			-- Nothing
+		end
+	end
+
+	var_29_16 = 0
+
+	::label_29_6::
+
+	tbl_8[1] = num_2 - var_29_16
+
+	local var_29_17 = arg_29_3[2]
+	local var_29_18
+
+	if not arg_29_4 then
+		var_29_18 = arg_29_4.size[2]
+
+		if not var_29_18 then
+			-- Nothing
+		end
+	end
+
+	var_29_18 = 0
+
+	::label_29_7::
+
+	tbl_8[2] = var_29_17 - var_29_18
+	tbl_8[3] = arg_29_3[3] + 15
+	tbl_7.offset = tbl_8
+	tbl_4.slider_image = tbl_7
+
+	local tbl_9 = {
+		horizontal_alignment = "left",
+		vertical_alignment = "center",
+		dynamic_font = true
+	}
+	local tbl_10 = {}
+	local num_3 = arg_29_3[1] + tbl_12[1]
+	local var_29_22
+
+	if not arg_29_4 then
+		var_29_22 = arg_29_4.size[1]
+
+		if not var_29_22 then
+			-- Nothing
+		end
+	end
+
+	var_29_22 = 0
+
+	::label_29_8::
+
+	tbl_10[1] = num_3 - var_29_22 + 5
+
+	local var_29_23 = arg_29_3[2]
+	local num_4
+
+	if not arg_29_4 then
+		num_4 = arg_29_4.size[2] / 2
+
+		if not num_4 then
+			-- Nothing
+		end
+	end
+
+	num_4 = 0
+
+	::label_29_9::
+
+	tbl_10[2] = var_29_23 - num_4
+	tbl_10[3] = arg_29_3[3] + 16
+	tbl_9.offset = tbl_10
+
+	local color_2
+
+	if not arg_29_5 then
+		color_2 = arg_29_5.color
+
+		if not color_2 then
+			-- Nothing
+		end
+	end
+
+	color_2 = Colors.get_color_table_with_alpha("font_default", 255)
+
+	::label_29_10::
+
+	tbl_9.text_color = color_2
+
+	local upper_case
+
+	if not arg_29_5 then
+		upper_case = arg_29_5.upper_case
+
+		if not upper_case then
+			-- Nothing
+		end
+	end
+
+	upper_case = false
+
+	::label_29_11::
+
+	tbl_9.upper_case = upper_case
+
+	local font
+
+	if not arg_29_5 then
+		font = arg_29_5.font
+
+		if not font then
+			-- Nothing
+		end
+	end
+
+	font = "hell_shark_masked"
+
+	::label_29_12::
+
+	tbl_9.font_type = font
+
+	local font_size
+
+	if not arg_29_5 then
+		font_size = arg_29_5.font_size
+
+		if not font_size then
+			-- Nothing
+		end
+	end
+
+	font_size = 16
+
+	::label_29_13::
+
+	tbl_9.font_size = font_size
+
+	local localize
+
+	if not arg_29_5 then
+		localize = arg_29_5.localize
+
+		if not localize then
+			-- Nothing
+		end
+	end
+
+	localize = false
+
+	::label_29_14::
+
+	tbl_9.localize = localize
+	tbl_4.slider_image_text = tbl_9
+	tbl_4.bottom_edge = {
+		offset = {
+			arg_29_3[1],
+			arg_29_3[2],
+			arg_29_3[3] + 1
+		},
+		color = get_color_table_with_alpha,
+		size = {
+			tbl_12[1],
+			num_5
+		}
+	}
+	tbl_4.left_arrow = {
+		masked = true,
+		offset = {
+			arg_29_3[1] + tbl_12[1] - num,
+			arg_29_3[2] + (tbl_12[2] / 2 - 13.5),
+			arg_29_3[3] + 1
+		},
+		size = {
+			19,
+			27
+		},
+		color = Colors.get_color_table_with_alpha("font_default", 255)
+	}
+	tbl_4.left_arrow_hover = {
+		masked = true,
+		offset = {
+			arg_29_3[1] + tbl_12[1] - num + 6,
+			arg_29_3[2] + (tbl_12[2] / 2 - 17.5),
+			arg_29_3[3]
+		},
+		size = {
+			30,
+			35
+		},
+		color = {
+			0,
+			255,
+			255,
+			255
+		}
+	}
+	tbl_4.left_arrow_hotspot = {
+		offset = {
+			arg_29_3[1] + tbl_12[1] - num,
+			arg_29_3[2] + (tbl_12[2] / 2 - 13.5),
+			arg_29_3[3]
+		},
+		size = {
+			num / 2,
+			27
+		}
+	}
+	tbl_4.right_arrow = {
+		masked = true,
+		offset = {
+			arg_29_3[1] + tbl_12[1] - 19 - 52,
+			arg_29_3[2] + (tbl_12[2] / 2 - 13.5),
+			arg_29_3[3]
+		},
+		size = {
+			19,
+			27
+		},
+		color = Colors.get_color_table_with_alpha("font_default", 255),
+		pivot = {
+			9.5,
+			13.5
+		}
+	}
+	tbl_4.right_arrow_hover = {
+		masked = true,
+		offset = {
+			arg_29_3[1] + tbl_12[1] - 30 - 52 - 5,
+			arg_29_3[2] + (tbl_12[2] / 2 - 17.5),
+			arg_29_3[3]
+		},
+		size = {
+			30,
+			35
+		},
+		color = {
+			0,
+			255,
+			255,
+			255
+		},
+		pivot = {
+			9.5,
+			13.5
+		}
+	}
+	tbl_4.right_arrow_hotspot = {
+		offset = {
+			arg_29_3[1] + tbl_12[1] - num / 2,
+			arg_29_3[2] + (tbl_12[2] / 2 - 13.5),
+			arg_29_3[3]
+		},
+		size = {
+			num / 2,
+			27
+		}
+	}
+	tbl_2.style = tbl_4
+	tbl_2.scenegraph_id = arg_29_2
+
+	local num_6 = arg_29_3[2] - tbl_12[2]
+	local var_29_31
+
+	if not arg_29_4 then
+		var_29_31 = arg_29_4.size[2]
+
+		if not var_29_31 then
+			-- Nothing
+		end
+	end
+
+	var_29_31 = 0
+
+	::label_29_15::
+
+	arg_29_3[2] = num_6 - var_29_31
+
+	return UIWidget.init(tbl_2)
 end
 
-local var_0_31 = {
+local tbl_13 = {
 	var_0_21 - 100,
 	30
 }
 
-local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55_5, arg_55_6, arg_55_7, arg_55_8)
-	local var_55_0 = {}
-	local var_55_1 = {}
-	local var_55_2 = #arg_55_1
+local function fn_10(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55_5, arg_55_6, arg_55_7, arg_55_8)
+	-- function 55
+	local tbl = {}
+	local tbl_2 = {}
+	local count = #arg_55_1
 
-	for iter_55_0 = 1, var_55_2 do
-		var_55_0[iter_55_0] = arg_55_1[iter_55_0].text
-		var_55_1[iter_55_0] = arg_55_1[iter_55_0].value
+	for i = 1, count do
+		tbl[i] = arg_55_1[i].text
+		tbl_2[i] = arg_55_1[i].value
 	end
 
-	arg_55_6[2] = arg_55_6[2] - var_0_31[2]
+	arg_55_6[2] = arg_55_6[2] - tbl_13[2]
 
-	local var_55_3 = {
-		var_0_0 - 56,
+	local tbl_3 = {
+		num - 56,
 		24
 	}
-	local var_55_4 = {}
-	local var_55_5 = {}
-	local var_55_6 = math.min(var_55_2, 10)
-	local var_55_7 = var_55_3[2] * var_55_6
-	local var_55_8 = var_55_6 < var_55_2
+	local tbl_4 = {}
+	local tbl_5 = {}
+	local min = math.min(count, 10)
+	local num_2 = tbl_3[2] * min
+	local flag_2 = min < count
 
-	if var_55_8 then
-		var_55_3[1] = var_55_3[1] - 25
+	if not flag_2 then
+		tbl_3[1] = tbl_3[1] - 25
 	end
 
-	for iter_55_1 = 1, var_55_2 do
-		var_55_5[iter_55_1], var_55_4[iter_55_1] = {
+	for j = 1, count do
+		tbl_5[j], tbl_4[j] = {
 			selected = false,
 			highlight_texture = "playerlist_hover",
 			hotspot = {},
-			text = var_55_0[iter_55_1]
+			text = tbl[j]
 		}, {
 			text = {
 				horizontal_alignment = "center",
@@ -2335,7 +2692,7 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 				hover_color = Colors.get_color_table_with_alpha("font_default", 255),
 				disabled_color = Colors.get_color_table_with_alpha("font_default", 75),
 				upper_case = not arg_55_8,
-				size = var_55_3
+				size = tbl_3
 			},
 			highlight_texture = {
 				offset = {
@@ -2344,9 +2701,9 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 					24
 				},
 				color = Colors.get_table("white"),
-				size = var_55_3
+				size = tbl_3
 			},
-			size = var_55_3,
+			size = tbl_3,
 			color = {
 				50,
 				255,
@@ -2356,16 +2713,17 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 		}
 	end
 
-	local var_55_9 = math.pi
-	local var_55_10 = {
+	local pi = math.pi
+	local tbl_6 = {
 		element = {
 			passes = {
 				{
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_change_function = function(arg_56_0, arg_56_1)
-						if arg_56_0.disabled then
+					content_change_function = function (self, arg_56_1)
+						-- function 56
+						if not self.disabled then
 							arg_56_1.text_color = arg_56_1.disabled_color
 						else
 							arg_56_1.text_color = arg_56_1.default_color
@@ -2385,22 +2743,24 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 					pass_type = "texture",
 					style_id = "highlight_texture",
 					texture_id = "highlight_texture",
-					content_check_function = function(arg_57_0)
-						return arg_57_0.is_highlighted
+					content_check_function = function (self)
+						-- function 57
+						return self.is_highlighted
 					end
 				},
 				{
 					pass_type = "option_tooltip",
 					text_id = "tooltip_text",
-					content_check_function = function(arg_58_0)
-						if not arg_58_0.highlight_hotspot.is_hover or Managers.input:is_device_active("gamepad") then
+					content_check_function = function (self)
+						-- function 58
+						if not self.highlight_hotspot.is_hover and not Managers.input:is_device_active("gamepad") then
 							return false
 						end
 
-						if not arg_58_0.disabled then
-							return arg_58_0.tooltip_text
+						if not self.disabled then
+							return self.tooltip_text
 						else
-							return not arg_58_0.disabled_tooltip_text
+							return not self.disabled_tooltip_text
 						end
 					end
 				},
@@ -2408,16 +2768,17 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 					style_id = "disabled_tooltip_text",
 					pass_type = "option_tooltip",
 					text_id = "disabled_tooltip_text",
-					content_check_function = function(arg_59_0)
-						if not arg_59_0.disabled or not arg_59_0.highlight_hotspot.is_hover or Managers.input:is_device_active("gamepad") then
+					content_check_function = function (self)
+						-- function 59
+						if not self.disabled and not self.highlight_hotspot.is_hover and not Managers.input:is_device_active("gamepad") then
 							return false
 						end
 
-						if arg_59_0.overriden_reason then
-							arg_59_0.disabled_tooltip_text = arg_59_0.overriden_reason
+						if not self.overriden_reason then
+							self.disabled_tooltip_text = self.overriden_reason
 						end
 
-						if arg_59_0.disabled_tooltip_text then
+						if not self.disabled_tooltip_text then
 							return true
 						end
 					end
@@ -2432,14 +2793,15 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 					style_id = "arrow",
 					pass_type = "texture_uv",
 					content_id = "arrow",
-					content_check_function = function(arg_60_0, arg_60_1)
-						local var_60_0 = arg_60_0.parent
+					content_check_function = function (self, arg_60_1)
+						-- function 60
+						local parent = self.parent
 
-						if var_60_0.disabled then
+						if not parent.disabled then
 							return false
 						end
 
-						return var_60_0.active
+						return parent.active
 					end
 				},
 				{
@@ -2447,14 +2809,15 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 					style_id = "arrow",
 					pass_type = "texture",
 					content_id = "arrow",
-					content_check_function = function(arg_61_0, arg_61_1)
-						local var_61_0 = arg_61_0.parent
+					content_check_function = function (self, arg_61_1)
+						-- function 61
+						local parent = self.parent
 
-						if var_61_0.disabled then
+						if not parent.disabled then
 							return false
 						end
 
-						return not var_61_0.active
+						return not parent.active
 					end
 				},
 				{
@@ -2462,15 +2825,16 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 					style_id = "arrow_hover_flipped",
 					pass_type = "texture_uv",
 					content_id = "arrow_hover",
-					content_check_function = function(arg_62_0, arg_62_1)
-						local var_62_0 = arg_62_0.parent
+					content_check_function = function (self, arg_62_1)
+						-- function 62
+						local parent = self.parent
 
-						if var_62_0.hotspot.is_hover then
-							if var_62_0.disabled then
+						if not parent.hotspot.is_hover then
+							if not parent.disabled then
 								return false
 							end
 
-							return var_62_0.active
+							return parent.active
 						end
 					end
 				},
@@ -2479,15 +2843,16 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 					style_id = "arrow_hover",
 					pass_type = "texture",
 					content_id = "arrow_hover",
-					content_check_function = function(arg_63_0, arg_63_1)
-						local var_63_0 = arg_63_0.parent
+					content_check_function = function (self, arg_63_1)
+						-- function 63
+						local parent = self.parent
 
-						if var_63_0.hotspot.is_hover then
-							if var_63_0.disabled then
+						if not parent.hotspot.is_hover then
+							if not parent.disabled then
 								return false
 							end
 
-							return not var_63_0.active
+							return not parent.active
 						end
 					end
 				},
@@ -2495,34 +2860,53 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 					style_id = "selected_option",
 					pass_type = "text",
 					text_id = "selected_option",
-					content_check_function = function(arg_64_0, arg_64_1)
-						if arg_64_0.disabled then
+					content_check_function = function (self, arg_64_1)
+						-- function 64
+						if not self.disabled then
 							arg_64_1.text_color = arg_64_1.disabled_color
-						elseif arg_64_0.hotspot.is_hover or arg_64_0.active then
+						elseif self.hotspot.is_hover or not self.active then
 							arg_64_1.text_color = arg_64_1.hover_color
 						else
 							arg_64_1.text_color = arg_64_1.default_color
 						end
 
-						if arg_64_0._last_selection ~= arg_64_0.current_selection or arg_64_0._last_overriden_setting ~= arg_64_0.overriden_setting then
-							arg_64_0._last_selection = arg_64_0.current_selection
-							arg_64_0._last_overriden_setting = arg_64_0.overriden_setting
+						if not (self._last_selection ~= self.current_selection or self._last_overriden_setting == self.overriden_setting) then
+							self._last_selection = self.current_selection
+							self._last_overriden_setting = self.overriden_setting
 
-							local var_64_0 = Utf8.upper(arg_64_0.options_texts[arg_64_0.current_selection] or "n/a")
-							local var_64_1 = arg_64_0.overriden_setting
+							local upper = Utf8.upper
+							local var_64_1 = self.options_texts[self.current_selection]
 
-							if var_64_1 then
-								local var_64_2 = arg_64_0.disabled and arg_64_1.override_color or arg_64_1.default_color
-								local var_64_3 = arg_64_1.disabled_color
+							var_64_1 = var_64_1 or "n/a"
 
-								arg_64_0.selected_option = string.format("{#color(%d,%d,%d,%d)}%s {#color(%d,%d,%d,%d);strike(true)}%s{#strike(false)}", var_64_2[2], var_64_2[3], var_64_2[4], var_64_2[1], var_64_0, var_64_3[2], var_64_3[3], var_64_3[4], var_64_3[1], Utf8.upper(var_64_1))
+							local var_64_2 = upper(var_64_1)
+							local overriden_setting = self.overriden_setting
+
+							if not overriden_setting then
+								local override_color
+
+								if not self.disabled then
+									override_color = arg_64_1.override_color
+
+									if not override_color then
+										-- Nothing
+									end
+								end
+
+								override_color = arg_64_1.default_color
+
+								::label_64_0::
+
+								local disabled_color = arg_64_1.disabled_color
+
+								self.selected_option = string.format("{#color(%d,%d,%d,%d)}%s {#color(%d,%d,%d,%d);strike(true)}%s{#strike(false)}", override_color[2], override_color[3], override_color[4], override_color[1], var_64_2, disabled_color[2], disabled_color[3], disabled_color[4], disabled_color[1], Utf8.upper(overriden_setting))
 							else
-								arg_64_0.selected_option = var_64_0
+								self.selected_option = var_64_2
 							end
 						end
 
-						if arg_64_0.selected_option == nil then
-							arg_64_0.selected_option = ""
+						if self.selected_option == nil then
+							self.selected_option = ""
 						end
 
 						return true
@@ -2532,7 +2916,8 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 					style_id = "list_style",
 					pass_type = "list_pass",
 					content_id = "list_content",
-					content_check_function = function(arg_65_0, arg_65_1)
+					content_check_function = function (arg_65_0, arg_65_1)
+						-- function 65
 						return arg_65_1.active
 					end,
 					passes = {
@@ -2542,22 +2927,23 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 						},
 						{
 							pass_type = "local_offset",
-							offset_function = function(arg_66_0, arg_66_1, arg_66_2, arg_66_3)
-								local var_66_0 = arg_66_2.hotspot
-								local var_66_1 = arg_66_1.text
+							offset_function = function (arg_66_0, arg_66_1, arg_66_2, arg_66_3)
+								-- function 66
+								local hotspot = arg_66_2.hotspot
+								local text = arg_66_1.text
 
-								if var_66_0.on_hover_enter then
-									var_66_0.is_selected = true
-								elseif var_66_0.on_hover_exit then
-									var_66_0.is_selected = false
+								if not hotspot.on_hover_enter then
+									hotspot.is_selected = true
+								elseif not hotspot.on_hover_exit then
+									hotspot.is_selected = false
 								end
 
-								if var_66_0.disabled then
-									var_66_1.text_color = var_66_1.disabled_color
-								elseif var_66_0.is_selected then
-									var_66_1.text_color = var_66_1.hover_color
+								if not hotspot.disabled then
+									text.text_color = text.disabled_color
+								elseif not hotspot.is_selected then
+									text.text_color = text.hover_color
 								else
-									var_66_1.text_color = var_66_1.default_color
+									text.text_color = text.default_color
 								end
 							end
 						},
@@ -2570,14 +2956,22 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 							pass_type = "texture",
 							style_id = "highlight_texture",
 							texture_id = "highlight_texture",
-							content_check_function = function(arg_67_0)
-								local var_67_0 = arg_67_0.hotspot
+							content_check_function = function (self)
+								-- function 67
+								local hotspot = self.hotspot
 
-								if var_67_0.disabled then
+								if not hotspot.disabled then
 									return false
 								end
 
-								return var_67_0.is_hover or Managers.input:is_device_active("gamepad") and var_67_0.is_selected
+								local is_hover = hotspot.is_hover
+
+								if not is_hover then
+									is_hover = Managers.input:is_device_active("gamepad")
+									is_hover = not is_hover and hotspot.is_selected
+								end
+
+								return is_hover
 							end
 						}
 					}
@@ -2585,38 +2979,43 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 				{
 					style_id = "selected_bg",
 					pass_type = "rect",
-					content_check_function = function(arg_68_0, arg_68_1)
-						return arg_68_0.active
+					content_check_function = function (self, arg_68_1)
+						-- function 68
+						return self.active
 					end
 				},
 				{
 					style_id = "selected_bg_shade",
 					pass_type = "rect",
-					content_check_function = function(arg_69_0, arg_69_1)
-						return arg_69_0.active
+					content_check_function = function (self, arg_69_1)
+						-- function 69
+						return self.active
 					end
 				},
 				{
 					pass_type = "rect",
-					content_check_function = function(arg_70_0)
-						return var_0_24
+					content_check_function = function (arg_70_0)
+						-- function 70
+						return flag
 					end
 				},
 				{
 					pass_type = "border",
-					content_check_function = function(arg_71_0, arg_71_1)
-						if var_0_24 then
+					content_check_function = function (arg_71_0, arg_71_1)
+						-- function 71
+						if not flag then
 							arg_71_1.thickness = 1
 						end
 
-						return var_0_24
+						return flag
 					end
 				},
 				{
 					style_id = "debug_middle_line",
 					pass_type = "rect",
-					content_check_function = function(arg_72_0)
-						return var_0_24
+					content_check_function = function (arg_72_0)
+						-- function 72
+						return flag
 					end
 				}
 			}
@@ -2627,17 +3026,17 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 			rect_masked = "rect_masked",
 			disabled = false,
 			active = false,
-			using_scrollbar = var_55_8,
+			using_scrollbar = flag_2,
 			hotspot = {},
 			highlight_hotspot = {},
-			list_content = var_55_5,
+			list_content = tbl_5,
 			text = arg_55_0,
-			selected_option = var_55_0[arg_55_2],
+			selected_option = tbl[arg_55_2],
 			current_selection = arg_55_2,
-			options_texts = var_55_0,
-			options_values = var_55_1,
+			options_texts = tbl,
+			options_values = tbl_2,
 			tooltip_text = arg_55_3,
-			disabled_tooltip_text = arg_55_4 and Localize(arg_55_4),
+			disabled_tooltip_text = not arg_55_4 and Localize(arg_55_4),
 			arrow = {
 				texture_id = "drop_down_menu_arrow",
 				uvs = {
@@ -2678,18 +3077,18 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 				active = false,
 				start_index = 1,
 				offset = {
-					arg_55_6[1] + var_0_31[1] - var_0_0 + 28,
-					arg_55_6[2] - var_55_3[2],
+					arg_55_6[1] + tbl_13[1] - num + 28,
+					arg_55_6[2] - tbl_3[2],
 					arg_55_6[3] + 5
 				},
-				num_draws = var_55_6,
-				total_draws = var_55_2,
+				num_draws = min,
+				total_draws = count,
 				list_member_offset = {
 					0,
-					-var_55_3[2],
+					-tbl_3[2],
 					0
 				},
-				item_styles = var_55_4
+				item_styles = tbl_4
 			},
 			highlight_texture = {
 				masked = true,
@@ -2700,8 +3099,8 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 				},
 				color = Colors.get_table("white"),
 				size = {
-					var_0_31[1],
-					var_0_31[2]
+					tbl_13[1],
+					tbl_13[2]
 				}
 			},
 			tooltip_text = {
@@ -2734,19 +3133,19 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 					arg_55_6[3]
 				},
 				size = {
-					var_0_31[1],
-					var_0_31[2]
+					tbl_13[1],
+					tbl_13[2]
 				}
 			},
 			hotspot = {
 				offset = {
-					arg_55_6[1] + var_0_31[1] - var_0_0,
+					arg_55_6[1] + tbl_13[1] - num,
 					arg_55_6[2],
 					arg_55_6[3]
 				},
 				size = {
-					var_0_0,
-					var_0_31[2]
+					num,
+					tbl_13[2]
 				}
 			},
 			text = {
@@ -2756,7 +3155,7 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 				dynamic_font = true,
 				font_type = "hell_shark_masked",
 				offset = {
-					arg_55_6[1] + 2 + var_0_11(arg_55_7),
+					arg_55_6[1] + 2 + fn(arg_55_7),
 					arg_55_6[2] + 5,
 					arg_55_6[3] + 10
 				},
@@ -2767,8 +3166,8 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 			arrow = {
 				masked = true,
 				offset = {
-					arg_55_6[1] + var_0_31[1] - 31,
-					arg_55_6[2] + (var_0_31[2] / 2 - 7.5),
+					arg_55_6[1] + tbl_13[1] - 31,
+					arg_55_6[2] + (tbl_13[2] / 2 - 7.5),
 					arg_55_6[3] + 1
 				},
 				size = {
@@ -2780,8 +3179,8 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 			arrow_hover = {
 				masked = true,
 				offset = {
-					arg_55_6[1] + var_0_31[1] - 31,
-					arg_55_6[2] + (var_0_31[2] / 2 - 14) + 13,
+					arg_55_6[1] + tbl_13[1] - 31,
+					arg_55_6[2] + (tbl_13[2] / 2 - 14) + 13,
 					arg_55_6[3]
 				},
 				size = {
@@ -2793,8 +3192,8 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 			arrow_hover_flipped = {
 				masked = true,
 				offset = {
-					arg_55_6[1] + var_0_31[1] - 31,
-					arg_55_6[2] + (var_0_31[2] / 2 - 14) - 12,
+					arg_55_6[1] + tbl_13[1] - 31,
+					arg_55_6[2] + (tbl_13[2] / 2 - 14) - 12,
 					arg_55_6[3]
 				},
 				size = {
@@ -2809,7 +3208,7 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 				dynamic_font = true,
 				font_type = "hell_shark_masked",
 				offset = {
-					arg_55_6[1] + var_0_31[1] - var_0_0 / 2,
+					arg_55_6[1] + tbl_13[1] - num / 2,
 					arg_55_6[2] + 2,
 					arg_55_6[3] + 3
 				},
@@ -2822,13 +3221,13 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 			selected_bg = {
 				masked = true,
 				offset = {
-					arg_55_6[1] + var_0_31[1] - (var_0_0 - 28),
-					arg_55_6[2] - var_55_7,
+					arg_55_6[1] + tbl_13[1] - (num - 28),
+					arg_55_6[2] - num_2,
 					arg_55_6[3] + 20
 				},
 				size = {
-					var_0_0 - 56,
-					var_55_7
+					num - 56,
+					num_2
 				},
 				color = {
 					255,
@@ -2840,13 +3239,13 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 			selected_bg_shade = {
 				masked = true,
 				offset = {
-					arg_55_6[1] + var_0_31[1] - (var_0_0 - 28) - 2,
-					arg_55_6[2] - (var_55_7 + 2),
+					arg_55_6[1] + tbl_13[1] - (num - 28) - 2,
+					arg_55_6[2] - (num_2 + 2),
 					arg_55_6[3] + 19
 				},
 				size = {
-					var_0_0 - 56 + 4,
-					var_55_7 + 2
+					num - 56 + 4,
+					num_2 + 2
 				},
 				color = {
 					255,
@@ -2858,11 +3257,11 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 			debug_middle_line = {
 				offset = {
 					arg_55_6[1],
-					arg_55_6[2] + var_0_31[2] / 2 - 1,
+					arg_55_6[2] + tbl_13[2] / 2 - 1,
 					arg_55_6[3] + 10
 				},
 				size = {
-					var_0_31[1],
+					tbl_13[1],
 					2
 				},
 				color = {
@@ -2878,13 +3277,13 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 					arg_55_6[2],
 					arg_55_6[3] + 1
 				},
-				color = var_0_9,
+				color = get_color_table_with_alpha,
 				size = {
-					var_0_31[1],
-					var_0_8
+					tbl_13[1],
+					num_5
 				}
 			},
-			size = table.clone(var_0_31),
+			size = table.clone(tbl_13),
 			color = {
 				50,
 				255,
@@ -2895,97 +3294,103 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 		scenegraph_id = arg_55_5
 	}
 
-	if var_55_8 then
-		local var_55_11 = (var_55_2 - var_55_6) / var_55_2
-		local var_55_12 = var_55_7 * var_55_11
-		local var_55_13 = var_55_7 - var_55_12
-		local var_55_14 = var_55_13 / (var_55_2 - var_55_6) - 1
-		local var_55_15 = {
+	if not flag_2 then
+		local num_3 = (count - min) / count
+		local num_4 = num_2 * num_3
+		local num_6 = num_2 - num_4
+		local num_7 = num_6 / (count - min) - 1
+		local tbl_7 = {
 			style_id = "thumbnail",
 			pass_type = "hotspot",
 			content_id = "thumbnail_hotspot",
-			content_check_function = function(arg_73_0)
-				return arg_73_0.parent.active
+			content_check_function = function (self)
+				-- function 73
+				return self.parent.active
 			end
 		}
-		local var_55_16 = {
+		local tbl_8 = {
 			style_id = "thumbnail",
 			pass_type = "held",
 			content_id = "thumbnail_hotspot",
-			content_check_function = function(arg_74_0)
-				return arg_74_0.parent.active
+			content_check_function = function (self)
+				-- function 74
+				return self.parent.active
 			end,
-			held_function = function(arg_75_0, arg_75_1, arg_75_2, arg_75_3)
-				if Managers.input:is_device_active("gamepad") then
+			held_function = function (arg_75_0, arg_75_1, arg_75_2, arg_75_3)
+				-- function 75
+				if not Managers.input:is_device_active("gamepad") then
 					return
 				end
 
-				local var_75_0 = arg_75_2.thumbnail_fraction
-				local var_75_1 = arg_75_2.thumbnail_length
-				local var_75_2 = arg_75_2.scroll_length
-				local var_75_3 = arg_75_1.parent.offset
-				local var_75_4 = arg_75_1.default_offset_y
-				local var_75_5 = arg_75_1.offset
-				local var_75_6 = 2
-				local var_75_7 = arg_75_3:get("cursor")
-				local var_75_8 = UIInverseScaleVectorToResolution(var_75_7)[var_75_6]
+				local thumbnail_fraction = arg_75_2.thumbnail_fraction
+				local thumbnail_length = arg_75_2.thumbnail_length
+				local scroll_length = arg_75_2.scroll_length
+				local offset = arg_75_1.parent.offset
+				local default_offset_y = arg_75_1.default_offset_y
+				local offset_2 = arg_75_1.offset
+				local num = 2
+				local get = arg_75_3:get("cursor")
+				local var_75_8 = UIInverseScaleVectorToResolution(get)[num]
 
 				if not arg_75_2.cursor_y then
 					arg_75_2.cursor_y = var_75_8
 					arg_75_2.parent.dragging = true
 				end
 
-				local var_75_9 = var_75_8 - arg_75_2.cursor_y
+				local num_2 = var_75_8 - arg_75_2.cursor_y
 
 				arg_75_2.cursor_y = var_75_8
 
-				local var_75_10 = 0
-				local var_75_11 = var_75_2
-				local var_75_12 = var_75_4 - var_75_5[var_75_6] - var_75_9
-				local var_75_13 = math.clamp(var_75_12, var_75_10, var_75_11) / var_75_11
-				local var_75_14 = arg_75_1.parent.list_style
-				local var_75_15 = var_75_14.num_draws
-				local var_75_16 = 1 / (var_75_14.total_draws - var_75_15)
+				local num_3 = 0
+				local var_75_11 = scroll_length
+				local num_4 = default_offset_y - offset_2[num] - num_2
+				local num_5 = math.clamp(num_4, num_3, var_75_11) / var_75_11
+				local list_style = arg_75_1.parent.list_style
+				local num_draws = list_style.num_draws
+				local num_6 = 1 / (list_style.total_draws - num_draws)
 
-				var_75_14.start_index = math.floor(var_75_13 / var_75_16) + 1
-				arg_75_2.scroll_progress = var_75_13
+				list_style.start_index = math.floor(num_5 / num_6) + 1
+				arg_75_2.scroll_progress = num_5
 			end,
-			release_function = function(arg_76_0, arg_76_1, arg_76_2, arg_76_3)
+			release_function = function (arg_76_0, arg_76_1, arg_76_2, arg_76_3)
+				-- function 76
 				arg_76_2.cursor_y = nil
 				arg_76_2.parent.dragging = nil
 			end
 		}
-		local var_55_17 = {
+		local tbl_9 = {
 			style_id = "thumbnail",
 			texture_id = "rect_masked",
 			pass_type = "texture",
-			content_check_function = function(arg_77_0, arg_77_1)
-				return arg_77_0.active
+			content_check_function = function (self, arg_77_1)
+				-- function 77
+				return self.active
 			end,
-			content_change_function = function(arg_78_0, arg_78_1)
-				local var_78_0 = arg_78_1.default_offset_y
-				local var_78_1 = arg_78_1.offset
-				local var_78_2 = arg_78_1.step_size
-				local var_78_3 = arg_78_1.size
-				local var_78_4 = 2
-				local var_78_5 = arg_78_0.thumbnail_hotspot
-				local var_78_6 = var_78_5.scroll_progress
-				local var_78_7 = var_78_5.scroll_length
-				local var_78_8 = var_78_5.thumbnail_length
-				local var_78_9 = 0
-				local var_78_10 = var_78_7 - var_78_8
+			content_change_function = function (self, arg_78_1)
+				-- function 78
+				local default_offset_y = arg_78_1.default_offset_y
+				local offset = arg_78_1.offset
+				local step_size = arg_78_1.step_size
+				local size = arg_78_1.size
+				local num = 2
+				local thumbnail_hotspot = self.thumbnail_hotspot
+				local scroll_progress = thumbnail_hotspot.scroll_progress
+				local scroll_length = thumbnail_hotspot.scroll_length
+				local thumbnail_length = thumbnail_hotspot.thumbnail_length
+				local num_2 = 0
+				local num_3 = scroll_length - thumbnail_length
 
-				var_78_1[var_78_4] = var_78_0 - var_78_7 * var_78_6
+				offset[num] = default_offset_y - scroll_length * scroll_progress
 			end
 		}
-		local var_55_18 = {
+		local tbl_10 = {
 			vertical_alignment = "bottom",
 			horizontal_alignment = "center",
-			step_size = var_55_14,
-			default_offset_y = arg_55_6[2] - var_55_12,
+			step_size = num_7,
+			default_offset_y = arg_55_6[2] - num_4,
 			offset = {
-				arg_55_6[1] + var_0_31[1] - 50,
-				arg_55_6[2] - var_55_12,
+				arg_55_6[1] + tbl_13[1] - 50,
+				arg_55_6[2] - num_4,
 				arg_55_6[3] + 25
 			},
 			color = {
@@ -2996,67 +3401,74 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 			},
 			size = {
 				20,
-				var_55_12
+				num_4
 			},
 			texture_size = {
 				5,
-				var_55_12
+				num_4
 			}
 		}
 
-		var_55_10.element.passes[#var_55_10.element.passes + 1] = var_55_17
-		var_55_10.element.passes[#var_55_10.element.passes + 1] = var_55_16
-		var_55_10.element.passes[#var_55_10.element.passes + 1] = var_55_15
-		var_55_10.content.thumbnail_hotspot = {
+		tbl_6.element.passes[#tbl_6.element.passes + 1] = tbl_9
+		tbl_6.element.passes[#tbl_6.element.passes + 1] = tbl_8
+		tbl_6.element.passes[#tbl_6.element.passes + 1] = tbl_7
+		tbl_6.content.thumbnail_hotspot = {
 			scroll_progress = 0,
-			thumbnail_fraction = var_55_11,
-			thumbnail_length = var_55_12,
-			scroll_length = var_55_13,
+			thumbnail_fraction = num_3,
+			thumbnail_length = num_4,
+			scroll_length = num_6,
 			scenegraph_id = arg_55_5
 		}
-		var_55_10.style.thumbnail = var_55_18
+		tbl_6.style.thumbnail = tbl_10
 	end
 
-	return UIWidget.init(var_55_10)
+	return UIWidget.init(tbl_6)
 end
 
-local var_0_33 = {
+local tbl_14 = {
 	var_0_21 - 100,
 	30
 }
 
-local function var_0_34(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79_5, arg_79_6, arg_79_7)
-	local var_79_0 = {}
-	local var_79_1 = {}
-	local var_79_2 = #arg_79_1
+local function fn_11(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79_5, arg_79_6, arg_79_7)
+	-- function 79
+	local tbl_2 = {}
+	local tbl_3 = {}
+	local count = #arg_79_1
 
-	for iter_79_0 = 1, var_79_2 do
-		var_79_0[iter_79_0] = arg_79_1[iter_79_0].text
-		var_79_1[iter_79_0] = arg_79_1[iter_79_0].value
+	for i = 1, count do
+		tbl_2[i] = arg_79_1[i].text
+		tbl_3[i] = arg_79_1[i].value
 	end
 
-	arg_79_6[2] = arg_79_6[2] - var_0_33[2]
+	arg_79_6[2] = arg_79_6[2] - tbl_14[2]
 
-	local var_79_3 = {
+	local tbl_4 = {
 		element = {
 			passes = {
 				{
 					pass_type = "local_offset",
-					offset_function = function(arg_80_0, arg_80_1, arg_80_2, arg_80_3)
-						if arg_80_2._last_selection ~= arg_80_2.current_selection or arg_80_2._last_overriden_setting ~= arg_80_2.overriden_setting then
+					offset_function = function (arg_80_0, arg_80_1, arg_80_2, arg_80_3)
+						-- function 80
+						if not (arg_80_2._last_selection ~= arg_80_2.current_selection or arg_80_2._last_overriden_setting == arg_80_2.overriden_setting) then
 							arg_80_2._last_selection = arg_80_2.current_selection
 							arg_80_2._last_overriden_setting = arg_80_2.overriden_setting
 
-							local var_80_0 = Utf8.upper(arg_80_2.options_texts[arg_80_2.current_selection] or "n/a")
-							local var_80_1 = arg_80_2.overriden_setting
+							local upper = Utf8.upper
+							local var_80_1 = arg_80_2.options_texts[arg_80_2.current_selection]
 
-							if var_80_1 then
-								local var_80_2 = arg_80_1.selection_text.override_color
-								local var_80_3 = arg_80_1.selection_text.disabled_color
+							var_80_1 = var_80_1 or "n/a"
 
-								arg_80_2.selection_text = string.format("{#color(%d,%d,%d,%d)}%s {#color(%d,%d,%d,%d);strike(true)}%s{#strike(false)}", var_80_2[2], var_80_2[3], var_80_2[4], var_80_2[1], var_80_0, var_80_3[2], var_80_3[3], var_80_3[4], var_80_3[1], Utf8.upper(var_80_1))
+							local var_80_2 = upper(var_80_1)
+							local overriden_setting = arg_80_2.overriden_setting
+
+							if not overriden_setting then
+								local override_color = arg_80_1.selection_text.override_color
+								local disabled_color = arg_80_1.selection_text.disabled_color
+
+								arg_80_2.selection_text = string.format("{#color(%d,%d,%d,%d)}%s {#color(%d,%d,%d,%d);strike(true)}%s{#strike(false)}", override_color[2], override_color[3], override_color[4], override_color[1], var_80_2, disabled_color[2], disabled_color[3], disabled_color[4], disabled_color[1], Utf8.upper(overriden_setting))
 							else
-								arg_80_2.selection_text = var_80_0
+								arg_80_2.selection_text = var_80_2
 							end
 						end
 					end
@@ -3069,30 +3481,33 @@ local function var_0_34(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79
 				{
 					pass_type = "hotspot",
 					content_id = "highlight_hotspot",
-					content_check_function = function(arg_81_0)
-						return not arg_81_0.disabled
+					content_check_function = function (self)
+						-- function 81
+						return not self.disabled
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "highlight_texture",
 					texture_id = "highlight_texture",
-					content_check_function = function(arg_82_0)
-						return arg_82_0.is_highlighted
+					content_check_function = function (self)
+						-- function 82
+						return self.is_highlighted
 					end
 				},
 				{
 					pass_type = "option_tooltip",
 					text_id = "tooltip_text",
-					content_check_function = function(arg_83_0)
-						if not arg_83_0.highlight_hotspot.is_hover or Managers.input:is_device_active("gamepad") then
+					content_check_function = function (self)
+						-- function 83
+						if not self.highlight_hotspot.is_hover and not Managers.input:is_device_active("gamepad") then
 							return false
 						end
 
-						if not arg_83_0.disabled then
-							return arg_83_0.tooltip_text
+						if not self.disabled then
+							return self.tooltip_text
 						else
-							return not arg_83_0.disabled_tooltip_text
+							return not self.disabled_tooltip_text
 						end
 					end
 				},
@@ -3100,79 +3515,81 @@ local function var_0_34(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79
 					style_id = "disabled_tooltip_text",
 					pass_type = "option_tooltip",
 					text_id = "disabled_tooltip_text",
-					content_check_function = function(arg_84_0)
-						if not arg_84_0.disabled or not arg_84_0.highlight_hotspot.is_hover or Managers.input:is_device_active("gamepad") then
+					content_check_function = function (self)
+						-- function 84
+						if not self.disabled and not self.highlight_hotspot.is_hover and not Managers.input:is_device_active("gamepad") then
 							return false
 						end
 
-						if arg_84_0.overriden_reason then
-							arg_84_0.disabled_tooltip_text = arg_84_0.overriden_reason
+						if not self.overriden_reason then
+							self.disabled_tooltip_text = self.overriden_reason
 						end
 
-						if arg_84_0.disabled_tooltip_text then
+						if not self.disabled_tooltip_text then
 							return true
 						end
 					end
 				},
 				{
 					pass_type = "local_offset",
-					offset_function = function(arg_85_0, arg_85_1, arg_85_2, arg_85_3)
-						local var_85_0 = arg_85_2.left_hotspot
-						local var_85_1 = arg_85_2.right_hotspot
+					offset_function = function (arg_85_0, arg_85_1, arg_85_2, arg_85_3)
+						-- function 85
+						local left_hotspot = arg_85_2.left_hotspot
+						local right_hotspot = arg_85_2.right_hotspot
 
-						if var_85_0.on_hover_enter then
-							local var_85_2 = arg_85_2.on_hover_enter_callback
+						if not left_hotspot.on_hover_enter then
+							local on_hover_enter_callback = arg_85_2.on_hover_enter_callback
 
-							if var_85_2 then
-								var_85_2("left_arrow_hover")
+							if not on_hover_enter_callback then
+								on_hover_enter_callback("left_arrow_hover")
 							end
 						end
 
-						if var_85_0.on_hover_exit then
-							local var_85_3 = arg_85_2.on_hover_exit_callback
+						if not left_hotspot.on_hover_exit then
+							local on_hover_exit_callback = arg_85_2.on_hover_exit_callback
 
-							if var_85_3 then
-								var_85_3("left_arrow_hover")
+							if not on_hover_exit_callback then
+								on_hover_exit_callback("left_arrow_hover")
 							end
 						end
 
-						if var_85_0.on_release then
-							local var_85_4 = arg_85_2.on_pressed_callback
+						if not left_hotspot.on_release then
+							local on_pressed_callback = arg_85_2.on_pressed_callback
 
-							if var_85_4 then
-								var_85_4("left_arrow")
-								var_85_4("left_arrow_hover")
+							if not on_pressed_callback then
+								on_pressed_callback("left_arrow")
+								on_pressed_callback("left_arrow_hover")
 							end
 						end
 
-						if var_85_1.on_hover_enter then
-							local var_85_5 = arg_85_2.on_hover_enter_callback
+						if not right_hotspot.on_hover_enter then
+							local on_hover_enter_callback_2 = arg_85_2.on_hover_enter_callback
 
-							if var_85_5 then
-								var_85_5("right_arrow_hover")
+							if not on_hover_enter_callback_2 then
+								on_hover_enter_callback_2("right_arrow_hover")
 							end
 						end
 
-						if var_85_1.on_hover_exit then
-							local var_85_6 = arg_85_2.on_hover_exit_callback
+						if not right_hotspot.on_hover_exit then
+							local on_hover_exit_callback_2 = arg_85_2.on_hover_exit_callback
 
-							if var_85_6 then
-								var_85_6("right_arrow_hover")
+							if not on_hover_exit_callback_2 then
+								on_hover_exit_callback_2("right_arrow_hover")
 							end
 						end
 
-						if var_85_1.on_release then
-							local var_85_7 = arg_85_2.on_pressed_callback
+						if not right_hotspot.on_release then
+							local on_pressed_callback_2 = arg_85_2.on_pressed_callback
 
-							if var_85_7 then
-								var_85_7("right_arrow")
-								var_85_7("right_arrow_hover")
+							if not on_pressed_callback_2 then
+								on_pressed_callback_2("right_arrow")
+								on_pressed_callback_2("right_arrow_hover")
 							end
 						end
 
-						if arg_85_2.disabled then
+						if not arg_85_2.disabled then
 							arg_85_1.selection_text.text_color = arg_85_1.selection_text.disabled_color
-						elseif var_85_0.is_hover or var_85_1.is_hover then
+						elseif left_hotspot.is_hover or not right_hotspot.is_hover then
 							arg_85_1.selection_text.text_color = arg_85_1.selection_text.highlight_color
 						else
 							arg_85_1.selection_text.text_color = arg_85_1.selection_text.default_color
@@ -3183,8 +3600,9 @@ local function var_0_34(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_change_function = function(arg_86_0, arg_86_1)
-						if arg_86_0.disabled then
+					content_change_function = function (self, arg_86_1)
+						-- function 86
+						if not self.disabled then
 							arg_86_1.text_color = arg_86_1.disabled_color
 						else
 							arg_86_1.text_color = arg_86_1.default_color
@@ -3195,16 +3613,18 @@ local function var_0_34(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79
 					style_id = "left_arrow_hotspot",
 					pass_type = "hotspot",
 					content_id = "left_hotspot",
-					content_check_function = function(arg_87_0)
-						return not arg_87_0.disabled
+					content_check_function = function (self)
+						-- function 87
+						return not self.disabled
 					end
 				},
 				{
 					style_id = "right_arrow_hotspot",
 					pass_type = "hotspot",
 					content_id = "right_hotspot",
-					content_check_function = function(arg_88_0)
-						return not arg_88_0.disabled
+					content_check_function = function (self)
+						-- function 88
+						return not self.disabled
 					end
 				},
 				{
@@ -3212,8 +3632,9 @@ local function var_0_34(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79
 					style_id = "left_arrow",
 					pass_type = "texture",
 					content_id = "arrow",
-					content_check_function = function(arg_89_0)
-						return not arg_89_0.parent.disabled
+					content_check_function = function (self)
+						-- function 89
+						return not self.parent.disabled
 					end
 				},
 				{
@@ -3221,8 +3642,9 @@ local function var_0_34(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79
 					style_id = "right_arrow",
 					pass_type = "texture_uv",
 					content_id = "arrow",
-					content_check_function = function(arg_90_0)
-						return not arg_90_0.parent.disabled
+					content_check_function = function (self)
+						-- function 90
+						return not self.parent.disabled
 					end
 				},
 				{
@@ -3241,33 +3663,37 @@ local function var_0_34(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79
 					style_id = "selection_text",
 					pass_type = "text",
 					text_id = "selection_text",
-					content_check_function = function(arg_91_0)
-						local var_91_0 = arg_91_0.selection_text
+					content_check_function = function (self)
+						-- function 91
+						local selection_text = self.selection_text
 
-						return var_91_0 and var_91_0 ~= ""
+						return not selection_text and selection_text ~= ""
 					end
 				},
 				{
 					pass_type = "rect",
-					content_check_function = function(arg_92_0)
-						return var_0_24
+					content_check_function = function (arg_92_0)
+						-- function 92
+						return flag
 					end
 				},
 				{
 					pass_type = "border",
-					content_check_function = function(arg_93_0, arg_93_1)
-						if var_0_24 then
+					content_check_function = function (arg_93_0, arg_93_1)
+						-- function 93
+						if not flag then
 							arg_93_1.thickness = 1
 						end
 
-						return var_0_24
+						return flag
 					end
 				},
 				{
 					style_id = "debug_middle_line",
 					pass_type = "rect",
-					content_check_function = function(arg_94_0)
-						return var_0_24
+					content_check_function = function (arg_94_0)
+						-- function 94
+						return flag
 					end
 				}
 			}
@@ -3314,11 +3740,11 @@ local function var_0_34(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79
 				}
 			},
 			tooltip_text = arg_79_3,
-			disabled_tooltip_text = arg_79_4 and Localize(arg_79_4),
+			disabled_tooltip_text = not arg_79_4 and Localize(arg_79_4),
 			current_selection = arg_79_2,
-			options_texts = var_79_0,
-			options_values = var_79_1,
-			num_options = var_79_2,
+			options_texts = tbl_2,
+			options_values = tbl_3,
+			num_options = count,
 			hotspot_content_ids = {
 				"left_hotspot",
 				"right_hotspot"
@@ -3326,7 +3752,7 @@ local function var_0_34(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79
 		},
 		style = {
 			offset = table.clone(arg_79_6),
-			size = table.clone(var_0_33),
+			size = table.clone(tbl_14),
 			highlight_texture = {
 				upper_case = true,
 				masked = true,
@@ -3337,8 +3763,8 @@ local function var_0_34(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79
 				},
 				color = Colors.get_table("white"),
 				size = {
-					var_0_33[1],
-					var_0_33[2]
+					tbl_14[1],
+					tbl_14[2]
 				}
 			},
 			tooltip_text = {
@@ -3371,15 +3797,15 @@ local function var_0_34(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79
 					arg_79_6[3]
 				},
 				size = {
-					var_0_33[1],
-					var_0_33[2]
+					tbl_14[1],
+					tbl_14[2]
 				}
 			},
 			left_arrow = {
 				masked = true,
 				offset = {
-					arg_79_6[1] + var_0_33[1] - var_0_0,
-					arg_79_6[2] + (var_0_33[2] / 2 - 13.5),
+					arg_79_6[1] + tbl_14[1] - num,
+					arg_79_6[2] + (tbl_14[2] / 2 - 13.5),
 					arg_79_6[3] + 1
 				},
 				size = {
@@ -3391,8 +3817,8 @@ local function var_0_34(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79
 			left_arrow_hover = {
 				masked = true,
 				offset = {
-					arg_79_6[1] + var_0_33[1] - var_0_0 + 6,
-					arg_79_6[2] + (var_0_33[2] / 2 - 17.5),
+					arg_79_6[1] + tbl_14[1] - num + 6,
+					arg_79_6[2] + (tbl_14[2] / 2 - 17.5),
 					arg_79_6[3]
 				},
 				size = {
@@ -3408,20 +3834,20 @@ local function var_0_34(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79
 			},
 			left_arrow_hotspot = {
 				offset = {
-					arg_79_6[1] + var_0_33[1] - var_0_0,
-					arg_79_6[2] + (var_0_33[2] / 2 - 13.5),
+					arg_79_6[1] + tbl_14[1] - num,
+					arg_79_6[2] + (tbl_14[2] / 2 - 13.5),
 					arg_79_6[3]
 				},
 				size = {
-					var_0_0 / 2,
+					num / 2,
 					27
 				}
 			},
 			right_arrow = {
 				masked = true,
 				offset = {
-					arg_79_6[1] + var_0_33[1] - 19,
-					arg_79_6[2] + (var_0_33[2] / 2 - 13.5),
+					arg_79_6[1] + tbl_14[1] - 19,
+					arg_79_6[2] + (tbl_14[2] / 2 - 13.5),
 					arg_79_6[3] + 1
 				},
 				size = {
@@ -3433,8 +3859,8 @@ local function var_0_34(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79
 			right_arrow_hover = {
 				masked = true,
 				offset = {
-					arg_79_6[1] + var_0_33[1] - 30 - 5,
-					arg_79_6[2] + (var_0_33[2] / 2 - 17.5),
+					arg_79_6[1] + tbl_14[1] - 30 - 5,
+					arg_79_6[2] + (tbl_14[2] / 2 - 17.5),
 					arg_79_6[3]
 				},
 				size = {
@@ -3450,12 +3876,12 @@ local function var_0_34(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79
 			},
 			right_arrow_hotspot = {
 				offset = {
-					arg_79_6[1] + var_0_33[1] - var_0_0 / 2,
-					arg_79_6[2] + (var_0_33[2] / 2 - 13.5),
+					arg_79_6[1] + tbl_14[1] - num / 2,
+					arg_79_6[2] + (tbl_14[2] / 2 - 13.5),
 					arg_79_6[3]
 				},
 				size = {
-					var_0_0 / 2,
+					num / 2,
 					27
 				}
 			},
@@ -3466,7 +3892,7 @@ local function var_0_34(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79
 				dynamic_font = true,
 				font_type = "hell_shark_masked",
 				offset = {
-					arg_79_6[1] + 2 + var_0_11(arg_79_7),
+					arg_79_6[1] + 2 + fn(arg_79_7),
 					arg_79_6[2] + 2,
 					arg_79_6[3]
 				},
@@ -3480,7 +3906,7 @@ local function var_0_34(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79
 				dynamic_font = true,
 				font_type = "hell_shark_masked",
 				offset = {
-					arg_79_6[1] + var_0_33[1] - var_0_0 / 2,
+					arg_79_6[1] + tbl_14[1] - num / 2,
 					arg_79_6[2] + 2,
 					arg_79_6[3]
 				},
@@ -3493,11 +3919,11 @@ local function var_0_34(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79
 			debug_middle_line = {
 				offset = {
 					arg_79_6[1],
-					arg_79_6[2] + var_0_33[2] / 2 - 1,
+					arg_79_6[2] + tbl_14[2] / 2 - 1,
 					arg_79_6[3] + 10
 				},
 				size = {
-					var_0_33[1],
+					tbl_14[1],
 					2
 				},
 				color = {
@@ -3513,22 +3939,22 @@ local function var_0_34(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79
 					arg_79_6[2],
 					arg_79_6[3] + 1
 				},
-				color = var_0_9,
+				color = get_color_table_with_alpha,
 				size = {
-					var_0_33[1],
-					var_0_8
+					tbl_14[1],
+					num_5
 				}
 			},
 			input_field_background = {
 				offset = {
-					arg_79_6[1] + var_0_33[1] - var_0_0,
+					arg_79_6[1] + tbl_14[1] - num,
 					arg_79_6[2],
 					arg_79_6[3]
 				},
-				color = var_0_1,
+				color = tbl,
 				size = {
-					var_0_0,
-					var_0_33[2]
+					num,
+					tbl_14[2]
 				}
 			},
 			color = {
@@ -3541,18 +3967,19 @@ local function var_0_34(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79
 		scenegraph_id = arg_79_5
 	}
 
-	return UIWidget.init(var_79_3)
+	return UIWidget.init(tbl_4)
 end
 
-local var_0_35 = {
+local tbl_15 = {
 	var_0_21 - 100,
 	50
 }
 
-local function var_0_36(arg_95_0, arg_95_1, arg_95_2, arg_95_3, arg_95_4, arg_95_5)
-	arg_95_5[2] = arg_95_5[2] - var_0_35[2]
+local function fn_12(arg_95_0, arg_95_1, arg_95_2, arg_95_3, arg_95_4, arg_95_5)
+	-- function 95
+	arg_95_5[2] = arg_95_5[2] - tbl_15[2]
 
-	local var_95_0 = {
+	local tbl = {
 		element = {
 			passes = {
 				{
@@ -3571,25 +3998,28 @@ local function var_0_36(arg_95_0, arg_95_1, arg_95_2, arg_95_3, arg_95_4, arg_95
 				},
 				{
 					pass_type = "rect",
-					content_check_function = function(arg_96_0)
-						return var_0_24
+					content_check_function = function (arg_96_0)
+						-- function 96
+						return flag
 					end
 				},
 				{
 					pass_type = "border",
-					content_check_function = function(arg_97_0, arg_97_1)
-						if var_0_24 then
+					content_check_function = function (arg_97_0, arg_97_1)
+						-- function 97
+						if not flag then
 							arg_97_1.thickness = 1
 						end
 
-						return var_0_24
+						return flag
 					end
 				},
 				{
 					style_id = "debug_middle_line",
 					pass_type = "rect",
-					content_check_function = function(arg_98_0)
-						return var_0_24
+					content_check_function = function (arg_98_0)
+						-- function 98
+						return flag
 					end
 				}
 			}
@@ -3603,7 +4033,7 @@ local function var_0_36(arg_95_0, arg_95_1, arg_95_2, arg_95_3, arg_95_4, arg_95
 		},
 		style = {
 			offset = table.clone(arg_95_5),
-			size = table.clone(var_0_35),
+			size = table.clone(tbl_15),
 			text = {
 				upper_case = true,
 				localize = true,
@@ -3617,16 +4047,16 @@ local function var_0_36(arg_95_0, arg_95_1, arg_95_2, arg_95_3, arg_95_4, arg_95
 				text_color = arg_95_2 or Colors.get_color_table_with_alpha("font_title", 255),
 				font_size = arg_95_1 or 18,
 				horizontal_alignment = arg_95_3 or "left",
-				size = table.clone(var_0_35)
+				size = table.clone(tbl_15)
 			},
 			debug_middle_line = {
 				offset = {
 					arg_95_5[1],
-					arg_95_5[2] + var_0_35[2] / 2 - 1,
+					arg_95_5[2] + tbl_15[2] / 2 - 1,
 					arg_95_5[3] + 10
 				},
 				size = {
-					var_0_35[1],
+					tbl_15[1],
 					2
 				},
 				color = {
@@ -3642,10 +4072,10 @@ local function var_0_36(arg_95_0, arg_95_1, arg_95_2, arg_95_3, arg_95_4, arg_95
 					arg_95_5[2],
 					arg_95_5[3] + 1
 				},
-				color = var_0_9,
+				color = get_color_table_with_alpha,
 				size = {
-					var_0_35[1],
-					var_0_8
+					tbl_15[1],
+					num_5
 				}
 			},
 			color = {
@@ -3658,18 +4088,19 @@ local function var_0_36(arg_95_0, arg_95_1, arg_95_2, arg_95_3, arg_95_4, arg_95
 		scenegraph_id = arg_95_4
 	}
 
-	return UIWidget.init(var_95_0)
+	return UIWidget.init(tbl)
 end
 
-local var_0_37 = {
+local tbl_16 = {
 	var_0_21 - 100,
 	50
 }
 
-local function var_0_38(arg_99_0, arg_99_1, arg_99_2, arg_99_3, arg_99_4, arg_99_5, arg_99_6)
-	arg_99_6[2] = arg_99_6[2] - var_0_37[2]
+local function fn_13(arg_99_0, arg_99_1, arg_99_2, arg_99_3, arg_99_4, arg_99_5, arg_99_6)
+	-- function 99
+	arg_99_6[2] = arg_99_6[2] - tbl_16[2]
 
-	local var_99_0 = {
+	local tbl = {
 		element = {
 			passes = {
 				{
@@ -3684,24 +4115,27 @@ local function var_0_38(arg_99_0, arg_99_1, arg_99_2, arg_99_3, arg_99_4, arg_99
 					pass_type = "texture",
 					style_id = "highlight_texture",
 					texture_id = "highlight_texture",
-					content_check_function = function(arg_100_0)
-						return arg_100_0.is_highlighted
+					content_check_function = function (self)
+						-- function 100
+						return self.is_highlighted
 					end
 				},
 				{
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_101_0)
-						return not arg_101_0.hotspot.is_hover
+					content_check_function = function (self)
+						-- function 101
+						return not self.hotspot.is_hover
 					end
 				},
 				{
 					style_id = "text_hover",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_102_0)
-						return arg_102_0.hotspot.is_hover
+					content_check_function = function (self)
+						-- function 102
+						return self.hotspot.is_hover
 					end
 				},
 				{
@@ -3711,25 +4145,28 @@ local function var_0_38(arg_99_0, arg_99_1, arg_99_2, arg_99_3, arg_99_4, arg_99
 				},
 				{
 					pass_type = "rect",
-					content_check_function = function(arg_103_0)
-						return var_0_24
+					content_check_function = function (arg_103_0)
+						-- function 103
+						return flag
 					end
 				},
 				{
 					pass_type = "border",
-					content_check_function = function(arg_104_0, arg_104_1)
-						if var_0_24 then
+					content_check_function = function (arg_104_0, arg_104_1)
+						-- function 104
+						if not flag then
 							arg_104_1.thickness = 1
 						end
 
-						return var_0_24
+						return flag
 					end
 				},
 				{
 					style_id = "debug_middle_line",
 					pass_type = "rect",
-					content_check_function = function(arg_105_0)
-						return var_0_24
+					content_check_function = function (arg_105_0)
+						-- function 105
+						return flag
 					end
 				}
 			}
@@ -3746,7 +4183,7 @@ local function var_0_38(arg_99_0, arg_99_1, arg_99_2, arg_99_3, arg_99_4, arg_99
 		},
 		style = {
 			offset = table.clone(arg_99_6),
-			size = table.clone(var_0_37),
+			size = table.clone(tbl_16),
 			highlight_texture = {
 				masked = true,
 				offset = {
@@ -3756,8 +4193,8 @@ local function var_0_38(arg_99_0, arg_99_1, arg_99_2, arg_99_3, arg_99_4, arg_99
 				},
 				color = Colors.get_table("white"),
 				size = {
-					var_0_37[1],
-					var_0_37[2]
+					tbl_16[1],
+					tbl_16[2]
 				}
 			},
 			text = {
@@ -3773,7 +4210,7 @@ local function var_0_38(arg_99_0, arg_99_1, arg_99_2, arg_99_3, arg_99_4, arg_99
 				text_color = arg_99_3 or Colors.get_color_table_with_alpha("font_title", 255),
 				font_size = arg_99_2 or 18,
 				horizontal_alignment = arg_99_4 or "left",
-				size = table.clone(var_0_37)
+				size = table.clone(tbl_16)
 			},
 			text_hover = {
 				upper_case = true,
@@ -3788,16 +4225,16 @@ local function var_0_38(arg_99_0, arg_99_1, arg_99_2, arg_99_3, arg_99_4, arg_99
 				text_color = arg_99_3 or Colors.get_color_table_with_alpha("font_default", 255),
 				font_size = arg_99_2 or 18,
 				horizontal_alignment = arg_99_4 or "left",
-				size = table.clone(var_0_37)
+				size = table.clone(tbl_16)
 			},
 			debug_middle_line = {
 				offset = {
 					arg_99_6[1],
-					arg_99_6[2] + var_0_37[2] / 2 - 1,
+					arg_99_6[2] + tbl_16[2] / 2 - 1,
 					arg_99_6[3] + 10
 				},
 				size = {
-					var_0_37[1],
+					tbl_16[1],
 					2
 				},
 				color = {
@@ -3813,10 +4250,10 @@ local function var_0_38(arg_99_0, arg_99_1, arg_99_2, arg_99_3, arg_99_4, arg_99
 					arg_99_6[2],
 					arg_99_6[3] + 1
 				},
-				color = var_0_9,
+				color = get_color_table_with_alpha,
 				size = {
-					var_0_37[1],
-					var_0_8
+					tbl_16[1],
+					num_5
 				}
 			},
 			color = {
@@ -3829,130 +4266,160 @@ local function var_0_38(arg_99_0, arg_99_1, arg_99_2, arg_99_3, arg_99_4, arg_99
 		scenegraph_id = arg_99_5
 	}
 
-	return UIWidget.init(var_99_0)
+	return UIWidget.init(tbl)
 end
 
-local var_0_39 = {
+local tbl_17 = {
 	var_0_21 - 100,
 	50
 }
 
-local function var_0_40(arg_106_0, arg_106_1, arg_106_2, arg_106_3, arg_106_4, arg_106_5, arg_106_6)
-	local var_106_0 = {}
-	local var_106_1 = {}
-	local var_106_2 = #arg_106_2
+local function fn_14(arg_106_0, arg_106_1, arg_106_2, arg_106_3, arg_106_4, arg_106_5, arg_106_6)
+	-- function 106
+	local tbl = {}
+	local tbl_2 = {}
+	local count = #arg_106_2
 
-	for iter_106_0 = 1, var_106_2 do
-		var_106_0[iter_106_0] = arg_106_2[iter_106_0].text
-		var_106_1[iter_106_0] = arg_106_2[iter_106_0].value
+	for i = 1, count do
+		tbl[i] = arg_106_2[i].text
+		tbl_2[i] = arg_106_2[i].value
 	end
 
-	arg_106_6[2] = arg_106_6[2] - var_0_39[2]
+	arg_106_6[2] = arg_106_6[2] - tbl_17[2]
 
-	local var_106_3 = {}
-	local var_106_4 = {
-		passes = var_106_3
+	local tbl_3 = {}
+	local tbl_4 = {
+		passes = tbl_3
 	}
-	local var_106_5 = {}
-	local var_106_6 = {}
-	local var_106_7 = {
-		element = var_106_4,
-		content = var_106_5,
-		style = var_106_6,
+	local tbl_5 = {}
+	local tbl_6 = {}
+	local tbl_7 = {
+		element = tbl_4,
+		content = tbl_5,
+		style = tbl_6,
 		scenegraph_id = arg_106_5
 	}
 
-	var_106_3[#var_106_3 + 1] = {
+	tbl_3[#tbl_3 + 1] = {
 		pass_type = "local_offset",
-		offset_function = function(arg_107_0, arg_107_1, arg_107_2, arg_107_3)
-			local var_107_0 = arg_107_2.current_selection
+		offset_function = function (arg_107_0, arg_107_1, arg_107_2, arg_107_3)
+			-- function 107
+			local current_selection = arg_107_2.current_selection
 
-			if var_107_0 ~= arg_107_2.local_selection then
-				arg_107_2.local_selection = var_107_0
+			if current_selection ~= arg_107_2.local_selection then
+				arg_107_2.local_selection = current_selection
 
-				local var_107_1 = arg_107_2.num_options
+				local num_options = arg_107_2.num_options
 
-				for iter_107_0 = 1, var_107_1 do
-					local var_107_2 = "option_" .. iter_107_0
-					local var_107_3 = "option_text_" .. iter_107_0
-					local var_107_4 = iter_107_0 == var_107_0
+				for i = 1, num_options do
+					local str = "option_" .. i
+					local str_2 = "option_text_" .. i
+					local flag = i == current_selection
 
-					arg_107_2[var_107_2].is_selected = var_107_4
-					arg_107_1[var_107_3].text_color = var_107_4 and arg_107_1[var_107_3].highlight_color or arg_107_1[var_107_3].default_color
+					arg_107_2[str].is_selected = flag
+
+					local var_107_5 = arg_107_1[str_2]
+					local highlight_color
+
+					if not flag then
+						highlight_color = arg_107_1[str_2].highlight_color
+
+						if not highlight_color then
+							-- Nothing
+						end
+					end
+
+					highlight_color = arg_107_1[str_2].default_color
+
+					::label_107_0::
+
+					var_107_5.text_color = highlight_color
 				end
 			end
 		end
 	}
-	var_106_3[#var_106_3 + 1] = {
+	tbl_3[#tbl_3 + 1] = {
 		pass_type = "texture",
 		style_id = "highlight_texture",
 		texture_id = "highlight_texture",
-		content_check_function = function(arg_108_0)
-			return arg_108_0.is_highlighted
+		content_check_function = function (self)
+			-- function 108
+			return self.is_highlighted
 		end
 	}
-	var_106_3[#var_106_3 + 1] = {
+	tbl_3[#tbl_3 + 1] = {
 		pass_type = "hotspot",
 		content_id = "highlight_hotspot"
 	}
-	var_106_3[#var_106_3 + 1] = {
+	tbl_3[#tbl_3 + 1] = {
 		pass_type = "option_tooltip",
 		text_id = "tooltip_text",
-		content_check_function = function(arg_109_0)
-			return arg_109_0.tooltip_text and arg_109_0.highlight_hotspot.is_hover and not Managers.input:is_device_active("gamepad")
+		content_check_function = function (self)
+			-- function 109
+			local tooltip_text = self.tooltip_text
+
+			if not tooltip_text then
+				tooltip_text = self.highlight_hotspot.is_hover
+				tooltip_text = not tooltip_text and not Managers.input:is_device_active("gamepad")
+			end
+
+			return tooltip_text
 		end
 	}
-	var_106_3[#var_106_3 + 1] = {
+	tbl_3[#tbl_3 + 1] = {
 		pass_type = "texture",
 		style_id = "bottom_edge",
 		texture_id = "rect_masked"
 	}
-	var_106_3[#var_106_3 + 1] = {
+	tbl_3[#tbl_3 + 1] = {
 		style_id = "text",
 		pass_type = "text",
 		text_id = "text"
 	}
-	var_106_3[#var_106_3 + 1] = {
+	tbl_3[#tbl_3 + 1] = {
 		pass_type = "rect",
-		content_check_function = function(arg_110_0)
-			return var_0_24
+		content_check_function = function (arg_110_0)
+			-- function 110
+			return flag
 		end
 	}
-	var_106_3[#var_106_3 + 1] = {
+	tbl_3[#tbl_3 + 1] = {
 		pass_type = "border",
-		content_check_function = function(arg_111_0, arg_111_1)
-			if var_0_24 then
+		content_check_function = function (arg_111_0, arg_111_1)
+			-- function 111
+			if not flag then
 				arg_111_1.thickness = 1
 			end
 
-			return var_0_24
+			return flag
 		end
 	}
-	var_106_3[#var_106_3 + 1] = {
+	tbl_3[#tbl_3 + 1] = {
 		style_id = "debug_middle_line",
 		pass_type = "rect",
-		content_check_function = function(arg_112_0)
-			return var_0_24
+		content_check_function = function (arg_112_0)
+			-- function 112
+			return flag
 		end
 	}
-	var_106_5.text = arg_106_1
-	var_106_5.tooltip_text = arg_106_4
-	var_106_5.current_selection = arg_106_3
-	var_106_5.options_texts = var_106_0
-	var_106_5.options_values = var_106_1
-	var_106_5.num_options = var_106_2
-	var_106_5.highlight_hotspot = {
+	tbl_5.text = arg_106_1
+	tbl_5.tooltip_text = arg_106_4
+	tbl_5.current_selection = arg_106_3
+	tbl_5.options_texts = tbl
+	tbl_5.options_values = tbl_2
+	tbl_5.num_options = count
+	tbl_5.highlight_hotspot = {
 		allow_multi_hover = true
 	}
-	var_106_5.highlight_texture = "playerlist_hover"
-	var_106_5.rect_masked = "rect_masked"
+	tbl_5.highlight_texture = "playerlist_hover"
+	tbl_5.rect_masked = "rect_masked"
 
-	local var_106_8 = {}
+	local tbl_8 = {}
 
-	var_106_5.hotspot_content_ids = var_106_8
-	var_106_6.offset = table.clone(arg_106_6)
-	var_106_6.size = table.clone(var_0_39)
-	var_106_6.highlight_texture = {
+	tbl_5.hotspot_content_ids = tbl_8
+	tbl_6.offset = table.clone(arg_106_6)
+	tbl_6.size = table.clone(tbl_17)
+	tbl_6.highlight_texture = {
 		upper_case = true,
 		masked = true,
 		offset = {
@@ -3962,11 +4429,11 @@ local function var_0_40(arg_106_0, arg_106_1, arg_106_2, arg_106_3, arg_106_4, a
 		},
 		color = Colors.get_table("white"),
 		size = {
-			var_0_39[1],
-			var_0_39[2]
+			tbl_17[1],
+			tbl_17[2]
 		}
 	}
-	var_106_6.tooltip_text = {
+	tbl_6.tooltip_text = {
 		font_type = "hell_shark",
 		localize = true,
 		font_size = 24,
@@ -3988,7 +4455,7 @@ local function var_0_40(arg_106_0, arg_106_1, arg_106_2, arg_106_3, arg_106_4, a
 			arg_106_6[3] + 20
 		}
 	}
-	var_106_6.text = {
+	tbl_6.text = {
 		upper_case = true,
 		localize = true,
 		dynamic_font = true,
@@ -4001,14 +4468,14 @@ local function var_0_40(arg_106_0, arg_106_1, arg_106_2, arg_106_3, arg_106_4, a
 		},
 		text_color = Colors.get_color_table_with_alpha("font_default", 255)
 	}
-	var_106_6.debug_middle_line = {
+	tbl_6.debug_middle_line = {
 		offset = {
 			arg_106_6[1],
-			arg_106_6[2] + var_0_39[2] / 2 - 1,
+			arg_106_6[2] + tbl_17[2] / 2 - 1,
 			arg_106_6[3] + 10
 		},
 		size = {
-			var_0_39[1],
+			tbl_17[1],
 			2
 		},
 		color = {
@@ -4018,44 +4485,45 @@ local function var_0_40(arg_106_0, arg_106_1, arg_106_2, arg_106_3, arg_106_4, a
 			0
 		}
 	}
-	var_106_6.color = {
+	tbl_6.color = {
 		50,
 		255,
 		255,
 		255
 	}
-	var_106_6.bottom_edge = {
+	tbl_6.bottom_edge = {
 		offset = {
 			arg_106_6[1],
 			arg_106_6[2],
 			arg_106_6[3] + 1
 		},
-		color = var_0_9,
+		color = get_color_table_with_alpha,
 		size = {
-			var_0_39[1],
-			var_0_8
+			tbl_17[1],
+			num_5
 		}
 	}
 
-	local var_106_9 = 20
-	local var_106_10 = 20
-	local var_106_11 = 120
-	local var_106_12 = arg_106_6[1] + var_0_39[1]
-	local var_106_13 = -var_106_9
+	local num = 20
+	local num_2 = 20
+	local num_3 = 120
+	local num_4 = arg_106_6[1] + tbl_17[1]
+	local num_6 = -num
 
-	for iter_106_1 = 1, var_106_2 do
-		local var_106_14 = arg_106_2[iter_106_1].text
-		local var_106_15 = "option_text_" .. iter_106_1
+	for j = 1, count do
+		local text = arg_106_2[j].text
+		local str = "option_text_" .. j
 
-		var_106_3[#var_106_3 + 1] = {
+		tbl_3[#tbl_3 + 1] = {
 			pass_type = "text",
-			style_id = var_106_15,
-			text_id = var_106_15,
-			content_change_function = function(arg_113_0, arg_113_1)
-				local var_113_0 = arg_113_0["option_" .. iter_106_1]
+			style_id = str,
+			text_id = str,
+			content_change_function = function (self, arg_113_1)
+				-- function 113
+				local var_113_0 = self["option_" .. j]
 
 				if not var_113_0.is_selected then
-					if var_113_0.is_hover then
+					if not var_113_0.is_hover then
 						arg_113_1.text_color = Colors.get_color_table_with_alpha("font_default", 255)
 					else
 						arg_113_1.text_color = Colors.get_color_table_with_alpha("font_title", 255)
@@ -4063,7 +4531,7 @@ local function var_0_40(arg_106_0, arg_106_1, arg_106_2, arg_106_3, arg_106_4, a
 				end
 			end
 		}
-		var_106_6[var_106_15] = {
+		tbl_6[str] = {
 			upper_case = true,
 			horizontal_alignment = "center",
 			font_size = 22,
@@ -4072,10 +4540,10 @@ local function var_0_40(arg_106_0, arg_106_1, arg_106_2, arg_106_3, arg_106_4, a
 			font_type = "hell_shark_masked",
 			size = {
 				500,
-				var_0_39[2]
+				tbl_17[2]
 			},
 			offset = {
-				var_106_12 - var_106_13,
+				num_4 - num_6,
 				arg_106_6[2],
 				arg_106_6[3] + 1
 			},
@@ -4083,40 +4551,42 @@ local function var_0_40(arg_106_0, arg_106_1, arg_106_2, arg_106_3, arg_106_4, a
 			highlight_color = Colors.get_color_table_with_alpha("black", 255),
 			default_color = Colors.get_color_table_with_alpha("font_title", 255)
 		}
-		var_106_5[var_106_15] = var_106_14
+		tbl_5[str] = text
 
-		if var_106_6[var_106_15].upper_case then
-			var_106_14 = TextToUpper(var_106_14)
+		if not tbl_6[str].upper_case then
+			text = TextToUpper(text)
 		end
 
-		local var_106_16, var_106_17 = UIFontByResolution(var_106_6[var_106_15])
-		local var_106_18, var_106_19, var_106_20 = UIRenderer.text_size(arg_106_0, var_106_14, var_106_16[1], var_106_17)
-		local var_106_21 = math.max(var_106_18 + var_106_10, var_106_11)
+		local var_106_16, var_106_17 = UIFontByResolution(tbl_6[str])
+		local text_size, var_106_19, var_106_20 = UIRenderer.text_size(arg_106_0, text, var_106_16[1], var_106_17)
+		local max = math.max(text_size + num_2, num_3)
 
-		var_106_13 = var_106_13 + var_106_21 + var_106_9
-		var_106_6[var_106_15].size[1] = var_106_21
-		var_106_6[var_106_15].offset[1] = var_106_12 - var_106_13
+		num_6 = num_6 + max + num
+		tbl_6[str].size[1] = max
+		tbl_6[str].offset[1] = num_4 - num_6
 
-		local var_106_22 = "option_" .. iter_106_1
+		local str_2 = "option_" .. j
 
-		var_106_3[#var_106_3 + 1] = {
+		tbl_3[#tbl_3 + 1] = {
 			pass_type = "hotspot",
-			style_id = var_106_22,
-			content_id = var_106_22
+			style_id = str_2,
+			content_id = str_2
 		}
-		var_106_5[var_106_22] = {}
-		var_106_3[#var_106_3 + 1] = {
+		tbl_5[str_2] = {}
+		tbl_3[#tbl_3 + 1] = {
 			texture_id = "rect_texture",
 			pass_type = "texture",
-			style_id = var_106_22,
-			content_check_function = function(arg_114_0)
-				return arg_114_0[var_106_22].is_selected
+			style_id = str_2,
+			content_check_function = function (self)
+				-- function 114
+				return self[str_2].is_selected
 			end,
-			content_change_function = function(arg_115_0, arg_115_1)
-				local var_115_0 = arg_115_0["option_" .. iter_106_1]
+			content_change_function = function (self, arg_115_1)
+				-- function 115
+				local var_115_0 = self["option_" .. j]
 
-				if var_115_0.is_selected then
-					if var_115_0.is_hover then
+				if not var_115_0.is_selected then
+					if not var_115_0.is_hover then
 						arg_115_1.color = Colors.get_color_table_with_alpha("font_default", 255)
 					else
 						arg_115_1.color = Colors.get_color_table_with_alpha("font_title", 255)
@@ -4124,41 +4594,43 @@ local function var_0_40(arg_106_0, arg_106_1, arg_106_2, arg_106_3, arg_106_4, a
 				end
 			end
 		}
-		var_106_5.rect_texture = "rect_masked"
-		var_106_6[var_106_22] = {
+		tbl_5.rect_texture = "rect_masked"
+		tbl_6[str_2] = {
 			size = {
-				var_106_21,
-				var_0_39[2] - 10
+				max,
+				tbl_17[2] - 10
 			},
 			offset = {
-				var_106_12 - var_106_13,
+				num_4 - num_6,
 				arg_106_6[2] + 5,
 				arg_106_6[3]
 			},
 			color = Colors.get_color_table_with_alpha("font_title", 255)
 		}
-		var_106_8[#var_106_8 + 1] = var_106_22
+		tbl_8[#tbl_8 + 1] = str_2
 	end
 
-	return UIWidget.init(var_106_7)
+	return UIWidget.init(tbl_7)
 end
 
-local var_0_41 = {
+local tbl_18 = {
 	var_0_21 - 100,
 	30
 }
 
-local function var_0_42(arg_116_0, arg_116_1, arg_116_2, arg_116_3, arg_116_4, arg_116_5, arg_116_6)
-	arg_116_6[2] = arg_116_6[2] - var_0_41[2]
+local function fn_15(arg_116_0, arg_116_1, arg_116_2, arg_116_3, arg_116_4, arg_116_5, arg_116_6)
+	-- function 116
+	arg_116_6[2] = arg_116_6[2] - tbl_18[2]
 
-	local var_116_0 = {
+	local tbl_2 = {
 		element = {
 			passes = {
 				{
 					style_id = "hotspot_1",
 					pass_type = "hotspot",
 					content_id = "hotspot_1",
-					content_check_function = function(arg_117_0)
+					content_check_function = function (arg_117_0)
+						-- function 117
 						return not Managers.input:is_device_active("gamepad")
 					end
 				},
@@ -4166,7 +4638,8 @@ local function var_0_42(arg_116_0, arg_116_1, arg_116_2, arg_116_3, arg_116_4, a
 					style_id = "hotspot_2",
 					pass_type = "hotspot",
 					content_id = "hotspot_2",
-					content_check_function = function(arg_118_0)
+					content_check_function = function (arg_118_0)
+						-- function 118
 						return not Managers.input:is_device_active("gamepad")
 					end
 				},
@@ -4183,7 +4656,8 @@ local function var_0_42(arg_116_0, arg_116_1, arg_116_2, arg_116_3, arg_116_4, a
 				{
 					pass_type = "hotspot",
 					content_id = "highlight_hotspot",
-					content_check_function = function(arg_119_0)
+					content_check_function = function (arg_119_0)
+						-- function 119
 						return not Managers.input:is_device_active("gamepad")
 					end
 				},
@@ -4191,32 +4665,39 @@ local function var_0_42(arg_116_0, arg_116_1, arg_116_2, arg_116_3, arg_116_4, a
 					pass_type = "texture",
 					style_id = "highlight_texture",
 					texture_id = "highlight_texture",
-					content_check_function = function(arg_120_0)
-						return arg_120_0.is_highlighted and not Managers.input:is_device_active("gamepad")
+					content_check_function = function (self)
+						-- function 120
+						local is_highlighted = self.is_highlighted
+
+						is_highlighted = not is_highlighted and not Managers.input:is_device_active("gamepad")
+
+						return is_highlighted
 					end
 				},
 				{
 					style_id = "selected_key_1",
 					pass_type = "text",
 					text_id = "selected_key_1",
-					content_check_function = function(arg_121_0)
-						return not arg_121_0.active_1
+					content_check_function = function (self)
+						-- function 121
+						return not self.active_1
 					end,
-					content_change_function = function(arg_122_0, arg_122_1)
-						if arg_122_0.active_1 or arg_122_0.hotspot_1.is_hover then
+					content_change_function = function (self, arg_122_1)
+						-- function 122
+						if self.active_1 or not self.hotspot_1.is_hover then
 							arg_122_1.text_color = arg_122_1.hover_color
-						elseif arg_122_0.is_unassigned_1 then
+						elseif not self.is_unassigned_1 then
 							arg_122_1.text_color = arg_122_1.unassigned_color
 						else
 							arg_122_1.text_color = arg_122_1.default_color
 						end
 
-						if arg_122_0.active_1 then
-							arg_122_0.active_t = arg_122_0.active_t + ui_renderer.dt * 2.5
+						if not self.active_1 then
+							self.active_t = self.active_t + ui_renderer.dt * 2.5
 
-							local var_122_0 = math.sirp(0, 1, arg_122_0.active_t)
+							local sirp = math.sirp(0, 1, self.active_t)
 
-							arg_122_1.parent.selected_rect_1.color[1] = var_122_0 * 255
+							arg_122_1.parent.selected_rect_1.color[1] = sirp * 255
 						else
 							arg_122_1.parent.selected_rect_1.color[1] = 255
 						end
@@ -4226,24 +4707,26 @@ local function var_0_42(arg_116_0, arg_116_1, arg_116_2, arg_116_3, arg_116_4, a
 					style_id = "selected_key_2",
 					pass_type = "text",
 					text_id = "selected_key_2",
-					content_check_function = function(arg_123_0)
-						return not arg_123_0.active_2
+					content_check_function = function (self)
+						-- function 123
+						return not self.active_2
 					end,
-					content_change_function = function(arg_124_0, arg_124_1)
-						if arg_124_0.active_2 or arg_124_0.hotspot_2.is_hover then
+					content_change_function = function (self, arg_124_1)
+						-- function 124
+						if self.active_2 or not self.hotspot_2.is_hover then
 							arg_124_1.text_color = arg_124_1.hover_color
-						elseif arg_124_0.is_unassigned_2 then
+						elseif not self.is_unassigned_2 then
 							arg_124_1.text_color = arg_124_1.unassigned_color
 						else
 							arg_124_1.text_color = arg_124_1.default_color
 						end
 
-						if arg_124_0.active_2 then
-							arg_124_0.active_t = arg_124_0.active_t + ui_renderer.dt * 2.5
+						if not self.active_2 then
+							self.active_t = self.active_t + ui_renderer.dt * 2.5
 
-							local var_124_0 = math.sirp(0, 1, arg_124_0.active_t)
+							local sirp = math.sirp(0, 1, self.active_t)
 
-							arg_124_1.parent.selected_rect_2.color[1] = var_124_0 * 255
+							arg_124_1.parent.selected_rect_2.color[1] = sirp * 255
 						else
 							arg_124_1.parent.selected_rect_2.color[1] = 255
 						end
@@ -4252,15 +4735,17 @@ local function var_0_42(arg_116_0, arg_116_1, arg_116_2, arg_116_3, arg_116_4, a
 				{
 					style_id = "selected_rect_1",
 					pass_type = "rect",
-					content_check_function = function(arg_125_0)
-						return arg_125_0.active_1
+					content_check_function = function (self)
+						-- function 125
+						return self.active_1
 					end
 				},
 				{
 					style_id = "selected_rect_2",
 					pass_type = "rect",
-					content_check_function = function(arg_126_0)
-						return arg_126_0.active_2
+					content_check_function = function (self)
+						-- function 126
+						return self.active_2
 					end
 				},
 				{
@@ -4308,24 +4793,24 @@ local function var_0_42(arg_116_0, arg_116_1, arg_116_2, arg_116_3, arg_116_4, a
 			offset = table.clone(arg_116_6),
 			hotspot_1 = {
 				offset = {
-					arg_116_6[1] + var_0_41[1] - 2 * (20 + var_0_0 - 2),
-					arg_116_6[2] + var_0_41[2] / 2 - (var_0_41[2] - 10) / 2,
+					arg_116_6[1] + tbl_18[1] - 2 * (20 + num - 2),
+					arg_116_6[2] + tbl_18[2] / 2 - (tbl_18[2] - 10) / 2,
 					arg_116_6[3] + 2
 				},
 				area_size = {
-					var_0_0 - 2,
-					var_0_41[2] - 10
+					num - 2,
+					tbl_18[2] - 10
 				}
 			},
 			hotspot_2 = {
 				offset = {
-					arg_116_6[1] + var_0_41[1] - (var_0_0 - 2),
-					arg_116_6[2] + var_0_41[2] / 2 - (var_0_41[2] - 10) / 2,
+					arg_116_6[1] + tbl_18[1] - (num - 2),
+					arg_116_6[2] + tbl_18[2] / 2 - (tbl_18[2] - 10) / 2,
 					arg_116_6[3] + 2
 				},
 				area_size = {
-					var_0_0 - 2,
-					var_0_41[2] - 10
+					num - 2,
+					tbl_18[2] - 10
 				}
 			},
 			highlight_texture = {
@@ -4337,8 +4822,8 @@ local function var_0_42(arg_116_0, arg_116_1, arg_116_2, arg_116_3, arg_116_4, a
 				},
 				color = Colors.get_table("white"),
 				size = {
-					var_0_41[1],
-					var_0_41[2]
+					tbl_18[1],
+					tbl_18[2]
 				}
 			},
 			text = {
@@ -4361,7 +4846,7 @@ local function var_0_42(arg_116_0, arg_116_1, arg_116_2, arg_116_3, arg_116_4, a
 				dynamic_font = true,
 				font_type = "hell_shark_masked",
 				offset = {
-					arg_116_6[1] + var_0_41[1] - 2 * (20 + var_0_0),
+					arg_116_6[1] + tbl_18[1] - 2 * (20 + num),
 					arg_116_6[2] + 2,
 					arg_116_6[3] + 5
 				},
@@ -4370,8 +4855,8 @@ local function var_0_42(arg_116_0, arg_116_1, arg_116_2, arg_116_3, arg_116_4, a
 				default_color = Colors.get_color_table_with_alpha("font_default", 255),
 				unassigned_color = Colors.get_color_table_with_alpha("dim_gray", 255),
 				size = {
-					var_0_0,
-					var_0_41[2] - 10
+					num,
+					tbl_18[2] - 10
 				}
 			},
 			selected_key_2 = {
@@ -4381,7 +4866,7 @@ local function var_0_42(arg_116_0, arg_116_1, arg_116_2, arg_116_3, arg_116_4, a
 				dynamic_font = true,
 				font_type = "hell_shark_masked",
 				offset = {
-					arg_116_6[1] + var_0_41[1] - var_0_0,
+					arg_116_6[1] + tbl_18[1] - num,
 					arg_116_6[2] + 2,
 					arg_116_6[3] + 5
 				},
@@ -4390,42 +4875,42 @@ local function var_0_42(arg_116_0, arg_116_1, arg_116_2, arg_116_3, arg_116_4, a
 				default_color = Colors.get_color_table_with_alpha("font_default", 255),
 				unassigned_color = Colors.get_color_table_with_alpha("dim_gray", 255),
 				size = {
-					var_0_0,
-					var_0_41[2] - 10
+					num,
+					tbl_18[2] - 10
 				}
 			},
 			selected_rect_1 = {
 				offset = {
-					arg_116_6[1] + var_0_41[1] - 2 * (20 + var_0_0 - 2),
-					arg_116_6[2] + var_0_41[2] / 2 - (var_0_41[2] - 10) / 2,
+					arg_116_6[1] + tbl_18[1] - 2 * (20 + num - 2),
+					arg_116_6[2] + tbl_18[2] / 2 - (tbl_18[2] - 10) / 2,
 					arg_116_6[3] + 2
 				},
 				size = {
-					var_0_0 - 2,
-					var_0_41[2] - 10
+					num - 2,
+					tbl_18[2] - 10
 				},
 				color = Colors.get_color_table_with_alpha("font_default", 100)
 			},
 			selected_rect_2 = {
 				offset = {
-					arg_116_6[1] + var_0_41[1] - (var_0_0 - 2),
-					arg_116_6[2] + var_0_41[2] / 2 - (var_0_41[2] - 10) / 2,
+					arg_116_6[1] + tbl_18[1] - (num - 2),
+					arg_116_6[2] + tbl_18[2] / 2 - (tbl_18[2] - 10) / 2,
 					arg_116_6[3] + 2
 				},
 				size = {
-					var_0_0 - 2,
-					var_0_41[2] - 10
+					num - 2,
+					tbl_18[2] - 10
 				},
 				color = Colors.get_color_table_with_alpha("font_default", 100)
 			},
 			debug_middle_line = {
 				offset = {
 					arg_116_6[1],
-					arg_116_6[2] + var_0_41[2] / 2 - 1,
+					arg_116_6[2] + tbl_18[2] / 2 - 1,
 					arg_116_6[3] + 10
 				},
 				size = {
-					var_0_41[1],
+					tbl_18[1],
 					2
 				},
 				color = {
@@ -4441,28 +4926,28 @@ local function var_0_42(arg_116_0, arg_116_1, arg_116_2, arg_116_3, arg_116_4, a
 					arg_116_6[2],
 					arg_116_6[3] + 1
 				},
-				color = var_0_9,
+				color = get_color_table_with_alpha,
 				size = {
-					var_0_41[1],
-					var_0_8
+					tbl_18[1],
+					num_5
 				}
 			},
 			input_field_1_background_bevel = {
 				offset = {
-					arg_116_6[1] + var_0_41[1] - 2 * (20 + var_0_0),
-					arg_116_6[2] + var_0_41[2] / 2 - (var_0_41[2] - 10) / 2,
+					arg_116_6[1] + tbl_18[1] - 2 * (20 + num),
+					arg_116_6[2] + tbl_18[2] / 2 - (tbl_18[2] - 10) / 2,
 					arg_116_6[3] + 1
 				},
-				color = var_0_1,
+				color = tbl,
 				size = {
-					var_0_0,
-					var_0_41[2] - 10 + 2
+					num,
+					tbl_18[2] - 10 + 2
 				}
 			},
 			input_field_1_background = {
 				offset = {
-					arg_116_6[1] + var_0_41[1] - 2 * (20 + var_0_0 - 2),
-					arg_116_6[2] + var_0_41[2] / 2 - (var_0_41[2] - 10) / 2,
+					arg_116_6[1] + tbl_18[1] - 2 * (20 + num - 2),
+					arg_116_6[2] + tbl_18[2] / 2 - (tbl_18[2] - 10) / 2,
 					arg_116_6[3] + 2
 				},
 				color = {
@@ -4472,26 +4957,26 @@ local function var_0_42(arg_116_0, arg_116_1, arg_116_2, arg_116_3, arg_116_4, a
 					10
 				},
 				size = {
-					var_0_0 - 2,
-					var_0_41[2] - 10
+					num - 2,
+					tbl_18[2] - 10
 				}
 			},
 			input_field_2_background_bevel = {
 				offset = {
-					arg_116_6[1] + var_0_41[1] - var_0_0,
-					arg_116_6[2] + var_0_41[2] / 2 - (var_0_41[2] - 10) / 2,
+					arg_116_6[1] + tbl_18[1] - num,
+					arg_116_6[2] + tbl_18[2] / 2 - (tbl_18[2] - 10) / 2,
 					arg_116_6[3] + 1
 				},
-				color = var_0_1,
+				color = tbl,
 				size = {
-					var_0_0,
-					var_0_41[2] - 10 + 2
+					num,
+					tbl_18[2] - 10 + 2
 				}
 			},
 			input_field_2_background = {
 				offset = {
-					arg_116_6[1] + var_0_41[1] - (var_0_0 - 2),
-					arg_116_6[2] + var_0_41[2] / 2 - (var_0_41[2] - 10) / 2,
+					arg_116_6[1] + tbl_18[1] - (num - 2),
+					arg_116_6[2] + tbl_18[2] / 2 - (tbl_18[2] - 10) / 2,
 					arg_116_6[3] + 2
 				},
 				color = {
@@ -4501,11 +4986,11 @@ local function var_0_42(arg_116_0, arg_116_1, arg_116_2, arg_116_3, arg_116_4, a
 					10
 				},
 				size = {
-					var_0_0 - 2,
-					var_0_41[2] - 10
+					num - 2,
+					tbl_18[2] - 10
 				}
 			},
-			size = table.clone(var_0_41),
+			size = table.clone(tbl_18),
 			color = {
 				50,
 				255,
@@ -4516,30 +5001,31 @@ local function var_0_42(arg_116_0, arg_116_1, arg_116_2, arg_116_3, arg_116_4, a
 		scenegraph_id = arg_116_5
 	}
 
-	return UIWidget.init(var_116_0)
+	return UIWidget.init(tbl_2)
 end
 
-local var_0_43 = var_0_21 - 100
-local var_0_44 = 28
+local num_6 = var_0_21 - 100
+local num_7 = 28
 
-local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, arg_127_5, arg_127_6, arg_127_7)
-	local var_127_0 = #arg_127_2
-	local var_127_1 = 10
-	local var_127_2 = {
-		var_0_43,
-		var_127_0 * arg_127_4[2] + var_127_1
+local function fn_16(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, arg_127_5, arg_127_6, arg_127_7)
+	-- function 127
+	local count = #arg_127_2
+	local num = 10
+	local tbl_2 = {
+		num_6,
+		count * arg_127_4[2] + num
 	}
-	local var_127_3 = var_127_2[2] - var_127_1
-	local var_127_4 = {
+	local num_2 = tbl_2[2] - num
+	local tbl_3 = {
 		35,
-		(var_127_2[2] - var_127_1) / 2 - 2
+		(tbl_2[2] - num) / 2 - 2
 	}
 
-	arg_127_7[2] = arg_127_7[2] - var_127_2[2]
+	arg_127_7[2] = arg_127_7[2] - tbl_2[2]
 
-	local var_127_5 = Colors.get_color_table_with_alpha("font_default", 255)
-	local var_127_6 = Colors.get_color_table_with_alpha("font_default", 100)
-	local var_127_7 = {
+	local get_color_table_with_alpha_2 = Colors.get_color_table_with_alpha("font_default", 255)
+	local get_color_table_with_alpha_3 = Colors.get_color_table_with_alpha("font_default", 100)
+	local tbl_4 = {
 		element = {
 			passes = {
 				{
@@ -4551,7 +5037,8 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 					pass_type = "texture",
 					style_id = "background",
 					texture_id = "rect_masked",
-					content_check_function = function(arg_128_0, arg_128_1)
+					content_check_function = function (arg_128_0, arg_128_1)
+						-- function 128
 						return not Managers.input:is_device_active("gamepad")
 					end
 				},
@@ -4559,7 +5046,8 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 					pass_type = "texture",
 					style_id = "background_fg",
 					texture_id = "rect_masked",
-					content_check_function = function(arg_129_0, arg_129_1)
+					content_check_function = function (arg_129_0, arg_129_1)
+						-- function 129
 						return not Managers.input:is_device_active("gamepad")
 					end
 				},
@@ -4567,7 +5055,8 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 					pass_type = "texture",
 					style_id = "bottom_edge",
 					texture_id = "rect_masked",
-					content_check_function = function(arg_130_0, arg_130_1)
+					content_check_function = function (arg_130_0, arg_130_1)
+						-- function 130
 						return not Managers.input:is_device_active("gamepad")
 					end
 				},
@@ -4575,7 +5064,8 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 					pass_type = "texture",
 					style_id = "arrow_buttons_edge_horizontal",
 					texture_id = "rect_masked",
-					content_check_function = function(arg_131_0, arg_131_1)
+					content_check_function = function (arg_131_0, arg_131_1)
+						-- function 131
 						return not Managers.input:is_device_active("gamepad")
 					end
 				},
@@ -4583,7 +5073,8 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 					pass_type = "texture",
 					style_id = "arrow_buttons_edge_vertical",
 					texture_id = "rect_masked",
-					content_check_function = function(arg_132_0, arg_132_1)
+					content_check_function = function (arg_132_0, arg_132_1)
+						-- function 132
 						return not Managers.input:is_device_active("gamepad")
 					end
 				},
@@ -4595,46 +5086,68 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 					pass_type = "texture",
 					style_id = "highlight_texture",
 					texture_id = "highlight_texture",
-					content_check_function = function(arg_133_0)
-						return arg_133_0.is_highlighted and Managers.input:is_device_active("gamepad") and not arg_133_0.active
+					content_check_function = function (self)
+						-- function 133
+						local is_highlighted = self.is_highlighted
+
+						if not is_highlighted then
+							is_highlighted = Managers.input:is_device_active("gamepad")
+							is_highlighted = not is_highlighted and not self.active
+						end
+
+						return is_highlighted
 					end
 				},
 				{
 					style_id = "tooltip_text",
 					pass_type = "option_tooltip",
 					text_id = "tooltip_text",
-					content_check_function = function(arg_134_0)
-						return arg_134_0.tooltip_text and arg_134_0.highlight_hotspot.is_hover and not Managers.input:is_device_active("gamepad")
+					content_check_function = function (self)
+						-- function 134
+						local tooltip_text = self.tooltip_text
+
+						if not tooltip_text then
+							tooltip_text = self.highlight_hotspot.is_hover
+							tooltip_text = not tooltip_text and not Managers.input:is_device_active("gamepad")
+						end
+
+						return tooltip_text
 					end
 				},
 				{
 					style_id = "down_arrow_background",
 					pass_type = "hotspot",
 					content_id = "down_hotspot",
-					content_check_function = function(arg_135_0)
-						return arg_135_0.active
+					content_check_function = function (self)
+						-- function 135
+						return self.active
 					end
 				},
 				{
 					style_id = "up_arrow_background",
 					pass_type = "hotspot",
 					content_id = "up_hotspot",
-					content_check_function = function(arg_136_0)
-						return arg_136_0.active
+					content_check_function = function (self)
+						-- function 136
+						return self.active
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "down_arrow_background",
 					texture_id = "rect_masked",
-					content_check_function = function(arg_137_0)
-						if Managers.input:is_device_active("gamepad") then
+					content_check_function = function (self)
+						-- function 137
+						if not Managers.input:is_device_active("gamepad") then
 							return false
 						end
 
-						local var_137_0 = arg_137_0.down_hotspot
+						local down_hotspot = self.down_hotspot
+						local active = down_hotspot.active
 
-						return var_137_0.active and var_137_0.is_hover
+						active = not active and down_hotspot.is_hover
+
+						return active
 					end
 				},
 				{
@@ -4642,15 +5155,29 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 					style_id = "down_arrow",
 					pass_type = "texture",
 					content_id = "arrow",
-					content_check_function = function(arg_138_0, arg_138_1)
-						if Managers.input:is_device_active("gamepad") then
+					content_check_function = function (self, arg_138_1)
+						-- function 138
+						if not Managers.input:is_device_active("gamepad") then
 							return false
 						end
 
-						local var_138_0 = arg_138_0.parent
-						local var_138_1 = arg_138_1.parent
+						local parent = self.parent
+						local parent_2 = arg_138_1.parent
+						local enabled_color
 
-						arg_138_1.color = var_138_0.down_hotspot.active and var_138_1.enabled_color or var_138_1.disabled_color
+						if not parent.down_hotspot.active then
+							enabled_color = parent_2.enabled_color
+
+							if not enabled_color then
+								-- Nothing
+							end
+						end
+
+						enabled_color = parent_2.disabled_color
+
+						::label_138_0::
+
+						arg_138_1.color = enabled_color
 
 						return true
 					end
@@ -4659,14 +5186,18 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 					pass_type = "texture",
 					style_id = "up_arrow_background",
 					texture_id = "rect_masked",
-					content_check_function = function(arg_139_0)
-						if Managers.input:is_device_active("gamepad") then
+					content_check_function = function (self)
+						-- function 139
+						if not Managers.input:is_device_active("gamepad") then
 							return false
 						end
 
-						local var_139_0 = arg_139_0.up_hotspot
+						local up_hotspot = self.up_hotspot
+						local active = up_hotspot.active
 
-						return var_139_0.active and var_139_0.is_hover
+						active = not active and up_hotspot.is_hover
+
+						return active
 					end
 				},
 				{
@@ -4674,15 +5205,29 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 					style_id = "up_arrow",
 					pass_type = "texture_uv",
 					content_id = "arrow",
-					content_check_function = function(arg_140_0, arg_140_1)
-						if Managers.input:is_device_active("gamepad") then
+					content_check_function = function (self, arg_140_1)
+						-- function 140
+						if not Managers.input:is_device_active("gamepad") then
 							return false
 						end
 
-						local var_140_0 = arg_140_0.parent
-						local var_140_1 = arg_140_1.parent
+						local parent = self.parent
+						local parent_2 = arg_140_1.parent
+						local enabled_color
 
-						arg_140_1.color = var_140_0.up_hotspot.active and var_140_1.enabled_color or var_140_1.disabled_color
+						if not parent.up_hotspot.active then
+							enabled_color = parent_2.enabled_color
+
+							if not enabled_color then
+								-- Nothing
+							end
+						end
+
+						enabled_color = parent_2.disabled_color
+
+						::label_140_0::
+
+						arg_140_1.color = enabled_color
 
 						return true
 					end
@@ -4692,10 +5237,14 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 					style_id = "down_arrow_hover",
 					pass_type = "texture",
 					content_id = "arrow_hover",
-					content_check_function = function(arg_141_0)
-						local var_141_0 = arg_141_0.parent.down_hotspot
+					content_check_function = function (self)
+						-- function 141
+						local down_hotspot = self.parent.down_hotspot
+						local active = down_hotspot.active
 
-						return var_141_0.active and var_141_0.is_hover
+						active = not active and down_hotspot.is_hover
+
+						return active
 					end
 				},
 				{
@@ -4703,10 +5252,14 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 					style_id = "up_arrow_hover",
 					pass_type = "texture_uv",
 					content_id = "arrow_hover",
-					content_check_function = function(arg_142_0)
-						local var_142_0 = arg_142_0.parent.up_hotspot
+					content_check_function = function (self)
+						-- function 142
+						local up_hotspot = self.parent.up_hotspot
+						local active = up_hotspot.active
 
-						return var_142_0.active and var_142_0.is_hover
+						active = not active and up_hotspot.is_hover
+
+						return active
 					end
 				},
 				{
@@ -4722,8 +5275,9 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 							style_id = "texture",
 							texture_id = "texture",
 							pass_type = "texture",
-							content_check_function = function(arg_143_0)
-								return not arg_143_0.hotspot.is_hover and not arg_143_0.hotspot.is_selected
+							content_check_function = function (self)
+								-- function 143
+								return not not self.hotspot.is_hover or not self.hotspot.is_selected
 							end,
 							content_change_function = arg_127_5
 						},
@@ -4731,8 +5285,13 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 							style_id = "highlight_texture",
 							texture_id = "highlight_texture",
 							pass_type = "texture",
-							content_check_function = function(arg_144_0, arg_144_1, arg_144_2)
-								return arg_144_0.hotspot.is_hover or arg_144_0.hotspot.is_selected
+							content_check_function = function (self, arg_144_1, arg_144_2)
+								-- function 144
+								local is_hover = self.hotspot.is_hover
+
+								is_hover = is_hover or self.hotspot.is_selected
+
+								return is_hover
 							end,
 							content_change_function = arg_127_5
 						},
@@ -4740,8 +5299,13 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 							style_id = "background_highlight_texture",
 							texture_id = "background_highlight_texture",
 							pass_type = "texture",
-							content_check_function = function(arg_145_0, arg_145_1, arg_145_2)
-								return arg_145_0.hotspot.is_hover and not arg_145_0.hotspot.is_selected
+							content_check_function = function (self, arg_145_1, arg_145_2)
+								-- function 145
+								local is_hover = self.hotspot.is_hover
+
+								is_hover = not is_hover and not self.hotspot.is_selected
+
+								return is_hover
 							end,
 							content_change_function = arg_127_5
 						},
@@ -4749,8 +5313,9 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 							style_id = "background_selected_texture",
 							texture_id = "background_highlight_texture",
 							pass_type = "texture",
-							content_check_function = function(arg_146_0, arg_146_1, arg_146_2)
-								return arg_146_0.hotspot.is_selected
+							content_check_function = function (self, arg_146_1, arg_146_2)
+								-- function 146
+								return self.hotspot.is_selected
 							end,
 							content_change_function = arg_127_5
 						},
@@ -4818,31 +5383,31 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 		},
 		style = {
 			offset = table.clone(arg_127_7),
-			size = table.clone(var_127_2),
+			size = table.clone(tbl_2),
 			color = {
 				50,
 				255,
 				255,
 				255
 			},
-			enabled_color = var_127_5,
-			disabled_color = var_127_6,
+			enabled_color = get_color_table_with_alpha_2,
+			disabled_color = get_color_table_with_alpha_3,
 			background = {
 				offset = {
-					arg_127_7[1] + 7 * var_127_2[1] / 10,
-					arg_127_7[2] + var_127_1 / 2,
+					arg_127_7[1] + 7 * tbl_2[1] / 10,
+					arg_127_7[2] + num / 2,
 					arg_127_7[3]
 				},
-				color = var_0_1,
+				color = tbl,
 				size = {
-					3 * var_127_2[1] / 10,
-					var_127_3
+					3 * tbl_2[1] / 10,
+					num_2
 				}
 			},
 			background_fg = {
 				offset = {
-					arg_127_7[1] + 7 * var_127_2[1] / 10 + 2,
-					arg_127_7[2] + var_127_1 / 2,
+					arg_127_7[1] + 7 * tbl_2[1] / 10 + 2,
+					arg_127_7[2] + num / 2,
 					arg_127_7[3] + 1
 				},
 				color = {
@@ -4852,8 +5417,8 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 					10
 				},
 				size = {
-					3 * var_127_2[1] / 10 - 2,
-					var_127_3 - 2
+					3 * tbl_2[1] / 10 - 2,
+					num_2 - 2
 				}
 			},
 			text = {
@@ -4864,7 +5429,7 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 				font_type = "hell_shark_masked",
 				offset = {
 					arg_127_7[1] + 2,
-					arg_127_7[2] + var_127_2[2] - (var_0_44 + 4),
+					arg_127_7[2] + tbl_2[2] - (num_7 + 4),
 					arg_127_7[3]
 				},
 				text_color = Colors.get_color_table_with_alpha("font_default", 255)
@@ -4887,40 +5452,40 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 				},
 				offset = {
 					0,
-					arg_127_7[2] + var_127_2[2] - var_0_44 - 50,
+					arg_127_7[2] + tbl_2[2] - num_7 - 50,
 					arg_127_7[3] + 20
 				}
 			},
 			up_arrow = {
 				masked = true,
 				offset = {
-					arg_127_7[1] + var_127_2[1] - (var_127_4[1] + 31) / 2,
-					arg_127_7[2] + 1.5 * var_127_4[2] - 7.5 + var_127_1 / 2,
+					arg_127_7[1] + tbl_2[1] - (tbl_3[1] + 31) / 2,
+					arg_127_7[2] + 1.5 * tbl_3[2] - 7.5 + num / 2,
 					arg_127_7[3] + 2
 				},
 				size = {
 					31,
 					15
 				},
-				color = var_127_5
+				color = get_color_table_with_alpha_2
 			},
 			up_arrow_hover = {
 				masked = true,
 				offset = {
-					arg_127_7[1] + var_127_2[1] - (var_127_4[1] + 31) / 2,
-					arg_127_7[2] + 1.5 * var_127_4[2] - 27 + var_127_1 / 2,
+					arg_127_7[1] + tbl_2[1] - (tbl_3[1] + 31) / 2,
+					arg_127_7[2] + 1.5 * tbl_3[2] - 27 + num / 2,
 					arg_127_7[3] + 1
 				},
 				size = {
 					31,
 					28
 				},
-				color = var_127_5
+				color = get_color_table_with_alpha_2
 			},
 			up_arrow_background = {
 				offset = {
-					arg_127_7[1] + var_127_2[1] - var_127_4[1],
-					arg_127_7[2] + var_127_4[2] + 2 + var_127_1 / 2,
+					arg_127_7[1] + tbl_2[1] - tbl_3[1],
+					arg_127_7[2] + tbl_3[2] + 2 + num / 2,
 					arg_127_7[3] + 1
 				},
 				color = {
@@ -4929,62 +5494,62 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 					20,
 					20
 				},
-				size = var_127_4
+				size = tbl_3
 			},
 			arrow_buttons_edge_horizontal = {
 				offset = {
-					arg_127_7[1] + var_127_2[1] - var_127_4[1] - 2,
-					arg_127_7[2] + var_127_4[2] + var_127_1 / 2,
+					arg_127_7[1] + tbl_2[1] - tbl_3[1] - 2,
+					arg_127_7[2] + tbl_3[2] + num / 2,
 					arg_127_7[3] + 1
 				},
-				color = var_0_1,
+				color = tbl,
 				size = {
-					var_127_4[1],
+					tbl_3[1],
 					2
 				}
 			},
 			arrow_buttons_edge_vertical = {
 				offset = {
-					arg_127_7[1] + var_127_2[1] - var_127_4[1] - 2,
-					arg_127_7[2] + var_127_1 / 2,
+					arg_127_7[1] + tbl_2[1] - tbl_3[1] - 2,
+					arg_127_7[2] + num / 2,
 					arg_127_7[3] + 1
 				},
-				color = var_0_1,
+				color = tbl,
 				size = {
 					2,
-					var_127_3
+					num_2
 				}
 			},
 			down_arrow = {
 				masked = true,
 				offset = {
-					arg_127_7[1] + var_127_2[1] - (var_127_4[1] + 31) / 2,
-					arg_127_7[2] + (var_127_4[2] - 15) / 2 + var_127_1 / 2,
+					arg_127_7[1] + tbl_2[1] - (tbl_3[1] + 31) / 2,
+					arg_127_7[2] + (tbl_3[2] - 15) / 2 + num / 2,
 					arg_127_7[3] + 2
 				},
 				size = {
 					31,
 					15
 				},
-				color = var_127_5
+				color = get_color_table_with_alpha_2
 			},
 			down_arrow_hover = {
 				masked = true,
 				offset = {
-					arg_127_7[1] + var_127_2[1] - (var_127_4[1] + 31) / 2,
-					arg_127_7[2] + var_127_4[2] / 2 + var_127_1 / 2 - 1,
+					arg_127_7[1] + tbl_2[1] - (tbl_3[1] + 31) / 2,
+					arg_127_7[2] + tbl_3[2] / 2 + num / 2 - 1,
 					arg_127_7[3] + 1
 				},
 				size = {
 					31,
 					28
 				},
-				color = var_127_5
+				color = get_color_table_with_alpha_2
 			},
 			down_arrow_background = {
 				offset = {
-					arg_127_7[1] + var_127_2[1] - var_127_4[1],
-					arg_127_7[2] + var_127_1 / 2,
+					arg_127_7[1] + tbl_2[1] - tbl_3[1],
+					arg_127_7[2] + num / 2,
 					arg_127_7[3] + 1
 				},
 				color = {
@@ -4993,29 +5558,29 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 					20,
 					20
 				},
-				size = var_127_4
+				size = tbl_3
 			},
 			bottom_edge = {
 				offset = {
 					arg_127_7[1],
-					arg_127_7[2] - var_0_8,
+					arg_127_7[2] - num_5,
 					arg_127_7[3] + 1
 				},
-				color = var_0_9,
+				color = get_color_table_with_alpha,
 				size = {
-					var_127_2[1],
-					var_0_8
+					tbl_2[1],
+					num_5
 				}
 			},
 			list_style = {
 				active = true,
 				start_index = 1,
 				offset = {
-					arg_127_7[1] + 7 * var_127_2[1] / 10 + 5,
-					arg_127_7[2] + var_127_2[2] - arg_127_4[2] - var_127_1 / 2,
+					arg_127_7[1] + 7 * tbl_2[1] / 10 + 5,
+					arg_127_7[2] + tbl_2[2] - arg_127_4[2] - num / 2,
 					arg_127_7[3] + 5
 				},
-				num_draws = var_127_0,
+				num_draws = count,
 				list_member_offset = {
 					0,
 					-arg_127_4[2],
@@ -5032,164 +5597,165 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 				},
 				color = Colors.get_table("white"),
 				size = {
-					var_127_2[1],
-					var_127_2[2]
+					tbl_2[1],
+					tbl_2[2]
 				}
 			}
 		},
 		scenegraph_id = arg_127_6
 	}
 
-	return UIWidget.init(var_127_7)
+	return UIWidget.init(tbl_4)
 end
 
 SettingsWidgetTypeTemplate = {
 	drop_down = {
-		input_function = function(arg_147_0, arg_147_1)
-			local var_147_0 = arg_147_0.content
-			local var_147_1 = arg_147_0.style
-			local var_147_2 = var_147_0.list_content
-			local var_147_3 = var_147_1.list_style
-			local var_147_4 = var_147_3.start_index
-			local var_147_5 = var_147_3.num_draws
-			local var_147_6 = var_147_3.total_draws
-			local var_147_7 = var_147_0.using_scrollbar
-			local var_147_8 = var_147_0.thumbnail_hotspot
+		input_function = function (self, arg_147_1)
+			-- function 147
+			local content = self.content
+			local style = self.style
+			local list_content = content.list_content
+			local list_style = style.list_style
+			local start_index = list_style.start_index
+			local num_draws = list_style.num_draws
+			local total_draws = list_style.total_draws
+			local using_scrollbar = content.using_scrollbar
+			local thumbnail_hotspot = content.thumbnail_hotspot
 
-			if var_147_0.active then
-				local var_147_9 = false
+			if not content.active then
+				local flag = false
 
-				if arg_147_1:get("move_up_hold_continuous") then
+				if not arg_147_1:get("move_up_hold_continuous") then
 					local var_147_10
 
-					for iter_147_0 = 1, var_147_6 do
-						if var_147_2[iter_147_0].hotspot.is_selected then
-							var_147_10 = iter_147_0
+					for i = 1, total_draws do
+						if not list_content[i].hotspot.is_selected then
+							var_147_10 = i
 
 							break
 						end
 					end
 
-					if var_147_10 then
+					if not var_147_10 then
 						if var_147_10 > 1 then
-							var_147_2[var_147_10].hotspot.is_selected = false
-							var_147_2[var_147_10 - 1].hotspot.is_selected = true
+							list_content[var_147_10].hotspot.is_selected = false
+							list_content[var_147_10 - 1].hotspot.is_selected = true
 
-							if var_147_7 and var_147_4 >= var_147_10 - 1 then
-								var_147_3.start_index = math.max(var_147_4 - 1, 1)
+							if not (not using_scrollbar and not (start_index >= var_147_10 - 1)) then
+								list_style.start_index = math.max(start_index - 1, 1)
 							end
 						end
 					else
-						var_147_2[1].hotspot.is_selected = true
+						list_content[1].hotspot.is_selected = true
 					end
 
-					var_147_9 = true
-				elseif arg_147_1:get("move_down_hold_continuous") then
+					flag = true
+				elseif not arg_147_1:get("move_down_hold_continuous") then
 					local var_147_11
 
-					for iter_147_1 = 1, var_147_6 do
-						if var_147_2[iter_147_1].hotspot.is_selected then
-							var_147_11 = iter_147_1
+					for j = 1, total_draws do
+						if not list_content[j].hotspot.is_selected then
+							var_147_11 = j
 
 							break
 						end
 					end
 
-					if var_147_11 then
-						if var_147_11 < var_147_6 then
-							var_147_2[var_147_11].hotspot.is_selected = false
-							var_147_2[var_147_11 + 1].hotspot.is_selected = true
+					if not var_147_11 then
+						if var_147_11 < total_draws then
+							list_content[var_147_11].hotspot.is_selected = false
+							list_content[var_147_11 + 1].hotspot.is_selected = true
 
-							if var_147_7 and var_147_5 <= var_147_11 + 1 then
-								var_147_3.start_index = math.min(var_147_4 + 1, var_147_6 - var_147_5 + 1)
+							if not (not using_scrollbar and not (num_draws <= var_147_11 + 1)) then
+								list_style.start_index = math.min(start_index + 1, total_draws - num_draws + 1)
 							end
 						end
 					else
-						var_147_2[1].hotspot.is_selected = true
+						list_content[1].hotspot.is_selected = true
 					end
 
-					var_147_9 = true
+					flag = true
 				end
 
-				if var_147_9 then
-					if var_147_7 then
-						local var_147_12 = var_147_3.start_index
-						local var_147_13 = var_147_6 - var_147_5
+				if not flag then
+					if not using_scrollbar then
+						local start_index_2 = list_style.start_index
+						local num = total_draws - num_draws
 
-						var_147_8.scroll_progress = (var_147_12 - 1) / var_147_13
+						thumbnail_hotspot.scroll_progress = (start_index_2 - 1) / num
 					end
 
 					return true
 				end
 			end
 
-			if arg_147_1:get("confirm") then
-				if not var_147_0.active then
-					var_147_0.active = true
-					var_147_3.active = true
+			if not arg_147_1:get("confirm") then
+				if not content.active then
+					content.active = true
+					list_style.active = true
 
 					if not Managers.input:is_device_active("mouse") then
-						local var_147_14 = var_147_0.current_selection
+						local current_selection = content.current_selection
 
-						if var_147_14 then
-							var_147_2[var_147_14].hotspot.is_selected = true
+						if not current_selection then
+							list_content[current_selection].hotspot.is_selected = true
 
-							if var_147_7 then
-								local var_147_15 = var_147_6 - var_147_5
+							if not using_scrollbar then
+								local num_2 = total_draws - num_draws
 
-								var_147_3.start_index = math.min(var_147_14, var_147_15)
-								var_147_8.scroll_progress = (var_147_3.start_index - 1) / var_147_15
+								list_style.start_index = math.min(current_selection, num_2)
+								thumbnail_hotspot.scroll_progress = (list_style.start_index - 1) / num_2
 							end
 						end
 					end
 				else
-					var_147_0.active = false
-					var_147_3.active = false
+					content.active = false
+					list_style.active = false
 
-					local var_147_16 = var_147_3.num_draws
+					local num_draws_2 = list_style.num_draws
 					local var_147_17
 
-					for iter_147_2 = 1, var_147_6 do
-						local var_147_18 = var_147_2[iter_147_2].hotspot
+					for k = 1, total_draws do
+						local hotspot = list_content[k].hotspot
 
-						if var_147_18.is_selected then
-							var_147_18.is_selected = false
-							var_147_17 = iter_147_2
+						if not hotspot.is_selected then
+							hotspot.is_selected = false
+							var_147_17 = k
 
 							break
 						end
 					end
 
-					if var_147_17 then
-						var_147_0.current_selection = var_147_17
+					if not var_147_17 then
+						content.current_selection = var_147_17
 
-						var_147_0.callback(var_147_0)
+						content.callback(content)
 					end
 				end
 
-				return true, var_147_0.active
+				return true, content.active
 			end
 
-			if var_147_0.active and arg_147_1:get("back") then
-				var_147_0.active = false
-				var_147_3.active = false
+			if not content.active and not arg_147_1:get("back") then
+				content.active = false
+				list_style.active = false
 
-				local var_147_19 = var_147_3.num_draws
+				local num_draws_3 = list_style.num_draws
 
-				for iter_147_3 = 1, var_147_19 do
-					local var_147_20 = var_147_2[iter_147_3].hotspot
+				for l = 1, num_draws_3 do
+					local hotspot_2 = list_content[l].hotspot
 
-					if var_147_20.is_selected then
-						var_147_20.is_selected = false
+					if not hotspot_2.is_selected then
+						hotspot_2.is_selected = false
 
 						break
 					end
 				end
 
-				return true, var_147_0.active
+				return true, content.active
 			end
 
-			return var_147_0.active
+			return content.active
 		end,
 		input_description = {
 			name = "drop_down",
@@ -5227,11 +5793,12 @@ SettingsWidgetTypeTemplate = {
 		}
 	},
 	checkbox = {
-		input_function = function(arg_148_0, arg_148_1)
-			local var_148_0 = arg_148_0.content
+		input_function = function (self, arg_148_1)
+			-- function 148
+			local content = self.content
 
-			if arg_148_1:get("confirm") then
-				var_148_0.hotspot.on_release = true
+			if not arg_148_1:get("confirm") then
+				content.hotspot.on_release = true
 
 				return true
 			end
@@ -5249,24 +5816,25 @@ SettingsWidgetTypeTemplate = {
 		}
 	},
 	option = {
-		input_function = function(arg_149_0, arg_149_1)
-			local var_149_0 = arg_149_0.content
-			local var_149_1 = var_149_0.num_options
-			local var_149_2 = var_149_0.current_selection
+		input_function = function (self, arg_149_1)
+			-- function 149
+			local content = self.content
+			local num_options = content.num_options
+			local current_selection = content.current_selection
 
-			if arg_149_1:get("move_left") then
-				if var_149_2 > 1 then
-					local var_149_3 = var_149_2 - 1
+			if not arg_149_1:get("move_left") then
+				if current_selection > 1 then
+					local num = current_selection - 1
 
-					var_149_0["option_" .. var_149_3].on_release = true
+					content["option_" .. num].on_release = true
 				end
 
 				return true
-			elseif arg_149_1:get("move_right") then
-				if var_149_2 < var_149_1 then
-					local var_149_4 = var_149_2 + 1
+			elseif not arg_149_1:get("move_right") then
+				if current_selection < num_options then
+					local num_2 = current_selection + 1
 
-					var_149_0["option_" .. var_149_4].on_release = true
+					content["option_" .. num_2].on_release = true
 				end
 
 				return true
@@ -5274,17 +5842,18 @@ SettingsWidgetTypeTemplate = {
 		end
 	},
 	keybind = {
-		input_function = function(arg_150_0, arg_150_1)
-			local var_150_0 = arg_150_0.content
-			local var_150_1 = arg_150_0.style
+		input_function = function (self, arg_150_1)
+			-- function 150
+			local content = self.content
+			local style = self.style
 
-			if var_150_0.active and arg_150_1:get("back", true) then
-				var_150_0.controller_input_pressed = true
+			if not content.active and not arg_150_1:get("back", true) then
+				content.controller_input_pressed = true
 
 				return true
 			end
 
-			if var_150_0.active and (arg_150_1:get("move_up") or arg_150_1:get("move_down") or arg_150_1:get("move_up_hold") or arg_150_1:get("move_down_hold")) then
+			if not content.active and arg_150_1:get("move_up") and arg_150_1:get("move_down") and arg_150_1:get("move_up_hold") and not arg_150_1:get("move_down_hold") then
 				return true
 			end
 		end,
@@ -5323,137 +5892,139 @@ SettingsWidgetTypeTemplate = {
 				}
 			}
 		},
-		input_function = function(arg_151_0, arg_151_1)
-			local var_151_0 = arg_151_0.content
-			local var_151_1 = var_151_0.list_content
-			local var_151_2 = arg_151_0.style
+		input_function = function (self, arg_151_1)
+			-- function 151
+			local content = self.content
+			local list_content = content.list_content
+			local style = self.style
 
-			if not Managers.input:is_device_active("gamepad") and var_151_0.active then
-				var_151_0.controller_input_pressed = true
-				var_151_0.active = false
+			if Managers.input:is_device_active("gamepad") or not content.active then
+				content.controller_input_pressed = true
+				content.active = false
 				hotspot.is_selected = true
 
-				local var_151_3 = #var_151_1
+				local count = #list_content
 
-				for iter_151_0 = 1, var_151_3 do
-					var_151_1[iter_151_0].hotspot.is_selected = false
+				for i = 1, count do
+					list_content[i].hotspot.is_selected = false
 				end
 
-				return true, var_151_0.active
+				return true, content.active
 			end
 
-			if not var_151_0.active and arg_151_1:get("confirm") then
-				var_151_0.active = true
-				var_151_0.controller_input_pressed = true
-				var_151_1[1].hotspot.is_selected = true
+			if content.active or not arg_151_1:get("confirm") then
+				content.active = true
+				content.controller_input_pressed = true
+				list_content[1].hotspot.is_selected = true
 
 				Managers.music:trigger_event("Play_hud_select")
 
 				return true
-			elseif var_151_0.active then
-				if arg_151_1:get("move_up") then
-					local var_151_4 = #var_151_1
+			elseif not content.active then
+				if not arg_151_1:get("move_up") then
+					local count_2 = #list_content
 					local var_151_5
 
-					for iter_151_1 = 1, var_151_4 do
-						if var_151_1[iter_151_1].hotspot.is_selected then
-							var_151_5 = iter_151_1
+					for j = 1, count_2 do
+						if not list_content[j].hotspot.is_selected then
+							var_151_5 = j
 
 							break
 						end
 					end
 
-					if var_151_5 then
+					if not var_151_5 then
 						if var_151_5 > 1 then
-							var_151_1[var_151_5].hotspot.is_selected = false
-							var_151_1[var_151_5 - 1].hotspot.is_selected = true
+							list_content[var_151_5].hotspot.is_selected = false
+							list_content[var_151_5 - 1].hotspot.is_selected = true
 
 							Managers.music:trigger_event("Play_hud_select")
 						end
 					else
-						var_151_1[1].hotspot.is_selected = true
+						list_content[1].hotspot.is_selected = true
 					end
 
 					return true
-				elseif arg_151_1:get("move_down") then
-					local var_151_6 = #var_151_1
+				elseif not arg_151_1:get("move_down") then
+					local count_3 = #list_content
 					local var_151_7
 
-					for iter_151_2 = 1, var_151_6 do
-						if var_151_1[iter_151_2].hotspot.is_selected then
-							var_151_7 = iter_151_2
+					for k = 1, count_3 do
+						if not list_content[k].hotspot.is_selected then
+							var_151_7 = k
 
 							break
 						end
 					end
 
-					if var_151_7 then
-						if var_151_7 < var_151_6 then
-							var_151_1[var_151_7].hotspot.is_selected = false
-							var_151_1[var_151_7 + 1].hotspot.is_selected = true
+					if not var_151_7 then
+						if var_151_7 < count_3 then
+							list_content[var_151_7].hotspot.is_selected = false
+							list_content[var_151_7 + 1].hotspot.is_selected = true
 
 							Managers.music:trigger_event("Play_hud_select")
 						end
 					else
-						var_151_1[1].hotspot.is_selected = true
+						list_content[1].hotspot.is_selected = true
 					end
 
 					return true
-				elseif arg_151_1:get("back", true) then
-					var_151_0.controller_input_pressed = true
-					var_151_0.active = false
+				elseif not arg_151_1:get("back", true) then
+					content.controller_input_pressed = true
+					content.active = false
 
-					local var_151_8 = #var_151_1
+					local count_4 = #list_content
 
-					for iter_151_3 = 1, var_151_8 do
-						var_151_1[iter_151_3].hotspot.is_selected = false
+					for l = 1, count_4 do
+						list_content[l].hotspot.is_selected = false
 					end
 
 					Managers.music:trigger_event("Play_hud_select")
 
-					return true, var_151_0.active
-				elseif arg_151_1:get("confirm", true) then
+					return true, content.active
+				elseif not arg_151_1:get("confirm", true) then
 					local var_151_9
-					local var_151_10 = #var_151_1
+					local count_5 = #list_content
 
-					for iter_151_4 = 1, var_151_10 do
-						if var_151_1[iter_151_4].hotspot.is_selected then
-							var_151_9 = iter_151_4
+					for i4 = 1, count_5 do
+						if not list_content[i4].hotspot.is_selected then
+							var_151_9 = i4
 
 							break
 						end
 					end
 
-					if var_151_9 then
-						local var_151_11 = var_151_1[var_151_9]
+					if not var_151_9 then
+						local var_151_11 = list_content[var_151_9]
 
-						table.remove(var_151_1, var_151_9)
-						table.insert(var_151_1, 1, var_151_11)
-						var_151_0.callback(var_151_0, var_151_2)
+						table.remove(list_content, var_151_9)
+						table.insert(list_content, 1, var_151_11)
+						content.callback(content, style)
 						Managers.music:trigger_event("Play_hud_select")
 
-						for iter_151_5, iter_151_6 in ipairs(var_151_1) do
-							iter_151_6.index_text = iter_151_5 .. "."
+						for i_2, v in ipairs(list_content) do
+							v.index_text = i_2 .. "."
 						end
 					end
 				end
 
-				return true, var_151_0.active
+				return true, content.active
 			end
 
-			return false, var_151_0.active
+			return false, content.active
 		end
 	},
 	stepper = {
-		input_function = function(arg_152_0, arg_152_1)
-			local var_152_0 = arg_152_0.content
+		input_function = function (self, arg_152_1)
+			-- function 152
+			local content = self.content
 
-			if arg_152_1:get("move_left") then
-				var_152_0.controller_on_release_left = true
+			if not arg_152_1:get("move_left") then
+				content.controller_on_release_left = true
 
 				return true
-			elseif arg_152_1:get("move_right") then
-				var_152_0.controller_on_release_right = true
+			elseif not arg_152_1:get("move_right") then
+				content.controller_on_release_right = true
 
 				return true
 			end
@@ -5472,50 +6043,51 @@ SettingsWidgetTypeTemplate = {
 		}
 	},
 	slider = {
-		input_function = function(arg_153_0, arg_153_1, arg_153_2)
-			local var_153_0 = arg_153_0.content
-			local var_153_1 = var_153_0.input_cooldown
-			local var_153_2 = var_153_0.input_cooldown_multiplier
-			local var_153_3 = false
+		input_function = function (self, arg_153_1, arg_153_2)
+			-- function 153
+			local content = self.content
+			local input_cooldown = content.input_cooldown
+			local input_cooldown_multiplier = content.input_cooldown_multiplier
+			local flag = false
 
-			if var_153_1 then
-				var_153_3 = true
+			if not input_cooldown then
+				flag = true
 
-				local var_153_4 = math.max(var_153_1 - arg_153_2, 0)
+				local max = math.max(input_cooldown - arg_153_2, 0)
 
-				var_153_1 = var_153_4 > 0 and var_153_4 or nil
-				var_153_0.input_cooldown = var_153_1
+				input_cooldown = not (max > 0) or not max or nil
+				content.input_cooldown = input_cooldown
 			end
 
-			local var_153_5 = var_153_0.internal_value
-			local var_153_6 = var_153_0.num_decimals
-			local var_153_7 = var_153_0.min
-			local var_153_8 = 1 / ((var_153_0.max - var_153_7) * 10^var_153_6)
-			local var_153_9 = false
+			local internal_value = content.internal_value
+			local num_decimals = content.num_decimals
+			local min = content.min
+			local num = 1 / ((content.max - min) * 10^num_decimals)
+			local flag_2 = false
 
-			if arg_153_1:get("move_left_hold") then
-				if not var_153_1 then
-					var_153_0.internal_value = math.clamp(var_153_5 - var_153_8, 0, 1)
-					var_153_9 = true
+			if not arg_153_1:get("move_left_hold") then
+				if not input_cooldown then
+					content.internal_value = math.clamp(internal_value - num, 0, 1)
+					flag_2 = true
 				end
-			elseif arg_153_1:get("move_right_hold") and not var_153_1 then
-				var_153_0.internal_value = math.clamp(var_153_5 + var_153_8, 0, 1)
-				var_153_9 = true
+			elseif not (not arg_153_1:get("move_right_hold") and input_cooldown) then
+				content.internal_value = math.clamp(internal_value + num, 0, 1)
+				flag_2 = true
 			end
 
-			if var_153_9 then
-				var_153_0.changed = true
+			if not flag_2 then
+				content.changed = true
 
-				if var_153_3 then
-					local var_153_10 = math.max(var_153_2 - 0.1, 0.1)
+				if not flag then
+					local max_2 = math.max(input_cooldown_multiplier - 0.1, 0.1)
 
-					var_153_0.input_cooldown = 0.2 * math.ease_in_exp(var_153_10)
-					var_153_0.input_cooldown_multiplier = var_153_10
+					content.input_cooldown = 0.2 * math.ease_in_exp(max_2)
+					content.input_cooldown_multiplier = max_2
 				else
-					local var_153_11 = 1
+					local num_2 = 1
 
-					var_153_0.input_cooldown = 0.2 * math.ease_in_exp(var_153_11)
-					var_153_0.input_cooldown_multiplier = var_153_11
+					content.input_cooldown = 0.2 * math.ease_in_exp(num_2)
+					content.input_cooldown_multiplier = num_2
 				end
 
 				return true
@@ -5535,7 +6107,8 @@ SettingsWidgetTypeTemplate = {
 		}
 	},
 	image = {
-		input_function = function()
+		input_function = function ()
+			-- function 154
 			return
 		end,
 		input_description = {
@@ -5545,7 +6118,8 @@ SettingsWidgetTypeTemplate = {
 		}
 	},
 	title = {
-		input_function = function()
+		input_function = function ()
+			-- function 155
 			return
 		end,
 		input_description = {
@@ -5555,13 +6129,14 @@ SettingsWidgetTypeTemplate = {
 		}
 	},
 	text_link = {
-		input_function = function(arg_156_0, arg_156_1)
-			local var_156_0 = arg_156_0.content
+		input_function = function (self, arg_156_1)
+			-- function 156
+			local content = self.content
 
-			var_156_0.controller_input_pressed = nil
+			content.controller_input_pressed = nil
 
-			if arg_156_1:get("confirm") then
-				var_156_0.controller_input_pressed = true
+			if not arg_156_1:get("confirm") then
+				content.controller_input_pressed = true
 
 				return true
 			end
@@ -5579,7 +6154,8 @@ SettingsWidgetTypeTemplate = {
 		}
 	},
 	gamepad_layout = {
-		input_function = function()
+		input_function = function ()
+			-- function 157
 			return
 		end,
 		input_description = {
@@ -5590,21 +6166,24 @@ SettingsWidgetTypeTemplate = {
 	}
 }
 
-local var_0_46 = {
+local tbl_19 = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.25,
-			init = function(arg_158_0, arg_158_1, arg_158_2, arg_158_3)
+			init = function (arg_158_0, arg_158_1, arg_158_2, arg_158_3)
+				-- function 158
 				arg_158_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_159_0, arg_159_1, arg_159_2, arg_159_3, arg_159_4)
-				local var_159_0 = math.easeOutCubic(arg_159_3)
+			update = function (arg_159_0, arg_159_1, arg_159_2, arg_159_3, arg_159_4)
+				-- function 159
+				local easeOutCubic = math.easeOutCubic(arg_159_3)
 
-				arg_159_4.render_settings.alpha_multiplier = var_159_0
+				arg_159_4.render_settings.alpha_multiplier = easeOutCubic
 			end,
-			on_complete = function(arg_160_0, arg_160_1, arg_160_2, arg_160_3)
+			on_complete = function (arg_160_0, arg_160_1, arg_160_2, arg_160_3)
+				-- function 160
 				arg_160_3.render_settings.alpha_multiplier = 1
 			end
 		}
@@ -5612,23 +6191,23 @@ local var_0_46 = {
 }
 
 return {
-	scenegraph_definition = var_0_10,
-	background_widget_definitions = var_0_17,
-	gamepad_frame_widget_definitions = var_0_16,
-	widget_definitions = var_0_18,
-	button_definitions = var_0_20,
-	scrollbar_definition = var_0_23,
-	animation_definitions = var_0_46,
-	create_title_widget = var_0_36,
-	create_checkbox_widget = var_0_26,
-	create_slider_widget = var_0_30,
-	create_drop_down_widget = var_0_32,
-	create_stepper_widget = var_0_34,
-	create_option_widget = var_0_40,
-	create_text_link_widget = var_0_38,
-	create_keybind_widget = var_0_42,
-	create_sorted_list_widget = var_0_45,
-	create_simple_texture_widget = var_0_27,
-	create_gamepad_layout_widget = var_0_28,
-	create_safe_rect_widget = var_0_12
+	scenegraph_definition = tbl_5,
+	background_widget_definitions = tbl_8,
+	gamepad_frame_widget_definitions = tbl_7,
+	widget_definitions = tbl_9,
+	button_definitions = tbl_10,
+	scrollbar_definition = create_scrollbar,
+	animation_definitions = tbl_19,
+	create_title_widget = fn_12,
+	create_checkbox_widget = fn_6,
+	create_slider_widget = fn_9,
+	create_drop_down_widget = fn_10,
+	create_stepper_widget = fn_11,
+	create_option_widget = fn_14,
+	create_text_link_widget = fn_13,
+	create_keybind_widget = fn_15,
+	create_sorted_list_widget = fn_16,
+	create_simple_texture_widget = fn_7,
+	create_gamepad_layout_widget = fn_8,
+	create_safe_rect_widget = fn_2
 }

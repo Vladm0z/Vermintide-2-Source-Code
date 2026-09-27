@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/breeds/breed_chaos_greed_pinata.lua
 
-local var_0_0 = 2
-local var_0_1 = {
+local num = 2
+local tbl = {
 	detection_radius = 12,
 	bot_melee_aim_node = "j_neck",
 	has_inventory = false,
@@ -43,14 +43,14 @@ local var_0_1 = {
 	aoe_height = 1.5,
 	infighting = InfightingSettings.none,
 	max_health = {
-		25 * var_0_0,
-		25 * var_0_0,
-		37.5 * var_0_0,
-		50 * var_0_0,
-		75 * var_0_0,
-		75 * var_0_0,
-		75 * var_0_0,
-		75 * var_0_0
+		25 * num,
+		25 * num,
+		37.5 * num,
+		50 * num,
+		75 * num,
+		75 * num,
+		75 * num,
+		75 * num
 	},
 	stagger_duration = {
 		1,
@@ -102,9 +102,9 @@ local var_0_1 = {
 	}
 }
 
-Breeds.chaos_greed_pinata = table.create_copy(Breeds.chaos_greed_pinata, var_0_1)
+Breeds.chaos_greed_pinata = table.create_copy(Breeds.chaos_greed_pinata, tbl)
 
-local var_0_2 = {
+local tbl_2 = {
 	flee = {
 		escaped_players_distance_sq = 10000
 	},
@@ -240,4 +240,4 @@ local var_0_2 = {
 	}
 }
 
-BreedActions.chaos_greed_pinata = table.create_copy(BreedActions.chaos_greed_pinata, var_0_2)
+BreedActions.chaos_greed_pinata = table.create_copy(BreedActions.chaos_greed_pinata, tbl_2)

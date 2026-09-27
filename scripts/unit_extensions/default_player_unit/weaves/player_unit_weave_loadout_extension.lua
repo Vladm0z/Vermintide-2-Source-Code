@@ -2,141 +2,155 @@
 
 PlayerUnitWeaveLoadoutExtension = class(PlayerUnitWeaveLoadoutExtension)
 
-function PlayerUnitWeaveLoadoutExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	arg_1_0._unit = arg_1_2
-	arg_1_0._is_server = arg_1_1.is_server
-	arg_1_0._buffs = {}
-	arg_1_0._synced_buff_params = nil
+PlayerUnitWeaveLoadoutExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	self._unit = arg_1_2
+	self._is_server = arg_1_1.is_server
+	self._buffs = {}
+	self._synced_buff_params = nil
 end
 
-function PlayerUnitWeaveLoadoutExtension.destroy(arg_2_0)
-	arg_2_0._unit = nil
-	arg_2_0._buffs = nil
-	arg_2_0._synced_buff_params = nil
-	arg_2_0._buff_extension = nil
-	arg_2_0._career_extension = nil
+PlayerUnitWeaveLoadoutExtension.destroy = function (self)
+	-- function 2
+	self._unit = nil
+	self._buffs = nil
+	self._synced_buff_params = nil
+	self._buff_extension = nil
+	self._career_extension = nil
 end
 
-function PlayerUnitWeaveLoadoutExtension.extensions_ready(arg_3_0, arg_3_1, arg_3_2)
-	arg_3_0._buff_extension = ScriptUnit.extension(arg_3_2, "buff_system")
-	arg_3_0._career_extension = ScriptUnit.extension(arg_3_2, "career_system")
+PlayerUnitWeaveLoadoutExtension.extensions_ready = function (self, arg_3_1, arg_3_2)
+	-- function 3
+	self._buff_extension = ScriptUnit.extension(arg_3_2, "buff_system")
+	self._career_extension = ScriptUnit.extension(arg_3_2, "career_system")
 
-	if arg_3_0:_is_in_weave() then
-		local var_3_0 = arg_3_0:_get_weave_buffs()
+	if not self:_is_in_weave() then
+		local _get_weave_buffs = self:_get_weave_buffs()
 
-		arg_3_0._buffs = var_3_0
+		self._buffs = _get_weave_buffs
 
-		arg_3_0:_apply_buffs(var_3_0)
+		self:_apply_buffs(_get_weave_buffs)
 
-		local var_3_1 = Managers.backend:get_interface("weaves")
-		local var_3_2 = arg_3_0._career_extension:career_name()
+		local get_interface = Managers.backend:get_interface("weaves")
+		local career_name = self._career_extension:career_name()
 
-		var_3_1:apply_career_item_loadouts(var_3_2)
+		get_interface:apply_career_item_loadouts(career_name)
 	end
 end
 
-function PlayerUnitWeaveLoadoutExtension.game_object_initialized(arg_4_0, arg_4_1, arg_4_2)
-	arg_4_0:_sync_buffs(arg_4_2)
+PlayerUnitWeaveLoadoutExtension.game_object_initialized = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	self:_sync_buffs(arg_4_2)
 end
 
-function PlayerUnitWeaveLoadoutExtension.hot_join_sync(arg_5_0, arg_5_1)
-	local var_5_0 = arg_5_0._synced_buff_params
+PlayerUnitWeaveLoadoutExtension.hot_join_sync = function (self, arg_5_1)
+	-- function 5
+	local _synced_buff_params = self._synced_buff_params
 
-	if var_5_0 then
-		local var_5_1 = Managers.state.unit_storage:go_id(arg_5_0._unit)
+	if not _synced_buff_params then
+		local go_id = Managers.state.unit_storage:go_id(self._unit)
 		local var_5_2 = PEER_ID_TO_CHANNEL[arg_5_1]
 
-		RPC.rpc_add_weave_buffs(var_5_2, var_5_1, unpack(var_5_0))
+		RPC.rpc_add_weave_buffs(var_5_2, go_id, unpack(_synced_buff_params))
 	end
 end
 
-function PlayerUnitWeaveLoadoutExtension._is_in_weave(arg_6_0)
+PlayerUnitWeaveLoadoutExtension._is_in_weave = function (arg_6_0)
+	-- function 6
 	return Managers.mechanism:game_mechanism():get_state() == "weave"
 end
 
-function PlayerUnitWeaveLoadoutExtension._get_weave_buffs(arg_7_0)
-	local var_7_0 = {
+PlayerUnitWeaveLoadoutExtension._get_weave_buffs = function (self)
+	-- function 7
+	local tbl = {
 		client = {},
 		server = {},
 		both = {}
 	}
-	local var_7_1 = Managers.backend:get_interface("weaves")
-	local var_7_2 = arg_7_0._career_extension:career_name()
-	local var_7_3 = var_7_1:get_loadout_properties(var_7_2)
+	local get_interface = Managers.backend:get_interface("weaves")
+	local career_name = self._career_extension:career_name()
+	local get_loadout_properties = get_interface:get_loadout_properties(career_name)
 
-	for iter_7_0, iter_7_1 in pairs(var_7_3) do
-		local var_7_4 = #iter_7_1
-		local var_7_5 = WeaveProperties.properties[iter_7_0]
-		local var_7_6 = var_7_5.buff_name
+	for k, v in pairs(get_loadout_properties) do
+		local count = #v
+		local var_7_5 = WeaveProperties.properties[k]
+		local buff_name = var_7_5.buff_name
 
-		fassert(BuffUtils.get_buff_template(var_7_6), "Weave buff %q does not exist", var_7_6)
+		fassert(BuffUtils.get_buff_template(buff_name), "Weave buff %q does not exist", buff_name)
 
-		local var_7_7 = var_7_4 / #var_7_1:get_property_mastery_costs(iter_7_0)
+		local num = count / #get_interface:get_property_mastery_costs(k)
+		local buffer = var_7_5.buffer
 
-		var_7_0[var_7_5.buffer or "client"][var_7_6] = {
-			variable_value = var_7_7
+		buffer = buffer or "client"
+		tbl[buffer][buff_name] = {
+			variable_value = num
 		}
 	end
 
-	local var_7_8 = var_7_1:get_loadout_traits(var_7_2)
+	local get_loadout_traits = get_interface:get_loadout_traits(career_name)
 
-	for iter_7_2, iter_7_3 in pairs(var_7_8) do
-		local var_7_9 = WeaveTraits.traits[iter_7_2]
-		local var_7_10 = var_7_9.buff_name
+	for k_2, v_2 in pairs(get_loadout_traits) do
+		local var_7_10 = WeaveTraits.traits[k_2]
+		local buff_name_2 = var_7_10.buff_name
 
-		fassert(BuffUtils.get_buff_template(var_7_10), "Weave buff %q does not exist", var_7_10)
+		fassert(BuffUtils.get_buff_template(buff_name_2), "Weave buff %q does not exist", buff_name_2)
 
-		var_7_0[var_7_9.buffer or "client"][var_7_10] = {
+		local buffer_2 = var_7_10.buffer
+
+		buffer_2 = buffer_2 or "client"
+		tbl[buffer_2][buff_name_2] = {
 			variable_value = 1
 		}
 	end
 
-	return var_7_0
+	return tbl
 end
 
-function PlayerUnitWeaveLoadoutExtension._apply_buffs(arg_8_0, arg_8_1)
-	local var_8_0 = arg_8_0._buff_extension
+PlayerUnitWeaveLoadoutExtension._apply_buffs = function (self, arg_8_1)
+	-- function 8
+	local _buff_extension = self._buff_extension
 
-	for iter_8_0, iter_8_1 in pairs(arg_8_1) do
-		if arg_8_0._is_server or iter_8_0 == "client" or iter_8_0 == "both" then
-			for iter_8_2, iter_8_3 in pairs(iter_8_1) do
-				local var_8_1 = BuffUtils.get_buff_template(iter_8_2)
-				local var_8_2 = {}
+	for k, v in pairs(arg_8_1) do
+		if not (self._is_server or k == "client" or k ~= "both") then
+			for k_2, v_2 in pairs(v) do
+				local get_buff_template = BuffUtils.get_buff_template(k_2)
+				local tbl = {}
 
-				for iter_8_4, iter_8_5 in pairs(iter_8_3) do
-					var_8_2[iter_8_4] = iter_8_5
+				for k_3, v_3 in pairs(v_2) do
+					tbl[k_3] = v_3
 				end
 
-				var_8_0:add_buff(iter_8_2, var_8_2)
+				_buff_extension:add_buff(k_2, tbl)
 			end
 		end
 	end
 end
 
-function PlayerUnitWeaveLoadoutExtension._sync_buffs(arg_9_0, arg_9_1)
-	local var_9_0 = arg_9_0._buffs
+PlayerUnitWeaveLoadoutExtension._sync_buffs = function (self, arg_9_1)
+	-- function 9
+	local _buffs = self._buffs
 
-	if table.size(var_9_0) == 0 then
+	if table.size(_buffs) == 0 then
 		return
 	end
 
-	local var_9_1 = {}
+	local tbl = {}
 
-	table.merge(var_9_1, var_9_0.server)
-	table.merge(var_9_1, var_9_0.both)
+	table.merge(tbl, _buffs.server)
+	table.merge(tbl, _buffs.both)
 
-	if table.size(var_9_1) == 0 then
+	if table.size(tbl) == 0 then
 		return
 	end
 
-	local var_9_2 = BuffUtils.buffs_to_rpc_params(var_9_1)
-	local var_9_3 = Managers.state.network.network_transmit
+	local buffs_to_rpc_params = BuffUtils.buffs_to_rpc_params(tbl)
+	local network_transmit = Managers.state.network.network_transmit
 
-	if arg_9_0._is_server then
-		var_9_3:send_rpc_clients("rpc_add_weave_buffs", arg_9_1, unpack(var_9_2))
+	if not self._is_server then
+		network_transmit:send_rpc_clients("rpc_add_weave_buffs", arg_9_1, unpack(buffs_to_rpc_params))
 	else
-		var_9_3:send_rpc_server("rpc_add_weave_buffs", arg_9_1, unpack(var_9_2))
+		network_transmit:send_rpc_server("rpc_add_weave_buffs", arg_9_1, unpack(buffs_to_rpc_params))
 	end
 
-	arg_9_0._synced_buff_params = var_9_2
+	self._synced_buff_params = buffs_to_rpc_params
 end

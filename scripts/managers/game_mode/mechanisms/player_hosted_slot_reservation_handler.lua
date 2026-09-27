@@ -2,418 +2,435 @@
 
 PlayerHostedSlotReservationHandler = class(PlayerHostedSlotReservationHandler)
 
-local var_0_0 = true
-local var_0_1 = {
+local flag = true
+local tbl = {
 	reserved = false
 }
 
-function PlayerHostedSlotReservationHandler.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	arg_1_0._owner_peer_id = arg_1_2
-	arg_1_0._reservation_handler_type = arg_1_3
-	arg_1_0._group_leaders = {}
-	arg_1_0._peer_id_to_party_id = {}
-	arg_1_0._reserved_peers = {}
+PlayerHostedSlotReservationHandler.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	self._owner_peer_id = arg_1_2
+	self._reservation_handler_type = arg_1_3
+	self._group_leaders = {}
+	self._peer_id_to_party_id = {}
+	self._reserved_peers = {}
 
-	if arg_1_1 then
-		arg_1_0:update_slot_settings(arg_1_1)
+	if not arg_1_1 then
+		self:update_slot_settings(arg_1_1)
 	end
 
-	arg_1_0._party_manager = Managers.party
-	arg_1_0._pending_peer_informations = {}
+	self._party_manager = Managers.party
+	self._pending_peer_informations = {}
 
-	Managers.persistent_event:register(arg_1_0, "network_match_changed", "_on_network_match_changed")
-	Managers.persistent_event:register(arg_1_0, "network_match_terminated", "_on_network_match_terminated")
-	Managers.persistent_event:register(arg_1_0, "new_network_match_synced", "_on_new_network_match_synced")
+	Managers.persistent_event:register(self, "network_match_changed", "_on_network_match_changed")
+	Managers.persistent_event:register(self, "network_match_terminated", "_on_network_match_terminated")
+	Managers.persistent_event:register(self, "new_network_match_synced", "_on_new_network_match_synced")
 	printf("[PlayerHostedSlotReservationHandler] Created")
 
-	arg_1_0._synced = false
+	self._synced = false
 
-	local var_1_0 = Managers.mechanism:network_handler()
+	local network_handler = Managers.mechanism:network_handler()
 
-	if var_1_0 then
-		arg_1_0:request_slot_reservation_sync()
+	if not network_handler then
+		self:request_slot_reservation_sync()
 
-		local var_1_1 = Network.peer_id()
+		local peer_id = Network.peer_id()
 
-		if var_1_0.is_server and arg_1_0._owner_peer_id == var_1_1 then
-			local var_1_2 = var_1_0:active_peers()
+		if not (not network_handler.is_server and self._owner_peer_id ~= peer_id) then
+			local active_peers = network_handler:active_peers()
 
-			var_1_2 = table.is_empty(var_1_2) and {
+			active_peers = not table.is_empty(active_peers) and {
 				Network.peer_id()
-			} or var_1_2
+			} and active_peers
 
-			arg_1_0:try_reserve_slots(Network.peer_id(), var_1_2)
+			self:try_reserve_slots(Network.peer_id(), active_peers)
 		end
 	end
 
-	arg_1_0._dangling_peers = {}
+	self._dangling_peers = {}
 end
 
-function PlayerHostedSlotReservationHandler.set_reservation_handler_type(arg_2_0, arg_2_1)
-	arg_2_0._reservation_handler_type = arg_2_1
+PlayerHostedSlotReservationHandler.set_reservation_handler_type = function (self, arg_2_1)
+	-- function 2
+	self._reservation_handler_type = arg_2_1
 end
 
-function PlayerHostedSlotReservationHandler.update_slot_settings(arg_3_0, arg_3_1)
-	arg_3_0._max_party_slots = 0
-	arg_3_0._num_slots_total = 0
+PlayerHostedSlotReservationHandler.update_slot_settings = function (self, arg_3_1)
+	-- function 3
+	self._max_party_slots = 0
+	self._num_slots_total = 0
 
-	local var_3_0 = 0
+	local num = 0
 
-	for iter_3_0, iter_3_1 in pairs(arg_3_1) do
-		if iter_3_1.game_participating then
-			local var_3_1 = iter_3_1.party_id
-			local var_3_2 = iter_3_1.num_slots
+	for k, v in pairs(arg_3_1) do
+		if not v.game_participating then
+			local party_id = v.party_id
+			local num_slots = v.num_slots
 
-			arg_3_0:_expand(var_3_1, var_3_2)
+			self:_expand(party_id, num_slots)
 
-			var_3_0 = math.max(var_3_0, var_3_1)
+			num = math.max(num, party_id)
 
-			for iter_3_2 = 1, #arg_3_0._reserved_peers[var_3_1] do
-				local var_3_3 = arg_3_0._reserved_peers[var_3_1][iter_3_2]
+			for k_2 = 1, #self._reserved_peers[party_id] do
+				local var_3_3 = self._reserved_peers[party_id][k_2]
 
-				if var_3_3 and var_3_3.reserved then
-					arg_3_0._peer_id_to_party_id[var_3_3.peer_id] = var_3_1
+				if not var_3_3 and not var_3_3.reserved then
+					self._peer_id_to_party_id[var_3_3.peer_id] = party_id
 				end
 			end
 		end
 	end
 
-	local var_3_4 = {}
+	local tbl = {}
 
-	for iter_3_3 = var_3_0 + 1, #arg_3_0._reserved_peers do
-		local var_3_5 = arg_3_0._reserved_peers[iter_3_3]
+	for l = num + 1, #self._reserved_peers do
+		local var_3_5 = self._reserved_peers[l]
 
-		for iter_3_4 = 1, #var_3_5 do
-			local var_3_6 = var_3_5[iter_3_4]
+		for i4 = 1, #var_3_5 do
+			local var_3_6 = var_3_5[i4]
 
-			if var_3_6.reserved then
-				local var_3_7 = var_3_6.peer_id
+			if not var_3_6.reserved then
+				local peer_id = var_3_6.peer_id
 
-				var_3_4[#var_3_4 + 1] = var_3_7
+				tbl[#tbl + 1] = peer_id
 			end
 		end
 	end
 
-	local var_3_8 = #var_3_4
+	local count = #tbl
 
-	for iter_3_5 = 1, var_3_8 do
-		local var_3_9 = var_3_4[iter_3_5]
-		local var_3_10 = false
+	for i5 = 1, count do
+		local var_3_9 = tbl[i5]
+		local flag_2 = false
 
-		for iter_3_6 = 1, var_3_0 do
-			local var_3_11 = arg_3_0._reserved_peers[iter_3_6]
+		for i6 = 1, num do
+			local var_3_11 = self._reserved_peers[i6]
 
-			for iter_3_7 = 1, #var_3_11 do
-				if not var_3_11[iter_3_7].reserved then
-					local var_3_12 = iter_3_5 < var_3_8
+			for i7 = 1, #var_3_11 do
+				if not var_3_11[i7].reserved then
+					local flag_3 = i5 < count
 
-					arg_3_0:move_player(var_3_9, iter_3_6, var_3_12)
+					self:move_player(var_3_9, i6, flag_3)
 
-					var_3_10 = true
+					flag_2 = true
 
 					break
 				end
 			end
 
-			if var_3_10 then
+			if not flag_2 then
 				break
 			end
 		end
 	end
 
-	for iter_3_8 = var_3_0 + 1, #arg_3_0._reserved_peers do
-		assert(table.is_empty(table.select_array(arg_3_0._reserved_peers, function(arg_4_0, arg_4_1)
+	for i8 = num + 1, #self._reserved_peers do
+		assert(table.is_empty(table.select_array(self._reserved_peers, function (arg_4_0, arg_4_1)
+			-- function 4
 			return arg_4_1.peer_id
 		end)), "[PlayerHostedSlotReservationHandler] Dangling peers remain in the slot reservation handler")
 
-		arg_3_0._reserved_peers[iter_3_8] = nil
-		arg_3_0._num_slots_per_party[iter_3_8] = nil
+		self._reserved_peers[i8] = nil
+		self._num_slots_per_party[i8] = nil
 
-		if var_0_0 then
-			printf("[PlayerHostedSlotReservationHandler] Shrinking reserved peers. Removing party %s", iter_3_8)
+		if not flag then
+			printf("[PlayerHostedSlotReservationHandler] Shrinking reserved peers. Removing party %s", i8)
 		end
 	end
 end
 
-function PlayerHostedSlotReservationHandler._recalculate_slots(arg_5_0)
-	arg_5_0._num_slots_total = 0
-	arg_5_0._max_party_slots = 0
-	arg_5_0._num_slots_per_party = {}
+PlayerHostedSlotReservationHandler._recalculate_slots = function (self)
+	-- function 5
+	self._num_slots_total = 0
+	self._max_party_slots = 0
+	self._num_slots_per_party = {}
 
-	local var_5_0 = arg_5_0._reserved_peers
+	local _reserved_peers = self._reserved_peers
 
-	for iter_5_0 = 1, #var_5_0 do
-		local var_5_1 = #var_5_0[iter_5_0]
+	for i = 1, #_reserved_peers do
+		local count = #_reserved_peers[i]
 
-		arg_5_0._num_slots_total = arg_5_0._num_slots_total + var_5_1
-		arg_5_0._num_slots_per_party[iter_5_0] = var_5_1
+		self._num_slots_total = self._num_slots_total + count
+		self._num_slots_per_party[i] = count
 
-		if var_5_1 > arg_5_0._max_party_slots then
-			arg_5_0._max_party_slots = var_5_1
+		if count > self._max_party_slots then
+			self._max_party_slots = count
 		end
 	end
 end
 
-function PlayerHostedSlotReservationHandler._expand(arg_6_0, arg_6_1, arg_6_2)
-	local var_6_0 = arg_6_0._reserved_peers
+PlayerHostedSlotReservationHandler._expand = function (self, arg_6_1, arg_6_2)
+	-- function 6
+	local _reserved_peers = self._reserved_peers
 
-	for iter_6_0 = #var_6_0 + 1, arg_6_1 do
-		if var_0_0 then
-			printf("[PlayerHostedSlotReservationHandler] Expanding. Adding party %s", iter_6_0)
+	for i = #_reserved_peers + 1, arg_6_1 do
+		if not flag then
+			printf("[PlayerHostedSlotReservationHandler] Expanding. Adding party %s", i)
 		end
 
-		var_6_0[iter_6_0] = {}
+		_reserved_peers[i] = {}
 	end
 
-	local var_6_1 = var_6_0[arg_6_1]
+	local var_6_1 = _reserved_peers[arg_6_1]
 
-	for iter_6_1 = #var_6_1 + 1, arg_6_2 do
-		if var_0_0 then
-			printf("[PlayerHostedSlotReservationHandler] Expanding. Adding slot %s in party %s", iter_6_1, arg_6_1)
+	for j = #var_6_1 + 1, arg_6_2 do
+		if not flag then
+			printf("[PlayerHostedSlotReservationHandler] Expanding. Adding slot %s in party %s", j, arg_6_1)
 		end
 
-		var_6_1[iter_6_1] = table.clone(var_0_1)
+		var_6_1[j] = table.clone(tbl)
 	end
 
-	arg_6_0:_recalculate_slots()
+	self:_recalculate_slots()
 end
 
-function PlayerHostedSlotReservationHandler.handle_dangling_peers(arg_7_0)
-	if table.is_empty(arg_7_0._dangling_peers) then
+PlayerHostedSlotReservationHandler.handle_dangling_peers = function (self)
+	-- function 7
+	if not table.is_empty(self._dangling_peers) then
 		return
 	end
 
-	local var_7_0 = Managers.mechanism:network_handler()
-	local var_7_1 = Managers.time:time("main")
+	local network_handler = Managers.mechanism:network_handler()
+	local time = Managers.time:time("main")
 
-	for iter_7_0, iter_7_1 in pairs(arg_7_0._dangling_peers) do
-		if iter_7_1 < var_7_1 then
-			var_7_0:force_disconnect_client_by_peer_id(iter_7_0)
+	for k, v in pairs(self._dangling_peers) do
+		if v < time then
+			network_handler:force_disconnect_client_by_peer_id(k)
 
-			arg_7_0._dangling_peers[iter_7_0] = nil
+			self._dangling_peers[k] = nil
 		end
 	end
 end
 
-function PlayerHostedSlotReservationHandler.num_slots_total(arg_8_0)
-	return arg_8_0._num_slots_total
+PlayerHostedSlotReservationHandler.num_slots_total = function (self)
+	-- function 8
+	return self._num_slots_total
 end
 
-function PlayerHostedSlotReservationHandler.max_party_slots(arg_9_0)
-	return arg_9_0._max_party_slots
+PlayerHostedSlotReservationHandler.max_party_slots = function (self)
+	-- function 9
+	return self._max_party_slots
 end
 
-function PlayerHostedSlotReservationHandler.try_reserve_slots(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
-	local var_10_0 = false
+PlayerHostedSlotReservationHandler.try_reserve_slots = function (self, arg_10_1, arg_10_2, arg_10_3)
+	-- function 10
+	local flag = false
 	local var_10_1
 
-	if table.is_empty(arg_10_2) then
+	if not table.is_empty(arg_10_2) then
 		printf("[PlayerHostedSlotReservationHandler] Tried to reserve slots for peer %s, but no peers were provided", arg_10_1)
 
-		return var_10_0, var_10_1
+		return flag, var_10_1
 	end
 
-	if arg_10_3 then
+	if not arg_10_3 then
 		arg_10_1 = arg_10_3
 	end
 
-	local var_10_2 = arg_10_0:_filter_already_reserved_peers(arg_10_2)
+	local _filter_already_reserved_peers = self:_filter_already_reserved_peers(arg_10_2)
 
-	if table.is_empty(var_10_2) then
-		var_10_0 = true
-		var_10_1 = arg_10_0._peer_id_to_party_id[arg_10_1]
+	if not table.is_empty(_filter_already_reserved_peers) then
+		flag = true
+		var_10_1 = self._peer_id_to_party_id[arg_10_1]
 
 		printf("[PlayerHostedSlotReservationHandler] Attempted to reserve peers (%s), but they were already in party %s", table.concat(arg_10_2, ", "), var_10_1)
 
-		return var_10_0, var_10_1
+		return flag, var_10_1
 	end
 
-	local var_10_3 = #var_10_2
-	local var_10_4 = 0
+	local count = #_filter_already_reserved_peers
+	local num = 0
 
-	for iter_10_0, iter_10_1 in ipairs(arg_10_0._reserved_peers) do
-		local var_10_5 = arg_10_0:_num_free_slots_in_party(iter_10_0)
+	for i, v in ipairs(self._reserved_peers) do
+		local _num_free_slots_in_party = self:_num_free_slots_in_party(i)
 
-		if var_10_3 <= var_10_5 and var_10_4 < var_10_5 then
-			var_10_1 = iter_10_0
-			var_10_4 = var_10_5
+		if not (not (count <= _num_free_slots_in_party) or not (num < _num_free_slots_in_party)) then
+			var_10_1 = i
+			num = _num_free_slots_in_party
 		end
 	end
 
-	if var_10_1 then
-		if Managers.mechanism:game_mechanism():is_hosting_versus_custom_game() then
-			if arg_10_3 then
-				arg_10_0._party_manager:server_add_friend_party_peer_from_invitee(arg_10_1, arg_10_3)
+	if not var_10_1 then
+		if not Managers.mechanism:game_mechanism():is_hosting_versus_custom_game() then
+			if not arg_10_3 then
+				self._party_manager:server_add_friend_party_peer_from_invitee(arg_10_1, arg_10_3)
 			else
-				arg_10_0._party_manager:server_create_friend_party(arg_10_2, arg_10_1)
+				self._party_manager:server_create_friend_party(arg_10_2, arg_10_1)
 			end
 
-			arg_10_0._party_manager:sync_friend_party_ids()
+			self._party_manager:sync_friend_party_ids()
 		end
 
-		local var_10_6 = arg_10_0._party_manager:get_friend_party_id_from_peer(arg_10_1)
+		local get_friend_party_id_from_peer = self._party_manager:get_friend_party_id_from_peer(arg_10_1)
 
-		for iter_10_2 = 1, #var_10_2 do
-			for iter_10_3, iter_10_4 in pairs(arg_10_0._reserved_peers[var_10_1]) do
-				local var_10_7 = var_10_2[iter_10_2]
+		for k = 1, #_filter_already_reserved_peers do
+			for k_2, v_2 in pairs(self._reserved_peers[var_10_1]) do
+				local var_10_7 = _filter_already_reserved_peers[k]
 
-				if not iter_10_4.reserved then
-					arg_10_0:_write_party_slot(iter_10_4, var_10_7, var_10_6, arg_10_1, var_10_1)
+				if not v_2.reserved then
+					self:_write_party_slot(v_2, var_10_7, get_friend_party_id_from_peer, arg_10_1, var_10_1)
 
 					break
 				end
 			end
 		end
 
-		var_10_0 = true
+		flag = true
 	else
-		printf("[PlayerHostedSlotReservationHandler] Failed to reserve slot for peers (%s).", table.concat(var_10_2))
-		table.dump(arg_10_0._reserved_peers, "Reserved Peers", 2)
+		printf("[PlayerHostedSlotReservationHandler] Failed to reserve slot for peers (%s).", table.concat(_filter_already_reserved_peers))
+		table.dump(self._reserved_peers, "Reserved Peers", 2)
 	end
 
-	if var_10_0 then
-		arg_10_0:_update_reservations()
+	if not flag then
+		self:_update_reservations()
 	end
 
-	return var_10_0, var_10_1
+	return flag, var_10_1
 end
 
-function PlayerHostedSlotReservationHandler._filter_already_reserved_peers(arg_11_0, arg_11_1)
+PlayerHostedSlotReservationHandler._filter_already_reserved_peers = function (self, arg_11_1)
+	-- function 11
 	local var_11_0
 
-	for iter_11_0 = #arg_11_1, 1, -1 do
-		if arg_11_0:has_reservation(arg_11_1[iter_11_0]) then
+	for i = #arg_11_1, 1, -1 do
+		if not self:has_reservation(arg_11_1[i]) then
 			var_11_0 = var_11_0 or table.shallow_copy(arg_11_1, true)
 
-			table.remove(var_11_0, iter_11_0)
+			table.remove(var_11_0, i)
 		end
 	end
 
 	return var_11_0 or arg_11_1
 end
 
-function PlayerHostedSlotReservationHandler._num_free_slots_in_party(arg_12_0, arg_12_1)
-	local var_12_0 = 0
+PlayerHostedSlotReservationHandler._num_free_slots_in_party = function (self, arg_12_1)
+	-- function 12
+	local num = 0
 
-	for iter_12_0, iter_12_1 in pairs(arg_12_0._reserved_peers[arg_12_1]) do
-		if not iter_12_1.reserved then
-			var_12_0 = var_12_0 + 1
+	for k, v in pairs(self._reserved_peers[arg_12_1]) do
+		if not v.reserved then
+			num = num + 1
 		end
 	end
 
-	return var_12_0
+	return num
 end
 
-function PlayerHostedSlotReservationHandler._update_reservations(arg_13_0)
-	local var_13_0 = 0
-	local var_13_1 = 0
-	local var_13_2 = ""
+PlayerHostedSlotReservationHandler._update_reservations = function (self)
+	-- function 13
+	local num = 0
+	local num_2 = 0
+	local str = ""
 
-	for iter_13_0, iter_13_1 in ipairs(arg_13_0._reserved_peers) do
-		local var_13_3 = arg_13_0._num_slots_per_party[iter_13_0]
-		local var_13_4 = var_13_3 - arg_13_0:_num_free_slots_in_party(iter_13_0)
+	for i, v in ipairs(self._reserved_peers) do
+		local var_13_3 = self._num_slots_per_party[i]
+		local num_3 = var_13_3 - self:_num_free_slots_in_party(i)
 
-		for iter_13_2 = 1, var_13_4 do
-			var_13_0 = bit.bor(var_13_0, bit.lshift(1, var_13_1 + (iter_13_2 - 1)))
-			var_13_2 = var_13_2 .. "1"
+		for k = 1, num_3 do
+			num = bit.bor(num, bit.lshift(1, num_2 + (k - 1)))
+			str = str .. "1"
 		end
 
-		for iter_13_3 = var_13_4 + 1, var_13_3 do
-			var_13_2 = var_13_2 .. "0"
+		for l = num_3 + 1, var_13_3 do
+			str = str .. "0"
 		end
 
-		var_13_1 = var_13_1 + var_13_3
+		num_2 = num_2 + var_13_3
 	end
 
-	print("[PlayerHostedSlotReservationHandler] updating reservations. slots:", var_13_2, var_13_0)
+	print("[PlayerHostedSlotReservationHandler] updating reservations. slots:", str, num)
 
-	local var_13_5 = Managers.state.network
+	local network = Managers.state.network
 
-	if var_13_5 then
-		arg_13_0._dirty_reserved_slots = nil
+	if not network then
+		self._dirty_reserved_slots = nil
 
-		local var_13_6 = var_13_5:lobby()
+		local lobby = network:lobby()
 
-		arg_13_0:_update_lobby_data(var_13_6, var_13_0)
+		self:_update_lobby_data(lobby, num)
 
-		arg_13_0._lobby_data_sync_requested = true
+		self._lobby_data_sync_requested = true
 	else
-		arg_13_0._dirty_reserved_slots = var_13_0
+		self._dirty_reserved_slots = num
 	end
 
-	arg_13_0:_send_peer_updates_to_clients()
+	self:_send_peer_updates_to_clients()
 end
 
-function PlayerHostedSlotReservationHandler.remove_peer_reservations(arg_14_0, arg_14_1, arg_14_2)
+PlayerHostedSlotReservationHandler.remove_peer_reservations = function (self, arg_14_1, arg_14_2)
+	-- function 14
 	local var_14_0
-	local var_14_1 = arg_14_0._group_leaders[arg_14_1]
-	local var_14_3
+	local var_14_1 = self._group_leaders[arg_14_1]
+	local flag
 
-	if var_14_1 then
+	if not var_14_1 then
 		if not arg_14_2 then
 			local var_14_2 = arg_14_1
 
-			for iter_14_0 in pairs(var_14_1) do
-				if iter_14_0 ~= var_14_2 then
-					if PEER_ID_TO_CHANNEL[iter_14_0] then
-						var_14_1[iter_14_0] = nil
+			for k in pairs(var_14_1) do
+				if k ~= var_14_2 then
+					if not PEER_ID_TO_CHANNEL[k] then
+						var_14_1[k] = nil
 					else
-						printf("[PlayerHostedSlotReservationHandler] Removing peer %s since they are in a party with peer %s and we don't have a connection to them.", iter_14_0, var_14_2)
+						printf("[PlayerHostedSlotReservationHandler] Removing peer %s since they are in a party with peer %s and we don't have a connection to them.", k, var_14_2)
 					end
 				end
 			end
 		end
 
-		for iter_14_1, iter_14_2 in pairs(var_14_1) do
-			arg_14_0:_remove_peer_reservation(iter_14_1)
+		for k_2, v in pairs(var_14_1) do
+			self:_remove_peer_reservation(k_2)
 		end
 
-		var_14_3 = true
+		flag = true
 	else
-		var_14_3 = arg_14_0:_remove_peer_reservation(arg_14_1)
+		flag = self:_remove_peer_reservation(arg_14_1)
 	end
 
-	if var_14_3 then
-		arg_14_0:_update_reservations()
+	if not flag then
+		self:_update_reservations()
 	end
 end
 
-function PlayerHostedSlotReservationHandler.network_context_created(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+PlayerHostedSlotReservationHandler.network_context_created = function (self, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+	-- function 15
 	if not arg_15_4 then
-		arg_15_0._dirty_reserved_slots = nil
-	elseif arg_15_0._dirty_reserved_slots then
-		arg_15_0:_update_lobby_data(arg_15_1, arg_15_0._dirty_reserved_slots)
+		self._dirty_reserved_slots = nil
+	elseif not self._dirty_reserved_slots then
+		self:_update_lobby_data(arg_15_1, self._dirty_reserved_slots)
 
-		arg_15_0._dirty_reserved_slots = nil
+		self._dirty_reserved_slots = nil
 	end
 end
 
-function PlayerHostedSlotReservationHandler._update_lobby_data(arg_16_0, arg_16_1, arg_16_2)
-	local var_16_0 = arg_16_1.lobby_data_table
+PlayerHostedSlotReservationHandler._update_lobby_data = function (arg_16_0, arg_16_1, arg_16_2)
+	-- function 16
+	local lobby_data_table = arg_16_1.lobby_data_table
 
-	var_16_0.reserved_slots_mask = arg_16_2
+	lobby_data_table.reserved_slots_mask = arg_16_2
 
-	arg_16_1:set_lobby_data(var_16_0)
+	arg_16_1:set_lobby_data(lobby_data_table)
 end
 
-function PlayerHostedSlotReservationHandler._remove_peer_reservation(arg_17_0, arg_17_1)
-	local var_17_0 = arg_17_0._peer_id_to_party_id[arg_17_1]
+PlayerHostedSlotReservationHandler._remove_peer_reservation = function (self, arg_17_1)
+	-- function 17
+	local var_17_0 = self._peer_id_to_party_id[arg_17_1]
 
-	if arg_17_0._dangling_peers[arg_17_1] then
-		arg_17_0._dangling_peers[arg_17_1] = nil
+	if not self._dangling_peers[arg_17_1] then
+		self._dangling_peers[arg_17_1] = nil
 
 		return false
 	elseif not var_17_0 then
 		return false
 	else
-		local var_17_1 = false
-		local var_17_2 = arg_17_0._reserved_peers[var_17_0]
+		local flag = false
+		local var_17_2 = self._reserved_peers[var_17_0]
 
-		for iter_17_0 = 1, #var_17_2 do
-			if var_17_2[iter_17_0].peer_id == arg_17_1 then
-				arg_17_0:_clear_party_slot(var_17_2[iter_17_0])
+		for i = 1, #var_17_2 do
+			if var_17_2[i].peer_id == arg_17_1 then
+				self:_clear_party_slot(var_17_2[i])
 
-				var_17_1 = true
+				flag = true
 
 				break
 			end
@@ -421,41 +438,47 @@ function PlayerHostedSlotReservationHandler._remove_peer_reservation(arg_17_0, a
 
 		print("[PlayerHostedSlotReservationHandler] Removing reserved peer %s", arg_17_1)
 
-		local var_17_3 = Managers.mechanism:game_mechanism()
+		local game_mechanism = Managers.mechanism:game_mechanism()
+		local is_hosting_versus_custom_game = game_mechanism.is_hosting_versus_custom_game
 
-		if var_17_3.is_hosting_versus_custom_game and var_17_3:is_hosting_versus_custom_game() and var_17_1 then
-			arg_17_0._party_manager:server_remove_friend_party_peer(arg_17_1)
-		elseif not var_17_1 then
-			-- block empty
+		is_hosting_versus_custom_game = not is_hosting_versus_custom_game and game_mechanism:is_hosting_versus_custom_game()
+
+		if not is_hosting_versus_custom_game and not flag then
+			self._party_manager:server_remove_friend_party_peer(arg_17_1)
+		elseif not flag then
+			-- Nothing
 		end
 
-		arg_17_0._peer_id_to_party_id[arg_17_1] = nil
+		self._peer_id_to_party_id[arg_17_1] = nil
 
-		if arg_17_0._group_leaders[arg_17_1] then
-			local var_17_4 = table.find_func(arg_17_0._group_leaders[arg_17_1], function(arg_18_0)
+		if not self._group_leaders[arg_17_1] then
+			local find_func = table.find_func(self._group_leaders[arg_17_1], function (arg_18_0)
+				-- function 18
 				return arg_18_0 ~= arg_17_1
 			end)
 
-			if var_17_4 then
-				arg_17_0._group_leaders[var_17_4] = arg_17_0._group_leaders[arg_17_1]
+			if not find_func then
+				self._group_leaders[find_func] = self._group_leaders[arg_17_1]
 			end
 		end
 
-		arg_17_0._group_leaders[arg_17_1] = nil
+		self._group_leaders[arg_17_1] = nil
 
-		return var_17_1
+		return flag
 	end
 end
 
-function PlayerHostedSlotReservationHandler.party_id(arg_19_0, arg_19_1)
-	return arg_19_0._peer_id_to_party_id[arg_19_1]
+PlayerHostedSlotReservationHandler.party_id = function (self, arg_19_1)
+	-- function 19
+	return self._peer_id_to_party_id[arg_19_1]
 end
 
-function PlayerHostedSlotReservationHandler.all_teams_have_members(arg_20_0)
-	local var_20_0 = Managers.party
+PlayerHostedSlotReservationHandler.all_teams_have_members = function (self)
+	-- function 20
+	local party = Managers.party
 
-	for iter_20_0, iter_20_1 in ipairs(arg_20_0._reserved_peers) do
-		if var_20_0:is_game_participating(iter_20_0) and arg_20_0._num_slots_per_party[iter_20_0] == arg_20_0:_num_free_slots_in_party(iter_20_0) then
+	for i, v in ipairs(self._reserved_peers) do
+		if not (not party:is_game_participating(i) and self._num_slots_per_party[i] ~= self:_num_free_slots_in_party(i)) then
 			return false
 		end
 	end
@@ -463,223 +486,270 @@ function PlayerHostedSlotReservationHandler.all_teams_have_members(arg_20_0)
 	return true
 end
 
-function PlayerHostedSlotReservationHandler.get_group_leaders(arg_21_0)
-	return table.keys(arg_21_0._group_leaders)
+PlayerHostedSlotReservationHandler.get_group_leaders = function (self)
+	-- function 21
+	return table.keys(self._group_leaders)
 end
 
-function PlayerHostedSlotReservationHandler.get_leader_from_peer(arg_22_0, arg_22_1)
-	for iter_22_0, iter_22_1 in pairs(arg_22_0._group_leaders) do
-		if iter_22_1[arg_22_1] then
-			return iter_22_0
+PlayerHostedSlotReservationHandler.get_leader_from_peer = function (self, arg_22_1)
+	-- function 22
+	for k, v in pairs(self._group_leaders) do
+		if not v[arg_22_1] then
+			return k
 		end
 	end
 end
 
-function PlayerHostedSlotReservationHandler.peers(arg_23_0)
-	return table.keys(arg_23_0._peer_id_to_party_id)
+PlayerHostedSlotReservationHandler.peers = function (self)
+	-- function 23
+	return table.keys(self._peer_id_to_party_id)
 end
 
-function PlayerHostedSlotReservationHandler.peers_by_party(arg_24_0, arg_24_1)
-	return table.keys(table.filter(arg_24_0._peer_id_to_party_id, function(arg_25_0)
+PlayerHostedSlotReservationHandler.peers_by_party = function (self, arg_24_1)
+	-- function 24
+	return table.keys(table.filter(self._peer_id_to_party_id, function (arg_25_0)
+		-- function 25
 		return arg_24_1 == arg_25_0
 	end))
 end
 
-function PlayerHostedSlotReservationHandler.party_id_by_peer(arg_26_0, arg_26_1)
-	return arg_26_0._peer_id_to_party_id[arg_26_1]
+PlayerHostedSlotReservationHandler.party_id_by_peer = function (self, arg_26_1)
+	-- function 26
+	return self._peer_id_to_party_id[arg_26_1]
 end
 
-function PlayerHostedSlotReservationHandler.update_slots(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
-	arg_27_0._synced = true
+PlayerHostedSlotReservationHandler.update_slots = function (self, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+	-- function 27
+	self._synced = true
 
-	for iter_27_0 = 1, #arg_27_0._reserved_peers do
-		local var_27_0 = arg_27_0._reserved_peers[iter_27_0]
+	for i = 1, #self._reserved_peers do
+		local var_27_0 = self._reserved_peers[i]
 
-		for iter_27_1 = 1, #var_27_0 do
-			arg_27_0:_clear_party_slot(var_27_0[iter_27_1])
+		for j = 1, #var_27_0 do
+			self:_clear_party_slot(var_27_0[j])
 		end
 	end
 
-	table.clear(arg_27_0._group_leaders)
-	table.clear(arg_27_0._peer_id_to_party_id)
+	table.clear(self._group_leaders)
+	table.clear(self._peer_id_to_party_id)
 
-	if var_0_0 then
+	if not flag then
 		printf("[PlayerHostedSlotReservationHandler] Updating slots (%s) (%s)", table.concat(arg_27_1, ", "), table.concat(arg_27_2, ", "))
 	end
 
 	assert(table.find(arg_27_1, Network.peer_id()), "[PlayerHostedSlotReservationHandler] Missing self in reservation handler")
 
-	for iter_27_2 = 1, #arg_27_1 do
-		local var_27_1 = arg_27_1[iter_27_2]
-		local var_27_2 = arg_27_2[iter_27_2]
-		local var_27_3 = arg_27_3[iter_27_2]
-		local var_27_4 = arg_27_4[iter_27_2]
-		local var_27_5 = false
-		local var_27_6 = arg_27_0._reserved_peers[var_27_2]
+	for k = 1, #arg_27_1 do
+		local var_27_1 = arg_27_1[k]
+		local var_27_2 = arg_27_2[k]
+		local var_27_3 = arg_27_3[k]
+		local var_27_4 = arg_27_4[k]
+		local flag_2 = false
+		local var_27_6 = self._reserved_peers[var_27_2]
 
-		if var_27_6 then
-			for iter_27_3 = 1, #var_27_6 do
-				local var_27_7 = var_27_6[iter_27_3]
+		if not var_27_6 then
+			for l = 1, #var_27_6 do
+				local var_27_7 = var_27_6[l]
 
 				if not var_27_7.reserved then
-					arg_27_0:_write_party_slot(var_27_7, var_27_1, var_27_3, var_27_4, var_27_2)
+					self:_write_party_slot(var_27_7, var_27_1, var_27_3, var_27_4, var_27_2)
 
-					var_27_5 = true
+					flag_2 = true
 
 					break
 				end
 			end
 		end
 
-		if not var_27_5 then
-			arg_27_0:_expand(var_27_2, var_27_6 and #var_27_6 + 1 or 1)
+		if not flag_2 then
+			local var_27_8 = self
+			local _expand = self._expand
+			local var_27_10 = var_27_2
+			local num
 
-			local var_27_8 = arg_27_0._reserved_peers[var_27_2]
+			if not var_27_6 then
+				num = #var_27_6 + 1
 
-			arg_27_0:_write_party_slot(var_27_8[#var_27_8], var_27_1, var_27_3, var_27_4, var_27_2)
+				if not num then
+					-- Nothing
+				end
+			end
+
+			num = 1
+
+			::label_27_0::
+
+			_expand(var_27_8, var_27_10, num)
+
+			local var_27_12 = self._reserved_peers[var_27_2]
+
+			self:_write_party_slot(var_27_12[#var_27_12], var_27_1, var_27_3, var_27_4, var_27_2)
 		end
 	end
 
-	if Managers.mechanism:is_server() then
-		if var_0_0 then
-			local var_27_9 = table.concat(table.select_array(arg_27_0._reserved_peers, function(arg_28_0, arg_28_1)
-				return table.concat(table.select_array(arg_28_1, function(arg_29_0, arg_29_1)
+	if not Managers.mechanism:is_server() then
+		if not flag then
+			local concat = table.concat(table.select_array(self._reserved_peers, function (arg_28_0, arg_28_1)
+				-- function 28
+				return table.concat(table.select_array(arg_28_1, function (arg_29_0, arg_29_1)
+					-- function 29
 					return arg_29_1.peer_id
 				end), ", ")
 			end), " | ")
 
-			printf("[PlayerHostedSlotReservationHandler] Sending update to clients (%s)", var_27_9)
+			printf("[PlayerHostedSlotReservationHandler] Sending update to clients (%s)", concat)
 		end
 
-		local var_27_10 = NetworkLookup.reservation_handler_types[arg_27_0._reservation_handler_type]
+		local var_27_14 = NetworkLookup.reservation_handler_types[self._reservation_handler_type]
 
-		Managers.mechanism:network_handler():get_match_handler():send_rpc_down_if("rpc_sync_vs_custom_game_slot_data", function(arg_30_0)
+		Managers.mechanism:network_handler():get_match_handler():send_rpc_down_if("rpc_sync_vs_custom_game_slot_data", function (arg_30_0)
+			-- function 30
 			return table.find(arg_27_1, arg_30_0)
-		end, arg_27_0._owner_peer_id, var_27_10, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+		end, self._owner_peer_id, var_27_14, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
 	end
 end
 
-function PlayerHostedSlotReservationHandler.party_peers(arg_31_0, arg_31_1)
-	return table.keys_if(arg_31_0._peer_id_to_party_id, nil, function(arg_32_0, arg_32_1)
+PlayerHostedSlotReservationHandler.party_peers = function (self, arg_31_1)
+	-- function 31
+	return table.keys_if(self._peer_id_to_party_id, nil, function (arg_32_0, arg_32_1)
+		-- function 32
 		return arg_31_1 == arg_32_1
 	end)
 end
 
-function PlayerHostedSlotReservationHandler.player_joined_party(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5)
-	if arg_33_5 or arg_33_3 == 0 then
+PlayerHostedSlotReservationHandler.player_joined_party = function (self, arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5)
+	-- function 33
+	if not (arg_33_5 or arg_33_3 ~= 0) then
 		return
 	end
 
-	local var_33_0 = arg_33_0._peer_id_to_party_id[arg_33_1]
-	local var_33_1 = Managers.party:get_party(arg_33_3)
+	local var_33_0 = self._peer_id_to_party_id[arg_33_1]
+	local get_party = Managers.party:get_party(arg_33_3)
 
-	if var_33_0 and not var_33_1.game_participating then
-		arg_33_0:_remove_peer_reservation(arg_33_1)
+	if not (not var_33_0 and get_party.game_participating) then
+		self:_remove_peer_reservation(arg_33_1)
 
 		return
 	end
 
-	if not var_33_0 or var_33_0 == arg_33_3 then
+	if not (not var_33_0 and var_33_0 ~= arg_33_3) then
 		return
 	end
 
-	arg_33_0:move_player(arg_33_1, arg_33_3)
+	self:move_player(arg_33_1, arg_33_3)
 end
 
-function PlayerHostedSlotReservationHandler.request_party_change(arg_34_0, arg_34_1)
-	local var_34_0 = Network.peer_id()
+PlayerHostedSlotReservationHandler.request_party_change = function (arg_34_0, arg_34_1)
+	-- function 34
+	local peer_id = Network.peer_id()
 
-	Managers.state.network.network_transmit:send_rpc_server("rpc_slot_reservation_request_party_change", var_34_0, arg_34_1)
+	Managers.state.network.network_transmit:send_rpc_server("rpc_slot_reservation_request_party_change", peer_id, arg_34_1)
 end
 
-function PlayerHostedSlotReservationHandler.slot_reservation_sync_requested(arg_35_0, arg_35_1)
-	local var_35_0, var_35_1, var_35_2, var_35_3 = arg_35_0:_build_slot_info()
+PlayerHostedSlotReservationHandler.slot_reservation_sync_requested = function (self, arg_35_1)
+	-- function 35
+	local _build_slot_info, var_35_1, var_35_2, var_35_3 = self:_build_slot_info()
 
-	if not table.find(var_35_0, arg_35_1) then
+	if not table.find(_build_slot_info, arg_35_1) then
 		printf("[PlayerHostedSlotReservationHandler] Non reserved peer %s requested a slot reservation sync.", arg_35_1)
 
 		return
 	end
 
-	local var_35_4 = NetworkLookup.reservation_handler_types[arg_35_0._reservation_handler_type]
+	local var_35_4 = NetworkLookup.reservation_handler_types[self._reservation_handler_type]
 
-	Managers.mechanism:network_handler():get_match_handler():send_rpc("rpc_sync_vs_custom_game_slot_data", arg_35_1, arg_35_0._owner_peer_id, var_35_4, var_35_0, var_35_1, var_35_2, var_35_3)
+	Managers.mechanism:network_handler():get_match_handler():send_rpc("rpc_sync_vs_custom_game_slot_data", arg_35_1, self._owner_peer_id, var_35_4, _build_slot_info, var_35_1, var_35_2, var_35_3)
 end
 
-function PlayerHostedSlotReservationHandler.request_slot_reservation_sync(arg_36_0)
+PlayerHostedSlotReservationHandler.request_slot_reservation_sync = function (arg_36_0)
+	-- function 36
 	Managers.mechanism:network_handler():get_match_handler():send_rpc_up("rpc_request_slot_reservation_sync")
 end
 
-function PlayerHostedSlotReservationHandler._send_peer_updates_to_clients(arg_37_0)
-	local var_37_0 = Managers.mechanism:network_handler()
+PlayerHostedSlotReservationHandler._send_peer_updates_to_clients = function (self)
+	-- function 37
+	local network_handler = Managers.mechanism:network_handler()
 
-	if not var_37_0 then
+	if not network_handler then
 		return
 	end
 
-	if not var_37_0:get_match_handler():query_peer_data(Network.peer_id(), "is_match_owner") then
+	if not network_handler:get_match_handler():query_peer_data(Network.peer_id(), "is_match_owner") then
 		return
 	end
 
-	local var_37_1, var_37_2, var_37_3, var_37_4 = arg_37_0:_build_slot_info()
+	local _build_slot_info, var_37_2, var_37_3, var_37_4 = self:_build_slot_info()
 
-	arg_37_0:update_slots(var_37_1, var_37_2, var_37_3, var_37_4)
+	self:update_slots(_build_slot_info, var_37_2, var_37_3, var_37_4)
 end
 
-local var_0_2 = {}
-local var_0_3 = {}
-local var_0_4 = {}
-local var_0_5 = {}
+local tbl_2 = {}
+local tbl_3 = {}
+local tbl_4 = {}
+local tbl_5 = {}
 
-function PlayerHostedSlotReservationHandler._build_slot_info(arg_38_0)
-	table.clear(var_0_2)
-	table.clear(var_0_3)
-	table.clear(var_0_4)
-	table.clear(var_0_5)
+PlayerHostedSlotReservationHandler._build_slot_info = function (self)
+	-- function 38
+	table.clear(tbl_2)
+	table.clear(tbl_3)
+	table.clear(tbl_4)
+	table.clear(tbl_5)
 
-	local var_38_0 = 1
+	local num = 1
 
-	for iter_38_0 = 1, #arg_38_0._reserved_peers do
-		local var_38_1 = arg_38_0._reserved_peers[iter_38_0]
+	for i = 1, #self._reserved_peers do
+		local var_38_1 = self._reserved_peers[i]
 
-		for iter_38_1 = 1, #var_38_1 do
-			local var_38_2 = var_38_1[iter_38_1]
+		for j = 1, #var_38_1 do
+			local var_38_2 = var_38_1[j]
 
-			if var_38_2.reserved then
-				var_0_2[var_38_0] = var_38_2.peer_id
-				var_0_3[var_38_0] = iter_38_0
-				var_0_4[var_38_0] = var_38_2.friend_party_id or 1
-				var_0_5[var_38_0] = var_38_2.friend_party_leader or ""
-				var_38_0 = var_38_0 + 1
+			if not var_38_2.reserved then
+				tbl_2[num] = var_38_2.peer_id
+				tbl_3[num] = i
+
+				local var_38_3 = tbl_4
+				local friend_party_id = var_38_2.friend_party_id
+
+				friend_party_id = friend_party_id or 1
+				var_38_3[num] = friend_party_id
+
+				local var_38_5 = tbl_5
+				local friend_party_leader = var_38_2.friend_party_leader
+
+				friend_party_leader = friend_party_leader or ""
+				var_38_5[num] = friend_party_leader
+				num = num + 1
 			end
 		end
 	end
 
-	return var_0_2, var_0_3, var_0_4, var_0_5
+	return tbl_2, tbl_3, tbl_4, tbl_5
 end
 
-function PlayerHostedSlotReservationHandler.get_peer_reserved_indices(arg_39_0, arg_39_1)
-	local var_39_0 = arg_39_0._reserved_peers
+PlayerHostedSlotReservationHandler.get_peer_reserved_indices = function (self, arg_39_1)
+	-- function 39
+	local _reserved_peers = self._reserved_peers
 
-	for iter_39_0 = 1, #var_39_0 do
-		local var_39_1 = var_39_0[iter_39_0]
+	for i = 1, #_reserved_peers do
+		local var_39_1 = _reserved_peers[i]
 
-		for iter_39_1 = 1, #var_39_1 do
-			if var_39_1[iter_39_1].peer_id == arg_39_1 then
-				return iter_39_0, iter_39_1
+		for j = 1, #var_39_1 do
+			if var_39_1[j].peer_id == arg_39_1 then
+				return i, j
 			end
 		end
 	end
 end
 
-function PlayerHostedSlotReservationHandler._get_peer_slot_data(arg_40_0, arg_40_1)
-	local var_40_0 = arg_40_0._reserved_peers
+PlayerHostedSlotReservationHandler._get_peer_slot_data = function (self, arg_40_1)
+	-- function 40
+	local _reserved_peers = self._reserved_peers
 
-	for iter_40_0 = 1, #var_40_0 do
-		local var_40_1 = var_40_0[iter_40_0]
+	for i = 1, #_reserved_peers do
+		local var_40_1 = _reserved_peers[i]
 
-		for iter_40_1 = 1, #var_40_1 do
-			local var_40_2 = var_40_1[iter_40_1]
+		for j = 1, #var_40_1 do
+			local var_40_2 = var_40_1[j]
 
 			if var_40_2.peer_id == arg_40_1 then
 				return var_40_2
@@ -688,12 +758,13 @@ function PlayerHostedSlotReservationHandler._get_peer_slot_data(arg_40_0, arg_40
 	end
 end
 
-function PlayerHostedSlotReservationHandler.move_player(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
-	if arg_41_0:_num_free_slots_in_party(arg_41_2) < 1 then
+PlayerHostedSlotReservationHandler.move_player = function (self, arg_41_1, arg_41_2, arg_41_3)
+	-- function 41
+	if self:_num_free_slots_in_party(arg_41_2) < 1 then
 		return false
 	end
 
-	local var_41_0 = arg_41_0._peer_id_to_party_id[arg_41_1]
+	local var_41_0 = self._peer_id_to_party_id[arg_41_1]
 
 	if not var_41_0 then
 		return false, "Failed to find peer"
@@ -703,21 +774,21 @@ function PlayerHostedSlotReservationHandler.move_player(arg_41_0, arg_41_1, arg_
 		return true
 	end
 
-	local var_41_1 = false
-	local var_41_2 = arg_41_0._reserved_peers[var_41_0]
-	local var_41_3 = arg_41_0._reserved_peers[arg_41_2]
+	local flag = false
+	local var_41_2 = self._reserved_peers[var_41_0]
+	local var_41_3 = self._reserved_peers[arg_41_2]
 
-	for iter_41_0, iter_41_1 in pairs(var_41_2) do
-		if iter_41_1.peer_id == arg_41_1 then
-			for iter_41_2, iter_41_3 in pairs(var_41_3) do
-				if not iter_41_3.reserved then
-					local var_41_4 = iter_41_1.friend_party_id
-					local var_41_5 = iter_41_1.friend_party_leader
+	for k, v in pairs(var_41_2) do
+		if v.peer_id == arg_41_1 then
+			for k_2, v_2 in pairs(var_41_3) do
+				if not v_2.reserved then
+					local friend_party_id = v.friend_party_id
+					local friend_party_leader = v.friend_party_leader
 
-					arg_41_0:_write_party_slot(iter_41_3, arg_41_1, var_41_4, var_41_5, arg_41_2)
-					arg_41_0:_clear_party_slot(iter_41_1)
+					self:_write_party_slot(v_2, arg_41_1, friend_party_id, friend_party_leader, arg_41_2)
+					self:_clear_party_slot(v)
 
-					var_41_1 = true
+					flag = true
 
 					break
 				end
@@ -727,20 +798,21 @@ function PlayerHostedSlotReservationHandler.move_player(arg_41_0, arg_41_1, arg_
 		end
 	end
 
-	if not var_41_1 then
+	if not flag then
 		Crashify.print_exception("[PlayerHostedSlotReservationHandler]", "Tried removing peer %s but was not reserved to begin with", arg_41_1)
 	end
 
 	if not arg_41_3 then
-		arg_41_0:_update_reservations()
+		self:_update_reservations()
 	end
 
 	return true
 end
 
-function PlayerHostedSlotReservationHandler.poll_sync_lobby_data_required(arg_42_0)
-	if arg_42_0._lobby_data_sync_requested then
-		arg_42_0._lobby_data_sync_requested = false
+PlayerHostedSlotReservationHandler.poll_sync_lobby_data_required = function (self)
+	-- function 42
+	if not self._lobby_data_sync_requested then
+		self._lobby_data_sync_requested = false
 
 		return true
 	end
@@ -748,20 +820,23 @@ function PlayerHostedSlotReservationHandler.poll_sync_lobby_data_required(arg_42
 	return false
 end
 
-function PlayerHostedSlotReservationHandler.remote_client_disconnected(arg_43_0, arg_43_1)
-	arg_43_0:remove_peer_reservations(arg_43_1)
+PlayerHostedSlotReservationHandler.remote_client_disconnected = function (self, arg_43_1)
+	-- function 43
+	self:remove_peer_reservations(arg_43_1)
 
-	arg_43_0._pending_peer_informations[arg_43_1] = nil
+	self._pending_peer_informations[arg_43_1] = nil
 end
 
-function PlayerHostedSlotReservationHandler.has_reservation(arg_44_0, arg_44_1)
-	return arg_44_0._peer_id_to_party_id[arg_44_1]
+PlayerHostedSlotReservationHandler.has_reservation = function (self, arg_44_1)
+	-- function 44
+	return self._peer_id_to_party_id[arg_44_1]
 end
 
-function PlayerHostedSlotReservationHandler.handle_slot_reservation_for_connecting_peer(arg_45_0, arg_45_1, arg_45_2)
-	local var_45_0 = arg_45_1.peer_id
-	local var_45_1 = false
-	local var_45_2 = arg_45_0._pending_peer_informations[var_45_0]
+PlayerHostedSlotReservationHandler.handle_slot_reservation_for_connecting_peer = function (self, arg_45_1, arg_45_2)
+	-- function 45
+	local peer_id = arg_45_1.peer_id
+	local flag = false
+	local var_45_2 = self._pending_peer_informations[peer_id]
 
 	if not var_45_2 then
 		var_45_2 = {
@@ -770,21 +845,21 @@ function PlayerHostedSlotReservationHandler.handle_slot_reservation_for_connecti
 			status = SlotReservationConnectStatus.PENDING,
 			peers = {}
 		}
-		arg_45_0._pending_peer_informations[var_45_0] = var_45_2
-		var_45_1 = true
+		self._pending_peer_informations[peer_id] = var_45_2
+		flag = true
 	else
 		var_45_2.resend_timer = var_45_2.resend_timer - arg_45_2
 	end
 
-	if var_45_2.status == SlotReservationConnectStatus.PENDING and var_45_2.resend_timer < 0 then
-		var_45_1 = true
+	if not (var_45_2.status ~= SlotReservationConnectStatus.PENDING or not (var_45_2.resend_timer < 0)) then
+		flag = true
 		var_45_2.resend_timer = 3
 	end
 
-	if var_45_1 then
-		printf("[PlayerHostedSlotReservationHandler] Requesting reservation info from peer '%s'", var_45_0)
+	if not flag then
+		printf("[PlayerHostedSlotReservationHandler] Requesting reservation info from peer '%s'", peer_id)
 
-		local var_45_3 = PEER_ID_TO_CHANNEL[var_45_0]
+		local var_45_3 = PEER_ID_TO_CHANNEL[peer_id]
 
 		RPC.rpc_slot_reservation_request_peers(var_45_3)
 	end
@@ -792,8 +867,9 @@ function PlayerHostedSlotReservationHandler.handle_slot_reservation_for_connecti
 	return var_45_2.status
 end
 
-function PlayerHostedSlotReservationHandler.connecting_slot_reservation_info_received(arg_46_0, arg_46_1, arg_46_2, arg_46_3)
-	local var_46_0 = arg_46_0._pending_peer_informations[arg_46_1]
+PlayerHostedSlotReservationHandler.connecting_slot_reservation_info_received = function (self, arg_46_1, arg_46_2, arg_46_3)
+	-- function 46
+	local var_46_0 = self._pending_peer_informations[arg_46_1]
 
 	if var_46_0.status ~= SlotReservationConnectStatus.PENDING then
 		printf("[PlayerHostedSlotReservationHandler]", "Received slot reservation info from already handled peer '%s'.", arg_46_1)
@@ -801,24 +877,24 @@ function PlayerHostedSlotReservationHandler.connecting_slot_reservation_info_rec
 		return
 	end
 
-	for iter_46_0 = 1, #arg_46_2 do
-		local var_46_1 = arg_46_2[iter_46_0]
+	for i = 1, #arg_46_2 do
+		local var_46_1 = arg_46_2[i]
 
-		arg_46_0._pending_peer_informations[var_46_1] = var_46_0
-		var_46_0.peers[iter_46_0] = var_46_1
+		self._pending_peer_informations[var_46_1] = var_46_0
+		var_46_0.peers[i] = var_46_1
 	end
 
-	local var_46_2 = Managers.matchmaking
+	local matchmaking = Managers.matchmaking
 
-	if not var_46_2 or not var_46_2:is_in_versus_custom_game_lobby() then
+	if not (not matchmaking and matchmaking:is_in_versus_custom_game_lobby()) then
 		arg_46_3 = Network.peer_id()
 	end
 
-	local var_46_3 = arg_46_0:try_reserve_slots(arg_46_3, var_46_0.peers)
+	local try_reserve_slots = self:try_reserve_slots(arg_46_3, var_46_0.peers)
 
-	printf("[PlayerHostedSlotReservationHandler] Peer info from peer '%s' received. (%s) joining. Success: %s", arg_46_1, table.concat(arg_46_2, ","), var_46_3)
+	printf("[PlayerHostedSlotReservationHandler] Peer info from peer '%s' received. (%s) joining. Success: %s", arg_46_1, table.concat(arg_46_2, ","), try_reserve_slots)
 
-	if var_46_3 then
+	if not try_reserve_slots then
 		var_46_0.reserved = true
 		var_46_0.status = SlotReservationConnectStatus.SUCCEEDED
 	else
@@ -826,23 +902,29 @@ function PlayerHostedSlotReservationHandler.connecting_slot_reservation_info_rec
 	end
 end
 
-function PlayerHostedSlotReservationHandler._change_leader(arg_47_0, arg_47_1, arg_47_2)
-	local var_47_0 = arg_47_0:get_leader_from_peer(arg_47_1)
+PlayerHostedSlotReservationHandler._change_leader = function (self, arg_47_1, arg_47_2)
+	-- function 47
+	local get_leader_from_peer = self:get_leader_from_peer(arg_47_1)
 
-	if var_47_0 then
-		arg_47_0._group_leaders[var_47_0][arg_47_1] = nil
+	if not get_leader_from_peer then
+		self._group_leaders[get_leader_from_peer][arg_47_1] = nil
 
-		if table.is_empty(arg_47_0._group_leaders[var_47_0]) then
-			arg_47_0._group_leaders[var_47_0] = nil
+		if not table.is_empty(self._group_leaders[get_leader_from_peer]) then
+			self._group_leaders[get_leader_from_peer] = nil
 		end
 	end
 
-	arg_47_0._group_leaders[arg_47_2] = arg_47_0._group_leaders[arg_47_2] or {}
-	arg_47_0._group_leaders[arg_47_2][arg_47_1] = true
+	local _group_leaders = self._group_leaders
+	local var_47_2 = self._group_leaders[arg_47_2]
+
+	var_47_2 = var_47_2 or {}
+	_group_leaders[arg_47_2] = var_47_2
+	self._group_leaders[arg_47_2][arg_47_1] = true
 end
 
-function PlayerHostedSlotReservationHandler._clear_party_slot(arg_48_0, arg_48_1)
-	if var_0_0 and arg_48_1.peer_id then
+PlayerHostedSlotReservationHandler._clear_party_slot = function (arg_48_0, arg_48_1)
+	-- function 48
+	if not flag and not arg_48_1.peer_id then
 		printf("[PlayerHostedSlotReservationHandler] Clearing peer %s from party %s (friend party %s leader %s)", arg_48_1.peer_id, arg_48_1.party_id, arg_48_1.friend_party_id, arg_48_1.friend_party_leader)
 	end
 
@@ -853,68 +935,111 @@ function PlayerHostedSlotReservationHandler._clear_party_slot(arg_48_0, arg_48_1
 	arg_48_1.party_id = nil
 end
 
-function PlayerHostedSlotReservationHandler._write_party_slot(arg_49_0, arg_49_1, arg_49_2, arg_49_3, arg_49_4, arg_49_5)
+PlayerHostedSlotReservationHandler._write_party_slot = function (self, arg_49_1, arg_49_2, arg_49_3, arg_49_4, arg_49_5)
+	-- function 49
 	arg_49_1.reserved = true
 	arg_49_1.peer_id = arg_49_2
 	arg_49_1.friend_party_id = arg_49_3
 	arg_49_1.friend_party_leader = arg_49_4
 	arg_49_1.party_id = arg_49_5
-	arg_49_0._group_leaders[arg_49_4] = arg_49_0._group_leaders[arg_49_4] or {}
-	arg_49_0._group_leaders[arg_49_4][arg_49_2] = true
-	arg_49_0._peer_id_to_party_id[arg_49_2] = arg_49_5
 
-	if var_0_0 then
+	local _group_leaders = self._group_leaders
+	local var_49_1 = self._group_leaders[arg_49_4]
+
+	var_49_1 = var_49_1 or {}
+	_group_leaders[arg_49_4] = var_49_1
+	self._group_leaders[arg_49_4][arg_49_2] = true
+	self._peer_id_to_party_id[arg_49_2] = arg_49_5
+
+	if not flag then
 		printf("[PlayerHostedSlotReservationHandler] Reserving peer %s to party %s (friend party %s leader %s)", arg_49_2, arg_49_5, arg_49_3, arg_49_4)
 	end
 end
 
-function PlayerHostedSlotReservationHandler._clear_non_session_peers(arg_50_0)
-	local var_50_0 = Network.peer_id()
-	local var_50_1 = arg_50_0._synced and arg_50_0:_get_peer_slot_data(var_50_0)
-	local var_50_2 = var_50_1 and var_50_1.friend_party_leader or var_50_0
-	local var_50_3 = arg_50_0._reserved_peers
+PlayerHostedSlotReservationHandler._clear_non_session_peers = function (self)
+	-- function 50
+	local peer_id = Network.peer_id()
+	local _synced = self._synced
 
-	for iter_50_0 = 1, #var_50_3 do
-		local var_50_4 = var_50_3[iter_50_0]
+	_synced = not _synced and self:_get_peer_slot_data(peer_id)
 
-		for iter_50_1 = 1, #var_50_4 do
-			local var_50_5 = var_50_4[iter_50_1]
+	local friend_party_leader
 
-			if var_50_5.peer_id and var_50_5.friend_party_leader ~= var_50_2 then
-				arg_50_0:_remove_peer_reservation(var_50_5.peer_id)
+	if not _synced then
+		friend_party_leader = _synced.friend_party_leader
+
+		if not friend_party_leader then
+			-- Nothing
+		end
+	end
+
+	friend_party_leader = peer_id
+
+	::label_50_0::
+
+	local _reserved_peers = self._reserved_peers
+
+	for i = 1, #_reserved_peers do
+		local var_50_4 = _reserved_peers[i]
+
+		for j = 1, #var_50_4 do
+			local var_50_5 = var_50_4[j]
+
+			if not (not var_50_5.peer_id and var_50_5.friend_party_leader == friend_party_leader) then
+				self:_remove_peer_reservation(var_50_5.peer_id)
 			end
 		end
 	end
 end
 
-function PlayerHostedSlotReservationHandler._on_network_match_changed(arg_51_0, arg_51_1)
+PlayerHostedSlotReservationHandler._on_network_match_changed = function (self, arg_51_1)
+	-- function 51
 	if not arg_51_1 then
-		arg_51_0:_clear_non_session_peers()
-		arg_51_0:update_slot_settings({
-			arg_51_0._party_manager:parties()[1]
+		self:_clear_non_session_peers()
+		self:update_slot_settings({
+			self._party_manager:parties()[1]
 		})
 	end
 end
 
-function PlayerHostedSlotReservationHandler._on_network_match_terminated(arg_52_0)
-	arg_52_0._synced = false
+PlayerHostedSlotReservationHandler._on_network_match_terminated = function (self)
+	-- function 52
+	self._synced = false
 
-	arg_52_0:_clear_non_session_peers()
+	self:_clear_non_session_peers()
 end
 
-function PlayerHostedSlotReservationHandler._on_new_network_match_synced(arg_53_0, arg_53_1, arg_53_2)
-	if arg_53_1 then
-		local var_53_0 = Managers.mechanism:network_handler()
+PlayerHostedSlotReservationHandler._on_new_network_match_synced = function (self, arg_53_1, arg_53_2)
+	-- function 53
+	if not arg_53_1 then
+		local network_handler = Managers.mechanism:network_handler()
+		local var_53_1 = self
+		local try_reserve_slots = self.try_reserve_slots
+		local var_53_3 = arg_53_2
+		local active_peers
 
-		arg_53_0:try_reserve_slots(arg_53_2, var_53_0 and var_53_0:active_peers() or {
+		if not network_handler then
+			active_peers = network_handler:active_peers()
+
+			if not active_peers then
+				-- Nothing
+			end
+		end
+
+		active_peers = {
 			arg_53_2
-		})
+		}
+
+		::label_53_0::
+
+		try_reserve_slots(var_53_1, var_53_3, active_peers)
 	else
-		arg_53_0:request_slot_reservation_sync()
+		self:request_slot_reservation_sync()
 	end
 end
 
-function PlayerHostedSlotReservationHandler.destroy(arg_54_0)
+PlayerHostedSlotReservationHandler.destroy = function (arg_54_0)
+	-- function 54
 	Managers.persistent_event:unregister("network_match_changed", arg_54_0)
 	Managers.persistent_event:unregister("network_match_terminated", arg_54_0)
 	Managers.persistent_event:unregister("new_network_match_synced", arg_54_0)

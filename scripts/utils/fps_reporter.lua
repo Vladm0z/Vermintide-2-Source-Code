@@ -3,56 +3,63 @@
 FPSReporter = class(FPSReporter)
 FPSReporter.NAME = "FPSReporter"
 
-local var_0_0 = 10
+local num = 10
 
-function FPSReporter.init(arg_1_0)
-	arg_1_0._avg_fps = 0
-	arg_1_0._histogram = {}
-	arg_1_0._num_frames = 1
+FPSReporter.init = function (self)
+	-- function 1
+	self._avg_fps = 0
+	self._histogram = {}
+	self._num_frames = 1
 
-	for iter_1_0 = 1, var_0_0 + 1 do
-		arg_1_0._histogram[iter_1_0] = 0
+	for i = 1, num + 1 do
+		self._histogram[i] = 0
 	end
 end
 
-function FPSReporter.update(arg_2_0, arg_2_1, arg_2_2)
-	local var_2_0 = 1 / math.max(arg_2_1, 0.001)
+FPSReporter.update = function (self, arg_2_1, arg_2_2)
+	-- function 2
+	local num = 1 / math.max(arg_2_1, 0.001)
 
-	arg_2_0:_update_average_fps(var_2_0)
-	arg_2_0:_update_histogram(var_2_0)
+	self:_update_average_fps(num)
+	self:_update_histogram(num)
 
-	arg_2_0._num_frames = arg_2_0._num_frames + 1
+	self._num_frames = self._num_frames + 1
 end
 
-function FPSReporter._update_average_fps(arg_3_0, arg_3_1)
-	arg_3_0._avg_fps = (arg_3_1 + arg_3_0._avg_fps * (arg_3_0._num_frames - 1)) / arg_3_0._num_frames
+FPSReporter._update_average_fps = function (self, arg_3_1)
+	-- function 3
+	self._avg_fps = (arg_3_1 + self._avg_fps * (self._num_frames - 1)) / self._num_frames
 end
 
-function FPSReporter._update_histogram(arg_4_0, arg_4_1)
-	local var_4_0 = math.clamp(math.ceil(arg_4_1 / var_0_0), 1, var_0_0 + 1)
+FPSReporter._update_histogram = function (self, arg_4_1)
+	-- function 4
+	local clamp = math.clamp(math.ceil(arg_4_1 / num), 1, num + 1)
 
-	arg_4_0._histogram[var_4_0] = arg_4_0._histogram[var_4_0] + 1
+	self._histogram[clamp] = self._histogram[clamp] + 1
 end
 
-function FPSReporter.report(arg_5_0)
-	arg_5_0:_normalize_histogram()
-	Managers.telemetry_events:fps(arg_5_0._avg_fps, arg_5_0._histogram)
+FPSReporter.report = function (self)
+	-- function 5
+	self:_normalize_histogram()
+	Managers.telemetry_events:fps(self._avg_fps, self._histogram)
 end
 
-function FPSReporter.avg_fps(arg_6_0)
-	return arg_6_0._avg_fps
+FPSReporter.avg_fps = function (self)
+	-- function 6
+	return self._avg_fps
 end
 
-function FPSReporter._normalize_histogram(arg_7_0)
-	local var_7_0 = 0
+FPSReporter._normalize_histogram = function (self)
+	-- function 7
+	local num = 0
 
-	for iter_7_0, iter_7_1 in pairs(arg_7_0._histogram) do
-		var_7_0 = var_7_0 + iter_7_1
+	for k, v in pairs(self._histogram) do
+		num = num + v
 	end
 
-	local var_7_1 = math.max(var_7_0, 1)
+	local max = math.max(num, 1)
 
-	for iter_7_2, iter_7_3 in pairs(arg_7_0._histogram) do
-		arg_7_0._histogram[iter_7_2] = arg_7_0._histogram[iter_7_2] / var_7_1
+	for k_2, v_2 in pairs(self._histogram) do
+		self._histogram[k_2] = self._histogram[k_2] / max
 	end
 end

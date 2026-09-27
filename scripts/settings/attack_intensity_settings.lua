@@ -1,6 +1,9 @@
 -- chunkname: @scripts/settings/attack_intensity_settings.lua
 
+local AttackIntensitySettings = AttackIntensitySettings
+
 AttackIntensitySettings = AttackIntensitySettings or {}
+AttackIntensitySettings = AttackIntensitySettings
 AttackIntensitySettings.attack_type_intesities = {
 	cleave = true,
 	sweep = true,
@@ -192,8 +195,8 @@ AttackIntensitySettings.difficulty.cataclysm_2 = table.clone(AttackIntensitySett
 AttackIntensitySettings.difficulty.cataclysm_3 = table.clone(AttackIntensitySettings.difficulty.hardest)
 AttackIntensitySettings.difficulty.versus_base = table.clone(AttackIntensitySettings.difficulty.hard)
 
-for iter_0_0, iter_0_1 in pairs(AttackIntensitySettings.attack_type_intesities) do
-	for iter_0_2, iter_0_3 in pairs(AttackIntensitySettings.difficulty) do
-		fassert(iter_0_3[iter_0_0], "Missing settings for attack type [%s] in AttackIntensitySettings for difficulty [%s]", iter_0_0, iter_0_2)
+for k, v in pairs(AttackIntensitySettings.attack_type_intesities) do
+	for k_2, v_2 in pairs(AttackIntensitySettings.difficulty) do
+		fassert(v_2[k], "Missing settings for attack type [%s] in AttackIntensitySettings for difficulty [%s]", k, k_2)
 	end
 end

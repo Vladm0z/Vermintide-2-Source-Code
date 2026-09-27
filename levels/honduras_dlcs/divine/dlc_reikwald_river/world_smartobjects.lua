@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/divine/dlc_reikwald_river/world_smartobjects.lua
 
-local var_0_0 = {
+local tbl = {
 	["2fa0cb58-530c-4b30-8a4d-1058c48ef440"] = {
 		{
 			smart_object_index = 427,
@@ -23284,13 +23284,13 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = 994
-local var_0_2 = "v1"
-local var_0_3 = "2017.MAY.05.05"
+local num = 994
+local str = "v1"
+local str_2 = "2017.MAY.05.05"
 
 return {
-	smart_objects = var_0_0,
-	smart_object_count = var_0_1,
-	version = var_0_2,
-	ledgelator_version = var_0_3
+	smart_objects = tbl,
+	smart_object_count = num,
+	version = str,
+	ledgelator_version = str_2
 }

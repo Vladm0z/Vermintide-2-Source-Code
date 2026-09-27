@@ -4,7 +4,8 @@ return {
 	description = "description_mutator_splitting_enemies",
 	display_name = "display_name_mutator_splitting_enemies",
 	icon = "mutator_icon_splitting_enemies",
-	server_start_function = function(arg_1_0, arg_1_1)
+	server_start_function = function (arg_1_0, arg_1_1)
+		-- function 1
 		arg_1_1.breed_tier_list = {
 			beastmen_standard_bearer = "beastmen_bestigor",
 			chaos_raider = "chaos_marauder",
@@ -72,7 +73,8 @@ return {
 			skaven_storm_vermin_with_shield = "generic_mutator_explosion_medium"
 		}
 
-		function arg_1_1.cb_enemy_spawned_function(arg_2_0, arg_2_1, arg_2_2)
+		arg_1_1.cb_enemy_spawned_function = function (arg_2_0, arg_2_1, arg_2_2)
+			-- function 2
 			local var_2_0 = BLACKBOARDS[arg_2_0]
 
 			if not arg_2_1.special then
@@ -84,122 +86,133 @@ return {
 		arg_1_1.spawn_queue = {}
 		arg_1_1.spawn_delay = 0.25
 	end,
-	server_update_function = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
-		local var_3_0 = arg_3_1.spawn_queue
+	server_update_function = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+		-- function 3
+		local spawn_queue = arg_3_1.spawn_queue
 		local var_3_1
 
-		for iter_3_0 = 1, #var_3_0 do
-			local var_3_2 = var_3_0[iter_3_0]
+		for i = 1, #spawn_queue do
+			local var_3_2 = spawn_queue[i]
 
 			if arg_3_3 > var_3_2.spawn_at_t then
-				local var_3_3 = var_3_2.breed
-				local var_3_4 = var_3_2.position_box
-				local var_3_5 = var_3_2.rotation_box
-				local var_3_6 = "mutator"
-				local var_3_7 = {
+				local breed = var_3_2.breed
+				local position_box = var_3_2.position_box
+				local rotation_box = var_3_2.rotation_box
+				local str = "mutator"
+				local tbl = {
 					spawned_func = arg_3_1.cb_enemy_spawned_function
 				}
 
-				Managers.state.conflict:spawn_queued_unit(var_3_3, var_3_4, var_3_5, var_3_6, nil, "terror_event", var_3_7)
+				Managers.state.conflict:spawn_queued_unit(breed, position_box, rotation_box, str, nil, "terror_event", tbl)
 
-				var_3_1 = iter_3_0
+				var_3_1 = i
 
 				break
 			end
 		end
 
-		if var_3_1 then
-			table.remove(var_3_0, var_3_1)
+		if not var_3_1 then
+			table.remove(spawn_queue, var_3_1)
 		end
 	end,
-	on_split_enemy = function(arg_4_0)
+	on_split_enemy = function (arg_4_0)
+		-- function 4
 		return
 	end,
-	server_ai_killed_function = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	server_ai_killed_function = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+		-- function 5
 		local var_5_0 = arg_5_5[DamageDataIndex.DAMAGE_TYPE]
 
-		if arg_5_5[DamageDataIndex.DAMAGE_SOURCE_NAME] == "suicide" and (var_5_0 == "volume_insta_kill" or var_5_0 == "forced") then
+		if not (arg_5_5[DamageDataIndex.DAMAGE_SOURCE_NAME] ~= "suicide" or var_5_0 == "volume_insta_kill" or var_5_0 ~= "forced") then
 			return
 		end
 
-		local var_5_1 = arg_5_1.breed_tier_list
-		local var_5_2 = arg_5_1.breed_explosion_templates
+		local breed_tier_list = arg_5_1.breed_tier_list
+		local breed_explosion_templates = arg_5_1.breed_explosion_templates
 		local var_5_3 = BLACKBOARDS[arg_5_2]
-		local var_5_4 = var_5_3.breed
-		local var_5_5 = var_5_4.name
-		local var_5_6 = var_5_1[var_5_5]
+		local breed = var_5_3.breed
+		local name = breed.name
+		local var_5_6 = breed_tier_list[name]
 
 		if type(var_5_6) == "table" then
 			var_5_6 = var_5_6[Managers.state.difficulty:get_difficulty_rank() - 1]
 		end
 
 		local var_5_7 = POSITION_LOOKUP[arg_5_2]
-		local var_5_8 = Managers.state.entity:system("ai_system"):nav_world()
-		local var_5_9 = arg_5_1.spawn_queue
-		local var_5_10 = Managers.state.conflict
+		local nav_world = Managers.state.entity:system("ai_system"):nav_world()
+		local spawn_queue = arg_5_1.spawn_queue
+		local conflict = Managers.state.conflict
 
-		if var_5_7 and var_5_6 then
-			local var_5_11 = Unit.local_rotation(arg_5_2, 0)
-			local var_5_12 = Quaternion.right(var_5_11) * 0.5
-			local var_5_13 = -var_5_12
+		if not var_5_7 and not var_5_6 then
+			local local_rotation = Unit.local_rotation(arg_5_2, 0)
+			local num = Quaternion.right(local_rotation) * 0.5
+			local num_2 = -num
 			local var_5_14 = Breeds[var_5_6]
-			local var_5_15 = var_5_2[var_5_5] or "generic_mutator_explosion"
+			local var_5_15 = breed_explosion_templates[name]
+
+			var_5_15 = var_5_15 or "generic_mutator_explosion"
 
 			AiUtils.generic_mutator_explosion(arg_5_2, var_5_3, var_5_15)
 
-			local var_5_16 = var_5_7 + var_5_12
-			local var_5_17 = var_5_7 + var_5_13
-			local var_5_18 = LocomotionUtils.pos_on_mesh(var_5_8, var_5_16, 1, 1)
+			local num_3 = var_5_7 + num
+			local num_4 = var_5_7 + num_2
+			local pos_on_mesh = LocomotionUtils.pos_on_mesh(nav_world, num_3, 1, 1)
 
-			if not var_5_18 then
-				local var_5_19 = GwNavQueries.inside_position_from_outside_position(var_5_8, var_5_16, 6, 6, 8, 0.5)
+			if not pos_on_mesh then
+				local inside_position_from_outside_position = GwNavQueries.inside_position_from_outside_position(nav_world, num_3, 6, 6, 8, 0.5)
 
-				if var_5_19 then
-					var_5_18 = var_5_19
+				if not inside_position_from_outside_position then
+					pos_on_mesh = inside_position_from_outside_position
 				end
 			end
 
-			local var_5_20 = LocomotionUtils.pos_on_mesh(var_5_8, var_5_17, 1, 1)
+			local pos_on_mesh_2 = LocomotionUtils.pos_on_mesh(nav_world, num_4, 1, 1)
 
-			if not var_5_20 then
-				local var_5_21 = GwNavQueries.inside_position_from_outside_position(var_5_8, var_5_17, 6, 6, 8, 0.5)
+			if not pos_on_mesh_2 then
+				local inside_position_from_outside_position_2 = GwNavQueries.inside_position_from_outside_position(nav_world, num_4, 6, 6, 8, 0.5)
 
-				if var_5_21 then
-					var_5_20 = var_5_21
+				if not inside_position_from_outside_position_2 then
+					pos_on_mesh_2 = inside_position_from_outside_position_2
 				end
 			end
 
-			local var_5_22 = Managers.time:time("game") + arg_5_1.spawn_delay
+			local num_5 = Managers.time:time("game") + arg_5_1.spawn_delay
 
-			if var_5_18 then
-				local var_5_23 = {
+			if not pos_on_mesh then
+				local tbl = {
 					breed = var_5_14,
-					rotation_box = QuaternionBox(var_5_11),
-					spawn_at_t = var_5_22,
-					position_box = Vector3Box(var_5_18)
+					rotation_box = QuaternionBox(local_rotation),
+					spawn_at_t = num_5,
+					position_box = Vector3Box(pos_on_mesh)
 				}
 
-				var_5_9[#var_5_9 + 1] = var_5_23
+				spawn_queue[#spawn_queue + 1] = tbl
 			end
 
-			if var_5_20 then
-				local var_5_24 = {
+			if not pos_on_mesh_2 then
+				local tbl_2 = {
 					breed = var_5_14,
-					rotation_box = QuaternionBox(var_5_11),
-					spawn_at_t = var_5_22,
-					position_box = Vector3Box(var_5_20)
+					rotation_box = QuaternionBox(local_rotation),
+					spawn_at_t = num_5,
+					position_box = Vector3Box(pos_on_mesh_2)
 				}
 
-				var_5_9[#var_5_9 + 1] = var_5_24
+				spawn_queue[#spawn_queue + 1] = tbl_2
 			end
 
-			local var_5_25 = Managers.state.unit_spawner
+			local unit_spawner = Managers.state.unit_spawner
 
-			if not var_5_25:is_marked_for_deletion(arg_5_2) and not (var_5_10.breed_freezer and var_5_10.breed_freezer:try_mark_unit_for_freeze(var_5_4, arg_5_2)) then
-				var_5_25:mark_for_deletion(arg_5_2)
+			if not unit_spawner:is_marked_for_deletion(arg_5_2) then
+				local breed_freezer = conflict.breed_freezer
 
-				if arg_5_4 then
-					arg_5_4.remove = true
+				breed_freezer = not breed_freezer and conflict.breed_freezer:try_mark_unit_for_freeze(breed, arg_5_2)
+
+				if not breed_freezer then
+					unit_spawner:mark_for_deletion(arg_5_2)
+
+					if not arg_5_4 then
+						arg_5_4.remove = true
+					end
 				end
 			end
 

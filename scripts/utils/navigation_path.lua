@@ -2,57 +2,67 @@
 
 NavigationPath = class(NavigationPath)
 
-function NavigationPath.init(arg_1_0, arg_1_1, arg_1_2)
-	arg_1_0._path = {}
-	arg_1_0._current_index = 1
-	arg_1_0._callback = arg_1_2
+NavigationPath.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	self._path = {}
+	self._current_index = 1
+	self._callback = arg_1_2
 
-	for iter_1_0 = 1, #arg_1_1 do
-		arg_1_0._path[iter_1_0] = Vector3Box(arg_1_1[iter_1_0])
+	for i = 1, #arg_1_1 do
+		self._path[i] = Vector3Box(arg_1_1[i])
 	end
 end
 
-function NavigationPath.current(arg_2_0)
-	return arg_2_0._path[arg_2_0._current_index]:unbox()
+NavigationPath.current = function (self)
+	-- function 2
+	return self._path[self._current_index]:unbox()
 end
 
-function NavigationPath.last(arg_3_0)
-	return arg_3_0._path[#arg_3_0._path]:unbox()
+NavigationPath.last = function (self)
+	-- function 3
+	return self._path[#self._path]:unbox()
 end
 
-function NavigationPath.advance(arg_4_0)
-	arg_4_0._current_index = arg_4_0._current_index + 1
+NavigationPath.advance = function (self)
+	-- function 4
+	self._current_index = self._current_index + 1
 end
 
-function NavigationPath.is_last(arg_5_0)
-	return arg_5_0._current_index == #arg_5_0._path
+NavigationPath.is_last = function (self)
+	-- function 5
+	return self._current_index == #self._path
 end
 
-function NavigationPath.reset(arg_6_0)
-	arg_6_0._current_index = 1
+NavigationPath.reset = function (self)
+	-- function 6
+	self._current_index = 1
 end
 
-function NavigationPath.reverse(arg_7_0)
-	table.reverse(arg_7_0._path)
+NavigationPath.reverse = function (self)
+	-- function 7
+	table.reverse(self._path)
 end
 
-function NavigationPath.callback(arg_8_0)
-	return arg_8_0._callback
+NavigationPath.callback = function (self)
+	-- function 8
+	return self._callback
 end
 
-function NavigationPath.path(arg_9_0)
-	return arg_9_0._path
+NavigationPath.path = function (self)
+	-- function 9
+	return self._path
 end
 
-function NavigationPath.draw(arg_10_0, arg_10_1, arg_10_2)
-	local var_10_0 = Managers.state.debug:drawer({
+NavigationPath.draw = function (self, arg_10_1, arg_10_2)
+	-- function 10
+	local drawer = Managers.state.debug:drawer({
 		mode = "immediate",
 		name = "nav_path"
 	})
-	local var_10_1 = arg_10_2 or Vector3(0, 0, 0)
+	local flag = arg_10_2 or Vector3(0, 0, 0)
 	local var_10_2
 
-	for iter_10_0, iter_10_1 in ipairs(arg_10_0._path) do
-		var_10_0:sphere(iter_10_1:unbox() + Vector3.up() * 0.05 + var_10_1, 0.05, arg_10_1)
+	for i, v in ipairs(self._path) do
+		drawer:sphere(v:unbox() + Vector3.up() * 0.05 + flag, 0.05, arg_10_1)
 	end
 end

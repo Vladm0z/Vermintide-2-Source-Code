@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras/ground_zero/world_smartobjects.lua
 
-local var_0_0 = {
+local tbl = {
 	["4847ca7f-a311-4e85-be2c-93b3cf3b4e96"] = {
 		{
 			smart_object_index = 105,
@@ -47327,13 +47327,13 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = 1952
-local var_0_2 = "v1"
-local var_0_3 = "2017.MAY.05.05"
+local num = 1952
+local str = "v1"
+local str_2 = "2017.MAY.05.05"
 
 return {
-	smart_objects = var_0_0,
-	smart_object_count = var_0_1,
-	version = var_0_2,
-	ledgelator_version = var_0_3
+	smart_objects = tbl,
+	smart_object_count = num,
+	version = str,
+	ledgelator_version = str_2
 }

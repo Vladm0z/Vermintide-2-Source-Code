@@ -1,17 +1,17 @@
 -- chunkname: @scripts/ui/hud_ui/gamepad_equipment_ui_definitions.lua
 
-local var_0_0 = 1920
-local var_0_1 = 1080
-local var_0_2 = true
-local var_0_3 = {
+local num = 1920
+local num_2 = 1080
+local flag = true
+local tbl = {
 	70,
 	64
 }
-local var_0_4 = {
+local tbl_2 = {
 	55,
 	55
 }
-local var_0_5 = {
+local tbl_3 = {
 	root = {
 		scale = "hud_scale_fit",
 		position = {
@@ -20,8 +20,8 @@ local var_0_5 = {
 			UILayer.hud
 		},
 		size = {
-			var_0_0,
-			var_0_1
+			num,
+			num_2
 		}
 	},
 	screen = {
@@ -32,8 +32,8 @@ local var_0_5 = {
 			UILayer.hud
 		},
 		size = {
-			var_0_0,
-			var_0_1
+			num,
+			num_2
 		}
 	},
 	hud_base = {
@@ -187,7 +187,7 @@ local var_0_5 = {
 			70,
 			100
 		},
-		size = var_0_3
+		size = tbl
 	},
 	ammo_background = {
 		vertical_alignment = "bottom",
@@ -290,13 +290,14 @@ local var_0_5 = {
 }
 
 if not IS_WINDOWS then
-	var_0_5.root.scale = "hud_fit"
-	var_0_5.root.is_root = nil
-	var_0_5.screen.scale = "hud_fit"
+	tbl_3.root.scale = "hud_fit"
+	tbl_3.root.is_root = nil
+	tbl_3.screen.scale = "hud_fit"
 end
 
-local function var_0_6(arg_1_0)
-	local var_1_0 = UIFrameSettings.menu_frame_06
+local function fn(arg_1_0)
+	-- function 1
+	local menu_frame_06 = UIFrameSettings.menu_frame_06
 
 	return {
 		element = {
@@ -305,80 +306,88 @@ local function var_0_6(arg_1_0)
 					pass_type = "texture",
 					style_id = "melee_weapon_texture",
 					texture_id = "melee_weapon_texture_id",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_2_0, arg_2_1)
-						return arg_2_0.wielded_slot == "melee"
+					retained_mode = flag,
+					content_check_function = function (self, arg_2_1)
+						-- function 2
+						return self.wielded_slot == "melee"
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "melee_weapon_texture_glow",
 					texture_id = "melee_weapon_texture_glow_id",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_3_0, arg_3_1)
-						return arg_3_0.wielded_slot == "melee"
+					retained_mode = flag,
+					content_check_function = function (self, arg_3_1)
+						-- function 3
+						return self.wielded_slot == "melee"
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "deselected_weapon",
 					texture_id = "deselected_weapon_texture_id",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_4_0, arg_4_1)
-						return arg_4_0.wielded_slot ~= "melee" and arg_4_0.wielded_slot ~= "ranged"
+					retained_mode = flag,
+					content_check_function = function (self, arg_4_1)
+						-- function 4
+						return self.wielded_slot == "melee" or self.wielded_slot ~= "ranged"
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "ranged_weapon_texture",
 					texture_id = "ranged_weapon_texture_id",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_5_0, arg_5_1)
-						return arg_5_0.wielded_slot == "ranged"
+					retained_mode = flag,
+					content_check_function = function (self, arg_5_1)
+						-- function 5
+						return self.wielded_slot == "ranged"
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "ranged_weapon_texture_glow",
 					texture_id = "ranged_weapon_texture_glow_id",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_6_0, arg_6_1)
-						return arg_6_0.wielded_slot == "ranged"
+					retained_mode = flag,
+					content_check_function = function (self, arg_6_1)
+						-- function 6
+						return self.wielded_slot == "ranged"
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "switch",
 					texture_id = "switch_id",
-					retained_mode = var_0_2
+					retained_mode = flag
 				},
 				{
 					pass_type = "texture",
 					style_id = "wield_switch",
 					texture_id = "wield_switch_id",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_7_0, arg_7_1)
-						return arg_7_0.wield_switch_id
+					retained_mode = flag,
+					content_check_function = function (self, arg_7_1)
+						-- function 7
+						return self.wield_switch_id
 					end
 				},
 				{
 					style_id = "input_text",
 					pass_type = "text",
 					text_id = "input_text",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_8_0, arg_8_1)
-						arg_8_0.gamepad_active = Managers.input:is_device_active("gamepad")
+					retained_mode = flag,
+					content_check_function = function (self, arg_8_1)
+						-- function 8
+						self.gamepad_active = Managers.input:is_device_active("gamepad")
 
-						return not arg_8_0.gamepad_active
+						return not self.gamepad_active
 					end
 				},
 				{
 					style_id = "input_text_shadow",
 					pass_type = "text",
 					text_id = "input_text",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_9_0, arg_9_1)
-						return not arg_9_0.gamepad_active
+					retained_mode = flag,
+					content_check_function = function (self, arg_9_1)
+						-- function 9
+						return not self.gamepad_active
 					end
 				}
 			}
@@ -396,12 +405,12 @@ local function var_0_6(arg_1_0)
 			background_texture_id = "hud_inventory_slot_bg_01",
 			ranged_weapon_texture_id = "hud_icon_ranged",
 			switch_id = "button_y",
-			weapon_frame = var_1_0.texture
+			weapon_frame = menu_frame_06.texture
 		},
 		style = {
 			weapon_frame = {
-				texture_size = var_1_0.texture_size,
-				texture_sizes = var_1_0.texture_sizes,
+				texture_size = menu_frame_06.texture_size,
+				texture_sizes = menu_frame_06.texture_sizes,
 				color = {
 					255,
 					255,
@@ -638,23 +647,24 @@ local function var_0_6(arg_1_0)
 	}
 end
 
-local function var_0_7(arg_10_0, arg_10_1)
-	local var_10_0 = arg_10_0 - 1
-	local var_10_1 = 0
-	local var_10_2 = var_0_3[1]
-	local var_10_3 = var_10_2 * arg_10_1 + var_10_1 * (arg_10_1 - 1)
-	local var_10_4 = {
-		(var_10_0 - 1) * (var_10_2 + var_10_1),
+local function fn_2(arg_10_0, arg_10_1)
+	-- function 10
+	local num = arg_10_0 - 1
+	local num_2 = 0
+	local var_10_2 = tbl[1]
+	local num_3 = var_10_2 * arg_10_1 + num_2 * (arg_10_1 - 1)
+	local tbl_3 = {
+		(num - 1) * (var_10_2 + num_2),
 		0,
 		-30
 	}
-	local var_10_5 = {
+	local tbl_4 = {
 		255,
 		36,
 		215,
 		231
 	}
-	local var_10_6 = {
+	local tbl_5 = {
 		slot_healthkit = "hud_icon_heal_01",
 		slot_grenade = "hud_icon_bomb_01",
 		slot_potion = "hud_icon_heal_02"
@@ -668,138 +678,192 @@ local function var_0_7(arg_10_0, arg_10_1)
 					style_id = "input_text",
 					pass_type = "text",
 					text_id = "input_text",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_11_0, arg_11_1)
-						return not Managers.input:is_device_active("gamepad") and arg_11_0.is_filled
+					retained_mode = flag,
+					content_check_function = function (self, arg_11_1)
+						-- function 11
+						return not not Managers.input:is_device_active("gamepad") or self.is_filled
 					end
 				},
 				{
 					style_id = "input_text_shadow",
 					pass_type = "text",
 					text_id = "input_text",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_12_0, arg_12_1)
-						return not Managers.input:is_device_active("gamepad") and arg_12_0.is_filled
+					retained_mode = flag,
+					content_check_function = function (self, arg_12_1)
+						-- function 12
+						return not not Managers.input:is_device_active("gamepad") or self.is_filled
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_icon",
 					texture_id = "texture_icon",
-					retained_mode = var_0_2
+					retained_mode = flag
 				},
 				{
 					pass_type = "texture",
 					style_id = "secondary_texture_icon",
 					texture_id = "secondary_texture_icon",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_13_0, arg_13_1)
-						return arg_13_0.secondary_texture_icon
+					retained_mode = flag,
+					content_check_function = function (self, arg_13_1)
+						-- function 13
+						return self.secondary_texture_icon
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "secondary_texture_icon_glow",
 					texture_id = "secondary_texture_icon_glow",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_14_0, arg_14_1)
-						return arg_14_0.secondary_texture_icon
+					retained_mode = flag,
+					content_check_function = function (self, arg_14_1)
+						-- function 14
+						return self.secondary_texture_icon
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_selected",
 					texture_id = "texture_selected",
-					retained_mode = var_0_2
+					retained_mode = flag
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_selected_up_arrow",
 					texture_id = "texture_selected_up_arrow",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_15_0, arg_15_1)
-						return arg_15_0.texture_arrow_up_enabled and arg_15_0.is_filled
+					retained_mode = flag,
+					content_check_function = function (self, arg_15_1)
+						-- function 15
+						local texture_arrow_up_enabled = self.texture_arrow_up_enabled
+
+						texture_arrow_up_enabled = not texture_arrow_up_enabled and self.is_filled
+
+						return texture_arrow_up_enabled
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_selected_left_arrow",
 					texture_id = "texture_selected_left_arrow",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_16_0, arg_16_1)
-						return arg_16_0.texture_arrow_left_enabled and arg_16_0.is_filled
+					retained_mode = flag,
+					content_check_function = function (self, arg_16_1)
+						-- function 16
+						local texture_arrow_left_enabled = self.texture_arrow_left_enabled
+
+						texture_arrow_left_enabled = not texture_arrow_left_enabled and self.is_filled
+
+						return texture_arrow_left_enabled
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_selected_right_arrow",
 					texture_id = "texture_selected_right_arrow",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_17_0, arg_17_1)
-						return arg_17_0.texture_arrow_right_enabled and arg_17_0.is_filled
+					retained_mode = flag,
+					content_check_function = function (self, arg_17_1)
+						-- function 17
+						local texture_arrow_right_enabled = self.texture_arrow_right_enabled
+
+						texture_arrow_right_enabled = not texture_arrow_right_enabled and self.is_filled
+
+						return texture_arrow_right_enabled
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_selected_up_arrow_glow",
 					texture_id = "texture_selected_up_arrow_glow",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_18_0, arg_18_1)
-						return arg_18_0.texture_arrow_up_enabled and arg_18_0.selected
+					retained_mode = flag,
+					content_check_function = function (self, arg_18_1)
+						-- function 18
+						local texture_arrow_up_enabled = self.texture_arrow_up_enabled
+
+						texture_arrow_up_enabled = not texture_arrow_up_enabled and self.selected
+
+						return texture_arrow_up_enabled
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_selected_left_arrow_glow",
 					texture_id = "texture_selected_left_arrow_glow",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_19_0, arg_19_1)
-						return arg_19_0.texture_arrow_left_enabled and arg_19_0.selected
+					retained_mode = flag,
+					content_check_function = function (self, arg_19_1)
+						-- function 19
+						local texture_arrow_left_enabled = self.texture_arrow_left_enabled
+
+						texture_arrow_left_enabled = not texture_arrow_left_enabled and self.selected
+
+						return texture_arrow_left_enabled
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_selected_right_arrow_glow",
 					texture_id = "texture_selected_right_arrow_glow",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_20_0, arg_20_1)
-						return arg_20_0.texture_arrow_right_enabled and arg_20_0.selected
+					retained_mode = flag,
+					content_check_function = function (self, arg_20_1)
+						-- function 20
+						local texture_arrow_right_enabled = self.texture_arrow_right_enabled
+
+						texture_arrow_right_enabled = not texture_arrow_right_enabled and self.selected
+
+						return texture_arrow_right_enabled
 					end
 				},
 				{
 					style_id = "use_count_text",
 					pass_type = "text",
 					text_id = "use_count_text",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_21_0, arg_21_1)
-						return arg_21_0.is_filled and arg_21_0.has_additional_slots
+					retained_mode = flag,
+					content_check_function = function (self, arg_21_1)
+						-- function 21
+						local is_filled = self.is_filled
+
+						is_filled = not is_filled and self.has_additional_slots
+
+						return is_filled
 					end
 				},
 				{
 					style_id = "use_count_text_shadow",
 					pass_type = "text",
 					text_id = "use_count_text",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_22_0, arg_22_1)
-						return arg_22_0.is_filled and arg_22_0.has_additional_slots
+					retained_mode = flag,
+					content_check_function = function (self, arg_22_1)
+						-- function 22
+						local is_filled = self.is_filled
+
+						is_filled = not is_filled and self.has_additional_slots
+
+						return is_filled
 					end
 				},
 				{
 					style_id = "can_swap_text",
 					pass_type = "text",
 					text_id = "can_swap_text",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_23_0, arg_23_1)
-						return arg_23_0.is_filled and arg_23_0.can_swap
+					retained_mode = flag,
+					content_check_function = function (self, arg_23_1)
+						-- function 23
+						local is_filled = self.is_filled
+
+						is_filled = not is_filled and self.can_swap
+
+						return is_filled
 					end
 				},
 				{
 					style_id = "can_swap_text_shadow",
 					pass_type = "text",
 					text_id = "can_swap_text",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_24_0, arg_24_1)
-						return arg_24_0.is_filled and arg_24_0.can_swap
+					retained_mode = flag,
+					content_check_function = function (self, arg_24_1)
+						-- function 24
+						local is_filled = self.is_filled
+
+						is_filled = not is_filled and self.can_swap
+
+						return is_filled
 					end
 				}
 			}
@@ -826,7 +890,7 @@ local function var_0_7(arg_10_0, arg_10_1)
 			texture_selected_left_arrow_glow = "hud_icon_left_glow",
 			texture_highlight = "hud_inventory_slot_small_pickup",
 			console_hud_index = arg_10_0,
-			empty_slot_texture = var_10_6[InventorySettings.slots_by_console_hud_index[arg_10_0].name],
+			empty_slot_texture = tbl_5[InventorySettings.slots_by_console_hud_index[arg_10_0].name],
 			texture_arrow_left_enabled = arg_10_0 == 2,
 			texture_arrow_up_enabled = arg_10_0 == 3,
 			texture_arrow_right_enabled = arg_10_0 == 4
@@ -919,7 +983,7 @@ local function var_0_7(arg_10_0, arg_10_1)
 			texture_icon = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				texture_size = var_0_4,
+				texture_size = tbl_2,
 				color = {
 					0,
 					128,
@@ -936,8 +1000,8 @@ local function var_0_7(arg_10_0, arg_10_1)
 				vertical_alignment = "bottom",
 				horizontal_alignment = "right",
 				texture_size = {
-					var_0_4[1] * 0.6,
-					var_0_4[2] * 0.6
+					tbl_2[1] * 0.6,
+					tbl_2[2] * 0.6
 				},
 				color = {
 					255,
@@ -955,8 +1019,8 @@ local function var_0_7(arg_10_0, arg_10_1)
 				vertical_alignment = "bottom",
 				horizontal_alignment = "right",
 				texture_size = {
-					var_0_4[1] * 0.6,
-					var_0_4[2] * 0.6
+					tbl_2[1] * 0.6,
+					tbl_2[2] * 0.6
 				},
 				color = {
 					255,
@@ -1086,8 +1150,8 @@ local function var_0_7(arg_10_0, arg_10_1)
 			},
 			texture_frame = {
 				size = {
-					var_0_3[1],
-					var_0_3[2]
+					tbl[1],
+					tbl[2]
 				},
 				color = {
 					255,
@@ -1295,7 +1359,7 @@ local function var_0_7(arg_10_0, arg_10_1)
 			texture_background = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				texture_size = var_0_4,
+				texture_size = tbl_2,
 				color = {
 					0,
 					255,
@@ -1311,7 +1375,7 @@ local function var_0_7(arg_10_0, arg_10_1)
 			rect_background = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				rect_size = var_0_4,
+				rect_size = tbl_2,
 				color = {
 					255,
 					0,
@@ -1322,7 +1386,7 @@ local function var_0_7(arg_10_0, arg_10_1)
 			texture_empty_slot = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				texture_size = var_0_4,
+				texture_size = tbl_2,
 				color = {
 					128,
 					255,
@@ -1336,11 +1400,11 @@ local function var_0_7(arg_10_0, arg_10_1)
 				}
 			}
 		},
-		offset = var_10_4
+		offset = tbl_3
 	}
 end
 
-local var_0_8 = {
+local tbl_4 = {
 	word_wrap = false,
 	font_size = 65,
 	localize = false,
@@ -1356,7 +1420,7 @@ local var_0_8 = {
 		2
 	}
 }
-local var_0_9 = {
+local tbl_5 = {
 	word_wrap = false,
 	font_size = 40,
 	localize = false,
@@ -1372,7 +1436,7 @@ local var_0_9 = {
 		2
 	}
 }
-local var_0_10 = {
+local tbl_6 = {
 	word_wrap = false,
 	font_size = 40,
 	localize = false,
@@ -1389,8 +1453,9 @@ local var_0_10 = {
 	}
 }
 
-local function var_0_11(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6, arg_25_7, arg_25_8)
-	local var_25_0 = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_25_0)
+local function fn_3(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6, arg_25_7, arg_25_8)
+	-- function 25
+	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_25_0)
 
 	return {
 		element = {
@@ -1409,7 +1474,7 @@ local function var_0_11(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25
 		},
 		style = {
 			texture_id = {
-				texture_size = var_25_0.size,
+				texture_size = get_atlas_settings_by_texture_name.size,
 				color = arg_25_4 or {
 					255,
 					255,
@@ -1435,10 +1500,11 @@ local function var_0_11(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25
 	}
 end
 
-local function var_0_12(arg_26_0, arg_26_1, arg_26_2)
+local function fn_4(arg_26_0, arg_26_1, arg_26_2)
+	-- function 26
 	local var_26_0 = ButtonTextureByName("x", "xb1")
-	local var_26_1 = var_26_0.texture
-	local var_26_2 = var_26_0.size
+	local texture = var_26_0.texture
+	local size = var_26_0.size
 
 	return {
 		element = {
@@ -1448,40 +1514,41 @@ local function var_0_12(arg_26_0, arg_26_1, arg_26_2)
 					style_id = "minigun",
 					pass_type = "texture",
 					retained_mode = arg_26_2,
-					content_check_function = function(arg_27_0, arg_27_1)
-						arg_27_0.using_career_skill_weapon = false
-						arg_27_0.visible = false
+					content_check_function = function (self, arg_27_1)
+						-- function 27
+						self.using_career_skill_weapon = false
+						self.visible = false
 
-						local var_27_0 = Managers.player:local_player()
-						local var_27_1 = var_27_0 and var_27_0.player_unit
+						local local_player = Managers.player:local_player()
+						local flag = not local_player and local_player.player_unit
 
-						if not ALIVE[var_27_1] then
+						if not ALIVE[flag] then
 							return false
 						end
 
-						local var_27_2 = ScriptUnit.extension(var_27_1, "career_system")
+						local extension = ScriptUnit.extension(flag, "career_system")
 
-						arg_27_0.visible = (var_27_2 and var_27_2:career_name()) == "dr_engineer"
+						self.visible = (not extension and extension:career_name()) == "dr_engineer"
 
-						local var_27_3, var_27_4 = var_27_2:current_ability_cooldown()
+						local current_ability_cooldown, var_27_4 = extension:current_ability_cooldown()
 
-						arg_27_0.on_cooldown = var_27_3 / var_27_4 ~= 0
+						self.on_cooldown = current_ability_cooldown / var_27_4 ~= 0
 
-						local var_27_5 = ScriptUnit.extension(var_27_1, "inventory_system")
+						local extension_2 = ScriptUnit.extension(flag, "inventory_system")
 
-						arg_27_0.using_career_skill_weapon = var_27_5 and var_27_5:get_wielded_slot_name() == "slot_career_skill_weapon"
+						self.using_career_skill_weapon = not extension_2 and extension_2:get_wielded_slot_name() == "slot_career_skill_weapon"
 
-						local var_27_6 = ScriptUnit.extension(var_27_1, "buff_system")
+						local extension_3 = ScriptUnit.extension(flag, "buff_system")
 
-						arg_27_0.is_reloading = var_27_6 and var_27_6:has_buff_type("bardin_engineer_pump_buff")
+						self.is_reloading = not extension_3 and extension_3:has_buff_type("bardin_engineer_pump_buff")
 
-						local var_27_7, var_27_8 = Managers.time:time_and_delta("game")
-						local var_27_9 = arg_27_0.time + var_27_8
+						local time_and_delta, var_27_8 = Managers.time:time_and_delta("game")
+						local num = self.time + var_27_8
 
-						arg_27_0.time = arg_27_0.is_reloading and var_27_9 or 0
-						arg_27_0.using_gamepad = Managers.input:is_device_active("gamepad")
+						self.time = not self.is_reloading and num and 0
+						self.using_gamepad = Managers.input:is_device_active("gamepad")
 
-						return not arg_27_0.using_career_skill_weapon and arg_27_0.visible
+						return not not self.using_career_skill_weapon or self.visible
 					end
 				},
 				{
@@ -1489,16 +1556,45 @@ local function var_0_12(arg_26_0, arg_26_1, arg_26_2)
 					style_id = "reload_button",
 					texture_id = "reload_button_id",
 					retained_mode = arg_26_2,
-					content_check_function = function(arg_28_0, arg_28_1)
-						return arg_28_0.on_cooldown and arg_28_0.reload_button_id and arg_28_0.using_career_skill_weapon and arg_28_0.using_gamepad
+					content_check_function = function (self, arg_28_1)
+						-- function 28
+						local on_cooldown = self.on_cooldown
+
+						if not on_cooldown then
+							on_cooldown = self.reload_button_id
+
+							if not on_cooldown then
+								on_cooldown = self.using_career_skill_weapon
+								on_cooldown = not on_cooldown and self.using_gamepad
+							end
+						end
+
+						return on_cooldown
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "ability_effect",
 					texture_id = "ability_effect",
-					content_check_function = function(arg_29_0, arg_29_1)
-						return not arg_29_0.on_cooldown and arg_29_0.using_career_skill_weapon and arg_29_0.visible
+					content_check_function = function (self, arg_29_1)
+						-- function 29
+						local using_career_skill_weapon
+
+						if not self.on_cooldown then
+							using_career_skill_weapon = self.using_career_skill_weapon
+
+							if not using_career_skill_weapon then
+								using_career_skill_weapon = self.visible
+							end
+						else
+							using_career_skill_weapon = false
+						end
+
+						if false then
+							using_career_skill_weapon = true
+						end
+
+						return using_career_skill_weapon
 					end
 				},
 				{
@@ -1506,8 +1602,25 @@ local function var_0_12(arg_26_0, arg_26_1, arg_26_2)
 					style_id = "reload_icon_frame",
 					pass_type = "texture",
 					retained_mode = arg_26_2,
-					content_check_function = function(arg_30_0, arg_30_1)
-						return not arg_30_0.on_cooldown and arg_30_0.using_career_skill_weapon and arg_30_0.visible
+					content_check_function = function (self, arg_30_1)
+						-- function 30
+						local using_career_skill_weapon
+
+						if not self.on_cooldown then
+							using_career_skill_weapon = self.using_career_skill_weapon
+
+							if not using_career_skill_weapon then
+								using_career_skill_weapon = self.visible
+							end
+						else
+							using_career_skill_weapon = false
+						end
+
+						if false then
+							using_career_skill_weapon = true
+						end
+
+						return using_career_skill_weapon
 					end
 				},
 				{
@@ -1515,8 +1628,13 @@ local function var_0_12(arg_26_0, arg_26_1, arg_26_2)
 					style_id = "reload",
 					pass_type = "texture",
 					retained_mode = arg_26_2,
-					content_check_function = function(arg_31_0, arg_31_1)
-						return arg_31_0.using_career_skill_weapon and arg_31_0.visible
+					content_check_function = function (self, arg_31_1)
+						-- function 31
+						local using_career_skill_weapon = self.using_career_skill_weapon
+
+						using_career_skill_weapon = not using_career_skill_weapon and self.visible
+
+						return using_career_skill_weapon
 					end
 				},
 				{
@@ -1524,11 +1642,20 @@ local function var_0_12(arg_26_0, arg_26_1, arg_26_2)
 					pass_type = "texture",
 					texture_id = "reload_icon_id",
 					retained_mode = arg_26_2,
-					content_check_function = function(arg_32_0, arg_32_1)
-						return arg_32_0.using_career_skill_weapon and arg_32_0.visible and arg_32_0.is_reloading
+					content_check_function = function (self, arg_32_1)
+						-- function 32
+						local using_career_skill_weapon = self.using_career_skill_weapon
+
+						if not using_career_skill_weapon then
+							using_career_skill_weapon = self.visible
+							using_career_skill_weapon = not using_career_skill_weapon and self.is_reloading
+						end
+
+						return using_career_skill_weapon
 					end,
-					content_change_function = function(arg_33_0, arg_33_1)
-						arg_33_1.color[1] = 160 + -math.cos(arg_33_0.time * 2 * math.pi) * 95
+					content_change_function = function (self, arg_33_1)
+						-- function 33
+						arg_33_1.color[1] = 160 + -math.cos(self.time * 2 * math.pi) * 95
 					end
 				},
 				{
@@ -1536,11 +1663,20 @@ local function var_0_12(arg_26_0, arg_26_1, arg_26_2)
 					pass_type = "texture",
 					texture_id = "reload_mask_id",
 					retained_mode = arg_26_2,
-					content_check_function = function(arg_34_0, arg_34_1)
-						return arg_34_0.visible and arg_34_0.is_reloading
+					content_check_function = function (self, arg_34_1)
+						-- function 34
+						local visible = self.visible
+
+						visible = not visible and self.is_reloading
+
+						return visible
 					end,
-					content_change_function = function(arg_35_0, arg_35_1)
-						arg_35_0.reload_mask_id = arg_35_0.using_career_skill_weapon and "reload_icon_mask" or "minigun_icon_mask"
+					content_change_function = function (self, arg_35_1)
+						-- function 35
+						local flag
+
+						flag = not self.using_career_skill_weapon and "reload_icon_mask" and "minigun_icon_mask"
+						self.reload_mask_id = flag
 					end
 				},
 				{
@@ -1548,53 +1684,88 @@ local function var_0_12(arg_26_0, arg_26_1, arg_26_2)
 					pass_type = "texture",
 					texture_id = "reload_overlay_id",
 					retained_mode = arg_26_2,
-					content_check_function = function(arg_36_0, arg_36_1)
-						return arg_36_0.visible and arg_36_0.is_reloading
-					end,
-					content_change_function = function(arg_37_0, arg_37_1)
-						local var_37_0 = arg_37_0.time % 1
+					content_check_function = function (self, arg_36_1)
+						-- function 36
+						local visible = self.visible
 
-						arg_37_1.offset[2] = math.lerp(-137, 137, var_37_0)
+						visible = not visible and self.is_reloading
+
+						return visible
+					end,
+					content_change_function = function (self, arg_37_1)
+						-- function 37
+						local num = self.time % 1
+
+						arg_37_1.offset[2] = math.lerp(-137, 137, num)
 					end
 				},
 				{
 					style_id = "input_text",
 					pass_type = "text",
 					text_id = "input_text",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_38_0)
-						return arg_38_0.on_cooldown and arg_38_0.visible and not arg_38_0.using_gamepad and arg_38_0.using_career_skill_weapon
-					end,
-					content_change_function = function(arg_39_0, arg_39_1)
-						local var_39_0 = Managers.input:get_service("Player"):get_keymapping("weapon_reload", "win32")
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 38
+						local on_cooldown = self.on_cooldown
 
-						if not var_39_0 then
-							arg_39_0.input_text = ""
+						if not on_cooldown then
+							on_cooldown = self.visible
+							on_cooldown = not on_cooldown and not not self.using_gamepad or self.using_career_skill_weapon
+						end
+
+						return on_cooldown
+					end,
+					content_change_function = function (self, arg_39_1)
+						-- function 39
+						local get_keymapping = Managers.input:get_service("Player"):get_keymapping("weapon_reload", "win32")
+
+						if not get_keymapping then
+							self.input_text = ""
 
 							return
 						end
 
-						local var_39_1 = var_39_0[1]
-						local var_39_2 = var_39_0[2]
-						local var_39_3 = ""
+						local var_39_1 = get_keymapping[1]
+						local var_39_2 = get_keymapping[2]
+						local str = ""
 
 						if var_39_2 ~= UNASSIGNED_KEY then
-							local var_39_4 = var_39_1 == "mouse" and Mouse or Keyboard
+							local Mouse
 
-							var_39_3 = var_39_4.button_locale_name(var_39_2) or var_39_4.button_name(var_39_2) or Localize("lb_unknown")
-							var_39_3 = Utf8.upper(var_39_3)
+							if var_39_1 == "mouse" then
+								Mouse = Mouse
+
+								if not Mouse then
+									-- Nothing
+								end
+							end
+
+							Mouse = Keyboard
+
+							::label_39_0::
+
+							str = Mouse.button_locale_name(var_39_2) or Mouse.button_name(var_39_2) or Localize("lb_unknown")
+							str = Utf8.upper(str)
 						end
 
-						arg_39_0.input_text = var_39_3
+						self.input_text = str
 					end
 				},
 				{
 					style_id = "input_text_shadow",
 					pass_type = "text",
 					text_id = "input_text",
-					retained_mode = var_0_2,
-					content_check_function = function(arg_40_0)
-						return arg_40_0.on_cooldown and arg_40_0.visible and not arg_40_0.using_gamepad and arg_40_0.using_career_skill_weapon
+					retained_mode = flag,
+					content_check_function = function (self)
+						-- function 40
+						local on_cooldown = self.on_cooldown
+
+						if not on_cooldown then
+							on_cooldown = self.visible
+							on_cooldown = not on_cooldown and not not self.using_gamepad or self.using_career_skill_weapon
+						end
+
+						return on_cooldown
 					end
 				}
 			}
@@ -1609,7 +1780,7 @@ local function var_0_12(arg_26_0, arg_26_1, arg_26_2)
 			ability_effect = "gamepad_ability_effect_cog",
 			reload_icon_id = "icon_reload",
 			reload_id = "reload_bg",
-			reload_button_id = var_26_1
+			reload_button_id = texture
 		},
 		style = {
 			input_text = {
@@ -1719,7 +1890,7 @@ local function var_0_12(arg_26_0, arg_26_1, arg_26_2)
 					140,
 					20
 				},
-				texture_size = var_26_2
+				texture_size = size
 			},
 			reload_icon = {
 				vertical_alignment = "center",
@@ -1808,14 +1979,14 @@ local function var_0_12(arg_26_0, arg_26_1, arg_26_2)
 	}
 end
 
-local var_0_13 = {
-	ability_base = var_0_11("ability_base", "hud_base", nil, var_0_2, nil, 5, "right", "bottom"),
-	hud_brushstroke = UIWidgets.create_simple_atlas_texture("hud_brushstroke", "hud_brush", nil, var_0_2, nil, nil, "right", "bottom"),
-	weapon_slot = var_0_6("weapon_slot"),
+local tbl_7 = {
+	ability_base = fn_3("ability_base", "hud_base", nil, flag, nil, 5, "right", "bottom"),
+	hud_brushstroke = UIWidgets.create_simple_atlas_texture("hud_brushstroke", "hud_brush", nil, flag, nil, nil, "right", "bottom"),
+	weapon_slot = fn("weapon_slot"),
 	extra_storage_bg = {
 		scenegraph_id = "slot",
 		offset = {
-			1 * (var_0_3[1] + 0),
+			1 * (tbl[1] + 0),
 			22,
 			-100
 		},
@@ -1825,7 +1996,7 @@ local var_0_13 = {
 					pass_type = "rotated_texture",
 					style_id = "texture",
 					texture_id = "texture",
-					retained_mode = var_0_2
+					retained_mode = flag
 				}
 			}
 		},
@@ -1855,7 +2026,7 @@ local var_0_13 = {
 		}
 	}
 }
-local var_0_14 = {
+local tbl_8 = {
 	word_wrap = false,
 	localize = false,
 	font_size = 30,
@@ -1870,18 +2041,18 @@ local var_0_14 = {
 		2
 	}
 }
-local var_0_15 = {
-	engineer_base = var_0_12("gamepad_icon_base", 10)
+local tbl_9 = {
+	engineer_base = fn_4("gamepad_icon_base", 10)
 }
-local var_0_16 = {
-	health_bar_frame = UIWidgets.create_simple_texture("console_hp_bar_frame", "health_bar_frame", nil, var_0_2),
-	background_panel_bg = UIWidgets.create_simple_texture("console_hp_bar_background", "health_bar_frame_bg", nil, var_0_2)
+local tbl_10 = {
+	health_bar_frame = UIWidgets.create_simple_texture("console_hp_bar_frame", "health_bar_frame", nil, flag),
+	background_panel_bg = UIWidgets.create_simple_texture("console_hp_bar_background", "health_bar_frame_bg", nil, flag)
 }
-local var_0_17 = {
-	ammo_text_clip = UIWidgets.create_simple_text("-", "ammo_text_clip", nil, nil, var_0_8, nil, var_0_2),
-	ammo_text_remaining = UIWidgets.create_simple_text("-", "ammo_text_remaining", nil, nil, var_0_9, nil, var_0_2),
-	ammo_text_center = UIWidgets.create_simple_text("/", "ammo_text_center", nil, nil, var_0_10, nil, var_0_2),
-	overcharge_background = UIWidgets.create_simple_texture("hud_inventory_charge_icon", "overcharge_background", nil, var_0_2),
+local tbl_11 = {
+	ammo_text_clip = UIWidgets.create_simple_text("-", "ammo_text_clip", nil, nil, tbl_4, nil, flag),
+	ammo_text_remaining = UIWidgets.create_simple_text("-", "ammo_text_remaining", nil, nil, tbl_5, nil, flag),
+	ammo_text_center = UIWidgets.create_simple_text("/", "ammo_text_center", nil, nil, tbl_6, nil, flag),
+	overcharge_background = UIWidgets.create_simple_texture("hud_inventory_charge_icon", "overcharge_background", nil, flag),
 	overcharge = UIWidgets.create_simple_uv_texture("hud_inventory_charge_icon", {
 		{
 			0,
@@ -1891,33 +2062,33 @@ local var_0_17 = {
 			1,
 			1
 		}
-	}, "overcharge", nil, var_0_2),
-	reload_tip_text = UIWidgets.create_simple_text("", "reload_ui", nil, Colors.get_color_table_with_alpha("white", 0), var_0_14, nil, var_0_2, false)
+	}, "overcharge", nil, flag),
+	reload_tip_text = UIWidgets.create_simple_text("", "reload_ui", nil, Colors.get_color_table_with_alpha("white", 0), tbl_8, nil, flag, false)
 }
-local var_0_18 = InventorySettings.slots
-local var_0_19 = {}
+local slots = InventorySettings.slots
+local tbl_12 = {}
 
-for iter_0_0 = 1, #var_0_18 do
-	local var_0_20 = var_0_18[iter_0_0].console_hud_index
+for i = 1, #slots do
+	local console_hud_index = slots[i].console_hud_index
 
-	if var_0_20 then
-		var_0_19[#var_0_19 + 1] = var_0_7(var_0_20, 6)
+	if not console_hud_index then
+		tbl_12[#tbl_12 + 1] = fn_2(console_hud_index, 6)
 	end
 end
 
-local var_0_21 = 2
-local var_0_22 = {}
+local num_3 = 2
+local tbl_13 = {}
 
-for iter_0_1 = 1, var_0_21 do
-	local var_0_23 = 2
-	local var_0_24 = 0
-	local var_0_25 = var_0_3[1]
+for j = 1, num_3 do
+	local num_4 = 2
+	local num_5 = 0
+	local var_0_25 = tbl[1]
 
-	var_0_22[iter_0_1] = {
+	tbl_13[j] = {
 		scenegraph_id = "slot",
 		offset = {
-			(var_0_23 - 1) * (var_0_25 + var_0_24),
-			55 + iter_0_1 * (var_0_4[2] - 10),
+			(num_4 - 1) * (var_0_25 + num_5),
+			55 + j * (tbl_2[2] - 10),
 			5
 		},
 		element = {
@@ -1949,7 +2120,7 @@ for iter_0_1 = 1, var_0_21 do
 					0,
 					6
 				},
-				texture_size = var_0_4,
+				texture_size = tbl_2,
 				color = {
 					0,
 					255,
@@ -1965,7 +2136,7 @@ for iter_0_1 = 1, var_0_21 do
 					0,
 					5
 				},
-				texture_size = var_0_4,
+				texture_size = tbl_2,
 				color = {
 					0,
 					255,
@@ -1983,15 +2154,18 @@ animations_definitions = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+			init = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+				-- function 41
 				arg_41_2.content.visible = true
 			end,
-			update = function(arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4)
-				local var_42_0 = 255 * math.easeOutCubic(arg_42_3)
+			update = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4)
+				-- function 42
+				local num = 255 * math.easeOutCubic(arg_42_3)
 
-				arg_42_2.style.text.text_color[1] = var_42_0
+				arg_42_2.style.text.text_color[1] = num
 			end,
-			on_complete = function(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+			on_complete = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+				-- function 43
 				return
 			end
 		},
@@ -1999,15 +2173,18 @@ animations_definitions = {
 			name = "fade_out",
 			start_progress = 2.3,
 			end_progress = 2.6,
-			init = function(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+			init = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+				-- function 44
 				return
 			end,
-			update = function(arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4)
-				local var_45_0 = 255 * (1 - math.easeOutCubic(arg_45_3))
+			update = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4)
+				-- function 45
+				local num = 255 * (1 - math.easeOutCubic(arg_45_3))
 
-				arg_45_2.style.text.text_color[1] = var_45_0
+				arg_45_2.style.text.text_color[1] = num
 			end,
-			on_complete = function(arg_46_0, arg_46_1, arg_46_2, arg_46_3)
+			on_complete = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3)
+				-- function 46
 				arg_46_2.content.visible = false
 			end
 		}
@@ -2015,14 +2192,14 @@ animations_definitions = {
 }
 
 return {
-	slot_size = var_0_3,
-	NUM_SLOTS = #var_0_19,
-	scenegraph_definition = var_0_5,
-	widget_definitions = var_0_13,
-	career_widget_definitions = var_0_15,
-	frame_definitions = var_0_16,
-	ammo_widget_definitions = var_0_17,
-	slot_widget_definitions = var_0_19,
-	extra_storage_icon_definitions = var_0_22,
+	slot_size = tbl,
+	NUM_SLOTS = #tbl_12,
+	scenegraph_definition = tbl_3,
+	widget_definitions = tbl_7,
+	career_widget_definitions = tbl_9,
+	frame_definitions = tbl_10,
+	ammo_widget_definitions = tbl_11,
+	slot_widget_definitions = tbl_12,
+	extra_storage_icon_definitions = tbl_13,
 	animations_definitions = animations_definitions
 }

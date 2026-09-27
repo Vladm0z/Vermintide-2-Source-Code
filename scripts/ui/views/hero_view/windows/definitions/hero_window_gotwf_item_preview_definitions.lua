@@ -1,20 +1,20 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/definitions/hero_window_gotwf_item_preview_definitions.lua
 
-local var_0_0 = UISettings.console_menu_scenegraphs
-local var_0_1 = {
+local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
+local tbl = {
 	800,
 	600
 }
-local var_0_2 = {
+local tbl_2 = {
 	800,
 	220
 }
-local var_0_3 = {
+local tbl_3 = {
 	16,
-	var_0_1[2] + 100
+	tbl[2] + 100
 }
-local var_0_4 = {
-	screen = var_0_0.screen,
+local tbl_4 = {
+	screen = console_menu_scenegraphs.screen,
 	background = {
 		scale = "fit_height",
 		horizontal_alignment = "center",
@@ -285,7 +285,7 @@ local var_0_4 = {
 		}
 	}
 }
-local var_0_5 = {
+local tbl_5 = {
 	word_wrap = false,
 	upper_case = false,
 	localize = false,
@@ -302,7 +302,7 @@ local var_0_5 = {
 		2
 	}
 }
-local var_0_6 = {
+local tbl_6 = {
 	word_wrap = false,
 	upper_case = false,
 	localize = false,
@@ -319,7 +319,7 @@ local var_0_6 = {
 		2
 	}
 }
-local var_0_7 = {
+local tbl_7 = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -336,7 +336,7 @@ local var_0_7 = {
 		2
 	}
 }
-local var_0_8 = {
+local tbl_8 = {
 	word_wrap = false,
 	upper_case = false,
 	localize = false,
@@ -353,7 +353,7 @@ local var_0_8 = {
 		2
 	}
 }
-local var_0_9 = {
+local tbl_9 = {
 	word_wrap = false,
 	upper_case = false,
 	localize = false,
@@ -375,7 +375,7 @@ local var_0_9 = {
 		2
 	}
 }
-local var_0_10 = {
+local tbl_10 = {
 	word_wrap = false,
 	upper_case = false,
 	localize = false,
@@ -397,7 +397,7 @@ local var_0_10 = {
 		2
 	}
 }
-local var_0_11 = {
+local tbl_11 = {
 	word_wrap = false,
 	upper_case = false,
 	localize = false,
@@ -419,7 +419,7 @@ local var_0_11 = {
 		2
 	}
 }
-local var_0_12 = {
+local tbl_12 = {
 	loading_icon = {
 		scenegraph_id = "loading_icon",
 		element = {
@@ -428,11 +428,16 @@ local var_0_12 = {
 					style_id = "texture_id",
 					pass_type = "rotated_texture",
 					texture_id = "texture_id",
-					content_change_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-						local var_1_0 = ((arg_1_1.progress or 0) + arg_1_3) % 1
+					content_change_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+						-- function 1
+						local progress = arg_1_1.progress
 
-						arg_1_1.angle = math.pow(2, math.smoothstep(var_1_0, 0, 1)) * (math.pi * 2)
-						arg_1_1.progress = var_1_0
+						progress = progress or 0
+
+						local num = (progress + arg_1_3) % 1
+
+						arg_1_1.angle = math.pow(2, math.smoothstep(num, 0, 1)) * (math.pi * 2)
+						arg_1_1.progress = num
 					end
 				}
 			}
@@ -468,35 +473,38 @@ local var_0_12 = {
 	}
 }
 
-local function var_0_13(arg_2_0)
-	local var_2_0 = "menu_frame_08"
-	local var_2_1 = UIFrameSettings[var_2_0]
+local function fn(arg_2_0)
+	-- function 2
+	local str = "menu_frame_08"
+	local var_2_1 = UIFrameSettings[str]
 	local var_2_2 = var_2_1.texture_sizes.horizontal[2]
-	local var_2_3 = {
+	local tbl = {
 		element = {}
 	}
-	local var_2_4 = {
+	local tbl_2 = {
 		{
 			style_id = "painting",
 			pass_type = "texture_uv",
 			content_id = "painting",
-			content_check_function = function(arg_3_0)
-				return arg_3_0.texture_id
+			content_check_function = function (self)
+				-- function 3
+				return self.texture_id
 			end
 		},
 		{
 			pass_type = "texture_frame",
 			style_id = "painting_frame",
 			texture_id = "painting_frame",
-			content_check_function = function(arg_4_0)
-				return arg_4_0.painting
+			content_check_function = function (self)
+				-- function 4
+				return self.painting
 			end
 		}
 	}
-	local var_2_5 = {
+	local tbl_3 = {
 		painting_frame = var_2_1.texture
 	}
-	local var_2_6 = {
+	local tbl_4 = {
 		painting = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
@@ -535,22 +543,23 @@ local function var_0_13(arg_2_0)
 		}
 	}
 
-	var_2_3.element.passes = var_2_4
-	var_2_3.content = var_2_5
-	var_2_3.style = var_2_6
-	var_2_3.offset = {
+	tbl.element.passes = tbl_2
+	tbl.content = tbl_3
+	tbl.style = tbl_4
+	tbl.offset = {
 		0,
 		0,
 		5
 	}
-	var_2_3.scenegraph_id = "item_texture"
+	tbl.scenegraph_id = "item_texture"
 
-	return var_2_3
+	return tbl
 end
 
-local function var_0_14(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+local function fn_2(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	-- function 5
 	local var_5_0 = UIFrameSettings.frame_outer_glow_04_big.texture_sizes.horizontal[2]
-	local var_5_1 = {
+	local tbl = {
 		passes = {
 			{
 				style_id = "hotspot",
@@ -579,7 +588,7 @@ local function var_0_14(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 			}
 		}
 	}
-	local var_5_2 = {
+	local tbl_2 = {
 		mask_edge = "mask_rect_edge_fade",
 		mask_texture = "mask_rect",
 		list_hotspot = {},
@@ -590,7 +599,7 @@ local function var_0_14(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 			scroll_value = 1
 		}
 	}
-	local var_5_3 = {
+	local tbl_3 = {
 		hotspot = {
 			size = {
 				arg_5_2[1],
@@ -678,9 +687,9 @@ local function var_0_14(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	}
 
 	return {
-		element = var_5_1,
-		content = var_5_2,
-		style = var_5_3,
+		element = tbl,
+		content = tbl_2,
+		style = tbl_3,
 		offset = {
 			0,
 			0,
@@ -690,7 +699,8 @@ local function var_0_14(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	}
 end
 
-local function var_0_15(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7, arg_6_8)
+local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7, arg_6_8)
+	-- function 6
 	if type(arg_6_5) ~= "table" then
 		arg_6_5 = {
 			0,
@@ -700,11 +710,11 @@ local function var_0_15(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, ar
 	end
 
 	if arg_6_6 == "native" then
-		local var_6_0 = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_6_0).size
+		local size = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_6_0).size
 
 		arg_6_6 = {
-			var_6_0[1],
-			var_6_0[2]
+			size[1],
+			size[2]
 		}
 	end
 
@@ -716,8 +726,9 @@ local function var_0_15(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, ar
 					style_id = "texture_id",
 					pass_type = "texture",
 					retained_mode = arg_6_3,
-					content_check_function = function(arg_7_0)
-						return arg_7_0.texture_id
+					content_check_function = function (self)
+						-- function 7
+						return self.texture_id
 					end
 				}
 			}
@@ -751,7 +762,7 @@ local function var_0_15(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, ar
 	}
 end
 
-local var_0_16 = {
+local tbl_13 = {
 	word_wrap = false,
 	upper_case = false,
 	localize = false,
@@ -772,7 +783,7 @@ local var_0_16 = {
 		1
 	}
 }
-local var_0_17 = {
+local tbl_14 = {
 	word_wrap = false,
 	upper_case = false,
 	localize = false,
@@ -794,96 +805,115 @@ local var_0_17 = {
 	}
 }
 
-local function var_0_18(arg_8_0, arg_8_1, arg_8_2)
+local function fn_4(arg_8_0, arg_8_1, arg_8_2)
+	-- function 8
 	arg_8_2 = arg_8_2 or 1
 
-	local var_8_0 = arg_8_1 or "default"
-	local var_8_1 = UIPlayerPortraitFrameSettings[var_8_0]
-	local var_8_2 = {
+	local flag = arg_8_1 or "default"
+	local var_8_1 = UIPlayerPortraitFrameSettings[flag]
+	local tbl = {
 		255,
 		255,
 		255,
 		255
 	}
-	local var_8_3 = {
+	local tbl_2 = {
 		0,
 		0,
 		0
 	}
-	local var_8_4 = {
+	local tbl_3 = {
 		element = {}
 	}
-	local var_8_5 = {}
-	local var_8_6 = {
+	local tbl_4 = {}
+	local tbl_5 = {
 		scale = arg_8_2,
-		frame_settings_name = var_8_0
+		frame_settings_name = flag
 	}
-	local var_8_7 = {}
+	local tbl_6 = {}
 
-	for iter_8_0, iter_8_1 in ipairs(var_8_1) do
-		local var_8_8 = "texture_" .. iter_8_0
-		local var_8_9 = iter_8_1.texture or "icons_placeholder"
-		local var_8_10 = iter_8_1.size
+	for i, v in ipairs(var_8_1) do
+		local str = "texture_" .. i
+		local texture = v.texture
 
-		if UIAtlasHelper.has_atlas_settings_by_texture_name(var_8_9) then
-			var_8_10 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_8_9).size
+		texture = texture or "icons_placeholder"
+
+		local size = v.size
+
+		if not UIAtlasHelper.has_atlas_settings_by_texture_name(texture) then
+			size = UIAtlasHelper.get_atlas_settings_by_texture_name(texture).size
 		else
-			var_8_10 = iter_8_1.size
+			size = v.size
 		end
 
-		local var_8_11
+		local flag_2
 
-		var_8_11 = var_8_10 and table.clone(var_8_10) or {
+		flag_2 = not size and table.clone(size) and {
 			0,
 			0
 		}
-		var_8_11[1] = var_8_11[1] * arg_8_2
-		var_8_11[2] = var_8_11[2] * arg_8_2
+		flag_2[1] = flag_2[1] * arg_8_2
+		flag_2[2] = flag_2[2] * arg_8_2
 
-		local var_8_12 = table.clone(iter_8_1.offset or var_8_3)
+		local clone = table.clone
+		local offset = v.offset
 
-		var_8_12[1] = var_8_12[1] * arg_8_2
-		var_8_12[2] = var_8_12[2] * arg_8_2
-		var_8_12[3] = iter_8_1.layer or 0
-		var_8_5[#var_8_5 + 1] = {
+		offset = offset or tbl_2
+
+		local var_8_14 = clone(offset)
+
+		var_8_14[1] = var_8_14[1] * arg_8_2
+		var_8_14[2] = var_8_14[2] * arg_8_2
+
+		local layer = v.layer
+
+		layer = layer or 0
+		var_8_14[3] = layer
+		tbl_4[#tbl_4 + 1] = {
 			pass_type = "texture",
-			texture_id = var_8_8,
-			style_id = var_8_8
+			texture_id = str,
+			style_id = str
 		}
-		var_8_6[var_8_8] = var_8_9
-		var_8_7[var_8_8] = {
+		tbl_5[str] = texture
+
+		local tbl_7 = {
 			vertical_alignment = "center",
-			horizontal_alignment = "center",
-			color = iter_8_1.color or var_8_2,
-			offset = var_8_12,
-			texture_size = var_8_11
+			horizontal_alignment = "center"
 		}
+		local color = v.color
+
+		color = color or tbl
+		tbl_7.color = color
+		tbl_7.offset = var_8_14
+		tbl_7.texture_size = flag_2
+		tbl_6[str] = tbl_7
 	end
 
-	var_8_4.element.passes = var_8_5
-	var_8_4.content = var_8_6
-	var_8_4.style = var_8_7
-	var_8_4.offset = {
+	tbl_3.element.passes = tbl_4
+	tbl_3.content = tbl_5
+	tbl_3.style = tbl_6
+	tbl_3.offset = {
 		0,
 		0,
 		0
 	}
-	var_8_4.scenegraph_id = arg_8_0
+	tbl_3.scenegraph_id = arg_8_0
 
-	return var_8_4
+	return tbl_3
 end
 
-local function var_0_19(arg_9_0)
-	local var_9_0 = string.gsub(Localize("search_filter_claimed"), "^%l", string.upper)
-	local var_9_1 = 32
-	local var_9_2 = "hell_shark_header"
-	local var_9_3, var_9_4 = UIFontByResolution(var_0_16)
-	local var_9_5, var_9_6, var_9_7 = UIRenderer.text_size(arg_9_0, var_9_0, var_9_3[1], var_9_4)
+local function fn_5(arg_9_0)
+	-- function 9
+	local gsub = string.gsub(Localize("search_filter_claimed"), "^%l", string.upper)
+	local num = 32
+	local str = "hell_shark_header"
+	local var_9_3, var_9_4 = UIFontByResolution(tbl_13)
+	local text_size, var_9_6, var_9_7 = UIRenderer.text_size(arg_9_0, gsub, var_9_3[1], var_9_4)
 	local var_9_8 = Localize("event_gotwf_already_owned")
-	local var_9_9, var_9_10, var_9_11 = UIRenderer.text_size(arg_9_0, var_9_8, var_9_3[1], var_9_4)
-	local var_9_12 = var_0_4.claimed.size[1]
-	local var_9_13 = math.min(var_9_5, var_9_12)
-	local var_9_14 = math.min(var_9_9, var_9_12)
+	local text_size_2, var_9_10, var_9_11 = UIRenderer.text_size(arg_9_0, var_9_8, var_9_3[1], var_9_4)
+	local var_9_12 = tbl_4.claimed.size[1]
+	local min = math.min(text_size, var_9_12)
+	local min_2 = math.min(text_size_2, var_9_12)
 
 	return {
 		scenegraph_id = "claimed",
@@ -893,62 +923,70 @@ local function var_0_19(arg_9_0)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_10_0)
-						return not arg_10_0.already_owned
+					content_check_function = function (self)
+						-- function 10
+						return not self.already_owned
 					end
 				},
 				{
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_11_0)
-						return not arg_11_0.already_owned
+					content_check_function = function (self)
+						-- function 11
+						return not self.already_owned
 					end
 				},
 				{
 					style_id = "background",
 					pass_type = "rect",
-					content_check_function = function(arg_12_0)
-						return not arg_12_0.already_owned
+					content_check_function = function (self)
+						-- function 12
+						return not self.already_owned
 					end
 				},
 				{
 					texture_id = "sigil",
 					style_id = "sigil",
 					pass_type = "texture",
-					content_check_function = function(arg_13_0)
-						return not arg_13_0.already_owned
+					content_check_function = function (self)
+						-- function 13
+						return not self.already_owned
 					end
 				},
 				{
 					style_id = "text",
 					pass_type = "text",
 					text_id = "owned_text",
-					content_check_function = function(arg_14_0)
-						return arg_14_0.already_owned
+					content_check_function = function (self)
+						-- function 14
+						return self.already_owned
 					end
 				},
 				{
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "owned_text",
-					content_check_function = function(arg_15_0)
-						return arg_15_0.already_owned
+					content_check_function = function (self)
+						-- function 15
+						return self.already_owned
 					end
 				},
 				{
 					style_id = "background_owned",
 					pass_type = "rect",
-					content_check_function = function(arg_16_0)
-						return arg_16_0.already_owned
+					content_check_function = function (self)
+						-- function 16
+						return self.already_owned
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "sigil_owned",
 					texture_id = "sigil",
-					content_check_function = function(arg_17_0)
-						return arg_17_0.already_owned
+					content_check_function = function (self)
+						-- function 17
+						return self.already_owned
 					end
 				}
 			}
@@ -956,17 +994,17 @@ local function var_0_19(arg_9_0)
 		content = {
 			already_owned = true,
 			sigil = "store_owned_sigil",
-			text = var_9_0,
+			text = gsub,
 			owned_text = var_9_8
 		},
 		style = {
-			text = var_0_16,
-			text_shadow = var_0_17,
+			text = tbl_13,
+			text_shadow = tbl_14,
 			background = {
 				vertical_alignment = "center",
 				horizontal_alignment = "right",
 				texture_size = {
-					var_9_13 + 35,
+					min + 35,
 					35
 				},
 				color = {
@@ -995,7 +1033,7 @@ local function var_0_19(arg_9_0)
 					255
 				},
 				offset = {
-					-var_9_13,
+					-min,
 					0,
 					5
 				}
@@ -1004,7 +1042,7 @@ local function var_0_19(arg_9_0)
 				vertical_alignment = "center",
 				horizontal_alignment = "right",
 				texture_size = {
-					var_9_14 + 35,
+					min_2 + 35,
 					35
 				},
 				color = {
@@ -1033,7 +1071,7 @@ local function var_0_19(arg_9_0)
 					255
 				},
 				offset = {
-					-var_9_14,
+					-min_2,
 					0,
 					5
 				}
@@ -1047,31 +1085,34 @@ local function var_0_19(arg_9_0)
 	}
 end
 
-local var_0_20 = false
-local var_0_21 = {
+local flag = false
+local tbl_15 = {
 	disclaimer_divider = UIWidgets.create_simple_texture("tooltip_marker_gold", "disclaimer_divider"),
-	disclaimer_text = UIWidgets.create_simple_text(Localize("menu_store_product_hero_skin_disclaimer_desc"), "disclaimer_text", nil, nil, var_0_10),
-	amount_text = UIWidgets.create_simple_text("", "amount_text", nil, nil, var_0_11),
-	title_text = UIWidgets.create_simple_text("", "title_text", nil, nil, var_0_5),
-	type_title_text = UIWidgets.create_simple_text("", "sub_title_text", nil, nil, var_0_8),
-	sub_title_text = UIWidgets.create_simple_text("", "profile_title_text", nil, nil, var_0_6),
-	description_text = UIWidgets.create_simple_text("", "profile_title_text", nil, nil, var_0_7),
-	career_title_text = UIWidgets.create_simple_text("", "career_title_text", nil, nil, var_0_9),
+	disclaimer_text = UIWidgets.create_simple_text(Localize("menu_store_product_hero_skin_disclaimer_desc"), "disclaimer_text", nil, nil, tbl_10),
+	amount_text = UIWidgets.create_simple_text("", "amount_text", nil, nil, tbl_11),
+	title_text = UIWidgets.create_simple_text("", "title_text", nil, nil, tbl_5),
+	type_title_text = UIWidgets.create_simple_text("", "sub_title_text", nil, nil, tbl_8),
+	sub_title_text = UIWidgets.create_simple_text("", "profile_title_text", nil, nil, tbl_6),
+	description_text = UIWidgets.create_simple_text("", "profile_title_text", nil, nil, tbl_7),
+	career_title_text = UIWidgets.create_simple_text("", "career_title_text", nil, nil, tbl_9),
 	viewport_button = UIWidgets.create_simple_hotspot("viewport")
 }
-local var_0_22 = {
+local tbl_16 = {
 	on_enter = {
 		{
 			name = "delay",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			init = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+				-- function 18
 				return
 			end,
-			update = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+			update = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+				-- function 19
 				return
 			end,
-			on_complete = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+			on_complete = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+				-- function 20
 				return
 			end
 		},
@@ -1079,15 +1120,18 @@ local var_0_22 = {
 			name = "fade_in",
 			start_progress = 0.3,
 			end_progress = 0.6,
-			init = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			init = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+				-- function 21
 				arg_21_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
-				local var_22_0 = math.easeOutCubic(arg_22_3)
+			update = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+				-- function 22
+				local easeOutCubic = math.easeOutCubic(arg_22_3)
 
-				arg_22_4.render_settings.alpha_multiplier = var_22_0
+				arg_22_4.render_settings.alpha_multiplier = easeOutCubic
 			end,
-			on_complete = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+			on_complete = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+				-- function 23
 				return
 			end
 		}
@@ -1097,7 +1141,8 @@ local var_0_22 = {
 			name = "animate_in",
 			start_progress = 0.3,
 			end_progress = 0.8,
-			init = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+			init = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+				-- function 24
 				arg_24_2.claimed.alpha_multiplier = 0
 				arg_24_2.title_text.alpha_multiplier = 0
 				arg_24_2.type_title_text.alpha_multiplier = 0
@@ -1106,18 +1151,20 @@ local var_0_22 = {
 				arg_24_2.description_text.alpha_multiplier = 0
 				arg_24_0.info_anchor.local_position[1] = arg_24_1.info_anchor.position[1] + 50
 			end,
-			update = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
-				local var_25_0 = math.easeOutCubic(arg_25_3)
+			update = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
+				-- function 25
+				local easeOutCubic = math.easeOutCubic(arg_25_3)
 
-				arg_25_0.info_anchor.local_position[1] = math.lerp(arg_25_1.info_anchor.position[1] + 50, arg_25_1.info_anchor.position[1], var_25_0)
-				arg_25_2.claimed.alpha_multiplier = var_25_0
-				arg_25_2.title_text.alpha_multiplier = var_25_0
-				arg_25_2.type_title_text.alpha_multiplier = var_25_0
-				arg_25_2.sub_title_text.alpha_multiplier = var_25_0
-				arg_25_2.career_title_text.alpha_multiplier = var_25_0
-				arg_25_2.description_text.alpha_multiplier = var_25_0
+				arg_25_0.info_anchor.local_position[1] = math.lerp(arg_25_1.info_anchor.position[1] + 50, arg_25_1.info_anchor.position[1], easeOutCubic)
+				arg_25_2.claimed.alpha_multiplier = easeOutCubic
+				arg_25_2.title_text.alpha_multiplier = easeOutCubic
+				arg_25_2.type_title_text.alpha_multiplier = easeOutCubic
+				arg_25_2.sub_title_text.alpha_multiplier = easeOutCubic
+				arg_25_2.career_title_text.alpha_multiplier = easeOutCubic
+				arg_25_2.description_text.alpha_multiplier = easeOutCubic
 			end,
-			on_complete = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+			on_complete = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+				-- function 26
 				return
 			end
 		}
@@ -1125,12 +1172,12 @@ local var_0_22 = {
 }
 
 return {
-	top_widgets = var_0_21,
-	loading_widgets = var_0_12,
-	create_claimed_widget = var_0_19,
-	create_painting_widget = var_0_13,
-	create_texture_widget = var_0_15,
+	top_widgets = tbl_15,
+	loading_widgets = tbl_12,
+	create_claimed_widget = fn_5,
+	create_painting_widget = fn,
+	create_texture_widget = fn_3,
 	generic_input_actions = generic_input_actions,
-	scenegraph_definition = var_0_4,
-	animation_definitions = var_0_22
+	scenegraph_definition = tbl_4,
+	animation_definitions = tbl_16
 }

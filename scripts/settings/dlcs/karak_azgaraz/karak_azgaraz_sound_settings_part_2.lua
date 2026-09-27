@@ -1,9 +1,9 @@
 -- chunkname: @scripts/settings/dlcs/karak_azgaraz/karak_azgaraz_sound_settings_part_2.lua
 
-local var_0_0 = DLCSettings.karak_azgaraz_part_2
+local karak_azgaraz_part_2 = DLCSettings.karak_azgaraz_part_2
 
-var_0_0.network_sound_events = {}
-var_0_0.dialogue_lookup = {
+karak_azgaraz_part_2.network_sound_events = {}
+karak_azgaraz_part_2.dialogue_lookup = {
 	"dialogues/generated/lookup_wood_elf_dlc_dwarf_exterior",
 	"dialogues/generated/lookup_empire_soldier_dlc_dwarf_exterior",
 	"dialogues/generated/lookup_bright_wizard_dlc_dwarf_exterior",
@@ -11,7 +11,7 @@ var_0_0.dialogue_lookup = {
 	"dialogues/generated/lookup_witch_hunter_dlc_dwarf_exterior",
 	"dialogues/generated/lookup_npc_dlc_dwarf_exterior"
 }
-var_0_0.dialogue_settings = {
+karak_azgaraz_part_2.dialogue_settings = {
 	dlc_dwarf_exterior = {
 		"dialogues/generated/wood_elf_dlc_dwarf_exterior",
 		"dialogues/generated/empire_soldier_dlc_dwarf_exterior",

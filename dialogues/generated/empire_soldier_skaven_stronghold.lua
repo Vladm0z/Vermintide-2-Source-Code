@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/empire_soldier_skaven_stronghold.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pes_gameplay_chieftain_tips_special_attack_cleave",

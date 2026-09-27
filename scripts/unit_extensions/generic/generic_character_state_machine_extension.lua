@@ -39,59 +39,65 @@ DLCUtils.dofile_list("character_states")
 
 GenericCharacterStateMachineExtension = class(GenericCharacterStateMachineExtension)
 
-function GenericCharacterStateMachineExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	arg_1_0.world = arg_1_1.world
-	arg_1_0.network_transmit = arg_1_1.network_transmit
-	arg_1_0.unit_storage = arg_1_1.unit_storage
-	arg_1_0.unit = arg_1_2
-	arg_1_0.player = arg_1_3.player
-	arg_1_0.start_state = arg_1_3.start_state
-	arg_1_0.character_state_class_list = arg_1_3.character_state_class_list
-	arg_1_0.nav_world = arg_1_3.nav_world
-	arg_1_0.state_machine = GenericStateMachine:new(arg_1_0.world, arg_1_0.unit)
+GenericCharacterStateMachineExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	self.world = arg_1_1.world
+	self.network_transmit = arg_1_1.network_transmit
+	self.unit_storage = arg_1_1.unit_storage
+	self.unit = arg_1_2
+	self.player = arg_1_3.player
+	self.start_state = arg_1_3.start_state
+	self.character_state_class_list = arg_1_3.character_state_class_list
+	self.nav_world = arg_1_3.nav_world
+	self.state_machine = GenericStateMachine:new(self.world, self.unit)
 end
 
-function GenericCharacterStateMachineExtension.extensions_ready(arg_2_0)
-	local var_2_0 = {
-		world = arg_2_0.world,
-		unit = arg_2_0.unit,
-		player = arg_2_0.player,
-		csm = arg_2_0.state_machine,
-		network_transmit = arg_2_0.network_transmit,
-		unit_storage = arg_2_0.unit_storage,
-		nav_world = arg_2_0.nav_world
+GenericCharacterStateMachineExtension.extensions_ready = function (self)
+	-- function 2
+	local tbl = {
+		world = self.world,
+		unit = self.unit,
+		player = self.player,
+		csm = self.state_machine,
+		network_transmit = self.network_transmit,
+		unit_storage = self.unit_storage,
+		nav_world = self.nav_world
 	}
-	local var_2_1 = {}
-	local var_2_2 = arg_2_0.character_state_class_list
+	local tbl_2 = {}
+	local character_state_class_list = self.character_state_class_list
 
-	for iter_2_0 = 1, #var_2_2 do
-		local var_2_3 = var_2_2[iter_2_0]:new(var_2_0)
-		local var_2_4 = var_2_3.name
+	for i = 1, #character_state_class_list do
+		local var_2_3 = character_state_class_list[i]:new(tbl)
+		local name = var_2_3.name
 
-		assert(var_2_4 and var_2_1[var_2_4] == nil)
+		assert(not name and tbl_2[name] == nil)
 
-		var_2_1[var_2_4] = var_2_3
+		tbl_2[name] = var_2_3
 	end
 
-	local var_2_5 = arg_2_0.start_state
+	local start_state = self.start_state
 
-	arg_2_0.state_machine:post_init(var_2_1, var_2_5)
+	self.state_machine:post_init(tbl_2, start_state)
 end
 
-function GenericCharacterStateMachineExtension.destroy(arg_3_0)
-	local var_3_0 = true
+GenericCharacterStateMachineExtension.destroy = function (self)
+	-- function 3
+	local flag = true
 
-	arg_3_0.state_machine:exit_current_state(var_3_0)
+	self.state_machine:exit_current_state(flag)
 end
 
-function GenericCharacterStateMachineExtension.reset(arg_4_0)
-	arg_4_0.state_machine:reset()
+GenericCharacterStateMachineExtension.reset = function (self)
+	-- function 4
+	self.state_machine:reset()
 end
 
-function GenericCharacterStateMachineExtension.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
-	arg_5_0.state_machine:update(arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+GenericCharacterStateMachineExtension.update = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	-- function 5
+	self.state_machine:update(arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 end
 
-function GenericCharacterStateMachineExtension.current_state(arg_6_0)
-	return arg_6_0.state_machine:current_state()
+GenericCharacterStateMachineExtension.current_state = function (self)
+	-- function 6
+	return self.state_machine:current_state()
 end

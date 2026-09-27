@@ -57,7 +57,7 @@ VersusObjectiveSettings = {
 	}
 }
 
-local var_0_0 = {
+local tbl = {
 	always_show_objective_marker = true,
 	mission_name = true,
 	play_safehouse_vo = true,
@@ -93,96 +93,101 @@ local var_0_0 = {
 	}
 }
 
-local function var_0_1(arg_1_0, arg_1_1)
-	local var_1_0 = 999
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
+	local num = 999
 	local var_1_1
 
-	for iter_1_0, iter_1_1 in pairs(arg_1_1) do
-		local var_1_2 = string.damerau_levenshtein_distance(iter_1_0, arg_1_0, 5)
+	for k, v in pairs(arg_1_1) do
+		local damerau_levenshtein_distance = string.damerau_levenshtein_distance(k, arg_1_0, 5)
 
-		if var_1_2 < var_1_0 then
-			var_1_0 = var_1_2
-			var_1_1 = iter_1_0
+		if damerau_levenshtein_distance < num then
+			num = damerau_levenshtein_distance
+			var_1_1 = k
 		end
 	end
 
-	if var_1_1 then
+	if not var_1_1 then
 		return var_1_1
 	end
 end
 
-local function var_0_2(arg_2_0)
-	local var_2_0 = 0
+local function fn_2(arg_2_0)
+	-- function 2
+	local num = 0
 
-	for iter_2_0, iter_2_1 in pairs(arg_2_0) do
-		for iter_2_2, iter_2_3 in pairs(iter_2_1) do
-			local var_2_1 = var_0_0[iter_2_2]
+	for k, v in pairs(arg_2_0) do
+		for k_2, v_2 in pairs(v) do
+			local var_2_1 = tbl[k_2]
 
 			if not var_2_1 then
-				local var_2_2 = var_0_1(iter_2_2, var_0_0)
+				local var_2_2 = fn(k_2, tbl)
 
-				if var_2_2 then
-					fassert(false, "Bad objective keyword found in objective_templates_vs.lua: '%s', did you mean '%s' ?", iter_2_2, var_2_2)
+				if not var_2_2 then
+					fassert(false, "Bad objective keyword found in objective_templates_vs.lua: '%s', did you mean '%s' ?", k_2, var_2_2)
 				else
-					fassert(false, "Bad objective keyword found objective_templates_vs.lua: '%s', was it misspelled?", iter_2_2)
+					fassert(false, "Bad objective keyword found objective_templates_vs.lua: '%s', was it misspelled?", k_2)
 				end
 			end
 
 			if type(var_2_1) == "table" then
-				local var_2_3 = var_0_1(iter_2_3, var_2_1)
+				local var_2_3 = fn(v_2, var_2_1)
 
-				fassert(var_2_1[iter_2_3], "Bad objective: Objective keyword '%s' is set to '%s' which does not exist or is misspelled. Did you mean '%s' ?", iter_2_2, iter_2_3, var_2_3)
+				fassert(var_2_1[v_2], "Bad objective: Objective keyword '%s' is set to '%s' which does not exist or is misspelled. Did you mean '%s' ?", k_2, v_2, var_2_3)
 			end
 		end
 
-		GameModeSettings.versus.objective_names[iter_2_0] = true
+		GameModeSettings.versus.objective_names[k] = true
 
-		if iter_2_1.sub_objectives then
-			var_2_0 = var_2_0 + var_0_2(iter_2_1.sub_objectives)
+		if not v.sub_objectives then
+			num = num + fn_2(v.sub_objectives)
 		end
 
-		var_2_0 = var_2_0 + (iter_2_1.score_for_completion or 0)
+		local score_for_completion = v.score_for_completion
 
-		local var_2_4 = iter_2_1.score_per_section
+		score_for_completion = score_for_completion or 0
+		num = num + score_for_completion
 
-		if var_2_4 then
-			var_2_0 = var_2_0 + var_2_4 * iter_2_1.num_sections
+		local score_per_section = v.score_per_section
+
+		if not score_per_section then
+			num = num + score_per_section * v.num_sections
 		end
 
-		local var_2_5 = iter_2_1.score_per_socket
+		local score_per_socket = v.score_per_socket
 
-		if var_2_5 then
-			var_2_0 = var_2_0 + var_2_5 * iter_2_1.num_sockets
+		if not score_per_socket then
+			num = num + score_per_socket * v.num_sockets
 		end
 
-		local var_2_6 = iter_2_1.score_for_each_player_inside
+		local score_for_each_player_inside = v.score_for_each_player_inside
 
-		if var_2_6 then
-			var_2_0 = var_2_0 + var_2_6 * 4
+		if not score_for_each_player_inside then
+			num = num + score_for_each_player_inside * 4
 		end
 	end
 
-	return var_2_0
+	return num
 end
 
 GameModeSettings.versus.objective_names = {}
 
-for iter_0_0, iter_0_1 in pairs(VersusObjectiveSettings) do
-	local var_0_3 = iter_0_1.objective_lists
+for k, v in pairs(VersusObjectiveSettings) do
+	local objective_lists = v.objective_lists
 
-	iter_0_1.max_score = 0
+	v.max_score = 0
 
-	for iter_0_2 = 1, #var_0_3 do
-		local var_0_4 = ObjectiveLists[var_0_3[iter_0_2]]
-		local var_0_5 = 0
+	for k_2 = 1, #objective_lists do
+		local var_0_4 = ObjectiveLists[objective_lists[k_2]]
+		local num = 0
 
-		for iter_0_3 = 1, #var_0_4 do
-			local var_0_6 = var_0_4[iter_0_3]
+		for l = 1, #var_0_4 do
+			local var_0_6 = var_0_4[l]
 
-			var_0_5 = var_0_5 + var_0_2(var_0_6)
+			num = num + fn_2(var_0_6)
 		end
 
-		var_0_4.max_score = var_0_5
-		iter_0_1.max_score = iter_0_1.max_score + var_0_5
+		var_0_4.max_score = num
+		v.max_score = v.max_score + num
 	end
 end

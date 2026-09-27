@@ -4,39 +4,41 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTBulwarkFollowAction = class(BTBulwarkFollowAction, BTNode)
 
-local var_0_0 = 36
-local var_0_1 = 16
-local var_0_2 = 0.01
-local var_0_3 = 3
-local var_0_4 = 2
-local var_0_5 = 10
-local var_0_6 = 2
-local var_0_7 = 1
-local var_0_8 = 0.05
-local var_0_9 = POSITION_LOOKUP
-local var_0_10 = 7
-local var_0_11 = 30
-local var_0_12 = 3
+local num = 36
+local num_2 = 16
+local num_3 = 0.01
+local num_4 = 3
+local num_5 = 2
+local num_6 = 10
+local num_7 = 2
+local num_8 = 1
+local num_9 = 0.05
+local POSITION_LOOKUP = POSITION_LOOKUP
+local num_10 = 7
+local num_11 = 30
+local num_12 = 3
 
-function BTBulwarkFollowAction.init(arg_1_0, ...)
-	BTBulwarkFollowAction.super.init(arg_1_0, ...)
+BTBulwarkFollowAction.init = function (self, ...)
+	-- function 1
+	BTBulwarkFollowAction.super.init(self, ...)
 
-	arg_1_0.next_time_to_trigger_running_dialogue = 0
-	arg_1_0.triggered_units = {}
+	self.next_time_to_trigger_running_dialogue = 0
+	self.triggered_units = {}
 end
 
 BTBulwarkFollowAction.name = "BTBulwarkFollowAction"
 
-local var_0_13 = 0.0001
+local num_13 = 0.0001
 
-function BTBulwarkFollowAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
-	local var_2_0 = arg_2_0._tree_node.action_data
+BTBulwarkFollowAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+	-- function 2
+	local action_data = self._tree_node.action_data
 
-	arg_2_2.action = var_2_0
-	arg_2_2.active_node = arg_2_0
+	arg_2_2.action = action_data
+	arg_2_2.active_node = self
 	arg_2_2.time_to_next_evaluate = arg_2_3 + 0.5
 
-	if arg_2_2.sneaky then
+	if not arg_2_2.sneaky then
 		arg_2_2.time_to_next_friend_alert = arg_2_3 + 99999
 	else
 		arg_2_2.time_to_next_friend_alert = arg_2_3 + 0.3
@@ -44,46 +46,68 @@ function BTBulwarkFollowAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 
 	Managers.state.entity:system("ai_slot_system"):do_slot_search(arg_2_1, true)
 
-	local var_2_1 = arg_2_2.target_unit
-	local var_2_2 = arg_2_2.locomotion_extension
-	local var_2_3 = LocomotionUtils.rotation_towards_unit_flat(arg_2_1, var_2_1)
+	local target_unit = arg_2_2.target_unit
+	local locomotion_extension = arg_2_2.locomotion_extension
+	local rotation_towards_unit_flat = LocomotionUtils.rotation_towards_unit_flat(arg_2_1, target_unit)
 
-	var_2_2:set_wanted_rotation(var_2_3)
+	locomotion_extension:set_wanted_rotation(rotation_towards_unit_flat)
 
-	local var_2_4 = var_0_9[arg_2_1]
-	local var_2_5 = arg_2_2.breed
-	local var_2_6 = var_2_5.enter_walk_distance and var_2_5.enter_walk_distance^2 or var_0_1
-	local var_2_7 = arg_2_2.navigation_extension:destination()
+	local var_2_4 = POSITION_LOOKUP[arg_2_1]
+	local breed = arg_2_2.breed
+	local num
 
-	if arg_2_0:_should_walk(var_2_7, var_2_4, var_2_6, var_2_3, arg_2_2) then
-		arg_2_2.walking = true
-		arg_2_2.walk_timer = arg_2_3 + (var_2_0.walk_time or 3 + 1 * Math.random())
+	if not breed.enter_walk_distance then
+		num = breed.enter_walk_distance^2
+
+		if not num then
+			-- Nothing
+		end
 	end
 
-	if var_2_0.skip_start_anim_if_moving and arg_2_2.move_state == "moving" then
+	num = num_2
+
+	::label_2_0::
+
+	local destination = arg_2_2.navigation_extension:destination()
+
+	if not self:_should_walk(destination, var_2_4, num, rotation_towards_unit_flat, arg_2_2) then
+		arg_2_2.walking = true
+
+		local walk_time = action_data.walk_time
+
+		walk_time = walk_time or 3 + 1 * Math.random()
+		arg_2_2.walk_timer = arg_2_3 + walk_time
+	end
+
+	if not (not action_data.skip_start_anim_if_moving and arg_2_2.move_state ~= "moving") then
 		arg_2_2.skip_start_anim = true
 	end
 
-	arg_2_2.lerp_into_follow_t = arg_2_2.lerp_into_follow and arg_2_3
+	local lerp_into_follow = arg_2_2.lerp_into_follow
+
+	lerp_into_follow = not lerp_into_follow and arg_2_3
+	arg_2_2.lerp_into_follow_t = lerp_into_follow
 	arg_2_2.lerp_into_follow = nil
 end
 
-function BTBulwarkFollowAction._should_walk(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
-	if arg_3_5.is_charging then
+BTBulwarkFollowAction._should_walk = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	-- function 3
+	if not arg_3_5.is_charging then
 		return false
 	end
 
-	local var_3_0 = arg_3_1 - arg_3_2
-	local var_3_1 = Vector3.dot(Quaternion.forward(arg_3_4), var_3_0)
-	local var_3_2 = Vector3.dot(Quaternion.right(arg_3_4), var_3_0)
-	local var_3_3 = var_3_1 * var_3_1 + var_3_2 * var_0_2 * (var_3_2 * var_0_2)
+	local num = arg_3_1 - arg_3_2
+	local dot = Vector3.dot(Quaternion.forward(arg_3_4), num)
+	local dot_2 = Vector3.dot(Quaternion.right(arg_3_4), num)
+	local num_2 = dot * dot + dot_2 * num_3 * (dot_2 * num_3)
 
-	arg_3_5.is_charging = not (var_3_3 < arg_3_3)
+	arg_3_5.is_charging = not (num_2 < arg_3_3)
 
-	return var_3_3 < arg_3_3
+	return num_2 < arg_3_3
 end
 
-function BTBulwarkFollowAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTBulwarkFollowAction.leave = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	-- function 4
 	arg_4_2.active_node = nil
 	arg_4_2.is_charging = nil
 
@@ -91,11 +115,11 @@ function BTBulwarkFollowAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4
 		return
 	end
 
-	if Managers.state.network:in_game_session() then
-		arg_4_0:set_start_move_animation_lock(arg_4_1, arg_4_2, false)
+	if not Managers.state.network:in_game_session() then
+		self:set_start_move_animation_lock(arg_4_1, arg_4_2, false)
 	end
 
-	if arg_4_2.is_turning then
+	if not arg_4_2.is_turning then
 		LocomotionUtils.reset_turning(arg_4_1, arg_4_2)
 
 		arg_4_2.is_turning = nil
@@ -112,104 +136,146 @@ function BTBulwarkFollowAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4
 	arg_4_2.skip_start_anim = nil
 	arg_4_2.lerp_into_follow_t = nil
 
-	local var_4_0 = AiUtils.get_default_breed_move_speed(arg_4_1, arg_4_2)
+	local get_default_breed_move_speed = AiUtils.get_default_breed_move_speed(arg_4_1, arg_4_2)
 
-	arg_4_2.navigation_extension:set_max_speed(var_4_0)
+	arg_4_2.navigation_extension:set_max_speed(get_default_breed_move_speed)
 
-	arg_4_0.triggered_units[arg_4_1] = nil
+	self.triggered_units[arg_4_1] = nil
 end
 
-local var_0_14 = Unit.alive
+local alive = Unit.alive
 
-function BTBulwarkFollowAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
-	if not var_0_14(arg_5_2.target_unit) then
+BTBulwarkFollowAction.run = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	-- function 5
+	if not alive(arg_5_2.target_unit) then
 		return "done"
 	end
 
-	if arg_5_2.spawn_to_running or arg_5_2.skip_start_anim then
+	if arg_5_2.spawn_to_running or not arg_5_2.skip_start_anim then
 		arg_5_2.spawn_to_running = nil
 		arg_5_2.start_anim_done = true
 		arg_5_2.move_state = "moving"
 		arg_5_2.start_anim_locked = nil
 		arg_5_2.skip_start_anim = nil
 
-		arg_5_0:set_start_move_animation_lock(arg_5_1, arg_5_2, false)
+		self:set_start_move_animation_lock(arg_5_1, arg_5_2, false)
 	end
 
-	if arg_5_2.walking then
-		arg_5_0:_update_walking(arg_5_1, arg_5_2, arg_5_4, arg_5_3)
+	if not arg_5_2.walking then
+		self:_update_walking(arg_5_1, arg_5_2, arg_5_4, arg_5_3)
 	end
 
-	if not arg_5_2.walking and not arg_5_2.start_anim_done then
+	if not (arg_5_2.walking or arg_5_2.start_anim_done) then
 		if not arg_5_2.start_anim_locked then
-			arg_5_0:start_move_animation(arg_5_1, arg_5_2)
+			self:start_move_animation(arg_5_1, arg_5_2)
 
 			arg_5_2.anim_lock_fallback_time = arg_5_3 + 2.5
 		end
 
-		if arg_5_2.anim_cb_rotation_start then
-			arg_5_0:start_move_rotation(arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+		if not arg_5_2.anim_cb_rotation_start then
+			self:start_move_rotation(arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 		end
 
-		if arg_5_2.anim_cb_move or arg_5_2.anim_lock_fallback_time and arg_5_3 >= arg_5_2.anim_lock_fallback_time then
+		if not ((arg_5_2.anim_cb_move or not arg_5_2.anim_lock_fallback_time) and not (arg_5_3 >= arg_5_2.anim_lock_fallback_time)) then
 			arg_5_2.anim_cb_move = false
 			arg_5_2.move_state = "moving"
 			arg_5_2.anim_lock_fallback_time = nil
 
-			arg_5_0:set_start_move_animation_lock(arg_5_1, arg_5_2, false)
+			self:set_start_move_animation_lock(arg_5_1, arg_5_2, false)
 
 			arg_5_2.start_anim_locked = nil
 			arg_5_2.start_anim_done = true
 		end
 	else
-		arg_5_0:follow(arg_5_1, arg_5_2, arg_5_3, arg_5_4)
-		arg_5_0:do_dialogue(arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+		self:follow(arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+		self:do_dialogue(arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	end
 
 	local var_5_0
-	local var_5_1 = arg_5_2.navigation_extension
+	local navigation_extension = arg_5_2.navigation_extension
 
-	if arg_5_3 > arg_5_2.time_to_next_evaluate or var_5_1:has_reached_destination() then
-		local var_5_2 = arg_5_2.have_slot == 1 and arg_5_2.attacks_done == 0
+	if arg_5_3 > arg_5_2.time_to_next_evaluate or not navigation_extension:has_reached_destination() then
+		local flag = arg_5_2.have_slot ~= 1 or arg_5_2.attacks_done == 0
 
 		var_5_0 = "evaluate"
-		arg_5_2.time_to_next_evaluate = var_5_2 and arg_5_3 + 0.1 or arg_5_3 + 0.5
+
+		local num
+
+		if not flag then
+			num = arg_5_3 + 0.1
+
+			if not num then
+				-- Nothing
+			end
+		end
+
+		num = arg_5_3 + 0.5
+
+		::label_5_0::
+
+		arg_5_2.time_to_next_evaluate = num
 	end
 
-	local var_5_3 = arg_5_2.breed
-	local var_5_4 = arg_5_2.lerp_into_follow_t
-	local var_5_5 = var_5_3.lerp_alerted_into_follow_speed
+	local breed = arg_5_2.breed
+	local lerp_into_follow_t = arg_5_2.lerp_into_follow_t
+	local lerp_alerted_into_follow_speed = breed.lerp_alerted_into_follow_speed
 
-	if arg_5_2.is_charging and var_5_4 and arg_5_3 < var_5_4 + var_5_5 then
-		local var_5_6 = var_5_3.run_speed - var_5_3.walk_speed
-		local var_5_7 = var_5_3.walk_speed + var_5_6 * math.inv_lerp(var_5_4, var_5_4 + var_5_5, arg_5_3)
+	if not (not arg_5_2.is_charging and not lerp_into_follow_t and not (arg_5_3 < lerp_into_follow_t + lerp_alerted_into_follow_speed)) then
+		local num_2 = breed.run_speed - breed.walk_speed
+		local num_3 = breed.walk_speed + num_2 * math.inv_lerp(lerp_into_follow_t, lerp_into_follow_t + lerp_alerted_into_follow_speed, arg_5_3)
 
-		var_5_1:set_max_speed(var_5_7)
+		navigation_extension:set_max_speed(num_3)
 	end
 
 	return "running", var_5_0
 end
 
-function BTBulwarkFollowAction._update_walking(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
-	local var_6_0 = arg_6_2.target_unit
-	local var_6_1 = arg_6_2.locomotion_extension
-	local var_6_2 = LocomotionUtils.rotation_towards_unit_flat(arg_6_1, var_6_0)
+BTBulwarkFollowAction._update_walking = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	-- function 6
+	local target_unit = arg_6_2.target_unit
+	local locomotion_extension = arg_6_2.locomotion_extension
+	local rotation_towards_unit_flat = LocomotionUtils.rotation_towards_unit_flat(arg_6_1, target_unit)
 
-	var_6_1:set_wanted_rotation(var_6_2)
+	locomotion_extension:set_wanted_rotation(rotation_towards_unit_flat)
 
-	local var_6_3 = arg_6_2.action
-	local var_6_4 = var_0_9[arg_6_1]
-	local var_6_5 = ScriptUnit.has_extension(var_6_0, "locomotion_system")
-	local var_6_6 = var_6_5 and var_6_5.average_velocity and Vector3.dot(var_6_5:average_velocity(), Vector3.normalize(var_0_9[var_6_0] - var_6_4))
-	local var_6_7 = arg_6_2.navigation_extension:destination()
-	local var_6_8 = arg_6_4 > arg_6_2.walk_timer
-	local var_6_9 = arg_6_2.breed.leave_walk_distance
-	local var_6_10 = var_6_9 and var_6_9 * var_6_9 or var_0_0
-	local var_6_11 = arg_6_0:_should_walk(var_6_7, var_6_4, var_6_10, var_6_2, arg_6_2)
-	local var_6_12 = not var_6_11
-	local var_6_13 = var_6_6 and var_6_6 > var_0_3 and not var_6_3.ignore_target_velocity
+	local action = arg_6_2.action
+	local var_6_4 = POSITION_LOOKUP[arg_6_1]
+	local has_extension = ScriptUnit.has_extension(target_unit, "locomotion_system")
 
-	if not var_6_11 and var_6_8 or var_6_12 or var_6_13 then
+	if not has_extension then
+		-- Nothing
+	end
+
+	::label_6_0::
+
+	local average_velocity = has_extension.average_velocity
+
+	average_velocity = not average_velocity and Vector3.dot(has_extension:average_velocity(), Vector3.normalize(POSITION_LOOKUP[target_unit] - var_6_4))
+
+	::label_6_1::
+
+	local destination = arg_6_2.navigation_extension:destination()
+	local flag = arg_6_4 > arg_6_2.walk_timer
+	local leave_walk_distance = arg_6_2.breed.leave_walk_distance
+	local num_2
+
+	if not leave_walk_distance then
+		num_2 = leave_walk_distance * leave_walk_distance
+
+		if not num_2 then
+			-- Nothing
+		end
+	end
+
+	num_2 = num
+
+	::label_6_2::
+
+	local _should_walk = self:_should_walk(destination, var_6_4, num_2, rotation_towards_unit_flat, arg_6_2)
+	local flag_2 = not _should_walk
+	local flag_3 = not average_velocity and not (average_velocity > num_4) or not action.ignore_target_velocity
+
+	if (_should_walk or not flag) and flag_2 or not flag_3 then
 		arg_6_2.walking = false
 		arg_6_2.walking_direction = nil
 
@@ -218,33 +284,35 @@ function BTBulwarkFollowAction._update_walking(arg_6_0, arg_6_1, arg_6_2, arg_6_
 		return
 	end
 
-	local var_6_14 = var_6_3.walk_anims
-	local var_6_15 = arg_6_2.navigation_extension:desired_velocity()
-	local var_6_16 = arg_6_0:_calculate_walk_dir(Quaternion.right(var_6_2), Quaternion.forward(var_6_2), var_6_15, var_6_4, var_6_14)
+	local walk_anims = action.walk_anims
+	local desired_velocity = arg_6_2.navigation_extension:desired_velocity()
+	local _calculate_walk_dir = self:_calculate_walk_dir(Quaternion.right(rotation_towards_unit_flat), Quaternion.forward(rotation_towards_unit_flat), desired_velocity, var_6_4, walk_anims)
 
-	if var_6_16 ~= arg_6_2.walking_direction then
-		local var_6_17 = arg_6_0:_calculate_walk_animation(var_6_16, var_6_14)
+	if _calculate_walk_dir ~= arg_6_2.walking_direction then
+		local _calculate_walk_animation = self:_calculate_walk_animation(_calculate_walk_dir, walk_anims)
 
-		if arg_6_2.action.alt_walk_anim then
+		if not arg_6_2.action.alt_walk_anim then
 			Managers.state.network:anim_event(arg_6_1, arg_6_2.action.alt_walk_anim)
 		else
-			Managers.state.network:anim_event(arg_6_1, var_6_17)
+			Managers.state.network:anim_event(arg_6_1, _calculate_walk_animation)
 		end
 
 		arg_6_2.move_state = "moving"
-		arg_6_2.walking_direction = var_6_16
+		arg_6_2.walking_direction = _calculate_walk_dir
 	end
 end
 
-local function var_0_15(arg_7_0)
-	if type(arg_7_0) == "table" then
-		return arg_7_0[Math.random(1, #arg_7_0)]
+local function fn(self)
+	-- function 7
+	if type(self) == "table" then
+		return self[Math.random(1, #self)]
 	else
-		return arg_7_0
+		return self
 	end
 end
 
-function BTBulwarkFollowAction._calculate_walk_animation(arg_8_0, arg_8_1, arg_8_2)
+BTBulwarkFollowAction._calculate_walk_animation = function (arg_8_0, arg_8_1, arg_8_2)
+	-- function 8
 	local var_8_0
 
 	if arg_8_1 == "right" then
@@ -252,7 +320,7 @@ function BTBulwarkFollowAction._calculate_walk_animation(arg_8_0, arg_8_1, arg_8
 	elseif arg_8_1 == "left" then
 		var_8_0 = "move_left_walk"
 	elseif arg_8_1 == "forward" then
-		var_8_0 = arg_8_2 and var_0_15(arg_8_2) or "move_fwd_walk"
+		var_8_0 = not arg_8_2 and fn(arg_8_2) and "move_fwd_walk"
 	else
 		var_8_0 = "move_bwd_walk"
 	end
@@ -260,28 +328,36 @@ function BTBulwarkFollowAction._calculate_walk_animation(arg_8_0, arg_8_1, arg_8
 	return var_8_0
 end
 
-function BTBulwarkFollowAction._calculate_walk_dir(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
-	local var_9_0 = Vector3.dot(arg_9_1, arg_9_3)
-	local var_9_1 = Vector3.dot(arg_9_2, arg_9_3)
-	local var_9_2 = math.abs(var_9_0)
-	local var_9_3 = math.abs(var_9_1)
+BTBulwarkFollowAction._calculate_walk_dir = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+	-- function 9
+	local dot = Vector3.dot(arg_9_1, arg_9_3)
+	local dot_2 = Vector3.dot(arg_9_2, arg_9_3)
+	local abs = math.abs(dot)
+	local abs_2 = math.abs(dot_2)
 
-	arg_9_3 = var_9_3 < var_9_2 and var_9_0 > 0 and "right" or var_9_3 < var_9_2 and "left" or var_9_1 > 0 and "forward" or "backward"
+	arg_9_3 = (not (abs_2 < abs) or not (dot > 0) or not "right" or not (abs_2 < abs)) and (not "left" or not (dot_2 > 0) or not "forward" or "backward")
 
 	return arg_9_3
 end
 
-function BTBulwarkFollowAction.follow(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
-	local var_10_0 = arg_10_2.breed
-	local var_10_1 = arg_10_2.target_unit
-	local var_10_2 = arg_10_2.target_dist
-	local var_10_3 = var_10_0.follow_reach or var_10_0.weapon_reach or 2
-	local var_10_4 = ScriptUnit.has_extension(var_10_1, "locomotion_system")
-	local var_10_5 = arg_10_2.locomotion_extension
-	local var_10_6 = Vector3.length(var_10_5:current_velocity())
+BTBulwarkFollowAction.follow = function (self, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+	-- function 10
+	local breed = arg_10_2.breed
+	local target_unit = arg_10_2.target_unit
+	local target_dist = arg_10_2.target_dist
+	local follow_reach = breed.follow_reach
 
-	if var_10_0.use_big_boy_turning and arg_10_2.move_state == "moving" then
-		if arg_10_2.is_turning then
+	if not follow_reach then
+		follow_reach = breed.weapon_reach
+		follow_reach = follow_reach or 2
+	end
+
+	local has_extension = ScriptUnit.has_extension(target_unit, "locomotion_system")
+	local locomotion_extension = arg_10_2.locomotion_extension
+	local length = Vector3.length(locomotion_extension:current_velocity())
+
+	if not (not breed.use_big_boy_turning and arg_10_2.move_state ~= "moving") then
+		if not arg_10_2.is_turning then
 			LocomotionUtils.update_turning(arg_10_1, arg_10_3, arg_10_4, arg_10_2)
 		else
 			LocomotionUtils.check_start_turning(arg_10_1, arg_10_3, arg_10_4, arg_10_2)
@@ -290,55 +366,111 @@ function BTBulwarkFollowAction.follow(arg_10_0, arg_10_1, arg_10_2, arg_10_3, ar
 
 	local var_10_7
 
-	if arg_10_2.walking then
-		arg_10_2.deacceleration_factor = nil
-		var_10_7 = var_10_0.walk_speed
-	elseif var_10_2 < (var_10_0.match_speed_distance or 2 * var_10_3) then
-		arg_10_2.deacceleration_factor = nil
-
-		local var_10_8 = math.max((var_10_2 - var_10_3) / var_10_3, 0) * 0.4
-		local var_10_9 = var_10_4 and var_10_4.average_velocity and var_10_4:average_velocity() or Vector3.zero()
-		local var_10_10 = Vector3.length(var_10_9) or 0
-		local var_10_11 = var_10_10 > var_10_0.walk_speed and var_10_10 or var_10_0.walk_speed
-
-		var_10_7 = math.lerp(var_10_11, var_10_0.run_speed, var_10_8)
-	elseif (var_10_6 > var_10_0.run_speed + 0.1 or arg_10_2.deacceleration_factor) and var_10_2 < 2 * var_10_3 + var_0_7 then
-		local var_10_12 = var_10_2 - var_10_3
-
-		if not arg_10_2.deacceleration_factor then
-			arg_10_2.deacceleration_factor = (var_10_6 - var_10_0.run_speed) / var_10_12
-		end
-
-		var_10_7 = arg_10_2.deacceleration_factor * var_10_12 + var_10_0.run_speed
-	else
-		arg_10_2.deacceleration_factor = nil
-
-		local var_10_13 = arg_10_2.breed.run_speed_interpolation_factor or var_0_8
-		local var_10_14 = arg_10_0:_calculate_run_speed(arg_10_1, var_10_1, arg_10_2, var_10_4)
-		local var_10_15 = math.sign(var_10_14 - var_10_6)
-
-		var_10_6 = var_10_15 > 0 and var_10_6 < var_10_0.run_speed and var_10_2 > (var_10_0.match_speed_distance or var_10_3) + 0.5 and var_10_0.run_speed or var_10_6
-		var_10_7 = math.min(var_10_6 + var_10_15 * var_10_13 * arg_10_4, var_10_14)
-	end
-
-	local var_10_16 = arg_10_2.action
-
 	if not arg_10_2.walking then
-		local var_10_17 = var_10_0.enter_walk_distance and var_10_0.enter_walk_distance^2 or var_0_1
-		local var_10_18 = arg_10_2.navigation_extension:destination()
-		local var_10_19 = LocomotionUtils.rotation_towards_unit_flat(arg_10_1, arg_10_2.target_unit)
-		local var_10_20 = var_0_9[arg_10_1]
+		arg_10_2.deacceleration_factor = nil
+		var_10_7 = breed.walk_speed
+	else
+		local match_speed_distance = breed.match_speed_distance
 
-		if arg_10_0:_should_walk(var_10_18, var_10_20, var_10_17, var_10_19, arg_10_2) then
-			local var_10_21 = 0
+		match_speed_distance = match_speed_distance or 2 * follow_reach
 
-			if not var_10_16.ignore_target_velocity then
-				local var_10_22 = var_10_4 and var_10_4.average_velocity and var_10_4:average_velocity() or Vector3.zero()
+		if target_dist < match_speed_distance then
+			arg_10_2.deacceleration_factor = nil
 
-				var_10_21 = Vector3.length(var_10_22) or 0
+			local num = math.max((target_dist - follow_reach) / follow_reach, 0) * 0.4
+			local average_velocity
+
+			if not has_extension and not has_extension.average_velocity then
+				average_velocity = has_extension:average_velocity()
+
+				if not average_velocity then
+					-- Nothing
+				end
 			end
 
-			if var_10_21 < var_0_3 then
+			average_velocity = Vector3.zero()
+
+			::label_10_0::
+
+			local length_2 = Vector3.length(average_velocity)
+
+			length_2 = length_2 or 0
+
+			local flag = not (length_2 > breed.walk_speed) or not length_2 or breed.walk_speed
+
+			var_10_7 = math.lerp(flag, breed.run_speed, num)
+		elseif not ((length > breed.run_speed + 0.1 or not arg_10_2.deacceleration_factor) and not (target_dist < 2 * follow_reach + num_8)) then
+			local num_3 = target_dist - follow_reach
+
+			if not arg_10_2.deacceleration_factor then
+				arg_10_2.deacceleration_factor = (length - breed.run_speed) / num_3
+			end
+
+			var_10_7 = arg_10_2.deacceleration_factor * num_3 + breed.run_speed
+		else
+			arg_10_2.deacceleration_factor = nil
+
+			local run_speed_interpolation_factor = arg_10_2.breed.run_speed_interpolation_factor
+
+			run_speed_interpolation_factor = run_speed_interpolation_factor or num_9
+
+			local _calculate_run_speed = self:_calculate_run_speed(arg_10_1, target_unit, arg_10_2, has_extension)
+			local sign = math.sign(_calculate_run_speed - length)
+
+			if not (not (sign > 0) or not (length < breed.run_speed)) then
+				local match_speed_distance_2 = breed.match_speed_distance
+
+				match_speed_distance_2 = match_speed_distance_2 or follow_reach
+				length = not (target_dist > match_speed_distance_2 + 0.5) or not breed.run_speed or length
+			end
+
+			var_10_7 = math.min(length + sign * run_speed_interpolation_factor * arg_10_4, _calculate_run_speed)
+		end
+	end
+
+	local action = arg_10_2.action
+
+	if not arg_10_2.walking then
+		local num_5
+
+		if not breed.enter_walk_distance then
+			num_5 = breed.enter_walk_distance^2
+
+			if not num_5 then
+				-- Nothing
+			end
+		end
+
+		num_5 = num_2
+
+		::label_10_1::
+
+		local destination = arg_10_2.navigation_extension:destination()
+		local rotation_towards_unit_flat = LocomotionUtils.rotation_towards_unit_flat(arg_10_1, arg_10_2.target_unit)
+		local var_10_22 = POSITION_LOOKUP[arg_10_1]
+
+		if not self:_should_walk(destination, var_10_22, num_5, rotation_towards_unit_flat, arg_10_2) then
+			local num_6 = 0
+
+			if not action.ignore_target_velocity then
+				local average_velocity_2
+
+				if not has_extension and not has_extension.average_velocity then
+					average_velocity_2 = has_extension:average_velocity()
+
+					if not average_velocity_2 then
+						-- Nothing
+					end
+				end
+
+				average_velocity_2 = Vector3.zero()
+
+				::label_10_2::
+
+				num_6 = Vector3.length(average_velocity_2) or 0
+			end
+
+			if num_6 < num_4 then
 				arg_10_2.walking = true
 				arg_10_2.walk_timer = arg_10_3 + 2.5
 			end
@@ -350,106 +482,145 @@ function BTBulwarkFollowAction.follow(arg_10_0, arg_10_1, arg_10_2, arg_10_3, ar
 	if arg_10_3 > arg_10_2.time_to_next_friend_alert then
 		arg_10_2.time_to_next_friend_alert = arg_10_3 + 0.5
 
-		if var_10_2 > (var_10_0.min_alert_friends_distance or var_0_10) and var_10_2 < (var_10_0.max_alert_friends_distance or var_0_11) then
-			local var_10_23 = World.get_data(arg_10_2.world, "physics_world")
-			local var_10_24 = var_0_9[arg_10_1]
-			local var_10_25 = var_0_9[var_10_1] - var_10_24
-			local var_10_26 = var_10_24 + Vector3(0, 0, 1)
+		local min_alert_friends_distance = breed.min_alert_friends_distance
 
-			if Vector3.length_squared(var_10_25) > 0 then
-				local var_10_27, var_10_28, var_10_29, var_10_30 = PhysicsWorld.immediate_raycast(var_10_23, var_10_26, var_10_25, arg_10_2.target_dist, "closest", "types", "statics", "collision_filter", "filter_ai_line_of_sight_check")
+		min_alert_friends_distance = min_alert_friends_distance or num_10
 
-				if not var_10_27 then
-					AiUtils.alert_nearby_friends_of_enemy(arg_10_1, arg_10_2.group_blackboard.broadphase, var_10_1, var_10_0.friends_alert_range or var_0_12)
+		if min_alert_friends_distance < target_dist then
+			local max_alert_friends_distance = breed.max_alert_friends_distance
+
+			max_alert_friends_distance = max_alert_friends_distance or num_11
+
+			if not (target_dist < max_alert_friends_distance) then
+				-- Nothing
+			end
+		end
+
+		do
+			local flag_2 = false
+
+			goto label_10_4
+		end
+
+		::label_10_3::
+
+		flag_2 = true
+
+		::label_10_4::
+
+		if not flag_2 then
+			local get_data = World.get_data(arg_10_2.world, "physics_world")
+			local var_10_29 = POSITION_LOOKUP[arg_10_1]
+			local num_7 = POSITION_LOOKUP[target_unit] - var_10_29
+			local num_13 = var_10_29 + Vector3(0, 0, 1)
+
+			if Vector3.length_squared(num_7) > 0 then
+				local immediate_raycast, var_10_33, var_10_34, var_10_35 = PhysicsWorld.immediate_raycast(get_data, num_13, num_7, arg_10_2.target_dist, "closest", "types", "statics", "collision_filter", "filter_ai_line_of_sight_check")
+
+				if not immediate_raycast then
+					local alert_nearby_friends_of_enemy = AiUtils.alert_nearby_friends_of_enemy
+					local var_10_37 = arg_10_1
+					local broadphase = arg_10_2.group_blackboard.broadphase
+					local var_10_39 = target_unit
+					local friends_alert_range = breed.friends_alert_range
+
+					friends_alert_range = friends_alert_range or num_12
+
+					alert_nearby_friends_of_enemy(var_10_37, broadphase, var_10_39, friends_alert_range)
 				end
 			end
 		end
 	end
 end
 
-function BTBulwarkFollowAction._calculate_run_speed(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
-	local var_11_0 = arg_11_3.target_dist
-	local var_11_1 = arg_11_3.destination_dist
-	local var_11_2 = 0
+BTBulwarkFollowAction._calculate_run_speed = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+	-- function 11
+	local target_dist = arg_11_3.target_dist
+	local destination_dist = arg_11_3.destination_dist
+	local num = 0
 
-	if arg_11_4 and arg_11_4.average_velocity and var_11_1 > var_0_4 and var_11_0 < var_0_5 then
-		local var_11_3 = var_0_9[arg_11_1]
-		local var_11_4 = arg_11_3.navigation_extension:destination()
-		local var_11_5 = arg_11_4:average_velocity()
-		local var_11_6 = Vector3.normalize(var_11_4 - var_11_3)
-		local var_11_7 = Vector3.normalize(var_11_5)
-		local var_11_8 = Vector3.dot(var_11_7, var_11_6)
+	if not (not arg_11_4 and not arg_11_4.average_velocity and not (destination_dist > num_5) or not (target_dist < num_6)) then
+		local var_11_3 = POSITION_LOOKUP[arg_11_1]
+		local destination = arg_11_3.navigation_extension:destination()
+		local average_velocity = arg_11_4:average_velocity()
+		local normalize = Vector3.normalize(destination - var_11_3)
+		local normalize_2 = Vector3.normalize(average_velocity)
+		local dot = Vector3.dot(normalize_2, normalize)
 
-		var_11_2 = math.clamp(var_11_8, 0, 1)
+		num = math.clamp(dot, 0, 1)
 	end
 
-	return arg_11_3.breed.run_speed + var_0_6 * var_11_2
+	return arg_11_3.breed.run_speed + num_7 * num
 end
 
-function BTBulwarkFollowAction.start_move_animation(arg_12_0, arg_12_1, arg_12_2)
-	arg_12_0:set_start_move_animation_lock(arg_12_1, arg_12_2, true)
+BTBulwarkFollowAction.start_move_animation = function (self, arg_12_1, arg_12_2)
+	-- function 12
+	self:set_start_move_animation_lock(arg_12_1, arg_12_2, true)
 
-	local var_12_0 = var_0_9[arg_12_2.target_unit]
-	local var_12_1 = arg_12_2.action.start_anims_name
-	local var_12_2 = AiAnimUtils.get_start_move_animation(arg_12_1, var_12_0, var_12_1)
+	local var_12_0 = POSITION_LOOKUP[arg_12_2.target_unit]
+	local start_anims_name = arg_12_2.action.start_anims_name
+	local get_start_move_animation = AiAnimUtils.get_start_move_animation(arg_12_1, var_12_0, start_anims_name)
 
-	Managers.state.network:anim_event(arg_12_1, var_12_2)
+	Managers.state.network:anim_event(arg_12_1, get_start_move_animation)
 
-	arg_12_2.move_animation_name = var_12_2
+	arg_12_2.move_animation_name = get_start_move_animation
 	arg_12_2.start_anim_locked = true
 end
 
-function BTBulwarkFollowAction.start_move_rotation(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
-	if arg_13_2.move_animation_name == "move_start_fwd" or arg_13_2.move_animation_name == "move_start_fwd_jog" then
-		arg_13_0:set_start_move_animation_lock(arg_13_1, arg_13_2, false)
+BTBulwarkFollowAction.start_move_rotation = function (self, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+	-- function 13
+	if not (arg_13_2.move_animation_name == "move_start_fwd" or arg_13_2.move_animation_name ~= "move_start_fwd_jog") then
+		self:set_start_move_animation_lock(arg_13_1, arg_13_2, false)
 
-		local var_13_0 = arg_13_2.locomotion_extension
-		local var_13_1 = LocomotionUtils.rotation_towards_unit_flat(arg_13_1, arg_13_2.target_unit)
+		local locomotion_extension = arg_13_2.locomotion_extension
+		local rotation_towards_unit_flat = LocomotionUtils.rotation_towards_unit_flat(arg_13_1, arg_13_2.target_unit)
 
-		var_13_0:set_wanted_rotation(var_13_1)
+		locomotion_extension:set_wanted_rotation(rotation_towards_unit_flat)
 	else
 		arg_13_2.anim_cb_rotation_start = false
 
-		local var_13_2 = var_0_9[arg_13_2.target_unit]
-		local var_13_3 = AiAnimUtils.get_animation_rotation_scale(arg_13_1, var_13_2, arg_13_2.move_animation_name, arg_13_2.action.start_anims_data)
+		local var_13_2 = POSITION_LOOKUP[arg_13_2.target_unit]
+		local get_animation_rotation_scale = AiAnimUtils.get_animation_rotation_scale(arg_13_1, var_13_2, arg_13_2.move_animation_name, arg_13_2.action.start_anims_data)
 
-		LocomotionUtils.set_animation_rotation_scale(arg_13_1, var_13_3)
+		LocomotionUtils.set_animation_rotation_scale(arg_13_1, get_animation_rotation_scale)
 	end
 end
 
-function BTBulwarkFollowAction.set_start_move_animation_lock(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
-	local var_14_0 = arg_14_2.locomotion_extension
+BTBulwarkFollowAction.set_start_move_animation_lock = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+	-- function 14
+	local locomotion_extension = arg_14_2.locomotion_extension
 
-	if arg_14_3 then
-		var_14_0:use_lerp_rotation(false)
+	if not arg_14_3 then
+		locomotion_extension:use_lerp_rotation(false)
 		LocomotionUtils.set_animation_driven_movement(arg_14_1, true, false, false)
 	else
-		var_14_0:use_lerp_rotation(true)
+		locomotion_extension:use_lerp_rotation(true)
 		LocomotionUtils.set_animation_driven_movement(arg_14_1, false)
 		LocomotionUtils.set_animation_rotation_scale(arg_14_1, 1)
 	end
 end
 
-local var_0_16 = {}
+local tbl = {}
 
-function BTBulwarkFollowAction.do_dialogue(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
-	if arg_15_3 > arg_15_0.next_time_to_trigger_running_dialogue and arg_15_0.triggered_units[arg_15_1] == nil then
-		local var_15_0 = math.ceil(Vector3.distance(var_0_9[arg_15_1], var_0_9[arg_15_2.target_unit]))
+BTBulwarkFollowAction.do_dialogue = function (self, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+	-- function 15
+	if not (not (arg_15_3 > self.next_time_to_trigger_running_dialogue) or self.triggered_units[arg_15_1] ~= nil) then
+		local ceil = math.ceil(Vector3.distance(POSITION_LOOKUP[arg_15_1], POSITION_LOOKUP[arg_15_2.target_unit]))
 
-		if var_15_0 < 15 then
-			local var_15_1 = var_0_9[arg_15_1]
-			local var_15_2 = AiUtils.broadphase_query(var_15_1, 10, var_0_16)
+		if ceil < 15 then
+			local var_15_1 = POSITION_LOOKUP[arg_15_1]
+			local broadphase_query = AiUtils.broadphase_query(var_15_1, 10, tbl)
 
-			arg_15_0.next_time_to_trigger_running_dialogue = arg_15_3 + 1
-			arg_15_0.triggered_units[arg_15_1] = true
+			self.next_time_to_trigger_running_dialogue = arg_15_3 + 1
+			self.triggered_units[arg_15_1] = true
 
-			local var_15_3 = ScriptUnit.extension_input(arg_15_1, "dialogue_system")
-			local var_15_4 = FrameTable.alloc_table()
+			local extension_input = ScriptUnit.extension_input(arg_15_1, "dialogue_system")
+			local alloc_table = FrameTable.alloc_table()
 
-			var_15_4.distance = var_15_0
-			var_15_4.num_units = var_15_2 - 1
+			alloc_table.distance = ceil
+			alloc_table.num_units = broadphase_query - 1
 
-			var_15_3:trigger_networked_dialogue_event("running", var_15_4)
+			extension_input:trigger_networked_dialogue_event("running", alloc_table)
 		end
 	end
 end

@@ -2,151 +2,154 @@
 
 EnemyCharacterStateWalking = class(EnemyCharacterStateWalking, EnemyCharacterState)
 
-function EnemyCharacterStateWalking.init(arg_1_0, arg_1_1, arg_1_2)
-	EnemyCharacterState.init(arg_1_0, arg_1_1, arg_1_2 or "walking")
+EnemyCharacterStateWalking.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	EnemyCharacterState.init(self, arg_1_1, arg_1_2 or "walking")
 
 	local var_1_0 = arg_1_1
 
-	arg_1_0.current_movement_speed_scale = 0
-	arg_1_0.latest_valid_navmesh_position = Vector3Box(math.huge, math.huge, math.huge)
-	arg_1_0.last_input_direction = Vector3Box(0, 0, 0)
+	self.current_movement_speed_scale = 0
+	self.latest_valid_navmesh_position = Vector3Box(math.huge, math.huge, math.huge)
+	self.last_input_direction = Vector3Box(0, 0, 0)
 end
 
-function EnemyCharacterStateWalking.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
-	local var_2_0 = arg_2_0._unit
-	local var_2_1 = arg_2_0._input_extension
-	local var_2_2 = arg_2_0._first_person_extension
-	local var_2_3 = arg_2_0._status_extension
-	local var_2_4 = arg_2_0._inventory_extension
-	local var_2_5 = arg_2_0._health_extension
-	local var_2_6 = arg_2_0._locomotion_extension:current_velocity()
-	local var_2_7 = Managers.player:owner(var_2_0)
-	local var_2_8 = var_2_7 and var_2_7.bot_player
+EnemyCharacterStateWalking.on_enter = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	-- function 2
+	local _unit = self._unit
+	local _input_extension = self._input_extension
+	local _first_person_extension = self._first_person_extension
+	local _status_extension = self._status_extension
+	local _inventory_extension = self._inventory_extension
+	local _health_extension = self._health_extension
+	local current_velocity = self._locomotion_extension:current_velocity()
+	local owner = Managers.player:owner(_unit)
+	local flag = not owner and owner.bot_player
 
-	if not var_2_3:get_unarmed() then
-		CharacterStateHelper.play_animation_event(var_2_0, "to_combat")
+	if not _status_extension:get_unarmed() then
+		CharacterStateHelper.play_animation_event(_unit, "to_combat")
 	end
 
 	if arg_2_6 == "standing" then
-		arg_2_0.current_movement_speed_scale = 0
+		self.current_movement_speed_scale = 0
 	else
-		arg_2_0.current_movement_speed_scale = 1
+		self.current_movement_speed_scale = 1
 	end
 
-	if not var_2_8 then
-		local var_2_9 = Vector3.normalize(Vector3.flat(var_2_6))
-		local var_2_10 = var_2_2:current_rotation()
-		local var_2_11 = Vector3.dot(Quaternion.right(var_2_10), var_2_9)
-		local var_2_12 = Vector3.dot(Vector3.normalize(Vector3.flat(Quaternion.forward(var_2_10))), var_2_9)
-		local var_2_13 = Vector3(var_2_11, var_2_12, 0)
+	if not flag then
+		local normalize = Vector3.normalize(Vector3.flat(current_velocity))
+		local current_rotation = _first_person_extension:current_rotation()
+		local dot = Vector3.dot(Quaternion.right(current_rotation), normalize)
+		local dot_2 = Vector3.dot(Vector3.normalize(Vector3.flat(Quaternion.forward(current_rotation))), normalize)
+		local var_2_13 = Vector3(dot, dot_2, 0)
 
-		arg_2_0.last_input_direction:store(var_2_13)
+		self.last_input_direction:store(var_2_13)
 	end
 
-	local var_2_14, var_2_15 = CharacterStateHelper.get_move_animation(arg_2_0._locomotion_extension, var_2_1, var_2_3)
+	local get_move_animation, var_2_15 = CharacterStateHelper.get_move_animation(self._locomotion_extension, _input_extension, _status_extension)
 
-	arg_2_0.move_anim_3p = var_2_14
-	arg_2_0.move_anim_1p = var_2_15
+	self.move_anim_3p = get_move_animation
+	self.move_anim_1p = var_2_15
 
-	CharacterStateHelper.play_animation_event(var_2_0, var_2_14)
-	CharacterStateHelper.play_animation_event_first_person(var_2_2, var_2_15)
-	CharacterStateHelper.look(var_2_1, arg_2_0._player.viewport_name, var_2_2, var_2_3, var_2_4)
-	CharacterStateHelper.update_weapon_actions(arg_2_5, var_2_0, var_2_1, var_2_4, var_2_5)
+	CharacterStateHelper.play_animation_event(_unit, get_move_animation)
+	CharacterStateHelper.play_animation_event_first_person(_first_person_extension, var_2_15)
+	CharacterStateHelper.look(_input_extension, self._player.viewport_name, _first_person_extension, _status_extension, _inventory_extension)
+	CharacterStateHelper.update_weapon_actions(arg_2_5, _unit, _input_extension, _inventory_extension, _health_extension)
 
-	arg_2_0.is_bot = var_2_8
+	self.is_bot = flag
 end
 
-function EnemyCharacterStateWalking.common_state_changes(arg_3_0)
-	arg_3_0:handle_disabled_ghost_mode()
+EnemyCharacterStateWalking.common_state_changes = function (self)
+	-- function 3
+	self:handle_disabled_ghost_mode()
 
-	local var_3_0 = arg_3_0._csm
-	local var_3_1 = arg_3_0._unit
-	local var_3_2 = arg_3_0._input_extension
-	local var_3_3 = PlayerUnitMovementSettings.get_movement_settings_table(var_3_1)
-	local var_3_4 = arg_3_0._status_extension
-	local var_3_5 = arg_3_0._locomotion_extension
-	local var_3_6 = CharacterStateHelper
-	local var_3_7 = arg_3_0._first_person_extension
-	local var_3_8 = arg_3_0._inventory_extension
-	local var_3_9 = arg_3_0._career_extension:career_settings()
+	local _csm = self._csm
+	local _unit = self._unit
+	local _input_extension = self._input_extension
+	local get_movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(_unit)
+	local _status_extension = self._status_extension
+	local _locomotion_extension = self._locomotion_extension
+	local CharacterStateHelper = CharacterStateHelper
+	local _first_person_extension = self._first_person_extension
+	local _inventory_extension = self._inventory_extension
+	local career_settings = self._career_extension:career_settings()
 
-	if var_3_5:is_on_ground() then
-		ScriptUnit.extension(var_3_1, "whereabouts_system"):set_is_onground()
+	if not _locomotion_extension:is_on_ground() then
+		ScriptUnit.extension(_unit, "whereabouts_system"):set_is_onground()
 	end
 
-	if var_3_6.do_common_state_transitions(var_3_4, var_3_0) then
+	if not CharacterStateHelper.do_common_state_transitions(_status_extension, _csm) then
 		return true
 	end
 
-	if var_3_6.is_using_transport(var_3_4) then
-		var_3_0:change_state("using_transport")
-
-		return true
-	end
-
-	if var_3_6.is_pushed(var_3_4) then
-		var_3_4:set_pushed(false)
-
-		local var_3_10 = var_3_3.stun_settings.pushed
-
-		var_3_10.hit_react_type = var_3_4:hit_react_type() .. "_push"
-
-		var_3_0:change_state("stunned", var_3_10)
+	if not CharacterStateHelper.is_using_transport(_status_extension) then
+		_csm:change_state("using_transport")
 
 		return true
 	end
 
-	if var_3_6.is_block_broken(var_3_4) then
-		var_3_4:set_block_broken(false)
+	if not CharacterStateHelper.is_pushed(_status_extension) then
+		_status_extension:set_pushed(false)
 
-		local var_3_11 = var_3_3.stun_settings.parry_broken
+		local pushed = get_movement_settings_table.stun_settings.pushed
 
-		var_3_11.hit_react_type = "medium_push"
+		pushed.hit_react_type = _status_extension:hit_react_type() .. "_push"
 
-		var_3_0:change_state("stunned", var_3_11)
+		_csm:change_state("stunned", pushed)
 
 		return true
 	end
 
-	if var_3_5:is_animation_driven() then
+	if not CharacterStateHelper.is_block_broken(_status_extension) then
+		_status_extension:set_block_broken(false)
+
+		local parry_broken = get_movement_settings_table.stun_settings.parry_broken
+
+		parry_broken.hit_react_type = "medium_push"
+
+		_csm:change_state("stunned", parry_broken)
+
 		return true
 	end
 
-	local var_3_12 = arg_3_0._interactor_extension
+	if not _locomotion_extension:is_animation_driven() then
+		return true
+	end
 
-	if var_3_6.is_starting_interaction(var_3_2, var_3_12) then
-		local var_3_13, var_3_14 = InteractionHelper.interaction_action_names(var_3_1)
+	local _interactor_extension = self._interactor_extension
 
-		var_3_12:start_interaction(var_3_14)
+	if not CharacterStateHelper.is_starting_interaction(_input_extension, _interactor_extension) then
+		local interaction_action_names, var_3_14 = InteractionHelper.interaction_action_names(_unit)
 
-		if var_3_12:allow_movement_during_interaction() then
+		_interactor_extension:start_interaction(var_3_14)
+
+		if not _interactor_extension:allow_movement_during_interaction() then
 			return
 		end
 
-		local var_3_15 = var_3_12:interaction_config()
-		local var_3_16 = arg_3_0._temp_params
+		local interaction_config = _interactor_extension:interaction_config()
+		local _temp_params = self._temp_params
 
-		var_3_16.swap_to_3p = var_3_15.swap_to_3p
-		var_3_16.show_weapons = var_3_15.show_weapons
-		var_3_16.activate_block = var_3_15.activate_block
-		var_3_16.allow_rotation_update = var_3_15.allow_rotation_update
+		_temp_params.swap_to_3p = interaction_config.swap_to_3p
+		_temp_params.show_weapons = interaction_config.show_weapons
+		_temp_params.activate_block = interaction_config.activate_block
+		_temp_params.allow_rotation_update = interaction_config.allow_rotation_update
 
-		var_3_0:change_state("interacting", var_3_16)
-
-		return true
-	end
-
-	if not var_3_0.state_next and var_3_4.do_leap then
-		var_3_0:change_state("leaping")
+		_csm:change_state("interacting", _temp_params)
 
 		return true
 	end
 
-	if arg_3_0._input_extension:get("character_inspecting") then
-		local var_3_17, var_3_18, var_3_19 = var_3_6.get_item_data_and_weapon_extensions(arg_3_0._inventory_extension)
+	if _csm.state_next or not _status_extension.do_leap then
+		_csm:change_state("leaping")
 
-		if not var_3_6.get_current_action_data(var_3_19, var_3_18) then
-			var_3_0:change_state("inspecting")
+		return true
+	end
+
+	if not self._input_extension:get("character_inspecting") then
+		local get_item_data_and_weapon_extensions, var_3_18, var_3_19 = CharacterStateHelper.get_item_data_and_weapon_extensions(self._inventory_extension)
+
+		if not CharacterStateHelper.get_current_action_data(var_3_19, var_3_18) then
+			_csm:change_state("inspecting")
 
 			return true
 		end
@@ -155,126 +158,133 @@ function EnemyCharacterStateWalking.common_state_changes(arg_3_0)
 	return false
 end
 
-function EnemyCharacterStateWalking.common_movement(arg_4_0, arg_4_1, arg_4_2)
-	local var_4_0 = arg_4_0._csm
-	local var_4_1 = arg_4_0.current_movement_speed_scale
-	local var_4_2 = arg_4_0._first_person_extension
-	local var_4_3 = arg_4_0._input_extension
-	local var_4_4 = arg_4_0._inventory_extension
-	local var_4_5 = arg_4_0._locomotion_extension
-	local var_4_6 = arg_4_0._status_extension
-	local var_4_7 = arg_4_0._unit
-	local var_4_8 = ScriptUnit.extension(var_4_7, "buff_system")
-	local var_4_9 = PlayerUnitMovementSettings.get_movement_settings_table(var_4_7)
-	local var_4_10 = Managers.input:is_device_active("gamepad")
-	local var_4_11 = var_4_6:is_crouching()
-	local var_4_12 = CharacterStateHelper.has_move_input(var_4_3)
+EnemyCharacterStateWalking.common_movement = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	local _csm = self._csm
+	local current_movement_speed_scale = self.current_movement_speed_scale
+	local _first_person_extension = self._first_person_extension
+	local _input_extension = self._input_extension
+	local _inventory_extension = self._inventory_extension
+	local _locomotion_extension = self._locomotion_extension
+	local _status_extension = self._status_extension
+	local _unit = self._unit
+	local extension = ScriptUnit.extension(_unit, "buff_system")
+	local get_movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(_unit)
+	local is_device_active = Managers.input:is_device_active("gamepad")
+	local is_crouching = _status_extension:is_crouching()
+	local has_move_input = CharacterStateHelper.has_move_input(_input_extension)
 
-	if not var_4_0.state_next and not var_4_12 and var_4_1 == 0 then
-		local var_4_13 = arg_4_0._temp_params
+	if not (_csm.state_next or has_move_input or current_movement_speed_scale ~= 0) then
+		local _temp_params = self._temp_params
 
-		var_4_0:change_state("standing", var_4_13)
-		var_4_2:change_state("standing")
-
-		return true
-	end
-
-	if not var_4_0.state_next and not var_4_5:is_on_ground() then
-		var_4_0:change_state("falling", arg_4_0._temp_params)
-		var_4_2:change_state("falling")
+		_csm:change_state("standing", _temp_params)
+		_first_person_extension:change_state("standing")
 
 		return true
 	end
 
-	if (var_4_3:get("jump") or var_4_3:get("jump_only")) and not var_4_6:is_crouching() and (not var_4_11 or CharacterStateHelper.can_uncrouch(var_4_7)) and var_4_5:jump_allowed() then
-		if var_4_11 then
-			CharacterStateHelper.uncrouch(var_4_7, t, var_4_2, var_4_6)
+	if not (_csm.state_next or _locomotion_extension:is_on_ground()) then
+		_csm:change_state("falling", self._temp_params)
+		_first_person_extension:change_state("falling")
+
+		return true
+	end
+
+	if (_input_extension:get("jump") or not _input_extension:get("jump_only") or _status_extension:is_crouching()) and (not is_crouching or CharacterStateHelper.can_uncrouch(_unit) or not _locomotion_extension:jump_allowed()) then
+		if not is_crouching then
+			CharacterStateHelper.uncrouch(_unit, t, _first_person_extension, _status_extension)
 		end
 
-		var_4_0:change_state("jumping")
-		var_4_2:change_state("jumping")
+		_csm:change_state("jumping")
+		_first_person_extension:change_state("jumping")
 
 		return
 	end
 
-	local var_4_14 = var_4_3.toggle_crouch
-	local var_4_15 = Managers.player:owner(var_4_7)
-	local var_4_16 = CharacterStateHelper.get_movement_input(var_4_3)
-	local var_4_17 = Unit.get_data(var_4_7, "breed")
+	local toggle_crouch = _input_extension.toggle_crouch
+	local owner = Managers.player:owner(_unit)
+	local get_movement_input = CharacterStateHelper.get_movement_input(_input_extension)
+	local get_data = Unit.get_data(_unit, "breed")
 
-	if not arg_4_0.is_bot then
-		local var_4_18 = var_4_17 and var_4_17.breed_move_acceleration_up
-		local var_4_19 = var_4_17 and var_4_17.breed_move_acceleration_down
-		local var_4_20 = var_4_18 * arg_4_2 or var_4_9.move_acceleration_up * arg_4_2
-		local var_4_21 = var_4_19 * arg_4_2 or var_4_9.move_acceleration_down * arg_4_2
+	if not self.is_bot then
+		local flag = not get_data and get_data.breed_move_acceleration_up
+		local flag_2 = not get_data and get_data.breed_move_acceleration_down
+		local num = flag * arg_4_2
 
-		if var_4_12 then
-			var_4_1 = math.min(1, var_4_1 + var_4_20)
+		num = num or get_movement_settings_table.move_acceleration_up * arg_4_2
 
-			if var_4_10 then
-				var_4_1 = Vector3.length(var_4_16) * var_4_1
+		local num_2 = flag_2 * arg_4_2
+
+		num_2 = num_2 or get_movement_settings_table.move_acceleration_down * arg_4_2
+
+		if not has_move_input then
+			current_movement_speed_scale = math.min(1, current_movement_speed_scale + num)
+
+			if not is_device_active then
+				current_movement_speed_scale = Vector3.length(get_movement_input) * current_movement_speed_scale
 			end
 		else
-			var_4_1 = math.max(0, var_4_1 - var_4_21)
+			current_movement_speed_scale = math.max(0, current_movement_speed_scale - num_2)
 		end
 	else
-		var_4_1 = var_4_12 and 1 or 0
+		current_movement_speed_scale = not has_move_input and 1 and 0
 	end
 
-	local var_4_22 = var_4_3:get("walk")
-	local var_4_23 = var_4_17.movement_speed_multiplier
-	local var_4_24 = var_4_9.move_speed
+	local get = _input_extension:get("walk")
+	local movement_speed_multiplier = get_data.movement_speed_multiplier
+	local move_speed = get_movement_settings_table.move_speed
 
-	if arg_4_1 and not var_4_22 then
-		var_4_24 = var_4_9.ghost_move_speed
+	if not (not arg_4_1 and get) then
+		move_speed = get_movement_settings_table.ghost_move_speed
 	end
 
-	local var_4_25 = var_4_24 * var_4_23
-	local var_4_26 = var_4_8:apply_buffs_to_value(var_4_25, "movement_speed") * var_4_1 * var_4_9.player_speed_scale
-	local var_4_27 = var_4_17.strafe_speed_multiplier
-	local var_4_28 = Vector3.normalize(var_4_16)
+	local num_3 = move_speed * movement_speed_multiplier
+	local num_4 = extension:apply_buffs_to_value(num_3, "movement_speed") * current_movement_speed_scale * get_movement_settings_table.player_speed_scale
+	local strafe_speed_multiplier = get_data.strafe_speed_multiplier
+	local normalize = Vector3.normalize(get_movement_input)
 
-	if Vector3.length_squared(var_4_16) == 0 then
-		var_4_28 = arg_4_0.last_input_direction:unbox()
+	if Vector3.length_squared(get_movement_input) == 0 then
+		normalize = self.last_input_direction:unbox()
 	else
-		arg_4_0.last_input_direction:store(var_4_28)
+		self.last_input_direction:store(normalize)
 	end
 
-	CharacterStateHelper.move_on_ground(var_4_2, var_4_3, var_4_5, var_4_28, var_4_26, var_4_7, var_4_27)
-	CharacterStateHelper.ghost_mode(arg_4_0._ghost_mode_extension, var_4_3)
-	CharacterStateHelper.look(var_4_3, arg_4_0._player.viewport_name, var_4_2, var_4_6, var_4_4)
+	CharacterStateHelper.move_on_ground(_first_person_extension, _input_extension, _locomotion_extension, normalize, num_4, _unit, strafe_speed_multiplier)
+	CharacterStateHelper.ghost_mode(self._ghost_mode_extension, _input_extension)
+	CharacterStateHelper.look(_input_extension, self._player.viewport_name, _first_person_extension, _status_extension, _inventory_extension)
 
-	local var_4_29, var_4_30 = CharacterStateHelper.get_move_animation(var_4_5, var_4_3, var_4_6, arg_4_0.move_anim_3p)
+	local get_move_animation, var_4_30 = CharacterStateHelper.get_move_animation(_locomotion_extension, _input_extension, _status_extension, self.move_anim_3p)
 
-	if var_4_29 ~= arg_4_0.move_anim_3p then
-		CharacterStateHelper.play_animation_event(var_4_7, var_4_29, true)
+	if get_move_animation ~= self.move_anim_3p then
+		CharacterStateHelper.play_animation_event(_unit, get_move_animation, true)
 
-		arg_4_0.move_anim_3p = var_4_29
+		self.move_anim_3p = get_move_animation
 	end
 
-	if var_4_30 ~= arg_4_0.move_anim_1p then
-		CharacterStateHelper.play_animation_event_first_person(var_4_2, var_4_30)
+	if var_4_30 ~= self.move_anim_1p then
+		CharacterStateHelper.play_animation_event_first_person(_first_person_extension, var_4_30)
 
-		arg_4_0.move_anim_1p = var_4_30
+		self.move_anim_1p = var_4_30
 	end
 
-	arg_4_0.current_movement_speed_scale = var_4_1
+	self.current_movement_speed_scale = current_movement_speed_scale
 
 	return false
 end
 
-function EnemyCharacterStateWalking.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
-	if arg_5_0:common_state_changes() then
+EnemyCharacterStateWalking.update = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	-- function 5
+	if not self:common_state_changes() then
 		return
 	end
 
-	local var_5_0 = arg_5_0._input_extension
-	local var_5_1 = arg_5_0._inventory_extension
-	local var_5_2 = arg_5_0._health_extension
+	local _input_extension = self._input_extension
+	local _inventory_extension = self._inventory_extension
+	local _health_extension = self._health_extension
 
-	CharacterStateHelper.update_weapon_actions(arg_5_5, arg_5_1, var_5_0, var_5_1, var_5_2)
-	arg_5_0:_update_taunt_dialogue(arg_5_5)
+	CharacterStateHelper.update_weapon_actions(arg_5_5, arg_5_1, _input_extension, _inventory_extension, _health_extension)
+	self:_update_taunt_dialogue(arg_5_5)
 
-	local var_5_3 = arg_5_0._ghost_mode_extension:is_in_ghost_mode()
-	local var_5_4 = arg_5_0:common_movement(var_5_3, arg_5_3)
+	local is_in_ghost_mode = self._ghost_mode_extension:is_in_ghost_mode()
+	local common_movement = self:common_movement(is_in_ghost_mode, arg_5_3)
 end

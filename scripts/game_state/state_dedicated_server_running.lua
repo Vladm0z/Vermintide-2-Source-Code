@@ -3,20 +3,23 @@
 StateDedicatedServerRunning = class(StateDedicatedServerRunning)
 StateDedicatedServerRunning.NAME = "StateDedicatedServerRunning"
 
-function StateDedicatedServerRunning.on_enter(arg_1_0, arg_1_1)
-	arg_1_0._game_server = arg_1_0.parent.parent.loading_context.game_server
+StateDedicatedServerRunning.on_enter = function (self, arg_1_1)
+	-- function 1
+	self._game_server = self.parent.parent.loading_context.game_server
 end
 
-function StateDedicatedServerRunning.update(arg_2_0, arg_2_1, arg_2_2)
-	local var_2_0 = arg_2_0._game_server
-	local var_2_1 = var_2_0:state()
-	local var_2_2 = var_2_0:update(arg_2_1, arg_2_2)
+StateDedicatedServerRunning.update = function (self, arg_2_1, arg_2_2)
+	-- function 2
+	local _game_server = self._game_server
+	local state = _game_server:state()
+	local update = _game_server:update(arg_2_1, arg_2_2)
 
-	if var_2_1 ~= var_2_2 and var_2_2 == GameServerState.DISCONNECTED then
+	if not (state == update or update ~= GameServerState.DISCONNECTED) then
 		error("DISCONNECTED, RESTART!")
 	end
 end
 
-function StateDedicatedServerRunning.on_exit(arg_3_0)
+StateDedicatedServerRunning.on_exit = function (arg_3_0)
+	-- function 3
 	return
 end

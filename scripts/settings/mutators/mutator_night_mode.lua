@@ -5,9 +5,10 @@ return {
 	display_name = "display_name_mutator_night_mode",
 	disable_environment_variations = true,
 	icon = "mutator_icon_darkness",
-	client_start_function = function(arg_1_0, arg_1_1)
-		local var_1_0 = Managers.world:world("level_world")
+	client_start_function = function (arg_1_0, arg_1_1)
+		-- function 1
+		local world = Managers.world:world("level_world")
 
-		LevelHelper:flow_event(var_1_0, "mutator_night")
+		LevelHelper:flow_event(world, "mutator_night")
 	end
 }

@@ -2,88 +2,92 @@
 
 require("math")
 
-local var_0_0 = "Daniel Lindsley"
-local var_0_1 = "scm-1"
-local var_0_2 = "BSD"
-local var_0_3 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+local str = "Daniel Lindsley"
+local str_2 = "scm-1"
+local str_3 = "BSD"
+local str_4 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 
 function to_binary(arg_1_0)
+	-- function 1
 	local var_1_0 = tonumber(arg_1_0)
-	local var_1_1 = ""
+	local str = ""
 
-	for iter_1_0 = 7, 0, -1 do
-		local var_1_2 = math.pow(2, iter_1_0)
+	for i = 7, 0, -1 do
+		local pow = math.pow(2, i)
 
-		if var_1_2 <= var_1_0 then
-			var_1_1 = var_1_1 .. "1"
-			var_1_0 = var_1_0 - var_1_2
+		if pow <= var_1_0 then
+			str = str .. "1"
+			var_1_0 = var_1_0 - pow
 		else
-			var_1_1 = var_1_1 .. "0"
+			str = str .. "0"
 		end
 	end
 
-	return var_1_1
+	return str
 end
 
 function from_binary(arg_2_0)
+	-- function 2
 	return tonumber(arg_2_0, 2)
 end
 
 function to_base64(arg_3_0)
-	local var_3_0 = ""
-	local var_3_1 = ""
-	local var_3_2 = ""
+	-- function 3
+	local str = ""
+	local str_2 = ""
+	local str_3 = ""
 
-	for iter_3_0 = 1, string.len(arg_3_0) do
-		var_3_0 = var_3_0 .. to_binary(string.byte(string.sub(arg_3_0, iter_3_0, iter_3_0)))
+	for i = 1, string.len(arg_3_0) do
+		str = str .. to_binary(string.byte(string.sub(arg_3_0, i, i)))
 	end
 
-	if string.len(var_3_0) % 3 == 2 then
-		var_3_2 = "=="
-		var_3_0 = var_3_0 .. "0000000000000000"
-	elseif string.len(var_3_0) % 3 == 1 then
-		var_3_2 = "="
-		var_3_0 = var_3_0 .. "00000000"
+	if string.len(str) % 3 == 2 then
+		str_3 = "=="
+		str = str .. "0000000000000000"
+	elseif string.len(str) % 3 == 1 then
+		str_3 = "="
+		str = str .. "00000000"
 	end
 
-	for iter_3_1 = 1, string.len(var_3_0), 6 do
-		local var_3_3 = string.sub(var_3_0, iter_3_1, iter_3_1 + 5)
-		local var_3_4 = tonumber(from_binary(var_3_3))
+	for j = 1, string.len(str), 6 do
+		local sub = string.sub(str, j, j + 5)
+		local var_3_4 = tonumber(from_binary(sub))
 
-		var_3_1 = var_3_1 .. string.sub(var_0_3, var_3_4 + 1, var_3_4 + 1)
+		str_2 = str_2 .. string.sub(str_4, var_3_4 + 1, var_3_4 + 1)
 	end
 
-	return string.sub(var_3_1, 1, -1 - string.len(var_3_2)) .. var_3_2
+	return string.sub(str_2, 1, -1 - string.len(str_3)) .. str_3
 end
 
-function from_base64(arg_4_0)
-	local var_4_0 = arg_4_0:gsub("%s", "")
-	local var_4_1 = var_4_0:gsub("=", "")
-	local var_4_2 = ""
-	local var_4_3 = ""
+function from_base64(self)
+	-- function 4
+	local gsub = self:gsub("%s", "")
+	local gsub_2 = gsub:gsub("=", "")
+	local str = ""
+	local str_2 = ""
 
-	for iter_4_0 = 1, string.len(var_4_1) do
-		local var_4_4 = string.sub(arg_4_0, iter_4_0, iter_4_0)
-		local var_4_5, var_4_6 = string.find(var_0_3, var_4_4)
+	for i = 1, string.len(gsub_2) do
+		local sub = string.sub(self, i, i)
+		local find, var_4_6 = string.find(str_4, sub)
 
-		if var_4_5 == nil then
-			error("Invalid character '" .. var_4_4 .. "' found.")
+		if find == nil then
+			error("Invalid character '" .. sub .. "' found.")
 		end
 
-		var_4_2 = var_4_2 .. string.sub(to_binary(var_4_5 - 1), 3)
+		str = str .. string.sub(to_binary(find - 1), 3)
 	end
 
-	for iter_4_1 = 1, string.len(var_4_2), 8 do
-		local var_4_7 = string.sub(var_4_2, iter_4_1, iter_4_1 + 7)
+	for j = 1, string.len(str), 8 do
+		local sub_2 = string.sub(str, j, j + 7)
 
-		var_4_3 = var_4_3 .. string.char(from_binary(var_4_7))
+		str_2 = str_2 .. string.char(from_binary(sub_2))
 	end
 
-	local var_4_8 = var_4_0:len() - var_4_1:len()
+	local num = gsub:len() - gsub_2:len()
 
-	if var_4_8 == 1 or var_4_8 == 2 then
-		var_4_3 = var_4_3:sub(1, -2)
+	if not (num == 1 or num ~= 2) then
+		str_2 = str_2:sub(1, -2)
 	end
 
-	return var_4_3
+	return str_2
 end

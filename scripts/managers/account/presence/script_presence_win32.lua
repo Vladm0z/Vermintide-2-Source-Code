@@ -2,18 +2,22 @@
 
 ScriptPresence = class(ScriptPresence)
 
-function ScriptPresence.init(arg_1_0)
+ScriptPresence.init = function (arg_1_0)
+	-- function 1
 	return
 end
 
-function ScriptPresence.set_user_id(arg_2_0, arg_2_1)
+ScriptPresence.set_user_id = function (arg_2_0, arg_2_1)
+	-- function 2
 	return
 end
 
-function ScriptPresence.set_presence_idle(arg_3_0)
+ScriptPresence.set_presence_idle = function (arg_3_0)
+	-- function 3
 	return
 end
 
-function ScriptPresence.set_presence_ingame(arg_4_0, arg_4_1)
+ScriptPresence.set_presence_ingame = function (arg_4_0, arg_4_1)
+	-- function 4
 	return
 end

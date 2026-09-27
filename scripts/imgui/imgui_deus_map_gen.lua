@@ -2,9 +2,9 @@
 
 ImguiDeusMapGen = class(ImguiDeusMapGen)
 
-local var_0_0 = AvailableJourneyOrder
-local var_0_1 = DEUS_GOD_INDEX
-local var_0_2 = {
+local AvailableJourneyOrder = AvailableJourneyOrder
+local DEUS_GOD_INDEX = DEUS_GOD_INDEX
+local tbl = {
 	{
 		type = "INT",
 		key = "CURSES_HOT_SPOTS_MIN_COUNT"
@@ -31,127 +31,152 @@ local var_0_2 = {
 	}
 }
 
-local function var_0_3(arg_1_0, arg_1_1)
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
 	return math.round(arg_1_0 * 10000) ~= math.round(arg_1_1 * 10000)
 end
 
-local function var_0_4(arg_2_0, arg_2_1, arg_2_2)
-	for iter_2_0, iter_2_1 in ipairs(arg_2_0) do
-		if iter_2_1.type == "FLOAT" then
-			arg_2_1[iter_2_1.key] = Imgui.input_float(iter_2_1.key, arg_2_1[iter_2_1.key])
-		elseif iter_2_1.type == "INT" then
-			arg_2_1[iter_2_1.key] = Imgui.input_int(iter_2_1.key, arg_2_1[iter_2_1.key])
+local function fn_2(arg_2_0, arg_2_1, arg_2_2)
+	-- function 2
+	for i, v in ipairs(arg_2_0) do
+		if v.type == "FLOAT" then
+			arg_2_1[v.key] = Imgui.input_float(v.key, arg_2_1[v.key])
+		elseif v.type == "INT" then
+			arg_2_1[v.key] = Imgui.input_int(v.key, arg_2_1[v.key])
 		end
 
-		if var_0_3(arg_2_1[iter_2_1.key], arg_2_2[iter_2_1.key]) then
+		if not fn(arg_2_1[v.key], arg_2_2[v.key]) then
 			Imgui.same_line()
 			Imgui.text("<changed>")
 		end
 	end
 end
 
-local var_0_5 = true
+local flag = true
 
-function ImguiDeusMapGen.init(arg_3_0)
-	arg_3_0._seed = tonumber(script_data.debug_draw_base_map_seed) or 0
-	arg_3_0._journey_index = 1
-	arg_3_0._dominant_god_index = 1
+ImguiDeusMapGen.init = function (self)
+	-- function 3
+	local var_3_0 = tonumber(script_data.debug_draw_base_map_seed)
 
-	arg_3_0:_init_configs()
+	var_3_0 = var_3_0 or 0
+	self._seed = var_3_0
+	self._journey_index = 1
+	self._dominant_god_index = 1
 
-	var_0_5 = false
+	self:_init_configs()
+
+	flag = false
 end
 
-function ImguiDeusMapGen.update(arg_4_0)
-	if var_0_5 then
-		arg_4_0:_init_configs()
+ImguiDeusMapGen.update = function (self)
+	-- function 4
+	if not flag then
+		self:_init_configs()
 
-		var_0_5 = false
+		flag = false
 	end
 end
 
-function ImguiDeusMapGen.is_persistent(arg_5_0)
+ImguiDeusMapGen.is_persistent = function (arg_5_0)
+	-- function 5
 	return false
 end
 
-function ImguiDeusMapGen._init_configs(arg_6_0)
-	arg_6_0._original_populate_configs = DEUS_MAP_POPULATE_SETTINGS
-	arg_6_0._populate_configs = table.clone(DEUS_MAP_POPULATE_SETTINGS)
+ImguiDeusMapGen._init_configs = function (self)
+	-- function 6
+	self._original_populate_configs = DEUS_MAP_POPULATE_SETTINGS
+	self._populate_configs = table.clone(DEUS_MAP_POPULATE_SETTINGS)
 
-	arg_6_0:_reset_configs_for_journey()
+	self:_reset_configs_for_journey()
 end
 
-function ImguiDeusMapGen._reset_configs_for_journey(arg_7_0)
-	local var_7_0 = var_0_0[arg_7_0._journey_index]
+ImguiDeusMapGen._reset_configs_for_journey = function (self)
+	-- function 7
+	local var_7_0 = AvailableJourneyOrder[self._journey_index]
+	local var_7_1 = DEUS_MAP_POPULATE_SETTINGS[var_7_0]
 
-	arg_7_0._original_populate_config = DEUS_MAP_POPULATE_SETTINGS[var_7_0] or DEUS_MAP_POPULATE_SETTINGS.default
-	arg_7_0._populate_config = arg_7_0._populate_configs[var_7_0] or arg_7_0._populate_configs.default
+	var_7_1 = var_7_1 or DEUS_MAP_POPULATE_SETTINGS.default
+	self._original_populate_config = var_7_1
+
+	local var_7_2 = self._populate_configs[var_7_0]
+
+	var_7_2 = var_7_2 or self._populate_configs.default
+	self._populate_config = var_7_2
 end
 
-function ImguiDeusMapGen.draw(arg_8_0, arg_8_1)
-	local var_8_0 = Imgui.begin_window("DeusMapGen", "always_auto_resize")
-	local var_8_1 = arg_8_0._journey_index
+ImguiDeusMapGen.draw = function (self, arg_8_1)
+	-- function 8
+	local begin_window = Imgui.begin_window("DeusMapGen", "always_auto_resize")
+	local _journey_index = self._journey_index
 
-	arg_8_0._journey_index = Imgui.combo("Journey to change", arg_8_0._journey_index, var_0_0)
+	self._journey_index = Imgui.combo("Journey to change", self._journey_index, AvailableJourneyOrder)
 
-	if var_8_1 ~= arg_8_0._journey_index then
-		arg_8_0:_reset_configs_for_journey()
+	if _journey_index ~= self._journey_index then
+		self:_reset_configs_for_journey()
 	end
 
-	arg_8_0._dominant_god_index = Imgui.combo("Dominant God", arg_8_0._dominant_god_index, var_0_1)
+	self._dominant_god_index = Imgui.combo("Dominant God", self._dominant_god_index, DEUS_GOD_INDEX)
 
-	local var_8_2 = arg_8_0._with_belakor or false
+	local _with_belakor = self._with_belakor
 
-	arg_8_0._with_belakor = Imgui.checkbox("With Be'lakor", var_8_2)
+	_with_belakor = _with_belakor or false
+	self._with_belakor = Imgui.checkbox("With Be'lakor", _with_belakor)
 
-	if Imgui.tree_node("PopulateSettings") then
-		var_0_4(var_0_2, arg_8_0._populate_config, arg_8_0._original_populate_config)
+	if not Imgui.tree_node("PopulateSettings") then
+		fn_2(tbl, self._populate_config, self._original_populate_config)
 		Imgui.tree_pop()
 	end
 
 	Imgui.spacing()
 
-	script_data.deus_populate_graph_debug = Imgui.checkbox("print populate debug info", script_data.deus_populate_graph_debug or false)
+	local script_data = script_data
+	local checkbox = Imgui.checkbox
+	local str = "print populate debug info"
+	local deus_populate_graph_debug = script_data.deus_populate_graph_debug
+
+	deus_populate_graph_debug = deus_populate_graph_debug or false
+	script_data.deus_populate_graph_debug = checkbox(str, deus_populate_graph_debug)
 
 	Imgui.spacing()
 
-	arg_8_0._seed = Imgui.input_int("seed", arg_8_0._seed)
+	self._seed = Imgui.input_int("seed", self._seed)
 
 	Imgui.spacing()
 
-	if Imgui.button("Generate and show") then
-		arg_8_0:_trigger_graph_render()
+	if not Imgui.button("Generate and show") then
+		self:_trigger_graph_render()
 	end
 
-	if Imgui.button("Set new seed, Generate and show") then
-		arg_8_0._seed = arg_8_0._seed + 1
+	if not Imgui.button("Set new seed, Generate and show") then
+		self._seed = self._seed + 1
 
-		arg_8_0:_trigger_graph_render()
+		self:_trigger_graph_render()
 	end
 
-	if Imgui.button("Hide") then
+	if not Imgui.button("Hide") then
 		script_data.deus_debug_draw_map = false
 		DeusDebugDrawMapSettings.base_graph = nil
 		DeusDebugDrawMapSettings.final_graph = nil
 	end
 
-	if Imgui.button("Force this seed and journey on the next game (can't have changes)") then
-		script_data.deus_seed = arg_8_0._seed
-		script_data.deus_journey = var_0_0[arg_8_0._journey_index]
-		script_data.deus_dominant_god = var_0_1[arg_8_0._dominant_god_index]
+	if not Imgui.button("Force this seed and journey on the next game (can't have changes)") then
+		script_data.deus_seed = self._seed
+		script_data.deus_journey = AvailableJourneyOrder[self._journey_index]
+		script_data.deus_dominant_god = DEUS_GOD_INDEX[self._dominant_god_index]
 	end
 
 	Imgui.spacing()
 	Imgui.spacing()
 	Imgui.end_window()
 
-	return var_8_0
+	return begin_window
 end
 
-function ImguiDeusMapGen._trigger_graph_render(arg_9_0)
+ImguiDeusMapGen._trigger_graph_render = function (self)
+	-- function 9
 	script_data.deus_debug_draw_map = true
 
-	local var_9_0 = deus_generate_graph(arg_9_0._seed, var_0_0[arg_9_0._journey_index], var_0_1[arg_9_0._dominant_god_index], arg_9_0._populate_config, arg_9_0._with_belakor)
+	local var_9_0 = deus_generate_graph(self._seed, AvailableJourneyOrder[self._journey_index], DEUS_GOD_INDEX[self._dominant_god_index], self._populate_config, self._with_belakor)
 
 	DeusDebugDrawMapSettings.base_graph = nil
 	DeusDebugDrawMapSettings.final_graph = var_9_0

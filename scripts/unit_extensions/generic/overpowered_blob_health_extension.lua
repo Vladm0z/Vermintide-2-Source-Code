@@ -2,28 +2,36 @@
 
 OverpoweredBlobHealthExtension = class(OverpoweredBlobHealthExtension, GenericHealthExtension)
 
-function OverpoweredBlobHealthExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, ...)
-	OverpoweredBlobHealthExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, ...)
+OverpoweredBlobHealthExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3, ...)
+	-- function 1
+	OverpoweredBlobHealthExtension.super.init(self, arg_1_1, arg_1_2, arg_1_3, ...)
 
-	arg_1_0.target_unit = arg_1_3.target_unit
-	arg_1_0.death_time = Managers.time:time("game") + (arg_1_3.life_time or math.huge)
-	arg_1_0.bots_can_do_damage = true
+	self.target_unit = arg_1_3.target_unit
+
+	local time = Managers.time:time("game")
+	local life_time = arg_1_3.life_time
+
+	life_time = life_time or math.huge
+	self.death_time = time + life_time
+	self.bots_can_do_damage = true
 end
 
-function OverpoweredBlobHealthExtension.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
-	local var_2_0 = ScriptUnit.has_extension(arg_2_0.target_unit, "status_system")
+OverpoweredBlobHealthExtension.update = function (self, arg_2_1, arg_2_2, arg_2_3)
+	-- function 2
+	local has_extension = ScriptUnit.has_extension(self.target_unit, "status_system")
 
-	if not var_2_0 or not var_2_0.overpowered or arg_2_3 > arg_2_0.death_time then
-		Managers.state.unit_spawner:mark_for_deletion(arg_2_0.unit)
+	if not (not has_extension and not has_extension.overpowered and not (arg_2_3 > self.death_time)) then
+		Managers.state.unit_spawner:mark_for_deletion(self.unit)
 	end
 end
 
-function OverpoweredBlobHealthExtension.destroy(arg_3_0)
-	if not Unit.alive(arg_3_0.target_unit) then
+OverpoweredBlobHealthExtension.destroy = function (self)
+	-- function 3
+	if not Unit.alive(self.target_unit) then
 		return
 	end
 
-	if ScriptUnit.has_extension(arg_3_0.target_unit, "status_system") then
-		StatusUtils.set_overpowered_network(arg_3_0.target_unit, false)
+	if not ScriptUnit.has_extension(self.target_unit, "status_system") then
+		StatusUtils.set_overpowered_network(self.target_unit, false)
 	end
 end

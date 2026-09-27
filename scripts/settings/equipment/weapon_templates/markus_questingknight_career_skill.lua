@@ -1,17 +1,29 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/markus_questingknight_career_skill.lua
 
-local var_0_0 = table.clone(ActionTemplates.wield)
-local var_0_1 = var_0_0.default
-local var_0_2 = type(var_0_1.pre_action_anim_event) == "table" and table.clone(var_0_1.pre_action_anim_event) or {
-	var_0_1.pre_action_anim_event
+local clone = table.clone(ActionTemplates.wield)
+local default = clone.default
+local clone_2
+
+if type(default.pre_action_anim_event) == "table" then
+	clone_2 = table.clone(default.pre_action_anim_event)
+
+	if not clone_2 then
+		-- Nothing
+	end
+end
+
+clone_2 = {
+	default.pre_action_anim_event
 }
 
-table.insert(var_0_2, 1, "questing_knight_ability_cancel_01")
-table.insert(var_0_2, 2, "ability_finished")
+::label_0_0::
 
-var_0_1.pre_action_anim_event = var_0_2
+table.insert(clone_2, 1, "questing_knight_ability_cancel_01")
+table.insert(clone_2, 2, "ability_finished")
 
-local var_0_3 = {
+default.pre_action_anim_event = clone_2
+
+local tbl = {
 	actions = {
 		action_career_hold = {
 			default = {
@@ -19,14 +31,16 @@ local var_0_3 = {
 				conditional_actions = {
 					{
 						sub_action = "default_2",
-						condition = function(arg_1_0, arg_1_1)
-							return arg_1_0 and arg_1_0:has_talent("markus_questing_knight_ability_tank_attack")
+						condition = function (self, arg_1_1)
+							-- function 1
+							return not self and self:has_talent("markus_questing_knight_ability_tank_attack")
 						end
 					},
 					{
 						sub_action = "default_3",
-						condition = function(arg_2_0, arg_2_1)
-							return arg_2_0 and arg_2_0:has_talent("markus_questing_knight_ability_double_activation")
+						condition = function (self, arg_2_1)
+							-- function 2
+							return not self and self:has_talent("markus_questing_knight_ability_double_activation")
 						end
 					}
 				},
@@ -39,7 +53,8 @@ local var_0_3 = {
 				kind = "career_dummy",
 				uninterruptible = true,
 				anim_event = "questing_knight_ability_base_charge",
-				anim_end_event_condition_func = function(arg_3_0, arg_3_1)
+				anim_end_event_condition_func = function (arg_3_0, arg_3_1)
+					-- function 3
 					return arg_3_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -81,7 +96,8 @@ local var_0_3 = {
 				kind = "career_dummy",
 				uninterruptible = true,
 				anim_event = "questing_knight_ability_tank_charge",
-				anim_end_event_condition_func = function(arg_4_0, arg_4_1)
+				anim_end_event_condition_func = function (arg_4_0, arg_4_1)
+					-- function 4
 					return arg_4_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -123,7 +139,8 @@ local var_0_3 = {
 				kind = "career_dummy",
 				uninterruptible = true,
 				anim_event = "questing_knight_ability_double_activation_charge",
-				anim_end_event_condition_func = function(arg_5_0, arg_5_1)
+				anim_end_event_condition_func = function (arg_5_0, arg_5_1)
+					-- function 5
 					return arg_5_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -184,7 +201,8 @@ local var_0_3 = {
 				anim_event = "questing_knight_ability_base_attack",
 				hit_stop_anim = "attack_hit",
 				total_time = 1,
-				anim_end_event_condition_func = function(arg_6_0, arg_6_1)
+				anim_end_event_condition_func = function (arg_6_0, arg_6_1)
+					-- function 6
 					return arg_6_1 ~= "new_interupting_action"
 				end,
 				vfx_settings = {
@@ -212,7 +230,8 @@ local var_0_3 = {
 					}
 				},
 				allowed_chain_actions = {},
-				enter_function = function(arg_7_0, arg_7_1)
+				enter_function = function (arg_7_0, arg_7_1)
+					-- function 7
 					return arg_7_1:reset_release_input()
 				end,
 				baked_sweep = {
@@ -311,7 +330,8 @@ local var_0_3 = {
 				anim_event = "questing_knight_ability_double_activation_attack_01",
 				hit_stop_anim = "attack_hit",
 				total_time = 1,
-				anim_end_event_condition_func = function(arg_8_0, arg_8_1)
+				anim_end_event_condition_func = function (arg_8_0, arg_8_1)
+					-- function 8
 					return arg_8_1 ~= "new_interupting_action"
 				end,
 				vfx_settings = {
@@ -376,7 +396,8 @@ local var_0_3 = {
 						auto_chain = true
 					}
 				},
-				enter_function = function(arg_9_0, arg_9_1)
+				enter_function = function (arg_9_0, arg_9_1)
+					-- function 9
 					return arg_9_1:reset_release_input()
 				end,
 				baked_sweep = {
@@ -474,7 +495,8 @@ local var_0_3 = {
 				anim_event = "questing_knight_ability_double_activation_attack_02",
 				hit_stop_anim = "attack_hit",
 				total_time = 0.9,
-				anim_end_event_condition_func = function(arg_10_0, arg_10_1)
+				anim_end_event_condition_func = function (arg_10_0, arg_10_1)
+					-- function 10
 					return arg_10_1 ~= "new_interupting_action"
 				end,
 				vfx_settings = {
@@ -510,7 +532,8 @@ local var_0_3 = {
 						auto_chain = true
 					}
 				},
-				enter_function = function(arg_11_0, arg_11_1)
+				enter_function = function (arg_11_0, arg_11_1)
+					-- function 11
 					return arg_11_1:reset_release_input()
 				end,
 				baked_sweep = {
@@ -610,7 +633,8 @@ local var_0_3 = {
 				anim_event = "questing_knight_ability_tank_attack",
 				hit_stop_anim = "attack_hit",
 				total_time = 1,
-				anim_end_event_condition_func = function(arg_12_0, arg_12_1)
+				anim_end_event_condition_func = function (arg_12_0, arg_12_1)
+					-- function 12
 					return arg_12_1 ~= "new_interupting_action"
 				end,
 				vfx_settings = {
@@ -638,7 +662,8 @@ local var_0_3 = {
 					}
 				},
 				allowed_chain_actions = {},
-				enter_function = function(arg_13_0, arg_13_1)
+				enter_function = function (arg_13_0, arg_13_1)
+					-- function 13
 					return arg_13_1:reset_release_input()
 				end,
 				hit_mass_count = TANK_HIT_MASS_COUNT,
@@ -723,14 +748,15 @@ local var_0_3 = {
 				anim_end_event = "ability_finished",
 				anim_event = "questing_knight_ability_cancel_01",
 				total_time = 0.47,
-				anim_end_event_condition_func = function(arg_14_0, arg_14_1)
+				anim_end_event_condition_func = function (arg_14_0, arg_14_1)
+					-- function 14
 					return arg_14_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {}
 			}
 		},
 		action_inspect = ActionTemplates.action_inspect,
-		action_wield = var_0_0
+		action_wield = clone
 	},
 	attack_meta_data = {
 		ignore_allies_for_obstruction = true,
@@ -749,16 +775,16 @@ local var_0_3 = {
 	}
 }
 
-var_0_3.right_hand_unit = "units/weapons/player/wpn_greatsword/wpn_greatsword"
-var_0_3.right_hand_attachment_node_linking = AttachmentNodeLinking.two_handed_melee_weapon
-var_0_3.display_unit = "units/weapons/weapon_display/display_2h_swords_executioner"
-var_0_3.wield_anim = "to_bastard_sword"
-var_0_3.state_machine = "units/beings/player/first_person_base/state_machines/career/skill_questingknight"
-var_0_3.load_state_machine = false
-var_0_3.buff_type = "MELEE_2H"
-var_0_3.weapon_type = "SWORD_2H"
-var_0_3.dodge_count = 2
-var_0_3.buffs = {
+tbl.right_hand_unit = "units/weapons/player/wpn_greatsword/wpn_greatsword"
+tbl.right_hand_attachment_node_linking = AttachmentNodeLinking.two_handed_melee_weapon
+tbl.display_unit = "units/weapons/weapon_display/display_2h_swords_executioner"
+tbl.wield_anim = "to_bastard_sword"
+tbl.state_machine = "units/beings/player/first_person_base/state_machines/career/skill_questingknight"
+tbl.load_state_machine = false
+tbl.buff_type = "MELEE_2H"
+tbl.weapon_type = "SWORD_2H"
+tbl.dodge_count = 2
+tbl.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1
 	},
@@ -766,7 +792,7 @@ var_0_3.buffs = {
 		external_optional_multiplier = 1
 	}
 }
-var_0_3.particle_fx = {
+tbl.particle_fx = {
 	wield = {
 		{
 			orphaned_policy = "stop",
@@ -822,8 +848,8 @@ var_0_3.particle_fx = {
 		}
 	}
 }
-var_0_3.particle_fx_lookup = table.mirror_array_inplace(table.keys(var_0_3.particle_fx))
-var_0_3.aim_assist_settings = {
+tbl.particle_fx_lookup = table.mirror_array_inplace(table.keys(tbl.particle_fx))
+tbl.aim_assist_settings = {
 	max_range = 5,
 	no_aim_input_multiplier = 0,
 	vertical_only = true,
@@ -835,18 +861,18 @@ var_0_3.aim_assist_settings = {
 		skaven_slave = 1
 	}
 }
-var_0_3.wwise_dep_left_hand = {
+tbl.wwise_dep_left_hand = {
 	"wwise/two_handed_swords"
 }
 
-local var_0_4 = table.clone(var_0_3)
+local clone_3 = table.clone(tbl)
 
-var_0_4.actions.action_career_release.default_smiter.damage_profile = "questing_knight_career_sword_vs"
-var_0_4.actions.action_career_release.smiter_combo_1.damage_profile = "questing_knight_career_sword_vs"
-var_0_4.actions.action_career_release.smiter_combo_2.damage_profile = "questing_knight_career_sword_stab_vs"
-var_0_4.actions.action_career_release.default_tank.damage_profile = "questing_knight_career_sword_tank_vs"
+clone_3.actions.action_career_release.default_smiter.damage_profile = "questing_knight_career_sword_vs"
+clone_3.actions.action_career_release.smiter_combo_1.damage_profile = "questing_knight_career_sword_vs"
+clone_3.actions.action_career_release.smiter_combo_2.damage_profile = "questing_knight_career_sword_stab_vs"
+clone_3.actions.action_career_release.default_tank.damage_profile = "questing_knight_career_sword_tank_vs"
 
 return {
-	markus_questingknight_career_skill_weapon = table.clone(var_0_3),
-	markus_questingknight_career_skill_weapon_vs = table.clone(var_0_4)
+	markus_questingknight_career_skill_weapon = table.clone(tbl),
+	markus_questingknight_career_skill_weapon_vs = table.clone(clone_3)
 }

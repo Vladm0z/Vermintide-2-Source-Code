@@ -1,10 +1,10 @@
 -- chunkname: @scripts/settings/dlcs/morris/morris_level_settings.lua
 
-local var_0_0 = DLCSettings.morris
+local morris = DLCSettings.morris
 
-var_0_0.level_settings = "levels/honduras_dlcs/morris/level_settings_morris"
-var_0_0.weighted_random_terror_events = {}
-var_0_0.missions = {
+morris.level_settings = "levels/honduras_dlcs/morris/level_settings_morris"
+morris.weighted_random_terror_events = {}
+morris.missions = {
 	deus_cursed_chest_defend = {
 		text = "deus_cursed_chest_defend",
 		disable_rewards = true,

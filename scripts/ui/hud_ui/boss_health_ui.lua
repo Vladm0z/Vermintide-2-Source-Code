@@ -1,10 +1,10 @@
 -- chunkname: @scripts/ui/hud_ui/boss_health_ui.lua
 
 local var_0_0 = local_require("scripts/ui/hud_ui/boss_health_ui_definitions")
-local var_0_1 = 0.5
-local var_0_2 = 2
-local var_0_3 = UISettings.breed_textures
-local var_0_4 = {
+local num = 0.5
+local num_2 = 2
+local breed_textures = UISettings.breed_textures
+local tbl = {
 	sync = 0,
 	lord = 2,
 	proximity = 1,
@@ -13,12 +13,12 @@ local var_0_4 = {
 	damage_done = 4,
 	forced = 5
 }
-local var_0_5 = table.set({
+local set = table.set({
 	"damage_taken",
 	"damage_done",
 	"ping"
 })
-local var_0_6 = {
+local tbl_2 = {
 	"rpc_add_forced_boss_health_ui",
 	"rpc_register_detected_boss"
 }
@@ -27,142 +27,151 @@ BossHealthUI = class(BossHealthUI)
 BossHealthUI.MAX_NUM_FORCED_WIDGETS = 2
 BossHealthUI.MAX_NUM_ADDITIONAL_WIDGETS = 4
 
-function BossHealthUI.init(arg_1_0, arg_1_1, arg_1_2)
-	arg_1_0._parent = arg_1_1
-	arg_1_0.ui_renderer = arg_1_2.ui_renderer
-	arg_1_0.input_manager = arg_1_2.input_manager
-	arg_1_0.player_manager = arg_1_2.player_manager
-	arg_1_0.peer_id = arg_1_2.peer_id
-	arg_1_0.world = arg_1_2.world_manager:world("level_world")
-	arg_1_0.render_settings = {
+BossHealthUI.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	self._parent = arg_1_1
+	self.ui_renderer = arg_1_2.ui_renderer
+	self.input_manager = arg_1_2.input_manager
+	self.player_manager = arg_1_2.player_manager
+	self.peer_id = arg_1_2.peer_id
+	self.world = arg_1_2.world_manager:world("level_world")
+	self.render_settings = {
 		alpha_multiplier = 1,
 		snap_pixel_positions = true
 	}
 
-	arg_1_0:create_ui_elements()
+	self:create_ui_elements()
 
-	arg_1_0._animations = {}
-	arg_1_0._forced_animations = {}
-	arg_1_0._ingame_ui_context = arg_1_2
-	arg_1_0._name_pools = {}
-	arg_1_0._cached_pool_name_by_unit = {}
-	arg_1_0._detected_boss_units = {}
+	self._animations = {}
+	self._forced_animations = {}
+	self._ingame_ui_context = arg_1_2
+	self._name_pools = {}
+	self._cached_pool_name_by_unit = {}
+	self._detected_boss_units = {}
 
-	local var_1_0 = Managers.state.event
+	local event = Managers.state.event
 
-	var_1_0:register(arg_1_0, "boss_health_bar_register_unit", "_event_register_boss_unit")
-	var_1_0:register(arg_1_0, "on_spectator_target_changed", "on_spectator_target_changed")
-	var_1_0:register(arg_1_0, "force_add_boss_health_ui", "on_force_add_boss_health_ui")
+	event:register(self, "boss_health_bar_register_unit", "_event_register_boss_unit")
+	event:register(self, "on_spectator_target_changed", "on_spectator_target_changed")
+	event:register(self, "force_add_boss_health_ui", "on_force_add_boss_health_ui")
 
-	arg_1_0._proximity_update_time = 0
-	arg_1_0._look_at_boss_unit_timer = 0
-	arg_1_0._network_event_delegate = arg_1_2.network_event_delegate
+	self._proximity_update_time = 0
+	self._look_at_boss_unit_timer = 0
+	self._network_event_delegate = arg_1_2.network_event_delegate
 
-	arg_1_0._network_event_delegate:register(arg_1_0, unpack(var_0_6))
+	self._network_event_delegate:register(self, unpack(tbl_2))
 end
 
-function BossHealthUI.destroy(arg_2_0)
-	GarbageLeakDetector.register_object(arg_2_0, "boss_health_ui")
+BossHealthUI.destroy = function (self)
+	-- function 2
+	GarbageLeakDetector.register_object(self, "boss_health_ui")
 
-	local var_2_0 = Managers.state.event
+	local event = Managers.state.event
 
-	var_2_0:unregister("on_spectator_target_changed", arg_2_0)
-	var_2_0:unregister("boss_health_bar_register_unit", arg_2_0)
-	var_2_0:unregister("force_add_boss_health_ui", arg_2_0)
-	arg_2_0._network_event_delegate:unregister(arg_2_0)
+	event:unregister("on_spectator_target_changed", self)
+	event:unregister("boss_health_bar_register_unit", self)
+	event:unregister("force_add_boss_health_ui", self)
+	self._network_event_delegate:unregister(self)
 end
 
-function BossHealthUI.create_ui_elements(arg_3_0)
-	UIRenderer.clear_scenegraph_queue(arg_3_0.ui_renderer)
+BossHealthUI.create_ui_elements = function (self)
+	-- function 3
+	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
-	arg_3_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
-	arg_3_0._forced_widget_names = {}
-	arg_3_0._additional_widget_names = {}
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
+	self._forced_widget_names = {}
+	self._additional_widget_names = {}
 
-	local var_3_0 = {}
-	local var_3_1 = {}
-	local var_3_2 = var_0_0.widget_create_func()
-	local var_3_3 = UIWidget.init(var_3_2)
+	local tbl = {}
+	local tbl_2 = {}
+	local widget_create_func = var_0_0.widget_create_func()
+	local var_3_3 = UIWidget.init(widget_create_func)
 
-	var_3_0[#var_3_0 + 1] = var_3_3
-	var_3_1.prioritized_bar = var_3_3
-	arg_3_0._widgets = var_3_0
-	arg_3_0._widgets_by_name = var_3_1
+	tbl[#tbl + 1] = var_3_3
+	tbl_2.prioritized_bar = var_3_3
+	self._widgets = tbl
+	self._widgets_by_name = tbl_2
 
-	arg_3_0:_preemptively_hide_widgets()
+	self:_preemptively_hide_widgets()
 
 	if Managers.state.game_mode:game_mode_key() == "versus" then
-		arg_3_0.ui_scenegraph.pivot.position[2] = -150
+		self.ui_scenegraph.pivot.position[2] = -150
 	end
 end
 
-function BossHealthUI._get_or_create_forced_widget_name(arg_4_0, arg_4_1)
+BossHealthUI._get_or_create_forced_widget_name = function (self, arg_4_1)
+	-- function 4
 	if arg_4_1 > BossHealthUI.MAX_NUM_FORCED_WIDGETS then
 		return nil
 	end
 
-	local var_4_0 = arg_4_0._forced_widget_names
-	local var_4_1 = var_4_0[arg_4_1]
+	local _forced_widget_names = self._forced_widget_names
+	local var_4_1 = _forced_widget_names[arg_4_1]
 
 	if not var_4_1 then
 		var_4_1 = "forced_widget_" .. arg_4_1
-		var_4_0[arg_4_1] = var_4_1
+		_forced_widget_names[arg_4_1] = var_4_1
 	end
 
-	local var_4_2 = arg_4_0._widgets_by_name
+	local _widgets_by_name = self._widgets_by_name
 
-	if not var_4_2[var_4_1] then
-		local var_4_3 = arg_4_0._widgets
-		local var_4_4 = var_0_0.widget_create_func()
-		local var_4_5 = UIWidget.init(var_4_4)
+	if not _widgets_by_name[var_4_1] then
+		local _widgets = self._widgets
+		local widget_create_func = var_0_0.widget_create_func()
+		local var_4_5 = UIWidget.init(widget_create_func)
 
-		var_4_3[#var_4_3 + 1] = var_4_5
-		var_4_2[var_4_1] = var_4_5
+		_widgets[#_widgets + 1] = var_4_5
+		_widgets_by_name[var_4_1] = var_4_5
 	end
 
 	return var_4_1
 end
 
-function BossHealthUI._get_or_create_additional_widget_name(arg_5_0, arg_5_1)
+BossHealthUI._get_or_create_additional_widget_name = function (self, arg_5_1)
+	-- function 5
 	if arg_5_1 > BossHealthUI.MAX_NUM_ADDITIONAL_WIDGETS then
 		return nil
 	end
 
-	local var_5_0 = arg_5_0._additional_widget_names
-	local var_5_1 = var_5_0[arg_5_1]
+	local _additional_widget_names = self._additional_widget_names
+	local var_5_1 = _additional_widget_names[arg_5_1]
 
 	if not var_5_1 then
 		var_5_1 = "additional_widget_" .. arg_5_1
-		var_5_0[arg_5_1] = var_5_1
+		_additional_widget_names[arg_5_1] = var_5_1
 	end
 
-	local var_5_2 = arg_5_0._widgets_by_name
+	local _widgets_by_name = self._widgets_by_name
 
-	if not var_5_2[var_5_1] then
-		local var_5_3 = arg_5_0._widgets
-		local var_5_4 = var_0_0.widget_create_func(true)
-		local var_5_5 = UIWidget.init(var_5_4)
+	if not _widgets_by_name[var_5_1] then
+		local _widgets = self._widgets
+		local widget_create_func = var_0_0.widget_create_func(true)
+		local var_5_5 = UIWidget.init(widget_create_func)
 
-		var_5_3[#var_5_3 + 1] = var_5_5
-		var_5_2[var_5_1] = var_5_5
+		_widgets[#_widgets + 1] = var_5_5
+		_widgets_by_name[var_5_1] = var_5_5
 	end
 
 	return var_5_1
 end
 
-function BossHealthUI._set_portrait_and_title(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
-	local var_6_0 = arg_6_1.breed_name
-	local var_6_1 = var_0_3[var_6_0] or "icons_placeholder"
-	local var_6_2 = arg_6_0._widgets_by_name[arg_6_1.widget_name]
+BossHealthUI._set_portrait_and_title = function (self, arg_6_1, arg_6_2, arg_6_3)
+	-- function 6
+	local breed_name = arg_6_1.breed_name
+	local var_6_1 = breed_textures[breed_name]
 
-	if var_6_2 then
-		local var_6_3 = var_6_2.content.title_cached
-		local var_6_4 = var_6_2.content.marked_cached
+	var_6_1 = var_6_1 or "icons_placeholder"
 
-		if arg_6_1.dirty or var_6_3 ~= arg_6_3 or var_6_4 ~= arg_6_2 then
+	local var_6_2 = self._widgets_by_name[arg_6_1.widget_name]
+
+	if not var_6_2 then
+		local title_cached = var_6_2.content.title_cached
+		local marked_cached = var_6_2.content.marked_cached
+
+		if not (arg_6_1.dirty or title_cached ~= arg_6_3 or marked_cached == arg_6_2) then
 			var_6_2.content.title_cached, var_6_2.content.marked_cached = arg_6_3, arg_6_2
 
-			if arg_6_2 then
+			if not arg_6_2 then
 				var_6_2.content.title_text = "{#grad(true);color(255,125,80,255);color2(234,77,29,255)}" .. Utf8.upper(arg_6_3)
 			else
 				var_6_2.content.title_text = Utf8.upper(Localize(arg_6_3))
@@ -173,83 +182,92 @@ function BossHealthUI._set_portrait_and_title(arg_6_0, arg_6_1, arg_6_2, arg_6_3
 	end
 end
 
-local var_0_7 = {
+local tbl_3 = {
 	font_size = 20,
 	upper_case = true,
 	font_type = "hell_shark",
 	divider_icon_width = 22
 }
 
-function BossHealthUI._generate_attributes(arg_7_0, arg_7_1, arg_7_2)
-	local var_7_0 = var_0_7
-	local var_7_1 = var_7_0.font_size
-	local var_7_2 = arg_7_2.content
-	local var_7_3 = (var_7_2.attribute_offset_reference or 0) + 4
-	local var_7_4 = var_7_3
-	local var_7_5 = -40
-	local var_7_6 = 24
-	local var_7_7 = (var_7_6 - var_7_0.divider_icon_width) / 2
+BossHealthUI._generate_attributes = function (self, arg_7_1, arg_7_2)
+	-- function 7
+	local var_7_0 = tbl_3
+	local font_size = var_7_0.font_size
+	local content = arg_7_2.content
+	local attribute_offset_reference = content.attribute_offset_reference
 
-	for iter_7_0, iter_7_1 in ipairs(arg_7_1) do
-		var_7_2.attributes[iter_7_0] = true
-		var_7_2.num_attributes = iter_7_0
+	attribute_offset_reference = attribute_offset_reference or 0
 
-		local var_7_8 = "attribute_text_" .. iter_7_0
-		local var_7_9 = arg_7_2.style[var_7_8]
+	local num = attribute_offset_reference + 4
+	local var_7_5 = num
+	local num_2 = -40
+	local num_3 = 24
+	local num_4 = (num_3 - var_7_0.divider_icon_width) / 2
 
-		if var_7_9 then
-			local var_7_10 = var_7_2.skull_dividers[iter_7_0]
+	for i, v in ipairs(arg_7_1) do
+		content.attributes[i] = true
+		content.num_attributes = i
 
-			if var_7_10 then
-				local var_7_11 = arg_7_2.style[var_7_10]
+		local str = "attribute_text_" .. i
+		local var_7_10 = arg_7_2.style[str]
 
-				var_7_11.offset[1] = var_7_4 + var_7_7
-				var_7_11.offset[2] = var_7_5 - 13
-				var_7_4 = var_7_4 + var_7_6
+		if not var_7_10 then
+			local var_7_11 = content.skull_dividers[i]
+
+			if not var_7_11 then
+				local var_7_12 = arg_7_2.style[var_7_11]
+
+				var_7_12.offset[1] = var_7_5 + num_4
+				var_7_12.offset[2] = num_2 - 13
+				var_7_5 = var_7_5 + num_3
 			end
 
-			local var_7_12 = "{#grad(true);color(242,226,187,255);color2(255,125,80,255)}" .. iter_7_1
-			local var_7_13 = UIUtils.get_text_width(arg_7_0.ui_renderer, var_7_0, var_7_12)
+			local str_2 = "{#grad(true);color(242,226,187,255);color2(255,125,80,255)}" .. v
+			local get_text_width = UIUtils.get_text_width(self.ui_renderer, var_7_0, str_2)
 
-			var_7_2[var_7_8] = var_7_12
-			var_7_9.offset[1] = var_7_4
-			var_7_9.font_size = var_7_1
-			var_7_4 = var_7_4 + var_7_13
+			content[str] = str_2
+			var_7_10.offset[1] = var_7_5
+			var_7_10.font_size = font_size
+			var_7_5 = var_7_5 + get_text_width
 
-			if iter_7_0 % 3 == 0 then
-				var_7_4 = var_7_3
-				var_7_5 = var_7_5 - 16
+			if i % 3 == 0 then
+				var_7_5 = num
+				num_2 = num_2 - 16
 			end
 		end
 	end
 
-	local var_7_14 = arg_7_2.style.lower_marked_bg
+	local lower_marked_bg = arg_7_2.style.lower_marked_bg
 
-	if var_7_14 then
+	if not lower_marked_bg then
 		if #arg_7_1 <= 4 then
-			var_7_14.offset[2] = -83 + var_7_0.font_size - 4
+			lower_marked_bg.offset[2] = -83 + var_7_0.font_size - 4
 		else
-			var_7_14.offset[2] = -83
+			lower_marked_bg.offset[2] = -83
 		end
 	end
 
 	return true
 end
 
-function BossHealthUI._update_enemy_portrait_name_and_attributes(arg_8_0, arg_8_1)
-	local var_8_0 = arg_8_1.unit
-	local var_8_1 = Managers.state.entity:system("ai_system"):get_attributes(var_8_0)
-	local var_8_2 = var_8_1.grudge_marked
-	local var_8_3 = arg_8_1.breed_name
-	local var_8_4 = Breeds[var_8_3] or PlayerBreeds[var_8_3]
+BossHealthUI._update_enemy_portrait_name_and_attributes = function (self, arg_8_1)
+	-- function 8
+	local unit = arg_8_1.unit
+	local get_attributes = Managers.state.entity:system("ai_system"):get_attributes(unit)
+	local grudge_marked = get_attributes.grudge_marked
+	local breed_name = arg_8_1.breed_name
+	local var_8_4 = Breeds[breed_name]
+
+	var_8_4 = var_8_4 or PlayerBreeds[breed_name]
+
 	local var_8_5
-	local var_8_6 = var_8_4.boss_health_ui_boss_phase_func
+	local boss_health_ui_boss_phase_func = var_8_4.boss_health_ui_boss_phase_func
 
-	if var_8_6 then
-		local var_8_7, var_8_8 = var_8_6(var_8_0)
+	if not boss_health_ui_boss_phase_func then
+		local var_8_7, var_8_8 = boss_health_ui_boss_phase_func(unit)
 
-		if var_8_7 then
-			if var_8_8 and var_8_8 > 0 then
+		if not var_8_7 then
+			if not (not var_8_8 and not (var_8_8 > 0)) then
 				var_8_5 = string.format("%s (%s)", Localize(var_8_7), string.format(Localize("datetime_seconds_short"), var_8_8))
 			else
 				var_8_5 = Localize(var_8_7)
@@ -257,204 +275,239 @@ function BossHealthUI._update_enemy_portrait_name_and_attributes(arg_8_0, arg_8_
 		end
 	end
 
-	if not arg_8_1.dirty and arg_8_1.cached_name and var_8_5 == arg_8_1.cached_custom_attribute then
-		return arg_8_1.cached_name, var_8_2
+	if not ((arg_8_1.dirty or not arg_8_1.cached_name) and var_8_5 ~= arg_8_1.cached_custom_attribute) then
+		return arg_8_1.cached_name, grudge_marked
 	end
 
 	local var_8_9
-	local var_8_10 = arg_8_0._widgets_by_name[arg_8_1.widget_name]
+	local var_8_10 = self._widgets_by_name[arg_8_1.widget_name]
 
-	if var_8_10 then
+	if not var_8_10 then
 		table.clear(var_8_10.content.attributes)
 
-		var_8_10.content.has_custom_attribute = not not var_8_6
+		var_8_10.content.has_custom_attribute = not not boss_health_ui_boss_phase_func
 	end
 
-	local var_8_11 = Managers.level_transition_handler:get_current_level_key()
-	local var_8_12 = var_8_4 and var_8_4.name_pool_by_level and var_8_4.name_pool_by_level[var_8_11]
+	local get_current_level_key = Managers.level_transition_handler:get_current_level_key()
 
-	if var_8_2 then
-		local var_8_13 = var_8_2.name_index
+	if not var_8_4 then
+		-- Nothing
+	end
 
-		var_8_9 = TerrorEventUtils.get_grudge_marked_name(var_8_3, var_8_13, var_8_1.breed_enhancements)
-	elseif var_8_12 then
-		if arg_8_0._cached_pool_name_by_unit[var_8_0] then
-			var_8_9 = arg_8_0._cached_pool_name_by_unit[var_8_0]
+	::label_8_0::
+
+	local name_pool_by_level = var_8_4.name_pool_by_level
+
+	name_pool_by_level = not name_pool_by_level and var_8_4.name_pool_by_level[get_current_level_key]
+
+	::label_8_1::
+
+	if not grudge_marked then
+		local name_index = grudge_marked.name_index
+
+		var_8_9 = TerrorEventUtils.get_grudge_marked_name(breed_name, name_index, get_attributes.breed_enhancements)
+	elseif not name_pool_by_level then
+		if not self._cached_pool_name_by_unit[unit] then
+			var_8_9 = self._cached_pool_name_by_unit[unit]
 		else
-			local var_8_14 = string.format("%s_%s", var_8_11, var_8_3)
-			local var_8_15 = arg_8_0._name_pools[var_8_14] or {}
+			local format = string.format("%s_%s", get_current_level_key, breed_name)
+			local var_8_15 = self._name_pools[format]
 
-			arg_8_0._name_pools[var_8_14] = var_8_15
+			var_8_15 = var_8_15 or {}
+			self._name_pools[format] = var_8_15
 
-			if table.is_empty(var_8_15) then
-				table.append(var_8_15, var_8_12)
+			if not table.is_empty(var_8_15) then
+				table.append(var_8_15, name_pool_by_level)
 			end
 
-			local var_8_16 = Managers.state.unit_storage:go_id(arg_8_1.unit) or 0
-			local var_8_17, var_8_18 = Math.next_random(var_8_16, 1, #var_8_15)
+			local go_id = Managers.state.unit_storage:go_id(arg_8_1.unit)
+
+			go_id = go_id or 0
+
+			local next_random, var_8_18 = Math.next_random(go_id, 1, #var_8_15)
 
 			var_8_9 = table.remove(var_8_15, var_8_18)
-			arg_8_0._cached_pool_name_by_unit[var_8_0] = var_8_9
+			self._cached_pool_name_by_unit[unit] = var_8_9
 		end
 	else
-		var_8_9 = var_8_4.display_name or var_8_3
+		var_8_9 = var_8_4.display_name or breed_name
 	end
 
-	if var_8_10 then
-		local var_8_19 = {}
+	if not var_8_10 then
+		local tbl = {}
 
-		if var_8_2 and var_8_1.breed_enhancements then
-			for iter_8_0 in pairs(var_8_1.breed_enhancements) do
-				local var_8_20 = BreedEnhancements[iter_8_0].display_name or "missing_grudge_mark_name"
+		if not grudge_marked and not get_attributes.breed_enhancements then
+			for k in pairs(get_attributes.breed_enhancements) do
+				local display_name = BreedEnhancements[k].display_name
 
-				var_8_19[#var_8_19 + 1] = Utf8.upper(Localize(var_8_20))
+				display_name = display_name or "missing_grudge_mark_name"
+				tbl[#tbl + 1] = Utf8.upper(Localize(display_name))
 			end
 		end
 
-		if var_8_5 then
-			var_8_19[#var_8_19 + 1] = var_8_5
+		if not var_8_5 then
+			tbl[#tbl + 1] = var_8_5
 		end
 
-		if not table.is_empty(var_8_19) then
-			arg_8_0:_generate_attributes(var_8_19, var_8_10)
+		if not table.is_empty(tbl) then
+			self:_generate_attributes(tbl, var_8_10)
 		end
 	end
 
 	arg_8_1.cached_name = var_8_9
 	arg_8_1.cached_custom_attribute = var_8_5
 
-	return var_8_9, var_8_2
+	return var_8_9, grudge_marked
 end
 
-local var_0_8 = {
+local tbl_4 = {
 	root_scenegraph_id = "pivot",
 	label = "Boss health",
 	registry_key = "boss_health",
 	drag_scenegraph_id = "pivot_dragger"
 }
 
-function BossHealthUI.update(arg_9_0, arg_9_1, arg_9_2)
-	if HudCustomizer.run(arg_9_0.ui_renderer, arg_9_0.ui_scenegraph, var_0_8) then
-		UISceneGraph.update_scenegraph(arg_9_0.ui_scenegraph)
+BossHealthUI.update = function (self, arg_9_1, arg_9_2)
+	-- function 9
+	if not HudCustomizer.run(self.ui_renderer, self.ui_scenegraph, tbl_4) then
+		UISceneGraph.update_scenegraph(self.ui_scenegraph)
 	end
 
-	arg_9_0:_update_proximity_boss()
-	arg_9_0:_sync_boss_unit_health(arg_9_1, arg_9_2)
-	arg_9_0:_update_animations(arg_9_1, arg_9_2)
+	self:_update_proximity_boss()
+	self:_sync_boss_unit_health(arg_9_1, arg_9_2)
+	self:_update_animations(arg_9_1, arg_9_2)
 
 	if not script_data.hide_boss_health_ui then
-		arg_9_0:_draw(arg_9_1, arg_9_2)
+		self:_draw(arg_9_1, arg_9_2)
 	end
 end
 
-function BossHealthUI._update_proximity_boss(arg_10_0)
-	local var_10_0 = Managers.state.entity:system("proximity_system").closest_boss_unit
+BossHealthUI._update_proximity_boss = function (self)
+	-- function 10
+	local closest_boss_unit = Managers.state.entity:system("proximity_system").closest_boss_unit
 
-	arg_10_0:_event_register_boss_unit(var_10_0, "proximity")
+	self:_event_register_boss_unit(closest_boss_unit, "proximity")
 end
 
-function BossHealthUI._is_forced(arg_11_0, arg_11_1)
-	for iter_11_0, iter_11_1 in ipairs(arg_11_0._detected_boss_units) do
-		if iter_11_1.unit == arg_11_1 and iter_11_1.forced then
+BossHealthUI._is_forced = function (self, arg_11_1)
+	-- function 11
+	for i, v in ipairs(self._detected_boss_units) do
+		if v.unit ~= arg_11_1 or not v.forced then
 			return true
 		end
 	end
 end
 
-function BossHealthUI._has_forced(arg_12_0)
-	return table.find_func(arg_12_0._detected_boss_units, function(arg_13_0, arg_13_1)
+BossHealthUI._has_forced = function (self)
+	-- function 12
+	return table.find_func(self._detected_boss_units, function (arg_13_0, arg_13_1)
+		-- function 13
 		return arg_13_1.forced
 	end)
 end
 
-local var_0_9 = {}
+local tbl_5 = {}
 
-function BossHealthUI._num_healthbars(arg_14_0)
-	local var_14_0, var_14_1 = table.filter_array(arg_14_0._detected_boss_units, function(arg_15_0)
-		return arg_15_0.show_health_bar
-	end, var_0_9)
+BossHealthUI._num_healthbars = function (self)
+	-- function 14
+	local filter_array, var_14_1 = table.filter_array(self._detected_boss_units, function (self)
+		-- function 15
+		return self.show_health_bar
+	end, tbl_5)
 
 	return var_14_1
 end
 
-function BossHealthUI._update_animations(arg_16_0, arg_16_1, arg_16_2)
-	local var_16_0 = arg_16_0._animations
+BossHealthUI._update_animations = function (self, arg_16_1, arg_16_2)
+	-- function 16
+	local _animations = self._animations
 
-	for iter_16_0, iter_16_1 in pairs(var_16_0) do
-		if not UIAnimation.completed(iter_16_1) then
-			UIAnimation.update(iter_16_1, arg_16_1)
+	for k, v in pairs(_animations) do
+		if not UIAnimation.completed(v) then
+			UIAnimation.update(v, arg_16_1)
 		else
-			var_16_0[iter_16_0] = nil
+			_animations[k] = nil
 		end
 	end
 
-	local var_16_1 = arg_16_0._forced_animations
+	local _forced_animations = self._forced_animations
 
-	for iter_16_2, iter_16_3 in pairs(var_16_1) do
-		if not UIAnimation.completed(iter_16_3) then
-			UIAnimation.update(iter_16_3, arg_16_1)
+	for k_2, v_2 in pairs(_forced_animations) do
+		if not UIAnimation.completed(v_2) then
+			UIAnimation.update(v_2, arg_16_1)
 		else
-			var_16_1[iter_16_2] = nil
+			_forced_animations[k_2] = nil
 		end
 	end
 end
 
-function BossHealthUI._draw(arg_17_0, arg_17_1, arg_17_2)
-	local var_17_0 = arg_17_0.ui_renderer
-	local var_17_1 = arg_17_0.ui_scenegraph
-	local var_17_2 = arg_17_0.input_manager:get_service("Player")
-	local var_17_3 = arg_17_0.render_settings
+BossHealthUI._draw = function (self, arg_17_1, arg_17_2)
+	-- function 17
+	local ui_renderer = self.ui_renderer
+	local ui_scenegraph = self.ui_scenegraph
+	local get_service = self.input_manager:get_service("Player")
+	local render_settings = self.render_settings
 
-	var_17_3.alpha_multiplier = math.min(var_17_3.alpha_multiplier + arg_17_1 * 5, 1)
+	render_settings.alpha_multiplier = math.min(render_settings.alpha_multiplier + arg_17_1 * 5, 1)
 
-	UIRenderer.begin_pass(var_17_0, var_17_1, var_17_2, arg_17_1, nil, var_17_3)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, get_service, arg_17_1, nil, render_settings)
 
-	local var_17_4 = var_17_3.alpha_multiplier
+	local alpha_multiplier = render_settings.alpha_multiplier
 
-	for iter_17_0, iter_17_1 in pairs(arg_17_0._detected_boss_units) do
-		if iter_17_1.current_progress then
-			local var_17_5 = arg_17_0._widgets_by_name[iter_17_1.widget_name]
+	for k, v in pairs(self._detected_boss_units) do
+		if not v.current_progress then
+			local var_17_5 = self._widgets_by_name[v.widget_name]
 
-			if var_17_5 then
-				iter_17_1.alpha_multiplier = math.min(iter_17_1.alpha_multiplier + arg_17_1 * 5, 1)
-				var_17_3.alpha_multiplier = iter_17_1.alpha_multiplier
+			if not var_17_5 then
+				v.alpha_multiplier = math.min(v.alpha_multiplier + arg_17_1 * 5, 1)
+				render_settings.alpha_multiplier = v.alpha_multiplier
 
-				UIRenderer.draw_widget(var_17_0, var_17_5)
+				UIRenderer.draw_widget(ui_renderer, var_17_5)
 			end
 		end
 	end
 
-	var_17_3.alpha_multiplier = var_17_4
+	render_settings.alpha_multiplier = alpha_multiplier
 
-	UIRenderer.end_pass(var_17_0)
+	UIRenderer.end_pass(ui_renderer)
 end
 
-function BossHealthUI._show_boss_health_bar(arg_18_0, arg_18_1)
-	local var_18_0 = arg_18_1.unit
+BossHealthUI._show_boss_health_bar = function (self, arg_18_1)
+	-- function 18
+	local unit = arg_18_1.unit
 	local var_18_1
-	local var_18_2 = Unit.get_data(var_18_0, "breed")
+	local get_data = Unit.get_data(unit, "breed")
 
-	if var_18_2 and var_18_2.server_controlled_health_bar then
-		local var_18_3 = Managers.state
-		local var_18_4 = var_18_3.network:game()
-		local var_18_5 = var_18_3.unit_storage:go_id(var_18_0)
+	if not get_data and not get_data.server_controlled_health_bar then
+		local state = Managers.state
+		local game = state.network:game()
+		local go_id = state.unit_storage:go_id(unit)
 
-		var_18_1 = var_18_5 and GameSession.game_object_field(var_18_4, var_18_5, "show_health_bar")
+		var_18_1 = not go_id and GameSession.game_object_field(game, go_id, "show_health_bar")
 	else
-		local var_18_6 = Managers.state.entity:system("ai_system"):get_attributes(var_18_0)
+		local get_attributes = Managers.state.entity:system("ai_system"):get_attributes(unit)
 
-		var_18_1 = var_18_2 and var_18_2.show_health_bar or var_18_6.grudge_marked ~= nil
+		var_18_1 = not get_data and get_data.show_health_bar or get_attributes.grudge_marked ~= nil
 	end
 
 	if arg_18_1.show_health_bar ~= var_18_1 then
-		local var_18_7 = arg_18_0:_num_healthbars()
+		local _num_healthbars = self:_num_healthbars()
 
 		arg_18_1.show_health_bar = var_18_1
 		arg_18_1.dirty = true
-		arg_18_0.render_settings.alpha_multiplier = var_18_7 == 0 and 0 or arg_18_0.render_settings.alpha_multiplier
-		arg_18_1.alpha_multiplier = var_18_7 == 0 and 0 or arg_18_0.render_settings.alpha_multiplier
 
-		arg_18_0:_set_healing_amount(arg_18_1, 0, 0)
+		local render_settings = self.render_settings
+		local flag
+
+		flag = _num_healthbars ~= 0 or not 0 or self.render_settings.alpha_multiplier
+		render_settings.alpha_multiplier = flag
+
+		local flag_2
+
+		flag_2 = _num_healthbars ~= 0 or not 0 or self.render_settings.alpha_multiplier
+		arg_18_1.alpha_multiplier = flag_2
+
+		self:_set_healing_amount(arg_18_1, 0, 0)
 
 		arg_18_1.freeze_healing = false
 		arg_18_1.next_update_is_instant = true
@@ -463,45 +516,50 @@ function BossHealthUI._show_boss_health_bar(arg_18_0, arg_18_1)
 	return var_18_1
 end
 
-function BossHealthUI.on_spectator_target_changed(arg_19_0, arg_19_1)
+BossHealthUI.on_spectator_target_changed = function (arg_19_0, arg_19_1)
+	-- function 19
 	return
 end
 
-function BossHealthUI.on_force_add_boss_health_ui(arg_20_0, arg_20_1)
-	arg_20_0:_event_register_boss_unit(arg_20_1, "forced", true)
-	arg_20_0:_realign_forced_boss_widgets()
+BossHealthUI.on_force_add_boss_health_ui = function (self, arg_20_1)
+	-- function 20
+	self:_event_register_boss_unit(arg_20_1, "forced", true)
+	self:_realign_forced_boss_widgets()
 
-	if Managers.player.is_server then
+	if not Managers.player.is_server then
 		if not Managers.state.network:game() then
 			return
 		end
 
-		local var_20_0 = Managers.state.unit_storage:go_id(arg_20_1)
+		local go_id = Managers.state.unit_storage:go_id(arg_20_1)
 
-		Managers.state.network.network_transmit:send_rpc_clients("rpc_add_forced_boss_health_ui", var_20_0)
+		Managers.state.network.network_transmit:send_rpc_clients("rpc_add_forced_boss_health_ui", go_id)
 	end
 end
 
-function BossHealthUI.rpc_add_forced_boss_health_ui(arg_21_0, arg_21_1, arg_21_2)
-	local var_21_0 = Managers.state.unit_storage:unit(arg_21_2)
+BossHealthUI.rpc_add_forced_boss_health_ui = function (self, arg_21_1, arg_21_2)
+	-- function 21
+	local unit = Managers.state.unit_storage:unit(arg_21_2)
 
-	arg_21_0:on_force_add_boss_health_ui(var_21_0)
+	self:on_force_add_boss_health_ui(unit)
 end
 
-function BossHealthUI._event_register_boss_unit(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+BossHealthUI._event_register_boss_unit = function (self, arg_22_1, arg_22_2, arg_22_3)
+	-- function 22
 	if not HEALTH_ALIVE[arg_22_1] then
 		return
 	end
 
-	local var_22_0, var_22_1 = table.find_func(arg_22_0._detected_boss_units, function(arg_23_0, arg_23_1)
+	local find_func, var_22_1 = table.find_func(self._detected_boss_units, function (arg_23_0, arg_23_1)
+		-- function 23
 		return arg_23_1.unit == arg_22_1
 	end)
 
-	if var_22_1 then
-		local var_22_2 = var_22_1.priority
-		local var_22_3 = var_0_4[arg_22_2]
+	if not var_22_1 then
+		local priority = var_22_1.priority
+		local var_22_3 = tbl[arg_22_2]
 
-		if var_22_2 < var_22_3 or var_22_3 == var_22_2 and var_0_5[arg_22_2] then
+		if priority < var_22_3 or var_22_3 ~= priority or not set[arg_22_2] then
 			var_22_1.priority = var_22_3
 			var_22_1.priority_t = Managers.time:time("ui")
 		end
@@ -509,515 +567,625 @@ function BossHealthUI._event_register_boss_unit(arg_22_0, arg_22_1, arg_22_2, ar
 		return var_22_1
 	end
 
-	local var_22_4 = {
+	local tbl_2 = {
 		alpha_multiplier = 0,
 		unit = arg_22_1,
-		priority = var_0_4[arg_22_2],
+		priority = tbl[arg_22_2],
 		priority_t = Managers.time:time("ui"),
 		forced = arg_22_2 == "forced",
 		breed_name = Unit.get_data(arg_22_1, "breed").name
 	}
 
-	arg_22_0._detected_boss_units[#arg_22_0._detected_boss_units + 1] = var_22_4
+	self._detected_boss_units[#self._detected_boss_units + 1] = tbl_2
 
-	if var_22_4.forced then
-		arg_22_0:_realign_forced_boss_widgets()
+	if not tbl_2.forced then
+		self:_realign_forced_boss_widgets()
 	end
 
 	if arg_22_2 ~= "sync" then
-		local var_22_5 = Managers.state.unit_storage:go_id(arg_22_1)
+		local go_id = Managers.state.unit_storage:go_id(arg_22_1)
 
-		if var_22_5 then
-			local var_22_6 = Managers.state.network.network_transmit
+		if not go_id then
+			local network_transmit = Managers.state.network.network_transmit
 
-			if Managers.player.is_server then
-				var_22_6:send_rpc_clients("rpc_register_detected_boss", var_22_5)
+			if not Managers.player.is_server then
+				network_transmit:send_rpc_clients("rpc_register_detected_boss", go_id)
 			else
-				var_22_6:send_rpc_server("rpc_register_detected_boss", var_22_5)
+				network_transmit:send_rpc_server("rpc_register_detected_boss", go_id)
 			end
 		end
 	end
 
-	return var_22_4
+	return tbl_2
 end
 
-local var_0_10 = {}
+local tbl_6 = {}
 
-function BossHealthUI._realign_forced_boss_widgets(arg_24_0, arg_24_1)
-	table.clear(arg_24_0._forced_animations)
+BossHealthUI._realign_forced_boss_widgets = function (self, arg_24_1)
+	-- function 24
+	table.clear(self._forced_animations)
 
-	local var_24_0 = arg_24_1 and 0 or 0.3
-	local var_24_1, var_24_2 = table.filter_array(arg_24_0._detected_boss_units, function(arg_25_0)
-		return arg_25_0.forced
-	end, var_0_10)
-	local var_24_3 = math.min(var_24_2, BossHealthUI.MAX_NUM_FORCED_WIDGETS)
-	local var_24_4 = 50
-	local var_24_5 = 500
-	local var_24_6 = -(var_24_3 - 1) * 0.5 * (var_24_5 + var_24_4)
+	local flag
 
-	for iter_24_0 = 1, var_24_3 do
-		local var_24_7 = var_24_1[iter_24_0]
-		local var_24_8 = arg_24_0._widgets_by_name[var_24_7.widget_name]
+	flag = not arg_24_1 and 0 and 0.3
 
-		if var_24_8 then
-			arg_24_0._forced_animations["boss_ui_offset_" .. iter_24_0] = UIAnimation.init(UIAnimation.function_by_time, var_24_8.offset, 1, var_24_8.offset[1], var_24_6, var_24_0, math.easeOutCubic)
-			var_24_6 = var_24_6 + var_24_5 + var_24_4
+	local filter_array, var_24_2 = table.filter_array(self._detected_boss_units, function (self)
+		-- function 25
+		return self.forced
+	end, tbl_6)
+	local min = math.min(var_24_2, BossHealthUI.MAX_NUM_FORCED_WIDGETS)
+	local num = 50
+	local num_2 = 500
+	local num_3 = -(min - 1) * 0.5 * (num_2 + num)
+
+	for i = 1, min do
+		local var_24_7 = filter_array[i]
+		local var_24_8 = self._widgets_by_name[var_24_7.widget_name]
+
+		if not var_24_8 then
+			self._forced_animations["boss_ui_offset_" .. i] = UIAnimation.init(UIAnimation.function_by_time, var_24_8.offset, 1, var_24_8.offset[1], num_3, flag, math.easeOutCubic)
+			num_3 = num_3 + num_2 + num
 		end
 	end
 end
 
-function BossHealthUI._sync_boss_unit_health(arg_26_0, arg_26_1, arg_26_2)
-	local var_26_0 = arg_26_0:_update_alive_units()
-	local var_26_1, var_26_2, var_26_3 = arg_26_0:_update_prioritized_unit(arg_26_2)
+BossHealthUI._sync_boss_unit_health = function (self, arg_26_1, arg_26_2)
+	-- function 26
+	local _update_alive_units = self:_update_alive_units()
+	local _update_prioritized_unit, var_26_2, var_26_3 = self:_update_prioritized_unit(arg_26_2)
 
-	arg_26_0:_preemptively_hide_widgets()
+	self:_preemptively_hide_widgets()
 
-	if var_26_0 or var_26_2 then
-		arg_26_0:_realign_forced_boss_widgets(var_26_0)
+	if _update_alive_units or not var_26_2 then
+		self:_realign_forced_boss_widgets(_update_alive_units)
 	end
 
-	local var_26_4 = arg_26_0:_has_forced()
-	local var_26_5 = 0
-	local var_26_6 = arg_26_0._detected_boss_units
+	local _has_forced = self:_has_forced()
+	local num = 0
+	local _detected_boss_units = self._detected_boss_units
 
-	for iter_26_0 = 1, #var_26_6 do
-		local var_26_7 = var_26_6[iter_26_0]
+	for i = 1, #_detected_boss_units do
+		local var_26_7 = _detected_boss_units[i]
 
-		if var_26_1 then
+		if not _update_prioritized_unit then
 			var_26_7.dirty = true
 		end
 
-		local var_26_8 = var_26_7.unit
-		local var_26_9 = var_26_7.dirty
+		local unit = var_26_7.unit
+		local dirty = var_26_7.dirty
 
-		if var_26_7.prioritized or var_26_7.forced or var_26_9 then
-			local var_26_10, var_26_11 = arg_26_0:_update_enemy_portrait_name_and_attributes(var_26_7)
+		if var_26_7.prioritized or var_26_7.forced or not dirty then
+			local _update_enemy_portrait_name_and_attributes, var_26_11 = self:_update_enemy_portrait_name_and_attributes(var_26_7)
 
-			arg_26_0:_set_portrait_and_title(var_26_7, var_26_11, var_26_10)
+			self:_set_portrait_and_title(var_26_7, var_26_11, _update_enemy_portrait_name_and_attributes)
 		end
 
-		local var_26_12 = arg_26_0._widgets_by_name[var_26_7.widget_name]
+		local var_26_12 = self._widgets_by_name[var_26_7.widget_name]
 
-		if var_26_12 then
-			if var_26_7.forced then
+		if not var_26_12 then
+			if not var_26_7.forced then
 				var_26_12.offset[2] = 0
 			elseif not var_26_7.prioritized then
-				var_26_12.offset[1] = var_26_5 % 4 * var_0_0.total_bar_length * 0.25
-				var_26_5 = var_26_5 + 1
+				var_26_12.offset[1] = num % 4 * var_0_0.total_bar_length * 0.25
+				num = num + 1
 
-				local var_26_13 = -80
-				local var_26_14 = arg_26_0._widgets_by_name[var_26_3.widget_name]
+				local num_2 = -80
+				local var_26_14 = self._widgets_by_name[var_26_3.widget_name]
 
-				if var_26_14 and (var_26_14.content.num_attributes or 0) > 3 then
-					var_26_13 = -100
+				if not var_26_14 then
+					local num_attributes = var_26_14.content.num_attributes
+
+					num_attributes = num_attributes or 0
+
+					if num_attributes > 3 then
+						num_2 = -100
+					end
 				end
 
-				local var_26_15 = var_26_13 + (math.ceil(var_26_5 / 4) - 1) * -60
+				local num_3 = num_2 + (math.ceil(num / 4) - 1) * -60
 
-				var_26_12.offset[2] = var_26_15
+				var_26_12.offset[2] = num_3
 			end
 		end
 
-		local var_26_16
 		local var_26_17
-		local var_26_18 = ScriptUnit.extension(var_26_8, "health_system")
-		local var_26_19 = var_26_18:current_health_percent()
-		local var_26_20 = math.clamp(var_26_19, 0, 1)
-		local var_26_21 = var_26_18:current_max_health_percent()
-		local var_26_22 = var_26_20 * var_26_21
-		local var_26_23 = var_26_21
-		local var_26_24 = BreedActions[var_26_7.breed_name]
+		local var_26_18
+		local extension = ScriptUnit.extension(unit, "health_system")
+		local current_health_percent = extension:current_health_percent()
+		local clamp = math.clamp(current_health_percent, 0, 1)
+		local current_max_health_percent = extension:current_max_health_percent()
+		local num_4 = clamp * current_max_health_percent
+		local var_26_24 = current_max_health_percent
+		local var_26_25 = BreedActions[var_26_7.breed_name]
 
-		var_26_7.freeze_healing = var_26_24 and var_26_24.downed and var_26_24.downed.freeze_healing and var_26_18.state == "down"
-
-		local var_26_25 = var_26_7.current_raw_progress
-		local var_26_26 = false
-
-		if var_26_22 and (var_26_25 and var_26_25 < var_26_22 or var_26_9) then
-			local var_26_27 = arg_26_0._last_rendered_prioritized_unit ~= var_26_8 and var_26_22 or var_26_7.healing_start_progress or var_26_7.current_progress or var_26_22
-			local var_26_28 = var_26_25 and var_26_25 < var_26_22 and arg_26_2
-
-			arg_26_0:_set_healing_amount(var_26_7, var_26_27, var_26_22, var_26_28, arg_26_1)
-
-			var_26_7.healing_start_progress = var_26_27
+		if not var_26_25 then
+			-- Nothing
 		end
 
-		if var_26_22 ~= var_26_7.current_progress or var_26_22 ~= var_26_7.current_raw_progress or var_26_23 ~= var_26_7.current_max_health_fraction or var_26_9 then
-			arg_26_0:_set_bar_progress(var_26_7, var_26_22, var_26_23, var_26_26, arg_26_1, arg_26_2)
+		::label_26_0::
+
+		local downed = var_26_25.downed
+
+		if not downed then
+			downed = var_26_25.downed.freeze_healing
+			downed = not downed and extension.state == "down"
 		end
 
-		arg_26_0:_update_healing_bar(var_26_7, arg_26_1, arg_26_2, var_26_7.freeze_healing)
-		arg_26_0:_update_healing_effect(var_26_7, arg_26_1, arg_26_2)
-		arg_26_0:_set_health_edge_texture_position_progress(var_26_7)
+		::label_26_1::
 
-		if var_26_7.prioritized then
-			arg_26_0._last_rendered_prioritized_unit = var_26_7.unit
+		var_26_7.freeze_healing = downed
+
+		local current_raw_progress = var_26_7.current_raw_progress
+		local flag = false
+
+		if not num_4 and not current_raw_progress and current_raw_progress < num_4 and not dirty then
+			if not (self._last_rendered_prioritized_unit == unit or num_4) then
+				-- Nothing
+			end
+
+			::label_26_2::
+
+			local healing_start_progress = var_26_7.healing_start_progress
+
+			if not healing_start_progress then
+				healing_start_progress = var_26_7.current_progress
+				healing_start_progress = healing_start_progress or num_4
+			end
+
+			::label_26_3::
+
+			local flag_2 = not current_raw_progress and not (current_raw_progress < num_4) or arg_26_2
+
+			self:_set_healing_amount(var_26_7, healing_start_progress, num_4, flag_2, arg_26_1)
+
+			var_26_7.healing_start_progress = healing_start_progress
+		end
+
+		if num_4 ~= var_26_7.current_progress or num_4 ~= var_26_7.current_raw_progress or var_26_24 ~= var_26_7.current_max_health_fraction or not dirty then
+			self:_set_bar_progress(var_26_7, num_4, var_26_24, flag, arg_26_1, arg_26_2)
+		end
+
+		self:_update_healing_bar(var_26_7, arg_26_1, arg_26_2, var_26_7.freeze_healing)
+		self:_update_healing_effect(var_26_7, arg_26_1, arg_26_2)
+		self:_set_health_edge_texture_position_progress(var_26_7)
+
+		if not var_26_7.prioritized then
+			self._last_rendered_prioritized_unit = var_26_7.unit
 		end
 
 		var_26_7.dirty = false
 
-		if var_26_12 then
-			if not var_26_7.prioritized and var_26_5 > BossHealthUI.MAX_NUM_ADDITIONAL_WIDGETS then
+		if not var_26_12 then
+			if not (var_26_7.prioritized or not (num > BossHealthUI.MAX_NUM_ADDITIONAL_WIDGETS)) then
 				var_26_12.content.visible = false
 			else
-				var_26_12.content.visible = var_26_7.forced or not var_26_4 and arg_26_0:_show_boss_health_bar(var_26_7)
+				local content = var_26_12.content
+				local forced = var_26_7.forced
+
+				forced = forced or not not _has_forced or self:_show_boss_health_bar(var_26_7)
+				content.visible = forced
 			end
 		end
 	end
 end
 
-function BossHealthUI._update_alive_units(arg_27_0)
-	local var_27_0 = false
-	local var_27_1 = arg_27_0._detected_boss_units
+BossHealthUI._update_alive_units = function (self)
+	-- function 27
+	local flag = false
+	local _detected_boss_units = self._detected_boss_units
 
-	for iter_27_0 = #var_27_1, 1, -1 do
-		local var_27_2 = var_27_1[iter_27_0]
+	for i = #_detected_boss_units, 1, -1 do
+		local var_27_2 = _detected_boss_units[i]
 
 		if not HEALTH_ALIVE[var_27_2.unit] then
-			table.remove(var_27_1, iter_27_0)
+			table.remove(_detected_boss_units, i)
 
-			var_27_0 = true
+			flag = true
 		end
 	end
 
-	return var_27_0
+	return flag
 end
 
-local var_0_11 = {}
+local tbl_7 = {}
 
-function BossHealthUI._update_prioritized_unit(arg_28_0, arg_28_1)
-	local var_28_0 = arg_28_0._detected_boss_units
-	local var_28_1 = false
+BossHealthUI._update_prioritized_unit = function (self, arg_28_1)
+	-- function 28
+	local _detected_boss_units = self._detected_boss_units
+	local flag = false
 	local var_28_2
-	local var_28_3 = -math.huge
-	local var_28_4 = -math.huge
+	local num = -math.huge
+	local num_2 = -math.huge
 
-	for iter_28_0 = #var_28_0, 1, -1 do
-		local var_28_5 = var_28_0[iter_28_0]
+	for i = #_detected_boss_units, 1, -1 do
+		local var_28_5 = _detected_boss_units[i]
 
 		var_28_5.prioritized = false
 
-		local var_28_6 = var_28_5.priority
-		local var_28_7 = var_28_5.priority_t
-		local var_28_8 = var_28_5.breed_name
-		local var_28_9 = Breeds[var_28_8] or PlayerBreeds[var_28_8]
+		local priority = var_28_5.priority
+		local priority_t = var_28_5.priority_t
+		local breed_name = var_28_5.breed_name
+		local var_28_9 = Breeds[breed_name]
 
-		if (var_28_9 and var_28_9.healthbar_timeout or math.huge) < arg_28_1 - var_28_7 then
-			table.swap_delete(var_28_0, iter_28_0)
-		elseif arg_28_0:_show_boss_health_bar(var_28_5) then
-			if var_28_3 < var_28_6 then
+		var_28_9 = var_28_9 or PlayerBreeds[breed_name]
+
+		local healthbar_timeout
+
+		if not var_28_9 then
+			healthbar_timeout = var_28_9.healthbar_timeout
+
+			if not healthbar_timeout then
+				-- Nothing
+			end
+		end
+
+		healthbar_timeout = math.huge
+
+		::label_28_0::
+
+		if healthbar_timeout < arg_28_1 - priority_t then
+			table.swap_delete(_detected_boss_units, i)
+		elseif not self:_show_boss_health_bar(var_28_5) then
+			if num < priority then
 				var_28_2 = var_28_5
-				var_28_3 = var_28_6
-				var_28_4 = var_28_5.priority_t
-			elseif var_28_6 == var_28_3 and var_28_4 < var_28_7 then
+				num = priority
+				num_2 = var_28_5.priority_t
+			elseif not (priority ~= num or not (num_2 < priority_t)) then
 				var_28_2 = var_28_5
-				var_28_4 = var_28_7
+				num_2 = priority_t
 			end
 		end
 	end
 
-	if var_28_2 then
+	if not var_28_2 then
 		var_28_2.prioritized = true
 
-		if not var_28_2.forced and var_28_2.widget_name ~= "prioritized_bar" then
+		if not (var_28_2.forced or var_28_2.widget_name == "prioritized_bar") then
 			var_28_2.dirty = true
 			var_28_2.widget_name = "prioritized_bar"
-			var_28_1 = true
+			flag = true
 		end
 	end
 
-	local var_28_10, var_28_11 = table.filter_array(var_28_0, function(arg_29_0)
-		return not arg_29_0.prioritized and not arg_29_0.forced
-	end, var_0_11)
-	local var_28_12 = 0
+	local filter_array, var_28_12 = table.filter_array(_detected_boss_units, function (self)
+		-- function 29
+		return not not self.prioritized or not self.forced
+	end, tbl_7)
+	local num_3 = 0
 
-	for iter_28_1 = 1, var_28_11 do
-		local var_28_13 = var_28_10[iter_28_1]
-		local var_28_14 = var_28_13.breed_name
-		local var_28_15 = Breeds[var_28_14] or PlayerBreeds[var_28_14]
-		local var_28_16 = var_28_13.show_health_bar and not var_28_15.disallow_additional_healthbar
+	for j = 1, var_28_12 do
+		local var_28_14 = filter_array[j]
+		local breed_name_2 = var_28_14.breed_name
+		local var_28_16 = Breeds[breed_name_2]
 
-		if var_28_16 then
-			var_28_12 = var_28_12 + 1
+		var_28_16 = var_28_16 or PlayerBreeds[breed_name_2]
+
+		local show_health_bar = var_28_14.show_health_bar
+
+		show_health_bar = not show_health_bar and not var_28_16.disallow_additional_healthbar
+
+		if not show_health_bar then
+			num_3 = num_3 + 1
 		end
 
-		local var_28_17 = var_28_16 and arg_28_0:_get_or_create_additional_widget_name(var_28_12) or nil
+		local _get_or_create_additional_widget_name
 
-		if var_28_17 ~= var_28_13.widget_name then
-			var_28_13.dirty = true
-			var_28_13.widget_name = var_28_17
-			var_28_1 = true
+		if not show_health_bar then
+			_get_or_create_additional_widget_name = self:_get_or_create_additional_widget_name(num_3)
+
+			if not _get_or_create_additional_widget_name then
+				-- Nothing
+			end
+		end
+
+		_get_or_create_additional_widget_name = nil
+
+		::label_28_1::
+
+		if _get_or_create_additional_widget_name ~= var_28_14.widget_name then
+			var_28_14.dirty = true
+			var_28_14.widget_name = _get_or_create_additional_widget_name
+			flag = true
 		end
 	end
 
-	local var_28_18 = false
-	local var_28_19, var_28_20 = table.filter_array(var_28_0, function(arg_30_0)
-		return arg_30_0.forced
-	end, var_0_11)
+	local flag_2 = false
+	local filter_array_2, var_28_21 = table.filter_array(_detected_boss_units, function (self)
+		-- function 30
+		return self.forced
+	end, tbl_7)
 
-	for iter_28_2 = 1, var_28_20 do
-		local var_28_21 = var_28_19[iter_28_2]
-		local var_28_22 = arg_28_0:_get_or_create_forced_widget_name(iter_28_2)
+	for k = 1, var_28_21 do
+		local var_28_22 = filter_array_2[k]
+		local _get_or_create_forced_widget_name = self:_get_or_create_forced_widget_name(k)
 
-		if var_28_22 ~= var_28_21.widget_name then
-			var_28_21.dirty = true
-			var_28_21.widget_name = var_28_22
-			var_28_18 = true
-			var_28_1 = true
+		if _get_or_create_forced_widget_name ~= var_28_22.widget_name then
+			var_28_22.dirty = true
+			var_28_22.widget_name = _get_or_create_forced_widget_name
+			flag_2 = true
+			flag = true
 		end
 	end
 
-	return var_28_1, var_28_18, var_28_2
+	return flag, flag_2, var_28_2
 end
 
-function BossHealthUI._preemptively_hide_widgets(arg_31_0)
-	arg_31_0._widgets_by_name.prioritized_bar.content.visible = false
+BossHealthUI._preemptively_hide_widgets = function (self)
+	-- function 31
+	self._widgets_by_name.prioritized_bar.content.visible = false
 
-	local var_31_0 = arg_31_0._additional_widget_names
+	local _additional_widget_names = self._additional_widget_names
 
-	for iter_31_0 = 1, #var_31_0 do
-		local var_31_1 = arg_31_0:_get_or_create_additional_widget_name(iter_31_0)
+	for i = 1, #_additional_widget_names do
+		local _get_or_create_additional_widget_name = self:_get_or_create_additional_widget_name(i)
 
-		arg_31_0._widgets_by_name[var_31_1].content.visible = false
+		self._widgets_by_name[_get_or_create_additional_widget_name].content.visible = false
 	end
 
-	local var_31_2 = arg_31_0._forced_widget_names
+	local _forced_widget_names = self._forced_widget_names
 
-	for iter_31_1 = 1, #var_31_2 do
-		local var_31_3 = arg_31_0:_get_or_create_forced_widget_name(iter_31_1)
+	for j = 1, #_forced_widget_names do
+		local _get_or_create_forced_widget_name = self:_get_or_create_forced_widget_name(j)
 
-		arg_31_0._widgets_by_name[var_31_3].content.visible = false
+		self._widgets_by_name[_get_or_create_forced_widget_name].content.visible = false
 	end
 end
 
-function BossHealthUI._set_bar_progress(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5, arg_32_6)
+BossHealthUI._set_bar_progress = function (self, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5, arg_32_6)
+	-- function 32
 	arg_32_2 = arg_32_2 or 0
 
-	local var_32_0 = arg_32_1.current_progress or 1
-	local var_32_1 = arg_32_1.healing_start_progress or var_32_0 + math.sign(arg_32_2 - var_32_0) * (arg_32_5 * 0.3)
+	local current_progress = arg_32_1.current_progress
 
+	current_progress = current_progress or 1
+
+	local healing_start_progress = arg_32_1.healing_start_progress
+
+	healing_start_progress = healing_start_progress or current_progress + math.sign(arg_32_2 - current_progress) * (arg_32_5 * 0.3)
 	arg_32_4 = arg_32_1.next_update_is_instant or arg_32_4
 
-	if arg_32_4 then
-		var_32_1 = arg_32_2
-	elseif var_32_0 < arg_32_2 then
-		var_32_1 = math.min(var_32_1, arg_32_2)
+	if not arg_32_4 then
+		healing_start_progress = arg_32_2
+	elseif current_progress < arg_32_2 then
+		healing_start_progress = math.min(healing_start_progress, arg_32_2)
 	else
-		var_32_1 = math.max(var_32_1, arg_32_2)
+		healing_start_progress = math.max(healing_start_progress, arg_32_2)
 	end
 
 	arg_32_3 = arg_32_3 or 1
 
-	local var_32_2 = arg_32_1.current_max_health_fraction or 1
-	local var_32_3 = var_32_2 + math.sign(arg_32_3 - var_32_2) * (arg_32_5 * 0.3)
+	local current_max_health_fraction = arg_32_1.current_max_health_fraction
 
-	if arg_32_4 then
-		var_32_3 = arg_32_3
-	elseif var_32_2 < arg_32_3 then
-		var_32_3 = math.min(var_32_3, arg_32_3)
+	current_max_health_fraction = current_max_health_fraction or 1
+
+	local num = current_max_health_fraction + math.sign(arg_32_3 - current_max_health_fraction) * (arg_32_5 * 0.3)
+
+	if not arg_32_4 then
+		num = arg_32_3
+	elseif current_max_health_fraction < arg_32_3 then
+		num = math.min(num, arg_32_3)
 	else
-		var_32_3 = math.max(var_32_3, arg_32_3)
+		num = math.max(num, arg_32_3)
 	end
 
-	local var_32_4 = arg_32_0._widgets_by_name[arg_32_1.widget_name]
+	local var_32_4 = self._widgets_by_name[arg_32_1.widget_name]
 
-	if var_32_4 then
-		local var_32_5 = var_32_4.content
-		local var_32_6 = var_32_4.style
-		local var_32_7 = var_32_6.bar
-		local var_32_8 = var_32_5.bar.uvs
+	if not var_32_4 then
+		local content = var_32_4.content
+		local style = var_32_4.style
+		local bar = style.bar
+		local uvs = content.bar.uvs
 
-		var_32_7.size[1] = var_32_7.default_size[1] * (var_32_1 or 1)
-		var_32_8[2][1] = var_32_1
+		bar.size[1] = bar.default_size[1] * (healing_start_progress or 1)
+		uvs[2][1] = healing_start_progress
 
-		local var_32_9 = var_32_6.dead_space_bar
-		local var_32_10 = var_32_5.dead_space_bar.uvs
-		local var_32_11 = var_32_9.size
-		local var_32_12 = var_32_9.offset
-		local var_32_13 = var_32_9.default_size
+		local dead_space_bar = style.dead_space_bar
+		local uvs_2 = content.dead_space_bar.uvs
+		local size = dead_space_bar.size
+		local offset = dead_space_bar.offset
+		local default_size = dead_space_bar.default_size
 
-		var_32_11[1] = var_32_13[1] * (1 - (var_32_3 or 1))
-		var_32_10[1][1] = var_32_3
-		var_32_12[1] = var_32_5.dead_space_bar_offset_reference + var_32_13[1] - var_32_11[1]
+		size[1] = default_size[1] * (1 - (num or 1))
+		uvs_2[1][1] = num
+		offset[1] = content.dead_space_bar_offset_reference + default_size[1] - size[1]
 
-		local var_32_14 = var_32_6.dead_space_bar_divider
-		local var_32_15 = var_32_14.offset
-		local var_32_16 = var_32_14.default_width_offset
+		local dead_space_bar_divider = style.dead_space_bar_divider
+		local offset_2 = dead_space_bar_divider.offset
+		local default_width_offset = dead_space_bar_divider.default_width_offset
 
-		var_32_15[1] = var_32_5.dead_space_bar_divider_offset_reference + (var_32_13[1] - var_32_16) - var_32_11[1]
-		var_32_5.max_health_fraction = var_32_3
-		var_32_5.health_fraction = var_32_1
+		offset_2[1] = content.dead_space_bar_divider_offset_reference + (default_size[1] - default_width_offset) - size[1]
+		content.max_health_fraction = num
+		content.health_fraction = healing_start_progress
 	end
 
-	arg_32_1.current_progress = var_32_1
+	arg_32_1.current_progress = healing_start_progress
 	arg_32_1.current_raw_progress = arg_32_2
-	arg_32_1.current_max_health_fraction = var_32_3
+	arg_32_1.current_max_health_fraction = num
 	arg_32_1.next_update_is_instant = nil
 end
 
-function BossHealthUI._set_healing_amount(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5)
-	local var_33_0 = arg_33_0._widgets_by_name[arg_33_1.widget_name]
+BossHealthUI._set_healing_amount = function (self, arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5)
+	-- function 33
+	local var_33_0 = self._widgets_by_name[arg_33_1.widget_name]
 
-	if var_33_0 then
-		local var_33_1 = var_33_0.content
-		local var_33_2 = var_33_0.style
-		local var_33_3 = var_33_2.healing_bar
+	if not var_33_0 then
+		local content = var_33_0.content
+		local style = var_33_0.style
+		local healing_bar = style.healing_bar
+		local original_color = healing_bar.original_color
 
-		var_33_3.original_color = var_33_3.original_color or table.shallow_copy(var_33_3.color)
+		original_color = original_color or table.shallow_copy(healing_bar.color)
+		healing_bar.original_color = original_color
 
-		local var_33_4 = var_33_1.healing_bar
-		local var_33_5 = var_33_3.size
-		local var_33_6 = var_33_3.offset
-		local var_33_7 = var_33_4.uvs
-		local var_33_8 = arg_33_3 - arg_33_2
-		local var_33_9 = var_33_1.bar_length * var_33_8
-		local var_33_10 = var_33_1.healing_bar_offset_reference + var_33_1.bar_length * arg_33_2
+		local healing_bar_2 = content.healing_bar
+		local size = healing_bar.size
+		local offset = healing_bar.offset
+		local uvs = healing_bar_2.uvs
+		local num_3 = arg_33_3 - arg_33_2
+		local num_4 = content.bar_length * num_3
+		local num_5 = content.healing_bar_offset_reference + content.bar_length * arg_33_2
 
-		var_33_7[1][1] = arg_33_2
-		var_33_7[2][1] = arg_33_3
+		uvs[1][1] = arg_33_2
+		uvs[2][1] = arg_33_3
 
-		local var_33_11 = var_33_2.healing_bar_flash
-		local var_33_12 = false
-		local var_33_13 = arg_33_1.breed_name
-		local var_33_14 = Breeds[var_33_13] or PlayerBreeds[var_33_13]
+		local healing_bar_flash = style.healing_bar_flash
+		local flag = false
+		local breed_name = arg_33_1.breed_name
+		local var_33_15 = Breeds[breed_name]
 
-		if var_33_14 and var_33_14.reflect_regen_reduction_in_hp_bar then
-			local var_33_15 = ScriptUnit.has_extension(arg_33_1.unit, "buff_system")
+		var_33_15 = var_33_15 or PlayerBreeds[breed_name]
 
-			if var_33_15 then
-				var_33_3.flash_time = var_33_3.flash_time or 0
+		if not var_33_15 and not var_33_15.reflect_regen_reduction_in_hp_bar then
+			local has_extension = ScriptUnit.has_extension(arg_33_1.unit, "buff_system")
 
-				local var_33_16 = 0.75
-				local var_33_17 = 1 - math.clamp01(var_33_15:apply_buffs_to_value(1, "healing_received"))
+			if not has_extension then
+				local flash_time = healing_bar.flash_time
 
-				if var_33_17 ~= 0 and var_33_17 ~= var_33_3.last_lerp_value then
-					var_33_3.flash_time = var_33_16
+				flash_time = flash_time or 0
+				healing_bar.flash_time = flash_time
+
+				local num_6 = 0.75
+				local num_7 = 1 - math.clamp01(has_extension:apply_buffs_to_value(1, "healing_received"))
+
+				if not (num_7 == 0 or num_7 == healing_bar.last_lerp_value) then
+					healing_bar.flash_time = num_6
 				end
 
-				local var_33_18 = math.inv_lerp_clamped(var_33_16, 0, var_33_3.flash_time)
+				local inv_lerp_clamped = math.inv_lerp_clamped(num_6, 0, healing_bar.flash_time)
 
-				if var_33_18 < 0.5 then
-					var_33_11.color[1] = 200 * math.ease_out_quad(var_33_18 * 2)
-				elseif var_33_18 < 1 then
-					var_33_11.color[1] = 200 * math.ease_out_quad(1 - (var_33_18 - 0.5) * 2)
+				if inv_lerp_clamped < 0.5 then
+					healing_bar_flash.color[1] = 200 * math.ease_out_quad(inv_lerp_clamped * 2)
+				elseif inv_lerp_clamped < 1 then
+					healing_bar_flash.color[1] = 200 * math.ease_out_quad(1 - (inv_lerp_clamped - 0.5) * 2)
 				end
 
-				local var_33_19 = arg_33_3 - arg_33_2
+				local num_8 = arg_33_3 - arg_33_2
 
-				var_33_11.offset[1] = var_33_3.offset[1] - UIFrameSettings.boss_hp_bar_heal_flash.texture_sizes.vertical[1] * var_33_19
-				var_33_11.size[1] = var_33_11.default_size[1] * var_33_19 + UIFrameSettings.boss_hp_bar_heal_flash.texture_sizes.vertical[1] * 2 * var_33_19
-				var_33_3.color[1] = math.lerp(var_33_3.original_color[2], 255, var_33_17)
-				var_33_3.color[2] = math.lerp(var_33_3.original_color[2], 200, var_33_17)
-				var_33_3.color[3] = math.lerp(var_33_3.original_color[3], 100, var_33_17)
-				var_33_3.color[4] = math.lerp(var_33_3.original_color[4], 100, var_33_17)
-				var_33_3.last_lerp_value = var_33_17
+				healing_bar_flash.offset[1] = healing_bar.offset[1] - UIFrameSettings.boss_hp_bar_heal_flash.texture_sizes.vertical[1] * num_8
+				healing_bar_flash.size[1] = healing_bar_flash.default_size[1] * num_8 + UIFrameSettings.boss_hp_bar_heal_flash.texture_sizes.vertical[1] * 2 * num_8
+				healing_bar.color[1] = math.lerp(healing_bar.original_color[2], 255, num_7)
+				healing_bar.color[2] = math.lerp(healing_bar.original_color[2], 200, num_7)
+				healing_bar.color[3] = math.lerp(healing_bar.original_color[3], 100, num_7)
+				healing_bar.color[4] = math.lerp(healing_bar.original_color[4], 100, num_7)
+				healing_bar.last_lerp_value = num_7
 
-				if arg_33_5 then
-					var_33_3.flash_time = math.max(var_33_3.flash_time - arg_33_5, 0)
+				if not arg_33_5 then
+					healing_bar.flash_time = math.max(healing_bar.flash_time - arg_33_5, 0)
 				end
 
-				var_33_12 = true
+				flag = true
 			end
 		end
 
-		if not var_33_12 then
-			var_33_3.color[2] = var_33_3.original_color[2]
-			var_33_3.color[3] = var_33_3.original_color[3]
-			var_33_3.color[4] = var_33_3.original_color[4]
-			var_33_3.last_lerp_value = 1
-			var_33_3.flash_time = 0
+		if not flag then
+			healing_bar.color[2] = healing_bar.original_color[2]
+			healing_bar.color[3] = healing_bar.original_color[3]
+			healing_bar.color[4] = healing_bar.original_color[4]
+			healing_bar.last_lerp_value = 1
+			healing_bar.flash_time = 0
 		end
 
-		var_33_5[1] = var_33_9
-		var_33_6[1] = var_33_10
+		size[1] = num_4
+		offset[1] = num_5
 	end
 
-	if arg_33_4 then
-		arg_33_1.healing_life_time = arg_33_4 + var_0_1
-		arg_33_1.healing_effect_life_time = arg_33_4 + var_0_2
+	if not arg_33_4 then
+		arg_33_1.healing_life_time = arg_33_4 + num
+		arg_33_1.healing_effect_life_time = arg_33_4 + num_2
 	end
 end
 
-function BossHealthUI._update_healing_bar(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
-	local var_34_0 = arg_34_1.current_raw_progress
-	local var_34_1 = arg_34_1.healing_start_progress
+BossHealthUI._update_healing_bar = function (self, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
+	-- function 34
+	local current_raw_progress = arg_34_1.current_raw_progress
+	local healing_start_progress = arg_34_1.healing_start_progress
 
-	if not var_34_1 or not var_34_0 then
+	if not (not healing_start_progress and current_raw_progress) then
 		return
 	end
 
-	local var_34_2 = var_34_1
+	local var_34_2 = healing_start_progress
 
-	if var_34_0 <= var_34_1 then
-		var_34_2 = var_34_0
-	elseif arg_34_1.healing_life_time and arg_34_3 >= arg_34_1.healing_life_time and not arg_34_4 then
-		var_34_2 = math.min(var_34_1 + arg_34_2 * 0.5, var_34_0)
+	if current_raw_progress <= healing_start_progress then
+		var_34_2 = current_raw_progress
+	elseif not (not arg_34_1.healing_life_time and not (arg_34_3 >= arg_34_1.healing_life_time) or arg_34_4) then
+		var_34_2 = math.min(healing_start_progress + arg_34_2 * 0.5, current_raw_progress)
 	end
 
-	if arg_34_4 then
-		local var_34_3 = arg_34_1.unit
-		local var_34_4, var_34_5, var_34_6, var_34_7 = ScriptUnit.extension(var_34_3, "health_system"):respawn_thresholds()
+	if not arg_34_4 then
+		local unit = arg_34_1.unit
+		local respawn_thresholds, var_34_5, var_34_6, var_34_7 = ScriptUnit.extension(unit, "health_system"):respawn_thresholds()
 
 		var_34_2 = var_34_7
 	end
 
-	arg_34_0:_set_healing_amount(arg_34_1, var_34_2, var_34_0, nil, arg_34_2)
+	self:_set_healing_amount(arg_34_1, var_34_2, current_raw_progress, nil, arg_34_2)
 
 	arg_34_1.healing_start_progress = var_34_2
 
-	if var_34_2 == var_34_0 then
+	if var_34_2 == current_raw_progress then
 		arg_34_1.healing_start_progress = nil
 		arg_34_1.healing_life_time = nil
 	end
 end
 
-function BossHealthUI._set_health_edge_texture_position_progress(arg_35_0, arg_35_1)
-	local var_35_0 = arg_35_1.healing_start_progress or arg_35_1.current_progress or 0
-	local var_35_1 = arg_35_0._widgets_by_name[arg_35_1.widget_name]
+BossHealthUI._set_health_edge_texture_position_progress = function (self, arg_35_1)
+	-- function 35
+	local healing_start_progress = arg_35_1.healing_start_progress
 
-	if var_35_1 then
-		local var_35_2 = var_35_1.content
-		local var_35_3 = var_35_1.style.bar_edge
-		local var_35_4 = var_35_3.offset
-		local var_35_5 = var_35_3.default_width_offset
+	if not healing_start_progress then
+		healing_start_progress = arg_35_1.current_progress
+		healing_start_progress = healing_start_progress or 0
+	end
 
-		var_35_4[1] = var_35_2.bar_edge_reference_offset + var_35_2.bar_length * var_35_0 - var_35_5
-		var_35_2.bar_edge_fraction = var_35_0
+	local var_35_1 = self._widgets_by_name[arg_35_1.widget_name]
+
+	if not var_35_1 then
+		local content = var_35_1.content
+		local bar_edge = var_35_1.style.bar_edge
+		local offset = bar_edge.offset
+		local default_width_offset = bar_edge.default_width_offset
+
+		offset[1] = content.bar_edge_reference_offset + content.bar_length * healing_start_progress - default_width_offset
+		content.bar_edge_fraction = healing_start_progress
 	end
 end
 
-function BossHealthUI._update_healing_effect(arg_36_0, arg_36_1, arg_36_2, arg_36_3)
-	local var_36_0 = 0
+BossHealthUI._update_healing_effect = function (self, arg_36_1, arg_36_2, arg_36_3)
+	-- function 36
+	local num = 0
 
-	if arg_36_1.healing_effect_life_time then
-		local var_36_1 = math.inv_lerp_clamped(arg_36_1.healing_effect_life_time - var_0_2, var_0_2, arg_36_3)
-		local var_36_2 = 1 - var_36_1
+	if not arg_36_1.healing_effect_life_time then
+		local inv_lerp_clamped = math.inv_lerp_clamped(arg_36_1.healing_effect_life_time - num_2, num_2, arg_36_3)
+		local num_3 = 1 - inv_lerp_clamped
 
-		var_36_0 = 255 * math.ease_pulse(var_36_2)
+		num = 255 * math.ease_pulse(num_3)
 
-		if var_36_1 == 0 then
+		if inv_lerp_clamped == 0 then
 			arg_36_1.healing_effect_life_time = nil
 		end
 	end
 
-	arg_36_0:_set_health_effect_alpha(arg_36_1, var_36_0)
+	self:_set_health_effect_alpha(arg_36_1, num)
 end
 
-function BossHealthUI._set_health_effect_alpha(arg_37_0, arg_37_1, arg_37_2)
-	local var_37_0 = arg_37_0._widgets_by_name[arg_37_1.widget_name]
+BossHealthUI._set_health_effect_alpha = function (self, arg_37_1, arg_37_2)
+	-- function 37
+	local var_37_0 = self._widgets_by_name[arg_37_1.widget_name]
 
-	if var_37_0 then
+	if not var_37_0 then
 		var_37_0.style.portrait_healing.color[1] = arg_37_2
 	end
 end
 
-function BossHealthUI.rpc_register_detected_boss(arg_38_0, arg_38_1, arg_38_2)
-	local var_38_0 = Managers.state.unit_storage:unit(arg_38_2)
+BossHealthUI.rpc_register_detected_boss = function (self, arg_38_1, arg_38_2)
+	-- function 38
+	local unit = Managers.state.unit_storage:unit(arg_38_2)
 
-	if ALIVE[var_38_0] then
-		arg_38_0:_event_register_boss_unit(var_38_0, "sync")
+	if not ALIVE[unit] then
+		self:_event_register_boss_unit(unit, "sync")
 
-		if Managers.state.network.is_server then
+		if not Managers.state.network.is_server then
 			Managers.state.network.network_transmit:send_rpc_clients_except("rpc_register_detected_boss", CHANNEL_TO_PEER_ID[arg_38_1], arg_38_2)
 		end
 	end

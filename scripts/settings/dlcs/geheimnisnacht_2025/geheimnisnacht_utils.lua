@@ -2,9 +2,9 @@
 
 require("scripts/utils/hash_utils")
 
-local var_0_0 = require("scripts/settings/dlcs/geheimnisnacht_2025/geheimnisnacht_map_settings")
-local var_0_1 = {}
-local var_0_2 = {
+local scripts_settings_dlcs_geheimnisnacht_2025_geheimnisnacht_map_settings = require("scripts/settings/dlcs/geheimnisnacht_2025/geheimnisnacht_map_settings")
+local tbl = {}
+local tbl_2 = {
 	[2021] = {
 		"dlc_portals",
 		"bell",
@@ -49,67 +49,71 @@ local var_0_2 = {
 	}
 }
 
-var_0_1._cached_maps_by_event = {}
+tbl._cached_maps_by_event = {}
 
-for iter_0_0, iter_0_1 in pairs(var_0_2) do
-	var_0_1._cached_maps_by_event["geheimnisnacht_" .. iter_0_0] = iter_0_1
+for k, v in pairs(tbl_2) do
+	tbl._cached_maps_by_event["geheimnisnacht_" .. k] = v
 end
 
-function var_0_1.event_by_year(arg_1_0)
+tbl.event_by_year = function (arg_1_0)
+	-- function 1
 	return "geheimnisnacht_" .. arg_1_0
 end
 
-function var_0_1.maps_by_year(arg_2_0, arg_2_1)
-	local var_2_0 = var_0_1.event_by_year(arg_2_0)
+tbl.maps_by_year = function (arg_2_0, arg_2_1)
+	-- function 2
+	local event_by_year = tbl.event_by_year(arg_2_0)
 
-	return var_0_1.maps_by_event(var_2_0, arg_2_1)
+	return tbl.maps_by_event(event_by_year, arg_2_1)
 end
 
-function var_0_1.maps_by_event(arg_3_0, arg_3_1)
-	if var_0_1._cached_maps_by_event[arg_3_0] then
-		return var_0_1._cached_maps_by_event[arg_3_0]
+tbl.maps_by_event = function (arg_3_0, arg_3_1)
+	-- function 3
+	if not tbl._cached_maps_by_event[arg_3_0] then
+		return tbl._cached_maps_by_event[arg_3_0]
 	end
 
 	if not arg_3_1 then
 		return
 	end
 
-	local var_3_0 = HashUtils.fnv32_hash(arg_3_0)
-	local var_3_1 = table.keys(var_0_0)
-	local var_3_2 = {}
+	local fnv32_hash = HashUtils.fnv32_hash(arg_3_0)
+	local keys = table.keys(scripts_settings_dlcs_geheimnisnacht_2025_geheimnisnacht_map_settings)
+	local tbl_2 = {}
 
-	for iter_3_0 = 1, 5 do
+	for i = 1, 5 do
 		local var_3_3
 		local var_3_4
 
-		var_3_0, var_3_4 = Math.next_random(var_3_0, 1, #var_3_1)
-		var_3_2[iter_3_0] = var_3_1[var_3_4]
+		fnv32_hash, var_3_4 = Math.next_random(fnv32_hash, 1, #keys)
+		tbl_2[i] = keys[var_3_4]
 
-		table.remove(var_3_1, var_3_4)
+		table.remove(keys, var_3_4)
 	end
 
-	var_0_1._cached_maps_by_event[arg_3_0] = var_3_2
+	tbl._cached_maps_by_event[arg_3_0] = tbl_2
 
-	return var_3_2
+	return tbl_2
 end
 
-function var_0_1.maps_by_live_event(arg_4_0)
-	local var_4_0 = Managers.backend:get_interface("live_events")
-	local var_4_1 = var_4_0 and var_4_0:get_active_events()
+tbl.maps_by_live_event = function (arg_4_0)
+	-- function 4
+	local get_interface = Managers.backend:get_interface("live_events")
+	local flag = not get_interface and get_interface:get_active_events()
 
-	if var_4_1 then
-		for iter_4_0 = 1, #var_4_1 do
-			local var_4_2 = var_4_1[iter_4_0]
+	if not flag then
+		for i = 1, #flag do
+			local var_4_2 = flag[i]
 
-			if string.find(var_4_2, "geheimnisnacht_%d+") then
-				return var_0_1.maps_by_event(var_4_2, arg_4_0)
+			if not string.find(var_4_2, "geheimnisnacht_%d+") then
+				return tbl.maps_by_event(var_4_2, arg_4_0)
 			end
 		end
 	end
 
-	if arg_4_0 then
+	if not arg_4_0 then
 		return {}
 	end
 end
 
-return var_0_1
+return tbl

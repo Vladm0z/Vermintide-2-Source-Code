@@ -2,18 +2,27 @@
 
 LevelEndViewDeus = class(LevelEndViewDeus, LevelEndView)
 
-function LevelEndViewDeus.start(arg_1_0)
-	LevelEndViewDeus.super.start(arg_1_0)
+LevelEndViewDeus.start = function (self)
+	-- function 1
+	LevelEndViewDeus.super.start(self)
 
-	arg_1_0._start_music_event = arg_1_0.game_won and "Play_won_music_morris" or "Play_lost_music_morris"
-	arg_1_0._stop_music_event = arg_1_0.game_won and "Stop_won_music_morris" or "Stop_lost_music_morris"
+	local flag
+
+	flag = not self.game_won and "Play_won_music_morris" and "Play_lost_music_morris"
+	self._start_music_event = flag
+
+	local flag_2
+
+	flag_2 = not self.game_won and "Stop_won_music_morris" and "Stop_lost_music_morris"
+	self._stop_music_event = flag_2
 end
 
-function LevelEndViewDeus._setup_pages_victory(arg_2_0, arg_2_1)
-	local var_2_0 = arg_2_1.end_of_level_rewards.chest
+LevelEndViewDeus._setup_pages_victory = function (arg_2_0, arg_2_1)
+	-- function 2
+	local chest = arg_2_1.end_of_level_rewards.chest
 	local var_2_1
 
-	if var_2_0 then
+	if not chest then
 		var_2_1 = {
 			EndViewStateParading = 1,
 			EndViewStateSummaryDeus = 2,
@@ -31,11 +40,12 @@ function LevelEndViewDeus._setup_pages_victory(arg_2_0, arg_2_1)
 	return var_2_1
 end
 
-function LevelEndViewDeus._setup_pages_defeat(arg_3_0, arg_3_1)
-	local var_3_0 = arg_3_1.end_of_level_rewards.chest
+LevelEndViewDeus._setup_pages_defeat = function (arg_3_0, arg_3_1)
+	-- function 3
+	local chest = arg_3_1.end_of_level_rewards.chest
 	local var_3_1
 
-	if var_3_0 then
+	if not chest then
 		var_3_1 = {
 			EndViewStateChest = 2,
 			EndViewStateSummaryDeus = 1,

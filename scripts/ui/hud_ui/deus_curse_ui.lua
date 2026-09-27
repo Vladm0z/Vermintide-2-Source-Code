@@ -1,232 +1,284 @@
 -- chunkname: @scripts/ui/hud_ui/deus_curse_ui.lua
 
 local var_0_0 = local_require("scripts/ui/hud_ui/deus_curse_ui_definitions")
-local var_0_1 = var_0_0.animation_definitions
-local var_0_2 = var_0_0.scenegraph_definition
-local var_0_3 = var_0_0.scenegraph_methods
-local var_0_4 = var_0_0.text_background_width
-local var_0_5 = -2
+local animation_definitions = var_0_0.animation_definitions
+local scenegraph_definition = var_0_0.scenegraph_definition
+local scenegraph_methods = var_0_0.scenegraph_methods
+local text_background_width = var_0_0.text_background_width
+local num = -2
 
 DeusCurseUI = class(DeusCurseUI)
 
-function DeusCurseUI.init(arg_1_0, arg_1_1, arg_1_2)
-	local var_1_0 = Managers.mechanism:game_mechanism()
+DeusCurseUI.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	local game_mechanism = Managers.mechanism:game_mechanism()
 
-	arg_1_0._curse = var_1_0 and var_1_0:get_current_node_curse()
-	arg_1_0._theme = var_1_0 and var_1_0:get_current_node_theme()
-	arg_1_0._has_curse = arg_1_0._curse and arg_1_0._theme
-	arg_1_0._world = arg_1_2.world_manager:world("level_world")
-	arg_1_0._player_unit = arg_1_2.player.player_unit
-	arg_1_0._mission_system = Managers.state.entity:system("mission_system")
+	self._curse = not game_mechanism and game_mechanism:get_current_node_curse()
+	self._theme = not game_mechanism and game_mechanism:get_current_node_theme()
 
-	Managers.state.event:register(arg_1_0, "gm_event_round_started", "on_round_started")
+	local _curse = self._curse
 
-	arg_1_0._parent = arg_1_1
-	arg_1_0.ui_renderer = arg_1_2.ui_renderer
-	arg_1_0.ingame_ui = arg_1_2.ingame_ui
-	arg_1_0.input_manager = arg_1_2.input_manager
-	arg_1_0.wwise_world = Managers.world:wwise_world(arg_1_0._world)
-	arg_1_0._animations = {}
-	arg_1_0.render_settings = {
+	_curse = not _curse and self._theme
+	self._has_curse = _curse
+	self._world = arg_1_2.world_manager:world("level_world")
+	self._player_unit = arg_1_2.player.player_unit
+	self._mission_system = Managers.state.entity:system("mission_system")
+
+	Managers.state.event:register(self, "gm_event_round_started", "on_round_started")
+
+	self._parent = arg_1_1
+	self.ui_renderer = arg_1_2.ui_renderer
+	self.ingame_ui = arg_1_2.ingame_ui
+	self.input_manager = arg_1_2.input_manager
+	self.wwise_world = Managers.world:wwise_world(self._world)
+	self._animations = {}
+	self.render_settings = {
 		snap_pixel_positions = true
 	}
 
-	arg_1_0:create_ui_elements()
+	self:create_ui_elements()
 
-	if arg_1_0._has_curse then
-		arg_1_0:show_curse_info(arg_1_0._theme, arg_1_0._curse)
+	if not self._has_curse then
+		self:show_curse_info(self._theme, self._curse)
 	end
 end
 
-function DeusCurseUI.create_ui_elements(arg_2_0)
-	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
-	arg_2_0._description_widget = UIWidget.init(var_0_0.widget_definitions.description_widget)
+DeusCurseUI.create_ui_elements = function (self)
+	-- function 2
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
+	self._description_widget = UIWidget.init(var_0_0.widget_definitions.description_widget)
 
-	UIRenderer.clear_scenegraph_queue(arg_2_0.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
-	arg_2_0.ui_animator = UIAnimator:new(arg_2_0.ui_scenegraph, var_0_1)
+	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
 end
 
-function DeusCurseUI.destroy(arg_3_0)
-	Managers.state.event:unregister("gm_event_round_started", arg_3_0)
+DeusCurseUI.destroy = function (self)
+	-- function 3
+	Managers.state.event:unregister("gm_event_round_started", self)
 
-	arg_3_0.ui_animator = nil
+	self.ui_animator = nil
 end
 
-function DeusCurseUI.update(arg_4_0, arg_4_1, arg_4_2)
-	if not script_data.debug_enabled and not arg_4_0._has_curse then
+DeusCurseUI.update = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	if not (script_data.debug_enabled or self._has_curse) then
 		return
 	end
 
-	local var_4_0 = arg_4_0._timer
+	local _timer = self._timer
 
-	if var_4_0 then
-		local var_4_1 = var_4_0 - arg_4_1
+	if not _timer then
+		local num = _timer - arg_4_1
 
-		if var_4_1 > 0 then
-			arg_4_0._timer = var_4_1
+		if num > 0 then
+			self._timer = num
 		else
-			arg_4_0._timer = nil
+			self._timer = nil
 
-			arg_4_0:on_timer_ended()
+			self:on_timer_ended()
 		end
 	end
 
-	if arg_4_0._has_curse and RESOLUTION_LOOKUP.modified and arg_4_0._timer ~= nil then
-		arg_4_0:show_curse_info(arg_4_0._theme, arg_4_0._curse)
+	local _has_curse = self._has_curse
+
+	_has_curse = not _has_curse and RESOLUTION_LOOKUP.modified
+
+	if not (not _has_curse and self._timer == nil) then
+		self:show_curse_info(self._theme, self._curse)
 	end
 
-	if arg_4_0._has_curse then
-		arg_4_0:draw(arg_4_1)
-		arg_4_0:update_animations(arg_4_1)
+	if not self._has_curse then
+		self:draw(arg_4_1)
+		self:update_animations(arg_4_1)
 	end
 end
 
-function DeusCurseUI.on_timer_ended(arg_5_0)
-	arg_5_0:_clear_animations()
-	arg_5_0:_start_animation("curse_description_animation", "description_end")
+DeusCurseUI.on_timer_ended = function (self)
+	-- function 5
+	self:_clear_animations()
+	self:_start_animation("curse_description_animation", "description_end")
 
-	if not arg_5_0._player_unit then
+	if not self._player_unit then
 		return
 	end
 
-	ScriptUnit.extension(arg_5_0._player_unit, "hud_system"):block_current_location_ui(false)
-	arg_5_0._mission_system:block_mission_ui(false)
+	ScriptUnit.extension(self._player_unit, "hud_system"):block_current_location_ui(false)
+	self._mission_system:block_mission_ui(false)
 end
 
-function DeusCurseUI.show_special_message(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
-	arg_6_0._timer = arg_6_4
+DeusCurseUI.show_special_message = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	-- function 6
+	self._timer = arg_6_4
 
 	local var_6_0 = DeusThemeSettings[arg_6_1]
-	local var_6_1 = var_6_0.curse_description_color
-	local var_6_2 = var_6_0.icon or {
+	local curse_description_color = var_6_0.curse_description_color
+	local icon = var_6_0.icon
+
+	icon = icon or {
 		255,
 		255,
 		255,
 		255
 	}
-	local var_6_3 = var_6_0.curse_title and Localize(var_6_0.curse_title) or ""
+
+	local var_6_3
+
+	if not var_6_0.curse_title then
+		var_6_3 = Localize(var_6_0.curse_title)
+
+		if not var_6_3 then
+			-- Nothing
+		end
+	end
+
+	var_6_3 = ""
+
+	::label_6_0::
 
 	arg_6_2 = Localize(arg_6_2)
 	arg_6_3 = Localize(arg_6_3)
 
-	arg_6_0:_update_description_widget(var_6_3, arg_6_2, arg_6_3, var_6_2, var_6_1)
-	arg_6_0:_start_animation("curse_description_animation", "description_start")
+	self:_update_description_widget(var_6_3, arg_6_2, arg_6_3, icon, curse_description_color)
+	self:_start_animation("curse_description_animation", "description_start")
 
-	arg_6_0._has_curse = true
+	self._has_curse = true
 
-	if not arg_6_0._player_unit then
+	if not self._player_unit then
 		return
 	end
 
-	ScriptUnit.extension(arg_6_0._player_unit, "hud_system"):block_current_location_ui(true)
-	arg_6_0._mission_system:block_mission_ui(true)
+	ScriptUnit.extension(self._player_unit, "hud_system"):block_current_location_ui(true)
+	self._mission_system:block_mission_ui(true)
 end
 
-function DeusCurseUI.show_curse_info(arg_7_0, arg_7_1, arg_7_2)
-	local var_7_0 = Managers.state.game_mode:is_round_started()
-	local var_7_1 = arg_7_0:_get_display_time()
+DeusCurseUI.show_curse_info = function (self, arg_7_1, arg_7_2)
+	-- function 7
+	local is_round_started = Managers.state.game_mode:is_round_started()
+	local _get_display_time = self:_get_display_time()
 
-	arg_7_0._timer = var_7_0 and var_7_1 or math.huge
+	self._timer = not is_round_started and _get_display_time and math.huge
 
 	local var_7_2 = MutatorTemplates[arg_7_2]
 	local var_7_3 = Localize(var_7_2.display_name)
 	local var_7_4 = Localize(var_7_2.description)
 	local var_7_5 = DeusThemeSettings[arg_7_1]
-	local var_7_6 = var_7_5.curse_description_color
-	local var_7_7 = var_7_5.icon or {
+	local curse_description_color = var_7_5.curse_description_color
+	local icon = var_7_5.icon
+
+	icon = icon or {
 		255,
 		255,
 		255,
 		255
 	}
-	local var_7_8 = var_7_5.curse_title and Localize(var_7_5.curse_title) or ""
 
-	arg_7_0:_update_description_widget(var_7_8, var_7_3, var_7_4, var_7_7, var_7_6)
-	arg_7_0:_start_animation("curse_description_animation", "description_start")
+	local var_7_8
 
-	arg_7_0._has_curse = true
+	if not var_7_5.curse_title then
+		var_7_8 = Localize(var_7_5.curse_title)
 
-	if not arg_7_0._player_unit then
+		if not var_7_8 then
+			-- Nothing
+		end
+	end
+
+	var_7_8 = ""
+
+	::label_7_0::
+
+	self:_update_description_widget(var_7_8, var_7_3, var_7_4, icon, curse_description_color)
+	self:_start_animation("curse_description_animation", "description_start")
+
+	self._has_curse = true
+
+	if not self._player_unit then
 		return
 	end
 
-	ScriptUnit.extension(arg_7_0._player_unit, "hud_system"):block_current_location_ui(true)
-	arg_7_0._mission_system:block_mission_ui(true)
+	ScriptUnit.extension(self._player_unit, "hud_system"):block_current_location_ui(true)
+	self._mission_system:block_mission_ui(true)
 end
 
-function DeusCurseUI._update_description_widget(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
-	local var_8_0 = arg_8_0._description_widget.content
+DeusCurseUI._update_description_widget = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+	-- function 8
+	local content = self._description_widget.content
 
-	var_8_0.theme_icon = arg_8_4
-	var_8_0.title_text = arg_8_1
-	var_8_0.curse_name = arg_8_2
-	var_8_0.area_text_content = arg_8_3
+	content.theme_icon = arg_8_4
+	content.title_text = arg_8_1
+	content.curse_name = arg_8_2
+	content.area_text_content = arg_8_3
 
-	local var_8_1 = UIUtils.get_text_height(arg_8_0.ui_renderer, {
-		var_0_4,
+	local get_text_height = UIUtils.get_text_height(self.ui_renderer, {
+		text_background_width,
 		0
-	}, arg_8_0._description_widget.style.area_text_style, arg_8_3)
+	}, self._description_widget.style.area_text_style, arg_8_3)
 
-	var_0_3.change_widget_height(var_8_1)
+	scenegraph_methods.change_widget_height(get_text_height)
 
-	local var_8_2 = arg_8_0._description_widget.style
+	local style = self._description_widget.style
 
-	var_8_2.top_detail_glow.color = arg_8_5
-	var_8_2.bottom_glow.color = arg_8_5
-	var_8_2.bottom_edge_glow.color = arg_8_5
-	var_8_2.top_glow.color = arg_8_5
-	var_8_2.top_edge_glow.color = arg_8_5
+	style.top_detail_glow.color = arg_8_5
+	style.bottom_glow.color = arg_8_5
+	style.bottom_edge_glow.color = arg_8_5
+	style.top_glow.color = arg_8_5
+	style.top_edge_glow.color = arg_8_5
 end
 
-function DeusCurseUI.on_round_started(arg_9_0)
-	arg_9_0._timer = arg_9_0:_get_display_time()
+DeusCurseUI.on_round_started = function (self)
+	-- function 9
+	self._timer = self:_get_display_time()
 end
 
-function DeusCurseUI.draw(arg_10_0, arg_10_1)
-	local var_10_0 = arg_10_0.ui_renderer
-	local var_10_1 = arg_10_0.ui_scenegraph
-	local var_10_2 = arg_10_0.input_manager:get_service("ingame_menu")
-	local var_10_3 = arg_10_0.render_settings
+DeusCurseUI.draw = function (self, arg_10_1)
+	-- function 10
+	local ui_renderer = self.ui_renderer
+	local ui_scenegraph = self.ui_scenegraph
+	local get_service = self.input_manager:get_service("ingame_menu")
+	local render_settings = self.render_settings
 
-	UIRenderer.begin_pass(var_10_0, var_10_1, var_10_2, arg_10_1, nil, var_10_3)
-	UIRenderer.draw_widget(var_10_0, arg_10_0._description_widget)
-	UIRenderer.end_pass(var_10_0)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, get_service, arg_10_1, nil, render_settings)
+	UIRenderer.draw_widget(ui_renderer, self._description_widget)
+	UIRenderer.end_pass(ui_renderer)
 end
 
-function DeusCurseUI._start_animation(arg_11_0, arg_11_1, arg_11_2)
-	local var_11_0 = {
-		wwise_world = arg_11_0.wwise_world,
-		render_settings = arg_11_0.render_settings
+DeusCurseUI._start_animation = function (self, arg_11_1, arg_11_2)
+	-- function 11
+	local tbl = {
+		wwise_world = self.wwise_world,
+		render_settings = self.render_settings
 	}
-	local var_11_1 = arg_11_0.ui_animator:start_animation(arg_11_2, arg_11_0._description_widget, var_0_2, var_11_0)
+	local start_animation = self.ui_animator:start_animation(arg_11_2, self._description_widget, scenegraph_definition, tbl)
 
-	arg_11_0._animations[arg_11_1] = var_11_1
+	self._animations[arg_11_1] = start_animation
 end
 
-function DeusCurseUI.update_animations(arg_12_0, arg_12_1)
-	local var_12_0 = arg_12_0._animations
-	local var_12_1 = arg_12_0.ui_animator
+DeusCurseUI.update_animations = function (self, arg_12_1)
+	-- function 12
+	local _animations = self._animations
+	local ui_animator = self.ui_animator
 
-	var_12_1:update(arg_12_1)
+	ui_animator:update(arg_12_1)
 
-	for iter_12_0, iter_12_1 in pairs(var_12_0) do
-		if var_12_1:is_animation_completed(iter_12_1) then
-			var_12_1:stop_animation(iter_12_1)
+	for k, v in pairs(_animations) do
+		if not ui_animator:is_animation_completed(v) then
+			ui_animator:stop_animation(v)
 
-			var_12_0[iter_12_0] = nil
+			_animations[k] = nil
 		end
 	end
 end
 
-function DeusCurseUI._get_display_time(arg_13_0)
-	return MutatorCommonSettings.deus.initial_activation_delay + var_0_5
+DeusCurseUI._get_display_time = function (arg_13_0)
+	-- function 13
+	return MutatorCommonSettings.deus.initial_activation_delay + num
 end
 
-function DeusCurseUI._clear_animations(arg_14_0)
-	for iter_14_0, iter_14_1 in pairs(arg_14_0._animations) do
-		arg_14_0.ui_animator:stop_animation(iter_14_1)
+DeusCurseUI._clear_animations = function (self)
+	-- function 14
+	for k, v in pairs(self._animations) do
+		self.ui_animator:stop_animation(v)
 	end
 
-	table.clear(arg_14_0._animations)
+	table.clear(self._animations)
 end

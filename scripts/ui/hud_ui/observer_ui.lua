@@ -1,368 +1,389 @@
 -- chunkname: @scripts/ui/hud_ui/observer_ui.lua
 
 local var_0_0 = local_require("scripts/ui/hud_ui/observer_ui_definitions")
-local var_0_1 = true
-local var_0_2 = 0
-local var_0_3 = 10
+local flag = true
+local num = 0
+local num_2 = 10
 
 ObserverUI = class(ObserverUI)
 
-function ObserverUI.init(arg_1_0, arg_1_1, arg_1_2)
-	arg_1_0._parent = arg_1_1
-	arg_1_0.ui_renderer = arg_1_2.ui_renderer
-	arg_1_0.ingame_ui = arg_1_2.ingame_ui
-	arg_1_0.input_manager = arg_1_2.input_manager
-	arg_1_0.profile_synchronizer = arg_1_2.profile_synchronizer
-	arg_1_0.player_manager = arg_1_2.player_manager
-	arg_1_0.peer_id = arg_1_2.peer_id
-	arg_1_0.local_player = Managers.player:local_player()
-	arg_1_0.player_shielded = false
-	arg_1_0._is_visible = false
+ObserverUI.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	self._parent = arg_1_1
+	self.ui_renderer = arg_1_2.ui_renderer
+	self.ingame_ui = arg_1_2.ingame_ui
+	self.input_manager = arg_1_2.input_manager
+	self.profile_synchronizer = arg_1_2.profile_synchronizer
+	self.player_manager = arg_1_2.player_manager
+	self.peer_id = arg_1_2.peer_id
+	self.local_player = Managers.player:local_player()
+	self.player_shielded = false
+	self._is_visible = false
 
-	arg_1_0:create_ui_elements()
+	self:create_ui_elements()
 end
 
-function ObserverUI.create_ui_elements(arg_2_0)
-	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
-	arg_2_0.divider_widget = UIWidget.init(var_0_0.widget_definitions.divider)
-	arg_2_0.player_name_widget = UIWidget.init(var_0_0.widget_definitions.player_name)
-	arg_2_0.hero_name_widget = UIWidget.init(var_0_0.widget_definitions.hero_name)
-	arg_2_0.hp_bar_widget = UIWidget.init(var_0_0.widget_definitions.hp_bar)
-	arg_2_0.player_name_widget.style.text.localize = false
-	var_0_1 = false
+ObserverUI.create_ui_elements = function (self)
+	-- function 2
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
+	self.divider_widget = UIWidget.init(var_0_0.widget_definitions.divider)
+	self.player_name_widget = UIWidget.init(var_0_0.widget_definitions.player_name)
+	self.hero_name_widget = UIWidget.init(var_0_0.widget_definitions.hero_name)
+	self.hp_bar_widget = UIWidget.init(var_0_0.widget_definitions.hp_bar)
+	self.player_name_widget.style.text.localize = false
+	flag = false
 
-	arg_2_0:set_visible(false)
-	arg_2_0:draw()
+	self:set_visible(false)
+	self:draw()
 end
 
-function ObserverUI.get_player_camera_extension(arg_3_0)
-	local var_3_0 = arg_3_0.peer_id
-	local var_3_1 = arg_3_0.player_manager:player_from_peer_id(var_3_0).camera_follow_unit
+ObserverUI.get_player_camera_extension = function (self)
+	-- function 3
+	local peer_id = self.peer_id
+	local camera_follow_unit = self.player_manager:player_from_peer_id(peer_id).camera_follow_unit
 
-	if var_3_1 and ScriptUnit.has_extension(var_3_1, "camera_system") then
-		return ScriptUnit.extension(var_3_1, "camera_system")
+	if not camera_follow_unit and not ScriptUnit.has_extension(camera_follow_unit, "camera_system") then
+		return ScriptUnit.extension(camera_follow_unit, "camera_system")
 	end
 end
 
-function ObserverUI.handle_observer_player_changed(arg_4_0)
-	if not arg_4_0:get_player_camera_extension() then
+ObserverUI.handle_observer_player_changed = function (self)
+	-- function 4
+	if not self:get_player_camera_extension() then
 		return
 	end
 
-	local var_4_0 = arg_4_0.peer_id
-	local var_4_1 = arg_4_0.player_manager:player_from_peer_id(var_4_0)
-	local var_4_2 = var_4_1:observed_unit()
+	local peer_id = self.peer_id
+	local player_from_peer_id = self.player_manager:player_from_peer_id(peer_id)
+	local observed_unit = player_from_peer_id:observed_unit()
 
-	if not ALIVE[var_4_2] then
-		var_4_2 = var_4_1.player_unit
+	if not ALIVE[observed_unit] then
+		observed_unit = player_from_peer_id.player_unit
 	end
 
-	if Unit.alive(var_4_2) then
-		local var_4_3 = arg_4_0._observed_unit
+	if not Unit.alive(observed_unit) then
+		local _observed_unit = self._observed_unit
 
-		if var_4_3 ~= var_4_2 then
-			arg_4_0:_set_observed_unit(var_4_3)
+		if _observed_unit ~= observed_unit then
+			self:_set_observed_unit(_observed_unit)
 		end
 	else
-		arg_4_0:stop_draw_observer_ui()
+		self:stop_draw_observer_ui()
 	end
 end
 
-function ObserverUI._set_observed_unit(arg_5_0, arg_5_1)
-	local var_5_0 = SPProfiles
-	local var_5_1 = arg_5_0.profile_synchronizer
-	local var_5_2 = Managers.player:players()
-	local var_5_3 = false
-	local var_5_4 = ""
-	local var_5_5 = Managers.player:owner(arg_5_1)
-	local var_5_6 = ""
+ObserverUI._set_observed_unit = function (self, arg_5_1)
+	-- function 5
+	local SPProfiles = SPProfiles
+	local profile_synchronizer = self.profile_synchronizer
+	local players = Managers.player:players()
+	local flag = false
+	local str = ""
+	local owner = Managers.player:owner(arg_5_1)
+	local str_2 = ""
 
-	if var_5_5 then
-		var_5_3 = var_5_5:is_player_controlled()
-		var_5_4 = var_5_5:name()
+	if not owner then
+		flag = owner:is_player_controlled()
+		str = owner:name()
 
-		local var_5_7 = var_5_5:local_player_id()
-		local var_5_8 = var_5_1:profile_by_peer(var_5_5.peer_id, var_5_7)
+		local local_player_id = owner:local_player_id()
+		local profile_by_peer = profile_synchronizer:profile_by_peer(owner.peer_id, local_player_id)
 
-		var_5_6 = var_5_0[var_5_8] and var_5_0[var_5_8].display_name
+		str_2 = not SPProfiles[profile_by_peer] and SPProfiles[profile_by_peer].display_name
 	end
 
-	arg_5_0.player_name_widget.content.text = var_5_3 and var_5_4 or var_5_4 .. " (BOT)"
-	arg_5_0.hero_name_widget.content.text = var_5_6
-	arg_5_0._observed_unit = arg_5_1
-	arg_5_0._skip_bar_animation = true
-	arg_5_0.player_name_widget.element.dirty = true
-	arg_5_0.hero_name_widget.element.dirty = true
-	arg_5_0._dirty = true
+	self.player_name_widget.content.text = not flag and str and str .. " (BOT)"
+	self.hero_name_widget.content.text = str_2
+	self._observed_unit = arg_5_1
+	self._skip_bar_animation = true
+	self.player_name_widget.element.dirty = true
+	self.hero_name_widget.element.dirty = true
+	self._dirty = true
 end
 
-function ObserverUI.stop_draw_observer_ui(arg_6_0)
-	arg_6_0._observed_unit = nil
-	arg_6_0.divider_widget.element.dirty = true
-	arg_6_0.player_name_widget.element.dirty = true
-	arg_6_0.hero_name_widget.element.dirty = true
-	arg_6_0.hp_bar_widget.element.dirty = true
-	arg_6_0._dirty = true
+ObserverUI.stop_draw_observer_ui = function (self)
+	-- function 6
+	self._observed_unit = nil
+	self.divider_widget.element.dirty = true
+	self.player_name_widget.element.dirty = true
+	self.hero_name_widget.element.dirty = true
+	self.hp_bar_widget.element.dirty = true
+	self._dirty = true
 end
 
-function ObserverUI.update(arg_7_0, arg_7_1, arg_7_2)
-	if var_0_1 then
-		arg_7_0:create_ui_elements()
+ObserverUI.update = function (self, arg_7_1, arg_7_2)
+	-- function 7
+	if not flag then
+		self:create_ui_elements()
 	end
 
-	if not arg_7_0._is_visible then
+	if not self._is_visible then
 		return
 	end
 
-	arg_7_0:handle_observer_player_changed()
+	self:handle_observer_player_changed()
 
-	if arg_7_0._observed_unit then
-		arg_7_0:_update_follow_unit_health_bar(arg_7_0._observed_unit)
-		arg_7_0:update_health_animations(arg_7_1)
+	if not self._observed_unit then
+		self:_update_follow_unit_health_bar(self._observed_unit)
+		self:update_health_animations(arg_7_1)
 
-		arg_7_0._skip_bar_animation = nil
+		self._skip_bar_animation = nil
 	end
 
-	arg_7_0:draw(arg_7_1)
+	self:draw(arg_7_1)
 end
 
-function ObserverUI.draw(arg_8_0, arg_8_1)
-	local var_8_0 = arg_8_0.ui_renderer
-	local var_8_1 = arg_8_0.ui_scenegraph
-	local var_8_2 = arg_8_0.input_manager:get_service("Player")
+ObserverUI.draw = function (self, arg_8_1)
+	-- function 8
+	local ui_renderer = self.ui_renderer
+	local ui_scenegraph = self.ui_scenegraph
+	local get_service = self.input_manager:get_service("Player")
 
-	UIRenderer.begin_pass(var_8_0, var_8_1, var_8_2, arg_8_1)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, get_service, arg_8_1)
 
-	if arg_8_0._dirty then
-		UIRenderer.draw_widget(var_8_0, arg_8_0.divider_widget)
-		UIRenderer.draw_widget(var_8_0, arg_8_0.player_name_widget)
-		UIRenderer.draw_widget(var_8_0, arg_8_0.hero_name_widget)
+	if not self._dirty then
+		UIRenderer.draw_widget(ui_renderer, self.divider_widget)
+		UIRenderer.draw_widget(ui_renderer, self.player_name_widget)
+		UIRenderer.draw_widget(ui_renderer, self.hero_name_widget)
 
-		arg_8_0._dirty = false
+		self._dirty = false
 	end
 
-	UIRenderer.draw_widget(var_8_0, arg_8_0.hp_bar_widget)
-	UIRenderer.end_pass(var_8_0)
+	UIRenderer.draw_widget(ui_renderer, self.hp_bar_widget)
+	UIRenderer.end_pass(ui_renderer)
 end
 
-function ObserverUI.destroy(arg_9_0)
+ObserverUI.destroy = function (arg_9_0)
+	-- function 9
 	return
 end
 
-function ObserverUI.set_visible(arg_10_0, arg_10_1)
-	if arg_10_0._is_visible ~= arg_10_1 then
-		local var_10_0 = arg_10_0.divider_widget
+ObserverUI.set_visible = function (self, arg_10_1)
+	-- function 10
+	if self._is_visible ~= arg_10_1 then
+		local divider_widget = self.divider_widget
 
-		UIRenderer.set_element_visible(arg_10_0.ui_renderer, var_10_0.element, arg_10_1)
+		UIRenderer.set_element_visible(self.ui_renderer, divider_widget.element, arg_10_1)
 
-		var_10_0.content.visible = arg_10_1
-		var_10_0.element.dirty = true
+		divider_widget.content.visible = arg_10_1
+		divider_widget.element.dirty = true
 
-		local var_10_1 = arg_10_0.player_name_widget
+		local player_name_widget = self.player_name_widget
 
-		UIRenderer.set_element_visible(arg_10_0.ui_renderer, var_10_1.element, arg_10_1)
+		UIRenderer.set_element_visible(self.ui_renderer, player_name_widget.element, arg_10_1)
 
-		var_10_0.content.visible = arg_10_1
-		var_10_1.element.dirty = true
+		divider_widget.content.visible = arg_10_1
+		player_name_widget.element.dirty = true
 
-		local var_10_2 = arg_10_0.hero_name_widget
+		local hero_name_widget = self.hero_name_widget
 
-		UIRenderer.set_element_visible(arg_10_0.ui_renderer, var_10_2.element, arg_10_1)
+		UIRenderer.set_element_visible(self.ui_renderer, hero_name_widget.element, arg_10_1)
 
-		var_10_0.content.visible = arg_10_1
-		var_10_2.element.dirty = true
+		divider_widget.content.visible = arg_10_1
+		hero_name_widget.element.dirty = true
 
-		local var_10_3 = arg_10_0.hp_bar_widget
+		local hp_bar_widget = self.hp_bar_widget
 
-		UIRenderer.set_element_visible(arg_10_0.ui_renderer, var_10_3.element, arg_10_1)
+		UIRenderer.set_element_visible(self.ui_renderer, hp_bar_widget.element, arg_10_1)
 
-		var_10_0.content.visible = arg_10_1
-		var_10_3.element.dirty = true
-		arg_10_0._dirty = true
-		arg_10_0._is_visible = arg_10_1
+		divider_widget.content.visible = arg_10_1
+		hp_bar_widget.element.dirty = true
+		self._dirty = true
+		self._is_visible = arg_10_1
 	end
 end
 
-function ObserverUI.is_visible(arg_11_0)
-	return arg_11_0._is_visible
+ObserverUI.is_visible = function (self)
+	-- function 11
+	return self._is_visible
 end
 
-function ObserverUI._update_follow_unit_health_bar(arg_12_0, arg_12_1)
-	local var_12_0 = arg_12_0.profile_synchronizer
-	local var_12_1 = Managers.player:owner(arg_12_1)
+ObserverUI._update_follow_unit_health_bar = function (self, arg_12_1)
+	-- function 12
+	local profile_synchronizer = self.profile_synchronizer
+	local owner = Managers.player:owner(arg_12_1)
 	local var_12_2
 	local var_12_3
 	local var_12_4
 	local var_12_5
 	local var_12_6
-	local var_12_7 = 0
-	local var_12_8 = 1
-	local var_12_9 = false
-	local var_12_10 = arg_12_0.hp_bar_widget
-	local var_12_11 = var_12_10.content
-	local var_12_12 = var_12_10.style
+	local num_3 = 0
+	local num_4 = 1
+	local flag = false
+	local hp_bar_widget = self.hp_bar_widget
+	local content = hp_bar_widget.content
+	local style = hp_bar_widget.style
 
-	if var_12_1 then
-		local var_12_13 = ScriptUnit.extension(arg_12_1, "health_system")
-		local var_12_14 = ScriptUnit.extension(arg_12_1, "status_system")
+	if not owner then
+		local extension = ScriptUnit.extension(arg_12_1, "health_system")
+		local extension_2 = ScriptUnit.extension(arg_12_1, "status_system")
 
-		var_12_2 = var_12_13:current_health_percent()
+		var_12_2 = extension:current_health_percent()
 
-		local var_12_15 = var_12_13:get_max_health()
-		local var_12_16, var_12_17 = var_12_13:has_assist_shield()
+		local get_max_health = extension:get_max_health()
+		local has_assist_shield, var_12_17 = extension:has_assist_shield()
 
-		if var_12_16 then
-			var_12_7 = var_12_17 / var_12_15
+		if not has_assist_shield then
+			num_3 = var_12_17 / get_max_health
 
-			if not arg_12_0.player_shielded then
-				local var_12_18 = var_12_12.hp_bar_highlight
+			if not self.player_shielded then
+				local hp_bar_highlight = style.hp_bar_highlight
 
-				var_12_18.color[1] = 255
-				var_12_18.color[2] = 140
-				var_12_18.color[3] = 180
-				var_12_18.color[4] = 255
-				var_12_10.element.dirty = true
-				arg_12_0._dirty = true
-				arg_12_0.player_shielded = true
+				hp_bar_highlight.color[1] = 255
+				hp_bar_highlight.color[2] = 140
+				hp_bar_highlight.color[3] = 180
+				hp_bar_highlight.color[4] = 255
+				hp_bar_widget.element.dirty = true
+				self._dirty = true
+				self.player_shielded = true
 			end
-		elseif arg_12_0.player_shielded then
-			local var_12_19 = var_12_12.hp_bar_highlight
+		elseif not self.player_shielded then
+			local hp_bar_highlight_2 = style.hp_bar_highlight
 
-			var_12_19.color[1] = 0
-			var_12_19.color[2] = 0
-			var_12_19.color[3] = 0
-			var_12_19.color[4] = 0
-			var_12_10.element.dirty = true
-			arg_12_0._dirty = true
-			arg_12_0.player_shielded = false
+			hp_bar_highlight_2.color[1] = 0
+			hp_bar_highlight_2.color[2] = 0
+			hp_bar_highlight_2.color[3] = 0
+			hp_bar_highlight_2.color[4] = 0
+			hp_bar_widget.element.dirty = true
+			self._dirty = true
+			self.player_shielded = false
 		end
 
-		var_12_5 = var_12_14:is_wounded()
-		var_12_3 = var_12_14:is_knocked_down() and var_12_2 > 0
-		var_12_6 = var_12_14:is_ready_for_assisted_respawn()
+		var_12_5 = extension_2:is_wounded()
+		var_12_3 = not extension_2:is_knocked_down() and var_12_2 > 0
+		var_12_6 = extension_2:is_ready_for_assisted_respawn()
 
-		local var_12_20 = ScriptUnit.extension(arg_12_1, "buff_system")
-		local var_12_21 = var_12_20:num_buff_perk("skaven_grimoire")
-		local var_12_22 = var_12_20:apply_buffs_to_value(PlayerUnitDamageSettings.GRIMOIRE_HEALTH_DEBUFF, "curse_protection")
-		local var_12_23 = var_12_20:num_buff_perk("twitch_grimoire")
-		local var_12_24 = var_12_20:apply_buffs_to_value(PlayerUnitDamageSettings.GRIMOIRE_HEALTH_DEBUFF, "curse_protection")
-		local var_12_25 = var_12_20:num_buff_perk("slayer_curse")
-		local var_12_26 = var_12_20:apply_buffs_to_value(PlayerUnitDamageSettings.SLAYER_CURSE_HEALTH_DEBUFF, "curse_protection")
-		local var_12_27 = Managers.state.difficulty:get_difficulty()
-		local var_12_28 = var_12_20:num_buff_perk("mutator_curse")
-		local var_12_29 = var_12_20:apply_buffs_to_value(WindSettings.light.curse_settings.value[var_12_27], "curse_protection")
-		local var_12_30 = var_12_20:apply_buffs_to_value(0, "health_curse")
-		local var_12_31 = var_12_20:apply_buffs_to_value(var_12_30, "curse_protection")
+		local extension_3 = ScriptUnit.extension(arg_12_1, "buff_system")
+		local num_buff_perk = extension_3:num_buff_perk("skaven_grimoire")
+		local apply_buffs_to_value = extension_3:apply_buffs_to_value(PlayerUnitDamageSettings.GRIMOIRE_HEALTH_DEBUFF, "curse_protection")
+		local num_buff_perk_2 = extension_3:num_buff_perk("twitch_grimoire")
+		local apply_buffs_to_value_2 = extension_3:apply_buffs_to_value(PlayerUnitDamageSettings.GRIMOIRE_HEALTH_DEBUFF, "curse_protection")
+		local num_buff_perk_3 = extension_3:num_buff_perk("slayer_curse")
+		local apply_buffs_to_value_3 = extension_3:apply_buffs_to_value(PlayerUnitDamageSettings.SLAYER_CURSE_HEALTH_DEBUFF, "curse_protection")
+		local get_difficulty = Managers.state.difficulty:get_difficulty()
+		local num_buff_perk_4 = extension_3:num_buff_perk("mutator_curse")
+		local apply_buffs_to_value_4 = extension_3:apply_buffs_to_value(WindSettings.light.curse_settings.value[get_difficulty], "curse_protection")
+		local apply_buffs_to_value_5 = extension_3:apply_buffs_to_value(0, "health_curse")
+		local apply_buffs_to_value_6 = extension_3:apply_buffs_to_value(apply_buffs_to_value_5, "curse_protection")
 
-		var_12_8 = 1 + var_12_21 * var_12_22 + var_12_23 * var_12_24 + var_12_25 * var_12_26 + var_12_28 * var_12_29 + var_12_31
+		num_4 = 1 + num_buff_perk * apply_buffs_to_value + num_buff_perk_2 * apply_buffs_to_value_2 + num_buff_perk_3 * apply_buffs_to_value_3 + num_buff_perk_4 * apply_buffs_to_value_4 + apply_buffs_to_value_6
 	else
 		var_12_2 = 0
 		var_12_3 = false
 	end
 
-	var_12_11.hp_bar.draw_health_bar = not var_12_6
+	content.hp_bar.draw_health_bar = not var_12_6
 
-	local var_12_32 = var_12_2 <= 0
-	local var_12_33 = var_0_2
-	local var_12_34 = not var_12_32 and not var_12_3 and var_12_2 < UISettings.unit_frames.low_health_threshold or nil
-	local var_12_35 = arg_12_0:on_player_health_changed("my_player", var_12_10, var_12_2 * var_12_8)
-	local var_12_36 = arg_12_0:on_num_grimoires_changed("my_player_grimoires", var_12_10, 1 - var_12_8)
+	local flag_2 = var_12_2 <= 0
+	local var_12_33 = num
+	local flag_3 = (flag_2 or var_12_3 or not (var_12_2 < UISettings.unit_frames.low_health_threshold)) and nil
+	local on_player_health_changed = self:on_player_health_changed("my_player", hp_bar_widget, var_12_2 * num_4)
+	local on_num_grimoires_changed = self:on_num_grimoires_changed("my_player_grimoires", hp_bar_widget, 1 - num_4)
 
-	var_12_9 = var_12_9 or var_12_35 or var_12_36
+	flag = flag or on_player_health_changed or on_num_grimoires_changed
 
-	local var_12_37 = var_12_10.content.hp_bar.bar_value
-	local var_12_38 = var_12_10.content.hp_bar_grimoire_debuff.bar_value
+	local bar_value = hp_bar_widget.content.hp_bar.bar_value
+	local bar_value_2 = hp_bar_widget.content.hp_bar_grimoire_debuff.bar_value
 
-	var_12_11.hp_bar_shield.bar_value_position = var_12_37
-	var_12_11.hp_bar_shield.bar_value_offset = var_12_38
-	var_12_11.hp_bar_shield.bar_value_size = var_12_7
+	content.hp_bar_shield.bar_value_position = bar_value
+	content.hp_bar_shield.bar_value_offset = bar_value_2
+	content.hp_bar_shield.bar_value_size = num_3
 
-	local var_12_39 = var_12_11.hp_bar_max_health_divider
+	local hp_bar_max_health_divider = content.hp_bar_max_health_divider
 
-	var_12_39.active = false
+	hp_bar_max_health_divider.active = false
 
-	local var_12_40 = var_12_11.hp_bar_grimoire_icon
+	local hp_bar_grimoire_icon = content.hp_bar_grimoire_icon
 
-	var_12_40.active = false
+	hp_bar_grimoire_icon.active = false
 
-	if var_12_8 < 1 then
-		var_12_39.active = true
+	if num_4 < 1 then
+		hp_bar_max_health_divider.active = true
 
 		local var_12_41 = var_0_0.scenegraph_definition.hp_bar_grimoire_debuff_fill.size[1]
-		local var_12_42 = var_12_11.hp_bar_grimoire_debuff.bar_value * var_12_41
-		local var_12_43 = var_12_10.style.hp_bar_grimoire_icon
+		local num_5 = content.hp_bar_grimoire_debuff.bar_value * var_12_41
+		local hp_bar_grimoire_icon_2 = hp_bar_widget.style.hp_bar_grimoire_icon
 
-		var_12_40.active = true
+		hp_bar_grimoire_icon.active = true
 
-		local var_12_44 = var_12_43.offset[1]
-		local var_12_45 = -var_12_42 / 2
+		local var_12_44 = hp_bar_grimoire_icon_2.offset[1]
+		local num_6 = -num_5 / 2
 
-		if var_12_44 ~= var_12_45 then
-			var_12_43.offset[1] = var_12_45
-			var_12_9 = true
-			var_12_10.style.hp_bar_max_health_divider.offset[1] = -var_12_42
+		if var_12_44 ~= num_6 then
+			hp_bar_grimoire_icon_2.offset[1] = num_6
+			flag = true
+			hp_bar_widget.style.hp_bar_max_health_divider.offset[1] = -num_5
 		end
 	end
 
-	if var_12_1 then
-		local var_12_46 = var_12_1:local_player_id()
+	if not owner then
+		local local_player_id = owner:local_player_id()
 
-		if var_12_0:profile_by_peer(var_12_1.peer_id, var_12_46) then
-			if var_12_3 or var_12_32 then
-				var_12_33 = var_0_2
+		if not profile_synchronizer:profile_by_peer(owner.peer_id, local_player_id) then
+			if var_12_3 or not flag_2 then
+				var_12_33 = num
 			else
-				var_12_33 = var_0_3
+				var_12_33 = num_2
 			end
 
-			var_12_11.hp_bar.low_health = var_12_34
-			var_12_11.hp_bar.is_knocked_down = var_12_3
-			var_12_11.hp_bar.is_wounded = var_12_5
-			var_12_12.hp_bar_divider.texture_amount = var_12_33
+			content.hp_bar.low_health = flag_3
+			content.hp_bar.is_knocked_down = var_12_3
+			content.hp_bar.is_wounded = var_12_5
+			style.hp_bar_divider.texture_amount = var_12_33
 		end
 	end
 
-	local var_12_47 = RESOLUTION_LOOKUP.modified
+	local modified = RESOLUTION_LOOKUP.modified
 
-	if var_12_9 or var_12_47 then
-		var_12_10.element.dirty = true
-		arg_12_0._dirty = true
+	if flag or not modified then
+		hp_bar_widget.element.dirty = true
+		self._dirty = true
 	end
 end
 
-function ObserverUI.on_player_health_changed(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
-	if not arg_13_0.bar_animations_data then
-		arg_13_0.bar_animations_data = {}
+ObserverUI.on_player_health_changed = function (self, arg_13_1, arg_13_2, arg_13_3)
+	-- function 13
+	if not self.bar_animations_data then
+		self.bar_animations_data = {}
 	end
 
-	local var_13_0 = UISettings.unit_frames
-	local var_13_1 = arg_13_0.bar_animations_data[arg_13_1] or {
-		low_health_animation = UIAnimation.init(UIAnimation.pulse_animation, arg_13_2.style.hp_bar.color, 1, var_13_0.low_health_animation_alpha_from, var_13_0.low_health_animation_alpha_to, var_13_0.low_health_animation_time)
+	local unit_frames = UISettings.unit_frames
+	local var_13_1 = self.bar_animations_data[arg_13_1]
+
+	var_13_1 = var_13_1 or {
+		low_health_animation = UIAnimation.init(UIAnimation.pulse_animation, arg_13_2.style.hp_bar.color, 1, unit_frames.low_health_animation_alpha_from, unit_frames.low_health_animation_alpha_to, unit_frames.low_health_animation_time)
 	}
+	self.bar_animations_data[arg_13_1] = var_13_1
 
-	arg_13_0.bar_animations_data[arg_13_1] = var_13_1
-
-	local var_13_2 = var_13_1.current_health
+	local current_health = var_13_1.current_health
 
 	var_13_1.current_health = arg_13_3
 
-	if arg_13_3 <= 1 and arg_13_3 ~= var_13_2 then
-		local var_13_3 = arg_13_2.content.hp_bar.is_knocked_down
-		local var_13_4 = arg_13_2.content.hp_bar.bar_value
-		local var_13_5 = UISettings.unit_frames.health_bar_lerp_time
+	if not (not (arg_13_3 <= 1) or arg_13_3 == current_health) then
+		local is_knocked_down = arg_13_2.content.hp_bar.is_knocked_down
+		local bar_value = arg_13_2.content.hp_bar.bar_value
+		local health_bar_lerp_time = UISettings.unit_frames.health_bar_lerp_time
 		local var_13_6
 
-		if var_13_4 < arg_13_3 then
-			var_13_6 = (arg_13_3 - var_13_4) * var_13_5
+		if bar_value < arg_13_3 then
+			var_13_6 = (arg_13_3 - bar_value) * health_bar_lerp_time
 		else
-			var_13_6 = (var_13_4 - arg_13_3) * var_13_5
+			var_13_6 = (bar_value - arg_13_3) * health_bar_lerp_time
 		end
 
-		var_13_1.animate_highlight = (not var_13_3 and arg_13_3 < (var_13_2 or 1) or false) and 0 or var_13_1.animate_highlight
+		local flag
+
+		flag = not ((is_knocked_down or not (arg_13_3 < (current_health or 1))) and false) and 0 and var_13_1.animate_highlight
+		var_13_1.animate_highlight = flag
 		var_13_1.animate = true
 		var_13_1.new_health = arg_13_3
-		var_13_1.previous_health = var_13_4
+		var_13_1.previous_health = bar_value
 		var_13_1.time = 0
-		var_13_1.total_time = arg_13_0._skip_bar_animation and 0 or var_13_6
+
+		local flag_2
+
+		flag_2 = not self._skip_bar_animation and 0 and var_13_6
+		var_13_1.total_time = flag_2
 		var_13_1.widget = arg_13_2
 		var_13_1.bar = arg_13_2.content.hp_bar
 
@@ -370,93 +391,102 @@ function ObserverUI.on_player_health_changed(arg_13_0, arg_13_1, arg_13_2, arg_1
 	end
 end
 
-function ObserverUI.on_num_grimoires_changed(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
-	if not arg_14_0.bar_animations_data then
-		arg_14_0.bar_animations_data = {}
+ObserverUI.on_num_grimoires_changed = function (self, arg_14_1, arg_14_2, arg_14_3)
+	-- function 14
+	if not self.bar_animations_data then
+		self.bar_animations_data = {}
 	end
 
-	local var_14_0 = UISettings.unit_frames
-	local var_14_1 = arg_14_0.bar_animations_data[arg_14_1] or {}
+	local unit_frames = UISettings.unit_frames
+	local var_14_1 = self.bar_animations_data[arg_14_1]
+
+	var_14_1 = var_14_1 or {}
 
 	if arg_14_3 ~= var_14_1.current_health_debuff then
-		local var_14_2 = arg_14_2.content.hp_bar_grimoire_debuff.bar_value
-		local var_14_3 = UISettings.unit_frames.health_bar_lerp_time
+		local bar_value = arg_14_2.content.hp_bar_grimoire_debuff.bar_value
+		local health_bar_lerp_time = UISettings.unit_frames.health_bar_lerp_time
 		local var_14_4
 
-		if var_14_2 < arg_14_3 then
-			var_14_4 = (arg_14_3 - var_14_2) * var_14_3
+		if bar_value < arg_14_3 then
+			var_14_4 = (arg_14_3 - bar_value) * health_bar_lerp_time
 		else
-			var_14_4 = (var_14_2 - arg_14_3) * var_14_3
+			var_14_4 = (bar_value - arg_14_3) * health_bar_lerp_time
 		end
 
 		var_14_1.animate = true
 		var_14_1.new_health = arg_14_3
-		var_14_1.previous_health = var_14_2
+		var_14_1.previous_health = bar_value
 		var_14_1.time = 0
-		var_14_1.total_time = arg_14_0._skip_bar_animation and 0 or var_14_4
+
+		local flag
+
+		flag = not self._skip_bar_animation and 0 and var_14_4
+		var_14_1.total_time = flag
 		var_14_1.widget = arg_14_2
 		var_14_1.bar = arg_14_2.content.hp_bar_grimoire_debuff
 	end
 
 	var_14_1.current_health_debuff = arg_14_3
-	arg_14_0.bar_animations_data[arg_14_1] = var_14_1
+	self.bar_animations_data[arg_14_1] = var_14_1
 end
 
-function ObserverUI.update_health_animations(arg_15_0, arg_15_1)
-	local var_15_0 = arg_15_0.bar_animations_data
+ObserverUI.update_health_animations = function (self, arg_15_1)
+	-- function 15
+	local bar_animations_data = self.bar_animations_data
 
-	if var_15_0 then
-		for iter_15_0, iter_15_1 in pairs(var_15_0) do
-			local var_15_1 = iter_15_1.widget
-			local var_15_2 = iter_15_1.bar
+	if not bar_animations_data then
+		for k, v in pairs(bar_animations_data) do
+			local widget = v.widget
+			local bar = v.bar
 
-			if var_15_2.low_health then
-				UIAnimation.update(iter_15_1.low_health_animation, arg_15_1)
+			if not bar.low_health then
+				UIAnimation.update(v.low_health_animation, arg_15_1)
 			end
 
-			if iter_15_1.animate_highlight and not arg_15_0.player_shielded then
-				iter_15_1.animate_highlight = arg_15_0:update_damage_highlight(var_15_1, iter_15_1.animate_highlight, arg_15_1)
+			if not (not v.animate_highlight and self.player_shielded) then
+				v.animate_highlight = self:update_damage_highlight(widget, v.animate_highlight, arg_15_1)
 			end
 
-			if iter_15_1.animate then
-				local var_15_3 = iter_15_1.time
-				local var_15_4 = iter_15_1.total_time
-				local var_15_5 = iter_15_1.new_health
-				local var_15_6 = iter_15_1.previous_health
-				local var_15_7 = arg_15_0:update_player_bar_animation(var_15_1, var_15_2, var_15_3, var_15_4, var_15_6, var_15_5, arg_15_1)
+			if not v.animate then
+				local time = v.time
+				local total_time = v.total_time
+				local new_health = v.new_health
+				local previous_health = v.previous_health
+				local update_player_bar_animation = self:update_player_bar_animation(widget, bar, time, total_time, previous_health, new_health, arg_15_1)
 
-				if var_15_7 then
-					iter_15_1.time = var_15_7
+				if not update_player_bar_animation then
+					v.time = update_player_bar_animation
 				else
-					iter_15_1.animate = nil
+					v.animate = nil
 				end
 			end
 		end
 	end
 end
 
-function ObserverUI.update_player_bar_animation(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7)
+ObserverUI.update_player_bar_animation = function (self, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7)
+	-- function 16
 	arg_16_3 = arg_16_3 + arg_16_7
 
 	if arg_16_4 > 0 then
-		local var_16_0 = arg_16_1.style
-		local var_16_1 = math.min(arg_16_3 / arg_16_4, 1)
-		local var_16_2 = math.catmullrom(var_16_1, -14, 0, 0, 0)
-		local var_16_3 = 7
-		local var_16_4 = (var_16_1 * (var_16_3 - 1) + 1) / var_16_3
+		local style = arg_16_1.style
+		local min = math.min(arg_16_3 / arg_16_4, 1)
+		local catmullrom = math.catmullrom(min, -14, 0, 0, 0)
+		local num = 7
+		local num_2 = (min * (num - 1) + 1) / num
 		local var_16_5
 
 		if arg_16_5 < arg_16_6 then
-			var_16_5 = arg_16_5 + (arg_16_6 - arg_16_5) * var_16_4
+			var_16_5 = arg_16_5 + (arg_16_6 - arg_16_5) * num_2
 		else
-			var_16_5 = arg_16_5 - (arg_16_5 - arg_16_6) * var_16_4
+			var_16_5 = arg_16_5 - (arg_16_5 - arg_16_6) * num_2
 		end
 
 		arg_16_2.bar_value = var_16_5
 		arg_16_1.element.dirty = true
-		arg_16_0._dirty = true
+		self._dirty = true
 
-		return var_16_1 < 1 and arg_16_3 or nil
+		return not (min < 1) or not arg_16_3 or nil
 	end
 
 	arg_16_2.bar_value = arg_16_6
@@ -464,21 +494,23 @@ function ObserverUI.update_player_bar_animation(arg_16_0, arg_16_1, arg_16_2, ar
 	return nil
 end
 
-function ObserverUI.update_damage_highlight(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
-	local var_17_0 = arg_17_0._skip_bar_animation and 0 or 0.2
+ObserverUI.update_damage_highlight = function (self, arg_17_1, arg_17_2, arg_17_3)
+	-- function 17
+	local flag
 
+	flag = not self._skip_bar_animation and 0 and 0.2
 	arg_17_2 = arg_17_2 + arg_17_3
 
-	if var_17_0 > 0 then
-		local var_17_1 = arg_17_1.style
-		local var_17_2 = math.min(arg_17_2 / var_17_0, 1)
-		local var_17_3 = 255 * math.catmullrom(var_17_2, -8, 0, 0, -8)
+	if flag > 0 then
+		local style = arg_17_1.style
+		local min = math.min(arg_17_2 / flag, 1)
+		local num = 255 * math.catmullrom(min, -8, 0, 0, -8)
 
-		var_17_1.hp_bar_highlight.color[1] = var_17_3
+		style.hp_bar_highlight.color[1] = num
 		arg_17_1.element.dirty = true
-		arg_17_0._dirty = true
+		self._dirty = true
 
-		return var_17_2 < 1 and arg_17_2 or nil
+		return not (min < 1) or not arg_17_2 or nil
 	end
 
 	return nil

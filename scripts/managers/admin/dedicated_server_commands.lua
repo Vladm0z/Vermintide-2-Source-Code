@@ -1,111 +1,116 @@
 -- chunkname: @scripts/managers/admin/dedicated_server_commands.lua
 
-local var_0_0 = require("scripts/managers/game_mode/mechanisms/reservation_handler_types")
+local scripts_managers_game_mode_mechanisms_reservation_handler_types = require("scripts/managers/game_mode/mechanisms/reservation_handler_types")
 
 DedicatedServerCommands = class(DedicatedServerCommands)
 
 local var_0_1
 local var_0_2
 
-local function var_0_3(arg_1_0, ...)
-	local var_1_0 = string.format(arg_1_0, ...)
+local function fn(arg_1_0, ...)
+	-- function 1
+	local format = string.format(arg_1_0, ...)
 
-	cprint(var_1_0)
+	cprint(format)
 end
 
-local function var_0_4(arg_2_0, ...)
-	local var_2_0 = string.format(arg_2_0, ...)
+local function fn_2(arg_2_0, ...)
+	-- function 2
+	local format = string.format(arg_2_0, ...)
 
-	cprint(string.format("[ERROR] %s", var_2_0))
+	cprint(string.format("[ERROR] %s", format))
 end
 
-local function var_0_5(arg_3_0, arg_3_1, ...)
-	if arg_3_0 then
-		var_0_3(arg_3_1, ...)
+local function fn_3(arg_3_0, arg_3_1, ...)
+	-- function 3
+	if not arg_3_0 then
+		fn(arg_3_1, ...)
 	else
-		var_0_4(arg_3_1, ...)
+		fn_2(arg_3_1, ...)
 	end
 end
 
-function DedicatedServerCommands.init(arg_4_0)
+DedicatedServerCommands.init = function (arg_4_0)
+	-- function 4
 	return
 end
 
-function DedicatedServerCommands.execute_command(arg_5_0, arg_5_1)
-	local var_5_0 = string.split_deprecated(arg_5_1, " ")
+DedicatedServerCommands.execute_command = function (arg_5_0, arg_5_1)
+	-- function 5
+	local split_deprecated = string.split_deprecated(arg_5_1, " ")
 
-	if #var_5_0 == 0 then
-		local var_5_1 = "No command"
+	if #split_deprecated == 0 then
+		local str = "No command"
 
-		var_0_4(var_5_1)
+		fn_2(str)
 
-		return false, var_5_1
+		return false, str
 	end
 
-	local var_5_2 = table.remove(var_5_0, 1)
-	local var_5_3 = var_0_2[var_5_2]
+	local remove = table.remove(split_deprecated, 1)
+	local var_5_3 = var_0_2[remove]
 
-	if var_5_3 then
+	if not var_5_3 then
 		local var_5_4, var_5_5 = pcall(var_5_3)
 
-		return var_5_4, string.format("meta;%s;%s", var_5_2, var_5_5)
+		return var_5_4, string.format("meta;%s;%s", remove, var_5_5)
 	end
 
-	local var_5_6 = var_0_1[var_5_2]
+	local var_5_6 = var_0_1[remove]
 
 	if not var_5_6 then
-		local var_5_7 = string.format("Unknown command '%s'", var_5_2)
+		local format = string.format("Unknown command '%s'", remove)
 
-		var_0_4(var_5_7)
+		fn_2(format)
 
-		return false, string.format("error;%s;%s", var_5_2, var_5_7)
+		return false, string.format("error;%s;%s", remove, format)
 	end
 
-	local var_5_8 = var_5_6.func
+	local func = var_5_6.func
 
-	fassert(var_5_8, "Command function '%s' not implemented", var_5_2)
-	fassert(type(var_5_8) == "function", "Command function '%s' is not a function", var_5_2)
+	fassert(func, "Command function '%s' not implemented", remove)
+	fassert(type(func) == "function", "Command function '%s' is not a function", remove)
 
-	local var_5_9 = var_5_6.min_args
-	local var_5_10 = var_5_6.max_args
-	local var_5_11 = #var_5_0
+	local min_args = var_5_6.min_args
+	local max_args = var_5_6.max_args
+	local count = #split_deprecated
 
-	if var_5_11 < var_5_9 then
-		local var_5_12 = string.format("Too few arguments. Got %d, expected %d", var_5_11, var_5_9)
+	if count < min_args then
+		local format_2 = string.format("Too few arguments. Got %d, expected %d", count, min_args)
 
-		var_0_4(var_5_12)
+		fn_2(format_2)
 
-		return false, string.format("error;%s;%s", var_5_2, var_5_12)
+		return false, string.format("error;%s;%s", remove, format_2)
 	end
 
-	if var_5_10 < var_5_11 then
-		local var_5_13 = string.format("Too many arguments. Got %d, expected %d", var_5_11, var_5_10)
+	if max_args < count then
+		local format_3 = string.format("Too many arguments. Got %d, expected %d", count, max_args)
 
-		var_0_4(var_5_13)
+		fn_2(format_3)
 
-		return false, string.format("error;%s;%s", var_5_2, var_5_13)
+		return false, string.format("error;%s;%s", remove, format_3)
 	end
 
-	local var_5_14, var_5_15, var_5_16 = pcall(var_5_8, unpack(var_5_0))
+	local var_5_14, var_5_15, var_5_16 = pcall(func, unpack(split_deprecated))
 
 	if not var_5_14 then
-		var_0_4(tostring(var_5_15))
+		fn_2(tostring(var_5_15))
 
-		return false, string.format("error;%s;%s", var_5_2, var_5_16)
+		return false, string.format("error;%s;%s", remove, var_5_16)
 	end
 
 	fassert(var_5_15 == true or var_5_15 == false, "Unexpected result value '%s'", tostring(var_5_15))
-	fassert(var_5_16 ~= nil, "Missing response for '%s'", var_5_2)
+	fassert(var_5_16 ~= nil, "Missing response for '%s'", remove)
 
-	local var_5_17 = string.find(var_5_16, "\n+$")
+	local find = string.find(var_5_16, "\n+$")
 
-	if var_5_17 then
-		var_5_16 = string.sub(var_5_16, 1, var_5_17 - 1)
+	if not find then
+		var_5_16 = string.sub(var_5_16, 1, find - 1)
 	end
 
-	var_0_5(var_5_15, var_5_16)
+	fn_3(var_5_15, var_5_16)
 
-	return var_5_15, string.format("command;%s;%s", var_5_2, var_5_16)
+	return var_5_15, string.format("command;%s;%s", remove, var_5_16)
 end
 
 var_0_1 = {
@@ -114,14 +119,15 @@ var_0_1 = {
 		min_args = 0,
 		example = "list_commands",
 		max_args = 0,
-		func = function()
-			local var_6_0 = ""
+		func = function ()
+			-- function 6
+			local str = ""
 
-			for iter_6_0, iter_6_1 in pairs(var_0_1) do
-				var_6_0 = string.format("%s%s - %s\n", var_6_0, iter_6_0, iter_6_1.description)
+			for k, v in pairs(var_0_1) do
+				str = string.format("%s%s - %s\n", str, k, v.description)
 			end
 
-			return true, var_6_0
+			return true, str
 		end
 	},
 	help = {
@@ -129,15 +135,16 @@ var_0_1 = {
 		min_args = 0,
 		example = "help <command>",
 		max_args = 1,
-		func = function(arg_7_0)
+		func = function (arg_7_0)
+			-- function 7
 			if not arg_7_0 then
-				local var_7_0 = ""
+				local str = ""
 
-				for iter_7_0, iter_7_1 in pairs(var_0_1) do
-					var_7_0 = string.format("%s%s - %s\n", var_7_0, iter_7_0, iter_7_1.description)
+				for k, v in pairs(var_0_1) do
+					str = string.format("%s%s - %s\n", str, k, v.description)
 				end
 
-				return true, var_7_0
+				return true, str
 			end
 
 			local var_7_1 = var_0_1[arg_7_0]
@@ -146,9 +153,9 @@ var_0_1 = {
 				return false, string.format("Unknown command '%s'", arg_7_0)
 			end
 
-			local var_7_2 = string.format("Command: %s\nDescription: %s\nExample: %s\n", arg_7_0, var_7_1.description, var_7_1.example)
+			local format = string.format("Command: %s\nDescription: %s\nExample: %s\n", arg_7_0, var_7_1.description, var_7_1.example)
 
-			return true, var_7_2
+			return true, format
 		end
 	},
 	start = {
@@ -156,7 +163,8 @@ var_0_1 = {
 		min_args = 0,
 		example = "start",
 		max_args = 0,
-		func = function()
+		func = function ()
+			-- function 8
 			if Managers.mechanism:get_state() ~= "inn" then
 				return false, string.format("Failed to start server - Match already started")
 			end
@@ -171,7 +179,8 @@ var_0_1 = {
 		min_args = 0,
 		example = "stop",
 		max_args = 0,
-		func = function()
+		func = function ()
+			-- function 9
 			Application.quit()
 
 			return true, "Server stopped!"
@@ -182,18 +191,19 @@ var_0_1 = {
 		min_args = 0,
 		example = "restart",
 		max_args = 0,
-		func = function()
-			local var_10_0 = Managers.mechanism:game_mechanism()
+		func = function ()
+			-- function 10
+			local game_mechanism = Managers.mechanism:game_mechanism()
 
 			assert(DEDICATED_SERVER, "Mismanaged use of 'get_slot_reservation_handler'")
 
-			local var_10_1 = var_10_0:get_slot_reservation_handler(Network.peer_id(), var_0_0.session)
-			local var_10_2 = Managers.state.network
-			local var_10_3 = var_10_1:peers()
+			local get_slot_reservation_handler = game_mechanism:get_slot_reservation_handler(Network.peer_id(), scripts_managers_game_mode_mechanisms_reservation_handler_types.session)
+			local network = Managers.state.network
+			local peers = get_slot_reservation_handler:peers()
 
-			for iter_10_0, iter_10_1 in pairs(var_10_3) do
-				if PEER_ID_TO_CHANNEL[iter_10_1] then
-					var_10_2.network_server:kick_peer(iter_10_1)
+			for k, v in pairs(peers) do
+				if not PEER_ID_TO_CHANNEL[v] then
+					network.network_server:kick_peer(v)
 				end
 			end
 
@@ -207,7 +217,8 @@ var_0_1 = {
 		min_args = 2,
 		example = "set_party_size <party_id> <size>",
 		max_args = 2,
-		func = function(arg_11_0, arg_11_1)
+		func = function (arg_11_0, arg_11_1)
+			-- function 11
 			if Managers.mechanism:get_state() ~= "inn" then
 				return false, "Failed to set party size - Ongoing match"
 			end
@@ -217,9 +228,9 @@ var_0_1 = {
 
 			assert(DEDICATED_SERVER, "Mismanaged use of 'get_slot_reservation_handler'")
 
-			local var_11_0, var_11_1 = Managers.mechanism:get_slot_reservation_handler(Network.peer_id(), var_0_0.session):set_party_size(arg_11_0, arg_11_1)
+			local set_party_size, var_11_1 = Managers.mechanism:get_slot_reservation_handler(Network.peer_id(), scripts_managers_game_mode_mechanisms_reservation_handler_types.session):set_party_size(arg_11_0, arg_11_1)
 
-			if not var_11_0 then
+			if not set_party_size then
 				return false, string.format("Failed to set party size - %s", var_11_1)
 			end
 
@@ -231,7 +242,8 @@ var_0_1 = {
 		min_args = 1,
 		example = "set_level <level_key>",
 		max_args = 1,
-		func = function(arg_12_0)
+		func = function (arg_12_0)
+			-- function 12
 			if Managers.mechanism:get_state() ~= "inn" then
 				return false, string.format("Failed to set level - Match started")
 			end
@@ -256,30 +268,51 @@ var_0_1 = {
 		min_args = 0,
 		example = "list_players",
 		max_args = 0,
-		func = function()
-			local var_13_0 = ""
+		func = function ()
+			-- function 13
+			local str = ""
 
-			if Managers.level_transition_handler:in_hub_level() then
+			if not Managers.level_transition_handler:in_hub_level() then
 				assert(DEDICATED_SERVER, "Mismanaged use of 'get_slot_reservation_handler'")
 
-				local var_13_1 = Managers.mechanism:game_mechanism():get_slot_reservation_handler(Network.peer_id(), var_0_0.session):peers()
+				local peers = Managers.mechanism:game_mechanism():get_slot_reservation_handler(Network.peer_id(), scripts_managers_game_mode_mechanisms_reservation_handler_types.session):peers()
 
-				for iter_13_0 = 1, #var_13_1 do
-					local var_13_2 = var_13_1[iter_13_0]
+				for i = 1, #peers do
+					local var_13_2 = peers[i]
+					local format = string.format
+					local str_2 = "%s%s - %s\n"
+					local var_13_5 = str
+					local flag = var_13_2 or "-"
+					local peer_name = Managers.game_server:peer_name(var_13_2)
 
-					var_13_0 = string.format("%s%s - %s\n", var_13_0, var_13_2 or "-", Managers.game_server:peer_name(var_13_2) or "-")
+					peer_name = peer_name or "-"
+					str = format(str_2, var_13_5, flag, peer_name)
 				end
 
-				return true, var_13_0
+				return true, str
 			end
 
-			local var_13_3 = Managers.player:human_and_bot_players()
+			local human_and_bot_players = Managers.player:human_and_bot_players()
 
-			for iter_13_1, iter_13_2 in pairs(var_13_3) do
-				var_13_0 = string.format("%s%s - %s (%s)\n", var_13_0, iter_13_2.peer_id or "-", iter_13_2:name() or "-", iter_13_2:career_name() or "-")
+			for k, v in pairs(human_and_bot_players) do
+				local format_2 = string.format
+				local str_3 = "%s%s - %s (%s)\n"
+				local var_13_11 = str
+				local peer_id = v.peer_id
+
+				peer_id = peer_id or "-"
+
+				local name = v:name()
+
+				name = name or "-"
+
+				local career_name = v:career_name()
+
+				career_name = career_name or "-"
+				str = format_2(str_3, var_13_11, peer_id, name, career_name)
 			end
 
-			return true, var_13_0
+			return true, str
 		end
 	},
 	list_party = {
@@ -287,48 +320,49 @@ var_0_1 = {
 		min_args = 1,
 		example = "list_party <party_id>",
 		max_args = 1,
-		func = function(arg_14_0)
+		func = function (arg_14_0)
+			-- function 14
 			arg_14_0 = tonumber(arg_14_0)
 
-			if Managers.level_transition_handler:in_hub_level() then
+			if not Managers.level_transition_handler:in_hub_level() then
 				assert(DEDICATED_SERVER, "Mismanaged use of 'get_slot_reservation_handler'")
 
-				local var_14_0 = Managers.mechanism:game_mechanism():get_slot_reservation_handler(Network.peer_id(), var_0_0.session)._reserved_peers[arg_14_0]
+				local var_14_0 = Managers.mechanism:game_mechanism():get_slot_reservation_handler(Network.peer_id(), scripts_managers_game_mode_mechanisms_reservation_handler_types.session)._reserved_peers[arg_14_0]
 
 				if not var_14_0 then
 					return false, string.format("Failed to list party - Invalid party id %d", arg_14_0)
 				end
 
-				local var_14_1 = ""
+				local str = ""
 
-				for iter_14_0 = 1, #var_14_0 do
-					local var_14_2 = var_14_0[iter_14_0].peer_id
+				for i = 1, #var_14_0 do
+					local peer_id = var_14_0[i].peer_id
 
-					if var_14_2 then
-						var_14_1 = string.format("%s%s - %s\n", var_14_1, var_14_2, Managers.game_server:peer_name(var_14_2))
+					if not peer_id then
+						str = string.format("%s%s - %s\n", str, peer_id, Managers.game_server:peer_name(peer_id))
 					end
 				end
 
-				return true, var_14_1
+				return true, str
 			end
 
-			local var_14_3 = Managers.party:get_party(arg_14_0)
+			local get_party = Managers.party:get_party(arg_14_0)
 
-			if not var_14_3 then
+			if not get_party then
 				return false, string.format("Failed to list party - Invalid party id %d", arg_14_0)
 			end
 
-			local var_14_4 = ""
-			local var_14_5 = var_14_3.occupied_slots
+			local str_2 = ""
+			local occupied_slots = get_party.occupied_slots
 
-			for iter_14_1 = 1, #var_14_5 do
-				local var_14_6 = var_14_5[iter_14_1]
-				local var_14_7 = var_14_6.player
+			for j = 1, #occupied_slots do
+				local var_14_6 = occupied_slots[j]
+				local player = var_14_6.player
 
-				var_14_4 = string.format("%s%s - %s (%s)\n", var_14_4, var_14_6.peer_id, var_14_7:name(), var_14_7:career_name())
+				str_2 = string.format("%s%s - %s (%s)\n", str_2, var_14_6.peer_id, player:name(), player:career_name())
 			end
 
-			return true, var_14_4
+			return true, str_2
 		end
 	},
 	list_script_data = {
@@ -336,7 +370,8 @@ var_0_1 = {
 		min_args = 0,
 		example = "list_script_data",
 		max_args = 0,
-		func = function()
+		func = function ()
+			-- function 15
 			return true, table.dump_string(script_data)
 		end
 	},
@@ -345,7 +380,8 @@ var_0_1 = {
 		min_args = 2,
 		example = "set_script_data <key> <value>",
 		max_args = 2,
-		func = function(arg_16_0, arg_16_1)
+		func = function (arg_16_0, arg_16_1)
+			-- function 16
 			script_data[arg_16_0] = arg_16_1
 
 			return true, "Script data changed!"
@@ -356,7 +392,8 @@ var_0_1 = {
 		min_args = 1,
 		example = "disable_gamemode_end <bool>",
 		max_args = 1,
-		func = function(arg_17_0)
+		func = function (arg_17_0)
+			-- function 17
 			script_data.disable_gamemode_end = arg_17_0
 
 			return true, "Game mode end has changed"
@@ -367,8 +404,9 @@ var_0_1 = {
 		min_args = 1,
 		example = "set_time <time>",
 		max_args = 1,
-		func = function(arg_18_0)
-			if Managers.level_transition_handler:in_hub_level() then
+		func = function (arg_18_0)
+			-- function 18
+			if not Managers.level_transition_handler:in_hub_level() then
 				return false, string.format("Failed to set time - Match not started")
 			end
 
@@ -382,8 +420,9 @@ var_0_1 = {
 		min_args = 1,
 		example = "add_time <time>",
 		max_args = 1,
-		func = function(arg_19_0)
-			if Managers.level_transition_handler:in_hub_level() then
+		func = function (arg_19_0)
+			-- function 19
+			if not Managers.level_transition_handler:in_hub_level() then
 				return false, string.format("Failed to add time - Match not started")
 			end
 
@@ -397,8 +436,9 @@ var_0_1 = {
 		min_args = 1,
 		example = "set_score <score>",
 		max_args = 1,
-		func = function(arg_20_0)
-			if Managers.level_transition_handler:in_hub_level() then
+		func = function (arg_20_0)
+			-- function 20
+			if not Managers.level_transition_handler:in_hub_level() then
 				return false, string.format("Failed to set time - Match not started")
 			end
 
@@ -412,8 +452,9 @@ var_0_1 = {
 		min_args = 1,
 		example = "add_score <score>",
 		max_args = 1,
-		func = function(arg_21_0)
-			if Managers.level_transition_handler:in_hub_level() then
+		func = function (arg_21_0)
+			-- function 21
+			if not Managers.level_transition_handler:in_hub_level() then
 				return false, string.format("Failed to add time - Match not started")
 			end
 
@@ -427,8 +468,9 @@ var_0_1 = {
 		min_args = 0,
 		example = "start_round",
 		max_args = 0,
-		func = function()
-			if Managers.level_transition_handler:in_hub_level() then
+		func = function ()
+			-- function 22
+			if not Managers.level_transition_handler:in_hub_level() then
 				return false, "Failed to start round - Match not started"
 			end
 
@@ -442,8 +484,9 @@ var_0_1 = {
 		min_args = 0,
 		example = "end_round",
 		max_args = 0,
-		func = function()
-			if Managers.level_transition_handler:in_hub_level() then
+		func = function ()
+			-- function 23
+			if not Managers.level_transition_handler:in_hub_level() then
 				return false, "Failed to end round - Match not started"
 			end
 
@@ -458,8 +501,9 @@ var_0_1 = {
 		min_args = 0,
 		example = "end_round",
 		max_args = 0,
-		func = function()
-			if Managers.level_transition_handler:in_hub_level() then
+		func = function ()
+			-- function 24
+			if not Managers.level_transition_handler:in_hub_level() then
 				return false, "Failed to end match - Match not started"
 			end
 
@@ -474,22 +518,23 @@ var_0_1 = {
 		min_args = 1,
 		example = "skip_to_set <set>",
 		max_args = 1,
-		func = function(arg_25_0)
+		func = function (arg_25_0)
+			-- function 25
 			do return false, "Failed to skip to set - only avaiable in DEBUG" end
 
-			if Managers.level_transition_handler:in_hub_level() then
+			if not Managers.level_transition_handler:in_hub_level() then
 				return false, "Failed to skip to set - Match not started"
 			end
 
-			local var_25_0 = Managers.mechanism:game_mechanism()
+			local game_mechanism = Managers.mechanism:game_mechanism()
 
 			arg_25_0 = tonumber(arg_25_0)
 
-			if arg_25_0 <= var_25_0:get_current_set() then
+			if arg_25_0 <= game_mechanism:get_current_set() then
 				return false, "Failed to skip to set - Can't skip to current / previous set"
 			end
 
-			var_25_0:debug_skip_to_set(arg_25_0)
+			game_mechanism:debug_skip_to_set(arg_25_0)
 
 			return true, "Skipping to new set!"
 		end
@@ -499,26 +544,29 @@ var_0_1 = {
 		min_args = 0,
 		example = "skip_picker",
 		max_args = 0,
-		func = function()
+		func = function ()
+			-- function 26
 			do return false, "Failed to skip to set - only avaiable in DEBUG" end
 
 			if not Managers.mechanism:game_mechanism() then
 				return false, "No active mechanism"
 			end
 
-			local var_26_0 = Managers.state.game_mode and Managers.state.game_mode:game_mode()
+			local game_mode = Managers.state.game_mode
 
-			if not var_26_0 then
+			game_mode = not game_mode and Managers.state.game_mode:game_mode()
+
+			if not game_mode then
 				return false, "No current game mode is active"
 			end
 
-			local var_26_1 = var_26_0:party_selection_logic()
+			local party_selection_logic = game_mode:party_selection_logic()
 
-			if not var_26_1 then
+			if not party_selection_logic then
 				return false, "Current game mode doesn't have a party selection"
 			end
 
-			var_26_1._timer = 0
+			party_selection_logic._timer = 0
 
 			return true, "Skipping current picker"
 		end
@@ -528,26 +576,29 @@ var_0_1 = {
 		min_args = 0,
 		example = "skip_picker",
 		max_args = 0,
-		func = function()
+		func = function ()
+			-- function 27
 			do return false, "Failed to skip to set - only avaiable in DEBUG" end
 
 			if not Managers.mechanism:game_mechanism() then
 				return false, "No active mechanism"
 			end
 
-			local var_27_0 = Managers.state.game_mode and Managers.state.game_mode:game_mode()
+			local game_mode = Managers.state.game_mode
 
-			if not var_27_0 then
+			game_mode = not game_mode and Managers.state.game_mode:game_mode()
+
+			if not game_mode then
 				return false, "No current game mode is active"
 			end
 
-			local var_27_1 = var_27_0:party_selection_logic()
+			local party_selection_logic = game_mode:party_selection_logic()
 
-			if not var_27_1 then
+			if not party_selection_logic then
 				return false, "Current game mode doesn't have a party selection"
 			end
 
-			var_27_1._timer = 100000
+			party_selection_logic._timer = 100000
 
 			return true, "Stopping current picker"
 		end
@@ -557,7 +608,8 @@ var_0_1 = {
 		min_args = 0,
 		example = "quick_start",
 		max_args = 0,
-		func = function()
+		func = function ()
+			-- function 28
 			script_data.dev_quick_start = true
 
 			return true, "Quick start enabled. Bypassing mission select and round timers."
@@ -568,12 +620,13 @@ var_0_1 = {
 		min_args = 1,
 		example = "say <message>",
 		max_args = 1024,
-		func = function(...)
-			local var_29_0 = varargs.join(" ", ...)
-			local var_29_1 = Managers.chat
+		func = function (...)
+			-- function 29
+			local join = varargs.join(" ", ...)
+			local chat = Managers.chat
 
-			if var_29_1:has_channel(1) then
-				var_29_1:send_system_chat_message(1, "rcon_server_command_say_header", var_29_0, false, true)
+			if not chat:has_channel(1) then
+				chat:send_system_chat_message(1, "rcon_server_command_say_header", join, false, true)
 			else
 				return false, "Failed to send chat message - No channel 1"
 			end
@@ -586,7 +639,8 @@ var_0_1 = {
 		min_args = 2,
 		example = "say_party <party_id> <message>",
 		max_args = 1025,
-		func = function()
+		func = function ()
+			-- function 30
 			fassert("Not implemented")
 		end
 	},
@@ -595,7 +649,8 @@ var_0_1 = {
 		min_args = 2,
 		example = "say_player <peer_id> <message>",
 		max_args = 1025,
-		func = function()
+		func = function ()
+			-- function 31
 			fassert("Not implemented")
 		end
 	},
@@ -604,7 +659,8 @@ var_0_1 = {
 		min_args = 2,
 		example = "swap_players <peer_id> <peer_id>",
 		max_args = 2,
-		func = function(arg_32_0, arg_32_1)
+		func = function (arg_32_0, arg_32_1)
+			-- function 32
 			if Managers.mechanism:get_state() ~= "inn" then
 				return false, "Failed to move players - Match started"
 			end
@@ -613,13 +669,13 @@ var_0_1 = {
 				return false, "Failed to move players - peer_id_1 is same as peer_id_2"
 			end
 
-			local var_32_0 = Managers.mechanism:game_mechanism()
+			local game_mechanism = Managers.mechanism:game_mechanism()
 
 			assert(DEDICATED_SERVER, "Mismanaged use of 'get_slot_reservation_handler'")
 
-			local var_32_1, var_32_2 = var_32_0:get_slot_reservation_handler(Network.peer_id(), var_0_0.session):swap_players(arg_32_0, arg_32_1)
+			local swap_players, var_32_2 = game_mechanism:get_slot_reservation_handler(Network.peer_id(), scripts_managers_game_mode_mechanisms_reservation_handler_types.session):swap_players(arg_32_0, arg_32_1)
 
-			if not var_32_1 then
+			if not swap_players then
 				return false, string.format("Failed to swap players - %s", var_32_2)
 			end
 
@@ -631,7 +687,8 @@ var_0_1 = {
 		min_args = 2,
 		example = "set_player_party <peer_id> <party_id>",
 		max_args = 2,
-		func = function(arg_33_0, arg_33_1)
+		func = function (arg_33_0, arg_33_1)
+			-- function 33
 			if Managers.mechanism:get_state() ~= "inn" then
 				return false, "Failed to move player - Match started"
 			end
@@ -640,16 +697,16 @@ var_0_1 = {
 
 			assert(DEDICATED_SERVER, "Mismanaged use of 'get_slot_reservation_handler'")
 
-			local var_33_0 = Managers.mechanism:get_slot_reservation_handler(Network.peer_id(), var_0_0.session)
+			local get_slot_reservation_handler = Managers.mechanism:get_slot_reservation_handler(Network.peer_id(), scripts_managers_game_mode_mechanisms_reservation_handler_types.session)
 
-			if var_33_0:is_fully_reserved() then
+			if not get_slot_reservation_handler:is_fully_reserved() then
 				return false, "Failed to move player - All parties are full"
 			end
 
-			local var_33_1 = true
-			local var_33_2, var_33_3 = var_33_0:move_player(arg_33_0, arg_33_1, var_33_1)
+			local flag = true
+			local move_player, var_33_3 = get_slot_reservation_handler:move_player(arg_33_0, arg_33_1, flag)
 
-			if not var_33_2 then
+			if not move_player then
 				return false, var_33_3 or "Failed to move player - unknown"
 			end
 
@@ -661,28 +718,29 @@ var_0_1 = {
 		min_args = 1,
 		example = "kill <peer_id>",
 		max_args = 1,
-		func = function(arg_34_0)
-			if Managers.level_transition_handler:in_hub_level() then
+		func = function (arg_34_0)
+			-- function 34
+			if not Managers.level_transition_handler:in_hub_level() then
 				return false, "Failed to kill player - Match not started"
 			end
 
-			local var_34_0 = Managers.player:player(arg_34_0, 1)
+			local player = Managers.player:player(arg_34_0, 1)
 
-			if not var_34_0 then
+			if not player then
 				return false, "Failed to kill player - Player not found"
 			end
 
-			local var_34_1 = var_34_0.player_unit
+			local player_unit = player.player_unit
 
-			if not var_34_1 or not Unit.alive(var_34_1) then
+			if not (not player_unit and Unit.alive(player_unit)) then
 				return false, "Failed to kill player - Player unit not found"
 			end
 
-			if ScriptUnit.extension(var_34_1, "status_system"):is_dead() then
+			if not ScriptUnit.extension(player_unit, "status_system"):is_dead() then
 				return false, "Failed to kill player - Player already dead"
 			end
 
-			ScriptUnit.extension(var_34_1, "health_system"):die("forced")
+			ScriptUnit.extension(player_unit, "health_system"):die("forced")
 
 			return true, "Player killed!"
 		end
@@ -692,7 +750,8 @@ var_0_1 = {
 		min_args = 1,
 		example = "ban <peer_id>/<ip>",
 		max_args = 1,
-		func = function(arg_35_0, arg_35_1)
+		func = function (arg_35_0, arg_35_1)
+			-- function 35
 			if Application.hex64_to_dec(arg_35_0) == nil then
 				return false, "Invalid peer id"
 			end
@@ -705,10 +764,11 @@ var_0_1 = {
 				var_35_0 = os.time() + arg_35_1 * 24 * 60 * 60
 			end
 
-			local var_35_1 = Managers.ban_list
+			local ban_list = Managers.ban_list
 
-			var_35_1:ban(arg_35_0, arg_35_0, var_35_0)
-			var_35_1:save(function(arg_36_0)
+			ban_list:ban(arg_35_0, arg_35_0, var_35_0)
+			ban_list:save(function (arg_36_0)
+				-- function 36
 				if arg_36_0 ~= nil then
 					cprintf("Ban list save failed (%s)", arg_36_0)
 				end
@@ -722,7 +782,8 @@ var_0_1 = {
 		min_args = 1,
 		example = "kick <peer_id>/<ip>",
 		max_args = 1,
-		func = function(arg_37_0)
+		func = function (arg_37_0)
+			-- function 37
 			if not PEER_ID_TO_CHANNEL[arg_37_0] then
 				return false, "Failed to kick player - Player not found"
 			end
@@ -736,7 +797,8 @@ var_0_1 = {
 		description = "spawns a horde",
 		min_args = 0,
 		max_args = 0,
-		func = function()
+		func = function ()
+			-- function 38
 			Managers.state.conflict:debug_spawn_horde()
 
 			return true, "Spawning horde"
@@ -746,7 +808,8 @@ var_0_1 = {
 		description = "lets pactsworn pick playable boss",
 		min_args = 0,
 		max_args = 0,
-		func = function()
+		func = function ()
+			-- function 39
 			cprint("[DEBUG] Triggered Playable boss")
 			Managers.state.game_mode:game_mode():set_playable_boss_can_be_picked(true)
 
@@ -757,7 +820,8 @@ var_0_1 = {
 		description = "disables ai and bots",
 		min_args = 0,
 		max_args = 0,
-		func = function()
+		func = function ()
+			-- function 40
 			cprint("[DEBUG] disabling ai and bots")
 
 			script_data.ai_pacing_disabled = false
@@ -779,7 +843,8 @@ var_0_1 = {
 		description = "enables ai and bots",
 		min_args = 0,
 		max_args = 0,
-		func = function()
+		func = function ()
+			-- function 41
 			cprint("[DEBUG] enabling ai and bots")
 
 			script_data.ai_pacing_disabled = true
@@ -799,27 +864,29 @@ var_0_1 = {
 	}
 }
 var_0_2 = {
-	_num_players = function()
-		local var_42_0 = script_data.dedicated_server_reservation_slots
-		local var_42_1 = string.split_deprecated(var_42_0, ",")
+	_num_players = function ()
+		-- function 42
+		local dedicated_server_reservation_slots = script_data.dedicated_server_reservation_slots
+		local split_deprecated = string.split_deprecated(dedicated_server_reservation_slots, ",")
 		local var_42_2
-		local var_42_3 = 0
+		local num = 0
 
-		for iter_42_0 = 1, #var_42_1 do
-			var_42_3 = var_42_3 + tonumber(var_42_1[iter_42_0])
+		for i = 1, #split_deprecated do
+			num = num + tonumber(split_deprecated[i])
 		end
 
-		if Managers.level_transition_handler:in_hub_level() then
+		if not Managers.level_transition_handler:in_hub_level() then
 			assert(DEDICATED_SERVER, "Mismanaged use of 'get_slot_reservation_handler'")
 
-			var_42_2 = Managers.mechanism:game_mechanism():get_slot_reservation_handler(Network.peer_id(), var_0_0.session)._num_slots_reserved
+			var_42_2 = Managers.mechanism:game_mechanism():get_slot_reservation_handler(Network.peer_id(), scripts_managers_game_mode_mechanisms_reservation_handler_types.session)._num_slots_reserved
 		else
 			var_42_2 = Managers.player:num_human_players()
 		end
 
-		return string.format("%d/%d", var_42_2, var_42_3)
+		return string.format("%d/%d", var_42_2, num)
 	end,
-	_ping = function()
+	_ping = function ()
+		-- function 43
 		return "pong"
 	end
 }

@@ -1,8 +1,10 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/bt_minion.lua
 
-local var_0_0 = true
+local flag = true
+local BreedBehaviors = BreedBehaviors
 
 BreedBehaviors = BreedBehaviors or {}
+BreedBehaviors = BreedBehaviors
 
 dofile("scripts/entity_system/systems/behaviour/trees/skaven/skaven_gutter_runner_behavior")
 dofile("scripts/entity_system/systems/behaviour/trees/skaven/skaven_horde_rat_behavior")
@@ -56,14 +58,14 @@ dofile("scripts/entity_system/systems/behaviour/trees/critters/critter_nurgling_
 dofile("scripts/entity_system/systems/behaviour/trees/training_dummy_behavior")
 DLCUtils.dofile_list("behaviour_trees")
 
-if var_0_0 then
-	for iter_0_0, iter_0_1 in pairs(BreedBehaviors) do
-		iter_0_1[1] = "BTSelector_" .. iter_0_0
-		iter_0_1.name = iter_0_0 .. "_GENERATED"
+if not flag then
+	for k, v in pairs(BreedBehaviors) do
+		v[1] = "BTSelector_" .. k
+		v.name = k .. "_GENERATED"
 	end
 else
-	for iter_0_2, iter_0_3 in pairs(BreedBehaviors) do
-		iter_0_3[1] = "BTSelector"
-		iter_0_3.name = iter_0_2
+	for k_2, v_2 in pairs(BreedBehaviors) do
+		v_2[1] = "BTSelector"
+		v_2.name = k_2
 	end
 end

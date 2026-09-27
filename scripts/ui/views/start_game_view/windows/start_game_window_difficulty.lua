@@ -1,526 +1,628 @@
 -- chunkname: @scripts/ui/views/start_game_view/windows/start_game_window_difficulty.lua
 
 local var_0_0 = local_require("scripts/ui/views/start_game_view/windows/definitions/start_game_window_difficulty_definitions")
-local var_0_1 = var_0_0.widgets
-local var_0_2 = var_0_0.scenegraph_definition
-local var_0_3 = var_0_0.create_difficulty_button
-local var_0_4 = var_0_0.create_dlc_difficulty_divider
-local var_0_5 = var_0_0.animation_definitions
-local var_0_6 = 1
+local widgets = var_0_0.widgets
+local scenegraph_definition = var_0_0.scenegraph_definition
+local create_difficulty_button = var_0_0.create_difficulty_button
+local create_dlc_difficulty_divider = var_0_0.create_dlc_difficulty_divider
+local animation_definitions = var_0_0.animation_definitions
+local num = 1
 
 StartGameWindowDifficulty = class(StartGameWindowDifficulty)
 StartGameWindowDifficulty.NAME = "StartGameWindowDifficulty"
 
-function StartGameWindowDifficulty.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowDifficulty.on_enter = function (self, arg_1_1, arg_1_2)
+	-- function 1
 	print("[StartGameWindow] Enter Substate StartGameWindowDifficulty")
 
-	arg_1_0.parent = arg_1_1.parent
+	self.parent = arg_1_1.parent
 
-	local var_1_0 = arg_1_1.ingame_ui_context
+	local ingame_ui_context = arg_1_1.ingame_ui_context
 
-	arg_1_0.ui_renderer = var_1_0.ui_renderer
-	arg_1_0.input_manager = var_1_0.input_manager
-	arg_1_0.statistics_db = var_1_0.statistics_db
-	arg_1_0.render_settings = {
+	self.ui_renderer = ingame_ui_context.ui_renderer
+	self.input_manager = ingame_ui_context.input_manager
+	self.statistics_db = ingame_ui_context.statistics_db
+	self.render_settings = {
 		snap_pixel_positions = true
 	}
-	arg_1_0._has_exited = false
+	self._has_exited = false
 
-	local var_1_1 = Managers.player
+	local player = Managers.player
 
-	arg_1_0._stats_id = var_1_1:local_player():stats_id()
-	arg_1_0.player_manager = var_1_1
-	arg_1_0.peer_id = var_1_0.peer_id
-	arg_1_0._animations = {}
+	self._stats_id = player:local_player():stats_id()
+	self.player_manager = player
+	self.peer_id = ingame_ui_context.peer_id
+	self._animations = {}
 
-	arg_1_0:create_ui_elements(arg_1_1, arg_1_2)
-	arg_1_0:_setup_difficulties()
+	self:create_ui_elements(arg_1_1, arg_1_2)
+	self:_setup_difficulties()
 
-	local var_1_2 = arg_1_0.parent:get_difficulty_option() or Managers.state.difficulty:get_difficulty()
+	local get_difficulty_option = self.parent:get_difficulty_option()
 
-	arg_1_0:_update_selected_difficulty_option(var_1_2)
-	arg_1_0.parent:set_input_description("select_difficulty")
+	get_difficulty_option = get_difficulty_option or Managers.state.difficulty:get_difficulty()
+
+	self:_update_selected_difficulty_option(get_difficulty_option)
+	self.parent:set_input_description("select_difficulty")
 end
 
-function StartGameWindowDifficulty.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
-	local var_2_0 = UISceneGraph.init_scenegraph(var_0_2)
+StartGameWindowDifficulty.create_ui_elements = function (self, arg_2_1, arg_2_2)
+	-- function 2
+	local init_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	arg_2_0.ui_scenegraph = var_2_0
+	self.ui_scenegraph = init_scenegraph
 
-	local var_2_1 = {}
-	local var_2_2 = {}
+	local tbl = {}
+	local tbl_2 = {}
 
-	for iter_2_0, iter_2_1 in pairs(var_0_1) do
-		local var_2_3 = UIWidget.init(iter_2_1)
+	for k, v in pairs(widgets) do
+		local var_2_3 = UIWidget.init(v)
 
-		var_2_1[#var_2_1 + 1] = var_2_3
-		var_2_2[iter_2_0] = var_2_3
+		tbl[#tbl + 1] = var_2_3
+		tbl_2[k] = var_2_3
 	end
 
-	arg_2_0._widgets = var_2_1
-	arg_2_0._widgets_by_name = var_2_2
+	self._widgets = tbl
+	self._widgets_by_name = tbl_2
 
-	UIRenderer.clear_scenegraph_queue(arg_2_0.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
-	arg_2_0.ui_animator = UIAnimator:new(var_2_0, var_0_5)
+	self.ui_animator = UIAnimator:new(init_scenegraph, animation_definitions)
 
-	if arg_2_2 then
-		local var_2_4 = var_2_0.window.local_position
+	if not arg_2_2 then
+		local local_position = init_scenegraph.window.local_position
 
-		var_2_4[1] = var_2_4[1] + arg_2_2[1]
-		var_2_4[2] = var_2_4[2] + arg_2_2[2]
-		var_2_4[3] = var_2_4[3] + arg_2_2[3]
+		local_position[1] = local_position[1] + arg_2_2[1]
+		local_position[2] = local_position[2] + arg_2_2[2]
+		local_position[3] = local_position[3] + arg_2_2[3]
 	end
 end
 
-function StartGameWindowDifficulty._setup_difficulties(arg_3_0)
-	local var_3_0 = {}
-	local var_3_1 = {}
-	local var_3_2 = arg_3_0:_get_difficulty_options()
-	local var_3_3 = arg_3_0._widgets
-	local var_3_4 = arg_3_0._widgets_by_name
-	local var_3_5 = 1
-	local var_3_6 = "difficulty_option_"
-	local var_3_7 = 16
-	local var_3_8 = "difficulty_option"
-	local var_3_9 = var_0_2[var_3_8].size
-	local var_3_10 = var_0_3(var_3_8, var_3_9)
-	local var_3_11 = 0
-	local var_3_12 = {}
+StartGameWindowDifficulty._setup_difficulties = function (self)
+	-- function 3
+	local tbl = {}
+	local tbl_2 = {}
+	local _get_difficulty_options = self:_get_difficulty_options()
+	local _widgets = self._widgets
+	local _widgets_by_name = self._widgets_by_name
+	local num_2 = 1
+	local str = "difficulty_option_"
+	local num_3 = 16
+	local str_2 = "difficulty_option"
+	local size = scenegraph_definition[str_2].size
+	local var_3_10 = create_difficulty_button(str_2, size)
+	local num_4 = 0
+	local tbl_3 = {}
 
-	for iter_3_0 = var_0_6, #var_3_2 do
-		local var_3_13 = var_3_2[iter_3_0]
+	for i = num, #_get_difficulty_options do
+		local var_3_13 = _get_difficulty_options[i]
 		local var_3_14 = DifficultySettings[var_3_13]
 
-		if var_3_14.dlc_requirement then
-			var_3_12[#var_3_12 + 1] = var_3_13
+		if not var_3_14.dlc_requirement then
+			tbl_3[#tbl_3 + 1] = var_3_13
 		else
-			local var_3_15 = var_3_14.display_name
-			local var_3_16 = var_3_14.display_image
+			local display_name = var_3_14.display_name
+			local display_image = var_3_14.display_image
 			local var_3_17 = UIWidget.init(var_3_10)
 
-			var_3_4[var_3_6 .. var_3_5] = var_3_17
-			var_3_3[#var_3_3 + 1] = var_3_17
-			var_3_0[#var_3_0 + 1] = var_3_17
+			_widgets_by_name[str .. num_2] = var_3_17
+			_widgets[#_widgets + 1] = var_3_17
+			tbl[#tbl + 1] = var_3_17
 
-			local var_3_18 = var_3_17.offset
-			local var_3_19 = var_3_17.content
+			local offset = var_3_17.offset
+			local content = var_3_17.content
 
-			var_3_19.difficulty_key = var_3_13
-			var_3_19.title_text = Localize(var_3_15)
-			var_3_19.icon = var_3_16
-			var_3_18[2] = var_3_11
-			var_3_11 = var_3_11 - (var_3_9[2] + var_3_7)
-			var_3_5 = var_3_5 + 1
+			content.difficulty_key = var_3_13
+			content.title_text = Localize(display_name)
+			content.icon = display_image
+			offset[2] = num_4
+			num_4 = num_4 - (size[2] + num_3)
+			num_2 = num_2 + 1
 		end
 	end
 
-	arg_3_0.ui_scenegraph.game_options_left_chain.size[2] = math.abs(var_3_11) - var_3_7
-	arg_3_0.ui_scenegraph.game_options_right_chain.size[2] = math.abs(var_3_11) - var_3_7
+	self.ui_scenegraph.game_options_left_chain.size[2] = math.abs(num_4) - num_3
+	self.ui_scenegraph.game_options_right_chain.size[2] = math.abs(num_4) - num_3
 
-	if #var_3_12 > 0 then
-		local var_3_20 = "dlc_difficulty_divider"
-		local var_3_21 = UIWidget.init(var_0_4("divider_01_top", var_3_20))
+	if #tbl_3 > 0 then
+		local str_3 = "dlc_difficulty_divider"
+		local var_3_21 = UIWidget.init(create_dlc_difficulty_divider("divider_01_top", str_3))
 
-		var_3_4.dlc_difficulty_divider = var_3_21
-		var_3_3[#var_3_3 + 1] = var_3_21
-		var_3_21.style.texture_id.offset[2] = var_3_11 + var_3_9[2] * 0.5 + var_3_7 * 1.5
+		_widgets_by_name.dlc_difficulty_divider = var_3_21
+		_widgets[#_widgets + 1] = var_3_21
+		var_3_21.style.texture_id.offset[2] = num_4 + size[2] * 0.5 + num_3 * 1.5
 
-		local var_3_22 = var_3_11 - var_3_9[2] + var_3_7 * 2
-		local var_3_23 = "difficulty_option"
-		local var_3_24 = var_0_2[var_3_23].size
+		local num_5 = num_4 - size[2] + num_3 * 2
+		local str_4 = "difficulty_option"
+		local size_2 = scenegraph_definition[str_4].size
 
-		for iter_3_1, iter_3_2 in ipairs(var_3_12) do
-			local var_3_25 = DifficultySettings[iter_3_2]
-			local var_3_26 = var_3_25.display_name
-			local var_3_27 = var_3_25.display_image
-			local var_3_28 = var_3_25.dlc_requirement
-			local var_3_29 = not Managers.unlock:is_dlc_unlocked(var_3_28)
-			local var_3_30 = var_3_25.button_textures
-			local var_3_31 = var_0_3(var_3_23, var_3_24, var_3_30.lit_texture, var_3_30.unlit_texture, var_3_30.background, var_3_29)
+		for i_2, v in ipairs(tbl_3) do
+			local var_3_25 = DifficultySettings[v]
+			local display_name_2 = var_3_25.display_name
+			local display_image_2 = var_3_25.display_image
+			local dlc_requirement = var_3_25.dlc_requirement
+			local flag = not Managers.unlock:is_dlc_unlocked(dlc_requirement)
+			local button_textures = var_3_25.button_textures
+			local var_3_31 = create_difficulty_button(str_4, size_2, button_textures.lit_texture, button_textures.unlit_texture, button_textures.background, flag)
 			local var_3_32 = UIWidget.init(var_3_31)
 
-			var_3_4[var_3_6 .. var_3_5] = var_3_32
-			var_3_3[#var_3_3 + 1] = var_3_32
-			var_3_0[#var_3_0 + 1] = var_3_32
+			_widgets_by_name[str .. num_2] = var_3_32
+			_widgets[#_widgets + 1] = var_3_32
+			tbl[#tbl + 1] = var_3_32
 
-			local var_3_33 = var_3_32.offset
-			local var_3_34 = var_3_32.content
+			local offset_2 = var_3_32.offset
+			local content_2 = var_3_32.content
 
-			var_3_34.difficulty_key = iter_3_2
-			var_3_34.title_text = Localize(var_3_26)
-			var_3_34.icon = var_3_27
-			var_3_33[2] = var_3_22
-			var_3_22 = var_3_22 - (var_3_24[2] + var_3_7)
+			content_2.difficulty_key = v
+			content_2.title_text = Localize(display_name_2)
+			content_2.icon = display_image_2
+			offset_2[2] = num_5
+			num_5 = num_5 - (size_2[2] + num_3)
 		end
 	end
 
-	arg_3_0._difficulty_widgets = var_3_0
+	self._difficulty_widgets = tbl
 end
 
-function StartGameWindowDifficulty._get_difficulty_options(arg_4_0)
+StartGameWindowDifficulty._get_difficulty_options = function (arg_4_0)
+	-- function 4
 	return Managers.state.difficulty:get_default_difficulties()
 end
 
-function StartGameWindowDifficulty.on_exit(arg_5_0, arg_5_1)
+StartGameWindowDifficulty.on_exit = function (self, arg_5_1)
+	-- function 5
 	print("[StartGameWindow] Exit Substate StartGameWindowDifficulty")
 
-	arg_5_0.ui_animator = nil
+	self.ui_animator = nil
 
-	arg_5_0.parent:set_input_description(nil)
+	self.parent:set_input_description(nil)
 
-	arg_5_0._has_exited = true
+	self._has_exited = true
 end
 
-function StartGameWindowDifficulty.update(arg_6_0, arg_6_1, arg_6_2)
-	arg_6_0:_update_animations(arg_6_1)
-	arg_6_0:_handle_input(arg_6_1, arg_6_2)
-	arg_6_0:_update_difficulty_lock()
-	arg_6_0:draw(arg_6_1)
+StartGameWindowDifficulty.update = function (self, arg_6_1, arg_6_2)
+	-- function 6
+	self:_update_animations(arg_6_1)
+	self:_handle_input(arg_6_1, arg_6_2)
+	self:_update_difficulty_lock()
+	self:draw(arg_6_1)
 end
 
-function StartGameWindowDifficulty.post_update(arg_7_0, arg_7_1, arg_7_2)
+StartGameWindowDifficulty.post_update = function (arg_7_0, arg_7_1, arg_7_2)
+	-- function 7
 	return
 end
 
-function StartGameWindowDifficulty._update_animations(arg_8_0, arg_8_1)
-	local var_8_0 = arg_8_0.ui_animator
+StartGameWindowDifficulty._update_animations = function (self, arg_8_1)
+	-- function 8
+	local ui_animator = self.ui_animator
 
-	var_8_0:update(arg_8_1)
+	ui_animator:update(arg_8_1)
 
-	local var_8_1 = arg_8_0._animations
+	local _animations = self._animations
 
-	for iter_8_0, iter_8_1 in pairs(var_8_1) do
-		if var_8_0:is_animation_completed(iter_8_1) then
-			var_8_0:stop_animation(iter_8_1)
+	for k, v in pairs(_animations) do
+		if not ui_animator:is_animation_completed(v) then
+			ui_animator:stop_animation(v)
 
-			var_8_1[iter_8_0] = nil
+			_animations[k] = nil
 		end
 	end
 
-	local var_8_2 = arg_8_0._difficulty_widgets
+	local _difficulty_widgets = self._difficulty_widgets
 
-	for iter_8_2 = 1, #var_8_2 do
-		local var_8_3 = var_8_2[iter_8_2]
+	for k_2 = 1, #_difficulty_widgets do
+		local var_8_3 = _difficulty_widgets[k_2]
 
-		arg_8_0:_animate_difficulty_option_button(var_8_3, arg_8_1)
+		self:_animate_difficulty_option_button(var_8_3, arg_8_1)
 	end
 end
 
-function StartGameWindowDifficulty._is_button_pressed(arg_9_0, arg_9_1)
-	local var_9_0 = arg_9_1.content.button_hotspot
+StartGameWindowDifficulty._is_button_pressed = function (arg_9_0, arg_9_1)
+	-- function 9
+	local button_hotspot = arg_9_1.content.button_hotspot
 
-	if var_9_0.on_pressed then
-		var_9_0.on_pressed = false
+	if not button_hotspot.on_pressed then
+		button_hotspot.on_pressed = false
 
 		return true
 	end
 end
 
-function StartGameWindowDifficulty._is_button_released(arg_10_0, arg_10_1)
-	local var_10_0 = arg_10_1.content.button_hotspot
+StartGameWindowDifficulty._is_button_released = function (arg_10_0, arg_10_1)
+	-- function 10
+	local button_hotspot = arg_10_1.content.button_hotspot
 
-	if var_10_0.on_release then
-		var_10_0.on_release = false
+	if not button_hotspot.on_release then
+		button_hotspot.on_release = false
 
 		return true
 	end
 end
 
-function StartGameWindowDifficulty._is_button_hover_enter(arg_11_0, arg_11_1)
-	local var_11_0 = arg_11_1.content.button_hotspot
+StartGameWindowDifficulty._is_button_hover_enter = function (arg_11_0, arg_11_1)
+	-- function 11
+	local button_hotspot = arg_11_1.content.button_hotspot
+	local on_hover_enter = button_hotspot.on_hover_enter
 
-	return var_11_0.on_hover_enter and not var_11_0.is_selected
+	on_hover_enter = not on_hover_enter and not button_hotspot.is_selected
+
+	return on_hover_enter
 end
 
-function StartGameWindowDifficulty._handle_input(arg_12_0, arg_12_1, arg_12_2)
-	local var_12_0 = arg_12_0._difficulty_widgets
+StartGameWindowDifficulty._handle_input = function (self, arg_12_1, arg_12_2)
+	-- function 12
+	local _difficulty_widgets = self._difficulty_widgets
 
-	for iter_12_0 = 1, #var_12_0 do
-		local var_12_1 = var_12_0[iter_12_0]
+	for i = 1, #_difficulty_widgets do
+		local var_12_1 = _difficulty_widgets[i]
 
-		if arg_12_0:_is_button_hover_enter(var_12_1) then
-			arg_12_0:_play_sound("play_gui_lobby_button_01_difficulty_select_hover")
+		if not self:_is_button_hover_enter(var_12_1) then
+			self:_play_sound("play_gui_lobby_button_01_difficulty_select_hover")
 		end
 
-		if arg_12_0:_is_button_pressed(var_12_1) then
-			local var_12_2 = var_12_1.content.difficulty_key
+		if not self:_is_button_pressed(var_12_1) then
+			local difficulty_key = var_12_1.content.difficulty_key
 
-			arg_12_0:_update_selected_difficulty_option(var_12_2)
+			self:_update_selected_difficulty_option(difficulty_key)
 
-			local var_12_3 = UISettings.difficulties_select_sounds
-			local var_12_4 = var_12_3[iter_12_0] or var_12_3[#var_12_3]
+			local difficulties_select_sounds = UISettings.difficulties_select_sounds
+			local var_12_4 = difficulties_select_sounds[i]
 
-			arg_12_0:_play_sound(var_12_4)
+			var_12_4 = var_12_4 or difficulties_select_sounds[#difficulties_select_sounds]
+
+			self:_play_sound(var_12_4)
 		end
 	end
 
-	local var_12_5 = arg_12_0._widgets_by_name.select_button
+	local select_button = self._widgets_by_name.select_button
 
-	UIWidgetUtils.animate_default_button(var_12_5, arg_12_1)
+	UIWidgetUtils.animate_default_button(select_button, arg_12_1)
 
-	local var_12_6 = arg_12_0._widgets_by_name.buy_button
+	local buy_button = self._widgets_by_name.buy_button
 
-	UIWidgetUtils.animate_default_button(var_12_6, arg_12_1)
+	UIWidgetUtils.animate_default_button(buy_button, arg_12_1)
 
-	local var_12_7 = arg_12_0.parent
+	local parent = self.parent
 
-	if arg_12_0:_is_button_hover_enter(var_12_5) then
-		arg_12_0:_play_sound("play_gui_lobby_button_01_difficulty_confirm_hover")
+	if not self:_is_button_hover_enter(select_button) then
+		self:_play_sound("play_gui_lobby_button_01_difficulty_confirm_hover")
 	end
 
-	if arg_12_0:_is_button_hover_enter(var_12_6) then
-		arg_12_0:_play_sound("play_gui_lobby_button_01_difficulty_confirm_hover")
+	if not self:_is_button_hover_enter(buy_button) then
+		self:_play_sound("play_gui_lobby_button_01_difficulty_confirm_hover")
 	end
 
-	if arg_12_0:_is_button_released(var_12_5) then
-		if arg_12_0._selected_difficulty_key then
-			var_12_7:set_difficulty_option(arg_12_0._selected_difficulty_key)
-			arg_12_0:_play_sound("play_gui_lobby_button_01_difficulty_confirm_click")
+	if not self:_is_button_released(select_button) then
+		if not self._selected_difficulty_key then
+			parent:set_difficulty_option(self._selected_difficulty_key)
+			self:_play_sound("play_gui_lobby_button_01_difficulty_confirm_click")
 		end
 
-		local var_12_8 = var_12_7:get_selected_game_mode_layout_name()
+		local get_selected_game_mode_layout_name = parent:get_selected_game_mode_layout_name()
 
-		var_12_7:set_layout_by_name(var_12_8)
-	elseif arg_12_0:_is_button_released(var_12_6) then
-		local var_12_9 = var_12_6.content.dlc_name
-		local var_12_10 = AreaSettings[var_12_9].store_page_url
+		parent:set_layout_by_name(get_selected_game_mode_layout_name)
+	elseif not self:_is_button_released(buy_button) then
+		local dlc_name = buy_button.content.dlc_name
+		local store_page_url = AreaSettings[dlc_name].store_page_url
 
-		arg_12_0:_show_storepage(var_12_10)
-	end
-end
-
-function StartGameWindowDifficulty._set_selected_difficulty_option(arg_13_0, arg_13_1)
-	local var_13_0 = arg_13_0._difficulty_widgets
-
-	for iter_13_0 = 1, #var_13_0 do
-		local var_13_1 = var_13_0[iter_13_0].content
-		local var_13_2 = var_13_1.difficulty_key == arg_13_1
-
-		var_13_1.button_hotspot.is_selected = var_13_2
+		self:_show_storepage(store_page_url)
 	end
 end
 
-function StartGameWindowDifficulty._set_info_window(arg_14_0, arg_14_1)
+StartGameWindowDifficulty._set_selected_difficulty_option = function (self, arg_13_1)
+	-- function 13
+	local _difficulty_widgets = self._difficulty_widgets
+
+	for i = 1, #_difficulty_widgets do
+		local content = _difficulty_widgets[i].content
+		local flag = content.difficulty_key == arg_13_1
+
+		content.button_hotspot.is_selected = flag
+	end
+end
+
+StartGameWindowDifficulty._set_info_window = function (self, arg_14_1)
+	-- function 14
 	local var_14_0 = DifficultySettings[arg_14_1]
-	local var_14_1 = var_14_0.description
-	local var_14_2 = var_14_0.display_name
-	local var_14_3 = var_14_0.display_image
-	local var_14_4 = var_14_0.xp_multiplier
-	local var_14_5 = var_14_0.max_chest_power_level
-	local var_14_6 = arg_14_0._widgets_by_name
+	local description = var_14_0.description
+	local display_name = var_14_0.display_name
+	local display_image = var_14_0.display_image
+	local xp_multiplier = var_14_0.xp_multiplier
+	local max_chest_power_level = var_14_0.max_chest_power_level
+	local _widgets_by_name = self._widgets_by_name
 
-	var_14_6.difficulty_title.content.text = Localize(var_14_2)
-	var_14_6.difficulty_texture.content.texture_id = var_14_3
-	var_14_6.description_text.content.text = Localize(var_14_1)
-	var_14_6.difficulty_chest_info.content.text = Localize("difficulty_chest_max_powerlevel") .. ": " .. tostring(var_14_5)
+	_widgets_by_name.difficulty_title.content.text = Localize(display_name)
+	_widgets_by_name.difficulty_texture.content.texture_id = display_image
+	_widgets_by_name.description_text.content.text = Localize(description)
+	_widgets_by_name.difficulty_chest_info.content.text = Localize("difficulty_chest_max_powerlevel") .. ": " .. tostring(max_chest_power_level)
 end
 
-function StartGameWindowDifficulty._update_difficulty_lock(arg_15_0)
-	local var_15_0 = arg_15_0._widgets_by_name
-	local var_15_1 = var_15_0.select_button
-	local var_15_2 = var_15_0.buy_button
-	local var_15_3 = var_15_0.extreme_difficulty_bg
-	local var_15_4 = var_15_0.extremely_hard_text
-	local var_15_5 = var_15_0.dlc_lock_text
-	local var_15_6 = arg_15_0._selected_difficulty_key
+StartGameWindowDifficulty._update_difficulty_lock = function (self)
+	-- function 15
+	local _widgets_by_name = self._widgets_by_name
+	local select_button = _widgets_by_name.select_button
+	local buy_button = _widgets_by_name.buy_button
+	local extreme_difficulty_bg = _widgets_by_name.extreme_difficulty_bg
+	local extremely_hard_text = _widgets_by_name.extremely_hard_text
+	local dlc_lock_text = _widgets_by_name.dlc_lock_text
+	local _selected_difficulty_key = self._selected_difficulty_key
 
-	if var_15_6 then
-		local var_15_7 = DifficultySettings[var_15_6]
-		local var_15_8, var_15_9, var_15_10, var_15_11 = arg_15_0.parent:is_difficulty_approved(var_15_6)
+	if not _selected_difficulty_key then
+		local var_15_7 = DifficultySettings[_selected_difficulty_key]
+		local is_difficulty_approved, var_15_9, var_15_10, var_15_11 = self.parent:is_difficulty_approved(_selected_difficulty_key)
 
-		if not var_15_8 then
-			if var_15_10 then
-				var_15_2.content.button_hotspot.disable_button = false
-				var_15_2.content.visible = true
-				var_15_2.content.dlc_name = var_15_10
-				var_15_1.content.visible = false
-				var_15_5.content.visible = true
+		if not is_difficulty_approved then
+			if not var_15_10 then
+				buy_button.content.button_hotspot.disable_button = false
+				buy_button.content.visible = true
+				buy_button.content.dlc_name = var_15_10
+				select_button.content.visible = false
+				dlc_lock_text.content.visible = true
 			else
-				var_15_2.content.button_hotspot.disable_button = true
-				var_15_2.content.visible = false
-				var_15_2.content.dlc_name = nil
-				var_15_1.content.visible = true
-				var_15_5.content.visible = false
+				buy_button.content.button_hotspot.disable_button = true
+				buy_button.content.visible = false
+				buy_button.content.dlc_name = nil
+				select_button.content.visible = true
+				dlc_lock_text.content.visible = false
 			end
 
-			var_15_1.content.button_hotspot.disable_button = true
+			select_button.content.button_hotspot.disable_button = true
 
-			if var_15_11 or var_15_9 then
-				var_15_0.difficulty_is_locked_text.content.text = Localize("required_power_level_not_met_in_party")
+			if var_15_11 or not var_15_9 then
+				_widgets_by_name.difficulty_is_locked_text.content.text = Localize("required_power_level_not_met_in_party")
 
-				if var_15_11 then
-					local var_15_12 = var_15_7.required_power_level
+				if not var_15_11 then
+					local required_power_level = var_15_7.required_power_level
 					local var_15_13 = Localize("required_power_level")
 
-					var_15_0.difficulty_lock_text.content.text = string.format("%s: %s", var_15_13, tostring(UIUtils.presentable_hero_power_level(var_15_12)))
-					var_15_0.difficulty_second_lock_text.content.text = var_15_9 and Localize(var_15_9) or ""
+					_widgets_by_name.difficulty_lock_text.content.text = string.format("%s: %s", var_15_13, tostring(UIUtils.presentable_hero_power_level(required_power_level)))
+
+					local content = _widgets_by_name.difficulty_second_lock_text.content
+					local var_15_15
+
+					if not var_15_9 then
+						var_15_15 = Localize(var_15_9)
+
+						if not var_15_15 then
+							-- Nothing
+						end
+					end
+
+					var_15_15 = ""
+
+					::label_15_0::
+
+					content.text = var_15_15
 				else
-					var_15_0.difficulty_lock_text.content.text = var_15_9 and Localize(var_15_9) or ""
+					local content_2 = _widgets_by_name.difficulty_lock_text.content
+					local var_15_17
+
+					if not var_15_9 then
+						var_15_17 = Localize(var_15_9)
+
+						if not var_15_17 then
+							-- Nothing
+						end
+					end
+
+					var_15_17 = ""
+
+					::label_15_1::
+
+					content_2.text = var_15_17
 				end
 			end
 
-			if not arg_15_0._has_exited then
-				arg_15_0.parent:set_input_description(nil)
+			if not self._has_exited then
+				self.parent:set_input_description(nil)
 			end
 		else
-			var_15_1.content.button_hotspot.disable_button = false
-			var_15_1.content.visible = true
-			var_15_2.content.button_hotspot.disable_button = true
-			var_15_2.content.visible = false
-			var_15_2.content.dlc_name = nil
-			var_15_5.content.visible = false
-			var_15_0.difficulty_lock_text.content.text = ""
-			var_15_0.difficulty_second_lock_text.content.text = ""
-			var_15_0.difficulty_is_locked_text.content.text = ""
+			select_button.content.button_hotspot.disable_button = false
+			select_button.content.visible = true
+			buy_button.content.button_hotspot.disable_button = true
+			buy_button.content.visible = false
+			buy_button.content.dlc_name = nil
+			dlc_lock_text.content.visible = false
+			_widgets_by_name.difficulty_lock_text.content.text = ""
+			_widgets_by_name.difficulty_second_lock_text.content.text = ""
+			_widgets_by_name.difficulty_is_locked_text.content.text = ""
 
-			if not arg_15_0._has_exited then
-				arg_15_0.parent:set_input_description("select_difficulty")
+			if not self._has_exited then
+				self.parent:set_input_description("select_difficulty")
 			end
 		end
 
-		var_15_3.content.visible = var_15_7.show_warning or false
-		var_15_4.content.visible = var_15_7.show_warning or false
-	else
-		var_15_1.content.button_hotspot.disable_button = true
-		var_15_2.content.button_hotspot.disable_button = true
-		var_15_2.content.visible = false
-		var_15_2.content.dlc_name = nil
-		var_15_3.content.visible = false
-		var_15_4.content.visible = false
-		var_15_5.content.visible = false
+		local content_3 = extreme_difficulty_bg.content
+		local show_warning = var_15_7.show_warning
 
-		if not arg_15_0._has_exited then
-			arg_15_0.parent:set_input_description(nil)
+		show_warning = show_warning or false
+		content_3.visible = show_warning
+
+		local content_4 = extremely_hard_text.content
+		local show_warning_2 = var_15_7.show_warning
+
+		show_warning_2 = show_warning_2 or false
+		content_4.visible = show_warning_2
+	else
+		select_button.content.button_hotspot.disable_button = true
+		buy_button.content.button_hotspot.disable_button = true
+		buy_button.content.visible = false
+		buy_button.content.dlc_name = nil
+		extreme_difficulty_bg.content.visible = false
+		extremely_hard_text.content.visible = false
+		dlc_lock_text.content.visible = false
+
+		if not self._has_exited then
+			self.parent:set_input_description(nil)
 		end
 	end
 end
 
-function StartGameWindowDifficulty._update_selected_difficulty_option(arg_16_0, arg_16_1)
+StartGameWindowDifficulty._update_selected_difficulty_option = function (self, arg_16_1)
+	-- function 16
 	arg_16_1 = arg_16_1 or Managers.state.difficulty:get_difficulty()
 
-	if arg_16_1 ~= arg_16_0._selected_difficulty_key then
-		arg_16_0:_set_selected_difficulty_option(arg_16_1)
+	if arg_16_1 ~= self._selected_difficulty_key then
+		self:_set_selected_difficulty_option(arg_16_1)
 
-		arg_16_0._selected_difficulty_key = arg_16_1
+		self._selected_difficulty_key = arg_16_1
 
-		arg_16_0:_set_info_window(arg_16_1)
+		self:_set_info_window(arg_16_1)
 	end
 end
 
-function StartGameWindowDifficulty.draw(arg_17_0, arg_17_1)
-	local var_17_0 = arg_17_0.ui_renderer
-	local var_17_1 = arg_17_0.ui_scenegraph
-	local var_17_2 = arg_17_0.parent:window_input_service()
+StartGameWindowDifficulty.draw = function (self, arg_17_1)
+	-- function 17
+	local ui_renderer = self.ui_renderer
+	local ui_scenegraph = self.ui_scenegraph
+	local window_input_service = self.parent:window_input_service()
 
-	UIRenderer.begin_pass(var_17_0, var_17_1, var_17_2, arg_17_1, nil, arg_17_0.render_settings)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, window_input_service, arg_17_1, nil, self.render_settings)
 
-	local var_17_3 = arg_17_0._widgets
+	local _widgets = self._widgets
 
-	for iter_17_0 = 1, #var_17_3 do
-		local var_17_4 = var_17_3[iter_17_0]
+	for i = 1, #_widgets do
+		local var_17_4 = _widgets[i]
 
-		UIRenderer.draw_widget(var_17_0, var_17_4)
+		UIRenderer.draw_widget(ui_renderer, var_17_4)
 	end
 
-	UIRenderer.end_pass(var_17_0)
+	UIRenderer.end_pass(ui_renderer)
 end
 
-function StartGameWindowDifficulty._play_sound(arg_18_0, arg_18_1)
-	arg_18_0.parent:play_sound(arg_18_1)
+StartGameWindowDifficulty._play_sound = function (self, arg_18_1)
+	-- function 18
+	self.parent:play_sound(arg_18_1)
 end
 
-function StartGameWindowDifficulty._animate_difficulty_option_button(arg_19_0, arg_19_1, arg_19_2)
-	local var_19_0 = arg_19_1.content
-	local var_19_1 = arg_19_1.style
-	local var_19_2 = var_19_0.button_hotspot
-	local var_19_3 = var_19_0.has_focus
-	local var_19_4 = var_19_2.is_hover or var_19_3
-	local var_19_5 = var_19_2.is_selected
-	local var_19_6 = not var_19_5 and var_19_2.is_clicked and var_19_2.is_clicked == 0
-	local var_19_7 = var_19_2.input_progress or 0
-	local var_19_8 = var_19_2.hover_progress or 0
-	local var_19_9 = var_19_2.selection_progress or 0
-	local var_19_10 = 8
-	local var_19_11 = 20
+StartGameWindowDifficulty._animate_difficulty_option_button = function (arg_19_0, arg_19_1, arg_19_2)
+	-- function 19
+	local content = arg_19_1.content
+	local style = arg_19_1.style
+	local button_hotspot = content.button_hotspot
+	local has_focus = content.has_focus
+	local is_hover = button_hotspot.is_hover
 
-	if var_19_6 then
-		var_19_7 = math.min(var_19_7 + arg_19_2 * var_19_11, 1)
+	is_hover = is_hover or has_focus
+
+	local is_selected = button_hotspot.is_selected
+	local is_clicked
+
+	if not is_selected then
+		is_clicked = button_hotspot.is_clicked
+
+		if not is_clicked then
+			-- Nothing
+		end
+
+		if button_hotspot.is_clicked ~= 0 then
+			-- Nothing
+		end
+	end
+
+	is_clicked = false
+
+	goto label_19_1
+
+	::label_19_0::
+
+	is_clicked = true
+
+	::label_19_1::
+
+	local input_progress = button_hotspot.input_progress
+
+	input_progress = input_progress or 0
+
+	local hover_progress = button_hotspot.hover_progress
+
+	hover_progress = hover_progress or 0
+
+	local selection_progress = button_hotspot.selection_progress
+
+	selection_progress = selection_progress or 0
+
+	local num = 8
+	local num_2 = 20
+
+	if not is_clicked then
+		input_progress = math.min(input_progress + arg_19_2 * num_2, 1)
 	else
-		var_19_7 = math.max(var_19_7 - arg_19_2 * var_19_11, 0)
+		input_progress = math.max(input_progress - arg_19_2 * num_2, 0)
 	end
 
-	local var_19_12 = math.easeOutCubic(var_19_7)
-	local var_19_13 = math.easeInCubic(var_19_7)
+	local easeOutCubic = math.easeOutCubic(input_progress)
+	local easeInCubic = math.easeInCubic(input_progress)
 
-	if var_19_4 then
-		var_19_8 = math.min(var_19_8 + arg_19_2 * var_19_10, 1)
+	if not is_hover then
+		hover_progress = math.min(hover_progress + arg_19_2 * num, 1)
 	else
-		var_19_8 = math.max(var_19_8 - arg_19_2 * var_19_10, 0)
+		hover_progress = math.max(hover_progress - arg_19_2 * num, 0)
 	end
 
-	local var_19_14 = math.easeOutCubic(var_19_8)
-	local var_19_15 = math.easeInCubic(var_19_8)
+	local easeOutCubic_2 = math.easeOutCubic(hover_progress)
+	local easeInCubic_2 = math.easeInCubic(hover_progress)
 
-	if var_19_5 then
-		var_19_9 = math.min(var_19_9 + arg_19_2 * var_19_10, 1)
+	if not is_selected then
+		selection_progress = math.min(selection_progress + arg_19_2 * num, 1)
 	else
-		var_19_9 = math.max(var_19_9 - arg_19_2 * var_19_10, 0)
+		selection_progress = math.max(selection_progress - arg_19_2 * num, 0)
 	end
 
-	local var_19_16 = math.easeOutCubic(var_19_9)
-	local var_19_17 = math.easeInCubic(var_19_9)
-	local var_19_18 = math.max(var_19_8, var_19_9)
-	local var_19_19 = math.max(var_19_16, var_19_14)
-	local var_19_20 = math.max(var_19_15, var_19_17)
-	local var_19_21 = 255 * var_19_7
+	local easeOutCubic_3 = math.easeOutCubic(selection_progress)
+	local easeInCubic_3 = math.easeInCubic(selection_progress)
+	local max = math.max(hover_progress, selection_progress)
+	local max_2 = math.max(easeOutCubic_3, easeOutCubic_2)
+	local max_3 = math.max(easeInCubic_2, easeInCubic_3)
+	local num_3 = 255 * input_progress
 
-	var_19_1.button_clicked_rect.color[1] = 100 * var_19_7
-	var_19_1.hover_glow.color[1] = 255 * var_19_18
+	style.button_clicked_rect.color[1] = 100 * input_progress
+	style.hover_glow.color[1] = 255 * max
 
-	local var_19_22 = 255 * var_19_9
+	local num_4 = 255 * selection_progress
 
-	var_19_1.select_glow.color[1] = var_19_22
-	var_19_1.skull_select_glow.color[1] = var_19_22
-	var_19_1.icon_bg_glow.color[1] = var_19_22
+	style.select_glow.color[1] = num_4
+	style.skull_select_glow.color[1] = num_4
+	style.icon_bg_glow.color[1] = num_4
 
-	local var_19_23 = var_19_1.title_text_disabled
-	local var_19_24 = var_19_23.default_text_color
-	local var_19_25 = var_19_23.text_color
+	local title_text_disabled = style.title_text_disabled
+	local default_text_color = title_text_disabled.default_text_color
+	local text_color = title_text_disabled.text_color
 
-	var_19_25[2] = var_19_24[2] * 0.4
-	var_19_25[3] = var_19_24[3] * 0.4
-	var_19_25[4] = var_19_24[4] * 0.4
+	text_color[2] = default_text_color[2] * 0.4
+	text_color[3] = default_text_color[3] * 0.4
+	text_color[4] = default_text_color[4] * 0.4
 
-	local var_19_26 = var_19_1.title_text
-	local var_19_27 = var_19_26.text_color
-	local var_19_28 = var_19_26.default_text_color
-	local var_19_29 = var_19_26.select_text_color
+	local title_text = style.title_text
+	local text_color_2 = title_text.text_color
+	local default_text_color_2 = title_text.default_text_color
+	local select_text_color = title_text.select_text_color
 
-	Colors.lerp_color_tables(var_19_28, var_19_29, var_19_18, var_19_27)
+	Colors.lerp_color_tables(default_text_color_2, select_text_color, max, text_color_2)
 
-	local var_19_30 = var_19_1.icon.color
+	local color = style.icon.color
 
-	var_19_30[2] = var_19_27[2]
-	var_19_30[3] = var_19_27[3]
-	var_19_30[4] = var_19_27[4]
+	color[2] = text_color_2[2]
+	color[3] = text_color_2[3]
+	color[4] = text_color_2[4]
 
-	local var_19_31 = var_19_1.background_icon
-	local var_19_32 = var_19_31.color
-	local var_19_33 = var_19_31.default_color
+	local background_icon = style.background_icon
+	local color_2 = background_icon.color
+	local default_color = background_icon.default_color
 
-	var_19_32[2] = var_19_33[2] + var_19_18 * (255 - var_19_33[2])
-	var_19_32[3] = var_19_33[3] + var_19_18 * (255 - var_19_33[3])
-	var_19_32[4] = var_19_33[4] + var_19_18 * (255 - var_19_33[4])
-	var_19_2.hover_progress = var_19_8
-	var_19_2.input_progress = var_19_7
-	var_19_2.selection_progress = var_19_9
+	color_2[2] = default_color[2] + max * (255 - default_color[2])
+	color_2[3] = default_color[3] + max * (255 - default_color[3])
+	color_2[4] = default_color[4] + max * (255 - default_color[4])
+	button_hotspot.hover_progress = hover_progress
+	button_hotspot.input_progress = input_progress
+	button_hotspot.selection_progress = selection_progress
 end
 
-function StartGameWindowDifficulty._show_storepage(arg_20_0, arg_20_1)
-	local var_20_0 = PLATFORM
+StartGameWindowDifficulty._show_storepage = function (arg_20_0, arg_20_1)
+	-- function 20
+	local PLATFORM = PLATFORM
 
-	if IS_WINDOWS and rawget(_G, "Steam") then
+	if not IS_WINDOWS and not rawget(_G, "Steam") then
 		Steam.open_url(arg_20_1)
 	end
 end

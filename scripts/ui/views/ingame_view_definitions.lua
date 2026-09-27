@@ -1,29 +1,29 @@
 -- chunkname: @scripts/ui/views/ingame_view_definitions.lua
 
-local var_0_0 = UIWidgets.create_menu_button
-local var_0_1 = UIWidgets.create_simple_texture
-local var_0_2 = UIWidgets.create_simple_uv_texture
-local var_0_3 = 18
-local var_0_4 = {
+local create_menu_button = UIWidgets.create_menu_button
+local create_simple_texture = UIWidgets.create_simple_texture
+local create_simple_uv_texture = UIWidgets.create_simple_uv_texture
+local num = 18
+local tbl = {
 	370,
 	70
 }
-local var_0_5 = {
+local tbl_2 = {
 	300,
 	70
 }
-local var_0_6 = {
+local tbl_3 = {
 	0,
-	-(70 + var_0_3),
+	-(70 + num),
 	1
 }
-local var_0_7 = 24
-local var_0_8 = "menu_frame_03"
-local var_0_9 = "menu_frame_bg_02"
+local num_2 = 24
+local str = "menu_frame_03"
+local str_2 = "menu_frame_bg_02"
 
 IngameViewDefinitions = {
-	MENU_BUTTON_SPACING = var_0_3,
-	MENU_BUTTON_SIZE = var_0_4,
+	MENU_BUTTON_SPACING = num,
+	MENU_BUTTON_SIZE = tbl,
 	scenegraph_definition = {
 		root = {
 			is_root = true,
@@ -75,8 +75,8 @@ IngameViewDefinitions = {
 				1
 			},
 			size = {
-				var_0_4[1] + 20,
-				var_0_4[2]
+				tbl[1] + 20,
+				tbl[2]
 			}
 		},
 		top_panel = {
@@ -179,7 +179,7 @@ IngameViewDefinitions = {
 			vertical_alignment = "top",
 			parent = "window",
 			horizontal_alignment = "center",
-			size = var_0_4,
+			size = tbl,
 			position = {
 				0,
 				-10,
@@ -190,57 +190,57 @@ IngameViewDefinitions = {
 			vertical_alignment = "bottom",
 			parent = "button_1",
 			horizontal_alignment = "center",
-			size = var_0_4,
-			position = var_0_6
+			size = tbl,
+			position = tbl_3
 		},
 		button_3 = {
 			vertical_alignment = "bottom",
 			parent = "button_2",
 			horizontal_alignment = "center",
-			size = var_0_4,
-			position = var_0_6
+			size = tbl,
+			position = tbl_3
 		},
 		button_4 = {
 			vertical_alignment = "bottom",
 			parent = "button_3",
 			horizontal_alignment = "center",
-			size = var_0_4,
-			position = var_0_6
+			size = tbl,
+			position = tbl_3
 		},
 		button_5 = {
 			vertical_alignment = "bottom",
 			parent = "button_4",
 			horizontal_alignment = "center",
-			size = var_0_4,
-			position = var_0_6
+			size = tbl,
+			position = tbl_3
 		},
 		button_6 = {
 			vertical_alignment = "bottom",
 			parent = "button_5",
 			horizontal_alignment = "center",
-			size = var_0_4,
-			position = var_0_6
+			size = tbl,
+			position = tbl_3
 		},
 		button_7 = {
 			vertical_alignment = "bottom",
 			parent = "button_6",
 			horizontal_alignment = "center",
-			size = var_0_4,
-			position = var_0_6
+			size = tbl,
+			position = tbl_3
 		},
 		button_8 = {
 			vertical_alignment = "bottom",
 			parent = "button_7",
 			horizontal_alignment = "center",
-			size = var_0_4,
-			position = var_0_6
+			size = tbl,
+			position = tbl_3
 		},
 		button_9 = {
 			vertical_alignment = "bottom",
 			parent = "button_8",
 			horizontal_alignment = "center",
-			size = var_0_4,
-			position = var_0_6
+			size = tbl,
+			position = tbl_3
 		}
 	},
 	widgets = {
@@ -260,15 +260,15 @@ IngameViewDefinitions = {
 				}
 			}
 		},
-		button_1 = UIWidgets.create_default_button("button_1", var_0_4, nil, nil, "n/a", var_0_7),
-		button_2 = UIWidgets.create_default_button("button_2", var_0_4, nil, nil, "n/a", var_0_7),
-		button_3 = UIWidgets.create_default_button("button_3", var_0_4, nil, nil, "n/a", var_0_7),
-		button_4 = UIWidgets.create_default_button("button_4", var_0_4, nil, nil, "n/a", var_0_7),
-		button_5 = UIWidgets.create_default_button("button_5", var_0_4, nil, nil, "n/a", var_0_7),
-		button_6 = UIWidgets.create_default_button("button_6", var_0_4, nil, nil, "n/a", var_0_7),
-		button_7 = UIWidgets.create_default_button("button_7", var_0_4, nil, nil, "n/a", var_0_7),
-		button_8 = UIWidgets.create_default_button("button_8", var_0_4, nil, nil, "n/a", var_0_7),
-		button_9 = UIWidgets.create_default_button("button_9", var_0_4, nil, nil, "n/a", var_0_7),
+		button_1 = UIWidgets.create_default_button("button_1", tbl, nil, nil, "n/a", num_2),
+		button_2 = UIWidgets.create_default_button("button_2", tbl, nil, nil, "n/a", num_2),
+		button_3 = UIWidgets.create_default_button("button_3", tbl, nil, nil, "n/a", num_2),
+		button_4 = UIWidgets.create_default_button("button_4", tbl, nil, nil, "n/a", num_2),
+		button_5 = UIWidgets.create_default_button("button_5", tbl, nil, nil, "n/a", num_2),
+		button_6 = UIWidgets.create_default_button("button_6", tbl, nil, nil, "n/a", num_2),
+		button_7 = UIWidgets.create_default_button("button_7", tbl, nil, nil, "n/a", num_2),
+		button_8 = UIWidgets.create_default_button("button_8", tbl, nil, nil, "n/a", num_2),
+		button_9 = UIWidgets.create_default_button("button_9", tbl, nil, nil, "n/a", num_2),
 		gamepad_button_selection = UIWidgets.create_gamepad_selection("button_gamepad_selection", nil, nil, {
 			70,
 			70

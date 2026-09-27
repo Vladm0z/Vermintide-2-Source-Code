@@ -1,28 +1,28 @@
 -- chunkname: @scripts/managers/achievements/achievement_templates_penny_part_1.lua
 
-local var_0_0 = AchievementTemplateHelper.add_event_challenge
-local var_0_1 = AchievementTemplateHelper.add_levels_complete_challenge
-local var_0_2 = AchievementTemplateHelper.add_meta_challenge
-local var_0_3 = AchievementTemplateHelper.PLACEHOLDER_ICON
-local var_0_4 = AchievementTemplates.achievements
-local var_0_5 = {
+local add_event_challenge = AchievementTemplateHelper.add_event_challenge
+local add_levels_complete_challenge = AchievementTemplateHelper.add_levels_complete_challenge
+local add_meta_challenge = AchievementTemplateHelper.add_meta_challenge
+local PLACEHOLDER_ICON = AchievementTemplateHelper.PLACEHOLDER_ICON
+local achievements = AchievementTemplates.achievements
+local tbl = {
 	penny_portals_heads = 86,
 	penny_portals_vintage = 87
 }
-local var_0_6 = {
+local tbl_2 = {
 	penny_portals_vintage = "081"
 }
 
-var_0_0(var_0_4, "penny_portals_portal", nil, nil, nil, var_0_5.penny_portals_portal, var_0_6.penny_portals_portal)
-var_0_0(var_0_4, "penny_portals_heads", nil, nil, nil, var_0_5.penny_portals_heads, var_0_6.penny_portals_heads)
-var_0_0(var_0_4, "penny_portals_cleanser", nil, nil, nil, var_0_5.penny_portals_cleanser, var_0_6.penny_portals_cleanser)
-var_0_0(var_0_4, "penny_portals_vintage", nil, nil, nil, var_0_5.penny_portals_vintage, var_0_6.penny_portals_vintage)
-var_0_0(var_0_4, "penny_portals_hideout", nil, nil, nil, var_0_5.penny_portals_hideout, var_0_6.penny_portals_hideout)
+add_event_challenge(achievements, "penny_portals_portal", nil, nil, nil, tbl.penny_portals_portal, tbl_2.penny_portals_portal)
+add_event_challenge(achievements, "penny_portals_heads", nil, nil, nil, tbl.penny_portals_heads, tbl_2.penny_portals_heads)
+add_event_challenge(achievements, "penny_portals_cleanser", nil, nil, nil, tbl.penny_portals_cleanser, tbl_2.penny_portals_cleanser)
+add_event_challenge(achievements, "penny_portals_vintage", nil, nil, nil, tbl.penny_portals_vintage, tbl_2.penny_portals_vintage)
+add_event_challenge(achievements, "penny_portals_hideout", nil, nil, nil, tbl.penny_portals_hideout, tbl_2.penny_portals_hideout)
 
-local var_0_7 = {
+local tbl_3 = {
 	LevelSettings.dlc_portals
 }
-local var_0_8 = {
+local tbl_4 = {
 	"normal",
 	"hard",
 	"harder",
@@ -30,15 +30,15 @@ local var_0_8 = {
 	"cataclysm"
 }
 
-for iter_0_0 = 1, #var_0_8 do
-	local var_0_9 = var_0_8[iter_0_0]
+for i = 1, #tbl_4 do
+	local var_0_9 = tbl_4[i]
 	local var_0_10 = DifficultyMapping[var_0_9]
-	local var_0_11 = "penny_complete_portals_" .. var_0_10
+	local str = "penny_complete_portals_" .. var_0_10
 
-	var_0_1(var_0_4, var_0_11, var_0_7, DifficultySettings[var_0_9].rank, nil, nil, var_0_5[var_0_11], var_0_6[var_0_11])
+	add_levels_complete_challenge(achievements, str, tbl_3, DifficultySettings[var_0_9].rank, nil, nil, tbl[str], tbl_2[str])
 end
 
-var_0_2(var_0_4, "penny_complete_portals", {
+add_meta_challenge(achievements, "penny_complete_portals", {
 	"penny_portals_portal",
 	"penny_portals_heads",
 	"penny_portals_cleanser",

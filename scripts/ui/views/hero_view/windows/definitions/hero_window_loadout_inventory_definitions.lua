@@ -1,14 +1,14 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/definitions/hero_window_loadout_inventory_definitions.lua
 
-local var_0_0 = UISettings.game_start_windows
-local var_0_1 = var_0_0.background
-local var_0_2 = var_0_0.frame
-local var_0_3 = var_0_0.size
-local var_0_4 = var_0_0.spacing
-local var_0_5 = UIFrameSettings[var_0_2].texture_sizes.vertical[1]
-local var_0_6 = UIFrameSettings[var_0_2].texture_sizes.horizontal[2]
-local var_0_7 = var_0_3[1] - (var_0_5 * 2 + 60)
-local var_0_8 = {
+local game_start_windows = UISettings.game_start_windows
+local background = game_start_windows.background
+local frame = game_start_windows.frame
+local size = game_start_windows.size
+local spacing = game_start_windows.spacing
+local var_0_5 = UIFrameSettings[frame].texture_sizes.vertical[1]
+local var_0_6 = UIFrameSettings[frame].texture_sizes.horizontal[2]
+local num = size[1] - (var_0_5 * 2 + 60)
+local tbl = {
 	root = {
 		is_root = true,
 		size = {
@@ -51,7 +51,7 @@ local var_0_8 = {
 		vertical_alignment = "center",
 		parent = "menu_root",
 		horizontal_alignment = "center",
-		size = var_0_3,
+		size = size,
 		position = {
 			0,
 			0,
@@ -63,8 +63,8 @@ local var_0_8 = {
 		parent = "page_button_divider",
 		horizontal_alignment = "center",
 		size = {
-			var_0_3[1],
-			var_0_3[2] - 130
+			size[1],
+			size[2] - 130
 		},
 		position = {
 			0,
@@ -77,7 +77,7 @@ local var_0_8 = {
 		parent = "item_grid",
 		horizontal_alignment = "center",
 		size = {
-			var_0_3[1],
+			size[1],
 			0
 		},
 		position = {
@@ -91,7 +91,7 @@ local var_0_8 = {
 		parent = "item_tabs_divider",
 		horizontal_alignment = "center",
 		size = {
-			var_0_3[1],
+			size[1],
 			60
 		},
 		position = {
@@ -105,7 +105,7 @@ local var_0_8 = {
 		parent = "item_grid_divider",
 		horizontal_alignment = "center",
 		size = {
-			var_0_3[1] - 20,
+			size[1] - 20,
 			40
 		},
 		position = {
@@ -133,7 +133,7 @@ local var_0_8 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_3[1],
+			size[1],
 			40
 		},
 		position = {
@@ -147,7 +147,7 @@ local var_0_8 = {
 		parent = "item_tabs",
 		horizontal_alignment = "center",
 		size = {
-			var_0_3[1],
+			size[1],
 			0
 		},
 		position = {
@@ -161,7 +161,7 @@ local var_0_8 = {
 		parent = "item_tabs",
 		horizontal_alignment = "center",
 		size = {
-			var_0_3[1],
+			size[1],
 			0
 		},
 		position = {
@@ -175,7 +175,7 @@ local var_0_8 = {
 		parent = "item_tabs",
 		horizontal_alignment = "center",
 		size = {
-			var_0_3[1],
+			size[1],
 			0
 		},
 		position = {
@@ -189,7 +189,7 @@ local var_0_8 = {
 		parent = "item_tabs",
 		horizontal_alignment = "center",
 		size = {
-			var_0_3[1],
+			size[1],
 			0
 		},
 		position = {
@@ -203,7 +203,7 @@ local var_0_8 = {
 		parent = "window",
 		horizontal_alignment = "right",
 		size = {
-			var_0_3[1] * 0.4,
+			size[1] * 0.4,
 			42
 		},
 		position = {
@@ -231,7 +231,7 @@ local var_0_8 = {
 		parent = "window",
 		horizontal_alignment = "left",
 		size = {
-			var_0_3[1] * 0.4,
+			size[1] * 0.4,
 			42
 		},
 		position = {
@@ -259,7 +259,7 @@ local var_0_8 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_3[1],
+			size[1],
 			0
 		},
 		position = {
@@ -273,7 +273,7 @@ local var_0_8 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_3[1] * 0.2,
+			size[1] * 0.2,
 			42
 		},
 		position = {
@@ -283,7 +283,7 @@ local var_0_8 = {
 		}
 	}
 }
-local var_0_9 = {
+local tbl_2 = {
 	use_shadow = true,
 	upper_case = true,
 	localize = false,
@@ -299,7 +299,7 @@ local var_0_9 = {
 		2
 	}
 }
-local var_0_10 = {
+local tbl_3 = {
 	word_wrap = true,
 	font_size = 20,
 	localize = false,
@@ -309,12 +309,12 @@ local var_0_10 = {
 	font_type = "hell_shark",
 	text_color = Colors.get_color_table_with_alpha("font_default", 255),
 	offset = {
-		-(var_0_3[1] * 0.1 + 5),
+		-(size[1] * 0.1 + 5),
 		4,
 		2
 	}
 }
-local var_0_11 = {
+local tbl_4 = {
 	word_wrap = true,
 	font_size = 20,
 	localize = false,
@@ -324,12 +324,12 @@ local var_0_11 = {
 	font_type = "hell_shark",
 	text_color = Colors.get_color_table_with_alpha("font_default", 255),
 	offset = {
-		var_0_3[1] * 0.1 + 4,
+		size[1] * 0.1 + 4,
 		4,
 		2
 	}
 }
-local var_0_12 = {
+local tbl_5 = {
 	word_wrap = true,
 	font_size = 20,
 	localize = false,
@@ -345,7 +345,8 @@ local var_0_12 = {
 	}
 }
 
-local function var_0_13(arg_1_0, arg_1_1)
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
 	return {
 		element = {
 			passes = {
@@ -437,7 +438,8 @@ local function var_0_13(arg_1_0, arg_1_1)
 	}
 end
 
-local function var_0_14(arg_2_0, arg_2_1)
+local function fn_2(arg_2_0, arg_2_1)
+	-- function 2
 	return {
 		element = {
 			passes = {
@@ -529,10 +531,10 @@ local function var_0_14(arg_2_0, arg_2_1)
 	}
 end
 
-local var_0_15 = {
-	item_grid = UIWidgets.create_grid("item_grid", var_0_8.item_grid.size, 7, 5, 16, 10, false),
-	item_tabs_divider = var_0_13("item_tabs_divider", var_0_8.item_tabs_divider.size),
-	item_grid_header = UIWidgets.create_simple_text(Localize("hero_view_inventory"), "item_grid_header", nil, nil, var_0_9),
+local tbl_6 = {
+	item_grid = UIWidgets.create_grid("item_grid", tbl.item_grid.size, 7, 5, 16, 10, false),
+	item_tabs_divider = fn("item_tabs_divider", tbl.item_tabs_divider.size),
+	item_grid_header = UIWidgets.create_simple_text(Localize("hero_view_inventory"), "item_grid_header", nil, nil, tbl_2),
 	item_grid_header_fade = UIWidgets.create_simple_uv_texture("edge_fade_small", {
 		{
 			0,
@@ -544,17 +546,17 @@ local var_0_15 = {
 		}
 	}, "item_grid_header_fade"),
 	item_grid_header_detail = UIWidgets.create_simple_texture("divider_01_top", "item_grid_header_detail"),
-	window_frame = UIWidgets.create_frame("window", var_0_8.window.size, var_0_2, 10),
-	window = UIWidgets.create_background("window", var_0_8.window.size, "background_leather_02"),
+	window_frame = UIWidgets.create_frame("window", tbl.window.size, frame, 10),
+	window = UIWidgets.create_background("window", tbl.window.size, "background_leather_02"),
 	window_background_fade = UIWidgets.create_simple_texture("options_window_fade_01", "window", nil, nil, nil, 1),
-	page_button_next = UIWidgets.create_simple_window_button("page_button_next", var_0_8.page_button_next.size, Localize("menu_next"), 16),
-	page_button_previous = UIWidgets.create_simple_window_button("page_button_previous", var_0_8.page_button_previous.size, Localize("menu_previous"), 16),
-	page_button_divider = var_0_13("page_button_divider", var_0_8.page_button_divider.size),
-	page_button_edge_left = var_0_14("page_button_edge_left", var_0_8.page_button_edge_left.size),
-	page_button_edge_right = var_0_14("page_button_edge_right", var_0_8.page_button_edge_right.size),
-	page_text_center = UIWidgets.create_simple_text("/", "page_text_area", nil, nil, var_0_12),
-	page_text_left = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, var_0_10),
-	page_text_right = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, var_0_11),
+	page_button_next = UIWidgets.create_simple_window_button("page_button_next", tbl.page_button_next.size, Localize("menu_next"), 16),
+	page_button_previous = UIWidgets.create_simple_window_button("page_button_previous", tbl.page_button_previous.size, Localize("menu_previous"), 16),
+	page_button_divider = fn("page_button_divider", tbl.page_button_divider.size),
+	page_button_edge_left = fn_2("page_button_edge_left", tbl.page_button_edge_left.size),
+	page_button_edge_right = fn_2("page_button_edge_right", tbl.page_button_edge_right.size),
+	page_text_center = UIWidgets.create_simple_text("/", "page_text_area", nil, nil, tbl_5),
+	page_text_left = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, tbl_3),
+	page_text_right = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, tbl_4),
 	page_text_area = UIWidgets.create_simple_rect("page_text_area", {
 		255,
 		0,
@@ -562,7 +564,7 @@ local var_0_15 = {
 		0
 	})
 }
-local var_0_16 = {
+local tbl_7 = {
 	default = {
 		{
 			input_action = "d_vertical",
@@ -588,21 +590,24 @@ local var_0_16 = {
 		}
 	}
 }
-local var_0_17 = {
+local tbl_8 = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			init = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+				-- function 3
 				arg_3_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-				local var_4_0 = math.easeOutCubic(arg_4_3)
+			update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+				-- function 4
+				local easeOutCubic = math.easeOutCubic(arg_4_3)
 
-				arg_4_4.render_settings.alpha_multiplier = var_4_0
+				arg_4_4.render_settings.alpha_multiplier = easeOutCubic
 			end,
-			on_complete = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			on_complete = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+				-- function 5
 				return
 			end
 		}
@@ -612,15 +617,18 @@ local var_0_17 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			init = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+				-- function 6
 				arg_6_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
-				local var_7_0 = math.easeOutCubic(arg_7_3)
+			update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+				-- function 7
+				local easeOutCubic = math.easeOutCubic(arg_7_3)
 
-				arg_7_4.render_settings.alpha_multiplier = 1 - var_7_0
+				arg_7_4.render_settings.alpha_multiplier = 1 - easeOutCubic
 			end,
-			on_complete = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			on_complete = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+				-- function 8
 				return
 			end
 		}
@@ -628,8 +636,8 @@ local var_0_17 = {
 }
 
 return {
-	widgets = var_0_15,
-	scenegraph_definition = var_0_8,
-	animation_definitions = var_0_17,
-	generic_input_actions = var_0_16
+	widgets = tbl_6,
+	scenegraph_definition = tbl,
+	animation_definitions = tbl_8,
+	generic_input_actions = tbl_7
 }

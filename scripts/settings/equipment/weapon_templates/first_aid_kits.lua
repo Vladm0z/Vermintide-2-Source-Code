@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/first_aid_kits.lua
 
-local var_0_0 = 2
-local var_0_1 = {
+local num = 2
+local tbl = {
 	actions = {
 		action_one = {
 			default = {
@@ -17,7 +17,8 @@ local var_0_1 = {
 				interaction_priority = 4,
 				total_time = InteractionDefinitions.heal.config.duration,
 				allowed_chain_actions = {},
-				condition_func = function(arg_1_0)
+				condition_func = function (arg_1_0)
+					-- function 1
 					return (ScriptUnit.extension(arg_1_0, "interactor_system"):can_interact(arg_1_0, "heal"))
 				end
 			}
@@ -36,10 +37,11 @@ local var_0_1 = {
 				interaction_priority = 5,
 				total_time = InteractionDefinitions.heal.config.duration,
 				allowed_chain_actions = {},
-				condition_func = function(arg_2_0)
-					local var_2_0 = ScriptUnit.extension(arg_2_0, "interactor_system")
+				condition_func = function (arg_2_0)
+					-- function 2
+					local extension = ScriptUnit.extension(arg_2_0, "interactor_system")
 
-					return var_2_0 and var_2_0:can_interact(nil, "heal")
+					return not extension and extension:can_interact(nil, "heal")
 				end
 			}
 		},
@@ -59,19 +61,19 @@ local var_0_1 = {
 	}
 }
 
-var_0_1.left_hand_unit = "units/weapons/player/wpn_first_aid_kit/wpn_first_aid_kit"
-var_0_1.left_hand_attachment_node_linking = AttachmentNodeLinking.one_handed_melee_weapon.left
-var_0_1.wield_anim = "to_first_aid"
-var_0_1.state_machine = "units/beings/player/first_person_base/state_machines/common"
-var_0_1.load_state_machine = false
-var_0_1.gui_texture = "hud_teammate_consumable_icon_medkit"
-var_0_1.can_heal_other = true
-var_0_1.can_heal_self = true
-var_0_1.bot_heal_threshold = 0.2
-var_0_1.fast_heal = false
-var_0_1.max_fatigue_points = 1
-var_0_1.dodge_count = 3
-var_0_1.buffs = {
+tbl.left_hand_unit = "units/weapons/player/wpn_first_aid_kit/wpn_first_aid_kit"
+tbl.left_hand_attachment_node_linking = AttachmentNodeLinking.one_handed_melee_weapon.left
+tbl.wield_anim = "to_first_aid"
+tbl.state_machine = "units/beings/player/first_person_base/state_machines/common"
+tbl.load_state_machine = false
+tbl.gui_texture = "hud_teammate_consumable_icon_medkit"
+tbl.can_heal_other = true
+tbl.can_heal_self = true
+tbl.bot_heal_threshold = 0.2
+tbl.fast_heal = false
+tbl.max_fatigue_points = 1
+tbl.dodge_count = 3
+tbl.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1.2
 	},
@@ -80,18 +82,18 @@ var_0_1.buffs = {
 	}
 }
 
-local var_0_2 = table.clone(var_0_1)
+local clone = table.clone(tbl)
 
-var_0_2.left_hand_unit = "units/weapons/player/wpn_first_aid_kit/wpn_first_aid_kit"
-var_0_2.gui_texture = "hud_teammate_consumable_icon_medkit"
+clone.left_hand_unit = "units/weapons/player/wpn_first_aid_kit/wpn_first_aid_kit"
+clone.gui_texture = "hud_teammate_consumable_icon_medkit"
 
-local var_0_3 = table.clone(var_0_1)
+local clone_2 = table.clone(tbl)
 
-var_0_3.left_hand_unit = "units/weapons/player/wpn_first_aid_kit_02/wpn_first_aid_kit_02"
-var_0_3.gui_texture = "hud_teammate_consumable_icon_medkit"
+clone_2.left_hand_unit = "units/weapons/player/wpn_first_aid_kit_02/wpn_first_aid_kit_02"
+clone_2.gui_texture = "hud_teammate_consumable_icon_medkit"
 
 return {
-	healthkit = table.clone(var_0_1),
-	first_aid_kit = var_0_2,
-	first_aid_kit_02 = var_0_3
+	healthkit = table.clone(tbl),
+	first_aid_kit = clone,
+	first_aid_kit_02 = clone_2
 }

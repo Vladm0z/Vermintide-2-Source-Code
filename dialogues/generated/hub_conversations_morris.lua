@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/hub_conversations_morris.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "ndw_morris_daemon_whispers_hub_bardin",

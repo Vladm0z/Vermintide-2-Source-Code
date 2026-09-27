@@ -2,8 +2,8 @@
 
 require("scripts/settings/dlcs/morris/deus_blessing_settings")
 
-local var_0_0 = 1
-local var_0_1 = {
+local num = 1
+local tbl = {
 	{
 		drop_weight = 500,
 		pickup_name = "frag_grenade_t1",
@@ -70,88 +70,94 @@ local var_0_1 = {
 		spawn_function = "spawn_pickup_at_unit"
 	}
 }
-local var_0_2 = (function()
-	local var_1_0 = {}
-	local var_1_1 = 0
+local var_0_2 = (function ()
+	-- function 1
+	local tbl_2 = {}
+	local num = 0
 
-	for iter_1_0, iter_1_1 in ipairs(var_0_1) do
-		var_1_1 = var_1_1 + iter_1_1.drop_weight
+	for i, v in ipairs(tbl) do
+		num = num + v.drop_weight
 	end
 
-	for iter_1_2 = 1, #var_0_1 do
-		local var_1_2 = var_0_1[iter_1_2].drop_weight / var_1_1
+	for k = 1, #tbl do
+		local num_2 = tbl[k].drop_weight / num
 
-		var_1_0[iter_1_2] = var_0_1[iter_1_2]
-		var_1_0[iter_1_2].drop_weight = var_1_2
+		tbl_2[k] = tbl[k]
+		tbl_2[k].drop_weight = num_2
 	end
 
-	return var_1_0
+	return tbl_2
 end)()
 
-local function var_0_3(arg_2_0, arg_2_1)
-	local var_2_0 = 0
+local function fn(self, arg_2_1)
+	-- function 2
+	local num = 0
 
-	for iter_2_0, iter_2_1 in ipairs(arg_2_0) do
-		var_2_0 = var_2_0 + iter_2_1.drop_weight
+	for i, v in ipairs(self) do
+		num = num + v.drop_weight
 
-		if arg_2_1 < var_2_0 then
-			return iter_2_1
+		if arg_2_1 < num then
+			return v
 		end
 	end
 
-	assert(arg_2_0[1], "Does not contain first entry. Something went wrong.")
+	assert(self[1], "Does not contain first entry. Something went wrong.")
 
-	return arg_2_0[1]
+	return self[1]
 end
 
-local var_0_4 = {
-	spawn_pickup_at_unit = function(arg_3_0, arg_3_1)
-		local var_3_0 = POSITION_LOOKUP[arg_3_0] + Vector3.up() * 0.1
-		local var_3_1 = true
-		local var_3_2 = arg_3_1.pickup_name
+local tbl_2 = {
+	spawn_pickup_at_unit = function (arg_3_0, arg_3_1)
+		-- function 3
+		local num = POSITION_LOOKUP[arg_3_0] + Vector3.up() * 0.1
+		local flag = true
+		local pickup_name = arg_3_1.pickup_name
 
-		Managers.state.entity:system("pickup_system"):buff_spawn_pickup(var_3_2, var_3_0, var_3_1)
+		Managers.state.entity:system("pickup_system"):buff_spawn_pickup(pickup_name, num, flag)
 	end,
-	spawn_ignited_barrel_at_unit = function(arg_4_0, arg_4_1)
-		local var_4_0 = POSITION_LOOKUP[arg_4_0] + Vector3.up() * 0.1
-		local var_4_1 = Quaternion.identity()
-		local var_4_2 = AiAnimUtils.position_network_scale(var_4_0, true)
-		local var_4_3 = AiAnimUtils.rotation_network_scale(var_4_1, true)
-		local var_4_4 = AiAnimUtils.velocity_network_scale(Vector3(0, 0, 0), true)
-		local var_4_5 = arg_4_1.pickup_name
-		local var_4_6 = Managers.time:time("game")
-		local var_4_7 = {
-			explode_time = var_4_6 + arg_4_1.explode_time,
+	spawn_ignited_barrel_at_unit = function (arg_4_0, arg_4_1)
+		-- function 4
+		local num = POSITION_LOOKUP[arg_4_0] + Vector3.up() * 0.1
+		local identity = Quaternion.identity()
+		local position_network_scale = AiAnimUtils.position_network_scale(num, true)
+		local rotation_network_scale = AiAnimUtils.rotation_network_scale(identity, true)
+		local velocity_network_scale = AiAnimUtils.velocity_network_scale(Vector3(0, 0, 0), true)
+		local pickup_name = arg_4_1.pickup_name
+		local time = Managers.time:time("game")
+		local tbl = {
+			explode_time = time + arg_4_1.explode_time,
 			fuse_time = arg_4_1.fuse_time
 		}
-		local var_4_8 = {
+		local tbl_2 = {
 			projectile_locomotion_system = {
-				network_position = var_4_2,
-				network_rotation = var_4_3,
-				network_velocity = var_4_4,
-				network_angular_velocity = var_4_4
+				network_position = position_network_scale,
+				network_rotation = rotation_network_scale,
+				network_velocity = velocity_network_scale,
+				network_angular_velocity = velocity_network_scale
 			},
 			death_system = {
 				in_hand = false,
-				death_data = var_4_7,
-				item_name = var_4_5
+				death_data = tbl,
+				item_name = pickup_name
 			},
 			health_system = {
 				damage = 1,
-				health_data = var_4_7,
-				item_name = var_4_5
+				health_data = tbl,
+				item_name = pickup_name
 			},
 			pickup_system = {
 				has_physics = true,
 				spawn_type = "loot",
-				pickup_name = var_4_5
+				pickup_name = pickup_name
 			}
 		}
-		local var_4_9 = AllPickups[var_4_5]
-		local var_4_10 = var_4_9.unit_name
-		local var_4_11 = var_4_9.unit_template_name or "pickup_unit"
+		local var_4_9 = AllPickups[pickup_name]
+		local unit_name = var_4_9.unit_name
+		local unit_template_name = var_4_9.unit_template_name
 
-		Managers.state.unit_spawner:spawn_network_unit(var_4_10, var_4_11, var_4_8, var_4_0, var_4_1)
+		unit_template_name = unit_template_name or "pickup_unit"
+
+		Managers.state.unit_spawner:spawn_network_unit(unit_name, unit_template_name, tbl_2, num, identity)
 	end
 }
 
@@ -159,13 +165,15 @@ return {
 	display_name = DeusBlessingSettings.blessing_of_abundance.display_name,
 	description = DeusBlessingSettings.blessing_of_abundance.description,
 	icon = DeusBlessingSettings.blessing_of_abundance.icon,
-	server_start_function = function(arg_5_0, arg_5_1, arg_5_2)
+	server_start_function = function (arg_5_0, arg_5_1, arg_5_2)
+		-- function 5
 		arg_5_1.seed = Managers.mechanism:get_level_seed("mutator")
 	end,
-	server_ai_killed_function = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
-		local var_6_0 = Unit.get_data(arg_6_2, "breed")
+	server_ai_killed_function = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+		-- function 6
+		local get_data = Unit.get_data(arg_6_2, "breed")
 
-		if not var_6_0.special and not var_6_0.elite and not var_6_0.boss then
+		if not (get_data.special or get_data.elite or get_data.boss) then
 			return
 		end
 
@@ -174,21 +182,22 @@ return {
 
 		arg_6_1.seed, var_6_2 = Math.next_random(arg_6_1.seed)
 
-		if var_6_2 <= var_0_0 then
+		if var_6_2 <= num then
 			local var_6_3
 
 			arg_6_1.seed, var_6_3 = Math.next_random(arg_6_1.seed)
 
-			local var_6_4 = table.clone(var_0_2)
+			local clone = table.clone(var_0_2)
 
-			table.array_remove_if(var_6_4, function(arg_7_0)
-				return arg_7_0.pickup_name == arg_6_1.last_dropped_pickup
+			table.array_remove_if(clone, function (self)
+				-- function 7
+				return self.pickup_name == arg_6_1.last_dropped_pickup
 			end)
 
-			local var_6_5 = var_0_3(var_6_4, var_6_3)
-			local var_6_6 = var_6_5.spawn_function
+			local var_6_5 = fn(clone, var_6_3)
+			local spawn_function = var_6_5.spawn_function
 
-			var_0_4[var_6_6](arg_6_2, var_6_5)
+			tbl_2[spawn_function](arg_6_2, var_6_5)
 
 			arg_6_1.last_dropped_pickup = var_6_5.pickup_name
 		end

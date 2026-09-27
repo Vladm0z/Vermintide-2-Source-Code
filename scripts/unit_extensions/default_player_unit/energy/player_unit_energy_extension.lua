@@ -4,197 +4,230 @@ require("scripts/unit_extensions/default_player_unit/energy/energy_data")
 
 PlayerUnitEnergyExtension = class(PlayerUnitEnergyExtension)
 
-function PlayerUnitEnergyExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	arg_1_0.world = arg_1_1.world
-	arg_1_0.unit = arg_1_2
-	arg_1_0.network_manager = Managers.state.network
+PlayerUnitEnergyExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	self.world = arg_1_1.world
+	self.unit = arg_1_2
+	self.network_manager = Managers.state.network
 
-	local var_1_0 = arg_1_3.energy_data
+	local energy_data = arg_1_3.energy_data
+	local max_value = energy_data.max_value
 
-	arg_1_0._max_energy = var_1_0.max_value or 40
-	arg_1_0._energy = arg_1_0._max_energy
-	arg_1_0._recharge_delay_timer = 0
-	arg_1_0._recharge_delay = var_1_0.recharge_delay or 0
-	arg_1_0._recharge_rate = var_1_0.recharge_rate or 0
-	arg_1_0._depletion_cooldown_timer = 0
-	arg_1_0._depletion_cooldown = var_1_0.depletion_cooldown or 0
-	arg_1_0._previous_can_drain = arg_1_0:is_drainable()
+	max_value = max_value or 40
+	self._max_energy = max_value
+	self._energy = self._max_energy
+	self._recharge_delay_timer = 0
+
+	local recharge_delay = energy_data.recharge_delay
+
+	recharge_delay = recharge_delay or 0
+	self._recharge_delay = recharge_delay
+
+	local recharge_rate = energy_data.recharge_rate
+
+	recharge_rate = recharge_rate or 0
+	self._recharge_rate = recharge_rate
+	self._depletion_cooldown_timer = 0
+
+	local depletion_cooldown = energy_data.depletion_cooldown
+
+	depletion_cooldown = depletion_cooldown or 0
+	self._depletion_cooldown = depletion_cooldown
+	self._previous_can_drain = self:is_drainable()
 end
 
-function PlayerUnitEnergyExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+PlayerUnitEnergyExtension.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
+	-- function 2
 	return
 end
 
-function PlayerUnitEnergyExtension.destroy(arg_3_0)
+PlayerUnitEnergyExtension.destroy = function (arg_3_0)
+	-- function 3
 	return
 end
 
-function PlayerUnitEnergyExtension._update_game_object(arg_4_0)
-	local var_4_0 = arg_4_0.network_manager
-	local var_4_1 = arg_4_0.unit
-	local var_4_2 = var_4_0:game()
-	local var_4_3 = Managers.state.unit_storage:go_id(var_4_1)
+PlayerUnitEnergyExtension._update_game_object = function (self)
+	-- function 4
+	local network_manager = self.network_manager
+	local unit = self.unit
+	local game = network_manager:game()
+	local go_id = Managers.state.unit_storage:go_id(unit)
 
-	if var_4_2 and var_4_3 then
-		local var_4_4 = arg_4_0:get_fraction()
-		local var_4_5 = arg_4_0:get_max()
-		local var_4_6 = arg_4_0:is_on_depletion_cooldown()
+	if not game and not go_id then
+		local get_fraction = self:get_fraction()
+		local get_max = self:get_max()
+		local is_on_depletion_cooldown = self:is_on_depletion_cooldown()
 
-		fassert(var_4_5 >= NetworkConstants.max_energy.min and var_4_5 <= NetworkConstants.max_energy.max, "Max energy outside value bounds allowed by network variable!")
-		GameSession.set_game_object_field(var_4_2, var_4_3, "energy_percentage", var_4_4)
-		GameSession.set_game_object_field(var_4_2, var_4_3, "energy_max_value", var_4_5)
-		GameSession.set_game_object_field(var_4_2, var_4_3, "is_on_depletion_cooldown", var_4_6)
+		fassert(not (get_max >= NetworkConstants.max_energy.min) or get_max <= NetworkConstants.max_energy.max, "Max energy outside value bounds allowed by network variable!")
+		GameSession.set_game_object_field(game, go_id, "energy_percentage", get_fraction)
+		GameSession.set_game_object_field(game, go_id, "energy_max_value", get_max)
+		GameSession.set_game_object_field(game, go_id, "is_on_depletion_cooldown", is_on_depletion_cooldown)
 	end
 end
 
-function PlayerUnitEnergyExtension._update_events(arg_5_0)
-	local var_5_0 = arg_5_0._previous_can_drain
-	local var_5_1 = arg_5_0:is_drainable()
+PlayerUnitEnergyExtension._update_events = function (self)
+	-- function 5
+	local _previous_can_drain = self._previous_can_drain
+	local is_drainable = self:is_drainable()
 
-	if var_5_0 ~= var_5_1 then
-		if var_5_1 then
-			arg_5_0:_broadcast_equipment_flow_event("on_energy_drainable")
+	if _previous_can_drain ~= is_drainable then
+		if not is_drainable then
+			self:_broadcast_equipment_flow_event("on_energy_drainable")
 		else
-			arg_5_0:_broadcast_equipment_flow_event("on_energy_not_drainable")
+			self:_broadcast_equipment_flow_event("on_energy_not_drainable")
 		end
 	end
 
-	arg_5_0._previous_can_drain = var_5_1
+	self._previous_can_drain = is_drainable
 end
 
-function PlayerUnitEnergyExtension.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
-	local var_6_0 = ALIVE[arg_6_1] and ScriptUnit.has_extension(arg_6_1, "buff_system")
+PlayerUnitEnergyExtension.update = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+	-- function 6
+	local var_6_0 = ALIVE[arg_6_1]
 
-	if var_6_0 and var_6_0:has_buff_type("twitch_no_overcharge_no_ammo_reloads") then
-		arg_6_0._energy = arg_6_0._max_energy
-		arg_6_0._depletion_cooldown_timer = 0
+	var_6_0 = not var_6_0 and ScriptUnit.has_extension(arg_6_1, "buff_system")
+
+	if not var_6_0 and not var_6_0:has_buff_type("twitch_no_overcharge_no_ammo_reloads") then
+		self._energy = self._max_energy
+		self._depletion_cooldown_timer = 0
 	end
 
-	if arg_6_0:_is_recharging() then
-		arg_6_0:_process_recharge(arg_6_3, arg_6_5)
+	if not self:_is_recharging() then
+		self:_process_recharge(arg_6_3, arg_6_5)
 	end
 
-	if arg_6_0:is_depleted() then
-		arg_6_0:_start_depletion(arg_6_3, arg_6_5)
+	if not self:is_depleted() then
+		self:_start_depletion(arg_6_3, arg_6_5)
 	end
 
-	arg_6_0:_update_game_object()
-	arg_6_0:_update_events()
+	self:_update_game_object()
+	self:_update_events()
 end
 
-function PlayerUnitEnergyExtension.drain(arg_7_0, arg_7_1)
+PlayerUnitEnergyExtension.drain = function (self, arg_7_1)
+	-- function 7
 	assert(arg_7_1 >= 0, "Use add_energy()")
 
-	local var_7_0 = ScriptUnit.has_extension(arg_7_0.unit, "buff_system")
+	local has_extension = ScriptUnit.has_extension(self.unit, "buff_system")
 
-	if var_7_0 then
-		if var_7_0:has_buff_perk("infinite_ammo") then
+	if not has_extension then
+		if not has_extension:has_buff_perk("infinite_ammo") then
 			arg_7_1 = 0
 		end
 
-		arg_7_1 = arg_7_1 * var_7_0:apply_buffs_to_value(1, "ammo_used_multiplier")
+		arg_7_1 = arg_7_1 * has_extension:apply_buffs_to_value(1, "ammo_used_multiplier")
 	end
 
-	local var_7_1 = arg_7_0._energy
-	local var_7_2 = var_7_1 - arg_7_1
+	local _energy = self._energy
+	local num = _energy - arg_7_1
 
-	arg_7_0._energy = math.clamp(var_7_2, 0, var_7_1)
-	arg_7_0._recharge_delay_timer = Managers.time:time("game") + arg_7_0._recharge_delay
+	self._energy = math.clamp(num, 0, _energy)
+	self._recharge_delay_timer = Managers.time:time("game") + self._recharge_delay
 end
 
-function PlayerUnitEnergyExtension.add_energy(arg_8_0, arg_8_1)
+PlayerUnitEnergyExtension.add_energy = function (self, arg_8_1)
+	-- function 8
 	assert(arg_8_1 >= 0, "Use drain()")
 
-	local var_8_0 = arg_8_0._energy + arg_8_1
-	local var_8_1 = arg_8_0._max_energy
+	local num = self._energy + arg_8_1
+	local _max_energy = self._max_energy
 
-	arg_8_0._energy = math.clamp(var_8_0, 0, var_8_1)
+	self._energy = math.clamp(num, 0, _max_energy)
 end
 
-function PlayerUnitEnergyExtension.get_max(arg_9_0)
-	return arg_9_0._max_energy
+PlayerUnitEnergyExtension.get_max = function (self)
+	-- function 9
+	return self._max_energy
 end
 
-function PlayerUnitEnergyExtension.is_drainable(arg_10_0)
-	local var_10_0 = arg_10_0:is_depleted()
-	local var_10_1 = arg_10_0:is_on_depletion_cooldown()
+PlayerUnitEnergyExtension.is_drainable = function (self)
+	-- function 10
+	local is_depleted = self:is_depleted()
+	local is_on_depletion_cooldown = self:is_on_depletion_cooldown()
 
-	if var_10_0 or var_10_1 then
+	if is_depleted or not is_on_depletion_cooldown then
 		return false
 	end
 
 	return true
 end
 
-function PlayerUnitEnergyExtension.is_depleted(arg_11_0)
-	return arg_11_0._energy <= 0
+PlayerUnitEnergyExtension.is_depleted = function (self)
+	-- function 11
+	return self._energy <= 0
 end
 
-function PlayerUnitEnergyExtension.get_fraction(arg_12_0)
-	return math.clamp(arg_12_0._energy / arg_12_0._max_energy, 0, 1)
+PlayerUnitEnergyExtension.get_fraction = function (self)
+	-- function 12
+	return math.clamp(self._energy / self._max_energy, 0, 1)
 end
 
-function PlayerUnitEnergyExtension._start_depletion(arg_13_0, arg_13_1, arg_13_2)
-	arg_13_0._depletion_cooldown_timer = arg_13_0._depletion_cooldown + arg_13_2
+PlayerUnitEnergyExtension._start_depletion = function (self, arg_13_1, arg_13_2)
+	-- function 13
+	self._depletion_cooldown_timer = self._depletion_cooldown + arg_13_2
 end
 
-function PlayerUnitEnergyExtension._process_recharge(arg_14_0, arg_14_1, arg_14_2)
-	arg_14_0._energy = math.clamp(arg_14_0._energy + arg_14_0._recharge_rate * arg_14_1, 0, arg_14_0._max_energy)
+PlayerUnitEnergyExtension._process_recharge = function (self, arg_14_1, arg_14_2)
+	-- function 14
+	self._energy = math.clamp(self._energy + self._recharge_rate * arg_14_1, 0, self._max_energy)
 end
 
-function PlayerUnitEnergyExtension.is_on_depletion_cooldown(arg_15_0)
-	return arg_15_0._depletion_cooldown_timer > Managers.time:time("game")
+PlayerUnitEnergyExtension.is_on_depletion_cooldown = function (self)
+	-- function 15
+	return self._depletion_cooldown_timer > Managers.time:time("game")
 end
 
-function PlayerUnitEnergyExtension._is_recharging(arg_16_0)
-	return arg_16_0._recharge_delay_timer <= Managers.time:time("game")
+PlayerUnitEnergyExtension._is_recharging = function (self)
+	-- function 16
+	return self._recharge_delay_timer <= Managers.time:time("game")
 end
 
-function PlayerUnitEnergyExtension._broadcast_equipment_flow_event(arg_17_0, arg_17_1)
-	local var_17_0 = ScriptUnit.has_extension(arg_17_0.unit, "inventory_system")
-	local var_17_1 = var_17_0 and var_17_0:equipment()
+PlayerUnitEnergyExtension._broadcast_equipment_flow_event = function (self, arg_17_1)
+	-- function 17
+	local has_extension = ScriptUnit.has_extension(self.unit, "inventory_system")
+	local flag = not has_extension and has_extension:equipment()
 
-	if var_17_1 then
-		local var_17_2 = var_17_1.right_hand_wielded_unit_3p
-		local var_17_3 = var_17_1.right_hand_ammo_unit_3p
-		local var_17_4 = var_17_1.right_hand_wielded_unit
-		local var_17_5 = var_17_1.right_hand_ammo_unit_1p
+	if not flag then
+		local right_hand_wielded_unit_3p = flag.right_hand_wielded_unit_3p
+		local right_hand_ammo_unit_3p = flag.right_hand_ammo_unit_3p
+		local right_hand_wielded_unit = flag.right_hand_wielded_unit
+		local right_hand_ammo_unit_1p = flag.right_hand_ammo_unit_1p
 
-		if var_17_2 then
-			Unit.flow_event(var_17_2, arg_17_1)
+		if not right_hand_wielded_unit_3p then
+			Unit.flow_event(right_hand_wielded_unit_3p, arg_17_1)
 		end
 
-		if var_17_3 then
-			Unit.flow_event(var_17_3, arg_17_1)
+		if not right_hand_ammo_unit_3p then
+			Unit.flow_event(right_hand_ammo_unit_3p, arg_17_1)
 		end
 
-		if var_17_4 then
-			Unit.flow_event(var_17_4, arg_17_1)
+		if not right_hand_wielded_unit then
+			Unit.flow_event(right_hand_wielded_unit, arg_17_1)
 		end
 
-		if var_17_5 then
-			Unit.flow_event(var_17_5, arg_17_1)
+		if not right_hand_ammo_unit_1p then
+			Unit.flow_event(right_hand_ammo_unit_1p, arg_17_1)
 		end
 
-		local var_17_6 = var_17_1.left_hand_wielded_unit_3p
-		local var_17_7 = var_17_1.left_hand_ammo_unit_3p
-		local var_17_8 = var_17_1.left_hand_wielded_unit
-		local var_17_9 = var_17_1.left_hand_ammo_unit_1p
+		local left_hand_wielded_unit_3p = flag.left_hand_wielded_unit_3p
+		local left_hand_ammo_unit_3p = flag.left_hand_ammo_unit_3p
+		local left_hand_wielded_unit = flag.left_hand_wielded_unit
+		local left_hand_ammo_unit_1p = flag.left_hand_ammo_unit_1p
 
-		if var_17_6 then
-			Unit.flow_event(var_17_6, arg_17_1)
+		if not left_hand_wielded_unit_3p then
+			Unit.flow_event(left_hand_wielded_unit_3p, arg_17_1)
 		end
 
-		if var_17_7 then
-			Unit.flow_event(var_17_7, arg_17_1)
+		if not left_hand_ammo_unit_3p then
+			Unit.flow_event(left_hand_ammo_unit_3p, arg_17_1)
 		end
 
-		if var_17_8 then
-			Unit.flow_event(var_17_8, arg_17_1)
+		if not left_hand_wielded_unit then
+			Unit.flow_event(left_hand_wielded_unit, arg_17_1)
 		end
 
-		if var_17_9 then
-			Unit.flow_event(var_17_9, arg_17_1)
+		if not left_hand_ammo_unit_1p then
+			Unit.flow_event(left_hand_ammo_unit_1p, arg_17_1)
 		end
 	end
 end

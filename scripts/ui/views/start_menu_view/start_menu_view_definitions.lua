@@ -2,7 +2,7 @@
 
 local_require("scripts/ui/ui_widgets")
 
-local var_0_0 = {
+local tbl = {
 	root_1 = {
 		is_root = true,
 		size = {
@@ -96,7 +96,7 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	{
 		description = "switch character here",
 		name = "overview",
@@ -118,7 +118,8 @@ local var_0_1 = {
 			0,
 			-0.1
 		},
-		contains_new_content = function()
+		contains_new_content = function ()
+			-- function 1
 			return false
 		end
 	},
@@ -143,7 +144,8 @@ local var_0_1 = {
 			0,
 			-0.1
 		},
-		contains_new_content = function()
+		contains_new_content = function ()
+			-- function 2
 			return false
 		end
 	},
@@ -168,12 +170,13 @@ local var_0_1 = {
 			0,
 			0
 		},
-		contains_new_content = function()
+		contains_new_content = function ()
+			-- function 3
 			return false
 		end
 	}
 }
-local var_0_2 = {
+local tbl_3 = {
 	viewport = {
 		scenegraph_id = "dead_space_filler",
 		element = {
@@ -215,8 +218,8 @@ local var_0_2 = {
 	exit_button = UIWidgets.create_simple_two_state_button("exit_button", "tabs_icon_close", "tabs_icon_close_glow"),
 	console_cursor = UIWidgets.create_console_cursor("console_cursor")
 }
-local var_0_3 = {}
-local var_0_4 = {
+local tbl_4 = {}
+local tbl_5 = {
 	witch_hunter = {
 		{
 			unit_name = "units/beings/player/witch_hunter/headpiece/wh_hat_03",
@@ -272,7 +275,7 @@ local var_0_4 = {
 		}
 	}
 }
-local var_0_5 = {
+local tbl_6 = {
 	witch_hunter = {
 		hovered = "witch_hunter_hovered",
 		available = "witch_hunter_available",
@@ -316,10 +319,10 @@ local var_0_5 = {
 }
 
 return {
-	scenegraph_definition = var_0_0,
-	widgets_definitions = var_0_2,
-	settings_by_screen = var_0_1,
-	attachments = var_0_4,
-	flow_events = var_0_5,
-	animations = var_0_3
+	scenegraph_definition = tbl,
+	widgets_definitions = tbl_3,
+	settings_by_screen = tbl_2,
+	attachments = tbl_5,
+	flow_events = tbl_6,
+	animations = tbl_4
 }

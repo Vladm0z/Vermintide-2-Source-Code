@@ -1316,7 +1316,7 @@ ItemMasterList.test_item_1017 = {
 		"we_maidenguard",
 		"we_waywatcher"
 	},
-	steam_store_hidden = not Application or not Application.user_setting("show_test_item")
+	steam_store_hidden = not Application and not Application.user_setting("show_test_item")
 }
 ItemMasterList.test_item_1018 = {
 	description = "test_item_1018_desc",
@@ -1336,5 +1336,5 @@ ItemMasterList.test_item_1018 = {
 		"we_maidenguard",
 		"we_waywatcher"
 	},
-	steam_store_hidden = not Application or not Application.user_setting("show_test_item")
+	steam_store_hidden = not Application and not Application.user_setting("show_test_item")
 }

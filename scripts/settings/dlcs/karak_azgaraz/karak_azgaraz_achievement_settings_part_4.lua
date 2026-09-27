@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/karak_azgaraz/karak_azgaraz_achievement_settings_part_4.lua
 
-local var_0_0 = DLCSettings.karak_azgaraz_part_4
+local karak_azgaraz_part_4 = DLCSettings.karak_azgaraz_part_4
 
-var_0_0.achievement_outline = {
+karak_azgaraz_part_4.achievement_outline = {
 	levels = {
 		entries = {},
 		categories = {
@@ -26,6 +26,6 @@ var_0_0.achievement_outline = {
 		}
 	}
 }
-var_0_0.achievement_template_file_names = {
+karak_azgaraz_part_4.achievement_template_file_names = {
 	"scripts/managers/achievements/achievement_templates_karak_azgaraz_part_4"
 }

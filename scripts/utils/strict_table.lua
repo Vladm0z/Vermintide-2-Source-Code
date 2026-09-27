@@ -1,28 +1,31 @@
 -- chunkname: @scripts/utils/strict_table.lua
 
-local var_0_0 = string.format
+local format = string.format
 
-local function var_0_1(...)
-	return var_0_0(...)
+local function fn(...)
+	-- function 1
+	return format(...)
 end
 
-local var_0_2 = debug.getinfo
-local var_0_3 = true
+local getinfo = debug.getinfo
+local flag = true
 local var_0_4
 
-if var_0_3 then
+if not flag then
 	function var_0_4(...)
-		local var_2_0, var_2_1 = pcall(var_0_1, ...)
+		-- function 2
+		local var_2_0, var_2_1 = pcall(fn, ...)
 
-		if var_2_0 then
+		if not var_2_0 then
 			assert(false, var_2_1)
 		else
 			assert(false, "Failed to format text.")
 		end
 	end
 else
-	local function var_0_5(arg_3_0, arg_3_1)
-		if Application.console_send then
+	local function fn_2(arg_3_0, arg_3_1)
+		-- function 3
+		if not Application.console_send then
 			Application.console_send({
 				system = "Lua",
 				type = "message",
@@ -35,113 +38,131 @@ else
 	end
 
 	function var_0_4(...)
-		var_0_5("error", var_0_1(...))
+		-- function 4
+		fn_2("error", fn(...))
 	end
 end
 
-local var_0_6 = rawget
-local var_0_7 = rawset
+local rawget = rawget
+local rawset = rawset
 
-local function var_0_8(arg_5_0)
-	local var_5_0 = arg_5_0.short_src or ""
-	local var_5_1 = arg_5_0.currentline or -1
+local function fn_3(self)
+	-- function 5
+	local short_src = self.short_src
 
-	return (var_0_1("short_src(%s), line(%d)", var_5_0, var_5_1))
+	short_src = short_src or ""
+
+	local currentline = self.currentline
+
+	currentline = currentline or -1
+
+	return (fn("short_src(%s), line(%d)", short_src, currentline))
 end
+
+local StrictNil = StrictNil
 
 StrictNil = StrictNil or {}
+StrictNil = StrictNil
 
-function MakeTableStrict(arg_6_0)
-	local var_6_0 = {}
+function MakeTableStrict(self)
+	-- function 6
+	local tbl = {}
 
-	for iter_6_0, iter_6_1 in pairs(arg_6_0) do
-		var_6_0[iter_6_0] = true
+	for k, v in pairs(self) do
+		tbl[k] = true
 
-		if iter_6_1 == StrictNil then
-			arg_6_0[iter_6_0] = nil
+		if v == StrictNil then
+			self[k] = nil
 		end
 	end
 
-	local var_6_1 = {
-		__declared = var_6_0
+	local tbl_2 = {
+		__declared = tbl
 	}
 
-	function var_6_1.__newindex(arg_7_0, arg_7_1, arg_7_2)
-		if not var_6_1.__declared[arg_7_1] then
-			if not var_0_6(arg_7_0, arg_7_1) then
-				local var_7_0 = var_0_2(2, "Sl")
+	tbl_2.__newindex = function (arg_7_0, arg_7_1, arg_7_2)
+		-- function 7
+		if not tbl_2.__declared[arg_7_1] then
+			if not rawget(arg_7_0, arg_7_1) then
+				local var_7_0 = getinfo(2, "Sl")
 
-				if arg_7_1 ~= "to_console_line" and var_7_0 and var_7_0.what ~= "main" and var_7_0.what ~= "C" then
-					var_0_4("[ERROR] cannot assign undeclared member variable %q, %s", arg_7_1, var_0_8(var_7_0))
+				if not (arg_7_1 == "to_console_line" or not var_7_0 and var_7_0.what == "main" or var_7_0.what == "C") then
+					var_0_4("[ERROR] cannot assign undeclared member variable %q, %s", arg_7_1, fn_3(var_7_0))
 				end
 			end
 
-			var_6_1.__declared[arg_7_1] = true
+			tbl_2.__declared[arg_7_1] = true
 		end
 
-		var_0_7(arg_7_0, arg_7_1, arg_7_2)
+		rawset(arg_7_0, arg_7_1, arg_7_2)
 	end
 
-	function var_6_1.__index(arg_8_0, arg_8_1)
-		if not var_6_1.__declared[arg_8_1] and not var_0_6(arg_8_0, arg_8_1) then
-			local var_8_0 = var_0_2(2, "Sl")
+	tbl_2.__index = function (arg_8_0, arg_8_1)
+		-- function 8
+		if not (tbl_2.__declared[arg_8_1] or rawget(arg_8_0, arg_8_1)) then
+			local var_8_0 = getinfo(2, "Sl")
 
-			if arg_8_1 ~= "to_console_line" and var_8_0 and var_8_0.what ~= "main" and var_8_0.what ~= "C" then
-				var_0_4("[ERROR] cannot index undeclared member variable %q, %s", tostring(arg_8_1), var_0_8(var_8_0))
+			if not (arg_8_1 == "to_console_line" or not var_8_0 and var_8_0.what == "main" or var_8_0.what == "C") then
+				var_0_4("[ERROR] cannot index undeclared member variable %q, %s", tostring(arg_8_1), fn_3(var_8_0))
 			end
 		end
 	end
 
-	setmetatable(arg_6_0, var_6_1)
+	setmetatable(self, tbl_2)
 
-	return arg_6_0
+	return self
 end
 
-function MakeTableFrozen(arg_9_0)
-	local var_9_0 = {}
+function MakeTableFrozen(self)
+	-- function 9
+	local tbl = {}
 
-	for iter_9_0, iter_9_1 in pairs(arg_9_0) do
-		var_9_0[iter_9_0] = true
+	for k, v in pairs(self) do
+		tbl[k] = true
 
-		if iter_9_1 == StrictNil then
-			arg_9_0[iter_9_0] = nil
+		if v == StrictNil then
+			self[k] = nil
 		end
 	end
 
-	local var_9_1 = {
-		__declared = var_9_0
+	local tbl_2 = {
+		__declared = tbl
 	}
 
-	function var_9_1.__newindex(arg_10_0, arg_10_1, arg_10_2)
-		if not var_9_1.__declared[arg_10_1] then
-			if not var_0_6(arg_10_0, arg_10_1) then
-				local var_10_0 = var_0_2(2, "Sl")
+	tbl_2.__newindex = function (arg_10_0, arg_10_1, arg_10_2)
+		-- function 10
+		if not tbl_2.__declared[arg_10_1] then
+			if not rawget(arg_10_0, arg_10_1) then
+				local var_10_0 = getinfo(2, "Sl")
 
-				if arg_10_1 ~= "to_console_line" and var_10_0 and var_10_0.what ~= "main" and var_10_0.what ~= "C" then
-					var_0_4("[ERROR] cannot assign undeclared member variable %q, %s", arg_10_1, var_0_8(var_10_0))
+				if not (arg_10_1 == "to_console_line" or not var_10_0 and var_10_0.what == "main" or var_10_0.what == "C") then
+					var_0_4("[ERROR] cannot assign undeclared member variable %q, %s", arg_10_1, fn_3(var_10_0))
 				end
 			end
 
-			var_9_1.__declared[arg_10_1] = true
+			tbl_2.__declared[arg_10_1] = true
 		end
 
-		var_0_7(arg_10_0, arg_10_1, arg_10_2)
+		rawset(arg_10_0, arg_10_1, arg_10_2)
 	end
 
-	setmetatable(arg_9_0, var_9_1)
+	setmetatable(self, tbl_2)
 
-	return arg_9_0
+	return self
 end
 
 function ProtectMetaTable(arg_11_0)
+	-- function 11
 	getmetatable(arg_11_0).__metatable = true
 
 	return arg_11_0
 end
 
 function MakeTableWeakValues(arg_12_0)
-	local var_12_0 = getmetatable(arg_12_0) or {}
+	-- function 12
+	local var_12_0 = getmetatable(arg_12_0)
 
+	var_12_0 = var_12_0 or {}
 	var_12_0.__mode = "v"
 
 	setmetatable(arg_12_0, var_12_0)
@@ -150,8 +171,10 @@ function MakeTableWeakValues(arg_12_0)
 end
 
 function MakeTableWeakKeys(arg_13_0)
-	local var_13_0 = getmetatable(arg_13_0) or {}
+	-- function 13
+	local var_13_0 = getmetatable(arg_13_0)
 
+	var_13_0 = var_13_0 or {}
 	var_13_0.__mode = "k"
 
 	setmetatable(arg_13_0, var_13_0)
@@ -159,42 +182,47 @@ function MakeTableWeakKeys(arg_13_0)
 	return arg_13_0
 end
 
-if not var_0_6(_G, "STRICT_ENUM_INITIATED") then
-	var_0_7(_G, "STRICT_ENUM_INITIATED", true)
+if not rawget(_G, "STRICT_ENUM_INITIATED") then
+	rawset(_G, "STRICT_ENUM_INITIATED", true)
 
-	local var_0_9 = {
-		__eq = function(arg_14_0, arg_14_1)
-			assert(arg_14_0._enum_table == arg_14_1._enum_table, "Trying to compare incompatible enum types.")
+	local tbl = {
+		__eq = function (self, arg_14_1)
+			-- function 14
+			assert(self._enum_table == arg_14_1._enum_table, "Trying to compare incompatible enum types.")
 
-			return arg_14_0.my_index == arg_14_1.my_index
+			return self.my_index == arg_14_1.my_index
 		end,
-		__tostring = function(arg_15_0)
-			return arg_15_0._enum_table[arg_15_0]
+		__tostring = function (self)
+			-- function 15
+			return self._enum_table[self]
 		end
 	}
 
 	function CreateStrictEnumTable(...)
-		local var_16_0 = {}
+		-- function 16
+		local tbl_2 = {}
 		local var_16_1 = select("#", ...)
 
-		for iter_16_0 = 1, var_16_1 do
-			local var_16_2 = select(iter_16_0, ...)
+		for i = 1, var_16_1 do
+			local var_16_2 = select(i, ...)
 			local var_16_3 = setmetatable({
-				_enum_table = var_16_0,
-				my_index = iter_16_0,
-				as_number = function()
-					return iter_16_0
+				_enum_table = tbl_2,
+				my_index = i,
+				as_number = function ()
+					-- function 17
+					return i
 				end,
-				__tostring = function()
+				__tostring = function ()
+					-- function 18
 					return var_16_2
 				end
-			}, var_0_9)
+			}, tbl)
 
-			var_16_0[var_16_2] = var_16_3
-			var_16_0[var_16_3] = var_16_2
-			var_16_0[iter_16_0] = var_16_3
+			tbl_2[var_16_2] = var_16_3
+			tbl_2[var_16_3] = var_16_2
+			tbl_2[i] = var_16_3
 		end
 
-		return var_16_0
+		return tbl_2
 	end
 end

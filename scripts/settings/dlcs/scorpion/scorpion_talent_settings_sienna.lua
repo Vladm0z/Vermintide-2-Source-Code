@@ -1,10 +1,16 @@
 -- chunkname: @scripts/settings/dlcs/scorpion/scorpion_talent_settings_sienna.lua
 
-local var_0_0 = {}
+local tbl = {}
+local TalentBuffTemplates = TalentBuffTemplates
 
 TalentBuffTemplates = TalentBuffTemplates or {}
+TalentBuffTemplates = TalentBuffTemplates
 TalentBuffTemplates.bright_wizard = {}
+
+local TalentTrees = TalentTrees
+
 TalentTrees = TalentTrees or {}
+TalentTrees = TalentTrees
 TalentTrees.bright_wizard = {
 	{},
 	{},
@@ -12,12 +18,12 @@ TalentTrees.bright_wizard = {
 }
 Talents.bright_wizard = {}
 
-for iter_0_0, iter_0_1 in pairs(TalentBuffTemplates.bright_wizard) do
-	local var_0_1 = iter_0_1.buffs
+for k, v in pairs(TalentBuffTemplates.bright_wizard) do
+	local buffs = v.buffs
 
-	fassert(#var_0_1 == 1, "talent buff has more than one sub buff, add multiple buffs from the talent instead")
+	fassert(#buffs == 1, "talent buff has more than one sub buff, add multiple buffs from the talent instead")
 
-	var_0_1[1].name = iter_0_0
+	buffs[1].name = k
 end
 
-BuffUtils.apply_buff_tweak_data(TalentBuffTemplates.bright_wizard, var_0_0)
+BuffUtils.apply_buff_tweak_data(TalentBuffTemplates.bright_wizard, tbl)

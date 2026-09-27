@@ -1,32 +1,32 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/definitions/hero_window_gotwf_overview_definitions.lua
 
-local var_0_0 = UISettings.game_start_windows
-local var_0_1 = var_0_0.size
-local var_0_2 = var_0_0.spacing
-local var_0_3 = var_0_0.large_window_frame
-local var_0_4 = UIFrameSettings[var_0_3].texture_sizes.vertical[1]
-local var_0_5 = {
-	var_0_1[1] * 3 + var_0_2 * 2 + var_0_4 * 2,
-	var_0_1[2] + 80
+local game_start_windows = UISettings.game_start_windows
+local size = game_start_windows.size
+local spacing = game_start_windows.spacing
+local large_window_frame = game_start_windows.large_window_frame
+local var_0_4 = UIFrameSettings[large_window_frame].texture_sizes.vertical[1]
+local tbl = {
+	size[1] * 3 + spacing * 2 + var_0_4 * 2,
+	size[2] + 80
 }
-local var_0_6 = {
-	var_0_5[1] + 50,
-	var_0_5[2]
+local tbl_2 = {
+	tbl[1] + 50,
+	tbl[2]
 }
-local var_0_7 = "menu_frame_11"
-local var_0_8 = UIFrameSettings[var_0_7].texture_sizes.vertical[1]
-local var_0_9 = UISettings.game_start_windows
-local var_0_10 = 20
-local var_0_11 = 0.845
-local var_0_12 = {
+local str = "menu_frame_11"
+local var_0_8 = UIFrameSettings[str].texture_sizes.vertical[1]
+local game_start_windows_2 = UISettings.game_start_windows
+local num = 20
+local num_2 = 0.845
+local tbl_3 = {
 	59,
 	31
 }
-local var_0_13 = {
-	260 * var_0_11,
-	250 * var_0_11
+local tbl_4 = {
+	260 * num_2,
+	250 * num_2
 }
-local var_0_14 = {
+local tbl_5 = {
 	root = {
 		is_root = true,
 		size = {
@@ -137,10 +137,10 @@ local var_0_14 = {
 		vertical_alignment = "top",
 		parent = "screen_center",
 		horizontal_alignment = "left",
-		size = var_0_6,
+		size = tbl_2,
 		position = {
-			(1920 - var_0_6[1]) * 0.5,
-			(1080 - var_0_6[2]) * 0.5 * -1,
+			(1920 - tbl_2[1]) * 0.5,
+			(1080 - tbl_2[2]) * 0.5 * -1,
 			1
 		}
 	},
@@ -149,8 +149,8 @@ local var_0_14 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_6[1],
-			var_0_6[2] + 100
+			tbl_2[1],
+			tbl_2[2] + 100
 		},
 		position = {
 			0,
@@ -191,8 +191,8 @@ local var_0_14 = {
 		parent = "write_mask",
 		horizontal_alignment = "center",
 		size = {
-			var_0_6[1],
-			var_0_13[2] + 70
+			tbl_2[1],
+			tbl_4[2] + 70
 		},
 		position = {
 			0,
@@ -292,7 +292,7 @@ local var_0_14 = {
 	},
 	gotwf_item_anchor = {
 		parent = "gotwf_window",
-		size = var_0_13,
+		size = tbl_4,
 		position = {
 			0,
 			15,
@@ -337,7 +337,7 @@ local var_0_14 = {
 			5
 		},
 		size = {
-			var_0_13[1],
+			tbl_4[1],
 			60
 		}
 	},
@@ -790,7 +790,7 @@ local var_0_14 = {
 		}
 	}
 }
-local var_0_15 = {
+local tbl_6 = {
 	font_size = 32,
 	upper_case = true,
 	localize = false,
@@ -812,24 +812,26 @@ local var_0_15 = {
 	}
 }
 
-local function var_0_16(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
-	local var_1_0 = {
+local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	-- function 1
+	local tbl = {
 		element = {}
 	}
-	local var_1_1 = {}
-	local var_1_2 = {}
-	local var_1_3 = {}
-	local var_1_4 = "item_icon"
+	local tbl_2 = {}
+	local tbl_3 = {}
+	local tbl_4 = {}
+	local str = "item_icon"
 
-	var_1_1[#var_1_1 + 1] = {
+	tbl_2[#tbl_2 + 1] = {
 		pass_type = "texture",
-		texture_id = var_1_4,
-		style_id = var_1_4,
-		content_check_function = function(arg_2_0)
-			return arg_2_0[var_1_4]
+		texture_id = str,
+		style_id = str,
+		content_check_function = function (self)
+			-- function 2
+			return self[str]
 		end
 	}
-	var_1_3[var_1_4] = {
+	tbl_4[str] = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
 		masked = arg_1_4,
@@ -846,30 +848,32 @@ local function var_0_16(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 			1
 		}
 	}
-	var_1_2[var_1_4] = arg_1_1
+	tbl_3[str] = arg_1_1
 
-	UIWidgets.append_item_frame_pass("item_frame", var_1_1, var_1_2, var_1_3, arg_1_2, {
+	UIWidgets.append_item_frame_pass("item_frame", tbl_2, tbl_3, tbl_4, arg_1_2, {
 		0,
 		0,
 		4
 	}, arg_1_4, nil, {
 		horizontal_alignment = "center",
 		vertical_alignment = "center"
-	}, nil, function(arg_3_0)
-		return arg_3_0[var_1_4]
+	}, nil, function (self)
+		-- function 3
+		return self[str]
 	end)
 
-	local var_1_5 = "rarity_texture"
+	local str_2 = "rarity_texture"
 
-	var_1_1[#var_1_1 + 1] = {
+	tbl_2[#tbl_2 + 1] = {
 		pass_type = "texture",
-		texture_id = var_1_5,
-		style_id = var_1_5,
-		content_check_function = function(arg_4_0)
-			return arg_4_0[var_1_4]
+		texture_id = str_2,
+		style_id = str_2,
+		content_check_function = function (self)
+			-- function 4
+			return self[str]
 		end
 	}
-	var_1_3[var_1_5] = {
+	tbl_4[str_2] = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
 		masked = arg_1_4,
@@ -886,46 +890,69 @@ local function var_0_16(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 			0
 		}
 	}
-	var_1_2[var_1_5] = "icon_bg_default"
-	var_1_0.element.passes = var_1_1
-	var_1_0.content = var_1_2
-	var_1_0.style = var_1_3
-	var_1_0.offset = arg_1_3 or {
+	tbl_3[str_2] = "icon_bg_default"
+	tbl.element.passes = tbl_2
+	tbl.content = tbl_3
+	tbl.style = tbl_4
+	tbl.offset = arg_1_3 or {
 		0,
 		0,
 		0
 	}
-	var_1_0.scenegraph_id = arg_1_0
+	tbl.scenegraph_id = arg_1_0
 
-	return var_1_0
+	return tbl
 end
 
-local var_0_17 = 50
+local num_3 = 50
 
-local function var_0_18(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9, arg_5_10)
-	local var_5_0 = "menu_frame_16"
-	local var_5_1 = UIFrameSettings[var_5_0]
-	local var_5_2 = "frame_outer_glow_04"
-	local var_5_3 = UIFrameSettings[var_5_2]
+local function fn_2(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9, arg_5_10)
+	-- function 5
+	local str = "menu_frame_16"
+	local var_5_1 = UIFrameSettings[str]
+	local str_2 = "frame_outer_glow_04"
+	local var_5_3 = UIFrameSettings[str_2]
 	local var_5_4 = var_5_3.texture_sizes.horizontal[2]
-	local var_5_5 = "frame_outer_glow_04_big"
-	local var_5_6 = UIFrameSettings[var_5_5]
+	local str_3 = "frame_outer_glow_04_big"
+	local var_5_6 = UIFrameSettings[str_3]
 	local var_5_7 = var_5_6.texture_sizes.horizontal[2]
-	local var_5_8 = "menu_frame_08"
-	local var_5_9 = UIFrameSettings[var_5_8]
+	local str_4 = "menu_frame_08"
+	local var_5_9 = UIFrameSettings[str_4]
 	local var_5_10 = var_5_9.texture_sizes.horizontal[2]
-	local var_5_11 = (arg_5_4 or arg_5_7 and not arg_5_8 or arg_5_6) and 255 or 60
-	local var_5_12 = 75
-	local var_5_13 = arg_5_10 and arg_5_10.bundle and 1 or arg_5_7 and 1 or arg_5_10 and #arg_5_10 or 1
-	local var_5_14 = 1 - (var_5_13 - 1) * 0.25
-	local var_5_15 = 0
-	local var_5_16 = {
+	local flag
+
+	flag = arg_5_4 or not arg_5_7 and arg_5_8 and not arg_5_6 or 255 or 60
+
+	local num_2 = 75
+	local num_4
+
+	if not (not arg_5_10 and arg_5_10.bundle) then
+		num_4 = 1
+	elseif not arg_5_7 then
+		num_4 = 1
+	else
+		if not arg_5_10 then
+			num_4 = #arg_5_10
+
+			if not num_4 then
+				-- Nothing
+			end
+		end
+
+		num_4 = 1
+	end
+
+	::label_5_0::
+
+	local num_5 = 1 - (num_4 - 1) * 0.25
+	local num_6 = 0
+	local tbl = {
 		element = {}
 	}
-	local var_5_17 = {}
-	local var_5_18 = {}
-	local var_5_19 = {}
-	local var_5_20 = {
+	local tbl_2 = {}
+	local tbl_3 = {}
+	local tbl_5 = {}
+	local tbl_6 = {
 		{
 			style_id = "date_text",
 			pass_type = "text",
@@ -940,58 +967,67 @@ local function var_0_18(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, ar
 			pass_type = "texture",
 			style_id = "owned_icon",
 			texture_id = "owned_icon",
-			content_check_function = function(arg_6_0)
-				return arg_6_0.owned
+			content_check_function = function (self)
+				-- function 6
+				return self.owned
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "owned_icon_bg",
 			texture_id = "owned_icon_bg",
-			content_check_function = function(arg_7_0)
-				return arg_7_0.owned
+			content_check_function = function (self)
+				-- function 7
+				return self.owned
 			end
 		},
 		{
 			style_id = "loading_icon",
 			pass_type = "rotated_texture",
 			texture_id = "loading_icon",
-			content_check_function = function(arg_8_0)
-				local var_8_0 = true
+			content_check_function = function (self)
+				-- function 8
+				local flag = true
 
-				for iter_8_0 = 1, var_5_13 do
-					if not arg_8_0["icon_" .. iter_8_0] then
-						var_8_0 = false
+				for i = 1, num_4 do
+					if not self["icon_" .. i] then
+						flag = false
 
 						break
 					end
 				end
 
-				return not var_8_0 and not arg_8_0.hidden and not arg_8_0.disable_loading_icon
+				return not not flag or not not self.hidden or not self.disable_loading_icon
 			end,
-			content_change_function = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
-				local var_9_0 = ((arg_9_1.progress or 0) + arg_9_3) % 1
+			content_change_function = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+				-- function 9
+				local progress = arg_9_1.progress
 
-				arg_9_1.angle = math.pow(2, math.smoothstep(var_9_0, 0, 1)) * (math.pi * 2)
-				arg_9_1.progress = var_9_0
+				progress = progress or 0
+
+				local num = (progress + arg_9_3) % 1
+
+				arg_9_1.angle = math.pow(2, math.smoothstep(num, 0, 1)) * (math.pi * 2)
+				arg_9_1.progress = num
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "package_icon",
 			texture_id = "package_icon",
-			content_check_function = function(arg_10_0)
-				return arg_10_0.hidden
+			content_check_function = function (self)
+				-- function 10
+				return self.hidden
 			end
 		}
 	}
-	local var_5_21 = {}
+	local tbl_7 = {}
 
-	for iter_5_0 = 1, var_5_13 do
-		var_5_21[#var_5_21 + 1] = iter_5_0
+	for i = 1, num_4 do
+		tbl_7[#tbl_7 + 1] = i
 	end
 
-	local var_5_22 = {
+	local tbl_8 = {
 		loading_icon = "loot_loading",
 		owned_icon_bg = "store_owned_ribbon",
 		owned_icon = "store_owned_sigil",
@@ -1007,243 +1043,275 @@ local function var_0_18(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, ar
 		current_reward = arg_5_4,
 		owned = arg_5_6,
 		painting_frame = var_5_9.texture,
-		num_rewards = var_5_13,
+		num_rewards = num_4,
 		rewards = arg_5_10,
-		reward_order = var_5_21
+		reward_order = tbl_7
 	}
-	local var_5_23 = {
-		date_text = {
-			font_size = 32,
-			upper_case = true,
-			localize = false,
-			horizontal_alignment = "center",
-			vertical_alignment = "bottom",
-			dynamic_font_size = false,
-			font_type = arg_5_2 and "hell_shark_header_masked" or "hell_shark_header",
-			text_color = arg_5_4 and Colors.get_color_table_with_alpha("font_title", 255) or Colors.get_color_table_with_alpha("gray", 255),
-			offset = {
-				0,
-				-20 - ((arg_5_4 or arg_5_9) and not arg_5_6 and var_5_12 or 0),
-				10
-			}
+	local tbl_9 = {}
+	local tbl_10 = {
+		font_size = 32,
+		upper_case = true,
+		localize = false,
+		horizontal_alignment = "center",
+		vertical_alignment = "bottom",
+		dynamic_font_size = false
+	}
+	local flag_2
+
+	flag_2 = not arg_5_2 and "hell_shark_header_masked" and "hell_shark_header"
+	tbl_10.font_type = flag_2
+
+	local get_color_table_with_alpha
+
+	if not arg_5_4 then
+		get_color_table_with_alpha = Colors.get_color_table_with_alpha("font_title", 255)
+
+		if not get_color_table_with_alpha then
+			-- Nothing
+		end
+	end
+
+	get_color_table_with_alpha = Colors.get_color_table_with_alpha("gray", 255)
+
+	::label_5_1::
+
+	tbl_10.text_color = get_color_table_with_alpha
+	tbl_10.offset = {
+		0,
+		-20 - ((arg_5_4 or not arg_5_9 or not arg_5_6) and num_2 or 0),
+		10
+	}
+	tbl_9.date_text = tbl_10
+
+	local tbl_11 = {
+		font_size = 32,
+		upper_case = true,
+		localize = false,
+		horizontal_alignment = "center",
+		vertical_alignment = "bottom",
+		dynamic_font_size = false
+	}
+	local flag_3
+
+	flag_3 = not arg_5_2 and "hell_shark_header_masked" and "hell_shark_header"
+	tbl_11.font_type = flag_3
+	tbl_11.text_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_11.offset = {
+		2,
+		-22 - ((arg_5_4 or not arg_5_9 or not arg_5_6) and num_2 or 0),
+		9
+	}
+	tbl_9.date_text_shadow = tbl_11
+	tbl_9.loading_icon = {
+		vertical_alignment = "top",
+		horizontal_alignment = "left",
+		masked = true,
+		angle = 0,
+		pivot = {
+			50,
+			50
 		},
-		date_text_shadow = {
-			font_size = 32,
-			upper_case = true,
-			localize = false,
-			horizontal_alignment = "center",
-			vertical_alignment = "bottom",
-			dynamic_font_size = false,
-			font_type = arg_5_2 and "hell_shark_header_masked" or "hell_shark_header",
-			text_color = Colors.get_color_table_with_alpha("black", 255),
-			offset = {
-				2,
-				-22 - ((arg_5_4 or arg_5_9) and not arg_5_6 and var_5_12 or 0),
-				9
-			}
+		color = {
+			255,
+			255,
+			255,
+			255
 		},
-		loading_icon = {
-			vertical_alignment = "top",
-			horizontal_alignment = "left",
-			masked = true,
-			angle = 0,
-			pivot = {
-				50,
-				50
-			},
-			color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				arg_5_1[1] * 0.5 - 50,
-				-50,
-				8
-			},
-			texture_size = {
-				100,
-				100
-			}
+		offset = {
+			arg_5_1[1] * 0.5 - 50,
+			-50,
+			8
 		},
-		owned_icon = {
-			vertical_alignment = "bottom",
-			horizontal_alignment = "right",
-			masked = arg_5_2,
-			texture_size = {
-				53,
-				53
-			},
-			default_texture_size = {
-				53,
-				53
-			},
-			color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				2,
-				20,
-				12 + 16 * (var_5_13 - 1)
-			},
-			default_offset = {
-				5,
-				20,
-				12 + 16 * (var_5_13 - 1)
-			}
-		},
-		owned_icon_bg = {
-			vertical_alignment = "bottom",
-			horizontal_alignment = "right",
-			masked = arg_5_2,
-			texture_size = {
-				34,
-				50
-			},
-			default_texture_size = {
-				34,
-				50
-			},
-			color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				-10,
-				-0,
-				11 + 16 * (var_5_13 - 1)
-			},
-			default_offset = {
-				2,
-				-45,
-				11 + 16 * (var_5_13 - 1)
-			}
-		},
-		package_icon = {
-			vertical_alignment = "top",
-			horizontal_alignment = "left",
-			masked = arg_5_2,
-			texture_size = arg_5_1,
-			color = {
-				255,
-				var_5_11,
-				var_5_11,
-				var_5_11
-			},
-			offset = {
-				0,
-				0,
-				7
-			}
+		texture_size = {
+			100,
+			100
 		}
 	}
-
-	table.append(var_5_17, var_5_20)
-	table.merge(var_5_18, var_5_22)
-	table.merge(var_5_19, var_5_23)
-
-	local var_5_24 = arg_5_1
-
-	for iter_5_1 = 1, var_5_13 do
-		local var_5_25 = {
-			(iter_5_1 - 1) * var_0_17,
-			(iter_5_1 - 1) * -var_0_17,
-			(iter_5_1 - 1) * 15
+	tbl_9.owned_icon = {
+		vertical_alignment = "bottom",
+		horizontal_alignment = "right",
+		masked = arg_5_2,
+		texture_size = {
+			53,
+			53
+		},
+		default_texture_size = {
+			53,
+			53
+		},
+		color = {
+			255,
+			255,
+			255,
+			255
+		},
+		offset = {
+			2,
+			20,
+			12 + 16 * (num_4 - 1)
+		},
+		default_offset = {
+			5,
+			20,
+			12 + 16 * (num_4 - 1)
 		}
-		local var_5_26 = {
-			var_5_24[1] * var_5_14,
-			var_5_24[2] * var_5_14
+	}
+	tbl_9.owned_icon_bg = {
+		vertical_alignment = "bottom",
+		horizontal_alignment = "right",
+		masked = arg_5_2,
+		texture_size = {
+			34,
+			50
+		},
+		default_texture_size = {
+			34,
+			50
+		},
+		color = {
+			255,
+			255,
+			255,
+			255
+		},
+		offset = {
+			-10,
+			-0,
+			11 + 16 * (num_4 - 1)
+		},
+		default_offset = {
+			2,
+			-45,
+			11 + 16 * (num_4 - 1)
 		}
-		local var_5_27 = {
+	}
+	tbl_9.package_icon = {
+		vertical_alignment = "top",
+		horizontal_alignment = "left",
+		masked = arg_5_2,
+		texture_size = arg_5_1,
+		color = {
+			255,
+			flag,
+			flag,
+			flag
+		},
+		offset = {
+			0,
+			0,
+			7
+		}
+	}
+
+	table.append(tbl_2, tbl_6)
+	table.merge(tbl_3, tbl_8)
+	table.merge(tbl_5, tbl_9)
+
+	local var_5_29 = arg_5_1
+
+	for j = 1, num_4 do
+		local tbl_12 = {
+			(j - 1) * num_3,
+			(j - 1) * -num_3,
+			(j - 1) * 15
+		}
+		local tbl_13 = {
+			var_5_29[1] * num_5,
+			var_5_29[2] * num_5
+		}
+		local tbl_14 = {
 			{
 				pass_type = "hotspot",
-				content_id = "hotspot_" .. iter_5_1,
-				style_id = "hotspot_" .. iter_5_1
+				content_id = "hotspot_" .. j,
+				style_id = "hotspot_" .. j
 			},
 			{
 				pass_type = "texture",
 				texture_id = "rect",
-				style_id = "overlay_" .. iter_5_1
+				style_id = "overlay_" .. j
 			},
 			{
 				pass_type = "texture",
 				texture_id = "rect",
-				style_id = "background_rect_" .. iter_5_1
+				style_id = "background_rect_" .. j
 			},
 			{
 				pass_type = "texture",
-				texture_id = "background_" .. iter_5_1,
-				style_id = "background_" .. iter_5_1,
-				content_check_function = function(arg_11_0)
-					return arg_11_0["background_" .. iter_5_1]
+				texture_id = "background_" .. j,
+				style_id = "background_" .. j,
+				content_check_function = function (self)
+					-- function 11
+					return self["background_" .. j]
 				end
 			},
 			{
 				pass_type = "texture_frame",
 				texture_id = "frame",
-				style_id = "frame_" .. iter_5_1
+				style_id = "frame_" .. j
 			},
 			{
 				pass_type = "texture_frame",
 				texture_id = "hover_frame",
-				style_id = "hover_frame_" .. iter_5_1
+				style_id = "hover_frame_" .. j
 			},
 			{
 				pass_type = "texture_frame",
 				texture_id = "pulse_frame",
-				style_id = "pulse_frame_" .. iter_5_1
+				style_id = "pulse_frame_" .. j
 			},
 			{
 				pass_type = "texture_uv",
-				content_id = "painting_" .. iter_5_1,
-				style_id = "painting_" .. iter_5_1,
-				content_check_function = function(arg_12_0)
-					return arg_12_0.texture_id
+				content_id = "painting_" .. j,
+				style_id = "painting_" .. j,
+				content_check_function = function (self)
+					-- function 12
+					return self.texture_id
 				end
 			},
 			{
 				pass_type = "texture_frame",
 				texture_id = "painting_frame",
-				style_id = "painting_frame_" .. iter_5_1,
-				content_check_function = function(arg_13_0)
-					return arg_13_0.painting
+				style_id = "painting_frame_" .. j,
+				content_check_function = function (self)
+					-- function 13
+					return self.painting
 				end
 			},
 			{
 				pass_type = "texture",
-				texture_id = "icon_" .. iter_5_1,
-				style_id = "icon_" .. iter_5_1,
-				content_check_function = function(arg_14_0)
-					return arg_14_0["icon_" .. iter_5_1] and not arg_14_0.rendering_loading_icon
+				texture_id = "icon_" .. j,
+				style_id = "icon_" .. j,
+				content_check_function = function (self)
+					-- function 14
+					local var_14_0 = self["icon_" .. j]
+
+					var_14_0 = not var_14_0 and not self.rendering_loading_icon
+
+					return var_14_0
 				end
 			},
 			{
 				pass_type = "texture",
-				texture_id = "type_tag_icon_" .. iter_5_1,
-				style_id = "type_tag_icon_" .. iter_5_1,
-				content_check_function = function(arg_15_0)
-					return arg_15_0["type_tag_icon_" .. iter_5_1] ~= nil
+				texture_id = "type_tag_icon_" .. j,
+				style_id = "type_tag_icon_" .. j,
+				content_check_function = function (self)
+					-- function 15
+					return self["type_tag_icon_" .. j] ~= nil
 				end
 			}
 		}
-		local var_5_28 = {
-			["hotspot_" .. iter_5_1] = {},
-			["icon_" .. iter_5_1] = nil,
-			["painting_" .. iter_5_1] = nil,
-			["background_" .. iter_5_1] = nil,
-			["type_tag_icon_" .. iter_5_1] = nil
+		local tbl_15 = {
+			["hotspot_" .. j] = {},
+			["icon_" .. j] = nil,
+			["painting_" .. j] = nil,
+			["background_" .. j] = nil,
+			["type_tag_icon_" .. j] = nil
 		}
-		local var_5_29 = {
-			["hotspot_" .. iter_5_1] = {
+		local tbl_16 = {
+			["hotspot_" .. j] = {
 				size = {
-					var_0_13[1] * var_5_14,
-					var_0_13[2]
+					tbl_4[1] * num_5,
+					tbl_4[2]
 				},
 				base_offset = {
 					0,
@@ -1251,16 +1319,16 @@ local function var_0_18(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, ar
 					0
 				},
 				offset = {
-					0 + var_5_25[1],
-					0 + var_5_25[2],
-					0 + var_5_25[3]
+					0 + tbl_12[1],
+					0 + tbl_12[2],
+					0 + tbl_12[3]
 				}
 			},
-			["background_rect_" .. iter_5_1] = {
+			["background_rect_" .. j] = {
 				vertical_alignment = "top",
 				horizontal_alignment = "left",
 				masked = arg_5_2,
-				texture_size = var_5_26,
+				texture_size = tbl_13,
 				color = {
 					255,
 					255,
@@ -1273,16 +1341,16 @@ local function var_0_18(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, ar
 					0
 				},
 				offset = {
-					0 + var_5_25[1],
-					0 + var_5_25[2],
-					0 + var_5_25[3]
+					0 + tbl_12[1],
+					0 + tbl_12[2],
+					0 + tbl_12[3]
 				}
 			},
-			["background_" .. iter_5_1] = {
+			["background_" .. j] = {
 				vertical_alignment = "top",
 				horizontal_alignment = "left",
 				masked = arg_5_2,
-				texture_size = var_5_26,
+				texture_size = tbl_13,
 				color = {
 					255,
 					255,
@@ -1295,16 +1363,16 @@ local function var_0_18(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, ar
 					1
 				},
 				offset = {
-					0 + var_5_25[1],
-					0 + var_5_25[2],
-					1 + var_5_25[3]
+					0 + tbl_12[1],
+					0 + tbl_12[2],
+					1 + tbl_12[3]
 				}
 			},
-			["overlay_" .. iter_5_1] = {
+			["overlay_" .. j] = {
 				vertical_alignment = "top",
 				horizontal_alignment = "left",
 				masked = arg_5_2,
-				texture_size = var_5_26,
+				texture_size = tbl_13,
 				color = {
 					0,
 					5,
@@ -1317,12 +1385,12 @@ local function var_0_18(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, ar
 					8
 				},
 				offset = {
-					0 + var_5_25[1],
-					0 + var_5_25[2],
-					8 + var_5_25[3]
+					0 + tbl_12[1],
+					0 + tbl_12[2],
+					8 + tbl_12[3]
 				}
 			},
-			["type_tag_icon_" .. iter_5_1] = {
+			["type_tag_icon_" .. j] = {
 				vertical_alignment = "top",
 				horizontal_alignment = "left",
 				masked = arg_5_2,
@@ -1332,31 +1400,31 @@ local function var_0_18(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, ar
 				},
 				color = {
 					255,
-					var_5_11,
-					var_5_11,
-					var_5_11
+					flag,
+					flag,
+					flag
 				},
 				base_offset = {
-					var_5_26[1] - 56,
+					tbl_13[1] - 56,
 					0,
 					9
 				},
 				offset = {
-					var_5_26[1] - 56 + var_5_25[1],
-					0 + var_5_25[2],
-					9 + var_5_25[3]
+					tbl_13[1] - 56 + tbl_12[1],
+					0 + tbl_12[2],
+					9 + tbl_12[3]
 				}
 			},
-			["icon_" .. iter_5_1] = {
+			["icon_" .. j] = {
 				vertical_alignment = "top",
 				horizontal_alignment = "left",
 				masked = arg_5_2,
-				texture_size = var_5_26,
+				texture_size = tbl_13,
 				color = {
 					255,
-					var_5_11,
-					var_5_11,
-					var_5_11
+					flag,
+					flag,
+					flag
 				},
 				base_offset = {
 					0,
@@ -1364,16 +1432,16 @@ local function var_0_18(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, ar
 					7
 				},
 				offset = {
-					0 + var_5_25[1],
-					0 + var_5_25[2],
-					7 + var_5_25[3]
+					0 + tbl_12[1],
+					0 + tbl_12[2],
+					7 + tbl_12[3]
 				}
 			},
-			["frame_" .. iter_5_1] = {
+			["frame_" .. j] = {
 				horizontal_alignment = "left",
 				vertical_alignment = "top",
 				masked = arg_5_2,
-				area_size = var_5_26,
+				area_size = tbl_13,
 				texture_size = var_5_1.texture_size,
 				texture_sizes = var_5_1.texture_sizes,
 				frame_margins = {
@@ -1382,9 +1450,9 @@ local function var_0_18(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, ar
 				},
 				color = {
 					255,
-					var_5_11,
-					var_5_11,
-					var_5_11
+					flag,
+					flag,
+					flag
 				},
 				base_offset = {
 					0,
@@ -1392,16 +1460,16 @@ local function var_0_18(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, ar
 					10
 				},
 				offset = {
-					0 + var_5_25[1],
-					0 + var_5_25[2],
-					10 + var_5_25[3]
+					0 + tbl_12[1],
+					0 + tbl_12[2],
+					10 + tbl_12[3]
 				}
 			},
-			["hover_frame_" .. iter_5_1] = {
+			["hover_frame_" .. j] = {
 				horizontal_alignment = "left",
 				vertical_alignment = "top",
 				masked = arg_5_2,
-				area_size = var_5_26,
+				area_size = tbl_13,
 				texture_size = var_5_3.texture_size,
 				texture_sizes = var_5_3.texture_sizes,
 				frame_margins = {
@@ -1420,16 +1488,16 @@ local function var_0_18(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, ar
 					6
 				},
 				offset = {
-					0 + var_5_25[1],
-					0 + var_5_25[2],
-					6 + var_5_25[3]
+					0 + tbl_12[1],
+					0 + tbl_12[2],
+					6 + tbl_12[3]
 				}
 			},
-			["pulse_frame_" .. iter_5_1] = {
+			["pulse_frame_" .. j] = {
 				horizontal_alignment = "left",
 				vertical_alignment = "top",
 				masked = arg_5_2,
-				area_size = var_5_26,
+				area_size = tbl_13,
 				texture_size = var_5_6.texture_size,
 				texture_sizes = var_5_6.texture_sizes,
 				frame_margins = {
@@ -1448,21 +1516,21 @@ local function var_0_18(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, ar
 					12
 				},
 				offset = {
-					0 + var_5_25[1],
-					0 + var_5_25[2],
-					12 + var_5_25[3]
+					0 + tbl_12[1],
+					0 + tbl_12[2],
+					12 + tbl_12[3]
 				}
 			},
-			["painting_" .. iter_5_1] = {
+			["painting_" .. j] = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
 				masked = arg_5_2,
-				texture_size = var_5_26,
+				texture_size = tbl_13,
 				color = {
 					255,
-					var_5_11,
-					var_5_11,
-					var_5_11
+					flag,
+					flag,
+					flag
 				},
 				base_offset = {
 					0,
@@ -1470,16 +1538,16 @@ local function var_0_18(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, ar
 					7
 				},
 				offset = {
-					0 + var_5_25[1],
-					0 + var_5_25[2],
-					7 + var_5_25[3]
+					0 + tbl_12[1],
+					0 + tbl_12[2],
+					7 + tbl_12[3]
 				}
 			},
-			["painting_frame_" .. iter_5_1] = {
+			["painting_frame_" .. j] = {
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				masked = arg_5_2,
-				area_size = var_5_26,
+				area_size = tbl_13,
 				texture_size = var_5_9.texture_size,
 				texture_sizes = var_5_9.texture_sizes,
 				frame_margins = {
@@ -1498,32 +1566,33 @@ local function var_0_18(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, ar
 					12
 				},
 				offset = {
-					0 + var_5_25[1],
-					0 + var_5_25[2],
-					12 + var_5_25[3]
+					0 + tbl_12[1],
+					0 + tbl_12[2],
+					12 + tbl_12[3]
 				}
 			}
 		}
 
-		table.append(var_5_17, var_5_27)
-		table.merge(var_5_18, var_5_28)
-		table.merge(var_5_19, var_5_29)
+		table.append(tbl_2, tbl_14)
+		table.merge(tbl_3, tbl_15)
+		table.merge(tbl_5, tbl_16)
 	end
 
-	var_5_16.element.passes = var_5_17
-	var_5_16.content = var_5_18
-	var_5_16.style = var_5_19
-	var_5_16.offset = {
-		10 + (arg_5_3 - 1) * (arg_5_1[1] + var_0_10),
-		(arg_5_4 or arg_5_9) and not arg_5_6 and var_5_12 or 0,
+	tbl.element.passes = tbl_2
+	tbl.content = tbl_3
+	tbl.style = tbl_5
+	tbl.offset = {
+		10 + (arg_5_3 - 1) * (arg_5_1[1] + num),
+		(arg_5_4 or not arg_5_9 or not arg_5_6) and num_2 or 0,
 		5
 	}
-	var_5_16.scenegraph_id = arg_5_0
+	tbl.scenegraph_id = arg_5_0
 
-	return var_5_16
+	return tbl
 end
 
-local function var_0_19(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8, arg_16_9)
+local function fn_3(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8, arg_16_9)
+	-- function 16
 	return {
 		element = {
 			passes = {
@@ -1541,8 +1610,9 @@ local function var_0_19(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16
 					texture_id = "arrow_hover",
 					style_id = "arrow_hover",
 					pass_type = "rotated_texture",
-					content_check_function = function(arg_17_0, arg_17_1)
-						return arg_17_0.hotspot.is_hover
+					content_check_function = function (self, arg_17_1)
+						-- function 17
+						return self.hotspot.is_hover
 					end
 				}
 			}
@@ -1571,7 +1641,7 @@ local function var_0_19(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16
 				masked = arg_16_5,
 				angle = arg_16_2,
 				pivot = arg_16_3,
-				texture_size = var_0_12,
+				texture_size = tbl_3,
 				color = arg_16_6 or {
 					255,
 					255,
@@ -1588,7 +1658,7 @@ local function var_0_19(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16
 				masked = arg_16_5,
 				angle = arg_16_2,
 				pivot = arg_16_3,
-				texture_size = var_0_12,
+				texture_size = tbl_3,
 				color = arg_16_6 or {
 					255,
 					255,
@@ -1612,20 +1682,34 @@ local function var_0_19(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16
 end
 
 function create_claim_button_definition(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7, arg_18_8, arg_18_9, arg_18_10, arg_18_11)
+	-- function 18
 	arg_18_3 = arg_18_3 or "button_bg_01"
 
-	local var_18_0 = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_18_3)
-	local var_18_1 = arg_18_2 and UIFrameSettings[arg_18_2] or UIFrameSettings.button_frame_01
+	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_18_3)
+	local var_18_1
+
+	if not arg_18_2 then
+		var_18_1 = UIFrameSettings[arg_18_2]
+
+		if not var_18_1 then
+			-- Nothing
+		end
+	end
+
+	var_18_1 = UIFrameSettings.button_frame_01
+
+	::label_18_0::
+
 	local var_18_2 = var_18_1.texture_sizes.corner[1]
-	local var_18_3 = arg_18_7 or "button_detail_01"
-	local var_18_4 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_18_3).size
+	local flag = arg_18_7 or "button_detail_01"
+	local size = UIAtlasHelper.get_atlas_settings_by_texture_name(flag).size
 	local var_18_5
 	local var_18_6
-	local var_18_7 = "frame_outer_glow_04"
-	local var_18_8 = UIFrameSettings[var_18_7]
+	local str = "frame_outer_glow_04"
+	local var_18_8 = UIFrameSettings[str]
 	local var_18_9 = var_18_8.texture_sizes.horizontal[2]
 
-	if arg_18_8 then
+	if not arg_18_8 then
 		if type(arg_18_8) == "table" then
 			var_18_5 = arg_18_8[1]
 			var_18_6 = arg_18_8[2]
@@ -1634,7 +1718,7 @@ function create_claim_button_definition(arg_18_0, arg_18_1, arg_18_2, arg_18_3, 
 		end
 	end
 
-	return {
+	local tbl = {
 		element = {
 			passes = {
 				{
@@ -1646,8 +1730,9 @@ function create_claim_button_definition(arg_18_0, arg_18_1, arg_18_2, arg_18_3, 
 					texture_id = "frame",
 					style_id = "frame",
 					pass_type = "texture_frame",
-					content_check_function = function(arg_19_0)
-						return arg_19_0.draw_frame
+					content_check_function = function (self)
+						-- function 19
+						return self.draw_frame
 					end
 				},
 				{
@@ -1672,16 +1757,18 @@ function create_claim_button_definition(arg_18_0, arg_18_1, arg_18_2, arg_18_3, 
 				{
 					style_id = "disabled_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_20_0)
-						return arg_20_0.button_hotspot.disable_button
+					content_check_function = function (self)
+						-- function 20
+						return self.button_hotspot.disable_button
 					end
 				},
 				{
 					style_id = "side_detail_right",
 					pass_type = "texture_uv",
 					content_id = "side_detail",
-					content_check_function = function(arg_21_0)
-						return not arg_21_0.skip_side_detail
+					content_check_function = function (self)
+						-- function 21
+						return not self.skip_side_detail
 					end
 				},
 				{
@@ -1689,24 +1776,27 @@ function create_claim_button_definition(arg_18_0, arg_18_1, arg_18_2, arg_18_3, 
 					style_id = "side_detail_left",
 					pass_type = "texture",
 					content_id = "side_detail",
-					content_check_function = function(arg_22_0)
-						return not arg_22_0.skip_side_detail
+					content_check_function = function (self)
+						-- function 22
+						return not self.skip_side_detail
 					end
 				},
 				{
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_23_0)
-						return not arg_23_0.button_hotspot.disable_button
+					content_check_function = function (self)
+						-- function 23
+						return not self.button_hotspot.disable_button
 					end
 				},
 				{
 					style_id = "title_text_disabled",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_24_0)
-						return arg_24_0.button_hotspot.disable_button
+					content_check_function = function (self)
+						-- function 24
+						return self.button_hotspot.disable_button
 					end
 				},
 				{
@@ -1728,26 +1818,28 @@ function create_claim_button_definition(arg_18_0, arg_18_1, arg_18_2, arg_18_3, 
 					style_id = "hover_frame",
 					texture_id = "hover_frame",
 					pass_type = "texture_frame",
-					content_check_function = function(arg_25_0)
+					content_check_function = function (arg_25_0)
+						-- function 25
 						return (Managers.input:is_device_active("gamepad"))
 					end,
-					content_change_function = function(arg_26_0, arg_26_1)
-						local var_26_0 = 2
-						local var_26_1, var_26_2 = Managers.time:time_and_delta("main")
-						local var_26_3 = arg_26_0.gamepad_selected
-						local var_26_4 = arg_26_0.gamepad_selection_progress
-						local var_26_5 = 0
+					content_change_function = function (self, arg_26_1)
+						-- function 26
+						local num = 2
+						local time_and_delta, var_26_2 = Managers.time:time_and_delta("main")
+						local gamepad_selected = self.gamepad_selected
+						local gamepad_selection_progress = self.gamepad_selection_progress
+						local num_2 = 0
 
-						if var_26_3 then
-							var_26_4 = math.min(var_26_4 + var_26_2 * var_26_0, 1)
-							var_26_5 = math.easeOutCubic(var_26_4)
+						if not gamepad_selected then
+							gamepad_selection_progress = math.min(gamepad_selection_progress + var_26_2 * num, 1)
+							num_2 = math.easeOutCubic(gamepad_selection_progress)
 						else
-							var_26_4 = math.max(var_26_4 - var_26_2 * var_26_0, 0)
-							var_26_5 = math.easeInCubic(var_26_4)
+							gamepad_selection_progress = math.max(gamepad_selection_progress - var_26_2 * num, 0)
+							num_2 = math.easeInCubic(gamepad_selection_progress)
 						end
 
-						arg_26_1.color[1] = var_26_5 * 255
-						arg_26_0.gamepad_selection_progress = var_26_4
+						arg_26_1.color[1] = num_2 * 255
+						self.gamepad_selection_progress = gamepad_selection_progress
 					end
 				}
 			}
@@ -1769,7 +1861,7 @@ function create_claim_button_definition(arg_18_0, arg_18_1, arg_18_2, arg_18_3, 
 						1
 					}
 				},
-				texture_id = var_18_3,
+				texture_id = flag,
 				skip_side_detail = arg_18_10
 			},
 			button_hotspot = {},
@@ -1779,10 +1871,10 @@ function create_claim_button_definition(arg_18_0, arg_18_1, arg_18_2, arg_18_3, 
 				uvs = {
 					{
 						0,
-						1 - arg_18_1[2] / var_18_0.size[2]
+						1 - arg_18_1[2] / get_atlas_settings_by_texture_name.size[2]
 					},
 					{
-						arg_18_1[1] / var_18_0.size[1],
+						arg_18_1[1] / get_atlas_settings_by_texture_name.size[1],
 						1
 					}
 				},
@@ -1790,275 +1882,312 @@ function create_claim_button_definition(arg_18_0, arg_18_1, arg_18_2, arg_18_3, 
 			},
 			disable_with_gamepad = arg_18_9,
 			hover_frame = var_18_8.texture
+		}
+	}
+	local tbl_2 = {
+		background = {
+			color = {
+				255,
+				150,
+				150,
+				150
+			},
+			offset = {
+				0,
+				0,
+				0
+			},
+			masked = arg_18_11
 		},
-		style = {
-			background = {
-				color = {
-					255,
-					150,
-					150,
-					150
-				},
-				offset = {
-					0,
-					0,
-					0
-				},
-				masked = arg_18_11
+		background_fade = {
+			color = {
+				200,
+				255,
+				255,
+				255
 			},
-			background_fade = {
-				color = {
-					200,
-					255,
-					255,
-					255
-				},
-				offset = {
-					var_18_2,
-					var_18_2 - 2,
-					2
-				},
-				size = {
-					arg_18_1[1] - var_18_2 * 2,
-					arg_18_1[2] - var_18_2 * 2
-				},
-				masked = arg_18_11
+			offset = {
+				var_18_2,
+				var_18_2 - 2,
+				2
 			},
-			hover_glow = {
-				color = {
-					0,
-					255,
-					255,
-					255
-				},
-				offset = {
-					0,
-					var_18_2 - 2,
-					3
-				},
-				size = {
-					arg_18_1[1],
-					math.min(arg_18_1[2] - 5, 80)
-				},
-				masked = arg_18_11
+			size = {
+				arg_18_1[1] - var_18_2 * 2,
+				arg_18_1[2] - var_18_2 * 2
 			},
-			clicked_rect = {
-				color = {
-					0,
-					0,
-					0,
-					0
-				},
-				offset = {
-					0,
-					0,
-					7
-				}
+			masked = arg_18_11
+		},
+		hover_glow = {
+			color = {
+				0,
+				255,
+				255,
+				255
 			},
-			disabled_rect = {
-				color = {
-					150,
-					20,
-					20,
-					20
-				},
-				offset = {
-					0,
-					0,
-					1
-				}
+			offset = {
+				0,
+				var_18_2 - 2,
+				3
 			},
-			title_text = {
-				upper_case = true,
-				word_wrap = true,
-				horizontal_alignment = "center",
-				vertical_alignment = "center",
-				dynamic_font_size = true,
-				font_size = arg_18_5 or 24,
-				font_type = arg_18_11 and "hell_shark_masked" or "hell_shark",
-				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
-				default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
-				select_text_color = Colors.get_color_table_with_alpha("white", 255),
-				size = {
-					arg_18_1[1] - 40,
-					arg_18_1[2]
-				},
-				offset = {
-					20,
-					0,
-					6
-				}
+			size = {
+				arg_18_1[1],
+				math.min(arg_18_1[2] - 5, 80)
 			},
-			title_text_disabled = {
-				upper_case = true,
-				word_wrap = true,
-				horizontal_alignment = "center",
-				vertical_alignment = "center",
-				dynamic_font_size = true,
-				font_size = arg_18_5 or 24,
-				font_type = arg_18_11 and "hell_shark_masked" or "hell_shark",
-				text_color = Colors.get_color_table_with_alpha("gray", 255),
-				default_text_color = Colors.get_color_table_with_alpha("gray", 255),
-				size = {
-					arg_18_1[1] - 40,
-					arg_18_1[2]
-				},
-				offset = {
-					20,
-					0,
-					6
-				}
+			masked = arg_18_11
+		},
+		clicked_rect = {
+			color = {
+				0,
+				0,
+				0,
+				0
 			},
-			title_text_shadow = {
-				upper_case = true,
-				word_wrap = true,
-				horizontal_alignment = "center",
-				vertical_alignment = "center",
-				dynamic_font_size = true,
-				font_size = arg_18_5 or 24,
-				font_type = arg_18_11 and "hell_shark_masked" or "hell_shark",
-				text_color = Colors.get_color_table_with_alpha("black", 255),
-				default_text_color = Colors.get_color_table_with_alpha("black", 255),
-				size = {
-					arg_18_1[1] - 40,
-					arg_18_1[2]
-				},
-				offset = {
-					22,
-					-2,
-					5
-				}
-			},
-			frame = {
-				texture_size = var_18_1.texture_size,
-				texture_sizes = var_18_1.texture_sizes,
-				color = {
-					255,
-					255,
-					255,
-					255
-				},
-				offset = {
-					0,
-					0,
-					8
-				},
-				masked = arg_18_11
-			},
-			glass_top = {
-				color = {
-					255,
-					255,
-					255,
-					255
-				},
-				offset = {
-					0,
-					arg_18_1[2] - (var_18_2 + 11),
-					4
-				},
-				size = {
-					arg_18_1[1],
-					11
-				},
-				masked = arg_18_11
-			},
-			glass_bottom = {
-				color = {
-					100,
-					255,
-					255,
-					255
-				},
-				offset = {
-					0,
-					var_18_2 - 9,
-					4
-				},
-				size = {
-					arg_18_1[1],
-					11
-				},
-				masked = arg_18_11
-			},
-			side_detail_left = {
-				color = {
-					255,
-					255,
-					255,
-					255
-				},
-				offset = {
-					var_18_5 and -var_18_5 or -9,
-					arg_18_1[2] / 2 - var_18_4[2] / 2 + (var_18_6 or 0),
-					9
-				},
-				size = {
-					var_18_4[1],
-					var_18_4[2]
-				},
-				masked = arg_18_11
-			},
-			side_detail_right = {
-				color = {
-					255,
-					255,
-					255,
-					255
-				},
-				offset = {
-					arg_18_1[1] - var_18_4[1] + (var_18_5 or 9),
-					arg_18_1[2] / 2 - var_18_4[2] / 2 + (var_18_6 or 0),
-					9
-				},
-				size = {
-					var_18_4[1],
-					var_18_4[2]
-				},
-				masked = arg_18_11
-			},
-			hover_frame = {
-				horizontal_alignment = "left",
-				vertical_alignment = "top",
-				masked = arg_18_11,
-				area_size = arg_18_1,
-				texture_size = var_18_8.texture_size,
-				texture_sizes = var_18_8.texture_sizes,
-				frame_margins = {
-					-var_18_9,
-					-var_18_9
-				},
-				color = {
-					255,
-					255,
-					255,
-					255
-				},
-				offset = {
-					0,
-					0,
-					6
-				}
+			offset = {
+				0,
+				0,
+				7
 			}
 		},
-		scenegraph_id = arg_18_0,
+		disabled_rect = {
+			color = {
+				150,
+				20,
+				20,
+				20
+			},
+			offset = {
+				0,
+				0,
+				1
+			}
+		}
+	}
+	local tbl_3 = {
+		upper_case = true,
+		word_wrap = true,
+		horizontal_alignment = "center",
+		vertical_alignment = "center",
+		dynamic_font_size = true,
+		font_size = arg_18_5 or 24
+	}
+	local flag_2
+
+	flag_2 = not arg_18_11 and "hell_shark_masked" and "hell_shark"
+	tbl_3.font_type = flag_2
+	tbl_3.text_color = Colors.get_color_table_with_alpha("font_button_normal", 255)
+	tbl_3.default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255)
+	tbl_3.select_text_color = Colors.get_color_table_with_alpha("white", 255)
+	tbl_3.size = {
+		arg_18_1[1] - 40,
+		arg_18_1[2]
+	}
+	tbl_3.offset = {
+		20,
+		0,
+		6
+	}
+	tbl_2.title_text = tbl_3
+
+	local tbl_4 = {
+		upper_case = true,
+		word_wrap = true,
+		horizontal_alignment = "center",
+		vertical_alignment = "center",
+		dynamic_font_size = true,
+		font_size = arg_18_5 or 24
+	}
+	local flag_3
+
+	flag_3 = not arg_18_11 and "hell_shark_masked" and "hell_shark"
+	tbl_4.font_type = flag_3
+	tbl_4.text_color = Colors.get_color_table_with_alpha("gray", 255)
+	tbl_4.default_text_color = Colors.get_color_table_with_alpha("gray", 255)
+	tbl_4.size = {
+		arg_18_1[1] - 40,
+		arg_18_1[2]
+	}
+	tbl_4.offset = {
+		20,
+		0,
+		6
+	}
+	tbl_2.title_text_disabled = tbl_4
+
+	local tbl_5 = {
+		upper_case = true,
+		word_wrap = true,
+		horizontal_alignment = "center",
+		vertical_alignment = "center",
+		dynamic_font_size = true,
+		font_size = arg_18_5 or 24
+	}
+	local flag_4
+
+	flag_4 = not arg_18_11 and "hell_shark_masked" and "hell_shark"
+	tbl_5.font_type = flag_4
+	tbl_5.text_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_5.default_text_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_5.size = {
+		arg_18_1[1] - 40,
+		arg_18_1[2]
+	}
+	tbl_5.offset = {
+		22,
+		-2,
+		5
+	}
+	tbl_2.title_text_shadow = tbl_5
+	tbl_2.frame = {
+		texture_size = var_18_1.texture_size,
+		texture_sizes = var_18_1.texture_sizes,
+		color = {
+			255,
+			255,
+			255,
+			255
+		},
 		offset = {
 			0,
 			0,
-			0
+			8
+		},
+		masked = arg_18_11
+	}
+	tbl_2.glass_top = {
+		color = {
+			255,
+			255,
+			255,
+			255
+		},
+		offset = {
+			0,
+			arg_18_1[2] - (var_18_2 + 11),
+			4
+		},
+		size = {
+			arg_18_1[1],
+			11
+		},
+		masked = arg_18_11
+	}
+	tbl_2.glass_bottom = {
+		color = {
+			100,
+			255,
+			255,
+			255
+		},
+		offset = {
+			0,
+			var_18_2 - 9,
+			4
+		},
+		size = {
+			arg_18_1[1],
+			11
+		},
+		masked = arg_18_11
+	}
+
+	local tbl_6 = {
+		color = {
+			255,
+			255,
+			255,
+			255
 		}
 	}
+	local tbl_7 = {
+		nil,
+		nil,
+		9
+	}
+	local num
+
+	if not var_18_5 then
+		num = -var_18_5
+
+		if not num then
+			-- Nothing
+		end
+	end
+
+	num = -9
+
+	::label_18_1::
+
+	tbl_7[1] = num
+	tbl_7[2] = arg_18_1[2] / 2 - size[2] / 2 + (var_18_6 or 0)
+	tbl_6.offset = tbl_7
+	tbl_6.size = {
+		size[1],
+		size[2]
+	}
+	tbl_6.masked = arg_18_11
+	tbl_2.side_detail_left = tbl_6
+	tbl_2.side_detail_right = {
+		color = {
+			255,
+			255,
+			255,
+			255
+		},
+		offset = {
+			arg_18_1[1] - size[1] + (var_18_5 or 9),
+			arg_18_1[2] / 2 - size[2] / 2 + (var_18_6 or 0),
+			9
+		},
+		size = {
+			size[1],
+			size[2]
+		},
+		masked = arg_18_11
+	}
+	tbl_2.hover_frame = {
+		horizontal_alignment = "left",
+		vertical_alignment = "top",
+		masked = arg_18_11,
+		area_size = arg_18_1,
+		texture_size = var_18_8.texture_size,
+		texture_sizes = var_18_8.texture_sizes,
+		frame_margins = {
+			-var_18_9,
+			-var_18_9
+		},
+		color = {
+			255,
+			255,
+			255,
+			255
+		},
+		offset = {
+			0,
+			0,
+			6
+		}
+	}
+	tbl.style = tbl_2
+	tbl.scenegraph_id = arg_18_0
+	tbl.offset = {
+		0,
+		0,
+		0
+	}
+
+	return tbl
 end
 
-local var_0_20 = false
-local var_0_21 = true
-local var_0_22 = true
+local flag = false
+local flag_2 = true
+local flag_3 = true
 
-local function var_0_23()
-	return create_claim_button_definition("claim_button", var_0_14.claim_button.size, nil, nil, Localize("welcome_currency_popup_button_claim"), 26, nil, nil, nil, var_0_20, var_0_21, var_0_22)
+local function fn_4()
+	-- function 27
+	return create_claim_button_definition("claim_button", tbl_5.claim_button.size, nil, nil, Localize("welcome_currency_popup_button_claim"), 26, nil, nil, nil, flag, flag_2, flag_3)
 end
 
-local var_0_24 = {
+local tbl_7 = {
 	black_background = UIWidgets.create_simple_rect("black_background", {
 		255,
 		0,
@@ -2072,7 +2201,7 @@ local var_0_24 = {
 		0
 	})
 }
-local var_0_25 = {
+local tbl_8 = {
 	bg_black = UIWidgets.create_simple_rect("screen", {
 		255,
 		0,
@@ -2080,7 +2209,7 @@ local var_0_25 = {
 		0
 	})
 }
-local var_0_26 = {
+local tbl_9 = {
 	frame_bg = UIWidgets.create_simple_texture("store_thumbnail_bg_plentiful", "viewport", true, nil, nil, 1),
 	left_mask = UIWidgets.create_simple_texture("mask_rect", "mask_left", nil, nil, {
 		0,
@@ -2113,10 +2242,10 @@ local var_0_26 = {
 		255
 	})
 }
-local var_0_27 = {
-	arrow_left = var_0_19("achievement_arrow", "achievement_arrow_hover", math.pi * 0.5, {
-		var_0_12[1] * 0.5,
-		var_0_12[2] * 0.5
+local tbl_10 = {
+	arrow_left = fn_3("achievement_arrow", "achievement_arrow_hover", math.pi * 0.5, {
+		tbl_3[1] * 0.5,
+		tbl_3[2] * 0.5
 	}, "arrow_left", false, {
 		255,
 		255,
@@ -2127,9 +2256,9 @@ local var_0_27 = {
 		0,
 		0
 	}),
-	arrow_right = var_0_19("achievement_arrow", "achievement_arrow_hover", -math.pi * 0.5, {
-		var_0_12[1] * 0.5,
-		var_0_12[2] * 0.5
+	arrow_right = fn_3("achievement_arrow", "achievement_arrow_hover", -math.pi * 0.5, {
+		tbl_3[1] * 0.5,
+		tbl_3[2] * 0.5
 	}, "arrow_right", false, {
 		255,
 		255,
@@ -2144,7 +2273,7 @@ local var_0_27 = {
 	gotwf_logo_flag = UIWidgets.create_simple_texture("gotwf_flag", "gotwf_logo_flag"),
 	gotwf_logo_banner_left = UIWidgets.create_simple_texture("gotwf_banner_left", "gotwf_logo_banner_left"),
 	gotwf_logo_banner_right = UIWidgets.create_simple_texture("gotwf_banner_right", "gotwf_logo_banner_right"),
-	gotwf_description = UIWidgets.create_simple_text("", "gotwf_description", nil, nil, var_0_15),
+	gotwf_description = UIWidgets.create_simple_text("", "gotwf_description", nil, nil, tbl_6),
 	write_mask = UIWidgets.create_simple_texture("mask_rect", "write_mask", false, false, {
 		255,
 		255,
@@ -2173,7 +2302,7 @@ local var_0_27 = {
 		255
 	}, 0)
 }
-local var_0_28 = {
+local tbl_11 = {
 	lock_bg_left = UIWidgets.create_simple_rotated_texture("dice_game_lock_part_11", 0, {
 		167,
 		166.5
@@ -2279,22 +2408,25 @@ local var_0_28 = {
 		145
 	}, "frame_top")
 }
-local var_0_29 = 0.5
-local var_0_30 = {
+local num_4 = 0.5
+local tbl_12 = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.7,
-			init = function(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+			init = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+				-- function 28
 				arg_28_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
-				local var_29_0 = math.easeOutCubic(arg_29_3)
+			update = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
+				-- function 29
+				local easeOutCubic = math.easeOutCubic(arg_29_3)
 
-				arg_29_4.render_settings.alpha_multiplier = var_29_0
+				arg_29_4.render_settings.alpha_multiplier = easeOutCubic
 			end,
-			on_complete = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+			on_complete = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+				-- function 30
 				return
 			end
 		}
@@ -2304,15 +2436,18 @@ local var_0_30 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+			init = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+				-- function 31
 				arg_31_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
-				local var_32_0 = math.easeOutCubic(arg_32_3)
+			update = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+				-- function 32
+				local easeOutCubic = math.easeOutCubic(arg_32_3)
 
-				arg_32_4.render_settings.alpha_multiplier = 1 - var_32_0
+				arg_32_4.render_settings.alpha_multiplier = 1 - easeOutCubic
 			end,
-			on_complete = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+			on_complete = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+				-- function 33
 				return
 			end
 		}
@@ -2322,106 +2457,109 @@ local var_0_30 = {
 			name = "item_rotation",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
-				local var_34_0 = arg_34_3.item_widget
-				local var_34_1 = var_34_0.content
-				local var_34_2 = var_34_0.style
-				local var_34_3 = arg_34_3.reward_index
-				local var_34_4 = var_34_1.reward_order
-				local var_34_5 = table.find(var_34_4, var_34_3)
+			init = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+				-- function 34
+				local item_widget = arg_34_3.item_widget
+				local content = item_widget.content
+				local style = item_widget.style
+				local reward_index = arg_34_3.reward_index
+				local reward_order = content.reward_order
+				local find = table.find(reward_order, reward_index)
 
-				arg_34_3.start_index = var_34_5
+				arg_34_3.start_index = find
 
-				table.remove(var_34_4, var_34_5)
+				table.remove(reward_order, find)
 
-				var_34_4[#var_34_4 + 1] = var_34_3
-				var_34_2["background_rect_" .. var_34_3].color[1] = 0
-				var_34_2["background_" .. var_34_3].color[1] = 0
-				var_34_2["type_tag_icon_" .. var_34_3].color[1] = 0
-				var_34_2["icon_" .. var_34_3].color[1] = 0
-				var_34_2["frame_" .. var_34_3].color[1] = 0
-				var_34_2["hover_frame_" .. var_34_3].color[1] = 0
-				var_34_2["pulse_frame_" .. var_34_3].color[1] = 0
-				var_34_2["painting_" .. var_34_3].color[1] = 0
-				var_34_2["painting_frame_" .. var_34_3].color[1] = 0
+				reward_order[#reward_order + 1] = reward_index
+				style["background_rect_" .. reward_index].color[1] = 0
+				style["background_" .. reward_index].color[1] = 0
+				style["type_tag_icon_" .. reward_index].color[1] = 0
+				style["icon_" .. reward_index].color[1] = 0
+				style["frame_" .. reward_index].color[1] = 0
+				style["hover_frame_" .. reward_index].color[1] = 0
+				style["pulse_frame_" .. reward_index].color[1] = 0
+				style["painting_" .. reward_index].color[1] = 0
+				style["painting_frame_" .. reward_index].color[1] = 0
 			end,
-			update = function(arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
-				local var_35_0 = math.easeOutCubic(arg_35_3)
-				local var_35_1 = arg_35_4.item_widget
-				local var_35_2 = var_35_1.content
-				local var_35_3 = var_35_1.style
-				local var_35_4 = var_35_2.reward_order
-				local var_35_5 = arg_35_4.reward_index
+			update = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
+				-- function 35
+				local easeOutCubic = math.easeOutCubic(arg_35_3)
+				local item_widget = arg_35_4.item_widget
+				local content = item_widget.content
+				local style = item_widget.style
+				local reward_order = content.reward_order
+				local reward_index = arg_35_4.reward_index
 
-				for iter_35_0 = arg_35_4.start_index, #var_35_4 do
-					local var_35_6 = var_35_4[iter_35_0]
-					local var_35_7 = {
-						iter_35_0 * var_0_17,
-						iter_35_0 * -var_0_17,
-						iter_35_0 * 15
+				for i = arg_35_4.start_index, #reward_order do
+					local var_35_6 = reward_order[i]
+					local tbl = {
+						i * num_3,
+						i * -num_3,
+						i * 15
 					}
-					local var_35_8 = {
-						(iter_35_0 - 1) * var_0_17,
-						(iter_35_0 - 1) * -var_0_17,
-						(iter_35_0 - 1) * 15
+					local tbl_2 = {
+						(i - 1) * num_3,
+						(i - 1) * -num_3,
+						(i - 1) * 15
 					}
 
-					var_35_3["hotspot_" .. var_35_6].offset[1] = math.lerp(var_35_3["hotspot_" .. var_35_6].base_offset[1] + var_35_7[1], var_35_3["hotspot_" .. var_35_6].base_offset[1] + var_35_8[1], var_35_0)
-					var_35_3["hotspot_" .. var_35_6].offset[2] = math.lerp(var_35_3["hotspot_" .. var_35_6].base_offset[2] + var_35_7[2], var_35_3["hotspot_" .. var_35_6].base_offset[2] + var_35_8[2], var_35_0)
-					var_35_3["hotspot_" .. var_35_6].offset[3] = math.lerp(var_35_3["hotspot_" .. var_35_6].base_offset[3] + var_35_7[3], var_35_3["hotspot_" .. var_35_6].base_offset[3] + var_35_8[3], var_35_0)
-					var_35_3["background_rect_" .. var_35_6].offset[1] = math.lerp(var_35_3["background_rect_" .. var_35_6].base_offset[1] + var_35_7[1], var_35_3["background_rect_" .. var_35_6].base_offset[1] + var_35_8[1], var_35_0)
-					var_35_3["background_rect_" .. var_35_6].offset[2] = math.lerp(var_35_3["background_rect_" .. var_35_6].base_offset[2] + var_35_7[2], var_35_3["background_rect_" .. var_35_6].base_offset[2] + var_35_8[2], var_35_0)
-					var_35_3["background_rect_" .. var_35_6].offset[3] = math.lerp(var_35_3["background_rect_" .. var_35_6].base_offset[3] + var_35_7[3], var_35_3["background_rect_" .. var_35_6].base_offset[3] + var_35_8[3], var_35_0)
-					var_35_3["background_" .. var_35_6].offset[1] = math.lerp(var_35_3["background_" .. var_35_6].base_offset[1] + var_35_7[1], var_35_3["background_" .. var_35_6].base_offset[1] + var_35_8[1], var_35_0)
-					var_35_3["background_" .. var_35_6].offset[2] = math.lerp(var_35_3["background_" .. var_35_6].base_offset[2] + var_35_7[2], var_35_3["background_" .. var_35_6].base_offset[2] + var_35_8[2], var_35_0)
-					var_35_3["background_" .. var_35_6].offset[3] = math.lerp(var_35_3["background_" .. var_35_6].base_offset[3] + var_35_7[3], var_35_3["background_" .. var_35_6].base_offset[3] + var_35_8[3], var_35_0)
-					var_35_3["overlay_" .. var_35_6].offset[1] = math.lerp(var_35_3["overlay_" .. var_35_6].base_offset[1] + var_35_7[1], var_35_3["overlay_" .. var_35_6].base_offset[1] + var_35_8[1], var_35_0)
-					var_35_3["overlay_" .. var_35_6].offset[2] = math.lerp(var_35_3["overlay_" .. var_35_6].base_offset[2] + var_35_7[2], var_35_3["overlay_" .. var_35_6].base_offset[2] + var_35_8[2], var_35_0)
-					var_35_3["overlay_" .. var_35_6].offset[3] = math.lerp(var_35_3["overlay_" .. var_35_6].base_offset[3] + var_35_7[3], var_35_3["overlay_" .. var_35_6].base_offset[3] + var_35_8[3], var_35_0)
-					var_35_3["type_tag_icon_" .. var_35_6].offset[1] = math.lerp(var_35_3["type_tag_icon_" .. var_35_6].base_offset[1] + var_35_7[1], var_35_3["type_tag_icon_" .. var_35_6].base_offset[1] + var_35_8[1], var_35_0)
-					var_35_3["type_tag_icon_" .. var_35_6].offset[2] = math.lerp(var_35_3["type_tag_icon_" .. var_35_6].base_offset[2] + var_35_7[2], var_35_3["type_tag_icon_" .. var_35_6].base_offset[2] + var_35_8[2], var_35_0)
-					var_35_3["type_tag_icon_" .. var_35_6].offset[3] = math.lerp(var_35_3["type_tag_icon_" .. var_35_6].base_offset[3] + var_35_7[3], var_35_3["type_tag_icon_" .. var_35_6].base_offset[3] + var_35_8[3], var_35_0)
-					var_35_3["icon_" .. var_35_6].offset[1] = math.lerp(var_35_3["icon_" .. var_35_6].base_offset[1] + var_35_7[1], var_35_3["icon_" .. var_35_6].base_offset[1] + var_35_8[1], var_35_0)
-					var_35_3["icon_" .. var_35_6].offset[2] = math.lerp(var_35_3["icon_" .. var_35_6].base_offset[2] + var_35_7[2], var_35_3["icon_" .. var_35_6].base_offset[2] + var_35_8[2], var_35_0)
-					var_35_3["icon_" .. var_35_6].offset[3] = math.lerp(var_35_3["icon_" .. var_35_6].base_offset[3] + var_35_7[3], var_35_3["icon_" .. var_35_6].base_offset[3] + var_35_8[3], var_35_0)
-					var_35_3["frame_" .. var_35_6].offset[1] = math.lerp(var_35_3["frame_" .. var_35_6].base_offset[1] + var_35_7[1], var_35_3["frame_" .. var_35_6].base_offset[1] + var_35_8[1], var_35_0)
-					var_35_3["frame_" .. var_35_6].offset[2] = math.lerp(var_35_3["frame_" .. var_35_6].base_offset[2] + var_35_7[2], var_35_3["frame_" .. var_35_6].base_offset[2] + var_35_8[2], var_35_0)
-					var_35_3["frame_" .. var_35_6].offset[3] = math.lerp(var_35_3["frame_" .. var_35_6].base_offset[3] + var_35_7[3], var_35_3["frame_" .. var_35_6].base_offset[3] + var_35_8[3], var_35_0)
-					var_35_3["hover_frame_" .. var_35_6].offset[1] = math.lerp(var_35_3["hover_frame_" .. var_35_6].base_offset[1] + var_35_7[1], var_35_3["hover_frame_" .. var_35_6].base_offset[1] + var_35_8[1], var_35_0)
-					var_35_3["hover_frame_" .. var_35_6].offset[2] = math.lerp(var_35_3["hover_frame_" .. var_35_6].base_offset[2] + var_35_7[2], var_35_3["hover_frame_" .. var_35_6].base_offset[2] + var_35_8[2], var_35_0)
-					var_35_3["hover_frame_" .. var_35_6].offset[3] = math.lerp(var_35_3["hover_frame_" .. var_35_6].base_offset[3] + var_35_7[3], var_35_3["hover_frame_" .. var_35_6].base_offset[3] + var_35_8[3], var_35_0)
-					var_35_3["pulse_frame_" .. var_35_6].offset[1] = math.lerp(var_35_3["pulse_frame_" .. var_35_6].base_offset[1] + var_35_7[1], var_35_3["pulse_frame_" .. var_35_6].base_offset[1] + var_35_8[1], var_35_0)
-					var_35_3["pulse_frame_" .. var_35_6].offset[2] = math.lerp(var_35_3["pulse_frame_" .. var_35_6].base_offset[2] + var_35_7[2], var_35_3["pulse_frame_" .. var_35_6].base_offset[2] + var_35_8[2], var_35_0)
-					var_35_3["pulse_frame_" .. var_35_6].offset[3] = math.lerp(var_35_3["pulse_frame_" .. var_35_6].base_offset[3] + var_35_7[3], var_35_3["pulse_frame_" .. var_35_6].base_offset[3] + var_35_8[3], var_35_0)
-					var_35_3["painting_" .. var_35_6].offset[1] = math.lerp(var_35_3["painting_" .. var_35_6].base_offset[1] + var_35_7[1], var_35_3["painting_" .. var_35_6].base_offset[1] + var_35_8[1], var_35_0)
-					var_35_3["painting_" .. var_35_6].offset[2] = math.lerp(var_35_3["painting_" .. var_35_6].base_offset[2] + var_35_7[2], var_35_3["painting_" .. var_35_6].base_offset[2] + var_35_8[2], var_35_0)
-					var_35_3["painting_" .. var_35_6].offset[3] = math.lerp(var_35_3["painting_" .. var_35_6].base_offset[3] + var_35_7[3], var_35_3["painting_" .. var_35_6].base_offset[3] + var_35_8[3], var_35_0)
-					var_35_3["painting_frame_" .. var_35_6].offset[1] = math.lerp(var_35_3["painting_frame_" .. var_35_6].base_offset[1] + var_35_7[1], var_35_3["painting_frame_" .. var_35_6].base_offset[1] + var_35_8[1], var_35_0)
-					var_35_3["painting_frame_" .. var_35_6].offset[2] = math.lerp(var_35_3["painting_frame_" .. var_35_6].base_offset[2] + var_35_7[2], var_35_3["painting_frame_" .. var_35_6].base_offset[2] + var_35_8[2], var_35_0)
-					var_35_3["painting_frame_" .. var_35_6].offset[3] = math.lerp(var_35_3["painting_frame_" .. var_35_6].base_offset[3] + var_35_7[3], var_35_3["painting_frame_" .. var_35_6].base_offset[3] + var_35_8[3], var_35_0)
+					style["hotspot_" .. var_35_6].offset[1] = math.lerp(style["hotspot_" .. var_35_6].base_offset[1] + tbl[1], style["hotspot_" .. var_35_6].base_offset[1] + tbl_2[1], easeOutCubic)
+					style["hotspot_" .. var_35_6].offset[2] = math.lerp(style["hotspot_" .. var_35_6].base_offset[2] + tbl[2], style["hotspot_" .. var_35_6].base_offset[2] + tbl_2[2], easeOutCubic)
+					style["hotspot_" .. var_35_6].offset[3] = math.lerp(style["hotspot_" .. var_35_6].base_offset[3] + tbl[3], style["hotspot_" .. var_35_6].base_offset[3] + tbl_2[3], easeOutCubic)
+					style["background_rect_" .. var_35_6].offset[1] = math.lerp(style["background_rect_" .. var_35_6].base_offset[1] + tbl[1], style["background_rect_" .. var_35_6].base_offset[1] + tbl_2[1], easeOutCubic)
+					style["background_rect_" .. var_35_6].offset[2] = math.lerp(style["background_rect_" .. var_35_6].base_offset[2] + tbl[2], style["background_rect_" .. var_35_6].base_offset[2] + tbl_2[2], easeOutCubic)
+					style["background_rect_" .. var_35_6].offset[3] = math.lerp(style["background_rect_" .. var_35_6].base_offset[3] + tbl[3], style["background_rect_" .. var_35_6].base_offset[3] + tbl_2[3], easeOutCubic)
+					style["background_" .. var_35_6].offset[1] = math.lerp(style["background_" .. var_35_6].base_offset[1] + tbl[1], style["background_" .. var_35_6].base_offset[1] + tbl_2[1], easeOutCubic)
+					style["background_" .. var_35_6].offset[2] = math.lerp(style["background_" .. var_35_6].base_offset[2] + tbl[2], style["background_" .. var_35_6].base_offset[2] + tbl_2[2], easeOutCubic)
+					style["background_" .. var_35_6].offset[3] = math.lerp(style["background_" .. var_35_6].base_offset[3] + tbl[3], style["background_" .. var_35_6].base_offset[3] + tbl_2[3], easeOutCubic)
+					style["overlay_" .. var_35_6].offset[1] = math.lerp(style["overlay_" .. var_35_6].base_offset[1] + tbl[1], style["overlay_" .. var_35_6].base_offset[1] + tbl_2[1], easeOutCubic)
+					style["overlay_" .. var_35_6].offset[2] = math.lerp(style["overlay_" .. var_35_6].base_offset[2] + tbl[2], style["overlay_" .. var_35_6].base_offset[2] + tbl_2[2], easeOutCubic)
+					style["overlay_" .. var_35_6].offset[3] = math.lerp(style["overlay_" .. var_35_6].base_offset[3] + tbl[3], style["overlay_" .. var_35_6].base_offset[3] + tbl_2[3], easeOutCubic)
+					style["type_tag_icon_" .. var_35_6].offset[1] = math.lerp(style["type_tag_icon_" .. var_35_6].base_offset[1] + tbl[1], style["type_tag_icon_" .. var_35_6].base_offset[1] + tbl_2[1], easeOutCubic)
+					style["type_tag_icon_" .. var_35_6].offset[2] = math.lerp(style["type_tag_icon_" .. var_35_6].base_offset[2] + tbl[2], style["type_tag_icon_" .. var_35_6].base_offset[2] + tbl_2[2], easeOutCubic)
+					style["type_tag_icon_" .. var_35_6].offset[3] = math.lerp(style["type_tag_icon_" .. var_35_6].base_offset[3] + tbl[3], style["type_tag_icon_" .. var_35_6].base_offset[3] + tbl_2[3], easeOutCubic)
+					style["icon_" .. var_35_6].offset[1] = math.lerp(style["icon_" .. var_35_6].base_offset[1] + tbl[1], style["icon_" .. var_35_6].base_offset[1] + tbl_2[1], easeOutCubic)
+					style["icon_" .. var_35_6].offset[2] = math.lerp(style["icon_" .. var_35_6].base_offset[2] + tbl[2], style["icon_" .. var_35_6].base_offset[2] + tbl_2[2], easeOutCubic)
+					style["icon_" .. var_35_6].offset[3] = math.lerp(style["icon_" .. var_35_6].base_offset[3] + tbl[3], style["icon_" .. var_35_6].base_offset[3] + tbl_2[3], easeOutCubic)
+					style["frame_" .. var_35_6].offset[1] = math.lerp(style["frame_" .. var_35_6].base_offset[1] + tbl[1], style["frame_" .. var_35_6].base_offset[1] + tbl_2[1], easeOutCubic)
+					style["frame_" .. var_35_6].offset[2] = math.lerp(style["frame_" .. var_35_6].base_offset[2] + tbl[2], style["frame_" .. var_35_6].base_offset[2] + tbl_2[2], easeOutCubic)
+					style["frame_" .. var_35_6].offset[3] = math.lerp(style["frame_" .. var_35_6].base_offset[3] + tbl[3], style["frame_" .. var_35_6].base_offset[3] + tbl_2[3], easeOutCubic)
+					style["hover_frame_" .. var_35_6].offset[1] = math.lerp(style["hover_frame_" .. var_35_6].base_offset[1] + tbl[1], style["hover_frame_" .. var_35_6].base_offset[1] + tbl_2[1], easeOutCubic)
+					style["hover_frame_" .. var_35_6].offset[2] = math.lerp(style["hover_frame_" .. var_35_6].base_offset[2] + tbl[2], style["hover_frame_" .. var_35_6].base_offset[2] + tbl_2[2], easeOutCubic)
+					style["hover_frame_" .. var_35_6].offset[3] = math.lerp(style["hover_frame_" .. var_35_6].base_offset[3] + tbl[3], style["hover_frame_" .. var_35_6].base_offset[3] + tbl_2[3], easeOutCubic)
+					style["pulse_frame_" .. var_35_6].offset[1] = math.lerp(style["pulse_frame_" .. var_35_6].base_offset[1] + tbl[1], style["pulse_frame_" .. var_35_6].base_offset[1] + tbl_2[1], easeOutCubic)
+					style["pulse_frame_" .. var_35_6].offset[2] = math.lerp(style["pulse_frame_" .. var_35_6].base_offset[2] + tbl[2], style["pulse_frame_" .. var_35_6].base_offset[2] + tbl_2[2], easeOutCubic)
+					style["pulse_frame_" .. var_35_6].offset[3] = math.lerp(style["pulse_frame_" .. var_35_6].base_offset[3] + tbl[3], style["pulse_frame_" .. var_35_6].base_offset[3] + tbl_2[3], easeOutCubic)
+					style["painting_" .. var_35_6].offset[1] = math.lerp(style["painting_" .. var_35_6].base_offset[1] + tbl[1], style["painting_" .. var_35_6].base_offset[1] + tbl_2[1], easeOutCubic)
+					style["painting_" .. var_35_6].offset[2] = math.lerp(style["painting_" .. var_35_6].base_offset[2] + tbl[2], style["painting_" .. var_35_6].base_offset[2] + tbl_2[2], easeOutCubic)
+					style["painting_" .. var_35_6].offset[3] = math.lerp(style["painting_" .. var_35_6].base_offset[3] + tbl[3], style["painting_" .. var_35_6].base_offset[3] + tbl_2[3], easeOutCubic)
+					style["painting_frame_" .. var_35_6].offset[1] = math.lerp(style["painting_frame_" .. var_35_6].base_offset[1] + tbl[1], style["painting_frame_" .. var_35_6].base_offset[1] + tbl_2[1], easeOutCubic)
+					style["painting_frame_" .. var_35_6].offset[2] = math.lerp(style["painting_frame_" .. var_35_6].base_offset[2] + tbl[2], style["painting_frame_" .. var_35_6].base_offset[2] + tbl_2[2], easeOutCubic)
+					style["painting_frame_" .. var_35_6].offset[3] = math.lerp(style["painting_frame_" .. var_35_6].base_offset[3] + tbl[3], style["painting_frame_" .. var_35_6].base_offset[3] + tbl_2[3], easeOutCubic)
 
-					if var_35_6 == var_35_5 then
-						var_35_3["background_rect_" .. var_35_6].color[1] = var_35_0 * 255
-						var_35_3["background_" .. var_35_6].color[1] = var_35_0 * 255
-						var_35_3["type_tag_icon_" .. var_35_6].color[1] = var_35_0 * 255
-						var_35_3["icon_" .. var_35_6].color[1] = var_35_0 * 255
-						var_35_3["frame_" .. var_35_6].color[1] = var_35_0 * 255
-						var_35_3["painting_" .. var_35_6].color[1] = var_35_0 * 255
-						var_35_3["painting_frame_" .. var_35_6].color[1] = var_35_0 * 255
+					if var_35_6 == reward_index then
+						style["background_rect_" .. var_35_6].color[1] = easeOutCubic * 255
+						style["background_" .. var_35_6].color[1] = easeOutCubic * 255
+						style["type_tag_icon_" .. var_35_6].color[1] = easeOutCubic * 255
+						style["icon_" .. var_35_6].color[1] = easeOutCubic * 255
+						style["frame_" .. var_35_6].color[1] = easeOutCubic * 255
+						style["painting_" .. var_35_6].color[1] = easeOutCubic * 255
+						style["painting_frame_" .. var_35_6].color[1] = easeOutCubic * 255
 					end
 				end
 			end,
-			on_complete = function(arg_36_0, arg_36_1, arg_36_2, arg_36_3)
-				local var_36_0 = arg_36_3.item_widget.style
-				local var_36_1 = arg_36_3.reward_index
+			on_complete = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+				-- function 36
+				local style = arg_36_3.item_widget.style
+				local reward_index = arg_36_3.reward_index
 
-				var_36_0["background_rect_" .. var_36_1].color[1] = 255
-				var_36_0["background_" .. var_36_1].color[1] = 255
-				var_36_0["type_tag_icon_" .. var_36_1].color[1] = 255
-				var_36_0["icon_" .. var_36_1].color[1] = 255
-				var_36_0["frame_" .. var_36_1].color[1] = 255
-				var_36_0["painting_" .. var_36_1].color[1] = 255
-				var_36_0["painting_frame_" .. var_36_1].color[1] = 255
+				style["background_rect_" .. reward_index].color[1] = 255
+				style["background_" .. reward_index].color[1] = 255
+				style["type_tag_icon_" .. reward_index].color[1] = 255
+				style["icon_" .. reward_index].color[1] = 255
+				style["frame_" .. reward_index].color[1] = 255
+				style["painting_" .. reward_index].color[1] = 255
+				style["painting_frame_" .. reward_index].color[1] = 255
 			end
 		}
 	},
@@ -2430,18 +2568,21 @@ local var_0_30 = {
 			name = "hide_item_list",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+			init = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+				-- function 37
 				arg_37_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
-				local var_38_0 = math.easeOutCubic(arg_38_3)
+			update = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
+				-- function 38
+				local easeOutCubic = math.easeOutCubic(arg_38_3)
 
-				arg_38_0.gotwf_window.local_position[2] = arg_38_1.gotwf_window.position[2] - 500 * var_38_0
-				arg_38_0.scrollbar_area.local_position[2] = arg_38_1.scrollbar_area.position[2] - 500 * var_38_0
-				arg_38_0.arrow_left.local_position[2] = arg_38_1.arrow_left.position[2] - 500 * var_38_0
-				arg_38_0.arrow_right.local_position[2] = arg_38_1.arrow_right.position[2] - 500 * var_38_0
+				arg_38_0.gotwf_window.local_position[2] = arg_38_1.gotwf_window.position[2] - 500 * easeOutCubic
+				arg_38_0.scrollbar_area.local_position[2] = arg_38_1.scrollbar_area.position[2] - 500 * easeOutCubic
+				arg_38_0.arrow_left.local_position[2] = arg_38_1.arrow_left.position[2] - 500 * easeOutCubic
+				arg_38_0.arrow_right.local_position[2] = arg_38_1.arrow_right.position[2] - 500 * easeOutCubic
 			end,
-			on_complete = function(arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+			on_complete = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+				-- function 39
 				return
 			end
 		}
@@ -2451,18 +2592,21 @@ local var_0_30 = {
 			name = "show_item_list",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+			init = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+				-- function 40
 				arg_40_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
-				local var_41_0 = math.easeOutCubic(arg_41_3)
+			update = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
+				-- function 41
+				local easeOutCubic = math.easeOutCubic(arg_41_3)
 
-				arg_41_0.gotwf_window.local_position[2] = arg_41_1.gotwf_window.position[2] - 500 * (1 - var_41_0)
-				arg_41_0.scrollbar_area.local_position[2] = arg_41_1.scrollbar_area.position[2] - 500 * (1 - var_41_0)
-				arg_41_0.arrow_left.local_position[2] = arg_41_1.arrow_left.position[2] - 500 * (1 - var_41_0)
-				arg_41_0.arrow_right.local_position[2] = arg_41_1.arrow_right.position[2] - 500 * (1 - var_41_0)
+				arg_41_0.gotwf_window.local_position[2] = arg_41_1.gotwf_window.position[2] - 500 * (1 - easeOutCubic)
+				arg_41_0.scrollbar_area.local_position[2] = arg_41_1.scrollbar_area.position[2] - 500 * (1 - easeOutCubic)
+				arg_41_0.arrow_left.local_position[2] = arg_41_1.arrow_left.position[2] - 500 * (1 - easeOutCubic)
+				arg_41_0.arrow_right.local_position[2] = arg_41_1.arrow_right.position[2] - 500 * (1 - easeOutCubic)
 			end,
-			on_complete = function(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+			on_complete = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+				-- function 42
 				return
 			end
 		}
@@ -2470,9 +2614,10 @@ local var_0_30 = {
 	lock_open = {
 		{
 			name = "animate_in",
-			start_progress = 0 * var_0_29,
-			end_progress = 1 * var_0_29,
-			init = function(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+			start_progress = 0 * num_4,
+			end_progress = 1 * num_4,
+			init = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+				-- function 43
 				arg_43_0.lock_root.position[2] = arg_43_1.lock_root.position[2]
 				arg_43_2.lock_bg_left.content.visible = true
 				arg_43_2.lock_bg_right.content.visible = true
@@ -2596,67 +2741,70 @@ local var_0_30 = {
 				arg_43_2.bottom_mask.style.texture_id.color[1] = 0
 				arg_43_2.center_mask.style.texture_id.color[1] = 0
 			end,
-			update = function(arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
-				local var_44_0 = math.easeOutCubic(arg_44_3)
+			update = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
+				-- function 44
+				local easeOutCubic = math.easeOutCubic(arg_44_3)
 
-				arg_44_0.lock_root.position[2] = math.lerp(arg_44_1.lock_root.position[2], -355, var_44_0)
+				arg_44_0.lock_root.position[2] = math.lerp(arg_44_1.lock_root.position[2], -355, easeOutCubic)
 			end,
-			on_complete = function(arg_45_0, arg_45_1, arg_45_2, arg_45_3)
+			on_complete = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3)
+				-- function 45
 				return
 			end
 		},
 		{
 			name = "sticks_open",
-			start_progress = 0.5 * var_0_29,
-			end_progress = 1 * var_0_29,
-			init = function(arg_46_0, arg_46_1, arg_46_2, arg_46_3)
-				local var_46_0 = arg_46_0.lock_stick_top_left.local_position
-				local var_46_1 = arg_46_1.lock_stick_top_left.position
-				local var_46_2 = arg_46_0.lock_stick_top_right.local_position
-				local var_46_3 = arg_46_1.lock_stick_top_right.position
+			start_progress = 0.5 * num_4,
+			end_progress = 1 * num_4,
+			init = function (self, arg_46_1, arg_46_2, arg_46_3)
+				-- function 46
+				local local_position = self.lock_stick_top_left.local_position
+				local position = arg_46_1.lock_stick_top_left.position
+				local local_position_2 = self.lock_stick_top_right.local_position
+				local position_2 = arg_46_1.lock_stick_top_right.position
 
-				var_46_2[1] = var_46_3[1]
-				var_46_2[2] = var_46_3[2]
+				local_position_2[1] = position_2[1]
+				local_position_2[2] = position_2[2]
 
-				local var_46_4 = arg_46_0.lock_stick_bottom_left.local_position
-				local var_46_5 = arg_46_1.lock_stick_bottom_left.position
+				local local_position_3 = self.lock_stick_bottom_left.local_position
+				local position_3 = arg_46_1.lock_stick_bottom_left.position
 
-				var_46_4[1] = var_46_5[1]
-				var_46_4[2] = var_46_5[2]
+				local_position_3[1] = position_3[1]
+				local_position_3[2] = position_3[2]
 
-				local var_46_6 = arg_46_0.lock_stick_bottom_right.local_position
-				local var_46_7 = arg_46_1.lock_stick_bottom_right.position
+				local local_position_4 = self.lock_stick_bottom_right.local_position
+				local position_4 = arg_46_1.lock_stick_bottom_right.position
 
-				var_46_6[1] = var_46_7[1]
-				var_46_6[2] = var_46_7[2]
+				local_position_4[1] = position_4[1]
+				local_position_4[2] = position_4[2]
 
-				local var_46_8 = arg_46_0.lock_cover_top_left.local_position
-				local var_46_9 = arg_46_1.lock_cover_top_left.position
+				local local_position_5 = self.lock_cover_top_left.local_position
+				local position_5 = arg_46_1.lock_cover_top_left.position
 
-				var_46_8[1] = var_46_9[1]
-				var_46_8[2] = var_46_9[2]
+				local_position_5[1] = position_5[1]
+				local_position_5[2] = position_5[2]
 
-				local var_46_10 = arg_46_0.lock_cover_top_right.local_position
-				local var_46_11 = arg_46_1.lock_cover_top_right.position
+				local local_position_6 = self.lock_cover_top_right.local_position
+				local position_6 = arg_46_1.lock_cover_top_right.position
 
-				var_46_10[1] = var_46_11[1]
-				var_46_10[2] = var_46_11[2]
+				local_position_6[1] = position_6[1]
+				local_position_6[2] = position_6[2]
 
-				local var_46_12 = arg_46_0.lock_cover_bottom_left.local_position
-				local var_46_13 = arg_46_1.lock_cover_bottom_left.position
+				local local_position_7 = self.lock_cover_bottom_left.local_position
+				local position_7 = arg_46_1.lock_cover_bottom_left.position
 
-				var_46_12[1] = var_46_13[1]
-				var_46_12[2] = var_46_13[2]
+				local_position_7[1] = position_7[1]
+				local_position_7[2] = position_7[2]
 
-				local var_46_14 = arg_46_0.lock_cover_bottom_right.local_position
-				local var_46_15 = arg_46_1.lock_cover_bottom_right.position
+				local local_position_8 = self.lock_cover_bottom_right.local_position
+				local position_8 = arg_46_1.lock_cover_bottom_right.position
 
-				var_46_14[1] = var_46_15[1]
-				var_46_14[2] = var_46_15[2]
-				arg_46_0.lock_pillar_left.local_position[1] = arg_46_1.lock_pillar_left.position[1]
-				arg_46_0.lock_pillar_right.local_position[1] = arg_46_1.lock_pillar_right.position[1]
-				arg_46_0.lock_pillar_top.local_position[2] = arg_46_1.lock_pillar_top.position[2]
-				arg_46_0.lock_pillar_bottom.local_position[2] = arg_46_1.lock_pillar_bottom.position[2]
+				local_position_8[1] = position_8[1]
+				local_position_8[2] = position_8[2]
+				self.lock_pillar_left.local_position[1] = arg_46_1.lock_pillar_left.position[1]
+				self.lock_pillar_right.local_position[1] = arg_46_1.lock_pillar_right.position[1]
+				self.lock_pillar_top.local_position[2] = arg_46_1.lock_pillar_top.position[2]
+				self.lock_pillar_bottom.local_position[2] = arg_46_1.lock_pillar_bottom.position[2]
 				arg_46_2.lock_cogwheel_left.style.texture_id.angle = 0
 				arg_46_2.lock_cogwheel_right.style.texture_id.angle = 0
 				arg_46_2.lock_slot_holder_left.style.texture_id.angle = 0
@@ -2666,157 +2814,174 @@ local var_0_30 = {
 				arg_46_2.lock_cogwheel_bg_left.style.texture_id.angle = 0
 				arg_46_2.lock_cogwheel_bg_right.style.texture_id.angle = 0
 			end,
-			update = function(arg_47_0, arg_47_1, arg_47_2, arg_47_3, arg_47_4)
-				local var_47_0 = math.easeCubic(arg_47_3)
-				local var_47_1 = 50
-				local var_47_2 = arg_47_0.lock_stick_top_left.local_position
-				local var_47_3 = arg_47_1.lock_stick_top_left.position
-				local var_47_4 = arg_47_0.lock_stick_top_right.local_position
-				local var_47_5 = arg_47_1.lock_stick_top_right.position
-				local var_47_6 = arg_47_0.lock_stick_bottom_left.local_position
-				local var_47_7 = arg_47_1.lock_stick_bottom_left.position
-				local var_47_8 = arg_47_0.lock_stick_bottom_right.local_position
-				local var_47_9 = arg_47_1.lock_stick_bottom_right.position
+			update = function (self, arg_47_1, arg_47_2, arg_47_3, arg_47_4)
+				-- function 47
+				local easeCubic = math.easeCubic(arg_47_3)
+				local num = 50
+				local local_position = self.lock_stick_top_left.local_position
+				local position = arg_47_1.lock_stick_top_left.position
+				local local_position_2 = self.lock_stick_top_right.local_position
+				local position_2 = arg_47_1.lock_stick_top_right.position
+				local local_position_3 = self.lock_stick_bottom_left.local_position
+				local position_3 = arg_47_1.lock_stick_bottom_left.position
+				local local_position_4 = self.lock_stick_bottom_right.local_position
+				local position_4 = arg_47_1.lock_stick_bottom_right.position
 
-				var_47_2[1] = var_47_3[1] - var_47_1 * var_47_0
-				var_47_2[2] = var_47_3[2] + var_47_1 * var_47_0
-				var_47_4[1] = var_47_5[1] + var_47_1 * var_47_0
-				var_47_4[2] = var_47_5[2] + var_47_1 * var_47_0
-				var_47_6[1] = var_47_7[1] - var_47_1 * var_47_0
-				var_47_6[2] = var_47_7[2] - var_47_1 * var_47_0
-				var_47_8[1] = var_47_9[1] + var_47_1 * var_47_0
-				var_47_8[2] = var_47_9[2] - var_47_1 * var_47_0
+				local_position[1] = position[1] - num * easeCubic
+				local_position[2] = position[2] + num * easeCubic
+				local_position_2[1] = position_2[1] + num * easeCubic
+				local_position_2[2] = position_2[2] + num * easeCubic
+				local_position_3[1] = position_3[1] - num * easeCubic
+				local_position_3[2] = position_3[2] - num * easeCubic
+				local_position_4[1] = position_4[1] + num * easeCubic
+				local_position_4[2] = position_4[2] - num * easeCubic
 			end,
-			on_complete = function(arg_48_0, arg_48_1, arg_48_2, arg_48_3)
+			on_complete = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3)
+				-- function 48
 				return
 			end
 		},
 		{
 			name = "cover_open",
-			start_progress = 1.2 * var_0_29,
-			end_progress = 1.8 * var_0_29,
-			init = function(arg_49_0, arg_49_1, arg_49_2, arg_49_3)
+			start_progress = 1.2 * num_4,
+			end_progress = 1.8 * num_4,
+			init = function (arg_49_0, arg_49_1, arg_49_2, arg_49_3)
+				-- function 49
 				return
 			end,
-			update = function(arg_50_0, arg_50_1, arg_50_2, arg_50_3, arg_50_4)
-				local var_50_0 = 90
-				local var_50_1 = math.easeOutCubic(arg_50_3)
-				local var_50_2 = arg_50_0.lock_cover_top_left.local_position
-				local var_50_3 = arg_50_1.lock_cover_top_left.position
-				local var_50_4 = arg_50_0.lock_cover_top_right.local_position
-				local var_50_5 = arg_50_1.lock_cover_top_right.position
-				local var_50_6 = arg_50_0.lock_cover_bottom_left.local_position
-				local var_50_7 = arg_50_1.lock_cover_bottom_left.position
-				local var_50_8 = arg_50_0.lock_cover_bottom_right.local_position
-				local var_50_9 = arg_50_1.lock_cover_bottom_right.position
+			update = function (self, arg_50_1, arg_50_2, arg_50_3, arg_50_4)
+				-- function 50
+				local num = 90
+				local easeOutCubic = math.easeOutCubic(arg_50_3)
+				local local_position = self.lock_cover_top_left.local_position
+				local position = arg_50_1.lock_cover_top_left.position
+				local local_position_2 = self.lock_cover_top_right.local_position
+				local position_2 = arg_50_1.lock_cover_top_right.position
+				local local_position_3 = self.lock_cover_bottom_left.local_position
+				local position_3 = arg_50_1.lock_cover_bottom_left.position
+				local local_position_4 = self.lock_cover_bottom_right.local_position
+				local position_4 = arg_50_1.lock_cover_bottom_right.position
 
-				var_50_2[1] = var_50_3[1] - var_50_0 * var_50_1
-				var_50_2[2] = var_50_3[2] + var_50_0 * var_50_1
-				var_50_4[1] = var_50_5[1] + var_50_0 * var_50_1
-				var_50_4[2] = var_50_5[2] + var_50_0 * var_50_1
-				var_50_6[1] = var_50_7[1] - var_50_0 * var_50_1
-				var_50_6[2] = var_50_7[2] - var_50_0 * var_50_1
-				var_50_8[1] = var_50_9[1] + var_50_0 * var_50_1
-				var_50_8[2] = var_50_9[2] - var_50_0 * var_50_1
+				local_position[1] = position[1] - num * easeOutCubic
+				local_position[2] = position[2] + num * easeOutCubic
+				local_position_2[1] = position_2[1] + num * easeOutCubic
+				local_position_2[2] = position_2[2] + num * easeOutCubic
+				local_position_3[1] = position_3[1] - num * easeOutCubic
+				local_position_3[2] = position_3[2] - num * easeOutCubic
+				local_position_4[1] = position_4[1] + num * easeOutCubic
+				local_position_4[2] = position_4[2] - num * easeOutCubic
 
-				local var_50_10 = math.pi * 4 * var_50_1
-				local var_50_11 = arg_50_2.lock_block_left
-				local var_50_12 = arg_50_2.lock_block_right
+				local num_2 = math.pi * 4 * easeOutCubic
+				local lock_block_left = arg_50_2.lock_block_left
+				local lock_block_right = arg_50_2.lock_block_right
 
-				var_50_11.style.texture_id.angle = var_50_10
-				var_50_12.style.texture_id.angle = var_50_10 + math.pi
+				lock_block_left.style.texture_id.angle = num_2
+				lock_block_right.style.texture_id.angle = num_2 + math.pi
 			end,
-			on_complete = function(arg_51_0, arg_51_1, arg_51_2, arg_51_3)
+			on_complete = function (arg_51_0, arg_51_1, arg_51_2, arg_51_3)
+				-- function 51
 				return
 			end
 		},
 		{
 			name = "top_and_bottom_pillar_lock",
-			start_progress = 1.8 * var_0_29,
-			end_progress = 1.9 * var_0_29,
-			init = function(arg_52_0, arg_52_1, arg_52_2, arg_52_3)
+			start_progress = 1.8 * num_4,
+			end_progress = 1.9 * num_4,
+			init = function (arg_52_0, arg_52_1, arg_52_2, arg_52_3)
+				-- function 52
 				return
 			end,
-			update = function(arg_53_0, arg_53_1, arg_53_2, arg_53_3, arg_53_4)
-				local var_53_0 = 28
-				local var_53_1 = math.ease_in_exp(arg_53_3)
-				local var_53_2 = arg_53_0.lock_pillar_top.local_position
-				local var_53_3 = arg_53_1.lock_pillar_top.position
-				local var_53_4 = arg_53_0.lock_pillar_bottom.local_position
-				local var_53_5 = arg_53_1.lock_pillar_bottom.position
+			update = function (self, arg_53_1, arg_53_2, arg_53_3, arg_53_4)
+				-- function 53
+				local num = 28
+				local ease_in_exp = math.ease_in_exp(arg_53_3)
+				local local_position = self.lock_pillar_top.local_position
+				local position = arg_53_1.lock_pillar_top.position
+				local local_position_2 = self.lock_pillar_bottom.local_position
+				local position_2 = arg_53_1.lock_pillar_bottom.position
 
-				var_53_2[2] = var_53_3[2] + var_53_0 * var_53_1
-				var_53_4[2] = var_53_5[2] - var_53_0 * var_53_1
+				local_position[2] = position[2] + num * ease_in_exp
+				local_position_2[2] = position_2[2] - num * ease_in_exp
 			end,
-			on_complete = function(arg_54_0, arg_54_1, arg_54_2, arg_54_3)
+			on_complete = function (arg_54_0, arg_54_1, arg_54_2, arg_54_3)
+				-- function 54
 				return
 			end
 		},
 		{
 			name = "cogwheel_bg_spin",
-			start_progress = 2 * var_0_29,
-			end_progress = 2.4 * var_0_29,
-			init = function(arg_55_0, arg_55_1, arg_55_2, arg_55_3)
+			start_progress = 2 * num_4,
+			end_progress = 2.4 * num_4,
+			init = function (arg_55_0, arg_55_1, arg_55_2, arg_55_3)
+				-- function 55
 				return
 			end,
-			update = function(arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4)
-				local var_56_0 = math.easeCubic(arg_56_3)
-				local var_56_1 = arg_56_2.lock_cogwheel_bg_left
-				local var_56_2 = arg_56_2.lock_cogwheel_bg_right
-				local var_56_3 = math.pi * 0.5 * var_56_0
+			update = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4)
+				-- function 56
+				local easeCubic = math.easeCubic(arg_56_3)
+				local lock_cogwheel_bg_left = arg_56_2.lock_cogwheel_bg_left
+				local lock_cogwheel_bg_right = arg_56_2.lock_cogwheel_bg_right
+				local num = math.pi * 0.5 * easeCubic
 
-				var_56_1.style.texture_id.angle = var_56_3
-				var_56_2.style.texture_id.angle = var_56_3
+				lock_cogwheel_bg_left.style.texture_id.angle = num
+				lock_cogwheel_bg_right.style.texture_id.angle = num
 			end,
-			on_complete = function(arg_57_0, arg_57_1, arg_57_2, arg_57_3)
+			on_complete = function (arg_57_0, arg_57_1, arg_57_2, arg_57_3)
+				-- function 57
 				return
 			end
 		},
 		{
 			name = "cogwheel_spin",
-			start_progress = 2.5 * var_0_29,
-			end_progress = 3.5 * var_0_29,
-			init = function(arg_58_0, arg_58_1, arg_58_2, arg_58_3)
+			start_progress = 2.5 * num_4,
+			end_progress = 3.5 * num_4,
+			init = function (arg_58_0, arg_58_1, arg_58_2, arg_58_3)
+				-- function 58
 				return
 			end,
-			update = function(arg_59_0, arg_59_1, arg_59_2, arg_59_3, arg_59_4)
-				local var_59_0 = math.ease_exp(arg_59_3)
-				local var_59_1 = math.easeInCubic(arg_59_3)
-				local var_59_2 = arg_59_2.lock_slot_holder_left
-				local var_59_3 = arg_59_2.lock_slot_holder_right
-				local var_59_4 = arg_59_2.lock_cogwheel_left
-				local var_59_5 = arg_59_2.lock_cogwheel_right
-				local var_59_6 = math.pi / 2 * var_59_1
-				local var_59_7 = math.pi * 2 * var_59_0
+			update = function (arg_59_0, arg_59_1, arg_59_2, arg_59_3, arg_59_4)
+				-- function 59
+				local ease_exp = math.ease_exp(arg_59_3)
+				local easeInCubic = math.easeInCubic(arg_59_3)
+				local lock_slot_holder_left = arg_59_2.lock_slot_holder_left
+				local lock_slot_holder_right = arg_59_2.lock_slot_holder_right
+				local lock_cogwheel_left = arg_59_2.lock_cogwheel_left
+				local lock_cogwheel_right = arg_59_2.lock_cogwheel_right
+				local num = math.pi / 2 * easeInCubic
+				local num_2 = math.pi * 2 * ease_exp
 
-				var_59_2.style.texture_id.angle = -var_59_6
-				var_59_3.style.texture_id.angle = -var_59_6
-				var_59_4.style.texture_id.angle = var_59_7
-				var_59_5.style.texture_id.angle = var_59_7
+				lock_slot_holder_left.style.texture_id.angle = -num
+				lock_slot_holder_right.style.texture_id.angle = -num
+				lock_cogwheel_left.style.texture_id.angle = num_2
+				lock_cogwheel_right.style.texture_id.angle = num_2
 			end,
-			on_complete = function(arg_60_0, arg_60_1, arg_60_2, arg_60_3)
+			on_complete = function (arg_60_0, arg_60_1, arg_60_2, arg_60_3)
+				-- function 60
 				return
 			end
 		},
 		{
 			name = "left_and_right_pillar_lock",
-			start_progress = 3.5 * var_0_29,
-			end_progress = 3.6 * var_0_29,
-			init = function(arg_61_0, arg_61_1, arg_61_2, arg_61_3)
+			start_progress = 3.5 * num_4,
+			end_progress = 3.6 * num_4,
+			init = function (arg_61_0, arg_61_1, arg_61_2, arg_61_3)
+				-- function 61
 				return
 			end,
-			update = function(arg_62_0, arg_62_1, arg_62_2, arg_62_3, arg_62_4)
-				local var_62_0 = 28
-				local var_62_1 = math.ease_in_exp(arg_62_3)
-				local var_62_2 = arg_62_0.lock_pillar_left.local_position
-				local var_62_3 = arg_62_1.lock_pillar_left.position
-				local var_62_4 = arg_62_0.lock_pillar_right.local_position
-				local var_62_5 = arg_62_1.lock_pillar_right.position
+			update = function (self, arg_62_1, arg_62_2, arg_62_3, arg_62_4)
+				-- function 62
+				local num = 28
+				local ease_in_exp = math.ease_in_exp(arg_62_3)
+				local local_position = self.lock_pillar_left.local_position
+				local position = arg_62_1.lock_pillar_left.position
+				local local_position_2 = self.lock_pillar_right.local_position
+				local position_2 = arg_62_1.lock_pillar_right.position
 
-				var_62_2[1] = var_62_3[1] - var_62_0 * var_62_1
-				var_62_4[1] = var_62_5[1] + var_62_0 * var_62_1
+				local_position[1] = position[1] - num * ease_in_exp
+				local_position_2[1] = position_2[1] + num * ease_in_exp
 			end,
-			on_complete = function(arg_63_0, arg_63_1, arg_63_2, arg_63_3)
+			on_complete = function (arg_63_0, arg_63_1, arg_63_2, arg_63_3)
+				-- function 63
 				return
 			end
 		}
@@ -2826,31 +2991,34 @@ local var_0_30 = {
 			name = "sticks_open",
 			start_progress = 2.6,
 			end_progress = 3.1,
-			init = function(arg_64_0, arg_64_1, arg_64_2, arg_64_3)
+			init = function (arg_64_0, arg_64_1, arg_64_2, arg_64_3)
+				-- function 64
 				return
 			end,
-			update = function(arg_65_0, arg_65_1, arg_65_2, arg_65_3, arg_65_4)
-				local var_65_0 = math.easeCubic(1 - arg_65_3)
-				local var_65_1 = 50
-				local var_65_2 = arg_65_0.lock_stick_top_left.local_position
-				local var_65_3 = arg_65_1.lock_stick_top_left.position
-				local var_65_4 = arg_65_0.lock_stick_top_right.local_position
-				local var_65_5 = arg_65_1.lock_stick_top_right.position
-				local var_65_6 = arg_65_0.lock_stick_bottom_left.local_position
-				local var_65_7 = arg_65_1.lock_stick_bottom_left.position
-				local var_65_8 = arg_65_0.lock_stick_bottom_right.local_position
-				local var_65_9 = arg_65_1.lock_stick_bottom_right.position
+			update = function (self, arg_65_1, arg_65_2, arg_65_3, arg_65_4)
+				-- function 65
+				local easeCubic = math.easeCubic(1 - arg_65_3)
+				local num = 50
+				local local_position = self.lock_stick_top_left.local_position
+				local position = arg_65_1.lock_stick_top_left.position
+				local local_position_2 = self.lock_stick_top_right.local_position
+				local position_2 = arg_65_1.lock_stick_top_right.position
+				local local_position_3 = self.lock_stick_bottom_left.local_position
+				local position_3 = arg_65_1.lock_stick_bottom_left.position
+				local local_position_4 = self.lock_stick_bottom_right.local_position
+				local position_4 = arg_65_1.lock_stick_bottom_right.position
 
-				var_65_2[1] = var_65_3[1] - var_65_1 * var_65_0 + 50 * (1 - var_65_0)
-				var_65_2[2] = var_65_3[2] + var_65_1 * var_65_0 - 50 * (1 - var_65_0)
-				var_65_4[1] = var_65_5[1] + var_65_1 * var_65_0 - 50 * (1 - var_65_0)
-				var_65_4[2] = var_65_5[2] + var_65_1 * var_65_0 - 50 * (1 - var_65_0)
-				var_65_6[1] = var_65_7[1] - var_65_1 * var_65_0 + 50 * (1 - var_65_0)
-				var_65_6[2] = var_65_7[2] - var_65_1 * var_65_0 + 50 * (1 - var_65_0)
-				var_65_8[1] = var_65_9[1] + var_65_1 * var_65_0 - 50 * (1 - var_65_0)
-				var_65_8[2] = var_65_9[2] - var_65_1 * var_65_0 + 50 * (1 - var_65_0)
+				local_position[1] = position[1] - num * easeCubic + 50 * (1 - easeCubic)
+				local_position[2] = position[2] + num * easeCubic - 50 * (1 - easeCubic)
+				local_position_2[1] = position_2[1] + num * easeCubic - 50 * (1 - easeCubic)
+				local_position_2[2] = position_2[2] + num * easeCubic - 50 * (1 - easeCubic)
+				local_position_3[1] = position_3[1] - num * easeCubic + 50 * (1 - easeCubic)
+				local_position_3[2] = position_3[2] - num * easeCubic + 50 * (1 - easeCubic)
+				local_position_4[1] = position_4[1] + num * easeCubic - 50 * (1 - easeCubic)
+				local_position_4[2] = position_4[2] - num * easeCubic + 50 * (1 - easeCubic)
 			end,
-			on_complete = function(arg_66_0, arg_66_1, arg_66_2, arg_66_3)
+			on_complete = function (arg_66_0, arg_66_1, arg_66_2, arg_66_3)
+				-- function 66
 				return
 			end
 		},
@@ -2858,38 +3026,41 @@ local var_0_30 = {
 			name = "cover_open",
 			start_progress = 1.8,
 			end_progress = 2.4,
-			init = function(arg_67_0, arg_67_1, arg_67_2, arg_67_3)
+			init = function (arg_67_0, arg_67_1, arg_67_2, arg_67_3)
+				-- function 67
 				return
 			end,
-			update = function(arg_68_0, arg_68_1, arg_68_2, arg_68_3, arg_68_4)
-				local var_68_0 = 90
-				local var_68_1 = math.easeOutCubic(1 - arg_68_3)
-				local var_68_2 = arg_68_0.lock_cover_top_left.local_position
-				local var_68_3 = arg_68_1.lock_cover_top_left.position
-				local var_68_4 = arg_68_0.lock_cover_top_right.local_position
-				local var_68_5 = arg_68_1.lock_cover_top_right.position
-				local var_68_6 = arg_68_0.lock_cover_bottom_left.local_position
-				local var_68_7 = arg_68_1.lock_cover_bottom_left.position
-				local var_68_8 = arg_68_0.lock_cover_bottom_right.local_position
-				local var_68_9 = arg_68_1.lock_cover_bottom_right.position
+			update = function (self, arg_68_1, arg_68_2, arg_68_3, arg_68_4)
+				-- function 68
+				local num = 90
+				local easeOutCubic = math.easeOutCubic(1 - arg_68_3)
+				local local_position = self.lock_cover_top_left.local_position
+				local position = arg_68_1.lock_cover_top_left.position
+				local local_position_2 = self.lock_cover_top_right.local_position
+				local position_2 = arg_68_1.lock_cover_top_right.position
+				local local_position_3 = self.lock_cover_bottom_left.local_position
+				local position_3 = arg_68_1.lock_cover_bottom_left.position
+				local local_position_4 = self.lock_cover_bottom_right.local_position
+				local position_4 = arg_68_1.lock_cover_bottom_right.position
 
-				var_68_2[1] = var_68_3[1] - var_68_0 * var_68_1
-				var_68_2[2] = var_68_3[2] + var_68_0 * var_68_1
-				var_68_4[1] = var_68_5[1] + var_68_0 * var_68_1
-				var_68_4[2] = var_68_5[2] + var_68_0 * var_68_1
-				var_68_6[1] = var_68_7[1] - var_68_0 * var_68_1
-				var_68_6[2] = var_68_7[2] - var_68_0 * var_68_1
-				var_68_8[1] = var_68_9[1] + var_68_0 * var_68_1
-				var_68_8[2] = var_68_9[2] - var_68_0 * var_68_1
+				local_position[1] = position[1] - num * easeOutCubic
+				local_position[2] = position[2] + num * easeOutCubic
+				local_position_2[1] = position_2[1] + num * easeOutCubic
+				local_position_2[2] = position_2[2] + num * easeOutCubic
+				local_position_3[1] = position_3[1] - num * easeOutCubic
+				local_position_3[2] = position_3[2] - num * easeOutCubic
+				local_position_4[1] = position_4[1] + num * easeOutCubic
+				local_position_4[2] = position_4[2] - num * easeOutCubic
 
-				local var_68_10 = math.pi * 4 * var_68_1
-				local var_68_11 = arg_68_2.lock_block_left
-				local var_68_12 = arg_68_2.lock_block_right
+				local num_2 = math.pi * 4 * easeOutCubic
+				local lock_block_left = arg_68_2.lock_block_left
+				local lock_block_right = arg_68_2.lock_block_right
 
-				var_68_11.style.texture_id.angle = var_68_10
-				var_68_12.style.texture_id.angle = var_68_10 + math.pi
+				lock_block_left.style.texture_id.angle = num_2
+				lock_block_right.style.texture_id.angle = num_2 + math.pi
 			end,
-			on_complete = function(arg_69_0, arg_69_1, arg_69_2, arg_69_3)
+			on_complete = function (arg_69_0, arg_69_1, arg_69_2, arg_69_3)
+				-- function 69
 				return
 			end
 		},
@@ -2897,21 +3068,24 @@ local var_0_30 = {
 			name = "top_and_bottom_pillar_lock",
 			start_progress = 1.7,
 			end_progress = 1.8,
-			init = function(arg_70_0, arg_70_1, arg_70_2, arg_70_3)
+			init = function (arg_70_0, arg_70_1, arg_70_2, arg_70_3)
+				-- function 70
 				return
 			end,
-			update = function(arg_71_0, arg_71_1, arg_71_2, arg_71_3, arg_71_4)
-				local var_71_0 = 28
-				local var_71_1 = math.ease_in_exp(1 - arg_71_3)
-				local var_71_2 = arg_71_0.lock_pillar_top.local_position
-				local var_71_3 = arg_71_1.lock_pillar_top.position
-				local var_71_4 = arg_71_0.lock_pillar_bottom.local_position
-				local var_71_5 = arg_71_1.lock_pillar_bottom.position
+			update = function (self, arg_71_1, arg_71_2, arg_71_3, arg_71_4)
+				-- function 71
+				local num = 28
+				local ease_in_exp = math.ease_in_exp(1 - arg_71_3)
+				local local_position = self.lock_pillar_top.local_position
+				local position = arg_71_1.lock_pillar_top.position
+				local local_position_2 = self.lock_pillar_bottom.local_position
+				local position_2 = arg_71_1.lock_pillar_bottom.position
 
-				var_71_2[2] = var_71_3[2] + var_71_0 * var_71_1
-				var_71_4[2] = var_71_5[2] - var_71_0 * var_71_1
+				local_position[2] = position[2] + num * ease_in_exp
+				local_position_2[2] = position_2[2] - num * ease_in_exp
 			end,
-			on_complete = function(arg_72_0, arg_72_1, arg_72_2, arg_72_3)
+			on_complete = function (arg_72_0, arg_72_1, arg_72_2, arg_72_3)
+				-- function 72
 				return
 			end
 		},
@@ -2919,19 +3093,22 @@ local var_0_30 = {
 			name = "cogwheel_bg_spin",
 			start_progress = 1.2,
 			end_progress = 1.6,
-			init = function(arg_73_0, arg_73_1, arg_73_2, arg_73_3)
+			init = function (arg_73_0, arg_73_1, arg_73_2, arg_73_3)
+				-- function 73
 				return
 			end,
-			update = function(arg_74_0, arg_74_1, arg_74_2, arg_74_3, arg_74_4)
-				local var_74_0 = math.easeCubic(1 - arg_74_3)
-				local var_74_1 = arg_74_2.lock_cogwheel_bg_left
-				local var_74_2 = arg_74_2.lock_cogwheel_bg_right
-				local var_74_3 = math.pi * 0.5 * var_74_0
+			update = function (arg_74_0, arg_74_1, arg_74_2, arg_74_3, arg_74_4)
+				-- function 74
+				local easeCubic = math.easeCubic(1 - arg_74_3)
+				local lock_cogwheel_bg_left = arg_74_2.lock_cogwheel_bg_left
+				local lock_cogwheel_bg_right = arg_74_2.lock_cogwheel_bg_right
+				local num = math.pi * 0.5 * easeCubic
 
-				var_74_1.style.texture_id.angle = var_74_3
-				var_74_2.style.texture_id.angle = var_74_3
+				lock_cogwheel_bg_left.style.texture_id.angle = num
+				lock_cogwheel_bg_right.style.texture_id.angle = num
 			end,
-			on_complete = function(arg_75_0, arg_75_1, arg_75_2, arg_75_3)
+			on_complete = function (arg_75_0, arg_75_1, arg_75_2, arg_75_3)
+				-- function 75
 				return
 			end
 		},
@@ -2939,25 +3116,28 @@ local var_0_30 = {
 			name = "cogwheel_spin",
 			start_progress = 0.1,
 			end_progress = 1.1,
-			init = function(arg_76_0, arg_76_1, arg_76_2, arg_76_3)
+			init = function (arg_76_0, arg_76_1, arg_76_2, arg_76_3)
+				-- function 76
 				return
 			end,
-			update = function(arg_77_0, arg_77_1, arg_77_2, arg_77_3, arg_77_4)
-				local var_77_0 = math.ease_exp(1 - arg_77_3)
-				local var_77_1 = math.easeInCubic(1 - arg_77_3)
-				local var_77_2 = arg_77_2.lock_slot_holder_left
-				local var_77_3 = arg_77_2.lock_slot_holder_right
-				local var_77_4 = arg_77_2.lock_cogwheel_left
-				local var_77_5 = arg_77_2.lock_cogwheel_right
-				local var_77_6 = math.pi / 2 * var_77_1
-				local var_77_7 = math.pi * 2 * var_77_0
+			update = function (arg_77_0, arg_77_1, arg_77_2, arg_77_3, arg_77_4)
+				-- function 77
+				local ease_exp = math.ease_exp(1 - arg_77_3)
+				local easeInCubic = math.easeInCubic(1 - arg_77_3)
+				local lock_slot_holder_left = arg_77_2.lock_slot_holder_left
+				local lock_slot_holder_right = arg_77_2.lock_slot_holder_right
+				local lock_cogwheel_left = arg_77_2.lock_cogwheel_left
+				local lock_cogwheel_right = arg_77_2.lock_cogwheel_right
+				local num = math.pi / 2 * easeInCubic
+				local num_2 = math.pi * 2 * ease_exp
 
-				var_77_2.style.texture_id.angle = -var_77_6
-				var_77_3.style.texture_id.angle = -var_77_6
-				var_77_4.style.texture_id.angle = var_77_7
-				var_77_5.style.texture_id.angle = var_77_7
+				lock_slot_holder_left.style.texture_id.angle = -num
+				lock_slot_holder_right.style.texture_id.angle = -num
+				lock_cogwheel_left.style.texture_id.angle = num_2
+				lock_cogwheel_right.style.texture_id.angle = num_2
 			end,
-			on_complete = function(arg_78_0, arg_78_1, arg_78_2, arg_78_3)
+			on_complete = function (arg_78_0, arg_78_1, arg_78_2, arg_78_3)
+				-- function 78
 				return
 			end
 		},
@@ -2965,21 +3145,24 @@ local var_0_30 = {
 			name = "left_and_right_pillar_lock",
 			start_progress = 0,
 			end_progress = 0.1,
-			init = function(arg_79_0, arg_79_1, arg_79_2, arg_79_3)
+			init = function (arg_79_0, arg_79_1, arg_79_2, arg_79_3)
+				-- function 79
 				return
 			end,
-			update = function(arg_80_0, arg_80_1, arg_80_2, arg_80_3, arg_80_4)
-				local var_80_0 = 28
-				local var_80_1 = math.ease_in_exp(1 - arg_80_3)
-				local var_80_2 = arg_80_0.lock_pillar_left.local_position
-				local var_80_3 = arg_80_1.lock_pillar_left.position
-				local var_80_4 = arg_80_0.lock_pillar_right.local_position
-				local var_80_5 = arg_80_1.lock_pillar_right.position
+			update = function (self, arg_80_1, arg_80_2, arg_80_3, arg_80_4)
+				-- function 80
+				local num = 28
+				local ease_in_exp = math.ease_in_exp(1 - arg_80_3)
+				local local_position = self.lock_pillar_left.local_position
+				local position = arg_80_1.lock_pillar_left.position
+				local local_position_2 = self.lock_pillar_right.local_position
+				local position_2 = arg_80_1.lock_pillar_right.position
 
-				var_80_2[1] = var_80_3[1] - var_80_0 * var_80_1
-				var_80_4[1] = var_80_5[1] + var_80_0 * var_80_1
+				local_position[1] = position[1] - num * ease_in_exp
+				local_position_2[1] = position_2[1] + num * ease_in_exp
 			end,
-			on_complete = function(arg_81_0, arg_81_1, arg_81_2, arg_81_3)
+			on_complete = function (arg_81_0, arg_81_1, arg_81_2, arg_81_3)
+				-- function 81
 				return
 			end
 		},
@@ -2987,10 +3170,12 @@ local var_0_30 = {
 			name = "finalize",
 			start_progress = 3,
 			end_progress = 3.5,
-			init = function(arg_82_0, arg_82_1, arg_82_2, arg_82_3)
+			init = function (arg_82_0, arg_82_1, arg_82_2, arg_82_3)
+				-- function 82
 				return
 			end,
-			update = function(arg_83_0, arg_83_1, arg_83_2, arg_83_3, arg_83_4)
+			update = function (self, arg_83_1, arg_83_2, arg_83_3, arg_83_4)
+				-- function 83
 				arg_83_2.lock_bg_left.content.visible = false
 				arg_83_2.lock_bg_right.content.visible = false
 				arg_83_2.lock_block_left.content.visible = false
@@ -2998,41 +3183,42 @@ local var_0_30 = {
 				arg_83_2.lock_cogwheel_left.content.visible = false
 				arg_83_2.lock_cogwheel_right.content.visible = false
 
-				local var_83_0 = 120
-				local var_83_1 = math.easeOutCubic(arg_83_3)
+				local num = 120
+				local easeOutCubic = math.easeOutCubic(arg_83_3)
 
-				arg_83_0.lock_pillar_left.local_position[1] = arg_83_1.lock_pillar_left.position[1] + var_83_0 * var_83_1
-				arg_83_0.lock_pillar_right.local_position[1] = arg_83_1.lock_pillar_right.position[1] - var_83_0 * var_83_1
-				arg_83_0.lock_pillar_top.local_position[2] = arg_83_1.lock_pillar_top.position[2] - var_83_0 * var_83_1
-				arg_83_0.lock_pillar_bottom.local_position[2] = arg_83_1.lock_pillar_bottom.position[2] + var_83_0 * var_83_1
+				self.lock_pillar_left.local_position[1] = arg_83_1.lock_pillar_left.position[1] + num * easeOutCubic
+				self.lock_pillar_right.local_position[1] = arg_83_1.lock_pillar_right.position[1] - num * easeOutCubic
+				self.lock_pillar_top.local_position[2] = arg_83_1.lock_pillar_top.position[2] - num * easeOutCubic
+				self.lock_pillar_bottom.local_position[2] = arg_83_1.lock_pillar_bottom.position[2] + num * easeOutCubic
 
-				local var_83_2 = 0.25
-				local var_83_3 = arg_83_0.lock_cogwheel_bg_left.size
-				local var_83_4 = arg_83_1.lock_cogwheel_bg_left.size
+				local num_2 = 0.25
+				local size = self.lock_cogwheel_bg_left.size
+				local size_2 = arg_83_1.lock_cogwheel_bg_left.size
 
-				var_83_3[1] = var_83_4[1] - var_83_4[1] * var_83_2 * var_83_1
-				var_83_3[2] = var_83_4[2] - var_83_4[2] * var_83_2 * var_83_1
+				size[1] = size_2[1] - size_2[1] * num_2 * easeOutCubic
+				size[2] = size_2[2] - size_2[2] * num_2 * easeOutCubic
 
-				local var_83_5 = arg_83_0.lock_cogwheel_bg_right.size
-				local var_83_6 = arg_83_0.lock_cogwheel_bg_right.local_position
-				local var_83_7 = arg_83_1.lock_cogwheel_bg_right.size
-				local var_83_8 = arg_83_1.lock_cogwheel_bg_right.position
+				local size_3 = self.lock_cogwheel_bg_right.size
+				local local_position = self.lock_cogwheel_bg_right.local_position
+				local size_4 = arg_83_1.lock_cogwheel_bg_right.size
+				local position = arg_83_1.lock_cogwheel_bg_right.position
 
-				var_83_5[1] = var_83_7[1] - var_83_7[1] * var_83_2 * var_83_1
-				var_83_5[2] = var_83_7[2] - var_83_7[2] * var_83_2 * var_83_1
-				var_83_6[1] = var_83_8[1] - var_83_8[1] * var_83_2 * var_83_1
+				size_3[1] = size_4[1] - size_4[1] * num_2 * easeOutCubic
+				size_3[2] = size_4[2] - size_4[2] * num_2 * easeOutCubic
+				local_position[1] = position[1] - position[1] * num_2 * easeOutCubic
 
-				local var_83_9 = arg_83_0.lock_slot_holder_left.size
-				local var_83_10 = arg_83_1.lock_slot_holder_left.size
+				local size_5 = self.lock_slot_holder_left.size
+				local size_6 = arg_83_1.lock_slot_holder_left.size
 
-				var_83_9[2] = var_83_10[2] - var_83_10[2] * var_83_2 * var_83_1
+				size_5[2] = size_6[2] - size_6[2] * num_2 * easeOutCubic
 
-				local var_83_11 = arg_83_0.lock_slot_holder_right.size
-				local var_83_12 = arg_83_1.lock_slot_holder_right.size
+				local size_7 = self.lock_slot_holder_right.size
+				local size_8 = arg_83_1.lock_slot_holder_right.size
 
-				var_83_11[2] = var_83_12[2] - var_83_12[2] * var_83_2 * var_83_1
+				size_7[2] = size_8[2] - size_8[2] * num_2 * easeOutCubic
 			end,
-			on_complete = function(arg_84_0, arg_84_1, arg_84_2, arg_84_3)
+			on_complete = function (arg_84_0, arg_84_1, arg_84_2, arg_84_3)
+				-- function 84
 				return
 			end
 		}
@@ -3040,9 +3226,10 @@ local var_0_30 = {
 	reveal = {
 		{
 			name = "reveal",
-			start_progress = 0.5 * var_0_29,
-			end_progress = 1 * var_0_29,
-			init = function(arg_85_0, arg_85_1, arg_85_2, arg_85_3)
+			start_progress = 0.5 * num_4,
+			end_progress = 1 * num_4,
+			init = function (arg_85_0, arg_85_1, arg_85_2, arg_85_3)
+				-- function 85
 				arg_85_2.lock_bg_left.content.visible = false
 				arg_85_2.lock_bg_right.content.visible = false
 				arg_85_2.lock_pillar_left.content.visible = false
@@ -3103,68 +3290,70 @@ local var_0_30 = {
 				arg_85_0.frame_bottom.local_position[2] = 0
 				arg_85_0.frame_bottom.local_position[3] = 0
 			end,
-			update = function(arg_86_0, arg_86_1, arg_86_2, arg_86_3, arg_86_4)
+			update = function (self, arg_86_1, arg_86_2, arg_86_3, arg_86_4)
+				-- function 86
 				arg_86_2.frame_right.content.visible = true
 				arg_86_2.frame_bottom.content.visible = true
 				arg_86_2.frame_left.content.visible = true
 				arg_86_2.frame_top.content.visible = true
 
-				local var_86_0 = 130
-				local var_86_1 = math.easeOutCubic(arg_86_3)
-				local var_86_2 = arg_86_0.lock_cover_top_left.local_position
-				local var_86_3 = arg_86_1.lock_cover_top_left.position
-				local var_86_4 = arg_86_0.lock_cover_top_right.local_position
-				local var_86_5 = arg_86_1.lock_cover_top_right.position
-				local var_86_6 = arg_86_0.lock_cover_bottom_left.local_position
-				local var_86_7 = arg_86_1.lock_cover_bottom_left.position
-				local var_86_8 = arg_86_0.lock_cover_bottom_right.local_position
-				local var_86_9 = arg_86_1.lock_cover_bottom_right.position
+				local num = 130
+				local easeOutCubic = math.easeOutCubic(arg_86_3)
+				local local_position = self.lock_cover_top_left.local_position
+				local position = arg_86_1.lock_cover_top_left.position
+				local local_position_2 = self.lock_cover_top_right.local_position
+				local position_2 = arg_86_1.lock_cover_top_right.position
+				local local_position_3 = self.lock_cover_bottom_left.local_position
+				local position_3 = arg_86_1.lock_cover_bottom_left.position
+				local local_position_4 = self.lock_cover_bottom_right.local_position
+				local position_4 = arg_86_1.lock_cover_bottom_right.position
 
-				var_86_2[1] = var_86_3[1] - var_86_0 * var_86_1
-				var_86_2[2] = var_86_3[2] + var_86_0 * var_86_1
-				var_86_4[1] = var_86_5[1] + var_86_0 * var_86_1
-				var_86_4[2] = var_86_5[2] + var_86_0 * var_86_1
-				var_86_6[1] = var_86_7[1] - var_86_0 * var_86_1
-				var_86_6[2] = var_86_7[2] - var_86_0 * var_86_1
-				var_86_8[1] = var_86_9[1] + var_86_0 * var_86_1
-				var_86_8[2] = var_86_9[2] - var_86_0 * var_86_1
+				local_position[1] = position[1] - num * easeOutCubic
+				local_position[2] = position[2] + num * easeOutCubic
+				local_position_2[1] = position_2[1] + num * easeOutCubic
+				local_position_2[2] = position_2[2] + num * easeOutCubic
+				local_position_3[1] = position_3[1] - num * easeOutCubic
+				local_position_3[2] = position_3[2] - num * easeOutCubic
+				local_position_4[1] = position_4[1] + num * easeOutCubic
+				local_position_4[2] = position_4[2] - num * easeOutCubic
 
-				local var_86_10 = arg_86_0.frame_left.local_position
-				local var_86_11 = arg_86_1.frame_left.position
-				local var_86_12 = arg_86_0.frame_top.local_position
-				local var_86_13 = arg_86_1.frame_top.position
-				local var_86_14 = arg_86_0.frame_right.local_position
-				local var_86_15 = arg_86_1.frame_right.position
-				local var_86_16 = arg_86_0.frame_bottom.local_position
-				local var_86_17 = arg_86_1.frame_bottom.position
+				local local_position_5 = self.frame_left.local_position
+				local position_5 = arg_86_1.frame_left.position
+				local local_position_6 = self.frame_top.local_position
+				local position_6 = arg_86_1.frame_top.position
+				local local_position_7 = self.frame_right.local_position
+				local position_7 = arg_86_1.frame_right.position
+				local local_position_8 = self.frame_bottom.local_position
+				local position_8 = arg_86_1.frame_bottom.position
 
-				var_86_10[1] = var_86_11[1] - (var_86_0 + 77) * var_86_1
-				var_86_12[2] = var_86_13[2] + (var_86_0 + 85) * var_86_1
-				var_86_14[1] = var_86_15[1] + (var_86_0 + 85) * var_86_1
-				var_86_16[2] = var_86_17[2] - (var_86_0 + 85) * var_86_1
+				local_position_5[1] = position_5[1] - (num + 77) * easeOutCubic
+				local_position_6[2] = position_6[2] + (num + 85) * easeOutCubic
+				local_position_7[1] = position_7[1] + (num + 85) * easeOutCubic
+				local_position_8[2] = position_8[2] - (num + 85) * easeOutCubic
 
-				local var_86_18 = arg_86_0.mask_left.local_position
-				local var_86_19 = arg_86_1.mask_left.position
-				local var_86_20 = arg_86_0.mask_right.local_position
-				local var_86_21 = arg_86_1.mask_right.position
-				local var_86_22 = arg_86_0.mask_bottom.local_position
-				local var_86_23 = arg_86_1.mask_bottom.position
-				local var_86_24 = arg_86_0.mask_top.local_position
-				local var_86_25 = arg_86_1.mask_top.position
+				local local_position_9 = self.mask_left.local_position
+				local position_9 = arg_86_1.mask_left.position
+				local local_position_10 = self.mask_right.local_position
+				local position_10 = arg_86_1.mask_right.position
+				local local_position_11 = self.mask_bottom.local_position
+				local position_11 = arg_86_1.mask_bottom.position
+				local local_position_12 = self.mask_top.local_position
+				local position_12 = arg_86_1.mask_top.position
 
-				var_86_18[1] = var_86_19[1] - 185 * var_86_1
-				var_86_18[2] = var_86_19[2]
-				var_86_20[1] = var_86_21[1] + 185 * var_86_1
-				var_86_20[2] = var_86_21[2]
-				var_86_22[2] = var_86_23[1] - 185 * var_86_1
-				var_86_24[2] = var_86_25[2] + 185 * var_86_1
+				local_position_9[1] = position_9[1] - 185 * easeOutCubic
+				local_position_9[2] = position_9[2]
+				local_position_10[1] = position_10[1] + 185 * easeOutCubic
+				local_position_10[2] = position_10[2]
+				local_position_11[2] = position_11[1] - 185 * easeOutCubic
+				local_position_12[2] = position_12[2] + 185 * easeOutCubic
 				arg_86_2.left_mask.style.texture_id.color[1] = arg_86_3 * 255
 				arg_86_2.right_mask.style.texture_id.color[1] = arg_86_3 * 255
 				arg_86_2.top_mask.style.texture_id.color[1] = arg_86_3 * 255
 				arg_86_2.bottom_mask.style.texture_id.color[1] = arg_86_3 * 255
 				arg_86_2.center_mask.style.texture_id.color[1] = arg_86_3 * 255
 			end,
-			on_complete = function(arg_87_0, arg_87_1, arg_87_2, arg_87_3)
+			on_complete = function (arg_87_0, arg_87_1, arg_87_2, arg_87_3)
+				-- function 87
 				return
 			end
 		}
@@ -3174,7 +3363,8 @@ local var_0_30 = {
 			name = "reveal_instant",
 			start_progress = 0,
 			end_progress = 0,
-			init = function(arg_88_0, arg_88_1, arg_88_2, arg_88_3)
+			init = function (arg_88_0, arg_88_1, arg_88_2, arg_88_3)
+				-- function 88
 				arg_88_0.lock_root.position[2] = -355
 				arg_88_2.lock_bg_left.content.visible = false
 				arg_88_2.lock_bg_right.content.visible = false
@@ -3244,68 +3434,70 @@ local var_0_30 = {
 				arg_88_0.frame_bottom.local_position[2] = 0
 				arg_88_0.frame_bottom.local_position[3] = 0
 			end,
-			update = function(arg_89_0, arg_89_1, arg_89_2, arg_89_3, arg_89_4)
+			update = function (self, arg_89_1, arg_89_2, arg_89_3, arg_89_4)
+				-- function 89
 				arg_89_2.frame_right.content.visible = true
 				arg_89_2.frame_bottom.content.visible = true
 				arg_89_2.frame_left.content.visible = true
 				arg_89_2.frame_top.content.visible = true
 
-				local var_89_0 = 130
-				local var_89_1 = math.easeOutCubic(arg_89_3)
-				local var_89_2 = arg_89_0.lock_cover_top_left.local_position
-				local var_89_3 = arg_89_1.lock_cover_top_left.position
-				local var_89_4 = arg_89_0.lock_cover_top_right.local_position
-				local var_89_5 = arg_89_1.lock_cover_top_right.position
-				local var_89_6 = arg_89_0.lock_cover_bottom_left.local_position
-				local var_89_7 = arg_89_1.lock_cover_bottom_left.position
-				local var_89_8 = arg_89_0.lock_cover_bottom_right.local_position
-				local var_89_9 = arg_89_1.lock_cover_bottom_right.position
+				local num = 130
+				local easeOutCubic = math.easeOutCubic(arg_89_3)
+				local local_position = self.lock_cover_top_left.local_position
+				local position = arg_89_1.lock_cover_top_left.position
+				local local_position_2 = self.lock_cover_top_right.local_position
+				local position_2 = arg_89_1.lock_cover_top_right.position
+				local local_position_3 = self.lock_cover_bottom_left.local_position
+				local position_3 = arg_89_1.lock_cover_bottom_left.position
+				local local_position_4 = self.lock_cover_bottom_right.local_position
+				local position_4 = arg_89_1.lock_cover_bottom_right.position
 
-				var_89_2[1] = var_89_3[1] - var_89_0 * var_89_1
-				var_89_2[2] = var_89_3[2] + var_89_0 * var_89_1
-				var_89_4[1] = var_89_5[1] + var_89_0 * var_89_1
-				var_89_4[2] = var_89_5[2] + var_89_0 * var_89_1
-				var_89_6[1] = var_89_7[1] - var_89_0 * var_89_1
-				var_89_6[2] = var_89_7[2] - var_89_0 * var_89_1
-				var_89_8[1] = var_89_9[1] + var_89_0 * var_89_1
-				var_89_8[2] = var_89_9[2] - var_89_0 * var_89_1
+				local_position[1] = position[1] - num * easeOutCubic
+				local_position[2] = position[2] + num * easeOutCubic
+				local_position_2[1] = position_2[1] + num * easeOutCubic
+				local_position_2[2] = position_2[2] + num * easeOutCubic
+				local_position_3[1] = position_3[1] - num * easeOutCubic
+				local_position_3[2] = position_3[2] - num * easeOutCubic
+				local_position_4[1] = position_4[1] + num * easeOutCubic
+				local_position_4[2] = position_4[2] - num * easeOutCubic
 
-				local var_89_10 = arg_89_0.frame_left.local_position
-				local var_89_11 = arg_89_1.frame_left.position
-				local var_89_12 = arg_89_0.frame_top.local_position
-				local var_89_13 = arg_89_1.frame_top.position
-				local var_89_14 = arg_89_0.frame_right.local_position
-				local var_89_15 = arg_89_1.frame_right.position
-				local var_89_16 = arg_89_0.frame_bottom.local_position
-				local var_89_17 = arg_89_1.frame_bottom.position
+				local local_position_5 = self.frame_left.local_position
+				local position_5 = arg_89_1.frame_left.position
+				local local_position_6 = self.frame_top.local_position
+				local position_6 = arg_89_1.frame_top.position
+				local local_position_7 = self.frame_right.local_position
+				local position_7 = arg_89_1.frame_right.position
+				local local_position_8 = self.frame_bottom.local_position
+				local position_8 = arg_89_1.frame_bottom.position
 
-				var_89_10[1] = var_89_11[1] - (var_89_0 + 77) * var_89_1
-				var_89_12[2] = var_89_13[2] + (var_89_0 + 85) * var_89_1
-				var_89_14[1] = var_89_15[1] + (var_89_0 + 85) * var_89_1
-				var_89_16[2] = var_89_17[2] - (var_89_0 + 85) * var_89_1
+				local_position_5[1] = position_5[1] - (num + 77) * easeOutCubic
+				local_position_6[2] = position_6[2] + (num + 85) * easeOutCubic
+				local_position_7[1] = position_7[1] + (num + 85) * easeOutCubic
+				local_position_8[2] = position_8[2] - (num + 85) * easeOutCubic
 
-				local var_89_18 = arg_89_0.mask_left.local_position
-				local var_89_19 = arg_89_1.mask_left.position
-				local var_89_20 = arg_89_0.mask_right.local_position
-				local var_89_21 = arg_89_1.mask_right.position
-				local var_89_22 = arg_89_0.mask_bottom.local_position
-				local var_89_23 = arg_89_1.mask_bottom.position
-				local var_89_24 = arg_89_0.mask_top.local_position
-				local var_89_25 = arg_89_1.mask_top.position
+				local local_position_9 = self.mask_left.local_position
+				local position_9 = arg_89_1.mask_left.position
+				local local_position_10 = self.mask_right.local_position
+				local position_10 = arg_89_1.mask_right.position
+				local local_position_11 = self.mask_bottom.local_position
+				local position_11 = arg_89_1.mask_bottom.position
+				local local_position_12 = self.mask_top.local_position
+				local position_12 = arg_89_1.mask_top.position
 
-				var_89_18[1] = var_89_19[1] - 185 * var_89_1
-				var_89_18[2] = var_89_19[2]
-				var_89_20[1] = var_89_21[1] + 185 * var_89_1
-				var_89_20[2] = var_89_21[2]
-				var_89_22[2] = var_89_23[1] - 185 * var_89_1
-				var_89_24[2] = var_89_25[2] + 185 * var_89_1
+				local_position_9[1] = position_9[1] - 185 * easeOutCubic
+				local_position_9[2] = position_9[2]
+				local_position_10[1] = position_10[1] + 185 * easeOutCubic
+				local_position_10[2] = position_10[2]
+				local_position_11[2] = position_11[1] - 185 * easeOutCubic
+				local_position_12[2] = position_12[2] + 185 * easeOutCubic
 				arg_89_2.left_mask.style.texture_id.color[1] = arg_89_3 * 255
 				arg_89_2.right_mask.style.texture_id.color[1] = arg_89_3 * 255
 				arg_89_2.top_mask.style.texture_id.color[1] = arg_89_3 * 255
 				arg_89_2.bottom_mask.style.texture_id.color[1] = arg_89_3 * 255
 				arg_89_2.center_mask.style.texture_id.color[1] = arg_89_3 * 255
 			end,
-			on_complete = function(arg_90_0, arg_90_1, arg_90_2, arg_90_3)
+			on_complete = function (arg_90_0, arg_90_1, arg_90_2, arg_90_3)
+				-- function 90
 				return
 			end
 		}
@@ -3315,7 +3507,8 @@ local var_0_30 = {
 			name = "hide_instant",
 			start_progress = 0,
 			end_progress = 0,
-			init = function(arg_91_0, arg_91_1, arg_91_2, arg_91_3)
+			init = function (arg_91_0, arg_91_1, arg_91_2, arg_91_3)
+				-- function 91
 				arg_91_0.lock_root.position[2] = -355
 				arg_91_2.lock_bg_left.content.visible = false
 				arg_91_2.lock_bg_right.content.visible = false
@@ -3385,16 +3578,18 @@ local var_0_30 = {
 				arg_91_0.frame_bottom.local_position[2] = 0
 				arg_91_0.frame_bottom.local_position[3] = 0
 			end,
-			update = function(arg_92_0, arg_92_1, arg_92_2, arg_92_3, arg_92_4)
+			update = function (arg_92_0, arg_92_1, arg_92_2, arg_92_3, arg_92_4)
+				-- function 92
 				return
 			end,
-			on_complete = function(arg_93_0, arg_93_1, arg_93_2, arg_93_3)
+			on_complete = function (arg_93_0, arg_93_1, arg_93_2, arg_93_3)
+				-- function 93
 				return
 			end
 		}
 	}
 }
-local var_0_31 = {
+local tbl_13 = {
 	default = {
 		{
 			input_action = "d_horizontal",
@@ -3448,19 +3643,19 @@ local var_0_31 = {
 
 return {
 	gotwf_item_size = {
-		var_0_13[1] + var_0_10,
-		var_0_13[2]
+		tbl_4[1] + num,
+		tbl_4[2]
 	},
-	icon_scale = var_0_11,
-	create_item_definition_func = var_0_18,
-	widgets = var_0_27,
-	lock_widgets = var_0_28,
-	bottom_widgets = var_0_25,
-	background_widgets = var_0_24,
-	viewport_widgets = var_0_26,
-	scenegraph_definition = var_0_14,
-	animation_definitions = var_0_30,
-	generic_input_actions = var_0_31,
-	create_simple_item = var_0_16,
-	create_claim_button = var_0_23
+	icon_scale = num_2,
+	create_item_definition_func = fn_2,
+	widgets = tbl_10,
+	lock_widgets = tbl_11,
+	bottom_widgets = tbl_8,
+	background_widgets = tbl_7,
+	viewport_widgets = tbl_9,
+	scenegraph_definition = tbl_5,
+	animation_definitions = tbl_12,
+	generic_input_actions = tbl_13,
+	create_simple_item = fn,
+	create_claim_button = fn_4
 }

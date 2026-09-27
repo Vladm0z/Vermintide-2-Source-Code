@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/hit_effects/hit_effects_beastmen_ungor.lua
 
-local var_0_0 = {
+local tbl = {
 	"light_stab_fencer",
 	"light_stab_smiter",
 	"stab_fencer",
@@ -17,7 +17,7 @@ local var_0_0 = {
 	"slashing_linesman",
 	"heavy_slashing_linesman"
 }
-local var_0_1 = {
+local tbl_2 = {
 	"heavy_stab_smiter",
 	"light_slashing_smiter",
 	"slashing_smiter",
@@ -2650,7 +2650,7 @@ HitEffectsBeastmenUngor = {
 		armour_type = "cloth",
 		extra_conditions = {
 			death = false,
-			damage_type = var_0_0
+			damage_type = tbl
 		}
 	},
 	wound_tail = {
@@ -2660,7 +2660,7 @@ HitEffectsBeastmenUngor = {
 		extra_conditions = {
 			death = false,
 			is_critical_strike = true,
-			damage_type = var_0_1,
+			damage_type = tbl_2,
 			hit_zone = {
 				"tail"
 			}
@@ -2768,38 +2768,51 @@ HitEffectsBeastmenUngor = {
 	}
 }
 
-local function var_0_2(arg_1_0, ...)
-	local var_1_0 = arg_1_0
+local function fn(self, ...)
+	-- function 1
+	local var_1_0 = self
 
-	for iter_1_0 = 1, select("#", ...) do
-		var_1_0 = var_1_0[select(iter_1_0, ...)]
+	for i = 1, select("#", ...) do
+		var_1_0 = var_1_0[select(i, ...)]
 
 		if not var_1_0 then
 			break
 		end
 	end
 
-	return var_1_0 or arg_1_0.inherits and var_0_2(HitEffectsBeastmenUngor[arg_1_0.inherits], ...)
+	if not var_1_0 then
+		-- Nothing
+	end
+
+	::label_1_0::
+
+	local inherits = self.inherits
+
+	inherits = not inherits and fn(HitEffectsBeastmenUngor[self.inherits], ...)
+
+	::label_1_1::
+
+	return inherits
 end
 
-for iter_0_0, iter_0_1 in pairs(HitEffectsBeastmenUngor) do
-	local var_0_3 = var_0_2(iter_0_1, "extra_conditions", "death")
-	local var_0_4 = var_0_2(iter_0_1, "timed_status")
+for k, v in pairs(HitEffectsBeastmenUngor) do
+	local var_0_3 = fn(v, "extra_conditions", "death")
+	local var_0_4 = fn(v, "timed_status")
 	local var_0_5 = rawget(StatusEffectNames, (var_0_4 or "") .. "_death_critical")
 
-	if var_0_3 and var_0_5 then
-		local var_0_6 = iter_0_0 .. "_critical"
-		local var_0_7 = {
+	if not var_0_3 and not var_0_5 then
+		local str = k .. "_critical"
+		local tbl_3 = {
 			do_dismember = false,
 			do_diagonal_dismemberments = false,
-			inherits = iter_0_0,
+			inherits = k,
 			extra_conditions = {
 				is_critical_strike = true
 			},
 			timed_status = var_0_5
 		}
 
-		HitEffectsBeastmenUngor[var_0_6] = var_0_7
+		HitEffectsBeastmenUngor[str] = tbl_3
 	end
 end
 

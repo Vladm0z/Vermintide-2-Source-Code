@@ -2,186 +2,190 @@
 
 PlayerCharacterStateInteracting = class(PlayerCharacterStateInteracting, PlayerCharacterState)
 
-function PlayerCharacterStateInteracting.init(arg_1_0, arg_1_1)
+PlayerCharacterStateInteracting.init = function (arg_1_0, arg_1_1)
+	-- function 1
 	PlayerCharacterState.init(arg_1_0, arg_1_1, "interacting")
 end
 
-function PlayerCharacterStateInteracting.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
-	arg_2_0.has_started_interacting = false
-	arg_2_0.swap_to_3p = arg_2_7.swap_to_3p
-	arg_2_0.allow_rotation_update = arg_2_7.allow_rotation_update
+PlayerCharacterStateInteracting.on_enter = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	-- function 2
+	self.has_started_interacting = false
+	self.swap_to_3p = arg_2_7.swap_to_3p
+	self.allow_rotation_update = arg_2_7.allow_rotation_update
 
-	local var_2_0 = arg_2_0.locomotion_extension
+	local locomotion_extension = self.locomotion_extension
 
-	var_2_0:set_wanted_velocity(Vector3.zero())
+	locomotion_extension:set_wanted_velocity(Vector3.zero())
 
-	if not var_2_0:is_on_ground() then
-		arg_2_0.status_extension:set_falling_height()
+	if not locomotion_extension:is_on_ground() then
+		self.status_extension:set_falling_height()
 	end
 
-	local var_2_1 = arg_2_0.first_person_extension
+	local first_person_extension = self.first_person_extension
 
-	if arg_2_0.swap_to_3p then
-		CharacterStateHelper.change_camera_state(arg_2_0.player, "follow_third_person")
-		var_2_1:set_first_person_mode(false)
+	if not self.swap_to_3p then
+		CharacterStateHelper.change_camera_state(self.player, "follow_third_person")
+		first_person_extension:set_first_person_mode(false)
 	else
-		CharacterStateHelper.play_animation_event_first_person(var_2_1, "idle")
+		CharacterStateHelper.play_animation_event_first_person(first_person_extension, "idle")
 	end
 
 	if not arg_2_7.show_weapons then
-		local var_2_2 = true
+		local flag = true
 
-		CharacterStateHelper.show_inventory_3p(arg_2_1, false, var_2_2, arg_2_0.is_server, arg_2_0.inventory_extension)
+		CharacterStateHelper.show_inventory_3p(arg_2_1, false, flag, self.is_server, self.inventory_extension)
 	end
 
-	arg_2_0.deactivate_block_on_exit = false
+	self.deactivate_block_on_exit = false
 
-	if arg_2_7.activate_block then
-		arg_2_0.activate_block = arg_2_7.activate_block
+	if not arg_2_7.activate_block then
+		self.activate_block = arg_2_7.activate_block
 
-		local var_2_3 = arg_2_0.status_extension
+		local status_extension = self.status_extension
 
-		arg_2_0.deactivate_block_on_exit = not var_2_3:is_blocking()
+		self.deactivate_block_on_exit = not status_extension:is_blocking()
 
-		if not LEVEL_EDITOR_TEST and Managers.state.network:game() then
-			local var_2_4 = Managers.state.unit_storage:go_id(arg_2_1)
+		if LEVEL_EDITOR_TEST or not Managers.state.network:game() then
+			local go_id = Managers.state.unit_storage:go_id(arg_2_1)
 
-			if arg_2_0.is_server then
-				Managers.state.network.network_transmit:send_rpc_clients("rpc_set_blocking", var_2_4, true)
+			if not self.is_server then
+				Managers.state.network.network_transmit:send_rpc_clients("rpc_set_blocking", go_id, true)
 			else
-				Managers.state.network.network_transmit:send_rpc_server("rpc_set_blocking", var_2_4, true)
+				Managers.state.network.network_transmit:send_rpc_server("rpc_set_blocking", go_id, true)
 			end
 		end
 
-		var_2_3:set_blocking(true)
+		status_extension:set_blocking(true)
 	end
 end
 
-function PlayerCharacterStateInteracting.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
-	arg_3_0.activate_block = nil
+PlayerCharacterStateInteracting.on_exit = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+	-- function 3
+	self.activate_block = nil
 
-	if arg_3_0.swap_to_3p then
-		CharacterStateHelper.change_camera_state(arg_3_0.player, "follow")
+	if not self.swap_to_3p then
+		CharacterStateHelper.change_camera_state(self.player, "follow")
 
-		local var_3_0 = true
+		local flag = true
 
-		CharacterStateHelper.show_inventory_3p(arg_3_1, true, var_3_0, arg_3_0.is_server, arg_3_0.inventory_extension)
-		arg_3_0.first_person_extension:toggle_visibility(CameraTransitionSettings.perspective_transition_time)
+		CharacterStateHelper.show_inventory_3p(arg_3_1, true, flag, self.is_server, self.inventory_extension)
+		self.first_person_extension:toggle_visibility(CameraTransitionSettings.perspective_transition_time)
 	else
-		local var_3_1 = false
+		local flag_2 = false
 
-		CharacterStateHelper.show_inventory_3p(arg_3_1, true, var_3_1, arg_3_0.is_server, arg_3_0.inventory_extension)
+		CharacterStateHelper.show_inventory_3p(arg_3_1, true, flag_2, self.is_server, self.inventory_extension)
 	end
 
-	local var_3_2 = arg_3_0.status_extension
+	local status_extension = self.status_extension
 
-	if arg_3_0.deactivate_block_on_exit then
-		if not LEVEL_EDITOR_TEST and Managers.state.network:game() then
-			local var_3_3 = Managers.state.unit_storage:go_id(arg_3_1)
+	if not self.deactivate_block_on_exit then
+		if LEVEL_EDITOR_TEST or not Managers.state.network:game() then
+			local go_id = Managers.state.unit_storage:go_id(arg_3_1)
 
-			if arg_3_0.is_server then
-				Managers.state.network.network_transmit:send_rpc_clients("rpc_set_blocking", var_3_3, false)
+			if not self.is_server then
+				Managers.state.network.network_transmit:send_rpc_clients("rpc_set_blocking", go_id, false)
 			else
-				Managers.state.network.network_transmit:send_rpc_server("rpc_set_blocking", var_3_3, false)
+				Managers.state.network.network_transmit:send_rpc_server("rpc_set_blocking", go_id, false)
 			end
 		end
 
-		var_3_2:set_blocking(false)
+		status_extension:set_blocking(false)
 	end
 end
 
-function PlayerCharacterStateInteracting.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
-	local var_4_0 = arg_4_0.csm
-	local var_4_1 = arg_4_0.input_extension
-	local var_4_2 = arg_4_0.interactor_extension
-	local var_4_3 = arg_4_0.status_extension
-	local var_4_4 = PlayerUnitMovementSettings.get_movement_settings_table(arg_4_1)
+PlayerCharacterStateInteracting.update = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	-- function 4
+	local csm = self.csm
+	local input_extension = self.input_extension
+	local interactor_extension = self.interactor_extension
+	local status_extension = self.status_extension
+	local get_movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(arg_4_1)
 
-	if arg_4_0.activate_block then
-		if not var_4_3:is_blocking() and not LEVEL_EDITOR_TEST and Managers.state.network:game() then
-			local var_4_5 = Managers.state.unit_storage:go_id(arg_4_1)
+	if not self.activate_block then
+		if status_extension:is_blocking() or LEVEL_EDITOR_TEST or not Managers.state.network:game() then
+			local go_id = Managers.state.unit_storage:go_id(arg_4_1)
 
-			if arg_4_0.is_server then
-				Managers.state.network.network_transmit:send_rpc_clients("rpc_set_blocking", var_4_5, true)
+			if not self.is_server then
+				Managers.state.network.network_transmit:send_rpc_clients("rpc_set_blocking", go_id, true)
 			else
-				Managers.state.network.network_transmit:send_rpc_server("rpc_set_blocking", var_4_5, true)
+				Managers.state.network.network_transmit:send_rpc_server("rpc_set_blocking", go_id, true)
 			end
 		end
 
-		var_4_3:set_blocking(true)
+		status_extension:set_blocking(true)
 	end
 
-	if CharacterStateHelper.do_common_state_transitions(var_4_3, var_4_0) then
+	if not CharacterStateHelper.do_common_state_transitions(status_extension, csm) then
 		return
 	end
 
-	if CharacterStateHelper.is_using_transport(var_4_3) then
-		var_4_0:change_state("using_transport")
-
-		return
-	end
-
-	local var_4_6 = arg_4_0.world
-
-	if CharacterStateHelper.is_ledge_hanging(var_4_6, arg_4_1, arg_4_0.temp_params) then
-		var_4_0:change_state("ledge_hanging", arg_4_0.temp_params)
+	if not CharacterStateHelper.is_using_transport(status_extension) then
+		csm:change_state("using_transport")
 
 		return
 	end
 
-	if not var_4_0.state_next and var_4_3.do_leap then
-		var_4_0:change_state("leaping")
+	local world = self.world
+
+	if not CharacterStateHelper.is_ledge_hanging(world, arg_4_1, self.temp_params) then
+		csm:change_state("ledge_hanging", self.temp_params)
 
 		return
 	end
 
-	if not CharacterStateHelper.is_interacting(var_4_2) then
-		var_4_0:change_state("standing")
+	if csm.state_next or not status_extension.do_leap then
+		csm:change_state("leaping")
 
 		return
 	end
 
-	if not CharacterStateHelper.is_waiting_for_interaction_approval(var_4_2) then
-		if not arg_4_0.has_started_interacting then
-			arg_4_0.has_started_interacting = true
+	if not CharacterStateHelper.is_interacting(interactor_extension) then
+		csm:change_state("standing")
+
+		return
+	end
+
+	if not CharacterStateHelper.is_waiting_for_interaction_approval(interactor_extension) then
+		if not self.has_started_interacting then
+			self.has_started_interacting = true
 		end
 
-		if not CharacterStateHelper.interact(var_4_1, var_4_2) then
-			var_4_0:change_state("standing")
+		if not CharacterStateHelper.interact(input_extension, interactor_extension) then
+			csm:change_state("standing")
 
 			return
 		end
 	end
 
-	if CharacterStateHelper.is_pushed(var_4_3) then
-		var_4_3:set_pushed(false)
+	if not CharacterStateHelper.is_pushed(status_extension) then
+		status_extension:set_pushed(false)
 
-		local var_4_7 = var_4_4.stun_settings.pushed
+		local pushed = get_movement_settings_table.stun_settings.pushed
 
-		var_4_7.hit_react_type = var_4_3:hit_react_type() .. "_push"
+		pushed.hit_react_type = status_extension:hit_react_type() .. "_push"
 
-		var_4_0:change_state("stunned", var_4_7)
-		var_4_2:abort_interaction()
-
-		return
-	end
-
-	if CharacterStateHelper.is_block_broken(var_4_3) then
-		var_4_3:set_block_broken(false)
-
-		local var_4_8 = var_4_4.stun_settings.parry_broken
-
-		var_4_8.hit_react_type = "medium_push"
-
-		var_4_0:change_state("stunned", var_4_8)
-		var_4_2:abort_interaction()
+		csm:change_state("stunned", pushed)
+		interactor_extension:abort_interaction()
 
 		return
 	end
 
-	if not arg_4_0.allow_rotation_update then
-		arg_4_0.locomotion_extension:set_disable_rotation_update()
+	if not CharacterStateHelper.is_block_broken(status_extension) then
+		status_extension:set_block_broken(false)
+
+		local parry_broken = get_movement_settings_table.stun_settings.parry_broken
+
+		parry_broken.hit_react_type = "medium_push"
+
+		csm:change_state("stunned", parry_broken)
+		interactor_extension:abort_interaction()
+
+		return
 	end
 
-	CharacterStateHelper.look(var_4_1, arg_4_0.player.viewport_name, arg_4_0.first_person_extension, var_4_3, arg_4_0.inventory_extension)
+	if not self.allow_rotation_update then
+		self.locomotion_extension:set_disable_rotation_update()
+	end
+
+	CharacterStateHelper.look(input_extension, self.player.viewport_name, self.first_person_extension, status_extension, self.inventory_extension)
 end

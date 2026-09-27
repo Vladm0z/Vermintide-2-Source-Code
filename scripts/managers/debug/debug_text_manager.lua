@@ -2,141 +2,147 @@
 
 DebugTextManager = class(DebugTextManager)
 
-function DebugTextManager.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
-	arg_1_0._world = arg_1_1
-	arg_1_0._gui = arg_1_2
-	arg_1_0._world_gui = World.create_world_gui(arg_1_1, Matrix4x4.identity(), 1, 1, "material", "materials/fonts/gw_fonts", "immediate")
-	arg_1_0._time = 0
-	arg_1_0._screen_text_size = 50
-	arg_1_0._screen_text_time = 5
-	arg_1_0._screen_text_bgr = nil
-	arg_1_0._screen_text = nil
-	arg_1_0._unit_text_size = 0.2
-	arg_1_0._unit_text_time = math.huge
-	arg_1_0._unit_texts = {}
-	arg_1_0._world_text_size = 0.6
-	arg_1_0._world_text_time = math.huge
-	arg_1_0._world_texts = {}
+DebugTextManager.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	-- function 1
+	self._world = arg_1_1
+	self._gui = arg_1_2
+	self._world_gui = World.create_world_gui(arg_1_1, Matrix4x4.identity(), 1, 1, "material", "materials/fonts/gw_fonts", "immediate")
+	self._time = 0
+	self._screen_text_size = 50
+	self._screen_text_time = 5
+	self._screen_text_bgr = nil
+	self._screen_text = nil
+	self._unit_text_size = 0.2
+	self._unit_text_time = math.huge
+	self._unit_texts = {}
+	self._world_text_size = 0.6
+	self._world_text_time = math.huge
+	self._world_texts = {}
 end
 
-function DebugTextManager.update(arg_2_0, arg_2_1, arg_2_2)
-	arg_2_0._time = arg_2_0._time + arg_2_1
+DebugTextManager.update = function (self, arg_2_1, arg_2_2)
+	-- function 2
+	self._time = self._time + arg_2_1
 
-	if script_data and script_data.disable_debug_draw then
+	if not script_data and not script_data.disable_debug_draw then
 		return
 	end
 
-	arg_2_0:_update_unit_texts(arg_2_2, arg_2_1)
-	arg_2_0:_update_world_texts(arg_2_2)
-	arg_2_0:_update_screen_text()
+	self:_update_unit_texts(arg_2_2, arg_2_1)
+	self:_update_world_texts(arg_2_2)
+	self:_update_screen_text()
 end
 
-function DebugTextManager._update_unit_texts(arg_3_0, arg_3_1, arg_3_2)
-	local var_3_0 = Managers.state.camera:camera_rotation(arg_3_1)
-	local var_3_1 = arg_3_0._world_gui
-	local var_3_2 = "arial"
-	local var_3_3 = arg_3_0._unit_text_size
-	local var_3_4 = "materials/fonts/" .. var_3_2
+DebugTextManager._update_unit_texts = function (self, arg_3_1, arg_3_2)
+	-- function 3
+	local camera_rotation = Managers.state.camera:camera_rotation(arg_3_1)
+	local _world_gui = self._world_gui
+	local str = "arial"
+	local _unit_text_size = self._unit_text_size
+	local str_2 = "materials/fonts/" .. str
 
-	for iter_3_0, iter_3_1 in pairs(arg_3_0._unit_texts) do
-		if Unit.alive(iter_3_0) then
-			for iter_3_2, iter_3_3 in pairs(iter_3_1) do
-				for iter_3_4, iter_3_5 in ipairs(iter_3_3) do
-					if arg_3_0._time > iter_3_5.time then
-						Gui.destroy_text_3d(arg_3_0._world_gui, iter_3_5.id)
-						table.remove(iter_3_3, iter_3_4)
+	for k, v in pairs(self._unit_texts) do
+		if not Unit.alive(k) then
+			for k_2, v_2 in pairs(v) do
+				for i, v_3 in ipairs(v_2) do
+					if self._time > v_3.time then
+						Gui.destroy_text_3d(self._world_gui, v_3.id)
+						table.remove(v_2, i)
 					else
-						local var_3_5 = Vector3(iter_3_5.offset.x, iter_3_5.offset.y, iter_3_5.offset.z)
-						local var_3_6 = Matrix4x4.from_quaternion_position(var_3_0, Unit.world_position(iter_3_0, iter_3_5.node_index) + var_3_5)
-						local var_3_7 = Vector3(iter_3_5.text_offset.x, iter_3_5.text_offset.y, iter_3_5.text_offset.z)
+						local var_3_5 = Vector3(v_3.offset.x, v_3.offset.y, v_3.offset.z)
+						local from_quaternion_position = Matrix4x4.from_quaternion_position(camera_rotation, Unit.world_position(k, v_3.node_index) + var_3_5)
+						local var_3_7 = Vector3(v_3.text_offset.x, v_3.text_offset.y, v_3.text_offset.z)
 						local var_3_8
 
-						if iter_3_5.fade then
-							local var_3_9 = (iter_3_5.time - arg_3_0._time) / (iter_3_5.time - iter_3_5.starting_time) * 255
+						if not v_3.fade then
+							local num = (v_3.time - self._time) / (v_3.time - v_3.starting_time) * 255
 
-							var_3_8 = Color(var_3_9, iter_3_5.color.r, iter_3_5.color.g, iter_3_5.color.b)
+							var_3_8 = Color(num, v_3.color.r, v_3.color.g, v_3.color.b)
 						else
-							var_3_8 = Color(iter_3_5.color.r, iter_3_5.color.g, iter_3_5.color.b)
+							var_3_8 = Color(v_3.color.r, v_3.color.g, v_3.color.b)
 						end
 
-						local var_3_10 = iter_3_5.floating_position_box
+						local floating_position_box = v_3.floating_position_box
 
-						if var_3_10 then
-							local var_3_11 = var_3_10:unbox() + Vector3.forward() * arg_3_2 * 0.5
+						if not floating_position_box then
+							local num_2 = floating_position_box:unbox() + Vector3.forward() * arg_3_2 * 0.5
 
-							var_3_7 = var_3_7 + var_3_11
+							var_3_7 = var_3_7 + num_2
 
-							iter_3_5.floating_position_box:store(var_3_11)
+							v_3.floating_position_box:store(num_2)
 						end
 
-						Gui.update_text_3d(var_3_1, iter_3_5.id, iter_3_5.text, var_3_4, iter_3_5.text_size, var_3_2, var_3_6, var_3_7, 0, var_3_8)
+						Gui.update_text_3d(_world_gui, v_3.id, v_3.text, str_2, v_3.text_size, str, from_quaternion_position, var_3_7, 0, var_3_8)
 					end
 				end
 			end
 		else
-			arg_3_0:_destroy_unit_texts(iter_3_0)
+			self:_destroy_unit_texts(k)
 		end
 	end
 end
 
-function DebugTextManager._update_world_texts(arg_4_0, arg_4_1)
-	local var_4_0 = Managers.state.camera:camera_rotation(arg_4_1)
-	local var_4_1 = arg_4_0._world_gui
-	local var_4_2 = arg_4_0._world_text_size
-	local var_4_3 = "arial"
-	local var_4_4 = "materials/fonts/" .. var_4_3
+DebugTextManager._update_world_texts = function (self, arg_4_1)
+	-- function 4
+	local camera_rotation = Managers.state.camera:camera_rotation(arg_4_1)
+	local _world_gui = self._world_gui
+	local _world_text_size = self._world_text_size
+	local str = "arial"
+	local str_2 = "materials/fonts/" .. str
 
-	for iter_4_0, iter_4_1 in pairs(arg_4_0._world_texts) do
-		for iter_4_2, iter_4_3 in ipairs(iter_4_1) do
-			if arg_4_0._time > iter_4_3.time then
-				Gui.destroy_text_3d(arg_4_0._world_gui, iter_4_3.id)
-				table.remove(iter_4_1, iter_4_2)
+	for k, v in pairs(self._world_texts) do
+		for i, v_2 in ipairs(v) do
+			if self._time > v_2.time then
+				Gui.destroy_text_3d(self._world_gui, v_2.id)
+				table.remove(v, i)
 			else
-				local var_4_5 = Vector3(iter_4_3.position.x, iter_4_3.position.y, iter_4_3.position.z)
-				local var_4_6 = Vector3(iter_4_3.text_offset.x, iter_4_3.text_offset.y, iter_4_3.text_offset.z)
-				local var_4_7 = Matrix4x4.from_quaternion_position(var_4_0, var_4_5)
-				local var_4_8 = Color(iter_4_3.color.r, iter_4_3.color.g, iter_4_3.color.b)
+				local var_4_5 = Vector3(v_2.position.x, v_2.position.y, v_2.position.z)
+				local var_4_6 = Vector3(v_2.text_offset.x, v_2.text_offset.y, v_2.text_offset.z)
+				local from_quaternion_position = Matrix4x4.from_quaternion_position(camera_rotation, var_4_5)
+				local var_4_8 = Color(v_2.color.r, v_2.color.g, v_2.color.b)
 
-				Gui.update_text_3d(var_4_1, iter_4_3.id, iter_4_3.text, var_4_4, iter_4_3.text_size, var_4_3, var_4_7, var_4_6, 0, var_4_8)
+				Gui.update_text_3d(_world_gui, v_2.id, v_2.text, str_2, v_2.text_size, str, from_quaternion_position, var_4_6, 0, var_4_8)
 			end
 		end
 	end
 end
 
-function DebugTextManager._update_screen_text(arg_5_0)
-	if arg_5_0._screen_text and arg_5_0._time > arg_5_0._screen_text.time then
-		Gui.destroy_text(arg_5_0._gui, arg_5_0._screen_text.text_id)
-		Gui.destroy_rect(arg_5_0._gui, arg_5_0._screen_text.bgr_id)
+DebugTextManager._update_screen_text = function (self)
+	-- function 5
+	if not (not self._screen_text and not (self._time > self._screen_text.time)) then
+		Gui.destroy_text(self._gui, self._screen_text.text_id)
+		Gui.destroy_rect(self._gui, self._screen_text.bgr_id)
 
-		arg_5_0._screen_text = nil
+		self._screen_text = nil
 	end
 end
 
-function DebugTextManager.output_unit_text(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7, arg_6_8, arg_6_9, arg_6_10, arg_6_11)
-	if script_data and script_data.disable_debug_draw then
+DebugTextManager.output_unit_text = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7, arg_6_8, arg_6_9, arg_6_10, arg_6_11)
+	-- function 6
+	if not script_data and not script_data.disable_debug_draw then
 		return
 	end
 
 	arg_6_4 = arg_6_4 or 0
-	arg_6_2 = arg_6_2 or arg_6_0._unit_text_size
+	arg_6_2 = arg_6_2 or self._unit_text_size
 
-	local var_6_0 = arg_6_0._world_gui
-	local var_6_1 = "arial"
-	local var_6_2 = "materials/fonts/" .. var_6_1
+	local _world_gui = self._world_gui
+	local str = "arial"
+	local str_2 = "materials/fonts/" .. str
 	local var_6_3
 
-	if arg_6_9 then
-		local var_6_4 = Managers.state.camera:camera_rotation(arg_6_9)
+	if not arg_6_9 then
+		local camera_rotation = Managers.state.camera:camera_rotation(arg_6_9)
 
-		var_6_3 = Matrix4x4.from_quaternion_position(var_6_4, Unit.world_position(arg_6_3, arg_6_4) + arg_6_5)
+		var_6_3 = Matrix4x4.from_quaternion_position(camera_rotation, Unit.world_position(arg_6_3, arg_6_4) + arg_6_5)
 	else
 		var_6_3 = Unit.world_pose(arg_6_3, arg_6_4)
 	end
 
-	local var_6_5, var_6_6 = Gui.text_extents(var_6_0, arg_6_1, var_6_2, arg_6_2)
-	local var_6_7 = var_6_6[1] - var_6_5[1]
-	local var_6_8 = var_6_6[2] - var_6_5[2]
-	local var_6_9 = Vector3(-var_6_7 / 2, -var_6_8 / 2, 0)
+	local text_extents, var_6_6 = Gui.text_extents(_world_gui, arg_6_1, str_2, arg_6_2)
+	local num = var_6_6[1] - text_extents[1]
+	local num_2 = var_6_6[2] - text_extents[2]
+	local var_6_9 = Vector3(-num / 2, -num_2 / 2, 0)
 
 	arg_6_5 = arg_6_5 or Vector3(0, 0, 0)
 	arg_6_7 = arg_6_7 or "none"
@@ -144,13 +150,13 @@ function DebugTextManager.output_unit_text(arg_6_0, arg_6_1, arg_6_2, arg_6_3, a
 
 	local var_6_10
 
-	if arg_6_10 then
+	if not arg_6_10 then
 		var_6_10 = Vector3Box(Vector3.zero())
 	end
 
-	local var_6_11 = {
+	local tbl = {
 		alpha = 255,
-		id = Gui.text_3d(var_6_0, arg_6_1, var_6_2, arg_6_2, var_6_1, var_6_3, var_6_9, 0, Color(arg_6_8.x, arg_6_8.y, arg_6_8.z)),
+		id = Gui.text_3d(_world_gui, arg_6_1, str_2, arg_6_2, str, var_6_3, var_6_9, 0, Color(arg_6_8.x, arg_6_8.y, arg_6_8.z)),
 		text = arg_6_1,
 		text_size = arg_6_2,
 		node_index = arg_6_4,
@@ -169,27 +175,36 @@ function DebugTextManager.output_unit_text(arg_6_0, arg_6_1, arg_6_2, arg_6_3, a
 			g = arg_6_8.y,
 			b = arg_6_8.z
 		},
-		time = arg_6_0._time + (arg_6_6 or arg_6_0._unit_text_time),
+		time = self._time + (arg_6_6 or self._unit_text_time),
 		floating_position_box = var_6_10,
 		fade = arg_6_11,
-		starting_time = arg_6_0._time
+		starting_time = self._time
 	}
+	local _unit_texts = self._unit_texts
+	local var_6_13 = self._unit_texts[arg_6_3]
 
-	arg_6_0._unit_texts[arg_6_3] = arg_6_0._unit_texts[arg_6_3] or {}
-	arg_6_0._unit_texts[arg_6_3][arg_6_7] = arg_6_0._unit_texts[arg_6_3][arg_6_7] or {}
-	arg_6_0._unit_texts[arg_6_3][arg_6_7][#arg_6_0._unit_texts[arg_6_3][arg_6_7] + 1] = var_6_11
+	var_6_13 = var_6_13 or {}
+	_unit_texts[arg_6_3] = var_6_13
+
+	local var_6_14 = self._unit_texts[arg_6_3]
+	local var_6_15 = self._unit_texts[arg_6_3][arg_6_7]
+
+	var_6_15 = var_6_15 or {}
+	var_6_14[arg_6_7] = var_6_15
+	self._unit_texts[arg_6_3][arg_6_7][#self._unit_texts[arg_6_3][arg_6_7] + 1] = tbl
 end
 
-function DebugTextManager.clear_unit_text(arg_7_0, arg_7_1, arg_7_2)
-	for iter_7_0, iter_7_1 in pairs(arg_7_0._unit_texts) do
-		if not arg_7_1 or arg_7_1 == iter_7_0 then
-			for iter_7_2, iter_7_3 in pairs(iter_7_1) do
-				if not arg_7_2 or iter_7_2 == "none" or arg_7_2 == iter_7_2 then
-					for iter_7_4 = #iter_7_3, 1, -1 do
-						local var_7_0 = iter_7_3[iter_7_4]
+DebugTextManager.clear_unit_text = function (self, arg_7_1, arg_7_2)
+	-- function 7
+	for k, v in pairs(self._unit_texts) do
+		if not (not arg_7_1 and arg_7_1 ~= k) then
+			for k_2, v_2 in pairs(v) do
+				if not (not arg_7_2 and k_2 == "none" or arg_7_2 ~= k_2) then
+					for i4 = #v_2, 1, -1 do
+						local var_7_0 = v_2[i4]
 
-						Gui.destroy_text_3d(arg_7_0._world_gui, var_7_0.id)
-						table.remove(iter_7_3, iter_7_4)
+						Gui.destroy_text_3d(self._world_gui, var_7_0.id)
+						table.remove(v_2, i4)
 					end
 				end
 			end
@@ -197,36 +212,52 @@ function DebugTextManager.clear_unit_text(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function DebugTextManager.output_world_text(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7, arg_8_8)
-	if script_data and script_data.disable_debug_draw then
+DebugTextManager.output_world_text = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7, arg_8_8)
+	-- function 8
+	if not script_data and not script_data.disable_debug_draw then
 		return
 	end
 
-	arg_8_2 = arg_8_2 or arg_8_0._world_text_size
+	arg_8_2 = arg_8_2 or self._world_text_size
 
-	local var_8_0 = arg_8_0._world_gui
-	local var_8_1 = "arial"
-	local var_8_2 = "materials/fonts/" .. var_8_1
+	local _world_gui = self._world_gui
+	local str = "arial"
+	local str_2 = "materials/fonts/" .. str
 	local var_8_3
 
-	if arg_8_7 then
-		local var_8_4 = Managers.state.camera:camera_rotation(arg_8_7)
+	if not arg_8_7 then
+		local camera_rotation = Managers.state.camera:camera_rotation(arg_8_7)
 
-		var_8_3 = Matrix4x4.from_quaternion_position(var_8_4, arg_8_3)
+		var_8_3 = Matrix4x4.from_quaternion_position(camera_rotation, arg_8_3)
 	else
-		var_8_3 = Matrix4x4.from_quaternion_position(arg_8_8 and Quaternion.inverse(arg_8_8) or Quaternion.identity(), arg_8_3)
+		local from_quaternion_position = Matrix4x4.from_quaternion_position
+		local inverse
+
+		if not arg_8_8 then
+			inverse = Quaternion.inverse(arg_8_8)
+
+			if not inverse then
+				-- Nothing
+			end
+		end
+
+		inverse = Quaternion.identity()
+
+		::label_8_0::
+
+		var_8_3 = from_quaternion_position(inverse, arg_8_3)
 	end
 
-	local var_8_5, var_8_6 = Gui.text_extents(var_8_0, arg_8_1, var_8_2, arg_8_2)
-	local var_8_7 = var_8_6[1] - var_8_5[1]
-	local var_8_8 = var_8_6[2] - var_8_5[2]
-	local var_8_9 = Vector3(-var_8_7 / 2, -var_8_8 / 2, 0)
+	local text_extents, var_8_8 = Gui.text_extents(_world_gui, arg_8_1, str_2, arg_8_2)
+	local num = var_8_8[1] - text_extents[1]
+	local num_2 = var_8_8[2] - text_extents[2]
+	local var_8_11 = Vector3(-num / 2, -num_2 / 2, 0)
 
 	arg_8_5 = arg_8_5 or "none"
 	arg_8_6 = arg_8_6 or Vector3(255, 255, 255)
 
-	local var_8_10 = {
-		id = Gui.text_3d(var_8_0, arg_8_1, var_8_2, arg_8_2, var_8_1, var_8_3, var_8_9, 0, Color(arg_8_6.x, arg_8_6.y, arg_8_6.z)),
+	local tbl = {
+		id = Gui.text_3d(_world_gui, arg_8_1, str_2, arg_8_2, str, var_8_3, var_8_11, 0, Color(arg_8_6.x, arg_8_6.y, arg_8_6.z)),
 		text = arg_8_1,
 		text_size = arg_8_2,
 		position = {
@@ -235,100 +266,107 @@ function DebugTextManager.output_world_text(arg_8_0, arg_8_1, arg_8_2, arg_8_3, 
 			z = arg_8_3.z
 		},
 		text_offset = {
-			x = var_8_9.x,
-			y = var_8_9.y,
-			z = var_8_9.z
+			x = var_8_11.x,
+			y = var_8_11.y,
+			z = var_8_11.z
 		},
 		color = {
 			r = arg_8_6.x,
 			g = arg_8_6.y,
 			b = arg_8_6.z
 		},
-		time = arg_8_0._time + (arg_8_4 or arg_8_0._world_text_time)
+		time = self._time + (arg_8_4 or self._world_text_time)
 	}
+	local _world_texts = self._world_texts
+	local var_8_14 = self._world_texts[arg_8_5]
 
-	arg_8_0._world_texts[arg_8_5] = arg_8_0._world_texts[arg_8_5] or {}
-	arg_8_0._world_texts[arg_8_5][#arg_8_0._world_texts[arg_8_5] + 1] = var_8_10
+	var_8_14 = var_8_14 or {}
+	_world_texts[arg_8_5] = var_8_14
+	self._world_texts[arg_8_5][#self._world_texts[arg_8_5] + 1] = tbl
 end
 
-function DebugTextManager.clear_world_text(arg_9_0, arg_9_1)
-	for iter_9_0, iter_9_1 in pairs(arg_9_0._world_texts) do
-		if not arg_9_1 or iter_9_0 == "none" or arg_9_1 == iter_9_0 then
-			for iter_9_2 = #iter_9_1, 1, -1 do
-				local var_9_0 = iter_9_1[iter_9_2]
+DebugTextManager.clear_world_text = function (self, arg_9_1)
+	-- function 9
+	for k, v in pairs(self._world_texts) do
+		if not (not arg_9_1 and k == "none" or arg_9_1 ~= k) then
+			for k_2 = #v, 1, -1 do
+				local var_9_0 = v[k_2]
 
-				Gui.destroy_text_3d(arg_9_0._world_gui, var_9_0.id)
-				table.remove(iter_9_1, iter_9_2)
+				Gui.destroy_text_3d(self._world_gui, var_9_0.id)
+				table.remove(v, k_2)
 			end
 		end
 	end
 end
 
-function DebugTextManager.output_screen_text(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
-	if script_data and script_data.disable_debug_draw then
+DebugTextManager.output_screen_text = function (self, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+	-- function 10
+	if not script_data and not script_data.disable_debug_draw then
 		return
 	end
 
-	arg_10_2 = arg_10_2 or arg_10_0._screen_text_size
+	arg_10_2 = arg_10_2 or self._screen_text_size
 	arg_10_4 = arg_10_4 or Vector3(255, 255, 255)
 
-	local var_10_0 = arg_10_0._gui
+	local _gui = self._gui
 	local var_10_1 = Vector2(RESOLUTION_LOOKUP.res_w, RESOLUTION_LOOKUP.res_h)
-	local var_10_2 = "arial"
-	local var_10_3 = "materials/fonts/" .. var_10_2
-	local var_10_4, var_10_5 = Gui.text_extents(var_10_0, arg_10_1, var_10_3, arg_10_2)
-	local var_10_6 = var_10_5[1] - var_10_4[1]
-	local var_10_7 = var_10_5[2] - var_10_4[2]
-	local var_10_8 = Vector3(var_10_1.x / 2 - var_10_6 / 2, var_10_1.y / 2 - var_10_7 / 2, 11)
-	local var_10_9 = 10
-	local var_10_10 = var_10_8.x - var_10_9
-	local var_10_11 = var_10_8.y - var_10_9
-	local var_10_12 = var_10_6 + var_10_9 * 2
-	local var_10_13 = var_10_7 + var_10_9 * 2
-	local var_10_14 = Vector3(var_10_10, var_10_11, 10)
-	local var_10_15 = Vector2(var_10_12, var_10_13)
+	local str = "arial"
+	local str_2 = "materials/fonts/" .. str
+	local text_extents, var_10_5 = Gui.text_extents(_gui, arg_10_1, str_2, arg_10_2)
+	local num = var_10_5[1] - text_extents[1]
+	local num_2 = var_10_5[2] - text_extents[2]
+	local var_10_8 = Vector3(var_10_1.x / 2 - num / 2, var_10_1.y / 2 - num_2 / 2, 11)
+	local num_3 = 10
+	local num_4 = var_10_8.x - num_3
+	local num_5 = var_10_8.y - num_3
+	local num_6 = num + num_3 * 2
+	local num_7 = num_2 + num_3 * 2
+	local var_10_14 = Vector3(num_4, num_5, 10)
+	local var_10_15 = Vector2(num_6, num_7)
 
-	if arg_10_0._screen_text then
-		Gui.update_text(var_10_0, arg_10_0._screen_text.text_id, arg_10_1, var_10_3, arg_10_2, var_10_2, var_10_8, Color(arg_10_4.x, arg_10_4.y, arg_10_4.z))
-		Gui.update_rect(var_10_0, arg_10_0._screen_text.bgr_id, var_10_14, var_10_15, Color(120, 0, 0, 0))
+	if not self._screen_text then
+		Gui.update_text(_gui, self._screen_text.text_id, arg_10_1, str_2, arg_10_2, str, var_10_8, Color(arg_10_4.x, arg_10_4.y, arg_10_4.z))
+		Gui.update_rect(_gui, self._screen_text.bgr_id, var_10_14, var_10_15, Color(120, 0, 0, 0))
 
-		arg_10_0._screen_text.time = arg_10_0._time + (arg_10_3 or arg_10_0._screen_text_time)
+		self._screen_text.time = self._time + (arg_10_3 or self._screen_text_time)
 	else
-		arg_10_0._screen_text = {
-			text_id = Gui.text(var_10_0, arg_10_1, var_10_3, arg_10_2, var_10_2, var_10_8, Color(arg_10_4.x, arg_10_4.y, arg_10_4.z)),
-			bgr_id = Gui.rect(var_10_0, var_10_14, var_10_15, Color(120, 0, 0, 0)),
-			time = arg_10_0._time + (arg_10_3 or arg_10_0._screen_text_time)
+		self._screen_text = {
+			text_id = Gui.text(_gui, arg_10_1, str_2, arg_10_2, str, var_10_8, Color(arg_10_4.x, arg_10_4.y, arg_10_4.z)),
+			bgr_id = Gui.rect(_gui, var_10_14, var_10_15, Color(120, 0, 0, 0)),
+			time = self._time + (arg_10_3 or self._screen_text_time)
 		}
 	end
 end
 
-function DebugTextManager.destroy(arg_11_0)
-	if arg_11_0._screen_text then
-		Gui.destroy_text(arg_11_0._gui, arg_11_0._screen_text.text_id)
-		Gui.destroy_rect(arg_11_0._gui, arg_11_0._screen_text.bgr_id)
+DebugTextManager.destroy = function (self)
+	-- function 11
+	if not self._screen_text then
+		Gui.destroy_text(self._gui, self._screen_text.text_id)
+		Gui.destroy_rect(self._gui, self._screen_text.bgr_id)
 
-		arg_11_0._screen_text = nil
+		self._screen_text = nil
 	end
 
-	for iter_11_0, iter_11_1 in pairs(arg_11_0._unit_texts) do
-		arg_11_0:_destroy_unit_texts(iter_11_0)
+	for k, v in pairs(self._unit_texts) do
+		self:_destroy_unit_texts(k)
 	end
 
-	for iter_11_2, iter_11_3 in pairs(arg_11_0._world_texts) do
-		for iter_11_4, iter_11_5 in ipairs(iter_11_3) do
-			Gui.destroy_text_3d(arg_11_0._world_gui, iter_11_5.id)
+	for k_2, v_2 in pairs(self._world_texts) do
+		for i, v_3 in ipairs(v_2) do
+			Gui.destroy_text_3d(self._world_gui, v_3.id)
 		end
 	end
 end
 
-function DebugTextManager._destroy_unit_texts(arg_12_0, arg_12_1)
-	local var_12_0 = arg_12_0._unit_texts[arg_12_1]
+DebugTextManager._destroy_unit_texts = function (self, arg_12_1)
+	-- function 12
+	local var_12_0 = self._unit_texts[arg_12_1]
 
-	for iter_12_0, iter_12_1 in pairs(var_12_0) do
-		for iter_12_2, iter_12_3 in ipairs(iter_12_1) do
-			Gui.destroy_text_3d(arg_12_0._world_gui, iter_12_3.id)
+	for k, v in pairs(var_12_0) do
+		for i, v_2 in ipairs(v) do
+			Gui.destroy_text_3d(self._world_gui, v_2.id)
 		end
 	end
 
-	arg_12_0._unit_texts[arg_12_1] = nil
+	self._unit_texts[arg_12_1] = nil
 end

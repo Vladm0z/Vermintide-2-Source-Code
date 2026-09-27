@@ -2,165 +2,210 @@
 
 local var_0_0 = local_require("scripts/settings/credits")
 local var_0_1 = local_require("scripts/ui/views/credits_view_definitions")
-local var_0_2 = {
+local tbl = {
 	header = Colors.color_definitions.credits_header,
 	title = Colors.color_definitions.credits_title,
 	normal = Colors.color_definitions.credits_normal
 }
-local var_0_3 = {
+local tbl_2 = {
 	legal = 15,
 	normal = 30
 }
 
 CreditsView = class(CreditsView)
 
-function CreditsView.init(arg_1_0, arg_1_1)
-	arg_1_0._ui_renderer = arg_1_1.ui_renderer
-	arg_1_0._ui_top_renderer = arg_1_1.ui_top_renderer
-	arg_1_0._ingame_ui = arg_1_1.ingame_ui
-	arg_1_0._in_title_screen = arg_1_1.in_title_screen
+CreditsView.init = function (self, arg_1_1)
+	-- function 1
+	self._ui_renderer = arg_1_1.ui_renderer
+	self._ui_top_renderer = arg_1_1.ui_top_renderer
+	self._ingame_ui = arg_1_1.ingame_ui
+	self._in_title_screen = arg_1_1.in_title_screen
 
-	local var_1_0 = arg_1_1.input_manager
+	local input_manager = arg_1_1.input_manager
 
-	arg_1_0._input_manager = var_1_0
+	self._input_manager = input_manager
 
-	var_1_0:create_input_service("credits_view", "IngameMenuKeymaps", "IngameMenuFilters")
-	var_1_0:map_device_to_service("credits_view", "keyboard")
-	var_1_0:map_device_to_service("credits_view", "mouse")
-	var_1_0:map_device_to_service("credits_view", "gamepad")
-	arg_1_0:_create_ui_elements()
+	input_manager:create_input_service("credits_view", "IngameMenuKeymaps", "IngameMenuFilters")
+	input_manager:map_device_to_service("credits_view", "keyboard")
+	input_manager:map_device_to_service("credits_view", "mouse")
+	input_manager:map_device_to_service("credits_view", "gamepad")
+	self:_create_ui_elements()
 end
 
-function CreditsView._create_ui_elements(arg_2_0)
-	arg_2_0._num_credits = #var_0_0.entries
-	arg_2_0._current_offset = 0
-	arg_2_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1.scenegraph_definition)
-	arg_2_0._credits_widget = UIWidget.init(var_0_1.widget_definitions.credits)
-	arg_2_0._back_button_widget = UIWidget.init(var_0_1.widget_definitions.back_button)
+CreditsView._create_ui_elements = function (self)
+	-- function 2
+	self._num_credits = #var_0_0.entries
+	self._current_offset = 0
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1.scenegraph_definition)
+	self._credits_widget = UIWidget.init(var_0_1.widget_definitions.credits)
+	self._back_button_widget = UIWidget.init(var_0_1.widget_definitions.back_button)
 end
 
-function CreditsView.input_service(arg_3_0)
-	return arg_3_0._input_manager:get_service("credits_view")
+CreditsView.input_service = function (self)
+	-- function 3
+	return self._input_manager:get_service("credits_view")
 end
 
-function CreditsView.on_enter(arg_4_0)
-	arg_4_0._input_manager:capture_input(ALL_INPUT_METHODS, 1, "credits_view", "CreditsView")
+CreditsView.on_enter = function (self)
+	-- function 4
+	self._input_manager:capture_input(ALL_INPUT_METHODS, 1, "credits_view", "CreditsView")
 
-	arg_4_0._current_offset = 0
-	arg_4_0._active = true
+	self._current_offset = 0
+	self._active = true
 
-	UIWidgetUtils.reset_layout_button(arg_4_0._back_button_widget)
+	UIWidgetUtils.reset_layout_button(self._back_button_widget)
 end
 
-function CreditsView.on_exit(arg_5_0)
-	arg_5_0._input_manager:release_input(ALL_INPUT_METHODS, 1, "credits_view", "CreditsView")
+CreditsView.on_exit = function (self)
+	-- function 5
+	self._input_manager:release_input(ALL_INPUT_METHODS, 1, "credits_view", "CreditsView")
 
-	arg_5_0.active = nil
-	arg_5_0.exiting = nil
+	self.active = nil
+	self.exiting = nil
 
-	Managers.music:trigger_event(IS_WINDOWS and "Play_console_menu_back" or "Play_console_menu_select")
+	local music = Managers.music
+	local var_5_1 = music
+	local trigger_event = music.trigger_event
+	local flag
+
+	flag = not IS_WINDOWS and "Play_console_menu_back" and "Play_console_menu_select"
+
+	trigger_event(var_5_1, flag)
 end
 
-function CreditsView.exit(arg_6_0, arg_6_1)
-	local var_6_0 = arg_6_1 and "exit_menu" or "ingame_menu"
+CreditsView.exit = function (self, arg_6_1)
+	-- function 6
+	local flag
 
-	arg_6_0.ingame_ui:handle_transition(var_6_0)
+	flag = not arg_6_1 and "exit_menu" and "ingame_menu"
 
-	arg_6_0.exiting = nil
+	self.ingame_ui:handle_transition(flag)
+
+	self.exiting = nil
 end
 
-function CreditsView.update(arg_7_0, arg_7_1)
-	local var_7_0 = arg_7_0._input_manager
-	local var_7_1 = var_7_0:get_service("credits_view")
-	local var_7_2 = var_7_0:is_device_active("gamepad")
+CreditsView.update = function (self, arg_7_1)
+	-- function 7
+	local _input_manager = self._input_manager
+	local get_service = _input_manager:get_service("credits_view")
+	local is_device_active = _input_manager:is_device_active("gamepad")
 
-	if var_7_1:get("toggle_menu", true) or var_7_2 and var_7_1:get("back", true) then
-		arg_7_0:exit()
+	if get_service:get("toggle_menu", true) or not is_device_active or not get_service:get("back", true) then
+		self:exit()
 
 		return
 	end
 
-	local var_7_3 = var_7_2 and var_7_1:get("gamepad_left_axis") or var_7_1:get("scroll_axis")
-	local var_7_4 = var_7_3.y
+	local get
 
-	if not var_7_2 and IS_XB1 then
-		var_7_4 = math.sign(var_7_3.x) * 5
+	if not is_device_active then
+		get = get_service:get("gamepad_left_axis")
+
+		if not get then
+			-- Nothing
+		end
 	end
 
-	local var_7_5 = math.max(0, arg_7_0._current_offset + arg_7_1 * 50 - var_7_4 * 30)
+	get = get_service:get("scroll_axis")
 
-	arg_7_0._current_offset = var_7_5
+	::label_7_0::
 
-	local var_7_6 = arg_7_0._ui_top_renderer
-	local var_7_7 = arg_7_0._credits_widget
-	local var_7_8 = var_7_7.content
-	local var_7_9 = var_7_7.style
+	local y = get.y
 
-	UIRenderer.begin_pass(var_7_6, arg_7_0._ui_scenegraph, var_7_1, arg_7_1)
+	if is_device_active or not IS_XB1 then
+		y = math.sign(get.x) * 5
+	end
 
-	local var_7_10 = RESOLUTION_LOOKUP.res_w
-	local var_7_11 = RESOLUTION_LOOKUP.res_h
-	local var_7_12 = RESOLUTION_LOOKUP.inv_scale
+	local max = math.max(0, self._current_offset + arg_7_1 * 50 - y * 30)
 
-	UIRenderer.draw_texture(var_7_6, "gradient_credits_menu", Vector3(0, 0, UILayer.credits_gradient), Vector2(var_7_10 * var_7_12, var_7_11 * var_7_12))
+	self._current_offset = max
 
-	local var_7_13 = var_0_0.entries
+	local _ui_top_renderer = self._ui_top_renderer
+	local _credits_widget = self._credits_widget
+	local content = _credits_widget.content
+	local style = _credits_widget.style
 
-	for iter_7_0 = 1, arg_7_0._num_credits do
-		local var_7_14 = var_7_13[iter_7_0]
+	UIRenderer.begin_pass(_ui_top_renderer, self._ui_scenegraph, get_service, arg_7_1)
 
-		var_7_8.text_field = var_7_14.localized_str or var_7_14.localized and Localize(var_7_14.text) or var_7_14.text
-		var_7_14.localized_str = var_7_8.text_field
+	local res_w = RESOLUTION_LOOKUP.res_w
+	local res_h = RESOLUTION_LOOKUP.res_h
+	local inv_scale = RESOLUTION_LOOKUP.inv_scale
+
+	UIRenderer.draw_texture(_ui_top_renderer, "gradient_credits_menu", Vector3(0, 0, UILayer.credits_gradient), Vector2(res_w * inv_scale, res_h * inv_scale))
+
+	local entries = var_0_0.entries
+
+	for i = 1, self._num_credits do
+		local var_7_14 = entries[i]
+		local localized_str = var_7_14.localized_str
+
+		if not localized_str then
+			if not var_7_14.localized then
+				localized_str = Localize(var_7_14.text)
+
+				if not localized_str then
+					-- Nothing
+				end
+			end
+
+			localized_str = var_7_14.text
+		end
+
+		::label_7_1::
+
+		content.text_field = localized_str
+		var_7_14.localized_str = content.text_field
 
 		if var_7_14.type == "header" then
-			var_7_9.text.text_color = var_0_2.header
-			var_7_9.text.font_size = var_0_3.normal
-			var_7_5 = var_7_5 - 84 - 5
+			style.text.text_color = tbl.header
+			style.text.font_size = tbl_2.normal
+			max = max - 84 - 5
 		elseif var_7_14.type == "title" then
-			var_7_9.text.text_color = var_0_2.title
-			var_7_9.text.font_size = var_0_3.normal
-			var_7_5 = var_7_5 - 64 - 5
+			style.text.text_color = tbl.title
+			style.text.font_size = tbl_2.normal
+			max = max - 64 - 5
 		elseif var_7_14.type == "legal" then
-			var_7_9.text.text_color = var_0_2.normal
-			var_7_9.text.font_size = var_0_3.legal
-			var_7_5 = var_7_5 - 15 - 5
+			style.text.text_color = tbl.normal
+			style.text.font_size = tbl_2.legal
+			max = max - 15 - 5
 		else
-			var_7_9.text.text_color = var_0_2.normal
-			var_7_9.text.font_size = var_0_3.normal
-			var_7_5 = var_7_5 - 30 - 5
+			style.text.text_color = tbl.normal
+			style.text.font_size = tbl_2.normal
+			max = max - 30 - 5
 		end
 
-		if var_7_5 < -84 then
+		if max < -84 then
 			break
-		elseif var_7_5 < var_7_11 then
-			var_7_7.offset[2] = var_7_5
+		elseif max < res_h then
+			_credits_widget.offset[2] = max
 
-			UIRenderer.draw_widget(var_7_6, var_7_7)
+			UIRenderer.draw_widget(_ui_top_renderer, _credits_widget)
 		end
 	end
 
-	if arg_7_0._in_title_screen then
-		arg_7_0:_handle_back_button(var_7_6, arg_7_1)
+	if not self._in_title_screen then
+		self:_handle_back_button(_ui_top_renderer, arg_7_1)
 	end
 
-	if var_7_5 > 1200 then
-		arg_7_0._current_offset = 0
+	if max > 1200 then
+		self._current_offset = 0
 	end
 
-	UIRenderer.end_pass(var_7_6)
+	UIRenderer.end_pass(_ui_top_renderer)
 end
 
-function CreditsView._handle_back_button(arg_8_0, arg_8_1, arg_8_2)
+CreditsView._handle_back_button = function (self, arg_8_1, arg_8_2)
+	-- function 8
 	if not Managers.input:is_device_active("mouse") then
 		return
 	end
 
-	local var_8_0 = arg_8_0._back_button_widget
+	local _back_button_widget = self._back_button_widget
 
-	UIWidgetUtils.animate_layout_button(var_8_0, arg_8_2)
-	UIRenderer.draw_widget(arg_8_1, var_8_0)
+	UIWidgetUtils.animate_layout_button(_back_button_widget, arg_8_2)
+	UIRenderer.draw_widget(arg_8_1, _back_button_widget)
 
-	if UIUtils.is_button_pressed(var_8_0, "button_hotspot") then
-		arg_8_0:exit()
+	if not UIUtils.is_button_pressed(_back_button_widget, "button_hotspot") then
+		self:exit()
 	end
 end

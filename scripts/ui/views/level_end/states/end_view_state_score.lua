@@ -1,646 +1,787 @@
 -- chunkname: @scripts/ui/views/level_end/states/end_view_state_score.lua
 
 local var_0_0 = local_require("scripts/ui/views/level_end/states/definitions/end_view_state_score_definitions")
-local var_0_1 = var_0_0.widgets
-local var_0_2 = var_0_0.player_score_size
-local var_0_3 = var_0_0.hero_widgets
-local var_0_4 = var_0_0.score_widgets
-local var_0_5 = var_0_0.scenegraph_definition
-local var_0_6 = var_0_0.animation_definitions
-local var_0_7 = 16
-local var_0_8 = false
+local widgets = var_0_0.widgets
+local player_score_size = var_0_0.player_score_size
+local hero_widgets = var_0_0.hero_widgets
+local score_widgets = var_0_0.score_widgets
+local scenegraph_definition = var_0_0.scenegraph_definition
+local animation_definitions = var_0_0.animation_definitions
+local num = 16
+local flag = false
 
 EndViewStateScore = class(EndViewStateScore)
 EndViewStateScore.NAME = "EndViewStateScore"
 
-function EndViewStateScore.on_enter(arg_1_0, arg_1_1)
+EndViewStateScore.on_enter = function (self, arg_1_1)
+	-- function 1
 	print("[PlayState] Enter Substate EndViewStateScore")
 
-	arg_1_0.parent = arg_1_1.parent
-	arg_1_0.game_won = arg_1_1.game_won
-	arg_1_0.game_mode_key = arg_1_1.game_mode_key
+	self.parent = arg_1_1.parent
+	self.game_won = arg_1_1.game_won
+	self.game_mode_key = arg_1_1.game_mode_key
 
-	local var_1_0 = arg_1_1.context
+	local context = arg_1_1.context
 
-	arg_1_0._context = var_1_0
-	arg_1_0.ui_renderer = var_1_0.ui_top_renderer
-	arg_1_0.input_manager = var_1_0.input_manager
-	arg_1_0.statistics_db = var_1_0.statistics_db
-	arg_1_0.rewards = var_1_0.rewards
-	arg_1_0.render_settings = {
+	self._context = context
+	self.ui_renderer = context.ui_top_renderer
+	self.input_manager = context.input_manager
+	self.statistics_db = context.statistics_db
+	self.rewards = context.rewards
+	self.render_settings = {
 		alpha_multiplier = 0,
 		snap_pixel_positions = true
 	}
-	arg_1_0.world_previewer = arg_1_1.world_previewer
-	arg_1_0.platform = PLATFORM
-	arg_1_0.peer_id = var_1_0.peer_id
-	arg_1_0._animations = {}
-	arg_1_0._ui_animations = {}
+	self.world_previewer = arg_1_1.world_previewer
+	self.platform = PLATFORM
+	self.peer_id = context.peer_id
+	self._animations = {}
+	self._ui_animations = {}
 
-	arg_1_0:create_ui_elements(arg_1_1)
+	self:create_ui_elements(arg_1_1)
 
-	if arg_1_1.initial_state then
-		arg_1_0._initial_preview = true
+	if not arg_1_1.initial_state then
+		self._initial_preview = true
 		arg_1_1.initial_state = nil
 	end
 
-	arg_1_0:_start_transition_animation("on_enter", "transition_enter")
+	self:_start_transition_animation("on_enter", "transition_enter")
 
-	arg_1_0._exit_timer = nil
+	self._exit_timer = nil
 
-	local var_1_1 = arg_1_0._context.players_session_score
+	local players_session_score = self._context.players_session_score
 
-	arg_1_0:_setup_player_scores(var_1_1)
-	arg_1_0:_setup_level_widget()
-	arg_1_0:_play_sound("play_gui_mission_summary_team_summary_enter")
+	self:_setup_player_scores(players_session_score)
+	self:_setup_level_widget()
+	self:_play_sound("play_gui_mission_summary_team_summary_enter")
 end
 
-function EndViewStateScore.exit(arg_2_0, arg_2_1)
-	arg_2_0._exit_started = true
+EndViewStateScore.exit = function (self, arg_2_1)
+	-- function 2
+	self._exit_started = true
 
-	arg_2_0:_start_transition_animation("on_enter", "transition_exit")
+	self:_start_transition_animation("on_enter", "transition_exit")
 end
 
-function EndViewStateScore.exit_done(arg_3_0)
-	return arg_3_0._exit_started and arg_3_0._animations.on_enter == nil
+EndViewStateScore.exit_done = function (self)
+	-- function 3
+	local _exit_started = self._exit_started
+
+	_exit_started = not _exit_started and self._animations.on_enter == nil
+
+	return _exit_started
 end
 
-function EndViewStateScore.create_ui_elements(arg_4_0, arg_4_1)
-	arg_4_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_5)
-	arg_4_0._widgets, arg_4_0._widgets_by_name = UIUtils.create_widgets(var_0_1)
-	arg_4_0._hero_widgets = {
-		UIWidget.init(var_0_3.player_frame_1),
-		UIWidget.init(var_0_3.player_frame_2),
-		UIWidget.init(var_0_3.player_frame_3),
-		UIWidget.init(var_0_3.player_frame_4)
+EndViewStateScore.create_ui_elements = function (self, arg_4_1)
+	-- function 4
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+	self._widgets, self._widgets_by_name = UIUtils.create_widgets(widgets)
+	self._hero_widgets = {
+		UIWidget.init(hero_widgets.player_frame_1),
+		UIWidget.init(hero_widgets.player_frame_2),
+		UIWidget.init(hero_widgets.player_frame_3),
+		UIWidget.init(hero_widgets.player_frame_4)
 	}
-	arg_4_0._score_widgets = {
-		UIWidget.init(var_0_4.player_score_1),
-		UIWidget.init(var_0_4.player_score_2),
-		UIWidget.init(var_0_4.player_score_3),
-		UIWidget.init(var_0_4.player_score_4)
+	self._score_widgets = {
+		UIWidget.init(score_widgets.player_score_1),
+		UIWidget.init(score_widgets.player_score_2),
+		UIWidget.init(score_widgets.player_score_3),
+		UIWidget.init(score_widgets.player_score_4)
 	}
 
-	UIRenderer.clear_scenegraph_queue(arg_4_0.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
-	arg_4_0.ui_animator = UIAnimator:new(arg_4_0.ui_scenegraph, var_0_6)
+	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
 
-	arg_4_0:_create_gamepad_elements()
+	self:_create_gamepad_elements()
 end
 
-function EndViewStateScore._create_gamepad_elements(arg_5_0)
-	local var_5_0 = UIFrameSettings.frame_outer_glow_01
-	local var_5_1 = "player_panel_1"
-	local var_5_2 = arg_5_0.ui_scenegraph[var_5_1].size
-	local var_5_3 = {
-		-var_5_0.texture_sizes.vertical[1],
-		-var_5_0.texture_sizes.horizontal[2],
+EndViewStateScore._create_gamepad_elements = function (self)
+	-- function 5
+	local frame_outer_glow_01 = UIFrameSettings.frame_outer_glow_01
+	local str = "player_panel_1"
+	local size = self.ui_scenegraph[str].size
+	local tbl = {
+		-frame_outer_glow_01.texture_sizes.vertical[1],
+		-frame_outer_glow_01.texture_sizes.horizontal[2],
 		0
 	}
-	local var_5_4 = {
-		var_5_2[1] + var_5_0.texture_sizes.vertical[1] * 2,
-		var_5_2[2] + var_5_0.texture_sizes.horizontal[2] * 2
+	local tbl_2 = {
+		size[1] + frame_outer_glow_01.texture_sizes.vertical[1] * 2,
+		size[2] + frame_outer_glow_01.texture_sizes.horizontal[2] * 2
 	}
-	local var_5_5 = {
+	local tbl_3 = {
 		color = {
 			255,
 			255,
 			255,
 			255
 		},
-		offset = var_5_3,
-		size = var_5_4
+		offset = tbl,
+		size = tbl_2
 	}
 
-	arg_5_0._gamepad_selection_screen = UIWidget.init(UIWidgets.create_simple_frame(var_5_0.texture, var_5_0.texture_size, var_5_0.texture_sizes.corner, var_5_0.texture_sizes.vertical, var_5_0.texture_sizes.horizontal, "player_panel_1", var_5_5))
-	arg_5_0._current_gamepad_selection = 1
+	self._gamepad_selection_screen = UIWidget.init(UIWidgets.create_simple_frame(frame_outer_glow_01.texture, frame_outer_glow_01.texture_size, frame_outer_glow_01.texture_sizes.corner, frame_outer_glow_01.texture_sizes.vertical, frame_outer_glow_01.texture_sizes.horizontal, "player_panel_1", tbl_3))
+	self._current_gamepad_selection = 1
 end
 
-function EndViewStateScore._wanted_state(arg_6_0)
-	return (arg_6_0.parent:wanted_menu_state())
+EndViewStateScore._wanted_state = function (self)
+	-- function 6
+	return (self.parent:wanted_menu_state())
 end
 
-function EndViewStateScore.set_input_manager(arg_7_0, arg_7_1)
-	arg_7_0.input_manager = arg_7_1
+EndViewStateScore.set_input_manager = function (self, arg_7_1)
+	-- function 7
+	self.input_manager = arg_7_1
 end
 
-function EndViewStateScore.on_exit(arg_8_0, arg_8_1)
+EndViewStateScore.on_exit = function (self, arg_8_1)
+	-- function 8
 	print("[PlayState] Exit Substate EndViewStateScore")
 
-	arg_8_0.ui_animator = nil
+	self.ui_animator = nil
 end
 
-function EndViewStateScore.done(arg_9_0)
+EndViewStateScore.done = function (arg_9_0)
+	-- function 9
 	return false
 end
 
-function EndViewStateScore._update_transition_timer(arg_10_0, arg_10_1)
-	if not arg_10_0._transition_timer then
+EndViewStateScore._update_transition_timer = function (self, arg_10_1)
+	-- function 10
+	if not self._transition_timer then
 		return
 	end
 
-	if arg_10_0._transition_timer == 0 then
-		arg_10_0._transition_timer = nil
+	if self._transition_timer == 0 then
+		self._transition_timer = nil
 	else
-		arg_10_0._transition_timer = math.max(arg_10_0._transition_timer - arg_10_1, 0)
+		self._transition_timer = math.max(self._transition_timer - arg_10_1, 0)
 	end
 end
 
-function EndViewStateScore.update(arg_11_0, arg_11_1, arg_11_2)
-	if var_0_8 then
-		var_0_8 = false
+EndViewStateScore.update = function (self, arg_11_1, arg_11_2)
+	-- function 11
+	if not flag then
+		flag = false
 
-		arg_11_0:create_ui_elements()
+		self:create_ui_elements()
 
-		local var_11_0 = arg_11_0._context.players_session_score
+		local players_session_score = self._context.players_session_score
 
-		arg_11_0:_setup_player_scores(var_11_0)
+		self:_setup_player_scores(players_session_score)
 	end
 
-	local var_11_1 = arg_11_0.input_manager:get_service("end_of_level")
+	local get_service = self.input_manager:get_service("end_of_level")
 
-	arg_11_0:draw(var_11_1, arg_11_1)
-	arg_11_0:_update_transition_timer(arg_11_1)
+	self:draw(get_service, arg_11_1)
+	self:_update_transition_timer(arg_11_1)
 
-	local var_11_2 = arg_11_0:_wanted_state()
+	local _wanted_state = self:_wanted_state()
 
-	if not arg_11_0._transition_timer and (var_11_2 or arg_11_0._new_state) then
-		arg_11_0.parent:clear_wanted_menu_state()
+	if self._transition_timer or _wanted_state or not self._new_state then
+		self.parent:clear_wanted_menu_state()
 
-		return var_11_2 or arg_11_0._new_state
+		return _wanted_state or self._new_state
 	end
 
-	arg_11_0:_update_entry_hover(arg_11_1)
-	arg_11_0.ui_animator:update(arg_11_1)
-	arg_11_0:_update_animations(arg_11_1)
-	arg_11_0:_update_gamepad_input(arg_11_1, var_11_1)
+	self:_update_entry_hover(arg_11_1)
+	self.ui_animator:update(arg_11_1)
+	self:_update_animations(arg_11_1)
+	self:_update_gamepad_input(arg_11_1, get_service)
 
-	if not arg_11_0.parent:transitioning() and not arg_11_0._transition_timer then
-		arg_11_0:_handle_input(arg_11_1, arg_11_2)
+	if not (self.parent:transitioning() or self._transition_timer) then
+		self:_handle_input(arg_11_1, arg_11_2)
 	end
 end
 
-function EndViewStateScore.post_update(arg_12_0, arg_12_1, arg_12_2)
+EndViewStateScore.post_update = function (arg_12_0, arg_12_1, arg_12_2)
+	-- function 12
 	return
 end
 
-function EndViewStateScore._update_gamepad_input(arg_13_0, arg_13_1, arg_13_2)
-	if not Managers.input:is_device_active("gamepad") or not arg_13_0.parent:input_enabled() then
+EndViewStateScore._update_gamepad_input = function (self, arg_13_1, arg_13_2)
+	-- function 13
+	if not (not Managers.input:is_device_active("gamepad") and self.parent:input_enabled()) then
 		return
 	end
 
-	local var_13_0 = not Managers.account:offline_mode()
-	local var_13_1 = arg_13_0._current_gamepad_selection
-	local var_13_2 = arg_13_0._current_gamepad_selection
+	local flag = not Managers.account:offline_mode()
+	local _current_gamepad_selection = self._current_gamepad_selection
+	local _current_gamepad_selection_2 = self._current_gamepad_selection
 
-	if arg_13_2:get("move_left") then
-		var_13_1 = math.max(var_13_1 - 1, 1)
-	elseif arg_13_2:get("move_right") then
-		var_13_1 = math.min(var_13_1 + 1, 4)
-	elseif arg_13_2:get("confirm_press") then
-		local var_13_3 = arg_13_0._players_by_widget_index[var_13_1]
+	if not arg_13_2:get("move_left") then
+		_current_gamepad_selection = math.max(_current_gamepad_selection - 1, 1)
+	elseif not arg_13_2:get("move_right") then
+		_current_gamepad_selection = math.min(_current_gamepad_selection + 1, 4)
+	elseif not arg_13_2:get("confirm_press") then
+		local var_13_3 = self._players_by_widget_index[_current_gamepad_selection]
 
-		if var_13_3 and var_13_3.is_player_controlled and var_13_0 then
-			arg_13_0:show_gamercard(var_13_3.peer_id)
+		if not var_13_3 and not var_13_3.is_player_controlled and not flag then
+			self:show_gamercard(var_13_3.peer_id)
 		end
 	end
 
-	if var_13_1 ~= var_13_2 then
-		arg_13_0._gamepad_selection_screen.scenegraph_id = "player_panel_" .. var_13_1
-		arg_13_0._current_gamepad_selection = var_13_1
+	if _current_gamepad_selection ~= _current_gamepad_selection_2 then
+		self._gamepad_selection_screen.scenegraph_id = "player_panel_" .. _current_gamepad_selection
+		self._current_gamepad_selection = _current_gamepad_selection
 
-		local var_13_4 = arg_13_0._players_by_widget_index[var_13_1]
+		local var_13_4 = self._players_by_widget_index[_current_gamepad_selection]
 
-		if var_13_4 and var_13_4.is_player_controlled and var_13_0 then
-			arg_13_0.parent:set_input_description("profile_available")
+		if not var_13_4 and not var_13_4.is_player_controlled and not flag then
+			self.parent:set_input_description("profile_available")
 		else
-			arg_13_0.parent:set_input_description(nil)
+			self.parent:set_input_description(nil)
 		end
 	end
 end
 
-function EndViewStateScore.show_gamercard(arg_14_0, arg_14_1)
-	if arg_14_1 then
-		if IS_WINDOWS and rawget(_G, "Steam") then
-			local var_14_0 = Steam.id_hex_to_dec(arg_14_1)
-			local var_14_1 = "http://steamcommunity.com/profiles/" .. var_14_0
+EndViewStateScore.show_gamercard = function (self, arg_14_1)
+	-- function 14
+	if not arg_14_1 then
+		if not IS_WINDOWS and not rawget(_G, "Steam") then
+			local id_hex_to_dec = Steam.id_hex_to_dec(arg_14_1)
+			local str = "http://steamcommunity.com/profiles/" .. id_hex_to_dec
 
-			Steam.open_url(var_14_1)
-		elseif IS_XB1 then
-			if arg_14_0._context.lobby and arg_14_0._context.lobby.lobby then
-				local var_14_2 = arg_14_0._context.lobby:xuid(arg_14_1)
+			Steam.open_url(str)
+		elseif not IS_XB1 then
+			if not self._context.lobby and not self._context.lobby.lobby then
+				local xuid = self._context.lobby:xuid(arg_14_1)
 
-				if var_14_2 then
-					Managers.account:show_player_profile(var_14_2)
+				if not xuid then
+					Managers.account:show_player_profile(xuid)
 				end
 			end
-		elseif IS_PS4 then
+		elseif not IS_PS4 then
 			Managers.account:show_player_profile_with_account_id(arg_14_1)
 		end
 	end
 end
 
-function EndViewStateScore._update_animations(arg_15_0, arg_15_1)
-	for iter_15_0, iter_15_1 in pairs(arg_15_0._ui_animations) do
-		UIAnimation.update(iter_15_1, arg_15_1)
+EndViewStateScore._update_animations = function (self, arg_15_1)
+	-- function 15
+	for k, v in pairs(self._ui_animations) do
+		UIAnimation.update(v, arg_15_1)
 
-		if UIAnimation.completed(iter_15_1) then
-			arg_15_0._ui_animations[iter_15_0] = nil
+		if not UIAnimation.completed(v) then
+			self._ui_animations[k] = nil
 		end
 	end
 
-	local var_15_0 = arg_15_0._animations
-	local var_15_1 = arg_15_0.ui_animator
+	local _animations = self._animations
+	local ui_animator = self.ui_animator
 
-	for iter_15_2, iter_15_3 in pairs(var_15_0) do
-		if var_15_1:is_animation_completed(iter_15_3) then
-			var_15_1:stop_animation(iter_15_3)
+	for k_2, v_2 in pairs(_animations) do
+		if not ui_animator:is_animation_completed(v_2) then
+			ui_animator:stop_animation(v_2)
 
-			var_15_0[iter_15_2] = nil
+			_animations[k_2] = nil
 		end
 	end
 end
 
-function EndViewStateScore._update_entry_hover(arg_16_0)
+EndViewStateScore._update_entry_hover = function (self)
+	-- function 16
 	local var_16_0
-	local var_16_1 = arg_16_0._widgets_by_name.scores_topics.content
-	local var_16_2 = var_16_1.num_rows
+	local content = self._widgets_by_name.scores_topics.content
+	local num_rows = content.num_rows
 
-	for iter_16_0 = 1, var_16_2 do
-		local var_16_3 = "_" .. iter_16_0
-		local var_16_4 = var_16_1["hotspot" .. var_16_3]
+	for i = 1, num_rows do
+		local str = "_" .. i
+		local var_16_4 = content["hotspot" .. str]
 
-		if var_16_4 and var_16_4.is_hover and var_16_1["row_bg" .. var_16_3].has_score then
-			var_16_0 = iter_16_0
+		if not var_16_4 and not var_16_4.is_hover and not content["row_bg" .. str].has_score then
+			var_16_0 = i
 
 			break
 		end
 	end
 
-	if var_16_0 ~= arg_16_0._current_topic_hover_index then
-		arg_16_0:_set_entry_hover_index(var_16_0)
+	if var_16_0 ~= self._current_topic_hover_index then
+		self:_set_entry_hover_index(var_16_0)
 
-		arg_16_0._current_topic_hover_index = var_16_0
+		self._current_topic_hover_index = var_16_0
 	end
 end
 
-function EndViewStateScore._set_entry_hover_index(arg_17_0, arg_17_1)
-	local var_17_0 = arg_17_0._widgets_by_name
-	local var_17_1 = arg_17_0._score_widgets
+EndViewStateScore._set_entry_hover_index = function (self, arg_17_1)
+	-- function 17
+	local _widgets_by_name = self._widgets_by_name
+	local _score_widgets = self._score_widgets
 
-	for iter_17_0, iter_17_1 in ipairs(var_17_1) do
-		iter_17_1.content.hover_index = arg_17_1
+	for i, v in ipairs(_score_widgets) do
+		v.content.hover_index = arg_17_1
 	end
 
-	var_17_0.scores_topics.content.hover_index = arg_17_1
+	_widgets_by_name.scores_topics.content.hover_index = arg_17_1
 end
 
-function EndViewStateScore._handle_input(arg_18_0, arg_18_1, arg_18_2)
-	if Development.parameter("tobii_button") then
-		arg_18_0:_handle_tobii_button(arg_18_1)
-	end
-end
-
-function EndViewStateScore._handle_tobii_button(arg_19_0, arg_19_1)
-	local var_19_0 = arg_19_0._widgets_by_name.tobii_button
-
-	UIWidgetUtils.animate_default_button(var_19_0, arg_19_1)
-
-	if arg_19_0:_is_button_hover_enter(var_19_0) then
-		arg_19_0:_play_sound("play_gui_start_menu_button_hover")
-	end
-
-	if arg_19_0:_is_button_pressed(var_19_0) then
-		arg_19_0:_play_sound("play_gui_start_menu_button_click")
-
-		local var_19_1 = "https://vermintide2beta.com/?utm_medium=referral&utm_campaign=vermintide2beta&utm_source=ingame#challenge"
-
-		Application.open_url_in_browser(var_19_1)
+EndViewStateScore._handle_input = function (self, arg_18_1, arg_18_2)
+	-- function 18
+	if not Development.parameter("tobii_button") then
+		self:_handle_tobii_button(arg_18_1)
 	end
 end
 
-function EndViewStateScore._is_button_pressed(arg_20_0, arg_20_1)
-	local var_20_0 = arg_20_1.content.button_hotspot
+EndViewStateScore._handle_tobii_button = function (self, arg_19_1)
+	-- function 19
+	local tobii_button = self._widgets_by_name.tobii_button
 
-	if var_20_0.on_release then
-		var_20_0.on_release = false
+	UIWidgetUtils.animate_default_button(tobii_button, arg_19_1)
+
+	if not self:_is_button_hover_enter(tobii_button) then
+		self:_play_sound("play_gui_start_menu_button_hover")
+	end
+
+	if not self:_is_button_pressed(tobii_button) then
+		self:_play_sound("play_gui_start_menu_button_click")
+
+		local str = "https://vermintide2beta.com/?utm_medium=referral&utm_campaign=vermintide2beta&utm_source=ingame#challenge"
+
+		Application.open_url_in_browser(str)
+	end
+end
+
+EndViewStateScore._is_button_pressed = function (arg_20_0, arg_20_1)
+	-- function 20
+	local button_hotspot = arg_20_1.content.button_hotspot
+
+	if not button_hotspot.on_release then
+		button_hotspot.on_release = false
 
 		return true
 	end
 end
 
-function EndViewStateScore._is_button_hover_enter(arg_21_0, arg_21_1)
+EndViewStateScore._is_button_hover_enter = function (arg_21_0, arg_21_1)
+	-- function 21
 	return arg_21_1.content.button_hotspot.on_hover_enter
 end
 
-function EndViewStateScore.draw(arg_22_0, arg_22_1, arg_22_2)
-	local var_22_0 = arg_22_0.ui_renderer
-	local var_22_1 = arg_22_0.ui_scenegraph
-	local var_22_2 = arg_22_0.render_settings
-	local var_22_3 = Managers.input:is_device_active("gamepad")
+EndViewStateScore.draw = function (self, arg_22_1, arg_22_2)
+	-- function 22
+	local ui_renderer = self.ui_renderer
+	local ui_scenegraph = self.ui_scenegraph
+	local render_settings = self.render_settings
+	local is_device_active = Managers.input:is_device_active("gamepad")
 
-	UIRenderer.begin_pass(var_22_0, var_22_1, arg_22_1, arg_22_2, nil, var_22_2)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, arg_22_1, arg_22_2, nil, render_settings)
 
-	for iter_22_0, iter_22_1 in ipairs(arg_22_0._widgets) do
-		UIRenderer.draw_widget(var_22_0, iter_22_1)
+	for i, v in ipairs(self._widgets) do
+		UIRenderer.draw_widget(ui_renderer, v)
 	end
 
-	for iter_22_2, iter_22_3 in ipairs(arg_22_0._hero_widgets) do
-		UIRenderer.draw_widget(var_22_0, iter_22_3)
+	for i_2, v_2 in ipairs(self._hero_widgets) do
+		UIRenderer.draw_widget(ui_renderer, v_2)
 	end
 
-	for iter_22_4, iter_22_5 in ipairs(arg_22_0._score_widgets) do
-		UIRenderer.draw_widget(var_22_0, iter_22_5)
+	for i_3, v_3 in ipairs(self._score_widgets) do
+		UIRenderer.draw_widget(ui_renderer, v_3)
 	end
 
-	if var_22_3 and arg_22_0.parent:input_enabled() then
-		UIRenderer.draw_widget(var_22_0, arg_22_0._gamepad_selection_screen)
+	if not is_device_active and not self.parent:input_enabled() then
+		UIRenderer.draw_widget(ui_renderer, self._gamepad_selection_screen)
 	end
 
-	UIRenderer.end_pass(var_22_0)
+	UIRenderer.end_pass(ui_renderer)
 end
 
-function EndViewStateScore._start_transition_animation(arg_23_0, arg_23_1, arg_23_2)
-	local var_23_0 = {
-		wwise_world = arg_23_0.wwise_world,
-		render_settings = arg_23_0.render_settings,
-		self = arg_23_0
+EndViewStateScore._start_transition_animation = function (self, arg_23_1, arg_23_2)
+	-- function 23
+	local tbl = {
+		wwise_world = self.wwise_world,
+		render_settings = self.render_settings,
+		self = self
 	}
-	local var_23_1 = arg_23_0._hero_widgets
-	local var_23_2 = arg_23_0.ui_animator:start_animation(arg_23_2, var_23_1, var_0_5, var_23_0)
+	local _hero_widgets = self._hero_widgets
+	local start_animation = self.ui_animator:start_animation(arg_23_2, _hero_widgets, scenegraph_definition, tbl)
 
-	arg_23_0._animations[arg_23_1] = var_23_2
+	self._animations[arg_23_1] = start_animation
 end
 
-function EndViewStateScore._animate_element_by_time(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5)
+EndViewStateScore._animate_element_by_time = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5)
+	-- function 24
 	return (UIAnimation.init(UIAnimation.function_by_time, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, math.ease_out_quad))
 end
 
-function EndViewStateScore._animate_element_by_catmullrom(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6, arg_25_7, arg_25_8)
+EndViewStateScore._animate_element_by_catmullrom = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6, arg_25_7, arg_25_8)
+	-- function 25
 	return (UIAnimation.init(UIAnimation.catmullrom, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6, arg_25_7, arg_25_8))
 end
 
-function EndViewStateScore._transform_player_session_score(arg_26_0, arg_26_1)
-	local var_26_0 = {
+EndViewStateScore._transform_player_session_score = function (arg_26_0, arg_26_1)
+	-- function 26
+	local tbl = {
 		group_scores = {}
 	}
 
-	for iter_26_0, iter_26_1 in pairs(arg_26_1) do
-		for iter_26_2, iter_26_3 in pairs(iter_26_1.group_scores) do
-			if not var_26_0.group_scores[iter_26_2] then
-				var_26_0.group_scores[iter_26_2] = {}
+	for k, v in pairs(arg_26_1) do
+		for k_2, v_2 in pairs(v.group_scores) do
+			if not tbl.group_scores[k_2] then
+				tbl.group_scores[k_2] = {}
 			end
 
-			for iter_26_4, iter_26_5 in ipairs(iter_26_3) do
-				if not var_26_0.group_scores[iter_26_2][iter_26_4] then
-					var_26_0.group_scores[iter_26_2][iter_26_4] = {
+			for i, v_3 in ipairs(v_2) do
+				if not tbl.group_scores[k_2][i] then
+					tbl.group_scores[k_2][i] = {
 						player_scores = {}
 					}
 				end
 
-				local var_26_1 = var_26_0.group_scores[iter_26_2][iter_26_4].highscore or 0
+				local highscore = tbl.group_scores[k_2][i].highscore
 
-				var_26_0.group_scores[iter_26_2][iter_26_4].stat_name = iter_26_5.stat_name
-				var_26_0.group_scores[iter_26_2][iter_26_4].display_name = iter_26_5.display_name
-				var_26_0.group_scores[iter_26_2][iter_26_4].highscore = var_26_1 < iter_26_5.score and iter_26_5.score or var_26_1
-				var_26_0.group_scores[iter_26_2][iter_26_4].player_scores[iter_26_0] = iter_26_5.score
+				highscore = highscore or 0
+				tbl.group_scores[k_2][i].stat_name = v_3.stat_name
+				tbl.group_scores[k_2][i].display_name = v_3.display_name
+
+				local var_26_2 = tbl.group_scores[k_2][i]
+				local score
+
+				if highscore < v_3.score then
+					score = v_3.score
+
+					if not score then
+						-- Nothing
+					end
+				end
+
+				score = highscore
+
+				::label_26_0::
+
+				var_26_2.highscore = score
+				tbl.group_scores[k_2][i].player_scores[k] = v_3.score
 			end
 		end
 	end
 
-	return var_26_0
+	return tbl
 end
 
-function EndViewStateScore._group_scores_by_player_and_topic(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
-	for iter_27_0, iter_27_1 in pairs(arg_27_2.group_scores) do
-		if not arg_27_1[iter_27_0] then
-			arg_27_1[iter_27_0] = {}
+EndViewStateScore._group_scores_by_player_and_topic = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+	-- function 27
+	for k, v in pairs(arg_27_2.group_scores) do
+		if not arg_27_1[k] then
+			arg_27_1[k] = {}
 		end
 
-		local var_27_0 = 0
+		local num = 0
 
-		for iter_27_2, iter_27_3 in ipairs(iter_27_1) do
-			if not arg_27_1[iter_27_0][iter_27_2] then
-				arg_27_1[iter_27_0][iter_27_2] = {
+		for i, v_2 in ipairs(v) do
+			if not arg_27_1[k][i] then
+				arg_27_1[k][i] = {
 					player_scores = {}
 				}
 			end
 
-			local var_27_1 = arg_27_1[iter_27_0][iter_27_2].highscore or 0
-			local var_27_2 = iter_27_3.stat_name
+			local highscore = arg_27_1[k][i].highscore
 
-			arg_27_1[iter_27_0][iter_27_2].stat_name = var_27_2
-			arg_27_1[iter_27_0][iter_27_2].display_text = iter_27_3.display_text
-			arg_27_1[iter_27_0][iter_27_2].player_scores[arg_27_3] = iter_27_3.score
+			highscore = highscore or 0
 
-			if var_27_2 == "damage_taken" then
-				local var_27_3 = var_27_1 > iter_27_3.score and iter_27_3.score or var_27_1
+			local stat_name = v_2.stat_name
 
-				arg_27_1[iter_27_0][iter_27_2].highscore = var_27_3
+			arg_27_1[k][i].stat_name = stat_name
+			arg_27_1[k][i].display_text = v_2.display_text
+			arg_27_1[k][i].player_scores[arg_27_3] = v_2.score
+
+			if stat_name == "damage_taken" then
+				local score
+
+				if highscore > v_2.score then
+					score = v_2.score
+
+					if not score then
+						-- Nothing
+					end
+				end
+
+				score = highscore
+
+				::label_27_0::
+
+				arg_27_1[k][i].highscore = score
 			else
-				local var_27_4 = var_27_1 < iter_27_3.score and iter_27_3.score or var_27_1
+				local score_2
 
-				arg_27_1[iter_27_0][iter_27_2].highscore = var_27_4
+				if highscore < v_2.score then
+					score_2 = v_2.score
+
+					if not score_2 then
+						-- Nothing
+					end
+				end
+
+				score_2 = highscore
+
+				::label_27_1::
+
+				arg_27_1[k][i].highscore = score_2
 			end
 		end
 	end
 end
 
-function EndViewStateScore._setup_player_scores(arg_28_0, arg_28_1)
-	local var_28_0 = {}
-	local var_28_1 = {}
-	local var_28_2 = 1
-	local var_28_3 = 1
+EndViewStateScore._setup_player_scores = function (self, arg_28_1)
+	-- function 28
+	local tbl = {}
+	local tbl_2 = {}
+	local num = 1
+	local num_2 = 1
 
-	arg_28_0._players_by_widget_index = {}
+	self._players_by_widget_index = {}
 
-	local var_28_4 = arg_28_0._players_by_widget_index
-	local var_28_5 = 0
-	local var_28_6 = arg_28_0._hero_widgets
+	local _players_by_widget_index = self._players_by_widget_index
+	local num_3 = 0
+	local _hero_widgets = self._hero_widgets
 
-	for iter_28_0, iter_28_1 in pairs(arg_28_1) do
-		arg_28_0:_set_topic_data(iter_28_1, var_28_2)
-		arg_28_0:_group_scores_by_player_and_topic(var_28_0, iter_28_1, var_28_2)
+	for k, v in pairs(arg_28_1) do
+		self:_set_topic_data(v, num)
+		self:_group_scores_by_player_and_topic(tbl, v, num)
 
-		var_28_1[var_28_2] = iter_28_1.name
-		var_28_4[var_28_2] = iter_28_1
+		tbl_2[num] = v.name
+		_players_by_widget_index[num] = v
 
-		local var_28_7 = iter_28_1.peer_id
-		local var_28_8 = iter_28_1.profile_index
-		local var_28_9 = iter_28_1.career_index
-		local var_28_10 = SPProfiles[var_28_8].careers[var_28_9].portrait_image
-		local var_28_11 = iter_28_1.portrait_frame or "default"
-		local var_28_12 = iter_28_1.player_level
-		local var_28_13 = iter_28_1.is_player_controlled
+		local peer_id = v.peer_id
+		local profile_index = v.profile_index
+		local career_index = v.career_index
+		local portrait_image = SPProfiles[profile_index].careers[career_index].portrait_image
+		local portrait_frame = v.portrait_frame
 
-		if IS_WINDOWS and var_28_7 and var_28_13 then
-			var_28_5 = var_28_5 + 1
+		portrait_frame = portrait_frame or "default"
+
+		local player_level = v.player_level
+		local is_player_controlled = v.is_player_controlled
+
+		if not IS_WINDOWS and not peer_id and not is_player_controlled then
+			num_3 = num_3 + 1
 		end
 
-		local var_28_14 = var_28_13 and (var_28_12 and tostring(var_28_12) or "-") or "BOT"
-		local var_28_15 = UIWidgets.create_portrait_frame("player_frame_" .. var_28_2, var_28_11, var_28_14, 1, nil, var_28_10)
+		local var_28_14
 
-		var_28_6[var_28_2] = UIWidget.init(var_28_15, arg_28_0.ui_renderer)
-		var_28_2 = var_28_2 + 1
+		if not is_player_controlled then
+			if not player_level then
+				var_28_14 = tostring(player_level)
+
+				if not var_28_14 then
+					-- Nothing
+				end
+			end
+
+			var_28_14 = "-"
+		else
+			var_28_14 = "BOT"
+		end
+
+		::label_28_0::
+
+		local create_portrait_frame = UIWidgets.create_portrait_frame("player_frame_" .. num, portrait_frame, var_28_14, 1, nil, portrait_image)
+
+		_hero_widgets[num] = UIWidget.init(create_portrait_frame, self.ui_renderer)
+		num = num + 1
 	end
 
-	if IS_WINDOWS then
-		Presence.set_presence("steam_player_group_size", var_28_5)
+	if not IS_WINDOWS then
+		Presence.set_presence("steam_player_group_size", num_3)
 	end
 
-	arg_28_0:_setup_score_panel(var_28_0, var_28_1)
+	self:_setup_score_panel(tbl, tbl_2)
 end
 
-function EndViewStateScore._setup_level_widget(arg_29_0)
-	local var_29_0 = arg_29_0._widgets_by_name.level.content
-	local var_29_1 = arg_29_0._context.level_key
-	local var_29_2 = LevelSettings[var_29_1]
+EndViewStateScore._setup_level_widget = function (self)
+	-- function 29
+	local content = self._widgets_by_name.level.content
+	local level_key = self._context.level_key
+	local var_29_2 = LevelSettings[level_key]
+	local level_image
 
-	var_29_0.icon = var_29_2 and var_29_2.level_image or "level_image_any"
+	if not var_29_2 then
+		level_image = var_29_2.level_image
 
-	local var_29_3 = arg_29_0._context.difficulty
-	local var_29_4 = DifficultySettings[var_29_3]
+		if not level_image then
+			-- Nothing
+		end
+	end
 
-	var_29_0.frame = var_29_4 and var_29_4.completed_frame_texture or "map_frame_00"
+	level_image = "level_image_any"
+
+	::label_29_0::
+
+	content.icon = level_image
+
+	local difficulty = self._context.difficulty
+	local var_29_5 = DifficultySettings[difficulty]
+	local completed_frame_texture
+
+	if not var_29_5 then
+		completed_frame_texture = var_29_5.completed_frame_texture
+
+		if not completed_frame_texture then
+			-- Nothing
+		end
+	end
+
+	completed_frame_texture = "map_frame_00"
+
+	::label_29_1::
+
+	content.frame = completed_frame_texture
 end
 
-local var_0_9 = {
+local tbl = {
 	Colors.get_color_table_with_alpha("cyan", 255),
 	Colors.get_color_table_with_alpha("gold", 255),
 	Colors.get_color_table_with_alpha("silver", 255),
 	Colors.get_color_table_with_alpha("gray", 255)
 }
-local var_0_10 = {
+local tbl_2 = {
 	nil,
 	"scoreboard_topic_02",
 	"scoreboard_topic_03",
 	"scoreboard_topic_04"
 }
 
-function EndViewStateScore._set_topic_data(arg_30_0, arg_30_1, arg_30_2)
-	local var_30_0 = arg_30_0._score_widgets[arg_30_2]
-	local var_30_1 = var_30_0.content
-	local var_30_2 = var_30_0.style
-	local var_30_3 = 0
-	local var_30_4 = arg_30_1.group_scores
+EndViewStateScore._set_topic_data = function (self, arg_30_1, arg_30_2)
+	-- function 30
+	local var_30_0 = self._score_widgets[arg_30_2]
+	local content = var_30_0.content
+	local style = var_30_0.style
+	local num = 0
+	local group_scores = arg_30_1.group_scores
 
-	for iter_30_0, iter_30_1 in pairs(var_30_4) do
-		local var_30_5 = 0
+	for k, v in pairs(group_scores) do
+		local num_2 = 0
 
-		for iter_30_2, iter_30_3 in ipairs(iter_30_1) do
-			var_30_5 = var_30_5 + iter_30_3.score
-			var_30_3 = var_30_3 + iter_30_3.score
+		for i, v_2 in ipairs(v) do
+			num_2 = num_2 + v_2.score
+			num = num + v_2.score
 		end
 
-		iter_30_1.total_score = var_30_5
+		v.total_score = num_2
 	end
 end
 
-function EndViewStateScore._setup_score_panel(arg_31_0, arg_31_1, arg_31_2)
-	local var_31_0 = 30
-	local var_31_1 = 22
-	local var_31_2 = 1
-	local var_31_3 = 1
-	local var_31_4 = arg_31_0._score_widgets
+EndViewStateScore._setup_score_panel = function (self, arg_31_1, arg_31_2)
+	-- function 31
+	local num_2 = 30
+	local num_3 = 22
+	local num_4 = 1
+	local num_5 = 1
+	local _score_widgets = self._score_widgets
 
-	for iter_31_0, iter_31_1 in pairs(arg_31_1) do
-		local var_31_5 = "title_text_" .. tostring(var_31_2)
-		local var_31_6 = "horizontal_divider_" .. tostring(var_31_2)
+	for k, v in pairs(arg_31_1) do
+		local str = "title_text_" .. tostring(num_4)
+		local str_2 = "horizontal_divider_" .. tostring(num_4)
 
-		if var_31_2 == 1 then
-			for iter_31_2, iter_31_3 in ipairs(arg_31_2) do
-				local var_31_7 = "score_player_" .. tostring(iter_31_2) .. "_" .. tostring(var_31_2)
-				local var_31_8 = var_31_4[iter_31_2]
-				local var_31_9 = var_31_8.content
-				local var_31_10 = var_31_8.style
-				local var_31_11 = "_" .. var_31_2
-				local var_31_12 = "score_text" .. var_31_11
+		if num_4 == 1 then
+			for i, v_2 in ipairs(arg_31_2) do
+				local str_3 = "score_player_" .. tostring(i) .. "_" .. tostring(num_4)
+				local var_31_8 = _score_widgets[i]
+				local content = var_31_8.content
+				local style = var_31_8.style
+				local str_4 = "_" .. num_4
+				local str_5 = "score_text" .. str_4
+				local var_31_13 = content["row_bg" .. str_4]
+				local crop_text_width
 
-				var_31_9["row_bg" .. var_31_11][var_31_12] = Utf8.length(iter_31_3) > var_0_7 and UIRenderer.crop_text_width(arg_31_0.ui_renderer, iter_31_3, var_0_2[1] - 40, var_31_10[var_31_12]) or iter_31_3
-			end
+				if Utf8.length(v_2) > num then
+					crop_text_width = UIRenderer.crop_text_width(self.ui_renderer, v_2, player_score_size[1] - 40, style[str_5])
 
-			var_31_2 = var_31_2 + 1
-		end
-
-		for iter_31_4, iter_31_5 in ipairs(iter_31_1) do
-			local var_31_13 = iter_31_5.stat_name
-			local var_31_14 = math.round(iter_31_5.highscore)
-			local var_31_15 = iter_31_5.player_scores
-
-			for iter_31_6, iter_31_7 in ipairs(var_31_15) do
-				local var_31_16 = var_31_4[iter_31_6]
-				local var_31_17 = var_31_16.content
-				local var_31_18 = var_31_16.style
-
-				iter_31_7 = math.round(iter_31_7)
-
-				local var_31_19 = "title_text_" .. tostring(var_31_2)
-				local var_31_20 = "score_player_" .. tostring(iter_31_6) .. "_" .. tostring(var_31_2)
-				local var_31_21 = "high_score_marker_" .. tostring(iter_31_6) .. "_" .. tostring(var_31_2)
-				local var_31_22 = "horizontal_divider_" .. tostring(var_31_2)
-				local var_31_23 = "row_bg_" .. tostring(var_31_2)
-				local var_31_24 = false
-
-				if var_31_13 == "damage_taken" then
-					var_31_24 = iter_31_7 <= var_31_14
-				else
-					var_31_24 = var_31_14 <= iter_31_7 and var_31_14 > 0
+					if not crop_text_width then
+						-- Nothing
+					end
 				end
 
-				local var_31_25 = false
-				local var_31_26 = "_" .. var_31_2
-				local var_31_27 = "score_text" .. var_31_26
-				local var_31_28 = var_31_17["row_bg" .. var_31_26]
+				crop_text_width = v_2
 
-				var_31_28[var_31_27] = iter_31_7
-				var_31_28.has_background = var_31_2 % 2 == 0
-				var_31_28.has_highscore = var_31_24
-				var_31_28.has_score = true
+				::label_31_0::
 
-				arg_31_0:_set_score_topic_by_row(var_31_2, Localize(iter_31_5.display_text))
+				var_31_13[str_5] = crop_text_width
 			end
 
-			var_31_2 = var_31_2 + 1
+			num_4 = num_4 + 1
 		end
 
-		var_31_3 = var_31_3 + 1
+		for i_2, v_3 in ipairs(v) do
+			local stat_name = v_3.stat_name
+			local round = math.round(v_3.highscore)
+			local player_scores = v_3.player_scores
+
+			for i_3, v_4 in ipairs(player_scores) do
+				local var_31_18 = _score_widgets[i_3]
+				local content_2 = var_31_18.content
+				local style_2 = var_31_18.style
+
+				v_4 = math.round(v_4)
+
+				local str_6 = "title_text_" .. tostring(num_4)
+				local str_7 = "score_player_" .. tostring(i_3) .. "_" .. tostring(num_4)
+				local str_8 = "high_score_marker_" .. tostring(i_3) .. "_" .. tostring(num_4)
+				local str_9 = "horizontal_divider_" .. tostring(num_4)
+				local str_10 = "row_bg_" .. tostring(num_4)
+				local flag = false
+
+				if stat_name == "damage_taken" then
+					flag = v_4 <= round
+				else
+					flag = not (round <= v_4) or round > 0
+				end
+
+				local flag_2 = false
+				local str_11 = "_" .. num_4
+				local str_12 = "score_text" .. str_11
+				local var_31_30 = content_2["row_bg" .. str_11]
+
+				var_31_30[str_12] = v_4
+				var_31_30.has_background = num_4 % 2 == 0
+				var_31_30.has_highscore = flag
+				var_31_30.has_score = true
+
+				self:_set_score_topic_by_row(num_4, Localize(v_3.display_text))
+			end
+
+			num_4 = num_4 + 1
+		end
+
+		num_5 = num_5 + 1
 	end
 end
 
-function EndViewStateScore._set_score_topic_by_row(arg_32_0, arg_32_1, arg_32_2)
-	local var_32_0 = arg_32_0._widgets_by_name.scores_topics.content
-	local var_32_1 = "_" .. arg_32_1
-	local var_32_2 = "score_text" .. var_32_1
-	local var_32_3 = var_32_0["row_bg" .. var_32_1]
+EndViewStateScore._set_score_topic_by_row = function (self, arg_32_1, arg_32_2)
+	-- function 32
+	local content = self._widgets_by_name.scores_topics.content
+	local str = "_" .. arg_32_1
+	local str_2 = "score_text" .. str
+	local var_32_3 = content["row_bg" .. str]
 
-	var_32_3[var_32_2] = arg_32_2
+	var_32_3[str_2] = arg_32_2
 	var_32_3.has_score = true
 	var_32_3.has_background = arg_32_1 % 2 == 0
 end
 
-function EndViewStateScore._setup_hero_score_tooltip(arg_33_0, arg_33_1, arg_33_2)
-	local var_33_0 = arg_33_1.content.tooltip
-	local var_33_1 = arg_33_1.style.tooltip
-	local var_33_2 = var_33_1.text_styles
-	local var_33_3 = var_33_1.value_styles
+EndViewStateScore._setup_hero_score_tooltip = function (arg_33_0, arg_33_1, arg_33_2)
+	-- function 33
+	local tooltip = arg_33_1.content.tooltip
+	local tooltip_2 = arg_33_1.style.tooltip
+	local text_styles = tooltip_2.text_styles
+	local value_styles = tooltip_2.value_styles
 
-	table.clear(var_33_2)
-	table.clear(var_33_3)
-	table.clear(var_33_0)
+	table.clear(text_styles)
+	table.clear(value_styles)
+	table.clear(tooltip)
 
-	for iter_33_0, iter_33_1 in pairs(arg_33_2) do
-		var_33_0[iter_33_0] = iter_33_0
+	for k, v in pairs(arg_33_2) do
+		tooltip[k] = k
 
-		local var_33_4 = iter_33_0 .. "_value"
+		local str = k .. "_value"
 
-		var_33_0[var_33_4] = iter_33_1.total_score
-		var_33_2[#var_33_2 + 1] = {
+		tooltip[str] = v.total_score
+		text_styles[#text_styles + 1] = {
 			vertical_alignment = "top",
 			horizontal_alignment = "left",
 			font_size = 20,
 			font_type = "hell_shark",
 			word_wrap = true,
-			name = iter_33_0,
+			name = k,
 			text_color = Colors.get_color_table_with_alpha("font_title", 255),
 			value_style = {
 				vertical_alignment = "top",
@@ -648,28 +789,28 @@ function EndViewStateScore._setup_hero_score_tooltip(arg_33_0, arg_33_1, arg_33_
 				horizontal_alignment = "right",
 				font_size = 20,
 				font_type = "hell_shark",
-				name = var_33_4,
+				name = str,
 				text_color = Colors.get_color_table_with_alpha("font_title", 255)
 			}
 		}
 
-		for iter_33_2, iter_33_3 in ipairs(iter_33_1) do
-			local var_33_5 = iter_33_3.stat_name
-			local var_33_6 = iter_33_3.score
-			local var_33_7 = iter_33_3.display_text
+		for i, v_2 in ipairs(v) do
+			local stat_name = v_2.stat_name
+			local score = v_2.score
+			local display_text = v_2.display_text
 
-			var_33_0[var_33_5] = Localize(var_33_7) .. ":"
+			tooltip[stat_name] = Localize(display_text) .. ":"
 
-			local var_33_8 = var_33_5 .. "_value"
+			local str_2 = stat_name .. "_value"
 
-			var_33_0[var_33_8] = tostring(var_33_6)
-			var_33_2[#var_33_2 + 1] = {
+			tooltip[str_2] = tostring(score)
+			text_styles[#text_styles + 1] = {
 				vertical_alignment = "top",
 				horizontal_alignment = "left",
 				font_size = 20,
 				font_type = "hell_shark",
 				word_wrap = true,
-				name = var_33_5,
+				name = stat_name,
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				value_style = {
 					vertical_alignment = "top",
@@ -677,7 +818,7 @@ function EndViewStateScore._setup_hero_score_tooltip(arg_33_0, arg_33_1, arg_33_
 					horizontal_alignment = "right",
 					font_size = 20,
 					font_type = "hell_shark",
-					name = var_33_8,
+					name = str_2,
 					text_color = Colors.get_color_table_with_alpha("font_default", 255)
 				}
 			}
@@ -685,26 +826,30 @@ function EndViewStateScore._setup_hero_score_tooltip(arg_33_0, arg_33_1, arg_33_
 	end
 end
 
-function EndViewStateScore._player_score_data_by_stats_id(arg_34_0, arg_34_1)
-	return arg_34_0._players_list[arg_34_1]
+EndViewStateScore._player_score_data_by_stats_id = function (self, arg_34_1)
+	-- function 34
+	return self._players_list[arg_34_1]
 end
 
-function EndViewStateScore._get_player_position_in_score_table(arg_35_0, arg_35_1, arg_35_2)
-	for iter_35_0, iter_35_1 in ipairs(arg_35_2.scores) do
-		if iter_35_1.stats_id == arg_35_1 then
-			return iter_35_0
+EndViewStateScore._get_player_position_in_score_table = function (arg_35_0, arg_35_1, arg_35_2)
+	-- function 35
+	for i, v in ipairs(arg_35_2.scores) do
+		if v.stats_id == arg_35_1 then
+			return i
 		end
 	end
 end
 
-function EndViewStateScore._start_hero_score_animation(arg_36_0, arg_36_1)
-	local var_36_0 = {
-		wwise_world = arg_36_0.wwise_world
+EndViewStateScore._start_hero_score_animation = function (self, arg_36_1)
+	-- function 36
+	local tbl = {
+		wwise_world = self.wwise_world
 	}
 
-	return arg_36_0.ui_animator:start_animation(arg_36_1, arg_36_0._hero_widgets, var_0_5, var_36_0)
+	return self.ui_animator:start_animation(arg_36_1, self._hero_widgets, scenegraph_definition, tbl)
 end
 
-function EndViewStateScore._play_sound(arg_37_0, arg_37_1)
-	arg_37_0.parent:play_sound(arg_37_1)
+EndViewStateScore._play_sound = function (self, arg_37_1)
+	-- function 37
+	self.parent:play_sound(arg_37_1)
 end

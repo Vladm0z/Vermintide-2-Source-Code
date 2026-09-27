@@ -4,53 +4,62 @@ require("scripts/unit_extensions/weapons/ai_weapon_unit_templates")
 
 AiWeaponUnitExtension = class(AiWeaponUnitExtension)
 
-function AiWeaponUnitExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	arg_1_0.world = arg_1_1.world
-	arg_1_0.unit = arg_1_2
-	arg_1_0.owner_unit = arg_1_3.owner_unit
-	arg_1_0.weapon_template = arg_1_3.weapon_template
-	arg_1_0.is_server = Managers.player.is_server
-	arg_1_0.data = {}
+AiWeaponUnitExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	self.world = arg_1_1.world
+	self.unit = arg_1_2
+	self.owner_unit = arg_1_3.owner_unit
+	self.weapon_template = arg_1_3.weapon_template
+	self.is_server = Managers.player.is_server
+	self.data = {}
 end
 
-function AiWeaponUnitExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+AiWeaponUnitExtension.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
+	-- function 2
 	return
 end
 
-function AiWeaponUnitExtension.destroy(arg_3_0)
-	AiWeaponUnitTemplates.get_template(arg_3_0.weapon_template).destroy(arg_3_0.world, arg_3_0.unit, arg_3_0.data)
+AiWeaponUnitExtension.destroy = function (self)
+	-- function 3
+	AiWeaponUnitTemplates.get_template(self.weapon_template).destroy(self.world, self.unit, self.data)
 end
 
-function AiWeaponUnitExtension.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
-	AiWeaponUnitTemplates.get_template(arg_4_0.weapon_template).update(arg_4_0.world, arg_4_0.unit, arg_4_0.data, arg_4_5, arg_4_3)
+AiWeaponUnitExtension.update = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	-- function 4
+	AiWeaponUnitTemplates.get_template(self.weapon_template).update(self.world, self.unit, self.data, arg_4_5, arg_4_3)
 end
 
-function AiWeaponUnitExtension.shoot_start(arg_5_0, arg_5_1, arg_5_2)
-	arg_5_0.data.unit_owner = arg_5_1
+AiWeaponUnitExtension.shoot_start = function (self, arg_5_1, arg_5_2)
+	-- function 5
+	self.data.unit_owner = arg_5_1
 
-	AiWeaponUnitTemplates.get_template(arg_5_0.weapon_template).shoot_start(arg_5_0.world, arg_5_0.unit, arg_5_0.data, arg_5_2)
+	AiWeaponUnitTemplates.get_template(self.weapon_template).shoot_start(self.world, self.unit, self.data, arg_5_2)
 end
 
-function AiWeaponUnitExtension.shoot(arg_6_0, arg_6_1)
-	arg_6_0.data.unit_owner = arg_6_1
+AiWeaponUnitExtension.shoot = function (self, arg_6_1)
+	-- function 6
+	self.data.unit_owner = arg_6_1
 
-	AiWeaponUnitTemplates.get_template(arg_6_0.weapon_template).shoot(arg_6_0.world, arg_6_0.unit, arg_6_0.data)
+	AiWeaponUnitTemplates.get_template(self.weapon_template).shoot(self.world, self.unit, self.data)
 end
 
-function AiWeaponUnitExtension.shoot_end(arg_7_0, arg_7_1)
-	arg_7_0.data.unit_owner = arg_7_1
+AiWeaponUnitExtension.shoot_end = function (self, arg_7_1)
+	-- function 7
+	self.data.unit_owner = arg_7_1
 
-	AiWeaponUnitTemplates.get_template(arg_7_0.weapon_template).shoot_end(arg_7_0.world, arg_7_0.unit, arg_7_0.data)
+	AiWeaponUnitTemplates.get_template(self.weapon_template).shoot_end(self.world, self.unit, self.data)
 end
 
-function AiWeaponUnitExtension.windup_start(arg_8_0, arg_8_1, arg_8_2)
-	arg_8_0.data.unit_owner = arg_8_1
+AiWeaponUnitExtension.windup_start = function (self, arg_8_1, arg_8_2)
+	-- function 8
+	self.data.unit_owner = arg_8_1
 
-	AiWeaponUnitTemplates.get_template(arg_8_0.weapon_template).windup_start(arg_8_0.world, arg_8_0.unit, arg_8_0.data, arg_8_2)
+	AiWeaponUnitTemplates.get_template(self.weapon_template).windup_start(self.world, self.unit, self.data, arg_8_2)
 end
 
-function AiWeaponUnitExtension.windup_end(arg_9_0, arg_9_1)
-	arg_9_0.data.unit_owner = arg_9_1
+AiWeaponUnitExtension.windup_end = function (self, arg_9_1)
+	-- function 9
+	self.data.unit_owner = arg_9_1
 
-	AiWeaponUnitTemplates.get_template(arg_9_0.weapon_template).windup_end(arg_9_0.world, arg_9_0.unit, arg_9_0.data)
+	AiWeaponUnitTemplates.get_template(self.weapon_template).windup_end(self.world, self.unit, self.data)
 end

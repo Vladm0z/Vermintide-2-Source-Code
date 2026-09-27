@@ -2,33 +2,36 @@
 
 DeusArenaIdolExtension = class(DeusArenaIdolExtension)
 
-local var_0_0 = 1
-local var_0_1 = 2
-local var_0_2 = 3
-local var_0_3 = 4
-local var_0_4 = 5
-local var_0_5 = {
-	[var_0_0] = "units/props/deus_idol/deus_sigmar_01",
-	[var_0_1] = "units/props/deus_idol/deus_myrmidia_01",
-	[var_0_2] = "units/props/deus_idol/deus_valaya_01",
-	[var_0_3] = "units/props/deus_idol/deus_lileath_01",
-	[var_0_4] = "units/props/deus_idol/deus_taal_01"
+local num = 1
+local num_2 = 2
+local num_3 = 3
+local num_4 = 4
+local num_5 = 5
+local tbl = {
+	[num] = "units/props/deus_idol/deus_sigmar_01",
+	[num_2] = "units/props/deus_idol/deus_myrmidia_01",
+	[num_3] = "units/props/deus_idol/deus_valaya_01",
+	[num_4] = "units/props/deus_idol/deus_lileath_01",
+	[num_5] = "units/props/deus_idol/deus_taal_01"
 }
 
-function DeusArenaIdolExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	arg_1_0._unit = arg_1_2
-	arg_1_0._world = arg_1_1.world
+DeusArenaIdolExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	self._unit = arg_1_2
+	self._world = arg_1_1.world
 end
 
-function DeusArenaIdolExtension.destroy(arg_2_0)
+DeusArenaIdolExtension.destroy = function (arg_2_0)
+	-- function 2
 	return
 end
 
-function DeusArenaIdolExtension.on_local_player_game_starts(arg_3_0)
-	local var_3_0 = POSITION_LOOKUP[arg_3_0._unit]
-	local var_3_1 = Managers.player:local_player():profile_index()
-	local var_3_2 = var_0_5[var_3_1]
-	local var_3_3 = World.spawn_unit(arg_3_0._world, var_3_2, var_3_0)
+DeusArenaIdolExtension.on_local_player_game_starts = function (self)
+	-- function 3
+	local var_3_0 = POSITION_LOOKUP[self._unit]
+	local profile_index = Managers.player:local_player():profile_index()
+	local var_3_2 = tbl[profile_index]
+	local spawn_unit = World.spawn_unit(self._world, var_3_2, var_3_0)
 
-	World.link_unit(arg_3_0._world, var_3_3, 0, arg_3_0._unit, 0)
+	World.link_unit(self._world, spawn_unit, 0, self._unit, 0)
 end

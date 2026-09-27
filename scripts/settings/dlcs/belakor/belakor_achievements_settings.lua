@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/belakor/belakor_achievements_settings.lua
 
-local var_0_0 = DLCSettings.belakor
+local belakor = DLCSettings.belakor
 
-var_0_0.achievement_outline = {
+belakor.achievement_outline = {
 	levels = {
 		categories = {
 			{
@@ -24,7 +24,7 @@ var_0_0.achievement_outline = {
 		}
 	}
 }
-var_0_0.achievement_template_file_names = {
+belakor.achievement_template_file_names = {
 	"scripts/managers/achievements/achievement_templates_belakor"
 }
-var_0_0.achievement_events = {}
+belakor.achievement_events = {}

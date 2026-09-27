@@ -1,70 +1,75 @@
 -- chunkname: @scripts/managers/backend/statistics_definitions_morris.lua
 
-local var_0_0 = StatisticsDefinitions.player
+local player = StatisticsDefinitions.player
+local JourneyDifficultyDBNames = JourneyDifficultyDBNames
 
 JourneyDifficultyDBNames = JourneyDifficultyDBNames or {}
-var_0_0.completed_journeys_difficulty = {}
+JourneyDifficultyDBNames = JourneyDifficultyDBNames
+player.completed_journeys_difficulty = {}
 
-for iter_0_0, iter_0_1 in ipairs(AvailableJourneyOrder) do
-	local var_0_1 = iter_0_1 .. "_difficulty_completed"
+for i, v in ipairs(AvailableJourneyOrder) do
+	local str = v .. "_difficulty_completed"
 
-	JourneyDifficultyDBNames[iter_0_1] = var_0_1
+	JourneyDifficultyDBNames[v] = str
 
-	local var_0_2 = {
+	local tbl = {
 		value = 0,
 		source = "player_data",
 		sync_to_host = true,
-		database_name = var_0_1
+		database_name = str
 	}
 
-	var_0_0.completed_journeys_difficulty[var_0_1] = var_0_2
+	player.completed_journeys_difficulty[str] = tbl
 end
+
+local JourneyDominantGodDifficultyDBNames = JourneyDominantGodDifficultyDBNames
 
 JourneyDominantGodDifficultyDBNames = JourneyDominantGodDifficultyDBNames or {}
-var_0_0.completed_journey_dominant_god_difficulty = {}
+JourneyDominantGodDifficultyDBNames = JourneyDominantGodDifficultyDBNames
+player.completed_journey_dominant_god_difficulty = {}
 
-for iter_0_2, iter_0_3 in pairs(DEUS_GOD_TYPES) do
-	local var_0_3 = iter_0_3 .. "_deus_god_difficulty_completed"
+for k, v_2 in pairs(DEUS_GOD_TYPES) do
+	local str_2 = v_2 .. "_deus_god_difficulty_completed"
 
-	JourneyDominantGodDifficultyDBNames[iter_0_3] = var_0_3
+	JourneyDominantGodDifficultyDBNames[v_2] = str_2
 
-	local var_0_4 = {
+	local tbl_2 = {
 		value = 0,
 		source = "player_data",
 		sync_to_host = true,
-		database_name = var_0_3
+		database_name = str_2
 	}
 
-	var_0_0.completed_journey_dominant_god_difficulty[var_0_3] = var_0_4
+	player.completed_journey_dominant_god_difficulty[str_2] = tbl_2
 end
 
-var_0_0.completed_hero_journey_difficulty = {}
+player.completed_hero_journey_difficulty = {}
 
-for iter_0_4, iter_0_5 in ipairs(SPProfilesAbbreviation) do
-	var_0_0.completed_hero_journey_difficulty[iter_0_5] = {}
+for i_2, v_3 in ipairs(SPProfilesAbbreviation) do
+	player.completed_hero_journey_difficulty[v_3] = {}
 
-	for iter_0_6, iter_0_7 in ipairs(AvailableJourneyOrder) do
-		local var_0_5 = iter_0_7 .. "_difficulty_completed"
-		local var_0_6 = iter_0_5 .. "_" .. var_0_5
-		local var_0_7 = {
+	for i_3, v_4 in ipairs(AvailableJourneyOrder) do
+		local str_3 = v_4 .. "_difficulty_completed"
+		local str_4 = v_3 .. "_" .. str_3
+		local tbl_3 = {
 			value = 0,
 			source = "player_data",
 			sync_to_host = true,
-			database_name = var_0_6
+			database_name = str_4
 		}
 
-		var_0_0.completed_hero_journey_difficulty[iter_0_5][var_0_5] = var_0_7
+		player.completed_hero_journey_difficulty[v_3][str_3] = tbl_3
 	end
 end
 
-var_0_0.opened_shrines = {}
+player.opened_shrines = {}
 
-for iter_0_8, iter_0_9 in pairs(DEUS_CHEST_TYPES) do
-	local var_0_8 = iter_0_9 .. "_shrine_opened"
+for k_2, v_5 in pairs(DEUS_CHEST_TYPES) do
+	local str_5 = v_5 .. "_shrine_opened"
 
-	var_0_0.opened_shrines[iter_0_9] = {
+	player.opened_shrines[v_5] = {
 		value = 0,
 		source = "player_data",
-		database_name = var_0_8
+		database_name = str_5
 	}
 end

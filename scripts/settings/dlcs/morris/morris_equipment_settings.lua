@@ -1,11 +1,11 @@
 -- chunkname: @scripts/settings/dlcs/morris/morris_equipment_settings.lua
 
-local var_0_0 = DLCSettings.morris
+local morris = DLCSettings.morris
 
-var_0_0.item_master_list_file_names = {
+morris.item_master_list_file_names = {
 	"scripts/settings/equipment/item_master_list_morris"
 }
-var_0_0.weapon_template_file_names = {
+morris.weapon_template_file_names = {
 	"scripts/settings/equipment/weapon_templates/dr_deus_01",
 	"scripts/settings/equipment/weapon_templates/es_deus_01",
 	"scripts/settings/equipment/weapon_templates/wh_deus_01",
@@ -16,7 +16,7 @@ var_0_0.weapon_template_file_names = {
 	"scripts/settings/equipment/weapon_templates/deus_rally_flag",
 	"scripts/settings/equipment/weapon_templates/deus_grenades"
 }
-var_0_0.default_items = {
+morris.default_items = {
 	dr_deus_01 = {
 		inventory_icon = "icon_wpn_dw_trollhammer_t1",
 		description = "dr_deus_01_description",
@@ -43,13 +43,13 @@ var_0_0.default_items = {
 		display_name = "wh_deus_01_name"
 	}
 }
-var_0_0.inventory_settings = {
+morris.inventory_settings = {
 	"scripts/settings/inventory_settings_morris"
 }
-var_0_0.cosmetics_files = {
+morris.cosmetics_files = {
 	"scripts/settings/dlcs/morris/morris_cosmetics"
 }
-var_0_0.inventory_package_list = {
+morris.inventory_package_list = {
 	"units/weapons/player/wpn_dr_deus_01/wpn_dr_deus_01",
 	"units/weapons/player/wpn_dr_deus_01/wpn_dr_deus_01_3p",
 	"units/weapons/player/wpn_dr_deus_projectile_01/wpn_dr_deus_projectile_01",
@@ -177,10 +177,10 @@ var_0_0.inventory_package_list = {
 	"wwise/es_deus_01",
 	"wwise/wh_deus_01"
 }
-var_0_0.damage_profile_template_files_names = {
+morris.damage_profile_template_files_names = {
 	"scripts/settings/dlcs/morris/damage_profile_templates_dlc_morris"
 }
-var_0_0.weave_traits = {
+morris.weave_traits = {
 	ranged_energy = {
 		"weave_ranged_restore_stamina_headshot",
 		"weave_ranged_reduce_cooldown_on_crit",
@@ -188,10 +188,10 @@ var_0_0.weave_traits = {
 		"weave_ranged_consecutive_hits_increase_power"
 	}
 }
-var_0_0.attack_template_files_names = {
+morris.attack_template_files_names = {
 	"scripts/settings/dlcs/morris/attack_templates_dlc_morris"
 }
-var_0_0.action_template_file_names = {
+morris.action_template_file_names = {
 	"scripts/unit_extensions/weapons/actions/action_grenade_thrower",
 	"scripts/unit_extensions/weapons/actions/action_bow_energy",
 	"scripts/unit_extensions/weapons/actions/action_aim_energy",
@@ -199,10 +199,10 @@ var_0_0.action_template_file_names = {
 	"scripts/unit_extensions/weapons/actions/action_multi_shoot",
 	"scripts/unit_extensions/weapons/actions/action_deus_relic_throw"
 }
-var_0_0.player_unit_status_settings_file_names = {
+morris.player_unit_status_settings_file_names = {
 	"scripts/settings/dlcs/morris/player_unit_status_settings_morris"
 }
-var_0_0.action_classes_lookup = {
+morris.action_classes_lookup = {
 	bow_energy = "ActionBowEnergy",
 	deus_relic_throw = "ActionDeusRelicThrow",
 	multi_shoot = "ActionMultiShoot",
@@ -210,7 +210,7 @@ var_0_0.action_classes_lookup = {
 	aim_energy = "ActionAimEnergy",
 	magma_projectile = "ActionMagmaProjectile"
 }
-var_0_0.projectile_units = {
+morris.projectile_units = {
 	dr_deus_01_head = {
 		dummy_linker_unit_name = "units/weapons/player/wpn_dr_deus_projectile_01/wpn_dr_deus_projectile_01_3p",
 		projectile_unit_name = "units/weapons/player/wpn_dr_deus_projectile_01/wpn_dr_deus_projectile_01_3ps"
@@ -223,7 +223,7 @@ var_0_0.projectile_units = {
 		projectile_unit_name = "units/weapons/player/wpn_emp_holy_hand_grenade_01_t1/wpn_emp_holy_hand_grenade_01_t1_3p"
 	}
 }
-var_0_0.projectiles = {
+morris.projectiles = {
 	dr_deus_01 = {
 		projectile_unit_template_name = "player_projectile_unit",
 		life_time = 3,
@@ -256,16 +256,17 @@ var_0_0.projectiles = {
 		gravity_settings = "drakegun",
 		projectile_unit_template_name = "player_projectile_unit",
 		projectile_units_template = "holy_hand_grenade",
-		rotation_on_hit = function(arg_1_0)
-			local var_1_0 = Managers.state.network.unit_storage:go_id(arg_1_0)
-			local var_1_1, var_1_2 = Math.next_random(var_1_0)
-			local var_1_3 = Quaternion.axis_angle(Vector3.right(), var_1_2 * math.pi * 0.15)
+		rotation_on_hit = function (arg_1_0)
+			-- function 1
+			local go_id = Managers.state.network.unit_storage:go_id(arg_1_0)
+			local next_random, var_1_2 = Math.next_random(go_id)
+			local axis_angle = Quaternion.axis_angle(Vector3.right(), var_1_2 * math.pi * 0.15)
 
-			return Quaternion.multiply(Quaternion.axis_angle(Vector3.up(), math.random() * math.tau), var_1_3)
+			return Quaternion.multiply(Quaternion.axis_angle(Vector3.up(), math.random() * math.tau), axis_angle)
 		end
 	}
 }
-var_0_0.spread_templates = {
+morris.spread_templates = {
 	wh_deus_01 = {
 		continuous = {
 			still = {
@@ -405,7 +406,7 @@ var_0_0.spread_templates = {
 		}
 	}
 }
-var_0_0.extra_loot_chest_score_types = {
+morris.extra_loot_chest_score_types = {
 	deus = {
 		cursed_levels_completed = 10,
 		cursed_chests_purified = 7,

@@ -1,51 +1,52 @@
 -- chunkname: @scripts/settings/equipment/damage_profile_templates_dlc_bless.lua
 
-local function var_0_0(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, ...)
+local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, ...)
+	-- function 1
 	local var_1_0 = DamageProfileTemplates[arg_1_0]
-	local var_1_1 = table.clone(var_1_0)
+	local clone = table.clone(var_1_0)
 	local var_1_2 = select("#", ...)
 
-	if arg_1_4 then
-		if type(var_1_1.default_target) == "string" then
-			var_1_1.default_target = PowerLevelTemplates[var_1_1.default_target]
+	if not arg_1_4 then
+		if type(clone.default_target) == "string" then
+			clone.default_target = PowerLevelTemplates[clone.default_target]
 		end
 
-		var_1_1.default_target = table.clone(var_1_1.default_target)
-		var_1_1.default_target.attack_template = arg_1_4
+		clone.default_target = table.clone(clone.default_target)
+		clone.default_target.attack_template = arg_1_4
 
-		if type(var_1_1.targets) == "string" then
-			var_1_1.targets = PowerLevelTemplates[var_1_1.targets]
+		if type(clone.targets) == "string" then
+			clone.targets = PowerLevelTemplates[clone.targets]
 		end
 
-		var_1_1.targets = table.clone(var_1_1.targets)
+		clone.targets = table.clone(clone.targets)
 
-		local var_1_3 = var_1_1.targets
+		local targets = clone.targets
 
-		if var_1_3 then
-			for iter_1_0, iter_1_1 in ipairs(var_1_3) do
-				if iter_1_0 <= var_1_2 then
-					iter_1_1.attack_template = select(iter_1_0, ...)
+		if not targets then
+			for i, v in ipairs(targets) do
+				if i <= var_1_2 then
+					v.attack_template = select(i, ...)
 				else
-					iter_1_1.attack_template = arg_1_4
+					v.attack_template = arg_1_4
 				end
 			end
 		end
 	end
 
-	if arg_1_3 then
-		var_1_1.charge_value = arg_1_3
+	if not arg_1_3 then
+		clone.charge_value = arg_1_3
 	end
 
-	if arg_1_2 then
-		DamageProfileTemplates[arg_1_2] = var_1_1
-	elseif arg_1_1 then
-		local var_1_4 = arg_1_0 .. arg_1_1
+	if not arg_1_2 then
+		DamageProfileTemplates[arg_1_2] = clone
+	elseif not arg_1_1 then
+		local str = arg_1_0 .. arg_1_1
 
-		DamageProfileTemplates[var_1_4] = var_1_1
+		DamageProfileTemplates[str] = clone
 	end
 end
 
-local var_0_1 = {
+local tbl = {
 	hammer_book_charged_explosion = {
 		no_stagger_damage_reduction = true,
 		charge_value = "aoe",
@@ -519,17 +520,17 @@ local var_0_1 = {
 	}
 }
 
-var_0_0("medium_blunt_smiter_1h", "_priest", nil, nil)
+fn("medium_blunt_smiter_1h", "_priest", nil, nil)
 
 DamageProfileTemplates.medium_blunt_smiter_1h_priest.default_target.power_distribution.impact = 0.3
 
-var_0_0("medium_blunt_smiter_1h", "_thrust", nil, nil)
+fn("medium_blunt_smiter_1h", "_thrust", nil, nil)
 
 DamageProfileTemplates.medium_blunt_smiter_1h_thrust.default_target.power_distribution.impact = 0.35
 DamageProfileTemplates.medium_blunt_smiter_1h_thrust.default_target.power_distribution.attack = 0.45
 
-var_0_0("shield_slam_aoe", "_priest", nil, nil)
+fn("shield_slam_aoe", "_priest", nil, nil)
 
 DamageProfileTemplates.shield_slam_aoe_priest.charge_value = "aoe"
 
-return var_0_1
+return tbl

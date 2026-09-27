@@ -2,31 +2,35 @@
 
 SimplePopup = class(SimplePopup)
 
-function SimplePopup.init(arg_1_0)
-	arg_1_0._tracked_popups = {}
+SimplePopup.init = function (self)
+	-- function 1
+	self._tracked_popups = {}
 end
 
-function SimplePopup.queue_popup(arg_2_0, arg_2_1, arg_2_2, ...)
-	local var_2_0 = Managers.popup:queue_popup(arg_2_1, arg_2_2, ...)
+SimplePopup.queue_popup = function (arg_2_0, arg_2_1, arg_2_2, ...)
+	-- function 2
+	local queue_popup = Managers.popup:queue_popup(arg_2_1, arg_2_2, ...)
 
-	arg_2_0._tracked_popups[#arg_2_0._tracked_popups + 1] = var_2_0
+	arg_2_0._tracked_popups[#arg_2_0._tracked_popups + 1] = queue_popup
 end
 
-function SimplePopup.update(arg_3_0, arg_3_1)
-	local var_3_0 = Managers.popup
-	local var_3_1 = arg_3_0._tracked_popups[1]
+SimplePopup.update = function (self, arg_3_1)
+	-- function 3
+	local popup = Managers.popup
+	local var_3_1 = self._tracked_popups[1]
 
-	if var_3_1 and not var_3_0:has_popup_with_id(var_3_1) then
-		table.remove(arg_3_0._tracked_popups, 1)
+	if not (not var_3_1 and popup:has_popup_with_id(var_3_1)) then
+		table.remove(self._tracked_popups, 1)
 	end
 
-	for iter_3_0, iter_3_1 in ipairs(arg_3_0._tracked_popups) do
-		if var_3_0:query_result(iter_3_1) ~= nil then
-			table.remove(arg_3_0._tracked_popups, iter_3_0)
+	for i, v in ipairs(self._tracked_popups) do
+		if popup:query_result(v) ~= nil then
+			table.remove(self._tracked_popups, i)
 		end
 	end
 end
 
-function SimplePopup.destroy(arg_4_0)
+SimplePopup.destroy = function (arg_4_0)
+	-- function 4
 	return
 end

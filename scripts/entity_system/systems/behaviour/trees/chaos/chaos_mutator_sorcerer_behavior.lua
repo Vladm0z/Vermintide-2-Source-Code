@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/chaos/chaos_mutator_sorcerer_behavior.lua
 
-local var_0_0 = BreedActions.chaos_mutator_sorcerer
+local chaos_mutator_sorcerer = BreedActions.chaos_mutator_sorcerer
 
 BreedBehaviors.chaos_mutator_sorcerer = {
 	"BTSelector",
@@ -25,13 +25,13 @@ BreedBehaviors.chaos_mutator_sorcerer = {
 		leave_hook = "destroy_unit_leave_hook",
 		name = "quick_teleport",
 		condition = "quick_teleport",
-		action_data = var_0_0.quick_teleport
+		action_data = chaos_mutator_sorcerer.quick_teleport
 	},
 	{
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = var_0_0.stagger
+		action_data = chaos_mutator_sorcerer.stagger
 	},
 	{
 		"BTSelector",
@@ -49,7 +49,7 @@ BreedBehaviors.chaos_mutator_sorcerer = {
 			"BTSmashDoorAction",
 			name = "smash_door",
 			condition = "at_door_smartobject",
-			action_data = var_0_0.smash_door
+			action_data = chaos_mutator_sorcerer.smash_door
 		},
 		condition = "at_smartobject",
 		name = "smartobject"
@@ -59,14 +59,14 @@ BreedBehaviors.chaos_mutator_sorcerer = {
 		{
 			"BTMutatorSorcererFollowAction",
 			name = "follow",
-			action_data = var_0_0.follow
+			action_data = chaos_mutator_sorcerer.follow
 		},
 		{
 			"BTCorruptorGrabAction",
 			enter_hook = "remove_invincibility",
 			name = "attack",
 			leave_hook = "mutator_sorcerer_activate_teleport",
-			action_data = var_0_0.grab_attack
+			action_data = chaos_mutator_sorcerer.grab_attack
 		},
 		condition = "can_see_player",
 		name = "in_combat"
@@ -74,7 +74,7 @@ BreedBehaviors.chaos_mutator_sorcerer = {
 	{
 		"BTIdleAction",
 		name = "idle",
-		action_data = var_0_0.idle
+		action_data = chaos_mutator_sorcerer.idle
 	},
 	name = "chaos_mutator_sorcerer"
 }

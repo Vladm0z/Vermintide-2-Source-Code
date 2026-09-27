@@ -2,135 +2,154 @@
 
 ImguiCareerDebug = class(ImguiCareerDebug)
 
-local var_0_0 = true
-local var_0_1 = 820
-local var_0_2 = 500
-local var_0_3 = 8
-local var_0_4 = {}
+local flag = true
+local num = 820
+local num_2 = 500
+local num_3 = 8
+local tbl = {}
 
-for iter_0_0 = 0, var_0_3 do
-	var_0_4[iter_0_0 + 1] = tostring(iter_0_0)
+for i = 0, num_3 do
+	tbl[i + 1] = tostring(i)
 end
 
-function ImguiCareerDebug.init(arg_1_0)
-	arg_1_0._first_run = true
-	arg_1_0._is_persistent = false
-	arg_1_0._indent_counter = 0
-	arg_1_0._players = {}
-	arg_1_0._profiles = {}
-	arg_1_0._careers = {}
+ImguiCareerDebug.init = function (self)
+	-- function 1
+	self._first_run = true
+	self._is_persistent = false
+	self._indent_counter = 0
+	self._players = {}
+	self._profiles = {}
+	self._careers = {}
 
-	arg_1_0:register_events()
+	self:register_events()
 
-	var_0_0 = false
+	flag = false
 end
 
-function ImguiCareerDebug._get_profile_requester(arg_2_0)
-	if arg_2_0._profile_requester then
-		return arg_2_0._profile_requester
+ImguiCareerDebug._get_profile_requester = function (self)
+	-- function 2
+	if not self._profile_requester then
+		return self._profile_requester
 	end
 
-	local var_2_0 = Managers.state.network
+	local network = Managers.state.network
 
-	if var_2_0 then
-		local var_2_1 = var_2_0.network_server or var_2_0.network_client
+	if not network then
+		local network_server = network.network_server
 
-		arg_2_0._profile_requester = var_2_1 and var_2_1:profile_requester()
+		network_server = network_server or network.network_client
+		self._profile_requester = not network_server and network_server:profile_requester()
 	end
 
-	return arg_2_0._profile_requester
+	return self._profile_requester
 end
 
-function ImguiCareerDebug._get_profile_synchronizer(arg_3_0)
-	if arg_3_0._profile_synchronizer then
-		return arg_3_0._profile_synchronizer
+ImguiCareerDebug._get_profile_synchronizer = function (self)
+	-- function 3
+	if not self._profile_synchronizer then
+		return self._profile_synchronizer
 	end
 
-	local var_3_0 = Managers.state.network
+	local network = Managers.state.network
 
-	if var_3_0 then
-		local var_3_1 = var_3_0.network_server or var_3_0.network_client
+	if not network then
+		local network_server = network.network_server
 
-		arg_3_0._profile_synchronizer = var_3_1 and var_3_1.profile_synchronizer
+		network_server = network_server or network.network_client
+		self._profile_synchronizer = not network_server and network_server.profile_synchronizer
 	end
 
-	return arg_3_0._profile_synchronizer
+	return self._profile_synchronizer
 end
 
-function ImguiCareerDebug.destroy(arg_4_0)
-	arg_4_0:unregister_events()
+ImguiCareerDebug.destroy = function (self)
+	-- function 4
+	self:unregister_events()
 end
 
-function ImguiCareerDebug.register_events(arg_5_0)
-	if Managers.state.event then
-		-- block empty
-	end
-end
-
-function ImguiCareerDebug.unregister_events(arg_6_0)
-	if Managers.state.event then
-		-- block empty
+ImguiCareerDebug.register_events = function (arg_5_0)
+	-- function 5
+	if not Managers.state.event then
+		-- Nothing
 	end
 end
 
-function ImguiCareerDebug.is_persistent(arg_7_0)
-	return arg_7_0._is_persistent
+ImguiCareerDebug.unregister_events = function (arg_6_0)
+	-- function 6
+	if not Managers.state.event then
+		-- Nothing
+	end
 end
 
-function ImguiCareerDebug.update(arg_8_0)
-	if var_0_0 then
-		arg_8_0:unregister_events()
-		arg_8_0:init()
+ImguiCareerDebug.is_persistent = function (self)
+	-- function 7
+	return self._is_persistent
+end
+
+ImguiCareerDebug.update = function (self)
+	-- function 8
+	if not flag then
+		self:unregister_events()
+		self:init()
 	end
 
-	arg_8_0:_update_profiles_and_careers()
-	arg_8_0:_update_players()
+	self:_update_profiles_and_careers()
+	self:_update_players()
 end
 
-function ImguiCareerDebug._update_profiles_and_careers(arg_9_0)
-	arg_9_0._profiles = {}
-	arg_9_0._careers = {}
+ImguiCareerDebug._update_profiles_and_careers = function (self)
+	-- function 9
+	self._profiles = {}
+	self._careers = {}
 
-	for iter_9_0, iter_9_1 in pairs(SPProfiles) do
-		arg_9_0._profiles[iter_9_0] = iter_9_1.display_name
-		arg_9_0._careers[iter_9_0] = {}
+	for k, v in pairs(SPProfiles) do
+		self._profiles[k] = v.display_name
+		self._careers[k] = {}
 
-		for iter_9_2, iter_9_3 in pairs(iter_9_1.careers) do
-			arg_9_0._careers[iter_9_0][iter_9_2] = iter_9_3.display_name
+		for k_2, v_2 in pairs(v.careers) do
+			self._careers[k][k_2] = v_2.display_name
 		end
 	end
 end
 
-function ImguiCareerDebug._update_players(arg_10_0)
-	arg_10_0._players = Managers.player:players()
+ImguiCareerDebug._update_players = function (self)
+	-- function 10
+	self._players = Managers.player:players()
 end
 
-function ImguiCareerDebug.draw(arg_11_0)
-	if arg_11_0._first_run then
-		Imgui.set_next_window_size(var_0_1, var_0_2)
+ImguiCareerDebug.draw = function (self)
+	-- function 11
+	if not self._first_run then
+		Imgui.set_next_window_size(num, num_2)
 
-		arg_11_0._first_run = false
+		self._first_run = false
 	end
 
-	local var_11_0 = Imgui.begin_window("Career Debug")
+	local begin_window = Imgui.begin_window("Career Debug")
 
-	arg_11_0._is_persistent = Imgui.checkbox("Keep Window Open", arg_11_0._is_persistent)
+	self._is_persistent = Imgui.checkbox("Keep Window Open", self._is_persistent)
 
 	Imgui.same_line()
 	Imgui.push_item_width(100)
 
-	script_data.cap_num_bots = Imgui.combo("Num bots", (script_data.cap_num_bots or var_0_3) + 1, var_0_4) - 1
+	local script_data = script_data
+	local combo = Imgui.combo
+	local str = "Num bots"
+	local cap_num_bots = script_data.cap_num_bots
+
+	cap_num_bots = cap_num_bots or num_3
+	script_data.cap_num_bots = combo(str, cap_num_bots + 1, tbl) - 1
 
 	Imgui.pop_item_width()
 	Imgui.separator()
-	arg_11_0:_draw_players()
-	arg_11_0:_verify_indent()
+	self:_draw_players()
+	self:_verify_indent()
 	Imgui.end_window()
 
-	return var_11_0
+	return begin_window
 end
 
-local var_0_5 = {
+local tbl_2 = {
 	"Name",
 	"Profile",
 	"Career",
@@ -138,100 +157,111 @@ local var_0_5 = {
 	"Is Server"
 }
 
-function ImguiCareerDebug._draw_players(arg_12_0)
-	arg_12_0:_set_columns(5, true, 164)
+ImguiCareerDebug._draw_players = function (self)
+	-- function 12
+	self:_set_columns(5, true, 164)
 
-	for iter_12_0, iter_12_1 in pairs(var_0_5) do
-		Imgui.text(iter_12_1)
+	for k, v in pairs(tbl_2) do
+		Imgui.text(v)
 		Imgui.next_column()
 	end
 
-	local var_12_0 = Managers.mechanism:server_peer_id()
+	local server_peer_id = Managers.mechanism:server_peer_id()
 
-	for iter_12_2, iter_12_3 in pairs(arg_12_0._players) do
-		local var_12_1 = iter_12_3.peer_id == var_12_0
+	for k_2, v_2 in pairs(self._players) do
+		local flag = v_2.peer_id == server_peer_id
 
-		Imgui.tree_push(iter_12_2)
-		Imgui.text(iter_12_3:name())
+		Imgui.tree_push(k_2)
+		Imgui.text(v_2:name())
 		Imgui.next_column()
-		arg_12_0:_draw_profile_combo(iter_12_3)
+		self:_draw_profile_combo(v_2)
 		Imgui.next_column()
-		arg_12_0:_draw_career_combo(iter_12_3)
+		self:_draw_career_combo(v_2)
 		Imgui.next_column()
-		Imgui.text(tostring(iter_12_3.bot_player or not iter_12_3:is_player_controlled() or false))
+
+		local text = Imgui.text
+		local tostring = tostring
+		local bot_player = v_2.bot_player
+
+		bot_player = (bot_player or not v_2:is_player_controlled()) and false
+
+		text(tostring(bot_player))
 		Imgui.next_column()
-		Imgui.text(tostring(var_12_1))
+		Imgui.text(tostring(flag))
 		Imgui.next_column()
 		Imgui.tree_pop()
 	end
 
-	arg_12_0:_reset_columns()
+	self:_reset_columns()
 end
 
-function ImguiCareerDebug._draw_profile_combo(arg_13_0, arg_13_1)
-	local var_13_0 = arg_13_1:profile_index()
+ImguiCareerDebug._draw_profile_combo = function (self, arg_13_1)
+	-- function 13
+	local profile_index = arg_13_1:profile_index()
 
 	Imgui.tree_push("profile")
 
-	local var_13_1 = Imgui.combo("", var_13_0, arg_13_0._profiles)
+	local combo = Imgui.combo("", profile_index, self._profiles)
 
 	Imgui.tree_pop()
 
-	if var_13_1 ~= var_13_0 then
-		local var_13_2 = arg_13_0:_get_profile_requester()
-		local var_13_3, var_13_4 = hero_and_career_name_from_index(var_13_1, 1)
-		local var_13_5 = Network.peer_id()
-		local var_13_6 = Managers.mechanism:reserved_party_id_by_peer(var_13_5)
+	if combo ~= profile_index then
+		local _get_profile_requester = self:_get_profile_requester()
+		local var_13_3, var_13_4 = hero_and_career_name_from_index(combo, 1)
+		local peer_id = Network.peer_id()
+		local reserved_party_id_by_peer = Managers.mechanism:reserved_party_id_by_peer(peer_id)
 
-		if not Managers.mechanism:profile_available_for_peer(var_13_6, var_13_5, var_13_1) then
-			local var_13_7 = arg_13_0:_find_who_uses_profile(var_13_1)
-			local var_13_8 = arg_13_0:_get_profile_synchronizer()
-			local var_13_9 = 1
-			local var_13_10, var_13_11 = var_13_8:get_first_free_profile(var_13_9)
-			local var_13_12, var_13_13 = hero_and_career_name_from_index(var_13_10, var_13_11)
+		if not Managers.mechanism:profile_available_for_peer(reserved_party_id_by_peer, peer_id, combo) then
+			local _find_who_uses_profile = self:_find_who_uses_profile(combo)
+			local _get_profile_synchronizer = self:_get_profile_synchronizer()
+			local num = 1
+			local get_first_free_profile, var_13_11 = _get_profile_synchronizer:get_first_free_profile(num)
+			local var_13_12, var_13_13 = hero_and_career_name_from_index(get_first_free_profile, var_13_11)
 
-			var_13_2:request_profile(var_13_7.peer_id, var_13_7:local_player_id(), var_13_12, var_13_13, true)
+			_get_profile_requester:request_profile(_find_who_uses_profile.peer_id, _find_who_uses_profile:local_player_id(), var_13_12, var_13_13, true)
 
-			if var_13_7.bot_player then
-				var_13_7.character_name = Localize(var_13_12)
+			if not _find_who_uses_profile.bot_player then
+				_find_who_uses_profile.character_name = Localize(var_13_12)
 			end
 		end
 
-		var_13_2:request_profile(arg_13_1.peer_id, arg_13_1:local_player_id(), var_13_3, var_13_4, true)
+		_get_profile_requester:request_profile(arg_13_1.peer_id, arg_13_1:local_player_id(), var_13_3, var_13_4, true)
 
-		if arg_13_1.bot_player then
+		if not arg_13_1.bot_player then
 			arg_13_1.character_name = Localize(var_13_3)
 		end
 	end
 end
 
-function ImguiCareerDebug._draw_career_combo(arg_14_0, arg_14_1)
-	local var_14_0 = arg_14_1:profile_index()
-	local var_14_1 = arg_14_1:career_index()
-	local var_14_2 = arg_14_0._careers[var_14_0]
+ImguiCareerDebug._draw_career_combo = function (self, arg_14_1)
+	-- function 14
+	local profile_index = arg_14_1:profile_index()
+	local career_index = arg_14_1:career_index()
+	local var_14_2 = self._careers[profile_index]
 
 	Imgui.tree_push("career")
 
-	local var_14_3 = Imgui.combo("", var_14_1, var_14_2)
+	local combo = Imgui.combo("", career_index, var_14_2)
 
 	Imgui.tree_pop()
 
-	if var_14_3 ~= var_14_1 then
-		local var_14_4 = arg_14_0:_get_profile_requester()
-		local var_14_5, var_14_6 = hero_and_career_name_from_index(var_14_0, var_14_3)
+	if combo ~= career_index then
+		local _get_profile_requester = self:_get_profile_requester()
+		local var_14_5, var_14_6 = hero_and_career_name_from_index(profile_index, combo)
 
-		var_14_4:request_profile(arg_14_1.peer_id, arg_14_1:local_player_id(), var_14_5, var_14_6, true)
+		_get_profile_requester:request_profile(arg_14_1.peer_id, arg_14_1:local_player_id(), var_14_5, var_14_6, true)
 	end
 end
 
-function ImguiCareerDebug._find_who_uses_profile(arg_15_0, arg_15_1)
-	local var_15_0 = Managers.party:parties()
+ImguiCareerDebug._find_who_uses_profile = function (arg_15_0, arg_15_1)
+	-- function 15
+	local parties = Managers.party:parties()
 
-	for iter_15_0, iter_15_1 in pairs(var_15_0) do
-		local var_15_1 = iter_15_1.occupied_slots
+	for k, v in pairs(parties) do
+		local occupied_slots = v.occupied_slots
 
-		for iter_15_2 = 1, #var_15_1 do
-			local var_15_2 = var_15_1[iter_15_2]
+		for k_2 = 1, #occupied_slots do
+			local var_15_2 = occupied_slots[k_2]
 
 			if arg_15_1 == var_15_2.profile_index then
 				return var_15_2.player
@@ -240,7 +270,8 @@ function ImguiCareerDebug._find_who_uses_profile(arg_15_0, arg_15_1)
 	end
 end
 
-function ImguiCareerDebug._set_columns(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+ImguiCareerDebug._set_columns = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+	-- function 16
 	arg_16_2 = arg_16_2 or false
 
 	Imgui.columns(arg_16_1, arg_16_2)
@@ -250,34 +281,38 @@ function ImguiCareerDebug._set_columns(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	end
 
 	if type(arg_16_3) == "table" then
-		for iter_16_0, iter_16_1 in ipairs(arg_16_3) do
-			Imgui.set_column_width(iter_16_1, iter_16_0 - 1)
+		for i, v in ipairs(arg_16_3) do
+			Imgui.set_column_width(v, i - 1)
 		end
 	else
-		for iter_16_2 = 0, arg_16_1 - 1 do
-			Imgui.set_column_width(arg_16_3, iter_16_2)
+		for k = 0, arg_16_1 - 1 do
+			Imgui.set_column_width(arg_16_3, k)
 		end
 	end
 end
 
-function ImguiCareerDebug._reset_columns(arg_17_0)
-	arg_17_0:_set_columns(1)
+ImguiCareerDebug._reset_columns = function (self)
+	-- function 17
+	self:_set_columns(1)
 end
 
-local var_0_6 = 8
+local num_4 = 8
 
-function ImguiCareerDebug._indent(arg_18_0)
-	arg_18_0._indent_counter = arg_18_0._indent_counter + 1
+ImguiCareerDebug._indent = function (self)
+	-- function 18
+	self._indent_counter = self._indent_counter + 1
 
-	Imgui.indent(var_0_6)
+	Imgui.indent(num_4)
 end
 
-function ImguiCareerDebug._unindent(arg_19_0)
-	arg_19_0._indent_counter = arg_19_0._indent_counter - 1
+ImguiCareerDebug._unindent = function (self)
+	-- function 19
+	self._indent_counter = self._indent_counter - 1
 
-	Imgui.unindent(var_0_6)
+	Imgui.unindent(num_4)
 end
 
-function ImguiCareerDebug._verify_indent(arg_20_0)
-	fassert(arg_20_0._indent_counter == 0, tostring(arg_20_0._indent_counter))
+ImguiCareerDebug._verify_indent = function (self)
+	-- function 20
+	fassert(self._indent_counter == 0, tostring(self._indent_counter))
 end

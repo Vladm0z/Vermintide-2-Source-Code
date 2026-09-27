@@ -3,96 +3,113 @@
 ObjectiveGroupExtension = class(ObjectiveGroupExtension, BaseObjectiveExtension)
 ObjectiveGroupExtension.NAME = "ObjectiveGroupExtension"
 
-function ObjectiveGroupExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	ObjectiveGroupExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+ObjectiveGroupExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	ObjectiveGroupExtension.super.init(self, arg_1_1, arg_1_2, arg_1_3)
 
-	arg_1_0._children = {}
+	self._children = {}
 end
 
-function ObjectiveGroupExtension._set_objective_data(arg_2_0, arg_2_1)
-	arg_2_0._time_for_completion = arg_2_1.time_for_completion or 0
+ObjectiveGroupExtension._set_objective_data = function (self, arg_2_1)
+	-- function 2
+	local time_for_completion = arg_2_1.time_for_completion
+
+	time_for_completion = time_for_completion or 0
+	self._time_for_completion = time_for_completion
 end
 
-function ObjectiveGroupExtension._activate(arg_3_0)
+ObjectiveGroupExtension._activate = function (arg_3_0)
+	-- function 3
 	return
 end
 
-function ObjectiveGroupExtension.register_child(arg_4_0, arg_4_1)
+ObjectiveGroupExtension.register_child = function (arg_4_0, arg_4_1)
+	-- function 4
 	arg_4_0._children[arg_4_1] = true
 end
 
-function ObjectiveGroupExtension.get_percentage_done(arg_5_0)
-	local var_5_0 = 0
-	local var_5_1 = 0
+ObjectiveGroupExtension.get_percentage_done = function (self)
+	-- function 5
+	local num = 0
+	local num_2 = 0
 
-	for iter_5_0 in pairs(arg_5_0._children) do
-		var_5_0 = var_5_0 + iter_5_0:get_percentage_done()
-		var_5_1 = var_5_1 + 1
+	for k in pairs(self._children) do
+		num = num + k:get_percentage_done()
+		num_2 = num_2 + 1
 	end
 
-	if var_5_1 == 0 then
+	if num_2 == 0 then
 		return 1
 	end
 
-	return var_5_0 / var_5_1
+	return num / num_2
 end
 
-function ObjectiveGroupExtension.get_total_sections(arg_6_0)
-	local var_6_0 = 0
+ObjectiveGroupExtension.get_total_sections = function (self)
+	-- function 6
+	local num = 0
 
-	for iter_6_0 in pairs(arg_6_0._children) do
-		var_6_0 = var_6_0 + iter_6_0:get_total_sections()
+	for k in pairs(self._children) do
+		num = num + k:get_total_sections()
 	end
 
-	return var_6_0
+	return num
 end
 
-function ObjectiveGroupExtension.description(arg_7_0)
-	for iter_7_0 in pairs(arg_7_0._children) do
-		local var_7_0 = iter_7_0:description()
+ObjectiveGroupExtension.description = function (self)
+	-- function 7
+	for k in pairs(self._children) do
+		local description = k:description()
 
-		if var_7_0 then
-			return var_7_0
+		if not description then
+			return description
 		end
 	end
 end
 
-function ObjectiveGroupExtension.objective_icon(arg_8_0)
-	for iter_8_0 in pairs(arg_8_0._children) do
-		local var_8_0 = iter_8_0:objective_icon()
+ObjectiveGroupExtension.objective_icon = function (self)
+	-- function 8
+	for k in pairs(self._children) do
+		local objective_icon = k:objective_icon()
 
-		if var_8_0 then
-			return var_8_0
+		if not objective_icon then
+			return objective_icon
 		end
 	end
 end
 
-function ObjectiveGroupExtension.objective_type(arg_9_0)
-	for iter_9_0 in pairs(arg_9_0._children) do
-		local var_9_0 = iter_9_0:objective_type()
+ObjectiveGroupExtension.objective_type = function (self)
+	-- function 9
+	for k in pairs(self._children) do
+		local objective_type = k:objective_type()
 
-		if var_9_0 then
-			return var_9_0
+		if not objective_type then
+			return objective_type
 		end
 	end
 end
 
-function ObjectiveGroupExtension.is_done(arg_10_0)
-	return arg_10_0:get_percentage_done() >= 1
+ObjectiveGroupExtension.is_done = function (self)
+	-- function 10
+	return self:get_percentage_done() >= 1
 end
 
-function ObjectiveGroupExtension.is_active(arg_11_0)
-	return arg_11_0._activated
+ObjectiveGroupExtension.is_active = function (self)
+	-- function 11
+	return self._activated
 end
 
-function ObjectiveGroupExtension._client_update(arg_12_0)
+ObjectiveGroupExtension._client_update = function (arg_12_0)
+	-- function 12
 	return
 end
 
-function ObjectiveGroupExtension._server_update(arg_13_0)
+ObjectiveGroupExtension._server_update = function (arg_13_0)
+	-- function 13
 	return
 end
 
-function ObjectiveGroupExtension._deactivate(arg_14_0)
+ObjectiveGroupExtension._deactivate = function (arg_14_0)
+	-- function 14
 	return
 end

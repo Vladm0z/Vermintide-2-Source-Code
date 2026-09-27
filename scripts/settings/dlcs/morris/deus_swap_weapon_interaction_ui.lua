@@ -3,232 +3,267 @@
 DeusSwapWeaponInteractionUI = class(DeusSwapWeaponInteractionUI)
 
 local var_0_0 = local_require("scripts/settings/dlcs/morris/deus_swap_weapon_interaction_ui_definitions")
-local var_0_1 = var_0_0.scenegraph_definition
-local var_0_2 = var_0_0.widgets
-local var_0_3 = var_0_0.animation_definitions
+local scenegraph_definition = var_0_0.scenegraph_definition
+local widgets = var_0_0.widgets
+local animation_definitions = var_0_0.animation_definitions
 
 DeusSwapWeaponInteractionUI.TYPE = "swap_melee"
 
-function DeusSwapWeaponInteractionUI.init(arg_1_0, arg_1_1, arg_1_2)
-	arg_1_0._parent = arg_1_1
-	arg_1_0._ingame_ui_context = arg_1_2
-	arg_1_0._ui_renderer = arg_1_2.ui_renderer
-	arg_1_0._current_interactable_unit = nil
-	arg_1_0._render_settings = {
+DeusSwapWeaponInteractionUI.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	self._parent = arg_1_1
+	self._ingame_ui_context = arg_1_2
+	self._ui_renderer = arg_1_2.ui_renderer
+	self._current_interactable_unit = nil
+	self._render_settings = {
 		alpha_multiplier = 0
 	}
-	arg_1_0._animations = {}
-	arg_1_0._type = "melee"
-	arg_1_0._soft_currency_amount = nil
-	arg_1_0._offset = {
+	self._animations = {}
+	self._type = "melee"
+	self._soft_currency_amount = nil
+	self._offset = {
 		0,
 		0,
 		0
 	}
-	arg_1_0._calculate_offset = false
+	self._calculate_offset = false
 
-	arg_1_0:_create_ui_elements()
-	Managers.state.event:register(arg_1_0, "chest_unlock_failed", "chest_unlock_failed")
+	self:_create_ui_elements()
+	Managers.state.event:register(self, "chest_unlock_failed", "chest_unlock_failed")
 end
 
-function DeusSwapWeaponInteractionUI.destroy(arg_2_0)
+DeusSwapWeaponInteractionUI.destroy = function (arg_2_0)
+	-- function 2
 	Managers.state.event:unregister("chest_unlock_failed", arg_2_0)
 end
 
-function DeusSwapWeaponInteractionUI.chest_unlock_failed(arg_3_0, arg_3_1)
+DeusSwapWeaponInteractionUI.chest_unlock_failed = function (self, arg_3_1)
+	-- function 3
 	if arg_3_1 == DeusSwapWeaponInteractionUI.TYPE then
-		arg_3_0:_start_animation("chest_unlock_failed")
+		self:_start_animation("chest_unlock_failed")
 	end
 end
 
-function DeusSwapWeaponInteractionUI._create_ui_elements(arg_4_0)
-	UIRenderer.clear_scenegraph_queue(arg_4_0._ui_renderer)
+DeusSwapWeaponInteractionUI._create_ui_elements = function (self)
+	-- function 4
+	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
 
-	arg_4_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
-	arg_4_0._widgets_by_name = {}
-	arg_4_0._widgets = {}
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+	self._widgets_by_name = {}
+	self._widgets = {}
 
-	for iter_4_0, iter_4_1 in pairs(var_0_2) do
-		local var_4_0 = UIWidget.init(iter_4_1)
+	for k, v in pairs(widgets) do
+		local var_4_0 = UIWidget.init(v)
 
-		arg_4_0._widgets[#arg_4_0._widgets + 1] = var_4_0
-		arg_4_0._widgets_by_name[iter_4_0] = var_4_0
+		self._widgets[#self._widgets + 1] = var_4_0
+		self._widgets_by_name[k] = var_4_0
 	end
 
-	arg_4_0._ui_animator = UIAnimator:new(arg_4_0._ui_scenegraph, var_0_3)
-	arg_4_0._current_interactable_unit = nil
+	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
+	self._current_interactable_unit = nil
 end
 
-function DeusSwapWeaponInteractionUI._evaluate_interactable(arg_5_0, arg_5_1)
-	local var_5_0 = Managers.mechanism:game_mechanism()
-	local var_5_1 = var_5_0.get_deus_run_controller and var_5_0:get_deus_run_controller()
+DeusSwapWeaponInteractionUI._evaluate_interactable = function (self, arg_5_1)
+	-- function 5
+	local game_mechanism = Managers.mechanism:game_mechanism()
+	local get_deus_run_controller = game_mechanism.get_deus_run_controller
 
-	if not var_5_1 then
+	get_deus_run_controller = not get_deus_run_controller and game_mechanism:get_deus_run_controller()
+
+	if not get_deus_run_controller then
 		return
 	end
 
-	local var_5_2 = ScriptUnit.has_extension(arg_5_1, "inventory_system")
-	local var_5_3 = var_5_2 and var_5_2:get_wielded_slot_name()
-	local var_5_4 = ScriptUnit.extension(arg_5_1, "interactor_system"):interactable_unit()
-	local var_5_5 = Managers.state.network.profile_synchronizer:others_actually_ingame()
-	local var_5_6 = arg_5_0._others_actually_ingame
+	local has_extension = ScriptUnit.has_extension(arg_5_1, "inventory_system")
+	local flag = not has_extension and has_extension:get_wielded_slot_name()
+	local interactable_unit = ScriptUnit.extension(arg_5_1, "interactor_system"):interactable_unit()
+	local others_actually_ingame = Managers.state.network.profile_synchronizer:others_actually_ingame()
+	local _others_actually_ingame = self._others_actually_ingame
 
-	arg_5_0._others_actually_ingame = var_5_5
+	self._others_actually_ingame = others_actually_ingame
 
-	if arg_5_0._current_interactable_unit ~= var_5_4 or var_5_6 ~= var_5_5 then
-		arg_5_0:_populate_widget(var_5_4, var_5_3)
-		arg_5_0:_start_animation("on_enter")
+	if not (self._current_interactable_unit ~= interactable_unit or _others_actually_ingame == others_actually_ingame) then
+		self:_populate_widget(interactable_unit, flag)
+		self:_start_animation("on_enter")
 	else
-		local var_5_7, var_5_8 = var_5_1:get_own_loadout()
-		local var_5_9 = var_5_3 == "slot_melee" and "slot_melee" or "slot_ranged"
-		local var_5_10 = not arg_5_0._weapon_slot_name or var_5_9 ~= arg_5_0._weapon_slot_name
+		local get_own_loadout, var_5_8 = get_deus_run_controller:get_own_loadout()
+		local flag_2
 
-		arg_5_0._weapon_slot_name = var_5_9
+		flag_2 = flag ~= "slot_melee" or not "slot_melee" or "slot_ranged"
 
-		local var_5_11 = var_5_1:get_own_peer_id()
-		local var_5_12 = var_5_1:get_player_soft_currency(var_5_11)
+		local flag_3 = not self._weapon_slot_name and flag_2 ~= self._weapon_slot_name
 
-		if var_5_10 or var_5_12 ~= arg_5_0._soft_currency_amount then
-			arg_5_0:_populate_widget(var_5_4, var_5_3)
+		self._weapon_slot_name = flag_2
+
+		local get_own_peer_id = get_deus_run_controller:get_own_peer_id()
+		local get_player_soft_currency = get_deus_run_controller:get_player_soft_currency(get_own_peer_id)
+
+		if not (flag_3 or get_player_soft_currency == self._soft_currency_amount) then
+			self:_populate_widget(interactable_unit, flag)
 		end
 	end
 end
 
-function DeusSwapWeaponInteractionUI._start_animation(arg_6_0, arg_6_1)
-	arg_6_0._render_settings = arg_6_0._render_settings or {
+DeusSwapWeaponInteractionUI._start_animation = function (self, arg_6_1)
+	-- function 6
+	local _render_settings = self._render_settings
+
+	_render_settings = _render_settings or {
 		alpha_multiplier = 0
 	}
+	self._render_settings = _render_settings
 
-	local var_6_0 = {
-		render_settings = arg_6_0._render_settings
+	local tbl = {
+		render_settings = self._render_settings
 	}
 
-	arg_6_0._animations[arg_6_1] = arg_6_0._ui_animator:start_animation(arg_6_1, arg_6_0._widgets, arg_6_0._ui_scenegraph, var_6_0, nil, 0)
+	self._animations[arg_6_1] = self._ui_animator:start_animation(arg_6_1, self._widgets, self._ui_scenegraph, tbl, nil, 0)
 end
 
-function DeusSwapWeaponInteractionUI._populate_widget(arg_7_0, arg_7_1, arg_7_2)
-	local var_7_0 = Managers.mechanism:game_mechanism():get_deus_run_controller()
+DeusSwapWeaponInteractionUI._populate_widget = function (self, arg_7_1, arg_7_2)
+	-- function 7
+	local get_deus_run_controller = Managers.mechanism:game_mechanism():get_deus_run_controller()
 
-	if not var_7_0 then
+	if not get_deus_run_controller then
 		return
 	end
 
-	local var_7_1 = var_7_0:get_own_peer_id()
-	local var_7_2 = var_7_0:get_player_soft_currency(var_7_1)
-	local var_7_3 = ScriptUnit.extension(arg_7_1, "pickup_system")
-	local var_7_4 = var_7_3:get_purchase_cost()
-	local var_7_5 = var_7_3:get_stored_purchase()
+	local get_own_peer_id = get_deus_run_controller:get_own_peer_id()
+	local get_player_soft_currency = get_deus_run_controller:get_player_soft_currency(get_own_peer_id)
+	local extension = ScriptUnit.extension(arg_7_1, "pickup_system")
+	local get_purchase_cost = extension:get_purchase_cost()
+	local get_stored_purchase = extension:get_stored_purchase()
 
-	if not var_7_5 then
+	if not get_stored_purchase then
 		return
 	end
 
-	local var_7_6, var_7_7 = var_7_0:get_own_loadout()
-	local var_7_8 = arg_7_0._type == "melee" and var_7_6 or var_7_7
-	local var_7_9 = arg_7_0._widgets_by_name.weapon_tooltip
+	local get_own_loadout, var_7_7 = get_deus_run_controller:get_own_loadout()
+	local flag = self._type ~= "melee" or not get_own_loadout or var_7_7
+	local weapon_tooltip = self._widgets_by_name.weapon_tooltip
 
-	var_7_9.content.item = var_7_8
-	var_7_9.style.item.draw_end_passes = true
+	weapon_tooltip.content.item = flag
+	weapon_tooltip.style.item.draw_end_passes = true
 
-	local var_7_10 = arg_7_0._widgets_by_name.chest_content
-	local var_7_11 = var_7_5.rarity
-	local var_7_12 = Colors.get_table(var_7_11)
+	local chest_content = self._widgets_by_name.chest_content
+	local rarity = get_stored_purchase.rarity
+	local get_table = Colors.get_table(rarity)
 
-	var_7_10.content.rarity_text = RaritySettings[var_7_11].display_name
-	var_7_10.style.rarity.text_color = var_7_12
-	var_7_10.content.cost_text = var_7_2 .. "/" .. var_7_4
-	var_7_10.style.cost_text.text_color = var_7_4 <= var_7_2 and {
-		255,
-		255,
-		255,
-		255
-	} or {
+	chest_content.content.rarity_text = RaritySettings[rarity].display_name
+	chest_content.style.rarity.text_color = get_table
+	chest_content.content.cost_text = get_player_soft_currency .. "/" .. get_purchase_cost
+
+	local cost_text = chest_content.style.cost_text
+	local tbl
+
+	if get_purchase_cost <= get_player_soft_currency then
+		tbl = {
+			255,
+			255,
+			255,
+			255
+		}
+
+		if not tbl then
+			-- Nothing
+		end
+	end
+
+	tbl = {
 		255,
 		255,
 		0,
 		0
 	}
 
-	local var_7_13 = var_7_5.power_level
+	::label_7_0::
 
-	var_7_10.content.reward_info_text = var_7_13 .. " " .. Localize("deus_weapon_chest_" .. arg_7_0._type .. "_weapon_description")
-	arg_7_0._current_interactable_unit = arg_7_1
-	arg_7_0._soft_currency_amount = var_7_2
+	cost_text.text_color = tbl
 
-	if arg_7_0._others_actually_ingame then
-		var_7_10.content.disabled_text = nil
-		var_7_10.content.show_coin_icon = true
+	local power_level = get_stored_purchase.power_level
+
+	chest_content.content.reward_info_text = power_level .. " " .. Localize("deus_weapon_chest_" .. self._type .. "_weapon_description")
+	self._current_interactable_unit = arg_7_1
+	self._soft_currency_amount = get_player_soft_currency
+
+	if not self._others_actually_ingame then
+		chest_content.content.disabled_text = nil
+		chest_content.content.show_coin_icon = true
 	else
-		var_7_9.content.item = nil
-		var_7_10.content.show_coin_icon = false
-		var_7_10.content.rarity_text = nil
-		var_7_10.content.cost_text = nil
-		var_7_10.content.reward_info_text = nil
-		var_7_10.content.disabled_text = "reliquary_inactive_due_to_joining_player"
+		weapon_tooltip.content.item = nil
+		chest_content.content.show_coin_icon = false
+		chest_content.content.rarity_text = nil
+		chest_content.content.cost_text = nil
+		chest_content.content.reward_info_text = nil
+		chest_content.content.disabled_text = "reliquary_inactive_due_to_joining_player"
 	end
 
-	arg_7_0._calculate_offset = true
+	self._calculate_offset = true
 end
 
-function DeusSwapWeaponInteractionUI.update(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
-	arg_8_0:_evaluate_interactable(arg_8_1)
-	arg_8_0:_update_animations(arg_8_2, arg_8_3)
-	arg_8_0:_draw(arg_8_2, arg_8_3)
-	arg_8_0:_update_offset(arg_8_2, arg_8_3)
+DeusSwapWeaponInteractionUI.update = function (self, arg_8_1, arg_8_2, arg_8_3)
+	-- function 8
+	self:_evaluate_interactable(arg_8_1)
+	self:_update_animations(arg_8_2, arg_8_3)
+	self:_draw(arg_8_2, arg_8_3)
+	self:_update_offset(arg_8_2, arg_8_3)
 
-	return arg_8_0._offset
+	return self._offset
 end
 
-function DeusSwapWeaponInteractionUI._update_offset(arg_9_0, arg_9_1, arg_9_2)
-	if not arg_9_0._calculate_offset then
+DeusSwapWeaponInteractionUI._update_offset = function (self, arg_9_1, arg_9_2)
+	-- function 9
+	if not self._calculate_offset then
 		return
 	end
 
-	local var_9_0 = arg_9_0._widgets_by_name.weapon_tooltip
+	local weapon_tooltip = self._widgets_by_name.weapon_tooltip
 
-	if not var_9_0 then
+	if not weapon_tooltip then
 		return
 	end
 
-	local var_9_1 = var_9_0.style.item.item_presentation_height
+	local item_presentation_height = weapon_tooltip.style.item.item_presentation_height
 
-	if not var_9_1 then
+	if not item_presentation_height then
 		print("[DeusSwapWeaponInteractionUI] Tried to calculate the item height to early. We require the tooltip to be rendered at least once before this can be calculated")
 
 		return
 	end
 
-	arg_9_0._offset[2] = math.max(var_9_1 - 300, 0)
-	arg_9_0._calculate_offset = false
+	self._offset[2] = math.max(item_presentation_height - 300, 0)
+	self._calculate_offset = false
 end
 
-function DeusSwapWeaponInteractionUI._update_animations(arg_10_0, arg_10_1, arg_10_2)
-	local var_10_0 = arg_10_0._ui_animator
+DeusSwapWeaponInteractionUI._update_animations = function (self, arg_10_1, arg_10_2)
+	-- function 10
+	local _ui_animator = self._ui_animator
 
-	var_10_0:update(arg_10_1)
+	_ui_animator:update(arg_10_1)
 
-	local var_10_1 = arg_10_0._animations
+	local _animations = self._animations
 
-	for iter_10_0, iter_10_1 in pairs(var_10_1) do
-		if var_10_0:is_animation_completed(iter_10_1) then
-			var_10_1[iter_10_0] = nil
+	for k, v in pairs(_animations) do
+		if not _ui_animator:is_animation_completed(v) then
+			_animations[k] = nil
 		end
 	end
 end
 
-function DeusSwapWeaponInteractionUI._draw(arg_11_0, arg_11_1, arg_11_2)
-	local var_11_0 = arg_11_0._ui_renderer
-	local var_11_1 = arg_11_0._ui_scenegraph
-	local var_11_2 = Managers.input:get_service("Player")
-	local var_11_3 = arg_11_0._render_settings
+DeusSwapWeaponInteractionUI._draw = function (self, arg_11_1, arg_11_2)
+	-- function 11
+	local _ui_renderer = self._ui_renderer
+	local _ui_scenegraph = self._ui_scenegraph
+	local get_service = Managers.input:get_service("Player")
+	local _render_settings = self._render_settings
 
-	var_11_1.pivot.local_position = arg_11_0._offset
+	_ui_scenegraph.pivot.local_position = self._offset
 
-	UIRenderer.begin_pass(var_11_0, var_11_1, var_11_2, arg_11_1, nil, var_11_3)
+	UIRenderer.begin_pass(_ui_renderer, _ui_scenegraph, get_service, arg_11_1, nil, _render_settings)
 
-	for iter_11_0 = 1, #arg_11_0._widgets do
-		UIRenderer.draw_widget(var_11_0, arg_11_0._widgets[iter_11_0])
+	for i = 1, #self._widgets do
+		UIRenderer.draw_widget(_ui_renderer, self._widgets[i])
 	end
 
-	UIRenderer.end_pass(var_11_0)
+	UIRenderer.end_pass(_ui_renderer)
 end

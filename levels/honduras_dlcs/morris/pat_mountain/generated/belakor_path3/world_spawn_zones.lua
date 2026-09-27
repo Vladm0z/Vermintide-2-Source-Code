@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/morris/pat_mountain/generated/belakor_path3/world_spawn_zones.lua
 
-local var_0_0 = {
+local tbl = {
 	{
 		kind = "good",
 		main_path_index = 1,
@@ -389,7 +389,7 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	{
 		path_length = 8.174408912658691,
 		travel_dist = {
@@ -1129,7 +1129,7 @@ local var_0_1 = {
 		}
 	}
 }
-local var_0_2 = {
+local tbl_3 = {
 	A = {
 		main_path_index = 5,
 		num_roads = 7,
@@ -1139,7 +1139,7 @@ local var_0_2 = {
 		}
 	}
 }
-local var_0_3 = {
+local tbl_4 = {
 	{
 		unique_zone_id = 1,
 		travel_dist = 47.258490562438965,
@@ -17619,7 +17619,7 @@ local var_0_3 = {
 		}
 	}
 }
-local var_0_4 = {
+local tbl_5 = {
 	77.70999908447266,
 	-104.69000244140625,
 	310.01190185546875,
@@ -19536,7 +19536,7 @@ local var_0_4 = {
 	0.9994059801101685,
 	-0.03446284681558609
 }
-local var_0_5 = {
+local tbl_6 = {
 	{
 		139.7370147705078,
 		-236.94798278808594,
@@ -96598,20 +96598,20 @@ local var_0_5 = {
 		303.6605224609375
 	}
 }
-local var_0_6 = 15412
-local var_0_7 = 54
-local var_0_8 = 627.75738620758
-local var_0_9 = "1"
+local num = 15412
+local num_2 = 54
+local num_3 = 627.75738620758
+local str = "1"
 
 return {
-	version = var_0_9,
-	number_of_spawns = var_0_6,
-	path_markers = var_0_0,
-	zones = var_0_3,
-	cover_points = var_0_4,
-	num_main_zones = var_0_7,
-	position_lookup = var_0_5,
-	main_paths = var_0_1,
-	crossroads = var_0_2,
-	total_main_path_length = var_0_8
+	version = str,
+	number_of_spawns = num,
+	path_markers = tbl,
+	zones = tbl_4,
+	cover_points = tbl_5,
+	num_main_zones = num_2,
+	position_lookup = tbl_6,
+	main_paths = tbl_2,
+	crossroads = tbl_3,
+	total_main_path_length = num_3
 }

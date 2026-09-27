@@ -1,10 +1,10 @@
 -- chunkname: @scripts/ui/views/demo_title_ui_definitions.lua
 
-local var_0_0 = 264
-local var_0_1 = 575
-local var_0_2 = 320
-local var_0_3 = 180
-local var_0_4 = {
+local num = 264
+local num_2 = 575
+local num_3 = 320
+local num_4 = 180
+local tbl = {
 	root = {
 		is_root = true,
 		size = {
@@ -298,8 +298,8 @@ local var_0_4 = {
 		parent = "right_side_root",
 		horizontal_alignment = "right",
 		size = {
-			var_0_0,
-			var_0_1
+			num,
+			num_2
 		},
 		position = {
 			-100,
@@ -354,8 +354,8 @@ local var_0_4 = {
 		parent = "info_window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_2,
-			var_0_3
+			num_3,
+			num_4
 		},
 		position = {
 			0,
@@ -382,7 +382,7 @@ local var_0_4 = {
 		parent = "info_window_video",
 		horizontal_alignment = "center",
 		size = {
-			var_0_2,
+			num_3,
 			210
 		},
 		position = {
@@ -396,7 +396,7 @@ local var_0_4 = {
 		parent = "info_window_passive",
 		horizontal_alignment = "center",
 		size = {
-			var_0_2,
+			num_3,
 			0
 		},
 		position = {
@@ -424,7 +424,7 @@ local var_0_4 = {
 		parent = "info_passive_icon",
 		horizontal_alignment = "left",
 		size = {
-			var_0_2 - 70,
+			num_3 - 70,
 			50
 		},
 		position = {
@@ -438,7 +438,7 @@ local var_0_4 = {
 		parent = "info_window_passive",
 		horizontal_alignment = "left",
 		size = {
-			var_0_2 - 20,
+			num_3 - 20,
 			100
 		},
 		position = {
@@ -452,7 +452,7 @@ local var_0_4 = {
 		parent = "info_window_passive",
 		horizontal_alignment = "center",
 		size = {
-			var_0_2,
+			num_3,
 			210
 		},
 		position = {
@@ -466,7 +466,7 @@ local var_0_4 = {
 		parent = "info_window_ability",
 		horizontal_alignment = "center",
 		size = {
-			var_0_2,
+			num_3,
 			0
 		},
 		position = {
@@ -494,7 +494,7 @@ local var_0_4 = {
 		parent = "info_ability_icon",
 		horizontal_alignment = "left",
 		size = {
-			var_0_2 - 70,
+			num_3 - 70,
 			50
 		},
 		position = {
@@ -508,7 +508,7 @@ local var_0_4 = {
 		parent = "info_window_ability",
 		horizontal_alignment = "left",
 		size = {
-			var_0_2 - 20,
+			num_3 - 20,
 			100
 		},
 		position = {
@@ -560,15 +560,23 @@ local var_0_4 = {
 		}
 	}
 }
-local var_0_5 = {
+local tbl_2 = {
 	video_name = "video/vermintide_2_reveal",
 	scenegraph_id = "splash_video",
 	loop = false,
-	material_name = "vermintide_2_reveal",
-	sound_start = IS_XB1 and "Play_reveal_trailer" or "Play_vermintide_2_reveal",
-	sound_stop = IS_XB1 and "Stop_reveal_trailer" or "Stop_vermintide_2_reveal"
+	material_name = "vermintide_2_reveal"
 }
-local var_0_6 = {
+local flag
+
+flag = not IS_XB1 and "Play_reveal_trailer" and "Play_vermintide_2_reveal"
+tbl_2.sound_start = flag
+
+local flag_2
+
+flag_2 = not IS_XB1 and "Stop_reveal_trailer" and "Stop_vermintide_2_reveal"
+tbl_2.sound_stop = flag_2
+
+local tbl_3 = {
 	vertical_alignment = "bottom",
 	font_size = 18,
 	localize = false,
@@ -582,7 +590,7 @@ local var_0_6 = {
 		2
 	}
 }
-local var_0_7 = {
+local tbl_4 = {
 	vertical_alignment = "top",
 	font_size = 16,
 	localize = false,
@@ -596,7 +604,7 @@ local var_0_7 = {
 		2
 	}
 }
-local var_0_8 = {
+local tbl_5 = {
 	word_wrap = true,
 	upper_case = true,
 	localize = true,
@@ -611,7 +619,7 @@ local var_0_8 = {
 		2
 	}
 }
-local var_0_9 = {
+local tbl_6 = {
 	word_wrap = true,
 	upper_case = true,
 	localize = true,
@@ -626,7 +634,7 @@ local var_0_9 = {
 		2
 	}
 }
-local var_0_10 = {
+local tbl_7 = {
 	vertical_alignment = "bottom",
 	upper_case = true,
 	localize = true,
@@ -640,7 +648,7 @@ local var_0_10 = {
 		0
 	}
 }
-local var_0_11 = {
+local tbl_8 = {
 	vertical_alignment = "top",
 	horizontal_alignment = "left",
 	localize = true,
@@ -654,7 +662,8 @@ local var_0_11 = {
 	}
 }
 
-local function var_0_12(arg_1_0, arg_1_1)
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
 	return {
 		element = {
 			passes = {
@@ -666,21 +675,22 @@ local function var_0_12(arg_1_0, arg_1_1)
 					style_id = "video_style",
 					pass_type = "video",
 					content_id = "video_content",
-					content_check_function = function(arg_2_0, arg_2_1)
-						if not arg_2_0.parent.video_player then
+					content_check_function = function (self, arg_2_1)
+						-- function 2
+						if not self.parent.video_player then
 							return false
 						end
 
-						local var_2_0 = 20
-						local var_2_1 = 20
-						local var_2_2 = 30
-						local var_2_3 = VideoPlayer.current_frame(arg_2_0.parent.video_player)
-						local var_2_4 = VideoPlayer.number_of_frames(arg_2_0.parent.video_player)
+						local num = 20
+						local num_2 = 20
+						local num_3 = 30
+						local current_frame = VideoPlayer.current_frame(self.parent.video_player)
+						local number_of_frames = VideoPlayer.number_of_frames(self.parent.video_player)
 
-						if var_2_3 <= var_2_0 then
-							arg_2_1.color[1] = var_2_3 / var_2_0 * 255
-						elseif var_2_3 >= var_2_4 - var_2_1 - var_2_2 then
-							arg_2_1.color[1] = math.clamp((var_2_4 - var_2_3 - var_2_2) / var_2_1, 0, 1) * 255
+						if current_frame <= num then
+							arg_2_1.color[1] = current_frame / num * 255
+						elseif current_frame >= number_of_frames - num_2 - num_3 then
+							arg_2_1.color[1] = math.clamp((number_of_frames - current_frame - num_3) / num_2, 0, 1) * 255
 						else
 							arg_2_1.color[1] = 255
 						end
@@ -723,61 +733,80 @@ local function var_0_12(arg_1_0, arg_1_1)
 	}
 end
 
-local function var_0_13(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
-	return {
+local function fn_2(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	-- function 3
+	local tbl = {
 		element = {
 			passes = {
 				{
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_4_0, arg_4_1)
+					content_check_function = function (arg_4_0, arg_4_1)
+						-- function 4
 						arg_4_1.text_color[1] = 160 + math.sin(Managers.time:time("ui") * 5) * 95
 
 						return true
 					end
 				}
 			}
-		},
-		content = {
-			text = arg_3_0,
-			color = arg_3_4 and arg_3_4.text_color or arg_3_3
-		},
-		style = {
-			text = arg_3_4 or {
-				vertical_alignment = "center",
-				localize = true,
-				horizontal_alignment = "center",
-				word_wrap = true,
-				font_size = arg_3_2,
-				font_type = arg_3_5 or "hell_shark",
-				text_color = arg_3_3,
-				offset = {
-					0,
-					0,
-					2
-				}
-			}
-		},
-		offset = {
-			0,
-			0,
-			0
-		},
-		scenegraph_id = arg_3_1
+		}
 	}
+	local tbl_2 = {
+		text = arg_3_0
+	}
+	local text_color
+
+	if not arg_3_4 then
+		text_color = arg_3_4.text_color
+
+		if not text_color then
+			-- Nothing
+		end
+	end
+
+	text_color = arg_3_3
+
+	::label_3_0::
+
+	tbl_2.color = text_color
+	tbl.content = tbl_2
+	tbl.style = {
+		text = arg_3_4 or {
+			vertical_alignment = "center",
+			localize = true,
+			horizontal_alignment = "center",
+			word_wrap = true,
+			font_size = arg_3_2,
+			font_type = arg_3_5 or "hell_shark",
+			text_color = arg_3_3,
+			offset = {
+				0,
+				0,
+				2
+			}
+		}
+	}
+	tbl.offset = {
+		0,
+		0,
+		0
+	}
+	tbl.scenegraph_id = arg_3_1
+
+	return tbl
 end
 
-local var_0_14 = {
-	info_window_video = UIWidgets.create_frame("info_window_video", var_0_4.info_window_video.size, "menu_frame_06"),
+local tbl_9 = {
+	info_window_video = UIWidgets.create_frame("info_window_video", tbl.info_window_video.size, "menu_frame_06"),
 	info_passive_icon = UIWidgets.create_simple_texture("icons_placeholder", "info_passive_icon"),
 	info_ability_icon = UIWidgets.create_simple_texture("icons_placeholder", "info_ability_icon"),
-	info_passive_title = UIWidgets.create_simple_text("n/a", "info_passive_title", nil, nil, var_0_6),
-	info_ability_title = UIWidgets.create_simple_text("n/a", "info_ability_title", nil, nil, var_0_6),
-	info_passive_description = UIWidgets.create_simple_text("n/a", "info_passive_description", nil, nil, var_0_7),
-	info_ability_description = UIWidgets.create_simple_text("n/a", "info_ability_description", nil, nil, var_0_7),
-	info_window_passive_title = UIWidgets.create_title_widget("info_window_passive_title", var_0_4.info_window_passive_title.size, "Passive Effect", false, true),
-	info_window_ability_title = UIWidgets.create_title_widget("info_window_ability_title", var_0_4.info_window_ability_title.size, "Active Ability", false, true),
+	info_passive_title = UIWidgets.create_simple_text("n/a", "info_passive_title", nil, nil, tbl_3),
+	info_ability_title = UIWidgets.create_simple_text("n/a", "info_ability_title", nil, nil, tbl_3),
+	info_passive_description = UIWidgets.create_simple_text("n/a", "info_passive_description", nil, nil, tbl_4),
+	info_ability_description = UIWidgets.create_simple_text("n/a", "info_ability_description", nil, nil, tbl_4),
+	info_window_passive_title = UIWidgets.create_title_widget("info_window_passive_title", tbl.info_window_passive_title.size, "Passive Effect", false, true),
+	info_window_ability_title = UIWidgets.create_title_widget("info_window_ability_title", tbl.info_window_ability_title.size, "Active Ability", false, true),
 	info_window = UIWidgets.create_simple_texture("divider_01_bg", "info_window", nil, nil, {
 		255,
 		0,
@@ -789,26 +818,31 @@ local var_0_14 = {
 	demo_bg_01 = UIWidgets.create_simple_texture("demo_bg_01", "info_window_ink"),
 	demo_bg_02 = UIWidgets.create_simple_texture("demo_bg_02", "portrait_ink")
 }
-local var_0_15 = {
-	player_career_name = UIWidgets.create_simple_text("n/a", "player_career_name", 22, nil, var_0_10),
-	player_hero_name = UIWidgets.create_simple_text("n/a", "player_hero_name", 22, nil, var_0_11),
+local tbl_10 = {
+	player_career_name = UIWidgets.create_simple_text("n/a", "player_career_name", 22, nil, tbl_7),
+	player_hero_name = UIWidgets.create_simple_text("n/a", "player_hero_name", 22, nil, tbl_8),
 	player_name_divider = UIWidgets.create_simple_texture("infoslate_frame_02_horizontal", "player_name_divider")
 }
-
-return {
-	career_widget_definitions = var_0_15,
-	widget_definitions = var_0_14,
-	attract_mode_video = var_0_5,
-	scenegraph_definition = var_0_4,
+local tbl_11 = {
+	career_widget_definitions = tbl_10,
+	widget_definitions = tbl_9,
+	attract_mode_video = tbl_2,
+	scenegraph_definition = tbl,
 	dead_space_filler_widget = UIWidgets.create_simple_rect("dead_space_filler", {
 		255,
 		0,
 		0,
 		0
 	}),
-	create_video_func = var_0_12,
-	start_game_button_widget = UIWidgets.create_default_button("start_game_button", var_0_4.start_game_button.size, nil, nil, Localize("start_game_menu_button_name")),
-	back_button_widget = UIWidgets.create_default_button("back_button", var_0_4.start_game_button.size, nil, nil, Localize("back_menu_button_name")),
-	console_cursor_definition = UIWidgets.create_console_cursor("console_cursor"),
-	press_start_widget = var_0_13(IS_WINDOWS and "press_any_key_to_continue" or "press_any_button_to_continue", "press_start", nil, nil, var_0_9)
+	create_video_func = fn,
+	start_game_button_widget = UIWidgets.create_default_button("start_game_button", tbl.start_game_button.size, nil, nil, Localize("start_game_menu_button_name")),
+	back_button_widget = UIWidgets.create_default_button("back_button", tbl.start_game_button.size, nil, nil, Localize("back_menu_button_name")),
+	console_cursor_definition = UIWidgets.create_console_cursor("console_cursor")
 }
+local var_0_19 = fn_2
+local flag_3
+
+flag_3 = not IS_WINDOWS and "press_any_key_to_continue" and "press_any_button_to_continue"
+tbl_11.press_start_widget = var_0_19(flag_3, "press_start", nil, nil, tbl_6)
+
+return tbl_11

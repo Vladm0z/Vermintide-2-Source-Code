@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/skaven/skaven_rat_ogre_behavior.lua
 
-local var_0_0 = BreedActions.skaven_rat_ogre
+local skaven_rat_ogre = BreedActions.skaven_rat_ogre
 
 BreedBehaviors.ogre = {
 	"BTSelector",
@@ -20,7 +20,7 @@ BreedBehaviors.ogre = {
 			"BTClimbAction",
 			name = "climb",
 			condition = "at_climb_smartobject",
-			action_data = var_0_0.climb
+			action_data = skaven_rat_ogre.climb
 		},
 		{
 			"BTJumpAcrossAction",
@@ -31,7 +31,7 @@ BreedBehaviors.ogre = {
 			"BTSmashDoorAction",
 			name = "smash_door",
 			condition = "at_door_smartobject",
-			action_data = var_0_0.smash_door
+			action_data = skaven_rat_ogre.smash_door
 		},
 		condition = "ratogre_at_smartobject",
 		name = "smartobject"
@@ -40,7 +40,7 @@ BreedBehaviors.ogre = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = var_0_0.stagger
+		action_data = skaven_rat_ogre.stagger
 	},
 	{
 		"BTSelector",
@@ -49,44 +49,44 @@ BreedBehaviors.ogre = {
 			leave_hook = "reset_fling_skaven",
 			name = "fling_skaven",
 			condition = "fling_skaven",
-			action_data = var_0_0.fling_skaven
+			action_data = skaven_rat_ogre.fling_skaven
 		},
 		{
 			"BTTargetRageAction",
 			name = "target_rage",
 			condition = "target_changed",
-			action_data = var_0_0.target_rage
+			action_data = skaven_rat_ogre.target_rage
 		},
 		{
 			"BTUtilityNode",
 			{
 				"BTBossFollowAction",
 				name = "follow",
-				action_data = var_0_0.follow
+				action_data = skaven_rat_ogre.follow
 			},
 			{
 				"BTMeleeSlamAction",
 				name = "melee_slam",
-				action_data = var_0_0.melee_slam
+				action_data = skaven_rat_ogre.melee_slam
 			},
 			{
 				"BTMeleeSlamAction",
 				name = "anti_ladder_melee_slam",
-				action_data = var_0_0.anti_ladder_melee_slam
+				action_data = skaven_rat_ogre.anti_ladder_melee_slam
 			},
 			{
 				"BTMeleeOverlapAttackAction",
 				name = "melee_shove",
-				action_data = var_0_0.melee_shove
+				action_data = skaven_rat_ogre.melee_shove
 			},
 			{
 				"BTMeleeOverlapAttackAction",
 				name = "combo_attack",
-				action_data = var_0_0.combo_attack
+				action_data = skaven_rat_ogre.combo_attack
 			},
 			{
 				"BTSequence",
-				action_data = var_0_0.jump_slam,
+				action_data = skaven_rat_ogre.jump_slam,
 				{
 					"BTPrepareJumpSlamAction",
 					name = "prepare_jump_slam"
@@ -94,12 +94,12 @@ BreedBehaviors.ogre = {
 				{
 					"BTJumpSlamAction",
 					name = "attack_jump",
-					action_data = var_0_0.jump_slam
+					action_data = skaven_rat_ogre.jump_slam
 				},
 				{
 					"BTJumpSlamImpactAction",
 					name = "jump_slam_impact",
-					action_data = var_0_0.jump_slam_impact
+					action_data = skaven_rat_ogre.jump_slam_impact
 				},
 				name = "jump_slam"
 			},
@@ -109,7 +109,7 @@ BreedBehaviors.ogre = {
 		{
 			"BTTargetUnreachableAction",
 			name = "target_unreachable",
-			action_data = var_0_0.target_unreachable
+			action_data = skaven_rat_ogre.target_unreachable
 		},
 		condition = "can_see_player",
 		name = "has_target"
@@ -118,7 +118,7 @@ BreedBehaviors.ogre = {
 		"BTRatOgreWalkAction",
 		name = "walking",
 		condition = "ratogre_walking",
-		action_data = var_0_0.walking
+		action_data = skaven_rat_ogre.walking
 	},
 	{
 		"BTIdleAction",

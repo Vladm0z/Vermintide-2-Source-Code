@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/staff_spark_spear.lua
 
-local var_0_0 = {
+local tbl = {
 	actions = {
 		action_one = {
 			default = {
@@ -60,7 +60,8 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_1_0, arg_1_1)
+				enter_function = function (arg_1_0, arg_1_1)
+					-- function 1
 					arg_1_1:reset_release_input()
 					arg_1_1:clear_input_buffer()
 				end,
@@ -149,7 +150,8 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_2_0, arg_2_1)
+				enter_function = function (arg_2_0, arg_2_1)
+					-- function 2
 					arg_2_1:clear_input_buffer()
 				end,
 				cleave_distribution = {
@@ -248,7 +250,8 @@ local var_0_0 = {
 						input = "weapon_reload_hold"
 					}
 				},
-				enter_function = function(arg_3_0, arg_3_1)
+				enter_function = function (arg_3_0, arg_3_1)
+					-- function 3
 					arg_3_1:reset_release_input()
 					arg_3_1:clear_input_buffer()
 				end,
@@ -334,7 +337,8 @@ local var_0_0 = {
 						input = "weapon_reload_hold"
 					}
 				},
-				enter_function = function(arg_4_0, arg_4_1)
+				enter_function = function (arg_4_0, arg_4_1)
+					-- function 4
 					arg_4_1:reset_release_input()
 					arg_4_1:clear_input_buffer()
 				end,
@@ -421,7 +425,8 @@ local var_0_0 = {
 						input = "weapon_reload_hold"
 					}
 				},
-				enter_function = function(arg_5_0, arg_5_1)
+				enter_function = function (arg_5_0, arg_5_1)
+					-- function 5
 					arg_5_1:reset_release_input()
 					arg_5_1:clear_input_buffer()
 				end,
@@ -476,11 +481,13 @@ local var_0_0 = {
 				charge_time = 1.25,
 				hold_input = "action_two_hold",
 				max_targets = 1,
-				anim_end_event_condition_func = function(arg_6_0, arg_6_1)
+				anim_end_event_condition_func = function (arg_6_0, arg_6_1)
+					-- function 6
 					return arg_6_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
-				zoom_condition_function = function()
+				zoom_condition_function = function ()
+					-- function 7
 					return false
 				end,
 				buff_data = {
@@ -541,11 +548,13 @@ local var_0_0 = {
 				uninterruptible = true,
 				anim_event = "cooldown_start",
 				charge_sound_name = "player_combat_weapon_staff_cooldown",
-				anim_end_event_condition_func = function(arg_8_0, arg_8_1)
+				anim_end_event_condition_func = function (arg_8_0, arg_8_1)
+					-- function 8
 					return arg_8_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
-				enter_function = function(arg_9_0, arg_9_1)
+				enter_function = function (arg_9_0, arg_9_1)
+					-- function 9
 					arg_9_1:reset_release_input()
 					arg_9_1:clear_input_buffer()
 				end,
@@ -565,10 +574,12 @@ local var_0_0 = {
 						input = "action_wield"
 					}
 				},
-				condition_func = function(arg_10_0, arg_10_1)
+				condition_func = function (arg_10_0, arg_10_1)
+					-- function 10
 					return ScriptUnit.extension(arg_10_0, "overcharge_system"):get_overcharge_value() ~= 0
 				end,
-				chain_condition_func = function(arg_11_0, arg_11_1)
+				chain_condition_func = function (arg_11_0, arg_11_1)
+					-- function 11
 					return ScriptUnit.extension(arg_11_0, "overcharge_system"):get_overcharge_value() ~= 0
 				end
 			}
@@ -624,18 +635,18 @@ local var_0_0 = {
 	}
 }
 
-var_0_0.default_spread_template = "sparks"
-var_0_0.right_hand_unit = "units/weapons/player/wpn_brw_skullstaff/wpn_brw_skullstaff"
-var_0_0.right_hand_attachment_node_linking = AttachmentNodeLinking.spear_staff
-var_0_0.left_hand_unit = "units/weapons/player/wpn_fireball/wpn_fireball"
-var_0_0.left_hand_attachment_node_linking = AttachmentNodeLinking.fireball
-var_0_0.display_unit = "units/weapons/weapon_display/display_staff"
-var_0_0.wield_anim = "to_staff"
-var_0_0.state_machine = "units/beings/player/first_person_base/state_machines/ranged/staff"
-var_0_0.crosshair_style = "arrows"
-var_0_0.buff_type = "RANGED"
-var_0_0.weapon_type = "FIRE_STAFF"
-var_0_0.buffs = {
+tbl.default_spread_template = "sparks"
+tbl.right_hand_unit = "units/weapons/player/wpn_brw_skullstaff/wpn_brw_skullstaff"
+tbl.right_hand_attachment_node_linking = AttachmentNodeLinking.spear_staff
+tbl.left_hand_unit = "units/weapons/player/wpn_fireball/wpn_fireball"
+tbl.left_hand_attachment_node_linking = AttachmentNodeLinking.fireball
+tbl.display_unit = "units/weapons/weapon_display/display_staff"
+tbl.wield_anim = "to_staff"
+tbl.state_machine = "units/beings/player/first_person_base/state_machines/ranged/staff"
+tbl.crosshair_style = "arrows"
+tbl.buff_type = "RANGED"
+tbl.weapon_type = "FIRE_STAFF"
+tbl.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1
 	},
@@ -643,10 +654,10 @@ var_0_0.buffs = {
 		external_optional_multiplier = 1
 	}
 }
-var_0_0.wwise_dep_right_hand = {
+tbl.wwise_dep_right_hand = {
 	"wwise/staff"
 }
-var_0_0.weapon_diagram = {
+tbl.weapon_diagram = {
 	light_attack = {
 		[DamageTypes.ARMOR_PIERCING] = 2,
 		[DamageTypes.CLEAVE] = 0,
@@ -662,12 +673,12 @@ var_0_0.weapon_diagram = {
 		[DamageTypes.DAMAGE] = 6
 	}
 }
-var_0_0.tooltip_keywords = {
+tbl.tooltip_keywords = {
 	"weapon_keyword_rapid_fire",
 	"weapon_keyword_headshotting",
 	"weapon_keyword_sniper"
 }
-var_0_0.tooltip_compare = {
+tbl.tooltip_compare = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "rapid_left"
@@ -677,7 +688,7 @@ var_0_0.tooltip_compare = {
 		sub_action_name = "shoot_charged"
 	}
 }
-var_0_0.tooltip_detail = {
+tbl.tooltip_detail = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -702,12 +713,12 @@ var_0_0.tooltip_detail = {
 	}
 }
 
-local var_0_1 = table.clone(var_0_0)
+local clone = table.clone(tbl)
 
-var_0_1.actions.action_one.default.impact_data.damage_profile = "fire_spark_vs"
-var_0_1.actions.action_one.rapid_left.impact_data.damage_profile = "fire_spark_vs"
+clone.actions.action_one.default.impact_data.damage_profile = "fire_spark_vs"
+clone.actions.action_one.rapid_left.impact_data.damage_profile = "fire_spark_vs"
 
 return {
-	staff_spark_spear_template_1 = table.clone(var_0_0),
-	staff_spark_spear_template_1_vs = table.clone(var_0_0)
+	staff_spark_spear_template_1 = table.clone(tbl),
+	staff_spark_spear_template_1_vs = table.clone(tbl)
 }

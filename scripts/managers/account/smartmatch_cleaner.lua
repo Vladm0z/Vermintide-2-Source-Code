@@ -1,68 +1,79 @@
 -- chunkname: @scripts/managers/account/smartmatch_cleaner.lua
 
-local var_0_0 = true
+local flag = true
 
-local function var_0_1(...)
-	if var_0_0 then
+local function fn(...)
+	-- function 1
+	if not flag then
 		print("[SmartMatchCleaner]", string.format(...))
 	end
 end
 
 SmartMatchCleaner = class(SmartMatchCleaner)
 
-function SmartMatchCleaner.init(arg_2_0)
-	arg_2_0:reset()
+SmartMatchCleaner.init = function (self)
+	-- function 2
+	self:reset()
 end
 
-function SmartMatchCleaner.reset(arg_3_0)
-	arg_3_0._sessions_to_clean = {}
+SmartMatchCleaner.reset = function (self)
+	-- function 3
+	self._sessions_to_clean = {}
 end
 
-function SmartMatchCleaner.ready(arg_4_0)
-	return #arg_4_0._sessions_to_clean == 0
+SmartMatchCleaner.ready = function (self)
+	-- function 4
+	return #self._sessions_to_clean == 0
 end
 
-function SmartMatchCleaner.add_session(arg_5_0, arg_5_1)
+SmartMatchCleaner.add_session = function (arg_5_0, arg_5_1)
+	-- function 5
 	arg_5_0._sessions_to_clean[#arg_5_0._sessions_to_clean + 1] = arg_5_1
 end
 
-local var_0_2 = ENTRIES_TO_REMOVE or {}
+local ENTRIES_TO_REMOVE = ENTRIES_TO_REMOVE
 
-function SmartMatchCleaner.update(arg_6_0, arg_6_1)
-	arg_6_0:_update_cleanup(arg_6_1)
-	arg_6_0:_update_remove(arg_6_1)
+ENTRIES_TO_REMOVE = ENTRIES_TO_REMOVE or {}
+
+SmartMatchCleaner.update = function (self, arg_6_1)
+	-- function 6
+	self:_update_cleanup(arg_6_1)
+	self:_update_remove(arg_6_1)
 end
 
-function SmartMatchCleaner._update_cleanup(arg_7_0, arg_7_1)
-	for iter_7_0 = 1, #arg_7_0._sessions_to_clean do
-		local var_7_0 = arg_7_0._sessions_to_clean[iter_7_0]
+SmartMatchCleaner._update_cleanup = function (self, arg_7_1)
+	-- function 7
+	for i = 1, #self._sessions_to_clean do
+		local var_7_0 = self._sessions_to_clean[i]
 
-		arg_7_0[var_7_0.state](arg_7_0, arg_7_1, iter_7_0, var_7_0)
+		self[var_7_0.state](self, arg_7_1, i, var_7_0)
 	end
 end
 
-function SmartMatchCleaner._update_remove(arg_8_0, arg_8_1)
-	for iter_8_0, iter_8_1 in ipairs(arg_8_0._sessions_to_clean) do
-		if iter_8_1.state == "_do_remove" then
-			local var_8_0 = iter_8_1.session_id
-			local var_8_1 = iter_8_1.session_name
+SmartMatchCleaner._update_remove = function (self, arg_8_1)
+	-- function 8
+	for i, v in ipairs(self._sessions_to_clean) do
+		if v.state == "_do_remove" then
+			local session_id = v.session_id
+			local session_name = v.session_name
 
-			var_0_1("REMOVED session entry --> session_id: %s - session_name: %s", var_8_0, var_8_1)
+			fn("REMOVED session entry --> session_id: %s - session_name: %s", session_id, session_name)
 
-			var_0_2[#var_0_2 + 1] = iter_8_0
+			ENTRIES_TO_REMOVE[#ENTRIES_TO_REMOVE + 1] = i
 		end
 	end
 
-	for iter_8_2 = #var_0_2, 1, -1 do
-		table.remove(arg_8_0._sessions_to_clean, iter_8_2)
+	for k = #ENTRIES_TO_REMOVE, 1, -1 do
+		table.remove(self._sessions_to_clean, k)
 	end
 
-	table.clear(var_0_2)
+	table.clear(ENTRIES_TO_REMOVE)
 end
 
-function SmartMatchCleaner._change_state(arg_9_0, arg_9_1, arg_9_2)
-	if arg_9_2 and arg_9_0[arg_9_2] then
-		var_0_1("Changed state from: %s to: %s", arg_9_1.state, arg_9_2)
+SmartMatchCleaner._change_state = function (self, arg_9_1, arg_9_2)
+	-- function 9
+	if not arg_9_2 and not self[arg_9_2] then
+		fn("Changed state from: %s to: %s", arg_9_1.state, arg_9_2)
 
 		arg_9_1.state = arg_9_2
 	else
@@ -70,71 +81,75 @@ function SmartMatchCleaner._change_state(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function SmartMatchCleaner._cleanup_ticket(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
-	local var_10_0 = arg_10_3.session_id
-	local var_10_1 = arg_10_3.session_name
-	local var_10_2 = arg_10_3.hopper_name
-	local var_10_3 = arg_10_3.destroy_session
-	local var_10_4 = arg_10_3.ticket_id
-	local var_10_5 = arg_10_3.user_id
-	local var_10_6 = MultiplayerSession.status(var_10_0)
+SmartMatchCleaner._cleanup_ticket = function (self, arg_10_1, arg_10_2, arg_10_3)
+	-- function 10
+	local session_id = arg_10_3.session_id
+	local session_name = arg_10_3.session_name
+	local hopper_name = arg_10_3.hopper_name
+	local destroy_session = arg_10_3.destroy_session
+	local ticket_id = arg_10_3.ticket_id
+	local user_id = arg_10_3.user_id
+	local status = MultiplayerSession.status(session_id)
 
-	if var_10_6 == MultiplayerSession.WORKING then
+	if status == MultiplayerSession.WORKING then
 		return
 	end
 
-	local var_10_7 = MultiplayerSession.start_smartmatch_result(var_10_0)
+	local start_smartmatch_result = MultiplayerSession.start_smartmatch_result(session_id)
 
-	if var_10_6 == MultiplayerSession.BROKEN or var_10_6 == MultiplayerSession.SHUTDOWN then
-		var_0_1("Cannot cleanup ticket since the session is either broken or shutdown. Ticket params: - session_id: %s - session_name: %s - hopper_name: %s - ticket_id: %s", var_10_0, var_10_1, var_10_2, var_10_4)
-	elseif not Managers.account:user_exists(var_10_5) then
-		var_0_1("Couldn't delete smartmatch ticket since the user didn't exist in cache - session_id: %s - session_name: %s - hopper_name: %s - ticket_id: %s - user_id: %s", var_10_0, var_10_1, var_10_2, var_10_4, var_10_5)
-	elseif var_10_4 then
-		var_0_1("Deleting PROVIDED ticket with params - session_id: %s - session_name: %s - hopper_name: %s - ticket_id: %s", var_10_0, var_10_1, var_10_2, var_10_4)
-		MultiplayerSession.delete_smartmatch_ticket(var_10_0, var_10_2, var_10_4)
-	elseif var_10_7 ~= "" then
-		var_0_1("Found ticket for session --> session_id: %s - session_name: %s - ticket_id: %s", var_10_0, var_10_1, var_10_7)
-		var_0_1("Deleting ticket with params - session_id: %s - session_name: %s - hopper_name: %s - ticket_id: %s", var_10_0, var_10_1, var_10_2, var_10_7)
-		MultiplayerSession.delete_smartmatch_ticket(var_10_0, var_10_2, var_10_7)
+	if not (status == MultiplayerSession.BROKEN or status ~= MultiplayerSession.SHUTDOWN) then
+		fn("Cannot cleanup ticket since the session is either broken or shutdown. Ticket params: - session_id: %s - session_name: %s - hopper_name: %s - ticket_id: %s", session_id, session_name, hopper_name, ticket_id)
+	elseif not Managers.account:user_exists(user_id) then
+		fn("Couldn't delete smartmatch ticket since the user didn't exist in cache - session_id: %s - session_name: %s - hopper_name: %s - ticket_id: %s - user_id: %s", session_id, session_name, hopper_name, ticket_id, user_id)
+	elseif not ticket_id then
+		fn("Deleting PROVIDED ticket with params - session_id: %s - session_name: %s - hopper_name: %s - ticket_id: %s", session_id, session_name, hopper_name, ticket_id)
+		MultiplayerSession.delete_smartmatch_ticket(session_id, hopper_name, ticket_id)
+	elseif start_smartmatch_result ~= "" then
+		fn("Found ticket for session --> session_id: %s - session_name: %s - ticket_id: %s", session_id, session_name, start_smartmatch_result)
+		fn("Deleting ticket with params - session_id: %s - session_name: %s - hopper_name: %s - ticket_id: %s", session_id, session_name, hopper_name, start_smartmatch_result)
+		MultiplayerSession.delete_smartmatch_ticket(session_id, hopper_name, start_smartmatch_result)
 	else
-		var_0_1("Had no ticket for session --> session_id: %s - session_name: %s", var_10_0, var_10_1)
+		fn("Had no ticket for session --> session_id: %s - session_name: %s", session_id, session_name)
 	end
 
-	if var_10_3 then
-		arg_10_0:_change_state(arg_10_3, "_cleanup_session")
+	if not destroy_session then
+		self:_change_state(arg_10_3, "_cleanup_session")
 	else
-		var_0_1("KEEP SESSION ALIVE --> session_id: %s - session_name: %s", var_10_0, var_10_1)
-		arg_10_0:_change_state(arg_10_3, "_do_remove")
+		fn("KEEP SESSION ALIVE --> session_id: %s - session_name: %s", session_id, session_name)
+		self:_change_state(arg_10_3, "_do_remove")
 	end
 end
 
-function SmartMatchCleaner._cleanup_session(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
-	local var_11_0 = arg_11_3.session_id
-	local var_11_1 = arg_11_3.session_name
-	local var_11_2 = arg_11_3.session_name
-	local var_11_3 = arg_11_3.hopper_name
-	local var_11_4 = MultiplayerSession.status(var_11_0)
+SmartMatchCleaner._cleanup_session = function (self, arg_11_1, arg_11_2, arg_11_3)
+	-- function 11
+	local session_id = arg_11_3.session_id
+	local session_name = arg_11_3.session_name
+	local session_name_2 = arg_11_3.session_name
+	local hopper_name = arg_11_3.hopper_name
+	local status = MultiplayerSession.status(session_id)
 
-	if var_11_4 == MultiplayerSession.READY or var_11_4 == MultiplayerSession.BROKEN then
-		var_0_1("Leaving session --> session_id: %s - session_name: %s", var_11_0, var_11_2)
-		MultiplayerSession.leave(var_11_0)
-		arg_11_0:_change_state(arg_11_3, "_free_session")
-	elseif var_11_4 == MultiplayerSession.SHUTDOWN then
-		arg_11_0:_change_state(arg_11_3, "_free_session")
+	if not (status == MultiplayerSession.READY or status ~= MultiplayerSession.BROKEN) then
+		fn("Leaving session --> session_id: %s - session_name: %s", session_id, session_name_2)
+		MultiplayerSession.leave(session_id)
+		self:_change_state(arg_11_3, "_free_session")
+	elseif status == MultiplayerSession.SHUTDOWN then
+		self:_change_state(arg_11_3, "_free_session")
 	end
 end
 
-function SmartMatchCleaner._free_session(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
-	local var_12_0 = arg_12_3.session_id
-	local var_12_1 = arg_12_3.session_name
+SmartMatchCleaner._free_session = function (self, arg_12_1, arg_12_2, arg_12_3)
+	-- function 12
+	local session_id = arg_12_3.session_id
+	local session_name = arg_12_3.session_name
 
-	if MultiplayerSession.status(var_12_0) == MultiplayerSession.SHUTDOWN then
-		var_0_1("Freeing session --> session_id: %s - session_name: %s", var_12_0, var_12_1)
-		Network.free_multiplayer_session(var_12_0)
-		arg_12_0:_change_state(arg_12_3, "_do_remove")
+	if MultiplayerSession.status(session_id) == MultiplayerSession.SHUTDOWN then
+		fn("Freeing session --> session_id: %s - session_name: %s", session_id, session_name)
+		Network.free_multiplayer_session(session_id)
+		self:_change_state(arg_12_3, "_do_remove")
 	end
 end
 
-function SmartMatchCleaner._do_remove(arg_13_0)
+SmartMatchCleaner._do_remove = function (arg_13_0)
+	-- function 13
 	return
 end

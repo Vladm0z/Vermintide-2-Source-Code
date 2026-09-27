@@ -1,7 +1,7 @@
 -- chunkname: @scripts/managers/talents/talent_settings_markus.lua
 
-local var_0_0 = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
-local var_0_1 = {
+local scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
+local tbl = {
 	markus_huntsman_ability_cooldown_on_hit = {
 		bonus = 0.3
 	},
@@ -240,8 +240,10 @@ local var_0_1 = {
 		multiplier = -0.25
 	}
 }
+local TalentBuffTemplates = TalentBuffTemplates
 
 TalentBuffTemplates = TalentBuffTemplates or {}
+TalentBuffTemplates = TalentBuffTemplates
 TalentBuffTemplates.empire_soldier = {
 	markus_huntsman_ability_cooldown_on_hit = {
 		buffs = {
@@ -265,7 +267,7 @@ TalentBuffTemplates.empire_soldier = {
 				event = "on_hit",
 				remove_on_proc = true,
 				buff_func = "end_huntsman_stealth",
-				duration = var_0_1.markus_huntsman_activated_ability.duration
+				duration = tbl.markus_huntsman_activated_ability.duration
 			}
 		}
 	},
@@ -306,7 +308,7 @@ TalentBuffTemplates.empire_soldier = {
 				max_stacks = 10,
 				icon = "markus_huntsman_passive",
 				perks = {
-					var_0_0.auto_headshot
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.auto_headshot
 				}
 			}
 		}
@@ -340,7 +342,7 @@ TalentBuffTemplates.empire_soldier = {
 		buffs = {
 			{
 				perks = {
-					var_0_0.increased_zoom
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.increased_zoom
 				}
 			}
 		}
@@ -349,7 +351,7 @@ TalentBuffTemplates.empire_soldier = {
 		buffs = {
 			{
 				perks = {
-					var_0_0.no_damage_dropoff
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.no_damage_dropoff
 				}
 			}
 		}
@@ -365,7 +367,7 @@ TalentBuffTemplates.empire_soldier = {
 				icon = "markus_huntsman_activated_ability",
 				apply_buff_func = "apply_huntsman_activated_ability",
 				refresh_durations = true,
-				duration = var_0_1.markus_huntsman_activated_ability.duration
+				duration = tbl.markus_huntsman_activated_ability.duration
 			}
 		}
 	},
@@ -376,8 +378,8 @@ TalentBuffTemplates.empire_soldier = {
 				stat_buff = "headshot_multiplier",
 				refresh_durations = true,
 				max_stacks = 1,
-				multiplier = var_0_1.markus_huntsman_activated_ability.headshot_multiplier,
-				duration = var_0_1.markus_huntsman_activated_ability.duration
+				multiplier = tbl.markus_huntsman_activated_ability.headshot_multiplier,
+				duration = tbl.markus_huntsman_activated_ability.duration
 			}
 		}
 	},
@@ -388,8 +390,8 @@ TalentBuffTemplates.empire_soldier = {
 				stat_buff = "reload_speed",
 				refresh_durations = true,
 				max_stacks = 1,
-				multiplier = var_0_1.markus_huntsman_activated_ability.reload_speed_multiplier,
-				duration = var_0_1.markus_huntsman_activated_ability.duration
+				multiplier = tbl.markus_huntsman_activated_ability.reload_speed_multiplier,
+				duration = tbl.markus_huntsman_activated_ability.duration
 			}
 		}
 	},
@@ -406,8 +408,8 @@ TalentBuffTemplates.empire_soldier = {
 				path_to_movement_setting_to_modify = {
 					"move_speed"
 				},
-				multiplier = var_0_1.markus_huntsman_activated_ability.move_speed_multiplier,
-				duration = var_0_1.markus_huntsman_activated_ability.duration
+				multiplier = tbl.markus_huntsman_activated_ability.move_speed_multiplier,
+				duration = tbl.markus_huntsman_activated_ability.duration
 			}
 		}
 	},
@@ -424,8 +426,8 @@ TalentBuffTemplates.empire_soldier = {
 				path_to_movement_setting_to_modify = {
 					"crouch_move_speed"
 				},
-				multiplier = var_0_1.markus_huntsman_activated_ability.move_speed_multiplier,
-				duration = var_0_1.markus_huntsman_activated_ability.duration
+				multiplier = tbl.markus_huntsman_activated_ability.move_speed_multiplier,
+				duration = tbl.markus_huntsman_activated_ability.duration
 			}
 		}
 	},
@@ -442,8 +444,8 @@ TalentBuffTemplates.empire_soldier = {
 				path_to_movement_setting_to_modify = {
 					"walk_move_speed"
 				},
-				multiplier = var_0_1.markus_huntsman_activated_ability.move_speed_multiplier,
-				duration = var_0_1.markus_huntsman_activated_ability.duration
+				multiplier = tbl.markus_huntsman_activated_ability.move_speed_multiplier,
+				duration = tbl.markus_huntsman_activated_ability.duration
 			}
 		}
 	},
@@ -459,8 +461,8 @@ TalentBuffTemplates.empire_soldier = {
 					"dodging",
 					"speed_modifier"
 				},
-				multiplier = var_0_1.markus_huntsman_activated_ability.dodge_speed_multiplier,
-				duration = var_0_1.markus_huntsman_activated_ability.duration
+				multiplier = tbl.markus_huntsman_activated_ability.dodge_speed_multiplier,
+				duration = tbl.markus_huntsman_activated_ability.duration
 			}
 		}
 	},
@@ -476,8 +478,8 @@ TalentBuffTemplates.empire_soldier = {
 					"dodging",
 					"distance_modifier"
 				},
-				multiplier = var_0_1.markus_huntsman_activated_ability.dodge_distance_multiplier,
-				duration = var_0_1.markus_huntsman_activated_ability.duration
+				multiplier = tbl.markus_huntsman_activated_ability.dodge_distance_multiplier,
+				duration = tbl.markus_huntsman_activated_ability.duration
 			}
 		}
 	},
@@ -492,7 +494,7 @@ TalentBuffTemplates.empire_soldier = {
 				icon = "markus_huntsman_activated_ability",
 				apply_buff_func = "apply_huntsman_activated_ability",
 				refresh_durations = true,
-				duration = var_0_1.markus_huntsman_activated_ability_duration.duration
+				duration = tbl.markus_huntsman_activated_ability_duration.duration
 			}
 		}
 	},
@@ -502,9 +504,9 @@ TalentBuffTemplates.empire_soldier = {
 				refresh_durations = true,
 				name = "markus_huntsman_activated_ability_increased_zoom",
 				max_stacks = 1,
-				duration = var_0_1.markus_huntsman_activated_ability_duration.duration,
+				duration = tbl.markus_huntsman_activated_ability_duration.duration,
 				perks = {
-					var_0_0.increased_zoom
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.increased_zoom
 				}
 			}
 		}
@@ -515,7 +517,7 @@ TalentBuffTemplates.empire_soldier = {
 				event = "on_hit",
 				remove_on_proc = true,
 				buff_func = "end_huntsman_stealth",
-				duration = var_0_1.markus_huntsman_activated_ability_duration.duration
+				duration = tbl.markus_huntsman_activated_ability_duration.duration
 			}
 		}
 	},
@@ -526,8 +528,8 @@ TalentBuffTemplates.empire_soldier = {
 				stat_buff = "headshot_multiplier",
 				refresh_durations = true,
 				max_stacks = 1,
-				multiplier = var_0_1.markus_huntsman_activated_ability.headshot_multiplier,
-				duration = var_0_1.markus_huntsman_activated_ability_duration.duration
+				multiplier = tbl.markus_huntsman_activated_ability.headshot_multiplier,
+				duration = tbl.markus_huntsman_activated_ability_duration.duration
 			}
 		}
 	},
@@ -538,8 +540,8 @@ TalentBuffTemplates.empire_soldier = {
 				stat_buff = "reload_speed",
 				refresh_durations = true,
 				max_stacks = 1,
-				multiplier = var_0_1.markus_huntsman_activated_ability.reload_speed_multiplier,
-				duration = var_0_1.markus_huntsman_activated_ability_duration.duration
+				multiplier = tbl.markus_huntsman_activated_ability.reload_speed_multiplier,
+				duration = tbl.markus_huntsman_activated_ability_duration.duration
 			}
 		}
 	},
@@ -556,8 +558,8 @@ TalentBuffTemplates.empire_soldier = {
 				path_to_movement_setting_to_modify = {
 					"move_speed"
 				},
-				multiplier = var_0_1.markus_huntsman_activated_ability.move_speed_multiplier,
-				duration = var_0_1.markus_huntsman_activated_ability_duration.duration
+				multiplier = tbl.markus_huntsman_activated_ability.move_speed_multiplier,
+				duration = tbl.markus_huntsman_activated_ability_duration.duration
 			}
 		}
 	},
@@ -574,8 +576,8 @@ TalentBuffTemplates.empire_soldier = {
 				path_to_movement_setting_to_modify = {
 					"crouch_move_speed"
 				},
-				multiplier = var_0_1.markus_huntsman_activated_ability.move_speed_multiplier,
-				duration = var_0_1.markus_huntsman_activated_ability_duration.duration
+				multiplier = tbl.markus_huntsman_activated_ability.move_speed_multiplier,
+				duration = tbl.markus_huntsman_activated_ability_duration.duration
 			}
 		}
 	},
@@ -592,8 +594,8 @@ TalentBuffTemplates.empire_soldier = {
 				path_to_movement_setting_to_modify = {
 					"walk_move_speed"
 				},
-				multiplier = var_0_1.markus_huntsman_activated_ability.move_speed_multiplier,
-				duration = var_0_1.markus_huntsman_activated_ability_duration.duration
+				multiplier = tbl.markus_huntsman_activated_ability.move_speed_multiplier,
+				duration = tbl.markus_huntsman_activated_ability_duration.duration
 			}
 		}
 	},
@@ -609,8 +611,8 @@ TalentBuffTemplates.empire_soldier = {
 					"dodging",
 					"speed_modifier"
 				},
-				multiplier = var_0_1.markus_huntsman_activated_ability.dodge_speed_multiplier,
-				duration = var_0_1.markus_huntsman_activated_ability_duration.duration
+				multiplier = tbl.markus_huntsman_activated_ability.dodge_speed_multiplier,
+				duration = tbl.markus_huntsman_activated_ability_duration.duration
 			}
 		}
 	},
@@ -626,8 +628,8 @@ TalentBuffTemplates.empire_soldier = {
 					"dodging",
 					"distance_modifier"
 				},
-				multiplier = var_0_1.markus_huntsman_activated_ability.dodge_distance_multiplier,
-				duration = var_0_1.markus_huntsman_activated_ability_duration.duration
+				multiplier = tbl.markus_huntsman_activated_ability.dodge_distance_multiplier,
+				duration = tbl.markus_huntsman_activated_ability_duration.duration
 			}
 		}
 	},
@@ -639,7 +641,7 @@ TalentBuffTemplates.empire_soldier = {
 				buff_func = "heal_stagger_targets_on_melee",
 				event = "on_stagger",
 				perks = {
-					var_0_0.tank_healing
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.tank_healing
 				}
 			}
 		}
@@ -653,7 +655,7 @@ TalentBuffTemplates.empire_soldier = {
 				buff_func = "heal_percentage_of_enemy_hp_on_melee_kill",
 				event = "on_kill",
 				perks = {
-					var_0_0.smiter_healing
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.smiter_healing
 				}
 			}
 		}
@@ -943,7 +945,7 @@ TalentBuffTemplates.empire_soldier = {
 				remove_buff_func = "remove_invulnd_flash",
 				duration = 1,
 				perks = {
-					var_0_0.invulnerable
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.invulnerable
 				}
 			}
 		}
@@ -1016,7 +1018,7 @@ TalentBuffTemplates.empire_soldier = {
 				remove_buff_func = "end_knight_activated_ability",
 				icon = "markus_knight_activated_ability",
 				perks = {
-					var_0_0.uninterruptible
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.uninterruptible
 				}
 			}
 		}
@@ -1029,7 +1031,7 @@ TalentBuffTemplates.empire_soldier = {
 				buff_func = "heal_stagger_targets_on_melee",
 				event = "on_stagger",
 				perks = {
-					var_0_0.tank_healing
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.tank_healing
 				}
 			}
 		}
@@ -1044,7 +1046,7 @@ TalentBuffTemplates.empire_soldier = {
 				max_targets = 5,
 				bonus = 0.25,
 				perks = {
-					var_0_0.linesman_healing
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.linesman_healing
 				}
 			}
 		}
@@ -1136,7 +1138,7 @@ TalentBuffTemplates.empire_soldier = {
 				buff_to_add = "markus_knight_improved_passive_defence_aura_buff",
 				update_func = "activate_buff_on_distance",
 				remove_buff_func = "remove_aura_buff",
-				range = var_0_1.markus_knight_passive.range
+				range = tbl.markus_knight_passive.range
 			}
 		}
 	},
@@ -1154,7 +1156,7 @@ TalentBuffTemplates.empire_soldier = {
 			{
 				buff_to_add = "markus_knight_passive_block_cost_aura_buff",
 				update_func = "activate_buff_on_distance",
-				range = var_0_1.markus_knight_passive.range * 2
+				range = tbl.markus_knight_passive.range * 2
 			}
 		}
 	},
@@ -1172,7 +1174,7 @@ TalentBuffTemplates.empire_soldier = {
 				buff_to_add = "markus_knight_passive_defence_aura_range",
 				update_func = "activate_buff_on_distance",
 				remove_buff_func = "remove_aura_buff",
-				range = var_0_1.markus_knight_passive.range * 2
+				range = tbl.markus_knight_passive.range * 2
 			}
 		}
 	},
@@ -1192,7 +1194,7 @@ TalentBuffTemplates.empire_soldier = {
 				stat_buff = "damage_taken",
 				update_func = "activate_buff_on_closest_distance",
 				remove_buff_func = "remove_aura_buff",
-				range = var_0_1.markus_knight_passive.range
+				range = tbl.markus_knight_passive.range
 			}
 		}
 	},
@@ -1212,7 +1214,7 @@ TalentBuffTemplates.empire_soldier = {
 				remove_buff_func = "remove_aura_buff",
 				icon = "markus_knight_passive_power_increase",
 				update_func = "activate_buff_on_closest_distance",
-				range = var_0_1.markus_knight_passive.range
+				range = tbl.markus_knight_passive.range
 			}
 		}
 	},
@@ -1268,7 +1270,7 @@ TalentBuffTemplates.empire_soldier = {
 				max_stacks = 1,
 				refresh_durations = true,
 				perks = {
-					var_0_0.no_push_fatigue_cost
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.no_push_fatigue_cost
 				}
 			}
 		}
@@ -1385,7 +1387,7 @@ TalentBuffTemplates.empire_soldier = {
 		buffs = {
 			{
 				perks = {
-					var_0_0.uninterruptible_heavy
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.uninterruptible_heavy
 				}
 			}
 		}
@@ -1418,7 +1420,7 @@ TalentBuffTemplates.empire_soldier = {
 				max_targets = 5,
 				bonus = 0.25,
 				perks = {
-					var_0_0.linesman_healing
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.linesman_healing
 				}
 			}
 		}
@@ -1432,7 +1434,7 @@ TalentBuffTemplates.empire_soldier = {
 				buff_func = "heal_percentage_of_enemy_hp_on_melee_kill",
 				event = "on_kill",
 				perks = {
-					var_0_0.smiter_healing
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.smiter_healing
 				}
 			}
 		}
@@ -1506,7 +1508,7 @@ TalentBuffTemplates.empire_soldier = {
 				icon = "markus_mercenary_crit_count",
 				priority_buff = true,
 				perks = {
-					var_0_0.guaranteed_crit
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.guaranteed_crit
 				}
 			}
 		}
@@ -1593,7 +1595,11 @@ TalentBuffTemplates.empire_soldier = {
 		}
 	}
 }
+
+local TalentTrees = TalentTrees
+
 TalentTrees = TalentTrees or {}
+TalentTrees = TalentTrees
 TalentTrees.empire_soldier = {
 	{
 		{
@@ -1806,7 +1812,7 @@ Talents.empire_soldier = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.markus_huntsman_headshot_damage.multiplier
+				value = tbl.markus_huntsman_headshot_damage.multiplier
 			}
 		},
 		buffs = {
@@ -1821,10 +1827,10 @@ Talents.empire_soldier = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.markus_huntsman_headshots_increase_reload_speed_buff.multiplier
+				value = tbl.markus_huntsman_headshots_increase_reload_speed_buff.multiplier
 			},
 			{
-				value = var_0_1.markus_huntsman_headshots_increase_reload_speed_buff.duration
+				value = tbl.markus_huntsman_headshots_increase_reload_speed_buff.duration
 			}
 		},
 		buffs = {
@@ -1840,7 +1846,7 @@ Talents.empire_soldier = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.markus_huntsman_passive_crit_buff.bonus
+				value = tbl.markus_huntsman_passive_crit_buff.bonus
 			}
 		},
 		buffs = {}
@@ -1853,7 +1859,7 @@ Talents.empire_soldier = {
 		icon = "markus_huntsman_reduced_spread",
 		description_values = {
 			{
-				value = var_0_1.markus_huntsman_passive_temp_health_on_headshot.bonus
+				value = tbl.markus_huntsman_passive_temp_health_on_headshot.bonus
 			}
 		},
 		buffs = {
@@ -1869,7 +1875,7 @@ Talents.empire_soldier = {
 		description_values = {
 			{
 				value_type = "baked_percent",
-				value = var_0_1.markus_huntsman_movement_speed.multiplier
+				value = tbl.markus_huntsman_movement_speed.multiplier
 			}
 		},
 		buffs = {
@@ -1885,10 +1891,10 @@ Talents.empire_soldier = {
 		description_values = {
 			{
 				value_type = "baked_percent",
-				value = var_0_1.markus_huntsman_movement_speed.multiplier
+				value = tbl.markus_huntsman_movement_speed.multiplier
 			},
 			{
-				value = var_0_1.markus_huntsman_defence_buff.max_stacks
+				value = tbl.markus_huntsman_defence_buff.max_stacks
 			}
 		},
 		buffs = {
@@ -1904,7 +1910,7 @@ Talents.empire_soldier = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.markus_huntsman_ammo_on_special_kill.ammo_bonus_fraction
+				value = tbl.markus_huntsman_ammo_on_special_kill.ammo_bonus_fraction
 			}
 		},
 		buffs = {
@@ -1928,7 +1934,7 @@ Talents.empire_soldier = {
 		icon = "markus_huntsman_activated_ability_duration",
 		description_values = {
 			{
-				value = var_0_1.markus_huntsman_activated_ability_duration.duration
+				value = tbl.markus_huntsman_activated_ability_duration.duration
 			}
 		},
 		buffs = {}
@@ -1941,7 +1947,7 @@ Talents.empire_soldier = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.markus_huntsman_activated_ability_cooldown.multiplier
+				value = tbl.markus_huntsman_activated_ability_cooldown.multiplier
 			}
 		},
 		buffs = {
@@ -2098,7 +2104,7 @@ Talents.empire_soldier = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.markus_knight_power_level_impact.multiplier
+				value = tbl.markus_knight_power_level_impact.multiplier
 			}
 		},
 		buffs = {
@@ -2114,10 +2120,10 @@ Talents.empire_soldier = {
 		description_values = {
 			{
 				value_type = "baked_percent",
-				value = var_0_1.markus_knight_cooldown_buff.multiplier
+				value = tbl.markus_knight_cooldown_buff.multiplier
 			},
 			{
-				value = var_0_1.markus_knight_cooldown_buff.duration
+				value = tbl.markus_knight_cooldown_buff.duration
 			}
 		},
 		buffs = {
@@ -2133,10 +2139,10 @@ Talents.empire_soldier = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.markus_knight_power_level_on_stagger_elite_buff.multiplier
+				value = tbl.markus_knight_power_level_on_stagger_elite_buff.multiplier
 			},
 			{
-				value = var_0_1.markus_knight_power_level_on_stagger_elite_buff.duration
+				value = tbl.markus_knight_power_level_on_stagger_elite_buff.duration
 			}
 		},
 		buffs = {
@@ -2151,10 +2157,10 @@ Talents.empire_soldier = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.markus_knight_attack_speed_on_push_buff.multiplier
+				value = tbl.markus_knight_attack_speed_on_push_buff.multiplier
 			},
 			{
-				value = var_0_1.markus_knight_attack_speed_on_push_buff.duration
+				value = tbl.markus_knight_attack_speed_on_push_buff.duration
 			}
 		},
 		buffs = {
@@ -2170,7 +2176,7 @@ Talents.empire_soldier = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.markus_knight_improved_passive_defence_aura_buff.multiplier
+				value = tbl.markus_knight_improved_passive_defence_aura_buff.multiplier
 			}
 		},
 		buffs = {
@@ -2186,7 +2192,7 @@ Talents.empire_soldier = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.markus_knight_passive_block_cost_aura_buff.multiplier
+				value = tbl.markus_knight_passive_block_cost_aura_buff.multiplier
 			}
 		},
 		buffs = {
@@ -2203,15 +2209,15 @@ Talents.empire_soldier = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.markus_knight_passive_power_increase_buff.multiplier
+				value = tbl.markus_knight_passive_power_increase_buff.multiplier
 			},
 			{
 				value_type = "percent",
-				value = var_0_1.markus_knight_guard_buff.presentation_multiplier
+				value = tbl.markus_knight_guard_buff.presentation_multiplier
 			},
 			{
 				value_type = "percent",
-				value = var_0_1.markus_knight_passive_power_increase_buff.multiplier
+				value = tbl.markus_knight_passive_power_increase_buff.multiplier
 			}
 		},
 		buffs = {
@@ -2237,7 +2243,7 @@ Talents.empire_soldier = {
 		icon = "markus_knight_free_pushes_on_block",
 		description_values = {
 			{
-				value = var_0_1.markus_knight_free_pushes_on_block_buff.duration
+				value = tbl.markus_knight_free_pushes_on_block_buff.duration
 			}
 		},
 		buffs = {
@@ -2253,7 +2259,7 @@ Talents.empire_soldier = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.markus_knight_damage_taken_ally_proximity_buff.multiplier
+				value = tbl.markus_knight_damage_taken_ally_proximity_buff.multiplier
 			}
 		},
 		buffs = {
@@ -2268,7 +2274,7 @@ Talents.empire_soldier = {
 		icon = "markus_knight_ability_invulnerability",
 		description_values = {
 			{
-				value = var_0_1.markus_knight_ability_invulnerability_buff.duration
+				value = tbl.markus_knight_ability_invulnerability_buff.duration
 			}
 		},
 		buffs = {}
@@ -2291,13 +2297,13 @@ Talents.empire_soldier = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.markus_knight_ability_attack_speed_enemy_hit_buff.multiplier
+				value = tbl.markus_knight_ability_attack_speed_enemy_hit_buff.multiplier
 			},
 			{
-				value = var_0_1.markus_knight_ability_attack_speed_enemy_hit_buff.duration
+				value = tbl.markus_knight_ability_attack_speed_enemy_hit_buff.duration
 			},
 			{
-				value = var_0_1.markus_knight_ability_attack_speed_enemy_hit_buff.max_stacks
+				value = tbl.markus_knight_ability_attack_speed_enemy_hit_buff.max_stacks
 			}
 		},
 		buffs = {
@@ -2460,10 +2466,10 @@ Talents.empire_soldier = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.markus_mercenary_damage_on_enemy_proximity.multiplier
+				value = tbl.markus_mercenary_damage_on_enemy_proximity.multiplier
 			},
 			{
-				value = var_0_1.markus_mercenary_damage_on_enemy_proximity.max_stacks
+				value = tbl.markus_mercenary_damage_on_enemy_proximity.max_stacks
 			}
 		},
 		buffs = {
@@ -2479,7 +2485,7 @@ Talents.empire_soldier = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.markus_mercenary_power_level_cleave.multiplier
+				value = tbl.markus_mercenary_power_level_cleave.multiplier
 			}
 		},
 		buffs = {
@@ -2493,7 +2499,7 @@ Talents.empire_soldier = {
 		icon = "markus_mercenary_crit_count",
 		description_values = {
 			{
-				value = var_0_1.markus_mercenary_crit_count.buff_on_stacks
+				value = tbl.markus_mercenary_crit_count.buff_on_stacks
 			}
 		},
 		buffs = {
@@ -2512,7 +2518,7 @@ Talents.empire_soldier = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.markus_mercenary_passive_power_level.multiplier
+				value = tbl.markus_mercenary_passive_power_level.multiplier
 			}
 		},
 		buffs = {}
@@ -2533,10 +2539,10 @@ Talents.empire_soldier = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.markus_mercenary_passive_improved.multiplier
+				value = tbl.markus_mercenary_passive_improved.multiplier
 			},
 			{
-				value = var_0_1.markus_mercenary_passive_improved.targets
+				value = tbl.markus_mercenary_passive_improved.targets
 			}
 		},
 		buffs = {}
@@ -2550,7 +2556,7 @@ Talents.empire_soldier = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.markus_mercenary_passive_defence.multiplier
+				value = tbl.markus_mercenary_passive_defence.multiplier
 			}
 		},
 		buffs = {}
@@ -2563,7 +2569,7 @@ Talents.empire_soldier = {
 		description_values = {
 			{
 				value_type = "baked_percent",
-				value = var_0_1.markus_mercenary_dodge_range.multiplier
+				value = tbl.markus_mercenary_dodge_range.multiplier
 			}
 		},
 		buffs = {
@@ -2579,7 +2585,7 @@ Talents.empire_soldier = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.markus_mercenary_max_ammo.multiplier
+				value = tbl.markus_mercenary_max_ammo.multiplier
 			}
 		},
 		buffs = {
@@ -2601,7 +2607,7 @@ Talents.empire_soldier = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.markus_mercenary_activated_ability_cooldown_no_heal.multiplier
+				value = tbl.markus_mercenary_activated_ability_cooldown_no_heal.multiplier
 			}
 		},
 		buffs = {
@@ -2616,10 +2622,10 @@ Talents.empire_soldier = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.markus_mercenary_activated_ability_damage_reduction.multiplier
+				value = tbl.markus_mercenary_activated_ability_damage_reduction.multiplier
 			},
 			{
-				value = var_0_1.markus_mercenary_activated_ability_damage_reduction.duration
+				value = tbl.markus_mercenary_activated_ability_damage_reduction.duration
 			}
 		},
 		buffs = {}
@@ -2687,4 +2693,4 @@ Talents.empire_soldier = {
 }
 
 BuffUtils.copy_talent_buff_names(TalentBuffTemplates.empire_soldier)
-BuffUtils.apply_buff_tweak_data(TalentBuffTemplates.empire_soldier, var_0_1)
+BuffUtils.apply_buff_tweak_data(TalentBuffTemplates.empire_soldier, tbl)

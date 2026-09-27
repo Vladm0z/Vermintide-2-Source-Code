@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/belladonna/belladonna_gib_settings.lua
 
-local var_0_0 = DLCSettings.belladonna
+local belladonna = DLCSettings.belladonna
 
-var_0_0.unit_gib_settings = {
+belladonna.unit_gib_settings = {
 	beastmen_gor = {
 		parts = {
 			head = {
@@ -593,28 +593,28 @@ var_0_0.unit_gib_settings = {
 		}
 	}
 }
-var_0_0.unit_gib_settings.beastmen_ungor_archer = table.create_copy(var_0_0.unit_gib_settings.beastmen_ungor_archer, var_0_0.unit_gib_settings.beastmen_ungor)
-var_0_0.unit_gib_settings.beastmen_ungor_archer.parts.head.gib_unit = "units/beings/enemies/beastmen_ungor_archer/gibs/beastmen_ungor_archer_gib_neck"
-var_0_0.unit_gib_settings.beastmen_ungor_archer.parts.head.stump_unit = "units/beings/enemies/beastmen_ungor_archer/gibs/beastmen_ungor_archer_stump_neck"
-var_0_0.unit_gib_settings.beastmen_ungor_archer.parts.left_arm.gib_unit = "units/beings/enemies/beastmen_ungor_archer/gibs/beastmen_ungor_archer_gib_l_arm"
-var_0_0.unit_gib_settings.beastmen_ungor_archer.parts.left_arm.stump_unit = "units/beings/enemies/beastmen_ungor_archer/gibs/beastmen_ungor_archer_stump_l_arm"
-var_0_0.unit_gib_settings.beastmen_ungor_archer.parts.left_leg.gib_unit = "units/beings/enemies/beastmen_ungor_archer/gibs/beastmen_ungor_archer_gib_l_leg"
-var_0_0.unit_gib_settings.beastmen_ungor_archer.parts.left_leg.stump_unit = "units/beings/enemies/beastmen_ungor_archer/gibs/beastmen_ungor_archer_stump_l_leg"
-var_0_0.unit_gib_settings.beastmen_ungor_archer.parts.right_arm.gib_unit = "units/beings/enemies/beastmen_ungor_archer/gibs/beastmen_ungor_archer_gib_r_arm"
-var_0_0.unit_gib_settings.beastmen_ungor_archer.parts.right_arm.stump_unit = "units/beings/enemies/beastmen_ungor_archer/gibs/beastmen_ungor_archer_stump_r_arm"
-var_0_0.unit_gib_settings.beastmen_ungor_archer.parts.right_leg.gib_unit = "units/beings/enemies/beastmen_ungor_archer/gibs/beastmen_ungor_archer_gib_r_leg"
-var_0_0.unit_gib_settings.beastmen_ungor_archer.parts.right_leg.stump_unit = "units/beings/enemies/beastmen_ungor_archer/gibs/beastmen_ungor_archer_stump_r_leg"
-var_0_0.unit_gib_settings.beastmen_ungor_archer.parts.upperbody.gib_unit = "units/beings/enemies/beastmen_ungor_archer/gibs/beastmen_ungor_archer_gib_upperbody"
-var_0_0.unit_gib_settings.beastmen_ungor_archer.parts.upperbody.stump_unit = "units/beings/enemies/beastmen_ungor_archer/gibs/beastmen_ungor_archer_stump_upperbody"
-var_0_0.unit_gib_settings.beastmen_bestigor = table.create_copy(var_0_0.unit_gib_settings.beastmen_bestigor, var_0_0.unit_gib_settings.beastmen_gor)
-var_0_0.unit_gib_settings.beastmen_bestigor.parts.head.gib_unit = "units/beings/enemies/beastmen_bestigor/gibs/beastmen_bestigor_gib_head"
-var_0_0.unit_gib_settings.beastmen_bestigor.parts.left_arm.gib_unit = "units/beings/enemies/beastmen_bestigor/gibs/beastmen_bestigor_gib_l_arm"
-var_0_0.unit_gib_settings.beastmen_bestigor.parts.left_leg.gib_unit = "units/beings/enemies/beastmen_bestigor/gibs/beastmen_bestigor_gib_l_leg"
-var_0_0.unit_gib_settings.beastmen_bestigor.parts.right_arm.gib_unit = "units/beings/enemies/beastmen_bestigor/gibs/beastmen_bestigor_gib_r_arm"
-var_0_0.unit_gib_settings.beastmen_bestigor.parts.right_leg.gib_unit = "units/beings/enemies/beastmen_bestigor/gibs/beastmen_bestigor_gib_r_leg"
-var_0_0.unit_gib_settings.beastmen_standard_bearer = table.create_copy(var_0_0.unit_gib_settings.beastmen_standard_bearer, var_0_0.unit_gib_settings.beastmen_gor)
-var_0_0.unit_gib_settings.beastmen_standard_bearer.parts.left_arm.gib_unit = "units/beings/enemies/beastmen_standard_bearer/gibs/beastmen_standard_bearer_gib_l_arm"
-var_0_0.unit_gib_settings.beastmen_standard_bearer.parts.left_leg.gib_unit = "units/beings/enemies/beastmen_bestigor/gibs/beastmen_bestigor_gib_l_leg"
-var_0_0.unit_gib_settings.beastmen_standard_bearer.parts.right_arm.gib_unit = "units/beings/enemies/beastmen_standard_bearer/gibs/beastmen_standard_bearer_gib_r_arm"
-var_0_0.unit_gib_settings.beastmen_standard_bearer.parts.right_leg.gib_unit = "units/beings/enemies/beastmen_bestigor/gibs/beastmen_bestigor_gib_r_leg"
-var_0_0.unit_gib_settings.beastmen_standard_bearer.parts.upperbody.gib_unit = "units/beings/enemies/beastmen_standard_bearer/gibs/beastmen_standard_bearer_gib_upper_body"
+belladonna.unit_gib_settings.beastmen_ungor_archer = table.create_copy(belladonna.unit_gib_settings.beastmen_ungor_archer, belladonna.unit_gib_settings.beastmen_ungor)
+belladonna.unit_gib_settings.beastmen_ungor_archer.parts.head.gib_unit = "units/beings/enemies/beastmen_ungor_archer/gibs/beastmen_ungor_archer_gib_neck"
+belladonna.unit_gib_settings.beastmen_ungor_archer.parts.head.stump_unit = "units/beings/enemies/beastmen_ungor_archer/gibs/beastmen_ungor_archer_stump_neck"
+belladonna.unit_gib_settings.beastmen_ungor_archer.parts.left_arm.gib_unit = "units/beings/enemies/beastmen_ungor_archer/gibs/beastmen_ungor_archer_gib_l_arm"
+belladonna.unit_gib_settings.beastmen_ungor_archer.parts.left_arm.stump_unit = "units/beings/enemies/beastmen_ungor_archer/gibs/beastmen_ungor_archer_stump_l_arm"
+belladonna.unit_gib_settings.beastmen_ungor_archer.parts.left_leg.gib_unit = "units/beings/enemies/beastmen_ungor_archer/gibs/beastmen_ungor_archer_gib_l_leg"
+belladonna.unit_gib_settings.beastmen_ungor_archer.parts.left_leg.stump_unit = "units/beings/enemies/beastmen_ungor_archer/gibs/beastmen_ungor_archer_stump_l_leg"
+belladonna.unit_gib_settings.beastmen_ungor_archer.parts.right_arm.gib_unit = "units/beings/enemies/beastmen_ungor_archer/gibs/beastmen_ungor_archer_gib_r_arm"
+belladonna.unit_gib_settings.beastmen_ungor_archer.parts.right_arm.stump_unit = "units/beings/enemies/beastmen_ungor_archer/gibs/beastmen_ungor_archer_stump_r_arm"
+belladonna.unit_gib_settings.beastmen_ungor_archer.parts.right_leg.gib_unit = "units/beings/enemies/beastmen_ungor_archer/gibs/beastmen_ungor_archer_gib_r_leg"
+belladonna.unit_gib_settings.beastmen_ungor_archer.parts.right_leg.stump_unit = "units/beings/enemies/beastmen_ungor_archer/gibs/beastmen_ungor_archer_stump_r_leg"
+belladonna.unit_gib_settings.beastmen_ungor_archer.parts.upperbody.gib_unit = "units/beings/enemies/beastmen_ungor_archer/gibs/beastmen_ungor_archer_gib_upperbody"
+belladonna.unit_gib_settings.beastmen_ungor_archer.parts.upperbody.stump_unit = "units/beings/enemies/beastmen_ungor_archer/gibs/beastmen_ungor_archer_stump_upperbody"
+belladonna.unit_gib_settings.beastmen_bestigor = table.create_copy(belladonna.unit_gib_settings.beastmen_bestigor, belladonna.unit_gib_settings.beastmen_gor)
+belladonna.unit_gib_settings.beastmen_bestigor.parts.head.gib_unit = "units/beings/enemies/beastmen_bestigor/gibs/beastmen_bestigor_gib_head"
+belladonna.unit_gib_settings.beastmen_bestigor.parts.left_arm.gib_unit = "units/beings/enemies/beastmen_bestigor/gibs/beastmen_bestigor_gib_l_arm"
+belladonna.unit_gib_settings.beastmen_bestigor.parts.left_leg.gib_unit = "units/beings/enemies/beastmen_bestigor/gibs/beastmen_bestigor_gib_l_leg"
+belladonna.unit_gib_settings.beastmen_bestigor.parts.right_arm.gib_unit = "units/beings/enemies/beastmen_bestigor/gibs/beastmen_bestigor_gib_r_arm"
+belladonna.unit_gib_settings.beastmen_bestigor.parts.right_leg.gib_unit = "units/beings/enemies/beastmen_bestigor/gibs/beastmen_bestigor_gib_r_leg"
+belladonna.unit_gib_settings.beastmen_standard_bearer = table.create_copy(belladonna.unit_gib_settings.beastmen_standard_bearer, belladonna.unit_gib_settings.beastmen_gor)
+belladonna.unit_gib_settings.beastmen_standard_bearer.parts.left_arm.gib_unit = "units/beings/enemies/beastmen_standard_bearer/gibs/beastmen_standard_bearer_gib_l_arm"
+belladonna.unit_gib_settings.beastmen_standard_bearer.parts.left_leg.gib_unit = "units/beings/enemies/beastmen_bestigor/gibs/beastmen_bestigor_gib_l_leg"
+belladonna.unit_gib_settings.beastmen_standard_bearer.parts.right_arm.gib_unit = "units/beings/enemies/beastmen_standard_bearer/gibs/beastmen_standard_bearer_gib_r_arm"
+belladonna.unit_gib_settings.beastmen_standard_bearer.parts.right_leg.gib_unit = "units/beings/enemies/beastmen_bestigor/gibs/beastmen_bestigor_gib_r_leg"
+belladonna.unit_gib_settings.beastmen_standard_bearer.parts.upperbody.gib_unit = "units/beings/enemies/beastmen_standard_bearer/gibs/beastmen_standard_bearer_gib_upper_body"

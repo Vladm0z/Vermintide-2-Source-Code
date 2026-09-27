@@ -1,22 +1,22 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/definitions/hero_window_crafting_list_console_definitions.lua
 
-local var_0_0 = UISettings.game_start_windows
-local var_0_1 = var_0_0.background
-local var_0_2 = var_0_0.frame
-local var_0_3 = var_0_0.size
-local var_0_4 = UIFrameSettings[var_0_2].texture_sizes.vertical[1]
-local var_0_5 = UIFrameSettings[var_0_2].texture_sizes.horizontal[2]
-local var_0_6 = {
-	var_0_3[1] - var_0_4 * 2,
-	(var_0_3[2] - var_0_5 * 2) / 3.5
+local game_start_windows = UISettings.game_start_windows
+local background = game_start_windows.background
+local frame = game_start_windows.frame
+local size = game_start_windows.size
+local var_0_4 = UIFrameSettings[frame].texture_sizes.vertical[1]
+local var_0_5 = UIFrameSettings[frame].texture_sizes.horizontal[2]
+local tbl = {
+	size[1] - var_0_4 * 2,
+	(size[2] - var_0_5 * 2) / 3.5
 }
-local var_0_7 = UISettings.console_menu_scenegraphs
-local var_0_8 = {
-	screen = var_0_7.screen,
-	area = var_0_7.area,
-	area_left = var_0_7.area_left,
-	area_right = var_0_7.area_right,
-	area_divider = var_0_7.area_divider,
+local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
+local tbl_2 = {
+	screen = console_menu_scenegraphs.screen,
+	area = console_menu_scenegraphs.area,
+	area_left = console_menu_scenegraphs.area_left,
+	area_right = console_menu_scenegraphs.area_right,
+	area_divider = console_menu_scenegraphs.area_divider,
 	list_background_bottom = {
 		vertical_alignment = "bottom",
 		parent = "area_left",
@@ -116,7 +116,7 @@ local var_0_8 = {
 		}
 	}
 }
-local var_0_9 = {
+local tbl_3 = {
 	font_size = 42,
 	upper_case = true,
 	localize = false,
@@ -133,7 +133,7 @@ local var_0_9 = {
 		2
 	}
 }
-local var_0_10 = {
+local tbl_4 = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -149,7 +149,7 @@ local var_0_10 = {
 		2
 	}
 }
-local var_0_11 = {
+local tbl_5 = {
 	default = {
 		{
 			input_action = "d_vertical",
@@ -175,7 +175,8 @@ local var_0_11 = {
 	}
 }
 
-local function var_0_12(arg_1_0, arg_1_1)
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
 	return {
 		element = {
 			passes = {
@@ -296,14 +297,14 @@ local function var_0_12(arg_1_0, arg_1_1)
 	}
 end
 
-local var_0_13 = {}
-local var_0_14 = 10
+local tbl_6 = {}
+local num = 10
 
-for iter_0_0 = 1, var_0_14 do
-	var_0_13[iter_0_0] = var_0_12("list_entry", iter_0_0)
+for i = 1, num do
+	tbl_6[i] = fn("list_entry", i)
 end
 
-local var_0_15 = {
+local tbl_7 = {
 	list_background_bottom = UIWidgets.create_simple_texture("console_crafting_recipe_bg", "list_background_bottom"),
 	list_background_top = UIWidgets.create_simple_uv_texture("console_crafting_recipe_bg", {
 		{
@@ -316,28 +317,31 @@ local var_0_15 = {
 		}
 	}, "list_background_top"),
 	divider = UIWidgets.create_simple_texture("divider_01_top", "divider"),
-	tite_text = UIWidgets.create_simple_text("n/a", "tite_text", nil, nil, var_0_9),
-	description_text = UIWidgets.create_simple_text("n/a", "description_text", nil, nil, var_0_10),
-	description_bg = UIWidgets.create_rect_with_outer_frame("description_text", var_0_8.description_text.size, "frame_outer_fade_02", 0, UISettings.console_menu_rect_color)
+	tite_text = UIWidgets.create_simple_text("n/a", "tite_text", nil, nil, tbl_3),
+	description_text = UIWidgets.create_simple_text("n/a", "description_text", nil, nil, tbl_4),
+	description_bg = UIWidgets.create_rect_with_outer_frame("description_text", tbl_2.description_text.size, "frame_outer_fade_02", 0, UISettings.console_menu_rect_color)
 }
-local var_0_16 = {
+local tbl_8 = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+				-- function 2
 				arg_2_3.render_settings.alpha_multiplier = 0
 				arg_2_3.animation_settings.entry_alignment_progress = 0
 			end,
-			update = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
-				local var_3_0 = math.easeOutCubic(arg_3_3)
+			update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+				-- function 3
+				local easeOutCubic = math.easeOutCubic(arg_3_3)
 
-				arg_3_4.render_settings.alpha_multiplier = var_3_0
-				arg_3_4.animation_settings.entry_alignment_progress = var_3_0
-				arg_3_0.area_left.local_position[1] = arg_3_1.area_left.position[1] + -100 * (1 - var_3_0)
+				arg_3_4.render_settings.alpha_multiplier = easeOutCubic
+				arg_3_4.animation_settings.entry_alignment_progress = easeOutCubic
+				arg_3_0.area_left.local_position[1] = arg_3_1.area_left.position[1] + -100 * (1 - easeOutCubic)
 			end,
-			on_complete = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			on_complete = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				-- function 4
 				return
 			end
 		}
@@ -347,15 +351,18 @@ local var_0_16 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+				-- function 5
 				arg_5_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
-				local var_6_0 = math.easeOutCubic(arg_6_3)
+			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+				-- function 6
+				local easeOutCubic = math.easeOutCubic(arg_6_3)
 
-				arg_6_4.render_settings.alpha_multiplier = 1 - var_6_0
+				arg_6_4.render_settings.alpha_multiplier = 1 - easeOutCubic
 			end,
-			on_complete = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			on_complete = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+				-- function 7
 				return
 			end
 		}
@@ -363,9 +370,9 @@ local var_0_16 = {
 }
 
 return {
-	widgets = var_0_15,
-	generic_input_actions = var_0_11,
-	title_button_definitions = var_0_13,
-	scenegraph_definition = var_0_8,
-	animation_definitions = var_0_16
+	widgets = tbl_7,
+	generic_input_actions = tbl_5,
+	title_button_definitions = tbl_6,
+	scenegraph_definition = tbl_2,
+	animation_definitions = tbl_8
 }

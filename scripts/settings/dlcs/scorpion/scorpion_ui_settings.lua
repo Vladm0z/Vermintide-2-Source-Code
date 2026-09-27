@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/scorpion/scorpion_ui_settings.lua
 
-local var_0_0 = DLCSettings.scorpion
+local scorpion = DLCSettings.scorpion
 
-var_0_0.start_game_windows = {
+scorpion.start_game_windows = {
 	"scripts/ui/views/start_game_view/windows/start_game_window_weave_list",
 	"scripts/ui/views/start_game_view/windows/definitions/start_game_window_weave_list_definitions",
 	"scripts/ui/views/start_game_view/windows/definitions/start_game_window_weave_list_console_definitions",
@@ -20,7 +20,7 @@ var_0_0.start_game_windows = {
 	"scripts/ui/views/start_game_view/windows/definitions/start_game_window_weave_panel_console_definitions",
 	"scripts/ui/views/start_game_view/windows/start_game_window_weave_lobby_browser_console"
 }
-var_0_0.start_game_window_layout = {
+scorpion.start_game_window_layout = {
 	windows = {
 		weave_list = {
 			class_name = "StartGameWindowWeaveList",
@@ -59,8 +59,9 @@ var_0_0.start_game_window_layout = {
 				weave_list = 3,
 				weave_panel = 2
 			},
-			can_add_function = function(arg_1_0)
-				return arg_1_0:is_in_mechanism("weave")
+			can_add_function = function (self)
+				-- function 1
+				return self:is_in_mechanism("weave")
 			end
 		},
 		{
@@ -77,13 +78,14 @@ var_0_0.start_game_window_layout = {
 				weave_background = 1,
 				weave_panel = 2
 			},
-			can_add_function = function(arg_2_0)
-				return arg_2_0:is_in_mechanism("weave")
+			can_add_function = function (self)
+				-- function 2
+				return self:is_in_mechanism("weave")
 			end
 		}
 	}
 }
-var_0_0.start_game_window_layout_console = {
+scorpion.start_game_window_layout_console = {
 	windows = {
 		weave_background = {
 			class_name = "StartGameWindowWeaveBackgroundConsole",
@@ -131,8 +133,9 @@ var_0_0.start_game_window_layout_console = {
 				weave_list = 3,
 				weave_panel = 1
 			},
-			can_add_function = function(arg_3_0)
-				return arg_3_0:is_in_mechanism("weave")
+			can_add_function = function (self)
+				-- function 3
+				return self:is_in_mechanism("weave")
 			end
 		},
 		{
@@ -149,8 +152,9 @@ var_0_0.start_game_window_layout_console = {
 				weave_background = 2,
 				weave_panel = 1
 			},
-			can_add_function = function(arg_4_0)
-				return arg_4_0:is_in_mechanism("weave")
+			can_add_function = function (self)
+				-- function 4
+				return self:is_in_mechanism("weave")
 			end
 		},
 		{
@@ -165,8 +169,13 @@ var_0_0.start_game_window_layout_console = {
 				weave_background = 2,
 				weave_panel = 1
 			},
-			can_add_function = function(arg_5_0)
-				return arg_5_0:is_in_mechanism("weave") and not IS_XB1
+			can_add_function = function (self)
+				-- function 5
+				local is_in_mechanism = self:is_in_mechanism("weave")
+
+				is_in_mechanism = not is_in_mechanism and not IS_XB1
+
+				return is_in_mechanism
 			end
 		},
 		{
@@ -194,7 +203,7 @@ var_0_0.start_game_window_layout_console = {
 		}
 	}
 }
-var_0_0.ingame_hud_components = {
+scorpion.ingame_hud_components = {
 	{
 		use_hud_scale = true,
 		class_name = "WeaveProgressUI",
@@ -204,7 +213,8 @@ var_0_0.ingame_hud_components = {
 			"dead",
 			"alive"
 		},
-		validation_function = function()
+		validation_function = function ()
+			-- function 6
 			return Managers.mechanism:game_mechanism():get_state() == "weave"
 		end
 	},
@@ -217,7 +227,8 @@ var_0_0.ingame_hud_components = {
 			"dead",
 			"alive"
 		},
-		validation_function = function()
+		validation_function = function ()
+			-- function 7
 			return Managers.mechanism:game_mechanism():get_state() == "weave"
 		end
 	}

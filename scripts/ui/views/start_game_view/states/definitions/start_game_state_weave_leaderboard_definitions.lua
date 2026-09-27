@@ -1,39 +1,39 @@
 -- chunkname: @scripts/ui/views/start_game_view/states/definitions/start_game_state_weave_leaderboard_definitions.lua
 
-local var_0_0 = UISettings.game_start_windows
-local var_0_1 = var_0_0.size
-local var_0_2 = var_0_0.spacing
-local var_0_3 = "menu_frame_11"
-local var_0_4 = UIFrameSettings[var_0_3].texture_sizes.vertical[1]
-local var_0_5 = var_0_0.large_window_frame
-local var_0_6 = UIFrameSettings[var_0_5].texture_sizes.vertical[1]
-local var_0_7 = {
-	var_0_1[1] * 3 + var_0_2 * 2 + var_0_6 * 2,
-	var_0_1[2] + 80
+local game_start_windows = UISettings.game_start_windows
+local size = game_start_windows.size
+local spacing = game_start_windows.spacing
+local str = "menu_frame_11"
+local var_0_4 = UIFrameSettings[str].texture_sizes.vertical[1]
+local large_window_frame = game_start_windows.large_window_frame
+local var_0_6 = UIFrameSettings[large_window_frame].texture_sizes.vertical[1]
+local tbl = {
+	size[1] * 3 + spacing * 2 + var_0_6 * 2,
+	size[2] + 80
 }
-local var_0_8 = {
-	var_0_7[1] + 50,
-	var_0_7[2]
+local tbl_2 = {
+	tbl[1] + 50,
+	tbl[2]
 }
-local var_0_9 = 40
-local var_0_10 = 10
-local var_0_11 = {
-	var_0_8[1] - var_0_4 * 2,
-	var_0_8[2] - var_0_4 * 2
+local num = 40
+local num_2 = 10
+local tbl_3 = {
+	tbl_2[1] - var_0_4 * 2,
+	tbl_2[2] - var_0_4 * 2
 }
-local var_0_12 = {
-	var_0_11[1] - 100,
-	var_0_11[2] - 280
+local tbl_4 = {
+	tbl_3[1] - 100,
+	tbl_3[2] - 280
 }
-local var_0_13 = {
+local tbl_5 = {
 	16,
-	var_0_12[2]
+	tbl_4[2]
 }
-local var_0_14 = {
-	var_0_12[1] - 80,
+local tbl_6 = {
+	tbl_4[1] - 80,
 	48
 }
-local var_0_15 = {
+local tbl_7 = {
 	root = {
 		is_root = true,
 		size = {
@@ -104,7 +104,7 @@ local var_0_15 = {
 		vertical_alignment = "center",
 		parent = "screen",
 		horizontal_alignment = "center",
-		size = var_0_8,
+		size = tbl_2,
 		position = {
 			0,
 			0,
@@ -116,8 +116,8 @@ local var_0_15 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_8[1] - 5,
-			var_0_8[2] - 5
+			tbl_2[1] - 5,
+			tbl_2[2] - 5
 		},
 		position = {
 			0,
@@ -130,8 +130,8 @@ local var_0_15 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_8[1] - 5,
-			var_0_8[2] - 5
+			tbl_2[1] - 5,
+			tbl_2[2] - 5
 		},
 		position = {
 			0,
@@ -143,7 +143,7 @@ local var_0_15 = {
 		vertical_alignment = "center",
 		parent = "window",
 		horizontal_alignment = "center",
-		size = var_0_7,
+		size = tbl,
 		position = {
 			0,
 			0,
@@ -210,7 +210,7 @@ local var_0_15 = {
 		vertical_alignment = "center",
 		parent = "window",
 		horizontal_alignment = "left",
-		size = var_0_11,
+		size = tbl_3,
 		position = {
 			var_0_4,
 			0,
@@ -221,7 +221,7 @@ local var_0_15 = {
 		vertical_alignment = "bottom",
 		parent = "list_window",
 		horizontal_alignment = "center",
-		size = var_0_12,
+		size = tbl_4,
 		position = {
 			0,
 			80,
@@ -232,7 +232,7 @@ local var_0_15 = {
 		vertical_alignment = "bottom",
 		parent = "list_mask",
 		horizontal_alignment = "right",
-		size = var_0_13,
+		size = tbl_5,
 		position = {
 			-16,
 			0,
@@ -257,7 +257,7 @@ local var_0_15 = {
 		vertical_alignment = "top",
 		parent = "list_scroll_root",
 		horizontal_alignment = "left",
-		size = var_0_14,
+		size = tbl_6,
 		position = {
 			25,
 			0,
@@ -269,12 +269,12 @@ local var_0_15 = {
 		parent = "list_window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_11[1] / 3,
+			tbl_3[1] / 3,
 			85
 		},
 		position = {
-			var_0_11[1] / 5,
-			-(var_0_9 + 13),
+			tbl_3[1] / 5,
+			-(num + 13),
 			4
 		}
 	},
@@ -283,12 +283,12 @@ local var_0_15 = {
 		parent = "list_window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_11[1] / 3,
+			tbl_3[1] / 3,
 			85
 		},
 		position = {
-			-var_0_11[1] / 5,
-			-(var_0_9 + 13),
+			-tbl_3[1] / 5,
+			-(num + 13),
 			4
 		}
 	},
@@ -367,8 +367,8 @@ local var_0_15 = {
 		parent = "list_window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_11[1],
-			var_0_9
+			tbl_3[1],
+			num
 		},
 		position = {
 			0,
@@ -381,7 +381,7 @@ local var_0_15 = {
 		parent = "option_tabs",
 		horizontal_alignment = "center",
 		size = {
-			var_0_11[1],
+			tbl_3[1],
 			0
 		},
 		position = {
@@ -395,7 +395,7 @@ local var_0_15 = {
 		parent = "option_tabs",
 		horizontal_alignment = "center",
 		size = {
-			var_0_11[1],
+			tbl_3[1],
 			0
 		},
 		position = {
@@ -409,7 +409,7 @@ local var_0_15 = {
 		parent = "option_tabs",
 		horizontal_alignment = "center",
 		size = {
-			var_0_11[1],
+			tbl_3[1],
 			0
 		},
 		position = {
@@ -423,7 +423,7 @@ local var_0_15 = {
 		parent = "option_tabs",
 		horizontal_alignment = "center",
 		size = {
-			var_0_11[1] + 6,
+			tbl_3[1] + 6,
 			0
 		},
 		position = {
@@ -451,7 +451,7 @@ local var_0_15 = {
 		parent = "refresh_button",
 		horizontal_alignment = "left",
 		size = {
-			var_0_11[1] - 40,
+			tbl_3[1] - 40,
 			30
 		},
 		position = {
@@ -477,51 +477,51 @@ local var_0_15 = {
 }
 
 if not IS_WINDOWS then
-	var_0_15.setting_stepper_1 = {
+	tbl_7.setting_stepper_1 = {
 		vertical_alignment = "top",
 		parent = "list_window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_11[1] / 3.5,
+			tbl_3[1] / 3.5,
 			85
 		},
 		position = {
-			var_0_11[1] / 3,
-			-(var_0_9 + 13),
+			tbl_3[1] / 3,
+			-(num + 13),
 			4
 		}
 	}
-	var_0_15.setting_stepper_2 = {
+	tbl_7.setting_stepper_2 = {
 		vertical_alignment = "top",
 		parent = "list_window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_11[1] / 3.5,
+			tbl_3[1] / 3.5,
 			85
 		},
 		position = {
 			0,
-			-(var_0_9 + 13),
+			-(num + 13),
 			4
 		}
 	}
-	var_0_15.setting_stepper_3 = {
+	tbl_7.setting_stepper_3 = {
 		vertical_alignment = "top",
 		parent = "list_window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_11[1] / 3.5,
+			tbl_3[1] / 3.5,
 			85
 		},
 		position = {
-			-var_0_11[1] / 3,
-			-(var_0_9 + 13),
+			-tbl_3[1] / 3,
+			-(num + 13),
 			4
 		}
 	}
 end
 
-local var_0_16 = {
+local tbl_8 = {
 	use_shadow = true,
 	upper_case = true,
 	localize = false,
@@ -537,7 +537,7 @@ local var_0_16 = {
 		2
 	}
 }
-local var_0_17 = {
+local tbl_9 = {
 	use_shadow = true,
 	upper_case = true,
 	localize = false,
@@ -558,7 +558,7 @@ local var_0_17 = {
 		2
 	}
 }
-local var_0_18 = {
+local tbl_10 = {
 	use_shadow = true,
 	upper_case = false,
 	localize = false,
@@ -579,7 +579,7 @@ local var_0_18 = {
 		2
 	}
 }
-local var_0_19 = {
+local tbl_11 = {
 	use_shadow = true,
 	upper_case = true,
 	localize = false,
@@ -601,10 +601,11 @@ local var_0_19 = {
 	}
 }
 
-local function var_0_20(arg_1_0, arg_1_1, arg_1_2)
+local function fn(arg_1_0, arg_1_1, arg_1_2)
+	-- function 1
 	arg_1_2 = arg_1_2 or 20
 
-	local var_1_0 = {
+	local tbl = {
 		passes = {
 			{
 				pass_type = "hotspot",
@@ -627,14 +628,14 @@ local function var_0_20(arg_1_0, arg_1_1, arg_1_2)
 			}
 		}
 	}
-	local var_1_1 = {
+	local tbl_2 = {
 		mask_texture = "mask_rect",
 		mask_edge = "mask_rect_edge_fade",
 		hotspot = {
 			allow_multi_hover = true
 		}
 	}
-	local var_1_2 = {
+	local tbl_3 = {
 		mask = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
@@ -700,9 +701,9 @@ local function var_0_20(arg_1_0, arg_1_1, arg_1_2)
 	}
 
 	return {
-		element = var_1_0,
-		content = var_1_1,
-		style = var_1_2,
+		element = tbl,
+		content = tbl_2,
+		style = tbl_3,
 		offset = {
 			0,
 			0,
@@ -712,22 +713,23 @@ local function var_0_20(arg_1_0, arg_1_1, arg_1_2)
 	}
 end
 
-local function var_0_21(arg_2_0, arg_2_1)
-	local var_2_0 = {
+local function fn_2(arg_2_0, arg_2_1)
+	-- function 2
+	local tbl = {
 		17,
 		27
 	}
-	local var_2_1 = {
+	local tbl_2 = {
 		30,
 		40
 	}
-	local var_2_2 = {
+	local tbl_3 = {
 		0,
 		0,
 		0
 	}
-	local var_2_3 = {
-		arg_2_1[1] - var_2_1[1],
+	local tbl_4 = {
+		arg_2_1[1] - tbl_2[1],
 		0,
 		0
 	}
@@ -875,13 +877,13 @@ local function var_0_21(arg_2_0, arg_2_1)
 				font_type = "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				offset = {
-					var_2_1[1] + 10,
+					tbl_2[1] + 10,
 					0,
 					4
 				},
 				size = {
-					arg_2_1[1] - (var_2_1[1] * 2 + 20),
-					var_2_1[2]
+					arg_2_1[1] - (tbl_2[1] * 2 + 20),
+					tbl_2[2]
 				}
 			},
 			setting_text_shadow = {
@@ -895,13 +897,13 @@ local function var_0_21(arg_2_0, arg_2_1)
 				font_type = "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
-					var_2_1[1] + 10 + 2,
+					tbl_2[1] + 10 + 2,
 					-2,
 					3
 				},
 				size = {
-					arg_2_1[1] - (var_2_1[1] * 2 + 20),
-					var_2_1[2]
+					arg_2_1[1] - (tbl_2[1] * 2 + 20),
+					tbl_2[2]
 				}
 			},
 			button_hotspot_left = {
@@ -911,14 +913,14 @@ local function var_0_21(arg_2_0, arg_2_1)
 					30,
 					30
 				},
-				size = var_2_1,
-				offset = var_2_2
+				size = tbl_2,
+				offset = tbl_3
 			},
 			left_arrow_icon = {
-				size = var_2_0,
+				size = tbl,
 				offset = {
-					var_2_2[1] + (var_2_1[1] / 2 - var_2_0[1] / 2),
-					var_2_2[2] + (var_2_1[2] / 2 - var_2_0[2] / 2),
+					tbl_3[1] + (tbl_2[1] / 2 - tbl[1] / 2),
+					tbl_3[2] + (tbl_2[2] / 2 - tbl[2] / 2),
 					2
 				},
 				color = {
@@ -929,8 +931,8 @@ local function var_0_21(arg_2_0, arg_2_1)
 				}
 			},
 			button_hotspot_right = {
-				size = var_2_1,
-				offset = var_2_3
+				size = tbl_2,
+				offset = tbl_4
 			},
 			right_arrow_icon = {
 				angle = math.degrees_to_radians(180),
@@ -938,10 +940,10 @@ local function var_0_21(arg_2_0, arg_2_1)
 					14,
 					17
 				},
-				size = var_2_0,
+				size = tbl,
 				offset = {
-					var_2_3[1] + (var_2_1[1] / 2 - var_2_0[1] / 2),
-					var_2_3[2] + (var_2_1[2] / 2 - var_2_0[2] / 2),
+					tbl_4[1] + (tbl_2[1] / 2 - tbl[1] / 2),
+					tbl_4[2] + (tbl_2[2] / 2 - tbl[2] / 2),
 					2
 				},
 				color = {
@@ -956,7 +958,8 @@ local function var_0_21(arg_2_0, arg_2_1)
 	}
 end
 
-local function var_0_22(arg_3_0, arg_3_1)
+local function fn_3(arg_3_0, arg_3_1)
+	-- function 3
 	return {
 		element = {
 			passes = {
@@ -1048,9 +1051,10 @@ local function var_0_22(arg_3_0, arg_3_1)
 	}
 end
 
-local function var_0_23(arg_4_0, arg_4_1)
-	local var_4_0 = UIFrameSettings.menu_frame_09
-	local var_4_1 = {
+local function fn_4(arg_4_0, arg_4_1)
+	-- function 4
+	local menu_frame_09 = UIFrameSettings.menu_frame_09
+	local tbl = {
 		passes = {
 			{
 				style_id = "button",
@@ -1070,35 +1074,38 @@ local function var_0_23(arg_4_0, arg_4_1)
 				pass_type = "texture",
 				style_id = "icon",
 				texture_id = "icon",
-				content_check_function = function(arg_5_0)
-					return not arg_5_0.button_hotspot.is_hover
+				content_check_function = function (self)
+					-- function 5
+					return not self.button_hotspot.is_hover
 				end
 			},
 			{
 				pass_type = "texture",
 				style_id = "icon_hover",
 				texture_id = "icon",
-				content_check_function = function(arg_6_0)
-					return arg_6_0.button_hotspot.is_hover
+				content_check_function = function (self)
+					-- function 6
+					return self.button_hotspot.is_hover
 				end
 			},
 			{
 				pass_type = "texture",
 				style_id = "hover",
 				texture_id = "hover",
-				content_check_function = function(arg_7_0)
-					return arg_7_0.button_hotspot.is_hover
+				content_check_function = function (self)
+					-- function 7
+					return self.button_hotspot.is_hover
 				end
 			}
 		}
 	}
-	local var_4_2 = {
+	local tbl_2 = {
 		icon = "leaderboard_icon_refresh",
 		hover = "button_state_default_2",
 		button_hotspot = {},
-		frame = var_4_0.texture
+		frame = menu_frame_09.texture
 	}
-	local var_4_3 = {
+	local tbl_3 = {
 		button = {
 			color = Colors.get_color_table_with_alpha("black", 200),
 			offset = {
@@ -1136,8 +1143,8 @@ local function var_0_23(arg_4_0, arg_4_1)
 			}
 		},
 		frame = {
-			texture_size = var_4_0.texture_size,
-			texture_sizes = var_4_0.texture_sizes,
+			texture_size = menu_frame_09.texture_size,
+			texture_sizes = menu_frame_09.texture_sizes,
 			color = {
 				255,
 				255,
@@ -1166,9 +1173,9 @@ local function var_0_23(arg_4_0, arg_4_1)
 	}
 
 	return {
-		element = var_4_1,
-		content = var_4_2,
-		style = var_4_3,
+		element = tbl,
+		content = tbl_2,
+		style = tbl_3,
 		offset = {
 			0,
 			0,
@@ -1178,9 +1185,9 @@ local function var_0_23(arg_4_0, arg_4_1)
 	}
 end
 
-local var_0_24 = true
-local var_0_25 = {
-	window = UIWidgets.create_frame("window", var_0_15.window.size, "menu_frame_11"),
+local flag = true
+local tbl_12 = {
+	window = UIWidgets.create_frame("window", tbl_7.window.size, "menu_frame_11"),
 	window_background = UIWidgets.create_tiled_texture("window_background", "quests_background", {
 		50,
 		156
@@ -1194,58 +1201,76 @@ local var_0_25 = {
 		200,
 		200
 	}),
-	exit_button = UIWidgets.create_default_button("exit_button", var_0_15.exit_button.size, nil, nil, Localize("menu_close"), 24, nil, "button_detail_04", 34, var_0_24),
+	exit_button = UIWidgets.create_default_button("exit_button", tbl_7.exit_button.size, nil, nil, Localize("menu_close"), 24, nil, "button_detail_04", 34, flag),
 	title = UIWidgets.create_simple_texture("frame_title_bg", "title"),
-	title_bg = UIWidgets.create_background("title_bg", var_0_15.title_bg.size, "menu_frame_bg_02"),
-	title_text = UIWidgets.create_simple_text(Localize("menu_weave_leaderboard_title"), "title_text", nil, nil, var_0_16),
-	option_tabs_divider = var_0_22("option_tabs_divider", var_0_15.option_tabs_divider.size),
-	list_title_rank = UIWidgets.create_simple_text(Localize("menu_weave_leaderboard_title_rank"), "list_title_rank", nil, nil, var_0_17),
-	list_title_name = UIWidgets.create_simple_text(not IS_XB1 and Localize("menu_weave_leaderboard_title_player_name") or Localize("menu_weave_leaderboard_title_gamertag"), "list_title_name", nil, nil, var_0_17),
-	list_title_weave = UIWidgets.create_simple_text(Localize("menu_weave_leaderboard_title_weave_number"), "list_title_weave", nil, nil, var_0_17),
-	list_title_score = UIWidgets.create_simple_text(Localize("menu_weave_leaderboard_title_weave_score"), "list_title_score", nil, nil, var_0_17),
-	no_placement_text = UIWidgets.create_simple_text(Localize("menu_weave_leaderboard_no_placement_text"), "no_placement_text", nil, nil, var_0_19),
-	refresh_button = var_0_23("refresh_button", var_0_15.refresh_button.size),
-	refresh_text = UIWidgets.create_simple_text(Localize("menu_description_refresh"), "refresh_text", nil, nil, var_0_18),
-	list_window_fade = UIWidgets.create_simple_texture("options_window_fade_01", "list_window", nil, nil, nil, -1),
-	list_scrollbar = UIWidgets.create_chain_scrollbar("list_scrollbar", "list_mask", var_0_15.list_scrollbar.size),
-	list_mask = var_0_20("list_mask", var_0_15.list_mask.size, var_0_10),
-	list_mask_window = UIWidgets.create_rect_with_outer_frame("list_mask", var_0_15.list_mask.size, "shadow_frame_02", nil, {
-		100,
-		0,
-		0,
-		0
-	}, {
-		255,
-		0,
-		0,
-		0
-	}),
-	setting_stepper_1 = var_0_21("setting_stepper_1", var_0_15.setting_stepper_1.size),
-	setting_stepper_2 = var_0_21("setting_stepper_2", var_0_15.setting_stepper_2.size),
-	loading_icon = UIWidgets.create_leaderboard_loading_icon("loading_icon", {
-		"list_mask"
-	})
+	title_bg = UIWidgets.create_background("title_bg", tbl_7.title_bg.size, "menu_frame_bg_02"),
+	title_text = UIWidgets.create_simple_text(Localize("menu_weave_leaderboard_title"), "title_text", nil, nil, tbl_8),
+	option_tabs_divider = fn_3("option_tabs_divider", tbl_7.option_tabs_divider.size),
+	list_title_rank = UIWidgets.create_simple_text(Localize("menu_weave_leaderboard_title_rank"), "list_title_rank", nil, nil, tbl_9)
 }
+local create_simple_text = UIWidgets.create_simple_text
+local var_0_27
 
-if not IS_WINDOWS then
-	var_0_25.setting_stepper_3 = var_0_21("setting_stepper_3", var_0_15.setting_stepper_3.size)
+if not IS_XB1 then
+	var_0_27 = Localize("menu_weave_leaderboard_title_player_name")
+
+	if not var_0_27 then
+		-- Nothing
+	end
 end
 
-local var_0_26 = {
+var_0_27 = Localize("menu_weave_leaderboard_title_gamertag")
+
+::label_0_0::
+
+tbl_12.list_title_name = create_simple_text(var_0_27, "list_title_name", nil, nil, tbl_9)
+tbl_12.list_title_weave = UIWidgets.create_simple_text(Localize("menu_weave_leaderboard_title_weave_number"), "list_title_weave", nil, nil, tbl_9)
+tbl_12.list_title_score = UIWidgets.create_simple_text(Localize("menu_weave_leaderboard_title_weave_score"), "list_title_score", nil, nil, tbl_9)
+tbl_12.no_placement_text = UIWidgets.create_simple_text(Localize("menu_weave_leaderboard_no_placement_text"), "no_placement_text", nil, nil, tbl_11)
+tbl_12.refresh_button = fn_4("refresh_button", tbl_7.refresh_button.size)
+tbl_12.refresh_text = UIWidgets.create_simple_text(Localize("menu_description_refresh"), "refresh_text", nil, nil, tbl_10)
+tbl_12.list_window_fade = UIWidgets.create_simple_texture("options_window_fade_01", "list_window", nil, nil, nil, -1)
+tbl_12.list_scrollbar = UIWidgets.create_chain_scrollbar("list_scrollbar", "list_mask", tbl_7.list_scrollbar.size)
+tbl_12.list_mask = fn("list_mask", tbl_7.list_mask.size, num_2)
+tbl_12.list_mask_window = UIWidgets.create_rect_with_outer_frame("list_mask", tbl_7.list_mask.size, "shadow_frame_02", nil, {
+	100,
+	0,
+	0,
+	0
+}, {
+	255,
+	0,
+	0,
+	0
+})
+tbl_12.setting_stepper_1 = fn_2("setting_stepper_1", tbl_7.setting_stepper_1.size)
+tbl_12.setting_stepper_2 = fn_2("setting_stepper_2", tbl_7.setting_stepper_2.size)
+tbl_12.loading_icon = UIWidgets.create_leaderboard_loading_icon("loading_icon", {
+	"list_mask"
+})
+
+if not IS_WINDOWS then
+	tbl_12.setting_stepper_3 = fn_2("setting_stepper_3", tbl_7.setting_stepper_3.size)
+end
+
+local tbl_13 = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			init = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+				-- function 8
 				arg_8_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
-				local var_9_0 = math.easeOutCubic(arg_9_3)
+			update = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+				-- function 9
+				local easeOutCubic = math.easeOutCubic(arg_9_3)
 
 				arg_9_4.render_settings.alpha_multiplier = 1
 			end,
-			on_complete = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			on_complete = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+				-- function 10
 				return
 			end
 		}
@@ -1255,21 +1280,24 @@ local var_0_26 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+			init = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+				-- function 11
 				arg_11_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
-				local var_12_0 = math.easeOutCubic(arg_12_3)
+			update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+				-- function 12
+				local easeOutCubic = math.easeOutCubic(arg_12_3)
 
 				arg_12_4.render_settings.alpha_multiplier = 1
 			end,
-			on_complete = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			on_complete = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+				-- function 13
 				return
 			end
 		}
 	}
 }
-local var_0_27 = {
+local tbl_14 = {
 	default = {
 		{
 			input_action = "special_1",
@@ -1299,9 +1327,9 @@ local var_0_27 = {
 }
 
 return {
-	widgets = var_0_25,
-	scenegraph_definition = var_0_15,
-	animation_definitions = var_0_26,
+	widgets = tbl_12,
+	scenegraph_definition = tbl_7,
+	animation_definitions = tbl_13,
 	console_cursor_definition = UIWidgets.create_console_cursor("console_cursor"),
-	generic_input_actions = var_0_27
+	generic_input_actions = tbl_14
 }

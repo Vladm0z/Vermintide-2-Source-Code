@@ -2,99 +2,124 @@
 
 ImguiShrinesDebug = class(ImguiShrinesDebug)
 
-local var_0_0 = true
+local flag = true
 
-function ImguiShrinesDebug.init(arg_1_0)
+ImguiShrinesDebug.init = function (arg_1_0)
+	-- function 1
 	return
 end
 
-function ImguiShrinesDebug.update(arg_2_0)
-	if var_0_0 then
-		arg_2_0:init()
+ImguiShrinesDebug.update = function (self)
+	-- function 2
+	if not flag then
+		self:init()
 
-		var_0_0 = false
+		flag = false
 	end
 end
 
-function ImguiShrinesDebug.is_persistent(arg_3_0)
+ImguiShrinesDebug.is_persistent = function (arg_3_0)
+	-- function 3
 	return true
 end
 
-function ImguiShrinesDebug.draw(arg_4_0, arg_4_1)
-	if not Managers.state or not Managers.state.game_mode or Managers.state.game_mode:game_mode_key() ~= "deus" then
-		local var_4_0 = Imgui.begin_window("Shrines Debug", "always_auto_resize")
+ImguiShrinesDebug.draw = function (self, arg_4_1)
+	-- function 4
+	if not (not Managers.state and not Managers.state.game_mode and Managers.state.game_mode:game_mode_key() == "deus") then
+		local begin_window = Imgui.begin_window("Shrines Debug", "always_auto_resize")
 
 		Imgui.text("This UI only works when playing a deus level.")
 		Imgui.end_window()
 
-		return var_4_0
+		return begin_window
 	end
 
-	local var_4_1 = Imgui.begin_window("Shrines Debug", "always_auto_resize")
+	local begin_window_2 = Imgui.begin_window("Shrines Debug", "always_auto_resize")
 
-	arg_4_0:_update_controls()
+	self:_update_controls()
 	Imgui.end_window()
 
-	return var_4_1
+	return begin_window_2
 end
 
-function ImguiShrinesDebug._shrine_types(arg_5_0)
-	local var_5_0 = table.values(DEUS_CHEST_TYPES)
+ImguiShrinesDebug._shrine_types = function (arg_5_0)
+	-- function 5
+	local values = table.values(DEUS_CHEST_TYPES)
 
-	table.insert(var_5_0, "deus_cursed_chest")
+	table.insert(values, "deus_cursed_chest")
 
-	return var_5_0
+	return values
 end
 
-function ImguiShrinesDebug._cursed_chest_challenges(arg_6_0)
-	local var_6_0 = {
+ImguiShrinesDebug._cursed_chest_challenges = function (arg_6_0)
+	-- function 6
+	local tbl = {
 		"default"
 	}
 
-	table.append(var_6_0, table.keys_if(GenericTerrorEvents, nil, function(arg_7_0)
+	table.append(tbl, table.keys_if(GenericTerrorEvents, nil, function (arg_7_0)
+		-- function 7
 		return string.sub(arg_7_0, 1, string.len("cursed_chest_challenge")) == "cursed_chest_challenge"
 	end))
 
-	return var_6_0
+	return tbl
 end
 
-function ImguiShrinesDebug._update_controls(arg_8_0)
-	local var_8_0 = arg_8_0:_shrine_types()
-	local var_8_1 = table.index_of(var_8_0, arg_8_0._selected_shrine_type or next(DEUS_CHEST_TYPES))
+ImguiShrinesDebug._update_controls = function (self)
+	-- function 8
+	local _shrine_types = self:_shrine_types()
+	local index_of = table.index_of
+	local var_8_2 = _shrine_types
+	local _selected_shrine_type = self._selected_shrine_type
 
-	arg_8_0._selected_shrine_type = var_8_0[Imgui.combo("Shrine Type", var_8_1, var_8_0)]
+	_selected_shrine_type = _selected_shrine_type or next(DEUS_CHEST_TYPES)
 
-	if arg_8_0._selected_shrine_type == "deus_cursed_chest" then
-		local var_8_2 = arg_8_0:_cursed_chest_challenges()
-		local var_8_3 = table.index_of(var_8_2, arg_8_0._selected_cursed_challenge or "default")
+	local var_8_4 = index_of(var_8_2, _selected_shrine_type)
 
-		arg_8_0._selected_cursed_challenge = var_8_2[Imgui.combo("Challenge", var_8_3, var_8_2, 20)]
+	self._selected_shrine_type = _shrine_types[Imgui.combo("Shrine Type", var_8_4, _shrine_types)]
+
+	if self._selected_shrine_type == "deus_cursed_chest" then
+		local _cursed_chest_challenges = self:_cursed_chest_challenges()
+		local index_of_2 = table.index_of
+		local var_8_7 = _cursed_chest_challenges
+		local _selected_cursed_challenge = self._selected_cursed_challenge
+
+		_selected_cursed_challenge = _selected_cursed_challenge or "default"
+
+		local var_8_9 = index_of_2(var_8_7, _selected_cursed_challenge)
+
+		self._selected_cursed_challenge = _cursed_chest_challenges[Imgui.combo("Challenge", var_8_9, _cursed_chest_challenges, 20)]
 	end
 
-	if not Managers.state.network.is_server and arg_8_0._selected_shrine_type == "deus_cursed_chest" and arg_8_0._selected_cursed_challenge ~= "default" then
+	if not (Managers.state.network.is_server or self._selected_shrine_type ~= "deus_cursed_chest" or self._selected_cursed_challenge == "default") then
 		Imgui.text("Clients can not spawn chests with a specific challenge. Please select 'default'.")
 
 		return
 	end
 
-	if Imgui.button("Spawn", 100, 20) then
-		local var_8_4 = Managers.player and Managers.player:local_player()
+	if not Imgui.button("Spawn", 100, 20) then
+		local player = Managers.player
 
-		if not var_8_4 or not var_8_4.player_unit then
+		player = not player and Managers.player:local_player()
+
+		if not (not player and player.player_unit) then
 			return
 		end
 
-		local var_8_5 = POSITION_LOOKUP[var_8_4.player_unit]
-		local var_8_6 = Managers.state.entity:system("pickup_system")
+		local var_8_11 = POSITION_LOOKUP[player.player_unit]
+		local system = Managers.state.entity:system("pickup_system")
 
-		if arg_8_0._selected_shrine_type == "deus_cursed_chest" then
-			var_8_6:debug_spawn_pickup("deus_cursed_chest", var_8_5, function(arg_9_0)
-				local var_9_0 = arg_8_0._selected_cursed_challenge == "default" and "cursed_chest_prototype" or arg_8_0._selected_cursed_challenge
+		if self._selected_shrine_type == "deus_cursed_chest" then
+			system:debug_spawn_pickup("deus_cursed_chest", var_8_11, function (arg_9_0)
+				-- function 9
+				local flag
 
-				Unit.set_data(arg_9_0, "debug_override_terror_event", var_9_0)
+				flag = self._selected_cursed_challenge ~= "default" or not "cursed_chest_prototype" or self._selected_cursed_challenge
+
+				Unit.set_data(arg_9_0, "debug_override_terror_event", flag)
 			end)
 		else
-			var_8_6:debug_spawn_pickup("DEBUG_deus_weapon_chest_" .. arg_8_0._selected_shrine_type, var_8_5)
+			system:debug_spawn_pickup("DEBUG_deus_weapon_chest_" .. self._selected_shrine_type, var_8_11)
 		end
 	end
 end

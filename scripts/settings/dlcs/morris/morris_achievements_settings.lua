@@ -1,11 +1,11 @@
 -- chunkname: @scripts/settings/dlcs/morris/morris_achievements_settings.lua
 
-local var_0_0 = DLCSettings.morris
+local morris = DLCSettings.morris
 
-var_0_0.achievement_template_file_names = {
+morris.achievement_template_file_names = {
 	"scripts/managers/achievements/achievement_templates_morris"
 }
-var_0_0.achievement_outline = {
+morris.achievement_outline = {
 	levels = {
 		categories = {
 			{

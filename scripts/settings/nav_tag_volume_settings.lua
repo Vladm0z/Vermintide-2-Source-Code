@@ -50,15 +50,15 @@ LevelVolumesOnly = {
 	NO_BOTS_NO_SPAWN = true
 }
 
-local var_0_0 = {}
+local tbl = {}
 
-for iter_0_0, iter_0_1 in pairs(VolumeSystemSettings.nav_tag_layer_costs) do
-	for iter_0_2, iter_0_3 in pairs(iter_0_1) do
-		local var_0_1 = iter_0_0 .. "_" .. iter_0_2
+for k, v in pairs(VolumeSystemSettings.nav_tag_layer_costs) do
+	for k_2, v_2 in pairs(v) do
+		local str = k .. "_" .. k_2
 
-		if not var_0_0[var_0_1] then
-			NavTagVolumeLayers[#NavTagVolumeLayers + 1] = var_0_1
-			var_0_0[var_0_1] = true
+		if not tbl[str] then
+			NavTagVolumeLayers[#NavTagVolumeLayers + 1] = str
+			tbl[str] = true
 		end
 	end
 end

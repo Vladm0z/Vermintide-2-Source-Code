@@ -1,11 +1,11 @@
 -- chunkname: @scripts/settings/terror_events/terror_events_dlc_termite_1.lua
 
-local var_0_0 = require("scripts/settings/terror_events/terror_event_utils")
-local var_0_1 = var_0_0.count_event_breed
-local var_0_2 = var_0_0.HARD
-local var_0_3 = var_0_0.HARDER
-local var_0_4 = var_0_0.HARDEST
-local var_0_5 = {
+local scripts_settings_terror_events_terror_event_utils = require("scripts/settings/terror_events/terror_event_utils")
+local count_event_breed = scripts_settings_terror_events_terror_event_utils.count_event_breed
+local HARD = scripts_settings_terror_events_terror_event_utils.HARD
+local HARDER = scripts_settings_terror_events_terror_event_utils.HARDER
+local HARDEST = scripts_settings_terror_events_terror_event_utils.HARDEST
+local tbl = {
 	termite_01_pacing_off = {
 		{
 			"control_pacing",
@@ -61,7 +61,7 @@ local var_0_5 = {
 				"skaven_gutter_runner",
 				"skaven_ratling_gunner"
 			},
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARD
 		},
 		{
 			"delay",
@@ -75,7 +75,7 @@ local var_0_5 = {
 				"skaven_gutter_runner",
 				"skaven_ratling_gunner"
 			},
-			difficulty_requirement = var_0_4
+			difficulty_requirement = HARDEST
 		},
 		{
 			"delay",
@@ -84,8 +84,9 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 120,
-			condition = function(arg_1_0)
-				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 5
+			condition = function (arg_1_0)
+				-- function 1
+				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -123,8 +124,9 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 120,
-			condition = function(arg_2_0)
-				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 5 and var_0_1("skaven_plague_monk") < 1
+			condition = function (arg_2_0)
+				-- function 2
+				return not (count_event_breed("skaven_clan_rat") < 5) or not (count_event_breed("skaven_slave") < 5) or count_event_breed("skaven_plague_monk") < 1
 			end
 		},
 		{
@@ -153,8 +155,9 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 120,
-			condition = function(arg_3_0)
-				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 3
+			condition = function (arg_3_0)
+				-- function 3
+				return not (count_event_breed("skaven_clan_rat") < 3) or count_event_breed("skaven_slave") < 3
 			end
 		},
 		{
@@ -180,7 +183,7 @@ local var_0_5 = {
 			"event_horde",
 			spawner_id = "end_event_left",
 			composition_type = "event_extra_spice_small",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARD
 		},
 		{
 			"delay",
@@ -189,8 +192,9 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 120,
-			condition = function(arg_4_0)
-				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 5
+			condition = function (arg_4_0)
+				-- function 4
+				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -221,7 +225,7 @@ local var_0_5 = {
 			"event_horde",
 			spawner_id = "end_event_left_extras",
 			composition_type = "storm_vermin_medium",
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_special",
@@ -231,7 +235,7 @@ local var_0_5 = {
 				"skaven_gutter_runner",
 				"skaven_ratling_gunner"
 			},
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARD
 		},
 		{
 			"delay",
@@ -241,7 +245,7 @@ local var_0_5 = {
 			"event_horde",
 			spawner_id = "end_event_left_extras",
 			composition_type = "plague_monks_small",
-			difficulty_requirement = var_0_4
+			difficulty_requirement = HARDEST
 		}
 	},
 	termite_01_end_event_right = {
@@ -258,7 +262,7 @@ local var_0_5 = {
 			"event_horde",
 			spawner_id = "end_event_right",
 			composition_type = "event_extra_spice_small",
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARD
 		},
 		{
 			"delay",
@@ -267,8 +271,9 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 120,
-			condition = function(arg_5_0)
-				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 5
+			condition = function (arg_5_0)
+				-- function 5
+				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -303,7 +308,7 @@ local var_0_5 = {
 				"skaven_gutter_runner",
 				"skaven_ratling_gunner"
 			},
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
@@ -313,7 +318,7 @@ local var_0_5 = {
 			"event_horde",
 			spawner_id = "end_event_right_extras",
 			composition_type = "storm_vermin_small",
-			difficulty_requirement = var_0_4
+			difficulty_requirement = HARDEST
 		},
 		{
 			"delay",
@@ -327,7 +332,7 @@ local var_0_5 = {
 				"skaven_gutter_runner",
 				"skaven_ratling_gunner"
 			},
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARD
 		}
 	},
 	termite_01_end_event_center = {
@@ -342,7 +347,7 @@ local var_0_5 = {
 			"event_horde",
 			spawner_id = "end_event_right_extras",
 			composition_type = "plague_monks_medium",
-			difficulty_requirement = var_0_4
+			difficulty_requirement = HARDEST
 		},
 		{
 			"spawn_special",
@@ -351,7 +356,7 @@ local var_0_5 = {
 				"skaven_pack_master",
 				"skaven_gutter_runner"
 			},
-			difficulty_requirement = var_0_2
+			difficulty_requirement = HARD
 		},
 		{
 			"spawn_special",
@@ -360,7 +365,7 @@ local var_0_5 = {
 				"skaven_pack_master",
 				"skaven_gutter_runner"
 			},
-			difficulty_requirement = var_0_3
+			difficulty_requirement = HARDER
 		}
 	},
 	termite_01_end_event_manual_01 = {
@@ -401,5 +406,5 @@ local var_0_5 = {
 }
 
 return {
-	var_0_5
+	tbl
 }

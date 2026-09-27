@@ -1,12 +1,12 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/definitions/hero_window_cosmetics_loadout_inventory_console_definitions.lua
 
-local var_0_0 = UISettings.console_menu_scenegraphs
-local var_0_1 = {
-	screen = var_0_0.screen,
-	area = var_0_0.area,
-	area_left = var_0_0.area_left,
-	area_right = var_0_0.area_right,
-	area_divider = var_0_0.area_divider,
+local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
+local tbl = {
+	screen = console_menu_scenegraphs.screen,
+	area = console_menu_scenegraphs.area,
+	area_left = console_menu_scenegraphs.area_left,
+	area_right = console_menu_scenegraphs.area_right,
+	area_divider = console_menu_scenegraphs.area_divider,
 	item_tooltip = {
 		vertical_alignment = "top",
 		parent = "area_right",
@@ -148,7 +148,7 @@ local var_0_1 = {
 		}
 	}
 }
-local var_0_2 = {
+local tbl_2 = {
 	word_wrap = true,
 	font_size = 26,
 	localize = false,
@@ -163,7 +163,7 @@ local var_0_2 = {
 		2
 	}
 }
-local var_0_3 = {
+local tbl_3 = {
 	word_wrap = true,
 	font_size = 26,
 	localize = false,
@@ -178,7 +178,7 @@ local var_0_3 = {
 		2
 	}
 }
-local var_0_4 = {
+local tbl_4 = {
 	word_wrap = true,
 	font_size = 26,
 	localize = false,
@@ -193,7 +193,7 @@ local var_0_4 = {
 		2
 	}
 }
-local var_0_5 = {
+local tbl_5 = {
 	{
 		wield = true,
 		name = "hats",
@@ -237,8 +237,8 @@ local var_0_5 = {
 		icon = UISettings.slot_icons.portrait_frame
 	}
 }
-local var_0_6 = {
-	item_grid = UIWidgets.create_grid("item_grid", var_0_1.item_grid.size, 6, 5, 16, 10, false),
+local tbl_6 = {
+	item_grid = UIWidgets.create_grid("item_grid", tbl.item_grid.size, 6, 5, 16, 10, false),
 	page_button_next = UIWidgets.create_arrow_button("page_button_next", math.pi),
 	page_button_previous = UIWidgets.create_arrow_button("page_button_previous"),
 	input_icon_next = UIWidgets.create_simple_texture("xbone_button_icon_a", "input_icon_next"),
@@ -254,14 +254,14 @@ local var_0_6 = {
 		}
 	}, "input_arrow_next"),
 	input_arrow_previous = UIWidgets.create_simple_texture("settings_arrow_normal", "input_arrow_previous"),
-	page_text_center = UIWidgets.create_simple_text("/", "page_text_area", nil, nil, var_0_4),
-	page_text_left = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, var_0_2),
-	page_text_right = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, var_0_3),
+	page_text_center = UIWidgets.create_simple_text("/", "page_text_area", nil, nil, tbl_4),
+	page_text_left = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, tbl_2),
+	page_text_right = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, tbl_3),
 	page_text_area = UIWidgets.create_simple_texture("tab_menu_bg_03", "page_text_area"),
 	item_tooltip = UIWidgets.create_simple_item_presentation("item_tooltip", UISettings.console_tooltip_pass_definitions),
 	item_tooltip_compare = UIWidgets.create_simple_item_presentation("item_tooltip_compare", UISettings.console_tooltip_pass_definitions)
 }
-local var_0_7 = {
+local tbl_7 = {
 	default = {
 		{
 			input_action = "d_pad",
@@ -336,22 +336,25 @@ local var_0_7 = {
 		}
 	}
 }
-local var_0_8 = {
+local tbl_8 = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+				-- function 1
 				arg_1_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
-				local var_2_0 = math.easeOutCubic(arg_2_3)
+			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+				-- function 2
+				local easeOutCubic = math.easeOutCubic(arg_2_3)
 
-				arg_2_4.render_settings.alpha_multiplier = var_2_0
-				arg_2_0.area_left.local_position[1] = arg_2_1.area_left.position[1] + math.floor(-100 * (1 - var_2_0))
+				arg_2_4.render_settings.alpha_multiplier = easeOutCubic
+				arg_2_0.area_left.local_position[1] = arg_2_1.area_left.position[1] + math.floor(-100 * (1 - easeOutCubic))
 			end,
-			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+				-- function 3
 				return
 			end
 		}
@@ -361,15 +364,18 @@ local var_0_8 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				-- function 4
 				arg_4_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
-				local var_5_0 = math.easeOutCubic(arg_5_3)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+				-- function 5
+				local easeOutCubic = math.easeOutCubic(arg_5_3)
 
-				arg_5_4.render_settings.alpha_multiplier = 1 - var_5_0
+				arg_5_4.render_settings.alpha_multiplier = 1 - easeOutCubic
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+				-- function 6
 				return
 			end
 		}
@@ -377,9 +383,9 @@ local var_0_8 = {
 }
 
 return {
-	widgets = var_0_6,
-	category_settings = var_0_5,
-	scenegraph_definition = var_0_1,
-	animation_definitions = var_0_8,
-	generic_input_actions = var_0_7
+	widgets = tbl_6,
+	category_settings = tbl_5,
+	scenegraph_definition = tbl,
+	animation_definitions = tbl_8,
+	generic_input_actions = tbl_7
 }

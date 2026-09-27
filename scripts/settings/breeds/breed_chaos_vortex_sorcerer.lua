@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/breeds/breed_chaos_vortex_sorcerer.lua
 
-local var_0_0 = {
+local tbl = {
 	walk_speed = 0.65,
 	proximity_system_check = true,
 	threat_value = 10,
@@ -73,142 +73,147 @@ local var_0_0 = {
 		200,
 		200,
 		0
-	},
-	disabled = Development.setting("disable_vortex_sorcerer") or false,
-	hitzone_multiplier_types = {
-		head = "headshot"
-	},
-	hit_zones = {
-		head = {
-			prio = 1,
-			actors = {
-				"c_head"
-			},
-			push_actors = {
-				"j_head",
-				"j_spine1"
-			}
+	}
+}
+local setting = Development.setting("disable_vortex_sorcerer")
+
+setting = setting or false
+tbl.disabled = setting
+tbl.hitzone_multiplier_types = {
+	head = "headshot"
+}
+tbl.hit_zones = {
+	head = {
+		prio = 1,
+		actors = {
+			"c_head"
 		},
-		neck = {
-			prio = 1,
-			actors = {
-				"c_neck"
-			},
-			push_actors = {
-				"j_head",
-				"j_spine1"
-			}
-		},
-		torso = {
-			prio = 2,
-			actors = {
-				"c_hips",
-				"c_spine",
-				"c_spine1",
-				"c_leftshoulder",
-				"c_rightshoulder"
-			},
-			push_actors = {
-				"j_spine1"
-			}
-		},
-		left_arm = {
-			prio = 3,
-			actors = {
-				"c_leftarm",
-				"c_leftforearm",
-				"c_lefthand"
-			},
-			push_actors = {
-				"j_spine1"
-			}
-		},
-		right_arm = {
-			prio = 3,
-			actors = {
-				"c_rightarm",
-				"c_rightforearm",
-				"c_righthand"
-			},
-			push_actors = {
-				"j_spine1"
-			}
-		},
-		left_leg = {
-			prio = 3,
-			actors = {
-				"c_leftupleg",
-				"c_leftleg",
-				"c_leftfoot",
-				"c_lefttoebase"
-			},
-			push_actors = {
-				"j_leftfoot",
-				"j_rightfoot",
-				"j_hips"
-			}
-		},
-		right_leg = {
-			prio = 3,
-			actors = {
-				"c_rightupleg",
-				"c_rightleg",
-				"c_rightfoot",
-				"c_righttoebase"
-			},
-			push_actors = {
-				"j_leftfoot",
-				"j_rightfoot",
-				"j_hips"
-			}
-		},
-		full = {
-			prio = 4,
-			actors = {}
-		},
-		afro = {
-			prio = 5,
-			actors = {
-				"h_afro"
-			}
+		push_actors = {
+			"j_head",
+			"j_spine1"
 		}
 	},
-	allowed_layers = {
-		planks = 1.5,
-		ledges = 5,
-		bot_ratling_gun_fire = 10,
-		jumps = 5,
-		destructible_wall = 5,
-		temporary_wall = 0,
-		ledges_with_fence = 5,
-		doors = 1.5,
-		teleporters = 5,
-		bot_poison_wind = 2,
-		fire_grenade = 10
+	neck = {
+		prio = 1,
+		actors = {
+			"c_neck"
+		},
+		push_actors = {
+			"j_head",
+			"j_spine1"
+		}
 	},
-	status_effect_settings = {
-		category = "medium",
-		ignored_statuses = table.set({
-			StatusEffectNames.burning_warpfire,
-			StatusEffectNames.poisoned
-		})
+	torso = {
+		prio = 2,
+		actors = {
+			"c_hips",
+			"c_spine",
+			"c_spine1",
+			"c_leftshoulder",
+			"c_rightshoulder"
+		},
+		push_actors = {
+			"j_spine1"
+		}
 	},
-	custom_death_enter_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
-		local var_1_0 = BLACKBOARDS[arg_1_0]
-
-		if not Unit.alive(arg_1_1) then
-			return
-		end
-
-		QuestSettings.check_vortex_sorcerer_killed_while_summoning(var_1_0, arg_1_1)
-		QuestSettings.check_vortex_sorcerer_killed_while_ally_in_vortex(var_1_0, arg_1_1)
-		QuestSettings.check_vortex_sorcerer_killed_by_melee(arg_1_1, arg_1_5)
-	end
+	left_arm = {
+		prio = 3,
+		actors = {
+			"c_leftarm",
+			"c_leftforearm",
+			"c_lefthand"
+		},
+		push_actors = {
+			"j_spine1"
+		}
+	},
+	right_arm = {
+		prio = 3,
+		actors = {
+			"c_rightarm",
+			"c_rightforearm",
+			"c_righthand"
+		},
+		push_actors = {
+			"j_spine1"
+		}
+	},
+	left_leg = {
+		prio = 3,
+		actors = {
+			"c_leftupleg",
+			"c_leftleg",
+			"c_leftfoot",
+			"c_lefttoebase"
+		},
+		push_actors = {
+			"j_leftfoot",
+			"j_rightfoot",
+			"j_hips"
+		}
+	},
+	right_leg = {
+		prio = 3,
+		actors = {
+			"c_rightupleg",
+			"c_rightleg",
+			"c_rightfoot",
+			"c_righttoebase"
+		},
+		push_actors = {
+			"j_leftfoot",
+			"j_rightfoot",
+			"j_hips"
+		}
+	},
+	full = {
+		prio = 4,
+		actors = {}
+	},
+	afro = {
+		prio = 5,
+		actors = {
+			"h_afro"
+		}
+	}
+}
+tbl.allowed_layers = {
+	planks = 1.5,
+	ledges = 5,
+	bot_ratling_gun_fire = 10,
+	jumps = 5,
+	destructible_wall = 5,
+	temporary_wall = 0,
+	ledges_with_fence = 5,
+	doors = 1.5,
+	teleporters = 5,
+	bot_poison_wind = 2,
+	fire_grenade = 10
+}
+tbl.status_effect_settings = {
+	category = "medium",
+	ignored_statuses = table.set({
+		StatusEffectNames.burning_warpfire,
+		StatusEffectNames.poisoned
+	})
 }
 
-Breeds.chaos_vortex_sorcerer = table.create_copy(Breeds.chaos_vortex_sorcerer, var_0_0)
+tbl.custom_death_enter_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	-- function 1
+	local var_1_0 = BLACKBOARDS[arg_1_0]
 
-local var_0_1 = {
+	if not Unit.alive(arg_1_1) then
+		return
+	end
+
+	QuestSettings.check_vortex_sorcerer_killed_while_summoning(var_1_0, arg_1_1)
+	QuestSettings.check_vortex_sorcerer_killed_while_ally_in_vortex(var_1_0, arg_1_1)
+	QuestSettings.check_vortex_sorcerer_killed_by_melee(arg_1_1, arg_1_5)
+end
+
+Breeds.chaos_vortex_sorcerer = table.create_copy(Breeds.chaos_vortex_sorcerer, tbl)
+
+local tbl_2 = {
 	skulk_approach = {
 		teleport_closer_summon_limit = 2,
 		vortex_template_name = "standard",
@@ -273,7 +278,8 @@ local var_0_1 = {
 		}
 	},
 	stagger = {
-		custom_enter_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+		custom_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			-- function 2
 			arg_2_1.stagger_ignore_anim_cb = true
 
 			return arg_2_3.stagger_anims[arg_2_1.stagger_type], "idle"
@@ -401,4 +407,4 @@ local var_0_1 = {
 	}
 }
 
-BreedActions.chaos_vortex_sorcerer = table.create_copy(BreedActions.chaos_vortex_sorcerer, var_0_1)
+BreedActions.chaos_vortex_sorcerer = table.create_copy(BreedActions.chaos_vortex_sorcerer, tbl_2)

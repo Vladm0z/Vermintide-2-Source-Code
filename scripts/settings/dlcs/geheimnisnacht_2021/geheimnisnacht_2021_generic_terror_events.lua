@@ -1,26 +1,30 @@
 -- chunkname: @scripts/settings/dlcs/geheimnisnacht_2021/geheimnisnacht_2021_generic_terror_events.lua
 
-local function var_0_0(arg_1_0, arg_1_1, arg_1_2)
+local function fn(arg_1_0, arg_1_1, arg_1_2)
+	-- function 1
 	Managers.state.entity:system("buff_system"):add_buff(arg_1_0, "geheimnisnacht_2021_event_cultist_buff", arg_1_0)
 end
 
-local function var_0_1(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
-	local var_2_0 = {
+local function fn_2(self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	-- function 2
+	local tbl = {
 		"shockwave",
 		"ignore_death_aura"
 	}
-	local var_2_1 = "elite_base"
-	local var_2_2 = var_2_0[math.random(1, #var_2_0)]
-	local var_2_3 = arg_2_0.enhancements or {}
+	local str = "elite_base"
+	local var_2_2 = tbl[math.random(1, #tbl)]
+	local enhancements = self.enhancements
 
-	var_2_3[#var_2_3 + 1] = BreedEnhancements[var_2_1]
-	var_2_3[#var_2_3 + 1] = BreedEnhancements[var_2_2]
-	arg_2_0.enhancements = var_2_3
+	enhancements = enhancements or {}
+	enhancements[#enhancements + 1] = BreedEnhancements[str]
+	enhancements[#enhancements + 1] = BreedEnhancements[var_2_2]
+	self.enhancements = enhancements
 
-	return arg_2_0
+	return self
 end
 
-local function var_0_2(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+local function fn_3(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	-- function 3
 	return
 end
 
@@ -36,11 +40,11 @@ GenericTerrorEvents.geheimnisnacht_2021_event = {
 			1
 		},
 		breed_name = "chaos_warrior",
-		pre_spawn_func = var_0_1,
+		pre_spawn_func = fn_2,
 		optional_data = {
 			spawn_chance = 1,
 			spawned_func = AiUtils.magic_entrance_optional_spawned_func,
-			prepare_func = var_0_2
+			prepare_func = fn_3
 		}
 	},
 	{
@@ -118,7 +122,7 @@ GenericTerrorEvents.geheimnisnacht_2021_event_skaven_slaves = {
 		spawn_counter_category = "geheimnisnacht_2021",
 		composition_type = "event_large",
 		optional_data = {
-			spawned_func = var_0_0
+			spawned_func = fn
 		}
 	},
 	{
@@ -126,7 +130,7 @@ GenericTerrorEvents.geheimnisnacht_2021_event_skaven_slaves = {
 		spawn_counter_category = "geheimnisnacht_2021",
 		composition_type = "storm_vermin_small",
 		optional_data = {
-			spawned_func = var_0_0
+			spawned_func = fn
 		}
 	},
 	{
@@ -136,15 +140,17 @@ GenericTerrorEvents.geheimnisnacht_2021_event_skaven_slaves = {
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function(arg_4_0)
-			return arg_4_0.geheimnisnacht_2021 > 0
+		condition = function (self)
+			-- function 4
+			return self.geheimnisnacht_2021 > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function(arg_5_0)
-			return arg_5_0.geheimnisnacht_2021 <= 0
+		condition = function (self)
+			-- function 5
+			return self.geheimnisnacht_2021 <= 0
 		end
 	},
 	{
@@ -170,7 +176,7 @@ GenericTerrorEvents.geheimnisnacht_2021_event_skaven_shields = {
 		spawn_counter_category = "geheimnisnacht_2021",
 		composition_type = "event_medium_shield",
 		optional_data = {
-			spawned_func = var_0_0
+			spawned_func = fn
 		}
 	},
 	{
@@ -178,7 +184,7 @@ GenericTerrorEvents.geheimnisnacht_2021_event_skaven_shields = {
 		spawn_counter_category = "geheimnisnacht_2021",
 		composition_type = "event_extra_spice_small",
 		optional_data = {
-			spawned_func = var_0_0
+			spawned_func = fn
 		}
 	},
 	{
@@ -188,15 +194,17 @@ GenericTerrorEvents.geheimnisnacht_2021_event_skaven_shields = {
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function(arg_6_0)
-			return arg_6_0.geheimnisnacht_2021 > 0
+		condition = function (self)
+			-- function 6
+			return self.geheimnisnacht_2021 > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function(arg_7_0)
-			return arg_7_0.geheimnisnacht_2021 <= 0
+		condition = function (self)
+			-- function 7
+			return self.geheimnisnacht_2021 <= 0
 		end
 	},
 	{
@@ -222,7 +230,7 @@ GenericTerrorEvents.geheimnisnacht_2021_event_skaven_big_shields = {
 		spawn_counter_category = "geheimnisnacht_2021",
 		composition_type = "event_medium",
 		optional_data = {
-			spawned_func = var_0_0
+			spawned_func = fn
 		}
 	},
 	{
@@ -230,7 +238,7 @@ GenericTerrorEvents.geheimnisnacht_2021_event_skaven_big_shields = {
 		spawn_counter_category = "geheimnisnacht_2021",
 		composition_type = "storm_vermin_shields_small",
 		optional_data = {
-			spawned_func = var_0_0
+			spawned_func = fn
 		}
 	},
 	{
@@ -240,15 +248,17 @@ GenericTerrorEvents.geheimnisnacht_2021_event_skaven_big_shields = {
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function(arg_8_0)
-			return arg_8_0.geheimnisnacht_2021 > 0
+		condition = function (self)
+			-- function 8
+			return self.geheimnisnacht_2021 > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function(arg_9_0)
-			return arg_9_0.geheimnisnacht_2021 <= 0
+		condition = function (self)
+			-- function 9
+			return self.geheimnisnacht_2021 <= 0
 		end
 	},
 	{
@@ -298,7 +308,7 @@ GenericTerrorEvents.geheimnisnacht_2021_event_chaos_fanatics = {
 		spawn_counter_category = "geheimnisnacht_2021",
 		composition_type = "event_large_chaos",
 		optional_data = {
-			spawned_func = var_0_0
+			spawned_func = fn
 		}
 	},
 	{
@@ -308,15 +318,17 @@ GenericTerrorEvents.geheimnisnacht_2021_event_chaos_fanatics = {
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function(arg_10_0)
-			return arg_10_0.geheimnisnacht_2021 > 0
+		condition = function (self)
+			-- function 10
+			return self.geheimnisnacht_2021 > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function(arg_11_0)
-			return arg_11_0.geheimnisnacht_2021 <= 0
+		condition = function (self)
+			-- function 11
+			return self.geheimnisnacht_2021 <= 0
 		end
 	},
 	{
@@ -342,7 +354,7 @@ GenericTerrorEvents.geheimnisnacht_2021_event_chaos_spice = {
 		spawn_counter_category = "geheimnisnacht_2021",
 		composition_type = "event_medium_chaos",
 		optional_data = {
-			spawned_func = var_0_0
+			spawned_func = fn
 		}
 	},
 	{
@@ -350,7 +362,7 @@ GenericTerrorEvents.geheimnisnacht_2021_event_chaos_spice = {
 		spawn_counter_category = "geheimnisnacht_2021",
 		composition_type = "event_chaos_extra_spice_small",
 		optional_data = {
-			spawned_func = var_0_0
+			spawned_func = fn
 		}
 	},
 	{
@@ -360,15 +372,17 @@ GenericTerrorEvents.geheimnisnacht_2021_event_chaos_spice = {
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function(arg_12_0)
-			return arg_12_0.geheimnisnacht_2021 > 0
+		condition = function (self)
+			-- function 12
+			return self.geheimnisnacht_2021 > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function(arg_13_0)
-			return arg_13_0.geheimnisnacht_2021 <= 0
+		condition = function (self)
+			-- function 13
+			return self.geheimnisnacht_2021 <= 0
 		end
 	},
 	{
@@ -394,7 +408,7 @@ GenericTerrorEvents.geheimnisnacht_2021_event_chaos_berzerkers = {
 		spawn_counter_category = "geheimnisnacht_2021",
 		composition_type = "event_medium_chaos",
 		optional_data = {
-			spawned_func = var_0_0
+			spawned_func = fn
 		}
 	},
 	{
@@ -402,7 +416,7 @@ GenericTerrorEvents.geheimnisnacht_2021_event_chaos_berzerkers = {
 		spawn_counter_category = "geheimnisnacht_2021",
 		composition_type = "chaos_berzerkers_small",
 		optional_data = {
-			spawned_func = var_0_0
+			spawned_func = fn
 		}
 	},
 	{
@@ -412,15 +426,17 @@ GenericTerrorEvents.geheimnisnacht_2021_event_chaos_berzerkers = {
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function(arg_14_0)
-			return arg_14_0.geheimnisnacht_2021 > 0
+		condition = function (self)
+			-- function 14
+			return self.geheimnisnacht_2021 > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function(arg_15_0)
-			return arg_15_0.geheimnisnacht_2021 <= 0
+		condition = function (self)
+			-- function 15
+			return self.geheimnisnacht_2021 <= 0
 		end
 	},
 	{
@@ -462,7 +478,7 @@ GenericTerrorEvents.geheimnisnacht_2021_event_beastmen_ungor = {
 		spawn_counter_category = "geheimnisnacht_2021",
 		composition_type = "event_large_beastmen",
 		optional_data = {
-			spawned_func = var_0_0
+			spawned_func = fn
 		}
 	},
 	{
@@ -472,15 +488,17 @@ GenericTerrorEvents.geheimnisnacht_2021_event_beastmen_ungor = {
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function(arg_16_0)
-			return arg_16_0.geheimnisnacht_2021 > 0
+		condition = function (self)
+			-- function 16
+			return self.geheimnisnacht_2021 > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function(arg_17_0)
-			return arg_17_0.geheimnisnacht_2021 <= 0
+		condition = function (self)
+			-- function 17
+			return self.geheimnisnacht_2021 <= 0
 		end
 	},
 	{

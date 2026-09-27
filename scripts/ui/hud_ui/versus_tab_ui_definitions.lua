@@ -1,782 +1,786 @@
 -- chunkname: @scripts/ui/hud_ui/versus_tab_ui_definitions.lua
 
-local var_0_0 = 1920
-local var_0_1 = 1080
-local var_0_2 = {
+local num = 1920
+local num_2 = 1080
+local tbl = {
 	620,
 	160
 }
-local var_0_3 = {
-	screen = {
-		position = {
-			0,
-			0,
-			UILayer.hud
-		},
-		size = {
-			var_0_0,
-			var_0_1
-		},
-		scale = not IS_WINDOWS and "hud_fit" or "fit"
+local tbl_2 = {}
+local tbl_3 = {
+	position = {
+		0,
+		0,
+		UILayer.hud
 	},
-	level_name = {
-		vertical_alignment = "top",
-		parent = "screen",
-		horizontal_alignment = "center",
-		size = {
-			400,
-			60
-		},
-		position = {
-			0,
-			-200,
-			10
-		}
-	},
-	title_divider = {
-		vertical_alignment = "center",
-		parent = "level_name",
-		horizontal_alignment = "center",
-		size = {
-			264,
-			21
-		},
-		position = {
-			0,
-			-40,
-			0
-		}
-	},
-	sub_title = {
-		vertical_alignment = "center",
-		parent = "title_divider",
-		horizontal_alignment = "center",
-		size = {
-			1600,
-			60
-		},
-		position = {
-			0,
-			-40,
-			0
-		}
-	},
-	privacy_text = {
-		vertical_alignment = "top",
-		parent = "screen",
-		horizontal_alignment = "right",
-		size = {
-			1900,
-			30
-		},
-		position = {
-			-10,
-			-10,
-			10
-		}
-	},
-	player_list_input_description = {
-		vertical_alignment = "bottom",
-		parent = "screen",
-		horizontal_alignment = "center",
-		size = {
-			1900,
-			60
-		},
-		position = {
-			0,
-			60,
-			10
-		}
-	},
-	vs_text = {
-		vertical_alignment = "center",
-		parent = "screen",
-		horizontal_alignment = "center",
-		size = {
-			500,
-			50
-		},
-		position = {
-			0,
-			0,
-			10
-		}
-	},
-	talent_tooltip = {
-		vertical_alignment = "center",
-		parent = "screen",
-		horizontal_alignment = "center",
-		size = {
-			400,
-			0
-		},
-		position = {
-			0,
-			0,
-			20
-		}
-	},
-	item_tooltip = {
-		vertical_alignment = "center",
-		parent = "screen",
-		horizontal_alignment = "center",
-		size = {
-			400,
-			0
-		},
-		position = {
-			0,
-			0,
-			20
-		}
-	},
-	objective = {
-		vertical_alignment = "top",
-		parent = "screen",
-		horizontal_alignment = "center",
-		size = {
-			544,
-			55
-		},
-		position = {
-			0,
-			-4,
-			2
-		}
-	},
-	score = {
-		vertical_alignment = "top",
-		parent = "screen",
-		horizontal_alignment = "center",
-		size = {
-			302.4,
-			117.6
-		},
-		position = {
-			0,
-			-60,
-			10
-		}
-	},
-	console_cursor = {
-		vertical_alignment = "center",
-		parent = "screen",
-		horizontal_alignment = "center",
-		size = {
-			1920,
-			1080
-		},
-		position = {
-			0,
-			0,
-			-10
-		}
-	},
-	team_1 = {
-		vertical_alignment = "center",
-		parent = "screen",
-		horizontal_alignment = "left",
-		size = {
-			0,
-			0
-		},
-		position = {
-			20,
-			210,
-			10
-		}
-	},
-	team_1_icon = {
-		vertical_alignment = "top",
-		parent = "screen",
-		horizontal_alignment = "center",
-		size = {
-			232,
-			196
-		},
-		position = {
-			-320,
-			0,
-			20
-		}
-	},
-	team_1_name = {
-		vertical_alignment = "top",
-		parent = "team_1",
-		horizontal_alignment = "left",
-		size = {
-			500,
-			50
-		},
-		position = {
-			28,
-			105,
-			3
-		}
-	},
-	team_1_text = {
-		vertical_alignment = "top",
-		parent = "team_1",
-		horizontal_alignment = "left",
-		size = {
-			500,
-			40
-		},
-		position = {
-			28,
-			160,
-			3
-		}
-	},
-	team_1_side_text = {
-		vertical_alignment = "top",
-		parent = "team_1",
-		horizontal_alignment = "left",
-		size = {
-			500,
-			40
-		},
-		position = {
-			28,
-			40,
-			3
-		}
-	},
-	team_1_score = {
-		vertical_alignment = "top",
-		parent = "screen",
-		horizontal_alignment = "center",
-		size = {
-			200,
-			120
-		},
-		position = {
-			-320,
-			-60,
-			3
-		}
-	},
-	team_1_player_panel_1 = {
-		vertical_alignment = "top",
-		parent = "team_1",
-		horizontal_alignment = "left",
-		size = var_0_2,
-		position = {
-			0,
-			0,
-			10
-		}
-	},
-	team_1_player_panel_2 = {
-		vertical_alignment = "top",
-		parent = "team_1",
-		horizontal_alignment = "left",
-		size = var_0_2,
-		position = {
-			0,
-			-170,
-			10
-		}
-	},
-	team_1_player_panel_3 = {
-		vertical_alignment = "top",
-		parent = "team_1",
-		horizontal_alignment = "left",
-		size = var_0_2,
-		position = {
-			0,
-			-340,
-			10
-		}
-	},
-	team_1_player_panel_4 = {
-		vertical_alignment = "top",
-		parent = "team_1",
-		horizontal_alignment = "left",
-		size = var_0_2,
-		position = {
-			0,
-			-510,
-			10
-		}
-	},
-	team_1_player_frame_1 = {
-		vertical_alignment = "bottom",
-		parent = "team_1_player_panel_1",
-		horizontal_alignment = "left",
-		size = {
-			0,
-			0
-		},
-		position = {
-			128,
-			69,
-			3
-		}
-	},
-	team_1_player_frame_2 = {
-		vertical_alignment = "bottom",
-		parent = "team_1_player_panel_2",
-		horizontal_alignment = "left",
-		size = {
-			0,
-			0
-		},
-		position = {
-			128,
-			69,
-			3
-		}
-	},
-	team_1_player_frame_3 = {
-		vertical_alignment = "bottom",
-		parent = "team_1_player_panel_3",
-		horizontal_alignment = "left",
-		size = {
-			0,
-			0
-		},
-		position = {
-			128,
-			69,
-			3
-		}
-	},
-	team_1_player_frame_4 = {
-		vertical_alignment = "bottom",
-		parent = "team_1_player_panel_4",
-		horizontal_alignment = "left",
-		size = {
-			0,
-			0
-		},
-		position = {
-			128,
-			69,
-			3
-		}
-	},
-	team_1_player_insignia_1 = {
-		vertical_alignment = "bottom",
-		parent = "team_1_player_panel_1",
-		horizontal_alignment = "left",
-		position = {
-			-275,
-			0,
-			3
-		}
-	},
-	team_1_player_insignia_2 = {
-		vertical_alignment = "bottom",
-		parent = "team_1_player_panel_2",
-		horizontal_alignment = "left",
-		position = {
-			-275,
-			0,
-			3
-		}
-	},
-	team_1_player_insignia_3 = {
-		vertical_alignment = "bottom",
-		parent = "team_1_player_panel_3",
-		horizontal_alignment = "left",
-		position = {
-			-275,
-			0,
-			3
-		}
-	},
-	team_1_player_insignia_4 = {
-		vertical_alignment = "bottom",
-		parent = "team_1_player_panel_4",
-		horizontal_alignment = "left",
-		position = {
-			-275,
-			0,
-			3
-		}
-	},
-	team_1_player_ready_1 = {
-		vertical_alignment = "center",
-		parent = "team_1_player_panel_1",
-		horizontal_alignment = "left",
-		size = {
-			50,
-			55
-		},
-		position = {
-			-80,
-			0,
-			1
-		}
-	},
-	team_1_player_ready_2 = {
-		vertical_alignment = "center",
-		parent = "team_1_player_panel_2",
-		horizontal_alignment = "left",
-		size = {
-			50,
-			55
-		},
-		position = {
-			-80,
-			0,
-			1
-		}
-	},
-	team_1_player_ready_3 = {
-		vertical_alignment = "center",
-		parent = "team_1_player_panel_3",
-		horizontal_alignment = "left",
-		size = {
-			50,
-			55
-		},
-		position = {
-			-80,
-			0,
-			1
-		}
-	},
-	team_1_player_ready_4 = {
-		vertical_alignment = "center",
-		parent = "team_1_player_panel_4",
-		horizontal_alignment = "left",
-		size = {
-			50,
-			55
-		},
-		position = {
-			-80,
-			0,
-			1
-		}
-	},
-	team_2 = {
-		vertical_alignment = "center",
-		parent = "screen",
-		horizontal_alignment = "right",
-		size = {
-			0,
-			0
-		},
-		position = {
-			-20,
-			210,
-			10
-		}
-	},
-	team_2_icon = {
-		vertical_alignment = "top",
-		parent = "screen",
-		horizontal_alignment = "center",
-		size = {
-			232,
-			196
-		},
-		position = {
-			320,
-			0,
-			20
-		}
-	},
-	team_2_name = {
-		vertical_alignment = "top",
-		parent = "team_2",
-		horizontal_alignment = "right",
-		size = {
-			500,
-			50
-		},
-		position = {
-			-28,
-			105,
-			3
-		}
-	},
-	team_2_text = {
-		vertical_alignment = "top",
-		parent = "team_2",
-		horizontal_alignment = "right",
-		size = {
-			500,
-			40
-		},
-		position = {
-			-28,
-			160,
-			3
-		}
-	},
-	team_2_side_text = {
-		vertical_alignment = "top",
-		parent = "team_2",
-		horizontal_alignment = "right",
-		size = {
-			500,
-			40
-		},
-		position = {
-			-28,
-			40,
-			3
-		}
-	},
-	team_2_score = {
-		vertical_alignment = "top",
-		parent = "screen",
-		horizontal_alignment = "center",
-		size = {
-			200,
-			120
-		},
-		position = {
-			320,
-			-60,
-			3
-		}
-	},
-	team_2_player_panel_1 = {
-		vertical_alignment = "top",
-		parent = "team_2",
-		horizontal_alignment = "right",
-		size = var_0_2,
-		position = {
-			0,
-			0,
-			10
-		}
-	},
-	team_2_player_panel_2 = {
-		vertical_alignment = "top",
-		parent = "team_2",
-		horizontal_alignment = "right",
-		size = var_0_2,
-		position = {
-			0,
-			-170,
-			10
-		}
-	},
-	team_2_player_panel_3 = {
-		vertical_alignment = "top",
-		parent = "team_2",
-		horizontal_alignment = "right",
-		size = var_0_2,
-		position = {
-			0,
-			-340,
-			10
-		}
-	},
-	team_2_player_panel_4 = {
-		vertical_alignment = "top",
-		parent = "team_2",
-		horizontal_alignment = "right",
-		size = var_0_2,
-		position = {
-			0,
-			-510,
-			10
-		}
-	},
-	team_2_player_frame_1 = {
-		vertical_alignment = "bottom",
-		parent = "team_2_player_panel_1",
-		horizontal_alignment = "left",
-		size = {
-			0,
-			0
-		},
-		position = {
-			128,
-			69,
-			3
-		}
-	},
-	team_2_player_frame_2 = {
-		vertical_alignment = "bottom",
-		parent = "team_2_player_panel_2",
-		horizontal_alignment = "left",
-		size = {
-			0,
-			0
-		},
-		position = {
-			128,
-			69,
-			3
-		}
-	},
-	team_2_player_frame_3 = {
-		vertical_alignment = "bottom",
-		parent = "team_2_player_panel_3",
-		horizontal_alignment = "left",
-		size = {
-			0,
-			0
-		},
-		position = {
-			128,
-			69,
-			3
-		}
-	},
-	team_2_player_frame_4 = {
-		vertical_alignment = "bottom",
-		parent = "team_2_player_panel_4",
-		horizontal_alignment = "left",
-		size = {
-			0,
-			0
-		},
-		position = {
-			128,
-			69,
-			3
-		}
-	},
-	team_2_player_insignia_1 = {
-		vertical_alignment = "bottom",
-		parent = "team_2_player_panel_1",
-		horizontal_alignment = "left",
-		position = {
-			-275,
-			0,
-			3
-		}
-	},
-	team_2_player_insignia_2 = {
-		vertical_alignment = "bottom",
-		parent = "team_2_player_panel_2",
-		horizontal_alignment = "left",
-		position = {
-			-275,
-			0,
-			3
-		}
-	},
-	team_2_player_insignia_3 = {
-		vertical_alignment = "bottom",
-		parent = "team_2_player_panel_3",
-		horizontal_alignment = "left",
-		position = {
-			-275,
-			0,
-			3
-		}
-	},
-	team_2_player_insignia_4 = {
-		vertical_alignment = "bottom",
-		parent = "team_2_player_panel_4",
-		horizontal_alignment = "left",
-		position = {
-			-275,
-			0,
-			3
-		}
-	},
-	team_2_player_ready_1 = {
-		vertical_alignment = "center",
-		parent = "team_2_player_panel_1",
-		horizontal_alignment = "right",
-		size = {
-			50,
-			55
-		},
-		position = {
-			80,
-			0,
-			1
-		}
-	},
-	team_2_player_ready_2 = {
-		vertical_alignment = "center",
-		parent = "team_2_player_panel_2",
-		horizontal_alignment = "right",
-		size = {
-			50,
-			55
-		},
-		position = {
-			80,
-			0,
-			1
-		}
-	},
-	team_2_player_ready_3 = {
-		vertical_alignment = "center",
-		parent = "team_2_player_panel_3",
-		horizontal_alignment = "right",
-		size = {
-			50,
-			55
-		},
-		position = {
-			80,
-			0,
-			1
-		}
-	},
-	team_2_player_ready_4 = {
-		vertical_alignment = "center",
-		parent = "team_2_player_panel_4",
-		horizontal_alignment = "right",
-		size = {
-			50,
-			55
-		},
-		position = {
-			80,
-			0,
-			1
-		}
-	},
-	settings_container = {
-		vertical_alignment = "center",
-		parent = "screen",
-		horizontal_alignment = "center",
-		size = {
-			480,
-			560
-		},
-		position = {
-			0,
-			-140,
-			10
-		}
-	},
-	settings_anchor = {
-		vertical_alignment = "top",
-		parent = "settings_container",
-		horizontal_alignment = "left",
-		size = {
-			0,
-			0
-		},
-		position = {
-			0,
-			-10,
-			100
-		}
-	},
-	custom_ruleset_text = {
-		vertical_alignment = "top",
-		parent = "settings_container",
-		horizontal_alignment = "center",
-		size = {
-			480,
-			30
-		},
-		position = {
-			0,
-			40,
-			1
-		}
+	size = {
+		num,
+		num_2
 	}
 }
-local var_0_4 = {
+local flag
+
+flag = IS_WINDOWS or not "hud_fit" or "fit"
+tbl_3.scale = flag
+tbl_2.screen = tbl_3
+tbl_2.level_name = {
+	vertical_alignment = "top",
+	parent = "screen",
+	horizontal_alignment = "center",
+	size = {
+		400,
+		60
+	},
+	position = {
+		0,
+		-200,
+		10
+	}
+}
+tbl_2.title_divider = {
+	vertical_alignment = "center",
+	parent = "level_name",
+	horizontal_alignment = "center",
+	size = {
+		264,
+		21
+	},
+	position = {
+		0,
+		-40,
+		0
+	}
+}
+tbl_2.sub_title = {
+	vertical_alignment = "center",
+	parent = "title_divider",
+	horizontal_alignment = "center",
+	size = {
+		1600,
+		60
+	},
+	position = {
+		0,
+		-40,
+		0
+	}
+}
+tbl_2.privacy_text = {
+	vertical_alignment = "top",
+	parent = "screen",
+	horizontal_alignment = "right",
+	size = {
+		1900,
+		30
+	},
+	position = {
+		-10,
+		-10,
+		10
+	}
+}
+tbl_2.player_list_input_description = {
+	vertical_alignment = "bottom",
+	parent = "screen",
+	horizontal_alignment = "center",
+	size = {
+		1900,
+		60
+	},
+	position = {
+		0,
+		60,
+		10
+	}
+}
+tbl_2.vs_text = {
+	vertical_alignment = "center",
+	parent = "screen",
+	horizontal_alignment = "center",
+	size = {
+		500,
+		50
+	},
+	position = {
+		0,
+		0,
+		10
+	}
+}
+tbl_2.talent_tooltip = {
+	vertical_alignment = "center",
+	parent = "screen",
+	horizontal_alignment = "center",
+	size = {
+		400,
+		0
+	},
+	position = {
+		0,
+		0,
+		20
+	}
+}
+tbl_2.item_tooltip = {
+	vertical_alignment = "center",
+	parent = "screen",
+	horizontal_alignment = "center",
+	size = {
+		400,
+		0
+	},
+	position = {
+		0,
+		0,
+		20
+	}
+}
+tbl_2.objective = {
+	vertical_alignment = "top",
+	parent = "screen",
+	horizontal_alignment = "center",
+	size = {
+		544,
+		55
+	},
+	position = {
+		0,
+		-4,
+		2
+	}
+}
+tbl_2.score = {
+	vertical_alignment = "top",
+	parent = "screen",
+	horizontal_alignment = "center",
+	size = {
+		302.4,
+		117.6
+	},
+	position = {
+		0,
+		-60,
+		10
+	}
+}
+tbl_2.console_cursor = {
+	vertical_alignment = "center",
+	parent = "screen",
+	horizontal_alignment = "center",
+	size = {
+		1920,
+		1080
+	},
+	position = {
+		0,
+		0,
+		-10
+	}
+}
+tbl_2.team_1 = {
+	vertical_alignment = "center",
+	parent = "screen",
+	horizontal_alignment = "left",
+	size = {
+		0,
+		0
+	},
+	position = {
+		20,
+		210,
+		10
+	}
+}
+tbl_2.team_1_icon = {
+	vertical_alignment = "top",
+	parent = "screen",
+	horizontal_alignment = "center",
+	size = {
+		232,
+		196
+	},
+	position = {
+		-320,
+		0,
+		20
+	}
+}
+tbl_2.team_1_name = {
+	vertical_alignment = "top",
+	parent = "team_1",
+	horizontal_alignment = "left",
+	size = {
+		500,
+		50
+	},
+	position = {
+		28,
+		105,
+		3
+	}
+}
+tbl_2.team_1_text = {
+	vertical_alignment = "top",
+	parent = "team_1",
+	horizontal_alignment = "left",
+	size = {
+		500,
+		40
+	},
+	position = {
+		28,
+		160,
+		3
+	}
+}
+tbl_2.team_1_side_text = {
+	vertical_alignment = "top",
+	parent = "team_1",
+	horizontal_alignment = "left",
+	size = {
+		500,
+		40
+	},
+	position = {
+		28,
+		40,
+		3
+	}
+}
+tbl_2.team_1_score = {
+	vertical_alignment = "top",
+	parent = "screen",
+	horizontal_alignment = "center",
+	size = {
+		200,
+		120
+	},
+	position = {
+		-320,
+		-60,
+		3
+	}
+}
+tbl_2.team_1_player_panel_1 = {
+	vertical_alignment = "top",
+	parent = "team_1",
+	horizontal_alignment = "left",
+	size = tbl,
+	position = {
+		0,
+		0,
+		10
+	}
+}
+tbl_2.team_1_player_panel_2 = {
+	vertical_alignment = "top",
+	parent = "team_1",
+	horizontal_alignment = "left",
+	size = tbl,
+	position = {
+		0,
+		-170,
+		10
+	}
+}
+tbl_2.team_1_player_panel_3 = {
+	vertical_alignment = "top",
+	parent = "team_1",
+	horizontal_alignment = "left",
+	size = tbl,
+	position = {
+		0,
+		-340,
+		10
+	}
+}
+tbl_2.team_1_player_panel_4 = {
+	vertical_alignment = "top",
+	parent = "team_1",
+	horizontal_alignment = "left",
+	size = tbl,
+	position = {
+		0,
+		-510,
+		10
+	}
+}
+tbl_2.team_1_player_frame_1 = {
+	vertical_alignment = "bottom",
+	parent = "team_1_player_panel_1",
+	horizontal_alignment = "left",
+	size = {
+		0,
+		0
+	},
+	position = {
+		128,
+		69,
+		3
+	}
+}
+tbl_2.team_1_player_frame_2 = {
+	vertical_alignment = "bottom",
+	parent = "team_1_player_panel_2",
+	horizontal_alignment = "left",
+	size = {
+		0,
+		0
+	},
+	position = {
+		128,
+		69,
+		3
+	}
+}
+tbl_2.team_1_player_frame_3 = {
+	vertical_alignment = "bottom",
+	parent = "team_1_player_panel_3",
+	horizontal_alignment = "left",
+	size = {
+		0,
+		0
+	},
+	position = {
+		128,
+		69,
+		3
+	}
+}
+tbl_2.team_1_player_frame_4 = {
+	vertical_alignment = "bottom",
+	parent = "team_1_player_panel_4",
+	horizontal_alignment = "left",
+	size = {
+		0,
+		0
+	},
+	position = {
+		128,
+		69,
+		3
+	}
+}
+tbl_2.team_1_player_insignia_1 = {
+	vertical_alignment = "bottom",
+	parent = "team_1_player_panel_1",
+	horizontal_alignment = "left",
+	position = {
+		-275,
+		0,
+		3
+	}
+}
+tbl_2.team_1_player_insignia_2 = {
+	vertical_alignment = "bottom",
+	parent = "team_1_player_panel_2",
+	horizontal_alignment = "left",
+	position = {
+		-275,
+		0,
+		3
+	}
+}
+tbl_2.team_1_player_insignia_3 = {
+	vertical_alignment = "bottom",
+	parent = "team_1_player_panel_3",
+	horizontal_alignment = "left",
+	position = {
+		-275,
+		0,
+		3
+	}
+}
+tbl_2.team_1_player_insignia_4 = {
+	vertical_alignment = "bottom",
+	parent = "team_1_player_panel_4",
+	horizontal_alignment = "left",
+	position = {
+		-275,
+		0,
+		3
+	}
+}
+tbl_2.team_1_player_ready_1 = {
+	vertical_alignment = "center",
+	parent = "team_1_player_panel_1",
+	horizontal_alignment = "left",
+	size = {
+		50,
+		55
+	},
+	position = {
+		-80,
+		0,
+		1
+	}
+}
+tbl_2.team_1_player_ready_2 = {
+	vertical_alignment = "center",
+	parent = "team_1_player_panel_2",
+	horizontal_alignment = "left",
+	size = {
+		50,
+		55
+	},
+	position = {
+		-80,
+		0,
+		1
+	}
+}
+tbl_2.team_1_player_ready_3 = {
+	vertical_alignment = "center",
+	parent = "team_1_player_panel_3",
+	horizontal_alignment = "left",
+	size = {
+		50,
+		55
+	},
+	position = {
+		-80,
+		0,
+		1
+	}
+}
+tbl_2.team_1_player_ready_4 = {
+	vertical_alignment = "center",
+	parent = "team_1_player_panel_4",
+	horizontal_alignment = "left",
+	size = {
+		50,
+		55
+	},
+	position = {
+		-80,
+		0,
+		1
+	}
+}
+tbl_2.team_2 = {
+	vertical_alignment = "center",
+	parent = "screen",
+	horizontal_alignment = "right",
+	size = {
+		0,
+		0
+	},
+	position = {
+		-20,
+		210,
+		10
+	}
+}
+tbl_2.team_2_icon = {
+	vertical_alignment = "top",
+	parent = "screen",
+	horizontal_alignment = "center",
+	size = {
+		232,
+		196
+	},
+	position = {
+		320,
+		0,
+		20
+	}
+}
+tbl_2.team_2_name = {
+	vertical_alignment = "top",
+	parent = "team_2",
+	horizontal_alignment = "right",
+	size = {
+		500,
+		50
+	},
+	position = {
+		-28,
+		105,
+		3
+	}
+}
+tbl_2.team_2_text = {
+	vertical_alignment = "top",
+	parent = "team_2",
+	horizontal_alignment = "right",
+	size = {
+		500,
+		40
+	},
+	position = {
+		-28,
+		160,
+		3
+	}
+}
+tbl_2.team_2_side_text = {
+	vertical_alignment = "top",
+	parent = "team_2",
+	horizontal_alignment = "right",
+	size = {
+		500,
+		40
+	},
+	position = {
+		-28,
+		40,
+		3
+	}
+}
+tbl_2.team_2_score = {
+	vertical_alignment = "top",
+	parent = "screen",
+	horizontal_alignment = "center",
+	size = {
+		200,
+		120
+	},
+	position = {
+		320,
+		-60,
+		3
+	}
+}
+tbl_2.team_2_player_panel_1 = {
+	vertical_alignment = "top",
+	parent = "team_2",
+	horizontal_alignment = "right",
+	size = tbl,
+	position = {
+		0,
+		0,
+		10
+	}
+}
+tbl_2.team_2_player_panel_2 = {
+	vertical_alignment = "top",
+	parent = "team_2",
+	horizontal_alignment = "right",
+	size = tbl,
+	position = {
+		0,
+		-170,
+		10
+	}
+}
+tbl_2.team_2_player_panel_3 = {
+	vertical_alignment = "top",
+	parent = "team_2",
+	horizontal_alignment = "right",
+	size = tbl,
+	position = {
+		0,
+		-340,
+		10
+	}
+}
+tbl_2.team_2_player_panel_4 = {
+	vertical_alignment = "top",
+	parent = "team_2",
+	horizontal_alignment = "right",
+	size = tbl,
+	position = {
+		0,
+		-510,
+		10
+	}
+}
+tbl_2.team_2_player_frame_1 = {
+	vertical_alignment = "bottom",
+	parent = "team_2_player_panel_1",
+	horizontal_alignment = "left",
+	size = {
+		0,
+		0
+	},
+	position = {
+		128,
+		69,
+		3
+	}
+}
+tbl_2.team_2_player_frame_2 = {
+	vertical_alignment = "bottom",
+	parent = "team_2_player_panel_2",
+	horizontal_alignment = "left",
+	size = {
+		0,
+		0
+	},
+	position = {
+		128,
+		69,
+		3
+	}
+}
+tbl_2.team_2_player_frame_3 = {
+	vertical_alignment = "bottom",
+	parent = "team_2_player_panel_3",
+	horizontal_alignment = "left",
+	size = {
+		0,
+		0
+	},
+	position = {
+		128,
+		69,
+		3
+	}
+}
+tbl_2.team_2_player_frame_4 = {
+	vertical_alignment = "bottom",
+	parent = "team_2_player_panel_4",
+	horizontal_alignment = "left",
+	size = {
+		0,
+		0
+	},
+	position = {
+		128,
+		69,
+		3
+	}
+}
+tbl_2.team_2_player_insignia_1 = {
+	vertical_alignment = "bottom",
+	parent = "team_2_player_panel_1",
+	horizontal_alignment = "left",
+	position = {
+		-275,
+		0,
+		3
+	}
+}
+tbl_2.team_2_player_insignia_2 = {
+	vertical_alignment = "bottom",
+	parent = "team_2_player_panel_2",
+	horizontal_alignment = "left",
+	position = {
+		-275,
+		0,
+		3
+	}
+}
+tbl_2.team_2_player_insignia_3 = {
+	vertical_alignment = "bottom",
+	parent = "team_2_player_panel_3",
+	horizontal_alignment = "left",
+	position = {
+		-275,
+		0,
+		3
+	}
+}
+tbl_2.team_2_player_insignia_4 = {
+	vertical_alignment = "bottom",
+	parent = "team_2_player_panel_4",
+	horizontal_alignment = "left",
+	position = {
+		-275,
+		0,
+		3
+	}
+}
+tbl_2.team_2_player_ready_1 = {
+	vertical_alignment = "center",
+	parent = "team_2_player_panel_1",
+	horizontal_alignment = "right",
+	size = {
+		50,
+		55
+	},
+	position = {
+		80,
+		0,
+		1
+	}
+}
+tbl_2.team_2_player_ready_2 = {
+	vertical_alignment = "center",
+	parent = "team_2_player_panel_2",
+	horizontal_alignment = "right",
+	size = {
+		50,
+		55
+	},
+	position = {
+		80,
+		0,
+		1
+	}
+}
+tbl_2.team_2_player_ready_3 = {
+	vertical_alignment = "center",
+	parent = "team_2_player_panel_3",
+	horizontal_alignment = "right",
+	size = {
+		50,
+		55
+	},
+	position = {
+		80,
+		0,
+		1
+	}
+}
+tbl_2.team_2_player_ready_4 = {
+	vertical_alignment = "center",
+	parent = "team_2_player_panel_4",
+	horizontal_alignment = "right",
+	size = {
+		50,
+		55
+	},
+	position = {
+		80,
+		0,
+		1
+	}
+}
+tbl_2.settings_container = {
+	vertical_alignment = "center",
+	parent = "screen",
+	horizontal_alignment = "center",
+	size = {
+		480,
+		560
+	},
+	position = {
+		0,
+		-140,
+		10
+	}
+}
+tbl_2.settings_anchor = {
+	vertical_alignment = "top",
+	parent = "settings_container",
+	horizontal_alignment = "left",
+	size = {
+		0,
+		0
+	},
+	position = {
+		0,
+		-10,
+		100
+	}
+}
+tbl_2.custom_ruleset_text = {
+	vertical_alignment = "top",
+	parent = "settings_container",
+	horizontal_alignment = "center",
+	size = {
+		480,
+		30
+	},
+	position = {
+		0,
+		40,
+		1
+	}
+}
+
+local tbl_4 = {
 	word_wrap = false,
 	upper_case = false,
 	localize = false,
@@ -793,7 +797,7 @@ local var_0_4 = {
 		2
 	}
 }
-local var_0_5 = {
+local tbl_5 = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -810,7 +814,7 @@ local var_0_5 = {
 		2
 	}
 }
-local var_0_6 = {
+local tbl_6 = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -826,12 +830,12 @@ local var_0_6 = {
 		0
 	}
 }
-local var_0_7 = table.clone(var_0_6)
+local clone = table.clone(tbl_6)
 
-var_0_7.horizontal_alignment = "right"
-var_0_7.text_color = Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
+clone.horizontal_alignment = "right"
+clone.text_color = Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
 
-local var_0_8 = {
+local tbl_7 = {
 	font_size = 24,
 	upper_case = true,
 	localize = true,
@@ -846,7 +850,7 @@ local var_0_8 = {
 		1
 	}
 }
-local var_0_9 = {
+local tbl_8 = {
 	word_wrap = true,
 	font_size = 82,
 	localize = false,
@@ -861,7 +865,7 @@ local var_0_9 = {
 		2
 	}
 }
-local var_0_10 = {
+local tbl_9 = {
 	word_wrap = true,
 	font_size = 32,
 	localize = false,
@@ -876,12 +880,12 @@ local var_0_10 = {
 		2
 	}
 }
-local var_0_11 = table.clone(var_0_10)
+local clone_2 = table.clone(tbl_9)
 
-var_0_11.horizontal_alignment = "right"
-var_0_11.text_color = Colors.get_color_table_with_alpha("opponent_team", 255)
+clone_2.horizontal_alignment = "right"
+clone_2.text_color = Colors.get_color_table_with_alpha("opponent_team", 255)
 
-local var_0_12 = {
+local tbl_10 = {
 	word_wrap = false,
 	upper_case = true,
 	localize = false,
@@ -897,19 +901,20 @@ local var_0_12 = {
 		2
 	}
 }
-local var_0_13 = table.clone(var_0_12)
+local clone_3 = table.clone(tbl_10)
 
-var_0_13.horizontal_alignment = "right"
+clone_3.horizontal_alignment = "right"
 
-local function var_0_14(arg_1_0)
-	local var_1_0 = "shadow_frame_02"
-	local var_1_1 = UIFrameSettings[var_1_0]
-	local var_1_2 = "frame_outer_glow_04"
-	local var_1_3 = UIFrameSettings[var_1_2]
-	local var_1_4 = "frame_outer_glow_01"
-	local var_1_5 = UIFrameSettings[var_1_4]
-	local var_1_6 = "frame_bevel_01"
-	local var_1_7 = UIFrameSettings[var_1_6]
+local function fn(arg_1_0)
+	-- function 1
+	local str = "shadow_frame_02"
+	local var_1_1 = UIFrameSettings[str]
+	local str_2 = "frame_outer_glow_04"
+	local var_1_3 = UIFrameSettings[str_2]
+	local str_3 = "frame_outer_glow_01"
+	local var_1_5 = UIFrameSettings[str_3]
+	local str_4 = "frame_bevel_01"
+	local var_1_7 = UIFrameSettings[str_4]
 
 	return {
 		element = {
@@ -922,32 +927,40 @@ local function var_0_14(arg_1_0)
 					pass_type = "texture_frame",
 					style_id = "shadow_frame",
 					texture_id = "shadow_frame",
-					content_check_function = function(arg_2_0)
-						return arg_2_0.empty
+					content_check_function = function (self)
+						-- function 2
+						return self.empty
 					end
 				},
 				{
 					pass_type = "texture_frame",
 					style_id = "hover_frame",
 					texture_id = "hover_frame",
-					content_check_function = function(arg_3_0)
-						return not arg_3_0.empty and arg_3_0.hotspot.is_hover
+					content_check_function = function (self)
+						-- function 3
+						return not not self.empty or self.hotspot.is_hover
 					end
 				},
 				{
 					pass_type = "texture_frame",
 					style_id = "empty_hover",
 					texture_id = "empty_hover",
-					content_check_function = function(arg_4_0)
-						return arg_4_0.empty and arg_4_0.hotspot.is_hover
+					content_check_function = function (self)
+						-- function 4
+						local empty = self.empty
+
+						empty = not empty and self.hotspot.is_hover
+
+						return empty
 					end
 				},
 				{
 					pass_type = "texture_frame",
 					style_id = "empty_frame",
 					texture_id = "empty_frame",
-					content_check_function = function(arg_5_0)
-						return arg_5_0.empty
+					content_check_function = function (self)
+						-- function 5
+						return self.empty
 					end
 				}
 			}
@@ -1045,45 +1058,64 @@ local function var_0_14(arg_1_0)
 	}
 end
 
-local function var_0_15(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6)
-	local var_6_0 = arg_6_1.values or {}
-	local var_6_1 = #var_6_0 or 0
-	local var_6_2 = "menu_settings_" .. arg_6_1.setting_name
-	local var_6_3 = "tooltip_" .. arg_6_1.setting_name
+local function fn_2(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6)
+	-- function 6
+	local values = arg_6_1.values
 
-	local function var_6_4(arg_7_0, arg_7_1, arg_7_2)
-		local var_7_0 = arg_7_0.parent
-		local var_7_1 = arg_7_0.hover_progress or 0
-		local var_7_2 = 15
+	values = values or {}
 
-		if arg_7_0.is_hover then
-			var_7_1 = math.min(var_7_1 + arg_7_2 * var_7_2, 1)
+	local count = #values
+
+	count = count or 0
+
+	local str = "menu_settings_" .. arg_6_1.setting_name
+	local str_2 = "tooltip_" .. arg_6_1.setting_name
+
+	local function fn(self, arg_7_1, arg_7_2)
+		-- function 7
+		local parent = self.parent
+		local hover_progress = self.hover_progress
+
+		hover_progress = hover_progress or 0
+
+		local num = 15
+
+		if not self.is_hover then
+			hover_progress = math.min(hover_progress + arg_7_2 * num, 1)
 		else
-			var_7_1 = math.max(var_7_1 - arg_7_2 * var_7_2, 0)
+			hover_progress = math.max(hover_progress - arg_7_2 * num, 0)
 		end
 
-		arg_7_0.hover_progress = var_7_1
+		self.hover_progress = hover_progress
 
-		local var_7_3 = arg_7_0.press_progress or 1
-		local var_7_4 = 25
+		local press_progress = self.press_progress
 
-		if arg_7_0.is_held then
-			var_7_3 = math.max(var_7_3 - arg_7_2 * var_7_4, 0.5)
+		press_progress = press_progress or 1
+
+		local num_2 = 25
+
+		if not self.is_held then
+			press_progress = math.max(press_progress - arg_7_2 * num_2, 0.5)
 		else
-			var_7_3 = math.min(var_7_3 + arg_7_2 * var_7_4, 1)
+			press_progress = math.min(press_progress + arg_7_2 * num_2, 1)
 		end
 
-		arg_7_0.press_progress = var_7_3
+		self.press_progress = press_progress
 	end
 
-	local function var_6_5(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
-		local var_8_0 = arg_8_2.hover_progress or 0
-		local var_8_1 = arg_8_2.press_progress or 1
+	local function fn_2(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+		-- function 8
+		local hover_progress = arg_8_2.hover_progress
 
-		arg_8_1.color[1] = 255 * var_8_0
+		hover_progress = hover_progress or 0
 
-		if arg_8_2.is_hover then
-			arg_8_1.color[1] = 255 * var_8_1
+		local press_progress = arg_8_2.press_progress
+
+		press_progress = press_progress or 1
+		arg_8_1.color[1] = 255 * hover_progress
+
+		if not arg_8_2.is_hover then
+			arg_8_1.color[1] = 255 * press_progress
 		end
 	end
 
@@ -1104,39 +1136,42 @@ local function var_0_15(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, ar
 					style_id = "setting_value",
 					pass_type = "text",
 					text_id = "setting_value",
-					content_change_function = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
-						local var_9_0 = arg_9_0.data.values
-						local var_9_1 = arg_9_0.ui_data
-						local var_9_2 = var_9_0[arg_9_0.setting_idx]
+					content_change_function = function (self, arg_9_1, arg_9_2, arg_9_3)
+						-- function 9
+						local values = self.data.values
+						local ui_data = self.ui_data
+						local var_9_2 = values[self.setting_idx]
 
-						if arg_9_0.value ~= var_9_2 then
-							arg_9_0.value = var_9_2
+						if self.value ~= var_9_2 then
+							self.value = var_9_2
 
-							local var_9_3 = var_9_1 and var_9_1.localization_options
-							local var_9_4 = ""
+							local flag = not ui_data and ui_data.localization_options
+							local str = ""
 
-							if var_9_3 and var_9_3[var_9_2] then
-								local var_9_5 = var_9_3[var_9_2]
+							if not flag and not flag[var_9_2] then
+								local var_9_5 = flag[var_9_2]
 
-								var_9_4 = Localize(var_9_5)
-							elseif type(arg_9_0.value) == "number" and var_9_1 and var_9_1.setting_type == "multiplier" then
-								var_9_4 = string.format("%.2f", arg_9_0.value)
+								str = Localize(var_9_5)
+							elseif not ((type(self.value) ~= "number" or not ui_data) and ui_data.setting_type ~= "multiplier") then
+								str = string.format("%.2f", self.value)
 							else
-								var_9_4 = string.format("%s", arg_9_0.value)
+								str = string.format("%s", self.value)
 							end
 
-							if (not var_9_3 or not var_9_3[var_9_2]) and var_9_1 and var_9_1.setting_type then
-								local var_9_6 = DLCSettings.carousel and DLCSettings.carousel.custom_game_settigns_values_suffix
+							if (not flag and flag[var_9_2] or not ui_data) and not ui_data.setting_type then
+								local carousel = DLCSettings.carousel
 
-								if var_9_1 and var_9_6 and var_9_6[var_9_1.setting_type] then
-									var_9_4 = var_9_4 .. var_9_6[var_9_1.setting_type]
+								carousel = not carousel and DLCSettings.carousel.custom_game_settigns_values_suffix
+
+								if not ui_data and not carousel and not carousel[ui_data.setting_type] then
+									str = str .. carousel[ui_data.setting_type]
 								end
 							end
 
-							arg_9_0.setting_value = var_9_4
+							self.setting_value = str
 						end
 
-						if arg_9_0.value ~= arg_9_0.default_value then
+						if self.value ~= self.default_value then
 							arg_9_1.text_color = arg_9_1.modified_color
 						else
 							arg_9_1.text_color = arg_9_1.default_color
@@ -1152,35 +1187,42 @@ local function var_0_15(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, ar
 					style_id = "setting_highlight_hotspot",
 					pass_type = "hotspot",
 					content_id = "setting_highlight_hotspot",
-					content_change_function = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
-						local var_10_0 = arg_10_0.hover_progress or 0
-						local var_10_1 = 15
+					content_change_function = function (self, arg_10_1, arg_10_2, arg_10_3)
+						-- function 10
+						local hover_progress = self.hover_progress
 
-						if arg_10_0.is_hover or arg_10_0.parent.is_gamepad_active and arg_10_0.parent.focused and arg_10_0.parent.is_selected then
-							var_10_0 = math.min(var_10_0 + arg_10_3 * var_10_1, 1)
+						hover_progress = hover_progress or 0
+
+						local num = 15
+
+						if self.is_hover or not self.parent.is_gamepad_active or not self.parent.focused or not self.parent.is_selected then
+							hover_progress = math.min(hover_progress + arg_10_3 * num, 1)
 						else
-							var_10_0 = math.max(var_10_0 - arg_10_3 * var_10_1, 0)
+							hover_progress = math.max(hover_progress - arg_10_3 * num, 0)
 						end
 
-						arg_10_0.hover_progress = var_10_0
+						self.hover_progress = hover_progress
 					end
 				},
 				{
 					style_id = "setting_highlight",
 					texture_id = "setting_highlight",
 					pass_type = "texture",
-					content_change_function = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
-						local var_11_0 = arg_11_0.setting_highlight_hotspot.hover_progress or 0
+					content_change_function = function (self, arg_11_1, arg_11_2, arg_11_3)
+						-- function 11
+						local hover_progress = self.setting_highlight_hotspot.hover_progress
 
-						arg_11_1.color[1] = 255 * var_11_0
+						hover_progress = hover_progress or 0
+						arg_11_1.color[1] = 255 * hover_progress
 					end
 				},
 				{
 					style_id = "tooltip_text",
 					pass_type = "option_tooltip",
 					text_id = "tooltip_text",
-					content_check_function = function(arg_12_0, arg_12_1)
-						return arg_12_0.setting_highlight_hotspot.is_hover
+					content_check_function = function (self, arg_12_1)
+						-- function 12
+						return self.setting_highlight_hotspot.is_hover
 					end
 				}
 			}
@@ -1196,15 +1238,15 @@ local function var_0_15(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, ar
 			id = arg_6_5,
 			name = arg_6_1.setting_name,
 			on_setting_changed_cb = arg_6_6,
-			settings = var_6_0,
-			num_settings = var_6_1,
+			settings = values,
+			num_settings = count,
 			setting_idx = arg_6_4,
 			setting_value = tostring(arg_6_3),
-			setting_name = var_6_2,
+			setting_name = str,
 			setting_highlight_hotspot = {
 				allow_multi_hover = true
 			},
-			tooltip_text = var_6_3
+			tooltip_text = str_2
 		},
 		style = {
 			setting_name = {
@@ -1341,9 +1383,9 @@ local function var_0_15(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, ar
 	}
 end
 
-local var_0_16 = {
-	level_name = UIWidgets.create_simple_text("level_name", "level_name", nil, nil, var_0_4),
-	sub_title = UIWidgets.create_simple_text("sub_title", "sub_title", nil, nil, var_0_5),
+local tbl_11 = {
+	level_name = UIWidgets.create_simple_text("level_name", "level_name", nil, nil, tbl_4),
+	sub_title = UIWidgets.create_simple_text("sub_title", "sub_title", nil, nil, tbl_5),
 	background = UIWidgets.create_simple_rect("screen", {
 		176,
 		0,
@@ -1352,18 +1394,18 @@ local var_0_16 = {
 	}),
 	title_divider = UIWidgets.create_simple_texture("divider_01_top", "title_divider"),
 	objective_text = UIWidgets.create_mission_objective_text_widget_still("objective"),
-	score = UIWidgets.create_objective_score_widget("score", var_0_3.score.size),
-	team_1_name = UIWidgets.create_simple_text("", "team_1_name", nil, nil, var_0_6),
+	score = UIWidgets.create_objective_score_widget("score", tbl_2.score.size),
+	team_1_name = UIWidgets.create_simple_text("", "team_1_name", nil, nil, tbl_6),
 	team_1_icon = UIWidgets.create_simple_texture("banner_hammers_local", "team_1_icon"),
-	team_1_text = UIWidgets.create_simple_text(Localize("vs_lobby_your_team"), "team_1_text", nil, nil, var_0_10),
-	team_1_side_text = UIWidgets.create_simple_text("", "team_1_side_text", nil, nil, var_0_12),
-	team_2_name = UIWidgets.create_simple_text("", "team_2_name", nil, nil, var_0_7),
+	team_1_text = UIWidgets.create_simple_text(Localize("vs_lobby_your_team"), "team_1_text", nil, nil, tbl_9),
+	team_1_side_text = UIWidgets.create_simple_text("", "team_1_side_text", nil, nil, tbl_10),
+	team_2_name = UIWidgets.create_simple_text("", "team_2_name", nil, nil, clone),
 	team_2_icon = UIWidgets.create_simple_texture("banner_skulls_opponent", "team_2_icon"),
-	team_2_text = UIWidgets.create_simple_text(Localize("vs_lobby_enemy_team"), "team_2_text", nil, nil, var_0_11),
-	team_2_side_text = UIWidgets.create_simple_text("", "team_2_side_text", nil, nil, var_0_13),
-	input_description_text = UIWidgets.create_simple_text("player_list_show_mouse_description", "player_list_input_description", nil, nil, var_0_8)
+	team_2_text = UIWidgets.create_simple_text(Localize("vs_lobby_enemy_team"), "team_2_text", nil, nil, clone_2),
+	team_2_side_text = UIWidgets.create_simple_text("", "team_2_side_text", nil, nil, clone_3),
+	input_description_text = UIWidgets.create_simple_text("player_list_show_mouse_description", "player_list_input_description", nil, nil, tbl_7)
 }
-local var_0_17 = {
+local tbl_12 = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -1380,28 +1422,31 @@ local var_0_17 = {
 		2
 	}
 }
-local var_0_18 = {
-	settings_background = UIWidgets.create_rect_with_outer_frame("settings_container", var_0_3.settings_container.size, "frame_outer_fade_02", nil, UISettings.console_start_game_menu_rect_color, Colors.get_color_table_with_alpha("font_default", 125)),
+local tbl_13 = {
+	settings_background = UIWidgets.create_rect_with_outer_frame("settings_container", tbl_2.settings_container.size, "frame_outer_fade_02", nil, UISettings.console_start_game_menu_rect_color, Colors.get_color_table_with_alpha("font_default", 125)),
 	settings_mask = UIWidgets.create_simple_texture("mask_rect", "settings_container"),
-	custom_ruleset_text = UIWidgets.create_simple_text(Localize("versus_custom_game_custom_ruleset"), "custom_ruleset_text", nil, nil, var_0_17)
+	custom_ruleset_text = UIWidgets.create_simple_text(Localize("versus_custom_game_custom_ruleset"), "custom_ruleset_text", nil, nil, tbl_12)
 }
-local var_0_19 = {
+local tbl_14 = {
 	on_enter = {
 		{
 			name = "entry",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			init = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+				-- function 13
 				arg_13_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
-				local var_14_0 = math.easeCubic(arg_14_3)
+			update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+				-- function 14
+				local easeCubic = math.easeCubic(arg_14_3)
 
-				arg_14_4.render_settings.alpha_multiplier = var_14_0
-				arg_14_0.team_1.position[1] = arg_14_1.team_1.position[1] - (1 - var_14_0) * 100
-				arg_14_0.team_2.position[1] = arg_14_1.team_2.position[1] + (1 - var_14_0) * 100
+				arg_14_4.render_settings.alpha_multiplier = easeCubic
+				arg_14_0.team_1.position[1] = arg_14_1.team_1.position[1] - (1 - easeCubic) * 100
+				arg_14_0.team_2.position[1] = arg_14_1.team_2.position[1] + (1 - easeCubic) * 100
 			end,
-			on_complete = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+			on_complete = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+				-- function 15
 				return
 			end
 		}
@@ -1409,12 +1454,12 @@ local var_0_19 = {
 }
 
 return {
-	create_empty_frame_widget = var_0_14,
-	animation_definitions = var_0_19,
-	scenegraph_definition = var_0_3,
-	widget_definitions = var_0_16,
-	custom_game_settings_widgets = var_0_18,
-	create_settings_widget = var_0_15,
+	create_empty_frame_widget = fn,
+	animation_definitions = tbl_14,
+	scenegraph_definition = tbl_2,
+	widget_definitions = tbl_11,
+	custom_game_settings_widgets = tbl_13,
+	create_settings_widget = fn_2,
 	console_cursor_definition = UIWidgets.create_console_cursor("console_cursor"),
 	item_tooltip = UIWidgets.create_simple_item_presentation("item_tooltip", UISettings.console_tooltip_pass_definitions)
 }

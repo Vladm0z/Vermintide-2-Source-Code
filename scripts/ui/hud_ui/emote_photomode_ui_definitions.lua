@@ -1,17 +1,17 @@
 -- chunkname: @scripts/ui/hud_ui/emote_photomode_ui_definitions.lua
 
-local var_0_0 = 1920
-local var_0_1 = 1080
-local var_0_2 = 45
-local var_0_3 = {
+local num = 1920
+local num_2 = 1080
+local num_3 = 45
+local tbl = {
 	325,
-	var_0_2 * 2
+	num_3 * 2
 }
-local var_0_4 = {
+local tbl_2 = {
 	325,
-	var_0_2 * 4
+	num_3 * 4
 }
-local var_0_5 = {
+local tbl_3 = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -20,8 +20,8 @@ local var_0_5 = {
 			UILayer.hud
 		},
 		size = {
-			var_0_0,
-			var_0_1
+			num,
+			num_2
 		}
 	},
 	controls_pc = {
@@ -33,7 +33,7 @@ local var_0_5 = {
 			-20,
 			0
 		},
-		size = var_0_3
+		size = tbl
 	},
 	controls_gamepad = {
 		vertical_alignment = "top",
@@ -44,11 +44,12 @@ local var_0_5 = {
 			-20,
 			0
 		},
-		size = var_0_4
+		size = tbl_2
 	}
 }
 
-local function var_0_6(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
 	return {
 		element = {
 			passes = {
@@ -104,14 +105,15 @@ local function var_0_6(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 		},
 		offset = {
 			0,
-			-arg_1_3 * var_0_2,
+			-arg_1_3 * num_3,
 			0
 		},
 		scenegraph_id = arg_1_0
 	}
 end
 
-local function var_0_7(arg_2_0, arg_2_1)
+local function fn_2(arg_2_0, arg_2_1)
+	-- function 2
 	return {
 		element = {
 			passes = {
@@ -159,8 +161,8 @@ local function var_0_7(arg_2_0, arg_2_1)
 					-5
 				},
 				texture_size = {
-					var_0_5[arg_2_0].size[1],
-					var_0_5[arg_2_0].size[2] + var_0_2
+					tbl_3[arg_2_0].size[1],
+					tbl_3[arg_2_0].size[2] + num_3
 				}
 			},
 			mask_vertical = {
@@ -179,12 +181,12 @@ local function var_0_7(arg_2_0, arg_2_1)
 					0
 				},
 				pivot = {
-					(var_0_5[arg_2_0].size[2] + var_0_2 + 50) * 0.5,
-					var_0_5[arg_2_0].size[1] * 0.5
+					(tbl_3[arg_2_0].size[2] + num_3 + 50) * 0.5,
+					tbl_3[arg_2_0].size[1] * 0.5
 				},
 				texture_size = {
-					var_0_5[arg_2_0].size[2] + var_0_2 + 50,
-					var_0_5[arg_2_0].size[1]
+					tbl_3[arg_2_0].size[2] + num_3 + 50,
+					tbl_3[arg_2_0].size[1]
 				}
 			},
 			background = {
@@ -203,8 +205,8 @@ local function var_0_7(arg_2_0, arg_2_1)
 					0
 				},
 				texture_size = {
-					var_0_5[arg_2_0].size[1],
-					var_0_5[arg_2_0].size[2] + var_0_2
+					tbl_3[arg_2_0].size[1],
+					tbl_3[arg_2_0].size[2] + num_3
 				}
 			}
 		},
@@ -217,35 +219,35 @@ local function var_0_7(arg_2_0, arg_2_1)
 	}
 end
 
-local var_0_8 = {}
-local var_0_9 = 2
-local var_0_10 = {
-	rect = var_0_7("controls_pc", {
+local tbl_4 = {}
+local num_4 = 2
+local tbl_5 = {
+	rect = fn_2("controls_pc", {
 		70,
 		0,
 		0,
 		0
-	}, var_0_9),
-	hide_hud = var_0_6("controls_pc", "photomode_hide_hud", "emote_toggle_hud_visibility", 0),
-	zoom_mouse = var_0_6("controls_pc", "photomode_camera_zoom", "emote_camera_zoom", 1)
+	}, num_4),
+	hide_hud = fn("controls_pc", "photomode_hide_hud", "emote_toggle_hud_visibility", 0),
+	zoom_mouse = fn("controls_pc", "photomode_camera_zoom", "emote_camera_zoom", 1)
 }
-local var_0_11 = 4
-local var_0_12 = {
-	rect = var_0_7("controls_gamepad", {
+local num_5 = 4
+local tbl_6 = {
+	rect = fn_2("controls_gamepad", {
 		255,
 		255,
 		255,
 		255
-	}, var_0_11),
-	hide_hud = var_0_6("controls_gamepad", "photomode_hide_hud", "emote_toggle_hud_visibility", 0),
-	zoom_in_gamepad = var_0_6("controls_gamepad", "photomode_camera_zoom_in", "emote_camera_zoom_in", 1),
-	zoom_out_gamepad = var_0_6("controls_gamepad", "photomode_camera_zoom_out", "emote_camera_zoom_out", 2),
-	exit_gamepad = var_0_6("controls_gamepad", "exit", "crouch", 3)
+	}, num_5),
+	hide_hud = fn("controls_gamepad", "photomode_hide_hud", "emote_toggle_hud_visibility", 0),
+	zoom_in_gamepad = fn("controls_gamepad", "photomode_camera_zoom_in", "emote_camera_zoom_in", 1),
+	zoom_out_gamepad = fn("controls_gamepad", "photomode_camera_zoom_out", "emote_camera_zoom_out", 2),
+	exit_gamepad = fn("controls_gamepad", "exit", "crouch", 3)
 }
 
 return {
-	scenegraph_definition = var_0_5,
-	widgets = var_0_8,
-	widgets_pc = var_0_10,
-	widgets_gamepad = var_0_12
+	scenegraph_definition = tbl_3,
+	widgets = tbl_4,
+	widgets_pc = tbl_5,
+	widgets_gamepad = tbl_6
 }

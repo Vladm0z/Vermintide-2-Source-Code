@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/chaos/chaos_exalted_sorcerer_behavior.lua
 
-local var_0_0 = BreedActions.chaos_exalted_sorcerer
+local chaos_exalted_sorcerer = BreedActions.chaos_exalted_sorcerer
 
 BreedBehaviors.chaos_exalted_sorcerer = {
 	"BTSelector",
@@ -11,17 +11,17 @@ BreedBehaviors.chaos_exalted_sorcerer = {
 	},
 	{
 		"BTSelector",
-		action_data = var_0_0.intro_sequence,
+		action_data = chaos_exalted_sorcerer.intro_sequence,
 		{
 			"BTQuickTeleportAction",
 			name = "defensive_teleport",
 			condition = "quick_teleport",
-			action_data = var_0_0.defensive_teleport
+			action_data = chaos_exalted_sorcerer.defensive_teleport
 		},
 		{
 			"BTDefensiveIdleAction",
 			name = "intro_idle",
-			action_data = var_0_0.intro_idle
+			action_data = chaos_exalted_sorcerer.intro_idle
 		},
 		name = "intro_sequence",
 		leave_hook = "on_lord_intro_leave",
@@ -38,7 +38,7 @@ BreedBehaviors.chaos_exalted_sorcerer = {
 		enter_hook = "block_stagger_start",
 		name = "stagger",
 		condition = "stagger",
-		action_data = var_0_0.stagger
+		action_data = chaos_exalted_sorcerer.stagger
 	},
 	{
 		"BTSelector",
@@ -70,13 +70,13 @@ BreedBehaviors.chaos_exalted_sorcerer = {
 		{
 			"BTQuickTeleportAction",
 			name = "defensive_teleport",
-			action_data = var_0_0.defensive_teleport
+			action_data = chaos_exalted_sorcerer.defensive_teleport
 		},
 		{
 			"BTChaosSorcererSummoningAction",
 			name = "spawn_flower_wave",
 			leave_hook = "sorcerer_setup_done",
-			action_data = var_0_0.spawn_flower_wave
+			action_data = chaos_exalted_sorcerer.spawn_flower_wave
 		},
 		name = "setup_mode",
 		condition = "sorcerer_in_setup_mode",
@@ -89,13 +89,13 @@ BreedBehaviors.chaos_exalted_sorcerer = {
 			{
 				"BTQuickTeleportAction",
 				name = "defensive_teleport",
-				action_data = var_0_0.defensive_teleport
+				action_data = chaos_exalted_sorcerer.defensive_teleport
 			},
 			{
 				"BTSpawnAllies",
 				name = "spawn_wave",
 				leave_hook = "sorcerer_next_phase",
-				action_data = var_0_0.spawn_allies
+				action_data = chaos_exalted_sorcerer.spawn_allies
 			},
 			name = "defensive_mode_starts",
 			condition = "defensive_mode_starts",
@@ -109,7 +109,7 @@ BreedBehaviors.chaos_exalted_sorcerer = {
 				leave_hook = "sorcerer_evade",
 				condition = "escape_teleport",
 				enter_hook = "sorcerer_evade",
-				action_data = var_0_0.defensive_escape_teleport
+				action_data = chaos_exalted_sorcerer.defensive_escape_teleport
 			},
 			{
 				"BTUtilityNode",
@@ -117,17 +117,17 @@ BreedBehaviors.chaos_exalted_sorcerer = {
 					"BTCastMissileAction",
 					enter_hook = "sorcerer_defensive_seeking_bomb",
 					name = "defensive_seeking_bomb",
-					action_data = var_0_0.defensive_seeking_bomb
+					action_data = chaos_exalted_sorcerer.defensive_seeking_bomb
 				},
 				{
 					"BTCastMissileAction",
 					name = "defensive_magic_missile",
-					action_data = var_0_0.defensive_magic_missile
+					action_data = chaos_exalted_sorcerer.defensive_magic_missile
 				},
 				{
 					"BTDefensiveIdleAction",
 					name = "defensive_idle",
-					action_data = var_0_0.defensive_idle
+					action_data = chaos_exalted_sorcerer.defensive_idle
 				},
 				condition = "sorcerer_defensive_combat",
 				name = "sorcerer_defensive_combat"
@@ -141,27 +141,27 @@ BreedBehaviors.chaos_exalted_sorcerer = {
 				"BTSpawnAllies",
 				enter_hook = "sorcerer_spawn_horde",
 				name = "spawn_allies_horde",
-				action_data = var_0_0.spawn_allies_horde
+				action_data = chaos_exalted_sorcerer.spawn_allies_horde
 			},
 			{
 				"BTQuickTeleportAction",
 				name = "defensive_teleport",
-				action_data = var_0_0.defensive_teleport
+				action_data = chaos_exalted_sorcerer.defensive_teleport
 			},
 			{
 				"BTRandom",
-				action_data = var_0_0.mega_attack,
+				action_data = chaos_exalted_sorcerer.mega_attack,
 				{
 					"BTChaosSorcererSummoningAction",
 					name = "spawn_flower_wave",
 					weight = 1,
-					action_data = var_0_0.spawn_flower_wave
+					action_data = chaos_exalted_sorcerer.spawn_flower_wave
 				},
 				{
 					"BTChaosSorcererSummoningAction",
 					name = "spawn_boss_vortex",
 					weight = 1,
-					action_data = var_0_0.spawn_boss_vortex
+					action_data = chaos_exalted_sorcerer.spawn_boss_vortex
 				},
 				name = "mega_attack"
 			},
@@ -169,7 +169,7 @@ BreedBehaviors.chaos_exalted_sorcerer = {
 				"BTDefensiveIdleAction",
 				name = "defensive_idle",
 				leave_hook = "sorcerer_next_phase",
-				action_data = var_0_0.defensive_idle
+				action_data = chaos_exalted_sorcerer.defensive_idle
 			},
 			name = "defensive_mode_ends",
 			condition = "defensive_mode_ends",
@@ -182,7 +182,7 @@ BreedBehaviors.chaos_exalted_sorcerer = {
 		"BTQuickTeleportAction",
 		name = "quick_teleport",
 		condition = "quick_teleport",
-		action_data = var_0_0.quick_teleport
+		action_data = chaos_exalted_sorcerer.quick_teleport
 	},
 	{
 		"BTSelector",
@@ -192,19 +192,19 @@ BreedBehaviors.chaos_exalted_sorcerer = {
 				"BTChaosSorcererSummoningAction",
 				name = "spawn_multiple_wave",
 				condition = "ready_to_summon_plague_wave",
-				action_data = var_0_0.spawn_multiple_wave
+				action_data = chaos_exalted_sorcerer.spawn_multiple_wave
 			},
 			{
 				"BTCastMissileAction",
 				name = "cast_missile",
 				condition = "ready_to_cast_missile",
-				action_data = var_0_0.cast_missile
+				action_data = chaos_exalted_sorcerer.cast_missile
 			},
 			{
 				"BTCastMissileAction",
 				name = "cast_seeking_bomb_missile",
 				condition = "ready_to_cast_seeking_bomb_missile",
-				action_data = var_0_0.cast_seeking_bomb_missile
+				action_data = chaos_exalted_sorcerer.cast_seeking_bomb_missile
 			},
 			leave_hook = "summoning_ends",
 			name = "ready_to_summon",
@@ -216,12 +216,12 @@ BreedBehaviors.chaos_exalted_sorcerer = {
 			{
 				"BTChaosExaltedSorcererSkulkAction",
 				name = "plague_wave_skulking",
-				action_data = var_0_0.plague_wave_skulking
+				action_data = chaos_exalted_sorcerer.plague_wave_skulking
 			},
 			{
 				"BTChaosExaltedSorcererSkulkAction",
 				name = "magic_missile_skulking",
-				action_data = var_0_0.magic_missile_skulking
+				action_data = chaos_exalted_sorcerer.magic_missile_skulking
 			},
 			name = "in_combat"
 		},

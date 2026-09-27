@@ -4,79 +4,85 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTCombatIdleAction = class(BTCombatIdleAction, BTNode)
 
-function BTCombatIdleAction.init(arg_1_0, ...)
+BTCombatIdleAction.init = function (arg_1_0, ...)
+	-- function 1
 	BTCombatIdleAction.super.init(arg_1_0, ...)
 end
 
 BTCombatIdleAction.name = "BTCombatIdleAction"
 
-local function var_0_0(arg_2_0)
-	if type(arg_2_0) == "table" then
-		return arg_2_0[Math.random(1, #arg_2_0)]
+local function fn(self)
+	-- function 2
+	if type(self) == "table" then
+		return self[Math.random(1, #self)]
 	else
-		return arg_2_0
+		return self
 	end
 end
 
-function BTCombatIdleAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
-	arg_3_0:_check_if_should_idle(arg_3_1, arg_3_2)
+BTCombatIdleAction.enter = function (self, arg_3_1, arg_3_2, arg_3_3)
+	-- function 3
+	self:_check_if_should_idle(arg_3_1, arg_3_2)
 	arg_3_2.navigation_extension:set_enabled(true)
 end
 
-function BTCombatIdleAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTCombatIdleAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	-- function 4
 	arg_4_2.combat_idling = nil
 end
 
-local var_0_1 = 0.0001
+local num = 0.0001
 
-function BTCombatIdleAction._check_if_should_idle(arg_5_0, arg_5_1, arg_5_2)
+BTCombatIdleAction._check_if_should_idle = function (self, arg_5_1, arg_5_2)
+	-- function 5
 	if not arg_5_2.combat_idling then
-		local var_5_0 = arg_5_2.locomotion_extension
+		local locomotion_extension = arg_5_2.locomotion_extension
 
-		if Vector3.length_squared(var_5_0:current_velocity()) < var_0_1 then
+		if Vector3.length_squared(locomotion_extension:current_velocity()) < num then
 			arg_5_2.combat_idling = true
 
-			arg_5_0:_init_idle_anim(arg_5_1, arg_5_2)
+			self:_init_idle_anim(arg_5_1, arg_5_2)
 		end
 	end
 end
 
-function BTCombatIdleAction._init_idle_anim(arg_6_0, arg_6_1, arg_6_2)
-	local var_6_0 = Managers.state.network
-	local var_6_1 = "idle"
-	local var_6_2 = arg_6_0._tree_node.action_data
+BTCombatIdleAction._init_idle_anim = function (self, arg_6_1, arg_6_2)
+	-- function 6
+	local network = Managers.state.network
+	local str = "idle"
+	local action_data = self._tree_node.action_data
 
-	arg_6_2.action = var_6_2
+	arg_6_2.action = action_data
 
-	if var_6_2 and var_6_2.alerted_anims and arg_6_2.confirmed_player_sighting then
-		var_6_1 = var_6_2.alerted_anims[math.random(1, #var_6_2.alerted_anims)]
-	elseif var_6_2 and var_6_2.idle_animation then
-		var_6_1 = var_0_0(var_6_2.idle_animation)
-	elseif arg_6_2.is_passive and arg_6_2.spawn_type ~= "horde" and arg_6_2.spawn_type ~= "horde_hidden" then
-		if var_6_2 and var_6_2.animations then
-			local var_6_3 = var_6_2.animations
-			local var_6_4 = var_6_2.anim_cycle_index % #var_6_3 + 1
+	if not action_data and not action_data.alerted_anims and not arg_6_2.confirmed_player_sighting then
+		str = action_data.alerted_anims[math.random(1, #action_data.alerted_anims)]
+	elseif not action_data and not action_data.idle_animation then
+		str = fn(action_data.idle_animation)
+	elseif not (not arg_6_2.is_passive and arg_6_2.spawn_type == "horde" or arg_6_2.spawn_type == "horde_hidden") then
+		if not action_data and not action_data.animations then
+			local animations = action_data.animations
+			local num = action_data.anim_cycle_index % #animations + 1
 
-			var_6_1 = var_6_3[var_6_4]
-			var_6_2.anim_cycle_index = var_6_4
+			str = animations[num]
+			action_data.anim_cycle_index = num
 		end
-	elseif var_6_2 and var_6_2.combat_animations then
-		local var_6_5 = var_6_2.combat_animations
-		local var_6_6 = var_6_2.anim_cycle_index % #var_6_5 + 1
+	elseif not action_data and not action_data.combat_animations then
+		local combat_animations = action_data.combat_animations
+		local num_2 = action_data.anim_cycle_index % #combat_animations + 1
 
-		var_6_1 = var_6_5[var_6_6]
-		var_6_2.anim_cycle_index = var_6_6
+		str = combat_animations[num_2]
+		action_data.anim_cycle_index = num_2
 	end
 
-	local var_6_7 = arg_6_2.optional_spawn_data
-	local var_6_8 = var_6_7 and var_6_7.idle_animation
+	local optional_spawn_data = arg_6_2.optional_spawn_data
+	local flag = not optional_spawn_data and optional_spawn_data.idle_animation
 
-	if var_6_8 and var_6_8 ~= "" then
-		var_6_1 = var_6_8
+	if not (not flag and flag == "") then
+		str = flag
 	end
 
-	if arg_6_2.move_state ~= "idle" or var_6_2 and var_6_2.force_idle_animation then
-		var_6_0:anim_event(arg_6_1, var_6_1)
+	if arg_6_2.move_state ~= "idle" or not action_data or not action_data.force_idle_animation then
+		network:anim_event(arg_6_1, str)
 
 		arg_6_2.move_state = "idle"
 	end
@@ -84,17 +90,18 @@ function BTCombatIdleAction._init_idle_anim(arg_6_0, arg_6_1, arg_6_2)
 	arg_6_2.locomotion_extension:set_wanted_velocity(Vector3.zero())
 end
 
-local var_0_2 = Unit.alive
+local alive = Unit.alive
 
-function BTCombatIdleAction.run(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
-	arg_7_0:_check_if_should_idle(arg_7_1, arg_7_2)
+BTCombatIdleAction.run = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	-- function 7
+	self:_check_if_should_idle(arg_7_1, arg_7_2)
 
-	local var_7_0 = arg_7_2.target_unit
+	local target_unit = arg_7_2.target_unit
 
-	if var_0_2(var_7_0) then
-		local var_7_1 = LocomotionUtils.rotation_towards_unit_flat(arg_7_1, var_7_0)
+	if not alive(target_unit) then
+		local rotation_towards_unit_flat = LocomotionUtils.rotation_towards_unit_flat(arg_7_1, target_unit)
 
-		arg_7_2.locomotion_extension:set_wanted_rotation(var_7_1)
+		arg_7_2.locomotion_extension:set_wanted_rotation(rotation_towards_unit_flat)
 	end
 
 	return "running"

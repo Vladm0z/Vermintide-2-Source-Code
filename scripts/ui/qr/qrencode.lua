@@ -1,12 +1,13 @@
 -- chunkname: @scripts/ui/qr/qrencode.lua
 
-local var_0_0 = false
-local var_0_1 = false
-local var_0_2 = require("bit").bxor
+local flag = false
+local flag_2 = false
+local bxor = require("bit").bxor
 
-local function var_0_3(arg_1_0, arg_1_1)
-	local var_1_0 = string.format("%o", arg_1_0)
-	local var_1_1 = {
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
+	local format = string.format("%o", arg_1_0)
+	local tbl = {
 		["0"] = "000",
 		["1"] = "001",
 		["6"] = "110",
@@ -16,17 +17,19 @@ local function var_0_3(arg_1_0, arg_1_1)
 		["7"] = "111",
 		["4"] = "100"
 	}
-	local var_1_2 = string.gsub(var_1_0, "(.)", function(arg_2_0)
-		return var_1_1[arg_2_0]
+	local gsub = string.gsub(format, "(.)", function (arg_2_0)
+		-- function 2
+		return tbl[arg_2_0]
 	end)
-	local var_1_3 = string.gsub(var_1_2, "^0*(.*)$", "%1")
-	local var_1_4 = string.format("%%%ds", arg_1_1)
-	local var_1_5 = string.format(var_1_4, var_1_3)
+	local gsub_2 = string.gsub(gsub, "^0*(.*)$", "%1")
+	local format_2 = string.format("%%%ds", arg_1_1)
+	local format_3 = string.format(format_2, gsub_2)
 
-	return string.gsub(var_1_5, " ", "0")
+	return string.gsub(format_3, " ", "0")
 end
 
-local function var_0_4(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+local function fn_2(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	-- function 3
 	if arg_3_1 == "1" then
 		arg_3_0[arg_3_2][arg_3_3] = 2
 	else
@@ -34,12 +37,13 @@ local function var_0_4(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	end
 end
 
-local function var_0_5(arg_4_0)
+local function fn_3(arg_4_0)
+	-- function 4
 	local var_4_0
 
-	if string.match(arg_4_0, "^[0-9]+$") then
+	if not string.match(arg_4_0, "^[0-9]+$") then
 		return 1
-	elseif string.match(arg_4_0, "^[0-9A-Z $%%*./:+-]+$") then
+	elseif not string.match(arg_4_0, "^[0-9A-Z $%%*./:+-]+$") then
 		return 2
 	else
 		return 4
@@ -50,7 +54,7 @@ local function var_0_5(arg_4_0)
 	return nil
 end
 
-local var_0_6 = {
+local tbl = {
 	{
 		19,
 		16,
@@ -293,7 +297,8 @@ local var_0_6 = {
 	}
 }
 
-local function var_0_7(arg_5_0, arg_5_1, arg_5_2)
+local function fn_4(arg_5_0, arg_5_1, arg_5_2)
+	-- function 5
 	local var_5_0 = arg_5_1
 
 	if arg_5_1 == 4 then
@@ -309,7 +314,7 @@ local function var_0_7(arg_5_0, arg_5_1, arg_5_2)
 	local var_5_3
 	local var_5_4
 	local var_5_5
-	local var_5_6 = {
+	local tbl_2 = {
 		{
 			10,
 			9,
@@ -329,44 +334,44 @@ local function var_0_7(arg_5_0, arg_5_1, arg_5_2)
 			12
 		}
 	}
-	local var_5_7 = 40
-	local var_5_8 = arg_5_2 or 1
-	local var_5_9 = 1
-	local var_5_10 = 4
+	local num = 40
+	local flag = arg_5_2 or 1
+	local num_2 = 1
+	local num_3 = 4
 
-	if arg_5_2 and arg_5_2 >= 1 and arg_5_2 <= 4 then
-		var_5_9 = arg_5_2
-		var_5_10 = arg_5_2
+	if not (not arg_5_2 and not (arg_5_2 >= 1) or not (arg_5_2 <= 4)) then
+		num_2 = arg_5_2
+		num_3 = arg_5_2
 	end
 
-	for iter_5_0 = var_5_9, var_5_10 do
-		for iter_5_1 = 1, #var_0_6 do
-			local var_5_11 = var_0_6[iter_5_1][iter_5_0] * 8 - 4
+	for i = num_2, num_3 do
+		for j = 1, #tbl do
+			local num_4 = tbl[j][i] * 8 - 4
 
-			if iter_5_1 < 10 then
-				var_5_3 = var_5_6[1][var_5_0]
-			elseif iter_5_1 < 27 then
-				var_5_3 = var_5_6[2][var_5_0]
-			elseif iter_5_1 <= 40 then
-				var_5_3 = var_5_6[3][var_5_0]
+			if j < 10 then
+				var_5_3 = tbl_2[1][var_5_0]
+			elseif j < 27 then
+				var_5_3 = tbl_2[2][var_5_0]
+			elseif j <= 40 then
+				var_5_3 = tbl_2[3][var_5_0]
 			end
 
-			local var_5_12 = var_5_11 - var_5_3
+			local num_5 = num_4 - var_5_3
 
 			if var_5_0 == 1 then
-				var_5_5 = math.floor(var_5_12 * 3 / 10)
+				var_5_5 = math.floor(num_5 * 3 / 10)
 			elseif var_5_0 == 2 then
-				var_5_5 = math.floor(var_5_12 * 2 / 11)
+				var_5_5 = math.floor(num_5 * 2 / 11)
 			elseif var_5_0 == 3 then
-				var_5_5 = math.floor(var_5_12 * 1 / 8)
+				var_5_5 = math.floor(num_5 * 1 / 8)
 			else
-				var_5_5 = math.floor(var_5_12 * 1 / 13)
+				var_5_5 = math.floor(num_5 * 1 / 13)
 			end
 
 			if arg_5_0 <= var_5_5 then
-				if iter_5_1 <= var_5_7 then
-					var_5_7 = iter_5_1
-					var_5_8 = iter_5_0
+				if j <= num then
+					num = j
+					flag = i
 				end
 
 				break
@@ -374,10 +379,11 @@ local function var_0_7(arg_5_0, arg_5_1, arg_5_2)
 		end
 	end
 
-	return var_5_7, var_5_8
+	return num, flag
 end
 
-local function var_0_8(arg_6_0, arg_6_1, arg_6_2)
+local function fn_5(arg_6_0, arg_6_1, arg_6_2)
+	-- function 6
 	local var_6_0 = arg_6_2
 
 	if arg_6_2 == 4 then
@@ -388,7 +394,7 @@ local function var_0_8(arg_6_0, arg_6_1, arg_6_2)
 
 	assert(var_6_0 <= 4)
 
-	local var_6_1 = {
+	local tbl = {
 		{
 			10,
 			9,
@@ -411,38 +417,39 @@ local function var_0_8(arg_6_0, arg_6_1, arg_6_2)
 	local var_6_2
 
 	if arg_6_1 < 10 then
-		var_6_2 = var_6_1[1][var_6_0]
+		var_6_2 = tbl[1][var_6_0]
 	elseif arg_6_1 < 27 then
-		var_6_2 = var_6_1[2][var_6_0]
+		var_6_2 = tbl[2][var_6_0]
 	elseif arg_6_1 <= 40 then
-		var_6_2 = var_6_1[3][var_6_0]
+		var_6_2 = tbl[3][var_6_0]
 	else
 		assert(false, "get_length, version > 40 not supported")
 	end
 
-	return (var_0_3(#arg_6_0, var_6_2))
+	return (fn(#arg_6_0, var_6_2))
 end
 
-local function var_0_9(arg_7_0, arg_7_1, arg_7_2)
+local function fn_6(arg_7_0, arg_7_1, arg_7_2)
+	-- function 7
 	local var_7_0
 
-	if arg_7_2 then
+	if not arg_7_2 then
 		assert(false, "not implemented")
 
 		var_7_0 = arg_7_2
 	else
-		var_7_0 = var_0_5(arg_7_0)
+		var_7_0 = fn_3(arg_7_0)
 	end
 
 	local var_7_1
 	local var_7_2
-	local var_7_3, var_7_4 = var_0_7(#arg_7_0, var_7_0, arg_7_1)
-	local var_7_5 = var_0_8(arg_7_0, var_7_3, var_7_0)
+	local var_7_3, var_7_4 = fn_4(#arg_7_0, var_7_0, arg_7_1)
+	local var_7_5 = fn_5(arg_7_0, var_7_3, var_7_0)
 
-	return var_7_3, var_7_4, var_0_3(var_7_0, 4), var_7_0, var_7_5
+	return var_7_3, var_7_4, fn(var_7_0, 4), var_7_0, var_7_5
 end
 
-local var_0_10 = {
+local tbl_2 = {
 	-1,
 	-1,
 	-1,
@@ -540,90 +547,98 @@ local var_0_10 = {
 	-1
 }
 
-local function var_0_11(arg_8_0)
-	local var_8_0 = ""
+local function fn_7(arg_8_0)
+	-- function 8
+	local str = ""
 	local var_8_1
 
-	string.gsub(arg_8_0, "..?.?", function(arg_9_0)
+	string.gsub(arg_8_0, "..?.?", function (arg_9_0)
+		-- function 9
 		var_8_1 = tonumber(arg_9_0)
 
 		if #arg_9_0 == 3 then
-			var_8_0 = var_8_0 .. var_0_3(var_8_1, 10)
+			str = str .. fn(var_8_1, 10)
 		elseif #arg_9_0 == 2 then
-			var_8_0 = var_8_0 .. var_0_3(var_8_1, 7)
+			str = str .. fn(var_8_1, 7)
 		else
-			var_8_0 = var_8_0 .. var_0_3(var_8_1, 4)
+			str = str .. fn(var_8_1, 4)
 		end
 	end)
 
-	return var_8_0
+	return str
 end
 
-local function var_0_12(arg_10_0)
-	local var_10_0 = ""
+local function fn_8(arg_10_0)
+	-- function 10
+	local str = ""
 	local var_10_1
 	local var_10_2
 	local var_10_3
 
-	string.gsub(arg_10_0, "..?", function(arg_11_0)
+	string.gsub(arg_10_0, "..?", function (arg_11_0)
+		-- function 11
 		if #arg_11_0 == 2 then
-			var_10_2 = var_0_10[string.byte(string.sub(arg_11_0, 1, 1))]
-			var_10_3 = var_0_10[string.byte(string.sub(arg_11_0, 2, 2))]
+			var_10_2 = tbl_2[string.byte(string.sub(arg_11_0, 1, 1))]
+			var_10_3 = tbl_2[string.byte(string.sub(arg_11_0, 2, 2))]
 			var_10_1 = var_10_2 * 45 + var_10_3
-			var_10_0 = var_10_0 .. var_0_3(var_10_1, 11)
+			str = str .. fn(var_10_1, 11)
 		else
-			var_10_1 = var_0_10[string.byte(arg_11_0)]
-			var_10_0 = var_10_0 .. var_0_3(var_10_1, 6)
+			var_10_1 = tbl_2[string.byte(arg_11_0)]
+			str = str .. fn(var_10_1, 6)
 		end
 	end)
 
-	return var_10_0
+	return str
 end
 
-local function var_0_13(arg_12_0)
-	local var_12_0 = {}
+local function fn_9(arg_12_0)
+	-- function 12
+	local tbl = {}
 
-	string.gsub(arg_12_0, ".", function(arg_13_0)
-		var_12_0[#var_12_0 + 1] = var_0_3(string.byte(arg_13_0), 8)
+	string.gsub(arg_12_0, ".", function (arg_13_0)
+		-- function 13
+		tbl[#tbl + 1] = fn(string.byte(arg_13_0), 8)
 	end)
 
-	return table.concat(var_12_0)
+	return table.concat(tbl)
 end
 
-local function var_0_14(arg_14_0, arg_14_1)
+local function fn_10(arg_14_0, arg_14_1)
+	-- function 14
 	if arg_14_1 == 1 then
-		return var_0_11(arg_14_0)
+		return fn_7(arg_14_0)
 	elseif arg_14_1 == 2 then
-		return var_0_12(arg_14_0)
+		return fn_8(arg_14_0)
 	elseif arg_14_1 == 4 then
-		return var_0_13(arg_14_0)
+		return fn_9(arg_14_0)
 	else
 		assert(false, "not implemented yet")
 	end
 end
 
-local function var_0_15(arg_15_0, arg_15_1, arg_15_2)
+local function fn_11(arg_15_0, arg_15_1, arg_15_2)
+	-- function 15
 	local var_15_0
 	local var_15_1
-	local var_15_2 = var_0_6[arg_15_0][arg_15_1] * 8
-	local var_15_3 = math.min(4, var_15_2 - #arg_15_2)
+	local num = tbl[arg_15_0][arg_15_1] * 8
+	local min = math.min(4, num - #arg_15_2)
 
-	if var_15_3 > 0 then
-		arg_15_2 = arg_15_2 .. string.rep("0", var_15_3)
+	if min > 0 then
+		arg_15_2 = arg_15_2 .. string.rep("0", min)
 	end
 
 	if math.fmod(#arg_15_2, 8) ~= 0 then
-		local var_15_4 = 8 - math.fmod(#arg_15_2, 8)
+		local num_2 = 8 - math.fmod(#arg_15_2, 8)
 
-		arg_15_2 = arg_15_2 .. string.rep("0", var_15_4)
+		arg_15_2 = arg_15_2 .. string.rep("0", num_2)
 	end
 
 	assert(math.fmod(#arg_15_2, 8) == 0)
 
-	while var_15_2 > #arg_15_2 do
+	while num > #arg_15_2 do
 		arg_15_2 = arg_15_2 .. "11101100"
 
-		if var_15_2 > #arg_15_2 then
+		if num > #arg_15_2 then
 			arg_15_2 = arg_15_2 .. "00010001"
 		end
 	end
@@ -631,7 +646,7 @@ local function var_0_15(arg_15_0, arg_15_1, arg_15_2)
 	return arg_15_2
 end
 
-local var_0_16 = {
+local tbl_3 = {
 	[0] = 0,
 	2,
 	4,
@@ -889,7 +904,7 @@ local var_0_16 = {
 	142,
 	1
 }
-local var_0_17 = {
+local tbl_4 = {
 	[0] = 0,
 	255,
 	1,
@@ -1147,7 +1162,7 @@ local var_0_17 = {
 	88,
 	175
 }
-local var_0_18 = {
+local tbl_5 = {
 	[7] = {
 		21,
 		102,
@@ -1435,138 +1450,144 @@ local var_0_18 = {
 	}
 }
 
-local function var_0_19(arg_16_0)
-	local var_16_0 = {}
-	local var_16_1 = string.gsub(arg_16_0, "(........)", function(arg_17_0)
-		var_16_0[#var_16_0 + 1] = tonumber(arg_17_0, 2)
+local function fn_12(arg_16_0)
+	-- function 16
+	local tbl = {}
+	local gsub = string.gsub(arg_16_0, "(........)", function (arg_17_0)
+		-- function 17
+		tbl[#tbl + 1] = tonumber(arg_17_0, 2)
 	end)
 
-	return var_16_0
+	return tbl
 end
 
-local function var_0_20(arg_18_0, arg_18_1)
-	local var_18_0 = {
+local function fn_13(arg_18_0, arg_18_1)
+	-- function 18
+	local tbl = {
 		[0] = 0
 	}
 
-	for iter_18_0 = 0, arg_18_1 - arg_18_0 - 1 do
-		var_18_0[iter_18_0] = 0
+	for i = 0, arg_18_1 - arg_18_0 - 1 do
+		tbl[i] = 0
 	end
 
-	local var_18_1 = var_0_18[arg_18_0]
+	local var_18_1 = tbl_5[arg_18_0]
 
-	for iter_18_1 = 1, arg_18_0 + 1 do
-		var_18_0[arg_18_1 - arg_18_0 + iter_18_1 - 1] = var_18_1[iter_18_1]
+	for j = 1, arg_18_0 + 1 do
+		tbl[arg_18_1 - arg_18_0 + j - 1] = var_18_1[j]
 	end
 
-	return var_18_0
+	return tbl
 end
 
-local function var_0_21(arg_19_0)
-	local var_19_0 = {}
+local function fn_14(self)
+	-- function 19
+	local tbl = {}
 
-	for iter_19_0 = 0, #arg_19_0 do
-		var_19_0[iter_19_0] = var_0_17[arg_19_0[iter_19_0]]
+	for i = 0, #self do
+		tbl[i] = tbl_4[self[i]]
 	end
 
-	return var_19_0
+	return tbl
 end
 
-local function var_0_22(arg_20_0, arg_20_1)
-	local var_20_0 = {}
+local function fn_15(self, arg_20_1)
+	-- function 20
+	local tbl = {}
 
-	for iter_20_0 = 0, #arg_20_0 do
-		var_20_0[iter_20_0] = var_0_16[arg_20_0[iter_20_0]]
+	for i = 0, #self do
+		tbl[i] = tbl_3[self[i]]
 	end
 
-	return var_20_0
+	return tbl
 end
 
-local function var_0_23(arg_21_0, arg_21_1)
+local function fn_16(arg_21_0, arg_21_1)
+	-- function 21
 	local var_21_0
 
 	if type(arg_21_0) == "string" then
-		var_21_0 = var_0_19(arg_21_0)
+		var_21_0 = fn_12(arg_21_0)
 	elseif type(arg_21_0) == "table" then
 		var_21_0 = arg_21_0
 	else
 		assert(false, "Unknown type for data: %s", type(arg_21_0))
 	end
 
-	local var_21_1 = #var_21_0
-	local var_21_2 = var_21_1 + arg_21_1 - 1
+	local count = #var_21_0
+	local num = count + arg_21_1 - 1
 	local var_21_3
 	local var_21_4
 	local var_21_5
-	local var_21_6 = {}
-	local var_21_7 = {}
-	local var_21_8 = {}
+	local tbl = {}
+	local tbl_2 = {}
+	local tbl_3 = {}
 
-	for iter_21_0 = 1, var_21_1 do
-		var_21_7[var_21_2 - iter_21_0 + 1] = var_21_0[iter_21_0]
+	for i = 1, count do
+		tbl_2[num - i + 1] = var_21_0[i]
 	end
 
-	for iter_21_1 = 1, var_21_2 - var_21_1 do
-		var_21_7[iter_21_1] = 0
+	for j = 1, num - count do
+		tbl_2[j] = 0
 	end
 
-	var_21_7[0] = 0
+	tbl_2[0] = 0
 
-	local var_21_9 = var_0_21(var_21_7)
+	local var_21_9 = fn_14(tbl_2)
 
-	while arg_21_1 <= var_21_2 do
-		local var_21_10 = var_0_20(arg_21_1, var_21_2)
-		local var_21_11 = var_21_9[var_21_2]
+	while arg_21_1 <= num do
+		local var_21_10 = fn_13(arg_21_1, num)
+		local var_21_11 = var_21_9[num]
 
-		for iter_21_2 = var_21_2, var_21_2 - arg_21_1, -1 do
-			if var_21_10[iter_21_2] + var_21_11 > 255 then
-				var_21_10[iter_21_2] = math.fmod(var_21_10[iter_21_2] + var_21_11, 255)
+		for k = num, num - arg_21_1, -1 do
+			if var_21_10[k] + var_21_11 > 255 then
+				var_21_10[k] = math.fmod(var_21_10[k] + var_21_11, 255)
 			else
-				var_21_10[iter_21_2] = var_21_10[iter_21_2] + var_21_11
+				var_21_10[k] = var_21_10[k] + var_21_11
 			end
 		end
 
-		for iter_21_3 = var_21_2 - arg_21_1 - 1, 0, -1 do
-			var_21_10[iter_21_3] = 0
+		for l = num - arg_21_1 - 1, 0, -1 do
+			var_21_10[l] = 0
 		end
 
-		local var_21_12 = var_0_22(var_21_10)
+		local var_21_12 = fn_15(var_21_10)
 
-		var_21_7 = var_0_22(var_21_9)
+		tbl_2 = fn_15(var_21_9)
 
-		local var_21_13 = {}
+		local tbl_4 = {}
 
-		for iter_21_4 = var_21_2, 0, -1 do
-			var_21_13[iter_21_4] = var_0_2(var_21_12[iter_21_4], var_21_7[iter_21_4])
+		for i4 = num, 0, -1 do
+			tbl_4[i4] = bxor(var_21_12[i4], tbl_2[i4])
 		end
 
-		for iter_21_5 = var_21_2, 0, -1 do
-			if iter_21_5 < arg_21_1 then
+		for i5 = num, 0, -1 do
+			if i5 < arg_21_1 then
 				break
 			end
 
-			if var_21_13[iter_21_5] == 0 then
-				var_21_13[iter_21_5] = nil
-				var_21_2 = var_21_2 - 1
+			if tbl_4[i5] == 0 then
+				tbl_4[i5] = nil
+				num = num - 1
 			else
 				break
 			end
 		end
 
-		var_21_7 = var_21_13
-		var_21_9 = var_0_21(var_21_7)
+		tbl_2 = tbl_4
+		var_21_9 = fn_14(tbl_2)
 	end
 
-	local var_21_14 = {}
+	local tbl_5 = {}
 
-	for iter_21_6 = #var_21_7, 0, -1 do
-		var_21_14[#var_21_14 + 1] = var_21_7[iter_21_6]
+	for i6 = #tbl_2, 0, -1 do
+		tbl_5[#tbl_5 + 1] = tbl_2[i6]
 	end
 
-	return var_21_14
+	return tbl_5
 end
 
-local var_0_24 = {
+local tbl_6 = {
 	{
 		{
 			1,
@@ -3696,7 +3717,7 @@ local var_0_24 = {
 		}
 	}
 }
-local var_0_25 = {
+local tbl_7 = {
 	0,
 	7,
 	7,
@@ -3739,135 +3760,138 @@ local var_0_25 = {
 	0
 }
 
-local function var_0_26(arg_22_0, arg_22_1, arg_22_2)
+local function fn_17(arg_22_0, arg_22_1, arg_22_2)
+	-- function 22
 	if type(arg_22_2) == "table" then
-		local var_22_0 = ""
+		local str = ""
 
-		for iter_22_0 = 1, #arg_22_2 do
-			var_22_0 = var_22_0 .. var_0_3(arg_22_2[iter_22_0], 8)
+		for i = 1, #arg_22_2 do
+			str = str .. fn(arg_22_2[i], 8)
 		end
 
-		arg_22_2 = var_22_0
+		arg_22_2 = str
 	end
 
-	local var_22_1 = var_0_24[arg_22_0][arg_22_1]
+	local var_22_1 = tbl_6[arg_22_0][arg_22_1]
 	local var_22_2
 	local var_22_3
-	local var_22_4 = {}
-	local var_22_5 = {}
-	local var_22_6 = 1
-	local var_22_7 = 0
-	local var_22_8 = 0
+	local tbl = {}
+	local tbl_2 = {}
+	local num = 1
+	local num_2 = 0
+	local num_3 = 0
 
-	for iter_22_1 = 1, #var_22_1 / 2 do
-		for iter_22_2 = 1, var_22_1[2 * iter_22_1 - 1] do
-			local var_22_9 = var_22_1[2 * iter_22_1][2]
-			local var_22_10 = var_22_1[2 * iter_22_1][1] - var_22_1[2 * iter_22_1][2]
+	for j = 1, #var_22_1 / 2 do
+		for k = 1, var_22_1[2 * j - 1] do
+			local var_22_9 = var_22_1[2 * j][2]
+			local num_4 = var_22_1[2 * j][1] - var_22_1[2 * j][2]
 
-			var_22_8 = var_22_8 + var_22_10 * 8
-			var_22_4[#var_22_4 + 1] = string.sub(arg_22_2, var_22_7 * 8 + 1, (var_22_7 + var_22_9) * 8)
+			num_3 = num_3 + num_4 * 8
+			tbl[#tbl + 1] = string.sub(arg_22_2, num_2 * 8 + 1, (num_2 + var_22_9) * 8)
 
-			local var_22_11 = var_0_23(var_22_4[#var_22_4], var_22_10)
-			local var_22_12 = ""
+			local var_22_11 = fn_16(tbl[#tbl], num_4)
+			local str_2 = ""
 
-			for iter_22_3 = 1, #var_22_11 do
-				var_22_12 = var_22_12 .. var_0_3(var_22_11[iter_22_3], 8)
+			for l = 1, #var_22_11 do
+				str_2 = str_2 .. fn(var_22_11[l], 8)
 			end
 
-			var_22_5[#var_22_5 + 1] = var_22_12
-			var_22_7 = var_22_7 + var_22_9
-			var_22_6 = var_22_6 + 1
+			tbl_2[#tbl_2 + 1] = str_2
+			num_2 = num_2 + var_22_9
+			num = num + 1
 		end
 	end
 
-	local var_22_13 = ""
-	local var_22_14 = 1
+	local str_3 = ""
+	local num_5 = 1
 
 	repeat
-		for iter_22_4 = 1, #var_22_4 do
-			if var_22_14 < #var_22_4[iter_22_4] then
-				var_22_13 = var_22_13 .. string.sub(var_22_4[iter_22_4], var_22_14, var_22_14 + 7)
+		for i4 = 1, #tbl do
+			if num_5 < #tbl[i4] then
+				str_3 = str_3 .. string.sub(tbl[i4], num_5, num_5 + 7)
 			end
 		end
 
-		var_22_14 = var_22_14 + 8
-	until #var_22_13 == #arg_22_2
+		num_5 = num_5 + 8
+	until #str_3 == #arg_22_2
 
-	local var_22_15 = ""
-	local var_22_16 = 1
+	local str_4 = ""
+	local num_6 = 1
 
 	repeat
-		for iter_22_5 = 1, #var_22_5 do
-			if var_22_16 < #var_22_5[iter_22_5] then
-				var_22_15 = var_22_15 .. string.sub(var_22_5[iter_22_5], var_22_16, var_22_16 + 7)
+		for i5 = 1, #tbl_2 do
+			if num_6 < #tbl_2[i5] then
+				str_4 = str_4 .. string.sub(tbl_2[i5], num_6, num_6 + 7)
 			end
 		end
 
-		var_22_16 = var_22_16 + 8
-	until #var_22_15 == var_22_8
+		num_6 = num_6 + 8
+	until #str_4 == num_3
 
-	return var_22_13 .. var_22_15
+	return str_3 .. str_4
 end
 
-local function var_0_27(arg_23_0)
-	local var_23_0 = #arg_23_0
+local function fn_18(arg_23_0)
+	-- function 23
+	local count = #arg_23_0
 
-	for iter_23_0 = 1, 8 do
-		for iter_23_1 = 1, 8 do
-			arg_23_0[iter_23_0][iter_23_1] = -2
-			arg_23_0[var_23_0 - 8 + iter_23_0][iter_23_1] = -2
-			arg_23_0[iter_23_0][var_23_0 - 8 + iter_23_1] = -2
+	for i = 1, 8 do
+		for j = 1, 8 do
+			arg_23_0[i][j] = -2
+			arg_23_0[count - 8 + i][j] = -2
+			arg_23_0[i][count - 8 + j] = -2
 		end
 	end
 
-	for iter_23_2 = 1, 7 do
-		arg_23_0[1][iter_23_2] = 2
-		arg_23_0[7][iter_23_2] = 2
-		arg_23_0[iter_23_2][1] = 2
-		arg_23_0[iter_23_2][7] = 2
-		arg_23_0[var_23_0][iter_23_2] = 2
-		arg_23_0[var_23_0 - 6][iter_23_2] = 2
-		arg_23_0[var_23_0 - iter_23_2 + 1][1] = 2
-		arg_23_0[var_23_0 - iter_23_2 + 1][7] = 2
-		arg_23_0[1][var_23_0 - iter_23_2 + 1] = 2
-		arg_23_0[7][var_23_0 - iter_23_2 + 1] = 2
-		arg_23_0[iter_23_2][var_23_0 - 6] = 2
-		arg_23_0[iter_23_2][var_23_0] = 2
+	for k = 1, 7 do
+		arg_23_0[1][k] = 2
+		arg_23_0[7][k] = 2
+		arg_23_0[k][1] = 2
+		arg_23_0[k][7] = 2
+		arg_23_0[count][k] = 2
+		arg_23_0[count - 6][k] = 2
+		arg_23_0[count - k + 1][1] = 2
+		arg_23_0[count - k + 1][7] = 2
+		arg_23_0[1][count - k + 1] = 2
+		arg_23_0[7][count - k + 1] = 2
+		arg_23_0[k][count - 6] = 2
+		arg_23_0[k][count] = 2
 	end
 
-	for iter_23_3 = 1, 3 do
-		for iter_23_4 = 1, 3 do
-			arg_23_0[2 + iter_23_4][iter_23_3 + 2] = 2
-			arg_23_0[var_23_0 - iter_23_4 - 1][iter_23_3 + 2] = 2
-			arg_23_0[2 + iter_23_4][var_23_0 - iter_23_3 - 1] = 2
+	for l = 1, 3 do
+		for i4 = 1, 3 do
+			arg_23_0[2 + i4][l + 2] = 2
+			arg_23_0[count - i4 - 1][l + 2] = 2
+			arg_23_0[2 + i4][count - l - 1] = 2
 		end
 	end
 end
 
-local function var_0_28(arg_24_0)
+local function fn_19(arg_24_0)
+	-- function 24
 	local var_24_0
 	local var_24_1
-	local var_24_2 = 7
-	local var_24_3 = 9
+	local num = 7
+	local num_2 = 9
 
-	for iter_24_0 = var_24_3, #arg_24_0 - 8 do
-		if math.fmod(iter_24_0, 2) == 1 then
-			arg_24_0[iter_24_0][var_24_2] = 2
+	for i = num_2, #arg_24_0 - 8 do
+		if math.fmod(i, 2) == 1 then
+			arg_24_0[i][num] = 2
 		else
-			arg_24_0[iter_24_0][var_24_2] = -2
+			arg_24_0[i][num] = -2
 		end
 	end
 
-	for iter_24_1 = var_24_3, #arg_24_0 - 8 do
-		if math.fmod(iter_24_1, 2) == 1 then
-			arg_24_0[var_24_2][iter_24_1] = 2
+	for j = num_2, #arg_24_0 - 8 do
+		if math.fmod(j, 2) == 1 then
+			arg_24_0[num][j] = 2
 		else
-			arg_24_0[var_24_2][iter_24_1] = -2
+			arg_24_0[num][j] = -2
 		end
 	end
 end
 
-local var_0_29 = {
+local tbl_8 = {
 	{},
 	{
 		6,
@@ -4127,49 +4151,50 @@ local var_0_29 = {
 	}
 }
 
-local function var_0_30(arg_25_0)
-	local var_25_0 = (#arg_25_0 - 17) / 4
-	local var_25_1 = var_0_29[var_25_0]
+local function fn_20(arg_25_0)
+	-- function 25
+	local num = (#arg_25_0 - 17) / 4
+	local var_25_1 = tbl_8[num]
 	local var_25_2
 	local var_25_3
 
-	for iter_25_0 = 1, #var_25_1 do
-		for iter_25_1 = 1, #var_25_1 do
-			if (iter_25_0 ~= 1 or iter_25_1 ~= 1) and (iter_25_0 ~= #var_25_1 or iter_25_1 ~= 1) and (iter_25_0 ~= 1 or iter_25_1 ~= #var_25_1) then
-				local var_25_4 = var_25_1[iter_25_0] + 1
-				local var_25_5 = var_25_1[iter_25_1] + 1
+	for i = 1, #var_25_1 do
+		for j = 1, #var_25_1 do
+			if not ((i ~= 1 or j ~= 1 or i ~= #var_25_1) and j ~= 1 and i ~= 1 or j == #var_25_1) then
+				local num_2 = var_25_1[i] + 1
+				local num_3 = var_25_1[j] + 1
 
-				arg_25_0[var_25_4][var_25_5] = 2
-				arg_25_0[var_25_4 + 1][var_25_5] = -2
-				arg_25_0[var_25_4 - 1][var_25_5] = -2
-				arg_25_0[var_25_4 + 2][var_25_5] = 2
-				arg_25_0[var_25_4 - 2][var_25_5] = 2
-				arg_25_0[var_25_4][var_25_5 - 2] = 2
-				arg_25_0[var_25_4 + 1][var_25_5 - 2] = 2
-				arg_25_0[var_25_4 - 1][var_25_5 - 2] = 2
-				arg_25_0[var_25_4 + 2][var_25_5 - 2] = 2
-				arg_25_0[var_25_4 - 2][var_25_5 - 2] = 2
-				arg_25_0[var_25_4][var_25_5 + 2] = 2
-				arg_25_0[var_25_4 + 1][var_25_5 + 2] = 2
-				arg_25_0[var_25_4 - 1][var_25_5 + 2] = 2
-				arg_25_0[var_25_4 + 2][var_25_5 + 2] = 2
-				arg_25_0[var_25_4 - 2][var_25_5 + 2] = 2
-				arg_25_0[var_25_4][var_25_5 - 1] = -2
-				arg_25_0[var_25_4 + 1][var_25_5 - 1] = -2
-				arg_25_0[var_25_4 - 1][var_25_5 - 1] = -2
-				arg_25_0[var_25_4 + 2][var_25_5 - 1] = 2
-				arg_25_0[var_25_4 - 2][var_25_5 - 1] = 2
-				arg_25_0[var_25_4][var_25_5 + 1] = -2
-				arg_25_0[var_25_4 + 1][var_25_5 + 1] = -2
-				arg_25_0[var_25_4 - 1][var_25_5 + 1] = -2
-				arg_25_0[var_25_4 + 2][var_25_5 + 1] = 2
-				arg_25_0[var_25_4 - 2][var_25_5 + 1] = 2
+				arg_25_0[num_2][num_3] = 2
+				arg_25_0[num_2 + 1][num_3] = -2
+				arg_25_0[num_2 - 1][num_3] = -2
+				arg_25_0[num_2 + 2][num_3] = 2
+				arg_25_0[num_2 - 2][num_3] = 2
+				arg_25_0[num_2][num_3 - 2] = 2
+				arg_25_0[num_2 + 1][num_3 - 2] = 2
+				arg_25_0[num_2 - 1][num_3 - 2] = 2
+				arg_25_0[num_2 + 2][num_3 - 2] = 2
+				arg_25_0[num_2 - 2][num_3 - 2] = 2
+				arg_25_0[num_2][num_3 + 2] = 2
+				arg_25_0[num_2 + 1][num_3 + 2] = 2
+				arg_25_0[num_2 - 1][num_3 + 2] = 2
+				arg_25_0[num_2 + 2][num_3 + 2] = 2
+				arg_25_0[num_2 - 2][num_3 + 2] = 2
+				arg_25_0[num_2][num_3 - 1] = -2
+				arg_25_0[num_2 + 1][num_3 - 1] = -2
+				arg_25_0[num_2 - 1][num_3 - 1] = -2
+				arg_25_0[num_2 + 2][num_3 - 1] = 2
+				arg_25_0[num_2 - 2][num_3 - 1] = 2
+				arg_25_0[num_2][num_3 + 1] = -2
+				arg_25_0[num_2 + 1][num_3 + 1] = -2
+				arg_25_0[num_2 - 1][num_3 + 1] = -2
+				arg_25_0[num_2 + 2][num_3 + 1] = 2
+				arg_25_0[num_2 - 2][num_3 + 1] = 2
 			end
 		end
 	end
 end
 
-local var_0_31 = {
+local tbl_9 = {
 	{
 		[0] = "111011111000100",
 		"111001011110011",
@@ -4216,46 +4241,47 @@ local var_0_31 = {
 	}
 }
 
-local function var_0_32(arg_26_0, arg_26_1, arg_26_2)
-	local var_26_0 = var_0_31[arg_26_1][arg_26_2]
+local function fn_21(arg_26_0, arg_26_1, arg_26_2)
+	-- function 26
+	local var_26_0 = tbl_9[arg_26_1][arg_26_2]
 	local var_26_1
 
-	for iter_26_0 = 1, 7 do
-		local var_26_2 = string.sub(var_26_0, iter_26_0, iter_26_0)
+	for i = 1, 7 do
+		local sub = string.sub(var_26_0, i, i)
 
-		var_0_4(arg_26_0, var_26_2, 9, #arg_26_0 - iter_26_0 + 1)
+		fn_2(arg_26_0, sub, 9, #arg_26_0 - i + 1)
 	end
 
-	for iter_26_1 = 8, 9 do
-		local var_26_3 = string.sub(var_26_0, iter_26_1, iter_26_1)
+	for j = 8, 9 do
+		local sub_2 = string.sub(var_26_0, j, j)
 
-		var_0_4(arg_26_0, var_26_3, 9, 17 - iter_26_1)
+		fn_2(arg_26_0, sub_2, 9, 17 - j)
 	end
 
-	for iter_26_2 = 10, 15 do
-		local var_26_4 = string.sub(var_26_0, iter_26_2, iter_26_2)
+	for k = 10, 15 do
+		local sub_3 = string.sub(var_26_0, k, k)
 
-		var_0_4(arg_26_0, var_26_4, 9, 16 - iter_26_2)
+		fn_2(arg_26_0, sub_3, 9, 16 - k)
 	end
 
-	for iter_26_3 = 1, 6 do
-		local var_26_5 = string.sub(var_26_0, iter_26_3, iter_26_3)
+	for l = 1, 6 do
+		local sub_4 = string.sub(var_26_0, l, l)
 
-		var_0_4(arg_26_0, var_26_5, iter_26_3, 9)
+		fn_2(arg_26_0, sub_4, l, 9)
 	end
 
-	local var_26_6 = string.sub(var_26_0, 7, 7)
+	local sub_5 = string.sub(var_26_0, 7, 7)
 
-	var_0_4(arg_26_0, var_26_6, 8, 9)
+	fn_2(arg_26_0, sub_5, 8, 9)
 
-	for iter_26_4 = 8, 15 do
-		local var_26_7 = string.sub(var_26_0, iter_26_4, iter_26_4)
+	for i4 = 8, 15 do
+		local sub_6 = string.sub(var_26_0, i4, i4)
 
-		var_0_4(arg_26_0, var_26_7, #arg_26_0 - 15 + iter_26_4, 9)
+		fn_2(arg_26_0, sub_6, #arg_26_0 - 15 + i4, 9)
 	end
 end
 
-local var_0_33 = {
+local tbl_10 = {
 	"001010010011111000",
 	"001111011010000100",
 	"100110010101100100",
@@ -4292,149 +4318,153 @@ local var_0_33 = {
 	"100101100011000101"
 }
 
-local function var_0_34(arg_27_0, arg_27_1)
+local function fn_22(arg_27_0, arg_27_1)
+	-- function 27
 	if arg_27_1 < 7 then
 		return
 	end
 
-	local var_27_0 = #arg_27_0
-	local var_27_1 = var_0_33[arg_27_1 - 6]
+	local count = #arg_27_0
+	local var_27_1 = tbl_10[arg_27_1 - 6]
 	local var_27_2
 	local var_27_3
 	local var_27_4
 	local var_27_5
 	local var_27_6
-	local var_27_7 = #arg_27_0 - 10
-	local var_27_8 = 1
+	local num = #arg_27_0 - 10
+	local num_2 = 1
 
-	for iter_27_0 = 1, #var_27_1 do
-		local var_27_9 = string.sub(var_27_1, iter_27_0, iter_27_0)
-		local var_27_10 = var_27_7 + math.fmod(iter_27_0 - 1, 3)
-		local var_27_11 = var_27_8 + math.floor((iter_27_0 - 1) / 3)
+	for i = 1, #var_27_1 do
+		local sub = string.sub(var_27_1, i, i)
+		local num_3 = num + math.fmod(i - 1, 3)
+		local num_4 = num_2 + math.floor((i - 1) / 3)
 
-		var_0_4(arg_27_0, var_27_9, var_27_10, var_27_11)
+		fn_2(arg_27_0, sub, num_3, num_4)
 	end
 
-	local var_27_12 = 1
-	local var_27_13 = #arg_27_0 - 10
+	local num_5 = 1
+	local num_6 = #arg_27_0 - 10
 
-	for iter_27_1 = 1, #var_27_1 do
-		local var_27_14 = string.sub(var_27_1, iter_27_1, iter_27_1)
-		local var_27_15 = var_27_12 + math.floor((iter_27_1 - 1) / 3)
-		local var_27_16 = var_27_13 + math.fmod(iter_27_1 - 1, 3)
+	for j = 1, #var_27_1 do
+		local sub_2 = string.sub(var_27_1, j, j)
+		local num_7 = num_5 + math.floor((j - 1) / 3)
+		local num_8 = num_6 + math.fmod(j - 1, 3)
 
-		var_0_4(arg_27_0, var_27_14, var_27_15, var_27_16)
+		fn_2(arg_27_0, sub_2, num_7, num_8)
 	end
 end
 
-local function var_0_35(arg_28_0, arg_28_1, arg_28_2)
+local function fn_23(arg_28_0, arg_28_1, arg_28_2)
+	-- function 28
 	local var_28_0
-	local var_28_1 = {}
-	local var_28_2 = arg_28_0 * 4 + 17
+	local tbl = {}
+	local num = arg_28_0 * 4 + 17
 
-	for iter_28_0 = 1, var_28_2 do
-		var_28_1[iter_28_0] = {}
+	for i = 1, num do
+		tbl[i] = {}
 
-		for iter_28_1 = 1, var_28_2 do
-			var_28_1[iter_28_0][iter_28_1] = 0
+		for j = 1, num do
+			tbl[i][j] = 0
 		end
 	end
 
-	var_0_27(var_28_1)
-	var_0_28(var_28_1)
-	var_0_34(var_28_1, arg_28_0)
+	fn_18(tbl)
+	fn_19(tbl)
+	fn_22(tbl, arg_28_0)
 
-	var_28_1[9][var_28_2 - 7] = 2
+	tbl[9][num - 7] = 2
 
-	var_0_30(var_28_1)
-	var_0_32(var_28_1, arg_28_1, arg_28_2)
+	fn_20(tbl)
+	fn_21(tbl, arg_28_1, arg_28_2)
 
-	return var_28_1
+	return tbl
 end
 
-local function var_0_36(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+local function fn_24(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+	-- function 29
 	arg_29_1 = arg_29_1 - 1
 	arg_29_2 = arg_29_2 - 1
 
-	local var_29_0 = false
+	local flag = false
 
 	if arg_29_0 == -1 then
-		-- block empty
+		-- Nothing
 	elseif arg_29_0 == 0 then
 		if math.fmod(arg_29_1 + arg_29_2, 2) == 0 then
-			var_29_0 = true
+			flag = true
 		end
 	elseif arg_29_0 == 1 then
 		if math.fmod(arg_29_2, 2) == 0 then
-			var_29_0 = true
+			flag = true
 		end
 	elseif arg_29_0 == 2 then
 		if math.fmod(arg_29_1, 3) == 0 then
-			var_29_0 = true
+			flag = true
 		end
 	elseif arg_29_0 == 3 then
 		if math.fmod(arg_29_1 + arg_29_2, 3) == 0 then
-			var_29_0 = true
+			flag = true
 		end
 	elseif arg_29_0 == 4 then
 		if math.fmod(math.floor(arg_29_2 / 2) + math.floor(arg_29_1 / 3), 2) == 0 then
-			var_29_0 = true
+			flag = true
 		end
 	elseif arg_29_0 == 5 then
 		if math.fmod(arg_29_1 * arg_29_2, 2) + math.fmod(arg_29_1 * arg_29_2, 3) == 0 then
-			var_29_0 = true
+			flag = true
 		end
 	elseif arg_29_0 == 6 then
 		if math.fmod(math.fmod(arg_29_1 * arg_29_2, 2) + math.fmod(arg_29_1 * arg_29_2, 3), 2) == 0 then
-			var_29_0 = true
+			flag = true
 		end
 	elseif arg_29_0 == 7 then
 		if math.fmod(math.fmod(arg_29_1 * arg_29_2, 3) + math.fmod(arg_29_1 + arg_29_2, 2), 2) == 0 then
-			var_29_0 = true
+			flag = true
 		end
 	else
 		assert(false, "This can't happen (mask must be <= 7)")
 	end
 
-	if var_29_0 then
+	if not flag then
 		return 1 - 2 * tonumber(arg_29_3)
 	else
 		return -1 + 2 * tonumber(arg_29_3)
 	end
 end
 
-local function var_0_37(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
-	local var_30_0 = {}
-	local var_30_1 = 1
-	local var_30_2 = "right"
+local function fn_25(self, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+	-- function 30
+	local tbl = {}
+	local num = 1
+	local str = "right"
 
-	while var_30_1 <= #arg_30_4 do
-		if var_30_2 == "right" and arg_30_0[arg_30_1][arg_30_2] == 0 then
-			var_30_0[#var_30_0 + 1] = {
+	while num <= #arg_30_4 do
+		if not (str ~= "right" or self[arg_30_1][arg_30_2] ~= 0) then
+			tbl[#tbl + 1] = {
 				arg_30_1,
 				arg_30_2
 			}
-			var_30_2 = "left"
-			var_30_1 = var_30_1 + 1
-		elseif var_30_2 == "left" and arg_30_0[arg_30_1 - 1][arg_30_2] == 0 then
-			var_30_0[#var_30_0 + 1] = {
+			str = "left"
+			num = num + 1
+		elseif not (str ~= "left" or self[arg_30_1 - 1][arg_30_2] ~= 0) then
+			tbl[#tbl + 1] = {
 				arg_30_1 - 1,
 				arg_30_2
 			}
-			var_30_2 = "right"
-			var_30_1 = var_30_1 + 1
+			str = "right"
+			num = num + 1
 
 			if arg_30_3 == "up" then
 				arg_30_2 = arg_30_2 - 1
 			else
 				arg_30_2 = arg_30_2 + 1
 			end
-		elseif var_30_2 == "right" and arg_30_0[arg_30_1 - 1][arg_30_2] == 0 then
-			var_30_0[#var_30_0 + 1] = {
+		elseif not (str ~= "right" or self[arg_30_1 - 1][arg_30_2] ~= 0) then
+			tbl[#tbl + 1] = {
 				arg_30_1 - 1,
 				arg_30_2
 			}
-			var_30_1 = var_30_1 + 1
+			num = num + 1
 
 			if arg_30_3 == "up" then
 				arg_30_2 = arg_30_2 - 1
@@ -4447,7 +4477,7 @@ local function var_0_37(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
 			arg_30_2 = arg_30_2 + 1
 		end
 
-		if arg_30_2 < 1 or arg_30_2 > #arg_30_0 then
+		if not (arg_30_2 < 1 or not (arg_30_2 > #self)) then
 			arg_30_1 = arg_30_1 - 2
 
 			if arg_30_1 == 7 then
@@ -4459,37 +4489,39 @@ local function var_0_37(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
 				arg_30_2 = 1
 			else
 				arg_30_3 = "up"
-				arg_30_2 = #arg_30_0
+				arg_30_2 = #self
 			end
 		end
 	end
 
-	return var_30_0, arg_30_1, arg_30_2, arg_30_3
+	return tbl, arg_30_1, arg_30_2, arg_30_3
 end
 
-local function var_0_38(arg_31_0, arg_31_1, arg_31_2)
-	local var_31_0 = #arg_31_0
+local function fn_26(arg_31_0, arg_31_1, arg_31_2)
+	-- function 31
+	local count = #arg_31_0
 	local var_31_1
 	local var_31_2
 	local var_31_3
 	local var_31_4
 	local var_31_5
 	local var_31_6
-	local var_31_7 = "up"
-	local var_31_8 = 0
-	local var_31_9, var_31_10 = var_31_0, var_31_0
+	local str = "up"
+	local num = 0
+	local var_31_9, var_31_10 = count, count
 
-	string.gsub(arg_31_1, ".?.?.?.?.?.?.?.?", function(arg_32_0)
-		var_31_8 = var_31_8 + 1
-		var_31_3, var_31_9, var_31_10, var_31_7 = var_0_37(arg_31_0, var_31_9, var_31_10, var_31_7, arg_32_0, arg_31_2)
+	string.gsub(arg_31_1, ".?.?.?.?.?.?.?.?", function (arg_32_0)
+		-- function 32
+		num = num + 1
+		var_31_3, var_31_9, var_31_10, str = fn_25(arg_31_0, var_31_9, var_31_10, str, arg_32_0, arg_31_2)
 
-		for iter_32_0 = 1, #arg_32_0 do
-			var_31_4 = var_31_3[iter_32_0][1]
-			var_31_5 = var_31_3[iter_32_0][2]
-			var_31_6 = var_0_36(arg_31_2, var_31_4, var_31_5, string.sub(arg_32_0, iter_32_0, iter_32_0))
+		for i = 1, #arg_32_0 do
+			var_31_4 = var_31_3[i][1]
+			var_31_5 = var_31_3[i][2]
+			var_31_6 = fn_24(arg_31_2, var_31_4, var_31_5, string.sub(arg_32_0, i, i))
 
-			if var_0_0 then
-				arg_31_0[var_31_4][var_31_5] = var_31_6 * (iter_32_0 + 10)
+			if not flag then
+				arg_31_0[var_31_4][var_31_5] = var_31_6 * (i + 10)
 			else
 				arg_31_0[var_31_4][var_31_5] = var_31_6
 			end
@@ -4497,116 +4529,119 @@ local function var_0_38(arg_31_0, arg_31_1, arg_31_2)
 	end)
 end
 
-local function var_0_39(arg_33_0)
-	local var_33_0 = 0
-	local var_33_1 = 0
-	local var_33_2 = 0
-	local var_33_3 = 0
-	local var_33_4 = #arg_33_0
-	local var_33_5 = 0
+local function fn_27(self)
+	-- function 33
+	local num = 0
+	local num_2 = 0
+	local num_3 = 0
+	local num_4 = 0
+	local count = #self
+	local num_5 = 0
 	local var_33_6
 	local var_33_7
 	local var_33_8
 
-	for iter_33_0 = 1, var_33_4 do
-		local var_33_9 = 0
+	for i = 1, count do
+		local num_6 = 0
 		local var_33_10
 
-		for iter_33_1 = 1, var_33_4 do
-			if arg_33_0[iter_33_0][iter_33_1] > 0 then
-				var_33_5 = var_33_5 + 1
+		for j = 1, count do
+			if self[i][j] > 0 then
+				num_5 = num_5 + 1
 
-				local var_33_11 = false
+				local flag = false
 			else
-				local var_33_12 = true
+				local flag_2 = true
 			end
 
-			local var_33_13 = arg_33_0[iter_33_0][iter_33_1] < 0
+			local flag_3 = self[i][j] < 0
 
-			if var_33_10 == var_33_13 then
-				var_33_9 = var_33_9 + 1
+			if var_33_10 == flag_3 then
+				num_6 = num_6 + 1
 			else
-				if var_33_9 >= 5 then
-					var_33_0 = var_33_0 + var_33_9 - 2
+				if num_6 >= 5 then
+					num = num + num_6 - 2
 				end
 
-				var_33_9 = 1
+				num_6 = 1
 			end
 
-			var_33_10 = var_33_13
+			var_33_10 = flag_3
 		end
 
-		if var_33_9 >= 5 then
-			var_33_0 = var_33_0 + var_33_9 - 2
+		if num_6 >= 5 then
+			num = num + num_6 - 2
 		end
 	end
 
-	for iter_33_2 = 1, var_33_4 do
-		local var_33_14 = 0
+	for k = 1, count do
+		local num_7 = 0
 		local var_33_15
 
-		for iter_33_3 = 1, var_33_4 do
-			local var_33_16 = arg_33_0[iter_33_3][iter_33_2] < 0
+		for l = 1, count do
+			local flag_4 = self[l][k] < 0
 
-			if var_33_15 == var_33_16 then
-				var_33_14 = var_33_14 + 1
+			if var_33_15 == flag_4 then
+				num_7 = num_7 + 1
 			else
-				if var_33_14 >= 5 then
-					var_33_0 = var_33_0 + var_33_14 - 2
+				if num_7 >= 5 then
+					num = num + num_7 - 2
 				end
 
-				var_33_14 = 1
+				num_7 = 1
 			end
 
-			var_33_15 = var_33_16
+			var_33_15 = flag_4
 		end
 
-		if var_33_14 >= 5 then
-			var_33_0 = var_33_0 + var_33_14 - 2
-		end
-	end
-
-	for iter_33_4 = 1, var_33_4 do
-		for iter_33_5 = 1, var_33_4 do
-			if iter_33_5 < var_33_4 - 1 and iter_33_4 < var_33_4 - 1 and (arg_33_0[iter_33_4][iter_33_5] < 0 and arg_33_0[iter_33_4 + 1][iter_33_5] < 0 and arg_33_0[iter_33_4][iter_33_5 + 1] < 0 and arg_33_0[iter_33_4 + 1][iter_33_5 + 1] < 0 or arg_33_0[iter_33_4][iter_33_5] > 0 and arg_33_0[iter_33_4 + 1][iter_33_5] > 0 and arg_33_0[iter_33_4][iter_33_5 + 1] > 0 and arg_33_0[iter_33_4 + 1][iter_33_5 + 1] > 0) then
-				var_33_1 = var_33_1 + 3
-			end
-
-			if var_33_4 > iter_33_5 + 6 and arg_33_0[iter_33_4][iter_33_5] > 0 and arg_33_0[iter_33_4][iter_33_5 + 1] < 0 and arg_33_0[iter_33_4][iter_33_5 + 2] > 0 and arg_33_0[iter_33_4][iter_33_5 + 3] > 0 and arg_33_0[iter_33_4][iter_33_5 + 4] > 0 and arg_33_0[iter_33_4][iter_33_5 + 5] < 0 and arg_33_0[iter_33_4][iter_33_5 + 6] > 0 and (var_33_4 > iter_33_5 + 10 and arg_33_0[iter_33_4][iter_33_5 + 7] < 0 and arg_33_0[iter_33_4][iter_33_5 + 8] < 0 and arg_33_0[iter_33_4][iter_33_5 + 9] < 0 and arg_33_0[iter_33_4][iter_33_5 + 10] < 0 or iter_33_5 - 4 >= 1 and arg_33_0[iter_33_4][iter_33_5 - 1] < 0 and arg_33_0[iter_33_4][iter_33_5 - 2] < 0 and arg_33_0[iter_33_4][iter_33_5 - 3] < 0 and arg_33_0[iter_33_4][iter_33_5 - 4] < 0) then
-				var_33_2 = var_33_2 + 40
-			end
-
-			if var_33_4 >= iter_33_4 + 6 and arg_33_0[iter_33_4][iter_33_5] > 0 and arg_33_0[iter_33_4 + 1][iter_33_5] < 0 and arg_33_0[iter_33_4 + 2][iter_33_5] > 0 and arg_33_0[iter_33_4 + 3][iter_33_5] > 0 and arg_33_0[iter_33_4 + 4][iter_33_5] > 0 and arg_33_0[iter_33_4 + 5][iter_33_5] < 0 and arg_33_0[iter_33_4 + 6][iter_33_5] > 0 and (var_33_4 >= iter_33_4 + 10 and arg_33_0[iter_33_4 + 7][iter_33_5] < 0 and arg_33_0[iter_33_4 + 8][iter_33_5] < 0 and arg_33_0[iter_33_4 + 9][iter_33_5] < 0 and arg_33_0[iter_33_4 + 10][iter_33_5] < 0 or iter_33_4 - 4 >= 1 and arg_33_0[iter_33_4 - 1][iter_33_5] < 0 and arg_33_0[iter_33_4 - 2][iter_33_5] < 0 and arg_33_0[iter_33_4 - 3][iter_33_5] < 0 and arg_33_0[iter_33_4 - 4][iter_33_5] < 0) then
-				var_33_2 = var_33_2 + 40
-			end
+		if num_7 >= 5 then
+			num = num + num_7 - 2
 		end
 	end
 
-	local var_33_17 = var_33_5 / (var_33_4 * var_33_4)
-	local var_33_18 = math.floor(math.abs(var_33_17 * 100 - 50)) * 2
+	for i4 = 1, count do
+		for i5 = 1, count do
+			if not (not (i5 < count - 1) or not (i4 < count - 1) or (not (self[i4][i5] < 0) or not (self[i4 + 1][i5] < 0) or not (self[i4][i5 + 1] < 0) or not (self[i4 + 1][i5 + 1] < 0) or not (self[i4][i5] > 0)) and (not (self[i4 + 1][i5] > 0) or not (self[i4][i5 + 1] > 0) or not (self[i4 + 1][i5 + 1] > 0))) then
+				num_2 = num_2 + 3
+			end
 
-	return var_33_0 + var_33_1 + var_33_2 + var_33_18
+			if not (not (count > i5 + 6) or not (self[i4][i5] > 0) or not (self[i4][i5 + 1] < 0) or not (self[i4][i5 + 2] > 0) or not (self[i4][i5 + 3] > 0) or not (self[i4][i5 + 4] > 0) or not (self[i4][i5 + 5] < 0) or not (self[i4][i5 + 6] > 0) or (not (count > i5 + 10) or not (self[i4][i5 + 7] < 0) or not (self[i4][i5 + 8] < 0) or not (self[i4][i5 + 9] < 0) or not (self[i4][i5 + 10] < 0) or not (i5 - 4 >= 1)) and (not (self[i4][i5 - 1] < 0) or not (self[i4][i5 - 2] < 0) or not (self[i4][i5 - 3] < 0) or not (self[i4][i5 - 4] < 0))) then
+				num_3 = num_3 + 40
+			end
+
+			if not (not (count >= i4 + 6) or not (self[i4][i5] > 0) or not (self[i4 + 1][i5] < 0) or not (self[i4 + 2][i5] > 0) or not (self[i4 + 3][i5] > 0) or not (self[i4 + 4][i5] > 0) or not (self[i4 + 5][i5] < 0) or not (self[i4 + 6][i5] > 0) or (not (count >= i4 + 10) or not (self[i4 + 7][i5] < 0) or not (self[i4 + 8][i5] < 0) or not (self[i4 + 9][i5] < 0) or not (self[i4 + 10][i5] < 0) or not (i4 - 4 >= 1)) and (not (self[i4 - 1][i5] < 0) or not (self[i4 - 2][i5] < 0) or not (self[i4 - 3][i5] < 0) or not (self[i4 - 4][i5] < 0))) then
+				num_3 = num_3 + 40
+			end
+		end
+	end
+
+	local num_8 = num_5 / (count * count)
+	local num_9 = math.floor(math.abs(num_8 * 100 - 50)) * 2
+
+	return num + num_2 + num_3 + num_9
 end
 
-local function var_0_40(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
-	local var_34_0 = var_0_35(arg_34_0, arg_34_1, arg_34_3)
+local function fn_28(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+	-- function 34
+	local var_34_0 = fn_23(arg_34_0, arg_34_1, arg_34_3)
 
-	var_0_38(var_34_0, arg_34_2, arg_34_3)
+	fn_26(var_34_0, arg_34_2, arg_34_3)
 
-	local var_34_1 = var_0_39(var_34_0)
+	local var_34_1 = fn_27(var_34_0)
 
 	return var_34_0, var_34_1
 end
 
-local function var_0_41(arg_35_0, arg_35_1, arg_35_2)
+local function fn_29(arg_35_0, arg_35_1, arg_35_2)
+	-- function 35
 	local var_35_0
 	local var_35_1
 	local var_35_2
 	local var_35_3
-	local var_35_4, var_35_5 = var_0_40(arg_35_0, arg_35_1, arg_35_2, 0)
+	local var_35_4, var_35_5 = fn_28(arg_35_0, arg_35_1, arg_35_2, 0)
 
-	for iter_35_0 = 1, 7 do
-		local var_35_6, var_35_7 = var_0_40(arg_35_0, arg_35_1, arg_35_2, iter_35_0)
+	for i = 1, 7 do
+		local var_35_6, var_35_7 = fn_28(arg_35_0, arg_35_1, arg_35_2, i)
 
 		if var_35_7 < var_35_5 then
 			var_35_4 = var_35_6
@@ -4617,7 +4652,8 @@ local function var_0_41(arg_35_0, arg_35_1, arg_35_2)
 	return var_35_4
 end
 
-local function var_0_42(arg_36_0, arg_36_1, arg_36_2)
+local function fn_30(arg_36_0, arg_36_1, arg_36_2)
+	-- function 36
 	local var_36_0
 	local var_36_1
 	local var_36_2
@@ -4625,42 +4661,42 @@ local function var_0_42(arg_36_0, arg_36_1, arg_36_2)
 	local var_36_4
 	local var_36_5, var_36_6, var_36_7, var_36_8
 
-	var_36_5, arg_36_1, var_36_6, var_36_7, var_36_8 = var_0_9(arg_36_0, arg_36_1)
+	var_36_5, arg_36_1, var_36_6, var_36_7, var_36_8 = fn_6(arg_36_0, arg_36_1)
 
-	local var_36_9 = (var_36_6 .. var_36_8) .. var_0_14(arg_36_0, var_36_7)
-	local var_36_10 = var_0_15(var_36_5, arg_36_1, var_36_9)
-	local var_36_11 = var_0_26(var_36_5, arg_36_1, var_36_10)
+	local str = (var_36_6 .. var_36_8) .. fn_10(arg_36_0, var_36_7)
+	local var_36_10 = fn_11(var_36_5, arg_36_1, str)
+	local var_36_11 = fn_17(var_36_5, arg_36_1, var_36_10)
 
 	if math.fmod(#var_36_11, 8) ~= 0 then
 		return false, string.format("Arranged data %% 8 != 0: data length = %d, mod 8 = %d", #var_36_11, math.fmod(#var_36_11, 8))
 	end
 
-	local var_36_12 = var_36_11 .. string.rep("0", var_0_25[var_36_5])
-	local var_36_13 = var_0_41(var_36_5, arg_36_1, var_36_12)
+	local str_2 = var_36_11 .. string.rep("0", tbl_7[var_36_5])
+	local var_36_13 = fn_29(var_36_5, arg_36_1, str_2)
 
 	return true, var_36_13
 end
 
-if var_0_1 then
+if not flag_2 then
 	return {
-		encode_string_numeric = var_0_11,
-		encode_string_ascii = var_0_12,
-		qrcode = var_0_42,
-		binary = var_0_3,
-		get_mode = var_0_5,
-		get_length = var_0_8,
-		add_pad_data = var_0_15,
-		get_generator_polynominal_adjusted = var_0_20,
-		get_pixel_with_mask = var_0_36,
-		get_version_eclevel_mode_bistringlength = var_0_9,
-		remainder = var_0_25,
-		arrange_codewords_and_calculate_ec = var_0_26,
-		calculate_error_correction = var_0_23,
-		convert_bitstring_to_bytes = var_0_19,
-		bit_xor = var_0_2
+		encode_string_numeric = fn_7,
+		encode_string_ascii = fn_8,
+		qrcode = fn_30,
+		binary = fn,
+		get_mode = fn_3,
+		get_length = fn_5,
+		add_pad_data = fn_11,
+		get_generator_polynominal_adjusted = fn_13,
+		get_pixel_with_mask = fn_24,
+		get_version_eclevel_mode_bistringlength = fn_6,
+		remainder = tbl_7,
+		arrange_codewords_and_calculate_ec = fn_17,
+		calculate_error_correction = fn_16,
+		convert_bitstring_to_bytes = fn_12,
+		bit_xor = bxor
 	}
 end
 
 return {
-	qrcode = var_0_42
+	qrcode = fn_30
 }

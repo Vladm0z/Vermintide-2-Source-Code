@@ -1,24 +1,24 @@
 -- chunkname: @scripts/ui/views/deus_menu/deus_cursed_chest_view_definitions.lua
 
-local var_0_0 = UISettings.game_start_windows
-local var_0_1 = {
+local game_start_windows = UISettings.game_start_windows
+local tbl = {
 	400,
 	600
 }
-local var_0_2 = var_0_0.spacing
-local var_0_3 = var_0_0.large_window_frame
-local var_0_4 = UIFrameSettings[var_0_3].texture_sizes.vertical[1]
-local var_0_5 = {
-	var_0_1[1] * 3 + var_0_2 * 2 + var_0_4 * 2,
-	var_0_1[2] + 80
+local spacing = game_start_windows.spacing
+local large_window_frame = game_start_windows.large_window_frame
+local var_0_4 = UIFrameSettings[large_window_frame].texture_sizes.vertical[1]
+local tbl_2 = {
+	tbl[1] * 3 + spacing * 2 + var_0_4 * 2,
+	tbl[2] + 80
 }
-local var_0_6 = {
-	var_0_5[1] + 50,
-	var_0_5[2]
+local tbl_3 = {
+	tbl_2[1] + 50,
+	tbl_2[2]
 }
-local var_0_7 = "menu_frame_11"
-local var_0_8 = UIFrameSettings[var_0_7].texture_sizes.vertical[1]
-local var_0_9 = {
+local str = "menu_frame_11"
+local var_0_8 = UIFrameSettings[str].texture_sizes.vertical[1]
+local tbl_4 = {
 	root = {
 		is_root = true,
 		size = {
@@ -61,7 +61,7 @@ local var_0_9 = {
 		vertical_alignment = "center",
 		parent = "screen_center",
 		horizontal_alignment = "center",
-		size = var_0_6,
+		size = tbl_3,
 		position = {
 			0,
 			0,
@@ -72,7 +72,7 @@ local var_0_9 = {
 		vertical_alignment = "center",
 		parent = "window",
 		horizontal_alignment = "center",
-		size = var_0_6,
+		size = tbl_3,
 		position = {
 			0,
 			0,
@@ -83,7 +83,7 @@ local var_0_9 = {
 		vertical_alignment = "center",
 		parent = "screen",
 		horizontal_alignment = "center",
-		size = var_0_6,
+		size = tbl_3,
 		position = {
 			0,
 			0,
@@ -109,7 +109,7 @@ local var_0_9 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_6[1] - var_0_8 * 2,
+			tbl_3[1] - var_0_8 * 2,
 			1000
 		},
 		position = {
@@ -123,7 +123,7 @@ local var_0_9 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_6[1] - var_0_8 * 2,
+			tbl_3[1] - var_0_8 * 2,
 			500
 		},
 		position = {
@@ -137,7 +137,7 @@ local var_0_9 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_6[1] - var_0_8 * 2,
+			tbl_3[1] - var_0_8 * 2,
 			200
 		},
 		position = {
@@ -278,7 +278,7 @@ local var_0_9 = {
 		horizontal_alignment = "right",
 		size = {
 			1000,
-			var_0_6[2]
+			tbl_3[2]
 		},
 		position = {
 			0,
@@ -320,7 +320,7 @@ local var_0_9 = {
 		horizontal_alignment = "right",
 		size = {
 			126,
-			var_0_6[2] - 20
+			tbl_3[2] - 20
 		},
 		position = {
 			-493,
@@ -371,7 +371,7 @@ local var_0_9 = {
 		}
 	}
 }
-local var_0_10 = {
+local tbl_5 = {
 	use_shadow = true,
 	upper_case = true,
 	localize = false,
@@ -387,7 +387,7 @@ local var_0_10 = {
 		2
 	}
 }
-local var_0_11 = {
+local tbl_6 = {
 	use_shadow = true,
 	upper_case = true,
 	localize = false,
@@ -403,7 +403,7 @@ local var_0_11 = {
 		2
 	}
 }
-local var_0_12 = {
+local tbl_7 = {
 	use_shadow = true,
 	upper_case = true,
 	localize = false,
@@ -420,14 +420,15 @@ local var_0_12 = {
 	}
 }
 
-local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	local var_1_0 = {
+local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	local tbl = {
 		255,
 		255,
 		255,
 		255
 	}
-	local var_1_1 = {
+	local tbl_2 = {
 		vertical_alignment = "center",
 		horizontal_alignment = "left",
 		masked = arg_1_2,
@@ -447,16 +448,16 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			66
 		}
 	}
-	local var_1_2 = table.clone(var_1_1)
+	local clone = table.clone(tbl_2)
 
-	var_1_2.color = {
+	clone.color = {
 		255,
 		80,
 		80,
 		80
 	}
 
-	local var_1_3 = {
+	local tbl_3 = {
 		font_size = 20,
 		upper_case = true,
 		word_wrap = true,
@@ -468,38 +469,42 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			255,
 			0,
 			0
-		},
-		font_type = arg_1_2 and "hell_shark_masked" or "hell_shark",
-		text_color = Colors.get_color_table_with_alpha("font_title", 255),
-		offset = {
-			100,
-			arg_1_1[2] - 70,
-			3
-		},
-		size = {
-			arg_1_1[1] - 270,
-			30
 		}
 	}
-	local var_1_4 = table.clone(var_1_3)
+	local flag
 
-	var_1_4.text_color = {
+	flag = not arg_1_2 and "hell_shark_masked" and "hell_shark"
+	tbl_3.font_type = flag
+	tbl_3.text_color = Colors.get_color_table_with_alpha("font_title", 255)
+	tbl_3.offset = {
+		100,
+		arg_1_1[2] - 70,
+		3
+	}
+	tbl_3.size = {
+		arg_1_1[1] - 270,
+		30
+	}
+
+	local clone_2 = table.clone(tbl_3)
+
+	clone_2.text_color = {
 		255,
 		100,
 		100,
 		100
 	}
 
-	local var_1_5 = table.clone(var_1_3)
+	local clone_3 = table.clone(tbl_3)
 
-	var_1_5.text_color = Colors.get_color_table_with_alpha("black", 255)
-	var_1_5.offset = {
-		var_1_3.offset[1] + 2,
-		var_1_3.offset[2] - 2,
-		var_1_3.offset[3] - 1
+	clone_3.text_color = Colors.get_color_table_with_alpha("black", 255)
+	clone_3.offset = {
+		tbl_3.offset[1] + 2,
+		tbl_3.offset[2] - 2,
+		tbl_3.offset[3] - 1
 	}
 
-	local var_1_6 = {
+	local tbl_4 = {
 		font_size = 20,
 		word_wrap = true,
 		horizontal_alignment = "right",
@@ -510,29 +515,33 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			255,
 			0,
 			0
-		},
-		font_type = arg_1_2 and "hell_shark_masked" or "hell_shark",
-		text_color = Colors.get_color_table_with_alpha("font_title", 255),
-		offset = {
-			330,
-			arg_1_1[2] - 70,
-			3
-		},
-		size = {
-			100,
-			30
 		}
 	}
-	local var_1_7 = table.clone(var_1_6)
+	local flag_2
 
-	var_1_7.text_color = Colors.get_color_table_with_alpha("black", 255)
-	var_1_7.offset = {
-		var_1_6.offset[1] + 2,
-		var_1_6.offset[2] - 2,
-		var_1_6.offset[3] - 1
+	flag_2 = not arg_1_2 and "hell_shark_masked" and "hell_shark"
+	tbl_4.font_type = flag_2
+	tbl_4.text_color = Colors.get_color_table_with_alpha("font_title", 255)
+	tbl_4.offset = {
+		330,
+		arg_1_1[2] - 70,
+		3
+	}
+	tbl_4.size = {
+		100,
+		30
 	}
 
-	local var_1_8 = {
+	local clone_4 = table.clone(tbl_4)
+
+	clone_4.text_color = Colors.get_color_table_with_alpha("black", 255)
+	clone_4.offset = {
+		tbl_4.offset[1] + 2,
+		tbl_4.offset[2] - 2,
+		tbl_4.offset[3] - 1
+	}
+
+	local tbl_5 = {
 		font_size = 18,
 		word_wrap = true,
 		dynamic_font_size_word_wrap = true,
@@ -543,38 +552,42 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			0,
 			255,
 			0
-		},
-		font_type = arg_1_2 and "hell_shark_masked" or "hell_shark",
-		text_color = Colors.get_color_table_with_alpha("font_default", 255),
-		offset = {
-			100,
-			arg_1_1[2] - 167,
-			3
-		},
-		size = {
-			arg_1_1[1] - 155,
-			100
 		}
 	}
-	local var_1_9 = table.clone(var_1_8)
+	local flag_3
 
-	var_1_9.text_color = {
+	flag_3 = not arg_1_2 and "hell_shark_masked" and "hell_shark"
+	tbl_5.font_type = flag_3
+	tbl_5.text_color = Colors.get_color_table_with_alpha("font_default", 255)
+	tbl_5.offset = {
+		100,
+		arg_1_1[2] - 167,
+		3
+	}
+	tbl_5.size = {
+		arg_1_1[1] - 155,
+		100
+	}
+
+	local clone_5 = table.clone(tbl_5)
+
+	clone_5.text_color = {
 		255,
 		80,
 		80,
 		80
 	}
 
-	local var_1_10 = table.clone(var_1_8)
+	local clone_6 = table.clone(tbl_5)
 
-	var_1_10.text_color = Colors.get_color_table_with_alpha("black", 255)
-	var_1_10.offset = {
-		var_1_8.offset[1] + 2,
-		var_1_8.offset[2] - 2,
-		var_1_8.offset[3] - 1
+	clone_6.text_color = Colors.get_color_table_with_alpha("black", 255)
+	clone_6.offset = {
+		tbl_5.offset[1] + 2,
+		tbl_5.offset[2] - 2,
+		tbl_5.offset[3] - 1
 	}
 
-	local var_1_11 = {
+	local tbl_6 = {
 		font_size = 22,
 		word_wrap = true,
 		horizontal_alignment = "left",
@@ -585,49 +598,53 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			255,
 			0,
 			0
-		},
-		font_type = arg_1_2 and "hell_shark_masked" or "hell_shark",
-		text_color = Colors.get_color_table_with_alpha("font_default", 255),
-		offset = {
-			-60,
-			70,
-			3
-		},
-		default_offset = {
-			-60,
-			70,
-			3
-		},
-		size = {
-			55,
-			20
-		},
-		color_override = {},
-		color_override_table = {
-			start_index = 0,
-			end_index = 0,
-			color = {
-				255,
-				121,
-				193,
-				229
-			}
 		}
 	}
-	local var_1_12 = table.clone(var_1_11)
+	local flag_4
 
-	var_1_12.text_color = Colors.get_color_table_with_alpha("red", 255)
-
-	local var_1_13 = table.clone(var_1_11)
-
-	var_1_13.text_color = Colors.get_color_table_with_alpha("black", 255)
-	var_1_13.offset = {
-		var_1_11.offset[1] + 2,
-		var_1_11.offset[2] - 2,
-		var_1_11.offset[3] - 1
+	flag_4 = not arg_1_2 and "hell_shark_masked" and "hell_shark"
+	tbl_6.font_type = flag_4
+	tbl_6.text_color = Colors.get_color_table_with_alpha("font_default", 255)
+	tbl_6.offset = {
+		-60,
+		70,
+		3
+	}
+	tbl_6.default_offset = {
+		-60,
+		70,
+		3
+	}
+	tbl_6.size = {
+		55,
+		20
+	}
+	tbl_6.color_override = {}
+	tbl_6.color_override_table = {
+		start_index = 0,
+		end_index = 0,
+		color = {
+			255,
+			121,
+			193,
+			229
+		}
 	}
 
-	local var_1_14 = {
+	local clone_7 = table.clone(tbl_6)
+
+	clone_7.text_color = Colors.get_color_table_with_alpha("red", 255)
+
+	local clone_8 = table.clone(tbl_6)
+
+	clone_8.text_color = Colors.get_color_table_with_alpha("black", 255)
+	clone_8.offset = {
+		tbl_6.offset[1] + 2,
+		tbl_6.offset[2] - 2,
+		tbl_6.offset[3] - 1
+	}
+
+	local tbl_7 = {
 		font_size = 18,
 		word_wrap = true,
 		horizontal_alignment = "right",
@@ -638,34 +655,38 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			255,
 			0,
 			0
-		},
-		font_type = arg_1_2 and "hell_shark_masked" or "hell_shark",
-		text_color = {
-			255,
-			150,
-			150,
-			150
-		},
-		offset = {
-			-155,
-			40,
-			3
-		},
-		size = {
-			80,
-			20
 		}
 	}
-	local var_1_15 = table.clone(var_1_14)
+	local flag_5
 
-	var_1_15.text_color = Colors.get_color_table_with_alpha("black", 255)
-	var_1_15.offset = {
-		var_1_14.offset[1] + 2,
-		var_1_14.offset[2] - 2,
-		var_1_14.offset[3] - 1
+	flag_5 = not arg_1_2 and "hell_shark_masked" and "hell_shark"
+	tbl_7.font_type = flag_5
+	tbl_7.text_color = {
+		255,
+		150,
+		150,
+		150
+	}
+	tbl_7.offset = {
+		-155,
+		40,
+		3
+	}
+	tbl_7.size = {
+		80,
+		20
 	}
 
-	local var_1_16 = {
+	local clone_9 = table.clone(tbl_7)
+
+	clone_9.text_color = Colors.get_color_table_with_alpha("black", 255)
+	clone_9.offset = {
+		tbl_7.offset[1] + 2,
+		tbl_7.offset[2] - 2,
+		tbl_7.offset[3] - 1
+	}
+
+	local tbl_8 = {
 		font_size = 18,
 		word_wrap = true,
 		horizontal_alignment = "right",
@@ -676,56 +697,60 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			255,
 			0,
 			0
-		},
-		font_type = arg_1_2 and "hell_shark_masked" or "hell_shark",
-		text_color = Colors.get_color_table_with_alpha("white", 255),
-		offset = {
-			-60,
-			40,
-			3
-		},
-		size = {
-			30,
-			20
 		}
 	}
-	local var_1_17 = table.clone(var_1_16)
+	local flag_6
 
-	var_1_17.text_color = Colors.get_color_table_with_alpha("black", 255)
-	var_1_17.offset = {
-		var_1_16.offset[1] + 2,
-		var_1_16.offset[2] - 2,
-		var_1_16.offset[3] - 1
+	flag_6 = not arg_1_2 and "hell_shark_masked" and "hell_shark"
+	tbl_8.font_type = flag_6
+	tbl_8.text_color = Colors.get_color_table_with_alpha("white", 255)
+	tbl_8.offset = {
+		-60,
+		40,
+		3
+	}
+	tbl_8.size = {
+		30,
+		20
 	}
 
-	local var_1_18 = table.clone(var_1_14)
+	local clone_10 = table.clone(tbl_8)
 
-	var_1_18.offset[2] = 15
-
-	local var_1_19 = table.clone(var_1_18)
-
-	var_1_19.text_color = Colors.get_color_table_with_alpha("black", 255)
-	var_1_19.offset = {
-		var_1_18.offset[1] + 2,
-		var_1_18.offset[2] - 2,
-		var_1_18.offset[3] - 1
+	clone_10.text_color = Colors.get_color_table_with_alpha("black", 255)
+	clone_10.offset = {
+		tbl_8.offset[1] + 2,
+		tbl_8.offset[2] - 2,
+		tbl_8.offset[3] - 1
 	}
 
-	local var_1_20 = table.clone(var_1_16)
+	local clone_11 = table.clone(tbl_7)
 
-	var_1_20.offset[2] = 15
-	var_1_20.text_color = Colors.get_color_table_with_alpha("font_title", 255)
+	clone_11.offset[2] = 15
 
-	local var_1_21 = table.clone(var_1_20)
+	local clone_12 = table.clone(clone_11)
 
-	var_1_21.text_color = Colors.get_color_table_with_alpha("black", 255)
-	var_1_21.offset = {
-		var_1_20.offset[1] + 2,
-		var_1_20.offset[2] - 2,
-		var_1_20.offset[3] - 1
+	clone_12.text_color = Colors.get_color_table_with_alpha("black", 255)
+	clone_12.offset = {
+		clone_11.offset[1] + 2,
+		clone_11.offset[2] - 2,
+		clone_11.offset[3] - 1
 	}
 
-	local var_1_22 = {
+	local clone_13 = table.clone(tbl_8)
+
+	clone_13.offset[2] = 15
+	clone_13.text_color = Colors.get_color_table_with_alpha("font_title", 255)
+
+	local clone_14 = table.clone(clone_13)
+
+	clone_14.text_color = Colors.get_color_table_with_alpha("black", 255)
+	clone_14.offset = {
+		clone_13.offset[1] + 2,
+		clone_13.offset[2] - 2,
+		clone_13.offset[3] - 1
+	}
+
+	local tbl_9 = {
 		{
 			pass_type = "hotspot",
 			content_id = "button_hotspot"
@@ -749,8 +774,9 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			pass_type = "texture",
 			style_id = "icon_discount_frame",
 			texture_id = "icon_discount_frame",
-			content_check_function = function(arg_2_0)
-				return arg_2_0.has_discount
+			content_check_function = function (self)
+				-- function 2
+				return self.has_discount
 			end
 		},
 		{
@@ -767,32 +793,52 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			pass_type = "texture",
 			style_id = "icon",
 			texture_id = "icon",
-			content_check_function = function(arg_3_0)
-				return arg_3_0.is_bought or not arg_3_0.button_hotspot.disable_button
+			content_check_function = function (self)
+				-- function 3
+				local is_bought = self.is_bought
+
+				is_bought = is_bought or not self.button_hotspot.disable_button
+
+				return is_bought
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "icon_disabled",
 			texture_id = "icon",
-			content_check_function = function(arg_4_0)
-				return arg_4_0.button_hotspot.disable_button and not arg_4_0.is_bought
+			content_check_function = function (self)
+				-- function 4
+				local disable_button = self.button_hotspot.disable_button
+
+				disable_button = not disable_button and not self.is_bought
+
+				return disable_button
 			end
 		},
 		{
 			style_id = "sub_text_disabled",
 			pass_type = "text",
 			text_id = "sub_text",
-			content_check_function = function(arg_5_0)
-				return arg_5_0.button_hotspot.disable_button and not arg_5_0.is_bought
+			content_check_function = function (self)
+				-- function 5
+				local disable_button = self.button_hotspot.disable_button
+
+				disable_button = not disable_button and not self.is_bought
+
+				return disable_button
 			end
 		},
 		{
 			style_id = "sub_text",
 			pass_type = "text",
 			text_id = "sub_text",
-			content_check_function = function(arg_6_0)
-				return arg_6_0.is_bought or not arg_6_0.button_hotspot.disable_button
+			content_check_function = function (self)
+				-- function 6
+				local is_bought = self.is_bought
+
+				is_bought = is_bought or not self.button_hotspot.disable_button
+
+				return is_bought
 			end
 		},
 		{
@@ -804,16 +850,26 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			style_id = "title_text_disabled",
 			pass_type = "text",
 			text_id = "title_text",
-			content_check_function = function(arg_7_0)
-				return arg_7_0.button_hotspot.disable_button and not arg_7_0.is_bought
+			content_check_function = function (self)
+				-- function 7
+				local disable_button = self.button_hotspot.disable_button
+
+				disable_button = not disable_button and not self.is_bought
+
+				return disable_button
 			end
 		},
 		{
 			style_id = "title_text",
 			pass_type = "text",
 			text_id = "title_text",
-			content_check_function = function(arg_8_0)
-				return arg_8_0.is_bought or not arg_8_0.button_hotspot.disable_button
+			content_check_function = function (self)
+				-- function 8
+				local is_bought = self.is_bought
+
+				is_bought = is_bought or not self.button_hotspot.disable_button
+
+				return is_bought
 			end
 		},
 		{
@@ -835,104 +891,249 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			style_id = "price_text",
 			pass_type = "text",
 			text_id = "price_text",
-			content_check_function = function(arg_9_0)
-				return not arg_9_0.button_hotspot.disable_button and not arg_9_0.is_bought
+			content_check_function = function (self)
+				-- function 9
+				return not not self.button_hotspot.disable_button or not self.is_bought
 			end
 		},
 		{
 			style_id = "price_text_disabled",
 			pass_type = "text",
 			text_id = "price_text",
-			content_check_function = function(arg_10_0)
-				return arg_10_0.button_hotspot.disable_button and not arg_10_0.is_bought
+			content_check_function = function (self)
+				-- function 10
+				local disable_button = self.button_hotspot.disable_button
+
+				disable_button = not disable_button and not self.is_bought
+
+				return disable_button
 			end
 		},
 		{
 			style_id = "price_text_shadow",
 			pass_type = "text",
 			text_id = "price_text",
-			content_check_function = function(arg_11_0)
-				return not arg_11_0.is_bought
+			content_check_function = function (self)
+				-- function 11
+				return not self.is_bought
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "price_icon",
 			texture_id = "price_icon",
-			content_check_function = function(arg_12_0)
-				return not arg_12_0.is_bought
+			content_check_function = function (self)
+				-- function 12
+				return not self.is_bought
 			end
 		},
 		{
 			style_id = "current_value_title_text",
 			pass_type = "text",
 			text_id = "current_value_title_text",
-			content_check_function = function(arg_13_0)
-				return not arg_13_0.is_bought and arg_13_0.current_value_text and arg_13_0.max_value_text
+			content_check_function = function (self)
+				-- function 13
+				local current_value_text
+
+				if not self.is_bought then
+					current_value_text = self.current_value_text
+
+					if not current_value_text then
+						current_value_text = self.max_value_text
+					end
+				else
+					current_value_text = false
+				end
+
+				if false then
+					current_value_text = true
+				end
+
+				return current_value_text
 			end
 		},
 		{
 			style_id = "current_value_title_text_shadow",
 			pass_type = "text",
 			text_id = "current_value_title_text",
-			content_check_function = function(arg_14_0)
-				return not arg_14_0.is_bought and arg_14_0.current_value_text and arg_14_0.max_value_text
+			content_check_function = function (self)
+				-- function 14
+				local current_value_text
+
+				if not self.is_bought then
+					current_value_text = self.current_value_text
+
+					if not current_value_text then
+						current_value_text = self.max_value_text
+					end
+				else
+					current_value_text = false
+				end
+
+				if false then
+					current_value_text = true
+				end
+
+				return current_value_text
 			end
 		},
 		{
 			style_id = "current_value_text",
 			pass_type = "text",
 			text_id = "current_value_text",
-			content_check_function = function(arg_15_0)
-				return not arg_15_0.is_bought and arg_15_0.current_value_text and arg_15_0.max_value_text
+			content_check_function = function (self)
+				-- function 15
+				local current_value_text
+
+				if not self.is_bought then
+					current_value_text = self.current_value_text
+
+					if not current_value_text then
+						current_value_text = self.max_value_text
+					end
+				else
+					current_value_text = false
+				end
+
+				if false then
+					current_value_text = true
+				end
+
+				return current_value_text
 			end
 		},
 		{
 			style_id = "current_value_text_shadow",
 			pass_type = "text",
 			text_id = "current_value_text",
-			content_check_function = function(arg_16_0)
-				return not arg_16_0.is_bought and arg_16_0.current_value_text and arg_16_0.max_value_text
+			content_check_function = function (self)
+				-- function 16
+				local current_value_text
+
+				if not self.is_bought then
+					current_value_text = self.current_value_text
+
+					if not current_value_text then
+						current_value_text = self.max_value_text
+					end
+				else
+					current_value_text = false
+				end
+
+				if false then
+					current_value_text = true
+				end
+
+				return current_value_text
 			end
 		},
 		{
 			style_id = "max_value_title_text",
 			pass_type = "text",
 			text_id = "max_value_title_text",
-			content_check_function = function(arg_17_0)
-				return not arg_17_0.is_bought and arg_17_0.current_value_text and arg_17_0.max_value_text
+			content_check_function = function (self)
+				-- function 17
+				local current_value_text
+
+				if not self.is_bought then
+					current_value_text = self.current_value_text
+
+					if not current_value_text then
+						current_value_text = self.max_value_text
+					end
+				else
+					current_value_text = false
+				end
+
+				if false then
+					current_value_text = true
+				end
+
+				return current_value_text
 			end
 		},
 		{
 			style_id = "max_value_title_text_shadow",
 			pass_type = "text",
 			text_id = "max_value_title_text",
-			content_check_function = function(arg_18_0)
-				return not arg_18_0.is_bought and arg_18_0.current_value_text and arg_18_0.max_value_text
+			content_check_function = function (self)
+				-- function 18
+				local current_value_text
+
+				if not self.is_bought then
+					current_value_text = self.current_value_text
+
+					if not current_value_text then
+						current_value_text = self.max_value_text
+					end
+				else
+					current_value_text = false
+				end
+
+				if false then
+					current_value_text = true
+				end
+
+				return current_value_text
 			end
 		},
 		{
 			style_id = "max_value_text",
 			pass_type = "text",
 			text_id = "max_value_text",
-			content_check_function = function(arg_19_0)
-				return not arg_19_0.is_bought and arg_19_0.current_value_text and arg_19_0.max_value_text
+			content_check_function = function (self)
+				-- function 19
+				local current_value_text
+
+				if not self.is_bought then
+					current_value_text = self.current_value_text
+
+					if not current_value_text then
+						current_value_text = self.max_value_text
+					end
+				else
+					current_value_text = false
+				end
+
+				if false then
+					current_value_text = true
+				end
+
+				return current_value_text
 			end
 		},
 		{
 			style_id = "max_value_text_shadow",
 			pass_type = "text",
 			text_id = "max_value_text",
-			content_check_function = function(arg_20_0)
-				return not arg_20_0.is_bought and arg_20_0.current_value_text and arg_20_0.max_value_text
+			content_check_function = function (self)
+				-- function 20
+				local current_value_text
+
+				if not self.is_bought then
+					current_value_text = self.current_value_text
+
+					if not current_value_text then
+						current_value_text = self.max_value_text
+					end
+				else
+					current_value_text = false
+				end
+
+				if false then
+					current_value_text = true
+				end
+
+				return current_value_text
 			end
 		},
 		{
 			style_id = "unlocked_text",
 			pass_type = "text",
 			text_id = "unlocked_text",
-			content_check_function = function(arg_21_0)
-				return arg_21_0.is_bought
+			content_check_function = function (self)
+				-- function 21
+				return self.is_bought
 			end
 		},
 		{
@@ -944,12 +1145,13 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			style_id = "set_progression",
 			pass_type = "text",
 			text_id = "set_progression",
-			content_check_function = function(arg_22_0)
-				return arg_22_0.is_part_of_set
+			content_check_function = function (self)
+				-- function 22
+				return self.is_part_of_set
 			end
 		}
 	}
-	local var_1_23 = {
+	local tbl_10 = {
 		title_text = "",
 		icon_background = "button_frame_01",
 		is_bought = false,
@@ -1013,7 +1215,7 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			"icon_bought_frame"
 		}
 	}
-	local var_1_24 = {
+	local tbl_11 = {
 		debug = {
 			masked = arg_1_2,
 			color = {
@@ -1112,8 +1314,8 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				3
 			}
 		},
-		icon = var_1_1,
-		icon_disabled = var_1_2,
+		icon = tbl_2,
+		icon_disabled = clone,
 		icon_bg = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
@@ -1138,7 +1340,7 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			masked = arg_1_2,
-			color = var_1_0,
+			color = tbl,
 			offset = {
 				0,
 				0,
@@ -1167,7 +1369,7 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			masked = arg_1_2,
-			color = var_1_0,
+			color = tbl,
 			offset = {
 				0,
 				0,
@@ -1192,84 +1394,88 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				20
 			}
 		},
-		price_text = var_1_11,
-		price_text_shadow = var_1_13,
-		price_text_disabled = var_1_12,
-		title_text_disabled = var_1_4,
-		title_text = var_1_3,
-		title_text_shadow = var_1_5,
-		rarity_text = var_1_6,
-		rarity_text_shadow = var_1_7,
-		sub_text_disabled = var_1_9,
-		sub_text = var_1_8,
-		sub_text_shadow = var_1_10,
-		current_value_title_text = var_1_14,
-		current_value_title_text_shadow = var_1_15,
-		current_value_text = var_1_16,
-		current_value_text_shadow = var_1_17,
-		max_value_title_text = var_1_18,
-		max_value_title_text_shadow = var_1_19,
-		max_value_text = var_1_20,
-		max_value_text_shadow = var_1_21,
-		unlocked_text = {
-			font_size = 24,
-			upper_case = true,
-			word_wrap = true,
-			horizontal_alignment = "center",
-			vertical_alignment = "center",
-			dynamic_font_size = true,
-			color = {
-				150,
-				255,
-				0,
-				0
-			},
-			font_type = arg_1_2 and "hell_shark_masked" or "hell_shark",
-			text_color = Colors.get_color_table_with_alpha("font_default", 255),
-			offset = {
-				-130,
-				40,
-				3
-			},
-			size = {
-				120,
-				30
-			}
+		price_text = tbl_6,
+		price_text_shadow = clone_8,
+		price_text_disabled = clone_7,
+		title_text_disabled = clone_2,
+		title_text = tbl_3,
+		title_text_shadow = clone_3,
+		rarity_text = tbl_4,
+		rarity_text_shadow = clone_4,
+		sub_text_disabled = clone_5,
+		sub_text = tbl_5,
+		sub_text_shadow = clone_6,
+		current_value_title_text = tbl_7,
+		current_value_title_text_shadow = clone_9,
+		current_value_text = tbl_8,
+		current_value_text_shadow = clone_10,
+		max_value_title_text = clone_11,
+		max_value_title_text_shadow = clone_12,
+		max_value_text = clone_13,
+		max_value_text_shadow = clone_14
+	}
+	local tbl_12 = {
+		font_size = 24,
+		upper_case = true,
+		word_wrap = true,
+		horizontal_alignment = "center",
+		vertical_alignment = "center",
+		dynamic_font_size = true,
+		color = {
+			150,
+			255,
+			0,
+			0
+		}
+	}
+	local flag_7
+
+	flag_7 = not arg_1_2 and "hell_shark_masked" and "hell_shark"
+	tbl_12.font_type = flag_7
+	tbl_12.text_color = Colors.get_color_table_with_alpha("font_default", 255)
+	tbl_12.offset = {
+		-130,
+		40,
+		3
+	}
+	tbl_12.size = {
+		120,
+		30
+	}
+	tbl_11.unlocked_text = tbl_12
+	tbl_11.set_progression = {
+		word_wrap = false,
+		upper_case = false,
+		font_size = 20,
+		horizontal_alignment = "left",
+		vertical_alignment = "center",
+		font_type = "hell_shark",
+		progression_colors = {
+			incomplete = Colors.get_color_table_with_alpha("font_default", 255),
+			complete = Colors.get_color_table_with_alpha("lime_green", 255)
 		},
-		set_progression = {
-			word_wrap = false,
-			upper_case = false,
-			font_size = 20,
-			horizontal_alignment = "left",
-			vertical_alignment = "center",
-			font_type = "hell_shark",
-			progression_colors = {
-				incomplete = Colors.get_color_table_with_alpha("font_default", 255),
-				complete = Colors.get_color_table_with_alpha("lime_green", 255)
-			},
-			text_color = Colors.get_color_table_with_alpha("font_default", 255),
-			area_size = {
-				250,
-				22
-			},
-			size = {
-				250,
-				22
-			},
-			offset = {
-				110,
-				24,
-				10
-			}
+		text_color = Colors.get_color_table_with_alpha("font_default", 255),
+		area_size = {
+			250,
+			22
+		},
+		size = {
+			250,
+			22
+		},
+		offset = {
+			110,
+			24,
+			10
 		}
 	}
 
 	return {
 		element = {
-			passes = var_1_22
+			passes = tbl_9
 		},
-		content = var_1_23,
-		style = var_1_24,
+		content = tbl_10,
+		style = tbl_11,
 		offset = {
 			0,
 			0,
@@ -1279,59 +1485,59 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	}
 end
 
-local var_0_14 = {
+local tbl_8 = {
 	255,
 	25,
 	21,
 	36
 }
-local var_0_15 = {
+local tbl_9 = {
 	255,
 	159,
 	154,
 	210
 }
-local var_0_16 = {
+local tbl_10 = {
 	200,
 	208,
 	149,
 	177
 }
-local var_0_17 = {
+local tbl_11 = {
 	200,
 	94,
 	67,
 	101
 }
-local var_0_18 = {
+local tbl_12 = {
 	200,
 	172,
 	101,
 	159
 }
-local var_0_19 = {
+local tbl_13 = {
 	130,
 	250,
 	212,
 	251
 }
-local var_0_20 = true
-local var_0_21 = {
+local flag = true
+local tbl_14 = {
 	console_cursor = UIWidgets.create_console_cursor("console_cursor"),
-	window_frame = UIWidgets.create_frame("window_frame", var_0_9.window.size, "menu_frame_11", 10),
+	window_frame = UIWidgets.create_frame("window_frame", tbl_4.window.size, "menu_frame_11", 10),
 	background_write_mask = UIWidgets.create_simple_texture("shrine_background_write_mask", "window"),
 	background_wheel_01 = UIWidgets.create_simple_rotated_texture("shrine_circle_background_01", 0, {
 		94,
 		94
-	}, "background_wheel_01", nil, nil, var_0_15),
+	}, "background_wheel_01", nil, nil, tbl_9),
 	background_wheel_02 = UIWidgets.create_simple_rotated_texture("shrine_circle_background_02", 0, {
 		230.5,
 		230.5
-	}, "background_wheel_02", nil, nil, var_0_15),
+	}, "background_wheel_02", nil, nil, tbl_9),
 	background_wheel_03 = UIWidgets.create_simple_rotated_texture("shrine_circle_background_03", 0, {
 		537,
 		537
-	}, "background_wheel_03", nil, nil, var_0_15),
+	}, "background_wheel_03", nil, nil, tbl_9),
 	bottom_glow_smoke_1 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_smoke_1", {
 		{
 			0,
@@ -1341,7 +1547,7 @@ local var_0_21 = {
 			1,
 			0
 		}
-	}, "bottom_glow", nil, nil, var_0_16),
+	}, "bottom_glow", nil, nil, tbl_10),
 	bottom_glow_smoke_2 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_smoke_2", {
 		{
 			0,
@@ -1351,7 +1557,7 @@ local var_0_21 = {
 			1,
 			0
 		}
-	}, "bottom_glow_short", nil, nil, var_0_17),
+	}, "bottom_glow_short", nil, nil, tbl_11),
 	bottom_glow_smoke_3 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_embers_2", {
 		{
 			0,
@@ -1361,7 +1567,7 @@ local var_0_21 = {
 			1,
 			0
 		}
-	}, "bottom_glow_shortest", nil, nil, var_0_18),
+	}, "bottom_glow_shortest", nil, nil, tbl_12),
 	bottom_glow_embers_1 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_embers_1", {
 		{
 			0,
@@ -1371,7 +1577,7 @@ local var_0_21 = {
 			1,
 			0
 		}
-	}, "bottom_glow", nil, nil, var_0_19, 1),
+	}, "bottom_glow", nil, nil, tbl_13, 1),
 	bottom_glow_embers_3 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_embers_3", {
 		{
 			0,
@@ -1381,8 +1587,8 @@ local var_0_21 = {
 			1,
 			0
 		}
-	}, "bottom_glow_short", nil, nil, var_0_19, 1),
-	window_background = UIWidgets.create_simple_rect("window", var_0_14),
+	}, "bottom_glow_short", nil, nil, tbl_13, 1),
+	window_background = UIWidgets.create_simple_rect("window", tbl_8),
 	top_corner_left = UIWidgets.create_simple_texture("athanor_decoration_corner", "top_corner_left"),
 	bottom_corner_left = UIWidgets.create_simple_uv_texture("athanor_decoration_corner", {
 		{
@@ -1414,16 +1620,16 @@ local var_0_21 = {
 			1
 		}
 	}, "options_background_mask"),
-	exit_button = UIWidgets.create_default_button("exit_button", var_0_9.exit_button.size, nil, nil, Localize("menu_close"), 24, nil, "button_detail_04", 34, var_0_20),
+	exit_button = UIWidgets.create_default_button("exit_button", tbl_4.exit_button.size, nil, nil, Localize("menu_close"), 24, nil, "button_detail_04", 34, flag),
 	title = UIWidgets.create_simple_texture("frame_title_bg", "title"),
-	title_bg = UIWidgets.create_background("title_bg", var_0_9.title_bg.size, "menu_frame_bg_02"),
-	title_text = UIWidgets.create_simple_text(Localize("deus_cursed_chest_title"), "title_text", nil, nil, var_0_10),
-	chest_name_text = UIWidgets.create_simple_text(Localize("deus_cursed_chest_title"), "chest_name_text", nil, nil, var_0_11),
-	chest_lore_text = UIWidgets.create_simple_text(Localize("deus_cursed_chest_lore"), "chest_lore_text", nil, nil, var_0_12)
+	title_bg = UIWidgets.create_background("title_bg", tbl_4.title_bg.size, "menu_frame_bg_02"),
+	title_text = UIWidgets.create_simple_text(Localize("deus_cursed_chest_title"), "title_text", nil, nil, tbl_5),
+	chest_name_text = UIWidgets.create_simple_text(Localize("deus_cursed_chest_title"), "chest_name_text", nil, nil, tbl_6),
+	chest_lore_text = UIWidgets.create_simple_text(Localize("deus_cursed_chest_lore"), "chest_lore_text", nil, nil, tbl_7)
 }
 
 return {
-	scenegraph_definition = var_0_9,
-	background_widgets = var_0_21,
-	create_power_up_shop_item = var_0_13
+	scenegraph_definition = tbl_4,
+	background_widgets = tbl_14,
+	create_power_up_shop_item = fn
 }

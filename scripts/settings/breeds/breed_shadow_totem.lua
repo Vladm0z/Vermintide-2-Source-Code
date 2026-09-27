@@ -2,7 +2,7 @@
 
 require("scripts/settings/dlcs/belakor/belakor_balancing")
 
-local var_0_0 = {
+local tbl = {
 	immediate_threat = true,
 	height = 2.6,
 	no_blood_splatter_on_damage = true,
@@ -40,31 +40,36 @@ local var_0_0 = {
 			}
 		}
 	},
-	modify_extension_init_data = function(arg_1_0, arg_1_1, arg_1_2)
-		local var_1_0 = arg_1_2.death_system or {}
+	modify_extension_init_data = function (arg_1_0, arg_1_1, arg_1_2)
+		-- function 1
+		local death_system = arg_1_2.death_system
 
-		var_1_0.death_reaction_template = "ai_default"
-		var_1_0.is_husk = arg_1_1
-		arg_1_2.death_system = var_1_0
+		death_system = death_system or {}
+		death_system.death_reaction_template = "ai_default"
+		death_system.is_husk = arg_1_1
+		arg_1_2.death_system = death_system
 
-		local var_1_1 = arg_1_2.hit_reaction_system or {}
+		local hit_reaction_system = arg_1_2.hit_reaction_system
 
-		var_1_1.hit_reaction_template = "level_object"
-		var_1_1.is_husk = arg_1_1
-		arg_1_2.hit_reaction_system = var_1_1
+		hit_reaction_system = hit_reaction_system or {}
+		hit_reaction_system.hit_reaction_template = "level_object"
+		hit_reaction_system.is_husk = arg_1_1
+		arg_1_2.hit_reaction_system = hit_reaction_system
 
-		local var_1_2 = arg_1_2.ping_system or {}
+		local ping_system = arg_1_2.ping_system
 
-		var_1_2.always_pingable = true
-		arg_1_2.ping_system = var_1_2
+		ping_system = ping_system or {}
+		ping_system.always_pingable = true
+		arg_1_2.ping_system = ping_system
 	end,
 	debug_spawn_optional_data = {
-		prepare_func = function(arg_2_0, arg_2_1)
-			local var_2_0 = false
+		prepare_func = function (self, arg_2_1)
+			-- function 2
+			local flag = false
 
-			arg_2_0.modify_extension_init_data(arg_2_0, var_2_0, arg_2_1)
+			self.modify_extension_init_data(self, flag, arg_2_1)
 		end
 	}
 }
 
-Breeds.shadow_totem = table.create_copy(Breeds.shadow_totem, var_0_0)
+Breeds.shadow_totem = table.create_copy(Breeds.shadow_totem, tbl)

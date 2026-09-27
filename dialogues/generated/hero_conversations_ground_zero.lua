@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/hero_conversations_ground_zero.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pbw_level_ground_zero_story_eleven_01",

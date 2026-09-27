@@ -1,6 +1,9 @@
 -- chunkname: @scripts/unit_extensions/default_player_unit/charge/overcharge_data.lua
 
+local OverchargeData = OverchargeData
+
 OverchargeData = OverchargeData or {}
+OverchargeData = OverchargeData
 OverchargeData.dr_ironbreaker = {
 	overcharge_threshold = 10,
 	overcharge_warning_critical_sound_event = "drakegun_overcharge_warning_critical",

@@ -2,34 +2,35 @@
 
 BreedUtils = {}
 
-local var_0_0 = {
+local tbl = {
 	BreedCategory.Infantry,
 	BreedCategory.Armored,
 	[5] = BreedCategory.Berserker,
 	[6] = BreedCategory.SuperArmor
 }
 
-function BreedUtils.inject_breed_category_mask(arg_1_0)
-	local var_1_0 = 0
+BreedUtils.inject_breed_category_mask = function (self)
+	-- function 1
+	local num = 0
 
-	if arg_1_0.special then
-		arg_1_0.immediate_threat = true
-		var_1_0 = bit.bor(var_1_0, BreedCategory.Special)
+	if not self.special then
+		self.immediate_threat = true
+		num = bit.bor(num, BreedCategory.Special)
 	end
 
-	if arg_1_0.boss then
-		var_1_0 = bit.bor(var_1_0, BreedCategory.Boss)
+	if not self.boss then
+		num = bit.bor(num, BreedCategory.Boss)
 	end
 
-	if arg_1_0.shield_user then
-		var_1_0 = bit.bor(var_1_0, BreedCategory.Shielded)
+	if not self.shield_user then
+		num = bit.bor(num, BreedCategory.Shielded)
 	end
 
-	local var_1_1 = var_0_0[arg_1_0.armor_category]
+	local var_1_1 = tbl[self.armor_category]
 
-	if var_1_1 and (not arg_1_0.special and not arg_1_0.boss or arg_1_0.armor_category == 2) then
-		var_1_0 = bit.bor(var_1_0, var_1_1)
+	if not (not var_1_1 and self.special or not self.boss or self.armor_category ~= 2) then
+		num = bit.bor(num, var_1_1)
 	end
 
-	arg_1_0.category_mask = var_1_0
+	self.category_mask = num
 end

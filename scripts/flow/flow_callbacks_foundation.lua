@@ -5,15 +5,16 @@ require("scripts/settings/attachment_node_linking")
 require("scripts/settings/ai_inventory_templates")
 require("scripts/settings/equipment/weapon_material_settings_templates")
 
-local var_0_0 = Unit.alive
+local alive = Unit.alive
 
-function flow_query_script_data(arg_1_0)
+function flow_query_script_data(self)
+	-- function 1
 	local var_1_0
 
-	if arg_1_0.table then
-		var_1_0 = Unit.get_data(arg_1_0.unit, arg_1_0.table, arg_1_0.scriptdata)
+	if not self.table then
+		var_1_0 = Unit.get_data(self.unit, self.table, self.scriptdata)
 	else
-		var_1_0 = Unit.get_data(arg_1_0.unit, arg_1_0.scriptdata)
+		var_1_0 = Unit.get_data(self.unit, self.scriptdata)
 	end
 
 	return {
@@ -21,31 +22,33 @@ function flow_query_script_data(arg_1_0)
 	}
 end
 
-function flow_set_script_data(arg_2_0)
-	if arg_2_0.table then
-		Unit.set_data(arg_2_0.unit, arg_2_0.table, arg_2_0.scriptdata, arg_2_0.value)
+function flow_set_script_data(self)
+	-- function 2
+	if not self.table then
+		Unit.set_data(self.unit, self.table, self.scriptdata, self.value)
 	else
-		Unit.set_data(arg_2_0.unit, arg_2_0.scriptdata, arg_2_0.value)
+		Unit.set_data(self.unit, self.scriptdata, self.value)
 	end
 end
 
-function flow_script_data_compare_bool(arg_3_0)
+function flow_script_data_compare_bool(self)
+	-- function 3
 	local var_3_0
-	local var_3_1 = arg_3_0.reference
+	local reference = self.reference
 	local var_3_2
 
-	if arg_3_0.table then
-		local var_3_3 = split(arg_3_0.table, "/")
+	if not self.table then
+		local var_3_3 = split(self.table, "/")
 
-		table.insert(var_3_3, arg_3_0.scriptdata)
+		table.insert(var_3_3, self.scriptdata)
 
-		var_3_0 = Unit.get_data(arg_3_0.unit, unpack(var_3_3))
+		var_3_0 = Unit.get_data(self.unit, unpack(var_3_3))
 	else
-		var_3_0 = Unit.get_data(arg_3_0.unit, arg_3_0.scriptdata)
+		var_3_0 = Unit.get_data(self.unit, self.scriptdata)
 	end
 
 	if type(var_3_0) == "boolean" then
-		if var_3_0 == var_3_1 then
+		if var_3_0 == reference then
 			var_3_2 = {
 				equal = true,
 				unequal = false
@@ -61,23 +64,24 @@ function flow_script_data_compare_bool(arg_3_0)
 	end
 end
 
-function flow_script_data_compare_string(arg_4_0)
+function flow_script_data_compare_string(self)
+	-- function 4
 	local var_4_0
-	local var_4_1 = arg_4_0.reference
+	local reference = self.reference
 	local var_4_2
 
-	if arg_4_0.table then
-		local var_4_3 = split(arg_4_0.table, "/")
+	if not self.table then
+		local var_4_3 = split(self.table, "/")
 
-		table.insert(var_4_3, arg_4_0.scriptdata)
+		table.insert(var_4_3, self.scriptdata)
 
-		var_4_0 = Unit.get_data(arg_4_0.unit, unpack(var_4_3))
+		var_4_0 = Unit.get_data(self.unit, unpack(var_4_3))
 	else
-		var_4_0 = Unit.get_data(arg_4_0.unit, arg_4_0.scriptdata)
+		var_4_0 = Unit.get_data(self.unit, self.scriptdata)
 	end
 
 	if type(var_4_0) == "string" then
-		if var_4_0 == var_4_1 then
+		if var_4_0 == reference then
 			var_4_2 = {
 				equal = true
 			}
@@ -91,43 +95,44 @@ function flow_script_data_compare_string(arg_4_0)
 	end
 end
 
-function flow_script_data_compare_number(arg_5_0)
+function flow_script_data_compare_number(self)
+	-- function 5
 	local var_5_0
-	local var_5_1 = arg_5_0.reference
+	local reference = self.reference
 	local var_5_2
 
-	if arg_5_0.table then
-		local var_5_3 = split(arg_5_0.table, "/")
+	if not self.table then
+		local var_5_3 = split(self.table, "/")
 
-		table.insert(var_5_3, arg_5_0.scriptdata)
+		table.insert(var_5_3, self.scriptdata)
 
-		var_5_0 = Unit.get_data(arg_5_0.unit, unpack(var_5_3))
+		var_5_0 = Unit.get_data(self.unit, unpack(var_5_3))
 	else
-		var_5_0 = Unit.get_data(arg_5_0.unit, arg_5_0.scriptdata)
+		var_5_0 = Unit.get_data(self.unit, self.scriptdata)
 	end
 
 	if type(var_5_0) == "number" then
-		if var_5_0 < var_5_1 then
+		if var_5_0 < reference then
 			var_5_2 = {
 				less = true
 			}
-		elseif var_5_0 <= var_5_1 then
+		elseif var_5_0 <= reference then
 			var_5_2 = {
 				less_or_equal = true
 			}
-		elseif var_5_0 == var_5_1 then
+		elseif var_5_0 == reference then
 			var_5_2 = {
 				equal = true
 			}
-		elseif var_5_0 ~= var_5_1 then
+		elseif var_5_0 ~= reference then
 			var_5_2 = {
 				unequal = true
 			}
-		elseif var_5_1 <= var_5_0 then
+		elseif reference <= var_5_0 then
 			var_5_2 = {
 				more_or_equal = true
 			}
-		elseif var_5_1 < var_5_0 then
+		elseif reference < var_5_0 then
 			var_5_2 = {
 				more = true
 			}
@@ -138,6 +143,7 @@ function flow_script_data_compare_number(arg_5_0)
 end
 
 function flow_callback_state_false(arg_6_0)
+	-- function 6
 	return {
 		updated = true,
 		state = false
@@ -145,315 +151,351 @@ function flow_callback_state_false(arg_6_0)
 end
 
 function flow_callback_state_true(arg_7_0)
+	-- function 7
 	return {
 		updated = true,
 		state = true
 	}
 end
 
-function flow_callback_construct_vector3(arg_8_0)
-	local var_8_0 = Vector3(arg_8_0.x, arg_8_0.y, arg_8_0.z)
+function flow_callback_construct_vector3(self)
+	-- function 8
+	local var_8_0 = Vector3(self.x, self.y, self.z)
 
 	return {
 		vector = var_8_0
 	}
 end
 
-function flow_callback_store_float(arg_9_0)
-	local var_9_0 = arg_9_0.invalue
+function flow_callback_store_float(self)
+	-- function 9
+	local invalue = self.invalue
 
 	return {
 		updated = true,
 		state = true,
-		outvalue = var_9_0
+		outvalue = invalue
 	}
 end
 
-function flow_callback_store_boolean(arg_10_0)
-	local var_10_0 = arg_10_0.inbool
+function flow_callback_store_boolean(self)
+	-- function 10
+	local inbool = self.inbool
 
 	return {
 		updated = true,
 		state = true,
-		outbool = var_10_0
+		outbool = inbool
 	}
 end
 
-function flow_callback_switchcase(arg_11_0)
-	local var_11_0 = {}
-	local var_11_1 = "out"
+function flow_callback_switchcase(self)
+	-- function 11
+	local tbl = {}
+	local str = "out"
 
-	if arg_11_0.case ~= "" then
-		for iter_11_0, iter_11_1 in pairs(arg_11_0) do
-			if iter_11_0 ~= "case" and arg_11_0.case == iter_11_1 then
-				var_11_0[var_11_1 .. string.sub(iter_11_0, -1)] = true
+	if self.case ~= "" then
+		for k, v in pairs(self) do
+			if not (k == "case" or self.case ~= v) then
+				tbl[str .. string.sub(k, -1)] = true
 			end
 		end
 	end
 
-	return var_11_0
+	return tbl
 end
 
-function flow_callback_switchcase_special(arg_12_0)
-	local var_12_0 = {}
-	local var_12_1 = "out"
+function flow_callback_switchcase_special(self)
+	-- function 12
+	local tbl = {}
+	local str = "out"
 
-	if arg_12_0.case ~= "" then
-		for iter_12_0, iter_12_1 in pairs(arg_12_0) do
-			if iter_12_0 ~= "case" then
-				local var_12_2 = string.sub(iter_12_0, -1)
+	if self.case ~= "" then
+		for k, v in pairs(self) do
+			if k ~= "case" then
+				local sub = string.sub(k, -1)
 
-				if arg_12_0.case == var_12_2 then
-					var_12_0[var_12_1 .. var_12_2] = true
-					var_12_0.out_number = var_12_2
+				if self.case == sub then
+					tbl[str .. sub] = true
+					tbl.out_number = sub
 				end
 			end
 		end
 	end
 
-	return var_12_0
+	return tbl
 end
 
-function flow_callback_set_numeric_w_out(arg_13_0)
-	local var_13_0 = {}
-	local var_13_1 = "out"
+function flow_callback_set_numeric_w_out(self)
+	-- function 13
+	local tbl = {}
+	local str = "out"
 
-	if arg_13_0.case ~= "" then
-		for iter_13_0, iter_13_1 in pairs(arg_13_0) do
-			if iter_13_0 ~= "case" then
-				local var_13_2 = string.sub(iter_13_0, -1)
+	if self.case ~= "" then
+		for k, v in pairs(self) do
+			if k ~= "case" then
+				local sub = string.sub(k, -1)
 
-				if arg_13_0.case == var_13_2 then
-					var_13_0[var_13_1 .. var_13_2] = true
-					var_13_0.out_number = var_13_2
+				if self.case == sub then
+					tbl[str .. sub] = true
+					tbl.out_number = sub
 				end
 			end
 		end
 	end
 
-	return var_13_0
+	return tbl
 end
 
 function flow_callback_switch_event_to_number_0(arg_14_0)
+	-- function 14
 	return {
 		out_number = 0
 	}
 end
 
 function flow_callback_switch_event_to_number_1(arg_15_0)
+	-- function 15
 	return {
 		out_number = 1
 	}
 end
 
 function flow_callback_switch_event_to_number_2(arg_16_0)
+	-- function 16
 	return {
 		out_number = 2
 	}
 end
 
 function flow_callback_switch_event_to_number_3(arg_17_0)
+	-- function 17
 	return {
 		out_number = 3
 	}
 end
 
 function flow_callback_switch_event_to_number_4(arg_18_0)
+	-- function 18
 	return {
 		out_number = 4
 	}
 end
 
 function flow_callback_switch_event_to_number_5(arg_19_0)
+	-- function 19
 	return {
 		out_number = 5
 	}
 end
 
 function flow_callback_switch_event_to_number_6(arg_20_0)
+	-- function 20
 	return {
 		out_number = 6
 	}
 end
 
-function flow_callback_math_addition(arg_21_0)
-	local var_21_0 = arg_21_0.term_one
-	local var_21_1 = arg_21_0.term_two
+function flow_callback_math_addition(self)
+	-- function 21
+	local term_one = self.term_one
+	local term_two = self.term_two
 
 	return {
-		value = var_21_0 + var_21_1
+		value = term_one + term_two
 	}
 end
 
-function flow_callback_rotate_vector3(arg_22_0)
-	local var_22_0 = arg_22_0.direction
-	local var_22_1 = arg_22_0.vector3
-	local var_22_2 = Quaternion.rotate(var_22_0, var_22_1)
+function flow_callback_rotate_vector3(self)
+	-- function 22
+	local direction = self.direction
+	local vector3 = self.vector3
+	local rotate = Quaternion.rotate(direction, vector3)
 
 	return {
-		vector = var_22_2
+		vector = rotate
 	}
 end
 
-function flow_callback_look(arg_23_0)
-	local var_23_0 = arg_23_0.direction
-	local var_23_1 = arg_23_0.up
-	local var_23_2 = Quaternion.look(var_23_0, var_23_1)
+function flow_callback_look(self)
+	-- function 23
+	local direction = self.direction
+	local up = self.up
+	local look = Quaternion.look(direction, up)
 
 	return {
-		rotation = var_23_2
+		rotation = look
 	}
 end
 
-function flow_callback_math_subtraction(arg_24_0)
-	local var_24_0 = arg_24_0.term_one
-	local var_24_1 = arg_24_0.term_two
+function flow_callback_math_subtraction(self)
+	-- function 24
+	local term_one = self.term_one
+	local term_two = self.term_two
 
 	return {
-		value = var_24_0 - var_24_1
+		value = term_one - term_two
 	}
 end
 
-function flow_callback_math_multiplication(arg_25_0)
-	local var_25_0 = arg_25_0.factor_one
-	local var_25_1 = arg_25_0.factor_two
+function flow_callback_math_multiplication(self)
+	-- function 25
+	local factor_one = self.factor_one
+	local factor_two = self.factor_two
 
 	return {
-		value = var_25_0 * var_25_1
+		value = factor_one * factor_two
 	}
 end
 
-function flow_callback_math_multiplication_vector3(arg_26_0)
-	local var_26_0 = arg_26_0.vector
-	local var_26_1 = arg_26_0.float
+function flow_callback_math_multiplication_vector3(self)
+	-- function 26
+	local vector = self.vector
+	local float = self.float
 
 	return {
-		value = var_26_0 * var_26_1
+		value = vector * float
 	}
 end
 
-function flow_callback_math_division(arg_27_0)
-	local var_27_0 = arg_27_0.dividend
-	local var_27_1 = arg_27_0.divisor
+function flow_callback_math_division(self)
+	-- function 27
+	local dividend = self.dividend
+	local divisor = self.divisor
 
-	fassert(var_27_1 ~= 0, "Trying to divide by 0 in division flow node.")
+	fassert(divisor ~= 0, "Trying to divide by 0 in division flow node.")
 
 	return {
-		value = var_27_0 / var_27_1
+		value = dividend / divisor
 	}
 end
 
-function flow_callback_math_floor(arg_28_0)
+function flow_callback_math_floor(self)
+	-- function 28
 	return {
-		value = math.floor(arg_28_0.float)
+		value = math.floor(self.float)
 	}
 end
 
-function flow_callback_math_ceil(arg_29_0)
+function flow_callback_math_ceil(self)
+	-- function 29
 	return {
-		value = math.ceil(arg_29_0.float)
+		value = math.ceil(self.float)
 	}
 end
 
 function flow_query_ghost_mode_active(arg_30_0)
+	-- function 30
 	return
 end
 
-function flow_callback_set_simple_animation_speed(arg_31_0)
-	Unit.set_simple_animation_speed(arg_31_0.unit, arg_31_0.speed, arg_31_0.group)
+function flow_callback_set_simple_animation_speed(self)
+	-- function 31
+	Unit.set_simple_animation_speed(self.unit, self.speed, self.group)
 end
 
-function flow_callback_trigger_event(arg_32_0)
-	if var_0_0(arg_32_0.unit) then
-		Unit.flow_event(arg_32_0.unit, arg_32_0.event)
+function flow_callback_trigger_event(self)
+	-- function 32
+	if not alive(self.unit) then
+		Unit.flow_event(self.unit, self.event)
 	else
-		print("WARNING: flow_callback_trigger_event - unit:", arg_32_0.unit)
+		print("WARNING: flow_callback_trigger_event - unit:", self.unit)
 	end
 end
 
-function flow_callback_set_unit_visibility(arg_33_0)
-	Unit.set_visibility(arg_33_0.unit, arg_33_0.group, arg_33_0.visibility)
+function flow_callback_set_unit_visibility(self)
+	-- function 33
+	Unit.set_visibility(self.unit, self.group, self.visibility)
 end
 
-function flow_callback_distance_between(arg_34_0)
-	local var_34_0 = arg_34_0.unit
-	local var_34_1 = arg_34_0.node1
-	local var_34_2 = arg_34_0.node2
-	local var_34_3 = Unit.node(var_34_0, var_34_1)
-	local var_34_4 = Unit.node(var_34_0, var_34_2)
-	local var_34_5 = Unit.world_position(var_34_0, var_34_3)
-	local var_34_6 = Unit.world_position(var_34_0, var_34_4)
-	local var_34_7 = Vector3.distance(var_34_5, var_34_6)
+function flow_callback_distance_between(self)
+	-- function 34
+	local unit = self.unit
+	local node1 = self.node1
+	local node2 = self.node2
+	local node = Unit.node(unit, node1)
+	local node_2 = Unit.node(unit, node2)
+	local world_position = Unit.world_position(unit, node)
+	local world_position_2 = Unit.world_position(unit, node_2)
+	local distance = Vector3.distance(world_position, world_position_2)
 
 	return {
-		distance = var_34_7
+		distance = distance
 	}
 end
 
-function flow_callback_link_objects_in_units_and_store(arg_35_0)
-	local var_35_0 = arg_35_0.parent_unit
-	local var_35_1 = arg_35_0.child_unit
-	local var_35_2 = split(arg_35_0.parent_nodes, ";")
-	local var_35_3 = split(arg_35_0.child_nodes, ";")
-	local var_35_4 = Unit.world(var_35_0)
-	local var_35_5 = Script.index_offset()
+function flow_callback_link_objects_in_units_and_store(self)
+	-- function 35
+	local parent_unit = self.parent_unit
+	local child_unit = self.child_unit
+	local var_35_2 = split(self.parent_nodes, ";")
+	local var_35_3 = split(self.child_nodes, ";")
+	local world = Unit.world(parent_unit)
+	local index_offset = Script.index_offset()
 
-	for iter_35_0 = 1, #var_35_2 - 1 do
-		local var_35_6 = Unit.node(var_35_0, var_35_2[iter_35_0])
-		local var_35_7 = var_35_3[iter_35_0]
+	for i = 1, #var_35_2 - 1 do
+		local node = Unit.node(parent_unit, var_35_2[i])
+		local var_35_7 = var_35_3[i]
 		local var_35_8
 
-		if string.find(var_35_7, "Index(.)") then
-			var_35_8 = tonumber(string.match(var_35_7, "%d+") + var_35_5)
+		if not string.find(var_35_7, "Index(.)") then
+			var_35_8 = tonumber(string.match(var_35_7, "%d+") + index_offset)
 		else
-			var_35_8 = Unit.node(var_35_1, var_35_7)
+			var_35_8 = Unit.node(child_unit, var_35_7)
 		end
 
-		World.link_unit(var_35_4, var_35_1, var_35_8, var_35_0, var_35_6)
+		World.link_unit(world, child_unit, var_35_8, parent_unit, node)
 
-		if arg_35_0.parent_lod_object and arg_35_0.child_lod_object and Unit.has_lod_object(var_35_0, arg_35_0.parent_lod_object) and Unit.has_lod_object(var_35_1, arg_35_0.child_lod_object) then
-			local var_35_9 = Unit.lod_object(var_35_0, arg_35_0.parent_lod_object)
-			local var_35_10 = Unit.lod_object(var_35_1, arg_35_0.child_lod_object)
+		if not self.parent_lod_object and not self.child_lod_object and not Unit.has_lod_object(parent_unit, self.parent_lod_object) and not Unit.has_lod_object(child_unit, self.child_lod_object) then
+			local lod_object = Unit.lod_object(parent_unit, self.parent_lod_object)
+			local lod_object_2 = Unit.lod_object(child_unit, self.child_lod_object)
 
-			LODObject.set_bounding_volume(var_35_10, LODObject.bounding_volume(var_35_9))
-			World.link_unit(var_35_4, var_35_1, LODObject.node(var_35_10), var_35_0, LODObject.node(var_35_9))
+			LODObject.set_bounding_volume(lod_object_2, LODObject.bounding_volume(lod_object))
+			World.link_unit(world, child_unit, LODObject.node(lod_object_2), parent_unit, LODObject.node(lod_object))
 		end
 	end
 
-	local var_35_11 = Unit.get_data(var_35_0, "flow_unit_attachments") or {}
+	local get_data = Unit.get_data(parent_unit, "flow_unit_attachments")
 
-	table.insert(var_35_11, var_35_1)
-	Unit.set_data(var_35_0, "flow_unit_attachments", var_35_11)
+	get_data = get_data or {}
+
+	table.insert(get_data, child_unit)
+	Unit.set_data(parent_unit, "flow_unit_attachments", get_data)
 
 	return {
 		linked = true
 	}
 end
 
-function flow_callback_unlink_objects_in_units_and_remove(arg_36_0)
-	local var_36_0 = arg_36_0.parent_unit
-	local var_36_1 = arg_36_0.child_unit
-	local var_36_2 = Unit.world(var_36_0)
+function flow_callback_unlink_objects_in_units_and_remove(self)
+	-- function 36
+	local parent_unit = self.parent_unit
+	local child_unit = self.child_unit
+	local world = Unit.world(parent_unit)
 
-	World.unlink_unit(var_36_2, var_36_1)
+	World.unlink_unit(world, child_unit)
 
-	local var_36_3 = Unit.get_data(var_36_0, "flow_unit_attachments") or {}
-	local var_36_4 = table.find(var_36_3, var_36_1)
+	local get_data = Unit.get_data(parent_unit, "flow_unit_attachments")
 
-	if var_36_4 then
-		table.remove(var_36_3, var_36_4)
+	get_data = get_data or {}
+
+	local find = table.find(get_data, child_unit)
+
+	if not find then
+		table.remove(get_data, find)
 	end
 
-	Unit.set_data(var_36_0, "flow_unit_attachments", var_36_3)
+	Unit.set_data(parent_unit, "flow_unit_attachments", get_data)
 
 	return {
 		unlinked = true
 	}
 end
 
-function flow_callback_attach_unit(arg_37_0)
-	local var_37_0 = AttachmentNodeLinking
-	local var_37_1 = split(arg_37_0.node_link_template, "/")
+function flow_callback_attach_unit(self)
+	-- function 37
+	local AttachmentNodeLinking = AttachmentNodeLinking
+	local var_37_1 = split(self.node_link_template, "/")
 
 	if not var_37_1 then
 		print("No attachment node linking defined in flow!")
@@ -461,43 +503,72 @@ function flow_callback_attach_unit(arg_37_0)
 		return
 	end
 
-	for iter_37_0, iter_37_1 in ipairs(var_37_1) do
-		var_37_0 = var_37_0[iter_37_1]
+	for i, v in ipairs(var_37_1) do
+		AttachmentNodeLinking = AttachmentNodeLinking[v]
 	end
 
-	if type(var_37_0) ~= "table" then
-		print("No attachment node linking with name %s", tostring(arg_37_0.node_link_template))
+	if type(AttachmentNodeLinking) ~= "table" then
+		print("No attachment node linking with name %s", tostring(self.node_link_template))
 
 		return
 	end
 
-	local var_37_2 = arg_37_0.parent_unit
-	local var_37_3 = arg_37_0.child_unit
-	local var_37_4 = Script.index_offset()
-	local var_37_5 = Unit.world(var_37_2)
+	local parent_unit = self.parent_unit
+	local child_unit = self.child_unit
+	local index_offset = Script.index_offset()
+	local world = Unit.world(parent_unit)
 
-	for iter_37_2, iter_37_3 in ipairs(var_37_0) do
-		local var_37_6 = iter_37_3.source
-		local var_37_7 = iter_37_3.target
-		local var_37_8 = type(var_37_6) == "string" and Unit.node(var_37_2, var_37_6) or var_37_6 + var_37_4
-		local var_37_9 = type(var_37_7) == "string" and Unit.node(var_37_3, var_37_7) or var_37_7 + var_37_4
+	for i_2, v_2 in ipairs(AttachmentNodeLinking) do
+		local source = v_2.source
+		local target = v_2.target
+		local node
 
-		World.link_unit(var_37_5, var_37_3, var_37_9, var_37_2, var_37_8)
+		if type(source) == "string" then
+			node = Unit.node(parent_unit, source)
+
+			if not node then
+				-- Nothing
+			end
+		end
+
+		node = source + index_offset
+
+		do
+			local node_2
+		end
+
+		::label_37_0::
+
+		if type(target) == "string" then
+			node_2 = Unit.node(child_unit, target)
+
+			if not node_2 then
+				-- Nothing
+			end
+		end
+
+		node_2 = target + index_offset
+
+		::label_37_1::
+
+		World.link_unit(world, child_unit, node_2, parent_unit, node)
 	end
 
-	if arg_37_0.link_lod_groups and Unit.num_lod_objects(var_37_2) ~= 0 and Unit.num_lod_objects(var_37_3) ~= 0 then
-		local var_37_10 = Unit.lod_object(var_37_2, var_37_4)
-		local var_37_11 = Unit.lod_object(var_37_3, var_37_4)
+	if not (not self.link_lod_groups and Unit.num_lod_objects(parent_unit) == 0 or Unit.num_lod_objects(child_unit) == 0) then
+		local lod_object = Unit.lod_object(parent_unit, index_offset)
+		local lod_object_2 = Unit.lod_object(child_unit, index_offset)
 
-		LODObject.set_bounding_volume(var_37_11, LODObject.bounding_volume(var_37_10))
-		World.link_unit(var_37_5, var_37_3, LODObject.node(var_37_11), var_37_2, LODObject.node(var_37_10))
+		LODObject.set_bounding_volume(lod_object_2, LODObject.bounding_volume(lod_object))
+		World.link_unit(world, child_unit, LODObject.node(lod_object_2), parent_unit, LODObject.node(lod_object))
 	end
 
-	if arg_37_0.store_in_parent then
-		local var_37_12 = Unit.get_data(var_37_2, "flow_unit_attachments") or {}
+	if not self.store_in_parent then
+		local get_data = Unit.get_data(parent_unit, "flow_unit_attachments")
 
-		table.insert(var_37_12, var_37_3)
-		Unit.set_data(var_37_2, "flow_unit_attachments", var_37_12)
+		get_data = get_data or {}
+
+		table.insert(get_data, child_unit)
+		Unit.set_data(parent_unit, "flow_unit_attachments", get_data)
 	end
 
 	return {
@@ -505,34 +576,43 @@ function flow_callback_attach_unit(arg_37_0)
 	}
 end
 
-function flow_callback_attach_weapon_display(arg_38_0)
-	if arg_38_0.item == nil then
+function flow_callback_attach_weapon_display(self)
+	-- function 38
+	if self.item == nil then
 		return {}
 	end
 
-	local var_38_0 = arg_38_0.unit
+	local unit = self.unit
 	local var_38_1
 	local var_38_2
-	local var_38_3 = Unit.world(var_38_0)
-	local var_38_4 = "display"
-	local var_38_5 = arg_38_0.show_right_hand
-	local var_38_6 = arg_38_0.show_left_hand
-	local var_38_7 = arg_38_0.show_ammo
+	local world = Unit.world(unit)
+	local str = "display"
+	local show_right_hand = self.show_right_hand
+	local show_left_hand = self.show_left_hand
+	local show_ammo = self.show_ammo
 
 	if ItemMasterList ~= nil then
-		local var_38_8 = ItemMasterList[arg_38_0.item]
+		local var_38_8 = ItemMasterList[self.item]
 
-		if var_38_8 ~= nil and (var_38_8.slot_type == "melee" or var_38_8.slot_type == "ranged" or var_38_8.slot_type == "weapon_skin" or var_38_8.slot_type == "potion") then
+		if not (var_38_8 == nil or var_38_8.slot_type == "melee" or var_38_8.slot_type == "ranged" or var_38_8.slot_type == "weapon_skin" or var_38_8.slot_type ~= "potion") then
 			pcall(require, "scripts/settings/equipment/weapons")
 			pcall(require, "scripts/settings/equipment/weapon_skins")
 
 			if Weapons ~= nil then
-				local var_38_9 = var_38_8.template
-				local var_38_10 = rawget(Weapons, var_38_9)
-				local var_38_11 = rawget(WeaponSkins.skins, arg_38_0.item)
-				local var_38_12 = var_38_8.display_unit or nil
-				local var_38_13 = var_38_8.right_hand_unit or nil
-				local var_38_14 = var_38_8.left_hand_unit or nil
+				local template = var_38_8.template
+				local var_38_10 = rawget(Weapons, template)
+				local var_38_11 = rawget(WeaponSkins.skins, self.item)
+				local display_unit = var_38_8.display_unit
+
+				display_unit = display_unit or nil
+
+				local right_hand_unit = var_38_8.right_hand_unit
+
+				right_hand_unit = right_hand_unit or nil
+
+				local left_hand_unit = var_38_8.left_hand_unit
+
+				left_hand_unit = left_hand_unit or nil
 
 				if not var_38_8.ammo_unit then
 					local var_38_15
@@ -540,11 +620,11 @@ function flow_callback_attach_weapon_display(arg_38_0)
 
 				if var_38_11 ~= nil then
 					if var_38_11.right_hand_unit ~= nil then
-						var_38_13 = var_38_11.right_hand_unit
+						right_hand_unit = var_38_11.right_hand_unit
 					end
 
 					if var_38_11.left_hand_unit ~= nil then
-						var_38_14 = var_38_11.left_hand_unit
+						left_hand_unit = var_38_11.left_hand_unit
 					end
 
 					if var_38_11.ammo_unit ~= nil then
@@ -552,71 +632,73 @@ function flow_callback_attach_weapon_display(arg_38_0)
 					end
 
 					if var_38_11.display_unit ~= nil then
-						var_38_12 = var_38_11.display_unit
+						display_unit = var_38_11.display_unit
 					end
 				end
 
-				if var_38_12 ~= nil then
-					local var_38_16 = Script.index_offset()
-					local var_38_17 = Unit.world_position(var_38_0, 0 + var_38_16)
-					local var_38_18 = Unit.world_rotation(var_38_0, 0 + var_38_16)
-					local var_38_19 = World.spawn_unit(var_38_3, var_38_12, var_38_17, var_38_18)
+				if display_unit ~= nil then
+					local index_offset = Script.index_offset()
+					local world_position = Unit.world_position(unit, 0 + index_offset)
+					local world_rotation = Unit.world_rotation(unit, 0 + index_offset)
+					local spawn_unit = World.spawn_unit(world, display_unit, world_position, world_rotation)
 
-					World.link_unit(var_38_3, var_38_19, 0 + var_38_16, var_38_0, 0 + var_38_16)
+					World.link_unit(world, spawn_unit, 0 + index_offset, unit, 0 + index_offset)
 
-					local var_38_20 = Unit.get_data(var_38_0, "flow_item_attachments") or {}
+					local get_data = Unit.get_data(unit, "flow_item_attachments")
 
-					if var_38_5 and var_38_13 ~= nil then
-						var_38_2 = attach_player_item(var_38_19, var_38_13, var_38_10.right_hand_attachment_node_linking.third_person, "display", false)
+					get_data = get_data or {}
 
-						if var_38_11 ~= nil and var_38_11.material_settings_name ~= nil then
+					if not (not show_right_hand and right_hand_unit == nil) then
+						var_38_2 = attach_player_item(spawn_unit, right_hand_unit, var_38_10.right_hand_attachment_node_linking.third_person, "display", false)
+
+						if not (var_38_11 == nil or var_38_11.material_settings_name == nil) then
 							apply_material_settings(var_38_2, var_38_11.material_settings_name)
 						end
 
 						Unit.flow_event(var_38_2, "spawn_display")
-						table.insert(var_38_20, var_38_2)
-						Unit.set_data(var_38_0, "flow_item_attachments", var_38_20)
+						table.insert(get_data, var_38_2)
+						Unit.set_data(unit, "flow_item_attachments", get_data)
 					end
 
-					if var_38_6 and var_38_14 ~= nil then
+					if not (not show_left_hand and left_hand_unit == nil) then
 						local var_38_21
 
-						if var_38_14 == ammo_unit_type then
+						if left_hand_unit == ammo_unit_type then
 							var_38_21 = var_38_10.right_hand_attachment_node_linking.third_person
 						elseif var_38_10.left_hand_attachment_node_linking ~= nil then
 							var_38_21 = var_38_10.left_hand_attachment_node_linking.third_person
 						end
 
 						if var_38_21 ~= nil then
-							var_38_2 = attach_player_item(var_38_19, var_38_14, var_38_21, "display", false)
+							var_38_2 = attach_player_item(spawn_unit, left_hand_unit, var_38_21, "display", false)
 
-							if var_38_11 ~= nil and var_38_11.material_settings_name ~= nil then
+							if not (var_38_11 == nil or var_38_11.material_settings_name == nil) then
 								apply_material_settings(var_38_2, var_38_11.material_settings_name)
 							end
 
 							Unit.flow_event(var_38_2, "spawn_display")
-							table.insert(var_38_20, var_38_2)
-							Unit.set_data(var_38_0, "flow_item_attachments", var_38_20)
+							table.insert(get_data, var_38_2)
+							Unit.set_data(unit, "flow_item_attachments", get_data)
 						end
 					end
 
-					if var_38_7 and var_38_10.ammo_data ~= nil and var_38_10.actions.action_one.default.projectile_info ~= nil then
-						local var_38_22 = ProjectileUnits
+					if not (not show_ammo and var_38_10.ammo_data == nil or var_38_10.actions.action_one.default.projectile_info == nil) then
+						local ProjectileUnits = ProjectileUnits
 
-						if var_38_22[var_38_10.actions.action_one.default.projectile_info.projectile_units_template].dummy_linker_unit_name ~= nil then
-							var_38_2 = attach_player_item(var_38_19, var_38_22[var_38_10.actions.action_one.default.projectile_info.projectile_units_template].dummy_linker_unit_name, var_38_10.ammo_data.ammo_unit_attachment_node_linking.third_person, "display", false)
+						if ProjectileUnits[var_38_10.actions.action_one.default.projectile_info.projectile_units_template].dummy_linker_unit_name ~= nil then
+							var_38_2 = attach_player_item(spawn_unit, ProjectileUnits[var_38_10.actions.action_one.default.projectile_info.projectile_units_template].dummy_linker_unit_name, var_38_10.ammo_data.ammo_unit_attachment_node_linking.third_person, "display", false)
 
-							if var_38_11 ~= nil and var_38_11.material_settings_name ~= nil then
+							if not (var_38_11 == nil or var_38_11.material_settings_name == nil) then
 								apply_material_settings(var_38_2, var_38_11.material_settings_name)
 							end
 
 							Unit.flow_event(var_38_2, "spawn_display")
-							table.insert(var_38_20, var_38_2)
-							Unit.set_data(var_38_0, "flow_item_attachments", var_38_20)
+							table.insert(get_data, var_38_2)
+							Unit.set_data(unit, "flow_item_attachments", get_data)
 						end
 					end
 
-					Unit.set_data(var_38_0, "flow_item_attachments", var_38_20)
+					Unit.set_data(unit, "flow_item_attachments", get_data)
 				else
 					print("SKIPPED PLAYER WEAPON: Missing Display definition")
 				end
@@ -632,99 +714,102 @@ function flow_callback_attach_weapon_display(arg_38_0)
 	}
 end
 
-function flow_callback_attach_player_item(arg_39_0)
-	if arg_39_0.item == nil then
+function flow_callback_attach_player_item(self)
+	-- function 39
+	if self.item == nil then
 		return {}
 	end
 
 	local var_39_0
-	local var_39_1 = arg_39_0.unit
-	local var_39_2 = Unit.world(var_39_1)
-	local var_39_3 = arg_39_0.node_linking or "wielded"
+	local unit = self.unit
+	local world = Unit.world(unit)
+	local node_linking = self.node_linking
+
+	node_linking = node_linking or "wielded"
 
 	if ItemMasterList ~= nil then
-		local var_39_4 = ItemMasterList[arg_39_0.item]
+		local var_39_4 = ItemMasterList[self.item]
 
 		if var_39_4 ~= nil then
-			if arg_39_0.career_filter and not table.is_empty(var_39_4.can_wield) and not table.find(var_39_4.can_wield, arg_39_0.career_filter) then
-				print("SKIPPED ITEM! Career " .. arg_39_0.career_filter .. " can't wield " .. arg_39_0.item)
+			if not (not self.career_filter and table.is_empty(var_39_4.can_wield) or table.find(var_39_4.can_wield, self.career_filter)) then
+				print("SKIPPED ITEM! Career " .. self.career_filter .. " can't wield " .. self.item)
 				table.dump(var_39_4.can_wield)
 
 				return
 			end
 
-			if var_39_4.slot_type == "melee" or var_39_4.slot_type == "ranged" or var_39_4.slot_type == "weapon_skin" or var_39_4.slot_type == "potion" then
+			if not (var_39_4.slot_type == "melee" or var_39_4.slot_type == "ranged" or var_39_4.slot_type == "weapon_skin" or var_39_4.slot_type ~= "potion") then
 				pcall(require, "scripts/settings/equipment/weapons")
 				pcall(require, "scripts/settings/equipment/weapon_skins")
 
 				if Weapons ~= nil then
-					local var_39_5 = "_3p"
+					local str = "_3p"
 
-					if var_39_3 == "display" then
-						var_39_5 = ""
+					if node_linking == "display" then
+						str = ""
 					end
 
-					local var_39_6 = var_39_4.template
-					local var_39_7 = rawget(Weapons, var_39_6)
-					local var_39_8 = rawget(WeaponSkins.skins, arg_39_0.item)
-					local var_39_9 = var_39_4.right_hand_unit
-					local var_39_10 = var_39_4.left_hand_unit
-					local var_39_11 = var_39_4.ammo_unit
+					local template = var_39_4.template
+					local var_39_7 = rawget(Weapons, template)
+					local var_39_8 = rawget(WeaponSkins.skins, self.item)
+					local right_hand_unit = var_39_4.right_hand_unit
+					local left_hand_unit = var_39_4.left_hand_unit
+					local ammo_unit = var_39_4.ammo_unit
 
 					if var_39_8 ~= nil then
-						if var_39_9 == nil then
-							var_39_9 = var_39_8.right_hand_unit or nil
+						if right_hand_unit == nil then
+							right_hand_unit = var_39_8.right_hand_unit or nil
 						end
 
-						if var_39_10 == nil then
-							var_39_10 = var_39_8.left_hand_unit or nil
+						if left_hand_unit == nil then
+							left_hand_unit = var_39_8.left_hand_unit or nil
 						end
 
-						if var_39_11 == nil then
-							var_39_11 = var_39_8.ammo_unit or nil
+						if ammo_unit == nil then
+							ammo_unit = var_39_8.ammo_unit or nil
 						end
 					end
 
-					if var_39_9 ~= nil then
-						var_39_0 = attach_player_item(var_39_1, var_39_9 .. var_39_5, var_39_7.right_hand_attachment_node_linking.third_person, var_39_3, false)
+					if right_hand_unit ~= nil then
+						var_39_0 = attach_player_item(unit, right_hand_unit .. str, var_39_7.right_hand_attachment_node_linking.third_person, node_linking, false)
 
-						if var_39_8 ~= nil and var_39_8.material_settings_name ~= nil then
+						if not (var_39_8 == nil or var_39_8.material_settings_name == nil) then
 							apply_material_settings(var_39_0, var_39_8.material_settings_name)
 						end
 					end
 
-					if var_39_10 ~= nil then
+					if left_hand_unit ~= nil then
 						local var_39_12
 
-						if var_39_10 == var_39_11 then
+						if left_hand_unit == ammo_unit then
 							var_39_12 = var_39_7.right_hand_attachment_node_linking.third_person
 						elseif var_39_7.left_hand_attachment_node_linking ~= nil then
 							var_39_12 = var_39_7.left_hand_attachment_node_linking.third_person
 						end
 
 						if var_39_12 ~= nil then
-							var_39_0 = attach_player_item(var_39_1, var_39_10 .. var_39_5, var_39_12, var_39_3, false)
+							var_39_0 = attach_player_item(unit, left_hand_unit .. str, var_39_12, node_linking, false)
 
-							if var_39_8 ~= nil and var_39_8.material_settings_name ~= nil then
+							if not (var_39_8 == nil or var_39_8.material_settings_name == nil) then
 								apply_material_settings(var_39_0, var_39_8.material_settings_name)
 							end
 						end
 					end
 
-					if var_39_7.ammo_data ~= nil and var_39_7.actions.action_one ~= nil and var_39_7.actions.action_one.default.projectile_info ~= nil then
-						local var_39_13 = ProjectileUnits
+					if not (var_39_7.ammo_data == nil or var_39_7.actions.action_one == nil or var_39_7.actions.action_one.default.projectile_info == nil) then
+						local ProjectileUnits = ProjectileUnits
 
-						if var_39_13[var_39_7.actions.action_one.default.projectile_info.projectile_units_template].dummy_linker_unit_name ~= nil then
-							var_39_0 = attach_player_item(var_39_1, var_39_13[var_39_7.actions.action_one.default.projectile_info.projectile_units_template].dummy_linker_unit_name, var_39_7.ammo_data.ammo_unit_attachment_node_linking.third_person, var_39_3, false)
+						if ProjectileUnits[var_39_7.actions.action_one.default.projectile_info.projectile_units_template].dummy_linker_unit_name ~= nil then
+							var_39_0 = attach_player_item(unit, ProjectileUnits[var_39_7.actions.action_one.default.projectile_info.projectile_units_template].dummy_linker_unit_name, var_39_7.ammo_data.ammo_unit_attachment_node_linking.third_person, node_linking, false)
 
-							if var_39_8 ~= nil and var_39_8.material_settings_name ~= nil then
+							if not (var_39_8 == nil or var_39_8.material_settings_name == nil) then
 								apply_material_settings(var_39_0, var_39_8.material_settings_name)
 							end
 						end
 					end
 
-					if Unit.has_animation_state_machine(var_39_1) and var_39_7.wield_anim ~= nil and not arg_39_0.skip_wield_anim then
-						Unit.animation_event(var_39_1, var_39_7.wield_anim)
+					if not (not Unit.has_animation_state_machine(unit) and var_39_7.wield_anim == nil or self.skip_wield_anim) then
+						Unit.animation_event(unit, var_39_7.wield_anim)
 					end
 				else
 					print("SKIPPED PLAYER WEAPON: Missing Weapons table")
@@ -734,36 +819,48 @@ function flow_callback_attach_player_item(arg_39_0)
 					if Attachments ~= nil then
 						local var_39_14 = Attachments[var_39_4.template]
 
-						var_39_0 = attach_player_item(var_39_1, var_39_4.unit, var_39_14.attachment_node_linking.slot_hat, nil, true)
-						equip_event = Unit.get_data(var_39_0, "equip_event") or var_39_14.show_attachments_event or nil
+						var_39_0 = attach_player_item(unit, var_39_4.unit, var_39_14.attachment_node_linking.slot_hat, nil, true)
+
+						local get_data = Unit.get_data(var_39_0, "equip_event")
+
+						if not get_data then
+							get_data = var_39_14.show_attachments_event
+							get_data = get_data or nil
+						end
+
+						equip_event = get_data
 						material_switches = nil
 
 						if var_39_14.character_material_changes ~= nil then
 							material_switches = var_39_14.character_material_changes.third_person
 						end
 
-						if equip_event then
-							Unit.flow_event(var_39_1, equip_event)
+						if not equip_event then
+							Unit.flow_event(unit, equip_event)
 						end
 
-						local var_39_15 = Unit.get_data(var_39_1, "flow_item_attachments") or {}
+						local get_data_2 = Unit.get_data(unit, "flow_item_attachments")
 
-						for iter_39_0, iter_39_1 in pairs(var_39_15) do
-							if equip_event then
-								Unit.flow_event(iter_39_1, equip_event)
+						get_data_2 = get_data_2 or {}
+
+						for k, v in pairs(get_data_2) do
+							if not equip_event then
+								Unit.flow_event(v, equip_event)
 							end
 
 							if material_switches ~= nil then
-								for iter_39_2, iter_39_3 in pairs(material_switches) do
-									Unit.set_material(iter_39_1, iter_39_2, iter_39_3)
+								for k_2, v_2 in pairs(material_switches) do
+									Unit.set_material(v, k_2, v_2)
 								end
 							end
 						end
 
-						local var_39_16 = Unit.get_data(var_39_1, "skin_events") or {}
+						local get_data_3 = Unit.get_data(unit, "skin_events")
 
-						for iter_39_4, iter_39_5 in pairs(var_39_16) do
-							Unit.flow_event(var_39_0, iter_39_5)
+						get_data_3 = get_data_3 or {}
+
+						for k_3, v_3 in pairs(get_data_3) do
+							Unit.flow_event(var_39_0, v_3)
 						end
 					else
 						print("SKIPPED PLAYER ATTACHMENT: Missing Attachments table")
@@ -771,47 +868,51 @@ function flow_callback_attach_player_item(arg_39_0)
 				end
 			elseif var_39_4.slot_type == "skin" then
 				if Cosmetics ~= nil then
-					local var_39_17 = Cosmetics[arg_39_0.item]
+					local var_39_18 = Cosmetics[self.item]
 
-					if var_39_3 == "display" then
-						if var_39_17.first_person_attachment ~= nil then
-							var_39_0 = attach_player_item(var_39_1, var_39_17.first_person_attachment.unit, var_39_17.first_person_attachment.attachment_node_linking, nil, true)
+					if node_linking == "display" then
+						if var_39_18.first_person_attachment ~= nil then
+							var_39_0 = attach_player_item(unit, var_39_18.first_person_attachment.unit, var_39_18.first_person_attachment.attachment_node_linking, nil, true)
 
-							if var_39_17.material_changes ~= nil then
-								for iter_39_6, iter_39_7 in pairs(var_39_17.material_changes.first_person) do
-									Unit.set_material(var_39_0, iter_39_6, iter_39_7)
+							if var_39_18.material_changes ~= nil then
+								for k_4, v_4 in pairs(var_39_18.material_changes.first_person) do
+									Unit.set_material(var_39_0, k_4, v_4)
 								end
 							end
 						end
-					elseif var_39_17.third_person_attachment ~= nil then
-						var_39_0 = attach_player_item(var_39_1, var_39_17.third_person_attachment.unit, var_39_17.third_person_attachment.attachment_node_linking, nil, true)
+					elseif var_39_18.third_person_attachment ~= nil then
+						var_39_0 = attach_player_item(unit, var_39_18.third_person_attachment.unit, var_39_18.third_person_attachment.attachment_node_linking, nil, true)
 
-						if var_39_17.material_changes ~= nil then
-							for iter_39_8, iter_39_9 in pairs(var_39_17.material_changes.third_person) do
-								Unit.set_material(var_39_0, iter_39_8, iter_39_9)
+						if var_39_18.material_changes ~= nil then
+							for k_5, v_5 in pairs(var_39_18.material_changes.third_person) do
+								Unit.set_material(var_39_0, k_5, v_5)
 							end
 						end
 
-						if var_39_17.material_settings_name ~= nil then
-							apply_material_settings(var_39_0, var_39_17.material_settings_name)
+						if var_39_18.material_settings_name ~= nil then
+							apply_material_settings(var_39_0, var_39_18.material_settings_name)
 						end
 
-						local var_39_18 = var_39_17.equip_skin_event or "using_skin_default"
+						local equip_skin_event = var_39_18.equip_skin_event
 
-						Unit.flow_event(var_39_1, var_39_18)
+						equip_skin_event = equip_skin_event or "using_skin_default"
 
-						local var_39_19 = Unit.get_data(var_39_1, "skin_events") or {}
+						Unit.flow_event(unit, equip_skin_event)
 
-						if var_39_17.equip_hat_event ~= nil then
-							table.insert(var_39_19, var_39_17.equip_hat_event)
+						local get_data_4 = Unit.get_data(unit, "skin_events")
+
+						get_data_4 = get_data_4 or {}
+
+						if var_39_18.equip_hat_event ~= nil then
+							table.insert(get_data_4, var_39_18.equip_hat_event)
 						else
-							table.insert(var_39_19, "using_skin_default")
+							table.insert(get_data_4, "using_skin_default")
 						end
 
-						Unit.set_data(var_39_1, "skin_events", var_39_19)
-						Unit.set_data(var_39_0, "skin_events", var_39_19)
+						Unit.set_data(unit, "skin_events", get_data_4)
+						Unit.set_data(var_39_0, "skin_events", get_data_4)
 
-						if Unit.has_animation_state_machine(var_39_0) and Unit.has_animation_event(var_39_0, "enable") then
+						if not Unit.has_animation_state_machine(var_39_0) and not Unit.has_animation_event(var_39_0, "enable") then
 							Unit.animation_event(var_39_0, "enable")
 						end
 					end
@@ -822,7 +923,7 @@ function flow_callback_attach_player_item(arg_39_0)
 				print("SKIPPED PLAYER ITEM: Unsupported slot type " .. var_39_4.slot_type)
 			end
 		else
-			print("SKIPPED PLAYER ITEM: Missing item " .. arg_39_0.item)
+			print("SKIPPED PLAYER ITEM: Missing item " .. self.item)
 		end
 	else
 		print("SKIPPED PLAYER INVENTORY: Missing ItemMasterList table")
@@ -834,7 +935,8 @@ function flow_callback_attach_player_item(arg_39_0)
 end
 
 function attach_player_item(arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4)
-	local var_40_0 = Script.index_offset()
+	-- function 40
+	local index_offset = Script.index_offset()
 
 	if arg_40_3 == "unwielded" then
 		arg_40_2 = arg_40_2.unwielded or arg_40_2
@@ -847,138 +949,190 @@ function attach_player_item(arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4)
 	local var_40_1
 	local var_40_2
 
-	for iter_40_0, iter_40_1 in pairs(arg_40_2) do
-		if iter_40_0 == 0 then
-			local var_40_3 = type(iter_40_1) == "string" and Unit.node(arg_40_0, iter_40_1) or iter_40_1 + var_40_0
+	for k, v in pairs(arg_40_2) do
+		if k == 0 then
+			local node
 
-			var_40_1 = Unit.world_position(arg_40_0, var_40_3)
-			var_40_2 = Unit.world_rotation(arg_40_0, var_40_3)
+			if type(v) == "string" then
+				node = Unit.node(arg_40_0, v)
+
+				if not node then
+					-- Nothing
+				end
+			end
+
+			node = v + index_offset
+
+			::label_40_0::
+
+			var_40_1 = Unit.world_position(arg_40_0, node)
+			var_40_2 = Unit.world_rotation(arg_40_0, node)
 
 			break
 		end
 	end
 
-	local var_40_4 = Unit.world(arg_40_0)
-	local var_40_5 = World.spawn_unit(var_40_4, arg_40_1, var_40_1, var_40_2)
+	local world = Unit.world(arg_40_0)
+	local spawn_unit = World.spawn_unit(world, arg_40_1, var_40_1, var_40_2)
 
-	for iter_40_2, iter_40_3 in ipairs(arg_40_2) do
-		local var_40_6 = iter_40_3.source
-		local var_40_7 = iter_40_3.target
-		local var_40_8 = type(var_40_6) == "string" and Unit.node(arg_40_0, var_40_6) or var_40_6 + var_40_0
-		local var_40_9 = type(var_40_7) == "string" and Unit.node(var_40_5, var_40_7) or var_40_7 + var_40_0
+	for i, v_2 in ipairs(arg_40_2) do
+		local source = v_2.source
+		local target = v_2.target
+		local node_2
 
-		World.link_unit(var_40_4, var_40_5, var_40_9, arg_40_0, var_40_8)
+		if type(source) == "string" then
+			node_2 = Unit.node(arg_40_0, source)
+
+			if not node_2 then
+				-- Nothing
+			end
+		end
+
+		node_2 = source + index_offset
+
+		do
+			local node_3
+		end
+
+		::label_40_1::
+
+		if type(target) == "string" then
+			node_3 = Unit.node(spawn_unit, target)
+
+			if not node_3 then
+				-- Nothing
+			end
+		end
+
+		node_3 = target + index_offset
+
+		::label_40_2::
+
+		World.link_unit(world, spawn_unit, node_3, arg_40_0, node_2)
 	end
 
-	if arg_40_4 and Unit.num_lod_objects(arg_40_0) ~= 0 and Unit.num_lod_objects(var_40_5) ~= 0 then
-		local var_40_10 = Unit.lod_object(arg_40_0, var_40_0)
-		local var_40_11 = Unit.lod_object(var_40_5, var_40_0)
+	if not (not arg_40_4 and Unit.num_lod_objects(arg_40_0) == 0 or Unit.num_lod_objects(spawn_unit) == 0) then
+		local lod_object = Unit.lod_object(arg_40_0, index_offset)
+		local lod_object_2 = Unit.lod_object(spawn_unit, index_offset)
 
-		LODObject.set_bounding_volume(var_40_11, LODObject.bounding_volume(var_40_10))
-		World.link_unit(var_40_4, var_40_5, LODObject.node(var_40_11), arg_40_0, LODObject.node(var_40_10))
+		LODObject.set_bounding_volume(lod_object_2, LODObject.bounding_volume(lod_object))
+		World.link_unit(world, spawn_unit, LODObject.node(lod_object_2), arg_40_0, LODObject.node(lod_object))
 	end
 
-	local var_40_12 = Unit.get_data(arg_40_0, "flow_item_attachments") or {}
+	local get_data = Unit.get_data(arg_40_0, "flow_item_attachments")
 
-	table.insert(var_40_12, var_40_5)
-	Unit.set_data(arg_40_0, "flow_item_attachments", var_40_12)
+	get_data = get_data or {}
 
-	return var_40_5
+	table.insert(get_data, spawn_unit)
+	Unit.set_data(arg_40_0, "flow_item_attachments", get_data)
+
+	return spawn_unit
 end
 
 function apply_material_settings(arg_41_0, arg_41_1)
+	-- function 41
 	local var_41_0 = MaterialSettingsTemplates[arg_41_1]
 
-	for iter_41_0, iter_41_1 in pairs(var_41_0) do
-		if iter_41_1.type == "color" then
-			if iter_41_1.apply_to_children then
-				Unit.set_color_for_materials_in_unit_and_childs(arg_41_0, iter_41_0, Quaternion(iter_41_1.alpha, iter_41_1.r, iter_41_1.g, iter_41_1.b))
+	for k, v in pairs(var_41_0) do
+		if v.type == "color" then
+			if not v.apply_to_children then
+				Unit.set_color_for_materials_in_unit_and_childs(arg_41_0, k, Quaternion(v.alpha, v.r, v.g, v.b))
 			else
-				Unit.set_color_for_materials(arg_41_0, iter_41_0, Quaternion(iter_41_1.alpha, iter_41_1.r, iter_41_1.g, iter_41_1.b))
+				Unit.set_color_for_materials(arg_41_0, k, Quaternion(v.alpha, v.r, v.g, v.b))
 			end
-		elseif iter_41_1.type == "matrix4x4" then
-			local var_41_1 = Matrix4x4(iter_41_1.xx, iter_41_1.xy, iter_41_1.xz, iter_41_1.yx, iter_41_1.yy, iter_41_1.yz, iter_41_1.zx, iter_41_1.zy, iter_41_1.zz, iter_41_1.tx, iter_41_1.ty, iter_41_1.tz)
+		elseif v.type == "matrix4x4" then
+			local var_41_1 = Matrix4x4(v.xx, v.xy, v.xz, v.yx, v.yy, v.yz, v.zx, v.zy, v.zz, v.tx, v.ty, v.tz)
 
-			if iter_41_1.apply_to_children then
-				Unit.set_matrix4x4_for_materials_in_unit_and_childs(arg_41_0, iter_41_0, var_41_1)
+			if not v.apply_to_children then
+				Unit.set_matrix4x4_for_materials_in_unit_and_childs(arg_41_0, k, var_41_1)
 			else
-				Unit.set_matrix4x4_for_materials(arg_41_0, iter_41_0, var_41_1)
+				Unit.set_matrix4x4_for_materials(arg_41_0, k, var_41_1)
 			end
-		elseif iter_41_1.type == "scalar" then
-			if iter_41_1.apply_to_children then
-				Unit.set_scalar_for_materials_in_unit_and_childs(arg_41_0, iter_41_0, iter_41_1.value)
+		elseif v.type == "scalar" then
+			if not v.apply_to_children then
+				Unit.set_scalar_for_materials_in_unit_and_childs(arg_41_0, k, v.value)
 			else
-				Unit.set_scalar_for_materials(arg_41_0, iter_41_0, iter_41_1.value)
+				Unit.set_scalar_for_materials(arg_41_0, k, v.value)
 			end
-		elseif iter_41_1.type == "vector2" then
-			if iter_41_1.apply_to_children then
-				Unit.set_vector2_for_materials_in_unit_and_childs(arg_41_0, iter_41_0, Vector3(iter_41_1.x, iter_41_1.y, 0))
+		elseif v.type == "vector2" then
+			if not v.apply_to_children then
+				Unit.set_vector2_for_materials_in_unit_and_childs(arg_41_0, k, Vector3(v.x, v.y, 0))
 			else
-				Unit.set_vector2_for_materials(arg_41_0, iter_41_0, Vector3(iter_41_1.x, iter_41_1.y, 0))
+				Unit.set_vector2_for_materials(arg_41_0, k, Vector3(v.x, v.y, 0))
 			end
-		elseif iter_41_1.type == "vector3" then
-			if iter_41_1.apply_to_children then
-				Unit.set_vector3_for_materials_in_unit_and_childs(arg_41_0, iter_41_0, Vector3(iter_41_1.x, iter_41_1.y, iter_41_1.z))
+		elseif v.type == "vector3" then
+			if not v.apply_to_children then
+				Unit.set_vector3_for_materials_in_unit_and_childs(arg_41_0, k, Vector3(v.x, v.y, v.z))
 			else
-				Unit.set_vector3_for_materials(arg_41_0, iter_41_0, Vector3(iter_41_1.x, iter_41_1.y, iter_41_1.z))
+				Unit.set_vector3_for_materials(arg_41_0, k, Vector3(v.x, v.y, v.z))
 			end
-		elseif iter_41_1.type == "vector4" then
-			if iter_41_1.apply_to_children then
-				Unit.set_vector4_for_materials_in_unit_and_childs(arg_41_0, iter_41_0, Quaternion(iter_41_1.x, iter_41_1.y, iter_41_1.z, iter_41_1.w))
+		elseif v.type == "vector4" then
+			if not v.apply_to_children then
+				Unit.set_vector4_for_materials_in_unit_and_childs(arg_41_0, k, Quaternion(v.x, v.y, v.z, v.w))
 			else
-				Unit.set_vector4_for_materials(arg_41_0, iter_41_0, Quaternion(iter_41_1.x, iter_41_1.y, iter_41_1.z, iter_41_1.w))
+				Unit.set_vector4_for_materials(arg_41_0, k, Quaternion(v.x, v.y, v.z, v.w))
 			end
-		elseif iter_41_1.type == "texture" and Application.can_get("texture", iter_41_1.texture) then
-			Unit.set_texture_for_materials(arg_41_0, iter_41_0, iter_41_1.texture)
+		elseif v.type ~= "texture" or not Application.can_get("texture", v.texture) then
+			Unit.set_texture_for_materials(arg_41_0, k, v.texture)
 		end
 	end
 end
 
-function flow_callback_remove_player_items(arg_42_0)
-	local var_42_0 = arg_42_0.unit
-	local var_42_1 = Unit.world(var_42_0)
-	local var_42_2 = Unit.get_data(var_42_0, "flow_item_attachments") or {}
+function flow_callback_remove_player_items(self)
+	-- function 42
+	local unit = self.unit
+	local world = Unit.world(unit)
+	local get_data = Unit.get_data(unit, "flow_item_attachments")
 
-	for iter_42_0 = 1, #var_42_2 do
-		arg_42_0.unit = var_42_2[iter_42_0]
+	get_data = get_data or {}
 
-		local var_42_3 = flow_callback_remove_player_items(arg_42_0)
+	for i = 1, #get_data do
+		self.unit = get_data[i]
 
-		World.unlink_unit(var_42_1, var_42_2[iter_42_0])
-		World.destroy_unit(var_42_1, var_42_2[iter_42_0])
+		local var_42_3 = flow_callback_remove_player_items(self)
+
+		World.unlink_unit(world, get_data[i])
+		World.destroy_unit(world, get_data[i])
 	end
 
-	Unit.set_data(var_42_0, "flow_item_attachments", {})
+	Unit.set_data(unit, "flow_item_attachments", {})
 
 	return {}
 end
 
-function flow_callback_unattach_unit(arg_43_0)
-	local var_43_0 = arg_43_0.parent_unit
-	local var_43_1 = arg_43_0.child_unit
-	local var_43_2 = Unit.world(var_43_0)
+function flow_callback_unattach_unit(self)
+	-- function 43
+	local parent_unit = self.parent_unit
+	local child_unit = self.child_unit
+	local world = Unit.world(parent_unit)
 
-	World.unlink_unit(var_43_2, var_43_1)
+	World.unlink_unit(world, child_unit)
 
-	local var_43_3 = Unit.get_data(var_43_0, "flow_unit_attachments") or {}
-	local var_43_4 = table.find(var_43_3, var_43_1)
+	local get_data = Unit.get_data(parent_unit, "flow_unit_attachments")
 
-	if var_43_4 then
-		table.remove(var_43_3, var_43_4)
+	get_data = get_data or {}
+
+	local find = table.find(get_data, child_unit)
+
+	if not find then
+		table.remove(get_data, find)
 	end
 
-	Unit.set_data(var_43_0, "flow_unit_attachments", var_43_3)
+	Unit.set_data(parent_unit, "flow_unit_attachments", get_data)
 
 	return {
 		unlinked = true
 	}
 end
 
-function flow_callback_trigger_event_on_attachments(arg_44_0)
-	local var_44_0 = Unit.get_data(arg_44_0.unit, "flow_unit_attachments") or {}
+function flow_callback_trigger_event_on_attachments(self)
+	-- function 44
+	local get_data = Unit.get_data(self.unit, "flow_unit_attachments")
 
-	for iter_44_0 = 1, #var_44_0 do
-		Unit.flow_event(var_44_0[iter_44_0], arg_44_0.event)
+	get_data = get_data or {}
+
+	for i = 1, #get_data do
+		Unit.flow_event(get_data[i], self.event)
 	end
 
 	return {
@@ -987,482 +1141,557 @@ function flow_callback_trigger_event_on_attachments(arg_44_0)
 end
 
 function flow_callback_unit_spawner_spawn_local_unit(arg_45_0)
+	-- function 45
 	return
 end
 
 function flow_callback_unit_spawner_mark_for_deletion(arg_46_0)
+	-- function 46
 	return
 end
 
-function flow_callback_set_actor_enabled(arg_47_0)
-	local var_47_0 = arg_47_0.unit
+function flow_callback_set_actor_enabled(self)
+	-- function 47
+	local unit = self.unit
 
-	assert(var_47_0, "Set Actor Enabled flow node is missing unit")
+	assert(unit, "Set Actor Enabled flow node is missing unit")
 
-	local var_47_1 = arg_47_0.actor or Unit.actor(var_47_0, arg_47_0.actor_name)
+	local actor = self.actor
 
-	fassert(var_47_1, "Set Actor Enabled flow node referring to unit %s is missing actor %s", tostring(var_47_0), tostring(arg_47_0.actor or arg_47_0.actor_name))
-	Actor.set_collision_enabled(var_47_1, arg_47_0.enabled)
-	Actor.set_scene_query_enabled(var_47_1, arg_47_0.enabled)
+	actor = actor or Unit.actor(unit, self.actor_name)
+
+	local fassert = fassert
+	local var_47_3 = actor
+	local str = "Set Actor Enabled flow node referring to unit %s is missing actor %s"
+	local var_47_5 = tostring(unit)
+	local tostring = tostring
+	local actor_2 = self.actor
+
+	actor_2 = actor_2 or self.actor_name
+
+	fassert(var_47_3, str, var_47_5, tostring(actor_2))
+	Actor.set_collision_enabled(actor, self.enabled)
+	Actor.set_scene_query_enabled(actor, self.enabled)
 end
 
-function flow_callback_set_actor_kinematic(arg_48_0)
-	local var_48_0 = arg_48_0.unit
+function flow_callback_set_actor_kinematic(self)
+	-- function 48
+	local unit = self.unit
 
-	assert(var_48_0, "Set Actor Kinematic flow node is missing unit")
+	assert(unit, "Set Actor Kinematic flow node is missing unit")
 
-	local var_48_1 = arg_48_0.actor or Unit.actor(var_48_0, arg_48_0.actor_name)
+	local actor = self.actor
 
-	fassert(var_48_1, "Set Actor Kinematic flow node referring to unit %s is missing actor %s", tostring(var_48_0), tostring(arg_48_0.actor or arg_48_0.actor_name))
-	Actor.set_kinematic(var_48_1, arg_48_0.enabled)
+	actor = actor or Unit.actor(unit, self.actor_name)
+
+	local fassert = fassert
+	local var_48_3 = actor
+	local str = "Set Actor Kinematic flow node referring to unit %s is missing actor %s"
+	local var_48_5 = tostring(unit)
+	local tostring = tostring
+	local actor_2 = self.actor
+
+	actor_2 = actor_2 or self.actor_name
+
+	fassert(var_48_3, str, var_48_5, tostring(actor_2))
+	Actor.set_kinematic(actor, self.enabled)
 end
 
-function flow_callback_spawn_actor(arg_49_0)
-	local var_49_0 = arg_49_0.unit
+function flow_callback_spawn_actor(self)
+	-- function 49
+	local unit = self.unit
 
-	assert(var_49_0, "Spawn Actor flow node is missing unit")
+	assert(unit, "Spawn Actor flow node is missing unit")
 
-	local var_49_1 = arg_49_0.actor_name
+	local actor_name = self.actor_name
 
-	Unit.create_actor(var_49_0, var_49_1)
+	Unit.create_actor(unit, actor_name)
 end
 
-function flow_callback_destroy_actor(arg_50_0)
-	local var_50_0 = arg_50_0.unit
+function flow_callback_destroy_actor(self)
+	-- function 50
+	local unit = self.unit
 
-	assert(var_50_0, "Destroy Actor flow node is missing unit")
+	assert(unit, "Destroy Actor flow node is missing unit")
 
-	local var_50_1 = arg_50_0.actor_name
+	local actor_name = self.actor_name
 
-	Unit.destroy_actor(var_50_0, var_50_1)
+	Unit.destroy_actor(unit, actor_name)
 end
 
-function flow_callback_set_actor_initial_velocity(arg_51_0)
-	local var_51_0 = arg_51_0.unit
+function flow_callback_set_actor_initial_velocity(self)
+	-- function 51
+	local unit = self.unit
 
-	assert(var_51_0, "Set actor initial velocity has no unit")
-	Unit.apply_initial_actor_velocities(var_51_0, true)
+	assert(unit, "Set actor initial velocity has no unit")
+	Unit.apply_initial_actor_velocities(unit, true)
 end
 
-function flow_callback_set_actor_initial_velocity(arg_52_0)
-	local var_52_0 = arg_52_0.unit
+function flow_callback_set_actor_initial_velocity(self)
+	-- function 52
+	local unit = self.unit
 
-	assert(var_52_0, "Set actor initial velocity has no unit")
-	Unit.apply_initial_actor_velocities(var_52_0, true)
+	assert(unit, "Set actor initial velocity has no unit")
+	Unit.apply_initial_actor_velocities(unit, true)
 end
 
-function flow_callback_set_unit_material_variation(arg_53_0)
-	local var_53_0 = arg_53_0.unit
-	local var_53_1 = arg_53_0.material_variation
+function flow_callback_set_unit_material_variation(self)
+	-- function 53
+	local unit = self.unit
+	local material_variation = self.material_variation
 
-	Unit.set_material_variation(var_53_0, var_53_1)
+	Unit.set_material_variation(unit, material_variation)
 end
 
-function flow_callback_set_material_property_scalar(arg_54_0)
-	local var_54_0 = arg_54_0.unit
-	local var_54_1 = arg_54_0.all_meshes
-	local var_54_2 = arg_54_0.mesh
-	local var_54_3 = arg_54_0.material
-	local var_54_4 = arg_54_0.variable
-	local var_54_5 = arg_54_0.value
+function flow_callback_set_material_property_scalar(self)
+	-- function 54
+	local unit = self.unit
+	local all_meshes = self.all_meshes
+	local mesh = self.mesh
+	local material = self.material
+	local variable = self.variable
+	local value = self.value
 
-	if var_54_1 then
-		for iter_54_0 = 0, Unit.num_meshes(var_54_0) - 1 do
-			var_54_2 = Unit.mesh(var_54_0, iter_54_0)
+	if not all_meshes then
+		for i = 0, Unit.num_meshes(unit) - 1 do
+			mesh = Unit.mesh(unit, i)
 
-			if Mesh.has_material(var_54_2, var_54_3) then
-				local var_54_6 = Mesh.material(var_54_2, var_54_3)
+			if not Mesh.has_material(mesh, material) then
+				local material_2 = Mesh.material(mesh, material)
 
-				Material.set_scalar(var_54_6, var_54_4, var_54_5)
+				Material.set_scalar(material_2, variable, value)
 			end
 		end
 	else
-		local var_54_7 = Unit.mesh(var_54_0, var_54_2)
-		local var_54_8 = Mesh.material(var_54_7, var_54_3)
+		local mesh_2 = Unit.mesh(unit, mesh)
+		local material_3 = Mesh.material(mesh_2, material)
 
-		Material.set_scalar(var_54_8, var_54_4, var_54_5)
+		Material.set_scalar(material_3, variable, value)
 	end
 end
 
-function flow_callback_set_material_property_vector2(arg_55_0)
-	local var_55_0 = arg_55_0.unit
-	local var_55_1 = arg_55_0.all_meshes
-	local var_55_2 = arg_55_0.mesh
-	local var_55_3 = arg_55_0.material
-	local var_55_4 = arg_55_0.variable
-	local var_55_5 = Vector2(arg_55_0.value.x, arg_55_0.value.y)
+function flow_callback_set_material_property_vector2(self)
+	-- function 55
+	local unit = self.unit
+	local all_meshes = self.all_meshes
+	local mesh = self.mesh
+	local material = self.material
+	local variable = self.variable
+	local var_55_5 = Vector2(self.value.x, self.value.y)
 
-	if var_55_1 then
-		for iter_55_0 = 0, Unit.num_meshes(var_55_0) - 1 do
-			var_55_2 = Unit.mesh(var_55_0, iter_55_0)
+	if not all_meshes then
+		for i = 0, Unit.num_meshes(unit) - 1 do
+			mesh = Unit.mesh(unit, i)
 
-			if Mesh.has_material(var_55_2, var_55_3) then
-				local var_55_6 = Mesh.material(var_55_2, var_55_3)
+			if not Mesh.has_material(mesh, material) then
+				local material_2 = Mesh.material(mesh, material)
 
-				Material.set_vector2(var_55_6, var_55_4, var_55_5)
+				Material.set_vector2(material_2, variable, var_55_5)
 			end
 		end
 	else
-		local var_55_7 = Unit.mesh(var_55_0, var_55_2)
-		local var_55_8 = Mesh.material(var_55_7, var_55_3)
+		local mesh_2 = Unit.mesh(unit, mesh)
+		local material_3 = Mesh.material(mesh_2, material)
 
-		Material.set_vector2(var_55_8, var_55_4, var_55_5)
+		Material.set_vector2(material_3, variable, var_55_5)
 	end
 end
 
-function flow_callback_set_material_property_vector3(arg_56_0)
-	local var_56_0 = arg_56_0.unit
-	local var_56_1 = arg_56_0.all_meshes
-	local var_56_2 = arg_56_0.mesh
-	local var_56_3 = arg_56_0.material
-	local var_56_4 = arg_56_0.variable
-	local var_56_5 = arg_56_0.value
+function flow_callback_set_material_property_vector3(self)
+	-- function 56
+	local unit = self.unit
+	local all_meshes = self.all_meshes
+	local mesh = self.mesh
+	local material = self.material
+	local variable = self.variable
+	local value = self.value
 
-	if var_56_1 then
-		for iter_56_0 = 0, Unit.num_meshes(var_56_0) - 1 do
-			var_56_2 = Unit.mesh(var_56_0, iter_56_0)
+	if not all_meshes then
+		for i = 0, Unit.num_meshes(unit) - 1 do
+			mesh = Unit.mesh(unit, i)
 
-			if Mesh.has_material(var_56_2, var_56_3) then
-				local var_56_6 = Mesh.material(var_56_2, var_56_3)
+			if not Mesh.has_material(mesh, material) then
+				local material_2 = Mesh.material(mesh, material)
 
-				Material.set_vector3(var_56_6, var_56_4, var_56_5)
+				Material.set_vector3(material_2, variable, value)
 			end
 		end
 	else
-		local var_56_7 = Unit.mesh(var_56_0, var_56_2)
-		local var_56_8 = Mesh.material(var_56_7, var_56_3)
+		local mesh_2 = Unit.mesh(unit, mesh)
+		local material_3 = Mesh.material(mesh_2, material)
 
-		Material.set_vector3(var_56_8, var_56_4, var_56_5)
+		Material.set_vector3(material_3, variable, value)
 	end
 end
 
-function flow_callback_set_material_property_color(arg_57_0)
-	local var_57_0 = arg_57_0.unit
-	local var_57_1 = arg_57_0.all_meshes
-	local var_57_2 = arg_57_0.mesh
-	local var_57_3 = arg_57_0.material
-	local var_57_4 = arg_57_0.variable
-	local var_57_5 = arg_57_0.color
+function flow_callback_set_material_property_color(self)
+	-- function 57
+	local unit = self.unit
+	local all_meshes = self.all_meshes
+	local mesh = self.mesh
+	local material = self.material
+	local variable = self.variable
+	local color = self.color
 
-	if var_57_1 then
-		for iter_57_0 = 0, Unit.num_meshes(var_57_0) - 1 do
-			var_57_2 = Unit.mesh(var_57_0, iter_57_0)
+	if not all_meshes then
+		for i = 0, Unit.num_meshes(unit) - 1 do
+			mesh = Unit.mesh(unit, i)
 
-			if Mesh.has_material(var_57_2, var_57_3) then
-				local var_57_6 = Mesh.material(var_57_2, var_57_3)
+			if not Mesh.has_material(mesh, material) then
+				local material_2 = Mesh.material(mesh, material)
 
-				Material.set_color(var_57_6, var_57_4, var_57_5)
+				Material.set_color(material_2, variable, color)
 			end
 		end
 	else
-		local var_57_7 = Unit.mesh(var_57_0, var_57_2)
-		local var_57_8 = Mesh.material(var_57_7, var_57_3)
+		local mesh_2 = Unit.mesh(unit, mesh)
+		local material_3 = Mesh.material(mesh_2, material)
 
-		Material.set_color(var_57_8, var_57_4, var_57_5)
+		Material.set_color(material_3, variable, color)
 	end
 end
 
 function do_material_dissolve(arg_58_0, arg_58_1, arg_58_2, arg_58_3, arg_58_4)
+	-- function 58
 	Material.set_scalar(arg_58_0, arg_58_3, arg_58_4)
 	Material.set_vector2(arg_58_0, arg_58_1, arg_58_2)
 end
 
-function flow_callback_set_material_property_scalar_all(arg_59_0)
-	local var_59_0 = arg_59_0.unit
-	local var_59_1 = arg_59_0.variable
-	local var_59_2 = arg_59_0.value
-	local var_59_3 = Script.index_offset()
-	local var_59_4 = 1 - var_59_3
-	local var_59_5 = Unit.num_meshes(var_59_0)
+function flow_callback_set_material_property_scalar_all(self)
+	-- function 59
+	local unit = self.unit
+	local variable = self.variable
+	local value = self.value
+	local index_offset = Script.index_offset()
+	local num = 1 - index_offset
+	local num_meshes = Unit.num_meshes(unit)
 
-	for iter_59_0 = var_59_3, var_59_5 - var_59_4 do
-		local var_59_6 = Unit.mesh(var_59_0, iter_59_0)
-		local var_59_7 = Mesh.num_materials(var_59_6)
+	for i = index_offset, num_meshes - num do
+		local mesh = Unit.mesh(unit, i)
+		local num_materials = Mesh.num_materials(mesh)
 
-		for iter_59_1 = var_59_3, var_59_7 - var_59_4 do
-			local var_59_8 = Mesh.material(var_59_6, iter_59_1)
+		for j = index_offset, num_materials - num do
+			local material = Mesh.material(mesh, j)
 
-			Material.set_scalar(var_59_8, var_59_1, var_59_2)
+			Material.set_scalar(material, variable, value)
 		end
 	end
 end
 
-function flow_callback_material_scalar_set_chr_inventory(arg_60_0)
-	assert(arg_60_0.unit, "[flow_callback_material_scalar_set_chr_inventory] You need to specify the Unit")
-	assert(arg_60_0.variable, "[flow_callback_material_scalar_set_chr_inventory] You need to specify variable value")
-	assert(arg_60_0.value, "[flow_callback_material_scalar_set_chr_inventory] You need to specify variable name")
+function flow_callback_material_scalar_set_chr_inventory(self)
+	-- function 60
+	assert(self.unit, "[flow_callback_material_scalar_set_chr_inventory] You need to specify the Unit")
+	assert(self.variable, "[flow_callback_material_scalar_set_chr_inventory] You need to specify variable value")
+	assert(self.value, "[flow_callback_material_scalar_set_chr_inventory] You need to specify variable name")
 
-	local var_60_0 = arg_60_0.unit
-	local var_60_1 = {}
+	local unit = self.unit
+	local tbl = {}
 
-	for iter_60_0, iter_60_1 in ipairs({
+	for i, v in ipairs({
 		"outfit",
 		"stump",
 		"helmet",
 		"skin",
 		"other"
 	}) do
-		local var_60_2 = Unit.get_data(var_60_0, iter_60_1 .. "_items") or {}
+		local flag = Unit.get_data(unit, v .. "_items") or {}
 
-		for iter_60_2 = 1, #var_60_2 do
-			arg_60_0.unit = var_60_2[iter_60_2]
+		for k = 1, #flag do
+			self.unit = flag[k]
 
-			flow_callback_set_material_property_scalar_all(arg_60_0)
+			flow_callback_set_material_property_scalar_all(self)
 		end
 	end
 end
 
-function flow_callback_material_dissolve(arg_61_0)
-	assert(arg_61_0.unit, "[flow_callback_material_dissolve] You need to specify the Unit")
-	assert(arg_61_0.duration, "[flow_callback_material_dissolve] You need to specify duration")
+function flow_callback_material_dissolve(self)
+	-- function 61
+	assert(self.unit, "[flow_callback_material_dissolve] You need to specify the Unit")
+	assert(self.duration, "[flow_callback_material_dissolve] You need to specify duration")
 
-	local var_61_0 = arg_61_0.timer_var_name or "dissolve_timer"
-	local var_61_1 = World.time(Application.main_world())
-	local var_61_2 = Vector2(var_61_1, var_61_1 + arg_61_0.duration)
-	local var_61_3 = arg_61_0.dissolve_start_state_var_name or "dissolve_start_value"
-	local var_61_4 = math.floor(0.5 + arg_61_0.dissolve_start_state or 1)
-	local var_61_5 = arg_61_0.unit
-	local var_61_6 = Script.index_offset()
-	local var_61_7
-	local var_61_8 = arg_61_0.mesh_name
+	local timer_var_name = self.timer_var_name
 
-	if var_61_8 then
-		fassert(Unit.has_mesh(var_61_5, var_61_8), string.format("[flow_callback_material_dissolve] The mesh %s doesn't exist in unit %s", var_61_8, tostring(var_61_5)))
+	timer_var_name = timer_var_name or "dissolve_timer"
 
-		var_61_7 = Unit.mesh(var_61_5, var_61_8)
-	end
+	local time = World.time(Application.main_world())
+	local var_61_2 = Vector2(time, time + self.duration)
+	local dissolve_start_state_var_name = self.dissolve_start_state_var_name
 
+	dissolve_start_state_var_name = dissolve_start_state_var_name or "dissolve_start_value"
+
+	local floor = math.floor
+	local num = 0.5 + self.dissolve_start_state
+
+	num = num or 1
+
+	local var_61_6 = floor(num)
+	local unit = self.unit
+	local index_offset = Script.index_offset()
 	local var_61_9
-	local var_61_10 = arg_61_0.material_name
+	local mesh_name = self.mesh_name
 
-	if var_61_7 and var_61_10 then
-		fassert(Mesh.has_material(var_61_7, var_61_10), string.format("[flow_callback_material_dissolve] The material %s doesn't exist for mesh %s", var_61_8, var_61_10))
+	if not mesh_name then
+		fassert(Unit.has_mesh(unit, mesh_name), string.format("[flow_callback_material_dissolve] The mesh %s doesn't exist in unit %s", mesh_name, tostring(unit)))
 
-		var_61_9 = Mesh.material(var_61_7, var_61_10)
+		var_61_9 = Unit.mesh(unit, mesh_name)
 	end
 
-	if var_61_7 and var_61_9 then
-		do_material_dissolve(var_61_9, var_61_0, var_61_2, var_61_3, var_61_4)
-	elseif var_61_7 then
-		local var_61_11 = Mesh.num_materials(var_61_7)
+	local var_61_11
+	local material_name = self.material_name
 
-		for iter_61_0 = 0, var_61_11 - 1 do
-			do_material_dissolve(Mesh.material(var_61_7, iter_61_0 + var_61_6), var_61_0, var_61_2, var_61_3, var_61_4)
+	if not var_61_9 and not material_name then
+		fassert(Mesh.has_material(var_61_9, material_name), string.format("[flow_callback_material_dissolve] The material %s doesn't exist for mesh %s", mesh_name, material_name))
+
+		var_61_11 = Mesh.material(var_61_9, material_name)
+	end
+
+	if not var_61_9 and not var_61_11 then
+		do_material_dissolve(var_61_11, timer_var_name, var_61_2, dissolve_start_state_var_name, var_61_6)
+	elseif not var_61_9 then
+		local num_materials = Mesh.num_materials(var_61_9)
+
+		for i = 0, num_materials - 1 do
+			do_material_dissolve(Mesh.material(var_61_9, i + index_offset), timer_var_name, var_61_2, dissolve_start_state_var_name, var_61_6)
 		end
-	elseif var_61_10 then
-		local var_61_12 = Unit.num_meshes(var_61_5)
+	elseif not material_name then
+		local num_meshes = Unit.num_meshes(unit)
 
-		for iter_61_1 = 0, var_61_12 - 1 do
-			local var_61_13 = Unit.mesh(var_61_5, iter_61_1 + var_61_6)
+		for j = 0, num_meshes - 1 do
+			local mesh = Unit.mesh(unit, j + index_offset)
 
-			if Mesh.has_material(var_61_13, var_61_10) then
-				do_material_dissolve(Mesh.material(var_61_13, var_61_10), var_61_0, var_61_2, var_61_3, var_61_4)
+			if not Mesh.has_material(mesh, material_name) then
+				do_material_dissolve(Mesh.material(mesh, material_name), timer_var_name, var_61_2, dissolve_start_state_var_name, var_61_6)
 			end
 		end
 	else
-		local var_61_14 = Unit.num_meshes(var_61_5)
+		local num_meshes_2 = Unit.num_meshes(unit)
 
-		for iter_61_2 = 0, var_61_14 - 1 do
-			local var_61_15 = Unit.mesh(var_61_5, iter_61_2 + var_61_6)
-			local var_61_16 = Mesh.num_materials(var_61_15)
+		for k = 0, num_meshes_2 - 1 do
+			local mesh_2 = Unit.mesh(unit, k + index_offset)
+			local num_materials_2 = Mesh.num_materials(mesh_2)
 
-			for iter_61_3 = 0, var_61_16 - 1 do
-				do_material_dissolve(Mesh.material(var_61_15, iter_61_3 + var_61_6), var_61_0, var_61_2, var_61_3, var_61_4)
+			for l = 0, num_materials_2 - 1 do
+				do_material_dissolve(Mesh.material(mesh_2, l + index_offset), timer_var_name, var_61_2, dissolve_start_state_var_name, var_61_6)
 			end
 		end
 	end
 end
 
-function flow_callback_material_dissolve_chr(arg_62_0)
-	assert(arg_62_0.unit, "[flow_callback_material_dissolve_chr] You need to specify the Unit")
-	assert(arg_62_0.duration, "[flow_callback_material_dissolve_chr] You need to specify duration")
-	flow_callback_material_dissolve(arg_62_0)
+function flow_callback_material_dissolve_chr(self)
+	-- function 62
+	assert(self.unit, "[flow_callback_material_dissolve_chr] You need to specify the Unit")
+	assert(self.duration, "[flow_callback_material_dissolve_chr] You need to specify duration")
+	flow_callback_material_dissolve(self)
 
-	local var_62_0 = arg_62_0.unit
-	local var_62_1 = {}
+	local unit = self.unit
+	local tbl = {}
 
-	for iter_62_0, iter_62_1 in ipairs({
+	for i, v in ipairs({
 		"outfit",
 		"stump",
 		"skin",
 		"helmet"
 	}) do
-		local var_62_2 = Unit.get_data(var_62_0, iter_62_1 .. "_items") or {}
+		local flag = Unit.get_data(unit, v .. "_items") or {}
 
-		for iter_62_2 = 1, #var_62_2 do
-			arg_62_0.unit = var_62_2[iter_62_2]
+		for k = 1, #flag do
+			self.unit = flag[k]
 
-			flow_callback_material_dissolve(arg_62_0)
+			flow_callback_material_dissolve(self)
 		end
 	end
 end
 
-function flow_callback_material_dissolve_chr_inventory(arg_63_0)
-	assert(arg_63_0.unit, "[flow_callback_material_dissolve_chr_outfit] You need to specify the Unit")
-	assert(arg_63_0.duration, "[flow_callback_material_dissolve_chr_outfit] You need to specify duration")
-	assert(arg_63_0.inventory_type, "[flow_callback_material_dissolve_chr_inventory] You need to specify inventory type")
+function flow_callback_material_dissolve_chr_inventory(self)
+	-- function 63
+	assert(self.unit, "[flow_callback_material_dissolve_chr_outfit] You need to specify the Unit")
+	assert(self.duration, "[flow_callback_material_dissolve_chr_outfit] You need to specify duration")
+	assert(self.inventory_type, "[flow_callback_material_dissolve_chr_inventory] You need to specify inventory type")
 
-	local var_63_0 = arg_63_0.unit
-	local var_63_1 = {}
+	local unit = self.unit
+	local tbl = {}
 
-	if arg_63_0.inventory_type == "weapon" then
-		var_63_1 = Unit.get_data(var_63_0, "other_items") or {}
+	if self.inventory_type == "weapon" then
+		tbl = Unit.get_data(unit, "other_items") or {}
 	else
-		var_63_1 = Unit.get_data(var_63_0, arg_63_0.inventory_type .. "_items") or {}
+		tbl = Unit.get_data(unit, self.inventory_type .. "_items") or {}
 	end
 
-	for iter_63_0 = 1, #var_63_1 do
-		arg_63_0.unit = var_63_1[iter_63_0]
+	for i = 1, #tbl do
+		self.unit = tbl[i]
 
-		flow_callback_material_dissolve(arg_63_0)
+		flow_callback_material_dissolve(self)
 	end
 end
 
 function do_material_fade(arg_64_0, arg_64_1, arg_64_2, arg_64_3, arg_64_4)
+	-- function 64
 	Material.set_vector2(arg_64_0, arg_64_3, arg_64_4)
 	Material.set_vector2(arg_64_0, arg_64_1, arg_64_2)
 end
 
-function flow_callback_material_fade(arg_65_0)
-	assert(arg_65_0.unit, "[flow_callback_material_fade] You need to specify the Unit")
-	assert(arg_65_0.duration, "[flow_callback_material_fade] You need to specify duration")
+function flow_callback_material_fade(self)
+	-- function 65
+	assert(self.unit, "[flow_callback_material_fade] You need to specify the Unit")
+	assert(self.duration, "[flow_callback_material_fade] You need to specify duration")
 
-	local var_65_0 = arg_65_0.timer_var_name or "fade_timer"
-	local var_65_1 = World.time(Application.main_world())
-	local var_65_2 = Vector2(var_65_1, var_65_1 + arg_65_0.duration)
-	local var_65_3 = arg_65_0.fade_range_var_name or "fade_interval"
-	local var_65_4 = Vector2(arg_65_0.fade_range_from or 1, arg_65_0.fade_range_to or 0)
-	local var_65_5 = arg_65_0.unit
-	local var_65_6 = Script.index_offset()
-	local var_65_7
-	local var_65_8 = arg_65_0.mesh_name
+	local timer_var_name = self.timer_var_name
 
-	if var_65_8 then
-		fassert(Unit.has_mesh(var_65_5, var_65_8), string.format("[flow_callback_material_fade] The mesh %s doesn't exist in unit %s", var_65_8, tostring(var_65_5)))
+	timer_var_name = timer_var_name or "fade_timer"
 
-		var_65_7 = Unit.mesh(var_65_5, var_65_8)
+	local time = World.time(Application.main_world())
+	local var_65_2 = Vector2(time, time + self.duration)
+	local fade_range_var_name = self.fade_range_var_name
+
+	fade_range_var_name = fade_range_var_name or "fade_interval"
+
+	local Vector2 = Vector2
+	local fade_range_from = self.fade_range_from
+
+	fade_range_from = fade_range_from or 1
+
+	local fade_range_to = self.fade_range_to
+
+	fade_range_to = fade_range_to or 0
+
+	local var_65_7 = Vector2(fade_range_from, fade_range_to)
+	local unit = self.unit
+	local index_offset = Script.index_offset()
+	local var_65_10
+	local mesh_name = self.mesh_name
+
+	if not mesh_name then
+		fassert(Unit.has_mesh(unit, mesh_name), string.format("[flow_callback_material_fade] The mesh %s doesn't exist in unit %s", mesh_name, tostring(unit)))
+
+		var_65_10 = Unit.mesh(unit, mesh_name)
 	end
 
-	local var_65_9
-	local var_65_10 = arg_65_0.material_name
+	local var_65_12
+	local material_name = self.material_name
 
-	if var_65_7 and var_65_10 then
-		fassert(Mesh.has_material(var_65_7, var_65_10), string.format("[flow_callback_material_fade] The material %s doesn't exist for mesh %s", var_65_8, var_65_10))
+	if not var_65_10 and not material_name then
+		fassert(Mesh.has_material(var_65_10, material_name), string.format("[flow_callback_material_fade] The material %s doesn't exist for mesh %s", mesh_name, material_name))
 
-		var_65_9 = Mesh.material(var_65_7, var_65_10)
+		var_65_12 = Mesh.material(var_65_10, material_name)
 	end
 
-	if var_65_7 and var_65_9 then
-		do_material_fade(var_65_9, var_65_0, var_65_2, var_65_3, var_65_4)
-	elseif var_65_7 then
-		local var_65_11 = Mesh.num_materials(var_65_7)
+	if not var_65_10 and not var_65_12 then
+		do_material_fade(var_65_12, timer_var_name, var_65_2, fade_range_var_name, var_65_7)
+	elseif not var_65_10 then
+		local num_materials = Mesh.num_materials(var_65_10)
 
-		for iter_65_0 = 0, var_65_11 - 1 do
-			do_material_fade(Mesh.material(var_65_7, iter_65_0 + var_65_6), var_65_0, var_65_2, var_65_3, var_65_4)
+		for i = 0, num_materials - 1 do
+			do_material_fade(Mesh.material(var_65_10, i + index_offset), timer_var_name, var_65_2, fade_range_var_name, var_65_7)
 		end
-	elseif var_65_10 then
-		local var_65_12 = Unit.num_meshes(var_65_5)
+	elseif not material_name then
+		local num_meshes = Unit.num_meshes(unit)
 
-		for iter_65_1 = 0, var_65_12 - 1 do
-			local var_65_13 = Unit.mesh(var_65_5, iter_65_1 + var_65_6)
+		for j = 0, num_meshes - 1 do
+			local mesh = Unit.mesh(unit, j + index_offset)
 
-			if Mesh.has_material(var_65_13, var_65_10) then
-				do_material_fade(Mesh.material(var_65_13, var_65_10), var_65_0, var_65_2, var_65_3, var_65_4)
+			if not Mesh.has_material(mesh, material_name) then
+				do_material_fade(Mesh.material(mesh, material_name), timer_var_name, var_65_2, fade_range_var_name, var_65_7)
 			end
 		end
 	else
-		local var_65_14 = Unit.num_meshes(var_65_5)
+		local num_meshes_2 = Unit.num_meshes(unit)
 
-		for iter_65_2 = 0, var_65_14 - 1 do
-			local var_65_15 = Unit.mesh(var_65_5, iter_65_2 + var_65_6)
-			local var_65_16 = Mesh.num_materials(var_65_15)
+		for k = 0, num_meshes_2 - 1 do
+			local mesh_2 = Unit.mesh(unit, k + index_offset)
+			local num_materials_2 = Mesh.num_materials(mesh_2)
 
-			for iter_65_3 = 0, var_65_16 - 1 do
-				do_material_fade(Mesh.material(var_65_15, iter_65_3 + var_65_6), var_65_0, var_65_2, var_65_3, var_65_4)
+			for l = 0, num_materials_2 - 1 do
+				do_material_fade(Mesh.material(mesh_2, l + index_offset), timer_var_name, var_65_2, fade_range_var_name, var_65_7)
 			end
 		end
 	end
 end
 
-function flow_callback_material_fade_chr(arg_66_0)
-	assert(arg_66_0.unit, "[flow_callback_material_fade_chr] You need to specify the Unit")
-	assert(arg_66_0.duration, "[flow_callback_material_fade_chr] You need to specify duration")
-	flow_callback_material_fade(arg_66_0)
+function flow_callback_material_fade_chr(self)
+	-- function 66
+	assert(self.unit, "[flow_callback_material_fade_chr] You need to specify the Unit")
+	assert(self.duration, "[flow_callback_material_fade_chr] You need to specify duration")
+	flow_callback_material_fade(self)
 
-	local var_66_0 = arg_66_0.unit
-	local var_66_1 = {}
+	local unit = self.unit
+	local tbl = {}
 
-	for iter_66_0, iter_66_1 in ipairs({
+	for i, v in ipairs({
 		"outfit",
 		"stump",
 		"skin",
 		"helmet"
 	}) do
-		local var_66_2 = Unit.get_data(var_66_0, iter_66_1 .. "_items") or {}
+		local flag = Unit.get_data(unit, v .. "_items") or {}
 
-		for iter_66_2 = 1, #var_66_2 do
-			arg_66_0.unit = var_66_2[iter_66_2]
+		for k = 1, #flag do
+			self.unit = flag[k]
 
-			flow_callback_material_fade(arg_66_0)
+			flow_callback_material_fade(self)
 		end
 	end
 end
 
-function flow_callback_material_fade_chr_inventory(arg_67_0)
-	assert(arg_67_0.unit, "[flow_callback_material_fade_chr_inventory] You need to specify the Unit")
-	assert(arg_67_0.duration, "[flow_callback_material_fade_chr_inventory] You need to specify duration")
-	assert(arg_67_0.inventory_type, "[flow_callback_material_fade_chr_inventory] You need to specify inventory type")
+function flow_callback_material_fade_chr_inventory(self)
+	-- function 67
+	assert(self.unit, "[flow_callback_material_fade_chr_inventory] You need to specify the Unit")
+	assert(self.duration, "[flow_callback_material_fade_chr_inventory] You need to specify duration")
+	assert(self.inventory_type, "[flow_callback_material_fade_chr_inventory] You need to specify inventory type")
 
-	local var_67_0 = arg_67_0.unit
-	local var_67_1 = {}
+	local unit = self.unit
+	local tbl = {}
 
-	if arg_67_0.inventory_type == "weapon" then
-		var_67_1 = Unit.get_data(var_67_0, "other_items") or {}
+	if self.inventory_type == "weapon" then
+		tbl = Unit.get_data(unit, "other_items") or {}
 	else
-		var_67_1 = Unit.get_data(var_67_0, arg_67_0.inventory_type .. "_items") or {}
+		tbl = Unit.get_data(unit, self.inventory_type .. "_items") or {}
 	end
 
-	for iter_67_0 = 1, #var_67_1 do
-		arg_67_0.unit = var_67_1[iter_67_0]
+	for i = 1, #tbl do
+		self.unit = tbl[i]
 
-		flow_callback_material_fade(arg_67_0)
+		flow_callback_material_fade(self)
 	end
 end
 
-function flow_callback_visibility_chr_inventory(arg_68_0)
-	assert(arg_68_0.unit, "[flow_callback_visibility_chr_inventory] You need to specify the Unit")
+function flow_callback_visibility_chr_inventory(self)
+	-- function 68
+	assert(self.unit, "[flow_callback_visibility_chr_inventory] You need to specify the Unit")
 
-	local var_68_0 = arg_68_0.unit
-	local var_68_1 = arg_68_0.visibility
-	local var_68_2 = {}
+	local unit = self.unit
+	local visibility = self.visibility
+	local tbl = {}
 
-	for iter_68_0, iter_68_1 in ipairs({
+	for i, v in ipairs({
 		"outfit",
 		"stump",
 		"helmet",
 		"skin",
 		"other"
 	}) do
-		local var_68_3 = Unit.get_data(var_68_0, iter_68_1 .. "_items") or {}
+		local flag = Unit.get_data(unit, v .. "_items") or {}
 
-		for iter_68_2 = 1, #var_68_3 do
-			Unit.set_unit_visibility(var_68_3[iter_68_2], var_68_1)
+		for k = 1, #flag do
+			Unit.set_unit_visibility(flag[k], visibility)
 		end
 	end
 end
 
-function flow_callback_get_chr_inventory_skin_unit(arg_69_0)
-	assert(arg_69_0.unit, "[flow_callback_get_chr_inventory_skin_unit] You need to specify the Unit")
+function flow_callback_get_chr_inventory_skin_unit(self)
+	-- function 69
+	assert(self.unit, "[flow_callback_get_chr_inventory_skin_unit] You need to specify the Unit")
 
-	local var_69_0 = arg_69_0.unit
+	local unit = self.unit
 	local var_69_1
-	local var_69_2 = Unit.get_data(var_69_0, "skin_items") or {}
+	local get_data = Unit.get_data(unit, "skin_items")
 
-	for iter_69_0 = 1, #var_69_2 do
-		var_69_1 = var_69_2[iter_69_0]
+	get_data = get_data or {}
+
+	for i = 1, #get_data do
+		var_69_1 = get_data[i]
 	end
 
-	assert(var_69_1, "[flow_callback_get_chr_inventory_skin_unit] No skin found for unit ", tostring(var_69_0))
+	assert(var_69_1, "[flow_callback_get_chr_inventory_skin_unit] No skin found for unit ", tostring(unit))
 
 	return {
 		skin_unit = var_69_1
@@ -1470,11 +1699,12 @@ function flow_callback_get_chr_inventory_skin_unit(arg_69_0)
 end
 
 function start_material_fade(arg_70_0, arg_70_1, arg_70_2, arg_70_3, arg_70_4, arg_70_5, arg_70_6, arg_70_7, arg_70_8)
-	if arg_70_5 and arg_70_6 then
+	-- function 70
+	if not arg_70_5 and not arg_70_6 then
 		Material.set_scalar(arg_70_0, arg_70_5, arg_70_6)
 	end
 
-	if arg_70_7 and arg_70_8 then
+	if not arg_70_7 and not arg_70_8 then
 		Material.set_scalar(arg_70_0, arg_70_7, arg_70_8)
 	end
 
@@ -1482,159 +1712,208 @@ function start_material_fade(arg_70_0, arg_70_1, arg_70_2, arg_70_3, arg_70_4, a
 	Material.set_vector2(arg_70_0, arg_70_3, arg_70_4)
 end
 
-function flow_callback_start_fade(arg_71_0)
-	assert(arg_71_0.unit, "[flow_callback_start_fade] You need to specify the Unit")
-	assert(arg_71_0.duration, "[flow_callback_start_fade] You need to specify duration")
-	assert(arg_71_0.fade_switch, "[flow_callback_start_fade] You need to specify whether to fade in or out (0 or 1)")
+function flow_callback_start_fade(self)
+	-- function 71
+	assert(self.unit, "[flow_callback_start_fade] You need to specify the Unit")
+	assert(self.duration, "[flow_callback_start_fade] You need to specify duration")
+	assert(self.fade_switch, "[flow_callback_start_fade] You need to specify whether to fade in or out (0 or 1)")
 
-	local var_71_0 = World.time(Application.main_world())
-	local var_71_1 = Vector2(var_71_0, var_71_0 + arg_71_0.duration)
-	local var_71_2 = math.floor(arg_71_0.fade_switch + 0.5)
-	local var_71_3 = arg_71_0.fade_switch_name or "fade_switch"
-	local var_71_4 = arg_71_0.start_end_time_name or "start_end_time"
-	local var_71_5 = arg_71_0.unit
-	local var_71_6 = Script.index_offset()
+	local time = World.time(Application.main_world())
+	local var_71_1 = Vector2(time, time + self.duration)
+	local floor = math.floor(self.fade_switch + 0.5)
+	local fade_switch_name = self.fade_switch_name
+
+	fade_switch_name = fade_switch_name or "fade_switch"
+
+	local start_end_time_name = self.start_end_time_name
+
+	start_end_time_name = start_end_time_name or "start_end_time"
+
+	local unit = self.unit
+	local index_offset = Script.index_offset()
 	local var_71_7
-	local var_71_8 = arg_71_0.mesh_name
-	local var_71_9 = arg_71_0.start_fade_value_name or nil
-	local var_71_10 = arg_71_0.start_fade_value or nil
-	local var_71_11 = arg_71_0.end_fade_value_name or nil
-	local var_71_12 = arg_71_0.end_fade_value or nil
+	local mesh_name = self.mesh_name
+	local start_fade_value_name = self.start_fade_value_name
 
-	if var_71_8 then
-		assert(Unit.has_mesh(var_71_5, var_71_8), string.format("[flow_callback_start_fade] The mesh %s doesn't exist in unit %s", var_71_8, tostring(var_71_5)))
+	start_fade_value_name = start_fade_value_name or nil
 
-		var_71_7 = Unit.mesh(var_71_5, var_71_8)
+	local start_fade_value = self.start_fade_value
+
+	start_fade_value = start_fade_value or nil
+
+	local end_fade_value_name = self.end_fade_value_name
+
+	end_fade_value_name = end_fade_value_name or nil
+
+	local end_fade_value = self.end_fade_value
+
+	end_fade_value = end_fade_value or nil
+
+	if not mesh_name then
+		assert(Unit.has_mesh(unit, mesh_name), string.format("[flow_callback_start_fade] The mesh %s doesn't exist in unit %s", mesh_name, tostring(unit)))
+
+		var_71_7 = Unit.mesh(unit, mesh_name)
 	end
 
 	local var_71_13
-	local var_71_14 = arg_71_0.material_name
+	local material_name = self.material_name
 
-	if var_71_7 and var_71_14 then
-		assert(Mesh.has_material(var_71_7, var_71_14), string.format("[flow_callback_start_fade] The material %s doesn't exist for mesh %s", var_71_8, var_71_14))
+	if not var_71_7 and not material_name then
+		assert(Mesh.has_material(var_71_7, material_name), string.format("[flow_callback_start_fade] The material %s doesn't exist for mesh %s", mesh_name, material_name))
 
-		var_71_13 = Mesh.material(var_71_7, var_71_14)
+		var_71_13 = Mesh.material(var_71_7, material_name)
 	end
 
-	if var_71_7 and var_71_13 then
-		start_material_fade(var_71_13, var_71_3, var_71_2, var_71_4, var_71_1, var_71_9, var_71_10, var_71_11, var_71_12)
-	elseif var_71_7 then
-		local var_71_15 = Mesh.num_materials(var_71_7)
+	if not var_71_7 and not var_71_13 then
+		start_material_fade(var_71_13, fade_switch_name, floor, start_end_time_name, var_71_1, start_fade_value_name, start_fade_value, end_fade_value_name, end_fade_value)
+	elseif not var_71_7 then
+		local num_materials = Mesh.num_materials(var_71_7)
 
-		for iter_71_0 = 0, var_71_15 - 1 do
-			local var_71_16 = Mesh.material(var_71_7, iter_71_0 + var_71_6)
+		for i = 0, num_materials - 1 do
+			local material = Mesh.material(var_71_7, i + index_offset)
 
-			start_material_fade(var_71_16, var_71_3, var_71_2, var_71_4, var_71_1, var_71_9, var_71_10, var_71_11, var_71_12)
+			start_material_fade(material, fade_switch_name, floor, start_end_time_name, var_71_1, start_fade_value_name, start_fade_value, end_fade_value_name, end_fade_value)
 		end
-	elseif var_71_14 then
-		local var_71_17 = Unit.num_meshes(var_71_5)
+	elseif not material_name then
+		local num_meshes = Unit.num_meshes(unit)
 
-		for iter_71_1 = 0, var_71_17 - 1 do
-			local var_71_18 = Unit.mesh(var_71_5, iter_71_1 + var_71_6)
+		for j = 0, num_meshes - 1 do
+			local mesh = Unit.mesh(unit, j + index_offset)
 
-			if Mesh.has_material(var_71_18, var_71_14) then
-				local var_71_19 = Mesh.material(var_71_18, var_71_14)
+			if not Mesh.has_material(mesh, material_name) then
+				local material_2 = Mesh.material(mesh, material_name)
 
-				start_material_fade(var_71_19, var_71_3, var_71_2, var_71_4, var_71_1, var_71_9, var_71_10, var_71_11, var_71_12)
+				start_material_fade(material_2, fade_switch_name, floor, start_end_time_name, var_71_1, start_fade_value_name, start_fade_value, end_fade_value_name, end_fade_value)
 			end
 		end
 	else
-		local var_71_20 = Unit.num_meshes(var_71_5)
+		local num_meshes_2 = Unit.num_meshes(unit)
 
-		for iter_71_2 = 0, var_71_20 - 1 do
-			local var_71_21 = Unit.mesh(var_71_5, iter_71_2 + var_71_6)
-			local var_71_22 = Mesh.num_materials(var_71_21)
+		for k = 0, num_meshes_2 - 1 do
+			local mesh_2 = Unit.mesh(unit, k + index_offset)
+			local num_materials_2 = Mesh.num_materials(mesh_2)
 
-			for iter_71_3 = 0, var_71_22 - 1 do
-				local var_71_23 = Mesh.material(var_71_21, iter_71_3 + var_71_6)
+			for l = 0, num_materials_2 - 1 do
+				local material_3 = Mesh.material(mesh_2, l + index_offset)
 
-				start_material_fade(var_71_23, var_71_3, var_71_2, var_71_4, var_71_1, var_71_9, var_71_10, var_71_11, var_71_12)
+				start_material_fade(material_3, fade_switch_name, floor, start_end_time_name, var_71_1, start_fade_value_name, start_fade_value, end_fade_value_name, end_fade_value)
 			end
 		end
 	end
 end
 
-function flow_callback_chr_editor_inventory_spawn(arg_72_0)
-	local var_72_0 = arg_72_0.unit
-	local var_72_1 = Unit.world(var_72_0)
-	local var_72_2 = arg_72_0.unwield
-	local var_72_3 = InventoryConfigurations[arg_72_0.inventory_config]
+function flow_callback_chr_editor_inventory_spawn(self)
+	-- function 72
+	local unit = self.unit
+	local world = Unit.world(unit)
+	local unwield = self.unwield
+	local var_72_3 = InventoryConfigurations[self.inventory_config]
 
 	if var_72_3 ~= nil then
-		local var_72_4 = Unit.get_data(var_72_0, "outfit_items") or {}
-		local var_72_5 = Unit.get_data(var_72_0, "helmet_items") or {}
-		local var_72_6 = Unit.get_data(var_72_0, "skin_items") or {}
-		local var_72_7 = Unit.get_data(var_72_0, "other_items") or {}
+		local get_data = Unit.get_data(unit, "outfit_items")
 
-		for iter_72_0 = 1, #var_72_3.items do
-			local var_72_8 = var_72_3.items[iter_72_0][math.random(1, var_72_3.items[iter_72_0].count)]
-			local var_72_9 = var_72_8.attachment_node_linking
-			local var_72_10 = var_72_8.flow_event or nil
-			local var_72_11 = var_72_9.wielded or var_72_9
+		get_data = get_data or {}
 
-			if var_72_2 then
-				var_72_11 = var_72_9.unwielded or var_72_9
+		local get_data_2 = Unit.get_data(unit, "helmet_items")
+
+		get_data_2 = get_data_2 or {}
+
+		local get_data_3 = Unit.get_data(unit, "skin_items")
+
+		get_data_3 = get_data_3 or {}
+
+		local get_data_4 = Unit.get_data(unit, "other_items")
+
+		get_data_4 = get_data_4 or {}
+
+		for i = 1, #var_72_3.items do
+			local var_72_8 = var_72_3.items[i][math.random(1, var_72_3.items[i].count)]
+			local attachment_node_linking = var_72_8.attachment_node_linking
+			local flow_event = var_72_8.flow_event
+
+			flow_event = flow_event or nil
+
+			local wielded = attachment_node_linking.wielded
+
+			wielded = wielded or attachment_node_linking
+
+			if not unwield then
+				wielded = attachment_node_linking.unwielded or attachment_node_linking
 			end
 
 			local var_72_12
 			local var_72_13
 
-			for iter_72_1, iter_72_2 in ipairs(var_72_11) do
-				if iter_72_2.target == 0 then
-					local var_72_14 = iter_72_2.source
-					local var_72_15 = type(var_72_14) == "string" and Unit.node(var_72_0, var_72_14) or var_72_14 + 1
+			for i_2, v in ipairs(wielded) do
+				if v.target == 0 then
+					local source = v.source
+					local node
 
-					var_72_12 = Unit.world_position(var_72_0, var_72_15)
-					var_72_13 = Unit.world_rotation(var_72_0, var_72_15)
+					if type(source) == "string" then
+						node = Unit.node(unit, source)
+
+						if not node then
+							-- Nothing
+						end
+					end
+
+					node = source + 1
+
+					::label_72_0::
+
+					var_72_12 = Unit.world_position(unit, node)
+					var_72_13 = Unit.world_rotation(unit, node)
 
 					break
 				end
 			end
 
-			if var_72_10 then
-				Unit.flow_event(var_72_0, var_72_10)
+			if not flow_event then
+				Unit.flow_event(unit, flow_event)
 			end
 
-			local var_72_16 = World.spawn_unit(var_72_1, var_72_8.unit_name, var_72_12, var_72_13)
+			local spawn_unit = World.spawn_unit(world, var_72_8.unit_name, var_72_12, var_72_13)
 
-			link_attachment(var_72_11, var_72_1, var_72_16, var_72_0)
-			Unit.set_data(var_72_16, "node_linking_data", var_72_11)
+			link_attachment(wielded, world, spawn_unit, unit)
+			Unit.set_data(spawn_unit, "node_linking_data", wielded)
 
-			if Unit.has_animation_state_machine(var_72_16) then
-				if Unit.has_animation_event(var_72_16, "linked") then
-					Unit.animation_event(var_72_16, "linked")
+			if not Unit.has_animation_state_machine(spawn_unit) then
+				if not Unit.has_animation_event(spawn_unit, "linked") then
+					Unit.animation_event(spawn_unit, "linked")
 				end
 
-				if Unit.has_animation_event(var_72_16, "enable") then
-					Unit.animation_event(var_72_16, "enable")
+				if not Unit.has_animation_event(spawn_unit, "enable") then
+					Unit.animation_event(spawn_unit, "enable")
 				end
 			end
 
-			local var_72_17 = var_72_8.unit_extension_template or "ai_inventory_item"
+			local unit_extension_template = var_72_8.unit_extension_template
 
-			if var_72_17 == "ai_helmet_unit" then
-				table.insert(var_72_5, var_72_16)
-			elseif var_72_17 == "ai_outfit_unit" then
-				table.insert(var_72_4, var_72_16)
-			elseif var_72_17 == "ai_skin_unit" then
-				table.insert(var_72_6, var_72_16)
+			unit_extension_template = unit_extension_template or "ai_inventory_item"
+
+			if unit_extension_template == "ai_helmet_unit" then
+				table.insert(get_data_2, spawn_unit)
+			elseif unit_extension_template == "ai_outfit_unit" then
+				table.insert(get_data, spawn_unit)
+			elseif unit_extension_template == "ai_skin_unit" then
+				table.insert(get_data_3, spawn_unit)
 			else
-				table.insert(var_72_7, var_72_16)
+				table.insert(get_data_4, spawn_unit)
 			end
 		end
 
-		if var_72_2 ~= true then
-			local var_72_18 = var_72_3.anim_state_event
+		if unwield ~= true then
+			local anim_state_event = var_72_3.anim_state_event
 
-			if var_72_18 and Unit.has_animation_event(var_72_0, var_72_18) then
-				Unit.animation_event(var_72_0, var_72_18)
+			if not anim_state_event and not Unit.has_animation_event(unit, anim_state_event) then
+				Unit.animation_event(unit, anim_state_event)
 			end
 		end
 
-		Unit.set_data(var_72_0, "outfit_items", var_72_4)
-		Unit.set_data(var_72_0, "helmet_items", var_72_5)
-		Unit.set_data(var_72_0, "skin_items", var_72_6)
-		Unit.set_data(var_72_0, "other_items", var_72_7)
+		Unit.set_data(unit, "outfit_items", get_data)
+		Unit.set_data(unit, "helmet_items", get_data_2)
+		Unit.set_data(unit, "skin_items", get_data_3)
+		Unit.set_data(unit, "other_items", get_data_4)
 	end
 
 	return {
@@ -1642,57 +1921,81 @@ function flow_callback_chr_editor_inventory_spawn(arg_72_0)
 	}
 end
 
-function flow_callback_chr_editor_inventory_unspawn(arg_73_0)
-	local var_73_0 = arg_73_0.unit
-	local var_73_1 = Unit.world(var_73_0)
-	local var_73_2 = Unit.get_data(var_73_0, "outfit_items") or {}
-	local var_73_3 = Unit.get_data(var_73_0, "helmet_items") or {}
-	local var_73_4 = Unit.get_data(var_73_0, "skin_items") or {}
-	local var_73_5 = Unit.get_data(var_73_0, "other_items") or {}
+function flow_callback_chr_editor_inventory_unspawn(self)
+	-- function 73
+	local unit = self.unit
+	local world = Unit.world(unit)
+	local get_data = Unit.get_data(unit, "outfit_items")
 
-	for iter_73_0 = 1, #var_73_2 do
-		World.destroy_unit(var_73_1, var_73_2[iter_73_0])
+	get_data = get_data or {}
+
+	local get_data_2 = Unit.get_data(unit, "helmet_items")
+
+	get_data_2 = get_data_2 or {}
+
+	local get_data_3 = Unit.get_data(unit, "skin_items")
+
+	get_data_3 = get_data_3 or {}
+
+	local get_data_4 = Unit.get_data(unit, "other_items")
+
+	get_data_4 = get_data_4 or {}
+
+	for i = 1, #get_data do
+		World.destroy_unit(world, get_data[i])
 	end
 
-	for iter_73_1 = 1, #var_73_3 do
-		World.destroy_unit(var_73_1, var_73_3[iter_73_1])
+	for j = 1, #get_data_2 do
+		World.destroy_unit(world, get_data_2[j])
 	end
 
-	for iter_73_2 = 1, #var_73_4 do
-		World.destroy_unit(var_73_1, var_73_4[iter_73_2])
+	for k = 1, #get_data_3 do
+		World.destroy_unit(world, get_data_3[k])
 	end
 
-	for iter_73_3 = 1, #var_73_5 do
-		World.destroy_unit(var_73_1, var_73_5[iter_73_3])
+	for l = 1, #get_data_4 do
+		World.destroy_unit(world, get_data_4[l])
 	end
 
-	Unit.set_data(var_73_0, "outfit_items", {})
-	Unit.set_data(var_73_0, "helmet_items", {})
-	Unit.set_data(var_73_0, "skin_items", {})
-	Unit.set_data(var_73_0, "other_items", {})
+	Unit.set_data(unit, "outfit_items", {})
+	Unit.set_data(unit, "helmet_items", {})
+	Unit.set_data(unit, "skin_items", {})
+	Unit.set_data(unit, "other_items", {})
 
 	return {
 		unspawned = true
 	}
 end
 
-function flow_callback_chr_editor_inventory_drop(arg_74_0)
-	local var_74_0 = arg_74_0.unit
-	local var_74_1 = Unit.world(var_74_0)
-	local var_74_2 = Unit.get_data(var_74_0, "other_items") or {}
+function flow_callback_chr_editor_inventory_drop(self)
+	-- function 74
+	local unit = self.unit
+	local world = Unit.world(unit)
+	local get_data = Unit.get_data(unit, "other_items")
 
-	for iter_74_0 = 1, #var_74_2 do
-		local var_74_3 = var_74_2[iter_74_0]
-		local var_74_4 = Unit.get_data(var_74_3, "node_linking_data") or {}
+	get_data = get_data or {}
 
-		if var_74_4 then
-			unlink_attachment(var_74_4, var_74_1, var_74_3)
+	for i = 1, #get_data do
+		local var_74_3 = get_data[i]
+		local get_data_2 = Unit.get_data(var_74_3, "node_linking_data")
+
+		get_data_2 = get_data_2 or {}
+
+		if not get_data_2 then
+			unlink_attachment(get_data_2, world, var_74_3)
 			Unit.flow_event(var_74_3, "lua_dropped")
 
-			local var_74_5 = Unit.create_actor(var_74_3, "rp_dropped")
+			local create_actor = Unit.create_actor(var_74_3, "rp_dropped")
 
-			Actor.add_angular_velocity(var_74_5, Vector3(math.random(), math.random(), math.random()) * 5)
-			Actor.add_velocity(var_74_5, optional_drop_direction or Vector3(2 * math.random() - 0.5, 2 * math.random() - 0.5, 4.5))
+			Actor.add_angular_velocity(create_actor, Vector3(math.random(), math.random(), math.random()) * 5)
+
+			local add_velocity = Actor.add_velocity
+			local var_74_7 = create_actor
+			local optional_drop_direction = optional_drop_direction
+
+			optional_drop_direction = optional_drop_direction or Vector3(2 * math.random() - 0.5, 2 * math.random() - 0.5, 4.5)
+
+			add_velocity(var_74_7, optional_drop_direction)
 		end
 	end
 
@@ -1701,363 +2004,437 @@ function flow_callback_chr_editor_inventory_drop(arg_74_0)
 	}
 end
 
-function flow_callback_chr_enemy_inventory_send_event(arg_75_0)
-	assert(arg_75_0.unit, "[flow_callback_chr_enemy_inventory_send_event] You need to specify the Unit")
-	assert(arg_75_0.event, "[flow_callback_chr_enemy_inventory_send_event] You need to specify an event name")
+function flow_callback_chr_enemy_inventory_send_event(self)
+	-- function 75
+	assert(self.unit, "[flow_callback_chr_enemy_inventory_send_event] You need to specify the Unit")
+	assert(self.event, "[flow_callback_chr_enemy_inventory_send_event] You need to specify an event name")
 
-	local var_75_0 = arg_75_0.unit
-	local var_75_1 = arg_75_0.event
-	local var_75_2 = Unit.get_data(var_75_0, "outfit_items") or {}
+	local unit = self.unit
+	local event = self.event
+	local get_data = Unit.get_data(unit, "outfit_items")
 
-	for iter_75_0 = 1, #var_75_2 do
-		Unit.flow_event(var_75_2[iter_75_0], var_75_1)
+	get_data = get_data or {}
+
+	for i = 1, #get_data do
+		Unit.flow_event(get_data[i], event)
 	end
 
-	local var_75_3 = Unit.get_data(var_75_0, "helmet_items") or {}
+	local get_data_2 = Unit.get_data(unit, "helmet_items")
 
-	for iter_75_1 = 1, #var_75_3 do
-		Unit.flow_event(var_75_3[iter_75_1], var_75_1)
+	get_data_2 = get_data_2 or {}
+
+	for j = 1, #get_data_2 do
+		Unit.flow_event(get_data_2[j], event)
 	end
 
-	local var_75_4 = Unit.get_data(var_75_0, "skin_items") or {}
+	local get_data_3 = Unit.get_data(unit, "skin_items")
 
-	for iter_75_2 = 1, #var_75_4 do
-		Unit.flow_event(var_75_4[iter_75_2], var_75_1)
+	get_data_3 = get_data_3 or {}
+
+	for k = 1, #get_data_3 do
+		Unit.flow_event(get_data_3[k], event)
 	end
 
-	local var_75_5 = Unit.get_data(var_75_0, "stump_items") or {}
+	local get_data_4 = Unit.get_data(unit, "stump_items")
 
-	for iter_75_3 = 1, #var_75_5 do
-		Unit.flow_event(var_75_5[iter_75_3], var_75_1)
+	get_data_4 = get_data_4 or {}
+
+	for l = 1, #get_data_4 do
+		Unit.flow_event(get_data_4[l], event)
 	end
 
-	local var_75_6 = Unit.get_data(var_75_0, "other_items") or {}
+	local get_data_5 = Unit.get_data(unit, "other_items")
 
-	for iter_75_4 = 1, #var_75_6 do
-		Unit.flow_event(var_75_6[iter_75_4], var_75_1)
+	get_data_5 = get_data_5 or {}
+
+	for i4 = 1, #get_data_5 do
+		Unit.flow_event(get_data_5[i4], event)
 	end
 end
 
 function flow_callback_is_character_alive(arg_76_0)
+	-- function 76
 	return {
 		out_value = true
 	}
 end
 
-function flow_callback_set_unit_light_state(arg_77_0)
-	local var_77_0 = arg_77_0.unit
-	local var_77_1 = arg_77_0.state
+function flow_callback_set_unit_light_state(self)
+	-- function 77
+	local unit = self.unit
+	local state = self.state
 
-	if arg_77_0.all_lights then
-		local var_77_2 = Unit.num_lights(var_77_0)
+	if not self.all_lights then
+		local num_lights = Unit.num_lights(unit)
 
-		if var_77_2 then
-			for iter_77_0 = 1, var_77_2 do
-				local var_77_3 = Unit.light(var_77_0, iter_77_0 - 1)
+		if not num_lights then
+			for i = 1, num_lights do
+				local light = Unit.light(unit, i - 1)
 
-				Light.set_enabled(var_77_3, var_77_1)
+				Light.set_enabled(light, state)
 			end
 		else
 			print("No Lights in unit")
 		end
 	else
-		local var_77_4 = arg_77_0.light
+		local light_2 = self.light
 
-		if var_77_4 then
-			local var_77_5 = Unit.light(var_77_0, var_77_4)
+		if not light_2 then
+			local light_3 = Unit.light(unit, light_2)
 
-			Light.set_enabled(var_77_5, var_77_1)
+			Light.set_enabled(light_3, state)
 		else
-			print("No light named ", var_77_4, " in scene")
+			print("No light named ", light_2, " in scene")
 		end
 	end
 end
 
-function flow_callback_set_unit_light_color(arg_78_0)
-	local var_78_0 = arg_78_0.unit
-	local var_78_1 = arg_78_0.color
+function flow_callback_set_unit_light_color(self)
+	-- function 78
+	local unit = self.unit
+	local color = self.color
 
-	if arg_78_0.all_lights then
-		local var_78_2 = Unit.num_lights(var_78_0)
+	if not self.all_lights then
+		local num_lights = Unit.num_lights(unit)
 
-		if var_78_2 then
-			for iter_78_0 = 1, var_78_2 do
-				local var_78_3 = Unit.light(var_78_0, iter_78_0 - 1)
+		if not num_lights then
+			for i = 1, num_lights do
+				local light = Unit.light(unit, i - 1)
 
-				Light.set_color(var_78_3, var_78_1)
+				Light.set_color(light, color)
 			end
 		else
 			print("No Lights in unit")
 		end
 	else
-		local var_78_4 = arg_78_0.light
+		local light_2 = self.light
 
-		if var_78_4 then
-			local var_78_5 = Unit.light(var_78_0, var_78_4)
+		if not light_2 then
+			local light_3 = Unit.light(unit, light_2)
 
-			Light.set_color(var_78_5, var_78_1)
+			Light.set_color(light_3, color)
 		else
-			print("No light named ", var_78_4, " in scene")
+			print("No light named ", light_2, " in scene")
 		end
 	end
 end
 
-function flow_callback_debug_print(arg_79_0)
+function flow_callback_debug_print(self)
+	-- function 79
 	local var_79_0
 
-	if arg_79_0.prefix then
-		var_79_0 = string.format("[flow:%s]", arg_79_0.prefix)
+	if not self.prefix then
+		var_79_0 = string.format("[flow:%s]", self.prefix)
 	else
 		var_79_0 = "[flow]"
 	end
 
-	if arg_79_0.unit then
-		var_79_0 = var_79_0 .. string.format(" unit=%q", tostring(arg_79_0.unit))
+	if not self.unit then
+		var_79_0 = var_79_0 .. string.format(" unit=%q", tostring(self.unit))
 	end
 
-	if arg_79_0.actor then
-		var_79_0 = var_79_0 .. string.format(" actor=%q", tostring(arg_79_0.actor))
+	if not self.actor then
+		var_79_0 = var_79_0 .. string.format(" actor=%q", tostring(self.actor))
 	end
 
-	if arg_79_0.bool then
-		var_79_0 = var_79_0 .. string.format(" bool=%q", tostring(arg_79_0.bool))
+	if not self.bool then
+		var_79_0 = var_79_0 .. string.format(" bool=%q", tostring(self.bool))
 	end
 
-	if arg_79_0.string then
-		var_79_0 = var_79_0 .. string.format(" string=%q", arg_79_0.string)
+	if not self.string then
+		var_79_0 = var_79_0 .. string.format(" string=%q", self.string)
 	end
 
-	if arg_79_0.mover then
-		var_79_0 = var_79_0 .. string.format(" mover=%q", tostring(arg_79_0.mover))
+	if not self.mover then
+		var_79_0 = var_79_0 .. string.format(" mover=%q", tostring(self.mover))
 	end
 
-	if arg_79_0.vector3 then
-		var_79_0 = var_79_0 .. string.format(" vector3=%q", tostring(arg_79_0.vector3))
+	if not self.vector3 then
+		var_79_0 = var_79_0 .. string.format(" vector3=%q", tostring(self.vector3))
 	end
 
-	if arg_79_0.quaternion then
-		var_79_0 = var_79_0 .. string.format(" quaternion=%q", tostring(arg_79_0.quaternion))
+	if not self.quaternion then
+		var_79_0 = var_79_0 .. string.format(" quaternion=%q", tostring(self.quaternion))
 	end
 
-	if arg_79_0.float then
-		var_79_0 = var_79_0 .. string.format(" float=%f", arg_79_0.float)
+	if not self.float then
+		var_79_0 = var_79_0 .. string.format(" float=%f", self.float)
 	end
 
 	print(var_79_0)
 end
 
-function flow_callback_link_objects_in_units(arg_80_0)
-	local var_80_0 = arg_80_0.parent_unit
-	local var_80_1 = arg_80_0.child_unit
-	local var_80_2 = split(arg_80_0.parent_nodes, ";")
-	local var_80_3 = split(arg_80_0.child_nodes, ";")
-	local var_80_4 = Unit.world(var_80_0)
+function flow_callback_link_objects_in_units(self)
+	-- function 80
+	local parent_unit = self.parent_unit
+	local child_unit = self.child_unit
+	local var_80_2 = split(self.parent_nodes, ";")
+	local var_80_3 = split(self.child_nodes, ";")
+	local world = Unit.world(parent_unit)
 
-	for iter_80_0 = 1, #var_80_2 - 1 do
-		local var_80_5 = Unit.node(var_80_0, var_80_2[iter_80_0])
-		local var_80_6 = var_80_3[iter_80_0]
+	for i = 1, #var_80_2 - 1 do
+		local node = Unit.node(parent_unit, var_80_2[i])
+		local var_80_6 = var_80_3[i]
 		local var_80_7
 
-		if string.find(string.lower(var_80_6), "index(.)") then
+		if not string.find(string.lower(var_80_6), "index(.)") then
 			var_80_7 = tonumber(string.match(var_80_6, "%d+"))
 		else
-			var_80_7 = Unit.node(var_80_1, var_80_6)
+			var_80_7 = Unit.node(child_unit, var_80_6)
 		end
 
-		World.link_unit(var_80_4, var_80_1, var_80_7, var_80_0, var_80_5)
+		World.link_unit(world, child_unit, var_80_7, parent_unit, node)
 
-		if arg_80_0.parent_lod_object and arg_80_0.child_lod_object and Unit.has_lod_object(var_80_0, arg_80_0.parent_lod_object) and Unit.has_lod_object(var_80_1, arg_80_0.child_lod_object) then
-			local var_80_8 = Unit.lod_object(var_80_0, arg_80_0.parent_lod_object)
-			local var_80_9 = Unit.lod_object(var_80_1, arg_80_0.child_lod_object)
+		if not self.parent_lod_object and not self.child_lod_object and not Unit.has_lod_object(parent_unit, self.parent_lod_object) and not Unit.has_lod_object(child_unit, self.child_lod_object) then
+			local lod_object = Unit.lod_object(parent_unit, self.parent_lod_object)
+			local lod_object_2 = Unit.lod_object(child_unit, self.child_lod_object)
 
-			LODObject.set_bounding_volume(var_80_9, LODObject.bounding_volume(var_80_8))
-			World.link_unit(var_80_4, var_80_1, LODObject.node(var_80_9), var_80_0, LODObject.node(var_80_8))
+			LODObject.set_bounding_volume(lod_object_2, LODObject.bounding_volume(lod_object))
+			World.link_unit(world, child_unit, LODObject.node(lod_object_2), parent_unit, LODObject.node(lod_object))
 		end
 	end
 end
 
-function flow_callback_get_local_transform(arg_81_0)
-	local var_81_0 = arg_81_0.node
-	local var_81_1 = arg_81_0.unit
+function flow_callback_get_local_transform(self)
+	-- function 81
+	local node = self.node
+	local unit = self.unit
 	local var_81_2
 
-	if string.find(string.lower(var_81_0), "index(.)") then
-		var_81_2 = tonumber(string.match(var_81_0, "%d+"))
+	if not string.find(string.lower(node), "index(.)") then
+		var_81_2 = tonumber(string.match(node, "%d+"))
 	else
-		var_81_2 = Unit.node(var_81_1, var_81_0)
+		var_81_2 = Unit.node(unit, node)
 	end
 
 	return {
-		position = Unit.local_position(var_81_1, var_81_2),
-		rotation = Unit.local_rotation(var_81_1, var_81_2),
-		scale = Unit.local_scale(var_81_1, var_81_2)
+		position = Unit.local_position(unit, var_81_2),
+		rotation = Unit.local_rotation(unit, var_81_2),
+		scale = Unit.local_scale(unit, var_81_2)
 	}
 end
 
-function flow_callback_get_world_transform(arg_82_0)
-	local var_82_0 = arg_82_0.node
-	local var_82_1 = arg_82_0.unit
+function flow_callback_get_world_transform(self)
+	-- function 82
+	local node = self.node
+	local unit = self.unit
 	local var_82_2
 
-	if string.find(string.lower(var_82_0), "index(.)") then
-		var_82_2 = tonumber(string.match(var_82_0, "%d+"))
+	if not string.find(string.lower(node), "index(.)") then
+		var_82_2 = tonumber(string.match(node, "%d+"))
 	else
-		var_82_2 = Unit.node(var_82_1, var_82_0)
+		var_82_2 = Unit.node(unit, node)
 	end
 
 	return {
-		position = Unit.world_position(var_82_1, var_82_2),
-		rotation = Unit.world_rotation(var_82_1, var_82_2)
+		position = Unit.world_position(unit, var_82_2),
+		rotation = Unit.world_rotation(unit, var_82_2)
 	}
 end
 
-function flow_callback_set_local_scale(arg_83_0)
-	local var_83_0 = Unit.node(arg_83_0.unit, arg_83_0.node)
+function flow_callback_set_local_scale(self)
+	-- function 83
+	local node = Unit.node(self.unit, self.node)
 
-	Unit.set_local_scale(arg_83_0.unit, var_83_0, arg_83_0.scale)
+	Unit.set_local_scale(self.unit, node, self.scale)
 end
 
-function flow_callback_render_cubemap(arg_84_0)
-	local var_84_0 = arg_84_0.unit
-	local var_84_1 = arg_84_0.path
-	local var_84_2 = Unit.world_position(var_84_0, 0)
+function flow_callback_render_cubemap(self)
+	-- function 84
+	local unit = self.unit
+	local path = self.path
+	local world_position = Unit.world_position(unit, 0)
 
-	LevelEditor.cubemap_generator:create(var_84_2, LevelEditor.shading_environment, var_84_1)
+	LevelEditor.cubemap_generator:create(world_position, LevelEditor.shading_environment, path)
 	Application.console_command("reload", "texture")
 end
 
-function flow_callback_store_parent(arg_85_0)
-	local var_85_0 = arg_85_0.parent_unit
-	local var_85_1 = arg_85_0.child_unit
+function flow_callback_store_parent(self)
+	-- function 85
+	local parent_unit = self.parent_unit
+	local child_unit = self.child_unit
 
-	Unit.set_data(var_85_1, "parent_ref", var_85_0)
+	Unit.set_data(child_unit, "parent_ref", parent_unit)
 end
 
-function flow_callback_stored_parent(arg_86_0)
-	local var_86_0 = arg_86_0.child_unit
-	local var_86_1 = Unit.get_data(var_86_0, "parent_ref")
+function flow_callback_stored_parent(self)
+	-- function 86
+	local child_unit = self.child_unit
+	local get_data = Unit.get_data(child_unit, "parent_ref")
 
 	return {
-		parent_unit = var_86_1
+		parent_unit = get_data
 	}
 end
 
-function flow_callback_set_unit_enabled(arg_87_0)
-	if arg_87_0.enabled then
-		Unit.set_unit_visibility(arg_87_0.unit, true)
-		Unit.enable_physics(arg_87_0.unit)
-		Unit.enable_animation_state_machine(arg_87_0.unit)
+function flow_callback_set_unit_enabled(self)
+	-- function 87
+	if not self.enabled then
+		Unit.set_unit_visibility(self.unit, true)
+		Unit.enable_physics(self.unit)
+		Unit.enable_animation_state_machine(self.unit)
 	else
-		Unit.set_unit_visibility(arg_87_0.unit, false)
-		Unit.disable_physics(arg_87_0.unit)
+		Unit.set_unit_visibility(self.unit, false)
+		Unit.disable_physics(self.unit)
 
-		if Unit.has_animation_state_machine(arg_87_0.unit) then
-			Unit.disable_animation_state_machine(arg_87_0.unit)
+		if not Unit.has_animation_state_machine(self.unit) then
+			Unit.disable_animation_state_machine(self.unit)
 		end
 	end
 end
 
-function flow_callback_set_unit_physics(arg_88_0)
-	if arg_88_0.physics then
-		Unit.enable_physics(arg_88_0.unit)
+function flow_callback_set_unit_physics(self)
+	-- function 88
+	if not self.physics then
+		Unit.enable_physics(self.unit)
 	else
-		Unit.disable_physics(arg_88_0.unit)
+		Unit.disable_physics(self.unit)
 	end
 end
 
-function flow_callback_disable_animation_state_machine(arg_89_0)
-	Unit.disable_animation_state_machine(arg_89_0.unit)
+function flow_callback_disable_animation_state_machine(self)
+	-- function 89
+	Unit.disable_animation_state_machine(self.unit)
 end
 
 function flow_callback_play_voice(arg_90_0)
+	-- function 90
 	return
 end
 
 function flow_callback_relay_trigger(arg_91_0)
+	-- function 91
 	return {
 		out = true
 	}
 end
 
-function flow_callback_set_shading_environment_scalar(arg_92_0)
-	if GameSettingsDevelopment then
+function flow_callback_set_shading_environment_scalar(self)
+	-- function 92
+	if not GameSettingsDevelopment then
 		return
 	end
 
-	local var_92_0 = arg_92_0.variable
-	local var_92_1 = arg_92_0.value
+	local variable = self.variable
+	local value = self.value
 
 	LevelEditor.camera_env_control = true
 
-	local var_92_2 = LevelEditor.shading_environment
+	local shading_environment = LevelEditor.shading_environment
 
-	ShadingEnvironment.set_scalar(var_92_2, var_92_0, var_92_1)
-	ShadingEnvironment.apply(var_92_2)
+	ShadingEnvironment.set_scalar(shading_environment, variable, value)
+	ShadingEnvironment.apply(shading_environment)
 end
 
-function split(arg_93_0, arg_93_1)
+function split(self, arg_93_1)
+	-- function 93
 	arg_93_1 = arg_93_1 or "\n"
 
-	local var_93_0 = {}
-	local var_93_1 = 1
+	local tbl = {}
+	local num = 1
 
 	while true do
-		local var_93_2, var_93_3 = arg_93_0:find(arg_93_1, var_93_1)
+		local find, var_93_3 = self:find(arg_93_1, num)
 
-		if not var_93_2 then
-			table.insert(var_93_0, arg_93_0:sub(var_93_1))
+		if not find then
+			table.insert(tbl, self:sub(num))
 
 			break
 		end
 
-		table.insert(var_93_0, arg_93_0:sub(var_93_1, var_93_2 - 1))
+		table.insert(tbl, self:sub(num, find - 1))
 
-		var_93_1 = var_93_3 + 1
+		num = var_93_3 + 1
 	end
 
-	return var_93_0
+	return tbl
 end
 
 function link_attachment(arg_94_0, arg_94_1, arg_94_2, arg_94_3)
-	local var_94_0 = Script.index_offset()
+	-- function 94
+	local index_offset = Script.index_offset()
 
-	for iter_94_0, iter_94_1 in ipairs(arg_94_0) do
-		local var_94_1 = iter_94_1.source
-		local var_94_2 = iter_94_1.target
-		local var_94_3 = type(var_94_1) == "string" and Unit.node(arg_94_3, var_94_1) or var_94_1 + 1
-		local var_94_4 = type(var_94_2) == "string" and Unit.node(arg_94_2, var_94_2) or var_94_2 + 1
+	for i, v in ipairs(arg_94_0) do
+		local source = v.source
+		local target = v.target
+		local node
 
-		World.link_unit(arg_94_1, arg_94_2, var_94_4, arg_94_3, var_94_3)
+		if type(source) == "string" then
+			node = Unit.node(arg_94_3, source)
 
-		if Unit.num_lod_objects(arg_94_3) ~= 0 and Unit.num_lod_objects(arg_94_2) ~= 0 then
-			local var_94_5 = Unit.lod_object(arg_94_3, var_94_0)
-			local var_94_6 = Unit.lod_object(arg_94_2, var_94_0)
+			if not node then
+				-- Nothing
+			end
+		end
 
-			LODObject.set_bounding_volume(var_94_6, LODObject.bounding_volume(var_94_5))
-			World.link_unit(arg_94_1, arg_94_2, LODObject.node(var_94_6), arg_94_3, LODObject.node(var_94_5))
+		node = source + 1
+
+		do
+			local node_2
+		end
+
+		::label_94_0::
+
+		if type(target) == "string" then
+			node_2 = Unit.node(arg_94_2, target)
+
+			if not node_2 then
+				-- Nothing
+			end
+		end
+
+		node_2 = target + 1
+
+		::label_94_1::
+
+		World.link_unit(arg_94_1, arg_94_2, node_2, arg_94_3, node)
+
+		if not (Unit.num_lod_objects(arg_94_3) == 0 or Unit.num_lod_objects(arg_94_2) == 0) then
+			local lod_object = Unit.lod_object(arg_94_3, index_offset)
+			local lod_object_2 = Unit.lod_object(arg_94_2, index_offset)
+
+			LODObject.set_bounding_volume(lod_object_2, LODObject.bounding_volume(lod_object))
+			World.link_unit(arg_94_1, arg_94_2, LODObject.node(lod_object_2), arg_94_3, LODObject.node(lod_object))
 		end
 	end
 end
 
-function unlink_attachment(arg_95_0, arg_95_1, arg_95_2)
+function unlink_attachment(self, arg_95_1, arg_95_2)
+	-- function 95
 	World.unlink_unit(arg_95_1, arg_95_2)
 
-	local var_95_0 = arg_95_0.wielded or arg_95_0
+	local wielded = self.wielded
 
-	for iter_95_0, iter_95_1 in ipairs(var_95_0) do
-		local var_95_1 = iter_95_1.target
-		local var_95_2 = type(var_95_1) == "string" and Unit.node(arg_95_2, var_95_1) or var_95_1 + 1
+	wielded = wielded or self
 
-		if var_95_2 > 1 then
-			Unit.scene_graph_link(arg_95_2, var_95_2, 1)
+	for i, v in ipairs(wielded) do
+		local target = v.target
+		local node
+
+		if type(target) == "string" then
+			node = Unit.node(arg_95_2, target)
+
+			if not node then
+				-- Nothing
+			end
+		end
+
+		node = target + 1
+
+		::label_95_0::
+
+		if node > 1 then
+			Unit.scene_graph_link(arg_95_2, node, 1)
 		end
 	end
 end
 
 function flow_callback_wwise_trigger_event_with_environment()
+	-- function 96
 	return
 end
 
 function flow_query_global_listener()
+	-- function 97
 	return
 end

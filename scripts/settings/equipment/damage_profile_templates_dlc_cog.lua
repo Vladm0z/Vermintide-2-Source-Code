@@ -1,10 +1,10 @@
 -- chunkname: @scripts/settings/equipment/damage_profile_templates_dlc_cog.lua
 
-local var_0_0 = {
+local tbl = {
 	dropoff_start = 10,
 	dropoff_end = 20
 }
-local var_0_1 = {
+local tbl_2 = {
 	dropoff_start = 8,
 	dropoff_end = 15
 }
@@ -86,7 +86,7 @@ return {
 				attack = 0.125,
 				impact = 0.05
 			},
-			range_modifier_settings = var_0_0
+			range_modifier_settings = tbl
 		}
 	},
 	engineer_ability_shot_armor_pierce = {
@@ -165,7 +165,7 @@ return {
 				attack = 0.36,
 				impact = 0.25
 			},
-			range_modifier_settings = var_0_0
+			range_modifier_settings = tbl
 		}
 	},
 	shot_sniper_pistol = {
@@ -244,7 +244,7 @@ return {
 				attack = 0.5,
 				impact = 0.5
 			},
-			range_modifier_settings = var_0_1
+			range_modifier_settings = tbl_2
 		}
 	}
 }

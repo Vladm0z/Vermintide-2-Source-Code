@@ -3,7 +3,8 @@
 CareerActionNames.dwarf_ranger[#CareerActionNames.dwarf_ranger + 1] = "action_career_dr_4"
 
 setmetatable(PlayerBreeds.hero_dr_engineer, {
-	__newindex = function(arg_1_0, arg_1_1, arg_1_2)
+	__newindex = function (arg_1_0, arg_1_1, arg_1_2)
+		-- function 1
 		if type(arg_1_1) == "number" then
 			error("HON-32308. Trying to modify read only table.")
 		end
@@ -54,36 +55,39 @@ CareerSettings.dr_engineer = {
 			item_name = "engineer_hat_0000"
 		}
 	},
-	is_unlocked_function = function(arg_2_0, arg_2_1, arg_2_2)
-		local var_2_0, var_2_1 = arg_2_0:override_available_for_mechanism()
+	is_unlocked_function = function (self, arg_2_1, arg_2_2)
+		-- function 2
+		local override_available_for_mechanism, var_2_1 = self:override_available_for_mechanism()
 
-		if not var_2_0 then
-			return var_2_0, var_2_1
+		if not override_available_for_mechanism then
+			return override_available_for_mechanism, var_2_1
 		end
 
 		local var_2_2
-		local var_2_3, var_2_4, var_2_5 = arg_2_0:is_dlc_unlocked()
+		local is_dlc_unlocked, var_2_4, var_2_5 = self:is_dlc_unlocked()
 		local var_2_6 = var_2_5
 		local var_2_7 = var_2_4
 
-		if not var_2_3 then
+		if not is_dlc_unlocked then
 			return false, var_2_7, var_2_6
 		end
 
 		return true, var_2_7, var_2_6
 	end,
-	is_dlc_unlocked = function(arg_3_0)
-		if Managers.unlock:is_dlc_unlocked("cog") then
+	is_dlc_unlocked = function (arg_3_0)
+		-- function 3
+		if not Managers.unlock:is_dlc_unlocked("cog") then
 			return true, nil, "cog"
 		else
 			return false, "dlc_not_owned", "cog"
 		end
 	end,
-	override_available_for_mechanism = function(arg_4_0)
-		local var_4_0 = Managers.mechanism:mechanism_setting_for_title("override_career_availability")
-		local var_4_1 = arg_4_0.display_name
+	override_available_for_mechanism = function (self)
+		-- function 4
+		local mechanism_setting_for_title = Managers.mechanism:mechanism_setting_for_title("override_career_availability")
+		local display_name = self.display_name
 
-		if var_4_0 and var_4_0[var_4_1] == false then
+		if not (not mechanism_setting_for_title and mechanism_setting_for_title[display_name] ~= false) then
 			return false, "disabled_for_mechanism"
 		end
 
@@ -92,25 +96,26 @@ CareerSettings.dr_engineer = {
 	animation_variables = {
 		is_engineer = 1
 	},
-	talent_packages = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
-		local var_5_0 = 1
+	talent_packages = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+		-- function 5
+		local num = 1
 
-		for iter_5_0, iter_5_1 in ipairs(arg_5_0) do
-			local var_5_1 = TalentUtils.get_talent_by_id("dwarf_ranger", iter_5_1)
+		for i, v in ipairs(arg_5_0) do
+			local get_talent_by_id = TalentUtils.get_talent_by_id("dwarf_ranger", v)
 
-			if var_5_1 and var_5_1.talent_career_weapon_index then
-				var_5_0 = var_5_1.talent_career_weapon_index
+			if not get_talent_by_id and not get_talent_by_id.talent_career_weapon_index then
+				num = get_talent_by_id.talent_career_weapon_index
 			end
 		end
 
-		local var_5_2 = ActivatedAbilitySettings.dr_4[1].weapon_names_by_index[var_5_0]
+		local var_5_2 = ActivatedAbilitySettings.dr_4[1].weapon_names_by_index[num]
 		local var_5_3 = ItemMasterList[var_5_2]
-		local var_5_4 = WeaponUtils.get_weapon_template(var_5_3.template)
-		local var_5_5 = "dr_engineer"
-		local var_5_6 = WeaponUtils.get_weapon_packages(var_5_4, var_5_3, arg_5_2, var_5_5)
+		local get_weapon_template = WeaponUtils.get_weapon_template(var_5_3.template)
+		local str = "dr_engineer"
+		local get_weapon_packages = WeaponUtils.get_weapon_packages(get_weapon_template, var_5_3, arg_5_2, str)
 
-		for iter_5_2 = 1, #var_5_6 do
-			arg_5_1[var_5_6[iter_5_2]] = false
+		for k = 1, #get_weapon_packages do
+			arg_5_1[get_weapon_packages[k]] = false
 		end
 	end,
 	item_slot_types_by_slot_name = {
@@ -154,7 +159,11 @@ CareerSettings.dr_engineer = {
 		slot_grenade = 2
 	}
 }
+
+local OverchargeData = OverchargeData
+
 OverchargeData = OverchargeData or {}
+OverchargeData = OverchargeData
 OverchargeData.dr_engineer = {
 	overcharge_threshold = 10,
 	overcharge_warning_critical_sound_event = "drakegun_overcharge_warning_critical",
@@ -166,8 +175,18 @@ OverchargeData.dr_engineer = {
 	overcharge_warning_med_sound_event = "drakegun_overcharge_warning_med",
 	hit_overcharge_threshold_sound = "ui_special_attack_ready"
 }
+
+local PlayerUnitStatusSettings = PlayerUnitStatusSettings
+
 PlayerUnitStatusSettings = PlayerUnitStatusSettings or {}
-PlayerUnitStatusSettings.overcharge_values = table.merge(PlayerUnitStatusSettings.overcharge_values or {}, {
+PlayerUnitStatusSettings = PlayerUnitStatusSettings
+
+local PlayerUnitStatusSettings_2 = PlayerUnitStatusSettings
+local merge = table.merge
+local overcharge_values = PlayerUnitStatusSettings.overcharge_values
+
+overcharge_values = overcharge_values or {}
+PlayerUnitStatusSettings_2.overcharge_values = merge(overcharge_values, {
 	cog_hammer_charge_light = 3,
 	cog_hammer_heavy_1_burn = 10,
 	cog_hammer_heavy_1_explosion = 40

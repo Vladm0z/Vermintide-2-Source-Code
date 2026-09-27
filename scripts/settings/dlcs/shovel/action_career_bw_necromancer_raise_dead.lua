@@ -1,116 +1,124 @@
 -- chunkname: @scripts/settings/dlcs/shovel/action_career_bw_necromancer_raise_dead.lua
 
-local var_0_0 = 4.5
-local var_0_1 = 9
-local var_0_2 = 0.75
-local var_0_3 = 0.15
-local var_0_4 = 0.1
-local var_0_5 = math.degrees_to_radians(-60)
-local var_0_6 = math.degrees_to_radians(60)
+local num = 4.5
+local num_2 = 9
+local num_3 = 0.75
+local num_4 = 0.15
+local num_5 = 0.1
+local degrees_to_radians = math.degrees_to_radians(-60)
+local degrees_to_radians_2 = math.degrees_to_radians(60)
 
 ActionCareerBWNecromancerRaiseDead = class(ActionCareerBWNecromancerRaiseDead, ActionBase)
 
-function ActionCareerBWNecromancerRaiseDead.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
-	ActionCareerBWNecromancerRaiseDead.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionCareerBWNecromancerRaiseDead.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	-- function 1
+	ActionCareerBWNecromancerRaiseDead.super.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
-	arg_1_0._career_extension = ScriptUnit.extension(arg_1_4, "career_system")
-	arg_1_0._passive_ability = arg_1_0._career_extension:get_passive_ability_by_name("bw_necromancer")
-	arg_1_0._inventory_extension = ScriptUnit.extension(arg_1_4, "inventory_system")
-	arg_1_0._first_person_extension = ScriptUnit.has_extension(arg_1_4, "first_person_system")
-	arg_1_0._talent_extension = ScriptUnit.extension(arg_1_4, "talent_system")
-	arg_1_0._buff_extension = ScriptUnit.extension(arg_1_4, "buff_system")
-	arg_1_0._weapon_extension = ScriptUnit.extension(arg_1_7, "weapon_system")
-	arg_1_0._owner_unit = arg_1_4
-	arg_1_0._is_server = arg_1_3
-	arg_1_0._world = arg_1_1
-	arg_1_0._ai_navigation_system = Managers.state.entity:system("ai_navigation_system")
-	arg_1_0._nav_world = Managers.state.entity:system("ai_system"):nav_world()
-	arg_1_0._traverse_logic = Managers.state.entity:system("ai_slot_system"):traverse_logic()
-	arg_1_0._seed = math.random_seed()
-	arg_1_0.fx_spline_ids = {
+	self._career_extension = ScriptUnit.extension(arg_1_4, "career_system")
+	self._passive_ability = self._career_extension:get_passive_ability_by_name("bw_necromancer")
+	self._inventory_extension = ScriptUnit.extension(arg_1_4, "inventory_system")
+	self._first_person_extension = ScriptUnit.has_extension(arg_1_4, "first_person_system")
+	self._talent_extension = ScriptUnit.extension(arg_1_4, "talent_system")
+	self._buff_extension = ScriptUnit.extension(arg_1_4, "buff_system")
+	self._weapon_extension = ScriptUnit.extension(arg_1_7, "weapon_system")
+	self._owner_unit = arg_1_4
+	self._is_server = arg_1_3
+	self._world = arg_1_1
+	self._ai_navigation_system = Managers.state.entity:system("ai_navigation_system")
+	self._nav_world = Managers.state.entity:system("ai_system"):nav_world()
+	self._traverse_logic = Managers.state.entity:system("ai_slot_system"):traverse_logic()
+	self._seed = math.random_seed()
+	self.fx_spline_ids = {
 		World.find_particles_variable(arg_1_1, "fx/wpnfx_staff_death/curse_spirit", "spline_1"),
 		World.find_particles_variable(arg_1_1, "fx/wpnfx_staff_death/curse_spirit", "spline_2"),
 		World.find_particles_variable(arg_1_1, "fx/wpnfx_staff_death/curse_spirit", "spline_3")
 	}
 
-	function arg_1_0._nav_callback()
-		local var_2_0 = Managers.time:time("game")
+	self._nav_callback = function ()
+		-- function 2
+		local time = Managers.time:time("game")
 
-		arg_1_0:_update_spawning(var_2_0)
+		self:_update_spawning(time)
 	end
 end
 
-function ActionCareerBWNecromancerRaiseDead.client_owner_start_action(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+ActionCareerBWNecromancerRaiseDead.client_owner_start_action = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	-- function 3
 	arg_3_5 = arg_3_5 or {}
 
-	ActionCareerBWNecromancerRaiseDead.super.client_owner_start_action(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	ActionCareerBWNecromancerRaiseDead.super.client_owner_start_action(self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 
-	arg_3_0._next_spawn_t = arg_3_2
+	self._next_spawn_t = arg_3_2
 
-	if arg_3_3 then
-		arg_3_0:_play_vo()
+	if not arg_3_3 then
+		self:_play_vo()
 	end
 end
 
-function ActionCareerBWNecromancerRaiseDead._trigger_spawn(arg_4_0)
-	local var_4_0 = arg_4_0:_generate_position()
+ActionCareerBWNecromancerRaiseDead._trigger_spawn = function (self)
+	-- function 4
+	local _generate_position = self:_generate_position()
 
-	if var_4_0 then
-		World.create_particles(arg_4_0._world, "fx/necromancer_summon_decal", var_4_0)
+	if not _generate_position then
+		World.create_particles(self._world, "fx/necromancer_summon_decal", _generate_position)
 
 		local var_4_1 = NetworkLookup.effects["fx/wpnfx_staff_death/curse_spirit_first"]
-		local var_4_2 = POSITION_LOOKUP[arg_4_0._owner_unit] + Vector3.up() * 0.5
-		local var_4_3 = arg_4_0._first_person_extension:current_rotation()
-		local var_4_4 = Quaternion.right(var_4_3)
-		local var_4_5 = var_4_0 - var_4_2
-		local var_4_6 = math.sign(Vector3.dot(var_4_5, var_4_4))
-		local var_4_7 = math.pi * math.random(0.1, 0.25)
-		local var_4_8 = Quaternion.axis_angle(Vector3.up(), var_4_7 * var_4_6)
-		local var_4_9 = var_4_2 + Quaternion.rotate(var_4_8, var_4_5) * 0.5 + Vector3.up()
-		local var_4_10 = {
-			var_4_2,
-			var_4_9,
-			var_4_0
+		local num = POSITION_LOOKUP[self._owner_unit] + Vector3.up() * 0.5
+		local current_rotation = self._first_person_extension:current_rotation()
+		local right = Quaternion.right(current_rotation)
+		local num_2 = _generate_position - num
+		local sign = math.sign(Vector3.dot(num_2, right))
+		local num_3 = math.pi * math.random(0.1, 0.25)
+		local axis_angle = Quaternion.axis_angle(Vector3.up(), num_3 * sign)
+		local num_5 = num + Quaternion.rotate(axis_angle, num_2) * 0.5 + Vector3.up()
+		local tbl = {
+			num,
+			num_5,
+			_generate_position
 		}
 
-		Managers.state.network:rpc_play_particle_effect_spline(nil, var_4_1, arg_4_0.fx_spline_ids, var_4_10)
+		Managers.state.network:rpc_play_particle_effect_spline(nil, var_4_1, self.fx_spline_ids, tbl)
 	end
 
-	arg_4_0._passive_ability:spawn_pet(arg_4_0._controlled_unit_template, arg_4_0._breed_to_spawn, var_4_0, NecromancerPositionModes.Absolute)
-	arg_4_0._career_extension:reduce_activated_ability_cooldown_percent(-var_0_3)
+	self._passive_ability:spawn_pet(self._controlled_unit_template, self._breed_to_spawn, _generate_position, NecromancerPositionModes.Absolute)
+	self._career_extension:reduce_activated_ability_cooldown_percent(-num_4)
 end
 
-function ActionCareerBWNecromancerRaiseDead.client_owner_post_update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
-	arg_5_0._ai_navigation_system:add_safe_navigation_callback(arg_5_0._nav_callback)
+ActionCareerBWNecromancerRaiseDead.client_owner_post_update = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	-- function 5
+	self._ai_navigation_system:add_safe_navigation_callback(self._nav_callback)
 end
 
-function ActionCareerBWNecromancerRaiseDead._update_spawning(arg_6_0, arg_6_1)
-	if arg_6_0._career_extension:current_ability_cooldown_percentage() >= 1 - var_0_4 then
-		arg_6_0._weapon_extension:stop_action("action_complete")
+ActionCareerBWNecromancerRaiseDead._update_spawning = function (self, arg_6_1)
+	-- function 6
+	if self._career_extension:current_ability_cooldown_percentage() >= 1 - num_5 then
+		self._weapon_extension:stop_action("action_complete")
 	end
 
-	if arg_6_1 > arg_6_0._next_spawn_t then
-		arg_6_0._next_spawn_t = arg_6_0._next_spawn_t + var_0_2
+	if arg_6_1 > self._next_spawn_t then
+		self._next_spawn_t = self._next_spawn_t + num_3
 
-		arg_6_0:_trigger_spawn()
+		self:_trigger_spawn()
 	end
 end
 
-function ActionCareerBWNecromancerRaiseDead._play_vo(arg_7_0)
-	local var_7_0 = arg_7_0.owner_unit
-	local var_7_1 = ScriptUnit.extension_input(var_7_0, "dialogue_system")
-	local var_7_2 = FrameTable.alloc_table()
+ActionCareerBWNecromancerRaiseDead._play_vo = function (self)
+	-- function 7
+	local owner_unit = self.owner_unit
+	local extension_input = ScriptUnit.extension_input(owner_unit, "dialogue_system")
+	local alloc_table = FrameTable.alloc_table()
 
-	var_7_1:trigger_networked_dialogue_event("activate_ability", var_7_2)
+	extension_input:trigger_networked_dialogue_event("activate_ability", alloc_table)
 end
 
-function ActionCareerBWNecromancerRaiseDead._generate_position(arg_8_0)
-	local var_8_0 = arg_8_0._position:unbox()
-	local var_8_1 = 1
-	local var_8_2 = 3
-	local var_8_3 = LocomotionUtils.pos_on_mesh(arg_8_0._nav_world, var_8_0, var_8_1, var_8_2)
+ActionCareerBWNecromancerRaiseDead._generate_position = function (self)
+	-- function 8
+	local unbox = self._position:unbox()
+	local num_3 = 1
+	local num_4 = 3
+	local pos_on_mesh = LocomotionUtils.pos_on_mesh(self._nav_world, unbox, num_3, num_4)
 
-	if not var_8_3 then
+	if not pos_on_mesh then
 		return nil
 	end
 
@@ -118,12 +126,12 @@ function ActionCareerBWNecromancerRaiseDead._generate_position(arg_8_0)
 	local var_8_5
 	local var_8_6, var_8_7
 
-	arg_8_0._seed, var_8_6, var_8_7 = math.get_uniformly_random_point_inside_sector_seeded(arg_8_0._seed, var_0_0, var_0_1, var_0_5, var_0_6)
+	self._seed, var_8_6, var_8_7 = math.get_uniformly_random_point_inside_sector_seeded(self._seed, num, num_2, degrees_to_radians, degrees_to_radians_2)
 
 	local var_8_8 = Vector3(var_8_6, var_8_7, 0)
-	local var_8_9 = arg_8_0._first_person_extension:current_rotation()
-	local var_8_10 = var_8_3 + Quaternion.rotate(var_8_9, var_8_8)
-	local var_8_11, var_8_12 = GwNavQueries.raycast(arg_8_0._nav_world, var_8_3, var_8_10, arg_8_0._traverse_logic)
+	local current_rotation = self._first_person_extension:current_rotation()
+	local num_5 = pos_on_mesh + Quaternion.rotate(current_rotation, var_8_8)
+	local raycast, var_8_12 = GwNavQueries.raycast(self._nav_world, pos_on_mesh, num_5, self._traverse_logic)
 
 	return var_8_12
 end

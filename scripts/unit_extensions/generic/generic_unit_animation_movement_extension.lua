@@ -4,51 +4,61 @@ require("scripts/unit_extensions/generic/animation_movement_templates")
 
 GenericUnitAnimationMovementExtension = class(GenericUnitAnimationMovementExtension)
 
-function GenericUnitAnimationMovementExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	arg_1_0.unit = arg_1_2
+GenericUnitAnimationMovementExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	self.unit = arg_1_2
 
-	local var_1_0 = arg_1_3.template
+	local template = arg_1_3.template
 
-	arg_1_0.template = AnimationMovementTemplates[var_1_0]
-	arg_1_0.network_type = arg_1_3.is_husk and "husk" or "owner"
-	arg_1_0.data = {}
-	arg_1_0.enabled = false
+	self.template = AnimationMovementTemplates[template]
+
+	local flag
+
+	flag = not arg_1_3.is_husk and "husk" and "owner"
+	self.network_type = flag
+	self.data = {}
+	self.enabled = false
 end
 
-function GenericUnitAnimationMovementExtension.extensions_ready(arg_2_0)
-	arg_2_0.template[arg_2_0.network_type].init(arg_2_0.unit, arg_2_0.data)
+GenericUnitAnimationMovementExtension.extensions_ready = function (self)
+	-- function 2
+	self.template[self.network_type].init(self.unit, self.data)
 
-	local var_2_0 = Unit.get_data(arg_2_0.unit, "breed")
+	local get_data = Unit.get_data(self.unit, "breed")
 end
 
-function GenericUnitAnimationMovementExtension.destroy(arg_3_0)
-	arg_3_0.template[arg_3_0.network_type].leave(arg_3_0.unit, arg_3_0.data)
+GenericUnitAnimationMovementExtension.destroy = function (self)
+	-- function 3
+	self.template[self.network_type].leave(self.unit, self.data)
 
-	arg_3_0.template = nil
-	arg_3_0.data = nil
+	self.template = nil
+	self.data = nil
 end
 
-function GenericUnitAnimationMovementExtension.reset(arg_4_0)
+GenericUnitAnimationMovementExtension.reset = function (arg_4_0)
+	-- function 4
 	return
 end
 
-function GenericUnitAnimationMovementExtension.set_enabled(arg_5_0, arg_5_1)
-	arg_5_0.enabled = arg_5_1
+GenericUnitAnimationMovementExtension.set_enabled = function (self, arg_5_1)
+	-- function 5
+	self.enabled = arg_5_1
 
 	if not arg_5_1 then
-		arg_5_0.leave = true
+		self.leave = true
 	end
 end
 
-function GenericUnitAnimationMovementExtension.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
-	local var_6_0 = arg_6_0.data
-	local var_6_1 = arg_6_0.template
+GenericUnitAnimationMovementExtension.update = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+	-- function 6
+	local data = self.data
+	local template = self.template
 
-	if arg_6_0.enabled then
-		var_6_1[arg_6_0.network_type].update(arg_6_1, arg_6_5, arg_6_3, var_6_0)
-	elseif arg_6_0.leave then
-		var_6_1[arg_6_0.network_type].leave(arg_6_1, var_6_0)
+	if not self.enabled then
+		template[self.network_type].update(arg_6_1, arg_6_5, arg_6_3, data)
+	elseif not self.leave then
+		template[self.network_type].leave(arg_6_1, data)
 
-		arg_6_0.leave = false
+		self.leave = false
 	end
 end

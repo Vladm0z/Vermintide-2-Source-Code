@@ -4,60 +4,70 @@ require("scripts/entity_system/systems/dialogues/tag_query")
 
 TagQueryDatabase = class(TagQueryDatabase)
 
-function TagQueryDatabase.init(arg_1_0)
-	arg_1_0.database = RuleDatabase.initialize()
-	arg_1_0.rule_id_mapping = {}
-	arg_1_0.rules_n = 0
-	arg_1_0.contexts_by_object = {}
-	arg_1_0.queries = {}
+TagQueryDatabase.init = function (self)
+	-- function 1
+	self.database = RuleDatabase.initialize()
+	self.rule_id_mapping = {}
+	self.rules_n = 0
+	self.contexts_by_object = {}
+	self.queries = {}
 end
 
-function TagQueryDatabase.destroy(arg_2_0)
-	RuleDatabase.destroy(arg_2_0.database)
+TagQueryDatabase.destroy = function (self)
+	-- function 2
+	RuleDatabase.destroy(self.database)
 
-	arg_2_0.database = nil
-	arg_2_0.rule_id_mapping = nil
-	arg_2_0.contexts_by_object = nil
-	arg_2_0.queries = nil
+	self.database = nil
+	self.rule_id_mapping = nil
+	self.contexts_by_object = nil
+	self.queries = nil
 end
 
-function TagQueryDatabase.add_object_context(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
-	local var_3_0 = arg_3_0.contexts_by_object[arg_3_1] or {}
+TagQueryDatabase.add_object_context = function (self, arg_3_1, arg_3_2, arg_3_3)
+	-- function 3
+	local var_3_0 = self.contexts_by_object[arg_3_1]
 
-	arg_3_0.contexts_by_object[arg_3_1] = var_3_0
+	var_3_0 = var_3_0 or {}
+	self.contexts_by_object[arg_3_1] = var_3_0
 	var_3_0[arg_3_2] = arg_3_3
 end
 
-function TagQueryDatabase.get_object_context(arg_4_0, arg_4_1)
-	return arg_4_0.contexts_by_object[arg_4_1]
+TagQueryDatabase.get_object_context = function (self, arg_4_1)
+	-- function 4
+	return self.contexts_by_object[arg_4_1]
 end
 
-function TagQueryDatabase.remove_object(arg_5_0, arg_5_1)
+TagQueryDatabase.remove_object = function (arg_5_0, arg_5_1)
+	-- function 5
 	arg_5_0.contexts_by_object[arg_5_1] = nil
 end
 
-function TagQueryDatabase.set_global_context(arg_6_0, arg_6_1)
-	arg_6_0.global_context = arg_6_1
+TagQueryDatabase.set_global_context = function (self, arg_6_1)
+	-- function 6
+	self.global_context = arg_6_1
 end
 
-function TagQueryDatabase.create_query(arg_7_0)
+TagQueryDatabase.create_query = function (arg_7_0)
+	-- function 7
 	return setmetatable({
 		query_context = {},
 		tagquery_database = arg_7_0
 	}, TagQuery)
 end
 
-function TagQueryDatabase.add_query(arg_8_0, arg_8_1)
+TagQueryDatabase.add_query = function (arg_8_0, arg_8_1)
+	-- function 8
 	arg_8_0.queries[#arg_8_0.queries + 1] = arg_8_1
 end
 
-function TagQueryDatabase.finalize_rules(arg_9_0)
-	RuleDatabase.sort_rules(arg_9_0.database)
+TagQueryDatabase.finalize_rules = function (self)
+	-- function 9
+	RuleDatabase.sort_rules(self.database)
 end
 
 RuleDatabase.initialize_static_values()
 
-local var_0_0 = {
+local tbl = {
 	EQ = RuleDatabase.OPERATOR_EQUAL,
 	LT = RuleDatabase.OPERATOR_LT,
 	GT = RuleDatabase.OPERATOR_GT,
@@ -67,7 +77,7 @@ local var_0_0 = {
 	NEQ = RuleDatabase.OPERATOR_NOT_EQUAL,
 	RAND = RuleDatabase.OPERATOR_RAND
 }
-local var_0_1 = table.mirror_array_inplace({
+local mirror_array_inplace = table.mirror_array_inplace({
 	"global_context",
 	"query_context",
 	"user_context",
@@ -75,79 +85,89 @@ local var_0_1 = table.mirror_array_inplace({
 	"faction_memory"
 })
 
-function TagQueryDatabase.define_rule(arg_10_0, arg_10_1)
-	local var_10_0 = arg_10_1.name
-	local var_10_1 = {}
+TagQueryDatabase.define_rule = function (self, arg_10_1)
+	-- function 10
+	local name = arg_10_1.name
+	local tbl = {}
 
-	for iter_10_0 = 1, #arg_10_1.criterias do
-		local var_10_2 = arg_10_1.criterias[iter_10_0]
+	for i = 1, #arg_10_1.criterias do
+		local var_10_2 = arg_10_1.criterias[i]
 
-		arg_10_0:parse_criteria(var_10_2, arg_10_1.criterias, var_10_1, arg_10_1)
+		self:parse_criteria(var_10_2, arg_10_1.criterias, tbl, arg_10_1)
 	end
 
-	local var_10_3 = #var_10_1
+	local count = #tbl
 
-	arg_10_1.n_criterias = var_10_3
+	arg_10_1.n_criterias = count
 
-	fassert(var_10_3 <= (RuleDatabase.RULE_MAX_NUM_CRITERIA or 8), "Too many criteria in dialogue %s", var_10_0)
+	local fassert = fassert
+	local RULE_MAX_NUM_CRITERIA = RuleDatabase.RULE_MAX_NUM_CRITERIA
 
-	local var_10_4 = arg_10_1.probability or 1
+	RULE_MAX_NUM_CRITERIA = RULE_MAX_NUM_CRITERIA or 8
 
-	arg_10_0:_optimize_rule_definition(arg_10_1)
+	fassert(count <= RULE_MAX_NUM_CRITERIA, "Too many criteria in dialogue %s", name)
 
-	local var_10_5 = RuleDatabase.add_rule(arg_10_0.database, var_10_0, var_10_3, var_10_1, var_10_4)
+	local probability = arg_10_1.probability
 
-	arg_10_0.rule_id_mapping[var_10_5] = arg_10_1
-	arg_10_0.rule_id_mapping[arg_10_1.name] = var_10_5
-	arg_10_0.rules_n = arg_10_0.rules_n + 1
+	probability = probability or 1
+
+	self:_optimize_rule_definition(arg_10_1)
+
+	local add_rule = RuleDatabase.add_rule(self.database, name, count, tbl, probability)
+
+	self.rule_id_mapping[add_rule] = arg_10_1
+	self.rule_id_mapping[arg_10_1.name] = add_rule
+	self.rules_n = self.rules_n + 1
 end
 
-local var_0_2 = table.set({
+local set = table.set({
 	"name",
 	"n_criterias",
 	"response",
 	"on_done"
 })
 
-function TagQueryDatabase._optimize_rule_definition(arg_11_0, arg_11_1)
-	for iter_11_0, iter_11_1 in pairs(arg_11_1) do
-		if not var_0_2[iter_11_0] then
-			arg_11_1[iter_11_0] = nil
+TagQueryDatabase._optimize_rule_definition = function (arg_11_0, arg_11_1)
+	-- function 11
+	for k, v in pairs(arg_11_1) do
+		if not set[k] then
+			arg_11_1[k] = nil
 		end
 	end
 end
 
-local var_0_3 = table.mirror_array_inplace({
+local mirror_array_inplace_2 = table.mirror_array_inplace({
 	"context_name",
 	"criteria_key",
 	"operator"
 })
-local var_0_4 = table.copy_array(var_0_3)
+local copy_array = table.copy_array(mirror_array_inplace_2)
 
-table.mirror_array_inplace(table.append(var_0_4, {
+table.mirror_array_inplace(table.append(copy_array, {
 	"value",
 	"combining_operator"
 }))
 
-local var_0_5 = table.copy_array(var_0_3)
+local copy_array_2 = table.copy_array(mirror_array_inplace_2)
 
-table.mirror_array_inplace(table.append(var_0_5, {
+table.mirror_array_inplace(table.append(copy_array_2, {
 	"operator",
 	"value",
 	"combining_operator"
 }))
 
-local function var_0_6(arg_12_0, arg_12_1)
+local function fn(self, arg_12_1)
+	-- function 12
 	local var_12_0
 
-	if arg_12_0[var_0_3.operator] == "TIMEDIFF" then
-		return arg_12_0[var_0_5[arg_12_1]]
+	if not (self[mirror_array_inplace_2.operator] == "TIMEDIFF") then
+		return self[copy_array_2[arg_12_1]]
 	else
-		return arg_12_0[var_0_4[arg_12_1]]
+		return self[copy_array[arg_12_1]]
 	end
 end
 
-local var_0_7 = table.mirror_array_inplace({
+local mirror_array_inplace_3 = table.mirror_array_inplace({
 	"context_name",
 	"criteria_key",
 	"operator_index",
@@ -157,9 +177,10 @@ local var_0_7 = table.mirror_array_inplace({
 	"combining_operator_group_id"
 })
 
-local function var_0_8(arg_13_0)
-	for iter_13_0 = #arg_13_0, 1, -1 do
-		local var_13_0 = arg_13_0[iter_13_0][var_0_7.combining_operator_group_id]
+local function fn_2(self)
+	-- function 13
+	for i = #self, 1, -1 do
+		local var_13_0 = self[i][mirror_array_inplace_3.combining_operator_group_id]
 
 		if var_13_0 ~= 0 then
 			return var_13_0
@@ -167,205 +188,231 @@ local function var_0_8(arg_13_0)
 	end
 end
 
-local var_0_9 = {
+local tbl_2 = {
 	AND_NEXT = RuleDatabase.COMBINING_OPERATOR_AND,
 	OR_NEXT = RuleDatabase.COMBINING_OPERATOR_OR
 }
 
-local function var_0_10(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+local function fn_3(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+	-- function 14
 	local var_14_0 = arg_14_3[#arg_14_3]
-	local var_14_1 = 0
-	local var_14_2 = var_0_9[arg_14_1]
+	local num = 0
+	local var_14_2 = tbl_2[arg_14_1]
 
 	if not var_14_2 then
 		fassert(not arg_14_1, "[DialogueSystem] Unknown operator '%s' found in rule '%s'", arg_14_1, arg_14_4.name)
 
-		local var_14_3 = arg_14_2 and var_0_6(arg_14_2, "combining_operator")
+		local flag = not arg_14_2 and fn(arg_14_2, "combining_operator")
 
-		if var_14_3 and var_14_3 ~= "AND_NEXT" then
-			var_14_2 = var_0_9.OR_NEXT
-			var_14_1 = var_14_0[var_0_7.combining_operator_group_id]
+		if not (not flag and flag ~= "AND_NEXT") then
+			var_14_2 = tbl_2.OR_NEXT
+			num = var_14_0[mirror_array_inplace_3.combining_operator_group_id]
 		else
-			var_14_2 = var_0_9.AND_NEXT
+			var_14_2 = tbl_2.AND_NEXT
 		end
-	elseif arg_14_1 == (arg_14_2 and var_0_6(arg_14_2, "combining_operator")) then
-		var_14_1 = var_14_0[var_0_7.combining_operator_group_id]
-	elseif var_14_2 ~= var_0_9.AND_NEXT then
-		var_14_1 = (var_0_8(arg_14_3) or 0) + 1
+	elseif not (arg_14_1 == (not arg_14_2 and fn(arg_14_2, "combining_operator"))) then
+		num = var_14_0[mirror_array_inplace_3.combining_operator_group_id]
+	elseif var_14_2 ~= tbl_2.AND_NEXT then
+		local var_14_4 = fn_2(arg_14_3)
+
+		var_14_4 = var_14_4 or 0
+		num = var_14_4 + 1
 	end
 
-	return var_14_2, var_14_1
+	return var_14_2, num
 end
 
-function TagQueryDatabase.parse_criteria(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
-	local var_15_0 = arg_15_1[var_0_3.context_name]
-	local var_15_1 = arg_15_1[var_0_3.criteria_key]
-	local var_15_2 = arg_15_1[var_0_3.operator]
-	local var_15_3 = var_0_6(arg_15_1, "value")
-	local var_15_4 = var_0_6(arg_15_1, "combining_operator")
-	local var_15_5 = var_15_2 == "TIMEDIFF"
+TagQueryDatabase.parse_criteria = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+	-- function 15
+	local var_15_0 = arg_15_1[mirror_array_inplace_2.context_name]
+	local var_15_1 = arg_15_1[mirror_array_inplace_2.criteria_key]
+	local var_15_2 = arg_15_1[mirror_array_inplace_2.operator]
+	local var_15_3 = fn(arg_15_1, "value")
+	local var_15_4 = fn(arg_15_1, "combining_operator")
+	local flag = var_15_2 == "TIMEDIFF"
 
-	if var_15_5 then
-		var_15_2 = var_0_6(arg_15_1, "operator")
+	if not flag then
+		var_15_2 = fn(arg_15_1, "operator")
 
-		fassert(var_0_0[var_15_2], "No operator besides TIMEDIFF in rule %q", arg_15_4.name)
+		fassert(tbl[var_15_2], "No operator besides TIMEDIFF in rule %q", arg_15_4.name)
 	end
 
-	local var_15_6 = var_0_0[var_15_2]
+	local var_15_6 = tbl[var_15_2]
 
 	fassert(var_15_6, "No such rule operator named %q in rule %q", tostring(var_15_2), arg_15_4.name)
-	fassert(var_0_1[var_15_0], "No such context name %q", var_15_0)
+	fassert(mirror_array_inplace[var_15_0], "No such context name %q", var_15_0)
 
 	local var_15_7 = type(var_15_3)
 
 	fassert(var_15_7 == "boolean" or var_15_7 == "string" or var_15_7 == "number", "Unsupported type %s in rule %s", var_15_7, arg_15_4.name)
 
 	if var_15_7 == "boolean" then
-		var_15_3 = var_15_3 and 1 or 0
+		var_15_3 = not var_15_3 and 1 and 0
 	end
 
 	local var_15_8 = arg_15_2[#arg_15_3]
-	local var_15_9, var_15_10 = var_0_10(arg_15_1, var_15_4, var_15_8, arg_15_3, arg_15_4)
+	local var_15_9, var_15_10 = fn_3(arg_15_1, var_15_4, var_15_8, arg_15_3, arg_15_4)
 
 	arg_15_3[#arg_15_3 + 1] = {
-		[var_0_7.context_name] = var_15_0,
-		[var_0_7.criteria_key] = var_15_1,
-		[var_0_7.operator_index] = var_15_6,
-		[var_0_7.value] = var_15_3,
-		[var_0_7.has_time_diff] = var_15_5,
-		[var_0_7.combining_operator_id] = var_15_9,
-		[var_0_7.combining_operator_group_id] = var_15_10
+		[mirror_array_inplace_3.context_name] = var_15_0,
+		[mirror_array_inplace_3.criteria_key] = var_15_1,
+		[mirror_array_inplace_3.operator_index] = var_15_6,
+		[mirror_array_inplace_3.value] = var_15_3,
+		[mirror_array_inplace_3.has_time_diff] = flag,
+		[mirror_array_inplace_3.combining_operator_id] = var_15_9,
+		[mirror_array_inplace_3.combining_operator_group_id] = var_15_10
 	}
 end
 
-local var_0_11 = {}
+local tbl_3 = {}
 
-local function var_0_12(arg_16_0, arg_16_1)
-	return var_0_11[arg_16_0] > var_0_11[arg_16_1]
+local function fn_4(arg_16_0, arg_16_1)
+	-- function 16
+	return tbl_3[arg_16_0] > tbl_3[arg_16_1]
 end
 
-local var_0_13 = {
+local tbl_4 = {
 	[0] = 0
 }
 
-function TagQueryDatabase.iterate_queries(arg_17_0, arg_17_1, arg_17_2)
-	table.clear(var_0_11)
+TagQueryDatabase.iterate_queries = function (self, arg_17_1, arg_17_2)
+	-- function 17
+	table.clear(tbl_3)
 
-	local var_17_0 = 0
+	local num = 0
 
-	for iter_17_0 = 1, #arg_17_0.queries do
-		local var_17_1 = arg_17_0:iterate_query(arg_17_2)
+	for i = 1, #self.queries do
+		local iterate_query = self:iterate_query(arg_17_2)
 
-		if var_17_1.result then
-			var_17_0 = var_17_0 + 1
-			var_0_13[var_17_0] = var_17_1
-			var_0_11[var_17_1] = math.random(1, var_17_1.validated_rule.n_criterias)
+		if not iterate_query.result then
+			num = num + 1
+			tbl_4[num] = iterate_query
+			tbl_3[iterate_query] = math.random(1, iterate_query.validated_rule.n_criterias)
 		end
 	end
 
-	for iter_17_1 = var_17_0 + 1, var_0_13[0] do
-		var_0_13[iter_17_1] = nil
+	for j = num + 1, tbl_4[0] do
+		tbl_4[j] = nil
 	end
 
-	var_0_13[0] = var_17_0
+	tbl_4[0] = num
 
-	table.sort(var_0_13, var_0_12)
+	table.sort(tbl_4, fn_4)
 
-	for iter_17_2 = 1, var_17_0 do
-		arg_17_1[iter_17_2] = var_0_13[iter_17_2]
+	for k = 1, num do
+		arg_17_1[k] = tbl_4[k]
 	end
 
-	return var_17_0
+	return num
 end
 
-local var_0_14 = {}
+local tbl_5 = {}
 
-function TagQueryDatabase.iterate_query(arg_18_0, arg_18_1)
-	local var_18_0 = table.remove(arg_18_0.queries, 1)
+TagQueryDatabase.iterate_query = function (self, arg_18_1)
+	-- function 18
+	local remove = table.remove(self.queries, 1)
 
-	if not var_18_0 then
+	if not remove then
 		return
 	end
 
-	local var_18_1 = var_18_0.query_context
-	local var_18_2 = var_18_1.source
-	local var_18_3 = arg_18_0.contexts_by_object[var_18_2]
+	local query_context = remove.query_context
+	local source = query_context.source
+	local var_18_3 = self.contexts_by_object[source]
 
 	if var_18_3 == nil then
-		return var_18_0
+		return remove
 	end
 
-	local var_18_4 = {
-		arg_18_0.global_context or var_0_14,
-		var_18_1 or var_0_14,
-		var_18_3.user_context or var_0_14,
-		var_18_3.user_memory or var_0_14,
-		var_18_3.faction_memory or var_0_14
-	}
-	local var_18_5 = RuleDatabase.iterate_query(arg_18_0.database, var_18_4, arg_18_1)
+	local tbl = {}
+	local global_context = self.global_context
 
-	if var_18_5 then
-		local var_18_6 = arg_18_0.rule_id_mapping[var_18_5]
+	global_context = global_context or tbl_5
+	tbl[1] = global_context
+	tbl[2] = query_context or tbl_5
 
-		var_18_0.validated_rule = var_18_6
-		var_18_0.result = var_18_6.response
+	local user_context = var_18_3.user_context
+
+	user_context = user_context or tbl_5
+	tbl[3] = user_context
+
+	local user_memory = var_18_3.user_memory
+
+	user_memory = user_memory or tbl_5
+	tbl[4] = user_memory
+
+	local faction_memory = var_18_3.faction_memory
+
+	faction_memory = faction_memory or tbl_5
+	tbl[5] = faction_memory
+
+	local iterate_query = RuleDatabase.iterate_query(self.database, tbl, arg_18_1)
+
+	if not iterate_query then
+		local var_18_10 = self.rule_id_mapping[iterate_query]
+
+		remove.validated_rule = var_18_10
+		remove.result = var_18_10.response
 	end
 
-	return var_18_0
+	return remove
 end
 
-function TagQueryDatabase.has_queries(arg_19_0)
-	return not table.is_empty(arg_19_0.queries)
+TagQueryDatabase.has_queries = function (self)
+	-- function 19
+	return not table.is_empty(self.queries)
 end
 
-function TagQueryDatabase._debug_print_query(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
-	local var_20_0 = {}
+TagQueryDatabase._debug_print_query = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+	-- function 20
+	local tbl = {}
 
-	table.insert(var_20_0, "--------------- STARTING NEW QUERY ---------------")
-	table.insert(var_20_0, "Query context:")
+	table.insert(tbl, "--------------- STARTING NEW QUERY ---------------")
+	table.insert(tbl, "Query context:")
 
-	for iter_20_0, iter_20_1 in pairs(arg_20_1.query_context) do
-		table.insert(var_20_0, string.format("\t%-15s: %-15s", iter_20_0, tostring(iter_20_1)))
+	for k, v in pairs(arg_20_1.query_context) do
+		table.insert(tbl, string.format("\t%-15s: %-15s", k, tostring(v)))
 	end
 
-	table.insert(var_20_0, "User contexts:")
+	table.insert(tbl, "User contexts:")
 
-	for iter_20_2, iter_20_3 in pairs(arg_20_2) do
-		table.insert(var_20_0, "\t" .. iter_20_2)
+	for k_2, v_2 in pairs(arg_20_2) do
+		table.insert(tbl, "\t" .. k_2)
 
-		if type(iter_20_3) == "table" then
-			for iter_20_4, iter_20_5 in pairs(iter_20_3) do
-				table.insert(var_20_0, string.format("\t\t%-15s : %-15s", iter_20_4, tostring(iter_20_5)))
+		if type(v_2) == "table" then
+			for k_3, v_3 in pairs(v_2) do
+				table.insert(tbl, string.format("\t\t%-15s : %-15s", k_3, tostring(v_3)))
 			end
 		end
 	end
 
-	table.insert(var_20_0, "Global context:")
+	table.insert(tbl, "Global context:")
 
-	if arg_20_3 then
-		for iter_20_6, iter_20_7 in pairs(arg_20_3) do
-			table.insert(var_20_0, string.format("\t%-15s : %-15s", iter_20_6, tostring(iter_20_7)))
+	if not arg_20_3 then
+		for k_4, v_4 in pairs(arg_20_3) do
+			table.insert(tbl, string.format("\t%-15s : %-15s", k_4, tostring(v_4)))
 		end
 	end
 
-	table.insert(var_20_0, "--------------- END OF QUERY CONTEXTS ---------------")
-	print(table.concat(var_20_0, "\n"))
+	table.insert(tbl, "--------------- END OF QUERY CONTEXTS ---------------")
+	print(table.concat(tbl, "\n"))
 end
 
-local var_0_15 = {}
+local tbl_6 = {}
 
-function TagQueryDatabase.debug_test_query(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
+TagQueryDatabase.debug_test_query = function (self, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
+	-- function 21
 	print("--------------- TESTING FOLLOWING QUERY ---------------")
 	print(arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
 	table.dump(arg_21_3.query_context)
 
-	local var_21_0 = arg_21_0:create_query()
-	local var_21_1 = Managers.player:local_player().player_unit
+	local create_query = self:create_query()
+	local player_unit = Managers.player:local_player().player_unit
 
-	var_21_0:add("concept", arg_21_1, "source", var_21_1, "source_name", arg_21_2)
-	var_21_0:finalize()
+	create_query:add("concept", arg_21_1, "source", player_unit, "source_name", arg_21_2)
+	create_query:finalize()
 
-	local var_21_2 = arg_21_0.queries[#arg_21_0.queries]
+	local var_21_2 = self.queries[#self.queries]
 
 	if not var_21_2 then
 		print("FAILED TO CREATE NEW QUERY ", var_21_2)
@@ -373,47 +420,62 @@ function TagQueryDatabase.debug_test_query(arg_21_0, arg_21_1, arg_21_2, arg_21_
 		return
 	end
 
-	local var_21_3 = var_21_2.query_context
-	local var_21_4 = var_21_3.source
-	local var_21_5 = table.clone(arg_21_0.contexts_by_object[var_21_4])
+	local query_context = var_21_2.query_context
+	local source = query_context.source
+	local clone = table.clone(self.contexts_by_object[source])
 
-	for iter_21_0, iter_21_1 in pairs(arg_21_3.query_context) do
-		print(string.format("\t%-15s: %-15s", iter_21_0, tostring(iter_21_1)))
+	for k, v in pairs(arg_21_3.query_context) do
+		print(string.format("\t%-15s: %-15s", k, tostring(v)))
 
-		var_21_3[iter_21_0] = iter_21_1
+		query_context[k] = v
 	end
 
-	for iter_21_2, iter_21_3 in pairs(arg_21_4) do
-		for iter_21_4, iter_21_5 in pairs(iter_21_3) do
-			print(string.format("\t\t%-15s : %-15s", iter_21_4, tostring(iter_21_5)))
+	for k_2, v_2 in pairs(arg_21_4) do
+		for k_3, v_3 in pairs(v_2) do
+			print(string.format("\t\t%-15s : %-15s", k_3, tostring(v_3)))
 
-			var_21_5[iter_21_2][iter_21_4] = iter_21_5
+			clone[k_2][k_3] = v_3
 		end
 	end
 
-	if arg_21_5 then
-		for iter_21_6, iter_21_7 in pairs(arg_21_5) do
-			print(string.format("\t%-15s : %-15s", iter_21_6, tostring(iter_21_7)))
+	if not arg_21_5 then
+		for k_4, v_4 in pairs(arg_21_5) do
+			print(string.format("\t%-15s : %-15s", k_4, tostring(v_4)))
 
-			arg_21_0.global_context[iter_21_6] = iter_21_7
+			self.global_context[k_4] = v_4
 		end
 	end
 
-	local var_21_6 = {
-		arg_21_0.global_context or var_0_15,
-		var_21_3 or var_0_15,
-		var_21_5.user_context or var_0_15,
-		var_21_5.user_memory or var_0_15,
-		var_21_5.faction_memory or var_0_15
-	}
-	local var_21_7 = Managers.time:time("game")
-	local var_21_8 = RuleDatabase.iterate_query(arg_21_0.database, var_21_6, var_21_7)
+	local tbl = {}
+	local global_context = self.global_context
 
-	if var_21_8 then
-		local var_21_9 = arg_21_0.rule_id_mapping[var_21_8]
+	global_context = global_context or tbl_6
+	tbl[1] = global_context
+	tbl[2] = query_context or tbl_6
 
-		var_21_2.validated_rule = var_21_9
-		var_21_2.result = var_21_9.response
+	local user_context = clone.user_context
+
+	user_context = user_context or tbl_6
+	tbl[3] = user_context
+
+	local user_memory = clone.user_memory
+
+	user_memory = user_memory or tbl_6
+	tbl[4] = user_memory
+
+	local faction_memory = clone.faction_memory
+
+	faction_memory = faction_memory or tbl_6
+	tbl[5] = faction_memory
+
+	local time = Managers.time:time("game")
+	local iterate_query = RuleDatabase.iterate_query(self.database, tbl, time)
+
+	if not iterate_query then
+		local var_21_13 = self.rule_id_mapping[iterate_query]
+
+		var_21_2.validated_rule = var_21_13
+		var_21_2.result = var_21_13.response
 
 		print("Following rule succeeded:", var_21_2.result)
 	else

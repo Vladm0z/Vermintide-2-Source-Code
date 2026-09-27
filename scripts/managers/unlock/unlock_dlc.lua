@@ -2,96 +2,121 @@
 
 UnlockDlc = class(UnlockDlc)
 
-function UnlockDlc.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7)
-	arg_1_0._name = arg_1_1
-	arg_1_0._id = arg_1_2
-	arg_1_0._backend_reward_id = arg_1_3
-	arg_1_0._installed = false
-	arg_1_0._owned = false
-	arg_1_0._cosmetic = arg_1_5
-	arg_1_0._requires_restart = arg_1_7
-	arg_1_0._status_changed = false
+UnlockDlc.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7)
+	-- function 1
+	self._name = arg_1_1
+	self._id = arg_1_2
+	self._backend_reward_id = arg_1_3
+	self._installed = false
+	self._owned = false
+	self._cosmetic = arg_1_5
+	self._requires_restart = arg_1_7
+	self._status_changed = false
 
-	if HAS_STEAM and arg_1_4 then
-		local var_1_0 = Steam.app_id()
+	if not HAS_STEAM and not arg_1_4 then
+		local app_id = Steam.app_id()
 
-		if var_1_0 and table.contains(arg_1_4, var_1_0) then
-			arg_1_0._always_unlocked_for_app_id = true
-			arg_1_0._installed = true
+		if not app_id and not table.contains(arg_1_4, app_id) then
+			self._always_unlocked_for_app_id = true
+			self._installed = true
 		end
 	end
 
-	arg_1_0:update_is_installed()
+	self:update_is_installed()
 end
 
-function UnlockDlc.is_legacy_console_dlc(arg_2_0)
+UnlockDlc.is_legacy_console_dlc = function (arg_2_0)
+	-- function 2
 	return false
 end
 
-function UnlockDlc.ready(arg_3_0)
+UnlockDlc.ready = function (arg_3_0)
+	-- function 3
 	return true
 end
 
-function UnlockDlc.has_error(arg_4_0)
+UnlockDlc.has_error = function (arg_4_0)
+	-- function 4
 	return false
 end
 
-function UnlockDlc.id(arg_5_0)
-	return arg_5_0._id
+UnlockDlc.id = function (self)
+	-- function 5
+	return self._id
 end
 
-function UnlockDlc.backend_reward_id(arg_6_0)
-	return arg_6_0._backend_reward_id
+UnlockDlc.backend_reward_id = function (self)
+	-- function 6
+	return self._backend_reward_id
 end
 
-function UnlockDlc.remove_backend_reward_id(arg_7_0)
-	arg_7_0._backend_reward_id = nil
+UnlockDlc.remove_backend_reward_id = function (self)
+	-- function 7
+	self._backend_reward_id = nil
 end
 
-function UnlockDlc.unlocked(arg_8_0)
-	return arg_8_0._installed and arg_8_0._owned
+UnlockDlc.unlocked = function (self)
+	-- function 8
+	local _installed = self._installed
+
+	_installed = not _installed and self._owned
+
+	return _installed
 end
 
-function UnlockDlc.installed(arg_9_0)
-	return arg_9_0._installed
+UnlockDlc.installed = function (self)
+	-- function 9
+	return self._installed
 end
 
-function UnlockDlc.set_owned(arg_10_0, arg_10_1, arg_10_2)
-	if arg_10_2 == nil or arg_10_2 then
-		arg_10_0._status_changed = arg_10_0._status_changed or arg_10_1 ~= arg_10_0._owned
+UnlockDlc.set_owned = function (self, arg_10_1, arg_10_2)
+	-- function 10
+	if arg_10_2 == nil or not arg_10_2 then
+		local _status_changed = self._status_changed
+
+		_status_changed = _status_changed or arg_10_1 ~= self._owned
+		self._status_changed = _status_changed
 	end
 
-	arg_10_0._owned = arg_10_1
+	self._owned = arg_10_1
 end
 
-function UnlockDlc.set_status_changed(arg_11_0, arg_11_1)
-	arg_11_0._status_changed = arg_11_1
+UnlockDlc.set_status_changed = function (self, arg_11_1)
+	-- function 11
+	self._status_changed = arg_11_1
 end
 
-function UnlockDlc.update_is_installed(arg_12_0)
+UnlockDlc.update_is_installed = function (self)
+	-- function 12
 	if not HAS_STEAM then
-		return arg_12_0._installed
+		return self._installed
 	end
 
-	if arg_12_0._always_unlocked_for_app_id then
-		return arg_12_0._installed
+	if not self._always_unlocked_for_app_id then
+		return self._installed
 	end
 
-	local var_12_0 = Steam.is_installed(arg_12_0._id)
+	local is_installed = Steam.is_installed(self._id)
 
-	if arg_12_0._installed ~= var_12_0 then
-		arg_12_0._installed = var_12_0
+	if self._installed ~= is_installed then
+		self._installed = is_installed
 
-		return var_12_0, true
+		return is_installed, true
 	end
 
-	return var_12_0
+	return is_installed
 end
 
-function UnlockDlc.is_cosmetic(arg_13_0)
-	return arg_13_0._cosmetic
+UnlockDlc.is_cosmetic = function (self)
+	-- function 13
+	return self._cosmetic
 end
 
-function UnlockDlc.requires_restart(arg_14_0)
-	return arg_14_0._status_changed and arg_14_0._requires_restart
+UnlockDlc.requires_restart = function (self)
+	-- function 14
+	local _status_changed = self._status_changed
+
+	_status_changed = not _status_changed and self._requires_restart
+
+	return _status_changed
 end

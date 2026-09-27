@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/pactsworn_video_transition_view_definitions.lua
 
-local var_0_0 = {
+local tbl = {
 	{
 		video_name = "video/pactsworn_tunnel_transition_1",
 		sound_start = "Play_versus_sfx_tunnel_warp",
@@ -34,7 +34,7 @@ local var_0_0 = {
 		sound_stop = "Stop_versus_sfx_tunnel_warp"
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	root = {
 		is_root = true,
 		size = {
@@ -74,10 +74,10 @@ local var_0_1 = {
 		}
 	}
 }
-local var_0_2 = "PACTSWORN_VIDEO_PLAYER"
+local str = "PACTSWORN_VIDEO_PLAYER"
 
 return {
-	scenegraph_definition = var_0_1,
-	pactsworn_video_data = var_0_0,
-	reference_name = var_0_2
+	scenegraph_definition = tbl_2,
+	pactsworn_video_data = tbl,
+	reference_name = str
 }

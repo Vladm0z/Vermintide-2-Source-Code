@@ -1,9 +1,9 @@
 -- chunkname: @scripts/settings/terror_events/terror_events_skittergate.lua
 
-local var_0_0 = require("scripts/settings/terror_events/terror_event_utils")
-local var_0_1 = var_0_0.count_event_breed
-local var_0_2 = var_0_0.count_breed
-local var_0_3 = {
+local scripts_settings_terror_events_terror_event_utils = require("scripts/settings/terror_events/terror_event_utils")
+local count_event_breed = scripts_settings_terror_events_terror_event_utils.count_event_breed
+local count_breed = scripts_settings_terror_events_terror_event_utils.count_breed
+local tbl = {
 	skittergate_pacing_off = {
 		{
 			"control_pacing",
@@ -48,14 +48,16 @@ local var_0_3 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_1_0)
-				return var_0_1("chaos_exalted_champion_norsca") == 1
+			condition = function (arg_1_0)
+				-- function 1
+				return count_event_breed("chaos_exalted_champion_norsca") == 1
 			end
 		},
 		{
 			"continue_when",
-			condition = function(arg_2_0)
-				return var_0_1("chaos_exalted_champion_norsca") < 1
+			condition = function (arg_2_0)
+				-- function 2
+				return count_event_breed("chaos_exalted_champion_norsca") < 1
 			end
 		},
 		{
@@ -64,8 +66,9 @@ local var_0_3 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_3_0)
-				return var_0_1("chaos_exalted_champion_norsca") < 1 and var_0_1("chaos_spawn_exalted_champion_norsca") < 1
+			condition = function (arg_3_0)
+				-- function 3
+				return not (count_event_breed("chaos_exalted_champion_norsca") < 1) or count_event_breed("chaos_spawn_exalted_champion_norsca") < 1
 			end
 		},
 		{
@@ -124,8 +127,9 @@ local var_0_3 = {
 		{
 			"continue_when",
 			duration = 120,
-			condition = function(arg_4_0)
-				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 5
+			condition = function (arg_4_0)
+				-- function 4
+				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -160,8 +164,9 @@ local var_0_3 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_5_0)
-				return var_0_1("skaven_stormfiend_boss") == 1
+			condition = function (arg_5_0)
+				-- function 5
+				return count_event_breed("skaven_stormfiend_boss") == 1
 			end
 		},
 		{
@@ -170,8 +175,9 @@ local var_0_3 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_6_0)
-				return var_0_2("skaven_stormfiend_boss") < 1
+			condition = function (arg_6_0)
+				-- function 6
+				return count_breed("skaven_stormfiend_boss") < 1
 			end
 		},
 		{
@@ -184,8 +190,9 @@ local var_0_3 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_7_0)
-				return var_0_2("skaven_grey_seer") < 1
+			condition = function (arg_7_0)
+				-- function 7
+				return count_breed("skaven_grey_seer") < 1
 			end
 		},
 		{
@@ -227,5 +234,5 @@ local var_0_3 = {
 }
 
 return {
-	var_0_3
+	tbl
 }

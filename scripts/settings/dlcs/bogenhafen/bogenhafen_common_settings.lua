@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/bogenhafen/bogenhafen_common_settings.lua
 
-local var_0_0 = DLCSettings.bogenhafen
+local bogenhafen = DLCSettings.bogenhafen
 
-var_0_0.unlock_settings = {
+bogenhafen.unlock_settings = {
 	bogenhafen = {
 		id = "828790",
 		class = "UnlockDlc",
@@ -11,14 +11,14 @@ var_0_0.unlock_settings = {
 		}
 	}
 }
-var_0_0.unlock_settings_xb1 = {
+bogenhafen.unlock_settings_xb1 = {
 	bogenhafen = {
 		id = "3E0F5C11-261E-4165-A610-176131574B84",
 		backend_reward_id = "bogenhafen",
 		class = "UnlockDlc"
 	}
 }
-var_0_0.unlock_settings_ps4 = {
+bogenhafen.unlock_settings_ps4 = {
 	CUSA13595_00 = {
 		bogenhafen = {
 			id = "2b2fc2291fbf4eafb7289a0586ae3994",
@@ -36,6 +36,6 @@ var_0_0.unlock_settings_ps4 = {
 		}
 	}
 }
-var_0_0.statistics_definitions = {
+bogenhafen.statistics_definitions = {
 	"scripts/managers/backend/statistics_definitions_bogenhafen"
 }

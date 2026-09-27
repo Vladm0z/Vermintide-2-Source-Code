@@ -20,34 +20,37 @@ CareerActionNames = {
 	}
 }
 
-local function var_0_0(arg_1_0, arg_1_1, arg_1_2)
-	local var_1_0, var_1_1 = arg_1_0:override_available_for_mechanism()
+local function fn(self, arg_1_1, arg_1_2)
+	-- function 1
+	local override_available_for_mechanism, var_1_1 = self:override_available_for_mechanism()
 
-	if not var_1_0 then
-		return var_1_0, var_1_1
+	if not override_available_for_mechanism then
+		return override_available_for_mechanism, var_1_1
 	end
 
 	local var_1_2
-	local var_1_3, var_1_4, var_1_5 = arg_1_0:is_dlc_unlocked()
+	local is_dlc_unlocked, var_1_4, var_1_5 = self:is_dlc_unlocked()
 	local var_1_6 = var_1_5
 	local var_1_7 = var_1_4
 
-	if not var_1_3 then
+	if not is_dlc_unlocked then
 		return false, var_1_7, var_1_6
 	end
 
-	return ProgressionUnlocks.is_unlocked_for_profile(arg_1_0.display_name, arg_1_1, arg_1_2)
+	return ProgressionUnlocks.is_unlocked_for_profile(self.display_name, arg_1_1, arg_1_2)
 end
 
-local function var_0_1(arg_2_0)
+local function fn_2(arg_2_0)
+	-- function 2
 	return true
 end
 
-local function var_0_2(arg_3_0)
-	local var_3_0 = Managers.mechanism:mechanism_setting_for_title("override_career_availability")
-	local var_3_1 = arg_3_0.display_name
+local function fn_3(self)
+	-- function 3
+	local mechanism_setting_for_title = Managers.mechanism:mechanism_setting_for_title("override_career_availability")
+	local display_name = self.display_name
 
-	if var_3_0 and var_3_0[var_3_1] == false then
+	if not (not mechanism_setting_for_title and mechanism_setting_for_title[display_name] ~= false) then
 		return false, "disabled_for_mechanism"
 	end
 
@@ -97,9 +100,9 @@ CareerSettings = {
 				item_name = "ironbreaker_hat_0000"
 			}
 		},
-		is_unlocked_function = var_0_0,
-		is_dlc_unlocked = var_0_1,
-		override_available_for_mechanism = var_0_2,
+		is_unlocked_function = fn,
+		is_dlc_unlocked = fn_2,
+		override_available_for_mechanism = fn_3,
 		item_slot_types_by_slot_name = {
 			slot_melee = {
 				"melee"
@@ -179,9 +182,9 @@ CareerSettings = {
 				item_name = "slayer_hat_0000"
 			}
 		},
-		is_unlocked_function = var_0_0,
-		is_dlc_unlocked = var_0_1,
-		override_available_for_mechanism = var_0_2,
+		is_unlocked_function = fn,
+		is_dlc_unlocked = fn_2,
+		override_available_for_mechanism = fn_3,
 		item_slot_types_by_slot_name = {
 			slot_melee = {
 				"melee"
@@ -262,9 +265,9 @@ CareerSettings = {
 				item_name = "ranger_hat_0000"
 			}
 		},
-		is_unlocked_function = var_0_0,
-		is_dlc_unlocked = var_0_1,
-		override_available_for_mechanism = var_0_2,
+		is_unlocked_function = fn,
+		is_dlc_unlocked = fn_2,
+		override_available_for_mechanism = fn_3,
 		item_slot_types_by_slot_name = {
 			slot_melee = {
 				"melee"
@@ -343,9 +346,9 @@ CareerSettings = {
 				item_name = "huntsman_hat_0000"
 			}
 		},
-		is_unlocked_function = var_0_0,
-		is_dlc_unlocked = var_0_1,
-		override_available_for_mechanism = var_0_2,
+		is_unlocked_function = fn,
+		is_dlc_unlocked = fn_2,
+		override_available_for_mechanism = fn_3,
 		item_slot_types_by_slot_name = {
 			slot_melee = {
 				"melee"
@@ -424,9 +427,9 @@ CareerSettings = {
 				item_name = "knight_hat_0000"
 			}
 		},
-		is_unlocked_function = var_0_0,
-		is_dlc_unlocked = var_0_1,
-		override_available_for_mechanism = var_0_2,
+		is_unlocked_function = fn,
+		is_dlc_unlocked = fn_2,
+		override_available_for_mechanism = fn_3,
 		item_slot_types_by_slot_name = {
 			slot_melee = {
 				"melee"
@@ -505,9 +508,9 @@ CareerSettings = {
 				item_name = "mercenary_hat_0000"
 			}
 		},
-		is_unlocked_function = var_0_0,
-		is_dlc_unlocked = var_0_1,
-		override_available_for_mechanism = var_0_2,
+		is_unlocked_function = fn,
+		is_dlc_unlocked = fn_2,
+		override_available_for_mechanism = fn_3,
 		item_slot_types_by_slot_name = {
 			slot_melee = {
 				"melee"
@@ -586,9 +589,9 @@ CareerSettings = {
 				item_name = "shade_hat_0000"
 			}
 		},
-		is_unlocked_function = var_0_0,
-		is_dlc_unlocked = var_0_1,
-		override_available_for_mechanism = var_0_2,
+		is_unlocked_function = fn,
+		is_dlc_unlocked = fn_2,
+		override_available_for_mechanism = fn_3,
 		item_slot_types_by_slot_name = {
 			slot_melee = {
 				"melee"
@@ -667,9 +670,9 @@ CareerSettings = {
 				item_name = "maidenguard_hat_0000"
 			}
 		},
-		is_unlocked_function = var_0_0,
-		is_dlc_unlocked = var_0_1,
-		override_available_for_mechanism = var_0_2,
+		is_unlocked_function = fn,
+		is_dlc_unlocked = fn_2,
+		override_available_for_mechanism = fn_3,
 		item_slot_types_by_slot_name = {
 			slot_melee = {
 				"melee"
@@ -748,28 +751,29 @@ CareerSettings = {
 				item_name = "waywatcher_hat_0000"
 			}
 		},
-		is_unlocked_function = var_0_0,
-		is_dlc_unlocked = var_0_1,
-		override_available_for_mechanism = var_0_2,
-		talent_packages = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
-			local var_4_0 = ActivatedAbilitySettings.we_3[1].weapon_name
-			local var_4_1 = ItemMasterList[var_4_0]
+		is_unlocked_function = fn,
+		is_dlc_unlocked = fn_2,
+		override_available_for_mechanism = fn_3,
+		talent_packages = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			-- function 4
+			local weapon_name = ActivatedAbilitySettings.we_3[1].weapon_name
+			local var_4_1 = ItemMasterList[weapon_name]
 
-			if var_4_1 and var_4_1.slot_to_use then
-				local var_4_2 = "we_waywatcher"
-				local var_4_3 = BackendUtils.get_loadout_item(var_4_2, var_4_1.slot_to_use, arg_4_3)
-				local var_4_4 = var_4_3 and rawget(ItemMasterList, var_4_3.key)
-				local var_4_5 = var_4_4 and var_4_4.template
+			if not var_4_1 and not var_4_1.slot_to_use then
+				local str = "we_waywatcher"
+				local get_loadout_item = BackendUtils.get_loadout_item(str, var_4_1.slot_to_use, arg_4_3)
+				local flag = not get_loadout_item and rawget(ItemMasterList, get_loadout_item.key)
+				local flag_2 = not flag and flag.template
 
-				if not var_4_5 or not var_4_1.valid_templates_to_replace[var_4_5] then
-					local var_4_6 = var_4_1.default_item_to_replace
-					local var_4_7 = ItemMasterList[var_4_6]
-					local var_4_8 = WeaponUtils.get_weapon_template(var_4_1.template)
-					local var_4_9 = BackendUtils.get_item_units(var_4_7)
-					local var_4_10 = WeaponUtils.get_weapon_packages(var_4_8, var_4_9, arg_4_2, var_4_2)
+				if not (not flag_2 and var_4_1.valid_templates_to_replace[flag_2]) then
+					local default_item_to_replace = var_4_1.default_item_to_replace
+					local var_4_7 = ItemMasterList[default_item_to_replace]
+					local get_weapon_template = WeaponUtils.get_weapon_template(var_4_1.template)
+					local get_item_units = BackendUtils.get_item_units(var_4_7)
+					local get_weapon_packages = WeaponUtils.get_weapon_packages(get_weapon_template, get_item_units, arg_4_2, str)
 
-					for iter_4_0 = 1, #var_4_10 do
-						arg_4_1[var_4_10[iter_4_0]] = false
+					for i = 1, #get_weapon_packages do
+						arg_4_1[get_weapon_packages[i]] = false
 					end
 				end
 			end
@@ -852,9 +856,9 @@ CareerSettings = {
 				item_name = "zealot_hat_0000"
 			}
 		},
-		is_unlocked_function = var_0_0,
-		is_dlc_unlocked = var_0_1,
-		override_available_for_mechanism = var_0_2,
+		is_unlocked_function = fn,
+		is_dlc_unlocked = fn_2,
+		override_available_for_mechanism = fn_3,
 		animation_variables = {
 			is_zealot = 1
 		},
@@ -936,9 +940,9 @@ CareerSettings = {
 				item_name = "bountyhunter_hat_0000"
 			}
 		},
-		is_unlocked_function = var_0_0,
-		is_dlc_unlocked = var_0_1,
-		override_available_for_mechanism = var_0_2,
+		is_unlocked_function = fn,
+		is_dlc_unlocked = fn_2,
+		override_available_for_mechanism = fn_3,
 		item_slot_types_by_slot_name = {
 			slot_melee = {
 				"melee"
@@ -1017,9 +1021,9 @@ CareerSettings = {
 				item_name = "witchhunter_hat_0000"
 			}
 		},
-		is_unlocked_function = var_0_0,
-		is_dlc_unlocked = var_0_1,
-		override_available_for_mechanism = var_0_2,
+		is_unlocked_function = fn,
+		is_dlc_unlocked = fn_2,
+		override_available_for_mechanism = fn_3,
 		item_slot_types_by_slot_name = {
 			slot_melee = {
 				"melee"
@@ -1098,9 +1102,9 @@ CareerSettings = {
 				item_name = "scholar_hat_0000"
 			}
 		},
-		is_unlocked_function = var_0_0,
-		is_dlc_unlocked = var_0_1,
-		override_available_for_mechanism = var_0_2,
+		is_unlocked_function = fn,
+		is_dlc_unlocked = fn_2,
+		override_available_for_mechanism = fn_3,
 		item_slot_types_by_slot_name = {
 			slot_melee = {
 				"melee"
@@ -1179,9 +1183,9 @@ CareerSettings = {
 				item_name = "adept_hat_0000"
 			}
 		},
-		is_unlocked_function = var_0_0,
-		is_dlc_unlocked = var_0_1,
-		override_available_for_mechanism = var_0_2,
+		is_unlocked_function = fn,
+		is_dlc_unlocked = fn_2,
+		override_available_for_mechanism = fn_3,
 		item_slot_types_by_slot_name = {
 			slot_melee = {
 				"melee"
@@ -1260,9 +1264,9 @@ CareerSettings = {
 				item_name = "unchained_hat_0000"
 			}
 		},
-		is_unlocked_function = var_0_0,
-		is_dlc_unlocked = var_0_1,
-		override_available_for_mechanism = var_0_2,
+		is_unlocked_function = fn,
+		is_dlc_unlocked = fn_2,
+		override_available_for_mechanism = fn_3,
 		item_slot_types_by_slot_name = {
 			slot_melee = {
 				"melee"
@@ -1338,9 +1342,9 @@ CareerSettings = {
 				item_name = "knight_hat_0000"
 			}
 		},
-		is_unlocked_function = var_0_0,
-		is_dlc_unlocked = var_0_1,
-		override_available_for_mechanism = var_0_2,
+		is_unlocked_function = fn,
+		is_dlc_unlocked = fn_2,
+		override_available_for_mechanism = fn_3,
 		item_slot_types_by_slot_name = {
 			slot_melee = {
 				"melee"
@@ -1402,7 +1406,7 @@ DLCUtils.require_list("career_setting_files")
 
 CareerSettingsOriginal = table.shallow_copy(CareerSettings)
 
-if script_data.honduras_demo then
+if not script_data.honduras_demo then
 	CareerSettings.we_shade.preview_items = {
 		{
 			item_name = "we_spear"

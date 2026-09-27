@@ -1,6 +1,6 @@
 -- chunkname: @scripts/managers/game_mode/versus_pre_game_logic.lua
 
-local var_0_0 = {
+local tbl = {
 	"rpc_pre_game_request_ready",
 	"rpc_pre_game_set_player_ready",
 	"rpc_pre_game_select_character",
@@ -9,279 +9,309 @@ local var_0_0 = {
 
 VersusPreGameLogic = class(VersusPreGameLogic)
 
-function VersusPreGameLogic.init(arg_1_0, arg_1_1, arg_1_2)
-	arg_1_0._is_server = arg_1_1
-	arg_1_0._network_server = arg_1_2
-	arg_1_0._peer_ready_states = {}
-	arg_1_0._ready_request_ids = {}
-	arg_1_0._search_state_info = ""
+VersusPreGameLogic.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	self._is_server = arg_1_1
+	self._network_server = arg_1_2
+	self._peer_ready_states = {}
+	self._ready_request_ids = {}
+	self._search_state_info = ""
 
-	arg_1_0:_fill_peer_ready_states(arg_1_0._peer_ready_states)
+	self:_fill_peer_ready_states(self._peer_ready_states)
 
-	arg_1_0._owner_peer_id = Network.peer_id()
+	self._owner_peer_id = Network.peer_id()
 end
 
-function VersusPreGameLogic.register_rpcs(arg_2_0, arg_2_1, arg_2_2)
-	arg_2_1:register(arg_2_0, unpack(var_0_0))
+VersusPreGameLogic.register_rpcs = function (self, arg_2_1, arg_2_2)
+	-- function 2
+	arg_2_1:register(self, unpack(tbl))
 
-	arg_2_0._network_event_delegate = arg_2_1
-	arg_2_0._network_transmit = arg_2_2
+	self._network_event_delegate = arg_2_1
+	self._network_transmit = arg_2_2
 end
 
-function VersusPreGameLogic.unregister_rpcs(arg_3_0)
-	arg_3_0._network_event_delegate:unregister(arg_3_0)
+VersusPreGameLogic.unregister_rpcs = function (self)
+	-- function 3
+	self._network_event_delegate:unregister(self)
 
-	arg_3_0._network_event_delegate = nil
-	arg_3_0._network_transmit = nil
+	self._network_event_delegate = nil
+	self._network_transmit = nil
 end
 
-function VersusPreGameLogic.can_peer_change_ready_state(arg_4_0, arg_4_1, arg_4_2)
+VersusPreGameLogic.can_peer_change_ready_state = function (arg_4_0, arg_4_1, arg_4_2)
+	-- function 4
 	return true
 end
 
-function VersusPreGameLogic.is_peer_ready(arg_5_0, arg_5_1, arg_5_2)
-	return arg_5_0._peer_ready_states[arg_5_1][arg_5_2].ready
+VersusPreGameLogic.is_peer_ready = function (self, arg_5_1, arg_5_2)
+	-- function 5
+	return self._peer_ready_states[arg_5_1][arg_5_2].ready
 end
 
-local var_0_1 = false
+local flag = false
 
-function VersusPreGameLogic.all_peers_ready(arg_6_0)
-	local var_6_0 = true
+VersusPreGameLogic.all_peers_ready = function (self)
+	-- function 6
+	local flag_2 = true
 
-	if var_0_1 then
+	if not flag then
 		return true
 	end
 
-	local var_6_1 = arg_6_0._peer_ready_states
+	local _peer_ready_states = self._peer_ready_states
 
-	if table.is_empty(var_6_1) then
-		var_6_0 = false
+	if not table.is_empty(_peer_ready_states) then
+		flag_2 = false
 	end
 
-	for iter_6_0, iter_6_1 in pairs(var_6_1) do
-		for iter_6_2, iter_6_3 in pairs(iter_6_1) do
-			if not iter_6_3.ready then
-				var_6_0 = false
+	for k, v in pairs(_peer_ready_states) do
+		for k_2, v_2 in pairs(v) do
+			if not v_2.ready then
+				flag_2 = false
 
 				break
 			end
 		end
 	end
 
-	return var_6_0
+	return flag_2
 end
 
-function VersusPreGameLogic.character_info(arg_7_0, arg_7_1, arg_7_2)
-	local var_7_0 = arg_7_0._peer_ready_states[arg_7_1][arg_7_2]
-	local var_7_1 = var_7_0.profile_index
-	local var_7_2 = var_7_0.career_index
-	local var_7_3 = var_7_0.melee_name
-	local var_7_4 = var_7_0.ranged_name
+VersusPreGameLogic.character_info = function (self, arg_7_1, arg_7_2)
+	-- function 7
+	local var_7_0 = self._peer_ready_states[arg_7_1][arg_7_2]
+	local profile_index = var_7_0.profile_index
+	local career_index = var_7_0.career_index
+	local melee_name = var_7_0.melee_name
+	local ranged_name = var_7_0.ranged_name
 
-	return var_7_1, var_7_2, var_7_3, var_7_4
+	return profile_index, career_index, melee_name, ranged_name
 end
 
-function VersusPreGameLogic.player_joined_party(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+VersusPreGameLogic.player_joined_party = function (self, arg_8_1, arg_8_2, arg_8_3)
+	-- function 8
 	print("VersusPreGameLogic player_joined_party:", arg_8_1, arg_8_2, arg_8_3)
 
-	local var_8_0 = arg_8_0._peer_ready_states
+	local _peer_ready_states = self._peer_ready_states
 
-	arg_8_0:_add_player_state(var_8_0, arg_8_1, arg_8_2)
+	self:_add_player_state(_peer_ready_states, arg_8_1, arg_8_2)
 end
 
-function VersusPreGameLogic.player_left_party(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+VersusPreGameLogic.player_left_party = function (self, arg_9_1, arg_9_2, arg_9_3)
+	-- function 9
 	print("VersusPreGameLogic player_left_party:", arg_9_1, arg_9_2, arg_9_3)
 
-	local var_9_0 = arg_9_0._peer_ready_states
+	local _peer_ready_states = self._peer_ready_states
 
-	arg_9_0:_remove_player_state(var_9_0, arg_9_1, arg_9_2)
+	self:_remove_player_state(_peer_ready_states, arg_9_1, arg_9_2)
 end
 
-function VersusPreGameLogic.request_ready(arg_10_0, arg_10_1, arg_10_2)
-	arg_10_1 = arg_10_0._local_player_id or arg_10_1
-	arg_10_0._local_player_id = arg_10_1
+VersusPreGameLogic.request_ready = function (self, arg_10_1, arg_10_2)
+	-- function 10
+	arg_10_1 = self._local_player_id or arg_10_1
+	self._local_player_id = arg_10_1
 
-	if not Managers.state.network or not Managers.state.network:game() then
+	if not (not Managers.state.network and Managers.state.network:game()) then
 		Crashify.print_exception("VersusPreGameLogic", "Tried to ready up whithout game_session")
 
 		return
 	end
 
-	local var_10_0 = arg_10_0._owner_peer_id
+	local _owner_peer_id = self._owner_peer_id
+	local _ready_request_ids = self._ready_request_ids
+	local var_10_2 = self._ready_request_ids[arg_10_1]
 
-	arg_10_0._ready_request_ids[arg_10_1] = (arg_10_0._ready_request_ids[arg_10_1] or 0) % NetworkConstants.READY_REQUEST_ID_MAX + 1
+	var_10_2 = var_10_2 or 0
+	_ready_request_ids[arg_10_1] = var_10_2 % NetworkConstants.READY_REQUEST_ID_MAX + 1
 
-	local var_10_1 = arg_10_0._ready_request_ids[arg_10_1]
+	local var_10_3 = self._ready_request_ids[arg_10_1]
 
-	if arg_10_0._is_server then
-		arg_10_0:_handle_ready_request(var_10_0, arg_10_1, arg_10_2, var_10_1)
+	if not self._is_server then
+		self:_handle_ready_request(_owner_peer_id, arg_10_1, arg_10_2, var_10_3)
 
 		if not arg_10_2 then
 			Managers.mechanism:game_mechanism():reset_dedicated_slots_count()
 			Managers.matchmaking:cancel_matchmaking()
 		end
 	else
-		arg_10_0:_set_player_ready(var_10_0, arg_10_1, arg_10_2, var_10_1)
-		arg_10_0._network_transmit:send_rpc_server("rpc_pre_game_request_ready", arg_10_1, arg_10_2, var_10_1)
+		self:_set_player_ready(_owner_peer_id, arg_10_1, arg_10_2, var_10_3)
+		self._network_transmit:send_rpc_server("rpc_pre_game_request_ready", arg_10_1, arg_10_2, var_10_3)
 	end
 end
 
-function VersusPreGameLogic.failed_to_find_dedicated_server(arg_11_0, arg_11_1)
-	arg_11_0:request_ready(nil, false)
+VersusPreGameLogic.failed_to_find_dedicated_server = function (self, arg_11_1)
+	-- function 11
+	self:request_ready(nil, false)
 	Managers.state.event:trigger("show_pre_game_view_popup", arg_11_1)
 end
 
-function VersusPreGameLogic.request_force_start_server(arg_12_0)
+VersusPreGameLogic.request_force_start_server = function (arg_12_0)
+	-- function 12
 	print("force starting server")
 
-	local var_12_0 = Managers.mechanism:game_mechanism()
+	local game_mechanism = Managers.mechanism:game_mechanism()
 
-	if var_12_0.force_start_dedicated_server then
-		var_12_0:force_start_dedicated_server()
+	if not game_mechanism.force_start_dedicated_server then
+		game_mechanism:force_start_dedicated_server()
 	end
 end
 
-function VersusPreGameLogic.request_switch_level(arg_13_0, arg_13_1)
-	local var_13_0 = Managers.mechanism:game_mechanism()
+VersusPreGameLogic.request_switch_level = function (arg_13_0, arg_13_1)
+	-- function 13
+	local game_mechanism = Managers.mechanism:game_mechanism()
 
-	if var_13_0.switch_level_dedicated_server then
-		var_13_0:switch_level_dedicated_server(arg_13_1)
+	if not game_mechanism.switch_level_dedicated_server then
+		game_mechanism:switch_level_dedicated_server(arg_13_1)
 	end
 end
 
-function VersusPreGameLogic.select_character(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6)
+VersusPreGameLogic.select_character = function (self, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6)
+	-- function 14
 	local var_14_0
 
-	if arg_14_5 then
+	if not arg_14_5 then
 		var_14_0 = arg_14_5.key
 	end
 
 	local var_14_1
 
-	if arg_14_6 then
+	if not arg_14_6 then
 		var_14_1 = arg_14_6.key
 	end
 
-	arg_14_0:_select_character(arg_14_1, arg_14_2, arg_14_3, arg_14_4, var_14_0, var_14_1)
+	self:_select_character(arg_14_1, arg_14_2, arg_14_3, arg_14_4, var_14_0, var_14_1)
 
 	local var_14_2 = NetworkLookup.item_names[var_14_0 or "n/a"]
 	local var_14_3 = NetworkLookup.item_names[var_14_1 or "n/a"]
 
-	if arg_14_0._is_server then
-		arg_14_0._network_transmit:send_rpc_clients("rpc_pre_game_select_character", arg_14_1, arg_14_2, arg_14_3, arg_14_4, var_14_2, var_14_3)
+	if not self._is_server then
+		self._network_transmit:send_rpc_clients("rpc_pre_game_select_character", arg_14_1, arg_14_2, arg_14_3, arg_14_4, var_14_2, var_14_3)
 	else
-		arg_14_0._network_transmit:send_rpc_server("rpc_pre_game_select_character", arg_14_1, arg_14_2, arg_14_3, arg_14_4, var_14_2, var_14_3)
+		self._network_transmit:send_rpc_server("rpc_pre_game_select_character", arg_14_1, arg_14_2, arg_14_3, arg_14_4, var_14_2, var_14_3)
 	end
 
 	Managers.backend:commit()
 end
 
-function VersusPreGameLogic.can_toggle_local_match(arg_15_0)
-	if not arg_15_0._is_server then
+VersusPreGameLogic.can_toggle_local_match = function (self)
+	-- function 15
+	if not self._is_server then
 		return false
 	end
 
-	if arg_15_0:is_local_match() and #arg_15_0._network_server.lobby_host:members():get_members() > Managers.mechanism:max_party_members() then
+	if not (not self:is_local_match() and not (#self._network_server.lobby_host:members():get_members() > Managers.mechanism:max_party_members())) then
 		return false
 	end
 
 	return true
 end
 
-function VersusPreGameLogic.can_toggle_public_private_lobby(arg_16_0)
-	if not arg_16_0._is_server then
+VersusPreGameLogic.can_toggle_public_private_lobby = function (self)
+	-- function 16
+	if not self._is_server then
 		return false
 	end
 
-	if arg_16_0:is_local_match() then
+	if not self:is_local_match() then
 		return true
 	end
 
 	return false
 end
 
-function VersusPreGameLogic.can_toggle_dedicated_servers_or_player_hosted_search(arg_17_0)
-	if not arg_17_0._is_server then
+VersusPreGameLogic.can_toggle_dedicated_servers_or_player_hosted_search = function (self)
+	-- function 17
+	if not self._is_server then
 		return false
 	end
 
-	if arg_17_0:is_local_match() then
+	if not self:is_local_match() then
 		return false
 	end
 
 	return true
 end
 
-function VersusPreGameLogic.is_local_match(arg_18_0)
+VersusPreGameLogic.is_local_match = function (arg_18_0)
+	-- function 18
 	return Managers.mechanism:game_mechanism():is_local_match()
 end
 
-function VersusPreGameLogic.set_local_match(arg_19_0, arg_19_1)
+VersusPreGameLogic.set_local_match = function (arg_19_0, arg_19_1)
+	-- function 19
 	Managers.mechanism:game_mechanism():set_local_match(arg_19_1)
 end
 
-function VersusPreGameLogic.is_private_lobby(arg_20_0)
+VersusPreGameLogic.is_private_lobby = function (arg_20_0)
+	-- function 20
 	return Managers.mechanism:game_mechanism():is_private_lobby()
 end
 
-function VersusPreGameLogic.set_private_lobby(arg_21_0, arg_21_1)
+VersusPreGameLogic.set_private_lobby = function (arg_21_0, arg_21_1)
+	-- function 21
 	Managers.mechanism:game_mechanism():set_private_lobby(arg_21_1)
 end
 
-function VersusPreGameLogic.using_dedicated_servers_search(arg_22_0)
+VersusPreGameLogic.using_dedicated_servers_search = function (arg_22_0)
+	-- function 22
 	return Managers.mechanism:game_mechanism():using_dedicated_servers()
 end
 
-function VersusPreGameLogic.using_player_hosted_search(arg_23_0)
+VersusPreGameLogic.using_player_hosted_search = function (arg_23_0)
+	-- function 23
 	return Managers.mechanism:game_mechanism():using_player_hosted()
 end
 
-function VersusPreGameLogic.set_dedicated_or_player_hosted_search(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+VersusPreGameLogic.set_dedicated_or_player_hosted_search = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+	-- function 24
 	return Managers.mechanism:game_mechanism():set_dedicated_or_player_hosted_search(arg_24_1, arg_24_2, arg_24_3)
 end
 
-function VersusPreGameLogic.hot_join_sync(arg_25_0, arg_25_1)
+VersusPreGameLogic.hot_join_sync = function (self, arg_25_1)
+	-- function 25
 	local var_25_0 = PEER_ID_TO_CHANNEL[arg_25_1]
 
-	for iter_25_0, iter_25_1 in pairs(arg_25_0._peer_ready_states) do
-		for iter_25_2, iter_25_3 in pairs(iter_25_1) do
-			local var_25_1 = iter_25_3.ready
-			local var_25_2 = iter_25_3.request_id
+	for k, v in pairs(self._peer_ready_states) do
+		for k_2, v_2 in pairs(v) do
+			local ready = v_2.ready
+			local request_id = v_2.request_id
 
-			RPC.rpc_pre_game_set_player_ready(var_25_0, iter_25_0, iter_25_2, var_25_1, var_25_2)
+			RPC.rpc_pre_game_set_player_ready(var_25_0, k, k_2, ready, request_id)
 
-			local var_25_3 = iter_25_3.profile_index
+			local profile_index = v_2.profile_index
 
-			if var_25_3 then
-				local var_25_4 = iter_25_3.career_index
-				local var_25_5 = iter_25_3.melee_name
-				local var_25_6 = iter_25_3.ranged_name
-				local var_25_7 = NetworkLookup.item_names[var_25_5 or "n/a"]
-				local var_25_8 = NetworkLookup.item_names[var_25_6 or "n/a"]
+			if not profile_index then
+				local career_index = v_2.career_index
+				local melee_name = v_2.melee_name
+				local ranged_name = v_2.ranged_name
+				local var_25_7 = NetworkLookup.item_names[melee_name or "n/a"]
+				local var_25_8 = NetworkLookup.item_names[ranged_name or "n/a"]
 
-				RPC.rpc_pre_game_select_character(var_25_0, iter_25_0, iter_25_2, var_25_3, var_25_4, var_25_7, var_25_8)
+				RPC.rpc_pre_game_select_character(var_25_0, k, k_2, profile_index, career_index, var_25_7, var_25_8)
 			end
 		end
 	end
 end
 
-function VersusPreGameLogic._fill_peer_ready_states(arg_26_0, arg_26_1)
-	local var_26_0 = Managers.party:parties()
+VersusPreGameLogic._fill_peer_ready_states = function (self, arg_26_1)
+	-- function 26
+	local parties = Managers.party:parties()
 
-	for iter_26_0 = 0, #var_26_0 do
-		local var_26_1 = var_26_0[iter_26_0].occupied_slots
+	for i = 0, #parties do
+		local occupied_slots = parties[i].occupied_slots
 
-		for iter_26_1 = 1, #var_26_1 do
-			local var_26_2 = var_26_1[iter_26_1]
-			local var_26_3 = var_26_2.peer_id
-			local var_26_4 = var_26_2.local_player_id
+		for j = 1, #occupied_slots do
+			local var_26_2 = occupied_slots[j]
+			local peer_id = var_26_2.peer_id
+			local local_player_id = var_26_2.local_player_id
 
-			arg_26_0:_add_player_state(arg_26_1, var_26_3, var_26_4)
+			self:_add_player_state(arg_26_1, peer_id, local_player_id)
 		end
 	end
 end
 
-function VersusPreGameLogic._add_player_state(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+VersusPreGameLogic._add_player_state = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+	-- function 27
 	if not arg_27_1[arg_27_2] then
 		arg_27_1[arg_27_2] = {}
 	end
@@ -298,67 +328,77 @@ function VersusPreGameLogic._add_player_state(arg_27_0, arg_27_1, arg_27_2, arg_
 	var_27_1.request_id = 1
 end
 
-function VersusPreGameLogic._remove_player_state(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+VersusPreGameLogic._remove_player_state = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+	-- function 28
 	local var_28_0 = arg_28_1[arg_28_2]
 
 	var_28_0[arg_28_3] = nil
 
-	if table.is_empty(var_28_0) then
+	if not table.is_empty(var_28_0) then
 		arg_28_1[arg_28_2] = nil
 	end
 end
 
-function VersusPreGameLogic._handle_ready_request(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
-	if not arg_29_0:can_peer_change_ready_state(arg_29_1, arg_29_2) then
-		arg_29_3 = arg_29_0._peer_ready_states[arg_29_1][arg_29_2].ready
+VersusPreGameLogic._handle_ready_request = function (self, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
+	-- function 29
+	if not self:can_peer_change_ready_state(arg_29_1, arg_29_2) then
+		arg_29_3 = self._peer_ready_states[arg_29_1][arg_29_2].ready
 	end
 
-	arg_29_0:_set_player_ready(arg_29_1, arg_29_2, arg_29_3, arg_29_4)
+	self:_set_player_ready(arg_29_1, arg_29_2, arg_29_3, arg_29_4)
 end
 
-function VersusPreGameLogic.set_all_players_ready(arg_30_0, arg_30_1)
-	for iter_30_0, iter_30_1 in pairs(arg_30_0._peer_ready_states) do
-		for iter_30_2, iter_30_3 in pairs(iter_30_1) do
-			arg_30_0._ready_request_ids[iter_30_2] = (arg_30_0._ready_request_ids[iter_30_2] or 0) % NetworkConstants.READY_REQUEST_ID_MAX + 1
+VersusPreGameLogic.set_all_players_ready = function (self, arg_30_1)
+	-- function 30
+	for k, v in pairs(self._peer_ready_states) do
+		for k_2, v_2 in pairs(v) do
+			local _ready_request_ids = self._ready_request_ids
+			local var_30_1 = self._ready_request_ids[k_2]
 
-			local var_30_0 = arg_30_0._ready_request_ids[iter_30_2]
+			var_30_1 = var_30_1 or 0
+			_ready_request_ids[k_2] = var_30_1 % NetworkConstants.READY_REQUEST_ID_MAX + 1
 
-			arg_30_0:_set_player_ready(iter_30_0, iter_30_2, arg_30_1, -1)
+			local var_30_2 = self._ready_request_ids[k_2]
+
+			self:_set_player_ready(k, k_2, arg_30_1, -1)
 		end
 	end
 end
 
-function VersusPreGameLogic._set_player_ready(arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
-	if not arg_31_0:peer_in_ready_states(arg_31_1, arg_31_2) then
-		arg_31_0:_add_player_state(arg_31_0._peer_ready_states, arg_31_1, arg_31_2)
+VersusPreGameLogic._set_player_ready = function (self, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
+	-- function 31
+	if not self:peer_in_ready_states(arg_31_1, arg_31_2) then
+		self:_add_player_state(self._peer_ready_states, arg_31_1, arg_31_2)
 	end
 
-	local var_31_0 = arg_31_0._peer_ready_states[arg_31_1][arg_31_2]
+	local var_31_0 = self._peer_ready_states[arg_31_1][arg_31_2]
 
 	var_31_0.ready = arg_31_3
 	var_31_0.request_id = arg_31_4
 
-	if arg_31_0._is_server then
-		arg_31_0._network_transmit:send_rpc_clients("rpc_pre_game_set_player_ready", arg_31_1, arg_31_2, arg_31_3, arg_31_4)
+	if not self._is_server then
+		self._network_transmit:send_rpc_clients("rpc_pre_game_set_player_ready", arg_31_1, arg_31_2, arg_31_3, arg_31_4)
 	end
 end
 
-function VersusPreGameLogic._select_character(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5, arg_32_6)
-	local var_32_0 = arg_32_0._peer_ready_states[arg_32_1][arg_32_2]
+VersusPreGameLogic._select_character = function (self, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5, arg_32_6)
+	-- function 32
+	local var_32_0 = self._peer_ready_states[arg_32_1][arg_32_2]
 
 	var_32_0.profile_index = arg_32_3
 	var_32_0.career_index = arg_32_4
 	var_32_0.melee_name = arg_32_5
 	var_32_0.ranged_name = arg_32_6
 
-	local var_32_1 = Managers.party:get_status_from_unique_id(arg_32_1 .. ":" .. arg_32_2)
+	local get_status_from_unique_id = Managers.party:get_status_from_unique_id(arg_32_1 .. ":" .. arg_32_2)
 
-	var_32_1.preferred_profile_index = arg_32_3
-	var_32_1.preferred_career_index = arg_32_4
+	get_status_from_unique_id.preferred_profile_index = arg_32_3
+	get_status_from_unique_id.preferred_career_index = arg_32_4
 end
 
-function VersusPreGameLogic.peer_in_ready_states(arg_33_0, arg_33_1, arg_33_2)
-	local var_33_0 = arg_33_0._peer_ready_states[arg_33_1]
+VersusPreGameLogic.peer_in_ready_states = function (self, arg_33_1, arg_33_2)
+	-- function 33
+	local var_33_0 = self._peer_ready_states[arg_33_1]
 
 	if not var_33_0 then
 		return false
@@ -367,7 +407,7 @@ function VersusPreGameLogic.peer_in_ready_states(arg_33_0, arg_33_1, arg_33_2)
 	return var_33_0[arg_33_2] ~= nil
 end
 
-local var_0_2 = {
+local tbl_2 = {
 	"idle",
 	"joined_dedicated_server",
 	"searching_for_dedicated_server",
@@ -375,50 +415,56 @@ local var_0_2 = {
 	"searching_for_player_hosted_game"
 }
 
-for iter_0_0 = 1, #var_0_2 do
-	var_0_2[var_0_2[iter_0_0]] = iter_0_0
+for i = 1, #tbl_2 do
+	tbl_2[tbl_2[i]] = i
 end
 
-function VersusPreGameLogic.search_state_info(arg_34_0)
-	return arg_34_0._search_state_info
+VersusPreGameLogic.search_state_info = function (self)
+	-- function 34
+	return self._search_state_info
 end
 
-function VersusPreGameLogic.change_pre_game_search_state(arg_35_0, arg_35_1)
-	arg_35_0._search_state_info = arg_35_1
+VersusPreGameLogic.change_pre_game_search_state = function (self, arg_35_1)
+	-- function 35
+	self._search_state_info = arg_35_1
 
-	if arg_35_0._is_server then
-		local var_35_0 = var_0_2[arg_35_1]
+	if not self._is_server then
+		local var_35_0 = tbl_2[arg_35_1]
 
-		arg_35_0._network_transmit:send_rpc_clients("rpc_change_pre_game_seach_state", var_35_0)
+		self._network_transmit:send_rpc_clients("rpc_change_pre_game_seach_state", var_35_0)
 	end
 end
 
-function VersusPreGameLogic.rpc_change_pre_game_seach_state(arg_36_0, arg_36_1, arg_36_2)
-	fassert(not arg_36_0._is_server, "Should only appear on the clients.")
+VersusPreGameLogic.rpc_change_pre_game_seach_state = function (self, arg_36_1, arg_36_2)
+	-- function 36
+	fassert(not self._is_server, "Should only appear on the clients.")
 
-	local var_36_0 = var_0_2[arg_36_2]
+	local var_36_0 = tbl_2[arg_36_2]
 
-	arg_36_0:change_pre_game_search_state(var_36_0)
+	self:change_pre_game_search_state(var_36_0)
 end
 
-function VersusPreGameLogic.rpc_pre_game_request_ready(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
+VersusPreGameLogic.rpc_pre_game_request_ready = function (self, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
+	-- function 37
 	local var_37_0 = CHANNEL_TO_PEER_ID[arg_37_1]
 
-	arg_37_0:_handle_ready_request(var_37_0, arg_37_2, arg_37_3, arg_37_4)
+	self:_handle_ready_request(var_37_0, arg_37_2, arg_37_3, arg_37_4)
 end
 
-function VersusPreGameLogic.rpc_pre_game_set_player_ready(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4, arg_38_5)
-	local var_38_0 = arg_38_0._owner_peer_id
-	local var_38_1 = arg_38_0._ready_request_ids[arg_38_3]
+VersusPreGameLogic.rpc_pre_game_set_player_ready = function (self, arg_38_1, arg_38_2, arg_38_3, arg_38_4, arg_38_5)
+	-- function 38
+	local _owner_peer_id = self._owner_peer_id
+	local var_38_1 = self._ready_request_ids[arg_38_3]
 
-	if arg_38_2 == var_38_0 and arg_38_5 ~= var_38_1 and arg_38_5 ~= -1 then
+	if not (arg_38_2 ~= _owner_peer_id or arg_38_5 == var_38_1 or arg_38_5 == -1) then
 		return
 	end
 
-	arg_38_0:_set_player_ready(arg_38_2, arg_38_3, arg_38_4, arg_38_5)
+	self:_set_player_ready(arg_38_2, arg_38_3, arg_38_4, arg_38_5)
 end
 
-function VersusPreGameLogic.rpc_pre_game_select_character(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5, arg_39_6, arg_39_7)
+VersusPreGameLogic.rpc_pre_game_select_character = function (self, arg_39_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5, arg_39_6, arg_39_7)
+	-- function 39
 	local var_39_0 = NetworkLookup.item_names[arg_39_6]
 
 	if var_39_0 == "n/a" then
@@ -432,11 +478,11 @@ function VersusPreGameLogic.rpc_pre_game_select_character(arg_39_0, arg_39_1, ar
 	end
 
 	print("rpc_pre_game_select_character", arg_39_2, arg_39_3, var_39_0, var_39_1)
-	arg_39_0:_select_character(arg_39_2, arg_39_3, arg_39_4, arg_39_5, var_39_0, var_39_1)
+	self:_select_character(arg_39_2, arg_39_3, arg_39_4, arg_39_5, var_39_0, var_39_1)
 
-	if arg_39_0._is_server then
+	if not self._is_server then
 		local var_39_2 = CHANNEL_TO_PEER_ID[arg_39_1]
 
-		arg_39_0._network_transmit:send_rpc_clients_except("rpc_pre_game_select_character", var_39_2, arg_39_2, arg_39_3, arg_39_4, arg_39_5, arg_39_6, arg_39_7)
+		self._network_transmit:send_rpc_clients_except("rpc_pre_game_select_character", var_39_2, arg_39_2, arg_39_3, arg_39_4, arg_39_5, arg_39_6, arg_39_7)
 	end
 end

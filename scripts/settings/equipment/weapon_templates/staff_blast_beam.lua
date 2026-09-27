@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/staff_blast_beam.lua
 
-local var_0_0 = {
+local tbl = {
 	actions = {
 		action_one = {
 			default = {
@@ -30,11 +30,13 @@ local var_0_0 = {
 				anim_event = "attack_shoot_beam_start",
 				particle_effect_trail_3p = "fx/wpnfx_staff_beam_trail_3p_remap",
 				charge_sound_name = "player_combat_weapon_staff_fire_beam",
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
+					-- function 1
 					return arg_1_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
-				enter_function = function(arg_2_0, arg_2_1)
+				enter_function = function (arg_2_0, arg_2_1)
+					-- function 2
 					arg_2_1:reset_release_input()
 					arg_2_1:clear_input_buffer()
 				end,
@@ -140,7 +142,8 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_3_0, arg_3_1)
+				enter_function = function (arg_3_0, arg_3_1)
+					-- function 3
 					arg_3_1:clear_input_buffer()
 
 					return arg_3_1:reset_release_input()
@@ -178,7 +181,8 @@ local var_0_0 = {
 				anim_event = "flamethrower_charge_start",
 				fx_node = "fx_01",
 				charge_sound_name = "player_combat_weapon_staff_fire_beam",
-				anim_end_event_condition_func = function(arg_4_0, arg_4_1)
+				anim_end_event_condition_func = function (arg_4_0, arg_4_1)
+					-- function 4
 					return arg_4_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -265,7 +269,8 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_5_0, arg_5_1)
+				enter_function = function (arg_5_0, arg_5_1)
+					-- function 5
 					arg_5_1:clear_input_buffer()
 
 					return arg_5_1:reset_release_input()
@@ -289,7 +294,8 @@ local var_0_0 = {
 				uninterruptible = true,
 				anim_event = "cooldown_start",
 				charge_sound_name = "player_combat_weapon_staff_cooldown",
-				anim_end_event_condition_func = function(arg_6_0, arg_6_1)
+				anim_end_event_condition_func = function (arg_6_0, arg_6_1)
+					-- function 6
 					return arg_6_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -301,7 +307,8 @@ local var_0_0 = {
 						end_time = math.huge
 					}
 				},
-				enter_function = function(arg_7_0, arg_7_1)
+				enter_function = function (arg_7_0, arg_7_1)
+					-- function 7
 					arg_7_1:reset_release_input()
 					arg_7_1:clear_input_buffer()
 				end,
@@ -313,10 +320,12 @@ local var_0_0 = {
 						input = "action_wield"
 					}
 				},
-				condition_func = function(arg_8_0, arg_8_1)
+				condition_func = function (arg_8_0, arg_8_1)
+					-- function 8
 					return ScriptUnit.extension(arg_8_0, "overcharge_system"):get_overcharge_value() ~= 0
 				end,
-				chain_condition_func = function(arg_9_0, arg_9_1)
+				chain_condition_func = function (arg_9_0, arg_9_1)
+					-- function 9
 					return ScriptUnit.extension(arg_9_0, "overcharge_system"):get_overcharge_value() ~= 0
 				end
 			}
@@ -326,15 +335,15 @@ local var_0_0 = {
 	}
 }
 
-var_0_0.default_spread_template = "spear"
-var_0_0.overcharge_data = {
+tbl.default_spread_template = "spear"
+tbl.overcharge_data = {
 	explosion_template = "overcharge_explosion_brw",
 	overcharge_threshold = 10,
 	hit_overcharge_threshold_sound = "ui_special_attack_ready",
 	time_until_overcharge_decreases = 0.5,
 	overcharge_value_decrease_rate = 1
 }
-var_0_0.attack_meta_data = {
+tbl.attack_meta_data = {
 	max_range = 50,
 	charged_attack_action_name = "shoot_charged",
 	can_charge_shot = true,
@@ -363,7 +372,7 @@ var_0_0.attack_meta_data = {
 	},
 	effective_against = bit.bor(BreedCategory.Infantry, BreedCategory.Berserker, BreedCategory.Special, BreedCategory.Armored)
 }
-var_0_0.aim_assist_settings = {
+tbl.aim_assist_settings = {
 	max_range = 50,
 	no_aim_input_multiplier = 0,
 	always_auto_aim = true,
@@ -376,17 +385,17 @@ var_0_0.aim_assist_settings = {
 		skaven_slave = 1
 	}
 }
-var_0_0.right_hand_unit = "units/weapons/player/wpn_brw_skullstaff/wpn_brw_skullstaff"
-var_0_0.right_hand_attachment_node_linking = AttachmentNodeLinking.spear_staff
-var_0_0.left_hand_unit = "units/weapons/player/wpn_fireball/wpn_fireball"
-var_0_0.left_hand_attachment_node_linking = AttachmentNodeLinking.fireball
-var_0_0.display_unit = "units/weapons/weapon_display/display_staff"
-var_0_0.wield_anim = "to_staff"
-var_0_0.state_machine = "units/beings/player/first_person_base/state_machines/ranged/staff"
-var_0_0.crosshair_style = "arrows"
-var_0_0.buff_type = "RANGED"
-var_0_0.weapon_type = "FIRE_STAFF"
-var_0_0.buffs = {
+tbl.right_hand_unit = "units/weapons/player/wpn_brw_skullstaff/wpn_brw_skullstaff"
+tbl.right_hand_attachment_node_linking = AttachmentNodeLinking.spear_staff
+tbl.left_hand_unit = "units/weapons/player/wpn_fireball/wpn_fireball"
+tbl.left_hand_attachment_node_linking = AttachmentNodeLinking.fireball
+tbl.display_unit = "units/weapons/weapon_display/display_staff"
+tbl.wield_anim = "to_staff"
+tbl.state_machine = "units/beings/player/first_person_base/state_machines/ranged/staff"
+tbl.crosshair_style = "arrows"
+tbl.buff_type = "RANGED"
+tbl.weapon_type = "FIRE_STAFF"
+tbl.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1
 	},
@@ -394,7 +403,7 @@ var_0_0.buffs = {
 		external_optional_multiplier = 1
 	}
 }
-var_0_0.weapon_diagram = {
+tbl.weapon_diagram = {
 	light_attack = {
 		[DamageTypes.ARMOR_PIERCING] = 2,
 		[DamageTypes.CLEAVE] = 1,
@@ -410,12 +419,12 @@ var_0_0.weapon_diagram = {
 		[DamageTypes.DAMAGE] = 2
 	}
 }
-var_0_0.tooltip_keywords = {
+tbl.tooltip_keywords = {
 	"weapon_keyword_sniper",
 	"weapon_keyword_crowd_control",
 	"weapon_keyword_damage_over_time"
 }
-var_0_0.tooltip_compare = {
+tbl.tooltip_compare = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -425,7 +434,7 @@ var_0_0.tooltip_compare = {
 		sub_action_name = "shoot_charged"
 	}
 }
-var_0_0.tooltip_detail = {
+tbl.tooltip_detail = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -435,18 +444,18 @@ var_0_0.tooltip_detail = {
 		sub_action_name = "shoot_charged"
 	}
 }
-var_0_0.wwise_dep_right_hand = {
+tbl.wwise_dep_right_hand = {
 	"wwise/staff"
 }
 
-local var_0_1 = table.clone(var_0_0)
+local clone = table.clone(tbl)
 
-var_0_1.actions.action_one.default.damage_profile = "beam_vs"
-var_0_1.actions.action_one.default.initial_damage_profile = "beam_initial_vs"
-var_0_1.actions.action_one.shoot_charged.damage_profile = "blast_vs"
-var_0_1.actions.action_two.charged_beam.damage_profile = "beam_shot_vs"
+clone.actions.action_one.default.damage_profile = "beam_vs"
+clone.actions.action_one.default.initial_damage_profile = "beam_initial_vs"
+clone.actions.action_one.shoot_charged.damage_profile = "blast_vs"
+clone.actions.action_two.charged_beam.damage_profile = "beam_shot_vs"
 
 return {
-	staff_blast_beam_template_1 = table.clone(var_0_0),
-	staff_blast_beam_template_1_vs = table.clone(var_0_1)
+	staff_blast_beam_template_1 = table.clone(tbl),
+	staff_blast_beam_template_1_vs = table.clone(clone)
 }

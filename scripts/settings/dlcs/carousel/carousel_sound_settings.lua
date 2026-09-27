@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/carousel/carousel_sound_settings.lua
 
-local var_0_0 = DLCSettings.carousel
+local carousel = DLCSettings.carousel
 
-var_0_0.dialogue_lookup = {
+carousel.dialogue_lookup = {
 	"dialogues/generated/lookup_vs_player_vo_pactsworn",
 	"dialogues/generated/lookup_vs_player_vo_heroes",
 	"dialogues/generated/lookup_vs_mission_giver_pactsworn",
@@ -15,7 +15,7 @@ var_0_0.dialogue_lookup = {
 	"dialogues/generated/lookup_vs_level_forest_ambush_pvp",
 	"dialogues/generated/lookup_vs_level_dwarf_exterior_pvp"
 }
-var_0_0.auto_load_files_mechanism = {
+carousel.auto_load_files_mechanism = {
 	versus = {
 		"dialogues/generated/vs_player_vo_pactsworn",
 		"dialogues/generated/vs_player_vo_heroes",
@@ -23,7 +23,7 @@ var_0_0.auto_load_files_mechanism = {
 		"dialogues/generated/vs_mission_giver_heroes"
 	}
 }
-var_0_0.dialogue_settings = {
+carousel.dialogue_settings = {
 	carousel_hub = {
 		"dialogues/generated/hub_conversations_carousel"
 	},
@@ -51,7 +51,7 @@ var_0_0.dialogue_settings = {
 		"dialogues/generated/vs_level_dwarf_exterior_pvp"
 	}
 }
-var_0_0.network_sound_events = {
+carousel.network_sound_events = {
 	"menu_wind_countdown_warning",
 	"Play_hud_versus_objective_start",
 	"Play_versus_hud_round_end_heroes_fail",
@@ -66,10 +66,10 @@ var_0_0.network_sound_events = {
 	"Play_vs_rat_ogre_jump_charge_vce_3p",
 	"Stop_vs_rat_ogre_jump_charge_vce_3p"
 }
-var_0_0.blocked_auto_load_files = {
+carousel.blocked_auto_load_files = {
 	carousel_hub = true
 }
-var_0_0.versus_character_selection_clock_tick = {
+carousel.versus_character_selection_clock_tick = {
 	"Play_menu_versus_character_selection_clock_tick_10",
 	"Play_menu_versus_character_selection_clock_tick_09",
 	"Play_menu_versus_character_selection_clock_tick_08",
@@ -81,7 +81,7 @@ var_0_0.versus_character_selection_clock_tick = {
 	"Play_menu_versus_character_selection_clock_tick_02",
 	"Play_menu_versus_character_selection_clock_tick_01"
 }
-var_0_0.versus_round_start_safe_zone_countdown_tick = {
+carousel.versus_round_start_safe_zone_countdown_tick = {
 	"Play_versus_round_start_safe_zone_countdown_tick_11",
 	"Play_versus_round_start_safe_zone_countdown_tick_10",
 	"Play_versus_round_start_safe_zone_countdown_tick_09",
@@ -94,7 +94,7 @@ var_0_0.versus_round_start_safe_zone_countdown_tick = {
 	"Play_versus_round_start_safe_zone_countdown_tick_02",
 	"Play_versus_round_start_safe_zone_countdown_tick_01"
 }
-var_0_0.versus_close_to_win_score_ticks = {
+carousel.versus_close_to_win_score_ticks = {
 	"Play_hud_versus_score_0_final_tick",
 	"Play_hud_versus_score_1_ticks_to_win",
 	"Play_hud_versus_score_2_ticks_to_win",
@@ -102,7 +102,7 @@ var_0_0.versus_close_to_win_score_ticks = {
 	"Play_hud_versus_score_4_ticks_to_win",
 	"Play_hud_versus_score_5_ticks_to_win"
 }
-var_0_0.music_overrides = {
+carousel.music_overrides = {
 	carousel_hub = "Play_loading_screen_music_versus_small",
 	versus_between_rounds = "Play_loading_screen_music_versus_small"
 }

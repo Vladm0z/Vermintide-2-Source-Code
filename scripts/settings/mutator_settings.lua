@@ -2,7 +2,7 @@
 
 require("scripts/helpers/mutator_utils")
 
-local var_0_0 = {
+local tbl = {
 	"no_ammo",
 	"no_pickups",
 	"player_dot",
@@ -37,15 +37,15 @@ local var_0_0 = {
 	"twitch_darkness"
 }
 
-DLCUtils.append("mutators", var_0_0)
+DLCUtils.append("mutators", tbl)
 
-local var_0_1 = {}
+local tbl_2 = {}
 
-for iter_0_0 = 1, #var_0_0 do
-	local var_0_2 = var_0_0[iter_0_0]
-	local var_0_3 = string.format("scripts/settings/mutators/mutator_%s", var_0_2)
+for i = 1, #tbl do
+	local var_0_2 = tbl[i]
+	local format = string.format("scripts/settings/mutators/mutator_%s", var_0_2)
 
-	var_0_1[var_0_2] = local_require(var_0_3), fassert(var_0_1[var_0_2] == nil, "Error! Trying to add mutator settings for %s twice!", var_0_2)
+	tbl_2[var_0_2] = local_require(format), fassert(tbl_2[var_0_2] == nil, "Error! Trying to add mutator settings for %s twice!", var_0_2)
 end
 
-return var_0_1
+return tbl_2

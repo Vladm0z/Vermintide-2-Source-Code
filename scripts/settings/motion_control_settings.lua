@@ -1,5 +1,7 @@
 -- chunkname: @scripts/settings/motion_control_settings.lua
 
+local MotionControlSettings = MotionControlSettings
+
 MotionControlSettings = MotionControlSettings or {
 	motion_disable_right_stick_vertical = true,
 	motion_invert_yaw = false,
@@ -18,3 +20,4 @@ MotionControlSettings = MotionControlSettings or {
 	sensitivity_yaw_min = -5,
 	sensitivity_pitch_min = -5
 }
+MotionControlSettings = MotionControlSettings

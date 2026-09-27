@@ -1,8 +1,8 @@
 -- chunkname: @scripts/ui/views/cutscene_overlay_ui_definitions.lua
 
-local var_0_0 = 1920
-local var_0_1 = 1080
-local var_0_2 = {
+local num = 1920
+local num_2 = 1080
+local tbl = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -11,8 +11,8 @@ local var_0_2 = {
 			200
 		},
 		size = {
-			var_0_0,
-			var_0_1
+			num,
+			num_2
 		}
 	},
 	text_area = {
@@ -25,8 +25,8 @@ local var_0_2 = {
 			0
 		},
 		size = {
-			var_0_0 - 100,
-			var_0_1 - 100
+			num - 100,
+			num_2 - 100
 		}
 	},
 	image_area = {
@@ -44,7 +44,7 @@ local var_0_2 = {
 		}
 	}
 }
-local var_0_3 = {
+local tbl_2 = {
 	word_wrap = false,
 	font_size = 52,
 	localize = false,
@@ -60,8 +60,8 @@ local var_0_3 = {
 		1
 	}
 }
-local var_0_4 = {
-	text = UIWidgets.create_simple_text("", "text_area", nil, nil, var_0_3),
+local tbl_3 = {
+	text = UIWidgets.create_simple_text("", "text_area", nil, nil, tbl_2),
 	image = {
 		scenegraph_id = "image_area",
 		element = {
@@ -106,6 +106,6 @@ local var_0_4 = {
 }
 
 return {
-	scenegraph_definition = var_0_2,
-	widget_definitions = var_0_4
+	scenegraph_definition = tbl,
+	widget_definitions = tbl_3
 }

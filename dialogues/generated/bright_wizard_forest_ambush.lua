@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/bright_wizard_forest_ambush.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pbw_forest_ambush_intro",

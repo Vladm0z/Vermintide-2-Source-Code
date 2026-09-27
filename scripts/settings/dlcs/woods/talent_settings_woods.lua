@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/dlcs/woods/talent_settings_woods.lua
 
-local var_0_0 = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
-local var_0_1 = {
+local scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
+local tbl = {
 	thorn_sister_ability_cooldown_on_hit = {
 		bonus = 0.3
 	},
@@ -84,7 +84,7 @@ local var_0_1 = {
 		radius = 3
 	}
 }
-local var_0_2 = {
+local tbl_2 = {
 	thorn_sister_ability_cooldown_on_hit = {
 		buffs = {
 			{
@@ -109,7 +109,7 @@ local var_0_2 = {
 				update_func = "activate_buff_on_distance",
 				remove_buff_func = "remove_aura_buff",
 				perks = {
-					var_0_0.overcharge_no_slow
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.overcharge_no_slow
 				}
 			}
 		}
@@ -147,7 +147,7 @@ local var_0_2 = {
 		buffs = {
 			{
 				perks = {
-					var_0_0.missing_health_damage
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.missing_health_damage
 				}
 			}
 		}
@@ -248,7 +248,7 @@ local var_0_2 = {
 			{
 				icon = "kerillian_thornsister_crit_on_any_ability",
 				perks = {
-					var_0_0.guaranteed_crit
+					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.guaranteed_crit
 				},
 				max_stacks = math.huge
 			}
@@ -342,13 +342,13 @@ local var_0_2 = {
 				update_start_delay = 1,
 				time_between_dot_damages = 1,
 				max_stacks = 1,
-				multiplier = var_0_1.kerillian_thorn_sister_debuff_wall_buff.multiplier,
-				duration = var_0_1.kerillian_thorn_sister_debuff_wall_buff.duration
+				multiplier = tbl.kerillian_thorn_sister_debuff_wall_buff.multiplier,
+				duration = tbl.kerillian_thorn_sister_debuff_wall_buff.duration
 			}
 		}
 	}
 }
-local var_0_3 = {
+local tbl_3 = {
 	{
 		{
 			"kerillian_thorn_sister_thp_ninjafencer",
@@ -382,7 +382,7 @@ local var_0_3 = {
 		}
 	}
 }
-local var_0_4 = {
+local tbl_4 = {
 	{
 		description = "regrowth_desc_4",
 		name = "kerillian_thorn_sister_regrowth",
@@ -481,11 +481,11 @@ local var_0_4 = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.kerillian_thorn_sister_attack_speed_on_full.health_threshold
+				value = tbl.kerillian_thorn_sister_attack_speed_on_full.health_threshold
 			},
 			{
 				value_type = "percent",
-				value = var_0_1.kerillian_thorn_sister_attack_speed_on_full_buff.multiplier
+				value = tbl.kerillian_thorn_sister_attack_speed_on_full_buff.multiplier
 			}
 		},
 		buffs = {
@@ -509,7 +509,7 @@ local var_0_4 = {
 		icon = "kerillian_thornsister_crit_on_any_ability",
 		description_values = {
 			{
-				value = var_0_1.kerillian_thorn_sister_crit_on_any_ability.amount_to_add
+				value = tbl.kerillian_thorn_sister_crit_on_any_ability.amount_to_add
 			}
 		},
 		buffs = {
@@ -581,7 +581,7 @@ local var_0_4 = {
 		icon = "kerillian_thornsister_double_passive",
 		description_values = {
 			{
-				value = var_0_1.kerillian_double_passive.visualizer_max_stacks
+				value = tbl.kerillian_double_passive.visualizer_max_stacks
 			}
 		},
 		buffs = {}
@@ -595,10 +595,10 @@ local var_0_4 = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.kerillian_thorn_sister_passive_set_back.reduction_amount_vizualiser
+				value = tbl.kerillian_thorn_sister_passive_set_back.reduction_amount_vizualiser
 			},
 			{
-				value = var_0_1.kerillian_thorn_sister_passive_set_back.set_back
+				value = tbl.kerillian_thorn_sister_passive_set_back.set_back
 			}
 		},
 		buffs = {
@@ -613,14 +613,14 @@ local var_0_4 = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.kerillian_thorn_sister_passive_team_buff.power_multiplier_visualizer
+				value = tbl.kerillian_thorn_sister_passive_team_buff.power_multiplier_visualizer
 			},
 			{
 				value_type = "percent",
-				value = var_0_1.kerillian_thorn_sister_passive_team_buff.crit_multiplier_visualizer
+				value = tbl.kerillian_thorn_sister_passive_team_buff.crit_multiplier_visualizer
 			},
 			{
-				value = var_0_1.kerillian_thorn_sister_passive_team_buff.duration_visualizer
+				value = tbl.kerillian_thorn_sister_passive_team_buff.duration_visualizer
 			}
 		},
 		buffs = {
@@ -646,7 +646,7 @@ local var_0_4 = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.kerillian_thorn_sister_big_push_buff_2.multiplier
+				value = tbl.kerillian_thorn_sister_big_push_buff_2.multiplier
 			}
 		},
 		buffs = {
@@ -660,7 +660,7 @@ local var_0_4 = {
 		icon = "kerillian_thornsister_blackvenom",
 		description_values = {
 			{
-				value = var_0_1.kerillian_thorn_sister_double_poison.max_stacks
+				value = tbl.kerillian_thorn_sister_double_poison.max_stacks
 			}
 		},
 		buffs = {}
@@ -672,7 +672,7 @@ local var_0_4 = {
 		icon = "kerillian_thornsister_healing_wall",
 		description_values = {
 			{
-				value = var_0_1.kerillian_thorn_sister_tanky_wall.visualizer_extra_duration
+				value = tbl.kerillian_thorn_sister_tanky_wall.visualizer_extra_duration
 			}
 		},
 		buffs = {}
@@ -699,10 +699,10 @@ local var_0_4 = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = var_0_1.kerillian_thorn_sister_debuff_wall_buff.multiplier
+				value = tbl.kerillian_thorn_sister_debuff_wall_buff.multiplier
 			},
 			{
-				value = var_0_1.kerillian_thorn_sister_debuff_wall_buff.duration
+				value = tbl.kerillian_thorn_sister_debuff_wall_buff.duration
 			}
 		},
 		buffs = {},
@@ -713,25 +713,28 @@ local var_0_4 = {
 		}
 	}
 }
-local var_0_5 = "wood_elf"
+local str = "wood_elf"
 
-table.merge(TalentBuffTemplates[var_0_5], var_0_2)
-table.append(TalentTrees[var_0_5], var_0_3)
-table.append(Talents[var_0_5], var_0_4)
+table.merge(TalentBuffTemplates[str], tbl_2)
+table.append(TalentTrees[str], tbl_3)
+table.append(Talents[str], tbl_4)
+
+local WeaveLoadoutSettings = WeaveLoadoutSettings
 
 WeaveLoadoutSettings = WeaveLoadoutSettings or {}
+WeaveLoadoutSettings = WeaveLoadoutSettings
 WeaveLoadoutSettings.we_thornsister = {
-	talent_tree = var_0_3[1],
+	talent_tree = tbl_3[1],
 	properties = {},
 	traits = {}
 }
 
-for iter_0_0, iter_0_1 in pairs(var_0_2) do
-	local var_0_6 = iter_0_1.buffs
+for k, v in pairs(tbl_2) do
+	local buffs = v.buffs
 
-	fassert(#var_0_6 == 1, "talent buff has more than one sub buff, add multiple buffs from the talent instead")
+	fassert(#buffs == 1, "talent buff has more than one sub buff, add multiple buffs from the talent instead")
 
-	var_0_6[1].name = iter_0_0
+	buffs[1].name = k
 end
 
-BuffUtils.apply_buff_tweak_data(var_0_2, var_0_1)
+BuffUtils.apply_buff_tweak_data(tbl_2, tbl)

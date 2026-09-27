@@ -2,7 +2,7 @@
 
 local_require("scripts/ui/ui_widgets")
 
-local var_0_0 = {
+local tbl = {
 	root_1 = {
 		is_root = true,
 		size = {
@@ -252,7 +252,7 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	{
 		description = "switch character here",
 		name = "character",
@@ -274,7 +274,8 @@ local var_0_1 = {
 			0,
 			-0.1
 		},
-		contains_new_content = function()
+		contains_new_content = function ()
+			-- function 1
 			return false
 		end
 	},
@@ -299,12 +300,13 @@ local var_0_1 = {
 			0,
 			-0.1
 		},
-		contains_new_content = function()
+		contains_new_content = function ()
+			-- function 2
 			return false
 		end
 	}
 }
-local var_0_2 = {
+local tbl_3 = {
 	vertical_alignment = "center",
 	font_size = 36,
 	localize = false,
@@ -318,7 +320,7 @@ local var_0_2 = {
 		2
 	}
 }
-local var_0_3 = {
+local tbl_4 = {
 	vertical_alignment = "bottom",
 	font_size = 36,
 	localize = false,
@@ -332,7 +334,7 @@ local var_0_3 = {
 		2
 	}
 }
-local var_0_4 = {
+local tbl_5 = {
 	vertical_alignment = "bottom",
 	font_size = 20,
 	localize = false,
@@ -346,7 +348,7 @@ local var_0_4 = {
 		2
 	}
 }
-local var_0_5 = {
+local tbl_6 = {
 	vertical_alignment = "top",
 	font_size = 20,
 	localize = false,
@@ -360,14 +362,14 @@ local var_0_5 = {
 		2
 	}
 }
-local var_0_6 = {
+local tbl_7 = {
 	"unit_frame_portrait_dead",
 	"unit_frame_portrait_dead",
 	"unit_frame_portrait_dead",
 	"unit_frame_portrait_dead"
 }
-local var_0_7 = true
-local var_0_8 = {
+local flag = true
+local tbl_8 = {
 	viewport = {
 		scenegraph_id = "dead_space_filler",
 		element = {
@@ -406,16 +408,16 @@ local var_0_8 = {
 		},
 		content = {}
 	},
-	title_text = UIWidgets.create_simple_text("n/a", "title_text", nil, nil, var_0_2),
-	title_description_text = UIWidgets.create_simple_text("n/a", "title_description_text", nil, nil, var_0_5),
-	hero_name_text = UIWidgets.create_simple_text("n/a", "hero_name_text", nil, nil, var_0_3),
-	hero_level_text = UIWidgets.create_simple_text("n/a", "hero_level_text", nil, nil, var_0_4),
-	hero_prestige_level_text = UIWidgets.create_simple_text("n/a", "hero_prestige_level_text", nil, nil, var_0_4),
+	title_text = UIWidgets.create_simple_text("n/a", "title_text", nil, nil, tbl_3),
+	title_description_text = UIWidgets.create_simple_text("n/a", "title_description_text", nil, nil, tbl_6),
+	hero_name_text = UIWidgets.create_simple_text("n/a", "hero_name_text", nil, nil, tbl_4),
+	hero_level_text = UIWidgets.create_simple_text("n/a", "hero_level_text", nil, nil, tbl_5),
+	hero_prestige_level_text = UIWidgets.create_simple_text("n/a", "hero_prestige_level_text", nil, nil, tbl_5),
 	background = UIWidgets.create_simple_texture("large_frame_01", "dead_space_filler"),
-	exit_button = UIWidgets.create_default_button("exit_button", var_0_0.exit_button.size, nil, nil, Localize("interaction_action_close"), nil, nil, nil, nil, var_0_7)
+	exit_button = UIWidgets.create_default_button("exit_button", tbl.exit_button.size, nil, nil, Localize("interaction_action_close"), nil, nil, nil, nil, flag)
 }
-local var_0_9 = {}
-local var_0_10 = {
+local tbl_9 = {}
+local tbl_10 = {
 	witch_hunter = {
 		{
 			unit_name = "units/beings/player/witch_hunter/headpiece/wh_hat_03",
@@ -471,7 +473,7 @@ local var_0_10 = {
 		}
 	}
 }
-local var_0_11 = {
+local tbl_11 = {
 	witch_hunter = {
 		hovered = "witch_hunter_hovered",
 		available = "witch_hunter_available",
@@ -515,10 +517,10 @@ local var_0_11 = {
 }
 
 return {
-	scenegraph_definition = var_0_0,
-	widgets_definitions = var_0_8,
-	settings_by_screen = var_0_1,
-	attachments = var_0_10,
-	flow_events = var_0_11,
-	animations = var_0_9
+	scenegraph_definition = tbl,
+	widgets_definitions = tbl_8,
+	settings_by_screen = tbl_2,
+	attachments = tbl_10,
+	flow_events = tbl_11,
+	animations = tbl_9
 }

@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/hero_conversations_dlc_cowbell_map.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		response = "nfl_shadow_curse_loading_screen",
 		name = "nfl_shadow_curse_loading_screen",

@@ -1,176 +1,180 @@
 -- chunkname: @scripts/ui/diorama/hero_diorama_ui_definitions.lua
 
-local var_0_0 = 1920
-local var_0_1 = 1080
-local var_0_2 = {
-	screen = {
-		position = {
-			0,
-			0,
-			UILayer.hud
-		},
-		size = {
-			var_0_0,
-			var_0_1
-		},
-		scale = not IS_WINDOWS and "hud_fit" or "fit"
+local num = 1920
+local num_2 = 1080
+local tbl = {}
+local tbl_2 = {
+	position = {
+		0,
+		0,
+		UILayer.hud
 	},
-	background = {
-		vertical_alignment = "center",
-		parent = "screen",
-		horizontal_alignment = "center",
-		size = {
-			500,
-			500
-		},
-		position = {
-			0,
-			0,
-			0
-		}
-	},
-	viewport = {
-		vertical_alignment = "top",
-		parent = "background",
-		horizontal_alignment = "center",
-		size = {
-			500,
-			500
-		},
-		position = {
-			0,
-			0,
-			0
-		}
-	},
-	portrait_pivot = {
-		vertical_alignment = "bottom",
-		parent = "background",
-		horizontal_alignment = "left",
-		size = {
-			0,
-			0
-		},
-		position = {
-			63,
-			69,
-			10
-		}
-	},
-	corner_top_left = {
-		vertical_alignment = "top",
-		parent = "background",
-		horizontal_alignment = "left",
-		size = {
-			110,
-			110
-		},
-		position = {
-			0,
-			0,
-			10
-		}
-	},
-	corner_top_right = {
-		vertical_alignment = "top",
-		parent = "background",
-		horizontal_alignment = "right",
-		size = {
-			110,
-			110
-		},
-		position = {
-			0,
-			0,
-			10
-		}
-	},
-	corner_bottom_left = {
-		vertical_alignment = "bottom",
-		parent = "bottom_panel",
-		horizontal_alignment = "left",
-		size = {
-			110,
-			110
-		},
-		position = {
-			0,
-			100,
-			1
-		}
-	},
-	corner_bottom_right = {
-		vertical_alignment = "bottom",
-		parent = "bottom_panel",
-		horizontal_alignment = "right",
-		size = {
-			110,
-			110
-		},
-		position = {
-			0,
-			100,
-			1
-		}
-	},
-	bottom_panel = {
-		vertical_alignment = "bottom",
-		parent = "background",
-		horizontal_alignment = "right",
-		size = {
-			500,
-			100
-		},
-		position = {
-			0,
-			5,
-			1
-		}
-	},
-	bottom_panel_edge = {
-		vertical_alignment = "top",
-		parent = "bottom_panel",
-		horizontal_alignment = "center",
-		size = {
-			500,
-			5
-		},
-		position = {
-			0,
-			0,
-			1
-		}
-	},
-	hero_text_box = {
-		vertical_alignment = "top",
-		parent = "bottom_panel",
-		horizontal_alignment = "center",
-		size = {
-			500,
-			100
-		},
-		position = {
-			20,
-			5,
-			10
-		}
-	},
-	player_text_box = {
-		vertical_alignment = "top",
-		parent = "background",
-		horizontal_alignment = "center",
-		size = {
-			500,
-			100
-		},
-		position = {
-			0,
-			-5,
-			10
-		}
+	size = {
+		num,
+		num_2
 	}
 }
-local var_0_3 = {
+local flag
+
+flag = IS_WINDOWS or not "hud_fit" or "fit"
+tbl_2.scale = flag
+tbl.screen = tbl_2
+tbl.background = {
+	vertical_alignment = "center",
+	parent = "screen",
+	horizontal_alignment = "center",
+	size = {
+		500,
+		500
+	},
+	position = {
+		0,
+		0,
+		0
+	}
+}
+tbl.viewport = {
+	vertical_alignment = "top",
+	parent = "background",
+	horizontal_alignment = "center",
+	size = {
+		500,
+		500
+	},
+	position = {
+		0,
+		0,
+		0
+	}
+}
+tbl.portrait_pivot = {
+	vertical_alignment = "bottom",
+	parent = "background",
+	horizontal_alignment = "left",
+	size = {
+		0,
+		0
+	},
+	position = {
+		63,
+		69,
+		10
+	}
+}
+tbl.corner_top_left = {
+	vertical_alignment = "top",
+	parent = "background",
+	horizontal_alignment = "left",
+	size = {
+		110,
+		110
+	},
+	position = {
+		0,
+		0,
+		10
+	}
+}
+tbl.corner_top_right = {
+	vertical_alignment = "top",
+	parent = "background",
+	horizontal_alignment = "right",
+	size = {
+		110,
+		110
+	},
+	position = {
+		0,
+		0,
+		10
+	}
+}
+tbl.corner_bottom_left = {
+	vertical_alignment = "bottom",
+	parent = "bottom_panel",
+	horizontal_alignment = "left",
+	size = {
+		110,
+		110
+	},
+	position = {
+		0,
+		100,
+		1
+	}
+}
+tbl.corner_bottom_right = {
+	vertical_alignment = "bottom",
+	parent = "bottom_panel",
+	horizontal_alignment = "right",
+	size = {
+		110,
+		110
+	},
+	position = {
+		0,
+		100,
+		1
+	}
+}
+tbl.bottom_panel = {
+	vertical_alignment = "bottom",
+	parent = "background",
+	horizontal_alignment = "right",
+	size = {
+		500,
+		100
+	},
+	position = {
+		0,
+		5,
+		1
+	}
+}
+tbl.bottom_panel_edge = {
+	vertical_alignment = "top",
+	parent = "bottom_panel",
+	horizontal_alignment = "center",
+	size = {
+		500,
+		5
+	},
+	position = {
+		0,
+		0,
+		1
+	}
+}
+tbl.hero_text_box = {
+	vertical_alignment = "top",
+	parent = "bottom_panel",
+	horizontal_alignment = "center",
+	size = {
+		500,
+		100
+	},
+	position = {
+		20,
+		5,
+		10
+	}
+}
+tbl.player_text_box = {
+	vertical_alignment = "top",
+	parent = "background",
+	horizontal_alignment = "center",
+	size = {
+		500,
+		100
+	},
+	position = {
+		0,
+		-5,
+		10
+	}
+}
+
+local tbl_3 = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -187,7 +191,7 @@ local var_0_3 = {
 		2
 	}
 }
-local var_0_4 = {
+local tbl_4 = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -210,21 +214,22 @@ local var_0_4 = {
 	}
 }
 
-local function var_0_5(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
 	arg_1_2 = arg_1_2 or "menu_frame_bg_01"
 
-	local var_1_0 = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_1_2)
-	local var_1_1 = {
+	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_1_2)
+	local tbl = {
 		element = {}
 	}
-	local var_1_2 = {
+	local tbl_2 = {
 		{
 			style_id = "background",
 			pass_type = "texture_uv",
 			content_id = "background"
 		}
 	}
-	local var_1_3 = {
+	local tbl_3 = {
 		background = {
 			uvs = {
 				{
@@ -232,14 +237,14 @@ local function var_0_5(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 					1
 				},
 				{
-					0.5 - math.min(arg_1_1[1] / var_1_0.size[1], 1),
-					1 - math.min(arg_1_1[2] / var_1_0.size[2], 1)
+					0.5 - math.min(arg_1_1[1] / get_atlas_settings_by_texture_name.size[1], 1),
+					1 - math.min(arg_1_1[2] / get_atlas_settings_by_texture_name.size[2], 1)
 				}
 			},
 			texture_id = arg_1_2
 		}
 	}
-	local var_1_4 = {
+	local tbl_4 = {
 		background = {
 			color = arg_1_3 or {
 				255,
@@ -255,20 +260,20 @@ local function var_0_5(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 		}
 	}
 
-	var_1_1.element.passes = var_1_2
-	var_1_1.content = var_1_3
-	var_1_1.style = var_1_4
-	var_1_1.offset = {
+	tbl.element.passes = tbl_2
+	tbl.content = tbl_3
+	tbl.style = tbl_4
+	tbl.offset = {
 		0,
 		0,
 		0
 	}
-	var_1_1.scenegraph_id = arg_1_0
+	tbl.scenegraph_id = arg_1_0
 
-	return var_1_1
+	return tbl
 end
 
-local var_0_6 = {
+local tbl_5 = {
 	overlay = UIWidgets.create_simple_rect("viewport", {
 		255,
 		0,
@@ -307,8 +312,8 @@ local var_0_6 = {
 			0
 		}
 	}, "corner_bottom_right"),
-	frame = UIWidgets.create_frame("background", var_0_2.background.size, "menu_frame_12", 11),
-	viewport_frame = UIWidgets.create_frame("viewport", var_0_2.background.size, "frame_inner_glow_01", 1, {
+	frame = UIWidgets.create_frame("background", tbl.background.size, "menu_frame_12", 11),
+	viewport_frame = UIWidgets.create_frame("viewport", tbl.background.size, "frame_inner_glow_01", 1, {
 		255,
 		0,
 		0,
@@ -318,14 +323,14 @@ local var_0_6 = {
 		5
 	}),
 	bottom_panel_edge = UIWidgets.create_simple_texture("menu_frame_09_divider", "bottom_panel_edge"),
-	career_name = UIWidgets.create_simple_text("", "hero_text_box", nil, nil, var_0_3),
-	player_name = UIWidgets.create_simple_text("", "hero_text_box", nil, nil, var_0_4)
+	career_name = UIWidgets.create_simple_text("", "hero_text_box", nil, nil, tbl_3),
+	player_name = UIWidgets.create_simple_text("", "hero_text_box", nil, nil, tbl_4)
 }
-local var_0_7 = {}
+local tbl_6 = {}
 
 return {
-	animation_definitions = var_0_7,
-	scenegraph_definition = var_0_2,
-	widget_definitions = var_0_6,
-	create_panel_background = var_0_5
+	animation_definitions = tbl_6,
+	scenegraph_definition = tbl,
+	widget_definitions = tbl_5,
+	create_panel_background = fn
 }

@@ -1,9 +1,9 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/longbows.lua
 
-local var_0_0 = "arrow_impact"
-local var_0_1 = 4
-local var_0_2 = 2
-local var_0_3 = {
+local str = "arrow_impact"
+local num = 4
+local num_2 = 2
+local tbl = {
 	actions = {
 		action_one = {
 			default = {
@@ -57,12 +57,13 @@ local var_0_3 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_1_0, arg_1_1)
+				enter_function = function (arg_1_0, arg_1_1)
+					-- function 1
 					arg_1_1:clear_input_buffer()
 
 					return arg_1_1:reset_release_input()
 				end,
-				hit_effect = var_0_0,
+				hit_effect = str,
 				projectile_info = Projectiles.carbine_arrow,
 				impact_data = {
 					wall_nail = true,
@@ -72,8 +73,8 @@ local var_0_3 = {
 					link = true,
 					depth_offset = -0.6
 				},
-				alert_sound_range_fire = var_0_1,
-				alert_sound_range_hit = var_0_2,
+				alert_sound_range_fire = num,
+				alert_sound_range_hit = num_2,
 				recoil_settings = {
 					horizontal_climb = -0.5,
 					restore_duration = 0.2,
@@ -100,7 +101,8 @@ local var_0_3 = {
 				hold_input = "action_two_hold",
 				anim_event = "attack_shoot",
 				total_time = 0.6,
-				anim_end_event_condition_func = function(arg_2_0, arg_2_1)
+				anim_end_event_condition_func = function (arg_2_0, arg_2_1)
+					-- function 2
 					return arg_2_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {
@@ -131,12 +133,13 @@ local var_0_3 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_3_0, arg_3_1)
+				enter_function = function (arg_3_0, arg_3_1)
+					-- function 3
 					arg_3_1:clear_input_buffer()
 
 					return arg_3_1:reset_release_input()
 				end,
-				hit_effect = var_0_0,
+				hit_effect = str,
 				projectile_info = Projectiles.sniper_arrow,
 				impact_data = {
 					depth = 0.15,
@@ -145,8 +148,8 @@ local var_0_3 = {
 					link = true,
 					depth_offset = -0.6
 				},
-				alert_sound_range_fire = var_0_1,
-				alert_sound_range_hit = var_0_2,
+				alert_sound_range_fire = num,
+				alert_sound_range_hit = num_2,
 				recoil_settings = {
 					horizontal_climb = -0.5,
 					restore_duration = 0.2,
@@ -172,7 +175,8 @@ local var_0_3 = {
 				hold_input = "action_two_hold",
 				anim_event = "attack_shoot",
 				total_time = 0.6,
-				anim_end_event_condition_func = function(arg_4_0, arg_4_1)
+				anim_end_event_condition_func = function (arg_4_0, arg_4_1)
+					-- function 4
 					return arg_4_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {
@@ -203,12 +207,13 @@ local var_0_3 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_5_0, arg_5_1)
+				enter_function = function (arg_5_0, arg_5_1)
+					-- function 5
 					arg_5_1:clear_input_buffer()
 
 					return arg_5_1:reset_release_input()
 				end,
-				hit_effect = var_0_0,
+				hit_effect = str,
 				projectile_info = Projectiles.sniper_arrow,
 				impact_data = {
 					depth = 0.15,
@@ -217,9 +222,10 @@ local var_0_3 = {
 					link = true,
 					depth_offset = -0.6
 				},
-				alert_sound_range_fire = var_0_1,
-				alert_sound_range_hit = var_0_2,
-				chain_condition_func = function(arg_6_0, arg_6_1)
+				alert_sound_range_fire = num,
+				alert_sound_range_hit = num_2,
+				chain_condition_func = function (arg_6_0, arg_6_1)
+					-- function 6
 					return ScriptUnit.extension(arg_6_0, "buff_system"):has_buff_type("we_timed_charged_shot")
 				end,
 				recoil_settings = {
@@ -254,7 +260,8 @@ local var_0_3 = {
 				anim_event = "draw_bow",
 				allow_hold_toggle = true,
 				reload_when_out_of_ammo = true,
-				anim_end_event_condition_func = function(arg_7_0, arg_7_1)
+				anim_end_event_condition_func = function (arg_7_0, arg_7_1)
+					-- function 7
 					return arg_7_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -306,14 +313,17 @@ local var_0_3 = {
 					"zoom_in",
 					"increased_zoom_in"
 				},
-				zoom_condition_function = function()
+				zoom_condition_function = function ()
+					-- function 8
 					return true
 				end,
-				unzoom_condition_function = function(arg_9_0)
+				unzoom_condition_function = function (arg_9_0)
+					-- function 9
 					return arg_9_0 ~= "new_interupting_action"
 				end,
-				condition_func = function(arg_10_0, arg_10_1, arg_10_2)
-					if arg_10_2 and (arg_10_2:total_remaining_ammo() <= 0 or arg_10_2:is_reloading()) then
+				condition_func = function (arg_10_0, arg_10_1, arg_10_2)
+					-- function 10
+					if not arg_10_2 and arg_10_2:total_remaining_ammo() <= 0 and not arg_10_2:is_reloading() then
 						return false
 					end
 
@@ -348,27 +358,27 @@ local var_0_3 = {
 		effective_against_charged = bit.bor(BreedCategory.Berserker, BreedCategory.Special, BreedCategory.Armored)
 	}
 }
-local var_0_4 = var_0_3.actions.action_one.default
+local default = tbl.actions.action_one.default
 
-var_0_3.default_loaded_projectile_settings = {
+tbl.default_loaded_projectile_settings = {
 	drop_multiplier = 0.03,
-	speed = var_0_4.speed,
-	gravity = ProjectileGravitySettings[var_0_4.projectile_info.gravity_settings]
+	speed = default.speed,
+	gravity = ProjectileGravitySettings[default.projectile_info.gravity_settings]
 }
-var_0_3.default_spread_template = "longbow"
-var_0_3.left_hand_unit = "units/weapons/player/wpn_we_bow_01_t1/wpn_we_bow_01_t1"
-var_0_3.display_unit = "units/weapons/weapon_display/display_longbow"
-var_0_3.left_hand_attachment_node_linking = AttachmentNodeLinking.bow
-var_0_3.wield_anim = "to_longbow"
-var_0_3.wield_anim_no_ammo = "to_longbow_noammo"
-var_0_3.state_machine = "units/beings/player/first_person_base/state_machines/ranged/longbow"
-var_0_3.crosshair_style = "projectile"
-var_0_3.no_ammo_reload_event = "reload"
-var_0_3.buff_type = "RANGED"
-var_0_3.weapon_type = "LONGBOW"
-var_0_3.default_projectile_action = var_0_3.actions.action_one.default
-var_0_3.dodge_count = 3
-var_0_3.buffs = {
+tbl.default_spread_template = "longbow"
+tbl.left_hand_unit = "units/weapons/player/wpn_we_bow_01_t1/wpn_we_bow_01_t1"
+tbl.display_unit = "units/weapons/weapon_display/display_longbow"
+tbl.left_hand_attachment_node_linking = AttachmentNodeLinking.bow
+tbl.wield_anim = "to_longbow"
+tbl.wield_anim_no_ammo = "to_longbow_noammo"
+tbl.state_machine = "units/beings/player/first_person_base/state_machines/ranged/longbow"
+tbl.crosshair_style = "projectile"
+tbl.no_ammo_reload_event = "reload"
+tbl.buff_type = "RANGED"
+tbl.weapon_type = "LONGBOW"
+tbl.default_projectile_action = tbl.actions.action_one.default
+tbl.dodge_count = 3
+tbl.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1
 	},
@@ -376,10 +386,10 @@ var_0_3.buffs = {
 		external_optional_multiplier = 1
 	}
 }
-var_0_3.wwise_dep_left_hand = {
+tbl.wwise_dep_left_hand = {
 	"wwise/bow"
 }
-var_0_3.aim_assist_settings = {
+tbl.aim_assist_settings = {
 	max_range = 50,
 	no_aim_input_multiplier = 0,
 	always_auto_aim = true,
@@ -392,7 +402,7 @@ var_0_3.aim_assist_settings = {
 		skaven_slave = 1
 	}
 }
-var_0_3.weapon_diagram = {
+tbl.weapon_diagram = {
 	light_attack = {
 		[DamageTypes.ARMOR_PIERCING] = 3,
 		[DamageTypes.CLEAVE] = 3,
@@ -408,12 +418,12 @@ var_0_3.weapon_diagram = {
 		[DamageTypes.DAMAGE] = 6
 	}
 }
-var_0_3.tooltip_keywords = {
+tbl.tooltip_keywords = {
 	"weapon_keyword_armour_piercing",
 	"weapon_keyword_sniper",
 	"weapon_keyword_versatile"
 }
-var_0_3.tooltip_compare = {
+tbl.tooltip_compare = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -423,7 +433,7 @@ var_0_3.tooltip_compare = {
 		sub_action_name = "shoot_charged"
 	}
 }
-var_0_3.tooltip_detail = {
+tbl.tooltip_detail = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -444,5 +454,5 @@ var_0_3.tooltip_detail = {
 }
 
 return {
-	longbow_template_1 = table.clone(var_0_3)
+	longbow_template_1 = table.clone(tbl)
 }

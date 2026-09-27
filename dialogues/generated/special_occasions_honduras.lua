@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/special_occasions_honduras.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		response = "pbw_all_stairs_conversation_b",
 		name = "pbw_all_stairs_conversation_b",

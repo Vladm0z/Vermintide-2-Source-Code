@@ -1,101 +1,106 @@
 -- chunkname: @scripts/ui/hud_ui/kill_confirmation_ui_definitions.lua
 
-local var_0_0 = {
+local tbl = {
 	1920,
 	1080
 }
-local var_0_1 = {
+local tbl_2 = {
 	96,
 	96
 }
-local var_0_2 = {
+local tbl_3 = {
 	0,
 	-100,
 	0
 }
-local var_0_3 = 24
-local var_0_4 = {
-	var_0_0[1] / 2,
-	var_0_3 + 20
+local num = 24
+local tbl_4 = {
+	tbl[1] / 2,
+	num + 20
 }
-local var_0_5 = {
+local tbl_5 = {
 	0,
 	50,
 	0
 }
-local var_0_6 = {
-	0.703125 * var_0_1[1],
-	0.703125 * var_0_1[2]
+local tbl_6 = {
+	0.703125 * tbl_2[1],
+	0.703125 * tbl_2[2]
 }
-local var_0_7 = {
+local tbl_7 = {
 	0,
-	0.1015625 * var_0_1[1],
+	0.1015625 * tbl_2[1],
 	0
 }
-local var_0_8 = {
+local tbl_8 = {
 	root = {
 		is_root = true,
-		size = var_0_0,
+		size = tbl,
 		position = {
 			0,
 			0,
 			UILayer.hud
-		}
-	},
-	screen = {
-		size = var_0_0,
-		position = {
-			0,
-			0,
-			UILayer.hud
-		},
-		scale = IS_WINDOWS and "fit" or "hud_fit"
-	},
-	pivot = {
-		vertical_alignment = "top",
-		parent = "screen",
-		horizontal_alignment = "center",
-		size = {
-			var_0_0[1],
-			var_0_1[1]
-		},
-		position = {
-			0,
-			-86,
-			UILayer.hud
-		}
-	},
-	badge_placement = {
-		vertical_alignment = "center",
-		parent = "pivot",
-		horizontal_alignment = "center",
-		size = var_0_1,
-		position = var_0_2
-	},
-	text_background_placement = {
-		vertical_alignment = "center",
-		parent = "pivot",
-		horizontal_alignment = "center",
-		size = var_0_4,
-		position = {
-			var_0_5[1] + var_0_2[1],
-			var_0_2[2] - var_0_5[2],
-			0
-		}
-	},
-	text_placement = {
-		vertical_alignment = "center",
-		parent = "text_background_placement",
-		horizontal_alignment = "center",
-		size = var_0_4,
-		position = {
-			0,
-			0,
-			1
 		}
 	}
 }
-local var_0_9 = {
+local tbl_9 = {
+	size = tbl,
+	position = {
+		0,
+		0,
+		UILayer.hud
+	}
+}
+local flag
+
+flag = not IS_WINDOWS and "fit" and "hud_fit"
+tbl_9.scale = flag
+tbl_8.screen = tbl_9
+tbl_8.pivot = {
+	vertical_alignment = "top",
+	parent = "screen",
+	horizontal_alignment = "center",
+	size = {
+		tbl[1],
+		tbl_2[1]
+	},
+	position = {
+		0,
+		-86,
+		UILayer.hud
+	}
+}
+tbl_8.badge_placement = {
+	vertical_alignment = "center",
+	parent = "pivot",
+	horizontal_alignment = "center",
+	size = tbl_2,
+	position = tbl_3
+}
+tbl_8.text_background_placement = {
+	vertical_alignment = "center",
+	parent = "pivot",
+	horizontal_alignment = "center",
+	size = tbl_4,
+	position = {
+		tbl_5[1] + tbl_3[1],
+		tbl_3[2] - tbl_5[2],
+		0
+	}
+}
+tbl_8.text_placement = {
+	vertical_alignment = "center",
+	parent = "text_background_placement",
+	horizontal_alignment = "center",
+	size = tbl_4,
+	position = {
+		0,
+		0,
+		1
+	}
+}
+
+local tbl_10 = {
 	scenegraph_id = "badge_placement",
 	element = {
 		passes = {
@@ -179,8 +184,8 @@ local var_0_9 = {
 		icon = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
-			texture_size = var_0_6,
-			offset = var_0_7,
+			texture_size = tbl_6,
+			offset = tbl_7,
 			color = {
 				255,
 				255,
@@ -191,8 +196,8 @@ local var_0_9 = {
 		icon_glow = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
-			texture_size = var_0_6,
-			offset = var_0_7,
+			texture_size = tbl_6,
+			offset = tbl_7,
 			color = {
 				255,
 				255,
@@ -206,7 +211,7 @@ local var_0_9 = {
 			horizontal_alignment = "center",
 			word_wrap = true,
 			font_type = "hell_shark",
-			font_size = var_0_3,
+			font_size = num,
 			text_color = Colors.get_color_table_with_alpha("white", 255)
 		},
 		text_bg_texture_id = {
@@ -215,13 +220,14 @@ local var_0_9 = {
 		}
 	}
 }
-local var_0_10 = {
+local tbl_11 = {
 	on_enter = {
 		{
 			name = "fade_in_scale_down",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+				-- function 1
 				arg_1_3.render_settings.alpha_multiplier = 0
 
 				WwiseWorld.trigger_event(arg_1_3.wwise_world, "play_gui_mission_summary_chest_upgrade")
@@ -237,87 +243,91 @@ local var_0_10 = {
 					0
 				}
 				arg_1_2.style.icon.texture_size = {
-					var_0_6[1] - 40,
-					var_0_6[2] - 40
+					tbl_6[1] - 40,
+					tbl_6[2] - 40
 				}
 				arg_1_2.style.icon_glow.texture_size = {
-					var_0_6[1] - 40,
-					var_0_6[2] - 40
+					tbl_6[1] - 40,
+					tbl_6[2] - 40
 				}
 			end,
-			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
-				local var_2_0 = math.easeOutCubic(arg_2_3)
+			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+				-- function 2
+				local easeOutCubic = math.easeOutCubic(arg_2_3)
 
-				arg_2_4.render_settings.alpha_multiplier = var_2_0
+				arg_2_4.render_settings.alpha_multiplier = easeOutCubic
 
-				local var_2_1 = arg_2_1.badge_placement.size[1] * 1.3
-				local var_2_2 = arg_2_1.badge_placement.size[2] * 1.3
-				local var_2_3 = var_0_6
+				local num = arg_2_1.badge_placement.size[1] * 1.3
+				local num_2 = arg_2_1.badge_placement.size[2] * 1.3
+				local var_2_3 = tbl_6
 
 				arg_2_4.ui_scenegraph.badge_placement.size = {
-					var_2_1 * var_2_0,
-					var_2_2 * var_2_0
+					num * easeOutCubic,
+					num_2 * easeOutCubic
 				}
 				arg_2_2.style.icon.texture_size = {
-					var_0_6[1] - 40 + 60 * var_2_0,
-					var_0_6[2] - 40 + 60 * var_2_0
+					tbl_6[1] - 40 + 60 * easeOutCubic,
+					tbl_6[2] - 40 + 60 * easeOutCubic
 				}
 				arg_2_2.style.icon_glow.texture_size = {
-					var_0_6[1] - 40 + 60 * var_2_0,
-					var_0_6[2] - 40 + 60 * var_2_0
+					tbl_6[1] - 40 + 60 * easeOutCubic,
+					tbl_6[2] - 40 + 60 * easeOutCubic
 				}
 			end,
-			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+				-- function 3
 				arg_3_3.start_size = {
 					arg_3_3.ui_scenegraph.badge_placement.size[1],
 					arg_3_3.ui_scenegraph.badge_placement.size[2]
 				}
-				arg_3_2.style.icon.texture_size = var_0_6
-				arg_3_2.style.icon_glow.texture_size = var_0_6
+				arg_3_2.style.icon.texture_size = tbl_6
+				arg_3_2.style.icon_glow.texture_size = tbl_6
 			end
 		},
 		{
 			name = "scale_down",
 			start_progress = 0.5,
 			end_progress = 0.62,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				-- function 4
 				arg_4_3.ui_scenegraph.text_background_placement.size = {
 					0,
 					0
 				}
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+				-- function 5
 				local var_5_0 = arg_5_4.start_size[1]
 				local var_5_1 = arg_5_4.start_size[2]
 				local var_5_2 = arg_5_1.badge_placement.size[1]
 				local var_5_3 = arg_5_1.badge_placement.size[2]
-				local var_5_4 = var_5_0 - var_5_2
-				local var_5_5 = var_5_1 - var_5_3
+				local num = var_5_0 - var_5_2
+				local num_2 = var_5_1 - var_5_3
 
 				arg_5_4.ui_scenegraph.badge_placement.size = {
-					var_5_0 - var_5_4 * arg_5_3,
-					var_5_1 - var_5_5 * arg_5_3
+					var_5_0 - num * arg_5_3,
+					var_5_1 - num_2 * arg_5_3
 				}
 				arg_5_4.ui_scenegraph.text_background_placement.size = {
 					arg_5_1.text_background_placement.size[1] * arg_5_3,
 					arg_5_1.text_background_placement.size[2]
 				}
 
-				local var_5_6 = 255 * arg_5_3
+				local num_3 = 255 * arg_5_3
 
 				arg_5_2.style.text_name.text_color = {
-					var_5_6,
-					var_5_6,
-					var_5_6,
-					var_5_6
+					num_3,
+					num_3,
+					num_3,
+					num_3
 				}
 				arg_5_2.style.icon.texture_size = {
-					var_0_6[1] + 20 - 20 * arg_5_3,
-					var_0_6[2] + 20 - 20 * arg_5_3
+					tbl_6[1] + 20 - 20 * arg_5_3,
+					tbl_6[2] + 20 - 20 * arg_5_3
 				}
 				arg_5_2.style.icon_glow.texture_size = {
-					var_0_6[1] + 20 - 20 * arg_5_3,
-					var_0_6[2] + 20 - 20 * arg_5_3
+					tbl_6[1] + 20 - 20 * arg_5_3,
+					tbl_6[2] + 20 - 20 * arg_5_3
 				}
 			end,
 			on_complete = NOP
@@ -326,10 +336,12 @@ local var_0_10 = {
 			name = "fade_out_everything",
 			start_progress = 1.4,
 			end_progress = 1.8,
-			init = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			init = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+				-- function 6
 				arg_6_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+			update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+				-- function 7
 				arg_7_4.render_settings.alpha_multiplier = 1 - arg_7_3
 			end,
 			on_complete = NOP
@@ -338,7 +350,7 @@ local var_0_10 = {
 }
 
 return {
-	scenegraph_definition = var_0_8,
-	badge_widget_definition = var_0_9,
-	animation_definitions = var_0_10
+	scenegraph_definition = tbl_8,
+	badge_widget_definition = tbl_10,
+	animation_definitions = tbl_11
 }

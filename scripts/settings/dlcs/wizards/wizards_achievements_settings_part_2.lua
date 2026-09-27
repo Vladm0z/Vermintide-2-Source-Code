@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/wizards/wizards_achievements_settings_part_2.lua
 
-local var_0_0 = DLCSettings.wizards_part_2
+local wizards_part_2 = DLCSettings.wizards_part_2
 
-var_0_0.achievement_outline = {
+wizards_part_2.achievement_outline = {
 	levels = {
 		entries = {},
 		categories = {
@@ -28,6 +28,6 @@ var_0_0.achievement_outline = {
 		}
 	}
 }
-var_0_0.achievement_template_file_names = {
+wizards_part_2.achievement_template_file_names = {
 	"scripts/managers/achievements/achievement_templates_wizards_part_2"
 }

@@ -4,50 +4,55 @@ require("scripts/settings/dlcs/morris/morris_changelog")
 
 DeusDebugChangelogView = class(DeusDebugChangelogView)
 
-function DeusDebugChangelogView.init(arg_1_0, arg_1_1)
-	local var_1_0 = "deus_debug_changelog_view"
-	local var_1_1 = arg_1_1.input_manager
+DeusDebugChangelogView.init = function (self, arg_1_1)
+	-- function 1
+	local str = "deus_debug_changelog_view"
+	local input_manager = arg_1_1.input_manager
 
-	arg_1_0._input_manager = var_1_1
-	arg_1_0._input_service_name = var_1_0
-	arg_1_0.ingame_ui = arg_1_1.ingame_ui
+	self._input_manager = input_manager
+	self._input_service_name = str
+	self.ingame_ui = arg_1_1.ingame_ui
 
-	var_1_1:create_input_service(var_1_0, "IngameMenuKeymaps", "IngameMenuFilters")
-	var_1_1:map_device_to_service(var_1_0, "keyboard")
-	var_1_1:map_device_to_service(var_1_0, "mouse")
-	var_1_1:map_device_to_service(var_1_0, "gamepad")
+	input_manager:create_input_service(str, "IngameMenuKeymaps", "IngameMenuFilters")
+	input_manager:map_device_to_service(str, "keyboard")
+	input_manager:map_device_to_service(str, "mouse")
+	input_manager:map_device_to_service(str, "gamepad")
 end
 
-function DeusDebugChangelogView.destroy(arg_2_0)
+DeusDebugChangelogView.destroy = function (arg_2_0)
+	-- function 2
 	return
 end
 
-function DeusDebugChangelogView.on_enter(arg_3_0, arg_3_1)
-	local var_3_0 = arg_3_0._input_manager
-	local var_3_1 = arg_3_0._input_service_name
+DeusDebugChangelogView.on_enter = function (self, arg_3_1)
+	-- function 3
+	local _input_manager = self._input_manager
+	local _input_service_name = self._input_service_name
 
-	var_3_0:block_device_except_service(var_3_1, "keyboard")
-	var_3_0:block_device_except_service(var_3_1, "mouse")
-	var_3_0:block_device_except_service(var_3_1, "gamepad")
+	_input_manager:block_device_except_service(_input_service_name, "keyboard")
+	_input_manager:block_device_except_service(_input_service_name, "mouse")
+	_input_manager:block_device_except_service(_input_service_name, "gamepad")
 	ShowCursorStack.show("DeusDebugChangelogView")
 	Imgui.open_imgui()
 	Imgui.enable_imgui_input_system(Imgui.KEYBOARD)
 	Imgui.enable_imgui_input_system(Imgui.MOUSE)
 	Window.set_mouse_focus(false)
 
-	arg_3_0._changelog = MorrisChangelog
+	self._changelog = MorrisChangelog
 end
 
-function DeusDebugChangelogView.post_update_on_enter(arg_4_0)
+DeusDebugChangelogView.post_update_on_enter = function (arg_4_0)
+	-- function 4
 	return
 end
 
-function DeusDebugChangelogView.on_exit(arg_5_0)
-	local var_5_0 = arg_5_0._input_manager
+DeusDebugChangelogView.on_exit = function (self)
+	-- function 5
+	local _input_manager = self._input_manager
 
-	var_5_0:device_unblock_all_services("keyboard")
-	var_5_0:device_unblock_all_services("mouse")
-	var_5_0:device_unblock_all_services("gamepad")
+	_input_manager:device_unblock_all_services("keyboard")
+	_input_manager:device_unblock_all_services("mouse")
+	_input_manager:device_unblock_all_services("gamepad")
 	ShowCursorStack.hide("DeusDebugChangelogView")
 	Window.set_mouse_focus(true)
 	Imgui.disable_imgui_input_system(Imgui.KEYBOARD)
@@ -55,52 +60,58 @@ function DeusDebugChangelogView.on_exit(arg_5_0)
 	Imgui.close_imgui()
 end
 
-function DeusDebugChangelogView.post_update_on_exit(arg_6_0)
+DeusDebugChangelogView.post_update_on_exit = function (arg_6_0)
+	-- function 6
 	return
 end
 
-function DeusDebugChangelogView.update(arg_7_0, arg_7_1, arg_7_2)
+DeusDebugChangelogView.update = function (self, arg_7_1, arg_7_2)
+	-- function 7
 	Imgui.begin_window("Morris Changelog", "always_auto_resize", "no_resize", "no_title_bar", "no_move")
 
-	local var_7_0 = arg_7_0._changelog
+	local _changelog = self._changelog
 
-	for iter_7_0, iter_7_1 in ipairs(var_7_0) do
-		local var_7_1 = #var_7_0 - iter_7_0
-		local var_7_2 = "Update " .. var_7_1
+	for i, v in ipairs(_changelog) do
+		local num = #_changelog - i
+		local str = "Update " .. num
 
-		if iter_7_0 == 1 then
-			Imgui.text(var_7_2)
-			Imgui.text(iter_7_1)
-		elseif Imgui.tree_node(var_7_2) then
-			Imgui.text(iter_7_1)
+		if i == 1 then
+			Imgui.text(str)
+			Imgui.text(v)
+		elseif not Imgui.tree_node(str) then
+			Imgui.text(v)
 			Imgui.tree_pop()
 		end
 	end
 
-	if Imgui.button("Close", 400, 50) then
-		arg_7_0:_close()
+	if not Imgui.button("Close", 400, 50) then
+		self:_close()
 	end
 
 	Imgui.end_window()
-	arg_7_0:handle_input(arg_7_1)
+	self:handle_input(arg_7_1)
 end
 
-function DeusDebugChangelogView.handle_input(arg_8_0, arg_8_1)
-	local var_8_0 = arg_8_0._input_manager:get_service(arg_8_0._input_service_name)
+DeusDebugChangelogView.handle_input = function (self, arg_8_1)
+	-- function 8
+	local get_service = self._input_manager:get_service(self._input_service_name)
 
-	if var_8_0:get("toggle_menu", true) or var_8_0:get("back", true) then
-		arg_8_0:_close()
+	if get_service:get("toggle_menu", true) or not get_service:get("back", true) then
+		self:_close()
 	end
 end
 
-function DeusDebugChangelogView.disable_toggle_menu(arg_9_0)
+DeusDebugChangelogView.disable_toggle_menu = function (arg_9_0)
+	-- function 9
 	return true
 end
 
-function DeusDebugChangelogView.input_service(arg_10_0)
-	return arg_10_0._input_manager:get_service(arg_10_0._input_service_name)
+DeusDebugChangelogView.input_service = function (self)
+	-- function 10
+	return self._input_manager:get_service(self._input_service_name)
 end
 
-function DeusDebugChangelogView._close(arg_11_0)
-	arg_11_0.ingame_ui:handle_transition("exit_menu")
+DeusDebugChangelogView._close = function (self)
+	-- function 11
+	self.ingame_ui:handle_transition("exit_menu")
 end

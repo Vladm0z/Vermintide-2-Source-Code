@@ -8,270 +8,309 @@ require("scripts/ui/views/level_end/states/end_view_state_chest")
 require("scripts/ui/reward_popup/reward_popup_ui")
 
 local var_0_0 = local_require("scripts/ui/views/level_end/level_end_view_v2_definitions")
-local var_0_1 = var_0_0.widgets_definitions
-local var_0_2 = var_0_0.scenegraph_definition
-local var_0_3 = var_0_0.animations
-local var_0_4 = var_0_0.generic_input_actions
-local var_0_5 = var_0_0.weave_widget_definitions
-local var_0_6 = false
-local var_0_7 = false
-local var_0_8 = script_data.testify and require("scripts/ui/views/level_end/level_end_view_testify")
-local var_0_9 = 0.07
-local var_0_10 = 1.36
-local var_0_11 = -1.5
-local var_0_12 = 0.15
-local var_0_13 = 0
-local var_0_14 = {
+local widgets_definitions = var_0_0.widgets_definitions
+local scenegraph_definition = var_0_0.scenegraph_definition
+local animations = var_0_0.animations
+local generic_input_actions = var_0_0.generic_input_actions
+local weave_widget_definitions = var_0_0.weave_widget_definitions
+local flag = false
+local flag_2 = false
+local testify = script_data.testify
+
+testify = not testify and require("scripts/ui/views/level_end/level_end_view_testify")
+
+local num = 0.07
+local num_2 = 1.36
+local num_3 = -1.5
+local num_4 = 0.15
+local num_5 = 0
+local tbl = {
 	{
 		{
-			var_0_9,
-			var_0_11,
-			var_0_13
+			num,
+			num_3,
+			num_5
 		}
 	},
 	{
 		{
-			var_0_9 + var_0_10 * 0.5,
-			var_0_11 + var_0_12 * 0.5,
-			var_0_13
+			num + num_2 * 0.5,
+			num_3 + num_4 * 0.5,
+			num_5
 		},
 		{
-			var_0_9 + var_0_10 * -0.5,
-			var_0_11 + var_0_12 * -0.5,
-			var_0_13
+			num + num_2 * -0.5,
+			num_3 + num_4 * -0.5,
+			num_5
 		}
 	},
 	{
 		{
-			var_0_9 + var_0_10 * 1,
-			var_0_11 + var_0_12 * 1,
-			var_0_13
+			num + num_2 * 1,
+			num_3 + num_4 * 1,
+			num_5
 		},
 		{
-			var_0_9 + var_0_10 * 0,
-			var_0_11 + var_0_12 * 0,
-			var_0_13
+			num + num_2 * 0,
+			num_3 + num_4 * 0,
+			num_5
 		},
 		{
-			var_0_9 + var_0_10 * -1,
-			var_0_11 + var_0_12 * -1,
-			var_0_13
+			num + num_2 * -1,
+			num_3 + num_4 * -1,
+			num_5
 		}
 	},
 	{
 		{
-			var_0_9 + var_0_10 * 1,
-			var_0_11 + var_0_12 * 1.5,
-			var_0_13
+			num + num_2 * 1,
+			num_3 + num_4 * 1.5,
+			num_5
 		},
 		{
-			var_0_9 + var_0_10 * 0.25,
-			var_0_11 + var_0_12 * 0.25 + 0.5,
-			var_0_13
+			num + num_2 * 0.25,
+			num_3 + num_4 * 0.25 + 0.5,
+			num_5
 		},
 		{
-			var_0_9 + var_0_10 * -0.25,
-			var_0_11 + var_0_12 * -0.25 + 0.5,
-			var_0_13
+			num + num_2 * -0.25,
+			num_3 + num_4 * -0.25 + 0.5,
+			num_5
 		},
 		{
-			var_0_9 + var_0_10 * -1,
-			var_0_11 + var_0_12 * -1.5,
-			var_0_13
+			num + num_2 * -1,
+			num_3 + num_4 * -1.5,
+			num_5
 		}
 	}
 }
 
 LevelEndView = class(LevelEndView, LevelEndViewBase)
 
-function LevelEndView.init(arg_1_0, arg_1_1)
-	arg_1_0._weave_render_settings = {
+LevelEndView.init = function (self, arg_1_1)
+	-- function 1
+	self._weave_render_settings = {
 		snap_pixel_positions = true
 	}
-	arg_1_0._team_heroes = {}
-	arg_1_0._team_previewer = nil
+	self._team_heroes = {}
+	self._team_previewer = nil
 
-	local var_1_0 = {}
+	local tbl = {}
 
-	if arg_1_1.players_session_score then
-		for iter_1_0 in pairs(arg_1_1.players_session_score) do
-			var_1_0[iter_1_0] = true
+	if not arg_1_1.players_session_score then
+		for k in pairs(arg_1_1.players_session_score) do
+			tbl[k] = true
 		end
 	end
 
-	arg_1_0._peers_with_score = var_1_0
+	self._peers_with_score = tbl
 
-	LevelEndView.super.init(arg_1_0, arg_1_1)
+	LevelEndView.super.init(self, arg_1_1)
 	Managers.transition:force_fade_in()
 end
 
-function LevelEndView.start(arg_2_0)
-	LevelEndView.super.start(arg_2_0)
-	arg_2_0:play_sound("play_gui_chestroom_start")
+LevelEndView.start = function (self)
+	-- function 2
+	LevelEndView.super.start(self)
+	self:play_sound("play_gui_chestroom_start")
 
-	arg_2_0._playing_music = nil
-	arg_2_0._start_music_event = arg_2_0.game_won and "Play_won_music" or "Play_lost_music"
-	arg_2_0._stop_music_event = arg_2_0.game_won and "Stop_won_music" or "Stop_lost_music"
+	self._playing_music = nil
+
+	local flag
+
+	flag = not self.game_won and "Play_won_music" and "Play_lost_music"
+	self._start_music_event = flag
+
+	local flag_2
+
+	flag_2 = not self.game_won and "Stop_won_music" and "Stop_lost_music"
+	self._stop_music_event = flag_2
 end
 
-function LevelEndView.setup_pages(arg_3_0, arg_3_1, arg_3_2)
+LevelEndView.setup_pages = function (self, arg_3_1, arg_3_2)
+	-- function 3
 	local var_3_0
 
-	if GameSettingsDevelopment.read_only_backend then
-		var_3_0 = arg_3_0:_setup_pages_untrusted()
-	elseif arg_3_1 then
-		var_3_0 = arg_3_0:_setup_pages_victory(arg_3_2)
+	if not GameSettingsDevelopment.read_only_backend then
+		var_3_0 = self:_setup_pages_untrusted()
+	elseif not arg_3_1 then
+		var_3_0 = self:_setup_pages_victory(arg_3_2)
 	else
-		var_3_0 = arg_3_0:_setup_pages_defeat(arg_3_2)
+		var_3_0 = self:_setup_pages_defeat(arg_3_2)
 	end
 
 	return var_3_0
 end
 
-function LevelEndView._setup_pages_untrusted(arg_4_0)
+LevelEndView._setup_pages_untrusted = function (arg_4_0)
+	-- function 4
 	return {
 		EndViewStateScore = 1
 	}
 end
 
-function LevelEndView._setup_pages_victory(arg_5_0, arg_5_1)
-	local var_5_0 = {}
-	local var_5_1 = arg_5_1.end_of_level_rewards.chest
+LevelEndView._setup_pages_victory = function (arg_5_0, arg_5_1)
+	-- function 5
+	local tbl = {}
+	local chest = arg_5_1.end_of_level_rewards.chest
 
-	var_5_0.EndViewStateParading = table.size(var_5_0) + 1
-	var_5_0.EndViewStateSummary = table.size(var_5_0) + 1
+	tbl.EndViewStateParading = table.size(tbl) + 1
+	tbl.EndViewStateSummary = table.size(tbl) + 1
 
-	if var_5_1 then
-		var_5_0.EndViewStateChest = table.size(var_5_0) + 1
+	if not chest then
+		tbl.EndViewStateChest = table.size(tbl) + 1
 	end
 
-	var_5_0.EndViewStateScore = table.size(var_5_0) + 1
+	tbl.EndViewStateScore = table.size(tbl) + 1
 
-	return var_5_0
+	return tbl
 end
 
-function LevelEndView.show_team(arg_6_0)
-	if arg_6_0._team_previewer then
-		arg_6_0:_destroy_team_previewer()
+LevelEndView.show_team = function (self)
+	-- function 6
+	if not self._team_previewer then
+		self:_destroy_team_previewer()
 	end
 
-	arg_6_0:_setup_team_heroes(arg_6_0.context.players_session_score)
+	self:_setup_team_heroes(self.context.players_session_score)
 
-	if arg_6_0.game_won then
-		arg_6_0:_setup_team_previewer()
-	end
-end
-
-function LevelEndView.hide_team(arg_7_0)
-	if arg_7_0._team_previewer then
-		arg_7_0:_destroy_team_previewer()
+	if not self.game_won then
+		self:_setup_team_previewer()
 	end
 end
 
-function LevelEndView.loading_complete(arg_8_0)
-	return arg_8_0._team_previewer and arg_8_0._team_previewer:loading_done()
+LevelEndView.hide_team = function (self)
+	-- function 7
+	if not self._team_previewer then
+		self:_destroy_team_previewer()
+	end
 end
 
-function LevelEndView._setup_pages_defeat(arg_9_0)
-	local var_9_0 = {}
+LevelEndView.loading_complete = function (self)
+	-- function 8
+	local _team_previewer = self._team_previewer
 
-	var_9_0.EndViewStateSummary = table.size(var_9_0) + 1
-	var_9_0.EndViewStateScore = table.size(var_9_0) + 1
+	_team_previewer = not _team_previewer and self._team_previewer:loading_done()
 
-	return var_9_0
+	return _team_previewer
 end
 
-function LevelEndView.create_ui_elements(arg_10_0)
-	arg_10_0.ui_animations = {}
-	arg_10_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
-	arg_10_0._static_widgets = {}
-	arg_10_0._dynamic_widgets = {
-		timer_text = UIWidget.init(var_0_1.timer_text),
-		timer_bg = UIWidget.init(var_0_1.timer_bg)
+LevelEndView._setup_pages_defeat = function (arg_9_0)
+	-- function 9
+	local tbl = {}
+
+	tbl.EndViewStateSummary = table.size(tbl) + 1
+	tbl.EndViewStateScore = table.size(tbl) + 1
+
+	return tbl
+end
+
+LevelEndView.create_ui_elements = function (self)
+	-- function 10
+	self.ui_animations = {}
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+	self._static_widgets = {}
+	self._dynamic_widgets = {
+		timer_text = UIWidget.init(widgets_definitions.timer_text),
+		timer_bg = UIWidget.init(widgets_definitions.timer_bg)
 	}
 
-	if var_0_7 then
-		arg_10_0._page_selector_widget = UIWidget.init(UIWidgets.create_page_dot_selector("page_selector", #arg_10_0._state_name_by_index))
+	if not flag_2 then
+		self._page_selector_widget = UIWidget.init(UIWidgets.create_page_dot_selector("page_selector", #self._state_name_by_index))
 	end
 
-	local var_10_0 = UIWidgets.create_default_button("retry_button", var_0_2.retry_button.size, nil, nil, Localize(arg_10_0.game_won and "button_replay" or "button_retry"), 32, nil, nil, nil, true)
+	local create_default_button = UIWidgets.create_default_button
+	local str = "retry_button"
+	local size = scenegraph_definition.retry_button.size
+	local var_10_3
+	local var_10_4
+	local Localize = Localize
+	local flag
 
-	arg_10_0._retry_button_widget = UIWidget.init(var_10_0)
-	arg_10_0._ready_button_widget = UIWidget.init(var_0_1.ready_button)
-	arg_10_0._retry_checkboxes_widget = UIWidget.init(var_0_1.retry_checkboxes)
-	arg_10_0._reload_checkboxes_widget = UIWidget.init(var_0_1.reload_checkboxes)
-	arg_10_0._weave_widgets = {}
+	flag = not self.game_won and "button_replay" and "button_retry"
 
-	for iter_10_0, iter_10_1 in pairs(var_0_5) do
-		arg_10_0._weave_widgets[iter_10_0] = UIWidget.init(iter_10_1)
+	local var_10_7 = create_default_button(str, size, var_10_3, var_10_4, Localize(flag), 32, nil, nil, nil, true)
+
+	self._retry_button_widget = UIWidget.init(var_10_7)
+	self._ready_button_widget = UIWidget.init(widgets_definitions.ready_button)
+	self._retry_checkboxes_widget = UIWidget.init(widgets_definitions.retry_checkboxes)
+	self._reload_checkboxes_widget = UIWidget.init(widgets_definitions.reload_checkboxes)
+	self._weave_widgets = {}
+
+	for k, v in pairs(weave_widget_definitions) do
+		self._weave_widgets[k] = UIWidget.init(v)
 	end
 
-	arg_10_0._dead_space_filler_mask = UIWidget.init(var_0_1.dead_space_filler_mask)
-	arg_10_0._dead_space_filler_unmask = UIWidget.init(var_0_1.dead_space_filler_unmask)
+	self._dead_space_filler_mask = UIWidget.init(widgets_definitions.dead_space_filler_mask)
+	self._dead_space_filler_unmask = UIWidget.init(widgets_definitions.dead_space_filler_unmask)
 
-	UIRenderer.clear_scenegraph_queue(arg_10_0.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
-	arg_10_0.ui_animator = UIAnimator:new(arg_10_0.ui_scenegraph, var_0_3)
+	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animations)
 
-	local var_10_1 = arg_10_0.input_manager:get_service("end_of_level")
+	local get_service = self.input_manager:get_service("end_of_level")
 
-	arg_10_0._menu_input_description = MenuInputDescriptionUI:new(nil, arg_10_0.ui_renderer, var_10_1, 5, 10, var_0_4.default)
+	self._menu_input_description = MenuInputDescriptionUI:new(nil, self.ui_renderer, get_service, 5, 10, generic_input_actions.default)
 
-	arg_10_0._menu_input_description:set_input_description(nil)
+	self._menu_input_description:set_input_description(nil)
 
-	arg_10_0.active = true
-	arg_10_0._ready_button_widget.scenegraph_id = "ready_button_alone"
+	self.active = true
+	self._ready_button_widget.scenegraph_id = "ready_button_alone"
 end
 
-function LevelEndView._setup_team_heroes(arg_11_0, arg_11_1)
-	local var_11_0 = {}
+LevelEndView._setup_team_heroes = function (self, arg_11_1)
+	-- function 11
+	local tbl = {}
 
-	for iter_11_0 in pairs(arg_11_1) do
-		table.insert(var_11_0, iter_11_0)
+	for k in pairs(arg_11_1) do
+		table.insert(tbl, k)
 	end
 
-	table.sort(var_11_0)
+	table.sort(tbl)
 
-	local var_11_1 = table.size(arg_11_1)
-	local var_11_2 = arg_11_0._team_heroes
-	local var_11_3 = arg_11_0._peers_with_score
+	local size = table.size(arg_11_1)
+	local _team_heroes = self._team_heroes
+	local _peers_with_score = self._peers_with_score
 
-	table.clear(var_11_2)
-	table.clear(var_11_3)
+	table.clear(_team_heroes)
+	table.clear(_peers_with_score)
 
-	for iter_11_1 = 1, var_11_1 do
-		local var_11_4 = var_11_0[iter_11_1]
+	for j = 1, size do
+		local var_11_4 = tbl[j]
 
-		if var_11_4 then
+		if not var_11_4 then
 			local var_11_5 = arg_11_1[var_11_4]
 
-			var_11_2[#var_11_2 + 1] = arg_11_0:_get_hero_from_score(var_11_5)
-			var_11_3[var_11_4] = true
+			_team_heroes[#_team_heroes + 1] = self:_get_hero_from_score(var_11_5)
+			_peers_with_score[var_11_4] = true
 		end
 	end
 end
 
-function LevelEndView._get_hero_from_score(arg_12_0, arg_12_1)
-	local var_12_0 = arg_12_1.profile_index
-	local var_12_1 = arg_12_1.career_index
-	local var_12_2 = SPProfiles[var_12_0].careers[var_12_1]
+LevelEndView._get_hero_from_score = function (self, arg_12_1)
+	-- function 12
+	local profile_index = arg_12_1.profile_index
+	local career_index = arg_12_1.career_index
+	local var_12_2 = SPProfiles[profile_index].careers[career_index]
 	local var_12_3
 	local var_12_4
 	local var_12_5
-	local var_12_6 = arg_12_1.weapon_pose and arg_12_1.weapon_pose.item_name
+	local weapon_pose = arg_12_1.weapon_pose
 
-	if var_12_6 then
-		local var_12_7 = ItemMasterList[var_12_6]
+	weapon_pose = not weapon_pose and arg_12_1.weapon_pose.item_name
 
-		if var_12_7 then
-			local var_12_8 = arg_12_1.weapon_pose.skin_name
-			local var_12_9 = var_12_7.parent
-			local var_12_10 = rawget(ItemMasterList, var_12_9)
+	if not weapon_pose then
+		local var_12_7 = ItemMasterList[weapon_pose]
 
-			if var_12_10 then
+		if not var_12_7 then
+			local skin_name = arg_12_1.weapon_pose.skin_name
+			local parent = var_12_7.parent
+			local var_12_10 = rawget(ItemMasterList, parent)
+
+			if not var_12_10 then
 				var_12_4 = {
-					item_name = var_12_9,
-					skin_name = var_12_8
+					item_name = parent,
+					skin_name = skin_name
 				}
 				var_12_5 = var_12_10.slot_type
 				var_12_3 = var_12_7.data.anim_event
@@ -279,623 +318,730 @@ function LevelEndView._get_hero_from_score(arg_12_0, arg_12_1)
 		end
 	end
 
-	local var_12_11, var_12_12, var_12_13 = arg_12_0:_verify_weapon_data(arg_12_1, var_12_5 or arg_12_1.weapon and var_12_2.preview_wield_slot or nil, var_12_4 or arg_12_1.weapon, var_12_3)
+	local var_12_11 = self
+	local _verify_weapon_data = self._verify_weapon_data
+	local var_12_13 = arg_12_1
+
+	if not var_12_5 then
+		-- Nothing
+	end
+
+	do
+		local preview_wield_slot
+	end
+
+	::label_12_0::
+
+	if not arg_12_1.weapon then
+		preview_wield_slot = var_12_2.preview_wield_slot
+
+		if not preview_wield_slot then
+			-- Nothing
+		end
+	end
+
+	preview_wield_slot = nil
+
+	::label_12_1::
+
+	local var_12_15, var_12_16, var_12_17 = _verify_weapon_data(var_12_11, var_12_13, preview_wield_slot, var_12_4 or arg_12_1.weapon, var_12_3)
 
 	return {
-		profile_index = var_12_0,
-		career_index = var_12_1,
+		profile_index = profile_index,
+		career_index = career_index,
 		hero_name = var_12_2.profile_name,
 		skin_name = arg_12_1.hero_skin,
-		weapon_slot = var_12_11,
-		weapon_pose_anim_event = var_12_13,
+		weapon_slot = var_12_15,
+		weapon_pose_anim_event = var_12_17,
 		preview_items = {
 			arg_12_1.hat,
-			var_12_12
+			var_12_16
 		}
 	}
 end
 
-local var_0_15 = {}
+local tbl_2 = {}
 
-function LevelEndView._verify_weapon_data(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
-	local var_13_0 = arg_13_1.profile_index
-	local var_13_1 = arg_13_1.career_index
-	local var_13_2 = SPProfiles[var_13_0].careers[var_13_1]
-	local var_13_3 = var_13_2.name
-	local var_13_4 = var_13_2.preview_wield_slot
-	local var_13_5 = {
+LevelEndView._verify_weapon_data = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+	-- function 13
+	local profile_index = arg_13_1.profile_index
+	local career_index = arg_13_1.career_index
+	local var_13_2 = SPProfiles[profile_index].careers[career_index]
+	local name = var_13_2.name
+	local preview_wield_slot = var_13_2.preview_wield_slot
+	local tbl = {
 		item_name = var_13_2.preview_items[1].item_name
 	}
 	local var_13_6
 
-	if not arg_13_3 or arg_13_3 and not arg_13_3.item_name then
+	if not (not arg_13_3 and not arg_13_3 and arg_13_3.item_name) then
 		print(string.format("[LevelEndView] No preview weapon was set - using DEFAULT for %s with peer_id: %s", arg_13_1.name, arg_13_1.peer_id))
 
-		return var_13_4, var_13_5, var_13_6
+		return preview_wield_slot, tbl, var_13_6
 	end
 
-	local var_13_7 = Managers.backend:get_interface("common")
+	local get_interface = Managers.backend:get_interface("common")
 	local var_13_8 = rawget(ItemMasterList, arg_13_3.item_name)
 
-	if not var_13_7:can_wield(var_13_3, var_13_8) then
-		print(string.format("[LevelEndView] %q is not wieldable by %s  - using DEFAULT for %s with peer_id: %s", arg_13_3.item_name, var_13_3, arg_13_1.name, arg_13_1.peer_id))
+	if not get_interface:can_wield(name, var_13_8) then
+		print(string.format("[LevelEndView] %q is not wieldable by %s  - using DEFAULT for %s with peer_id: %s", arg_13_3.item_name, name, arg_13_1.name, arg_13_1.peer_id))
 
-		return var_13_4, var_13_5, var_13_6
+		return preview_wield_slot, tbl, var_13_6
 	end
 
 	if var_13_8.slot_type ~= arg_13_2 then
-		return var_13_4, var_13_5, var_13_6
+		return preview_wield_slot, tbl, var_13_6
 	end
 
 	local var_13_9 = arg_13_2
 
-	var_13_5.item_name = arg_13_3.item_name
+	tbl.item_name = arg_13_3.item_name
 
-	local var_13_10 = false
-	local var_13_11 = arg_13_3.skin_name
+	local flag = false
+	local skin_name = arg_13_3.skin_name
 
-	if var_13_11 then
-		local var_13_12 = var_13_8.skin_combination_table
-		local var_13_13 = WeaponSkins.skin_combinations[var_13_12] or var_0_15
+	if not skin_name then
+		local skin_combination_table = var_13_8.skin_combination_table
+		local var_13_13 = WeaponSkins.skin_combinations[skin_combination_table]
 
-		for iter_13_0, iter_13_1 in pairs(var_13_13) do
-			for iter_13_2, iter_13_3 in ipairs(iter_13_1) do
-				if iter_13_3 == var_13_11 then
-					var_13_10 = true
+		var_13_13 = var_13_13 or tbl_2
+
+		for k, v in pairs(var_13_13) do
+			for i, v_2 in ipairs(v) do
+				if v_2 == skin_name then
+					flag = true
 
 					break
 				end
 			end
 
-			if var_13_10 then
+			if not flag then
 				break
 			end
 		end
 
-		var_13_5.skin_name = var_13_10 and var_13_11
+		tbl.skin_name = not flag and skin_name
 	end
 
-	local var_13_14 = string.gsub(var_13_8.name, "^vs_", "")
+	local gsub = string.gsub(var_13_8.name, "^vs_", "")
 
 	if var_13_8.rarity == "magic" then
-		var_13_14 = string.gsub(var_13_14, "_magic_0%d$", "")
+		gsub = string.gsub(gsub, "_magic_0%d$", "")
 	end
 
-	local var_13_15 = "resource_packages/pose_packages/" .. var_13_14
+	local str = "resource_packages/pose_packages/" .. gsub
 
-	if Application.can_get("package", var_13_15) then
+	if not Application.can_get("package", str) then
 		var_13_6 = arg_13_4
 	else
 		var_13_6 = nil
 	end
 
-	return var_13_9, var_13_5, var_13_6
+	return var_13_9, tbl, var_13_6
 end
 
-function LevelEndView._destroy_team_previewer(arg_14_0)
-	if arg_14_0._team_previewer then
-		arg_14_0._team_previewer:on_exit()
+LevelEndView._destroy_team_previewer = function (self)
+	-- function 14
+	if not self._team_previewer then
+		self._team_previewer:on_exit()
 
-		arg_14_0._team_previewer = nil
+		self._team_previewer = nil
 	end
 end
 
-function LevelEndView._update_team_previewer(arg_15_0, arg_15_1, arg_15_2)
-	local var_15_0 = arg_15_0._team_previewer
+LevelEndView._update_team_previewer = function (self, arg_15_1, arg_15_2)
+	-- function 15
+	local _team_previewer = self._team_previewer
 
-	if var_15_0 then
-		var_15_0:update(arg_15_1, arg_15_2)
-		var_15_0:post_update(arg_15_1, arg_15_2)
+	if not _team_previewer then
+		_team_previewer:update(arg_15_1, arg_15_2)
+		_team_previewer:post_update(arg_15_1, arg_15_2)
 	end
 end
 
-function LevelEndView._setup_team_previewer(arg_16_0)
-	if arg_16_0._team_previewer then
-		arg_16_0:_destroy_team_previewer()
+LevelEndView._setup_team_previewer = function (self)
+	-- function 16
+	if not self._team_previewer then
+		self:_destroy_team_previewer()
 	end
 
-	local var_16_0, var_16_1 = arg_16_0:get_viewport_world()
+	local get_viewport_world, var_16_1 = self:get_viewport_world()
 
-	arg_16_0._team_previewer = TeamPreviewer:new(arg_16_0.context, var_16_0, var_16_1)
+	self._team_previewer = TeamPreviewer:new(self.context, get_viewport_world, var_16_1)
 
-	local var_16_2 = arg_16_0._team_heroes
-	local var_16_3 = #var_16_2
-	local var_16_4 = arg_16_0:_gather_hero_locations()
+	local _team_heroes = self._team_heroes
+	local count = #_team_heroes
+	local _gather_hero_locations = self:_gather_hero_locations()
 
-	arg_16_0._team_previewer:setup_team(var_16_2, var_16_4)
+	self._team_previewer:setup_team(_team_heroes, _gather_hero_locations)
 end
 
-function LevelEndView._handle_global_shader_flags(arg_17_0)
-	local var_17_0 = false
+LevelEndView._handle_global_shader_flags = function (self)
+	-- function 17
+	local flag = false
 
-	for iter_17_0, iter_17_1 in pairs(arg_17_0._team_heroes) do
-		local var_17_1 = iter_17_1.profile_index
-		local var_17_2 = iter_17_1.career_index
+	for k, v in pairs(self._team_heroes) do
+		local profile_index = v.profile_index
+		local career_index = v.career_index
 
-		if SPProfiles[var_17_1].careers[var_17_2].name == "bw_necromancer" then
-			var_17_0 = true
+		if SPProfiles[profile_index].careers[career_index].name == "bw_necromancer" then
+			flag = true
 
 			break
 		end
 	end
 
-	GlobalShaderFlags.set_global_shader_flag("NECROMANCER_CAREER_REMAP", var_17_0)
+	GlobalShaderFlags.set_global_shader_flag("NECROMANCER_CAREER_REMAP", flag)
 end
 
-function LevelEndView.draw_weave_widgets(arg_18_0, arg_18_1, arg_18_2)
-	local var_18_0 = arg_18_0.context.game_mode_key == "weave"
-	local var_18_1 = arg_18_0.context.is_quickplay
+LevelEndView.draw_weave_widgets = function (self, arg_18_1, arg_18_2)
+	-- function 18
+	local flag = self.context.game_mode_key == "weave"
+	local is_quickplay = self.context.is_quickplay
 
-	if not var_18_0 or not var_18_1 then
+	if not (not flag and is_quickplay) then
 		return
 	end
 
-	local var_18_2 = arg_18_0.ui_renderer
-	local var_18_3 = arg_18_0.ui_scenegraph
-	local var_18_4 = arg_18_0._weave_render_settings
+	local ui_renderer = self.ui_renderer
+	local ui_scenegraph = self.ui_scenegraph
+	local _weave_render_settings = self._weave_render_settings
 
-	UIRenderer.begin_pass(var_18_2, var_18_3, arg_18_2, arg_18_1, nil, var_18_4)
-	UIRenderer.draw_widget(var_18_2, arg_18_0._dead_space_filler_mask)
-	UIRenderer.draw_widget(var_18_2, arg_18_0._dead_space_filler_unmask)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, arg_18_2, arg_18_1, nil, _weave_render_settings)
+	UIRenderer.draw_widget(ui_renderer, self._dead_space_filler_mask)
+	UIRenderer.draw_widget(ui_renderer, self._dead_space_filler_unmask)
 
-	for iter_18_0, iter_18_1 in pairs(arg_18_0._weave_widgets) do
-		UIRenderer.draw_widget(var_18_2, iter_18_1)
+	for k, v in pairs(self._weave_widgets) do
+		UIRenderer.draw_widget(ui_renderer, v)
 	end
 
-	UIRenderer.end_pass(var_18_2)
+	UIRenderer.end_pass(ui_renderer)
 end
 
-function LevelEndView.draw(arg_19_0, arg_19_1, arg_19_2)
-	local var_19_0 = arg_19_0.ui_renderer
-	local var_19_1 = arg_19_0.ui_top_renderer
-	local var_19_2 = arg_19_0.ui_scenegraph
-	local var_19_3 = arg_19_0.input_manager:is_device_active("gamepad")
-	local var_19_4 = arg_19_0.waiting_to_start
-	local var_19_5 = arg_19_0.render_settings
+LevelEndView.draw = function (self, arg_19_1, arg_19_2)
+	-- function 19
+	local ui_renderer = self.ui_renderer
+	local ui_top_renderer = self.ui_top_renderer
+	local ui_scenegraph = self.ui_scenegraph
+	local is_device_active = self.input_manager:is_device_active("gamepad")
+	local waiting_to_start = self.waiting_to_start
+	local render_settings = self.render_settings
 
-	UIRenderer.begin_pass(var_19_0, var_19_2, arg_19_2, arg_19_1, nil, var_19_5)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, arg_19_2, arg_19_1, nil, render_settings)
 
-	if var_0_6 then
-		UISceneGraph.debug_render_scenegraph(var_19_0, var_19_2)
+	if not flag then
+		UISceneGraph.debug_render_scenegraph(ui_renderer, ui_scenegraph)
 	end
 
-	for iter_19_0, iter_19_1 in ipairs(arg_19_0._static_widgets) do
-		UIRenderer.draw_widget(var_19_0, iter_19_1)
+	for i, v in ipairs(self._static_widgets) do
+		UIRenderer.draw_widget(ui_renderer, v)
 	end
 
-	if arg_19_0._page_selector_widget then
-		UIRenderer.draw_widget(var_19_0, arg_19_0._page_selector_widget)
+	if not self._page_selector_widget then
+		UIRenderer.draw_widget(ui_renderer, self._page_selector_widget)
 	end
 
-	if arg_19_0._started_force_shutdown then
-		for iter_19_2, iter_19_3 in pairs(arg_19_0._dynamic_widgets) do
-			UIRenderer.draw_widget(var_19_0, iter_19_3)
+	if not self._started_force_shutdown then
+		for k, v_2 in pairs(self._dynamic_widgets) do
+			UIRenderer.draw_widget(ui_renderer, v_2)
 		end
 	end
 
-	if arg_19_0:state_machine_completed() then
-		UIRenderer.draw_widget(var_19_0, arg_19_0._ready_button_widget)
+	if not self:state_machine_completed() then
+		UIRenderer.draw_widget(ui_renderer, self._ready_button_widget)
 	end
 
-	UIRenderer.end_pass(var_19_0)
+	UIRenderer.end_pass(ui_renderer)
 
-	if arg_19_0:state_machine_completed() and var_19_3 and not arg_19_0._ready_button_widget.content.button_hotspot.disable_button then
-		arg_19_0._menu_input_description:draw(var_19_1, arg_19_1)
-	end
-end
-
-function LevelEndView.update(arg_20_0, arg_20_1, arg_20_2)
-	LevelEndView.super.update(arg_20_0, arg_20_1, arg_20_2)
-	arg_20_0:_update_team_previewer(arg_20_1, arg_20_2)
-	arg_20_0:_update_fade(arg_20_1, arg_20_2)
-	arg_20_0:_update_story(arg_20_1, arg_20_2)
-
-	local var_20_0 = arg_20_0:input_service()
-
-	arg_20_0:draw_weave_widgets(arg_20_1, var_20_0)
-
-	if arg_20_0.suspended or arg_20_0.waiting_for_post_update_enter then
-		return
-	end
-
-	arg_20_0:_update_input(arg_20_1, arg_20_2)
-	arg_20_0:_update_animations(arg_20_1, arg_20_2)
-	arg_20_0:draw(arg_20_1, var_20_0)
-
-	if not arg_20_0._playing_music then
-		arg_20_0._playing_music = true
-
-		arg_20_0:play_sound(arg_20_0._start_music_event)
-	end
-
-	if script_data.testify then
-		Testify:poll_requests_through_handler(var_0_8, arg_20_0)
+	if not self:state_machine_completed() and not is_device_active and not not self._ready_button_widget.content.button_hotspot.disable_button then
+		self._menu_input_description:draw(ui_top_renderer, arg_19_1)
 	end
 end
 
-function LevelEndView._update_fade(arg_21_0, arg_21_1, arg_21_2)
-	if arg_21_0._fade_out_triggered then
+LevelEndView.update = function (self, arg_20_1, arg_20_2)
+	-- function 20
+	LevelEndView.super.update(self, arg_20_1, arg_20_2)
+	self:_update_team_previewer(arg_20_1, arg_20_2)
+	self:_update_fade(arg_20_1, arg_20_2)
+	self:_update_story(arg_20_1, arg_20_2)
+
+	local input_service = self:input_service()
+
+	self:draw_weave_widgets(arg_20_1, input_service)
+
+	if self.suspended or not self.waiting_for_post_update_enter then
 		return
 	end
 
-	if arg_21_0._team_previewer and not arg_21_0._team_previewer:loading_done() then
+	self:_update_input(arg_20_1, arg_20_2)
+	self:_update_animations(arg_20_1, arg_20_2)
+	self:draw(arg_20_1, input_service)
+
+	if not self._playing_music then
+		self._playing_music = true
+
+		self:play_sound(self._start_music_event)
+	end
+
+	if not script_data.testify then
+		Testify:poll_requests_through_handler(testify, self)
+	end
+end
+
+LevelEndView._update_fade = function (self, arg_21_1, arg_21_2)
+	-- function 21
+	if not self._fade_out_triggered then
+		return
+	end
+
+	if not (not self._team_previewer and self._team_previewer:loading_done()) then
 		Managers.transition:force_fade_in()
 	else
 		Managers.transition:fade_out(2)
 
-		arg_21_0._fade_out_triggered = true
+		self._fade_out_triggered = true
 
-		arg_21_0:_handle_global_shader_flags()
+		self:_handle_global_shader_flags()
 	end
 end
 
-function LevelEndView._update_input(arg_22_0, arg_22_1, arg_22_2)
-	local var_22_0 = false
+LevelEndView._update_input = function (self, arg_22_1, arg_22_2)
+	-- function 22
+	local flag = false
 
-	if arg_22_0:_is_button_hover_enter(arg_22_0._retry_button_widget) or arg_22_0:_is_button_hover_enter(arg_22_0._ready_button_widget) then
-		arg_22_0:play_sound("play_gui_start_menu_button_hover")
+	if self:_is_button_hover_enter(self._retry_button_widget) or not self:_is_button_hover_enter(self._ready_button_widget) then
+		self:play_sound("play_gui_start_menu_button_hover")
 	end
 
-	if arg_22_0:_is_button_pressed(arg_22_0._ready_button_widget) and not var_22_0 then
-		arg_22_0:play_sound("play_gui_mission_summary_button_return_to_keep_click")
+	if not (not self:_is_button_pressed(self._ready_button_widget) and flag) then
+		self:play_sound("play_gui_mission_summary_button_return_to_keep_click")
 
-		if arg_22_0._left_lobby then
-			arg_22_0:exit_to_game()
+		if not self._left_lobby then
+			self:exit_to_game()
 		else
-			arg_22_0:signal_done(false)
+			self:signal_done(false)
 		end
 
-		var_22_0 = true
+		flag = true
 	end
 
-	if not var_22_0 and arg_22_0._cursor_visible then
-		arg_22_0:_update_gamepad_input(arg_22_1, arg_22_2)
+	if flag or not self._cursor_visible then
+		self:_update_gamepad_input(arg_22_1, arg_22_2)
 	end
 end
 
-function LevelEndView._update_gamepad_input(arg_23_0, arg_23_1, arg_23_2)
-	local var_23_0 = arg_23_0:input_service()
+LevelEndView._update_gamepad_input = function (self, arg_23_1, arg_23_2)
+	-- function 23
+	local input_service = self:input_service()
 
-	if not arg_23_0._ready_button_widget.content.button_hotspot.disable_button and (var_23_0:get("refresh") or Managers.invite:has_invitation()) then
-		arg_23_0:play_sound("play_gui_mission_summary_button_return_to_keep_click")
+	if not not self._ready_button_widget.content.button_hotspot.disable_button and input_service:get("refresh") and not Managers.invite:has_invitation() then
+		self:play_sound("play_gui_mission_summary_button_return_to_keep_click")
 
-		if arg_23_0._left_lobby then
-			arg_23_0:exit_to_game()
+		if not self._left_lobby then
+			self:exit_to_game()
 		else
-			arg_23_0:signal_done(false)
+			self:signal_done(false)
 		end
 	end
 end
 
-function LevelEndView.input_enabled(arg_24_0)
-	return not arg_24_0._ready_button_widget.content.button_hotspot.disable_button
+LevelEndView.input_enabled = function (self)
+	-- function 24
+	return not self._ready_button_widget.content.button_hotspot.disable_button
 end
 
-function LevelEndView.set_input_description(arg_25_0, arg_25_1)
+LevelEndView.set_input_description = function (self, arg_25_1)
+	-- function 25
 	local var_25_0 = var_0_0.generic_input_actions[arg_25_1]
 
-	arg_25_0._menu_input_description:set_input_description(var_25_0)
+	self._menu_input_description:set_input_description(var_25_0)
 end
 
-function LevelEndView._update_animations(arg_26_0, arg_26_1, arg_26_2)
-	arg_26_0.ui_animator:update(arg_26_1)
+LevelEndView._update_animations = function (self, arg_26_1, arg_26_2)
+	-- function 26
+	self.ui_animator:update(arg_26_1)
 
-	for iter_26_0, iter_26_1 in pairs(arg_26_0.ui_animations) do
-		UIAnimation.update(iter_26_1, arg_26_1)
+	for k, v in pairs(self.ui_animations) do
+		UIAnimation.update(v, arg_26_1)
 
-		if UIAnimation.completed(iter_26_1) then
-			arg_26_0.ui_animations[iter_26_0] = nil
+		if not UIAnimation.completed(v) then
+			self.ui_animations[k] = nil
 		end
 	end
 
-	UIWidgetUtils.animate_default_button(arg_26_0._retry_button_widget, arg_26_1)
-	UIWidgetUtils.animate_default_button(arg_26_0._ready_button_widget, arg_26_1)
+	UIWidgetUtils.animate_default_button(self._retry_button_widget, arg_26_1)
+	UIWidgetUtils.animate_default_button(self._ready_button_widget, arg_26_1)
 end
 
-function LevelEndView.destroy(arg_27_0, arg_27_1)
-	arg_27_0:_destroy_team_previewer()
-	LevelEndView.super.destroy(arg_27_0, arg_27_1)
-	Managers.state.event:unregister("set_flow_object_set_enabled", arg_27_0)
+LevelEndView.destroy = function (self, arg_27_1)
+	-- function 27
+	self:_destroy_team_previewer()
+	LevelEndView.super.destroy(self, arg_27_1)
+	Managers.state.event:unregister("set_flow_object_set_enabled", self)
 
-	arg_27_0._ui_scenegraph = nil
+	self._ui_scenegraph = nil
 end
 
-function LevelEndView.active_input_service(arg_28_0)
-	return arg_28_0.input_blocked and FAKE_INPUT_SERVICE or arg_28_0:input_service()
+LevelEndView.active_input_service = function (self)
+	-- function 28
+	local FAKE_INPUT_SERVICE
+
+	if not self.input_blocked then
+		FAKE_INPUT_SERVICE = FAKE_INPUT_SERVICE
+
+		if not FAKE_INPUT_SERVICE then
+			-- Nothing
+		end
+	end
+
+	FAKE_INPUT_SERVICE = self:input_service()
+
+	::label_28_0::
+
+	return FAKE_INPUT_SERVICE
 end
 
-function LevelEndView._start_animation(arg_29_0, arg_29_1)
-	local var_29_0 = {
-		wwise_world = arg_29_0.wwise_world,
-		render_settings = arg_29_0.render_settings
+LevelEndView._start_animation = function (self, arg_29_1)
+	-- function 29
+	local tbl = {
+		wwise_world = self.wwise_world,
+		render_settings = self.render_settings
 	}
-	local var_29_1 = arg_29_0._dynamic_widgets
+	local _dynamic_widgets = self._dynamic_widgets
 
-	return arg_29_0.ui_animator:start_animation(arg_29_1, var_29_1, var_0_2, var_29_0)
+	return self.ui_animator:start_animation(arg_29_1, _dynamic_widgets, scenegraph_definition, tbl)
 end
 
-function LevelEndView._retry_level(arg_30_0)
-	arg_30_0:signal_done(true)
+LevelEndView._retry_level = function (self)
+	-- function 30
+	self:signal_done(true)
 
-	if not arg_30_0.is_server then
-		arg_30_0._retry_button_widget.content.button_hotspot.disabled = true
+	if not self.is_server then
+		self._retry_button_widget.content.button_hotspot.disabled = true
 	end
 end
 
-function LevelEndView.signal_done(arg_31_0, arg_31_1)
-	LevelEndView.super.signal_done(arg_31_0, arg_31_1)
+LevelEndView.signal_done = function (self, arg_31_1)
+	-- function 31
+	LevelEndView.super.signal_done(self, arg_31_1)
 
-	if arg_31_0._signaled_done then
+	if not self._signaled_done then
 		return
 	end
 
-	arg_31_0._ready_button_widget.content.button_hotspot.disable_button = true
-	arg_31_0._retry_button_widget.content.button_hotspot.disable_button = true
+	self._ready_button_widget.content.button_hotspot.disable_button = true
+	self._retry_button_widget.content.button_hotspot.disable_button = true
 end
 
-function LevelEndView.peer_signaled_done(arg_32_0, arg_32_1, arg_32_2)
-	LevelEndView.super.peer_signaled_done(arg_32_0, arg_32_1, arg_32_2)
+LevelEndView.peer_signaled_done = function (self, arg_32_1, arg_32_2)
+	-- function 32
+	LevelEndView.super.peer_signaled_done(self, arg_32_1, arg_32_2)
 
 	local var_32_0
 
-	if arg_32_2 then
-		var_32_0 = arg_32_0._retry_checkboxes_widget.content
+	if not arg_32_2 then
+		var_32_0 = self._retry_checkboxes_widget.content
 	else
-		var_32_0 = arg_32_0._reload_checkboxes_widget.content
+		var_32_0 = self._reload_checkboxes_widget.content
 	end
 
 	var_32_0.votes = var_32_0.votes + 1
 end
 
-function LevelEndView._set_end_timer(arg_33_0, arg_33_1)
+LevelEndView._set_end_timer = function (arg_33_0, arg_33_1)
+	-- function 33
 	arg_33_0._dynamic_widgets.timer_text.content.text = Localize("timer_prefix_time_left") .. ": " .. UIUtils.format_time(math.ceil(arg_33_1))
 end
 
-function LevelEndView.update_force_shutdown(arg_34_0, arg_34_1)
-	arg_34_0._force_shutdown_timer = math.max(0, arg_34_0._force_shutdown_timer - arg_34_1)
+LevelEndView.update_force_shutdown = function (self, arg_34_1)
+	-- function 34
+	self._force_shutdown_timer = math.max(0, self._force_shutdown_timer - arg_34_1)
 
-	arg_34_0:_set_end_timer(arg_34_0._force_shutdown_timer)
+	self:_set_end_timer(self._force_shutdown_timer)
 
-	if arg_34_0._force_shutdown_timer == 0 and not arg_34_0._signaled_done then
-		arg_34_0:signal_done(false)
+	if not (self._force_shutdown_timer ~= 0 or self._signaled_done) then
+		self:signal_done(false)
 
-		arg_34_0._signaled_done = true
-		arg_34_0._signal_done_fallback_timer = 15
-		arg_34_0._ready_button_widget.content.button_hotspot.disable_button = true
-		arg_34_0._retry_button_widget.content.button_hotspot.disable_button = true
-	elseif not arg_34_0._left_lobby then
-		if arg_34_0._signal_done_fallback_timer then
-			arg_34_0._signal_done_fallback_timer = math.max(0, arg_34_0._signal_done_fallback_timer - arg_34_1)
+		self._signaled_done = true
+		self._signal_done_fallback_timer = 15
+		self._ready_button_widget.content.button_hotspot.disable_button = true
+		self._retry_button_widget.content.button_hotspot.disable_button = true
+	elseif not self._left_lobby then
+		if not self._signal_done_fallback_timer then
+			self._signal_done_fallback_timer = math.max(0, self._signal_done_fallback_timer - arg_34_1)
 		end
 
-		local var_34_0 = true
+		local flag = true
 
-		if arg_34_0._lobby:members() then
-			local var_34_1 = arg_34_0._lobby:members():get_members()
-			local var_34_2 = arg_34_0._peers_with_score
+		if not self._lobby:members() then
+			local get_members = self._lobby:members():get_members()
+			local _peers_with_score = self._peers_with_score
 
-			for iter_34_0 = 1, #var_34_1 do
-				local var_34_3 = var_34_1[iter_34_0]
+			for i = 1, #get_members do
+				local var_34_3 = get_members[i]
 
-				if not arg_34_0._done_peers[var_34_3] and (not var_34_2 or var_34_2[var_34_3 .. ":1"]) then
-					var_34_0 = false
+				if (self._done_peers[var_34_3] or not _peers_with_score) and not _peers_with_score[var_34_3 .. ":1"] then
+					flag = false
 
 					break
 				end
 			end
 		end
 
-		if var_34_0 or arg_34_0._signal_done_fallback_timer and arg_34_0._signal_done_fallback_timer <= 0 then
-			arg_34_0:exit_to_game()
+		if not ((flag or not self._signal_done_fallback_timer) and not (self._signal_done_fallback_timer <= 0)) then
+			self:exit_to_game()
 		end
 	end
 
-	if arg_34_0._started_exit then
-		arg_34_0._started_force_shutdown = false
+	if not self._started_exit then
+		self._started_force_shutdown = false
 	end
 end
 
-local var_0_16 = "levels/end_screen_victory/parading_screen"
+local str = "levels/end_screen_victory/parading_screen"
 
-function LevelEndView.setup_camera(arg_35_0)
-	local var_35_0 = arg_35_0.game_won and "pose_camera" or "end_screen_camera"
+LevelEndView.setup_camera = function (self)
+	-- function 35
+	local flag
+
+	flag = not self.game_won and "pose_camera" and "end_screen_camera"
+
 	local var_35_1
 	local var_35_2
-	local var_35_3 = arg_35_0.game_won and "units/hub_elements/cutscene_camera/cutscene_camera_env_controls" or "units/hub_elements/cutscene_camera/cutscene_camera"
-	local var_35_4 = LevelResource.unit_indices(var_0_16, var_35_3)
+	local flag_2
 
-	for iter_35_0, iter_35_1 in pairs(var_35_4) do
-		local var_35_5 = LevelResource.unit_data(var_0_16, iter_35_1)
-		local var_35_6 = DynamicData.get(var_35_5, "name")
+	flag_2 = not self.game_won and "units/hub_elements/cutscene_camera/cutscene_camera_env_controls" and "units/hub_elements/cutscene_camera/cutscene_camera"
 
-		if var_35_6 and var_35_6 == var_35_0 then
-			local var_35_7 = LevelResource.unit_position(var_0_16, iter_35_1)
-			local var_35_8 = LevelResource.unit_rotation(var_0_16, iter_35_1)
-			local var_35_9 = LevelResource.unit_rotation(var_0_16, iter_35_1)
-			local var_35_10 = Quaternion.forward(var_35_9)
-			local var_35_11 = Matrix4x4.from_quaternion_position(var_35_9, var_35_7)
+	local unit_indices = LevelResource.unit_indices(str, flag_2)
 
-			var_35_1 = Matrix4x4Box(var_35_11)
-			var_35_2 = iter_35_1
+	for k, v in pairs(unit_indices) do
+		local unit_data = LevelResource.unit_data(str, v)
+		local get = DynamicData.get(unit_data, "name")
 
-			print("Found camera: " .. var_35_6)
+		if not (not get and get ~= flag) then
+			local unit_position = LevelResource.unit_position(str, v)
+			local unit_rotation = LevelResource.unit_rotation(str, v)
+			local unit_rotation_2 = LevelResource.unit_rotation(str, v)
+			local forward = Quaternion.forward(unit_rotation_2)
+			local from_quaternion_position = Matrix4x4.from_quaternion_position(unit_rotation_2, unit_position)
+
+			var_35_1 = Matrix4x4Box(from_quaternion_position)
+			var_35_2 = v
+
+			print("Found camera: " .. get)
 
 			break
 		end
 	end
 
-	arg_35_0._camera_pose = var_35_1
-	arg_35_0._camera_index = var_35_2
+	self._camera_pose = var_35_1
+	self._camera_index = var_35_2
 
-	arg_35_0:position_camera()
+	self:position_camera()
 end
 
-function LevelEndView.get_camera_pose(arg_36_0)
-	return arg_36_0._camera_pose:unbox()
+LevelEndView.get_camera_pose = function (self)
+	-- function 36
+	return self._camera_pose:unbox()
 end
 
-function LevelEndView.start_story_camera(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
-	arg_37_0._storyteller = World.storyteller(arg_37_0._world)
+LevelEndView.start_story_camera = function (self, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
+	-- function 37
+	self._storyteller = World.storyteller(self._world)
 
-	arg_37_0:stop_playing_story(arg_37_0._story_id)
+	self:stop_playing_story(self._story_id)
 
-	local var_37_0 = Storyteller.play_level_story(arg_37_0._storyteller, arg_37_0._level, arg_37_1)
+	local play_level_story = Storyteller.play_level_story(self._storyteller, self._level, arg_37_1)
 
-	arg_37_0._story_id = var_37_0
+	self._story_id = play_level_story
 
-	Storyteller.set_speed(arg_37_0._storyteller, var_37_0, arg_37_3 or 1)
-	Storyteller.set_loop_mode(arg_37_0._storyteller, var_37_0, arg_37_2 and Storyteller.LOOP or Storyteller.NONE)
+	Storyteller.set_speed(self._storyteller, play_level_story, arg_37_3 or 1)
 
-	arg_37_0._story_timer = 0
-	arg_37_0._manual_control = arg_37_4
-	arg_37_0._story_length = Storyteller.length(arg_37_0._storyteller, var_37_0)
+	local set_loop_mode = Storyteller.set_loop_mode
+	local _storyteller = self._storyteller
+	local var_37_3 = play_level_story
+	local LOOP
 
-	return var_37_0
+	if not arg_37_2 then
+		LOOP = Storyteller.LOOP
+
+		if not LOOP then
+			-- Nothing
+		end
+	end
+
+	LOOP = Storyteller.NONE
+
+	::label_37_0::
+
+	set_loop_mode(_storyteller, var_37_3, LOOP)
+
+	self._story_timer = 0
+	self._manual_control = arg_37_4
+	self._story_length = Storyteller.length(self._storyteller, play_level_story)
+
+	return play_level_story
 end
 
-function LevelEndView.stop_playing_story(arg_38_0, arg_38_1)
-	if not arg_38_1 or not arg_38_0._storyteller or not Storyteller.is_playing(arg_38_0._storyteller, arg_38_1) then
+LevelEndView.stop_playing_story = function (self, arg_38_1)
+	-- function 38
+	if not (not arg_38_1 and not self._storyteller and Storyteller.is_playing(self._storyteller, arg_38_1)) then
 		return
 	end
 
-	Storyteller.stop(arg_38_0._storyteller, arg_38_1)
+	Storyteller.stop(self._storyteller, arg_38_1)
 
-	arg_38_0._story_id = nil
+	self._story_id = nil
 end
 
-function LevelEndView.is_playing_story(arg_39_0, arg_39_1)
-	if not arg_39_0._storyteller or not arg_39_1 then
+LevelEndView.is_playing_story = function (self, arg_39_1)
+	-- function 39
+	if not (not self._storyteller and arg_39_1) then
 		return false
 	end
 
-	return (Storyteller.is_playing(arg_39_0._storyteller, arg_39_1))
+	return (Storyteller.is_playing(self._storyteller, arg_39_1))
 end
 
-function LevelEndView._update_story(arg_40_0, arg_40_1, arg_40_2)
-	if not arg_40_0._storyteller or not arg_40_0._story_id then
+LevelEndView._update_story = function (self, arg_40_1, arg_40_2)
+	-- function 40
+	if not (not self._storyteller and self._story_id) then
 		return
 	end
 
-	Storyteller.set_speed(arg_40_0._storyteller, arg_40_0._story_id, arg_40_0._state_speed_mult)
+	Storyteller.set_speed(self._storyteller, self._story_id, self._state_speed_mult)
 
-	if arg_40_0._manual_control then
-		Storyteller.set_time(arg_40_0._storyteller, arg_40_0._story_id, arg_40_0._story_timer)
+	if not self._manual_control then
+		Storyteller.set_time(self._storyteller, self._story_id, self._story_timer)
 	end
 
-	local var_40_0 = Level.unit_by_index(arg_40_0._level, arg_40_0._camera_index)
-	local var_40_1 = Unit.world_pose(var_40_0, 0)
+	local unit_by_index = Level.unit_by_index(self._level, self._camera_index)
+	local world_pose = Unit.world_pose(unit_by_index, 0)
 
-	arg_40_0._camera_pose = Matrix4x4Box(var_40_1)
+	self._camera_pose = Matrix4x4Box(world_pose)
 
-	arg_40_0:position_camera()
+	self:position_camera()
 
-	if Storyteller.time(arg_40_0._storyteller, arg_40_0._story_id) >= arg_40_0._story_length then
-		arg_40_0:stop_playing_story(arg_40_0._story_id)
+	if Storyteller.time(self._storyteller, self._story_id) >= self._story_length then
+		self:stop_playing_story(self._story_id)
 
-		arg_40_0._storyteller = nil
+		self._storyteller = nil
 	end
 end
 
-function LevelEndView.set_story_time(arg_41_0, arg_41_1)
-	arg_41_0._story_timer = arg_41_1
+LevelEndView.set_story_time = function (self, arg_41_1)
+	-- function 41
+	self._story_timer = arg_41_1
 end
 
-function LevelEndView._gather_hero_locations(arg_42_0)
-	local var_42_0 = {}
-	local var_42_1 = LevelResource.unit_indices(var_0_16, "units/hub_elements/versus_podium_character_spawn")
+LevelEndView._gather_hero_locations = function (arg_42_0)
+	-- function 42
+	local tbl = {}
+	local unit_indices = LevelResource.unit_indices(str, "units/hub_elements/versus_podium_character_spawn")
 
-	for iter_42_0, iter_42_1 in pairs(var_42_1) do
-		local var_42_2 = LevelResource.unit_data(var_0_16, iter_42_1)
-		local var_42_3 = DynamicData.get(var_42_2, "name")
+	for k, v in pairs(unit_indices) do
+		local unit_data = LevelResource.unit_data(str, v)
+		local get = DynamicData.get(unit_data, "name")
 
-		if var_42_3 and string.find(var_42_3, "spawn_point") then
-			local var_42_4 = LevelResource.unit_position(var_0_16, iter_42_1)
+		if not get and not string.find(get, "spawn_point") then
+			local unit_position = LevelResource.unit_position(str, v)
 
-			var_42_0[tonumber(string.gsub(var_42_3, "spawn_point_", ""), 10)] = {
-				var_42_4[1],
-				var_42_4[2],
-				var_42_4[3]
+			tbl[tonumber(string.gsub(get, "spawn_point_", ""), 10)] = {
+				unit_position[1],
+				unit_position[2],
+				unit_position[3]
 			}
 		end
 	end
 
-	for iter_42_2 = 1, 4 do
-		var_42_0[iter_42_2] = var_42_0[iter_42_2] or {
+	for k_2 = 1, 4 do
+		local var_42_5 = tbl[k_2]
+
+		var_42_5 = var_42_5 or {
 			0,
 			0,
 			0
 		}
+		tbl[k_2] = var_42_5
 	end
 
-	return var_42_0
+	return tbl
 end
 
-function LevelEndView.create_world(arg_43_0, arg_43_1)
-	local var_43_0 = "end_screen"
-	local var_43_1 = "environment/ui_end_screen"
-	local var_43_2 = 2
-	local var_43_3 = arg_43_0:get_world_flags()
-	local var_43_4 = Managers.world:create_world(var_43_0, var_43_1, nil, var_43_2, unpack(var_43_3))
-	local var_43_5 = Managers.world:world("top_ingame_view")
+LevelEndView.create_world = function (self, arg_43_1)
+	-- function 43
+	local str = "end_screen"
+	local str_2 = "environment/ui_end_screen"
+	local num = 2
+	local get_world_flags = self:get_world_flags()
+	local create_world = Managers.world:create_world(str, str_2, nil, num, unpack(get_world_flags))
+	local world = Managers.world:world("top_ingame_view")
 
-	return var_43_4, var_43_5
+	return create_world, world
 end
 
-function LevelEndView.spawn_level(arg_44_0, arg_44_1, arg_44_2)
-	local var_44_0 = {}
+LevelEndView.spawn_level = function (self, arg_44_1, arg_44_2)
+	-- function 44
+	local tbl = {}
 	local var_44_1
 	local var_44_2
 	local var_44_3
 	local var_44_4
-	local var_44_5 = false
-	local var_44_6 = ScriptWorld.spawn_level(arg_44_2, var_0_16, var_44_0, var_44_1, var_44_2, var_44_3, var_44_4, var_44_5)
+	local flag = false
+	local spawn_level = ScriptWorld.spawn_level(arg_44_2, str, tbl, var_44_1, var_44_2, var_44_3, var_44_4, flag)
 
-	Level.spawn_background(var_44_6)
-	Level.trigger_level_loaded(var_44_6)
-	arg_44_0:_register_object_sets(var_44_6, var_0_16)
+	Level.spawn_background(spawn_level)
+	Level.trigger_level_loaded(spawn_level)
+	self:_register_object_sets(spawn_level, str)
 
-	local var_44_7 = arg_44_1.game_won and "flow_victory" or "flow_defeat"
+	local flag_2
 
-	arg_44_0:_show_object_set(var_44_7, var_44_6)
+	flag_2 = not arg_44_1.game_won and "flow_victory" and "flow_defeat"
 
-	return var_44_6
+	self:_show_object_set(flag_2, spawn_level)
+
+	return spawn_level
 end
 
-function LevelEndView.get_world_link_unit(arg_45_0)
-	local var_45_0 = arg_45_0:get_viewport_world()
-	local var_45_1 = ScriptWorld.level(var_45_0, var_0_16)
+LevelEndView.get_world_link_unit = function (self)
+	-- function 45
+	local get_viewport_world = self:get_viewport_world()
+	local level = ScriptWorld.level(get_viewport_world, str)
 
-	if var_45_1 then
-		local var_45_2 = Level.units(var_45_1)
+	if not level then
+		local units = Level.units(level)
 
-		for iter_45_0, iter_45_1 in ipairs(var_45_2) do
-			local var_45_3 = Unit.get_data(iter_45_1, "name")
+		for i, v in ipairs(units) do
+			local get_data = Unit.get_data(v, "name")
 
-			if var_45_3 and var_45_3 == "loot_chest_spawn" then
-				return iter_45_1
+			if not (not get_data and get_data ~= "loot_chest_spawn") then
+				return v
 			end
 		end
 	end
 end
 
-function LevelEndView._push_mouse_cursor(arg_46_0)
-	if not arg_46_0._cursor_visible then
+LevelEndView._push_mouse_cursor = function (self)
+	-- function 46
+	if not self._cursor_visible then
 		ShowCursorStack.show("LevelEndViewBase")
 
-		arg_46_0._cursor_visible = true
+		self._cursor_visible = true
 
-		arg_46_0:_start_animation("ready_button_entry_alone")
+		self:_start_animation("ready_button_entry_alone")
 	end
 end
 
-function LevelEndViewBase._pop_mouse_cursor(arg_47_0)
-	if arg_47_0._cursor_visible then
+LevelEndViewBase._pop_mouse_cursor = function (self)
+	-- function 47
+	if not self._cursor_visible then
 		ShowCursorStack.hide("LevelEndViewBase")
 
-		arg_47_0._cursor_visible = nil
+		self._cursor_visible = nil
 	end
 end
 
-function LevelEndView.input_enabled(arg_48_0)
-	return not arg_48_0._ready_button_widget.content.button_hotspot.disable_button
+LevelEndView.input_enabled = function (self)
+	-- function 48
+	return not self._ready_button_widget.content.button_hotspot.disable_button
 end

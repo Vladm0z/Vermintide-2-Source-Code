@@ -2,244 +2,262 @@
 
 HordeSurgeHandler = class(HordeSurgeHandler)
 
-local var_0_0 = {
+local tbl = {
 	"rpc_horde_surge_freeze",
 	"rpc_horde_surge_set_level"
 }
 
-function HordeSurgeHandler.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
-	arg_1_0._is_server = arg_1_1
-	arg_1_0._world = arg_1_2
+HordeSurgeHandler.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	-- function 1
+	self._is_server = arg_1_1
+	self._world = arg_1_2
 
 	if not arg_1_3 then
-		arg_1_0.disabled = true
+		self.disabled = true
 	end
 
-	arg_1_0._events = arg_1_3
-	arg_1_0._current_event = nil
-	arg_1_0._seed = arg_1_4
-	arg_1_0._level_index = 0
-	arg_1_0._current_terror_event_index = 0
-	arg_1_0._end_time = nil
-	arg_1_0._start_time = 0
-	arg_1_0._freeze_time = 0
-	arg_1_0._frozen = false
-	arg_1_0._active = arg_1_5
-	arg_1_0._first_update = true
-	arg_1_0._time_modifier = 1
-	arg_1_0._game_object_id = nil
-	arg_1_0._progress = 0
-	arg_1_0._time_to_next = 0
-	arg_1_0._current_terror_event = nil
+	self._events = arg_1_3
+	self._current_event = nil
+	self._seed = arg_1_4
+	self._level_index = 0
+	self._current_terror_event_index = 0
+	self._end_time = nil
+	self._start_time = 0
+	self._freeze_time = 0
+	self._frozen = false
+	self._active = arg_1_5
+	self._first_update = true
+	self._time_modifier = 1
+	self._game_object_id = nil
+	self._progress = 0
+	self._time_to_next = 0
+	self._current_terror_event = nil
 
-	if arg_1_0._is_server then
-		local var_1_0 = {
+	if not self._is_server then
+		local tbl = {
 			progress = 0,
 			go_type = NetworkLookup.go_types.horde_surge
 		}
 
-		arg_1_0._game_object_id = Managers.state.network:create_game_object("horde_surge", var_1_0)
+		self._game_object_id = Managers.state.network:create_game_object("horde_surge", tbl)
 	else
-		arg_1_0._target_progress = 0
-		arg_1_0._time_until_next_update = 0
-		arg_1_0._last_update_time = 0
+		self._target_progress = 0
+		self._time_until_next_update = 0
+		self._last_update_time = 0
 	end
 end
 
-function HordeSurgeHandler.register_rpcs(arg_2_0, arg_2_1, arg_2_2)
-	arg_2_1:register(arg_2_0, unpack(var_0_0))
+HordeSurgeHandler.register_rpcs = function (self, arg_2_1, arg_2_2)
+	-- function 2
+	arg_2_1:register(self, unpack(tbl))
 
-	arg_2_0._network_event_delegate = arg_2_1
-	arg_2_0._network_transmit = arg_2_2
+	self._network_event_delegate = arg_2_1
+	self._network_transmit = arg_2_2
 end
 
-function HordeSurgeHandler.unregister_rpcs(arg_3_0)
-	arg_3_0._network_event_delegate:unregister(arg_3_0)
+HordeSurgeHandler.unregister_rpcs = function (self)
+	-- function 3
+	self._network_event_delegate:unregister(self)
 
-	arg_3_0._network_event_delegate = nil
-	arg_3_0._network_transmit = nil
+	self._network_event_delegate = nil
+	self._network_transmit = nil
 end
 
-function HordeSurgeHandler.destroy(arg_4_0)
-	if arg_4_0._is_server then
-		local var_4_0 = Network.game_session()
+HordeSurgeHandler.destroy = function (self)
+	-- function 4
+	if not self._is_server then
+		local game_session = Network.game_session()
 
-		GameSession.destroy_game_object(var_4_0, arg_4_0._game_object_id)
+		GameSession.destroy_game_object(game_session, self._game_object_id)
 	end
 end
 
-function HordeSurgeHandler.server_update(arg_5_0, arg_5_1, arg_5_2)
-	if not arg_5_0._active or not arg_5_0._game_object_id or script_data.disable_horde_surge or arg_5_0.disabled then
+HordeSurgeHandler.server_update = function (self, arg_5_1, arg_5_2)
+	-- function 5
+	if not self._active and not self._game_object_id and script_data.disable_horde_surge or not self.disabled then
 		return
 	end
 
-	local var_5_0 = Network.game_session()
+	local game_session = Network.game_session()
 
-	if not var_5_0 then
+	if not game_session then
 		return
 	end
 
-	local var_5_1 = arg_5_0._freeze_time ~= 0
+	local flag = self._freeze_time ~= 0
 
-	if not var_5_1 and arg_5_0._events then
-		if arg_5_0._first_update then
-			arg_5_0:_next_level(arg_5_1, var_5_0)
+	if flag or not self._events then
+		if not self._first_update then
+			self:_next_level(arg_5_1, game_session)
 
-			arg_5_0._first_update = false
+			self._first_update = false
 		end
 
-		if arg_5_1 > arg_5_0._end_time then
-			arg_5_0:_trigger_event()
-			arg_5_0:_next_level(arg_5_1, var_5_0)
+		if arg_5_1 > self._end_time then
+			self:_trigger_event()
+			self:_next_level(arg_5_1, game_session)
 		end
 
-		arg_5_0._time_to_next = arg_5_0._end_time - arg_5_1
-		arg_5_0._progress = (arg_5_1 - arg_5_0._start_time) / (arg_5_0._end_time - arg_5_0._start_time) * 100
+		self._time_to_next = self._end_time - arg_5_1
+		self._progress = (arg_5_1 - self._start_time) / (self._end_time - self._start_time) * 100
 
-		GameSession.set_game_object_field(var_5_0, arg_5_0._game_object_id, "progress", arg_5_0._progress)
+		GameSession.set_game_object_field(game_session, self._game_object_id, "progress", self._progress)
 	else
-		arg_5_0._freeze_time = math.max(arg_5_0._freeze_time - arg_5_2, 0)
+		self._freeze_time = math.max(self._freeze_time - arg_5_2, 0)
 	end
 
-	arg_5_0._frozen = var_5_1
+	self._frozen = flag
 end
 
-function HordeSurgeHandler.client_update(arg_6_0, arg_6_1, arg_6_2)
-	if not arg_6_0._game_object_id or script_data.disable_horde_surge or arg_6_0.disabled then
+HordeSurgeHandler.client_update = function (self, arg_6_1, arg_6_2)
+	-- function 6
+	if not self._game_object_id and script_data.disable_horde_surge or not self.disabled then
 		return
 	end
 
-	local var_6_0 = Network.game_session()
+	local game_session = Network.game_session()
 
-	if not var_6_0 then
+	if not game_session then
 		return
 	end
 
-	local var_6_1 = GameSession.game_object_field(var_6_0, arg_6_0._game_object_id, "progress")
+	local game_object_field = GameSession.game_object_field(game_session, self._game_object_id, "progress")
 
-	if var_6_1 < arg_6_0._target_progress then
-		arg_6_0._target_progress = 0
-		arg_6_0._progress = 0
+	if game_object_field < self._target_progress then
+		self._target_progress = 0
+		self._progress = 0
 	end
 
-	if var_6_1 ~= arg_6_0._target_progress then
-		arg_6_0._progress = arg_6_0._target_progress
-		arg_6_0._target_progress = var_6_1
-		arg_6_0._time_until_next_update = arg_6_1 - arg_6_0._last_update_time
-		arg_6_0._last_update_time = arg_6_1
+	if game_object_field ~= self._target_progress then
+		self._progress = self._target_progress
+		self._target_progress = game_object_field
+		self._time_until_next_update = arg_6_1 - self._last_update_time
+		self._last_update_time = arg_6_1
 	end
 
-	if arg_6_0._progress ~= arg_6_0._target_progress then
-		local var_6_2 = arg_6_0._target_progress - arg_6_0._progress
+	if self._progress ~= self._target_progress then
+		local num = self._target_progress - self._progress
 
-		arg_6_0._progress = math.min(arg_6_0._progress + var_6_2 / arg_6_0._time_until_next_update * arg_6_2, arg_6_0._target_progress)
-		arg_6_0._time_until_next_update = arg_6_0._time_until_next_update - arg_6_2
+		self._progress = math.min(self._progress + num / self._time_until_next_update * arg_6_2, self._target_progress)
+		self._time_until_next_update = self._time_until_next_update - arg_6_2
 	end
 
-	arg_6_0._time_to_next = math.max(0, arg_6_0._time_to_next - arg_6_2)
+	self._time_to_next = math.max(0, self._time_to_next - arg_6_2)
 
-	if arg_6_0._frozen then
-		arg_6_0._freeze_time = math.max(0, arg_6_0._freeze_time - arg_6_2)
+	if not self._frozen then
+		self._freeze_time = math.max(0, self._freeze_time - arg_6_2)
 
-		if arg_6_0._freeze_time == 0 then
-			arg_6_0._frozen = false
+		if self._freeze_time == 0 then
+			self._frozen = false
 		end
 	end
 end
 
-function HordeSurgeHandler._trigger_event(arg_7_0)
-	local var_7_0 = {}
-	local var_7_1, var_7_2 = Math.next_random(arg_7_0._seed, 1, #arg_7_0._current_event.terror_events)
+HordeSurgeHandler._trigger_event = function (self)
+	-- function 7
+	local tbl = {}
+	local next_random, var_7_2 = Math.next_random(self._seed, 1, #self._current_event.terror_events)
 
-	arg_7_0._seed = var_7_1
+	self._seed = next_random
 
-	local var_7_3 = arg_7_0._current_event.terror_events[var_7_2]
+	local var_7_3 = self._current_event.terror_events[var_7_2]
 
-	TerrorEventMixer.start_event(var_7_3, var_7_0)
+	TerrorEventMixer.start_event(var_7_3, tbl)
 
-	arg_7_0._current_terror_event = var_7_3
-	arg_7_0._current_terror_event_index = var_7_2
+	self._current_terror_event = var_7_3
+	self._current_terror_event_index = var_7_2
 end
 
-function HordeSurgeHandler._next_level(arg_8_0, arg_8_1, arg_8_2)
-	fassert(arg_8_0._is_server, "This should only be called on the server")
+HordeSurgeHandler._next_level = function (self, arg_8_1, arg_8_2)
+	-- function 8
+	fassert(self._is_server, "This should only be called on the server")
 
-	if arg_8_0._events[arg_8_0._level_index + 1] then
-		arg_8_0._level_index = arg_8_0._level_index + 1
-		arg_8_0._current_event = arg_8_0._events[arg_8_0._level_index]
+	if not self._events[self._level_index + 1] then
+		self._level_index = self._level_index + 1
+		self._current_event = self._events[self._level_index]
 	else
-		arg_8_0._time_modifier = math.max(arg_8_0._time_modifier * 0.9, 0.5)
+		self._time_modifier = math.max(self._time_modifier * 0.9, 0.5)
 	end
 
-	local var_8_0 = arg_8_0._current_event.time * arg_8_0._time_modifier
+	local num = self._current_event.time * self._time_modifier
 
-	arg_8_0._start_time = arg_8_1
-	arg_8_0._end_time = arg_8_1 + var_8_0
+	self._start_time = arg_8_1
+	self._end_time = arg_8_1 + num
 
-	Managers.state.event:trigger("horde_surge_level_changed", arg_8_0._level_index)
-	arg_8_0._network_transmit:send_rpc_clients("rpc_horde_surge_set_level", arg_8_0._level_index, arg_8_0._current_terror_event_index, arg_8_0._time_to_next)
+	Managers.state.event:trigger("horde_surge_level_changed", self._level_index)
+	self._network_transmit:send_rpc_clients("rpc_horde_surge_set_level", self._level_index, self._current_terror_event_index, self._time_to_next)
 end
 
-function HordeSurgeHandler.freeze_timer(arg_9_0, arg_9_1)
-	fassert(arg_9_0._is_server, "This should only be called on the server")
+HordeSurgeHandler.freeze_timer = function (self, arg_9_1)
+	-- function 9
+	fassert(self._is_server, "This should only be called on the server")
 
-	if arg_9_0._frozen then
-		arg_9_1 = arg_9_1 - arg_9_0._freeze_time
+	if not self._frozen then
+		arg_9_1 = arg_9_1 - self._freeze_time
 	end
 
-	arg_9_0._freeze_time = arg_9_0._freeze_time + arg_9_1
-	arg_9_0._end_time = arg_9_0._end_time + arg_9_1
-	arg_9_0._start_time = arg_9_0._start_time + arg_9_1
+	self._freeze_time = self._freeze_time + arg_9_1
+	self._end_time = self._end_time + arg_9_1
+	self._start_time = self._start_time + arg_9_1
 
-	arg_9_0._network_transmit:send_rpc_clients("rpc_horde_surge_freeze", arg_9_0._freeze_time)
+	self._network_transmit:send_rpc_clients("rpc_horde_surge_freeze", self._freeze_time)
 end
 
-function HordeSurgeHandler.activate(arg_10_0)
-	arg_10_0._active = true
+HordeSurgeHandler.activate = function (self)
+	-- function 10
+	self._active = true
 end
 
-function HordeSurgeHandler.deactivate(arg_11_0)
-	arg_11_0._active = false
+HordeSurgeHandler.deactivate = function (self)
+	-- function 11
+	self._active = false
 end
 
-function HordeSurgeHandler.get_progress(arg_12_0)
-	return arg_12_0._progress
+HordeSurgeHandler.get_progress = function (self)
+	-- function 12
+	return self._progress
 end
 
-function HordeSurgeHandler.get_freeze_time(arg_13_0)
-	return arg_13_0._freeze_time
+HordeSurgeHandler.get_freeze_time = function (self)
+	-- function 13
+	return self._freeze_time
 end
 
-function HordeSurgeHandler.is_frozen(arg_14_0)
-	return arg_14_0._frozen
+HordeSurgeHandler.is_frozen = function (self)
+	-- function 14
+	return self._frozen
 end
 
-function HordeSurgeHandler.get_level(arg_15_0)
-	return arg_15_0._level_index
+HordeSurgeHandler.get_level = function (self)
+	-- function 15
+	return self._level_index
 end
 
-function HordeSurgeHandler.rpc_horde_surge_freeze(arg_16_0, arg_16_1, arg_16_2)
-	arg_16_0._freeze_time = arg_16_2
-	arg_16_0._frozen = true
+HordeSurgeHandler.rpc_horde_surge_freeze = function (self, arg_16_1, arg_16_2)
+	-- function 16
+	self._freeze_time = arg_16_2
+	self._frozen = true
 end
 
-function HordeSurgeHandler.rpc_horde_surge_set_level(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
-	arg_17_0._level_index = arg_17_2
+HordeSurgeHandler.rpc_horde_surge_set_level = function (self, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+	-- function 17
+	self._level_index = arg_17_2
 
 	if arg_17_3 ~= 0 then
-		arg_17_0._current_terror_event_index = arg_17_3
-		arg_17_0._current_terror_event = arg_17_0._events[arg_17_2 - 1].terror_events[arg_17_3]
+		self._current_terror_event_index = arg_17_3
+		self._current_terror_event = self._events[arg_17_2 - 1].terror_events[arg_17_3]
 	end
 
-	arg_17_0._time_to_next = arg_17_4
+	self._time_to_next = arg_17_4
 
 	Managers.state.event:trigger("horde_surge_changed_level", arg_17_2)
 end
 
-function HordeSurgeHandler.hot_join_sync(arg_18_0, arg_18_1)
-	arg_18_0._network_transmit:send_rpc("rpc_horde_surge_set_level", arg_18_1, arg_18_0._level_index, arg_18_0._current_terror_event_index, arg_18_0._time_to_next)
+HordeSurgeHandler.hot_join_sync = function (self, arg_18_1)
+	-- function 18
+	self._network_transmit:send_rpc("rpc_horde_surge_set_level", arg_18_1, self._level_index, self._current_terror_event_index, self._time_to_next)
 
-	if arg_18_0._frozen then
-		arg_18_0._network_transmit:send_rpc("rpc_horde_surge_freeze", arg_18_1, arg_18_0._freeze_time)
+	if not self._frozen then
+		self._network_transmit:send_rpc("rpc_horde_surge_freeze", arg_18_1, self._freeze_time)
 	end
 end

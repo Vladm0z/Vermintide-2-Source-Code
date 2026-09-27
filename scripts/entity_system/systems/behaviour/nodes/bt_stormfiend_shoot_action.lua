@@ -4,49 +4,64 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTStormfiendShootAction = class(BTStormfiendShootAction, BTNode)
 
-function BTStormfiendShootAction.init(arg_1_0, ...)
-	BTStormfiendShootAction.super.init(arg_1_0, ...)
+BTStormfiendShootAction.init = function (self, ...)
+	-- function 1
+	BTStormfiendShootAction.super.init(self, ...)
 
-	arg_1_0.unit_ids = {}
+	self.unit_ids = {}
 end
 
 BTStormfiendShootAction.name = "BTStormfiendShootAction"
 
-local function var_0_0(...)
-	if script_data.debug_stormfiend then
+local function fn(...)
+	-- function 2
+	if not script_data.debug_stormfiend then
 		print("BTStormfiendShootAction:", ...)
 	end
 end
 
-local var_0_1 = 0.4
-local var_0_2 = 10
+local num = 0.4
+local num_2 = 10
 
-function BTStormfiendShootAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
-	arg_3_0.unit_ids[arg_3_1] = Managers.state.network.unit_storage:go_id(arg_3_1)
-	arg_3_0.network_transmit = arg_3_0.network_transmit or Managers.state.network.network_transmit
+BTStormfiendShootAction.enter = function (self, arg_3_1, arg_3_2, arg_3_3)
+	-- function 3
+	self.unit_ids[arg_3_1] = Managers.state.network.unit_storage:go_id(arg_3_1)
 
-	local var_3_0 = arg_3_0._tree_node.action_data
-	local var_3_1 = arg_3_2.world
+	local network_transmit = self.network_transmit
 
-	arg_3_2.action = var_3_0
+	network_transmit = network_transmit or Managers.state.network.network_transmit
+	self.network_transmit = network_transmit
+
+	local action_data = self._tree_node.action_data
+	local world = arg_3_2.world
+
+	arg_3_2.action = action_data
 	arg_3_2.active_node = BTStormfiendShootAction
 	arg_3_2.attack_finished = false
-	arg_3_2.shoot_data = arg_3_2.shoot_data or {}
-	arg_3_2.physics_world = arg_3_2.physics_world or World.get_data(var_3_1, "physics_world")
+
+	local shoot_data = arg_3_2.shoot_data
+
+	shoot_data = shoot_data or {}
+	arg_3_2.shoot_data = shoot_data
+
+	local physics_world = arg_3_2.physics_world
+
+	physics_world = physics_world or World.get_data(world, "physics_world")
+	arg_3_2.physics_world = physics_world
 	arg_3_2.attacking_target = arg_3_2.target_unit
 
-	if arg_3_0:init_attack(arg_3_1, arg_3_2, var_3_0, arg_3_3) then
-		local var_3_2 = arg_3_2.shoot_data
+	if not self:init_attack(arg_3_1, arg_3_2, action_data, arg_3_3) then
+		local shoot_data_2 = arg_3_2.shoot_data
 
-		arg_3_2.anim_locked = arg_3_3 + var_3_0.attack_anims_data[var_3_2.attack_animation].full_animation_t
+		arg_3_2.anim_locked = arg_3_3 + action_data.attack_anims_data[shoot_data_2.attack_animation].full_animation_t
 		arg_3_2.move_state = "attacking"
 		arg_3_2.attack_aborted = false
 		arg_3_2.keep_target = true
 		arg_3_2.find_new_shoot_position = nil
 
-		arg_3_0:set_global_environment_intensity(arg_3_1, arg_3_2.group_blackboard, var_3_0)
+		self:set_global_environment_intensity(arg_3_1, arg_3_2.group_blackboard, action_data)
 
-		if var_3_0.use_demo_flow_event then
+		if not action_data.use_demo_flow_event then
 			AiBreedSnippets.on_stormfiend_demo_shoot(arg_3_1, arg_3_2)
 		end
 	else
@@ -56,128 +71,134 @@ function BTStormfiendShootAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 			arg_3_2.find_new_shoot_position = true
 		end
 
-		var_0_0("ATTACK WAS NOT OK [Aborting]")
+		fn("ATTACK WAS NOT OK [Aborting]")
 	end
 
-	local var_3_3 = arg_3_2.target_unit
+	local target_unit = arg_3_2.target_unit
 
-	AiUtils.add_attack_intensity(var_3_3, var_3_0, arg_3_2)
+	AiUtils.add_attack_intensity(target_unit, action_data, arg_3_2)
 end
 
-function BTStormfiendShootAction.set_global_environment_intensity(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
-	local var_4_0 = arg_4_3.environment_max_intensity
-	local var_4_1 = arg_4_2.firewall_environment_intensity or 0
-	local var_4_2 = math.min(var_4_1 + arg_4_3.environment_intensity_increase_per_firewall, var_4_0)
-	local var_4_3 = arg_4_3.global_sound_parameter
+BTStormfiendShootAction.set_global_environment_intensity = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	-- function 4
+	local environment_max_intensity = arg_4_3.environment_max_intensity
+	local firewall_environment_intensity = arg_4_2.firewall_environment_intensity
 
-	Managers.state.entity:system("audio_system"):set_global_parameter_with_lerp(var_4_3, var_4_2)
+	firewall_environment_intensity = firewall_environment_intensity or 0
 
-	local var_4_4 = var_4_2 / var_4_0
-	local var_4_5 = Managers.state.network.network_transmit
-	local var_4_6 = NetworkLookup.global_parameter_names[var_4_3]
+	local min = math.min(firewall_environment_intensity + arg_4_3.environment_intensity_increase_per_firewall, environment_max_intensity)
+	local global_sound_parameter = arg_4_3.global_sound_parameter
 
-	var_4_5:send_rpc_clients("rpc_client_audio_set_global_parameter_with_lerp", var_4_6, var_4_4)
+	Managers.state.entity:system("audio_system"):set_global_parameter_with_lerp(global_sound_parameter, min)
 
-	arg_4_2.firewall_environment_intensity = var_4_2
+	local num = min / environment_max_intensity
+	local network_transmit = Managers.state.network.network_transmit
+	local var_4_6 = NetworkLookup.global_parameter_names[global_sound_parameter]
+
+	network_transmit:send_rpc_clients("rpc_client_audio_set_global_parameter_with_lerp", var_4_6, num)
+
+	arg_4_2.firewall_environment_intensity = min
 end
 
-function BTStormfiendShootAction._calculate_attack_animation(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
-	local var_5_0 = Vector3.dot(arg_5_1, arg_5_3)
-	local var_5_1 = Vector3.dot(arg_5_2, arg_5_3)
-	local var_5_2 = math.abs(var_5_0)
-	local var_5_3 = math.abs(var_5_1)
+BTStormfiendShootAction._calculate_attack_animation = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	-- function 5
+	local dot = Vector3.dot(arg_5_1, arg_5_3)
+	local dot_2 = Vector3.dot(arg_5_2, arg_5_3)
+	local abs = math.abs(dot)
+	local abs_2 = math.abs(dot_2)
 	local var_5_4
 	local var_5_5
 	local var_5_6
-	local var_5_7 = var_5_3 < var_5_2
-	local var_5_8
+	local flag = abs_2 < abs
+	local flag_2
 
-	if var_5_7 and var_5_0 > 0.5 then
+	if not (not flag and not (dot > 0.5)) then
 		var_5_6 = "attack_right"
 		var_5_5 = arg_5_4.right[var_5_6]
-		var_5_8 = true
-	elseif var_5_7 and var_5_0 < -0.5 then
+		flag_2 = true
+	elseif not (not flag and not (dot < -0.5)) then
 		var_5_6 = "attack_left"
 		var_5_5 = arg_5_4.left[var_5_6]
-		var_5_8 = true
-	elseif var_5_1 > 0 then
+		flag_2 = true
+	elseif dot_2 > 0 then
 		var_5_6 = NetworkLookup.attack_arm[math.random(1, 2)]
 		var_5_5 = arg_5_4.fwd[var_5_6]
-		var_5_8 = false
+		flag_2 = false
 	else
 		var_5_6 = "attack_left"
 		var_5_5 = arg_5_4.bwd[var_5_6]
-		var_5_8 = true
+		flag_2 = true
 	end
 
-	return var_5_5, var_5_6, var_5_8
+	return var_5_5, var_5_6, flag_2
 end
 
-function BTStormfiendShootAction._calculate_aim(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7, arg_6_8, arg_6_9, arg_6_10)
+BTStormfiendShootAction._calculate_aim = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7, arg_6_8, arg_6_9, arg_6_10)
+	-- function 6
 	local var_6_0 = arg_6_7.muzzle_nodes[arg_6_3]
-	local var_6_1 = Unit.node(arg_6_1, var_6_0)
-	local var_6_2 = Unit.world_position(arg_6_1, var_6_1)
+	local node = Unit.node(arg_6_1, var_6_0)
+	local world_position = Unit.world_position(arg_6_1, node)
 
-	if arg_6_5 then
-		local var_6_3 = Vector3.flat_angle(arg_6_4, arg_6_10)
-		local var_6_4 = Quaternion.axis_angle(Vector3.up(), var_6_3)
-		local var_6_5 = var_6_2 - arg_6_2
+	if not arg_6_5 then
+		local flat_angle = Vector3.flat_angle(arg_6_4, arg_6_10)
+		local axis_angle = Quaternion.axis_angle(Vector3.up(), flat_angle)
+		local num_3 = world_position - arg_6_2
 
-		var_6_2 = arg_6_2 + Quaternion.rotate(var_6_4, var_6_5)
+		world_position = arg_6_2 + Quaternion.rotate(axis_angle, num_3)
 	end
 
 	local var_6_6 = arg_6_7.shoulder_nodes[arg_6_3]
-	local var_6_7 = Unit.node(arg_6_1, var_6_6)
-	local var_6_8 = Unit.world_position(arg_6_1, var_6_7)
-	local var_6_9 = var_6_2 - var_6_8
-	local var_6_10 = Vector3.normalize(var_6_9)
-	local var_6_11 = Vector3.length(var_6_9)
-	local var_6_12 = arg_6_6.physics_world
+	local node_2 = Unit.node(arg_6_1, var_6_6)
+	local world_position_2 = Unit.world_position(arg_6_1, node_2)
+	local num_4 = world_position - world_position_2
+	local normalize = Vector3.normalize(num_4)
+	local length = Vector3.length(num_4)
+	local physics_world = arg_6_6.physics_world
 
-	if PhysicsWorld.immediate_raycast(var_6_12, var_6_8, var_6_10, var_6_11, "any", "collision_filter", "filter_ai_line_of_sight_check") then
+	if not PhysicsWorld.immediate_raycast(physics_world, world_position_2, normalize, length, "any", "collision_filter", "filter_ai_line_of_sight_check") then
 		return nil, nil, nil
 	end
 
-	local var_6_13 = arg_6_7.start_distance
-	local var_6_14 = arg_6_7.maximum_length
-	local var_6_15 = arg_6_2 + arg_6_10 * var_6_13
-	local var_6_16 = var_6_15 + arg_6_10 * var_6_14
-	local var_6_17 = 1
-	local var_6_18 = 2
-	local var_6_19 = arg_6_6.nav_world
-	local var_6_20 = arg_6_6.navigation_extension:traverse_logic()
-	local var_6_21 = arg_6_7.minimum_length^2
-	local var_6_22 = var_6_21 < Vector3.distance_squared(var_6_15, arg_6_9)
+	local start_distance = arg_6_7.start_distance
+	local maximum_length = arg_6_7.maximum_length
+	local num_5 = arg_6_2 + arg_6_10 * start_distance
+	local num_6 = num_5 + arg_6_10 * maximum_length
+	local num_7 = 1
+	local num_8 = 2
+	local nav_world = arg_6_6.nav_world
+	local traverse_logic = arg_6_6.navigation_extension:traverse_logic()
+	local num_9 = arg_6_7.minimum_length^2
+	local flag = num_9 < Vector3.distance_squared(num_5, arg_6_9)
 	local var_6_23
 	local var_6_24
 
-	if var_6_22 then
-		var_6_24 = LocomotionUtils.ray_can_go_on_mesh(var_6_19, arg_6_2, var_6_15, var_6_20, var_6_17, var_6_18) and LocomotionUtils.ray_can_go_on_mesh(var_6_19, var_6_15, arg_6_9, var_6_20, var_6_17, var_6_18)
+	if not flag then
+		var_6_24 = not LocomotionUtils.ray_can_go_on_mesh(nav_world, arg_6_2, num_5, traverse_logic, num_7, num_8) and LocomotionUtils.ray_can_go_on_mesh(nav_world, num_5, arg_6_9, traverse_logic, num_7, num_8)
 	end
 
-	local var_6_25 = false
+	local flag_2 = false
 	local var_6_26
 	local var_6_27
 
-	if var_6_24 then
-		var_6_25 = true
+	if not var_6_24 then
+		flag_2 = true
 	else
-		local var_6_28 = Unit.node(arg_6_8, "c_head")
-		local var_6_29 = Unit.world_position(arg_6_8, var_6_28)
-		local var_6_30 = PhysicsWorld.linear_sphere_sweep(var_6_12, var_6_2, var_6_29, var_0_1, var_0_2, "collision_filter", "filter_enemy_player_ray_projectile", "report_initial_overlap")
+		local node_3 = Unit.node(arg_6_8, "c_head")
+		local world_position_3 = Unit.world_position(arg_6_8, node_3)
+		local linear_sphere_sweep = PhysicsWorld.linear_sphere_sweep(physics_world, world_position, world_position_3, num, num_2, "collision_filter", "filter_enemy_player_ray_projectile", "report_initial_overlap")
 
-		if var_6_30 then
-			local var_6_31 = #var_6_30
+		if not linear_sphere_sweep then
+			local count = #linear_sphere_sweep
 
-			for iter_6_0 = 1, var_6_31 do
-				local var_6_32 = var_6_30[iter_6_0].actor
-				local var_6_33 = Actor.unit(var_6_32)
+			for i = 1, count do
+				local actor = linear_sphere_sweep[i].actor
+				local unit = Actor.unit(actor)
 
-				if not DamageUtils.is_character(var_6_33) then
+				if not DamageUtils.is_character(unit) then
 					break
-				elseif var_6_33 == arg_6_8 then
-					var_6_25 = true
-					var_6_27 = var_6_29
+				elseif unit == arg_6_8 then
+					flag_2 = true
+					var_6_27 = world_position_3
 
 					break
 				end
@@ -187,171 +208,213 @@ function BTStormfiendShootAction._calculate_aim(arg_6_0, arg_6_1, arg_6_2, arg_6
 
 	local var_6_34
 
-	if var_6_25 then
-		local var_6_35, var_6_36, var_6_37, var_6_38 = LocomotionUtils.raycast_on_navmesh(var_6_19, var_6_15, var_6_16, var_6_20, var_6_17, var_6_18)
+	if not flag_2 then
+		local raycast_on_navmesh, var_6_36, var_6_37, var_6_38 = LocomotionUtils.raycast_on_navmesh(nav_world, num_5, num_6, traverse_logic, num_7, num_8)
+		local distance_squared
 
-		var_6_34 = var_6_21 < (var_6_36 and Vector3.distance_squared(var_6_36, var_6_38) or 0) and var_6_36 or nil
+		if not var_6_36 then
+			distance_squared = Vector3.distance_squared(var_6_36, var_6_38)
+
+			if not distance_squared then
+				-- Nothing
+			end
+		end
+
+		distance_squared = 0
+
+		::label_6_0::
+
+		var_6_34 = not (num_9 < distance_squared) or not var_6_36 or nil
 		var_6_26 = var_6_36
 		var_6_27 = var_6_27 or var_6_38
 	end
 
-	local var_6_39 = arg_6_7.aim_start_offset
-	local var_6_40 = (var_6_26 or var_6_15) + arg_6_10 * var_6_39
+	local aim_start_offset = arg_6_7.aim_start_offset
+	local num_10 = (var_6_26 or num_5) + arg_6_10 * aim_start_offset
 
-	return var_6_34, var_6_40, var_6_27
+	return var_6_34, num_10, var_6_27
 end
 
-function BTStormfiendShootAction.init_attack(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
-	local var_7_0 = arg_7_2.action
+BTStormfiendShootAction.init_attack = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	-- function 7
+	local action = arg_7_2.action
 
-	if var_7_0.switch_between_weapon_setups then
-		local var_7_1 = arg_7_2.target_dist
-		local var_7_2 = var_7_0.warpfire_switch_range
-		local var_7_3 = var_7_0.ratling_gun_switch_range
+	if not action.switch_between_weapon_setups then
+		local target_dist = arg_7_2.target_dist
+		local warpfire_switch_range = action.warpfire_switch_range
+		local ratling_gun_switch_range = action.ratling_gun_switch_range
 
-		if var_7_1 < var_7_2 then
+		if target_dist < warpfire_switch_range then
 			arg_7_2.weapon_setup = "warpfire_thrower"
 		else
 			arg_7_2.weapon_setup = "ratling_gun"
 		end
 	else
-		arg_7_2.weapon_setup = var_7_0.weapon_setup or "warpfire_thrower"
+		local weapon_setup = action.weapon_setup
+
+		weapon_setup = weapon_setup or "warpfire_thrower"
+		arg_7_2.weapon_setup = weapon_setup
 	end
 
-	local var_7_4 = POSITION_LOOKUP[arg_7_1]
-	local var_7_5 = arg_7_2.attacking_target
-	local var_7_6 = POSITION_LOOKUP[var_7_5]
-	local var_7_7 = Vector3.normalize(var_7_6 - var_7_4)
-	local var_7_8 = var_7_0.attack_anims
-	local var_7_9 = Unit.world_rotation(arg_7_1, 0)
-	local var_7_10 = Quaternion.forward(var_7_9)
-	local var_7_11 = Quaternion.right(var_7_9)
-	local var_7_12, var_7_13, var_7_14 = arg_7_0:_calculate_attack_animation(var_7_11, var_7_10, var_7_7, var_7_8, var_7_4)
-	local var_7_15, var_7_16, var_7_17 = arg_7_0:_calculate_aim(arg_7_1, var_7_4, var_7_13, var_7_10, var_7_14, arg_7_2, var_7_0, var_7_5, var_7_6, var_7_7)
-	local var_7_18 = var_7_17 ~= nil
+	local var_7_5 = POSITION_LOOKUP[arg_7_1]
+	local attacking_target = arg_7_2.attacking_target
+	local var_7_7 = POSITION_LOOKUP[attacking_target]
+	local normalize = Vector3.normalize(var_7_7 - var_7_5)
+	local attack_anims = action.attack_anims
+	local world_rotation = Unit.world_rotation(arg_7_1, 0)
+	local forward = Quaternion.forward(world_rotation)
+	local right = Quaternion.right(world_rotation)
+	local _calculate_attack_animation, var_7_14, var_7_15 = self:_calculate_attack_animation(right, forward, normalize, attack_anims, var_7_5)
+	local _calculate_aim, var_7_17, var_7_18 = self:_calculate_aim(arg_7_1, var_7_5, var_7_14, forward, var_7_15, arg_7_2, action, attacking_target, var_7_7, normalize)
+	local flag = var_7_18 ~= nil
 
-	if var_7_18 then
+	if not flag then
 		arg_7_2.navigation_extension:stop()
-		arg_7_2.locomotion_extension:use_lerp_rotation(not var_7_14)
-		LocomotionUtils.set_animation_driven_movement(arg_7_1, var_7_14)
+		arg_7_2.locomotion_extension:use_lerp_rotation(not var_7_15)
+		LocomotionUtils.set_animation_driven_movement(arg_7_1, var_7_15)
 
-		local var_7_19 = var_7_0.attack_anims_data
+		local attack_anims_data = action.attack_anims_data
 
-		if var_7_14 then
-			local var_7_20 = AiAnimUtils.get_animation_rotation_scale(arg_7_1, var_7_6, var_7_12, var_7_19)
+		if not var_7_15 then
+			local get_animation_rotation_scale = AiAnimUtils.get_animation_rotation_scale(arg_7_1, var_7_7, _calculate_attack_animation, attack_anims_data)
 
-			LocomotionUtils.set_animation_rotation_scale(arg_7_1, var_7_20)
+			LocomotionUtils.set_animation_rotation_scale(arg_7_1, get_animation_rotation_scale)
 		end
 
-		local var_7_21 = Managers.state.network
+		local network = Managers.state.network
 
-		var_7_21:anim_event(arg_7_1, var_7_12)
+		network:anim_event(arg_7_1, _calculate_attack_animation)
 
-		local var_7_22 = arg_7_2.shoot_data
-		local var_7_23 = var_7_19[var_7_12]
+		local shoot_data = arg_7_2.shoot_data
+		local var_7_24 = attack_anims_data[_calculate_attack_animation]
 
-		var_7_22.start_firing_t = arg_7_4 + var_7_23.start_firing_t
-		var_7_22.stop_firing_t = arg_7_4 + var_7_23.stop_firing_t
-		var_7_22.aim_start_t = arg_7_4 + var_7_23.aim_start_t
-		var_7_22.firing_duration = var_7_22.stop_firing_t - var_7_22.start_firing_t
-		var_7_22.firing_initiated = false
+		shoot_data.start_firing_t = arg_7_4 + var_7_24.start_firing_t
+		shoot_data.stop_firing_t = arg_7_4 + var_7_24.stop_firing_t
+		shoot_data.aim_start_t = arg_7_4 + var_7_24.aim_start_t
+		shoot_data.firing_duration = shoot_data.stop_firing_t - shoot_data.start_firing_t
+		shoot_data.firing_initiated = false
 
-		local var_7_24 = var_7_0.aim_constraint_target[var_7_13]
+		local var_7_25 = action.aim_constraint_target[var_7_14]
 
-		var_7_22.aim_start_position = Vector3Box(var_7_16)
-		var_7_22.current_aim_position = Vector3Box(var_7_16)
-		var_7_22.aim_end_position = Vector3Box(var_7_17)
-		var_7_22.firewall_start_position = var_7_15 and Vector3Box(var_7_15) or nil
-		var_7_22.direction = Vector3Box(var_7_7)
-		var_7_22.aim_constraint_target_var = Unit.animation_find_constraint_target(arg_7_1, var_7_24)
-		var_7_22.attack_arm = var_7_13
-		var_7_22.firing_time = var_7_0.firing_time
-		var_7_22.attack_animation = var_7_12
-		var_7_22.aim_constraint_animations = var_7_0.aim_constraint_animations[var_7_13]
-		var_7_22.hit_enemies = {}
-		var_7_22.shoot_threat = {
+		shoot_data.aim_start_position = Vector3Box(var_7_17)
+		shoot_data.current_aim_position = Vector3Box(var_7_17)
+		shoot_data.aim_end_position = Vector3Box(var_7_18)
+
+		local var_7_26
+
+		if not _calculate_aim then
+			var_7_26 = Vector3Box(_calculate_aim)
+
+			if not var_7_26 then
+				-- Nothing
+			end
+		end
+
+		var_7_26 = nil
+
+		::label_7_0::
+
+		shoot_data.firewall_start_position = var_7_26
+		shoot_data.direction = Vector3Box(normalize)
+		shoot_data.aim_constraint_target_var = Unit.animation_find_constraint_target(arg_7_1, var_7_25)
+		shoot_data.attack_arm = var_7_14
+		shoot_data.firing_time = action.firing_time
+		shoot_data.attack_animation = _calculate_attack_animation
+		shoot_data.aim_constraint_animations = action.aim_constraint_animations[var_7_14]
+		shoot_data.hit_enemies = {}
+		shoot_data.shoot_threat = {
 			rotation = QuaternionBox()
 		}
 
-		local var_7_25 = var_7_21:game()
-		local var_7_26 = Managers.state.unit_storage:go_id(arg_7_1)
+		local game = network:game()
+		local go_id = Managers.state.unit_storage:go_id(arg_7_1)
 
-		if var_7_25 and var_7_26 then
-			local var_7_27 = NetworkLookup.attack_arm[var_7_13]
+		if not game and not go_id then
+			local var_7_29 = NetworkLookup.attack_arm[var_7_14]
 
-			GameSession.set_game_object_field(var_7_25, var_7_26, "attack_arm", var_7_27)
+			GameSession.set_game_object_field(game, go_id, "attack_arm", var_7_29)
 		end
 
-		local var_7_28 = LocomotionUtils.look_at_position_flat(arg_7_1, var_7_16)
+		local look_at_position_flat = LocomotionUtils.look_at_position_flat(arg_7_1, var_7_17)
 
-		arg_7_2.attack_rotation = QuaternionBox(var_7_28)
+		arg_7_2.attack_rotation = QuaternionBox(look_at_position_flat)
 		arg_7_2.attack_started_at_t = arg_7_4
 
-		local var_7_29 = var_7_0.bot_threats and (var_7_0.bot_threats[var_7_12] or var_7_0.bot_threats[1] and var_7_0.bot_threats)
+		local bot_threats = action.bot_threats
 
-		if var_7_29 then
-			local var_7_30 = 1
-			local var_7_31 = var_7_29[var_7_30]
+		if not bot_threats then
+			bot_threats = action.bot_threats[_calculate_attack_animation]
 
-			arg_7_2.create_bot_threat_at_t = arg_7_4 + var_7_31.start_time
-			arg_7_2.current_bot_threat_index = var_7_30
-			arg_7_2.bot_threats_data = var_7_29
+			if not bot_threats then
+				bot_threats = action.bot_threats[1]
+				bot_threats = not bot_threats and action.bot_threats
+			end
+		end
 
-			local var_7_32 = Vector3.flat(var_7_17 - var_7_4)
+		if not bot_threats then
+			local num_2 = 1
+			local var_7_33 = bot_threats[num_2]
 
-			arg_7_2.bot_threat_range = Vector3.length(var_7_32) - var_7_31.offset_forward + 1.5 * var_0_1
+			arg_7_2.create_bot_threat_at_t = arg_7_4 + var_7_33.start_time
+			arg_7_2.current_bot_threat_index = num_2
+			arg_7_2.bot_threats_data = bot_threats
+
+			local flat = Vector3.flat(var_7_18 - var_7_5)
+
+			arg_7_2.bot_threat_range = Vector3.length(flat) - var_7_33.offset_forward + 1.5 * num
 		end
 	end
 
-	return var_7_18
+	return flag
 end
 
-function BTStormfiendShootAction.leave(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
-	local var_8_0 = arg_8_2.shoot_data
-	local var_8_1 = Managers.state.network
+BTStormfiendShootAction.leave = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+	-- function 8
+	local shoot_data = arg_8_2.shoot_data
+	local network = Managers.state.network
 
-	if var_8_0.aim_constraint_animations then
-		local var_8_2 = var_8_0.aim_constraint_animations.off
+	if not shoot_data.aim_constraint_animations then
+		local off = shoot_data.aim_constraint_animations.off
 
-		var_8_1:anim_event(arg_8_1, var_8_2)
+		network:anim_event(arg_8_1, off)
 	else
-		var_8_1:anim_event(arg_8_1, "aim_at_right_off")
-		var_8_1:anim_event(arg_8_1, "aim_at_left_off")
+		network:anim_event(arg_8_1, "aim_at_right_off")
+		network:anim_event(arg_8_1, "aim_at_left_off")
 	end
 
-	local var_8_3 = arg_8_2.weapon_setup
+	local weapon_setup = arg_8_2.weapon_setup
 
-	if var_8_0.beam_active then
-		local var_8_4 = arg_8_0.unit_ids[arg_8_1]
-		local var_8_5 = NetworkLookup.attack_arm[var_8_0.attack_arm]
+	if not shoot_data.beam_active then
+		local var_8_4 = self.unit_ids[arg_8_1]
+		local var_8_5 = NetworkLookup.attack_arm[shoot_data.attack_arm]
 
-		arg_8_0.network_transmit:send_rpc_all("rpc_set_stormfiend_beam", var_8_4, var_8_5, false)
+		self.network_transmit:send_rpc_all("rpc_set_stormfiend_beam", var_8_4, var_8_5, false)
 
-		var_8_0.beam_active = false
+		shoot_data.beam_active = false
 	end
 
-	arg_8_0.unit_ids[arg_8_1] = nil
-	var_8_0.ratling_gun_active = false
+	self.unit_ids[arg_8_1] = nil
+	shoot_data.ratling_gun_active = false
 
-	arg_8_0:_stop_beam_sfx(arg_8_1, arg_8_2, var_8_0)
+	self:_stop_beam_sfx(arg_8_1, arg_8_2, shoot_data)
 
-	local var_8_6 = arg_8_2.action
-	local var_8_7 = var_8_0.attack_arm
+	local action = arg_8_2.action
+	local attack_arm = shoot_data.attack_arm
 
-	if var_8_7 then
-		local var_8_8 = var_8_6.muzzle_nodes[var_8_7]
-		local var_8_9 = Unit.node(arg_8_1, var_8_8)
+	if not attack_arm then
+		local var_8_8 = action.muzzle_nodes[attack_arm]
+		local node = Unit.node(arg_8_1, var_8_8)
 
-		if var_8_6.stop_shoot_sfx then
-			WwiseUtils.trigger_unit_event(arg_8_2.world, var_8_6.stop_shoot_sfx, arg_8_1, var_8_9)
+		if not action.stop_shoot_sfx then
+			WwiseUtils.trigger_unit_event(arg_8_2.world, action.stop_shoot_sfx, arg_8_1, node)
 		end
 	end
 
-	if var_8_0.shoot_threat and var_8_0.shoot_threat.handle then
-		Managers.state.entity:system("ai_bot_group_system"):remove_threat(var_8_0.shoot_threat.handle)
+	if not shoot_data.shoot_threat and not shoot_data.shoot_threat.handle then
+		Managers.state.entity:system("ai_bot_group_system"):remove_threat(shoot_data.shoot_threat.handle)
 	end
 
-	table.clear(var_8_0)
+	table.clear(shoot_data)
 
 	if not arg_8_5 then
 		arg_8_2.locomotion_extension:use_lerp_rotation(true)
@@ -375,122 +438,123 @@ function BTStormfiendShootAction.leave(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8
 	arg_8_2.attacking_target = nil
 end
 
-function BTStormfiendShootAction.run(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
-	if arg_9_2.attack_aborted or not Unit.alive(arg_9_2.attacking_target) then
+BTStormfiendShootAction.run = function (self, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	-- function 9
+	if not (arg_9_2.attack_aborted or Unit.alive(arg_9_2.attacking_target)) then
 		return "failed"
 	end
 
 	if arg_9_3 < arg_9_2.anim_locked then
-		local var_9_0 = arg_9_2.shoot_data
-		local var_9_1 = arg_9_2.weapon_setup
+		local shoot_data = arg_9_2.shoot_data
+		local weapon_setup = arg_9_2.weapon_setup
 
-		if arg_9_3 < var_9_0.aim_start_t then
-			-- block empty
-		elseif not var_9_0.aim_constrained then
-			arg_9_0:constrain_aim(arg_9_1, arg_9_2)
+		if arg_9_3 < shoot_data.aim_start_t then
+			-- Nothing
+		elseif not shoot_data.aim_constrained then
+			self:constrain_aim(arg_9_1, arg_9_2)
 
-			var_9_0.aim_constrained = true
-		elseif arg_9_3 < var_9_0.start_firing_t then
-			-- block empty
-		elseif not var_9_0.firing_initiated then
-			if var_9_1 and var_9_1 == "ratling_gun" then
-				arg_9_0:initiate_firing_ratling_gun(arg_9_2)
+			shoot_data.aim_constrained = true
+		elseif arg_9_3 < shoot_data.start_firing_t then
+			-- Nothing
+		elseif not shoot_data.firing_initiated then
+			if not (not weapon_setup and weapon_setup ~= "ratling_gun") then
+				self:initiate_firing_ratling_gun(arg_9_2)
 			else
-				arg_9_0:initiate_firing_warpfire_thrower(arg_9_1, arg_9_2)
+				self:initiate_firing_warpfire_thrower(arg_9_1, arg_9_2)
 
-				local var_9_2 = arg_9_0.unit_ids[arg_9_1]
-				local var_9_3 = NetworkLookup.attack_arm[var_9_0.attack_arm]
+				local var_9_2 = self.unit_ids[arg_9_1]
+				local var_9_3 = NetworkLookup.attack_arm[shoot_data.attack_arm]
 
-				arg_9_0.network_transmit:send_rpc_all("rpc_set_stormfiend_beam", var_9_2, var_9_3, true)
+				self.network_transmit:send_rpc_all("rpc_set_stormfiend_beam", var_9_2, var_9_3, true)
 
-				var_9_0.beam_active = true
+				shoot_data.beam_active = true
 			end
-		elseif arg_9_3 < var_9_0.stop_firing_t then
-			if var_9_1 and var_9_1 == "ratling_gun" then
-				arg_9_0:_update_ratling_gun(arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+		elseif arg_9_3 < shoot_data.stop_firing_t then
+			if not (not weapon_setup and weapon_setup ~= "ratling_gun") then
+				self:_update_ratling_gun(arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 			else
-				arg_9_0:shoot_hit_check(arg_9_1, arg_9_2)
+				self:shoot_hit_check(arg_9_1, arg_9_2)
 			end
-		elseif var_9_0.is_firing then
-			if var_9_0.beam_active then
-				local var_9_4 = arg_9_0.unit_ids[arg_9_1]
-				local var_9_5 = NetworkLookup.attack_arm[var_9_0.attack_arm]
+		elseif not shoot_data.is_firing then
+			if not shoot_data.beam_active then
+				local var_9_4 = self.unit_ids[arg_9_1]
+				local var_9_5 = NetworkLookup.attack_arm[shoot_data.attack_arm]
 
-				arg_9_0.network_transmit:send_rpc_all("rpc_set_stormfiend_beam", var_9_4, var_9_5, false)
+				self.network_transmit:send_rpc_all("rpc_set_stormfiend_beam", var_9_4, var_9_5, false)
 
-				var_9_0.beam_active = false
+				shoot_data.beam_active = false
 			end
 
-			if var_9_0.aim_constrained then
-				local var_9_6 = Managers.state.network
+			if not shoot_data.aim_constrained then
+				local network = Managers.state.network
 
-				if var_9_0.aim_constraint_animations then
-					local var_9_7 = var_9_0.aim_constraint_animations.off
+				if not shoot_data.aim_constraint_animations then
+					local off = shoot_data.aim_constraint_animations.off
 
-					var_9_6:anim_event(arg_9_1, var_9_7)
+					network:anim_event(arg_9_1, off)
 				else
-					var_9_6:anim_event(arg_9_1, "aim_at_right_off")
-					var_9_6:anim_event(arg_9_1, "aim_at_left_off")
+					network:anim_event(arg_9_1, "aim_at_right_off")
+					network:anim_event(arg_9_1, "aim_at_left_off")
 				end
 
-				var_9_0.aim_constraint_animations = nil
+				shoot_data.aim_constraint_animations = nil
 			end
 
-			if arg_9_2.shoot_sfx_id then
+			if not arg_9_2.shoot_sfx_id then
 				WwiseWorld.stop_event(Managers.world:wwise_world(arg_9_2.world), arg_9_2.shoot_sfx_id)
 
 				arg_9_2.shoot_sfx_id = nil
 			end
 
-			var_9_0.is_firing = false
+			shoot_data.is_firing = false
 		end
 
-		local var_9_8 = arg_9_2.create_bot_threat_at_t
+		local create_bot_threat_at_t = arg_9_2.create_bot_threat_at_t
 
-		if var_9_8 and var_9_8 < arg_9_3 then
+		if not (not create_bot_threat_at_t and not (create_bot_threat_at_t < arg_9_3)) then
 			local var_9_9
 
-			if var_9_0.current_gun_aim_position then
-				local var_9_10, var_9_11 = arg_9_0:_fire_from_position_direction(arg_9_1, arg_9_2, var_9_0, arg_9_4)
+			if not shoot_data.current_gun_aim_position then
+				local _fire_from_position_direction, var_9_11 = self:_fire_from_position_direction(arg_9_1, arg_9_2, shoot_data, arg_9_4)
 
 				var_9_9 = Quaternion.look(var_9_11)
 			else
 				var_9_9 = arg_9_2.attack_rotation:unbox()
 			end
 
-			local var_9_12 = arg_9_2.bot_threats_data
-			local var_9_13 = arg_9_2.current_bot_threat_index
-			local var_9_14 = var_9_12[var_9_13]
-			local var_9_15 = arg_9_2.bot_threat_range
+			local bot_threats_data = arg_9_2.bot_threats_data
+			local current_bot_threat_index = arg_9_2.current_bot_threat_index
+			local var_9_14 = bot_threats_data[current_bot_threat_index]
+			local bot_threat_range = arg_9_2.bot_threat_range
 
-			arg_9_0:_create_bot_aoe_threat(arg_9_1, var_9_9, var_9_14, var_9_15, var_9_0)
+			self:_create_bot_aoe_threat(arg_9_1, var_9_9, var_9_14, bot_threat_range, shoot_data)
 
-			local var_9_16 = var_9_13 + 1
-			local var_9_17 = var_9_12[var_9_16]
+			local num = current_bot_threat_index + 1
+			local var_9_17 = bot_threats_data[num]
 
-			if var_9_17 then
+			if not var_9_17 then
 				arg_9_2.create_bot_threat_at_t = arg_9_2.attack_started_at_t + var_9_17.start_time
-				arg_9_2.current_bot_threat_index = var_9_16
+				arg_9_2.current_bot_threat_index = num
 			else
 				arg_9_2.create_bot_threat_at_t = nil
 				arg_9_2.current_bot_threat_index = nil
 			end
-		elseif var_9_0.shoot_threat.handle then
+		elseif not shoot_data.shoot_threat.handle then
 			local var_9_18
 
-			if var_9_0.current_gun_aim_position then
-				local var_9_19, var_9_20 = arg_9_0:_fire_from_position_direction(arg_9_1, arg_9_2, var_9_0, arg_9_4)
+			if not shoot_data.current_gun_aim_position then
+				local _fire_from_position_direction_2, var_9_20 = self:_fire_from_position_direction(arg_9_1, arg_9_2, shoot_data, arg_9_4)
 
 				var_9_18 = Quaternion.look(var_9_20)
 			else
 				var_9_18 = arg_9_2.attack_rotation:unbox()
 			end
 
-			if Quaternion.angle(var_9_18, var_9_0.shoot_threat.rotation:unbox()) > math.pi * 0.025 then
-				local var_9_21 = var_9_0.shoot_threat.bot_threat
-				local var_9_22 = var_9_0.shoot_threat.bot_threat_range
+			if Quaternion.angle(var_9_18, shoot_data.shoot_threat.rotation:unbox()) > math.pi * 0.025 then
+				local bot_threat = shoot_data.shoot_threat.bot_threat
+				local bot_threat_range_2 = shoot_data.shoot_threat.bot_threat_range
 
-				arg_9_0:_create_bot_aoe_threat(arg_9_1, var_9_18, var_9_21, var_9_22, var_9_0)
+				self:_create_bot_aoe_threat(arg_9_1, var_9_18, bot_threat, bot_threat_range_2, shoot_data)
 			end
 		end
 
@@ -500,276 +564,308 @@ function BTStormfiendShootAction.run(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4
 	end
 end
 
-function BTStormfiendShootAction._calculate_oobb_collision(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+BTStormfiendShootAction._calculate_oobb_collision = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+	-- function 10
 	local var_10_0 = arg_10_2
-	local var_10_1 = arg_10_1.height
-	local var_10_2 = arg_10_1.width
-	local var_10_3 = arg_10_1.offset_up
-	local var_10_4 = arg_10_1.offset_forward
-	local var_10_5 = var_10_2 * 0.5
-	local var_10_6 = var_10_0 * 0.5
-	local var_10_7 = var_10_1 * 0.5
-	local var_10_8 = Vector3(var_10_5, var_10_6, var_10_7)
-	local var_10_9 = Quaternion.rotate(arg_10_4, Vector3.forward()) * (var_10_4 + var_10_6)
-	local var_10_10 = Vector3.up() * (var_10_3 + var_10_7)
+	local height = arg_10_1.height
+	local width = arg_10_1.width
+	local offset_up = arg_10_1.offset_up
+	local offset_forward = arg_10_1.offset_forward
+	local num = width * 0.5
+	local num_2 = var_10_0 * 0.5
+	local num_3 = height * 0.5
+	local var_10_8 = Vector3(num, num_2, num_3)
+	local num_4 = Quaternion.rotate(arg_10_4, Vector3.forward()) * (offset_forward + num_2)
+	local num_5 = Vector3.up() * (offset_up + num_3)
 
-	return arg_10_3 + var_10_9 + var_10_10, arg_10_4, var_10_8
+	return arg_10_3 + num_4 + num_5, arg_10_4, var_10_8
 end
 
-function BTStormfiendShootAction._create_bot_aoe_threat(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
-	local var_11_0 = Managers.state.entity:system("ai_bot_group_system")
+BTStormfiendShootAction._create_bot_aoe_threat = function (self, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+	-- function 11
+	local system = Managers.state.entity:system("ai_bot_group_system")
 	local var_11_1 = POSITION_LOOKUP[arg_11_1]
-	local var_11_2 = arg_11_5.shoot_threat
+	local shoot_threat = arg_11_5.shoot_threat
 
-	if var_11_2.handle then
-		var_11_0:remove_threat(var_11_2.handle)
+	if not shoot_threat.handle then
+		system:remove_threat(shoot_threat.handle)
 	end
 
-	local var_11_3, var_11_4, var_11_5 = arg_11_0:_calculate_oobb_collision(arg_11_3, arg_11_4, var_11_1, arg_11_2)
+	local _calculate_oobb_collision, var_11_4, var_11_5 = self:_calculate_oobb_collision(arg_11_3, arg_11_4, var_11_1, arg_11_2)
 
-	var_11_2.handle = var_11_0:aoe_threat_created(var_11_3, "oobb", var_11_5, var_11_4, math.huge, "Stormfiend")
+	shoot_threat.handle = system:aoe_threat_created(_calculate_oobb_collision, "oobb", var_11_5, var_11_4, math.huge, "Stormfiend")
 
-	var_11_2.rotation:store(arg_11_2)
+	shoot_threat.rotation:store(arg_11_2)
 
-	var_11_2.bot_threat = arg_11_3
-	var_11_2.bot_threat_range = arg_11_4
+	shoot_threat.bot_threat = arg_11_3
+	shoot_threat.bot_threat_range = arg_11_4
 end
 
-function BTStormfiendShootAction.constrain_aim(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
-	local var_12_0 = arg_12_2.shoot_data
+BTStormfiendShootAction.constrain_aim = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+	-- function 12
+	local shoot_data = arg_12_2.shoot_data
 
-	if var_12_0 and var_12_0.aim_constraint_animations then
-		local var_12_1 = arg_12_2.shoot_data
-		local var_12_2 = Managers.state.network
-		local var_12_3 = var_12_1.aim_constraint_animations.on
+	if not shoot_data and not shoot_data.aim_constraint_animations then
+		local shoot_data_2 = arg_12_2.shoot_data
+		local network = Managers.state.network
+		local on = shoot_data_2.aim_constraint_animations.on
 
-		var_12_2:anim_event(arg_12_1, var_12_3)
+		network:anim_event(arg_12_1, on)
 
-		var_12_1.aiming_started = true
+		shoot_data_2.aiming_started = true
 	end
 end
 
-function BTStormfiendShootAction.create_firewall(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
-	local var_13_0 = arg_13_3.firewall_start_position:unbox()
-	local var_13_1 = arg_13_2.nav_world
-	local var_13_2, var_13_3 = GwNavQueries.triangle_from_position(var_13_1, var_13_0, 1, 1)
+BTStormfiendShootAction.create_firewall = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+	-- function 13
+	local unbox = arg_13_3.firewall_start_position:unbox()
+	local nav_world = arg_13_2.nav_world
+	local triangle_from_position, var_13_3 = GwNavQueries.triangle_from_position(nav_world, unbox, 1, 1)
 
-	if var_13_2 then
-		var_13_0 = Vector3.copy(var_13_0)
-		var_13_0.z = var_13_3
+	if not triangle_from_position then
+		unbox = Vector3.copy(unbox)
+		unbox.z = var_13_3
 	else
-		var_13_0 = GwNavQueries.inside_position_from_outside_position(var_13_1, var_13_0, 3, 3, 1, 1)
+		unbox = GwNavQueries.inside_position_from_outside_position(nav_world, unbox, 3, 3, 1, 1)
 	end
 
-	if not var_13_0 then
+	if not unbox then
 		return
 	end
 
-	local var_13_4 = arg_13_3.direction:unbox()
-	local var_13_5 = {
+	local unbox_2 = arg_13_3.direction:unbox()
+	local tbl = {
 		area_damage_system = {
 			liquid_template = "stormfiend_firewall",
-			flow_dir = var_13_4,
+			flow_dir = unbox_2,
 			source_unit = arg_13_1
 		}
 	}
-	local var_13_6 = "units/hub_elements/empty"
-	local var_13_7 = Managers.state.unit_spawner:spawn_network_unit(var_13_6, "liquid_aoe_unit", var_13_5, var_13_0)
+	local str = "units/hub_elements/empty"
+	local spawn_network_unit = Managers.state.unit_spawner:spawn_network_unit(str, "liquid_aoe_unit", tbl, unbox)
 
-	ScriptUnit.extension(var_13_7, "area_damage_system"):ready()
+	ScriptUnit.extension(spawn_network_unit, "area_damage_system"):ready()
 end
 
-function BTStormfiendShootAction.shoot_hit_check(arg_14_0, arg_14_1, arg_14_2)
-	local var_14_0 = arg_14_2.action
-	local var_14_1 = arg_14_2.shoot_data
-	local var_14_2 = var_14_1.attack_arm
-	local var_14_3 = var_14_0.muzzle_nodes[var_14_2]
-	local var_14_4 = Unit.node(arg_14_1, var_14_3)
-	local var_14_5 = Unit.world_position(arg_14_1, var_14_4)
-	local var_14_6 = var_14_1.current_aim_position:unbox()
-	local var_14_7 = arg_14_2.physics_world
-	local var_14_8 = var_0_1
-	local var_14_9 = var_0_2
-	local var_14_10 = PhysicsWorld.linear_sphere_sweep(var_14_7, var_14_5, var_14_6, var_14_8, var_14_9, "collision_filter", "filter_enemy_player_ray_projectile", "report_initial_overlap")
+BTStormfiendShootAction.shoot_hit_check = function (arg_14_0, arg_14_1, arg_14_2)
+	-- function 14
+	local action = arg_14_2.action
+	local shoot_data = arg_14_2.shoot_data
+	local attack_arm = shoot_data.attack_arm
+	local var_14_3 = action.muzzle_nodes[attack_arm]
+	local node = Unit.node(arg_14_1, var_14_3)
+	local world_position = Unit.world_position(arg_14_1, node)
+	local unbox = shoot_data.current_aim_position:unbox()
+	local physics_world = arg_14_2.physics_world
+	local var_14_8 = num
+	local var_14_9 = num_2
+	local linear_sphere_sweep = PhysicsWorld.linear_sphere_sweep(physics_world, world_position, unbox, var_14_8, var_14_9, "collision_filter", "filter_enemy_player_ray_projectile", "report_initial_overlap")
 
-	if var_14_10 then
-		local var_14_11 = var_14_0.immune_breeds
-		local var_14_12 = #var_14_10
+	if not linear_sphere_sweep then
+		local immune_breeds = action.immune_breeds
+		local count = #linear_sphere_sweep
 
-		for iter_14_0 = 1, var_14_12 do
-			local var_14_13 = var_14_10[iter_14_0]
-			local var_14_14 = var_14_13.actor
-			local var_14_15 = Actor.unit(var_14_14)
-			local var_14_16 = var_14_13.position
+		for i = 1, count do
+			local var_14_13 = linear_sphere_sweep[i]
+			local actor = var_14_13.actor
+			local unit = Actor.unit(actor)
+			local position = var_14_13.position
 
-			if not DamageUtils.is_character(var_14_15) then
+			if not DamageUtils.is_character(unit) then
 				break
 			end
 
-			local var_14_17 = HEALTH_ALIVE[var_14_15]
+			local var_14_17 = HEALTH_ALIVE[unit]
 
-			if var_14_15 ~= arg_14_1 and var_14_17 then
-				local var_14_18 = DamageUtils.is_player_unit(var_14_15)
-				local var_14_19 = var_14_1.hit_enemies
-				local var_14_20 = not var_14_18 and Unit.get_data(var_14_15, "breed")
+			if unit == arg_14_1 or not var_14_17 then
+				local is_player_unit = DamageUtils.is_player_unit(unit)
+				local hit_enemies = shoot_data.hit_enemies
+				local flag = not not is_player_unit or Unit.get_data(unit, "breed")
 
-				if var_14_18 then
-					if not ScriptUnit.extension(var_14_15, "buff_system"):has_buff_type("stormfiend_warpfire_face") then
-						Managers.state.entity:system("buff_system"):add_buff(var_14_15, "stormfiend_warpfire_face_base", arg_14_1)
+				if not is_player_unit then
+					if not ScriptUnit.extension(unit, "buff_system"):has_buff_type("stormfiend_warpfire_face") then
+						Managers.state.entity:system("buff_system"):add_buff(unit, "stormfiend_warpfire_face_base", arg_14_1)
 
 						arg_14_2.has_dealt_burn_damage = true
 					end
-				elseif var_14_20 and not var_14_11[var_14_20.name] and not var_14_19[var_14_15] then
+				elseif not (not flag and immune_breeds[flag.name] or hit_enemies[unit]) then
 					local var_14_21 = arg_14_1
-					local var_14_22 = var_14_20.armor_category or 1
-					local var_14_23 = var_14_0.damage_type
-					local var_14_24 = var_14_0.damage[var_14_22]
-					local var_14_25 = var_14_1.direction:unbox()
-					local var_14_26 = arg_14_2.breed.name
+					local armor_category = flag.armor_category
 
-					DamageUtils.add_damage_network(var_14_15, var_14_21, var_14_24, "torso", var_14_23, var_14_16, var_14_25, var_14_26, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, iter_14_0)
+					armor_category = armor_category or 1
 
-					var_14_19[var_14_15] = true
+					local damage_type = action.damage_type
+					local var_14_24 = action.damage[armor_category]
+					local unbox_2 = shoot_data.direction:unbox()
+					local name = arg_14_2.breed.name
+
+					DamageUtils.add_damage_network(unit, var_14_21, var_14_24, "torso", damage_type, position, unbox_2, name, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, i)
+
+					hit_enemies[unit] = true
 				end
 			end
 		end
 	end
 end
 
-function BTStormfiendShootAction._stop_beam_sfx(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
-	local var_15_0 = arg_15_2.action
-	local var_15_1 = arg_15_3.attack_arm
-	local var_15_2 = var_15_0.muzzle_nodes[var_15_1]
-	local var_15_3 = var_15_0.beam_sfx_stop_event
+BTStormfiendShootAction._stop_beam_sfx = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+	-- function 15
+	local action = arg_15_2.action
+	local attack_arm = arg_15_3.attack_arm
+	local var_15_2 = action.muzzle_nodes[attack_arm]
+	local beam_sfx_stop_event = action.beam_sfx_stop_event
 
-	Managers.state.entity:system("audio_system"):play_audio_unit_event(var_15_3, arg_15_1, var_15_2)
+	Managers.state.entity:system("audio_system"):play_audio_unit_event(beam_sfx_stop_event, arg_15_1, var_15_2)
 end
 
-function BTStormfiendShootAction.initiate_firing_warpfire_thrower(arg_16_0, arg_16_1, arg_16_2)
-	local var_16_0 = arg_16_2.action
-	local var_16_1 = arg_16_2.shoot_data
+BTStormfiendShootAction.initiate_firing_warpfire_thrower = function (self, arg_16_1, arg_16_2)
+	-- function 16
+	local action = arg_16_2.action
+	local shoot_data = arg_16_2.shoot_data
 
-	if var_16_1.firewall_start_position then
-		arg_16_0:create_firewall(arg_16_1, arg_16_2, var_16_1)
+	if not shoot_data.firewall_start_position then
+		self:create_firewall(arg_16_1, arg_16_2, shoot_data)
 	end
 
-	local var_16_2 = var_16_1.attack_arm
-	local var_16_3 = var_16_0.muzzle_nodes[var_16_2]
-	local var_16_4 = var_16_0.beam_sfx_start_event
+	local attack_arm = shoot_data.attack_arm
+	local var_16_3 = action.muzzle_nodes[attack_arm]
+	local beam_sfx_start_event = action.beam_sfx_start_event
 
-	Managers.state.entity:system("audio_system"):play_audio_unit_event(var_16_4, arg_16_1, var_16_3)
+	Managers.state.entity:system("audio_system"):play_audio_unit_event(beam_sfx_start_event, arg_16_1, var_16_3)
 
-	var_16_1.firing_initiated = true
-	var_16_1.is_firing = true
+	shoot_data.firing_initiated = true
+	shoot_data.is_firing = true
 end
 
-function BTStormfiendShootAction._fire_from_position_direction(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
-	local var_17_0 = arg_17_2.action
-	local var_17_1 = arg_17_3.attack_arm
-	local var_17_2 = var_17_0.muzzle_nodes[var_17_1]
-	local var_17_3 = Unit.node(arg_17_1, var_17_2)
-	local var_17_4 = Unit.world_position(arg_17_1, var_17_3)
-	local var_17_5 = Unit.world_position(arg_17_2.attacking_target, Unit.node(arg_17_2.attacking_target, "j_spine"))
-	local var_17_6 = arg_17_3.current_gun_aim_position:unbox()
-	local var_17_7 = math.min(arg_17_4 * 6, 1)
-	local var_17_8 = Vector3.lerp(var_17_6, var_17_5, var_17_7)
-	local var_17_9 = Vector3.normalize(var_17_8 - var_17_4)
+BTStormfiendShootAction._fire_from_position_direction = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+	-- function 17
+	local action = arg_17_2.action
+	local attack_arm = arg_17_3.attack_arm
+	local var_17_2 = action.muzzle_nodes[attack_arm]
+	local node = Unit.node(arg_17_1, var_17_2)
+	local world_position = Unit.world_position(arg_17_1, node)
+	local world_position_2 = Unit.world_position(arg_17_2.attacking_target, Unit.node(arg_17_2.attacking_target, "j_spine"))
+	local unbox = arg_17_3.current_gun_aim_position:unbox()
+	local min = math.min(arg_17_4 * 6, 1)
+	local lerp = Vector3.lerp(unbox, world_position_2, min)
+	local normalize = Vector3.normalize(lerp - world_position)
 
-	arg_17_3.current_gun_aim_position:store(var_17_8)
+	arg_17_3.current_gun_aim_position:store(lerp)
 
-	return var_17_4 - Vector3.normalize(var_17_9) * 1.25, var_17_9
+	return world_position - Vector3.normalize(normalize) * 1.25, normalize
 end
 
-function BTStormfiendShootAction._update_ratling_gun(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
-	local var_18_0 = arg_18_2.shoot_data
-	local var_18_1 = arg_18_3 - var_18_0.start_firing_t
-	local var_18_2 = math.clamp(var_18_1 / var_18_0.firing_duration * var_18_0.max_fire_rate_at_percentage_modifier, 0, 1)
-	local var_18_3 = math.lerp(var_18_0.time_between_shots_at_start, var_18_0.time_between_shots_at_end, var_18_2)
-	local var_18_4 = math.floor(var_18_1 / var_18_3) + 1 - var_18_0.shots_fired
+BTStormfiendShootAction._update_ratling_gun = function (self, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+	-- function 18
+	local shoot_data = arg_18_2.shoot_data
+	local num = arg_18_3 - shoot_data.start_firing_t
+	local clamp = math.clamp(num / shoot_data.firing_duration * shoot_data.max_fire_rate_at_percentage_modifier, 0, 1)
+	local lerp = math.lerp(shoot_data.time_between_shots_at_start, shoot_data.time_between_shots_at_end, clamp)
+	local num_2 = math.floor(num / lerp) + 1 - shoot_data.shots_fired
 
-	for iter_18_0 = 1, var_18_4 do
-		var_18_0.shots_fired = var_18_0.shots_fired + 1
+	for i = 1, num_2 do
+		shoot_data.shots_fired = shoot_data.shots_fired + 1
 
-		arg_18_0:_shoot_ratling_gun(arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+		self:_shoot_ratling_gun(arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 	end
 end
 
-local var_0_3 = math.pi * 2
+local num_3 = math.pi * 2
 
-function BTStormfiendShootAction._shoot_ratling_gun(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
-	local var_19_0 = arg_19_2.action
-	local var_19_1 = arg_19_2.shoot_data
-	local var_19_2 = var_19_0.light_weight_projectile_template_name
-	local var_19_3 = LightWeightProjectiles[var_19_2]
-	local var_19_4, var_19_5 = arg_19_0:_fire_from_position_direction(arg_19_1, arg_19_2, var_19_1, arg_19_4)
-	local var_19_6 = Vector3.normalize(var_19_5)
-	local var_19_7 = Math.random() * var_19_3.spread
-	local var_19_8 = Quaternion.look(var_19_6, Vector3.up())
-	local var_19_9 = Quaternion(Vector3.right(), var_19_7)
-	local var_19_10 = Quaternion(Vector3.forward(), Math.random() * var_0_3)
-	local var_19_11 = Quaternion.multiply(Quaternion.multiply(var_19_8, var_19_10), var_19_9)
-	local var_19_12 = Quaternion.forward(var_19_11)
-	local var_19_13 = "filter_enemy_player_ray_projectile"
-	local var_19_14 = Managers.state.difficulty:get_difficulty_rank()
-	local var_19_15 = var_19_3.attack_power_level[var_19_14] or var_19_3.attack_power_level[2]
-	local var_19_16 = {
+BTStormfiendShootAction._shoot_ratling_gun = function (self, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+	-- function 19
+	local action = arg_19_2.action
+	local shoot_data = arg_19_2.shoot_data
+	local light_weight_projectile_template_name = action.light_weight_projectile_template_name
+	local var_19_3 = LightWeightProjectiles[light_weight_projectile_template_name]
+	local _fire_from_position_direction, var_19_5 = self:_fire_from_position_direction(arg_19_1, arg_19_2, shoot_data, arg_19_4)
+	local normalize = Vector3.normalize(var_19_5)
+	local num = Math.random() * var_19_3.spread
+	local look = Quaternion.look(normalize, Vector3.up())
+	local var_19_9 = Quaternion(Vector3.right(), num)
+	local var_19_10 = Quaternion(Vector3.forward(), Math.random() * num_3)
+	local multiply = Quaternion.multiply(Quaternion.multiply(look, var_19_10), var_19_9)
+	local forward = Quaternion.forward(multiply)
+	local str = "filter_enemy_player_ray_projectile"
+	local get_difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
+	local var_19_15 = var_19_3.attack_power_level[get_difficulty_rank]
+
+	var_19_15 = var_19_15 or var_19_3.attack_power_level[2]
+
+	local tbl = {
 		power_level = var_19_15,
 		damage_profile = var_19_3.damage_profile,
 		hit_effect = var_19_3.hit_effect,
-		player_push_velocity = Vector3Box(var_19_6 * var_19_3.impact_push_speed),
+		player_push_velocity = Vector3Box(normalize * var_19_3.impact_push_speed),
 		projectile_linker = var_19_3.projectile_linker,
 		first_person_hit_flow_events = var_19_3.first_person_hit_flow_events
 	}
-	local var_19_17 = var_19_1.attack_arm
-	local var_19_18 = var_19_0.muzzle_nodes[var_19_17]
-	local var_19_19 = Unit.node(arg_19_1, var_19_18)
+	local attack_arm = shoot_data.attack_arm
+	local var_19_18 = action.muzzle_nodes[attack_arm]
+	local node = Unit.node(arg_19_1, var_19_18)
 
-	if var_19_0.shoot_sfx and not arg_19_2.shoot_sfx_id then
-		arg_19_2.shoot_sfx_id = WwiseUtils.trigger_unit_event(arg_19_2.world, var_19_0.shoot_sfx, arg_19_1, var_19_19)
+	if not (not action.shoot_sfx and arg_19_2.shoot_sfx_id) then
+		arg_19_2.shoot_sfx_id = WwiseUtils.trigger_unit_event(arg_19_2.world, action.shoot_sfx, arg_19_1, node)
 	end
 
-	local var_19_20 = Managers.state.entity:system("projectile_system")
-	local var_19_21 = Network.peer_id()
+	local system = Managers.state.entity:system("projectile_system")
+	local peer_id = Network.peer_id()
 
-	var_19_20:create_light_weight_projectile(Unit.get_data(arg_19_1, "breed").name, arg_19_1, var_19_4, var_19_12, var_19_3.projectile_speed, nil, nil, var_19_3.projectile_max_range, var_19_13, var_19_16, var_19_3.light_weight_projectile_effect, var_19_21)
+	system:create_light_weight_projectile(Unit.get_data(arg_19_1, "breed").name, arg_19_1, _fire_from_position_direction, forward, var_19_3.projectile_speed, nil, nil, var_19_3.projectile_max_range, str, tbl, var_19_3.light_weight_projectile_effect, peer_id)
 end
 
-function BTStormfiendShootAction.initiate_firing_ratling_gun(arg_20_0, arg_20_1)
-	local var_20_0 = arg_20_1.action
-	local var_20_1 = arg_20_1.shoot_data
+BTStormfiendShootAction.initiate_firing_ratling_gun = function (arg_20_0, arg_20_1)
+	-- function 20
+	local action = arg_20_1.action
+	local shoot_data = arg_20_1.shoot_data
 
-	var_20_1.shots_fired = 0
-	var_20_1.time_between_shots_at_start = 1 / var_20_0.fire_rate_at_start
-	var_20_1.time_between_shots_at_end = 1 / var_20_0.fire_rate_at_end
-	var_20_1.max_fire_rate_at_percentage_modifier = 1 / var_20_0.max_fire_rate_at_percentage
-	var_20_1.current_gun_aim_position = Vector3Box(POSITION_LOOKUP[arg_20_1.attacking_target])
-	var_20_1.firing_initiated = true
-	var_20_1.is_firing = true
+	shoot_data.shots_fired = 0
+	shoot_data.time_between_shots_at_start = 1 / action.fire_rate_at_start
+	shoot_data.time_between_shots_at_end = 1 / action.fire_rate_at_end
+	shoot_data.max_fire_rate_at_percentage_modifier = 1 / action.max_fire_rate_at_percentage
+	shoot_data.current_gun_aim_position = Vector3Box(POSITION_LOOKUP[arg_20_1.attacking_target])
+	shoot_data.firing_initiated = true
+	shoot_data.is_firing = true
 end
 
-function BTStormfiendShootAction._debug_firewall(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
-	if script_data.debug_stormfiend then
-		local var_21_0 = Managers.state.debug:drawer({
+BTStormfiendShootAction._debug_firewall = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
+	-- function 21
+	if not script_data.debug_stormfiend then
+		local drawer = Managers.state.debug:drawer({
 			mode = "retained",
 			name = "BTStormfiendShootAction"
 		})
-		local var_21_1 = Colors.get("green")
-		local var_21_2 = Colors.get("yellow")
-		local var_21_3 = Colors.get("red")
-		local var_21_4 = arg_21_4 and Vector3.distance(arg_21_4, arg_21_5) or 0
-		local var_21_5 = arg_21_4 or arg_21_2
-		local var_21_6 = arg_21_5 or arg_21_3
-		local var_21_7 = arg_21_3 - var_21_5
+		local get = Colors.get("green")
+		local get_2 = Colors.get("yellow")
+		local get_3 = Colors.get("red")
+		local distance
 
-		var_21_0:sphere(var_21_5, 0.25, arg_21_4 and var_21_1 or var_21_3)
-		var_21_0:vector(var_21_5, var_21_7, var_21_2)
-		var_21_0:sphere(var_21_6, 0.25, arg_21_1 < var_21_4 and var_21_1 or var_21_3)
-		var_0_0("FIREWALL DISTANCE", var_21_4, "MINIMUM DISTANCE", arg_21_1)
+		if not arg_21_4 then
+			distance = Vector3.distance(arg_21_4, arg_21_5)
+
+			if not distance then
+				-- Nothing
+			end
+		end
+
+		distance = 0
+
+		::label_21_0::
+
+		local flag = arg_21_4 or arg_21_2
+		local flag_2 = arg_21_5 or arg_21_3
+		local num = arg_21_3 - flag
+
+		drawer:sphere(flag, 0.25, not arg_21_4 and get and get_3)
+		drawer:vector(flag, num, get_2)
+		drawer:sphere(flag_2, 0.25, not (arg_21_1 < distance) or not get or get_3)
+		fn("FIREWALL DISTANCE", distance, "MINIMUM DISTANCE", arg_21_1)
 	end
 end
 
-function BTStormfiendShootAction._debug_fire_beam(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6)
-	if script_data.debug_stormfiend then
+BTStormfiendShootAction._debug_fire_beam = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6)
+	-- function 22
+	if not script_data.debug_stormfiend then
 		local var_22_0
 		local var_22_1
 		local var_22_2
@@ -790,45 +886,46 @@ function BTStormfiendShootAction._debug_fire_beam(arg_22_0, arg_22_1, arg_22_2, 
 			var_22_0 = QuickDrawer
 		end
 
-		var_22_0:sphere(arg_22_1, var_0_1, arg_22_3 and var_22_1 or var_22_2)
-		var_22_0:line(arg_22_1, arg_22_2, arg_22_3 and var_22_1 or var_22_2)
-		var_22_0:sphere(arg_22_2, var_0_1, arg_22_3 and var_22_1 or var_22_2)
+		var_22_0:sphere(arg_22_1, num, not arg_22_3 and var_22_1 and var_22_2)
+		var_22_0:line(arg_22_1, arg_22_2, not arg_22_3 and var_22_1 and var_22_2)
+		var_22_0:sphere(arg_22_2, num, not arg_22_3 and var_22_1 and var_22_2)
 
-		if arg_22_5 then
-			local var_22_6 = #arg_22_5
-			local var_22_7 = Vector3.normalize(arg_22_2 - arg_22_1)
+		if not arg_22_5 then
+			local count = #arg_22_5
+			local normalize = Vector3.normalize(arg_22_2 - arg_22_1)
 
-			for iter_22_0 = 1, var_22_6 do
-				local var_22_8 = arg_22_5[iter_22_0]
-				local var_22_9 = var_22_8.distance
-				local var_22_10 = var_22_8.position
-				local var_22_11 = arg_22_1 + var_22_7 * var_22_9
+			for i = 1, count do
+				local var_22_8 = arg_22_5[i]
+				local distance = var_22_8.distance
+				local position = var_22_8.position
+				local num_2 = arg_22_1 + normalize * distance
 				local var_22_12
 
-				if arg_22_4 == nil or iter_22_0 < arg_22_4 then
+				if not (arg_22_4 == nil or not (i < arg_22_4)) then
 					var_22_12 = var_22_3
-				elseif iter_22_0 == arg_22_4 then
+				elseif i == arg_22_4 then
 					var_22_12 = var_22_4
 				else
 					var_22_12 = var_22_5
 				end
 
-				var_22_0:sphere(var_22_11, var_0_1, var_22_12)
-				var_22_0:sphere(var_22_10, 0.05, var_22_12)
+				var_22_0:sphere(num_2, num, var_22_12)
+				var_22_0:sphere(position, 0.05, var_22_12)
 			end
 		end
 	end
 end
 
-function BTStormfiendShootAction._debug_colliding_arm(arg_23_0, arg_23_1, arg_23_2)
-	if script_data.debug_stormfiend then
-		local var_23_0 = Managers.state.debug:drawer({
+BTStormfiendShootAction._debug_colliding_arm = function (arg_23_0, arg_23_1, arg_23_2)
+	-- function 23
+	if not script_data.debug_stormfiend then
+		local drawer = Managers.state.debug:drawer({
 			mode = "retained",
 			name = "BTStormfiendShootAction"
 		})
 
-		var_23_0:sphere(arg_23_1, 0.1, Colors.get("black"))
-		var_23_0:line(arg_23_1, arg_23_2, Colors.get("black"))
-		var_23_0:sphere(arg_23_2, 0.1, Colors.get("black"))
+		drawer:sphere(arg_23_1, 0.1, Colors.get("black"))
+		drawer:line(arg_23_1, arg_23_2, Colors.get("black"))
+		drawer:sphere(arg_23_2, 0.1, Colors.get("black"))
 	end
 end

@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/transition_video_definitions.lua
 
-local var_0_0 = {
+local tbl = {
 	root = {
 		is_root = true,
 		size = {
@@ -52,13 +52,13 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	video_name = "video/demo_end_video_logo",
 	scenegraph_id = "splash_video",
 	material_name = "demo_end_video_logo",
 	loop = false
 }
-local var_0_2 = {
+local tbl_3 = {
 	dead_space_filler_widget = UIWidgets.create_simple_rect("dead_space_filler", {
 		255,
 		0,
@@ -66,11 +66,11 @@ local var_0_2 = {
 		0
 	})
 }
-local var_0_3 = {}
+local tbl_4 = {}
 
 return {
-	scenegraph_definition = var_0_0,
-	background_widget_definitions = var_0_2,
-	demo_video = var_0_1,
-	widget_definitions = var_0_3
+	scenegraph_definition = tbl,
+	background_widget_definitions = tbl_3,
+	demo_video = tbl_2,
+	widget_definitions = tbl_4
 }

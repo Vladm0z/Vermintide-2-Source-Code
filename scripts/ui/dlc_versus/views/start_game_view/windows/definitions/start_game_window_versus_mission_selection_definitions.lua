@@ -1,15 +1,15 @@
 -- chunkname: @scripts/ui/dlc_versus/views/start_game_view/windows/definitions/start_game_window_versus_mission_selection_definitions.lua
 
-local var_0_0 = UISettings.game_start_windows
-local var_0_1 = var_0_0.frame
-local var_0_2 = var_0_0.size
-local var_0_3 = {
-	var_0_2[1] * 3 - 76,
-	var_0_2[2]
+local game_start_windows = UISettings.game_start_windows
+local frame = game_start_windows.frame
+local size = game_start_windows.size
+local tbl = {
+	size[1] * 3 - 76,
+	size[2]
 }
-local var_0_4 = UIFrameSettings[var_0_1].texture_sizes.vertical[1]
-local var_0_5 = var_0_2[1] - (var_0_4 * 2 + 60)
-local var_0_6 = {
+local var_0_4 = UIFrameSettings[frame].texture_sizes.vertical[1]
+local num = size[1] - (var_0_4 * 2 + 60)
+local tbl_2 = {
 	root = {
 		is_root = true,
 		size = {
@@ -52,7 +52,7 @@ local var_0_6 = {
 		vertical_alignment = "center",
 		parent = "menu_root",
 		horizontal_alignment = "center",
-		size = var_0_3,
+		size = tbl,
 		position = {
 			0,
 			0,
@@ -64,8 +64,8 @@ local var_0_6 = {
 		parent = "window",
 		horizontal_alignment = "right",
 		size = {
-			var_0_2[1],
-			var_0_2[2]
+			size[1],
+			size[2]
 		},
 		position = {
 			0,
@@ -78,8 +78,8 @@ local var_0_6 = {
 		parent = "window",
 		horizontal_alignment = "right",
 		size = {
-			var_0_2[1],
-			var_0_2[2]
+			size[1],
+			size[2]
 		},
 		position = {
 			0,
@@ -93,7 +93,7 @@ local var_0_6 = {
 		horizontal_alignment = "left",
 		size = {
 			660,
-			var_0_2[2] + 10
+			size[2] + 10
 		},
 		position = {
 			-30,
@@ -140,7 +140,7 @@ local var_0_6 = {
 		},
 		size = {
 			20,
-			var_0_2[2] + 10
+			size[2] + 10
 		}
 	},
 	description_text = {
@@ -148,8 +148,8 @@ local var_0_6 = {
 		parent = "info_window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_5,
-			var_0_2[2] / 2
+			num,
+			size[2] / 2
 		},
 		position = {
 			0,
@@ -162,7 +162,7 @@ local var_0_6 = {
 		parent = "info_window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_5,
+			num,
 			100
 		},
 		position = {
@@ -232,7 +232,7 @@ local var_0_6 = {
 		parent = "level_title_divider",
 		horizontal_alignment = "center",
 		size = {
-			var_0_5,
+			num,
 			50
 		},
 		position = {
@@ -246,7 +246,7 @@ local var_0_6 = {
 		parent = "level_title_divider",
 		horizontal_alignment = "center",
 		size = {
-			var_0_5,
+			num,
 			50
 		},
 		position = {
@@ -256,7 +256,7 @@ local var_0_6 = {
 		}
 	}
 }
-local var_0_7 = {
+local tbl_3 = {
 	margin = 20,
 	columns = 4,
 	area_spacing = {
@@ -284,7 +284,7 @@ local var_0_7 = {
 		0
 	}
 }
-local var_0_8 = {
+local tbl_4 = {
 	font_size = 24,
 	use_shadow = true,
 	localize = false,
@@ -300,7 +300,7 @@ local var_0_8 = {
 		2
 	}
 }
-local var_0_9 = {
+local tbl_5 = {
 	font_size = 36,
 	upper_case = true,
 	localize = false,
@@ -317,7 +317,7 @@ local var_0_9 = {
 		2
 	}
 }
-local var_0_10 = {
+local tbl_6 = {
 	font_size = 36,
 	upper_case = true,
 	localize = false,
@@ -333,7 +333,7 @@ local var_0_10 = {
 		2
 	}
 }
-local var_0_11 = {
+local tbl_7 = {
 	font_size = 28,
 	upper_case = true,
 	localize = false,
@@ -349,21 +349,24 @@ local var_0_11 = {
 		0
 	}
 }
-local var_0_12 = {
+local tbl_8 = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+				-- function 1
 				arg_1_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
-				local var_2_0 = math.easeOutCubic(arg_2_3)
+			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+				-- function 2
+				local easeOutCubic = math.easeOutCubic(arg_2_3)
 
-				arg_2_4.render_settings.alpha_multiplier = var_2_0
+				arg_2_4.render_settings.alpha_multiplier = easeOutCubic
 			end,
-			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+				-- function 3
 				return
 			end
 		},
@@ -371,16 +374,19 @@ local var_0_12 = {
 			name = "animate_in_window",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				-- function 4
 				return
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
-				local var_5_0 = math.easeOutCubic(arg_5_3)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+				-- function 5
+				local easeOutCubic = math.easeOutCubic(arg_5_3)
 
-				arg_5_0.window.local_position[1] = arg_5_1.window.position[1] + math.floor(-100 * (1 - var_5_0))
-				arg_5_0.info_window.local_position[1] = arg_5_1.info_window.position[1] + math.floor(-80 * (1 - var_5_0))
+				arg_5_0.window.local_position[1] = arg_5_1.window.position[1] + math.floor(-100 * (1 - easeOutCubic))
+				arg_5_0.info_window.local_position[1] = arg_5_1.info_window.position[1] + math.floor(-80 * (1 - easeOutCubic))
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+				-- function 6
 				return
 			end
 		}
@@ -390,22 +396,26 @@ local var_0_12 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			init = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+				-- function 7
 				arg_7_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+			update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+				-- function 8
 				arg_8_4.render_settings.alpha_multiplier = 1
 			end,
-			on_complete = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			on_complete = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+				-- function 9
 				return
 			end
 		}
 	}
 }
 
-local function var_0_13(arg_10_0, arg_10_1)
-	local var_10_0 = UIFrameSettings.frame_outer_fade_02
-	local var_10_1 = var_10_0.texture_sizes.horizontal[2]
+local function fn(self, arg_10_1)
+	-- function 10
+	local frame_outer_fade_02 = UIFrameSettings.frame_outer_fade_02
+	local var_10_1 = frame_outer_fade_02.texture_sizes.horizontal[2]
 
 	return {
 		scenegraph_id = "grid_anchor",
@@ -435,8 +445,8 @@ local function var_0_13(arg_10_0, arg_10_1)
 		},
 		content = {
 			background_id = "rect_masked",
-			text_id = arg_10_0.area_display_name,
-			frame = var_10_0.texture
+			text_id = self.area_display_name,
+			frame = frame_outer_fade_02.texture
 		},
 		style = {
 			text_id = {
@@ -479,7 +489,7 @@ local function var_0_13(arg_10_0, arg_10_1)
 					0
 				},
 				texture_size = {
-					var_0_7.level_spacing[1] * var_0_7.columns + var_0_7.margin * 2,
+					tbl_3.level_spacing[1] * tbl_3.columns + tbl_3.margin * 2,
 					0
 				},
 				offset = {
@@ -500,11 +510,11 @@ local function var_0_13(arg_10_0, arg_10_1)
 				},
 				edge_height = var_10_1,
 				area_size = {
-					var_0_7.level_spacing[1] * var_0_7.columns + var_0_7.margin * 2 + var_10_1 * 2,
+					tbl_3.level_spacing[1] * tbl_3.columns + tbl_3.margin * 2 + var_10_1 * 2,
 					200
 				},
-				texture_size = var_10_0.texture_size,
-				texture_sizes = var_10_0.texture_sizes,
+				texture_size = frame_outer_fade_02.texture_size,
+				texture_sizes = frame_outer_fade_02.texture_sizes,
 				offset = {
 					-var_10_1,
 					var_10_1,
@@ -516,7 +526,8 @@ local function var_0_13(arg_10_0, arg_10_1)
 	}
 end
 
-local function var_0_14(arg_11_0, arg_11_1)
+local function fn_2(arg_11_0, arg_11_1)
+	-- function 11
 	return {
 		scenegraph_id = "grid_anchor",
 		element = {
@@ -563,7 +574,7 @@ local function var_0_14(arg_11_0, arg_11_1)
 				horizontal_alignment = "left",
 				color = UISettings.console_start_game_menu_rect_color,
 				texture_size = {
-					var_0_7.level_spacing[1] * var_0_7.columns + 5,
+					tbl_3.level_spacing[1] * tbl_3.columns + 5,
 					25
 				},
 				offset = {
@@ -577,13 +588,30 @@ local function var_0_14(arg_11_0, arg_11_1)
 	}
 end
 
-local function var_0_15(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
-	local var_12_0 = "icons_placeholder"
-	local var_12_1 = arg_12_0.small_level_image or LevelHelper:get_small_level_image(arg_12_0.level_id)
-	local var_12_2 = UIAtlasHelper.has_texture_by_name(var_12_1) and UIAtlasHelper.get_atlas_settings_by_texture_name(var_12_1) or UIAtlasHelper.get_atlas_settings_by_texture_name(var_12_0)
-	local var_12_3 = UIFrameSettings.frame_outer_glow_01
-	local var_12_4 = var_12_3.texture_sizes.horizontal[2]
-	local var_12_5 = math.min(var_0_7.level_size[1], var_0_7.level_size[2])
+local function fn_3(self, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
+	-- function 12
+	local str = "icons_placeholder"
+	local small_level_image = self.small_level_image
+
+	small_level_image = small_level_image or LevelHelper:get_small_level_image(self.level_id)
+
+	local get_atlas_settings_by_texture_name
+
+	if not UIAtlasHelper.has_texture_by_name(small_level_image) then
+		get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(small_level_image)
+
+		if not get_atlas_settings_by_texture_name then
+			-- Nothing
+		end
+	end
+
+	get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(str)
+
+	::label_12_0::
+
+	local frame_outer_glow_01 = UIFrameSettings.frame_outer_glow_01
+	local var_12_4 = frame_outer_glow_01.texture_sizes.horizontal[2]
+	local min = math.min(tbl_3.level_size[1], tbl_3.level_size[2])
 
 	return {
 		scenegraph_id = "grid_anchor",
@@ -603,29 +631,33 @@ local function var_0_15(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12
 					style_id = "frame",
 					texture_id = "frame",
 					pass_type = "texture_frame",
-					content_check_function = function(arg_13_0, arg_13_1)
-						return arg_13_0.index[1] == arg_13_0.selected_index[1] and arg_13_0.index[2] == arg_13_0.selected_index[2]
+					content_check_function = function (self, arg_13_1)
+						-- function 13
+						return self.index[1] ~= self.selected_index[1] or self.index[2] == self.selected_index[2]
 					end,
-					content_change_function = function(arg_14_0, arg_14_1)
-						local var_14_0 = Managers.time:time("game")
+					content_change_function = function (arg_14_0, arg_14_1)
+						-- function 14
+						local time = Managers.time:time("game")
 
-						arg_14_1.color[1] = 192 + math.sin(var_14_0 * 6) * 63
+						arg_14_1.color[1] = 192 + math.sin(time * 6) * 63
 					end
 				},
 				{
 					texture_id = "gold_lock",
 					style_id = "gold_lock",
 					pass_type = "texture",
-					content_check_function = function(arg_15_0)
-						return arg_15_0.show_gold_lock
+					content_check_function = function (self)
+						-- function 15
+						return self.show_gold_lock
 					end
 				},
 				{
 					texture_id = "forbidden",
 					style_id = "forbidden",
 					pass_type = "texture",
-					content_check_function = function(arg_16_0)
-						return arg_16_0.show_forbidden
+					content_check_function = function (self)
+						-- function 16
+						return self.show_forbidden
 					end
 				}
 			}
@@ -638,20 +670,20 @@ local function var_0_15(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12
 			button_hotspot = {
 				disable_button = arg_12_4
 			},
-			texture_id = var_12_2.texture_name,
-			level_settings = arg_12_0,
+			texture_id = get_atlas_settings_by_texture_name.texture_name,
+			level_settings = self,
 			index = arg_12_3,
 			selected_index = arg_12_2,
-			frame = var_12_3.texture,
+			frame = frame_outer_glow_01.texture,
 			is_disabled = arg_12_4,
-			show_gold_lock = arg_12_4 and arg_12_5 == "dlc",
-			show_forbidden = arg_12_4 and arg_12_5 ~= "dlc"
+			show_gold_lock = not arg_12_4 and arg_12_5 == "dlc",
+			show_forbidden = not arg_12_4 and arg_12_5 ~= "dlc"
 		},
 		style = {
 			button_hotspot = {
 				vertical_alignment = "top",
 				horizontal_alignment = "left",
-				area_size = var_0_7.level_size,
+				area_size = tbl_3.level_size,
 				offset = {
 					10,
 					-10,
@@ -668,7 +700,7 @@ local function var_0_15(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12
 					255,
 					255
 				},
-				texture_size = var_0_7.level_size,
+				texture_size = tbl_3.level_size,
 				saturated = arg_12_4,
 				offset = {
 					10,
@@ -688,11 +720,11 @@ local function var_0_15(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12
 				},
 				edge_height = var_12_4,
 				area_size = {
-					math.ceil(var_0_7.level_size[1] + var_12_4 * 2),
-					var_0_7.level_size[2] + var_12_4 * 2
+					math.ceil(tbl_3.level_size[1] + var_12_4 * 2),
+					tbl_3.level_size[2] + var_12_4 * 2
 				},
-				texture_size = var_12_3.texture_size,
-				texture_sizes = var_12_3.texture_sizes,
+				texture_size = frame_outer_glow_01.texture_size,
+				texture_sizes = frame_outer_glow_01.texture_sizes,
 				offset = {
 					-4,
 					4,
@@ -708,8 +740,8 @@ local function var_0_15(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12
 					4
 				},
 				texture_size = {
-					var_12_5 * 0.8735632183908046,
-					var_12_5
+					min * 0.8735632183908046,
+					min
 				}
 			},
 			forbidden = {
@@ -721,8 +753,8 @@ local function var_0_15(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12
 					4
 				},
 				texture_size = {
-					var_12_5,
-					var_12_5
+					min,
+					min
 				}
 			}
 		},
@@ -730,20 +762,21 @@ local function var_0_15(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12
 	}
 end
 
-local function var_0_16(arg_17_0, arg_17_1)
+local function fn_4(arg_17_0, arg_17_1)
+	-- function 17
 	local var_17_0 = arg_17_1
-	local var_17_1 = {
+	local tbl = {
 		180,
 		180
 	}
 
 	if not var_17_0 then
 		var_17_0 = "level_root_" .. arg_17_0
-		var_0_6[var_17_0] = {
+		tbl_2[var_17_0] = {
 			vertical_alignment = "center",
 			parent = "level_root_node",
 			horizontal_alignment = "center",
-			size = var_17_1,
+			size = tbl,
 			position = {
 				0,
 				0,
@@ -752,24 +785,26 @@ local function var_0_16(arg_17_0, arg_17_1)
 		}
 	end
 
-	local var_17_2 = {
+	local tbl_3 = {
 		element = {}
 	}
-	local var_17_3 = {
+	local tbl_4 = {
 		{
 			style_id = "icon",
 			pass_type = "hotspot",
 			content_id = "button_hotspot",
-			content_check_function = function(arg_18_0)
-				return not arg_18_0.parent.locked
+			content_check_function = function (self)
+				-- function 18
+				return not self.parent.locked
 			end
 		},
 		{
 			style_id = "icon",
 			pass_type = "level_tooltip",
 			level_id = "level_data",
-			content_check_function = function(arg_19_0)
-				return arg_19_0.button_hotspot.is_hover
+			content_check_function = function (self)
+				-- function 19
+				return self.button_hotspot.is_hover
 			end
 		},
 		{
@@ -786,32 +821,36 @@ local function var_0_16(arg_17_0, arg_17_1)
 			pass_type = "texture",
 			style_id = "icon",
 			texture_id = "icon",
-			content_check_function = function(arg_20_0)
-				return not arg_20_0.locked
+			content_check_function = function (self)
+				-- function 20
+				return not self.locked
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "icon_locked",
 			texture_id = "icon",
-			content_check_function = function(arg_21_0)
-				return arg_21_0.locked
+			content_check_function = function (self)
+				-- function 21
+				return self.locked
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "lock",
 			texture_id = "lock",
-			content_check_function = function(arg_22_0)
-				return arg_22_0.locked
+			content_check_function = function (self)
+				-- function 22
+				return self.locked
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "lock_fade",
 			texture_id = "lock_fade",
-			content_check_function = function(arg_23_0)
-				return arg_23_0.locked
+			content_check_function = function (self)
+				-- function 23
+				return self.locked
 			end
 		},
 		{
@@ -828,12 +867,13 @@ local function var_0_16(arg_17_0, arg_17_1)
 			pass_type = "texture",
 			style_id = "boss_icon",
 			texture_id = "boss_icon",
-			content_check_function = function(arg_24_0)
-				return arg_24_0.boss_level
+			content_check_function = function (self)
+				-- function 24
+				return self.boss_level
 			end
 		}
 	}
-	local var_17_4 = {
+	local tbl_5 = {
 		lock = "map_frame_lock",
 		locked = true,
 		lock_fade = "map_frame_fade",
@@ -848,7 +888,7 @@ local function var_0_16(arg_17_0, arg_17_1)
 		icon_glow = "map_frame_glow_02",
 		button_hotspot = {}
 	}
-	local var_17_5 = {
+	local tbl_6 = {
 		glass = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
@@ -1023,20 +1063,21 @@ local function var_0_16(arg_17_0, arg_17_1)
 		}
 	}
 
-	var_17_2.element.passes = var_17_3
-	var_17_2.content = var_17_4
-	var_17_2.style = var_17_5
-	var_17_2.offset = {
+	tbl_3.element.passes = tbl_4
+	tbl_3.content = tbl_5
+	tbl_3.style = tbl_6
+	tbl_3.offset = {
 		0,
 		0,
 		0
 	}
-	var_17_2.scenegraph_id = var_17_0
+	tbl_3.scenegraph_id = var_17_0
 
-	return var_17_2
+	return tbl_3
 end
 
-local function var_0_17(arg_25_0)
+local function fn_5(arg_25_0)
+	-- function 25
 	return {
 		element = {
 			passes = {
@@ -1079,8 +1120,8 @@ local function var_0_17(arg_25_0)
 					1
 				},
 				texture_size = {
-					var_0_6[arg_25_0].size[1] - 6,
-					var_0_6[arg_25_0].size[2] - 6
+					tbl_2[arg_25_0].size[1] - 6,
+					tbl_2[arg_25_0].size[2] - 6
 				}
 			},
 			scroller = {
@@ -1098,7 +1139,7 @@ local function var_0_17(arg_25_0)
 					2
 				},
 				texture_size = {
-					var_0_6[arg_25_0].size[1] - 6,
+					tbl_2[arg_25_0].size[1] - 6,
 					94
 				}
 			}
@@ -1112,28 +1153,28 @@ local function var_0_17(arg_25_0)
 	}
 end
 
-local var_0_18 = {
-	create_area_entry = var_0_13,
-	create_act_entry = var_0_14,
-	create_level_entry = var_0_15
+local tbl_9 = {
+	create_area_entry = fn,
+	create_act_entry = fn_2,
+	create_level_entry = fn_3
 }
-local var_0_19 = {
-	background = UIWidgets.create_rect_with_outer_frame("background", var_0_6.background.size, "frame_outer_fade_02", nil, UISettings.console_start_game_menu_rect_color),
+local tbl_10 = {
+	background = UIWidgets.create_rect_with_outer_frame("background", tbl_2.background.size, "frame_outer_fade_02", nil, UISettings.console_start_game_menu_rect_color),
 	mask = UIWidgets.create_simple_texture("mask_rect", "mask"),
-	scroller = var_0_17("scroller"),
-	level_title = UIWidgets.create_simple_text("", "level_title", nil, nil, var_0_9),
-	selected_level = var_0_16(nil, "level_texture_frame"),
+	scroller = fn_5("scroller"),
+	level_title = UIWidgets.create_simple_text("", "level_title", nil, nil, tbl_5),
+	selected_level = fn_4(nil, "level_texture_frame"),
 	level_title_divider = UIWidgets.create_simple_texture("divider_01_top", "level_title_divider"),
-	description_text = UIWidgets.create_simple_text("", "description_text", nil, nil, var_0_8),
-	helper_text = UIWidgets.create_simple_text(Localize("tutorial_map"), "helper_text", nil, nil, var_0_10),
-	description_background = UIWidgets.create_rect_with_outer_frame("info_window", var_0_6.info_window.size, "frame_outer_fade_02", nil, UISettings.console_start_game_menu_rect_color),
-	locked_text = UIWidgets.create_simple_text("", "locked_text", nil, nil, var_0_11)
+	description_text = UIWidgets.create_simple_text("", "description_text", nil, nil, tbl_4),
+	helper_text = UIWidgets.create_simple_text(Localize("tutorial_map"), "helper_text", nil, nil, tbl_6),
+	description_background = UIWidgets.create_rect_with_outer_frame("info_window", tbl_2.info_window.size, "frame_outer_fade_02", nil, UISettings.console_start_game_menu_rect_color),
+	locked_text = UIWidgets.create_simple_text("", "locked_text", nil, nil, tbl_7)
 }
 
 return {
-	widgets = var_0_19,
-	widget_functions = var_0_18,
-	grid_settings = var_0_7,
-	scenegraph_definition = var_0_6,
-	animation_definitions = var_0_12
+	widgets = tbl_10,
+	widget_functions = tbl_9,
+	grid_settings = tbl_3,
+	scenegraph_definition = tbl_2,
+	animation_definitions = tbl_8
 }

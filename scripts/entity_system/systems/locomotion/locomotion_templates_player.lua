@@ -1,38 +1,44 @@
 -- chunkname: @scripts/entity_system/systems/locomotion/locomotion_templates_player.lua
 
+local LocomotionTemplates = LocomotionTemplates
+
 LocomotionTemplates = LocomotionTemplates or {}
+LocomotionTemplates = LocomotionTemplates
 
-local var_0_0 = LocomotionTemplates
-local var_0_1 = LEVEL_EDITOR_TEST
-local var_0_2
+local LocomotionTemplates_2 = LocomotionTemplates
+local LEVEL_EDITOR_TEST = LEVEL_EDITOR_TEST
 local var_0_3
-local var_0_4 = true
+local var_0_4
+local flag = true
 
-if var_0_4 then
-	local var_0_5 = Profiler.start
-	local var_0_6 = Profiler.stop
+if not flag then
+	local start = Profiler.start
+	local stop = Profiler.stop
 else
-	local function var_0_7()
+	local function fn()
+		-- function 1
 		return
 	end
 
-	local function var_0_8()
+	local function fn_2()
+		-- function 2
 		return
 	end
 end
 
-local var_0_9 = false
+local flag_2 = false
 
-var_0_0.PlayerUnitLocomotionExtension = {}
+LocomotionTemplates_2.PlayerUnitLocomotionExtension = {}
 
-local var_0_10 = var_0_0.PlayerUnitLocomotionExtension
+local PlayerUnitLocomotionExtension = LocomotionTemplates_2.PlayerUnitLocomotionExtension
 
-function var_0_10.init(arg_3_0, arg_3_1)
-	arg_3_0.nav_world = arg_3_1
-	arg_3_0.all_update_units = {}
-	arg_3_0.all_disabled_units = {}
+PlayerUnitLocomotionExtension.init = function (self, arg_3_1)
+	-- function 3
+	self.nav_world = arg_3_1
+	self.all_update_units = {}
+	self.all_disabled_units = {}
 
-	if var_0_9 then
+	if not flag_2 then
 		self.drawer = Managers.state.debug:drawer({
 			mode = "immediate",
 			name = "PlayerUnitLocomotionExtension"
@@ -48,305 +54,318 @@ function var_0_10.init(arg_3_0, arg_3_1)
 	end
 end
 
-function var_0_10.update(arg_4_0, arg_4_1, arg_4_2)
-	var_0_10.update_movement(arg_4_0, arg_4_1, arg_4_2)
-	var_0_10.update_rotation(arg_4_0, arg_4_1, arg_4_2)
-	var_0_10.update_network(arg_4_0, arg_4_2)
-	var_0_10.update_average_velocity(arg_4_0, arg_4_1, arg_4_2)
-	var_0_10.update_disabled_units(arg_4_0, arg_4_2)
+PlayerUnitLocomotionExtension.update = function (arg_4_0, arg_4_1, arg_4_2)
+	-- function 4
+	PlayerUnitLocomotionExtension.update_movement(arg_4_0, arg_4_1, arg_4_2)
+	PlayerUnitLocomotionExtension.update_rotation(arg_4_0, arg_4_1, arg_4_2)
+	PlayerUnitLocomotionExtension.update_network(arg_4_0, arg_4_2)
+	PlayerUnitLocomotionExtension.update_average_velocity(arg_4_0, arg_4_1, arg_4_2)
+	PlayerUnitLocomotionExtension.update_disabled_units(arg_4_0, arg_4_2)
 end
 
-function var_0_10.update_average_velocity(arg_5_0, arg_5_1, arg_5_2)
-	local var_5_0 = arg_5_0.all_update_units
-	local var_5_1 = 0.125
-	local var_5_2, var_5_3 = next(var_5_0, arg_5_0.last_average_velocity_unit)
+PlayerUnitLocomotionExtension.update_average_velocity = function (self, arg_5_1, arg_5_2)
+	-- function 5
+	local all_update_units = self.all_update_units
+	local num = 0.125
+	local var_5_2, var_5_3 = next(all_update_units, self.last_average_velocity_unit)
 
 	if not var_5_2 then
-		var_5_2, var_5_3 = next(var_5_0)
+		var_5_2, var_5_3 = next(all_update_units)
 	end
 
-	if var_5_2 then
-		local var_5_4 = var_5_3._sample_velocity_time
-		local var_5_5 = var_5_3._sample_velocity_index
-		local var_5_6 = var_5_3._sample_velocities
-		local var_5_7 = #var_5_6
+	if not var_5_2 then
+		local _sample_velocity_time = var_5_3._sample_velocity_time
+		local _sample_velocity_index = var_5_3._sample_velocity_index
+		local _sample_velocities = var_5_3._sample_velocities
+		local count = #_sample_velocities
 		local var_5_8
 
-		while var_5_1 < arg_5_1 - var_5_4 do
-			var_5_4 = var_5_4 + var_5_1
-			var_5_5 = var_5_5 % var_5_7 + 1
+		while num < arg_5_1 - _sample_velocity_time do
+			_sample_velocity_time = _sample_velocity_time + num
+			_sample_velocity_index = _sample_velocity_index % count + 1
 
-			var_5_6[var_5_5]:store(var_5_3.velocity_current:unbox())
+			_sample_velocities[_sample_velocity_index]:store(var_5_3.velocity_current:unbox())
 
 			var_5_8 = true
 		end
 
-		if var_5_8 then
-			var_5_3._sample_velocity_index = var_5_5
-			var_5_3._sample_velocity_time = var_5_4
+		if not var_5_8 then
+			var_5_3._sample_velocity_index = _sample_velocity_index
+			var_5_3._sample_velocity_time = _sample_velocity_time
 
 			local var_5_9 = Vector3(0, 0, 0)
 
-			for iter_5_0, iter_5_1 in ipairs(var_5_6) do
-				var_5_9 = var_5_9 + iter_5_1:unbox()
+			for i, v in ipairs(_sample_velocities) do
+				var_5_9 = var_5_9 + v:unbox()
 			end
 
-			var_5_3._average_velocity:store(var_5_9 / var_5_7)
+			var_5_3._average_velocity:store(var_5_9 / count)
 
-			local var_5_10 = 7
+			local num_2 = 7
 			local var_5_11 = Vector3(0, 0, 0)
-			local var_5_12 = var_5_5
+			local var_5_12 = _sample_velocity_index
 
-			for iter_5_2 = 1, var_5_10 do
-				var_5_11 = var_5_11 + var_5_6[var_5_12]:unbox()
+			for k = 1, num_2 do
+				var_5_11 = var_5_11 + _sample_velocities[var_5_12]:unbox()
 				var_5_12 = var_5_12 - 1
 
 				if var_5_12 == 0 then
-					var_5_12 = var_5_7
+					var_5_12 = count
 				end
 			end
 
-			var_5_3._small_sample_size_average_velocity:store(var_5_11 / var_5_10)
+			var_5_3._small_sample_size_average_velocity:store(var_5_11 / num_2)
 		end
 	end
 
-	arg_5_0.last_average_velocity_unit = var_5_2
+	self.last_average_velocity_unit = var_5_2
 end
 
-local var_0_11 = 0.2
+local num = 0.2
 
-function var_0_10.update_movement(arg_6_0, arg_6_1, arg_6_2)
-	local var_6_0 = Managers.world:world("level_world")
-	local var_6_1 = World.get_data(var_6_0, "physics_world")
+PlayerUnitLocomotionExtension.update_movement = function (self, arg_6_1, arg_6_2)
+	-- function 6
+	local world = Managers.world:world("level_world")
+	local get_data = World.get_data(world, "physics_world")
 
-	for iter_6_0, iter_6_1 in pairs(arg_6_0.all_update_units) do
-		iter_6_1.IS_NEW_FRAME = false
+	for k, v in pairs(self.all_update_units) do
+		v.IS_NEW_FRAME = false
 
-		if Mover.collides_down(Unit.mover(iter_6_0)) then
-			iter_6_1.time_since_last_down_collide = 0
-			iter_6_1.collides_down = true
+		if not Mover.collides_down(Unit.mover(k)) then
+			v.time_since_last_down_collide = 0
+			v.collides_down = true
 		else
-			iter_6_1.time_since_last_down_collide = iter_6_1.time_since_last_down_collide + arg_6_2
-			iter_6_1.collides_down = iter_6_1.time_since_last_down_collide < var_0_11 and iter_6_1.collides_down
+			v.time_since_last_down_collide = v.time_since_last_down_collide + arg_6_2
+			v.collides_down = not (v.time_since_last_down_collide < num) or v.collides_down
 		end
 
-		local var_6_2 = iter_6_1.on_ground
-		local var_6_3 = 0.3
-		local var_6_4 = Quaternion.look(Vector3(0, 0, 1))
+		local on_ground = v.on_ground
+		local num_2 = 0.3
+		local look = Quaternion.look(Vector3(0, 0, 1))
 
-		if var_6_2 then
-			local var_6_5, var_6_6 = PhysicsWorld.immediate_overlap(var_6_1, "shape", "sphere", "position", POSITION_LOOKUP[iter_6_0], "rotation", var_6_4, "size", var_6_3, "collision_filter", iter_6_1._default_mover_filter)
+		if not on_ground then
+			local immediate_overlap, var_6_6 = PhysicsWorld.immediate_overlap(get_data, "shape", "sphere", "position", POSITION_LOOKUP[k], "rotation", look, "size", num_2, "collision_filter", v._default_mover_filter)
 
-			iter_6_1.on_ground = var_6_6 > 0 or Mover.flying_frames(Unit.mover(iter_6_0)) == 0 and iter_6_1.velocity_wanted:unbox().z <= 0
+			v.on_ground = var_6_6 > 0 or Mover.flying_frames(Unit.mover(k)) ~= 0 or v.velocity_wanted:unbox().z <= 0
 		else
-			iter_6_1.on_ground = Mover.flying_frames(Unit.mover(iter_6_0)) == 0 and iter_6_1.velocity_wanted:unbox().z <= 0
+			v.on_ground = Mover.flying_frames(Unit.mover(k)) ~= 0 or v.velocity_wanted:unbox().z <= 0
 		end
 
-		local var_6_7 = iter_6_1.state
+		local state = v.state
 
-		if var_6_7 ~= "script_driven" then
-			iter_6_1.external_velocity = nil
+		if state ~= "script_driven" then
+			v.external_velocity = nil
 		end
 
-		if var_6_7 == "script_driven" then
-			local var_6_8 = true
+		if state == "script_driven" then
+			local flag = true
 
-			iter_6_1:update_script_driven_movement(iter_6_0, arg_6_2, arg_6_1, var_6_8)
-		elseif var_6_7 == "animation_driven" then
-			iter_6_1:update_animation_driven_movement(iter_6_0, arg_6_2, arg_6_1)
-		elseif var_6_7 == "animation_driven_entrance_and_exit_no_mover" then
-			iter_6_1:update_animation_driven_movement_entrance_and_exit_no_mover(iter_6_0, arg_6_2, arg_6_1)
-		elseif var_6_7 == "animation_driven_with_rotation_no_mover" then
-			iter_6_1:update_animation_driven_movement_with_rotation_no_mover(iter_6_0, arg_6_2, arg_6_1)
-		elseif var_6_7 == "linked_movement" then
-			iter_6_1:update_linked_movement(iter_6_0, arg_6_2, arg_6_1)
-		elseif var_6_7 == "script_driven_ladder" then
-			local var_6_9 = false
+			v:update_script_driven_movement(k, arg_6_2, arg_6_1, flag)
+		elseif state == "animation_driven" then
+			v:update_animation_driven_movement(k, arg_6_2, arg_6_1)
+		elseif state == "animation_driven_entrance_and_exit_no_mover" then
+			v:update_animation_driven_movement_entrance_and_exit_no_mover(k, arg_6_2, arg_6_1)
+		elseif state == "animation_driven_with_rotation_no_mover" then
+			v:update_animation_driven_movement_with_rotation_no_mover(k, arg_6_2, arg_6_1)
+		elseif state == "linked_movement" then
+			v:update_linked_movement(k, arg_6_2, arg_6_1)
+		elseif state == "script_driven_ladder" then
+			local flag_2 = false
 
-			iter_6_1:update_script_driven_movement(iter_6_0, arg_6_2, arg_6_1, var_6_9)
-		elseif var_6_7 == "script_driven_ladder_transition_movement" then
-			iter_6_1:update_script_driven_ladder_transition_movement(iter_6_0, arg_6_2, arg_6_1)
-		elseif var_6_7 == "script_driven_no_mover" then
-			iter_6_1:update_script_driven_no_mover_movement(iter_6_0, arg_6_2, arg_6_1)
-		elseif var_6_7 == "wanted_position_mover" then
-			iter_6_1:update_wanted_position_movement(iter_6_0, arg_6_2, arg_6_1)
+			v:update_script_driven_movement(k, arg_6_2, arg_6_1, flag_2)
+		elseif state == "script_driven_ladder_transition_movement" then
+			v:update_script_driven_ladder_transition_movement(k, arg_6_2, arg_6_1)
+		elseif state == "script_driven_no_mover" then
+			v:update_script_driven_no_mover_movement(k, arg_6_2, arg_6_1)
+		elseif state == "wanted_position_mover" then
+			v:update_wanted_position_movement(k, arg_6_2, arg_6_1)
 		end
 
-		if not iter_6_1.has_moved_from_start_position then
-			local var_6_10 = iter_6_1._start_position:unbox()
-			local var_6_11 = POSITION_LOOKUP[iter_6_0]
+		if not v.has_moved_from_start_position then
+			local unbox = v._start_position:unbox()
+			local var_6_11 = POSITION_LOOKUP[k]
 
-			if Vector3.distance_squared(var_6_10, var_6_11) > 0.25 then
-				iter_6_1.has_moved_from_start_position = true
+			if Vector3.distance_squared(unbox, var_6_11) > 0.25 then
+				v.has_moved_from_start_position = true
 			end
 		end
 	end
 end
 
-function var_0_10.update_network(arg_7_0, arg_7_1)
-	local var_7_0 = Managers.state.network:game()
+PlayerUnitLocomotionExtension.update_network = function (self, arg_7_1)
+	-- function 7
+	local game = Managers.state.network:game()
 
-	if not var_7_0 or var_0_1 then
+	if not game and not LEVEL_EDITOR_TEST then
 		return
 	end
 
-	local var_7_1 = 99.9999
-	local var_7_2 = NetworkConstants.position
-	local var_7_3 = var_7_2.min
-	local var_7_4 = var_7_2.max
-	local var_7_5 = NetworkConstants.velocity.min
-	local var_7_6 = NetworkConstants.velocity.max
-	local var_7_7 = Unit.local_rotation
-	local var_7_8 = GameSession.set_game_object_field
-	local var_7_9 = Unit.local_position
+	local num = 99.9999
+	local position = NetworkConstants.position
+	local min = position.min
+	local max = position.max
+	local min_2 = NetworkConstants.velocity.min
+	local max_2 = NetworkConstants.velocity.max
+	local local_rotation = Unit.local_rotation
+	local set_game_object_field = GameSession.set_game_object_field
+	local local_position = Unit.local_position
 
-	for iter_7_0, iter_7_1 in pairs(arg_7_0.all_update_units) do
-		local var_7_10 = Managers.state.unit_storage:go_id(iter_7_0)
-		local var_7_11 = var_7_7(iter_7_0, 0)
-		local var_7_12 = Quaternion.yaw(var_7_11)
-		local var_7_13 = Quaternion.pitch(var_7_11)
+	for k, v in pairs(self.all_update_units) do
+		local go_id = Managers.state.unit_storage:go_id(k)
+		local var_7_11 = local_rotation(k, 0)
+		local yaw = Quaternion.yaw(var_7_11)
+		local pitch = Quaternion.pitch(var_7_11)
 
-		var_7_8(var_7_0, var_7_10, "yaw", var_7_12)
-		var_7_8(var_7_0, var_7_10, "pitch", var_7_13)
+		set_game_object_field(game, go_id, "yaw", yaw)
+		set_game_object_field(game, go_id, "pitch", pitch)
 
-		local var_7_14 = var_7_9(iter_7_0, 0)
-		local var_7_15 = iter_7_1.velocity_network:unbox()
-		local var_7_16, var_7_17 = iter_7_1:get_moving_platform()
+		local var_7_14 = local_position(k, 0)
+		local unbox = v.velocity_network:unbox()
+		local get_moving_platform, var_7_17 = v:get_moving_platform()
 
-		if var_7_16 then
-			var_7_14 = var_7_14 - Unit.local_position(var_7_16, 0)
+		if not get_moving_platform then
+			var_7_14 = var_7_14 - Unit.local_position(get_moving_platform, 0)
 			var_7_14 = var_7_14 - var_7_17:visual_delta()
 		end
 
-		var_7_8(var_7_0, var_7_10, "position", Vector3.clamp(var_7_14, var_7_3, var_7_4))
-		var_7_8(var_7_0, var_7_10, "has_moved_from_start_position", iter_7_1.has_moved_from_start_position)
+		set_game_object_field(game, go_id, "position", Vector3.clamp(var_7_14, min, max))
+		set_game_object_field(game, go_id, "has_moved_from_start_position", v.has_moved_from_start_position)
 
-		local var_7_18 = math.min(iter_7_1.anim_move_speed or Vector3.length(iter_7_1.velocity_current:unbox()), var_7_1)
+		local min_3 = math.min
+		local anim_move_speed = v.anim_move_speed
 
-		Unit.animation_set_variable(iter_7_0, iter_7_1.move_speed_anim_var, var_7_18)
-		var_7_8(var_7_0, var_7_10, "velocity", Vector3.clamp(var_7_15, var_7_5, var_7_6))
-		var_7_8(var_7_0, var_7_10, "average_velocity", Vector3.clamp(iter_7_1._average_velocity:unbox(), var_7_5, var_7_6))
-		var_7_8(var_7_0, var_7_10, "small_sample_size_average_velocity", Vector3.clamp(iter_7_1._small_sample_size_average_velocity:unbox(), var_7_5, var_7_6))
+		anim_move_speed = anim_move_speed or Vector3.length(v.velocity_current:unbox())
+
+		local var_7_20 = min_3(anim_move_speed, num)
+
+		Unit.animation_set_variable(k, v.move_speed_anim_var, var_7_20)
+		set_game_object_field(game, go_id, "velocity", Vector3.clamp(unbox, min_2, max_2))
+		set_game_object_field(game, go_id, "average_velocity", Vector3.clamp(v._average_velocity:unbox(), min_2, max_2))
+		set_game_object_field(game, go_id, "small_sample_size_average_velocity", Vector3.clamp(v._small_sample_size_average_velocity:unbox(), min_2, max_2))
 	end
 end
 
-function var_0_10.update_statistics(arg_8_0, arg_8_1, arg_8_2)
-	for iter_8_0, iter_8_1 in pairs(arg_8_0.all_update_units) do
-		GraphHelper.record_statistics("move_velocity", iter_8_1.velocity_current:unbox())
-		GraphHelper.record_statistics("move_speed", Vector3.length(iter_8_1.velocity_current:unbox()))
+PlayerUnitLocomotionExtension.update_statistics = function (self, arg_8_1, arg_8_2)
+	-- function 8
+	for k, v in pairs(self.all_update_units) do
+		GraphHelper.record_statistics("move_velocity", v.velocity_current:unbox())
+		GraphHelper.record_statistics("move_speed", Vector3.length(v.velocity_current:unbox()))
 	end
 end
 
-function var_0_10.update_rotation(arg_9_0, arg_9_1, arg_9_2)
-	local var_9_0 = Managers.player.is_server
-	local var_9_1 = Unit.set_local_rotation
-	local var_9_2 = Quaternion.lerp
-	local var_9_3 = Quaternion.look
-	local var_9_4 = Quaternion.forward
-	local var_9_5 = math.smoothstep
-	local var_9_6 = Vector3.normalize
-	local var_9_7 = Vector3.flat
-	local var_9_8 = Vector3.dot
+PlayerUnitLocomotionExtension.update_rotation = function (self, arg_9_1, arg_9_2)
+	-- function 9
+	local is_server = Managers.player.is_server
+	local set_local_rotation = Unit.set_local_rotation
+	local lerp = Quaternion.lerp
+	local look = Quaternion.look
+	local forward = Quaternion.forward
+	local smoothstep = math.smoothstep
+	local normalize = Vector3.normalize
+	local flat = Vector3.flat
+	local dot = Vector3.dot
 
-	for iter_9_0, iter_9_1 in pairs(arg_9_0.all_update_units) do
-		if not iter_9_1.disable_rotation_update then
-			if iter_9_1.rotate_along_direction then
-				local var_9_9 = iter_9_1.first_person_extension:current_rotation()
-				local var_9_10 = var_9_7(var_9_4(var_9_9))
-				local var_9_11 = iter_9_1.velocity_current:unbox()
+	for k, v in pairs(self.all_update_units) do
+		if not v.disable_rotation_update then
+			if not v.rotate_along_direction then
+				local current_rotation = v.first_person_extension:current_rotation()
+				local var_9_10 = flat(forward(current_rotation))
+				local unbox = v.velocity_current:unbox()
 
-				var_9_11.z = 0
+				unbox.z = 0
 
-				local var_9_12 = var_9_8(var_9_11, var_9_10)
+				local var_9_12 = dot(unbox, var_9_10)
 
 				if var_9_12 == 0 then
-					local var_9_13 = var_9_6(var_9_10)
-					local var_9_14 = iter_9_1.target_rotation:unbox()
-					local var_9_15 = var_9_7(var_9_4(var_9_14))
-					local var_9_16 = var_9_6(var_9_15)
+					local var_9_13 = normalize(var_9_10)
+					local unbox_2 = v.target_rotation:unbox()
+					local var_9_15 = flat(forward(unbox_2))
+					local var_9_16 = normalize(var_9_15)
 
-					if var_9_8(var_9_13, var_9_16) < 0 then
-						iter_9_1.target_rotation:store(var_9_9)
+					if not (dot(var_9_13, var_9_16) < 0) then
+						v.target_rotation:store(current_rotation)
 
-						iter_9_1.disable_rotation_update_when_still = false
+						v.disable_rotation_update_when_still = false
 					end
 
-					var_9_11 = var_9_15
+					unbox = var_9_15
 				else
-					iter_9_1.target_rotation:store(var_9_9)
+					v.target_rotation:store(current_rotation)
 				end
 
 				if var_9_12 < -0.1 then
-					var_9_11 = -var_9_11
+					unbox = -unbox
 				end
 
-				local var_9_17 = var_9_3(var_9_11)
+				local var_9_17 = look(unbox)
 
-				Unit.set_local_rotation(iter_9_0, 0, var_9_2(Unit.local_rotation(iter_9_0, 0), var_9_17, arg_9_2 * 5))
-			elseif iter_9_1.target_rotation_data then
-				local var_9_18 = iter_9_1.target_rotation_data
-				local var_9_19 = var_9_18.start_rotation:unbox()
-				local var_9_20 = var_9_18.target_rotation:unbox()
-				local var_9_21 = var_9_18.start_time
-				local var_9_22 = var_9_18.end_time
-				local var_9_23 = var_9_5(arg_9_1, var_9_21, var_9_22)
+				Unit.set_local_rotation(k, 0, lerp(Unit.local_rotation(k, 0), var_9_17, arg_9_2 * 5))
+			elseif not v.target_rotation_data then
+				local target_rotation_data = v.target_rotation_data
+				local unbox_3 = target_rotation_data.start_rotation:unbox()
+				local unbox_4 = target_rotation_data.target_rotation:unbox()
+				local start_time = target_rotation_data.start_time
+				local end_time = target_rotation_data.end_time
+				local var_9_23 = smoothstep(arg_9_1, start_time, end_time)
 
-				var_9_1(iter_9_0, 0, var_9_2(var_9_19, var_9_20, var_9_23))
+				set_local_rotation(k, 0, lerp(unbox_3, unbox_4, var_9_23))
 			end
 		end
 
-		if var_9_0 then
-			local var_9_24 = Unit.world_position(iter_9_0, 0)
-			local var_9_25, var_9_26 = GwNavQueries.triangle_from_position(iter_9_1._nav_world, var_9_24, 0.1, 0.3, iter_9_1._nav_traverse_logic)
+		if not is_server then
+			local world_position = Unit.world_position(k, 0)
+			local triangle_from_position, var_9_26 = GwNavQueries.triangle_from_position(v._nav_world, world_position, 0.1, 0.3, v._nav_traverse_logic)
 
-			if var_9_25 then
-				iter_9_1._latest_position_on_navmesh:store(Vector3(var_9_24.x, var_9_24.y, var_9_24.z))
+			if not triangle_from_position then
+				v._latest_position_on_navmesh:store(Vector3(world_position.x, world_position.y, world_position.z))
 			end
 		end
 
-		iter_9_1.disable_rotation_update = false
+		v.disable_rotation_update = false
 	end
 end
 
-function var_0_10.update_disabled_units(arg_10_0, arg_10_1)
-	for iter_10_0, iter_10_1 in pairs(arg_10_0.all_disabled_units) do
-		iter_10_1.run_func(iter_10_0, arg_10_1, iter_10_1)
+PlayerUnitLocomotionExtension.update_disabled_units = function (self, arg_10_1)
+	-- function 10
+	for k, v in pairs(self.all_disabled_units) do
+		v.run_func(k, arg_10_1, v)
 
-		local var_10_0 = Managers.state.network:game()
-		local var_10_1 = Managers.state.unit_storage:go_id(iter_10_0)
+		local game = Managers.state.network:game()
+		local go_id = Managers.state.unit_storage:go_id(k)
 
-		if var_10_0 and var_10_1 then
-			iter_10_1:sync_network_rotation(var_10_0, var_10_1)
-			iter_10_1:sync_network_position(var_10_0, var_10_1)
-			iter_10_1:sync_network_velocity(var_10_0, var_10_1, arg_10_1)
+		if not game and not go_id then
+			v:sync_network_rotation(game, go_id)
+			v:sync_network_position(game, go_id)
+			v:sync_network_velocity(game, go_id, arg_10_1)
 		end
 
 		return
 	end
 end
 
-function var_0_10.update_debug_anims(arg_11_0)
-	for iter_11_0, iter_11_1 in pairs(arg_11_0.all_update_units) do
-		local var_11_0 = iter_11_1.first_person_extension:get_first_person_unit()
+PlayerUnitLocomotionExtension.update_debug_anims = function (self)
+	-- function 11
+	for k, v in pairs(self.all_update_units) do
+		local get_first_person_unit = v.first_person_extension:get_first_person_unit()
 
-		if script_data.debug_first_person_player_animations and not iter_11_1.debugging_1p_animations then
-			iter_11_1.debugging_1p_animations = true
+		if not (not script_data.debug_first_person_player_animations and v.debugging_1p_animations) then
+			v.debugging_1p_animations = true
 
-			Unit.set_animation_logging(var_11_0, true)
-		elseif iter_11_1.debugging_1p_animations and not script_data.debug_first_person_player_animations then
-			iter_11_1.debugging_1p_animations = false
+			Unit.set_animation_logging(get_first_person_unit, true)
+		elseif not (not v.debugging_1p_animations and script_data.debug_first_person_player_animations) then
+			v.debugging_1p_animations = false
 
-			Unit.set_animation_logging(var_11_0, false)
+			Unit.set_animation_logging(get_first_person_unit, false)
 		end
 
-		if script_data.debug_player_animations and not iter_11_1.debugging_animations then
-			iter_11_1.debugging_animations = true
+		if not (not script_data.debug_player_animations and v.debugging_animations) then
+			v.debugging_animations = true
 
-			Unit.set_animation_logging(iter_11_0, true)
-		elseif iter_11_1.debugging_animations and not script_data.debug_player_animations then
-			iter_11_1.debugging_animations = false
+			Unit.set_animation_logging(k, true)
+		elseif not (not v.debugging_animations and script_data.debug_player_animations) then
+			v.debugging_animations = false
 
-			Unit.set_animation_logging(iter_11_0, false)
+			Unit.set_animation_logging(k, false)
 		end
 	end
 end

@@ -1,24 +1,24 @@
 -- chunkname: @scripts/managers/backend/statistics_definitions_cog.lua
 
-local var_0_0 = StatisticsDefinitions.player
+local player = StatisticsDefinitions.player
 
-var_0_0.cog_kills_bardin_engineer_career_skill_weapon = {
+player.cog_kills_bardin_engineer_career_skill_weapon = {
 	value = 0,
 	database_name = "cog_kills_bardin_engineer_career_skill_weapon",
 	source = "player_data"
 }
-var_0_0.cog_kills_bardin_engineer_career_skill_weapon_heavy = {
+player.cog_kills_bardin_engineer_career_skill_weapon_heavy = {
 	value = 0,
 	database_name = "cog_kills_bardin_engineer_career_skill_weapon_heavy",
 	source = "player_data"
 }
-var_0_0.cog_kills_dr_2h_cog_hammer = {
+player.cog_kills_dr_2h_cog_hammer = {
 	value = 0,
 	database_name = "cog_kills_dr_2h_cog_hammer",
 	source = "player_data"
 }
 
-local var_0_1 = {
+local tbl = {
 	"complete_all_helmgart_levels_recruit_dr_engineer",
 	"complete_all_helmgart_levels_veteran_dr_engineer",
 	"complete_all_helmgart_levels_champion_dr_engineer",
@@ -55,55 +55,55 @@ local var_0_1 = {
 	"complete_all_engineer_challenges"
 }
 
-for iter_0_0 = 1, #var_0_1 do
-	local var_0_2 = var_0_1[iter_0_0]
+for i = 1, #tbl do
+	local var_0_2 = tbl[i]
 
-	var_0_0[var_0_2] = {
+	player[var_0_2] = {
 		value = 0,
 		source = "player_data",
 		database_name = var_0_2
 	}
 end
 
-local var_0_3 = {
+local tbl_2 = {
 	"dr_2h_cog_hammer",
 	"dr_steam_pistol",
 	"bardin_engineer_career_skill_weapon",
 	"bardin_engineer_career_skill_weapon_heavy"
 }
 
-for iter_0_1, iter_0_2 in pairs(var_0_3) do
-	var_0_0.weapon_kills_per_breed[iter_0_2] = {}
+for k, v in pairs(tbl_2) do
+	player.weapon_kills_per_breed[v] = {}
 end
 
-for iter_0_3, iter_0_4 in pairs(Breeds) do
-	for iter_0_5, iter_0_6 in pairs(var_0_3) do
-		local var_0_4 = iter_0_6 .. "_" .. iter_0_3
+for k_2, v_2 in pairs(Breeds) do
+	for k_3, v_3 in pairs(tbl_2) do
+		local str = v_3 .. "_" .. k_2
 
-		var_0_0.weapon_kills_per_breed[iter_0_6][iter_0_3] = {
+		player.weapon_kills_per_breed[v_3][k_2] = {
 			value = 0,
 			source = "player_data",
-			database_name = var_0_4
+			database_name = str
 		}
 	end
 end
 
-local var_0_5 = {
+local tbl_3 = {
 	dr_engineer = true
 }
 
-for iter_0_7, iter_0_8 in pairs(CareerSettings) do
-	if var_0_5[iter_0_7] then
-		var_0_0.mission_streak[iter_0_7] = {}
+for k_4, v_4 in pairs(CareerSettings) do
+	if not tbl_3[k_4] then
+		player.mission_streak[k_4] = {}
 
-		for iter_0_9, iter_0_10 in pairs(LevelSettings) do
-			if table.contains(UnlockableLevels, iter_0_9) then
-				local var_0_6 = "mission_streak_" .. iter_0_7 .. "_" .. iter_0_9
+		for k_5, v_5 in pairs(LevelSettings) do
+			if not table.contains(UnlockableLevels, k_5) then
+				local str_2 = "mission_streak_" .. k_4 .. "_" .. k_5
 
-				var_0_0.mission_streak[iter_0_7][iter_0_9] = {
+				player.mission_streak[k_4][k_5] = {
 					value = 0,
 					source = "player_data",
-					database_name = var_0_6
+					database_name = str_2
 				}
 			end
 		end

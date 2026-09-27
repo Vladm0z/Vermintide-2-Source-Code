@@ -2,294 +2,328 @@
 
 ActionGeiser = class(ActionGeiser, ActionBase)
 
-function ActionGeiser.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
-	ActionGeiser.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionGeiser.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	-- function 1
+	ActionGeiser.super.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
-	arg_1_0.overcharge_extension = ScriptUnit.extension(arg_1_4, "overcharge_system")
-	arg_1_0._damage_buffer = {}
-	arg_1_0._damage_buffer_index = 1
-	arg_1_0._check_buffs = false
+	self.overcharge_extension = ScriptUnit.extension(arg_1_4, "overcharge_system")
+	self._damage_buffer = {}
+	self._damage_buffer_index = 1
+	self._check_buffs = false
 end
 
-function ActionGeiser.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
-	ActionGeiser.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+ActionGeiser.client_owner_start_action = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	-- function 2
+	ActionGeiser.super.client_owner_start_action(self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 
-	arg_2_0.current_action = arg_2_1
+	self.current_action = arg_2_1
 
-	local var_2_0 = arg_2_0.owner_unit
-	local var_2_1 = ActionUtils.is_critical_strike(var_2_0, arg_2_1)
-	local var_2_2 = ScriptUnit.extension(var_2_0, "buff_system")
-	local var_2_3 = arg_2_3.charge_value
+	local owner_unit = self.owner_unit
+	local is_critical_strike = ActionUtils.is_critical_strike(owner_unit, arg_2_1)
+	local extension = ScriptUnit.extension(owner_unit, "buff_system")
+	local charge_value = arg_2_3.charge_value
 
-	arg_2_0.charge_value = var_2_3
-	arg_2_0.power_level = ActionUtils.scale_geiser_power_level(arg_2_4, var_2_3)
+	self.charge_value = charge_value
+	self.power_level = ActionUtils.scale_geiser_power_level(arg_2_4, charge_value)
 
-	if var_2_2:has_buff_perk("full_charge_boost") and arg_2_0.charge_value >= 1 then
-		arg_2_0.power_level = var_2_2:apply_buffs_to_value(arg_2_0.power_level, "full_charge_boost")
+	if not (not extension:has_buff_perk("full_charge_boost") and not (self.charge_value >= 1)) then
+		self.power_level = extension:apply_buffs_to_value(self.power_level, "full_charge_boost")
 	end
 
-	arg_2_0.owner_buff_extension = var_2_2
-	arg_2_0.state = "waiting_to_shoot"
-	arg_2_0.time_to_shoot = arg_2_2 + (arg_2_1.fire_time or 0)
-	arg_2_0.radius = arg_2_3.radius
-	arg_2_0.height = arg_2_3.height
-	arg_2_0.position = arg_2_3.position
+	self.owner_buff_extension = extension
+	self.state = "waiting_to_shoot"
 
-	table.clear(arg_2_0._damage_buffer)
+	local fire_time = arg_2_1.fire_time
 
-	arg_2_0._damage_buffer_index = 1
-	arg_2_0._check_buffs = true
-	arg_2_0._is_critical_strike = var_2_1
+	fire_time = fire_time or 0
+	self.time_to_shoot = arg_2_2 + fire_time
+	self.radius = arg_2_3.radius
+	self.height = arg_2_3.height
+	self.position = arg_2_3.position
 
-	if arg_2_0.charge_value and arg_2_0.charge_value >= 1 then
-		var_2_2:trigger_procs("on_full_charge_action", arg_2_1, arg_2_2, arg_2_3)
-	end
-end
+	table.clear(self._damage_buffer)
 
-function ActionGeiser.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
-	local var_3_0 = arg_3_0.current_action
+	self._damage_buffer_index = 1
+	self._check_buffs = true
+	self._is_critical_strike = is_critical_strike
 
-	if arg_3_0.state == "waiting_to_shoot" and arg_3_2 >= arg_3_0.time_to_shoot then
-		arg_3_0.state = "shooting"
-	end
-
-	if arg_3_0.state == "shooting" then
-		arg_3_0:fire()
-
-		arg_3_0.state = "doing_damage"
-	end
-
-	if arg_3_0.state == "doing_damage" and arg_3_0:_update_damage(var_3_0) then
-		arg_3_0:_proc_spell_used(arg_3_0.owner_buff_extension)
-
-		arg_3_0.state = "shot"
+	if not (not self.charge_value and not (self.charge_value >= 1)) then
+		extension:trigger_procs("on_full_charge_action", arg_2_1, arg_2_2, arg_2_3)
 	end
 end
 
-function ActionGeiser.finish(arg_4_0, arg_4_1)
-	if arg_4_0.state ~= "waiting_to_shoot" and arg_4_0.state ~= "shot" then
-		arg_4_0:_proc_spell_used(arg_4_0.owner_buff_extension)
+ActionGeiser.client_owner_post_update = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	-- function 3
+	local current_action = self.current_action
+
+	if not (self.state ~= "waiting_to_shoot" or not (arg_3_2 >= self.time_to_shoot)) then
+		self.state = "shooting"
 	end
 
-	arg_4_0.position = nil
+	if self.state == "shooting" then
+		self:fire()
 
-	local var_4_0 = ScriptUnit.has_extension(arg_4_0.owner_unit, "hud_system")
+		self.state = "doing_damage"
+	end
 
-	if var_4_0 then
-		var_4_0.show_critical_indication = false
+	if self.state ~= "doing_damage" or not self:_update_damage(current_action) then
+		self:_proc_spell_used(self.owner_buff_extension)
+
+		self.state = "shot"
 	end
 end
 
-function ActionGeiser.fire(arg_5_0, arg_5_1)
-	local var_5_0 = arg_5_0.current_action
-	local var_5_1 = arg_5_0.owner_unit
-	local var_5_2 = arg_5_0.owner_player
-	local var_5_3 = arg_5_0.radius
-	local var_5_4 = arg_5_0.height * 0.5
-	local var_5_5 = arg_5_0.position:unbox()
-	local var_5_6 = World.get_data(arg_5_0.world, "physics_world")
-	local var_5_7 = Managers.state.network
-	local var_5_8 = var_5_5 + Vector3(0, 0, var_5_4)
-	local var_5_9 = var_5_5
-	local var_5_10 = var_5_4 + var_5_3
-	local var_5_11 = var_5_10 - var_5_3 > 0 and "capsule" or "sphere"
-	local var_5_12, var_5_13 = PhysicsWorld.immediate_overlap(var_5_6, "shape", var_5_11, "position", var_5_8, "size", Vector3(var_5_3, var_5_10, var_5_3), "rotation", Quaternion.look(Vector3.up(), Vector3.up()), "collision_filter", "filter_character_trigger")
-	local var_5_14 = arg_5_0.charge_value
-	local var_5_15 = var_5_0.particle_effect
-	local var_5_16 = var_5_0.overcharge_type
-	local var_5_17 = Managers.state.difficulty:get_difficulty_settings()
-	local var_5_18 = not DamageUtils.allow_friendly_fire_ranged(var_5_17, var_5_2)
-	local var_5_19 = var_5_0.small_charge_value or 0.33
-	local var_5_20 = var_5_0.medium_charge_value or 0.66
-	local var_5_21 = var_5_0.large_charge_value or 1
-	local var_5_22 = not global_is_inside_inn or var_5_0.can_proc_in_inn
-	local var_5_23 = "_large"
-
-	if var_5_14 < var_5_19 then
-		var_5_23 = "_small"
-	elseif var_5_14 < var_5_20 then
-		var_5_23 = "_medium"
-	elseif var_5_21 <= var_5_14 and var_5_22 then
-		var_5_23 = "_large"
-
-		local var_5_24 = var_5_7:unit_game_object_id(var_5_1)
-		local var_5_25 = NetworkLookup.damage_sources[arg_5_0.item_name]
-		local var_5_26 = var_5_0.aoe_name
-		local var_5_27 = NetworkLookup.explosion_templates[var_5_26]
-
-		var_5_16 = var_5_0.overcharge_type_heavy
-
-		arg_5_0.network_transmit:send_rpc_server("rpc_client_create_aoe", var_5_24, var_5_9, var_5_25, var_5_27, var_5_3)
+ActionGeiser.finish = function (self, arg_4_1)
+	-- function 4
+	if not (self.state == "waiting_to_shoot" or self.state == "shot") then
+		self:_proc_spell_used(self.owner_buff_extension)
 	end
 
-	if var_5_15 then
-		local var_5_28 = var_5_15 .. var_5_23
-		local var_5_29 = var_5_0.particle_radius_variable
-		local var_5_30 = NetworkLookup.effects[var_5_28]
-		local var_5_31 = NetworkLookup.effects[var_5_29]
-		local var_5_32 = Vector3(var_5_3, 1, 1)
+	self.position = nil
 
-		arg_5_0.network_transmit:send_rpc_server("rpc_play_simple_particle_with_vector_variable", var_5_30, var_5_5, var_5_31, var_5_32)
+	local has_extension = ScriptUnit.has_extension(self.owner_unit, "hud_system")
+
+	if not has_extension then
+		has_extension.show_critical_indication = false
+	end
+end
+
+ActionGeiser.fire = function (self, arg_5_1)
+	-- function 5
+	local current_action = self.current_action
+	local owner_unit = self.owner_unit
+	local owner_player = self.owner_player
+	local radius = self.radius
+	local num = self.height * 0.5
+	local unbox = self.position:unbox()
+	local get_data = World.get_data(self.world, "physics_world")
+	local network = Managers.state.network
+	local num_2 = unbox + Vector3(0, 0, num)
+	local var_5_9 = unbox
+	local num_3 = num + radius
+	local flag
+
+	flag = not (num_3 - radius > 0) or not "capsule" or "sphere"
+
+	local immediate_overlap, var_5_13 = PhysicsWorld.immediate_overlap(get_data, "shape", flag, "position", num_2, "size", Vector3(radius, num_3, radius), "rotation", Quaternion.look(Vector3.up(), Vector3.up()), "collision_filter", "filter_character_trigger")
+	local charge_value = self.charge_value
+	local particle_effect = current_action.particle_effect
+	local overcharge_type = current_action.overcharge_type
+	local get_difficulty_settings = Managers.state.difficulty:get_difficulty_settings()
+	local flag_2 = not DamageUtils.allow_friendly_fire_ranged(get_difficulty_settings, owner_player)
+	local small_charge_value = current_action.small_charge_value
+
+	small_charge_value = small_charge_value or 0.33
+
+	local medium_charge_value = current_action.medium_charge_value
+
+	medium_charge_value = medium_charge_value or 0.66
+
+	local large_charge_value = current_action.large_charge_value
+
+	large_charge_value = large_charge_value or 1
+
+	local flag_3 = not global_is_inside_inn and current_action.can_proc_in_inn
+	local str = "_large"
+
+	if charge_value < small_charge_value then
+		str = "_small"
+	elseif charge_value < medium_charge_value then
+		str = "_medium"
+	elseif not (large_charge_value <= charge_value) or not flag_3 then
+		str = "_large"
+
+		local unit_game_object_id = network:unit_game_object_id(owner_unit)
+		local var_5_25 = NetworkLookup.damage_sources[self.item_name]
+		local aoe_name = current_action.aoe_name
+		local var_5_27 = NetworkLookup.explosion_templates[aoe_name]
+
+		overcharge_type = current_action.overcharge_type_heavy
+
+		self.network_transmit:send_rpc_server("rpc_client_create_aoe", unit_game_object_id, var_5_9, var_5_25, var_5_27, radius)
 	end
 
-	if var_5_16 then
-		local var_5_33 = PlayerUnitStatusSettings.overcharge_values[var_5_16]
-		local var_5_34 = ScriptUnit.extension(var_5_1, "buff_system")
+	if not particle_effect then
+		local str_2 = particle_effect .. str
+		local particle_radius_variable = current_action.particle_radius_variable
+		local var_5_30 = NetworkLookup.effects[str_2]
+		local var_5_31 = NetworkLookup.effects[particle_radius_variable]
+		local var_5_32 = Vector3(radius, 1, 1)
 
-		if arg_5_0._is_critical_strike and var_5_34:has_buff_perk("no_overcharge_crit") then
+		self.network_transmit:send_rpc_server("rpc_play_simple_particle_with_vector_variable", var_5_30, unbox, var_5_31, var_5_32)
+	end
+
+	if not overcharge_type then
+		local var_5_33 = PlayerUnitStatusSettings.overcharge_values[overcharge_type]
+		local extension = ScriptUnit.extension(owner_unit, "buff_system")
+
+		if not self._is_critical_strike and not extension:has_buff_perk("no_overcharge_crit") then
 			var_5_33 = 0
 		end
 
-		arg_5_0.overcharge_extension:add_charge(var_5_33, var_5_14, var_5_16)
+		self.overcharge_extension:add_charge(var_5_33, charge_value, overcharge_type)
 	end
 
-	local var_5_35 = arg_5_0.current_action.fire_sound_event
+	local fire_sound_event = self.current_action.fire_sound_event
 
-	if var_5_35 then
-		local var_5_36 = arg_5_0.current_action.fire_sound_on_husk
+	if not fire_sound_event then
+		local fire_sound_on_husk = self.current_action.fire_sound_on_husk
 
-		ScriptUnit.extension(var_5_1, "first_person_system"):play_hud_sound_event(var_5_35, nil, var_5_36)
+		ScriptUnit.extension(owner_unit, "first_person_system"):play_hud_sound_event(fire_sound_event, nil, fire_sound_on_husk)
 	end
 
-	local var_5_37 = arg_5_0._damage_buffer
-	local var_5_38 = {}
-	local var_5_39 = var_5_0.damage_profile or "default"
-	local var_5_40 = DamageProfileTemplates[var_5_39]
-	local var_5_41 = Managers.state.side
-	local var_5_42 = var_5_41.side_by_unit[var_5_1]
-	local var_5_43 = var_5_2 and var_5_2.player_unit
+	local _damage_buffer = self._damage_buffer
+	local tbl = {}
+	local damage_profile = current_action.damage_profile
+
+	damage_profile = damage_profile or "default"
+
+	local var_5_40 = DamageProfileTemplates[damage_profile]
+	local side = Managers.state.side
+	local var_5_42 = side.side_by_unit[owner_unit]
+	local flag_4 = not owner_player and owner_player.player_unit
 
 	if var_5_13 > 0 then
-		local var_5_44 = 0
+		local num_4 = 0
 
-		for iter_5_0 = 1, var_5_13 do
-			local var_5_45 = var_5_12[iter_5_0]
-			local var_5_46 = Actor.unit(var_5_45)
-			local var_5_47 = POSITION_LOOKUP[var_5_46] or Unit.local_position(var_5_46, 0)
-			local var_5_48 = Unit.get_data(var_5_46, "breed")
+		for i = 1, var_5_13 do
+			local var_5_45 = immediate_overlap[i]
+			local unit = Actor.unit(var_5_45)
+			local var_5_47 = POSITION_LOOKUP[unit]
 
-			if not var_5_38[var_5_46] then
-				local var_5_49 = var_5_41:is_enemy(var_5_1, var_5_46)
-				local var_5_50 = var_5_42 == var_5_41.side_by_unit[var_5_46] and not var_5_18
-				local var_5_51 = var_5_49 or var_5_50
+			var_5_47 = var_5_47 or Unit.local_position(unit, 0)
 
-				if not var_5_49 then
-					local var_5_52 = var_5_48 and var_5_48.is_player
-					local var_5_53 = var_5_48 and not var_5_52
-					local var_5_54 = not var_5_49 and var_5_41:is_ally(var_5_1, var_5_46)
+			local get_data_2 = Unit.get_data(unit, "breed")
 
-					if var_5_43 and var_5_53 and var_5_54 then
-						var_5_51 = false
+			if not tbl[unit] then
+				local is_enemy = side:is_enemy(owner_unit, unit)
+				local flag_5 = not (var_5_42 == side.side_by_unit[unit]) and not flag_2
+				local flag_6 = is_enemy or flag_5
+
+				if not is_enemy then
+					local flag_7 = not get_data_2 and get_data_2.is_player
+					local flag_8 = not get_data_2 and not flag_7
+					local flag_9 = not not is_enemy or side:is_ally(owner_unit, unit)
+
+					if not flag_4 and not flag_8 and not flag_9 then
+						flag_6 = false
 					end
 				end
 
-				if var_5_51 then
-					local var_5_55 = var_5_47 - var_5_9
-					local var_5_56 = Vector3.length(var_5_55)
+				if not flag_6 then
+					local num_5 = var_5_47 - var_5_9
+					local length = Vector3.length(num_5)
 					local var_5_57
 
-					if var_5_40.target_radius and var_5_40.targets then
-						local var_5_58 = var_5_56 / var_5_3
+					if not var_5_40.target_radius and not var_5_40.targets then
+						local num_6 = length / radius
 
-						if AiUtils.attack_is_shield_blocked(var_5_46, var_5_1) then
-							var_5_58 = math.lerp(var_5_58, 1, 0.5)
+						if not AiUtils.attack_is_shield_blocked(unit, owner_unit) then
+							num_6 = math.lerp(num_6, 1, 0.5)
 						end
 
-						for iter_5_1, iter_5_2 in pairs(var_5_40.target_radius) do
-							if var_5_58 <= iter_5_2 then
-								var_5_57 = iter_5_1
+						for k, v in pairs(var_5_40.target_radius) do
+							if num_6 <= v then
+								var_5_57 = k
 
 								break
 							end
 						end
 					end
 
-					var_5_38[var_5_46] = true
+					tbl[unit] = true
 
-					if HEALTH_ALIVE[var_5_46] then
-						var_5_44 = var_5_44 + 1
+					if not HEALTH_ALIVE[unit] then
+						num_4 = num_4 + 1
 					end
 
-					local var_5_59 = {
+					local tbl_2 = {
 						hit_zone_name = "torso",
-						hit_unit = var_5_46,
-						damage_profile_name = var_5_39,
+						hit_unit = unit,
+						damage_profile_name = damage_profile,
 						target_index = var_5_57,
 						allow_critical_proc = var_5_57 == 1,
-						hit_index = var_5_44
+						hit_index = num_4
 					}
 
-					var_5_37[#var_5_37 + 1] = var_5_59
+					_damage_buffer[#_damage_buffer + 1] = tbl_2
 				end
 			end
 		end
 	end
 
-	if var_5_0.alert_enemies then
-		Managers.state.entity:system("ai_system"):alert_enemies_within_range(var_5_1, var_5_9, var_5_0.alert_sound_range_fire)
+	if not current_action.alert_enemies then
+		Managers.state.entity:system("ai_system"):alert_enemies_within_range(owner_unit, var_5_9, current_action.alert_sound_range_fire)
 	end
 
-	local var_5_60 = ScriptUnit.has_extension(var_5_1, "hud_system")
+	local has_extension = ScriptUnit.has_extension(owner_unit, "hud_system")
 
-	arg_5_0:_handle_critical_strike(arg_5_0._is_critical_strike, arg_5_0.owner_buff_extension, var_5_60, nil, "on_critical_shot", nil)
+	self:_handle_critical_strike(self._is_critical_strike, self.owner_buff_extension, has_extension, nil, "on_critical_shot", nil)
 end
 
-local var_0_0 = 1
+local num = 1
 
-function ActionGeiser._update_damage(arg_6_0, arg_6_1)
-	local var_6_0 = arg_6_0._damage_buffer
-	local var_6_1 = arg_6_0._damage_buffer_index
-	local var_6_2 = var_6_1 + var_0_0 - 1
-	local var_6_3 = Managers.state.network
-	local var_6_4 = arg_6_0.owner_unit
-	local var_6_5 = arg_6_0.item_name
-	local var_6_6 = NetworkLookup.damage_sources[var_6_5]
-	local var_6_7 = var_6_3:unit_game_object_id(var_6_4)
-	local var_6_8 = arg_6_0.position:unbox()
+ActionGeiser._update_damage = function (self, arg_6_1)
+	-- function 6
+	local _damage_buffer = self._damage_buffer
+	local _damage_buffer_index = self._damage_buffer_index
+	local num_2 = _damage_buffer_index + num - 1
+	local network = Managers.state.network
+	local owner_unit = self.owner_unit
+	local item_name = self.item_name
+	local var_6_6 = NetworkLookup.damage_sources[item_name]
+	local unit_game_object_id = network:unit_game_object_id(owner_unit)
+	local unbox = self.position:unbox()
 
-	for iter_6_0 = var_6_1, var_6_2 do
+	for i = _damage_buffer_index, num_2 do
 		repeat
-			local var_6_9 = var_6_0[iter_6_0]
+			local var_6_9 = _damage_buffer[i]
 
 			if not var_6_9 then
 				return true
 			end
 
-			local var_6_10 = var_6_9.hit_unit
-			local var_6_11 = var_6_9.damage_profile_name
-			local var_6_12 = var_6_9.target_index
-			local var_6_13 = var_6_9.hit_zone_name
-			local var_6_14 = var_6_9.allow_critical_proc
-			local var_6_15 = var_6_9.hit_index
+			local hit_unit = var_6_9.hit_unit
+			local damage_profile_name = var_6_9.damage_profile_name
+			local target_index = var_6_9.target_index
+			local hit_zone_name = var_6_9.hit_zone_name
+			local allow_critical_proc = var_6_9.allow_critical_proc
+			local hit_index = var_6_9.hit_index
 
-			if not Unit.alive(var_6_10) then
+			if not Unit.alive(hit_unit) then
 				break
 			end
 
-			local var_6_16, var_6_17 = ActionUtils.get_ranged_boost(var_6_4)
-			local var_6_18 = arg_6_0._is_critical_strike or var_6_16
-			local var_6_19 = true
-			local var_6_20 = DamageUtils.get_item_buff_type(arg_6_0.item_name)
+			local get_ranged_boost, var_6_17 = ActionUtils.get_ranged_boost(owner_unit)
+			local _is_critical_strike = self._is_critical_strike
 
-			DamageUtils.buff_on_attack(var_6_4, var_6_10, "aoe", var_6_18 and var_6_14, var_6_13, var_6_15, var_6_19, var_6_20, nil, arg_6_0.item_name)
+			_is_critical_strike = _is_critical_strike or get_ranged_boost
 
-			local var_6_21 = var_6_3:unit_game_object_id(var_6_10)
+			local flag = true
+			local get_item_buff_type = DamageUtils.get_item_buff_type(self.item_name)
 
-			if not var_6_21 then
+			DamageUtils.buff_on_attack(owner_unit, hit_unit, "aoe", not _is_critical_strike and allow_critical_proc, hit_zone_name, hit_index, flag, get_item_buff_type, nil, self.item_name)
+
+			local unit_game_object_id_2 = network:unit_game_object_id(hit_unit)
+
+			if not unit_game_object_id_2 then
 				break
 			end
 
-			local var_6_22 = NetworkLookup.hit_zones[var_6_13]
-			local var_6_23 = NetworkLookup.damage_profiles[var_6_11]
-			local var_6_24 = POSITION_LOOKUP[var_6_10] or Unit.local_position(var_6_10, 0)
-			local var_6_25 = Vector3.normalize(var_6_24 - var_6_8)
-			local var_6_26 = arg_6_0.power_level
-			local var_6_27 = false
-			local var_6_28 = false
+			local var_6_22 = NetworkLookup.hit_zones[hit_zone_name]
+			local var_6_23 = NetworkLookup.damage_profiles[damage_profile_name]
+			local var_6_24 = POSITION_LOOKUP[hit_unit]
 
-			Managers.state.entity:system("weapon_system"):send_rpc_attack_hit(var_6_6, var_6_7, var_6_21, var_6_22, var_6_24, var_6_25, var_6_23, "power_level", var_6_26, "hit_target_index", var_6_12, "blocking", var_6_27, "shield_break_procced", var_6_28, "boost_curve_multiplier", var_6_17, "is_critical_strike", var_6_18)
+			var_6_24 = var_6_24 or Unit.local_position(hit_unit, 0)
+
+			local normalize = Vector3.normalize(var_6_24 - unbox)
+			local power_level = self.power_level
+			local flag_2 = false
+			local flag_3 = false
+
+			Managers.state.entity:system("weapon_system"):send_rpc_attack_hit(var_6_6, unit_game_object_id, unit_game_object_id_2, var_6_22, var_6_24, normalize, var_6_23, "power_level", power_level, "hit_target_index", target_index, "blocking", flag_2, "shield_break_procced", flag_3, "boost_curve_multiplier", var_6_17, "is_critical_strike", _is_critical_strike)
 		until true
 	end
 
-	arg_6_0._damage_buffer_index = var_6_2 + 1
+	self._damage_buffer_index = num_2 + 1
 end

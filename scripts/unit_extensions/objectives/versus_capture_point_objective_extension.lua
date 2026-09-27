@@ -1,161 +1,211 @@
 -- chunkname: @scripts/unit_extensions/objectives/versus_capture_point_objective_extension.lua
 
-local var_0_0 = script_data.testify and require("scripts/unit_extensions/objectives/testify/versus_capture_point_objective_extension_testify")
+local testify = script_data.testify
 
+testify = not testify and require("scripts/unit_extensions/objectives/testify/versus_capture_point_objective_extension_testify")
 VersusCapturePointObjectiveExtension = class(VersusCapturePointObjectiveExtension, BaseObjectiveExtension)
 VersusCapturePointObjectiveExtension.NAME = "VersusCapturePointObjectiveExtension"
 
-function VersusCapturePointObjectiveExtension.init(arg_1_0, ...)
-	VersusCapturePointObjectiveExtension.super.init(arg_1_0, ...)
+VersusCapturePointObjectiveExtension.init = function (self, ...)
+	-- function 1
+	VersusCapturePointObjectiveExtension.super.init(self, ...)
 
-	local var_1_0, var_1_1 = Unit.box(arg_1_0._unit)
+	local box, var_1_1 = Unit.box(self._unit)
 
-	arg_1_0._inside_radius = math.max(var_1_1.x, var_1_1.y) * math.max(arg_1_0._scale.x, arg_1_0._scale.y)
-	arg_1_0._percentage = 0
+	self._inside_radius = math.max(var_1_1.x, var_1_1.y) * math.max(self._scale.x, self._scale.y)
+	self._percentage = 0
 end
 
-function VersusCapturePointObjectiveExtension._set_objective_data(arg_2_0, arg_2_1)
-	local var_2_0 = GameModeSettings.versus.objectives.capture_point
+VersusCapturePointObjectiveExtension._set_objective_data = function (self, arg_2_1)
+	-- function 2
+	local capture_point = GameModeSettings.versus.objectives.capture_point
+	local capture_rate_multiplier = arg_2_1.capture_rate_multiplier
 
-	arg_2_0._capture_rate_multiplier = arg_2_1.capture_rate_multiplier or var_2_0.capture_rate_multiplier
-	arg_2_0._capture_time = arg_2_1.capture_time or var_2_0.capture_time
-	arg_2_0._num_sections = arg_2_1.num_sections or var_2_0.num_sections
-	arg_2_0._score_per_section = arg_2_1.score_per_section or var_2_0.score_per_section
-	arg_2_0._time_per_section = arg_2_1.time_per_section or var_2_0.time_per_section
-	arg_2_0._score_for_completion = arg_2_1.score_for_completion or var_2_0.score_for_completion
-	arg_2_0._time_for_completion = arg_2_1.time_for_completion or var_2_0.time_for_completion
-	arg_2_0._on_last_leaf_complete_sound_event = arg_2_1.on_last_leaf_complete_sound_event or var_2_0.on_last_leaf_complete_sound_event
-	arg_2_0._on_leaf_complete_sound_event = arg_2_1.on_leaf_complete_sound_event or var_2_0.on_leaf_complete_sound_event
-	arg_2_0._on_section_progress_sound_event = arg_2_1.on_section_progress_sound_event or var_2_0.on_section_progress_sound_event
-	arg_2_0._capture_time_remaining = arg_2_0._capture_time
+	capture_rate_multiplier = capture_rate_multiplier or capture_point.capture_rate_multiplier
+	self._capture_rate_multiplier = capture_rate_multiplier
+
+	local capture_time = arg_2_1.capture_time
+
+	capture_time = capture_time or capture_point.capture_time
+	self._capture_time = capture_time
+
+	local num_sections = arg_2_1.num_sections
+
+	num_sections = num_sections or capture_point.num_sections
+	self._num_sections = num_sections
+
+	local score_per_section = arg_2_1.score_per_section
+
+	score_per_section = score_per_section or capture_point.score_per_section
+	self._score_per_section = score_per_section
+
+	local time_per_section = arg_2_1.time_per_section
+
+	time_per_section = time_per_section or capture_point.time_per_section
+	self._time_per_section = time_per_section
+
+	local score_for_completion = arg_2_1.score_for_completion
+
+	score_for_completion = score_for_completion or capture_point.score_for_completion
+	self._score_for_completion = score_for_completion
+
+	local time_for_completion = arg_2_1.time_for_completion
+
+	time_for_completion = time_for_completion or capture_point.time_for_completion
+	self._time_for_completion = time_for_completion
+
+	local on_last_leaf_complete_sound_event = arg_2_1.on_last_leaf_complete_sound_event
+
+	on_last_leaf_complete_sound_event = on_last_leaf_complete_sound_event or capture_point.on_last_leaf_complete_sound_event
+	self._on_last_leaf_complete_sound_event = on_last_leaf_complete_sound_event
+
+	local on_leaf_complete_sound_event = arg_2_1.on_leaf_complete_sound_event
+
+	on_leaf_complete_sound_event = on_leaf_complete_sound_event or capture_point.on_leaf_complete_sound_event
+	self._on_leaf_complete_sound_event = on_leaf_complete_sound_event
+
+	local on_section_progress_sound_event = arg_2_1.on_section_progress_sound_event
+
+	on_section_progress_sound_event = on_section_progress_sound_event or capture_point.on_section_progress_sound_event
+	self._on_section_progress_sound_event = on_section_progress_sound_event
+	self._capture_time_remaining = self._capture_time
 end
 
-function VersusCapturePointObjectiveExtension._activate(arg_3_0)
-	local var_3_0 = Unit.mesh(arg_3_0._unit, "g_projector002")
+VersusCapturePointObjectiveExtension._activate = function (self)
+	-- function 3
+	local mesh = Unit.mesh(self._unit, "g_projector002")
 
-	arg_3_0._material = Mesh.material(var_3_0, "projector")
+	self._material = Mesh.material(mesh, "projector")
 
-	Material.set_scalar(arg_3_0._material, "radial_cutoff", 0)
+	Material.set_scalar(self._material, "radial_cutoff", 0)
 
-	arg_3_0._hero_side = Managers.state.side:get_side_from_name("heroes")
+	self._hero_side = Managers.state.side:get_side_from_name("heroes")
 
 	if not DEDICATED_SERVER then
-		arg_3_0:play_local_unit_sound("Play_versus_objective_capture_world_loop")
+		self:play_local_unit_sound("Play_versus_objective_capture_world_loop")
 	end
 end
 
-function VersusCapturePointObjectiveExtension._deactivate(arg_4_0)
+VersusCapturePointObjectiveExtension._deactivate = function (self)
+	-- function 4
 	if not DEDICATED_SERVER then
-		arg_4_0:play_local_unit_sound("Stop_versus_objective_capture_loop")
-		arg_4_0:play_local_unit_sound("Stop_versus_objective_capture_ticking_loop")
+		self:play_local_unit_sound("Stop_versus_objective_capture_loop")
+		self:play_local_unit_sound("Stop_versus_objective_capture_ticking_loop")
 	end
 end
 
-function VersusCapturePointObjectiveExtension._server_update(arg_5_0, arg_5_1, arg_5_2)
-	local var_5_0 = arg_5_0:_get_num_players_inside()
-	local var_5_1 = arg_5_0:get_percentage_done()
+VersusCapturePointObjectiveExtension._server_update = function (self, arg_5_1, arg_5_2)
+	-- function 5
+	local _get_num_players_inside = self:_get_num_players_inside()
+	local get_percentage_done = self:get_percentage_done()
 
-	if var_5_0 >= 1 then
-		local var_5_2 = #arg_5_0._hero_side.PLAYER_UNITS
-		local var_5_3 = arg_5_0._capture_rate_multiplier * 4 * (var_5_0 / var_5_2)
-		local var_5_4 = math.clamp(arg_5_0._capture_time_remaining - arg_5_1 * var_5_3, 0, arg_5_0._capture_time)
+	if _get_num_players_inside >= 1 then
+		local count = #self._hero_side.PLAYER_UNITS
+		local num = self._capture_rate_multiplier * 4 * (_get_num_players_inside / count)
+		local clamp = math.clamp(self._capture_time_remaining - arg_5_1 * num, 0, self._capture_time)
 
-		if var_5_4 ~= arg_5_0._capture_time_remaining then
-			arg_5_0._capture_time_remaining = var_5_4
+		if clamp ~= self._capture_time_remaining then
+			self._capture_time_remaining = clamp
 
-			local var_5_5 = arg_5_0:get_percentage_done()
+			local get_percentage_done_2 = self:get_percentage_done()
 
-			arg_5_0:server_set_value(var_5_5)
+			self:server_set_value(get_percentage_done_2)
 
-			if var_5_5 >= (arg_5_0._current_section + 1) * (1 / arg_5_0._num_sections) then
-				arg_5_0:on_section_completed()
+			if get_percentage_done_2 >= (self._current_section + 1) * (1 / self._num_sections) then
+				self:on_section_completed()
 			end
 		end
 	end
 
 	if not DEDICATED_SERVER then
-		arg_5_0:_update_local_player(arg_5_1, arg_5_2, var_5_1)
+		self:_update_local_player(arg_5_1, arg_5_2, get_percentage_done)
 	end
 end
 
-function VersusCapturePointObjectiveExtension._client_update(arg_6_0, arg_6_1, arg_6_2)
-	local var_6_0 = arg_6_0:get_percentage_done()
+VersusCapturePointObjectiveExtension._client_update = function (self, arg_6_1, arg_6_2)
+	-- function 6
+	local get_percentage_done = self:get_percentage_done()
 
-	arg_6_0._percentage = arg_6_0:client_get_value()
+	self._percentage = self:client_get_value()
 
-	arg_6_0:_update_local_player(arg_6_1, arg_6_2, var_6_0)
+	self:_update_local_player(arg_6_1, arg_6_2, get_percentage_done)
 end
 
-function VersusCapturePointObjectiveExtension.update_testify(arg_7_0, arg_7_1, arg_7_2)
-	Testify:poll_requests_through_handler(var_0_0, arg_7_0)
+VersusCapturePointObjectiveExtension.update_testify = function (arg_7_0, arg_7_1, arg_7_2)
+	-- function 7
+	Testify:poll_requests_through_handler(testify, arg_7_0)
 end
 
-function VersusCapturePointObjectiveExtension._update_local_player(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
-	local var_8_0 = arg_8_0:get_percentage_done()
+VersusCapturePointObjectiveExtension._update_local_player = function (self, arg_8_1, arg_8_2, arg_8_3)
+	-- function 8
+	local get_percentage_done = self:get_percentage_done()
 
-	if arg_8_3 ~= var_8_0 then
-		Material.set_scalar(arg_8_0._material, "radial_cutoff", var_8_0)
-		arg_8_0._audio_system:set_global_parameter("versus_checkpoint", var_8_0 * 100)
+	if arg_8_3 ~= get_percentage_done then
+		Material.set_scalar(self._material, "radial_cutoff", get_percentage_done)
+		self._audio_system:set_global_parameter("versus_checkpoint", get_percentage_done * 100)
 	end
 
-	if arg_8_0:_local_side():name() ~= "heroes" then
+	if self:_local_side():name() ~= "heroes" then
 		return
 	end
 
-	local var_8_1 = arg_8_0:_is_local_player_inside()
+	local _is_local_player_inside = self:_is_local_player_inside()
 
-	if var_8_1 and not arg_8_0._local_player_entered then
-		arg_8_0:play_local_unit_sound("Play_versus_objective_capture_ticking_loop")
-	elseif not var_8_1 and arg_8_0._local_player_entered then
-		arg_8_0:play_local_unit_sound("Stop_versus_objective_capture_ticking_loop")
+	if not (not _is_local_player_inside and self._local_player_entered) then
+		self:play_local_unit_sound("Play_versus_objective_capture_ticking_loop")
+	elseif _is_local_player_inside or not self._local_player_entered then
+		self:play_local_unit_sound("Stop_versus_objective_capture_ticking_loop")
 	end
 
-	arg_8_0._local_player_entered = var_8_1
+	self._local_player_entered = _is_local_player_inside
 end
 
-function VersusCapturePointObjectiveExtension._is_local_player_inside(arg_9_0)
-	local var_9_0 = Managers.player:local_player()
-	local var_9_1 = var_9_0 and var_9_0.player_unit
+VersusCapturePointObjectiveExtension._is_local_player_inside = function (self)
+	-- function 9
+	local local_player = Managers.player:local_player()
+	local flag = not local_player and local_player.player_unit
 
-	if not var_9_1 then
+	if not flag then
 		return
 	end
 
-	local var_9_2 = POSITION_LOOKUP[var_9_1]
-	local var_9_3 = Unit.local_position(arg_9_0._unit, 0)
+	local var_9_2 = POSITION_LOOKUP[flag]
+	local local_position = Unit.local_position(self._unit, 0)
 
-	return Vector3.distance_squared(var_9_3, var_9_2) <= arg_9_0._inside_radius * arg_9_0._inside_radius
+	return Vector3.distance_squared(local_position, var_9_2) <= self._inside_radius * self._inside_radius
 end
 
-function VersusCapturePointObjectiveExtension._get_num_players_inside(arg_10_0)
-	local var_10_0 = ALIVE
-	local var_10_1 = POSITION_LOOKUP
-	local var_10_2 = ScriptUnit.extension
-	local var_10_3 = Vector3.distance_squared
-	local var_10_4 = arg_10_0._inside_radius * arg_10_0._inside_radius
-	local var_10_5 = 0
-	local var_10_6 = arg_10_0._hero_side.PLAYER_UNITS
-	local var_10_7 = arg_10_0:get_position()
+VersusCapturePointObjectiveExtension._get_num_players_inside = function (self)
+	-- function 10
+	local ALIVE = ALIVE
+	local POSITION_LOOKUP = POSITION_LOOKUP
+	local extension = ScriptUnit.extension
+	local distance_squared = Vector3.distance_squared
+	local num = self._inside_radius * self._inside_radius
+	local num_2 = 0
+	local PLAYER_UNITS = self._hero_side.PLAYER_UNITS
+	local get_position = self:get_position()
 
-	for iter_10_0, iter_10_1 in pairs(var_10_6) do
-		if var_10_0[iter_10_1] and not var_10_2(iter_10_1, "status_system"):is_disabled() then
-			local var_10_8 = var_10_1[iter_10_1]
+	for k, v in pairs(PLAYER_UNITS) do
+		if not (not ALIVE[v] and extension(v, "status_system"):is_disabled()) then
+			local var_10_8 = POSITION_LOOKUP[v]
 
-			if var_10_4 >= var_10_3(var_10_7, var_10_8) then
-				var_10_5 = var_10_5 + 1
+			if num >= distance_squared(get_position, var_10_8) then
+				num_2 = num_2 + 1
 			end
 		end
 	end
 
-	return var_10_5
+	return num_2
 end
 
-function VersusCapturePointObjectiveExtension.get_percentage_done(arg_11_0)
-	if arg_11_0._is_server then
-		local var_11_0 = 1 - arg_11_0._capture_time_remaining / arg_11_0._capture_time
+VersusCapturePointObjectiveExtension.get_percentage_done = function (self)
+	-- function 11
+	if not self._is_server then
+		local num = 1 - self._capture_time_remaining / self._capture_time
 
-		return math.clamp(var_11_0, 0, 1)
+		return math.clamp(num, 0, 1)
 	end
 
-	return arg_11_0._percentage
+	return self._percentage
 end

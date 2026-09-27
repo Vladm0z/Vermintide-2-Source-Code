@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/skaven/skaven_slave_rat_behavior.lua
 
-local var_0_0 = BreedActions.skaven_slave_rat
+local skaven_slave_rat = BreedActions.skaven_slave_rat
 
 BreedBehaviors.slave_rat = {
 	"BTSelector",
@@ -23,13 +23,13 @@ BreedBehaviors.slave_rat = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = var_0_0.stagger
+		action_data = skaven_slave_rat.stagger
 	},
 	{
 		"BTBlockedAction",
 		name = "blocked",
 		condition = "blocked",
-		action_data = var_0_0.blocked
+		action_data = skaven_slave_rat.blocked
 	},
 	{
 		"BTSelector",
@@ -42,7 +42,7 @@ BreedBehaviors.slave_rat = {
 			"BTClimbAction",
 			name = "climb",
 			condition = "at_climb_smartobject",
-			action_data = var_0_0.climb
+			action_data = skaven_slave_rat.climb
 		},
 		{
 			"BTJumpAcrossAction",
@@ -53,7 +53,7 @@ BreedBehaviors.slave_rat = {
 			"BTSmashDoorAction",
 			name = "smash_door",
 			condition = "at_door_smartobject",
-			action_data = var_0_0.smash_door
+			action_data = skaven_slave_rat.smash_door
 		},
 		condition = "at_smartobject",
 		name = "smartobject"
@@ -62,32 +62,32 @@ BreedBehaviors.slave_rat = {
 		"BTHesitateAction",
 		name = "hesitate",
 		condition = "is_alerted",
-		action_data = var_0_0.alerted
+		action_data = skaven_slave_rat.alerted
 	},
 	{
 		"BTUtilityNode",
-		action_data = var_0_0.utility_action,
+		action_data = skaven_slave_rat.utility_action,
 		{
 			"BTClanRatFollowAction",
 			name = "follow",
-			action_data = var_0_0.follow
+			action_data = skaven_slave_rat.follow
 		},
 		{
 			"BTAttackAction",
 			name = "running_attack",
 			condition = "ask_target_before_attacking",
-			action_data = var_0_0.running_attack
+			action_data = skaven_slave_rat.running_attack
 		},
 		{
 			"BTAttackAction",
 			name = "normal_attack",
 			condition = "ask_target_before_attacking",
-			action_data = var_0_0.normal_attack
+			action_data = skaven_slave_rat.normal_attack
 		},
 		{
 			"BTCombatShoutAction",
 			name = "combat_shout",
-			action_data = var_0_0.combat_shout
+			action_data = skaven_slave_rat.combat_shout
 		},
 		name = "in_combat",
 		condition = "confirmed_player_sighting"
@@ -96,20 +96,20 @@ BreedBehaviors.slave_rat = {
 		"BTAlertedAction",
 		name = "alerted",
 		condition = "player_spotted",
-		action_data = var_0_0.alerted
+		action_data = skaven_slave_rat.alerted
 	},
 	{
 		"BTMoveToGoalAction",
 		name = "move_to_goal",
 		condition = "has_goal_destination",
-		action_data = var_0_0.follow
+		action_data = skaven_slave_rat.follow
 	},
 	{
 		"BTSequence",
 		{
 			"BTInterestPointChooseAction",
 			name = "interest_point_choose",
-			action_data = var_0_0.interest_point_choose
+			action_data = skaven_slave_rat.interest_point_choose
 		},
 		{
 			"BTInterestPointApproachAction",
@@ -118,7 +118,7 @@ BreedBehaviors.slave_rat = {
 		{
 			"BTInterestPointUseAction",
 			name = "interest_point_use",
-			action_data = var_0_0.interest_point_choose
+			action_data = skaven_slave_rat.interest_point_choose
 		},
 		condition = "should_use_interest_point",
 		name = "interest_point"
@@ -127,7 +127,7 @@ BreedBehaviors.slave_rat = {
 		"BTIdleAction",
 		name = "idle",
 		condition = "no_target",
-		action_data = var_0_0.idle
+		action_data = skaven_slave_rat.idle
 	},
 	{
 		"BTFallbackIdleAction",

@@ -2,37 +2,42 @@
 
 ScriptPSRestrictionToken = class(ScriptPSRestrictionToken)
 
-function ScriptPSRestrictionToken.init(arg_1_0, arg_1_1)
-	arg_1_0._token = arg_1_1
-	arg_1_0._done = false
+ScriptPSRestrictionToken.init = function (self, arg_1_1)
+	-- function 1
+	self._token = arg_1_1
+	self._done = false
 end
 
-function ScriptPSRestrictionToken.update(arg_2_0)
-	local var_2_0 = NpCheck.status(arg_2_0._token)
+ScriptPSRestrictionToken.update = function (self)
+	-- function 2
+	local status = NpCheck.status(self._token)
 
-	if var_2_0 == NpCheck.COMPLETED or var_2_0 == NpCheck.ERROR then
-		arg_2_0._done = true
+	if not (status == NpCheck.COMPLETED or status ~= NpCheck.ERROR) then
+		self._done = true
 	end
 end
 
-function ScriptPSRestrictionToken.info(arg_3_0)
-	local var_3_0 = {}
+ScriptPSRestrictionToken.info = function (self)
+	-- function 3
+	local tbl = {}
 
-	if NpCheck.status(arg_3_0._token) == NpCheck.ERROR then
-		var_3_0.error = NpCheck.error_code(arg_3_0._token)
+	if NpCheck.status(self._token) == NpCheck.ERROR then
+		tbl.error = NpCheck.error_code(self._token)
 	else
-		var_3_0.result = NpCheck.result(arg_3_0._token)
+		tbl.result = NpCheck.result(self._token)
 	end
 
-	var_3_0.token = arg_3_0._token
+	tbl.token = self._token
 
-	return var_3_0
+	return tbl
 end
 
-function ScriptPSRestrictionToken.done(arg_4_0)
-	return arg_4_0._done
+ScriptPSRestrictionToken.done = function (self)
+	-- function 4
+	return self._done
 end
 
-function ScriptPSRestrictionToken.close(arg_5_0)
-	NpCheck.free(arg_5_0._token)
+ScriptPSRestrictionToken.close = function (self)
+	-- function 5
+	NpCheck.free(self._token)
 end

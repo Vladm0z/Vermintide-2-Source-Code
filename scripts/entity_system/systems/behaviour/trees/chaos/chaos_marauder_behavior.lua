@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/chaos/chaos_marauder_behavior.lua
 
-local var_0_0 = BreedActions.chaos_marauder
+local chaos_marauder = BreedActions.chaos_marauder
 
 BreedBehaviors.marauder = {
 	"BTSelector",
@@ -23,13 +23,13 @@ BreedBehaviors.marauder = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = var_0_0.stagger
+		action_data = chaos_marauder.stagger
 	},
 	{
 		"BTBlockedAction",
 		name = "blocked",
 		condition = "blocked",
-		action_data = var_0_0.blocked
+		action_data = chaos_marauder.blocked
 	},
 	{
 		"BTSelector",
@@ -42,7 +42,7 @@ BreedBehaviors.marauder = {
 			"BTClimbAction",
 			name = "climb",
 			condition = "at_climb_smartobject",
-			action_data = var_0_0.climb
+			action_data = chaos_marauder.climb
 		},
 		{
 			"BTJumpAcrossAction",
@@ -53,7 +53,7 @@ BreedBehaviors.marauder = {
 			"BTSmashDoorAction",
 			name = "smash_door",
 			condition = "at_door_smartobject",
-			action_data = var_0_0.smash_door
+			action_data = chaos_marauder.smash_door
 		},
 		condition = "at_smartobject",
 		name = "smartobject"
@@ -62,37 +62,37 @@ BreedBehaviors.marauder = {
 		"BTHesitateAction",
 		name = "hesitate",
 		condition = "is_alerted",
-		action_data = var_0_0.alerted
+		action_data = chaos_marauder.alerted
 	},
 	{
 		"BTUtilityNode",
-		action_data = var_0_0.utility_action,
+		action_data = chaos_marauder.utility_action,
 		{
 			"BTCombatStepAction",
 			name = "combat_step",
-			action_data = var_0_0.combat_step
+			action_data = chaos_marauder.combat_step
 		},
 		{
 			"BTClanRatFollowAction",
 			name = "follow",
-			action_data = var_0_0.follow
+			action_data = chaos_marauder.follow
 		},
 		{
 			"BTAttackAction",
 			name = "running_attack",
 			condition = "ask_target_before_attacking",
-			action_data = var_0_0.running_attack
+			action_data = chaos_marauder.running_attack
 		},
 		{
 			"BTAttackAction",
 			name = "normal_attack",
 			condition = "ask_target_before_attacking",
-			action_data = var_0_0.normal_attack
+			action_data = chaos_marauder.normal_attack
 		},
 		{
 			"BTCombatShoutAction",
 			name = "combat_shout",
-			action_data = var_0_0.combat_shout
+			action_data = chaos_marauder.combat_shout
 		},
 		name = "in_combat",
 		condition = "confirmed_player_sighting"
@@ -101,24 +101,24 @@ BreedBehaviors.marauder = {
 		"BTAlertedAction",
 		name = "alerted",
 		condition = "player_spotted",
-		action_data = var_0_0.alerted
+		action_data = chaos_marauder.alerted
 	},
 	{
 		"BTMoveToGoalAction",
 		name = "move_to_goal",
 		condition = "has_goal_destination",
-		action_data = var_0_0.follow
+		action_data = chaos_marauder.follow
 	},
 	{
 		"BTIdleAction",
 		name = "idle",
 		condition = "no_target",
-		action_data = var_0_0.idle
+		action_data = chaos_marauder.idle
 	},
 	{
 		"BTFallbackIdleAction",
 		name = "fallback_idle",
-		action_data = var_0_0.fallback_idle
+		action_data = chaos_marauder.fallback_idle
 	},
 	name = "marauder"
 }
@@ -138,13 +138,13 @@ BreedBehaviors.marauder_tutorial = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = var_0_0.stagger
+		action_data = chaos_marauder.stagger
 	},
 	{
 		"BTBlockedAction",
 		name = "blocked",
 		condition = "blocked",
-		action_data = var_0_0.blocked
+		action_data = chaos_marauder.blocked
 	},
 	{
 		"BTSelector",
@@ -157,7 +157,7 @@ BreedBehaviors.marauder_tutorial = {
 			"BTClimbAction",
 			name = "climb",
 			condition = "at_climb_smartobject",
-			action_data = var_0_0.climb
+			action_data = chaos_marauder.climb
 		},
 		{
 			"BTJumpAcrossAction",
@@ -168,7 +168,7 @@ BreedBehaviors.marauder_tutorial = {
 			"BTSmashDoorAction",
 			name = "smash_door",
 			condition = "at_door_smartobject",
-			action_data = var_0_0.smash_door
+			action_data = chaos_marauder.smash_door
 		},
 		condition = "at_smartobject",
 		name = "smartobject"
@@ -177,21 +177,21 @@ BreedBehaviors.marauder_tutorial = {
 		"BTHesitateAction",
 		name = "hesitate",
 		condition = "is_alerted",
-		action_data = var_0_0.alerted
+		action_data = chaos_marauder.alerted
 	},
 	{
 		"BTUtilityNode",
-		action_data = var_0_0.utility_action,
+		action_data = chaos_marauder.utility_action,
 		{
 			"BTClanRatFollowAction",
 			name = "follow",
-			action_data = var_0_0.follow
+			action_data = chaos_marauder.follow
 		},
 		{
 			"BTAttackAction",
 			name = "tutorial_attack",
 			condition = "ask_target_before_attacking",
-			action_data = var_0_0.tutorial_attack
+			action_data = chaos_marauder.tutorial_attack
 		},
 		name = "in_combat",
 		condition = "confirmed_player_sighting"
@@ -200,24 +200,24 @@ BreedBehaviors.marauder_tutorial = {
 		"BTAlertedAction",
 		name = "alerted",
 		condition = "player_spotted",
-		action_data = var_0_0.alerted
+		action_data = chaos_marauder.alerted
 	},
 	{
 		"BTMoveToGoalAction",
 		name = "move_to_goal",
 		condition = "has_goal_destination",
-		action_data = var_0_0.follow
+		action_data = chaos_marauder.follow
 	},
 	{
 		"BTIdleAction",
 		name = "idle",
 		condition = "no_target",
-		action_data = var_0_0.idle
+		action_data = chaos_marauder.idle
 	},
 	{
 		"BTFallbackIdleAction",
 		name = "fallback_idle",
-		action_data = var_0_0.fallback_idle
+		action_data = chaos_marauder.fallback_idle
 	},
 	name = "marauder_tutorial"
 }

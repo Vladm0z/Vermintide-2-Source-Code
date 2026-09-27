@@ -2,23 +2,27 @@
 
 ImguiDeusChestPreloadDebug = class(ImguiDeusChestPreload)
 
-function ImguiDeusChestPreloadDebug.init(arg_1_0)
+ImguiDeusChestPreloadDebug.init = function (arg_1_0)
+	-- function 1
 	return
 end
 
-function ImguiDeusChestPreloadDebug.update(arg_2_0)
+ImguiDeusChestPreloadDebug.update = function (arg_2_0)
+	-- function 2
 	return
 end
 
-function ImguiDeusChestPreloadDebug.is_persistent(arg_3_0)
+ImguiDeusChestPreloadDebug.is_persistent = function (arg_3_0)
+	-- function 3
 	return true
 end
 
-function ImguiDeusChestPreloadDebug.draw(arg_4_0, arg_4_1)
-	local var_4_0 = Managers.mechanism:current_mechanism_name()
-	local var_4_1 = Imgui.begin_window("ImguiDeusChestPreloadDebug", "always_auto_resize")
+ImguiDeusChestPreloadDebug.draw = function (arg_4_0, arg_4_1)
+	-- function 4
+	local current_mechanism_name = Managers.mechanism:current_mechanism_name()
+	local begin_window = Imgui.begin_window("ImguiDeusChestPreloadDebug", "always_auto_resize")
 
 	Imgui.end_window()
 
-	return var_4_1
+	return begin_window
 end

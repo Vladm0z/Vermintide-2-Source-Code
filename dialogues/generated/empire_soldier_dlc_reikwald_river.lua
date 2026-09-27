@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/empire_soldier_dlc_reikwald_river.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		response = "pes_reik2_barricade_a",
 		name = "pes_reik2_barricade_a",

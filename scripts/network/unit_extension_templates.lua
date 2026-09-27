@@ -1,8 +1,14 @@
 -- chunkname: @scripts/network/unit_extension_templates.lua
 
-local var_0_0 = _G.GameSettingsDevelopment and GameSettingsDevelopment.use_engine_optimized_ai_locomotion and "AILocomotionExtensionC" or "AILocomotionExtension"
-local var_0_1 = IS_WINDOWS and "PlayerEyeTrackingExtension" or nil
-local var_0_2 = {
+local flag
+
+flag = not _G.GameSettingsDevelopment and not GameSettingsDevelopment.use_engine_optimized_ai_locomotion and "AILocomotionExtensionC" and "AILocomotionExtension"
+
+local flag_2
+
+flag_2 = not IS_WINDOWS and "PlayerEyeTrackingExtension" and nil
+
+local tbl = {
 	player_unit_base = {
 		go_type = "player_unit",
 		self_owned_extensions = {
@@ -33,7 +39,7 @@ local var_0_2 = {
 			"PlayerSoundEffectExtension",
 			"PlayerUnitAttackIntensityExtension",
 			"AICommanderExtension",
-			var_0_1
+			flag_2
 		},
 		self_owned_extensions_server = {
 			"PlayerInputExtension",
@@ -65,7 +71,7 @@ local var_0_2 = {
 			"PlayerSoundEffectExtension",
 			"PlayerUnitAttackIntensityExtension",
 			"AICommanderExtension",
-			var_0_1
+			flag_2
 		},
 		husk_extensions = {
 			"SimpleHuskInventoryExtension",
@@ -213,7 +219,7 @@ local var_0_2 = {
 			"PlayerSoundEffectExtension",
 			"PlayerUnitVisualEffectsExtension",
 			"AICommanderExtension",
-			var_0_1
+			flag_2
 		},
 		self_owned_extensions_server = {
 			"PlayerInputTutorialExtension",
@@ -258,7 +264,7 @@ local var_0_2 = {
 			"PlayerUnitVisualEffectsExtension",
 			"PlayerUnitAttackIntensityExtension",
 			"AICommanderExtension",
-			var_0_1
+			flag_2
 		},
 		husk_extensions = {
 			"SimpleHuskInventoryExtension",
@@ -401,7 +407,7 @@ local var_0_2 = {
 	ai_unit_base = {
 		go_type = "ai_unit",
 		self_owned_extensions = {
-			var_0_0,
+			flag,
 			"AINavigationExtension",
 			"GenericHitReactionExtension",
 			"GenericHealthExtension",
@@ -455,7 +461,7 @@ local var_0_2 = {
 	ai_unit_critter = {
 		go_type = "ai_unit",
 		self_owned_extensions = {
-			var_0_0,
+			flag,
 			"AINavigationExtension",
 			"GenericHitReactionExtension",
 			"GenericHealthExtension",
@@ -499,7 +505,7 @@ local var_0_2 = {
 	ai_unit_critter_nurgling = {
 		go_type = "ai_unit_with_inventory",
 		self_owned_extensions = {
-			var_0_0,
+			flag,
 			"AINavigationExtension",
 			"GenericHitReactionExtension",
 			"GenericHealthExtension",
@@ -945,7 +951,7 @@ local var_0_2 = {
 	ai_unit_pet_skeleton = {
 		go_type = "ai_unit_with_inventory",
 		self_owned_extensions = {
-			var_0_0,
+			flag,
 			"AINavigationExtension",
 			"GenericHitReactionExtension",
 			"GenericHealthExtension",
@@ -1013,7 +1019,7 @@ local var_0_2 = {
 	ai_unit_pet_skeleton_with_shield = {
 		go_type = "ai_unit_with_inventory_and_shield",
 		self_owned_extensions = {
-			var_0_0,
+			flag,
 			"AINavigationExtension",
 			"GenericHitReactionExtension",
 			"GenericHealthExtension",
@@ -1149,7 +1155,7 @@ local var_0_2 = {
 	ai_unit_loot_rat = {
 		go_type = "ai_unit_with_inventory",
 		self_owned_extensions = {
-			var_0_0,
+			flag,
 			"AINavigationExtension",
 			"GenericHitReactionExtension",
 			"LootRatHealthExtension",
@@ -1205,7 +1211,7 @@ local var_0_2 = {
 	ai_unit_rat_ogre = {
 		go_type = "ai_unit_with_inventory",
 		self_owned_extensions = {
-			var_0_0,
+			flag,
 			"AINavigationExtension",
 			"GenericHitReactionExtension",
 			"AIInventoryExtension",
@@ -1263,7 +1269,7 @@ local var_0_2 = {
 	ai_unit_chaos_troll = {
 		go_type = "ai_unit_chaos_troll",
 		self_owned_extensions = {
-			var_0_0,
+			flag,
 			"AINavigationExtension",
 			"GenericHitReactionExtension",
 			"AIInventoryExtension",
@@ -1329,7 +1335,7 @@ local var_0_2 = {
 	ai_unit_stormfiend = {
 		go_type = "ai_unit_stormfiend",
 		self_owned_extensions = {
-			var_0_0,
+			flag,
 			"AINavigationExtension",
 			"GenericHitReactionExtension",
 			"AIInventoryExtension",
@@ -1411,7 +1417,7 @@ local var_0_2 = {
 	ai_unit_chaos_spawn = {
 		go_type = "ai_unit",
 		self_owned_extensions = {
-			var_0_0,
+			flag,
 			"AINavigationExtension",
 			"GenericHitReactionExtension",
 			"GenericHealthExtension",
@@ -1776,7 +1782,7 @@ local var_0_2 = {
 	ai_unit_vortex = {
 		go_type = "ai_unit_vortex",
 		self_owned_extensions = {
-			var_0_0,
+			flag,
 			"AINavigationExtension",
 			"VortexExtension",
 			"AISimpleExtension"
@@ -2739,90 +2745,97 @@ local var_0_2 = {
 	}
 }
 
-DLCUtils.map_list("unit_extension_templates", function(arg_1_0)
-	table.merge(var_0_2, dofile(arg_1_0))
+DLCUtils.map_list("unit_extension_templates", function (arg_1_0)
+	-- function 1
+	table.merge(tbl, dofile(arg_1_0))
 end)
 
-local var_0_3 = {
+local tbl_2 = {
 	"self_owned_extensions",
 	"self_owned_extensions_server",
 	"husk_extensions",
 	"husk_extensions_server"
 }
-local var_0_4 = #var_0_3
+local count = #tbl_2
 
-for iter_0_0, iter_0_1 in pairs(var_0_2) do
-	iter_0_1.NAME = iter_0_0
+for k, v in pairs(tbl) do
+	v.NAME = k
 
-	for iter_0_2 = 1, var_0_4 do
-		local var_0_5 = var_0_3[iter_0_2]
-		local var_0_6 = iter_0_1[var_0_5] or {}
-		local var_0_7 = #var_0_6
+	for k_2 = 1, count do
+		local var_0_5 = tbl_2[k_2]
+		local var_0_6 = v[var_0_5]
 
-		if iter_0_1.base_template ~= nil then
-			local var_0_8 = var_0_2[iter_0_1.base_template]
+		var_0_6 = var_0_6 or {}
 
-			assert(var_0_8.base_template == nil, "%s tried to inherit from template that had a base_template", iter_0_0)
+		local count_2 = #var_0_6
+
+		if v.base_template ~= nil then
+			local var_0_8 = tbl[v.base_template]
+
+			assert(var_0_8.base_template == nil, "%s tried to inherit from template that had a base_template", k)
 
 			local var_0_9 = var_0_8[var_0_5]
 
-			if var_0_9 then
+			if not var_0_9 then
 				inherited_extension_list_n = #var_0_9
 
-				for iter_0_3 = 1, inherited_extension_list_n do
-					var_0_7 = var_0_7 + 1
-					var_0_6[var_0_7] = var_0_9[iter_0_3]
+				for l = 1, inherited_extension_list_n do
+					count_2 = count_2 + 1
+					var_0_6[count_2] = var_0_9[l]
 				end
 			end
 
-			local var_0_10 = var_0_8.remove_when_killed and var_0_8.remove_when_killed[var_0_5]
+			local remove_when_killed = var_0_8.remove_when_killed
 
-			if var_0_10 then
-				if iter_0_1.remove_when_killed == nil then
-					iter_0_1.remove_when_killed = {}
+			remove_when_killed = not remove_when_killed and var_0_8.remove_when_killed[var_0_5]
+
+			if not remove_when_killed then
+				if v.remove_when_killed == nil then
+					v.remove_when_killed = {}
 				end
 
-				if iter_0_1.remove_when_killed[var_0_5] == nil then
-					iter_0_1.remove_when_killed[var_0_5] = {}
+				if v.remove_when_killed[var_0_5] == nil then
+					v.remove_when_killed[var_0_5] = {}
 				end
 
-				for iter_0_4 = 1, #var_0_10 do
-					local var_0_11 = iter_0_1.remove_when_killed[var_0_5]
+				for i4 = 1, #remove_when_killed do
+					local var_0_11 = v.remove_when_killed[var_0_5]
 
-					var_0_11[#var_0_11 + 1] = var_0_10[iter_0_4]
+					var_0_11[#var_0_11 + 1] = remove_when_killed[i4]
 				end
 			end
 		end
 
-		iter_0_1["num_" .. var_0_5] = var_0_7
+		v["num_" .. var_0_5] = count_2
 
-		local var_0_12 = iter_0_1.remove_when_killed
+		local remove_when_killed_2 = v.remove_when_killed
 
-		if var_0_12 then
-			for iter_0_5 = 1, var_0_4 do
-				local var_0_13 = var_0_3[iter_0_5]
-				local var_0_14 = var_0_12[var_0_13]
+		if not remove_when_killed_2 then
+			for i5 = 1, count do
+				local var_0_13 = tbl_2[i5]
+				local var_0_14 = remove_when_killed_2[var_0_13]
 
-				if var_0_14 then
-					var_0_12["num_" .. var_0_13] = #var_0_14
+				if not var_0_14 then
+					remove_when_killed_2["num_" .. var_0_13] = #var_0_14
 				end
 			end
 		end
 	end
 end
 
-function var_0_2.get_extensions(arg_2_0, arg_2_1, arg_2_2)
+tbl.get_extensions = function (arg_2_0, arg_2_1, arg_2_2)
+	-- function 2
 	local var_2_0
 	local var_2_1
-	local var_2_2 = var_0_2[arg_2_0]
+	local var_2_2 = tbl[arg_2_0]
 
-	if arg_2_1 then
-		if arg_2_2 and var_2_2.husk_extensions_server then
+	if not arg_2_1 then
+		if not arg_2_2 and not var_2_2.husk_extensions_server then
 			var_2_0, var_2_1 = var_2_2.husk_extensions_server, var_2_2.num_husk_extensions_server
 		else
 			var_2_0, var_2_1 = var_2_2.husk_extensions, var_2_2.num_husk_extensions
 		end
-	elseif arg_2_2 and var_2_2.self_owned_extensions_server then
+	elseif not arg_2_2 and not var_2_2.self_owned_extensions_server then
 		var_2_0, var_2_1 = var_2_2.self_owned_extensions_server, var_2_2.num_self_owned_extensions_server
 	else
 		var_2_0, var_2_1 = var_2_2.self_owned_extensions, var_2_2.num_self_owned_extensions
@@ -2831,28 +2844,29 @@ function var_0_2.get_extensions(arg_2_0, arg_2_1, arg_2_2)
 	return var_2_0, var_2_1
 end
 
-function var_0_2.extensions_to_remove_on_death(arg_3_0, arg_3_1, arg_3_2)
+tbl.extensions_to_remove_on_death = function (arg_3_0, arg_3_1, arg_3_2)
+	-- function 3
 	local var_3_0
 	local var_3_1
-	local var_3_2 = var_0_2[arg_3_0].remove_when_killed
+	local remove_when_killed = tbl[arg_3_0].remove_when_killed
 
-	if var_3_2 == nil then
+	if remove_when_killed == nil then
 		return nil
 	end
 
-	if arg_3_1 then
-		if arg_3_2 and var_3_2.husk_extensions_server then
-			var_3_0, var_3_1 = var_3_2.husk_extensions_server, var_3_2.num_husk_extensions_server
+	if not arg_3_1 then
+		if not arg_3_2 and not remove_when_killed.husk_extensions_server then
+			var_3_0, var_3_1 = remove_when_killed.husk_extensions_server, remove_when_killed.num_husk_extensions_server
 		else
-			var_3_0, var_3_1 = var_3_2.husk_extensions, var_3_2.num_husk_extensions
+			var_3_0, var_3_1 = remove_when_killed.husk_extensions, remove_when_killed.num_husk_extensions
 		end
-	elseif arg_3_2 and var_3_2.self_owned_extensions_server then
-		var_3_0, var_3_1 = var_3_2.self_owned_extensions_server, var_3_2.num_self_owned_extensions_server
+	elseif not arg_3_2 and not remove_when_killed.self_owned_extensions_server then
+		var_3_0, var_3_1 = remove_when_killed.self_owned_extensions_server, remove_when_killed.num_self_owned_extensions_server
 	else
-		var_3_0, var_3_1 = var_3_2.self_owned_extensions, var_3_2.num_self_owned_extensions
+		var_3_0, var_3_1 = remove_when_killed.self_owned_extensions, remove_when_killed.num_self_owned_extensions
 	end
 
 	return var_3_0, var_3_1
 end
 
-return var_0_2
+return tbl

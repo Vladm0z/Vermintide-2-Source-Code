@@ -1,11 +1,11 @@
 -- chunkname: @scripts/settings/dlcs/grudge_marks/grudge_marks_achievements_settings.lua
 
-local var_0_0 = DLCSettings.grudge_marks
+local grudge_marks = DLCSettings.grudge_marks
 
-var_0_0.achievement_template_file_names = {
+grudge_marks.achievement_template_file_names = {
 	"scripts/managers/achievements/achievement_templates_grudge_marks"
 }
-var_0_0.achievement_outline = {
+grudge_marks.achievement_outline = {
 	levels = {
 		categories = {
 			{
@@ -97,4 +97,4 @@ var_0_0.achievement_outline = {
 		}
 	}
 }
-var_0_0.achievement_events = {}
+grudge_marks.achievement_events = {}

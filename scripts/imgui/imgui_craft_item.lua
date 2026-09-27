@@ -2,19 +2,20 @@
 
 ImguiCraftItem = class(ImguiCraftItem)
 
-local var_0_0 = true
-local var_0_1 = 20
-local var_0_2 = 5
-local var_0_3 = 300
-local var_0_4 = 0.1
-local var_0_5 = 1
+local flag = true
+local num = 20
+local num_2 = 5
+local num_3 = 300
+local num_4 = 0.1
+local num_5 = 1
 
-function ImguiCraftItem.init(arg_1_0)
-	arg_1_0._properties = {}
-	arg_1_0._traits = {}
-	arg_1_0._skins = {}
-	arg_1_0._types = {}
-	arg_1_0._rarities = {
+ImguiCraftItem.init = function (self)
+	-- function 1
+	self._properties = {}
+	self._traits = {}
+	self._skins = {}
+	self._types = {}
+	self._rarities = {
 		"default",
 		"plentiful",
 		"common",
@@ -23,94 +24,109 @@ function ImguiCraftItem.init(arg_1_0)
 		"unique",
 		"magic"
 	}
-	arg_1_0._items_per_type = {}
-	arg_1_0._power_level = 300
-	arg_1_0._property_strength = 1
-	arg_1_0._current_type = -1
-	arg_1_0._current_item = -1
-	arg_1_0._current_rarity = -1
-	arg_1_0._current_skin = -1
-	arg_1_0._current_property = -1
-	arg_1_0._current_trait = -1
-	arg_1_0._current_magic_level = 1
-	arg_1_0._active_protperties = {}
-	arg_1_0._active_traits = {}
+	self._items_per_type = {}
+	self._power_level = 300
+	self._property_strength = 1
+	self._current_type = -1
+	self._current_item = -1
+	self._current_rarity = -1
+	self._current_skin = -1
+	self._current_property = -1
+	self._current_trait = -1
+	self._current_magic_level = 1
+	self._active_protperties = {}
+	self._active_traits = {}
 
-	arg_1_0:_parse_master_list()
+	self:_parse_master_list()
 end
 
-function ImguiCraftItem.update(arg_2_0)
-	if var_0_0 then
-		arg_2_0:init()
+ImguiCraftItem.update = function (self)
+	-- function 2
+	if not flag then
+		self:init()
 
-		var_0_0 = false
+		flag = false
 	end
 end
 
-function ImguiCraftItem.is_persistent(arg_3_0)
+ImguiCraftItem.is_persistent = function (arg_3_0)
+	-- function 3
 	return false
 end
 
-function ImguiCraftItem.draw(arg_4_0, arg_4_1)
-	local var_4_0 = Imgui.begin_window("Craft Item")
+ImguiCraftItem.draw = function (self, arg_4_1)
+	-- function 4
+	local begin_window = Imgui.begin_window("Craft Item")
 
 	Imgui.set_window_size(500, 335, "once")
 
-	arg_4_0._power_level = math.floor(Imgui.slider_float("Power Level", arg_4_0._power_level, var_0_2, var_0_3))
-	arg_4_0._current_type = Imgui.combo("Item Type", arg_4_0._current_type, arg_4_0._types, var_0_1)
+	self._power_level = math.floor(Imgui.slider_float("Power Level", self._power_level, num_2, num_3))
+	self._current_type = Imgui.combo("Item Type", self._current_type, self._types, num)
 
-	local var_4_1 = arg_4_0._current_type >= 0 and arg_4_0._types[arg_4_0._current_type]
-	local var_4_2 = var_4_1 and arg_4_0._items_per_type[var_4_1] or {}
+	local flag = not (self._current_type >= 0) or self._types[self._current_type]
+	local var_4_2
 
-	arg_4_0._current_item = Imgui.combo("Item Name", arg_4_0._current_item, var_4_2, var_0_1)
-	arg_4_0._current_rarity = Imgui.combo("Item Rarity", arg_4_0._current_rarity, arg_4_0._rarities, var_0_1)
+	if not flag then
+		var_4_2 = self._items_per_type[flag]
 
-	local var_4_3 = arg_4_0._current_item >= 0 and var_4_2[arg_4_0._current_item]
-	local var_4_4 = arg_4_0:_get_skins_for_item(var_4_3)
+		if not var_4_2 then
+			-- Nothing
+		end
+	end
 
-	arg_4_0._current_skin = Imgui.combo("Item Skin", arg_4_0._current_skin, var_4_4, var_0_1)
+	var_4_2 = {}
 
-	if arg_4_0._rarities[arg_4_0._current_rarity] == "magic" then
-		local var_4_5 = Managers.backend:get_interface("weaves"):max_magic_level()
+	::label_4_0::
 
-		arg_4_0._current_magic_level = math.floor(Imgui.slider_float("Magic Level", arg_4_0._current_magic_level, 1, var_4_5))
+	self._current_item = Imgui.combo("Item Name", self._current_item, var_4_2, num)
+	self._current_rarity = Imgui.combo("Item Rarity", self._current_rarity, self._rarities, num)
+
+	local flag_2 = not (self._current_item >= 0) or var_4_2[self._current_item]
+	local _get_skins_for_item = self:_get_skins_for_item(flag_2)
+
+	self._current_skin = Imgui.combo("Item Skin", self._current_skin, _get_skins_for_item, num)
+
+	if self._rarities[self._current_rarity] == "magic" then
+		local max_magic_level = Managers.backend:get_interface("weaves"):max_magic_level()
+
+		self._current_magic_level = math.floor(Imgui.slider_float("Magic Level", self._current_magic_level, 1, max_magic_level))
 	end
 
 	Imgui.separator()
 
-	arg_4_0._property_strength = Imgui.slider_float("Property Strength", arg_4_0._property_strength, var_0_4, var_0_5)
-	arg_4_0._current_property = Imgui.combo("Item Properties", arg_4_0._current_property, arg_4_0._properties, var_0_1)
+	self._property_strength = Imgui.slider_float("Property Strength", self._property_strength, num_4, num_5)
+	self._current_property = Imgui.combo("Item Properties", self._current_property, self._properties, num)
 
-	if Imgui.button("Add Property") then
-		local var_4_6 = arg_4_0._current_property > 0 and arg_4_0._properties[arg_4_0._current_property]
+	if not Imgui.button("Add Property") then
+		local flag_3 = not (self._current_property > 0) or self._properties[self._current_property]
 
-		if var_4_6 then
-			arg_4_0._active_protperties[var_4_6] = arg_4_0._property_strength
+		if not flag_3 then
+			self._active_protperties[flag_3] = self._property_strength
 		end
 	end
 
 	Imgui.separator()
 
-	arg_4_0._current_trait = Imgui.combo("Item Traits", arg_4_0._current_trait, arg_4_0._traits, var_0_1)
+	self._current_trait = Imgui.combo("Item Traits", self._current_trait, self._traits, num)
 
-	if Imgui.button("Add Trait") then
-		local var_4_7 = arg_4_0._current_trait > 0 and arg_4_0._traits[arg_4_0._current_trait]
+	if not Imgui.button("Add Trait") then
+		local flag_4 = not (self._current_trait > 0) or self._traits[self._current_trait]
 
-		if var_4_7 then
-			arg_4_0._active_traits[var_4_7] = true
+		if not flag_4 then
+			self._active_traits[flag_4] = true
 		end
 	end
 
 	Imgui.separator()
 	Imgui.text("Properties:")
 
-	for iter_4_0, iter_4_1 in pairs(arg_4_0._active_protperties) do
-		Imgui.tree_push(iter_4_0)
-		Imgui.text(string.format("%32s : %.2f", iter_4_0, iter_4_1))
+	for k, v in pairs(self._active_protperties) do
+		Imgui.tree_push(k)
+		Imgui.text(string.format("%32s : %.2f", k, v))
 		Imgui.same_line()
 
-		if Imgui.button("Remove") then
-			arg_4_0._active_protperties[iter_4_0] = nil
+		if not Imgui.button("Remove") then
+			self._active_protperties[k] = nil
 		end
 
 		Imgui.tree_pop()
@@ -118,13 +134,13 @@ function ImguiCraftItem.draw(arg_4_0, arg_4_1)
 
 	Imgui.text("Traits:")
 
-	for iter_4_2, iter_4_3 in pairs(arg_4_0._active_traits) do
-		Imgui.tree_push(iter_4_2)
-		Imgui.text(string.format("%48s", iter_4_2))
+	for k_2, v_2 in pairs(self._active_traits) do
+		Imgui.tree_push(k_2)
+		Imgui.text(string.format("%48s", k_2))
 		Imgui.same_line()
 
-		if Imgui.button("Remove") then
-			arg_4_0._active_traits[iter_4_2] = nil
+		if not Imgui.button("Remove") then
+			self._active_traits[k_2] = nil
 		end
 
 		Imgui.tree_pop()
@@ -132,90 +148,93 @@ function ImguiCraftItem.draw(arg_4_0, arg_4_1)
 
 	Imgui.separator()
 
-	if Imgui.button("Add Item", 100, 20) and arg_4_0._current_rarity then
-		local var_4_8 = arg_4_0._power_level
-		local var_4_9 = arg_4_0._current_rarity > 0 and arg_4_0._rarities[arg_4_0._current_rarity]
-		local var_4_10 = arg_4_0._current_skin > 0 and var_4_4[arg_4_0._current_skin]
-		local var_4_11 = var_4_9 == "magic" and arg_4_0._current_magic_level
+	if not Imgui.button("Add Item", 100, 20) and not self._current_rarity then
+		local _power_level = self._power_level
+		local flag_5 = not (self._current_rarity > 0) or self._rarities[self._current_rarity]
+		local flag_6 = not (self._current_skin > 0) or _get_skins_for_item[self._current_skin]
+		local flag_7 = flag_5 ~= "magic" or self._current_magic_level
 
-		arg_4_0:give_item(var_4_3, var_4_8, var_4_10, var_4_9, var_4_11, arg_4_0._active_protperties, arg_4_0._active_traits)
+		self:give_item(flag_2, _power_level, flag_6, flag_5, flag_7, self._active_protperties, self._active_traits)
 	end
 
 	Imgui.end_window()
 
-	return var_4_0
+	return begin_window
 end
 
-function ImguiCraftItem.give_item(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7)
-	if arg_5_1 and arg_5_2 then
-		local var_5_0 = Managers.backend:get_interface("items")
+ImguiCraftItem.give_item = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7)
+	-- function 5
+	if not arg_5_1 and not arg_5_2 then
+		local get_interface = Managers.backend:get_interface("items")
 
-		if var_5_0.award_custom_item then
-			var_5_0:award_custom_item(arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7)
+		if not get_interface.award_custom_item then
+			get_interface:award_custom_item(arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7)
 		end
 	end
 end
 
-function ImguiCraftItem._parse_master_list(arg_6_0)
-	local var_6_0 = arg_6_0._types
-	local var_6_1 = arg_6_0._items_per_type
-	local var_6_2 = ItemMasterList
+ImguiCraftItem._parse_master_list = function (self)
+	-- function 6
+	local _types = self._types
+	local _items_per_type = self._items_per_type
+	local ItemMasterList = ItemMasterList
 
-	for iter_6_0, iter_6_1 in pairs(var_6_2) do
-		local var_6_3 = iter_6_1.slot_type
+	for k, v in pairs(ItemMasterList) do
+		local slot_type = v.slot_type
 
-		if var_6_3 and not iter_6_1.is_local then
-			if not table.contains(var_6_0, var_6_3) then
-				table.insert(var_6_0, var_6_3)
+		if not (not slot_type and v.is_local) then
+			if not table.contains(_types, slot_type) then
+				table.insert(_types, slot_type)
 			end
 
-			if not var_6_1[var_6_3] then
-				var_6_1[var_6_3] = {}
+			if not _items_per_type[slot_type] then
+				_items_per_type[slot_type] = {}
 			end
 
-			table.insert(var_6_1[var_6_3], iter_6_0)
+			table.insert(_items_per_type[slot_type], k)
 		end
 	end
 
-	table.sort(var_6_0)
+	table.sort(_types)
 
-	for iter_6_2, iter_6_3 in pairs(var_6_1) do
-		table.sort(var_6_1[iter_6_2])
+	for k_2, v_2 in pairs(_items_per_type) do
+		table.sort(_items_per_type[k_2])
 	end
 
-	local var_6_4 = WeaponProperties.properties
+	local properties = WeaponProperties.properties
 
-	for iter_6_4, iter_6_5 in pairs(var_6_4) do
-		table.insert(arg_6_0._properties, iter_6_4)
+	for k_3, v_3 in pairs(properties) do
+		table.insert(self._properties, k_3)
 	end
 
-	table.sort(arg_6_0._properties)
+	table.sort(self._properties)
 
-	local var_6_5 = WeaponTraits.traits
+	local traits = WeaponTraits.traits
 
-	for iter_6_6, iter_6_7 in pairs(var_6_5) do
-		table.insert(arg_6_0._traits, iter_6_6)
+	for k_4, v_4 in pairs(traits) do
+		table.insert(self._traits, k_4)
 	end
 
-	table.sort(arg_6_0._traits)
+	table.sort(self._traits)
 end
 
-function ImguiCraftItem._get_skins_for_item(arg_7_0, arg_7_1)
-	if arg_7_1 then
+ImguiCraftItem._get_skins_for_item = function (arg_7_0, arg_7_1)
+	-- function 7
+	if not arg_7_1 then
 		local var_7_0 = ItemMasterList[arg_7_1]
-		local var_7_1 = var_7_0 and var_7_0.skin_combination_table
-		local var_7_2 = var_7_1 and WeaponSkins.skin_combinations[var_7_1]
-		local var_7_3 = {}
+		local flag = not var_7_0 and var_7_0.skin_combination_table
+		local flag_2 = not flag and WeaponSkins.skin_combinations[flag]
+		local tbl = {}
 
-		if var_7_2 then
-			for iter_7_0, iter_7_1 in pairs(var_7_2) do
-				table.append(var_7_3, iter_7_1)
+		if not flag_2 then
+			for k, v in pairs(flag_2) do
+				table.append(tbl, v)
 			end
 		end
 
-		table.sort(var_7_3)
+		table.sort(tbl)
 
-		return var_7_3
+		return tbl
 	end
 
 	return {}

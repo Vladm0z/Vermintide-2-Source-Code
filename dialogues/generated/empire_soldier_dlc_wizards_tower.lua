@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/empire_soldier_dlc_wizards_tower.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pes_enchantment_dummy_trigger",

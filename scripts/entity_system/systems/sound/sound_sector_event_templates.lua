@@ -1,17 +1,21 @@
 -- chunkname: @scripts/entity_system/systems/sound/sound_sector_event_templates.lua
 
-SoundSectorEventTemplates = SoundSectorEventTemplates or {}
+local SoundSectorEventTemplates = SoundSectorEventTemplates
 
-local var_0_0
-local var_0_1 = {}
-local var_0_2 = {}
-local var_0_3 = 0
+SoundSectorEventTemplates = SoundSectorEventTemplates or {}
+SoundSectorEventTemplates = SoundSectorEventTemplates
+
+local var_0_1
+local tbl = {}
+local tbl_2 = {}
+local num = 0
 
 SoundSectorEventTemplates.distant_horde = {
 	sound_event_stop = "stop_distant_horde",
 	sound_event_start = "distant_horde",
-	evaluate = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
-		local var_1_0 = arg_1_0[arg_1_1]
+	evaluate = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+		-- function 1
+		local var_1_0 = self[arg_1_1]
 
 		if not var_1_0 then
 			return false
@@ -20,62 +24,63 @@ SoundSectorEventTemplates.distant_horde = {
 		local var_1_1
 		local var_1_2
 
-		if not var_0_0 or not Unit.alive(var_0_0) or not var_1_0[var_0_0] then
+		if not (not var_0_1 and not Unit.alive(var_0_1) and not var_1_0[var_0_1]) then
 			var_1_1, var_1_2 = next(var_1_0, nil)
 		else
-			var_1_1, var_1_2 = next(var_1_0, var_0_0)
+			var_1_1, var_1_2 = next(var_1_0, var_0_1)
 		end
 
-		if var_1_1 and ScriptUnit.extension(var_1_1, "ai_system"):breed().race == "skaven" and arg_1_3[var_1_1].has_target and not var_1_2:has_death_started() then
-			if not var_0_1[var_1_1] then
-				var_0_3 = var_0_3 + 1
+		if not (not var_1_1 and not (ScriptUnit.extension(var_1_1, "ai_system"):breed().race == "skaven") and not arg_1_3[var_1_1].has_target and var_1_2:has_death_started()) then
+			if not tbl[var_1_1] then
+				num = num + 1
 			end
 
 			local var_1_3 = POSITION_LOOKUP[var_1_1]
 
-			var_0_1[var_1_1] = var_1_2
-			var_0_2[var_1_1] = Vector3Box(var_1_3)
+			tbl[var_1_1] = var_1_2
+			tbl_2[var_1_1] = Vector3Box(var_1_3)
 		end
 
-		local var_1_4 = Vector3.zero()
+		local zero = Vector3.zero()
 
-		for iter_1_0, iter_1_1 in pairs(var_0_1) do
-			local var_1_5 = var_0_2[iter_1_0]:unbox()
+		for k, v in pairs(tbl) do
+			local unbox = tbl_2[k]:unbox()
 
-			if not Unit.alive(iter_1_0) or iter_1_1:has_death_started() or not var_1_0[iter_1_0] or not arg_1_3[iter_1_0].has_target then
-				var_0_1[iter_1_0] = nil
-				var_0_2[iter_1_0] = nil
-				var_0_3 = var_0_3 - 1
-			elseif var_1_5 then
-				var_1_4 = var_1_4 + var_1_5
+			if not (not Unit.alive(k) and (v:has_death_started() or not var_1_0[k]) and arg_1_3[k].has_target) then
+				tbl[k] = nil
+				tbl_2[k] = nil
+				num = num - 1
+			elseif not unbox then
+				zero = zero + unbox
 			end
 		end
 
-		var_0_0 = var_1_1
+		var_0_1 = var_1_1
 
-		if 7 > var_0_3 then
+		if 7 > num then
 			return false
 		end
 
-		local var_1_6 = 25
-		local var_1_7 = 1600
-		local var_1_8 = var_1_4 / var_0_3
-		local var_1_9 = Vector3.distance_squared(arg_1_4, var_1_8)
+		local num_2 = 25
+		local num_3 = 1600
+		local num_4 = zero / num
+		local distance_squared = Vector3.distance_squared(arg_1_4, num_4)
 
-		return var_1_6 <= var_1_9 and var_1_9 <= var_1_7, var_1_8, var_0_3
+		return not (num_2 <= distance_squared) or distance_squared <= num_3, num_4, num
 	end
 }
 
-local var_0_4
-local var_0_5 = {}
-local var_0_6 = {}
-local var_0_7 = 0
+local var_0_5
+local tbl_3 = {}
+local tbl_4 = {}
+local num_2 = 0
 
 SoundSectorEventTemplates.distant_horde_chaos = {
 	sound_event_stop = "stop_distant_horde_marauder",
 	sound_event_start = "distant_horde_marauder",
-	evaluate = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
-		local var_2_0 = arg_2_0[arg_2_1]
+	evaluate = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+		-- function 2
+		local var_2_0 = self[arg_2_1]
 
 		if not var_2_0 then
 			return false
@@ -84,62 +89,63 @@ SoundSectorEventTemplates.distant_horde_chaos = {
 		local var_2_1
 		local var_2_2
 
-		if not var_0_4 or not Unit.alive(var_0_4) or not var_2_0[var_0_4] then
+		if not (not var_0_5 and not Unit.alive(var_0_5) and not var_2_0[var_0_5]) then
 			var_2_1, var_2_2 = next(var_2_0, nil)
 		else
-			var_2_1, var_2_2 = next(var_2_0, var_0_4)
+			var_2_1, var_2_2 = next(var_2_0, var_0_5)
 		end
 
-		if var_2_1 and ScriptUnit.extension(var_2_1, "ai_system"):breed().race == "chaos" and arg_2_3[var_2_1].has_target and not var_2_2:has_death_started() then
-			if not var_0_5[var_2_1] then
-				var_0_7 = var_0_7 + 1
+		if not (not var_2_1 and not (ScriptUnit.extension(var_2_1, "ai_system"):breed().race == "chaos") and not arg_2_3[var_2_1].has_target and var_2_2:has_death_started()) then
+			if not tbl_3[var_2_1] then
+				num_2 = num_2 + 1
 			end
 
 			local var_2_3 = POSITION_LOOKUP[var_2_1]
 
-			var_0_5[var_2_1] = var_2_2
-			var_0_6[var_2_1] = Vector3Box(var_2_3)
+			tbl_3[var_2_1] = var_2_2
+			tbl_4[var_2_1] = Vector3Box(var_2_3)
 		end
 
-		local var_2_4 = Vector3.zero()
+		local zero = Vector3.zero()
 
-		for iter_2_0, iter_2_1 in pairs(var_0_5) do
-			local var_2_5 = var_0_6[iter_2_0]:unbox()
+		for k, v in pairs(tbl_3) do
+			local unbox = tbl_4[k]:unbox()
 
-			if not Unit.alive(iter_2_0) or iter_2_1:has_death_started() or not var_2_0[iter_2_0] or not arg_2_3[iter_2_0].has_target then
-				var_0_5[iter_2_0] = nil
-				var_0_6[iter_2_0] = nil
-				var_0_7 = var_0_7 - 1
-			elseif var_2_5 then
-				var_2_4 = var_2_4 + var_2_5
+			if not (not Unit.alive(k) and (v:has_death_started() or not var_2_0[k]) and arg_2_3[k].has_target) then
+				tbl_3[k] = nil
+				tbl_4[k] = nil
+				num_2 = num_2 - 1
+			elseif not unbox then
+				zero = zero + unbox
 			end
 		end
 
-		var_0_4 = var_2_1
+		var_0_5 = var_2_1
 
-		if 4 > var_0_7 then
+		if 4 > num_2 then
 			return false
 		end
 
-		local var_2_6 = 4
-		local var_2_7 = 3600
-		local var_2_8 = var_2_4 / var_0_7
-		local var_2_9 = Vector3.distance_squared(arg_2_4, var_2_8)
+		local num = 4
+		local num_3 = 3600
+		local num_4 = zero / num_2
+		local distance_squared = Vector3.distance_squared(arg_2_4, num_4)
 
-		return var_2_6 <= var_2_9 and var_2_9 <= var_2_7, var_2_8, var_0_7
+		return not (num <= distance_squared) or distance_squared <= num_3, num_4, num_2
 	end
 }
 
-local var_0_8
-local var_0_9 = {}
-local var_0_10 = {}
-local var_0_11 = 0
+local var_0_9
+local tbl_5 = {}
+local tbl_6 = {}
+local num_3 = 0
 
 SoundSectorEventTemplates.distant_horde_beastmen = {
 	sound_event_stop = "stop_distant_horde_beastmen",
 	sound_event_start = "distant_horde_beastmen",
-	evaluate = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
-		local var_3_0 = arg_3_0[arg_3_1]
+	evaluate = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+		-- function 3
+		local var_3_0 = self[arg_3_1]
 
 		if not var_3_0 then
 			return false
@@ -148,48 +154,48 @@ SoundSectorEventTemplates.distant_horde_beastmen = {
 		local var_3_1
 		local var_3_2
 
-		if not var_0_8 or not Unit.alive(var_0_8) or not var_3_0[var_0_8] then
+		if not (not var_0_9 and not Unit.alive(var_0_9) and not var_3_0[var_0_9]) then
 			var_3_1, var_3_2 = next(var_3_0, nil)
 		else
-			var_3_1, var_3_2 = next(var_3_0, var_0_8)
+			var_3_1, var_3_2 = next(var_3_0, var_0_9)
 		end
 
-		if var_3_1 and ScriptUnit.extension(var_3_1, "ai_system"):breed().race == "beastmen" and arg_3_3[var_3_1].has_target and not var_3_2:has_death_started() then
-			if not var_0_9[var_3_1] then
-				var_0_11 = var_0_11 + 1
+		if not (not var_3_1 and not (ScriptUnit.extension(var_3_1, "ai_system"):breed().race == "beastmen") and not arg_3_3[var_3_1].has_target and var_3_2:has_death_started()) then
+			if not tbl_5[var_3_1] then
+				num_3 = num_3 + 1
 			end
 
 			local var_3_3 = POSITION_LOOKUP[var_3_1]
 
-			var_0_9[var_3_1] = var_3_2
-			var_0_10[var_3_1] = Vector3Box(var_3_3)
+			tbl_5[var_3_1] = var_3_2
+			tbl_6[var_3_1] = Vector3Box(var_3_3)
 		end
 
-		local var_3_4 = Vector3.zero()
+		local zero = Vector3.zero()
 
-		for iter_3_0, iter_3_1 in pairs(var_0_9) do
-			local var_3_5 = var_0_10[iter_3_0]:unbox()
+		for k, v in pairs(tbl_5) do
+			local unbox = tbl_6[k]:unbox()
 
-			if not Unit.alive(iter_3_0) or iter_3_1:has_death_started() or not var_3_0[iter_3_0] or not arg_3_3[iter_3_0].has_target then
-				var_0_9[iter_3_0] = nil
-				var_0_10[iter_3_0] = nil
-				var_0_11 = var_0_11 - 1
-			elseif var_3_5 then
-				var_3_4 = var_3_4 + var_3_5
+			if not (not Unit.alive(k) and (v:has_death_started() or not var_3_0[k]) and arg_3_3[k].has_target) then
+				tbl_5[k] = nil
+				tbl_6[k] = nil
+				num_3 = num_3 - 1
+			elseif not unbox then
+				zero = zero + unbox
 			end
 		end
 
-		var_0_8 = var_3_1
+		var_0_9 = var_3_1
 
-		if 4 > var_0_11 then
+		if 4 > num_3 then
 			return false
 		end
 
-		local var_3_6 = 4
-		local var_3_7 = 3600
-		local var_3_8 = var_3_4 / var_0_11
-		local var_3_9 = Vector3.distance_squared(arg_3_4, var_3_8)
+		local num = 4
+		local num_2 = 3600
+		local num_4 = zero / num_3
+		local distance_squared = Vector3.distance_squared(arg_3_4, num_4)
 
-		return var_3_6 <= var_3_9 and var_3_9 <= var_3_7, var_3_8, var_0_11
+		return not (num <= distance_squared) or distance_squared <= num_2, num_4, num_3
 	end
 }

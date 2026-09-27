@@ -1,6 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/morris/morris_unit_extension_templates.lua
 
-local var_0_0 = _G.GameSettingsDevelopment and GameSettingsDevelopment.use_engine_optimized_ai_locomotion and "AILocomotionExtensionC" or "AILocomotionExtension"
+local flag
+
+flag = not _G.GameSettingsDevelopment and not GameSettingsDevelopment.use_engine_optimized_ai_locomotion and "AILocomotionExtensionC" and "AILocomotionExtension"
 
 return {
 	deus_weapon_chest = {
@@ -59,7 +61,7 @@ return {
 	ai_unit_greed_pinata = {
 		go_type = "ai_unit",
 		self_owned_extensions = {
-			var_0_0,
+			flag,
 			"AINavigationExtension",
 			"GenericHitReactionExtension",
 			"GenericHealthExtension",

@@ -4,203 +4,238 @@ require("foundation/scripts/managers/time/timer")
 
 TimeManager = class(TimeManager)
 
-function TimeManager.init(arg_1_0)
-	arg_1_0._timers = {
+TimeManager.init = function (self)
+	-- function 1
+	self._timers = {
 		main = Timer:new("main", nil)
 	}
-	arg_1_0._dt_stack = {}
-	arg_1_0._dt_stack_max_size = 10
-	arg_1_0._dt_stack_index = 0
-	arg_1_0._mean_dt = 0
-	arg_1_0._global_time_scale = 1
-	arg_1_0._lerp_global_time_scale = false
+	self._dt_stack = {}
+	self._dt_stack_max_size = 10
+	self._dt_stack_index = 0
+	self._mean_dt = 0
+	self._global_time_scale = 1
+	self._lerp_global_time_scale = false
 
-	arg_1_0:register_timer("ui", "main", Application.time_since_launch())
+	self:register_timer("ui", "main", Application.time_since_launch())
 end
 
-function TimeManager.register_timer(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
-	local var_2_0 = arg_2_0._timers
+TimeManager.register_timer = function (self, arg_2_1, arg_2_2, arg_2_3)
+	-- function 2
+	local _timers = self._timers
 
-	fassert(var_2_0[arg_2_1] == nil, "[TimeManager] Tried to add already registered timer %q", arg_2_1)
-	fassert(var_2_0[arg_2_2], "[TimeManager] Not allowed to add timer with unregistered parent %q", arg_2_2)
+	fassert(_timers[arg_2_1] == nil, "[TimeManager] Tried to add already registered timer %q", arg_2_1)
+	fassert(_timers[arg_2_2], "[TimeManager] Not allowed to add timer with unregistered parent %q", arg_2_2)
 
-	local var_2_1 = var_2_0[arg_2_2]
+	local var_2_1 = _timers[arg_2_2]
 	local var_2_2 = Timer:new(arg_2_1, var_2_1, arg_2_3)
 
 	var_2_1:add_child(var_2_2)
 
-	var_2_0[arg_2_1] = var_2_2
+	_timers[arg_2_1] = var_2_2
 end
 
-function TimeManager.unregister_timer(arg_3_0, arg_3_1)
-	local var_3_0 = arg_3_0._timers[arg_3_1]
+TimeManager.unregister_timer = function (self, arg_3_1)
+	-- function 3
+	local var_3_0 = self._timers[arg_3_1]
 
 	fassert(var_3_0, "[TimeManager] Tried to remove unregistered timer %q", arg_3_1)
 	fassert(table.size(var_3_0:children()) == 0, "[TimeManager] Not allowed to remove timer %q with children", arg_3_1)
 
-	local var_3_1 = var_3_0:parent()
+	local parent = var_3_0:parent()
 
-	if var_3_1 then
-		var_3_1:remove_child(var_3_0)
+	if not parent then
+		parent:remove_child(var_3_0)
 	end
 
 	var_3_0:destroy()
 
-	arg_3_0._timers[arg_3_1] = nil
+	self._timers[arg_3_1] = nil
 end
 
-function TimeManager.has_timer(arg_4_0, arg_4_1)
-	return arg_4_0._timers[arg_4_1] and true or false
+TimeManager.has_timer = function (self, arg_4_1)
+	-- function 4
+	local flag
+
+	flag = not self._timers[arg_4_1] and true and false
+
+	return flag
 end
 
-function TimeManager.update(arg_5_0, arg_5_1)
-	local var_5_0 = arg_5_0._timers.main
+TimeManager.update = function (self, arg_5_1)
+	-- function 5
+	local main = self._timers.main
 
-	if var_5_0:active() then
-		var_5_0:update(arg_5_1, 1)
+	if not main:active() then
+		main:update(arg_5_1, 1)
 	end
 
-	if arg_5_0._lerp_global_time_scale then
-		arg_5_0:_update_global_time_scale_lerp(arg_5_1)
+	if not self._lerp_global_time_scale then
+		self:_update_global_time_scale_lerp(arg_5_1)
 	end
 
-	if script_data.honduras_demo then
-		arg_5_0:_update_demo_timer(arg_5_1)
+	if not script_data.honduras_demo then
+		self:_update_demo_timer(arg_5_1)
 	end
 
-	arg_5_0:_update_mean_dt(arg_5_1)
+	self:_update_mean_dt(arg_5_1)
 end
 
-function TimeManager._update_demo_timer(arg_6_0, arg_6_1)
-	arg_6_0._demo_timer = (arg_6_0._demo_timer or DemoSettings.demo_idle_timer) - arg_6_1
+TimeManager._update_demo_timer = function (self, arg_6_1)
+	-- function 6
+	local _demo_timer = self._demo_timer
 
-	local var_6_0 = Managers.input and Managers.input:get_most_recent_device()
+	_demo_timer = _demo_timer or DemoSettings.demo_idle_timer
+	self._demo_timer = _demo_timer - arg_6_1
 
-	if not var_6_0 then
+	local input = Managers.input
+
+	input = not input and Managers.input:get_most_recent_device()
+
+	if not input then
 		return
 	end
 
-	local var_6_1 = Managers.input:is_device_active("gamepad")
-	local var_6_2 = false
+	local is_device_active = Managers.input:is_device_active("gamepad")
+	local flag = false
 
-	for iter_6_0 = 0, var_6_0.num_axes() - 1 do
-		if var_6_1 then
-			if (not IS_PS4 or iter_6_0 < 3) and Vector3.length(var_6_0.axis(iter_6_0)) ~= 0 then
-				var_6_2 = true
+	for i = 0, input.num_axes() - 1 do
+		if not is_device_active then
+			if not (not IS_PS4 and not (i < 3) and Vector3.length(input.axis(i)) == 0) then
+				flag = true
 
 				break
 			end
-		elseif Vector3.length(var_6_0.axis(iter_6_0)) ~= 0 and var_6_0.axis_name(iter_6_0) ~= "cursor" then
-			var_6_2 = true
+		elseif not (Vector3.length(input.axis(i)) == 0 or input.axis_name(i) == "cursor") then
+			flag = true
 
 			break
 		end
 	end
 
-	if var_6_0.any_pressed() or var_6_2 then
-		arg_6_0._demo_timer = DemoSettings.demo_idle_timer
-		arg_6_0._demo_idle_timer_failed = false
-	elseif arg_6_0._demo_timer <= 0 then
-		arg_6_0._demo_idle_timer_failed = true
+	if input.any_pressed() or not flag then
+		self._demo_timer = DemoSettings.demo_idle_timer
+		self._demo_idle_timer_failed = false
+	elseif self._demo_timer <= 0 then
+		self._demo_idle_timer_failed = true
 	end
 end
 
-function TimeManager.get_demo_transition(arg_7_0)
-	return arg_7_0._demo_idle_timer_failed and "return_to_demo_title_screen"
+TimeManager.get_demo_transition = function (self)
+	-- function 7
+	local _demo_idle_timer_failed = self._demo_idle_timer_failed
+
+	_demo_idle_timer_failed = not _demo_idle_timer_failed and "return_to_demo_title_screen"
+
+	return _demo_idle_timer_failed
 end
 
-function TimeManager._update_mean_dt(arg_8_0, arg_8_1)
-	local var_8_0 = arg_8_0._dt_stack
+TimeManager._update_mean_dt = function (self, arg_8_1)
+	-- function 8
+	local _dt_stack = self._dt_stack
 
-	arg_8_0._dt_stack_index = arg_8_0._dt_stack_index % arg_8_0._dt_stack_max_size + 1
-	var_8_0[arg_8_0._dt_stack_index] = arg_8_1
+	self._dt_stack_index = self._dt_stack_index % self._dt_stack_max_size + 1
+	_dt_stack[self._dt_stack_index] = arg_8_1
 
-	local var_8_1 = 0
+	local num = 0
 
-	for iter_8_0, iter_8_1 in ipairs(var_8_0) do
-		var_8_1 = var_8_1 + iter_8_1
+	for i, v in ipairs(_dt_stack) do
+		num = num + v
 	end
 
-	arg_8_0._mean_dt = var_8_1 / #var_8_0
+	self._mean_dt = num / #_dt_stack
 end
 
-function TimeManager.mean_dt(arg_9_0)
-	return arg_9_0._mean_dt
+TimeManager.mean_dt = function (self)
+	-- function 9
+	return self._mean_dt
 end
 
-function TimeManager.set_time(arg_10_0, arg_10_1, arg_10_2)
-	arg_10_0._timers[arg_10_1]:set_time(arg_10_2)
+TimeManager.set_time = function (self, arg_10_1, arg_10_2)
+	-- function 10
+	self._timers[arg_10_1]:set_time(arg_10_2)
 end
 
-function TimeManager.time(arg_11_0, arg_11_1)
-	if arg_11_0._timers[arg_11_1] then
-		return arg_11_0._timers[arg_11_1]:time()
+TimeManager.time = function (self, arg_11_1)
+	-- function 11
+	if not self._timers[arg_11_1] then
+		return self._timers[arg_11_1]:time()
 	end
 end
 
-function TimeManager.time_and_delta(arg_12_0, arg_12_1)
-	if arg_12_0._timers[arg_12_1] then
-		return arg_12_0._timers[arg_12_1]:time_and_delta()
+TimeManager.time_and_delta = function (self, arg_12_1)
+	-- function 12
+	if not self._timers[arg_12_1] then
+		return self._timers[arg_12_1]:time_and_delta()
 	end
 end
 
-function TimeManager.active(arg_13_0, arg_13_1)
-	return arg_13_0._timers[arg_13_1]:active()
+TimeManager.active = function (self, arg_13_1)
+	-- function 13
+	return self._timers[arg_13_1]:active()
 end
 
-function TimeManager.set_active(arg_14_0, arg_14_1, arg_14_2)
-	arg_14_0._timers[arg_14_1]:set_active(arg_14_2)
+TimeManager.set_active = function (self, arg_14_1, arg_14_2)
+	-- function 14
+	self._timers[arg_14_1]:set_active(arg_14_2)
 end
 
-function TimeManager.set_local_scale(arg_15_0, arg_15_1, arg_15_2)
+TimeManager.set_local_scale = function (self, arg_15_1, arg_15_2)
+	-- function 15
 	fassert(arg_15_1 ~= "main", "[TimeManager] Not allowed to set scale in main timer")
-	arg_15_0._timers[arg_15_1]:set_local_scale(arg_15_2)
+	self._timers[arg_15_1]:set_local_scale(arg_15_2)
 end
 
-function TimeManager.local_scale(arg_16_0, arg_16_1)
-	return arg_16_0._timers[arg_16_1]:local_scale()
+TimeManager.local_scale = function (self, arg_16_1)
+	-- function 16
+	return self._timers[arg_16_1]:local_scale()
 end
 
-function TimeManager.global_scale(arg_17_0, arg_17_1)
-	return arg_17_0._timers[arg_17_1]:global_scale()
+TimeManager.global_scale = function (self, arg_17_1)
+	-- function 17
+	return self._timers[arg_17_1]:global_scale()
 end
 
-function TimeManager.set_global_time_scale(arg_18_0, arg_18_1)
-	arg_18_0._global_time_scale = arg_18_1
-	arg_18_0._lerp_global_time_scale = false
+TimeManager.set_global_time_scale = function (self, arg_18_1)
+	-- function 18
+	self._global_time_scale = arg_18_1
+	self._lerp_global_time_scale = false
 end
 
-function TimeManager.set_global_time_scale_lerp(arg_19_0, arg_19_1, arg_19_2)
-	arg_19_0._global_time_scale_lerp_start = arg_19_0._global_time_scale
-	arg_19_0._global_time_scale_lerp_end = arg_19_1
-	arg_19_0._global_time_scale_lerp_progress = 0
-	arg_19_0._global_time_scale_lerp_increment = 1 / arg_19_2
-	arg_19_0._lerp_global_time_scale = true
+TimeManager.set_global_time_scale_lerp = function (self, arg_19_1, arg_19_2)
+	-- function 19
+	self._global_time_scale_lerp_start = self._global_time_scale
+	self._global_time_scale_lerp_end = arg_19_1
+	self._global_time_scale_lerp_progress = 0
+	self._global_time_scale_lerp_increment = 1 / arg_19_2
+	self._lerp_global_time_scale = true
 end
 
-function TimeManager._update_global_time_scale_lerp(arg_20_0, arg_20_1)
-	local var_20_0 = arg_20_0._global_time_scale_lerp_start
-	local var_20_1 = arg_20_0._global_time_scale_lerp_end
-	local var_20_2 = arg_20_0._global_time_scale_lerp_progress
-	local var_20_3 = arg_20_0._global_time_scale_lerp_increment
-	local var_20_4 = math.clamp(var_20_2 + arg_20_1 * var_20_3, 0, 1)
+TimeManager._update_global_time_scale_lerp = function (self, arg_20_1)
+	-- function 20
+	local _global_time_scale_lerp_start = self._global_time_scale_lerp_start
+	local _global_time_scale_lerp_end = self._global_time_scale_lerp_end
+	local _global_time_scale_lerp_progress = self._global_time_scale_lerp_progress
+	local _global_time_scale_lerp_increment = self._global_time_scale_lerp_increment
+	local clamp = math.clamp(_global_time_scale_lerp_progress + arg_20_1 * _global_time_scale_lerp_increment, 0, 1)
 
-	arg_20_0._global_time_scale = math.lerp(var_20_0, var_20_1, var_20_4)
-	arg_20_0._global_time_scale_lerp_progress = var_20_4
+	self._global_time_scale = math.lerp(_global_time_scale_lerp_start, _global_time_scale_lerp_end, clamp)
+	self._global_time_scale_lerp_progress = clamp
 
-	if var_20_4 >= 1 then
-		arg_20_0._lerp_global_time_scale = false
+	if clamp >= 1 then
+		self._lerp_global_time_scale = false
 	end
 end
 
-function TimeManager.scaled_delta_time(arg_21_0, arg_21_1)
-	return math.max(arg_21_1 * arg_21_0._global_time_scale, 1e-06)
+TimeManager.scaled_delta_time = function (self, arg_21_1)
+	-- function 21
+	return math.max(arg_21_1 * self._global_time_scale, 1e-06)
 end
 
-function TimeManager.destroy(arg_22_0)
-	for iter_22_0, iter_22_1 in pairs(arg_22_0._timers) do
-		iter_22_1:destroy()
+TimeManager.destroy = function (self)
+	-- function 22
+	for k, v in pairs(self._timers) do
+		v:destroy()
 	end
 
-	arg_22_0._timers = nil
+	self._timers = nil
 end

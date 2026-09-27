@@ -4,143 +4,167 @@ local var_0_0 = local_require("scripts/ui/hud_ui/career_ability_bar_ui_definitio
 
 CareerAbilityBarUI = class(CareerAbilityBarUI)
 
-local var_0_1 = true
+local flag = true
 
-function CareerAbilityBarUI.init(arg_1_0, arg_1_1, arg_1_2)
-	arg_1_0._parent = arg_1_1
-	arg_1_0._platform = PLATFORM
-	arg_1_0._ui_renderer = arg_1_2.ui_renderer
-	arg_1_0._input_manager = arg_1_2.input_manager
-	arg_1_0._slot_equip_animations = {}
-	arg_1_0._slot_animations = {}
-	arg_1_0._ui_animations = {}
+CareerAbilityBarUI.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	self._parent = arg_1_1
+	self._platform = PLATFORM
+	self._ui_renderer = arg_1_2.ui_renderer
+	self._input_manager = arg_1_2.input_manager
+	self._slot_equip_animations = {}
+	self._slot_animations = {}
+	self._ui_animations = {}
 
-	arg_1_0:_create_ui_elements()
+	self:_create_ui_elements()
 
-	arg_1_0._peer_id = arg_1_2.peer_id
-	arg_1_0._player_manager = arg_1_2.player_manager
-	arg_1_0._render_settings = {
+	self._peer_id = arg_1_2.peer_id
+	self._player_manager = arg_1_2.player_manager
+	self._render_settings = {
 		alpha_multiplier = 1,
 		snap_pixel_positions = true
 	}
-	arg_1_0._is_spectator = false
-	arg_1_0._spectated_player = nil
-	arg_1_0._spectated_player_unit = nil
-	arg_1_0._game_options_dirty = true
+	self._is_spectator = false
+	self._spectated_player = nil
+	self._spectated_player_unit = nil
+	self._game_options_dirty = true
 
-	local var_1_0 = Managers.state.event
+	local event = Managers.state.event
 
-	var_1_0:register(arg_1_0, "on_spectator_target_changed", "on_spectator_target_changed")
-	var_1_0:register(arg_1_0, "on_game_options_changed", "_set_game_options_dirty")
-	arg_1_0:_update_game_options()
+	event:register(self, "on_spectator_target_changed", "on_spectator_target_changed")
+	event:register(self, "on_game_options_changed", "_set_game_options_dirty")
+	self:_update_game_options()
 end
 
-function CareerAbilityBarUI._get_ability_amount(arg_2_0, arg_2_1)
-	local var_2_0, var_2_1 = ScriptUnit.extension(arg_2_1, "career_system"):current_ability_cooldown()
-	local var_2_2 = 1 - var_2_0 / var_2_1
-	local var_2_3 = 0.25
-	local var_2_4 = 0.8
-	local var_2_5 = 0.3
+CareerAbilityBarUI._get_ability_amount = function (arg_2_0, arg_2_1)
+	-- function 2
+	local current_ability_cooldown, var_2_1 = ScriptUnit.extension(arg_2_1, "career_system"):current_ability_cooldown()
+	local num = 1 - current_ability_cooldown / var_2_1
+	local num_2 = 0.25
+	local num_3 = 0.8
+	local num_4 = 0.3
 
-	return var_2_2, var_2_3, var_2_4, var_2_5
+	return num, num_2, num_3, num_4
 end
 
-function CareerAbilityBarUI.on_spectator_target_changed(arg_3_0, arg_3_1)
-	arg_3_0._spectated_player_unit = arg_3_1
-	arg_3_0._spectated_player = Managers.player:owner(arg_3_1)
-	arg_3_0._is_spectator = true
+CareerAbilityBarUI.on_spectator_target_changed = function (self, arg_3_1)
+	-- function 3
+	self._spectated_player_unit = arg_3_1
+	self._spectated_player = Managers.player:owner(arg_3_1)
+	self._is_spectator = true
 end
 
-function CareerAbilityBarUI._set_player_extensions(arg_4_0, arg_4_1)
-	arg_4_0._inventory_extension = ScriptUnit.extension(arg_4_1, "inventory_system")
-	arg_4_0._initialize_ability_bar = true
+CareerAbilityBarUI._set_player_extensions = function (self, arg_4_1)
+	-- function 4
+	self._inventory_extension = ScriptUnit.extension(arg_4_1, "inventory_system")
+	self._initialize_ability_bar = true
 end
 
-function CareerAbilityBarUI._update_career_ability(arg_5_0, arg_5_1, arg_5_2)
+CareerAbilityBarUI._update_career_ability = function (self, arg_5_1, arg_5_2)
+	-- function 5
 	if not arg_5_1 then
 		return
 	end
 
-	local var_5_0 = arg_5_1.player_unit
+	local player_unit = arg_5_1.player_unit
 
-	if not Unit.alive(var_5_0) then
+	if not Unit.alive(player_unit) then
 		return
 	end
 
-	local var_5_1 = ScriptUnit.extension(var_5_0, "inventory_system")
+	local extension = ScriptUnit.extension(player_unit, "inventory_system")
 
-	if not var_5_1:equipment() then
+	if not extension:equipment() then
 		return
 	end
 
-	if not (var_5_1:get_wielded_slot_name() == "slot_career_skill_weapon") then
+	if not (extension:get_wielded_slot_name() == "slot_career_skill_weapon") then
 		return
 	end
 
-	local var_5_2 = ScriptUnit.extension(var_5_0, "career_system")
-	local var_5_3 = var_5_2:career_name()
-	local var_5_4 = var_5_2:profile_index()
-	local var_5_5 = var_5_2:career_index()
+	local extension_2 = ScriptUnit.extension(player_unit, "career_system")
+	local career_name = extension_2:career_name()
+	local profile_index = extension_2:profile_index()
+	local career_index = extension_2:career_index()
 
-	if CareerUtils.get_ability_data(var_5_4, var_5_5, 1).show_gamepad_ability_bar then
-		local var_5_6, var_5_7, var_5_8, var_5_9 = arg_5_0:_get_ability_amount(var_5_0)
+	if not CareerUtils.get_ability_data(profile_index, career_index, 1).show_gamepad_ability_bar then
+		local _get_ability_amount, var_5_7, var_5_8, var_5_9 = self:_get_ability_amount(player_unit)
 
-		arg_5_0:_set_ability_bar_fraction(var_5_6, var_5_7, var_5_8, var_5_9)
+		self:_set_ability_bar_fraction(_get_ability_amount, var_5_7, var_5_8, var_5_9)
 
 		return true
 	end
 end
 
-function CareerAbilityBarUI._create_ui_elements(arg_6_0)
-	UIRenderer.clear_scenegraph_queue(arg_6_0._ui_renderer)
+CareerAbilityBarUI._create_ui_elements = function (self)
+	-- function 6
+	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
 
-	arg_6_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 
-	local var_6_0 = var_0_0.inventory_entry_definitions
+	local inventory_entry_definitions = var_0_0.inventory_entry_definitions
 
-	arg_6_0._ability_bar = UIWidget.init(var_0_0.widget_definitions.ability_bar)
-	var_0_1 = false
+	self._ability_bar = UIWidget.init(var_0_0.widget_definitions.ability_bar)
+	flag = false
 end
 
-function CareerAbilityBarUI.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
-	if var_0_1 then
-		arg_7_0:_create_ui_elements()
+CareerAbilityBarUI.update = function (self, arg_7_1, arg_7_2, arg_7_3)
+	-- function 7
+	if not flag then
+		self:_create_ui_elements()
 	end
 
-	local var_7_0 = arg_7_0._input_manager
+	local _input_manager = self._input_manager
 
-	if not ((var_7_0:is_device_active("gamepad") or UISettings.use_gamepad_hud_layout == "always") and UISettings.use_gamepad_hud_layout ~= "never") then
+	if not ((_input_manager:is_device_active("gamepad") or UISettings.use_gamepad_hud_layout == "always") and UISettings.use_gamepad_hud_layout ~= "never") then
 		return
 	end
 
-	arg_7_0:_update_game_options()
+	self:_update_game_options()
 
-	local var_7_1 = arg_7_0._is_spectator and arg_7_0._spectated_player or arg_7_3
-	local var_7_2 = arg_7_0:_update_career_ability(var_7_1, arg_7_1)
-	local var_7_3 = Managers.twitch:is_activated()
+	local _spectated_player
 
-	if var_7_3 ~= arg_7_0._has_twitch then
-		arg_7_0._ability_bar.offset[2] = var_7_3 and 140 or 0
-		arg_7_0._has_twitch = var_7_3
-		var_7_2 = true
+	if not self._is_spectator then
+		_spectated_player = self._spectated_player
+
+		if not _spectated_player then
+			-- Nothing
+		end
 	end
 
-	if var_7_2 then
-		local var_7_4 = arg_7_0._ui_scenegraph
-		local var_7_5 = var_7_0:get_service("ingame_menu")
-		local var_7_6, var_7_7 = arg_7_0._parent:get_crosshair_position()
+	_spectated_player = arg_7_3
 
-		arg_7_0:_apply_crosshair_position(var_7_6, var_7_7)
+	::label_7_0::
 
-		local var_7_8 = arg_7_0._ui_renderer
+	local _update_career_ability = self:_update_career_ability(_spectated_player, arg_7_1)
+	local is_activated = Managers.twitch:is_activated()
 
-		UIRenderer.begin_pass(var_7_8, var_7_4, var_7_5, arg_7_1, nil, arg_7_0._render_settings)
-		UIRenderer.draw_widget(var_7_8, arg_7_0._ability_bar)
-		UIRenderer.end_pass(var_7_8)
+	if is_activated ~= self._has_twitch then
+		local offset = self._ability_bar.offset
+		local flag_2
+
+		flag_2 = not is_activated and 140 and 0
+		offset[2] = flag_2
+		self._has_twitch = is_activated
+		_update_career_ability = true
+	end
+
+	if not _update_career_ability then
+		local _ui_scenegraph = self._ui_scenegraph
+		local get_service = _input_manager:get_service("ingame_menu")
+		local get_crosshair_position, var_7_9 = self._parent:get_crosshair_position()
+
+		self:_apply_crosshair_position(get_crosshair_position, var_7_9)
+
+		local _ui_renderer = self._ui_renderer
+
+		UIRenderer.begin_pass(_ui_renderer, _ui_scenegraph, get_service, arg_7_1, nil, self._render_settings)
+		UIRenderer.draw_widget(_ui_renderer, self._ability_bar)
+		UIRenderer.end_pass(_ui_renderer)
 	end
 end
 
-local var_0_2 = {
+local tbl = {
 	normal = {
 		255,
 		223,
@@ -161,115 +185,125 @@ local var_0_2 = {
 	}
 }
 
-function CareerAbilityBarUI._set_ability_bar_fraction(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
-	local var_8_0 = arg_8_0._ability_bar
-	local var_8_1 = var_8_0.style
-	local var_8_2 = var_8_0.content
-	local var_8_3 = var_8_2.size
+CareerAbilityBarUI._set_ability_bar_fraction = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+	-- function 8
+	local _ability_bar = self._ability_bar
+	local style = _ability_bar.style
+	local content = _ability_bar.content
+	local size = content.size
+	local lerp = math.lerp
+	local internal_gradient_threshold = content.internal_gradient_threshold
 
-	arg_8_1 = math.lerp(var_8_2.internal_gradient_threshold or 0, math.min(arg_8_1, 1), 0.3)
-	var_8_2.internal_gradient_threshold = arg_8_1
+	internal_gradient_threshold = internal_gradient_threshold or 0
+	arg_8_1 = lerp(internal_gradient_threshold, math.min(arg_8_1, 1), 0.3)
+	content.internal_gradient_threshold = arg_8_1
 
-	local var_8_4 = 0
-	local var_8_5 = 1
-	local var_8_6 = math.min(arg_8_1, arg_8_2) * var_8_5
-	local var_8_7 = math.min(arg_8_1, arg_8_3) * var_8_5
-	local var_8_8 = arg_8_1 * var_8_5
+	local num = 0
+	local num_2 = 1
+	local num_3 = math.min(arg_8_1, arg_8_2) * num_2
+	local num_4 = math.min(arg_8_1, arg_8_3) * num_2
+	local num_5 = arg_8_1 * num_2
 
-	var_8_1.bar_1.gradient_threshold = var_8_8
+	style.bar_1.gradient_threshold = num_5
 
-	local var_8_9 = 1
-	local var_8_10
-	local var_8_11 = var_8_1.icon.color
-	local var_8_12 = var_8_1.bar_1.color
+	local num_6 = 1
+	local var_8_12
+	local color = style.icon.color
+	local color_2 = style.bar_1.color
 
 	if arg_8_1 <= arg_8_2 then
-		var_8_10 = var_0_2.normal
+		var_8_12 = tbl.normal
 	elseif arg_8_1 <= arg_8_3 then
-		var_8_10 = var_0_2.medium
+		var_8_12 = tbl.medium
 	else
-		var_8_10 = var_0_2.high
+		var_8_12 = tbl.high
 	end
 
-	var_8_12[1] = var_8_10[1]
-	var_8_12[2] = var_8_10[2]
-	var_8_12[3] = var_8_10[3]
-	var_8_12[4] = var_8_10[4]
+	color_2[1] = var_8_12[1]
+	color_2[2] = var_8_12[2]
+	color_2[3] = var_8_12[3]
+	color_2[4] = var_8_12[4]
 
-	local var_8_13 = 10
-	local var_8_14 = 1 - arg_8_1
-	local var_8_15 = math.min(math.max(var_8_14 - arg_8_3, 0) / (1 - arg_8_3) * 1.3, 1)
-	local var_8_16 = math.min(math.max(var_8_14 - arg_8_4, 0) / (1 - arg_8_4) * 1.3, 1)
-	local var_8_17 = 100 + (0.5 + math.sin(Managers.time:time("ui") * var_8_13) * 0.5) * 155
+	local num_7 = 10
+	local num_8 = 1 - arg_8_1
+	local min = math.min(math.max(num_8 - arg_8_3, 0) / (1 - arg_8_3) * 1.3, 1)
+	local min_2 = math.min(math.max(num_8 - arg_8_4, 0) / (1 - arg_8_4) * 1.3, 1)
+	local num_9 = 100 + (0.5 + math.sin(Managers.time:time("ui") * num_7) * 0.5) * 155
 
-	var_8_1.frame.color[1] = var_8_17 * var_8_15
-	var_8_11[1] = var_8_17 * var_8_16
-	var_8_11[2] = 255
-	var_8_11[3] = 255
-	var_8_11[4] = 255
-	var_8_1.input_text.text_color[1] = var_8_17 * var_8_16
-	var_8_1.input_text_shadow.text_color[1] = var_8_17 * var_8_16 * var_8_16
-	var_8_1.ability_bar_highlight.texture_size[1] = 250 * arg_8_1
+	style.frame.color[1] = num_9 * min
+	color[1] = num_9 * min_2
+	color[2] = 255
+	color[3] = 255
+	color[4] = 255
+	style.input_text.text_color[1] = num_9 * min_2
+	style.input_text_shadow.text_color[1] = num_9 * min_2 * min_2
+	style.ability_bar_highlight.texture_size[1] = 250 * arg_8_1
 
-	local var_8_18 = Managers.time:time("main") * 0.25
+	local num_10 = Managers.time:time("main") * 0.25
 
-	var_8_2.ability_bar_highlight.uvs[1][1] = var_8_18 % 1
-	var_8_2.ability_bar_highlight.uvs[2][1] = (0.5 + var_8_18) % 1
+	content.ability_bar_highlight.uvs[1][1] = num_10 % 1
+	content.ability_bar_highlight.uvs[2][1] = (0.5 + num_10) % 1
 end
 
-function CareerAbilityBarUI.destroy(arg_9_0)
-	local var_9_0 = Managers.state.event
+CareerAbilityBarUI.destroy = function (arg_9_0)
+	-- function 9
+	local event = Managers.state.event
 
-	var_9_0:unregister("on_spectator_target_changed", arg_9_0)
-	var_9_0:unregister("on_game_options_changed", arg_9_0)
+	event:unregister("on_spectator_target_changed", arg_9_0)
+	event:unregister("on_game_options_changed", arg_9_0)
 end
 
-function CareerAbilityBarUI.set_alpha(arg_10_0, arg_10_1)
+CareerAbilityBarUI.set_alpha = function (arg_10_0, arg_10_1)
+	-- function 10
 	arg_10_0._render_settings.alpha_multiplier = arg_10_1
 end
 
-function CareerAbilityBarUI._apply_crosshair_position(arg_11_0, arg_11_1, arg_11_2)
-	local var_11_0 = "screen_bottom_pivot"
-	local var_11_1 = arg_11_0._ui_scenegraph[var_11_0].local_position
+CareerAbilityBarUI._apply_crosshair_position = function (self, arg_11_1, arg_11_2)
+	-- function 11
+	local str = "screen_bottom_pivot"
+	local local_position = self._ui_scenegraph[str].local_position
 
-	var_11_1[1] = arg_11_1
-	var_11_1[2] = arg_11_2
+	local_position[1] = arg_11_1
+	local_position[2] = arg_11_2
 end
 
-function CareerAbilityBarUI._set_game_options_dirty(arg_12_0)
-	arg_12_0._game_options_dirty = true
+CareerAbilityBarUI._set_game_options_dirty = function (self)
+	-- function 12
+	self._game_options_dirty = true
 end
 
-function CareerAbilityBarUI._update_game_options(arg_13_0)
-	if not arg_13_0._game_options_dirty then
+CareerAbilityBarUI._update_game_options = function (self)
+	-- function 13
+	if not self._game_options_dirty then
 		return
 	end
 
-	arg_13_0:_update_gamepad_input_button()
+	self:_update_gamepad_input_button()
 
-	arg_13_0._game_options_dirty = false
+	self._game_options_dirty = false
 end
 
-function CareerAbilityBarUI._update_gamepad_input_button(arg_14_0)
-	local var_14_0 = Managers.input:get_service("Player")
-	local var_14_1 = "weapon_reload_input"
-	local var_14_2 = true
-	local var_14_3, var_14_4, var_14_5, var_14_6 = UISettings.get_gamepad_input_texture_data(var_14_0, var_14_1, var_14_2)
-	local var_14_7 = arg_14_0._ability_bar
-	local var_14_8 = var_14_7.style
-	local var_14_9 = var_14_7.content
+CareerAbilityBarUI._update_gamepad_input_button = function (self)
+	-- function 14
+	local get_service = Managers.input:get_service("Player")
+	local str = "weapon_reload_input"
+	local flag = true
+	local get_gamepad_input_texture_data, var_14_4, var_14_5, var_14_6 = UISettings.get_gamepad_input_texture_data(get_service, str, flag)
+	local _ability_bar = self._ability_bar
+	local style = _ability_bar.style
+	local content = _ability_bar.content
 
-	if var_14_3 then
-		var_14_9.icon = var_14_3.texture
-		var_14_9.input_text = ""
+	if not get_gamepad_input_texture_data then
+		content.icon = get_gamepad_input_texture_data.texture
+		content.input_text = ""
 
-		local var_14_10 = var_14_8.icon.texture_size
-		local var_14_11 = var_14_8.icon_shadow.texture_size
-		local var_14_12 = var_14_3.size
+		local texture_size = style.icon.texture_size
+		local texture_size_2 = style.icon_shadow.texture_size
+		local size = get_gamepad_input_texture_data.size
 
-		var_14_10[1] = var_14_12[1]
-		var_14_10[2] = var_14_12[2]
-		var_14_11[1] = var_14_12[1]
-		var_14_11[2] = var_14_12[2]
+		texture_size[1] = size[1]
+		texture_size[2] = size[2]
+		texture_size_2[1] = size[1]
+		texture_size_2[2] = size[2]
 	end
 end

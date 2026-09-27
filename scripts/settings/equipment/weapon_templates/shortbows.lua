@@ -1,11 +1,11 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/shortbows.lua
 
-local var_0_0 = {}
-local var_0_1 = "arrow_impact"
-local var_0_2 = 4
-local var_0_3 = 2
+local tbl = {}
+local str = "arrow_impact"
+local num = 4
+local num_2 = 2
 
-var_0_0.actions = {
+tbl.actions = {
 	action_one = {
 		default = {
 			anim_event = "attack_shoot_fast",
@@ -63,12 +63,13 @@ var_0_0.actions = {
 					input = "weapon_reload"
 				}
 			},
-			enter_function = function(arg_1_0, arg_1_1)
+			enter_function = function (arg_1_0, arg_1_1)
+				-- function 1
 				arg_1_1:clear_input_buffer()
 
 				return arg_1_1:reset_release_input()
 			end,
-			hit_effect = var_0_1,
+			hit_effect = str,
 			projectile_info = Projectiles.machinegun_arrow,
 			impact_data = {
 				wall_nail = true,
@@ -78,8 +79,8 @@ var_0_0.actions = {
 				link = true,
 				depth_offset = -0.6
 			},
-			alert_sound_range_fire = var_0_2,
-			alert_sound_range_hit = var_0_3,
+			alert_sound_range_fire = num,
+			alert_sound_range_hit = num_2,
 			recoil_settings = {
 				horizontal_climb = -0.5,
 				restore_duration = 0.1,
@@ -104,7 +105,8 @@ var_0_0.actions = {
 			hold_input = "action_two_hold",
 			anim_event = "attack_shoot",
 			total_time = 0.5,
-			anim_end_event_condition_func = function(arg_2_0, arg_2_1)
+			anim_end_event_condition_func = function (arg_2_0, arg_2_1)
+				-- function 2
 				return arg_2_1 ~= "new_interupting_action"
 			end,
 			allowed_chain_actions = {
@@ -136,12 +138,13 @@ var_0_0.actions = {
 					input = "weapon_reload"
 				}
 			},
-			enter_function = function(arg_3_0, arg_3_1)
+			enter_function = function (arg_3_0, arg_3_1)
+				-- function 3
 				arg_3_1:clear_input_buffer()
 
 				return arg_3_1:reset_release_input()
 			end,
-			hit_effect = var_0_1,
+			hit_effect = str,
 			projectile_info = Projectiles.carbine_arrow,
 			impact_data = {
 				wall_nail = true,
@@ -151,8 +154,8 @@ var_0_0.actions = {
 				link = true,
 				depth_offset = -0.6
 			},
-			alert_sound_range_fire = var_0_2,
-			alert_sound_range_hit = var_0_3,
+			alert_sound_range_fire = num,
+			alert_sound_range_hit = num_2,
 			recoil_settings = {
 				horizontal_climb = -0.5,
 				restore_duration = 0.15,
@@ -177,7 +180,8 @@ var_0_0.actions = {
 			hold_input = "action_two_hold",
 			anim_event = "attack_shoot",
 			total_time = 0.5,
-			anim_end_event_condition_func = function(arg_4_0, arg_4_1)
+			anim_end_event_condition_func = function (arg_4_0, arg_4_1)
+				-- function 4
 				return arg_4_1 ~= "new_interupting_action"
 			end,
 			allowed_chain_actions = {
@@ -209,12 +213,13 @@ var_0_0.actions = {
 					input = "weapon_reload"
 				}
 			},
-			enter_function = function(arg_5_0, arg_5_1)
+			enter_function = function (arg_5_0, arg_5_1)
+				-- function 5
 				arg_5_1:clear_input_buffer()
 
 				return arg_5_1:reset_release_input()
 			end,
-			hit_effect = var_0_1,
+			hit_effect = str,
 			projectile_info = Projectiles.carbine_arrow,
 			impact_data = {
 				wall_nail = true,
@@ -224,9 +229,10 @@ var_0_0.actions = {
 				link = true,
 				depth_offset = -0.6
 			},
-			alert_sound_range_fire = var_0_2,
-			alert_sound_range_hit = var_0_3,
-			chain_condition_func = function(arg_6_0, arg_6_1)
+			alert_sound_range_fire = num,
+			alert_sound_range_hit = num_2,
+			chain_condition_func = function (arg_6_0, arg_6_1)
+				-- function 6
 				return ScriptUnit.extension(arg_6_0, "buff_system"):has_buff_type("we_timed_charged_shot")
 			end,
 			recoil_settings = {
@@ -261,7 +267,8 @@ var_0_0.actions = {
 			anim_event = "draw_bow",
 			allow_hold_toggle = true,
 			reload_when_out_of_ammo = true,
-			anim_end_event_condition_func = function(arg_7_0, arg_7_1)
+			anim_end_event_condition_func = function (arg_7_0, arg_7_1)
+				-- function 7
 				return arg_7_1 ~= "new_interupting_action"
 			end,
 			total_time = math.huge,
@@ -313,14 +320,17 @@ var_0_0.actions = {
 				"zoom_in_trueflight",
 				"zoom_in"
 			},
-			zoom_condition_function = function()
+			zoom_condition_function = function ()
+				-- function 8
 				return true
 			end,
-			unzoom_condition_function = function(arg_9_0)
+			unzoom_condition_function = function (arg_9_0)
+				-- function 9
 				return arg_9_0 ~= "new_interupting_action"
 			end,
-			condition_func = function(arg_10_0, arg_10_1, arg_10_2)
-				if arg_10_2 and (arg_10_2:total_remaining_ammo() <= 0 or arg_10_2:is_reloading()) then
+			condition_func = function (arg_10_0, arg_10_1, arg_10_2)
+				-- function 10
+				if not arg_10_2 and arg_10_2:total_remaining_ammo() <= 0 and not arg_10_2:is_reloading() then
 					return false
 				end
 
@@ -332,7 +342,7 @@ var_0_0.actions = {
 	action_inspect = ActionTemplates.action_inspect_left,
 	action_wield = ActionTemplates.wield_left
 }
-var_0_0.ammo_data = {
+tbl.ammo_data = {
 	ammo_per_reload = 1,
 	max_ammo = 60,
 	ammo_per_clip = 1,
@@ -341,7 +351,7 @@ var_0_0.ammo_data = {
 	ammo_hand = "left",
 	ammo_unit_attachment_node_linking = AttachmentNodeLinking.arrow
 }
-var_0_0.attack_meta_data = {
+tbl.attack_meta_data = {
 	aim_at_node = "j_head",
 	charged_attack_action_name = "shoot_charged",
 	can_charge_shot = true,
@@ -352,7 +362,7 @@ var_0_0.attack_meta_data = {
 	effective_against = bit.bor(BreedCategory.Berserker, BreedCategory.Special),
 	effective_against_charged = bit.bor(BreedCategory.Berserker, BreedCategory.Special, BreedCategory.Armored)
 }
-var_0_0.aim_assist_settings = {
+tbl.aim_assist_settings = {
 	max_range = 50,
 	no_aim_input_multiplier = 0,
 	always_auto_aim = true,
@@ -365,19 +375,19 @@ var_0_0.aim_assist_settings = {
 		skaven_slave = 1
 	}
 }
-var_0_0.default_spread_template = "bow"
-var_0_0.left_hand_unit = "units/weapons/player/wpn_we_bow_01_t1/wpn_we_bow_01_t1"
-var_0_0.display_unit = "units/weapons/weapon_display/display_bow"
-var_0_0.left_hand_attachment_node_linking = AttachmentNodeLinking.shortbow
-var_0_0.wield_anim = "to_shortbow"
-var_0_0.wield_anim_no_ammo = "to_shortbow_noammo"
-var_0_0.state_machine = "units/beings/player/first_person_base/state_machines/ranged/shortbow"
-var_0_0.crosshair_style = "projectile"
-var_0_0.no_ammo_reload_event = "reload"
-var_0_0.buff_type = "RANGED"
-var_0_0.weapon_type = "SHORTBOW"
-var_0_0.dodge_count = 6
-var_0_0.buffs = {
+tbl.default_spread_template = "bow"
+tbl.left_hand_unit = "units/weapons/player/wpn_we_bow_01_t1/wpn_we_bow_01_t1"
+tbl.display_unit = "units/weapons/weapon_display/display_bow"
+tbl.left_hand_attachment_node_linking = AttachmentNodeLinking.shortbow
+tbl.wield_anim = "to_shortbow"
+tbl.wield_anim_no_ammo = "to_shortbow_noammo"
+tbl.state_machine = "units/beings/player/first_person_base/state_machines/ranged/shortbow"
+tbl.crosshair_style = "projectile"
+tbl.no_ammo_reload_event = "reload"
+tbl.buff_type = "RANGED"
+tbl.weapon_type = "SHORTBOW"
+tbl.dodge_count = 6
+tbl.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1.25
 	},
@@ -386,14 +396,14 @@ var_0_0.buffs = {
 	}
 }
 
-local var_0_4 = var_0_0.actions.action_one.default
+local default = tbl.actions.action_one.default
 
-var_0_0.default_loaded_projectile_settings = {
+tbl.default_loaded_projectile_settings = {
 	drop_multiplier = 0.03,
-	speed = var_0_4.speed,
-	gravity = ProjectileGravitySettings[var_0_4.projectile_info.gravity_settings]
+	speed = default.speed,
+	gravity = ProjectileGravitySettings[default.projectile_info.gravity_settings]
 }
-var_0_0.weapon_diagram = {
+tbl.weapon_diagram = {
 	light_attack = {
 		[DamageTypes.ARMOR_PIERCING] = 0,
 		[DamageTypes.CLEAVE] = 2,
@@ -409,12 +419,12 @@ var_0_0.weapon_diagram = {
 		[DamageTypes.DAMAGE] = 5
 	}
 }
-var_0_0.tooltip_keywords = {
+tbl.tooltip_keywords = {
 	"weapon_keyword_rapid_fire",
 	"weapon_keyword_crowd_control",
 	"weapon_keyword_headshotting"
 }
-var_0_0.tooltip_compare = {
+tbl.tooltip_compare = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -424,7 +434,7 @@ var_0_0.tooltip_compare = {
 		sub_action_name = "shoot_charged"
 	}
 }
-var_0_0.tooltip_detail = {
+tbl.tooltip_detail = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -443,10 +453,10 @@ var_0_0.tooltip_detail = {
 		custom_chain = true
 	}
 }
-var_0_0.wwise_dep_left_hand = {
+tbl.wwise_dep_left_hand = {
 	"wwise/bow"
 }
 
 return {
-	shortbow_template_1 = table.clone(var_0_0)
+	shortbow_template_1 = table.clone(tbl)
 }

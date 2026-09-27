@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/scorpion/level_settings_scorpion.lua
 
-local var_0_0 = {
+local tbl = {
 	wall = {
 		player_aux_bus_name = "environment_reverb_outside",
 		knocked_down_setting = "knocked_down",
@@ -744,7 +744,7 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	"life",
 	"metal",
 	"beasts",
@@ -755,22 +755,22 @@ local var_0_1 = {
 	"death"
 }
 
-for iter_0_0, iter_0_1 in pairs(var_0_0) do
-	LevelSettings["dlc_scorpion_" .. iter_0_0] = iter_0_1
+for k, v in pairs(tbl) do
+	LevelSettings["dlc_scorpion_" .. k] = v
 
-	for iter_0_2 = 1, #var_0_1 do
-		local var_0_2 = var_0_1[iter_0_2]
-		local var_0_3 = table.clone(iter_0_1)
-		local var_0_4 = "dlc_scorpion_" .. iter_0_0 .. "_" .. var_0_2
+	for k_2 = 1, #tbl_2 do
+		local var_0_2 = tbl_2[k_2]
+		local clone = table.clone(v)
+		local str = "dlc_scorpion_" .. k .. "_" .. var_0_2
 
-		var_0_3.level_name = "levels/honduras_dlcs/scorpion/" .. iter_0_0 .. "/" .. var_0_2 .. "/world"
-		var_0_3.packages = {
-			string.format("resource_packages/levels/dlcs/scorpion/%s", iter_0_0),
-			string.format("resource_packages/levels/dlcs/scorpion/%s_%s", iter_0_0, var_0_2),
+		clone.level_name = "levels/honduras_dlcs/scorpion/" .. k .. "/" .. var_0_2 .. "/world"
+		clone.packages = {
+			string.format("resource_packages/levels/dlcs/scorpion/%s", k),
+			string.format("resource_packages/levels/dlcs/scorpion/%s_%s", k, var_0_2),
 			"resource_packages/dlcs/scorpion_ingame"
 		}
-		var_0_3.level_key = iter_0_0
-		var_0_3.level_image = "level_icon_weaves"
-		LevelSettings[var_0_4] = var_0_3
+		clone.level_key = k
+		clone.level_image = "level_icon_weaves"
+		LevelSettings[str] = clone
 	end
 end

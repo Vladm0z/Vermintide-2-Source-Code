@@ -1,146 +1,168 @@
 -- chunkname: @scripts/imgui/imgui_physgun.lua
 
-local var_0_0 = stingray.Vector3
-local var_0_1 = stingray.Quaternion
-local var_0_2 = stingray.Matrix4x4
-local var_0_3 = stingray.Imgui
-local var_0_4 = Unit
+local Vector3 = stingray.Vector3
+local Quaternion = stingray.Quaternion
+local Matrix4x4 = stingray.Matrix4x4
+local Imgui = stingray.Imgui
+local Unit = Unit
 
-local function var_0_5(arg_1_0, arg_1_1, ...)
-	var_0_3.text_colored(arg_1_0, 200, 200, 255, 255)
-	var_0_3.same_line()
-	var_0_3.text(string.format(arg_1_1, ...))
+local function fn(arg_1_0, arg_1_1, ...)
+	-- function 1
+	Imgui.text_colored(arg_1_0, 200, 200, 255, 255)
+	Imgui.same_line()
+	Imgui.text(string.format(arg_1_1, ...))
 end
 
 ImguiPhysgun = class(ImguiPhysgun)
 
-function ImguiPhysgun.init(arg_2_0)
-	arg_2_0._delayed_initialization_done = false
-	arg_2_0._camera_locked = false
-	arg_2_0._is_rotating = false
+ImguiPhysgun.init = function (self)
+	-- function 2
+	self._delayed_initialization_done = false
+	self._camera_locked = false
+	self._is_rotating = false
 end
 
-function ImguiPhysgun._delayed_initialization(arg_3_0)
-	local var_3_0 = Managers.state and Managers.state.entity:system("ai_system")
+ImguiPhysgun._delayed_initialization = function (self)
+	-- function 3
+	local state = Managers.state
 
-	if not var_3_0 then
+	state = not state and Managers.state.entity:system("ai_system")
+
+	if not state then
 		return
 	end
 
-	local var_3_1 = var_3_0.world
+	local world = state.world
 
-	arg_3_0._world = var_3_1
-	arg_3_0._physics_world = World.physics_world(var_3_1)
-	arg_3_0._line_object = World.create_line_object(var_3_1)
+	self._world = world
+	self._physics_world = World.physics_world(world)
+	self._line_object = World.create_line_object(world)
 
 	print("[ImguiPhysgun] Delayed initialization done")
 
-	arg_3_0._delayed_initialization_done = true
+	self._delayed_initialization_done = true
 end
 
-function ImguiPhysgun.is_persistent(arg_4_0)
+ImguiPhysgun.is_persistent = function (arg_4_0)
+	-- function 4
 	return true
 end
 
-function ImguiPhysgun.destroy_gui(arg_5_0)
-	local var_5_0 = arg_5_0._world
-	local var_5_1 = arg_5_0._gui_navmesh
+ImguiPhysgun.destroy_gui = function (self)
+	-- function 5
+	local _world = self._world
+	local _gui_navmesh = self._gui_navmesh
 
-	if var_5_0 and var_5_1 then
-		World.destroy_gui(arg_5_0._world, var_5_1)
+	if not _world and not _gui_navmesh then
+		World.destroy_gui(self._world, _gui_navmesh)
 
-		arg_5_0._gui_navmesh = nil
+		self._gui_navmesh = nil
 	end
 end
 
-function ImguiPhysgun.destroy(arg_6_0)
-	local var_6_0 = arg_6_0._world
+ImguiPhysgun.destroy = function (self)
+	-- function 6
+	local _world = self._world
 
-	if var_6_0 then
-		local var_6_1 = arg_6_0._line_object
+	if not _world then
+		local _line_object = self._line_object
 
-		LineObject.reset(var_6_1)
-		LineObject.dispatch(var_6_0, var_6_1)
-		World.destroy_line_object(var_6_0, var_6_1)
+		LineObject.reset(_line_object)
+		LineObject.dispatch(_world, _line_object)
+		World.destroy_line_object(_world, _line_object)
 
-		arg_6_0._world = nil
+		self._world = nil
 	end
 
-	arg_6_0:destroy_gui()
-	arg_6_0:set_camera_lock(false)
+	self:destroy_gui()
+	self:set_camera_lock(false)
 end
 
-function ImguiPhysgun.get_player_pos_rot(arg_7_0)
-	local var_7_0 = Managers.player:local_player()
-	local var_7_1 = var_7_0 and var_7_0.player_unit
+ImguiPhysgun.get_player_pos_rot = function (arg_7_0)
+	-- function 7
+	local local_player = Managers.player:local_player()
+	local flag = not local_player and local_player.player_unit
 
-	if not ALIVE[var_7_1] then
+	if not ALIVE[flag] then
 		return
 	end
 
-	local var_7_2 = ScriptUnit.extension(var_7_1, "first_person_system")
-	local var_7_3 = var_7_2:current_position()
-	local var_7_4 = var_7_2:current_rotation()
+	local extension = ScriptUnit.extension(flag, "first_person_system")
+	local current_position = extension:current_position()
+	local current_rotation = extension:current_rotation()
 
-	return var_7_3, var_7_4
+	return current_position, current_rotation
 end
 
-local function var_0_6(arg_8_0)
+local function fn_2(arg_8_0)
+	-- function 8
 	return string.format("\\x%02x", string.byte(arg_8_0))
 end
 
-local function var_0_7(arg_9_0)
-	return string.gsub(arg_9_0, ".", var_0_6)
+local function fn_3(arg_9_0)
+	-- function 9
+	return string.gsub(arg_9_0, ".", fn_2)
 end
 
-function ImguiPhysgun.show_unit_info(arg_10_0, arg_10_1)
-	local var_10_0 = var_0_4
+ImguiPhysgun.show_unit_info = function (arg_10_0, arg_10_1)
+	-- function 10
+	local var_10_0 = Unit
 
-	var_0_5("ID string", "%s", var_10_0.id_string(arg_10_1))
-	var_0_5("Level ID", "%s", var_10_0.level_id_string(arg_10_1))
-	var_0_5("Debug name", "%q", var_10_0.debug_name(arg_10_1))
-	var_0_5("Name hash", "%s", var_0_7(var_10_0.name_hash(arg_10_1)))
-	var_0_5("Position", "%s", tostring(var_10_0.local_position(arg_10_1, 0)))
-	var_0_5("Rotation", "%s", tostring(var_10_0.local_rotation(arg_10_1, 0)))
-	var_0_5("Scale", "%s", tostring(var_10_0.local_scale(arg_10_1, 0)))
-	var_0_5("Mesh#", var_10_0.num_meshes(arg_10_1))
-	var_0_5("Actor#", var_10_0.num_actors(arg_10_1))
-	var_0_5("Light#", var_10_0.num_lights(arg_10_1))
-	var_0_5("Cameras#", var_10_0.num_cameras(arg_10_1))
-	var_0_5("Is frozen?", var_10_0.is_frozen(arg_10_1) and "yes" or "no")
+	fn("ID string", "%s", var_10_0.id_string(arg_10_1))
+	fn("Level ID", "%s", var_10_0.level_id_string(arg_10_1))
+	fn("Debug name", "%q", var_10_0.debug_name(arg_10_1))
+	fn("Name hash", "%s", fn_3(var_10_0.name_hash(arg_10_1)))
+	fn("Position", "%s", tostring(var_10_0.local_position(arg_10_1, 0)))
+	fn("Rotation", "%s", tostring(var_10_0.local_rotation(arg_10_1, 0)))
+	fn("Scale", "%s", tostring(var_10_0.local_scale(arg_10_1, 0)))
+	fn("Mesh#", var_10_0.num_meshes(arg_10_1))
+	fn("Actor#", var_10_0.num_actors(arg_10_1))
+	fn("Light#", var_10_0.num_lights(arg_10_1))
+	fn("Cameras#", var_10_0.num_cameras(arg_10_1))
+
+	local var_10_1 = fn
+	local str = "Is frozen?"
+	local flag
+
+	flag = not var_10_0.is_frozen(arg_10_1) and "yes" and "no"
+
+	var_10_1(str, flag)
 end
 
-local function var_0_8(arg_11_0)
+local function fn_4(arg_11_0)
+	-- function 11
 	return setmetatable({}, {
-		__index = function(arg_12_0, arg_12_1)
-			local var_12_0 = arg_11_0.button_index(arg_12_1)
-			local var_12_1 = "pressed"
+		__index = function (self, arg_12_1)
+			-- function 12
+			local button_index = arg_11_0.button_index(arg_12_1)
+			local str = "pressed"
 
-			if not var_12_0 then
-				var_12_0 = arg_11_0.axis_index(arg_12_1)
-				var_12_1 = "axis"
+			if not button_index then
+				button_index = arg_11_0.axis_index(arg_12_1)
+				str = "axis"
 			end
 
-			assert(var_12_0, "Not such button or axis: " .. tostring(arg_12_1))
+			assert(button_index, "Not such button or axis: " .. tostring(arg_12_1))
 
-			local function var_12_2(arg_13_0)
+			local function fn(arg_13_0)
+				-- function 13
 				if arg_13_0 == "held" then
-					return arg_11_0.button(var_12_0) > 0.5
+					return arg_11_0.button(button_index) > 0.5
 				end
 
-				return arg_11_0[arg_13_0 or var_12_1](var_12_0)
+				return arg_11_0[arg_13_0 or str](button_index)
 			end
 
-			arg_12_0[arg_12_1] = var_12_2
+			self[arg_12_1] = fn
 
-			return var_12_2
+			return fn
 		end
 	})
 end
 
-local var_0_9 = var_0_8(Keyboard)
-local var_0_10 = var_0_8(Mouse)
-local var_0_11 = {
+local var_0_9 = fn_4(Keyboard)
+local var_0_10 = fn_4(Mouse)
+local tbl = {
 	mouse = var_0_10.mouse,
 	cursor = var_0_10.cursor,
 	move_right = var_0_9.d,
@@ -152,7 +174,8 @@ local var_0_11 = {
 	rotate = var_0_10.right,
 	arcball = var_0_9.e,
 	generate_navmesh = var_0_9.f1,
-	wheel = function(arg_14_0)
+	wheel = function (arg_14_0)
+		-- function 14
 		return var_0_10.wheel("axis").y
 	end,
 	spawn_seedpoint = var_0_9.f,
@@ -160,309 +183,357 @@ local var_0_11 = {
 	spawn_cylinder = var_0_9.c
 }
 
-local function var_0_12(arg_15_0, arg_15_1)
-	return var_0_11[arg_15_0](arg_15_1)
+local function fn_5(arg_15_0, arg_15_1)
+	-- function 15
+	return tbl[arg_15_0](arg_15_1)
 end
 
-function ImguiPhysgun.set_camera_lock(arg_16_0, arg_16_1)
-	if arg_16_1 ~= arg_16_0._camera_locked then
-		if arg_16_1 then
+ImguiPhysgun.set_camera_lock = function (self, arg_16_1)
+	-- function 16
+	if arg_16_1 ~= self._camera_locked then
+		if not arg_16_1 then
 			Managers.input:capture_input(ALL_INPUT_METHODS, 1, "imgui", "ImguiManager")
 		else
 			Window.set_show_cursor(false)
 			Managers.input:release_input(ALL_INPUT_METHODS, 1, "imgui", "ImguiManager")
 		end
 
-		arg_16_0._camera_locked = arg_16_1
+		self._camera_locked = arg_16_1
 	end
 end
 
-function ImguiPhysgun.can_grab(arg_17_0, arg_17_1)
+ImguiPhysgun.can_grab = function (arg_17_0, arg_17_1)
+	-- function 17
 	if not arg_17_1 then
 		return false, "actor is nil"
 	end
 
-	local var_17_0 = Actor.unit(arg_17_1)
+	local unit = Actor.unit(arg_17_1)
 
-	if var_0_4.is_a(var_17_0, "core/editor_slave/units/animation_preview_tile/animation_preview_tile") then
+	if not Unit.is_a(unit, "core/editor_slave/units/animation_preview_tile/animation_preview_tile") then
 		return false, "unit is the floor"
 	end
 
 	return true
 end
 
-function ImguiPhysgun.grab_begin(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
-	local var_18_0 = Actor.unit(arg_18_3)
-	local var_18_1 = var_0_4.local_position(var_18_0, 0)
-	local var_18_2 = var_0_4.local_rotation(var_18_0, 0)
+ImguiPhysgun.grab_begin = function (self, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+	-- function 18
+	local unit = Actor.unit(arg_18_3)
+	local local_position = Unit.local_position(unit, 0)
+	local local_rotation = Unit.local_rotation(unit, 0)
 
-	arg_18_0._physgun_unit = var_18_0
-	arg_18_0._physgun_actor = arg_18_3
+	self._physgun_unit = unit
+	self._physgun_actor = arg_18_3
 
-	local var_18_3 = var_0_1.inverse(arg_18_2)
+	local inverse = Quaternion.inverse(arg_18_2)
 
-	arg_18_0._physgun_pos = Vector3Box(var_0_1.rotate(var_18_3, var_18_1 - arg_18_1))
-	arg_18_0._physgun_rot = QuaternionBox(var_0_1.multiply(var_18_3, var_18_2))
-	arg_18_0._physgun_pivot = Vector3Box(var_0_1.rotate(var_18_3, arg_18_4 - var_18_1))
-	arg_18_0._wheel_speed = 0
-	arg_18_0._physgun_dist = Vector3.distance(arg_18_1, arg_18_4)
+	self._physgun_pos = Vector3Box(Quaternion.rotate(inverse, local_position - arg_18_1))
+	self._physgun_rot = QuaternionBox(Quaternion.multiply(inverse, local_rotation))
+	self._physgun_pivot = Vector3Box(Quaternion.rotate(inverse, arg_18_4 - local_position))
+	self._wheel_speed = 0
+	self._physgun_dist = Vector3.distance(arg_18_1, arg_18_4)
 
-	local var_18_4 = arg_18_0._world
-	local var_18_5 = arg_18_0._physgun_actor_poses
+	local _world = self._world
+	local _physgun_actor_poses = self._physgun_actor_poses
 
-	if not var_18_5 then
-		var_18_5 = {}
-		arg_18_0._physgun_actor_poses = var_18_5
+	if not _physgun_actor_poses then
+		_physgun_actor_poses = {}
+		self._physgun_actor_poses = _physgun_actor_poses
 	end
 
-	local var_18_6 = var_0_2.inverse(var_0_4.local_pose(var_18_0, 0))
+	local inverse_2 = Matrix4x4.inverse(Unit.local_pose(unit, 0))
 
-	for iter_18_0 = 0, var_0_4.num_actors(var_18_0) - 1 do
-		local var_18_7 = var_0_4.actor(var_18_0, iter_18_0)
+	for i = 0, Unit.num_actors(unit) - 1 do
+		local actor = Unit.actor(unit, i)
 
-		if var_18_7 and Actor.is_static(var_18_7) then
-			var_18_5[var_18_7] = Matrix4x4Box(var_0_2.multiply(Actor.pose(var_18_7), var_18_6))
+		if not actor and not Actor.is_static(actor) then
+			_physgun_actor_poses[actor] = Matrix4x4Box(Matrix4x4.multiply(Actor.pose(actor), inverse_2))
 		end
 	end
 end
 
-function ImguiPhysgun.grab_end(arg_19_0)
-	arg_19_0._physgun_unit = nil
-	arg_19_0._physgun_actor = nil
-	arg_19_0._physgun_pos = nil
-	arg_19_0._physgun_rot = nil
-	arg_19_0._physgun_pivot = nil
-	arg_19_0._physgun_dist = nil
+ImguiPhysgun.grab_end = function (self)
+	-- function 19
+	self._physgun_unit = nil
+	self._physgun_actor = nil
+	self._physgun_pos = nil
+	self._physgun_rot = nil
+	self._physgun_pivot = nil
+	self._physgun_dist = nil
 
-	table.clear(arg_19_0._physgun_actor_poses)
+	table.clear(self._physgun_actor_poses)
 
-	arg_19_0._is_rotating = false
+	self._is_rotating = false
 end
 
-local function var_0_13()
-	local var_20_0 = var_0_12("cursor")
-	local var_20_1, var_20_2 = Gui.resolution()
-	local var_20_3 = 1 / math.min(var_20_1, var_20_2)
-	local var_20_4 = (2 * var_20_0.x - var_20_1) * var_20_3
-	local var_20_5 = (2 * var_20_0.y - var_20_2) * var_20_3
-	local var_20_6 = var_20_4 * var_20_4 + var_20_5 * var_20_5
+local function fn_6()
+	-- function 20
+	local var_20_0 = fn_5("cursor")
+	local resolution, var_20_2 = Gui.resolution()
+	local num = 1 / math.min(resolution, var_20_2)
+	local num_2 = (2 * var_20_0.x - resolution) * num
+	local num_3 = (2 * var_20_0.y - var_20_2) * num
+	local num_4 = num_2 * num_2 + num_3 * num_3
+	local var_20_7 = Vector3
+	local var_20_8 = num_2
+	local var_20_9 = num_3
+	local sqrt
 
-	return var_0_0(var_20_4, var_20_5, var_20_6 < 0.5 and math.sqrt(1 - var_20_6) or 0.5 / math.sqrt(var_20_6))
+	if num_4 < 0.5 then
+		sqrt = math.sqrt(1 - num_4)
+
+		if not sqrt then
+			-- Nothing
+		end
+	end
+
+	sqrt = 0.5 / math.sqrt(num_4)
+
+	::label_20_0::
+
+	return var_20_7(var_20_8, var_20_9, sqrt)
 end
 
-function ImguiPhysgun.grab_update(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
-	local var_21_0 = arg_21_0._physgun_unit
-	local var_21_1 = arg_21_0._physgun_actor
-	local var_21_2 = arg_21_0._physgun_pos:unbox()
-	local var_21_3 = arg_21_0._physgun_rot:unbox()
+ImguiPhysgun.grab_update = function (self, arg_21_1, arg_21_2, arg_21_3)
+	-- function 21
+	local _physgun_unit = self._physgun_unit
+	local _physgun_actor = self._physgun_actor
+	local unbox = self._physgun_pos:unbox()
+	local unbox_2 = self._physgun_rot:unbox()
 	local var_21_4
 	local var_21_5
-	local var_21_6 = 0.1 * var_0_12("wheel") / arg_21_1
-	local var_21_7 = arg_21_0._wheel_speed * math.exp(-15 * arg_21_1) + var_21_6
+	local num = 0.1 * fn_5("wheel") / arg_21_1
+	local num_2 = self._wheel_speed * math.exp(-15 * arg_21_1) + num
 
-	arg_21_0._wheel_speed = var_21_7
+	self._wheel_speed = num_2
 
-	local var_21_8 = var_21_7 * arg_21_1
-	local var_21_9 = var_0_12("rotate", "held")
+	local num_3 = num_2 * arg_21_1
+	local var_21_9 = fn_5("rotate", "held")
 
-	if var_21_9 ~= arg_21_0._is_rotating then
-		arg_21_0._is_rotating = var_21_9
+	if var_21_9 ~= self._is_rotating then
+		self._is_rotating = var_21_9
 
 		if not var_21_9 then
 			Window.set_clip_cursor(false)
 			Window.set_show_cursor(false)
 		end
 
-		arg_21_0:set_camera_lock(var_21_9)
+		self:set_camera_lock(var_21_9)
 	end
 
-	if var_21_9 then
+	if not var_21_9 then
 		local var_21_10
 
-		if var_0_12("arcball", "pressed") then
+		if not fn_5("arcball", "pressed") then
 			Window.set_clip_cursor(true)
 			Window.set_show_cursor(true)
-			Window.set_cursor_position(var_0_0(0.5, 0.5, 0))
-		elseif var_0_12("arcball", "released") then
+			Window.set_cursor_position(Vector3(0.5, 0.5, 0))
+		elseif not fn_5("arcball", "released") then
 			Window.set_clip_cursor(false)
 			Window.set_show_cursor(false)
 		end
 
-		if var_0_12("arcball", "held") then
-			if var_0_12("grab", "pressed") then
-				arg_21_0._trackball_start = Vector3Box(var_0_13())
-			elseif var_0_12("grab", "released") then
-				arg_21_0._trackball_start = nil
-			elseif var_0_12("grab", "held") and arg_21_0._trackball_start then
-				local var_21_11 = arg_21_0._trackball_start:unbox()
-				local var_21_12 = var_0_13()
-				local var_21_13 = var_0_1.rotate(arg_21_3, var_0_0.cross(var_21_11, var_21_12))
-				local var_21_14 = math.acos(math.min(1, var_0_0.dot(var_21_11, var_21_12)))
+		if not fn_5("arcball", "held") then
+			if not fn_5("grab", "pressed") then
+				self._trackball_start = Vector3Box(fn_6())
+			elseif not fn_5("grab", "released") then
+				self._trackball_start = nil
+			elseif not fn_5("grab", "held") and not self._trackball_start then
+				local unbox_3 = self._trackball_start:unbox()
+				local var_21_12 = fn_6()
+				local rotate = Quaternion.rotate(arg_21_3, Vector3.cross(unbox_3, var_21_12))
+				local acos = math.acos(math.min(1, Vector3.dot(unbox_3, var_21_12)))
 
-				if var_21_14 > 0.001 then
-					var_21_10 = var_0_1.multiply(var_0_1.axis_angle(var_21_13, var_21_14), var_0_1.inverse(var_21_3))
+				if acos > 0.001 then
+					var_21_10 = Quaternion.multiply(Quaternion.axis_angle(rotate, acos), Quaternion.inverse(unbox_2))
 				end
 			end
 		else
-			local var_21_15 = var_0_12("mouse")
-			local var_21_16 = 2 * math.pi / math.min(Gui.resolution())
-			local var_21_17 = var_0_12("move_right", "button") - var_0_12("move_left", "button")
+			local var_21_15 = fn_5("mouse")
+			local num_4 = 2 * math.pi / math.min(Gui.resolution())
+			local num_5 = fn_5("move_right", "button") - fn_5("move_left", "button")
 
-			var_21_10 = var_0_1.from_yaw_pitch_roll((var_21_15.x + var_21_17) * var_21_16, var_21_15.y * var_21_16, 0)
+			var_21_10 = Quaternion.from_yaw_pitch_roll((var_21_15.x + num_5) * num_4, var_21_15.y * num_4, 0)
 		end
 
-		if var_21_10 then
-			var_21_3 = var_0_1.multiply(var_21_10, var_21_3)
+		if not var_21_10 then
+			unbox_2 = Quaternion.multiply(var_21_10, unbox_2)
 
-			arg_21_0._physgun_rot:store(var_21_3)
+			self._physgun_rot:store(unbox_2)
 
-			local var_21_18 = arg_21_0._physgun_pivot:unbox()
-			local var_21_19 = var_0_1.rotate(var_21_10, var_21_18)
+			local unbox_4 = self._physgun_pivot:unbox()
+			local rotate_2 = Quaternion.rotate(var_21_10, unbox_4)
 
-			arg_21_0._physgun_pivot:store(var_21_19)
+			self._physgun_pivot:store(rotate_2)
 
-			var_21_2 = var_21_2 + (var_21_18 - var_21_19)
+			unbox = unbox + (unbox_4 - rotate_2)
 		end
 
-		var_21_8 = var_21_8 + 10 * arg_21_1 * (var_0_12("move_forward", "button") - var_0_12("move_back", "button"))
+		num_3 = num_3 + 10 * arg_21_1 * (fn_5("move_forward", "button") - fn_5("move_back", "button"))
 	end
 
-	local var_21_20 = var_21_2 + var_0_0(0, var_21_8, 0)
+	local num_6 = unbox + Vector3(0, num_3, 0)
 
-	arg_21_0._physgun_pos:store(var_21_20)
+	self._physgun_pos:store(num_6)
 
-	if var_0_12("snap_angles", "held") then
-		local var_21_21, var_21_22, var_21_23 = var_0_1.to_euler_angles_xyz(var_21_3)
-		local var_21_24 = math.round(var_21_21 / 45) * 45
-		local var_21_25 = math.round(var_21_22 / 45) * 45
-		local var_21_26 = math.round(var_21_23 / 45) * 45
+	if not fn_5("snap_angles", "held") then
+		local to_euler_angles_xyz, var_21_22, var_21_23 = Quaternion.to_euler_angles_xyz(unbox_2)
+		local num_7 = math.round(to_euler_angles_xyz / 45) * 45
+		local num_8 = math.round(var_21_22 / 45) * 45
+		local num_9 = math.round(var_21_23 / 45) * 45
 
-		var_21_3 = var_0_1.from_euler_angles_xyz(var_21_24, var_21_25, var_21_26)
+		unbox_2 = Quaternion.from_euler_angles_xyz(num_7, num_8, num_9)
 	end
 
-	local var_21_27 = arg_21_2 + var_0_1.rotate(arg_21_3, var_21_20)
-	local var_21_28 = var_0_1.multiply(arg_21_3, var_21_3)
+	local num_10 = arg_21_2 + Quaternion.rotate(arg_21_3, num_6)
+	local multiply = Quaternion.multiply(arg_21_3, unbox_2)
 
-	var_0_4.set_local_position(var_21_0, 0, var_0_0.lerp(var_0_4.local_position(var_21_0, 0), var_21_27, 0.25))
-	var_0_4.set_local_rotation(var_21_0, 0, var_0_1.lerp(var_0_4.local_rotation(var_21_0, 0), var_21_28, 0.25))
+	Unit.set_local_position(_physgun_unit, 0, Vector3.lerp(Unit.local_position(_physgun_unit, 0), num_10, 0.25))
+	Unit.set_local_rotation(_physgun_unit, 0, Quaternion.lerp(Unit.local_rotation(_physgun_unit, 0), multiply, 0.25))
 
-	local var_21_29 = arg_21_0._physgun_actor_poses
-	local var_21_30 = var_0_4.local_pose(var_21_0, 0)
+	local _physgun_actor_poses = self._physgun_actor_poses
+	local local_pose = Unit.local_pose(_physgun_unit, 0)
 
-	for iter_21_0, iter_21_1 in pairs(var_21_29) do
-		Actor.teleport_pose(iter_21_0, var_0_2.multiply(iter_21_1:unbox(), var_21_30))
+	for k, v in pairs(_physgun_actor_poses) do
+		Actor.teleport_pose(k, Matrix4x4.multiply(v:unbox(), local_pose))
 	end
 
-	local var_21_31 = var_21_9 and (var_0_12("arcball", "held") and Color(255, 0, 0) or Color(0, 255, 0)) or Color(255, 255, 0)
+	local var_21_31
 
-	Actor.debug_draw(var_21_1, arg_21_0._line_object, var_21_31)
-	arg_21_0:laser_update(arg_21_3)
+	if not var_21_9 then
+		if not fn_5("arcball", "held") then
+			var_21_31 = Color(255, 0, 0)
+
+			if not var_21_31 then
+				-- Nothing
+			end
+		end
+
+		var_21_31 = Color(0, 255, 0)
+
+		if not var_21_31 then
+			-- Nothing
+		end
+	end
+
+	var_21_31 = Color(255, 255, 0)
+
+	::label_21_0::
+
+	Actor.debug_draw(_physgun_actor, self._line_object, var_21_31)
+	self:laser_update(arg_21_3)
 end
 
-function ImguiPhysgun.laser_update(arg_22_0, arg_22_1)
+ImguiPhysgun.laser_update = function (arg_22_0, arg_22_1)
+	-- function 22
 	return
 end
 
-function ImguiPhysgun.do_grab(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
-	if not arg_23_0._physgun_actor then
-		local var_23_0 = var_0_12("rotate", "held")
+ImguiPhysgun.do_grab = function (self, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
+	-- function 23
+	if not self._physgun_actor then
+		local var_23_0 = fn_5("rotate", "held")
 
-		if var_23_0 or var_0_12("grab", "held") then
-			local var_23_1, var_23_2 = arg_23_0:can_grab(arg_23_4)
+		if var_23_0 or not fn_5("grab", "held") then
+			local can_grab, var_23_2 = self:can_grab(arg_23_4)
 
-			if var_23_1 then
-				arg_23_0:grab_begin(arg_23_2, arg_23_3, arg_23_4, arg_23_5)
+			if not can_grab then
+				self:grab_begin(arg_23_2, arg_23_3, arg_23_4, arg_23_5)
 
-				if var_23_0 then
-					arg_23_0._is_rotating = true
+				if not var_23_0 then
+					self._is_rotating = true
 
-					arg_23_0:set_camera_lock(true)
+					self:set_camera_lock(true)
 				end
 			else
 				Debug.text("Cannot grab unit: %s", var_23_2)
 			end
 		end
 	else
-		local var_23_3 = arg_23_0._physgun_unit
+		local _physgun_unit = self._physgun_unit
 
-		if not var_0_4.alive(var_23_3) or not arg_23_0._is_rotating and not var_0_12("grab", "held") then
-			arg_23_0:grab_end()
-			arg_23_0:set_camera_lock(false)
+		if not (not Unit.alive(_physgun_unit) and self._is_rotating and fn_5("grab", "held")) then
+			self:grab_end()
+			self:set_camera_lock(false)
 		else
-			arg_23_0:grab_update(arg_23_1, arg_23_2, arg_23_3)
+			self:grab_update(arg_23_1, arg_23_2, arg_23_3)
 		end
 	end
 end
 
-function ImguiPhysgun.on_hide(arg_24_0)
-	if arg_24_0._delayed_initialization_done then
-		local var_24_0 = arg_24_0._line_object
+ImguiPhysgun.on_hide = function (self)
+	-- function 24
+	if not self._delayed_initialization_done then
+		local _line_object = self._line_object
 
-		LineObject.reset(var_24_0)
-		LineObject.dispatch(arg_24_0._world, var_24_0)
+		LineObject.reset(_line_object)
+		LineObject.dispatch(self._world, _line_object)
 	end
 end
 
-local var_0_14 = true
+local flag = true
 
-function ImguiPhysgun.update(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
-	if var_0_14 then
-		var_0_14 = arg_25_0:init()
+ImguiPhysgun.update = function (self, arg_25_1, arg_25_2, arg_25_3)
+	-- function 25
+	if not flag then
+		flag = self:init()
 	end
 end
 
-function ImguiPhysgun.draw(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
-	if not arg_26_0._delayed_initialization_done then
-		arg_26_0:_delayed_initialization()
+ImguiPhysgun.draw = function (self, arg_26_1, arg_26_2, arg_26_3)
+	-- function 26
+	if not self._delayed_initialization_done then
+		self:_delayed_initialization()
 	end
 
-	local var_26_0 = var_0_3.begin_window("Physgun")
-	local var_26_1 = arg_26_0._line_object
-	local var_26_2, var_26_3 = arg_26_0:get_player_pos_rot()
+	local begin_window = Imgui.begin_window("Physgun")
+	local _line_object = self._line_object
+	local get_player_pos_rot, var_26_3 = self:get_player_pos_rot()
 
-	if var_26_2 then
-		local var_26_4 = var_0_1.forward(var_26_3)
-		local var_26_5 = 30
-		local var_26_6, var_26_7, var_26_8, var_26_9, var_26_10 = PhysicsWorld.raycast(arg_26_0._physics_world, var_26_2, var_26_4, var_26_5, "closest", "collision_filter", "filter_in_line_of_sight_no_players_no_enemies")
+	if not get_player_pos_rot then
+		local forward = Quaternion.forward(var_26_3)
+		local num = 30
+		local raycast, var_26_7, var_26_8, var_26_9, var_26_10 = PhysicsWorld.raycast(self._physics_world, get_player_pos_rot, forward, num, "closest", "collision_filter", "filter_in_line_of_sight_no_players_no_enemies")
 
-		if var_26_6 and not arg_26_0._physgun_unit then
-			LineObject.add_circle(var_26_1, Color(255, 255, 0, 0), var_26_7, 0.1, var_26_9)
-			LineObject.add_line(var_26_1, Color(255, 255, 0, 0), var_26_7, var_26_7 + 0.1 * var_26_9)
-			Actor.debug_draw(var_26_10, var_26_1, Color(255, 255, 0, 0))
+		if not (not raycast and self._physgun_unit) then
+			LineObject.add_circle(_line_object, Color(255, 255, 0, 0), var_26_7, 0.1, var_26_9)
+			LineObject.add_line(_line_object, Color(255, 255, 0, 0), var_26_7, var_26_7 + 0.1 * var_26_9)
+			Actor.debug_draw(var_26_10, _line_object, Color(255, 255, 0, 0))
 
-			if var_0_12("delete_unit") then
-				local var_26_11 = Actor.unit(var_26_10)
+			if not fn_5("delete_unit") then
+				local unit = Actor.unit(var_26_10)
 
-				if var_26_11 == arg_26_0._physgun_unit then
-					arg_26_0:grab_end()
+				if unit == self._physgun_unit then
+					self:grab_end()
 				end
 
-				World.destroy_unit(arg_26_0._world, var_26_11)
+				World.destroy_unit(self._world, unit)
 
 				var_26_10 = nil
-			elseif var_0_12("spawn_cylinder") then
-				-- block empty
+			elseif not fn_5("spawn_cylinder") then
+				-- Nothing
 			end
 		end
 
-		local var_26_12 = arg_26_0._physgun_unit or var_26_10 and Actor.unit(var_26_10)
+		local flag = not var_26_10 and Actor.unit(var_26_10) and self._physgun_unit
 
-		if var_26_12 then
-			arg_26_0:show_unit_info(var_26_12)
+		if not flag then
+			self:show_unit_info(flag)
 		end
 
-		arg_26_0:do_grab(arg_26_3, var_26_2, var_26_3, var_26_10, var_26_7)
+		self:do_grab(arg_26_3, get_player_pos_rot, var_26_3, var_26_10, var_26_7)
 	else
-		var_0_3.text("Could not raycast.")
+		Imgui.text("Could not raycast.")
 
-		if arg_26_0._physgun_unit then
-			arg_26_0:grab_end()
+		if not self._physgun_unit then
+			self:grab_end()
 		end
 	end
 
-	LineObject.dispatch(arg_26_0._world, var_26_1)
-	LineObject.reset(var_26_1)
-	var_0_3.end_window()
+	LineObject.dispatch(self._world, _line_object)
+	LineObject.reset(_line_object)
+	Imgui.end_window()
 
-	return var_26_0
+	return begin_window
 end

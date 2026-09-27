@@ -1,176 +1,224 @@
 -- chunkname: @scripts/ui/round_end_emblem_popup/round_end_emblem_popup_ui.lua
 
 local var_0_0 = local_require("scripts/ui/round_end_emblem_popup/round_end_emblem_popup_ui_definitions")
-local var_0_1 = var_0_0.scenegraph_definition
-local var_0_2 = var_0_0.create_emblem_widget
-local var_0_3 = var_0_0.animations
+local scenegraph_definition = var_0_0.scenegraph_definition
+local create_emblem_widget = var_0_0.create_emblem_widget
+local animations = var_0_0.animations
 
 RoundEndEmblemPopupUI = class(RoundEndEmblemPopupUI)
 
-local var_0_4 = false
+local flag = false
 
-function RoundEndEmblemPopupUI.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
-	arg_1_0._ui_renderer = arg_1_1.ui_renderer
-	arg_1_0._ui_top_renderer = arg_1_1.ui_top_renderer
-	arg_1_0._input_manager = arg_1_1.input_manager
-	arg_1_0._world = arg_1_1.world
-	arg_1_0._wwise_world = arg_1_1.wwise_world or Managers.world:wwise_world(arg_1_0._world)
-	arg_1_0._render_settings = {
+RoundEndEmblemPopupUI.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	-- function 1
+	self._ui_renderer = arg_1_1.ui_renderer
+	self._ui_top_renderer = arg_1_1.ui_top_renderer
+	self._input_manager = arg_1_1.input_manager
+	self._world = arg_1_1.world
+	self._wwise_world = arg_1_1.wwise_world or Managers.world:wwise_world(self._world)
+	self._render_settings = {
 		alpha_multiplier = 0,
 		blur_progress = 0,
 		snap_pixel_positions = true
 	}
-	arg_1_0._viewport_world = arg_1_2
+	self._viewport_world = arg_1_2
 
-	arg_1_0:_create_ui_elements()
-	arg_1_0:_set_title_text(arg_1_3 or "")
-	arg_1_0:_set_sub_title_text(arg_1_4 or "")
+	self:_create_ui_elements()
+	self:_set_title_text(arg_1_3 or "")
+	self:_set_sub_title_text(arg_1_4 or "")
 end
 
-function RoundEndEmblemPopupUI._set_title_text(arg_2_0, arg_2_1)
+RoundEndEmblemPopupUI._set_title_text = function (arg_2_0, arg_2_1)
+	-- function 2
 	arg_2_0._title_title_widget.content.text = arg_2_1
 end
 
-function RoundEndEmblemPopupUI._set_sub_title_text(arg_3_0, arg_3_1)
+RoundEndEmblemPopupUI._set_sub_title_text = function (arg_3_0, arg_3_1)
+	-- function 3
 	arg_3_0._sub_title_text_widget.content.text = arg_3_1
 end
 
-function RoundEndEmblemPopupUI._create_ui_elements(arg_4_0)
-	local var_4_0 = "silver"
+RoundEndEmblemPopupUI._create_ui_elements = function (self)
+	-- function 4
+	local str = "silver"
 
-	arg_4_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	local var_4_1 = var_0_0.widget_definitions
+	local widget_definitions = var_0_0.widget_definitions
 
-	arg_4_0._title_title_widget = UIWidget.init(var_4_1.title_title)
-	arg_4_0._sub_title_text_widget = UIWidget.init(var_4_1.sub_title_text)
-	arg_4_0._emblem_widget = UIWidget.init(var_0_2(var_4_0))
+	self._title_title_widget = UIWidget.init(widget_definitions.title_title)
+	self._sub_title_text_widget = UIWidget.init(widget_definitions.sub_title_text)
+	self._emblem_widget = UIWidget.init(create_emblem_widget(str))
 
-	UIRenderer.clear_scenegraph_queue(arg_4_0._ui_renderer)
+	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
 
-	arg_4_0._ui_animator = UIAnimator:new(arg_4_0._ui_scenegraph, var_0_3)
-	arg_4_0._animations = {}
+	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animations)
+	self._animations = {}
 
-	local var_4_2 = "present_entry"
+	local str_2 = "present_entry"
 
-	arg_4_0._animation_key = arg_4_0:start_presentation_animation(var_4_2)
+	self._animation_key = self:start_presentation_animation(str_2)
 end
 
-function RoundEndEmblemPopupUI.set_input_manager(arg_5_0, arg_5_1)
-	arg_5_0._input_manager = arg_5_1
+RoundEndEmblemPopupUI.set_input_manager = function (self, arg_5_1)
+	-- function 5
+	self._input_manager = arg_5_1
 end
 
-function RoundEndEmblemPopupUI.destroy(arg_6_0)
-	arg_6_0._ui_animator = nil
+RoundEndEmblemPopupUI.destroy = function (self)
+	-- function 6
+	self._ui_animator = nil
 
-	if arg_6_0._viewport_world and arg_6_0._fullscreen_effect_enabled then
-		arg_6_0:set_fullscreen_effect_enable_state(false, 0, arg_6_0._viewport_world)
+	if not self._viewport_world and not self._fullscreen_effect_enabled then
+		self:set_fullscreen_effect_enable_state(false, 0, self._viewport_world)
 	end
 end
 
-function RoundEndEmblemPopupUI.update(arg_7_0, arg_7_1)
-	if var_0_4 then
-		var_0_4 = false
+RoundEndEmblemPopupUI.update = function (self, arg_7_1)
+	-- function 7
+	if not flag then
+		flag = false
 
-		arg_7_0:_create_ui_elements()
+		self:_create_ui_elements()
 	end
 
-	arg_7_0._animations_running = arg_7_0:_update_animations(arg_7_1)
+	self._animations_running = self:_update_animations(arg_7_1)
 
-	arg_7_0:_draw(arg_7_1)
+	self:_draw(arg_7_1)
 end
 
-function RoundEndEmblemPopupUI._update_animations(arg_8_0, arg_8_1)
-	local var_8_0 = arg_8_0._animations
-	local var_8_1 = arg_8_0._ui_animator
+RoundEndEmblemPopupUI._update_animations = function (self, arg_8_1)
+	-- function 8
+	local _animations = self._animations
+	local _ui_animator = self._ui_animator
 
-	var_8_1:update(arg_8_1)
+	_ui_animator:update(arg_8_1)
 
-	if arg_8_0._animation_key and var_8_0[arg_8_0._animation_key] and arg_8_0._viewport_world then
-		local var_8_2 = arg_8_0._render_settings.blur_progress or 0
+	if not self._animation_key and not _animations[self._animation_key] and not self._viewport_world then
+		local blur_progress = self._render_settings.blur_progress
 
-		arg_8_0:set_fullscreen_effect_enable_state(true, var_8_2, arg_8_0._viewport_world)
+		blur_progress = blur_progress or 0
+
+		self:set_fullscreen_effect_enable_state(true, blur_progress, self._viewport_world)
 	end
 
-	local var_8_3 = false
+	local flag = false
 
-	for iter_8_0, iter_8_1 in pairs(var_8_0) do
-		if var_8_1:is_animation_completed(iter_8_1) then
-			var_8_1:stop_animation(iter_8_1)
+	for k, v in pairs(_animations) do
+		if not _ui_animator:is_animation_completed(v) then
+			_ui_animator:stop_animation(v)
 
-			var_8_0[iter_8_0] = nil
+			_animations[k] = nil
 
-			if arg_8_0._viewport_world and arg_8_0._fullscreen_effect_enabled then
-				arg_8_0:set_fullscreen_effect_enable_state(false, 0, arg_8_0._viewport_world)
+			if not self._viewport_world and not self._fullscreen_effect_enabled then
+				self:set_fullscreen_effect_enable_state(false, 0, self._viewport_world)
 			end
 		end
 
-		var_8_3 = true
+		flag = true
 	end
 
-	return var_8_3
+	return flag
 end
 
-function RoundEndEmblemPopupUI._draw(arg_9_0, arg_9_1)
-	local var_9_0 = arg_9_0._ui_renderer
-	local var_9_1 = arg_9_0._ui_top_renderer
-	local var_9_2 = arg_9_0._ui_scenegraph
-	local var_9_3 = arg_9_0._input_manager:get_service("end_of_level")
-	local var_9_4 = arg_9_0._render_settings
-	local var_9_5 = var_9_4.alpha_multiplier
+RoundEndEmblemPopupUI._draw = function (self, arg_9_1)
+	-- function 9
+	local _ui_renderer = self._ui_renderer
+	local _ui_top_renderer = self._ui_top_renderer
+	local _ui_scenegraph = self._ui_scenegraph
+	local get_service = self._input_manager:get_service("end_of_level")
+	local _render_settings = self._render_settings
+	local alpha_multiplier = _render_settings.alpha_multiplier
 
-	UIRenderer.begin_pass(var_9_1, var_9_2, var_9_3, arg_9_1, nil, var_9_4)
+	UIRenderer.begin_pass(_ui_top_renderer, _ui_scenegraph, get_service, arg_9_1, nil, _render_settings)
 
-	var_9_4.alpha_multiplier = arg_9_0._emblem_widget.alpha_multiplier or var_9_5
+	local alpha_multiplier_2 = self._emblem_widget.alpha_multiplier
 
-	UIRenderer.draw_widget(var_9_1, arg_9_0._emblem_widget)
+	alpha_multiplier_2 = alpha_multiplier_2 or alpha_multiplier
+	_render_settings.alpha_multiplier = alpha_multiplier_2
 
-	var_9_4.alpha_multiplier = arg_9_0._title_title_widget.alpha_multiplier or var_9_5
+	UIRenderer.draw_widget(_ui_top_renderer, self._emblem_widget)
 
-	UIRenderer.draw_widget(var_9_1, arg_9_0._title_title_widget)
+	local alpha_multiplier_3 = self._title_title_widget.alpha_multiplier
 
-	var_9_4.alpha_multiplier = arg_9_0._sub_title_text_widget.alpha_multiplier or var_9_5
+	alpha_multiplier_3 = alpha_multiplier_3 or alpha_multiplier
+	_render_settings.alpha_multiplier = alpha_multiplier_3
 
-	UIRenderer.draw_widget(var_9_1, arg_9_0._sub_title_text_widget)
-	UIRenderer.end_pass(var_9_1)
+	UIRenderer.draw_widget(_ui_top_renderer, self._title_title_widget)
 
-	var_9_4.alpha_multiplier = var_9_5
-	var_9_4.alpha_multiplier = var_9_5
+	local alpha_multiplier_4 = self._sub_title_text_widget.alpha_multiplier
+
+	alpha_multiplier_4 = alpha_multiplier_4 or alpha_multiplier
+	_render_settings.alpha_multiplier = alpha_multiplier_4
+
+	UIRenderer.draw_widget(_ui_top_renderer, self._sub_title_text_widget)
+	UIRenderer.end_pass(_ui_top_renderer)
+
+	_render_settings.alpha_multiplier = alpha_multiplier
+	_render_settings.alpha_multiplier = alpha_multiplier
 end
 
-function RoundEndEmblemPopupUI.is_presentation_complete(arg_10_0)
-	return not arg_10_0._animations_running
+RoundEndEmblemPopupUI.is_presentation_complete = function (self)
+	-- function 10
+	return not self._animations_running
 end
 
-function RoundEndEmblemPopupUI.start_presentation_animation(arg_11_0, arg_11_1, arg_11_2)
-	local var_11_0 = {
-		wwise_world = arg_11_0._wwise_world,
-		render_settings = arg_11_0._render_settings
+RoundEndEmblemPopupUI.start_presentation_animation = function (self, arg_11_1, arg_11_2)
+	-- function 11
+	local tbl = {
+		wwise_world = self._wwise_world,
+		render_settings = self._render_settings
 	}
-	local var_11_1 = arg_11_2 or {
-		title_title = arg_11_0._title_title_widget,
-		sub_title_text = arg_11_0._sub_title_text_widget,
-		emblem = arg_11_0._emblem_widget
+	local flag = arg_11_2 or {
+		title_title = self._title_title_widget,
+		sub_title_text = self._sub_title_text_widget,
+		emblem = self._emblem_widget
 	}
-	local var_11_2 = arg_11_0._ui_animator:start_animation(arg_11_1, var_11_1, var_0_1, var_11_0)
-	local var_11_3 = arg_11_1 .. var_11_2
+	local start_animation = self._ui_animator:start_animation(arg_11_1, flag, scenegraph_definition, tbl)
+	local str = arg_11_1 .. start_animation
 
-	arg_11_0._animations[var_11_3] = var_11_2
-	arg_11_0._animation_params = var_11_0
+	self._animations[str] = start_animation
+	self._animation_params = tbl
 
-	return var_11_3
+	return str
 end
 
-function RoundEndEmblemPopupUI.set_fullscreen_effect_enable_state(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
-	local var_12_0 = World.get_data(arg_12_3, "shading_environment")
+RoundEndEmblemPopupUI.set_fullscreen_effect_enable_state = function (self, arg_12_1, arg_12_2, arg_12_3)
+	-- function 12
+	local get_data = World.get_data(arg_12_3, "shading_environment")
 
-	arg_12_2 = arg_12_2 or arg_12_1 and 1 or 0
+	arg_12_2 = arg_12_2 or not arg_12_1 or 1 or 0
 
-	if var_12_0 then
-		ShadingEnvironment.set_scalar(var_12_0, "fullscreen_blur_enabled", arg_12_1 and 1 or 0)
-		ShadingEnvironment.set_scalar(var_12_0, "fullscreen_blur_amount", arg_12_1 and arg_12_2 * 0.75 or 0)
-		ShadingEnvironment.apply(var_12_0)
+	if not get_data then
+		local set_scalar = ShadingEnvironment.set_scalar
+		local var_12_2 = get_data
+		local str = "fullscreen_blur_enabled"
+		local flag
+
+		flag = not arg_12_1 and 1 and 0
+
+		set_scalar(var_12_2, str, flag)
+
+		local set_scalar_2 = ShadingEnvironment.set_scalar
+		local var_12_6 = get_data
+		local str_2 = "fullscreen_blur_amount"
+		local num
+
+		if not arg_12_1 then
+			num = arg_12_2 * 0.75
+
+			if not num then
+				-- Nothing
+			end
+		end
+
+		num = 0
+
+		::label_12_0::
+
+		set_scalar_2(var_12_6, str_2, num)
+		ShadingEnvironment.apply(get_data)
 	end
 
-	arg_12_0._fullscreen_effect_enabled = arg_12_1
+	self._fullscreen_effect_enabled = arg_12_1
 end

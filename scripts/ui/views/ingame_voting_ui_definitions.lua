@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/ingame_voting_ui_definitions.lua
 
-local var_0_0 = {
+local tbl = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -157,81 +157,118 @@ local var_0_0 = {
 	}
 }
 
-local var_0_1 = {
+local tbl_2 = {
 	passes = {
 		{
 			style_id = "bar",
 			pass_type = "rect",
-			content_check_function = function(arg_1_0)
-				return arg_1_0.can_vote and not arg_1_0.has_voted and arg_1_0.input_icon
+			content_check_function = function (self)
+				-- function 1
+				local can_vote = self.can_vote
+
+				can_vote = not can_vote and not not self.has_voted or self.input_icon
+
+				return can_vote
 			end
 		},
 		{
 			style_id = "bar_bg",
 			pass_type = "rect",
-			content_check_function = function(arg_2_0)
-				return arg_2_0.can_vote and not arg_2_0.has_voted and arg_2_0.input_icon
+			content_check_function = function (self)
+				-- function 2
+				local can_vote = self.can_vote
+
+				can_vote = not can_vote and not not self.has_voted or self.input_icon
+
+				return can_vote
 			end
 		},
 		{
 			style_id = "option_text",
 			pass_type = "text",
 			text_id = "option_text",
-			content_check_function = function(arg_3_0)
-				return arg_3_0.can_vote and not arg_3_0.has_voted
+			content_check_function = function (self)
+				-- function 3
+				local can_vote = self.can_vote
+
+				can_vote = not can_vote and not self.has_voted
+
+				return can_vote
 			end
 		},
 		{
 			style_id = "option_text_shadow",
 			pass_type = "text",
 			text_id = "option_text",
-			content_check_function = function(arg_4_0)
-				return arg_4_0.can_vote and not arg_4_0.has_voted
+			content_check_function = function (self)
+				-- function 4
+				local can_vote = self.can_vote
+
+				can_vote = not can_vote and not self.has_voted
+
+				return can_vote
 			end
 		},
 		{
 			style_id = "result_text",
 			pass_type = "text",
 			text_id = "result_text",
-			content_check_function = function(arg_5_0)
-				return arg_5_0.has_voted
+			content_check_function = function (self)
+				-- function 5
+				return self.has_voted
 			end
 		},
 		{
 			style_id = "result_text_shadow",
 			pass_type = "text",
 			text_id = "result_text",
-			content_check_function = function(arg_6_0)
-				return arg_6_0.has_voted
+			content_check_function = function (self)
+				-- function 6
+				return self.has_voted
 			end
 		},
 		{
 			style_id = "input_text",
 			pass_type = "text",
 			text_id = "input_text",
-			content_check_function = function(arg_7_0)
-				return arg_7_0.can_vote and not arg_7_0.has_voted
+			content_check_function = function (self)
+				-- function 7
+				local can_vote = self.can_vote
+
+				can_vote = not can_vote and not self.has_voted
+
+				return can_vote
 			end
 		},
 		{
 			style_id = "input_text_shadow",
 			pass_type = "text",
 			text_id = "input_text",
-			content_check_function = function(arg_8_0)
-				return arg_8_0.can_vote and not arg_8_0.has_voted
+			content_check_function = function (self)
+				-- function 8
+				local can_vote = self.can_vote
+
+				can_vote = not can_vote and not self.has_voted
+
+				return can_vote
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "input_icon",
 			texture_id = "input_icon",
-			content_check_function = function(arg_9_0)
-				return arg_9_0.can_vote and not arg_9_0.has_voted and arg_9_0.input_icon
+			content_check_function = function (self)
+				-- function 9
+				local can_vote = self.can_vote
+
+				can_vote = not can_vote and not not self.has_voted or self.input_icon
+
+				return can_vote
 			end
 		}
 	}
 }
-local var_0_2 = {
+local tbl_3 = {
 	background = {
 		scenegraph_id = "voting_box_root",
 		element = {
@@ -255,24 +292,27 @@ local var_0_2 = {
 					pass_type = "texture",
 					style_id = "input_glow",
 					texture_id = "input_glow",
-					content_check_function = function(arg_10_0)
-						return not arg_10_0.can_vote and not arg_10_0.has_voted
+					content_check_function = function (self)
+						-- function 10
+						return not not self.can_vote or not self.has_voted
 					end
 				},
 				{
 					style_id = "input_text",
 					pass_type = "text",
 					text_id = "input_text",
-					content_check_function = function(arg_11_0)
-						return not arg_11_0.has_voted and not arg_11_0.can_vote
+					content_check_function = function (self)
+						-- function 11
+						return not not self.has_voted or not self.can_vote
 					end
 				},
 				{
 					style_id = "input_text_shadow",
 					pass_type = "text",
 					text_id = "input_text",
-					content_check_function = function(arg_12_0)
-						return not arg_12_0.has_voted and not arg_12_0.can_vote
+					content_check_function = function (self)
+						-- function 12
+						return not not self.has_voted or not self.can_vote
 					end
 				},
 				{
@@ -304,8 +344,16 @@ local var_0_2 = {
 					pass_type = "texture",
 					style_id = "gamepad_input_icon",
 					texture_id = "gamepad_input_icon",
-					content_check_function = function(arg_13_0)
-						return arg_13_0.gamepad_input_icon and arg_13_0.is_gamepad_active and not arg_13_0.has_voted
+					content_check_function = function (self)
+						-- function 13
+						local gamepad_input_icon = self.gamepad_input_icon
+
+						if not gamepad_input_icon then
+							gamepad_input_icon = self.is_gamepad_active
+							gamepad_input_icon = not gamepad_input_icon and not self.has_voted
+						end
+
+						return gamepad_input_icon
 					end
 				}
 			}
@@ -521,7 +569,7 @@ local var_0_2 = {
 	},
 	option_yes = {
 		scenegraph_id = "option_yes",
-		element = var_0_1,
+		element = tbl_2,
 		content = {
 			input_text = "",
 			has_voted = false,
@@ -690,7 +738,7 @@ local var_0_2 = {
 	},
 	option_no = {
 		scenegraph_id = "option_no",
-		element = var_0_1,
+		element = tbl_2,
 		content = {
 			input_text = "",
 			has_voted = false,
@@ -853,6 +901,6 @@ local var_0_2 = {
 }
 
 return {
-	scenegraph_definition = var_0_0,
-	widget_definitions = var_0_2
+	scenegraph_definition = tbl,
+	widget_definitions = tbl_3
 }

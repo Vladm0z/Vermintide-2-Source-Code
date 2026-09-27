@@ -1,31 +1,31 @@
 -- chunkname: @scripts/managers/achievements/achievement_templates_karak_azgaraz_part_3.lua
 
-local var_0_0 = AchievementTemplateHelper.add_event_challenge
-local var_0_1 = AchievementTemplateHelper.add_levels_complete_challenge
-local var_0_2 = AchievementTemplateHelper.add_meta_challenge
-local var_0_3 = AchievementTemplates.achievements
-local var_0_4 = AchievementTemplateHelper.add_console_achievements
-local var_0_5 = {
+local add_event_challenge = AchievementTemplateHelper.add_event_challenge
+local add_levels_complete_challenge = AchievementTemplateHelper.add_levels_complete_challenge
+local add_meta_challenge = AchievementTemplateHelper.add_meta_challenge
+local achievements = AchievementTemplates.achievements
+local add_console_achievements = AchievementTemplateHelper.add_console_achievements
+local tbl = {
 	karak_azgaraz_complete_dlc_dwarf_beacons_legend = 121,
 	dwarf_big_jump = 118,
 	dwarf_pressure_pad = 114,
 	dwarf_crows = 115
 }
-local var_0_6 = {
+local tbl_2 = {
 	dwarf_crows = "091"
 }
-local var_0_7 = {}
-local var_0_8 = {
+local tbl_3 = {}
+local tbl_4 = {
 	LevelSettings.dlc_dwarf_beacons
 }
-local var_0_9 = {
+local tbl_5 = {
 	"normal",
 	"hard",
 	"harder",
 	"hardest",
 	"cataclysm"
 }
-local var_0_10 = {
+local tbl_6 = {
 	hardest = "legend",
 	hard = "veteran",
 	harder = "champion",
@@ -33,17 +33,17 @@ local var_0_10 = {
 	normal = "recruit"
 }
 
-for iter_0_0 = 1, #var_0_9 do
-	local var_0_11 = var_0_9[iter_0_0]
-	local var_0_12 = "karak_azgaraz_complete_dlc_dwarf_beacons_" .. var_0_10[var_0_11]
-	local var_0_13 = "achievement_beacons_" .. var_0_10[var_0_11]
+for i = 1, #tbl_5 do
+	local var_0_11 = tbl_5[i]
+	local str = "karak_azgaraz_complete_dlc_dwarf_beacons_" .. tbl_6[var_0_11]
+	local str_2 = "achievement_beacons_" .. tbl_6[var_0_11]
 
-	var_0_7[iter_0_0] = var_0_12
+	tbl_3[i] = str
 
-	var_0_1(var_0_3, var_0_12, var_0_8, DifficultySettings[var_0_11].rank, var_0_13, nil, var_0_5[var_0_12], var_0_6[var_0_12])
+	add_levels_complete_challenge(achievements, str, tbl_4, DifficultySettings[var_0_11].rank, str_2, nil, tbl[str], tbl_2[str])
 end
 
-var_0_3.dwarf_pressure_pad = {
+achievements.dwarf_pressure_pad = {
 	name = "achv_dwarf_pressure_pad_name",
 	display_completion_ui = true,
 	icon = "achievement_dwarf_pressure_pad",
@@ -51,15 +51,17 @@ var_0_3.dwarf_pressure_pad = {
 	events = {
 		"dwarf_pressure_pad"
 	},
-	completed = function(arg_1_0, arg_1_1, arg_1_2)
-		return arg_1_0:get_persistent_stat(arg_1_1, "dwarf_pressure_pad") >= 1
+	completed = function (self, arg_1_1, arg_1_2)
+		-- function 1
+		return self:get_persistent_stat(arg_1_1, "dwarf_pressure_pad") >= 1
 	end,
-	on_event = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	on_event = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+		-- function 2
 		local var_2_0 = arg_2_4[1]
 		local var_2_1 = arg_2_4[2]
 		local var_2_2 = arg_2_4[3]
 
-		if not var_2_2 and (Managers.player:unit_owner(var_2_0).bot_player or arg_2_2.challenge_over) then
+		if var_2_2 or Managers.player:unit_owner(var_2_0).bot_player or not arg_2_2.challenge_over then
 			return
 		end
 
@@ -67,11 +69,11 @@ var_0_3.dwarf_pressure_pad = {
 			arg_2_2.num_on_pad = 0
 		end
 
-		if var_2_2 and arg_2_2.num_on_pad and arg_2_2.num_on_pad >= 1 then
-			arg_2_0:increment_stat(arg_2_1, "dwarf_pressure_pad")
+		if not (not var_2_2 and not arg_2_2.num_on_pad and not (arg_2_2.num_on_pad >= 1)) then
+			self:increment_stat(arg_2_1, "dwarf_pressure_pad")
 
 			arg_2_2.challenge_over = true
-		elseif var_2_1 then
+		elseif not var_2_1 then
 			arg_2_2.num_on_pad = arg_2_2.num_on_pad + 1
 		else
 			arg_2_2.num_on_pad = arg_2_2.num_on_pad - 1
@@ -82,7 +84,7 @@ var_0_3.dwarf_pressure_pad = {
 		end
 	end
 }
-var_0_3.dwarf_big_jump = {
+achievements.dwarf_big_jump = {
 	name = "achv_dwarf_big_jump_name",
 	display_completion_ui = true,
 	icon = "achievement_dwarf_big_jump",
@@ -90,21 +92,23 @@ var_0_3.dwarf_big_jump = {
 	events = {
 		"dwarf_big_jump"
 	},
-	completed = function(arg_3_0, arg_3_1, arg_3_2)
-		return arg_3_0:get_persistent_stat(arg_3_1, "dwarf_big_jump") >= 1
+	completed = function (self, arg_3_1, arg_3_2)
+		-- function 3
+		return self:get_persistent_stat(arg_3_1, "dwarf_big_jump") >= 1
 	end,
-	on_event = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	on_event = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+		-- function 4
 		local var_4_0 = arg_4_4[1]
-		local var_4_1 = Managers.time:time("game")
+		local time = Managers.time:time("game")
 
-		if var_4_0 and arg_4_2.exit_t and var_4_1 < arg_4_2.exit_t then
-			arg_4_0:increment_stat(arg_4_1, "dwarf_big_jump")
+		if not (not var_4_0 and not arg_4_2.exit_t and not (time < arg_4_2.exit_t)) then
+			self:increment_stat(arg_4_1, "dwarf_big_jump")
 		elseif not var_4_0 then
-			arg_4_2.exit_t = var_4_1 + 4
+			arg_4_2.exit_t = time + 4
 		end
 	end
 }
-var_0_3.dwarf_crows = {
+achievements.dwarf_crows = {
 	name = "achv_dwarf_crows_name",
 	display_completion_ui = true,
 	icon = "achievement_dwarf_crows",
@@ -112,14 +116,16 @@ var_0_3.dwarf_crows = {
 	events = {
 		"dwarf_crows"
 	},
-	completed = function(arg_5_0, arg_5_1, arg_5_2)
-		return arg_5_0:get_persistent_stat(arg_5_1, "dwarf_crows") >= 1
+	completed = function (self, arg_5_1, arg_5_2)
+		-- function 5
+		return self:get_persistent_stat(arg_5_1, "dwarf_crows") >= 1
 	end,
-	on_event = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
-		arg_6_0:increment_stat(arg_6_1, "dwarf_crows")
+	on_event = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+		-- function 6
+		self:increment_stat(arg_6_1, "dwarf_crows")
 	end
 }
-var_0_3.dwarf_speedrun = {
+achievements.dwarf_speedrun = {
 	name = "achv_dwarf_speedrun_name",
 	display_completion_ui = true,
 	icon = "achievement_dwarf_speedrun",
@@ -128,22 +134,24 @@ var_0_3.dwarf_speedrun = {
 		"dwarf_speedrun_start",
 		"dwarf_speedrun_end"
 	},
-	completed = function(arg_7_0, arg_7_1, arg_7_2)
-		return arg_7_0:get_persistent_stat(arg_7_1, "dwarf_speedrun") >= 1
+	completed = function (self, arg_7_1, arg_7_2)
+		-- function 7
+		return self:get_persistent_stat(arg_7_1, "dwarf_speedrun") >= 1
 	end,
-	on_event = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+	on_event = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+		-- function 8
 		if arg_8_3 == "dwarf_speedrun_start" then
 			arg_8_2.started = true
 
 			return
 		end
 
-		if arg_8_3 == "dwarf_speedrun_end" and arg_8_2.started then
-			arg_8_0:increment_stat(arg_8_1, "dwarf_speedrun")
+		if arg_8_3 ~= "dwarf_speedrun_end" or not arg_8_2.started then
+			self:increment_stat(arg_8_1, "dwarf_speedrun")
 		end
 	end
 }
-beacons_all_challenges = table.clone(var_0_7)
+beacons_all_challenges = table.clone(tbl_3)
 
 table.remove(beacons_all_challenges, #beacons_all_challenges)
 
@@ -152,5 +160,5 @@ beacons_all_challenges[#beacons_all_challenges + 1] = "dwarf_big_jump"
 beacons_all_challenges[#beacons_all_challenges + 1] = "dwarf_crows"
 beacons_all_challenges[#beacons_all_challenges + 1] = "dwarf_speedrun"
 
-var_0_2(var_0_3, "beacons_all_challenges", beacons_all_challenges, "achievement_beacons_meta", nil, var_0_5[name], var_0_6[name])
-var_0_4(var_0_5, var_0_6)
+add_meta_challenge(achievements, "beacons_all_challenges", beacons_all_challenges, "achievement_beacons_meta", nil, tbl[name], tbl_2[name])
+add_console_achievements(tbl, tbl_2)

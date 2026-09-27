@@ -2,268 +2,322 @@
 
 EventLightSpawnerExtension = class(EventLightSpawnerExtension)
 
-local var_0_0 = 1
+local num = 1
 
-function EventLightSpawnerExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	arg_1_0.world = arg_1_1.world
-	arg_1_0.unit = arg_1_2
-	arg_1_0.is_server = Managers.player.is_server
-	arg_1_0.unit_spawner = Managers.state.unit_spawner
-	arg_1_0._units = {}
-	arg_1_0._spawn_pool = {}
-	arg_1_0._spawn_pool_timer = 0
-	arg_1_0._spawn_pool_spawn_index = 1
-	arg_1_0._spawn_pool_add_index = 1
-	arg_1_0._num_raycasts = 0
-	arg_1_0._speed = arg_1_3.speed or Unit.get_data(arg_1_2, "speed") or 1
-	arg_1_0._respawn_timer = arg_1_3.respawn_timer or Unit.get_data(arg_1_2, "respawn_timer") or 10
-	arg_1_0._first_spawn_delay = arg_1_3.first_spawn_delay or Unit.get_data(arg_1_2, "first_spawn_delay") or 0
-	arg_1_0._unit_to_spawn = arg_1_3.unit_to_spawn or Unit.get_data(arg_1_2, "unit_to_spawn")
-	arg_1_0._light_intensity = Unit.get_data(arg_1_2, "light_intensity") or 1
-	arg_1_0._active = false
+EventLightSpawnerExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	self.world = arg_1_1.world
+	self.unit = arg_1_2
+	self.is_server = Managers.player.is_server
+	self.unit_spawner = Managers.state.unit_spawner
+	self._units = {}
+	self._spawn_pool = {}
+	self._spawn_pool_timer = 0
+	self._spawn_pool_spawn_index = 1
+	self._spawn_pool_add_index = 1
+	self._num_raycasts = 0
 
-	Unit.set_unit_visibility(arg_1_0.unit, false)
+	local speed = arg_1_3.speed
 
-	if arg_1_0.is_server then
-		for iter_1_0 = 1, 4 do
-			local var_1_0 = {
-				speed = arg_1_0._speed,
-				id = iter_1_0,
-				respawn_time = arg_1_0._respawn_timer - arg_1_0._first_spawn_delay
+	if not speed then
+		speed = Unit.get_data(arg_1_2, "speed")
+		speed = speed or 1
+	end
+
+	self._speed = speed
+
+	local respawn_timer = arg_1_3.respawn_timer
+
+	if not respawn_timer then
+		respawn_timer = Unit.get_data(arg_1_2, "respawn_timer")
+		respawn_timer = respawn_timer or 10
+	end
+
+	self._respawn_timer = respawn_timer
+
+	local first_spawn_delay = arg_1_3.first_spawn_delay
+
+	if not first_spawn_delay then
+		first_spawn_delay = Unit.get_data(arg_1_2, "first_spawn_delay")
+		first_spawn_delay = first_spawn_delay or 0
+	end
+
+	self._first_spawn_delay = first_spawn_delay
+
+	local unit_to_spawn = arg_1_3.unit_to_spawn
+
+	unit_to_spawn = unit_to_spawn or Unit.get_data(arg_1_2, "unit_to_spawn")
+	self._unit_to_spawn = unit_to_spawn
+
+	local get_data = Unit.get_data(arg_1_2, "light_intensity")
+
+	get_data = get_data or 1
+	self._light_intensity = get_data
+	self._active = false
+
+	Unit.set_unit_visibility(self.unit, false)
+
+	if not self.is_server then
+		for i = 1, 4 do
+			local tbl = {
+				speed = self._speed,
+				id = i,
+				respawn_time = self._respawn_timer - self._first_spawn_delay
 			}
 
-			arg_1_0._units[iter_1_0] = var_1_0
+			self._units[i] = tbl
 		end
 	end
 end
 
-function EventLightSpawnerExtension.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
-	if not arg_2_0.is_server then
+EventLightSpawnerExtension.update = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	-- function 2
+	if not self.is_server then
 		return
 	end
 
-	local var_2_0 = Unit.get_data(arg_2_1, "active")
+	local get_data = Unit.get_data(arg_2_1, "active")
 
-	if not arg_2_0._active and var_2_0 then
-		arg_2_0:_activate()
-	elseif arg_2_0._active and not var_2_0 then
-		arg_2_0:_deactivate()
+	if self._active or not get_data then
+		self:_activate()
+	elseif not (not self._active and get_data) then
+		self:_deactivate()
 	end
 
-	if arg_2_0._active then
-		local var_2_1 = arg_2_0._units
-		local var_2_2 = Managers.state.side:get_side_from_name("heroes").PLAYER_AND_BOT_UNITS
+	if not self._active then
+		local _units = self._units
+		local PLAYER_AND_BOT_UNITS = Managers.state.side:get_side_from_name("heroes").PLAYER_AND_BOT_UNITS
 
-		for iter_2_0, iter_2_1 in pairs(var_2_2) do
-			local var_2_3 = var_2_1[iter_2_0]
+		for k, v in pairs(PLAYER_AND_BOT_UNITS) do
+			local var_2_3 = _units[k]
 
 			if not var_2_3.unit then
 				var_2_3.respawn_time = var_2_3.respawn_time + arg_2_3
 
-				local var_2_4 = var_2_3.chase_target
+				local chase_target = var_2_3.chase_target
 
-				if var_2_3.respawn_time >= arg_2_0._respawn_timer and var_2_4 and Unit.alive(var_2_4) then
-					arg_2_0:_add_to_spawn_pool(var_2_3.id)
+				if (not (var_2_3.respawn_time >= self._respawn_timer) or not chase_target) and not Unit.alive(chase_target) then
+					self:_add_to_spawn_pool(var_2_3.id)
 
 					var_2_3.respawn_time = 0
 				end
 			end
 		end
 
-		arg_2_0:_update_spawn_pool(arg_2_3)
-		arg_2_0:_update_units(arg_2_4, arg_2_3)
+		self:_update_spawn_pool(arg_2_3)
+		self:_update_units(arg_2_4, arg_2_3)
 	end
 end
 
-function EventLightSpawnerExtension._update_units(arg_3_0, arg_3_1, arg_3_2)
-	local var_3_0 = arg_3_0._units
+EventLightSpawnerExtension._update_units = function (self, arg_3_1, arg_3_2)
+	-- function 3
+	local _units = self._units
 
-	for iter_3_0, iter_3_1 in pairs(var_3_0) do
-		local var_3_1 = iter_3_1 and iter_3_1.unit
-		local var_3_2 = iter_3_1.chase_target
+	for k, v in pairs(_units) do
+		local flag = not v and v.unit
+		local chase_target = v.chase_target
 
-		if not var_3_2 then
-			arg_3_0:_sync_light_units()
+		if not chase_target then
+			self:_sync_light_units()
 		end
 
-		if var_3_2 and Unit.alive(var_3_2) and var_3_1 and Unit.alive(var_3_1) then
-			local var_3_3 = Unit.local_position(var_3_1, 0)
-			local var_3_4 = var_3_2 and POSITION_LOOKUP[var_3_2] + Vector3.up()
-			local var_3_5 = World.physics_world(arg_3_1.world)
-			local var_3_6 = var_3_4 - var_3_3
+		if not chase_target and not Unit.alive(chase_target) and not flag and not Unit.alive(flag) then
+			local local_position = Unit.local_position(flag, 0)
+			local flag_2 = not chase_target and POSITION_LOOKUP[chase_target] + Vector3.up()
+			local physics_world = World.physics_world(arg_3_1.world)
+			local num = flag_2 - local_position
 
-			var_3_6 = Vector3.length(var_3_6) == 0 and Vector3.down() or Vector3.normalize(var_3_6)
+			num = Vector3.length(num) ~= 0 or not Vector3.down() or Vector3.normalize(num)
 
-			local var_3_7 = 1
+			local num_2 = 1
 
-			PhysicsWorld.prepare_actors_for_raycast(var_3_5, var_3_3, var_3_6, 0.1)
+			PhysicsWorld.prepare_actors_for_raycast(physics_world, local_position, num, 0.1)
 
-			local var_3_8 = PhysicsWorld.immediate_raycast(var_3_5, var_3_3, var_3_6, var_3_7, "all", "collision_filter", "filter_player_hit_box_and_static_check")
+			local immediate_raycast = PhysicsWorld.immediate_raycast(physics_world, local_position, num, num_2, "all", "collision_filter", "filter_player_hit_box_and_static_check")
 
-			if var_3_8 then
-				local var_3_9 = #var_3_8
+			if not immediate_raycast then
+				local count = #immediate_raycast
 
-				for iter_3_2 = 1, var_3_9 do
-					local var_3_10 = var_3_8[iter_3_2][4]
-					local var_3_11 = Actor.unit(var_3_10)
+				for k_2 = 1, count do
+					local var_3_10 = immediate_raycast[k_2][4]
+					local unit = Actor.unit(var_3_10)
 
-					if not AiUtils.unit_breed(var_3_11) and iter_3_2 == var_3_9 then
-						arg_3_0:_explode_spirit(var_3_1)
+					if not (AiUtils.unit_breed(unit) or k_2 ~= count) then
+						self:_explode_spirit(flag)
 
-						iter_3_1.unit = nil
-					elseif var_3_11 == var_3_2 then
-						local var_3_12 = DamageProfileTemplates.warpfire_thrower_explosion
-						local var_3_13 = 100
-						local var_3_14 = var_3_3 - var_3_4
-						local var_3_15 = Vector3.normalize(var_3_14)
-						local var_3_16 = Managers.player:owner(var_3_2)
+						v.unit = nil
+					elseif unit == chase_target then
+						local warpfire_thrower_explosion = DamageProfileTemplates.warpfire_thrower_explosion
+						local num_3 = 100
+						local num_4 = local_position - flag_2
+						local normalize = Vector3.normalize(num_4)
+						local owner = Managers.player:owner(chase_target)
 
-						if var_3_16 and var_3_16:is_player_controlled() then
-							DamageUtils.add_damage_network_player(var_3_12, nil, var_3_13, var_3_2, var_3_1, "full", var_3_4, var_3_15, "undefined", nil, 0, false, nil, false, 0, 1)
+						if not (not owner and owner:is_player_controlled()) then
+							DamageUtils.add_damage_network_player(warpfire_thrower_explosion, nil, num_3, chase_target, flag, "full", flag_2, normalize, "undefined", nil, 0, false, nil, false, 0, 1)
 						end
 
-						arg_3_0:_explode_spirit(var_3_1)
+						self:_explode_spirit(flag)
 
-						iter_3_1.unit = nil
+						v.unit = nil
 					end
 				end
 			end
 		end
 	end
 
-	for iter_3_3, iter_3_4 in pairs(var_3_0) do
-		local var_3_17 = iter_3_4.unit
+	for k_3, v_2 in pairs(_units) do
+		local unit_2 = v_2.unit
 
-		if var_3_17 then
-			local var_3_18 = Unit.local_position(var_3_17, 0)
-			local var_3_19 = iter_3_4.chase_target
+		if not unit_2 then
+			local local_position_2 = Unit.local_position(unit_2, 0)
+			local chase_target_2 = v_2.chase_target
 
-			if Unit.alive(var_3_19) then
-				local var_3_20 = var_3_19 and POSITION_LOOKUP[var_3_19]
-				local var_3_21 = Managers.player:owner(var_3_19)
-				local var_3_22 = var_3_21 and var_3_21:is_player_controlled()
+			if not Unit.alive(chase_target_2) then
+				local flag_3 = not chase_target_2 and POSITION_LOOKUP[chase_target_2]
+				local owner_2 = Managers.player:owner(chase_target_2)
+				local flag_4 = not owner_2 and owner_2:is_player_controlled()
 
-				if var_3_20 and var_3_22 then
-					local var_3_23 = var_3_20 + Vector3(0, 0, 1) - var_3_18
-					local var_3_24 = var_3_18 + Vector3.normalize(var_3_23) * (arg_3_2 * iter_3_4.speed)
+				if not flag_3 and not flag_4 then
+					local num_5 = flag_3 + Vector3(0, 0, 1) - local_position_2
+					local num_6 = local_position_2 + Vector3.normalize(num_5) * (arg_3_2 * v_2.speed)
 
-					Unit.set_local_position(var_3_17, 0, var_3_24)
-				elseif var_3_20 and not var_3_22 then
-					local var_3_25 = var_3_20 + Vector3(0, 0, 1) - var_3_18
-					local var_3_26 = Vector3.length(var_3_25)
-					local var_3_27 = var_3_26 < 3 and math.max(0, var_3_26 - 2) or 1
-					local var_3_28 = var_3_18 + Vector3.normalize(var_3_25) * (arg_3_2 * iter_3_4.speed) * var_3_27
+					Unit.set_local_position(unit_2, 0, num_6)
+				elseif not (not flag_3 and flag_4) then
+					local num_7 = flag_3 + Vector3(0, 0, 1) - local_position_2
+					local length = Vector3.length(num_7)
+					local max
 
-					Unit.set_local_position(var_3_17, 0, var_3_28)
+					if length < 3 then
+						max = math.max(0, length - 2)
+
+						if not max then
+							-- Nothing
+						end
+					end
+
+					max = 1
+
+					::label_3_0::
+
+					local num_8 = local_position_2 + Vector3.normalize(num_7) * (arg_3_2 * v_2.speed) * max
+
+					Unit.set_local_position(unit_2, 0, num_8)
 				end
 			else
-				iter_3_4.chase_target = nil
+				v_2.chase_target = nil
 
-				arg_3_0:_explode_spirit(iter_3_4.unit)
+				self:_explode_spirit(v_2.unit)
 
-				iter_3_4.unit = nil
+				v_2.unit = nil
 			end
 		end
 	end
 end
 
-function EventLightSpawnerExtension._update_spawn_pool(arg_4_0, arg_4_1)
-	local var_4_0 = arg_4_0._spawn_pool
+EventLightSpawnerExtension._update_spawn_pool = function (self, arg_4_1)
+	-- function 4
+	local _spawn_pool = self._spawn_pool
 
-	if var_4_0[arg_4_0._spawn_pool_spawn_index] then
-		arg_4_0._spawn_pool_timer = arg_4_0._spawn_pool_timer + arg_4_1
+	if not _spawn_pool[self._spawn_pool_spawn_index] then
+		self._spawn_pool_timer = self._spawn_pool_timer + arg_4_1
 
-		if arg_4_0._spawn_pool_timer > 1 then
-			arg_4_0._spawn_pool_timer = arg_4_0._spawn_pool_timer - 1
+		if self._spawn_pool_timer > 1 then
+			self._spawn_pool_timer = self._spawn_pool_timer - 1
 
-			local var_4_1 = arg_4_0.unit_spawner:spawn_network_unit(arg_4_0._unit_to_spawn, "position_synched_light_unit", nil, Unit.local_position(arg_4_0.unit, 0))
+			local spawn_network_unit = self.unit_spawner:spawn_network_unit(self._unit_to_spawn, "position_synched_light_unit", nil, Unit.local_position(self.unit, 0))
 
-			Managers.state.entity:system("audio_system"):play_audio_unit_event("Play_bastion_sorcerer_boss_magic_ball_spawn", var_4_1)
+			Managers.state.entity:system("audio_system"):play_audio_unit_event("Play_bastion_sorcerer_boss_magic_ball_spawn", spawn_network_unit)
 
-			local var_4_2 = var_4_0[arg_4_0._spawn_pool_spawn_index]
+			local var_4_2 = _spawn_pool[self._spawn_pool_spawn_index]
 
-			arg_4_0._units[var_4_2].unit = var_4_1
-			var_4_0[arg_4_0._spawn_pool_spawn_index] = nil
-			arg_4_0._spawn_pool_spawn_index = arg_4_0._spawn_pool_spawn_index + 1
+			self._units[var_4_2].unit = spawn_network_unit
+			_spawn_pool[self._spawn_pool_spawn_index] = nil
+			self._spawn_pool_spawn_index = self._spawn_pool_spawn_index + 1
 		end
 	end
 end
 
-function EventLightSpawnerExtension._add_to_spawn_pool(arg_5_0, arg_5_1)
-	arg_5_0._spawn_pool[arg_5_0._spawn_pool_add_index] = arg_5_1
-	arg_5_0._spawn_pool_add_index = arg_5_0._spawn_pool_add_index + 1
+EventLightSpawnerExtension._add_to_spawn_pool = function (self, arg_5_1)
+	-- function 5
+	self._spawn_pool[self._spawn_pool_add_index] = arg_5_1
+	self._spawn_pool_add_index = self._spawn_pool_add_index + 1
 end
 
-function EventLightSpawnerExtension._activate(arg_6_0)
-	arg_6_0._active = true
+EventLightSpawnerExtension._activate = function (self)
+	-- function 6
+	self._active = true
 
-	local var_6_0 = Managers.state.side:get_side_from_name("heroes").PLAYER_AND_BOT_UNITS
+	local PLAYER_AND_BOT_UNITS = Managers.state.side:get_side_from_name("heroes").PLAYER_AND_BOT_UNITS
 
-	for iter_6_0, iter_6_1 in pairs(var_6_0) do
-		arg_6_0._units[iter_6_0].chase_target = iter_6_1
+	for k, v in pairs(PLAYER_AND_BOT_UNITS) do
+		self._units[k].chase_target = v
 	end
 end
 
-function EventLightSpawnerExtension._deactivate(arg_7_0)
-	arg_7_0._active = false
+EventLightSpawnerExtension._deactivate = function (self)
+	-- function 7
+	self._active = false
 
-	local var_7_0 = arg_7_0._units
+	local _units = self._units
 
-	for iter_7_0 = 1, #var_7_0 do
-		local var_7_1 = var_7_0[iter_7_0].unit
+	for i = 1, #_units do
+		local unit = _units[i].unit
 
-		if var_7_1 then
-			arg_7_0:_explode_spirit(var_7_1)
+		if not unit then
+			self:_explode_spirit(unit)
 
-			var_7_0[iter_7_0].chase_target = nil
-			var_7_0[iter_7_0].unit = nil
+			_units[i].chase_target = nil
+			_units[i].unit = nil
 		end
 	end
 end
 
-function EventLightSpawnerExtension._explode_spirit(arg_8_0, arg_8_1)
-	local var_8_0 = Unit.local_position(arg_8_1, 0)
-	local var_8_1 = Unit.world_rotation(arg_8_1, 0)
+EventLightSpawnerExtension._explode_spirit = function (arg_8_0, arg_8_1)
+	-- function 8
+	local local_position = Unit.local_position(arg_8_1, 0)
+	local world_rotation = Unit.world_rotation(arg_8_1, 0)
 
-	Managers.state.entity:system("area_damage_system"):create_explosion(arg_8_1, var_8_0, var_8_1, "bastion_light_spirit", 1, "undefined", 0, false)
+	Managers.state.entity:system("area_damage_system"):create_explosion(arg_8_1, local_position, world_rotation, "bastion_light_spirit", 1, "undefined", 0, false)
 	Managers.state.entity:system("audio_system"):play_audio_unit_event("Play_bastion_sorcerer_boss_magic_ball_explode", arg_8_1)
 	Managers.state.unit_spawner:mark_for_deletion(arg_8_1)
 end
 
-function EventLightSpawnerExtension._sync_light_units(arg_9_0)
-	if not arg_9_0.is_server then
+EventLightSpawnerExtension._sync_light_units = function (self)
+	-- function 9
+	if not self.is_server then
 		return
 	end
 
-	local var_9_0 = arg_9_0._units
-	local var_9_1 = Managers.state.side:get_side_from_name("heroes").PLAYER_AND_BOT_UNITS
+	local _units = self._units
+	local PLAYER_AND_BOT_UNITS = Managers.state.side:get_side_from_name("heroes").PLAYER_AND_BOT_UNITS
 
-	for iter_9_0, iter_9_1 in ipairs(var_9_0) do
-		if not iter_9_1.chase_target or not Unit.alive(iter_9_1.chase_target) then
-			iter_9_1.chase_target = nil
+	for i, v in ipairs(_units) do
+		if not (not v.chase_target and Unit.alive(v.chase_target)) then
+			v.chase_target = nil
 		end
 	end
 
-	for iter_9_2, iter_9_3 in pairs(var_9_1) do
+	for k, v_2 in pairs(PLAYER_AND_BOT_UNITS) do
 		local var_9_2
 		local var_9_3
 
-		for iter_9_4, iter_9_5 in ipairs(var_9_0) do
-			if iter_9_5.chase_target then
-				if iter_9_5.chase_target == iter_9_3 then
+		for i_2, v_3 in ipairs(_units) do
+			if not v_3.chase_target then
+				if v_3.chase_target == v_2 then
 					var_9_3 = true
 
 					break
 				end
 			else
-				var_9_2 = var_9_2 or iter_9_5
+				var_9_2 = var_9_2 or v_3
 			end
 		end
 
-		if not var_9_3 and var_9_2 then
-			arg_9_0:_add_to_spawn_pool(var_9_2.id)
+		if var_9_3 or not var_9_2 then
+			self:_add_to_spawn_pool(var_9_2.id)
 
-			var_9_2.chase_target = iter_9_3
+			var_9_2.chase_target = v_2
 
 			break
 		end

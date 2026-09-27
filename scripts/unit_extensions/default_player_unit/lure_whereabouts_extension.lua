@@ -4,38 +4,41 @@ require("scripts/unit_extensions/generic/generic_state_machine")
 
 LureWhereaboutsExtension = class(LureWhereaboutsExtension)
 
-function LureWhereaboutsExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	arg_1_0._unit = arg_1_2
+LureWhereaboutsExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	self._unit = arg_1_2
 
-	local var_1_0 = Managers.state.entity:system("ai_system"):nav_world()
+	local nav_world = Managers.state.entity:system("ai_system"):nav_world()
 
-	arg_1_0._closest_positions = {}
+	self._closest_positions = {}
 
-	local var_1_1 = Unit.world_position(arg_1_2, 0)
-	local var_1_2 = 1
-	local var_1_3 = 5
-	local var_1_4, var_1_5 = GwNavQueries.triangle_from_position(var_1_0, var_1_1, var_1_2, var_1_3)
+	local world_position = Unit.world_position(arg_1_2, 0)
+	local num = 1
+	local num_2 = 5
+	local triangle_from_position, var_1_5 = GwNavQueries.triangle_from_position(nav_world, world_position, num, num_2)
 
-	if var_1_4 then
-		arg_1_0._closest_positions[1] = Vector3Box(Vector3(var_1_1.x, var_1_1.y, var_1_5))
-		arg_1_0._on_navmesh = true
+	if not triangle_from_position then
+		self._closest_positions[1] = Vector3Box(Vector3(world_position.x, world_position.y, var_1_5))
+		self._on_navmesh = true
 	else
-		arg_1_0._on_navmesh = false
+		self._on_navmesh = false
 
-		local var_1_6 = 5
-		local var_1_7 = 0.1
-		local var_1_8 = GwNavQueries.inside_position_from_outside_position(var_1_0, var_1_1, var_1_2, var_1_3, var_1_6, var_1_7)
+		local num_3 = 5
+		local num_4 = 0.1
+		local inside_position_from_outside_position = GwNavQueries.inside_position_from_outside_position(nav_world, world_position, num, num_2, num_3, num_4)
 
-		if var_1_8 then
-			arg_1_0._closest_positions[1] = Vector3Box(var_1_8)
+		if not inside_position_from_outside_position then
+			self._closest_positions[1] = Vector3Box(inside_position_from_outside_position)
 		end
 	end
 end
 
-function LureWhereaboutsExtension.destroy(arg_2_0)
+LureWhereaboutsExtension.destroy = function (arg_2_0)
+	-- function 2
 	return
 end
 
-function LureWhereaboutsExtension.closest_positions_when_outside_navmesh(arg_3_0)
-	return arg_3_0._closest_positions, arg_3_0._on_navmesh
+LureWhereaboutsExtension.closest_positions_when_outside_navmesh = function (self)
+	-- function 3
+	return self._closest_positions, self._on_navmesh
 end

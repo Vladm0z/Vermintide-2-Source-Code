@@ -1,8 +1,8 @@
 -- chunkname: @scripts/ui/hud_ui/floating_icon_ui_definitions.lua
 
-local var_0_0 = 1920
-local var_0_1 = 1080
-local var_0_2 = {
+local num = 1920
+local num_2 = 1080
+local tbl = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -11,8 +11,8 @@ local var_0_2 = {
 			UILayer.hud
 		},
 		size = {
-			var_0_0,
-			var_0_1
+			num,
+			num_2
 		}
 	},
 	pivot = {
@@ -45,7 +45,8 @@ local var_0_2 = {
 	}
 }
 
-local function var_0_3(arg_1_0, arg_1_1)
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
 	return {
 		element = {
 			passes = {
@@ -110,7 +111,7 @@ local function var_0_3(arg_1_0, arg_1_1)
 	}
 end
 
-local var_0_4 = {
+local tbl_2 = {
 	default = {
 		scenegraph_id = "pivot",
 		element = {
@@ -124,7 +125,8 @@ local var_0_4 = {
 					texture_id = "arrow",
 					style_id = "arrow",
 					pass_type = "rotated_texture",
-					content_check_function = function(arg_2_0, arg_2_1)
+					content_check_function = function (arg_2_0, arg_2_1)
+						-- function 2
 						return arg_2_1.color[1] > 0
 					end
 				},
@@ -132,16 +134,18 @@ local var_0_4 = {
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_3_0)
-						return arg_3_0.text
+					content_check_function = function (self)
+						-- function 3
+						return self.text
 					end
 				},
 				{
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_4_0)
-						return arg_4_0.text
+					content_check_function = function (self)
+						-- function 4
+						return self.text
 					end
 				}
 			}
@@ -220,15 +224,15 @@ local var_0_4 = {
 			0
 		}
 	},
-	progress_bar = var_0_3("bar_pivot", {
+	progress_bar = fn("bar_pivot", {
 		300,
 		50
 	})
 }
-local var_0_5 = {}
+local tbl_3 = {}
 
 return {
-	animation_definitions = var_0_5,
-	scenegraph_definition = var_0_2,
-	widget_definitions = var_0_4
+	animation_definitions = tbl_3,
+	scenegraph_definition = tbl,
+	widget_definitions = tbl_2
 }

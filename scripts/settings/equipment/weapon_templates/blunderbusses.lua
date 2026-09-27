@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/blunderbusses.lua
 
-local var_0_0 = 0.8
-local var_0_1 = {
+local num = 0.8
+local tbl = {
 	actions = {
 		action_one = {
 			default = {
@@ -93,10 +93,11 @@ local var_0_1 = {
 				dedicated_target_range = 3.5,
 				anim_event = "attack_push",
 				total_time = 1,
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
-					return arg_1_1 ~= "new_interupting_action" and arg_1_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
+					-- function 1
+					return arg_1_1 == "new_interupting_action" or arg_1_1 ~= "action_complete"
 				end,
-				anim_time_scale = var_0_0 * 1.15,
+				anim_time_scale = num * 1.15,
 				allowed_chain_actions = {
 					{
 						sub_action = "default",
@@ -130,7 +131,8 @@ local var_0_1 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_2_0, arg_2_1)
+				enter_function = function (arg_2_0, arg_2_1)
+					-- function 2
 					arg_2_1:clear_input_buffer()
 				end
 			}
@@ -151,20 +153,20 @@ local var_0_1 = {
 	}
 }
 
-var_0_1.default_spread_template = "blunderbuss"
-var_0_1.right_hand_unit = ""
-var_0_1.right_hand_attachment_node_linking = AttachmentNodeLinking.rifles
-var_0_1.display_unit = "units/weapons/weapon_display/display_blunderbusses"
-var_0_1.wield_anim = "to_blunderbuss"
-var_0_1.wield_anim_no_ammo = "to_blunderbuss_noammo"
-var_0_1.state_machine = "units/beings/player/first_person_base/state_machines/ranged/blunderbuss"
-var_0_1.crosshair_style = "shotgun"
-var_0_1.fire_at_gaze_setting = "tobii_fire_at_gaze_blunderbuss"
-var_0_1.reload_event = "reload"
-var_0_1.buff_type = "RANGED"
-var_0_1.weapon_type = "SHOTGUN"
-var_0_1.dodge_count = 3
-var_0_1.buffs = {
+tbl.default_spread_template = "blunderbuss"
+tbl.right_hand_unit = ""
+tbl.right_hand_attachment_node_linking = AttachmentNodeLinking.rifles
+tbl.display_unit = "units/weapons/weapon_display/display_blunderbusses"
+tbl.wield_anim = "to_blunderbuss"
+tbl.wield_anim_no_ammo = "to_blunderbuss_noammo"
+tbl.state_machine = "units/beings/player/first_person_base/state_machines/ranged/blunderbuss"
+tbl.crosshair_style = "shotgun"
+tbl.fire_at_gaze_setting = "tobii_fire_at_gaze_blunderbuss"
+tbl.reload_event = "reload"
+tbl.buff_type = "RANGED"
+tbl.weapon_type = "SHOTGUN"
+tbl.dodge_count = 3
+tbl.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1
 	},
@@ -172,18 +174,18 @@ var_0_1.buffs = {
 		external_optional_multiplier = 1
 	}
 }
-var_0_1.attack_meta_data = {
+tbl.attack_meta_data = {
 	max_range = 15,
 	aim_at_node = "j_spine",
 	ignore_enemies_for_obstruction = true,
 	effective_against = bit.bor(BreedCategory.Infantry, BreedCategory.Berserker, BreedCategory.Special, BreedCategory.Armored)
 }
-var_0_1.tooltip_keywords = {
+tbl.tooltip_keywords = {
 	"weapon_keyword_high_damage",
 	"weapon_keyword_crowd_control",
 	"weapon_keyword_close_range"
 }
-var_0_1.tooltip_compare = {
+tbl.tooltip_compare = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -193,7 +195,7 @@ var_0_1.tooltip_compare = {
 		sub_action_name = "default"
 	}
 }
-var_0_1.weapon_diagram = {
+tbl.weapon_diagram = {
 	light_attack = {
 		[DamageTypes.ARMOR_PIERCING] = 4,
 		[DamageTypes.CLEAVE] = 7,
@@ -209,7 +211,7 @@ var_0_1.weapon_diagram = {
 		[DamageTypes.DAMAGE] = 2
 	}
 }
-var_0_1.tooltip_detail = {
+tbl.tooltip_detail = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -219,17 +221,17 @@ var_0_1.tooltip_detail = {
 		sub_action_name = "default"
 	}
 }
-var_0_1.wwise_dep_right_hand = {
+tbl.wwise_dep_right_hand = {
 	"wwise/blunderbuss"
 }
 
-local var_0_2 = table.clone(var_0_1)
+local clone = table.clone(tbl)
 
-var_0_2.actions.action_one.default.damage_profile = "shot_shotgun_vs"
-var_0_2.actions.action_one.default.bullseye = true
-var_0_2.actions.action_one.default.shot_count = 14
+clone.actions.action_one.default.damage_profile = "shot_shotgun_vs"
+clone.actions.action_one.default.bullseye = true
+clone.actions.action_one.default.shot_count = 14
 
 return {
-	blunderbuss_template_1 = table.clone(var_0_1),
-	blunderbuss_template_1_vs = table.clone(var_0_2)
+	blunderbuss_template_1 = table.clone(tbl),
+	blunderbuss_template_1_vs = table.clone(clone)
 }

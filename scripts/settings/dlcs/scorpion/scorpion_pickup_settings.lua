@@ -15,15 +15,17 @@ DLCSettings.scorpion.pickups = {
 			consumable_item = true,
 			local_pickup_sound = true,
 			hud_description = "interaction_ammunition_axe",
-			can_interact_func = function(arg_1_0, arg_1_1, arg_1_2)
-				local var_1_0 = ScriptUnit.has_extension(arg_1_0, "inventory_system")
+			can_interact_func = function (arg_1_0, arg_1_1, arg_1_2)
+				-- function 1
+				local has_extension = ScriptUnit.has_extension(arg_1_0, "inventory_system")
 
-				return var_1_0 and var_1_0:has_ammo_consuming_weapon_equipped("throwing_axe")
+				return not has_extension and has_extension:has_ammo_consuming_weapon_equipped("throwing_axe")
 			end,
-			outline_available_func = function(arg_2_0)
-				local var_2_0 = ScriptUnit.has_extension(arg_2_0, "inventory_system")
+			outline_available_func = function (arg_2_0)
+				-- function 2
+				local has_extension = ScriptUnit.has_extension(arg_2_0, "inventory_system")
 
-				return var_2_0 and var_2_0:has_ammo_consuming_weapon_equipped("throwing_axe")
+				return not has_extension and has_extension:has_ammo_consuming_weapon_equipped("throwing_axe")
 			end
 		},
 		link_ammo_throwing_axe_01_t2_magic_01 = {
@@ -39,15 +41,17 @@ DLCSettings.scorpion.pickups = {
 			consumable_item = true,
 			local_pickup_sound = true,
 			hud_description = "interaction_ammunition_axe",
-			can_interact_func = function(arg_3_0, arg_3_1, arg_3_2)
-				local var_3_0 = ScriptUnit.has_extension(arg_3_0, "inventory_system")
+			can_interact_func = function (arg_3_0, arg_3_1, arg_3_2)
+				-- function 3
+				local has_extension = ScriptUnit.has_extension(arg_3_0, "inventory_system")
 
-				return var_3_0 and var_3_0:has_ammo_consuming_weapon_equipped("throwing_axe")
+				return not has_extension and has_extension:has_ammo_consuming_weapon_equipped("throwing_axe")
 			end,
-			outline_available_func = function(arg_4_0)
-				local var_4_0 = ScriptUnit.has_extension(arg_4_0, "inventory_system")
+			outline_available_func = function (arg_4_0)
+				-- function 4
+				local has_extension = ScriptUnit.has_extension(arg_4_0, "inventory_system")
 
-				return var_4_0 and var_4_0:has_ammo_consuming_weapon_equipped("throwing_axe")
+				return not has_extension and has_extension:has_ammo_consuming_weapon_equipped("throwing_axe")
 			end
 		}
 	}

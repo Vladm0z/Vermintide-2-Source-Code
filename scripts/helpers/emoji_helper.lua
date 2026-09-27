@@ -199,87 +199,90 @@ EMOJI_SETTINGS = {
 	}
 }
 
-for iter_0_0, iter_0_1 in ipairs(EMOJI_SETTINGS) do
-	local var_0_0 = iter_0_1.keys
+for i, v in ipairs(EMOJI_SETTINGS) do
+	local keys = v.keys
 
-	for iter_0_2, iter_0_3 in ipairs(ESCAPE_CHARACTERS) do
-		var_0_0 = string.gsub(var_0_0, "%" .. iter_0_3, "%%" .. iter_0_3)
+	for i_2, v_2 in ipairs(ESCAPE_CHARACTERS) do
+		keys = string.gsub(keys, "%" .. v_2, "%%" .. v_2)
 	end
 
-	iter_0_1.pattern = var_0_0
+	v.pattern = keys
 
-	local var_0_1 = iter_0_1.replacement_keys
+	local replacement_keys = v.replacement_keys
 
-	if var_0_1 then
-		for iter_0_4, iter_0_5 in ipairs(ESCAPE_CHARACTERS) do
-			var_0_1 = string.gsub(var_0_1, "%" .. iter_0_5, "%%" .. iter_0_5)
+	if not replacement_keys then
+		for i_3, v_3 in ipairs(ESCAPE_CHARACTERS) do
+			replacement_keys = string.gsub(replacement_keys, "%" .. v_3, "%%" .. v_3)
 		end
 
-		iter_0_1.replacement_pattern = var_0_1
+		v.replacement_pattern = replacement_keys
 	end
 end
 
 EMOJI_SETTINGS_LUT = {}
 
-for iter_0_6, iter_0_7 in ipairs(EMOJI_SETTINGS) do
-	EMOJI_SETTINGS_LUT[iter_0_7.keys] = iter_0_6
+for i_4, v_4 in ipairs(EMOJI_SETTINGS) do
+	EMOJI_SETTINGS_LUT[v_4.keys] = i_4
 end
 
 EMOJI_REPLACEMENTS = {}
 
-for iter_0_8, iter_0_9 in ipairs(EMOJI_SETTINGS) do
-	if iter_0_9.replacement_keys then
+for i_5, v_5 in ipairs(EMOJI_SETTINGS) do
+	if not v_5.replacement_keys then
 		EMOJI_REPLACEMENTS[#EMOJI_REPLACEMENTS + 1] = {
-			data = iter_0_9,
-			size = string.len(iter_0_9.replacement_keys)
+			data = v_5,
+			size = string.len(v_5.replacement_keys)
 		}
 	end
 end
 
-local function var_0_2(arg_1_0, arg_1_1)
-	return arg_1_0.size > arg_1_1.size
+local function fn(self, arg_1_1)
+	-- function 1
+	return self.size > arg_1_1.size
 end
 
-table.sort(EMOJI_REPLACEMENTS, var_0_2)
+table.sort(EMOJI_REPLACEMENTS, fn)
 
 EmojiHelper = {}
 
-local var_0_3 = {}
+local tbl = {}
 
-function EmojiHelper.parse_emojis(arg_2_0)
+EmojiHelper.parse_emojis = function (arg_2_0)
+	-- function 2
 	local var_2_0 = arg_2_0
 
-	table.clear(var_0_3)
+	table.clear(tbl)
 
-	local var_2_1 = string.find(var_2_0, ":")
+	local find = string.find(var_2_0, ":")
 
-	while var_2_1 do
-		local var_2_2 = string.find(var_2_0, ":", var_2_1 + 1)
-		local var_2_3 = string.sub(var_2_0, var_2_1, var_2_2)
-		local var_2_4 = EMOJI_SETTINGS_LUT[var_2_3]
+	while not find do
+		local find_2 = string.find(var_2_0, ":", find + 1)
+		local sub = string.sub(var_2_0, find, find_2)
+		local var_2_4 = EMOJI_SETTINGS_LUT[sub]
 
-		if var_2_4 then
-			var_0_3[#var_0_3 + 1] = EMOJI_SETTINGS[var_2_4]
-			var_2_2 = var_2_2 + 1
+		if not var_2_4 then
+			tbl[#tbl + 1] = EMOJI_SETTINGS[var_2_4]
+			find_2 = find_2 + 1
 		end
 
-		if not var_2_2 then
-			return var_0_3
+		if not find_2 then
+			return tbl
 		end
 
-		var_2_0 = string.sub(var_2_0, var_2_2)
-		var_2_1 = string.find(var_2_0, ":")
+		var_2_0 = string.sub(var_2_0, find_2)
+		find = string.find(var_2_0, ":")
 	end
 
-	return var_0_3
+	return tbl
 end
 
-function EmojiHelper.replace_emojis(arg_3_0)
-	for iter_3_0, iter_3_1 in ipairs(EMOJI_REPLACEMENTS) do
-		local var_3_0 = iter_3_1.data
+EmojiHelper.replace_emojis = function (arg_3_0)
+	-- function 3
+	for i, v in ipairs(EMOJI_REPLACEMENTS) do
+		local data = v.data
 
-		if var_3_0.replacement_pattern then
-			arg_3_0 = string.gsub(arg_3_0, var_3_0.replacement_pattern, var_3_0.keys)
+		if not data.replacement_pattern then
+			arg_3_0 = string.gsub(arg_3_0, data.replacement_pattern, data.keys)
 		end
 	end
 

@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/breeds/breed_skaven_stormfiend_boss.lua
 
-local var_0_0 = require("scripts/utils/stagger_types")
-local var_0_1 = {
+local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
+local tbl = {
 	is_bot_aid_threat = true,
 	walk_speed = 5,
 	minion_detection_radius = 10,
@@ -277,14 +277,15 @@ local var_0_1 = {
 		stormfiend_warpfire = 1,
 		vortex_danger_zone = 1
 	},
-	before_stagger_enter_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	before_stagger_enter_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+		-- function 1
 		QuestSettings.handle_charge_stagger(arg_1_0, arg_1_1, arg_1_2)
 	end
 }
 
-Breeds.skaven_stormfiend_boss = table.create_copy(Breeds.skaven_stormfiend_boss, var_0_1)
+Breeds.skaven_stormfiend_boss = table.create_copy(Breeds.skaven_stormfiend_boss, tbl)
 
-local var_0_2 = {
+local tbl_2 = {
 	aoe = {
 		easy = {
 			running = 2,
@@ -391,7 +392,7 @@ local var_0_2 = {
 		}
 	}
 }
-local var_0_3 = {
+local tbl_3 = {
 	climb = {
 		sync_with_linked_unit = false,
 		catapult_players = {
@@ -413,7 +414,7 @@ local var_0_3 = {
 		blocked_damage = 5,
 		ignore_ai_damage = true,
 		damage_type = "cutting",
-		difficulty_attack_intensity = var_0_2,
+		difficulty_attack_intensity = tbl_2,
 		considerations = UtilityConsiderations.stormfiend_boss_charge,
 		attacks = {
 			{
@@ -448,11 +449,11 @@ local var_0_3 = {
 				push_ai = {
 					stagger_distance = 3,
 					stagger_impact = {
-						var_0_0.explosion,
-						var_0_0.explosion,
-						var_0_0.none,
-						var_0_0.none,
-						var_0_0.explosion
+						scripts_utils_stagger_types.explosion,
+						scripts_utils_stagger_types.explosion,
+						scripts_utils_stagger_types.none,
+						scripts_utils_stagger_types.none,
+						scripts_utils_stagger_types.explosion
 					},
 					stagger_duration = {
 						4.5,
@@ -514,7 +515,7 @@ local var_0_3 = {
 		attack_intensity_type = "shove",
 		ignore_ai_damage = true,
 		damage_type = "cutting",
-		difficulty_attack_intensity = var_0_2,
+		difficulty_attack_intensity = tbl_2,
 		attacks = {
 			{
 				anim_driven = true,
@@ -581,10 +582,10 @@ local var_0_3 = {
 				push_ai = {
 					stagger_distance = 4,
 					stagger_impact = {
-						var_0_0.explosion,
-						var_0_0.heavy,
-						var_0_0.none,
-						var_0_0.none
+						scripts_utils_stagger_types.explosion,
+						scripts_utils_stagger_types.heavy,
+						scripts_utils_stagger_types.none,
+						scripts_utils_stagger_types.none
 					},
 					stagger_duration = {
 						4.5,
@@ -701,7 +702,7 @@ local var_0_3 = {
 		action_weight = 1,
 		ignore_ai_damage = true,
 		damage_type = "cutting",
-		difficulty_attack_intensity = var_0_2,
+		difficulty_attack_intensity = tbl_2,
 		considerations = UtilityConsiderations.stormfiend_boss_melee_shove,
 		attacks = {
 			{
@@ -775,10 +776,10 @@ local var_0_3 = {
 				push_ai = {
 					stagger_distance = 3,
 					stagger_impact = {
-						var_0_0.explosion,
-						var_0_0.heavy,
-						var_0_0.none,
-						var_0_0.none
+						scripts_utils_stagger_types.explosion,
+						scripts_utils_stagger_types.heavy,
+						scripts_utils_stagger_types.none,
+						scripts_utils_stagger_types.none
 					},
 					stagger_duration = {
 						4.5,
@@ -874,7 +875,7 @@ local var_0_3 = {
 		shove_speed = 10,
 		player_push_speed_blocked = 15,
 		ignore_abort_on_blocked_attack = true,
-		difficulty_attack_intensity = var_0_2,
+		difficulty_attack_intensity = tbl_2,
 		considerations = UtilityConsiderations.stormfiend_boss_aoe,
 		difficulty_damage = {
 			hardest = 30,
@@ -1454,4 +1455,4 @@ local var_0_3 = {
 	}
 }
 
-BreedActions.skaven_stormfiend_boss = table.create_copy(BreedActions.skaven_stormfiend_boss, var_0_3)
+BreedActions.skaven_stormfiend_boss = table.create_copy(BreedActions.skaven_stormfiend_boss, tbl_3)

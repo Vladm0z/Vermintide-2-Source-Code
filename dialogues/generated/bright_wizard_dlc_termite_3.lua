@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/bright_wizard_dlc_termite_3.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		response = "pbw_gateway_accidental_bell_ring_a",
 		name = "pbw_gateway_accidental_bell_ring_a",

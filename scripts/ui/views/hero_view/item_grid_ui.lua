@@ -2,274 +2,306 @@
 
 ItemGridUI = class(InventoryGridUI)
 
-local function var_0_0(arg_1_0, arg_1_1)
-	for iter_1_0, iter_1_1 in pairs(arg_1_0) do
-		if arg_1_1 == iter_1_1.name then
-			return iter_1_0
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
+	for k, v in pairs(arg_1_0) do
+		if arg_1_1 == v.name then
+			return k
 		end
 	end
 end
 
-function ItemGridUI.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
-	arg_2_0._platform = PLATFORM
-	arg_2_0._category_settings = arg_2_1
-	arg_2_0._widget = arg_2_2
+ItemGridUI.init = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	-- function 2
+	self._platform = PLATFORM
+	self._category_settings = arg_2_1
+	self._widget = arg_2_2
 
-	arg_2_0:_append_widget_content(arg_2_2, arg_2_5)
+	self:_append_widget_content(arg_2_2, arg_2_5)
 
 	if arg_2_4 > #PROFILES_BY_NAME[arg_2_3].careers then
 		arg_2_4 = 1
 	end
 
-	arg_2_0._hero_name = arg_2_3
-	arg_2_0._career_index = arg_2_4
-	arg_2_0._params = arg_2_5
-	arg_2_0._locked_items = {}
+	self._hero_name = arg_2_3
+	self._career_index = arg_2_4
+	self._params = arg_2_5
+	self._locked_items = {}
 end
 
-function ItemGridUI._append_widget_content(arg_3_0, arg_3_1, arg_3_2)
-	local var_3_0 = arg_3_1.content
+ItemGridUI._append_widget_content = function (arg_3_0, arg_3_1, arg_3_2)
+	-- function 3
+	local content = arg_3_1.content
 
-	var_3_0.profile_index = arg_3_2 and arg_3_2.profile_index
-	var_3_0.career_index = arg_3_2 and arg_3_2.career_index
+	content.profile_index = not arg_3_2 and arg_3_2.profile_index
+	content.career_index = not arg_3_2 and arg_3_2.career_index
 end
 
-function ItemGridUI.change_category(arg_4_0, arg_4_1, arg_4_2)
-	arg_4_0:clear_item_grid()
+ItemGridUI.change_category = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	self:clear_item_grid()
 
-	for iter_4_0, iter_4_1 in ipairs(arg_4_0._category_settings) do
-		if iter_4_1.name == arg_4_1 then
-			arg_4_0:_on_category_index_change(iter_4_0, arg_4_2)
+	for i, v in ipairs(self._category_settings) do
+		if v.name == arg_4_1 then
+			self:_on_category_index_change(i, arg_4_2)
 
 			return
 		end
 	end
 end
 
-function ItemGridUI.set_item_page(arg_5_0, arg_5_1)
-	local var_5_0 = arg_5_0._total_item_pages
+ItemGridUI.set_item_page = function (self, arg_5_1)
+	-- function 5
+	local _total_item_pages = self._total_item_pages
 
-	if var_5_0 < arg_5_1 or arg_5_1 < 1 then
+	if not (_total_item_pages < arg_5_1 or not (arg_5_1 < 1)) then
 		return
 	end
 
-	local var_5_1 = arg_5_0._widget
-	local var_5_2 = var_5_1.content.slots
-	local var_5_3 = (arg_5_1 - 1) * var_5_2 + 1
-	local var_5_4 = arg_5_0._items
+	local _widget = self._widget
+	local slots = _widget.content.slots
+	local num = (arg_5_1 - 1) * slots + 1
+	local _items = self._items
 
-	arg_5_0:_populate_inventory_page(var_5_4, var_5_3)
+	self:_populate_inventory_page(_items, num)
 
-	var_5_1.content.page_text = arg_5_1 .. "/" .. var_5_0
-	arg_5_0._selected_page_index = arg_5_1
+	_widget.content.page_text = arg_5_1 .. "/" .. _total_item_pages
+	self._selected_page_index = arg_5_1
 end
 
-function ItemGridUI.items(arg_6_0)
-	return arg_6_0._items
+ItemGridUI.items = function (self)
+	-- function 6
+	return self._items
 end
 
-function ItemGridUI.get_page_info(arg_7_0)
-	return arg_7_0._selected_page_index, arg_7_0._total_item_pages
+ItemGridUI.get_page_info = function (self)
+	-- function 7
+	return self._selected_page_index, self._total_item_pages
 end
 
-function ItemGridUI.get_equipped_items(arg_8_0, arg_8_1, arg_8_2)
-	local var_8_0 = InventorySettings.slots
-	local var_8_1 = {}
-	local var_8_2 = SPProfiles[FindProfileIndex(arg_8_1)].careers[arg_8_2].name
+ItemGridUI.get_equipped_items = function (arg_8_0, arg_8_1, arg_8_2)
+	-- function 8
+	local slots = InventorySettings.slots
+	local tbl = {}
+	local name = SPProfiles[FindProfileIndex(arg_8_1)].careers[arg_8_2].name
 
-	for iter_8_0, iter_8_1 in pairs(var_8_0) do
-		local var_8_3 = iter_8_1.name
-		local var_8_4 = BackendUtils.get_loadout_item(var_8_2, var_8_3)
+	for k, v in pairs(slots) do
+		local name_2 = v.name
+		local get_loadout_item = BackendUtils.get_loadout_item(name, name_2)
 
-		if var_8_4 then
-			var_8_1[var_8_4.backend_id] = var_8_4
+		if not get_loadout_item then
+			tbl[get_loadout_item.backend_id] = get_loadout_item
 		end
 	end
 
-	return var_8_1
+	return tbl
 end
 
-function ItemGridUI.get_equipped_weapon_pose_parent(arg_9_0, arg_9_1, arg_9_2)
-	local var_9_0 = SPProfiles[FindProfileIndex(arg_9_1)].careers[arg_9_2].name
-	local var_9_1 = BackendUtils.get_loadout_item(var_9_0, "slot_pose")
+ItemGridUI.get_equipped_weapon_pose_parent = function (arg_9_0, arg_9_1, arg_9_2)
+	-- function 9
+	local name = SPProfiles[FindProfileIndex(arg_9_1)].careers[arg_9_2].name
+	local get_loadout_item = BackendUtils.get_loadout_item(name, "slot_pose")
 
-	if not var_9_1 then
+	if not get_loadout_item then
 		return
 	end
 
-	local var_9_2 = var_9_1.data.parent
+	local parent = get_loadout_item.data.parent
 
-	return (Managers.backend:get_interface("items"):get_item_from_key(var_9_2))
+	return (Managers.backend:get_interface("items"):get_item_from_key(parent))
 end
 
-function ItemGridUI.apply_item_sorting_function(arg_10_0, arg_10_1)
-	arg_10_0._item_sort_func = arg_10_1
+ItemGridUI.apply_item_sorting_function = function (self, arg_10_1)
+	-- function 10
+	self._item_sort_func = arg_10_1
 end
 
-function ItemGridUI.set_locked_items_icon(arg_11_0, arg_11_1)
-	arg_11_0._locked_item_icon = arg_11_1
+ItemGridUI.set_locked_items_icon = function (self, arg_11_1)
+	-- function 11
+	self._locked_item_icon = arg_11_1
 
-	arg_11_0:update_items_status()
+	self:update_items_status()
 end
 
-function ItemGridUI.disable_locked_items(arg_12_0, arg_12_1)
-	arg_12_0._disable_locked_items = arg_12_1
+ItemGridUI.disable_locked_items = function (self, arg_12_1)
+	-- function 12
+	self._disable_locked_items = arg_12_1
 
-	arg_12_0:mark_locked_items(arg_12_0._mark_locked_items)
+	self:mark_locked_items(self._mark_locked_items)
 end
 
-function ItemGridUI.lock_item_by_id(arg_13_0, arg_13_1, arg_13_2)
+ItemGridUI.lock_item_by_id = function (arg_13_0, arg_13_1, arg_13_2)
+	-- function 13
 	arg_13_0._locked_items[arg_13_1] = arg_13_2
 end
 
-function ItemGridUI.clear_locked_items(arg_14_0)
-	arg_14_0._locked_items = {}
+ItemGridUI.clear_locked_items = function (self)
+	-- function 14
+	self._locked_items = {}
 end
 
-function ItemGridUI.hide_slots(arg_15_0, arg_15_1)
-	arg_15_0._hide_slots = arg_15_1
+ItemGridUI.hide_slots = function (self, arg_15_1)
+	-- function 15
+	self._hide_slots = arg_15_1
 
-	arg_15_0:update_items_status()
+	self:update_items_status()
 end
 
-function ItemGridUI.mark_locked_items(arg_16_0, arg_16_1)
-	arg_16_0._mark_locked_items = arg_16_1
+ItemGridUI.mark_locked_items = function (self, arg_16_1)
+	-- function 16
+	self._mark_locked_items = arg_16_1
 
-	arg_16_0:update_items_status()
+	self:update_items_status()
 end
 
-function ItemGridUI.disable_unwieldable_items(arg_17_0, arg_17_1)
-	arg_17_0._disable_unwieldable_items = arg_17_1
+ItemGridUI.disable_unwieldable_items = function (self, arg_17_1)
+	-- function 17
+	self._disable_unwieldable_items = arg_17_1
 end
 
-function ItemGridUI.disable_equipped_items(arg_18_0, arg_18_1)
-	arg_18_0._disable_equipped_items = arg_18_1
+ItemGridUI.disable_equipped_items = function (self, arg_18_1)
+	-- function 18
+	self._disable_equipped_items = arg_18_1
 
-	arg_18_0:mark_equipped_items(arg_18_0._mark_equipped_items)
+	self:mark_equipped_items(self._mark_equipped_items)
 end
 
-function ItemGridUI.mark_equipped_items(arg_19_0, arg_19_1)
-	arg_19_0._mark_equipped_items = arg_19_1
+ItemGridUI.mark_equipped_items = function (self, arg_19_1)
+	-- function 19
+	self._mark_equipped_items = arg_19_1
 
-	arg_19_0:update_items_status()
+	self:update_items_status()
 end
 
-function ItemGridUI.mark_equipped_weapon_pose_parent(arg_20_0, arg_20_1)
-	arg_20_0._mark_equipped_weapon_pose_parent = arg_20_1
+ItemGridUI.mark_equipped_weapon_pose_parent = function (self, arg_20_1)
+	-- function 20
+	self._mark_equipped_weapon_pose_parent = arg_20_1
 
-	arg_20_0:update_items_status()
+	self:update_items_status()
 end
 
-function ItemGridUI.disable_item_drag(arg_21_0)
-	arg_21_0._item_drag_disabled = true
+ItemGridUI.disable_item_drag = function (self)
+	-- function 21
+	self._item_drag_disabled = true
 
-	arg_21_0:update_items_status()
+	self:update_items_status()
 end
 
-function ItemGridUI.update_items_status(arg_22_0)
-	local var_22_0 = arg_22_0._hero_name
-	local var_22_1 = FindProfileIndex(var_22_0)
-	local var_22_2 = arg_22_0._career_index
-	local var_22_3 = SPProfiles[var_22_1].careers[var_22_2].name
-	local var_22_4 = arg_22_0._locked_item_icon
-	local var_22_5 = arg_22_0._mark_locked_items and arg_22_0._locked_items
-	local var_22_6 = arg_22_0._mark_equipped_items and arg_22_0:get_equipped_items(var_22_0, var_22_2)
-	local var_22_7 = arg_22_0._mark_equipped_weapon_pose_parent and arg_22_0:get_equipped_weapon_pose_parent(var_22_0, var_22_2)
-	local var_22_8 = arg_22_0._item_drag_disabled
-	local var_22_9 = arg_22_0._hide_slots
-	local var_22_10 = arg_22_0._disable_locked_items
-	local var_22_11 = arg_22_0._disable_equipped_items
-	local var_22_12 = arg_22_0._disable_unwieldable_items
-	local var_22_13 = arg_22_0._widget
-	local var_22_14 = var_22_13.content
-	local var_22_15 = var_22_13.style
-	local var_22_16 = var_22_14.rows
-	local var_22_17 = var_22_14.columns
+ItemGridUI.update_items_status = function (self)
+	-- function 22
+	local _hero_name = self._hero_name
+	local var_22_1 = FindProfileIndex(_hero_name)
+	local _career_index = self._career_index
+	local name = SPProfiles[var_22_1].careers[_career_index].name
+	local _locked_item_icon = self._locked_item_icon
+	local _mark_locked_items = self._mark_locked_items
 
-	for iter_22_0 = 1, var_22_16 do
-		for iter_22_1 = 1, var_22_17 do
-			local var_22_18 = "_" .. tostring(iter_22_0) .. "_" .. tostring(iter_22_1)
-			local var_22_19 = "item_icon" .. var_22_18
-			local var_22_20 = "locked_icon" .. var_22_18
-			local var_22_21 = var_22_14["hotspot" .. var_22_18]
-			local var_22_22 = var_22_15[var_22_19]
-			local var_22_23 = var_22_14["item" .. var_22_18]
-			local var_22_24 = var_22_23 and var_22_23.data
-			local var_22_25 = var_22_24 and var_22_24.key
-			local var_22_26 = var_22_23 and var_22_23.backend_id
-			local var_22_27 = var_22_26 and var_22_6 and var_22_6[var_22_26] ~= nil
+	_mark_locked_items = not _mark_locked_items and self._locked_items
 
-			var_22_27 = var_22_25 and var_22_7 and var_22_7.data.key == var_22_25 or var_22_27
+	local _mark_equipped_items = self._mark_equipped_items
 
-			local var_22_28 = var_22_26 and var_22_5 and var_22_5[var_22_26] ~= nil
-			local var_22_29 = var_22_24 and var_22_24.can_wield
-			local var_22_30 = var_22_29 and table.contains(var_22_29, var_22_3)
+	_mark_equipped_items = not _mark_equipped_items and self:get_equipped_items(_hero_name, _career_index)
 
-			var_22_21[var_22_20] = var_22_4
+	local _mark_equipped_weapon_pose_parent = self._mark_equipped_weapon_pose_parent
 
-			if var_22_6 or var_22_7 then
-				var_22_21.equipped = var_22_27
+	_mark_equipped_weapon_pose_parent = not _mark_equipped_weapon_pose_parent and self:get_equipped_weapon_pose_parent(_hero_name, _career_index)
+
+	local _item_drag_disabled = self._item_drag_disabled
+	local _hide_slots = self._hide_slots
+	local _disable_locked_items = self._disable_locked_items
+	local _disable_equipped_items = self._disable_equipped_items
+	local _disable_unwieldable_items = self._disable_unwieldable_items
+	local _widget = self._widget
+	local content = _widget.content
+	local style = _widget.style
+	local rows = content.rows
+	local columns = content.columns
+
+	for i = 1, rows do
+		for j = 1, columns do
+			local str = "_" .. tostring(i) .. "_" .. tostring(j)
+			local str_2 = "item_icon" .. str
+			local str_3 = "locked_icon" .. str
+			local var_22_21 = content["hotspot" .. str]
+			local var_22_22 = style[str_2]
+			local var_22_23 = content["item" .. str]
+			local flag = not var_22_23 and var_22_23.data
+			local flag_2 = not flag and flag.key
+			local flag_3 = not var_22_23 and var_22_23.backend_id
+			local flag_4 = not flag_3 and not _mark_equipped_items and _mark_equipped_items[flag_3] ~= nil
+
+			flag_4 = not flag_2 and not _mark_equipped_weapon_pose_parent and _mark_equipped_weapon_pose_parent.data.key == flag_2 or flag_4
+
+			local flag_5 = not flag_3 and not _mark_locked_items and _mark_locked_items[flag_3] ~= nil
+			local flag_6 = not flag and flag.can_wield
+			local flag_7 = not flag_6 and table.contains(flag_6, name)
+
+			var_22_21[str_3] = _locked_item_icon
+
+			if _mark_equipped_items or not _mark_equipped_weapon_pose_parent then
+				var_22_21.equipped = flag_4
 			else
 				var_22_21.equipped = false
 			end
 
-			if var_22_5 then
-				var_22_21.reserved = var_22_28
+			if not _mark_locked_items then
+				var_22_21.reserved = flag_5
 			else
 				var_22_21.reserved = false
 			end
 
-			local var_22_31 = false
-			local var_22_32 = var_22_8
-			local var_22_33 = false
+			local flag_8 = false
+			local var_22_32 = _item_drag_disabled
+			local flag_9 = false
 
-			if var_22_28 then
-				var_22_33 = true
+			if not flag_5 then
+				flag_9 = true
 
-				if var_22_10 then
+				if not _disable_locked_items then
 					var_22_32 = true
-					var_22_31 = true
+					flag_8 = true
 				end
 			end
 
-			if not var_22_30 and var_22_12 then
-				var_22_33 = true
+			if flag_7 or not _disable_unwieldable_items then
+				flag_9 = true
 				var_22_21.unwieldable = true
 			else
 				var_22_21.unwieldable = false
 			end
 
-			if var_22_6 and var_22_27 and var_22_11 then
+			if not _mark_equipped_items and not flag_4 and not _disable_equipped_items then
 				var_22_32 = true
-				var_22_31 = true
+				flag_8 = true
 			end
 
 			if not var_22_23 then
-				var_22_31 = true
+				flag_8 = true
 			end
 
-			var_22_21.disable_button = var_22_31
+			var_22_21.disable_button = flag_8
 			var_22_21.drag_disabled = var_22_32
-			var_22_21.hide_slot = var_22_9
-			var_22_22.saturated = var_22_33
+			var_22_21.hide_slot = _hide_slots
+			var_22_22.saturated = flag_9
 		end
 	end
 
-	local var_22_34 = Managers.backend:get_interface("items")
+	local get_interface = Managers.backend:get_interface("items")
 
-	if arg_22_0._selected_item and var_22_34:get_item_from_id(arg_22_0._selected_item.backend_id) then
-		arg_22_0:set_item_selected(arg_22_0._selected_item)
+	if not self._selected_item and not get_interface:get_item_from_id(self._selected_item.backend_id) then
+		self:set_item_selected(self._selected_item)
 	end
 end
 
-function ItemGridUI.has_item(arg_23_0, arg_23_1)
-	local var_23_0 = arg_23_0._items
+ItemGridUI.has_item = function (self, arg_23_1)
+	-- function 23
+	local _items = self._items
 
-	if var_23_0 then
-		for iter_23_0, iter_23_1 in ipairs(var_23_0) do
-			local var_23_1 = iter_23_1.backend_id
+	if not _items then
+		for i, v in ipairs(_items) do
+			local backend_id = v.backend_id
 
-			if arg_23_1.backend_id == var_23_1 then
+			if arg_23_1.backend_id == backend_id then
 				return true
 			end
 		end
@@ -278,54 +310,56 @@ function ItemGridUI.has_item(arg_23_0, arg_23_1)
 	return false
 end
 
-function ItemGridUI.set_item_selected(arg_24_0, arg_24_1)
-	arg_24_0._selected_item = arg_24_1
+ItemGridUI.set_item_selected = function (self, arg_24_1)
+	-- function 24
+	self._selected_item = arg_24_1
 
-	local var_24_0 = arg_24_0._widget.content
-	local var_24_1 = var_24_0.rows
-	local var_24_2 = var_24_0.columns
+	local content = self._widget.content
+	local rows = content.rows
+	local columns = content.columns
 
-	arg_24_0._selected_item_row = nil
-	arg_24_0._selected_item_column = nil
-	arg_24_0._selected_item_equipped = nil
+	self._selected_item_row = nil
+	self._selected_item_column = nil
+	self._selected_item_equipped = nil
 
-	for iter_24_0 = 1, var_24_1 do
-		for iter_24_1 = 1, var_24_2 do
-			local var_24_3 = "_" .. tostring(iter_24_0) .. "_" .. tostring(iter_24_1)
-			local var_24_4 = var_24_0["hotspot" .. var_24_3]
-			local var_24_5 = var_24_0["item" .. var_24_3]
-			local var_24_6 = arg_24_1 and var_24_5 and arg_24_1.backend_id == var_24_5.backend_id
-			local var_24_7 = var_24_4.equipped
+	for i = 1, rows do
+		for j = 1, columns do
+			local str = "_" .. tostring(i) .. "_" .. tostring(j)
+			local var_24_4 = content["hotspot" .. str]
+			local var_24_5 = content["item" .. str]
+			local flag = not arg_24_1 and not var_24_5 and arg_24_1.backend_id == var_24_5.backend_id
+			local equipped = var_24_4.equipped
 
-			var_24_4.is_selected = var_24_6
+			var_24_4.is_selected = flag
 
-			if var_24_6 then
-				arg_24_0._selected_item_row = iter_24_0
-				arg_24_0._selected_item_column = iter_24_1
-				arg_24_0._selected_item_equipped = var_24_7
+			if not flag then
+				self._selected_item_row = i
+				self._selected_item_column = j
+				self._selected_item_equipped = equipped
 			end
 		end
 	end
 end
 
-function ItemGridUI.is_item_wieldable(arg_25_0, arg_25_1)
-	local var_25_0 = arg_25_0._widget.content
-	local var_25_1 = var_25_0.rows
-	local var_25_2 = var_25_0.columns
+ItemGridUI.is_item_wieldable = function (self, arg_25_1)
+	-- function 25
+	local content = self._widget.content
+	local rows = content.rows
+	local columns = content.columns
 
-	for iter_25_0 = 1, var_25_1 do
-		for iter_25_1 = 1, var_25_2 do
-			local var_25_3 = "_" .. tostring(iter_25_0) .. "_" .. tostring(iter_25_1)
-			local var_25_4 = var_25_0["hotspot" .. var_25_3]
-			local var_25_5 = var_25_0["item" .. var_25_3]
+	for i = 1, rows do
+		for j = 1, columns do
+			local str = "_" .. tostring(i) .. "_" .. tostring(j)
+			local var_25_4 = content["hotspot" .. str]
+			local var_25_5 = content["item" .. str]
 
-			if arg_25_1 and var_25_5 and arg_25_1.backend_id == var_25_5.backend_id then
-				local var_25_6 = var_25_4.equipped
-				local var_25_7 = var_25_4.disable_button
-				local var_25_8 = var_25_4.unwieldable
-				local var_25_9 = var_25_4.reserved
+			if not (not arg_25_1 and not var_25_5 and arg_25_1.backend_id ~= var_25_5.backend_id) then
+				local equipped = var_25_4.equipped
+				local disable_button = var_25_4.disable_button
+				local unwieldable = var_25_4.unwieldable
+				local reserved = var_25_4.reserved
 
-				if not var_25_6 and not var_25_7 and not var_25_8 and not var_25_9 then
+				if not (equipped or disable_button or unwieldable or reserved) then
 					return true
 				end
 
@@ -337,27 +371,28 @@ function ItemGridUI.is_item_wieldable(arg_25_0, arg_25_1)
 	return false
 end
 
-function ItemGridUI.handle_favorite_marking(arg_26_0, arg_26_1)
-	if arg_26_1 and arg_26_1:has("hotkey_mark_favorite_item") and arg_26_1:get("hotkey_mark_favorite_item") then
+ItemGridUI.handle_favorite_marking = function (self, arg_26_1)
+	-- function 26
+	if not arg_26_1 and not arg_26_1:has("hotkey_mark_favorite_item") and not arg_26_1:get("hotkey_mark_favorite_item") then
 		local var_26_0
 
-		if Managers.input:is_device_active("gamepad") then
-			var_26_0 = arg_26_0:selected_item()
+		if not Managers.input:is_device_active("gamepad") then
+			var_26_0 = self:selected_item()
 		else
-			var_26_0 = arg_26_0:get_item_hovered()
+			var_26_0 = self:get_item_hovered()
 		end
 
-		local var_26_1 = var_26_0 and var_26_0.backend_id
+		local flag = not var_26_0 and var_26_0.backend_id
 
-		print("item", var_26_0, var_26_1)
+		print("item", var_26_0, flag)
 
-		if var_26_1 then
-			if ItemHelper.is_favorite_backend_id(var_26_1, var_26_0) then
-				ItemHelper.unmark_backend_id_as_favorite(var_26_1, var_26_0)
+		if not flag then
+			if not ItemHelper.is_favorite_backend_id(flag, var_26_0) then
+				ItemHelper.unmark_backend_id_as_favorite(flag, var_26_0)
 
 				return true
 			else
-				ItemHelper.mark_backend_id_as_favorite(var_26_1, var_26_0)
+				ItemHelper.mark_backend_id_as_favorite(flag, var_26_0)
 
 				return true
 			end
@@ -365,43 +400,44 @@ function ItemGridUI.handle_favorite_marking(arg_26_0, arg_26_1)
 	end
 end
 
-function ItemGridUI.handle_gamepad_selection(arg_27_0, arg_27_1)
-	if not arg_27_0._selected_item then
+ItemGridUI.handle_gamepad_selection = function (self, arg_27_1)
+	-- function 27
+	if not self._selected_item then
 		return
 	end
 
-	local var_27_0 = arg_27_0._widget.content
-	local var_27_1 = var_27_0.rows
-	local var_27_2 = var_27_0.columns
-	local var_27_3 = arg_27_0._selected_item_row
-	local var_27_4 = arg_27_0._selected_item_column
+	local content = self._widget.content
+	local rows = content.rows
+	local columns = content.columns
+	local _selected_item_row = self._selected_item_row
+	local _selected_item_column = self._selected_item_column
 
-	if var_27_3 and var_27_4 then
-		local var_27_5 = false
+	if not _selected_item_row and not _selected_item_column then
+		local flag = false
 
-		if var_27_4 > 1 and arg_27_1:get("move_left_hold_continuous") then
-			var_27_4 = var_27_4 - 1
-			var_27_5 = true
-		elseif var_27_4 < var_27_2 and arg_27_1:get("move_right_hold_continuous") then
-			var_27_4 = var_27_4 + 1
-			var_27_5 = true
+		if not (_selected_item_column > 1) or not arg_27_1:get("move_left_hold_continuous") then
+			_selected_item_column = _selected_item_column - 1
+			flag = true
+		elseif not (_selected_item_column < columns) or not arg_27_1:get("move_right_hold_continuous") then
+			_selected_item_column = _selected_item_column + 1
+			flag = true
 		end
 
-		if var_27_3 > 1 and arg_27_1:get("move_up_hold_continuous") then
-			var_27_3 = var_27_3 - 1
-			var_27_5 = true
-		elseif var_27_3 < var_27_1 and arg_27_1:get("move_down_hold_continuous") then
-			var_27_3 = var_27_3 + 1
-			var_27_5 = true
+		if not (_selected_item_row > 1) or not arg_27_1:get("move_up_hold_continuous") then
+			_selected_item_row = _selected_item_row - 1
+			flag = true
+		elseif not (_selected_item_row < rows) or not arg_27_1:get("move_down_hold_continuous") then
+			_selected_item_row = _selected_item_row + 1
+			flag = true
 		end
 
-		if var_27_5 then
-			local var_27_6 = "_" .. tostring(var_27_3) .. "_" .. tostring(var_27_4)
-			local var_27_7 = var_27_0["hotspot" .. var_27_6]
-			local var_27_8 = var_27_0["item" .. var_27_6]
+		if not flag then
+			local str = "_" .. tostring(_selected_item_row) .. "_" .. tostring(_selected_item_column)
+			local var_27_7 = content["hotspot" .. str]
+			local var_27_8 = content["item" .. str]
 
-			if var_27_8 then
-				arg_27_0:set_item_selected(var_27_8)
+			if not var_27_8 then
+				self:set_item_selected(var_27_8)
 
 				return true
 			end
@@ -409,109 +445,113 @@ function ItemGridUI.handle_gamepad_selection(arg_27_0, arg_27_1)
 	end
 end
 
-function ItemGridUI.get_item_in_slot(arg_28_0, arg_28_1, arg_28_2)
-	local var_28_0 = arg_28_0._widget.content
-	local var_28_1 = var_28_0.rows
-	local var_28_2 = var_28_0.columns
+ItemGridUI.get_item_in_slot = function (self, arg_28_1, arg_28_2)
+	-- function 28
+	local content = self._widget.content
+	local rows = content.rows
+	local columns = content.columns
 
-	for iter_28_0 = 1, var_28_1 do
-		if iter_28_0 == arg_28_1 then
-			for iter_28_1 = 1, var_28_2 do
-				if iter_28_1 == arg_28_2 then
-					local var_28_3 = "_" .. tostring(iter_28_0) .. "_" .. tostring(iter_28_1)
+	for i = 1, rows do
+		if i == arg_28_1 then
+			for j = 1, columns do
+				if j == arg_28_2 then
+					local str = "_" .. tostring(i) .. "_" .. tostring(j)
 
-					return var_28_0["item" .. var_28_3]
+					return content["item" .. str]
 				end
 			end
 		end
 	end
 end
 
-function ItemGridUI.set_backend_id_selected(arg_29_0, arg_29_1)
-	local var_29_0 = Managers.backend:get_interface("items")
-	local var_29_1 = arg_29_1 and var_29_0:get_item_from_id(arg_29_1)
+ItemGridUI.set_backend_id_selected = function (self, arg_29_1)
+	-- function 29
+	local get_interface = Managers.backend:get_interface("items")
+	local flag = not arg_29_1 and get_interface:get_item_from_id(arg_29_1)
 
-	arg_29_0:set_item_selected(var_29_1)
+	self:set_item_selected(flag)
 end
 
-function ItemGridUI.selected_item(arg_30_0)
-	return arg_30_0._selected_item, arg_30_0._selected_item_equipped
+ItemGridUI.selected_item = function (self)
+	-- function 30
+	return self._selected_item, self._selected_item_equipped
 end
 
-function ItemGridUI.add_item_to_slot_index(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
-	local var_31_0 = arg_31_0._widget
-	local var_31_1 = var_31_0.content
-	local var_31_2 = var_31_0.style
-	local var_31_3 = var_31_1.rows
-	local var_31_4 = var_31_1.columns
-	local var_31_5 = math.floor((arg_31_1 - 1) / var_31_4) + 1
-	local var_31_6 = (arg_31_1 - 1) % var_31_4 + 1
-	local var_31_7 = "_" .. tostring(var_31_5) .. "_" .. tostring(var_31_6)
-	local var_31_8 = "item_icon" .. var_31_7
-	local var_31_9 = "amount_text" .. var_31_7
-	local var_31_10 = "locked_icon" .. var_31_7
-	local var_31_11 = var_31_1["hotspot" .. var_31_7]
-	local var_31_12 = var_31_2[var_31_8]
-	local var_31_13 = arg_31_2 and arg_31_2.backend_id
+ItemGridUI.add_item_to_slot_index = function (self, arg_31_1, arg_31_2, arg_31_3)
+	-- function 31
+	local _widget = self._widget
+	local content = _widget.content
+	local style = _widget.style
+	local rows = content.rows
+	local columns = content.columns
+	local num = math.floor((arg_31_1 - 1) / columns) + 1
+	local num_2 = (arg_31_1 - 1) % columns + 1
+	local str = "_" .. tostring(num) .. "_" .. tostring(num_2)
+	local str_2 = "item_icon" .. str
+	local str_3 = "amount_text" .. str
+	local str_4 = "locked_icon" .. str
+	local var_31_11 = content["hotspot" .. str]
+	local var_31_12 = style[str_2]
+	local flag = not arg_31_2 and arg_31_2.backend_id
 
-	var_31_1["item" .. var_31_7] = arg_31_2
+	content["item" .. str] = arg_31_2
 	var_31_11.item = arg_31_2
 
-	if arg_31_2 then
-		local var_31_14 = arg_31_2.data
-		local var_31_15 = Managers.backend:get_interface("items")
-		local var_31_16 = var_31_14.rarity
+	if not arg_31_2 then
+		local data = arg_31_2.data
+		local get_interface = Managers.backend:get_interface("items")
+		local rarity = data.rarity
 
-		if var_31_13 then
-			var_31_16 = var_31_15:get_item_rarity(var_31_13)
+		if not flag then
+			rarity = get_interface:get_item_rarity(flag)
 		end
 
-		local var_31_17, var_31_18, var_31_19 = UIUtils.get_ui_information_from_item(arg_31_2)
-		local var_31_20 = "rarity_texture" .. var_31_7
+		local get_ui_information_from_item, var_31_18, var_31_19 = UIUtils.get_ui_information_from_item(arg_31_2)
+		local str_5 = "rarity_texture" .. str
 
-		if var_31_2[var_31_20] then
-			var_31_1[var_31_20] = UISettings.item_rarity_textures[var_31_16]
+		if not style[str_5] then
+			content[str_5] = UISettings.item_rarity_textures[rarity]
 		end
 
 		local var_31_21
 
-		if var_31_13 then
-			var_31_21 = arg_31_3 or var_31_15:get_item_amount(var_31_13)
-		elseif arg_31_2.amount then
+		if not flag then
+			var_31_21 = arg_31_3 or get_interface:get_item_amount(flag)
+		elseif not arg_31_2.amount then
 			var_31_21 = arg_31_2.amount
 		end
 
-		if var_31_21 then
+		if not var_31_21 then
 			local var_31_22
 			local var_31_23
 			local var_31_24
-			local var_31_25
+			local num_3
 
-			if arg_31_2.insufficient_amount then
+			if not arg_31_2.insufficient_amount then
 				var_31_22 = 255
 				var_31_23 = 0
-				var_31_25 = 0
+				num_3 = 0
 			else
-				local var_31_26 = var_31_2[var_31_9].default_color
+				local default_color = style[str_3].default_color
 
-				var_31_22 = var_31_26[2]
-				var_31_23 = var_31_26[3]
-				var_31_25 = var_31_26[4]
+				var_31_22 = default_color[2]
+				var_31_23 = default_color[3]
+				num_3 = default_color[4]
 			end
 
-			local var_31_27 = var_31_2[var_31_9].text_color
+			local text_color = style[str_3].text_color
 
-			arg_31_0:_set_color_values(var_31_27, var_31_22, var_31_23, var_31_25)
+			self:_set_color_values(text_color, var_31_22, var_31_23, num_3)
 		else
 			var_31_21 = ""
 		end
 
-		var_31_1["item_tooltip" .. var_31_7] = var_31_18
-		var_31_11[var_31_8] = var_31_17
-		var_31_11[var_31_9] = var_31_14.can_stack and var_31_21 or ""
-		var_31_11[var_31_10] = arg_31_0._locked_item_icon
+		content["item_tooltip" .. str] = var_31_18
+		var_31_11[str_2] = get_ui_information_from_item
+		var_31_11[str_3] = not data.can_stack and var_31_21 and ""
+		var_31_11[str_4] = self._locked_item_icon
 
-		if not var_31_13 then
+		if not flag then
 			var_31_11.reserved = true
 			var_31_11.equipped = false
 			var_31_12.saturated = false
@@ -522,116 +562,119 @@ function ItemGridUI.add_item_to_slot_index(arg_31_0, arg_31_1, arg_31_2, arg_31_
 			var_31_11.disable_button = false
 		end
 
-		var_31_11.fake_item = var_31_13 == nil
+		var_31_11.fake_item = flag == nil
 	else
 		var_31_11.disable_button = true
-		var_31_11[var_31_8] = nil
-		var_31_11[var_31_9] = ""
+		var_31_11[str_2] = nil
+		var_31_11[str_3] = ""
 	end
 
-	if arg_31_0._mark_locked_items then
-		arg_31_0:mark_locked_items(true)
+	if not self._mark_locked_items then
+		self:mark_locked_items(true)
 	end
 end
 
-function ItemGridUI._set_color_values(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+ItemGridUI._set_color_values = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+	-- function 32
 	arg_32_1[2] = arg_32_2
 	arg_32_1[3] = arg_32_3
 	arg_32_1[4] = arg_32_4
 end
 
-function ItemGridUI.repopulate_current_inventory_page(arg_33_0)
-	local var_33_0 = arg_33_0._widget
-	local var_33_1 = var_33_0.content
-	local var_33_2 = arg_33_0._items
-	local var_33_3 = arg_33_0._selected_page_index
-	local var_33_4 = arg_33_0._total_item_pages
-	local var_33_5 = var_33_1.slots
-	local var_33_6 = (var_33_3 - 1) * var_33_5 + 1
+ItemGridUI.repopulate_current_inventory_page = function (self)
+	-- function 33
+	local _widget = self._widget
+	local content = _widget.content
+	local _items = self._items
+	local _selected_page_index = self._selected_page_index
+	local _total_item_pages = self._total_item_pages
+	local slots = content.slots
+	local num = (_selected_page_index - 1) * slots + 1
 
-	arg_33_0:_populate_inventory_page(var_33_2, var_33_6)
+	self:_populate_inventory_page(_items, num)
 
-	var_33_0.content.page_text = var_33_3 .. "/" .. var_33_4
-	arg_33_0._selected_page_index = var_33_3
+	_widget.content.page_text = _selected_page_index .. "/" .. _total_item_pages
+	self._selected_page_index = _selected_page_index
 end
 
-function ItemGridUI._populate_inventory_page(arg_34_0, arg_34_1, arg_34_2)
-	local var_34_0 = arg_34_0._widget
-	local var_34_1 = var_34_0.content
-	local var_34_2 = var_34_0.style
-	local var_34_3 = var_34_1.rows
-	local var_34_4 = var_34_1.columns
+ItemGridUI._populate_inventory_page = function (self, arg_34_1, arg_34_2)
+	-- function 34
+	local _widget = self._widget
+	local content = _widget.content
+	local style = _widget.style
+	local rows = content.rows
+	local columns = content.columns
 	local var_34_5 = arg_34_2
 
-	for iter_34_0 = 1, var_34_3 do
-		for iter_34_1 = 1, var_34_4 do
-			local var_34_6 = "_" .. tostring(iter_34_0) .. "_" .. tostring(iter_34_1)
-			local var_34_7 = "item_icon" .. var_34_6
-			local var_34_8 = "amount_text" .. var_34_6
-			local var_34_9 = "locked_icon" .. var_34_6
-			local var_34_10 = var_34_1["hotspot" .. var_34_6]
-			local var_34_11 = var_34_2[var_34_7]
+	for i = 1, rows do
+		for j = 1, columns do
+			local str = "_" .. tostring(i) .. "_" .. tostring(j)
+			local str_2 = "item_icon" .. str
+			local str_3 = "amount_text" .. str
+			local str_4 = "locked_icon" .. str
+			local var_34_10 = content["hotspot" .. str]
+			local var_34_11 = style[str_2]
 			local var_34_12 = arg_34_1[var_34_5]
-			local var_34_13 = var_34_12 and var_34_12.backend_id
+			local flag = not var_34_12 and var_34_12.backend_id
 
-			var_34_1["item" .. var_34_6] = var_34_13 and var_34_12
-			var_34_10.item = var_34_13 and var_34_12
+			content["item" .. str] = not flag and var_34_12
+			var_34_10.item = not flag and var_34_12
 
-			if var_34_12 then
-				local var_34_14 = var_34_12.data
-				local var_34_15 = var_34_14.rarity
-				local var_34_16 = Managers.backend:get_interface("items")
+			if not var_34_12 then
+				local data = var_34_12.data
+				local rarity = data.rarity
+				local get_interface = Managers.backend:get_interface("items")
 
-				if var_34_13 then
-					var_34_15 = var_34_16:get_item_rarity(var_34_13)
+				if not flag then
+					rarity = get_interface:get_item_rarity(flag)
 				end
 
-				local var_34_17, var_34_18, var_34_19 = UIUtils.get_ui_information_from_item(var_34_12)
-				local var_34_20 = "rarity_texture" .. var_34_6
+				local get_ui_information_from_item, var_34_18, var_34_19 = UIUtils.get_ui_information_from_item(var_34_12)
+				local str_5 = "rarity_texture" .. str
 
-				if var_34_2[var_34_20] then
-					var_34_1[var_34_20] = UISettings.item_rarity_textures[var_34_15]
+				if not style[str_5] then
+					content[str_5] = UISettings.item_rarity_textures[rarity]
 				end
 
 				local var_34_21
 
-				if var_34_13 then
-					var_34_21 = var_34_16:get_item_amount(var_34_13)
-				elseif var_34_12.amount then
+				if not flag then
+					var_34_21 = get_interface:get_item_amount(flag)
+				elseif not var_34_12.amount then
 					var_34_21 = var_34_12.amount
 				end
 
-				if var_34_21 then
+				if not var_34_21 then
 					local var_34_22
 					local var_34_23
 					local var_34_24
-					local var_34_25
+					local num
 
-					if var_34_12.insufficient_amount then
+					if not var_34_12.insufficient_amount then
 						var_34_22 = 255
 						var_34_23 = 0
-						var_34_25 = 0
+						num = 0
 					else
-						local var_34_26 = var_34_2[var_34_8].default_color
+						local default_color = style[str_3].default_color
 
-						var_34_22 = var_34_26[2]
-						var_34_23 = var_34_26[3]
-						var_34_25 = var_34_26[4]
+						var_34_22 = default_color[2]
+						var_34_23 = default_color[3]
+						num = default_color[4]
 					end
 
-					local var_34_27 = var_34_2[var_34_8].text_color
+					local text_color = style[str_3].text_color
 
-					arg_34_0:_set_color_values(var_34_27, var_34_22, var_34_23, var_34_25)
+					self:_set_color_values(text_color, var_34_22, var_34_23, num)
 				else
 					var_34_21 = ""
 				end
 
-				var_34_1["item_tooltip" .. var_34_6] = var_34_18
-				var_34_10[var_34_7] = var_34_17
-				var_34_10[var_34_8] = var_34_14.can_stack and var_34_21 or ""
-				var_34_10[var_34_9] = arg_34_0._locked_item_icon
+				content["item_tooltip" .. str] = var_34_18
+				var_34_10[str_2] = get_ui_information_from_item
+				var_34_10[str_3] = not data.can_stack and var_34_21 and ""
+				var_34_10[str_4] = self._locked_item_icon
 
-				if not var_34_13 then
+				if not flag then
 					var_34_10.reserved = true
 					var_34_10.equipped = false
 					var_34_11.saturated = true
@@ -644,46 +687,47 @@ function ItemGridUI._populate_inventory_page(arg_34_0, arg_34_1, arg_34_2)
 
 				var_34_5 = var_34_5 + 1
 			else
-				var_34_10[var_34_7] = nil
-				var_34_10[var_34_8] = ""
+				var_34_10[str_2] = nil
+				var_34_10[str_3] = ""
 			end
 		end
 	end
 
-	if arg_34_0._mark_equipped_items then
-		arg_34_0:mark_equipped_items(true)
+	if not self._mark_equipped_items then
+		self:mark_equipped_items(true)
 	end
 
-	if arg_34_0._mark_locked_items then
-		arg_34_0:mark_locked_items(true)
+	if not self._mark_locked_items then
+		self:mark_locked_items(true)
 	end
 
-	local var_34_28 = Managers.backend:get_interface("items")
+	local get_interface_2 = Managers.backend:get_interface("items")
 
-	if arg_34_0._selected_item and var_34_28:get_item_from_id(arg_34_0._selected_item.backend_id) then
-		arg_34_0:set_item_selected(arg_34_0._selected_item)
+	if not self._selected_item and not get_interface_2:get_item_from_id(self._selected_item.backend_id) then
+		self:set_item_selected(self._selected_item)
 	end
 end
 
-function ItemGridUI.clear_item_grid(arg_35_0)
-	local var_35_0 = arg_35_0._widget
-	local var_35_1 = var_35_0.content
-	local var_35_2 = var_35_0.style
-	local var_35_3 = var_35_1.rows
-	local var_35_4 = var_35_1.columns
+ItemGridUI.clear_item_grid = function (self)
+	-- function 35
+	local _widget = self._widget
+	local content = _widget.content
+	local style = _widget.style
+	local rows = content.rows
+	local columns = content.columns
 
-	for iter_35_0 = 1, var_35_3 do
-		for iter_35_1 = 1, var_35_4 do
-			local var_35_5 = "_" .. tostring(iter_35_0) .. "_" .. tostring(iter_35_1)
-			local var_35_6 = "item_icon" .. var_35_5
-			local var_35_7 = "amount_text" .. var_35_5
-			local var_35_8 = var_35_1["hotspot" .. var_35_5]
-			local var_35_9 = var_35_2[var_35_6]
+	for i = 1, rows do
+		for j = 1, columns do
+			local str = "_" .. tostring(i) .. "_" .. tostring(j)
+			local str_2 = "item_icon" .. str
+			local str_3 = "amount_text" .. str
+			local var_35_8 = content["hotspot" .. str]
+			local var_35_9 = style[str_2]
 
-			var_35_1["item" .. var_35_5] = nil
+			content["item" .. str] = nil
 			var_35_8.item = nil
-			var_35_8[var_35_6] = nil
-			var_35_8[var_35_7] = ""
+			var_35_8[str_2] = nil
+			var_35_8[str_3] = ""
 			var_35_8.equipped = false
 			var_35_8.drag_disabled = false
 			var_35_8.disable_button = true
@@ -692,311 +736,350 @@ function ItemGridUI.clear_item_grid(arg_35_0)
 	end
 end
 
-function ItemGridUI._on_category_index_change(arg_36_0, arg_36_1, arg_36_2)
-	local var_36_0 = arg_36_0._category_settings[arg_36_1]
-	local var_36_1 = var_36_0.display_name
-	local var_36_2 = var_36_0.item_filter
-	local var_36_3 = var_36_0.slot_type
-	local var_36_4 = var_36_0.hero_specific_filter
-	local var_36_5 = var_36_0.career_specific_filter
+ItemGridUI._on_category_index_change = function (self, arg_36_1, arg_36_2)
+	-- function 36
+	local var_36_0 = self._category_settings[arg_36_1]
+	local display_name = var_36_0.display_name
+	local item_filter = var_36_0.item_filter
+	local slot_type = var_36_0.slot_type
+	local hero_specific_filter = var_36_0.hero_specific_filter
+	local career_specific_filter = var_36_0.career_specific_filter
 
-	if var_36_4 then
-		local var_36_6 = var_36_2 and "and " .. var_36_2 or ""
+	if not hero_specific_filter then
+		local str
 
-		var_36_2 = "can_wield_by_current_hero " .. var_36_6
+		if not item_filter then
+			str = "and " .. item_filter
+
+			if not str then
+				-- Nothing
+			end
+		end
+
+		str = ""
+
+		::label_36_0::
+
+		item_filter = "can_wield_by_current_hero " .. str
 	end
 
-	if var_36_0.wield then
-		arg_36_0:disable_unwieldable_items(true)
+	if not var_36_0.wield then
+		self:disable_unwieldable_items(true)
 	end
 
-	local var_36_7 = arg_36_0._selected_page_index or 1
+	local _selected_page_index = self._selected_page_index
 
-	arg_36_0:change_item_filter(var_36_2, not arg_36_2)
+	_selected_page_index = _selected_page_index or 1
 
-	arg_36_0._widget.content.title_text = var_36_1
+	self:change_item_filter(item_filter, not arg_36_2)
 
-	if arg_36_2 then
-		local var_36_8 = math.min(var_36_7, arg_36_0._total_item_pages)
+	self._widget.content.title_text = display_name
 
-		arg_36_0:set_item_page(var_36_8)
+	if not arg_36_2 then
+		local min = math.min(_selected_page_index, self._total_item_pages)
+
+		self:set_item_page(min)
 	end
 end
 
-local var_0_1 = {}
+local tbl = {}
 
-function ItemGridUI._apply_search_query(arg_37_0, arg_37_1, arg_37_2)
-	local var_37_0 = Utf8.lower(arg_37_2)
+ItemGridUI._apply_search_query = function (arg_37_0, arg_37_1, arg_37_2)
+	-- function 37
+	local lower = Utf8.lower(arg_37_2)
 
-	table.clear(var_0_1)
+	table.clear(tbl)
 
-	for iter_37_0 = 1, #arg_37_1 do
-		local var_37_1 = arg_37_1[iter_37_0]
-		local var_37_2 = var_37_1.data
-		local var_37_3 = Utf8.lower(Localize(var_37_2.item_type))
-		local var_37_4, var_37_5 = UIUtils.get_ui_information_from_item(var_37_1)
-		local var_37_6 = Utf8.lower(Localize(var_37_5))
+	for i = 1, #arg_37_1 do
+		local var_37_1 = arg_37_1[i]
+		local data = var_37_1.data
+		local lower_2 = Utf8.lower(Localize(data.item_type))
+		local get_ui_information_from_item, var_37_5 = UIUtils.get_ui_information_from_item(var_37_1)
+		local lower_3 = Utf8.lower(Localize(var_37_5))
 
-		if var_37_3:find(var_37_0) then
-			var_0_1[#var_0_1 + 1] = var_37_1
-		elseif var_37_6:find(var_37_0) then
-			var_0_1[#var_0_1 + 1] = var_37_1
+		if not lower_2:find(lower) then
+			tbl[#tbl + 1] = var_37_1
+		elseif not lower_3:find(lower) then
+			tbl[#tbl + 1] = var_37_1
 		end
 	end
 
-	local var_37_7 = var_0_1
+	local var_37_7 = tbl
 
-	return var_0_1
+	return tbl
 end
 
-function ItemGridUI.change_item_filter(arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+ItemGridUI.change_item_filter = function (self, arg_38_1, arg_38_2, arg_38_3)
+	-- function 38
 	arg_38_1 = "available_in_current_mechanism and ( " .. arg_38_1 .. " )"
 
-	local var_38_0 = arg_38_0:_get_items_by_filter("can_wield_by_current_career and ( " .. arg_38_1 .. " )")
-	local var_38_1 = arg_38_0:_get_items_by_filter("not can_wield_by_current_career and ( " .. arg_38_1 .. " )")
-	local var_38_2 = arg_38_0._item_sort_func
+	local _get_items_by_filter = self:_get_items_by_filter("can_wield_by_current_career and ( " .. arg_38_1 .. " )")
+	local _get_items_by_filter_2 = self:_get_items_by_filter("not can_wield_by_current_career and ( " .. arg_38_1 .. " )")
+	local _item_sort_func = self._item_sort_func
 
-	if var_38_2 then
-		arg_38_0:_sort_items(var_38_0, var_38_2)
-		arg_38_0:_sort_items(var_38_1, var_38_2)
+	if not _item_sort_func then
+		self:_sort_items(_get_items_by_filter, _item_sort_func)
+		self:_sort_items(_get_items_by_filter_2, _item_sort_func)
 	end
 
-	local var_38_3 = var_38_0
+	local var_38_3 = _get_items_by_filter
 
-	for iter_38_0, iter_38_1 in pairs(var_38_1) do
-		var_38_3[#var_38_3 + 1] = iter_38_1
+	for k, v in pairs(_get_items_by_filter_2) do
+		var_38_3[#var_38_3 + 1] = v
 	end
 
-	if arg_38_3 then
-		var_38_3 = arg_38_0:_apply_search_query(var_38_3, arg_38_3)
+	if not arg_38_3 then
+		var_38_3 = self:_apply_search_query(var_38_3, arg_38_3)
 	end
 
-	arg_38_0._items = var_38_3
+	self._items = var_38_3
 
-	local var_38_4 = arg_38_0._widget.content.slots
-	local var_38_5 = #var_38_3
+	local slots = self._widget.content.slots
+	local count = #var_38_3
 
-	arg_38_0._total_item_pages = math.max(math.ceil(var_38_5 / var_38_4), 1)
+	self._total_item_pages = math.max(math.ceil(count / slots), 1)
 
-	if arg_38_2 then
-		local var_38_6 = 1
+	if not arg_38_2 then
+		local num = 1
 
-		arg_38_0:set_item_page(var_38_6)
+		self:set_item_page(num)
 	end
 end
 
-function ItemGridUI._sort_items(arg_39_0, arg_39_1, arg_39_2)
-	if arg_39_2 and #arg_39_1 > 1 then
+ItemGridUI._sort_items = function (arg_39_0, arg_39_1, arg_39_2)
+	-- function 39
+	if not (not arg_39_2 and not (#arg_39_1 > 1)) then
 		table.sort(arg_39_1, arg_39_2)
 	end
 end
 
-function ItemGridUI._get_items_by_filter(arg_40_0, arg_40_1)
-	return (Managers.backend:get_interface("items"):get_filtered_items(arg_40_1, arg_40_0._params))
+ItemGridUI._get_items_by_filter = function (self, arg_40_1)
+	-- function 40
+	return (Managers.backend:get_interface("items"):get_filtered_items(arg_40_1, self._params))
 end
 
-function ItemGridUI._get_slot_by_ui_index(arg_41_0, arg_41_1)
-	local var_41_0 = InventorySettings.slots
+ItemGridUI._get_slot_by_ui_index = function (arg_41_0, arg_41_1)
+	-- function 41
+	local slots = InventorySettings.slots
 
-	for iter_41_0, iter_41_1 in pairs(var_41_0) do
-		if arg_41_1 == iter_41_1.ui_slot_index then
-			return iter_41_1
+	for k, v in pairs(slots) do
+		if arg_41_1 == v.ui_slot_index then
+			return v
 		end
 	end
 end
 
-function ItemGridUI._handle_page_arrow_pressed(arg_42_0)
-	local var_42_0 = arg_42_0._selected_page_index or 0
-	local var_42_1 = arg_42_0._total_item_pages
-	local var_42_2 = var_42_1 == 0
-	local var_42_3 = arg_42_0._widget.content
-	local var_42_4 = var_42_3.page_hotspot_left
-	local var_42_5 = var_42_3.page_hotspot_right
+ItemGridUI._handle_page_arrow_pressed = function (self)
+	-- function 42
+	local _selected_page_index = self._selected_page_index
 
-	if not var_42_4 and not var_42_5 then
+	_selected_page_index = _selected_page_index or 0
+
+	local _total_item_pages = self._total_item_pages
+	local flag = _total_item_pages == 0
+	local content = self._widget.content
+	local page_hotspot_left = content.page_hotspot_left
+	local page_hotspot_right = content.page_hotspot_right
+
+	if not (page_hotspot_left or page_hotspot_right) then
 		return
 	end
 
-	var_42_4.disable_button = var_42_2 or var_42_0 <= 1
-	var_42_5.disable_button = var_42_2 or var_42_0 == var_42_1
+	page_hotspot_left.disable_button = flag or _selected_page_index <= 1
+	page_hotspot_right.disable_button = flag or _selected_page_index == _total_item_pages
 
-	if not arg_42_0._selected_page_index or not arg_42_0._total_item_pages then
+	if not (not self._selected_page_index and self._total_item_pages) then
 		return
 	end
 
 	local var_42_6
 
-	if var_42_4 and var_42_4.on_release then
-		var_42_6 = math.max(var_42_0 - 1, 1)
-	elseif var_42_5 and var_42_5.on_release then
-		var_42_6 = math.min(var_42_0 + 1, var_42_1)
+	if not page_hotspot_left and not page_hotspot_left.on_release then
+		var_42_6 = math.max(_selected_page_index - 1, 1)
+	elseif not page_hotspot_right and not page_hotspot_right.on_release then
+		var_42_6 = math.min(_selected_page_index + 1, _total_item_pages)
 	end
 
-	if var_42_6 and var_42_6 ~= var_42_0 then
-		arg_42_0:set_item_page(var_42_6)
+	if not (not var_42_6 and var_42_6 == _selected_page_index) then
+		self:set_item_page(var_42_6)
 
 		return true
 	end
 end
 
-function ItemGridUI.is_item_pressed(arg_43_0, arg_43_1)
-	local var_43_0 = arg_43_0._widget.content
-	local var_43_1 = var_43_0.rows
-	local var_43_2 = var_43_0.columns
-	local var_43_3 = arg_43_0._disable_locked_items
-	local var_43_4 = arg_43_0._disable_unwieldable_items
+ItemGridUI.is_item_pressed = function (self, arg_43_1)
+	-- function 43
+	local content = self._widget.content
+	local rows = content.rows
+	local columns = content.columns
+	local _disable_locked_items = self._disable_locked_items
+	local _disable_unwieldable_items = self._disable_unwieldable_items
 
-	for iter_43_0 = 1, var_43_1 do
-		for iter_43_1 = 1, var_43_2 do
-			local var_43_5 = "_" .. tostring(iter_43_0) .. "_" .. tostring(iter_43_1)
-			local var_43_6 = var_43_0["hotspot" .. var_43_5]
-			local var_43_7 = var_43_3 and var_43_6.reserved
-			local var_43_8 = var_43_4 and var_43_6.unwieldable
+	for i = 1, rows do
+		for j = 1, columns do
+			local str = "_" .. tostring(i) .. "_" .. tostring(j)
+			local var_43_6 = content["hotspot" .. str]
+			local flag = not _disable_locked_items and var_43_6.reserved
+			local flag_2 = not _disable_unwieldable_items and var_43_6.unwieldable
 
-			if not var_43_7 and not var_43_8 and (var_43_6.on_double_click or var_43_6.on_right_click or arg_43_1 and var_43_6.on_pressed) then
-				local var_43_9 = var_43_0["item" .. var_43_5]
-				local var_43_10 = var_43_6.equipped
+			if flag or flag_2 or var_43_6.on_double_click or var_43_6.on_right_click or not arg_43_1 or not var_43_6.on_pressed then
+				local var_43_9 = content["item" .. str]
+				local equipped = var_43_6.equipped
 
-				return var_43_9, var_43_10
+				return var_43_9, equipped
 			end
 		end
 	end
 end
 
-function ItemGridUI.is_item_hovered(arg_44_0)
-	local var_44_0 = arg_44_0._widget.content
-	local var_44_1 = var_44_0.rows
-	local var_44_2 = var_44_0.columns
+ItemGridUI.is_item_hovered = function (self)
+	-- function 44
+	local content = self._widget.content
+	local rows = content.rows
+	local columns = content.columns
 
-	for iter_44_0 = 1, var_44_1 do
-		for iter_44_1 = 1, var_44_2 do
-			local var_44_3 = "_" .. tostring(iter_44_0) .. "_" .. tostring(iter_44_1)
+	for i = 1, rows do
+		for j = 1, columns do
+			local str = "_" .. tostring(i) .. "_" .. tostring(j)
 
-			if var_44_0["hotspot" .. var_44_3].on_hover_enter then
-				return var_44_0["item" .. var_44_3]
+			if not content["hotspot" .. str].on_hover_enter then
+				return content["item" .. str]
 			end
 		end
 	end
 end
 
-function ItemGridUI.get_item_hovered(arg_45_0)
-	local var_45_0 = arg_45_0._widget.content
-	local var_45_1 = var_45_0.rows
-	local var_45_2 = var_45_0.columns
+ItemGridUI.get_item_hovered = function (self)
+	-- function 45
+	local content = self._widget.content
+	local rows = content.rows
+	local columns = content.columns
 
-	for iter_45_0 = 1, var_45_1 do
-		for iter_45_1 = 1, var_45_2 do
-			local var_45_3 = "_" .. tostring(iter_45_0) .. "_" .. tostring(iter_45_1)
-			local var_45_4 = var_45_0["hotspot" .. var_45_3]
+	for i = 1, rows do
+		for j = 1, columns do
+			local str = "_" .. tostring(i) .. "_" .. tostring(j)
+			local var_45_4 = content["hotspot" .. str]
 
-			if var_45_4.internal_is_hover then
-				local var_45_5 = var_45_0["item" .. var_45_3]
-				local var_45_6 = var_45_4.equipped
+			if not var_45_4.internal_is_hover then
+				local var_45_5 = content["item" .. str]
+				local equipped = var_45_4.equipped
 
-				return var_45_5, var_45_6
+				return var_45_5, equipped
 			end
 		end
 	end
 end
 
-function ItemGridUI.get_item_hovered_slot(arg_46_0)
-	local var_46_0 = arg_46_0._widget.content
-	local var_46_1 = var_46_0.rows
-	local var_46_2 = var_46_0.columns
+ItemGridUI.get_item_hovered_slot = function (self)
+	-- function 46
+	local content = self._widget.content
+	local rows = content.rows
+	local columns = content.columns
 
-	for iter_46_0 = 1, var_46_1 do
-		for iter_46_1 = 1, var_46_2 do
-			local var_46_3 = "_" .. tostring(iter_46_0) .. "_" .. tostring(iter_46_1)
+	for i = 1, rows do
+		for j = 1, columns do
+			local str = "_" .. tostring(i) .. "_" .. tostring(j)
 
-			if var_46_0["hotspot" .. var_46_3].internal_is_hover then
-				return iter_46_0, iter_46_1
+			if not content["hotspot" .. str].internal_is_hover then
+				return i, j
 			end
 		end
 	end
 end
 
-function ItemGridUI.get_item_content(arg_47_0, arg_47_1, arg_47_2)
-	local var_47_0 = arg_47_0._widget.content
-	local var_47_1 = "_" .. tostring(arg_47_1) .. "_" .. tostring(arg_47_2)
+ItemGridUI.get_item_content = function (self, arg_47_1, arg_47_2)
+	-- function 47
+	local content = self._widget.content
+	local str = "_" .. tostring(arg_47_1) .. "_" .. tostring(arg_47_2)
 
-	return var_47_0["hotspot" .. var_47_1]
+	return content["hotspot" .. str]
 end
 
-function ItemGridUI.is_slot_hovered(arg_48_0)
-	local var_48_0 = arg_48_0._widget.content
-	local var_48_1 = var_48_0.rows
-	local var_48_2 = var_48_0.columns
+ItemGridUI.is_slot_hovered = function (self)
+	-- function 48
+	local content = self._widget.content
+	local rows = content.rows
+	local columns = content.columns
 
-	for iter_48_0 = 1, var_48_1 do
-		for iter_48_1 = 1, var_48_2 do
-			local var_48_3 = "_" .. tostring(iter_48_0) .. "_" .. tostring(iter_48_1)
+	for i = 1, rows do
+		for j = 1, columns do
+			local str = "_" .. tostring(i) .. "_" .. tostring(j)
 
-			if var_48_0["hotspot" .. var_48_3].internal_is_hover then
-				return (iter_48_0 - 1) * var_48_1 + iter_48_1
+			if not content["hotspot" .. str].internal_is_hover then
+				return (i - 1) * rows + j
 			end
 		end
 	end
 end
 
-function ItemGridUI.highlight_slots(arg_49_0, arg_49_1, arg_49_2)
-	local var_49_0 = arg_49_0._widget
-	local var_49_1 = var_49_0.content
-	local var_49_2 = var_49_0.style
-	local var_49_3 = var_49_1.rows
-	local var_49_4 = var_49_1.columns
+ItemGridUI.highlight_slots = function (self, arg_49_1, arg_49_2)
+	-- function 49
+	local _widget = self._widget
+	local content = _widget.content
+	local style = _widget.style
+	local rows = content.rows
+	local columns = content.columns
 
-	for iter_49_0 = 1, var_49_3 do
-		for iter_49_1 = 1, var_49_4 do
-			local var_49_5 = "_" .. tostring(iter_49_0) .. "_" .. tostring(iter_49_1)
-			local var_49_6 = "hotspot" .. var_49_5
-			local var_49_7 = "slot_hover" .. var_49_5
+	for i = 1, rows do
+		for j = 1, columns do
+			local str = "_" .. tostring(i) .. "_" .. tostring(j)
+			local str_2 = "hotspot" .. str
+			local str_3 = "slot_hover" .. str
 
-			var_49_1[var_49_6].highlight = arg_49_1
-			var_49_2[var_49_7].color[1] = arg_49_1 and (arg_49_2 or 255) or 255
+			content[str_2].highlight = arg_49_1
+
+			local color = style[str_3].color
+			local flag
+
+			flag = not arg_49_1 and arg_49_2 and 255 and 255
+			color[1] = flag
 		end
 	end
 end
 
-function ItemGridUI.highlight_drop_slots(arg_50_0, arg_50_1)
-	local var_50_0 = arg_50_0._widget
-	local var_50_1 = var_50_0.content
-	local var_50_2 = var_50_0.style
-	local var_50_3 = var_50_1.rows
-	local var_50_4 = var_50_1.columns
+ItemGridUI.highlight_drop_slots = function (self, arg_50_1)
+	-- function 50
+	local _widget = self._widget
+	local content = _widget.content
+	local style = _widget.style
+	local rows = content.rows
+	local columns = content.columns
 
-	for iter_50_0 = 1, var_50_3 do
-		for iter_50_1 = 1, var_50_4 do
-			local var_50_5 = "_" .. tostring(iter_50_0) .. "_" .. tostring(iter_50_1)
-			local var_50_6 = "hotspot" .. var_50_5
-			local var_50_7 = "item_icon" .. var_50_5
-			local var_50_8 = "slot_hover" .. var_50_5
-			local var_50_9 = var_50_1[var_50_6]
+	for i = 1, rows do
+		for j = 1, columns do
+			local str = "_" .. tostring(i) .. "_" .. tostring(j)
+			local str_2 = "hotspot" .. str
+			local str_3 = "item_icon" .. str
+			local str_4 = "slot_hover" .. str
+			local var_50_9 = content[str_2]
 
 			var_50_9.highlight = arg_50_1
 
-			local var_50_10 = var_50_9.internal_is_hover and 255 or 100
+			local flag
 
-			var_50_2[var_50_8].color[1] = arg_50_1 and var_50_10 or 255
+			flag = not var_50_9.internal_is_hover and 255 and 100
+			style[str_4].color[1] = not arg_50_1 and flag and 255
 		end
 	end
 end
 
-function ItemGridUI.is_item_dragged(arg_51_0)
-	local var_51_0 = arg_51_0._widget.content
-	local var_51_1 = var_51_0.rows
-	local var_51_2 = var_51_0.columns
+ItemGridUI.is_item_dragged = function (self)
+	-- function 51
+	local content = self._widget.content
+	local rows = content.rows
+	local columns = content.columns
 	local var_51_3
 	local var_51_4
 
-	for iter_51_0 = 1, var_51_1 do
-		for iter_51_1 = 1, var_51_2 do
-			local var_51_5 = "_" .. tostring(iter_51_0) .. "_" .. tostring(iter_51_1)
-			local var_51_6 = "hotspot" .. var_51_5
-			local var_51_7 = "item_icon" .. var_51_5
-			local var_51_8 = var_51_0[var_51_6]
+	for i = 1, rows do
+		for j = 1, columns do
+			local str = "_" .. tostring(i) .. "_" .. tostring(j)
+			local str_2 = "hotspot" .. str
+			local str_3 = "item_icon" .. str
+			local var_51_8 = content[str_2]
 
-			if var_51_8[var_51_7] and var_51_8.on_drag_stopped then
-				var_51_3 = var_51_0["item" .. var_51_5]
+			if not var_51_8[str_3] and not var_51_8.on_drag_stopped then
+				var_51_3 = content["item" .. str]
 
 				break
 			end
@@ -1006,21 +1089,22 @@ function ItemGridUI.is_item_dragged(arg_51_0)
 	return var_51_3
 end
 
-function ItemGridUI.is_dragging_item(arg_52_0)
-	local var_52_0 = arg_52_0._widget.content
-	local var_52_1 = var_52_0.rows
-	local var_52_2 = var_52_0.columns
+ItemGridUI.is_dragging_item = function (self)
+	-- function 52
+	local content = self._widget.content
+	local rows = content.rows
+	local columns = content.columns
 	local var_52_3
 
-	for iter_52_0 = 1, var_52_1 do
-		for iter_52_1 = 1, var_52_2 do
-			local var_52_4 = "_" .. tostring(iter_52_0) .. "_" .. tostring(iter_52_1)
-			local var_52_5 = "hotspot" .. var_52_4
-			local var_52_6 = "item_icon" .. var_52_4
-			local var_52_7 = var_52_0[var_52_5]
+	for i = 1, rows do
+		for j = 1, columns do
+			local str = "_" .. tostring(i) .. "_" .. tostring(j)
+			local str_2 = "hotspot" .. str
+			local str_3 = "item_icon" .. str
+			local var_52_7 = content[str_2]
 
-			if var_52_7[var_52_6] and var_52_7.is_dragging then
-				var_52_3 = var_52_0["item" .. var_52_4]
+			if not var_52_7[str_3] and not var_52_7.is_dragging then
+				var_52_3 = content["item" .. str]
 
 				break
 			end
@@ -1030,14 +1114,17 @@ function ItemGridUI.is_dragging_item(arg_52_0)
 	return var_52_3
 end
 
-function ItemGridUI.update(arg_53_0, arg_53_1, arg_53_2)
-	local var_53_0 = arg_53_0:_handle_page_arrow_pressed()
+ItemGridUI.update = function (self, arg_53_1, arg_53_2)
+	-- function 53
+	local _handle_page_arrow_pressed = self:_handle_page_arrow_pressed()
 end
 
-function ItemGridUI.destroy(arg_54_0)
+ItemGridUI.destroy = function (arg_54_0)
+	-- function 54
 	return
 end
 
-function ItemGridUI.get_selected_item_grid_slot(arg_55_0)
-	return arg_55_0._selected_item_row, arg_55_0._selected_item_column
+ItemGridUI.get_selected_item_grid_slot = function (self)
+	-- function 55
+	return self._selected_item_row, self._selected_item_column
 end

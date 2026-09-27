@@ -1,24 +1,27 @@
 -- chunkname: @scripts/ui/dlc_versus/views/start_game_view/windows/definitions/start_game_window_host_versus_additional_settings_definitions.lua
 
-local var_0_0 = UISettings.game_start_windows.size
-local var_0_1 = {
-	var_0_0[1] - 20,
+local size = UISettings.game_start_windows.size
+local tbl = {
+	size[1] - 20,
 	30
 }
-local var_0_2 = {
+local tbl_2 = {
 	on_enter = {
 		{
 			name = "fade_in",
 			duration = 0.2,
-			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+				-- function 1
 				arg_1_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
-				local var_2_0 = math.easeOutCubic(arg_2_3)
+			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+				-- function 2
+				local easeOutCubic = math.easeOutCubic(arg_2_3)
 
-				arg_2_4.render_settings.alpha_multiplier = var_2_0
+				arg_2_4.render_settings.alpha_multiplier = easeOutCubic
 			end,
-			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+				-- function 3
 				return
 			end
 		}
@@ -27,21 +30,24 @@ local var_0_2 = {
 		{
 			name = "fade_out",
 			duration = 0.3,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				-- function 4
 				arg_4_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
-				local var_5_0 = math.easeOutCubic(arg_5_3)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+				-- function 5
+				local easeOutCubic = math.easeOutCubic(arg_5_3)
 
-				arg_5_4.render_settings.alpha_multiplier = 1 - var_5_0
+				arg_5_4.render_settings.alpha_multiplier = 1 - easeOutCubic
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+				-- function 6
 				return
 			end
 		}
 	}
 }
-local var_0_3 = {
+local tbl_3 = {
 	root = {
 		is_root = true,
 		size = {
@@ -84,7 +90,7 @@ local var_0_3 = {
 		vertical_alignment = "bottom",
 		parent = "menu_root",
 		horizontal_alignment = "right",
-		size = var_0_0,
+		size = size,
 		position = {
 			-100,
 			-400,
@@ -96,7 +102,7 @@ local var_0_3 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_1[1],
+			tbl[1],
 			260
 		},
 		position = {
@@ -110,7 +116,7 @@ local var_0_3 = {
 		parent = "additional_option",
 		horizontal_alignment = "left",
 		size = {
-			var_0_1[1],
+			tbl[1],
 			50
 		},
 		position = {
@@ -124,7 +130,7 @@ local var_0_3 = {
 		parent = "title_text",
 		horizontal_alignment = "left",
 		size = {
-			var_0_1[1],
+			tbl[1],
 			5
 		},
 		position = {
@@ -139,7 +145,7 @@ local var_0_3 = {
 		horizontal_alignment = "center",
 		size = {
 			16,
-			var_0_0[2]
+			size[2]
 		},
 		position = {
 			195,
@@ -153,7 +159,7 @@ local var_0_3 = {
 		horizontal_alignment = "center",
 		size = {
 			16,
-			var_0_0[2]
+			size[2]
 		},
 		position = {
 			-195,
@@ -166,12 +172,12 @@ local var_0_3 = {
 		parent = "additional_option",
 		horizontal_alignment = "center",
 		size = {
-			var_0_1[1] - 20,
-			var_0_1[2]
+			tbl[1] - 20,
+			tbl[2]
 		},
 		position = {
 			0,
-			-(var_0_1[2] + 5) * 3 - 25,
+			-(tbl[2] + 5) * 3 - 25,
 			10
 		}
 	},
@@ -180,8 +186,8 @@ local var_0_3 = {
 		parent = "option_1",
 		horizontal_alignment = "center",
 		size = {
-			var_0_1[1] - 20,
-			var_0_1[2] + 5
+			tbl[1] - 20,
+			tbl[2] + 5
 		},
 		position = {
 			0,
@@ -194,12 +200,12 @@ local var_0_3 = {
 		parent = "option_1",
 		horizontal_alignment = "center",
 		size = {
-			var_0_1[1] - 20,
-			var_0_1[2]
+			tbl[1] - 20,
+			tbl[2]
 		},
 		position = {
 			0,
-			var_0_1[2] + 5,
+			tbl[2] + 5,
 			10
 		}
 	},
@@ -208,8 +214,8 @@ local var_0_3 = {
 		parent = "option_2",
 		horizontal_alignment = "center",
 		size = {
-			var_0_1[1] - 20,
-			var_0_1[2] + 5
+			tbl[1] - 20,
+			tbl[2] + 5
 		},
 		position = {
 			0,
@@ -222,12 +228,12 @@ local var_0_3 = {
 		parent = "option_2",
 		horizontal_alignment = "center",
 		size = {
-			var_0_1[1] - 20,
-			var_0_1[2]
+			tbl[1] - 20,
+			tbl[2]
 		},
 		position = {
 			0,
-			var_0_1[2] + 5,
+			tbl[2] + 5,
 			10
 		}
 	},
@@ -236,8 +242,8 @@ local var_0_3 = {
 		parent = "private_button",
 		horizontal_alignment = "center",
 		size = {
-			var_0_1[1] - 20,
-			var_0_1[2] + 5
+			tbl[1] - 20,
+			tbl[2] + 5
 		},
 		position = {
 			0,
@@ -250,7 +256,7 @@ local var_0_3 = {
 		parent = "additional_option",
 		horizontal_alignment = "center",
 		size = {
-			var_0_1[1] - 40,
+			tbl[1] - 40,
 			122
 		},
 		position = {
@@ -264,7 +270,7 @@ local var_0_3 = {
 		parent = "option_tooltip",
 		horizontal_alignment = "left",
 		size = {
-			var_0_1[1],
+			tbl[1],
 			5
 		},
 		position = {
@@ -276,62 +282,65 @@ local var_0_3 = {
 }
 
 function create_option_tooltip(arg_7_0, arg_7_1)
-	local var_7_0 = "text"
-	local var_7_1 = "text_shadow"
-	local var_7_2 = {}
+	-- function 7
+	local str = "text"
+	local str_2 = "text_shadow"
+	local tbl = {}
 
-	var_7_2[#var_7_2 + 1] = {
+	tbl[#tbl + 1] = {
 		pass_type = "text",
-		text_id = var_7_0,
-		style_id = var_7_0,
-		content_check_function = function(arg_8_0)
-			return arg_8_0[var_7_0]
+		text_id = str,
+		style_id = str,
+		content_check_function = function (self)
+			-- function 8
+			return self[str]
 		end
 	}
-	var_7_2[#var_7_2 + 1] = {
+	tbl[#tbl + 1] = {
 		pass_type = "text",
-		text_id = var_7_0,
-		style_id = var_7_1,
-		content_check_function = function(arg_9_0)
-			return arg_9_0[var_7_0]
+		text_id = str,
+		style_id = str_2,
+		content_check_function = function (self)
+			-- function 9
+			return self[str]
 		end
 	}
 
-	local var_7_3 = {
-		[var_7_0] = nil
+	local tbl_2 = {
+		[str] = nil
 	}
-	local var_7_4 = {
+	local tbl_3 = {
 		0,
 		-35,
 		1
 	}
-	local var_7_5 = {
-		[var_7_0] = {
+	local tbl_4 = {
+		[str] = {
 			vertical_alignment = "top",
 			font_size = 22,
 			horizontal_alignment = "left",
 			word_wrap = true,
 			font_type = "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("font_default", 255),
-			offset = var_7_4
+			offset = tbl_3
 		}
 	}
-	local var_7_6 = table.clone(var_7_5[var_7_0])
+	local clone = table.clone(tbl_4[str])
 
-	var_7_6.text_color = Colors.get_color_table_with_alpha("black", 255)
-	var_7_6.offset = {
-		var_7_4[1] + 2,
-		var_7_4[2] - 2,
-		var_7_4[3] - 1
+	clone.text_color = Colors.get_color_table_with_alpha("black", 255)
+	clone.offset = {
+		tbl_3[1] + 2,
+		tbl_3[2] - 2,
+		tbl_3[3] - 1
 	}
-	var_7_5[var_7_1] = var_7_6
+	tbl_4[str_2] = clone
 
 	return {
 		element = {
-			passes = var_7_2
+			passes = tbl
 		},
-		content = var_7_3,
-		style = var_7_5,
+		content = tbl_2,
+		style = tbl_4,
 		offset = {
 			0,
 			0,
@@ -341,7 +350,7 @@ function create_option_tooltip(arg_7_0, arg_7_1)
 	}
 end
 
-local var_0_4 = {
+local tbl_4 = {
 	font_size = 32,
 	upper_case = true,
 	localize = false,
@@ -358,24 +367,24 @@ local var_0_4 = {
 		0
 	}
 }
-local var_0_5 = {
-	background = UIWidgets.create_rect_with_outer_frame("additional_option", var_0_3.additional_option.size, "frame_outer_fade_02", nil, UISettings.console_start_game_menu_rect_color),
-	title_text = UIWidgets.create_simple_text(Localize("start_game_window_other_options_title"), "title_text", 32, nil, var_0_4),
+local tbl_5 = {
+	background = UIWidgets.create_rect_with_outer_frame("additional_option", tbl_3.additional_option.size, "frame_outer_fade_02", nil, UISettings.console_start_game_menu_rect_color),
+	title_text = UIWidgets.create_simple_text(Localize("start_game_window_other_options_title"), "title_text", 32, nil, tbl_4),
 	title_divider = UIWidgets.create_simple_texture("infoslate_frame_02_horizontal", "title_divider"),
-	option_tooltip = create_option_tooltip("option_tooltip", var_0_3.option_tooltip.size),
+	option_tooltip = create_option_tooltip("option_tooltip", tbl_3.option_tooltip.size),
 	option_tooltip_divider = UIWidgets.create_simple_texture("infoslate_frame_02_horizontal", "option_tooltip_divider"),
-	private_button = UIWidgets.create_default_checkbox_button_console("private_button", var_0_3.private_button.size, Localize("start_game_window_other_options_private"), 24, {
+	private_button = UIWidgets.create_default_checkbox_button_console("private_button", tbl_3.private_button.size, Localize("start_game_window_other_options_private"), 24, {
 		title = Localize("start_game_window_other_options_private"),
 		description = Localize("start_game_window_other_options_private_description")
 	})
 }
-local var_0_6 = {
+local tbl_6 = {
 	"private_button"
 }
 
 return {
-	widgets = var_0_5,
-	scenegraph_definition = var_0_3,
-	animation_definitions = var_0_2,
-	gamepad_widget_navigation = var_0_6
+	widgets = tbl_5,
+	scenegraph_definition = tbl_3,
+	animation_definitions = tbl_2,
+	gamepad_widget_navigation = tbl_6
 }

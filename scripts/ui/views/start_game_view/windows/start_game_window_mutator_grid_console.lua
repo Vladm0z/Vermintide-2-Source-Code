@@ -1,13 +1,13 @@
 -- chunkname: @scripts/ui/views/start_game_view/windows/start_game_window_mutator_grid_console.lua
 
 local var_0_0 = local_require("scripts/ui/views/start_game_view/windows/definitions/start_game_window_mutator_grid_console_definitions")
-local var_0_1 = var_0_0.widgets
-local var_0_2 = var_0_0.scenegraph_definition
-local var_0_3 = var_0_0.animation_definitions
-local var_0_4 = var_0_0.overlay_widgets
-local var_0_5 = var_0_0.delete_deeds_button_widgets
-local var_0_6 = "confirm_press"
-local var_0_7 = {
+local widgets = var_0_0.widgets
+local scenegraph_definition = var_0_0.scenegraph_definition
+local animation_definitions = var_0_0.animation_definitions
+local overlay_widgets = var_0_0.overlay_widgets
+local delete_deeds_button_widgets = var_0_0.delete_deeds_button_widgets
+local str = "confirm_press"
+local tbl = {
 	{
 		wield = true,
 		name = "heroic_deeds",
@@ -20,28 +20,35 @@ local var_0_7 = {
 		icon = UISettings.slot_icons.melee
 	}
 }
-local var_0_8 = table.enum("clear", "delete_selected")
+local enum = table.enum("clear", "delete_selected")
 
-local function var_0_9(arg_1_0, arg_1_1)
-	local var_1_0 = arg_1_0.data
-	local var_1_1 = arg_1_1.data
-	local var_1_2 = arg_1_0.rarity or var_1_0.rarity
-	local var_1_3 = arg_1_1.rarity or var_1_1.rarity
-	local var_1_4 = UISettings.item_rarity_order
-	local var_1_5 = var_1_4[var_1_2]
-	local var_1_6 = var_1_4[var_1_3]
-	local var_1_7 = arg_1_0.backend_id
-	local var_1_8 = arg_1_1.backend_id
-	local var_1_9 = ItemHelper.is_favorite_backend_id(var_1_7, arg_1_0)
+local function fn(self, arg_1_1)
+	-- function 1
+	local data = self.data
+	local data_2 = arg_1_1.data
+	local rarity = self.rarity
 
-	if var_1_9 == ItemHelper.is_favorite_backend_id(var_1_8, arg_1_1) then
+	rarity = rarity or data.rarity
+
+	local rarity_2 = arg_1_1.rarity
+
+	rarity_2 = rarity_2 or data_2.rarity
+
+	local item_rarity_order = UISettings.item_rarity_order
+	local var_1_5 = item_rarity_order[rarity]
+	local var_1_6 = item_rarity_order[rarity_2]
+	local backend_id = self.backend_id
+	local backend_id_2 = arg_1_1.backend_id
+	local is_favorite_backend_id = ItemHelper.is_favorite_backend_id(backend_id, self)
+
+	if is_favorite_backend_id == ItemHelper.is_favorite_backend_id(backend_id_2, arg_1_1) then
 		if var_1_5 == var_1_6 then
-			local var_1_10 = Localize(var_1_0.item_type)
-			local var_1_11 = Localize(var_1_1.item_type)
+			local var_1_10 = Localize(data.item_type)
+			local var_1_11 = Localize(data_2.item_type)
 
 			if var_1_10 == var_1_11 then
-				local var_1_12, var_1_13 = UIUtils.get_ui_information_from_item(arg_1_0)
-				local var_1_14, var_1_15 = UIUtils.get_ui_information_from_item(arg_1_1)
+				local get_ui_information_from_item, var_1_13 = UIUtils.get_ui_information_from_item(self)
+				local get_ui_information_from_item_2, var_1_15 = UIUtils.get_ui_information_from_item(arg_1_1)
 
 				return Localize(var_1_13) < Localize(var_1_15)
 			else
@@ -50,69 +57,72 @@ local function var_0_9(arg_1_0, arg_1_1)
 		else
 			return var_1_5 < var_1_6
 		end
-	elseif var_1_9 then
+	elseif not is_favorite_backend_id then
 		return true
 	else
 		return false
 	end
 end
 
-local var_0_10 = "trigger_cycle_next"
-local var_0_11 = "trigger_cycle_previous"
+local str_2 = "trigger_cycle_next"
+local str_3 = "trigger_cycle_previous"
 
 StartGameWindowMutatorGridConsole = class(StartGameWindowMutatorGridConsole)
 StartGameWindowMutatorGridConsole.NAME = "StartGameWindowMutatorGridConsole"
 
-function StartGameWindowMutatorGridConsole.on_enter(arg_2_0, arg_2_1, arg_2_2)
+StartGameWindowMutatorGridConsole.on_enter = function (self, arg_2_1, arg_2_2)
+	-- function 2
 	print("[StartGameWindow] Enter Substate StartGameWindowMutatorGridConsole")
 
-	arg_2_0.parent = arg_2_1.parent
+	self.parent = arg_2_1.parent
 
-	local var_2_0 = arg_2_1.ingame_ui_context
+	local ingame_ui_context = arg_2_1.ingame_ui_context
 
-	arg_2_0.ui_renderer = var_2_0.ui_renderer
-	arg_2_0._ui_top_renderer = var_2_0.ui_top_renderer
-	arg_2_0.input_manager = var_2_0.input_manager
-	arg_2_0.statistics_db = var_2_0.statistics_db
-	arg_2_0.render_settings = {
+	self.ui_renderer = ingame_ui_context.ui_renderer
+	self._ui_top_renderer = ingame_ui_context.ui_top_renderer
+	self.input_manager = ingame_ui_context.input_manager
+	self.statistics_db = ingame_ui_context.statistics_db
+	self.render_settings = {
 		snap_pixel_positions = true
 	}
 
-	local var_2_1 = Managers.player
+	local player = Managers.player
 
-	arg_2_0._stats_id = var_2_1:local_player():stats_id()
-	arg_2_0.player_manager = var_2_1
-	arg_2_0.peer_id = var_2_0.peer_id
-	arg_2_0._deeds_marked_for_deletion = {}
-	arg_2_0._animations = {}
+	self._stats_id = player:local_player():stats_id()
+	self.player_manager = player
+	self.peer_id = ingame_ui_context.peer_id
+	self._deeds_marked_for_deletion = {}
+	self._animations = {}
 
-	arg_2_0:create_ui_elements(arg_2_1, arg_2_2)
+	self:create_ui_elements(arg_2_1, arg_2_2)
 
-	arg_2_0._previously_selected_backend_id = arg_2_0.parent:get_selected_heroic_deed_backend_id()
+	self._previously_selected_backend_id = self.parent:get_selected_heroic_deed_backend_id()
 
-	if not Managers.backend:get_interface("items"):get_item_from_id(arg_2_0._previously_selected_backend_id) then
-		arg_2_0._previously_selected_backend_id = nil
+	if not Managers.backend:get_interface("items"):get_item_from_id(self._previously_selected_backend_id) then
+		self._previously_selected_backend_id = nil
 
-		arg_2_0.parent:set_selected_heroic_deed_backend_id(nil)
+		self.parent:set_selected_heroic_deed_backend_id(nil)
 	end
 
-	local var_2_2 = "empire_soldier"
-	local var_2_3 = 1
-	local var_2_4 = ItemGridUI:new(var_0_7, arg_2_0._widgets_by_name.item_grid, var_2_2, var_2_3)
+	local str = "empire_soldier"
+	local num = 1
+	local var_2_4 = ItemGridUI:new(tbl, self._widgets_by_name.item_grid, str, num)
 
 	var_2_4:change_category("heroic_deeds")
 	var_2_4:disable_item_drag()
-	var_2_4:apply_item_sorting_function(var_0_9)
+	var_2_4:apply_item_sorting_function(fn)
 
-	local var_2_5 = Managers.mechanism and Managers.mechanism:mechanism_setting_for_title("override_levels")
+	local mechanism = Managers.mechanism
 
-	if var_2_5 then
-		local var_2_6 = var_2_4:items()
+	mechanism = not mechanism and Managers.mechanism:mechanism_setting_for_title("override_levels")
 
-		for iter_2_0 = 1, #var_2_6 do
-			local var_2_7 = var_2_6[iter_2_0]
+	if not mechanism then
+		local items = var_2_4:items()
 
-			if var_2_5[var_2_7.level_key] == false then
+		for i = 1, #items do
+			local var_2_7 = items[i]
+
+			if mechanism[var_2_7.level_key] == false then
 				var_2_4:lock_item_by_id(var_2_7.backend_id, true)
 			end
 		end
@@ -121,491 +131,517 @@ function StartGameWindowMutatorGridConsole.on_enter(arg_2_0, arg_2_1, arg_2_2)
 		var_2_4:disable_locked_items(true)
 	end
 
-	arg_2_0:_setup_input_buttons()
+	self:_setup_input_buttons()
 
-	arg_2_0._item_grid = var_2_4
+	self._item_grid = var_2_4
 
-	arg_2_0.parent:set_input_description("select_heroic_deed")
-	arg_2_0:_start_transition_animation("on_enter")
+	self.parent:set_input_description("select_heroic_deed")
+	self:_start_transition_animation("on_enter")
 
 	if not Managers.input:is_device_active("gamepad") then
-		arg_2_0.parent:set_selected_heroic_deed_backend_id(nil)
+		self.parent:set_selected_heroic_deed_backend_id(nil)
 	end
 
-	arg_2_0._deed_manager = Managers.deed
-	arg_2_0._can_delete_deeds = false
+	self._deed_manager = Managers.deed
+	self._can_delete_deeds = false
 end
 
-function StartGameWindowMutatorGridConsole._start_transition_animation(arg_3_0, arg_3_1)
-	local var_3_0 = {
-		render_settings = arg_3_0.render_settings
+StartGameWindowMutatorGridConsole._start_transition_animation = function (self, arg_3_1)
+	-- function 3
+	local tbl = {
+		render_settings = self.render_settings
 	}
-	local var_3_1 = {}
-	local var_3_2 = arg_3_0.ui_animator:start_animation(arg_3_1, var_3_1, var_0_2, var_3_0)
+	local tbl_2 = {}
+	local start_animation = self.ui_animator:start_animation(arg_3_1, tbl_2, scenegraph_definition, tbl)
 
-	arg_3_0._animations[arg_3_1] = var_3_2
+	self._animations[arg_3_1] = start_animation
 end
 
-function StartGameWindowMutatorGridConsole.create_ui_elements(arg_4_0, arg_4_1, arg_4_2)
-	arg_4_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
-	arg_4_0._widgets, arg_4_0._widgets_by_name = UIUtils.create_widgets(var_0_1)
-	arg_4_0._overlay_widgets, arg_4_0._overlay_widgets_by_name = UIUtils.create_widgets(var_0_4)
-	arg_4_0._delete_deeds_buttons_widgets, arg_4_0._delete_deeds_buttons_widgets_by_name = UIUtils.create_widgets(var_0_5)
+StartGameWindowMutatorGridConsole.create_ui_elements = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+	self._widgets, self._widgets_by_name = UIUtils.create_widgets(widgets)
+	self._overlay_widgets, self._overlay_widgets_by_name = UIUtils.create_widgets(overlay_widgets)
+	self._delete_deeds_buttons_widgets, self._delete_deeds_buttons_widgets_by_name = UIUtils.create_widgets(delete_deeds_button_widgets)
 
-	if GameSettingsDevelopment.read_only_backend then
-		local var_4_0 = arg_4_0._delete_deeds_buttons_widgets_by_name
+	if not GameSettingsDevelopment.read_only_backend then
+		local _delete_deeds_buttons_widgets_by_name = self._delete_deeds_buttons_widgets_by_name
 
-		var_4_0.button_delete.content.button_hotspot.disable_button = true
-		var_4_0.button_clear.content.button_hotspot.disable_button = true
+		_delete_deeds_buttons_widgets_by_name.button_delete.content.button_hotspot.disable_button = true
+		_delete_deeds_buttons_widgets_by_name.button_clear.content.button_hotspot.disable_button = true
 	end
 
-	UIRenderer.clear_scenegraph_queue(arg_4_0.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
-	arg_4_0.ui_animator = UIAnimator:new(arg_4_0.ui_scenegraph, var_0_3)
+	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
 
-	if arg_4_2 then
-		local var_4_1 = arg_4_0.ui_scenegraph.window.local_position
+	if not arg_4_2 then
+		local local_position = self.ui_scenegraph.window.local_position
 
-		var_4_1[1] = var_4_1[1] + arg_4_2[1]
-		var_4_1[2] = var_4_1[2] + arg_4_2[2]
-		var_4_1[3] = var_4_1[3] + arg_4_2[3]
+		local_position[1] = local_position[1] + arg_4_2[1]
+		local_position[2] = local_position[2] + arg_4_2[2]
+		local_position[3] = local_position[3] + arg_4_2[3]
 	end
 end
 
-function StartGameWindowMutatorGridConsole.on_exit(arg_5_0, arg_5_1)
+StartGameWindowMutatorGridConsole.on_exit = function (self, arg_5_1)
+	-- function 5
 	print("[StartGameWindow] Exit Substate StartGameWindowMutatorGridConsole")
 
-	arg_5_0.ui_animator = nil
+	self.ui_animator = nil
 
-	arg_5_0._item_grid:destroy()
+	self._item_grid:destroy()
 
-	arg_5_0._item_grid = nil
+	self._item_grid = nil
 
-	arg_5_0.parent:set_input_description(nil)
+	self.parent:set_input_description(nil)
 
-	if arg_5_0._previously_selected_backend_id and not arg_5_0._selected_backend_id or not arg_5_0._confirm_selection then
-		arg_5_0.parent:set_selected_heroic_deed_backend_id(arg_5_0._previously_selected_backend_id)
+	if not (not self._previously_selected_backend_id and self._selected_backend_id or self._confirm_selection) then
+		self.parent:set_selected_heroic_deed_backend_id(self._previously_selected_backend_id)
 	end
 
-	arg_5_0._confirm_selection = nil
+	self._confirm_selection = nil
 end
 
-function StartGameWindowMutatorGridConsole.update(arg_6_0, arg_6_1, arg_6_2)
-	arg_6_0._item_grid:update(arg_6_1, arg_6_2)
-	arg_6_0:_update_animations(arg_6_1)
-	arg_6_0:_update_page_info()
-	arg_6_0:_update_selected_item_backend_id()
-	arg_6_0:_handle_input(arg_6_1, arg_6_2)
-	arg_6_0:_handle_gamepad_activity()
-	arg_6_0:draw(arg_6_1)
-	arg_6_0:_update_on_removal_state(arg_6_2)
+StartGameWindowMutatorGridConsole.update = function (self, arg_6_1, arg_6_2)
+	-- function 6
+	self._item_grid:update(arg_6_1, arg_6_2)
+	self:_update_animations(arg_6_1)
+	self:_update_page_info()
+	self:_update_selected_item_backend_id()
+	self:_handle_input(arg_6_1, arg_6_2)
+	self:_handle_gamepad_activity()
+	self:draw(arg_6_1)
+	self:_update_on_removal_state(arg_6_2)
 
-	local var_6_0 = arg_6_0._popup_id
+	local _popup_id = self._popup_id
 
-	if var_6_0 then
-		local var_6_1 = Managers.popup:query_result(var_6_0)
+	if not _popup_id then
+		local query_result = Managers.popup:query_result(_popup_id)
 
-		if var_6_1 then
-			if var_6_1 == "yes" then
-				arg_6_0:_handle_deeds_deletion()
+		if not query_result then
+			if query_result == "yes" then
+				self:_handle_deeds_deletion()
 			end
 
-			arg_6_0._popup_id = nil
+			self._popup_id = nil
 		end
 	end
 end
 
-function StartGameWindowMutatorGridConsole.post_update(arg_7_0, arg_7_1, arg_7_2)
+StartGameWindowMutatorGridConsole.post_update = function (arg_7_0, arg_7_1, arg_7_2)
+	-- function 7
 	return
 end
 
-function StartGameWindowMutatorGridConsole._update_animations(arg_8_0, arg_8_1)
-	local var_8_0 = arg_8_0.ui_animator
+StartGameWindowMutatorGridConsole._update_animations = function (self, arg_8_1)
+	-- function 8
+	local ui_animator = self.ui_animator
 
-	var_8_0:update(arg_8_1)
+	ui_animator:update(arg_8_1)
 
-	local var_8_1 = arg_8_0._animations
+	local _animations = self._animations
 
-	for iter_8_0, iter_8_1 in pairs(var_8_1) do
-		if var_8_0:is_animation_completed(iter_8_1) then
-			var_8_0:stop_animation(iter_8_1)
+	for k, v in pairs(_animations) do
+		if not ui_animator:is_animation_completed(v) then
+			ui_animator:stop_animation(v)
 
-			var_8_1[iter_8_0] = nil
+			_animations[k] = nil
 		end
 	end
 
-	local var_8_2 = arg_8_0._widgets_by_name
-	local var_8_3 = var_8_2.page_button_next
-	local var_8_4 = var_8_2.page_button_previous
+	local _widgets_by_name = self._widgets_by_name
+	local page_button_next = _widgets_by_name.page_button_next
+	local page_button_previous = _widgets_by_name.page_button_previous
 
-	UIWidgetUtils.animate_arrow_button(var_8_3, arg_8_1)
-	UIWidgetUtils.animate_arrow_button(var_8_4, arg_8_1)
+	UIWidgetUtils.animate_arrow_button(page_button_next, arg_8_1)
+	UIWidgetUtils.animate_arrow_button(page_button_previous, arg_8_1)
 end
 
-function StartGameWindowMutatorGridConsole._handle_input(arg_9_0, arg_9_1, arg_9_2)
-	local var_9_0 = arg_9_0.parent:window_input_service()
-	local var_9_1 = arg_9_0._item_grid
+StartGameWindowMutatorGridConsole._handle_input = function (self, arg_9_1, arg_9_2)
+	-- function 9
+	local window_input_service = self.parent:window_input_service()
+	local _item_grid = self._item_grid
 
-	if var_9_1:handle_gamepad_selection(var_9_0) then
-		arg_9_0:_play_sound("play_gui_inventory_item_hover")
+	if not _item_grid:handle_gamepad_selection(window_input_service) then
+		self:_play_sound("play_gui_inventory_item_hover")
 	end
 
-	if var_9_1:is_item_hovered() then
-		arg_9_0:_play_sound("play_gui_equipment_selection_hover")
+	if not _item_grid:is_item_hovered() then
+		self:_play_sound("play_gui_equipment_selection_hover")
 	end
 
-	local var_9_2 = Managers.input:is_device_active("gamepad")
+	local is_device_active = Managers.input:is_device_active("gamepad")
 	local var_9_3
 	local var_9_4
 
-	if var_9_2 then
-		local var_9_5, var_9_6 = var_9_1:get_selected_item_grid_slot()
+	if not is_device_active then
+		local get_selected_item_grid_slot, var_9_6 = _item_grid:get_selected_item_grid_slot()
 
-		var_9_3 = var_9_1:get_item_in_slot(var_9_5, var_9_6)
-		var_9_4 = var_9_1:get_item_content(var_9_5, var_9_6)
+		var_9_3 = _item_grid:get_item_in_slot(get_selected_item_grid_slot, var_9_6)
+		var_9_4 = _item_grid:get_item_content(get_selected_item_grid_slot, var_9_6)
 	else
-		local var_9_7, var_9_8 = var_9_1:get_item_hovered_slot()
+		local get_item_hovered_slot, var_9_8 = _item_grid:get_item_hovered_slot()
 
-		var_9_3 = var_9_1:get_item_hovered()
-		var_9_4 = var_9_1:get_item_content(var_9_7, var_9_8)
+		var_9_3 = _item_grid:get_item_hovered()
+		var_9_4 = _item_grid:get_item_content(get_item_hovered_slot, var_9_8)
 	end
 
-	if var_9_3 and not var_9_3.marked_for_deletion and (var_9_0 and var_9_0:get("right_stick_press") or var_9_0:get("mouse_middle_press")) then
+	if (not var_9_3 and var_9_3.marked_for_deletion or not window_input_service) and window_input_service:get("right_stick_press") and not window_input_service:get("mouse_middle_press") then
 		var_9_3.marked_for_deletion = true
 		var_9_4.reserved = true
 
-		table.insert(arg_9_0._deeds_marked_for_deletion, var_9_3)
-		arg_9_0:_play_sound("hud_deed_delete_select")
-	elseif var_9_3 and var_9_3.marked_for_deletion and (var_9_0 and var_9_0:get("right_stick_press") or var_9_0:get("mouse_middle_press")) then
+		table.insert(self._deeds_marked_for_deletion, var_9_3)
+		self:_play_sound("hud_deed_delete_select")
+	elseif not var_9_3 and not var_9_3.marked_for_deletion and not window_input_service and window_input_service:get("right_stick_press") and not window_input_service:get("mouse_middle_press") then
 		var_9_3.marked_for_deletion = false
 		var_9_4.reserved = false
 
-		local var_9_9 = table.index_of(arg_9_0._deeds_marked_for_deletion, var_9_3)
+		local index_of = table.index_of(self._deeds_marked_for_deletion, var_9_3)
 
-		table.swap_delete(arg_9_0._deeds_marked_for_deletion, var_9_9)
-		arg_9_0:_play_sound("hud_deed_delete_select")
+		table.swap_delete(self._deeds_marked_for_deletion, index_of)
+		self:_play_sound("hud_deed_delete_select")
 	end
 
-	local var_9_10 = var_9_1:selected_item()
+	local selected_item = _item_grid:selected_item()
 
-	if var_9_10 and var_9_10.backend_id ~= arg_9_0._selected_backend_id then
-		arg_9_0.parent:set_selected_heroic_deed_backend_id(var_9_10.backend_id)
+	if not (not selected_item and selected_item.backend_id == self._selected_backend_id) then
+		self.parent:set_selected_heroic_deed_backend_id(selected_item.backend_id)
 	end
 
-	local var_9_11 = true
-	local var_9_12 = var_9_1:is_item_pressed(var_9_11)
+	local flag = true
+	local is_item_pressed = _item_grid:is_item_pressed(flag)
 
-	if var_9_12 then
-		arg_9_0:_play_sound("play_gui_lobby_button_04_heroic_deed_inventory_click")
+	if not is_item_pressed then
+		self:_play_sound("play_gui_lobby_button_04_heroic_deed_inventory_click")
 
-		local var_9_13 = var_9_12.backend_id
+		local backend_id = is_item_pressed.backend_id
 
-		arg_9_0.parent:set_selected_heroic_deed_backend_id(var_9_13)
+		self.parent:set_selected_heroic_deed_backend_id(backend_id)
 
-		arg_9_0._selected_backend_id = var_9_13
-		arg_9_0._confirm_selection = true
+		self._selected_backend_id = backend_id
+		self._confirm_selection = true
 
-		arg_9_0.parent:set_layout_by_name("heroic_deeds")
+		self.parent:set_layout_by_name("heroic_deeds")
 	end
 
-	local var_9_14 = arg_9_0._widgets_by_name
-	local var_9_15 = var_9_14.page_button_next
-	local var_9_16 = var_9_14.page_button_previous
+	local _widgets_by_name = self._widgets_by_name
+	local page_button_next = _widgets_by_name.page_button_next
+	local page_button_previous = _widgets_by_name.page_button_previous
 
-	if UIUtils.is_button_hover_enter(var_9_15) or UIUtils.is_button_hover_enter(var_9_16) then
-		arg_9_0:_play_sound("play_gui_inventory_next_hover")
+	if UIUtils.is_button_hover_enter(page_button_next) or not UIUtils.is_button_hover_enter(page_button_previous) then
+		self:_play_sound("play_gui_inventory_next_hover")
 	end
 
-	local var_9_17 = arg_9_0._current_page
+	local _current_page = self._current_page
 
-	if UIUtils.is_button_pressed(var_9_15) or var_9_0:get(var_0_10) then
-		var_9_17 = math.min(var_9_17 + 1, arg_9_0._total_pages)
-	elseif UIUtils.is_button_pressed(var_9_16) or var_9_0:get(var_0_11) then
-		var_9_17 = math.max(var_9_17 - 1, 1)
+	if UIUtils.is_button_pressed(page_button_next) or not window_input_service:get(str_2) then
+		_current_page = math.min(_current_page + 1, self._total_pages)
+	elseif UIUtils.is_button_pressed(page_button_previous) or not window_input_service:get(str_3) then
+		_current_page = math.max(_current_page - 1, 1)
 	end
 
-	if var_9_17 ~= arg_9_0._current_page then
-		var_9_1:set_item_page(var_9_17)
-		arg_9_0:_play_sound("play_gui_equipment_inventory_next_click")
+	if _current_page ~= self._current_page then
+		_item_grid:set_item_page(_current_page)
+		self:_play_sound("play_gui_equipment_inventory_next_click")
 
-		local var_9_18 = arg_9_0._item_grid:get_item_in_slot(1, 1)
+		local get_item_in_slot = self._item_grid:get_item_in_slot(1, 1)
 
-		if var_9_18 then
-			arg_9_0.parent:set_selected_heroic_deed_backend_id(var_9_18.backend_id)
+		if not get_item_in_slot then
+			self.parent:set_selected_heroic_deed_backend_id(get_item_in_slot.backend_id)
 		end
 	end
 
-	local var_9_19 = arg_9_0._delete_deeds_buttons_widgets_by_name.button_clear
+	local button_clear = self._delete_deeds_buttons_widgets_by_name.button_clear
 
-	if UIUtils.is_button_hover_enter(var_9_19) then
-		arg_9_0:_play_sound("play_gui_start_menu_button_hover")
+	if not UIUtils.is_button_hover_enter(button_clear) then
+		self:_play_sound("play_gui_start_menu_button_hover")
 	end
 
-	if UIUtils.is_button_pressed(var_9_19) or var_9_0:get("refresh") then
-		arg_9_0._popup_id = Managers.popup:queue_popup(Localize("delete_deeds_popup_warning_message"), Localize("popup_discard_changes_topic"), "yes", Localize("popup_choice_yes"), "cancel_popup", Localize("popup_choice_no"))
-		arg_9_0._delete_type = var_0_8.clear
+	if UIUtils.is_button_pressed(button_clear) or not window_input_service:get("refresh") then
+		self._popup_id = Managers.popup:queue_popup(Localize("delete_deeds_popup_warning_message"), Localize("popup_discard_changes_topic"), "yes", Localize("popup_choice_yes"), "cancel_popup", Localize("popup_choice_no"))
+		self._delete_type = enum.clear
 
-		arg_9_0.parent:set_selected_heroic_deed_backend_id(nil)
+		self.parent:set_selected_heroic_deed_backend_id(nil)
 	end
 
-	local var_9_20 = arg_9_0._delete_deeds_buttons_widgets_by_name.button_delete
+	local button_delete = self._delete_deeds_buttons_widgets_by_name.button_delete
 
-	if UIUtils.is_button_hover_enter(var_9_20) then
-		arg_9_0:_play_sound("play_gui_start_menu_button_hover")
+	if not UIUtils.is_button_hover_enter(button_delete) then
+		self:_play_sound("play_gui_start_menu_button_hover")
 	end
 
-	if (UIUtils.is_button_pressed(var_9_20) or var_9_0:get("special_1")) and not table.is_empty(arg_9_0._deeds_marked_for_deletion) then
-		arg_9_0._popup_id = Managers.popup:queue_popup(Localize("delete_deeds_popup_warning_message"), Localize("popup_discard_changes_topic"), "yes", Localize("popup_choice_yes"), "cancel_popup", Localize("popup_choice_no"))
-		arg_9_0._delete_type = var_0_8.delete_selected
+	if not ((UIUtils.is_button_pressed(button_delete) or not window_input_service:get("special_1")) and table.is_empty(self._deeds_marked_for_deletion)) then
+		self._popup_id = Managers.popup:queue_popup(Localize("delete_deeds_popup_warning_message"), Localize("popup_discard_changes_topic"), "yes", Localize("popup_choice_yes"), "cancel_popup", Localize("popup_choice_no"))
+		self._delete_type = enum.delete_selected
 
-		arg_9_0.parent:set_selected_heroic_deed_backend_id(nil)
+		self.parent:set_selected_heroic_deed_backend_id(nil)
 	end
 
-	UIWidgetUtils.animate_default_button(var_9_19, arg_9_1)
-	UIWidgetUtils.animate_default_button(var_9_20, arg_9_1)
+	UIWidgetUtils.animate_default_button(button_clear, arg_9_1)
+	UIWidgetUtils.animate_default_button(button_delete, arg_9_1)
 
-	if var_9_0:get(var_0_6) then
-		arg_9_0._confirm_selection = true
+	if not window_input_service:get(str) then
+		self._confirm_selection = true
 
-		arg_9_0.parent:set_layout_by_name("heroic_deeds")
+		self.parent:set_layout_by_name("heroic_deeds")
 	end
 end
 
-function StartGameWindowMutatorGridConsole._play_sound(arg_10_0, arg_10_1)
-	arg_10_0.parent:play_sound(arg_10_1)
+StartGameWindowMutatorGridConsole._play_sound = function (self, arg_10_1)
+	-- function 10
+	self.parent:play_sound(arg_10_1)
 end
 
-function StartGameWindowMutatorGridConsole._update_selected_item_backend_id(arg_11_0)
-	local var_11_0 = Managers.input:is_device_active("mouse")
-	local var_11_1 = arg_11_0.parent
-	local var_11_2 = arg_11_0._item_grid
+StartGameWindowMutatorGridConsole._update_selected_item_backend_id = function (self)
+	-- function 11
+	local is_device_active = Managers.input:is_device_active("mouse")
+	local parent = self.parent
+	local _item_grid = self._item_grid
 
-	if not var_11_0 then
-		local var_11_3 = var_11_1:get_selected_heroic_deed_backend_id()
+	if not is_device_active then
+		local get_selected_heroic_deed_backend_id = parent:get_selected_heroic_deed_backend_id()
 
-		if var_11_3 ~= arg_11_0._selected_backend_id then
-			arg_11_0._selected_backend_id = var_11_3
+		if get_selected_heroic_deed_backend_id ~= self._selected_backend_id then
+			self._selected_backend_id = get_selected_heroic_deed_backend_id
 
-			var_11_2:set_backend_id_selected(var_11_3)
-		elseif not var_11_3 then
-			local var_11_4 = var_11_2:get_item_in_slot(1, 1)
+			_item_grid:set_backend_id_selected(get_selected_heroic_deed_backend_id)
+		elseif not get_selected_heroic_deed_backend_id then
+			local get_item_in_slot = _item_grid:get_item_in_slot(1, 1)
 
-			if var_11_4 then
-				var_11_1:set_selected_heroic_deed_backend_id(var_11_4.backend_id)
+			if not get_item_in_slot then
+				parent:set_selected_heroic_deed_backend_id(get_item_in_slot.backend_id)
 			end
 		end
 	else
-		local var_11_5 = var_11_2:get_item_hovered()
-		local var_11_6 = var_11_5 and var_11_5.backend_id
+		local get_item_hovered = _item_grid:get_item_hovered()
+		local flag = not get_item_hovered and get_item_hovered.backend_id
 
-		if var_11_6 ~= arg_11_0._selected_backend_id then
-			arg_11_0._selected_backend_id = var_11_6
+		if flag ~= self._selected_backend_id then
+			self._selected_backend_id = flag
 
-			var_11_1:set_selected_heroic_deed_backend_id(var_11_6)
-		elseif not var_11_6 then
-			var_11_1:set_selected_heroic_deed_backend_id(nil)
-			var_11_2:set_backend_id_selected(nil)
+			parent:set_selected_heroic_deed_backend_id(flag)
+		elseif not flag then
+			parent:set_selected_heroic_deed_backend_id(nil)
+			_item_grid:set_backend_id_selected(nil)
 
-			arg_11_0._selected_backend_id = nil
+			self._selected_backend_id = nil
 		end
 	end
 end
 
-function StartGameWindowMutatorGridConsole.draw(arg_12_0, arg_12_1)
-	local var_12_0 = arg_12_0._ui_top_renderer
-	local var_12_1 = arg_12_0.ui_scenegraph
-	local var_12_2 = arg_12_0.parent:window_input_service()
-	local var_12_3 = arg_12_0.render_settings
-	local var_12_4 = var_12_3.snap_pixel_positions
-	local var_12_5 = var_12_3.alpha_multiplier or 1
+StartGameWindowMutatorGridConsole.draw = function (self, arg_12_1)
+	-- function 12
+	local _ui_top_renderer = self._ui_top_renderer
+	local ui_scenegraph = self.ui_scenegraph
+	local window_input_service = self.parent:window_input_service()
+	local render_settings = self.render_settings
+	local snap_pixel_positions = render_settings.snap_pixel_positions
+	local alpha_multiplier = render_settings.alpha_multiplier
 
-	UIRenderer.begin_pass(var_12_0, var_12_1, var_12_2, arg_12_1, nil, arg_12_0.render_settings)
+	alpha_multiplier = alpha_multiplier or 1
 
-	local var_12_6 = arg_12_0._widgets
+	UIRenderer.begin_pass(_ui_top_renderer, ui_scenegraph, window_input_service, arg_12_1, nil, self.render_settings)
 
-	for iter_12_0 = 1, #var_12_6 do
-		local var_12_7 = var_12_6[iter_12_0]
+	local _widgets = self._widgets
 
-		UIRenderer.draw_widget(var_12_0, var_12_7)
+	for i = 1, #_widgets do
+		local var_12_7 = _widgets[i]
+
+		UIRenderer.draw_widget(_ui_top_renderer, var_12_7)
 	end
 
-	if arg_12_0:_is_deleting() then
-		for iter_12_1, iter_12_2 in ipairs(arg_12_0._overlay_widgets) do
-			if iter_12_2.snap_pixel_positions ~= nil then
-				var_12_3.snap_pixel_positions = iter_12_2.snap_pixel_positions
+	if not self:_is_deleting() then
+		for i_2, v in ipairs(self._overlay_widgets) do
+			if v.snap_pixel_positions ~= nil then
+				render_settings.snap_pixel_positions = v.snap_pixel_positions
 			end
 
-			var_12_3.alpha_multiplier = iter_12_2.alpha_multiplier or var_12_5
+			local alpha_multiplier_2 = v.alpha_multiplier
 
-			UIRenderer.draw_widget(var_12_0, iter_12_2)
+			alpha_multiplier_2 = alpha_multiplier_2 or alpha_multiplier
+			render_settings.alpha_multiplier = alpha_multiplier_2
 
-			var_12_3.snap_pixel_positions = var_12_4
+			UIRenderer.draw_widget(_ui_top_renderer, v)
+
+			render_settings.snap_pixel_positions = snap_pixel_positions
 		end
 	end
 
-	for iter_12_3, iter_12_4 in ipairs(arg_12_0._delete_deeds_buttons_widgets) do
-		UIRenderer.draw_widget(var_12_0, iter_12_4)
+	for i_3, v_2 in ipairs(self._delete_deeds_buttons_widgets) do
+		UIRenderer.draw_widget(_ui_top_renderer, v_2)
 	end
 
-	UIRenderer.end_pass(var_12_0)
+	UIRenderer.end_pass(_ui_top_renderer)
 end
 
-function StartGameWindowMutatorGridConsole._update_page_info(arg_13_0)
-	local var_13_0, var_13_1 = arg_13_0._item_grid:get_page_info()
+StartGameWindowMutatorGridConsole._update_page_info = function (self)
+	-- function 13
+	local get_page_info, var_13_1 = self._item_grid:get_page_info()
 
-	if var_13_0 ~= arg_13_0._current_page or var_13_1 ~= arg_13_0._total_pages then
-		arg_13_0._total_pages = var_13_1
-		arg_13_0._current_page = var_13_0
-		var_13_0 = var_13_0 or 1
+	if not (get_page_info ~= self._current_page or var_13_1 == self._total_pages) then
+		self._total_pages = var_13_1
+		self._current_page = get_page_info
+		get_page_info = get_page_info or 1
 		var_13_1 = var_13_1 or 1
 
-		local var_13_2 = arg_13_0._widgets_by_name
+		local _widgets_by_name = self._widgets_by_name
 
-		var_13_2.page_text_left.content.text = tostring(var_13_0)
-		var_13_2.page_text_right.content.text = tostring(var_13_1)
-		var_13_2.page_button_next.content.hotspot.disable_button = var_13_0 == var_13_1
-		var_13_2.page_button_previous.content.hotspot.disable_button = var_13_0 == 1
+		_widgets_by_name.page_text_left.content.text = tostring(get_page_info)
+		_widgets_by_name.page_text_right.content.text = tostring(var_13_1)
+		_widgets_by_name.page_button_next.content.hotspot.disable_button = get_page_info == var_13_1
+		_widgets_by_name.page_button_previous.content.hotspot.disable_button = get_page_info == 1
 	end
 end
 
-function StartGameWindowMutatorGridConsole._setup_input_buttons(arg_14_0)
-	local var_14_0 = arg_14_0.parent:window_input_service()
-	local var_14_1 = arg_14_0._widgets_by_name
-	local var_14_2 = UISettings.get_gamepad_input_texture_data(var_14_0, var_0_10, true)
-	local var_14_3 = var_14_1.input_icon_next
-	local var_14_4 = var_14_3.style.texture_id
+StartGameWindowMutatorGridConsole._setup_input_buttons = function (self)
+	-- function 14
+	local window_input_service = self.parent:window_input_service()
+	local _widgets_by_name = self._widgets_by_name
+	local get_gamepad_input_texture_data = UISettings.get_gamepad_input_texture_data(window_input_service, str_2, true)
+	local input_icon_next = _widgets_by_name.input_icon_next
+	local texture_id = input_icon_next.style.texture_id
 
-	var_14_4.horizontal_alignment = "center"
-	var_14_4.vertical_alignment = "center"
-	var_14_4.texture_size = {
-		var_14_2.size[1],
-		var_14_2.size[2]
+	texture_id.horizontal_alignment = "center"
+	texture_id.vertical_alignment = "center"
+	texture_id.texture_size = {
+		get_gamepad_input_texture_data.size[1],
+		get_gamepad_input_texture_data.size[2]
 	}
-	var_14_3.content.texture_id = var_14_2.texture
+	input_icon_next.content.texture_id = get_gamepad_input_texture_data.texture
 
-	local var_14_5 = UISettings.get_gamepad_input_texture_data(var_14_0, var_0_11, true)
-	local var_14_6 = var_14_1.input_icon_previous
-	local var_14_7 = var_14_6.style.texture_id
+	local get_gamepad_input_texture_data_2 = UISettings.get_gamepad_input_texture_data(window_input_service, str_3, true)
+	local input_icon_previous = _widgets_by_name.input_icon_previous
+	local texture_id_2 = input_icon_previous.style.texture_id
 
-	var_14_7.horizontal_alignment = "center"
-	var_14_7.vertical_alignment = "center"
-	var_14_7.texture_size = {
-		var_14_5.size[1],
-		var_14_5.size[2]
+	texture_id_2.horizontal_alignment = "center"
+	texture_id_2.vertical_alignment = "center"
+	texture_id_2.texture_size = {
+		get_gamepad_input_texture_data_2.size[1],
+		get_gamepad_input_texture_data_2.size[2]
 	}
-	var_14_6.content.texture_id = var_14_5.texture
+	input_icon_previous.content.texture_id = get_gamepad_input_texture_data_2.texture
 end
 
-function StartGameWindowMutatorGridConsole._set_gamepad_input_buttons_visibility(arg_15_0, arg_15_1)
-	local var_15_0 = arg_15_0._widgets_by_name
-	local var_15_1 = var_15_0.input_icon_next
-	local var_15_2 = var_15_0.input_icon_previous
-	local var_15_3 = var_15_0.input_arrow_next
-	local var_15_4 = var_15_0.input_arrow_previous
+StartGameWindowMutatorGridConsole._set_gamepad_input_buttons_visibility = function (self, arg_15_1)
+	-- function 15
+	local _widgets_by_name = self._widgets_by_name
+	local input_icon_next = _widgets_by_name.input_icon_next
+	local input_icon_previous = _widgets_by_name.input_icon_previous
+	local input_arrow_next = _widgets_by_name.input_arrow_next
+	local input_arrow_previous = _widgets_by_name.input_arrow_previous
 
-	var_15_1.content.visible = arg_15_1
-	var_15_2.content.visible = arg_15_1
-	var_15_3.content.visible = arg_15_1
-	var_15_4.content.visible = arg_15_1
+	input_icon_next.content.visible = arg_15_1
+	input_icon_previous.content.visible = arg_15_1
+	input_arrow_next.content.visible = arg_15_1
+	input_arrow_previous.content.visible = arg_15_1
 end
 
-function StartGameWindowMutatorGridConsole._handle_gamepad_activity(arg_16_0)
-	local var_16_0 = arg_16_0.gamepad_active_last_frame == nil
+StartGameWindowMutatorGridConsole._handle_gamepad_activity = function (self)
+	-- function 16
+	local flag = self.gamepad_active_last_frame == nil
 
-	if Managers.input:is_device_active("gamepad") then
-		if not arg_16_0.gamepad_active_last_frame or var_16_0 then
-			arg_16_0.gamepad_active_last_frame = true
+	if not Managers.input:is_device_active("gamepad") then
+		if not self.gamepad_active_last_frame and not flag then
+			self.gamepad_active_last_frame = true
 
-			arg_16_0:_set_gamepad_input_buttons_visibility(true)
-			arg_16_0:_set_delete_buttons_visible(false)
+			self:_set_gamepad_input_buttons_visibility(true)
+			self:_set_delete_buttons_visible(false)
 		end
-	elseif arg_16_0.gamepad_active_last_frame or var_16_0 then
-		arg_16_0.gamepad_active_last_frame = false
+	elseif self.gamepad_active_last_frame or not flag then
+		self.gamepad_active_last_frame = false
 
-		arg_16_0:_set_gamepad_input_buttons_visibility(false)
-		arg_16_0:_set_delete_buttons_visible(true)
+		self:_set_gamepad_input_buttons_visibility(false)
+		self:_set_delete_buttons_visible(true)
 	end
 end
 
-function StartGameWindowMutatorGridConsole._delete_deeds(arg_17_0, arg_17_1, arg_17_2)
-	local var_17_0 = arg_17_0._deed_manager
+StartGameWindowMutatorGridConsole._delete_deeds = function (self, arg_17_1, arg_17_2)
+	-- function 17
+	local _deed_manager = self._deed_manager
 	local var_17_1
-	local var_17_2, var_17_3, var_17_4 = var_17_0:can_delete_deeds(arg_17_1, arg_17_2)
+	local can_delete_deeds, var_17_3, var_17_4 = _deed_manager:can_delete_deeds(arg_17_1, arg_17_2)
 
 	if not var_17_3 then
 		printf("[StartGameWindowMutatorGridConsole]:Failed to remove deeds from the inventory: %s)", var_17_4)
 
 		return nil
 	else
-		return var_17_0:delete_marked_deeds(var_17_3), var_17_2
+		return _deed_manager:delete_marked_deeds(var_17_3), can_delete_deeds
 	end
 
-	arg_17_0.parent:window_input_service():set_blocked(true)
+	self.parent:window_input_service():set_blocked(true)
 end
 
-function StartGameWindowMutatorGridConsole._handle_deeds_deletion(arg_18_0)
-	local var_18_0 = arg_18_0._item_grid:items()
+StartGameWindowMutatorGridConsole._handle_deeds_deletion = function (self)
+	-- function 18
+	local items = self._item_grid:items()
 
-	if arg_18_0._delete_type == "clear" then
-		arg_18_0:_mark_all_for_deletion()
+	if self._delete_type == "clear" then
+		self:_mark_all_for_deletion()
 	end
 
-	local var_18_1 = arg_18_0._deeds_marked_for_deletion
+	local _deeds_marked_for_deletion = self._deeds_marked_for_deletion
 
-	if table.is_empty(var_18_0) or table.is_empty(var_18_1) then
+	if table.is_empty(items) or not table.is_empty(_deeds_marked_for_deletion) then
 		return
 	end
 
-	local var_18_2, var_18_3 = arg_18_0:_delete_deeds(var_18_0, var_18_1)
+	local _delete_deeds, var_18_3 = self:_delete_deeds(items, _deeds_marked_for_deletion)
 
-	arg_18_0._deed_removal_id = var_18_2
+	self._deed_removal_id = _delete_deeds
 end
 
-function StartGameWindowMutatorGridConsole._update_on_removal_state(arg_19_0, arg_19_1)
-	if not arg_19_0._deed_removal_id then
+StartGameWindowMutatorGridConsole._update_on_removal_state = function (self, arg_19_1)
+	-- function 19
+	if not self._deed_removal_id then
 		return
 	end
 
-	if not arg_19_0._deed_manager:is_deleting_deeds() then
-		arg_19_0:_on_removal_complete()
+	if not self._deed_manager:is_deleting_deeds() then
+		self:_on_removal_complete()
 
-		arg_19_0._deed_removal_id = nil
+		self._deed_removal_id = nil
 	end
 end
 
-function StartGameWindowMutatorGridConsole._is_deleting(arg_20_0)
-	return arg_20_0._deed_removal_id
+StartGameWindowMutatorGridConsole._is_deleting = function (self)
+	-- function 20
+	return self._deed_removal_id
 end
 
-function StartGameWindowMutatorGridConsole._on_removal_complete(arg_21_0)
-	local var_21_0 = arg_21_0._item_grid
+StartGameWindowMutatorGridConsole._on_removal_complete = function (self)
+	-- function 21
+	local _item_grid = self._item_grid
 
-	var_21_0:clear_item_grid()
-	var_21_0:change_item_filter(var_0_7[1].item_filter, true)
-	arg_21_0.parent:window_input_service():set_blocked(false)
+	_item_grid:clear_item_grid()
+	_item_grid:change_item_filter(tbl[1].item_filter, true)
+	self.parent:window_input_service():set_blocked(false)
 
-	local var_21_1 = arg_21_0.parent:get_selected_heroic_deed_backend_id()
+	local get_selected_heroic_deed_backend_id = self.parent:get_selected_heroic_deed_backend_id()
 
-	arg_21_0:_play_sound("hud_deed_delete_confirmed")
+	self:_play_sound("hud_deed_delete_confirmed")
 end
 
-function StartGameWindowMutatorGridConsole._set_delete_buttons_visible(arg_22_0, arg_22_1)
+StartGameWindowMutatorGridConsole._set_delete_buttons_visible = function (self, arg_22_1)
+	-- function 22
 	local var_22_0
 	local var_22_1
-	local var_22_2 = arg_22_0._delete_deeds_buttons_widgets_by_name.button_clear
-	local var_22_3 = arg_22_0._delete_deeds_buttons_widgets_by_name.button_delete
+	local button_clear = self._delete_deeds_buttons_widgets_by_name.button_clear
+	local button_delete = self._delete_deeds_buttons_widgets_by_name.button_delete
 
-	var_22_2.content.visible = arg_22_1
-	var_22_3.content.visible = arg_22_1
+	button_clear.content.visible = arg_22_1
+	button_delete.content.visible = arg_22_1
 end
 
-function StartGameWindowMutatorGridConsole._mark_all_for_deletion(arg_23_0)
-	arg_23_0._deeds_marked_for_deletion = {}
+StartGameWindowMutatorGridConsole._mark_all_for_deletion = function (self)
+	-- function 23
+	self._deeds_marked_for_deletion = {}
 
-	local var_23_0 = arg_23_0._item_grid:items()
+	local items = self._item_grid:items()
 
-	for iter_23_0, iter_23_1 in ipairs(var_23_0) do
-		iter_23_1.marked_for_deletion = true
-		arg_23_0._deeds_marked_for_deletion[#arg_23_0._deeds_marked_for_deletion + 1] = iter_23_1
+	for i, v in ipairs(items) do
+		v.marked_for_deletion = true
+		self._deeds_marked_for_deletion[#self._deeds_marked_for_deletion + 1] = v
 	end
 end

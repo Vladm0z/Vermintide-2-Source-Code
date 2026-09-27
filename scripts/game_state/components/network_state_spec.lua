@@ -1,249 +1,276 @@
 -- chunkname: @scripts/game_state/components/network_state_spec.lua
 
-local var_0_0 = require("scripts/utils/lib_deflate")
-local var_0_1 = require("scripts/utils/byte_array")
+local scripts_utils_lib_deflate = require("scripts/utils/lib_deflate")
+local scripts_utils_byte_array = require("scripts/utils/byte_array")
 
-local function var_0_2(arg_1_0)
-	local var_1_0 = {}
-	local var_1_1 = NetworkLookup.inventory_packages
+local function fn(arg_1_0)
+	-- function 1
+	local tbl = {}
+	local inventory_packages = NetworkLookup.inventory_packages
 
-	for iter_1_0, iter_1_1 in pairs(arg_1_0) do
-		local var_1_2 = var_1_1[iter_1_0]
+	for k, v in pairs(arg_1_0) do
+		local var_1_2 = inventory_packages[k]
 
-		assert(var_1_2, "No existing inventory package for attempted name %q", iter_1_0)
+		assert(var_1_2, "No existing inventory package for attempted name %q", k)
 
-		var_1_0[#var_1_0 + 1] = var_1_2
+		tbl[#tbl + 1] = var_1_2
 	end
 
-	return var_1_0
+	return tbl
 end
 
-local function var_0_3(arg_2_0)
-	local var_2_0 = {}
+local function fn_2(arg_2_0)
+	-- function 2
+	local tbl = {}
 
-	for iter_2_0, iter_2_1 in ipairs(arg_2_0) do
-		var_2_0[#var_2_0 + 1] = {
-			iter_2_1.peer_id,
-			iter_2_1.local_player_id,
-			iter_2_1.profile_index,
-			iter_2_1.career_index,
-			iter_2_1.is_bot
+	for i, v in ipairs(arg_2_0) do
+		tbl[#tbl + 1] = {
+			v.peer_id,
+			v.local_player_id,
+			v.profile_index,
+			v.career_index,
+			v.is_bot
 		}
 	end
 
-	return cjson.encode(var_2_0)
+	return cjson.encode(tbl)
 end
 
-local function var_0_4(arg_3_0)
-	local var_3_0 = cjson.decode(arg_3_0)
-	local var_3_1 = {}
+local function fn_3(arg_3_0)
+	-- function 3
+	local decode = cjson.decode(arg_3_0)
+	local tbl = {}
 
-	for iter_3_0, iter_3_1 in ipairs(var_3_0) do
-		local var_3_2 = {
-			peer_id = iter_3_1[1],
-			local_player_id = iter_3_1[2],
-			profile_index = iter_3_1[3],
-			career_index = iter_3_1[4],
-			is_bot = iter_3_1[5]
+	for i, v in ipairs(decode) do
+		local tbl_2 = {
+			peer_id = v[1],
+			local_player_id = v[2],
+			profile_index = v[3],
+			career_index = v[4],
+			is_bot = v[5]
 		}
 
-		var_3_1[#var_3_1 + 1] = var_3_2
+		tbl[#tbl + 1] = tbl_2
 	end
 
-	return var_3_1
+	return tbl
 end
 
-local function var_0_5(arg_4_0)
-	local var_4_0 = var_0_2(arg_4_0.third_person)
-	local var_4_1 = var_0_2(arg_4_0.first_person)
-	local var_4_2 = {}
+local function fn_4(self)
+	-- function 4
+	local var_4_0 = fn(self.third_person)
+	local var_4_1 = fn(self.first_person)
+	local tbl = {}
 
-	var_0_1.write_int32(var_4_2, arg_4_0.inventory_id)
-	var_0_1.write_hash(var_4_2, arg_4_0.inventory_hash)
-	var_0_1.write_int32(var_4_2, #var_4_1)
+	scripts_utils_byte_array.write_int32(tbl, self.inventory_id)
+	scripts_utils_byte_array.write_hash(tbl, self.inventory_hash)
+	scripts_utils_byte_array.write_int32(tbl, #var_4_1)
 
-	for iter_4_0 = 1, #var_4_1 do
-		var_0_1.write_int32(var_4_2, var_4_1[iter_4_0])
+	for i = 1, #var_4_1 do
+		scripts_utils_byte_array.write_int32(tbl, var_4_1[i])
 	end
 
-	var_0_1.write_int32(var_4_2, #var_4_0)
+	scripts_utils_byte_array.write_int32(tbl, #var_4_0)
 
-	for iter_4_1 = 1, #var_4_0 do
-		var_0_1.write_int32(var_4_2, var_4_0[iter_4_1])
+	for j = 1, #var_4_0 do
+		scripts_utils_byte_array.write_int32(tbl, var_4_0[j])
 	end
 
-	local var_4_3 = var_0_1.read_string(var_4_2)
+	local read_string = scripts_utils_byte_array.read_string(tbl)
 
-	return (var_0_0:CompressDeflate(var_4_3))
+	return (scripts_utils_lib_deflate:CompressDeflate(read_string))
 end
 
-local function var_0_6(arg_5_0)
-	local var_5_0 = var_0_0:DecompressDeflate(arg_5_0)
-	local var_5_1 = {}
+local function fn_5(arg_5_0)
+	-- function 5
+	local DecompressDeflate = scripts_utils_lib_deflate:DecompressDeflate(arg_5_0)
+	local tbl = {}
 
-	var_0_1.write_string(var_5_1, var_5_0)
+	scripts_utils_byte_array.write_string(tbl, DecompressDeflate)
 
-	local var_5_2 = 1
+	local num = 1
 	local var_5_3
 	local var_5_4
-	local var_5_5, var_5_6 = var_0_1.read_int32(var_5_1, var_5_2)
-	local var_5_7, var_5_8 = var_0_1.read_hash(var_5_1, var_5_6)
+	local read_int32, var_5_6 = scripts_utils_byte_array.read_int32(tbl, num)
+	local read_hash, var_5_8 = scripts_utils_byte_array.read_hash(tbl, var_5_6)
 	local var_5_9
-	local var_5_10, var_5_11 = var_0_1.read_int32(var_5_1, var_5_8)
-	local var_5_12 = {}
+	local read_int32_2, var_5_11 = scripts_utils_byte_array.read_int32(tbl, var_5_8)
+	local tbl_2 = {}
 
-	for iter_5_0 = 1, var_5_10 do
+	for i = 1, read_int32_2 do
 		local var_5_13
-		local var_5_14
+		local read_int32_3
 
-		var_5_14, var_5_11 = var_0_1.read_int32(var_5_1, var_5_11)
-		var_5_12[NetworkLookup.inventory_packages[var_5_14]] = false
+		read_int32_3, var_5_11 = scripts_utils_byte_array.read_int32(tbl, var_5_11)
+		tbl_2[NetworkLookup.inventory_packages[read_int32_3]] = false
 	end
 
 	local var_5_15
-	local var_5_16, var_5_17 = var_0_1.read_int32(var_5_1, var_5_11)
-	local var_5_18 = {}
+	local read_int32_4, var_5_17 = scripts_utils_byte_array.read_int32(tbl, var_5_11)
+	local tbl_3 = {}
 
-	for iter_5_1 = 1, var_5_16 do
+	for j = 1, read_int32_4 do
 		local var_5_19
-		local var_5_20
+		local read_int32_5
 
-		var_5_20, var_5_17 = var_0_1.read_int32(var_5_1, var_5_17)
-		var_5_18[NetworkLookup.inventory_packages[var_5_20]] = false
+		read_int32_5, var_5_17 = scripts_utils_byte_array.read_int32(tbl, var_5_17)
+		tbl_3[NetworkLookup.inventory_packages[read_int32_5]] = false
 	end
 
 	return {
-		inventory_id = var_5_5,
-		inventory_hash = var_5_7,
-		first_person = var_5_12,
-		third_person = var_5_18
+		inventory_id = read_int32,
+		inventory_hash = read_hash,
+		first_person = tbl_2,
+		third_person = tbl_3
 	}
 end
 
-local function var_0_7(arg_6_0)
-	return string.format("%d:%d", arg_6_0.profile_index, arg_6_0.career_index)
+local function fn_6(self)
+	-- function 6
+	return string.format("%d:%d", self.profile_index, self.career_index)
 end
 
-local function var_0_8(arg_7_0)
-	local var_7_0 = string.split(arg_7_0, ":")
+local function fn_7(arg_7_0)
+	-- function 7
+	local split = string.split(arg_7_0, ":")
 
 	return {
-		profile_index = tonumber(var_7_0[1]),
-		career_index = tonumber(var_7_0[2])
+		profile_index = tonumber(split[1]),
+		career_index = tonumber(split[2])
 	}
 end
 
-local function var_0_9(arg_8_0)
-	return string.format("%d:%d:%d", arg_8_0.profile_index, arg_8_0.career_index, arg_8_0.party_id)
+local function fn_8(self)
+	-- function 8
+	return string.format("%d:%d:%d", self.profile_index, self.career_index, self.party_id)
 end
 
-local function var_0_10(arg_9_0)
-	local var_9_0 = string.split(arg_9_0, ":")
+local function fn_9(arg_9_0)
+	-- function 9
+	local split = string.split(arg_9_0, ":")
 
 	return {
-		profile_index = tonumber(var_9_0[1]),
-		career_index = tonumber(var_9_0[2]),
-		party_id = tonumber(var_9_0[3])
+		profile_index = tonumber(split[1]),
+		career_index = tonumber(split[2]),
+		party_id = tonumber(split[3])
 	}
 end
 
-local function var_0_11(arg_10_0)
+local function fn_10(arg_10_0)
+	-- function 10
 	return table.concat(arg_10_0, ",")
 end
 
-local function var_0_12(arg_11_0)
-	return (arg_11_0.split_deprecated(arg_11_0, ","))
+local function fn_11(self)
+	-- function 11
+	return (self.split_deprecated(self, ","))
 end
 
-local function var_0_13(arg_12_0)
-	local var_12_0 = {}
+local function fn_12(arg_12_0)
+	-- function 12
+	local tbl = {}
 
-	for iter_12_0, iter_12_1 in ipairs(arg_12_0) do
-		var_12_0[iter_12_0] = NetworkLookup.conflict_director_lock_lookup[iter_12_1]
+	for i, v in ipairs(arg_12_0) do
+		tbl[i] = NetworkLookup.conflict_director_lock_lookup[v]
 	end
 
-	return table.concat(var_12_0, ",")
+	return table.concat(tbl, ",")
 end
 
-local function var_0_14(arg_13_0)
-	local var_13_0 = arg_13_0.split_deprecated(arg_13_0, ",")
-	local var_13_1 = {}
+local function fn_13(self)
+	-- function 13
+	local split_deprecated = self.split_deprecated(self, ",")
+	local tbl = {}
 
-	for iter_13_0, iter_13_1 in ipairs(var_13_0) do
-		var_13_1[iter_13_0] = NetworkLookup.conflict_director_lock_lookup[tonumber(iter_13_1)]
+	for i, v in ipairs(split_deprecated) do
+		tbl[i] = NetworkLookup.conflict_director_lock_lookup[tonumber(v)]
 	end
 
-	return var_13_1
+	return tbl
 end
 
-local function var_0_15(arg_14_0)
-	local var_14_0 = {}
+local function fn_14(arg_14_0)
+	-- function 14
+	local tbl = {}
 
-	for iter_14_0, iter_14_1 in ipairs(arg_14_0) do
-		var_14_0[iter_14_0] = NetworkLookup.network_packages[iter_14_1]
+	for i, v in ipairs(arg_14_0) do
+		tbl[i] = NetworkLookup.network_packages[v]
 	end
 
-	return table.concat(var_14_0, ",")
+	return table.concat(tbl, ",")
 end
 
-local function var_0_16(arg_15_0)
-	local var_15_0 = arg_15_0.split_deprecated(arg_15_0, ",")
-	local var_15_1 = {}
+local function fn_15(self)
+	-- function 15
+	local split_deprecated = self.split_deprecated(self, ",")
+	local tbl = {}
 
-	for iter_15_0, iter_15_1 in ipairs(var_15_0) do
-		var_15_1[iter_15_0] = NetworkLookup.network_packages[tonumber(iter_15_1)]
+	for i, v in ipairs(split_deprecated) do
+		tbl[i] = NetworkLookup.network_packages[tonumber(v)]
 	end
 
-	return var_15_1
+	return tbl
 end
 
-local function var_0_17(arg_16_0)
-	local var_16_0 = table.clone(arg_16_0, true)
-	local var_16_1 = var_16_0.mutators
-	local var_16_2
+local function fn_16(arg_16_0)
+	-- function 16
+	local clone = table.clone(arg_16_0, true)
+	local mutators = clone.mutators
+	local flag
 
-	var_16_2 = var_16_1 and table.convert_lookup(var_16_1, NetworkLookup.mutator_templates)
+	flag = not mutators and table.convert_lookup(mutators, NetworkLookup.mutator_templates)
 
-	local var_16_3 = var_16_0.boons
-	local var_16_4
+	local boons = clone.boons
+	local flag_2
 
-	var_16_4 = var_16_3 and table.convert_lookup(var_16_3, NetworkLookup.deus_power_up_templates)
+	flag_2 = not boons and table.convert_lookup(boons, NetworkLookup.deus_power_up_templates)
 
-	return cjson.encode(var_16_0)
+	return cjson.encode(clone)
 end
 
-local function var_0_18(arg_17_0)
-	local var_17_0 = cjson.decode(arg_17_0)
-	local var_17_1 = var_17_0.mutators
-	local var_17_2
+local function fn_17(arg_17_0)
+	-- function 17
+	local decode = cjson.decode(arg_17_0)
+	local mutators = decode.mutators
+	local flag
 
-	var_17_2 = var_17_1 and table.convert_lookup(var_17_1, NetworkLookup.mutator_templates)
+	flag = not mutators and table.convert_lookup(mutators, NetworkLookup.mutator_templates)
 
-	local var_17_3 = var_17_0.boons
-	local var_17_4
+	local boons = decode.boons
+	local flag_2
 
-	var_17_4 = var_17_3 and table.convert_lookup(var_17_3, NetworkLookup.deus_power_up_templates)
+	flag_2 = not boons and table.convert_lookup(boons, NetworkLookup.deus_power_up_templates)
 
-	return var_17_0
+	return decode
 end
 
-local function var_0_19(arg_18_0)
-	return function(arg_19_0)
+local function fn_18(arg_18_0)
+	-- function 18
+	return function (arg_19_0)
+		-- function 19
 		return NetworkLookup[arg_18_0][arg_19_0]
 	end
 end
 
-local function var_0_20(arg_20_0)
-	return function(arg_21_0)
+local function fn_19(arg_20_0)
+	-- function 20
+	return function (arg_21_0)
+		-- function 21
 		return NetworkLookup[arg_20_0][arg_21_0]
 	end
 end
 
-local function var_0_21(arg_22_0)
-	return arg_22_0 == "load_next_level" and 0 or 1
+local function fn_20(arg_22_0)
+	-- function 22
+	local flag
+
+	flag = arg_22_0 ~= "load_next_level" or not 0 or 1
+
+	return flag
 end
 
-local function var_0_22(arg_23_0)
+local function fn_21(arg_23_0)
+	-- function 23
 	if arg_23_0 == 0 then
 		return "load_next_level"
 	else
@@ -251,195 +278,203 @@ local function var_0_22(arg_23_0)
 	end
 end
 
-local function var_0_23(arg_24_0)
-	local var_24_0 = math.ceil(#NetworkLookup.breeds / 8)
-	local var_24_1 = {}
+local function fn_22(arg_24_0)
+	-- function 24
+	local ceil = math.ceil(#NetworkLookup.breeds / 8)
+	local tbl = {}
 
-	for iter_24_0 = 1, var_24_0 do
-		var_24_1[iter_24_0] = 0
+	for i = 1, ceil do
+		tbl[i] = 0
 	end
 
-	for iter_24_1 in pairs(arg_24_0) do
-		local var_24_2 = NetworkLookup.breeds[iter_24_1]
-		local var_24_3 = (var_24_2 - 1) % 8
-		local var_24_4 = math.ceil(var_24_2 / 8)
-		local var_24_5 = var_24_1[var_24_4]
+	for k in pairs(arg_24_0) do
+		local var_24_2 = NetworkLookup.breeds[k]
+		local num = (var_24_2 - 1) % 8
+		local ceil_2 = math.ceil(var_24_2 / 8)
+		local var_24_5 = tbl[ceil_2]
 
-		var_24_1[var_24_4] = bit.bor(var_24_5, 2^var_24_3)
+		tbl[ceil_2] = bit.bor(var_24_5, 2^num)
 	end
 
-	local var_24_6 = var_0_1.read_string(var_24_1)
+	local read_string = scripts_utils_byte_array.read_string(tbl)
 
-	return (var_0_0:CompressDeflate(var_24_6))
+	return (scripts_utils_lib_deflate:CompressDeflate(read_string))
 end
 
-local function var_0_24(arg_25_0)
-	local var_25_0 = var_0_0:DecompressDeflate(arg_25_0)
-	local var_25_1 = {}
+local function fn_23(arg_25_0)
+	-- function 25
+	local DecompressDeflate = scripts_utils_lib_deflate:DecompressDeflate(arg_25_0)
+	local tbl = {}
 
-	var_0_1.write_string(var_25_1, var_25_0)
+	scripts_utils_byte_array.write_string(tbl, DecompressDeflate)
 
-	local var_25_2 = {}
+	local tbl_2 = {}
 
-	for iter_25_0 = 1, #var_25_1 do
-		local var_25_3 = tonumber(var_25_1[iter_25_0])
+	for i = 1, #tbl do
+		local var_25_3 = tonumber(tbl[i])
 
 		if var_25_3 ~= 0 then
-			for iter_25_1 = 0, 7 do
-				if bit.band(var_25_3, 2^iter_25_1) ~= 0 then
-					local var_25_4 = iter_25_1 + 1 + 8 * (iter_25_0 - 1)
+			for j = 0, 7 do
+				if not (bit.band(var_25_3, 2^j) ~= 0) then
+					local num = j + 1 + 8 * (i - 1)
 
-					var_25_2[NetworkLookup.breeds[var_25_4]] = true
+					tbl_2[NetworkLookup.breeds[num]] = true
 				end
 			end
 		end
 	end
 
-	return var_25_2
+	return tbl_2
 end
 
-local function var_0_25(arg_26_0)
-	local var_26_0 = math.ceil(#NetworkLookup.pickup_names / 8)
-	local var_26_1 = {}
+local function fn_24(arg_26_0)
+	-- function 26
+	local ceil = math.ceil(#NetworkLookup.pickup_names / 8)
+	local tbl = {}
 
-	for iter_26_0 = 1, var_26_0 do
-		var_26_1[iter_26_0] = 0
+	for i = 1, ceil do
+		tbl[i] = 0
 	end
 
-	for iter_26_1 in pairs(arg_26_0) do
-		local var_26_2 = NetworkLookup.pickup_names[iter_26_1]
-		local var_26_3 = (var_26_2 - 1) % 8
-		local var_26_4 = math.ceil(var_26_2 / 8)
-		local var_26_5 = var_26_1[var_26_4]
+	for k in pairs(arg_26_0) do
+		local var_26_2 = NetworkLookup.pickup_names[k]
+		local num = (var_26_2 - 1) % 8
+		local ceil_2 = math.ceil(var_26_2 / 8)
+		local var_26_5 = tbl[ceil_2]
 
-		var_26_1[var_26_4] = bit.bor(var_26_5, 2^var_26_3)
+		tbl[ceil_2] = bit.bor(var_26_5, 2^num)
 	end
 
-	local var_26_6 = var_0_1.read_string(var_26_1)
+	local read_string = scripts_utils_byte_array.read_string(tbl)
 
-	return (var_0_0:CompressDeflate(var_26_6))
+	return (scripts_utils_lib_deflate:CompressDeflate(read_string))
 end
 
-local function var_0_26(arg_27_0)
-	local var_27_0 = var_0_0:DecompressDeflate(arg_27_0)
-	local var_27_1 = {}
+local function fn_25(arg_27_0)
+	-- function 27
+	local DecompressDeflate = scripts_utils_lib_deflate:DecompressDeflate(arg_27_0)
+	local tbl = {}
 
-	var_0_1.write_string(var_27_1, var_27_0)
+	scripts_utils_byte_array.write_string(tbl, DecompressDeflate)
 
-	local var_27_2 = {}
+	local tbl_2 = {}
 
-	for iter_27_0 = 1, #var_27_1 do
-		local var_27_3 = tonumber(var_27_1[iter_27_0])
+	for i = 1, #tbl do
+		local var_27_3 = tonumber(tbl[i])
 
 		if var_27_3 ~= 0 then
-			for iter_27_1 = 0, 7 do
-				if bit.band(var_27_3, 2^iter_27_1) ~= 0 then
-					local var_27_4 = iter_27_1 + 1 + 8 * (iter_27_0 - 1)
+			for j = 0, 7 do
+				if not (bit.band(var_27_3, 2^j) ~= 0) then
+					local num = j + 1 + 8 * (i - 1)
 
-					var_27_2[NetworkLookup.pickup_names[var_27_4]] = true
+					tbl_2[NetworkLookup.pickup_names[num]] = true
 				end
 			end
 		end
 	end
 
-	return var_27_2
+	return tbl_2
 end
 
-local function var_0_27(arg_28_0)
-	local var_28_0 = math.ceil(#NetworkLookup.dlcs / 8)
-	local var_28_1 = {}
+local function fn_26(arg_28_0)
+	-- function 28
+	local ceil = math.ceil(#NetworkLookup.dlcs / 8)
+	local tbl = {}
 
-	for iter_28_0 = 1, var_28_0 do
-		var_28_1[iter_28_0] = 0
+	for i = 1, ceil do
+		tbl[i] = 0
 	end
 
-	for iter_28_1 in pairs(arg_28_0) do
-		local var_28_2 = NetworkLookup.dlcs[iter_28_1]
-		local var_28_3 = (var_28_2 - 1) % 8
-		local var_28_4 = math.ceil(var_28_2 / 8)
-		local var_28_5 = var_28_1[var_28_4]
+	for k in pairs(arg_28_0) do
+		local var_28_2 = NetworkLookup.dlcs[k]
+		local num = (var_28_2 - 1) % 8
+		local ceil_2 = math.ceil(var_28_2 / 8)
+		local var_28_5 = tbl[ceil_2]
 
-		var_28_1[var_28_4] = bit.bor(var_28_5, 2^var_28_3)
+		tbl[ceil_2] = bit.bor(var_28_5, 2^num)
 	end
 
-	local var_28_6 = var_0_1.read_string(var_28_1)
+	local read_string = scripts_utils_byte_array.read_string(tbl)
 
-	return (var_0_0:CompressDeflate(var_28_6))
+	return (scripts_utils_lib_deflate:CompressDeflate(read_string))
 end
 
-local function var_0_28(arg_29_0)
-	local var_29_0 = var_0_0:DecompressDeflate(arg_29_0)
-	local var_29_1 = {}
+local function fn_27(arg_29_0)
+	-- function 29
+	local DecompressDeflate = scripts_utils_lib_deflate:DecompressDeflate(arg_29_0)
+	local tbl = {}
 
-	var_0_1.write_string(var_29_1, var_29_0)
+	scripts_utils_byte_array.write_string(tbl, DecompressDeflate)
 
-	local var_29_2 = {}
+	local tbl_2 = {}
 
-	for iter_29_0 = 1, #var_29_1 do
-		local var_29_3 = tonumber(var_29_1[iter_29_0])
+	for i = 1, #tbl do
+		local var_29_3 = tonumber(tbl[i])
 
 		if var_29_3 ~= 0 then
-			for iter_29_1 = 0, 7 do
-				if bit.band(var_29_3, 2^iter_29_1) ~= 0 then
-					local var_29_4 = iter_29_1 + 1 + 8 * (iter_29_0 - 1)
+			for j = 0, 7 do
+				if not (bit.band(var_29_3, 2^j) ~= 0) then
+					local num = j + 1 + 8 * (i - 1)
 
-					var_29_2[NetworkLookup.dlcs[var_29_4]] = true
+					tbl_2[NetworkLookup.dlcs[num]] = true
 				end
 			end
 		end
 	end
 
-	return var_29_2
+	return tbl_2
 end
 
-local function var_0_29(arg_30_0)
-	local var_30_0 = math.ceil(#NetworkLookup.mutator_templates / 8)
-	local var_30_1 = {}
+local function fn_28(arg_30_0)
+	-- function 30
+	local ceil = math.ceil(#NetworkLookup.mutator_templates / 8)
+	local tbl = {}
 
-	for iter_30_0 = 1, var_30_0 do
-		var_30_1[iter_30_0] = 0
+	for i = 1, ceil do
+		tbl[i] = 0
 	end
 
-	for iter_30_1 in pairs(arg_30_0) do
-		local var_30_2 = NetworkLookup.mutator_templates[iter_30_1]
-		local var_30_3 = (var_30_2 - 1) % 8
-		local var_30_4 = math.ceil(var_30_2 / 8)
-		local var_30_5 = var_30_1[var_30_4]
+	for k in pairs(arg_30_0) do
+		local var_30_2 = NetworkLookup.mutator_templates[k]
+		local num = (var_30_2 - 1) % 8
+		local ceil_2 = math.ceil(var_30_2 / 8)
+		local var_30_5 = tbl[ceil_2]
 
-		var_30_1[var_30_4] = bit.bor(var_30_5, 2^var_30_3)
+		tbl[ceil_2] = bit.bor(var_30_5, 2^num)
 	end
 
-	local var_30_6 = var_0_1.read_string(var_30_1)
+	local read_string = scripts_utils_byte_array.read_string(tbl)
 
-	return (var_0_0:CompressDeflate(var_30_6))
+	return (scripts_utils_lib_deflate:CompressDeflate(read_string))
 end
 
-local function var_0_30(arg_31_0)
-	local var_31_0 = var_0_0:DecompressDeflate(arg_31_0)
-	local var_31_1 = {}
+local function fn_29(arg_31_0)
+	-- function 31
+	local DecompressDeflate = scripts_utils_lib_deflate:DecompressDeflate(arg_31_0)
+	local tbl = {}
 
-	var_0_1.write_string(var_31_1, var_31_0)
+	scripts_utils_byte_array.write_string(tbl, DecompressDeflate)
 
-	local var_31_2 = {}
+	local tbl_2 = {}
 
-	for iter_31_0 = 1, #var_31_1 do
-		local var_31_3 = tonumber(var_31_1[iter_31_0])
+	for i = 1, #tbl do
+		local var_31_3 = tonumber(tbl[i])
 
 		if var_31_3 ~= 0 then
-			for iter_31_1 = 0, 7 do
-				if bit.band(var_31_3, 2^iter_31_1) ~= 0 then
-					local var_31_4 = iter_31_1 + 1 + 8 * (iter_31_0 - 1)
+			for j = 0, 7 do
+				if not (bit.band(var_31_3, 2^j) ~= 0) then
+					local num = j + 1 + 8 * (i - 1)
 
-					var_31_2[NetworkLookup.mutator_templates[var_31_4]] = true
+					tbl_2[NetworkLookup.mutator_templates[num]] = true
 				end
 			end
 		end
 	end
 
-	return var_31_2
+	return tbl_2
 end
 
-local var_0_31 = {
+local tbl = {
 	server = {
 		peer_ingame = {
 			clear_when_peer_id_leaves = true,
@@ -475,8 +510,8 @@ local var_0_31 = {
 			composite_keys = {
 				peer_id = true
 			},
-			encode = var_0_9,
-			decode = var_0_10
+			encode = fn_8,
+			decode = fn_9
 		},
 		bot_profile = {
 			type = "table",
@@ -488,22 +523,22 @@ local var_0_31 = {
 				party_id = true,
 				local_player_id = true
 			},
-			encode = var_0_7,
-			decode = var_0_8
+			encode = fn_6,
+			decode = fn_7
 		},
 		full_profile_peers = {
 			type = "table",
 			default_value = {},
 			composite_keys = {},
-			encode = var_0_3,
-			decode = var_0_4
+			encode = fn_2,
+			decode = fn_3
 		},
 		peers = {
 			type = "table",
 			default_value = {},
 			composite_keys = {},
-			encode = var_0_11,
-			decode = var_0_12
+			encode = fn_10,
+			decode = fn_11
 		},
 		level_key = {
 			default_value = "inn_level",
@@ -534,15 +569,15 @@ local var_0_31 = {
 			type = "table",
 			default_value = {},
 			composite_keys = {},
-			encode = var_0_13,
-			decode = var_0_14
+			encode = fn_12,
+			decode = fn_13
 		},
 		difficulty = {
 			type = "string",
 			default_value = "normal",
 			composite_keys = {},
-			encode = var_0_19("difficulties"),
-			decode = var_0_20("difficulties")
+			encode = fn_18("difficulties"),
+			decode = fn_19("difficulties")
 		},
 		difficulty_tweak = {
 			default_value = 0,
@@ -553,15 +588,15 @@ local var_0_31 = {
 			type = "table",
 			default_value = {},
 			composite_keys = {},
-			encode = var_0_15,
-			decode = var_0_16
+			encode = fn_14,
+			decode = fn_15
 		},
 		mechanism = {
 			type = "string",
 			default_value = "adventure",
 			composite_keys = {},
-			encode = var_0_19("mechanism_keys"),
-			decode = var_0_20("mechanism_keys")
+			encode = fn_18("mechanism_keys"),
+			decode = fn_19("mechanism_keys")
 		},
 		level_session_id = {
 			default_value = 0,
@@ -572,8 +607,8 @@ local var_0_31 = {
 			type = "string",
 			default_value = "load_next_level",
 			composite_keys = {},
-			encode = var_0_21,
-			decode = var_0_22
+			encode = fn_20,
+			decode = fn_21
 		},
 		side_order_state = {
 			default_value = 1,
@@ -584,38 +619,38 @@ local var_0_31 = {
 			type = "table",
 			default_value = {},
 			composite_keys = {},
-			encode = var_0_17,
-			decode = var_0_18
+			encode = fn_16,
+			decode = fn_17
 		},
 		initialized_mutator_map = {
 			type = "table",
 			default_value = {},
 			composite_keys = {},
-			encode = var_0_29,
-			decode = var_0_30
+			encode = fn_28,
+			decode = fn_29
 		},
 		session_breed_map = {
 			mute_print = true,
 			type = "table",
 			default_value = {},
 			composite_keys = {},
-			encode = var_0_23,
-			decode = var_0_24
+			encode = fn_22,
+			decode = fn_23
 		},
 		startup_breed_map = {
 			type = "table",
 			default_value = {},
 			composite_keys = {},
-			encode = var_0_23,
-			decode = var_0_24
+			encode = fn_22,
+			decode = fn_23
 		},
 		session_pickup_map = {
 			mute_print = true,
 			type = "table",
 			default_value = {},
 			composite_keys = {},
-			encode = var_0_25,
-			decode = var_0_26
+			encode = fn_24,
+			decode = fn_25
 		}
 	},
 	peer = {
@@ -630,8 +665,8 @@ local var_0_31 = {
 				first_person = {},
 				third_person = {}
 			},
-			encode = var_0_5,
-			decode = var_0_6
+			encode = fn_4,
+			decode = fn_5
 		},
 		loaded_inventory_id = {
 			default_value = 0,
@@ -655,36 +690,37 @@ local var_0_31 = {
 			type = "table",
 			default_value = {},
 			composite_keys = {},
-			encode = var_0_23,
-			decode = var_0_24
+			encode = fn_22,
+			decode = fn_23
 		},
 		loaded_session_pickup_map = {
 			mute_print = true,
 			type = "table",
 			default_value = {},
 			composite_keys = {},
-			encode = var_0_25,
-			decode = var_0_26
+			encode = fn_24,
+			decode = fn_25
 		},
 		unlocked_dlcs = {
 			mute_print = true,
 			type = "table",
 			default_value = {},
 			composite_keys = {},
-			encode = var_0_27,
-			decode = var_0_28,
-			immediate_initialization = function(arg_32_0, arg_32_1)
-				local var_32_0 = Managers.unlock
-				local var_32_1 = NetworkLookup.dlcs
-				local var_32_2 = {}
+			encode = fn_26,
+			decode = fn_27,
+			immediate_initialization = function (self, arg_32_1)
+				-- function 32
+				local unlock = Managers.unlock
+				local dlcs = NetworkLookup.dlcs
+				local tbl = {}
 
-				for iter_32_0 = 1, #var_32_1 do
-					local var_32_3 = var_32_1[iter_32_0]
+				for i = 1, #dlcs do
+					local var_32_3 = dlcs[i]
 
-					var_32_2[var_32_3] = var_32_0:is_dlc_unlocked(var_32_3)
+					tbl[var_32_3] = unlock:is_dlc_unlocked(var_32_3)
 				end
 
-				return arg_32_0:get_key("unlocked_dlcs"), var_32_2
+				return self:get_key("unlocked_dlcs"), tbl
 			end
 		},
 		loaded_mutator_map = {
@@ -692,12 +728,12 @@ local var_0_31 = {
 			type = "table",
 			default_value = {},
 			composite_keys = {},
-			encode = var_0_29,
-			decode = var_0_30
+			encode = fn_28,
+			decode = fn_29
 		}
 	}
 }
 
-SharedState.validate_spec(var_0_31)
+SharedState.validate_spec(tbl)
 
-return var_0_31
+return tbl

@@ -1,27 +1,28 @@
 -- chunkname: @scripts/ui/hud_ui/deus_curse_ui_definitions.lua
 
-local var_0_0 = 1920
-local var_0_1 = 1080
-local var_0_2 = {
+local num = 1920
+local num_2 = 1080
+local tbl = {
 	819,
 	60
 }
-local var_0_3 = {
+local tbl_2 = {
 	0,
 	20
 }
-local var_0_4 = 100
-local var_0_5 = var_0_4
-local var_0_6 = 1000
+local num_3 = 100
+local var_0_5 = num_3
+local num_4 = 1000
 
-var_0_2[2] = var_0_2[2] + var_0_5 + var_0_3[2] * 2
+tbl[2] = tbl[2] + var_0_5 + tbl_2[2] * 2
 
-local var_0_7 = {
-	change_widget_height = function(arg_1_0)
-		var_0_5 = math.min(var_0_4, arg_1_0)
+local tbl_3 = {
+	change_widget_height = function (arg_1_0)
+		-- function 1
+		var_0_5 = math.min(num_3, arg_1_0)
 	end
 }
-local var_0_8 = {
+local tbl_4 = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -30,8 +31,8 @@ local var_0_8 = {
 			UILayer.hud
 		},
 		size = {
-			var_0_0,
-			var_0_1
+			num,
+			num_2
 		}
 	},
 	pivot = {
@@ -114,8 +115,8 @@ local var_0_8 = {
 			0
 		},
 		size = {
-			var_0_2[1],
-			var_0_2[2]
+			tbl[1],
+			tbl[2]
 		}
 	},
 	background = {
@@ -123,8 +124,8 @@ local var_0_8 = {
 		parent = "description_pivot",
 		horizontal_alignment = "center",
 		size = {
-			var_0_6,
-			var_0_5 + var_0_3[2]
+			num_4,
+			var_0_5 + tbl_2[2]
 		},
 		position = {
 			0,
@@ -137,7 +138,7 @@ local var_0_8 = {
 		parent = "background",
 		horizontal_alignment = "center",
 		size = {
-			var_0_6,
+			num_4,
 			var_0_5
 		},
 		position = {
@@ -165,7 +166,7 @@ local var_0_8 = {
 		parent = "top_center",
 		horizontal_alignment = "right",
 		size = {
-			var_0_6 / 2,
+			num_4 / 2,
 			6
 		},
 		position = {
@@ -179,7 +180,7 @@ local var_0_8 = {
 		parent = "top_center",
 		horizontal_alignment = "left",
 		size = {
-			var_0_6 / 2,
+			num_4 / 2,
 			6
 		},
 		position = {
@@ -221,7 +222,7 @@ local var_0_8 = {
 		parent = "bottom_center",
 		horizontal_alignment = "right",
 		size = {
-			var_0_6 / 2,
+			num_4 / 2,
 			6
 		},
 		position = {
@@ -235,7 +236,7 @@ local var_0_8 = {
 		parent = "bottom_center",
 		horizontal_alignment = "left",
 		size = {
-			var_0_6 / 2,
+			num_4 / 2,
 			6
 		},
 		position = {
@@ -253,7 +254,7 @@ local var_0_8 = {
 			4
 		},
 		position = {
-			var_0_2[1] / 2,
+			tbl[1] / 2,
 			2,
 			3
 		}
@@ -267,7 +268,7 @@ local var_0_8 = {
 			4
 		},
 		position = {
-			-var_0_2[1] / 2,
+			-tbl[1] / 2,
 			2,
 			3
 		}
@@ -281,7 +282,7 @@ local var_0_8 = {
 			4
 		},
 		position = {
-			var_0_2[1] / 2,
+			tbl[1] / 2,
 			-2,
 			3
 		}
@@ -295,7 +296,7 @@ local var_0_8 = {
 			4
 		},
 		position = {
-			-var_0_2[1] / 2,
+			-tbl[1] / 2,
 			-2,
 			3
 		}
@@ -303,12 +304,12 @@ local var_0_8 = {
 }
 
 if not IS_WINDOWS then
-	var_0_8.screen.scale = "hud_fit"
+	tbl_4.screen.scale = "hud_fit"
 end
 
 table.clone(Colors.color_definitions.white)[1] = 0
 
-local var_0_9 = {
+local tbl_5 = {
 	description_widget = {
 		scenegraph_id = "description_pivot",
 		element = {
@@ -317,8 +318,9 @@ local var_0_9 = {
 					texture_id = "theme_icon",
 					style_id = "theme_icon",
 					pass_type = "texture",
-					content_check_function = function(arg_2_0)
-						return arg_2_0.theme_icon ~= nil
+					content_check_function = function (self)
+						-- function 2
+						return self.theme_icon ~= nil
 					end
 				},
 				{
@@ -440,20 +442,21 @@ local var_0_9 = {
 					pass_type = "texture_uv_dynamic_color_uvs_size_offset",
 					style_id = "background_texture",
 					texture_id = "background_texture",
-					dynamic_function = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
-						local var_3_0 = arg_3_0.fraction
-						local var_3_1 = arg_3_1.color
-						local var_3_2 = arg_3_1.uv_start_pixels
-						local var_3_3 = arg_3_1.uv_scale_pixels
-						local var_3_4 = var_3_2 + var_3_3 * var_3_0
-						local var_3_5 = arg_3_1.uvs
-						local var_3_6 = arg_3_1.scale_axis
-						local var_3_7 = (1 - var_3_4 / (var_3_2 + var_3_3)) * 0.5
+					dynamic_function = function (self, arg_3_1, arg_3_2, arg_3_3)
+						-- function 3
+						local fraction = self.fraction
+						local color = arg_3_1.color
+						local uv_start_pixels = arg_3_1.uv_start_pixels
+						local uv_scale_pixels = arg_3_1.uv_scale_pixels
+						local num = uv_start_pixels + uv_scale_pixels * fraction
+						local uvs = arg_3_1.uvs
+						local scale_axis = arg_3_1.scale_axis
+						local num_2 = (1 - num / (uv_start_pixels + uv_scale_pixels)) * 0.5
 
-						var_3_5[1][var_3_6] = var_3_7
-						var_3_5[2][var_3_6] = 1 - var_3_7
+						uvs[1][scale_axis] = num_2
+						uvs[2][scale_axis] = 1 - num_2
 
-						return var_3_1, var_3_5, arg_3_2, arg_3_1.offset
+						return color, uvs, arg_3_2, arg_3_1.offset
 					end
 				}
 			}
@@ -647,20 +650,20 @@ local var_0_9 = {
 			top_glow = {
 				scenegraph_id = "top_center",
 				size = {
-					var_0_6 + 44,
+					num_4 + 44,
 					90
 				},
 				default_size = {
-					var_0_6 + 44,
+					num_4 + 44,
 					90
 				},
 				offset = {
-					27 - (var_0_6 + 44) / 2,
+					27 - (num_4 + 44) / 2,
 					-80,
 					-4
 				},
 				default_offset = {
-					27 - (var_0_6 + 44) / 2,
+					27 - (num_4 + 44) / 2,
 					-80,
 					-4
 				},
@@ -674,20 +677,20 @@ local var_0_9 = {
 			top_edge_glow = {
 				scenegraph_id = "top_center",
 				size = {
-					var_0_6 + 44,
+					num_4 + 44,
 					16
 				},
 				default_size = {
-					var_0_6 + 44,
+					num_4 + 44,
 					16
 				},
 				offset = {
-					27 - (var_0_6 + 44) / 2,
+					27 - (num_4 + 44) / 2,
 					-6,
 					-4
 				},
 				default_offset = {
-					27 - (var_0_6 + 44) / 2,
+					27 - (num_4 + 44) / 2,
 					-6,
 					-5
 				},
@@ -799,20 +802,20 @@ local var_0_9 = {
 			bottom_glow = {
 				scenegraph_id = "bottom_center",
 				size = {
-					var_0_6 + 44,
+					num_4 + 44,
 					90
 				},
 				default_size = {
-					var_0_6 + 44,
+					num_4 + 44,
 					90
 				},
 				offset = {
-					27 - (var_0_6 + 44) / 2,
+					27 - (num_4 + 44) / 2,
 					10,
 					-4
 				},
 				default_offset = {
-					27 - (var_0_6 + 44) / 2,
+					27 - (num_4 + 44) / 2,
 					10,
 					-4
 				},
@@ -826,20 +829,20 @@ local var_0_9 = {
 			bottom_edge_glow = {
 				scenegraph_id = "bottom_center",
 				size = {
-					var_0_6 + 44,
+					num_4 + 44,
 					16
 				},
 				default_size = {
-					var_0_6 + 44,
+					num_4 + 44,
 					16
 				},
 				offset = {
-					27 - (var_0_6 + 44) / 2,
+					27 - (num_4 + 44) / 2,
 					10,
 					-4
 				},
 				default_offset = {
-					27 - (var_0_6 + 44) / 2,
+					27 - (num_4 + 44) / 2,
 					10,
 					-5
 				},
@@ -957,7 +960,7 @@ local var_0_9 = {
 				offset_scale = 1,
 				background_component = true,
 				scale_axis = 2,
-				uv_scale_pixels = var_0_2[2],
+				uv_scale_pixels = tbl[2],
 				uvs = {
 					{
 						0,
@@ -1019,42 +1022,45 @@ local var_0_9 = {
 		}
 	}
 }
-local var_0_10 = {
+local tbl_6 = {
 	description_start = {
 		{
 			name = "entry",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (self, arg_4_1, arg_4_2, arg_4_3)
+				-- function 4
 				arg_4_3.render_settings.alpha_multiplier = 0
 				arg_4_3.render_settings.snap_pixel_positions = false
 				arg_4_2.style.top_edge_glow.color[1] = 0
 				arg_4_2.style.bottom_edge_glow.color[1] = 0
 
-				local var_4_0 = arg_4_1.description_pivot.position
+				local position = arg_4_1.description_pivot.position
 
-				arg_4_0.description_pivot.local_position[2] = var_4_0[2]
+				self.description_pivot.local_position[2] = position[2]
 
-				local var_4_1 = arg_4_2.style
-				local var_4_2 = var_4_1.area_text_style
-				local var_4_3 = var_4_1.area_text_shadow_style
+				local style = arg_4_2.style
+				local area_text_style = style.area_text_style
+				local area_text_shadow_style = style.area_text_shadow_style
 
-				var_4_2.font_size = var_4_2.default_font_size
-				var_4_3.font_size = var_4_2.default_font_size
-				var_4_2.text_color[1] = 0
-				var_4_3.text_color[1] = 0
+				area_text_style.font_size = area_text_style.default_font_size
+				area_text_shadow_style.font_size = area_text_style.default_font_size
+				area_text_style.text_color[1] = 0
+				area_text_shadow_style.text_color[1] = 0
 
-				local var_4_4 = arg_4_0.background
-				local var_4_5 = arg_4_1.background
+				local background = self.background
+				local background_2 = arg_4_1.background
 
-				var_4_4.size[2] = var_4_5.size[2]
+				background.size[2] = background_2.size[2]
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
-				local var_5_0 = math.easeOutCubic(arg_5_3)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+				-- function 5
+				local easeOutCubic = math.easeOutCubic(arg_5_3)
 
-				arg_5_4.render_settings.alpha_multiplier = var_5_0
+				arg_5_4.render_settings.alpha_multiplier = easeOutCubic
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+				-- function 6
 				return
 			end
 		},
@@ -1062,69 +1068,72 @@ local var_0_10 = {
 			name = "unfold",
 			start_progress = 0.3,
 			end_progress = 0.8,
-			init = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
-				local var_7_0 = 0.1
-				local var_7_1 = arg_7_2.content
-				local var_7_2 = var_7_1.top_left.uvs
-				local var_7_3 = arg_7_0.top_left
-				local var_7_4 = arg_7_1.top_left
+			init = function (self, arg_7_1, arg_7_2, arg_7_3)
+				-- function 7
+				local num = 0.1
+				local content = arg_7_2.content
+				local uvs = content.top_left.uvs
+				local top_left = self.top_left
+				local top_left_2 = arg_7_1.top_left
 
-				var_7_3.size[1] = var_7_4.size[1] * var_7_0
-				var_7_2[2][1] = var_7_0
+				top_left.size[1] = top_left_2.size[1] * num
+				uvs[2][1] = num
 
-				local var_7_5 = var_7_1.bottom_left.uvs
-				local var_7_6 = arg_7_0.bottom_left
-				local var_7_7 = arg_7_1.bottom_left
+				local uvs_2 = content.bottom_left.uvs
+				local bottom_left = self.bottom_left
+				local bottom_left_2 = arg_7_1.bottom_left
 
-				var_7_6.size[1] = var_7_7.size[1] * var_7_0
-				var_7_5[2][1] = var_7_0
+				bottom_left.size[1] = bottom_left_2.size[1] * num
+				uvs_2[2][1] = num
 
-				local var_7_8 = var_7_1.top_right.uvs
-				local var_7_9 = arg_7_0.top_right
-				local var_7_10 = arg_7_1.top_right
+				local uvs_3 = content.top_right.uvs
+				local top_right = self.top_right
+				local top_right_2 = arg_7_1.top_right
 
-				var_7_9.size[1] = var_7_10.size[1] * var_7_0
-				var_7_8[1][1] = 1 - var_7_0
+				top_right.size[1] = top_right_2.size[1] * num
+				uvs_3[1][1] = 1 - num
 
-				local var_7_11 = var_7_1.bottom_right.uvs
-				local var_7_12 = arg_7_0.bottom_right
-				local var_7_13 = arg_7_1.bottom_right
+				local uvs_4 = content.bottom_right.uvs
+				local bottom_right = self.bottom_right
+				local bottom_right_2 = arg_7_1.bottom_right
 
-				var_7_12.size[1] = var_7_13.size[1] * var_7_0
-				var_7_11[1][1] = 1 - var_7_0
+				bottom_right.size[1] = bottom_right_2.size[1] * num
+				uvs_4[1][1] = 1 - num
 			end,
-			update = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
-				local var_8_0 = math.min(0.1 + math.easeInCubic(arg_8_3), 1)
-				local var_8_1 = arg_8_2.content
-				local var_8_2 = var_8_1.top_left.uvs
-				local var_8_3 = arg_8_0.top_left
-				local var_8_4 = arg_8_1.top_left
+			update = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+				-- function 8
+				local min = math.min(0.1 + math.easeInCubic(arg_8_3), 1)
+				local content = arg_8_2.content
+				local uvs = content.top_left.uvs
+				local top_left = self.top_left
+				local top_left_2 = arg_8_1.top_left
 
-				var_8_3.size[1] = var_8_4.size[1] * var_8_0
-				var_8_2[2][1] = var_8_0
+				top_left.size[1] = top_left_2.size[1] * min
+				uvs[2][1] = min
 
-				local var_8_5 = var_8_1.bottom_left.uvs
-				local var_8_6 = arg_8_0.bottom_left
-				local var_8_7 = arg_8_1.bottom_left
+				local uvs_2 = content.bottom_left.uvs
+				local bottom_left = self.bottom_left
+				local bottom_left_2 = arg_8_1.bottom_left
 
-				var_8_6.size[1] = var_8_7.size[1] * var_8_0
-				var_8_5[2][1] = var_8_0
+				bottom_left.size[1] = bottom_left_2.size[1] * min
+				uvs_2[2][1] = min
 
-				local var_8_8 = var_8_1.top_right.uvs
-				local var_8_9 = arg_8_0.top_right
-				local var_8_10 = arg_8_1.top_right
+				local uvs_3 = content.top_right.uvs
+				local top_right = self.top_right
+				local top_right_2 = arg_8_1.top_right
 
-				var_8_9.size[1] = var_8_10.size[1] * var_8_0
-				var_8_8[1][1] = 1 - var_8_0
+				top_right.size[1] = top_right_2.size[1] * min
+				uvs_3[1][1] = 1 - min
 
-				local var_8_11 = var_8_1.bottom_right.uvs
-				local var_8_12 = arg_8_0.bottom_right
-				local var_8_13 = arg_8_1.bottom_right
+				local uvs_4 = content.bottom_right.uvs
+				local bottom_right = self.bottom_right
+				local bottom_right_2 = arg_8_1.bottom_right
 
-				var_8_12.size[1] = var_8_13.size[1] * var_8_0
-				var_8_11[1][1] = 1 - var_8_0
+				bottom_right.size[1] = bottom_right_2.size[1] * min
+				uvs_4[1][1] = 1 - min
 			end,
-			on_complete = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			on_complete = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+				-- function 9
 				return
 			end
 		},
@@ -1132,64 +1141,67 @@ local var_0_10 = {
 			name = "open",
 			start_progress = 0.8,
 			end_progress = 1.5,
-			init = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
-				local var_10_0 = arg_10_2.style
-				local var_10_1 = arg_10_2.content
-				local var_10_2 = var_10_0.top_glow
-				local var_10_3 = var_10_0.bottom_glow
-				local var_10_4 = var_10_0.background
+			init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+				-- function 10
+				local style = arg_10_2.style
+				local content = arg_10_2.content
+				local top_glow = style.top_glow
+				local bottom_glow = style.bottom_glow
+				local background = style.background
 
-				var_10_1.top_glow.uvs[1][2] = 0
-				var_10_1.bottom_glow.uvs[2][2] = 1
-				var_10_2.size[2] = 0
-				var_10_3.size[2] = 0
-				var_10_4.color[1] = 0
+				content.top_glow.uvs[1][2] = 0
+				content.bottom_glow.uvs[2][2] = 1
+				top_glow.size[2] = 0
+				bottom_glow.size[2] = 0
+				background.color[1] = 0
 				arg_10_0.top_center.local_position[2] = arg_10_1.top_center.position[2]
 				arg_10_0.bottom_center.local_position[2] = arg_10_1.bottom_center.position[2]
 			end,
-			update = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
-				local var_11_0 = math.easeOutCubic(arg_11_3)
+			update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+				-- function 11
+				local easeOutCubic = math.easeOutCubic(arg_11_3)
 
-				arg_11_0.top_center.local_position[2] = arg_11_1.top_center.position[2] + (var_0_5 + var_0_3[2]) / 2 * var_11_0
-				arg_11_0.bottom_center.local_position[2] = arg_11_1.bottom_center.position[2] + -((var_0_5 + var_0_3[2]) / 2) * var_11_0
+				arg_11_0.top_center.local_position[2] = arg_11_1.top_center.position[2] + (var_0_5 + tbl_2[2]) / 2 * easeOutCubic
+				arg_11_0.bottom_center.local_position[2] = arg_11_1.bottom_center.position[2] + -((var_0_5 + tbl_2[2]) / 2) * easeOutCubic
 
-				local var_11_1 = arg_11_2.style
-				local var_11_2 = arg_11_2.content
-				local var_11_3 = var_11_2.top_glow
-				local var_11_4 = var_11_2.bottom_glow
-				local var_11_5 = var_11_3.uvs
-				local var_11_6 = var_11_4.uvs
+				local style = arg_11_2.style
+				local content = arg_11_2.content
+				local top_glow = content.top_glow
+				local bottom_glow = content.bottom_glow
+				local uvs = top_glow.uvs
+				local uvs_2 = bottom_glow.uvs
 
-				var_11_5[2][2] = var_11_0
-				var_11_6[1][2] = 1 - var_11_0
+				uvs[2][2] = easeOutCubic
+				uvs_2[1][2] = 1 - easeOutCubic
 
-				local var_11_7 = var_11_1.top_glow
-				local var_11_8 = var_11_1.bottom_glow
+				local top_glow_2 = style.top_glow
+				local bottom_glow_2 = style.bottom_glow
 
-				var_11_8.size[2] = var_11_8.default_size[2] * var_11_0
+				bottom_glow_2.size[2] = bottom_glow_2.default_size[2] * easeOutCubic
 
-				local var_11_9 = var_11_7.size
-				local var_11_10 = var_11_7.default_size
-				local var_11_11 = var_11_7.offset
+				local size = top_glow_2.size
+				local default_size = top_glow_2.default_size
+				local offset = top_glow_2.offset
 
-				var_11_9[2] = var_11_10[2] * var_11_0
-				var_11_11[2] = 10 - var_11_9[2]
+				size[2] = default_size[2] * easeOutCubic
+				offset[2] = 10 - size[2]
 
-				local var_11_12 = var_11_2.background
-				local var_11_13 = var_11_1.background
-				local var_11_14 = var_11_12.uvs
+				local background = content.background
+				local background_2 = style.background
+				local uvs_3 = background.uvs
 
 				arg_11_0.background.size[2] = ({
-					var_0_6,
-					var_0_5 + var_0_3[2]
-				})[2] * var_11_0
-				var_11_14[1][2] = 0.5 - 0.5 * var_11_0
-				var_11_14[2][2] = 0.5 + 0.5 * var_11_0
-				var_11_13.color[1] = 255
-				arg_11_2.style.top_edge_glow.color[1] = 255 * var_11_0
-				arg_11_2.style.bottom_edge_glow.color[1] = 255 * var_11_0
+					num_4,
+					var_0_5 + tbl_2[2]
+				})[2] * easeOutCubic
+				uvs_3[1][2] = 0.5 - 0.5 * easeOutCubic
+				uvs_3[2][2] = 0.5 + 0.5 * easeOutCubic
+				background_2.color[1] = 255
+				arg_11_2.style.top_edge_glow.color[1] = 255 * easeOutCubic
+				arg_11_2.style.bottom_edge_glow.color[1] = 255 * easeOutCubic
 			end,
-			on_complete = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			on_complete = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+				-- function 12
 				return
 			end
 		},
@@ -1197,20 +1209,23 @@ local var_0_10 = {
 			name = "text_entry",
 			start_progress = 0.9,
 			end_progress = 1.5,
-			init = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			init = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+				-- function 13
 				return
 			end,
-			update = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
-				local var_14_0 = math.easeCubic(arg_14_3)
-				local var_14_1 = arg_14_2.style
-				local var_14_2 = var_14_1.area_text_style
-				local var_14_3 = var_14_1.area_text_shadow_style
-				local var_14_4 = 255 * var_14_0
+			update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+				-- function 14
+				local easeCubic = math.easeCubic(arg_14_3)
+				local style = arg_14_2.style
+				local area_text_style = style.area_text_style
+				local area_text_shadow_style = style.area_text_shadow_style
+				local num = 255 * easeCubic
 
-				var_14_2.text_color[1] = var_14_4
-				var_14_3.text_color[1] = var_14_4
+				area_text_style.text_color[1] = num
+				area_text_shadow_style.text_color[1] = num
 			end,
-			on_complete = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+			on_complete = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+				-- function 15
 				arg_15_3.render_settings.snap_pixel_positions = false
 			end
 		}
@@ -1220,15 +1235,18 @@ local var_0_10 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			init = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+				-- function 16
 				return
 			end,
-			update = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
-				local var_17_0 = math.easeOutCubic(arg_17_3)
+			update = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+				-- function 17
+				local easeOutCubic = math.easeOutCubic(arg_17_3)
 
-				arg_17_4.render_settings.alpha_multiplier = 1 - var_17_0
+				arg_17_4.render_settings.alpha_multiplier = 1 - easeOutCubic
 			end,
-			on_complete = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			on_complete = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+				-- function 18
 				arg_18_0.description_pivot.local_position[2] = 0
 			end
 		}
@@ -1236,9 +1254,9 @@ local var_0_10 = {
 }
 
 return {
-	animation_definitions = var_0_10,
-	scenegraph_definition = var_0_8,
-	widget_definitions = var_0_9,
-	scenegraph_methods = var_0_7,
-	text_background_width = var_0_6
+	animation_definitions = tbl_6,
+	scenegraph_definition = tbl_4,
+	widget_definitions = tbl_5,
+	scenegraph_methods = tbl_3,
+	text_background_width = num_4
 }

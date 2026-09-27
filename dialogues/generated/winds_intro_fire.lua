@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/winds_intro_fire.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pbw_bright_weave_conversation_one_01",

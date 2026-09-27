@@ -3,7 +3,7 @@
 local var_0_0
 local var_0_1
 
-if rawget(_G, "RuleDatabase") then
+if not rawget(_G, "RuleDatabase") then
 	RuleDatabase.initialize_static_values()
 
 	var_0_0 = {
@@ -29,102 +29,114 @@ else
 	var_0_1 = TagQuery.CombiningOP
 end
 
-local function var_0_2(arg_1_0, ...)
-	if script_data.dialogue_debug_queries then
+local function fn(arg_1_0, ...)
+	-- function 1
+	if not script_data.dialogue_debug_queries then
 		print(string.format("[TagQueryLoader] " .. arg_1_0, ...))
 	end
 end
 
 TagQueryLoader = class(TagQueryLoader)
 
-function TagQueryLoader.init(arg_2_0, arg_2_1, arg_2_2)
-	arg_2_0.loaded_files = {}
-	arg_2_0.file_environment = {
+TagQueryLoader.init = function (self, arg_2_1, arg_2_2)
+	-- function 2
+	self.loaded_files = {}
+	self.file_environment = {
 		OP = var_0_0,
 		CombiningOP = var_0_1,
 		math = math,
-		define_rule = function(arg_3_0)
+		define_rule = function (arg_3_0)
+			-- function 3
 			arg_2_1:define_rule(arg_3_0)
 		end,
-		add_dialogues = function(arg_4_0)
-			for iter_4_0, iter_4_1 in pairs(arg_4_0) do
-				iter_4_1.category = iter_4_1.category or "default"
-				arg_2_2[iter_4_0] = iter_4_1
+		add_dialogues = function (arg_4_0)
+			-- function 4
+			for k, v in pairs(arg_4_0) do
+				local category = v.category
+
+				category = category or "default"
+				v.category = category
+				arg_2_2[k] = v
 			end
 		end
 	}
-	arg_2_0.tagquery_database = arg_2_1
+	self.tagquery_database = arg_2_1
 end
 
 function tag_query_errorfunc(arg_5_0)
+	-- function 5
 	return arg_5_0 .. "\n" .. debug.traceback()
 end
 
-function TagQueryLoader.load_file(arg_6_0, arg_6_1)
+TagQueryLoader.load_file = function (self, arg_6_1)
+	-- function 6
 	local var_6_0 = require(arg_6_1)
 
-	arg_6_0:_trigger_file_function(arg_6_1, var_6_0)
+	self:_trigger_file_function(arg_6_1, var_6_0)
 end
 
-function TagQueryLoader._trigger_file_function(arg_7_0, arg_7_1, arg_7_2)
-	setfenv(arg_7_2, arg_7_0.file_environment)
+TagQueryLoader._trigger_file_function = function (self, arg_7_1, arg_7_2)
+	-- function 7
+	setfenv(arg_7_2, self.file_environment)
 
-	local var_7_0 = arg_7_0.tagquery_database.rules_n
+	local rules_n = self.tagquery_database.rules_n
 
 	arg_7_2()
 
-	local var_7_1 = arg_7_0.tagquery_database.rules_n - var_7_0
+	local num = self.tagquery_database.rules_n - rules_n
 
-	var_0_2("Loaded file %s. Read %d rules.", arg_7_1, var_7_1)
+	fn("Loaded file %s. Read %d rules.", arg_7_1, num)
 end
 
-function TagQueryLoader.unload_files(arg_8_0)
-	for iter_8_0, iter_8_1 in ipairs(arg_8_0.loaded_files) do
-		if package.loaded[iter_8_1] then
-			local var_8_0 = package.load_order
-			local var_8_1 = #var_8_0
+TagQueryLoader.unload_files = function (self)
+	-- function 8
+	for i, v in ipairs(self.loaded_files) do
+		if not package.loaded[v] then
+			local load_order = package.load_order
+			local count = #load_order
 			local var_8_2
 
-			for iter_8_2 = var_8_1, 1, -1 do
-				if var_8_0[iter_8_2] == iter_8_1 then
+			for k = count, 1, -1 do
+				if load_order[k] == v then
 					var_8_2 = true
-					package.loaded[iter_8_1] = nil
+					package.loaded[v] = nil
 
-					table.remove(var_8_0, iter_8_2)
+					table.remove(load_order, k)
 
 					break
 				end
 			end
 
 			fassert(var_8_2)
-			var_0_2("TagQueryLoader: Unloaded file: " .. tostring(iter_8_1))
+			fn("TagQueryLoader: Unloaded file: " .. tostring(v))
 		else
-			var_0_2("TagQueryLoader: Could not unload file: " .. tostring(iter_8_1))
+			fn("TagQueryLoader: Could not unload file: " .. tostring(v))
 		end
 	end
 
-	arg_8_0.file_environment = nil
-	arg_8_0.loaded_files = nil
-	arg_8_0.tagquery_database = nil
+	self.file_environment = nil
+	self.loaded_files = nil
+	self.tagquery_database = nil
 end
 
-function TagQueryLoader.load_auto_load_files(arg_9_0, arg_9_1)
-	local var_9_0 = DialogueSettings.auto_load_files
+TagQueryLoader.load_auto_load_files = function (self, arg_9_1)
+	-- function 9
+	local auto_load_files = DialogueSettings.auto_load_files
 
-	for iter_9_0, iter_9_1 in ipairs(var_9_0) do
-		local var_9_1 = DialogueSettings.cached_auto_load_files[iter_9_1]
+	for i, v in ipairs(auto_load_files) do
+		local var_9_1 = DialogueSettings.cached_auto_load_files[v]
 
-		if var_9_1 then
-			arg_9_0:_trigger_file_function(iter_9_1, var_9_1)
+		if not var_9_1 then
+			self:_trigger_file_function(v, var_9_1)
 		end
 
-		local var_9_2 = DialogueSettings.cached_auto_load_files[iter_9_1 .. "_markers"]
+		local var_9_2 = DialogueSettings.cached_auto_load_files[v .. "_markers"]
 
-		if var_9_2 then
-			for iter_9_2, iter_9_3 in pairs(var_9_2) do
-				fassert(not arg_9_1[iter_9_2], "[DialogueSystem] There is already a marker called %s registered", iter_9_2)
+		if not var_9_2 then
+			for k, v_2 in pairs(var_9_2) do
+				fassert(not arg_9_1[k], "[DialogueSystem] There is already a marker called %s registered", k)
 
-				arg_9_1[iter_9_2] = iter_9_3
+				arg_9_1[k] = v_2
 			end
 		end
 	end

@@ -12,47 +12,54 @@ NetworkedAnimationVariableTemplates = {
 			"attack_move_4",
 			"attack_cleave_moving_01"
 		},
-		init = function(arg_1_0, arg_1_1)
-			local var_1_0 = Managers.state.network
-			local var_1_1 = var_1_0:unit_game_object_id(arg_1_0)
-			local var_1_2 = GameSession.game_object_field(var_1_0:game(), var_1_1, "target_unit_id")
+		init = function (arg_1_0, arg_1_1)
+			-- function 1
+			local network = Managers.state.network
+			local unit_game_object_id = network:unit_game_object_id(arg_1_0)
+			local game_object_field = GameSession.game_object_field(network:game(), unit_game_object_id, "target_unit_id")
 
-			arg_1_1.target_unit = var_1_0:game_object_or_level_unit(var_1_2)
+			arg_1_1.target_unit = network:game_object_or_level_unit(game_object_field)
 			arg_1_1.previous_move_animation_value = nil
 			arg_1_1.move_animation_variable = Unit.animation_find_variable(arg_1_0, arg_1_1.variable_name)
 		end,
-		update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
-			local var_2_0 = arg_2_1.target_unit
+		update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			-- function 2
+			local target_unit = arg_2_1.target_unit
 
-			if not var_2_0 then
-				local var_2_1 = Managers.state.network
-				local var_2_2 = var_2_1:unit_game_object_id(arg_2_0)
-				local var_2_3 = GameSession.game_object_field(var_2_1:game(), var_2_2, "target_unit_id")
+			if not target_unit then
+				local network = Managers.state.network
+				local unit_game_object_id = network:unit_game_object_id(arg_2_0)
+				local game_object_field = GameSession.game_object_field(network:game(), unit_game_object_id, "target_unit_id")
 
-				var_2_0 = var_2_1:game_object_or_level_unit(var_2_3, false)
-				arg_2_1.target_unit = var_2_0
+				target_unit = network:game_object_or_level_unit(game_object_field, false)
+				arg_2_1.target_unit = target_unit
 			end
 
-			if not ALIVE[var_2_0] then
+			if not ALIVE[target_unit] then
 				return
 			end
 
-			local var_2_4 = arg_2_1.variable_data
-			local var_2_5 = var_2_4.animation_move_speed_config
+			local variable_data = arg_2_1.variable_data
+			local animation_move_speed_config = variable_data.animation_move_speed_config
 
-			if var_2_5 then
-				local var_2_6 = AiUtils.calculate_animation_movespeed(var_2_5, arg_2_0, var_2_0, var_2_4.estimated_attack_time)
-				local var_2_7 = var_2_4.move_speed_variable_lerp_speed
-				local var_2_8 = math.min(arg_2_2 * var_2_7, 1)
-				local var_2_9 = math.lerp_clamped(arg_2_1.previous_move_animation_value or 0, var_2_6, var_2_8)
+			if not animation_move_speed_config then
+				local calculate_animation_movespeed = AiUtils.calculate_animation_movespeed(animation_move_speed_config, arg_2_0, target_unit, variable_data.estimated_attack_time)
+				local move_speed_variable_lerp_speed = variable_data.move_speed_variable_lerp_speed
+				local min = math.min(arg_2_2 * move_speed_variable_lerp_speed, 1)
+				local lerp_clamped = math.lerp_clamped
+				local previous_move_animation_value = arg_2_1.previous_move_animation_value
 
-				if arg_2_1.previous_move_animation_value ~= var_2_9 then
-					arg_2_1.previous_move_animation_value = var_2_9
+				previous_move_animation_value = previous_move_animation_value or 0
 
-					local var_2_10 = arg_2_1.move_animation_variable
+				local var_2_11 = lerp_clamped(previous_move_animation_value, calculate_animation_movespeed, min)
 
-					if var_2_10 then
-						Unit.animation_set_variable(arg_2_0, var_2_10, var_2_9)
+				if arg_2_1.previous_move_animation_value ~= var_2_11 then
+					arg_2_1.previous_move_animation_value = var_2_11
+
+					local move_animation_variable = arg_2_1.move_animation_variable
+
+					if not move_animation_variable then
+						Unit.animation_set_variable(arg_2_0, move_animation_variable, var_2_11)
 					end
 				end
 			end
@@ -61,13 +68,14 @@ NetworkedAnimationVariableTemplates = {
 }
 NetworkedAnimationVariableTemplatesLookup = {}
 
-local var_0_0 = NetworkedAnimationVariableTemplatesLookup
+local NetworkedAnimationVariableTemplatesLookup = NetworkedAnimationVariableTemplatesLookup
 
-for iter_0_0, iter_0_1 in pairs(NetworkedAnimationVariableTemplates) do
-	for iter_0_2, iter_0_3 in ipairs(iter_0_1.anims) do
-		local var_0_1 = var_0_0[iter_0_3] or {}
+for k, v in pairs(NetworkedAnimationVariableTemplates) do
+	for i, v_2 in ipairs(v.anims) do
+		local var_0_1 = NetworkedAnimationVariableTemplatesLookup[v_2]
 
-		var_0_1[#var_0_1 + 1] = iter_0_0
-		var_0_0[iter_0_3] = var_0_1
+		var_0_1 = var_0_1 or {}
+		var_0_1[#var_0_1 + 1] = k
+		NetworkedAnimationVariableTemplatesLookup[v_2] = var_0_1
 	end
 end

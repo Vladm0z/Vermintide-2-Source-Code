@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/twitch_view_definitions.lua
 
-local var_0_0 = {
+local tbl = {
 	root = {
 		is_root = true,
 		position = {
@@ -222,15 +222,16 @@ local var_0_0 = {
 	}
 }
 
-local function var_0_1(arg_1_0, arg_1_1)
-	local var_1_0 = "menu_frame_bg_01"
-	local var_1_1 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_1_0)
-	local var_1_2 = UIFrameSettings.menu_frame_02
-	local var_1_3 = UIFrameSettings.menu_frame_06
-	local var_1_4 = {
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
+	local str = "menu_frame_bg_01"
+	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(str)
+	local menu_frame_02 = UIFrameSettings.menu_frame_02
+	local menu_frame_06 = UIFrameSettings.menu_frame_06
+	local tbl = {
 		element = {}
 	}
-	local var_1_5 = {
+	local tbl_2 = {
 		{
 			scenegraph_id = "popup_text_box",
 			pass_type = "hotspot",
@@ -264,15 +265,17 @@ local function var_0_1(arg_1_0, arg_1_1)
 		{
 			style_id = "inner_rect",
 			pass_type = "rect",
-			content_check_function = function(arg_2_0, arg_2_1)
-				return not Managers.twitch:is_connected() and not Managers.twitch:is_connecting()
+			content_check_function = function (arg_2_0, arg_2_1)
+				-- function 2
+				return not not Managers.twitch:is_connected() or not Managers.twitch:is_connecting()
 			end
 		},
 		{
 			style_id = "inner_inner_rect",
 			pass_type = "rect",
-			content_check_function = function(arg_3_0, arg_3_1)
-				return not Managers.twitch:is_connected() and not Managers.twitch:is_connecting()
+			content_check_function = function (arg_3_0, arg_3_1)
+				-- function 3
+				return not not Managers.twitch:is_connected() or not Managers.twitch:is_connecting()
 			end
 		},
 		{
@@ -283,13 +286,14 @@ local function var_0_1(arg_1_0, arg_1_1)
 			style_id = "text",
 			pass_type = "text",
 			text_id = "text_field",
-			content_check_function = function(arg_4_0, arg_4_1)
-				if Managers.twitch:is_connected() then
-					local var_4_0 = Managers.twitch:user_name()
+			content_check_function = function (self, arg_4_1)
+				-- function 4
+				if not Managers.twitch:is_connected() then
+					local user_name = Managers.twitch:user_name()
 
-					arg_4_0.text_field = Localize("start_game_window_twitch_confirm_connection") .. var_4_0
+					self.text_field = Localize("start_game_window_twitch_confirm_connection") .. user_name
 				else
-					arg_4_0.text_field = Localize("start_game_window_twitch_connect_description")
+					self.text_field = Localize("start_game_window_twitch_connect_description")
 				end
 
 				return true
@@ -304,8 +308,9 @@ local function var_0_1(arg_1_0, arg_1_1)
 			style_id = "login_hint",
 			pass_type = "text",
 			text_id = "login_hint",
-			content_check_function = function(arg_5_0, arg_5_1)
-				if arg_5_0.text_input_hotspot.is_hover then
+			content_check_function = function (self, arg_5_1)
+				-- function 5
+				if not self.text_input_hotspot.is_hover then
 					arg_5_1.text_color = {
 						128,
 						255,
@@ -321,36 +326,38 @@ local function var_0_1(arg_1_0, arg_1_1)
 					}
 				end
 
-				return arg_5_0.twitch_name == "" and not Managers.twitch:is_connected() and not arg_5_0.text_field_active and not Managers.twitch:is_connecting()
+				return self.twitch_name ~= "" or not not Managers.twitch:is_connected() or not not self.text_field_active or not Managers.twitch:is_connecting()
 			end
 		},
 		{
 			style_id = "twitch_name",
 			pass_type = "text",
 			text_id = "twitch_name",
-			content_check_function = function(arg_6_0, arg_6_1)
-				if not arg_6_0.text_field_active then
+			content_check_function = function (self, arg_6_1)
+				-- function 6
+				if not self.text_field_active then
 					arg_6_1.caret_color[1] = 0
 				else
 					arg_6_1.caret_color[1] = 128 + math.sin(Managers.time:time("ui") * 5) * 128
 				end
 
-				return not Managers.twitch:is_connected() and not Managers.twitch:is_connecting()
+				return not not Managers.twitch:is_connected() or not Managers.twitch:is_connecting()
 			end
 		},
 		{
 			style_id = "connecting",
 			pass_type = "text",
 			text_id = "connecting_id",
-			content_check_function = function(arg_7_0, arg_7_1)
+			content_check_function = function (self, arg_7_1)
+				-- function 7
 				if not Managers.twitch:is_connecting() then
 					return
 				end
 
-				local var_7_0 = 10 * Managers.time:time("ui")
-				local var_7_1 = string.rep(".", var_7_0 % 5)
+				local num = 10 * Managers.time:time("ui")
+				local rep = string.rep(".", num % 5)
 
-				arg_7_0.connecting_id = "Connecting" .. var_7_1
+				self.connecting_id = "Connecting" .. rep
 
 				return true
 			end
@@ -359,11 +366,12 @@ local function var_0_1(arg_1_0, arg_1_1)
 			style_id = "error_field",
 			pass_type = "text",
 			text_id = "error_id",
-			content_check_function = function(arg_8_0, arg_8_1)
-				local var_8_0 = Managers.twitch:is_connecting()
-				local var_8_1 = Managers.twitch:is_connected()
+			content_check_function = function (arg_8_0, arg_8_1)
+				-- function 8
+				local is_connecting = Managers.twitch:is_connecting()
+				local is_connected = Managers.twitch:is_connected()
 
-				if var_8_0 or var_8_1 then
+				if is_connecting or not is_connected then
 					return
 				end
 
@@ -371,7 +379,7 @@ local function var_0_1(arg_1_0, arg_1_1)
 			end
 		}
 	}
-	local var_1_6 = {
+	local tbl_3 = {
 		text_field_active = false,
 		text_start_offset = 0,
 		connecting_id = "Connecting",
@@ -385,7 +393,7 @@ local function var_0_1(arg_1_0, arg_1_1)
 		caret_index = 1,
 		login_hint = "Type your username here",
 		play_text_field = "Play with",
-		frame = var_1_2.texture,
+		frame = menu_frame_02.texture,
 		background = {
 			uvs = {
 				{
@@ -393,17 +401,17 @@ local function var_0_1(arg_1_0, arg_1_1)
 					0
 				},
 				{
-					math.min(arg_1_1[1] / var_1_1.size[1], 1),
-					math.min(arg_1_1[2] / var_1_1.size[2], 1)
+					math.min(arg_1_1[1] / get_atlas_settings_by_texture_name.size[1], 1),
+					math.min(arg_1_1[2] / get_atlas_settings_by_texture_name.size[2], 1)
 				}
 			},
-			texture_id = var_1_0
+			texture_id = str
 		},
 		text_input_hotspot = {},
 		screen_hotspot = {},
 		frame_hotspot = {}
 	}
-	local var_1_7 = {
+	local tbl_4 = {
 		background = {
 			color = {
 				255,
@@ -418,8 +426,8 @@ local function var_0_1(arg_1_0, arg_1_1)
 			}
 		},
 		frame = {
-			texture_size = var_1_2.texture_size,
-			texture_sizes = var_1_2.texture_sizes,
+			texture_size = menu_frame_02.texture_size,
+			texture_sizes = menu_frame_02.texture_sizes,
 			color = {
 				255,
 				255,
@@ -650,20 +658,20 @@ local function var_0_1(arg_1_0, arg_1_1)
 		}
 	}
 
-	var_1_4.element.passes = var_1_5
-	var_1_4.content = var_1_6
-	var_1_4.style = var_1_7
-	var_1_4.offset = {
+	tbl.element.passes = tbl_2
+	tbl.content = tbl_3
+	tbl.style = tbl_4
+	tbl.offset = {
 		0,
 		0,
 		0
 	}
-	var_1_4.scenegraph_id = arg_1_0
+	tbl.scenegraph_id = arg_1_0
 
-	return var_1_4
+	return tbl
 end
 
-local var_0_2 = {
+local tbl_2 = {
 	scenegraph_id = "feed_area",
 	element = {
 		passes = {
@@ -671,21 +679,24 @@ local var_0_2 = {
 				pass_type = "texture",
 				style_id = "mask",
 				texture_id = "mask_id",
-				content_check_function = function(arg_9_0)
+				content_check_function = function (arg_9_0)
+					-- function 9
 					return Managers.twitch:is_connected()
 				end
 			},
 			{
 				style_id = "edge",
 				pass_type = "rounded_background",
-				content_check_function = function(arg_10_0)
+				content_check_function = function (arg_10_0)
+					-- function 10
 					return Managers.twitch:is_connected()
 				end
 			},
 			{
 				style_id = "background",
 				pass_type = "rounded_background",
-				content_check_function = function(arg_11_0)
+				content_check_function = function (arg_11_0)
+					-- function 11
 					return Managers.twitch:is_connected()
 				end
 			},
@@ -693,7 +704,8 @@ local var_0_2 = {
 				style_id = "text",
 				pass_type = "text_area_chat",
 				text_id = "text_field",
-				content_check_function = function(arg_12_0)
+				content_check_function = function (arg_12_0)
+					-- function 12
 					return Managers.twitch:is_connected()
 				end
 			}
@@ -766,17 +778,17 @@ local var_0_2 = {
 		}
 	}
 }
-local var_0_3 = {
+local tbl_3 = {
 	widgets = {
-		frame_widget = var_0_1("popup_root", var_0_0.popup_root.size),
-		chat_output_widget = var_0_2,
+		frame_widget = fn("popup_root", tbl.popup_root.size),
+		chat_output_widget = tbl_2,
 		exit_button = UIWidgets.create_simple_two_state_button("exit_button", "tabs_icon_close", "tabs_icon_close_glow")
 	},
-	connect_button = UIWidgets.create_default_button("twitch_connect_button", var_0_0.twitch_connect_button.size, nil, nil, "connect"),
-	disconnect_button = UIWidgets.create_default_button("twitch_disconnect_button", var_0_0.twitch_disconnect_button.size, nil, nil, "disconnect")
+	connect_button = UIWidgets.create_default_button("twitch_connect_button", tbl.twitch_connect_button.size, nil, nil, "connect"),
+	disconnect_button = UIWidgets.create_default_button("twitch_disconnect_button", tbl.twitch_disconnect_button.size, nil, nil, "disconnect")
 }
 
 return {
-	scenegraph_definition = var_0_0,
-	widget_definitions = var_0_3
+	scenegraph_definition = tbl,
+	widget_definitions = tbl_3
 }

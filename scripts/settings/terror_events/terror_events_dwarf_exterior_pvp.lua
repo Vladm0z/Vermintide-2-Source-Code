@@ -1,9 +1,9 @@
 -- chunkname: @scripts/settings/terror_events/terror_events_dwarf_exterior_pvp.lua
 
-local var_0_0 = require("scripts/settings/terror_events/terror_event_utils")
-local var_0_1 = var_0_0.count_event_breed
-local var_0_2 = var_0_0.spawned_during_event
-local var_0_3 = {
+local scripts_settings_terror_events_terror_event_utils = require("scripts/settings/terror_events/terror_event_utils")
+local count_event_breed = scripts_settings_terror_events_terror_event_utils.count_event_breed
+local spawned_during_event = scripts_settings_terror_events_terror_event_utils.spawned_during_event
+local tbl = {
 	dwarf_exterior_disable_pacing = {
 		{
 			"control_pacing",
@@ -66,8 +66,9 @@ local var_0_3 = {
 		{
 			"continue_when",
 			duration = 60,
-			condition = function(arg_1_0)
-				return var_0_2() < 8
+			condition = function (arg_1_0)
+				-- function 1
+				return spawned_during_event() < 8
 			end
 		},
 		{
@@ -89,8 +90,9 @@ local var_0_3 = {
 		{
 			"continue_when",
 			duration = 40,
-			condition = function(arg_2_0)
-				return var_0_2() < 10
+			condition = function (arg_2_0)
+				-- function 2
+				return spawned_during_event() < 10
 			end
 		},
 		{
@@ -128,8 +130,9 @@ local var_0_3 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_3_0)
-				return var_0_2() < 6
+			condition = function (arg_3_0)
+				-- function 3
+				return spawned_during_event() < 6
 			end
 		},
 		{
@@ -167,8 +170,9 @@ local var_0_3 = {
 		{
 			"continue_when",
 			duration = 60,
-			condition = function(arg_4_0)
-				return var_0_2() < 8
+			condition = function (arg_4_0)
+				-- function 4
+				return spawned_during_event() < 8
 			end
 		},
 		{
@@ -210,8 +214,9 @@ local var_0_3 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_5_0)
-				return var_0_2() < 6
+			condition = function (arg_5_0)
+				-- function 5
+				return spawned_during_event() < 6
 			end
 		},
 		{
@@ -233,8 +238,9 @@ local var_0_3 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_6_0)
-				return var_0_2() < 6
+			condition = function (arg_6_0)
+				-- function 6
+				return spawned_during_event() < 6
 			end
 		},
 		{
@@ -359,8 +365,9 @@ local var_0_3 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_7_0)
-				return var_0_1("skaven_clan_rat") < 7 and var_0_1("skaven_slave") < 8 and var_0_1("skaven_storm_vermin_commander") < 2
+			condition = function (arg_7_0)
+				-- function 7
+				return not (count_event_breed("skaven_clan_rat") < 7) or not (count_event_breed("skaven_slave") < 8) or count_event_breed("skaven_storm_vermin_commander") < 2
 			end
 		},
 		{
@@ -400,8 +407,9 @@ local var_0_3 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_8_0)
-				return var_0_1("skaven_clan_rat") < 7 and var_0_1("skaven_slave") < 8 and var_0_1("skaven_storm_vermin_commander") < 2
+			condition = function (arg_8_0)
+				-- function 8
+				return not (count_event_breed("skaven_clan_rat") < 7) or not (count_event_breed("skaven_slave") < 8) or count_event_breed("skaven_storm_vermin_commander") < 2
 			end
 		},
 		{
@@ -441,8 +449,9 @@ local var_0_3 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_9_0)
-				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 3 and var_0_1("skaven_storm_vermin_commander") < 1
+			condition = function (arg_9_0)
+				-- function 9
+				return not (count_event_breed("skaven_clan_rat") < 3) or not (count_event_breed("skaven_slave") < 3) or count_event_breed("skaven_storm_vermin_commander") < 1
 			end
 		},
 		{
@@ -492,8 +501,9 @@ local var_0_3 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_10_0)
-				return var_0_1("skaven_clan_rat") < 4 and var_0_1("skaven_slave") < 5
+			condition = function (arg_10_0)
+				-- function 10
+				return not (count_event_breed("skaven_clan_rat") < 4) or count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -533,8 +543,9 @@ local var_0_3 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_11_0)
-				return var_0_1("skaven_clan_rat") < 4 and var_0_1("skaven_slave") < 5
+			condition = function (arg_11_0)
+				-- function 11
+				return not (count_event_breed("skaven_clan_rat") < 4) or count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -586,8 +597,9 @@ local var_0_3 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_12_0)
-				return var_0_1("skaven_clan_rat") < 4 and var_0_1("skaven_slave") < 5
+			condition = function (arg_12_0)
+				-- function 12
+				return not (count_event_breed("skaven_clan_rat") < 4) or count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -674,5 +686,5 @@ local var_0_3 = {
 }
 
 return {
-	var_0_3
+	tbl
 }

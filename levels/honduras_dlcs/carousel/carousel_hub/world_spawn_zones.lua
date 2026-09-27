@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/carousel/carousel_hub/world_spawn_zones.lua
 
-local var_0_0 = {
+local tbl = {
 	{
 		kind = "good",
 		main_path_index = 1,
@@ -26,7 +26,7 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	{
 		path_length = 33.15956115722656,
 		travel_dist = {
@@ -65,8 +65,8 @@ local var_0_1 = {
 		}
 	}
 }
-local var_0_2 = {}
-local var_0_3 = {
+local tbl_3 = {}
+local tbl_4 = {
 	{
 		unique_zone_id = 1,
 		travel_dist = 9.999992370605469,
@@ -1703,7 +1703,7 @@ local var_0_3 = {
 		}
 	}
 }
-local var_0_4 = {
+local tbl_5 = {
 	-70.63249969482422,
 	188.4550018310547,
 	2.1179392337799072,
@@ -1795,7 +1795,7 @@ local var_0_4 = {
 	1,
 	0
 }
-local var_0_5 = {
+local tbl_6 = {
 	{
 		-59.56263732910156,
 		165.62100219726562,
@@ -9672,20 +9672,20 @@ local var_0_5 = {
 		2.437776803970337
 	}
 }
-local var_0_6 = 1575
-local var_0_7 = 3
-local var_0_8 = 33.159561157227
-local var_0_9 = "1"
+local num = 1575
+local num_2 = 3
+local num_3 = 33.159561157227
+local str = "1"
 
 return {
-	version = var_0_9,
-	number_of_spawns = var_0_6,
-	path_markers = var_0_0,
-	zones = var_0_3,
-	cover_points = var_0_4,
-	num_main_zones = var_0_7,
-	position_lookup = var_0_5,
-	main_paths = var_0_1,
-	crossroads = var_0_2,
-	total_main_path_length = var_0_8
+	version = str,
+	number_of_spawns = num,
+	path_markers = tbl,
+	zones = tbl_4,
+	cover_points = tbl_5,
+	num_main_zones = num_2,
+	position_lookup = tbl_6,
+	main_paths = tbl_2,
+	crossroads = tbl_3,
+	total_main_path_length = num_3
 }

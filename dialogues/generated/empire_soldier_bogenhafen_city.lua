@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/empire_soldier_bogenhafen_city.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pes_hu_level_bogenhafen_city_blocked",

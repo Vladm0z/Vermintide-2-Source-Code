@@ -1,8 +1,8 @@
 -- chunkname: @scripts/ui/views/tutorial_input_ui_definitions.lua
 
-local var_0_0 = false
-local var_0_1 = 5
-local var_0_2 = {
+local flag = false
+local num = 5
+local tbl = {
 	screen = {
 		scale = "fit",
 		size = {
@@ -128,20 +128,21 @@ local var_0_2 = {
 		}
 	}
 }
-local var_0_3 = 0
+local num_2 = 0
 
-local function var_0_4(arg_1_0, arg_1_1)
-	local var_1_0 = {}
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
+	local tbl_2 = {}
 
-	for iter_1_0 = 1, arg_1_0 do
-		local var_1_1 = "input_description_root_" .. iter_1_0
-		local var_1_2 = "input_description_" .. iter_1_0
-		local var_1_3 = "input_description_prefix_text_" .. iter_1_0
-		local var_1_4 = "input_description_suffix_text_" .. iter_1_0
-		local var_1_5 = "input_description_button_text_" .. iter_1_0
-		local var_1_6 = "input_description_icon_" .. iter_1_0
+	for i = 1, arg_1_0 do
+		local str = "input_description_root_" .. i
+		local str_2 = "input_description_" .. i
+		local str_3 = "input_description_prefix_text_" .. i
+		local str_4 = "input_description_suffix_text_" .. i
+		local str_5 = "input_description_button_text_" .. i
+		local str_6 = "input_description_icon_" .. i
 
-		var_0_2[var_1_1] = {
+		tbl[str] = {
 			vertical_alignment = "center",
 			parent = "tutorial_tooltip_input_field",
 			horizontal_alignment = "top",
@@ -155,10 +156,10 @@ local function var_0_4(arg_1_0, arg_1_1)
 				1
 			}
 		}
-		var_0_2[var_1_2] = {
+		tbl[str_2] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
-			parent = var_1_1,
+			parent = str,
 			size = {
 				0,
 				0
@@ -169,10 +170,10 @@ local function var_0_4(arg_1_0, arg_1_1)
 				1
 			}
 		}
-		var_0_2[var_1_5] = {
+		tbl[str_5] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
-			parent = var_1_6,
+			parent = str_6,
 			size = {
 				0,
 				40
@@ -183,10 +184,10 @@ local function var_0_4(arg_1_0, arg_1_1)
 				2
 			}
 		}
-		var_0_2[var_1_6] = {
+		tbl[str_6] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
-			parent = var_1_2,
+			parent = str_2,
 			size = {
 				0,
 				40
@@ -197,10 +198,10 @@ local function var_0_4(arg_1_0, arg_1_1)
 				1
 			}
 		}
-		var_0_2[var_1_3] = {
+		tbl[str_3] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
-			parent = var_1_6,
+			parent = str_6,
 			size = {
 				0,
 				40
@@ -211,10 +212,10 @@ local function var_0_4(arg_1_0, arg_1_1)
 				1
 			}
 		}
-		var_0_2[var_1_4] = {
+		tbl[str_4] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "right",
-			parent = var_1_6,
+			parent = str_6,
 			size = {
 				0,
 				40
@@ -226,71 +227,78 @@ local function var_0_4(arg_1_0, arg_1_1)
 			}
 		}
 
-		local var_1_7 = {
+		local tbl_3 = {
 			element = {
 				passes = {
 					{
 						style_id = "prefix_text",
 						pass_type = "text",
 						text_id = "prefix_text",
-						retained_mode = var_0_0,
-						content_check_function = function(arg_2_0)
-							return arg_2_0.prefix_text ~= ""
+						retained_mode = flag,
+						content_check_function = function (self)
+							-- function 2
+							return self.prefix_text ~= ""
 						end
 					},
 					{
 						style_id = "prefix_text_shadow",
 						pass_type = "text",
 						text_id = "prefix_text",
-						retained_mode = var_0_0,
-						content_check_function = function(arg_3_0)
-							return arg_3_0.prefix_text ~= ""
+						retained_mode = flag,
+						content_check_function = function (self)
+							-- function 3
+							return self.prefix_text ~= ""
 						end
 					},
 					{
 						style_id = "suffix_text",
 						pass_type = "text",
 						text_id = "suffix_text",
-						retained_mode = var_0_0,
-						content_check_function = function(arg_4_0)
-							return arg_4_0.suffix_text ~= ""
+						retained_mode = flag,
+						content_check_function = function (self)
+							-- function 4
+							return self.suffix_text ~= ""
 						end
 					},
 					{
 						style_id = "suffix_text_shadow",
 						pass_type = "text",
 						text_id = "suffix_text",
-						retained_mode = var_0_0,
-						content_check_function = function(arg_5_0)
-							return arg_5_0.suffix_text ~= ""
+						retained_mode = flag,
+						content_check_function = function (self)
+							-- function 5
+							return self.suffix_text ~= ""
 						end
 					},
 					{
 						style_id = "button_text",
 						pass_type = "text",
 						text_id = "button_text",
-						retained_mode = var_0_0,
-						content_check_function = function(arg_6_0)
-							return arg_6_0.button_text ~= ""
+						retained_mode = flag,
+						content_check_function = function (self)
+							-- function 6
+							return self.button_text ~= ""
 						end
 					},
 					{
 						style_id = "button_text_shadow",
 						pass_type = "text",
 						text_id = "button_text",
-						retained_mode = var_0_0,
-						content_check_function = function(arg_7_0)
-							return arg_7_0.button_text ~= ""
+						retained_mode = flag,
+						content_check_function = function (self)
+							-- function 7
+							return self.button_text ~= ""
 						end
 					},
 					{
 						pass_type = "multi_texture",
 						style_id = "icon",
 						texture_id = "icon",
-						content_check_function = function(arg_8_0)
-							local var_8_0 = arg_8_0.icon
+						content_check_function = function (self)
+							-- function 8
+							local icon = self.icon
 
-							return var_8_0 and #var_8_0 > 0
+							return not icon and #icon > 0
 						end
 					}
 				}
@@ -310,13 +318,13 @@ local function var_0_4(arg_1_0, arg_1_1)
 					vertical_alignment = "center",
 					dynamic_font = true,
 					font_type = "hell_shark",
-					text_color = Colors.get_color_table_with_alpha("white", var_0_3),
+					text_color = Colors.get_color_table_with_alpha("white", num_2),
 					offset = {
 						0,
 						0,
 						2
 					},
-					scenegraph_id = var_1_3
+					scenegraph_id = str_3
 				},
 				prefix_text_shadow = {
 					word_wrap = false,
@@ -327,13 +335,13 @@ local function var_0_4(arg_1_0, arg_1_1)
 					vertical_alignment = "center",
 					dynamic_font = true,
 					font_type = "hell_shark",
-					text_color = Colors.get_color_table_with_alpha("black", var_0_3),
+					text_color = Colors.get_color_table_with_alpha("black", num_2),
 					offset = {
 						2,
 						-2,
 						1
 					},
-					scenegraph_id = var_1_3
+					scenegraph_id = str_3
 				},
 				suffix_text = {
 					word_wrap = false,
@@ -344,13 +352,13 @@ local function var_0_4(arg_1_0, arg_1_1)
 					vertical_alignment = "center",
 					dynamic_font = true,
 					font_type = "hell_shark",
-					text_color = Colors.get_color_table_with_alpha("white", var_0_3),
+					text_color = Colors.get_color_table_with_alpha("white", num_2),
 					offset = {
 						0,
 						0,
 						2
 					},
-					scenegraph_id = var_1_4
+					scenegraph_id = str_4
 				},
 				suffix_text_shadow = {
 					word_wrap = false,
@@ -361,13 +369,13 @@ local function var_0_4(arg_1_0, arg_1_1)
 					vertical_alignment = "center",
 					dynamic_font = true,
 					font_type = "hell_shark",
-					text_color = Colors.get_color_table_with_alpha("black", var_0_3),
+					text_color = Colors.get_color_table_with_alpha("black", num_2),
 					offset = {
 						2,
 						-2,
 						1
 					},
-					scenegraph_id = var_1_4
+					scenegraph_id = str_4
 				},
 				button_text = {
 					word_wrap = false,
@@ -378,13 +386,13 @@ local function var_0_4(arg_1_0, arg_1_1)
 					vertical_alignment = "center",
 					dynamic_font = true,
 					font_type = "hell_shark",
-					text_color = Colors.get_color_table_with_alpha("font_title", var_0_3),
+					text_color = Colors.get_color_table_with_alpha("font_title", num_2),
 					offset = {
 						0,
 						0,
 						2
 					},
-					scenegraph_id = var_1_5
+					scenegraph_id = str_5
 				},
 				button_text_shadow = {
 					word_wrap = false,
@@ -395,13 +403,13 @@ local function var_0_4(arg_1_0, arg_1_1)
 					vertical_alignment = "center",
 					dynamic_font = true,
 					font_type = "hell_shark",
-					text_color = Colors.get_color_table_with_alpha("black", var_0_3),
+					text_color = Colors.get_color_table_with_alpha("black", num_2),
 					offset = {
 						2,
 						-2,
 						1
 					},
-					scenegraph_id = var_1_5
+					scenegraph_id = str_5
 				},
 				icon = {
 					texture_sizes = {
@@ -415,20 +423,20 @@ local function var_0_4(arg_1_0, arg_1_1)
 						0,
 						1
 					},
-					color = Colors.get_color_table_with_alpha("white", var_0_3),
-					scenegraph_id = var_1_6
+					color = Colors.get_color_table_with_alpha("white", num_2),
+					scenegraph_id = str_6
 				}
 			},
-			scenegraph_id = var_1_2
+			scenegraph_id = str_2
 		}
 
-		var_1_0[#var_1_0 + 1] = UIWidget.init(var_1_7)
+		tbl_2[#tbl_2 + 1] = UIWidget.init(tbl_3)
 	end
 
-	return var_1_0
+	return tbl_2
 end
 
-local var_0_5 = {
+local tbl_2 = {
 	tutorial_tooltip = {
 		scenegraph_id = "tutorial_tooltip",
 		element = {
@@ -447,16 +455,18 @@ local var_0_5 = {
 					texture_id = "completed_texture",
 					style_id = "completed_texture",
 					pass_type = "texture",
-					content_check_function = function(arg_9_0)
-						return arg_9_0.completed
+					content_check_function = function (self)
+						-- function 9
+						return self.completed
 					end
 				},
 				{
 					texture_id = "completed_texture",
 					style_id = "completed_texture_shadow",
 					pass_type = "texture",
-					content_check_function = function(arg_10_0)
-						return arg_10_0.completed
+					content_check_function = function (self)
+						-- function 10
+						return self.completed
 					end
 				},
 				{
@@ -483,24 +493,27 @@ local var_0_5 = {
 					style_id = "unassigned",
 					pass_type = "text",
 					text_id = "unassigned_id",
-					content_check_function = function(arg_11_0)
-						return arg_11_0.unassigned
+					content_check_function = function (self)
+						-- function 11
+						return self.unassigned
 					end
 				},
 				{
 					style_id = "unassigned_shadow",
 					pass_type = "text",
 					text_id = "unassigned_id",
-					content_check_function = function(arg_12_0)
-						return arg_12_0.unassigned
+					content_check_function = function (self)
+						-- function 12
+						return self.unassigned
 					end
 				},
 				{
 					texture_id = "background",
 					style_id = "unassigned_background",
 					pass_type = "texture",
-					content_check_function = function(arg_13_0)
-						return arg_13_0.unassigned
+					content_check_function = function (self)
+						-- function 13
+						return self.unassigned
 					end
 				}
 			}
@@ -524,7 +537,7 @@ local var_0_5 = {
 					0
 				},
 				color = {
-					var_0_3,
+					num_2,
 					255,
 					255,
 					255
@@ -544,7 +557,7 @@ local var_0_5 = {
 					32
 				},
 				color = {
-					var_0_3,
+					num_2,
 					255,
 					255,
 					255
@@ -563,7 +576,7 @@ local var_0_5 = {
 					408,
 					179
 				},
-				color = Colors.get_color_table_with_alpha("font_title", var_0_3)
+				color = Colors.get_color_table_with_alpha("font_title", num_2)
 			},
 			completed_texture_shadow = {
 				vertical_alignment = "center",
@@ -578,7 +591,7 @@ local var_0_5 = {
 					408,
 					179
 				},
-				color = Colors.get_color_table_with_alpha("black", var_0_3)
+				color = Colors.get_color_table_with_alpha("black", num_2)
 			},
 			description = {
 				scenegraph_id = "tutorial_tooltip_description",
@@ -590,7 +603,7 @@ local var_0_5 = {
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
-				text_color = Colors.get_color_table_with_alpha("white", var_0_3),
+				text_color = Colors.get_color_table_with_alpha("white", num_2),
 				offset = {
 					0,
 					0,
@@ -607,7 +620,7 @@ local var_0_5 = {
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
-				text_color = Colors.get_color_table_with_alpha("black", var_0_3),
+				text_color = Colors.get_color_table_with_alpha("black", num_2),
 				offset = {
 					2,
 					-2,
@@ -624,7 +637,7 @@ local var_0_5 = {
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
-				text_color = Colors.get_color_table_with_alpha("font_default", var_0_3),
+				text_color = Colors.get_color_table_with_alpha("font_default", num_2),
 				offset = {
 					0,
 					0,
@@ -641,7 +654,7 @@ local var_0_5 = {
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
-				text_color = Colors.get_color_table_with_alpha("black", var_0_3),
+				text_color = Colors.get_color_table_with_alpha("black", num_2),
 				offset = {
 					2,
 					-2,
@@ -658,7 +671,7 @@ local var_0_5 = {
 				vertical_alignment = "center",
 				dynamic_font = true,
 				font_type = "hell_shark_header",
-				text_color = Colors.get_color_table_with_alpha("red", var_0_3),
+				text_color = Colors.get_color_table_with_alpha("red", num_2),
 				offset = {
 					0,
 					15,
@@ -675,7 +688,7 @@ local var_0_5 = {
 				vertical_alignment = "center",
 				dynamic_font = true,
 				font_type = "hell_shark_header",
-				text_color = Colors.get_color_table_with_alpha("black", var_0_3),
+				text_color = Colors.get_color_table_with_alpha("black", num_2),
 				offset = {
 					2,
 					13,
@@ -696,7 +709,7 @@ local var_0_5 = {
 					45.75
 				},
 				color = {
-					var_0_3,
+					num_2,
 					255,
 					255,
 					255
@@ -705,11 +718,11 @@ local var_0_5 = {
 		}
 	}
 }
-local var_0_6 = var_0_4(var_0_1)
+local var_0_6 = fn(num)
 
 return {
-	scenegraph = var_0_2,
-	widgets = var_0_5,
+	scenegraph = tbl,
+	widgets = tbl_2,
 	tutorial_tooltip_input_widgets = var_0_6,
-	NUMBER_OF_TOOLTIP_INPUT_WIDGETS = var_0_1
+	NUMBER_OF_TOOLTIP_INPUT_WIDGETS = num
 }

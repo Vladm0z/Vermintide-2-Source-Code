@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/hero_view/states/hero_window_layout_console.lua
 
-local var_0_0 = {
+local tbl = {
 	panel = {
 		ignore_alignment = true,
 		name = "panel",
@@ -97,7 +97,7 @@ local var_0_0 = {
 		class_name = "HeroWindowDarkPactCharacterSelectionConsole"
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	{
 		sound_event_enter = "play_gui_equipment_button",
 		name = "equipment",
@@ -136,8 +136,9 @@ local var_0_1 = {
 			background = 2,
 			crafting_list = 3
 		},
-		can_add_function = function(arg_1_0)
-			return arg_1_0 ~= "versus" and arg_1_0 ~= "inn_vs"
+		can_add_function = function (arg_1_0)
+			-- function 1
+			return arg_1_0 == "versus" or arg_1_0 ~= "inn_vs"
 		end
 	},
 	{
@@ -277,68 +278,78 @@ local var_0_1 = {
 			panel = 1,
 			background = 2
 		},
-		can_add_function = function(arg_2_0)
+		can_add_function = function (arg_2_0)
+			-- function 2
 			return arg_2_0 == "versus"
 		end,
-		on_exit = function(arg_3_0)
-			local var_3_0 = Managers.player:local_player()
-			local var_3_1 = var_3_0:profile_index()
-			local var_3_2 = var_3_0:career_index()
+		on_exit = function (self)
+			-- function 3
+			local local_player = Managers.player:local_player()
+			local profile_index = local_player:profile_index()
+			local career_index = local_player:career_index()
 
-			arg_3_0:change_profile(var_3_1, var_3_2)
+			self:change_profile(profile_index, career_index)
 
-			local var_3_3 = SPProfiles[var_3_1]
+			local var_3_3 = SPProfiles[profile_index]
 
 			Managers.state.event:trigger("respawn_hero", {
 				hero_name = var_3_3.display_name,
-				career_index = var_3_2
+				career_index = career_index
 			})
 
-			local var_3_4 = (DLCSettings.carousel and DLCSettings.carousel.hero_window_mood_settings).default or "default"
+			local carousel = DLCSettings.carousel
 
-			arg_3_0:set_background_mood(var_3_4)
+			carousel = not carousel and DLCSettings.carousel.hero_window_mood_settings
+
+			local default = carousel.default
+
+			default = default or "default"
+
+			self:set_background_mood(default)
 		end
 	}
 }
-local var_0_2 = 6
+local num = 6
 
-DLCUtils.map("hero_view_window_layout_console", function(arg_4_0)
-	local var_4_0 = arg_4_0.windows
+DLCUtils.map("hero_view_window_layout_console", function (self)
+	-- function 4
+	local windows = self.windows
 
-	if var_4_0 then
-		for iter_4_0, iter_4_1 in pairs(var_4_0) do
-			var_0_0[iter_4_0] = iter_4_1
+	if not windows then
+		for k, v in pairs(windows) do
+			tbl[k] = v
 		end
 	end
 
-	local var_4_1 = arg_4_0.window_layouts
+	local window_layouts = self.window_layouts
 
-	if var_4_1 then
-		for iter_4_2 = 1, #var_4_1 do
-			var_0_1[#var_0_1 + 1] = var_4_1[iter_4_2]
+	if not window_layouts then
+		for k_2 = 1, #window_layouts do
+			tbl_2[#tbl_2 + 1] = window_layouts[k_2]
 		end
 	end
 end)
-DLCUtils.map("hero_view_window_layout_console", function(arg_5_0)
-	local var_5_0 = arg_5_0.windows
+DLCUtils.map("hero_view_window_layout_console", function (self)
+	-- function 5
+	local windows = self.windows
 
-	if var_5_0 then
-		for iter_5_0, iter_5_1 in pairs(var_5_0) do
-			var_0_0[iter_5_0] = iter_5_1
+	if not windows then
+		for k, v in pairs(windows) do
+			tbl[k] = v
 		end
 	end
 
-	local var_5_1 = arg_5_0.window_layouts
+	local window_layouts = self.window_layouts
 
-	if var_5_1 then
-		for iter_5_2 = 1, #var_5_1 do
-			var_0_1[#var_0_1 + 1] = var_5_1[iter_5_2]
+	if not window_layouts then
+		for k_2 = 1, #window_layouts do
+			tbl_2[#tbl_2 + 1] = window_layouts[k_2]
 		end
 	end
 end)
 
 return {
-	max_active_windows = var_0_2,
-	windows = var_0_0,
-	window_layouts = var_0_1
+	max_active_windows = num,
+	windows = tbl,
+	window_layouts = tbl_2
 }

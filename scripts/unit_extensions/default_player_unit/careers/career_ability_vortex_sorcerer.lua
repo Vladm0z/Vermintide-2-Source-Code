@@ -2,252 +2,281 @@
 
 CareerAbilityVortexSorcerer = class(CareerAbilityVortexSorcerer)
 
-local var_0_0 = require("scripts/entity_system/systems/ai/ai_slot_utils")
+local scripts_entity_system_systems_ai_ai_slot_utils = require("scripts/entity_system/systems/ai/ai_slot_utils")
 
-function CareerAbilityVortexSorcerer._ballistic_raycast(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7)
-	local var_1_0 = arg_1_3 / arg_1_2
-	local var_1_1 = 0.85
-	local var_1_2 = 10
+CareerAbilityVortexSorcerer._ballistic_raycast = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7)
+	-- function 1
+	local num = arg_1_3 / arg_1_2
+	local num_2 = 0.85
+	local num_3 = 10
 
-	for iter_1_0 = 1, arg_1_2 do
-		local var_1_3 = arg_1_4 + arg_1_5 * var_1_0
-		local var_1_4 = PhysicsWorld.linear_sphere_sweep(arg_1_1, arg_1_4, var_1_3, var_1_1, var_1_2, "collision_filter", arg_1_7, "report_initial_overlap")
+	for i = 1, arg_1_2 do
+		local num_4 = arg_1_4 + arg_1_5 * num
+		local linear_sphere_sweep = PhysicsWorld.linear_sphere_sweep(arg_1_1, arg_1_4, num_4, num_2, num_3, "collision_filter", arg_1_7, "report_initial_overlap")
 
-		if var_1_4 then
-			local var_1_5 = #var_1_4
+		if not linear_sphere_sweep then
+			local count = #linear_sphere_sweep
 
-			for iter_1_1 = 1, var_1_5 do
-				local var_1_6 = var_1_4[iter_1_1]
-				local var_1_7 = var_1_6.actor
-				local var_1_8 = var_1_6.position
-				local var_1_9 = var_1_6.normal
-				local var_1_10 = var_1_6.distance
+			for j = 1, count do
+				local var_1_6 = linear_sphere_sweep[j]
+				local actor = var_1_6.actor
+				local position = var_1_6.position
+				local normal = var_1_6.normal
+				local distance = var_1_6.distance
 
-				if Actor.unit(var_1_7) ~= arg_1_0.owner_unit then
-					return true, var_1_8, var_1_10, var_1_9, var_1_7
+				if Actor.unit(actor) ~= self.owner_unit then
+					return true, position, distance, normal, actor
 				end
 			end
 		end
 
-		arg_1_5 = arg_1_5 + arg_1_6 * var_1_0
-		arg_1_4 = var_1_3
+		arg_1_5 = arg_1_5 + arg_1_6 * num
+		arg_1_4 = num_4
 	end
 
 	return false, arg_1_4
 end
 
-local function var_0_1(arg_2_0, arg_2_1, arg_2_2)
+local function fn(arg_2_0, arg_2_1, arg_2_2)
+	-- function 2
 	return Vector3.distance(arg_2_1, arg_2_0) / arg_2_2
 end
 
-function CareerAbilityVortexSorcerer.init(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
-	arg_3_0.owner_unit = arg_3_2
-	arg_3_0.world = arg_3_1.world
-	arg_3_0.wwise_world = Managers.world:wwise_world(arg_3_0.world)
+CareerAbilityVortexSorcerer.init = function (self, arg_3_1, arg_3_2, arg_3_3)
+	-- function 3
+	self.owner_unit = arg_3_2
+	self.world = arg_3_1.world
+	self.wwise_world = Managers.world:wwise_world(self.world)
 
-	local var_3_0 = arg_3_3.player
+	local player = arg_3_3.player
 
-	arg_3_0.player = var_3_0
-	arg_3_0.is_server = var_3_0.is_server
-	arg_3_0.local_player = var_3_0.local_player
-	arg_3_0.bot_player = var_3_0.bot_player
-	arg_3_0.network_manager = Managers.state.network
-	arg_3_0.input_manager = Managers.input
-	arg_3_0.effect_id = nil
-	arg_3_0.effect_name = "fx/wpnfx_staff_geiser_charge"
-	arg_3_0.effect_id_teleport_exit = nil
+	self.player = player
+	self.is_server = player.is_server
+	self.local_player = player.local_player
+	self.bot_player = player.bot_player
+	self.network_manager = Managers.state.network
+	self.input_manager = Managers.input
+	self.effect_id = nil
+	self.effect_name = "fx/wpnfx_staff_geiser_charge"
+	self.effect_id_teleport_exit = nil
 end
 
-function CareerAbilityVortexSorcerer.extensions_ready(arg_4_0, arg_4_1, arg_4_2)
-	arg_4_0.first_person_extension = ScriptUnit.has_extension(arg_4_2, "first_person_system")
-	arg_4_0.status_extension = ScriptUnit.extension(arg_4_2, "status_system")
-	arg_4_0.career_extension = ScriptUnit.extension(arg_4_2, "career_system")
-	arg_4_0.ghost_mode_extension = ScriptUnit.extension(arg_4_2, "ghost_mode_system")
-	arg_4_0.buff_extension = ScriptUnit.extension(arg_4_2, "buff_system")
-	arg_4_0.locomotion_extension = ScriptUnit.extension(arg_4_2, "locomotion_system")
-	arg_4_0._input_extension = ScriptUnit.has_extension(arg_4_2, "input_system")
-	arg_4_0._ability_input = arg_4_0.career_extension:get_activated_ability_data(1).input_action
+CareerAbilityVortexSorcerer.extensions_ready = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	self.first_person_extension = ScriptUnit.has_extension(arg_4_2, "first_person_system")
+	self.status_extension = ScriptUnit.extension(arg_4_2, "status_system")
+	self.career_extension = ScriptUnit.extension(arg_4_2, "career_system")
+	self.ghost_mode_extension = ScriptUnit.extension(arg_4_2, "ghost_mode_system")
+	self.buff_extension = ScriptUnit.extension(arg_4_2, "buff_system")
+	self.locomotion_extension = ScriptUnit.extension(arg_4_2, "locomotion_system")
+	self._input_extension = ScriptUnit.has_extension(arg_4_2, "input_system")
+	self._ability_input = self.career_extension:get_activated_ability_data(1).input_action
 
-	if arg_4_0.first_person_extension then
-		arg_4_0.first_person_unit = arg_4_0.first_person_extension:get_first_person_unit()
+	if not self.first_person_extension then
+		self.first_person_unit = self.first_person_extension:get_first_person_unit()
 	end
 end
 
-function CareerAbilityVortexSorcerer.destroy(arg_5_0)
+CareerAbilityVortexSorcerer.destroy = function (arg_5_0)
+	-- function 5
 	return
 end
 
-function CareerAbilityVortexSorcerer.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
-	if not arg_6_0:_ability_available() then
+CareerAbilityVortexSorcerer.update = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+	-- function 6
+	if not self:_ability_available() then
 		return
 	end
 
-	local var_6_0 = arg_6_0._input_extension
+	local _input_extension = self._input_extension
 
-	if not var_6_0 then
+	if not _input_extension then
 		return
 	end
 
-	if not arg_6_0.is_priming then
-		if var_6_0:get(arg_6_0._ability_input) then
-			arg_6_0:_start_priming()
+	if not self.is_priming then
+		if not _input_extension:get(self._ability_input) then
+			self:_start_priming()
 		end
-	elseif arg_6_0.is_priming then
-		arg_6_0:_update_priming(arg_6_3, arg_6_5)
+	elseif not self.is_priming then
+		self:_update_priming(arg_6_3, arg_6_5)
 
-		if var_6_0:get("reload") or var_6_0:get("action_two") then
-			arg_6_0:_stop_priming()
+		if _input_extension:get("reload") or not _input_extension:get("action_two") then
+			self:_stop_priming()
 		end
 
-		if not var_6_0:get("action_one_hold") then
-			local var_6_1 = arg_6_0.status_extension
+		if not _input_extension:get("action_one_hold") then
+			local status_extension = self.status_extension
 
-			var_6_1._last_valid_position = arg_6_0._last_valid_position
-			var_6_1.do_sorcerer_vortex = true
+			status_extension._last_valid_position = self._last_valid_position
+			status_extension.do_sorcerer_vortex = true
 
-			if arg_6_0.effect_id then
-				World.destroy_particles(arg_6_0.world, arg_6_0.effect_id)
+			if not self.effect_id then
+				World.destroy_particles(self.world, self.effect_id)
 
-				arg_6_0.effect_id = nil
+				self.effect_id = nil
 			end
 
-			arg_6_0.career_extension:start_activated_ability_cooldown()
+			self.career_extension:start_activated_ability_cooldown()
 
-			arg_6_0.is_priming = false
+			self.is_priming = false
 
 			return
 		end
 	end
 end
 
-function CareerAbilityVortexSorcerer.stop(arg_7_0, arg_7_1)
-	if arg_7_0._is_priming then
-		arg_7_0:_stop_priming()
+CareerAbilityVortexSorcerer.stop = function (self, arg_7_1)
+	-- function 7
+	if not self._is_priming then
+		self:_stop_priming()
 	end
 end
 
-function CareerAbilityVortexSorcerer._ability_available(arg_8_0)
-	local var_8_0 = arg_8_0.career_extension
-	local var_8_1 = arg_8_0.status_extension
-	local var_8_2 = arg_8_0.locomotion_extension
-	local var_8_3 = arg_8_0.ghost_mode_extension:is_in_ghost_mode()
+CareerAbilityVortexSorcerer._ability_available = function (self)
+	-- function 8
+	local career_extension = self.career_extension
+	local status_extension = self.status_extension
+	local locomotion_extension = self.locomotion_extension
+	local is_in_ghost_mode = self.ghost_mode_extension:is_in_ghost_mode()
+	local can_use_activated_ability = career_extension:can_use_activated_ability()
 
-	return var_8_0:can_use_activated_ability() and not var_8_1:is_disabled() and var_8_2:is_on_ground() and not var_8_3
-end
+	if not can_use_activated_ability then
+		if not status_extension:is_disabled() then
+			can_use_activated_ability = locomotion_extension:is_on_ground()
 
-function CareerAbilityVortexSorcerer._start_priming(arg_9_0)
-	if arg_9_0.local_player then
-		local var_9_0 = arg_9_0.world
-		local var_9_1 = arg_9_0.effect_name
-
-		arg_9_0.effect_id = World.create_particles(var_9_0, var_9_1, Vector3.zero())
+			if not can_use_activated_ability then
+				can_use_activated_ability = not is_in_ghost_mode
+			end
+		else
+			can_use_activated_ability = false
+		end
 	end
 
-	arg_9_0._last_valid_position = nil
-	arg_9_0.is_priming = true
+	if false then
+		can_use_activated_ability = true
+	end
+
+	return can_use_activated_ability
 end
 
-function CareerAbilityVortexSorcerer._landing_postion_valid(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
-	local var_10_0 = false
-	local var_10_1 = arg_10_3.astar
+CareerAbilityVortexSorcerer._start_priming = function (self)
+	-- function 9
+	if not self.local_player then
+		local world = self.world
+		local effect_name = self.effect_name
 
-	if var_10_1 then
-		if GwNavAStar.processing_finished(var_10_1) then
-			var_10_0 = GwNavAStar.path_found(var_10_1) and true or var_10_0
+		self.effect_id = World.create_particles(world, effect_name, Vector3.zero())
+	end
 
-			GwNavAStar.destroy(var_10_1)
+	self._last_valid_position = nil
+	self.is_priming = true
+end
+
+CareerAbilityVortexSorcerer._landing_postion_valid = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+	-- function 10
+	local flag = false
+	local astar = arg_10_3.astar
+
+	if not astar then
+		if not GwNavAStar.processing_finished(astar) then
+			flag = not GwNavAStar.path_found(astar) and true and flag
+
+			GwNavAStar.destroy(astar)
 
 			arg_10_3.astar = nil
 			arg_10_3.astar_timer = arg_10_4 + 0.01
 		end
 	elseif arg_10_4 > arg_10_3.astar_timer then
-		local var_10_2 = Managers.state.entity:system("ai_system"):nav_world()
-		local var_10_3 = GwNavAStar.create(var_10_2)
-		local var_10_4 = arg_10_3.box_half_width
-		local var_10_5 = Managers.state.bot_nav_transition:traverse_logic()
+		local nav_world = Managers.state.entity:system("ai_system"):nav_world()
+		local var_10_3 = GwNavAStar.create(nav_world)
+		local box_half_width = arg_10_3.box_half_width
+		local traverse_logic = Managers.state.bot_nav_transition:traverse_logic()
 
-		GwNavAStar.start_with_propagation_box(var_10_3, var_10_2, arg_10_1, arg_10_2, var_10_4, var_10_5)
+		GwNavAStar.start_with_propagation_box(var_10_3, nav_world, arg_10_1, arg_10_2, box_half_width, traverse_logic)
 
 		arg_10_3.astar = var_10_3
 		arg_10_3.astar_timer = arg_10_4 + 0.01
 	end
 
-	return var_10_0
+	return flag
 end
 
-function CareerAbilityVortexSorcerer._update_priming(arg_11_0, arg_11_1, arg_11_2)
-	local var_11_0 = arg_11_0.effect_id
-	local var_11_1 = arg_11_0.owner_unit
-	local var_11_2 = arg_11_0.world
-	local var_11_3 = Managers.state.network:game()
-	local var_11_4 = Managers.state.network
-	local var_11_5 = World.get_data(var_11_2, "physics_world")
-	local var_11_6 = var_11_4:unit_game_object_id(var_11_1)
+CareerAbilityVortexSorcerer._update_priming = function (self, arg_11_1, arg_11_2)
+	-- function 11
+	local effect_id = self.effect_id
+	local owner_unit = self.owner_unit
+	local world = self.world
+	local game = Managers.state.network:game()
+	local network = Managers.state.network
+	local get_data = World.get_data(world, "physics_world")
+	local unit_game_object_id = network:unit_game_object_id(owner_unit)
 	local var_11_7 = Vector3(0, 0, 1)
-	local var_11_8 = arg_11_0.first_person_extension
-	local var_11_9 = var_11_8:current_position()
-	local var_11_10 = var_11_8:current_rotation()
-	local var_11_11 = 10
-	local var_11_12 = 0.9
-	local var_11_13 = 25
-	local var_11_14 = 0
-	local var_11_15 = Quaternion.forward(Quaternion.multiply(var_11_10, Quaternion(Vector3.right(), var_11_14))) * var_11_13
+	local first_person_extension = self.first_person_extension
+	local current_position = first_person_extension:current_position()
+	local current_rotation = first_person_extension:current_rotation()
+	local num = 10
+	local num_2 = 0.9
+	local num_3 = 25
+	local num_4 = 0
+	local num_5 = Quaternion.forward(Quaternion.multiply(current_rotation, Quaternion(Vector3.right(), num_4))) * num_3
 	local var_11_16 = Vector3(0, 0, -2)
-	local var_11_17 = "filter_adept_teleport"
-	local var_11_18, var_11_19, var_11_20, var_11_21 = arg_11_0:_ballistic_raycast(var_11_5, var_11_11, var_11_12, var_11_9, var_11_15, var_11_16, var_11_17, false)
+	local str = "filter_adept_teleport"
+	local _ballistic_raycast, var_11_19, var_11_20, var_11_21 = self:_ballistic_raycast(get_data, num, num_2, current_position, num_5, var_11_16, str, false)
 
-	if var_11_18 and Vector3.dot(var_11_21, Vector3.up()) < 0.75 then
-		local var_11_22 = var_11_19 - Vector3.normalize(var_11_19 - var_11_9) * 1.5
-		local var_11_23, var_11_24, var_11_25, var_11_26 = PhysicsWorld.immediate_raycast(var_11_5, var_11_22, Vector3.down(), 10, "closest", "collision_filter", var_11_17)
+	if not (not _ballistic_raycast and not (Vector3.dot(var_11_21, Vector3.up()) < 0.75)) then
+		local num_6 = var_11_19 - Vector3.normalize(var_11_19 - current_position) * 1.5
+		local immediate_raycast, var_11_24, var_11_25, var_11_26 = PhysicsWorld.immediate_raycast(get_data, num_6, Vector3.down(), 10, "closest", "collision_filter", str)
 
-		if var_11_23 then
+		if not immediate_raycast then
 			var_11_19 = var_11_24
 		end
 	end
 
-	local var_11_27 = Managers.state.entity:system("ai_system"):nav_world()
+	local nav_world = Managers.state.entity:system("ai_system"):nav_world()
 
-	var_11_19 = var_0_0.get_target_pos_on_navmesh(var_11_19, var_11_27) or var_11_19
+	var_11_19 = scripts_entity_system_systems_ai_ai_slot_utils.get_target_pos_on_navmesh(var_11_19, nav_world) or var_11_19
 
-	local var_11_28 = arg_11_0._astar_data
+	local _astar_data = self._astar_data
 
-	if not var_11_28 then
-		var_11_28 = {
+	if not _astar_data then
+		_astar_data = {
 			astar_timer = 0,
 			box_half_width = 20
 		}
-		arg_11_0._astar_data = var_11_28
+		self._astar_data = _astar_data
 	end
 
-	if arg_11_0:_landing_postion_valid(var_11_9, var_11_19, var_11_28, arg_11_2) then
-		if var_11_0 then
-			World.move_particles(var_11_2, var_11_0, var_11_19)
+	if not self:_landing_postion_valid(current_position, var_11_19, _astar_data, arg_11_2) then
+		if not effect_id then
+			World.move_particles(world, effect_id, var_11_19)
 		end
 
-		if arg_11_0._last_valid_position then
-			arg_11_0._last_valid_position:store(var_11_19)
+		if not self._last_valid_position then
+			self._last_valid_position:store(var_11_19)
 		else
-			arg_11_0._last_valid_position = Vector3Box(var_11_19)
+			self._last_valid_position = Vector3Box(var_11_19)
 		end
 	end
 end
 
-function CareerAbilityVortexSorcerer._stop_priming(arg_12_0)
-	if arg_12_0.effect_id then
-		World.destroy_particles(arg_12_0.world, arg_12_0.effect_id)
+CareerAbilityVortexSorcerer._stop_priming = function (self)
+	-- function 12
+	if not self.effect_id then
+		World.destroy_particles(self.world, self.effect_id)
 
-		arg_12_0.effect_id = nil
+		self.effect_id = nil
 	end
 
-	if arg_12_0._astar_data then
-		local var_12_0 = arg_12_0._astar_data.astar
+	if not self._astar_data then
+		local astar = self._astar_data.astar
 
-		if var_12_0 then
-			GwNavAStar.destroy(var_12_0)
+		if not astar then
+			GwNavAStar.destroy(astar)
 		end
 
-		arg_12_0._astar_data = nil
+		self._astar_data = nil
 	end
 
-	arg_12_0.is_priming = false
+	self.is_priming = false
 end

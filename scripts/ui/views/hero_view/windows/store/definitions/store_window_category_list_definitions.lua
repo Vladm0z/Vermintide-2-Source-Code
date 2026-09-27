@@ -1,25 +1,25 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/store/definitions/store_window_category_list_definitions.lua
 
-local var_0_0 = UISettings.console_menu_scenegraphs
-local var_0_1 = {
+local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
+local tbl = {
 	550,
 	700
 }
-local var_0_2 = {
+local tbl_2 = {
 	550,
 	80
 }
-local var_0_3 = {
+local tbl_3 = {
 	16,
-	var_0_1[2]
+	tbl[2]
 }
-local var_0_4 = {
-	screen = var_0_0.screen,
+local tbl_4 = {
+	screen = console_menu_scenegraphs.screen,
 	list_window = {
 		vertical_alignment = "top",
 		parent = "screen",
 		horizontal_alignment = "left",
-		size = var_0_1,
+		size = tbl,
 		position = {
 			130,
 			-215,
@@ -30,10 +30,10 @@ local var_0_4 = {
 		vertical_alignment = "top",
 		parent = "list_window",
 		horizontal_alignment = "left",
-		size = var_0_1,
+		size = tbl,
 		position = {
 			0,
-			-var_0_1[2],
+			-tbl[2],
 			0
 		}
 	},
@@ -41,7 +41,7 @@ local var_0_4 = {
 		vertical_alignment = "top",
 		parent = "list_window",
 		horizontal_alignment = "left",
-		size = var_0_3,
+		size = tbl_3,
 		position = {
 			-58,
 			0,
@@ -64,9 +64,10 @@ local var_0_4 = {
 	}
 }
 
-local function var_0_5(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
 	local var_1_0 = UIFrameSettings.frame_outer_glow_04_big.texture_sizes.horizontal[2]
-	local var_1_1 = {
+	local tbl = {
 		passes = {
 			{
 				style_id = "hotspot",
@@ -95,7 +96,7 @@ local function var_0_5(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			}
 		}
 	}
-	local var_1_2 = {
+	local tbl_2 = {
 		mask_edge = "mask_rect_edge_fade",
 		mask_texture = "mask_rect",
 		list_hotspot = {},
@@ -106,7 +107,7 @@ local function var_0_5(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			scroll_value = 1
 		}
 	}
-	local var_1_3 = {
+	local tbl_3 = {
 		hotspot = {
 			size = {
 				arg_1_2[1],
@@ -194,9 +195,9 @@ local function var_0_5(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	}
 
 	return {
-		element = var_1_1,
-		content = var_1_2,
-		style = var_1_3,
+		element = tbl,
+		content = tbl_2,
+		style = tbl_3,
 		offset = {
 			0,
 			0,
@@ -206,50 +207,53 @@ local function var_0_5(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	}
 end
 
-local var_0_6 = {
-	list = var_0_5("list_window", "list", var_0_1, var_0_2),
-	list_scrollbar = UIWidgets.create_chain_scrollbar("list_scrollbar", "list_window", var_0_4.list_scrollbar.size, "gold", true)
+local tbl_5 = {
+	list = fn("list_window", "list", tbl, tbl_2),
+	list_scrollbar = UIWidgets.create_chain_scrollbar("list_scrollbar", "list_window", tbl_4.list_scrollbar.size, "gold", true)
 }
-local var_0_7 = {
+local tbl_6 = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+				-- function 2
 				arg_2_3.render_settings.alpha_multiplier = 0
 				arg_2_3.mask_default_width = arg_2_2.widgets_by_name.list.style.mask.size[1]
 			end,
-			update = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
-				local var_3_0 = math.easeOutCubic(arg_3_3)
+			update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+				-- function 3
+				local easeOutCubic = math.easeOutCubic(arg_3_3)
 
-				arg_3_4.render_settings.alpha_multiplier = var_3_0
+				arg_3_4.render_settings.alpha_multiplier = easeOutCubic
 
-				local var_3_1 = arg_3_2.widgets_by_name
-				local var_3_2 = arg_3_2.list_widgets
-				local var_3_3 = 0
+				local widgets_by_name = arg_3_2.widgets_by_name
+				local list_widgets = arg_3_2.list_widgets
+				local num = 0
 
-				for iter_3_0, iter_3_1 in ipairs(var_3_2) do
-					local var_3_4 = iter_3_1.content
-					local var_3_5 = iter_3_1.offset
-					local var_3_6 = iter_3_1.default_offset
-					local var_3_7 = var_3_4.row
-					local var_3_8 = var_3_4.column
-					local var_3_9 = math.min(var_3_7 * 50 + var_3_8 * 20, 300)
+				for i, v in ipairs(list_widgets) do
+					local content = v.content
+					local offset = v.offset
+					local default_offset = v.default_offset
+					local row = content.row
+					local column = content.column
+					local min = math.min(row * 50 + column * 20, 300)
 
-					var_3_5[1] = math.floor(var_3_6[1] + var_3_9 - var_3_9 * var_3_0)
-					var_3_3 = math.max(var_3_3, var_3_9)
+					offset[1] = math.floor(default_offset[1] + min - min * easeOutCubic)
+					num = math.max(num, min)
 				end
 
-				local var_3_10 = arg_3_4.mask_default_width
-				local var_3_11 = math.floor(var_3_10 + var_3_3 - var_3_3 * var_3_0)
-				local var_3_12 = var_3_1.list.style
+				local mask_default_width = arg_3_4.mask_default_width
+				local floor = math.floor(mask_default_width + num - num * easeOutCubic)
+				local style = widgets_by_name.list.style
 
-				var_3_12.mask.size[1] = var_3_11
-				var_3_12.mask_top.size[1] = var_3_11
-				var_3_12.mask_bottom.size[1] = var_3_11
+				style.mask.size[1] = floor
+				style.mask_top.size[1] = floor
+				style.mask_bottom.size[1] = floor
 			end,
-			on_complete = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			on_complete = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				-- function 4
 				return
 			end
 		}
@@ -259,15 +263,18 @@ local var_0_7 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+				-- function 5
 				arg_5_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
-				local var_6_0 = math.easeOutCubic(arg_6_3)
+			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+				-- function 6
+				local easeOutCubic = math.easeOutCubic(arg_6_3)
 
-				arg_6_4.render_settings.alpha_multiplier = 1 - var_6_0
+				arg_6_4.render_settings.alpha_multiplier = 1 - easeOutCubic
 			end,
-			on_complete = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			on_complete = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+				-- function 7
 				return
 			end
 		}
@@ -275,8 +282,8 @@ local var_0_7 = {
 }
 
 return {
-	widgets = var_0_6,
+	widgets = tbl_5,
 	title_button_definitions = title_button_definitions,
-	scenegraph_definition = var_0_4,
-	animation_definitions = var_0_7
+	scenegraph_definition = tbl_4,
+	animation_definitions = tbl_6
 }

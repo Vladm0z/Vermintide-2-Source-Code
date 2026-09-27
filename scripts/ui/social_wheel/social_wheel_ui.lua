@@ -1,28 +1,31 @@
 -- chunkname: @scripts/ui/social_wheel/social_wheel_ui.lua
 
 local var_0_0 = local_require("scripts/ui/social_wheel/social_wheel_ui_settings")
-local var_0_1 = BASE_SOCIAL_WHEEL_SETTINGS or table.clone(SocialWheelSettings)
-local var_0_2 = "gui/1080p/single_textures/generic/transparent_placeholder_texture"
-local var_0_3 = "social_wheel_ui"
-local var_0_4 = "SocialWheelUI_"
-local var_0_5 = "%s_weapon_pose_anim_%02d"
-local var_0_6 = false
+local BASE_SOCIAL_WHEEL_SETTINGS = BASE_SOCIAL_WHEEL_SETTINGS
+
+BASE_SOCIAL_WHEEL_SETTINGS = BASE_SOCIAL_WHEEL_SETTINGS or table.clone(SocialWheelSettings)
+
+local str = "gui/1080p/single_textures/generic/transparent_placeholder_texture"
+local str_2 = "social_wheel_ui"
+local str_3 = "SocialWheelUI_"
+local str_4 = "%s_weapon_pose_anim_%02d"
+local flag = false
 local var_0_7 = local_require("scripts/ui/social_wheel/social_wheel_ui_definitions")
-local var_0_8 = var_0_7.scenegraph_definition
+local scenegraph_definition = var_0_7.scenegraph_definition
 
 SocialWheelUI = class(SocialWheelUI)
 
-local var_0_9 = {
+local tbl = {
 	"rpc_social_wheel_event"
 }
-local var_0_10 = 0.125
-local var_0_11 = 0.25
-local var_0_12 = 0.01
-local var_0_13 = 0.125
-local var_0_14 = 5
+local num = 0.125
+local num_2 = 0.25
+local num_3 = 0.01
+local num_4 = 0.125
+local num_5 = 5
 local var_0_15
 
-if IS_WINDOWS then
+if not IS_WINDOWS then
 	var_0_15 = {
 		OPEN = {
 			MOVE_Y = 0.3,
@@ -54,12 +57,13 @@ else
 	}
 end
 
-local var_0_16 = {
-	__index = function(arg_1_0, arg_1_1, arg_1_2)
-		return arg_1_0.default
+local tbl_2 = {
+	__index = function (self, arg_1_1, arg_1_2)
+		-- function 1
+		return self.default
 	end
 }
-local var_0_17 = {
+local tbl_3 = {
 	default = {
 		OPEN = "Play_hud_socialwheel_open",
 		HOVER = "Play_hud_socialwheel_hover",
@@ -72,128 +76,135 @@ local var_0_17 = {
 	}
 }
 
-for iter_0_0, iter_0_1 in pairs(DLCSettings) do
-	local var_0_18 = iter_0_1.social_wheel_sfx_events
+for k, v in pairs(DLCSettings) do
+	local social_wheel_sfx_events = v.social_wheel_sfx_events
 
-	if var_0_18 then
-		table.merge_recursive(var_0_17, var_0_18)
+	if not social_wheel_sfx_events then
+		table.merge_recursive(tbl_3, social_wheel_sfx_events)
 	end
 end
 
-setmetatable(var_0_17, var_0_16)
+setmetatable(tbl_3, tbl_2)
 
-function SocialWheelUI.init(arg_2_0, arg_2_1, arg_2_2)
-	arg_2_0._parent = arg_2_1
-	arg_2_0._ui_top_renderer = arg_2_2.ui_top_renderer
-	arg_2_0._render_settings = {
+SocialWheelUI.init = function (self, arg_2_1, arg_2_2)
+	-- function 2
+	self._parent = arg_2_1
+	self._ui_top_renderer = arg_2_2.ui_top_renderer
+	self._render_settings = {
 		alpha_multiplier = 0
 	}
-	arg_2_0._is_visible = true
-	arg_2_0._state = "update_closed"
-	arg_2_0._states = {
+	self._is_visible = true
+	self._state = "update_closed"
+	self._states = {
 		update_closed = true,
 		update_open = true
 	}
-	arg_2_0._ingame_ui_context = arg_2_2
-	arg_2_0._peer_id = arg_2_2.peer_id
-	arg_2_0._player = arg_2_2.player
-	arg_2_0._wwise_world = arg_2_2.wwise_world
+	self._ingame_ui_context = arg_2_2
+	self._peer_id = arg_2_2.peer_id
+	self._player = arg_2_2.player
+	self._wwise_world = arg_2_2.wwise_world
 
-	if IS_CONSOLE then
-		arg_2_0._console_extension = arg_2_2.is_in_inn and "_inn" or ""
+	if not IS_CONSOLE then
+		local flag
+
+		flag = not arg_2_2.is_in_inn and "_inn" and ""
+		self._console_extension = flag
 	else
-		arg_2_0._console_extension = ""
+		self._console_extension = ""
 	end
 
-	arg_2_0._current_context = nil
-	arg_2_0._active_context = nil
-	arg_2_0._num_free_events = var_0_14
-	arg_2_0._valid_selection = true
-	arg_2_0._cloned_materials_by_reference = {}
+	self._current_context = nil
+	self._active_context = nil
+	self._num_free_events = num_5
+	self._valid_selection = true
+	self._cloned_materials_by_reference = {}
 
-	local var_2_0 = Managers.state.game_mode:settings().ping_mode
+	local ping_mode = Managers.state.game_mode:settings().ping_mode
 
-	if var_2_0 then
-		arg_2_0._world_markers_enabled = var_2_0.world_markers
+	if not ping_mode then
+		self._world_markers_enabled = ping_mode.world_markers
 	else
-		arg_2_0._world_markers_enabled = false
+		self._world_markers_enabled = false
 	end
 
-	arg_2_0:_create_ui_elements()
-	arg_2_0:_register_rpcs()
+	self:_create_ui_elements()
+	self:_register_rpcs()
 end
 
-function SocialWheelUI._create_ui_elements(arg_3_0)
-	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_8)
-	arg_3_0._animations = {}
-	arg_3_0._animation_callbacks = {}
-	arg_3_0._selection_widgets = {}
-	arg_3_0._social_event_widgets = {}
-	arg_3_0._queued_social_wheel_events = {}
-	arg_3_0._icon_widgets = {}
-	arg_3_0._event_index = 0
-	arg_3_0._select_timer = 0
-	arg_3_0._selected_widget = nil
+SocialWheelUI._create_ui_elements = function (self)
+	-- function 3
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+	self._animations = {}
+	self._animation_callbacks = {}
+	self._selection_widgets = {}
+	self._social_event_widgets = {}
+	self._queued_social_wheel_events = {}
+	self._icon_widgets = {}
+	self._event_index = 0
+	self._select_timer = 0
+	self._selected_widget = nil
 
-	arg_3_0:_create_social_wheel(var_0_1)
+	self:_create_social_wheel(BASE_SOCIAL_WHEEL_SETTINGS)
 
-	arg_3_0._arrow_widget = UIWidget.init(var_0_7.arrow_widget)
-	arg_3_0._bg_widget = UIWidget.init(var_0_7.create_bg_widget())
-	arg_3_0._page_input_widget = UIWidget.init(var_0_7.page_input_widget)
+	self._arrow_widget = UIWidget.init(var_0_7.arrow_widget)
+	self._bg_widget = UIWidget.init(var_0_7.create_bg_widget())
+	self._page_input_widget = UIWidget.init(var_0_7.page_input_widget)
 
-	UIRenderer.clear_scenegraph_queue(arg_3_0._ui_top_renderer)
+	UIRenderer.clear_scenegraph_queue(self._ui_top_renderer)
 end
 
-function SocialWheelUI._create_social_wheel(arg_4_0, arg_4_1)
-	local var_4_0 = arg_4_1 or SocialWheelSettings
+SocialWheelUI._create_social_wheel = function (self, arg_4_1)
+	-- function 4
+	local flag = arg_4_1 or SocialWheelSettings
 
-	local function var_4_1()
-		return arg_4_0._active_context
+	local function fn()
+		-- function 5
+		return self._active_context
 	end
 
-	for iter_4_0, iter_4_1 in pairs(var_4_0) do
-		local var_4_2 = iter_4_1.has_pages
-		local var_4_3 = iter_4_1.validation_function
+	for k, v in pairs(flag) do
+		local has_pages = v.has_pages
+		local validation_function = v.validation_function
 
-		if not var_4_3 or var_4_3() then
-			if not var_4_2 then
-				local var_4_4 = #iter_4_1
-				local var_4_5 = Script.new_array(var_4_4)
+		if not validation_function and not validation_function() then
+			if not has_pages then
+				local count = #v
+				local new_array = Script.new_array(count)
 
-				arg_4_0._selection_widgets[iter_4_0] = var_4_5
+				self._selection_widgets[k] = new_array
 
-				for iter_4_2 = 1, var_4_4 do
-					local var_4_6 = var_0_7.create_social_widget(iter_4_1[iter_4_2], arg_4_0:_widget_angle(iter_4_1.angle, var_4_4, iter_4_2), iter_4_1, var_4_1)
+				for k_2 = 1, count do
+					local create_social_widget = var_0_7.create_social_widget(v[k_2], self:_widget_angle(v.angle, count, k_2), v, fn)
 
-					var_4_5[iter_4_2] = UIWidget.init(var_4_6)
+					new_array[k_2] = UIWidget.init(create_social_widget)
 				end
 			else
-				local var_4_7 = #iter_4_1
-				local var_4_8 = Script.new_table(var_4_7, 2)
+				local count_2 = #v
+				local new_table = Script.new_table(count_2, 2)
 
-				var_4_8.num_pages = var_4_7
-				var_4_8.current_page = 1
-				arg_4_0._selection_widgets[iter_4_0] = var_4_8
+				new_table.num_pages = count_2
+				new_table.current_page = 1
+				self._selection_widgets[k] = new_table
 
-				for iter_4_3 = 1, var_4_7 do
-					local var_4_9 = iter_4_1[iter_4_3]
-					local var_4_10 = #var_4_9
-					local var_4_11 = Script.new_array(var_4_10)
+				for l = 1, count_2 do
+					local var_4_9 = v[l]
+					local count_3 = #var_4_9
+					local new_array_2 = Script.new_array(count_3)
 
-					var_4_8[iter_4_3] = var_4_11
+					new_table[l] = new_array_2
 
-					if not var_4_8.emotes_page_index then
-						var_4_8.emotes_page_index = var_4_9.emotes and iter_4_3 or nil
+					if not new_table.emotes_page_index then
+						new_table.emotes_page_index = not var_4_9.emotes and l and nil
 					end
 
-					if not var_4_8.weapon_poses_page_index then
-						var_4_8.weapon_poses_page_index = var_4_9.weapon_poses and iter_4_3 or nil
+					if not new_table.weapon_poses_page_index then
+						new_table.weapon_poses_page_index = not var_4_9.weapon_poses and l and nil
 					end
 
-					for iter_4_4 = 1, var_4_10 do
-						local var_4_12 = var_0_7.create_social_widget(var_4_9[iter_4_4], arg_4_0:_widget_angle(iter_4_1.angle, var_4_10, iter_4_4), iter_4_1, var_4_1, iter_4_3)
+					for i4 = 1, count_3 do
+						local create_social_widget_2 = var_0_7.create_social_widget(var_4_9[i4], self:_widget_angle(v.angle, count_3, i4), v, fn, l)
 
-						var_4_11[iter_4_4] = UIWidget.init(var_4_12)
+						new_array_2[i4] = UIWidget.init(create_social_widget_2)
 					end
 				end
 			end
@@ -201,136 +212,159 @@ function SocialWheelUI._create_social_wheel(arg_4_0, arg_4_1)
 	end
 end
 
-function SocialWheelUI._register_rpcs(arg_6_0)
-	arg_6_0._ingame_ui_context.network_event_delegate:register(arg_6_0, unpack(var_0_9))
+SocialWheelUI._register_rpcs = function (self)
+	-- function 6
+	self._ingame_ui_context.network_event_delegate:register(self, unpack(tbl))
 end
 
-function SocialWheelUI._unregister_rpcs(arg_7_0)
-	arg_7_0._ingame_ui_context.network_event_delegate:unregister(arg_7_0)
+SocialWheelUI._unregister_rpcs = function (self)
+	-- function 7
+	self._ingame_ui_context.network_event_delegate:unregister(self)
 end
 
-function SocialWheelUI.destroy(arg_8_0)
-	arg_8_0:_unregister_rpcs()
+SocialWheelUI.destroy = function (self)
+	-- function 8
+	self:_unregister_rpcs()
 
-	local var_8_0 = ScriptUnit.has_extension(arg_8_0._player.player_unit, "interactor_system")
+	local has_extension = ScriptUnit.has_extension(self._player.player_unit, "interactor_system")
 
-	if var_8_0 then
-		var_8_0:enable_interactions(true)
+	if not has_extension then
+		has_extension:enable_interactions(true)
 	end
 
-	if arg_8_0._loaded_weapon_pose_packages then
-		for iter_8_0, iter_8_1 in pairs(arg_8_0._loaded_weapon_pose_packages) do
-			arg_8_0:_reset_materials_for_item_type(iter_8_1.item_type, iter_8_0)
-			Managers.package:unload(iter_8_1.package_name, var_0_3)
+	if not self._loaded_weapon_pose_packages then
+		for k, v in pairs(self._loaded_weapon_pose_packages) do
+			self:_reset_materials_for_item_type(v.item_type, k)
+			Managers.package:unload(v.package_name, str_2)
 		end
 
-		table.clear(arg_8_0._loaded_weapon_pose_packages)
+		table.clear(self._loaded_weapon_pose_packages)
 	end
 
-	arg_8_0:_set_player_input_scale(1, nil)
+	self:_set_player_input_scale(1, nil)
 end
 
-function SocialWheelUI._widget_angle(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
-	local var_9_0 = math.pi
-	local var_9_1 = arg_9_1 / arg_9_2
+SocialWheelUI._widget_angle = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	-- function 9
+	local pi = math.pi
+	local num = arg_9_1 / arg_9_2
 
-	return -(var_9_0 * 0.5 + var_9_0 - arg_9_1 * 0.5 + var_9_1 * 0.5) - (arg_9_3 - 1) * var_9_1
+	return -(pi * 0.5 + pi - arg_9_1 * 0.5 + num * 0.5) - (arg_9_3 - 1) * num
 end
 
-function SocialWheelUI._select_widget(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
-	local var_10_0 = math.pi
-	local var_10_1 = arg_10_1 / arg_10_2
-	local var_10_2 = var_10_0 * 0.5 + var_10_0 - arg_10_1 * 0.5
-	local var_10_3 = (-arg_10_3 - var_10_2) % (2 * var_10_0)
-	local var_10_4 = math.floor(var_10_3 / var_10_1) + 1
+SocialWheelUI._select_widget = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	-- function 10
+	local pi = math.pi
+	local num = arg_10_1 / arg_10_2
+	local num_2 = pi * 0.5 + pi - arg_10_1 * 0.5
+	local num_3 = (-arg_10_3 - num_2) % (2 * pi)
+	local num_4 = math.floor(num_3 / num) + 1
 
-	if var_10_4 > 0 and var_10_4 <= arg_10_2 then
-		return var_10_4
+	if not (not (num_4 > 0) or not (num_4 <= arg_10_2)) then
+		return num_4
 	end
 end
 
-local var_0_19 = {
+local tbl_4 = {
 	0,
 	0,
 	0
 }
 
-function SocialWheelUI._add_social_wheel_event(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+SocialWheelUI._add_social_wheel_event = function (self, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+	-- function 11
 	local var_11_0 = SocialWheelSettingsLookup[arg_11_2]
-	local var_11_1, var_11_2 = var_11_0.event_text, var_11_0.event_text_func
+	local event_text, event_text_func = var_11_0.event_text, var_11_0.event_text_func
 	local var_11_3
 
-	if var_11_2 then
-		var_11_1, var_11_3 = var_11_2(arg_11_3, var_11_0)
+	if not event_text_func then
+		event_text, var_11_3 = event_text_func(arg_11_3, var_11_0)
 	end
 
-	if var_11_1 then
-		if IS_WINDOWS then
-			if arg_11_0._num_free_events >= 1 then
-				local var_11_4 = true
-				local var_11_5 = true
+	if not event_text then
+		if not IS_WINDOWS then
+			if self._num_free_events >= 1 then
+				local flag = true
+				local flag_2 = true
 
-				Managers.chat:send_chat_message(1, arg_11_1:local_player_id(), var_11_1, var_11_4, var_11_3, var_11_5)
+				Managers.chat:send_chat_message(1, arg_11_1:local_player_id(), event_text, flag, var_11_3, flag_2)
 			else
 				local var_11_6 = Localize("social_wheel_too_many_messages_warning")
 
 				Managers.chat:add_local_system_message(1, var_11_6, true)
 			end
 		else
-			local var_11_7 = arg_11_1.peer_id == Network.peer_id()
-			local var_11_8 = arg_11_1.player_unit
+			local flag_3 = arg_11_1.peer_id == Network.peer_id()
+			local player_unit = arg_11_1.player_unit
 
-			if Unit.alive(var_11_8) then
-				local var_11_9 = ScriptUnit.extension(var_11_8, "career_system"):career_name()
-				local var_11_10 = CareerSettings[var_11_9]
-				local var_11_11 = UIWidget.init(var_0_7.create_social_text_event(var_11_0, var_11_10.portrait_image, var_11_1, var_11_7))
+			if not Unit.alive(player_unit) then
+				local career_name = ScriptUnit.extension(player_unit, "career_system"):career_name()
+				local var_11_10 = CareerSettings[career_name]
+				local var_11_11 = UIWidget.init(var_0_7.create_social_text_event(var_11_0, var_11_10.portrait_image, event_text, flag_3))
 				local var_11_12
 
-				if not var_11_7 then
-					local var_11_13 = Managers.world:world("level_world")
-					local var_11_14 = ScriptWorld.viewport(var_11_13, "player_1")
-					local var_11_15 = ScriptViewport.camera(var_11_14)
-					local var_11_16 = UIWidget.init(var_0_7.create_social_icon(var_11_0, arg_11_1.peer_id, var_11_15, var_11_13, Managers.time:time("game") + 5, 1))
+				if not flag_3 then
+					local world = Managers.world:world("level_world")
+					local viewport = ScriptWorld.viewport(world, "player_1")
+					local camera = ScriptViewport.camera(viewport)
+					local var_11_16 = UIWidget.init(var_0_7.create_social_icon(var_11_0, arg_11_1.peer_id, camera, world, Managers.time:time("game") + 5, 1))
 
-					arg_11_0._icon_widgets[arg_11_1.peer_id] = var_11_16
+					self._icon_widgets[arg_11_1.peer_id] = var_11_16
 				end
 			end
 		end
 
-		if arg_11_4 then
-			arg_11_0:_play_sound("Play_hud_socialwheel_notification")
+		if not arg_11_4 then
+			self:_play_sound("Play_hud_socialwheel_notification")
 		end
 	end
 end
 
-function SocialWheelUI._add_social_wheel_event_animation(arg_12_0, arg_12_1, arg_12_2)
-	local var_12_0 = arg_12_1.content.is_local_player
+SocialWheelUI._add_social_wheel_event_animation = function (self, arg_12_1, arg_12_2)
+	-- function 12
+	local is_local_player = arg_12_1.content.is_local_player
 
-	arg_12_0._social_event_widgets[#arg_12_0._social_event_widgets + 1] = arg_12_1
-	arg_12_0._event_index = arg_12_0._event_index + 1
+	self._social_event_widgets[#self._social_event_widgets + 1] = arg_12_1
+	self._event_index = self._event_index + 1
 
-	local var_12_1 = arg_12_0._event_index
+	local _event_index = self._event_index
 
-	arg_12_0._animations["social_event_" .. var_12_1] = UIAnimation.init(UIAnimation.function_by_time, arg_12_1.offset, 1, 500, -60, 0.25, math.easeOutCubic)
-	arg_12_0._animation_callbacks["social_event_" .. var_12_1] = function()
-		local var_13_0 = var_12_0 and Colors.get_color_table_with_alpha("medium_purple", 255) or Colors.get_color_table_with_alpha("light_sky_blue", 255)
+	self._animations["social_event_" .. _event_index] = UIAnimation.init(UIAnimation.function_by_time, arg_12_1.offset, 1, 500, -60, 0.25, math.easeOutCubic)
+	self._animation_callbacks["social_event_" .. _event_index] = function ()
+		-- function 13
+		local get_color_table_with_alpha
 
-		arg_12_0._animations["social_event_color_" .. var_12_1] = UIAnimation.init(UIAnimation.linear_scale_color, arg_12_1.style.text.text_color, 255, 255, 255, var_13_0[2], var_13_0[3], var_13_0[4], 2)
-		arg_12_0._animations["timer_" .. var_12_1] = UIAnimation.init(UIAnimation.function_by_time, var_0_19, 1, 0, 0, 5, math.easeInCubic)
-		arg_12_0._animation_callbacks["timer_" .. var_12_1] = function()
-			arg_12_0._animations["social_event_alpha_" .. var_12_1] = UIAnimation.init(UIAnimation.function_by_time, arg_12_1.style.text.text_color, 1, 255, 0, 1, math.easeInCubic)
-			arg_12_0._animations["social_event_texture_alpha_" .. var_12_1] = UIAnimation.init(UIAnimation.function_by_time, arg_12_1.style.texture.color, 1, 255, 0, 1, math.easeInCubic)
-			arg_12_0._animation_callbacks["social_event_alpha_" .. var_12_1] = function()
-				arg_12_0._animations["spacing_" .. var_12_1] = UIAnimation.init(UIAnimation.function_by_time, arg_12_1.content, "spacing", arg_12_1.content.spacing, 0, 0.5, math.easeOutCubic)
-				arg_12_0._animation_callbacks["spacing_" .. var_12_1] = function()
-					table.remove(arg_12_0._social_event_widgets, 1)
+		if not is_local_player then
+			get_color_table_with_alpha = Colors.get_color_table_with_alpha("medium_purple", 255)
 
-					if #arg_12_0._social_event_widgets < 6 then
-						local var_16_0 = arg_12_0._queued_social_wheel_events[1]
+			if not get_color_table_with_alpha then
+				-- Nothing
+			end
+		end
 
-						if var_16_0 then
-							table.remove(arg_12_0._queued_social_wheel_events, 1)
-							arg_12_0:_add_social_wheel_event_animation(var_16_0)
+		get_color_table_with_alpha = Colors.get_color_table_with_alpha("light_sky_blue", 255)
+
+		::label_13_0::
+
+		self._animations["social_event_color_" .. _event_index] = UIAnimation.init(UIAnimation.linear_scale_color, arg_12_1.style.text.text_color, 255, 255, 255, get_color_table_with_alpha[2], get_color_table_with_alpha[3], get_color_table_with_alpha[4], 2)
+		self._animations["timer_" .. _event_index] = UIAnimation.init(UIAnimation.function_by_time, tbl_4, 1, 0, 0, 5, math.easeInCubic)
+		self._animation_callbacks["timer_" .. _event_index] = function ()
+			-- function 14
+			self._animations["social_event_alpha_" .. _event_index] = UIAnimation.init(UIAnimation.function_by_time, arg_12_1.style.text.text_color, 1, 255, 0, 1, math.easeInCubic)
+			self._animations["social_event_texture_alpha_" .. _event_index] = UIAnimation.init(UIAnimation.function_by_time, arg_12_1.style.texture.color, 1, 255, 0, 1, math.easeInCubic)
+			self._animation_callbacks["social_event_alpha_" .. _event_index] = function ()
+				-- function 15
+				self._animations["spacing_" .. _event_index] = UIAnimation.init(UIAnimation.function_by_time, arg_12_1.content, "spacing", arg_12_1.content.spacing, 0, 0.5, math.easeOutCubic)
+				self._animation_callbacks["spacing_" .. _event_index] = function ()
+					-- function 16
+					table.remove(self._social_event_widgets, 1)
+
+					if #self._social_event_widgets < 6 then
+						local var_16_0 = self._queued_social_wheel_events[1]
+
+						if not var_16_0 then
+							table.remove(self._queued_social_wheel_events, 1)
+							self:_add_social_wheel_event_animation(var_16_0)
 						end
 					end
 				end
@@ -339,1133 +373,1269 @@ function SocialWheelUI._add_social_wheel_event_animation(arg_12_0, arg_12_1, arg
 	end
 end
 
-function SocialWheelUI.rpc_social_wheel_event(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
-	if IS_XB1 and Managers.chat:ignoring_peer_id(arg_17_2) then
+SocialWheelUI.rpc_social_wheel_event = function (self, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+	-- function 17
+	if not IS_XB1 and not Managers.chat:ignoring_peer_id(arg_17_2) then
 		return
 	end
 
-	local var_17_0 = Managers.player:player_from_peer_id(arg_17_2)
+	local player_from_peer_id = Managers.player:player_from_peer_id(arg_17_2)
 
-	if var_17_0 then
-		local var_17_1 = Managers.state.unit_storage:unit(arg_17_4)
+	if not player_from_peer_id then
+		local unit = Managers.state.unit_storage:unit(arg_17_4)
 
-		if not var_17_1 or Unit.alive(var_17_1) then
+		if not unit and not Unit.alive(unit) then
 			local var_17_2 = rawget(NetworkLookup.social_wheel_events, arg_17_3)
 
-			if var_17_2 then
-				arg_17_0:_add_social_wheel_event(var_17_0, var_17_2, var_17_1, true)
+			if not var_17_2 then
+				self:_add_social_wheel_event(player_from_peer_id, var_17_2, unit, true)
 			end
 		end
 	end
 end
 
-function SocialWheelUI.post_update(arg_18_0, arg_18_1)
-	arg_18_0:_post_update_remove_icon(arg_18_1)
-	arg_18_0:_post_update_render(arg_18_1)
+SocialWheelUI.post_update = function (self, arg_18_1)
+	-- function 18
+	self:_post_update_remove_icon(arg_18_1)
+	self:_post_update_render(arg_18_1)
 end
 
-local var_0_20 = {}
+local tbl_5 = {}
 
-function SocialWheelUI._post_update_remove_icon(arg_19_0, arg_19_1)
-	table.clear(var_0_20)
+SocialWheelUI._post_update_remove_icon = function (self, arg_19_1)
+	-- function 19
+	table.clear(tbl_5)
 
-	local var_19_0 = Managers.time:time("game")
+	local time = Managers.time:time("game")
 
-	for iter_19_0, iter_19_1 in pairs(arg_19_0._icon_widgets) do
-		if var_19_0 > iter_19_1.content.end_time then
-			var_0_20[#var_0_20 + 1] = iter_19_0
+	for k, v in pairs(self._icon_widgets) do
+		if time > v.content.end_time then
+			tbl_5[#tbl_5 + 1] = k
 		end
 	end
 
-	for iter_19_2, iter_19_3 in ipairs(var_0_20) do
-		arg_19_0._icon_widgets[iter_19_3] = nil
+	for i, v_2 in ipairs(tbl_5) do
+		self._icon_widgets[v_2] = nil
 	end
 end
 
-local var_0_21 = {}
+local tbl_6 = {}
 
-function SocialWheelUI._post_update_render(arg_20_0, arg_20_1)
-	if not arg_20_0._is_visible then
+SocialWheelUI._post_update_render = function (self, arg_20_1)
+	-- function 20
+	if not self._is_visible then
 		return
 	end
 
-	local var_20_0 = arg_20_0._ui_top_renderer
-	local var_20_1 = arg_20_0._ui_scenegraph
-	local var_20_2 = Managers.input:get_service("ingame_menu")
+	local _ui_top_renderer = self._ui_top_renderer
+	local _ui_scenegraph = self._ui_scenegraph
+	local get_service = Managers.input:get_service("ingame_menu")
 
-	UIRenderer.begin_pass(var_20_0, var_20_1, var_20_2, arg_20_1, nil, var_0_21)
+	UIRenderer.begin_pass(_ui_top_renderer, _ui_scenegraph, get_service, arg_20_1, nil, tbl_6)
 
-	for iter_20_0, iter_20_1 in pairs(arg_20_0._icon_widgets) do
-		UIRenderer.draw_widget(var_20_0, iter_20_1)
+	for k, v in pairs(self._icon_widgets) do
+		UIRenderer.draw_widget(_ui_top_renderer, v)
 	end
 
-	UIRenderer.end_pass(var_20_0)
+	UIRenderer.end_pass(_ui_top_renderer)
 end
 
-function SocialWheelUI.update(arg_21_0, arg_21_1, arg_21_2)
-	arg_21_0:_update_animations(arg_21_1, arg_21_2)
-	arg_21_0:_update_input(arg_21_1, arg_21_2)
-	arg_21_0:_draw(arg_21_1, arg_21_2)
+SocialWheelUI.update = function (self, arg_21_1, arg_21_2)
+	-- function 21
+	self:_update_animations(arg_21_1, arg_21_2)
+	self:_update_input(arg_21_1, arg_21_2)
+	self:_draw(arg_21_1, arg_21_2)
 end
 
-function SocialWheelUI._update_animations(arg_22_0, arg_22_1)
-	local var_22_0 = arg_22_0._animations
-	local var_22_1 = arg_22_0._animation_callbacks
+SocialWheelUI._update_animations = function (self, arg_22_1)
+	-- function 22
+	local _animations = self._animations
+	local _animation_callbacks = self._animation_callbacks
 
-	for iter_22_0, iter_22_1 in pairs(var_22_0) do
-		UIAnimation.update(iter_22_1, arg_22_1)
+	for k, v in pairs(_animations) do
+		UIAnimation.update(v, arg_22_1)
 
-		if UIAnimation.completed(iter_22_1) then
-			var_22_0[iter_22_0] = nil
+		if not UIAnimation.completed(v) then
+			_animations[k] = nil
 
-			if var_22_1[iter_22_0] then
-				var_22_1[iter_22_0]()
+			if not _animation_callbacks[k] then
+				_animation_callbacks[k]()
 
-				var_22_1[iter_22_0] = nil
+				_animation_callbacks[k] = nil
 			end
 		end
 	end
 end
 
-function SocialWheelUI._update_input(arg_23_0, arg_23_1, arg_23_2)
-	local var_23_0 = Managers.input:get_service("Player")
+SocialWheelUI._update_input = function (self, arg_23_1, arg_23_2)
+	-- function 23
+	local get_service = Managers.input:get_service("Player")
 
-	arg_23_0[arg_23_0._state](arg_23_0, arg_23_1, arg_23_2, var_23_0)
+	self[self._state](self, arg_23_1, arg_23_2, get_service)
 
-	arg_23_0.previous_ping_held = var_23_0:get("ping_hold")
-	arg_23_0.previous_social_wheel_only_held = var_23_0:get("social_wheel_only_hold")
-	arg_23_0.previous_weapon_poses_only_held = var_23_0:get("weapon_poses_only_hold")
-	arg_23_0.previous_photomode_only_held = var_23_0:get("photomode_only_hold")
+	self.previous_ping_held = get_service:get("ping_hold")
+	self.previous_social_wheel_only_held = get_service:get("social_wheel_only_hold")
+	self.previous_weapon_poses_only_held = get_service:get("weapon_poses_only_hold")
+	self.previous_photomode_only_held = get_service:get("photomode_only_hold")
 end
 
-function SocialWheelUI._draw(arg_24_0, arg_24_1, arg_24_2)
-	if not arg_24_0._is_visible then
+SocialWheelUI._draw = function (self, arg_24_1, arg_24_2)
+	-- function 24
+	if not self._is_visible then
 		return
 	end
 
-	local var_24_0 = arg_24_0._ui_top_renderer
-	local var_24_1 = arg_24_0._ui_scenegraph
-	local var_24_2 = Managers.input:get_service("ingame_menu")
-	local var_24_3 = arg_24_0._current_selection_widgets
-	local var_24_4 = arg_24_0._render_settings
+	local _ui_top_renderer = self._ui_top_renderer
+	local _ui_scenegraph = self._ui_scenegraph
+	local get_service = Managers.input:get_service("ingame_menu")
+	local _current_selection_widgets = self._current_selection_widgets
+	local _render_settings = self._render_settings
 
-	if var_24_3 and var_24_4.alpha_multiplier > 0 then
-		UIRenderer.begin_pass(var_24_0, var_24_1, var_24_2, arg_24_1, nil, var_24_4)
+	if not (not _current_selection_widgets and not (_render_settings.alpha_multiplier > 0)) then
+		UIRenderer.begin_pass(_ui_top_renderer, _ui_scenegraph, get_service, arg_24_1, nil, _render_settings)
 
-		local var_24_5 = #var_24_3
+		local count = #_current_selection_widgets
 
-		for iter_24_0 = 1, var_24_5 do
-			local var_24_6 = var_24_3[iter_24_0]
+		for i = 1, count do
+			local var_24_6 = _current_selection_widgets[i]
 
-			UIRenderer.draw_widget(var_24_0, var_24_6)
+			UIRenderer.draw_widget(_ui_top_renderer, var_24_6)
 		end
 
-		UIRenderer.draw_widget(var_24_0, arg_24_0._arrow_widget)
+		UIRenderer.draw_widget(_ui_top_renderer, self._arrow_widget)
 
-		if arg_24_0._current_selection_widget_settings.has_pages then
-			UIRenderer.draw_widget(var_24_0, arg_24_0._page_input_widget)
+		if not self._current_selection_widget_settings.has_pages then
+			UIRenderer.draw_widget(_ui_top_renderer, self._page_input_widget)
 		end
 
-		if not arg_24_0._current_selection_widget_settings.individual_bg then
-			UIRenderer.draw_widget(var_24_0, arg_24_0._bg_widget)
+		if not self._current_selection_widget_settings.individual_bg then
+			UIRenderer.draw_widget(_ui_top_renderer, self._bg_widget)
 		end
 
-		UIRenderer.end_pass(var_24_0)
+		UIRenderer.end_pass(_ui_top_renderer)
 	end
 
-	UIRenderer.begin_pass(var_24_0, var_24_1, var_24_2, arg_24_1)
+	UIRenderer.begin_pass(_ui_top_renderer, _ui_scenegraph, get_service, arg_24_1)
 
-	if arg_24_0._selected_widget then
-		UIRenderer.draw_widget(var_24_0, arg_24_0._selected_widget)
+	if not self._selected_widget then
+		UIRenderer.draw_widget(_ui_top_renderer, self._selected_widget)
 	end
 
-	local var_24_7 = 0
-	local var_24_8 = arg_24_0._social_event_widgets
-	local var_24_9 = #var_24_8
+	local num = 0
+	local _social_event_widgets = self._social_event_widgets
+	local count_2 = #_social_event_widgets
 
-	for iter_24_1 = 1, var_24_9 do
-		local var_24_10 = var_24_8[iter_24_1]
+	for j = 1, count_2 do
+		local var_24_10 = _social_event_widgets[j]
 
-		var_24_10.offset[2] = var_24_7
+		var_24_10.offset[2] = num
 
-		UIRenderer.draw_widget(var_24_0, var_24_10)
+		UIRenderer.draw_widget(_ui_top_renderer, var_24_10)
 
-		var_24_7 = var_24_7 - var_24_10.content.spacing
+		num = num - var_24_10.content.spacing
 	end
 
-	UIRenderer.end_pass(var_24_0)
+	UIRenderer.end_pass(_ui_top_renderer)
 end
 
-function SocialWheelUI.set_visible(arg_25_0, arg_25_1)
-	arg_25_0._is_visible = arg_25_1
+SocialWheelUI.set_visible = function (self, arg_25_1)
+	-- function 25
+	self._is_visible = arg_25_1
 end
 
-function SocialWheelUI._set_player_input_scale(arg_26_0, arg_26_1, arg_26_2)
-	local var_26_0 = arg_26_0._player.player_unit
+SocialWheelUI._set_player_input_scale = function (self, arg_26_1, arg_26_2)
+	-- function 26
+	local player_unit = self._player.player_unit
 
-	if Unit.alive(var_26_0) then
-		local var_26_1 = ScriptUnit.extension(var_26_0, "input_system")
+	if not Unit.alive(player_unit) then
+		local extension = ScriptUnit.extension(player_unit, "input_system")
 
-		var_26_1:set_input_key_scale("look", arg_26_1, arg_26_2)
-		var_26_1:set_input_key_scale("look_controller", arg_26_1, arg_26_2)
-		var_26_1:set_input_key_scale("look_controller_zoom", arg_26_1, arg_26_2)
-		var_26_1:set_input_key_scale("look_controller_3p", arg_26_1, arg_26_2)
-		var_26_1:set_input_key_scale("look_controller_ranged", arg_26_1, arg_26_2)
-		var_26_1:set_input_key_scale("look_controller_melee", arg_26_1, arg_26_2)
+		extension:set_input_key_scale("look", arg_26_1, arg_26_2)
+		extension:set_input_key_scale("look_controller", arg_26_1, arg_26_2)
+		extension:set_input_key_scale("look_controller_zoom", arg_26_1, arg_26_2)
+		extension:set_input_key_scale("look_controller_3p", arg_26_1, arg_26_2)
+		extension:set_input_key_scale("look_controller_ranged", arg_26_1, arg_26_2)
+		extension:set_input_key_scale("look_controller_melee", arg_26_1, arg_26_2)
 	end
 
-	local var_26_2 = Managers.input:get_service("Player")
+	local get_service = Managers.input:get_service("Player")
 
-	if var_26_2 then
-		local var_26_3 = arg_26_1 == 0
+	if not get_service then
+		local flag = arg_26_1 == 0
 
-		var_26_2:set_input_blocked("look_controller_3p", var_26_3, nil, "SocialWheelUI")
-		var_26_2:set_input_blocked("look", var_26_3, nil, "SocialWheelUI")
-	end
-end
-
-function SocialWheelUI._ping_unit_attempt(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
-	local var_27_0 = arg_27_0._player.player_unit
-
-	if Unit.alive(var_27_0) and Unit.alive(arg_27_1) then
-		local var_27_1 = Managers.time:time("game")
-
-		return ScriptUnit.extension(var_27_0, "ping_system"):ping_attempt(var_27_0, arg_27_1, var_27_1, arg_27_2, arg_27_3)
+		get_service:set_input_blocked("look_controller_3p", flag, nil, "SocialWheelUI")
+		get_service:set_input_blocked("look", flag, nil, "SocialWheelUI")
 	end
 end
 
-function SocialWheelUI._ping_world_position_attempt(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
-	local var_28_0 = arg_28_0._player.player_unit
+SocialWheelUI._ping_unit_attempt = function (self, arg_27_1, arg_27_2, arg_27_3)
+	-- function 27
+	local player_unit = self._player.player_unit
 
-	if Unit.alive(var_28_0) then
-		local var_28_1 = Managers.time:time("game")
+	if not Unit.alive(player_unit) and not Unit.alive(arg_27_1) then
+		local time = Managers.time:time("game")
 
-		return ScriptUnit.extension(var_28_0, "ping_system"):ping_world_position_attempt(var_28_0, arg_28_1:unbox(), var_28_1, arg_28_2, arg_28_3)
+		return ScriptUnit.extension(player_unit, "ping_system"):ping_attempt(player_unit, arg_27_1, time, arg_27_2, arg_27_3)
 	end
 end
 
-function SocialWheelUI._social_message_attempt(arg_29_0, arg_29_1, arg_29_2)
-	local var_29_0 = arg_29_0._player.player_unit
+SocialWheelUI._ping_world_position_attempt = function (self, arg_28_1, arg_28_2, arg_28_3)
+	-- function 28
+	local player_unit = self._player.player_unit
 
-	if Unit.alive(var_29_0) then
-		local var_29_1 = Managers.time:time("game")
+	if not Unit.alive(player_unit) then
+		local time = Managers.time:time("game")
 
-		return ScriptUnit.extension(var_29_0, "ping_system"):social_message_attempt(var_29_0, arg_29_1, arg_29_2)
+		return ScriptUnit.extension(player_unit, "ping_system"):ping_world_position_attempt(player_unit, arg_28_1:unbox(), time, arg_28_2, arg_28_3)
 	end
 end
 
-function SocialWheelUI._local_ping_attempt(arg_30_0, arg_30_1, arg_30_2)
-	local var_30_0 = arg_30_0._player
-	local var_30_1 = var_30_0.player_unit
+SocialWheelUI._social_message_attempt = function (self, arg_29_1, arg_29_2)
+	-- function 29
+	local player_unit = self._player.player_unit
 
-	if Unit.alive(var_30_1) then
-		Managers.state.entity:system("ping_system"):handle_local_ping(PingTypes.LOCAL_ONLY, arg_30_1, var_30_0, var_30_1, arg_30_2, nil)
+	if not Unit.alive(player_unit) then
+		local time = Managers.time:time("game")
+
+		return ScriptUnit.extension(player_unit, "ping_system"):social_message_attempt(player_unit, arg_29_1, arg_29_2)
 	end
 end
 
-function SocialWheelUI._play_sound(arg_31_0, arg_31_1)
+SocialWheelUI._local_ping_attempt = function (self, arg_30_1, arg_30_2)
+	-- function 30
+	local _player = self._player
+	local player_unit = _player.player_unit
+
+	if not Unit.alive(player_unit) then
+		Managers.state.entity:system("ping_system"):handle_local_ping(PingTypes.LOCAL_ONLY, arg_30_1, _player, player_unit, arg_30_2, nil)
+	end
+end
+
+SocialWheelUI._play_sound = function (self, arg_31_1)
+	-- function 31
 	if not arg_31_1 then
 		return
 	end
 
-	WwiseWorld.trigger_event(arg_31_0._wwise_world, arg_31_1)
+	WwiseWorld.trigger_event(self._wwise_world, arg_31_1)
 end
 
-function SocialWheelUI._change_state(arg_32_0, arg_32_1)
-	fassert(arg_32_0._states[arg_32_1], "[SocialWheelUI:_change_state] There is no state called %s", tostring(arg_32_1))
+SocialWheelUI._change_state = function (self, arg_32_1)
+	-- function 32
+	fassert(self._states[arg_32_1], "[SocialWheelUI:_change_state] There is no state called %s", tostring(arg_32_1))
 
-	arg_32_0._state = arg_32_1
+	self._state = arg_32_1
 end
 
-function SocialWheelUI.update_closed(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
-	local var_33_0 = arg_33_0._player.player_unit
+SocialWheelUI.update_closed = function (self, arg_33_1, arg_33_2, arg_33_3)
+	-- function 33
+	local player_unit = self._player.player_unit
 
-	if Unit.alive(var_33_0) then
-		local var_33_1 = ScriptUnit.extension(var_33_0, "ping_system"):social_wheel_context()
+	if not Unit.alive(player_unit) then
+		local social_wheel_context = ScriptUnit.extension(player_unit, "ping_system"):social_wheel_context()
 
-		arg_33_0:_set_current_context(var_33_1)
+		self:_set_current_context(social_wheel_context)
 
-		local var_33_2 = Managers.time:time("game")
+		local time = Managers.time:time("game")
 
-		if var_33_1 and var_33_2 > var_33_1.min_t then
-			if arg_33_0:_open_menu(arg_33_1, arg_33_2, arg_33_3) then
-				arg_33_0:_set_pulsing(var_33_1, true)
+		if not (not social_wheel_context and not (time > social_wheel_context.min_t)) then
+			if not self:_open_menu(arg_33_1, arg_33_2, arg_33_3) then
+				self:_set_pulsing(social_wheel_context, true)
 			else
-				arg_33_0:_set_current_context(nil)
+				self:_set_current_context(nil)
 			end
-		elseif var_33_1 then
-			arg_33_0:_update_pointer(arg_33_3, false, arg_33_2)
+		elseif not social_wheel_context then
+			self:_update_pointer(arg_33_3, false, arg_33_2)
 		else
 			local var_33_3 = Vector3(RESOLUTION_LOOKUP.res_w / 2, RESOLUTION_LOOKUP.res_h / 2, 0)
 
-			arg_33_0._arrow_widget.content.pointing_point:store(var_33_3)
+			self._arrow_widget.content.pointing_point:store(var_33_3)
 		end
 	end
 end
 
-function SocialWheelUI._set_pulsing(arg_34_0, arg_34_1, arg_34_2)
-	local var_34_0 = arg_34_1.unit
+SocialWheelUI._set_pulsing = function (arg_34_0, arg_34_1, arg_34_2)
+	-- function 34
+	local unit = arg_34_1.unit
 
-	if Unit.alive(var_34_0) then
-		if arg_34_2 then
-			Managers.state.entity:system("outline_system"):set_pulsing(var_34_0, true, "pulse")
+	if not Unit.alive(unit) then
+		if not arg_34_2 then
+			Managers.state.entity:system("outline_system"):set_pulsing(unit, true, "pulse")
 
 			arg_34_1.id = true
-		elseif not arg_34_2 and arg_34_1.id then
-			Managers.state.entity:system("outline_system"):set_pulsing(var_34_0, false)
+		elseif arg_34_2 or not arg_34_1.id then
+			Managers.state.entity:system("outline_system"):set_pulsing(unit, false)
 
 			arg_34_1.id = nil
 		end
 	end
 end
 
-function SocialWheelUI._set_current_context(arg_35_0, arg_35_1)
-	local var_35_0 = arg_35_0._current_context
+SocialWheelUI._set_current_context = function (self, arg_35_1)
+	-- function 35
+	local _current_context = self._current_context
 
-	if arg_35_1 ~= var_35_0 then
-		if var_35_0 then
-			arg_35_0:_set_pulsing(var_35_0, false)
+	if arg_35_1 ~= _current_context then
+		if not _current_context then
+			self:_set_pulsing(_current_context, false)
 		end
 
-		if arg_35_1 and arg_35_0._state == "open" then
-			arg_35_0:_set_pulsing(arg_35_1, true)
+		if not (not arg_35_1 and self._state ~= "open") then
+			self:_set_pulsing(arg_35_1, true)
 		end
 
-		arg_35_0._current_context = arg_35_1
+		self._current_context = arg_35_1
 	end
 end
 
-function SocialWheelUI._open_menu(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
-	arg_36_0._block_next_input = false
+SocialWheelUI._open_menu = function (self, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
+	-- function 36
+	self._block_next_input = false
 
-	local var_36_0 = true
-	local var_36_1 = arg_36_0._current_context
-	local var_36_2 = var_36_1.unit or var_36_1.ping_context_unit
+	local flag = true
+	local _current_context = self._current_context
+	local unit = _current_context.unit
 
-	if not Unit.alive(var_36_2) then
-		var_36_2 = nil
+	unit = unit or _current_context.ping_context_unit
+
+	if not Unit.alive(unit) then
+		unit = nil
 	end
 
-	local var_36_3 = Managers.state.side.side_by_unit[arg_36_0._player.player_unit]:name()
-	local var_36_4 = Managers.state.game_mode:setting("social_wheel_by_side")
+	local name = Managers.state.side.side_by_unit[self._player.player_unit]:name()
+	local setting = Managers.state.game_mode:setting("social_wheel_by_side")
 	local var_36_5
 
-	if var_36_4 then
-		var_36_5 = var_36_4[var_36_3] or "general"
+	if not setting then
+		var_36_5 = setting[name] or "general"
 	else
 		var_36_5 = "general"
 	end
 
-	if IS_WINDOWS then
-		local var_36_6 = Managers.input:is_device_active("gamepad")
-		local var_36_7 = Application.user_setting("social_wheel_gamepad_layout")
-		local var_36_8 = Managers.state.game_mode:setting("should_use_gamepad_social_wheel")
+	if not IS_WINDOWS then
+		local is_device_active = Managers.input:is_device_active("gamepad")
+		local user_setting = Application.user_setting("social_wheel_gamepad_layout")
+		local setting_2 = Managers.state.game_mode:setting("should_use_gamepad_social_wheel")
 
-		if var_36_7 == "auto" and var_36_6 or var_36_7 == "always" or var_36_8 then
+		if user_setting ~= "auto" or not is_device_active or user_setting == "always" or not setting_2 then
 			var_36_5 = var_36_5 .. "_gamepad"
 		end
 	else
-		var_36_5 = var_36_5 .. arg_36_0._console_extension
+		var_36_5 = var_36_5 .. self._console_extension
 	end
 
-	arg_36_0:_inject_weapon_poses()
+	self:_inject_weapon_poses()
 
-	for iter_36_0 = 1, #SocialWheelPriority do
-		local var_36_9 = SocialWheelPriority[iter_36_0]
+	for i = 1, #SocialWheelPriority do
+		local var_36_9 = SocialWheelPriority[i]
 		local var_36_10 = var_36_9[1]
 
-		if var_36_9[2](var_36_1, arg_36_0._player, var_36_2) then
+		if not var_36_9[2](_current_context, self._player, unit) then
 			var_36_5 = var_36_10
 
 			break
 		end
 	end
 
-	arg_36_0._current_selection_widgets = arg_36_0._selection_widgets[var_36_5]
+	self._current_selection_widgets = self._selection_widgets[var_36_5]
 
-	local var_36_11 = arg_36_0._selection_widgets[var_36_5]
-	local var_36_12 = var_36_11.current_page
+	local var_36_11 = self._selection_widgets[var_36_5]
+	local current_page = var_36_11.current_page
 
-	arg_36_0._page_input_widget.content.visible = true
+	self._page_input_widget.content.visible = true
 
-	if var_36_12 then
-		if arg_36_4 then
-			var_36_12 = var_36_12 % var_36_11.num_pages + 1
+	if not current_page then
+		if not arg_36_4 then
+			current_page = current_page % var_36_11.num_pages + 1
 
-			if var_36_1.show_emotes and var_36_12 ~= var_36_11.emotes_page_index then
-				var_36_12 = var_36_11.emotes_page_index
-			elseif var_36_1.show_poses and var_36_12 ~= var_36_11.weapon_poses_page_index then
-				var_36_12 = var_36_11.weapon_poses_page_index or 1
+			if not (not _current_context.show_emotes and current_page == var_36_11.emotes_page_index) then
+				current_page = var_36_11.emotes_page_index
+			elseif not (not _current_context.show_poses and current_page == var_36_11.weapon_poses_page_index) then
+				current_page = var_36_11.weapon_poses_page_index or 1
 			end
 		else
-			var_36_12 = 1
+			current_page = 1
 
-			if var_36_1.show_emotes then
-				var_36_12 = var_36_11.emotes_page_index or 1
-			elseif var_36_1.show_poses then
-				var_36_12 = var_36_11.weapon_poses_page_index or 1
+			if not _current_context.show_emotes then
+				current_page = var_36_11.emotes_page_index or 1
+			elseif not _current_context.show_poses then
+				current_page = var_36_11.weapon_poses_page_index or 1
 			end
 		end
 
-		var_36_11.current_page = var_36_12
-		arg_36_0._current_selection_widgets = var_36_11[var_36_12]
+		var_36_11.current_page = current_page
+		self._current_selection_widgets = var_36_11[current_page]
 	else
-		arg_36_0._current_selection_widgets = var_36_11
+		self._current_selection_widgets = var_36_11
 	end
 
-	if not arg_36_0._current_selection_widgets then
-		var_36_0 = false
+	if not self._current_selection_widgets then
+		flag = false
 
-		return var_36_0
+		return flag
 	end
 
-	arg_36_0._active_context = var_36_1
+	self._active_context = _current_context
 
-	local var_36_13 = arg_36_0._active_context
+	local _active_context = self._active_context
 
-	if var_36_11.num_pages and var_36_13.show_emotes or var_36_13.show_poses then
-		arg_36_0._page_input_widget.content.visible = false
-		arg_36_0._block_next_input = true
+	if not var_36_11.num_pages and _active_context.show_emotes and not _active_context.show_poses then
+		self._page_input_widget.content.visible = false
+		self._block_next_input = true
 	end
 
-	arg_36_0._current_selection_category = var_36_5
+	self._current_selection_category = var_36_5
 
 	local var_36_14 = SocialWheelSettings[var_36_5]
 
 	fassert(var_36_14, "No settings for category %q.", var_36_5)
 
-	arg_36_0._current_selection_widget_settings = var_36_14
+	self._current_selection_widget_settings = var_36_14
 
-	local var_36_15 = var_0_15.OPEN
-	local var_36_16 = arg_36_0._animations
+	local OPEN = var_0_15.OPEN
+	local _animations = self._animations
 
-	var_36_16.update_alpha = UIAnimation.init(UIAnimation.function_by_time, arg_36_0._render_settings, "alpha_multiplier", 0, 1, var_36_15.ALPHA, math.easeOutCubic)
+	_animations.update_alpha = UIAnimation.init(UIAnimation.function_by_time, self._render_settings, "alpha_multiplier", 0, 1, OPEN.ALPHA, math.easeOutCubic)
 
-	local var_36_17 = arg_36_0._current_selection_widgets
-	local var_36_18 = #var_36_17
+	local _current_selection_widgets = self._current_selection_widgets
+	local count = #_current_selection_widgets
 
-	for iter_36_1 = 1, var_36_18 do
-		local var_36_19 = var_36_17[iter_36_1]
-		local var_36_20 = var_36_19.content
-		local var_36_21 = var_36_20.final_offset
-		local var_36_22 = var_36_20.dir:unbox()
-		local var_36_23 = var_36_19.offset
+	for j = 1, count do
+		local var_36_19 = _current_selection_widgets[j]
+		local content = var_36_19.content
+		local final_offset = content.final_offset
+		local unbox = content.dir:unbox()
+		local offset = var_36_19.offset
 
-		var_36_16["animation_x_" .. iter_36_1] = UIAnimation.init(UIAnimation.function_by_time, var_36_23, 1, var_36_22[1] * var_36_21[1] * 0.5, var_36_22[1] * var_36_21[1], var_36_15.MOVE_X, math.ease_out_elastic)
-		var_36_16["animation_y_" .. iter_36_1] = UIAnimation.init(UIAnimation.function_by_time, var_36_23, 2, var_36_22[2] * var_36_21[2] * 0.5, var_36_22[2] * var_36_21[2], var_36_15.MOVE_Y, math.ease_out_elastic)
-		var_36_16["animation_divider_size_" .. iter_36_1] = UIAnimation.init(UIAnimation.function_by_time, var_36_20, "size_multiplier", var_36_20.final_size_multiplier * 0.5, var_36_20.final_size_multiplier, var_36_15.SIZE, math.ease_out_elastic)
+		_animations["animation_x_" .. j] = UIAnimation.init(UIAnimation.function_by_time, offset, 1, unbox[1] * final_offset[1] * 0.5, unbox[1] * final_offset[1], OPEN.MOVE_X, math.ease_out_elastic)
+		_animations["animation_y_" .. j] = UIAnimation.init(UIAnimation.function_by_time, offset, 2, unbox[2] * final_offset[2] * 0.5, unbox[2] * final_offset[2], OPEN.MOVE_Y, math.ease_out_elastic)
+		_animations["animation_divider_size_" .. j] = UIAnimation.init(UIAnimation.function_by_time, content, "size_multiplier", content.final_size_multiplier * 0.5, content.final_size_multiplier, OPEN.SIZE, math.ease_out_elastic)
 	end
 
-	local var_36_24 = arg_36_0._bg_widget.content
+	local content_2 = self._bg_widget.content
 
-	var_36_16.animation_bg_size = UIAnimation.init(UIAnimation.function_by_time, var_36_24, "size_multiplier", var_36_24.final_size_multiplier * 0.5, var_36_24.final_size_multiplier, var_36_15.SIZE, math.ease_out_elastic)
+	_animations.animation_bg_size = UIAnimation.init(UIAnimation.function_by_time, content_2, "size_multiplier", content_2.final_size_multiplier * 0.5, content_2.final_size_multiplier, OPEN.SIZE, math.ease_out_elastic)
 
-	local var_36_25 = (not IS_WINDOWS or Managers.input:is_device_active("gamepad")) and var_0_11 or var_0_10
+	local var_36_25
 
-	arg_36_0._valid_selection = true
-	arg_36_0._selected_widget = nil
-	arg_36_0._open_start_t = arg_36_2
+	if not (not IS_WINDOWS and Managers.input:is_device_active("gamepad")) then
+		var_36_25 = num_2
 
-	arg_36_0:_set_player_input_scale(0, var_36_25)
-	arg_36_0:_change_state("update_open")
-	ScriptUnit.extension(arg_36_0._player.player_unit, "interactor_system"):enable_interactions(false)
+		if not var_36_25 then
+			-- Nothing
+		end
+	end
 
-	if arg_36_0._world_markers_enabled then
-		local function var_36_26(arg_37_0, arg_37_1)
-			if arg_36_0._world_marker_preview_id then
-				Managers.state.event:trigger("remove_world_marker", arg_36_0._world_marker_preview_id)
+	var_36_25 = num
+
+	::label_36_0::
+
+	self._valid_selection = true
+	self._selected_widget = nil
+	self._open_start_t = arg_36_2
+
+	self:_set_player_input_scale(0, var_36_25)
+	self:_change_state("update_open")
+	ScriptUnit.extension(self._player.player_unit, "interactor_system"):enable_interactions(false)
+
+	if not self._world_markers_enabled then
+		local function fn(arg_37_0, arg_37_1)
+			-- function 37
+			if not self._world_marker_preview_id then
+				Managers.state.event:trigger("remove_world_marker", self._world_marker_preview_id)
 			end
 
-			arg_36_0._world_marker_preview_id = arg_37_0
+			self._world_marker_preview_id = arg_37_0
 			arg_37_1.style.text.localize = false
 		end
 
-		local var_36_27 = var_36_13.position and var_36_13.position:unbox()
+		local position = _active_context.position
 
-		if var_36_27 and not arg_36_0._world_marker_preview_id then
-			Managers.state.event:trigger("add_world_marker_position", "ping", var_36_27, var_36_26)
+		position = not position and _active_context.position:unbox()
+
+		if not (not position and self._world_marker_preview_id) then
+			Managers.state.event:trigger("add_world_marker_position", "ping", position, fn)
 		end
 	end
 
-	if var_36_3 then
-		local var_36_28 = var_0_17[var_36_3].OPEN
+	if not name then
+		local OPEN_2 = tbl_3[name].OPEN
 
-		arg_36_0:_play_sound(var_36_28)
+		self:_play_sound(OPEN_2)
 	end
 
-	return var_36_0
+	return flag
 end
 
-function SocialWheelUI._inject_weapon_poses(arg_38_0)
-	local var_38_0 = Managers.player:local_player()
-	local var_38_1 = var_38_0.player_unit
+SocialWheelUI._inject_weapon_poses = function (self)
+	-- function 38
+	local local_player = Managers.player:local_player()
+	local player_unit = local_player.player_unit
 
-	if not ALIVE[var_38_1] then
-		arg_38_0:_reset_social_wheel()
-
-		return
-	end
-
-	local var_38_2 = ScriptUnit.has_extension(var_38_1, "inventory_system"):get_wielded_slot_name()
-
-	if var_38_2 ~= "slot_melee" and var_38_2 ~= "slot_ranged" then
-		arg_38_0:_reset_social_wheel()
+	if not ALIVE[player_unit] then
+		self:_reset_social_wheel()
 
 		return
 	end
 
-	local var_38_3 = var_38_0:career_name()
-	local var_38_4 = BackendUtils.get_loadout_item(var_38_3, var_38_2)
-	local var_38_5 = var_38_4.data
-	local var_38_6 = string.gsub(var_38_5.key, "^vs_", "")
+	local get_wielded_slot_name = ScriptUnit.has_extension(player_unit, "inventory_system"):get_wielded_slot_name()
 
-	if var_38_4.rarity == "magic" then
-		var_38_6 = string.gsub(var_38_5.key, "_magic_0%d$", "")
-	end
+	if not (get_wielded_slot_name == "slot_melee" or get_wielded_slot_name == "slot_ranged") then
+		self:_reset_social_wheel()
 
-	if arg_38_0._wielded_item_type == var_38_6 and not arg_38_0:_is_dirty(var_38_6) then
 		return
 	end
 
-	arg_38_0._wielded_item_type = var_38_6
-	arg_38_0._loaded_weapon_pose_packages = arg_38_0._loaded_weapon_pose_packages or {}
+	local career_name = local_player:career_name()
+	local get_loadout_item = BackendUtils.get_loadout_item(career_name, get_wielded_slot_name)
+	local data = get_loadout_item.data
+	local gsub = string.gsub(data.key, "^vs_", "")
 
-	local var_38_7 = arg_38_0._loaded_weapon_pose_packages[var_38_2]
-
-	if var_38_7 and var_38_7.item_type ~= var_38_6 and var_38_2 == var_38_7.slot_type then
-		arg_38_0:_reset_materials_for_item_type(var_38_7.item_type, var_38_2)
-		Managers.package:unload(var_38_7.package_name, var_0_3)
-
-		arg_38_0._loaded_weapon_pose_packages[var_38_2] = nil
+	if get_loadout_item.rarity == "magic" then
+		gsub = string.gsub(data.key, "_magic_0%d$", "")
 	end
 
-	local var_38_8 = arg_38_0._loaded_weapon_pose_packages[var_38_2]
+	if not (self._wielded_item_type ~= gsub or self:_is_dirty(gsub)) then
+		return
+	end
 
-	if not var_38_8 then
-		local var_38_9 = "resource_packages/pose_packages/" .. var_38_6
+	self._wielded_item_type = gsub
 
-		if Application.can_get("package", var_38_9) then
-			if not Managers.package:has_loaded(var_38_9, var_0_3) then
-				Managers.package:load(var_38_9, var_0_3, callback(arg_38_0, "_weapon_pose_package_loaded_cb", var_38_6, var_38_2), true, true)
+	local _loaded_weapon_pose_packages = self._loaded_weapon_pose_packages
+
+	_loaded_weapon_pose_packages = _loaded_weapon_pose_packages or {}
+	self._loaded_weapon_pose_packages = _loaded_weapon_pose_packages
+
+	local var_38_8 = self._loaded_weapon_pose_packages[get_wielded_slot_name]
+
+	if not (not var_38_8 and var_38_8.item_type == gsub or get_wielded_slot_name ~= var_38_8.slot_type) then
+		self:_reset_materials_for_item_type(var_38_8.item_type, get_wielded_slot_name)
+		Managers.package:unload(var_38_8.package_name, str_2)
+
+		self._loaded_weapon_pose_packages[get_wielded_slot_name] = nil
+	end
+
+	local var_38_9 = self._loaded_weapon_pose_packages[get_wielded_slot_name]
+
+	if not var_38_9 then
+		local str = "resource_packages/pose_packages/" .. gsub
+
+		if not Application.can_get("package", str) then
+			if not Managers.package:has_loaded(str, str_2) then
+				Managers.package:load(str, str_2, callback(self, "_weapon_pose_package_loaded_cb", gsub, get_wielded_slot_name), true, true)
 			end
 
-			arg_38_0._loaded_weapon_pose_packages[var_38_2] = {
-				package_name = var_38_9,
-				item_type = var_38_6,
-				slot_type = var_38_2
+			self._loaded_weapon_pose_packages[get_wielded_slot_name] = {
+				package_name = str,
+				item_type = gsub,
+				slot_type = get_wielded_slot_name
 			}
 		else
-			Application.warning(string.format("[SocialWheelUI:_inject_weapon_poses] Pose package %q is missing for %q", var_38_6, var_38_9))
+			Application.warning(string.format("[SocialWheelUI:_inject_weapon_poses] Pose package %q is missing for %q", gsub, str))
 		end
 	end
 
-	arg_38_0:_create_weapon_pose_wheel(var_38_6, var_38_2, var_38_8)
+	self:_create_weapon_pose_wheel(gsub, get_wielded_slot_name, var_38_9)
 end
 
-function SocialWheelUI._is_dirty(arg_39_0, arg_39_1)
-	local var_39_0 = arg_39_0:_gather_weapon_poses_by_parent_item(arg_39_1) ~= nil
-	local var_39_1 = Managers.state.side.side_by_unit[arg_39_0._player.player_unit]:name()
-	local var_39_2 = Managers.state.game_mode:setting("social_wheel_by_side")
-	local var_39_3 = "general"
+SocialWheelUI._is_dirty = function (self, arg_39_1)
+	-- function 39
+	local flag = self:_gather_weapon_poses_by_parent_item(arg_39_1) ~= nil
+	local name = Managers.state.side.side_by_unit[self._player.player_unit]:name()
+	local setting = Managers.state.game_mode:setting("social_wheel_by_side")
+	local str = "general"
 
-	if var_39_2 then
-		var_39_3 = var_39_2[var_39_1]
+	if not setting then
+		str = setting[name]
 	end
 
-	local var_39_4 = var_39_3 .. arg_39_0._console_extension
-	local var_39_5 = arg_39_0._selection_widgets[var_39_4]
-	local var_39_6 = arg_39_0._selection_widgets[var_39_4 .. "_gamepad"]
+	local str_2 = str .. self._console_extension
+	local var_39_5 = self._selection_widgets[str_2]
+	local var_39_6 = self._selection_widgets[str_2 .. "_gamepad"]
 
-	if var_39_5 then
-		return var_39_5.weapon_poses_page_index ~= nil ~= var_39_0
+	if not var_39_5 then
+		return var_39_5.weapon_poses_page_index ~= nil ~= flag
 	end
 
-	if var_39_6 then
-		return var_39_6.weapon_poses_page_index ~= nil ~= var_39_0
+	if not var_39_6 then
+		return var_39_6.weapon_poses_page_index ~= nil ~= flag
 	end
 end
 
-function SocialWheelUI._reset_social_wheel(arg_40_0)
-	local var_40_0 = Managers.state.side.side_by_unit[arg_40_0._player.player_unit]:name()
-	local var_40_1 = Managers.state.game_mode:setting("social_wheel_by_side")
-	local var_40_2 = "general"
+SocialWheelUI._reset_social_wheel = function (self)
+	-- function 40
+	local name = Managers.state.side.side_by_unit[self._player.player_unit]:name()
+	local setting = Managers.state.game_mode:setting("social_wheel_by_side")
+	local str = "general"
 
-	if var_40_1 then
-		var_40_2 = var_40_1[var_40_0]
+	if not setting then
+		str = setting[name]
 	end
 
-	local var_40_3 = var_40_2 .. arg_40_0._console_extension
-	local var_40_4 = SocialWheelSettings[var_40_3]
-	local var_40_5 = SocialWheelSettings[var_40_3 .. "_gamepad"]
+	local str_2 = str .. self._console_extension
+	local var_40_4 = SocialWheelSettings[str_2]
+	local var_40_5 = SocialWheelSettings[str_2 .. "_gamepad"]
 
-	if var_40_4 then
-		local var_40_6 = table.find_func_array(var_40_4, function(arg_41_0)
-			return arg_41_0.weapon_poses
+	if not var_40_4 then
+		local find_func_array = table.find_func_array(var_40_4, function (self)
+			-- function 41
+			return self.weapon_poses
 		end)
 
-		if var_40_6 then
-			table.remove(var_40_4, var_40_6)
+		if not find_func_array then
+			table.remove(var_40_4, find_func_array)
 		end
 	end
 
-	if var_40_5 then
-		local var_40_7 = table.find_func_array(var_40_5, function(arg_42_0)
-			return arg_42_0.weapon_poses
+	if not var_40_5 then
+		local find_func_array_2 = table.find_func_array(var_40_5, function (self)
+			-- function 42
+			return self.weapon_poses
 		end)
 
-		if var_40_7 then
-			table.remove(var_40_5, var_40_7)
+		if not find_func_array_2 then
+			table.remove(var_40_5, find_func_array_2)
 		end
 	end
 
-	arg_40_0:_create_social_wheel()
+	self:_create_social_wheel()
 end
 
-function SocialWheelUI._create_weapon_pose_wheel(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
-	arg_43_0:_reset_social_wheel()
+SocialWheelUI._create_weapon_pose_wheel = function (self, arg_43_1, arg_43_2, arg_43_3)
+	-- function 43
+	self:_reset_social_wheel()
 
-	local var_43_0 = arg_43_0:_gather_weapon_poses_by_parent_item(arg_43_1)
+	local _gather_weapon_poses_by_parent_item = self:_gather_weapon_poses_by_parent_item(arg_43_1)
 
-	if not var_43_0 then
+	if not _gather_weapon_poses_by_parent_item then
 		return
 	end
 
-	local var_43_1 = var_0_0.functions
-	local var_43_2 = {
+	local functions = var_0_0.functions
+	local tbl = {
 		weapon_poses = true
 	}
-	local var_43_3 = var_0_6 and "template_diffuse_masked" or "template_diffuse"
+	local flag_2
 
-	for iter_43_0 = 1, #var_43_0 do
-		local var_43_4 = var_43_0[iter_43_0].data
-		local var_43_5 = var_43_4.pose_index
-		local var_43_6 = var_43_4.parent
-		local var_43_7 = string.format(var_0_5, arg_43_2, var_43_4.pose_index)
-		local var_43_8 = var_0_4 .. var_43_7
+	flag_2 = not flag and "template_diffuse_masked" and "template_diffuse"
 
-		arg_43_0:_create_material_instance(var_43_8, var_43_3, var_43_7)
+	for i = 1, #_gather_weapon_poses_by_parent_item do
+		local data = _gather_weapon_poses_by_parent_item[i].data
+		local pose_index = data.pose_index
+		local parent = data.parent
+		local format = string.format(str_4, arg_43_2, data.pose_index)
+		local str = str_3 .. format
 
-		if arg_43_3 then
-			local var_43_9 = string.format("gui/1080p/single_textures/icons_poses_social_wheel/" .. arg_43_1 .. "_%02d", var_43_5)
+		self:_create_material_instance(str, flag_2, format)
 
-			arg_43_0:_set_material_diffuse_by_texture_path(var_43_8, var_43_9)
+		if not arg_43_3 then
+			local format_2 = string.format("gui/1080p/single_textures/icons_poses_social_wheel/" .. arg_43_1 .. "_%02d", pose_index)
+
+			self:_set_material_diffuse_by_texture_path(str, format_2)
 		end
 
-		local var_43_10 = string.format(var_0_5 .. "_glow", arg_43_2, var_43_4.pose_index)
-		local var_43_11 = var_0_4 .. var_43_10
+		local format_3 = string.format(str_4 .. "_glow", arg_43_2, data.pose_index)
+		local str_2 = str_3 .. format_3
 
-		arg_43_0:_create_material_instance(var_43_11, var_43_3, var_43_10)
+		self:_create_material_instance(str_2, flag_2, format_3)
 
-		if arg_43_3 then
-			local var_43_12 = string.format("gui/1080p/single_textures/icons_poses_social_wheel/" .. arg_43_1 .. "_%02d_glow", var_43_5)
+		if not arg_43_3 then
+			local format_4 = string.format("gui/1080p/single_textures/icons_poses_social_wheel/" .. arg_43_1 .. "_%02d_glow", pose_index)
 
-			arg_43_0:_set_material_diffuse_by_texture_path(var_43_11, var_43_12)
+			self:_set_material_diffuse_by_texture_path(str_2, format_4)
 		end
 
-		local var_43_13 = string.format("social_wheel_weapon_pose_general_pose_%02d", var_43_4.pose_index)
-		local var_43_14 = {
+		local format_5 = string.format("social_wheel_weapon_pose_general_pose_%02d", data.pose_index)
+		local tbl_2 = {
 			localize = false,
 			disable_input_text = true,
-			name = var_43_13,
-			text = string.format(Localize(var_43_6 .. "_emote_wheel"), var_43_4.pose_index),
-			event_text = string.format(Localize(var_43_6 .. "_emote_wheel"), var_43_4.pose_index),
-			execute_func = var_43_1.play_emote,
+			name = format_5,
+			text = string.format(Localize(parent .. "_emote_wheel"), data.pose_index),
+			event_text = string.format(Localize(parent .. "_emote_wheel"), data.pose_index),
+			execute_func = functions.play_emote,
 			data = {
-				anim_event = var_43_4.data.anim_event,
-				pose_index = var_43_4.pose_index,
-				hide_weapons = var_43_4.data.hide_weapons
+				anim_event = data.data.anim_event,
+				pose_index = data.pose_index,
+				hide_weapons = data.data.hide_weapons
 			},
-			icon = var_43_8,
-			icon_glow = var_43_11,
+			icon = str,
+			icon_glow = str_2,
 			ping_type = PingTypes.LOCAL_ONLY
 		}
 
-		var_43_2[#var_43_2 + 1] = var_43_14
-		SocialWheelSettingsLookup[var_43_13] = var_43_14
+		tbl[#tbl + 1] = tbl_2
+		SocialWheelSettingsLookup[format_5] = tbl_2
 	end
 
-	local var_43_15 = Managers.state.side.side_by_unit[arg_43_0._player.player_unit]:name()
-	local var_43_16 = Managers.state.game_mode:setting("social_wheel_by_side")
-	local var_43_17 = "general"
+	local name = Managers.state.side.side_by_unit[self._player.player_unit]:name()
+	local setting = Managers.state.game_mode:setting("social_wheel_by_side")
+	local str_5 = "general"
 
-	if var_43_16 then
-		var_43_17 = var_43_16[var_43_15]
+	if not setting then
+		str_5 = setting[name]
 	end
 
-	local var_43_18 = var_43_17 .. arg_43_0._console_extension
-	local var_43_19 = SocialWheelSettings[var_43_18]
-	local var_43_20 = SocialWheelSettings[var_43_18 .. "_gamepad"]
+	local str_6 = str_5 .. self._console_extension
+	local var_43_19 = SocialWheelSettings[str_6]
+	local var_43_20 = SocialWheelSettings[str_6 .. "_gamepad"]
 
-	if var_43_19 then
-		table.insert(var_43_19, var_43_2)
+	if not var_43_19 then
+		table.insert(var_43_19, tbl)
 	end
 
-	if var_43_20 then
-		table.insert(var_43_20, var_43_2)
+	if not var_43_20 then
+		table.insert(var_43_20, tbl)
 	end
 
-	arg_43_0:_create_social_wheel()
+	self:_create_social_wheel()
 end
 
-function SocialWheelUI._create_material_instance(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
-	local var_44_0 = arg_44_0._cloned_materials_by_reference or {}
+SocialWheelUI._create_material_instance = function (self, arg_44_1, arg_44_2, arg_44_3)
+	-- function 44
+	local _cloned_materials_by_reference = self._cloned_materials_by_reference
 
-	if not var_44_0[arg_44_3] then
-		var_44_0[arg_44_3] = arg_44_1
+	_cloned_materials_by_reference = _cloned_materials_by_reference or {}
 
-		Gui.clone_material_from_template(arg_44_0._ui_top_renderer.gui, arg_44_1, arg_44_2)
+	if not _cloned_materials_by_reference[arg_44_3] then
+		_cloned_materials_by_reference[arg_44_3] = arg_44_1
 
-		arg_44_0._cloned_materials_by_reference = var_44_0
+		Gui.clone_material_from_template(self._ui_top_renderer.gui, arg_44_1, arg_44_2)
+
+		self._cloned_materials_by_reference = _cloned_materials_by_reference
 	end
 end
 
-function SocialWheelUI._gather_weapon_poses_by_parent_item(arg_45_0, arg_45_1)
-	local var_45_0 = {}
-	local var_45_1 = Managers.backend:get_interface("items")
-	local var_45_2 = var_45_1:get_unlocked_weapon_poses()[arg_45_1]
+SocialWheelUI._gather_weapon_poses_by_parent_item = function (arg_45_0, arg_45_1)
+	-- function 45
+	local tbl = {}
+	local get_interface = Managers.backend:get_interface("items")
+	local var_45_2 = get_interface:get_unlocked_weapon_poses()[arg_45_1]
 
 	if not var_45_2 then
 		return
 	end
 
-	for iter_45_0, iter_45_1 in pairs(var_45_2) do
-		local var_45_3 = var_45_1:get_item_from_id(iter_45_1)
+	for k, v in pairs(var_45_2) do
+		local get_item_from_id = get_interface:get_item_from_id(v)
 
-		var_45_0[#var_45_0 + 1] = var_45_3
+		tbl[#tbl + 1] = get_item_from_id
 	end
 
-	local function var_45_4(arg_46_0, arg_46_1)
-		return arg_46_0.data.pose_index < arg_46_1.data.pose_index
+	local function fn(self, arg_46_1)
+		-- function 46
+		return self.data.pose_index < arg_46_1.data.pose_index
 	end
 
-	table.sort(var_45_0, var_45_4)
+	table.sort(tbl, fn)
 
-	return var_45_0
+	return tbl
 end
 
-function SocialWheelUI._reset_materials_for_item_type(arg_47_0, arg_47_1, arg_47_2)
-	local var_47_0 = arg_47_0:_gather_weapon_poses_by_parent_item(arg_47_1)
+SocialWheelUI._reset_materials_for_item_type = function (self, arg_47_1, arg_47_2)
+	-- function 47
+	local _gather_weapon_poses_by_parent_item = self:_gather_weapon_poses_by_parent_item(arg_47_1)
 
-	if not var_47_0 then
+	if not _gather_weapon_poses_by_parent_item then
 		return
 	end
 
-	for iter_47_0 = 1, #var_47_0 do
-		local var_47_1 = var_47_0[iter_47_0].data
-		local var_47_2 = string.format(var_0_5, arg_47_2, var_47_1.pose_index)
+	for i = 1, #_gather_weapon_poses_by_parent_item do
+		local data = _gather_weapon_poses_by_parent_item[i].data
+		local format = string.format(str_4, arg_47_2, data.pose_index)
 
-		arg_47_0:_reset_cloned_material(var_47_2)
+		self:_reset_cloned_material(format)
 
-		local var_47_3 = string.format(var_0_5 .. "_glow", arg_47_2, var_47_1.pose_index)
+		local format_2 = string.format(str_4 .. "_glow", arg_47_2, data.pose_index)
 
-		arg_47_0:_reset_cloned_material(var_47_3)
+		self:_reset_cloned_material(format_2)
 	end
 end
 
-function SocialWheelUI._weapon_pose_package_loaded_cb(arg_48_0, arg_48_1, arg_48_2)
-	local var_48_0 = arg_48_0:_gather_weapon_poses_by_parent_item(arg_48_1)
+SocialWheelUI._weapon_pose_package_loaded_cb = function (self, arg_48_1, arg_48_2)
+	-- function 48
+	local _gather_weapon_poses_by_parent_item = self:_gather_weapon_poses_by_parent_item(arg_48_1)
 
-	if not var_48_0 then
+	if not _gather_weapon_poses_by_parent_item then
 		return
 	end
 
-	for iter_48_0 = 1, #var_48_0 do
-		local var_48_1 = var_48_0[iter_48_0].data
-		local var_48_2 = string.format(var_0_5, arg_48_2, var_48_1.pose_index)
-		local var_48_3 = var_0_4 .. var_48_2
-		local var_48_4 = var_48_1.pose_index
-		local var_48_5 = string.format("gui/1080p/single_textures/icons_poses_social_wheel/" .. arg_48_1 .. "_%02d", var_48_4)
+	for i = 1, #_gather_weapon_poses_by_parent_item do
+		local data = _gather_weapon_poses_by_parent_item[i].data
+		local format = string.format(str_4, arg_48_2, data.pose_index)
+		local str = str_3 .. format
+		local pose_index = data.pose_index
+		local format_2 = string.format("gui/1080p/single_textures/icons_poses_social_wheel/" .. arg_48_1 .. "_%02d", pose_index)
 
-		arg_48_0:_set_material_diffuse_by_texture_path(var_48_3, var_48_5)
+		self:_set_material_diffuse_by_texture_path(str, format_2)
 
-		local var_48_6 = string.format(var_0_5 .. "_glow", arg_48_2, var_48_1.pose_index)
-		local var_48_7 = var_0_4 .. var_48_6
-		local var_48_8 = string.format("gui/1080p/single_textures/icons_poses_social_wheel/" .. arg_48_1 .. "_%02d_glow", var_48_4)
+		local format_3 = string.format(str_4 .. "_glow", arg_48_2, data.pose_index)
+		local str_2 = str_3 .. format_3
+		local format_4 = string.format("gui/1080p/single_textures/icons_poses_social_wheel/" .. arg_48_1 .. "_%02d_glow", pose_index)
 
-		arg_48_0:_set_material_diffuse_by_texture_path(var_48_7, var_48_8)
+		self:_set_material_diffuse_by_texture_path(str_2, format_4)
 	end
 end
 
-function SocialWheelUI._set_material_diffuse_by_texture_path(arg_49_0, arg_49_1, arg_49_2)
-	local var_49_0 = Gui.material(arg_49_0._ui_top_renderer.gui, arg_49_1)
+SocialWheelUI._set_material_diffuse_by_texture_path = function (self, arg_49_1, arg_49_2)
+	-- function 49
+	local material = Gui.material(self._ui_top_renderer.gui, arg_49_1)
 
-	if var_49_0 then
-		Material.set_texture(var_49_0, "diffuse_map", arg_49_2)
+	if not material then
+		Material.set_texture(material, "diffuse_map", arg_49_2)
 	else
 		Application.error(string.format("[SocialWheelUI:_set_material_diffuse_by_texture_path9 Missing material name: %q", arg_49_1))
 	end
 end
 
-function SocialWheelUI._reset_cloned_material(arg_50_0, arg_50_1)
-	local var_50_0 = arg_50_0._cloned_materials_by_reference[arg_50_1]
+SocialWheelUI._reset_cloned_material = function (self, arg_50_1)
+	-- function 50
+	local var_50_0 = self._cloned_materials_by_reference[arg_50_1]
 
-	if var_50_0 then
-		arg_50_0:_set_material_diffuse_by_texture_path(var_50_0, var_0_2)
+	if not var_50_0 then
+		self:_set_material_diffuse_by_texture_path(var_50_0, str)
 	else
 		Application.error(string.format("[SocialWheelUI:_reset_cloned_material] Found no material to reset for reference name: %q", arg_50_1))
 	end
 end
 
-function SocialWheelUI.update_open(arg_51_0, arg_51_1, arg_51_2, arg_51_3)
-	local var_51_0 = arg_51_3:get("ping_hold")
-	local var_51_1 = arg_51_3:get("ping_release") or arg_51_0.previous_ping_held and not var_51_0
-	local var_51_2 = arg_51_3:get("social_wheel_only_hold")
-	local var_51_3 = arg_51_3:get("social_wheel_only_release") or arg_51_0.previous_social_wheel_only_held and not var_51_2
-	local var_51_4 = arg_51_3:get("photomode_only_hold")
-	local var_51_5 = arg_51_3:get("photomode_only_release") or arg_51_0.previous_photomode_only_held and not var_51_4
+SocialWheelUI.update_open = function (self, arg_51_1, arg_51_2, arg_51_3)
+	-- function 51
+	local get = arg_51_3:get("ping_hold")
+	local get_2 = arg_51_3:get("ping_release")
 
-	if var_51_4 and arg_51_0._current_selection_widget_settings.has_pages and arg_51_3:get("social_wheel_page") and not arg_51_0._block_next_input then
-		arg_51_0:_close_menu(arg_51_1, arg_51_2, arg_51_3, true)
-		arg_51_0:_open_menu(arg_51_1, arg_51_2, arg_51_3, true)
+	if not get_2 then
+		get_2 = self.previous_ping_held
+		get_2 = not get_2 and not get
+	end
+
+	local get_3 = arg_51_3:get("social_wheel_only_hold")
+	local get_4 = arg_51_3:get("social_wheel_only_release")
+
+	if not get_4 then
+		get_4 = self.previous_social_wheel_only_held
+		get_4 = not get_4 and not get_3
+	end
+
+	local get_5 = arg_51_3:get("photomode_only_hold")
+	local get_6 = arg_51_3:get("photomode_only_release")
+
+	if not get_6 then
+		get_6 = self.previous_photomode_only_held
+		get_6 = not get_6 and not get_5
+	end
+
+	if not (not get_5 and not self._current_selection_widget_settings.has_pages and not arg_51_3:get("social_wheel_page") and self._block_next_input) then
+		self:_close_menu(arg_51_1, arg_51_2, arg_51_3, true)
+		self:_open_menu(arg_51_1, arg_51_2, arg_51_3, true)
 
 		return
 	end
 
-	local var_51_6 = arg_51_3:get("weapon_poses_only_hold")
-	local var_51_7 = arg_51_3:get("weapon_poses_only_release") or arg_51_0.previous_weapon_poses_only_held and not var_51_6
+	local get_7 = arg_51_3:get("weapon_poses_only_hold")
+	local get_8 = arg_51_3:get("weapon_poses_only_release")
 
-	if var_51_6 and arg_51_0._current_selection_widget_settings.has_pages and arg_51_3:get("social_wheel_page") and not arg_51_0._block_next_input then
-		arg_51_0:_close_menu(arg_51_1, arg_51_2, arg_51_3, true)
-		arg_51_0:_open_menu(arg_51_1, arg_51_2, arg_51_3, true)
+	if not get_8 then
+		get_8 = self.previous_weapon_poses_only_held
+		get_8 = not get_8 and not get_7
+	end
+
+	if not (not get_7 and not self._current_selection_widget_settings.has_pages and not arg_51_3:get("social_wheel_page") and self._block_next_input) then
+		self:_close_menu(arg_51_1, arg_51_2, arg_51_3, true)
+		self:_open_menu(arg_51_1, arg_51_2, arg_51_3, true)
 
 		return
 	end
 
-	if arg_51_0._current_selection_widget_settings.has_pages and arg_51_3:get("social_wheel_page") and not arg_51_0._block_next_input then
-		arg_51_0:_close_menu(arg_51_1, arg_51_2, arg_51_3, true)
-		arg_51_0:_open_menu(arg_51_1, arg_51_2, arg_51_3, true)
+	if not (not self._current_selection_widget_settings.has_pages and not arg_51_3:get("social_wheel_page") and self._block_next_input) then
+		self:_close_menu(arg_51_1, arg_51_2, arg_51_3, true)
+		self:_open_menu(arg_51_1, arg_51_2, arg_51_3, true)
 
 		return
 	end
 
-	if var_51_1 or var_51_3 or var_51_5 or var_51_7 then
-		arg_51_0:_close_menu(arg_51_1, arg_51_2, arg_51_3)
+	if get_2 or get_4 or get_6 or not get_8 then
+		self:_close_menu(arg_51_1, arg_51_2, arg_51_3)
 
 		return
 	end
 
-	arg_51_0:_update_pointer(arg_51_3, true, arg_51_2)
+	self:_update_pointer(arg_51_3, true, arg_51_2)
 end
 
-function SocialWheelUI._update_pointer(arg_52_0, arg_52_1, arg_52_2, arg_52_3)
-	local var_52_0 = arg_52_0._arrow_widget
-	local var_52_1 = var_52_0.content
-	local var_52_2 = var_52_0.style
-	local var_52_3 = var_52_2.arrow
-	local var_52_4 = var_52_2.cursor
-	local var_52_5 = arg_52_0._current_selection_widget_settings
-	local var_52_6 = 0
-	local var_52_7 = false
+SocialWheelUI._update_pointer = function (self, arg_52_1, arg_52_2, arg_52_3)
+	-- function 52
+	local _arrow_widget = self._arrow_widget
+	local content = _arrow_widget.content
+	local style = _arrow_widget.style
+	local arrow = style.arrow
+	local cursor = style.cursor
+	local _current_selection_widget_settings = self._current_selection_widget_settings
+	local num = 0
+	local flag = false
 
-	if Managers.input:is_device_active("gamepad") then
-		local var_52_8 = arg_52_1:get("look_raw_controller")
+	if not Managers.input:is_device_active("gamepad") then
+		local get = arg_52_1:get("look_raw_controller")
 
-		if Vector3.length_squared(var_52_8) < 0.5 then
-			var_52_3.angle = 0
-			var_52_3.offset = {
+		if Vector3.length_squared(get) < 0.5 then
+			arrow.angle = 0
+			arrow.offset = {
 				0,
 				0,
 				0
 			}
-			var_52_1.visible = false
+			content.visible = false
 
-			if arg_52_3 < arg_52_0._select_timer then
+			if arg_52_3 < self._select_timer then
 				arg_52_2 = false
 			end
 		else
-			local var_52_9 = Vector3.normalize(var_52_8)
+			local normalize = Vector3.normalize(get)
 
-			var_52_6 = math.atan2(var_52_9[2], var_52_9[1])
-			var_52_3.angle = math.pi - var_52_6
-			var_52_3.offset = {
-				90 * var_52_9[1],
-				90 * var_52_9[2],
+			num = math.atan2(normalize[2], normalize[1])
+			arrow.angle = math.pi - num
+			arrow.offset = {
+				90 * normalize[1],
+				90 * normalize[2],
 				0
 			}
-			var_52_1.visible = arg_52_2
-			var_52_7 = arg_52_2
-			arg_52_0._select_timer = arg_52_3 + 0.4
+			content.visible = arg_52_2
+			flag = arg_52_2
+			self._select_timer = arg_52_3 + 0.4
 		end
 	else
-		local var_52_10 = arg_52_1:get("look_raw")
+		local get_2 = arg_52_1:get("look_raw")
 		local var_52_11 = Vector3(RESOLUTION_LOOKUP.res_w / 2, RESOLUTION_LOOKUP.res_h / 2, 0)
-		local var_52_12 = var_52_1.pointing_point:unbox() + Vector3(var_52_10.x, -var_52_10.y, 0) - var_52_11
-		local var_52_13 = Vector3.length(var_52_12)
-		local var_52_14 = math.min(var_52_13, 200)
-		local var_52_15 = Vector3.normalize(var_52_12)
-		local var_52_16 = var_52_11 + var_52_15 * var_52_14
-		local var_52_17 = arg_52_2 and var_52_5.size[1] / var_52_5.size[2] or 1
+		local num_2 = content.pointing_point:unbox() + Vector3(get_2.x, -get_2.y, 0) - var_52_11
+		local length = Vector3.length(num_2)
+		local min = math.min(length, 200)
+		local normalize_2 = Vector3.normalize(num_2)
+		local num_3 = var_52_11 + normalize_2 * min
+		local num_4
 
-		if var_52_14 < 100 then
-			var_52_6 = math.atan2(var_52_15[2] * var_52_17, var_52_15[1])
-			var_52_3.angle = math.pi - var_52_6
-			var_52_3.offset = {
+		if not arg_52_2 then
+			num_4 = _current_selection_widget_settings.size[1] / _current_selection_widget_settings.size[2]
+
+			if not num_4 then
+				-- Nothing
+			end
+		end
+
+		num_4 = 1
+
+		::label_52_0::
+
+		if min < 100 then
+			num = math.atan2(normalize_2[2] * num_4, normalize_2[1])
+			arrow.angle = math.pi - num
+			arrow.offset = {
 				0,
 				0,
 				0
 			}
-			var_52_3.color[1] = 0
-			var_52_4.color[1] = 255
-			var_52_4.offset = {
-				var_52_12.x,
-				var_52_12.y
+			arrow.color[1] = 0
+			cursor.color[1] = 255
+			cursor.offset = {
+				num_2.x,
+				num_2.y
 			}
-			var_52_1.visible = arg_52_2
+			content.visible = arg_52_2
 
-			var_52_1.pointing_point:store(var_52_16)
+			content.pointing_point:store(num_3)
 		else
-			var_52_6 = math.atan2(var_52_15[2] * var_52_17, var_52_15[1])
-			var_52_3.angle = math.pi - var_52_6
-			var_52_3.offset = {
-				100 * var_52_15[1],
-				100 * var_52_15[2],
+			num = math.atan2(normalize_2[2] * num_4, normalize_2[1])
+			arrow.angle = math.pi - num
+			arrow.offset = {
+				100 * normalize_2[1],
+				100 * normalize_2[2],
 				0
 			}
-			var_52_3.color[1] = 255
-			var_52_4.color[1] = 0
-			var_52_1.visible = arg_52_2
+			arrow.color[1] = 255
+			cursor.color[1] = 0
+			content.visible = arg_52_2
 
-			var_52_1.pointing_point:store(var_52_16)
+			content.pointing_point:store(num_3)
 
-			var_52_7 = arg_52_2
+			flag = arg_52_2
 		end
 	end
 
-	if arg_52_2 then
-		arg_52_0:_update_selection(var_52_7, var_52_5.angle, var_52_6)
+	if not arg_52_2 then
+		self:_update_selection(flag, _current_selection_widget_settings.angle, num)
 	end
 end
 
-function SocialWheelUI._update_selection(arg_53_0, arg_53_1, arg_53_2, arg_53_3)
-	local var_53_0 = arg_53_0._current_selection_widgets
+SocialWheelUI._update_selection = function (self, arg_53_1, arg_53_2, arg_53_3)
+	-- function 53
+	local _current_selection_widgets = self._current_selection_widgets
 
-	local function var_53_1()
-		var_53_0[arg_53_0._current_index].content.selected = false
-		arg_53_0._current_index = nil
-		arg_53_0._valid_selection = true
-		arg_53_0._bg_widget.content.text_id = Localize("tutorial_no_text")
+	local function fn()
+		-- function 54
+		_current_selection_widgets[self._current_index].content.selected = false
+		self._current_index = nil
+		self._valid_selection = true
+		self._bg_widget.content.text_id = Localize("tutorial_no_text")
 	end
 
 	if not arg_53_1 then
-		if arg_53_0._current_index then
-			var_53_1()
+		if not self._current_index then
+			fn()
 		end
 
 		return
 	end
 
-	local var_53_2 = arg_53_0:_select_widget(arg_53_2, #var_53_0, arg_53_3)
+	local _select_widget = self:_select_widget(arg_53_2, #_current_selection_widgets, arg_53_3)
 
-	if not var_53_2 and arg_53_0._current_index then
-		var_53_1()
-
-		return
-	end
-
-	local var_53_3 = arg_53_0._current_index
-
-	if var_53_3 and not var_53_0[var_53_3].content.is_valid then
-		var_53_1()
+	if _select_widget or not self._current_index then
+		fn()
 
 		return
 	end
 
-	if var_53_2 == var_53_3 then
+	local _current_index = self._current_index
+
+	if not (not _current_index and _current_selection_widgets[_current_index].content.is_valid) then
+		fn()
+
 		return
 	end
 
-	if var_53_3 then
-		var_53_0[var_53_3].content.selected = false
-		arg_53_0._current_index = nil
+	if _select_widget == _current_index then
+		return
 	end
 
-	local var_53_4 = var_53_0[var_53_2]
+	if not _current_index then
+		_current_selection_widgets[_current_index].content.selected = false
+		self._current_index = nil
+	end
 
-	if var_53_4.content.is_valid then
+	local var_53_4 = _current_selection_widgets[_select_widget]
+
+	if not var_53_4.content.is_valid then
 		var_53_4.content.selected = true
-		arg_53_0._current_index = var_53_2
-		arg_53_0._valid_selection = true
+		self._current_index = _select_widget
+		self._valid_selection = true
 
 		if not IS_WINDOWS then
-			local var_53_5 = arg_53_0._active_context.unit
+			local unit = self._active_context.unit
 
-			if not var_53_5 or Unit.alive(var_53_5) then
-				local var_53_6 = var_53_4.content.settings.name
-				local var_53_7 = SocialWheelSettingsLookup[var_53_6]
-				local var_53_8 = var_53_7.event_text_func
+			if not unit and not Unit.alive(unit) then
+				local name = var_53_4.content.settings.name
+				local var_53_7 = SocialWheelSettingsLookup[name]
+				local event_text_func = var_53_7.event_text_func
 
 				if not var_53_7.disable_input_text then
-					local var_53_9 = var_53_8 and var_53_8(var_53_5, var_53_7, true) or var_53_7.event_text or Localize(var_53_7.text)
+					local var_53_9
 
-					arg_53_0._bg_widget.content.text_id = var_53_9
+					if not event_text_func then
+						var_53_9 = event_text_func(unit, var_53_7, true)
+
+						if not var_53_9 then
+							-- Nothing
+						end
+					end
+
+					var_53_9 = var_53_7.event_text
+					var_53_9 = var_53_9 or Localize(var_53_7.text)
+
+					::label_53_0::
+
+					self._bg_widget.content.text_id = var_53_9
 				end
 			end
 		end
 
-		local var_53_10 = Managers.state.side.side_by_unit[arg_53_0._player.player_unit]:name()
+		local name_2 = Managers.state.side.side_by_unit[self._player.player_unit]:name()
 
-		if var_53_10 then
-			local var_53_11 = var_0_17[var_53_10].HOVER
+		if not name_2 then
+			local HOVER = tbl_3[name_2].HOVER
 
-			arg_53_0:_play_sound(var_53_11)
+			self:_play_sound(HOVER)
 		end
 	else
-		arg_53_0._valid_selection = false
+		self._valid_selection = false
 	end
 end
 
-function SocialWheelUI._close_menu(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4)
-	local var_55_0 = var_0_15.CLOSE
-	local var_55_1 = arg_55_0._animations
+SocialWheelUI._close_menu = function (self, arg_55_1, arg_55_2, arg_55_3, arg_55_4)
+	-- function 55
+	local CLOSE = var_0_15.CLOSE
+	local _animations = self._animations
 
-	arg_55_0._animations.update_alpha = UIAnimation.init(UIAnimation.function_by_time, arg_55_0._render_settings, "alpha_multiplier", arg_55_0._render_settings.alpha_multiplier, 0, var_55_0.ALPHA, math.easeOutCubic)
+	self._animations.update_alpha = UIAnimation.init(UIAnimation.function_by_time, self._render_settings, "alpha_multiplier", self._render_settings.alpha_multiplier, 0, CLOSE.ALPHA, math.easeOutCubic)
 
-	local var_55_2 = arg_55_0._bg_widget.content
+	local content = self._bg_widget.content
 
-	var_55_2.text_id = Localize("tutorial_no_text")
-	var_55_1.animation_bg_size = UIAnimation.init(UIAnimation.function_by_time, var_55_2, "size_multiplier", var_55_2.size_multiplier, 0, var_55_0.SIZE, math.easeOutCubic)
+	content.text_id = Localize("tutorial_no_text")
+	_animations.animation_bg_size = UIAnimation.init(UIAnimation.function_by_time, content, "size_multiplier", content.size_multiplier, 0, CLOSE.SIZE, math.easeOutCubic)
 
-	local var_55_3 = arg_55_0._active_context
-	local var_55_4 = var_55_3.unit or var_55_3.ping_context_unit
-	local var_55_5 = arg_55_0._current_selection_widgets
-	local var_55_6 = #var_55_5
+	local _active_context = self._active_context
+	local unit = _active_context.unit
 
-	for iter_55_0 = 1, var_55_6 do
-		local var_55_7 = var_55_5[iter_55_0]
-		local var_55_8 = var_55_7.content
-		local var_55_9 = var_55_7.offset
+	unit = unit or _active_context.ping_context_unit
 
-		var_55_1["animation_x_" .. iter_55_0] = UIAnimation.init(UIAnimation.function_by_time, var_55_9, 1, var_55_9[1], 0, var_55_0.MOVE_X, math.easeOutCubic)
-		var_55_1["animation_y_" .. iter_55_0] = UIAnimation.init(UIAnimation.function_by_time, var_55_9, 2, var_55_9[2], 0, var_55_0.MOVE_Y, math.easeOutCubic)
-		var_55_1["animation_divider_size_" .. iter_55_0] = UIAnimation.init(UIAnimation.function_by_time, var_55_8, "size_multiplier", var_55_8.size_multiplier, 0, var_55_0.SIZE, math.easeOutCubic)
+	local _current_selection_widgets = self._current_selection_widgets
+	local count = #_current_selection_widgets
 
-		if iter_55_0 == arg_55_0._current_index then
-			local var_55_10 = var_55_8.settings
+	for i = 1, count do
+		local var_55_7 = _current_selection_widgets[i]
+		local content_2 = var_55_7.content
+		local offset = var_55_7.offset
 
-			var_55_8.selected = false
+		_animations["animation_x_" .. i] = UIAnimation.init(UIAnimation.function_by_time, offset, 1, offset[1], 0, CLOSE.MOVE_X, math.easeOutCubic)
+		_animations["animation_y_" .. i] = UIAnimation.init(UIAnimation.function_by_time, offset, 2, offset[2], 0, CLOSE.MOVE_Y, math.easeOutCubic)
+		_animations["animation_divider_size_" .. i] = UIAnimation.init(UIAnimation.function_by_time, content_2, "size_multiplier", content_2.size_multiplier, 0, CLOSE.SIZE, math.easeOutCubic)
 
-			local function var_55_11()
-				return var_55_3
+		if i == self._current_index then
+			local settings = content_2.settings
+
+			content_2.selected = false
+
+			local function fn()
+				-- function 56
+				return _active_context
 			end
 
-			local var_55_12 = var_55_7.content.category_settings
-			local var_55_13 = arg_55_0._current_selection_category
-			local var_55_14 = arg_55_0._selection_widgets[var_55_13].current_page
-			local var_55_15 = UIWidget.init(var_0_7.create_social_widget(var_55_10, arg_55_0:_widget_angle(var_55_12.angle, var_55_6, iter_55_0), var_55_12, var_55_11, var_55_14))
+			local category_settings = var_55_7.content.category_settings
+			local _current_selection_category = self._current_selection_category
+			local current_page = self._selection_widgets[_current_selection_category].current_page
+			local var_55_15 = UIWidget.init(var_0_7.create_social_widget(settings, self:_widget_angle(category_settings.angle, count, i), category_settings, fn, current_page))
 
-			arg_55_0._selected_widget = var_55_15
+			self._selected_widget = var_55_15
 
-			local var_55_16 = var_55_15.content
+			local content_3 = var_55_15.content
 
-			var_55_16.selected = true
-			var_55_16.activated = true
+			content_3.selected = true
+			content_3.activated = true
 
-			local var_55_17 = var_55_15.style
-			local var_55_18 = var_55_17.icon.color
-			local var_55_19 = var_55_17.icon_shadow.color
-			local var_55_20 = var_55_17.icon_bg.color
-			local var_55_21 = var_55_17.icon.texture_size
-			local var_55_22 = var_55_17.icon_shadow.texture_size
-			local var_55_23 = var_55_17.icon.base_texture_size
-			local var_55_24 = var_55_17.icon_shadow.base_texture_size
-			local var_55_25 = var_55_17.text.selected_color
-			local var_55_26 = var_55_17.text_shadow.selected_color
+			local style = var_55_15.style
+			local color = style.icon.color
+			local color_2 = style.icon_shadow.color
+			local color_3 = style.icon_bg.color
+			local texture_size = style.icon.texture_size
+			local texture_size_2 = style.icon_shadow.texture_size
+			local base_texture_size = style.icon.base_texture_size
+			local base_texture_size_2 = style.icon_shadow.base_texture_size
+			local selected_color = style.text.selected_color
+			local selected_color_2 = style.text_shadow.selected_color
 
-			var_55_1["icon_color_a_" .. iter_55_0] = UIAnimation.init(UIAnimation.pulse_animation3, var_55_18, 1, var_55_18[1], var_55_18[1] * 0.5, 10, 0.5)
-			var_55_1["icon_size_x_" .. iter_55_0] = UIAnimation.init(UIAnimation.pulse_animation3, var_55_21, 1, var_55_23[1], var_55_23[1] * 0.75, 10, 0.5)
-			var_55_1["icon_size_y_" .. iter_55_0] = UIAnimation.init(UIAnimation.pulse_animation3, var_55_21, 2, var_55_23[2], var_55_23[2] * 0.75, 10, 0.5)
-			var_55_1["icon_shadow_color_a_" .. iter_55_0] = UIAnimation.init(UIAnimation.pulse_animation3, var_55_19, 1, var_55_19[1], var_55_19[1] * 0.5, 10, 0.5)
-			var_55_1["icon_shadow_size_x_" .. iter_55_0] = UIAnimation.init(UIAnimation.pulse_animation3, var_55_22, 1, var_55_24[1], var_55_24[1] * 0.75, 10, 0.5)
-			var_55_1["icon_shadow_size_y_" .. iter_55_0] = UIAnimation.init(UIAnimation.pulse_animation3, var_55_22, 2, var_55_24[2], var_55_24[2] * 0.75, 10, 0.5)
-			arg_55_0._animation_callbacks["icon_color_a_" .. iter_55_0] = function()
-				var_55_1["fade_text_color_a_" .. iter_55_0] = UIAnimation.init(UIAnimation.function_by_time, var_55_25, 1, var_55_25[1], 0, 0.25, math.easeOutCubic)
-				var_55_1["fade_text_shadow_color_a_" .. iter_55_0] = UIAnimation.init(UIAnimation.function_by_time, var_55_26, 1, var_55_26[1], 0, 0.25, math.easeOutCubic)
-				var_55_1["fade_icon_color_a_" .. iter_55_0] = UIAnimation.init(UIAnimation.function_by_time, var_55_18, 1, var_55_18[1], 0, 0.25, math.easeOutCubic)
-				var_55_1["fade_icon_shadow_color_a_" .. iter_55_0] = UIAnimation.init(UIAnimation.function_by_time, var_55_19, 1, var_55_19[1], 0, 0.25, math.easeOutCubic)
-				var_55_1["fade_icon_bg_color_a_" .. iter_55_0] = UIAnimation.init(UIAnimation.function_by_time, var_55_20, 1, var_55_20[1], 0, 0.25, math.easeOutCubic)
-				arg_55_0._animation_callbacks["fade_icon_color_a_" .. iter_55_0] = function()
-					arg_55_0._selected_widget = nil
-					var_55_16.activated = false
+			_animations["icon_color_a_" .. i] = UIAnimation.init(UIAnimation.pulse_animation3, color, 1, color[1], color[1] * 0.5, 10, 0.5)
+			_animations["icon_size_x_" .. i] = UIAnimation.init(UIAnimation.pulse_animation3, texture_size, 1, base_texture_size[1], base_texture_size[1] * 0.75, 10, 0.5)
+			_animations["icon_size_y_" .. i] = UIAnimation.init(UIAnimation.pulse_animation3, texture_size, 2, base_texture_size[2], base_texture_size[2] * 0.75, 10, 0.5)
+			_animations["icon_shadow_color_a_" .. i] = UIAnimation.init(UIAnimation.pulse_animation3, color_2, 1, color_2[1], color_2[1] * 0.5, 10, 0.5)
+			_animations["icon_shadow_size_x_" .. i] = UIAnimation.init(UIAnimation.pulse_animation3, texture_size_2, 1, base_texture_size_2[1], base_texture_size_2[1] * 0.75, 10, 0.5)
+			_animations["icon_shadow_size_y_" .. i] = UIAnimation.init(UIAnimation.pulse_animation3, texture_size_2, 2, base_texture_size_2[2], base_texture_size_2[2] * 0.75, 10, 0.5)
+			self._animation_callbacks["icon_color_a_" .. i] = function ()
+				-- function 57
+				_animations["fade_text_color_a_" .. i] = UIAnimation.init(UIAnimation.function_by_time, selected_color, 1, selected_color[1], 0, 0.25, math.easeOutCubic)
+				_animations["fade_text_shadow_color_a_" .. i] = UIAnimation.init(UIAnimation.function_by_time, selected_color_2, 1, selected_color_2[1], 0, 0.25, math.easeOutCubic)
+				_animations["fade_icon_color_a_" .. i] = UIAnimation.init(UIAnimation.function_by_time, color, 1, color[1], 0, 0.25, math.easeOutCubic)
+				_animations["fade_icon_shadow_color_a_" .. i] = UIAnimation.init(UIAnimation.function_by_time, color_2, 1, color_2[1], 0, 0.25, math.easeOutCubic)
+				_animations["fade_icon_bg_color_a_" .. i] = UIAnimation.init(UIAnimation.function_by_time, color_3, 1, color_3[1], 0, 0.25, math.easeOutCubic)
+				self._animation_callbacks["fade_icon_color_a_" .. i] = function ()
+					-- function 58
+					self._selected_widget = nil
+					content_3.activated = false
 				end
 			end
 		end
 	end
 
-	if arg_55_4 then
-		arg_55_0._open_start_t = nil
-		arg_55_0._current_index = nil
+	if not arg_55_4 then
+		self._open_start_t = nil
+		self._current_index = nil
 
 		return
 	end
 
-	if IS_CONSOLE then
-		arg_55_0._console_extension = arg_55_0._ingame_ui_context.is_in_inn and "_inn" or ""
+	if not IS_CONSOLE then
+		local flag
+
+		flag = not self._ingame_ui_context.is_in_inn and "_inn" and ""
+		self._console_extension = flag
 	else
-		arg_55_0._console_extension = ""
+		self._console_extension = ""
 	end
 
-	local var_55_27 = (not IS_WINDOWS or Managers.input:is_device_active("gamepad")) and var_0_13 or var_0_12
 	local var_55_28
 
-	if arg_55_0._world_marker_preview_id then
-		Managers.state.event:trigger("remove_world_marker", arg_55_0._world_marker_preview_id)
+	if not (not IS_WINDOWS and Managers.input:is_device_active("gamepad")) then
+		var_55_28 = num_4
 
-		arg_55_0._world_marker_preview_id = nil
+		if not var_55_28 then
+			-- Nothing
+		end
 	end
 
-	if arg_55_0._valid_selection then
-		if arg_55_0._current_index == nil then
-			local var_55_29 = arg_55_2 - arg_55_0._open_start_t
-			local var_55_30, var_55_31 = table.max(var_0_15.OPEN)
+	var_55_28 = num_3
 
-			if var_55_29 < var_55_31 then
-				var_55_28 = arg_55_0:_ping_unit_attempt(var_55_4, PingTypes.CONTEXT)
+	::label_55_0::
+
+	local var_55_29
+
+	if not self._world_marker_preview_id then
+		Managers.state.event:trigger("remove_world_marker", self._world_marker_preview_id)
+
+		self._world_marker_preview_id = nil
+	end
+
+	if not self._valid_selection then
+		if self._current_index == nil then
+			local num = arg_55_2 - self._open_start_t
+			local max, var_55_32 = table.max(var_0_15.OPEN)
+
+			if num < var_55_32 then
+				var_55_29 = self:_ping_unit_attempt(unit, PingTypes.CONTEXT)
 			end
 		else
-			local var_55_32 = arg_55_0._current_selection_widgets[arg_55_0._current_index].content.settings
-			local var_55_33 = var_55_32.ping_type or PingTypes.CHAT_ONLY
-			local var_55_34 = rawget(NetworkLookup.social_wheel_events, var_55_32.name)
+			local settings_2 = self._current_selection_widgets[self._current_index].content.settings
+			local ping_type = settings_2.ping_type
 
-			if var_55_34 then
-				if var_55_4 and (arg_55_0._world_markers_enabled or var_55_33 == PingTypes.PLAYER_PICK_UP) then
-					var_55_28 = arg_55_0:_ping_unit_attempt(var_55_4, var_55_33, var_55_34)
-				elseif var_55_33 == PingTypes.LOCAL_ONLY then
-					var_55_28 = arg_55_0:_local_ping_attempt(var_55_34, var_55_4)
-				elseif var_55_3.position and arg_55_0._world_markers_enabled then
-					var_55_28 = arg_55_0:_ping_world_position_attempt(var_55_3.position, var_55_33, var_55_34)
+			ping_type = ping_type or PingTypes.CHAT_ONLY
+
+			local var_55_35 = rawget(NetworkLookup.social_wheel_events, settings_2.name)
+
+			if not var_55_35 then
+				if not (not unit and self._world_markers_enabled or ping_type ~= PingTypes.PLAYER_PICK_UP) then
+					var_55_29 = self:_ping_unit_attempt(unit, ping_type, var_55_35)
+				elseif ping_type == PingTypes.LOCAL_ONLY then
+					var_55_29 = self:_local_ping_attempt(var_55_35, unit)
+				elseif not _active_context.position and not self._world_markers_enabled then
+					var_55_29 = self:_ping_world_position_attempt(_active_context.position, ping_type, var_55_35)
 				else
-					var_55_28 = arg_55_0:_social_message_attempt(var_55_34, var_55_4)
+					var_55_29 = self:_social_message_attempt(var_55_35, unit)
 				end
 			end
 		end
 	end
 
-	local var_55_35 = Managers.state.side.side_by_unit[arg_55_0._player.player_unit]:name()
+	local name = Managers.state.side.side_by_unit[self._player.player_unit]:name()
 
-	if var_55_35 then
-		if var_55_28 then
-			local var_55_36 = var_0_17[var_55_35].SELECT
+	if not name then
+		if not var_55_29 then
+			local SELECT = tbl_3[name].SELECT
 
-			arg_55_0:_play_sound(var_55_36)
+			self:_play_sound(SELECT)
 		else
-			local var_55_37 = var_0_17[var_55_35].CLOSE
+			local CLOSE_2 = tbl_3[name].CLOSE
 
-			arg_55_0:_play_sound(var_55_37)
+			self:_play_sound(CLOSE_2)
 		end
 	end
 
-	arg_55_0._active_context = nil
+	self._active_context = nil
 
-	arg_55_0:_set_current_context(nil)
+	self:_set_current_context(nil)
 
-	arg_55_0._open_start_t = nil
-	arg_55_0._current_index = nil
+	self._open_start_t = nil
+	self._current_index = nil
 
-	arg_55_0:_set_player_input_scale(1, var_55_27)
-	arg_55_0:_change_state("update_closed")
-	ScriptUnit.extension(arg_55_0._player.player_unit, "interactor_system"):enable_interactions(true)
+	self:_set_player_input_scale(1, var_55_28)
+	self:_change_state("update_closed")
+	ScriptUnit.extension(self._player.player_unit, "interactor_system"):enable_interactions(true)
 end
 
-function SocialWheelUI.is_active(arg_59_0)
-	return arg_59_0._active_context ~= nil
+SocialWheelUI.is_active = function (self)
+	-- function 59
+	return self._active_context ~= nil
 end

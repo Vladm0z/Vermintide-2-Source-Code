@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/breeds/breed_chaos_corruptor_sorcerer.lua
 
-local var_0_0 = {
+local tbl = {
 	detection_radius = 9999999,
 	player_locomotion_constrain_radius = 0.7,
 	walk_speed = 0.65,
@@ -178,41 +178,46 @@ local var_0_0 = {
 		200,
 		200,
 		0
-	},
-	disabled = Development.setting("disable_plague_sorcerer") or false,
-	allowed_layers = {
-		planks = 1.5,
-		ledges = 5,
-		bot_ratling_gun_fire = 10,
-		jumps = 5,
-		destructible_wall = 5,
-		temporary_wall = 0,
-		ledges_with_fence = 5,
-		doors = 1.5,
-		teleporters = 5,
-		bot_poison_wind = 2,
-		fire_grenade = 10
-	},
-	custom_death_enter_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
-		local var_1_0 = BLACKBOARDS[arg_1_0]
+	}
+}
+local setting = Development.setting("disable_plague_sorcerer")
 
-		if not Unit.alive(arg_1_1) then
-			return
-		end
-
-		local var_1_1 = var_1_0.teleport_at_t
-
-		if var_1_1 then
-			QuestSettings.check_corruptor_killed_at_teleport_time(var_1_0, var_1_1, arg_1_4, arg_1_1)
-		end
-
-		QuestSettings.check_corruptor_killed_while_grabbing(var_1_0, arg_1_1)
-	end
+setting = setting or false
+tbl.disabled = setting
+tbl.allowed_layers = {
+	planks = 1.5,
+	ledges = 5,
+	bot_ratling_gun_fire = 10,
+	jumps = 5,
+	destructible_wall = 5,
+	temporary_wall = 0,
+	ledges_with_fence = 5,
+	doors = 1.5,
+	teleporters = 5,
+	bot_poison_wind = 2,
+	fire_grenade = 10
 }
 
-Breeds.chaos_corruptor_sorcerer = table.create_copy(Breeds.chaos_corruptor_sorcerer, var_0_0)
+tbl.custom_death_enter_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	-- function 1
+	local var_1_0 = BLACKBOARDS[arg_1_0]
 
-local var_0_1 = {
+	if not Unit.alive(arg_1_1) then
+		return
+	end
+
+	local teleport_at_t = var_1_0.teleport_at_t
+
+	if not teleport_at_t then
+		QuestSettings.check_corruptor_killed_at_teleport_time(var_1_0, teleport_at_t, arg_1_4, arg_1_1)
+	end
+
+	QuestSettings.check_corruptor_killed_while_grabbing(var_1_0, arg_1_1)
+end
+
+Breeds.chaos_corruptor_sorcerer = table.create_copy(Breeds.chaos_corruptor_sorcerer, tbl)
+
+local tbl_2 = {
 	skulk_approach = {
 		move_animation = "move_fwd",
 		close_distance = 10,
@@ -294,12 +299,13 @@ local var_0_1 = {
 		}
 	},
 	stagger = {
-		custom_enter_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+		custom_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			-- function 2
 			local var_2_0
 
 			arg_2_1.stagger_ignore_anim_cb = true
 
-			if arg_2_1.corruptor_grab_stagger then
+			if not arg_2_1.corruptor_grab_stagger then
 				var_2_0 = arg_2_3.grabbing_stagger_anims[arg_2_1.stagger_type]
 				arg_2_1.stagger_time = arg_2_2 + 1
 			else
@@ -308,7 +314,8 @@ local var_0_1 = {
 
 			return var_2_0, "idle"
 		end,
-		custom_exit_function = function(arg_3_0, arg_3_1, arg_3_2)
+		custom_exit_function = function (arg_3_0, arg_3_1, arg_3_2)
+			-- function 3
 			arg_3_1.corruptor_grab_stagger = nil
 		end,
 		stagger_anims = {
@@ -554,4 +561,4 @@ local var_0_1 = {
 	}
 }
 
-BreedActions.chaos_corruptor_sorcerer = table.create_copy(BreedActions.chaos_corruptor_sorcerer, var_0_1)
+BreedActions.chaos_corruptor_sorcerer = table.create_copy(BreedActions.chaos_corruptor_sorcerer, tbl_2)

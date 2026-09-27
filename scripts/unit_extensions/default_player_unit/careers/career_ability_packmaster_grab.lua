@@ -2,28 +2,31 @@
 
 CareerAbilityPackmasterGrab = class(CareerAbilityPackmasterGrab, CareerAbilityDarkPactBase)
 
-function CareerAbilityPackmasterGrab._ability_available(arg_1_0)
-	local var_1_0 = arg_1_0.super._ability_available(arg_1_0)
-	local var_1_1 = arg_1_0._status_extension
+CareerAbilityPackmasterGrab._ability_available = function (self)
+	-- function 1
+	local _ability_available = self.super._ability_available(self)
+	local _status_extension = self._status_extension
 
-	return var_1_0 and not var_1_1:get_unarmed()
+	return not _ability_available and not _status_extension:get_unarmed()
 end
 
-function CareerAbilityPackmasterGrab._start(arg_2_0)
-	arg_2_0.super._start(arg_2_0)
+CareerAbilityPackmasterGrab._start = function (self)
+	-- function 2
+	self.super._start(self)
 
-	local var_2_0 = arg_2_0._career_extension
+	local _career_extension = self._career_extension
 
-	var_2_0:start_activated_ability_cooldown(arg_2_0._ability_data.ability_id)
-	var_2_0:set_activated_ability_cooldown_paused(arg_2_0._ability_data.ability_id)
+	_career_extension:start_activated_ability_cooldown(self._ability_data.ability_id)
+	_career_extension:set_activated_ability_cooldown_paused(self._ability_data.ability_id)
 end
 
-function CareerAbilityPackmasterGrab.ability_ready(arg_3_0)
-	arg_3_0.super.ability_ready(arg_3_0)
+CareerAbilityPackmasterGrab.ability_ready = function (self)
+	-- function 3
+	self.super.ability_ready(self)
 
-	local var_3_0 = arg_3_0._first_person_extension
+	local _first_person_extension = self._first_person_extension
 
-	if var_3_0 then
-		CharacterStateHelper.play_animation_event_first_person(var_3_0, "cooldown_ready")
+	if not _first_person_extension then
+		CharacterStateHelper.play_animation_event_first_person(_first_person_extension, "cooldown_ready")
 	end
 end

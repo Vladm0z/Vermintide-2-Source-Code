@@ -2,37 +2,39 @@
 
 GutterRunnerStateWalking = class(GutterRunnerStateWalking, EnemyCharacterStateWalking)
 
-function GutterRunnerStateWalking.init(arg_1_0, arg_1_1, arg_1_2)
-	GutterRunnerStateWalking.super.init(arg_1_0, arg_1_1, arg_1_2)
+GutterRunnerStateWalking.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	GutterRunnerStateWalking.super.init(self, arg_1_1, arg_1_2)
 
-	arg_1_0._pounce_ability_id = arg_1_0._career_extension:ability_id("pounce")
-	arg_1_0._foff_ability_id = arg_1_0._career_extension:ability_id("foff")
+	self._pounce_ability_id = self._career_extension:ability_id("pounce")
+	self._foff_ability_id = self._career_extension:ability_id("foff")
 end
 
-function GutterRunnerStateWalking.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
-	if arg_2_0:common_state_changes() then
+GutterRunnerStateWalking.update = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	-- function 2
+	if not self:common_state_changes() then
 		return
 	end
 
-	local var_2_0 = arg_2_0._csm
-	local var_2_1 = arg_2_0._career_extension
+	local _csm = self._csm
+	local _career_extension = self._career_extension
 
-	if var_2_1:ability_was_triggered(arg_2_0._pounce_ability_id) then
-		var_2_0:change_state("gutter_runner_prowling")
-
-		return
-	end
-
-	if var_2_1:ability_was_triggered(arg_2_0._foff_ability_id) then
-		var_2_0:change_state("gutter_runner_foff")
+	if not _career_extension:ability_was_triggered(self._pounce_ability_id) then
+		_csm:change_state("gutter_runner_prowling")
 
 		return
 	end
 
-	if not arg_2_0._status_extension:is_invisible() then
-		arg_2_0:_update_taunt_dialogue(arg_2_5)
+	if not _career_extension:ability_was_triggered(self._foff_ability_id) then
+		_csm:change_state("gutter_runner_foff")
+
+		return
 	end
 
-	local var_2_2 = arg_2_0._ghost_mode_extension:is_in_ghost_mode()
-	local var_2_3 = arg_2_0:common_movement(var_2_2, arg_2_3)
+	if not self._status_extension:is_invisible() then
+		self:_update_taunt_dialogue(arg_2_5)
+	end
+
+	local is_in_ghost_mode = self._ghost_mode_extension:is_in_ghost_mode()
+	local common_movement = self:common_movement(is_in_ghost_mode, arg_2_3)
 end

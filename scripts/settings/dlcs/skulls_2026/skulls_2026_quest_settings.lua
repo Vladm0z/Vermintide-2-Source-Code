@@ -1,37 +1,41 @@
 -- chunkname: @scripts/settings/dlcs/skulls_2026/skulls_2026_quest_settings.lua
 
-local var_0_0 = DLCSettings.skulls_2026
-local var_0_1 = 100
+local skulls_2026 = DLCSettings.skulls_2026
+local num = 100
 
-var_0_0.quest_templates = {
+skulls_2026.quest_templates = {
 	event_skulls_2026_collect_skulls = {
 		name = "quest_event_skulls_2026_pickups",
 		icon = "quest_book_event_skull",
 		summary_icon = "achievement_symbol_book_event_skull",
-		desc = function()
-			return string.format(Localize("quest_event_skulls_2026_pickups_desc"), var_0_1)
+		desc = function ()
+			-- function 1
+			return string.format(Localize("quest_event_skulls_2026_pickups_desc"), num)
 		end,
-		completed = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+		completed = function (self, arg_2_1, arg_2_2, arg_2_3)
+			-- function 2
 			local var_2_0 = QuestSettings.stat_mappings[arg_2_2][1]
 
-			return arg_2_0:get_persistent_stat(arg_2_1, "quest_statistics", var_2_0) >= var_0_1
+			return self:get_persistent_stat(arg_2_1, "quest_statistics", var_2_0) >= num
 		end,
-		progress = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+		progress = function (self, arg_3_1, arg_3_2, arg_3_3)
+			-- function 3
 			local var_3_0 = QuestSettings.stat_mappings[arg_3_2][1]
-			local var_3_1 = arg_3_0:get_persistent_stat(arg_3_1, "quest_statistics", var_3_0)
+			local get_persistent_stat = self:get_persistent_stat(arg_3_1, "quest_statistics", var_3_0)
 
 			return {
-				var_3_1,
-				var_0_1
+				get_persistent_stat,
+				num
 			}
 		end,
 		events = {
 			"register_skulls_2023_pickup"
 		},
-		on_event = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+		on_event = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+			-- function 4
 			local var_4_0 = QuestSettings.stat_mappings[arg_4_5][1]
 
-			arg_4_0:increment_stat(arg_4_1, "quest_statistics", var_4_0)
+			self:increment_stat(arg_4_1, "quest_statistics", var_4_0)
 		end
 	}
 }

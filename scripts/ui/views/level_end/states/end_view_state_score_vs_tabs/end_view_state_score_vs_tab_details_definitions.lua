@@ -1,8 +1,8 @@
 -- chunkname: @scripts/ui/views/level_end/states/end_view_state_score_vs_tabs/end_view_state_score_vs_tab_details_definitions.lua
 
-local var_0_0 = 40
-local var_0_1 = 450
-local var_0_2 = {
+local num = 40
+local num_2 = 450
+local tbl = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -40,7 +40,7 @@ local var_0_2 = {
 		},
 		size = {
 			370,
-			var_0_0 * 2
+			num * 2
 		}
 	},
 	local_heroes_score_title = {
@@ -53,8 +53,8 @@ local var_0_2 = {
 			10
 		},
 		size = {
-			var_0_1,
-			var_0_0 * 2
+			num_2,
+			num * 2
 		}
 	},
 	local_pactsworn_score_title = {
@@ -62,13 +62,13 @@ local var_0_2 = {
 		parent = "local_heroes_score_title",
 		horizontal_alignment = "left",
 		position = {
-			var_0_1 + 20,
+			num_2 + 20,
 			0,
 			10
 		},
 		size = {
-			var_0_1,
-			var_0_0 * 2
+			num_2,
+			num * 2
 		}
 	},
 	local_pactsworn_score_edge = {
@@ -76,13 +76,13 @@ local var_0_2 = {
 		parent = "local_pactsworn_score_title",
 		horizontal_alignment = "left",
 		position = {
-			var_0_1,
+			num_2,
 			0,
 			10
 		},
 		size = {
 			200,
-			var_0_0 * 2
+			num * 2
 		}
 	},
 	local_flag = {
@@ -124,7 +124,7 @@ local var_0_2 = {
 		},
 		size = {
 			270,
-			var_0_0
+			num
 		}
 	},
 	local_anchor = {
@@ -137,8 +137,8 @@ local var_0_2 = {
 			10
 		},
 		size = {
-			var_0_1,
-			var_0_0
+			num_2,
+			num
 		}
 	},
 	local_pact_anchor = {
@@ -146,13 +146,13 @@ local var_0_2 = {
 		parent = "local_anchor",
 		horizontal_alignment = "left",
 		position = {
-			var_0_1 + 20,
+			num_2 + 20,
 			0,
 			0
 		},
 		size = {
-			var_0_1,
-			var_0_0
+			num_2,
+			num
 		}
 	},
 	local_color_edge = {
@@ -166,7 +166,7 @@ local var_0_2 = {
 		},
 		size = {
 			4,
-			var_0_0 * 5
+			num * 5
 		}
 	},
 	local_score_bg = {
@@ -222,7 +222,7 @@ local var_0_2 = {
 		},
 		size = {
 			270,
-			var_0_0 * 2
+			num * 2
 		}
 	},
 	local_names_grid = {
@@ -235,8 +235,8 @@ local var_0_2 = {
 			1
 		},
 		size = {
-			var_0_1,
-			var_0_0 * 5
+			num_2,
+			num * 5
 		}
 	},
 	local_heroes_grid = {
@@ -245,12 +245,12 @@ local var_0_2 = {
 		horizontal_alignment = "right",
 		position = {
 			0,
-			var_0_0,
+			num,
 			1
 		},
 		size = {
-			var_0_1,
-			var_0_0 * 6
+			num_2,
+			num * 6
 		}
 	},
 	local_heroes_score_grid = {
@@ -259,12 +259,12 @@ local var_0_2 = {
 		horizontal_alignment = "right",
 		position = {
 			0,
-			var_0_0,
+			num,
 			1
 		},
 		size = {
-			var_0_1,
-			var_0_0 * 5
+			num_2,
+			num * 5
 		}
 	},
 	local_heroes_header_grid = {
@@ -273,12 +273,12 @@ local var_0_2 = {
 		horizontal_alignment = "right",
 		position = {
 			0,
-			var_0_0,
+			num,
 			1
 		},
 		size = {
-			var_0_1,
-			var_0_0
+			num_2,
+			num
 		}
 	},
 	local_pact_grid = {
@@ -287,12 +287,12 @@ local var_0_2 = {
 		horizontal_alignment = "right",
 		position = {
 			0,
-			var_0_0,
+			num,
 			1
 		},
 		size = {
-			var_0_1,
-			var_0_0 * 6
+			num_2,
+			num * 6
 		}
 	},
 	local_pact_score_grid = {
@@ -301,12 +301,12 @@ local var_0_2 = {
 		horizontal_alignment = "right",
 		position = {
 			0,
-			var_0_0,
+			num,
 			1
 		},
 		size = {
-			var_0_1,
-			var_0_0 * 5
+			num_2,
+			num * 5
 		}
 	},
 	local_pact_header_grid = {
@@ -315,12 +315,12 @@ local var_0_2 = {
 		horizontal_alignment = "left",
 		position = {
 			0,
-			var_0_0,
+			num,
 			1
 		},
 		size = {
-			var_0_1,
-			var_0_0
+			num_2,
+			num
 		}
 	},
 	opponent_team_anchor = {
@@ -334,7 +334,7 @@ local var_0_2 = {
 		},
 		size = {
 			370,
-			var_0_0 * 2
+			num * 2
 		}
 	},
 	opponent_heroes_score_title = {
@@ -347,8 +347,8 @@ local var_0_2 = {
 			10
 		},
 		size = {
-			var_0_1,
-			var_0_0 * 2
+			num_2,
+			num * 2
 		}
 	},
 	opponent_pactsworn_score_title = {
@@ -356,13 +356,13 @@ local var_0_2 = {
 		parent = "opponent_heroes_score_title",
 		horizontal_alignment = "left",
 		position = {
-			var_0_1 + 20,
+			num_2 + 20,
 			0,
 			10
 		},
 		size = {
-			var_0_1,
-			var_0_0 * 2
+			num_2,
+			num * 2
 		}
 	},
 	opponent_pactsworn_score_edge = {
@@ -370,13 +370,13 @@ local var_0_2 = {
 		parent = "opponent_pactsworn_score_title",
 		horizontal_alignment = "left",
 		position = {
-			var_0_1,
+			num_2,
 			0,
 			10
 		},
 		size = {
 			200,
-			var_0_0 * 2
+			num * 2
 		}
 	},
 	opponent_flag = {
@@ -418,7 +418,7 @@ local var_0_2 = {
 		},
 		size = {
 			270,
-			var_0_0
+			num
 		}
 	},
 	opponent_anchor = {
@@ -431,8 +431,8 @@ local var_0_2 = {
 			10
 		},
 		size = {
-			var_0_1,
-			var_0_0
+			num_2,
+			num
 		}
 	},
 	opponent_pact_anchor = {
@@ -440,13 +440,13 @@ local var_0_2 = {
 		parent = "opponent_anchor",
 		horizontal_alignment = "left",
 		position = {
-			var_0_1 + 20,
+			num_2 + 20,
 			0,
 			0
 		},
 		size = {
-			var_0_1,
-			var_0_0
+			num_2,
+			num
 		}
 	},
 	opponent_color_edge = {
@@ -460,7 +460,7 @@ local var_0_2 = {
 		},
 		size = {
 			4,
-			var_0_0 * 5
+			num * 5
 		}
 	},
 	opponent_score_bg = {
@@ -516,7 +516,7 @@ local var_0_2 = {
 		},
 		size = {
 			270,
-			var_0_0 * 2
+			num * 2
 		}
 	},
 	opponent_names_grid = {
@@ -529,8 +529,8 @@ local var_0_2 = {
 			1
 		},
 		size = {
-			var_0_1,
-			var_0_0 * 5
+			num_2,
+			num * 5
 		}
 	},
 	opponent_heroes_grid = {
@@ -539,12 +539,12 @@ local var_0_2 = {
 		horizontal_alignment = "right",
 		position = {
 			0,
-			var_0_0,
+			num,
 			1
 		},
 		size = {
-			var_0_1,
-			var_0_0 * 6
+			num_2,
+			num * 6
 		}
 	},
 	opponent_heroes_score_grid = {
@@ -553,12 +553,12 @@ local var_0_2 = {
 		horizontal_alignment = "right",
 		position = {
 			0,
-			var_0_0,
+			num,
 			1
 		},
 		size = {
-			var_0_1,
-			var_0_0 * 5
+			num_2,
+			num * 5
 		}
 	},
 	opponent_pact_grid = {
@@ -567,12 +567,12 @@ local var_0_2 = {
 		horizontal_alignment = "right",
 		position = {
 			0,
-			var_0_0,
+			num,
 			1
 		},
 		size = {
-			var_0_1,
-			var_0_0 * 6
+			num_2,
+			num * 6
 		}
 	},
 	opponent_pact_score_grid = {
@@ -581,12 +581,12 @@ local var_0_2 = {
 		horizontal_alignment = "right",
 		position = {
 			0,
-			var_0_0,
+			num,
 			1
 		},
 		size = {
-			var_0_1,
-			var_0_0 * 5
+			num_2,
+			num * 5
 		}
 	},
 	heroes_header_bg = {
@@ -595,12 +595,12 @@ local var_0_2 = {
 		horizontal_alignment = "right",
 		position = {
 			0,
-			var_0_0,
+			num,
 			0
 		},
 		size = {
-			var_0_1,
-			var_0_0
+			num_2,
+			num
 		}
 	},
 	pact_header_bg = {
@@ -609,50 +609,51 @@ local var_0_2 = {
 		horizontal_alignment = "right",
 		position = {
 			0,
-			var_0_0,
+			num,
 			0
 		},
 		size = {
-			var_0_1,
-			var_0_0
+			num_2,
+			num
 		}
 	}
 }
-local var_0_3 = {
+local tbl_2 = {
 	255,
 	24,
 	24,
 	24
 }
-local var_0_4 = {
+local tbl_3 = {
 	255,
 	226,
 	220,
 	209
 }
-local var_0_5 = Colors.get_color_table_with_alpha("local_player_team", 255)
-local var_0_6 = Colors.get_color_table_with_alpha("local_player_team_lighter", 255)
-local var_0_7 = Colors.get_color_table_with_alpha("local_player_team_darker", 255)
-local var_0_8 = Colors.get_color_table_with_alpha("opponent_team", 255)
-local var_0_9 = Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
-local var_0_10 = Colors.get_color_table_with_alpha("opponent_team_darkened", 255)
-local var_0_11 = Colors.get_table("local_scoreboard_entry_dark")
-local var_0_12 = Colors.get_table("local_scoreboard_entry")
-local var_0_13 = Colors.get_table("opponent_scoreboard_entry_dark")
-local var_0_14 = Colors.get_table("opponent_scoreboard_entry")
+local get_color_table_with_alpha = Colors.get_color_table_with_alpha("local_player_team", 255)
+local get_color_table_with_alpha_2 = Colors.get_color_table_with_alpha("local_player_team_lighter", 255)
+local get_color_table_with_alpha_3 = Colors.get_color_table_with_alpha("local_player_team_darker", 255)
+local get_color_table_with_alpha_4 = Colors.get_color_table_with_alpha("opponent_team", 255)
+local get_color_table_with_alpha_5 = Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
+local get_color_table_with_alpha_6 = Colors.get_color_table_with_alpha("opponent_team_darkened", 255)
+local get_table = Colors.get_table("local_scoreboard_entry_dark")
+local get_table_2 = Colors.get_table("local_scoreboard_entry")
+local get_table_3 = Colors.get_table("opponent_scoreboard_entry_dark")
+local get_table_4 = Colors.get_table("opponent_scoreboard_entry")
 
-local function var_0_15(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
-	local var_1_0 = arg_1_4 or {
+local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	-- function 1
+	local flag = arg_1_4 or {
 		255,
 		10,
 		10,
 		10
 	}
-	local var_1_1 = var_0_2[arg_1_0].size
+	local size = tbl[arg_1_0].size
 
-	var_1_1[2] = arg_1_1 * var_0_0
+	size[2] = arg_1_1 * num
 
-	local var_1_2 = {
+	local tbl_2 = {
 		element = {
 			passes = {}
 		},
@@ -665,118 +666,118 @@ local function var_0_15(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 			0
 		}
 	}
-	local var_1_3 = var_1_2.element.passes
-	local var_1_4 = var_1_2.content
-	local var_1_5 = var_1_2.style
+	local passes = tbl_2.element.passes
+	local content = tbl_2.content
+	local style = tbl_2.style
 
-	var_1_3[#var_1_3 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "rect",
 		style_id = "left_border"
 	}
-	var_1_3[#var_1_3 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "rect",
 		style_id = "right_border"
 	}
-	var_1_3[#var_1_3 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "rect",
 		style_id = "top_border"
 	}
-	var_1_3[#var_1_3 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "rect",
 		style_id = "bottom_border"
 	}
-	var_1_5.left_border = {
+	style.left_border = {
 		vertical_alignment = "top",
 		horizontal_alignment = "left",
 		texture_size = {
 			arg_1_3,
-			var_1_1[2]
+			size[2]
 		},
-		color = var_1_0
+		color = flag
 	}
-	var_1_5.right_border = {
+	style.right_border = {
 		vertical_alignment = "top",
 		horizontal_alignment = "right",
 		texture_size = {
 			arg_1_3,
-			var_1_1[2]
+			size[2]
 		},
-		color = var_1_0
+		color = flag
 	}
-	var_1_5.top_border = {
+	style.top_border = {
 		vertical_alignment = "top",
 		horizontal_alignment = "left",
 		texture_size = {
-			var_1_1[1],
+			size[1],
 			arg_1_3
 		},
-		color = var_1_0
+		color = flag
 	}
-	var_1_5.bottom_border = {
+	style.bottom_border = {
 		vertical_alignment = "top",
 		horizontal_alignment = "left",
 		texture_size = {
-			var_1_1[1],
+			size[1],
 			-arg_1_3
 		},
-		color = var_1_0,
+		color = flag,
 		offset = {
 			0,
-			-var_1_1[2],
+			-size[2],
 			0
 		}
 	}
 
-	local var_1_6 = var_1_1[2] / arg_1_1
+	local num_2 = size[2] / arg_1_1
 
-	for iter_1_0 = 1, arg_1_1 - 1 do
-		var_1_3[#var_1_3 + 1] = {
+	for i = 1, arg_1_1 - 1 do
+		passes[#passes + 1] = {
 			pass_type = "rect",
-			style_id = "row_edge_" .. iter_1_0
+			style_id = "row_edge_" .. i
 		}
-		var_1_5["row_edge_" .. iter_1_0] = {
+		style["row_edge_" .. i] = {
 			vertical_alignment = "top",
 			horizontal_alignment = "left",
 			texture_size = {
-				var_1_1[1],
+				size[1],
 				arg_1_3
 			},
 			offset = {
 				0,
-				-var_1_6 * iter_1_0 + arg_1_3 * 0.5,
+				-num_2 * i + arg_1_3 * 0.5,
 				0
 			},
-			color = var_1_0
+			color = flag
 		}
 	end
 
-	local var_1_7 = var_1_1[1] / arg_1_2
+	local num_3 = size[1] / arg_1_2
 
-	for iter_1_1 = 1, arg_1_2 - 1 do
-		var_1_3[#var_1_3 + 1] = {
+	for j = 1, arg_1_2 - 1 do
+		passes[#passes + 1] = {
 			pass_type = "rect",
-			style_id = "column_edge_" .. iter_1_1
+			style_id = "column_edge_" .. j
 		}
-		var_1_5["column_edge_" .. iter_1_1] = {
+		style["column_edge_" .. j] = {
 			vertical_alignment = "top",
 			horizontal_alignment = "left",
 			texture_size = {
 				arg_1_3,
-				var_1_1[2]
+				size[2]
 			},
 			offset = {
-				var_1_7 * iter_1_1,
+				num_3 * j,
 				0,
 				0
 			},
-			color = var_1_0
+			color = flag
 		}
 	end
 
-	return var_1_2
+	return tbl_2
 end
 
-local var_0_16 = {
+local tbl_4 = {
 	word_wrap = false,
 	upper_case = true,
 	localize = false,
@@ -792,7 +793,7 @@ local var_0_16 = {
 		10
 	}
 }
-local var_0_17 = {
+local tbl_5 = {
 	word_wrap = false,
 	upper_case = false,
 	localize = false,
@@ -801,7 +802,7 @@ local var_0_17 = {
 	vertical_alignment = "center",
 	dynamic_font_size = true,
 	font_type = "hell_shark_header",
-	text_color = var_0_4,
+	text_color = tbl_3,
 	offset = {
 		0,
 		-2,
@@ -812,7 +813,7 @@ local var_0_17 = {
 		0
 	}
 }
-local var_0_18 = {
+local tbl_6 = {
 	word_wrap = false,
 	upper_case = false,
 	localize = false,
@@ -832,7 +833,7 @@ local var_0_18 = {
 		0
 	}
 }
-local var_0_19 = {
+local tbl_7 = {
 	word_wrap = false,
 	upper_case = true,
 	localize = true,
@@ -852,7 +853,7 @@ local var_0_19 = {
 		0
 	}
 }
-local var_0_20 = {
+local tbl_8 = {
 	word_wrap = false,
 	upper_case = false,
 	localize = true,
@@ -861,7 +862,7 @@ local var_0_20 = {
 	vertical_alignment = "center",
 	dynamic_font_size = true,
 	font_type = "hell_shark",
-	text_color = var_0_4,
+	text_color = tbl_3,
 	offset = {
 		12,
 		18,
@@ -872,7 +873,7 @@ local var_0_20 = {
 		0
 	}
 }
-local var_0_21 = {
+local tbl_9 = {
 	word_wrap = false,
 	upper_case = true,
 	localize = true,
@@ -881,7 +882,7 @@ local var_0_21 = {
 	vertical_alignment = "center",
 	dynamic_font_size = true,
 	font_type = "hell_shark",
-	text_color = var_0_4,
+	text_color = tbl_3,
 	offset = {
 		0,
 		-2,
@@ -893,15 +894,16 @@ local var_0_21 = {
 	}
 }
 
-local function var_0_22(arg_2_0, arg_2_1, arg_2_2)
-	local var_2_0 = var_0_2[arg_2_0]
-	local var_2_1 = table.clone(var_2_0.size)
-	local var_2_2 = table.clone(var_0_21)
+local function fn_2(arg_2_0, arg_2_1, arg_2_2)
+	-- function 2
+	local var_2_0 = tbl[arg_2_0]
+	local clone = table.clone(var_2_0.size)
+	local clone_2 = table.clone(tbl_9)
 
-	var_2_2.text_color = arg_2_2
-	var_2_2.size = var_2_1
+	clone_2.text_color = arg_2_2
+	clone_2.size = clone
 
-	local var_2_3 = {
+	local tbl_2 = {
 		element = {
 			passes = {}
 		},
@@ -914,44 +916,44 @@ local function var_0_22(arg_2_0, arg_2_1, arg_2_2)
 			0
 		}
 	}
-	local var_2_4 = var_2_3.element.passes
-	local var_2_5 = var_2_3.content
-	local var_2_6 = var_2_3.style
+	local passes = tbl_2.element.passes
+	local content = tbl_2.content
+	local style = tbl_2.style
 
-	var_2_4[#var_2_4 + 1] = {
+	passes[#passes + 1] = {
 		style_id = "title",
 		pass_type = "text",
 		text_id = "title"
 	}
-	var_2_4[#var_2_4 + 1] = {
+	passes[#passes + 1] = {
 		style_id = "title_shadow",
 		pass_type = "text",
 		text_id = "title"
 	}
-	var_2_5.title = tostring(arg_2_1)
-	var_2_6.title = var_2_2
-	var_2_6.title_shadow = table.clone(var_2_2)
-	var_2_6.title_shadow.text_color = {
+	content.title = tostring(arg_2_1)
+	style.title = clone_2
+	style.title_shadow = table.clone(clone_2)
+	style.title_shadow.text_color = {
 		255,
 		0,
 		0,
 		0
 	}
-	var_2_6.title_shadow.offset = {
+	style.title_shadow.offset = {
 		2,
 		-3,
 		-1
 	}
-	var_2_6.underline = {
+	style.underline = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "center",
 		color = arg_2_2,
 		texture_size = {
-			var_2_1[1],
+			clone[1],
 			4
 		}
 	}
-	var_2_5.gradient = {
+	content.gradient = {
 		texture_id = "vertical_gradient",
 		uvs = {
 			{
@@ -964,7 +966,7 @@ local function var_0_22(arg_2_0, arg_2_1, arg_2_2)
 			}
 		}
 	}
-	var_2_6.left_gradient = {
+	style.left_gradient = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "left",
 		color = arg_2_2,
@@ -978,7 +980,7 @@ local function var_0_22(arg_2_0, arg_2_1, arg_2_2)
 			0
 		}
 	}
-	var_2_6.right_gradient = {
+	style.right_gradient = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "right",
 		color = arg_2_2,
@@ -993,31 +995,61 @@ local function var_0_22(arg_2_0, arg_2_1, arg_2_2)
 		}
 	}
 
-	return var_2_3
+	return tbl_2
 end
 
-local function var_0_23(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
-	local var_3_0 = var_0_2[arg_3_0].size
-	local var_3_1 = 12
-	local var_3_2 = {
-		var_3_0[1] / #arg_3_1,
-		var_3_0[2]
+local function fn_3(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+	-- function 3
+	local size = tbl[arg_3_0].size
+	local num = 12
+	local tbl_2 = {
+		size[1] / #arg_3_1,
+		size[2]
 	}
-	local var_3_3 = table.clone(var_0_17)
+	local clone = table.clone(tbl_5)
 
-	var_3_3.font_size = arg_3_2 or var_3_3.font_size
-	var_3_3.text_color = arg_3_4 and {
-		255,
-		177,
-		144,
-		31
-	} or var_3_3.text_color
+	clone.font_size = arg_3_2 or clone.font_size
 
-	if arg_3_7 then
-		var_3_3.text_color = arg_3_7 == "local_team" and Colors.get_color_table_with_alpha("local_player_team_lighter", 255) or Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
+	local tbl_3
+
+	if not arg_3_4 then
+		tbl_3 = {
+			255,
+			177,
+			144,
+			31
+		}
+
+		if not tbl_3 then
+			-- Nothing
+		end
 	end
 
-	local var_3_4 = {
+	tbl_3 = clone.text_color
+
+	::label_3_0::
+
+	clone.text_color = tbl_3
+
+	if not arg_3_7 then
+		local get_color_table_with_alpha
+
+		if arg_3_7 == "local_team" then
+			get_color_table_with_alpha = Colors.get_color_table_with_alpha("local_player_team_lighter", 255)
+
+			if not get_color_table_with_alpha then
+				-- Nothing
+			end
+		end
+
+		get_color_table_with_alpha = Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
+
+		::label_3_1::
+
+		clone.text_color = get_color_table_with_alpha
+	end
+
+	local tbl_4 = {
 		element = {
 			passes = {}
 		},
@@ -1030,77 +1062,79 @@ local function var_0_23(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, ar
 			0
 		}
 	}
-	local var_3_5 = var_3_4.element.passes
-	local var_3_6 = var_3_4.content
-	local var_3_7 = var_3_4.style
+	local passes = tbl_4.element.passes
+	local content = tbl_4.content
+	local style = tbl_4.style
 
-	for iter_3_0 = 1, #arg_3_1 do
-		local var_3_8 = "stat_" .. iter_3_0
+	for i = 1, #arg_3_1 do
+		local str = "stat_" .. i
 
-		var_3_5[#var_3_5 + 1] = {
+		passes[#passes + 1] = {
 			pass_type = "text",
-			text_id = var_3_8,
-			style_id = var_3_8
+			text_id = str,
+			style_id = str
 		}
 
 		if not arg_3_5 then
-			var_3_5[#var_3_5 + 1] = {
+			passes[#passes + 1] = {
 				pass_type = "texture",
 				texture_id = "highscore_marker",
-				style_id = var_3_8 .. "_highscore_marker",
-				content_check_function = function(arg_4_0, arg_4_1)
-					return arg_4_0[var_3_8 .. "_is_highscore"]
+				style_id = str .. "_highscore_marker",
+				content_check_function = function (self, arg_4_1)
+					-- function 4
+					return self[str .. "_is_highscore"]
 				end
 			}
-			var_3_5[#var_3_5 + 1] = {
+			passes[#passes + 1] = {
 				pass_type = "texture",
 				texture_id = "highscore_marker",
-				style_id = var_3_8 .. "_highscore_marker_shadow",
-				content_check_function = function(arg_5_0, arg_5_1)
-					return arg_5_0[var_3_8 .. "_is_highscore"]
+				style_id = str .. "_highscore_marker_shadow",
+				content_check_function = function (self, arg_5_1)
+					-- function 5
+					return self[str .. "_is_highscore"]
 				end
 			}
 		end
 
-		var_3_5[#var_3_5 + 1] = {
+		passes[#passes + 1] = {
 			pass_type = "text",
-			text_id = var_3_8,
-			style_id = var_3_8 .. "_shadow"
+			text_id = str,
+			style_id = str .. "_shadow"
 		}
 
-		local var_3_9 = arg_3_1[iter_3_0]
+		local var_3_11 = arg_3_1[i]
 
-		if type(var_3_9) == "number" then
-			var_3_9 = math.round(var_3_9)
+		if type(var_3_11) == "number" then
+			var_3_11 = math.round(var_3_11)
 		end
 
-		var_3_6[var_3_8] = tostring(var_3_9)
-		var_3_6.highscore_marker = "scoreboard_marker"
-		var_3_6.offset = arg_3_3
-		var_3_6[var_3_8 .. "_is_highscore"] = not arg_3_5 and arg_3_6 and arg_3_6[iter_3_0] == var_3_9 and var_3_9 > 0 or false
-		var_3_7[var_3_8] = table.clone(var_3_3)
-		var_3_7[var_3_8].offset[1] = (iter_3_0 - 1) * var_3_2[1] + var_3_1
-		var_3_7[var_3_8].size = {
-			var_3_2[1] - var_3_1 * 2,
-			var_3_2[2]
+		content[str] = tostring(var_3_11)
+		content.highscore_marker = "scoreboard_marker"
+		content.offset = arg_3_3
+		content[str .. "_is_highscore"] = (arg_3_5 or arg_3_6 or arg_3_6[i] ~= var_3_11 or not (var_3_11 > 0)) and false
+		style[str] = table.clone(clone)
+		style[str].offset[1] = (i - 1) * tbl_2[1] + num
+		style[str].size = {
+			tbl_2[1] - num * 2,
+			tbl_2[2]
 		}
-		var_3_7[var_3_8 .. "_shadow"] = table.clone(var_3_3)
-		var_3_7[var_3_8 .. "_shadow"].offset = {
-			(iter_3_0 - 1) * var_3_2[1] + 2 + var_3_1,
+		style[str .. "_shadow"] = table.clone(clone)
+		style[str .. "_shadow"].offset = {
+			(i - 1) * tbl_2[1] + 2 + num,
 			-3,
 			-1
 		}
-		var_3_7[var_3_8 .. "_shadow"].size = {
-			var_3_2[1] - var_3_1 * 2,
-			var_3_2[2]
+		style[str .. "_shadow"].size = {
+			tbl_2[1] - num * 2,
+			tbl_2[2]
 		}
-		var_3_7[var_3_8 .. "_shadow"].text_color = {
+		style[str .. "_shadow"].text_color = {
 			255,
 			0,
 			0,
 			0
 		}
-		var_3_7[var_3_8 .. "_highscore_marker"] = {
+		style[str .. "_highscore_marker"] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			texture_size = {
@@ -1108,16 +1142,16 @@ local function var_0_23(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, ar
 				39
 			},
 			offset = {
-				(iter_3_0 - 1) * var_3_2[1],
+				(i - 1) * tbl_2[1],
 				0,
 				5
 			},
 			size = {
-				var_3_2[1],
-				var_3_2[2]
+				tbl_2[1],
+				tbl_2[2]
 			}
 		}
-		var_3_7[var_3_8 .. "_highscore_marker_shadow"] = {
+		style[str .. "_highscore_marker_shadow"] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			texture_size = {
@@ -1131,39 +1165,55 @@ local function var_0_23(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, ar
 				0
 			},
 			offset = {
-				(iter_3_0 - 1) * var_3_2[1] + 1,
+				(i - 1) * tbl_2[1] + 1,
 				-1,
 				4
 			},
 			size = {
-				var_3_2[1],
-				var_3_2[2]
+				tbl_2[1],
+				tbl_2[2]
 			}
 		}
 	end
 
-	return var_3_4
+	return tbl_4
 end
 
-local function var_0_24(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
-	local var_6_0 = var_0_2[arg_6_0]
-	local var_6_1 = table.clone(var_6_0.size)
+local function fn_4(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+	-- function 6
+	local var_6_0 = tbl[arg_6_0]
+	local clone = table.clone(var_6_0.size)
 
-	var_6_1[1] = 170
+	clone[1] = 170
 
-	local var_6_2 = var_0_4
-	local var_6_3 = table.clone(var_0_18)
+	local var_6_2 = tbl_3
+	local clone_2 = table.clone(tbl_6)
 
-	var_6_3.font_size = arg_6_2 or var_6_3.font_size
-	var_6_3.text_color = arg_6_4 and {
-		255,
-		177,
-		144,
-		31
-	} or var_6_2
-	var_6_3.size = var_6_1
+	clone_2.font_size = arg_6_2 or clone_2.font_size
 
-	local var_6_4 = {
+	local tbl_2
+
+	if not arg_6_4 then
+		tbl_2 = {
+			255,
+			177,
+			144,
+			31
+		}
+
+		if not tbl_2 then
+			-- Nothing
+		end
+	end
+
+	tbl_2 = var_6_2
+
+	::label_6_0::
+
+	clone_2.text_color = tbl_2
+	clone_2.size = clone
+
+	local tbl_4 = {
 		element = {
 			passes = {}
 		},
@@ -1176,142 +1226,163 @@ local function var_0_24(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 			0
 		}
 	}
-	local var_6_5 = var_6_4.element.passes
-	local var_6_6 = var_6_4.content
-	local var_6_7 = var_6_4.style
+	local passes = tbl_4.element.passes
+	local content = tbl_4.content
+	local style = tbl_4.style
 
-	var_6_5[#var_6_5 + 1] = {
+	passes[#passes + 1] = {
 		style_id = "title",
 		pass_type = "text",
 		text_id = "title"
 	}
-	var_6_5[#var_6_5 + 1] = {
+	passes[#passes + 1] = {
 		style_id = "title_shadow",
 		pass_type = "text",
 		text_id = "title"
 	}
-	var_6_6.title = tostring(arg_6_1)
-	var_6_7.title = var_6_3
-	var_6_7.title_shadow = table.clone(var_6_3)
-	var_6_7.title_shadow.text_color = {
+	content.title = tostring(arg_6_1)
+	style.title = clone_2
+	style.title_shadow = table.clone(clone_2)
+	style.title_shadow.text_color = {
 		255,
 		0,
 		0,
 		0
 	}
-	var_6_7.title_shadow.offset = {
+	style.title_shadow.offset = {
 		2,
 		-3,
 		-1
 	}
 
-	return var_6_4
+	return tbl_4
 end
 
-local function var_0_25(arg_7_0, arg_7_1, arg_7_2)
-	local var_7_0 = arg_7_0 == "local_team"
-	local var_7_1 = var_7_0 and "local_title" or "opponent_title"
-	local var_7_2 = var_0_2[var_7_1]
-	local var_7_3 = table.clone(var_7_2.size)
-	local var_7_4 = var_7_0 and arg_7_1 or arg_7_2
-	local var_7_5 = UISettings.teams_ui_assets[var_7_4]
+local function fn_5(arg_7_0, arg_7_1, arg_7_2)
+	-- function 7
+	local flag = arg_7_0 == "local_team"
+	local flag_2
 
-	if not var_7_0 or not var_0_5 then
-		local var_7_6 = var_0_8
+	flag_2 = not flag and "local_title" and "opponent_title"
+
+	local var_7_2 = tbl[flag_2]
+	local clone = table.clone(var_7_2.size)
+	local flag_3 = not flag and arg_7_1 and arg_7_2
+	local var_7_5 = UISettings.teams_ui_assets[flag_3]
+
+	if not (not flag and get_color_table_with_alpha) then
+		local var_7_6 = get_color_table_with_alpha_4
 	end
 
-	if not var_7_0 or not var_0_6 then
-		local var_7_7 = var_0_9
+	if not (not flag and get_color_table_with_alpha_2) then
+		local var_7_7 = get_color_table_with_alpha_5
 	end
 
-	if not var_7_0 or not var_0_7 then
-		local var_7_8 = var_0_10
+	if not (not flag and get_color_table_with_alpha_3) then
+		local var_7_8 = get_color_table_with_alpha_6
 	end
 
-	local var_7_9 = var_7_0 and Colors.get_color_table_with_alpha("local_player_team_lighter", 255) or Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
-	local var_7_10 = table.clone(var_0_19)
+	local get_color_table_with_alpha_7
 
-	var_7_10.size = var_7_3
-	var_7_10.text_color = var_7_9
+	if not flag then
+		get_color_table_with_alpha_7 = Colors.get_color_table_with_alpha("local_player_team_lighter", 255)
 
-	local var_7_11 = {
+		if not get_color_table_with_alpha_7 then
+			-- Nothing
+		end
+	end
+
+	get_color_table_with_alpha_7 = Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
+
+	::label_7_0::
+
+	local clone_2 = table.clone(tbl_7)
+
+	clone_2.size = clone
+	clone_2.text_color = get_color_table_with_alpha_7
+
+	local tbl_2 = {
 		element = {
 			passes = {}
 		},
 		content = {},
 		style = {},
-		scenegraph_id = var_7_1,
+		scenegraph_id = flag_2,
 		offset = {
 			0,
 			0,
 			0
 		}
 	}
-	local var_7_12 = var_7_11.element.passes
-	local var_7_13 = var_7_11.content
-	local var_7_14 = var_7_11.style
+	local passes = tbl_2.element.passes
+	local content = tbl_2.content
+	local style = tbl_2.style
 
-	var_7_12[#var_7_12 + 1] = {
+	passes[#passes + 1] = {
 		style_id = "title",
 		pass_type = "text",
 		text_id = "title"
 	}
-	var_7_12[#var_7_12 + 1] = {
+	passes[#passes + 1] = {
 		style_id = "title_shadow",
 		pass_type = "text",
 		text_id = "title"
 	}
-	var_7_13.title = var_7_5.display_name
-	var_7_14.title = var_7_10
-	var_7_14.title_shadow = table.clone(var_7_10)
-	var_7_14.title_shadow.text_color = {
+	content.title = var_7_5.display_name
+	style.title = clone_2
+	style.title_shadow = table.clone(clone_2)
+	style.title_shadow.text_color = {
 		255,
 		0,
 		0,
 		0
 	}
-	var_7_14.title_shadow.offset[1] = var_7_14.title_shadow.offset[1] + 2
-	var_7_14.title_shadow.offset[2] = var_7_14.title_shadow.offset[2] - 2
-	var_7_14.title_shadow.offset[3] = var_7_14.title_shadow.offset[3] - 1
-	var_7_12[#var_7_12 + 1] = {
+	style.title_shadow.offset[1] = style.title_shadow.offset[1] + 2
+	style.title_shadow.offset[2] = style.title_shadow.offset[2] - 2
+	style.title_shadow.offset[3] = style.title_shadow.offset[3] - 1
+	passes[#passes + 1] = {
 		style_id = "team_type",
 		pass_type = "text",
 		text_id = "team_type"
 	}
-	var_7_12[#var_7_12 + 1] = {
+	passes[#passes + 1] = {
 		style_id = "team_type_shadow",
 		pass_type = "text",
 		text_id = "team_type"
 	}
-	var_7_13.team_type = var_7_0 and "vs_lobby_your_team" or "vs_lobby_enemy_team"
 
-	local var_7_15 = table.clone(var_0_20)
+	local flag_4
 
-	var_7_15.size = var_7_3
-	var_7_14.team_type = var_7_15
-	var_7_14.team_type_shadow = table.clone(var_7_15)
-	var_7_14.team_type_shadow.text_color = {
+	flag_4 = not flag and "vs_lobby_your_team" and "vs_lobby_enemy_team"
+	content.team_type = flag_4
+
+	local clone_3 = table.clone(tbl_8)
+
+	clone_3.size = clone
+	style.team_type = clone_3
+	style.team_type_shadow = table.clone(clone_3)
+	style.team_type_shadow.text_color = {
 		255,
 		0,
 		0,
 		0
 	}
-	var_7_14.team_type_shadow.offset[1] = var_7_14.team_type_shadow.offset[1] + 2
-	var_7_14.team_type_shadow.offset[2] = var_7_14.team_type_shadow.offset[2] - 2
-	var_7_14.team_type_shadow.offset[3] = var_7_14.team_type_shadow.offset[3] - 1
+	style.team_type_shadow.offset[1] = style.team_type_shadow.offset[1] + 2
+	style.team_type_shadow.offset[2] = style.team_type_shadow.offset[2] - 2
+	style.team_type_shadow.offset[3] = style.team_type_shadow.offset[3] - 1
 
-	return var_7_11
+	return tbl_2
 end
 
-local var_0_26 = {
+local tbl_10 = {
 	background = UIWidgets.create_simple_rect("screen", {
 		128,
 		0,
 		0,
 		0
 	}),
-	heroes_side_title = var_0_22("local_heroes_header_grid", "vs_as_heroes", var_0_4),
-	pactsworn_side_title = var_0_22("local_pact_header_grid", "vs_as_pactsworn", var_0_4),
+	heroes_side_title = fn_2("local_heroes_header_grid", "vs_as_heroes", tbl_3),
+	pactsworn_side_title = fn_2("local_pact_header_grid", "vs_as_pactsworn", tbl_3),
 	local_gradient = UIWidgets.create_simple_uv_texture("horizontal_gradient", {
 		{
 			1,
@@ -1344,8 +1415,11 @@ local var_0_26 = {
 	})
 }
 
-local function var_0_27(arg_8_0)
-	local var_8_0 = arg_8_0 == "local_team" and "local_winner_icon" or "opponent_winner_icon"
+local function fn_6(arg_8_0)
+	-- function 8
+	local flag
+
+	flag = arg_8_0 ~= "local_team" or not "local_winner_icon" or "opponent_winner_icon"
 
 	return {
 		element = {
@@ -1428,28 +1502,30 @@ local function var_0_27(arg_8_0)
 			0,
 			0
 		},
-		scenegraph_id = var_8_0
+		scenegraph_id = flag
 	}
 end
 
-local function var_0_28(arg_9_0, arg_9_1, arg_9_2)
-	local var_9_0 = "icons_placeholder"
-	local var_9_1 = ""
-	local var_9_2
+local function fn_7(arg_9_0, arg_9_1, arg_9_2)
+	-- function 9
+	local str = "icons_placeholder"
+	local str_2 = ""
+	local str_3
 
 	if arg_9_0 == "local_team" then
-		var_9_0 = UISettings.teams_ui_assets[arg_9_1].local_flag_texture or var_9_0
-		var_9_2 = "local_flag"
+		str = UISettings.teams_ui_assets[arg_9_1].local_flag_texture or str
+		str_3 = "local_flag"
 	else
-		var_9_0 = UISettings.teams_ui_assets[arg_9_2].opponent_flag_texture or var_9_0
-		var_9_2 = "opponent_flag"
+		str = UISettings.teams_ui_assets[arg_9_2].opponent_flag_texture or str
+		str_3 = "opponent_flag"
 	end
 
-	return UIWidgets.create_simple_texture(var_9_0, var_9_2)
+	return UIWidgets.create_simple_texture(str, str_3)
 end
 
-local function var_0_29(arg_10_0, arg_10_1, arg_10_2)
-	local var_10_0 = var_0_2[arg_10_0].size
+local function fn_8(arg_10_0, arg_10_1, arg_10_2)
+	-- function 10
+	local size = tbl[arg_10_0].size
 
 	return {
 		element = {
@@ -1477,7 +1553,7 @@ local function var_0_29(arg_10_0, arg_10_1, arg_10_2)
 					0
 				},
 				texture_size = {
-					var_10_0[1],
+					size[1],
 					arg_10_2
 				}
 			}
@@ -1491,64 +1567,69 @@ local function var_0_29(arg_10_0, arg_10_1, arg_10_2)
 	}
 end
 
-local function var_0_30(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
-	local var_11_0 = var_0_2[arg_11_0].size
+local function fn_9(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+	-- function 11
+	local size = tbl[arg_11_0].size
 
-	for iter_11_0 = 1, arg_11_1 do
-		local var_11_1 = {
+	for i = 1, arg_11_1 do
+		local tbl_2 = {
 			0,
-			(iter_11_0 - 1) * -var_11_0[2]
+			(i - 1) * -size[2]
 		}
-		local var_11_2 = iter_11_0 % 2 == 0 and arg_11_4 or arg_11_5 or {
+		local flag = (i % 2 ~= 0 or not arg_11_4 or arg_11_5) and {
 			128,
 			0,
 			0,
 			0
 		}
 
-		arg_11_3[arg_11_2 .. "_" .. iter_11_0] = UIWidgets.create_simple_rect(arg_11_0, var_11_2, nil, var_11_1)
+		arg_11_3[arg_11_2 .. "_" .. i] = UIWidgets.create_simple_rect(arg_11_0, flag, nil, tbl_2)
 	end
 end
 
-local function var_0_31(arg_12_0, arg_12_1, arg_12_2)
-	local var_12_0 = {}
+local function fn_10(arg_12_0, arg_12_1, arg_12_2)
+	-- function 12
+	local tbl_2 = {}
 
 	if arg_12_0 == "local_team" then
-		var_0_30("local_team_anchor", 1, "local_team", var_12_0)
-		var_0_30("local_heroes_score_title", 1, "local_team_heroes", var_12_0)
-		var_0_30("local_pactsworn_score_title", 1, "local_team_pactsworn", var_12_0)
-		var_0_30("local_names_anchor", arg_12_1, "local_names", var_12_0, var_0_11, var_0_12)
-		var_0_30("local_anchor", arg_12_1, "local_heroes", var_12_0, var_0_11, var_0_12)
-		var_0_30("local_pact_anchor", arg_12_1, "local_pact", var_12_0, var_0_11, var_0_12)
+		fn_9("local_team_anchor", 1, "local_team", tbl_2)
+		fn_9("local_heroes_score_title", 1, "local_team_heroes", tbl_2)
+		fn_9("local_pactsworn_score_title", 1, "local_team_pactsworn", tbl_2)
+		fn_9("local_names_anchor", arg_12_1, "local_names", tbl_2, get_table, get_table_2)
+		fn_9("local_anchor", arg_12_1, "local_heroes", tbl_2, get_table, get_table_2)
+		fn_9("local_pact_anchor", arg_12_1, "local_pact", tbl_2, get_table, get_table_2)
 
-		arg_12_2.opponent_team_anchor.local_position[2] = var_0_2.local_team_anchor.position[2] - 5 * var_0_0 - var_0_2.local_team_anchor.size[2]
+		arg_12_2.opponent_team_anchor.local_position[2] = tbl.local_team_anchor.position[2] - 5 * num - tbl.local_team_anchor.size[2]
 	else
-		var_0_30("opponent_team_anchor", 1, "opponent_team", var_12_0)
-		var_0_30("opponent_heroes_score_title", 1, "opponent_team_heroes", var_12_0)
-		var_0_30("opponent_pactsworn_score_title", 1, "opponent_team_pactsworn", var_12_0)
-		var_0_30("opponent_names_anchor", arg_12_1, "opponent_names", var_12_0, var_0_13, var_0_14)
-		var_0_30("opponent_anchor", arg_12_1, "opponent_heroes", var_12_0, var_0_13, var_0_14)
-		var_0_30("opponent_pact_anchor", arg_12_1, "opponent_pact", var_12_0, var_0_13, var_0_14)
+		fn_9("opponent_team_anchor", 1, "opponent_team", tbl_2)
+		fn_9("opponent_heroes_score_title", 1, "opponent_team_heroes", tbl_2)
+		fn_9("opponent_pactsworn_score_title", 1, "opponent_team_pactsworn", tbl_2)
+		fn_9("opponent_names_anchor", arg_12_1, "opponent_names", tbl_2, get_table_3, get_table_4)
+		fn_9("opponent_anchor", arg_12_1, "opponent_heroes", tbl_2, get_table_3, get_table_4)
+		fn_9("opponent_pact_anchor", arg_12_1, "opponent_pact", tbl_2, get_table_3, get_table_4)
 	end
 
-	return var_12_0
+	return tbl_2
 end
 
-local var_0_32 = {
+local tbl_11 = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			init = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+				-- function 13
 				arg_13_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
-				local var_14_0 = math.easeOutCubic(arg_14_3)
+			update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+				-- function 14
+				local easeOutCubic = math.easeOutCubic(arg_14_3)
 
-				arg_14_4.render_settings.alpha_multiplier = var_14_0
+				arg_14_4.render_settings.alpha_multiplier = easeOutCubic
 			end,
-			on_complete = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+			on_complete = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+				-- function 15
 				return
 			end
 		}
@@ -1558,15 +1639,18 @@ local var_0_32 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			init = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+				-- function 16
 				arg_16_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
-				local var_17_0 = math.easeOutCubic(arg_17_3)
+			update = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+				-- function 17
+				local easeOutCubic = math.easeOutCubic(arg_17_3)
 
-				arg_17_4.render_settings.alpha_multiplier = 1 - var_17_0
+				arg_17_4.render_settings.alpha_multiplier = 1 - easeOutCubic
 			end,
-			on_complete = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			on_complete = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+				-- function 18
 				return
 			end
 		}
@@ -1574,13 +1658,13 @@ local var_0_32 = {
 }
 
 return {
-	scenegraph_definition = var_0_2,
-	widget_definitions = var_0_26,
-	animation_definitions = var_0_32,
-	create_stats_func = var_0_23,
-	create_title_func = var_0_24,
-	create_team_grid_fields_func = var_0_31,
-	create_team_title_func = var_0_25,
-	create_flag_func = var_0_28,
-	create_winner_icon_func = var_0_27
+	scenegraph_definition = tbl,
+	widget_definitions = tbl_10,
+	animation_definitions = tbl_11,
+	create_stats_func = fn_3,
+	create_title_func = fn_4,
+	create_team_grid_fields_func = fn_10,
+	create_team_title_func = fn_5,
+	create_flag_func = fn_7,
+	create_winner_icon_func = fn_6
 }

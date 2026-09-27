@@ -1,914 +1,1125 @@
 -- chunkname: @scripts/imgui/imgui_store_rotation.lua
 
-local var_0_0 = "    {\n        \"pages\": {\n          \"featured\": {\n            \"rotation_timestamp\": 1669633200,\n            \"display_name\": \"menu_store_panel_title_featured\",\n            \"grid\": [\n            ],\n            \"layout\": \"featured\",\n            \"slideshow\": [\n            ],\n            \"sound_event_enter\": \"Play_hud_store_category_front\"\n          },\n          \"dlc\": {\n            \"content\": [\n              \"ultimate_bundle\",\n              \"legacy_bundle\",\n              \"premium_career_bundle\",\n              \"premium_career_bundle_upgrade\",\n              \"shovel\",\n              \"shovel_upgrade\",\n              \"bless\",\n              \"bless_upgrade\",\n              \"woods\",\n              \"woods_upgrade\",\n              \"grass\",\n              \"cog\",\n              \"cog_upgrade\",\n              \"lake\",\n              \"lake_upgrade\",\n              \"scorpion\",\n              \"holly\",\n              \"bogenhafen\",\n              \"pre_order\"\n            ],\n            \"type\": \"dlc\",\n            \"display_name\": \"menu_store_panel_title_dlcs\",\n            \"layout\": \"dlc_list\",\n            \"sound_event_enter\": \"Play_hud_store_category_dlc\"\n          }\n        }\n      }\n"
-local var_0_1 = "    {\n        \"featured\": {\n        },\n        \"discounts\" : {\n        }\n    }\n"
-local var_0_2 = {
+local str = "    {\n        \"pages\": {\n          \"featured\": {\n            \"rotation_timestamp\": 1669633200,\n            \"display_name\": \"menu_store_panel_title_featured\",\n            \"grid\": [\n            ],\n            \"layout\": \"featured\",\n            \"slideshow\": [\n            ],\n            \"sound_event_enter\": \"Play_hud_store_category_front\"\n          },\n          \"dlc\": {\n            \"content\": [\n              \"ultimate_bundle\",\n              \"legacy_bundle\",\n              \"premium_career_bundle\",\n              \"premium_career_bundle_upgrade\",\n              \"shovel\",\n              \"shovel_upgrade\",\n              \"bless\",\n              \"bless_upgrade\",\n              \"woods\",\n              \"woods_upgrade\",\n              \"grass\",\n              \"cog\",\n              \"cog_upgrade\",\n              \"lake\",\n              \"lake_upgrade\",\n              \"scorpion\",\n              \"holly\",\n              \"bogenhafen\",\n              \"pre_order\"\n            ],\n            \"type\": \"dlc\",\n            \"display_name\": \"menu_store_panel_title_dlcs\",\n            \"layout\": \"dlc_list\",\n            \"sound_event_enter\": \"Play_hud_store_category_dlc\"\n          }\n        }\n      }\n"
+local str_2 = "    {\n        \"featured\": {\n        },\n        \"discounts\" : {\n        }\n    }\n"
+local tbl = {
 	[1] = "795750",
 	[2] = "552500"
 }
-local var_0_3 = table.enum("slideshow", "featured", "discount")
+local enum = table.enum("slideshow", "featured", "discount")
 
-local function var_0_4(arg_1_0)
+local function fn(arg_1_0)
+	-- function 1
 	return (Localize(arg_1_0))
 end
 
-local var_0_5 = "/.shop/imgui_store_tool_save_file.json"
+local str_3 = "/.shop/imgui_store_tool_save_file.json"
 
 ImguiStoreRotation = class(ImguiStoreRotation)
 
-local var_0_6 = Imgui
-local var_0_7 = true
+local Imgui = Imgui
+local flag = true
 
-function ImguiStoreRotation.init(arg_2_0)
-	arg_2_0._fp = nil
-	arg_2_0._save_file = nil
-	arg_2_0._first_launch = true
+ImguiStoreRotation.init = function (self)
+	-- function 2
+	self._fp = nil
+	self._save_file = nil
+	self._first_launch = true
 
-	arg_2_0:_load_saved_data()
+	self:_load_saved_data()
 
-	arg_2_0._item_keys_list = {}
-	arg_2_0._layout_items = {}
-	arg_2_0._slideshow_items = {}
-	arg_2_0._dlc_list = {}
-	arg_2_0._store_dlc_list = {}
-	arg_2_0._search_type = var_0_3.featured
+	self._item_keys_list = {}
+	self._layout_items = {}
+	self._slideshow_items = {}
+	self._dlc_list = {}
+	self._store_dlc_list = {}
+	self._search_type = enum.featured
 
-	arg_2_0:_setup_timpestamp_fields()
+	self:_setup_timpestamp_fields()
 
-	arg_2_0._timestamp = 0
+	self._timestamp = 0
 
-	arg_2_0:_setup_item_keys_list()
-	arg_2_0:_setup_dlc_list()
+	self:_setup_item_keys_list()
+	self:_setup_dlc_list()
 
-	arg_2_0._item_search_results = table.clone(arg_2_0._item_keys_list)
-	arg_2_0._searcheable_item_keys = {}
+	self._item_search_results = table.clone(self._item_keys_list)
+	self._searcheable_item_keys = {}
 
-	arg_2_0:_filter_item_keys_list()
+	self:_filter_item_keys_list()
 
-	arg_2_0._is_selecting_item = false
-	arg_2_0._is_selecting_slideshow_item = false
-	arg_2_0._selected_item_index = -1
-	arg_2_0._item_search_text = ""
-	arg_2_0._prio = 0
-	arg_2_0._localize = false
+	self._is_selecting_item = false
+	self._is_selecting_slideshow_item = false
+	self._selected_item_index = -1
+	self._item_search_text = ""
+	self._prio = 0
+	self._localize = false
 
-	arg_2_0:_setup_layout_template()
+	self:_setup_layout_template()
 
-	arg_2_0._appid = 795750
-	arg_2_0._appid_idx = 1
-	arg_2_0._is_selecting_discount_item = false
-	arg_2_0._discount_amount = 0
-	arg_2_0._discounted_items = {}
-	arg_2_0._has_error_discount = false
+	self._appid = 795750
+	self._appid_idx = 1
+	self._is_selecting_discount_item = false
+	self._discount_amount = 0
+	self._discounted_items = {}
+	self._has_error_discount = false
 
-	arg_2_0:_setup_discount_begin_end_date()
+	self:_setup_discount_begin_end_date()
 
-	arg_2_0._backend_store = Managers.backend:get_interface("peddler")
-	arg_2_0._itemdef_filename = ""
-	arg_2_0._all_feature_items = {}
-	arg_2_0._all_slideshow_items = {}
-	arg_2_0._missing_file_name = nil
-	arg_2_0._timestamp_error = nil
-	arg_2_0._tabs = {
+	self._backend_store = Managers.backend:get_interface("peddler")
+	self._itemdef_filename = ""
+	self._all_feature_items = {}
+	self._all_slideshow_items = {}
+	self._missing_file_name = nil
+	self._timestamp_error = nil
+	self._tabs = {
 		"Feature Page Rotation",
 		"Store Discounts",
 		"Store Item Utility"
 	}
-	arg_2_0._selected_tab = arg_2_0._tabs[1]
-	arg_2_0._save_successful_discount = ""
-	arg_2_0._save_successful_featured = ""
-	arg_2_0._cosmetic_items = {}
+	self._selected_tab = self._tabs[1]
+	self._save_successful_discount = ""
+	self._save_successful_featured = ""
+	self._cosmetic_items = {}
 
-	arg_2_0:_collect_cosmetic_items_data()
+	self:_collect_cosmetic_items_data()
 end
 
-function ImguiStoreRotation._cleanup_slideshow(arg_3_0)
-	local var_3_0 = {}
-	local var_3_1 = {}
+ImguiStoreRotation._cleanup_slideshow = function (self)
+	-- function 3
+	local tbl = {}
+	local tbl_2 = {}
 
-	for iter_3_0 = 1, #arg_3_0._item_keys_list do
-		local var_3_2 = arg_3_0._item_keys_list[iter_3_0]
-		local var_3_3 = arg_3_0:_is_a_dlc(var_3_2)
-		local var_3_4 = var_3_3 and StoreDlcSettingsByName[var_3_2] or rawget(ItemMasterList, var_3_2)
+	for i = 1, #self._item_keys_list do
+		local var_3_2 = self._item_keys_list[i]
+		local _is_a_dlc = self:_is_a_dlc(var_3_2)
+		local var_3_4
 
-		if not var_3_4 or var_3_4.item_type ~= "bundle" and not var_3_3 and not var_3_4.store_bundle_big_image then
-			-- block empty
-		elseif var_3_4.item_type == "bundle" or var_3_3 then
-			var_3_0[#var_3_0 + 1] = var_3_2
+		if not _is_a_dlc then
+			var_3_4 = StoreDlcSettingsByName[var_3_2]
+
+			if not var_3_4 then
+				-- Nothing
+			end
+		end
+
+		var_3_4 = rawget(ItemMasterList, var_3_2)
+
+		::label_3_0::
+
+		if not (not var_3_4 and var_3_4.item_type == "bundle" and _is_a_dlc and var_3_4.store_bundle_big_image) then
+			-- Nothing
+		elseif var_3_4.item_type == "bundle" or not _is_a_dlc then
+			tbl[#tbl + 1] = var_3_2
 		end
 	end
 
-	arg_3_0._slideshow_item_keys = var_3_0
+	self._slideshow_item_keys = tbl
 end
 
-function ImguiStoreRotation._filter_item_keys_list(arg_4_0)
-	local var_4_0 = {}
-	local var_4_1 = {}
-	local var_4_2 = {}
+ImguiStoreRotation._filter_item_keys_list = function (self)
+	-- function 4
+	local tbl = {}
+	local tbl_2 = {}
+	local tbl_3 = {}
 
-	arg_4_0._name_to_key = {}
+	self._name_to_key = {}
 
-	for iter_4_0 = 1, #arg_4_0._item_keys_list do
-		local var_4_3 = arg_4_0._item_keys_list[iter_4_0]
-		local var_4_4 = arg_4_0:_is_a_dlc(var_4_3)
-		local var_4_5 = var_4_4 and StoreDlcSettingsByName[var_4_3] or rawget(ItemMasterList, var_4_3)
+	for i = 1, #self._item_keys_list do
+		local var_4_3 = self._item_keys_list[i]
+		local _is_a_dlc = self:_is_a_dlc(var_4_3)
+		local var_4_5
 
-		if not var_4_5 or var_4_5.item_type == "deed" then
-			-- block empty
+		if not _is_a_dlc then
+			var_4_5 = StoreDlcSettingsByName[var_4_3]
+
+			if not var_4_5 then
+				-- Nothing
+			end
+		end
+
+		var_4_5 = rawget(ItemMasterList, var_4_3)
+
+		::label_4_0::
+
+		if not (not var_4_5 and var_4_5.item_type ~= "deed") then
+			-- Nothing
 		else
-			local var_4_6 = var_0_4(var_4_5.display_name or var_4_5.name)
+			local var_4_6 = fn
+			local display_name = var_4_5.display_name
 
-			if var_4_5.item_type == "bundle" or var_4_4 then
-				var_4_0[#var_4_0 + 1] = var_4_3
-				var_4_0[#var_4_0 + 1] = var_4_6
+			display_name = display_name or var_4_5.name
+
+			local var_4_8 = var_4_6(display_name)
+
+			if var_4_5.item_type == "bundle" or not _is_a_dlc then
+				tbl[#tbl + 1] = var_4_3
+				tbl[#tbl + 1] = var_4_8
 			end
 
-			var_4_1[#var_4_1 + 1] = var_4_3
-			var_4_1[#var_4_1 + 1] = var_4_6
-			arg_4_0._name_to_key[var_4_6] = var_4_3
+			tbl_2[#tbl_2 + 1] = var_4_3
+			tbl_2[#tbl_2 + 1] = var_4_8
+			self._name_to_key[var_4_8] = var_4_3
 
-			if var_4_5.steam_itemdefid or var_4_5.current_prices then
-				var_4_2[#var_4_2 + 1] = var_4_3
-				var_4_2[#var_4_2 + 1] = var_4_6
+			if var_4_5.steam_itemdefid or not var_4_5.current_prices then
+				tbl_3[#tbl_3 + 1] = var_4_3
+				tbl_3[#tbl_3 + 1] = var_4_8
 			end
 		end
 	end
 
-	arg_4_0._searcheable_item_keys.slideshow = var_4_0
-	arg_4_0._searcheable_item_keys.featured = var_4_1
-	arg_4_0._searcheable_item_keys.discount = var_4_2
+	self._searcheable_item_keys.slideshow = tbl
+	self._searcheable_item_keys.featured = tbl_2
+	self._searcheable_item_keys.discount = tbl_3
 end
 
-function ImguiStoreRotation._load_saved_data(arg_5_0)
-	arg_5_0._save_data = {}
+ImguiStoreRotation._load_saved_data = function (self)
+	-- function 5
+	self._save_data = {}
 
-	if script_data.source_dir then
-		local var_5_0 = script_data.source_dir .. var_0_5
+	if not script_data.source_dir then
+		local str = script_data.source_dir .. str_3
 
-		arg_5_0._save_file = io.open(var_5_0, "r")
+		self._save_file = io.open(str, "r")
 
-		if arg_5_0._save_file then
-			local var_5_1 = arg_5_0._save_file:read("*all")
+		if not self._save_file then
+			local read = self._save_file:read("*all")
 
-			arg_5_0._save_data = cjson.decode(var_5_1)
+			self._save_data = cjson.decode(read)
 
-			arg_5_0._save_file:close()
+			self._save_file:close()
 		else
-			arg_5_0._save_data = cjson.decode(var_0_1)
+			self._save_data = cjson.decode(str_2)
 		end
 	else
 		Application.warning("[ImguiStoreRotation] script_data.source_dir is nil, cannot load store rotation settings, using default!")
 
-		arg_5_0._save_data = cjson.decode(var_0_1)
+		self._save_data = cjson.decode(str_2)
 	end
 end
 
-function ImguiStoreRotation._save_settings(arg_6_0)
-	arg_6_0._save_data.featured.end_year = arg_6_0._timestamp_year
-	arg_6_0._save_data.featured.end_month = arg_6_0._timestamp_month
-	arg_6_0._save_data.featured.end_day = arg_6_0._timestamp_day
-	arg_6_0._save_data.featured.timestamp = arg_6_0._timestamp
-	arg_6_0._save_data.discounts.end_year = arg_6_0._end_discount_year
-	arg_6_0._save_data.discounts.end_month = arg_6_0._end_discount_month
-	arg_6_0._save_data.discounts.end_day = arg_6_0._end_discount_day
+ImguiStoreRotation._save_settings = function (self)
+	-- function 6
+	self._save_data.featured.end_year = self._timestamp_year
+	self._save_data.featured.end_month = self._timestamp_month
+	self._save_data.featured.end_day = self._timestamp_day
+	self._save_data.featured.timestamp = self._timestamp
+	self._save_data.discounts.end_year = self._end_discount_year
+	self._save_data.discounts.end_month = self._end_discount_month
+	self._save_data.discounts.end_day = self._end_discount_day
 
-	local var_6_0 = cjson.encode(arg_6_0._save_data)
+	local encode = cjson.encode(self._save_data)
 
-	if script_data.source_dir then
-		local var_6_1 = script_data.source_dir .. var_0_5
-		local var_6_2 = assert(io.open(var_6_1, "w"))
+	if not script_data.source_dir then
+		local str = script_data.source_dir .. str_3
+		local var_6_2 = assert(io.open(str, "w"))
 
-		var_6_2:write(var_6_0)
+		var_6_2:write(encode)
 		var_6_2:close()
 	else
 		Application.warning("[ImguiStoreRotation] script_data.source_dir is nil, cannot save store rotation settings!")
 	end
 end
 
-function ImguiStoreRotation._setup_timpestamp_fields(arg_7_0)
-	arg_7_0._timestamp_year = arg_7_0._save_data.featured.end_year and arg_7_0._save_data.featured.end_year or os.date("%Y")
-	arg_7_0._timestamp_month = arg_7_0._save_data.featured.end_month and arg_7_0._save_data.featured.end_month or os.date("%m")
-	arg_7_0._timestamp_day = arg_7_0._save_data.featured.end_day and arg_7_0._save_data.featured.end_day or os.date("%d")
-	arg_7_0._timestamp_hour = "12"
-	arg_7_0._timestamp_minutes = "00"
-	arg_7_0._timestamp_seconds = "00"
-	arg_7_0._timestamp = arg_7_0._save_data.featured.timestamp and arg_7_0._save_data.featured.timestamp or 0
-	arg_7_0._new_rotation_file_name = string.format("layout_%s_%s_%s", os.date("%Y"), os.date("%m"), os.date("%d"))
-	arg_7_0._new_discount_file_name = string.format("rotation_%s_%s_%s", os.date("%Y"), os.date("%m"), os.date("%d"))
-end
+ImguiStoreRotation._setup_timpestamp_fields = function (self)
+	-- function 7
+	local end_year
 
-function ImguiStoreRotation._setup_discount_begin_end_date(arg_8_0)
-	arg_8_0._begin_discount_year = os.date("%Y")
-	arg_8_0._begin_discount_month = os.date("%m")
-	arg_8_0._begin_discount_day = os.date("%d")
-	arg_8_0._end_discount_year = arg_8_0._save_data.discounts.end_year and arg_8_0._save_data.discounts.end_year or "00"
-	arg_8_0._end_discount_month = arg_8_0._save_data.discounts.end_month and arg_8_0._save_data.discounts.end_month or "00"
-	arg_8_0._end_discount_day = arg_8_0._save_data.discounts.end_day and arg_8_0._save_data.discounts.end_day or "00"
-end
+	if not self._save_data.featured.end_year then
+		end_year = self._save_data.featured.end_year
 
-function ImguiStoreRotation._setup_layout_template(arg_9_0)
-	local var_9_0 = cjson.decode(var_0_0)
-
-	if var_9_0 then
-		arg_9_0._lua_layout = var_9_0
-	end
-end
-
-function ImguiStoreRotation._setup_item_keys_list(arg_10_0)
-	table.clear(arg_10_0._item_keys_list)
-
-	arg_10_0._item_keys_list = table.keys(ItemMasterList)
-
-	table.sort(arg_10_0._item_keys_list)
-end
-
-function ImguiStoreRotation._setup_dlc_list(arg_11_0)
-	local var_11_0 = 0
-
-	table.clear(arg_11_0._dlc_list)
-
-	for iter_11_0, iter_11_1 in ipairs(UnlockSettings) do
-		for iter_11_2, iter_11_3 in pairs(iter_11_1.unlocks) do
-			var_11_0 = var_11_0 + 1
-			arg_11_0._dlc_list[var_11_0] = iter_11_2
+		if not end_year then
+			-- Nothing
 		end
 	end
 
-	table.sort(arg_11_0._dlc_list)
-	table.append(arg_11_0._item_keys_list, arg_11_0._dlc_list)
+	end_year = os.date("%Y")
+
+	::label_7_0::
+
+	self._timestamp_year = end_year
+
+	local end_month
+
+	if not self._save_data.featured.end_month then
+		end_month = self._save_data.featured.end_month
+
+		if not end_month then
+			-- Nothing
+		end
+	end
+
+	end_month = os.date("%m")
+
+	::label_7_1::
+
+	self._timestamp_month = end_month
+
+	local end_day
+
+	if not self._save_data.featured.end_day then
+		end_day = self._save_data.featured.end_day
+
+		if not end_day then
+			-- Nothing
+		end
+	end
+
+	end_day = os.date("%d")
+
+	::label_7_2::
+
+	self._timestamp_day = end_day
+	self._timestamp_hour = "12"
+	self._timestamp_minutes = "00"
+	self._timestamp_seconds = "00"
+
+	local timestamp
+
+	if not self._save_data.featured.timestamp then
+		timestamp = self._save_data.featured.timestamp
+
+		if not timestamp then
+			-- Nothing
+		end
+	end
+
+	timestamp = 0
+
+	::label_7_3::
+
+	self._timestamp = timestamp
+	self._new_rotation_file_name = string.format("layout_%s_%s_%s", os.date("%Y"), os.date("%m"), os.date("%d"))
+	self._new_discount_file_name = string.format("rotation_%s_%s_%s", os.date("%Y"), os.date("%m"), os.date("%d"))
 end
 
-function ImguiStoreRotation.is_persistent(arg_12_0)
+ImguiStoreRotation._setup_discount_begin_end_date = function (self)
+	-- function 8
+	self._begin_discount_year = os.date("%Y")
+	self._begin_discount_month = os.date("%m")
+	self._begin_discount_day = os.date("%d")
+
+	local end_year
+
+	if not self._save_data.discounts.end_year then
+		end_year = self._save_data.discounts.end_year
+
+		if not end_year then
+			-- Nothing
+		end
+	end
+
+	end_year = "00"
+
+	::label_8_0::
+
+	self._end_discount_year = end_year
+
+	local end_month
+
+	if not self._save_data.discounts.end_month then
+		end_month = self._save_data.discounts.end_month
+
+		if not end_month then
+			-- Nothing
+		end
+	end
+
+	end_month = "00"
+
+	::label_8_1::
+
+	self._end_discount_month = end_month
+
+	local end_day
+
+	if not self._save_data.discounts.end_day then
+		end_day = self._save_data.discounts.end_day
+
+		if not end_day then
+			-- Nothing
+		end
+	end
+
+	end_day = "00"
+
+	::label_8_2::
+
+	self._end_discount_day = end_day
+end
+
+ImguiStoreRotation._setup_layout_template = function (self)
+	-- function 9
+	local decode = cjson.decode(str)
+
+	if not decode then
+		self._lua_layout = decode
+	end
+end
+
+ImguiStoreRotation._setup_item_keys_list = function (self)
+	-- function 10
+	table.clear(self._item_keys_list)
+
+	self._item_keys_list = table.keys(ItemMasterList)
+
+	table.sort(self._item_keys_list)
+end
+
+ImguiStoreRotation._setup_dlc_list = function (self)
+	-- function 11
+	local num = 0
+
+	table.clear(self._dlc_list)
+
+	for i, v in ipairs(UnlockSettings) do
+		for k, v_2 in pairs(v.unlocks) do
+			num = num + 1
+			self._dlc_list[num] = k
+		end
+	end
+
+	table.sort(self._dlc_list)
+	table.append(self._item_keys_list, self._dlc_list)
+end
+
+ImguiStoreRotation.is_persistent = function (arg_12_0)
+	-- function 12
 	return false
 end
 
-function ImguiStoreRotation.update(arg_13_0)
-	if var_0_7 then
-		arg_13_0:init()
+ImguiStoreRotation.update = function (self)
+	-- function 13
+	if not flag then
+		self:init()
 
-		var_0_7 = false
+		flag = false
 	end
 end
 
-function ImguiStoreRotation.draw(arg_14_0, arg_14_1)
-	if arg_14_0._first_launch then
-		local var_14_0, var_14_1 = Application.resolution()
+ImguiStoreRotation.draw = function (self, arg_14_1)
+	-- function 14
+	if not self._first_launch then
+		local resolution, var_14_1 = Application.resolution()
 
-		var_0_6.set_next_window_size(var_14_0 * 0.8, var_14_1 * 0.8)
+		Imgui.set_next_window_size(resolution * 0.8, var_14_1 * 0.8)
 
-		arg_14_0._first_launch = false
+		self._first_launch = false
 	end
 
-	local var_14_2 = var_0_6.begin_window("Create Store Rotation", "menu_bar")
+	local begin_window = Imgui.begin_window("Create Store Rotation", "menu_bar")
 
-	var_0_6.text("This is the store rotation tool!!")
-	var_0_6.separator()
+	Imgui.text("This is the store rotation tool!!")
+	Imgui.separator()
 
-	if var_0_6.begin_menu_bar() then
-		for iter_14_0, iter_14_1 in ipairs(arg_14_0._tabs) do
-			local var_14_3 = arg_14_0._selected_tab ~= iter_14_1 and " " .. iter_14_1 .. " " or "[" .. iter_14_1 .. "]"
+	if not Imgui.begin_menu_bar() then
+		for i, v in ipairs(self._tabs) do
+			local str
 
-			if var_0_6.menu_item(var_14_3) then
-				arg_14_0._selected_tab = iter_14_1
+			if self._selected_tab ~= v then
+				str = " " .. v .. " "
+
+				if not str then
+					-- Nothing
+				end
+			end
+
+			str = "[" .. v .. "]"
+
+			::label_14_0::
+
+			if not Imgui.menu_item(str) then
+				self._selected_tab = v
 			end
 		end
 
-		var_0_6.end_menu_bar()
+		Imgui.end_menu_bar()
 	end
 
-	var_0_6.begin_child_window("child_window", 0, 0, true)
+	Imgui.begin_child_window("child_window", 0, 0, true)
 
-	if arg_14_0._selected_tab == "Feature Page Rotation" then
-		arg_14_0:_featured_page_tab()
-	elseif arg_14_0._selected_tab == "Store Discounts" then
-		arg_14_0:_store_rotation_discounts_tab()
-	elseif arg_14_0._selected_tab == "Store Item Utility" then
-		arg_14_0:_store_item_utility_tab()
+	if self._selected_tab == "Feature Page Rotation" then
+		self:_featured_page_tab()
+	elseif self._selected_tab == "Store Discounts" then
+		self:_store_rotation_discounts_tab()
+	elseif self._selected_tab == "Store Item Utility" then
+		self:_store_item_utility_tab()
 	end
 
-	var_0_6.end_child_window()
-	var_0_6:end_window()
+	Imgui.end_child_window()
+	Imgui:end_window()
 
-	return var_14_2
+	return begin_window
 end
 
-function ImguiStoreRotation._featured_page_tab(arg_15_0)
-	arg_15_0:_do_new_file_name()
-	arg_15_0:_do_timestamp_settings()
-	var_0_6.text("Timestamp: ")
-	var_0_6.same_line()
-	var_0_6.text_colored(arg_15_0._timestamp, 44, 192, 133, 255)
-	var_0_6.separator()
-	var_0_6.columns(2, true)
-	arg_15_0:_do_edit_buttons()
-	arg_15_0:_do_clear_edit_buttons()
-	arg_15_0:_do_save_file_button()
+ImguiStoreRotation._featured_page_tab = function (self)
+	-- function 15
+	self:_do_new_file_name()
+	self:_do_timestamp_settings()
+	Imgui.text("Timestamp: ")
+	Imgui.same_line()
+	Imgui.text_colored(self._timestamp, 44, 192, 133, 255)
+	Imgui.separator()
+	Imgui.columns(2, true)
+	self:_do_edit_buttons()
+	self:_do_clear_edit_buttons()
+	self:_do_save_file_button()
 
-	if arg_15_0._save_successful_featured ~= "" then
-		var_0_6.text_colored(arg_15_0._save_successful_featured, 255, 196, 0, 255)
+	if self._save_successful_featured ~= "" then
+		Imgui.text_colored(self._save_successful_featured, 255, 196, 0, 255)
 	end
 
-	var_0_6.next_column()
-	var_0_6.text("Content Preview")
-	var_0_6.separator()
-	arg_15_0:_draw_layout_slideshow_preview()
-	var_0_6.next_column()
-	arg_15_0:_handle_error_messages()
+	Imgui.next_column()
+	Imgui.text("Content Preview")
+	Imgui.separator()
+	self:_draw_layout_slideshow_preview()
+	Imgui.next_column()
+	self:_handle_error_messages()
 end
 
-function ImguiStoreRotation._do_edit_buttons(arg_16_0)
-	var_0_6.text("Edit Feature Page Layout and Slideshow Composition")
-	var_0_6.dummy(2, 10)
+ImguiStoreRotation._do_edit_buttons = function (self)
+	-- function 16
+	Imgui.text("Edit Feature Page Layout and Slideshow Composition")
+	Imgui.dummy(2, 10)
 
-	arg_16_0._localize = var_0_6.checkbox("Localize headers and descriptions in the preview", arg_16_0._localize)
+	self._localize = Imgui.checkbox("Localize headers and descriptions in the preview", self._localize)
 
-	var_0_6.dummy(2, 10)
-	var_0_6.text_colored("EDIT FEATURED PAGE:", 245, 245, 207, 255)
-	var_0_6.dummy(2, 5)
-	var_0_6.text("Edit Slideshow")
-	var_0_6.text_colored("Add the items that will be displayed in the Store Featured Page Slideshow :", 245, 245, 207, 255)
+	Imgui.dummy(2, 10)
+	Imgui.text_colored("EDIT FEATURED PAGE:", 245, 245, 207, 255)
+	Imgui.dummy(2, 5)
+	Imgui.text("Edit Slideshow")
+	Imgui.text_colored("Add the items that will be displayed in the Store Featured Page Slideshow :", 245, 245, 207, 255)
 
-	if var_0_6.button("ADD Slideshow Item", 200, 20) then
-		arg_16_0._is_selecting_slideshow_item = true
-		arg_16_0._is_selecting_item = false
+	if not Imgui.button("ADD Slideshow Item", 200, 20) then
+		self._is_selecting_slideshow_item = true
+		self._is_selecting_item = false
 
-		arg_16_0:_on_search_type_changed(var_0_3.slideshow)
+		self:_on_search_type_changed(enum.slideshow)
 	end
 
-	if arg_16_0._is_selecting_slideshow_item then
-		arg_16_0:_draw_item_selection()
+	if not self._is_selecting_slideshow_item then
+		self:_draw_item_selection()
 
-		if arg_16_0._selected_item_index ~= -1 then
-			local var_16_0 = arg_16_0._item_search_results[arg_16_0._selected_item_index]
+		if self._selected_item_index ~= -1 then
+			local var_16_0 = self._item_search_results[self._selected_item_index]
 
-			arg_16_0._slideshow_items[#arg_16_0._slideshow_items + 1] = arg_16_0:_get_slideshow_item(var_16_0)
-			arg_16_0._is_selecting_slideshow_item = false
-			arg_16_0._selected_item_index = -1
-			arg_16_0._item_search_text = ""
+			self._slideshow_items[#self._slideshow_items + 1] = self:_get_slideshow_item(var_16_0)
+			self._is_selecting_slideshow_item = false
+			self._selected_item_index = -1
+			self._item_search_text = ""
 		end
 	end
 
-	if var_0_6.button("REMOVE LAST Slideshow Item", 200, 20) then
-		arg_16_0:_remove_last_added_item(arg_16_0._slideshow_items)
+	if not Imgui.button("REMOVE LAST Slideshow Item", 200, 20) then
+		self:_remove_last_added_item(self._slideshow_items)
 	end
 
-	var_0_6.dummy(2, 10)
-	var_0_6.text("Edit Featured Items")
-	var_0_6.text_colored("Add the items to highlight as featured in the Store Featured Page :", 245, 245, 207, 255)
+	Imgui.dummy(2, 10)
+	Imgui.text("Edit Featured Items")
+	Imgui.text_colored("Add the items to highlight as featured in the Store Featured Page :", 245, 245, 207, 255)
 
-	if var_0_6.button("ADD Featured Item", 200, 20) then
-		arg_16_0._is_selecting_item = true
-		arg_16_0._is_selecting_slideshow_item = false
+	if not Imgui.button("ADD Featured Item", 200, 20) then
+		self._is_selecting_item = true
+		self._is_selecting_slideshow_item = false
 
-		arg_16_0:_on_search_type_changed(var_0_3.featured)
+		self:_on_search_type_changed(enum.featured)
 	end
 
-	if arg_16_0._is_selecting_item then
-		arg_16_0:_draw_item_selection()
+	if not self._is_selecting_item then
+		self:_draw_item_selection()
 
-		if arg_16_0._selected_item_index ~= -1 then
-			local var_16_1 = arg_16_0._item_search_results[arg_16_0._selected_item_index]
+		if self._selected_item_index ~= -1 then
+			local var_16_1 = self._item_search_results[self._selected_item_index]
 
-			arg_16_0._layout_items[#arg_16_0._layout_items + 1] = arg_16_0:_get_layout_item(var_16_1)
-			arg_16_0._is_selecting_item = false
-			arg_16_0._selected_item_index = -1
-			arg_16_0._item_search_text = ""
+			self._layout_items[#self._layout_items + 1] = self:_get_layout_item(var_16_1)
+			self._is_selecting_item = false
+			self._selected_item_index = -1
+			self._item_search_text = ""
 		end
 	end
 
-	if var_0_6.button("REMOVE LAST Featured Item", 200, 20) then
-		arg_16_0:_remove_last_added_item(arg_16_0._layout_items)
+	if not Imgui.button("REMOVE LAST Featured Item", 200, 20) then
+		self:_remove_last_added_item(self._layout_items)
 	end
 end
 
-function ImguiStoreRotation._do_item_selection(arg_17_0)
-	if arg_17_0._is_selecting_item or arg_17_0._is_selecting_slideshow_item then
-		arg_17_0:_draw_item_selection()
+ImguiStoreRotation._do_item_selection = function (self)
+	-- function 17
+	if self._is_selecting_item or not self._is_selecting_slideshow_item then
+		self:_draw_item_selection()
 
-		if arg_17_0._selected_item_index ~= -1 then
-			local var_17_0 = arg_17_0._item_search_results[arg_17_0._selected_item_index]
+		if self._selected_item_index ~= -1 then
+			local var_17_0 = self._item_search_results[self._selected_item_index]
 
-			if arg_17_0._is_selecting_item then
-				arg_17_0._layout_items[#arg_17_0._layout_items + 1] = arg_17_0:_get_layout_item(var_17_0)
-				arg_17_0._is_selecting_item = false
+			if not self._is_selecting_item then
+				self._layout_items[#self._layout_items + 1] = self:_get_layout_item(var_17_0)
+				self._is_selecting_item = false
 			end
 
-			if arg_17_0._is_selecting_slideshow_item then
-				arg_17_0._slideshow_items[#arg_17_0._slideshow_items + 1] = arg_17_0:_get_slideshow_item(var_17_0)
-				arg_17_0._is_selecting_slideshow_item = false
+			if not self._is_selecting_slideshow_item then
+				self._slideshow_items[#self._slideshow_items + 1] = self:_get_slideshow_item(var_17_0)
+				self._is_selecting_slideshow_item = false
 			end
 
-			arg_17_0._selected_item_index = -1
-			arg_17_0._item_search_text = ""
+			self._selected_item_index = -1
+			self._item_search_text = ""
 		end
 	end
 end
 
-function ImguiStoreRotation._do_save_file_button(arg_18_0)
-	var_0_6.dummy(2, 10)
-	var_0_6.text("Preview the featured page rotation, before saving your changes and uploading them.")
+ImguiStoreRotation._do_save_file_button = function (self)
+	-- function 18
+	Imgui.dummy(2, 10)
+	Imgui.text("Preview the featured page rotation, before saving your changes and uploading them.")
 
-	if var_0_6.button("PREVIEW CHANGES", 250, 35) then
-		arg_18_0:_preview_changes()
+	if not Imgui.button("PREVIEW CHANGES", 250, 35) then
+		self:_preview_changes()
 	end
 
-	var_0_6.dummy(2, 10)
-	var_0_6.text("Save the edits to the feature page layout in to a file.")
+	Imgui.dummy(2, 10)
+	Imgui.text("Save the edits to the feature page layout in to a file.")
 
-	if var_0_6.button("SAVE FILE AND COPY TO CLIPBOARD", 250, 50) then
-		arg_18_0:_save_to_file()
+	if not Imgui.button("SAVE FILE AND COPY TO CLIPBOARD", 250, 50) then
+		self:_save_to_file()
 	end
 
-	var_0_6.text("All the edits will be copied to the clipboard as text.")
+	Imgui.text("All the edits will be copied to the clipboard as text.")
 end
 
-function ImguiStoreRotation._preview_changes(arg_19_0)
-	local var_19_0 = Managers.backend:get_interface("peddler")
+ImguiStoreRotation._preview_changes = function (self)
+	-- function 19
+	local get_interface = Managers.backend:get_interface("peddler")
 
-	if var_19_0:has_force_override() then
+	if not get_interface:has_force_override() then
 		return
 	end
 
-	local var_19_1 = false
-	local var_19_2, var_19_3 = arg_19_0:_calculate_timestamp(arg_19_0._timestamp_year, arg_19_0._timestamp_month, arg_19_0._timestamp_day, arg_19_0._timestamp_hour, arg_19_0._timestamp_minutes, arg_19_0._timestamp_seconds)
+	local flag = false
+	local _calculate_timestamp, var_19_3 = self:_calculate_timestamp(self._timestamp_year, self._timestamp_month, self._timestamp_day, self._timestamp_hour, self._timestamp_minutes, self._timestamp_seconds)
 
 	if not var_19_3 then
-		arg_19_0._timestamp_error = true
-		var_19_1 = true
+		self._timestamp_error = true
+		flag = true
 	end
 
-	if not var_19_1 then
-		arg_19_0._timestamp = var_19_2
-		arg_19_0._lua_layout.pages.featured.rotation_timestamp = arg_19_0._timestamp
+	if not flag then
+		self._timestamp = _calculate_timestamp
+		self._lua_layout.pages.featured.rotation_timestamp = self._timestamp
 
-		arg_19_0:_save_layout_items(arg_19_0._layout_items)
-		arg_19_0:_save_slideshow_items(arg_19_0._slideshow_items)
+		self:_save_layout_items(self._layout_items)
+		self:_save_slideshow_items(self._slideshow_items)
 
-		local var_19_4 = arg_19_0._lua_layout
-		local var_19_5 = cjson.encode(var_19_4)
+		local _lua_layout = self._lua_layout
+		local encode = cjson.encode(_lua_layout)
 
-		var_19_0:force_layout_override(var_19_5)
-	end
-end
-
-function ImguiStoreRotation._draw_layout_slideshow_preview(arg_20_0)
-	var_0_6.dummy(2, 10)
-	var_0_6.text_colored("LAYOUT ITEMS: " .. tostring(#arg_20_0._layout_items), 0, 179, 255, 255)
-	var_0_6.dummy(2, 10)
-
-	if #arg_20_0._layout_items ~= 0 then
-		arg_20_0:_draw_selcted_layout_items(arg_20_0._layout_items)
-	end
-
-	var_0_6.text_colored("SLIDESHOW ITEMS: " .. tostring(#arg_20_0._slideshow_items), 0, 179, 255, 255)
-	var_0_6.dummy(2, 10)
-
-	if #arg_20_0._slideshow_items ~= 0 then
-		arg_20_0:_draw_selcted_slideshow_items(arg_20_0._slideshow_items)
+		get_interface:force_layout_override(encode)
 	end
 end
 
-function ImguiStoreRotation._do_new_file_name(arg_21_0)
-	arg_21_0._new_rotation_file_name = var_0_6.input_text("New Rotation File Name ", arg_21_0._new_rotation_file_name)
+ImguiStoreRotation._draw_layout_slideshow_preview = function (self)
+	-- function 20
+	Imgui.dummy(2, 10)
+	Imgui.text_colored("LAYOUT ITEMS: " .. tostring(#self._layout_items), 0, 179, 255, 255)
+	Imgui.dummy(2, 10)
 
-	var_0_6.dummy(2, 10)
+	if #self._layout_items ~= 0 then
+		self:_draw_selcted_layout_items(self._layout_items)
+	end
+
+	Imgui.text_colored("SLIDESHOW ITEMS: " .. tostring(#self._slideshow_items), 0, 179, 255, 255)
+	Imgui.dummy(2, 10)
+
+	if #self._slideshow_items ~= 0 then
+		self:_draw_selcted_slideshow_items(self._slideshow_items)
+	end
 end
 
-local function var_0_8(arg_22_0)
-	return arg_22_0.steam_itemdefid and true or false
+ImguiStoreRotation._do_new_file_name = function (self)
+	-- function 21
+	self._new_rotation_file_name = Imgui.input_text("New Rotation File Name ", self._new_rotation_file_name)
+
+	Imgui.dummy(2, 10)
 end
 
-function ImguiStoreRotation._is_a_dlc(arg_23_0, arg_23_1)
-	return (table.find(arg_23_0._dlc_list, arg_23_1))
+local function fn_2(self)
+	-- function 22
+	local flag
+
+	flag = not self.steam_itemdefid and true and false
+
+	return flag
 end
 
-function ImguiStoreRotation._get_layout_item(arg_24_0, arg_24_1)
-	arg_24_1 = arg_24_0._name_to_key[arg_24_1] or arg_24_1
+ImguiStoreRotation._is_a_dlc = function (self, arg_23_1)
+	-- function 23
+	return (table.find(self._dlc_list, arg_23_1))
+end
 
-	local var_24_0 = {}
+ImguiStoreRotation._get_layout_item = function (self, arg_24_1)
+	-- function 24
+	arg_24_1 = self._name_to_key[arg_24_1] or arg_24_1
 
-	if arg_24_0:_is_a_dlc(arg_24_1) then
-		var_24_0.id = arg_24_1
-		var_24_0.type = "dlc"
+	local tbl = {}
+
+	if not self:_is_a_dlc(arg_24_1) then
+		tbl.id = arg_24_1
+		tbl.type = "dlc"
 	else
 		local var_24_1 = rawget(ItemMasterList, arg_24_1)
 
-		if var_0_8(var_24_1) then
-			var_24_0.steam_itemdefid = var_24_1.steam_itemdefid
-			var_24_0.id = arg_24_1
-			var_24_0.type = "item"
-			var_24_0.key = arg_24_1
+		if not fn_2(var_24_1) then
+			tbl.steam_itemdefid = var_24_1.steam_itemdefid
+			tbl.id = arg_24_1
+			tbl.type = "item"
+			tbl.key = arg_24_1
 		else
-			var_24_0.id = arg_24_1
-			var_24_0.type = "item"
+			tbl.id = arg_24_1
+			tbl.type = "item"
 		end
 	end
 
-	return var_24_0
+	return tbl
 end
 
-function ImguiStoreRotation._get_slideshow_item(arg_25_0, arg_25_1)
-	arg_25_1 = arg_25_0._name_to_key[arg_25_1] or arg_25_1
+ImguiStoreRotation._get_slideshow_item = function (self, arg_25_1)
+	-- function 25
+	arg_25_1 = self._name_to_key[arg_25_1] or arg_25_1
 
-	local var_25_0 = {}
+	local tbl = {}
 	local var_25_1
 	local var_25_2
 	local var_25_3
 	local var_25_4
 	local var_25_5
 	local var_25_6
-	local var_25_7 = arg_25_0:_is_a_dlc(arg_25_1)
-	local var_25_8 = var_25_7 and "dlc" or "item"
-	local var_25_9 = var_25_7 and StoreDlcSettingsByName[arg_25_1] or rawget(ItemMasterList, arg_25_1)
+	local _is_a_dlc = self:_is_a_dlc(arg_25_1)
+	local flag
 
-	if not var_25_9 or var_25_9.item_type ~= "bundle" and not var_25_7 and not var_25_9.store_bundle_big_image then
-		var_25_0.error_text = "Item " .. arg_25_1 .. " Cannot be used as a slideshow item."
+	flag = not _is_a_dlc and "dlc" and "item"
 
-		return var_25_0
+	local var_25_9
+
+	if not _is_a_dlc then
+		var_25_9 = StoreDlcSettingsByName[arg_25_1]
+
+		if not var_25_9 then
+			-- Nothing
+		end
 	end
 
-	if var_25_9.item_type == "bundle" or var_25_7 then
-		local var_25_10 = false
+	var_25_9 = rawget(ItemMasterList, arg_25_1)
 
-		for iter_25_0 = 1, #StoreDlcSettings do
-			local var_25_11 = StoreDlcSettings[iter_25_0]
+	::label_25_0::
 
-			if var_25_11.dlc_name == arg_25_1 or var_25_11.name == arg_25_1 then
+	if not (not var_25_9 and var_25_9.item_type == "bundle" and _is_a_dlc and var_25_9.store_bundle_big_image) then
+		tbl.error_text = "Item " .. arg_25_1 .. " Cannot be used as a slideshow item."
+
+		return tbl
+	end
+
+	if var_25_9.item_type == "bundle" or not _is_a_dlc then
+		local flag_2 = false
+
+		for i = 1, #StoreDlcSettings do
+			local var_25_11 = StoreDlcSettings[i]
+
+			if not (var_25_11.dlc_name == arg_25_1 or var_25_11.name ~= arg_25_1) then
 				if not var_25_11.slideshow_texture then
-					var_25_0.error_text = "Item " .. arg_25_1 .. " Cannot be used as a slideshow item."
+					tbl.error_text = "Item " .. arg_25_1 .. " Cannot be used as a slideshow item."
 
-					return var_25_0
+					return tbl
 				end
 
-				var_25_8 = "item"
+				flag = "item"
 				var_25_2 = var_25_11.name
 				var_25_3 = var_25_11.slideshow_texture
 				var_25_4 = arg_25_1
 				var_25_5 = var_25_11.information_text
-				var_25_10 = true
+				flag_2 = true
 			end
 		end
 
-		if not var_25_10 then
+		if not flag_2 then
 			var_25_2 = var_25_9.display_name
-			var_25_3 = var_25_9.store_bundle_big_image and string.match(var_25_9.store_bundle_big_image, "[^/]+$") or ""
+			var_25_3 = not var_25_9.store_bundle_big_image and string.match(var_25_9.store_bundle_big_image, "[^/]+$") and ""
 			var_25_4 = arg_25_1
 			var_25_5 = var_25_9.description
 		end
 	else
 		var_25_2 = var_25_9.display_name
-		var_25_3 = var_25_9.store_bundle_big_image and string.match(var_25_9.store_bundle_big_image, "[^/]+$") or ""
+		var_25_3 = not var_25_9.store_bundle_big_image and string.match(var_25_9.store_bundle_big_image, "[^/]+$") and ""
 		var_25_4 = arg_25_1
 		var_25_5 = var_25_9.description
 	end
 
-	if var_0_8(var_25_9) then
-		var_25_0.steam_itemdefid = var_25_9.steam_itemdefid
+	if not fn_2(var_25_9) then
+		tbl.steam_itemdefid = var_25_9.steam_itemdefid
 	end
 
-	var_25_0.product_type = var_25_8
-	var_25_0.header = var_25_2
-	var_25_0.texture = var_25_3
-	var_25_0.product_id = var_25_4
-	var_25_0.description = var_25_5
+	tbl.product_type = flag
+	tbl.header = var_25_2
+	tbl.texture = var_25_3
+	tbl.product_id = var_25_4
+	tbl.description = var_25_5
 
-	local var_25_12 = arg_25_0._prio + 100
+	local num = self._prio + 100
 
-	var_25_0.prio = var_25_12
-	arg_25_0._prio = var_25_12
+	tbl.prio = num
+	self._prio = num
 
-	return var_25_0
+	return tbl
 end
 
-function ImguiStoreRotation._draw_item_selection(arg_26_0)
-	var_0_6.text("Select Item")
+ImguiStoreRotation._draw_item_selection = function (self)
+	-- function 26
+	Imgui.text("Select Item")
 
-	local var_26_0, var_26_1, var_26_2 = ImguiX.combo_search(arg_26_0._selected_item_index, arg_26_0._item_search_results, arg_26_0._item_search_text, arg_26_0._searcheable_item_keys[arg_26_0._search_type])
+	local combo_search, var_26_1, var_26_2 = ImguiX.combo_search(self._selected_item_index, self._item_search_results, self._item_search_text, self._searcheable_item_keys[self._search_type])
 
-	arg_26_0._selected_item_index = var_26_0
-	arg_26_0._item_search_results = var_26_1
-	arg_26_0._item_search_text = var_26_2
+	self._selected_item_index = combo_search
+	self._item_search_results = var_26_1
+	self._item_search_text = var_26_2
 end
 
-function ImguiStoreRotation._draw_selcted_layout_items(arg_27_0, arg_27_1)
-	for iter_27_0 = 1, #arg_27_1 do
-		local var_27_0 = arg_27_1[iter_27_0]
-		local var_27_1 = var_27_0.key or var_27_0.id
+ImguiStoreRotation._draw_selcted_layout_items = function (self, arg_27_1)
+	-- function 27
+	for i = 1, #arg_27_1 do
+		local var_27_0 = arg_27_1[i]
+		local key = var_27_0.key
 
-		if arg_27_0._localize then
-			local var_27_2 = rawget(ItemMasterList, var_27_1)
-			local var_27_3 = var_0_4(var_27_2.display_name)
+		key = key or var_27_0.id
 
-			var_0_6.text_colored("Featured Item: " .. var_27_3, 245, 245, 207, 255)
+		if not self._localize then
+			local var_27_2 = rawget(ItemMasterList, key)
+			local var_27_3 = fn(var_27_2.display_name)
+
+			Imgui.text_colored("Featured Item: " .. var_27_3, 245, 245, 207, 255)
 		else
-			var_0_6.text_colored("Featured Item: " .. var_27_1, 245, 245, 207, 255)
+			Imgui.text_colored("Featured Item: " .. key, 245, 245, 207, 255)
 		end
 
-		var_0_6.dummy(2, 5)
+		Imgui.dummy(2, 5)
 
-		for iter_27_1, iter_27_2 in pairs(var_27_0) do
-			var_0_6.text_colored(iter_27_1 .. " : ", 0, 186, 112, 255)
-			var_0_6.same_line()
-			var_0_6.text_colored(tostring(iter_27_2), 0, 193, 212, 255)
+		for k, v in pairs(var_27_0) do
+			Imgui.text_colored(k .. " : ", 0, 186, 112, 255)
+			Imgui.same_line()
+			Imgui.text_colored(tostring(v), 0, 193, 212, 255)
 		end
 
-		arg_27_0:_draw_selected_item_image(var_27_1)
-		var_0_6.dummy(2, 5)
+		self:_draw_selected_item_image(key)
+		Imgui.dummy(2, 5)
 	end
 end
 
-function ImguiStoreRotation._draw_selcted_slideshow_items(arg_28_0, arg_28_1)
-	for iter_28_0 = 1, #arg_28_1 do
-		local var_28_0 = arg_28_1[iter_28_0]
+ImguiStoreRotation._draw_selcted_slideshow_items = function (self, arg_28_1)
+	-- function 28
+	for i = 1, #arg_28_1 do
+		local var_28_0 = arg_28_1[i]
 
 		if not var_28_0.error_text then
-			local var_28_1 = var_28_0.product_id or var_28_0.dlc_name
+			local product_id = var_28_0.product_id
 
-			var_0_6.text_colored("Slideshow Item: " .. var_28_1, 245, 245, 207, 255)
+			product_id = product_id or var_28_0.dlc_name
+
+			Imgui.text_colored("Slideshow Item: " .. product_id, 245, 245, 207, 255)
 		end
 
-		var_0_6.dummy(2, 5)
+		Imgui.dummy(2, 5)
 
-		for iter_28_1, iter_28_2 in pairs(var_28_0) do
-			if var_28_0.error_text then
-				var_0_6.text_colored(iter_28_1 .. " : " .. iter_28_2, 255, 0, 0, 255)
-			elseif arg_28_0._localize and (iter_28_1 == "header" or iter_28_1 == "description") then
-				local var_28_2 = var_0_4(iter_28_2)
+		for k, v in pairs(var_28_0) do
+			if not var_28_0.error_text then
+				Imgui.text_colored(k .. " : " .. v, 255, 0, 0, 255)
+			elseif not (not self._localize and k == "header" or k ~= "description") then
+				local var_28_2 = fn(v)
 
-				var_0_6.text_colored(iter_28_1 .. " : ", 0, 186, 112, 255)
-				var_0_6.same_line()
-				var_0_6.text_colored(var_28_2, 0, 193, 212, 255)
+				Imgui.text_colored(k .. " : ", 0, 186, 112, 255)
+				Imgui.same_line()
+				Imgui.text_colored(var_28_2, 0, 193, 212, 255)
 			else
-				var_0_6.text_colored(iter_28_1 .. " : ", 0, 186, 112, 255)
-				var_0_6.same_line()
-				var_0_6.text_colored(tostring(iter_28_2), 0, 193, 212, 255)
+				Imgui.text_colored(k .. " : ", 0, 186, 112, 255)
+				Imgui.same_line()
+				Imgui.text_colored(tostring(v), 0, 193, 212, 255)
 			end
 		end
 
-		local var_28_3 = var_28_0.product_id or var_28_0.dlc_name
+		local product_id_2 = var_28_0.product_id
 
-		arg_28_0:_draw_selected_item_image(var_28_3)
-		var_0_6.dummy(2, 5)
+		product_id_2 = product_id_2 or var_28_0.dlc_name
+
+		self:_draw_selected_item_image(product_id_2)
+		Imgui.dummy(2, 5)
 	end
 end
 
-function ImguiStoreRotation._draw_selected_item_image(arg_29_0, arg_29_1)
+ImguiStoreRotation._draw_selected_item_image = function (arg_29_0, arg_29_1)
+	-- function 29
 	local var_29_0 = rawget(ItemMasterList, arg_29_1)
 
-	if var_29_0 then
+	if not var_29_0 then
 		if var_29_0.item_type ~= "bundle" then
-			local var_29_1 = "store_item_icon_" .. arg_29_1
-			local var_29_2 = "gui/1080p/single_textures/store_item_icons/" .. var_29_1 .. "/" .. var_29_1
-			local var_29_3 = "resource_packages/store/item_icons/" .. var_29_1
+			local str = "store_item_icon_" .. arg_29_1
+			local str_2 = "gui/1080p/single_textures/store_item_icons/" .. str .. "/" .. str
+			local str_3 = "resource_packages/store/item_icons/" .. str
 
-			if not Application.can_get("texture", var_29_2) and Application.can_get("package", var_29_3) then
-				local var_29_4 = Managers.package
+			if Application.can_get("texture", str_2) or not Application.can_get("package", str_3) then
+				local package = Managers.package
 
-				local function var_29_5()
-					Debug.sticky_text("Image Loaded " .. var_29_2)
+				local function fn()
+					-- function 30
+					Debug.sticky_text("Image Loaded " .. str_2)
 				end
 
-				local var_29_6 = callback(var_29_5)
-				local var_29_7 = "ImguiStoreRotation"
+				local var_29_6 = callback(fn)
+				local str_4 = "ImguiStoreRotation"
 
-				var_29_4:load(var_29_3, var_29_7, var_29_6, true)
-			elseif Application.can_get("texture", var_29_2) then
-				local var_29_8 = 130
-				local var_29_9 = 110
+				package:load(str_3, str_4, var_29_6, true)
+			elseif not Application.can_get("texture", str_2) then
+				local num = 130
+				local num_2 = 110
 
-				var_0_6.image(var_29_2, var_29_8, var_29_9)
+				Imgui.image(str_2, num, num_2)
 			else
-				local var_29_10 = "gui/1080p/single_textures/vermintide_2_logo_for_dark_backgrounds"
+				local str_5 = "gui/1080p/single_textures/vermintide_2_logo_for_dark_backgrounds"
 
-				if Application.can_get("texture", var_29_10) then
-					local var_29_11 = 342
-					local var_29_12 = 192
+				if not Application.can_get("texture", str_5) then
+					local num_3 = 342
+					local num_4 = 192
 
-					var_0_6.image(var_29_10, var_29_11, var_29_12)
-					var_0_6.text_colored("Missing Texture for Item: " .. arg_29_1, 0, 186, 112, 255)
+					Imgui.image(str_5, num_3, num_4)
+					Imgui.text_colored("Missing Texture for Item: " .. arg_29_1, 0, 186, 112, 255)
 				end
 			end
 		elseif var_29_0.item_type == "bundle" then
-			local var_29_13 = "store_item_icon_" .. arg_29_1
-			local var_29_14 = "gui/1080p/single_textures/store_bundle/" .. var_29_13
-			local var_29_15 = "resource_packages/store/bundle_icons/" .. var_29_13
+			local str_6 = "store_item_icon_" .. arg_29_1
+			local str_7 = "gui/1080p/single_textures/store_bundle/" .. str_6
+			local str_8 = "resource_packages/store/bundle_icons/" .. str_6
 
-			if not Application.can_get("texture", var_29_14) and Application.can_get("package", var_29_15) then
-				local var_29_16 = Managers.package
+			if Application.can_get("texture", str_7) or not Application.can_get("package", str_8) then
+				local package_2 = Managers.package
 
-				local function var_29_17()
-					Debug.sticky_text("Image Loaded " .. var_29_14)
+				local function fn_2()
+					-- function 31
+					Debug.sticky_text("Image Loaded " .. str_7)
 				end
 
-				local var_29_18 = callback(var_29_17)
-				local var_29_19 = "ImguiStoreRotation"
+				local var_29_18 = callback(fn_2)
+				local str_9 = "ImguiStoreRotation"
 
-				var_29_16:load(var_29_15, var_29_19, var_29_18, true)
-			elseif Application.can_get("texture", var_29_14) then
-				local var_29_20 = 400
-				local var_29_21 = 110
+				package_2:load(str_8, str_9, var_29_18, true)
+			elseif not Application.can_get("texture", str_7) then
+				local num_5 = 400
+				local num_6 = 110
 
-				var_0_6.image(var_29_14, var_29_20, var_29_21)
+				Imgui.image(str_7, num_5, num_6)
 			else
-				var_0_6.text_colored("Loading Texture", 0, 186, 112, 255)
+				Imgui.text_colored("Loading Texture", 0, 186, 112, 255)
 			end
 		end
 	end
 end
 
-function ImguiStoreRotation._do_timestamp_settings(arg_32_0)
-	var_0_6.text("Set End Date, This will be used for the countdown displayed at the top of the Store Feature Page ")
-	var_0_6.dummy(2, 10)
-	var_0_6.columns(6, false)
+ImguiStoreRotation._do_timestamp_settings = function (self)
+	-- function 32
+	Imgui.text("Set End Date, This will be used for the countdown displayed at the top of the Store Feature Page ")
+	Imgui.dummy(2, 10)
+	Imgui.columns(6, false)
 
-	arg_32_0._timestamp_year = var_0_6.input_text("<-Year", arg_32_0._timestamp_year)
+	self._timestamp_year = Imgui.input_text("<-Year", self._timestamp_year)
 
-	var_0_6.next_column()
+	Imgui.next_column()
 
-	arg_32_0._timestamp_month = var_0_6.input_text("<-Month", arg_32_0._timestamp_month)
+	self._timestamp_month = Imgui.input_text("<-Month", self._timestamp_month)
 
-	var_0_6.next_column()
+	Imgui.next_column()
 
-	arg_32_0._timestamp_day = var_0_6.input_text("<-Day", arg_32_0._timestamp_day)
+	self._timestamp_day = Imgui.input_text("<-Day", self._timestamp_day)
 
-	var_0_6.next_column()
+	Imgui.next_column()
 
-	arg_32_0._timestamp_hour = var_0_6.input_text("<-Hour", arg_32_0._timestamp_hour)
+	self._timestamp_hour = Imgui.input_text("<-Hour", self._timestamp_hour)
 
-	var_0_6.next_column()
+	Imgui.next_column()
 
-	arg_32_0._timestamp_minutes = var_0_6.input_text("<-Min", arg_32_0._timestamp_minutes)
+	self._timestamp_minutes = Imgui.input_text("<-Min", self._timestamp_minutes)
 
-	var_0_6.next_column()
+	Imgui.next_column()
 
-	arg_32_0._timestamp_seconds = var_0_6.input_text("<-Secs", arg_32_0._timestamp_seconds)
+	self._timestamp_seconds = Imgui.input_text("<-Secs", self._timestamp_seconds)
 
-	var_0_6.next_column()
+	Imgui.next_column()
 
-	if var_0_6.button("Preview Timestamp", 150, 20) then
-		arg_32_0._timestamp = arg_32_0:_calculate_timestamp(arg_32_0._timestamp_year, arg_32_0._timestamp_month, arg_32_0._timestamp_day, arg_32_0._timestamp_hour, arg_32_0._timestamp_minutes, arg_32_0._timestamp_seconds)
+	if not Imgui.button("Preview Timestamp", 150, 20) then
+		self._timestamp = self:_calculate_timestamp(self._timestamp_year, self._timestamp_month, self._timestamp_day, self._timestamp_hour, self._timestamp_minutes, self._timestamp_seconds)
 	end
 end
 
-local function var_0_9(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5)
-	if arg_33_0 == "" or tonumber(arg_33_0) < tonumber(os.date("%Y")) then
+local function fn_3(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5)
+	-- function 33
+	if not (arg_33_0 == "" or not (tonumber(arg_33_0) < tonumber(os.date("%Y")))) then
 		return false
-	elseif arg_33_1 == "" or tonumber(arg_33_1) > 12 or tonumber(arg_33_1) < 1 then
+	elseif not (arg_33_1 == "" or tonumber(arg_33_1) > 12 or not (tonumber(arg_33_1) < 1)) then
 		return false
-	elseif not arg_33_2 or arg_33_2 == "" or tonumber(arg_33_2) > 31 or tonumber(arg_33_2) < 1 then
+	elseif not (not arg_33_2 and arg_33_2 == "" and tonumber(arg_33_2) > 31 or not (tonumber(arg_33_2) < 1)) then
 		return false
-	elseif arg_33_3 and (arg_33_3 == "" or tonumber(arg_33_3) > 23 or tonumber(arg_33_3) < 0) then
+	elseif not (not arg_33_3 and arg_33_3 == "" or tonumber(arg_33_3) > 23 or not (tonumber(arg_33_3) < 0)) then
 		return false
-	elseif arg_33_4 and (arg_33_4 == "" or tonumber(arg_33_4) > 59 or tonumber(arg_33_4) < 0) then
+	elseif not (not arg_33_4 and arg_33_4 == "" or tonumber(arg_33_4) > 59 or not (tonumber(arg_33_4) < 0)) then
 		return false
-	elseif arg_33_5 and (arg_33_5 == "" or tonumber(arg_33_5) > 59 or tonumber(arg_33_5) < 0) then
+	elseif not (not arg_33_5 and arg_33_5 == "" or tonumber(arg_33_5) > 59 or not (tonumber(arg_33_5) < 0)) then
 		return false
 	end
 
 	return true
 end
 
-function ImguiStoreRotation._calculate_timestamp(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4, arg_34_5, arg_34_6)
-	if not var_0_9(arg_34_1, arg_34_2, arg_34_3, arg_34_4, arg_34_5, arg_34_6) then
+ImguiStoreRotation._calculate_timestamp = function (self, arg_34_1, arg_34_2, arg_34_3, arg_34_4, arg_34_5, arg_34_6)
+	-- function 34
+	if not fn_3(arg_34_1, arg_34_2, arg_34_3, arg_34_4, arg_34_5, arg_34_6) then
 		return 0, false
 	end
 
-	local var_34_0 = false
-	local var_34_1 = os.time({
+	local flag = false
+	local time = os.time({
 		day = arg_34_3,
 		month = arg_34_2,
 		year = arg_34_1,
 		hour = arg_34_4,
 		min = arg_34_5,
 		sec = arg_34_6,
-		isdst = var_34_0
+		isdst = flag
 	})
 
-	arg_34_0._timestamp_error = false
+	self._timestamp_error = false
 
-	return var_34_1, true
+	return time, true
 end
 
-function ImguiStoreRotation._save_layout_items(arg_35_0, arg_35_1)
-	if table.is_empty(arg_35_1) then
+ImguiStoreRotation._save_layout_items = function (self, arg_35_1)
+	-- function 35
+	if not table.is_empty(arg_35_1) then
 		return
 	end
 
-	local var_35_0 = arg_35_0._lua_layout.pages.featured.grid
+	local grid = self._lua_layout.pages.featured.grid
 
-	table.clear(var_35_0)
+	table.clear(grid)
 
-	for iter_35_0, iter_35_1 in pairs(arg_35_1) do
-		var_35_0[#var_35_0 + 1] = iter_35_1
+	for k, v in pairs(arg_35_1) do
+		grid[#grid + 1] = v
 	end
 
-	arg_35_0._lua_layout.pages.featured.grid = var_35_0
+	self._lua_layout.pages.featured.grid = grid
 
-	table.dump(arg_35_0._lua_layout.pages.featured, "FEATURED", 5)
+	table.dump(self._lua_layout.pages.featured, "FEATURED", 5)
 end
 
-function ImguiStoreRotation._save_slideshow_items(arg_36_0, arg_36_1)
-	if table.is_empty(arg_36_1) then
+ImguiStoreRotation._save_slideshow_items = function (self, arg_36_1)
+	-- function 36
+	if not table.is_empty(arg_36_1) then
 		return
 	end
 
-	local var_36_0 = arg_36_0._lua_layout.pages.featured.slideshow
+	local slideshow = self._lua_layout.pages.featured.slideshow
 
-	table.clear(var_36_0)
+	table.clear(slideshow)
 
-	for iter_36_0, iter_36_1 in pairs(arg_36_1) do
-		if iter_36_1.error_text then
-			-- block empty
+	for k, v in pairs(arg_36_1) do
+		if not v.error_text then
+			-- Nothing
 		else
-			var_36_0[#var_36_0 + 1] = iter_36_1
+			slideshow[#slideshow + 1] = v
 		end
 	end
 
-	arg_36_0._lua_layout.pages.featured.slideshow = var_36_0
+	self._lua_layout.pages.featured.slideshow = slideshow
 
-	table.dump(arg_36_0._lua_layout.pages.featured, "FEATURED", 5)
+	table.dump(self._lua_layout.pages.featured, "FEATURED", 5)
 end
 
-function ImguiStoreRotation._remove_last_added_item(arg_37_0, arg_37_1)
+ImguiStoreRotation._remove_last_added_item = function (arg_37_0, arg_37_1)
+	-- function 37
 	arg_37_1[#arg_37_1] = nil
 end
 
-function ImguiStoreRotation._do_clear_edit_buttons(arg_38_0)
-	var_0_6.dummy(2, 10)
-	var_0_6.text("Clear Edits")
-	var_0_6.text_colored("Clear the edits made, the uses can delete a whole section or the entire edits. ", 245, 245, 207, 255)
+ImguiStoreRotation._do_clear_edit_buttons = function (self)
+	-- function 38
+	Imgui.dummy(2, 10)
+	Imgui.text("Clear Edits")
+	Imgui.text_colored("Clear the edits made, the uses can delete a whole section or the entire edits. ", 245, 245, 207, 255)
 
-	if var_0_6.button("Clear Featured Items", 180, 20) then
-		table.clear(arg_38_0._layout_items)
+	if not Imgui.button("Clear Featured Items", 180, 20) then
+		table.clear(self._layout_items)
 	end
 
-	if var_0_6.button("Clear Slideshow Items", 180, 20) then
-		table.clear(arg_38_0._slideshow_items)
+	if not Imgui.button("Clear Slideshow Items", 180, 20) then
+		table.clear(self._slideshow_items)
 
-		arg_38_0._prio = 0
+		self._prio = 0
 	end
 
-	if var_0_6.button("Clear All", 180, 20) then
-		table.clear(arg_38_0._layout_items)
-		table.clear(arg_38_0._slideshow_items)
+	if not Imgui.button("Clear All", 180, 20) then
+		table.clear(self._layout_items)
+		table.clear(self._slideshow_items)
 	end
 end
 
-function ImguiStoreRotation._save_to_file(arg_39_0)
-	local var_39_0 = false
+ImguiStoreRotation._save_to_file = function (self)
+	-- function 39
+	local flag = false
 
-	if arg_39_0._new_rotation_file_name == "" then
-		arg_39_0._missing_file_name = true
-		var_39_0 = true
+	if self._new_rotation_file_name == "" then
+		self._missing_file_name = true
+		flag = true
 	end
 
-	local var_39_1, var_39_2 = arg_39_0:_calculate_timestamp(arg_39_0._timestamp_year, arg_39_0._timestamp_month, arg_39_0._timestamp_day, arg_39_0._timestamp_hour, arg_39_0._timestamp_minutes, arg_39_0._timestamp_seconds)
+	local _calculate_timestamp, var_39_2 = self:_calculate_timestamp(self._timestamp_year, self._timestamp_month, self._timestamp_day, self._timestamp_hour, self._timestamp_minutes, self._timestamp_seconds)
 
 	if not var_39_2 then
-		arg_39_0._timestamp_error = true
-		var_39_0 = true
+		self._timestamp_error = true
+		flag = true
 	end
 
-	if not var_39_0 then
-		arg_39_0._timestamp = var_39_1
-		arg_39_0._lua_layout.pages.featured.rotation_timestamp = arg_39_0._timestamp
+	if not flag then
+		self._timestamp = _calculate_timestamp
+		self._lua_layout.pages.featured.rotation_timestamp = self._timestamp
 
-		arg_39_0:_save_layout_items(arg_39_0._layout_items)
-		arg_39_0:_save_slideshow_items(arg_39_0._slideshow_items)
+		self:_save_layout_items(self._layout_items)
+		self:_save_slideshow_items(self._slideshow_items)
 
-		local var_39_3 = arg_39_0._lua_layout
-		local var_39_4 = cjson.encode(var_39_3)
-		local var_39_5 = script_data.source_dir
+		local _lua_layout = self._lua_layout
+		local encode = cjson.encode(_lua_layout)
+		local source_dir = script_data.source_dir
 
-		arg_39_0._fp = assert(io.open(var_39_5 .. "/.shop/rotation/" .. arg_39_0._new_rotation_file_name .. ".json", "w"))
+		self._fp = assert(io.open(source_dir .. "/.shop/rotation/" .. self._new_rotation_file_name .. ".json", "w"))
 
-		arg_39_0._fp:write(var_39_4)
-		arg_39_0._fp:close()
-		Clipboard.put(var_39_4)
+		self._fp:write(encode)
+		self._fp:close()
+		Clipboard.put(encode)
 
-		arg_39_0._save_successful_featured = "File saved successfully at\n" .. var_39_5 .. "/.shop/rotation/" .. arg_39_0._new_rotation_file_name .. ".json"
+		self._save_successful_featured = "File saved successfully at\n" .. source_dir .. "/.shop/rotation/" .. self._new_rotation_file_name .. ".json"
 
-		arg_39_0:_save_settings()
+		self:_save_settings()
 	end
 end
 
-function ImguiStoreRotation._calculate_discount(arg_40_0, arg_40_1, arg_40_2)
-	local var_40_0 = arg_40_1:gsub("%s+", "")
-	local var_40_1 = arg_40_2 / 100
-	local var_40_2 = string.format("%s%s%sT110000Z", arg_40_0._begin_discount_year, arg_40_0._begin_discount_month, arg_40_0._begin_discount_day)
-	local var_40_3 = string.format("%s%s%sT110000Z", arg_40_0._end_discount_year, arg_40_0._end_discount_month, arg_40_0._end_discount_day)
-	local var_40_4 = SteamItemService.apply_discounts(var_40_0, var_40_1, var_40_2, var_40_3)
+ImguiStoreRotation._calculate_discount = function (self, arg_40_1, arg_40_2)
+	-- function 40
+	local gsub = arg_40_1:gsub("%s+", "")
+	local num = arg_40_2 / 100
+	local format = string.format("%s%s%sT110000Z", self._begin_discount_year, self._begin_discount_month, self._begin_discount_day)
+	local format_2 = string.format("%s%s%sT110000Z", self._end_discount_year, self._end_discount_month, self._end_discount_day)
+	local apply_discounts = SteamItemService.apply_discounts(gsub, num, format, format_2)
 
-	print(var_40_4)
+	print(apply_discounts)
 
-	return var_40_4
+	return apply_discounts
 end
 
-function ImguiStoreRotation._make_item_def(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
-	local var_41_0 = arg_41_2.steam_itemdefid
-	local var_41_1 = SteamInventory.get_item_definition_property(var_41_0, "price")
-	local var_41_2 = var_0_4(arg_41_2.display_name)
-	local var_41_3 = var_0_4(arg_41_2.description)
+ImguiStoreRotation._make_item_def = function (self, arg_41_1, arg_41_2, arg_41_3)
+	-- function 41
+	local steam_itemdefid = arg_41_2.steam_itemdefid
+	local get_item_definition_property = SteamInventory.get_item_definition_property(steam_itemdefid, "price")
+	local var_41_2 = fn(arg_41_2.display_name)
+	local var_41_3 = fn(arg_41_2.description)
 
 	return {
 		item_quality = 2,
@@ -919,21 +1130,52 @@ function ImguiStoreRotation._make_item_def(arg_41_0, arg_41_1, arg_41_2, arg_41_
 		store_hidden = false,
 		hidden = false,
 		itemdefid = arg_41_2.steam_itemdefid,
-		display_type = SteamInventory.get_item_definition_property(var_41_0, "display_type"),
+		display_type = SteamInventory.get_item_definition_property(steam_itemdefid, "display_type"),
 		name = var_41_2,
-		price = arg_41_0:_calculate_discount(var_41_1, arg_41_3),
+		price = self:_calculate_discount(get_item_definition_property, arg_41_3),
 		description = var_41_3,
-		name_color = SteamInventory.get_item_definition_property(var_41_0, "name_color"),
-		background_color = SteamInventory.get_item_definition_property(var_41_0, "background_color"),
-		icon_url = SteamInventory.get_item_definition_property(var_41_0, "icon_url")
+		name_color = SteamInventory.get_item_definition_property(steam_itemdefid, "name_color"),
+		background_color = SteamInventory.get_item_definition_property(steam_itemdefid, "background_color"),
+		icon_url = SteamInventory.get_item_definition_property(steam_itemdefid, "icon_url")
 	}
 end
 
-function ImguiStoreRotation._make_bundle_def(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
-	local var_42_0 = arg_42_2.steam_itemdefid
-	local var_42_1 = SteamInventory.get_item_definition_property(var_42_0, "price")
-	local var_42_2 = var_0_4(arg_42_2 and arg_42_2.display_name or "not_assigned")
-	local var_42_3 = var_0_4(arg_42_2 and arg_42_2.description or "not_assigned")
+ImguiStoreRotation._make_bundle_def = function (self, arg_42_1, arg_42_2, arg_42_3)
+	-- function 42
+	local steam_itemdefid = arg_42_2.steam_itemdefid
+	local get_item_definition_property = SteamInventory.get_item_definition_property(steam_itemdefid, "price")
+	local var_42_2 = fn
+	local display_name
+
+	if not arg_42_2 then
+		display_name = arg_42_2.display_name
+
+		if not display_name then
+			-- Nothing
+		end
+	end
+
+	display_name = "not_assigned"
+
+	::label_42_0::
+
+	local var_42_4 = var_42_2(display_name)
+	local var_42_5 = fn
+	local description
+
+	if not arg_42_2 then
+		description = arg_42_2.description
+
+		if not description then
+			-- Nothing
+		end
+	end
+
+	description = "not_assigned"
+
+	::label_42_1::
+
+	local var_42_7 = var_42_5(description)
 
 	return {
 		item_quality = 2,
@@ -944,491 +1186,520 @@ function ImguiStoreRotation._make_bundle_def(arg_42_0, arg_42_1, arg_42_2, arg_4
 		hidden = false,
 		store_hidden = false,
 		itemdefid = arg_42_2.steam_itemdefid,
-		display_type = SteamInventory.get_item_definition_property(var_42_0, "display_type"),
-		bundle = SteamInventory.get_item_definition_property(var_42_0, "bundle"),
-		name = var_42_2,
-		price = arg_42_0:_calculate_discount(var_42_1, arg_42_3),
-		description = var_42_3,
-		name_color = SteamInventory.get_item_definition_property(var_42_0, "name_color"),
-		background_color = SteamInventory.get_item_definition_property(var_42_0, "background_color"),
-		icon_url = SteamInventory.get_item_definition_property(var_42_0, "icon_url")
+		display_type = SteamInventory.get_item_definition_property(steam_itemdefid, "display_type"),
+		bundle = SteamInventory.get_item_definition_property(steam_itemdefid, "bundle"),
+		name = var_42_4,
+		price = self:_calculate_discount(get_item_definition_property, arg_42_3),
+		description = var_42_7,
+		name_color = SteamInventory.get_item_definition_property(steam_itemdefid, "name_color"),
+		background_color = SteamInventory.get_item_definition_property(steam_itemdefid, "background_color"),
+		icon_url = SteamInventory.get_item_definition_property(steam_itemdefid, "icon_url")
 	}
 end
 
-function ImguiStoreRotation._generate_discounted_item(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
-	if arg_43_2.item_type ~= "bundle" and arg_43_2.item_type ~= "cosmetic_bundle" then
-		return arg_43_0:_make_item_def(arg_43_1, arg_43_2, arg_43_3)
+ImguiStoreRotation._generate_discounted_item = function (self, arg_43_1, arg_43_2, arg_43_3)
+	-- function 43
+	if not (arg_43_2.item_type == "bundle" or arg_43_2.item_type == "cosmetic_bundle") then
+		return self:_make_item_def(arg_43_1, arg_43_2, arg_43_3)
 	else
-		return arg_43_0:_make_bundle_def(arg_43_1, arg_43_2, arg_43_3)
+		return self:_make_bundle_def(arg_43_1, arg_43_2, arg_43_3)
 	end
 end
 
-function ImguiStoreRotation._draw_dicount_begin_and_end_fields(arg_44_0)
-	var_0_6.text("Setup Discount Begin and End Date")
-	var_0_6.text_colored("Set the start date from when the an item should be on sale", 245, 245, 207, 255)
-	var_0_6.text("Begin Date")
-	var_0_6.columns(3, false)
-	var_0_6.set_column_width(300)
+ImguiStoreRotation._draw_dicount_begin_and_end_fields = function (self)
+	-- function 44
+	Imgui.text("Setup Discount Begin and End Date")
+	Imgui.text_colored("Set the start date from when the an item should be on sale", 245, 245, 207, 255)
+	Imgui.text("Begin Date")
+	Imgui.columns(3, false)
+	Imgui.set_column_width(300)
 
-	arg_44_0._begin_discount_year = var_0_6.input_text("Begin Year", arg_44_0._begin_discount_year)
+	self._begin_discount_year = Imgui.input_text("Begin Year", self._begin_discount_year)
 
-	var_0_6.next_column()
-	var_0_6.set_column_width(300)
+	Imgui.next_column()
+	Imgui.set_column_width(300)
 
-	arg_44_0._begin_discount_month = var_0_6.input_text("Begin Month", arg_44_0._begin_discount_month)
+	self._begin_discount_month = Imgui.input_text("Begin Month", self._begin_discount_month)
 
-	var_0_6.next_column()
-	var_0_6.set_column_width(300)
+	Imgui.next_column()
+	Imgui.set_column_width(300)
 
-	arg_44_0._begin_discount_day = var_0_6.input_text("Begin Day", arg_44_0._begin_discount_day)
+	self._begin_discount_day = Imgui.input_text("Begin Day", self._begin_discount_day)
 
-	var_0_6.columns(0, false)
-	var_0_6.text("End Date")
-	var_0_6.text_colored("Set the end date from when the sale on the item should end", 245, 245, 207, 255)
-	var_0_6.columns(3, false)
+	Imgui.columns(0, false)
+	Imgui.text("End Date")
+	Imgui.text_colored("Set the end date from when the sale on the item should end", 245, 245, 207, 255)
+	Imgui.columns(3, false)
 
-	arg_44_0._end_discount_year = var_0_6.input_text("End Year", arg_44_0._end_discount_year)
+	self._end_discount_year = Imgui.input_text("End Year", self._end_discount_year)
 
-	var_0_6.next_column()
-	var_0_6.set_column_width(300)
+	Imgui.next_column()
+	Imgui.set_column_width(300)
 
-	arg_44_0._end_discount_month = var_0_6.input_text("End Month", arg_44_0._end_discount_month)
+	self._end_discount_month = Imgui.input_text("End Month", self._end_discount_month)
 
-	var_0_6.next_column()
-	var_0_6.set_column_width(300)
+	Imgui.next_column()
+	Imgui.set_column_width(300)
 
-	arg_44_0._end_discount_day = var_0_6.input_text("End Day", arg_44_0._end_discount_day)
+	self._end_discount_day = Imgui.input_text("End Day", self._end_discount_day)
 
-	var_0_6.next_column()
+	Imgui.next_column()
 end
 
-function ImguiStoreRotation._store_rotation_discounts_tab(arg_45_0)
-	var_0_6.text("Store Rotation Discounts")
-	var_0_6.text_colored("This tab only supports discounting STEAM ITEMS.\nSupport to discount PLAYFAB items will be added in the near future.", 255, 0, 0, 255)
-	var_0_6.dummy(2, 5)
-	var_0_6.text_colored("Set the file name and the Steam Application ID (This field is prefilled to be the 'Vermintide 2 Internal Test' Steam App ID: 795750)", 245, 245, 207, 255)
-	arg_45_0:_do_discount_rotation_file_name()
-	arg_45_0:_draw_dicount_begin_and_end_fields()
-	var_0_6.dummy(2, 5)
-	var_0_6.separator()
-	var_0_6.columns(2, true)
-	var_0_6.text("Edit Discounts")
-	arg_45_0:_do_edit_discounts_button()
+ImguiStoreRotation._store_rotation_discounts_tab = function (self)
+	-- function 45
+	Imgui.text("Store Rotation Discounts")
+	Imgui.text_colored("This tab only supports discounting STEAM ITEMS.\nSupport to discount PLAYFAB items will be added in the near future.", 255, 0, 0, 255)
+	Imgui.dummy(2, 5)
+	Imgui.text_colored("Set the file name and the Steam Application ID (This field is prefilled to be the 'Vermintide 2 Internal Test' Steam App ID: 795750)", 245, 245, 207, 255)
+	self:_do_discount_rotation_file_name()
+	self:_draw_dicount_begin_and_end_fields()
+	Imgui.dummy(2, 5)
+	Imgui.separator()
+	Imgui.columns(2, true)
+	Imgui.text("Edit Discounts")
+	self:_do_edit_discounts_button()
 
-	local var_45_0 = var_0_9(arg_45_0._end_discount_year, arg_45_0._end_discount_month, arg_45_0._end_discount_day)
+	local var_45_0 = fn_3(self._end_discount_year, self._end_discount_month, self._end_discount_day)
 
-	arg_45_0:_do_discount_item_selection(var_45_0)
-	arg_45_0:_handle_discount_page_errors(var_45_0)
-	arg_45_0:_do_clear_discount_edit_buttons()
-	arg_45_0:_do_save_discounted_items_button()
+	self:_do_discount_item_selection(var_45_0)
+	self:_handle_discount_page_errors(var_45_0)
+	self:_do_clear_discount_edit_buttons()
+	self:_do_save_discounted_items_button()
 
-	if arg_45_0._save_successful_discount ~= "" then
-		var_0_6.text_colored(arg_45_0._save_successful_discount, 255, 196, 0, 255)
+	if self._save_successful_discount ~= "" then
+		Imgui.text_colored(self._save_successful_discount, 255, 196, 0, 255)
 	end
 
-	var_0_6.next_column()
-	var_0_6.text("Preview Discounted Items")
-	var_0_6.separator()
-	arg_45_0:_do_preview_discounted_items()
-	var_0_6.next_column()
-	var_0_6.columns(0, false)
+	Imgui.next_column()
+	Imgui.text("Preview Discounted Items")
+	Imgui.separator()
+	self:_do_preview_discounted_items()
+	Imgui.next_column()
+	Imgui.columns(0, false)
 end
 
-function ImguiStoreRotation._do_discount_rotation_file_name(arg_46_0)
-	var_0_6.dummy(2, 3)
+ImguiStoreRotation._do_discount_rotation_file_name = function (self)
+	-- function 46
+	Imgui.dummy(2, 3)
 
-	arg_46_0._new_discount_file_name = var_0_6.input_text("Steam Discount File Name", arg_46_0._new_discount_file_name)
+	self._new_discount_file_name = Imgui.input_text("Steam Discount File Name", self._new_discount_file_name)
 
-	local var_46_0 = var_0_6.combo("Steam App Id", arg_46_0._appid_idx, var_0_2, 2)
+	local combo = Imgui.combo("Steam App Id", self._appid_idx, tbl, 2)
 
-	if var_46_0 ~= arg_46_0._appid_idx then
-		arg_46_0._appid = var_0_2[var_46_0]
-		arg_46_0._appid_idx = var_46_0
+	if combo ~= self._appid_idx then
+		self._appid = tbl[combo]
+		self._appid_idx = combo
 	end
 
-	var_0_6.dummy(2, 5)
-	var_0_6.separator()
+	Imgui.dummy(2, 5)
+	Imgui.separator()
 end
 
-function ImguiStoreRotation._do_edit_discounts_button(arg_47_0)
-	var_0_6.dummy(2, 10)
-	var_0_6.text("Edit Discounts")
-	var_0_6.text_colored("Select an item and set the anount of which it should be discounted by", 245, 245, 207, 255)
+ImguiStoreRotation._do_edit_discounts_button = function (self)
+	-- function 47
+	Imgui.dummy(2, 10)
+	Imgui.text("Edit Discounts")
+	Imgui.text_colored("Select an item and set the anount of which it should be discounted by", 245, 245, 207, 255)
 
-	if var_0_6.button("DISCOUNT Item", 200, 20) then
-		arg_47_0._is_selecting_discount_item = true
+	if not Imgui.button("DISCOUNT Item", 200, 20) then
+		self._is_selecting_discount_item = true
 
-		arg_47_0:_on_search_type_changed(var_0_3.discount)
+		self:_on_search_type_changed(enum.discount)
 	end
 
-	if var_0_6.button("REMOVE LAST Item", 200, 20) then
-		arg_47_0:_remove_last_added_item(arg_47_0._discounted_items)
+	if not Imgui.button("REMOVE LAST Item", 200, 20) then
+		self:_remove_last_added_item(self._discounted_items)
 	end
 end
 
-function ImguiStoreRotation._on_search_type_changed(arg_48_0, arg_48_1)
-	arg_48_0._search_type = arg_48_1
-	arg_48_0._item_search_results = table.clone(arg_48_0._searcheable_item_keys[arg_48_1])
+ImguiStoreRotation._on_search_type_changed = function (self, arg_48_1)
+	-- function 48
+	self._search_type = arg_48_1
+	self._item_search_results = table.clone(self._searcheable_item_keys[arg_48_1])
 end
 
-function ImguiStoreRotation._do_discount_item_selection(arg_49_0, arg_49_1)
-	if arg_49_0._is_selecting_discount_item then
-		var_0_6.dummy(2, 5)
-		var_0_6.text_colored("OBS! PRESS ENTER", 255, 0, 0, 255)
-		var_0_6.same_line()
-		var_0_6.text("after inputting the discoiunt to apply it")
+ImguiStoreRotation._do_discount_item_selection = function (self, arg_49_1)
+	-- function 49
+	if not self._is_selecting_discount_item then
+		Imgui.dummy(2, 5)
+		Imgui.text_colored("OBS! PRESS ENTER", 255, 0, 0, 255)
+		Imgui.same_line()
+		Imgui.text("after inputting the discoiunt to apply it")
 
-		arg_49_0._discount_amount = var_0_6.input_int("Discount amount", arg_49_0._discount_amount)
+		self._discount_amount = Imgui.input_int("Discount amount", self._discount_amount)
 
-		arg_49_0:_draw_item_selection()
+		self:_draw_item_selection()
 
-		if arg_49_0._selected_item_index ~= -1 then
-			if arg_49_0._discount_amount > 0 and arg_49_0._discount_amount <= 100 and arg_49_1 then
-				local var_49_0 = arg_49_0._item_search_results[arg_49_0._selected_item_index]
+		if self._selected_item_index ~= -1 then
+			if not (not (self._discount_amount > 0) or self._discount_amount <= 100) and not arg_49_1 then
+				local var_49_0 = self._item_search_results[self._selected_item_index]
 
-				var_49_0 = arg_49_0._name_to_key[var_49_0] or var_49_0
+				var_49_0 = self._name_to_key[var_49_0] or var_49_0
 
 				local var_49_1 = rawget(ItemMasterList, var_49_0)
 
 				fassert(var_49_1, "Item %s is not in the ItemMasterList", var_49_0)
 
-				local var_49_2 = var_0_8(var_49_1)
+				local var_49_2 = fn_2(var_49_1)
 
-				arg_49_0._is_playfab_item = not var_49_2
+				self._is_playfab_item = not var_49_2
 
-				if var_49_2 then
-					local var_49_3 = arg_49_0._discount_amount
-					local var_49_4 = arg_49_0:_generate_discounted_item(var_49_0, var_49_1, var_49_3)
-					local var_49_5 = {
+				if not var_49_2 then
+					local _discount_amount = self._discount_amount
+					local _generate_discounted_item = self:_generate_discounted_item(var_49_0, var_49_1, _discount_amount)
+					local tbl = {
 						key = var_49_0,
-						item = var_49_4
+						item = _generate_discounted_item
 					}
 
-					arg_49_0._discounted_items[#arg_49_0._discounted_items + 1] = var_49_5
-					arg_49_0._has_error_discount = false
-					arg_49_0._selected_item_index = -1
-					arg_49_0._item_search_text = ""
-					arg_49_0._is_selecting_discount_item = false
+					self._discounted_items[#self._discounted_items + 1] = tbl
+					self._has_error_discount = false
+					self._selected_item_index = -1
+					self._item_search_text = ""
+					self._is_selecting_discount_item = false
 				else
-					arg_49_0._has_error_discount = true
+					self._has_error_discount = true
 				end
 			else
-				arg_49_0._has_error_discount = true
-				arg_49_0._selected_item_index = -1
-				arg_49_0._item_search_text = ""
+				self._has_error_discount = true
+				self._selected_item_index = -1
+				self._item_search_text = ""
 			end
 		end
 	end
 end
 
-function ImguiStoreRotation._handle_discount_page_errors(arg_50_0, arg_50_1)
-	if arg_50_0._has_error_discount then
-		local var_50_0 = ""
+ImguiStoreRotation._handle_discount_page_errors = function (self, arg_50_1)
+	-- function 50
+	if not self._has_error_discount then
+		local str = ""
 
-		if arg_50_0._discount_amount <= 0 then
-			var_50_0 = string.format("ERROR: You are tring to discount an item by %d,\nThe discount amount must be greater than 0", arg_50_0._discount_amount)
-		elseif arg_50_0._discount_amount > 100 then
-			var_50_0 = string.format("ERROR: You are tring to discount an item by %d,\nThe discount amount must be less then or equal to 100", arg_50_0._discount_amount)
+		if self._discount_amount <= 0 then
+			str = string.format("ERROR: You are tring to discount an item by %d,\nThe discount amount must be greater than 0", self._discount_amount)
+		elseif self._discount_amount > 100 then
+			str = string.format("ERROR: You are tring to discount an item by %d,\nThe discount amount must be less then or equal to 100", self._discount_amount)
 		end
 
 		if not arg_50_1 then
-			var_50_0 = var_50_0 .. "\n" .. string.format("ERROR: You are tring to set a discount time with an invalid end date,\nThe date cannot be %s-%s-%s", arg_50_0._end_discount_year, arg_50_0._end_discount_month, arg_50_0._end_discount_day)
+			str = str .. "\n" .. string.format("ERROR: You are tring to set a discount time with an invalid end date,\nThe date cannot be %s-%s-%s", self._end_discount_year, self._end_discount_month, self._end_discount_day)
 		end
 
-		if arg_50_0._is_playfab_item then
-			var_50_0 = var_50_0 .. "\n" .. "ERROR: The Item you are trying to discount is a Playfab item.\nCurrently this tool does not support discounting Playfab items."
+		if not self._is_playfab_item then
+			str = str .. "\n" .. "ERROR: The Item you are trying to discount is a Playfab item.\nCurrently this tool does not support discounting Playfab items."
 		end
 
-		if var_50_0 then
-			var_0_6.text_colored(var_50_0, 255, 0, 0, 255)
+		if not str then
+			Imgui.text_colored(str, 255, 0, 0, 255)
 		end
 	end
 end
 
-function ImguiStoreRotation._do_clear_discount_edit_buttons(arg_51_0)
-	var_0_6.dummy(2, 10)
-	var_0_6.text("Clear All Discounted Items")
-	var_0_6.text_colored("Delete all the edited discounted items.", 245, 245, 207, 255)
+ImguiStoreRotation._do_clear_discount_edit_buttons = function (self)
+	-- function 51
+	Imgui.dummy(2, 10)
+	Imgui.text("Clear All Discounted Items")
+	Imgui.text_colored("Delete all the edited discounted items.", 245, 245, 207, 255)
 
-	if var_0_6.button("Clear Discounted Items", 200, 20) then
-		table.clear(arg_51_0._discounted_items)
+	if not Imgui.button("Clear Discounted Items", 200, 20) then
+		table.clear(self._discounted_items)
 	end
 end
 
-function ImguiStoreRotation._do_save_discounted_items_button(arg_52_0)
-	var_0_6.dummy(2, 10)
-	var_0_6.text("Save Discounts")
-	var_0_6.text_colored("Save the discounted items to a JSON file, that can be easily uploaded to Steam.", 245, 245, 207, 255)
+ImguiStoreRotation._do_save_discounted_items_button = function (self)
+	-- function 52
+	Imgui.dummy(2, 10)
+	Imgui.text("Save Discounts")
+	Imgui.text_colored("Save the discounted items to a JSON file, that can be easily uploaded to Steam.", 245, 245, 207, 255)
 
-	if var_0_6.button("SAVE DISCOUNTS TO FILE", 250, 50) then
-		arg_52_0:_save_discounts_to_file()
+	if not Imgui.button("SAVE DISCOUNTS TO FILE", 250, 50) then
+		self:_save_discounts_to_file()
 	end
 end
 
-function ImguiStoreRotation._do_preview_discounted_items(arg_53_0)
-	var_0_6.dummy(2, 10)
-	var_0_6.text("DISCOUNTED ITEMS: " .. #arg_53_0._discounted_items)
+ImguiStoreRotation._do_preview_discounted_items = function (self)
+	-- function 53
+	Imgui.dummy(2, 10)
+	Imgui.text("DISCOUNTED ITEMS: " .. #self._discounted_items)
 
-	if not table.is_empty(arg_53_0._discounted_items) then
-		arg_53_0:_draw_discounted_items(arg_53_0._discounted_items)
+	if not table.is_empty(self._discounted_items) then
+		self:_draw_discounted_items(self._discounted_items)
 	end
 end
 
-function ImguiStoreRotation._get_from_to_discount_price(arg_54_0, arg_54_1)
-	local var_54_0 = arg_54_0._backend_store
-	local var_54_1 = "Discounted by %d percent from %.2f %s to %.2f %s"
-	local var_54_2, var_54_3 = var_54_0:get_steam_item_price(arg_54_1)
-	local var_54_4 = var_54_2 - math.floor(var_54_2 * (arg_54_0._discount_amount / 100))
+ImguiStoreRotation._get_from_to_discount_price = function (self, arg_54_1)
+	-- function 54
+	local _backend_store = self._backend_store
+	local str = "Discounted by %d percent from %.2f %s to %.2f %s"
+	local get_steam_item_price, var_54_3 = _backend_store:get_steam_item_price(arg_54_1)
+	local num = get_steam_item_price - math.floor(get_steam_item_price * (self._discount_amount / 100))
 
-	return (string.format(var_54_1, arg_54_0._discount_amount, var_54_2 * 0.01, var_54_3, var_54_4 * 0.01, var_54_3))
+	return (string.format(str, self._discount_amount, get_steam_item_price * 0.01, var_54_3, num * 0.01, var_54_3))
 end
 
-function ImguiStoreRotation._draw_discounted_items(arg_55_0, arg_55_1)
-	for iter_55_0 = 1, #arg_55_1 do
-		local var_55_0 = arg_55_1[iter_55_0]
-		local var_55_1 = var_55_0.item
-		local var_55_2 = var_55_0.key
+ImguiStoreRotation._draw_discounted_items = function (self, arg_55_1)
+	-- function 55
+	for i = 1, #arg_55_1 do
+		local var_55_0 = arg_55_1[i]
+		local item = var_55_0.item
+		local key = var_55_0.key
 
-		var_0_6.text_colored("Discounted Item: " .. var_55_2, 245, 245, 207, 255)
+		Imgui.text_colored("Discounted Item: " .. key, 245, 245, 207, 255)
 
-		local var_55_3 = arg_55_0:_get_from_to_discount_price(var_55_1.itemdefid)
+		local _get_from_to_discount_price = self:_get_from_to_discount_price(item.itemdefid)
 
-		var_0_6.text(var_55_3)
-		var_0_6.dummy(2, 5)
+		Imgui.text(_get_from_to_discount_price)
+		Imgui.dummy(2, 5)
 
-		for iter_55_1, iter_55_2 in pairs(var_55_1) do
-			if var_55_1.error_text then
-				var_0_6.text_colored(iter_55_1 .. " : " .. iter_55_2, 255, 0, 0, 255)
+		for k, v in pairs(item) do
+			if not item.error_text then
+				Imgui.text_colored(k .. " : " .. v, 255, 0, 0, 255)
 			else
-				var_0_6.text_colored(iter_55_1 .. " : ", 0, 186, 112, 255)
-				var_0_6.same_line()
-				var_0_6.text_colored(tostring(iter_55_2), 0, 193, 212, 255)
+				Imgui.text_colored(k .. " : ", 0, 186, 112, 255)
+				Imgui.same_line()
+				Imgui.text_colored(tostring(v), 0, 193, 212, 255)
 			end
 		end
 
-		var_0_6.dummy(2, 5)
+		Imgui.dummy(2, 5)
 	end
 end
 
-function ImguiStoreRotation._get_rotation_items(arg_56_0)
-	local var_56_0 = {}
+ImguiStoreRotation._get_rotation_items = function (self)
+	-- function 56
+	local tbl = {}
 
-	for iter_56_0 = 1, #arg_56_0._discounted_items do
-		local var_56_1 = arg_56_0._discounted_items[iter_56_0]
+	for i = 1, #self._discounted_items do
+		local var_56_1 = self._discounted_items[i]
 
-		var_56_0[#var_56_0 + 1] = var_56_1.item
+		tbl[#tbl + 1] = var_56_1.item
 	end
 
-	return var_56_0
+	return tbl
 end
 
-function ImguiStoreRotation._save_discounts_to_file(arg_57_0)
-	if not arg_57_0._has_error_discount then
-		local var_57_0 = arg_57_0:_get_rotation_items()
-		local var_57_1 = cjson.encode({
-			appid = arg_57_0._appid,
-			items = var_57_0
+ImguiStoreRotation._save_discounts_to_file = function (self)
+	-- function 57
+	if not self._has_error_discount then
+		local _get_rotation_items = self:_get_rotation_items()
+		local gsub = cjson.encode({
+			appid = self._appid,
+			items = _get_rotation_items
 		}):gsub("\\/", "/")
-		local var_57_2 = script_data.source_dir
+		local source_dir = script_data.source_dir
 
-		arg_57_0._fp = assert(io.open(var_57_2 .. "/.shop/rotation/" .. arg_57_0._new_discount_file_name .. ".json", "w"))
+		self._fp = assert(io.open(source_dir .. "/.shop/rotation/" .. self._new_discount_file_name .. ".json", "w"))
 
-		arg_57_0._fp:write(var_57_1)
-		arg_57_0._fp:close()
+		self._fp:write(gsub)
+		self._fp:close()
 
-		arg_57_0._save_successful_discount = "File saved succsessfully at\n" .. var_57_2 .. "/.shop/rotation/" .. arg_57_0._new_discount_file_name .. ".json"
+		self._save_successful_discount = "File saved succsessfully at\n" .. source_dir .. "/.shop/rotation/" .. self._new_discount_file_name .. ".json"
 
-		arg_57_0:_save_settings()
+		self:_save_settings()
 	end
 end
 
-function ImguiStoreRotation._store_item_utility_tab(arg_58_0)
-	var_0_6.text("Store Items Utility")
-	var_0_6.dummy(2, 5)
-	var_0_6.text_colored("Create a .CSV file containing all the items present in the game", 64, 255, 255, 255)
-	var_0_6.text_colored("The item information collected will be the Hero Name, Cosmetic Type, Localized Name, Item Key and Which Career Can Wield/Equip the Item", 64, 255, 255, 255)
+ImguiStoreRotation._store_item_utility_tab = function (self)
+	-- function 58
+	Imgui.text("Store Items Utility")
+	Imgui.dummy(2, 5)
+	Imgui.text_colored("Create a .CSV file containing all the items present in the game", 64, 255, 255, 255)
+	Imgui.text_colored("The item information collected will be the Hero Name, Cosmetic Type, Localized Name, Item Key and Which Career Can Wield/Equip the Item", 64, 255, 255, 255)
 
-	if var_0_6.button("Create cosmetics List file", 250, 50) then
-		arg_58_0:_create_cosmetics_item_list_file()
+	if not Imgui.button("Create cosmetics List file", 250, 50) then
+		self:_create_cosmetics_item_list_file()
 	end
 
-	var_0_6.dummy(2, 5)
-	var_0_6.text_colored("Create a .JSON file containing all the feature and slideshow items available in the game", 64, 255, 255, 255)
+	Imgui.dummy(2, 5)
+	Imgui.text_colored("Create a .JSON file containing all the feature and slideshow items available in the game", 64, 255, 255, 255)
 
-	if var_0_6.button("Create Featured and Slideshow Json file", 250, 50) then
-		arg_58_0:_create_rotation_items_json_file()
+	if not Imgui.button("Create Featured and Slideshow Json file", 250, 50) then
+		self:_create_rotation_items_json_file()
 	end
 end
 
-function ImguiStoreRotation._create_rotation_items_json_file(arg_59_0)
-	local var_59_0 = arg_59_0:_collect_all_feature_items()
-	local var_59_1 = arg_59_0:_collect_all_slideshow_items()
-	local var_59_2 = cjson.encode({
-		featured_items = var_59_0,
-		slideshow_items = var_59_1
+ImguiStoreRotation._create_rotation_items_json_file = function (self)
+	-- function 59
+	local _collect_all_feature_items = self:_collect_all_feature_items()
+	local _collect_all_slideshow_items = self:_collect_all_slideshow_items()
+	local gsub = cjson.encode({
+		featured_items = _collect_all_feature_items,
+		slideshow_items = _collect_all_slideshow_items
 	}):gsub("\\/", "/")
-	local var_59_3 = script_data.source_dir
+	local source_dir = script_data.source_dir
 
-	arg_59_0._fp = assert(io.open(var_59_3 .. "/.shop/collected_featured_and_slideshow_items.json", "w"))
+	self._fp = assert(io.open(source_dir .. "/.shop/collected_featured_and_slideshow_items.json", "w"))
 
-	arg_59_0._fp:write(var_59_2)
-	arg_59_0._fp:close()
+	self._fp:write(gsub)
+	self._fp:close()
 end
 
-function ImguiStoreRotation._collect_all_feature_items(arg_60_0)
-	local var_60_0 = {}
+ImguiStoreRotation._collect_all_feature_items = function (self)
+	-- function 60
+	local tbl = {}
 
-	for iter_60_0, iter_60_1 in ipairs(arg_60_0._item_keys_list) do
-		var_60_0[iter_60_1] = arg_60_0:_get_layout_item(iter_60_1)
+	for i, v in ipairs(self._item_keys_list) do
+		tbl[v] = self:_get_layout_item(v)
 	end
 
-	arg_60_0._all_feature_items = var_60_0
+	self._all_feature_items = tbl
 
-	return var_60_0
+	return tbl
 end
 
-function ImguiStoreRotation._collect_all_slideshow_items(arg_61_0)
-	local var_61_0 = {}
+ImguiStoreRotation._collect_all_slideshow_items = function (self)
+	-- function 61
+	local tbl = {}
 
-	for iter_61_0, iter_61_1 in pairs(arg_61_0._item_keys_list) do
-		local var_61_1 = arg_61_0:_get_slideshow_item(iter_61_1)
+	for k, v in pairs(self._item_keys_list) do
+		local _get_slideshow_item = self:_get_slideshow_item(v)
 
-		if not var_61_1.error_text then
-			var_61_0[iter_61_1] = var_61_1
+		if not _get_slideshow_item.error_text then
+			tbl[v] = _get_slideshow_item
 		end
 	end
 
-	arg_61_0._all_slideshow_items = var_61_0
+	self._all_slideshow_items = tbl
 
-	return var_61_0
+	return tbl
 end
 
-function ImguiStoreRotation._create_cosmetics_item_list_file(arg_62_0)
-	local var_62_0 = "Hero, Comsetic Type, Localized Name, Item Key, Can Wield Careers \n"
+ImguiStoreRotation._create_cosmetics_item_list_file = function (self)
+	-- function 62
+	local str = "Hero, Comsetic Type, Localized Name, Item Key, Can Wield Careers \n"
 
-	local function var_62_1(arg_63_0)
-		local var_63_0 = ""
+	local function fn_2(self)
+		-- function 63
+		local str = ""
 
-		for iter_63_0 = 1, #arg_63_0 do
-			local var_63_1 = var_0_4(arg_63_0[iter_63_0])
+		for i = 1, #self do
+			local var_63_1 = fn(self[i])
 
-			if iter_63_0 == #arg_63_0 then
-				var_63_0 = var_63_0 .. var_63_1
+			if i == #self then
+				str = str .. var_63_1
 			else
-				var_63_0 = var_63_0 .. var_63_1 .. " , "
+				str = str .. var_63_1 .. " , "
 			end
 		end
 
-		return "\" " .. var_63_0 .. " \""
+		return "\" " .. str .. " \""
 	end
 
-	for iter_62_0, iter_62_1 in pairs(arg_62_0._cosmetic_items) do
-		local var_62_2 = var_0_4(iter_62_0)
+	for k, v in pairs(self._cosmetic_items) do
+		local var_62_2 = fn(k)
 
-		if iter_62_0 == "frame" then
-			for iter_62_2, iter_62_3 in pairs(iter_62_1) do
-				local var_62_3 = var_0_4(iter_62_2)
-				local var_62_4 = iter_62_3.item_key
+		if k == "frame" then
+			for k_2, v_2 in pairs(v) do
+				local var_62_3 = fn(k_2)
+				local item_key = v_2.item_key
 
-				var_62_0 = var_62_0 .. "\" \"" .. "," .. var_62_2 .. "," .. "\"" .. var_62_3 .. "\"" .. ", " .. var_62_4 .. ", All" .. "\n"
+				str = str .. "\" \"" .. "," .. var_62_2 .. "," .. "\"" .. var_62_3 .. "\"" .. ", " .. item_key .. ", All" .. "\n"
 			end
 		else
-			for iter_62_4, iter_62_5 in pairs(iter_62_1) do
-				local var_62_5 = var_0_4(iter_62_4)
+			for k_3, v_3 in pairs(v) do
+				local var_62_5 = fn(k_3)
 
-				for iter_62_6, iter_62_7 in pairs(iter_62_5) do
-					local var_62_6 = var_0_4(iter_62_6)
+				for k_4, v_4 in pairs(v_3) do
+					local var_62_6 = fn(k_4)
 
-					var_62_0 = var_62_0 .. var_62_2 .. "," .. var_62_5 .. ","
+					str = str .. var_62_2 .. "," .. var_62_5 .. ","
 
-					local var_62_7 = ""
+					local str_2 = ""
 
-					if iter_62_7.can_wield then
-						var_62_7 = var_62_1(iter_62_7.can_wield)
+					if not v_4.can_wield then
+						str_2 = fn_2(v_4.can_wield)
 					end
 
-					var_62_0 = var_62_0 .. "\"" .. var_62_6 .. "\"" .. ", " .. iter_62_7.item_key .. ", " .. var_62_7 .. "\n"
+					str = str .. "\"" .. var_62_6 .. "\"" .. ", " .. v_4.item_key .. ", " .. str_2 .. "\n"
 				end
 			end
 		end
 	end
 
-	local var_62_8 = script_data.source_dir
+	local source_dir = script_data.source_dir
 
-	arg_62_0._fp = assert(io.open(var_62_8 .. "/.shop/cosmetic_items_list.csv", "w"))
+	self._fp = assert(io.open(source_dir .. "/.shop/cosmetic_items_list.csv", "w"))
 
-	arg_62_0._fp:write(var_62_0)
-	arg_62_0._fp:close()
+	self._fp:write(str)
+	self._fp:close()
 end
 
-local var_0_10 = {
+local tbl_2 = {
 	frame = true,
 	skin = true,
 	weapon_skin = true,
 	cosmetic_bundles = true
 }
 
-function ImguiStoreRotation._collect_cosmetic_items_data(arg_64_0)
-	local var_64_0 = {}
+ImguiStoreRotation._collect_cosmetic_items_data = function (self)
+	-- function 64
+	local tbl = {}
 
-	for iter_64_0, iter_64_1 in pairs(ItemMasterList) do
-		local var_64_1 = iter_64_1.item_type
+	for k, v in pairs(ItemMasterList) do
+		local item_type = v.item_type
 
-		if not iter_64_1.base_skin_item and var_0_10[var_64_1] then
-			if var_64_1 == "frame" then
-				if not var_64_0.frame then
-					var_64_0.frame = {}
+		if v.base_skin_item or not tbl_2[item_type] then
+			if item_type == "frame" then
+				if not tbl.frame then
+					tbl.frame = {}
 				end
 
-				local var_64_2 = {
-					item_key = iter_64_0,
-					icon = iter_64_1.inventory_icon or "icons_placeholder"
+				local tbl_3 = {
+					item_key = k
 				}
+				local inventory_icon = v.inventory_icon
 
-				var_64_0.frame[iter_64_1.display_name] = var_64_2
+				inventory_icon = inventory_icon or "icons_placeholder"
+				tbl_3.icon = inventory_icon
+				tbl.frame[v.display_name] = tbl_3
 			else
-				local var_64_3 = iter_64_1.can_wield[1]
-				local var_64_4 = PROFILES_BY_CAREER_NAMES[var_64_3].ingame_display_name
+				local var_64_4 = v.can_wield[1]
+				local ingame_display_name = PROFILES_BY_CAREER_NAMES[var_64_4].ingame_display_name
 
-				if not var_64_0[var_64_4] then
-					var_64_0[var_64_4] = {}
+				if not tbl[ingame_display_name] then
+					tbl[ingame_display_name] = {}
 				end
 
-				local var_64_5 = {
-					item_key = iter_64_0,
-					can_wield = iter_64_1.can_wield,
-					icon = iter_64_1.inventory_icon or "icons_placeholder"
+				local tbl_4 = {
+					item_key = k,
+					can_wield = v.can_wield
 				}
-				local var_64_6 = var_64_0[var_64_4]
+				local inventory_icon_2 = v.inventory_icon
 
-				if not var_64_6[var_64_1] then
-					var_64_6[var_64_1] = {}
+				inventory_icon_2 = inventory_icon_2 or "icons_placeholder"
+				tbl_4.icon = inventory_icon_2
+
+				local var_64_8 = tbl[ingame_display_name]
+
+				if not var_64_8[item_type] then
+					var_64_8[item_type] = {}
 				end
 
-				local var_64_7 = iter_64_1.display_name
+				local display_name = v.display_name
 
-				var_64_6[var_64_1][var_64_7] = var_64_5
+				var_64_8[item_type][display_name] = tbl_4
 			end
 		end
 	end
 
-	arg_64_0._cosmetic_items = var_64_0
+	self._cosmetic_items = tbl
 end
 
-function ImguiStoreRotation._handle_error_messages(arg_65_0)
-	if arg_65_0._timestamp_error then
-		var_0_6.text_colored("Achtung!!: ", 255, 0, 0, 255)
-		var_0_6.same_line()
-		var_0_6.text("Something is wrong with the date you have given, something seems to be missing!")
+ImguiStoreRotation._handle_error_messages = function (self)
+	-- function 65
+	if not self._timestamp_error then
+		Imgui.text_colored("Achtung!!: ", 255, 0, 0, 255)
+		Imgui.same_line()
+		Imgui.text("Something is wrong with the date you have given, something seems to be missing!")
 	end
 
-	if arg_65_0._missing_file_name then
-		if arg_65_0._new_rotation_file_name ~= "" then
-			arg_65_0._missing_file_name = nil
+	if not self._missing_file_name then
+		if self._new_rotation_file_name ~= "" then
+			self._missing_file_name = nil
 		end
 
-		var_0_6.text_colored("Achtung!!: ", 255, 0, 0, 255)
-		var_0_6.same_line()
-		var_0_6.text("No new file name has been given please name your file before saving!")
+		Imgui.text_colored("Achtung!!: ", 255, 0, 0, 255)
+		Imgui.same_line()
+		Imgui.text("No new file name has been given please name your file before saving!")
 	end
 end

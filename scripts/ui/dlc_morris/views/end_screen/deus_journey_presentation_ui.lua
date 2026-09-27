@@ -6,61 +6,69 @@ local var_0_0 = local_require("scripts/ui/act_presentation/act_presentation_ui_d
 
 DeusJourneyPresentationUI = class(DeusJourneyPresentationUI, ActPresentationUI)
 
-function DeusJourneyPresentationUI.create_ui_elements(arg_1_0)
-	arg_1_0._widgets, arg_1_0._widgets_by_name = UIUtils.create_widgets(var_0_0.deus_widgets)
-	arg_1_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
-	arg_1_0._ui_animator = UIAnimator:new(arg_1_0._ui_scenegraph, var_0_0.deus_animations)
-	arg_1_0._animations = {}
+DeusJourneyPresentationUI.create_ui_elements = function (self)
+	-- function 1
+	self._widgets, self._widgets_by_name = UIUtils.create_widgets(var_0_0.deus_widgets)
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
+	self._ui_animator = UIAnimator:new(self._ui_scenegraph, var_0_0.deus_animations)
+	self._animations = {}
 end
 
-function DeusJourneyPresentationUI.start(arg_2_0, arg_2_1, arg_2_2)
-	arg_2_0._presentation_aborted = nil
-	arg_2_0._journey_name = arg_2_1
+DeusJourneyPresentationUI.start = function (self, arg_2_1, arg_2_2)
+	-- function 2
+	self._presentation_aborted = nil
+	self._journey_name = arg_2_1
 
 	local var_2_0 = DeusJourneySettings[arg_2_1]
-	local var_2_1 = arg_2_0._widgets_by_name
+	local _widgets_by_name = self._widgets_by_name
 
-	arg_2_0:_set_presentation_info(var_2_0, arg_2_1)
+	self:_set_presentation_info(var_2_0, arg_2_1)
 
-	var_2_1.act_title.content.text = ""
+	_widgets_by_name.act_title.content.text = ""
 
-	local var_2_2 = arg_2_0.statistics_db
-	local var_2_3 = arg_2_0.stats_id
-	local var_2_4 = LevelUnlockUtils.completed_journey_difficulty_index(var_2_2, var_2_3, arg_2_1) or 0
-	local var_2_5 = arg_2_2 < var_2_4
+	local statistics_db = self.statistics_db
+	local stats_id = self.stats_id
+	local completed_journey_difficulty_index = LevelUnlockUtils.completed_journey_difficulty_index(statistics_db, stats_id, arg_2_1)
 
-	var_2_1.level.content.locked = var_2_5
+	completed_journey_difficulty_index = completed_journey_difficulty_index or 0
 
-	local var_2_6 = {
-		wwise_world = arg_2_0.wwise_world,
+	local flag = arg_2_2 < completed_journey_difficulty_index
+
+	_widgets_by_name.level.content.locked = flag
+
+	local tbl = {
+		wwise_world = self.wwise_world,
 		journey_name = arg_2_1,
-		widget = arg_2_0._widgets_by_name.level,
-		first_time = var_2_5,
+		widget = self._widgets_by_name.level,
+		first_time = flag,
 		previous_difficulty_index = arg_2_2,
-		difficulty_index = var_2_4,
-		render_settings = arg_2_0.render_settings
+		difficulty_index = completed_journey_difficulty_index,
+		render_settings = self.render_settings
 	}
 
-	arg_2_0.animation_params = var_2_6
+	self.animation_params = tbl
 
-	local var_2_7 = var_2_5 and "enter_first_time" or "enter"
+	local flag_2
 
-	arg_2_0:start_presentation_animation(var_2_7, var_2_6)
+	flag_2 = not flag and "enter_first_time" and "enter"
 
-	arg_2_0.active = true
+	self:start_presentation_animation(flag_2, tbl)
+
+	self.active = true
 end
 
-function DeusJourneyPresentationUI._set_presentation_info(arg_3_0, arg_3_1, arg_3_2)
-	local var_3_0 = arg_3_1.display_name
-	local var_3_1 = arg_3_1.level_image
-	local var_3_2 = arg_3_0._widgets_by_name
+DeusJourneyPresentationUI._set_presentation_info = function (self, arg_3_1, arg_3_2)
+	-- function 3
+	local display_name = arg_3_1.display_name
+	local level_image = arg_3_1.level_image
+	local _widgets_by_name = self._widgets_by_name
 
-	var_3_2.level.content.level_icon = var_3_1
+	_widgets_by_name.level.content.level_icon = level_image
 
-	local var_3_3 = Managers.backend:get_interface("deus"):get_journey_cycle().journey_data[arg_3_2].dominant_god
-	local var_3_4 = DeusThemeSettings[var_3_3]
+	local dominant_god = Managers.backend:get_interface("deus"):get_journey_cycle().journey_data[arg_3_2].dominant_god
+	local var_3_4 = DeusThemeSettings[dominant_god]
 
-	var_3_2.level.content.theme_icon = var_3_4.text_icon
-	var_3_2.level_title.content.text = Localize(var_3_0)
-	var_3_2.level.style.purple_glow.color[1] = 0
+	_widgets_by_name.level.content.theme_icon = var_3_4.text_icon
+	_widgets_by_name.level_title.content.text = Localize(display_name)
+	_widgets_by_name.level.style.purple_glow.color[1] = 0
 end

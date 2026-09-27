@@ -1,9 +1,9 @@
 -- chunkname: @scripts/ui/hud_ui/gamepad_consumable_ui_definitions.lua
 
-local var_0_0 = 1920
-local var_0_1 = 1080
-local var_0_2 = true
-local var_0_3 = {
+local num = 1920
+local num_2 = 1080
+local flag = true
+local tbl = {
 	root = {
 		is_root = true,
 		position = {
@@ -12,8 +12,8 @@ local var_0_3 = {
 			UILayer.hud
 		},
 		size = {
-			var_0_0,
-			var_0_1
+			num,
+			num_2
 		}
 	},
 	pivot = {
@@ -84,7 +84,8 @@ local var_0_3 = {
 	}
 }
 
-local function var_0_4(arg_1_0, arg_1_1, arg_1_2)
+local function fn(arg_1_0, arg_1_1, arg_1_2)
+	-- function 1
 	return {
 		scenegraph_id = "pivot",
 		element = {
@@ -106,8 +107,13 @@ local function var_0_4(arg_1_0, arg_1_1, arg_1_2)
 					style_id = "texture_icon_lit",
 					pass_type = "texture",
 					retained_mode = true,
-					content_check_function = function(arg_2_0)
-						return arg_2_0.has_data and arg_2_0.wielded
+					content_check_function = function (self)
+						-- function 2
+						local has_data = self.has_data
+
+						has_data = not has_data and self.wielded
+
+						return has_data
 					end
 				},
 				{
@@ -115,8 +121,13 @@ local function var_0_4(arg_1_0, arg_1_1, arg_1_2)
 					pass_type = "text",
 					text_id = "text_ammo",
 					retained_mode = true,
-					content_check_function = function(arg_3_0)
-						return arg_3_0.has_data and arg_3_0.show_ammo
+					content_check_function = function (self)
+						-- function 3
+						local has_data = self.has_data
+
+						has_data = not has_data and self.show_ammo
+
+						return has_data
 					end
 				}
 			}
@@ -221,9 +232,9 @@ local function var_0_4(arg_1_0, arg_1_1, arg_1_2)
 	}
 end
 
-local var_0_5 = math.degrees_to_radians
-local var_0_6 = {
-	slot_potion = var_0_4(var_0_5(0), {
+local degrees_to_radians = math.degrees_to_radians
+local tbl_2 = {
+	slot_potion = fn(degrees_to_radians(0), {
 		-36,
 		-30,
 		2
@@ -232,7 +243,7 @@ local var_0_6 = {
 		-20,
 		3
 	}),
-	slot_grenade = var_0_4(var_0_5(180), {
+	slot_grenade = fn(degrees_to_radians(180), {
 		-26,
 		-30,
 		2
@@ -241,7 +252,7 @@ local var_0_6 = {
 		-20,
 		3
 	}),
-	slot_healthkit = var_0_4(var_0_5(90), {
+	slot_healthkit = fn(degrees_to_radians(90), {
 		-32,
 		-26,
 		2
@@ -253,21 +264,24 @@ local var_0_6 = {
 	selection = UIWidgets.create_gamepad_selection("selection", true),
 	background = UIWidgets.create_simple_texture("player_consumable_bg", "background")
 }
-local var_0_7 = {
+local tbl_3 = {
 	pickup = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 1,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				-- function 4
 				return
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
-				local var_5_0 = math.easeInCubic(arg_5_3)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+				-- function 5
+				local easeInCubic = math.easeInCubic(arg_5_3)
 
-				arg_5_2[1].style.texture_highlight.color[1] = 255 * var_5_0
+				arg_5_2[1].style.texture_highlight.color[1] = 255 * easeInCubic
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+				-- function 6
 				return
 			end
 		}
@@ -275,7 +289,7 @@ local var_0_7 = {
 }
 
 return {
-	scenegraph_definition = var_0_3,
-	widget_definitions = var_0_6,
-	animations = var_0_7
+	scenegraph_definition = tbl,
+	widget_definitions = tbl_2,
+	animations = tbl_3
 }

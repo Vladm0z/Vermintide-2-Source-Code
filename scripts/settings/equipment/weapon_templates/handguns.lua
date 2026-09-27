@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/handguns.lua
 
-local var_0_0 = {
+local tbl = {
 	actions = {
 		action_wield = ActionTemplates.wield,
 		action_one = {
@@ -62,7 +62,8 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_1_0, arg_1_1)
+				enter_function = function (arg_1_0, arg_1_1)
+					-- function 1
 					arg_1_1:clear_input_buffer()
 				end,
 				recoil_settings = {
@@ -102,7 +103,8 @@ local var_0_0 = {
 				anim_event = "attack_shoot",
 				ignore_shield_hit = true,
 				total_time = 0.8,
-				anim_end_event_condition_func = function(arg_2_0, arg_2_1)
+				anim_end_event_condition_func = function (arg_2_0, arg_2_1)
+					-- function 2
 					return arg_2_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {
@@ -160,7 +162,8 @@ local var_0_0 = {
 				hold_input = "action_two_hold",
 				can_abort_reload = false,
 				allow_hold_toggle = true,
-				anim_end_event_condition_func = function(arg_3_0, arg_3_1)
+				anim_end_event_condition_func = function (arg_3_0, arg_3_1)
+					-- function 3
 					return arg_3_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -191,14 +194,17 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				zoom_condition_function = function()
+				zoom_condition_function = function ()
+					-- function 4
 					return true
 				end,
-				unzoom_condition_function = function(arg_5_0)
+				unzoom_condition_function = function (arg_5_0)
+					-- function 5
 					return arg_5_0 ~= "new_interupting_action"
 				end,
-				condition_func = function(arg_6_0, arg_6_1, arg_6_2)
-					if arg_6_2 and (arg_6_2:total_remaining_ammo() <= 0 or arg_6_2:is_reloading()) then
+				condition_func = function (arg_6_0, arg_6_1, arg_6_2)
+					-- function 6
+					if not arg_6_2 and arg_6_2:total_remaining_ammo() <= 0 and not arg_6_2:is_reloading() then
 						return false
 					end
 
@@ -235,21 +241,21 @@ local var_0_0 = {
 action_anim_overrides = {
 	animation_variation_id = 1
 }
-var_0_0.default_spread_template = "handgun"
-var_0_0.spread_lerp_speed = 5
-var_0_0.spread_lerp_speed_zoom = 3.75
-var_0_0.right_hand_unit = ""
-var_0_0.right_hand_attachment_node_linking = AttachmentNodeLinking.rifles
-var_0_0.display_unit = "units/weapons/weapon_display/display_1h_handguns"
-var_0_0.wield_anim = "to_handgun"
-var_0_0.wield_anim_no_ammo = "to_handgun_noammo"
-var_0_0.state_machine = "units/beings/player/first_person_base/state_machines/ranged/handgun"
-var_0_0.crosshair_style = "default"
-var_0_0.reload_event = "reload"
-var_0_0.buff_type = "RANGED"
-var_0_0.weapon_type = "HANDGUN"
-var_0_0.no_dodge = true
-var_0_0.buffs = {
+tbl.default_spread_template = "handgun"
+tbl.spread_lerp_speed = 5
+tbl.spread_lerp_speed_zoom = 3.75
+tbl.right_hand_unit = ""
+tbl.right_hand_attachment_node_linking = AttachmentNodeLinking.rifles
+tbl.display_unit = "units/weapons/weapon_display/display_1h_handguns"
+tbl.wield_anim = "to_handgun"
+tbl.wield_anim_no_ammo = "to_handgun_noammo"
+tbl.state_machine = "units/beings/player/first_person_base/state_machines/ranged/handgun"
+tbl.crosshair_style = "default"
+tbl.reload_event = "reload"
+tbl.buff_type = "RANGED"
+tbl.weapon_type = "HANDGUN"
+tbl.no_dodge = true
+tbl.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1
 	},
@@ -257,7 +263,7 @@ var_0_0.buffs = {
 		external_optional_multiplier = 1
 	}
 }
-var_0_0.aim_assist_settings = {
+tbl.aim_assist_settings = {
 	max_range = 22,
 	no_aim_input_multiplier = 0,
 	always_auto_aim = true,
@@ -270,7 +276,7 @@ var_0_0.aim_assist_settings = {
 		skaven_slave = 1
 	}
 }
-var_0_0.weapon_diagram = {
+tbl.weapon_diagram = {
 	light_attack = {
 		[DamageTypes.ARMOR_PIERCING] = 7,
 		[DamageTypes.CLEAVE] = 1,
@@ -286,15 +292,15 @@ var_0_0.weapon_diagram = {
 		[DamageTypes.DAMAGE] = 0
 	}
 }
-var_0_0.wwise_dep_right_hand = {
+tbl.wwise_dep_right_hand = {
 	"wwise/handgun"
 }
-var_0_0.tooltip_keywords = {
+tbl.tooltip_keywords = {
 	"weapon_keyword_high_damage",
 	"weapon_keyword_sniper",
 	"weapon_keyword_headshotting"
 }
-var_0_0.tooltip_compare = {
+tbl.tooltip_compare = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -304,7 +310,7 @@ var_0_0.tooltip_compare = {
 		sub_action_name = "zoomed_shot"
 	}
 }
-var_0_0.tooltip_detail = {
+tbl.tooltip_detail = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -315,16 +321,16 @@ var_0_0.tooltip_detail = {
 	}
 }
 
-local var_0_1 = table.clone(var_0_0)
-local var_0_2 = table.clone(var_0_0)
+local clone = table.clone(tbl)
+local clone_2 = table.clone(tbl)
 
-var_0_2.wield_anim = "to_handgun_dr"
-var_0_2.wield_anim_no_ammo = "to_handgun_dr_noammo"
-var_0_2.state_machine = "units/beings/player/first_person_base/state_machines/ranged/handgun_dr"
+clone_2.wield_anim = "to_handgun_dr"
+clone_2.wield_anim_no_ammo = "to_handgun_dr_noammo"
+clone_2.state_machine = "units/beings/player/first_person_base/state_machines/ranged/handgun_dr"
 
-local var_0_3 = table.clone(var_0_0)
+local clone_3 = table.clone(tbl)
 
-var_0_3.ammo_data = {
+clone_3.ammo_data = {
 	ammo_hand = "right",
 	ammo_per_reload = 1,
 	max_ammo = 13,
@@ -335,15 +341,15 @@ var_0_3.ammo_data = {
 	should_update_anim_ammo = true
 }
 
-local var_0_4 = table.clone(var_0_3)
+local clone_4 = table.clone(clone_3)
 
-var_0_4.wield_anim = "to_handgun_dr"
-var_0_4.wield_anim_no_ammo = "to_handgun_dr_noammo"
-var_0_4.state_machine = "units/beings/player/first_person_base/state_machines/ranged/handgun_dr"
+clone_4.wield_anim = "to_handgun_dr"
+clone_4.wield_anim_no_ammo = "to_handgun_dr_noammo"
+clone_4.state_machine = "units/beings/player/first_person_base/state_machines/ranged/handgun_dr"
 
 return {
-	handgun_template_1 = table.clone(var_0_1),
-	handgun_template_2 = table.clone(var_0_2),
-	handgun_template_1_vs = table.clone(var_0_3),
-	handgun_template_2_vs = table.clone(var_0_4)
+	handgun_template_1 = table.clone(clone),
+	handgun_template_2 = table.clone(clone_2),
+	handgun_template_1_vs = table.clone(clone_3),
+	handgun_template_2_vs = table.clone(clone_4)
 }

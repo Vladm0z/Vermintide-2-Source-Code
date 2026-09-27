@@ -4,197 +4,205 @@ return {
 	description = "weaves_death_mutator_desc",
 	icon = "mutator_icon_death_spirits",
 	display_name = "weaves_death_mutator_name",
-	spawn_spirit = function(arg_1_0, arg_1_1, arg_1_2)
-		local var_1_0 = Vector3.add(Unit.local_position(arg_1_1, 0), Vector3(0, 0, arg_1_0.offset))
-		local var_1_1 = arg_1_0.unit_spawner:spawn_network_unit(arg_1_0.spirit_unit_name, "position_synched_dummy_unit", arg_1_0.extension_init_data, var_1_0)
-		local var_1_2 = {
+	spawn_spirit = function (self, arg_1_1, arg_1_2)
+		-- function 1
+		local add = Vector3.add(Unit.local_position(arg_1_1, 0), Vector3(0, 0, self.offset))
+		local spawn_network_unit = self.unit_spawner:spawn_network_unit(self.spirit_unit_name, "position_synched_dummy_unit", self.extension_init_data, add)
+		local tbl = {
 			follow_unit = arg_1_2,
-			unit = var_1_1,
-			chase_time = arg_1_0.chase_time,
-			delay_time = arg_1_0.delay_time
+			unit = spawn_network_unit,
+			chase_time = self.chase_time,
+			delay_time = self.delay_time
 		}
-		local var_1_3 = arg_1_0.network_manager:unit_game_object_id(var_1_1)
+		local unit_game_object_id = self.network_manager:unit_game_object_id(spawn_network_unit)
 
-		arg_1_0.audio_system:play_audio_position_event("Play_winds_death_gameplay_spirit_release", var_1_0)
-		arg_1_0.audio_system:play_audio_unit_event("Play_winds_death_gameplay_spirit_loop", var_1_1)
+		self.audio_system:play_audio_position_event("Play_winds_death_gameplay_spirit_release", add)
+		self.audio_system:play_audio_unit_event("Play_winds_death_gameplay_spirit_loop", spawn_network_unit)
 
-		arg_1_0.spirits[var_1_3] = var_1_2
+		self.spirits[unit_game_object_id] = tbl
 	end,
-	update_spirits = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
-		local var_2_0 = arg_2_1.spirits
-		local var_2_1 = 1
-		local var_2_2 = 1
+	update_spirits = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+		-- function 2
+		local spirits = arg_2_1.spirits
+		local num = 1
+		local num_2 = 1
 
-		for iter_2_0, iter_2_1 in pairs(var_2_0) do
-			local var_2_3 = iter_2_1.unit
+		for k, v in pairs(spirits) do
+			local unit = v.unit
 
-			if Unit.alive(var_2_3) then
-				if iter_2_1.delay_time == 0 then
-					local var_2_4 = Unit.local_position(var_2_3, 0)
-					local var_2_5 = iter_2_1.follow_unit
-					local var_2_6 = POSITION_LOOKUP[var_2_5]
+			if not Unit.alive(unit) then
+				if v.delay_time == 0 then
+					local local_position = Unit.local_position(unit, 0)
+					local follow_unit = v.follow_unit
+					local var_2_6 = POSITION_LOOKUP[follow_unit]
 
-					if var_2_6 then
-						local var_2_7 = var_2_6 + Vector3.up() - var_2_4
-						local var_2_8 = Vector3.length_squared(var_2_7)
-						local var_2_9 = Vector3.normalize(var_2_7)
+					if not var_2_6 then
+						local num_3 = var_2_6 + Vector3.up() - local_position
+						local length_squared = Vector3.length_squared(num_3)
+						local normalize = Vector3.normalize(num_3)
 
-						if var_2_8 <= var_2_1 * var_2_1 then
-							local var_2_10 = ScriptUnit.extension(var_2_5, "health_system")
+						if length_squared <= num * num then
+							local extension = ScriptUnit.extension(follow_unit, "health_system")
 
-							if var_2_10 then
-								local var_2_11 = var_2_10:current_permanent_health()
+							if not extension then
+								local current_permanent_health = extension:current_permanent_health()
 
-								if var_2_11 > 0 then
-									local var_2_12 = var_2_10:current_temporary_health()
-									local var_2_13 = arg_2_1.spirit_damage
+								if current_permanent_health > 0 then
+									local current_temporary_health = extension:current_temporary_health()
+									local spirit_damage = arg_2_1.spirit_damage
 									local var_2_14
 
-									if var_2_13 < var_2_12 + var_2_11 then
-										var_2_14 = var_2_13
+									if spirit_damage < current_temporary_health + current_permanent_health then
+										var_2_14 = spirit_damage
 									else
-										var_2_14 = var_2_11 - 1
+										var_2_14 = current_permanent_health - 1
 									end
 
-									DamageUtils.add_damage_network(var_2_5, var_2_3, var_2_14, "torso", "death_explosion", nil, var_2_9, "undefined", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, var_2_2)
+									DamageUtils.add_damage_network(follow_unit, unit, var_2_14, "torso", "death_explosion", nil, normalize, "undefined", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, num_2)
 
-									var_2_2 = var_2_2 + 1
+									num_2 = num_2 + 1
 								end
 							end
 
-							local var_2_15 = Unit.world_rotation(var_2_3, 0)
+							local world_rotation = Unit.world_rotation(unit, 0)
 
-							Managers.state.entity:system("area_damage_system"):create_explosion(var_2_3, var_2_4, var_2_15, "death_spirit_bomb", 1, "undefined", 0, false)
-							arg_2_1.audio_system:play_audio_unit_event("Play_winds_death_gameplay_spirit_explode", var_2_3)
-							Managers.state.unit_spawner:mark_for_deletion(var_2_3)
+							Managers.state.entity:system("area_damage_system"):create_explosion(unit, local_position, world_rotation, "death_spirit_bomb", 1, "undefined", 0, false)
+							arg_2_1.audio_system:play_audio_unit_event("Play_winds_death_gameplay_spirit_explode", unit)
+							Managers.state.unit_spawner:mark_for_deletion(unit)
 
-							arg_2_1.spirits[iter_2_0] = nil
+							arg_2_1.spirits[k] = nil
 
 							if ScorpionSeasonalSettings.current_season_id == 1 then
-								local var_2_16 = "season_1"
-								local var_2_17 = "weave_death_hit_by_spirit"
-								local var_2_18 = Managers.player:owner(var_2_5)
+								local str = "season_1"
+								local str_2 = "weave_death_hit_by_spirit"
+								local owner = Managers.player:owner(follow_unit)
 
-								if var_2_18.local_player then
-									local var_2_19 = Managers.player:statistics_db()
-									local var_2_20 = Managers.player:local_player():stats_id()
+								if not owner.local_player then
+									local statistics_db = Managers.player:statistics_db()
+									local stats_id = Managers.player:local_player():stats_id()
 
-									var_2_19:increment_stat(var_2_20, var_2_16, var_2_17)
+									statistics_db:increment_stat(stats_id, str, str_2)
 								else
-									local var_2_21 = NetworkLookup.statistics_group_name[var_2_16]
-									local var_2_22 = NetworkLookup.statistics[var_2_17]
-									local var_2_23 = var_2_18:network_id()
+									local var_2_21 = NetworkLookup.statistics_group_name[str]
+									local var_2_22 = NetworkLookup.statistics[str_2]
+									local network_id = owner:network_id()
 
-									Managers.state.network.network_transmit:send_rpc("rpc_increment_stat_group", var_2_23, var_2_21, var_2_22)
+									Managers.state.network.network_transmit:send_rpc("rpc_increment_stat_group", network_id, var_2_21, var_2_22)
 								end
 							end
 						else
-							iter_2_1.chase_time = math.max(iter_2_1.chase_time - arg_2_2, 0)
+							v.chase_time = math.max(v.chase_time - arg_2_2, 0)
 
-							local var_2_24 = var_2_4 + var_2_9 * (arg_2_2 * arg_2_1.chase_speed)
+							local num_4 = local_position + normalize * (arg_2_2 * arg_2_1.chase_speed)
 
-							Unit.set_local_position(var_2_3, 0, var_2_24)
+							Unit.set_local_position(unit, 0, num_4)
 
-							if iter_2_1.chase_time == 0 then
-								local var_2_25 = Unit.world_rotation(var_2_3, 0)
+							if v.chase_time == 0 then
+								local world_rotation_2 = Unit.world_rotation(unit, 0)
 
-								Managers.state.entity:system("area_damage_system"):create_explosion(var_2_3, var_2_4, var_2_25, "death_spirit_bomb", 1, "undefined", 0, false)
-								arg_2_1.audio_system:play_audio_unit_event("Play_winds_death_gameplay_spirit_explode", var_2_3)
-								Managers.state.unit_spawner:mark_for_deletion(var_2_3)
+								Managers.state.entity:system("area_damage_system"):create_explosion(unit, local_position, world_rotation_2, "death_spirit_bomb", 1, "undefined", 0, false)
+								arg_2_1.audio_system:play_audio_unit_event("Play_winds_death_gameplay_spirit_explode", unit)
+								Managers.state.unit_spawner:mark_for_deletion(unit)
 
-								arg_2_1.spirits[iter_2_0] = nil
+								arg_2_1.spirits[k] = nil
 							end
 						end
 					end
 				else
-					iter_2_1.delay_time = math.max(iter_2_1.delay_time - arg_2_2, 0)
+					v.delay_time = math.max(v.delay_time - arg_2_2, 0)
 				end
 			else
-				arg_2_1.spirits[iter_2_0] = nil
+				arg_2_1.spirits[k] = nil
 			end
 		end
 	end,
-	update_player_buff = function(arg_3_0, arg_3_1)
-		local var_3_0 = Managers.player:players()
+	update_player_buff = function (arg_3_0, arg_3_1)
+		-- function 3
+		local players = Managers.player:players()
 
-		for iter_3_0, iter_3_1 in pairs(var_3_0) do
-			if iter_3_1.player_unit == nil then
+		for k, v in pairs(players) do
+			if v.player_unit == nil then
 				return
 			end
 
-			local var_3_1 = ScriptUnit.extension(iter_3_1.player_unit, "health_system"):current_permanent_health_percent()
-			local var_3_2 = ScriptUnit.has_extension(iter_3_1.player_unit, "buff_system")
-			local var_3_3 = arg_3_1.network_manager:unit_game_object_id(iter_3_1.player_unit)
+			local current_permanent_health_percent = ScriptUnit.extension(v.player_unit, "health_system"):current_permanent_health_percent()
+			local has_extension = ScriptUnit.has_extension(v.player_unit, "buff_system")
+			local unit_game_object_id = arg_3_1.network_manager:unit_game_object_id(v.player_unit)
 
-			if not var_3_2:has_buff_type("death_attack_speed_buff") then
-				if var_3_1 < 0.2 then
-					local var_3_4 = arg_3_1.buff_system:add_buff(iter_3_1.player_unit, "mutator_death_attack_speed_player_buff", iter_3_1.player_unit, true)
+			if not has_extension:has_buff_type("death_attack_speed_buff") then
+				if current_permanent_health_percent < 0.2 then
+					local add_buff = arg_3_1.buff_system:add_buff(v.player_unit, "mutator_death_attack_speed_player_buff", v.player_unit, true)
 
-					arg_3_1.player_buffs[var_3_3] = var_3_4
+					arg_3_1.player_buffs[unit_game_object_id] = add_buff
 				end
-			elseif var_3_1 >= 0.2 then
-				arg_3_1.buff_system:remove_server_controlled_buff(iter_3_1.player_unit, arg_3_1.player_buffs[var_3_3])
+			elseif current_permanent_health_percent >= 0.2 then
+				arg_3_1.buff_system:remove_server_controlled_buff(v.player_unit, arg_3_1.player_buffs[unit_game_object_id])
 
-				arg_3_1.player_buffs[var_3_3] = nil
+				arg_3_1.player_buffs[unit_game_object_id] = nil
 			end
 		end
 	end,
-	server_ai_hit_by_player_function = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	server_ai_hit_by_player_function = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+		-- function 4
 		if not DamageUtils.is_player_unit(arg_4_3) then
 			return
 		end
 
-		if Unit.get_data(arg_4_2, "breed").boss then
-			local var_4_0 = arg_4_1.network_manager:unit_game_object_id(arg_4_2)
+		if not Unit.get_data(arg_4_2, "breed").boss then
+			local unit_game_object_id = arg_4_1.network_manager:unit_game_object_id(arg_4_2)
 
-			if not arg_4_1.boss_drop_timers[var_4_0] then
-				arg_4_1.boss_drop_timers[var_4_0] = {
+			if not arg_4_1.boss_drop_timers[unit_game_object_id] then
+				arg_4_1.boss_drop_timers[unit_game_object_id] = {
 					timer = arg_4_1.boss_drop_cooldown
 				}
 			end
 
-			if arg_4_1.boss_drop_timers[var_4_0].timer >= arg_4_1.boss_drop_cooldown then
+			if arg_4_1.boss_drop_timers[unit_game_object_id].timer >= arg_4_1.boss_drop_cooldown then
 				arg_4_1.template.spawn_spirit(arg_4_1, arg_4_2, arg_4_3)
 
-				arg_4_1.boss_drop_timers[var_4_0].timer = 0
+				arg_4_1.boss_drop_timers[unit_game_object_id].timer = 0
 			end
 		end
 	end,
-	server_player_hit_function = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	server_player_hit_function = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+		-- function 5
 		local var_5_0 = arg_5_4[2]
-		local var_5_1 = DamageUtils.is_player_unit(arg_5_2)
+		local is_player_unit = DamageUtils.is_player_unit(arg_5_2)
 
-		if var_5_0 == "death_explosion" and var_5_1 then
-			local var_5_2 = arg_5_1.network_manager
-			local var_5_3 = NetworkLookup.heal_types.mutator
+		if var_5_0 ~= "death_explosion" or not is_player_unit then
+			local network_manager = arg_5_1.network_manager
+			local mutator = NetworkLookup.heal_types.mutator
 			local var_5_4 = arg_5_4[1]
-			local var_5_5 = var_5_2:unit_game_object_id(arg_5_2)
+			local unit_game_object_id = network_manager:unit_game_object_id(arg_5_2)
 
-			var_5_2.network_transmit:send_rpc_server("rpc_request_heal", var_5_5, var_5_4, var_5_3)
+			network_manager.network_transmit:send_rpc_server("rpc_request_heal", unit_game_object_id, var_5_4, mutator)
 		end
 	end,
-	server_ai_killed_function = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
-		if not DamageUtils.is_player_unit(arg_6_3) or not ScriptUnit.has_extension(arg_6_3, "status_system") then
+	server_ai_killed_function = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+		-- function 6
+		if not (not DamageUtils.is_player_unit(arg_6_3) and ScriptUnit.has_extension(arg_6_3, "status_system")) then
 			return
 		end
 
 		arg_6_1.template.spawn_spirit(arg_6_1, arg_6_2, arg_6_3)
 	end,
-	server_players_left_safe_zone = function(arg_7_0, arg_7_1)
+	server_players_left_safe_zone = function (arg_7_0, arg_7_1)
+		-- function 7
 		arg_7_1.has_left_safe_zone = true
 	end,
-	server_start_function = function(arg_8_0, arg_8_1)
+	server_start_function = function (arg_8_0, arg_8_1)
+		-- function 8
 		printf("[Mutator]: mutator_start")
 
-		local var_8_0 = Managers.weave
-		local var_8_1 = var_8_0:get_active_wind_settings()
-		local var_8_2 = var_8_0:get_wind_strength()
-		local var_8_3 = Managers.state.difficulty:get_difficulty()
+		local weave = Managers.weave
+		local get_active_wind_settings = weave:get_active_wind_settings()
+		local get_wind_strength = weave:get_wind_strength()
+		local get_difficulty = Managers.state.difficulty:get_difficulty()
 
-		arg_8_1.spirit_damage = var_8_1.spirit_settings.damage[var_8_3][var_8_2]
-		arg_8_1.delay_time = var_8_1.spirit_settings.wait_time[var_8_3][var_8_2]
-		arg_8_1.chase_speed = var_8_1.spirit_settings.chase_speed[var_8_3][var_8_2]
-		arg_8_1.chase_time = var_8_1.spirit_settings.chase_time[var_8_3][var_8_2]
+		arg_8_1.spirit_damage = get_active_wind_settings.spirit_settings.damage[get_difficulty][get_wind_strength]
+		arg_8_1.delay_time = get_active_wind_settings.spirit_settings.wait_time[get_difficulty][get_wind_strength]
+		arg_8_1.chase_speed = get_active_wind_settings.spirit_settings.chase_speed[get_difficulty][get_wind_strength]
+		arg_8_1.chase_time = get_active_wind_settings.spirit_settings.chase_time[get_difficulty][get_wind_strength]
 		arg_8_1.audio_system = Managers.state.entity:system("audio_system")
 		arg_8_1.network_manager = Managers.state.network
 		arg_8_1.buff_system = Managers.state.entity:system("buff_system")
@@ -207,13 +215,14 @@ return {
 		arg_8_1.extension_init_data = {}
 		arg_8_1.offset = 1
 	end,
-	server_update_function = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
-		if not Managers.state.network or not Managers.state.network:game() then
+	server_update_function = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+		-- function 9
+		if not (not Managers.state.network and Managers.state.network:game()) then
 			return
 		end
 
-		for iter_9_0, iter_9_1 in pairs(arg_9_1.boss_drop_timers) do
-			iter_9_1.timer = iter_9_1.timer + arg_9_2
+		for k, v in pairs(arg_9_1.boss_drop_timers) do
+			v.timer = v.timer + arg_9_2
 		end
 
 		arg_9_1.template.update_spirits(arg_9_0, arg_9_1, arg_9_2, arg_9_3)

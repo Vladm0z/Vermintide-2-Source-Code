@@ -8,94 +8,196 @@ UIElements.ButtonMenuSteps = {
 		{
 			pass_type = "hotspot",
 			content_id = "button_hotspot",
-			content_check_function = function(arg_1_0)
-				return not arg_1_0.disabled
+			content_check_function = function (self)
+				-- function 1
+				return not self.disabled
 			end
 		},
 		{
 			texture_id = "texture_id",
 			style_id = "texture",
 			pass_type = "texture",
-			content_check_function = function(arg_2_0)
-				local var_2_0 = arg_2_0.button_hotspot
+			content_check_function = function (self)
+				-- function 2
+				local button_hotspot = self.button_hotspot
 
-				return not var_2_0.disabled and not var_2_0.is_hover and var_2_0.is_clicked > 0 and not var_2_0.is_selected
+				return not not button_hotspot.disabled or not not button_hotspot.is_hover or not (button_hotspot.is_clicked > 0) or not button_hotspot.is_selected
 			end
 		},
 		{
 			texture_id = "texture_hover_id",
 			style_id = "texture",
 			pass_type = "texture",
-			content_check_function = function(arg_3_0)
-				local var_3_0 = arg_3_0.button_hotspot
+			content_check_function = function (self)
+				-- function 3
+				local button_hotspot = self.button_hotspot
+				local is_hover
 
-				return not var_3_0.disabled and not var_3_0.is_selected and var_3_0.is_hover and var_3_0.is_clicked > 0
+				if not (button_hotspot.disabled or button_hotspot.is_selected) then
+					is_hover = button_hotspot.is_hover
+
+					if not is_hover then
+						-- Nothing
+					end
+
+					if not (button_hotspot.is_clicked > 0) then
+						-- Nothing
+					end
+				end
+
+				is_hover = false
+
+				goto label_3_1
+
+				::label_3_0::
+
+				is_hover = true
+
+				::label_3_1::
+
+				return is_hover
 			end
 		},
 		{
 			texture_id = "texture_click_id",
 			style_id = "texture",
 			pass_type = "texture",
-			content_check_function = function(arg_4_0)
-				local var_4_0 = arg_4_0.button_hotspot
+			content_check_function = function (self)
+				-- function 4
+				local button_hotspot = self.button_hotspot
 
-				return not var_4_0.disabled and var_4_0.is_clicked == 0
+				return not not button_hotspot.disabled or button_hotspot.is_clicked == 0
 			end
 		},
 		{
 			texture_id = "texture_selected_id",
 			style_id = "texture",
 			pass_type = "texture",
-			content_check_function = function(arg_5_0)
-				local var_5_0 = arg_5_0.button_hotspot
+			content_check_function = function (self)
+				-- function 5
+				local button_hotspot = self.button_hotspot
+				local is_selected
 
-				return not var_5_0.disabled and var_5_0.is_selected and var_5_0.is_clicked > 0
+				if not button_hotspot.disabled then
+					is_selected = button_hotspot.is_selected
+
+					if not is_selected then
+						-- Nothing
+					end
+
+					if not (button_hotspot.is_clicked > 0) then
+						-- Nothing
+					end
+				end
+
+				is_selected = false
+
+				goto label_5_1
+
+				::label_5_0::
+
+				is_selected = true
+
+				::label_5_1::
+
+				return is_selected
 			end
 		},
 		{
 			texture_id = "texture_disabled_id",
 			style_id = "texture",
 			pass_type = "texture",
-			content_check_function = function(arg_6_0)
-				return arg_6_0.button_hotspot.disabled
+			content_check_function = function (self)
+				-- function 6
+				return self.button_hotspot.disabled
 			end
 		},
 		{
 			style_id = "text",
 			pass_type = "text",
 			text_id = "text_field",
-			content_check_function = function(arg_7_0)
-				local var_7_0 = arg_7_0.button_hotspot
+			content_check_function = function (self)
+				-- function 7
+				local button_hotspot = self.button_hotspot
 
-				return not var_7_0.disabled and not var_7_0.is_hover and not var_7_0.is_selected and var_7_0.is_clicked > 0
+				return not not button_hotspot.disabled or not not button_hotspot.is_hover or not not button_hotspot.is_selected or button_hotspot.is_clicked > 0
 			end
 		},
 		{
 			style_id = "text_hover",
 			pass_type = "text",
 			text_id = "text_field",
-			content_check_function = function(arg_8_0)
-				local var_8_0 = arg_8_0.button_hotspot
+			content_check_function = function (self)
+				-- function 8
+				local button_hotspot = self.button_hotspot
+				local is_hover
 
-				return not var_8_0.disabled and not var_8_0.is_selected and var_8_0.is_hover and var_8_0.is_clicked > 0
+				if not (button_hotspot.disabled or button_hotspot.is_selected) then
+					is_hover = button_hotspot.is_hover
+
+					if not is_hover then
+						-- Nothing
+					end
+
+					if not (button_hotspot.is_clicked > 0) then
+						-- Nothing
+					end
+				end
+
+				is_hover = false
+
+				goto label_8_1
+
+				::label_8_0::
+
+				is_hover = true
+
+				::label_8_1::
+
+				return is_hover
 			end
 		},
 		{
 			style_id = "text_selected",
 			pass_type = "text",
 			text_id = "text_field",
-			content_check_function = function(arg_9_0)
-				local var_9_0 = arg_9_0.button_hotspot
+			content_check_function = function (self)
+				-- function 9
+				local button_hotspot = self.button_hotspot
+				local is_selected
 
-				return not var_9_0.disabled and (var_9_0.is_selected or var_9_0.is_clicked == 0)
+				if not button_hotspot.disabled then
+					is_selected = button_hotspot.is_selected
+
+					if not is_selected then
+						-- Nothing
+					end
+
+					if button_hotspot.is_clicked ~= 0 then
+						-- Nothing
+					end
+				end
+
+				is_selected = false
+
+				goto label_9_1
+
+				::label_9_0::
+
+				is_selected = true
+
+				::label_9_1::
+
+				return is_selected
 			end
 		},
 		{
 			style_id = "text_disabled",
 			pass_type = "text",
 			text_id = "text_field",
-			content_check_function = function(arg_10_0)
-				return arg_10_0.button_hotspot.disabled
+			content_check_function = function (self)
+				-- function 10
+				return self.button_hotspot.disabled
 			end
 		}
 	}
@@ -105,127 +207,279 @@ UIElements.ButtonMenuStepsWithTimer = {
 		{
 			pass_type = "hotspot",
 			content_id = "button_hotspot",
-			content_check_function = function(arg_11_0)
-				return not arg_11_0.disabled
+			content_check_function = function (self)
+				-- function 11
+				return not self.disabled
 			end
 		},
 		{
 			pass_type = "texture",
 			texture_id = "texture_id",
-			content_check_function = function(arg_12_0)
-				local var_12_0 = arg_12_0.button_hotspot
+			content_check_function = function (self)
+				-- function 12
+				local button_hotspot = self.button_hotspot
 
-				return not var_12_0.disabled and not var_12_0.is_hover and var_12_0.is_clicked > 0 and not var_12_0.is_selected
+				return not not button_hotspot.disabled or not not button_hotspot.is_hover or not (button_hotspot.is_clicked > 0) or not button_hotspot.is_selected
 			end
 		},
 		{
 			pass_type = "texture",
 			texture_id = "texture_hover_id",
-			content_check_function = function(arg_13_0)
-				local var_13_0 = arg_13_0.button_hotspot
+			content_check_function = function (self)
+				-- function 13
+				local button_hotspot = self.button_hotspot
+				local is_hover
 
-				return not var_13_0.disabled and not var_13_0.is_selected and var_13_0.is_hover and var_13_0.is_clicked > 0
+				if not (button_hotspot.disabled or button_hotspot.is_selected) then
+					is_hover = button_hotspot.is_hover
+
+					if not is_hover then
+						-- Nothing
+					end
+
+					if not (button_hotspot.is_clicked > 0) then
+						-- Nothing
+					end
+				end
+
+				is_hover = false
+
+				goto label_13_1
+
+				::label_13_0::
+
+				is_hover = true
+
+				::label_13_1::
+
+				return is_hover
 			end
 		},
 		{
 			pass_type = "texture",
 			texture_id = "texture_click_id",
-			content_check_function = function(arg_14_0)
-				local var_14_0 = arg_14_0.button_hotspot
+			content_check_function = function (self)
+				-- function 14
+				local button_hotspot = self.button_hotspot
 
-				return not var_14_0.disabled and var_14_0.is_clicked == 0
+				return not not button_hotspot.disabled or button_hotspot.is_clicked == 0
 			end
 		},
 		{
 			pass_type = "texture",
 			texture_id = "texture_selected_id",
-			content_check_function = function(arg_15_0)
-				local var_15_0 = arg_15_0.button_hotspot
+			content_check_function = function (self)
+				-- function 15
+				local button_hotspot = self.button_hotspot
+				local is_selected
 
-				return not var_15_0.disabled and var_15_0.is_selected and var_15_0.is_clicked > 0
+				if not button_hotspot.disabled then
+					is_selected = button_hotspot.is_selected
+
+					if not is_selected then
+						-- Nothing
+					end
+
+					if not (button_hotspot.is_clicked > 0) then
+						-- Nothing
+					end
+				end
+
+				is_selected = false
+
+				goto label_15_1
+
+				::label_15_0::
+
+				is_selected = true
+
+				::label_15_1::
+
+				return is_selected
 			end
 		},
 		{
 			pass_type = "texture",
 			texture_id = "texture_disabled_id",
-			content_check_function = function(arg_16_0)
-				return arg_16_0.button_hotspot.disabled
+			content_check_function = function (self)
+				-- function 16
+				return self.button_hotspot.disabled
 			end
 		},
 		{
 			style_id = "text",
 			pass_type = "text",
 			text_id = "text_field",
-			content_check_function = function(arg_17_0)
-				local var_17_0 = arg_17_0.button_hotspot
+			content_check_function = function (self)
+				-- function 17
+				local button_hotspot = self.button_hotspot
 
-				return not var_17_0.disabled and not var_17_0.is_hover and not var_17_0.is_selected and var_17_0.is_clicked > 0
+				return not not button_hotspot.disabled or not not button_hotspot.is_hover or not not button_hotspot.is_selected or button_hotspot.is_clicked > 0
 			end
 		},
 		{
 			style_id = "text_hover",
 			pass_type = "text",
 			text_id = "text_field",
-			content_check_function = function(arg_18_0)
-				local var_18_0 = arg_18_0.button_hotspot
+			content_check_function = function (self)
+				-- function 18
+				local button_hotspot = self.button_hotspot
+				local is_hover
 
-				return not var_18_0.disabled and not var_18_0.is_selected and var_18_0.is_hover and var_18_0.is_clicked > 0
+				if not (button_hotspot.disabled or button_hotspot.is_selected) then
+					is_hover = button_hotspot.is_hover
+
+					if not is_hover then
+						-- Nothing
+					end
+
+					if not (button_hotspot.is_clicked > 0) then
+						-- Nothing
+					end
+				end
+
+				is_hover = false
+
+				goto label_18_1
+
+				::label_18_0::
+
+				is_hover = true
+
+				::label_18_1::
+
+				return is_hover
 			end
 		},
 		{
 			style_id = "text_selected",
 			pass_type = "text",
 			text_id = "text_field",
-			content_check_function = function(arg_19_0)
-				local var_19_0 = arg_19_0.button_hotspot
+			content_check_function = function (self)
+				-- function 19
+				local button_hotspot = self.button_hotspot
+				local is_selected
 
-				return not var_19_0.disabled and (var_19_0.is_selected or var_19_0.is_clicked == 0)
+				if not button_hotspot.disabled then
+					is_selected = button_hotspot.is_selected
+
+					if not is_selected then
+						-- Nothing
+					end
+
+					if button_hotspot.is_clicked ~= 0 then
+						-- Nothing
+					end
+				end
+
+				is_selected = false
+
+				goto label_19_1
+
+				::label_19_0::
+
+				is_selected = true
+
+				::label_19_1::
+
+				return is_selected
 			end
 		},
 		{
 			style_id = "text_disabled",
 			pass_type = "text",
 			text_id = "text_field",
-			content_check_function = function(arg_20_0)
-				return arg_20_0.button_hotspot.disabled
+			content_check_function = function (self)
+				-- function 20
+				return self.button_hotspot.disabled
 			end
 		},
 		{
 			style_id = "timer_text_field",
 			pass_type = "text",
 			text_id = "timer_text_field",
-			content_check_function = function(arg_21_0)
-				local var_21_0 = arg_21_0.button_hotspot
+			content_check_function = function (self)
+				-- function 21
+				local button_hotspot = self.button_hotspot
 
-				return not var_21_0.disabled and not var_21_0.is_hover and not var_21_0.is_selected and var_21_0.is_clicked > 0
+				return not not button_hotspot.disabled or not not button_hotspot.is_hover or not not button_hotspot.is_selected or button_hotspot.is_clicked > 0
 			end
 		},
 		{
 			style_id = "timer_text_field_hover",
 			pass_type = "text",
 			text_id = "timer_text_field",
-			content_check_function = function(arg_22_0)
-				local var_22_0 = arg_22_0.button_hotspot
+			content_check_function = function (self)
+				-- function 22
+				local button_hotspot = self.button_hotspot
+				local is_hover
 
-				return not var_22_0.disabled and not var_22_0.is_selected and var_22_0.is_hover and var_22_0.is_clicked > 0
+				if not (button_hotspot.disabled or button_hotspot.is_selected) then
+					is_hover = button_hotspot.is_hover
+
+					if not is_hover then
+						-- Nothing
+					end
+
+					if not (button_hotspot.is_clicked > 0) then
+						-- Nothing
+					end
+				end
+
+				is_hover = false
+
+				goto label_22_1
+
+				::label_22_0::
+
+				is_hover = true
+
+				::label_22_1::
+
+				return is_hover
 			end
 		},
 		{
 			style_id = "timer_text_field_selected",
 			pass_type = "text",
 			text_id = "timer_text_field",
-			content_check_function = function(arg_23_0)
-				local var_23_0 = arg_23_0.button_hotspot
+			content_check_function = function (self)
+				-- function 23
+				local button_hotspot = self.button_hotspot
+				local is_selected
 
-				return not var_23_0.disabled and (var_23_0.is_selected or var_23_0.is_clicked == 0)
+				if not button_hotspot.disabled then
+					is_selected = button_hotspot.is_selected
+
+					if not is_selected then
+						-- Nothing
+					end
+
+					if button_hotspot.is_clicked ~= 0 then
+						-- Nothing
+					end
+				end
+
+				is_selected = false
+
+				goto label_23_1
+
+				::label_23_0::
+
+				is_selected = true
+
+				::label_23_1::
+
+				return is_selected
 			end
 		},
 		{
 			style_id = "timer_text_field_disabled",
 			pass_type = "text",
 			text_id = "timer_text_field",
-			content_check_function = function(arg_24_0)
-				return arg_24_0.button_hotspot.disabled
+			content_check_function = function (self)
+				-- function 24
+				return self.button_hotspot.disabled
 			end
 		}
 	}
@@ -240,96 +494,166 @@ UIElements.ToggleIconButton = {
 			pass_type = "texture",
 			style_id = "normal_texture",
 			texture_id = "normal_texture",
-			content_check_function = function(arg_25_0)
-				return not arg_25_0.button_hotspot.is_hover
+			content_check_function = function (self)
+				-- function 25
+				return not self.button_hotspot.is_hover
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "hover_texture",
 			texture_id = "hover_texture",
-			content_check_function = function(arg_26_0)
-				local var_26_0 = arg_26_0.button_hotspot
+			content_check_function = function (self)
+				-- function 26
+				local button_hotspot = self.button_hotspot
+				local is_hover = button_hotspot.is_hover
 
-				return var_26_0.is_hover and var_26_0.is_clicked ~= 0
+				is_hover = not is_hover and button_hotspot.is_clicked ~= 0
+
+				return is_hover
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "click_texture",
 			texture_id = "click_texture",
-			content_check_function = function(arg_27_0)
-				local var_27_0 = arg_27_0.button_hotspot
+			content_check_function = function (self)
+				-- function 27
+				local button_hotspot = self.button_hotspot
+				local is_hover = button_hotspot.is_hover
 
-				return var_27_0.is_hover and var_27_0.is_clicked == 0
+				is_hover = not is_hover and button_hotspot.is_clicked == 0
+
+				return is_hover
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "toggle_texture",
 			texture_id = "toggle_texture",
-			content_check_function = function(arg_28_0)
-				local var_28_0 = arg_28_0.button_hotspot
+			content_check_function = function (self)
+				-- function 28
+				local button_hotspot = self.button_hotspot
+				local toggled = self.toggled
 
-				return arg_28_0.toggled and not var_28_0.is_hover
+				toggled = not toggled and not button_hotspot.is_hover
+
+				return toggled
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "toggle_hover_texture",
 			texture_id = "toggle_hover_texture",
-			content_check_function = function(arg_29_0)
-				local var_29_0 = arg_29_0.button_hotspot
+			content_check_function = function (self)
+				-- function 29
+				local button_hotspot = self.button_hotspot
+				local toggled = self.toggled
 
-				return arg_29_0.toggled and var_29_0.is_hover and var_29_0.is_clicked ~= 0
+				if not toggled then
+					toggled = button_hotspot.is_hover
+					toggled = not toggled and button_hotspot.is_clicked ~= 0
+				end
+
+				return toggled
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "icon_texture",
 			texture_id = "icon_texture",
-			content_check_function = function(arg_30_0)
-				return not arg_30_0.button_hotspot.is_hover and not arg_30_0.toggled
+			content_check_function = function (self)
+				-- function 30
+				return not not self.button_hotspot.is_hover or not self.toggled
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "icon_hover_texture",
 			texture_id = "icon_hover_texture",
-			content_check_function = function(arg_31_0)
-				local var_31_0 = arg_31_0.button_hotspot
+			content_check_function = function (self)
+				-- function 31
+				local button_hotspot = self.button_hotspot
+				local toggled
 
-				return (var_31_0.is_hover or arg_31_0.toggled) and var_31_0.is_clicked ~= 0
+				if not button_hotspot.is_hover then
+					toggled = self.toggled
+
+					if not toggled then
+						-- Nothing
+					end
+				end
+
+				toggled = button_hotspot.is_clicked ~= 0
+
+				::label_31_0::
+
+				return toggled
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "icon_click_texture",
 			texture_id = "icon_texture",
-			content_check_function = function(arg_32_0)
-				local var_32_0 = arg_32_0.button_hotspot
+			content_check_function = function (self)
+				-- function 32
+				local button_hotspot = self.button_hotspot
+				local is_hover = button_hotspot.is_hover
 
-				return var_32_0.is_hover and var_32_0.is_clicked == 0
+				is_hover = not is_hover and button_hotspot.is_clicked == 0
+
+				return is_hover
 			end
 		},
 		{
 			style_id = "tooltip_text",
 			pass_type = "tooltip_text",
 			text_id = "tooltip_text",
-			content_check_function = function(arg_33_0)
-				local var_33_0 = arg_33_0.button_hotspot
+			content_check_function = function (self)
+				-- function 33
+				local button_hotspot = self.button_hotspot
+				local is_hover
 
-				return not arg_33_0.toggled and var_33_0.is_hover and var_33_0.is_clicked ~= 0
+				if not self.toggled then
+					is_hover = button_hotspot.is_hover
+
+					if not is_hover then
+						-- Nothing
+					end
+
+					if button_hotspot.is_clicked == 0 then
+						-- Nothing
+					end
+				end
+
+				is_hover = false
+
+				goto label_33_1
+
+				::label_33_0::
+
+				is_hover = true
+
+				::label_33_1::
+
+				return is_hover
 			end
 		},
 		{
 			style_id = "tooltip_text",
 			pass_type = "tooltip_text",
 			text_id = "toggled_tooltip_text",
-			content_check_function = function(arg_34_0)
-				local var_34_0 = arg_34_0.button_hotspot
+			content_check_function = function (self)
+				-- function 34
+				local button_hotspot = self.button_hotspot
+				local toggled = self.toggled
 
-				return arg_34_0.toggled and var_34_0.is_hover and var_34_0.is_clicked == 0
+				if not toggled then
+					toggled = button_hotspot.is_hover
+					toggled = not toggled and button_hotspot.is_clicked == 0
+				end
+
+				return toggled
 			end
 		}
 	}
@@ -359,15 +683,17 @@ UIElements.SimpleButton = {
 		{
 			pass_type = "texture",
 			texture_id = "texture_id",
-			content_check_function = function(arg_35_0)
-				return not arg_35_0.button_hotspot.is_hover
+			content_check_function = function (self)
+				-- function 35
+				return not self.button_hotspot.is_hover
 			end
 		},
 		{
 			pass_type = "texture",
 			texture_id = "texture_hover_id",
-			content_check_function = function(arg_36_0)
-				return arg_36_0.button_hotspot.is_hover
+			content_check_function = function (self)
+				-- function 36
+				return self.button_hotspot.is_hover
 			end
 		}
 	}
@@ -385,15 +711,17 @@ UIElements.Button = {
 		{
 			pass_type = "texture",
 			texture_id = "texture_id",
-			content_check_function = function(arg_37_0)
-				return not arg_37_0.button_hotspot.is_hover
+			content_check_function = function (self)
+				-- function 37
+				return not self.button_hotspot.is_hover
 			end
 		},
 		{
 			pass_type = "texture",
 			texture_id = "texture_hover_id",
-			content_check_function = function(arg_38_0)
-				return arg_38_0.button_hotspot.is_hover
+			content_check_function = function (self)
+				-- function 38
+				return self.button_hotspot.is_hover
 			end
 		},
 		{
@@ -475,30 +803,33 @@ UIElements.ScrollBar = {
 		{
 			pass_type = "on_click",
 			click_check_content_id = "scrollbar_down_hotspot",
-			click_function = function(arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+			click_function = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+				-- function 39
 				arg_39_2.internal_scroll_value = math.max(0, arg_39_2.internal_scroll_value - arg_39_2.scroll_step_size)
 			end
 		},
 		{
 			pass_type = "on_click",
 			click_check_content_id = "scrollbar_up_hotspot",
-			click_function = function(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+			click_function = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+				-- function 40
 				arg_40_2.internal_scroll_value = math.min(1, arg_40_2.internal_scroll_value + arg_40_2.scroll_step_size)
 			end
 		},
 		{
 			style_id = "scrollbar",
 			pass_type = "local_offset",
-			offset_function = function(arg_41_0, arg_41_1, arg_41_2)
-				local var_41_0 = UISceneGraph.get_local_position(arg_41_0, arg_41_1.scenegraph_id)
-				local var_41_1 = arg_41_2.scroll_bar_height
-				local var_41_2 = var_41_1 / 2
-				local var_41_3 = arg_41_2.scroll_offset_min
-				local var_41_4 = arg_41_2.scroll_offset_max
-				local var_41_5 = math.min(var_41_3 + (var_41_4 - var_41_3) * arg_41_2.internal_scroll_value, var_41_4 - var_41_1)
+			offset_function = function (arg_41_0, arg_41_1, arg_41_2)
+				-- function 41
+				local get_local_position = UISceneGraph.get_local_position(arg_41_0, arg_41_1.scenegraph_id)
+				local scroll_bar_height = arg_41_2.scroll_bar_height
+				local num = scroll_bar_height / 2
+				local scroll_offset_min = arg_41_2.scroll_offset_min
+				local scroll_offset_max = arg_41_2.scroll_offset_max
+				local min = math.min(scroll_offset_min + (scroll_offset_max - scroll_offset_min) * arg_41_2.internal_scroll_value, scroll_offset_max - scroll_bar_height)
 
-				var_41_0[2] = var_41_5
-				arg_41_2.scroll_value = (var_41_5 - var_41_3) / (var_41_4 - var_41_1 - var_41_3)
+				get_local_position[2] = min
+				arg_41_2.scroll_value = (min - scroll_offset_min) / (scroll_offset_max - scroll_bar_height - scroll_offset_min)
 			end
 		},
 		{
@@ -512,21 +843,22 @@ UIElements.ScrollBar = {
 		{
 			style_id = "background",
 			pass_type = "held",
-			held_function = function(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+			held_function = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+				-- function 42
 				local var_42_0 = UIInverseScaleVectorToResolution(arg_42_3:get("cursor"))
-				local var_42_1 = arg_42_1.scenegraph_id
-				local var_42_2 = UISceneGraph.get_world_position(arg_42_0, var_42_1)
-				local var_42_3 = arg_42_2.scroll_bar_height / 2
-				local var_42_4 = var_42_3
-				local var_42_5 = var_42_0[2] - var_42_4
-				local var_42_6 = UISceneGraph.get_size(arg_42_0, var_42_1)
-				local var_42_7 = var_42_5 - var_42_2[2]
-				local var_42_8 = var_42_2[2] + var_42_3
-				local var_42_9 = arg_42_2.scroll_offset_max
-				local var_42_10 = var_42_2[2] + var_42_9 - var_42_3 - arg_42_2.scroll_offset_min
-				local var_42_11 = math.clamp(var_42_7, 0, var_42_6[2])
+				local scenegraph_id = arg_42_1.scenegraph_id
+				local get_world_position = UISceneGraph.get_world_position(arg_42_0, scenegraph_id)
+				local num = arg_42_2.scroll_bar_height / 2
+				local var_42_4 = num
+				local num_2 = var_42_0[2] - var_42_4
+				local get_size = UISceneGraph.get_size(arg_42_0, scenegraph_id)
+				local num_3 = num_2 - get_world_position[2]
+				local num_4 = get_world_position[2] + num
+				local scroll_offset_max = arg_42_2.scroll_offset_max
+				local num_5 = get_world_position[2] + scroll_offset_max - num - arg_42_2.scroll_offset_min
+				local clamp = math.clamp(num_3, 0, get_size[2])
 
-				arg_42_2.internal_scroll_value = math.min(var_42_11 / var_42_6[2], 1)
+				arg_42_2.internal_scroll_value = math.min(clamp / get_size[2], 1)
 			end
 		}
 	}
@@ -598,16 +930,18 @@ UIElements.TextButton = {
 			style_id = "text_hover",
 			pass_type = "text",
 			text_id = "text_field",
-			content_check_function = function(arg_43_0)
-				return arg_43_0.button_text.is_hover
+			content_check_function = function (self)
+				-- function 43
+				return self.button_text.is_hover
 			end
 		},
 		{
 			style_id = "text",
 			pass_type = "text",
 			text_id = "text_field",
-			content_check_function = function(arg_44_0)
-				return not arg_44_0.button_text.is_hover
+			content_check_function = function (self)
+				-- function 44
+				return not self.button_text.is_hover
 			end
 		}
 	}
@@ -641,22 +975,29 @@ UIElements.Button3States = {
 		{
 			pass_type = "texture",
 			texture_id = "texture_id",
-			content_check_function = function(arg_45_0)
-				return not arg_45_0.button_hotspot.is_hover and arg_45_0.button_hotspot.is_clicked > 0
+			content_check_function = function (self)
+				-- function 45
+				return not not self.button_hotspot.is_hover or self.button_hotspot.is_clicked > 0
 			end
 		},
 		{
 			pass_type = "texture",
 			texture_id = "texture_hover_id",
-			content_check_function = function(arg_46_0)
-				return arg_46_0.button_hotspot.is_hover and arg_46_0.button_hotspot.is_clicked > 0
+			content_check_function = function (self)
+				-- function 46
+				local is_hover = self.button_hotspot.is_hover
+
+				is_hover = not is_hover and self.button_hotspot.is_clicked > 0
+
+				return is_hover
 			end
 		},
 		{
 			pass_type = "texture",
 			texture_id = "texture_click_id",
-			content_check_function = function(arg_47_0)
-				return arg_47_0.button_hotspot.is_clicked == 0 or arg_47_0.button_hotspot.is_selected
+			content_check_function = function (self)
+				-- function 47
+				return self.button_hotspot.is_clicked == 0 or self.button_hotspot.is_selected
 			end
 		},
 		{
@@ -672,45 +1013,75 @@ UIElements.Button4States = {
 		{
 			pass_type = "hotspot",
 			content_id = "button_hotspot",
-			content_check_function = function(arg_48_0)
-				return not arg_48_0.disabled
+			content_check_function = function (self)
+				-- function 48
+				return not self.disabled
 			end
 		},
 		{
 			pass_type = "texture",
 			texture_id = "texture_id",
-			content_check_function = function(arg_49_0)
-				return not arg_49_0.disabled and not arg_49_0.button_hotspot.is_hover and arg_49_0.button_hotspot.is_clicked > 0
+			content_check_function = function (self)
+				-- function 49
+				return not not self.disabled or not not self.button_hotspot.is_hover or self.button_hotspot.is_clicked > 0
 			end
 		},
 		{
 			pass_type = "texture",
 			texture_id = "texture_hover_id",
-			content_check_function = function(arg_50_0)
-				return not arg_50_0.disabled and arg_50_0.button_hotspot.is_hover and arg_50_0.button_hotspot.is_clicked > 0
+			content_check_function = function (self)
+				-- function 50
+				local is_hover
+
+				if not self.disabled then
+					is_hover = self.button_hotspot.is_hover
+
+					if not is_hover then
+						-- Nothing
+					end
+
+					if not (self.button_hotspot.is_clicked > 0) then
+						-- Nothing
+					end
+				end
+
+				is_hover = false
+
+				goto label_50_1
+
+				::label_50_0::
+
+				is_hover = true
+
+				::label_50_1::
+
+				return is_hover
 			end
 		},
 		{
 			pass_type = "texture",
 			texture_id = "texture_click_id",
-			content_check_function = function(arg_51_0)
-				return not arg_51_0.disabled and arg_51_0.button_hotspot.is_clicked == 0 or arg_51_0.button_hotspot.is_selected
+			content_check_function = function (self)
+				-- function 51
+				return (self.disabled or self.button_hotspot.is_clicked ~= 0) and self.button_hotspot.is_selected
 			end
 		},
 		{
 			pass_type = "texture",
 			texture_id = "texture_disabled_id",
-			content_check_function = function(arg_52_0)
-				return arg_52_0.disabled
+			content_check_function = function (self)
+				-- function 52
+				return self.disabled
 			end
 		},
 		{
 			style_id = "text",
 			pass_type = "text",
 			text_id = "text_field",
-			content_check_function = function(arg_53_0, arg_53_1)
-				if arg_53_1.text_color_disabled and arg_53_1.text_color_enabled then
-					if arg_53_0.disabled then
+			content_check_function = function (self, arg_53_1)
+				-- function 53
+				if not arg_53_1.text_color_disabled and not arg_53_1.text_color_enabled then
+					if not self.disabled then
 						arg_53_1.text_color = arg_53_1.text_color_disabled
 					else
 						arg_53_1.text_color = arg_53_1.text_color_enabled
@@ -731,28 +1102,36 @@ UIElements.Button3StatesNoText = {
 		{
 			pass_type = "texture",
 			texture_id = "texture_id",
-			content_check_function = function(arg_54_0)
-				return not arg_54_0.button_hotspot.is_hover and arg_54_0.button_hotspot.is_clicked > 0
+			content_check_function = function (self)
+				-- function 54
+				return not not self.button_hotspot.is_hover or self.button_hotspot.is_clicked > 0
 			end
 		},
 		{
 			pass_type = "texture",
 			texture_id = "texture_hover_id",
-			content_check_function = function(arg_55_0)
-				return arg_55_0.button_hotspot.is_hover and arg_55_0.button_hotspot.is_clicked > 0
+			content_check_function = function (self)
+				-- function 55
+				local is_hover = self.button_hotspot.is_hover
+
+				is_hover = not is_hover and self.button_hotspot.is_clicked > 0
+
+				return is_hover
 			end
 		},
 		{
 			pass_type = "texture",
 			texture_id = "texture_click_id",
-			content_check_function = function(arg_56_0)
-				return arg_56_0.button_hotspot.is_clicked == 0 or arg_56_0.button_hotspot.is_selected
+			content_check_function = function (self)
+				-- function 56
+				return self.button_hotspot.is_clicked == 0 or self.button_hotspot.is_selected
 			end
 		}
 	}
 }
 
-function UIElements.GamepadButton(arg_57_0)
+UIElements.GamepadButton = function (arg_57_0)
+	-- function 57
 	return {
 		passes = {
 			{
@@ -766,29 +1145,37 @@ function UIElements.GamepadButton(arg_57_0)
 			{
 				content_id = "gamepad_button",
 				pass_type = "gamepad_button_click_" .. arg_57_0,
-				content_check_function = function(arg_58_0)
-					return arg_58_0.gamepad_connected
+				content_check_function = function (self)
+					-- function 58
+					return self.gamepad_connected
 				end
 			},
 			{
 				pass_type = "texture",
 				texture_id = "texture_id",
-				content_check_function = function(arg_59_0)
-					return not arg_59_0.button_hotspot.is_hover and arg_59_0.button_hotspot.is_clicked > 0 and arg_59_0.gamepad_button.is_clicked > 0
+				content_check_function = function (self)
+					-- function 59
+					return not not self.button_hotspot.is_hover or not (self.button_hotspot.is_clicked > 0) or self.gamepad_button.is_clicked > 0
 				end
 			},
 			{
 				pass_type = "texture",
 				texture_id = "texture_hover_id",
-				content_check_function = function(arg_60_0)
-					return arg_60_0.button_hotspot.is_hover and arg_60_0.button_hotspot.is_clicked > 0
+				content_check_function = function (self)
+					-- function 60
+					local is_hover = self.button_hotspot.is_hover
+
+					is_hover = not is_hover and self.button_hotspot.is_clicked > 0
+
+					return is_hover
 				end
 			},
 			{
 				pass_type = "texture",
 				texture_id = "texture_click_id",
-				content_check_function = function(arg_61_0)
-					return arg_61_0.button_hotspot.is_clicked == 0 or arg_61_0.gamepad_button.is_clicked == 0 or arg_61_0.button_hotspot.is_selected
+				content_check_function = function (self)
+					-- function 61
+					return self.button_hotspot.is_clicked == 0 or self.gamepad_button.is_clicked == 0 or self.button_hotspot.is_selected
 				end
 			},
 			{
@@ -802,8 +1189,9 @@ function UIElements.GamepadButton(arg_57_0)
 				style_id = "button_type_text",
 				pass_type = "text",
 				text_id = "button_type_text_field",
-				content_check_function = function(arg_62_0)
-					return arg_62_0.gamepad_button.gamepad_connected
+				content_check_function = function (self)
+					-- function 62
+					return self.gamepad_button.gamepad_connected
 				end
 			}
 		}

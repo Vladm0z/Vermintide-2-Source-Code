@@ -2,42 +2,62 @@
 
 ScriptQoSToken = class(ScriptQoSToken)
 
-function ScriptQoSToken.init(arg_1_0, arg_1_1)
-	arg_1_0._token = arg_1_1
-	arg_1_0._result = {}
-	arg_1_0._done = false
+ScriptQoSToken.init = function (self, arg_1_1)
+	-- function 1
+	self._token = arg_1_1
+	self._result = {}
+	self._done = false
 end
 
-function ScriptQoSToken.update(arg_2_0)
-	local var_2_0, var_2_1, var_2_2, var_2_3 = QoS.status(arg_2_0._token)
+ScriptQoSToken.update = function (self)
+	-- function 2
+	local status, var_2_1, var_2_2, var_2_3 = QoS.status(self._token)
 
-	arg_2_0._done = var_2_1
-	arg_2_0._result_code = var_2_3
+	self._done = var_2_1
+	self._result_code = var_2_3
 end
 
-function ScriptQoSToken.info(arg_3_0)
-	local var_3_0 = {}
-	local var_3_1 = bit.band(arg_3_0._result_code, QoS.UP_FAILED) > 0
-	local var_3_2 = bit.band(arg_3_0._result_code, QoS.DOWN_FAILED) > 0
+ScriptQoSToken.info = function (self)
+	-- function 3
+	local tbl = {}
+	local flag = bit.band(self._result_code, QoS.UP_FAILED) > 0
+	local flag_2 = bit.band(self._result_code, QoS.DOWN_FAILED) > 0
 
-	var_3_0.up_failed = var_3_1
-	var_3_0.down_failed = var_3_2
+	tbl.up_failed = flag
+	tbl.down_failed = flag_2
 
-	if var_3_1 or var_3_2 then
-		local var_3_3 = "Your"
-		local var_3_4 = var_3_1 and " upload bandwidth " or ""
-		local var_3_5 = var_3_2 and " download bandwidth " or ""
+	if flag or not flag_2 then
+		local str = "Your"
+		local flag_3
 
-		var_3_0.error = var_3_3 .. var_3_4 .. (var_3_1 and var_3_2 and "and" or "") .. var_3_5 .. (var_3_1 and var_3_2 and "are too low" or "is too low")
+		flag_3 = not flag and " upload bandwidth " and ""
+
+		local flag_4
+
+		flag_4 = not flag_2 and " download bandwidth " and ""
+
+		local var_3_6 = str
+		local var_3_7 = flag_3
+		local flag_5
+
+		flag_5 = not flag and not flag_2 and "and" and ""
+
+		local var_3_9 = flag_4
+		local flag_6
+
+		flag_6 = not flag and not flag_2 and "are too low" and "is too low"
+		tbl.error = var_3_6 .. var_3_7 .. flag_5 .. var_3_9 .. flag_6
 	end
 
-	return var_3_0
+	return tbl
 end
 
-function ScriptQoSToken.done(arg_4_0)
-	return arg_4_0._done
+ScriptQoSToken.done = function (self)
+	-- function 4
+	return self._done
 end
 
-function ScriptQoSToken.close(arg_5_0)
-	QoS.release(arg_5_0._token)
+ScriptQoSToken.close = function (self)
+	-- function 5
+	QoS.release(self._token)
 end

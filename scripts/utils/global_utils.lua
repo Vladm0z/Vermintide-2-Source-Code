@@ -1,75 +1,105 @@
 -- chunkname: @scripts/utils/global_utils.lua
 
-local var_0_0 = BUILD == "release"
-local var_0_1 = script_data
+local flag = BUILD == "release"
+local script_data = script_data
+local flag_2
 
-var_0_1.disable_debug_position_lookup = var_0_0 and true or nil
+flag_2 = not flag and true and nil
+script_data.disable_debug_position_lookup = flag_2
 
-local var_0_2 = Unit.alive
+local alive = Unit.alive
+local flag_3
 
-PACKAGED_BUILD = var_0_1.packaged_build and true or false
+flag_3 = not script_data.packaged_build and true and false
+PACKAGED_BUILD = flag_3
+
+local RESOLUTION_LOOKUP = RESOLUTION_LOOKUP
+
 RESOLUTION_LOOKUP = RESOLUTION_LOOKUP or {}
-POSITION_LOOKUP = POSITION_LOOKUP or Script.new_map(256)
-BLACKBOARDS = BLACKBOARDS or Script.new_map(256)
-HEALTH_ALIVE = HEALTH_ALIVE or Script.new_map(1024)
-ALIVE = POSITION_LOOKUP
-FROZEN = FROZEN or {}
+RESOLUTION_LOOKUP = RESOLUTION_LOOKUP
 
-local var_0_3 = POSITION_LOOKUP
-local var_0_4 = RESOLUTION_LOOKUP
+local POSITION_LOOKUP = POSITION_LOOKUP
+
+POSITION_LOOKUP = POSITION_LOOKUP or Script.new_map(256)
+POSITION_LOOKUP = POSITION_LOOKUP
+
+local BLACKBOARDS = BLACKBOARDS
+
+BLACKBOARDS = BLACKBOARDS or Script.new_map(256)
+BLACKBOARDS = BLACKBOARDS
+
+local HEALTH_ALIVE = HEALTH_ALIVE
+
+HEALTH_ALIVE = HEALTH_ALIVE or Script.new_map(1024)
+HEALTH_ALIVE = HEALTH_ALIVE
+ALIVE = POSITION_LOOKUP
+
+local FROZEN = FROZEN
+
+FROZEN = FROZEN or {}
+FROZEN = FROZEN
+
+local POSITION_LOOKUP_2 = POSITION_LOOKUP
+local RESOLUTION_LOOKUP_2 = RESOLUTION_LOOKUP
+local BREED_DIE_LOOKUP = BREED_DIE_LOOKUP
 
 BREED_DIE_LOOKUP = BREED_DIE_LOOKUP or {}
+BREED_DIE_LOOKUP = BREED_DIE_LOOKUP
 
 function CLEAR_POSITION_LOOKUP()
-	table.clear(var_0_3)
+	-- function 1
+	table.clear(POSITION_LOOKUP_2)
 end
 
-local var_0_5 = Unit.world_position
+local world_position = Unit.world_position
 
 function UPDATE_POSITION_LOOKUP()
-	EngineOptimized.update_position_lookup(var_0_3)
+	-- function 2
+	EngineOptimized.update_position_lookup(POSITION_LOOKUP_2)
 end
 
 function UPDATE_RESOLUTION_LOOKUP(arg_3_0, arg_3_1)
-	local var_3_0 = Window.is_minimized()
+	-- function 3
+	local is_minimized = Window.is_minimized()
 
-	var_0_4.minimized = var_3_0
+	RESOLUTION_LOOKUP_2.minimized = is_minimized
 
-	local var_3_1, var_3_2 = Application.resolution()
+	local resolution, var_3_2 = Application.resolution()
 
-	if var_3_0 then
-		var_3_1 = var_0_4.res_w or 1920
-		var_3_2 = var_0_4.res_h or 1080
+	if not is_minimized then
+		resolution = RESOLUTION_LOOKUP_2.res_w or 1920
+		var_3_2 = RESOLUTION_LOOKUP_2.res_h or 1080
 	end
 
-	local var_3_3 = var_3_1 ~= var_0_4.res_w or var_3_2 ~= var_0_4.res_h
-	local var_3_4 = var_3_1 / 1920
-	local var_3_5 = var_3_2 / 1080
-	local var_3_6 = math.min(var_3_4, var_3_5)
+	local flag = resolution ~= RESOLUTION_LOOKUP_2.res_w or var_3_2 ~= RESOLUTION_LOOKUP_2.res_h
+	local num = resolution / 1920
+	local num_2 = var_3_2 / 1080
+	local min = math.min(num, num_2)
 
-	var_3_6 = Application.user_setting("hud_clamp_ui_scaling") and math.min(var_3_6, 1) or var_3_6
+	min = not Application.user_setting("hud_clamp_ui_scaling") and math.min(min, 1) and min
 
-	local var_3_7 = false
+	local flag_2 = false
 
-	if arg_3_1 then
-		var_3_6 = var_3_6 * arg_3_1
+	if not arg_3_1 then
+		min = min * arg_3_1
 	end
 
-	if var_0_4.scale ~= var_3_6 then
-		var_3_7 = true
+	if RESOLUTION_LOOKUP_2.scale ~= min then
+		flag_2 = true
 	end
 
-	if var_3_3 or var_3_7 or arg_3_0 then
-		var_0_4.res_w = var_3_1
-		var_0_4.res_h = var_3_2
-		var_0_4.scale = var_3_6
-		var_0_4.inv_scale = 1 / var_3_6
+	if flag or flag_2 or not arg_3_0 then
+		RESOLUTION_LOOKUP_2.res_w = resolution
+		RESOLUTION_LOOKUP_2.res_h = var_3_2
+		RESOLUTION_LOOKUP_2.scale = min
+		RESOLUTION_LOOKUP_2.inv_scale = 1 / min
 	end
 
-	var_0_4.modified = var_3_3 or arg_3_0
+	RESOLUTION_LOOKUP_2.modified = flag or arg_3_0
 end
 
 function CLEAR_ALL_PLAYER_LISTS()
+	-- function 4
 	print("Clearing all global lookup lists")
 	table.clear(BLACKBOARDS)
 	assert(next(BLACKBOARDS) == nil)

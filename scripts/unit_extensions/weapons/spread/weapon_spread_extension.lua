@@ -4,45 +4,88 @@ require("scripts/unit_extensions/weapons/spread/spread_templates")
 
 WeaponSpreadExtension = class(WeaponSpreadExtension)
 
-function WeaponSpreadExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	arg_1_0.unit = arg_1_2
-	arg_1_0.owner_unit = arg_1_3.owner_unit
+WeaponSpreadExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	self.unit = arg_1_2
+	self.owner_unit = arg_1_3.owner_unit
 
-	local var_1_0 = arg_1_3.item_name
+	local item_name = arg_1_3.item_name
 
-	arg_1_0.item_name = var_1_0
+	self.item_name = item_name
 
-	local var_1_1 = ItemMasterList[var_1_0]
-	local var_1_2 = BackendUtils.get_item_template(var_1_1)
+	local var_1_1 = ItemMasterList[item_name]
+	local get_item_template = BackendUtils.get_item_template(var_1_1)
 
-	arg_1_0.default_spread_template_name = var_1_2.default_spread_template
-	arg_1_0.spread_lerp_speed_pitch = var_1_2.spread_lerp_speed_pitch or var_1_2.spread_lerp_speed or 4
-	arg_1_0.spread_lerp_speed_yaw = var_1_2.spread_lerp_speed_yaw or var_1_2.spread_lerp_speed or 4
-	arg_1_0.spread_lerp_speed_pitch_zoom = var_1_2.spread_lerp_speed_pitch_zoom or var_1_2.spread_lerp_speed_zoom or var_1_2.spread_lerp_speed or 4
-	arg_1_0.spread_lerp_speed_yaw_zoom = var_1_2.spread_lerp_speed_yaw_zoom or var_1_2.spread_lerp_speed_zoom or var_1_2.spread_lerp_speed or 4
-	arg_1_0.spread_settings = SpreadTemplates[arg_1_0.default_spread_template_name]
-	arg_1_0.current_state = "still"
-	arg_1_0.current_yaw = 0
-	arg_1_0.current_pitch = 0
-	arg_1_0.shooting = false
-	arg_1_0.hit_aftermath = false
-	arg_1_0.hit_timer = 0
+	self.default_spread_template_name = get_item_template.default_spread_template
+
+	local spread_lerp_speed_pitch = get_item_template.spread_lerp_speed_pitch
+
+	if not spread_lerp_speed_pitch then
+		spread_lerp_speed_pitch = get_item_template.spread_lerp_speed
+		spread_lerp_speed_pitch = spread_lerp_speed_pitch or 4
+	end
+
+	self.spread_lerp_speed_pitch = spread_lerp_speed_pitch
+
+	local spread_lerp_speed_yaw = get_item_template.spread_lerp_speed_yaw
+
+	if not spread_lerp_speed_yaw then
+		spread_lerp_speed_yaw = get_item_template.spread_lerp_speed
+		spread_lerp_speed_yaw = spread_lerp_speed_yaw or 4
+	end
+
+	self.spread_lerp_speed_yaw = spread_lerp_speed_yaw
+
+	local spread_lerp_speed_pitch_zoom = get_item_template.spread_lerp_speed_pitch_zoom
+
+	if not spread_lerp_speed_pitch_zoom then
+		spread_lerp_speed_pitch_zoom = get_item_template.spread_lerp_speed_zoom
+
+		if not spread_lerp_speed_pitch_zoom then
+			spread_lerp_speed_pitch_zoom = get_item_template.spread_lerp_speed
+			spread_lerp_speed_pitch_zoom = spread_lerp_speed_pitch_zoom or 4
+		end
+	end
+
+	self.spread_lerp_speed_pitch_zoom = spread_lerp_speed_pitch_zoom
+
+	local spread_lerp_speed_yaw_zoom = get_item_template.spread_lerp_speed_yaw_zoom
+
+	if not spread_lerp_speed_yaw_zoom then
+		spread_lerp_speed_yaw_zoom = get_item_template.spread_lerp_speed_zoom
+
+		if not spread_lerp_speed_yaw_zoom then
+			spread_lerp_speed_yaw_zoom = get_item_template.spread_lerp_speed
+			spread_lerp_speed_yaw_zoom = spread_lerp_speed_yaw_zoom or 4
+		end
+	end
+
+	self.spread_lerp_speed_yaw_zoom = spread_lerp_speed_yaw_zoom
+	self.spread_settings = SpreadTemplates[self.default_spread_template_name]
+	self.current_state = "still"
+	self.current_yaw = 0
+	self.current_pitch = 0
+	self.shooting = false
+	self.hit_aftermath = false
+	self.hit_timer = 0
 end
 
-function WeaponSpreadExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
-	local var_2_0 = arg_2_0.owner_unit
+WeaponSpreadExtension.extensions_ready = function (self, arg_2_1, arg_2_2)
+	-- function 2
+	local owner_unit = self.owner_unit
 
-	arg_2_0.owner_health_extension = ScriptUnit.extension(var_2_0, "health_system")
-	arg_2_0.owner_status_extension = ScriptUnit.extension(var_2_0, "status_system")
-	arg_2_0.owner_buff_extension = ScriptUnit.extension(var_2_0, "buff_system")
-	arg_2_0.owner_locomotion_extension = ScriptUnit.extension(var_2_0, "locomotion_system")
+	self.owner_health_extension = ScriptUnit.extension(owner_unit, "health_system")
+	self.owner_status_extension = ScriptUnit.extension(owner_unit, "status_system")
+	self.owner_buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
+	self.owner_locomotion_extension = ScriptUnit.extension(owner_unit, "locomotion_system")
 end
 
-function WeaponSpreadExtension.destroy(arg_3_0)
+WeaponSpreadExtension.destroy = function (arg_3_0)
+	-- function 3
 	return
 end
 
-local var_0_0 = {
+local tbl = {
 	temporary_health_degen = true,
 	buff_shared_medpack_temp_health = true,
 	buff_shared_medpack = true,
@@ -56,153 +99,219 @@ local var_0_0 = {
 	life_drain = true
 }
 
-function WeaponSpreadExtension.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
-	local var_4_0 = arg_4_0.current_pitch
-	local var_4_1 = arg_4_0.current_yaw
-	local var_4_2 = arg_4_0.current_state
-	local var_4_3 = arg_4_0.spread_settings.continuous[var_4_2]
-	local var_4_4 = arg_4_0.owner_buff_extension
-	local var_4_5 = var_4_4:apply_buffs_to_value(var_4_3.max_pitch, "reduced_spread")
-	local var_4_6 = var_4_4:apply_buffs_to_value(var_4_3.max_yaw, "reduced_spread")
-	local var_4_7 = arg_4_0.owner_status_extension
-	local var_4_8 = arg_4_0.owner_locomotion_extension
-	local var_4_9 = CharacterStateHelper.is_moving(var_4_8)
-	local var_4_10 = CharacterStateHelper.is_crouching(var_4_7)
-	local var_4_11 = CharacterStateHelper.is_zooming(var_4_7)
+WeaponSpreadExtension.update = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	-- function 4
+	local current_pitch = self.current_pitch
+	local current_yaw = self.current_yaw
+	local current_state = self.current_state
+	local var_4_3 = self.spread_settings.continuous[current_state]
+	local owner_buff_extension = self.owner_buff_extension
+	local apply_buffs_to_value = owner_buff_extension:apply_buffs_to_value(var_4_3.max_pitch, "reduced_spread")
+	local apply_buffs_to_value_2 = owner_buff_extension:apply_buffs_to_value(var_4_3.max_yaw, "reduced_spread")
+	local owner_status_extension = self.owner_status_extension
+	local owner_locomotion_extension = self.owner_locomotion_extension
+	local is_moving = CharacterStateHelper.is_moving(owner_locomotion_extension)
+	local is_crouching = CharacterStateHelper.is_crouching(owner_status_extension)
+	local is_zooming = CharacterStateHelper.is_zooming(owner_status_extension)
 	local var_4_12
-	local var_4_13 = var_4_11 and arg_4_0.spread_lerp_speed_pitch_zoom or arg_4_0.spread_lerp_speed_pitch
-	local var_4_14 = var_4_11 and arg_4_0.spread_lerp_speed_yaw_zoom or arg_4_0.spread_lerp_speed_yaw
+	local spread_lerp_speed_pitch_zoom
 
-	if arg_4_0.hit_aftermath then
-		arg_4_0.hit_timer = arg_4_0.hit_timer - arg_4_3
+	if not is_zooming then
+		spread_lerp_speed_pitch_zoom = self.spread_lerp_speed_pitch_zoom
 
-		local var_4_15 = Math.random(0.5, 1)
-
-		var_4_13 = var_4_15
-		var_4_14 = var_4_15
-
-		if arg_4_0.hit_timer <= 0 then
-			arg_4_0.hit_aftermath = false
+		if not spread_lerp_speed_pitch_zoom then
+			-- Nothing
 		end
 	end
 
-	local var_4_16 = var_4_9 and (var_4_10 and (var_4_11 and "zoomed_crouch_moving" or "crouch_moving") or var_4_11 and "zoomed_moving" or "moving") or var_4_10 and (var_4_11 and "zoomed_crouch_still" or "crouch_still") or var_4_11 and "zoomed_still" or "still"
+	spread_lerp_speed_pitch_zoom = self.spread_lerp_speed_pitch
 
-	if var_4_9 then
-		var_4_5 = var_4_4:apply_buffs_to_value(var_4_5, "reduced_spread_moving")
-		var_4_6 = var_4_4:apply_buffs_to_value(var_4_6, "reduced_spread_moving")
+	do
+		local spread_lerp_speed_yaw_zoom
 	end
 
-	local var_4_17 = math.lerp(var_4_0, var_4_5, arg_4_3 * var_4_13)
-	local var_4_18 = math.lerp(var_4_1, var_4_6, arg_4_3 * var_4_14)
+	::label_4_0::
 
-	if var_4_2 ~= var_4_16 then
-		arg_4_0.current_state = var_4_16
+	if not is_zooming then
+		spread_lerp_speed_yaw_zoom = self.spread_lerp_speed_yaw_zoom
+
+		if not spread_lerp_speed_yaw_zoom then
+			-- Nothing
+		end
 	end
 
-	local var_4_19 = arg_4_0.spread_settings.immediate
-	local var_4_20 = 0
-	local var_4_21 = 0
-	local var_4_22 = arg_4_0.owner_health_extension:recently_damaged()
+	spread_lerp_speed_yaw_zoom = self.spread_lerp_speed_yaw
 
-	if var_4_22 and not var_0_0[var_4_22] then
-		local var_4_23 = var_4_19.being_hit
+	::label_4_1::
 
-		var_4_20 = var_4_4:apply_buffs_to_value(var_4_23.immediate_pitch, "reduced_spread_hit")
-		var_4_21 = var_4_4:apply_buffs_to_value(var_4_23.immediate_yaw, "reduced_spread_hit")
-		arg_4_0.hit_aftermath = true
-		arg_4_0.hit_timer = 1.5
+	if not self.hit_aftermath then
+		self.hit_timer = self.hit_timer - arg_4_3
+
+		local random = Math.random(0.5, 1)
+
+		spread_lerp_speed_pitch_zoom = random
+		spread_lerp_speed_yaw_zoom = random
+
+		if self.hit_timer <= 0 then
+			self.hit_aftermath = false
+		end
 	end
 
-	if arg_4_0.shooting then
-		local var_4_24 = var_4_19.shooting
+	local flag
 
-		var_4_20 = var_4_4:apply_buffs_to_value(var_4_24.immediate_pitch, "reduced_spread_shot")
-		var_4_21 = var_4_4:apply_buffs_to_value(var_4_24.immediate_yaw, "reduced_spread_shot")
-		arg_4_0.shooting = false
+	flag = not is_moving and not is_crouching and not is_zooming and "zoomed_crouch_moving" and "crouch_moving" or not is_zooming and "zoomed_moving" and "moving" or not is_crouching and (not is_zooming and "zoomed_crouch_still" and "crouch_still" or not is_zooming) or "zoomed_still" and "still"
+
+	if not is_moving then
+		apply_buffs_to_value = owner_buff_extension:apply_buffs_to_value(apply_buffs_to_value, "reduced_spread_moving")
+		apply_buffs_to_value_2 = owner_buff_extension:apply_buffs_to_value(apply_buffs_to_value_2, "reduced_spread_moving")
 	end
 
-	local var_4_25 = var_4_17 + var_4_20
-	local var_4_26 = var_4_18 + var_4_21
+	local lerp = math.lerp(current_pitch, apply_buffs_to_value, arg_4_3 * spread_lerp_speed_pitch_zoom)
+	local lerp_2 = math.lerp(current_yaw, apply_buffs_to_value_2, arg_4_3 * spread_lerp_speed_yaw_zoom)
 
-	arg_4_0.current_pitch = math.min(var_4_25, SpreadTemplates.maximum_pitch)
-	arg_4_0.current_yaw = math.min(var_4_26, SpreadTemplates.maximum_yaw)
+	if current_state ~= flag then
+		self.current_state = flag
+	end
+
+	local immediate = self.spread_settings.immediate
+	local num = 0
+	local num_2 = 0
+	local recently_damaged = self.owner_health_extension:recently_damaged()
+
+	if not (not recently_damaged and not tbl[recently_damaged]) then
+		local being_hit = immediate.being_hit
+
+		num = owner_buff_extension:apply_buffs_to_value(being_hit.immediate_pitch, "reduced_spread_hit")
+		num_2 = owner_buff_extension:apply_buffs_to_value(being_hit.immediate_yaw, "reduced_spread_hit")
+		self.hit_aftermath = true
+		self.hit_timer = 1.5
+	end
+
+	if not self.shooting then
+		local shooting = immediate.shooting
+
+		num = owner_buff_extension:apply_buffs_to_value(shooting.immediate_pitch, "reduced_spread_shot")
+		num_2 = owner_buff_extension:apply_buffs_to_value(shooting.immediate_yaw, "reduced_spread_shot")
+		self.shooting = false
+	end
+
+	local num_3 = lerp + num
+	local num_4 = lerp_2 + num_2
+
+	self.current_pitch = math.min(num_3, SpreadTemplates.maximum_pitch)
+	self.current_yaw = math.min(num_4, SpreadTemplates.maximum_yaw)
 end
 
-function WeaponSpreadExtension.set_shooting(arg_5_0)
-	arg_5_0.shooting = true
+WeaponSpreadExtension.set_shooting = function (self)
+	-- function 5
+	self.shooting = true
 end
 
-function WeaponSpreadExtension.combine_spread_rotations(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+WeaponSpreadExtension.combine_spread_rotations = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	-- function 6
 	local var_6_0 = Quaternion(Vector3.forward(), arg_6_1)
 	local var_6_1 = Quaternion(Vector3.right(), arg_6_2)
-	local var_6_2 = Quaternion.multiply(arg_6_3, var_6_0)
+	local multiply = Quaternion.multiply(arg_6_3, var_6_0)
 
-	return (Quaternion.multiply(var_6_2, var_6_1))
+	return (Quaternion.multiply(multiply, var_6_1))
 end
 
-function WeaponSpreadExtension.get_max_pitch_rotation(arg_7_0, arg_7_1)
-	local var_7_0 = arg_7_0.current_pitch
-	local var_7_1 = arg_7_0.current_yaw
-	local var_7_2 = var_7_1 * math.cos(arg_7_1)
-	local var_7_3 = var_7_0 * math.sin(arg_7_1)
-	local var_7_4 = Vector3.length(Vector3(var_7_2, var_7_3, 0))
+WeaponSpreadExtension.get_max_pitch_rotation = function (self, arg_7_1)
+	-- function 7
+	local current_pitch = self.current_pitch
+	local current_yaw = self.current_yaw
+	local num = current_yaw * math.cos(arg_7_1)
+	local num_2 = current_pitch * math.sin(arg_7_1)
+	local length = Vector3.length(Vector3(num, num_2, 0))
 
-	if var_7_4 < 1e-05 then
+	if length < 1e-05 then
 		return 0
 	end
 
-	local var_7_5 = var_7_0 * var_7_1 / var_7_4
+	local num_3 = current_pitch * current_yaw / length
 
-	return math.degrees_to_radians(var_7_5)
+	return math.degrees_to_radians(num_3)
 end
 
-function WeaponSpreadExtension.get_current_pitch_and_yaw(arg_8_0)
-	return arg_8_0.current_pitch, arg_8_0.current_yaw
+WeaponSpreadExtension.get_current_pitch_and_yaw = function (self)
+	-- function 8
+	return self.current_pitch, self.current_yaw
 end
 
-function WeaponSpreadExtension.override_spread_template(arg_9_0, arg_9_1)
-	arg_9_0.spread_settings = SpreadTemplates[arg_9_1]
+WeaponSpreadExtension.override_spread_template = function (self, arg_9_1)
+	-- function 9
+	self.spread_settings = SpreadTemplates[arg_9_1]
 
-	local var_9_0 = arg_9_0.current_state
-	local var_9_1 = arg_9_0.spread_settings.continuous[var_9_0]
+	local current_state = self.current_state
+	local var_9_1 = self.spread_settings.continuous[current_state]
 
-	arg_9_0.current_pitch = var_9_1.max_pitch
-	arg_9_0.current_yaw = var_9_1.max_yaw
+	self.current_pitch = var_9_1.max_pitch
+	self.current_yaw = var_9_1.max_yaw
 end
 
-function WeaponSpreadExtension.reset_spread_template(arg_10_0)
-	arg_10_0.spread_settings = SpreadTemplates[arg_10_0.default_spread_template_name]
+WeaponSpreadExtension.reset_spread_template = function (self)
+	-- function 10
+	self.spread_settings = SpreadTemplates[self.default_spread_template_name]
 end
 
-function WeaponSpreadExtension.get_randomised_spread(arg_11_0, arg_11_1)
-	local var_11_0 = math.random() * math.pi * 2
-	local var_11_1 = math.random() * arg_11_0:get_max_pitch_rotation(var_11_0)
+WeaponSpreadExtension.get_randomised_spread = function (self, arg_11_1)
+	-- function 11
+	local num = math.random() * math.pi * 2
+	local num_2 = math.random() * self:get_max_pitch_rotation(num)
 
-	return (arg_11_0:combine_spread_rotations(var_11_0, var_11_1, arg_11_1))
+	return (self:combine_spread_rotations(num, num_2, arg_11_1))
 end
 
-function WeaponSpreadExtension.get_target_style_spread(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
-	if arg_12_5 and arg_12_1 == 1 then
+WeaponSpreadExtension.get_target_style_spread = function (self, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
+	-- function 12
+	if not (not arg_12_5 and arg_12_1 ~= 1) then
 		return arg_12_3
 	end
 
-	local var_12_0 = arg_12_5 and arg_12_1 - 1 or arg_12_1
-	local var_12_1 = arg_12_5 and arg_12_2 - 1 or arg_12_2
-	local var_12_2 = arg_12_4 or 1
-	local var_12_3 = var_12_2 * (var_12_0 / var_12_1)
-	local var_12_4 = var_12_2 / var_12_1
-	local var_12_5 = ((0.85 + 0.3 * math.random()) * var_12_4 * 2 + var_12_3 - var_12_4) * (math.pi * 2)
-	local var_12_6 = arg_12_0:get_max_pitch_rotation(var_12_5)
-	local var_12_7 = math.sqrt(0.25 + 0.5 * math.random())
+	local num
 
-	if var_12_2 == 2 and var_12_0 <= var_12_1 / var_12_2 then
-		var_12_7 = var_12_7 * ((arg_12_6 or 0.8) / 2)
-	else
-		var_12_7 = var_12_7 * (arg_12_6 or 0.8)
+	if not arg_12_5 then
+		num = arg_12_1 - 1
+
+		if not num then
+			-- Nothing
+		end
 	end
 
-	local var_12_8 = var_12_7 * var_12_6
+	num = arg_12_1
 
-	return (arg_12_0:combine_spread_rotations(var_12_5, var_12_8, arg_12_3))
+	do
+		local num_2
+	end
+
+	::label_12_0::
+
+	if not arg_12_5 then
+		num_2 = arg_12_2 - 1
+
+		if not num_2 then
+			-- Nothing
+		end
+	end
+
+	num_2 = arg_12_2
+
+	::label_12_1::
+
+	local flag = arg_12_4 or 1
+	local num_3 = flag * (num / num_2)
+	local num_4 = flag / num_2
+	local num_5 = ((0.85 + 0.3 * math.random()) * num_4 * 2 + num_3 - num_4) * (math.pi * 2)
+	local get_max_pitch_rotation = self:get_max_pitch_rotation(num_5)
+	local sqrt = math.sqrt(0.25 + 0.5 * math.random())
+
+	if not (flag ~= 2 or not (num <= num_2 / flag)) then
+		sqrt = sqrt * ((arg_12_6 or 0.8) / 2)
+	else
+		sqrt = sqrt * (arg_12_6 or 0.8)
+	end
+
+	local num_6 = sqrt * get_max_pitch_rotation
+
+	return (self:combine_spread_rotations(num_5, num_6, arg_12_3))
 end

@@ -2,8 +2,8 @@
 
 local_require("scripts/ui/ui_widgets")
 
-local var_0_0 = 20
-local var_0_1 = {
+local num = 20
+local tbl = {
 	screen = {
 		scale = "fit",
 		size = {
@@ -576,15 +576,16 @@ local var_0_1 = {
 	}
 }
 
-local function var_0_2(arg_1_0, arg_1_1)
-	local var_1_0 = {
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
+	local tbl = {
 		30,
 		30
 	}
-	local var_1_1 = 7
-	local var_1_2 = {
-		var_1_1,
-		var_1_0[2] + var_1_1
+	local num = 7
+	local tbl_2 = {
+		num,
+		tbl[2] + num
 	}
 
 	return {
@@ -594,32 +595,52 @@ local function var_0_2(arg_1_0, arg_1_1)
 					texture_id = "texture_id",
 					style_id = "checkbox_1",
 					pass_type = "texture",
-					content_check_function = function(arg_2_0, arg_2_1)
-						return GameSettingsDevelopment.allow_retry_weave and arg_2_0.votes > 0
+					content_check_function = function (self, arg_2_1)
+						-- function 2
+						local allow_retry_weave = GameSettingsDevelopment.allow_retry_weave
+
+						allow_retry_weave = not allow_retry_weave and self.votes > 0
+
+						return allow_retry_weave
 					end
 				},
 				{
 					texture_id = "texture_id",
 					style_id = "checkbox_2",
 					pass_type = "texture",
-					content_check_function = function(arg_3_0, arg_3_1)
-						return GameSettingsDevelopment.allow_retry_weave and arg_3_0.votes > 1
+					content_check_function = function (self, arg_3_1)
+						-- function 3
+						local allow_retry_weave = GameSettingsDevelopment.allow_retry_weave
+
+						allow_retry_weave = not allow_retry_weave and self.votes > 1
+
+						return allow_retry_weave
 					end
 				},
 				{
 					texture_id = "texture_id",
 					style_id = "checkbox_3",
 					pass_type = "texture",
-					content_check_function = function(arg_4_0, arg_4_1)
-						return GameSettingsDevelopment.allow_retry_weave and arg_4_0.votes > 2
+					content_check_function = function (self, arg_4_1)
+						-- function 4
+						local allow_retry_weave = GameSettingsDevelopment.allow_retry_weave
+
+						allow_retry_weave = not allow_retry_weave and self.votes > 2
+
+						return allow_retry_weave
 					end
 				},
 				{
 					texture_id = "texture_id",
 					style_id = "checkbox_4",
 					pass_type = "texture",
-					content_check_function = function(arg_5_0, arg_5_1)
-						return GameSettingsDevelopment.allow_retry_weave and arg_5_0.votes > 3
+					content_check_function = function (self, arg_5_1)
+						-- function 5
+						local allow_retry_weave = GameSettingsDevelopment.allow_retry_weave
+
+						allow_retry_weave = not allow_retry_weave and self.votes > 3
+
+						return allow_retry_weave
 					end
 				}
 			}
@@ -639,11 +660,11 @@ local function var_0_2(arg_1_0, arg_1_1)
 					255
 				},
 				offset = {
-					var_1_2[1] + (var_1_0[1] + var_1_1) * 0,
-					var_1_2[2],
+					tbl_2[1] + (tbl[1] + num) * 0,
+					tbl_2[2],
 					0
 				},
-				texture_size = var_1_0
+				texture_size = tbl
 			},
 			checkbox_2 = {
 				vertical_alignment = "top",
@@ -655,11 +676,11 @@ local function var_0_2(arg_1_0, arg_1_1)
 					255
 				},
 				offset = {
-					var_1_2[1] + (var_1_0[1] + var_1_1) * 1,
-					var_1_2[2],
+					tbl_2[1] + (tbl[1] + num) * 1,
+					tbl_2[2],
 					0
 				},
-				texture_size = var_1_0
+				texture_size = tbl
 			},
 			checkbox_3 = {
 				vertical_alignment = "top",
@@ -671,11 +692,11 @@ local function var_0_2(arg_1_0, arg_1_1)
 					255
 				},
 				offset = {
-					var_1_2[1] + (var_1_0[1] + var_1_1) * 2,
-					var_1_2[2],
+					tbl_2[1] + (tbl[1] + num) * 2,
+					tbl_2[2],
 					0
 				},
-				texture_size = var_1_0
+				texture_size = tbl
 			},
 			checkbox_4 = {
 				vertical_alignment = "top",
@@ -687,11 +708,11 @@ local function var_0_2(arg_1_0, arg_1_1)
 					255
 				},
 				offset = {
-					var_1_2[1] + (var_1_0[1] + var_1_1) * 3,
-					var_1_2[2],
+					tbl_2[1] + (tbl[1] + num) * 3,
+					tbl_2[2],
 					0
 				},
-				texture_size = var_1_0
+				texture_size = tbl
 			}
 		},
 		offset = {
@@ -703,7 +724,7 @@ local function var_0_2(arg_1_0, arg_1_1)
 	}
 end
 
-local var_0_3 = {
+local tbl_2 = {
 	word_wrap = true,
 	font_size = 52,
 	localize = false,
@@ -718,7 +739,7 @@ local var_0_3 = {
 		2
 	}
 }
-local var_0_4 = {
+local tbl_3 = {
 	vertical_alignment = "top",
 	font_size = 20,
 	localize = false,
@@ -732,16 +753,16 @@ local var_0_4 = {
 		2
 	}
 }
-local var_0_5
+local flag
 
-var_0_5 = IS_XB1 and "leave_party_xb1" or "leave_party"
+flag = not IS_XB1 and "leave_party_xb1" and "leave_party"
 
-local var_0_6 = true
-local var_0_7 = true
-local var_0_8 = {
-	timer_text = UIWidgets.create_simple_text(Localize("timer_prefix_time_left"), "timer_text", nil, nil, var_0_3),
+local flag_2 = true
+local flag_3 = true
+local tbl_4 = {
+	timer_text = UIWidgets.create_simple_text(Localize("timer_prefix_time_left"), "timer_text", nil, nil, tbl_2),
 	timer_bg = UIWidgets.create_simple_texture("tab_menu_bg_03", "timer_bg"),
-	ready_button = UIWidgets.create_default_button("ready_button", var_0_1.ready_button.size, nil, nil, Localize("return_to_inn"), 32, nil, nil, nil, var_0_7),
+	ready_button = UIWidgets.create_default_button("ready_button", tbl.ready_button.size, nil, nil, Localize("return_to_inn"), 32, nil, nil, nil, flag_3),
 	reset_button = UIWidgets.create_simple_two_state_button("reset_button", "scroll_bar_button_up", "scroll_bar_button_up_clicked"),
 	page_background = UIWidgets.create_simple_rect("page_background", {
 		150,
@@ -749,13 +770,13 @@ local var_0_8 = {
 		0,
 		0
 	}),
-	retry_checkboxes = var_0_2("retry_button", {
+	retry_checkboxes = fn("retry_button", {
 		255,
 		0,
 		255,
 		0
 	}),
-	reload_checkboxes = var_0_2("ready_button", {
+	reload_checkboxes = fn("ready_button", {
 		255,
 		255,
 		0,
@@ -774,31 +795,31 @@ local var_0_8 = {
 		21
 	})
 }
-local var_0_9 = {
+local tbl_5 = {
 	200,
 	138,
 	0,
 	147
 }
-local var_0_10 = {
+local tbl_6 = {
 	255,
 	138,
 	0,
 	187
 }
-local var_0_11 = {
+local tbl_7 = {
 	200,
 	128,
 	0,
 	217
 }
-local var_0_12 = {
+local tbl_8 = {
 	130,
 	255,
 	255,
 	255
 }
-local var_0_13 = {
+local tbl_9 = {
 	bottom_glow_smoke_1 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_smoke_1", {
 		{
 			0,
@@ -808,7 +829,7 @@ local var_0_13 = {
 			1,
 			0
 		}
-	}, "bottom_glow", nil, nil, var_0_9),
+	}, "bottom_glow", nil, nil, tbl_5),
 	bottom_glow_smoke_2 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_smoke_2", {
 		{
 			0,
@@ -818,7 +839,7 @@ local var_0_13 = {
 			1,
 			0
 		}
-	}, "bottom_glow_short", nil, nil, var_0_10),
+	}, "bottom_glow_short", nil, nil, tbl_6),
 	bottom_glow_smoke_3 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_embers_2", {
 		{
 			0,
@@ -828,7 +849,7 @@ local var_0_13 = {
 			1,
 			0
 		}
-	}, "bottom_glow_shortest", nil, nil, var_0_11),
+	}, "bottom_glow_shortest", nil, nil, tbl_7),
 	bottom_glow_embers_1 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_embers_1", {
 		{
 			0,
@@ -838,7 +859,7 @@ local var_0_13 = {
 			1,
 			0
 		}
-	}, "bottom_glow", nil, nil, var_0_12, 1),
+	}, "bottom_glow", nil, nil, tbl_8, 1),
 	bottom_glow_embers_3 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_embers_3", {
 		{
 			0,
@@ -848,7 +869,7 @@ local var_0_13 = {
 			1,
 			0
 		}
-	}, "bottom_glow_short", nil, nil, var_0_12, 1),
+	}, "bottom_glow_short", nil, nil, tbl_8, 1),
 	dead_space_filler = UIWidgets.create_simple_texture("rect_masked", "dead_space_filler", false, false, {
 		255,
 		0,
@@ -856,23 +877,26 @@ local var_0_13 = {
 		0
 	})
 }
-local var_0_14 = {
+local tbl_10 = {
 	ready_button_entry_alone = {
 		{
 			name = "entry",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			init = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+				-- function 6
 				arg_6_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
-				local var_7_0 = math.easeCubic(arg_7_3)
-				local var_7_1 = math.easeCubic(1 - arg_7_3)
+			update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+				-- function 7
+				local easeCubic = math.easeCubic(arg_7_3)
+				local easeCubic_2 = math.easeCubic(1 - arg_7_3)
 
-				arg_7_0.ready_button_alone.local_position[2] = arg_7_1.ready_button_alone.position[2] - 100 * var_7_1
-				arg_7_4.render_settings.alpha_multiplier = var_7_0
+				arg_7_0.ready_button_alone.local_position[2] = arg_7_1.ready_button_alone.position[2] - 100 * easeCubic_2
+				arg_7_4.render_settings.alpha_multiplier = easeCubic
 			end,
-			on_complete = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			on_complete = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+				-- function 8
 				return
 			end
 		}
@@ -882,14 +906,17 @@ local var_0_14 = {
 			name = "entry",
 			start_progress = 0,
 			end_progress = 0,
-			init = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			init = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+				-- function 9
 				return
 			end,
-			update = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+			update = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+				-- function 10
 				arg_10_0.ready_button_alone.local_position[2] = arg_10_1.ready_button_alone.position[2]
 				arg_10_4.render_settings.alpha_multiplier = 0
 			end,
-			on_complete = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+			on_complete = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+				-- function 11
 				return
 			end
 		}
@@ -899,17 +926,20 @@ local var_0_14 = {
 			name = "entry",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			init = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+				-- function 12
 				arg_12_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
-				local var_13_0 = math.easeCubic(arg_13_3)
-				local var_13_1 = math.easeCubic(1 - arg_13_3)
+			update = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+				-- function 13
+				local easeCubic = math.easeCubic(arg_13_3)
+				local easeCubic_2 = math.easeCubic(1 - arg_13_3)
 
-				arg_13_0.ready_button.local_position[2] = arg_13_1.ready_button.position[2] - 100 * var_13_1
-				arg_13_4.render_settings.alpha_multiplier = var_13_0
+				arg_13_0.ready_button.local_position[2] = arg_13_1.ready_button.position[2] - 100 * easeCubic_2
+				arg_13_4.render_settings.alpha_multiplier = easeCubic
 			end,
-			on_complete = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			on_complete = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+				-- function 14
 				return
 			end
 		}
@@ -919,23 +949,26 @@ local var_0_14 = {
 			name = "entry",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+			init = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+				-- function 15
 				arg_15_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
-				local var_16_0 = math.easeCubic(arg_16_3)
-				local var_16_1 = math.easeCubic(1 - arg_16_3)
+			update = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+				-- function 16
+				local easeCubic = math.easeCubic(arg_16_3)
+				local easeCubic_2 = math.easeCubic(1 - arg_16_3)
 
-				arg_16_0.retry_button.local_position[2] = arg_16_1.retry_button.position[2] - 100 * var_16_1
-				arg_16_4.render_settings.alpha_multiplier = var_16_0
+				arg_16_0.retry_button.local_position[2] = arg_16_1.retry_button.position[2] - 100 * easeCubic_2
+				arg_16_4.render_settings.alpha_multiplier = easeCubic
 			end,
-			on_complete = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+			on_complete = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+				-- function 17
 				return
 			end
 		}
 	}
 }
-local var_0_15 = {
+local tbl_11 = {
 	default = {
 		{
 			input_action = "analog_input",
@@ -962,10 +995,10 @@ local var_0_15 = {
 return {
 	num_reward_entries = num_reward_entries,
 	num_experience_entries = num_experience_entries,
-	scenegraph_definition = var_0_1,
-	widgets_definitions = var_0_8,
-	weave_widget_definitions = var_0_13,
-	animations = var_0_14,
-	generic_input_actions = var_0_15,
+	scenegraph_definition = tbl,
+	widgets_definitions = tbl_4,
+	weave_widget_definitions = tbl_9,
+	animations = tbl_10,
+	generic_input_actions = tbl_11,
 	console_cursor_definition = UIWidgets.create_console_cursor("console_cursor")
 }

@@ -2,40 +2,70 @@
 
 require("scripts/managers/game_mode/game_modes/game_mode_base")
 
-script_data.disable_gamemode_end = script_data.disable_gamemode_end or Development.parameter("disable_gamemode_end")
+local script_data = script_data
+local disable_gamemode_end = script_data.disable_gamemode_end
+
+disable_gamemode_end = disable_gamemode_end or Development.parameter("disable_gamemode_end")
+script_data.disable_gamemode_end = disable_gamemode_end
 GameModeSurvival = class(GameModeSurvival, GameModeBase)
 
-local var_0_0 = false
-local var_0_1 = false
+local flag = false
+local flag_2 = false
 
-function GameModeSurvival.init(arg_1_0, arg_1_1, arg_1_2, ...)
-	GameModeSurvival.super.init(arg_1_0, arg_1_1, arg_1_2, ...)
+GameModeSurvival.init = function (self, arg_1_1, arg_1_2, ...)
+	-- function 1
+	GameModeSurvival.super.init(self, arg_1_1, arg_1_2, ...)
 
-	arg_1_0._lost_condition_timer = nil
+	self._lost_condition_timer = nil
 end
 
-function GameModeSurvival.evaluate_end_conditions(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
-	if script_data.disable_gamemode_end then
+GameModeSurvival.evaluate_end_conditions = function (self, arg_2_1, arg_2_2, arg_2_3)
+	-- function 2
+	if not script_data.disable_gamemode_end then
 		return false
 	end
 
-	local var_2_0 = true
-	local var_2_1 = GameModeHelper.side_is_dead("heroes", var_2_0)
-	local var_2_2 = GameModeHelper.side_is_disabled("heroes")
-	local var_2_3 = not arg_2_0._lose_condition_disabled and (var_2_1 or var_2_2 or arg_2_0._level_failed or arg_2_0:_is_time_up())
+	local flag_3 = true
+	local side_is_dead = GameModeHelper.side_is_dead("heroes", flag_3)
+	local side_is_disabled = GameModeHelper.side_is_disabled("heroes")
+	local _level_failed
 
-	if arg_2_0:is_about_to_end_game_early() then
-		if var_2_3 then
-			if arg_2_3 > arg_2_0._lost_condition_timer then
-				local var_2_4, var_2_5 = Managers.state.entity:system("mission_system"):get_missions()
+	if not self._lose_condition_disabled then
+		if not (side_is_dead or side_is_disabled) then
+			-- Nothing
+		end
 
-				if var_2_4 then
-					local var_2_6 = var_2_4.survival_wave
+		::label_2_1::
 
-					if var_2_6 then
-						local var_2_7 = var_2_6.wave_completed - var_2_6.starting_wave > 0 and "won" or "lost"
+		_level_failed = self._level_failed
 
-						return true, var_2_7
+		if not _level_failed then
+			_level_failed = self:_is_time_up()
+		end
+	else
+		_level_failed = false
+	end
+
+	if false then
+		_level_failed = true
+	end
+
+	::label_2_2::
+
+	if not self:is_about_to_end_game_early() then
+		if not _level_failed then
+			if arg_2_3 > self._lost_condition_timer then
+				local get_missions, var_2_5 = Managers.state.entity:system("mission_system"):get_missions()
+
+				if not get_missions then
+					local survival_wave = get_missions.survival_wave
+
+					if not survival_wave then
+						local flag_4
+
+						flag_4 = not (survival_wave.wave_completed - survival_wave.starting_wave > 0) or not "won" or "lost"
+
+						return true, flag_4
 					end
 
 					return true, "lost"
@@ -44,49 +74,52 @@ function GameModeSurvival.evaluate_end_conditions(arg_2_0, arg_2_1, arg_2_2, arg
 				return false
 			end
 		else
-			arg_2_0:set_about_to_end_game_early(false)
+			self:set_about_to_end_game_early(false)
 
-			arg_2_0._lost_condition_timer = nil
+			self._lost_condition_timer = nil
 		end
 	end
 
-	if var_0_0 then
-		var_0_0 = false
+	if not flag then
+		flag = false
 
 		return true, "won"
 	end
 
-	if var_0_1 then
-		var_0_1 = false
+	if not flag_2 then
+		flag_2 = false
 
 		return true, "lost"
 	end
 
-	if var_2_3 then
-		arg_2_0:set_about_to_end_game_early(true)
+	if not _level_failed then
+		self:set_about_to_end_game_early(true)
 
-		if var_2_1 then
-			arg_2_0._lost_condition_timer = arg_2_3 + GameModeSettings.survival.lose_condition_time_dead
+		if not side_is_dead then
+			self._lost_condition_timer = arg_2_3 + GameModeSettings.survival.lose_condition_time_dead
 		else
-			arg_2_0._lost_condition_timer = arg_2_3 + GameModeSettings.survival.lose_condition_time
+			self._lost_condition_timer = arg_2_3 + GameModeSettings.survival.lose_condition_time
 		end
-	elseif arg_2_0._level_completed or arg_2_0:update_end_level_areas() then
+	elseif self._level_completed or not self:update_end_level_areas() then
 		return true, "won"
 	else
 		return false
 	end
 end
 
-function GameModeSurvival.ended(arg_3_0, arg_3_1)
-	if not arg_3_0._network_server:are_all_peers_ingame() then
-		arg_3_0._network_server:disconnect_joining_peers()
+GameModeSurvival.ended = function (self, arg_3_1)
+	-- function 3
+	if not self._network_server:are_all_peers_ingame() then
+		self._network_server:disconnect_joining_peers()
 	end
 end
 
 function COMPLETE_LEVEL()
-	var_0_0 = true
+	-- function 4
+	flag = true
 end
 
 function FAIL_LEVEL()
-	var_0_1 = true
+	-- function 5
+	flag_2 = true
 end

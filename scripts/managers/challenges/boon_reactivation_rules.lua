@@ -1,17 +1,21 @@
 -- chunkname: @scripts/managers/challenges/boon_reactivation_rules.lua
 
+local BoonReactivationRules = BoonReactivationRules
+
 BoonReactivationRules = BoonReactivationRules or {}
+BoonReactivationRules = BoonReactivationRules
 
-function BoonReactivationRules.questing_knight(arg_1_0)
-	local var_1_0 = Managers.party:get_status_from_unique_id(arg_1_0)
+BoonReactivationRules.questing_knight = function (arg_1_0)
+	-- function 1
+	local get_status_from_unique_id = Managers.party:get_status_from_unique_id(arg_1_0)
 
-	if var_1_0 then
-		local var_1_1 = var_1_0.profile_index
-		local var_1_2 = var_1_0.career_index
-		local var_1_3 = SPProfiles[var_1_1]
-		local var_1_4 = var_1_3 and var_1_3.careers[var_1_2]
+	if not get_status_from_unique_id then
+		local profile_index = get_status_from_unique_id.profile_index
+		local career_index = get_status_from_unique_id.career_index
+		local var_1_3 = SPProfiles[profile_index]
+		local flag = not var_1_3 and var_1_3.careers[career_index]
 
-		return var_1_4 and var_1_4 == CareerSettings.es_questingknight
+		return not flag and flag == CareerSettings.es_questingknight
 	end
 
 	return false

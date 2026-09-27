@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/staff_flamethrower.lua
 
-local var_0_0 = {
+local tbl = {
 	actions = {
 		action_one = {
 			default = {
@@ -71,7 +71,8 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_1_0, arg_1_1)
+				enter_function = function (arg_1_0, arg_1_1)
+					-- function 1
 					arg_1_1:clear_input_buffer()
 
 					return arg_1_1:reset_release_input()
@@ -126,7 +127,8 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_2_0, arg_2_1)
+				enter_function = function (arg_2_0, arg_2_1)
+					-- function 2
 					arg_2_1:clear_input_buffer()
 
 					return arg_2_1:reset_release_input()
@@ -153,7 +155,8 @@ local var_0_0 = {
 				hold_input = "action_two_hold",
 				anim_event = "flamethrower_charge_start",
 				charge_sound_husk_stop_event = "stop_player_combat_weapon_staff_charge_husk",
-				anim_end_event_condition_func = function(arg_3_0, arg_3_1)
+				anim_end_event_condition_func = function (arg_3_0, arg_3_1)
+					-- function 3
 					return arg_3_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -215,7 +218,8 @@ local var_0_0 = {
 				uninterruptible = true,
 				anim_event = "cooldown_start",
 				charge_sound_name = "player_combat_weapon_staff_cooldown",
-				anim_end_event_condition_func = function(arg_4_0, arg_4_1)
+				anim_end_event_condition_func = function (arg_4_0, arg_4_1)
+					-- function 4
 					return arg_4_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -227,7 +231,8 @@ local var_0_0 = {
 						end_time = math.huge
 					}
 				},
-				enter_function = function(arg_5_0, arg_5_1)
+				enter_function = function (arg_5_0, arg_5_1)
+					-- function 5
 					arg_5_1:reset_release_input()
 					arg_5_1:clear_input_buffer()
 				end,
@@ -239,10 +244,12 @@ local var_0_0 = {
 						input = "action_wield"
 					}
 				},
-				condition_func = function(arg_6_0, arg_6_1)
+				condition_func = function (arg_6_0, arg_6_1)
+					-- function 6
 					return ScriptUnit.extension(arg_6_0, "overcharge_system"):get_overcharge_value() ~= 0
 				end,
-				chain_condition_func = function(arg_7_0, arg_7_1)
+				chain_condition_func = function (arg_7_0, arg_7_1)
+					-- function 7
 					return ScriptUnit.extension(arg_7_0, "overcharge_system"):get_overcharge_value() ~= 0
 				end
 			}
@@ -281,18 +288,18 @@ local var_0_0 = {
 	}
 }
 
-var_0_0.default_spread_template = "drakegun"
-var_0_0.right_hand_unit = "units/weapons/player/wpn_brw_skullstaff/wpn_brw_skullstaff"
-var_0_0.right_hand_attachment_node_linking = AttachmentNodeLinking.spear_staff
-var_0_0.left_hand_unit = "units/weapons/player/wpn_fireball/wpn_fireball"
-var_0_0.left_hand_attachment_node_linking = AttachmentNodeLinking.fireball
-var_0_0.display_unit = "units/weapons/weapon_display/display_staff"
-var_0_0.wield_anim = "to_staff"
-var_0_0.state_machine = "units/beings/player/first_person_base/state_machines/ranged/staff"
-var_0_0.crosshair_style = "circle"
-var_0_0.buff_type = "RANGED"
-var_0_0.weapon_type = "FIRE_STAFF"
-var_0_0.buffs = {
+tbl.default_spread_template = "drakegun"
+tbl.right_hand_unit = "units/weapons/player/wpn_brw_skullstaff/wpn_brw_skullstaff"
+tbl.right_hand_attachment_node_linking = AttachmentNodeLinking.spear_staff
+tbl.left_hand_unit = "units/weapons/player/wpn_fireball/wpn_fireball"
+tbl.left_hand_attachment_node_linking = AttachmentNodeLinking.fireball
+tbl.display_unit = "units/weapons/weapon_display/display_staff"
+tbl.wield_anim = "to_staff"
+tbl.state_machine = "units/beings/player/first_person_base/state_machines/ranged/staff"
+tbl.crosshair_style = "circle"
+tbl.buff_type = "RANGED"
+tbl.weapon_type = "FIRE_STAFF"
+tbl.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1
 	},
@@ -300,11 +307,11 @@ var_0_0.buffs = {
 		external_optional_multiplier = 1
 	}
 }
-var_0_0.wwise_dep_right_hand = {
+tbl.wwise_dep_right_hand = {
 	"wwise/staff",
 	"wwise/flamethrower"
 }
-var_0_0.weapon_diagram = {
+tbl.weapon_diagram = {
 	light_attack = {
 		[DamageTypes.ARMOR_PIERCING] = 3,
 		[DamageTypes.CLEAVE] = 7,
@@ -320,12 +327,12 @@ var_0_0.weapon_diagram = {
 		[DamageTypes.DAMAGE] = 2
 	}
 }
-var_0_0.tooltip_keywords = {
+tbl.tooltip_keywords = {
 	"weapon_keyword_damage_over_time",
 	"weapon_keyword_charged_attack",
 	"weapon_keyword_close_range"
 }
-var_0_0.tooltip_compare = {
+tbl.tooltip_compare = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -335,7 +342,7 @@ var_0_0.tooltip_compare = {
 		sub_action_name = "shoot_charged"
 	}
 }
-var_0_0.tooltip_detail = {
+tbl.tooltip_detail = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -346,13 +353,13 @@ var_0_0.tooltip_detail = {
 	}
 }
 
-local var_0_1 = table.clone(var_0_0)
+local clone = table.clone(tbl)
 
-var_0_1.actions.action_one.default.damage_profile = "flamethrower_spray_vs"
-var_0_1.actions.action_one.shoot_charged.damage_profile = "flamethrower_vs"
-var_0_1.actions.action_one.shoot_charged.initial_damage_profile = "flamethrower_initial_vs"
+clone.actions.action_one.default.damage_profile = "flamethrower_spray_vs"
+clone.actions.action_one.shoot_charged.damage_profile = "flamethrower_vs"
+clone.actions.action_one.shoot_charged.initial_damage_profile = "flamethrower_initial_vs"
 
 return {
-	staff_flamethrower_template = table.clone(var_0_0),
-	staff_flamethrower_template_vs = table.clone(var_0_1)
+	staff_flamethrower_template = table.clone(tbl),
+	staff_flamethrower_template_vs = table.clone(clone)
 }

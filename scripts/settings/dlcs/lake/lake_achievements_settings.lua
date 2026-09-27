@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/lake/lake_achievements_settings.lua
 
-local var_0_0 = DLCSettings.lake
+local lake = DLCSettings.lake
 
-var_0_0.achievement_outline = {
+lake.achievement_outline = {
 	heroes = {
 		categories = {
 			{
@@ -29,77 +29,80 @@ var_0_0.achievement_outline = {
 		}
 	}
 }
-var_0_0.achievement_template_file_names = {
+lake.achievement_template_file_names = {
 	"scripts/managers/achievements/achievement_templates_lake"
 }
-var_0_0.speed_quest_complete_time = 140
-var_0_0.timing_quest_complete_margain = 5
+lake.speed_quest_complete_time = 140
+lake.timing_quest_complete_margain = 5
 
 local var_0_1
 
-local function var_0_2(arg_1_0, arg_1_1)
-	local var_1_0 = Managers.time:time("game")
-	local var_1_1 = var_0_0.speed_quest_complete_time
+local function fn(self, arg_1_1)
+	-- function 1
+	local time = Managers.time:time("game")
+	local speed_quest_complete_time = lake.speed_quest_complete_time
 
 	if arg_1_1 < 2 then
-		var_0_1 = var_1_0
-	elseif arg_1_1 > 1 and var_1_0 < var_1_1 then
-		local var_1_2 = arg_1_0:network_id()
-		local var_1_3 = "lake_speed_quest"
-		local var_1_4 = Managers.state.network
-		local var_1_5 = NetworkLookup.statistics[var_1_3]
+		var_0_1 = time
+	elseif not (not (arg_1_1 > 1) or not (time < speed_quest_complete_time)) then
+		local network_id = self:network_id()
+		local str = "lake_speed_quest"
+		local network = Managers.state.network
+		local var_1_5 = NetworkLookup.statistics[str]
 
-		var_1_4.network_transmit:send_rpc("rpc_increment_stat", var_1_2, var_1_5)
+		network.network_transmit:send_rpc("rpc_increment_stat", network_id, var_1_5)
 	end
 end
 
 local var_0_3
 
-local function var_0_4(arg_2_0, arg_2_1)
-	local var_2_0 = Managers.time:time("game")
-	local var_2_1 = var_0_0.timing_quest_complete_margain
+local function fn_2(self, arg_2_1)
+	-- function 2
+	local time = Managers.time:time("game")
+	local timing_quest_complete_margain = lake.timing_quest_complete_margain
 
 	if arg_2_1 < 2 then
-		var_0_3 = var_2_0
-	elseif arg_2_1 > 1 and var_0_3 and var_2_0 < var_0_3 + var_2_1 then
-		local var_2_2 = arg_2_0:network_id()
-		local var_2_3 = "lake_timing_quest"
-		local var_2_4 = Managers.state.network
-		local var_2_5 = NetworkLookup.statistics[var_2_3]
+		var_0_3 = time
+	elseif not ((not (arg_2_1 > 1) or not var_0_3) and not (time < var_0_3 + timing_quest_complete_margain)) then
+		local network_id = self:network_id()
+		local str = "lake_timing_quest"
+		local network = Managers.state.network
+		local var_2_5 = NetworkLookup.statistics[str]
 
-		var_2_4.network_transmit:send_rpc("rpc_increment_stat", var_2_2, var_2_5)
+		network.network_transmit:send_rpc("rpc_increment_stat", network_id, var_2_5)
 	end
 end
 
-var_0_0.achievement_events = {
-	on_challenge_completed = function(arg_3_0, arg_3_1)
-		local var_3_0 = Managers.player
-		local var_3_1 = var_3_0:local_player()
+lake.achievement_events = {
+	on_challenge_completed = function (arg_3_0, arg_3_1)
+		-- function 3
+		local player = Managers.player
+		local local_player = player:local_player()
 
-		if var_3_1 then
-			local var_3_2 = var_3_1.player_unit
+		if not local_player then
+			local player_unit = local_player.player_unit
 
-			if not var_3_2 then
+			if not player_unit then
 				return
 			end
 
-			local var_3_3 = var_3_0:owner(var_3_2)
+			local owner = player:owner(player_unit)
 
-			if not var_3_3 then
+			if not owner then
 				return
 			end
 
-			local var_3_4 = var_3_3:unique_id()
-			local var_3_5 = Managers.venture.challenge:get_completed_challenges_filtered({}, "questing_knight", var_3_4)
+			local unique_id = owner:unique_id()
+			local get_completed_challenges_filtered = Managers.venture.challenge:get_completed_challenges_filtered({}, "questing_knight", unique_id)
 
-			if not var_3_5 then
+			if not get_completed_challenges_filtered then
 				return
 			end
 
-			local var_3_6 = #var_3_5
+			local count = #get_completed_challenges_filtered
 
-			var_0_2(var_3_1, var_3_6)
-			var_0_4(var_3_1, var_3_6)
+			fn(local_player, count)
+			fn_2(local_player, count)
 		end
 	end
 }

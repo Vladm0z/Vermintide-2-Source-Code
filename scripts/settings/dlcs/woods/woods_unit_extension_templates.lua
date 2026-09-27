@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/woods/woods_unit_extension_templates.lua
 
-local var_0_0
+local flag
 
-var_0_0 = _G.GameSettingsDevelopment and GameSettingsDevelopment.use_engine_optimized_ai_locomotion and "AILocomotionExtensionC" or "AILocomotionExtension"
+flag = not _G.GameSettingsDevelopment and not GameSettingsDevelopment.use_engine_optimized_ai_locomotion and "AILocomotionExtensionC" and "AILocomotionExtension"
 
 return {
 	thornsister_thorn_wall_unit = {

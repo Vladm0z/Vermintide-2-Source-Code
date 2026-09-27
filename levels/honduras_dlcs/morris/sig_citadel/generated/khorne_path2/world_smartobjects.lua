@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/morris/sig_citadel/generated/khorne_path2/world_smartobjects.lua
 
-local var_0_0 = {
+local tbl = {
 	["ff9aa9a0-57b4-4405-91be-da6554a51642"] = {
 		{
 			smart_object_index = 107,
@@ -4614,13 +4614,13 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = 192
-local var_0_2 = "v1"
-local var_0_3 = "2017.MAY.05.05"
+local num = 192
+local str = "v1"
+local str_2 = "2017.MAY.05.05"
 
 return {
-	smart_objects = var_0_0,
-	smart_object_count = var_0_1,
-	version = var_0_2,
-	ledgelator_version = var_0_3
+	smart_objects = tbl,
+	smart_object_count = num,
+	version = str,
+	ledgelator_version = str_2
 }

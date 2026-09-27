@@ -2,52 +2,57 @@
 
 BackendInterfaceHeroAttributes = class(BackendInterfaceHeroAttributes)
 
-local var_0_0 = "hero_attributes_"
-local var_0_1 = "hero_attributes"
-local var_0_2 = "hero_attribute_"
+local str = "hero_attributes_"
+local str_2 = "hero_attributes"
+local str_3 = "hero_attribute_"
 
-function BackendInterfaceHeroAttributes.init(arg_1_0)
+BackendInterfaceHeroAttributes.init = function (arg_1_0)
+	-- function 1
 	return
 end
 
-function BackendInterfaceHeroAttributes._refresh_attributes(arg_2_0)
-	local var_2_0 = Backend.get_entities_with_attributes(var_0_1)
-	local var_2_1 = {}
+BackendInterfaceHeroAttributes._refresh_attributes = function (self)
+	-- function 2
+	local get_entities_with_attributes = Backend.get_entities_with_attributes(str_2)
+	local tbl = {}
 
-	for iter_2_0, iter_2_1 in pairs(var_2_0) do
-		local var_2_2 = iter_2_1.entity_name
-		local var_2_3 = iter_2_1.attributes
+	for k, v in pairs(get_entities_with_attributes) do
+		local entity_name = v.entity_name
+		local attributes = v.attributes
 
-		var_2_3.entity_id = iter_2_0
-		var_2_1[var_2_2] = var_2_3
+		attributes.entity_id = k
+		tbl[entity_name] = attributes
 	end
 
-	arg_2_0._attributes = var_2_1
+	self._attributes = tbl
 end
 
-function BackendInterfaceHeroAttributes.on_authenticated(arg_3_0)
-	arg_3_0:_refresh_attributes()
+BackendInterfaceHeroAttributes.on_authenticated = function (self)
+	-- function 3
+	self:_refresh_attributes()
 end
 
-function BackendInterfaceHeroAttributes.get(arg_4_0, arg_4_1, arg_4_2)
-	local var_4_0 = var_0_0 .. arg_4_1
-	local var_4_1 = var_0_2 .. arg_4_2
-	local var_4_2 = arg_4_0._attributes[var_4_0]
-	local var_4_3 = var_4_2 and var_4_2[var_4_1]
+BackendInterfaceHeroAttributes.get = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	local str_2 = str .. arg_4_1
+	local str_4 = str_3 .. arg_4_2
+	local var_4_2 = self._attributes[str_2]
+	local flag = not var_4_2 and var_4_2[str_4]
 
-	if not var_4_3 then
+	if not flag then
 		return
 	end
 
-	return (cjson.decode(var_4_3))
+	return (cjson.decode(flag))
 end
 
-function BackendInterfaceHeroAttributes.set(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
-	local var_5_0 = var_0_0 .. arg_5_1
-	local var_5_1 = var_0_2 .. arg_5_2
-	local var_5_2 = arg_5_0._attributes[var_5_0]
+BackendInterfaceHeroAttributes.set = function (self, arg_5_1, arg_5_2, arg_5_3)
+	-- function 5
+	local str_2 = str .. arg_5_1
+	local str_4 = str_3 .. arg_5_2
+	local var_5_2 = self._attributes[str_2]
 
-	if not var_5_2 or not var_5_2[var_5_1] then
+	if not (not var_5_2 and var_5_2[str_4]) then
 		return
 	end
 
@@ -55,10 +60,10 @@ function BackendInterfaceHeroAttributes.set(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 		return
 	end
 
-	local var_5_3 = var_5_2.entity_id
-	local var_5_4 = cjson.encode(arg_5_3)
-	local var_5_5 = Backend.set_entity_attribute(var_5_3, var_5_1, var_5_4)
+	local entity_id = var_5_2.entity_id
+	local encode = cjson.encode(arg_5_3)
+	local set_entity_attribute = Backend.set_entity_attribute(entity_id, str_4, encode)
 
-	fassert(not var_5_5 or var_5_5 == Backend.RES_NO_CHANGE, "[BackendInterfaceHeroAttributes:set] BackendItem.set_entity_attribute() returned an unexpected result: %d", var_5_5)
-	arg_5_0:_refresh_attributes()
+	fassert(not set_entity_attribute and set_entity_attribute == Backend.RES_NO_CHANGE, "[BackendInterfaceHeroAttributes:set] BackendItem.set_entity_attribute() returned an unexpected result: %d", set_entity_attribute)
+	self:_refresh_attributes()
 end

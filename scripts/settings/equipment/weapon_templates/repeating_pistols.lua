@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/repeating_pistols.lua
 
-local var_0_0 = {
+local tbl = {
 	actions = {
 		action_one = {
 			default = {
@@ -60,7 +60,8 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_1_0, arg_1_1)
+				enter_function = function (arg_1_0, arg_1_1)
+					-- function 1
 					arg_1_1:clear_input_buffer()
 
 					return arg_1_1:reset_release_input()
@@ -149,7 +150,8 @@ local var_0_0 = {
 				hold_input = "action_two_hold",
 				can_abort_reload = true,
 				allow_hold_toggle = true,
-				anim_end_event_condition_func = function(arg_2_0, arg_2_1)
+				anim_end_event_condition_func = function (arg_2_0, arg_2_1)
+					-- function 2
 					return arg_2_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -180,11 +182,13 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				zoom_condition_function = function()
+				zoom_condition_function = function ()
+					-- function 3
 					return false
 				end,
-				condition_func = function(arg_4_0, arg_4_1, arg_4_2)
-					if arg_4_2 and (arg_4_2:total_remaining_ammo() <= 0 or arg_4_2:is_reloading()) then
+				condition_func = function (arg_4_0, arg_4_1, arg_4_2)
+					-- function 4
+					if not arg_4_2 and arg_4_2:total_remaining_ammo() <= 0 and not arg_4_2:is_reloading() then
 						return false
 					end
 
@@ -208,20 +212,20 @@ local var_0_0 = {
 	}
 }
 
-var_0_0.default_spread_template = "repeating_pistol"
-var_0_0.spread_lerp_speed = 5
-var_0_0.right_hand_unit = "units/weapons/player/wpn_emp_pistol_01_t1/wpn_emp_pistol_01_t1"
-var_0_0.right_hand_attachment_node_linking = AttachmentNodeLinking.repeater_pistol
-var_0_0.display_unit = "units/weapons/weapon_display/display_repeating_pistols"
-var_0_0.wield_anim = "to_repeater_pistol"
-var_0_0.state_machine = "units/beings/player/first_person_base/state_machines/ranged/repeater_pistol"
-var_0_0.crosshair_style = "default"
-var_0_0.fire_at_gaze_setting = "tobii_fire_at_gaze_repeating_pistol"
-var_0_0.reload_event = "reload"
-var_0_0.buff_type = "RANGED"
-var_0_0.weapon_type = "REPEATING_PISTOL"
-var_0_0.dodge_count = 3
-var_0_0.buffs = {
+tbl.default_spread_template = "repeating_pistol"
+tbl.spread_lerp_speed = 5
+tbl.right_hand_unit = "units/weapons/player/wpn_emp_pistol_01_t1/wpn_emp_pistol_01_t1"
+tbl.right_hand_attachment_node_linking = AttachmentNodeLinking.repeater_pistol
+tbl.display_unit = "units/weapons/weapon_display/display_repeating_pistols"
+tbl.wield_anim = "to_repeater_pistol"
+tbl.state_machine = "units/beings/player/first_person_base/state_machines/ranged/repeater_pistol"
+tbl.crosshair_style = "default"
+tbl.fire_at_gaze_setting = "tobii_fire_at_gaze_repeating_pistol"
+tbl.reload_event = "reload"
+tbl.buff_type = "RANGED"
+tbl.weapon_type = "REPEATING_PISTOL"
+tbl.dodge_count = 3
+tbl.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1
 	},
@@ -229,12 +233,12 @@ var_0_0.buffs = {
 		external_optional_multiplier = 1
 	}
 }
-var_0_0.attack_meta_data = {
+tbl.attack_meta_data = {
 	aim_at_node = "j_neck",
 	can_charge_shot = false,
 	effective_against = bit.bor(BreedCategory.Berserker, BreedCategory.Special, BreedCategory.Armored)
 }
-var_0_0.aim_assist_settings = {
+tbl.aim_assist_settings = {
 	max_range = 22,
 	no_aim_input_multiplier = 0,
 	aim_at_node = "j_neck",
@@ -248,10 +252,10 @@ var_0_0.aim_assist_settings = {
 		skaven_slave = 1
 	}
 }
-var_0_0.wwise_dep_right_hand = {
+tbl.wwise_dep_right_hand = {
 	"wwise/repeating_handgun_pistol"
 }
-var_0_0.weapon_diagram = {
+tbl.weapon_diagram = {
 	light_attack = {
 		[DamageTypes.ARMOR_PIERCING] = 3,
 		[DamageTypes.CLEAVE] = 2,
@@ -267,12 +271,12 @@ var_0_0.weapon_diagram = {
 		[DamageTypes.DAMAGE] = 7
 	}
 }
-var_0_0.tooltip_keywords = {
+tbl.tooltip_keywords = {
 	"weapon_keyword_rapid_fire",
 	"weapon_keyword_close_range",
 	"weapon_keyword_high_damage"
 }
-var_0_0.tooltip_compare = {
+tbl.tooltip_compare = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -282,7 +286,7 @@ var_0_0.tooltip_compare = {
 		sub_action_name = "bullet_spray"
 	}
 }
-var_0_0.tooltip_detail = {
+tbl.tooltip_detail = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -293,12 +297,12 @@ var_0_0.tooltip_detail = {
 	}
 }
 
-local var_0_1 = table.clone(var_0_0)
+local clone = table.clone(tbl)
 
-var_0_1.actions.action_one.default.damage_profile = "shot_machinegun_vs"
-var_0_1.actions.action_one.bullet_spray.damage_profile = "shot_machinegun_shotgun_vs"
+clone.actions.action_one.default.damage_profile = "shot_machinegun_vs"
+clone.actions.action_one.bullet_spray.damage_profile = "shot_machinegun_shotgun_vs"
 
 return {
-	repeating_pistol_template_1 = table.clone(var_0_0),
-	repeating_pistol_template_1_vs = table.clone(var_0_1)
+	repeating_pistol_template_1 = table.clone(tbl),
+	repeating_pistol_template_1_vs = table.clone(clone)
 }

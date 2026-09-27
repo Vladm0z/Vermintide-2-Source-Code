@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/hit_effects/hit_effects_chaos_sorcerer.lua
 
-local var_0_0 = {
+local tbl = {
 	"light_slashing_linesman",
 	"slashing_linesman",
 	"heavy_slashing_linesman",
@@ -14,7 +14,7 @@ local var_0_0 = {
 	"blunt_tank",
 	"heavy_blunt_tank"
 }
-local var_0_1 = {
+local tbl_2 = {
 	"light_slashing_smiter",
 	"slashing_smiter",
 	"heavy_slashing_smiter",
@@ -25,7 +25,7 @@ local var_0_1 = {
 	"stab_smiter",
 	"heavy_stab_smiter"
 }
-local var_0_2 = {
+local tbl_3 = {
 	"light_slashing_fencer",
 	"slashing_fencer",
 	"heavy_slashing_fencer",
@@ -36,7 +36,7 @@ local var_0_2 = {
 	"blunt_fencer",
 	"heavy_blunt_fencer"
 }
-local var_0_3 = {
+local tbl_4 = {
 	"arrow_carbine",
 	"elven_magic_arrow_carbine",
 	"arrow_sniper",
@@ -79,7 +79,7 @@ HitEffectsChaosSorcerer = {
 		inherits = "default",
 		extra_conditions = {
 			death = true,
-			damage_type = var_0_0
+			damage_type = tbl
 		},
 		animations = {
 			"death_dissolve"
@@ -94,7 +94,7 @@ HitEffectsChaosSorcerer = {
 		inherits = "default",
 		extra_conditions = {
 			death = true,
-			damage_type = var_0_1
+			damage_type = tbl_2
 		},
 		animations = {
 			"death_dissolve"
@@ -109,7 +109,7 @@ HitEffectsChaosSorcerer = {
 		inherits = "default",
 		extra_conditions = {
 			death = true,
-			damage_type = var_0_2
+			damage_type = tbl_3
 		},
 		animations = {
 			"death_dissolve"
@@ -124,7 +124,7 @@ HitEffectsChaosSorcerer = {
 		inherits = "default",
 		extra_conditions = {
 			death = true,
-			damage_type = var_0_3
+			damage_type = tbl_4
 		},
 		animations = {
 			"death_dissolve"

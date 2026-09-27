@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/bw_deus_01.lua
 
-local var_0_0 = {
+local tbl = {
 	actions = {
 		action_one = {
 			default = {
@@ -56,7 +56,8 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_1_0, arg_1_1)
+				enter_function = function (arg_1_0, arg_1_1)
+					-- function 1
 					arg_1_1:clear_input_buffer()
 
 					return arg_1_1:reset_release_input()
@@ -129,7 +130,8 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_2_0, arg_2_1)
+				enter_function = function (arg_2_0, arg_2_1)
+					-- function 2
 					arg_2_1:reset_release_input()
 					arg_2_1:clear_input_buffer()
 				end,
@@ -173,7 +175,8 @@ local var_0_0 = {
 				anim_event = "attack_geiser_start",
 				max_radius = 1,
 				charge_sound_name = "player_combat_weapon_bw_deus_01_charge",
-				anim_end_event_condition_func = function(arg_3_0, arg_3_1)
+				anim_end_event_condition_func = function (arg_3_0, arg_3_1)
+					-- function 3
 					return arg_3_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -204,7 +207,8 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_4_0, arg_4_1)
+				enter_function = function (arg_4_0, arg_4_1)
+					-- function 4
 					arg_4_1:reset_release_input()
 					arg_4_1:clear_input_buffer()
 				end
@@ -227,7 +231,8 @@ local var_0_0 = {
 				uninterruptible = true,
 				anim_event = "cooldown_start",
 				charge_sound_name = "player_combat_weapon_bw_deus_01_cooldown",
-				anim_end_event_condition_func = function(arg_5_0, arg_5_1)
+				anim_end_event_condition_func = function (arg_5_0, arg_5_1)
+					-- function 5
 					return arg_5_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -239,7 +244,8 @@ local var_0_0 = {
 						end_time = math.huge
 					}
 				},
-				enter_function = function(arg_6_0, arg_6_1)
+				enter_function = function (arg_6_0, arg_6_1)
+					-- function 6
 					arg_6_1:reset_release_input()
 					arg_6_1:clear_input_buffer()
 				end,
@@ -251,10 +257,12 @@ local var_0_0 = {
 						input = "action_wield"
 					}
 				},
-				condition_func = function(arg_7_0, arg_7_1)
+				condition_func = function (arg_7_0, arg_7_1)
+					-- function 7
 					return ScriptUnit.extension(arg_7_0, "overcharge_system"):get_overcharge_value() ~= 0
 				end,
-				chain_condition_func = function(arg_8_0, arg_8_1)
+				chain_condition_func = function (arg_8_0, arg_8_1)
+					-- function 8
 					return ScriptUnit.extension(arg_8_0, "overcharge_system"):get_overcharge_value() ~= 0
 				end
 			}
@@ -287,19 +295,19 @@ local var_0_0 = {
 	}
 }
 
-var_0_0.default_spread_template = "bw_deus_01"
-var_0_0.right_hand_unit = "units/weapons/player/wpn_brw_skullstaff/wpn_brw_skullstaff"
-var_0_0.right_hand_attachment_node_linking = AttachmentNodeLinking.spear_staff
-var_0_0.left_hand_unit = "units/weapons/player/wpn_fireball/wpn_fireball"
-var_0_0.left_hand_attachment_node_linking = AttachmentNodeLinking.fireball
-var_0_0.display_unit = "units/weapons/weapon_display/display_staff"
-var_0_0.wield_anim = "to_staff"
-var_0_0.state_machine = "units/beings/player/first_person_base/state_machines/ranged/staff"
-var_0_0.crosshair_style = "arrows"
-var_0_0.buff_type = "RANGED"
-var_0_0.weapon_type = "FIRE_STAFF"
-var_0_0.fire_at_gaze_setting = "tobii_fire_at_gaze_geiser"
-var_0_0.buffs = {
+tbl.default_spread_template = "bw_deus_01"
+tbl.right_hand_unit = "units/weapons/player/wpn_brw_skullstaff/wpn_brw_skullstaff"
+tbl.right_hand_attachment_node_linking = AttachmentNodeLinking.spear_staff
+tbl.left_hand_unit = "units/weapons/player/wpn_fireball/wpn_fireball"
+tbl.left_hand_attachment_node_linking = AttachmentNodeLinking.fireball
+tbl.display_unit = "units/weapons/weapon_display/display_staff"
+tbl.wield_anim = "to_staff"
+tbl.state_machine = "units/beings/player/first_person_base/state_machines/ranged/staff"
+tbl.crosshair_style = "arrows"
+tbl.buff_type = "RANGED"
+tbl.weapon_type = "FIRE_STAFF"
+tbl.fire_at_gaze_setting = "tobii_fire_at_gaze_geiser"
+tbl.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1
 	},
@@ -307,12 +315,12 @@ var_0_0.buffs = {
 		external_optional_multiplier = 1
 	}
 }
-var_0_0.wwise_dep_right_hand = {
+tbl.wwise_dep_right_hand = {
 	"wwise/bw_deus_01"
 }
-var_0_0.dodge_distance = 1
-var_0_0.dodge_speed = 1
-var_0_0.aim_assist_settings = {
+tbl.dodge_distance = 1
+tbl.dodge_speed = 1
+tbl.aim_assist_settings = {
 	max_range = 50,
 	no_aim_input_multiplier = 0,
 	always_auto_aim = true,
@@ -325,7 +333,7 @@ var_0_0.aim_assist_settings = {
 		skaven_slave = 1
 	}
 }
-var_0_0.weapon_diagram = {
+tbl.weapon_diagram = {
 	light_attack = {
 		[DamageTypes.ARMOR_PIERCING] = 4,
 		[DamageTypes.CLEAVE] = 6,
@@ -341,12 +349,12 @@ var_0_0.weapon_diagram = {
 		[DamageTypes.DAMAGE] = 3
 	}
 }
-var_0_0.tooltip_keywords = {
+tbl.tooltip_keywords = {
 	"weapon_keyword_damage_over_time",
 	"weapon_keyword_crowd_control",
 	"weapon_keyword_charged_attack"
 }
-var_0_0.tooltip_compare = {
+tbl.tooltip_compare = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -356,7 +364,7 @@ var_0_0.tooltip_compare = {
 		sub_action_name = "geiser_launch"
 	}
 }
-var_0_0.tooltip_detail = {
+tbl.tooltip_detail = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -368,5 +376,5 @@ var_0_0.tooltip_detail = {
 }
 
 return {
-	bw_deus_01_template_1 = table.clone(var_0_0)
+	bw_deus_01_template_1 = table.clone(tbl)
 }

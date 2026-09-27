@@ -1,23 +1,23 @@
 -- chunkname: @scripts/settings/dlcs/mutators_batch_02/mutators_batch_02_ai_settings.lua
 
-local var_0_0 = DLCSettings.mutators_batch_02
+local mutators_batch_02 = DLCSettings.mutators_batch_02
 
-var_0_0.breeds = {
+mutators_batch_02.breeds = {
 	"scripts/settings/breeds/breed_skaven_explosive_loot_rat",
 	"scripts/settings/breeds/breed_chaos_mutator_sorcerer"
 }
-var_0_0.behaviour_trees_precompiled = {
+mutators_batch_02.behaviour_trees_precompiled = {
 	"scripts/entity_system/systems/behaviour/nodes/generated/bt_selector_explosive_loot_rat",
 	"scripts/entity_system/systems/behaviour/nodes/generated/bt_selector_chaos_mutator_sorcerer"
 }
-var_0_0.behaviour_tree_nodes = {
+mutators_batch_02.behaviour_tree_nodes = {
 	"scripts/entity_system/systems/behaviour/nodes/bt_mutator_sorcerer_follow_action"
 }
-var_0_0.behaviour_trees = {
+mutators_batch_02.behaviour_trees = {
 	"scripts/entity_system/systems/behaviour/trees/skaven/skaven_explosive_loot_rat_behavior",
 	"scripts/entity_system/systems/behaviour/trees/chaos/chaos_mutator_sorcerer_behavior"
 }
-var_0_0.enemy_package_loader_breed_categories = {
+mutators_batch_02.enemy_package_loader_breed_categories = {
 	level_specific = {
 		"skaven_explosive_loot_rat",
 		"chaos_mutator_sorcerer"

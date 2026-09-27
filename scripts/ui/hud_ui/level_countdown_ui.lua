@@ -1,160 +1,169 @@
 -- chunkname: @scripts/ui/hud_ui/level_countdown_ui.lua
 
 local var_0_0 = local_require("scripts/ui/hud_ui/level_countdown_ui_definitions")
-local var_0_1 = true
+local flag = true
 
 LevelCountdownUI = class(LevelCountdownUI)
 
-function LevelCountdownUI.init(arg_1_0, arg_1_1, arg_1_2)
-	arg_1_0._parent = arg_1_1
-	arg_1_0.network_event_delegate = arg_1_2.network_event_delegate
-	arg_1_0.camera_manager = arg_1_2.camera_manager
-	arg_1_0.ui_renderer = arg_1_2.ui_renderer
-	arg_1_0.ingame_ui = arg_1_2.ingame_ui
-	arg_1_0.is_in_inn = arg_1_2.is_in_inn
-	arg_1_0.is_server = arg_1_2.is_server
-	arg_1_0.world_manager = arg_1_2.world_manager
-	arg_1_0.input_manager = arg_1_2.input_manager
-	arg_1_0.matchmaking_manager = Managers.matchmaking
+LevelCountdownUI.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	self._parent = arg_1_1
+	self.network_event_delegate = arg_1_2.network_event_delegate
+	self.camera_manager = arg_1_2.camera_manager
+	self.ui_renderer = arg_1_2.ui_renderer
+	self.ingame_ui = arg_1_2.ingame_ui
+	self.is_in_inn = arg_1_2.is_in_inn
+	self.is_server = arg_1_2.is_server
+	self.world_manager = arg_1_2.world_manager
+	self.input_manager = arg_1_2.input_manager
+	self.matchmaking_manager = Managers.matchmaking
 
-	local var_1_0 = arg_1_0.world_manager:world("level_world")
+	local world = self.world_manager:world("level_world")
 
-	arg_1_0.wwise_world = Managers.world:wwise_world(var_1_0)
+	self.wwise_world = Managers.world:wwise_world(world)
 
-	arg_1_0:create_ui_elements()
+	self:create_ui_elements()
 
-	arg_1_0.colors = {
+	self.colors = {
 		normal = Colors.get_table("font_default"),
 		selected = Colors.get_table("font_title")
 	}
 end
 
-function LevelCountdownUI.create_ui_elements(arg_2_0)
-	var_0_1 = false
-	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
-	arg_2_0.countdown_widget = UIWidget.init(var_0_0.widgets.fullscreen_countdown)
+LevelCountdownUI.create_ui_elements = function (self)
+	-- function 2
+	flag = false
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
+	self.countdown_widget = UIWidget.init(var_0_0.widgets.fullscreen_countdown)
 
-	UIRenderer.clear_scenegraph_queue(arg_2_0.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 end
 
-function LevelCountdownUI.update(arg_3_0, arg_3_1)
-	if var_0_1 then
-		arg_3_0:create_ui_elements()
+LevelCountdownUI.update = function (self, arg_3_1)
+	-- function 3
+	if not flag then
+		self:create_ui_elements()
 
-		arg_3_0.colors = {
+		self.colors = {
 			normal = Colors.get_table("font_default"),
 			selected = Colors.get_table("font_title")
 		}
 	end
 
-	if not arg_3_0.is_in_inn then
+	if not self.is_in_inn then
 		return
 	end
 
-	if arg_3_0.ingame_ui.menu_suspended then
+	if not self.ingame_ui.menu_suspended then
 		return
 	end
 
-	local var_3_0 = false
-	local var_3_1, var_3_2 = arg_3_0:_get_start_time()
+	local flag_2 = false
+	local _get_start_time, var_3_2 = self:_get_start_time()
 
-	if var_3_1 and var_3_2 then
-		if arg_3_0:update_enter_game_counter(var_3_1, var_3_2, arg_3_1) then
-			var_3_0 = true
+	if not _get_start_time and not var_3_2 then
+		if not self:update_enter_game_counter(_get_start_time, var_3_2, arg_3_1) then
+			flag_2 = true
 
-			arg_3_0:draw(arg_3_1)
+			self:draw(arg_3_1)
 		else
-			arg_3_0.last_timer_value = var_3_2
+			self.last_timer_value = var_3_2
 		end
 	end
 
-	arg_3_0._countdown_active = var_3_0
+	self._countdown_active = flag_2
 end
 
-function LevelCountdownUI.is_enter_game(arg_4_0)
-	return arg_4_0._countdown_active
+LevelCountdownUI.is_enter_game = function (self)
+	-- function 4
+	return self._countdown_active
 end
 
-function LevelCountdownUI.draw(arg_5_0, arg_5_1)
-	local var_5_0 = arg_5_0.input_manager:get_service("ingame_menu")
-	local var_5_1 = arg_5_0.ui_renderer
+LevelCountdownUI.draw = function (self, arg_5_1)
+	-- function 5
+	local get_service = self.input_manager:get_service("ingame_menu")
+	local ui_renderer = self.ui_renderer
 
-	UIRenderer.begin_pass(var_5_1, arg_5_0.ui_scenegraph, var_5_0, arg_5_1)
-	UIRenderer.draw_widget(var_5_1, arg_5_0.countdown_widget)
-	UIRenderer.end_pass(var_5_1)
+	UIRenderer.begin_pass(ui_renderer, self.ui_scenegraph, get_service, arg_5_1)
+	UIRenderer.draw_widget(ui_renderer, self.countdown_widget)
+	UIRenderer.end_pass(ui_renderer)
 end
 
-function LevelCountdownUI.update_enter_game_counter(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
-	local var_6_0 = arg_6_0.countdown_widget
-	local var_6_1 = var_6_0.content
-	local var_6_2 = var_6_0.style
-	local var_6_3 = arg_6_0.colors
-	local var_6_4 = math.round(arg_6_1)
-	local var_6_5 = var_6_4 ~= arg_6_2
+LevelCountdownUI.update_enter_game_counter = function (self, arg_6_1, arg_6_2, arg_6_3)
+	-- function 6
+	local countdown_widget = self.countdown_widget
+	local content = countdown_widget.content
+	local style = countdown_widget.style
+	local colors = self.colors
+	local round = math.round(arg_6_1)
+	local flag = round ~= arg_6_2
 	local var_6_6
 
-	if var_6_4 ~= arg_6_0.last_timer_value then
-		if var_6_4 ~= 0 then
+	if round ~= self.last_timer_value then
+		if round ~= 0 then
 			var_6_6 = "Play_hud_matchmaking_countdown"
-			var_6_1.timer_text = var_6_4
-			arg_6_0.color_timer = 0
+			content.timer_text = round
+			self.color_timer = 0
 		else
 			var_6_6 = "Play_hud_matchmaking_countdown_final"
-			var_6_1.timer_text = ""
+			content.timer_text = ""
 		end
 
-		arg_6_0.last_timer_value = var_6_4
+		self.last_timer_value = round
 
-		Colors.lerp_color_tables(var_6_3.normal, var_6_3.selected, 0, var_6_2.timer_text.text_color)
+		Colors.lerp_color_tables(colors.normal, colors.selected, 0, style.timer_text.text_color)
 	else
-		local var_6_7 = arg_6_0.color_timer
+		local color_timer = self.color_timer
 
-		if var_6_7 then
-			local var_6_8 = 0.5
-			local var_6_9 = math.min(var_6_7 + arg_6_3, var_6_8)
-			local var_6_10 = var_6_9 / var_6_8
+		if not color_timer then
+			local num = 0.5
+			local min = math.min(color_timer + arg_6_3, num)
+			local num_2 = min / num
 
-			arg_6_0.color_timer = var_6_9
+			self.color_timer = min
 
-			Colors.lerp_color_tables(var_6_3.normal, var_6_3.selected, var_6_10, var_6_2.timer_text.text_color)
+			Colors.lerp_color_tables(colors.normal, colors.selected, num_2, style.timer_text.text_color)
 		end
 	end
 
-	if var_6_5 and var_6_6 then
-		arg_6_0:play_sound(var_6_6)
+	if not flag and not var_6_6 then
+		self:play_sound(var_6_6)
 	end
 
 	if arg_6_1 <= 0 then
-		arg_6_0.matchmaking_manager:countdown_completed()
+		self.matchmaking_manager:countdown_completed()
 	end
 
-	return var_6_5
+	return flag
 end
 
-function LevelCountdownUI.play_sound(arg_7_0, arg_7_1)
-	WwiseWorld.trigger_event(arg_7_0.wwise_world, arg_7_1)
+LevelCountdownUI.play_sound = function (self, arg_7_1)
+	-- function 7
+	WwiseWorld.trigger_event(self.wwise_world, arg_7_1)
 end
 
-function LevelCountdownUI._get_start_time(arg_8_0)
-	local var_8_0 = arg_8_0:_get_active_waystone_extension()
+LevelCountdownUI._get_start_time = function (self)
+	-- function 8
+	local _get_active_waystone_extension = self:_get_active_waystone_extension()
 
-	if var_8_0 then
-		local var_8_1 = var_8_0:end_time()
+	if not _get_active_waystone_extension then
+		local end_time = _get_active_waystone_extension:end_time()
 
-		return var_8_0:end_time_left(), var_8_1
+		return _get_active_waystone_extension:end_time_left(), end_time
 	end
 end
 
-function LevelCountdownUI._get_active_waystone_extension(arg_9_0)
+LevelCountdownUI._get_active_waystone_extension = function (arg_9_0)
+	-- function 9
 	if not Managers.state.entity then
 		return
 	end
 
-	local var_9_0 = Managers.state.entity:get_entities("EndZoneExtension")
+	local get_entities = Managers.state.entity:get_entities("EndZoneExtension")
 
-	for iter_9_0, iter_9_1 in pairs(var_9_0) do
-		if iter_9_1:activated() then
-			return iter_9_1
+	for k, v in pairs(get_entities) do
+		if not v:activated() then
+			return v
 		end
 	end
 end

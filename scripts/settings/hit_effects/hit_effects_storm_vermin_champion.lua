@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/hit_effects/hit_effects_storm_vermin_champion.lua
 
-local var_0_0 = {
+local tbl = {
 	"light_stab_fencer",
 	"light_stab_smiter",
 	"stab_fencer",
@@ -127,7 +127,7 @@ HitEffectsStormVerminChampion = {
 		armour_type = "metal_hollow",
 		extra_conditions = {
 			death = false,
-			damage_type = var_0_0
+			damage_type = tbl
 		}
 	},
 	wound_back = {

@@ -1,29 +1,29 @@
 -- chunkname: @scripts/settings/dlcs/shovel/shovel_ai_settings.lua
 
-local var_0_0 = DLCSettings.shovel
+local shovel = DLCSettings.shovel
 
-var_0_0.bot_conditions = {
+shovel.bot_conditions = {
 	"scripts/settings/dlcs/shovel/shovel_bot_conditions"
 }
-var_0_0.breeds = {
+shovel.breeds = {
 	"scripts/settings/breeds/breed_pet_skeleton",
 	"scripts/settings/breeds/breed_pet_skeleton_with_shield",
 	"scripts/settings/breeds/breed_pet_skeleton_dual_wield",
 	"scripts/settings/breeds/breed_pet_skeleton_armored"
 }
-var_0_0.behaviour_trees = {
+shovel.behaviour_trees = {
 	"scripts/entity_system/systems/behaviour/trees/pets/pet_skeleton_behavior"
 }
-var_0_0.behaviour_tree_nodes = {
+shovel.behaviour_tree_nodes = {
 	"scripts/entity_system/systems/behaviour/nodes/bt_transported_action",
 	"scripts/entity_system/systems/behaviour/nodes/bt_charge_position_action"
 }
-var_0_0.behaviour_trees_precompiled = {
+shovel.behaviour_trees_precompiled = {
 	"scripts/entity_system/systems/behaviour/nodes/generated/bt_selector_pet_skeleton",
 	"scripts/entity_system/systems/behaviour/nodes/generated/bt_selector_pet_skeleton_with_shield",
 	"scripts/entity_system/systems/behaviour/nodes/generated/bt_selector_pet_skeleton_dual_wield",
 	"scripts/entity_system/systems/behaviour/nodes/generated/bt_selector_pet_skeleton_armored"
 }
-var_0_0.utility_considerations_file_names = {
+shovel.utility_considerations_file_names = {
 	"scripts/settings/dlcs/shovel/shovel_utility_considerations"
 }

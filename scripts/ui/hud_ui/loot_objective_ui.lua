@@ -1,11 +1,11 @@
 -- chunkname: @scripts/ui/hud_ui/loot_objective_ui.lua
 
 local var_0_0 = local_require("scripts/ui/hud_ui/loot_objective_ui_definitions")
-local var_0_1 = var_0_0.create_loot_widget
+local create_loot_widget = var_0_0.create_loot_widget
 
 LootObjectiveUI = class(LootObjectiveUI)
 
-local var_0_2 = {
+local tbl = {
 	tome = {
 		item_name = "wpn_side_objective_tome_01",
 		mission_name = "tome_bonus_mission",
@@ -20,281 +20,296 @@ local var_0_2 = {
 	}
 }
 
-function LootObjectiveUI.init(arg_1_0, arg_1_1, arg_1_2)
-	arg_1_0._parent = arg_1_1
-	arg_1_0.ui_renderer = arg_1_2.ui_renderer
-	arg_1_0.ingame_ui = arg_1_2.ingame_ui
-	arg_1_0.input_manager = arg_1_2.input_manager
+LootObjectiveUI.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	self._parent = arg_1_1
+	self.ui_renderer = arg_1_2.ui_renderer
+	self.ingame_ui = arg_1_2.ingame_ui
+	self.input_manager = arg_1_2.input_manager
 
-	local var_1_0 = arg_1_2.world_manager:world("level_world")
+	local world = arg_1_2.world_manager:world("level_world")
 
-	arg_1_0.wwise_world = Managers.world:wwise_world(var_1_0)
-	arg_1_0.saved_mission_objectives = {}
-	arg_1_0.completed_mission_objectives = {}
-	arg_1_0.current_mission_objective = nil
-	arg_1_0.index_count = 0
-	arg_1_0._mission_system = Managers.state.entity:system("mission_system")
-	arg_1_0._animations = {}
-	arg_1_0._event_queue = {}
+	self.wwise_world = Managers.world:wwise_world(world)
+	self.saved_mission_objectives = {}
+	self.completed_mission_objectives = {}
+	self.current_mission_objective = nil
+	self.index_count = 0
+	self._mission_system = Managers.state.entity:system("mission_system")
+	self._animations = {}
+	self._event_queue = {}
 
-	arg_1_0:create_ui_elements()
+	self:create_ui_elements()
 end
 
-local var_0_3 = true
+local flag = true
 
-function LootObjectiveUI.create_ui_elements(arg_2_0)
-	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
+LootObjectiveUI.create_ui_elements = function (self)
+	-- function 2
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 
-	local var_2_0 = {}
-	local var_2_1 = {}
+	local tbl_2 = {}
+	local tbl_3 = {}
 
-	for iter_2_0, iter_2_1 in pairs(var_0_2) do
-		local var_2_2 = iter_2_1.mission_name
-		local var_2_3 = iter_2_1.texture
-		local var_2_4 = iter_2_1.total_amount
-		local var_2_5 = var_0_1(var_2_3, var_2_4)
+	for k, v in pairs(tbl) do
+		local mission_name = v.mission_name
+		local texture = v.texture
+		local total_amount = v.total_amount
+		local var_2_5 = create_loot_widget(texture, total_amount)
 		local var_2_6 = UIWidget.init(var_2_5)
 
-		var_2_0[iter_2_0] = var_2_6
-		var_2_1[iter_2_0] = {
-			name = iter_2_0,
-			total_amount = var_2_4,
-			mission_name = var_2_2,
+		tbl_2[k] = var_2_6
+		tbl_3[k] = {
+			name = k,
+			total_amount = total_amount,
+			mission_name = mission_name,
 			widget = var_2_6
 		}
 	end
 
-	arg_2_0._settings_data = var_2_1
-	arg_2_0._widgets_by_name = var_2_0
+	self._settings_data = tbl_3
+	self._widgets_by_name = tbl_2
 
-	UIRenderer.clear_scenegraph_queue(arg_2_0.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
-	var_0_3 = false
+	flag = false
 
-	arg_2_0:_sync_missions(true)
+	self:_sync_missions(true)
 end
 
-function LootObjectiveUI.destroy(arg_3_0)
+LootObjectiveUI.destroy = function (arg_3_0)
+	-- function 3
 	GarbageLeakDetector.register_object(arg_3_0, "loot_objective_ui")
 end
 
-local var_0_4 = {
+local tbl_2 = {
 	root_scenegraph_id = "background",
 	label = "Books",
 	registry_key = "books",
 	drag_scenegraph_id = "background"
 }
 
-function LootObjectiveUI.update(arg_4_0, arg_4_1, arg_4_2)
-	if var_0_3 then
-		arg_4_0:create_ui_elements()
+LootObjectiveUI.update = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	if not flag then
+		self:create_ui_elements()
 	end
 
-	HudCustomizer.run(arg_4_0.ui_renderer, arg_4_0.ui_scenegraph, var_0_4)
-	arg_4_0:_sync_missions()
+	HudCustomizer.run(self.ui_renderer, self.ui_scenegraph, tbl_2)
+	self:_sync_missions()
 
-	arg_4_0._active_presentation_widget = arg_4_0:_update_active_presentation(arg_4_1, arg_4_2)
+	self._active_presentation_widget = self:_update_active_presentation(arg_4_1, arg_4_2)
 
-	arg_4_0:_update_animations(arg_4_1)
-	arg_4_0:draw(arg_4_1)
+	self:_update_animations(arg_4_1)
+	self:draw(arg_4_1)
 end
 
-function LootObjectiveUI._sync_missions(arg_5_0, arg_5_1)
-	local var_5_0 = arg_5_0._settings_data
+LootObjectiveUI._sync_missions = function (self, arg_5_1)
+	-- function 5
+	local _settings_data = self._settings_data
 
-	for iter_5_0, iter_5_1 in pairs(var_5_0) do
-		local var_5_1 = iter_5_1.mission_name
-		local var_5_2 = arg_5_0:_get_item_amount_by_mission_name(var_5_1) or 0
+	for k, v in pairs(_settings_data) do
+		local mission_name = v.mission_name
+		local _get_item_amount_by_mission_name = self:_get_item_amount_by_mission_name(mission_name)
 
-		if not iter_5_1.amount then
-			iter_5_1.amount = var_5_2 or 0
+		_get_item_amount_by_mission_name = _get_item_amount_by_mission_name or 0
+
+		if not v.amount then
+			v.amount = _get_item_amount_by_mission_name or 0
 		end
 
-		local var_5_3 = iter_5_1.amount
+		local amount = v.amount
 
-		if var_5_3 ~= var_5_2 then
-			iter_5_1.previous_amount = var_5_3 or 0
-			iter_5_1.amount = var_5_2
+		if amount ~= _get_item_amount_by_mission_name then
+			v.previous_amount = amount or 0
+			v.amount = _get_item_amount_by_mission_name
 
-			local var_5_4 = iter_5_1.widget
+			local widget = v.widget
 
 			if not arg_5_1 then
-				arg_5_0:_add_presentation_event(var_5_4, iter_5_1.previous_amount, var_5_2)
+				self:_add_presentation_event(widget, v.previous_amount, _get_item_amount_by_mission_name)
 			end
 		end
 	end
 end
 
-function LootObjectiveUI._assign_amount_to_widget(arg_6_0, arg_6_1, arg_6_2)
+LootObjectiveUI._assign_amount_to_widget = function (arg_6_0, arg_6_1, arg_6_2)
+	-- function 6
 	arg_6_1.content.draw_count = arg_6_2
 end
 
-function LootObjectiveUI._get_item_amount_by_mission_name(arg_7_0, arg_7_1)
-	local var_7_0 = arg_7_0._mission_system:get_level_end_mission_data(arg_7_1)
+LootObjectiveUI._get_item_amount_by_mission_name = function (self, arg_7_1)
+	-- function 7
+	local get_level_end_mission_data = self._mission_system:get_level_end_mission_data(arg_7_1)
 
-	return var_7_0 and var_7_0.current_amount
+	return not get_level_end_mission_data and get_level_end_mission_data.current_amount
 end
 
-function LootObjectiveUI._add_presentation_event(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
-	local var_8_0 = arg_8_0._event_queue
-	local var_8_1 = #var_8_0
+LootObjectiveUI._add_presentation_event = function (self, arg_8_1, arg_8_2, arg_8_3)
+	-- function 8
+	local _event_queue = self._event_queue
+	local count = #_event_queue
 
-	var_8_0[#var_8_0 + 1] = {
+	_event_queue[#_event_queue + 1] = {
 		amount = arg_8_3,
 		previous_amount = arg_8_2,
 		widget = arg_8_1
 	}
 end
 
-function LootObjectiveUI._update_active_presentation(arg_9_0, arg_9_1, arg_9_2)
-	local var_9_0 = arg_9_0._event_queue
+LootObjectiveUI._update_active_presentation = function (self, arg_9_1, arg_9_2)
+	-- function 9
+	local _event_queue = self._event_queue
 
-	if #var_9_0 == 0 then
+	if #_event_queue == 0 then
 		return
 	end
 
-	local var_9_1 = var_9_0[1]
-	local var_9_2 = var_9_1.widget
-	local var_9_3 = var_9_1.amount
-	local var_9_4 = var_9_1.previous_amount
+	local var_9_1 = _event_queue[1]
+	local widget = var_9_1.widget
+	local amount = var_9_1.amount
+	local previous_amount = var_9_1.previous_amount
 
 	if not var_9_1.started then
-		arg_9_0:_assign_amount_to_widget(var_9_2, var_9_3)
+		self:_assign_amount_to_widget(widget, amount)
 
 		var_9_1.started = true
 
-		local var_9_5 = 2.5
+		local num = 2.5
 
-		var_9_1.end_time = arg_9_2 + arg_9_0:_animate_in(var_9_2, var_9_4) + var_9_5
+		var_9_1.end_time = arg_9_2 + self:_animate_in(widget, previous_amount) + num
 	end
 
 	if arg_9_2 > var_9_1.end_time then
 		if not var_9_1.end_started then
 			var_9_1.end_started = true
-			var_9_1.end_time = arg_9_2 + arg_9_0:_animate_out(var_9_2)
+			var_9_1.end_time = arg_9_2 + self:_animate_out(widget)
 		else
-			table.remove(var_9_0, 1)
+			table.remove(_event_queue, 1)
 		end
 	end
 
-	return var_9_2
+	return widget
 end
 
-function LootObjectiveUI._animate_in(arg_10_0, arg_10_1, arg_10_2)
-	local var_10_0 = arg_10_0._animations
-	local var_10_1 = 1
-	local var_10_2 = 0
-	local var_10_3 = math.easeInCubic
-	local var_10_4 = UIAnimation.function_by_time
-	local var_10_5 = 0.3
-	local var_10_6 = arg_10_1.content.amount
-	local var_10_7 = arg_10_1.content.draw_count
-	local var_10_8 = arg_10_1.style.icon_textures.texture_colors
-	local var_10_9 = math.max(arg_10_2, var_10_7)
-	local var_10_10 = arg_10_2 < var_10_7
+LootObjectiveUI._animate_in = function (self, arg_10_1, arg_10_2)
+	-- function 10
+	local _animations = self._animations
+	local num = 1
+	local num_2 = 0
+	local easeInCubic = math.easeInCubic
+	local function_by_time = UIAnimation.function_by_time
+	local num_3 = 0.3
+	local amount = arg_10_1.content.amount
+	local draw_count = arg_10_1.content.draw_count
+	local texture_colors = arg_10_1.style.icon_textures.texture_colors
+	local max = math.max(arg_10_2, draw_count)
+	local flag = arg_10_2 < draw_count
 
-	for iter_10_0 = 1, math.min(var_10_6, var_10_9) do
-		local var_10_11 = var_10_8[iter_10_0]
+	for i = 1, math.min(amount, max) do
+		local var_10_11 = texture_colors[i]
 
-		if not var_10_10 or iter_10_0 < var_10_9 then
-			local var_10_12 = UIAnimation.init(var_10_4, var_10_11, var_10_1, var_10_2, 255, var_10_5, var_10_3)
+		if not (not flag and not (i < max)) then
+			local var_10_12 = UIAnimation.init(function_by_time, var_10_11, num, num_2, 255, num_3, easeInCubic)
 
-			var_10_0["icon_textures_" .. iter_10_0] = var_10_12
+			_animations["icon_textures_" .. i] = var_10_12
 		end
 
-		if iter_10_0 == var_10_9 then
-			if var_10_10 then
-				local var_10_13 = UIAnimation.init(UIAnimation.wait, var_10_5 + 0.2, var_10_4, var_10_11, var_10_1, var_10_2, 255, var_10_5, var_10_3)
+		if i == max then
+			if not flag then
+				local var_10_13 = UIAnimation.init(UIAnimation.wait, num_3 + 0.2, function_by_time, var_10_11, num, num_2, 255, num_3, easeInCubic)
 
-				var_10_0["icon_textures_" .. iter_10_0] = var_10_13
+				_animations["icon_textures_" .. i] = var_10_13
 			else
-				local var_10_14 = UIAnimation.init(UIAnimation.wait, var_10_5 + 0.5, var_10_4, var_10_11, var_10_1, 255, 0, var_10_5, var_10_3)
+				local var_10_14 = UIAnimation.init(UIAnimation.wait, num_3 + 0.5, function_by_time, var_10_11, num, 255, 0, num_3, easeInCubic)
 
-				var_10_0["icon_textures_last" .. iter_10_0] = var_10_14
+				_animations["icon_textures_last" .. i] = var_10_14
 			end
 		end
 	end
 
-	local var_10_15 = arg_10_1.style.background_icon_textures.color
-	local var_10_16 = arg_10_1.style.background_icon_textures.default_color
+	local color = arg_10_1.style.background_icon_textures.color
+	local default_color = arg_10_1.style.background_icon_textures.default_color
 
-	var_10_0.background_icon_textures = UIAnimation.init(var_10_4, var_10_15, var_10_1, var_10_2, var_10_16[var_10_1], var_10_5, var_10_3)
+	_animations.background_icon_textures = UIAnimation.init(function_by_time, color, num, num_2, default_color[num], num_3, easeInCubic)
 
-	local var_10_17 = arg_10_1.style.glow_icon_textures.color
-	local var_10_18 = arg_10_1.style.glow_icon_textures.default_color
+	local color_2 = arg_10_1.style.glow_icon_textures.color
+	local default_color_2 = arg_10_1.style.glow_icon_textures.default_color
 
-	var_10_0.glow_icon_textures = UIAnimation.init(var_10_4, var_10_17, var_10_1, var_10_2, var_10_18[var_10_1], var_10_5, var_10_3)
+	_animations.glow_icon_textures = UIAnimation.init(function_by_time, color_2, num, num_2, default_color_2[num], num_3, easeInCubic)
 
-	local var_10_19 = arg_10_1.style.background.color
-	local var_10_20 = arg_10_1.style.background.default_color
+	local color_3 = arg_10_1.style.background.color
+	local default_color_3 = arg_10_1.style.background.default_color
 
-	var_10_0.background = UIAnimation.init(var_10_4, var_10_19, var_10_1, var_10_2, var_10_20[var_10_1], var_10_5, var_10_3)
+	_animations.background = UIAnimation.init(function_by_time, color_3, num, num_2, default_color_3[num], num_3, easeInCubic)
 
-	return var_10_5
+	return num_3
 end
 
-function LootObjectiveUI._animate_out(arg_11_0, arg_11_1)
-	local var_11_0 = arg_11_0._animations
-	local var_11_1 = 1
-	local var_11_2 = 0
-	local var_11_3 = math.easeInCubic
-	local var_11_4 = UIAnimation.function_by_time
-	local var_11_5 = 0.3
-	local var_11_6 = arg_11_1.content.amount
-	local var_11_7 = arg_11_1.content.draw_count
-	local var_11_8 = arg_11_1.style.icon_textures.texture_colors
+LootObjectiveUI._animate_out = function (self, arg_11_1)
+	-- function 11
+	local _animations = self._animations
+	local num = 1
+	local num_2 = 0
+	local easeInCubic = math.easeInCubic
+	local function_by_time = UIAnimation.function_by_time
+	local num_3 = 0.3
+	local amount = arg_11_1.content.amount
+	local draw_count = arg_11_1.content.draw_count
+	local texture_colors = arg_11_1.style.icon_textures.texture_colors
 
-	for iter_11_0 = 1, var_11_6 do
-		if iter_11_0 <= var_11_7 then
-			if iter_11_0 ~= var_11_7 or not (var_11_5 + 1) then
-				local var_11_9 = var_11_5
+	for i = 1, amount do
+		if i <= draw_count then
+			if not (i ~= draw_count or num_3 + 1) then
+				local var_11_9 = num_3
 			end
 
-			local var_11_10 = var_11_8[iter_11_0]
+			local var_11_10 = texture_colors[i]
 
-			var_11_0["icon_textures_" .. iter_11_0] = UIAnimation.init(var_11_4, var_11_10, var_11_1, 255, var_11_2, var_11_5, var_11_3)
+			_animations["icon_textures_" .. i] = UIAnimation.init(function_by_time, var_11_10, num, 255, num_2, num_3, easeInCubic)
 		end
 	end
 
-	local var_11_11 = arg_11_1.style.background_icon_textures.color
+	local color = arg_11_1.style.background_icon_textures.color
 
-	var_11_0.background_icon_textures = UIAnimation.init(var_11_4, var_11_11, var_11_1, var_11_11[1], var_11_2, var_11_5, var_11_3)
+	_animations.background_icon_textures = UIAnimation.init(function_by_time, color, num, color[1], num_2, num_3, easeInCubic)
 
-	local var_11_12 = arg_11_1.style.glow_icon_textures.color
+	local color_2 = arg_11_1.style.glow_icon_textures.color
 
-	var_11_0.glow_icon_textures = UIAnimation.init(var_11_4, var_11_12, var_11_1, var_11_12[1], var_11_2, var_11_5, var_11_3)
+	_animations.glow_icon_textures = UIAnimation.init(function_by_time, color_2, num, color_2[1], num_2, num_3, easeInCubic)
 
-	local var_11_13 = arg_11_1.style.background.color
+	local color_3 = arg_11_1.style.background.color
 
-	var_11_0.background = UIAnimation.init(var_11_4, var_11_13, var_11_1, var_11_13[1], var_11_2, var_11_5, var_11_3)
+	_animations.background = UIAnimation.init(function_by_time, color_3, num, color_3[1], num_2, num_3, easeInCubic)
 
-	return var_11_5
+	return num_3
 end
 
-function LootObjectiveUI._update_animations(arg_12_0, arg_12_1)
-	local var_12_0 = arg_12_0._animations
+LootObjectiveUI._update_animations = function (self, arg_12_1)
+	-- function 12
+	local _animations = self._animations
 
-	for iter_12_0, iter_12_1 in pairs(var_12_0) do
-		UIAnimation.update(iter_12_1, arg_12_1)
+	for k, v in pairs(_animations) do
+		UIAnimation.update(v, arg_12_1)
 
-		if UIAnimation.completed(iter_12_1) then
-			var_12_0[iter_12_0] = nil
+		if not UIAnimation.completed(v) then
+			_animations[k] = nil
 		end
 	end
 end
 
-function LootObjectiveUI.draw(arg_13_0, arg_13_1)
-	local var_13_0 = arg_13_0.ui_renderer
-	local var_13_1 = arg_13_0.ui_scenegraph
-	local var_13_2 = arg_13_0.input_manager:get_service("ingame_menu")
+LootObjectiveUI.draw = function (self, arg_13_1)
+	-- function 13
+	local ui_renderer = self.ui_renderer
+	local ui_scenegraph = self.ui_scenegraph
+	local get_service = self.input_manager:get_service("ingame_menu")
 
-	UIRenderer.begin_pass(var_13_0, var_13_1, var_13_2, arg_13_1)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, get_service, arg_13_1)
 
-	local var_13_3 = arg_13_0._active_presentation_widget
+	local _active_presentation_widget = self._active_presentation_widget
 
-	if var_13_3 then
-		UIRenderer.draw_widget(var_13_0, var_13_3)
+	if not _active_presentation_widget then
+		UIRenderer.draw_widget(ui_renderer, _active_presentation_widget)
 	end
 
-	UIRenderer.end_pass(var_13_0)
+	UIRenderer.end_pass(ui_renderer)
 end

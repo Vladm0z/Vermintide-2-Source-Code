@@ -1,36 +1,36 @@
 -- chunkname: @scripts/settings/dlcs/woods/woods_common_settings.lua
 
-local var_0_0 = DLCSettings.woods
+local woods = DLCSettings.woods
 
-var_0_0.career_setting_files = {
+woods.career_setting_files = {
 	"scripts/settings/dlcs/woods/career_settings_woods"
 }
-var_0_0.player_breeds = {
+woods.player_breeds = {
 	"scripts/settings/dlcs/woods/player_breeds_woods"
 }
-var_0_0.career_ability_settings = {
+woods.career_ability_settings = {
 	"scripts/settings/dlcs/woods/career_ability_settings_woods"
 }
-var_0_0.action_template_files = {
+woods.action_template_files = {
 	"scripts/settings/dlcs/woods/action_templates_woods"
 }
-var_0_0.talent_settings = {
+woods.talent_settings = {
 	"scripts/settings/dlcs/woods/talent_settings_woods"
 }
-var_0_0.profile_files = {
+woods.profile_files = {
 	"scripts/settings/dlcs/woods/woods_profiles"
 }
-var_0_0.death_reactions = {
+woods.death_reactions = {
 	"scripts/settings/dlcs/woods/woods_death_reactions"
 }
-var_0_0.spawn_unit_templates = "scripts/settings/dlcs/woods/woods_spawn_unit_templates"
-var_0_0.statistics_definitions = {
+woods.spawn_unit_templates = "scripts/settings/dlcs/woods/woods_spawn_unit_templates"
+woods.statistics_definitions = {
 	"scripts/managers/backend/statistics_definitions_woods"
 }
-var_0_0.unit_extension_templates = {
+woods.unit_extension_templates = {
 	"scripts/settings/dlcs/woods/woods_unit_extension_templates"
 }
-var_0_0.statistics_lookup = {
+woods.statistics_lookup = {
 	"woods_javelin_melee_kills",
 	"woods_lift_kills",
 	"woods_javelin_combo",
@@ -53,7 +53,7 @@ var_0_0.statistics_lookup = {
 	"woods_free_ability_grind",
 	"woods_free_abilities_used"
 }
-var_0_0.anim_lookup = {
+woods.anim_lookup = {
 	"thorn_ability_start",
 	"thorn_ability_cancel",
 	"thorn_ability_flip",
@@ -68,7 +68,7 @@ var_0_0.anim_lookup = {
 	"to_javelin",
 	"to_javelin_noammo"
 }
-var_0_0.effects = {
+woods.effects = {
 	"fx/magic_thorn_sister_finger_trail",
 	"fx/magic_thorn_sister_finger_trail_3p",
 	"fx/magic_thorn_sister_finger_trail_long",
@@ -89,11 +89,11 @@ var_0_0.effects = {
 	"fx/thornsister_vine_trail",
 	"fx/thornsister_overcharge_explosion_3p"
 }
-var_0_0.material_effect_mappings_file_names = {
+woods.material_effect_mappings_file_names = {
 	"scripts/settings/material_effect_mappings_woods"
 }
-var_0_0._tracked_weapon_kill_stats = {}
-var_0_0.unlock_settings = {
+woods._tracked_weapon_kill_stats = {}
+woods.unlock_settings = {
 	woods = {
 		id = "1629000",
 		class = "UnlockDlc",
@@ -105,7 +105,7 @@ var_0_0.unlock_settings = {
 		requires_restart = true
 	}
 }
-var_0_0.unlock_settings_xb1 = {
+woods.unlock_settings_xb1 = {
 	woods = {
 		id = "47365039-5234-3046-C035-4B5831583300",
 		backend_reward_id = "woods",
@@ -118,7 +118,7 @@ var_0_0.unlock_settings_xb1 = {
 		class = "UnlockDlc"
 	}
 }
-var_0_0.unlock_settings_ps4 = {
+woods.unlock_settings_ps4 = {
 	CUSA13595_00 = {
 		woods = {
 			product_label = "V2USSISTERTHORNK",
@@ -150,7 +150,7 @@ var_0_0.unlock_settings_ps4 = {
 		}
 	}
 }
-var_0_0.store_layout = {
+woods.store_layout = {
 	structure = {
 		cosmetics = {
 			kerillian = {
@@ -171,34 +171,34 @@ var_0_0.store_layout = {
 		}
 	}
 }
-var_0_0.prop_extension = {
+woods.prop_extension = {
 	"ThornSisterWallExtension"
 }
-var_0_0.area_damage_extension = {
+woods.area_damage_extension = {
 	"SummonedVortexExtension",
 	"SummonedVortexHuskExtension"
 }
-var_0_0.entity_extensions = {
+woods.entity_extensions = {
 	"scripts/settings/dlcs/woods/thornsister_wall_extension",
 	"scripts/settings/dlcs/woods/summoned_vortex_extension",
 	"scripts/settings/dlcs/woods/summoned_vortex_husk_extension"
 }
-var_0_0.health_extension_files = {
+woods.health_extension_files = {
 	"scripts/settings/dlcs/woods/thorn_wall_health_extension"
 }
-var_0_0.health_extensions = {
+woods.health_extensions = {
 	"ThornWallHealthExtension"
 }
-var_0_0.network_damage_types = {
+woods.network_damage_types = {
 	"burst_thorn"
 }
-var_0_0.dot_type_lookup = {
+woods.dot_type_lookup = {
 	thorn_sister_passive_poison_improved = "poison_dot",
 	weapon_bleed_dot_javelin = "poison_dot",
 	thorn_sister_wall_bleed = "poison_dot",
 	thorn_sister_passive_poison = "poison_dot"
 }
-var_0_0.progression_unlocks = {
+woods.progression_unlocks = {
 	we_thornsister = {
 		description = "end_screen_career_unlocked",
 		profile = "wood_elf",
@@ -208,11 +208,11 @@ var_0_0.progression_unlocks = {
 		unlock_type = "career"
 	}
 }
-var_0_0.network_go_types = {
+woods.network_go_types = {
 	"thornsister_thorn_wall_unit",
 	"vortex_unit"
 }
-var_0_0.game_object_templates = {
+woods.game_object_templates = {
 	thornsister_thorn_wall_unit = {
 		game_object_created_func_name = "game_object_created_network_unit",
 		syncs_position = true,
@@ -228,160 +228,190 @@ var_0_0.game_object_templates = {
 		is_level_unit = false
 	}
 }
-var_0_0.game_object_initializers = {
-	thornsister_thorn_wall_unit = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-		local var_1_0 = ScriptUnit.extension(arg_1_0, "area_damage_system")
-		local var_1_1 = var_1_0.aoe_dot_damage
-		local var_1_2 = var_1_0.aoe_init_damage
-		local var_1_3 = var_1_0.aoe_dot_damage_interval
-		local var_1_4 = var_1_0.radius
-		local var_1_5 = var_1_0.life_time
-		local var_1_6 = var_1_0.player_screen_effect_name
-		local var_1_7 = var_1_0.dot_effect_name
-		local var_1_8 = var_1_0.area_damage_template
-		local var_1_9 = var_1_0.invisible_unit
-		local var_1_10 = var_1_0.extra_dot_effect_name
-		local var_1_11 = var_1_0.explosion_template_name
-		local var_1_12 = var_1_0.owner_player
+woods.game_object_initializers = {
+	thornsister_thorn_wall_unit = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+		-- function 1
+		local extension = ScriptUnit.extension(arg_1_0, "area_damage_system")
+		local aoe_dot_damage = extension.aoe_dot_damage
+		local aoe_init_damage = extension.aoe_init_damage
+		local aoe_dot_damage_interval = extension.aoe_dot_damage_interval
+		local radius = extension.radius
+		local life_time = extension.life_time
+		local player_screen_effect_name = extension.player_screen_effect_name
+		local dot_effect_name = extension.dot_effect_name
+		local area_damage_template = extension.area_damage_template
+		local invisible_unit = extension.invisible_unit
+		local extra_dot_effect_name = extension.extra_dot_effect_name
+		local explosion_template_name = extension.explosion_template_name
+		local owner_player = extension.owner_player
 
-		if var_1_7 == nil then
-			var_1_7 = "n/a"
+		if dot_effect_name == nil then
+			dot_effect_name = "n/a"
 		end
 
-		if var_1_10 == nil then
-			var_1_10 = "n/a"
+		if extra_dot_effect_name == nil then
+			extra_dot_effect_name = "n/a"
 		end
 
-		if var_1_11 == nil then
-			var_1_11 = "n/a"
+		if explosion_template_name == nil then
+			explosion_template_name = "n/a"
 		end
 
-		if var_1_6 == nil then
-			var_1_6 = "n/a"
+		if player_screen_effect_name == nil then
+			player_screen_effect_name = "n/a"
 		end
 
-		local var_1_13 = NetworkConstants.invalid_game_object_id
+		local invalid_game_object_id = NetworkConstants.invalid_game_object_id
 
-		if var_1_12 then
-			var_1_13 = var_1_12.game_object_id
+		if not owner_player then
+			invalid_game_object_id = owner_player.game_object_id
 		end
 
-		local var_1_14 = ScriptUnit.extension(arg_1_0, "props_system")
-		local var_1_15 = var_1_14.wall_index
-		local var_1_16 = var_1_14.group_spawn_index
-		local var_1_17 = var_1_14:owner()
-		local var_1_18 = var_1_17 and Managers.state.unit_storage:go_id(var_1_17) or NetworkConstants.invalid_game_object_id
+		local extension_2 = ScriptUnit.extension(arg_1_0, "props_system")
+		local wall_index = extension_2.wall_index
+		local group_spawn_index = extension_2.group_spawn_index
+		local owner = extension_2:owner()
+		local go_id
+
+		if not owner then
+			go_id = Managers.state.unit_storage:go_id(owner)
+
+			if not go_id then
+				-- Nothing
+			end
+		end
+
+		go_id = NetworkConstants.invalid_game_object_id
+
+		::label_1_0::
 
 		return {
 			go_type = NetworkLookup.go_types.thornsister_thorn_wall_unit,
 			husk_unit = NetworkLookup.husks[arg_1_1],
-			aoe_dot_damage = var_1_1,
-			aoe_init_damage = var_1_2,
-			aoe_dot_damage_interval = var_1_3,
+			aoe_dot_damage = aoe_dot_damage,
+			aoe_init_damage = aoe_init_damage,
+			aoe_dot_damage_interval = aoe_dot_damage_interval,
 			position = Unit.local_position(arg_1_0, 0),
 			rotation = Unit.local_rotation(arg_1_0, 0),
-			radius = var_1_4,
-			life_time = var_1_5,
-			player_screen_effect_name = NetworkLookup.effects[var_1_6],
-			dot_effect_name = NetworkLookup.effects[var_1_7],
-			extra_dot_effect_name = NetworkLookup.effects[var_1_10],
-			invisible_unit = var_1_9,
-			area_damage_template = NetworkLookup.area_damage_templates[var_1_8],
-			explosion_template_name = NetworkLookup.explosion_templates[var_1_11],
-			owner_player_id = var_1_13,
+			radius = radius,
+			life_time = life_time,
+			player_screen_effect_name = NetworkLookup.effects[player_screen_effect_name],
+			dot_effect_name = NetworkLookup.effects[dot_effect_name],
+			extra_dot_effect_name = NetworkLookup.effects[extra_dot_effect_name],
+			invisible_unit = invisible_unit,
+			area_damage_template = NetworkLookup.area_damage_templates[area_damage_template],
+			explosion_template_name = NetworkLookup.explosion_templates[explosion_template_name],
+			owner_player_id = invalid_game_object_id,
 			health = ScriptUnit.extension(arg_1_0, "health_system"):get_max_health(),
-			wall_index = var_1_15,
-			group_spawn_index = var_1_16,
-			owner_unit_id = var_1_18
+			wall_index = wall_index,
+			group_spawn_index = group_spawn_index,
+			owner_unit_id = go_id
 		}
 	end,
-	vortex_unit = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
-		local var_2_0 = Unit.mover(arg_2_0)
-		local var_2_1 = ScriptUnit.has_extension(arg_2_0, "area_damage_system")
-		local var_2_2 = var_2_1._inner_decal_unit
-		local var_2_3 = NetworkConstants.invalid_game_object_id
+	vortex_unit = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+		-- function 2
+		local mover = Unit.mover(arg_2_0)
+		local has_extension = ScriptUnit.has_extension(arg_2_0, "area_damage_system")
+		local _inner_decal_unit = has_extension._inner_decal_unit
+		local invalid_game_object_id = NetworkConstants.invalid_game_object_id
 
-		if Unit.alive(var_2_2) then
-			var_2_3 = Managers.state.network:unit_game_object_id(var_2_2)
+		if not Unit.alive(_inner_decal_unit) then
+			invalid_game_object_id = Managers.state.network:unit_game_object_id(_inner_decal_unit)
 		end
 
-		local var_2_4 = var_2_1._outer_decal_unit
-		local var_2_5 = NetworkConstants.invalid_game_object_id
+		local _outer_decal_unit = has_extension._outer_decal_unit
+		local invalid_game_object_id_2 = NetworkConstants.invalid_game_object_id
 
-		if Unit.alive(var_2_4) then
-			var_2_5 = Managers.state.network:unit_game_object_id(var_2_4)
+		if not Unit.alive(_outer_decal_unit) then
+			invalid_game_object_id_2 = Managers.state.network:unit_game_object_id(_outer_decal_unit)
 		end
 
-		local var_2_6 = var_2_1._owner_unit
-		local var_2_7 = NetworkConstants.invalid_game_object_id
+		local _owner_unit = has_extension._owner_unit
+		local invalid_game_object_id_3 = NetworkConstants.invalid_game_object_id
 
-		if Unit.alive(var_2_6) then
-			var_2_7 = Managers.state.network:unit_game_object_id(var_2_6)
+		if not Unit.alive(_owner_unit) then
+			invalid_game_object_id_3 = Managers.state.network:unit_game_object_id(_owner_unit)
 		end
 
-		local var_2_8 = var_2_1.target_unit
-		local var_2_9 = NetworkConstants.invalid_game_object_id
+		local target_unit = has_extension.target_unit
+		local invalid_game_object_id_4 = NetworkConstants.invalid_game_object_id
 
-		if Unit.alive(var_2_8) then
-			var_2_9 = Managers.state.network:unit_game_object_id(var_2_8)
+		if not Unit.alive(target_unit) then
+			invalid_game_object_id_4 = Managers.state.network:unit_game_object_id(target_unit)
 		end
 
-		local var_2_10 = Managers.state.side.side_by_unit[var_2_6].side_id
-
-		return {
+		local side_id = Managers.state.side.side_by_unit[_owner_unit].side_id
+		local tbl = {
 			height_percentage = 1,
 			inner_radius_percentage = 1,
 			fx_radius_percentage = 1,
 			go_type = NetworkLookup.go_types.vortex_unit,
-			husk_unit = NetworkLookup.husks[arg_2_1],
-			position = var_2_0 and Mover.position(var_2_0) or Unit.local_position(arg_2_0, 0),
-			yaw_rot = Quaternion.yaw(Unit.local_rotation(arg_2_0, 0)),
-			velocity = Vector3(0, 0, 0),
-			vortex_template_id = NetworkLookup.vortex_templates[var_2_1.vortex_template_name],
-			inner_decal_unit_id = var_2_3,
-			outer_decal_unit_id = var_2_5,
-			owner_unit_id = var_2_7,
-			side_id = var_2_10,
-			target_unit_id = var_2_9
+			husk_unit = NetworkLookup.husks[arg_2_1]
 		}
+		local position
+
+		if not mover then
+			position = Mover.position(mover)
+
+			if not position then
+				-- Nothing
+			end
+		end
+
+		position = Unit.local_position(arg_2_0, 0)
+
+		::label_2_0::
+
+		tbl.position = position
+		tbl.yaw_rot = Quaternion.yaw(Unit.local_rotation(arg_2_0, 0))
+		tbl.velocity = Vector3(0, 0, 0)
+		tbl.vortex_template_id = NetworkLookup.vortex_templates[has_extension.vortex_template_name]
+		tbl.inner_decal_unit_id = invalid_game_object_id
+		tbl.outer_decal_unit_id = invalid_game_object_id_2
+		tbl.owner_unit_id = invalid_game_object_id_3
+		tbl.side_id = side_id
+		tbl.target_unit_id = invalid_game_object_id_4
+
+		return tbl
 	end
 }
-var_0_0.game_object_extractors = {
-	thornsister_thorn_wall_unit = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
-		local var_3_0 = GameSession.game_object_field(arg_3_0, arg_3_1, "aoe_dot_damage")
-		local var_3_1 = GameSession.game_object_field(arg_3_0, arg_3_1, "aoe_init_damage")
-		local var_3_2 = GameSession.game_object_field(arg_3_0, arg_3_1, "aoe_dot_damage_interval")
-		local var_3_3 = GameSession.game_object_field(arg_3_0, arg_3_1, "radius")
-		local var_3_4 = GameSession.game_object_field(arg_3_0, arg_3_1, "life_time")
-		local var_3_5 = GameSession.game_object_field(arg_3_0, arg_3_1, "player_screen_effect_name")
-		local var_3_6 = GameSession.game_object_field(arg_3_0, arg_3_1, "dot_effect_name")
-		local var_3_7 = GameSession.game_object_field(arg_3_0, arg_3_1, "area_damage_template")
-		local var_3_8 = GameSession.game_object_field(arg_3_0, arg_3_1, "invisible_unit")
-		local var_3_9 = GameSession.game_object_field(arg_3_0, arg_3_1, "extra_dot_effect_name")
-		local var_3_10 = GameSession.game_object_field(arg_3_0, arg_3_1, "explosion_template_name")
-		local var_3_11 = GameSession.game_object_field(arg_3_0, arg_3_1, "owner_player_id")
-		local var_3_12 = GameSession.game_object_field(arg_3_0, arg_3_1, "health")
-		local var_3_13 = GameSession.game_object_field(arg_3_0, arg_3_1, "wall_index")
-		local var_3_14 = GameSession.game_object_field(arg_3_0, arg_3_1, "owner_unit_id")
-		local var_3_15 = NetworkLookup.effects[var_3_9]
+woods.game_object_extractors = {
+	thornsister_thorn_wall_unit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+		-- function 3
+		local game_object_field = GameSession.game_object_field(arg_3_0, arg_3_1, "aoe_dot_damage")
+		local game_object_field_2 = GameSession.game_object_field(arg_3_0, arg_3_1, "aoe_init_damage")
+		local game_object_field_3 = GameSession.game_object_field(arg_3_0, arg_3_1, "aoe_dot_damage_interval")
+		local game_object_field_4 = GameSession.game_object_field(arg_3_0, arg_3_1, "radius")
+		local game_object_field_5 = GameSession.game_object_field(arg_3_0, arg_3_1, "life_time")
+		local game_object_field_6 = GameSession.game_object_field(arg_3_0, arg_3_1, "player_screen_effect_name")
+		local game_object_field_7 = GameSession.game_object_field(arg_3_0, arg_3_1, "dot_effect_name")
+		local game_object_field_8 = GameSession.game_object_field(arg_3_0, arg_3_1, "area_damage_template")
+		local game_object_field_9 = GameSession.game_object_field(arg_3_0, arg_3_1, "invisible_unit")
+		local game_object_field_10 = GameSession.game_object_field(arg_3_0, arg_3_1, "extra_dot_effect_name")
+		local game_object_field_11 = GameSession.game_object_field(arg_3_0, arg_3_1, "explosion_template_name")
+		local game_object_field_12 = GameSession.game_object_field(arg_3_0, arg_3_1, "owner_player_id")
+		local game_object_field_13 = GameSession.game_object_field(arg_3_0, arg_3_1, "health")
+		local game_object_field_14 = GameSession.game_object_field(arg_3_0, arg_3_1, "wall_index")
+		local game_object_field_15 = GameSession.game_object_field(arg_3_0, arg_3_1, "owner_unit_id")
+		local var_3_15 = NetworkLookup.effects[game_object_field_10]
 
 		if var_3_15 == "n/a" then
 			var_3_15 = nil
 		end
 
-		local var_3_16 = NetworkLookup.explosion_templates[var_3_10]
+		local var_3_16 = NetworkLookup.explosion_templates[game_object_field_11]
 
 		if var_3_16 == "n/a" then
 			var_3_16 = nil
 		end
 
-		local var_3_17 = NetworkLookup.effects[var_3_5]
+		local var_3_17 = NetworkLookup.effects[game_object_field_6]
 
 		if var_3_17 == "n/a" then
 			var_3_17 = nil
 		end
 
-		local var_3_18 = NetworkLookup.effects[var_3_6]
+		local var_3_18 = NetworkLookup.effects[game_object_field_7]
 
 		if var_3_18 == "n/a" then
 			var_3_18 = nil
@@ -389,49 +419,49 @@ var_0_0.game_object_extractors = {
 
 		local var_3_19
 
-		if var_3_16 then
-			local var_3_20 = ExplosionUtils.get_template(var_3_16)
+		if not var_3_16 then
+			local get_template = ExplosionUtils.get_template(var_3_16)
 
-			if var_3_20 then
-				var_3_19 = var_3_20.aoe.nav_mesh_effect
+			if not get_template then
+				var_3_19 = get_template.aoe.nav_mesh_effect
 			end
 		end
 
 		local var_3_21
 
-		if var_3_11 ~= NetworkConstants.invalid_game_object_id then
-			local var_3_22 = Managers.player:player_from_game_object_id(var_3_11)
+		if game_object_field_12 ~= NetworkConstants.invalid_game_object_id then
+			local player_from_game_object_id = Managers.player:player_from_game_object_id(game_object_field_12)
 		end
 
 		local var_3_23
 
-		if var_3_14 ~= NetworkConstants.invalid_game_object_id then
-			var_3_23 = Managers.state.unit_storage:unit(var_3_14)
+		if game_object_field_15 ~= NetworkConstants.invalid_game_object_id then
+			var_3_23 = Managers.state.unit_storage:unit(game_object_field_15)
 		end
 
-		local var_3_24 = {
+		local tbl = {
 			area_damage_system = {
-				aoe_dot_damage = var_3_0,
-				aoe_init_damage = var_3_1,
-				aoe_dot_damage_interval = var_3_2,
-				radius = var_3_3,
-				life_time = var_3_4,
-				invisible_unit = var_3_8,
+				aoe_dot_damage = game_object_field,
+				aoe_init_damage = game_object_field_2,
+				aoe_dot_damage_interval = game_object_field_3,
+				radius = game_object_field_4,
+				life_time = game_object_field_5,
+				invisible_unit = game_object_field_9,
 				player_screen_effect_name = var_3_17,
 				dot_effect_name = var_3_18,
 				nav_mesh_effect = var_3_19,
 				extra_dot_effect_name = var_3_15,
-				area_damage_template = NetworkLookup.area_damage_templates[var_3_7],
+				area_damage_template = NetworkLookup.area_damage_templates[game_object_field_8],
 				explosion_template_name = var_3_16,
 				source_attacker_unit = var_3_23
 			},
 			props_system = {
-				life_time = var_3_4,
+				life_time = game_object_field_5,
 				owner_unit = var_3_23,
-				wall_index = var_3_13
+				wall_index = game_object_field_14
 			},
 			health_system = {
-				health = var_3_12
+				health = game_object_field_13
 			},
 			death_system = {
 				death_reaction_template = "thorn_wall",
@@ -443,31 +473,32 @@ var_0_0.game_object_extractors = {
 			}
 		}
 
-		return "thornsister_thorn_wall_unit", var_3_24
+		return "thornsister_thorn_wall_unit", tbl
 	end,
-	vortex_unit = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-		local var_4_0 = GameSession.game_object_field(arg_4_0, arg_4_1, "vortex_template_id")
-		local var_4_1 = NetworkLookup.vortex_templates[var_4_0]
-		local var_4_2 = GameSession.game_object_field(arg_4_0, arg_4_1, "inner_decal_unit_id")
-		local var_4_3 = Managers.state.unit_storage:unit(var_4_2)
-		local var_4_4 = GameSession.game_object_field(arg_4_0, arg_4_1, "outer_decal_unit_id")
-		local var_4_5 = Managers.state.unit_storage:unit(var_4_4)
-		local var_4_6 = GameSession.game_object_field(arg_4_0, arg_4_1, "owner_unit_id")
-		local var_4_7 = Managers.state.unit_storage:unit(var_4_6)
-		local var_4_8 = GameSession.game_object_field(arg_4_0, arg_4_1, "side_id")
-		local var_4_9 = GameSession.game_object_field(arg_4_0, arg_4_1, "target_unit_id")
-		local var_4_10 = Managers.state.unit_storage:unit(var_4_9)
-		local var_4_11 = {
+	vortex_unit = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+		-- function 4
+		local game_object_field = GameSession.game_object_field(arg_4_0, arg_4_1, "vortex_template_id")
+		local var_4_1 = NetworkLookup.vortex_templates[game_object_field]
+		local game_object_field_2 = GameSession.game_object_field(arg_4_0, arg_4_1, "inner_decal_unit_id")
+		local unit = Managers.state.unit_storage:unit(game_object_field_2)
+		local game_object_field_3 = GameSession.game_object_field(arg_4_0, arg_4_1, "outer_decal_unit_id")
+		local unit_2 = Managers.state.unit_storage:unit(game_object_field_3)
+		local game_object_field_4 = GameSession.game_object_field(arg_4_0, arg_4_1, "owner_unit_id")
+		local unit_3 = Managers.state.unit_storage:unit(game_object_field_4)
+		local game_object_field_5 = GameSession.game_object_field(arg_4_0, arg_4_1, "side_id")
+		local game_object_field_6 = GameSession.game_object_field(arg_4_0, arg_4_1, "target_unit_id")
+		local unit_4 = Managers.state.unit_storage:unit(game_object_field_6)
+		local tbl = {
 			area_damage_system = {
 				vortex_template_name = var_4_1,
-				inner_decal_unit = var_4_3,
-				outer_decal_unit = var_4_5,
-				owner_unit = var_4_7,
-				side_id = var_4_8,
-				target_unit = var_4_10
+				inner_decal_unit = unit,
+				outer_decal_unit = unit_2,
+				owner_unit = unit_3,
+				side_id = game_object_field_5,
+				target_unit = unit_4
 			}
 		}
 
-		return "vortex_unit", var_4_11
+		return "vortex_unit", tbl
 	end
 }

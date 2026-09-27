@@ -3,57 +3,63 @@
 local var_0_0, var_0_1 = pcall(require, "ffi")
 local var_0_2, var_0_3 = pcall(require, "jit.util")
 
-if not IS_WINDOWS or not var_0_0 or not var_0_2 then
+if not (not IS_WINDOWS and not var_0_0 and var_0_2) then
 	return
 end
 
-local var_0_4 = var_0_1.C
-local var_0_5 = bit
-local var_0_6 = debug
-local var_0_7 = math
-local var_0_8 = string
-local var_0_9 = pairs
-local var_0_10 = tonumber
-local var_0_11 = type
+local C = var_0_1.C
+local bit = bit
+local debug = debug
+local math = math
+local string = string
+local pairs = pairs
+local tonumber = tonumber
+local type = type
+local LuaJIT = LuaJIT
 
 LuaJIT = LuaJIT or {}
+LuaJIT = LuaJIT
 
 var_0_1.cdef("int QueryPerformanceFrequency(long long*);\nint QueryPerformanceCounter(long long*);\n")
 
-local var_0_12 = var_0_1.new("long long[1]")
 local var_0_13 = var_0_1.new("long long[1]")
+local var_0_14 = var_0_1.new("long long[1]")
 
-var_0_4.QueryPerformanceFrequency(var_0_12)
+C.QueryPerformanceFrequency(var_0_13)
 
-function LuaJIT.clock()
-	var_0_4.QueryPerformanceCounter(var_0_13)
+LuaJIT.clock = function ()
+	-- function 1
+	C.QueryPerformanceCounter(var_0_14)
 
-	return var_0_12[0] * var_0_13[0]
+	return var_0_13[0] * var_0_14[0]
 end
 
-function LuaJIT.clock_diff(arg_2_0, arg_2_1)
-	return var_0_10(arg_2_0 - arg_2_1)
+LuaJIT.clock_diff = function (arg_2_0, arg_2_1)
+	-- function 2
+	return tonumber(arg_2_0 - arg_2_1)
 end
 
-local function var_0_14(arg_3_0, arg_3_1)
-	local var_3_0 = var_0_8.match(var_0_8.format("%p", arg_3_1), "0x(%x+)")
+local function fn(arg_3_0, arg_3_1)
+	-- function 3
+	local match = string.match(string.format("%p", arg_3_1), "0x(%x+)")
 
-	assert(var_3_0, "invalid pointer")
+	assert(match, "invalid pointer")
 
-	return var_0_1.cast(arg_3_0, var_0_10(var_3_0, 16))
+	return var_0_1.cast(arg_3_0, tonumber(match, 16))
 end
 
-local var_0_15 = {}
+local tbl = {}
 
-function LuaJIT.tvalue(arg_4_0)
-	var_0_15[0] = arg_4_0
+LuaJIT.tvalue = function (arg_4_0)
+	-- function 4
+	tbl[0] = arg_4_0
 
-	local var_4_0 = var_0_14("uint32_t*", var_0_15)
+	local var_4_0 = fn("uint32_t*", tbl)
 
 	return var_0_1.cast("int64_t*", var_4_0[2])[0]
 end
 
-local var_0_16 = {
+local tbl_2 = {
 	[0] = "nil",
 	"false",
 	"true",
@@ -70,39 +76,42 @@ local var_0_16 = {
 	"numx"
 }
 
-function LuaJIT.itype(arg_5_0)
-	local var_5_0 = LuaJIT.tvalue(arg_5_0)
-	local var_5_1 = var_0_10(var_0_5.arshift(var_5_0, 32))
-	local var_5_2 = var_0_5.bnot(var_5_1)
+LuaJIT.itype = function (arg_5_0)
+	-- function 5
+	local tvalue = LuaJIT.tvalue(arg_5_0)
+	local var_5_1 = tonumber(bit.arshift(tvalue, 32))
+	local bnot = bit.bnot(var_5_1)
 
 	if var_5_1 % 4294967296 <= 4294901759 then
-		var_5_2 = 13
-	elseif var_0_5.arshift(var_5_1, 15) == -2 then
-		var_5_2 = 3
+		bnot = 13
+	elseif bit.arshift(var_5_1, 15) == -2 then
+		bnot = 3
 	end
 
-	assert(var_0_16[var_5_2])
+	assert(tbl_2[bnot])
 
-	return var_0_16[var_5_2], var_5_2
+	return tbl_2[bnot], bnot
 end
 
-function LuaJIT.table_size(arg_6_0)
-	local var_6_0 = var_0_14("uint32_t*", arg_6_0)
+LuaJIT.table_size = function (arg_6_0)
+	-- function 6
+	local var_6_0 = fn("uint32_t*", arg_6_0)
 
 	return var_6_0[6], var_6_0[7]
 end
 
-local function var_0_17(arg_7_0, arg_7_1, arg_7_2)
-	arg_7_2 = arg_7_2 or var_0_11(arg_7_1)
+local function fn_2(self, arg_7_1, arg_7_2)
+	-- function 7
+	arg_7_2 = arg_7_2 or type(arg_7_1)
 
-	if arg_7_2 == "nil" or arg_7_2 == "boolean" or arg_7_2 == "number" then
+	if not (arg_7_2 == "nil" or arg_7_2 == "boolean" or arg_7_2 ~= "number") then
 		return 0
-	elseif arg_7_0 then
-		if arg_7_0[arg_7_1] then
-			return arg_7_0[arg_7_1]
+	elseif not self then
+		if not self[arg_7_1] then
+			return self[arg_7_1]
 		end
 
-		arg_7_0[arg_7_1] = 0
+		self[arg_7_1] = 0
 	end
 
 	if arg_7_2 == "string" then
@@ -112,49 +121,49 @@ local function var_0_17(arg_7_0, arg_7_1, arg_7_2)
 
 		return 17 + #arg_7_1
 	elseif arg_7_2 == "table" then
-		local var_7_0, var_7_1 = LuaJIT.table_size(arg_7_1)
-		local var_7_2 = 32 + 8 * var_7_0 + 24 * var_7_1
+		local table_size, var_7_1 = LuaJIT.table_size(arg_7_1)
+		local num = 32 + 8 * table_size + 24 * var_7_1
 
-		if arg_7_0 then
-			for iter_7_0, iter_7_1 in var_0_9(arg_7_1) do
-				var_7_2 = var_7_2 + var_0_17(arg_7_0, iter_7_0) + var_0_17(arg_7_0, iter_7_1)
+		if not self then
+			for iter_7_0, iter_7_1 in pairs(arg_7_1) do
+				num = num + fn_2(self, iter_7_0) + fn_2(self, iter_7_1)
 			end
 		end
 
-		return var_7_2
+		return num
 	elseif arg_7_2 == "function" then
-		local var_7_3 = var_0_3.funcinfo(arg_7_1)
-		local var_7_4 = var_7_3.upvalues
-		local var_7_5 = 0
+		local funcinfo = var_0_3.funcinfo(arg_7_1)
+		local upvalues = funcinfo.upvalues
+		local num_2 = 0
 
-		if var_7_3.addr then
-			var_7_5 = 28 + 8 * var_0_7.max(1, var_7_4)
+		if not funcinfo.addr then
+			num_2 = 28 + 8 * math.max(1, upvalues)
 		else
-			var_7_5 = 20 + 4 * var_0_7.max(1, var_7_4)
+			num_2 = 20 + 4 * math.max(1, upvalues)
 		end
 
-		if arg_7_0 then
-			var_7_5 = var_7_5 + var_0_17(arg_7_0, var_7_3.proto)
+		if not self then
+			num_2 = num_2 + fn_2(self, funcinfo.proto)
 
-			local var_7_6 = var_0_14("uint32_t*", arg_7_1)
+			local var_7_6 = fn("uint32_t*", arg_7_1)
 
-			for iter_7_2 = 1, var_7_4 do
-				local var_7_7 = var_7_6[5 + iter_7_2]
-				local var_7_8, var_7_9 = var_0_6.getupvalue(arg_7_1, iter_7_2)
+			for k = 1, upvalues do
+				local var_7_7 = var_7_6[5 + k]
+				local getupvalue, var_7_9 = debug.getupvalue(arg_7_1, k)
 
-				var_7_5 = var_7_5 + 24 + var_0_17(arg_7_0, var_7_7, "upval") + var_0_17(arg_7_0, var_7_9)
+				num_2 = num_2 + 24 + fn_2(self, var_7_7, "upval") + fn_2(self, var_7_9)
 			end
 		end
 
-		return var_7_5
+		return num_2
 	elseif arg_7_2 == "proto" then
-		local var_7_10 = var_0_14("uint32_t*", arg_7_1)[8]
+		local var_7_10 = fn("uint32_t*", arg_7_1)[8]
 
-		if arg_7_0 then
-			for iter_7_3 = -var_0_3.funcinfo(arg_7_1).gcconsts, -1 do
-				local var_7_11 = var_0_3.funck(arg_7_1, iter_7_3)
+		if not self then
+			for l = -var_0_3.funcinfo(arg_7_1).gcconsts, -1 do
+				local funck = var_0_3.funck(arg_7_1, l)
 
-				var_7_10 = var_7_10 + var_0_17(arg_7_0, var_7_11)
+				var_7_10 = var_7_10 + fn_2(self, funck)
 			end
 		end
 
@@ -166,7 +175,7 @@ local function var_0_17(arg_7_0, arg_7_1, arg_7_2)
 			return 0
 		end
 
-		return 16 + var_0_14("uint32_t*", arg_7_1)[-3]
+		return 16 + fn("uint32_t*", arg_7_1)[-3]
 	elseif arg_7_2 == "cdata" then
 		return 8
 	elseif arg_7_2 == "thread" then
@@ -178,10 +187,12 @@ local function var_0_17(arg_7_0, arg_7_1, arg_7_2)
 	error("Unknown type: " .. arg_7_2)
 end
 
-function LuaJIT.bytes(arg_8_0, arg_8_1)
-	return var_0_17(not arg_8_1 and {}, arg_8_0)
+LuaJIT.bytes = function (arg_8_0, arg_8_1)
+	-- function 8
+	return fn_2(not not arg_8_1 or {}, arg_8_0)
 end
 
-function LuaJIT.bytes_ex(arg_9_0, arg_9_1)
-	return var_0_17(arg_9_1, arg_9_0)
+LuaJIT.bytes_ex = function (arg_9_0, arg_9_1)
+	-- function 9
+	return fn_2(arg_9_1, arg_9_0)
 end

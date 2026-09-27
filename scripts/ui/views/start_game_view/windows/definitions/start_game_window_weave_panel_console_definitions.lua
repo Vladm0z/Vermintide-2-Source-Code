@@ -1,19 +1,19 @@
 -- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_weave_panel_console_definitions.lua
 
-local var_0_0 = UISettings.game_start_windows.large_window_size
-local var_0_1 = "menu_frame_11"
-local var_0_2 = UIFrameSettings[var_0_1].texture_sizes.vertical[1]
-local var_0_3 = {
-	var_0_0[1] - var_0_2 * 2,
-	var_0_0[2] - var_0_2 * 2
+local large_window_size = UISettings.game_start_windows.large_window_size
+local str = "menu_frame_11"
+local var_0_2 = UIFrameSettings[str].texture_sizes.vertical[1]
+local tbl = {
+	large_window_size[1] - var_0_2 * 2,
+	large_window_size[2] - var_0_2 * 2
 }
-local var_0_4 = 70
-local var_0_5 = {
+local num = 70
+local tbl_2 = {
 	1920,
 	1080
 }
-local var_0_6 = 0
-local var_0_7 = {
+local num_2 = 0
+local tbl_3 = {
 	root = {
 		is_root = true,
 		size = {
@@ -44,7 +44,7 @@ local var_0_7 = {
 		vertical_alignment = "center",
 		parent = "menu_root",
 		horizontal_alignment = "center",
-		size = var_0_5,
+		size = tbl_2,
 		position = {
 			0,
 			0,
@@ -55,9 +55,9 @@ local var_0_7 = {
 		vertical_alignment = "center",
 		parent = "parent_window",
 		horizontal_alignment = "right",
-		size = var_0_5,
+		size = tbl_2,
 		position = {
-			-var_0_6,
+			-num_2,
 			0,
 			1
 		}
@@ -67,8 +67,8 @@ local var_0_7 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_5[1],
-			var_0_4
+			tbl_2[1],
+			num
 		},
 		position = {
 			0,
@@ -109,7 +109,7 @@ local var_0_7 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_5[1],
+			tbl_2[1],
 			90
 		},
 		position = {
@@ -123,7 +123,7 @@ local var_0_7 = {
 		parent = "panel",
 		horizontal_alignment = "center",
 		size = {
-			var_0_5[1],
+			tbl_2[1],
 			5
 		},
 		position = {
@@ -137,7 +137,7 @@ local var_0_7 = {
 		parent = "panel_bottom",
 		horizontal_alignment = "center",
 		size = {
-			var_0_5[1],
+			tbl_2[1],
 			5
 		},
 		position = {
@@ -151,7 +151,7 @@ local var_0_7 = {
 		parent = "panel",
 		horizontal_alignment = "left",
 		size = {
-			var_0_5[1],
+			tbl_2[1],
 			64
 		},
 		position = {
@@ -194,7 +194,7 @@ local var_0_7 = {
 		horizontal_alignment = "left",
 		size = {
 			0,
-			var_0_4
+			num
 		},
 		position = {
 			0,
@@ -231,9 +231,10 @@ local var_0_7 = {
 		}
 	}
 }
-local var_0_8 = true
+local flag = true
 
-local function var_0_9(arg_1_0, arg_1_1)
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
 	return {
 		element = {
 			passes = {
@@ -334,7 +335,7 @@ local function var_0_9(arg_1_0, arg_1_1)
 	}
 end
 
-local var_0_10 = {
+local tbl_4 = {
 	panel_input_area_1 = UIWidgets.create_simple_texture("xbone_button_icon_lt", "panel_input_area_1"),
 	panel_input_area_2 = UIWidgets.create_simple_texture("xbone_button_icon_rt", "panel_input_area_2"),
 	panel = UIWidgets.create_tiled_texture("panel", "menu_frame_bg_03", {
@@ -378,23 +379,26 @@ local var_0_10 = {
 		0,
 		0
 	}, 2),
-	entry_panel_selection = var_0_9("entry_panel_selection", var_0_7.entry_panel_selection.size)
+	entry_panel_selection = fn("entry_panel_selection", tbl_3.entry_panel_selection.size)
 }
-local var_0_11 = {
+local tbl_5 = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+				-- function 2
 				arg_2_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
-				local var_3_0 = math.easeOutCubic(arg_3_3)
+			update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+				-- function 3
+				local easeOutCubic = math.easeOutCubic(arg_3_3)
 
-				arg_3_4.render_settings.alpha_multiplier = var_3_0
+				arg_3_4.render_settings.alpha_multiplier = easeOutCubic
 			end,
-			on_complete = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			on_complete = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				-- function 4
 				return
 			end
 		}
@@ -404,15 +408,18 @@ local var_0_11 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+				-- function 5
 				arg_5_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
-				local var_6_0 = math.easeOutCubic(arg_6_3)
+			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+				-- function 6
+				local easeOutCubic = math.easeOutCubic(arg_6_3)
 
-				arg_6_4.render_settings.alpha_multiplier = 1 - var_6_0
+				arg_6_4.render_settings.alpha_multiplier = 1 - easeOutCubic
 			end,
-			on_complete = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			on_complete = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+				-- function 7
 				return
 			end
 		}
@@ -420,7 +427,7 @@ local var_0_11 = {
 }
 
 return {
-	widgets = var_0_10,
-	scenegraph_definition = var_0_7,
-	animation_definitions = var_0_11
+	widgets = tbl_4,
+	scenegraph_definition = tbl_3,
+	animation_definitions = tbl_5
 }

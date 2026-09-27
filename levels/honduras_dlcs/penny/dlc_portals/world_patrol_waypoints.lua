@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/penny/dlc_portals/world_patrol_waypoints.lua
 
-local var_0_0 = {
+local tbl = {
 	{
 		{
 			id = "boss_6",
@@ -4499,7 +4499,7 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	{
 		travel_dist = 128.97186541557312,
 		id = "roaming_1",
@@ -15009,12 +15009,12 @@ local var_0_1 = {
 		}
 	}
 }
-local var_0_2 = {}
-local var_0_3 = "1"
+local tbl_3 = {}
+local str = "1"
 
 return {
-	version = var_0_3,
-	boss_waypoints = var_0_0,
-	patrol_waypoints = var_0_1,
-	event_waypoints = var_0_2
+	version = str,
+	boss_waypoints = tbl,
+	patrol_waypoints = tbl_2,
+	event_waypoints = tbl_3
 }

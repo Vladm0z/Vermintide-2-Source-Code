@@ -1,8 +1,11 @@
 -- chunkname: @scripts/settings/breeds/breed_skaven_rat_ogre.lua
 
-local var_0_0 = require("scripts/utils/stagger_types")
-local var_0_1 = BotConstants and BotConstants.default.DEFAULT_BOT_THREAT_DIFFICULTY_DATA
-local var_0_2 = {
+local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
+local BotConstants = BotConstants
+
+BotConstants = not BotConstants and BotConstants.default.DEFAULT_BOT_THREAT_DIFFICULTY_DATA
+
+local tbl = {
 	detection_radius = 9999999,
 	race = "skaven",
 	walk_speed = 5,
@@ -332,7 +335,8 @@ local var_0_2 = {
 		stormfiend_warpfire = 1,
 		vortex_danger_zone = 1
 	},
-	custom_death_enter_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	custom_death_enter_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+		-- function 1
 		local var_1_0 = BLACKBOARDS[arg_1_0]
 
 		if not Unit.alive(arg_1_1) then
@@ -342,24 +346,25 @@ local var_0_2 = {
 		QuestSettings.check_rat_ogre_killed_mid_leap(var_1_0, arg_1_1)
 		QuestSettings.check_rat_ogre_killed_without_dealing_damage(var_1_0, arg_1_1)
 	end,
-	before_stagger_enter_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	before_stagger_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+		-- function 2
 		Managers.state.achievement:trigger_event("rat_ogre_stagger", arg_2_0, arg_2_1, arg_2_2)
 	end
 }
 
-Breeds.skaven_rat_ogre = table.create_copy(Breeds.skaven_rat_ogre, var_0_2)
+Breeds.skaven_rat_ogre = table.create_copy(Breeds.skaven_rat_ogre, tbl)
 
-local var_0_3 = {
+local tbl_2 = {
 	ahead_dist = 2,
 	push_width = 4,
 	push_forward_offset = 1,
 	push_stagger_distance = 1,
 	player_pushed_speed = 10,
 	push_stagger_impact = {
-		var_0_0.medium,
-		var_0_0.medium,
-		var_0_0.none,
-		var_0_0.none
+		scripts_utils_stagger_types.medium,
+		scripts_utils_stagger_types.medium,
+		scripts_utils_stagger_types.none,
+		scripts_utils_stagger_types.none
 	},
 	push_stagger_duration = {
 		1.5,
@@ -368,7 +373,7 @@ local var_0_3 = {
 		0
 	}
 }
-local var_0_4 = {
+local tbl_3 = {
 	melee_slam = {
 		easy = {
 			running = 2,
@@ -513,7 +518,7 @@ local var_0_4 = {
 		}
 	}
 }
-local var_0_5 = {
+local tbl_4 = {
 	follow = {
 		follow_target_function_name = "_follow_target_rat_ogre",
 		move_anim = "move_start_fwd",
@@ -609,7 +614,7 @@ local var_0_5 = {
 		unblockable = false,
 		attack_time = 1.3333333333333333,
 		dodge_mitigation_radius_squared = 2.25,
-		difficulty_attack_intensity = var_0_4,
+		difficulty_attack_intensity = tbl_3,
 		considerations = UtilityConsiderations.melee_slam,
 		attack_anim = {
 			"attack_slam",
@@ -620,11 +625,11 @@ local var_0_5 = {
 		blocked_difficulty_damage = BreedTweaks.difficulty_damage.boss_slam_attack,
 		difficulty_damage = BreedTweaks.difficulty_damage.boss_slam_attack,
 		stagger_impact = {
-			var_0_0.weak,
-			var_0_0.medium,
-			var_0_0.none,
-			var_0_0.none,
-			var_0_0.weak
+			scripts_utils_stagger_types.weak,
+			scripts_utils_stagger_types.medium,
+			scripts_utils_stagger_types.none,
+			scripts_utils_stagger_types.none,
+			scripts_utils_stagger_types.weak
 		},
 		bot_threats = {
 			{
@@ -632,8 +637,9 @@ local var_0_5 = {
 				start_time = 0.16666666666666666
 			}
 		},
-		hit_player_func = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
-			if arg_3_3 then
+		hit_player_func = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			-- function 3
+			if not arg_3_3 then
 				arg_3_1.has_dealt_damage = true
 			end
 		end
@@ -646,7 +652,7 @@ local var_0_5 = {
 		allow_friendly_fire = true,
 		attack_intensity_type = "combo",
 		action_weight = 1,
-		difficulty_attack_intensity = var_0_4,
+		difficulty_attack_intensity = tbl_3,
 		considerations = UtilityConsiderations.rat_ogre_combo,
 		attacks = {
 			{
@@ -668,7 +674,7 @@ local var_0_5 = {
 				attack_anim = {
 					"attack_combo_fwd"
 				},
-				push_units_in_the_way = var_0_3,
+				push_units_in_the_way = tbl_2,
 				bot_threats = {
 					{
 						range = 3.5,
@@ -691,8 +697,9 @@ local var_0_5 = {
 						start_time = 1.9333333333333333
 					}
 				},
-				hit_player_func = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
-					if arg_4_5 then
+				hit_player_func = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+					-- function 4
+					if not arg_4_5 then
 						arg_4_1.has_dealt_damage = true
 					end
 				end
@@ -718,7 +725,7 @@ local var_0_5 = {
 		action_weight = 1,
 		ignore_ai_damage = true,
 		damage_type = "cutting",
-		difficulty_attack_intensity = var_0_4,
+		difficulty_attack_intensity = tbl_3,
 		considerations = UtilityConsiderations.melee_shove,
 		attacks = {
 			{
@@ -763,11 +770,11 @@ local var_0_5 = {
 				push_ai = {
 					stagger_distance = 3,
 					stagger_impact = {
-						var_0_0.explosion,
-						var_0_0.heavy,
-						var_0_0.none,
-						var_0_0.none,
-						var_0_0.explosion
+						scripts_utils_stagger_types.explosion,
+						scripts_utils_stagger_types.heavy,
+						scripts_utils_stagger_types.none,
+						scripts_utils_stagger_types.none,
+						scripts_utils_stagger_types.explosion
 					},
 					stagger_duration = {
 						4.5,
@@ -777,7 +784,7 @@ local var_0_5 = {
 						4
 					}
 				},
-				bot_threat_difficulty_data = var_0_1,
+				bot_threat_difficulty_data = BotConstants,
 				bot_threats = {
 					attack_shove_left = {
 						{
@@ -804,8 +811,9 @@ local var_0_5 = {
 						}
 					}
 				},
-				hit_player_func = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
-					if arg_5_5 then
+				hit_player_func = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+					-- function 5
+					if not arg_5_5 then
 						arg_5_1.has_dealt_damage = true
 					end
 				end
@@ -854,11 +862,11 @@ local var_0_5 = {
 				push_ai = {
 					stagger_distance = 3,
 					stagger_impact = {
-						var_0_0.explosion,
-						var_0_0.heavy,
-						var_0_0.none,
-						var_0_0.none,
-						var_0_0.explosion
+						scripts_utils_stagger_types.explosion,
+						scripts_utils_stagger_types.heavy,
+						scripts_utils_stagger_types.none,
+						scripts_utils_stagger_types.none,
+						scripts_utils_stagger_types.explosion
 					},
 					stagger_duration = {
 						4.5,
@@ -868,8 +876,9 @@ local var_0_5 = {
 						4
 					}
 				},
-				hit_player_func = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
-					if arg_6_5 then
+				hit_player_func = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+					-- function 6
+					if not arg_6_5 then
 						arg_6_1.has_dealt_damage = true
 					end
 				end
@@ -883,7 +892,7 @@ local var_0_5 = {
 	jump_slam = {
 		attack_intensity_type = "jump_slam",
 		action_weight = 1,
-		difficulty_attack_intensity = var_0_4,
+		difficulty_attack_intensity = tbl_3,
 		considerations = UtilityConsiderations.jump_slam,
 		bot_threats = {
 			{
@@ -908,10 +917,10 @@ local var_0_5 = {
 		catapulted_player_speed = 7,
 		difficulty_damage = BreedTweaks.difficulty_damage.boss_slam_attack,
 		stagger_impact = {
-			var_0_0.weak,
-			var_0_0.medium,
-			var_0_0.none,
-			var_0_0.none
+			scripts_utils_stagger_types.weak,
+			scripts_utils_stagger_types.medium,
+			scripts_utils_stagger_types.none,
+			scripts_utils_stagger_types.none
 		}
 	},
 	climb = {
@@ -995,8 +1004,8 @@ local var_0_5 = {
 	}
 }
 
-var_0_5.anti_ladder_melee_slam = table.clone(var_0_5.melee_slam)
-var_0_5.anti_ladder_melee_slam.considerations = UtilityConsiderations.anti_ladder_melee_slam
-var_0_5.fling_skaven = table.clone(var_0_5.melee_shove)
-var_0_5.fling_skaven.self_running_speed_threshold = 2
-BreedActions.skaven_rat_ogre = table.create_copy(BreedActions.skaven_rat_ogre, var_0_5)
+tbl_4.anti_ladder_melee_slam = table.clone(tbl_4.melee_slam)
+tbl_4.anti_ladder_melee_slam.considerations = UtilityConsiderations.anti_ladder_melee_slam
+tbl_4.fling_skaven = table.clone(tbl_4.melee_shove)
+tbl_4.fling_skaven.self_running_speed_threshold = 2
+BreedActions.skaven_rat_ogre = table.create_copy(BreedActions.skaven_rat_ogre, tbl_4)

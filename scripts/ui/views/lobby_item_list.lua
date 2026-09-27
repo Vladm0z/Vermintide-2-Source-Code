@@ -4,95 +4,95 @@ require("foundation/scripts/util/local_require")
 require("scripts/managers/telemetry/iso_country_names")
 require("scripts/settings/level_settings")
 
-local var_0_0 = UISettings.game_start_windows
-local var_0_1 = var_0_0.background
-local var_0_2 = var_0_0.frame
-local var_0_3 = var_0_0.size
-local var_0_4 = var_0_0.spacing
-local var_0_5 = UIFrameSettings[var_0_2].texture_sizes.vertical[1]
-local var_0_6 = UIFrameSettings[var_0_2].texture_sizes.horizontal[2]
-local var_0_7 = var_0_3[1] + var_0_4
-local var_0_8 = var_0_3[1] - (var_0_5 * 2 + 60)
-local var_0_9 = var_0_0.large_window_frame
-local var_0_10 = UIFrameSettings[var_0_9].texture_sizes.vertical[1]
-local var_0_11 = {
-	var_0_3[1] * 3 + var_0_4 * 2 + var_0_10 * 2,
-	var_0_3[2] + var_0_10 * 2
+local game_start_windows = UISettings.game_start_windows
+local background = game_start_windows.background
+local frame = game_start_windows.frame
+local size = game_start_windows.size
+local spacing = game_start_windows.spacing
+local var_0_5 = UIFrameSettings[frame].texture_sizes.vertical[1]
+local var_0_6 = UIFrameSettings[frame].texture_sizes.horizontal[2]
+local num = size[1] + spacing
+local num_2 = size[1] - (var_0_5 * 2 + 60)
+local large_window_frame = game_start_windows.large_window_frame
+local var_0_10 = UIFrameSettings[large_window_frame].texture_sizes.vertical[1]
+local tbl = {
+	size[1] * 3 + spacing * 2 + var_0_10 * 2,
+	size[2] + var_0_10 * 2
 }
-local var_0_12 = {
+local tbl_2 = {
 	400,
-	var_0_11[2]
+	tbl[2]
 }
-local var_0_13 = {
+local tbl_3 = {
 	400,
-	var_0_11[2]
+	tbl[2]
 }
-local var_0_14 = {
-	var_0_11[1] - var_0_12[1] - var_0_13[1] + 12,
-	var_0_11[2] - 60
+local tbl_4 = {
+	tbl[1] - tbl_2[1] - tbl_3[1] + 12,
+	tbl[2] - 60
 }
-local var_0_15 = {
+local tbl_5 = {
 	height_spacing = 7,
 	height = 45,
-	width = var_0_14[1] - 50
+	width = tbl_4[1] - 50
 }
-local var_0_16 = {
+local tbl_6 = {
 	font_size = 18
 }
-local var_0_17 = 22
-local var_0_18 = 100
-local var_0_19 = 5
-local var_0_20 = {
+local num_3 = 22
+local num_4 = 100
+local num_5 = 5
+local tbl_7 = {
 	20,
 	0,
 	2
 }
-local var_0_21 = {
-	var_0_14[1] * 0.3,
+local tbl_8 = {
+	tbl_4[1] * 0.3,
 	0,
 	2
 }
-local var_0_22 = {
-	var_0_14[1] * 0.6,
+local tbl_9 = {
+	tbl_4[1] * 0.6,
 	0,
 	2
 }
-local var_0_23 = {
-	var_0_14[1] * 0.8,
+local tbl_10 = {
+	tbl_4[1] * 0.8,
 	0,
 	2
 }
-local var_0_24 = {
-	var_0_14[1] * 0.6,
+local tbl_11 = {
+	tbl_4[1] * 0.6,
 	0,
 	2
 }
-local var_0_25 = {
+local tbl_12 = {
 	-5,
 	0,
 	2
 }
-local var_0_26 = {
+local tbl_13 = {
 	-50,
 	0,
 	2
 }
-local var_0_27 = {
-	var_0_21[1] - 25,
+local tbl_14 = {
+	tbl_8[1] - 25,
 	10,
 	3
 }
-local var_0_28 = {
-	var_0_22[1] - 25,
+local tbl_15 = {
+	tbl_9[1] - 25,
 	10,
 	3
 }
-local var_0_29 = {
-	var_0_24[1] - 25,
+local tbl_16 = {
+	tbl_11[1] - 25,
 	10,
 	3
 }
-local var_0_30 = {
+local tbl_17 = {
 	scenegraph_definition = {
 		root = {
 			is_root = true,
@@ -124,7 +124,7 @@ local var_0_30 = {
 			vertical_alignment = "center",
 			parent = "menu_root",
 			horizontal_alignment = "center",
-			size = var_0_11,
+			size = tbl,
 			position = {
 				0,
 				0,
@@ -136,11 +136,11 @@ local var_0_30 = {
 			parent = "window",
 			horizontal_alignment = "left",
 			size = {
-				var_0_14[1],
-				var_0_14[2]
+				tbl_4[1],
+				tbl_4[2]
 			},
 			position = {
-				var_0_12[1] + 8,
+				tbl_2[1] + 8,
 				12,
 				1
 			}
@@ -150,8 +150,8 @@ local var_0_30 = {
 			parent = "item_list",
 			horizontal_alignment = "left",
 			size = {
-				var_0_14[1] - 16,
-				var_0_14[2] + 7
+				tbl_4[1] - 16,
+				tbl_4[2] + 7
 			},
 			position = {
 				-4,
@@ -211,7 +211,7 @@ local var_0_30 = {
 				0
 			},
 			size = {
-				var_0_14[1],
+				tbl_4[1],
 				40
 			}
 		},
@@ -219,7 +219,7 @@ local var_0_30 = {
 			vertical_alignment = "top",
 			parent = "label_root",
 			horizontal_alignment = "left",
-			position = var_0_20,
+			position = tbl_7,
 			size = {
 				100,
 				40
@@ -228,7 +228,7 @@ local var_0_30 = {
 		level_text_button = {
 			parent = "label_root",
 			horizontal_alignment = "left",
-			position = var_0_21,
+			position = tbl_8,
 			size = {
 				100,
 				40
@@ -237,7 +237,7 @@ local var_0_30 = {
 		difficulty_text_button = {
 			parent = "label_root",
 			horizontal_alignment = "left",
-			position = var_0_22,
+			position = tbl_9,
 			size = {
 				130,
 				40
@@ -246,7 +246,7 @@ local var_0_30 = {
 		players_text_button = {
 			parent = "label_root",
 			horizontal_alignment = "left",
-			position = var_0_23,
+			position = tbl_10,
 			size = {
 				120,
 				40
@@ -271,7 +271,8 @@ local var_0_30 = {
 							{
 								pass_type = "on_click",
 								click_check_content_id = "button_hotspot",
-								click_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+								click_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+									-- function 1
 									arg_1_2.button_hotspot.is_selected = true
 								end
 							},
@@ -284,46 +285,60 @@ local var_0_30 = {
 								pass_type = "texture",
 								style_id = "background",
 								texture_id = "background_normal_hover",
-								content_check_function = function(arg_2_0)
-									local var_2_0 = arg_2_0.button_hotspot
+								content_check_function = function (self)
+									-- function 2
+									local button_hotspot = self.button_hotspot
+									local is_hover = button_hotspot.is_hover
 
-									return var_2_0.is_hover and not var_2_0.is_selected
+									is_hover = not is_hover and not button_hotspot.is_selected
+
+									return is_hover
 								end
 							},
 							{
 								pass_type = "texture",
 								style_id = "background",
 								texture_id = "background_selected",
-								content_check_function = function(arg_3_0)
-									local var_3_0 = arg_3_0.button_hotspot
+								content_check_function = function (self)
+									-- function 3
+									local button_hotspot = self.button_hotspot
+									local is_selected = button_hotspot.is_selected
 
-									return var_3_0.is_selected and not var_3_0.is_hover
+									is_selected = not is_selected and not button_hotspot.is_hover
+
+									return is_selected
 								end
 							},
 							{
 								pass_type = "texture",
 								style_id = "background",
 								texture_id = "background_selected_hover",
-								content_check_function = function(arg_4_0)
-									local var_4_0 = arg_4_0.button_hotspot
+								content_check_function = function (self)
+									-- function 4
+									local button_hotspot = self.button_hotspot
+									local is_selected = button_hotspot.is_selected
 
-									return var_4_0.is_selected and var_4_0.is_hover
+									is_selected = not is_selected and button_hotspot.is_hover
+
+									return is_selected
 								end
 							},
 							{
 								pass_type = "texture",
 								style_id = "locked_level",
 								texture_id = "locked_level",
-								content_check_function = function(arg_5_0)
-									return arg_5_0.level_is_locked
+								content_check_function = function (self)
+									-- function 5
+									return self.level_is_locked
 								end
 							},
 							{
 								pass_type = "texture",
 								style_id = "locked_difficulty",
 								texture_id = "locked_difficulty",
-								content_check_function = function(arg_6_0)
-									return arg_6_0.difficulty_is_locked
+								content_check_function = function (self)
+									-- function 6
+									return self.difficulty_is_locked
 								end
 							},
 							{
@@ -384,10 +399,10 @@ local var_0_30 = {
 			0,
 			0
 		}),
-		host_text_button = UIWidgets.create_text_button("host_text_button", "lb_host", var_0_16.font_size),
-		level_text_button = UIWidgets.create_text_button("level_text_button", "lb_level", var_0_16.font_size),
-		difficulty_text_button = UIWidgets.create_text_button("difficulty_text_button", "lb_difficulty", var_0_16.font_size),
-		players_text_button = UIWidgets.create_text_button("players_text_button", "lb_players", var_0_16.font_size),
+		host_text_button = UIWidgets.create_text_button("host_text_button", "lb_host", tbl_6.font_size),
+		level_text_button = UIWidgets.create_text_button("level_text_button", "lb_level", tbl_6.font_size),
+		difficulty_text_button = UIWidgets.create_text_button("difficulty_text_button", "lb_difficulty", tbl_6.font_size),
+		players_text_button = UIWidgets.create_text_button("players_text_button", "lb_players", tbl_6.font_size),
 		loading_overlay = UIWidgets.create_simple_rect("loading_overlay", {
 			100,
 			0,
@@ -402,23 +417,25 @@ local var_0_30 = {
 	}
 }
 
-local function var_0_31(arg_7_0, arg_7_1)
-	local var_7_0 = var_0_30.widget_definitions.inventory_list_widget
-	local var_7_1 = var_7_0.element.passes[2]
-	local var_7_2 = var_7_0.style.hover
-	local var_7_3 = var_7_2.size
-	local var_7_4 = var_7_2.offset
+local function fn(arg_7_0, arg_7_1)
+	-- function 7
+	local inventory_list_widget = tbl_17.widget_definitions.inventory_list_widget
+	local var_7_1 = inventory_list_widget.element.passes[2]
+	local hover = inventory_list_widget.style.hover
+	local size = hover.size
+	local offset = hover.offset
 
-	var_7_3[1] = arg_7_0
-	var_7_3[2] = arg_7_1
-	var_7_4[2] = 0
+	size[1] = arg_7_0
+	size[2] = arg_7_1
+	offset[2] = 0
 end
 
-local function var_0_32(arg_8_0, arg_8_1)
-	var_0_30.scenegraph_definition.scrollbar_root.size[2] = arg_8_1
+local function fn_2(arg_8_0, arg_8_1)
+	-- function 8
+	tbl_17.scenegraph_definition.scrollbar_root.size[2] = arg_8_1
 
-	local var_8_0 = "mouse_scroll_field"
-	local var_8_1 = {
+	local str = "mouse_scroll_field"
+	local tbl = {
 		horizontal_alignment = "right",
 		position = {
 			0,
@@ -431,18 +448,22 @@ local function var_0_32(arg_8_0, arg_8_1)
 		}
 	}
 
-	var_8_1.parent = "scrollbar_root"
-	var_0_30.scenegraph_definition[var_8_0] = var_8_1
-	var_0_30.widget_definitions.scroll_field = {
+	tbl.parent = "scrollbar_root"
+	tbl_17.scenegraph_definition[str] = tbl
+	tbl_17.widget_definitions.scroll_field = {
 		element = {
 			passes = {
 				{
 					pass_type = "scroll",
-					scroll_function = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
-						local var_9_0 = arg_9_2.scroll_step or 0.1
-						local var_9_1 = arg_9_2.internal_scroll_value + var_9_0 * -arg_9_4.y
+					scroll_function = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+						-- function 9
+						local scroll_step = arg_9_2.scroll_step
 
-						arg_9_2.internal_scroll_value = math.clamp(var_9_1, 0, 1)
+						scroll_step = scroll_step or 0.1
+
+						local num = arg_9_2.internal_scroll_value + scroll_step * -arg_9_4.y
+
+						arg_9_2.internal_scroll_value = math.clamp(num, 0, 1)
 					end
 				}
 			}
@@ -452,31 +473,35 @@ local function var_0_32(arg_8_0, arg_8_1)
 			internal_scroll_value = 0
 		},
 		style = {},
-		scenegraph_id = var_8_0
+		scenegraph_id = str
 	}
 end
 
-local function var_0_33(arg_10_0)
-	local var_10_0 = arg_10_0.selected_mission_id or arg_10_0.mission_id
-	local var_10_1 = arg_10_0.mechanism
-	local var_10_2 = tonumber(arg_10_0.matchmaking_type)
-	local var_10_3 = table.clone(NetworkLookup.matchmaking_types, true)
-	local var_10_4
+local function fn_3(self)
+	-- function 10
+	local selected_mission_id = self.selected_mission_id
 
-	var_10_4 = var_10_2 and var_10_3[var_10_2]
+	selected_mission_id = selected_mission_id or self.mission_id
 
-	if var_10_1 == "weave" then
-		if var_10_0 ~= "false" and arg_10_0.weave_quick_game == "false" then
-			local var_10_5 = string.split_deprecated(var_10_0, "_")
+	local mechanism = self.mechanism
+	local var_10_2 = tonumber(self.matchmaking_type)
+	local clone = table.clone(NetworkLookup.matchmaking_types, true)
+	local flag
 
-			return "Weave " .. var_10_5[2]
-		elseif arg_10_0.weave_quick_game == "true" then
+	flag = not var_10_2 and clone[var_10_2]
+
+	if mechanism == "weave" then
+		if not (selected_mission_id == "false" or self.weave_quick_game ~= "false") then
+			local split_deprecated = string.split_deprecated(selected_mission_id, "_")
+
+			return "Weave " .. split_deprecated[2]
+		elseif self.weave_quick_game == "true" then
 			return Localize("start_game_window_weave_quickplay_title")
 		else
 			return Localize("lb_unknown")
 		end
 	else
-		local var_10_6 = var_10_0
+		local var_10_6 = selected_mission_id
 		local var_10_7
 
 		if var_10_6 == "n/a" then
@@ -486,7 +511,7 @@ local function var_0_33(arg_10_0)
 		else
 			local var_10_8 = rawget(LevelSettings, var_10_6)
 
-			if var_10_8 then
+			if not var_10_8 then
 				var_10_7 = var_10_8.display_name
 			end
 		end
@@ -495,84 +520,133 @@ local function var_0_33(arg_10_0)
 	end
 end
 
-local function var_0_34(arg_11_0)
-	local var_11_0 = arg_11_0.selected_mission_id or arg_11_0.mission_id
-	local var_11_1 = Application.make_hash(var_11_0)
+local function fn_4(self)
+	-- function 11
+	local selected_mission_id = self.selected_mission_id
 
-	return Application.hex64_to_dec(var_11_1) or 0
+	selected_mission_id = selected_mission_id or self.mission_id
+
+	local make_hash = Application.make_hash(selected_mission_id)
+
+	return Application.hex64_to_dec(make_hash) or 0
 end
 
-local function var_0_35(arg_12_0)
-	local var_12_0 = arg_12_0.difficulty
-	local var_12_1 = var_12_0 and DifficultySettings[var_12_0]
-	local var_12_2 = var_12_0 and var_12_1.display_name
+local function fn_5(self)
+	-- function 12
+	local difficulty = self.difficulty
+	local flag = not difficulty and DifficultySettings[difficulty]
+	local flag_2 = not difficulty and flag.display_name
+	local var_12_3
 
-	return var_12_0 and Localize(var_12_2) or "-"
+	if not difficulty then
+		var_12_3 = Localize(flag_2)
+
+		if not var_12_3 then
+			-- Nothing
+		end
+	end
+
+	var_12_3 = "-"
+
+	::label_12_0::
+
+	return var_12_3
 end
 
-local function var_0_36(arg_13_0)
-	local var_13_0 = arg_13_0.difficulty
-	local var_13_1 = var_13_0 and DifficultySettings[var_13_0]
+local function fn_6(self)
+	-- function 13
+	local difficulty = self.difficulty
+	local flag = not difficulty and DifficultySettings[difficulty]
+	local rank
 
-	return var_13_0 and var_13_1.rank or 0
+	if not difficulty then
+		rank = flag.rank
+
+		if not rank then
+			-- Nothing
+		end
+	end
+
+	rank = 0
+
+	::label_13_0::
+
+	return rank
 end
 
-local function var_0_37(arg_14_0)
-	local var_14_0 = arg_14_0.country_code
+local function fn_7(self)
+	-- function 14
+	local country_code = self.country_code
+	local var_14_1
 
-	return var_14_0 and iso_countries[var_14_0] or ""
+	if not country_code then
+		var_14_1 = iso_countries[country_code]
+
+		if not var_14_1 then
+			-- Nothing
+		end
+	end
+
+	var_14_1 = ""
+
+	::label_14_0::
+
+	return var_14_1
 end
 
-local function var_0_38(arg_15_0)
-	local var_15_0 = Managers.player
-	local var_15_1 = var_15_0:local_player()
-	local var_15_2 = var_15_0:statistics_db()
-	local var_15_3 = var_15_1:stats_id()
-	local var_15_4 = arg_15_0.weave_quick_game == "true"
-	local var_15_5 = MatchmakingManager.is_lobby_private(arg_15_0)
-	local var_15_6 = arg_15_0.mechanism
-	local var_15_7 = var_15_6 and MechanismSettings[var_15_6]
+local function fn_8(self)
+	-- function 15
+	local player = Managers.player
+	local local_player = player:local_player()
+	local statistics_db = player:statistics_db()
+	local stats_id = local_player:stats_id()
+	local flag = self.weave_quick_game == "true"
+	local is_lobby_private = MatchmakingManager.is_lobby_private(self)
+	local mechanism = self.mechanism
+	local flag_2 = not mechanism and MechanismSettings[mechanism]
 
-	if var_15_5 then
+	if not is_lobby_private then
 		return true
 	end
 
-	local var_15_8 = arg_15_0.selected_mission_id or arg_15_0.mission_id
+	local selected_mission_id = self.selected_mission_id
 
-	if not var_15_8 then
+	selected_mission_id = selected_mission_id or self.mission_id
+
+	if not selected_mission_id then
 		return false
 	end
 
-	if not WeaveSettings.templates[var_15_8] then
-		local var_15_9 = rawget(LevelSettings, var_15_8)
+	if not WeaveSettings.templates[selected_mission_id] then
+		local var_15_9 = rawget(LevelSettings, selected_mission_id)
 
 		if not var_15_9 then
 			return true
 		end
 
-		if var_15_9.hub_level then
+		if not var_15_9.hub_level then
 			return false
 		end
 	end
 
-	if var_15_7 and var_15_7.extra_requirements_function and not var_15_7.extra_requirements_function() then
+	if not (not flag_2 and not flag_2.extra_requirements_function and flag_2.extra_requirements_function()) then
 		return true
 	end
 
-	if var_15_6 == "weave" then
-		if not var_15_4 then
-			local var_15_10 = false
-			local var_15_11 = var_15_8
+	if mechanism == "weave" then
+		if not flag then
+			local flag_3 = false
+			local var_15_11 = selected_mission_id
 
-			if LevelUnlockUtils.weave_disabled(var_15_11) then
+			if not LevelUnlockUtils.weave_disabled(var_15_11) then
 				return true
 			end
 
-			if LevelUnlockUtils.weave_unlocked(var_15_2, var_15_3, var_15_11, var_15_10) then
+			if not LevelUnlockUtils.weave_unlocked(statistics_db, stats_id, var_15_11, flag_3) then
 				return false
 			end
 
-			if LevelUnlockUtils.current_weave(var_15_2, var_15_3, var_15_10) == var_15_11 then
+			if LevelUnlockUtils.current_weave(statistics_db, stats_id, flag_3) == var_15_11 then
 				return false
 			end
 		end
@@ -580,51 +654,55 @@ local function var_0_38(arg_15_0)
 		return false
 	end
 
-	if not LevelUnlockUtils.level_unlocked(var_15_2, var_15_3, var_15_8) then
+	if not LevelUnlockUtils.level_unlocked(statistics_db, stats_id, selected_mission_id) then
 		return true
 	end
 end
 
-local function var_0_39(arg_16_0)
-	local var_16_0 = tonumber(arg_16_0.matchmaking_type)
+local function fn_9(self)
+	-- function 16
+	local var_16_0 = tonumber(self.matchmaking_type)
 	local var_16_1 = table.clone(NetworkLookup.matchmaking_types, true)[var_16_0]
 
-	if arg_16_0.mechanism == "weave" then
+	if self.mechanism == "weave" then
 		return false
 	end
 
-	local var_16_2 = arg_16_0.selected_mission_id or arg_16_0.mission_id
-	local var_16_3 = Managers.player
-	local var_16_4 = var_16_3:local_player()
-	local var_16_5 = var_16_3:statistics_db()
-	local var_16_6 = var_16_4:stats_id()
-	local var_16_7 = arg_16_0.difficulty
+	local selected_mission_id = self.selected_mission_id
 
-	if not var_16_7 or not var_16_2 then
+	selected_mission_id = selected_mission_id or self.mission_id
+
+	local player = Managers.player
+	local local_player = player:local_player()
+	local statistics_db = player:statistics_db()
+	local stats_id = local_player:stats_id()
+	local difficulty = self.difficulty
+
+	if not (not difficulty and selected_mission_id) then
 		return false
 	end
 
-	if var_16_7 then
-		local var_16_8 = DifficultySettings[var_16_7]
+	if not difficulty then
+		local var_16_8 = DifficultySettings[difficulty]
 
-		if var_16_8.extra_requirement_name then
+		if not var_16_8.extra_requirement_name then
 			local var_16_9 = ExtraDifficultyRequirements[var_16_8.extra_requirement_name]
 
-			if not Development.parameter("unlock_all_difficulties") and not var_16_9.requirement_function() then
+			if not (Development.parameter("unlock_all_difficulties") or var_16_9.requirement_function()) then
 				return true
 			end
 		end
 
-		if var_16_8.dlc_requirement and not Managers.unlock:is_dlc_unlocked(var_16_8.dlc_requirement) then
+		if not (not var_16_8.dlc_requirement and Managers.unlock:is_dlc_unlocked(var_16_8.dlc_requirement)) then
 			return true
 		end
 	end
 
-	if not MatchmakingManager.is_lobby_private(arg_16_0) then
-		local var_16_10 = var_16_4:profile_display_name()
-		local var_16_11 = var_16_4:career_name()
+	if not MatchmakingManager.is_lobby_private(self) then
+		local profile_display_name = local_player:profile_display_name()
+		local career_name = local_player:career_name()
 
-		if not Managers.matchmaking:has_required_power_level(arg_16_0, var_16_10, var_16_11) then
+		if not Managers.matchmaking:has_required_power_level(self, profile_display_name, career_name) then
 			return true
 		end
 	end
@@ -632,38 +710,65 @@ local function var_0_39(arg_16_0)
 	return false
 end
 
-local function var_0_40(arg_17_0)
-	local var_17_0 = Managers.matchmaking.get_matchmaking_settings_for_mechanism(arg_17_0.mechanism)
-	local var_17_1 = arg_17_0.num_players
-	local var_17_2 = arg_17_0.matchmaking
+local function fn_10(self)
+	-- function 17
+	local get_matchmaking_settings_for_mechanism = Managers.matchmaking.get_matchmaking_settings_for_mechanism(self.mechanism)
+	local num_players = self.num_players
+	local matchmaking = self.matchmaking
 
-	if not var_17_1 or not var_17_2 then
+	if not (not num_players and matchmaking) then
 		return false
 	end
 
-	local var_17_3 = arg_17_0.matchmaking == "false"
-	local var_17_4 = arg_17_0.num_players == var_17_0.MAX_NUMBER_OF_PLAYERS
+	local flag = self.matchmaking == "false"
+	local flag_2 = self.num_players == get_matchmaking_settings_for_mechanism.MAX_NUMBER_OF_PLAYERS
 
-	return arg_17_0.is_broken or var_17_4 or var_17_3
+	return self.is_broken or flag_2 or flag
 end
 
-local var_0_41 = UIFrameSettings.menu_frame_12
+local menu_frame_12 = UIFrameSettings.menu_frame_12
 
-local function var_0_42(arg_18_0)
-	local var_18_0 = Network.peer_id()
-	local var_18_1 = arg_18_0.host
-	local var_18_2 = arg_18_0.server_name or arg_18_0.unique_server_name or arg_18_0.name or arg_18_0.host
+local function fn_11(self)
+	-- function 18
+	local peer_id = Network.peer_id()
+	local host = self.host
+	local server_name = self.server_name
 
-	if var_18_1 == var_18_0 or not var_18_2 then
+	if not server_name then
+		server_name = self.unique_server_name
+
+		if not server_name then
+			server_name = self.name
+			server_name = server_name or self.host
+		end
+	end
+
+	if not (host == peer_id or server_name) then
 		return
 	end
 
-	local var_18_3 = var_0_33(arg_18_0)
-	local var_18_4 = arg_18_0.num_players or 0
-	local var_18_5 = var_0_35(arg_18_0)
-	local var_18_6 = LobbyItemsList.lobby_status_text(arg_18_0)
-	local var_18_7 = not arg_18_0.valid and "[INV]" .. var_18_6 or var_18_6
-	local var_18_8 = var_0_37(arg_18_0)
+	local var_18_3 = fn_3(self)
+	local num_players = self.num_players
+
+	num_players = num_players or 0
+
+	local var_18_5 = fn_5(self)
+	local lobby_status_text = LobbyItemsList.lobby_status_text(self)
+	local str
+
+	if not not self.valid then
+		str = "[INV]" .. lobby_status_text
+
+		if not str then
+			-- Nothing
+		end
+	end
+
+	str = lobby_status_text
+
+	::label_18_0::
+
+	local var_18_8 = fn_7(self)
 
 	return {
 		locked_difficulty = "locked_icon_01",
@@ -675,21 +780,22 @@ local function var_0_42(arg_18_0)
 		background_normal = "lb_list_item_normal",
 		locked_level = "locked_icon_01",
 		button_hotspot = {},
-		lobby_data = arg_18_0,
-		title_text = var_18_2,
+		lobby_data = self,
+		title_text = server_name,
 		level_text = var_18_3,
 		difficulty_text = var_18_5,
-		num_players_text = var_18_4 .. "/4",
-		status_text = var_18_7,
+		num_players_text = num_players .. "/4",
+		status_text = str,
 		country_text = var_18_8,
-		level_is_locked = var_0_38(arg_18_0),
-		difficulty_is_locked = var_0_39(arg_18_0),
-		status_is_locked = var_0_40(arg_18_0),
-		frame = var_0_41.texture
+		level_is_locked = fn_8(self),
+		difficulty_is_locked = fn_9(self),
+		status_is_locked = fn_10(self),
+		frame = menu_frame_12.texture
 	}
 end
 
-local function var_0_43()
+local function fn_12()
+	-- function 19
 	return {
 		difficulty_text = "",
 		title_text = "",
@@ -705,15 +811,16 @@ local function var_0_43()
 		button_hotspot = {
 			allow_multi_hover = true
 		},
-		frame = var_0_41.texture
+		frame = menu_frame_12.texture
 	}
 end
 
-local function var_0_44()
+local function fn_13()
+	-- function 20
 	return {
 		frame = {
-			texture_size = var_0_41.texture_size,
-			texture_sizes = var_0_41.texture_sizes,
+			texture_size = menu_frame_12.texture_size,
+			texture_sizes = menu_frame_12.texture_sizes,
 			color = {
 				255,
 				255,
@@ -721,8 +828,8 @@ local function var_0_44()
 				255
 			},
 			size = {
-				var_0_15.width,
-				var_0_15.height
+				tbl_5.width,
+				tbl_5.height
 			},
 			offset = {
 				0,
@@ -732,8 +839,8 @@ local function var_0_44()
 		},
 		background = {
 			size = {
-				var_0_15.width,
-				var_0_15.height
+				tbl_5.width,
+				tbl_5.height
 			},
 			offset = {
 				0,
@@ -746,33 +853,33 @@ local function var_0_44()
 				20,
 				26
 			},
-			offset = var_0_27
+			offset = tbl_14
 		},
 		locked_difficulty = {
 			size = {
 				20,
 				26
 			},
-			offset = var_0_28
+			offset = tbl_15
 		},
 		locked_status = {
 			size = {
 				20,
 				26
 			},
-			offset = var_0_29
+			offset = tbl_16
 		},
 		title_text = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
 			font_type = "arial",
 			size = {
-				var_0_15.width,
-				var_0_15.height
+				tbl_5.width,
+				tbl_5.height
 			},
 			text_color = Colors.color_definitions.white,
-			font_size = var_0_16.font_size,
-			offset = var_0_20
+			font_size = tbl_6.font_size,
+			offset = tbl_7
 		},
 		level_text = {
 			word_wrap = false,
@@ -781,43 +888,43 @@ local function var_0_44()
 			dynamic_font_size = true,
 			font_type = "arial",
 			size = {
-				var_0_15.width,
-				var_0_15.height
+				tbl_5.width,
+				tbl_5.height
 			},
 			text_color = Colors.color_definitions.white,
-			font_size = var_0_16.font_size,
+			font_size = tbl_6.font_size,
 			area_size = {
 				240,
 				50
 			},
-			offset = var_0_21
+			offset = tbl_8
 		},
 		difficulty_text = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
 			font_type = "arial",
 			size = {
-				var_0_15.width,
-				var_0_15.height
+				tbl_5.width,
+				tbl_5.height
 			},
 			text_color = Colors.color_definitions.white,
-			font_size = var_0_16.font_size,
-			offset = var_0_22
+			font_size = tbl_6.font_size,
+			offset = tbl_9
 		},
 		num_players_text = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
 			font_type = "arial",
 			size = {
-				var_0_15.width,
-				var_0_15.height
+				tbl_5.width,
+				tbl_5.height
 			},
 			text_color = Colors.color_definitions.white,
-			font_size = var_0_16.font_size,
+			font_size = tbl_6.font_size,
 			offset = {
-				var_0_23[1] + 5,
-				var_0_23[2],
-				var_0_23[3]
+				tbl_10[1] + 5,
+				tbl_10[2],
+				tbl_10[3]
 			}
 		},
 		status_text = {
@@ -825,386 +932,525 @@ local function var_0_44()
 			horizontal_alignment = "left",
 			font_type = "arial",
 			size = {
-				var_0_15.width,
-				var_0_15.height
+				tbl_5.width,
+				tbl_5.height
 			},
 			text_color = Colors.color_definitions.white,
-			font_size = var_0_16.font_size,
-			offset = var_0_24
+			font_size = tbl_6.font_size,
+			offset = tbl_11
 		},
 		country_text = {
 			vertical_alignment = "center",
 			horizontal_alignment = "right",
 			font_type = "arial",
 			size = {
-				var_0_15.width,
-				var_0_15.height
+				tbl_5.width,
+				tbl_5.height
 			},
 			text_color = Colors.color_definitions.white,
-			font_size = var_0_16.font_size,
-			offset = var_0_25
+			font_size = tbl_6.font_size,
+			offset = tbl_12
 		}
 	}
 end
 
 LobbyItemsList = class(LobbyItemsList)
 
-function LobbyItemsList.init(arg_21_0, arg_21_1, arg_21_2)
-	arg_21_0.ui_renderer = arg_21_1.ui_top_renderer
-	arg_21_0.input_manager = arg_21_1.input_manager
+LobbyItemsList.init = function (self, arg_21_1, arg_21_2)
+	-- function 21
+	self.ui_renderer = arg_21_1.ui_top_renderer
+	self.input_manager = arg_21_1.input_manager
 
-	local var_21_0 = arg_21_2.num_list_items
+	local num_list_items = arg_21_2.num_list_items
 
-	if arg_21_2.use_top_renderer then
-		arg_21_0.ui_renderer = arg_21_1.ui_top_renderer
+	if not arg_21_2.use_top_renderer then
+		self.ui_renderer = arg_21_1.ui_top_renderer
 	else
-		arg_21_0.ui_renderer = arg_21_1.ui_renderer
+		self.ui_renderer = arg_21_1.ui_renderer
 	end
 
-	arg_21_0.world_manager = arg_21_1.world_manager
+	self.world_manager = arg_21_1.world_manager
 
-	local var_21_1 = arg_21_0.world_manager:world("level_world")
+	local world = self.world_manager:world("level_world")
 
-	arg_21_0.wwise_world = Managers.world:wwise_world(var_21_1)
+	self.wwise_world = Managers.world:wwise_world(world)
 
-	local var_21_2 = var_0_30.scenegraph_definition
-	local var_21_3 = var_21_2.item_list
-	local var_21_4 = var_21_3.size[1]
-	local var_21_5 = var_21_3.size[2]
+	local scenegraph_definition = tbl_17.scenegraph_definition
+	local item_list = scenegraph_definition.item_list
+	local var_21_4 = item_list.size[1]
+	local var_21_5 = item_list.size[2]
 
 	arg_21_2.list_size = {
-		var_21_3.size[1],
-		var_21_3.size[2]
+		item_list.size[1],
+		item_list.size[2]
 	}
 
-	var_0_32(var_21_4, var_21_5)
-	var_0_31(var_21_4, var_21_5)
+	fn_2(var_21_4, var_21_5)
+	fn(var_21_4, var_21_5)
 
-	arg_21_0.settings = arg_21_2
-	arg_21_0.widget_definitions = var_0_30.widget_definitions
-	arg_21_0.bar_animations = {}
-	arg_21_0.inventory_list_animations = {}
-	arg_21_0.scenegraph_definition = var_21_2
-	arg_21_0.lobby_list = {}
-	arg_21_0.input_service_name = arg_21_2.input_service_name
+	self.settings = arg_21_2
+	self.widget_definitions = tbl_17.widget_definitions
+	self.bar_animations = {}
+	self.inventory_list_animations = {}
+	self.scenegraph_definition = scenegraph_definition
+	self.lobby_list = {}
+	self.input_service_name = arg_21_2.input_service_name
 
-	arg_21_0:create_ui_elements(arg_21_2.offset)
+	self:create_ui_elements(arg_21_2.offset)
 
-	arg_21_0.list_style = {
+	self.list_style = {
 		vertical_alignment = "top",
 		scenegraph_id = "item_list",
 		size = arg_21_2.list_size,
 		list_member_offset = {
 			0,
-			-(var_0_15.height + var_0_15.height_spacing),
+			-(tbl_5.height + tbl_5.height_spacing),
 			0
 		},
 		item_styles = {}
 	}
-	arg_21_0.selected_list_index = 1
+	self.selected_list_index = 1
 end
 
-function LobbyItemsList.destroy(arg_22_0)
+LobbyItemsList.destroy = function (arg_22_0)
+	-- function 22
 	return
 end
 
-function LobbyItemsList.lobby_status_text(arg_23_0)
-	local var_23_0 = arg_23_0.server_info ~= nil
-	local var_23_1 = Managers.matchmaking.get_matchmaking_settings_for_mechanism(arg_23_0.mechanism)
-	local var_23_2 = arg_23_0.mission_id
-	local var_23_3 = var_23_0 and arg_23_0.server_info.password or not var_23_0 and arg_23_0.matchmaking == "false"
-	local var_23_4 = arg_23_0.num_players == var_23_1.MAX_NUMBER_OF_PLAYERS
-	local var_23_5 = tonumber(arg_23_0.matchmaking_type)
-	local var_23_6 = table.clone(NetworkLookup.matchmaking_types, true)
-	local var_23_7 = var_23_5 and var_23_6[var_23_5]
-	local var_23_8 = var_23_2
+LobbyItemsList.lobby_status_text = function (self)
+	-- function 23
+	local flag = self.server_info ~= nil
+	local get_matchmaking_settings_for_mechanism = Managers.matchmaking.get_matchmaking_settings_for_mechanism(self.mechanism)
+	local mission_id = self.mission_id
+	local password
 
-	if var_23_7 == "weave" then
-		local var_23_9 = WeaveSettings.templates[var_23_2]
+	if not flag then
+		password = self.server_info.password
 
-		if var_23_9 then
-			local var_23_10 = var_23_9.objectives[1].level_id
+		if not password then
+			-- Nothing
 		end
 	end
 
-	local var_23_11 = LevelSettings[var_23_2].hub_level
-	local var_23_12 = arg_23_0.is_broken and "lb_broken" or var_23_3 and "lb_private" or var_23_4 and "lb_full" or var_23_11 and "lb_in_inn" or "lb_started"
+	password = not not flag or self.matchmaking == "false"
 
-	return var_23_12 and Localize(var_23_12) or ""
+	::label_23_0::
+
+	local flag_2 = self.num_players == get_matchmaking_settings_for_mechanism.MAX_NUMBER_OF_PLAYERS
+	local var_23_5 = tonumber(self.matchmaking_type)
+	local clone = table.clone(NetworkLookup.matchmaking_types, true)
+	local flag_3 = not var_23_5 and clone[var_23_5]
+	local var_23_8 = mission_id
+
+	if flag_3 == "weave" then
+		local var_23_9 = WeaveSettings.templates[mission_id]
+
+		if not var_23_9 then
+			local level_id = var_23_9.objectives[1].level_id
+		end
+	end
+
+	local hub_level = LevelSettings[mission_id].hub_level
+	local flag_4
+
+	flag_4 = not self.is_broken and "lb_broken" and not password or "lb_private" and (not flag_2 and "lb_full" and not hub_level or "lb_in_inn" and "lb_started")
+
+	local var_23_13
+
+	if not flag_4 then
+		var_23_13 = Localize(flag_4)
+
+		if not var_23_13 then
+			-- Nothing
+		end
+	end
+
+	var_23_13 = ""
+
+	::label_23_1::
+
+	return var_23_13
 end
 
-function LobbyItemsList.create_ui_elements(arg_24_0, arg_24_1)
-	arg_24_0.ui_scenegraph = UISceneGraph.init_scenegraph(arg_24_0.scenegraph_definition)
+LobbyItemsList.create_ui_elements = function (self, arg_24_1)
+	-- function 24
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(self.scenegraph_definition)
 
-	local var_24_0 = "scrollbar_root"
-	local var_24_1 = arg_24_0.scenegraph_definition[var_24_0]
+	local str = "scrollbar_root"
+	local var_24_1 = self.scenegraph_definition[str]
 
-	arg_24_0.scrollbar_widget = UIWidget.init(UIWidgets.create_scrollbar(var_24_0, var_24_1.size))
-	arg_24_0.item_list_widget = UIWidget.init(arg_24_0.widget_definitions.inventory_list_widget)
-	arg_24_0.scroll_field_widget = UIWidget.init(arg_24_0.widget_definitions.scroll_field)
-	arg_24_0.test = UIWidget.init(arg_24_0.widget_definitions.test)
-	arg_24_0.window = UIWidget.init(arg_24_0.widget_definitions.window)
-	arg_24_0.host_text_button = UIWidget.init(arg_24_0.widget_definitions.host_text_button)
-	arg_24_0.level_text_button = UIWidget.init(arg_24_0.widget_definitions.level_text_button)
-	arg_24_0.difficulty_text_button = UIWidget.init(arg_24_0.widget_definitions.difficulty_text_button)
-	arg_24_0.players_text_button = UIWidget.init(arg_24_0.widget_definitions.players_text_button)
-	arg_24_0.loading_overlay = UIWidget.init(arg_24_0.widget_definitions.loading_overlay)
-	arg_24_0.loading_icon = UIWidget.init(arg_24_0.widget_definitions.loading_icon)
-	arg_24_0.loading_text = UIWidget.init(arg_24_0.widget_definitions.loading_text)
+	self.scrollbar_widget = UIWidget.init(UIWidgets.create_scrollbar(str, var_24_1.size))
+	self.item_list_widget = UIWidget.init(self.widget_definitions.inventory_list_widget)
+	self.scroll_field_widget = UIWidget.init(self.widget_definitions.scroll_field)
+	self.test = UIWidget.init(self.widget_definitions.test)
+	self.window = UIWidget.init(self.widget_definitions.window)
+	self.host_text_button = UIWidget.init(self.widget_definitions.host_text_button)
+	self.level_text_button = UIWidget.init(self.widget_definitions.level_text_button)
+	self.difficulty_text_button = UIWidget.init(self.widget_definitions.difficulty_text_button)
+	self.players_text_button = UIWidget.init(self.widget_definitions.players_text_button)
+	self.loading_overlay = UIWidget.init(self.widget_definitions.loading_overlay)
+	self.loading_icon = UIWidget.init(self.widget_definitions.loading_icon)
+	self.loading_text = UIWidget.init(self.widget_definitions.loading_text)
 
-	UIRenderer.clear_scenegraph_queue(arg_24_0.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
-	if arg_24_1 then
-		local var_24_2 = arg_24_0.ui_scenegraph.window.local_position
+	if not arg_24_1 then
+		local local_position = self.ui_scenegraph.window.local_position
 
-		var_24_2[1] = var_24_2[1] + arg_24_1[1]
-		var_24_2[2] = var_24_2[2] + arg_24_1[2]
-		var_24_2[3] = var_24_2[3] + arg_24_1[3]
+		local_position[1] = local_position[1] + arg_24_1[1]
+		local_position[2] = local_position[2] + arg_24_1[2]
+		local_position[3] = local_position[3] + arg_24_1[3]
 	end
 end
 
-local function var_0_45(arg_25_0, arg_25_1)
-	return (arg_25_0.server_name or arg_25_0.unique_server_name or arg_25_0.host or "") < (arg_25_1.server_name or arg_25_1.unique_server_name or arg_25_1.host or "")
+local function fn_14(self, arg_25_1)
+	-- function 25
+	local server_name = self.server_name
+
+	if not server_name then
+		server_name = self.unique_server_name
+
+		if not server_name then
+			server_name = self.host
+			server_name = server_name or ""
+		end
+	end
+
+	local server_name_2 = arg_25_1.server_name
+
+	if not server_name_2 then
+		server_name_2 = arg_25_1.unique_server_name
+
+		if not server_name_2 then
+			server_name_2 = arg_25_1.host
+			server_name_2 = server_name_2 or ""
+		end
+	end
+
+	return server_name < server_name_2
 end
 
-local function var_0_46(arg_26_0, arg_26_1)
-	return (arg_26_0.server_name or arg_26_0.unique_server_name or arg_26_0.host or "") > (arg_26_1.server_name or arg_26_1.unique_server_name or arg_26_1.host or "")
+local function fn_15(self, arg_26_1)
+	-- function 26
+	local server_name = self.server_name
+
+	if not server_name then
+		server_name = self.unique_server_name
+
+		if not server_name then
+			server_name = self.host
+			server_name = server_name or ""
+		end
+	end
+
+	local server_name_2 = arg_26_1.server_name
+
+	if not server_name_2 then
+		server_name_2 = arg_26_1.unique_server_name
+
+		if not server_name_2 then
+			server_name_2 = arg_26_1.host
+			server_name_2 = server_name_2 or ""
+		end
+	end
+
+	return server_name_2 < server_name
 end
 
-local function var_0_47(arg_27_0, arg_27_1)
-	local var_27_0 = arg_27_0.selected_mission_id or arg_27_0.mission_id or "lb_unknown"
-	local var_27_1 = arg_27_1.selected_mission_id or arg_27_1.mission_id or "lb_unknown"
+local function fn_16(self, arg_27_1)
+	-- function 27
+	local selected_mission_id = self.selected_mission_id
 
-	return Localize(var_27_0) < Localize(var_27_1)
+	if not selected_mission_id then
+		selected_mission_id = self.mission_id
+		selected_mission_id = selected_mission_id or "lb_unknown"
+	end
+
+	local selected_mission_id_2 = arg_27_1.selected_mission_id
+
+	if not selected_mission_id_2 then
+		selected_mission_id_2 = arg_27_1.mission_id
+		selected_mission_id_2 = selected_mission_id_2 or "lb_unknown"
+	end
+
+	return Localize(selected_mission_id) < Localize(selected_mission_id_2)
 end
 
-local function var_0_48(arg_28_0, arg_28_1)
-	local var_28_0 = var_0_34(arg_28_0)
-	local var_28_1 = var_0_34(arg_28_1)
-	local var_28_2 = arg_28_0.selected_mission_id or arg_28_0.mission_id or "lb_unknown"
-	local var_28_3 = arg_28_1.selected_mission_id or arg_28_1.mission_id or "lb_unknown"
+local function fn_17(self, arg_28_1)
+	-- function 28
+	local var_28_0 = fn_4(self)
+	local var_28_1 = fn_4(arg_28_1)
+	local selected_mission_id = self.selected_mission_id
 
-	return Localize(var_28_2) > Localize(var_28_3)
+	if not selected_mission_id then
+		selected_mission_id = self.mission_id
+		selected_mission_id = selected_mission_id or "lb_unknown"
+	end
+
+	local selected_mission_id_2 = arg_28_1.selected_mission_id
+
+	if not selected_mission_id_2 then
+		selected_mission_id_2 = arg_28_1.mission_id
+		selected_mission_id_2 = selected_mission_id_2 or "lb_unknown"
+	end
+
+	return Localize(selected_mission_id) > Localize(selected_mission_id_2)
 end
 
-local function var_0_49(arg_29_0, arg_29_1)
-	return var_0_36(arg_29_0) < var_0_36(arg_29_1)
+local function fn_18(arg_29_0, arg_29_1)
+	-- function 29
+	return fn_6(arg_29_0) < fn_6(arg_29_1)
 end
 
-local function var_0_50(arg_30_0, arg_30_1)
-	return var_0_36(arg_30_0) > var_0_36(arg_30_1)
+local function fn_19(arg_30_0, arg_30_1)
+	-- function 30
+	return fn_6(arg_30_0) > fn_6(arg_30_1)
 end
 
-local function var_0_51(arg_31_0, arg_31_1)
+local function fn_20(arg_31_0, arg_31_1)
+	-- function 31
 	return LobbyItemsList.lobby_status_text(arg_31_0) < LobbyItemsList.lobby_status_text(arg_31_1)
 end
 
-local function var_0_52(arg_32_0, arg_32_1)
+local function fn_21(arg_32_0, arg_32_1)
+	-- function 32
 	return LobbyItemsList.lobby_status_text(arg_32_0) > LobbyItemsList.lobby_status_text(arg_32_1)
 end
 
-local function var_0_53(arg_33_0, arg_33_1)
-	return (tonumber(arg_33_0.num_players) or 0) < (tonumber(arg_33_1.num_players) or 0)
+local function fn_22(self, arg_33_1)
+	-- function 33
+	local var_33_0 = tonumber(self.num_players)
+
+	var_33_0 = var_33_0 or 0
+
+	local var_33_1 = tonumber(arg_33_1.num_players)
+
+	var_33_1 = var_33_1 or 0
+
+	return var_33_0 < var_33_1
 end
 
-local function var_0_54(arg_34_0, arg_34_1)
-	return (tonumber(arg_34_0.num_players) or 0) > (tonumber(arg_34_1.num_players) or 0)
+local function fn_23(self, arg_34_1)
+	-- function 34
+	local var_34_0 = tonumber(self.num_players)
+
+	var_34_0 = var_34_0 or 0
+
+	local var_34_1 = tonumber(arg_34_1.num_players)
+
+	var_34_1 = var_34_1 or 0
+
+	return var_34_1 < var_34_0
 end
 
-local function var_0_55(arg_35_0, arg_35_1)
-	return var_0_37(arg_35_0) < var_0_37(arg_35_1)
+local function fn_24(arg_35_0, arg_35_1)
+	-- function 35
+	return fn_7(arg_35_0) < fn_7(arg_35_1)
 end
 
-local function var_0_56(arg_36_0, arg_36_1)
-	return var_0_37(arg_36_0) > var_0_37(arg_36_1)
+local function fn_25(arg_36_0, arg_36_1)
+	-- function 36
+	return fn_7(arg_36_0) > fn_7(arg_36_1)
 end
 
-function LobbyItemsList.update(arg_37_0, arg_37_1, arg_37_2)
-	if arg_37_2 then
-		if not arg_37_0._loading_previous_frame then
-			arg_37_0:loading_overlay_fade_in(180)
+LobbyItemsList.update = function (self, arg_37_1, arg_37_2)
+	-- function 37
+	if not arg_37_2 then
+		if not self._loading_previous_frame then
+			self:loading_overlay_fade_in(180)
 		end
 
-		arg_37_0:rotate_loading_icon(arg_37_1)
-	elseif arg_37_0._loading_previous_frame then
-		arg_37_0:loading_overlay_fade_out()
+		self:rotate_loading_icon(arg_37_1)
+	elseif not self._loading_previous_frame then
+		self:loading_overlay_fade_out()
 	end
 
-	arg_37_0._loading_previous_frame = arg_37_2
+	self._loading_previous_frame = arg_37_2
 
-	local var_37_0 = arg_37_0.item_list_widget
-	local var_37_1 = var_37_0.content.list_content
-	local var_37_2 = var_37_0.style.list_style
-	local var_37_3 = arg_37_0.selected_list_index
-	local var_37_4 = arg_37_0.hover_list_index
-	local var_37_5 = arg_37_0.number_of_items_in_list
-	local var_37_6 = arg_37_0.input_manager:is_device_active("gamepad")
+	local item_list_widget = self.item_list_widget
+	local list_content = item_list_widget.content.list_content
+	local list_style = item_list_widget.style.list_style
+	local selected_list_index = self.selected_list_index
+	local hover_list_index = self.hover_list_index
+	local number_of_items_in_list = self.number_of_items_in_list
+	local is_device_active = self.input_manager:is_device_active("gamepad")
 
-	arg_37_0.lobby_list_index_changed = nil
-	arg_37_0.inventory_list_index_pressed = nil
+	self.lobby_list_index_changed = nil
+	self.inventory_list_index_pressed = nil
 
-	local var_37_7 = #var_37_1
+	local count = #list_content
 
-	if var_37_6 then
-		if var_37_5 > 0 then
-			arg_37_0:update_gamepad_list_scroll()
+	if not is_device_active then
+		if number_of_items_in_list > 0 then
+			self:update_gamepad_list_scroll()
 		end
 	else
-		arg_37_0.gamepad_changed_selected_list_index = nil
+		self.gamepad_changed_selected_list_index = nil
 	end
 
-	for iter_37_0 = 1, var_37_7 do
-		local var_37_8 = var_37_1[iter_37_0]
-		local var_37_9 = var_37_8.button_hotspot
+	for i = 1, count do
+		local var_37_8 = list_content[i]
+		local button_hotspot = var_37_8.button_hotspot
 
 		if not var_37_8.fake then
-			if var_37_9.on_hover_enter then
-				arg_37_0:play_sound("Play_hud_hover")
+			if not button_hotspot.on_hover_enter then
+				self:play_sound("Play_hud_hover")
 
-				var_37_9.on_hover_enter = false
+				button_hotspot.on_hover_enter = false
 			end
 
-			if (var_37_9.is_selected or arg_37_0.gamepad_changed_selected_list_index == iter_37_0) and iter_37_0 ~= var_37_3 then
-				arg_37_0.lobby_list_index_changed = iter_37_0
+			if not ((button_hotspot.is_selected or self.gamepad_changed_selected_list_index == i) and i == selected_list_index) then
+				self.lobby_list_index_changed = i
 
-				arg_37_0:play_sound("Play_hud_select")
+				self:play_sound("Play_hud_select")
 
 				break
 			end
 		end
 	end
 
-	arg_37_0:update_scroll()
+	self:update_scroll()
 
-	local var_37_10 = arg_37_0.host_text_button.content.button_text
-	local var_37_11 = arg_37_0.level_text_button.content.button_text
-	local var_37_12 = arg_37_0.difficulty_text_button.content.button_text
-	local var_37_13 = arg_37_0.players_text_button.content.button_text
+	local button_text = self.host_text_button.content.button_text
+	local button_text_2 = self.level_text_button.content.button_text
+	local button_text_3 = self.difficulty_text_button.content.button_text
+	local button_text_4 = self.players_text_button.content.button_text
 
-	if var_37_10.on_hover_enter or var_37_11.on_hover_enter or var_37_12.on_hover_enter or var_37_13.on_hover_enter then
-		arg_37_0:play_sound("Play_hud_hover")
+	if button_text.on_hover_enter or button_text_2.on_hover_enter or button_text_3.on_hover_enter or not button_text_4.on_hover_enter then
+		self:play_sound("Play_hud_hover")
 	end
 
-	if var_37_10.on_pressed then
-		local var_37_14 = arg_37_0:_pick_sort_func(var_0_45, var_0_46)
-		local var_37_15 = arg_37_0.lobbies
+	if not button_text.on_pressed then
+		local _pick_sort_func = self:_pick_sort_func(fn_14, fn_15)
+		local lobbies = self.lobbies
 
-		arg_37_0:populate_lobby_list(var_37_15, var_37_14)
-		arg_37_0:play_sound("Play_hud_select")
+		self:populate_lobby_list(lobbies, _pick_sort_func)
+		self:play_sound("Play_hud_select")
 	end
 
-	if var_37_11.on_pressed then
-		local var_37_16 = arg_37_0:_pick_sort_func(var_0_47, var_0_48)
-		local var_37_17 = arg_37_0.lobbies
+	if not button_text_2.on_pressed then
+		local _pick_sort_func_2 = self:_pick_sort_func(fn_16, fn_17)
+		local lobbies_2 = self.lobbies
 
-		arg_37_0:populate_lobby_list(var_37_17, var_37_16)
-		arg_37_0:play_sound("Play_hud_select")
+		self:populate_lobby_list(lobbies_2, _pick_sort_func_2)
+		self:play_sound("Play_hud_select")
 	end
 
-	if var_37_12.on_pressed then
-		local var_37_18 = arg_37_0:_pick_sort_func(var_0_49, var_0_50)
-		local var_37_19 = arg_37_0.lobbies
+	if not button_text_3.on_pressed then
+		local _pick_sort_func_3 = self:_pick_sort_func(fn_18, fn_19)
+		local lobbies_3 = self.lobbies
 
-		arg_37_0:populate_lobby_list(var_37_19, var_37_18)
-		arg_37_0:play_sound("Play_hud_select")
+		self:populate_lobby_list(lobbies_3, _pick_sort_func_3)
+		self:play_sound("Play_hud_select")
 	end
 
-	if var_37_13.on_pressed then
-		local var_37_20 = arg_37_0:_pick_sort_func(var_0_53, var_0_54)
-		local var_37_21 = arg_37_0.lobbies
+	if not button_text_4.on_pressed then
+		local _pick_sort_func_4 = self:_pick_sort_func(fn_22, fn_23)
+		local lobbies_4 = self.lobbies
 
-		arg_37_0:populate_lobby_list(var_37_21, var_37_20)
-		arg_37_0:play_sound("Play_hud_select")
+		self:populate_lobby_list(lobbies_4, _pick_sort_func_4)
+		self:play_sound("Play_hud_select")
 	end
 end
 
-function LobbyItemsList.handle_gamepad_input(arg_38_0, arg_38_1, arg_38_2)
-	local var_38_0 = arg_38_0.input_manager:get_service(arg_38_0.input_service_name)
-	local var_38_1 = arg_38_0.controller_cooldown
+LobbyItemsList.handle_gamepad_input = function (self, arg_38_1, arg_38_2)
+	-- function 38
+	local get_service = self.input_manager:get_service(self.input_service_name)
+	local controller_cooldown = self.controller_cooldown
 
-	if var_38_1 and var_38_1 > 0 then
-		arg_38_0.controller_cooldown = var_38_1 - arg_38_1
+	if not (not controller_cooldown and not (controller_cooldown > 0)) then
+		self.controller_cooldown = controller_cooldown - arg_38_1
 
-		local var_38_2 = arg_38_0.speed_multiplier or 1
-		local var_38_3 = GamepadSettings.menu_speed_multiplier_frame_decrease
-		local var_38_4 = GamepadSettings.menu_min_speed_multiplier
+		local speed_multiplier = self.speed_multiplier
 
-		arg_38_0.speed_multiplier = math.max(var_38_2 - var_38_3, var_38_4)
+		speed_multiplier = speed_multiplier or 1
+
+		local menu_speed_multiplier_frame_decrease = GamepadSettings.menu_speed_multiplier_frame_decrease
+		local menu_min_speed_multiplier = GamepadSettings.menu_min_speed_multiplier
+
+		self.speed_multiplier = math.max(speed_multiplier - menu_speed_multiplier_frame_decrease, menu_min_speed_multiplier)
 
 		return
 	else
-		local var_38_5 = arg_38_0.selected_list_index or 1
+		local selected_list_index = self.selected_list_index
 
-		if var_38_5 then
-			local var_38_6 = arg_38_0.speed_multiplier or 1
+		selected_list_index = selected_list_index or 1
+
+		if not selected_list_index then
+			local speed_multiplier_2 = self.speed_multiplier
+
+			speed_multiplier_2 = speed_multiplier_2 or 1
+
 			local var_38_7
-			local var_38_8 = var_38_0:get("move_up")
-			local var_38_9 = var_38_0:get("move_up_hold")
+			local get = get_service:get("move_up")
+			local get_2 = get_service:get("move_up_hold")
 
-			if var_38_8 or var_38_9 then
-				var_38_7 = math.max(var_38_5 - 1, 1)
-				arg_38_0.controller_cooldown = GamepadSettings.menu_cooldown * var_38_6
+			if get or not get_2 then
+				var_38_7 = math.max(selected_list_index - 1, 1)
+				self.controller_cooldown = GamepadSettings.menu_cooldown * speed_multiplier_2
 			else
-				local var_38_10 = var_38_0:get("move_down")
-				local var_38_11 = var_38_0:get("move_down_hold")
+				local get_3 = get_service:get("move_down")
+				local get_4 = get_service:get("move_down_hold")
 
-				if var_38_10 or var_38_11 then
-					arg_38_0.controller_cooldown = GamepadSettings.menu_cooldown * var_38_6
-					var_38_7 = math.min(var_38_5 + 1, arg_38_2)
+				if get_3 or not get_4 then
+					self.controller_cooldown = GamepadSettings.menu_cooldown * speed_multiplier_2
+					var_38_7 = math.min(selected_list_index + 1, arg_38_2)
 				end
 			end
 
-			if var_38_7 and var_38_7 ~= var_38_5 then
-				arg_38_0.gamepad_changed_selected_list_index = var_38_7
+			if not (not var_38_7 and var_38_7 == selected_list_index) then
+				self.gamepad_changed_selected_list_index = var_38_7
 
 				return
 			end
 		end
 	end
 
-	arg_38_0.speed_multiplier = 1
+	self.speed_multiplier = 1
 end
 
-function LobbyItemsList.update_gamepad_list_scroll(arg_39_0)
-	local var_39_0 = arg_39_0.selected_list_index
+LobbyItemsList.update_gamepad_list_scroll = function (self)
+	-- function 39
+	local selected_list_index = self.selected_list_index
 
-	if not var_39_0 then
+	if not selected_list_index then
 		return
 	end
 
-	local var_39_1, var_39_2 = arg_39_0:is_entry_outside(var_39_0)
+	local is_entry_outside, var_39_2 = self:is_entry_outside(selected_list_index)
 
-	while var_39_1 do
-		local var_39_3 = arg_39_0.scrollbar_widget.content.button_scroll_step
-		local var_39_4 = arg_39_0.scroll_value
+	while not is_entry_outside do
+		local button_scroll_step = self.scrollbar_widget.content.button_scroll_step
+		local scroll_value = self.scroll_value
 
 		if var_39_2 == "below" then
-			var_39_4 = math.min(var_39_4 + var_39_3, 1)
+			scroll_value = math.min(scroll_value + button_scroll_step, 1)
 		else
-			var_39_4 = math.max(var_39_4 - var_39_3, 0)
+			scroll_value = math.max(scroll_value - button_scroll_step, 0)
 		end
 
-		if var_39_4 ~= arg_39_0.scroll_value then
-			arg_39_0:set_scroll_amount(var_39_4)
+		if scroll_value ~= self.scroll_value then
+			self:set_scroll_amount(scroll_value)
 		end
 
-		var_39_1, var_39_2 = arg_39_0:is_entry_outside(arg_39_0.selected_list_index)
+		is_entry_outside, var_39_2 = self:is_entry_outside(self.selected_list_index)
 	end
 end
 
-function LobbyItemsList.is_entry_outside(arg_40_0, arg_40_1)
-	local var_40_0 = arg_40_0.item_list_widget
+LobbyItemsList.is_entry_outside = function (self, arg_40_1)
+	-- function 40
+	local item_list_widget = self.item_list_widget
 
-	if var_40_0 then
-		local var_40_1 = var_40_0.content.list_content
-		local var_40_2 = var_40_0.style.list_style
-		local var_40_3 = var_40_2.num_draws
-		local var_40_4 = #var_40_1
-		local var_40_5 = var_40_2.start_index
+	if not item_list_widget then
+		local list_content = item_list_widget.content.list_content
+		local list_style = item_list_widget.style.list_style
+		local num_draws = list_style.num_draws
+		local count = #list_content
+		local start_index = list_style.start_index
 
-		if arg_40_1 < var_40_5 then
+		if arg_40_1 < start_index then
 			return true, "above"
-		elseif arg_40_1 > math.min(var_40_5 + var_40_3 - 1, var_40_4) then
+		elseif arg_40_1 > math.min(start_index + num_draws - 1, count) then
 			return true, "below"
 		end
 	end
@@ -1212,280 +1458,300 @@ function LobbyItemsList.is_entry_outside(arg_40_0, arg_40_1)
 	return false
 end
 
-function LobbyItemsList._pick_sort_func(arg_41_0, arg_41_1, arg_41_2)
-	local var_41_0 = arg_41_0.sort_lobbies_function
+LobbyItemsList._pick_sort_func = function (self, arg_41_1, arg_41_2)
+	-- function 41
+	local sort_lobbies_function = self.sort_lobbies_function
 
-	if var_41_0 and var_41_0 == arg_41_1 then
-		var_41_0 = arg_41_2
+	if not (not sort_lobbies_function and sort_lobbies_function ~= arg_41_1) then
+		sort_lobbies_function = arg_41_2
 	else
-		var_41_0 = arg_41_1
+		sort_lobbies_function = arg_41_1
 	end
 
-	arg_41_0.sort_lobbies_function = var_41_0
+	self.sort_lobbies_function = sort_lobbies_function
 
-	return var_41_0
+	return sort_lobbies_function
 end
 
-function LobbyItemsList.rotate_loading_icon(arg_42_0, arg_42_1)
-	local var_42_0 = arg_42_0.loading_icon.style.texture_id
-	local var_42_1 = ((var_42_0.fraction or 0) + arg_42_1) % 1
+LobbyItemsList.rotate_loading_icon = function (self, arg_42_1)
+	-- function 42
+	local texture_id = self.loading_icon.style.texture_id
+	local fraction = texture_id.fraction
 
-	var_42_0.angle = math.easeOutCubic(var_42_1) * math.degrees_to_radians(360)
-	var_42_0.fraction = var_42_1
+	fraction = fraction or 0
+
+	local num = (fraction + arg_42_1) % 1
+
+	texture_id.angle = math.easeOutCubic(num) * math.degrees_to_radians(360)
+	texture_id.fraction = num
 end
 
-function LobbyItemsList.loading_overlay_fade_in(arg_43_0, arg_43_1)
-	local var_43_0 = arg_43_0.loading_icon
-	local var_43_1 = var_43_0.style.texture_id.color
-	local var_43_2 = UIAnimation.init(UIAnimation.function_by_time, var_43_1, 1, var_43_1[1], 255, 0.3, math.easeOutCubic)
+LobbyItemsList.loading_overlay_fade_in = function (self, arg_43_1)
+	-- function 43
+	local loading_icon = self.loading_icon
+	local color = loading_icon.style.texture_id.color
+	local var_43_2 = UIAnimation.init(UIAnimation.function_by_time, color, 1, color[1], 255, 0.3, math.easeOutCubic)
 
-	table.clear(var_43_0.animations)
+	table.clear(loading_icon.animations)
 
-	var_43_0.animations[var_43_2] = true
+	loading_icon.animations[var_43_2] = true
 
-	table.clear(arg_43_0.loading_overlay.animations)
+	table.clear(self.loading_overlay.animations)
 
-	arg_43_0.loading_overlay.style.rect.color[1] = arg_43_1
+	self.loading_overlay.style.rect.color[1] = arg_43_1
 end
 
-function LobbyItemsList.loading_overlay_fade_out(arg_44_0)
-	local function var_44_0(arg_45_0, arg_45_1)
+LobbyItemsList.loading_overlay_fade_out = function (self)
+	-- function 44
+	local function fn(self, arg_45_1)
+		-- function 45
 		local var_45_0 = UIAnimation.init(UIAnimation.function_by_time, arg_45_1, 1, arg_45_1[1], 0, 0.3, math.easeOutCubic)
 
-		table.clear(arg_45_0.animations)
+		table.clear(self.animations)
 
-		arg_45_0.animations[var_45_0] = true
+		self.animations[var_45_0] = true
 	end
 
-	var_44_0(arg_44_0.loading_overlay, arg_44_0.loading_overlay.style.rect.color)
-	var_44_0(arg_44_0.loading_icon, arg_44_0.loading_icon.style.texture_id.color)
-	var_44_0(arg_44_0.loading_text, arg_44_0.loading_text.style.text.text_color)
+	fn(self.loading_overlay, self.loading_overlay.style.rect.color)
+	fn(self.loading_icon, self.loading_icon.style.texture_id.color)
+	fn(self.loading_text, self.loading_text.style.text.text_color)
 end
 
-function LobbyItemsList.animate_loading_text(arg_46_0)
-	local var_46_0 = arg_46_0.loading_text
-	local var_46_1 = var_46_0.style.text.text_color
+LobbyItemsList.animate_loading_text = function (self)
+	-- function 46
+	local loading_text = self.loading_text
+	local text_color = loading_text.style.text.text_color
 
-	if var_46_1[1] ~= 255 then
-		local var_46_2 = UIAnimation.init(UIAnimation.function_by_time, var_46_1, 1, var_46_1[1], 255, 0.3, math.easeOutCubic, UIAnimation.wait, 3.2, UIAnimation.function_by_time, var_46_1, 1, 255, 0, 0.3, math.easeOutCubic)
+	if text_color[1] ~= 255 then
+		local var_46_2 = UIAnimation.init(UIAnimation.function_by_time, text_color, 1, text_color[1], 255, 0.3, math.easeOutCubic, UIAnimation.wait, 3.2, UIAnimation.function_by_time, text_color, 1, 255, 0, 0.3, math.easeOutCubic)
 
-		table.clear(var_46_0.animations)
+		table.clear(loading_text.animations)
 
-		var_46_0.animations[var_46_2] = true
+		loading_text.animations[var_46_2] = true
 	end
 end
 
-function LobbyItemsList.draw(arg_47_0, arg_47_1)
-	local var_47_0 = arg_47_0.ui_renderer
-	local var_47_1 = arg_47_0.ui_scenegraph
-	local var_47_2 = arg_47_0.input_manager:get_service(arg_47_0.input_service_name)
+LobbyItemsList.draw = function (self, arg_47_1)
+	-- function 47
+	local ui_renderer = self.ui_renderer
+	local ui_scenegraph = self.ui_scenegraph
+	local get_service = self.input_manager:get_service(self.input_service_name)
 
-	UIRenderer.begin_pass(var_47_0, var_47_1, var_47_2, arg_47_1)
-	UIRenderer.draw_widget(var_47_0, arg_47_0.item_list_widget)
-	UIRenderer.draw_widget(var_47_0, arg_47_0.scroll_field_widget)
-	UIRenderer.draw_widget(var_47_0, arg_47_0.scrollbar_widget)
-	UIRenderer.draw_widget(var_47_0, arg_47_0.host_text_button)
-	UIRenderer.draw_widget(var_47_0, arg_47_0.level_text_button)
-	UIRenderer.draw_widget(var_47_0, arg_47_0.difficulty_text_button)
-	UIRenderer.draw_widget(var_47_0, arg_47_0.players_text_button)
-	UIRenderer.draw_widget(var_47_0, arg_47_0.loading_overlay)
-	UIRenderer.draw_widget(var_47_0, arg_47_0.loading_icon)
-	UIRenderer.draw_widget(var_47_0, arg_47_0.loading_text)
-	UIRenderer.end_pass(var_47_0)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, get_service, arg_47_1)
+	UIRenderer.draw_widget(ui_renderer, self.item_list_widget)
+	UIRenderer.draw_widget(ui_renderer, self.scroll_field_widget)
+	UIRenderer.draw_widget(ui_renderer, self.scrollbar_widget)
+	UIRenderer.draw_widget(ui_renderer, self.host_text_button)
+	UIRenderer.draw_widget(ui_renderer, self.level_text_button)
+	UIRenderer.draw_widget(ui_renderer, self.difficulty_text_button)
+	UIRenderer.draw_widget(ui_renderer, self.players_text_button)
+	UIRenderer.draw_widget(ui_renderer, self.loading_overlay)
+	UIRenderer.draw_widget(ui_renderer, self.loading_icon)
+	UIRenderer.draw_widget(ui_renderer, self.loading_text)
+	UIRenderer.end_pass(ui_renderer)
 end
 
-function LobbyItemsList.sort_lobbies(arg_48_0, arg_48_1, arg_48_2)
+LobbyItemsList.sort_lobbies = function (arg_48_0, arg_48_1, arg_48_2)
+	-- function 48
 	table.sort(arg_48_1, arg_48_2)
 end
 
-function LobbyItemsList.remove_invalid_lobbies(arg_49_0, arg_49_1)
-	local var_49_0 = {}
-	local var_49_1 = #arg_49_1
+LobbyItemsList.remove_invalid_lobbies = function (arg_49_0, arg_49_1)
+	-- function 49
+	local tbl = {}
+	local count = #arg_49_1
 
-	for iter_49_0 = 1, var_49_1 do
-		local var_49_2 = arg_49_1[iter_49_0]
+	for i = 1, count do
+		local var_49_2 = arg_49_1[i]
 
-		if var_49_2 then
-			var_49_0[#var_49_0 + 1] = var_49_2
+		if not var_49_2 then
+			tbl[#tbl + 1] = var_49_2
 		end
 	end
 
-	return var_49_0
+	return tbl
 end
 
-function LobbyItemsList.populate_lobby_list(arg_50_0, arg_50_1, arg_50_2)
-	local var_50_0 = arg_50_0.settings
-	local var_50_1 = arg_50_0.item_list_widget
-	local var_50_2 = {}
-	local var_50_3 = arg_50_0.list_style
-	local var_50_4 = 0
-	local var_50_5 = arg_50_0.sort_lobbies_function
-	local var_50_6 = arg_50_0:selected_lobby()
-	local var_50_7 = arg_50_0:remove_invalid_lobbies(arg_50_1)
+LobbyItemsList.populate_lobby_list = function (self, arg_50_1, arg_50_2)
+	-- function 50
+	local settings = self.settings
+	local item_list_widget = self.item_list_widget
+	local tbl = {}
+	local list_style = self.list_style
+	local num = 0
+	local sort_lobbies_function = self.sort_lobbies_function
+	local selected_lobby = self:selected_lobby()
+	local remove_invalid_lobbies = self:remove_invalid_lobbies(arg_50_1)
 
-	if var_50_5 then
-		arg_50_0:sort_lobbies(var_50_7, var_50_5)
+	if not sort_lobbies_function then
+		self:sort_lobbies(remove_invalid_lobbies, sort_lobbies_function)
 	end
 
-	for iter_50_0, iter_50_1 in pairs(var_50_7) do
-		local var_50_8 = var_0_44()
-		local var_50_9 = var_0_42(iter_50_1)
+	for k, v in pairs(remove_invalid_lobbies) do
+		local var_50_8 = fn_13()
+		local var_50_9 = fn_11(v)
 
-		if var_50_9 then
-			var_50_4 = var_50_4 + 1
-			var_50_2[var_50_4] = var_50_9
-			var_50_3.item_styles[var_50_4] = var_50_8
+		if not var_50_9 then
+			num = num + 1
+			tbl[num] = var_50_9
+			list_style.item_styles[num] = var_50_8
 
-			if var_50_4 >= var_0_18 then
+			if num >= num_4 then
 				break
 			end
 		end
 	end
 
-	arg_50_0.lobbies = var_50_7
-	arg_50_0.number_of_items_in_list = var_50_4
-	var_50_1.content.list_content = var_50_2
-	var_50_1.style.list_style = var_50_3
-	var_50_1.style.list_style.start_index = 1
-	var_50_1.style.list_style.num_draws = var_50_0.num_list_items
-	var_50_1.element.pass_data[1].num_list_elements = nil
+	self.lobbies = remove_invalid_lobbies
+	self.number_of_items_in_list = num
+	item_list_widget.content.list_content = tbl
+	item_list_widget.style.list_style = list_style
+	item_list_widget.style.list_style.start_index = 1
+	item_list_widget.style.list_style.num_draws = settings.num_list_items
+	item_list_widget.element.pass_data[1].num_list_elements = nil
 
-	local var_50_10 = var_50_1.style.list_style.num_draws
+	local num_draws = item_list_widget.style.list_style.num_draws
 
-	if var_50_4 < var_50_10 then
-		local var_50_11 = var_50_10 - var_50_4 % var_50_10
+	if num < num_draws then
+		local num_2 = num_draws - num % num_draws
 
-		if var_50_11 <= var_50_10 then
-			for iter_50_2 = 1, var_50_11 do
-				local var_50_12 = var_0_43()
-				local var_50_13 = var_0_44()
-				local var_50_14 = #var_50_2 + 1
+		if num_2 <= num_draws then
+			for k_2 = 1, num_2 do
+				local var_50_12 = fn_12()
+				local var_50_13 = fn_13()
+				local num_3 = #tbl + 1
 
-				var_50_2[var_50_14] = var_50_12
-				var_50_3.item_styles[var_50_14] = var_50_13
+				tbl[num_3] = var_50_12
+				list_style.item_styles[num_3] = var_50_13
 			end
 		end
 	end
 
-	arg_50_0:set_scrollbar_length(nil, arg_50_2)
+	self:set_scrollbar_length(nil, arg_50_2)
 
-	arg_50_0.selected_list_index = nil
+	self.selected_list_index = nil
 end
 
-function LobbyItemsList.update_scroll(arg_51_0)
-	local var_51_0 = arg_51_0.scrollbar_widget.content.scroll_bar_info.value
-	local var_51_1 = arg_51_0.scroll_field_widget.content.internal_scroll_value
-	local var_51_2 = arg_51_0.scroll_value
+LobbyItemsList.update_scroll = function (self)
+	-- function 51
+	local value = self.scrollbar_widget.content.scroll_bar_info.value
+	local internal_scroll_value = self.scroll_field_widget.content.internal_scroll_value
+	local scroll_value = self.scroll_value
 
-	if var_51_2 ~= var_51_1 then
-		arg_51_0:set_scroll_amount(var_51_1)
-	elseif var_51_2 ~= var_51_0 then
-		arg_51_0:set_scroll_amount(var_51_0)
+	if scroll_value ~= internal_scroll_value then
+		self:set_scroll_amount(internal_scroll_value)
+	elseif scroll_value ~= value then
+		self:set_scroll_amount(value)
 	end
 end
 
-function LobbyItemsList.set_scroll_amount(arg_52_0, arg_52_1)
-	local var_52_0 = arg_52_0.scroll_value
+LobbyItemsList.set_scroll_amount = function (self, arg_52_1)
+	-- function 52
+	local scroll_value = self.scroll_value
 
-	if not var_52_0 or arg_52_1 ~= var_52_0 then
-		arg_52_0.scrollbar_widget.content.scroll_bar_info.value = arg_52_1
-		arg_52_0.scroll_field_widget.content.internal_scroll_value = arg_52_1
-		arg_52_0.scroll_value = arg_52_1
+	if not (not scroll_value and arg_52_1 == scroll_value) then
+		self.scrollbar_widget.content.scroll_bar_info.value = arg_52_1
+		self.scroll_field_widget.content.internal_scroll_value = arg_52_1
+		self.scroll_value = arg_52_1
 
-		arg_52_0:scroll_inventory_list(arg_52_1)
+		self:scroll_inventory_list(arg_52_1)
 	end
 end
 
-function LobbyItemsList.set_scrollbar_length(arg_53_0, arg_53_1, arg_53_2)
-	local var_53_0 = arg_53_0.settings
-	local var_53_1 = var_53_0.columns
-	local var_53_2 = var_53_0.num_list_items
-	local var_53_3 = arg_53_0.number_of_items_in_list
-	local var_53_4 = math.max(var_53_3 - var_53_2, 0)
-	local var_53_5 = arg_53_0.scrollbar_widget.content
-	local var_53_6 = var_53_5.scroll_bar_info
-	local var_53_7 = 0
-	local var_53_8 = 0
+LobbyItemsList.set_scrollbar_length = function (self, arg_53_1, arg_53_2)
+	-- function 53
+	local settings = self.settings
+	local columns = settings.columns
+	local num_list_items = settings.num_list_items
+	local number_of_items_in_list = self.number_of_items_in_list
+	local max = math.max(number_of_items_in_list - num_list_items, 0)
+	local content = self.scrollbar_widget.content
+	local scroll_bar_info = content.scroll_bar_info
+	local num = 0
+	local num_2 = 0
 
-	if var_53_4 > 0 then
-		local var_53_9 = var_53_1 and var_53_1 or 1
-		local var_53_10 = math.ceil(var_53_4 / var_53_9)
+	if max > 0 then
+		local flag = not columns and columns and 1
+		local ceil = math.ceil(max / flag)
 
-		var_53_7 = 1 - 1 / math.ceil(var_53_3 / var_53_9) * var_53_10
-		var_53_8 = 1 / var_53_10
+		num = 1 - 1 / math.ceil(number_of_items_in_list / flag) * ceil
+		num_2 = 1 / ceil
 	else
-		var_53_7 = 1
-		var_53_8 = 1
+		num = 1
+		num_2 = 1
 	end
 
-	var_53_6.bar_height_percentage = var_53_7
-	arg_53_0.scroll_field_widget.content.scroll_step = var_53_8
-	var_53_5.button_scroll_step = var_53_8
+	scroll_bar_info.bar_height_percentage = num
+	self.scroll_field_widget.content.scroll_step = num_2
+	content.button_scroll_step = num_2
 
-	if arg_53_2 then
-		local var_53_11 = arg_53_0.scroll_value
+	if not arg_53_2 then
+		local scroll_value = self.scroll_value
 
-		arg_53_0.scroll_value = nil
+		self.scroll_value = nil
 
-		arg_53_0:set_scroll_amount(var_53_11 or 0)
+		self:set_scroll_amount(scroll_value or 0)
 	else
-		arg_53_0:set_scroll_amount(arg_53_1 or 0)
+		self:set_scroll_amount(arg_53_1 or 0)
 	end
 end
 
-function LobbyItemsList.scroll_inventory_list(arg_54_0, arg_54_1)
-	local var_54_0 = arg_54_0.item_list_widget
+LobbyItemsList.scroll_inventory_list = function (self, arg_54_1)
+	-- function 54
+	local item_list_widget = self.item_list_widget
 
-	if var_54_0 then
-		local var_54_1 = var_54_0.content.list_content
-		local var_54_2 = var_54_0.style.list_style
-		local var_54_3 = var_54_2.num_draws
-		local var_54_4 = var_54_2.columns
-		local var_54_5 = #var_54_1
+	if not item_list_widget then
+		local list_content = item_list_widget.content.list_content
+		local list_style = item_list_widget.style.list_style
+		local num_draws = list_style.num_draws
+		local columns = list_style.columns
+		local count = #list_content
 
-		if var_54_3 and var_54_3 < var_54_5 then
-			local var_54_6 = var_54_5 - var_54_3
-			local var_54_7 = math.max(0, math.round(arg_54_1 * var_54_6)) + 1
+		if not (not num_draws and not (num_draws < count)) then
+			local num = count - num_draws
+			local num_2 = math.max(0, math.round(arg_54_1 * num)) + 1
 
-			if var_54_4 and var_54_7 % var_54_4 == 0 then
-				var_54_7 = var_54_7 + var_54_4 - 1
+			if not (not columns and num_2 % columns ~= 0) then
+				num_2 = num_2 + columns - 1
 			end
 
-			var_54_2.start_index = var_54_7
+			list_style.start_index = num_2
 		end
 	end
 end
 
-function LobbyItemsList.on_lobby_selected(arg_55_0, arg_55_1, arg_55_2)
-	local var_55_0 = arg_55_0.item_list_widget.content.list_content
-	local var_55_1 = arg_55_0.number_of_items_in_list
+LobbyItemsList.on_lobby_selected = function (self, arg_55_1, arg_55_2)
+	-- function 55
+	local list_content = self.item_list_widget.content.list_content
+	local number_of_items_in_list = self.number_of_items_in_list
 
-	if not var_55_1 or var_55_1 < 1 then
+	if not (not number_of_items_in_list and not (number_of_items_in_list < 1)) then
 		return
 	end
 
-	if arg_55_2 then
-		arg_55_0:play_sound(arg_55_0.item_select_sound_event)
+	if not arg_55_2 then
+		self:play_sound(self.item_select_sound_event)
 	end
 
-	if arg_55_1 and var_55_0[arg_55_1] then
-		for iter_55_0 = 1, #var_55_0 do
-			var_55_0[iter_55_0].button_hotspot.is_selected = iter_55_0 == arg_55_1
+	if not arg_55_1 and not list_content[arg_55_1] then
+		for i = 1, #list_content do
+			list_content[i].button_hotspot.is_selected = i == arg_55_1
 		end
 
-		arg_55_0.lobby_list_select_animation_time = 0
-		arg_55_0.selected_list_index = arg_55_1
+		self.lobby_list_select_animation_time = 0
+		self.selected_list_index = arg_55_1
 	end
 end
 
-function LobbyItemsList.selected_lobby(arg_56_0)
-	local var_56_0 = arg_56_0.selected_list_index
+LobbyItemsList.selected_lobby = function (self)
+	-- function 56
+	local selected_list_index = self.selected_list_index
 
-	if not var_56_0 then
+	if not selected_list_index then
 		return
 	end
 
-	local var_56_1 = arg_56_0.item_list_widget.content.list_content[var_56_0]
+	local var_56_1 = self.item_list_widget.content.list_content[selected_list_index]
 
 	if not var_56_1 then
 		return
@@ -1494,24 +1760,27 @@ function LobbyItemsList.selected_lobby(arg_56_0)
 	return var_56_1.lobby_data
 end
 
-function LobbyItemsList.set_selected_lobby(arg_57_0, arg_57_1)
-	arg_57_0.selected_list_index = nil
+LobbyItemsList.set_selected_lobby = function (self, arg_57_1)
+	-- function 57
+	self.selected_list_index = nil
 
-	local var_57_0 = arg_57_1.id
-	local var_57_1 = arg_57_0.item_list_widget.content.list_content
-	local var_57_2 = arg_57_0.number_of_items_in_list
+	local id = arg_57_1.id
+	local list_content = self.item_list_widget.content.list_content
+	local number_of_items_in_list = self.number_of_items_in_list
 
-	for iter_57_0 = 1, var_57_2 do
-		if var_57_0 == var_57_1[iter_57_0].lobby_data.id then
-			arg_57_0:on_lobby_selected(iter_57_0, false)
+	for i = 1, number_of_items_in_list do
+		if id == list_content[i].lobby_data.id then
+			self:on_lobby_selected(i, false)
 		end
 	end
 end
 
-function LobbyItemsList.animate_element_by_time(arg_58_0, arg_58_1, arg_58_2, arg_58_3, arg_58_4, arg_58_5)
+LobbyItemsList.animate_element_by_time = function (arg_58_0, arg_58_1, arg_58_2, arg_58_3, arg_58_4, arg_58_5)
+	-- function 58
 	return (UIAnimation.init(UIAnimation.function_by_time, arg_58_1, arg_58_2, arg_58_3, arg_58_4, arg_58_5, math.easeInCubic))
 end
 
-function LobbyItemsList.play_sound(arg_59_0, arg_59_1)
-	WwiseWorld.trigger_event(arg_59_0.wwise_world, arg_59_1)
+LobbyItemsList.play_sound = function (self, arg_59_1)
+	-- function 59
+	WwiseWorld.trigger_event(self.wwise_world, arg_59_1)
 end

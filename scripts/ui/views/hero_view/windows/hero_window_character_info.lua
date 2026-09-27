@@ -1,247 +1,277 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/hero_window_character_info.lua
 
 local var_0_0 = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_character_info_definitions")
-local var_0_1 = var_0_0.widgets
-local var_0_2 = var_0_0.category_settings
-local var_0_3 = var_0_0.scenegraph_definition
-local var_0_4 = var_0_0.animation_definitions
-local var_0_5 = false
-local var_0_6 = 1
+local widgets = var_0_0.widgets
+local category_settings = var_0_0.category_settings
+local scenegraph_definition = var_0_0.scenegraph_definition
+local animation_definitions = var_0_0.animation_definitions
+local flag = false
+local num = 1
 
 HeroWindowCharacterInfo = class(HeroWindowCharacterInfo)
 HeroWindowCharacterInfo.NAME = "HeroWindowCharacterInfo"
 
-function HeroWindowCharacterInfo.on_enter(arg_1_0, arg_1_1, arg_1_2)
+HeroWindowCharacterInfo.on_enter = function (self, arg_1_1, arg_1_2)
+	-- function 1
 	print("[HeroViewWindow] Enter Substate HeroWindowCharacterInfo")
 
-	arg_1_0.parent = arg_1_1.parent
+	self.parent = arg_1_1.parent
 
-	local var_1_0 = arg_1_1.ingame_ui_context
+	local ingame_ui_context = arg_1_1.ingame_ui_context
 
-	arg_1_0.ui_renderer = var_1_0.ui_renderer
-	arg_1_0.ui_top_renderer = var_1_0.ui_top_renderer
-	arg_1_0.input_manager = var_1_0.input_manager
-	arg_1_0.statistics_db = var_1_0.statistics_db
-	arg_1_0.render_settings = {
+	self.ui_renderer = ingame_ui_context.ui_renderer
+	self.ui_top_renderer = ingame_ui_context.ui_top_renderer
+	self.input_manager = ingame_ui_context.input_manager
+	self.statistics_db = ingame_ui_context.statistics_db
+	self.render_settings = {
 		snap_pixel_positions = true
 	}
-	arg_1_0.ingame_ui = var_1_0.ingame_ui
+	self.ingame_ui = ingame_ui_context.ingame_ui
 
-	local var_1_1 = Managers.player
+	local player = Managers.player
 
-	arg_1_0._stats_id = var_1_1:local_player():stats_id()
-	arg_1_0.player_manager = var_1_1
-	arg_1_0.peer_id = var_1_0.peer_id
-	arg_1_0.hero_name = arg_1_1.hero_name
-	arg_1_0.career_index = arg_1_1.career_index
-	arg_1_0.profile_index = arg_1_1.profile_index
-	arg_1_0._animations = {}
-	arg_1_0._ui_animations = {}
+	self._stats_id = player:local_player():stats_id()
+	self.player_manager = player
+	self.peer_id = ingame_ui_context.peer_id
+	self.hero_name = arg_1_1.hero_name
+	self.career_index = arg_1_1.career_index
+	self.profile_index = arg_1_1.profile_index
+	self._animations = {}
+	self._ui_animations = {}
 
-	arg_1_0:create_ui_elements(arg_1_1, arg_1_2)
+	self:create_ui_elements(arg_1_1, arg_1_2)
 end
 
-function HeroWindowCharacterInfo.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
-	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_3)
+HeroWindowCharacterInfo.create_ui_elements = function (self, arg_2_1, arg_2_2)
+	-- function 2
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	local var_2_0 = {}
-	local var_2_1 = {}
+	local tbl = {}
+	local tbl_2 = {}
 
-	for iter_2_0, iter_2_1 in pairs(var_0_1) do
-		local var_2_2 = UIWidget.init(iter_2_1)
+	for k, v in pairs(widgets) do
+		local var_2_2 = UIWidget.init(v)
 
-		var_2_0[#var_2_0 + 1] = var_2_2
-		var_2_1[iter_2_0] = var_2_2
+		tbl[#tbl + 1] = var_2_2
+		tbl_2[k] = var_2_2
 	end
 
-	arg_2_0._widgets = var_2_0
-	arg_2_0._widgets_by_name = var_2_1
+	self._widgets = tbl
+	self._widgets_by_name = tbl_2
 
-	arg_2_0:_create_insignia_widget()
-	UIRenderer.clear_scenegraph_queue(arg_2_0.ui_renderer)
+	self:_create_insignia_widget()
+	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
-	arg_2_0.ui_animator = UIAnimator:new(arg_2_0.ui_scenegraph, var_0_4)
+	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
 
-	if arg_2_2 then
-		local var_2_3 = arg_2_0.ui_scenegraph.window.local_position
+	if not arg_2_2 then
+		local local_position = self.ui_scenegraph.window.local_position
 
-		var_2_3[1] = var_2_3[1] + arg_2_2[1]
-		var_2_3[2] = var_2_3[2] + arg_2_2[2]
-		var_2_3[3] = var_2_3[3] + arg_2_2[3]
+		local_position[1] = local_position[1] + arg_2_2[1]
+		local_position[2] = local_position[2] + arg_2_2[2]
+		local_position[3] = local_position[3] + arg_2_2[3]
 	end
 end
 
-function HeroWindowCharacterInfo.on_exit(arg_3_0, arg_3_1)
+HeroWindowCharacterInfo.on_exit = function (self, arg_3_1)
+	-- function 3
 	print("[HeroViewWindow] Exit Substate HeroWindowCharacterInfo")
 
-	arg_3_0.ui_animator = nil
+	self.ui_animator = nil
 end
 
-function HeroWindowCharacterInfo.update(arg_4_0, arg_4_1, arg_4_2)
-	if var_0_5 then
-		var_0_5 = false
+HeroWindowCharacterInfo.update = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	if not flag then
+		flag = false
 
-		arg_4_0:create_ui_elements()
+		self:create_ui_elements()
 	end
 
-	arg_4_0:_update_loadout_sync()
-	arg_4_0:_update_animations(arg_4_1)
-	arg_4_0:draw(arg_4_1)
+	self:_update_loadout_sync()
+	self:_update_animations(arg_4_1)
+	self:draw(arg_4_1)
 end
 
-function HeroWindowCharacterInfo.post_update(arg_5_0, arg_5_1, arg_5_2)
+HeroWindowCharacterInfo.post_update = function (arg_5_0, arg_5_1, arg_5_2)
+	-- function 5
 	return
 end
 
-function HeroWindowCharacterInfo._update_animations(arg_6_0, arg_6_1)
-	local var_6_0 = arg_6_0._ui_animations
-	local var_6_1 = arg_6_0._animations
-	local var_6_2 = arg_6_0.ui_animator
+HeroWindowCharacterInfo._update_animations = function (self, arg_6_1)
+	-- function 6
+	local _ui_animations = self._ui_animations
+	local _animations = self._animations
+	local ui_animator = self.ui_animator
 
-	for iter_6_0, iter_6_1 in pairs(arg_6_0._ui_animations) do
-		UIAnimation.update(iter_6_1, arg_6_1)
+	for k, v in pairs(self._ui_animations) do
+		UIAnimation.update(v, arg_6_1)
 
-		if UIAnimation.completed(iter_6_1) then
-			arg_6_0._ui_animations[iter_6_0] = nil
+		if not UIAnimation.completed(v) then
+			self._ui_animations[k] = nil
 		end
 	end
 
-	var_6_2:update(arg_6_1)
+	ui_animator:update(arg_6_1)
 
-	for iter_6_2, iter_6_3 in pairs(var_6_1) do
-		if var_6_2:is_animation_completed(iter_6_3) then
-			var_6_2:stop_animation(iter_6_3)
+	for k_2, v_2 in pairs(_animations) do
+		if not ui_animator:is_animation_completed(v_2) then
+			ui_animator:stop_animation(v_2)
 
-			var_6_1[iter_6_2] = nil
+			_animations[k_2] = nil
 		end
 	end
 end
 
-function HeroWindowCharacterInfo.set_focus(arg_7_0, arg_7_1)
-	arg_7_0._focused = arg_7_1
+HeroWindowCharacterInfo.set_focus = function (self, arg_7_1)
+	-- function 7
+	self._focused = arg_7_1
 end
 
-function HeroWindowCharacterInfo._update_loadout_sync(arg_8_0)
-	local var_8_0 = arg_8_0.parent.loadout_sync_id
+HeroWindowCharacterInfo._update_loadout_sync = function (self)
+	-- function 8
+	local loadout_sync_id = self.parent.loadout_sync_id
 
-	if var_8_0 ~= arg_8_0._loadout_sync_id or arg_8_0:_has_hero_level_changed() then
-		arg_8_0:_update_experience_presentation()
-		arg_8_0:_update_hero_portrait_frame()
+	if loadout_sync_id ~= self._loadout_sync_id or not self:_has_hero_level_changed() then
+		self:_update_experience_presentation()
+		self:_update_hero_portrait_frame()
 
-		arg_8_0._loadout_sync_id = var_8_0
+		self._loadout_sync_id = loadout_sync_id
 	end
 end
 
-function HeroWindowCharacterInfo._has_hero_level_changed(arg_9_0)
-	local var_9_0 = ExperienceSettings.get_experience(arg_9_0.hero_name)
+HeroWindowCharacterInfo._has_hero_level_changed = function (self)
+	-- function 9
+	local get_experience = ExperienceSettings.get_experience(self.hero_name)
 
-	if ExperienceSettings.get_level(var_9_0) ~= arg_9_0._hero_level then
+	if ExperienceSettings.get_level(get_experience) ~= self._hero_level then
 		return true
 	end
 end
 
-function HeroWindowCharacterInfo._update_experience_presentation(arg_10_0)
-	local var_10_0 = arg_10_0._widgets_by_name
-	local var_10_1 = ExperienceSettings.get_experience(arg_10_0.hero_name)
-	local var_10_2, var_10_3 = ExperienceSettings.get_level(var_10_1)
-	local var_10_4 = ExperienceSettings.get_experience_pool(arg_10_0.hero_name)
-	local var_10_5, var_10_6 = ExperienceSettings.get_extra_level(var_10_4)
-	local var_10_7 = var_0_3.experience_bar.size
-	local var_10_8 = arg_10_0.ui_scenegraph.experience_bar.size
+HeroWindowCharacterInfo._update_experience_presentation = function (self)
+	-- function 10
+	local _widgets_by_name = self._widgets_by_name
+	local get_experience = ExperienceSettings.get_experience(self.hero_name)
+	local get_level, var_10_3 = ExperienceSettings.get_level(get_experience)
+	local get_experience_pool = ExperienceSettings.get_experience_pool(self.hero_name)
+	local get_extra_level, var_10_6 = ExperienceSettings.get_extra_level(get_experience_pool)
+	local size = scenegraph_definition.experience_bar.size
+	local size_2 = self.ui_scenegraph.experience_bar.size
 
 	if var_10_3 > 0 then
-		var_10_8[1] = math.ceil(var_10_7[1] * var_10_3)
+		size_2[1] = math.ceil(size[1] * var_10_3)
 	elseif var_10_6 > 0 then
-		var_10_8[1] = math.ceil(var_10_7[1] * var_10_6)
+		size_2[1] = math.ceil(size[1] * var_10_6)
 	end
 
-	local var_10_9 = Localize("level") .. " " .. tostring(var_10_2)
+	local str = Localize("level") .. " " .. tostring(get_level)
 
-	if var_10_5 and var_10_5 > 0 then
-		var_10_9 = var_10_9 .. " (+" .. tostring(var_10_5) .. ")"
+	if not (not get_extra_level and not (get_extra_level > 0)) then
+		str = str .. " (+" .. tostring(get_extra_level) .. ")"
 	end
 
-	var_10_0.level_text.content.text = var_10_9
-	arg_10_0._hero_level = var_10_2
+	_widgets_by_name.level_text.content.text = str
+	self._hero_level = get_level
 end
 
-function HeroWindowCharacterInfo._update_hero_portrait_frame(arg_11_0)
-	local var_11_0 = arg_11_0.career_index
-	local var_11_1 = arg_11_0.profile_index
-	local var_11_2 = SPProfiles[var_11_1]
-	local var_11_3 = var_11_2.careers[var_11_0]
-	local var_11_4 = var_11_3.portrait_image
-	local var_11_5 = var_11_3.display_name
-	local var_11_6 = var_11_2.character_name
-	local var_11_7 = arg_11_0._widgets_by_name
+HeroWindowCharacterInfo._update_hero_portrait_frame = function (self)
+	-- function 11
+	local career_index = self.career_index
+	local profile_index = self.profile_index
+	local var_11_2 = SPProfiles[profile_index]
+	local var_11_3 = var_11_2.careers[career_index]
+	local portrait_image = var_11_3.portrait_image
+	local display_name = var_11_3.display_name
+	local character_name = var_11_2.character_name
+	local _widgets_by_name = self._widgets_by_name
 
-	var_11_7.hero_name.content.text = var_11_6
-	var_11_7.career_name.content.text = var_11_5
+	_widgets_by_name.hero_name.content.text = character_name
+	_widgets_by_name.career_name.content.text = display_name
 
-	local var_11_8 = arg_11_0._hero_level and tostring(arg_11_0._hero_level) or "-"
-	local var_11_9 = arg_11_0:_get_portrait_frame()
+	local var_11_8
 
-	arg_11_0._portrait_widget = arg_11_0:_create_portrait_frame_widget(var_11_9, var_11_4, var_11_8)
-end
+	if not self._hero_level then
+		var_11_8 = tostring(self._hero_level)
 
-function HeroWindowCharacterInfo._exit(arg_12_0, arg_12_1)
-	arg_12_0.exit = true
-	arg_12_0.exit_level_id = arg_12_1
-end
-
-function HeroWindowCharacterInfo.draw(arg_13_0, arg_13_1)
-	local var_13_0 = arg_13_0.ui_renderer
-	local var_13_1 = arg_13_0.ui_top_renderer
-	local var_13_2 = arg_13_0.ui_scenegraph
-	local var_13_3 = arg_13_0.parent:window_input_service()
-
-	UIRenderer.begin_pass(var_13_1, var_13_2, var_13_3, arg_13_1, nil, arg_13_0.render_settings)
-
-	for iter_13_0, iter_13_1 in ipairs(arg_13_0._widgets) do
-		UIRenderer.draw_widget(var_13_1, iter_13_1)
+		if not var_11_8 then
+			-- Nothing
+		end
 	end
 
-	if arg_13_0._portrait_widget then
-		UIRenderer.draw_widget(var_13_1, arg_13_0._portrait_widget)
-	end
+	var_11_8 = "-"
 
-	if arg_13_0._insignia_widget then
-		UIRenderer.draw_widget(var_13_1, arg_13_0._insignia_widget)
-	end
+	::label_11_0::
 
-	UIRenderer.end_pass(var_13_1)
+	local _get_portrait_frame = self:_get_portrait_frame()
+
+	self._portrait_widget = self:_create_portrait_frame_widget(_get_portrait_frame, portrait_image, var_11_8)
 end
 
-function HeroWindowCharacterInfo._play_sound(arg_14_0, arg_14_1)
-	arg_14_0.parent:play_sound(arg_14_1)
+HeroWindowCharacterInfo._exit = function (self, arg_12_1)
+	-- function 12
+	self.exit = true
+	self.exit_level_id = arg_12_1
 end
 
-function HeroWindowCharacterInfo._create_portrait_frame_widget(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
-	local var_15_0 = UIWidgets.create_portrait_frame("portrait_root", arg_15_1, arg_15_3, 1, nil, arg_15_2)
-	local var_15_1 = UIWidget.init(var_15_0, arg_15_0.ui_top_renderer)
+HeroWindowCharacterInfo.draw = function (self, arg_13_1)
+	-- function 13
+	local ui_renderer = self.ui_renderer
+	local ui_top_renderer = self.ui_top_renderer
+	local ui_scenegraph = self.ui_scenegraph
+	local window_input_service = self.parent:window_input_service()
+
+	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, window_input_service, arg_13_1, nil, self.render_settings)
+
+	for i, v in ipairs(self._widgets) do
+		UIRenderer.draw_widget(ui_top_renderer, v)
+	end
+
+	if not self._portrait_widget then
+		UIRenderer.draw_widget(ui_top_renderer, self._portrait_widget)
+	end
+
+	if not self._insignia_widget then
+		UIRenderer.draw_widget(ui_top_renderer, self._insignia_widget)
+	end
+
+	UIRenderer.end_pass(ui_top_renderer)
+end
+
+HeroWindowCharacterInfo._play_sound = function (self, arg_14_1)
+	-- function 14
+	self.parent:play_sound(arg_14_1)
+end
+
+HeroWindowCharacterInfo._create_portrait_frame_widget = function (self, arg_15_1, arg_15_2, arg_15_3)
+	-- function 15
+	local create_portrait_frame = UIWidgets.create_portrait_frame("portrait_root", arg_15_1, arg_15_3, 1, nil, arg_15_2)
+	local var_15_1 = UIWidget.init(create_portrait_frame, self.ui_top_renderer)
 
 	var_15_1.content.frame_settings_name = arg_15_1
 
 	return var_15_1
 end
 
-function HeroWindowCharacterInfo._create_insignia_widget(arg_16_0)
-	local var_16_0 = Managers.player:local_player()
-	local var_16_1 = ExperienceSettings.get_versus_player_level(var_16_0)
-	local var_16_2 = UIWidgets.create_small_insignia("insignia", var_16_1)
+HeroWindowCharacterInfo._create_insignia_widget = function (self)
+	-- function 16
+	local local_player = Managers.player:local_player()
+	local get_versus_player_level = ExperienceSettings.get_versus_player_level(local_player)
+	local create_small_insignia = UIWidgets.create_small_insignia("insignia", get_versus_player_level)
 
-	arg_16_0._insignia_widget = UIWidget.init(var_16_2)
+	self._insignia_widget = UIWidget.init(create_small_insignia)
 end
 
-function HeroWindowCharacterInfo._get_portrait_frame(arg_17_0)
-	local var_17_0 = arg_17_0.profile_index
-	local var_17_1 = arg_17_0.career_index
-	local var_17_2 = arg_17_0.hero_name
-	local var_17_3 = SPProfiles[var_17_0].careers[var_17_1].name
-	local var_17_4 = "default"
-	local var_17_5 = BackendUtils.get_loadout_item(var_17_3, "slot_frame")
+HeroWindowCharacterInfo._get_portrait_frame = function (self)
+	-- function 17
+	local profile_index = self.profile_index
+	local career_index = self.career_index
+	local hero_name = self.hero_name
+	local name = SPProfiles[profile_index].careers[career_index].name
+	local str = "default"
+	local get_loadout_item = BackendUtils.get_loadout_item(name, "slot_frame")
 
-	var_17_4 = var_17_5 and var_17_5.data.temporary_template or var_17_4
+	str = not get_loadout_item and get_loadout_item.data.temporary_template and str
 
-	return var_17_4
+	return str
 end

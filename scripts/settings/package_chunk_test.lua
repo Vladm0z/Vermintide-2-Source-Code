@@ -265,9 +265,10 @@ PackageChunkPackages = {
 }
 
 function find_playgo_package(arg_1_0)
-	for iter_1_0, iter_1_1 in pairs(PackageChunkPackages) do
-		if iter_1_1 == arg_1_0 then
-			return iter_1_0
+	-- function 1
+	for k, v in pairs(PackageChunkPackages) do
+		if v == arg_1_0 then
+			return k
 		end
 	end
 

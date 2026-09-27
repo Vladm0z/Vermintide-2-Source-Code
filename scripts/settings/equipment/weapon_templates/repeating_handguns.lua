@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/repeating_handguns.lua
 
-local var_0_0 = {
+local tbl = {
 	actions = {
 		action_one = {
 			default = {
@@ -56,7 +56,8 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_1_0, arg_1_1)
+				enter_function = function (arg_1_0, arg_1_1)
+					-- function 1
 					arg_1_1:clear_input_buffer()
 
 					return arg_1_1:reset_release_input()
@@ -99,7 +100,8 @@ local var_0_0 = {
 				anim_event_secondary = "reload",
 				hold_input = "action_two_hold",
 				total_time = 0.66,
-				anim_end_event_condition_func = function(arg_2_0, arg_2_1)
+				anim_end_event_condition_func = function (arg_2_0, arg_2_1)
+					-- function 2
 					return arg_2_1 ~= "new_interupting_action"
 				end,
 				on_chain_keep_audio_loops = {
@@ -138,7 +140,8 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_3_0, arg_3_1)
+				enter_function = function (arg_3_0, arg_3_1)
+					-- function 3
 					arg_3_1:clear_input_buffer()
 
 					return arg_3_1:reset_release_input()
@@ -168,7 +171,8 @@ local var_0_0 = {
 				unaim_sound_event = "stop_weapon_repeating_handgun_special_cylinder",
 				hold_input = "action_two_hold",
 				anim_event = "lock_target",
-				anim_end_event_condition_func = function(arg_4_0, arg_4_1)
+				anim_end_event_condition_func = function (arg_4_0, arg_4_1)
+					-- function 4
 					return arg_4_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -211,16 +215,19 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_5_0, arg_5_1)
+				enter_function = function (arg_5_0, arg_5_1)
+					-- function 5
 					arg_5_1:clear_input_buffer()
 
 					return arg_5_1:reset_release_input()
 				end,
-				zoom_condition_function = function()
+				zoom_condition_function = function ()
+					-- function 6
 					return false
 				end,
-				condition_func = function(arg_7_0, arg_7_1, arg_7_2)
-					if arg_7_2 and (arg_7_2:total_remaining_ammo() <= 0 or arg_7_2:is_reloading()) then
+				condition_func = function (arg_7_0, arg_7_1, arg_7_2)
+					-- function 7
+					if not arg_7_2 and arg_7_2:total_remaining_ammo() <= 0 and not arg_7_2:is_reloading() then
 						return false
 					end
 
@@ -235,7 +242,8 @@ local var_0_0 = {
 				aim_sound_delay = 0,
 				hold_input = "action_two_hold",
 				can_abort_reload = true,
-				anim_end_event_condition_func = function(arg_8_0, arg_8_1)
+				anim_end_event_condition_func = function (arg_8_0, arg_8_1)
+					-- function 8
 					return arg_8_1 ~= "new_interupting_action"
 				end,
 				on_chain_keep_audio_loops = {
@@ -269,16 +277,19 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_9_0, arg_9_1)
+				enter_function = function (arg_9_0, arg_9_1)
+					-- function 9
 					arg_9_1:clear_input_buffer()
 
 					return arg_9_1:reset_release_input()
 				end,
-				zoom_condition_function = function()
+				zoom_condition_function = function ()
+					-- function 10
 					return false
 				end,
-				condition_func = function(arg_11_0, arg_11_1, arg_11_2)
-					if arg_11_2 and (arg_11_2:total_remaining_ammo() <= 0 or arg_11_2:is_reloading()) then
+				condition_func = function (arg_11_0, arg_11_1, arg_11_2)
+					-- function 11
+					if not arg_11_2 and arg_11_2:total_remaining_ammo() <= 0 and not arg_11_2:is_reloading() then
 						return false
 					end
 
@@ -306,20 +317,20 @@ local var_0_0 = {
 	}
 }
 
-var_0_0.right_hand_unit = ""
-var_0_0.right_hand_attachment_node_linking = AttachmentNodeLinking.repeating_handgun
-var_0_0.display_unit = "units/weapons/weapon_display/display_repeating_handguns"
-var_0_0.wield_anim = "to_repeating_handgun"
-var_0_0.wield_anim_no_ammo = "to_repeating_handgun_noammo"
-var_0_0.state_machine = "units/beings/player/first_person_base/state_machines/ranged/repeating_handgun"
-var_0_0.reload_event = "reload"
-var_0_0.buff_type = "RANGED"
-var_0_0.weapon_type = "REPEATING_HANDGUN"
-var_0_0.crosshair_style = "default"
-var_0_0.default_spread_template = "repeating_handgun"
-var_0_0.spread_lerp_speed = 12
-var_0_0.dodge_count = 1
-var_0_0.buffs = {
+tbl.right_hand_unit = ""
+tbl.right_hand_attachment_node_linking = AttachmentNodeLinking.repeating_handgun
+tbl.display_unit = "units/weapons/weapon_display/display_repeating_handguns"
+tbl.wield_anim = "to_repeating_handgun"
+tbl.wield_anim_no_ammo = "to_repeating_handgun_noammo"
+tbl.state_machine = "units/beings/player/first_person_base/state_machines/ranged/repeating_handgun"
+tbl.reload_event = "reload"
+tbl.buff_type = "RANGED"
+tbl.weapon_type = "REPEATING_HANDGUN"
+tbl.crosshair_style = "default"
+tbl.default_spread_template = "repeating_handgun"
+tbl.spread_lerp_speed = 12
+tbl.dodge_count = 1
+tbl.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1
 	},
@@ -327,7 +338,7 @@ var_0_0.buffs = {
 		external_optional_multiplier = 1
 	}
 }
-var_0_0.aim_assist_settings = {
+tbl.aim_assist_settings = {
 	max_range = 22,
 	no_aim_input_multiplier = 0,
 	always_auto_aim = true,
@@ -339,7 +350,7 @@ var_0_0.aim_assist_settings = {
 		skaven_slave = 1
 	}
 }
-var_0_0.weapon_diagram = {
+tbl.weapon_diagram = {
 	light_attack = {
 		[DamageTypes.ARMOR_PIERCING] = 5,
 		[DamageTypes.CLEAVE] = 1,
@@ -355,15 +366,15 @@ var_0_0.weapon_diagram = {
 		[DamageTypes.DAMAGE] = 5
 	}
 }
-var_0_0.wwise_dep_right_hand = {
+tbl.wwise_dep_right_hand = {
 	"wwise/repeating_handgun_pistol"
 }
-var_0_0.tooltip_keywords = {
+tbl.tooltip_keywords = {
 	"weapon_keyword_rapid_fire",
 	"weapon_keyword_armour_piercing",
 	"weapon_keyword_versatile"
 }
-var_0_0.tooltip_compare = {
+tbl.tooltip_compare = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -373,7 +384,7 @@ var_0_0.tooltip_compare = {
 		sub_action_name = "bullet_spray"
 	}
 }
-var_0_0.tooltip_detail = {
+tbl.tooltip_detail = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -385,5 +396,5 @@ var_0_0.tooltip_detail = {
 }
 
 return {
-	repeating_handgun_template_1 = table.clone(var_0_0)
+	repeating_handgun_template_1 = table.clone(tbl)
 }

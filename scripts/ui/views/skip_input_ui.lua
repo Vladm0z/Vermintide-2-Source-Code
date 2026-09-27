@@ -4,75 +4,99 @@ local var_0_0 = local_require("scripts/ui/views/skip_input_ui_definitions")
 
 SkipInputUI = class(SkipInputUI)
 
-function SkipInputUI.init(arg_1_0, arg_1_1, arg_1_2)
-	arg_1_0._parent = arg_1_1
-	arg_1_0._ui_renderer = arg_1_2.ui_renderer
-	arg_1_0._context = arg_1_2
-	arg_1_0._skip = false
-	arg_1_0._render_settings = {
+SkipInputUI.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	self._parent = arg_1_1
+	self._ui_renderer = arg_1_2.ui_renderer
+	self._context = arg_1_2
+	self._skip = false
+	self._render_settings = {
 		alpha_multiplier = 0,
 		internal_alpha_multiplier = 0,
 		snap_pixel_positions = false
 	}
 
-	arg_1_0:_create_ui_elements()
+	self:_create_ui_elements()
 end
 
-function SkipInputUI._create_ui_elements(arg_2_0)
-	arg_2_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
+SkipInputUI._create_ui_elements = function (self)
+	-- function 2
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 
-	local var_2_0 = arg_2_0._ui_renderer
-	local var_2_1 = arg_2_0._parent:input_service() or FAKE_INPUT_SERVICE
-	local var_2_2 = var_0_0.create_skip_widget(arg_2_0, var_2_0, var_2_1)
+	local _ui_renderer = self._ui_renderer
+	local input_service = self._parent:input_service()
 
-	arg_2_0._skip_widget = UIWidget.init(var_2_2)
+	input_service = input_service or FAKE_INPUT_SERVICE
+
+	local create_skip_widget = var_0_0.create_skip_widget(self, _ui_renderer, input_service)
+
+	self._skip_widget = UIWidget.init(create_skip_widget)
 end
 
-function SkipInputUI.destroy(arg_3_0)
+SkipInputUI.destroy = function (arg_3_0)
+	-- function 3
 	return
 end
 
-function SkipInputUI.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-	arg_4_0:_update_input(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-	arg_4_0:_draw(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+SkipInputUI.update = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	-- function 4
+	self:_update_input(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	self:_draw(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 end
 
-function SkipInputUI._update_input(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
-	local var_5_0 = arg_5_0._render_settings.internal_alpha_multiplier
+SkipInputUI._update_input = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	-- function 5
+	local internal_alpha_multiplier = self._render_settings.internal_alpha_multiplier
 
-	if arg_5_0._active then
-		var_5_0 = arg_5_3 and arg_5_3:get("cancel_video") and 1 or math.max(var_5_0 - arg_5_1 * 2, 0)
+	if not self._active then
+		internal_alpha_multiplier = not arg_5_3 and not arg_5_3:get("cancel_video") and 1 and math.max(internal_alpha_multiplier - arg_5_1 * 2, 0)
 	end
 
-	if arg_5_3:get("left_release") or arg_5_3:get("confirm") then
-		arg_5_0._active = true
+	if arg_5_3:get("left_release") or not arg_5_3:get("confirm") then
+		self._active = true
 	end
 
-	arg_5_0._render_settings.internal_alpha_multiplier = var_5_0
+	self._render_settings.internal_alpha_multiplier = internal_alpha_multiplier
 end
 
-function SkipInputUI.skip(arg_6_0)
-	arg_6_0._skip = true
+SkipInputUI.skip = function (self)
+	-- function 6
+	self._skip = true
 end
 
-function SkipInputUI.skipped(arg_7_0)
-	local var_7_0 = arg_7_0._skip
+SkipInputUI.skipped = function (self)
+	-- function 7
+	local _skip = self._skip
 
-	arg_7_0._skip = false
+	self._skip = false
 
-	return var_7_0
+	return _skip
 end
 
-function SkipInputUI._draw(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
-	local var_8_0 = arg_8_0._parent
-	local var_8_1 = arg_8_0._ui_renderer
-	local var_8_2 = arg_8_0._ui_scenegraph
-	local var_8_3 = arg_8_0._render_settings
-	local var_8_4 = arg_8_3 or FAKE_INPUT_SERVICE
+SkipInputUI._draw = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+	-- function 8
+	local _parent = self._parent
+	local _ui_renderer = self._ui_renderer
+	local _ui_scenegraph = self._ui_scenegraph
+	local _render_settings = self._render_settings
+	local flag = arg_8_3 or FAKE_INPUT_SERVICE
+	local alpha_multiplier
 
-	var_8_3.alpha_multiplier = (arg_8_4 and arg_8_4.alpha_multiplier or 1) * var_8_3.internal_alpha_multiplier
+	if not arg_8_4 then
+		alpha_multiplier = arg_8_4.alpha_multiplier
 
-	UIRenderer.begin_pass(var_8_1, var_8_2, var_8_4, arg_8_1, nil, var_8_3)
-	UIRenderer.draw_widget(var_8_1, arg_8_0._skip_widget)
-	UIRenderer.end_pass(var_8_1)
+		if not alpha_multiplier then
+			-- Nothing
+		end
+	end
+
+	alpha_multiplier = 1
+
+	::label_8_0::
+
+	_render_settings.alpha_multiplier = alpha_multiplier * _render_settings.internal_alpha_multiplier
+
+	UIRenderer.begin_pass(_ui_renderer, _ui_scenegraph, flag, arg_8_1, nil, _render_settings)
+	UIRenderer.draw_widget(_ui_renderer, self._skip_widget)
+	UIRenderer.end_pass(_ui_renderer)
 end

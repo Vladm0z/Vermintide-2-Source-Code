@@ -1,7 +1,8 @@
 -- chunkname: @scripts/game_state/loading_sub_states/win32/state_loading_versus_migration.lua
 
-local function var_0_0(arg_1_0, ...)
-	if script_data.network_debug_connections then
+local function fn(arg_1_0, ...)
+	-- function 1
+	if not script_data.network_debug_connections then
 		printf("[StateLoadingVersusMigration] " .. arg_1_0, ...)
 	end
 end
@@ -9,105 +10,116 @@ end
 StateLoadingVersusMigration = class(StateLoadingVersusMigration)
 StateLoadingVersusMigration.NAME = "StateLoadingVersusMigration"
 
-function StateLoadingVersusMigration.on_enter(arg_2_0, arg_2_1)
+StateLoadingVersusMigration.on_enter = function (self, arg_2_1)
+	-- function 2
 	print("[Gamestate] Enter Substate StateLoadingVersusMigration")
 
-	arg_2_0._party_manager = Managers.party
+	self._party_manager = Managers.party
 
-	arg_2_0:_init_params(arg_2_1)
-	arg_2_0:_init_network()
+	self:_init_params(arg_2_1)
+	self:_init_network()
 end
 
-function StateLoadingVersusMigration._init_params(arg_3_0, arg_3_1)
-	arg_3_0._loading_view = arg_3_1.loading_view
-	arg_3_0._lobby_client = arg_3_1.lobby_client
-	arg_3_0._lobby_joined = false
-	arg_3_0._server_created = false
+StateLoadingVersusMigration._init_params = function (self, arg_3_1)
+	-- function 3
+	self._loading_view = arg_3_1.loading_view
+	self._lobby_client = arg_3_1.lobby_client
+	self._lobby_joined = false
+	self._server_created = false
 end
 
-function StateLoadingVersusMigration._init_network(arg_4_0)
+StateLoadingVersusMigration._init_network = function (self)
+	-- function 4
 	LobbySetup.setup_network_options()
 
-	if not arg_4_0.parent:has_registered_rpcs() then
-		arg_4_0.parent:register_rpcs()
+	if not self.parent:has_registered_rpcs() then
+		self.parent:register_rpcs()
 	end
 
-	arg_4_0._migration_info = arg_4_0.parent.parent.loading_context.versus_migration_info
-	arg_4_0._friend_party = arg_4_0._migration_info.friend_party
+	self._migration_info = self.parent.parent.loading_context.versus_migration_info
+	self._friend_party = self._migration_info.friend_party
 
-	local var_4_0 = arg_4_0:get_host_to_migrate_to()
-	local var_4_1 = var_4_0.peer_id
+	local get_host_to_migrate_to = self:get_host_to_migrate_to()
+	local peer_id = get_host_to_migrate_to.peer_id
 
-	if not var_4_1 then
+	if not peer_id then
 		Crashify.print_exception("[VersusMigration]", "Local player does not belong to any friend party")
 	end
 
-	if not var_4_1 or var_4_1 == Network.peer_id() then
-		arg_4_0:set_up_lobby()
+	if not (not peer_id and peer_id ~= Network.peer_id()) then
+		self:set_up_lobby()
 	else
-		var_0_0("Versus migration to host %s, trying to find its lobby...", var_4_0)
+		fn("Versus migration to host %s, trying to find its lobby...", get_host_to_migrate_to)
 
-		local var_4_2 = arg_4_0.parent:setup_lobby_finder(callback(arg_4_0, "cb_lobby_joined"), nil, var_4_0)
-		local var_4_3 = {
+		local setup_lobby_finder = self.parent:setup_lobby_finder(callback(self, "cb_lobby_joined"), nil, get_host_to_migrate_to)
+		local tbl = {
 			free_slots = 1,
 			distance_filter = "world",
 			filters = {
 				host = {
 					comparison = "equal",
-					value = var_4_1
+					value = peer_id
 				}
 			},
 			near_filters = {}
 		}
-		local var_4_4 = var_4_2:get_lobby_browser()
+		local get_lobby_browser = setup_lobby_finder:get_lobby_browser()
 
-		LobbyInternal.add_filter_requirements(var_4_3, var_4_4)
+		LobbyInternal.add_filter_requirements(tbl, get_lobby_browser)
 	end
 end
 
-function StateLoadingVersusMigration.update(arg_5_0, arg_5_1, arg_5_2)
-	if arg_5_0._server_created or arg_5_0._lobby_joined then
+StateLoadingVersusMigration.update = function (self, arg_5_1, arg_5_2)
+	-- function 5
+	if self._server_created or not self._lobby_joined then
 		return StateLoadingRunning
 	end
 end
 
-function StateLoadingVersusMigration.on_exit(arg_6_0, arg_6_1)
+StateLoadingVersusMigration.on_exit = function (arg_6_0, arg_6_1)
+	-- function 6
 	arg_6_0.parent.parent.loading_context.versus_migration_info = nil
 end
 
-function StateLoadingVersusMigration.cb_server_created(arg_7_0)
-	var_0_0("cb_server_created")
+StateLoadingVersusMigration.cb_server_created = function (self)
+	-- function 7
+	fn("cb_server_created")
 
-	local var_7_0 = arg_7_0._migration_info.lobby_data
-	local var_7_1 = arg_7_0.parent:get_lobby()
-	local var_7_2 = var_7_1:get_stored_lobby_data() or {}
+	local lobby_data = self._migration_info.lobby_data
+	local get_lobby = self.parent:get_lobby()
+	local get_stored_lobby_data = get_lobby:get_stored_lobby_data()
 
-	for iter_7_0, iter_7_1 in pairs(var_7_0) do
-		var_7_2[iter_7_0] = iter_7_1
+	get_stored_lobby_data = get_stored_lobby_data or {}
+
+	for k, v in pairs(lobby_data) do
+		get_stored_lobby_data[k] = v
 	end
 
-	var_7_1:set_lobby_data(var_7_2)
+	get_lobby:set_lobby_data(get_stored_lobby_data)
 
-	arg_7_0._server_created = true
+	self._server_created = true
 end
 
-function StateLoadingVersusMigration.cb_lobby_joined(arg_8_0)
-	var_0_0("cb_lobby_joined")
+StateLoadingVersusMigration.cb_lobby_joined = function (self)
+	-- function 8
+	fn("cb_lobby_joined")
 
-	arg_8_0._lobby_joined = true
+	self._lobby_joined = true
 end
 
-function StateLoadingVersusMigration.set_up_lobby(arg_9_0)
-	local var_9_0 = Managers.level_transition_handler
-	local var_9_1 = arg_9_0._migration_info.level_data
+StateLoadingVersusMigration.set_up_lobby = function (self)
+	-- function 9
+	local level_transition_handler = Managers.level_transition_handler
+	local level_data = self._migration_info.level_data
 
-	var_9_0:set_next_level(var_9_1.level_key, var_9_1.environment_variation_id, var_9_1.level_seed)
-	arg_9_0.parent:setup_lobby_host(callback(arg_9_0, "cb_server_created"))
-	arg_9_0.parent:start_matchmaking()
+	level_transition_handler:set_next_level(level_data.level_key, level_data.environment_variation_id, level_data.level_seed)
+	self.parent:setup_lobby_host(callback(self, "cb_server_created"))
+	self.parent:start_matchmaking()
 end
 
-function StateLoadingVersusMigration.get_host_to_migrate_to(arg_10_0)
-	local var_10_0 = arg_10_0._friend_party[1]
+StateLoadingVersusMigration.get_host_to_migrate_to = function (self)
+	-- function 10
+	local var_10_0 = self._friend_party[1]
 	local var_10_1 = tostring(var_10_0)
 
 	return {

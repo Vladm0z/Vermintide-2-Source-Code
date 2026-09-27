@@ -1,61 +1,64 @@
 -- chunkname: @scripts/ui/dlc_morris/views/start_game_view/windows/definitions/start_game_window_deus_journey_selection_definitions.lua
 
-local var_0_0 = UISettings.game_start_windows
-local var_0_1 = var_0_0.frame
-local var_0_2 = var_0_0.size
-local var_0_3 = var_0_0.spacing
-local var_0_4 = UIFrameSettings[var_0_1].texture_sizes.vertical[1]
-local var_0_5 = var_0_2[1] - (var_0_4 * 2 + 60)
-local var_0_6 = {
-	var_0_2[1] * 2 + var_0_3,
-	var_0_2[2]
+local game_start_windows = UISettings.game_start_windows
+local frame = game_start_windows.frame
+local size = game_start_windows.size
+local spacing = game_start_windows.spacing
+local var_0_4 = UIFrameSettings[frame].texture_sizes.vertical[1]
+local num = size[1] - (var_0_4 * 2 + 60)
+local tbl = {
+	size[1] * 2 + spacing,
+	size[2]
 }
-local var_0_7 = {
-	var_0_2[1],
-	var_0_2[2]
+local tbl_2 = {
+	size[1],
+	size[2]
 }
-local var_0_8 = UISettings.console_menu_scenegraphs
-local var_0_9 = {
-	var_0_6[1] - 50,
+local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
+local tbl_3 = {
+	tbl[1] - 50,
 	200
 }
-local var_0_10 = {
+local tbl_4 = {
 	0,
 	-50,
 	0
 }
-local var_0_11 = {
+local tbl_5 = {
 	20,
 	0
 }
-local var_0_12 = {
-	var_0_9[1] + var_0_10[1] - var_0_11[1],
-	var_0_9[2] + var_0_10[2] - var_0_11[2]
+local tbl_6 = {
+	tbl_3[1] + tbl_4[1] - tbl_5[1],
+	tbl_3[2] + tbl_4[2] - tbl_5[2]
 }
-local var_0_13 = {
-	0 + var_0_10[1],
-	0 + var_0_10[2],
-	2 + var_0_10[3]
+local tbl_7 = {
+	0 + tbl_4[1],
+	0 + tbl_4[2],
+	2 + tbl_4[3]
 }
-local var_0_14 = {
+local tbl_8 = {
 	width = 180,
 	spacing_x = 50
 }
-local var_0_15 = {
+local tbl_9 = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+				-- function 1
 				arg_1_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
-				local var_2_0 = math.easeOutCubic(arg_2_3)
+			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+				-- function 2
+				local easeOutCubic = math.easeOutCubic(arg_2_3)
 
-				arg_2_4.render_settings.alpha_multiplier = var_2_0
+				arg_2_4.render_settings.alpha_multiplier = easeOutCubic
 			end,
-			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+				-- function 3
 				return
 			end
 		},
@@ -63,16 +66,19 @@ local var_0_15 = {
 			name = "animate_in_window",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				-- function 4
 				return
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
-				local var_5_0 = math.easeOutCubic(arg_5_3)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+				-- function 5
+				local easeOutCubic = math.easeOutCubic(arg_5_3)
 
-				arg_5_0.window.local_position[1] = arg_5_1.window.position[1] + math.floor(-100 * (1 - var_5_0))
-				arg_5_0.info_window.local_position[1] = arg_5_1.info_window.position[1] + math.floor(-80 * (1 - var_5_0))
+				arg_5_0.window.local_position[1] = arg_5_1.window.position[1] + math.floor(-100 * (1 - easeOutCubic))
+				arg_5_0.info_window.local_position[1] = arg_5_1.info_window.position[1] + math.floor(-80 * (1 - easeOutCubic))
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+				-- function 6
 				return
 			end
 		}
@@ -82,31 +88,34 @@ local var_0_15 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			init = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+				-- function 7
 				arg_7_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
-				local var_8_0 = math.easeOutCubic(arg_8_3)
+			update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+				-- function 8
+				local easeOutCubic = math.easeOutCubic(arg_8_3)
 
-				arg_8_4.render_settings.alpha_multiplier = 1 - var_8_0
+				arg_8_4.render_settings.alpha_multiplier = 1 - easeOutCubic
 			end,
-			on_complete = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			on_complete = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+				-- function 9
 				return
 			end
 		}
 	}
 }
-local var_0_16 = {
-	screen = var_0_8.screen,
-	area = var_0_8.area,
-	area_left = var_0_8.area_left,
-	area_right = var_0_8.area_right,
-	area_divider = var_0_8.area_divider,
+local tbl_10 = {
+	screen = console_menu_scenegraphs.screen,
+	area = console_menu_scenegraphs.area,
+	area_left = console_menu_scenegraphs.area_left,
+	area_right = console_menu_scenegraphs.area_right,
+	area_divider = console_menu_scenegraphs.area_divider,
 	window = {
 		vertical_alignment = "center",
 		parent = "area_left",
 		horizontal_alignment = "left",
-		size = var_0_6,
+		size = tbl,
 		position = {
 			100,
 			0,
@@ -118,7 +127,7 @@ local var_0_16 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_6[1],
+			tbl[1],
 			770
 		},
 		position = {
@@ -131,9 +140,9 @@ local var_0_16 = {
 		vertical_alignment = "center",
 		parent = "window",
 		horizontal_alignment = "right",
-		size = var_0_2,
+		size = size,
 		position = {
-			var_0_7[1] + 25,
+			tbl_2[1] + 25,
 			0,
 			1
 		}
@@ -171,7 +180,7 @@ local var_0_16 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_6[1],
+			tbl[1],
 			0
 		},
 		position = {
@@ -185,7 +194,7 @@ local var_0_16 = {
 		parent = "title_divider",
 		horizontal_alignment = "center",
 		size = {
-			var_0_6[1],
+			tbl[1],
 			52
 		},
 		position = {
@@ -212,7 +221,7 @@ local var_0_16 = {
 		vertical_alignment = "bottom",
 		parent = "window",
 		horizontal_alignment = "center",
-		size = var_0_9,
+		size = tbl_3,
 		position = {
 			0,
 			0,
@@ -223,16 +232,16 @@ local var_0_16 = {
 		vertical_alignment = "top",
 		parent = "modifier_info",
 		horizontal_alignment = "center",
-		size = var_0_12,
-		position = var_0_13
+		size = tbl_6,
+		position = tbl_7
 	},
 	description_text = {
 		vertical_alignment = "bottom",
 		parent = "info_window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_5,
-			var_0_2[2] / 2
+			num,
+			size[2] / 2
 		},
 		position = {
 			0,
@@ -245,7 +254,7 @@ local var_0_16 = {
 		parent = "info_window",
 		horizontal_alignment = "center",
 		size = {
-			var_0_5,
+			num,
 			100
 		},
 		position = {
@@ -315,7 +324,7 @@ local var_0_16 = {
 		parent = "level_title_divider",
 		horizontal_alignment = "center",
 		size = {
-			var_0_5,
+			num,
 			50
 		},
 		position = {
@@ -329,7 +338,7 @@ local var_0_16 = {
 		parent = "level_title_divider",
 		horizontal_alignment = "center",
 		size = {
-			var_0_5,
+			num,
 			50
 		},
 		position = {
@@ -353,7 +362,7 @@ local var_0_16 = {
 		}
 	}
 }
-local var_0_17 = {
+local tbl_11 = {
 	word_wrap = true,
 	font_size = 18,
 	localize = false,
@@ -368,7 +377,7 @@ local var_0_17 = {
 		2
 	}
 }
-local var_0_18 = {
+local tbl_12 = {
 	font_size = 36,
 	upper_case = true,
 	localize = false,
@@ -385,7 +394,7 @@ local var_0_18 = {
 		2
 	}
 }
-local var_0_19 = {
+local tbl_13 = {
 	font_size = 36,
 	upper_case = true,
 	localize = false,
@@ -401,7 +410,7 @@ local var_0_19 = {
 		2
 	}
 }
-local var_0_20 = {
+local tbl_14 = {
 	font_size = 22,
 	horizontal_alignment = "center",
 	localize = false,
@@ -417,7 +426,8 @@ local var_0_20 = {
 	}
 }
 
-local function var_0_21(arg_10_0)
+local function fn(arg_10_0)
+	-- function 10
 	return {
 		element = {
 			passes = {
@@ -471,26 +481,27 @@ local function var_0_21(arg_10_0)
 	}
 end
 
-local function var_0_22(arg_11_0)
-	local var_11_0 = 10
-	local var_11_1 = 32
-	local var_11_2 = {
+local function fn_2(arg_11_0)
+	-- function 11
+	local num = 10
+	local num_2 = 32
+	local tbl = {
 		50,
 		50
 	}
-	local var_11_3 = {
+	local tbl_2 = {
 		0,
 		40,
 		0
 	}
-	local var_11_4 = {
+	local tbl_3 = {
 		0,
-		-var_11_0 - var_11_2[2] + var_11_3[2],
+		-num - tbl[2] + tbl_2[2],
 		0
 	}
-	local var_11_5 = {
+	local tbl_4 = {
 		0,
-		-var_11_0 - var_11_1 + var_11_4[2],
+		-num - num_2 + tbl_3[2],
 		0
 	}
 
@@ -501,8 +512,9 @@ local function var_0_22(arg_11_0)
 					pass_type = "texture",
 					style_id = "icon",
 					texture_id = "icon",
-					content_check_function = function(arg_12_0)
-						return arg_12_0.icon ~= nil
+					content_check_function = function (self)
+						-- function 12
+						return self.icon ~= nil
 					end
 				},
 				{
@@ -527,8 +539,8 @@ local function var_0_22(arg_11_0)
 			icon = {
 				vertical_alignment = "top",
 				horizontal_alignment = "center",
-				texture_size = var_11_2,
-				offset = var_11_3,
+				texture_size = tbl,
+				offset = tbl_2,
 				color = Colors.get_color_table_with_alpha("white", 255)
 			},
 			title = {
@@ -540,8 +552,8 @@ local function var_0_22(arg_11_0)
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
 				text_color = Colors.get_color_table_with_alpha("font_title", 255),
-				font_size = var_11_1,
-				offset = var_11_4
+				font_size = num_2,
+				offset = tbl_3
 			},
 			description = {
 				horizontal_alignment = "center",
@@ -552,20 +564,21 @@ local function var_0_22(arg_11_0)
 				dynamic_font_size = false,
 				font_type = "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
-				offset = var_11_5
+				offset = tbl_4
 			}
 		},
 		scenegraph_id = arg_11_0
 	}
 end
 
-local function var_0_23(arg_13_0)
-	local var_13_0 = UIFrameSettings.frame_outer_fade_01
-	local var_13_1 = var_13_0.texture_sizes.horizontal[2]
-	local var_13_2 = var_0_16[arg_13_0].size
-	local var_13_3 = {
-		var_13_2[1] + var_13_1 * 2,
-		var_13_2[2] + var_13_1 * 2
+local function fn_3(arg_13_0)
+	-- function 13
+	local frame_outer_fade_01 = UIFrameSettings.frame_outer_fade_01
+	local var_13_1 = frame_outer_fade_01.texture_sizes.horizontal[2]
+	local size = tbl_10[arg_13_0].size
+	local tbl = {
+		size[1] + var_13_1 * 2,
+		size[2] + var_13_1 * 2
 	}
 
 	return {
@@ -585,14 +598,14 @@ local function var_0_23(arg_13_0)
 		},
 		content = {
 			title = "deus_start_game_mod_info_title",
-			frame = var_13_0.texture
+			frame = frame_outer_fade_01.texture
 		},
 		style = {
 			frame = {
 				color = Colors.get_color_table_with_alpha("console_menu_rect", 128),
-				size = var_13_3,
-				texture_size = var_13_0.texture_size,
-				texture_sizes = var_13_0.texture_sizes,
+				size = tbl,
+				texture_size = frame_outer_fade_01.texture_size,
+				texture_sizes = frame_outer_fade_01.texture_sizes,
 				offset = {
 					-var_13_1,
 					-var_13_1,
@@ -625,20 +638,21 @@ local function var_0_23(arg_13_0)
 	}
 end
 
-local function var_0_24(arg_14_0, arg_14_1)
+local function fn_4(arg_14_0, arg_14_1)
+	-- function 14
 	local var_14_0 = arg_14_1
-	local var_14_1 = {
+	local tbl = {
 		180,
 		180
 	}
 
 	if not var_14_0 then
 		var_14_0 = "level_root_" .. arg_14_0
-		var_0_16[var_14_0] = {
+		tbl_10[var_14_0] = {
 			vertical_alignment = "center",
 			parent = "level_root_node",
 			horizontal_alignment = "center",
-			size = var_14_1,
+			size = tbl,
 			position = {
 				0,
 				0,
@@ -647,24 +661,26 @@ local function var_0_24(arg_14_0, arg_14_1)
 		}
 	end
 
-	local var_14_2 = {
+	local tbl_2 = {
 		element = {}
 	}
-	local var_14_3 = {
+	local tbl_3 = {
 		{
 			style_id = "icon",
 			pass_type = "hotspot",
 			content_id = "button_hotspot",
-			content_check_function = function(arg_15_0)
-				return not arg_15_0.parent.locked
+			content_check_function = function (self)
+				-- function 15
+				return not self.parent.locked
 			end
 		},
 		{
 			style_id = "icon",
 			pass_type = "level_tooltip",
 			level_id = "level_data",
-			content_check_function = function(arg_16_0)
-				return arg_16_0.button_hotspot.is_hover
+			content_check_function = function (self)
+				-- function 16
+				return self.button_hotspot.is_hover
 			end
 		},
 		{
@@ -681,32 +697,36 @@ local function var_0_24(arg_14_0, arg_14_1)
 			pass_type = "texture",
 			style_id = "icon",
 			texture_id = "icon",
-			content_check_function = function(arg_17_0)
-				return not arg_17_0.locked
+			content_check_function = function (self)
+				-- function 17
+				return not self.locked
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "icon_locked",
 			texture_id = "icon",
-			content_check_function = function(arg_18_0)
-				return arg_18_0.locked
+			content_check_function = function (self)
+				-- function 18
+				return self.locked
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "lock",
 			texture_id = "lock",
-			content_check_function = function(arg_19_0)
-				return arg_19_0.locked
+			content_check_function = function (self)
+				-- function 19
+				return self.locked
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "lock_fade",
 			texture_id = "lock_fade",
-			content_check_function = function(arg_20_0)
-				return arg_20_0.locked
+			content_check_function = function (self)
+				-- function 20
+				return self.locked
 			end
 		},
 		{
@@ -718,36 +738,47 @@ local function var_0_24(arg_14_0, arg_14_1)
 			pass_type = "rotated_texture",
 			style_id = "path",
 			texture_id = "path",
-			content_check_function = function(arg_21_0)
-				return arg_21_0.draw_path
+			content_check_function = function (self)
+				-- function 21
+				return self.draw_path
 			end
 		},
 		{
 			pass_type = "rotated_texture",
 			style_id = "path_glow",
 			texture_id = "path_glow",
-			content_check_function = function(arg_22_0)
-				return arg_22_0.draw_path and arg_22_0.draw_path_fill and not arg_22_0.locked
+			content_check_function = function (self)
+				-- function 22
+				local draw_path = self.draw_path
+
+				if not draw_path then
+					draw_path = self.draw_path_fill
+					draw_path = not draw_path and not self.locked
+				end
+
+				return draw_path
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "chaos_symbol",
 			texture_id = "chaos_symbol",
-			content_check_function = function(arg_23_0)
-				return arg_23_0.draw_chaos_symbol
+			content_check_function = function (self)
+				-- function 23
+				return self.draw_chaos_symbol
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "theme_icon",
 			texture_id = "theme_icon",
-			content_check_function = function(arg_24_0)
-				return arg_24_0.theme_icon ~= nil
+			content_check_function = function (self)
+				-- function 24
+				return self.theme_icon ~= nil
 			end
 		}
 	}
-	local var_14_4 = {
+	local tbl_4 = {
 		frame = "map_frame_00",
 		locked = true,
 		lock = "map_frame_lock",
@@ -763,7 +794,7 @@ local function var_0_24(arg_14_0, arg_14_1)
 		draw_chaos_symbol = true,
 		button_hotspot = {}
 	}
-	local var_14_5 = {
+	local tbl_5 = {
 		path = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
@@ -777,7 +808,7 @@ local function var_0_24(arg_14_0, arg_14_1)
 				13
 			},
 			offset = {
-				var_14_1[1] / 2,
+				tbl[1] / 2,
 				0,
 				1
 			},
@@ -801,7 +832,7 @@ local function var_0_24(arg_14_0, arg_14_1)
 				43
 			},
 			offset = {
-				var_14_1[1] / 2,
+				tbl[1] / 2,
 				0,
 				2
 			},
@@ -986,42 +1017,42 @@ local function var_0_24(arg_14_0, arg_14_1)
 		}
 	}
 
-	var_14_2.element.passes = var_14_3
-	var_14_2.content = var_14_4
-	var_14_2.style = var_14_5
-	var_14_2.offset = {
+	tbl_2.element.passes = tbl_3
+	tbl_2.content = tbl_4
+	tbl_2.style = tbl_5
+	tbl_2.offset = {
 		0,
 		0,
 		0
 	}
-	var_14_2.scenegraph_id = var_14_0
+	tbl_2.scenegraph_id = var_14_0
 
-	return var_14_2
+	return tbl_2
 end
 
-local var_0_25 = {
-	level_title = UIWidgets.create_simple_text("level_title", "level_title", nil, nil, var_0_18),
-	selected_level = var_0_24(nil, "level_texture_frame"),
+local tbl_15 = {
+	level_title = UIWidgets.create_simple_text("level_title", "level_title", nil, nil, tbl_12),
+	selected_level = fn_4(nil, "level_texture_frame"),
 	level_title_divider = UIWidgets.create_simple_texture("divider_01_top", "level_title_divider"),
-	description_text = UIWidgets.create_simple_text("", "description_text", nil, nil, var_0_17),
-	helper_text = UIWidgets.create_simple_text(Localize("tutorial_map"), "helper_text", nil, nil, var_0_19),
-	description_background = UIWidgets.create_rect_with_outer_frame("info_window", var_0_16.info_window.size, "frame_outer_fade_02", nil, UISettings.console_start_game_menu_rect_color),
-	locked_text = UIWidgets.create_simple_text("", "locked_text", nil, nil, var_0_20),
-	modifier_timer = var_0_21("modifier_timer"),
-	modifier_info = var_0_23("modifier_info"),
-	modifier_info_god = var_0_22("modifier_info_god")
+	description_text = UIWidgets.create_simple_text("", "description_text", nil, nil, tbl_11),
+	helper_text = UIWidgets.create_simple_text(Localize("tutorial_map"), "helper_text", nil, nil, tbl_13),
+	description_background = UIWidgets.create_rect_with_outer_frame("info_window", tbl_10.info_window.size, "frame_outer_fade_02", nil, UISettings.console_start_game_menu_rect_color),
+	locked_text = UIWidgets.create_simple_text("", "locked_text", nil, nil, tbl_14),
+	modifier_timer = fn("modifier_timer"),
+	modifier_info = fn_3("modifier_info"),
+	modifier_info_god = fn_2("modifier_info_god")
 }
-local var_0_26 = {}
+local tbl_16 = {}
 
-for iter_0_0 = 1, 20 do
-	var_0_26[iter_0_0] = var_0_24(iter_0_0)
+for i = 1, 20 do
+	tbl_16[i] = fn_4(i)
 end
 
 return {
-	widgets = var_0_25,
-	node_widgets = var_0_26,
-	scenegraph_definition = var_0_16,
-	animation_definitions = var_0_15,
-	large_window_size = var_0_6,
-	journey_widget_settings = var_0_14
+	widgets = tbl_15,
+	node_widgets = tbl_16,
+	scenegraph_definition = tbl_10,
+	animation_definitions = tbl_9,
+	large_window_size = tbl,
+	journey_widget_settings = tbl_8
 }

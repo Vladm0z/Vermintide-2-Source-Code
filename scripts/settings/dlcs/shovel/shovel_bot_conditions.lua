@@ -1,7 +1,16 @@
 -- chunkname: @scripts/settings/dlcs/shovel/shovel_bot_conditions.lua
 
-BTConditions.can_activate = BTConditions.can_activate or {}
-BTConditions.can_activate_non_combat = BTConditions.can_activate_non_combat or {}
+local BTConditions = BTConditions
+local can_activate = BTConditions.can_activate
+
+can_activate = can_activate or {}
+BTConditions.can_activate = can_activate
+
+local BTConditions_2 = BTConditions
+local can_activate_non_combat = BTConditions.can_activate_non_combat
+
+can_activate_non_combat = can_activate_non_combat or {}
+BTConditions_2.can_activate_non_combat = can_activate_non_combat
 
 table.merge_recursive(BTConditions.ability_check_categories, {
 	activate_ability = {
@@ -9,29 +18,32 @@ table.merge_recursive(BTConditions.ability_check_categories, {
 	}
 })
 
-function BTConditions.can_activate.bw_necromancer(arg_1_0)
-	if arg_1_0.ai_slot_extension.num_occupied_slots >= 3 then
+BTConditions.can_activate.bw_necromancer = function (self)
+	-- function 1
+	if self.ai_slot_extension.num_occupied_slots >= 3 then
 		return true
 	end
 
 	if not Managers.state.game_mode:is_round_started() then
-		arg_1_0._bt_conditions_first_ability = true
+		self._bt_conditions_first_ability = true
 
 		return false
-	elseif arg_1_0._bt_conditions_first_ability then
-		local var_1_0 = Managers.time:time("game")
+	elseif not self._bt_conditions_first_ability then
+		local time = Managers.time:time("game")
+		local _first_ability_t = self._first_ability_t
 
-		arg_1_0._first_ability_t = arg_1_0._first_ability_t or var_1_0 + Math.random(1, 4)
+		_first_ability_t = _first_ability_t or time + Math.random(1, 4)
+		self._first_ability_t = _first_ability_t
 
-		if var_1_0 < arg_1_0._first_ability_t then
+		if time < self._first_ability_t then
 			return false
 		end
 
-		arg_1_0._bt_conditions_first_ability = nil
-		arg_1_0._first_ability_t = nil
+		self._bt_conditions_first_ability = nil
+		self._first_ability_t = nil
 	end
 
-	if arg_1_0.ai_commander_extension:get_controlled_units_count() <= 4 then
+	if self.ai_commander_extension:get_controlled_units_count() <= 4 then
 		return true
 	end
 

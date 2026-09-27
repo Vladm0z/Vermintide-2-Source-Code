@@ -4,30 +4,34 @@ require("scripts/managers/game_mode/spawning_components/spawning_helper")
 
 SimpleSpawning = class(SimpleSpawning)
 
-local var_0_0 = {
+local tbl = {
 	"rpc_to_server_spawn_failed"
 }
 
-function SimpleSpawning.init(arg_1_0, arg_1_1, arg_1_2)
-	arg_1_0._profile_synchronizer = arg_1_1
-	arg_1_0._spawn_point_groups = {}
-	arg_1_0._peers_ongoing_game_object_sync = {}
-	arg_1_0._use_spawn_point_groups = arg_1_2
+SimpleSpawning.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	self._profile_synchronizer = arg_1_1
+	self._spawn_point_groups = {}
+	self._peers_ongoing_game_object_sync = {}
+	self._use_spawn_point_groups = arg_1_2
 end
 
-function SimpleSpawning.register_rpcs(arg_2_0, arg_2_1, arg_2_2)
-	arg_2_1:register(arg_2_0, unpack(var_0_0))
+SimpleSpawning.register_rpcs = function (self, arg_2_1, arg_2_2)
+	-- function 2
+	arg_2_1:register(self, unpack(tbl))
 
-	arg_2_0._network_event_delegate = arg_2_1
+	self._network_event_delegate = arg_2_1
 end
 
-function SimpleSpawning.unregister_rpcs(arg_3_0)
-	arg_3_0._network_event_delegate:unregister(arg_3_0)
+SimpleSpawning.unregister_rpcs = function (self)
+	-- function 3
+	self._network_event_delegate:unregister(self)
 
-	arg_3_0._network_event_delegate = nil
+	self._network_event_delegate = nil
 end
 
-function SimpleSpawning.setup_data(arg_4_0, arg_4_1, arg_4_2)
+SimpleSpawning.setup_data = function (arg_4_0, arg_4_1, arg_4_2)
+	-- function 4
 	Managers.party:get_player_status(arg_4_1, arg_4_2).game_mode_data = {
 		health_state = "alive",
 		spawn_pos_stored = false,
@@ -43,153 +47,171 @@ function SimpleSpawning.setup_data(arg_4_0, arg_4_1, arg_4_2)
 	}
 end
 
-function SimpleSpawning._get_random_spawn_point(arg_5_0)
-	local var_5_0 = arg_5_0._spawn_point_groups[1]
+SimpleSpawning._get_random_spawn_point = function (self)
+	-- function 5
+	local var_5_0 = self._spawn_point_groups[1]
 	local var_5_1 = var_5_0[Math.random(1, #var_5_0)]
-	local var_5_2 = var_5_1.pos:unbox()
-	local var_5_3 = var_5_1.rot:unbox()
+	local unbox = var_5_1.pos:unbox()
+	local unbox_2 = var_5_1.rot:unbox()
 
-	return var_5_2, var_5_3
+	return unbox, unbox_2
 end
 
-function SimpleSpawning._get_free_spawn_point(arg_6_0, arg_6_1, arg_6_2)
-	local var_6_0 = arg_6_0._spawn_point_groups[arg_6_1][arg_6_2]
-	local var_6_1 = var_6_0.pos:unbox()
-	local var_6_2 = var_6_0.rot:unbox()
+SimpleSpawning._get_free_spawn_point = function (self, arg_6_1, arg_6_2)
+	-- function 6
+	local var_6_0 = self._spawn_point_groups[arg_6_1][arg_6_2]
+	local unbox = var_6_0.pos:unbox()
+	local unbox_2 = var_6_0.rot:unbox()
 
-	return var_6_1, var_6_2
+	return unbox, unbox_2
 end
 
-function SimpleSpawning.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
-	if Managers.state.network:game() then
-		local var_7_0 = Managers.player
-		local var_7_1, var_7_2 = Managers.state.network.network_server:peers_ongoing_game_object_sync(arg_7_0._peers_ongoing_game_object_sync)
+SimpleSpawning.update = function (self, arg_7_1, arg_7_2, arg_7_3)
+	-- function 7
+	if not Managers.state.network:game() then
+		local player = Managers.player
+		local peers_ongoing_game_object_sync, var_7_2 = Managers.state.network.network_server:peers_ongoing_game_object_sync(self._peers_ongoing_game_object_sync)
 
-		for iter_7_0 = 1, var_7_2 do
-			local var_7_3 = var_7_1[iter_7_0]
+		for i = 1, var_7_2 do
+			local var_7_3 = peers_ongoing_game_object_sync[i]
 
-			if not arg_7_0._profile_synchronizer:all_synced_for_peer(var_7_3, 1) then
+			if not self._profile_synchronizer:all_synced_for_peer(var_7_3, 1) then
 				return
 			end
 		end
 
-		local var_7_4 = Managers.party:parties()
+		local parties = Managers.party:parties()
 
-		for iter_7_1 = 1, #var_7_4 do
-			local var_7_5 = var_7_4[iter_7_1].occupied_slots
+		for j = 1, #parties do
+			local occupied_slots = parties[j].occupied_slots
 
-			for iter_7_2 = 1, #var_7_5 do
-				local var_7_6 = var_7_5[iter_7_2]
-				local var_7_7 = var_7_6.peer_id
-				local var_7_8 = var_7_6.local_player_id
+			for k = 1, #occupied_slots do
+				local var_7_6 = occupied_slots[k]
+				local peer_id = var_7_6.peer_id
+				local local_player_id = var_7_6.local_player_id
 
-				if not arg_7_0._profile_synchronizer:all_synced_for_peer(var_7_7, var_7_8) then
+				if not self._profile_synchronizer:all_synced_for_peer(peer_id, local_player_id) then
 					return
 				end
 			end
 		end
 
-		local var_7_9 = arg_7_3.occupied_slots
+		local occupied_slots_2 = arg_7_3.occupied_slots
 
-		for iter_7_3 = 1, #var_7_9 do
-			local var_7_10 = var_7_9[iter_7_3]
-			local var_7_11 = var_7_10.game_mode_data
-			local var_7_12 = var_7_11.spawn_state
+		for l = 1, #occupied_slots_2 do
+			local var_7_10 = occupied_slots_2[l]
+			local game_mode_data = var_7_10.game_mode_data
+			local spawn_state = game_mode_data.spawn_state
 
-			if var_7_12 == "not_spawned" then
-				local var_7_13 = arg_7_0._profile_synchronizer
-				local var_7_14 = var_7_10.peer_id
-				local var_7_15 = var_7_10.local_player_id
-				local var_7_16, var_7_17 = var_7_13:profile_by_peer(var_7_14, var_7_15)
+			if spawn_state == "not_spawned" then
+				local _profile_synchronizer = self._profile_synchronizer
+				local peer_id_2 = var_7_10.peer_id
+				local local_player_id_2 = var_7_10.local_player_id
+				local profile_by_peer, var_7_17 = _profile_synchronizer:profile_by_peer(peer_id_2, local_player_id_2)
 
-				if var_7_0:player(var_7_14, var_7_15) and var_7_16 and var_7_17 and var_7_13:all_synced() then
+				if not player:player(peer_id_2, local_player_id_2) and not profile_by_peer and not var_7_17 and not _profile_synchronizer:all_synced() then
 					local var_7_18
 					local var_7_19
 
-					if var_7_11.spawn_pos_stored then
-						var_7_18 = var_7_11.position:unbox()
-						var_7_19 = var_7_11.rotation:unbox()
-					elseif arg_7_0._use_spawn_point_groups then
-						var_7_18, var_7_19 = arg_7_0:_get_free_spawn_point(arg_7_3.party_id, iter_7_3)
+					if not game_mode_data.spawn_pos_stored then
+						var_7_18 = game_mode_data.position:unbox()
+						var_7_19 = game_mode_data.rotation:unbox()
+					elseif not self._use_spawn_point_groups then
+						var_7_18, var_7_19 = self:_get_free_spawn_point(arg_7_3.party_id, l)
 					else
-						var_7_18, var_7_19 = arg_7_0:_get_random_spawn_point()
+						var_7_18, var_7_19 = self:_get_random_spawn_point()
 					end
 
-					local var_7_20 = false
-					local var_7_21 = 100
-					local var_7_22 = 100
-					local var_7_23 = 100
+					local flag = false
+					local num = 100
+					local num_2 = 100
+					local num_3 = 100
 					local var_7_24 = NetworkLookup.item_names["n/a"]
-					local var_7_25 = arg_7_0._profile_synchronizer:cached_inventory_hash(var_7_14, var_7_15)
+					local cached_inventory_hash = self._profile_synchronizer:cached_inventory_hash(peer_id_2, local_player_id_2)
 
-					Managers.state.network.network_transmit:send_rpc("rpc_to_client_spawn_player", var_7_14, var_7_15, var_7_16, var_7_17, var_7_18, var_7_19, var_7_20, var_7_21, var_7_22, var_7_23, var_7_24, var_7_24, var_7_24, {}, {}, var_7_25)
+					Managers.state.network.network_transmit:send_rpc("rpc_to_client_spawn_player", peer_id_2, local_player_id_2, profile_by_peer, var_7_17, var_7_18, var_7_19, flag, num, num_2, num_3, var_7_24, var_7_24, var_7_24, {}, {}, cached_inventory_hash)
 
-					var_7_11.spawn_state = "spawning"
+					game_mode_data.spawn_state = "spawning"
 				end
-			elseif var_7_12 == "spawning" then
-				local var_7_26 = var_7_10.peer_id
-				local var_7_27 = var_7_10.local_player_id
+			elseif spawn_state == "spawning" then
+				local peer_id_3 = var_7_10.peer_id
+				local local_player_id_3 = var_7_10.local_player_id
 
-				if var_7_0:player(var_7_26, var_7_27).player_unit then
-					var_7_11.spawn_state = "spawned"
+				if not player:player(peer_id_3, local_player_id_3).player_unit then
+					game_mode_data.spawn_state = "spawned"
 				end
-			elseif var_7_12 == "spawned" then
-				local var_7_28 = var_7_10.peer_id
-				local var_7_29 = var_7_10.local_player_id
-				local var_7_30 = var_7_0:player(var_7_28, var_7_29).player_unit
+			elseif spawn_state == "spawned" then
+				local peer_id_4 = var_7_10.peer_id
+				local local_player_id_4 = var_7_10.local_player_id
+				local player_unit = player:player(peer_id_4, local_player_id_4).player_unit
 
-				if not var_7_30 then
-					var_7_11.spawn_state = "not_spawned"
+				if not player_unit then
+					game_mode_data.spawn_state = "not_spawned"
 				else
-					local var_7_31 = ScriptUnit.extension(var_7_30, "locomotion_system"):last_position_on_navmesh()
+					local last_position_on_navmesh = ScriptUnit.extension(player_unit, "locomotion_system"):last_position_on_navmesh()
 
-					var_7_11.position:store(var_7_31)
-					var_7_11.rotation:store(Unit.local_rotation(var_7_30, 0))
+					game_mode_data.position:store(last_position_on_navmesh)
+					game_mode_data.rotation:store(Unit.local_rotation(player_unit, 0))
 
-					var_7_11.spawn_pos_stored = true
+					game_mode_data.spawn_pos_stored = true
 				end
 			end
 		end
 	end
 end
 
-function SimpleSpawning.flow_callback_add_spawn_point(arg_8_0, arg_8_1)
-	local var_8_0 = Unit.local_position(arg_8_1, 0)
-	local var_8_1 = Unit.local_rotation(arg_8_1, 0)
-	local var_8_2 = {
-		pos = Vector3Box(var_8_0),
-		rot = QuaternionBox(var_8_1)
+SimpleSpawning.flow_callback_add_spawn_point = function (self, arg_8_1)
+	-- function 8
+	local local_position = Unit.local_position(arg_8_1, 0)
+	local local_rotation = Unit.local_rotation(arg_8_1, 0)
+	local tbl = {
+		pos = Vector3Box(local_position),
+		rot = QuaternionBox(local_rotation)
 	}
-	local var_8_3 = arg_8_0._use_spawn_point_groups and tonumber(Unit.get_data(arg_8_1, "group")) or 1
-	local var_8_4 = arg_8_0._spawn_point_groups[var_8_3]
+	local var_8_3
+
+	if not self._use_spawn_point_groups then
+		var_8_3 = tonumber(Unit.get_data(arg_8_1, "group"))
+
+		if not var_8_3 then
+			-- Nothing
+		end
+	end
+
+	var_8_3 = 1
+
+	::label_8_0::
+
+	local var_8_4 = self._spawn_point_groups[var_8_3]
 
 	if not var_8_4 then
 		var_8_4 = {}
-		arg_8_0._spawn_point_groups[var_8_3] = var_8_4
+		self._spawn_point_groups[var_8_3] = var_8_4
 	end
 
-	var_8_4[#var_8_4 + 1] = var_8_2
+	var_8_4[#var_8_4 + 1] = tbl
 end
 
-function SimpleSpawning.rpc_to_server_spawn_failed(arg_9_0, arg_9_1, arg_9_2)
+SimpleSpawning.rpc_to_server_spawn_failed = function (arg_9_0, arg_9_1, arg_9_2)
+	-- function 9
 	print("[SimpleSpawning] Client detected spawning mismatch. Trying again.")
 
 	local var_9_0 = CHANNEL_TO_PEER_ID[arg_9_1]
-	local var_9_1 = Managers.party:parties()
+	local parties = Managers.party:parties()
 
-	for iter_9_0 = 1, #var_9_1 do
-		local var_9_2 = var_9_1[iter_9_0].occupied_slots
+	for i = 1, #parties do
+		local occupied_slots = parties[i].occupied_slots
 
-		for iter_9_1 = 1, #var_9_2 do
-			local var_9_3 = var_9_2[iter_9_1]
-			local var_9_4 = var_9_3.peer_id
-			local var_9_5 = var_9_3.local_player_id
+		for j = 1, #occupied_slots do
+			local var_9_3 = occupied_slots[j]
+			local peer_id = var_9_3.peer_id
+			local local_player_id = var_9_3.local_player_id
 
-			if var_9_0 == var_9_4 and arg_9_2 == var_9_5 then
-				local var_9_6 = var_9_3.game_mode_data
+			if not (var_9_0 ~= peer_id or arg_9_2 ~= local_player_id) then
+				local game_mode_data = var_9_3.game_mode_data
 
-				if var_9_6.spawn_state == "spawning" then
-					var_9_6.spawn_state = "not_spawned"
+				if game_mode_data.spawn_state == "spawning" then
+					game_mode_data.spawn_state = "not_spawned"
 
 					break
 				end

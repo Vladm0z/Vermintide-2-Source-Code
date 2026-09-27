@@ -1,9 +1,9 @@
 -- chunkname: @scripts/settings/dlcs/karak_azgaraz/karak_azgaraz_sound_settings_part_3.lua
 
-local var_0_0 = DLCSettings.karak_azgaraz_part_3
+local karak_azgaraz_part_3 = DLCSettings.karak_azgaraz_part_3
 
-var_0_0.network_sound_events = {}
-var_0_0.dialogue_lookup = {
+karak_azgaraz_part_3.network_sound_events = {}
+karak_azgaraz_part_3.dialogue_lookup = {
 	"dialogues/generated/lookup_wood_elf_dlc_dwarf_beacons",
 	"dialogues/generated/lookup_empire_soldier_dlc_dwarf_beacons",
 	"dialogues/generated/lookup_bright_wizard_dlc_dwarf_beacons",
@@ -11,7 +11,7 @@ var_0_0.dialogue_lookup = {
 	"dialogues/generated/lookup_witch_hunter_dlc_dwarf_beacons",
 	"dialogues/generated/lookup_npc_dlc_dwarf_beacons"
 }
-var_0_0.dialogue_settings = {
+karak_azgaraz_part_3.dialogue_settings = {
 	dlc_dwarf_beacons = {
 		"dialogues/generated/wood_elf_dlc_dwarf_beacons",
 		"dialogues/generated/empire_soldier_dlc_dwarf_beacons",

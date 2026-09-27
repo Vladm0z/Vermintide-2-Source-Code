@@ -2,7 +2,7 @@
 
 require("scripts/settings/attachment_node_linking")
 
-local var_0_0 = {
+local tbl = {
 	outfit_null = {
 		unit_extension_template = "ai_outfit_unit",
 		unit_name = "units/beings/player/chr_dummy_hat",
@@ -1307,542 +1307,542 @@ local var_0_0 = {
 		attachment_node_linking = AttachmentNodeLinking.ai_helmet
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	one_hand_weapon_right = {
-		var_0_0.wpn_skaven_sword_01_right,
-		var_0_0.wpn_skaven_sword_02_right,
-		var_0_0.wpn_skaven_sword_03_right,
-		var_0_0.wpn_skaven_sword_04_right,
-		var_0_0.wpn_skaven_sword_05_right,
-		var_0_0.wpn_skaven_sword_06_right,
-		var_0_0.wpn_skaven_sword_07_right,
-		var_0_0.wpn_skaven_sword_08_right,
-		var_0_0.wpn_skaven_sword_16_right,
-		var_0_0.wpn_skaven_sword_17_right,
-		var_0_0.wpn_skaven_sword_18_right,
-		var_0_0.wpn_skaven_sword_19_right,
-		var_0_0.wpn_skaven_sword_20_right,
-		var_0_0.wpn_skaven_sword_21_right,
-		var_0_0.wpn_skaven_sword_22_right,
-		var_0_0.wpn_skaven_sword_23_right,
-		var_0_0.wpn_skaven_sword_24_right,
-		var_0_0.wpn_skaven_mace_31_right,
-		var_0_0.wpn_skaven_mace_32_right,
-		var_0_0.wpn_skaven_mace_33_right,
-		var_0_0.wpn_skaven_mace_34_right,
-		var_0_0.wpn_skaven_mace_35_right,
-		var_0_0.wpn_skaven_mace_35_right,
-		var_0_0.wpn_skaven_mace_35_right,
-		var_0_0.wpn_skaven_mace_35_right,
-		var_0_0.wpn_skaven_mace_35_right,
-		var_0_0.wpn_skaven_mace_36_right,
-		var_0_0.wpn_skaven_mace_36_right,
-		var_0_0.wpn_skaven_mace_36_right,
-		var_0_0.wpn_skaven_mace_36_right,
-		var_0_0.wpn_skaven_mace_36_right,
-		var_0_0.wpn_skaven_mace_37_right,
-		var_0_0.wpn_torch_right,
-		var_0_0.wpn_torch_right,
-		var_0_0.wpn_torch_right,
-		var_0_0.wpn_torch_right,
-		var_0_0.wpn_torch_right
+		tbl.wpn_skaven_sword_01_right,
+		tbl.wpn_skaven_sword_02_right,
+		tbl.wpn_skaven_sword_03_right,
+		tbl.wpn_skaven_sword_04_right,
+		tbl.wpn_skaven_sword_05_right,
+		tbl.wpn_skaven_sword_06_right,
+		tbl.wpn_skaven_sword_07_right,
+		tbl.wpn_skaven_sword_08_right,
+		tbl.wpn_skaven_sword_16_right,
+		tbl.wpn_skaven_sword_17_right,
+		tbl.wpn_skaven_sword_18_right,
+		tbl.wpn_skaven_sword_19_right,
+		tbl.wpn_skaven_sword_20_right,
+		tbl.wpn_skaven_sword_21_right,
+		tbl.wpn_skaven_sword_22_right,
+		tbl.wpn_skaven_sword_23_right,
+		tbl.wpn_skaven_sword_24_right,
+		tbl.wpn_skaven_mace_31_right,
+		tbl.wpn_skaven_mace_32_right,
+		tbl.wpn_skaven_mace_33_right,
+		tbl.wpn_skaven_mace_34_right,
+		tbl.wpn_skaven_mace_35_right,
+		tbl.wpn_skaven_mace_35_right,
+		tbl.wpn_skaven_mace_35_right,
+		tbl.wpn_skaven_mace_35_right,
+		tbl.wpn_skaven_mace_35_right,
+		tbl.wpn_skaven_mace_36_right,
+		tbl.wpn_skaven_mace_36_right,
+		tbl.wpn_skaven_mace_36_right,
+		tbl.wpn_skaven_mace_36_right,
+		tbl.wpn_skaven_mace_36_right,
+		tbl.wpn_skaven_mace_37_right,
+		tbl.wpn_torch_right,
+		tbl.wpn_torch_right,
+		tbl.wpn_torch_right,
+		tbl.wpn_torch_right,
+		tbl.wpn_torch_right
 	},
 	one_hand_weapon_left = {
-		var_0_0.wpn_skaven_sword_01_left,
-		var_0_0.wpn_skaven_sword_02_left,
-		var_0_0.wpn_skaven_sword_03_left,
-		var_0_0.wpn_skaven_sword_04_left,
-		var_0_0.wpn_skaven_sword_05_left,
-		var_0_0.wpn_skaven_sword_06_left,
-		var_0_0.wpn_skaven_sword_07_left,
-		var_0_0.wpn_skaven_sword_08_left,
-		var_0_0.wpn_skaven_sword_16_left,
-		var_0_0.wpn_skaven_sword_17_left,
-		var_0_0.wpn_skaven_sword_18_left,
-		var_0_0.wpn_skaven_sword_19_left,
-		var_0_0.wpn_skaven_sword_20_left,
-		var_0_0.wpn_skaven_sword_21_left,
-		var_0_0.wpn_skaven_sword_22_left,
-		var_0_0.wpn_skaven_sword_23_left,
-		var_0_0.wpn_skaven_sword_24_left,
-		var_0_0.wpn_skaven_mace_31_left,
-		var_0_0.wpn_skaven_mace_32_left,
-		var_0_0.wpn_skaven_mace_33_left,
-		var_0_0.wpn_skaven_mace_34_left,
-		var_0_0.wpn_skaven_mace_35_left,
-		var_0_0.wpn_skaven_mace_35_left,
-		var_0_0.wpn_skaven_mace_35_left,
-		var_0_0.wpn_skaven_mace_35_left,
-		var_0_0.wpn_skaven_mace_35_left,
-		var_0_0.wpn_skaven_mace_36_left,
-		var_0_0.wpn_skaven_mace_36_left,
-		var_0_0.wpn_skaven_mace_36_left,
-		var_0_0.wpn_skaven_mace_36_left,
-		var_0_0.wpn_skaven_mace_36_left,
-		var_0_0.wpn_skaven_mace_37_left,
-		var_0_0.wpn_torch_left,
-		var_0_0.wpn_torch_left,
-		var_0_0.wpn_torch_left,
-		var_0_0.wpn_torch_left,
-		var_0_0.wpn_torch_left
+		tbl.wpn_skaven_sword_01_left,
+		tbl.wpn_skaven_sword_02_left,
+		tbl.wpn_skaven_sword_03_left,
+		tbl.wpn_skaven_sword_04_left,
+		tbl.wpn_skaven_sword_05_left,
+		tbl.wpn_skaven_sword_06_left,
+		tbl.wpn_skaven_sword_07_left,
+		tbl.wpn_skaven_sword_08_left,
+		tbl.wpn_skaven_sword_16_left,
+		tbl.wpn_skaven_sword_17_left,
+		tbl.wpn_skaven_sword_18_left,
+		tbl.wpn_skaven_sword_19_left,
+		tbl.wpn_skaven_sword_20_left,
+		tbl.wpn_skaven_sword_21_left,
+		tbl.wpn_skaven_sword_22_left,
+		tbl.wpn_skaven_sword_23_left,
+		tbl.wpn_skaven_sword_24_left,
+		tbl.wpn_skaven_mace_31_left,
+		tbl.wpn_skaven_mace_32_left,
+		tbl.wpn_skaven_mace_33_left,
+		tbl.wpn_skaven_mace_34_left,
+		tbl.wpn_skaven_mace_35_left,
+		tbl.wpn_skaven_mace_35_left,
+		tbl.wpn_skaven_mace_35_left,
+		tbl.wpn_skaven_mace_35_left,
+		tbl.wpn_skaven_mace_35_left,
+		tbl.wpn_skaven_mace_36_left,
+		tbl.wpn_skaven_mace_36_left,
+		tbl.wpn_skaven_mace_36_left,
+		tbl.wpn_skaven_mace_36_left,
+		tbl.wpn_skaven_mace_36_left,
+		tbl.wpn_skaven_mace_37_left,
+		tbl.wpn_torch_left,
+		tbl.wpn_torch_left,
+		tbl.wpn_torch_left,
+		tbl.wpn_torch_left,
+		tbl.wpn_torch_left
 	},
 	spear = {
-		var_0_0.wpn_skaven_spear_25,
-		var_0_0.wpn_skaven_spear_27,
-		var_0_0.wpn_skaven_spear_28,
-		var_0_0.wpn_skaven_spear_29,
-		var_0_0.wpn_skaven_spear_30
+		tbl.wpn_skaven_spear_25,
+		tbl.wpn_skaven_spear_27,
+		tbl.wpn_skaven_spear_28,
+		tbl.wpn_skaven_spear_29,
+		tbl.wpn_skaven_spear_30
 	},
 	bow = {
-		var_0_0.wpn_bm_ungor_bow_01,
-		var_0_0.wpn_bm_ungor_bow_02
+		tbl.wpn_bm_ungor_bow_01,
+		tbl.wpn_bm_ungor_bow_02
 	},
 	clan_rat_outfit_head = {
-		var_0_0.outfit_skaven_clan_rat_head_01,
-		var_0_0.outfit_skaven_clan_rat_head_02,
-		var_0_0.outfit_skaven_clan_rat_head_03,
-		var_0_0.outfit_skaven_clan_rat_head_04,
-		var_0_0.outfit_skaven_clan_rat_head_05,
-		var_0_0.outfit_skaven_clan_rat_head_06
+		tbl.outfit_skaven_clan_rat_head_01,
+		tbl.outfit_skaven_clan_rat_head_02,
+		tbl.outfit_skaven_clan_rat_head_03,
+		tbl.outfit_skaven_clan_rat_head_04,
+		tbl.outfit_skaven_clan_rat_head_05,
+		tbl.outfit_skaven_clan_rat_head_06
 	},
 	clan_rat_outfit_body = {
-		var_0_0.outfit_skaven_clan_rat_body_01,
-		var_0_0.outfit_skaven_clan_rat_body_02,
-		var_0_0.outfit_skaven_clan_rat_body_03,
-		var_0_0.outfit_skaven_clan_rat_body_04
+		tbl.outfit_skaven_clan_rat_body_01,
+		tbl.outfit_skaven_clan_rat_body_02,
+		tbl.outfit_skaven_clan_rat_body_03,
+		tbl.outfit_skaven_clan_rat_body_04
 	},
 	clan_rat_outfit_arm_l = {
-		var_0_0.outfit_skaven_clan_rat_arm_l_01,
-		var_0_0.outfit_skaven_clan_rat_arm_l_02,
-		var_0_0.outfit_skaven_clan_rat_arm_l_03,
-		var_0_0.outfit_skaven_clan_rat_arm_l_04
+		tbl.outfit_skaven_clan_rat_arm_l_01,
+		tbl.outfit_skaven_clan_rat_arm_l_02,
+		tbl.outfit_skaven_clan_rat_arm_l_03,
+		tbl.outfit_skaven_clan_rat_arm_l_04
 	},
 	clan_rat_outfit_arm_r = {
-		var_0_0.outfit_skaven_clan_rat_arm_r_01,
-		var_0_0.outfit_skaven_clan_rat_arm_r_02,
-		var_0_0.outfit_skaven_clan_rat_arm_r_03,
-		var_0_0.outfit_skaven_clan_rat_arm_r_04
+		tbl.outfit_skaven_clan_rat_arm_r_01,
+		tbl.outfit_skaven_clan_rat_arm_r_02,
+		tbl.outfit_skaven_clan_rat_arm_r_03,
+		tbl.outfit_skaven_clan_rat_arm_r_04
 	},
 	clan_rat_outfit_legs = {
-		var_0_0.outfit_null,
-		var_0_0.outfit_skaven_clan_rat_legs_01
+		tbl.outfit_null,
+		tbl.outfit_skaven_clan_rat_legs_01
 	},
 	clan_rat_outfit_opt = {
-		var_0_0.outfit_skaven_clan_rat_baked_01,
-		var_0_0.outfit_skaven_clan_rat_baked_02,
-		var_0_0.outfit_skaven_clan_rat_baked_03,
-		var_0_0.outfit_skaven_clan_rat_baked_04
+		tbl.outfit_skaven_clan_rat_baked_01,
+		tbl.outfit_skaven_clan_rat_baked_02,
+		tbl.outfit_skaven_clan_rat_baked_03,
+		tbl.outfit_skaven_clan_rat_baked_04
 	},
 	clan_rat_shield_outfit_head = {
-		var_0_0.outfit_skaven_clan_rat_head_05,
-		var_0_0.outfit_skaven_clan_rat_head_06,
-		var_0_0.outfit_skaven_clan_rat_head_07
+		tbl.outfit_skaven_clan_rat_head_05,
+		tbl.outfit_skaven_clan_rat_head_06,
+		tbl.outfit_skaven_clan_rat_head_07
 	},
 	clan_rat_shield_outfit_body = {
-		var_0_0.outfit_skaven_clan_rat_body_02,
-		var_0_0.outfit_skaven_clan_rat_body_03,
-		var_0_0.outfit_skaven_clan_rat_body_04
+		tbl.outfit_skaven_clan_rat_body_02,
+		tbl.outfit_skaven_clan_rat_body_03,
+		tbl.outfit_skaven_clan_rat_body_04
 	},
 	clan_rat_shield_outfit_arm_l = {
-		var_0_0.outfit_skaven_clan_rat_arm_l_03,
-		var_0_0.outfit_skaven_clan_rat_arm_l_04
+		tbl.outfit_skaven_clan_rat_arm_l_03,
+		tbl.outfit_skaven_clan_rat_arm_l_04
 	},
 	clan_rat_shield_outfit_arm_r = {
-		var_0_0.outfit_skaven_clan_rat_arm_r_03,
-		var_0_0.outfit_skaven_clan_rat_arm_r_04
+		tbl.outfit_skaven_clan_rat_arm_r_03,
+		tbl.outfit_skaven_clan_rat_arm_r_04
 	},
 	clan_rat_shield_outfit_opt = {
-		var_0_0.outfit_skaven_clan_rat_baked_03,
-		var_0_0.outfit_skaven_clan_rat_baked_04
+		tbl.outfit_skaven_clan_rat_baked_03,
+		tbl.outfit_skaven_clan_rat_baked_04
 	},
 	clan_rat_loot_outfit_head = {
-		var_0_0.outfit_skaven_clan_rat_head_03,
-		var_0_0.outfit_skaven_clan_rat_head_04
+		tbl.outfit_skaven_clan_rat_head_03,
+		tbl.outfit_skaven_clan_rat_head_04
 	},
 	clan_rat_loot_outfit_neck = {
-		var_0_0.outfit_skaven_clan_rat_neck_01
+		tbl.outfit_skaven_clan_rat_neck_01
 	},
 	clan_rat_loot_outfit_body = {
-		var_0_0.outfit_skaven_clan_rat_body_02,
-		var_0_0.outfit_skaven_clan_rat_body_04
+		tbl.outfit_skaven_clan_rat_body_02,
+		tbl.outfit_skaven_clan_rat_body_04
 	},
 	clan_rat_loot_outfit_arm_l = {
-		var_0_0.outfit_skaven_clan_rat_arm_l_01,
-		var_0_0.outfit_skaven_clan_rat_arm_l_02
+		tbl.outfit_skaven_clan_rat_arm_l_01,
+		tbl.outfit_skaven_clan_rat_arm_l_02
 	},
 	clan_rat_loot_outfit_arm_r = {
-		var_0_0.outfit_skaven_clan_rat_arm_r_01,
-		var_0_0.outfit_skaven_clan_rat_arm_r_02
+		tbl.outfit_skaven_clan_rat_arm_r_01,
+		tbl.outfit_skaven_clan_rat_arm_r_02
 	},
 	mace = {
-		var_0_0.wpn_moc_mace_01,
-		var_0_0.wpn_moc_mace_02,
-		var_0_0.wpn_moc_sword_01,
-		var_0_0.wpn_moc_sword_02,
-		var_0_0.wpn_moc_sword_03,
-		var_0_0.wpn_moc_sword_04
+		tbl.wpn_moc_mace_01,
+		tbl.wpn_moc_mace_02,
+		tbl.wpn_moc_sword_01,
+		tbl.wpn_moc_sword_02,
+		tbl.wpn_moc_sword_03,
+		tbl.wpn_moc_sword_04
 	},
 	halberd = {
-		var_0_0.wpn_skaven_halberd_41
+		tbl.wpn_skaven_halberd_41
 	},
 	halberd_stormvermin_champion = {
-		var_0_0.wpn_skaven_halberd_stormvermin_champion
+		tbl.wpn_skaven_halberd_stormvermin_champion
 	},
 	stormfiend_warpfire_r = {
-		var_0_0.wpn_stormfiend_warpfire_r
+		tbl.wpn_stormfiend_warpfire_r
 	},
 	stormfiend_warpfire_l = {
-		var_0_0.wpn_stormfiend_warpfire_l
+		tbl.wpn_stormfiend_warpfire_l
 	},
 	axe = {
-		var_0_0.wpn_chaos_2h_axe_1,
-		var_0_0.wpn_chaos_2h_axe_2
+		tbl.wpn_chaos_2h_axe_1,
+		tbl.wpn_chaos_2h_axe_2
 	},
 	warrior_helmet = {
-		var_0_0.woc_helmet_01,
-		var_0_0.woc_helmet_02,
-		var_0_0.woc_helmet_03,
-		var_0_0.woc_helmet_04
+		tbl.woc_helmet_01,
+		tbl.woc_helmet_02,
+		tbl.woc_helmet_03,
+		tbl.woc_helmet_04
 	},
 	two_h_axe_moc = {
-		var_0_0.wpn_chaos_2h_axe_1_moc,
-		var_0_0.wpn_chaos_2h_axe_2_moc
+		tbl.wpn_chaos_2h_axe_1_moc,
+		tbl.wpn_chaos_2h_axe_2_moc
 	},
 	exalted_axe = {
-		var_0_0.wpn_chaos_2h_axe_3
+		tbl.wpn_chaos_2h_axe_3
 	},
 	exalted_helmet = {
-		var_0_0.woc_helmet_05
+		tbl.woc_helmet_05
 	},
 	marauder_helmet = {
-		var_0_0.moc_helmet_01,
-		var_0_0.moc_helmet_02,
-		var_0_0.moc_helmet_05,
-		var_0_0.moc_helmet_06,
-		var_0_0.moc_helmet_07,
-		var_0_0.moc_helmet_08,
-		var_0_0.moc_helmet_09,
-		var_0_0.moc_helmet_10,
-		var_0_0.moc_helmet_12,
-		var_0_0.moc_helmet_03,
-		var_0_0.moc_helmet_04a,
-		var_0_0.moc_helmet_04b,
-		var_0_0.moc_helmet_04c,
-		var_0_0.moc_helmet_04d
+		tbl.moc_helmet_01,
+		tbl.moc_helmet_02,
+		tbl.moc_helmet_05,
+		tbl.moc_helmet_06,
+		tbl.moc_helmet_07,
+		tbl.moc_helmet_08,
+		tbl.moc_helmet_09,
+		tbl.moc_helmet_10,
+		tbl.moc_helmet_12,
+		tbl.moc_helmet_03,
+		tbl.moc_helmet_04a,
+		tbl.moc_helmet_04b,
+		tbl.moc_helmet_04c,
+		tbl.moc_helmet_04d
 	},
 	marauder_shield_helmet = {
-		var_0_0.moc_helmet_11
+		tbl.moc_helmet_11
 	},
 	zombie_blobs = {
-		var_0_0.zombie_blob_01,
-		var_0_0.zombie_blob_02,
-		var_0_0.zombie_blob_03,
-		var_0_0.zombie_blob_04
+		tbl.zombie_blob_01,
+		tbl.zombie_blob_02,
+		tbl.zombie_blob_03,
+		tbl.zombie_blob_04
 	},
 	undead_npc_skeleton_sword = {
-		var_0_0.wpn_npc_skeleton_sword_01_right
+		tbl.wpn_npc_skeleton_sword_01_right
 	},
 	undead_npc_skeleton_shield = {
-		var_0_0.wpn_npc_skeleton_shield_01
+		tbl.wpn_npc_skeleton_shield_01
 	},
 	undead_npc_skeleton_2h_hammer = {
-		var_0_0.wpn_npc_skeleton_2h_hammer_01
+		tbl.wpn_npc_skeleton_2h_hammer_01
 	},
 	undead_npc_skeleton_dual_wield_right = {
-		var_0_0.wpn_npc_skeleton_sword_01_right,
-		var_0_0.wpn_npc_skeleton_short_sword_01_right
+		tbl.wpn_npc_skeleton_sword_01_right,
+		tbl.wpn_npc_skeleton_short_sword_01_right
 	},
 	undead_npc_skeleton_dual_wield_left = {
-		var_0_0.wpn_npc_skeleton_sword_01_left,
-		var_0_0.wpn_npc_skeleton_short_sword_01_left
+		tbl.wpn_npc_skeleton_sword_01_left,
+		tbl.wpn_npc_skeleton_short_sword_01_left
 	},
 	undead_npc_skeleton_skull = {
-		var_0_0.chr_npc_skeleton_skull_01,
-		var_0_0.chr_npc_skeleton_skull_02,
-		var_0_0.chr_npc_skeleton_skull_03
+		tbl.chr_npc_skeleton_skull_01,
+		tbl.chr_npc_skeleton_skull_02,
+		tbl.chr_npc_skeleton_skull_03
 	},
 	undead_npc_skeleton_helmet = {
-		var_0_0.outfit_null,
-		var_0_0.chr_npc_skeleton_helmet_02,
-		var_0_0.chr_npc_skeleton_helmet_03,
-		var_0_0.chr_npc_skeleton_helmet_04
+		tbl.outfit_null,
+		tbl.chr_npc_skeleton_helmet_02,
+		tbl.chr_npc_skeleton_helmet_03,
+		tbl.chr_npc_skeleton_helmet_04
 	},
 	undead_npc_skeleton_chest_armor = {
-		var_0_0.chr_npc_skeleton_armor_01
+		tbl.chr_npc_skeleton_armor_01
 	},
 	undead_npc_skeleton_chest_cloth = {
-		var_0_0.outfit_null,
-		var_0_0.chr_npc_skeleton_torso_cloth_01,
-		var_0_0.chr_npc_skeleton_torso_cloth_02
+		tbl.outfit_null,
+		tbl.chr_npc_skeleton_torso_cloth_01,
+		tbl.chr_npc_skeleton_torso_cloth_02
 	},
 	undead_npc_skeleton_torso = {
-		var_0_0.outfit_null,
-		var_0_0.chr_npc_skeleton_armor_01,
-		var_0_0.chr_npc_skeleton_torso_cloth_01,
-		var_0_0.chr_npc_skeleton_torso_cloth_02
+		tbl.outfit_null,
+		tbl.chr_npc_skeleton_armor_01,
+		tbl.chr_npc_skeleton_torso_cloth_01,
+		tbl.chr_npc_skeleton_torso_cloth_02
 	},
 	undead_npc_skeleton_hips = {
-		var_0_0.outfit_null,
-		var_0_0.chr_npc_skeleton_hip_cloth_01,
-		var_0_0.chr_npc_skeleton_hip_cloth_01,
-		var_0_0.chr_npc_skeleton_hip_cloth_02,
-		var_0_0.chr_npc_skeleton_hip_cloth_02
+		tbl.outfit_null,
+		tbl.chr_npc_skeleton_hip_cloth_01,
+		tbl.chr_npc_skeleton_hip_cloth_01,
+		tbl.chr_npc_skeleton_hip_cloth_02,
+		tbl.chr_npc_skeleton_hip_cloth_02
 	},
 	undead_npc_skeleton_vambrace_l = {
-		var_0_0.outfit_null,
-		var_0_0.chr_npc_skeleton_vambrace_01_l,
-		var_0_0.chr_npc_skeleton_vambrace_01_l
+		tbl.outfit_null,
+		tbl.chr_npc_skeleton_vambrace_01_l,
+		tbl.chr_npc_skeleton_vambrace_01_l
 	},
 	undead_npc_skeleton_vambrace_r = {
-		var_0_0.outfit_null,
-		var_0_0.chr_npc_skeleton_vambrace_01_r,
-		var_0_0.chr_npc_skeleton_vambrace_01_r
+		tbl.outfit_null,
+		tbl.chr_npc_skeleton_vambrace_01_r,
+		tbl.chr_npc_skeleton_vambrace_01_r
 	},
 	undead_npc_skeleton_greaves_l = {
-		var_0_0.outfit_null,
-		var_0_0.chr_npc_skeleton_greaves_01_l,
-		var_0_0.chr_npc_skeleton_greaves_01_l
+		tbl.outfit_null,
+		tbl.chr_npc_skeleton_greaves_01_l,
+		tbl.chr_npc_skeleton_greaves_01_l
 	},
 	undead_npc_skeleton_greaves_r = {
-		var_0_0.outfit_null,
-		var_0_0.chr_npc_skeleton_greaves_01_r,
-		var_0_0.chr_npc_skeleton_greaves_01_r
+		tbl.outfit_null,
+		tbl.chr_npc_skeleton_greaves_01_r,
+		tbl.chr_npc_skeleton_greaves_01_r
 	},
 	undead_ethereal_skeleton_sword = {
-		var_0_0.wpn_undead_ethereal_skeleton_sword_01
+		tbl.wpn_undead_ethereal_skeleton_sword_01
 	},
 	undead_ethereal_skeleton_shield = {
-		var_0_0.wpn_undead_ethereal_skeleton_shield_01
+		tbl.wpn_undead_ethereal_skeleton_shield_01
 	},
 	undead_ethereal_skeleton_2h_hammer = {
-		var_0_0.wpn_undead_ethereal_skeleton_2h_hammer_01
+		tbl.wpn_undead_ethereal_skeleton_2h_hammer_01
 	},
 	chaos_bulwark_weapon = {
-		var_0_0.wpn_bulwark_sledge_01
+		tbl.wpn_bulwark_sledge_01
 	},
 	chaos_bulwark_shield = {
-		var_0_0.wpn_bulwark_shield_01
+		tbl.wpn_bulwark_shield_01
 	},
 	chaos_bulwark_helmet = {
-		var_0_0.woc_bulwark_helmet_01
+		tbl.woc_bulwark_helmet_01
 	},
 	berzerker_helmet = {},
 	berzerker_right = {
-		var_0_0.wpn_moc_axe_01_right,
-		var_0_0.wpn_moc_axe_02_right
+		tbl.wpn_moc_axe_01_right,
+		tbl.wpn_moc_axe_02_right
 	},
 	berzerker_left = {
-		var_0_0.wpn_moc_axe_01_left,
-		var_0_0.wpn_moc_axe_02_left
+		tbl.wpn_moc_axe_01_left,
+		tbl.wpn_moc_axe_02_left
 	},
 	stormvermin_one_hand_weapon_right = {
-		var_0_0.wpn_skaven_sword_47_right
+		tbl.wpn_skaven_sword_47_right
 	},
 	stormvermin_one_hand_weapon_dual_right = {
-		var_0_0.wpn_skaven_sword_dual_right
+		tbl.wpn_skaven_sword_dual_right
 	},
 	stormvermin_one_hand_weapon_dual_left = {
-		var_0_0.wpn_skaven_sword_dual_left
+		tbl.wpn_skaven_sword_dual_left
 	},
 	beastmen_minotaur_dual_axes_right = {
-		var_0_0.wpn_beastmen_minotaur_dual_axes_right
+		tbl.wpn_beastmen_minotaur_dual_axes_right
 	},
 	beastmen_minotaur_dual_axes_left = {
-		var_0_0.wpn_beastmen_minotaur_dual_axes_left
+		tbl.wpn_beastmen_minotaur_dual_axes_left
 	},
 	shield = {
-		var_0_0.wpn_skaven_shield_38,
-		var_0_0.wpn_skaven_shield_39,
-		var_0_0.wpn_skaven_shield_40,
-		var_0_0.wpn_skaven_shield_42,
-		var_0_0.wpn_skaven_shield_44,
-		var_0_0.wpn_skaven_shield_46
+		tbl.wpn_skaven_shield_38,
+		tbl.wpn_skaven_shield_39,
+		tbl.wpn_skaven_shield_40,
+		tbl.wpn_skaven_shield_42,
+		tbl.wpn_skaven_shield_44,
+		tbl.wpn_skaven_shield_46
 	},
 	stormvermin_shield = {
-		var_0_0.wpn_skaven_shield_45
+		tbl.wpn_skaven_shield_45
 	},
 	marauder_shield = {
-		var_0_0.wpn_marauder_shield_01,
-		var_0_0.wpn_marauder_shield_02,
-		var_0_0.wpn_marauder_shield_03,
-		var_0_0.wpn_marauder_shield_04,
-		var_0_0.wpn_marauder_shield_05,
-		var_0_0.wpn_marauder_shield_06,
-		var_0_0.wpn_marauder_shield_07,
-		var_0_0.wpn_marauder_shield_08,
-		var_0_0.wpn_marauder_shield_09,
-		var_0_0.wpn_marauder_shield_10
+		tbl.wpn_marauder_shield_01,
+		tbl.wpn_marauder_shield_02,
+		tbl.wpn_marauder_shield_03,
+		tbl.wpn_marauder_shield_04,
+		tbl.wpn_marauder_shield_05,
+		tbl.wpn_marauder_shield_06,
+		tbl.wpn_marauder_shield_07,
+		tbl.wpn_marauder_shield_08,
+		tbl.wpn_marauder_shield_09,
+		tbl.wpn_marauder_shield_10
 	},
 	packmaster_claw = {
-		var_0_0.wpn_skaven_packmaster_claw
+		tbl.wpn_skaven_packmaster_claw
 	},
 	loot_rat_sack = {
-		var_0_0.wpn_loot_rat_sack
+		tbl.wpn_loot_rat_sack
 	},
 	ratlinggun = {
-		var_0_0.wpn_ratlinggun
+		tbl.wpn_ratlinggun
 	},
 	warpfiregun = {
-		var_0_0.wpn_warpfiregun
+		tbl.wpn_warpfiregun
 	},
 	chaos_troll = {
-		var_0_0.wpn_chaos_troll_01,
-		var_0_0.wpn_chaos_troll_02
+		tbl.wpn_chaos_troll_01,
+		tbl.wpn_chaos_troll_02
 	},
 	chaos_troll_skin_0000 = {
-		var_0_0.skin_chaos_troll_0000
+		tbl.skin_chaos_troll_0000
 	},
 	chaos_troll_skin_1001 = {
-		var_0_0.skin_chaos_troll_1001
+		tbl.skin_chaos_troll_1001
 	},
 	chaos_sorcerer_stick = {
-		var_0_0.wpn_chaos_sorcerer_stick
+		tbl.wpn_chaos_sorcerer_stick
 	},
 	chaos_sorcerer_book = {
-		var_0_0.wpn_chaos_sorcerer_book
+		tbl.wpn_chaos_sorcerer_book
 	},
 	chaos_sorcerer_scythe_01 = {
-		var_0_0.wpn_chaos_sorcerer_scythe_01
+		tbl.wpn_chaos_sorcerer_scythe_01
 	},
 	beastmen_1h = {
-		var_0_0.wpn_bm_gor_axe_01,
-		var_0_0.wpn_bm_gor_axe_02,
-		var_0_0.wpn_bm_gor_axe_03,
-		var_0_0.wpn_bm_gor_axe_04,
-		var_0_0.wpn_bm_gor_flail_01,
-		var_0_0.wpn_bm_gor_sword_01,
-		var_0_0.wpn_bm_gor_sword_02,
-		var_0_0.wpn_bm_gor_sword_03,
-		var_0_0.wpn_bm_gor_sword_04,
-		var_0_0.wpn_bm_gor_sword_05,
-		var_0_0.wpn_bm_gor_sword_06
+		tbl.wpn_bm_gor_axe_01,
+		tbl.wpn_bm_gor_axe_02,
+		tbl.wpn_bm_gor_axe_03,
+		tbl.wpn_bm_gor_axe_04,
+		tbl.wpn_bm_gor_flail_01,
+		tbl.wpn_bm_gor_sword_01,
+		tbl.wpn_bm_gor_sword_02,
+		tbl.wpn_bm_gor_sword_03,
+		tbl.wpn_bm_gor_sword_04,
+		tbl.wpn_bm_gor_sword_05,
+		tbl.wpn_bm_gor_sword_06
 	},
 	beastmen_gor_outfit_head = {
-		var_0_0.outfit_bm_gor_horns_02,
-		var_0_0.outfit_bm_gor_horns_03,
-		var_0_0.outfit_bm_gor_horns_04,
-		var_0_0.outfit_bm_gor_horns_05
+		tbl.outfit_bm_gor_horns_02,
+		tbl.outfit_bm_gor_horns_03,
+		tbl.outfit_bm_gor_horns_04,
+		tbl.outfit_bm_gor_horns_05
 	},
 	beastmen_gor_outfit_neck = {
-		var_0_0.outfit_null,
-		var_0_0.outfit_null,
-		var_0_0.outfit_bm_gor_necklace_01,
-		var_0_0.outfit_bm_gor_necklace_02
+		tbl.outfit_null,
+		tbl.outfit_null,
+		tbl.outfit_bm_gor_necklace_01,
+		tbl.outfit_bm_gor_necklace_02
 	},
 	beastmen_gor_outfit_r_arm = {
-		var_0_0.outfit_bm_gor_arm_r_01,
-		var_0_0.outfit_bm_gor_arm_r_02,
-		var_0_0.outfit_bm_gor_arm_r_03
+		tbl.outfit_bm_gor_arm_r_01,
+		tbl.outfit_bm_gor_arm_r_02,
+		tbl.outfit_bm_gor_arm_r_03
 	},
 	beastmen_gor_outfit_l_arm = {
-		var_0_0.outfit_bm_gor_arm_l_01,
-		var_0_0.outfit_bm_gor_arm_l_02,
-		var_0_0.outfit_bm_gor_arm_l_03
+		tbl.outfit_bm_gor_arm_l_01,
+		tbl.outfit_bm_gor_arm_l_02,
+		tbl.outfit_bm_gor_arm_l_03
 	},
 	beastmen_gor_belt = {
-		var_0_0.outfit_null,
-		var_0_0.outfit_bm_gor_belt_addon_01,
-		var_0_0.outfit_bm_gor_belt_addon_02,
-		var_0_0.outfit_bm_gor_belt_addon_03
+		tbl.outfit_null,
+		tbl.outfit_bm_gor_belt_addon_01,
+		tbl.outfit_bm_gor_belt_addon_02,
+		tbl.outfit_bm_gor_belt_addon_03
 	},
 	beastmen_gor_outfit_baked = {
-		var_0_0.outfit_bm_baked_01,
-		var_0_0.outfit_bm_baked_02,
-		var_0_0.outfit_bm_baked_03,
-		var_0_0.outfit_bm_baked_04
+		tbl.outfit_bm_baked_01,
+		tbl.outfit_bm_baked_02,
+		tbl.outfit_bm_baked_03,
+		tbl.outfit_bm_baked_04
 	},
 	beastmen_bestigor_outfit_r_arm_upper = {
-		var_0_0.outfit_bm_bestigor_arm_r_upper_01,
-		var_0_0.outfit_bm_bestigor_arm_r_upper_02
+		tbl.outfit_bm_bestigor_arm_r_upper_01,
+		tbl.outfit_bm_bestigor_arm_r_upper_02
 	},
 	beastmen_bestigor_outfit_l_arm_upper = {
-		var_0_0.outfit_bm_bestigor_arm_l_upper_01,
-		var_0_0.outfit_bm_bestigor_arm_l_upper_02
+		tbl.outfit_bm_bestigor_arm_l_upper_01,
+		tbl.outfit_bm_bestigor_arm_l_upper_02
 	},
 	beastmen_ungor_spear = {
-		var_0_0.wpn_bm_ungor_spear_01,
-		var_0_0.wpn_bm_ungor_spear_02,
-		var_0_0.wpn_bm_ungor_spear_03
+		tbl.wpn_bm_ungor_spear_01,
+		tbl.wpn_bm_ungor_spear_02,
+		tbl.wpn_bm_ungor_spear_03
 	},
 	beastmen_ungor_outfit_head = {
-		var_0_0.outfit_bm_ungor_head_00,
-		var_0_0.outfit_bm_ungor_head_01,
-		var_0_0.outfit_bm_ungor_head_02,
-		var_0_0.outfit_bm_ungor_head_03
+		tbl.outfit_bm_ungor_head_00,
+		tbl.outfit_bm_ungor_head_01,
+		tbl.outfit_bm_ungor_head_02,
+		tbl.outfit_bm_ungor_head_03
 	},
 	beastmen_ungor_outfit_r_arm = {
-		var_0_0.outfit_bm_ungor_arm_r_01,
-		var_0_0.outfit_bm_ungor_arm_r_02
+		tbl.outfit_bm_ungor_arm_r_01,
+		tbl.outfit_bm_ungor_arm_r_02
 	},
 	beastmen_ungor_outfit_l_arm = {
-		var_0_0.outfit_bm_ungor_arm_l_01,
-		var_0_0.outfit_bm_ungor_arm_l_02
+		tbl.outfit_bm_ungor_arm_l_01,
+		tbl.outfit_bm_ungor_arm_l_02
 	},
 	beastmen_ungor_outfit_neck = {
-		var_0_0.outfit_null,
-		var_0_0.outfit_bm_ungor_necklace_01,
-		var_0_0.outfit_bm_ungor_necklace_02,
-		var_0_0.outfit_bm_ungor_necklace_03
+		tbl.outfit_null,
+		tbl.outfit_bm_ungor_necklace_01,
+		tbl.outfit_bm_ungor_necklace_02,
+		tbl.outfit_bm_ungor_necklace_03
 	},
 	beastmen_ungor_outfit_baked = {
-		var_0_0.outfit_bm_ungor_baked_01,
-		var_0_0.outfit_bm_ungor_baked_02,
-		var_0_0.outfit_bm_ungor_baked_03
+		tbl.outfit_bm_ungor_baked_01,
+		tbl.outfit_bm_ungor_baked_02,
+		tbl.outfit_bm_ungor_baked_03
 	},
 	beastmen_bestigor_outfit_head = {
-		var_0_0.outfit_bm_gor_horns_01
+		tbl.outfit_bm_gor_horns_01
 	},
 	beastmen_standard_bearer_outfit_head = {
-		var_0_0.outfit_bm_gor_horns_02
+		tbl.outfit_bm_gor_horns_02
 	},
 	beastmen_2h_axe_2_moc = {
-		var_0_0.wpn_beastmen_2h_axe_2_moc
+		tbl.wpn_beastmen_2h_axe_2_moc
 	},
 	beastmen_2h = {
-		var_0_0.wpn_bm_bestigor_halberd_02,
-		var_0_0.wpn_bm_bestigor_halberd_03,
-		var_0_0.wpn_bm_bestigor_halberd_05,
-		var_0_0.wpn_bm_bestigor_halberd_06
+		tbl.wpn_bm_bestigor_halberd_02,
+		tbl.wpn_bm_bestigor_halberd_03,
+		tbl.wpn_bm_bestigor_halberd_05,
+		tbl.wpn_bm_bestigor_halberd_06
 	},
 	beastmen_2h_axe_standard = {
-		var_0_0.wpn_bm_bestigor_halberd_01,
-		var_0_0.wpn_bm_bestigor_halberd_04
+		tbl.wpn_bm_bestigor_halberd_01,
+		tbl.wpn_bm_bestigor_halberd_04
 	},
 	beastmen_standard = {
-		var_0_0.wpn_bm_standard_01
+		tbl.wpn_bm_standard_01
 	},
 	blk_shadow_lieutenant_warrior_helmet = {
-		var_0_0.woc_helmet_blk_shadow_lieutenant_01,
-		var_0_0.woc_helmet_blk_shadow_lieutenant_02,
-		var_0_0.woc_helmet_blk_shadow_lieutenant_03,
-		var_0_0.woc_helmet_blk_shadow_lieutenant_04
+		tbl.woc_helmet_blk_shadow_lieutenant_01,
+		tbl.woc_helmet_blk_shadow_lieutenant_02,
+		tbl.woc_helmet_blk_shadow_lieutenant_03,
+		tbl.woc_helmet_blk_shadow_lieutenant_04
 	},
 	blk_shadow_lieutenant_axe = {
-		var_0_0.wpn_chaos_2h_axe_blk_shadow_lieutenant_1,
-		var_0_0.wpn_chaos_2h_axe_blk_shadow_lieutenant_2
+		tbl.wpn_chaos_2h_axe_blk_shadow_lieutenant_1,
+		tbl.wpn_chaos_2h_axe_blk_shadow_lieutenant_2
 	},
 	critter_nurgling_horns = {
-		var_0_0.critter_nurgling_horn_01,
-		var_0_0.critter_nurgling_horn_02,
-		var_0_0.critter_nurgling_horn_03,
-		var_0_0.critter_nurgling_horn_04,
-		var_0_0.critter_nurgling_horn_05
+		tbl.critter_nurgling_horn_01,
+		tbl.critter_nurgling_horn_02,
+		tbl.critter_nurgling_horn_03,
+		tbl.critter_nurgling_horn_04,
+		tbl.critter_nurgling_horn_05
 	}
 }
-local var_0_2 = {
+local tbl_3 = {
 	death = true,
 	shield_break = true
 }
-local var_0_3 = {
+local tbl_4 = {
 	death = true
 }
 
-for iter_0_0, iter_0_1 in pairs(var_0_1) do
-	local var_0_4 = (iter_0_0 == "stormvermin_shield" or iter_0_0 == "shield" or iter_0_0 == "marauder_shield") and var_0_2 or var_0_3
+for k, v in pairs(tbl_2) do
+	local flag = k == "stormvermin_shield" or k == "shield" or k == "marauder_shield" or tbl_3 or tbl_4
 
-	for iter_0_2, iter_0_3 in ipairs(iter_0_1) do
-		if not iter_0_3.drop_reasons then
-			iter_0_3.drop_reasons = var_0_4
+	for i, v_2 in ipairs(v) do
+		if not v_2.drop_reasons then
+			v_2.drop_reasons = flag
 		end
 	end
 end
@@ -1856,98 +1856,98 @@ InventoryConfigurations.skaven_clan_rat_sword = {
 	enemy_hit_sound = "sword",
 	anim_state_event = "to_sword",
 	items = {
-		var_0_1.one_hand_weapon_right,
-		var_0_1.clan_rat_outfit_head,
-		var_0_1.clan_rat_outfit_arm_l,
-		var_0_1.clan_rat_outfit_arm_r,
-		var_0_1.clan_rat_outfit_legs,
-		var_0_1.clan_rat_outfit_body
+		tbl_2.one_hand_weapon_right,
+		tbl_2.clan_rat_outfit_head,
+		tbl_2.clan_rat_outfit_arm_l,
+		tbl_2.clan_rat_outfit_arm_r,
+		tbl_2.clan_rat_outfit_legs,
+		tbl_2.clan_rat_outfit_body
 	}
 }
 InventoryConfigurations.opt_skaven_clan_rat_sword = {
 	enemy_hit_sound = "sword",
 	anim_state_event = "to_sword",
 	items = {
-		var_0_1.one_hand_weapon_right,
-		var_0_1.clan_rat_outfit_opt
+		tbl_2.one_hand_weapon_right,
+		tbl_2.clan_rat_outfit_opt
 	}
 }
 InventoryConfigurations.skaven_slave_sword = {
 	enemy_hit_sound = "sword",
 	anim_state_event = "to_sword",
 	items = {
-		var_0_1.one_hand_weapon_right
+		tbl_2.one_hand_weapon_right
 	}
 }
 InventoryConfigurations.opt_skaven_slave_sword = {
 	enemy_hit_sound = "sword",
 	anim_state_event = "to_sword",
 	items = {
-		var_0_1.one_hand_weapon_right
+		tbl_2.one_hand_weapon_right
 	}
 }
 InventoryConfigurations.sword = {
 	enemy_hit_sound = "sword",
 	anim_state_event = "to_sword",
 	items = {
-		var_0_1.one_hand_weapon_right
+		tbl_2.one_hand_weapon_right
 	}
 }
 InventoryConfigurations.dual_sword = {
 	enemy_hit_sound = "sword",
 	anim_state_event = "to_sword",
 	items = {
-		var_0_1.one_hand_weapon_right,
-		var_0_1.one_hand_weapon_left
+		tbl_2.one_hand_weapon_right,
+		tbl_2.one_hand_weapon_left
 	}
 }
 InventoryConfigurations.dual_axes = {
 	enemy_hit_sound = "sword",
 	anim_state_event = "to_dual_wield",
 	items = {
-		var_0_1.berzerker_right,
-		var_0_1.berzerker_left
+		tbl_2.berzerker_right,
+		tbl_2.berzerker_left
 	}
 }
 InventoryConfigurations.skaven_clan_rat_spear = {
 	enemy_hit_sound = "spear",
 	anim_state_event = "to_spear",
 	items = {
-		var_0_1.spear,
-		var_0_1.clan_rat_outfit_head,
-		var_0_1.clan_rat_outfit_arm_l,
-		var_0_1.clan_rat_outfit_arm_r,
-		var_0_1.clan_rat_outfit_legs,
-		var_0_1.clan_rat_outfit_body
+		tbl_2.spear,
+		tbl_2.clan_rat_outfit_head,
+		tbl_2.clan_rat_outfit_arm_l,
+		tbl_2.clan_rat_outfit_arm_r,
+		tbl_2.clan_rat_outfit_legs,
+		tbl_2.clan_rat_outfit_body
 	}
 }
 InventoryConfigurations.opt_skaven_clan_rat_spear = {
 	enemy_hit_sound = "spear",
 	anim_state_event = "to_spear",
 	items = {
-		var_0_1.spear,
-		var_0_1.clan_rat_outfit_opt
+		tbl_2.spear,
+		tbl_2.clan_rat_outfit_opt
 	}
 }
 InventoryConfigurations.skaven_slave_spear = {
 	enemy_hit_sound = "spear",
 	anim_state_event = "to_spear",
 	items = {
-		var_0_1.spear
+		tbl_2.spear
 	}
 }
 InventoryConfigurations.opt_skaven_slave_spear = {
 	enemy_hit_sound = "spear",
 	anim_state_event = "to_spear",
 	items = {
-		var_0_1.spear
+		tbl_2.spear
 	}
 }
 InventoryConfigurations.spear = {
 	enemy_hit_sound = "spear",
 	anim_state_event = "to_spear",
 	items = {
-		var_0_1.spear
+		tbl_2.spear
 	}
 }
 InventoryConfigurations.halberd = {
@@ -1955,7 +1955,7 @@ InventoryConfigurations.halberd = {
 	anim_state_event = "to_halberd",
 	equip_anim = "equip_halberd",
 	items = {
-		var_0_1.halberd
+		tbl_2.halberd
 	}
 }
 InventoryConfigurations.halberd_stormvermin_champion = {
@@ -1963,91 +1963,91 @@ InventoryConfigurations.halberd_stormvermin_champion = {
 	anim_state_event = "to_halberd",
 	equip_anim = "equip_halberd",
 	items = {
-		var_0_1.halberd_stormvermin_champion
+		tbl_2.halberd_stormvermin_champion
 	}
 }
 InventoryConfigurations.axe_2h = {
 	enemy_hit_sound = "spear",
 	anim_state_event = "to_2h_axe",
 	items = {
-		var_0_1.two_h_axe_moc
+		tbl_2.two_h_axe_moc
 	}
 }
 InventoryConfigurations.axe = {
 	enemy_hit_sound = "spear",
 	anim_state_event = "to_spear",
 	items = {
-		var_0_1.axe
+		tbl_2.axe
 	}
 }
 InventoryConfigurations.warrior_axe = {
 	enemy_hit_sound = "spear",
 	anim_state_event = "to_spear",
 	items = {
-		var_0_1.axe,
-		var_0_1.warrior_helmet
+		tbl_2.axe,
+		tbl_2.warrior_helmet
 	}
 }
 InventoryConfigurations.chaos_bulwark = {
 	enemy_hit_sound = "sword",
 	anim_state_event = "to_sword",
 	items = {
-		var_0_1.chaos_bulwark_weapon,
-		var_0_1.chaos_bulwark_shield,
-		var_0_1.chaos_bulwark_helmet
+		tbl_2.chaos_bulwark_weapon,
+		tbl_2.chaos_bulwark_shield,
+		tbl_2.chaos_bulwark_helmet
 	}
 }
 InventoryConfigurations.exalted_axe = {
 	enemy_hit_sound = "sword",
 	anim_state_event = "to_spear",
 	items = {
-		var_0_1.exalted_axe,
-		var_0_1.exalted_helmet
+		tbl_2.exalted_axe,
+		tbl_2.exalted_helmet
 	}
 }
 InventoryConfigurations.exalted_spawn_axe = {
 	enemy_hit_sound = "sword",
 	anim_state_event = "to_spear",
 	items = {
-		var_0_1.axe
+		tbl_2.axe
 	}
 }
 InventoryConfigurations.sword_and_shield = {
 	enemy_hit_sound = "sword",
 	anim_state_event = "to_shield_1h",
 	items = {
-		var_0_1.one_hand_weapon_right,
-		var_0_1.shield
+		tbl_2.one_hand_weapon_right,
+		tbl_2.shield
 	}
 }
 InventoryConfigurations.skaven_clan_rat_sword_and_shield = {
 	enemy_hit_sound = "sword",
 	anim_state_event = "to_shield_1h",
 	items = {
-		var_0_1.one_hand_weapon_right,
-		var_0_1.shield,
-		var_0_1.clan_rat_shield_outfit_head,
-		var_0_1.clan_rat_shield_outfit_arm_l,
-		var_0_1.clan_rat_shield_outfit_arm_r,
-		var_0_1.clan_rat_shield_outfit_body,
-		var_0_1.clan_rat_outfit_legs
+		tbl_2.one_hand_weapon_right,
+		tbl_2.shield,
+		tbl_2.clan_rat_shield_outfit_head,
+		tbl_2.clan_rat_shield_outfit_arm_l,
+		tbl_2.clan_rat_shield_outfit_arm_r,
+		tbl_2.clan_rat_shield_outfit_body,
+		tbl_2.clan_rat_outfit_legs
 	}
 }
 InventoryConfigurations.opt_skaven_clan_rat_sword_and_shield = {
 	enemy_hit_sound = "sword",
 	anim_state_event = "to_shield_1h",
 	items = {
-		var_0_1.one_hand_weapon_right,
-		var_0_1.shield,
-		var_0_1.clan_rat_shield_outfit_opt
+		tbl_2.one_hand_weapon_right,
+		tbl_2.shield,
+		tbl_2.clan_rat_shield_outfit_opt
 	}
 }
 InventoryConfigurations.stormvermin_sword_and_shield = {
 	enemy_hit_sound = "sword",
 	anim_state_event = "to_shield_1h",
 	items = {
-		var_0_1.stormvermin_one_hand_weapon_right,
-		var_0_1.stormvermin_shield
+		tbl_2.stormvermin_one_hand_weapon_right,
+		tbl_2.stormvermin_shield
 	}
 }
 InventoryConfigurations.stormvermin_dual_wield = {
@@ -2055,8 +2055,8 @@ InventoryConfigurations.stormvermin_dual_wield = {
 	anim_state_event = "to_dual_wield",
 	equip_anim = "equip_dual_wield",
 	items = {
-		var_0_1.stormvermin_one_hand_weapon_dual_right,
-		var_0_1.stormvermin_one_hand_weapon_dual_left
+		tbl_2.stormvermin_one_hand_weapon_dual_right,
+		tbl_2.stormvermin_one_hand_weapon_dual_left
 	}
 }
 InventoryConfigurations.warlord_dual_setups = {
@@ -2069,128 +2069,128 @@ InventoryConfigurations.marauder_mace = {
 	enemy_hit_sound = "sword",
 	anim_state_event = "to_sword",
 	items = {
-		var_0_1.marauder_helmet,
-		var_0_1.mace
+		tbl_2.marauder_helmet,
+		tbl_2.mace
 	}
 }
 InventoryConfigurations.marauder_sword_and_shield = {
 	enemy_hit_sound = "sword",
 	anim_state_event = "to_shield",
 	items = {
-		var_0_1.marauder_shield_helmet,
-		var_0_1.mace,
-		var_0_1.marauder_shield
+		tbl_2.marauder_shield_helmet,
+		tbl_2.mace,
+		tbl_2.marauder_shield
 	}
 }
 InventoryConfigurations.fanatic = {
 	enemy_hit_sound = "sword",
 	anim_state_event = "to_sword",
 	items = {
-		var_0_1.one_hand_weapon_right
+		tbl_2.one_hand_weapon_right
 	}
 }
 InventoryConfigurations.raider_axe_2h = {
 	enemy_hit_sound = "spear",
 	anim_state_event = "to_2h_axe",
 	items = {
-		var_0_1.two_h_axe_moc
+		tbl_2.two_h_axe_moc
 	}
 }
 InventoryConfigurations.berzerker_dual_axes = {
 	enemy_hit_sound = "sword",
 	anim_state_event = "to_dual_wield",
 	items = {
-		var_0_1.berzerker_right,
-		var_0_1.berzerker_left
+		tbl_2.berzerker_right,
+		tbl_2.berzerker_left
 	}
 }
 InventoryConfigurations.zombie_blobs = {
 	items = {
-		var_0_1.zombie_blobs
+		tbl_2.zombie_blobs
 	}
 }
 InventoryConfigurations.undead_npc_skeleton = {
 	enemy_hit_sound = "sword",
 	anim_state_event = "to_sword",
 	items = {
-		var_0_1.undead_npc_skeleton_skull,
-		var_0_1.undead_npc_skeleton_sword,
-		var_0_1.undead_npc_skeleton_hips
+		tbl_2.undead_npc_skeleton_skull,
+		tbl_2.undead_npc_skeleton_sword,
+		tbl_2.undead_npc_skeleton_hips
 	}
 }
 InventoryConfigurations.undead_npc_skeleton_with_shield = {
 	enemy_hit_sound = "sword",
 	anim_state_event = "to_shield",
 	items = {
-		var_0_1.undead_npc_skeleton_skull,
-		var_0_1.undead_npc_skeleton_sword,
-		var_0_1.undead_npc_skeleton_shield,
-		var_0_1.undead_npc_skeleton_helmet,
-		var_0_1.undead_npc_skeleton_torso,
-		var_0_1.undead_npc_skeleton_hips,
-		var_0_1.undead_npc_skeleton_vambrace_l,
-		var_0_1.undead_npc_skeleton_vambrace_r,
-		var_0_1.undead_npc_skeleton_greaves_l,
-		var_0_1.undead_npc_skeleton_greaves_r
+		tbl_2.undead_npc_skeleton_skull,
+		tbl_2.undead_npc_skeleton_sword,
+		tbl_2.undead_npc_skeleton_shield,
+		tbl_2.undead_npc_skeleton_helmet,
+		tbl_2.undead_npc_skeleton_torso,
+		tbl_2.undead_npc_skeleton_hips,
+		tbl_2.undead_npc_skeleton_vambrace_l,
+		tbl_2.undead_npc_skeleton_vambrace_r,
+		tbl_2.undead_npc_skeleton_greaves_l,
+		tbl_2.undead_npc_skeleton_greaves_r
 	}
 }
 InventoryConfigurations.undead_npc_skeleton_dual_wield = {
 	enemy_hit_sound = "sword",
 	anim_state_event = "to_dual_wield",
 	items = {
-		var_0_1.undead_npc_skeleton_skull,
-		var_0_1.undead_npc_skeleton_dual_wield_right,
-		var_0_1.undead_npc_skeleton_dual_wield_left,
-		var_0_1.undead_npc_skeleton_helmet,
-		var_0_1.undead_npc_skeleton_chest_cloth,
-		var_0_1.undead_npc_skeleton_hips,
-		var_0_1.undead_npc_skeleton_vambrace_l,
-		var_0_1.undead_npc_skeleton_vambrace_r,
-		var_0_1.undead_npc_skeleton_greaves_l,
-		var_0_1.undead_npc_skeleton_greaves_r
+		tbl_2.undead_npc_skeleton_skull,
+		tbl_2.undead_npc_skeleton_dual_wield_right,
+		tbl_2.undead_npc_skeleton_dual_wield_left,
+		tbl_2.undead_npc_skeleton_helmet,
+		tbl_2.undead_npc_skeleton_chest_cloth,
+		tbl_2.undead_npc_skeleton_hips,
+		tbl_2.undead_npc_skeleton_vambrace_l,
+		tbl_2.undead_npc_skeleton_vambrace_r,
+		tbl_2.undead_npc_skeleton_greaves_l,
+		tbl_2.undead_npc_skeleton_greaves_r
 	}
 }
 InventoryConfigurations.undead_npc_skeleton_armored = {
 	enemy_hit_sound = "spear",
 	anim_state_event = "to_2h_hammer",
 	items = {
-		var_0_1.undead_npc_skeleton_skull,
-		var_0_1.undead_npc_skeleton_2h_hammer,
-		var_0_1.undead_npc_skeleton_helmet,
-		var_0_1.undead_npc_skeleton_torso,
-		var_0_1.undead_npc_skeleton_hips,
-		var_0_1.undead_npc_skeleton_vambrace_l,
-		var_0_1.undead_npc_skeleton_vambrace_r,
-		var_0_1.undead_npc_skeleton_greaves_l,
-		var_0_1.undead_npc_skeleton_greaves_r
+		tbl_2.undead_npc_skeleton_skull,
+		tbl_2.undead_npc_skeleton_2h_hammer,
+		tbl_2.undead_npc_skeleton_helmet,
+		tbl_2.undead_npc_skeleton_torso,
+		tbl_2.undead_npc_skeleton_hips,
+		tbl_2.undead_npc_skeleton_vambrace_l,
+		tbl_2.undead_npc_skeleton_vambrace_r,
+		tbl_2.undead_npc_skeleton_greaves_l,
+		tbl_2.undead_npc_skeleton_greaves_r
 	}
 }
 InventoryConfigurations.loot_rat_sack = {
 	items = {
-		var_0_1.loot_rat_sack,
-		var_0_1.clan_rat_loot_outfit_head,
-		var_0_1.clan_rat_loot_outfit_arm_l,
-		var_0_1.clan_rat_loot_outfit_arm_r,
-		var_0_1.clan_rat_loot_outfit_body,
-		var_0_1.clan_rat_loot_outfit_neck,
-		var_0_1.clan_rat_outfit_legs
+		tbl_2.loot_rat_sack,
+		tbl_2.clan_rat_loot_outfit_head,
+		tbl_2.clan_rat_loot_outfit_arm_l,
+		tbl_2.clan_rat_loot_outfit_arm_r,
+		tbl_2.clan_rat_loot_outfit_body,
+		tbl_2.clan_rat_loot_outfit_neck,
+		tbl_2.clan_rat_outfit_legs
 	}
 }
 InventoryConfigurations.pack_master = {
 	items = {
-		var_0_1.packmaster_claw
+		tbl_2.packmaster_claw
 	}
 }
 InventoryConfigurations.ratlinggun = {
 	enemy_hit_sound = "bullet",
 	items = {
-		var_0_1.ratlinggun
+		tbl_2.ratlinggun
 	}
 }
 InventoryConfigurations.warpfiregun = {
 	enemy_hit_sound = "bullet",
 	items = {
-		var_0_1.warpfiregun
+		tbl_2.warpfiregun
 	}
 }
 InventoryConfigurations.gutter_runner = {
@@ -2203,7 +2203,7 @@ InventoryConfigurations.wind_globadier = {
 InventoryConfigurations.warpfiregun = {
 	enemy_hit_sound = "bullet",
 	items = {
-		var_0_1.warpfiregun
+		tbl_2.warpfiregun
 	}
 }
 InventoryConfigurations.rat_ogre = {
@@ -2213,53 +2213,53 @@ InventoryConfigurations.rat_ogre = {
 InventoryConfigurations.beastmen_minotaur_dual_axes = {
 	enemy_hit_sound = "sword",
 	items = {
-		var_0_1.beastmen_minotaur_dual_axes_right,
-		var_0_1.beastmen_minotaur_dual_axes_left
+		tbl_2.beastmen_minotaur_dual_axes_right,
+		tbl_2.beastmen_minotaur_dual_axes_left
 	}
 }
 InventoryConfigurations.stormfiend_warpfire = {
 	enemy_hit_sound = "melee",
 	items = {
-		var_0_1.stormfiend_warpfire_r,
-		var_0_1.stormfiend_warpfire_l
+		tbl_2.stormfiend_warpfire_r,
+		tbl_2.stormfiend_warpfire_l
 	}
 }
 InventoryConfigurations.chaos_troll = {
 	enemy_hit_sound = "sword",
 	anim_state_event = "to_1h_axe",
 	items = {
-		var_0_1.chaos_troll_skin_0000,
-		var_0_1.chaos_troll
+		tbl_2.chaos_troll_skin_0000,
+		tbl_2.chaos_troll
 	}
 }
 InventoryConfigurations.chaos_troll_chief = {
 	enemy_hit_sound = "sword",
 	anim_state_event = "to_1h_axe",
 	items = {
-		var_0_1.chaos_troll_skin_1001,
-		var_0_1.chaos_troll
+		tbl_2.chaos_troll_skin_1001,
+		tbl_2.chaos_troll
 	}
 }
 InventoryConfigurations.chaos_sorcerer = {
 	items = {
-		var_0_1.chaos_sorcerer_stick
+		tbl_2.chaos_sorcerer_stick
 	}
 }
 InventoryConfigurations.chaos_sorcerer_vortex = {
 	items = {
-		var_0_1.chaos_sorcerer_book
+		tbl_2.chaos_sorcerer_book
 	}
 }
 InventoryConfigurations.chaos_exalted_sorcerer = {
 	anim_state_event = "to_boss",
 	items = {
-		var_0_1.chaos_sorcerer_stick
+		tbl_2.chaos_sorcerer_stick
 	}
 }
 InventoryConfigurations.chaos_exalted_sorcerer_drachenfels = {
 	anim_state_event = "to_boss",
 	items = {
-		var_0_1.chaos_sorcerer_scythe_01
+		tbl_2.chaos_sorcerer_scythe_01
 	}
 }
 InventoryConfigurations.chaos_mutator_sorcerer = {
@@ -2269,70 +2269,70 @@ InventoryConfigurations.mace = {
 	enemy_hit_sound = "sword",
 	anim_state_event = "to_sword",
 	items = {
-		var_0_1.mace
+		tbl_2.mace
 	}
 }
 InventoryConfigurations.chaos_sorcerer_vortex = {
 	items = {
-		var_0_1.chaos_sorcerer_book
+		tbl_2.chaos_sorcerer_book
 	}
 }
 InventoryConfigurations.beastmen_ungor_1h = {
 	enemy_hit_sound = "sword",
 	anim_state_event = "to_sword",
 	items = {
-		var_0_1.one_hand_weapon_right,
-		var_0_1.beastmen_ungor_outfit_head,
-		var_0_1.beastmen_ungor_outfit_r_arm,
-		var_0_1.beastmen_ungor_outfit_l_arm,
-		var_0_1.beastmen_ungor_outfit_neck
+		tbl_2.one_hand_weapon_right,
+		tbl_2.beastmen_ungor_outfit_head,
+		tbl_2.beastmen_ungor_outfit_r_arm,
+		tbl_2.beastmen_ungor_outfit_l_arm,
+		tbl_2.beastmen_ungor_outfit_neck
 	}
 }
 InventoryConfigurations.beastmen_ungor_spear = {
 	enemy_hit_sound = "spear",
 	anim_state_event = "to_halberd",
 	items = {
-		var_0_1.beastmen_ungor_spear,
-		var_0_1.beastmen_ungor_outfit_head,
-		var_0_1.beastmen_ungor_outfit_r_arm,
-		var_0_1.beastmen_ungor_outfit_l_arm,
-		var_0_1.beastmen_ungor_outfit_neck
+		tbl_2.beastmen_ungor_spear,
+		tbl_2.beastmen_ungor_outfit_head,
+		tbl_2.beastmen_ungor_outfit_r_arm,
+		tbl_2.beastmen_ungor_outfit_l_arm,
+		tbl_2.beastmen_ungor_outfit_neck
 	}
 }
 InventoryConfigurations.opt_beastmen_ungor_spear = {
 	enemy_hit_sound = "spear",
 	anim_state_event = "to_halberd",
 	items = {
-		var_0_1.beastmen_ungor_spear,
-		var_0_1.beastmen_ungor_outfit_head,
-		var_0_1.beastmen_ungor_outfit_baked
+		tbl_2.beastmen_ungor_spear,
+		tbl_2.beastmen_ungor_outfit_head,
+		tbl_2.beastmen_ungor_outfit_baked
 	}
 }
 InventoryConfigurations.beastmen_ungor_bow = {
 	enemy_hit_sound = "spear",
 	anim_state_event = "to_bow",
 	items = {
-		var_0_1.bow,
-		var_0_1.beastmen_ungor_outfit_head,
-		var_0_1.beastmen_ungor_outfit_r_arm,
-		var_0_1.beastmen_ungor_outfit_l_arm,
-		var_0_1.beastmen_ungor_outfit_neck
+		tbl_2.bow,
+		tbl_2.beastmen_ungor_outfit_head,
+		tbl_2.beastmen_ungor_outfit_r_arm,
+		tbl_2.beastmen_ungor_outfit_l_arm,
+		tbl_2.beastmen_ungor_outfit_neck
 	}
 }
 InventoryConfigurations.opt_beastmen_ungor_bow = {
 	enemy_hit_sound = "spear",
 	anim_state_event = "to_bow",
 	items = {
-		var_0_1.bow,
-		var_0_1.beastmen_ungor_outfit_head,
-		var_0_1.beastmen_ungor_outfit_baked
+		tbl_2.bow,
+		tbl_2.beastmen_ungor_outfit_head,
+		tbl_2.beastmen_ungor_outfit_baked
 	}
 }
 InventoryConfigurations.beastmen_ungor_just_add_spear = {
 	enemy_hit_sound = "spear",
 	anim_state_event = "to_halberd",
 	items = {
-		var_0_1.beastmen_ungor_spear
+		tbl_2.beastmen_ungor_spear
 	}
 }
 InventoryConfigurations.beastmen_ungor_archer_bow_and_spear = {
@@ -2353,21 +2353,21 @@ InventoryConfigurations.beastmen_gor_1h = {
 	enemy_hit_sound = "sword",
 	anim_state_event = "to_sword",
 	items = {
-		var_0_1.beastmen_1h,
-		var_0_1.beastmen_gor_outfit_head,
-		var_0_1.beastmen_gor_outfit_neck,
-		var_0_1.beastmen_gor_belt,
-		var_0_1.beastmen_gor_outfit_r_arm,
-		var_0_1.beastmen_gor_outfit_l_arm
+		tbl_2.beastmen_1h,
+		tbl_2.beastmen_gor_outfit_head,
+		tbl_2.beastmen_gor_outfit_neck,
+		tbl_2.beastmen_gor_belt,
+		tbl_2.beastmen_gor_outfit_r_arm,
+		tbl_2.beastmen_gor_outfit_l_arm
 	}
 }
 InventoryConfigurations.opt_beastmen_gor_1h = {
 	enemy_hit_sound = "sword",
 	anim_state_event = "to_sword",
 	items = {
-		var_0_1.beastmen_1h,
-		var_0_1.beastmen_gor_outfit_head,
-		var_0_1.beastmen_gor_outfit_baked
+		tbl_2.beastmen_1h,
+		tbl_2.beastmen_gor_outfit_head,
+		tbl_2.beastmen_gor_outfit_baked
 	}
 }
 InventoryConfigurations.beastmen_bestigor_2h_axe = {
@@ -2375,10 +2375,10 @@ InventoryConfigurations.beastmen_bestigor_2h_axe = {
 	anim_state_event = "to_halberd",
 	equip_anim = "equip_halberd",
 	items = {
-		var_0_1.beastmen_2h,
-		var_0_1.beastmen_bestigor_outfit_head,
-		var_0_1.beastmen_bestigor_outfit_r_arm_upper,
-		var_0_1.beastmen_bestigor_outfit_l_arm_upper
+		tbl_2.beastmen_2h,
+		tbl_2.beastmen_bestigor_outfit_head,
+		tbl_2.beastmen_bestigor_outfit_r_arm_upper,
+		tbl_2.beastmen_bestigor_outfit_l_arm_upper
 	}
 }
 InventoryConfigurations.beastmen_standard_bearer_2h_axe = {
@@ -2386,8 +2386,8 @@ InventoryConfigurations.beastmen_standard_bearer_2h_axe = {
 	anim_state_event = "to_halberd",
 	equip_anim = "equip_halberd",
 	items = {
-		var_0_1.beastmen_2h_axe_standard,
-		var_0_1.beastmen_standard_bearer_outfit_head
+		tbl_2.beastmen_2h_axe_standard,
+		tbl_2.beastmen_standard_bearer_outfit_head
 	}
 }
 InventoryConfigurations.beastmen_2h_axe_standard = {
@@ -2395,7 +2395,7 @@ InventoryConfigurations.beastmen_2h_axe_standard = {
 	anim_state_event = "to_standard_bearer",
 	equip_anim = "equip_halberd",
 	items = {
-		var_0_1.beastmen_standard
+		tbl_2.beastmen_standard
 	}
 }
 InventoryConfigurations.beastmen_standard_bearer_dual_setup = {
@@ -2408,70 +2408,77 @@ InventoryConfigurations.warrior_axe_blk_shadow_lieutenant = {
 	enemy_hit_sound = "spear",
 	anim_state_event = "to_spear",
 	items = {
-		var_0_1.blk_shadow_lieutenant_axe,
-		var_0_1.blk_shadow_lieutenant_warrior_helmet
+		tbl_2.blk_shadow_lieutenant_axe,
+		tbl_2.blk_shadow_lieutenant_warrior_helmet
 	}
 }
 InventoryConfigurations.undead_ethereal_skeleton_with_shield = {
 	enemy_hit_sound = "sword",
 	anim_state_event = "to_shield",
 	items = {
-		var_0_1.undead_ethereal_skeleton_sword,
-		var_0_1.undead_ethereal_skeleton_shield
+		tbl_2.undead_ethereal_skeleton_sword,
+		tbl_2.undead_ethereal_skeleton_shield
 	}
 }
 InventoryConfigurations.undead_ethereal_skeleton_2h = {
 	enemy_hit_sound = "sword",
 	anim_state_event = "to_2h_hammer",
 	items = {
-		var_0_1.undead_ethereal_skeleton_2h_hammer
+		tbl_2.undead_ethereal_skeleton_2h_hammer
 	}
 }
 InventoryConfigurations.critter_nurgling = {
 	items = {
-		var_0_1.critter_nurgling_horns
+		tbl_2.critter_nurgling_horns
 	}
 }
 AIInventoryTemplates = {}
 
-local var_0_5 = {
+local tbl_5 = {
 	"sword",
 	"spear"
 }
 
-function AIInventoryTemplates.random_melee()
-	local var_1_0 = math.random(1, #var_0_5)
+AIInventoryTemplates.random_melee = function ()
+	-- function 1
+	local random = math.random(1, #tbl_5)
 
-	return var_0_5[var_1_0]
+	return tbl_5[random]
 end
 
-function AIInventoryTemplates.default()
+AIInventoryTemplates.default = function ()
+	-- function 2
 	return AIInventoryTemplates.random_melee()
 end
 
-for iter_0_4, iter_0_5 in pairs(var_0_1) do
-	iter_0_5.count = #iter_0_5
-	iter_0_5.name = iter_0_4
+for k_2, v_3 in pairs(tbl_2) do
+	v_3.count = #v_3
+	v_3.name = k_2
 end
 
-for iter_0_6, iter_0_7 in pairs(InventoryConfigurations) do
-	iter_0_7.items_n = iter_0_7.items and #iter_0_7.items
+for k_3, v_4 in pairs(InventoryConfigurations) do
+	local str = "items_n"
+	local items = v_4.items
 
-	assert(AIInventoryTemplates[iter_0_6] == nil, "Can't override configuration based templates")
+	items = not items and #v_4.items
+	v_4[str] = items
 
-	AIInventoryTemplates[iter_0_6] = function()
-		return iter_0_6
+	assert(AIInventoryTemplates[k_3] == nil, "Can't override configuration based templates")
+
+	AIInventoryTemplates[k_3] = function ()
+		-- function 3
+		return k_3
 	end
 
-	local var_0_6 = iter_0_7.multiple_configurations
+	local multiple_configurations = v_4.multiple_configurations
 
-	if var_0_6 then
-		iter_0_7.config_lookup = {}
+	if not multiple_configurations then
+		v_4.config_lookup = {}
 
-		for iter_0_8 = 1, #var_0_6 do
-			local var_0_7 = var_0_6[iter_0_8]
+		for i8 = 1, #multiple_configurations do
+			local var_0_9 = multiple_configurations[i8]
 
-			iter_0_7.config_lookup[var_0_7] = iter_0_8
+			v_4.config_lookup[var_0_9] = i8
 		end
 	end
 end

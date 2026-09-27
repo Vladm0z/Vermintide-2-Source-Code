@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/wood_elf_dlc_termite_3.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		response = "pwe_gateway_accidental_bell_ring_a",
 		name = "pwe_gateway_accidental_bell_ring_a",

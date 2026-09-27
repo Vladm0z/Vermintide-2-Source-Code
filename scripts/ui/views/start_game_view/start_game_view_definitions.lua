@@ -2,7 +2,7 @@
 
 local_require("scripts/ui/ui_widgets")
 
-local var_0_0 = {
+local tbl = {
 	root_1 = {
 		is_root = true,
 		size = {
@@ -82,7 +82,7 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	{
 		description = "Start game",
 		display_name = "PLAY",
@@ -104,10 +104,12 @@ local var_0_1 = {
 			0,
 			-0.1
 		},
-		require_function = function()
+		require_function = function ()
+			-- function 1
 			return
 		end,
-		contains_new_content = function()
+		contains_new_content = function ()
+			-- function 2
 			return false
 		end
 	},
@@ -132,10 +134,12 @@ local var_0_1 = {
 			0,
 			-0.1
 		},
-		require_function = function()
+		require_function = function ()
+			-- function 3
 			return
 		end,
-		contains_new_content = function()
+		contains_new_content = function ()
+			-- function 4
 			return false
 		end
 	},
@@ -160,15 +164,17 @@ local var_0_1 = {
 			0,
 			-0.1
 		},
-		require_function = function()
+		require_function = function ()
+			-- function 5
 			return
 		end,
-		contains_new_content = function()
+		contains_new_content = function ()
+			-- function 6
 			return false
 		end
 	}
 }
-local var_0_2 = {
+local tbl_3 = {
 	vertical_alignment = "center",
 	font_size = 36,
 	localize = false,
@@ -182,7 +188,7 @@ local var_0_2 = {
 		2
 	}
 }
-local var_0_3 = {
+local tbl_4 = {
 	vertical_alignment = "bottom",
 	font_size = 36,
 	localize = false,
@@ -196,7 +202,7 @@ local var_0_3 = {
 		2
 	}
 }
-local var_0_4 = {
+local tbl_5 = {
 	vertical_alignment = "bottom",
 	font_size = 20,
 	localize = false,
@@ -210,7 +216,7 @@ local var_0_4 = {
 		2
 	}
 }
-local var_0_5 = {
+local tbl_6 = {
 	vertical_alignment = "top",
 	font_size = 20,
 	localize = false,
@@ -224,7 +230,7 @@ local var_0_5 = {
 		2
 	}
 }
-local var_0_6 = {
+local tbl_7 = {
 	vertical_alignment = "center",
 	upper_case = true,
 	word_wrap = true,
@@ -238,15 +244,15 @@ local var_0_6 = {
 		16
 	}
 }
-local var_0_7 = {
+local tbl_8 = {
 	"unit_frame_portrait_dead",
 	"unit_frame_portrait_dead",
 	"unit_frame_portrait_dead",
 	"unit_frame_portrait_dead"
 }
-local var_0_8 = {
-	title_text = UIWidgets.create_simple_text("n/a", "title_text", nil, nil, var_0_2),
-	title_description_text = UIWidgets.create_simple_text("n/a", "title_description_text", nil, nil, var_0_5),
+local tbl_9 = {
+	title_text = UIWidgets.create_simple_text("n/a", "title_text", nil, nil, tbl_3),
+	title_description_text = UIWidgets.create_simple_text("n/a", "title_description_text", nil, nil, tbl_6),
 	background = UIWidgets.create_simple_texture("large_frame_01", "dead_space_filler"),
 	console_cursor = UIWidgets.create_console_cursor("console_cursor"),
 	loading_bg = {
@@ -269,10 +275,10 @@ local var_0_8 = {
 			}
 		}
 	},
-	loading_text = UIWidgets.create_simple_text("n/a", "screen", nil, nil, var_0_6)
+	loading_text = UIWidgets.create_simple_text("n/a", "screen", nil, nil, tbl_7)
 }
-local var_0_9 = {}
-local var_0_10 = {
+local tbl_10 = {}
+local tbl_11 = {
 	witch_hunter = {
 		{
 			unit_name = "units/beings/player/witch_hunter/headpiece/wh_hat_03",
@@ -328,7 +334,7 @@ local var_0_10 = {
 		}
 	}
 }
-local var_0_11 = {
+local tbl_12 = {
 	witch_hunter = {
 		hovered = "witch_hunter_hovered",
 		available = "witch_hunter_available",
@@ -372,10 +378,10 @@ local var_0_11 = {
 }
 
 return {
-	scenegraph_definition = var_0_0,
-	widgets_definitions = var_0_8,
-	settings_by_screen = var_0_1,
-	attachments = var_0_10,
-	flow_events = var_0_11,
-	animations = var_0_9
+	scenegraph_definition = tbl,
+	widgets_definitions = tbl_9,
+	settings_by_screen = tbl_2,
+	attachments = tbl_11,
+	flow_events = tbl_12,
+	animations = tbl_10
 }

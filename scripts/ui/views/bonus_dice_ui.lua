@@ -1,117 +1,127 @@
 -- chunkname: @scripts/ui/views/bonus_dice_ui.lua
 
 local var_0_0 = local_require("scripts/ui/views/bonus_dice_ui_definitions")
-local var_0_1 = math.easeInCubic
+local easeInCubic = math.easeInCubic
 
 BonusDiceUI = class(BonusDiceUI)
 
-function BonusDiceUI.init(arg_1_0, arg_1_1, arg_1_2)
-	arg_1_0._parent = arg_1_1
-	arg_1_0.ui_renderer = arg_1_2.ui_renderer
-	arg_1_0.ingame_ui = arg_1_2.ingame_ui
-	arg_1_0.input_manager = arg_1_2.input_manager
-	arg_1_0.dice_keeper = arg_1_2.dice_keeper
-	arg_1_0.active_dice_widgets = 0
-	arg_1_0.dice_widgets = {}
-	arg_1_0.die_types = {}
-	arg_1_0.die_count = {}
+BonusDiceUI.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	self._parent = arg_1_1
+	self.ui_renderer = arg_1_2.ui_renderer
+	self.ingame_ui = arg_1_2.ingame_ui
+	self.input_manager = arg_1_2.input_manager
+	self.dice_keeper = arg_1_2.dice_keeper
+	self.active_dice_widgets = 0
+	self.dice_widgets = {}
+	self.die_types = {}
+	self.die_count = {}
 
-	local var_1_0 = arg_1_2.dice_keeper:get_dice()
-	local var_1_1 = 0
+	local get_dice = arg_1_2.dice_keeper:get_dice()
+	local num = 0
 
-	for iter_1_0, iter_1_1 in pairs(var_1_0) do
-		var_1_1 = var_1_1 + 1
-		arg_1_0.die_types[var_1_1] = iter_1_0
-		arg_1_0.die_count[iter_1_0] = 0
+	for k, v in pairs(get_dice) do
+		num = num + 1
+		self.die_types[num] = k
+		self.die_count[k] = 0
 	end
 
-	arg_1_0.die_types_n = var_1_1
+	self.die_types_n = num
 
-	arg_1_0:create_ui_elements()
+	self:create_ui_elements()
 end
 
-function BonusDiceUI.create_ui_elements(arg_2_0)
-	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
+BonusDiceUI.create_ui_elements = function (self)
+	-- function 2
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 
-	for iter_2_0 = 1, 10 do
-		arg_2_0.dice_widgets[iter_2_0] = UIWidget.init(var_0_0.dice_widget_definition)
+	for i = 1, 10 do
+		self.dice_widgets[i] = UIWidget.init(var_0_0.dice_widget_definition)
 	end
 end
 
-function BonusDiceUI.add_die(arg_3_0, arg_3_1)
-	local var_3_0 = arg_3_0.active_dice_widgets + 1
-	local var_3_1 = arg_3_0.dice_widgets[var_3_0] or UIWidget.init(var_0_0.dice_widget_definition)
-	local var_3_2 = var_0_0.num_dice_columns
-	local var_3_3 = var_0_0.dice_size
-	local var_3_4 = var_0_0.gap
-	local var_3_5 = 0
-	local var_3_6 = 0
-	local var_3_7 = (var_3_0 - 1) % var_3_2
-	local var_3_8 = math.floor((var_3_0 - 1) / var_3_2)
-	local var_3_9 = var_3_7 * var_3_3[1] + var_3_4 * var_3_7
-	local var_3_10 = -(var_3_8 * var_3_3[2] + var_3_4 * var_3_8)
+BonusDiceUI.add_die = function (self, arg_3_1)
+	-- function 3
+	local num = self.active_dice_widgets + 1
+	local var_3_1 = self.dice_widgets[num]
 
-	var_3_1.style.offset[1] = var_3_9
-	var_3_1.style.offset[2] = var_3_10
+	var_3_1 = var_3_1 or UIWidget.init(var_0_0.dice_widget_definition)
+
+	local num_dice_columns = var_0_0.num_dice_columns
+	local dice_size = var_0_0.dice_size
+	local gap = var_0_0.gap
+	local num_2 = 0
+	local num_3 = 0
+	local num_4 = (num - 1) % num_dice_columns
+	local floor = math.floor((num - 1) / num_dice_columns)
+	local num_5 = num_4 * dice_size[1] + gap * num_4
+	local num_6 = -(floor * dice_size[2] + gap * floor)
+
+	var_3_1.style.offset[1] = num_5
+	var_3_1.style.offset[2] = num_6
 	var_3_1.content.texture_id = var_0_0.get_die_texture(arg_3_1)
 
-	UIWidget.animate(var_3_1, UIAnimation.init(UIAnimation.function_by_time, var_3_1.style.color, 1, 0, 255, 1, var_0_1))
+	UIWidget.animate(var_3_1, UIAnimation.init(UIAnimation.function_by_time, var_3_1.style.color, 1, 0, 255, 1, easeInCubic))
 
-	arg_3_0.die_count[arg_3_1] = arg_3_0.die_count[arg_3_1] + 1
-	arg_3_0.dice_widgets[var_3_0] = var_3_1
-	arg_3_0.active_dice_widgets = var_3_0
+	self.die_count[arg_3_1] = self.die_count[arg_3_1] + 1
+	self.dice_widgets[num] = var_3_1
+	self.active_dice_widgets = num
 end
 
-function BonusDiceUI.destroy(arg_4_0)
-	arg_4_0.dice_keeper = nil
+BonusDiceUI.destroy = function (self)
+	-- function 4
+	self.dice_keeper = nil
 end
 
-function BonusDiceUI.update(arg_5_0, arg_5_1)
+BonusDiceUI.update = function (self, arg_5_1)
+	-- function 5
 	do return end
 
-	if DebugKeyHandler.key_pressed("f3", "asdasd", "dadsa") then
-		arg_5_0.dice_keeper:add_die("normal", 1)
+	if not DebugKeyHandler.key_pressed("f3", "asdasd", "dadsa") then
+		self.dice_keeper:add_die("normal", 1)
 	end
 
-	arg_5_0:update_dices()
+	self:update_dices()
 
-	if arg_5_0.active_dice_widgets > 0 then
-		arg_5_0:draw(arg_5_1)
+	if self.active_dice_widgets > 0 then
+		self:draw(arg_5_1)
 	end
 end
 
-function BonusDiceUI.update_dices(arg_6_0)
-	local var_6_0 = arg_6_0.dice_keeper
-	local var_6_1 = arg_6_0.die_count
-	local var_6_2 = arg_6_0.die_types
-	local var_6_3 = arg_6_0.die_types_n
+BonusDiceUI.update_dices = function (self)
+	-- function 6
+	local dice_keeper = self.dice_keeper
+	local die_count = self.die_count
+	local die_types = self.die_types
+	local die_types_n = self.die_types_n
 
-	for iter_6_0 = 1, var_6_3 do
-		local var_6_4 = var_6_2[iter_6_0]
-		local var_6_5 = var_6_1[var_6_4]
-		local var_6_6 = var_6_0:num_new_dices(var_6_4) - var_6_5
+	for i = 1, die_types_n do
+		local var_6_4 = die_types[i]
+		local var_6_5 = die_count[var_6_4]
+		local num = dice_keeper:num_new_dices(var_6_4) - var_6_5
 
-		if var_6_6 > 0 then
-			for iter_6_1 = 1, var_6_6 do
-				arg_6_0:add_die(var_6_4)
+		if num > 0 then
+			for j = 1, num do
+				self:add_die(var_6_4)
 			end
 		end
 	end
 end
 
-function BonusDiceUI.draw(arg_7_0, arg_7_1)
-	local var_7_0 = arg_7_0.ui_renderer
-	local var_7_1 = arg_7_0.ui_scenegraph
-	local var_7_2 = arg_7_0.input_manager:get_service("ingame_menu")
+BonusDiceUI.draw = function (self, arg_7_1)
+	-- function 7
+	local ui_renderer = self.ui_renderer
+	local ui_scenegraph = self.ui_scenegraph
+	local get_service = self.input_manager:get_service("ingame_menu")
 
-	UIRenderer.begin_pass(var_7_0, var_7_1, var_7_2, arg_7_1)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, get_service, arg_7_1)
 
-	local var_7_3 = arg_7_0.dice_widgets
-	local var_7_4 = arg_7_0.active_dice_widgets
+	local dice_widgets = self.dice_widgets
+	local active_dice_widgets = self.active_dice_widgets
 
-	for iter_7_0 = 1, var_7_4 do
-		UIRenderer.draw_widget(var_7_0, var_7_3[iter_7_0])
+	for i = 1, active_dice_widgets do
+		UIRenderer.draw_widget(ui_renderer, dice_widgets[i])
 	end
 
-	UIRenderer.end_pass(var_7_0)
+	UIRenderer.end_pass(ui_renderer)
 end

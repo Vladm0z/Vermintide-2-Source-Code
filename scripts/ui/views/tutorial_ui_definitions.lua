@@ -1,41 +1,41 @@
 -- chunkname: @scripts/ui/views/tutorial_ui_definitions.lua
 
-local var_0_0 = true
+local flag = true
 local var_0_1 = local_require("scripts/ui/views/tutorial_ui_animation_definitions")
-local var_0_2 = {
+local tbl = {
 	500,
 	500
 }
-local var_0_3 = {
+local tbl_2 = {
 	450,
 	66
 }
-local var_0_4 = 30
-local var_0_5 = {
+local num = 30
+local tbl_3 = {
 	584,
 	138
 }
-local var_0_6 = {
+local tbl_4 = {
 	450,
 	62
 }
-local var_0_7 = 20
-local var_0_8 = 4
-local var_0_9 = 10
-local var_0_10 = 6
-local var_0_11 = {
+local num_2 = 20
+local num_3 = 4
+local num_4 = 10
+local num_5 = 6
+local tbl_5 = {
 	64,
 	64
 }
-local var_0_12 = {
+local tbl_6 = {
 	137,
 	7
 }
-local var_0_13 = {
+local tbl_7 = {
 	147,
 	17
 }
-local var_0_14 = {
+local tbl_8 = {
 	root = {
 		is_root = true,
 		size = {
@@ -118,12 +118,12 @@ local var_0_14 = {
 	info_slate_mission_goal_end = {
 		parent = "info_slate_root",
 		size = {
-			var_0_3[1],
-			var_0_3[2] / 2
+			tbl_2[1],
+			tbl_2[2] / 2
 		},
 		position = {
 			0,
-			var_0_3[2] / 2,
+			tbl_2[2] / 2,
 			2
 		}
 	},
@@ -131,7 +131,7 @@ local var_0_14 = {
 		vertical_alignment = "top",
 		parent = "info_slate_root",
 		size = {
-			var_0_3[1] + 30,
+			tbl_2[1] + 30,
 			550
 		},
 		position = {
@@ -142,38 +142,38 @@ local var_0_14 = {
 	}
 }
 
-for iter_0_0 = 1, 3 do
-	local var_0_15 = string.format("info_slate_slot%d_start", iter_0_0)
-	local var_0_16 = string.format("info_slate_slot%d_end", iter_0_0)
-	local var_0_17 = (iter_0_0 - 1) * (var_0_3[2] + var_0_4)
+for i = 1, 3 do
+	local format = string.format("info_slate_slot%d_start", i)
+	local format_2 = string.format("info_slate_slot%d_end", i)
+	local num_6 = (i - 1) * (tbl_2[2] + num)
 
-	var_0_14[var_0_15] = {
+	tbl_8[format] = {
 		parent = "info_slate_mission_goal_end",
 		size = {
-			var_0_3[1],
-			var_0_3[2]
+			tbl_2[1],
+			tbl_2[2]
 		},
 		position = {
 			0,
-			-var_0_17,
+			-num_6,
 			1
 		}
 	}
-	var_0_14[var_0_16] = {
+	tbl_8[format_2] = {
 		parent = "info_slate_mission_goal_end",
 		size = {
-			var_0_3[1],
-			var_0_3[2] / 2
+			tbl_2[1],
+			tbl_2[2] / 2
 		},
 		position = {
 			0,
-			-var_0_17,
+			-num_6,
 			2
 		}
 	}
 end
 
-local var_0_18 = {
+local tbl_9 = {
 	tooltip_mission = {
 		scenegraph_id = "tooltip",
 		element = {
@@ -187,7 +187,8 @@ local var_0_18 = {
 					texture_id = "arrow",
 					style_id = "arrow",
 					pass_type = "rotated_texture",
-					content_check_function = function(arg_1_0, arg_1_1)
+					content_check_function = function (arg_1_0, arg_1_1)
+						-- function 1
 						return arg_1_1.color[1] > 0
 					end
 				},
@@ -195,16 +196,18 @@ local var_0_18 = {
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_2_0)
-						return arg_2_0.text
+					content_check_function = function (self)
+						-- function 2
+						return self.text
 					end
 				},
 				{
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_3_0)
-						return arg_3_0.text
+					content_check_function = function (self)
+						-- function 3
+						return self.text
 					end
 				}
 			}
@@ -296,7 +299,7 @@ local var_0_18 = {
 		}
 	}
 }
-local var_0_19 = {
+local tbl_10 = {
 	root = {
 		is_root = true,
 		size = {
@@ -392,8 +395,8 @@ local var_0_19 = {
 		parent = "tooltip_mission",
 		horizontal_alignment = "center",
 		size = {
-			var_0_11[1],
-			var_0_11[2]
+			tbl_5[1],
+			tbl_5[2]
 		},
 		position = {
 			0,
@@ -417,22 +420,23 @@ local var_0_19 = {
 	}
 }
 
-local function var_0_20(arg_4_0)
-	local var_4_0 = {}
+local function fn(arg_4_0)
+	-- function 4
+	local tbl = {}
 
-	for iter_4_0 = 1, arg_4_0 do
-		local var_4_1 = "health_bar_" .. iter_4_0
+	for i = 1, arg_4_0 do
+		local str = "health_bar_" .. i
 
-		var_0_19[var_4_1] = {
+		tbl_10[str] = {
 			parent = "screen_fit",
 			position = {
 				0,
 				0,
 				1
 			},
-			size = var_0_12
+			size = tbl_6
 		}
-		var_4_0[iter_4_0] = {
+		tbl[i] = {
 			element = {
 				passes = {
 					{
@@ -453,9 +457,9 @@ local function var_0_20(arg_4_0)
 			},
 			style = {
 				texture_bg = {
-					size = var_0_13,
+					size = tbl_7,
 					offset = {
-						-var_0_13[1] / 2,
+						-tbl_7[1] / 2,
 						0,
 						1
 					},
@@ -465,12 +469,12 @@ local function var_0_20(arg_4_0)
 						255,
 						255
 					},
-					scenegraph_id = var_4_1
+					scenegraph_id = str
 				},
 				texture_fg = {
-					size = var_0_12,
+					size = tbl_6,
 					offset = {
-						-var_0_12[1] / 2,
+						-tbl_6[1] / 2,
 						5,
 						1
 					},
@@ -480,49 +484,50 @@ local function var_0_20(arg_4_0)
 						255,
 						255
 					},
-					scenegraph_id = var_4_1
+					scenegraph_id = str
 				}
 			},
-			scenegraph_id = var_4_1
+			scenegraph_id = str
 		}
 	end
 
-	return var_4_0
+	return tbl
 end
 
-local function var_0_21(arg_5_0)
-	local var_5_0 = {}
+local function fn_2(arg_5_0)
+	-- function 5
+	local tbl = {}
 
-	for iter_5_0 = 1, arg_5_0 do
-		local var_5_1 = "info_slate_entry_anchor" .. iter_5_0
-		local var_5_2 = "info_slate_entry_root" .. iter_5_0
-		local var_5_3 = var_5_2 .. "_text"
-		local var_5_4 = var_5_2 .. "_icon_root"
-		local var_5_5 = var_5_2 .. "_icon"
-		local var_5_6 = var_5_2 .. "_top_frame"
-		local var_5_7 = var_5_2 .. "_bottom_frame"
-		local var_5_8 = var_5_2 .. "_frame_details"
-		local var_5_9 = var_5_2 .. "_frame_glow_top"
-		local var_5_10 = var_5_2 .. "_frame_glow_bottom"
+	for i = 1, arg_5_0 do
+		local str = "info_slate_entry_anchor" .. i
+		local str_2 = "info_slate_entry_root" .. i
+		local str_3 = str_2 .. "_text"
+		local str_4 = str_2 .. "_icon_root"
+		local str_5 = str_2 .. "_icon"
+		local str_6 = str_2 .. "_top_frame"
+		local str_7 = str_2 .. "_bottom_frame"
+		local str_8 = str_2 .. "_frame_details"
+		local str_9 = str_2 .. "_frame_glow_top"
+		local str_10 = str_2 .. "_frame_glow_bottom"
 
-		var_0_14[var_5_2] = {
+		tbl_8[str_2] = {
 			parent = "info_slate_root",
 			position = {
-				-var_0_3[1],
+				-tbl_2[1],
 				0,
 				1
 			},
 			size = {
-				var_0_3[1],
-				var_0_3[2]
+				tbl_2[1],
+				tbl_2[2]
 			}
 		}
-		var_0_14[var_5_4] = {
+		tbl_8[str_4] = {
 			vertical_alignment = "top",
 			horizontal_alignment = "center",
-			parent = var_5_2,
+			parent = str_2,
 			position = {
-				-var_0_3[1] / 2 + 30,
+				-tbl_2[1] / 2 + 30,
 				0,
 				0
 			},
@@ -531,10 +536,10 @@ local function var_0_21(arg_5_0)
 				62
 			}
 		}
-		var_0_14[var_5_5] = {
+		tbl_8[str_5] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
-			parent = var_5_4,
+			parent = str_4,
 			position = {
 				0,
 				0,
@@ -545,24 +550,24 @@ local function var_0_21(arg_5_0)
 				62
 			}
 		}
-		var_0_14[var_5_3] = {
+		tbl_8[str_3] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
-			parent = var_5_2,
+			parent = str_2,
 			position = {
 				2,
 				0,
 				1
 			},
 			size = {
-				var_0_3[1] - 62,
-				var_0_3[2]
+				tbl_2[1] - 62,
+				tbl_2[2]
 			}
 		}
-		var_0_14[var_5_6] = {
+		tbl_8[str_6] = {
 			vertical_alignment = "top",
 			horizontal_alignment = "left",
-			parent = var_5_2,
+			parent = str_2,
 			position = {
 				0,
 				0,
@@ -573,10 +578,10 @@ local function var_0_21(arg_5_0)
 				4
 			}
 		}
-		var_0_14[var_5_7] = {
+		tbl_8[str_7] = {
 			vertical_alignment = "bottom",
 			horizontal_alignment = "left",
-			parent = var_5_2,
+			parent = str_2,
 			position = {
 				0,
 				0,
@@ -587,78 +592,80 @@ local function var_0_21(arg_5_0)
 				4
 			}
 		}
-		var_0_14[var_5_9] = {
+		tbl_8[str_9] = {
 			vertical_alignment = "top",
 			horizontal_alignment = "left",
-			parent = var_5_2,
+			parent = str_2,
 			position = {
 				-105,
 				108,
 				5
 			},
 			size = {
-				var_0_5[1],
-				var_0_5[2]
+				tbl_3[1],
+				tbl_3[2]
 			}
 		}
-		var_0_14[var_5_10] = {
+		tbl_8[str_10] = {
 			vertical_alignment = "bottom",
 			horizontal_alignment = "left",
-			parent = var_5_2,
+			parent = str_2,
 			position = {
 				-105,
 				-108,
 				5
 			},
 			size = {
-				var_0_5[1],
-				var_0_5[2]
+				tbl_3[1],
+				tbl_3[2]
 			}
 		}
 
-		local var_5_11 = {
+		local tbl_4 = {
 			0,
 			0,
 			0
 		}
-		local var_5_12 = {
+		local tbl_5 = {
 			element = {
 				passes = {
 					{
 						style_id = "background_texture",
 						pass_type = "texture_uv_dynamic_color_uvs_size_offset",
 						content_id = "background_texture",
-						dynamic_function = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
-							local var_6_0 = arg_6_0.fraction
-							local var_6_1 = arg_6_1.uv_start_pixels + arg_6_1.uv_scale_pixels * var_6_0
-							local var_6_2 = arg_6_1.uvs
-							local var_6_3 = arg_6_1.scale_axis
-							local var_6_4 = arg_6_1.offset_scale
+						dynamic_function = function (self, arg_6_1, arg_6_2, arg_6_3)
+							-- function 6
+							local fraction = self.fraction
+							local num = arg_6_1.uv_start_pixels + arg_6_1.uv_scale_pixels * fraction
+							local uvs = arg_6_1.uvs
+							local scale_axis = arg_6_1.scale_axis
+							local offset_scale = arg_6_1.offset_scale
 
-							var_6_2[1][var_6_3] = 1 - var_6_0
-							arg_6_2[var_6_3] = var_6_1
+							uvs[1][scale_axis] = 1 - fraction
+							arg_6_2[scale_axis] = num
 
-							return arg_6_1.color, var_6_2, arg_6_2, var_5_11
+							return arg_6_1.color, uvs, arg_6_2, tbl_4
 						end
 					},
 					{
 						style_id = "icon_texture",
 						pass_type = "texture_uv_dynamic_color_uvs_size_offset",
 						content_id = "icon_texture",
-						dynamic_function = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
-							local var_7_0 = arg_7_0.fraction
-							local var_7_1 = arg_7_1.color
-							local var_7_2 = arg_7_1.uv_start_pixels
-							local var_7_3 = arg_7_1.uv_scale_pixels
-							local var_7_4 = var_7_2 + var_7_3 * var_7_0
-							local var_7_5 = arg_7_1.uvs
-							local var_7_6 = arg_7_1.scale_axis
-							local var_7_7 = (1 - var_7_4 / (var_7_2 + var_7_3)) * 0.5
+						dynamic_function = function (self, arg_7_1, arg_7_2, arg_7_3)
+							-- function 7
+							local fraction = self.fraction
+							local color = arg_7_1.color
+							local uv_start_pixels = arg_7_1.uv_start_pixels
+							local uv_scale_pixels = arg_7_1.uv_scale_pixels
+							local num = uv_start_pixels + uv_scale_pixels * fraction
+							local uvs = arg_7_1.uvs
+							local scale_axis = arg_7_1.scale_axis
+							local num_2 = (1 - num / (uv_start_pixels + uv_scale_pixels)) * 0.5
 
-							var_7_5[1][var_7_6] = var_7_7
-							var_7_5[2][var_7_6] = 1 - var_7_7
+							uvs[1][scale_axis] = num_2
+							uvs[2][scale_axis] = 1 - num_2
 
-							return var_7_1, var_7_5, arg_7_2, arg_7_1.offset
+							return color, uvs, arg_7_2, arg_7_1.offset
 						end
 					},
 					{
@@ -666,8 +673,9 @@ local function var_0_21(arg_5_0)
 						pass_type = "text",
 						text_id = "description_text",
 						retained_mode = false,
-						content_check_function = function(arg_8_0, arg_8_1)
-							if arg_8_0.icon_texture then
+						content_check_function = function (self, arg_8_1)
+							-- function 8
+							if not self.icon_texture then
 								arg_8_1.offset[1] = 78
 							else
 								arg_8_1.offset[1] = 0
@@ -680,36 +688,40 @@ local function var_0_21(arg_5_0)
 						pass_type = "texture",
 						style_id = "top_frame_texture",
 						texture_id = "top_frame_texture",
-						retained_mode = var_0_0,
-						content_check_function = function(arg_9_0)
-							return arg_9_0.top_frame_texture
+						retained_mode = flag,
+						content_check_function = function (self)
+							-- function 9
+							return self.top_frame_texture
 						end
 					},
 					{
 						pass_type = "texture",
 						style_id = "bottom_frame_texture",
 						texture_id = "bottom_frame_texture",
-						retained_mode = var_0_0,
-						content_check_function = function(arg_10_0)
-							return arg_10_0.bottom_frame_texture
+						retained_mode = flag,
+						content_check_function = function (self)
+							-- function 10
+							return self.bottom_frame_texture
 						end
 					},
 					{
 						pass_type = "texture",
 						style_id = "frame_glow_top_texture",
 						texture_id = "frame_glow_top_texture",
-						retained_mode = var_0_0,
-						content_check_function = function(arg_11_0)
-							return arg_11_0.frame_glow_top_texture
+						retained_mode = flag,
+						content_check_function = function (self)
+							-- function 11
+							return self.frame_glow_top_texture
 						end
 					},
 					{
 						pass_type = "texture",
 						style_id = "frame_glow_bottom_texture",
 						texture_id = "frame_glow_bottom_texture",
-						retained_mode = var_0_0,
-						content_check_function = function(arg_12_0)
-							return arg_12_0.frame_glow_bottom_texture
+						retained_mode = flag,
+						content_check_function = function (self)
+							-- function 12
+							return self.frame_glow_bottom_texture
 						end
 					}
 				}
@@ -740,7 +752,7 @@ local function var_0_21(arg_5_0)
 					uv_start_pixels = 0,
 					offset_scale = 1,
 					scale_axis = 2,
-					scenegraph_id = var_5_5,
+					scenegraph_id = str_5,
 					color = {
 						255,
 						255,
@@ -777,7 +789,7 @@ local function var_0_21(arg_5_0)
 						0
 					},
 					text_color = Colors.get_color_table_with_alpha("white", 255),
-					scenegraph_id = var_5_3
+					scenegraph_id = str_3
 				},
 				background_texture = {
 					masked = true,
@@ -790,14 +802,14 @@ local function var_0_21(arg_5_0)
 						0,
 						0
 					},
-					scenegraph_id = var_5_2,
+					scenegraph_id = str_2,
 					color = {
 						255,
 						66,
 						31,
 						17
 					},
-					uv_scale_pixels = var_0_3[1],
+					uv_scale_pixels = tbl_2[1],
 					uvs = {
 						{
 							0,
@@ -823,7 +835,7 @@ local function var_0_21(arg_5_0)
 						255,
 						255
 					},
-					scenegraph_id = var_5_6
+					scenegraph_id = str_6
 				},
 				bottom_frame_texture = {
 					background_component = true,
@@ -839,7 +851,7 @@ local function var_0_21(arg_5_0)
 						255,
 						255
 					},
-					scenegraph_id = var_5_7
+					scenegraph_id = str_7
 				},
 				frame_glow_top_texture = {
 					masked = true,
@@ -854,7 +866,7 @@ local function var_0_21(arg_5_0)
 						255,
 						255
 					},
-					scenegraph_id = var_5_9
+					scenegraph_id = str_9
 				},
 				frame_glow_bottom_texture = {
 					masked = true,
@@ -869,35 +881,36 @@ local function var_0_21(arg_5_0)
 						255,
 						255
 					},
-					scenegraph_id = var_5_10
+					scenegraph_id = str_10
 				}
 			},
-			scenegraph_id = var_5_2
+			scenegraph_id = str_2
 		}
 
-		for iter_5_1, iter_5_2 in pairs(var_5_12.style) do
-			if iter_5_2.color then
-				iter_5_2.default_alpha = iter_5_2.color[1]
+		for k, v in pairs(tbl_5.style) do
+			if not v.color then
+				v.default_alpha = v.color[1]
 			end
 		end
 
-		var_5_0[#var_5_0 + 1] = var_5_12
+		tbl[#tbl + 1] = tbl_5
 	end
 
-	return var_5_0
+	return tbl
 end
 
-local function var_0_22(arg_13_0)
-	local var_13_0 = {}
+local function fn_3(arg_13_0)
+	-- function 13
+	local tbl = {}
 
-	for iter_13_0 = 1, arg_13_0 do
-		local var_13_1 = "objective_tooltip_root_" .. iter_13_0
-		local var_13_2 = "objective_tooltip_" .. iter_13_0
-		local var_13_3 = "objective_tooltip_text" .. iter_13_0
-		local var_13_4 = "objective_tooltip_icon" .. iter_13_0
-		local var_13_5 = "objective_tooltip_arrow" .. iter_13_0
+	for i = 1, arg_13_0 do
+		local str = "objective_tooltip_root_" .. i
+		local str_2 = "objective_tooltip_" .. i
+		local str_3 = "objective_tooltip_text" .. i
+		local str_4 = "objective_tooltip_icon" .. i
+		local str_5 = "objective_tooltip_arrow" .. i
 
-		var_0_19[var_13_1] = {
+		tbl_10[str] = {
 			parent = "root",
 			position = {
 				0,
@@ -909,9 +922,9 @@ local function var_0_22(arg_13_0)
 				3
 			}
 		}
-		var_0_19[var_13_2] = {
+		tbl_10[str_2] = {
 			vertical_alignment = "bottom",
-			parent = var_13_1,
+			parent = str,
 			position = {
 				0,
 				0,
@@ -922,10 +935,10 @@ local function var_0_22(arg_13_0)
 				1
 			}
 		}
-		var_0_19[var_13_3] = {
+		tbl_10[str_3] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "right",
-			parent = var_13_4,
+			parent = str_4,
 			size = {
 				400,
 				62
@@ -936,10 +949,10 @@ local function var_0_22(arg_13_0)
 				2
 			}
 		}
-		var_0_19[var_13_4] = {
+		tbl_10[str_4] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
-			parent = var_13_2,
+			parent = str_2,
 			size = {
 				62,
 				62
@@ -950,10 +963,10 @@ local function var_0_22(arg_13_0)
 				3
 			}
 		}
-		var_0_19[var_13_5] = {
+		tbl_10[str_5] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
-			parent = var_13_4,
+			parent = str_4,
 			size = {
 				38,
 				18
@@ -964,7 +977,7 @@ local function var_0_22(arg_13_0)
 				2
 			}
 		}
-		var_13_0[iter_13_0] = {
+		tbl[i] = {
 			element = {
 				passes = {
 					{
@@ -976,7 +989,8 @@ local function var_0_22(arg_13_0)
 						texture_id = "arrow",
 						style_id = "arrow",
 						pass_type = "rotated_texture",
-						content_check_function = function(arg_14_0, arg_14_1)
+						content_check_function = function (arg_14_0, arg_14_1)
+							-- function 14
 							return arg_14_1.color[1] > 0
 						end
 					},
@@ -984,16 +998,18 @@ local function var_0_22(arg_13_0)
 						style_id = "text",
 						pass_type = "text",
 						text_id = "text",
-						content_check_function = function(arg_15_0)
-							return arg_15_0.text
+						content_check_function = function (self)
+							-- function 15
+							return self.text
 						end
 					},
 					{
 						style_id = "text_shadow",
 						pass_type = "text",
 						text_id = "text",
-						content_check_function = function(arg_16_0)
-							return arg_16_0.text
+						content_check_function = function (self)
+							-- function 16
+							return self.text
 						end
 					}
 				}
@@ -1018,7 +1034,7 @@ local function var_0_22(arg_13_0)
 						0,
 						1
 					},
-					scenegraph_id = var_13_3
+					scenegraph_id = str_3
 				},
 				text_shadow = {
 					font_size = 30,
@@ -1034,7 +1050,7 @@ local function var_0_22(arg_13_0)
 						-2,
 						0
 					},
-					scenegraph_id = var_13_3
+					scenegraph_id = str_3
 				},
 				texture_id = {
 					offset = {
@@ -1048,8 +1064,8 @@ local function var_0_22(arg_13_0)
 						255,
 						255
 					},
-					scenegraph_id = var_13_4,
-					size = var_0_11
+					scenegraph_id = str_4,
+					size = tbl_5
 				},
 				arrow = {
 					angle = 0,
@@ -1068,35 +1084,35 @@ local function var_0_22(arg_13_0)
 						255,
 						255
 					},
-					scenegraph_id = var_13_5
+					scenegraph_id = str_5
 				}
 			},
-			scenegraph_id = var_13_2
+			scenegraph_id = str_2
 		}
 	end
 
-	return var_13_0
+	return tbl
 end
 
-local var_0_23 = var_0_21(var_0_8)
-local var_0_24 = var_0_20(var_0_9)
-local var_0_25 = var_0_22(var_0_10)
+local var_0_23 = fn_2(num_3)
+local var_0_24 = fn(num_4)
+local var_0_25 = fn_3(num_5)
 
 return {
-	scenegraph = var_0_14,
-	floating_icons_scene_graph = var_0_19,
-	widgets = var_0_18,
-	INFO_SLATE_SIZE = var_0_2,
-	INFO_SLATE_ENTRY_SIZE = var_0_3,
-	INFO_SLATE_ENTRY_SPACING = var_0_4,
-	INFO_SLATE_ENTRY_HEIGHT_SPACING = var_0_7,
-	NUMBER_OF_INFO_SLATE_ENTRIES = var_0_8,
+	scenegraph = tbl_8,
+	floating_icons_scene_graph = tbl_10,
+	widgets = tbl_9,
+	INFO_SLATE_SIZE = tbl,
+	INFO_SLATE_ENTRY_SIZE = tbl_2,
+	INFO_SLATE_ENTRY_SPACING = num,
+	INFO_SLATE_ENTRY_HEIGHT_SPACING = num_2,
+	NUMBER_OF_INFO_SLATE_ENTRIES = num_3,
 	tutorial_icons = tutorial_icons,
 	info_slate_entries = var_0_23,
 	health_bar_definitions = var_0_24,
-	NUMBER_OF_HEALTH_BARS = var_0_9,
+	NUMBER_OF_HEALTH_BARS = num_4,
 	objective_tooltips = var_0_25,
-	NUMBER_OF_OBJECTIVE_TOOLTIPS = var_0_10,
-	FLOATING_ICON_SIZE = var_0_11,
+	NUMBER_OF_OBJECTIVE_TOOLTIPS = num_5,
+	FLOATING_ICON_SIZE = tbl_5,
 	animations = var_0_1
 }

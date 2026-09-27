@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/wood_elf_dlc_drachenfels_bastion.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pwe_bastion_intro_line_a",

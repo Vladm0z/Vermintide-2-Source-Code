@@ -1,14 +1,14 @@
 -- chunkname: @scripts/global_shader_flags.lua
 
-local var_0_0 = 8388608
-local var_0_1 = {
+local num = 8388608
+local tbl = {
 	"NECROMANCER_CAREER_REMAP",
 	"EVENT_ANNIVERSARY",
 	"EVENT_SKULLS",
 	"EVENT_GEHEIMNISNACHT",
 	"EVENT_GOTWF"
 }
-local var_0_2 = {
+local tbl_2 = {
 	NECROMANCER_CAREER_REMAP = {
 		39,
 		0,
@@ -41,17 +41,19 @@ local var_0_2 = {
 	}
 }
 
-local function var_0_3(arg_1_0, arg_1_1)
-	for iter_1_0, iter_1_1 in pairs(arg_1_0) do
-		if iter_1_1 == arg_1_1 then
-			return iter_1_0
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
+	for k, v in pairs(arg_1_0) do
+		if v == arg_1_1 then
+			return k
 		end
 	end
 
 	return nil
 end
 
-local function var_0_4(arg_2_0, arg_2_1, arg_2_2)
+local function fn_2(arg_2_0, arg_2_1, arg_2_2)
+	-- function 2
 	if GlobalShaderFlags.overridden_shader_flags[arg_2_2] == nil then
 		Application.set_render_setting(arg_2_0, arg_2_1)
 	end
@@ -59,113 +61,141 @@ local function var_0_4(arg_2_0, arg_2_1, arg_2_2)
 	GlobalShaderFlags.stored_values[arg_2_0] = arg_2_1
 end
 
-local function var_0_5()
-	local var_3_0 = {}
+local function fn_3()
+	-- function 3
+	local tbl_3 = {}
 
-	for iter_3_0, iter_3_1 in pairs(var_0_2) do
-		local var_3_1 = var_0_3(var_0_1, iter_3_0)
+	for k, v in pairs(tbl_2) do
+		local var_3_1 = fn(tbl, k)
 
-		var_3_0[(var_3_1 - 1) * 4 + 1] = iter_3_1[2] / 255
-		var_3_0[(var_3_1 - 1) * 4 + 2] = iter_3_1[3] / 255
-		var_3_0[(var_3_1 - 1) * 4 + 3] = iter_3_1[4] / 255
-		var_3_0[(var_3_1 - 1) * 4 + 4] = iter_3_1[1] / 255
+		tbl_3[(var_3_1 - 1) * 4 + 1] = v[2] / 255
+		tbl_3[(var_3_1 - 1) * 4 + 2] = v[3] / 255
+		tbl_3[(var_3_1 - 1) * 4 + 3] = v[4] / 255
+		tbl_3[(var_3_1 - 1) * 4 + 4] = v[1] / 255
 	end
 
-	var_0_4("particle_light_remapping_table", var_3_0)
+	fn_2("particle_light_remapping_table", tbl_3)
 end
 
-local function var_0_6()
-	var_0_4("global_shader_flags", var_0_0)
+local function fn_4()
+	-- function 4
+	fn_2("global_shader_flags", num)
 end
+
+local GlobalShaderFlags = GlobalShaderFlags
 
 GlobalShaderFlags = GlobalShaderFlags or {}
-GlobalShaderFlags.stored_values = GlobalShaderFlags.stored_values or {}
-GlobalShaderFlags.overridden_shader_flags = GlobalShaderFlags.overridden_shader_flags or {}
+GlobalShaderFlags = GlobalShaderFlags
 
-function GlobalShaderFlags.reset()
-	assert(#var_0_1 < 23, string.format("[GlobalShaderFlags] There is a maximum of 22 available shader flags. %q is out of scope", var_0_1[#var_0_1]))
-	var_0_5()
-	var_0_6()
+local GlobalShaderFlags_2 = GlobalShaderFlags
+local stored_values = GlobalShaderFlags.stored_values
+
+stored_values = stored_values or {}
+GlobalShaderFlags_2.stored_values = stored_values
+
+local GlobalShaderFlags_3 = GlobalShaderFlags
+local overridden_shader_flags = GlobalShaderFlags.overridden_shader_flags
+
+overridden_shader_flags = overridden_shader_flags or {}
+GlobalShaderFlags_3.overridden_shader_flags = overridden_shader_flags
+
+GlobalShaderFlags.reset = function ()
+	-- function 5
+	assert(#tbl < 23, string.format("[GlobalShaderFlags] There is a maximum of 22 available shader flags. %q is out of scope", tbl[#tbl]))
+	fn_3()
+	fn_4()
 end
 
-local function var_0_7(arg_6_0, arg_6_1)
-	local var_6_0 = var_0_3(var_0_1, arg_6_0)
+local function fn_5(arg_6_0, arg_6_1)
+	-- function 6
+	local var_6_0 = fn(tbl, arg_6_0)
 
 	assert(var_6_0, string.format("[GlobalShaderFlags] There is no flag called %q setup in global_shader_flags.lua", arg_6_0))
 
-	local var_6_1 = Application.render_config("settings", "global_shader_flags")
+	local render_config = Application.render_config("settings", "global_shader_flags")
 	local var_6_2
 
-	if arg_6_1 then
-		var_6_2 = bit.bor(var_6_1, bit.lshift(1, var_6_0 - 1))
+	if not arg_6_1 then
+		var_6_2 = bit.bor(render_config, bit.lshift(1, var_6_0 - 1))
 	else
-		var_6_2 = bit.band(var_6_1, bit.bnot(bit.lshift(1, var_6_0 - 1)))
+		var_6_2 = bit.band(render_config, bit.bnot(bit.lshift(1, var_6_0 - 1)))
 	end
 
 	return var_6_2
 end
 
-function GlobalShaderFlags.set_global_shader_flag(arg_7_0, arg_7_1)
-	local var_7_0 = var_0_7(arg_7_0, arg_7_1)
+GlobalShaderFlags.set_global_shader_flag = function (arg_7_0, arg_7_1)
+	-- function 7
+	local var_7_0 = fn_5(arg_7_0, arg_7_1)
 
-	var_0_4("global_shader_flags", var_7_0, arg_7_0)
+	fn_2("global_shader_flags", var_7_0, arg_7_0)
 end
 
-function GlobalShaderFlags.set_override_shader_flag(arg_8_0, arg_8_1)
-	local var_8_0 = var_0_7(arg_8_0, arg_8_1)
+GlobalShaderFlags.set_override_shader_flag = function (arg_8_0, arg_8_1)
+	-- function 8
+	local var_8_0 = fn_5(arg_8_0, arg_8_1)
 
 	Application.set_render_setting("global_shader_flags", var_8_0)
 
 	GlobalShaderFlags.overridden_shader_flags[arg_8_0] = arg_8_1
 end
 
-function GlobalShaderFlags.remove_override_shader_flag(arg_9_0)
-	local var_9_0 = GlobalShaderFlags.stored_values.global_shader_flags
-	local var_9_1 = var_0_3(var_0_1, arg_9_0)
-	local var_9_2 = bit.lshift(1, var_9_1 - 1)
-	local var_9_3 = bit.band(var_9_0, var_9_2) > 0
-	local var_9_4 = var_0_7(arg_9_0, var_9_3)
+GlobalShaderFlags.remove_override_shader_flag = function (arg_9_0)
+	-- function 9
+	local global_shader_flags = GlobalShaderFlags.stored_values.global_shader_flags
+	local var_9_1 = fn(tbl, arg_9_0)
+	local lshift = bit.lshift(1, var_9_1 - 1)
+	local flag = bit.band(global_shader_flags, lshift) > 0
+	local var_9_4 = fn_5(arg_9_0, flag)
 
 	Application.set_render_setting("global_shader_flags", var_9_4)
 
 	GlobalShaderFlags.overridden_shader_flags[arg_9_0] = nil
 end
 
-function GlobalShaderFlags.apply_settings()
-	for iter_10_0, iter_10_1 in pairs(GlobalShaderFlags.stored_values) do
-		var_0_4(iter_10_0, iter_10_1)
+GlobalShaderFlags.apply_settings = function ()
+	-- function 10
+	for k, v in pairs(GlobalShaderFlags.stored_values) do
+		fn_2(k, v)
 	end
 end
 
-function GlobalShaderFlags.print_debug()
+GlobalShaderFlags.print_debug = function ()
+	-- function 11
 	if BUILD ~= "release" then
-		local var_11_0 = Application.render_config("settings", "global_shader_flags")
+		local render_config = Application.render_config("settings", "global_shader_flags")
 
 		print("")
 		print("##########################")
 		print("[GlobalShaderFlags]")
 
-		local var_11_1 = ""
+		local str = ""
 
-		for iter_11_0 = 31, 0, -1 do
-			local var_11_2 = bit.lshift(1, iter_11_0)
-			local var_11_3 = bit.band(var_11_0, var_11_2)
-			local var_11_4 = iter_11_0 % 8 == 0 and " " or ""
+		for i = 31, 0, -1 do
+			local lshift = bit.lshift(1, i)
+			local band = bit.band(render_config, lshift)
+			local flag
 
-			var_11_1 = var_11_1 .. (var_11_3 >= 1 and 1 or 0) .. var_11_4
+			flag = i % 8 ~= 0 or not " " or ""
+
+			local var_11_5 = str
+			local flag_2
+
+			flag_2 = not (band >= 1) or not 1 or 0
+			str = var_11_5 .. flag_2 .. flag
 		end
 
-		print("Bit Layout: " .. var_11_1)
+		print("Bit Layout: " .. str)
 		print("---------------------------")
 		print("")
 		print("Active Shader Flags:")
 
-		for iter_11_1 = 1, #var_0_1 do
-			local var_11_5 = var_0_1[iter_11_1]
-			local var_11_6 = bit.lshift(1, iter_11_1 - 1)
+		for j = 1, #tbl do
+			local var_11_7 = tbl[j]
+			local lshift_2 = bit.lshift(1, j - 1)
 
-			if bit.band(var_11_0, var_11_6) > 0 then
-				print("- " .. var_11_5)
+			if bit.band(render_config, lshift_2) > 0 then
+				print("- " .. var_11_7)
 			end
 		end
 
@@ -173,33 +203,33 @@ function GlobalShaderFlags.print_debug()
 		print("")
 		print("<AVAILABLE SHADER FLAGS>")
 
-		for iter_11_2 = 1, #var_0_1 do
-			print("\t" .. var_0_1[iter_11_2])
+		for k = 1, #tbl do
+			print("\t" .. tbl[k])
 		end
 
 		print("</AVAILABLE SHADER FLAGS>")
 		print("##########################")
 		print("")
 
-		local var_11_7 = Application.render_config("settings", "particle_light_remapping_table")
+		local render_config_2 = Application.render_config("settings", "particle_light_remapping_table")
 
 		print("Particle light remapping table = [")
 
-		for iter_11_3 = 1, #var_11_7, 4 do
-			local var_11_8 = (iter_11_3 + 3) / 4
-			local var_11_9 = "\tA: " .. var_11_7[iter_11_3 + 3] * 255
-			local var_11_10 = "\tR: " .. var_11_7[iter_11_3] * 255
-			local var_11_11 = "\tG: " .. var_11_7[iter_11_3 + 1] * 255
-			local var_11_12 = "\tB: " .. var_11_7[iter_11_3 + 2] * 255 .. " // " .. var_0_1[var_11_8]
+		for l = 1, #render_config_2, 4 do
+			local num = (l + 3) / 4
+			local str_2 = "\tA: " .. render_config_2[l + 3] * 255
+			local str_3 = "\tR: " .. render_config_2[l] * 255
+			local str_4 = "\tG: " .. render_config_2[l + 1] * 255
+			local str_5 = "\tB: " .. render_config_2[l + 2] * 255 .. " // " .. tbl[num]
 
-			if iter_11_3 > 1 then
+			if l > 1 then
 				print("\t----------------------")
 			end
 
-			print(var_11_9)
-			print(var_11_10)
-			print(var_11_11)
-			print(var_11_12)
+			print(str_2)
+			print(str_3)
+			print(str_4)
+			print(str_5)
 		end
 
 		print("]")

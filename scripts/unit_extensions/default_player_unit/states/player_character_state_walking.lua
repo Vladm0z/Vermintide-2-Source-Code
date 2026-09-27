@@ -2,111 +2,115 @@
 
 PlayerCharacterStateWalking = class(PlayerCharacterStateWalking, PlayerCharacterState)
 
-function PlayerCharacterStateWalking.init(arg_1_0, arg_1_1)
-	PlayerCharacterState.init(arg_1_0, arg_1_1, "walking")
+PlayerCharacterStateWalking.init = function (self, arg_1_1)
+	-- function 1
+	PlayerCharacterState.init(self, arg_1_1, "walking")
 
-	arg_1_0.current_movement_speed_scale = 0
-	arg_1_0.latest_valid_navmesh_position = Vector3Box(math.huge, math.huge, math.huge)
-	arg_1_0.last_input_direction = Vector3Box(0, 0, 0)
+	self.current_movement_speed_scale = 0
+	self.latest_valid_navmesh_position = Vector3Box(math.huge, math.huge, math.huge)
+	self.last_input_direction = Vector3Box(0, 0, 0)
 end
 
-function PlayerCharacterStateWalking.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
-	local var_2_0 = arg_2_0.input_extension
-	local var_2_1 = arg_2_0.first_person_extension
-	local var_2_2 = arg_2_0.status_extension
-	local var_2_3 = arg_2_0.inventory_extension
-	local var_2_4 = arg_2_0.health_extension
-	local var_2_5 = arg_2_0.locomotion_extension:current_velocity()
-	local var_2_6 = Managers.player:owner(arg_2_1)
-	local var_2_7 = var_2_6 and var_2_6.bot_player
+PlayerCharacterStateWalking.on_enter = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	-- function 2
+	local input_extension = self.input_extension
+	local first_person_extension = self.first_person_extension
+	local status_extension = self.status_extension
+	local inventory_extension = self.inventory_extension
+	local health_extension = self.health_extension
+	local current_velocity = self.locomotion_extension:current_velocity()
+	local owner = Managers.player:owner(arg_2_1)
+	local flag = not owner and owner.bot_player
 
 	if arg_2_6 == "standing" then
-		arg_2_0.current_movement_speed_scale = 0
+		self.current_movement_speed_scale = 0
 	elseif not script_data.disable_nice_movement then
-		local var_2_8 = Vector3.length(var_2_5)
-		local var_2_9 = PlayerUnitMovementSettings.get_movement_settings_table(arg_2_1)
+		local length = Vector3.length(current_velocity)
+		local get_movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(arg_2_1)
 
-		arg_2_0.current_movement_speed_scale = math.min(var_2_8 / var_2_9.move_speed, 1)
+		self.current_movement_speed_scale = math.min(length / get_movement_settings_table.move_speed, 1)
 	else
-		arg_2_0.current_movement_speed_scale = 1
+		self.current_movement_speed_scale = 1
 	end
 
-	if not var_2_7 then
-		local var_2_10 = Vector3.normalize(Vector3.flat(var_2_5))
-		local var_2_11 = var_2_1:current_rotation()
-		local var_2_12 = Vector3.dot(Quaternion.right(var_2_11), var_2_10)
-		local var_2_13 = Vector3.dot(Vector3.normalize(Vector3.flat(Quaternion.forward(var_2_11))), var_2_10)
-		local var_2_14 = Vector3(var_2_12, var_2_13, 0)
+	if not flag then
+		local normalize = Vector3.normalize(Vector3.flat(current_velocity))
+		local current_rotation = first_person_extension:current_rotation()
+		local dot = Vector3.dot(Quaternion.right(current_rotation), normalize)
+		local dot_2 = Vector3.dot(Vector3.normalize(Vector3.flat(Quaternion.forward(current_rotation))), normalize)
+		local var_2_14 = Vector3(dot, dot_2, 0)
 
-		arg_2_0.last_input_direction:store(var_2_14)
+		self.last_input_direction:store(var_2_14)
 	end
 
-	local var_2_15, var_2_16 = CharacterStateHelper.get_move_animation(arg_2_0.locomotion_extension, var_2_0, var_2_2, arg_2_0.move_anim_3p)
+	local get_move_animation, var_2_16 = CharacterStateHelper.get_move_animation(self.locomotion_extension, input_extension, status_extension, self.move_anim_3p)
 
-	arg_2_0.move_anim_3p = var_2_15
-	arg_2_0.move_anim_1p = var_2_16
+	self.move_anim_3p = get_move_animation
+	self.move_anim_1p = var_2_16
 
-	CharacterStateHelper.play_animation_event(arg_2_1, var_2_15)
-	CharacterStateHelper.play_animation_event_first_person(var_2_1, var_2_16)
-	CharacterStateHelper.look(var_2_0, arg_2_0.player.viewport_name, var_2_1, var_2_2, var_2_3)
-	CharacterStateHelper.update_weapon_actions(arg_2_5, arg_2_1, var_2_0, var_2_3, var_2_4)
+	CharacterStateHelper.play_animation_event(arg_2_1, get_move_animation)
+	CharacterStateHelper.play_animation_event_first_person(first_person_extension, var_2_16)
+	CharacterStateHelper.look(input_extension, self.player.viewport_name, first_person_extension, status_extension, inventory_extension)
+	CharacterStateHelper.update_weapon_actions(arg_2_5, arg_2_1, input_extension, inventory_extension, health_extension)
 
-	arg_2_0.walking = false
-	arg_2_0.is_bot = var_2_7
+	self.walking = false
+	self.is_bot = flag
 end
 
-function PlayerCharacterStateWalking.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
-	local var_3_0 = arg_3_0.first_person_extension
+PlayerCharacterStateWalking.on_exit = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+	-- function 3
+	local first_person_extension = self.first_person_extension
 
-	CharacterStateHelper.play_animation_event_first_person(var_3_0, "idle")
+	CharacterStateHelper.play_animation_event_first_person(first_person_extension, "idle")
 end
 
-function PlayerCharacterStateWalking._handle_ladder_collision(arg_4_0, arg_4_1, arg_4_2)
-	local var_4_0 = arg_4_0.unit
-	local var_4_1 = arg_4_0.status_extension
-	local var_4_2 = arg_4_0.first_person_extension
-	local var_4_3 = arg_4_0.locomotion_extension
-	local var_4_4, var_4_5 = CharacterStateHelper.is_colliding_with_gameplay_collision_box(arg_4_0.world, var_4_0, "filter_ladder_collision")
-	local var_4_6 = CharacterStateHelper.looking_up(var_4_2, arg_4_2.ladder.looking_up_threshold)
-	local var_4_7 = CharacterStateHelper.recently_left_ladder(var_4_1, arg_4_1)
+PlayerCharacterStateWalking._handle_ladder_collision = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	local unit = self.unit
+	local status_extension = self.status_extension
+	local first_person_extension = self.first_person_extension
+	local locomotion_extension = self.locomotion_extension
+	local is_colliding_with_gameplay_collision_box, var_4_5 = CharacterStateHelper.is_colliding_with_gameplay_collision_box(self.world, unit, "filter_ladder_collision")
+	local looking_up = CharacterStateHelper.looking_up(first_person_extension, arg_4_2.ladder.looking_up_threshold)
+	local recently_left_ladder = CharacterStateHelper.recently_left_ladder(status_extension, arg_4_1)
 
-	if var_4_4 then
-		local var_4_8 = false
-		local var_4_9 = Unit.local_rotation(var_4_5, 0)
-		local var_4_10 = Quaternion.forward(var_4_9)
-		local var_4_11 = Unit.local_position(var_4_5, 0) - POSITION_LOOKUP[var_4_0]
-		local var_4_12 = Vector3.dot(var_4_10, var_4_11)
-		local var_4_13 = false
-		local var_4_14 = false
-		local var_4_15 = Quaternion.forward(Unit.local_rotation(var_4_5, 0))
-		local var_4_16 = Quaternion.forward(var_4_2:current_rotation())
-		local var_4_17 = Vector3.dot(var_4_16, var_4_15) < 0
-		local var_4_18 = Vector3.dot(var_4_3.velocity_current:unbox(), var_4_15)
-		local var_4_19 = Unit.node(var_4_5, "c_platform")
+	if not is_colliding_with_gameplay_collision_box then
+		local flag = false
+		local local_rotation = Unit.local_rotation(var_4_5, 0)
+		local forward = Quaternion.forward(local_rotation)
+		local num = Unit.local_position(var_4_5, 0) - POSITION_LOOKUP[unit]
+		local dot = Vector3.dot(forward, num)
+		local flag_2 = false
+		local flag_3 = false
+		local forward_2 = Quaternion.forward(Unit.local_rotation(var_4_5, 0))
+		local forward_3 = Quaternion.forward(first_person_extension:current_rotation())
+		local flag_4 = Vector3.dot(forward_3, forward_2) < 0
+		local dot_2 = Vector3.dot(locomotion_extension.velocity_current:unbox(), forward_2)
+		local node = Unit.node(var_4_5, "c_platform")
 
-		if POSITION_LOOKUP[var_4_0].z > Vector3.z(Unit.world_position(var_4_5, var_4_19)) then
-			local var_4_20 = not var_4_6
+		if POSITION_LOOKUP[unit].z > Vector3.z(Unit.world_position(var_4_5, node)) then
+			local flag_5 = not looking_up
 
-			if var_4_20 and var_4_17 and var_4_18 < 0 then
-				var_4_14 = var_4_12 > 0.5
-				var_4_13 = true
-			elseif var_4_20 and var_4_12 > 0 and not var_4_17 and var_4_18 > 0.5 then
-				var_4_14 = var_4_12 > 0.25
-				var_4_13 = true
+			if not (not flag_5 and not flag_4 and not (dot_2 < 0)) then
+				flag_3 = dot > 0.5
+				flag_2 = true
+			elseif not (not flag_5 and not (dot > 0) or flag_4 or not (dot_2 > 0.5)) then
+				flag_3 = dot > 0.25
+				flag_2 = true
 			end
 
-			var_4_8 = true
+			flag = true
 		else
-			local var_4_21 = 0.02
+			local num_2 = 0.02
 
-			var_4_14 = var_4_12 < 0.7 + var_4_21 and var_4_12 > 0
-			var_4_13 = var_4_6 and not var_4_17 and var_4_18 > 0
+			flag_3 = not (dot < 0.7 + num_2) or dot > 0
+			flag_2 = not looking_up and not not flag_4 or dot_2 > 0
 		end
 
-		if var_4_13 and not var_4_7 and var_4_14 then
-			arg_4_0.temp_params.ladder_unit = var_4_5
+		if not flag_2 and recently_left_ladder or not flag_3 then
+			self.temp_params.ladder_unit = var_4_5
 
-			if var_4_8 then
+			if not flag then
 				return "enter_ladder_top"
 			else
 				return "climbing_ladder"
@@ -115,310 +119,333 @@ function PlayerCharacterStateWalking._handle_ladder_collision(arg_4_0, arg_4_1, 
 	end
 end
 
-function PlayerCharacterStateWalking.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
-	local var_5_0 = arg_5_0.csm
-	local var_5_1 = arg_5_0.world
-	local var_5_2 = PlayerUnitMovementSettings.get_movement_settings_table(arg_5_1)
-	local var_5_3 = arg_5_0.input_extension
-	local var_5_4 = arg_5_0.status_extension
-	local var_5_5 = arg_5_0.first_person_extension
-	local var_5_6 = arg_5_0.locomotion_extension
-	local var_5_7 = arg_5_0.health_extension
-	local var_5_8 = arg_5_0.inventory_extension
-	local var_5_9 = arg_5_0.interactor_extension
-	local var_5_10 = arg_5_0.buff_extension
-	local var_5_11 = arg_5_0.current_movement_speed_scale
-	local var_5_12 = CharacterStateHelper
+PlayerCharacterStateWalking.update = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	-- function 5
+	local csm = self.csm
+	local world = self.world
+	local get_movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(arg_5_1)
+	local input_extension = self.input_extension
+	local status_extension = self.status_extension
+	local first_person_extension = self.first_person_extension
+	local locomotion_extension = self.locomotion_extension
+	local health_extension = self.health_extension
+	local inventory_extension = self.inventory_extension
+	local interactor_extension = self.interactor_extension
+	local buff_extension = self.buff_extension
+	local current_movement_speed_scale = self.current_movement_speed_scale
+	local CharacterStateHelper = CharacterStateHelper
 
-	if var_5_6:is_on_ground() then
+	if not locomotion_extension:is_on_ground() then
 		ScriptUnit.extension(arg_5_1, "whereabouts_system"):set_is_onground()
 	end
 
-	if var_5_12.do_common_state_transitions(var_5_4, var_5_0) then
+	if not CharacterStateHelper.do_common_state_transitions(status_extension, csm) then
 		return
 	end
 
-	if var_5_12.is_ledge_hanging(var_5_1, arg_5_1, arg_5_0.temp_params) and not var_5_12.handle_bot_ledge_hanging_failsafe(arg_5_1, arg_5_0.is_bot) then
-		var_5_0:change_state("ledge_hanging", arg_5_0.temp_params)
-
-		return
-	end
-
-	if var_5_12.is_overcharge_exploding(var_5_4) then
-		var_5_0:change_state("overcharge_exploding")
+	if not (not CharacterStateHelper.is_ledge_hanging(world, arg_5_1, self.temp_params) and CharacterStateHelper.handle_bot_ledge_hanging_failsafe(arg_5_1, self.is_bot)) then
+		csm:change_state("ledge_hanging", self.temp_params)
 
 		return
 	end
 
-	if var_5_12.is_using_transport(var_5_4) then
-		var_5_0:change_state("using_transport")
+	if not CharacterStateHelper.is_overcharge_exploding(status_extension) then
+		csm:change_state("overcharge_exploding")
 
 		return
 	end
 
-	if var_5_12.is_pushed(var_5_4) then
-		var_5_4:set_pushed(false)
-
-		local var_5_13 = var_5_2.stun_settings.pushed
-
-		var_5_13.hit_react_type = var_5_4:hit_react_type() .. "_push"
-
-		var_5_0:change_state("stunned", var_5_13)
+	if not CharacterStateHelper.is_using_transport(status_extension) then
+		csm:change_state("using_transport")
 
 		return
 	end
 
-	if var_5_12.is_charged(var_5_4) then
-		local var_5_14 = var_5_2.charged_settings.charged
+	if not CharacterStateHelper.is_pushed(status_extension) then
+		status_extension:set_pushed(false)
 
-		var_5_14.hit_react_type = "charged"
+		local pushed = get_movement_settings_table.stun_settings.pushed
 
-		var_5_0:change_state("charged", var_5_14)
+		pushed.hit_react_type = status_extension:hit_react_type() .. "_push"
 
-		return
-	end
-
-	if var_5_12.is_block_broken(var_5_4) then
-		var_5_4:set_block_broken(false)
-
-		local var_5_15 = var_5_2.stun_settings.parry_broken
-
-		var_5_15.hit_react_type = "medium_push"
-
-		var_5_0:change_state("stunned", var_5_15)
+		csm:change_state("stunned", pushed)
 
 		return
 	end
 
-	if var_5_6:is_animation_driven() then
-		return
-	end
+	if not CharacterStateHelper.is_charged(status_extension) then
+		local charged = get_movement_settings_table.charged_settings.charged
 
-	if not var_5_0.state_next and var_5_4.do_leap then
-		var_5_0:change_state("leaping")
+		charged.hit_react_type = "charged"
 
-		return
-	end
-
-	var_5_12.update_dodge_lock(arg_5_1, var_5_3, var_5_4)
-
-	local var_5_16, var_5_17 = var_5_12.check_to_start_dodge(arg_5_1, var_5_3, var_5_4, arg_5_5)
-
-	if var_5_16 then
-		local var_5_18 = arg_5_0.temp_params
-
-		var_5_18.dodge_direction = var_5_17
-
-		var_5_0:change_state("dodging", var_5_18)
+		csm:change_state("charged", charged)
 
 		return
 	end
 
-	local var_5_19 = Managers.input:is_device_active("gamepad")
-	local var_5_20 = var_5_4:is_crouching()
+	if not CharacterStateHelper.is_block_broken(status_extension) then
+		status_extension:set_block_broken(false)
 
-	if not var_5_0.state_next and (var_5_3:get("jump") or var_5_3:get("jump_only")) and (not var_5_20 or var_5_12.can_uncrouch(arg_5_1)) and var_5_6:jump_allowed() then
-		local var_5_21 = var_5_12.get_movement_input(var_5_3)
+		local parry_broken = get_movement_settings_table.stun_settings.parry_broken
 
-		if var_5_20 then
-			var_5_12.uncrouch(arg_5_1, arg_5_5, var_5_5, var_5_4)
+		parry_broken.hit_react_type = "medium_push"
+
+		csm:change_state("stunned", parry_broken)
+
+		return
+	end
+
+	if not locomotion_extension:is_animation_driven() then
+		return
+	end
+
+	if csm.state_next or not status_extension.do_leap then
+		csm:change_state("leaping")
+
+		return
+	end
+
+	CharacterStateHelper.update_dodge_lock(arg_5_1, input_extension, status_extension)
+
+	local check_to_start_dodge, var_5_17 = CharacterStateHelper.check_to_start_dodge(arg_5_1, input_extension, status_extension, arg_5_5)
+
+	if not check_to_start_dodge then
+		local temp_params = self.temp_params
+
+		temp_params.dodge_direction = var_5_17
+
+		csm:change_state("dodging", temp_params)
+
+		return
+	end
+
+	local is_device_active = Managers.input:is_device_active("gamepad")
+	local is_crouching = status_extension:is_crouching()
+
+	if (csm.state_next or input_extension:get("jump") or not input_extension:get("jump_only") or not is_crouching) and (CharacterStateHelper.can_uncrouch(arg_5_1) or not locomotion_extension:jump_allowed()) then
+		local get_movement_input = CharacterStateHelper.get_movement_input(input_extension)
+
+		if not is_crouching then
+			CharacterStateHelper.uncrouch(arg_5_1, arg_5_5, first_person_extension, status_extension)
 		end
 
-		if not var_5_3:get("jump") and not var_5_19 or var_5_4:can_override_dodge_with_jump(arg_5_5) or Vector3.y(var_5_21) >= 0 or Vector3.length(var_5_21) <= var_5_3.minimum_dodge_input then
-			if Vector3.y(var_5_12.get_movement_input(var_5_3)) < 0 then
-				arg_5_0.temp_params.backward_jump = true
+		if not ((input_extension:get("jump") or not is_device_active or status_extension:can_override_dodge_with_jump(arg_5_5)) and (Vector3.y(get_movement_input) >= 0 or not (Vector3.length(get_movement_input) <= input_extension.minimum_dodge_input))) then
+			if Vector3.y(CharacterStateHelper.get_movement_input(input_extension)) < 0 then
+				self.temp_params.backward_jump = true
 			else
-				arg_5_0.temp_params.backward_jump = false
+				self.temp_params.backward_jump = false
 			end
 
-			var_5_0:change_state("jumping", arg_5_0.temp_params)
-			var_5_5:change_state("jumping")
+			csm:change_state("jumping", self.temp_params)
+			first_person_extension:change_state("jumping")
 
 			return
 		end
 	end
 
-	local var_5_22 = var_5_12.has_move_input(var_5_3)
+	local has_move_input = CharacterStateHelper.has_move_input(input_extension)
 
-	if not var_5_0.state_next and not var_5_22 and var_5_11 == 0 then
-		local var_5_23 = arg_5_0.temp_params
+	if not (csm.state_next or has_move_input or current_movement_speed_scale ~= 0) then
+		local temp_params_2 = self.temp_params
 
-		var_5_0:change_state("standing", var_5_23)
-		var_5_5:change_state("standing")
-
-		return
-	end
-
-	if not var_5_0.state_next and not var_5_6:is_on_ground() then
-		var_5_0:change_state("falling", arg_5_0.temp_params)
-		var_5_5:change_state("falling")
+		csm:change_state("standing", temp_params_2)
+		first_person_extension:change_state("standing")
 
 		return
 	end
 
-	local var_5_24 = arg_5_0:_handle_ladder_collision(arg_5_5, var_5_2)
-
-	if not var_5_0.state_next and var_5_24 then
-		var_5_0:change_state(var_5_24, arg_5_0.temp_params)
+	if not (csm.state_next or locomotion_extension:is_on_ground()) then
+		csm:change_state("falling", self.temp_params)
+		first_person_extension:change_state("falling")
 
 		return
 	end
 
-	local var_5_25 = var_5_3.toggle_crouch
+	local _handle_ladder_collision = self:_handle_ladder_collision(arg_5_5, get_movement_settings_table)
 
-	var_5_12.check_crouch(arg_5_1, var_5_3, var_5_4, var_5_25, var_5_5, arg_5_5)
+	if csm.state_next or not _handle_ladder_collision then
+		csm:change_state(_handle_ladder_collision, self.temp_params)
 
-	local var_5_26 = var_5_12.get_movement_input(var_5_3)
+		return
+	end
 
-	if not arg_5_0.is_bot then
-		local var_5_27 = var_5_2.move_acceleration_up * arg_5_3
-		local var_5_28 = var_5_2.move_acceleration_down * arg_5_3
+	local toggle_crouch = input_extension.toggle_crouch
 
-		if var_5_22 then
-			var_5_11 = math.min(1, var_5_11 + var_5_27)
+	CharacterStateHelper.check_crouch(arg_5_1, input_extension, status_extension, toggle_crouch, first_person_extension, arg_5_5)
 
-			if var_5_19 then
-				var_5_11 = Vector3.length(var_5_26) * var_5_11
+	local get_movement_input_2 = CharacterStateHelper.get_movement_input(input_extension)
+
+	if not self.is_bot then
+		local num = get_movement_settings_table.move_acceleration_up * arg_5_3
+		local num_2 = get_movement_settings_table.move_acceleration_down * arg_5_3
+
+		if not has_move_input then
+			current_movement_speed_scale = math.min(1, current_movement_speed_scale + num)
+
+			if not is_device_active then
+				current_movement_speed_scale = Vector3.length(get_movement_input_2) * current_movement_speed_scale
 			end
 		else
-			var_5_11 = math.max(0, var_5_11 - var_5_28)
+			current_movement_speed_scale = math.max(0, current_movement_speed_scale - num_2)
 		end
 	else
-		var_5_11 = var_5_22 and 1 or 0
+		current_movement_speed_scale = not has_move_input and 1 and 0
 	end
 
-	local var_5_29 = var_5_3:get("walk")
-	local var_5_30 = var_5_4:is_crouching()
+	local get = input_extension:get("walk")
+	local is_crouching_2 = status_extension:is_crouching()
 
-	if var_5_29 ~= arg_5_0.walking then
-		var_5_4:set_slowed(var_5_29)
+	if get ~= self.walking then
+		status_extension:set_slowed(get)
 	end
 
-	local var_5_31 = (var_5_30 and var_5_2.crouch_move_speed or var_5_29 and var_5_2.walk_move_speed or var_5_2.move_speed) * var_5_4:current_move_speed_multiplier() * var_5_11 * var_5_2.player_speed_scale
-	local var_5_32 = var_5_10:has_buff_perk("intoxication_stagger")
-	local var_5_33 = var_5_10:has_buff_perk("drunk_stagger")
-	local var_5_34 = var_5_10:has_buff_perk("hungover_stagger")
+	local crouch_move_speed
 
-	if var_5_32 or var_5_33 or var_5_34 then
-		local var_5_35 = math.abs(var_5_4:intoxication_level())
-		local var_5_36 = var_5_32 and math.random() > 0.6 / var_5_35
-		local var_5_37 = var_5_33 and math.random() > 0.9 / var_5_35
-		local var_5_38 = var_5_34
-		local var_5_39 = var_5_36 or var_5_37 or var_5_38
+	if not is_crouching_2 then
+		crouch_move_speed = get_movement_settings_table.crouch_move_speed
 
-		if not arg_5_0._is_in_intoxication_stagger_cooldown and not arg_5_0._is_intoxication_stagger and var_5_39 then
-			arg_5_0._is_intoxication_stagger = true
-			arg_5_0._intoxication_stagger_start = arg_5_5
-			arg_5_0._intoxication_stagger_duration = math.random() * 1.5 + math.random() * 0.5
-			arg_5_0._intoxication_stagger_time = arg_5_0._intoxication_stagger_start + arg_5_0._intoxication_stagger_duration
+		if not crouch_move_speed then
+			-- Nothing
+		end
+	end
 
-			local var_5_40 = var_5_6:current_velocity()
-			local var_5_41 = Vector3.normalize(var_5_40)
-			local var_5_42 = Vector3.cross(var_5_41, Vector3.up())
-			local var_5_43 = math.sin(arg_5_5 * (math.pi * 0.5)) * math.sign(math.random() * 2 - 1) * var_5_42
+	if not get then
+		crouch_move_speed = get_movement_settings_table.walk_move_speed
 
-			arg_5_0._intoxication_stagger_dir = Vector3Box(var_5_43)
+		if not crouch_move_speed then
+			-- Nothing
+		end
+	end
+
+	crouch_move_speed = get_movement_settings_table.move_speed
+
+	::label_5_0::
+
+	local num_3 = crouch_move_speed * status_extension:current_move_speed_multiplier() * current_movement_speed_scale * get_movement_settings_table.player_speed_scale
+	local has_buff_perk = buff_extension:has_buff_perk("intoxication_stagger")
+	local has_buff_perk_2 = buff_extension:has_buff_perk("drunk_stagger")
+	local has_buff_perk_3 = buff_extension:has_buff_perk("hungover_stagger")
+
+	if has_buff_perk or has_buff_perk_2 or not has_buff_perk_3 then
+		local abs = math.abs(status_extension:intoxication_level())
+		local flag = not has_buff_perk and math.random() > 0.6 / abs
+		local flag_2 = not has_buff_perk_2 and math.random() > 0.9 / abs
+		local var_5_39 = has_buff_perk_3
+		local flag_3 = flag or flag_2 or var_5_39
+
+		if self._is_in_intoxication_stagger_cooldown or self._is_intoxication_stagger or not flag_3 then
+			self._is_intoxication_stagger = true
+			self._intoxication_stagger_start = arg_5_5
+			self._intoxication_stagger_duration = math.random() * 1.5 + math.random() * 0.5
+			self._intoxication_stagger_time = self._intoxication_stagger_start + self._intoxication_stagger_duration
+
+			local current_velocity = locomotion_extension:current_velocity()
+			local normalize = Vector3.normalize(current_velocity)
+			local cross = Vector3.cross(normalize, Vector3.up())
+			local num_4 = math.sin(arg_5_5 * (math.pi * 0.5)) * math.sign(math.random() * 2 - 1) * cross
+
+			self._intoxication_stagger_dir = Vector3Box(num_4)
 		end
 
-		if arg_5_0._is_intoxication_stagger and arg_5_5 <= arg_5_0._intoxication_stagger_time then
-			local var_5_44 = arg_5_0._intoxication_stagger_time - arg_5_5
-			local var_5_45 = (arg_5_0._intoxication_stagger_duration - var_5_44) / arg_5_0._intoxication_stagger_duration
+		if not (not self._is_intoxication_stagger and not (arg_5_5 <= self._intoxication_stagger_time)) then
+			local num_5 = self._intoxication_stagger_time - arg_5_5
+			local num_6 = (self._intoxication_stagger_duration - num_5) / self._intoxication_stagger_duration
 
-			var_5_26 = var_5_26 + Vector3.lerp(var_5_26, arg_5_0._intoxication_stagger_dir:unbox(), var_5_45)
+			get_movement_input_2 = get_movement_input_2 + Vector3.lerp(get_movement_input_2, self._intoxication_stagger_dir:unbox(), num_6)
 
-			if var_5_45 < 0.5 then
-				var_5_31 = math.lerp(var_5_31, var_5_31 * 0.75, math.sin(var_5_45 * 2 * math.pi * 0.5))
+			if num_6 < 0.5 then
+				num_3 = math.lerp(num_3, num_3 * 0.75, math.sin(num_6 * 2 * math.pi * 0.5))
 			else
-				var_5_31 = math.lerp(var_5_31 * 0.75, var_5_31, math.sin(var_5_45 * 2 * math.pi * 0.5))
+				num_3 = math.lerp(num_3 * 0.75, num_3, math.sin(num_6 * 2 * math.pi * 0.5))
 			end
-		elseif arg_5_0._is_intoxication_stagger and arg_5_5 > arg_5_0._intoxication_stagger_time then
-			arg_5_0._is_intoxication_stagger = nil
-			arg_5_0._is_in_intoxication_stagger_cooldown = true
-			arg_5_0._intoxication_stagger_cooldown_time = arg_5_5 + math.random() * (1 / math.abs(var_5_35))
+		elseif not (not self._is_intoxication_stagger and not (arg_5_5 > self._intoxication_stagger_time)) then
+			self._is_intoxication_stagger = nil
+			self._is_in_intoxication_stagger_cooldown = true
+			self._intoxication_stagger_cooldown_time = arg_5_5 + math.random() * (1 / math.abs(abs))
 		end
 
-		if arg_5_0._is_in_intoxication_stagger_cooldown and arg_5_5 > arg_5_0._intoxication_stagger_cooldown_time then
-			arg_5_0._is_in_intoxication_stagger_cooldown = nil
-			arg_5_0._intoxication_stagger_cooldown_time = nil
+		if not (not self._is_in_intoxication_stagger_cooldown and not (arg_5_5 > self._intoxication_stagger_cooldown_time)) then
+			self._is_in_intoxication_stagger_cooldown = nil
+			self._intoxication_stagger_cooldown_time = nil
 		end
 	end
 
-	local var_5_46 = Vector3.normalize(var_5_26)
+	local normalize_2 = Vector3.normalize(get_movement_input_2)
 
-	if Vector3.length_squared(var_5_26) == 0 then
-		var_5_46 = arg_5_0.last_input_direction:unbox()
+	if Vector3.length_squared(get_movement_input_2) == 0 then
+		normalize_2 = self.last_input_direction:unbox()
 	else
-		arg_5_0.last_input_direction:store(var_5_46)
+		self.last_input_direction:store(normalize_2)
 	end
 
-	if var_5_12.is_starting_interaction(var_5_3, var_5_9) then
-		local var_5_47, var_5_48 = InteractionHelper.interaction_action_names(arg_5_1)
+	if not CharacterStateHelper.is_starting_interaction(input_extension, interactor_extension) then
+		local interaction_action_names, var_5_49 = InteractionHelper.interaction_action_names(arg_5_1)
 
-		var_5_9:start_interaction(var_5_48)
+		interactor_extension:start_interaction(var_5_49)
 
-		if var_5_9:allow_movement_during_interaction() then
+		if not interactor_extension:allow_movement_during_interaction() then
 			return
 		end
 
-		local var_5_49 = var_5_9:interaction_config()
-		local var_5_50 = arg_5_0.temp_params
+		local interaction_config = interactor_extension:interaction_config()
+		local temp_params_3 = self.temp_params
 
-		var_5_50.swap_to_3p = var_5_49.swap_to_3p
-		var_5_50.show_weapons = var_5_49.show_weapons
-		var_5_50.activate_block = var_5_49.activate_block
-		var_5_50.allow_rotation_update = var_5_49.allow_rotation_update
+		temp_params_3.swap_to_3p = interaction_config.swap_to_3p
+		temp_params_3.show_weapons = interaction_config.show_weapons
+		temp_params_3.activate_block = interaction_config.activate_block
+		temp_params_3.allow_rotation_update = interaction_config.allow_rotation_update
 
-		var_5_0:change_state("interacting", var_5_50)
+		csm:change_state("interacting", temp_params_3)
 
 		return
 	end
 
-	if arg_5_0.cosmetic_extension:get_queued_3p_emote() then
-		local var_5_51, var_5_52, var_5_53 = var_5_12.get_item_data_and_weapon_extensions(arg_5_0.inventory_extension)
+	if not self.cosmetic_extension:get_queued_3p_emote() then
+		local get_item_data_and_weapon_extensions, var_5_53, var_5_54 = CharacterStateHelper.get_item_data_and_weapon_extensions(self.inventory_extension)
 
-		if not var_5_12.get_current_action_data(var_5_53, var_5_52) then
-			var_5_0:change_state("emote")
+		if not CharacterStateHelper.get_current_action_data(var_5_54, var_5_53) then
+			csm:change_state("emote")
 
 			return
 		end
 	end
 
-	var_5_12.move_on_ground(var_5_5, var_5_3, var_5_6, var_5_46, var_5_31, arg_5_1)
-	var_5_12.look(var_5_3, arg_5_0.player.viewport_name, var_5_5, var_5_4, var_5_8)
-	var_5_12.update_weapon_actions(arg_5_5, arg_5_1, var_5_3, var_5_8, var_5_7)
+	CharacterStateHelper.move_on_ground(first_person_extension, input_extension, locomotion_extension, normalize_2, num_3, arg_5_1)
+	CharacterStateHelper.look(input_extension, self.player.viewport_name, first_person_extension, status_extension, inventory_extension)
+	CharacterStateHelper.update_weapon_actions(arg_5_5, arg_5_1, input_extension, inventory_extension, health_extension)
 
-	if var_5_12.is_interacting(var_5_9) then
-		if var_5_9:allow_movement_during_interaction() then
+	if not CharacterStateHelper.is_interacting(interactor_extension) then
+		if not interactor_extension:allow_movement_during_interaction() then
 			return
 		end
 
-		local var_5_54 = var_5_9:interaction_config()
-		local var_5_55 = arg_5_0.temp_params
+		local interaction_config_2 = interactor_extension:interaction_config()
+		local temp_params_4 = self.temp_params
 
-		var_5_55.swap_to_3p = var_5_54.swap_to_3p
-		var_5_55.show_weapons = var_5_54.show_weapons
-		var_5_55.activate_block = var_5_54.activate_block
-		var_5_55.allow_rotation_update = var_5_54.allow_rotation_update
+		temp_params_4.swap_to_3p = interaction_config_2.swap_to_3p
+		temp_params_4.show_weapons = interaction_config_2.show_weapons
+		temp_params_4.activate_block = interaction_config_2.activate_block
+		temp_params_4.allow_rotation_update = interaction_config_2.allow_rotation_update
 
-		var_5_0:change_state("interacting", var_5_55)
+		csm:change_state("interacting", temp_params_4)
 
 		return
 	end
 
-	local var_5_56, var_5_57 = var_5_12.get_move_animation(var_5_6, var_5_3, var_5_4, arg_5_0.move_anim_3p)
+	local get_move_animation, var_5_58 = CharacterStateHelper.get_move_animation(locomotion_extension, input_extension, status_extension, self.move_anim_3p)
 
-	if var_5_57 ~= arg_5_0.move_anim_1p then
-		var_5_12.play_animation_event_first_person(var_5_5, var_5_57)
+	if var_5_58 ~= self.move_anim_1p then
+		CharacterStateHelper.play_animation_event_first_person(first_person_extension, var_5_58)
 
-		arg_5_0.move_anim_1p = var_5_57
+		self.move_anim_1p = var_5_58
 	end
 
-	if var_5_56 ~= arg_5_0.move_anim_3p then
-		var_5_12.play_animation_event(arg_5_1, var_5_56)
+	if get_move_animation ~= self.move_anim_3p then
+		CharacterStateHelper.play_animation_event(arg_5_1, get_move_animation)
 
-		arg_5_0.move_anim_3p = var_5_56
+		self.move_anim_3p = get_move_animation
 	end
 
-	arg_5_0.current_movement_speed_scale = var_5_11
-	arg_5_0.walking = var_5_29
+	self.current_movement_speed_scale = current_movement_speed_scale
+	self.walking = get
 end

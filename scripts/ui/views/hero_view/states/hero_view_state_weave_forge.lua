@@ -7,13 +7,13 @@ local_require("scripts/ui/views/hero_view/windows/hero_window_weave_forge_backgr
 local_require("scripts/ui/views/hero_view/windows/hero_window_weave_forge_panel")
 
 local var_0_0 = local_require("scripts/ui/views/hero_view/states/definitions/hero_view_state_weave_forge_definitions")
-local var_0_1 = var_0_0.widgets
-local var_0_2 = var_0_0.scenegraph_definition
-local var_0_3 = var_0_0.animation_definitions
-local var_0_4 = var_0_0.console_cursor_definition
-local var_0_5 = var_0_0.generic_input_actions
-local var_0_6 = false
-local var_0_7 = {
+local widgets = var_0_0.widgets
+local scenegraph_definition = var_0_0.scenegraph_definition
+local animation_definitions = var_0_0.animation_definitions
+local console_cursor_definition = var_0_0.console_cursor_definition
+local generic_input_actions = var_0_0.generic_input_actions
+local flag = false
+local tbl = {
 	common = 2,
 	plentiful = 1,
 	exotic = 4,
@@ -24,868 +24,972 @@ local var_0_7 = {
 HeroViewStateWeaveForge = class(HeroViewStateWeaveForge)
 HeroViewStateWeaveForge.NAME = "HeroViewStateWeaveForge"
 
-function HeroViewStateWeaveForge.on_enter(arg_1_0, arg_1_1)
+HeroViewStateWeaveForge.on_enter = function (self, arg_1_1)
+	-- function 1
 	print("[HeroViewState] Enter Substate HeroViewStateWeaveForge")
 
-	arg_1_0.parent = arg_1_1.parent
-	arg_1_0._gamepad_style_active = arg_1_0:_setup_menu_layout()
+	self.parent = arg_1_1.parent
+	self._gamepad_style_active = self:_setup_menu_layout()
 
-	local var_1_0 = arg_1_1.ingame_ui_context
+	local ingame_ui_context = arg_1_1.ingame_ui_context
 
-	arg_1_0.ingame_ui_context = var_1_0
-	arg_1_0.ui_renderer = var_1_0.ui_renderer
-	arg_1_0.ui_top_renderer = var_1_0.ui_top_renderer
-	arg_1_0.input_manager = var_1_0.input_manager
-	arg_1_0.voting_manager = var_1_0.voting_manager
-	arg_1_0.profile_synchronizer = var_1_0.profile_synchronizer
-	arg_1_0.statistics_db = var_1_0.statistics_db
-	arg_1_0.render_settings = {
+	self.ingame_ui_context = ingame_ui_context
+	self.ui_renderer = ingame_ui_context.ui_renderer
+	self.ui_top_renderer = ingame_ui_context.ui_top_renderer
+	self.input_manager = ingame_ui_context.input_manager
+	self.voting_manager = ingame_ui_context.voting_manager
+	self.profile_synchronizer = ingame_ui_context.profile_synchronizer
+	self.statistics_db = ingame_ui_context.statistics_db
+	self.render_settings = {
 		snap_pixel_positions = true
 	}
-	arg_1_0.wwise_world = arg_1_1.wwise_world
-	arg_1_0.ingame_ui = var_1_0.ingame_ui
-	arg_1_0.is_in_inn = var_1_0.is_in_inn
-	arg_1_0.world_previewer = arg_1_1.world_previewer
-	arg_1_0.platform = PLATFORM
+	self.wwise_world = arg_1_1.wwise_world
+	self.ingame_ui = ingame_ui_context.ingame_ui
+	self.is_in_inn = ingame_ui_context.is_in_inn
+	self.world_previewer = arg_1_1.world_previewer
+	self.platform = PLATFORM
 
-	local var_1_1 = Managers.player
-	local var_1_2 = var_1_1:local_player()
+	local player = Managers.player
+	local local_player = player:local_player()
 
-	arg_1_0._stats_id = var_1_2:stats_id()
-	arg_1_0.player_manager = var_1_1
-	arg_1_0.peer_id = var_1_0.peer_id
-	arg_1_0.local_player_id = var_1_0.local_player_id
-	arg_1_0.player = var_1_2
+	self._stats_id = local_player:stats_id()
+	self.player_manager = player
+	self.peer_id = ingame_ui_context.peer_id
+	self.local_player_id = ingame_ui_context.local_player_id
+	self.player = local_player
 
-	local var_1_3 = arg_1_0.profile_synchronizer:profile_by_peer(arg_1_0.peer_id, arg_1_0.local_player_id)
-	local var_1_4 = SPProfiles[var_1_3]
-	local var_1_5 = var_1_4.display_name
-	local var_1_6 = var_1_4.character_name
+	local profile_by_peer = self.profile_synchronizer:profile_by_peer(self.peer_id, self.local_player_id)
+	local var_1_4 = SPProfiles[profile_by_peer]
+	local display_name = var_1_4.display_name
+	local character_name = var_1_4.character_name
 
-	arg_1_0.career_index, arg_1_0.hero_name = Managers.backend:get_interface("hero_attributes"):get(var_1_5, "career"), var_1_5
-	arg_1_0.profile_index = var_1_3
-	arg_1_0._animations = {}
-	arg_1_0._ui_animations = {}
+	self.career_index, self.hero_name = Managers.backend:get_interface("hero_attributes"):get(display_name, "career"), display_name
+	self.profile_index = profile_by_peer
+	self._animations = {}
+	self._ui_animations = {}
 
-	if IS_WINDOWS then
-		arg_1_0._friends_component_ui = FriendsUIComponent:new(var_1_0)
+	if not IS_WINDOWS then
+		self._friends_component_ui = FriendsUIComponent:new(ingame_ui_context)
 	end
 
-	arg_1_0:create_ui_elements(arg_1_1)
+	self:create_ui_elements(arg_1_1)
 
-	if arg_1_1.initial_state then
+	if not arg_1_1.initial_state then
 		arg_1_1.initial_state = nil
 
-		arg_1_0:_start_transition_animation("on_enter", "on_enter")
+		self:_start_transition_animation("on_enter", "on_enter")
 	end
 
-	local var_1_7 = {
-		wwise_world = arg_1_0.wwise_world,
-		ingame_ui_context = var_1_0,
-		parent = arg_1_0,
-		windows_settings = arg_1_0._windows_settings,
+	local tbl = {
+		wwise_world = self.wwise_world,
+		ingame_ui_context = ingame_ui_context,
+		parent = self,
+		windows_settings = self._windows_settings,
 		input_service = FAKE_INPUT_SERVICE,
-		hero_name = arg_1_0.hero_name,
-		career_index = arg_1_0.career_index,
-		profile_index = arg_1_0.profile_index,
+		hero_name = self.hero_name,
+		career_index = self.career_index,
+		profile_index = self.profile_index,
 		start_state = arg_1_1.start_state
 	}
 
-	arg_1_0:_initial_windows_setups(var_1_7)
+	self:_initial_windows_setups(tbl)
 
-	if arg_1_0._gamepad_style_active then
+	if not self._gamepad_style_active then
 		UISettings.hero_fullscreen_menu_on_enter()
 
-		if arg_1_0.is_in_inn then
-			arg_1_0:play_sound("play_gui_amb_hero_screen_loop_begin")
-			arg_1_0:_setup_gamepad_gui()
-			arg_1_0:disable_player_world()
+		if not self.is_in_inn then
+			self:play_sound("play_gui_amb_hero_screen_loop_begin")
+			self:_setup_gamepad_gui()
+			self:disable_player_world()
 		else
-			arg_1_0:enable_ingame_overlay()
+			self:enable_ingame_overlay()
 		end
 	else
-		arg_1_0:play_sound("hud_magic_forge_open")
+		self:play_sound("hud_magic_forge_open")
 	end
 
 	Managers.input:enable_gamepad_cursor()
 	Managers.state.event:trigger("weave_forge_entered")
 end
 
-function HeroViewStateWeaveForge.gamepad_style_active(arg_2_0)
-	return arg_2_0._gamepad_style_active
+HeroViewStateWeaveForge.gamepad_style_active = function (self)
+	-- function 2
+	return self._gamepad_style_active
 end
 
-function HeroViewStateWeaveForge.get_ui_renderer(arg_3_0)
-	if arg_3_0._gamepad_style_active then
-		return arg_3_0._gui_data.bottom.renderer
+HeroViewStateWeaveForge.get_ui_renderer = function (self)
+	-- function 3
+	if not self._gamepad_style_active then
+		return self._gui_data.bottom.renderer
 	else
-		return arg_3_0.ui_renderer
+		return self.ui_renderer
 	end
 end
 
-function HeroViewStateWeaveForge.get_ui_top_renderer(arg_4_0)
-	return arg_4_0.ui_top_renderer
+HeroViewStateWeaveForge.get_ui_top_renderer = function (self)
+	-- function 4
+	return self.ui_top_renderer
 end
 
-function HeroViewStateWeaveForge.hdr_renderer(arg_5_0)
-	return arg_5_0.parent:hdr_renderer()
+HeroViewStateWeaveForge.hdr_renderer = function (self)
+	-- function 5
+	return self.parent:hdr_renderer()
 end
 
-function HeroViewStateWeaveForge.hdr_top_renderer(arg_6_0)
-	return arg_6_0.parent:hdr_top_renderer()
+HeroViewStateWeaveForge.hdr_top_renderer = function (self)
+	-- function 6
+	return self.parent:hdr_top_renderer()
 end
 
-function HeroViewStateWeaveForge._setup_gamepad_gui(arg_7_0)
-	if arg_7_0.is_in_inn then
-		local var_7_0 = {}
-		local var_7_1 = "weave_forge_gamepad"
-		local var_7_2, var_7_3, var_7_4 = arg_7_0:_setup_gamepad_renderer(var_7_1, 1, GameSettingsDevelopment.default_environment)
+HeroViewStateWeaveForge._setup_gamepad_gui = function (self)
+	-- function 7
+	if not self.is_in_inn then
+		local tbl = {}
+		local str = "weave_forge_gamepad"
+		local _setup_gamepad_renderer, var_7_3, var_7_4 = self:_setup_gamepad_renderer(str, 1, GameSettingsDevelopment.default_environment)
 
-		var_7_0.bottom = {
-			renderer = var_7_2,
+		tbl.bottom = {
+			renderer = _setup_gamepad_renderer,
 			world = var_7_3,
 			viewport_name = var_7_4
 		}
-		arg_7_0._gui_data = var_7_0
+		self._gui_data = tbl
 	end
 end
 
-function HeroViewStateWeaveForge._setup_gamepad_renderer(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
-	local var_8_0 = {
+HeroViewStateWeaveForge._setup_gamepad_renderer = function (self, arg_8_1, arg_8_2, arg_8_3)
+	-- function 8
+	local tbl = {
 		Application.DISABLE_SOUND,
 		Application.DISABLE_ESRAM
 	}
 	local var_8_1 = arg_8_1
 	local var_8_2 = arg_8_1
-	local var_8_3 = Managers.world:create_world(var_8_1, arg_8_3, nil, arg_8_2, unpack(var_8_0))
-	local var_8_4 = "overlay"
-	local var_8_5 = ScriptWorld.create_viewport(var_8_3, var_8_2, var_8_4, 999)
+	local create_world = Managers.world:create_world(var_8_1, arg_8_3, nil, arg_8_2, unpack(tbl))
+	local str = "overlay"
+	local create_viewport = ScriptWorld.create_viewport(create_world, var_8_2, str, 999)
 
-	return arg_8_0.ingame_ui:create_ui_renderer(var_8_3, false, arg_8_0.is_in_inn), var_8_3, var_8_2
+	return self.ingame_ui:create_ui_renderer(create_world, false, self.is_in_inn), create_world, var_8_2
 end
 
-function HeroViewStateWeaveForge._destroy_gamepad_gui(arg_9_0)
-	local var_9_0 = arg_9_0._gui_data
+HeroViewStateWeaveForge._destroy_gamepad_gui = function (self)
+	-- function 9
+	local _gui_data = self._gui_data
 
-	if var_9_0 then
-		for iter_9_0, iter_9_1 in pairs(var_9_0) do
-			local var_9_1 = iter_9_1.renderer
-			local var_9_2 = iter_9_1.world
-			local var_9_3 = iter_9_1.viewport_name
+	if not _gui_data then
+		for k, v in pairs(_gui_data) do
+			local renderer = v.renderer
+			local world = v.world
+			local viewport_name = v.viewport_name
 
-			UIRenderer.destroy(var_9_1, var_9_2)
-			ScriptWorld.destroy_viewport(var_9_2, var_9_3)
-			Managers.world:destroy_world(var_9_2)
+			UIRenderer.destroy(renderer, world)
+			ScriptWorld.destroy_viewport(world, viewport_name)
+			Managers.world:destroy_world(world)
 		end
 
-		arg_9_0._gui_data = nil
+		self._gui_data = nil
 	end
 end
 
-function HeroViewStateWeaveForge._setup_menu_layout(arg_10_0)
-	local var_10_0 = IS_CONSOLE or Managers.input:is_device_active("gamepad") or not UISettings.use_pc_menu_layout
+HeroViewStateWeaveForge._setup_menu_layout = function (self)
+	-- function 10
+	local IS_CONSOLE = IS_CONSOLE
 
-	arg_10_0._layout_settings = local_require("scripts/ui/views/hero_view/states/weave_forge_window_layout")
-	arg_10_0._windows_settings = arg_10_0._layout_settings.windows
-	arg_10_0._window_layouts = arg_10_0._layout_settings.window_layouts
-	arg_10_0._max_active_windows = arg_10_0._layout_settings.max_active_windows
+	if not IS_CONSOLE then
+		IS_CONSOLE = Managers.input:is_device_active("gamepad")
+		IS_CONSOLE = IS_CONSOLE or not UISettings.use_pc_menu_layout
+	end
 
-	return var_10_0
+	self._layout_settings = local_require("scripts/ui/views/hero_view/states/weave_forge_window_layout")
+	self._windows_settings = self._layout_settings.windows
+	self._window_layouts = self._layout_settings.window_layouts
+	self._max_active_windows = self._layout_settings.max_active_windows
+
+	return IS_CONSOLE
 end
 
-function HeroViewStateWeaveForge.create_ui_elements(arg_11_0, arg_11_1)
-	arg_11_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
-	arg_11_0._console_cursor_widget = UIWidget.init(var_0_4)
+HeroViewStateWeaveForge.create_ui_elements = function (self, arg_11_1)
+	-- function 11
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+	self._console_cursor_widget = UIWidget.init(console_cursor_definition)
 
-	local var_11_0 = {}
-	local var_11_1 = {}
+	local tbl = {}
+	local tbl_2 = {}
 
-	for iter_11_0, iter_11_1 in pairs(var_0_1) do
-		if iter_11_1 then
-			local var_11_2 = UIWidget.init(iter_11_1)
+	for k, v in pairs(widgets) do
+		if not v then
+			local var_11_2 = UIWidget.init(v)
 
-			var_11_0[#var_11_0 + 1] = var_11_2
-			var_11_1[iter_11_0] = var_11_2
+			tbl[#tbl + 1] = var_11_2
+			tbl_2[k] = var_11_2
 		end
 	end
 
-	arg_11_0._widgets = var_11_0
-	arg_11_0._widgets_by_name = var_11_1
-	var_11_1.loading_icon.content.visible = false
+	self._widgets = tbl
+	self._widgets_by_name = tbl_2
+	tbl_2.loading_icon.content.visible = false
 
-	UIRenderer.clear_scenegraph_queue(arg_11_0.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
-	arg_11_0.ui_animator = UIAnimator:new(arg_11_0.ui_scenegraph, var_0_3)
+	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
 
-	local var_11_3 = UILayer.default + 30
-	local var_11_4 = arg_11_0:input_service()
-	local var_11_5 = arg_11_0._gamepad_style_active
+	local num = UILayer.default + 30
+	local input_service = self:input_service()
+	local _gamepad_style_active = self._gamepad_style_active
 
-	arg_11_0._menu_input_description = MenuInputDescriptionUI:new(nil, arg_11_0.ui_top_renderer, var_11_4, 6, var_11_3, var_0_5.default, var_11_5)
+	self._menu_input_description = MenuInputDescriptionUI:new(nil, self.ui_top_renderer, input_service, 6, num, generic_input_actions.default, _gamepad_style_active)
 
-	arg_11_0._menu_input_description:set_input_description(nil)
+	self._menu_input_description:set_input_description(nil)
 
-	arg_11_0._current_input_desc = nil
+	self._current_input_desc = nil
 end
 
-function HeroViewStateWeaveForge.set_input_description(arg_12_0, arg_12_1)
-	local var_12_0 = var_0_5[arg_12_1]
+HeroViewStateWeaveForge.set_input_description = function (self, arg_12_1)
+	-- function 12
+	local var_12_0 = generic_input_actions[arg_12_1]
 
-	if arg_12_0._current_input_desc == arg_12_1 then
+	if self._current_input_desc == arg_12_1 then
 		return
 	end
 
-	if var_12_0 then
-		arg_12_0._menu_input_description:set_input_description(var_12_0)
+	if not var_12_0 then
+		self._menu_input_description:set_input_description(var_12_0)
 	else
-		arg_12_0._menu_input_description:set_input_description(nil)
+		self._menu_input_description:set_input_description(nil)
 	end
 
-	arg_12_0._current_input_desc = arg_12_1
+	self._current_input_desc = arg_12_1
 end
 
-function HeroViewStateWeaveForge.disable_player_world(arg_13_0)
-	if not arg_13_0._player_world_disabled then
-		arg_13_0._player_world_disabled = true
+HeroViewStateWeaveForge.disable_player_world = function (self)
+	-- function 13
+	if not self._player_world_disabled then
+		self._player_world_disabled = true
 
-		local var_13_0 = "player_1"
-		local var_13_1 = Managers.world:world("level_world")
-		local var_13_2 = ScriptWorld.viewport(var_13_1, var_13_0)
+		local str = "player_1"
+		local world = Managers.world:world("level_world")
+		local viewport = ScriptWorld.viewport(world, str)
 
-		ScriptWorld.deactivate_viewport(var_13_1, var_13_2)
-	end
-end
-
-function HeroViewStateWeaveForge.enable_player_world(arg_14_0)
-	if arg_14_0._player_world_disabled then
-		arg_14_0._player_world_disabled = false
-
-		local var_14_0 = "player_1"
-		local var_14_1 = Managers.world:world("level_world")
-		local var_14_2 = ScriptWorld.viewport(var_14_1, var_14_0)
-
-		ScriptWorld.activate_viewport(var_14_1, var_14_2)
+		ScriptWorld.deactivate_viewport(world, viewport)
 	end
 end
 
-function HeroViewStateWeaveForge.enable_ingame_overlay(arg_15_0)
-	if not arg_15_0._ingame_overlay_enabled then
-		arg_15_0._ingame_overlay_enabled = true
+HeroViewStateWeaveForge.enable_player_world = function (self)
+	-- function 14
+	if not self._player_world_disabled then
+		self._player_world_disabled = false
 
-		local var_15_0 = Managers.world:world("level_world")
+		local str = "player_1"
+		local world = Managers.world:world("level_world")
+		local viewport = ScriptWorld.viewport(world, str)
 
-		World.set_data(var_15_0, "fullscreen_blur", 0.5)
-		World.set_data(var_15_0, "greyscale", 1)
+		ScriptWorld.activate_viewport(world, viewport)
 	end
 end
 
-function HeroViewStateWeaveForge.disable_ingame_overlay(arg_16_0)
-	if arg_16_0._ingame_overlay_enabled then
-		arg_16_0._ingame_overlay_enabled = false
+HeroViewStateWeaveForge.enable_ingame_overlay = function (self)
+	-- function 15
+	if not self._ingame_overlay_enabled then
+		self._ingame_overlay_enabled = true
 
-		local var_16_0 = Managers.world:world("level_world")
+		local world = Managers.world:world("level_world")
 
-		World.set_data(var_16_0, "fullscreen_blur", nil)
-		World.set_data(var_16_0, "greyscale", nil)
+		World.set_data(world, "fullscreen_blur", 0.5)
+		World.set_data(world, "greyscale", 1)
 	end
 end
 
-function HeroViewStateWeaveForge._initial_windows_setups(arg_17_0, arg_17_1)
-	arg_17_0._active_windows = {}
-	arg_17_0._window_params = arg_17_1
-	arg_17_0._layouts_index_history = {}
+HeroViewStateWeaveForge.disable_ingame_overlay = function (self)
+	-- function 16
+	if not self._ingame_overlay_enabled then
+		self._ingame_overlay_enabled = false
 
-	local var_17_0 = arg_17_1.start_state
+		local world = Managers.world:world("level_world")
 
-	if var_17_0 then
-		arg_17_0:set_layout_by_name(var_17_0)
+		World.set_data(world, "fullscreen_blur", nil)
+		World.set_data(world, "greyscale", nil)
+	end
+end
+
+HeroViewStateWeaveForge._initial_windows_setups = function (self, arg_17_1)
+	-- function 17
+	self._active_windows = {}
+	self._window_params = arg_17_1
+	self._layouts_index_history = {}
+
+	local start_state = arg_17_1.start_state
+
+	if not start_state then
+		self:set_layout_by_name(start_state)
 	else
-		arg_17_0:set_layout(1)
+		self:set_layout(1)
 	end
 end
 
-function HeroViewStateWeaveForge.window_input_service(arg_18_0)
-	return arg_18_0._input_blocked and FAKE_INPUT_SERVICE or arg_18_0:input_service()
-end
+HeroViewStateWeaveForge.window_input_service = function (self)
+	-- function 18
+	local FAKE_INPUT_SERVICE
 
-function HeroViewStateWeaveForge._close_window_at_index(arg_19_0, arg_19_1)
-	local var_19_0 = arg_19_0._active_windows
-	local var_19_1 = arg_19_0._window_params
-	local var_19_2 = var_19_0[arg_19_1]
+	if not self._input_blocked then
+		FAKE_INPUT_SERVICE = FAKE_INPUT_SERVICE
 
-	if var_19_2 and var_19_2.on_exit then
-		var_19_2:on_exit(var_19_1)
+		if not FAKE_INPUT_SERVICE then
+			-- Nothing
+		end
 	end
 
-	var_19_0[arg_19_1] = nil
+	FAKE_INPUT_SERVICE = self:input_service()
+
+	::label_18_0::
+
+	return FAKE_INPUT_SERVICE
 end
 
-function HeroViewStateWeaveForge._change_window(arg_20_0, arg_20_1, arg_20_2)
-	local var_20_0 = arg_20_0._active_windows
-	local var_20_1 = arg_20_0._windows_settings[arg_20_2]
-	local var_20_2 = var_20_1.class_name
-	local var_20_3 = var_20_0[arg_20_1]
+HeroViewStateWeaveForge._close_window_at_index = function (self, arg_19_1)
+	-- function 19
+	local _active_windows = self._active_windows
+	local _window_params = self._window_params
+	local var_19_2 = _active_windows[arg_19_1]
 
-	if var_20_3 then
-		if var_20_3.NAME == var_20_2 then
+	if not var_19_2 and not var_19_2.on_exit then
+		var_19_2:on_exit(_window_params)
+	end
+
+	_active_windows[arg_19_1] = nil
+end
+
+HeroViewStateWeaveForge._change_window = function (self, arg_20_1, arg_20_2)
+	-- function 20
+	local _active_windows = self._active_windows
+	local var_20_1 = self._windows_settings[arg_20_2]
+	local class_name = var_20_1.class_name
+	local var_20_3 = _active_windows[arg_20_1]
+
+	if not var_20_3 then
+		if var_20_3.NAME == class_name then
 			return
 		end
 
-		arg_20_0:_close_window_at_index(arg_20_1)
+		self:_close_window_at_index(arg_20_1)
 	end
 
-	local var_20_4 = rawget(_G, var_20_2):new()
-	local var_20_5 = var_20_1.ignore_alignment
+	local var_20_4 = rawget(_G, class_name):new()
+	local ignore_alignment = var_20_1.ignore_alignment
 	local var_20_6
 
-	if not var_20_5 then
-		local var_20_7 = var_20_1.alignment_index or arg_20_1
-		local var_20_8 = UISettings.game_start_windows
-		local var_20_9 = var_20_8.size
-		local var_20_10 = var_20_8.spacing or 10
-		local var_20_11 = var_20_9[1]
-		local var_20_12 = var_20_10 * 2
-		local var_20_13 = -(3 * var_20_11 / 2 + var_20_11 / 2) - (var_20_12 / 2 + var_20_10) + var_20_7 * var_20_11 + var_20_7 * var_20_10
+	if not ignore_alignment then
+		local alignment_index = var_20_1.alignment_index
+
+		alignment_index = alignment_index or arg_20_1
+
+		local game_start_windows = UISettings.game_start_windows
+		local size = game_start_windows.size
+		local spacing = game_start_windows.spacing
+
+		spacing = spacing or 10
+
+		local var_20_11 = size[1]
+		local num = spacing * 2
+		local num_2 = -(3 * var_20_11 / 2 + var_20_11 / 2) - (num / 2 + spacing) + alignment_index * var_20_11 + alignment_index * spacing
 
 		var_20_6 = {
-			var_20_13,
+			num_2,
 			0,
 			3
 		}
 	end
 
-	if var_20_4.on_enter then
-		local var_20_14 = arg_20_0._window_params
+	if not var_20_4.on_enter then
+		local _window_params = self._window_params
 
-		var_20_4:on_enter(var_20_14, var_20_6)
+		var_20_4:on_enter(_window_params, var_20_6)
 	end
 
-	var_20_0[arg_20_1] = var_20_4
+	_active_windows[arg_20_1] = var_20_4
 end
 
-function HeroViewStateWeaveForge.get_layout_name(arg_21_0)
-	local var_21_0 = arg_21_0._selected_layout_index
+HeroViewStateWeaveForge.get_layout_name = function (self)
+	-- function 21
+	local _selected_layout_index = self._selected_layout_index
 
-	for iter_21_0, iter_21_1 in ipairs(arg_21_0._window_layouts) do
-		if iter_21_0 == var_21_0 then
-			return iter_21_1.name
+	for i, v in ipairs(self._window_layouts) do
+		if i == _selected_layout_index then
+			return v.name
 		end
 	end
 end
 
-function HeroViewStateWeaveForge.set_layout_by_name(arg_22_0, arg_22_1)
-	for iter_22_0, iter_22_1 in ipairs(arg_22_0._window_layouts) do
-		if iter_22_1.name == arg_22_1 then
-			arg_22_0:set_layout(iter_22_0)
+HeroViewStateWeaveForge.set_layout_by_name = function (self, arg_22_1)
+	-- function 22
+	for i, v in ipairs(self._window_layouts) do
+		if v.name == arg_22_1 then
+			self:set_layout(i)
 
 			return
 		end
 	end
 end
 
-function HeroViewStateWeaveForge.close_on_exit(arg_23_0)
-	return arg_23_0._close_on_exit
+HeroViewStateWeaveForge.close_on_exit = function (self)
+	-- function 23
+	return self._close_on_exit
 end
 
-function HeroViewStateWeaveForge.set_layout(arg_24_0, arg_24_1, arg_24_2)
-	local var_24_0 = arg_24_0:_get_layout_setting(arg_24_1)
-	local var_24_1 = var_24_0.windows
-	local var_24_2 = var_24_0.sound_event_enter
-	local var_24_3 = var_24_0.close_on_exit
-	local var_24_4 = var_24_0.input_focus_window
-	local var_24_5 = var_24_0.name
+HeroViewStateWeaveForge.set_layout = function (self, arg_24_1, arg_24_2)
+	-- function 24
+	local _get_layout_setting = self:_get_layout_setting(arg_24_1)
+	local windows = _get_layout_setting.windows
+	local sound_event_enter = _get_layout_setting.sound_event_enter
+	local close_on_exit = _get_layout_setting.close_on_exit
+	local input_focus_window = _get_layout_setting.input_focus_window
+	local name = _get_layout_setting.name
 
-	if var_24_2 then
-		arg_24_0:play_sound(var_24_2)
+	if not sound_event_enter then
+		self:play_sound(sound_event_enter)
 	end
 
-	arg_24_0._widgets_by_name.exit_button.content.visible = var_24_3
-	arg_24_0._widgets_by_name.back_button.content.visible = not var_24_3
-	arg_24_0._close_on_exit = var_24_3
+	self._widgets_by_name.exit_button.content.visible = close_on_exit
+	self._widgets_by_name.back_button.content.visible = not close_on_exit
+	self._close_on_exit = close_on_exit
 
-	for iter_24_0 = 1, arg_24_0._max_active_windows do
-		local var_24_6 = false
+	for i = 1, self._max_active_windows do
+		local flag = false
 
-		for iter_24_1, iter_24_2 in pairs(var_24_1) do
-			if iter_24_2 == iter_24_0 then
-				arg_24_0:_change_window(iter_24_2, iter_24_1)
+		for k, v in pairs(windows) do
+			if v == i then
+				self:_change_window(v, k)
 
-				var_24_6 = true
+				flag = true
 			end
 		end
 
-		if not var_24_6 then
-			arg_24_0:_close_window_at_index(iter_24_0)
+		if not flag then
+			self:_close_window_at_index(i)
 		end
 	end
 
-	if arg_24_0._selected_layout_index then
-		arg_24_0._previous_selected_layout_index = arg_24_0._selected_layout_index
+	if not self._selected_layout_index then
+		self._previous_selected_layout_index = self._selected_layout_index
 
 		if not arg_24_2 then
-			arg_24_0._layouts_index_history[#arg_24_0._layouts_index_history + 1] = arg_24_0._previous_selected_layout_index
+			self._layouts_index_history[#self._layouts_index_history + 1] = self._previous_selected_layout_index
 		end
 	end
 
-	arg_24_0._selected_layout_name = var_24_5
-	arg_24_0._selected_layout_index = arg_24_1
+	self._selected_layout_name = name
+	self._selected_layout_index = arg_24_1
 
-	arg_24_0:set_window_input_focus(var_24_4)
+	self:set_window_input_focus(input_focus_window)
 end
 
-function HeroViewStateWeaveForge.set_window_input_focus(arg_25_0, arg_25_1)
-	local var_25_0 = arg_25_0._selected_layout_index
-	local var_25_1 = arg_25_0:_get_layout_setting(var_25_0)
-	local var_25_2 = arg_25_0._windows_settings[arg_25_1]
-	local var_25_3 = var_25_2 and var_25_2.class_name
-	local var_25_4 = false
-	local var_25_5 = arg_25_0._active_windows
+HeroViewStateWeaveForge.set_window_input_focus = function (self, arg_25_1)
+	-- function 25
+	local _selected_layout_index = self._selected_layout_index
+	local _get_layout_setting = self:_get_layout_setting(_selected_layout_index)
+	local var_25_2 = self._windows_settings[arg_25_1]
+	local flag = not var_25_2 and var_25_2.class_name
+	local flag_2 = false
+	local _active_windows = self._active_windows
 
-	for iter_25_0, iter_25_1 in pairs(var_25_5) do
-		local var_25_6 = iter_25_1.NAME == var_25_3
+	for k, v in pairs(_active_windows) do
+		local flag_3 = v.NAME == flag
 
-		if iter_25_1.set_focus then
-			iter_25_1:set_focus(var_25_6)
+		if not v.set_focus then
+			v:set_focus(flag_3)
 		end
 
-		if var_25_6 then
-			var_25_4 = true
+		if not flag_3 then
+			flag_2 = true
 		end
 	end
 
-	if arg_25_1 and not var_25_4 then
+	if not (not arg_25_1 and flag_2) then
 		ferror("[HeroViewStateWeaveForge] - (set_window_input_focus) Could not find a window by name: %s", arg_25_1)
 	end
 
-	arg_25_0._window_focused = arg_25_1
+	self._window_focused = arg_25_1
 end
 
-function HeroViewStateWeaveForge.get_selected_layout_name(arg_26_0)
-	return arg_26_0._selected_layout_name
+HeroViewStateWeaveForge.get_selected_layout_name = function (self)
+	-- function 26
+	return self._selected_layout_name
 end
 
-function HeroViewStateWeaveForge.get_selected_layout_index(arg_27_0)
-	return arg_27_0._selected_layout_index
+HeroViewStateWeaveForge.get_selected_layout_index = function (self)
+	-- function 27
+	return self._selected_layout_index
 end
 
-function HeroViewStateWeaveForge.get_previous_selected_layout_index(arg_28_0)
-	return arg_28_0._previous_selected_layout_index
+HeroViewStateWeaveForge.get_previous_selected_layout_index = function (self)
+	-- function 28
+	return self._previous_selected_layout_index
 end
 
-function HeroViewStateWeaveForge._get_layout_setting(arg_29_0, arg_29_1)
-	return arg_29_0._window_layouts[arg_29_1]
+HeroViewStateWeaveForge._get_layout_setting = function (self, arg_29_1)
+	-- function 29
+	return self._window_layouts[arg_29_1]
 end
 
-function HeroViewStateWeaveForge._windows_update(arg_30_0, arg_30_1, arg_30_2)
-	local var_30_0 = arg_30_0._active_windows
+HeroViewStateWeaveForge._windows_update = function (self, arg_30_1, arg_30_2)
+	-- function 30
+	local _active_windows = self._active_windows
 
-	for iter_30_0, iter_30_1 in pairs(var_30_0) do
-		iter_30_1:update(arg_30_1, arg_30_2)
+	for k, v in pairs(_active_windows) do
+		v:update(arg_30_1, arg_30_2)
 	end
 end
 
-function HeroViewStateWeaveForge._windows_post_update(arg_31_0, arg_31_1, arg_31_2)
-	local var_31_0 = arg_31_0._active_windows
+HeroViewStateWeaveForge._windows_post_update = function (self, arg_31_1, arg_31_2)
+	-- function 31
+	local _active_windows = self._active_windows
 
-	for iter_31_0, iter_31_1 in pairs(var_31_0) do
-		if iter_31_1.post_update then
-			iter_31_1:post_update(arg_31_1, arg_31_2)
+	for k, v in pairs(_active_windows) do
+		if not v.post_update then
+			v:post_update(arg_31_1, arg_31_2)
 		end
 	end
 end
 
-function HeroViewStateWeaveForge.enable_widget(arg_32_0, arg_32_1, arg_32_2, arg_32_3)
-	local var_32_0 = arg_32_0._active_windows[arg_32_1]._widgets_by_name[arg_32_2]
+HeroViewStateWeaveForge.enable_widget = function (self, arg_32_1, arg_32_2, arg_32_3)
+	-- function 32
+	local var_32_0 = self._active_windows[arg_32_1]._widgets_by_name[arg_32_2]
 
-	if var_32_0 then
-		local var_32_1 = var_32_0.content.button_hotspot
+	if not var_32_0 then
+		local button_hotspot = var_32_0.content.button_hotspot
 
-		if var_32_1 then
-			var_32_1.disable_button = not arg_32_3
+		if not button_hotspot then
+			button_hotspot.disable_button = not arg_32_3
 		end
 	end
 end
 
-function HeroViewStateWeaveForge.transitioning(arg_33_0)
-	if arg_33_0.exiting then
+HeroViewStateWeaveForge.transitioning = function (self)
+	-- function 33
+	if not self.exiting then
 		return true
 	else
 		return false
 	end
 end
 
-function HeroViewStateWeaveForge._wanted_state(arg_34_0)
-	return (arg_34_0.parent:wanted_state())
+HeroViewStateWeaveForge._wanted_state = function (self)
+	-- function 34
+	return (self.parent:wanted_state())
 end
 
-function HeroViewStateWeaveForge.wanted_menu_state(arg_35_0)
-	return arg_35_0._wanted_menu_state
+HeroViewStateWeaveForge.wanted_menu_state = function (self)
+	-- function 35
+	return self._wanted_menu_state
 end
 
-function HeroViewStateWeaveForge.clear_wanted_menu_state(arg_36_0)
-	arg_36_0._wanted_menu_state = nil
+HeroViewStateWeaveForge.clear_wanted_menu_state = function (self)
+	-- function 36
+	self._wanted_menu_state = nil
 end
 
-function HeroViewStateWeaveForge.requested_screen_change_by_name(arg_37_0, arg_37_1)
-	arg_37_0._on_close_next_state = arg_37_1
+HeroViewStateWeaveForge.requested_screen_change_by_name = function (self, arg_37_1)
+	-- function 37
+	self._on_close_next_state = arg_37_1
 
-	arg_37_0:close_menu()
+	self:close_menu()
 end
 
-function HeroViewStateWeaveForge.on_exit(arg_38_0, arg_38_1)
+HeroViewStateWeaveForge.on_exit = function (self, arg_38_1)
+	-- function 38
 	print("[HeroViewState] Exit Substate HeroViewStateWeaveForge")
 
-	arg_38_0.ui_animator = nil
+	self.ui_animator = nil
 
-	local var_38_0 = arg_38_0._friends_component_ui
+	local _friends_component_ui = self._friends_component_ui
 
-	if var_38_0 and arg_38_0:is_friends_list_active() then
-		var_38_0:deactivate_friends_ui()
+	if not _friends_component_ui and not self:is_friends_list_active() then
+		_friends_component_ui:deactivate_friends_ui()
 	end
 
-	if arg_38_0._fullscreen_effect_enabled then
-		arg_38_0:set_fullscreen_effect_enable_state(false)
+	if not self._fullscreen_effect_enabled then
+		self:set_fullscreen_effect_enable_state(false)
 	end
 
-	arg_38_0:_close_active_windows()
+	self:_close_active_windows()
 
-	if arg_38_0._gamepad_style_active then
+	if not self._gamepad_style_active then
 		UISettings.hero_fullscreen_menu_on_exit()
 
-		if arg_38_0.is_in_inn then
-			arg_38_0:play_sound("play_gui_amb_hero_screen_loop_end")
-			arg_38_0:_destroy_gamepad_gui()
-			arg_38_0:enable_player_world()
+		if not self.is_in_inn then
+			self:play_sound("play_gui_amb_hero_screen_loop_end")
+			self:_destroy_gamepad_gui()
+			self:enable_player_world()
 		else
-			arg_38_0:disable_ingame_overlay()
+			self:disable_ingame_overlay()
 		end
 	else
-		arg_38_0:play_sound("hud_magic_forge_close")
+		self:play_sound("hud_magic_forge_close")
 	end
 
 	Managers.input:disable_gamepad_cursor()
 end
 
-function HeroViewStateWeaveForge._close_active_windows(arg_39_0)
-	local var_39_0 = arg_39_0._active_windows
-	local var_39_1 = arg_39_0._window_params
+HeroViewStateWeaveForge._close_active_windows = function (self)
+	-- function 39
+	local _active_windows = self._active_windows
+	local _window_params = self._window_params
 
-	for iter_39_0, iter_39_1 in pairs(var_39_0) do
-		if iter_39_1.on_exit then
-			iter_39_1:on_exit(var_39_1)
+	for k, v in pairs(_active_windows) do
+		if not v.on_exit then
+			v:on_exit(_window_params)
 		end
 	end
 
-	table.clear(var_39_0)
+	table.clear(_active_windows)
 end
 
-function HeroViewStateWeaveForge._update_transition_timer(arg_40_0, arg_40_1)
-	if not arg_40_0._transition_timer then
+HeroViewStateWeaveForge._update_transition_timer = function (self, arg_40_1)
+	-- function 40
+	if not self._transition_timer then
 		return
 	end
 
-	if arg_40_0._transition_timer == 0 then
-		arg_40_0._transition_timer = nil
+	if self._transition_timer == 0 then
+		self._transition_timer = nil
 	else
-		arg_40_0._transition_timer = math.max(arg_40_0._transition_timer - arg_40_1, 0)
+		self._transition_timer = math.max(self._transition_timer - arg_40_1, 0)
 	end
 end
 
-function HeroViewStateWeaveForge.input_service(arg_41_0)
-	return arg_41_0.parent:input_service()
+HeroViewStateWeaveForge.input_service = function (self)
+	-- function 41
+	return self.parent:input_service()
 end
 
-function HeroViewStateWeaveForge.update(arg_42_0, arg_42_1, arg_42_2)
-	if var_0_6 then
-		var_0_6 = false
+HeroViewStateWeaveForge.update = function (self, arg_42_1, arg_42_2)
+	-- function 42
+	if not flag then
+		flag = false
 
-		arg_42_0:create_ui_elements()
+		self:create_ui_elements()
 	end
 
-	local var_42_0 = arg_42_0.input_manager
-	local var_42_1 = arg_42_0:window_input_service()
-	local var_42_2 = arg_42_0._friends_component_ui
-	local var_42_3 = var_42_0:is_device_active("gamepad")
+	local input_manager = self.input_manager
+	local window_input_service = self:window_input_service()
+	local _friends_component_ui = self._friends_component_ui
+	local is_device_active = input_manager:is_device_active("gamepad")
 
-	if var_42_2 and not var_42_3 and Managers.account:is_online() then
-		var_42_2:update(arg_42_1, var_42_1)
+	if not _friends_component_ui and is_device_active or not Managers.account:is_online() then
+		_friends_component_ui:update(arg_42_1, window_input_service)
 	end
 
-	if not arg_42_0._gamepad_style_active then
-		arg_42_0:draw(var_42_1, arg_42_1)
+	if not self._gamepad_style_active then
+		self:draw(window_input_service, arg_42_1)
 	else
-		arg_42_0:draw_gamepad_cursor(var_42_1, arg_42_1)
+		self:draw_gamepad_cursor(window_input_service, arg_42_1)
 	end
 
-	arg_42_0:_update_transition_timer(arg_42_1)
-	arg_42_0:_windows_update(arg_42_1, arg_42_2)
+	self:_update_transition_timer(arg_42_1)
+	self:_windows_update(arg_42_1, arg_42_2)
 
-	local var_42_4 = arg_42_0.parent:transitioning()
-	local var_42_5 = arg_42_0:_wanted_state()
+	local transitioning = self.parent:transitioning()
+	local _wanted_state = self:_wanted_state()
 
-	if not arg_42_0._transition_timer then
-		if not var_42_4 and arg_42_0:_has_active_level_vote() then
-			local var_42_6 = true
+	if not self._transition_timer then
+		if transitioning or not self:_has_active_level_vote() then
+			local flag_2 = true
 
-			arg_42_0:close_menu(var_42_6)
+			self:close_menu(flag_2)
 		end
 
-		if var_42_5 then
-			arg_42_0.parent:clear_wanted_state()
+		if not _wanted_state then
+			self.parent:clear_wanted_state()
 
-			arg_42_0._new_state = var_42_5
+			self._new_state = _wanted_state
 		else
-			return arg_42_0._new_state
+			return self._new_state
 		end
 	end
 end
 
-function HeroViewStateWeaveForge.is_friends_list_active(arg_43_0)
-	local var_43_0 = arg_43_0._friends_component_ui
+HeroViewStateWeaveForge.is_friends_list_active = function (self)
+	-- function 43
+	local _friends_component_ui = self._friends_component_ui
 
-	if var_43_0 then
-		return var_43_0:is_active()
+	if not _friends_component_ui then
+		return _friends_component_ui:is_active()
 	end
 
 	return false
 end
 
-function HeroViewStateWeaveForge._handle_friend_joining(arg_44_0)
-	local var_44_0 = arg_44_0._friends_component_ui
+HeroViewStateWeaveForge._handle_friend_joining = function (self)
+	-- function 44
+	local _friends_component_ui = self._friends_component_ui
 
-	if var_44_0 then
-		local var_44_1 = var_44_0:join_lobby_data()
+	if not _friends_component_ui then
+		local join_lobby_data = _friends_component_ui:join_lobby_data()
 
-		if var_44_1 and Managers.matchmaking:allowed_to_initiate_join_lobby() then
-			Managers.matchmaking:request_join_lobby(var_44_1)
-			arg_44_0:close_menu(true)
+		if not join_lobby_data and not Managers.matchmaking:allowed_to_initiate_join_lobby() then
+			Managers.matchmaking:request_join_lobby(join_lobby_data)
+			self:close_menu(true)
 
 			return true
 		end
 	end
 end
 
-function HeroViewStateWeaveForge._has_active_level_vote(arg_45_0)
-	local var_45_0 = arg_45_0.voting_manager
+HeroViewStateWeaveForge._has_active_level_vote = function (self)
+	-- function 45
+	local voting_manager = self.voting_manager
+	local vote_in_progress = voting_manager:vote_in_progress()
 
-	return var_45_0:vote_in_progress() and var_45_0:is_mission_vote() and not var_45_0:has_voted(Network.peer_id())
+	vote_in_progress = not vote_in_progress and voting_manager:is_mission_vote()
+
+	return not vote_in_progress and not voting_manager:has_voted(Network.peer_id())
 end
 
-function HeroViewStateWeaveForge.post_update(arg_46_0, arg_46_1, arg_46_2)
-	arg_46_0.ui_animator:update(arg_46_1)
-	arg_46_0:_update_animations(arg_46_1)
+HeroViewStateWeaveForge.post_update = function (self, arg_46_1, arg_46_2)
+	-- function 46
+	self.ui_animator:update(arg_46_1)
+	self:_update_animations(arg_46_1)
 
-	if not arg_46_0._transition_timer and not arg_46_0._new_state and not arg_46_0.parent:transitioning() and not arg_46_0:_has_active_level_vote() then
-		arg_46_0:_handle_input(arg_46_1, arg_46_2)
+	if not (self._transition_timer or self._new_state or self.parent:transitioning() or self:_has_active_level_vote()) then
+		self:_handle_input(arg_46_1, arg_46_2)
 	end
 
-	arg_46_0:_windows_post_update(arg_46_1, arg_46_2)
+	self:_windows_post_update(arg_46_1, arg_46_2)
 
-	if arg_46_0._new_state then
-		arg_46_0:_close_active_windows()
+	if not self._new_state then
+		self:_close_active_windows()
 	end
 end
 
-function HeroViewStateWeaveForge._update_animations(arg_47_0, arg_47_1)
-	for iter_47_0, iter_47_1 in pairs(arg_47_0._ui_animations) do
-		UIAnimation.update(iter_47_1, arg_47_1)
+HeroViewStateWeaveForge._update_animations = function (self, arg_47_1)
+	-- function 47
+	for k, v in pairs(self._ui_animations) do
+		UIAnimation.update(v, arg_47_1)
 
-		if UIAnimation.completed(iter_47_1) then
-			arg_47_0._ui_animations[iter_47_0] = nil
+		if not UIAnimation.completed(v) then
+			self._ui_animations[k] = nil
 		end
 	end
 
-	local var_47_0 = arg_47_0._animations
-	local var_47_1 = arg_47_0.ui_animator
+	local _animations = self._animations
+	local ui_animator = self.ui_animator
 
-	for iter_47_2, iter_47_3 in pairs(var_47_0) do
-		if var_47_1:is_animation_completed(iter_47_3) then
-			var_47_1:stop_animation(iter_47_3)
+	for k_2, v_2 in pairs(_animations) do
+		if not ui_animator:is_animation_completed(v_2) then
+			ui_animator:stop_animation(v_2)
 
-			var_47_0[iter_47_2] = nil
+			_animations[k_2] = nil
 		end
 	end
 end
 
-function HeroViewStateWeaveForge._is_button_hover_enter(arg_48_0, arg_48_1)
+HeroViewStateWeaveForge._is_button_hover_enter = function (arg_48_0, arg_48_1)
+	-- function 48
 	return arg_48_1.content.button_hotspot.on_hover_enter
 end
 
-function HeroViewStateWeaveForge._handle_input(arg_49_0, arg_49_1, arg_49_2)
-	local var_49_0 = arg_49_0._input_blocked
-	local var_49_1 = arg_49_0._window_focused
+HeroViewStateWeaveForge._handle_input = function (self, arg_49_1, arg_49_2)
+	-- function 49
+	local _input_blocked = self._input_blocked
+	local _window_focused = self._window_focused
 
-	if var_49_0 then
+	if not _input_blocked then
 		return
 	end
 
-	if arg_49_0:_handle_friend_joining() then
+	if not self:_handle_friend_joining() then
 		return
 	end
 
-	local var_49_2 = arg_49_0._widgets_by_name
-	local var_49_3 = arg_49_0.parent:input_service()
-	local var_49_4 = var_49_3:get("toggle_menu", true)
-	local var_49_5 = Managers.input:is_device_active("gamepad") and var_49_3:get("back_menu", true)
-	local var_49_6 = arg_49_0._close_on_exit
-	local var_49_7 = var_49_2.exit_button
-	local var_49_8 = var_49_2.back_button
+	local _widgets_by_name = self._widgets_by_name
+	local input_service = self.parent:input_service()
+	local get = input_service:get("toggle_menu", true)
+	local flag = not Managers.input:is_device_active("gamepad") and input_service:get("back_menu", true)
+	local _close_on_exit = self._close_on_exit
+	local exit_button = _widgets_by_name.exit_button
+	local back_button = _widgets_by_name.back_button
 
-	UIWidgetUtils.animate_default_button(var_49_7, arg_49_1)
-	UIWidgetUtils.animate_default_button(var_49_8, arg_49_1)
+	UIWidgetUtils.animate_default_button(exit_button, arg_49_1)
+	UIWidgetUtils.animate_default_button(back_button, arg_49_1)
 
-	if arg_49_0:_is_button_hover_enter(var_49_8) or arg_49_0:_is_button_hover_enter(var_49_7) then
-		arg_49_0:play_sound("play_gui_equipment_button_hover")
+	if self:_is_button_hover_enter(back_button) or not self:_is_button_hover_enter(exit_button) then
+		self:play_sound("play_gui_equipment_button_hover")
 	end
 
-	if var_49_6 and (var_49_5 or var_49_4 or arg_49_0:_is_button_pressed(var_49_7)) then
-		arg_49_0:play_sound("Play_hud_hover")
-		arg_49_0:close_menu()
+	if not _close_on_exit and flag and get and not self:_is_button_pressed(exit_button) then
+		self:play_sound("Play_hud_hover")
+		self:close_menu()
 
 		return
-	elseif var_49_4 or var_49_5 or arg_49_0:_is_button_pressed(var_49_8) then
-		arg_49_0:play_sound("Play_hud_hover")
+	elseif get or flag or not self:_is_button_pressed(back_button) then
+		self:play_sound("Play_hud_hover")
 
-		local var_49_9 = arg_49_0:get_previous_selected_layout_index()
-		local var_49_10 = arg_49_0._layouts_index_history
+		local get_previous_selected_layout_index = self:get_previous_selected_layout_index()
+		local _layouts_index_history = self._layouts_index_history
 
-		if var_49_10 and #var_49_10 >= 1 then
-			local var_49_11 = var_49_10[#var_49_10]
+		if not (not _layouts_index_history and not (#_layouts_index_history >= 1)) then
+			local var_49_11 = _layouts_index_history[#_layouts_index_history]
 
-			var_49_10[#var_49_10] = nil
+			_layouts_index_history[#_layouts_index_history] = nil
 
-			arg_49_0:set_layout(var_49_11, true)
+			self:set_layout(var_49_11, true)
 		end
 	end
 end
 
-function HeroViewStateWeaveForge.close_menu(arg_50_0, arg_50_1)
-	if arg_50_0._on_close_next_state then
-		arg_50_0.parent:requested_screen_change_by_name(arg_50_0._on_close_next_state)
+HeroViewStateWeaveForge.close_menu = function (self, arg_50_1)
+	-- function 50
+	if not self._on_close_next_state then
+		self.parent:requested_screen_change_by_name(self._on_close_next_state)
 	else
-		arg_50_0.parent:close_menu(nil, arg_50_1)
+		self.parent:close_menu(nil, arg_50_1)
 	end
 end
 
-function HeroViewStateWeaveForge.draw_gamepad_cursor(arg_51_0, arg_51_1, arg_51_2)
-	local var_51_0 = arg_51_0:get_ui_renderer()
-	local var_51_1 = arg_51_0:get_ui_top_renderer()
-	local var_51_2 = arg_51_0.ui_scenegraph
-	local var_51_3 = arg_51_0.input_manager
-	local var_51_4 = arg_51_0.render_settings
+HeroViewStateWeaveForge.draw_gamepad_cursor = function (self, arg_51_1, arg_51_2)
+	-- function 51
+	local get_ui_renderer = self:get_ui_renderer()
+	local get_ui_top_renderer = self:get_ui_top_renderer()
+	local ui_scenegraph = self.ui_scenegraph
+	local input_manager = self.input_manager
+	local render_settings = self.render_settings
 
-	if var_51_3:is_device_active("gamepad") then
-		UIRenderer.begin_pass(var_51_1, var_51_2, arg_51_1, arg_51_2)
-		UIRenderer.draw_widget(var_51_1, arg_51_0._console_cursor_widget)
-		UIRenderer.end_pass(var_51_1)
+	if not input_manager:is_device_active("gamepad") then
+		UIRenderer.begin_pass(get_ui_top_renderer, ui_scenegraph, arg_51_1, arg_51_2)
+		UIRenderer.draw_widget(get_ui_top_renderer, self._console_cursor_widget)
+		UIRenderer.end_pass(get_ui_top_renderer)
 
-		if arg_51_0._menu_input_description then
-			arg_51_0._menu_input_description:draw(var_51_1, arg_51_2)
+		if not self._menu_input_description then
+			self._menu_input_description:draw(get_ui_top_renderer, arg_51_2)
 		end
 	end
 end
 
-function HeroViewStateWeaveForge.draw(arg_52_0, arg_52_1, arg_52_2)
-	local var_52_0 = arg_52_0.ui_renderer
-	local var_52_1 = arg_52_0.ui_top_renderer
-	local var_52_2 = arg_52_0.ui_scenegraph
-	local var_52_3 = arg_52_0.input_manager
-	local var_52_4 = arg_52_0.render_settings
-	local var_52_5 = var_52_3:is_device_active("gamepad")
+HeroViewStateWeaveForge.draw = function (self, arg_52_1, arg_52_2)
+	-- function 52
+	local ui_renderer = self.ui_renderer
+	local ui_top_renderer = self.ui_top_renderer
+	local ui_scenegraph = self.ui_scenegraph
+	local input_manager = self.input_manager
+	local render_settings = self.render_settings
+	local is_device_active = input_manager:is_device_active("gamepad")
 
-	UIRenderer.begin_pass(var_52_1, var_52_2, arg_52_1, arg_52_2, nil, var_52_4)
+	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, arg_52_1, arg_52_2, nil, render_settings)
 
-	local var_52_6 = var_52_4.snap_pixel_positions
+	local snap_pixel_positions = render_settings.snap_pixel_positions
 
-	for iter_52_0, iter_52_1 in ipairs(arg_52_0._widgets) do
-		if iter_52_1.snap_pixel_positions ~= nil then
-			var_52_4.snap_pixel_positions = iter_52_1.snap_pixel_positions
+	for i, v in ipairs(self._widgets) do
+		if v.snap_pixel_positions ~= nil then
+			render_settings.snap_pixel_positions = v.snap_pixel_positions
 		end
 
-		UIRenderer.draw_widget(var_52_1, iter_52_1)
+		UIRenderer.draw_widget(ui_top_renderer, v)
 
-		var_52_4.snap_pixel_positions = var_52_6
+		render_settings.snap_pixel_positions = snap_pixel_positions
 	end
 
-	UIRenderer.end_pass(var_52_1)
+	UIRenderer.end_pass(ui_top_renderer)
 
-	if var_52_5 then
-		UIRenderer.begin_pass(var_52_1, var_52_2, arg_52_1, arg_52_2)
-		UIRenderer.draw_widget(var_52_1, arg_52_0._console_cursor_widget)
-		UIRenderer.end_pass(var_52_1)
+	if not is_device_active then
+		UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, arg_52_1, arg_52_2)
+		UIRenderer.draw_widget(ui_top_renderer, self._console_cursor_widget)
+		UIRenderer.end_pass(ui_top_renderer)
 
-		if arg_52_0._menu_input_description then
-			arg_52_0._menu_input_description:draw(var_52_1, arg_52_2)
+		if not self._menu_input_description then
+			self._menu_input_description:draw(ui_top_renderer, arg_52_2)
 		end
 	end
 end
 
-function HeroViewStateWeaveForge._is_button_pressed(arg_53_0, arg_53_1)
-	local var_53_0 = arg_53_1.content
-	local var_53_1 = var_53_0.button_hotspot or var_53_0.hotspot
+HeroViewStateWeaveForge._is_button_pressed = function (arg_53_0, arg_53_1)
+	-- function 53
+	local content = arg_53_1.content
+	local button_hotspot = content.button_hotspot
 
-	if var_53_1.on_release then
-		var_53_1.on_release = false
+	button_hotspot = button_hotspot or content.hotspot
+
+	if not button_hotspot.on_release then
+		button_hotspot.on_release = false
 
 		return true
 	end
 end
 
-function HeroViewStateWeaveForge.play_sound(arg_54_0, arg_54_1)
-	arg_54_0.parent:play_sound(arg_54_1)
+HeroViewStateWeaveForge.play_sound = function (self, arg_54_1)
+	-- function 54
+	self.parent:play_sound(arg_54_1)
 end
 
-function HeroViewStateWeaveForge._start_transition_animation(arg_55_0, arg_55_1, arg_55_2)
-	local var_55_0 = {
-		wwise_world = arg_55_0.wwise_world,
-		render_settings = arg_55_0.render_settings
+HeroViewStateWeaveForge._start_transition_animation = function (self, arg_55_1, arg_55_2)
+	-- function 55
+	local tbl = {
+		wwise_world = self.wwise_world,
+		render_settings = self.render_settings
 	}
-	local var_55_1 = {}
-	local var_55_2 = arg_55_0.ui_animator:start_animation(arg_55_2, var_55_1, var_0_2, var_55_0)
+	local tbl_2 = {}
+	local start_animation = self.ui_animator:start_animation(arg_55_2, tbl_2, scenegraph_definition, tbl)
 
-	arg_55_0._animations[arg_55_1] = var_55_2
+	self._animations[arg_55_1] = start_animation
 end
 
-function HeroViewStateWeaveForge.set_fullscreen_effect_enable_state(arg_56_0, arg_56_1)
-	local var_56_0 = arg_56_0.ui_renderer.world
-	local var_56_1 = World.get_data(var_56_0, "shading_environment")
+HeroViewStateWeaveForge.set_fullscreen_effect_enable_state = function (self, arg_56_1)
+	-- function 56
+	local world = self.ui_renderer.world
+	local get_data = World.get_data(world, "shading_environment")
 
-	if var_56_1 then
-		ShadingEnvironment.set_scalar(var_56_1, "fullscreen_blur_enabled", arg_56_1 and 1 or 0)
-		ShadingEnvironment.set_scalar(var_56_1, "fullscreen_blur_amount", arg_56_1 and 0.75 or 0)
-		ShadingEnvironment.apply(var_56_1)
+	if not get_data then
+		local set_scalar = ShadingEnvironment.set_scalar
+		local var_56_3 = get_data
+		local str = "fullscreen_blur_enabled"
+		local flag
+
+		flag = not arg_56_1 and 1 and 0
+
+		set_scalar(var_56_3, str, flag)
+
+		local set_scalar_2 = ShadingEnvironment.set_scalar
+		local var_56_7 = get_data
+		local str_2 = "fullscreen_blur_amount"
+		local flag_2
+
+		flag_2 = not arg_56_1 and 0.75 and 0
+
+		set_scalar_2(var_56_7, str_2, flag_2)
+		ShadingEnvironment.apply(get_data)
 	end
 
-	arg_56_0._fullscreen_effect_enabled = arg_56_1
+	self._fullscreen_effect_enabled = arg_56_1
 end
 
-function HeroViewStateWeaveForge.block_input(arg_57_0, arg_57_1)
-	arg_57_0._input_blocked = true
+HeroViewStateWeaveForge.block_input = function (self, arg_57_1)
+	-- function 57
+	self._input_blocked = true
 
-	local var_57_0 = arg_57_0._widgets_by_name
+	local _widgets_by_name = self._widgets_by_name
 
-	if arg_57_1 then
-		var_57_0.loading_icon.content.visible = true
+	if not arg_57_1 then
+		_widgets_by_name.loading_icon.content.visible = true
 	end
 
-	var_57_0.exit_button.content.button_hotspot.disable_button = true
-	var_57_0.back_button.content.button_hotspot.disable_button = true
+	_widgets_by_name.exit_button.content.button_hotspot.disable_button = true
+	_widgets_by_name.back_button.content.button_hotspot.disable_button = true
 
-	arg_57_0.parent:set_input_blocked(true)
+	self.parent:set_input_blocked(true)
 end
 
-function HeroViewStateWeaveForge.unblock_input(arg_58_0)
-	arg_58_0._input_blocked = false
+HeroViewStateWeaveForge.unblock_input = function (self)
+	-- function 58
+	self._input_blocked = false
 
-	local var_58_0 = arg_58_0._widgets_by_name
+	local _widgets_by_name = self._widgets_by_name
 
-	var_58_0.loading_icon.content.visible = false
-	var_58_0.exit_button.content.button_hotspot.disable_button = false
-	var_58_0.back_button.content.button_hotspot.disable_button = false
+	_widgets_by_name.loading_icon.content.visible = false
+	_widgets_by_name.exit_button.content.button_hotspot.disable_button = false
+	_widgets_by_name.back_button.content.button_hotspot.disable_button = false
 
-	arg_58_0.parent:set_input_blocked(false)
+	self.parent:set_input_blocked(false)
 end
 
-function HeroViewStateWeaveForge.input_blocked(arg_59_0)
-	return arg_59_0._input_blocked
+HeroViewStateWeaveForge.input_blocked = function (self)
+	-- function 59
+	return self._input_blocked
 end

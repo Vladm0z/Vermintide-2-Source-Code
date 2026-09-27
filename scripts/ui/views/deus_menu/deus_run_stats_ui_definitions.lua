@@ -2,64 +2,64 @@
 
 require("scripts/ui/views/deus_menu/ui_widgets_deus")
 
-local var_0_0 = false
-local var_0_1 = {
+local flag = false
+local tbl = {
 	1920,
 	1080
 }
-local var_0_2 = {
+local tbl_2 = {
 	410,
 	240
 }
-local var_0_3 = {
+local tbl_3 = {
 	10,
 	10
 }
-local var_0_4 = {
+local tbl_4 = {
 	410,
 	0
 }
-local var_0_5 = 15
-local var_0_6 = {
+local num = 15
+local tbl_5 = {
 	360,
 	32
 }
-local var_0_7 = {
-	var_0_5,
+local tbl_6 = {
+	num,
 	-50,
 	1
 }
-local var_0_8 = {
+local tbl_7 = {
 	400,
 	250
 }
-local var_0_9 = {
-	var_0_5 + 5,
+local tbl_8 = {
+	num + 5,
 	80,
 	1
 }
-local var_0_10 = {
-	var_0_5 + 5 + var_0_3[1] + var_0_2[1],
+local tbl_9 = {
+	num + 5 + tbl_3[1] + tbl_2[1],
 	80,
 	1
 }
-local var_0_11 = {
-	var_0_5 + 5 + (var_0_3[1] + var_0_2[1]) * 2,
+local tbl_10 = {
+	num + 5 + (tbl_3[1] + tbl_2[1]) * 2,
 	80,
 	1
 }
-local var_0_12 = {
-	var_0_4[1] * 0.5,
+local tbl_11 = {
+	tbl_4[1] * 0.5,
 	0,
 	1
 }
-local var_0_13 = {
-	var_0_7[1] + var_0_4[1] + var_0_5,
-	var_0_7[2],
+local tbl_12 = {
+	tbl_6[1] + tbl_4[1] + num,
+	tbl_6[2],
 	1
 }
-local var_0_14 = UILayer.end_screen
-local var_0_15 = {
+local end_screen = UILayer.end_screen
+local tbl_13 = {
 	fullscreen_fade = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
@@ -71,34 +71,34 @@ local var_0_15 = {
 		position = {
 			0,
 			0,
-			var_0_14 - 1
+			end_screen - 1
 		}
 	},
 	root = {
 		is_root = true,
-		size = var_0_1,
+		size = tbl,
 		position = {
 			0,
 			0,
-			var_0_14
+			end_screen
 		}
 	},
 	screen = {
 		scale = "fit",
-		size = var_0_1,
+		size = tbl,
 		position = {
 			0,
 			0,
-			var_0_14 + 100
+			end_screen + 100
 		}
 	},
 	screen_reminder = {
 		scale = "fit",
-		size = var_0_1,
+		size = tbl,
 		position = {
 			0,
 			0,
-			var_0_14
+			end_screen
 		}
 	},
 	screen_center = {
@@ -119,7 +119,7 @@ local var_0_15 = {
 		vertical_alignment = "center",
 		parent = "screen_center",
 		horizontal_alignment = "center",
-		size = var_0_1,
+		size = tbl,
 		position = {
 			0,
 			0,
@@ -134,7 +134,7 @@ local var_0_15 = {
 		position = {
 			0,
 			0,
-			var_0_14 + 200
+			end_screen + 200
 		}
 	},
 	center_title = {
@@ -161,7 +161,7 @@ local var_0_15 = {
 		position = {
 			425,
 			0,
-			var_0_14 + 6
+			end_screen + 6
 		}
 	},
 	options_background = {
@@ -174,7 +174,7 @@ local var_0_15 = {
 		position = {
 			425,
 			0,
-			var_0_14 + 6
+			end_screen + 6
 		}
 	},
 	options_background_edge = {
@@ -187,7 +187,7 @@ local var_0_15 = {
 		position = {
 			-260,
 			0,
-			var_0_14 + 3
+			end_screen + 3
 		}
 	},
 	power_up_root = {
@@ -236,7 +236,7 @@ local var_0_15 = {
 			50
 		},
 		position = {
-			var_0_5 + 5,
+			num + 5,
 			-130,
 			10
 		}
@@ -245,7 +245,7 @@ local var_0_15 = {
 		vertical_alignment = "center",
 		parent = "blessing_root",
 		horizontal_alignment = "left",
-		size = var_0_2,
+		size = tbl_2,
 		position = {
 			0,
 			20,
@@ -256,9 +256,9 @@ local var_0_15 = {
 		vertical_alignment = "center",
 		parent = "blessing_1",
 		horizontal_alignment = "left",
-		size = var_0_2,
+		size = tbl_2,
 		position = {
-			var_0_2[1] + var_0_3[1],
+			tbl_2[1] + tbl_3[1],
 			0,
 			10
 		}
@@ -267,9 +267,9 @@ local var_0_15 = {
 		vertical_alignment = "center",
 		parent = "blessing_2",
 		horizontal_alignment = "left",
-		size = var_0_2,
+		size = tbl_2,
 		position = {
-			var_0_2[1] + var_0_3[1],
+			tbl_2[1] + tbl_3[1],
 			0,
 			10
 		}
@@ -278,9 +278,9 @@ local var_0_15 = {
 		vertical_alignment = "center",
 		parent = "blessing_root",
 		horizontal_alignment = "left",
-		size = var_0_2,
+		size = tbl_2,
 		position = {
-			var_0_2[1] + var_0_3[1],
+			tbl_2[1] + tbl_3[1],
 			0,
 			10
 		}
@@ -289,10 +289,10 @@ local var_0_15 = {
 		vertical_alignment = "center",
 		parent = "blessing_4",
 		horizontal_alignment = "left",
-		size = var_0_2,
+		size = tbl_2,
 		position = {
 			0,
-			-var_0_2[2] - var_0_3[2],
+			-tbl_2[2] - tbl_3[2],
 			10
 		}
 	},
@@ -300,10 +300,10 @@ local var_0_15 = {
 		vertical_alignment = "center",
 		parent = "blessing_5",
 		horizontal_alignment = "left",
-		size = var_0_2,
+		size = tbl_2,
 		position = {
 			0,
-			-var_0_2[2] - var_0_3[2],
+			-tbl_2[2] - tbl_3[2],
 			10
 		}
 	},
@@ -357,7 +357,7 @@ local var_0_15 = {
 			0,
 			0
 		},
-		position = var_0_7
+		position = tbl_6
 	},
 	weapon_ranged = {
 		vertical_alignment = "top",
@@ -367,21 +367,21 @@ local var_0_15 = {
 			0,
 			0
 		},
-		position = var_0_13
+		position = tbl_12
 	},
 	weapon_melee_title = {
 		vertical_alignment = "bottom",
 		parent = "weapon_melee",
 		horizontal_alignment = "center",
-		size = var_0_6,
-		position = var_0_12
+		size = tbl_5,
+		position = tbl_11
 	},
 	weapon_ranged_title = {
 		vertical_alignment = "bottom",
 		parent = "weapon_ranged",
 		horizontal_alignment = "center",
-		size = var_0_6,
-		position = var_0_12
+		size = tbl_5,
+		position = tbl_11
 	},
 	healing_slot = {
 		vertical_alignment = "bottom",
@@ -391,7 +391,7 @@ local var_0_15 = {
 			0,
 			0
 		},
-		position = var_0_9
+		position = tbl_8
 	},
 	potion_slot = {
 		vertical_alignment = "bottom",
@@ -401,7 +401,7 @@ local var_0_15 = {
 			0,
 			0
 		},
-		position = var_0_10
+		position = tbl_9
 	},
 	grenade_slot = {
 		vertical_alignment = "bottom",
@@ -411,10 +411,10 @@ local var_0_15 = {
 			0,
 			0
 		},
-		position = var_0_11
+		position = tbl_10
 	}
 }
-local var_0_16 = {
+local tbl_14 = {
 	font_type = "hell_shark_header",
 	upper_case = true,
 	localize = false,
@@ -434,7 +434,7 @@ local var_0_16 = {
 		0
 	}
 }
-local var_0_17 = {
+local tbl_15 = {
 	use_shadow = true,
 	vertical_alignment = "top",
 	localize = false,
@@ -448,7 +448,7 @@ local var_0_17 = {
 		0
 	}
 }
-local var_0_18 = {
+local tbl_16 = {
 	use_shadow = true,
 	upper_case = true,
 	localize = false,
@@ -464,7 +464,7 @@ local var_0_18 = {
 		2
 	}
 }
-local var_0_19 = {
+local tbl_17 = {
 	use_shadow = true,
 	vertical_alignment = "top",
 	horizontal_alignment = "right",
@@ -478,7 +478,7 @@ local var_0_19 = {
 		2
 	}
 }
-local var_0_20 = {
+local tbl_18 = {
 	use_shadow = true,
 	upper_case = true,
 	vertical_alignment = "center",
@@ -492,7 +492,7 @@ local var_0_20 = {
 		1
 	}
 }
-local var_0_21 = {
+local tbl_19 = {
 	word_wrap = false,
 	use_shadow = true,
 	font_size = 24,
@@ -510,7 +510,8 @@ local var_0_21 = {
 	}
 }
 
-local function var_0_22(arg_1_0, arg_1_1, arg_1_2)
+local function fn(arg_1_0, arg_1_1, arg_1_2)
+	-- function 1
 	return {
 		element = {
 			passes = {
@@ -603,7 +604,7 @@ local function var_0_22(arg_1_0, arg_1_1, arg_1_2)
 	}
 end
 
-local var_0_23 = {
+local tbl_20 = {
 	200,
 	10,
 	10,
@@ -611,6 +612,7 @@ local var_0_23 = {
 }
 
 function create_input_text(arg_2_0, arg_2_1, arg_2_2)
+	-- function 2
 	return {
 		element = {
 			passes = {
@@ -618,7 +620,8 @@ function create_input_text(arg_2_0, arg_2_1, arg_2_2)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_3_0, arg_3_1)
+					content_check_function = function (arg_3_0, arg_3_1)
+						-- function 3
 						return not ShowCursorStack.cursor_active()
 					end
 				},
@@ -626,7 +629,8 @@ function create_input_text(arg_2_0, arg_2_1, arg_2_2)
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_4_0, arg_4_1)
+					content_check_function = function (arg_4_0, arg_4_1)
+						-- function 4
 						return not ShowCursorStack.cursor_active()
 					end
 				}
@@ -677,20 +681,23 @@ function create_input_text(arg_2_0, arg_2_1, arg_2_2)
 	}
 end
 
-local var_0_24 = {
+local tbl_21 = {
 	reminder = {
 		{
 			name = "fade_in_reminder_text",
 			start_progress = 4,
 			end_progress = 4.3,
-			init = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+				-- function 5
 				return
 			end,
-			update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+				-- function 6
 				arg_6_2.style.text.text_color[1] = arg_6_3 * 255
 				arg_6_2.style.text_shadow.text_color[1] = arg_6_3 * 255
 			end,
-			on_complete = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			on_complete = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+				-- function 7
 				return
 			end
 		},
@@ -698,14 +705,17 @@ local var_0_24 = {
 			name = "fade_out_reminder_text",
 			start_progress = 6,
 			end_progress = 6.5,
-			init = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			init = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+				-- function 8
 				return
 			end,
-			update = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+			update = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+				-- function 9
 				arg_9_2.style.text.text_color[1] = (1 - arg_9_3) * 255
 				arg_9_2.style.text_shadow.text_color[1] = (1 - arg_9_3) * 255
 			end,
-			on_complete = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			on_complete = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+				-- function 10
 				return
 			end
 		}
@@ -713,6 +723,7 @@ local var_0_24 = {
 }
 
 function create_reminder_text(arg_11_0, arg_11_1, arg_11_2)
+	-- function 11
 	return {
 		element = {
 			passes = {
@@ -720,32 +731,36 @@ function create_reminder_text(arg_11_0, arg_11_1, arg_11_2)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "power_up_text",
-					content_check_function = function(arg_12_0)
-						return arg_12_0.info_type == "deus_power_up"
+					content_check_function = function (self)
+						-- function 12
+						return self.info_type == "deus_power_up"
 					end
 				},
 				{
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "power_up_text",
-					content_check_function = function(arg_13_0)
-						return arg_13_0.info_type == "deus_power_up"
+					content_check_function = function (self)
+						-- function 13
+						return self.info_type == "deus_power_up"
 					end
 				},
 				{
 					style_id = "text",
 					pass_type = "text",
 					text_id = "item_text",
-					content_check_function = function(arg_14_0)
-						return arg_14_0.info_type == "deus_item_tooltip"
+					content_check_function = function (self)
+						-- function 14
+						return self.info_type == "deus_item_tooltip"
 					end
 				},
 				{
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "item_text",
-					content_check_function = function(arg_15_0)
-						return arg_15_0.info_type == "deus_item_tooltip"
+					content_check_function = function (self)
+						-- function 15
+						return self.info_type == "deus_item_tooltip"
 					end
 				}
 			}
@@ -794,15 +809,15 @@ function create_reminder_text(arg_11_0, arg_11_1, arg_11_2)
 	}
 end
 
-local var_0_25 = true
-local var_0_26 = {
+local flag_2 = true
+local tbl_22 = {
 	fullscreen_fade = UIWidgets.create_simple_rect("fullscreen_fade", {
 		155,
 		0,
 		0,
 		0
 	}),
-	center_title = UIWidgets.create_simple_text(Localize("menu_weave_forge_options_sub_title_properties_utility"), "center_title", 32, nil, var_0_20),
+	center_title = UIWidgets.create_simple_text(Localize("menu_weave_forge_options_sub_title_properties_utility"), "center_title", 32, nil, tbl_18),
 	center_title_bg = UIWidgets.create_simple_texture("tab_menu_bg_03", "center_title"),
 	options_background_edge = UIWidgets.create_simple_texture("shrine_sidebar_background", "options_background_edge"),
 	options_background = UIWidgets.create_tiled_texture("options_background", "menu_frame_bg_01_mask2", {
@@ -825,12 +840,13 @@ local var_0_26 = {
 		}
 	}, "options_background_mask"),
 	power_up_mask = UIWidgets.create_simple_texture("mask_rect", "power_up_window"),
-	no_blessings_text = UIWidgets.create_simple_text("", "no_blessings_text", nil, nil, var_0_21),
-	input_description_text = create_input_text("player_list_show_mouse_description", "deus_run_stats_input_description", var_0_25),
-	power_up_description = UIWidgets.create_power_up("power_up_description_root", var_0_15.power_up_description_root.size, true, var_0_0)
+	no_blessings_text = UIWidgets.create_simple_text("", "no_blessings_text", nil, nil, tbl_19),
+	input_description_text = create_input_text("player_list_show_mouse_description", "deus_run_stats_input_description", flag_2),
+	power_up_description = UIWidgets.create_power_up("power_up_description_root", tbl_13.power_up_description_root.size, true, flag)
 }
 
-local function var_0_27(arg_16_0, arg_16_1)
+local function fn_2(arg_16_0, arg_16_1)
+	-- function 16
 	return {
 		element = {
 			passes = {
@@ -842,10 +858,11 @@ local function var_0_27(arg_16_0, arg_16_1)
 					style_id = "frame",
 					pass_type = "texture_frame",
 					texture_id = "frame",
-					content_change_function = function(arg_17_0, arg_17_1)
-						arg_17_0.frame = UIFrameSettings[arg_17_0.frame_settings_name].texture
-						arg_17_1.texture_size = UIFrameSettings[arg_17_0.frame_settings_name].texture_size
-						arg_17_1.texture_sizes = UIFrameSettings[arg_17_0.frame_settings_name].texture_sizes
+					content_change_function = function (self, arg_17_1)
+						-- function 17
+						self.frame = UIFrameSettings[self.frame_settings_name].texture
+						arg_17_1.texture_size = UIFrameSettings[self.frame_settings_name].texture_size
+						arg_17_1.texture_sizes = UIFrameSettings[self.frame_settings_name].texture_sizes
 					end
 				},
 				{
@@ -902,7 +919,7 @@ local function var_0_27(arg_16_0, arg_16_1)
 	}
 end
 
-local var_0_28 = {
+local tbl_23 = {
 	"item_titles",
 	"skin_applied",
 	"ammunition",
@@ -920,11 +937,11 @@ local var_0_28 = {
 	"detailed_stats_ranged_light",
 	"detailed_stats_ranged_heavy"
 }
-local var_0_29 = {
-	weapon_melee = UIWidgets.create_simple_item_tooltip("weapon_melee", var_0_28),
-	weapon_ranged = UIWidgets.create_simple_item_tooltip("weapon_ranged", var_0_28),
-	weapon_melee_title = var_0_27("weapon_melee_title", "deus_weapon_inspect_primary_title"),
-	weapon_ranged_title = var_0_27("weapon_ranged_title", "deus_weapon_inspect_secondary_title"),
+local tbl_24 = {
+	weapon_melee = UIWidgets.create_simple_item_tooltip("weapon_melee", tbl_23),
+	weapon_ranged = UIWidgets.create_simple_item_tooltip("weapon_ranged", tbl_23),
+	weapon_melee_title = fn_2("weapon_melee_title", "deus_weapon_inspect_primary_title"),
+	weapon_ranged_title = fn_2("weapon_ranged_title", "deus_weapon_inspect_secondary_title"),
 	healing_slot = UIWidgets.create_framed_info_box("healing_slot", "menu_frame_12", "menu_frame_12", "menu_frame_12", Localize("deus_weapon_inspect_healing_title"), "consumables_empty_medpack", {
 		50,
 		50
@@ -947,30 +964,30 @@ local var_0_29 = {
 		100
 	})
 }
-local var_0_30 = var_0_29.weapon_melee.content
+local content = tbl_24.weapon_melee.content
 
-var_0_30.disable_fade_in = true
-var_0_30.no_equipped_item = true
-var_0_30.force_top_alignment = true
+content.disable_fade_in = true
+content.no_equipped_item = true
+content.force_top_alignment = true
 
-local var_0_31 = var_0_29.weapon_ranged.content
+local content_2 = tbl_24.weapon_ranged.content
 
-var_0_31.disable_fade_in = true
-var_0_31.no_equipped_item = true
-var_0_31.force_top_alignment = true
+content_2.disable_fade_in = true
+content_2.no_equipped_item = true
+content_2.force_top_alignment = true
 
-local var_0_32 = {
+local tbl_25 = {
 	reminder_text = create_reminder_text("n/a", "reminder_text")
 }
-local var_0_33 = {
+local tbl_26 = {
 	64,
 	64
 }
-local var_0_34 = {
+local tbl_27 = {
 	20,
 	10
 }
-local var_0_35 = {
+local tbl_28 = {
 	title_frame_name = "menu_frame_12",
 	max_blessing_amount = 6,
 	icon_frame_name = "button_frame_01_gold",
@@ -985,9 +1002,9 @@ local var_0_35 = {
 		150
 	}
 }
-local var_0_36 = {
+local tbl_29 = {
 	background_icon = "button_frame_01",
-	width = var_0_33[1],
+	width = tbl_26[1],
 	icon_size = {
 		35,
 		35
@@ -1007,9 +1024,9 @@ local var_0_36 = {
 		-1
 	}
 }
-local var_0_37 = {
+local tbl_30 = {
 	background_icon = "button_frame_01",
-	width = var_0_33[1],
+	width = tbl_26[1],
 	icon_size = {
 		58,
 		58
@@ -1029,7 +1046,7 @@ local var_0_37 = {
 		1
 	}
 }
-local var_0_38 = {
+local tbl_31 = {
 	default = {
 		{
 			input_action = "left_stick",
@@ -1046,17 +1063,17 @@ local var_0_38 = {
 }
 
 return {
-	generic_input_actions = var_0_38,
-	scenegraph = var_0_15,
-	widgets = var_0_26,
-	equipment_widgets = var_0_29,
-	reminder_widgets = var_0_32,
-	blessing_widget_data = var_0_35,
+	generic_input_actions = tbl_31,
+	scenegraph = tbl_13,
+	widgets = tbl_22,
+	equipment_widgets = tbl_24,
+	reminder_widgets = tbl_25,
+	blessing_widget_data = tbl_28,
 	max_power_up_amount = max_power_up_amount,
-	round_power_up_widget_data = var_0_36,
-	rectangular_power_up_widget_data = var_0_37,
-	animations_definitions = var_0_24,
-	power_up_widget_size = var_0_33,
-	power_up_widget_spacing = var_0_34,
-	allow_boon_removal = var_0_0
+	round_power_up_widget_data = tbl_29,
+	rectangular_power_up_widget_data = tbl_30,
+	animations_definitions = tbl_21,
+	power_up_widget_size = tbl_26,
+	power_up_widget_spacing = tbl_27,
+	allow_boon_removal = flag
 }

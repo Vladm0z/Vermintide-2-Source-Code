@@ -2,129 +2,142 @@
 
 HandbookLogic = class(HandbookLogic)
 
-function HandbookLogic.init(arg_1_0, arg_1_1, arg_1_2)
-	arg_1_0._context = table.merge({
-		layout = arg_1_0
+HandbookLogic.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	self._context = table.merge({
+		layout = self
 	}, arg_1_1)
-	arg_1_0._reference_name = arg_1_1.reference_name or "HandbookLogic"
-	arg_1_0._blueprints = arg_1_2
-	arg_1_0._video_references = {}
-	arg_1_0._loaded_packages = {}
-	arg_1_0._reusable_material = false
+
+	local reference_name = arg_1_1.reference_name
+
+	reference_name = reference_name or "HandbookLogic"
+	self._reference_name = reference_name
+	self._blueprints = arg_1_2
+	self._video_references = {}
+	self._loaded_packages = {}
+	self._reusable_material = false
 end
 
-function HandbookLogic.destroy(arg_2_0)
-	arg_2_0:_destroy_video_players()
-	arg_2_0:_unload_packages()
+HandbookLogic.destroy = function (self)
+	-- function 2
+	self:_destroy_video_players()
+	self:_unload_packages()
 end
 
-function HandbookLogic.create_video_player(arg_3_0, arg_3_1)
-	local var_3_0 = arg_3_0._reference_name .. "@" .. arg_3_1
-	local var_3_1 = arg_3_0._video_references
-	local var_3_2 = arg_3_0._context
+HandbookLogic.create_video_player = function (self, arg_3_1)
+	-- function 3
+	local str = self._reference_name .. "@" .. arg_3_1
+	local _video_references = self._video_references
+	local _context = self._context
 
-	if not var_3_1[var_3_0] then
-		UIRenderer.create_video_player(var_3_2.ui_renderer, var_3_0, var_3_2.world, arg_3_1, true)
+	if not _video_references[str] then
+		UIRenderer.create_video_player(_context.ui_renderer, str, _context.world, arg_3_1, true)
 
-		var_3_1[var_3_0] = var_3_0
+		_video_references[str] = str
 	end
 
-	return var_3_0
+	return str
 end
 
-function HandbookLogic._destroy_video_players(arg_4_0)
-	if table.is_empty(arg_4_0._video_references) then
+HandbookLogic._destroy_video_players = function (self)
+	-- function 4
+	if not table.is_empty(self._video_references) then
 		return
 	end
 
-	local var_4_0 = arg_4_0._context.world
-	local var_4_1 = arg_4_0._context.ui_renderer
+	local world = self._context.world
+	local ui_renderer = self._context.ui_renderer
 
-	for iter_4_0 in pairs(arg_4_0._video_references) do
-		UIRenderer.destroy_video_player(var_4_1, iter_4_0, var_4_0)
+	for k in pairs(self._video_references) do
+		UIRenderer.destroy_video_player(ui_renderer, k, world)
 	end
 
-	table.clear(arg_4_0._video_references)
+	table.clear(self._video_references)
 end
 
-function HandbookLogic.load_texture_package(arg_5_0, arg_5_1, arg_5_2)
-	local var_5_0 = arg_5_0._reusable_material
+HandbookLogic.load_texture_package = function (self, arg_5_1, arg_5_2)
+	-- function 5
+	local _reusable_material = self._reusable_material
 
-	if not var_5_0 then
-		local var_5_1 = arg_5_0._context.ui_renderer.gui
+	if not _reusable_material then
+		local gui = self._context.ui_renderer.gui
 
-		Gui.clone_material_from_template(var_5_1, "material_handbook_diffuse", "template_store_diffuse_masked")
+		Gui.clone_material_from_template(gui, "material_handbook_diffuse", "template_store_diffuse_masked")
 
-		var_5_0 = Gui.material(var_5_1, "material_handbook_diffuse")
-		arg_5_0._reusable_material = var_5_0
+		_reusable_material = Gui.material(gui, "material_handbook_diffuse")
+		self._reusable_material = _reusable_material
 	end
 
-	local function var_5_2()
-		Material.set_texture(var_5_0, "diffuse_map", arg_5_1)
+	local function fn()
+		-- function 6
+		Material.set_texture(_reusable_material, "diffuse_map", arg_5_1)
 
-		arg_5_2.content.texture = var_5_0
+		arg_5_2.content.texture = _reusable_material
 	end
 
-	local var_5_3 = true
+	local flag = true
 
-	Managers.package:load(arg_5_1, arg_5_0._reference_name, var_5_2, var_5_3)
+	Managers.package:load(arg_5_1, self._reference_name, fn, flag)
 
-	arg_5_0._loaded_packages[arg_5_1] = arg_5_1
+	self._loaded_packages[arg_5_1] = arg_5_1
 
 	return "material_handbook_diffuse"
 end
 
-function HandbookLogic._unload_packages(arg_7_0)
-	if arg_7_0._reusable_material then
-		Material.set_texture(arg_7_0._reusable_material, "diffuse_map", UISettings.transparent_placeholder_texture)
+HandbookLogic._unload_packages = function (self)
+	-- function 7
+	if not self._reusable_material then
+		Material.set_texture(self._reusable_material, "diffuse_map", UISettings.transparent_placeholder_texture)
 
-		arg_7_0._reusable_material = nil
+		self._reusable_material = nil
 	end
 
-	local var_7_0 = arg_7_0._reference_name
+	local _reference_name = self._reference_name
 
-	for iter_7_0 in pairs(arg_7_0._loaded_packages) do
-		Managers.package:unload(iter_7_0, var_7_0)
+	for k in pairs(self._loaded_packages) do
+		Managers.package:unload(k, _reference_name)
 	end
 
-	table.clear(arg_7_0._loaded_packages)
+	table.clear(self._loaded_packages)
 end
 
-function HandbookLogic._create_entry(arg_8_0, arg_8_1)
+HandbookLogic._create_entry = function (self, arg_8_1)
+	-- function 8
 	if arg_8_1.condition == false then
 		return
 	end
 
-	if arg_8_1.condition_func and not arg_8_1:condition_func() then
+	if not (not arg_8_1.condition_func and arg_8_1:condition_func()) then
 		return
 	end
 
-	local var_8_0 = arg_8_1.type
-	local var_8_1 = arg_8_0._blueprints[var_8_0]
+	local type = arg_8_1.type
+	local var_8_1 = self._blueprints[type]
 
 	if not var_8_1 then
 		return
 	end
 
-	local var_8_2 = var_8_1(arg_8_0._context, arg_8_1)
+	local var_8_2 = var_8_1(self._context, arg_8_1)
 	local var_8_3 = UIWidget.init(var_8_2)
 
-	if var_8_0 == "image" then
-		local var_8_4 = "gui/1080p/single_textures/handbook/" .. arg_8_1.texture
+	if type == "image" then
+		local str = "gui/1080p/single_textures/handbook/" .. arg_8_1.texture
 
-		arg_8_0:load_texture_package(var_8_4, var_8_3)
+		self:load_texture_package(str, var_8_3)
 	end
 
 	return var_8_3
 end
 
-function HandbookLogic.create_entry_widgets(arg_9_0, arg_9_1)
-	local var_9_0 = {}
+HandbookLogic.create_entry_widgets = function (self, arg_9_1)
+	-- function 9
+	local tbl = {}
 
-	arg_9_0:_destroy_video_players()
-	arg_9_0:_unload_packages()
+	self:_destroy_video_players()
+	self:_unload_packages()
 
-	var_9_0[1] = arg_9_0:_create_entry({
+	tbl[1] = self:_create_entry({
 		padding = 0,
 		type = "text",
 		text = arg_9_1.display_name,
@@ -136,24 +149,25 @@ function HandbookLogic.create_entry_widgets(arg_9_0, arg_9_1)
 		}
 	})
 
-	local var_9_1 = var_9_0[1].content.size[2]
+	local var_9_1 = tbl[1].content.size[2]
 
-	var_9_0[1].offset[2] = -var_9_1
+	tbl[1].offset[2] = -var_9_1
 
-	for iter_9_0 = 1, #arg_9_1 do
-		local var_9_2 = arg_9_0:_create_entry(arg_9_1[iter_9_0])
+	for i = 1, #arg_9_1 do
+		local _create_entry = self:_create_entry(arg_9_1[i])
 
-		if var_9_2 then
-			var_9_0[#var_9_0 + 1] = var_9_2
+		if not _create_entry then
+			tbl[#tbl + 1] = _create_entry
 
-			local var_9_3 = var_9_2.content
-			local var_9_4 = var_9_3.size[2]
-			local var_9_5 = var_9_3.padding or 0
+			local content = _create_entry.content
+			local var_9_4 = content.size[2]
+			local padding = content.padding
 
-			var_9_1 = var_9_1 + var_9_4 + var_9_5
-			var_9_2.offset[2] = -var_9_1
+			padding = padding or 0
+			var_9_1 = var_9_1 + var_9_4 + padding
+			_create_entry.offset[2] = -var_9_1
 		end
 	end
 
-	return var_9_0, var_9_1
+	return tbl, var_9_1
 end

@@ -2,23 +2,25 @@
 
 ActionCareerWHBountyhunter = class(ActionCareerWHBountyhunter, ActionBountyHunterHandgun)
 
-function ActionCareerWHBountyhunter.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
-	ActionCareerWHBountyhunter.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionCareerWHBountyhunter.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	-- function 1
+	ActionCareerWHBountyhunter.super.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
-	arg_1_0.career_extension = ScriptUnit.extension(arg_1_4, "career_system")
-	arg_1_0.inventory_extension = ScriptUnit.extension(arg_1_4, "inventory_system")
-	arg_1_0.talent_extension = ScriptUnit.extension(arg_1_4, "talent_system")
+	self.career_extension = ScriptUnit.extension(arg_1_4, "career_system")
+	self.inventory_extension = ScriptUnit.extension(arg_1_4, "inventory_system")
+	self.talent_extension = ScriptUnit.extension(arg_1_4, "talent_system")
 end
 
-function ActionCareerWHBountyhunter.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ActionCareerWHBountyhunter.client_owner_start_action = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	-- function 2
 	arg_2_5 = arg_2_5 or {}
 
-	local var_2_0 = arg_2_0.talent_extension
+	local talent_extension = self.talent_extension
 
-	if var_2_0:has_talent("victor_bountyhunter_activated_ability_railgun") then
+	if not talent_extension:has_talent("victor_bountyhunter_activated_ability_railgun") then
 		arg_2_5.upper_barrel = "railgun"
 		arg_2_5.lower_barrel = "railgun"
-	elseif var_2_0:has_talent("victor_bountyhunter_activated_ability_blast_shotgun") then
+	elseif not talent_extension:has_talent("victor_bountyhunter_activated_ability_blast_shotgun") then
 		arg_2_5.upper_barrel = "shotgun"
 		arg_2_5.lower_barrel = "shotgun"
 	else
@@ -26,58 +28,61 @@ function ActionCareerWHBountyhunter.client_owner_start_action(arg_2_0, arg_2_1, 
 		arg_2_5.lower_barrel = "shotgun"
 	end
 
-	arg_2_0.career_extension:reduce_activated_ability_cooldown_percent(-1)
-	ActionCareerWHBountyhunter.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
-	arg_2_0:_play_vo()
+	self.career_extension:reduce_activated_ability_cooldown_percent(-1)
+	ActionCareerWHBountyhunter.super.client_owner_start_action(self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	self:_play_vo()
 
-	arg_2_0.start_activated_ability_cooldown_t = 0.1
+	self.start_activated_ability_cooldown_t = 0.1
 
-	ScriptUnit.extension(arg_2_0.owner_unit, "inventory_system"):check_and_drop_pickups("career_ability")
+	ScriptUnit.extension(self.owner_unit, "inventory_system"):check_and_drop_pickups("career_ability")
 end
 
-function ActionCareerWHBountyhunter.client_owner_post_update(arg_3_0, arg_3_1, ...)
-	if arg_3_0.start_activated_ability_cooldown_t then
-		arg_3_0.start_activated_ability_cooldown_t = arg_3_0.start_activated_ability_cooldown_t - arg_3_1
+ActionCareerWHBountyhunter.client_owner_post_update = function (self, arg_3_1, ...)
+	-- function 3
+	if not self.start_activated_ability_cooldown_t then
+		self.start_activated_ability_cooldown_t = self.start_activated_ability_cooldown_t - arg_3_1
 
-		if arg_3_0.start_activated_ability_cooldown_t <= 0 then
-			local var_3_0 = true
+		if self.start_activated_ability_cooldown_t <= 0 then
+			local flag = true
 
-			arg_3_0.career_extension:start_activated_ability_cooldown(1, 0, 0, var_3_0)
+			self.career_extension:start_activated_ability_cooldown(1, 0, 0, flag)
 
-			arg_3_0.start_activated_ability_cooldown_t = nil
+			self.start_activated_ability_cooldown_t = nil
 		end
 	end
 
-	ActionCareerWHBountyhunter.super.client_owner_post_update(arg_3_0, arg_3_1, ...)
+	ActionCareerWHBountyhunter.super.client_owner_post_update(self, arg_3_1, ...)
 end
 
-function ActionCareerWHBountyhunter.finish(arg_4_0, arg_4_1)
-	ActionCareerWHBountyhunter.super.finish(arg_4_0, arg_4_1)
+ActionCareerWHBountyhunter.finish = function (self, arg_4_1)
+	-- function 4
+	ActionCareerWHBountyhunter.super.finish(self, arg_4_1)
 
-	local var_4_0 = arg_4_0.talent_extension
-	local var_4_1 = arg_4_0.inventory_extension
+	local talent_extension = self.talent_extension
+	local inventory_extension = self.inventory_extension
 
-	if var_4_0:has_talent("victor_bountyhunter_activated_ability_reload", "witch_hunter", true) then
-		local var_4_2 = "slot_ranged"
-		local var_4_3 = var_4_1:get_slot_data(var_4_2)
-		local var_4_4 = var_4_3.right_unit_1p
-		local var_4_5 = var_4_3.left_unit_1p
-		local var_4_6 = ScriptUnit.has_extension(var_4_4, "ammo_system")
-		local var_4_7 = ScriptUnit.has_extension(var_4_5, "ammo_system")
-		local var_4_8 = var_4_6 or var_4_7
+	if not talent_extension:has_talent("victor_bountyhunter_activated_ability_reload", "witch_hunter", true) then
+		local str = "slot_ranged"
+		local get_slot_data = inventory_extension:get_slot_data(str)
+		local right_unit_1p = get_slot_data.right_unit_1p
+		local left_unit_1p = get_slot_data.left_unit_1p
+		local has_extension = ScriptUnit.has_extension(right_unit_1p, "ammo_system")
+		local has_extension_2 = ScriptUnit.has_extension(left_unit_1p, "ammo_system")
+		local flag = has_extension or has_extension_2
 
-		if var_4_8 then
-			var_4_8:instant_reload(true)
+		if not flag then
+			flag:instant_reload(true)
 		end
 	end
 
-	arg_4_0.inventory_extension:wield_previous_non_level_slot()
+	self.inventory_extension:wield_previous_non_level_slot()
 end
 
-function ActionCareerWHBountyhunter._play_vo(arg_5_0)
-	local var_5_0 = arg_5_0.owner_unit
-	local var_5_1 = ScriptUnit.extension_input(var_5_0, "dialogue_system")
-	local var_5_2 = FrameTable.alloc_table()
+ActionCareerWHBountyhunter._play_vo = function (self)
+	-- function 5
+	local owner_unit = self.owner_unit
+	local extension_input = ScriptUnit.extension_input(owner_unit, "dialogue_system")
+	local alloc_table = FrameTable.alloc_table()
 
-	var_5_1:trigger_networked_dialogue_event("activate_ability", var_5_2)
+	extension_input:trigger_networked_dialogue_event("activate_ability", alloc_table)
 end

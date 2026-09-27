@@ -4,76 +4,82 @@ require("scripts/managers/camera/cameras/base_camera")
 
 BlendCamera = class(BlendCamera, BaseCamera)
 
-function BlendCamera.init(arg_1_0, arg_1_1)
-	BlendCamera.super.init(arg_1_0, arg_1_1)
+BlendCamera.init = function (self, arg_1_1)
+	-- function 1
+	BlendCamera.super.init(self, arg_1_1)
 
-	arg_1_0._offset_position = Vector3(0, 0, 0)
-	arg_1_0._blend_setups = {}
-	arg_1_0._blend_functions = {
-		match_2d = function(arg_2_0, arg_2_1)
-			local var_2_0 = arg_2_1[arg_2_0.blend_parameter_x]
-			local var_2_1 = arg_2_1[arg_2_0.blend_parameter_y]
-			local var_2_2 = arg_2_0.match_value_x
-			local var_2_3 = arg_2_0.match_value_y
+	self._offset_position = Vector3(0, 0, 0)
+	self._blend_setups = {}
+	self._blend_functions = {
+		match_2d = function (self, arg_2_1)
+			-- function 2
+			local var_2_0 = arg_2_1[self.blend_parameter_x]
+			local var_2_1 = arg_2_1[self.blend_parameter_y]
+			local match_value_x = self.match_value_x
+			local match_value_y = self.match_value_y
 
-			return (1 - math.min(math.abs(var_2_0 - var_2_2), 1)) * (1 - math.min(math.abs(var_2_1 - var_2_3), 1))
+			return (1 - math.min(math.abs(var_2_0 - match_value_x), 1)) * (1 - math.min(math.abs(var_2_1 - match_value_y), 1))
 		end,
-		match = function(arg_3_0, arg_3_1)
-			local var_3_0 = arg_3_1[arg_3_0.blend_parameter]
-			local var_3_1 = arg_3_0.match_value
+		match = function (self, arg_3_1)
+			-- function 3
+			local var_3_0 = arg_3_1[self.blend_parameter]
+			local match_value = self.match_value
 
-			return 1 - math.min(math.abs(var_3_0 - var_3_1), 1)
+			return 1 - math.min(math.abs(var_3_0 - match_value), 1)
 		end
 	}
 end
 
-function BlendCamera.parse_parameters(arg_4_0, arg_4_1, arg_4_2)
-	BlendCamera.super.parse_parameters(arg_4_0, arg_4_1, arg_4_2)
+BlendCamera.parse_parameters = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	BlendCamera.super.parse_parameters(self, arg_4_1, arg_4_2)
 
-	arg_4_0._child_node_definitions = arg_4_1.child_node_blend_definitions
+	self._child_node_definitions = arg_4_1.child_node_blend_definitions
 end
 
-function BlendCamera.add_child_node(arg_5_0, arg_5_1)
-	BlendCamera.super.add_child_node(arg_5_0, arg_5_1)
+BlendCamera.add_child_node = function (self, arg_5_1)
+	-- function 5
+	BlendCamera.super.add_child_node(self, arg_5_1)
 
-	local var_5_0 = #arg_5_0._blend_setups + 1
-	local var_5_1 = arg_5_0._child_node_definitions[var_5_0]
+	local num = #self._blend_setups + 1
+	local var_5_1 = self._child_node_definitions[num]
 
-	arg_5_0._blend_setups[var_5_0] = {
+	self._blend_setups[num] = {
 		node = arg_5_1,
-		weight_function = arg_5_0._blend_functions[var_5_1.blend_function],
+		weight_function = self._blend_functions[var_5_1.blend_function],
 		definition = var_5_1
 	}
 end
 
-function BlendCamera.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
-	if arg_6_0._active_children > 0 then
-		BlendCamera.super.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+BlendCamera.update = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	-- function 6
+	if self._active_children > 0 then
+		BlendCamera.super.update(self, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 
 		return
 	end
 
-	local var_6_0 = 0
+	local num = 0
 	local var_6_1 = Vector3(0, 0, 0)
 
-	for iter_6_0, iter_6_1 in ipairs(arg_6_0._blend_setups) do
-		local var_6_2 = iter_6_1.node
+	for i, v in ipairs(self._blend_setups) do
+		local node = v.node
 
-		var_6_2:update(arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+		node:update(arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 
-		local var_6_3 = var_6_2:position() - arg_6_2
-		local var_6_4 = iter_6_1.weight_function(iter_6_1.definition, arg_6_4)
+		local num_2 = node:position() - arg_6_2
+		local weight_function = v.weight_function(v.definition, arg_6_4)
 
-		var_6_0 = var_6_0 + var_6_4
+		num = num + weight_function
 
-		assert(var_6_4 >= 0, "[BlendCamera:update() individual weight lesser than 0, undefined.")
+		assert(weight_function >= 0, "[BlendCamera:update() individual weight lesser than 0, undefined.")
 
-		var_6_1 = var_6_1 + var_6_3 * var_6_4
+		var_6_1 = var_6_1 + num_2 * weight_function
 	end
 
-	assert(var_6_0 > 0, "[BlendCamera:update() total blend weights are lower than 0")
+	assert(num > 0, "[BlendCamera:update() total blend weights are lower than 0")
 
-	local var_6_5 = arg_6_2 + var_6_1 / var_6_0
+	local num_3 = arg_6_2 + var_6_1 / num
 
-	BlendCamera.super.update(arg_6_0, arg_6_1, var_6_5, arg_6_3, arg_6_4)
+	BlendCamera.super.update(self, arg_6_1, num_3, arg_6_3, arg_6_4)
 end

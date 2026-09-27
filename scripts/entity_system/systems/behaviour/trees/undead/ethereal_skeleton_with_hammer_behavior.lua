@@ -1,66 +1,66 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/undead/ethereal_skeleton_with_hammer_behavior.lua
 
-local var_0_0 = BreedActions.ethereal_skeleton_with_hammer
-local var_0_1 = {
+local ethereal_skeleton_with_hammer = BreedActions.ethereal_skeleton_with_hammer
+local tbl = {
 	"BTUtilityNode",
 	{
 		"BTClanRatFollowAction",
 		name = "follow",
-		action_data = var_0_0.follow
+		action_data = ethereal_skeleton_with_hammer.follow
 	},
 	{
 		"BTStormVerminAttackAction",
 		name = "running_attack",
 		condition = "ask_target_before_attacking",
-		action_data = var_0_0.running_attack
+		action_data = ethereal_skeleton_with_hammer.running_attack
 	},
 	{
 		"BTRandom",
-		action_data = var_0_0.moving_attack,
+		action_data = ethereal_skeleton_with_hammer.moving_attack,
 		{
 			"BTStormVerminAttackAction",
 			weight = 1,
 			name = "running_special_attack_sweep",
 			condition = "ask_target_before_attacking",
-			action_data = var_0_0.special_attack_sweep
+			action_data = ethereal_skeleton_with_hammer.special_attack_sweep
 		},
 		{
 			"BTStormVerminAttackAction",
 			weight = 1,
 			name = "running_special_attack_cleave",
 			condition = "ask_target_before_attacking",
-			action_data = var_0_0.special_attack_cleave
+			action_data = ethereal_skeleton_with_hammer.special_attack_cleave
 		},
 		name = "moving_attack"
 	},
 	{
 		"BTRandom",
-		action_data = var_0_0.special_attack,
+		action_data = ethereal_skeleton_with_hammer.special_attack,
 		{
 			"BTStormVerminAttackAction",
 			weight = 1,
 			name = "special_attack_cleave",
 			condition = "ask_target_before_attacking",
-			action_data = var_0_0.special_attack_cleave
+			action_data = ethereal_skeleton_with_hammer.special_attack_cleave
 		},
 		{
 			"BTStormVerminAttackAction",
 			weight = 1,
 			name = "special_attack_sweep",
 			condition = "ask_target_before_attacking",
-			action_data = var_0_0.special_attack_sweep
+			action_data = ethereal_skeleton_with_hammer.special_attack_sweep
 		},
 		name = "special_attack"
 	},
 	{
 		"BTStormVerminPushAction",
 		name = "push_attack",
-		action_data = var_0_0.push_attack
+		action_data = ethereal_skeleton_with_hammer.push_attack
 	},
 	condition = "confirmed_player_sighting",
 	name = "in_combat"
 }
-local var_0_2 = {
+local tbl_2 = {
 	"BTSelector",
 	{
 		"BTTeleportAction",
@@ -81,7 +81,7 @@ local var_0_2 = {
 		"BTSmashDoorAction",
 		name = "smash_door",
 		condition = "at_door_smartobject",
-		action_data = var_0_0.smash_door
+		action_data = ethereal_skeleton_with_hammer.smash_door
 	},
 	condition = "at_smartobject",
 	name = "smartobject"
@@ -108,27 +108,27 @@ BreedBehaviors.ethereal_skeleton_with_hammer = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = var_0_0.stagger
+		action_data = ethereal_skeleton_with_hammer.stagger
 	},
 	{
 		"BTBlockedAction",
 		name = "blocked",
 		condition = "blocked",
-		action_data = var_0_0.blocked
+		action_data = ethereal_skeleton_with_hammer.blocked
 	},
-	var_0_2,
-	var_0_1,
+	tbl_2,
+	tbl,
 	{
 		"BTAlertedAction",
 		name = "alerted",
 		condition = "player_spotted",
-		action_data = var_0_0.alerted
+		action_data = ethereal_skeleton_with_hammer.alerted
 	},
 	{
 		"BTMoveToGoalAction",
 		name = "move_to_goal",
 		condition = "has_goal_destination",
-		action_data = var_0_0.follow
+		action_data = ethereal_skeleton_with_hammer.follow
 	},
 	{
 		"BTIdleAction",

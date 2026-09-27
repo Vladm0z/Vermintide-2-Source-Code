@@ -4,127 +4,141 @@ require("scripts/ui/views/deus_menu/deus_run_stats_ui")
 
 DeusRunStatsView = class(DeusRunStatsView)
 
-local var_0_0 = 1
+local num = 1
 
-function DeusRunStatsView.init(arg_1_0, arg_1_1, arg_1_2)
-	arg_1_0._ingame_hud = arg_1_1
-	arg_1_0._is_server = arg_1_2.is_server
-	arg_1_0._deus_run_controller = Managers.mechanism:game_mechanism():get_deus_run_controller()
+DeusRunStatsView.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	self._ingame_hud = arg_1_1
+	self._is_server = arg_1_2.is_server
+	self._deus_run_controller = Managers.mechanism:game_mechanism():get_deus_run_controller()
 
-	local var_1_0 = "deus_run_stats_view"
-	local var_1_1 = arg_1_2.input_manager
+	local str = "deus_run_stats_view"
+	local input_manager = arg_1_2.input_manager
 
-	arg_1_0._input_manager = var_1_1
-	arg_1_0._input_service_name = var_1_0
+	self._input_manager = input_manager
+	self._input_service_name = str
 
-	var_1_1:create_input_service(var_1_0, "IngameMenuKeymaps", "IngameMenuFilters")
-	var_1_1:map_device_to_service(var_1_0, "keyboard")
-	var_1_1:map_device_to_service(var_1_0, "gamepad")
-	var_1_1:map_device_to_service(var_1_0, "mouse")
+	input_manager:create_input_service(str, "IngameMenuKeymaps", "IngameMenuFilters")
+	input_manager:map_device_to_service(str, "keyboard")
+	input_manager:map_device_to_service(str, "gamepad")
+	input_manager:map_device_to_service(str, "mouse")
 
-	arg_1_0._ui = DeusRunStatsUi:new(arg_1_2, arg_1_0)
+	self._ui = DeusRunStatsUi:new(arg_1_2, self)
 end
 
-function DeusRunStatsView.on_enter(arg_2_0)
-	arg_2_0._input_manager:capture_input({
+DeusRunStatsView.on_enter = function (self)
+	-- function 2
+	self._input_manager:capture_input({
 		"keyboard",
 		"gamepad",
 		"mouse"
-	}, 1, arg_2_0._input_service_name, "DeusRunStatsView")
+	}, 1, self._input_service_name, "DeusRunStatsView")
 end
 
-function DeusRunStatsView.on_exit(arg_3_0)
-	arg_3_0._input_manager:release_input({
+DeusRunStatsView.on_exit = function (self)
+	-- function 3
+	self._input_manager:release_input({
 		"keyboard",
 		"gamepad",
 		"mouse"
-	}, 1, arg_3_0._input_service_name, "DeusRunStatsView")
+	}, 1, self._input_service_name, "DeusRunStatsView")
 end
 
-function DeusRunStatsView.update(arg_4_0, arg_4_1, arg_4_2)
-	arg_4_0._ui:update(arg_4_1, arg_4_2)
-	arg_4_0:_handle_input(arg_4_1, arg_4_2)
+DeusRunStatsView.update = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	self._ui:update(arg_4_1, arg_4_2)
+	self:_handle_input(arg_4_1, arg_4_2)
 end
 
-function DeusRunStatsView.input_service(arg_5_0)
-	return arg_5_0._input_manager:get_service(arg_5_0._input_service_name)
+DeusRunStatsView.input_service = function (self)
+	-- function 5
+	return self._input_manager:get_service(self._input_service_name)
 end
 
-function DeusRunStatsView.is_ui_active(arg_6_0)
-	return arg_6_0._ui:active()
+DeusRunStatsView.is_ui_active = function (self)
+	-- function 6
+	return self._ui:active()
 end
 
-function DeusRunStatsView._handle_input(arg_7_0, arg_7_1, arg_7_2)
-	local var_7_0 = arg_7_0._input_manager:get_service(arg_7_0._input_service_name)
-	local var_7_1 = var_7_0:get("hotkey_deus_inventory", false)
-	local var_7_2 = Managers.input:is_device_active("gamepad")
-	local var_7_3 = arg_7_0._ui:active()
+DeusRunStatsView._handle_input = function (self, arg_7_1, arg_7_2)
+	-- function 7
+	local get_service = self._input_manager:get_service(self._input_service_name)
+	local get = get_service:get("hotkey_deus_inventory", false)
+	local is_device_active = Managers.input:is_device_active("gamepad")
+	local active = self._ui:active()
 
-	if var_7_3 then
-		if var_7_0:get("right_press") then
-			arg_7_0._ui:lock(true)
+	if not active then
+		if not get_service:get("right_press") then
+			self._ui:lock(true)
 		end
 
-		if arg_7_0._ui:force_update_power_ups() then
-			arg_7_0:_update_dynamic_values()
+		if not self._ui:force_update_power_ups() then
+			self:_update_dynamic_values()
 		end
-	elseif var_7_3 ~= var_7_1 and var_7_1 == true then
-		arg_7_0:_update_dynamic_values()
-		arg_7_0:_update_inventory()
+	elseif not (active == get or get ~= true) then
+		self:_update_dynamic_values()
+		self:_update_inventory()
 
-		local var_7_4 = Managers.player:local_player().player_unit == nil
+		local flag = Managers.player:local_player().player_unit == nil
 
-		if var_7_4 or var_7_2 then
-			arg_7_0._ui:lock(true, var_7_4)
+		if flag or not is_device_active then
+			self._ui:lock(true, flag)
 		end
 	end
 
-	local var_7_5 = arg_7_0._ui:locked() and not Managers.ui:end_screen_active() and not arg_7_0:_is_in_deus_map_view()
+	local locked = self._ui:locked()
 
-	arg_7_0._ui:set_active(var_7_5 or var_7_1)
+	locked = not locked and not not Managers.ui:end_screen_active() or not self:_is_in_deus_map_view()
+
+	self._ui:set_active(locked or get)
 end
 
-function DeusRunStatsView.destroy(arg_8_0)
-	arg_8_0._ui:destroy()
+DeusRunStatsView.destroy = function (self)
+	-- function 8
+	self._ui:destroy()
 end
 
-function DeusRunStatsView._update_dynamic_values(arg_9_0)
-	local var_9_0 = arg_9_0._deus_run_controller
-	local var_9_1 = var_9_0:get_blessings()
-	local var_9_2 = table.keys(DeusBlessingSettings)
-	local var_9_3 = var_9_0:get_own_peer_id()
-	local var_9_4 = var_9_0:get_player_power_ups(var_9_3, var_0_0)
-	local var_9_5 = var_9_0:get_party_power_ups()
-	local var_9_6, var_9_7 = var_9_0:get_player_profile(var_9_3, var_0_0)
-	local var_9_8 = {
-		blessings = var_9_1,
-		power_ups = var_9_4,
-		party_power_ups = var_9_5,
-		profile_index = var_9_6,
+DeusRunStatsView._update_dynamic_values = function (self)
+	-- function 9
+	local _deus_run_controller = self._deus_run_controller
+	local get_blessings = _deus_run_controller:get_blessings()
+	local keys = table.keys(DeusBlessingSettings)
+	local get_own_peer_id = _deus_run_controller:get_own_peer_id()
+	local get_player_power_ups = _deus_run_controller:get_player_power_ups(get_own_peer_id, num)
+	local get_party_power_ups = _deus_run_controller:get_party_power_ups()
+	local get_player_profile, var_9_7 = _deus_run_controller:get_player_profile(get_own_peer_id, num)
+	local tbl = {
+		blessings = get_blessings,
+		power_ups = get_player_power_ups,
+		party_power_ups = get_party_power_ups,
+		profile_index = get_player_profile,
 		career_index = var_9_7
 	}
 
-	arg_9_0._ui:update_dynamic_values(var_9_8)
+	self._ui:update_dynamic_values(tbl)
 end
 
-function DeusRunStatsView._update_inventory(arg_10_0)
-	local var_10_0 = arg_10_0._deus_run_controller
-	local var_10_1, var_10_2 = var_10_0:get_own_loadout()
-	local var_10_3 = var_10_0:get_own_peer_id()
-	local var_10_4 = var_10_0:get_player_consumable_healthkit_slot(var_10_3, var_0_0)
-	local var_10_5 = var_10_0:get_player_consumable_potion_slot(var_10_3, var_0_0)
-	local var_10_6 = rawget(ItemMasterList, var_10_5)
+DeusRunStatsView._update_inventory = function (self)
+	-- function 10
+	local _deus_run_controller = self._deus_run_controller
+	local get_own_loadout, var_10_2 = _deus_run_controller:get_own_loadout()
+	local get_own_peer_id = _deus_run_controller:get_own_peer_id()
+	local get_player_consumable_healthkit_slot = _deus_run_controller:get_player_consumable_healthkit_slot(get_own_peer_id, num)
+	local get_player_consumable_potion_slot = _deus_run_controller:get_player_consumable_potion_slot(get_own_peer_id, num)
+	local var_10_6 = rawget(ItemMasterList, get_player_consumable_potion_slot)
 
-	if not var_10_6 or var_10_6.hide_in_frame_ui then
-		local var_10_7 = var_10_0:get_player_additional_items(var_10_3, var_0_0)
-		local var_10_8 = var_10_7.slot_potion and var_10_7.slot_potion.items
+	if not var_10_6 and not var_10_6.hide_in_frame_ui then
+		local get_player_additional_items = _deus_run_controller:get_player_additional_items(get_own_peer_id, num)
+		local slot_potion = get_player_additional_items.slot_potion
 
-		if var_10_8 then
-			for iter_10_0 = 1, #var_10_8 do
-				local var_10_9 = var_10_8[iter_10_0]
+		slot_potion = not slot_potion and get_player_additional_items.slot_potion.items
+
+		if not slot_potion then
+			for i = 1, #slot_potion do
+				local var_10_9 = slot_potion[i]
 
 				if not var_10_9.hide_in_frame_ui then
-					var_10_5 = var_10_9.key
+					get_player_consumable_potion_slot = var_10_9.key
 
 					break
 				end
@@ -132,20 +146,21 @@ function DeusRunStatsView._update_inventory(arg_10_0)
 		end
 	end
 
-	local var_10_10 = var_10_0:get_player_consumable_grenade_slot(var_10_3, var_0_0)
+	local get_player_consumable_grenade_slot = _deus_run_controller:get_player_consumable_grenade_slot(get_own_peer_id, num)
 
-	if arg_10_0._melee ~= var_10_1 or arg_10_0._ranged ~= var_10_2 or arg_10_0._potion_slot ~= var_10_5 or arg_10_0._grenade_slot ~= var_10_10 or arg_10_0._healing_slot ~= var_10_4 then
-		arg_10_0._ui:set_loadout(var_10_1, var_10_2, var_10_4, var_10_5, var_10_10)
+	if not (self._melee ~= get_own_loadout or self._ranged ~= var_10_2 or self._potion_slot ~= get_player_consumable_potion_slot or self._grenade_slot ~= get_player_consumable_grenade_slot or self._healing_slot == get_player_consumable_healthkit_slot) then
+		self._ui:set_loadout(get_own_loadout, var_10_2, get_player_consumable_healthkit_slot, get_player_consumable_potion_slot, get_player_consumable_grenade_slot)
 
-		arg_10_0._melee = var_10_1
-		arg_10_0._ranged = var_10_2
-		arg_10_0._potion_slot = var_10_5
-		arg_10_0._grenade_slot = var_10_10
-		arg_10_0._healing_slot = var_10_4
+		self._melee = get_own_loadout
+		self._ranged = var_10_2
+		self._potion_slot = get_player_consumable_potion_slot
+		self._grenade_slot = get_player_consumable_grenade_slot
+		self._healing_slot = get_player_consumable_healthkit_slot
 	end
 end
 
-function DeusRunStatsView._is_in_deus_map_view(arg_11_0)
+DeusRunStatsView._is_in_deus_map_view = function (arg_11_0)
+	-- function 11
 	if Managers.mechanism:current_mechanism_name() ~= "deus" then
 		return false
 	end

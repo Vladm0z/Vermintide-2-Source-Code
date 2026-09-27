@@ -1,14 +1,14 @@
 -- chunkname: @scripts/ui/views/chat_view_definitions.lua
 
-local var_0_0 = 800
-local var_0_1 = "menu_frame_06"
-local var_0_2 = UIFrameSettings[var_0_1].texture_sizes.corner[2]
-local var_0_3 = 12
-local var_0_4 = "menu_frame_06"
-local var_0_5 = UIFrameSettings[var_0_4]
+local num = 800
+local str = "menu_frame_06"
+local var_0_2 = UIFrameSettings[str].texture_sizes.corner[2]
+local num_2 = 12
+local str_2 = "menu_frame_06"
+local var_0_5 = UIFrameSettings[str_2]
 local var_0_6 = var_0_5.texture_sizes.horizontal[2]
-local var_0_7 = (var_0_0 - var_0_2 * 2) / var_0_3
-local var_0_8 = {
+local num_3 = (num - var_0_2 * 2) / num_2
+local tbl = {
 	emoji_width_spacing = 5,
 	max_rows = 7,
 	emoji_height_spacing = 5,
@@ -22,7 +22,7 @@ local var_0_8 = {
 		2
 	}
 }
-local var_0_9 = {
+local tbl_2 = {
 	max_rows = 6,
 	channels_per_row = 3,
 	channels_width_spacing = 5,
@@ -33,7 +33,7 @@ local var_0_9 = {
 		0
 	}
 }
-local var_0_10 = {
+local tbl_3 = {
 	root = {
 		is_root = true,
 		position = {
@@ -320,7 +320,7 @@ local var_0_10 = {
 		horizontal_alignment = "right",
 		size = {
 			370,
-			var_0_0
+			num
 		},
 		position = {
 			380,
@@ -334,7 +334,7 @@ local var_0_10 = {
 		horizontal_alignment = "left",
 		size = {
 			400 - var_0_2 * 2 - 30,
-			var_0_7
+			num_3
 		},
 		position = {
 			var_0_2,
@@ -946,41 +946,102 @@ local var_0_10 = {
 	}
 }
 
-local function var_0_11(arg_1_0, arg_1_1)
-	local var_1_0 = "menu_frame_bg_03"
-	local var_1_1 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_1_0)
-	local var_1_2 = UIFrameSettings.menu_frame_02
-	local var_1_3 = UIFrameSettings.menu_frame_06
-	local var_1_4 = {
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
+	local str = "menu_frame_bg_03"
+	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(str)
+	local menu_frame_02 = UIFrameSettings.menu_frame_02
+	local menu_frame_06 = UIFrameSettings.menu_frame_06
+	local tbl = {
 		element = {}
 	}
-	local var_1_5 = {
+	local tbl_2 = {
 		{
 			style_id = "left_arrow_top",
 			pass_type = "triangle",
-			content_change_function = function(arg_2_0, arg_2_1)
-				arg_2_1.color = arg_2_0.left_hotspot.is_hover and arg_2_1.hover_color or arg_2_1.base_color
+			content_change_function = function (self, arg_2_1)
+				-- function 2
+				local hover_color
+
+				if not self.left_hotspot.is_hover then
+					hover_color = arg_2_1.hover_color
+
+					if not hover_color then
+						-- Nothing
+					end
+				end
+
+				hover_color = arg_2_1.base_color
+
+				::label_2_0::
+
+				arg_2_1.color = hover_color
 			end
 		},
 		{
 			style_id = "left_arrow_bottom",
 			pass_type = "triangle",
-			content_change_function = function(arg_3_0, arg_3_1)
-				arg_3_1.color = arg_3_0.left_hotspot.is_hover and arg_3_1.hover_color or arg_3_1.base_color
+			content_change_function = function (self, arg_3_1)
+				-- function 3
+				local hover_color
+
+				if not self.left_hotspot.is_hover then
+					hover_color = arg_3_1.hover_color
+
+					if not hover_color then
+						-- Nothing
+					end
+				end
+
+				hover_color = arg_3_1.base_color
+
+				::label_3_0::
+
+				arg_3_1.color = hover_color
 			end
 		},
 		{
 			style_id = "right_arrow_top",
 			pass_type = "triangle",
-			content_change_function = function(arg_4_0, arg_4_1)
-				arg_4_1.color = arg_4_0.right_hotspot.is_hover and arg_4_1.hover_color or arg_4_1.base_color
+			content_change_function = function (self, arg_4_1)
+				-- function 4
+				local hover_color
+
+				if not self.right_hotspot.is_hover then
+					hover_color = arg_4_1.hover_color
+
+					if not hover_color then
+						-- Nothing
+					end
+				end
+
+				hover_color = arg_4_1.base_color
+
+				::label_4_0::
+
+				arg_4_1.color = hover_color
 			end
 		},
 		{
 			style_id = "right_arrow_bottom",
 			pass_type = "triangle",
-			content_change_function = function(arg_5_0, arg_5_1)
-				arg_5_1.color = arg_5_0.right_hotspot.is_hover and arg_5_1.hover_color or arg_5_1.base_color
+			content_change_function = function (self, arg_5_1)
+				-- function 5
+				local hover_color
+
+				if not self.right_hotspot.is_hover then
+					hover_color = arg_5_1.hover_color
+
+					if not hover_color then
+						-- Nothing
+					end
+				end
+
+				hover_color = arg_5_1.base_color
+
+				::label_5_0::
+
+				arg_5_1.color = hover_color
 			end
 		},
 		{
@@ -1051,14 +1112,15 @@ local function var_0_11(arg_1_0, arg_1_1)
 			style_id = "chat_text",
 			pass_type = "text",
 			text_id = "real_chat_text",
-			content_check_function = function(arg_6_0, arg_6_1)
-				if not arg_6_0.text_field_active then
+			content_check_function = function (self, arg_6_1)
+				-- function 6
+				if not self.text_field_active then
 					return false
 				else
 					arg_6_1.caret_color[1] = 128 + math.sin(Managers.time:time("ui") * 5) * 128
 				end
 
-				arg_6_0.real_chat_text = arg_6_0.chat_text.text
+				self.real_chat_text = self.chat_text.text
 
 				return true
 			end
@@ -1067,8 +1129,9 @@ local function var_0_11(arg_1_0, arg_1_1)
 			style_id = "chat_hint",
 			pass_type = "text",
 			text_id = "chat_hint",
-			content_check_function = function(arg_7_0, arg_7_1)
-				if arg_7_0.text_input_hotspot.is_hover then
+			content_check_function = function (self, arg_7_1)
+				-- function 7
+				if not self.text_input_hotspot.is_hover then
 					arg_7_1.text_color = {
 						128,
 						255,
@@ -1084,15 +1147,16 @@ local function var_0_11(arg_1_0, arg_1_1)
 					}
 				end
 
-				return arg_7_0.chat_text.text == "" and not arg_7_0.text_field_active
+				return self.chat_text.text ~= "" or not self.text_field_active
 			end
 		},
 		{
 			style_id = "private_user_name",
 			pass_type = "text",
 			text_id = "trimmed_private_user_name",
-			content_check_function = function(arg_8_0)
-				if not arg_8_0.private_user_name then
+			content_check_function = function (self)
+				-- function 8
+				if not self.private_user_name then
 					return false
 				end
 
@@ -1100,7 +1164,7 @@ local function var_0_11(arg_1_0, arg_1_1)
 			end
 		}
 	}
-	local var_1_6 = {
+	local tbl_4 = {
 		text_field_active = false,
 		text_start_offset = 0,
 		channel_arrow_id = "down_arrow",
@@ -1110,7 +1174,7 @@ local function var_0_11(arg_1_0, arg_1_1)
 		caret_index = 1,
 		mask_id = "mask_rect",
 		background_tint = "gradient_dice_game_reward",
-		frame = var_1_2.texture,
+		frame = menu_frame_02.texture,
 		background = {
 			uvs = {
 				{
@@ -1118,13 +1182,13 @@ local function var_0_11(arg_1_0, arg_1_1)
 					0
 				},
 				{
-					math.min(arg_1_1[1] / var_1_1.size[1], 1),
-					math.min(arg_1_1[2] / var_1_1.size[2], 1)
+					math.min(arg_1_1[1] / get_atlas_settings_by_texture_name.size[1], 1),
+					math.min(arg_1_1[2] / get_atlas_settings_by_texture_name.size[2], 1)
 				}
 			},
-			texture_id = var_1_0
+			texture_id = str
 		},
-		background_id = var_1_0,
+		background_id = str,
 		text_input_hotspot = {},
 		screen_hotspot = {},
 		channel_hotspot = {},
@@ -1134,7 +1198,7 @@ local function var_0_11(arg_1_0, arg_1_1)
 			text = ""
 		}
 	}
-	local var_1_7 = {
+	local tbl_5 = {
 		left_hotspot = {
 			color = {
 				50,
@@ -1380,11 +1444,11 @@ local function var_0_11(arg_1_0, arg_1_1)
 				0,
 				1
 			},
-			texture_tiling_size = var_1_1.size
+			texture_tiling_size = get_atlas_settings_by_texture_name.size
 		},
 		frame = {
-			texture_size = var_1_2.texture_size,
-			texture_sizes = var_1_2.texture_sizes,
+			texture_size = menu_frame_02.texture_size,
+			texture_sizes = menu_frame_02.texture_sizes,
 			color = {
 				255,
 				255,
@@ -1485,8 +1549,8 @@ local function var_0_11(arg_1_0, arg_1_1)
 				10
 			},
 			size = {
-				var_0_10.input_field.size[1] - 10,
-				var_0_10.input_field.size[2]
+				tbl_3.input_field.size[1] - 10,
+				tbl_3.input_field.size[2]
 			},
 			caret_size = {
 				2,
@@ -1548,24 +1612,25 @@ local function var_0_11(arg_1_0, arg_1_1)
 		}
 	}
 
-	var_1_4.element.passes = var_1_5
-	var_1_4.content = var_1_6
-	var_1_4.style = var_1_7
-	var_1_4.offset = {
+	tbl.element.passes = tbl_2
+	tbl.content = tbl_4
+	tbl.style = tbl_5
+	tbl.offset = {
 		0,
 		0,
 		0
 	}
-	var_1_4.scenegraph_id = arg_1_0
+	tbl.scenegraph_id = arg_1_0
 
-	return var_1_4
+	return tbl
 end
 
-local function var_0_12(arg_9_0, arg_9_1)
-	local var_9_0 = {
+local function fn_2(arg_9_0, arg_9_1)
+	-- function 9
+	local tbl = {
 		element = {}
 	}
-	local var_9_1 = {
+	local tbl_2 = {
 		{
 			pass_type = "texture_frame",
 			style_id = "frame",
@@ -1579,12 +1644,16 @@ local function var_0_12(arg_9_0, arg_9_1)
 			style_id = "text",
 			pass_type = "text_area_chat",
 			text_id = "text_field",
-			content_check_function = function(arg_10_0, arg_10_1)
-				if arg_10_0.private_user_name then
+			content_check_function = function (self, arg_10_1)
+				-- function 10
+				if not self.private_user_name then
 					return false
 				end
 
-				arg_10_0.message_tables = arg_10_0.channel_messages_table[arg_10_0.channel_name] or {}
+				local var_10_0 = self.channel_messages_table[self.channel_name]
+
+				var_10_0 = var_10_0 or {}
+				self.message_tables = var_10_0
 
 				return true
 			end
@@ -1593,18 +1662,22 @@ local function var_0_12(arg_9_0, arg_9_1)
 			style_id = "text",
 			pass_type = "text_area_chat",
 			text_id = "text_field",
-			content_check_function = function(arg_11_0, arg_11_1)
-				if not arg_11_0.private_user_name then
+			content_check_function = function (self, arg_11_1)
+				-- function 11
+				if not self.private_user_name then
 					return false
 				end
 
-				arg_11_0.message_tables = arg_11_0.private_messages_table[arg_11_0.private_user_name] or {}
+				local var_11_0 = self.private_messages_table[self.private_user_name]
+
+				var_11_0 = var_11_0 or {}
+				self.message_tables = var_11_0
 
 				return true
 			end
 		}
 	}
-	local var_9_2 = {
+	local tbl_3 = {
 		text_start_offset = 0,
 		channel_name = " ",
 		mask_id = "mask_rect",
@@ -1613,7 +1686,7 @@ local function var_0_12(arg_9_0, arg_9_1)
 		message_tables = {},
 		frame = var_0_5.texture
 	}
-	local var_9_3 = {
+	local tbl_4 = {
 		mask = {
 			corner_radius = 0,
 			offset = {
@@ -1681,24 +1754,25 @@ local function var_0_12(arg_9_0, arg_9_1)
 		}
 	}
 
-	var_9_0.element.passes = var_9_1
-	var_9_0.content = var_9_2
-	var_9_0.style = var_9_3
-	var_9_0.offset = {
+	tbl.element.passes = tbl_2
+	tbl.content = tbl_3
+	tbl.style = tbl_4
+	tbl.offset = {
 		0,
 		0,
 		0
 	}
-	var_9_0.scenegraph_id = arg_9_0
+	tbl.scenegraph_id = arg_9_0
 
-	return var_9_0
+	return tbl
 end
 
-local function var_0_13(arg_12_0, arg_12_1)
-	local var_12_0 = {
+local function fn_3(arg_12_0, arg_12_1)
+	-- function 12
+	local tbl = {
 		element = {}
 	}
-	local var_12_1 = {
+	local tbl_2 = {
 		{
 			pass_type = "texture",
 			style_id = "mask",
@@ -1716,21 +1790,25 @@ local function var_0_13(arg_12_0, arg_12_1)
 			style_id = "text",
 			pass_type = "user_list_chat",
 			text_id = "text_field",
-			content_check_function = function(arg_13_0, arg_13_1)
-				arg_13_0.message_tables = arg_13_0.channel_messages_table[arg_13_0.channel_name] or {}
+			content_check_function = function (self, arg_13_1)
+				-- function 13
+				local var_13_0 = self.channel_messages_table[self.channel_name]
+
+				var_13_0 = var_13_0 or {}
+				self.message_tables = var_13_0
 
 				return true
 			end
 		}
 	}
-	local var_12_2 = {
+	local tbl_3 = {
 		text_start_offset = 0,
 		channel_name = " ",
 		mask_id = "mask_rect",
 		channel_messages_table = {},
 		message_tables = {}
 	}
-	local var_12_3 = {
+	local tbl_4 = {
 		mask = {
 			corner_radius = 0,
 			offset = {
@@ -1791,26 +1869,27 @@ local function var_0_13(arg_12_0, arg_12_1)
 		}
 	}
 
-	var_12_0.element.passes = var_12_1
-	var_12_0.content = var_12_2
-	var_12_0.style = var_12_3
-	var_12_0.offset = {
+	tbl.element.passes = tbl_2
+	tbl.content = tbl_3
+	tbl.style = tbl_4
+	tbl.offset = {
 		0,
 		0,
 		0
 	}
-	var_12_0.scenegraph_id = arg_12_0
+	tbl.scenegraph_id = arg_12_0
 
-	return var_12_0
+	return tbl
 end
 
-local function var_0_14(arg_14_0)
-	local var_14_0 = "entry_root"
-	local var_14_1 = var_0_10[var_14_0].size
-	local var_14_2 = UIFrameSettings.menu_frame_06
-	local var_14_3 = {
+local function fn_4(arg_14_0)
+	-- function 14
+	local str = "entry_root"
+	local size = tbl_3[str].size
+	local menu_frame_06 = UIFrameSettings.menu_frame_06
+	local tbl = {
 		0,
-		-(var_0_7 * (arg_14_0 - 1)),
+		-(num_3 * (arg_14_0 - 1)),
 		0
 	}
 
@@ -1846,30 +1925,63 @@ local function var_0_14(arg_14_0)
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_15_0)
-						local var_15_0 = arg_15_0.button_hotspot
+					content_check_function = function (self)
+						-- function 15
+						local button_hotspot = self.button_hotspot
 
-						return not var_15_0.is_selected and not var_15_0.is_hover
+						return not not button_hotspot.is_selected or not button_hotspot.is_hover
 					end
 				},
 				{
 					style_id = "title_text_hover",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_16_0)
-						local var_16_0 = arg_16_0.button_hotspot
+					content_check_function = function (self)
+						-- function 16
+						local button_hotspot = self.button_hotspot
+						local is_selected
 
-						return not var_16_0.disable_button and (var_16_0.is_selected or var_16_0.is_hover)
+						if not button_hotspot.disable_button then
+							is_selected = button_hotspot.is_selected
+
+							if not is_selected then
+								is_selected = button_hotspot.is_hover
+							end
+						else
+							is_selected = false
+						end
+
+						if false then
+							is_selected = true
+						end
+
+						return is_selected
 					end
 				},
 				{
 					texture_id = "glow",
 					style_id = "glow",
 					pass_type = "texture",
-					content_check_function = function(arg_17_0)
-						local var_17_0 = arg_17_0.button_hotspot
+					content_check_function = function (self)
+						-- function 17
+						local button_hotspot = self.button_hotspot
+						local is_selected
 
-						return not var_17_0.disable_button and (var_17_0.is_selected or var_17_0.is_hover)
+						if not button_hotspot.disable_button then
+							is_selected = button_hotspot.is_selected
+
+							if not is_selected then
+								is_selected = button_hotspot.is_hover
+							end
+						else
+							is_selected = false
+						end
+
+						if false then
+							is_selected = true
+						end
+
+						return is_selected
 					end
 				}
 			}
@@ -1881,7 +1993,7 @@ local function var_0_14(arg_14_0)
 			description_text = "n/a",
 			icon = "icons_placeholder",
 			button_hotspot = {},
-			frame = var_14_2.texture
+			frame = menu_frame_06.texture
 		},
 		style = {
 			icon = {
@@ -1897,8 +2009,8 @@ local function var_0_14(arg_14_0)
 					0
 				},
 				size = {
-					var_14_1[2],
-					var_14_1[2]
+					size[2],
+					size[2]
 				}
 			},
 			background = {
@@ -1922,11 +2034,11 @@ local function var_0_14(arg_14_0)
 				font_type = "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				size = {
-					var_0_10[var_14_0].size[1] - 70,
-					var_0_10[var_14_0].size[2]
+					tbl_3[str].size[1] - 70,
+					tbl_3[str].size[2]
 				},
 				offset = {
-					var_14_1[2] + var_0_2,
+					size[2] + var_0_2,
 					-10,
 					3
 				}
@@ -1939,11 +2051,11 @@ local function var_0_14(arg_14_0)
 				font_type = "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				size = {
-					var_0_10[var_14_0].size[1] - 70,
-					var_0_10[var_14_0].size[2]
+					tbl_3[str].size[1] - 70,
+					tbl_3[str].size[2]
 				},
 				offset = {
-					var_14_1[2] + var_0_2,
+					size[2] + var_0_2,
 					-10,
 					3
 				}
@@ -1956,7 +2068,7 @@ local function var_0_14(arg_14_0)
 				font_type = "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("rosy_brown", 255),
 				offset = {
-					var_14_1[2] + var_0_2,
+					size[2] + var_0_2,
 					4,
 					3
 				}
@@ -1969,14 +2081,14 @@ local function var_0_14(arg_14_0)
 				font_type = "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
-					var_14_1[2] + var_0_2,
+					size[2] + var_0_2,
 					4,
 					3
 				}
 			},
 			frame = {
-				texture_size = var_14_2.texture_size,
-				texture_sizes = var_14_2.texture_sizes,
+				texture_size = menu_frame_06.texture_size,
+				texture_sizes = menu_frame_06.texture_sizes,
 				color = {
 					0,
 					255,
@@ -2003,12 +2115,12 @@ local function var_0_14(arg_14_0)
 				}
 			}
 		},
-		scenegraph_id = var_14_0,
-		offset = var_14_3
+		scenegraph_id = str,
+		offset = tbl
 	}
 end
 
-local var_0_15 = {
+local tbl_4 = {
 	scenegraph_id = "channel_list",
 	element = {
 		passes = {
@@ -2071,12 +2183,13 @@ local var_0_15 = {
 	}
 }
 
-local function var_0_16(arg_18_0, arg_18_1, arg_18_2)
-	local var_18_0 = UIFrameSettings.button_frame_01
-	local var_18_1 = {
+local function fn_5(arg_18_0, arg_18_1, arg_18_2)
+	-- function 18
+	local button_frame_01 = UIFrameSettings.button_frame_01
+	local tbl = {
 		element = {}
 	}
-	local var_18_2 = {
+	local tbl_2 = {
 		{
 			texture_id = "frame",
 			style_id = "frame",
@@ -2095,10 +2208,11 @@ local function var_0_16(arg_18_0, arg_18_1, arg_18_2)
 			style_id = "channel_name",
 			pass_type = "text",
 			text_id = "channel_name",
-			content_check_function = function(arg_19_0, arg_19_1)
-				if arg_19_0.tab_hotspot.is_hover then
+			content_check_function = function (self, arg_19_1)
+				-- function 19
+				if not self.tab_hotspot.is_hover then
 					arg_19_1.text_color = arg_19_1.hover_color
-				elseif arg_19_0.selected then
+				elseif not self.selected then
 					arg_19_1.text_color = arg_19_1.selected_color
 				else
 					arg_19_1.text_color = arg_19_1.base_color
@@ -2108,15 +2222,15 @@ local function var_0_16(arg_18_0, arg_18_1, arg_18_2)
 			end
 		}
 	}
-	local var_18_3 = {
+	local tbl_4 = {
 		texture_id = "rect_masked",
 		tab_hotspot = {},
 		exit_button_hotspot = {},
 		channel_name = arg_18_0,
-		frame = var_18_0.texture,
+		frame = button_frame_01.texture,
 		selected = arg_18_2 == arg_18_0
 	}
-	local var_18_4 = {
+	local tbl_5 = {
 		channel_name = {
 			font_size = 18,
 			pixel_perfect = false,
@@ -2136,8 +2250,8 @@ local function var_0_16(arg_18_0, arg_18_1, arg_18_2)
 			selected_color = Colors.get_table("cheeseburger"),
 			hover_color = Colors.get_table("white"),
 			size = {
-				var_0_10.channel_tab_anchor.size[1] - 10,
-				var_0_10.channel_tab_anchor.size[2]
+				tbl_3.channel_tab_anchor.size[1] - 10,
+				tbl_3.channel_tab_anchor.size[2]
 			},
 			offset = {
 				0,
@@ -2155,7 +2269,7 @@ local function var_0_16(arg_18_0, arg_18_1, arg_18_2)
 				255,
 				255
 			},
-			texture_size = var_0_10.channel_tab_anchor.size,
+			texture_size = tbl_3.channel_tab_anchor.size,
 			offset = {
 				0,
 				0,
@@ -2172,8 +2286,8 @@ local function var_0_16(arg_18_0, arg_18_1, arg_18_2)
 				0
 			},
 			texture_size = {
-				var_0_10.channel_tab_anchor.size[1] - 4,
-				var_0_10.channel_tab_anchor.size[2] - 2
+				tbl_3.channel_tab_anchor.size[1] - 4,
+				tbl_3.channel_tab_anchor.size[2] - 2
 			},
 			offset = {
 				2,
@@ -2183,8 +2297,8 @@ local function var_0_16(arg_18_0, arg_18_1, arg_18_2)
 		},
 		frame = {
 			masked = true,
-			texture_size = var_18_0.texture_size,
-			texture_sizes = var_18_0.texture_sizes,
+			texture_size = button_frame_01.texture_size,
+			texture_sizes = button_frame_01.texture_sizes,
 			color = {
 				255,
 				255,
@@ -2199,20 +2313,20 @@ local function var_0_16(arg_18_0, arg_18_1, arg_18_2)
 		}
 	}
 
-	var_18_1.element.passes = var_18_2
-	var_18_1.content = var_18_3
-	var_18_1.style = var_18_4
-	var_18_1.offset = {
-		(arg_18_1 - 1) * var_0_10.channel_tab_anchor.size[1],
+	tbl.element.passes = tbl_2
+	tbl.content = tbl_4
+	tbl.style = tbl_5
+	tbl.offset = {
+		(arg_18_1 - 1) * tbl_3.channel_tab_anchor.size[1],
 		0,
 		0
 	}
-	var_18_1.scenegraph_id = "channel_tab_anchor"
+	tbl.scenegraph_id = "channel_tab_anchor"
 
-	return var_18_1
+	return tbl
 end
 
-local var_0_17 = {
+local tbl_5 = {
 	scenegraph_id = "private_user_list",
 	element = {
 		passes = {
@@ -2274,7 +2388,7 @@ local var_0_17 = {
 		0
 	}
 }
-local var_0_18 = {
+local tbl_6 = {
 	scenegraph_id = "channels_button_list",
 	element = {
 		passes = {
@@ -2337,7 +2451,7 @@ local var_0_18 = {
 		0
 	}
 }
-local var_0_19 = {
+local tbl_7 = {
 	scenegraph_id = "popular_channels_button_list",
 	element = {
 		passes = {
@@ -2401,10 +2515,11 @@ local var_0_19 = {
 }
 
 function create_channel_entry(arg_20_0, arg_20_1)
-	local var_20_0 = {
+	-- function 20
+	local tbl = {
 		element = {}
 	}
-	local var_20_1 = {
+	local tbl_2 = {
 		{
 			style_id = "exit_button_hotspot",
 			pass_type = "hotspot",
@@ -2414,16 +2529,18 @@ function create_channel_entry(arg_20_0, arg_20_1)
 			pass_type = "texture",
 			style_id = "exit_button",
 			texture_id = "exit_texture_id",
-			content_check_function = function(arg_21_0)
-				return not arg_21_0.exit_button_hotspot.is_hover
+			content_check_function = function (self)
+				-- function 21
+				return not self.exit_button_hotspot.is_hover
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "exit_button_hover",
 			texture_id = "exit_texture_hover_id",
-			content_check_function = function(arg_22_0)
-				return arg_22_0.exit_button_hotspot.is_hover
+			content_check_function = function (self)
+				-- function 22
+				return self.exit_button_hotspot.is_hover
 			end
 		},
 		{
@@ -2434,8 +2551,9 @@ function create_channel_entry(arg_20_0, arg_20_1)
 			style_id = "channel_name",
 			pass_type = "text",
 			text_id = "channel_name",
-			content_check_function = function(arg_23_0, arg_23_1)
-				if arg_23_0.channel_hotspot.is_hover then
+			content_check_function = function (self, arg_23_1)
+				-- function 23
+				if not self.channel_hotspot.is_hover then
 					arg_23_1.text_color = Colors.get_table("white")
 				else
 					arg_23_1.text_color = Colors.get_table("cheeseburger")
@@ -2445,14 +2563,14 @@ function create_channel_entry(arg_20_0, arg_20_1)
 			end
 		}
 	}
-	local var_20_2 = {
+	local tbl_3 = {
 		exit_texture_id = "tabs_icon_power",
 		exit_texture_hover_id = "tabs_icon_power_glow",
 		channel_hotspot = {},
 		channel_name = arg_20_0,
 		exit_button_hotspot = {}
 	}
-	local var_20_3 = {
+	local tbl_4 = {
 		channel_name = {
 			font_size = 18,
 			word_wrap = false,
@@ -2514,24 +2632,25 @@ function create_channel_entry(arg_20_0, arg_20_1)
 		}
 	}
 
-	var_20_0.element.passes = var_20_1
-	var_20_0.content = var_20_2
-	var_20_0.style = var_20_3
-	var_20_0.offset = {
+	tbl.element.passes = tbl_2
+	tbl.content = tbl_3
+	tbl.style = tbl_4
+	tbl.offset = {
 		0,
 		arg_20_1,
 		0
 	}
-	var_20_0.scenegraph_id = "channel_list_entry"
+	tbl.scenegraph_id = "channel_list_entry"
 
-	return var_20_0
+	return tbl
 end
 
 function create_recent_channel_entry(arg_24_0, arg_24_1)
-	local var_24_0 = {
+	-- function 24
+	local tbl = {
 		element = {}
 	}
-	local var_24_1 = {
+	local tbl_2 = {
 		{
 			pass_type = "hotspot",
 			content_id = "channel_hotspot"
@@ -2540,8 +2659,9 @@ function create_recent_channel_entry(arg_24_0, arg_24_1)
 			style_id = "channel_name",
 			pass_type = "text",
 			text_id = "channel_name",
-			content_check_function = function(arg_25_0, arg_25_1)
-				if arg_25_0.channel_hotspot.is_hover then
+			content_check_function = function (self, arg_25_1)
+				-- function 25
+				if not self.channel_hotspot.is_hover then
 					arg_25_1.text_color = Colors.get_table("white")
 				else
 					arg_25_1.text_color = Colors.get_table("cheeseburger")
@@ -2551,14 +2671,14 @@ function create_recent_channel_entry(arg_24_0, arg_24_1)
 			end
 		}
 	}
-	local var_24_2 = {
+	local tbl_3 = {
 		exit_texture_id = "tabs_icon_power",
 		exit_texture_hover_id = "tabs_icon_power_glow",
 		channel_hotspot = {},
 		channel_name = arg_24_0,
 		exit_button_hotspot = {}
 	}
-	local var_24_3 = {
+	local tbl_4 = {
 		channel_name = {
 			font_size = 28,
 			word_wrap = false,
@@ -2576,24 +2696,25 @@ function create_recent_channel_entry(arg_24_0, arg_24_1)
 		}
 	}
 
-	var_24_0.element.passes = var_24_1
-	var_24_0.content = var_24_2
-	var_24_0.style = var_24_3
-	var_24_0.offset = {
+	tbl.element.passes = tbl_2
+	tbl.content = tbl_3
+	tbl.style = tbl_4
+	tbl.offset = {
 		0,
 		arg_24_1,
 		0
 	}
-	var_24_0.scenegraph_id = "channels_button_list_entry"
+	tbl.scenegraph_id = "channels_button_list_entry"
 
-	return var_24_0
+	return tbl
 end
 
 function create_popular_channels_entry(arg_26_0, arg_26_1, arg_26_2)
-	local var_26_0 = {
+	-- function 26
+	local tbl = {
 		element = {}
 	}
-	local var_26_1 = {
+	local tbl_2 = {
 		{
 			pass_type = "hotspot",
 			content_id = "channel_hotspot"
@@ -2602,8 +2723,9 @@ function create_popular_channels_entry(arg_26_0, arg_26_1, arg_26_2)
 			style_id = "channel_name",
 			pass_type = "text",
 			text_id = "channel_name",
-			content_check_function = function(arg_27_0, arg_27_1)
-				if arg_27_0.channel_hotspot.is_hover then
+			content_check_function = function (self, arg_27_1)
+				-- function 27
+				if not self.channel_hotspot.is_hover then
 					arg_27_1.text_color = Colors.get_table("white")
 				else
 					arg_27_1.text_color = Colors.get_table("cheeseburger")
@@ -2618,7 +2740,7 @@ function create_popular_channels_entry(arg_26_0, arg_26_1, arg_26_2)
 			text_id = "num_users"
 		}
 	}
-	local var_26_2 = {
+	local tbl_3 = {
 		exit_texture_id = "tabs_icon_power",
 		exit_texture_hover_id = "tabs_icon_power_glow",
 		channel_hotspot = {},
@@ -2626,7 +2748,7 @@ function create_popular_channels_entry(arg_26_0, arg_26_1, arg_26_2)
 		num_users = arg_26_1,
 		exit_button_hotspot = {}
 	}
-	local var_26_3 = {
+	local tbl_4 = {
 		channel_name = {
 			font_size = 28,
 			word_wrap = false,
@@ -2659,24 +2781,25 @@ function create_popular_channels_entry(arg_26_0, arg_26_1, arg_26_2)
 		}
 	}
 
-	var_26_0.element.passes = var_26_1
-	var_26_0.content = var_26_2
-	var_26_0.style = var_26_3
-	var_26_0.offset = {
+	tbl.element.passes = tbl_2
+	tbl.content = tbl_3
+	tbl.style = tbl_4
+	tbl.offset = {
 		0,
 		arg_26_2,
 		0
 	}
-	var_26_0.scenegraph_id = "popular_channels_button_list_entry"
+	tbl.scenegraph_id = "popular_channels_button_list_entry"
 
-	return var_26_0
+	return tbl
 end
 
 function create_filtered_user_name_entry(arg_28_0, arg_28_1)
-	local var_28_0 = {
+	-- function 28
+	local tbl = {
 		element = {}
 	}
-	local var_28_1 = {
+	local tbl_2 = {
 		{
 			pass_type = "hotspot",
 			content_id = "user_name_hotspot"
@@ -2685,8 +2808,9 @@ function create_filtered_user_name_entry(arg_28_0, arg_28_1)
 			style_id = "user_name",
 			pass_type = "text",
 			text_id = "user_name",
-			content_check_function = function(arg_29_0, arg_29_1)
-				if arg_29_0.user_name_hotspot.is_hover then
+			content_check_function = function (self, arg_29_1)
+				-- function 29
+				if not self.user_name_hotspot.is_hover then
 					arg_29_1.text_color = Colors.get_table("white")
 				else
 					arg_29_1.text_color = Colors.get_table("medium_purple")
@@ -2696,14 +2820,14 @@ function create_filtered_user_name_entry(arg_28_0, arg_28_1)
 			end
 		}
 	}
-	local var_28_2 = {
+	local tbl_3 = {
 		exit_texture_hover_id = "tabs_icon_power_glow",
 		exit_texture_id = "tabs_icon_power",
 		user_name_hotspot = {},
 		user_name = arg_28_0,
 		exit_button_hotspot = {}
 	}
-	local var_28_3 = {
+	local tbl_4 = {
 		user_name = {
 			font_size = 16,
 			word_wrap = false,
@@ -2721,25 +2845,26 @@ function create_filtered_user_name_entry(arg_28_0, arg_28_1)
 		}
 	}
 
-	var_28_0.element.passes = var_28_1
-	var_28_0.content = var_28_2
-	var_28_0.style = var_28_3
-	var_28_0.offset = {
+	tbl.element.passes = tbl_2
+	tbl.content = tbl_3
+	tbl.style = tbl_4
+	tbl.offset = {
 		0,
 		arg_28_1,
 		0
 	}
-	var_28_0.scenegraph_id = "filtered_user_names_list_entry"
+	tbl.scenegraph_id = "filtered_user_names_list_entry"
 
-	return var_28_0
+	return tbl
 end
 
 function create_private_user_entry(arg_30_0, arg_30_1, arg_30_2)
-	local var_30_0 = {
+	-- function 30
+	local tbl = {
 		element = {}
 	}
-	local var_30_1 = string.sub(arg_30_0, 1, -11)
-	local var_30_2 = {
+	local sub = string.sub(arg_30_0, 1, -11)
+	local tbl_2 = {
 		{
 			style_id = "exit_button_hotspot",
 			pass_type = "hotspot",
@@ -2749,16 +2874,18 @@ function create_private_user_entry(arg_30_0, arg_30_1, arg_30_2)
 			pass_type = "texture",
 			style_id = "exit_button",
 			texture_id = "exit_texture_id",
-			content_check_function = function(arg_31_0)
-				return not arg_31_0.exit_button_hotspot.is_hover
+			content_check_function = function (self)
+				-- function 31
+				return not self.exit_button_hotspot.is_hover
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "exit_button_hover",
 			texture_id = "exit_texture_hover_id",
-			content_check_function = function(arg_32_0)
-				return arg_32_0.exit_button_hotspot.is_hover
+			content_check_function = function (self)
+				-- function 32
+				return self.exit_button_hotspot.is_hover
 			end
 		},
 		{
@@ -2769,24 +2896,25 @@ function create_private_user_entry(arg_30_0, arg_30_1, arg_30_2)
 			style_id = "user_name",
 			pass_type = "text",
 			text_id = "trimmed_name",
-			content_check_function = function(arg_33_0, arg_33_1)
-				local var_33_0 = arg_33_1.selected_color
-				local var_33_1 = arg_33_1.unselected_color
+			content_check_function = function (self, arg_33_1)
+				-- function 33
+				local selected_color = arg_33_1.selected_color
+				local unselected_color = arg_33_1.unselected_color
 
-				if arg_33_0.user_hotspot.is_hover then
-					arg_33_1.text_color = var_33_0
+				if not self.user_hotspot.is_hover then
+					arg_33_1.text_color = selected_color
 				else
-					local var_33_2 = 1
+					local num = 1
 
-					if arg_33_0.new then
-						local var_33_3 = Managers.time:time("main")
+					if not self.new then
+						local time = Managers.time:time("main")
 
-						var_33_2 = 0.5 + math.sin(var_33_3 * 8) * 0.5
+						num = 0.5 + math.sin(time * 8) * 0.5
 					end
 
-					arg_33_1.current_color[2] = math.lerp(var_33_0[2], var_33_1[2], var_33_2)
-					arg_33_1.current_color[3] = math.lerp(var_33_0[3], var_33_1[3], var_33_2)
-					arg_33_1.current_color[4] = math.lerp(var_33_0[4], var_33_1[4], var_33_2)
+					arg_33_1.current_color[2] = math.lerp(selected_color[2], unselected_color[2], num)
+					arg_33_1.current_color[3] = math.lerp(selected_color[3], unselected_color[3], num)
+					arg_33_1.current_color[4] = math.lerp(selected_color[4], unselected_color[4], num)
 					arg_33_1.text_color = arg_33_1.current_color
 				end
 
@@ -2794,16 +2922,16 @@ function create_private_user_entry(arg_30_0, arg_30_1, arg_30_2)
 			end
 		}
 	}
-	local var_30_3 = {
+	local tbl_3 = {
 		exit_texture_hover_id = "tabs_icon_power_glow",
 		exit_texture_id = "tabs_icon_power",
 		user_hotspot = {},
 		user_name = arg_30_0,
-		trimmed_name = var_30_1,
+		trimmed_name = sub,
 		exit_button_hotspot = {},
 		new = arg_30_2
 	}
-	local var_30_4 = {
+	local tbl_4 = {
 		user_name = {
 			font_size = 16,
 			horizontal_alignment = "left",
@@ -2860,20 +2988,20 @@ function create_private_user_entry(arg_30_0, arg_30_1, arg_30_2)
 		}
 	}
 
-	var_30_0.element.passes = var_30_2
-	var_30_0.content = var_30_3
-	var_30_0.style = var_30_4
-	var_30_0.offset = {
+	tbl.element.passes = tbl_2
+	tbl.content = tbl_3
+	tbl.style = tbl_4
+	tbl.offset = {
 		0,
 		arg_30_1,
 		0
 	}
-	var_30_0.scenegraph_id = "private_user_list_entry"
+	tbl.scenegraph_id = "private_user_list_entry"
 
-	return var_30_0
+	return tbl
 end
 
-local var_0_20 = {
+local tbl_8 = {
 	scenegraph_id = "commands_list",
 	element = {
 		passes = {
@@ -2935,7 +3063,7 @@ local var_0_20 = {
 		0
 	}
 }
-local var_0_21 = {
+local tbl_9 = {
 	scenegraph_id = "filtered_user_names_list",
 	element = {
 		passes = {
@@ -2999,10 +3127,11 @@ local var_0_21 = {
 }
 
 function create_command_entry(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4, arg_34_5, arg_34_6)
-	local var_34_0 = {
+	-- function 34
+	local tbl = {
 		element = {}
 	}
-	local var_34_1 = {
+	local tbl_2 = {
 		{
 			pass_type = "hotspot",
 			content_id = "command_hotspot"
@@ -3016,22 +3145,23 @@ function create_command_entry(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4, 
 			style_id = "command_compare",
 			pass_type = "text",
 			text_id = "command_compare",
-			content_check_function = function(arg_35_0, arg_35_1)
-				if arg_35_0.command_hotspot.is_hover then
-					arg_35_0.command_compare = arg_35_0.command
+			content_check_function = function (self, arg_35_1)
+				-- function 35
+				if not self.command_hotspot.is_hover then
+					self.command_compare = self.command
 
 					return true
 				end
 
-				local var_35_0 = arg_34_6.text
-				local var_35_1 = arg_35_0.command
-				local var_35_2 = string.len(var_35_1)
-				local var_35_3, var_35_4 = string.find(var_35_1, var_35_0)
+				local text = arg_34_6.text
+				local command = self.command
+				local len = string.len(command)
+				local find, var_35_4 = string.find(command, text)
 
-				if var_35_3 ~= 1 and var_35_4 ~= var_35_2 then
+				if not (find == 1 or var_35_4 == len) then
 					return false
 				else
-					arg_35_0.command_compare = var_35_0
+					self.command_compare = text
 
 					return true
 				end
@@ -3041,12 +3171,13 @@ function create_command_entry(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4, 
 			style_id = "description",
 			pass_type = "text",
 			text_id = "description",
-			content_check_function = function(arg_36_0, arg_36_1)
-				return arg_36_0.description ~= nil
+			content_check_function = function (self, arg_36_1)
+				-- function 36
+				return self.description ~= nil
 			end
 		}
 	}
-	local var_34_2 = {
+	local tbl_3 = {
 		command_compare = " ",
 		command_hotspot = {},
 		command = arg_34_0,
@@ -3054,7 +3185,7 @@ function create_command_entry(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4, 
 		parameter = arg_34_2,
 		chat_text = arg_34_6
 	}
-	local var_34_3 = {
+	local tbl_4 = {
 		command = {
 			font_size = 16,
 			word_wrap = false,
@@ -3102,44 +3233,58 @@ function create_command_entry(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4, 
 		}
 	}
 
-	var_34_0.element.passes = var_34_1
-	var_34_0.content = var_34_2
-	var_34_0.style = var_34_3
-	var_34_0.offset = {
+	tbl.element.passes = tbl_2
+	tbl.content = tbl_3
+	tbl.style = tbl_4
+	tbl.offset = {
 		0,
 		arg_34_5,
 		0
 	}
-	var_34_0.scenegraph_id = "commands_list_entry"
+	tbl.scenegraph_id = "commands_list_entry"
 
-	return var_34_0
+	return tbl
 end
 
 function create_private_button(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5, arg_37_6)
+	-- function 37
 	local var_37_0
 
-	if arg_37_6 then
+	if not arg_37_6 then
 		var_37_0 = "button_" .. arg_37_6
 	else
 		var_37_0 = "button_normal"
 	end
 
-	local var_37_1 = Colors.get_color_table_with_alpha(var_37_0, 255)
+	local get_color_table_with_alpha = Colors.get_color_table_with_alpha(var_37_0, 255)
 
 	arg_37_3 = arg_37_3 or "button_bg_01"
 
-	local var_37_2 = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_37_3)
-	local var_37_3 = arg_37_2 and UIFrameSettings[arg_37_2] or UIFrameSettings.button_frame_01
+	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_37_3)
+	local var_37_3
 
-	return {
+	if not arg_37_2 then
+		var_37_3 = UIFrameSettings[arg_37_2]
+
+		if not var_37_3 then
+			-- Nothing
+		end
+	end
+
+	var_37_3 = UIFrameSettings.button_frame_01
+
+	::label_37_0::
+
+	local tbl = {
 		element = {
 			passes = {
 				{
 					style_id = "frame",
 					pass_type = "hotspot",
 					content_id = "button_hotspot",
-					content_check_function = function(arg_38_0)
-						arg_38_0.disable_button = not arg_38_0.parent.has_private_conversations
+					content_check_function = function (self)
+						-- function 38
+						self.disable_button = not self.parent.has_private_conversations
 
 						return true
 					end
@@ -3157,33 +3302,37 @@ function create_private_button(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4,
 				{
 					style_id = "clicked_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_39_0)
-						local var_39_0 = arg_39_0.button_hotspot.is_clicked
+					content_check_function = function (self)
+						-- function 39
+						local is_clicked = self.button_hotspot.is_clicked
 
-						return not var_39_0 or var_39_0 == 0
+						return not is_clicked and is_clicked == 0
 					end
 				},
 				{
 					style_id = "disabled_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_40_0)
-						return arg_40_0.button_hotspot.disable_button
+					content_check_function = function (self)
+						-- function 40
+						return self.button_hotspot.disable_button
 					end
 				},
 				{
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_41_0)
-						return not arg_41_0.button_hotspot.disable_button
+					content_check_function = function (self)
+						-- function 41
+						return not self.button_hotspot.disable_button
 					end
 				},
 				{
 					style_id = "title_text_disabled",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_42_0)
-						return arg_42_0.button_hotspot.disable_button
+					content_check_function = function (self)
+						-- function 42
+						return self.button_hotspot.disable_button
 					end
 				},
 				{
@@ -3205,253 +3354,304 @@ function create_private_button(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4,
 					texture_id = "hover_glow",
 					style_id = "hover_glow",
 					pass_type = "texture",
-					content_check_function = function(arg_43_0)
-						local var_43_0 = arg_43_0.button_hotspot
+					content_check_function = function (self)
+						-- function 43
+						local button_hotspot = self.button_hotspot
+						local is_selected
 
-						return not var_43_0.disable_button and (var_43_0.is_selected or var_43_0.is_hover)
+						if not button_hotspot.disable_button then
+							is_selected = button_hotspot.is_selected
+
+							if not is_selected then
+								is_selected = button_hotspot.is_hover
+							end
+						else
+							is_selected = false
+						end
+
+						if false then
+							is_selected = true
+						end
+
+						return is_selected
 					end
 				},
 				{
 					texture_id = "speech_bubble_id",
 					style_id = "speech_bubble",
 					pass_type = "texture",
-					content_check_function = function(arg_44_0, arg_44_1)
-						return arg_44_0.num_private_messages > 0
+					content_check_function = function (self, arg_44_1)
+						-- function 44
+						return self.num_private_messages > 0
 					end
 				},
 				{
 					style_id = "message_number",
 					pass_type = "text",
 					text_id = "message_number_text",
-					content_check_function = function(arg_45_0)
-						local var_45_0 = arg_45_0.num_private_messages
+					content_check_function = function (self)
+						-- function 45
+						local num_private_messages = self.num_private_messages
 
-						if var_45_0 <= 0 then
+						if num_private_messages <= 0 then
 							return false
 						end
 
-						if var_45_0 > 10 then
-							arg_45_0.message_number_text = "..."
+						if num_private_messages > 10 then
+							self.message_number_text = "..."
 						else
-							arg_45_0.message_number_text = tostring(var_45_0)
+							self.message_number_text = tostring(num_private_messages)
 						end
 
 						return true
 					end
 				}
 			}
-		},
-		content = {
-			speech_bubble_id = "speech_bubble",
-			message_number_text = "",
-			num_private_messages = 0,
-			glass_top = "button_glass_01",
-			has_private_conversations = false,
-			hover_glow = arg_37_6 and "button_state_hover_" .. arg_37_6 or "button_state_hover",
-			glow = arg_37_6 and "button_state_normal_" .. arg_37_6 or "button_state_normal",
-			button_hotspot = {},
-			title_text = arg_37_4 or "n/a",
-			frame = var_37_3.texture,
-			background = {
-				uvs = {
-					{
-						0,
-						1 - arg_37_1[2] / var_37_2.size[2]
-					},
-					{
-						arg_37_1[1] / var_37_2.size[1],
-						1
-					}
-				},
-				texture_id = arg_37_3
-			},
-			new_per_user = {}
-		},
-		style = {
-			background = {
-				color = var_37_1,
-				offset = {
-					0,
-					0,
-					0
-				}
-			},
-			clicked_rect = {
-				color = {
-					100,
-					0,
-					0,
-					0
-				},
-				offset = {
-					0,
-					0,
-					6
-				}
-			},
-			disabled_rect = {
-				color = {
-					150,
-					5,
-					5,
-					5
-				},
-				offset = {
-					0,
-					0,
-					6
-				}
-			},
-			title_text = {
-				vertical_alignment = "center",
-				upper_case = true,
-				word_wrap = true,
-				horizontal_alignment = "center",
-				font_type = "hell_shark",
-				font_size = arg_37_5 or 24,
-				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
-				offset = {
-					0,
-					0,
-					5
-				}
-			},
-			title_text_disabled = {
-				vertical_alignment = "center",
-				upper_case = true,
-				word_wrap = true,
-				horizontal_alignment = "center",
-				font_type = "hell_shark",
-				font_size = arg_37_5 or 24,
-				text_color = Colors.get_color_table_with_alpha("gray", 255),
-				offset = {
-					0,
-					0,
-					5
-				}
-			},
-			title_text_shadow = {
-				vertical_alignment = "center",
-				upper_case = true,
-				word_wrap = true,
-				horizontal_alignment = "center",
-				font_type = "hell_shark",
-				font_size = arg_37_5 or 24,
-				text_color = Colors.get_color_table_with_alpha("black", 255),
-				offset = {
-					2,
-					-2,
-					4
-				}
-			},
-			frame = {
-				texture_size = var_37_3.texture_size,
-				texture_sizes = var_37_3.texture_sizes,
-				color = {
-					255,
-					255,
-					255,
-					255
-				},
-				offset = {
-					0,
-					0,
-					7
-				}
-			},
-			hover_glow = {
-				color = {
-					255,
-					255,
-					255,
-					255
-				},
-				offset = {
-					0,
-					var_37_3.texture_sizes.horizontal[2],
-					1
-				},
-				size = {
-					arg_37_1[1],
-					math.min(60, arg_37_1[2] - var_37_3.texture_sizes.horizontal[2] * 2)
-				}
-			},
-			glass_top = {
-				color = {
-					255,
-					255,
-					255,
-					255
-				},
-				offset = {
-					0,
-					arg_37_1[2] - var_37_3.texture_sizes.horizontal[2] - 4,
-					3
-				},
-				size = {
-					arg_37_1[1],
-					5
-				}
-			},
-			glow = {
-				color = {
-					255,
-					255,
-					255,
-					255
-				},
-				offset = {
-					0,
-					var_37_3.texture_sizes.horizontal[2] - 1,
-					2
-				},
-				size = {
-					arg_37_1[1],
-					math.min(60, arg_37_1[2] - var_37_3.texture_sizes.horizontal[2] * 2)
-				}
-			},
-			speech_bubble = {
-				vertical_alignment = "top",
-				horizontal_alignment = "right",
-				texture_size = {
-					35,
-					35
-				},
-				offset = {
-					10,
-					10,
-					10
-				}
-			},
-			message_number = {
-				vertical_alignment = "center",
-				font_size = 18,
-				horizontal_alignment = "center",
-				word_wrap = true,
-				font_type = "hell_shark_arial",
-				text_color = {
-					255,
-					0,
-					0,
-					0
-				},
-				offset = {
-					57,
-					17,
-					11
-				}
-			}
-		},
-		scenegraph_id = arg_37_0,
-		offset = {
-			0,
-			0,
-			0
 		}
 	}
+	local tbl_2 = {
+		speech_bubble_id = "speech_bubble",
+		message_number_text = "",
+		num_private_messages = 0,
+		glass_top = "button_glass_01",
+		has_private_conversations = false
+	}
+	local str
+
+	if not arg_37_6 then
+		str = "button_state_hover_" .. arg_37_6
+
+		if not str then
+			-- Nothing
+		end
+	end
+
+	str = "button_state_hover"
+
+	::label_37_1::
+
+	tbl_2.hover_glow = str
+
+	local str_2
+
+	if not arg_37_6 then
+		str_2 = "button_state_normal_" .. arg_37_6
+
+		if not str_2 then
+			-- Nothing
+		end
+	end
+
+	str_2 = "button_state_normal"
+
+	::label_37_2::
+
+	tbl_2.glow = str_2
+	tbl_2.button_hotspot = {}
+	tbl_2.title_text = arg_37_4 or "n/a"
+	tbl_2.frame = var_37_3.texture
+	tbl_2.background = {
+		uvs = {
+			{
+				0,
+				1 - arg_37_1[2] / get_atlas_settings_by_texture_name.size[2]
+			},
+			{
+				arg_37_1[1] / get_atlas_settings_by_texture_name.size[1],
+				1
+			}
+		},
+		texture_id = arg_37_3
+	}
+	tbl_2.new_per_user = {}
+	tbl.content = tbl_2
+	tbl.style = {
+		background = {
+			color = get_color_table_with_alpha,
+			offset = {
+				0,
+				0,
+				0
+			}
+		},
+		clicked_rect = {
+			color = {
+				100,
+				0,
+				0,
+				0
+			},
+			offset = {
+				0,
+				0,
+				6
+			}
+		},
+		disabled_rect = {
+			color = {
+				150,
+				5,
+				5,
+				5
+			},
+			offset = {
+				0,
+				0,
+				6
+			}
+		},
+		title_text = {
+			vertical_alignment = "center",
+			upper_case = true,
+			word_wrap = true,
+			horizontal_alignment = "center",
+			font_type = "hell_shark",
+			font_size = arg_37_5 or 24,
+			text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
+			offset = {
+				0,
+				0,
+				5
+			}
+		},
+		title_text_disabled = {
+			vertical_alignment = "center",
+			upper_case = true,
+			word_wrap = true,
+			horizontal_alignment = "center",
+			font_type = "hell_shark",
+			font_size = arg_37_5 or 24,
+			text_color = Colors.get_color_table_with_alpha("gray", 255),
+			offset = {
+				0,
+				0,
+				5
+			}
+		},
+		title_text_shadow = {
+			vertical_alignment = "center",
+			upper_case = true,
+			word_wrap = true,
+			horizontal_alignment = "center",
+			font_type = "hell_shark",
+			font_size = arg_37_5 or 24,
+			text_color = Colors.get_color_table_with_alpha("black", 255),
+			offset = {
+				2,
+				-2,
+				4
+			}
+		},
+		frame = {
+			texture_size = var_37_3.texture_size,
+			texture_sizes = var_37_3.texture_sizes,
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				0,
+				0,
+				7
+			}
+		},
+		hover_glow = {
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				0,
+				var_37_3.texture_sizes.horizontal[2],
+				1
+			},
+			size = {
+				arg_37_1[1],
+				math.min(60, arg_37_1[2] - var_37_3.texture_sizes.horizontal[2] * 2)
+			}
+		},
+		glass_top = {
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				0,
+				arg_37_1[2] - var_37_3.texture_sizes.horizontal[2] - 4,
+				3
+			},
+			size = {
+				arg_37_1[1],
+				5
+			}
+		},
+		glow = {
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				0,
+				var_37_3.texture_sizes.horizontal[2] - 1,
+				2
+			},
+			size = {
+				arg_37_1[1],
+				math.min(60, arg_37_1[2] - var_37_3.texture_sizes.horizontal[2] * 2)
+			}
+		},
+		speech_bubble = {
+			vertical_alignment = "top",
+			horizontal_alignment = "right",
+			texture_size = {
+				35,
+				35
+			},
+			offset = {
+				10,
+				10,
+				10
+			}
+		},
+		message_number = {
+			vertical_alignment = "center",
+			font_size = 18,
+			horizontal_alignment = "center",
+			word_wrap = true,
+			font_type = "hell_shark_arial",
+			text_color = {
+				255,
+				0,
+				0,
+				0
+			},
+			offset = {
+				57,
+				17,
+				11
+			}
+		}
+	}
+	tbl.scenegraph_id = arg_37_0
+	tbl.offset = {
+		0,
+		0,
+		0
+	}
+
+	return tbl
 end
 
-local function var_0_22()
+local function fn_6()
+	-- function 46
 	return {
 		scenegraph_id = "emoji",
 		element = {
@@ -3463,16 +3663,22 @@ local function var_0_22()
 				{
 					style_id = "rect",
 					pass_type = "rounded_background",
-					content_check_function = function(arg_47_0)
-						return arg_47_0.texture_id and arg_47_0.hotspot.is_hover
+					content_check_function = function (self)
+						-- function 47
+						local texture_id = self.texture_id
+
+						texture_id = not texture_id and self.hotspot.is_hover
+
+						return texture_id
 					end
 				},
 				{
 					texture_id = "texture_id",
 					style_id = "texture_id",
 					pass_type = "texture",
-					content_check_function = function(arg_48_0)
-						return arg_48_0.texture_id
+					content_check_function = function (self)
+						-- function 48
+						return self.texture_id
 					end
 				}
 			}
@@ -3518,12 +3724,13 @@ local function var_0_22()
 	}
 end
 
-local function var_0_23()
-	local var_49_0 = UIFrameSettings.menu_frame_06
-	local var_49_1 = {
+local function fn_7()
+	-- function 49
+	local menu_frame_06 = UIFrameSettings.menu_frame_06
+	local tbl = {
 		element = {}
 	}
-	local var_49_2 = {
+	local tbl_2 = {
 		{
 			pass_type = "hotspot",
 			content_id = "hotspot"
@@ -3546,16 +3753,18 @@ local function var_0_23()
 			style_id = "emoji_text",
 			pass_type = "text",
 			text_id = "emoji_text_id",
-			content_check_function = function(arg_50_0)
-				return arg_50_0.emoji_text_id ~= nil
+			content_check_function = function (self)
+				-- function 50
+				return self.emoji_text_id ~= nil
 			end
 		},
 		{
 			texture_id = "emoji_texture_id",
 			style_id = "emoji_texture",
 			pass_type = "texture",
-			content_check_function = function(arg_51_0)
-				return arg_51_0.emoji_texture_id
+			content_check_function = function (self)
+				-- function 51
+				return self.emoji_texture_id
 			end
 		},
 		{
@@ -3564,13 +3773,13 @@ local function var_0_23()
 			texture_id = "frame"
 		}
 	}
-	local var_49_3 = {
+	local tbl_3 = {
 		mask_texture = "mask_rect",
-		frame = var_49_0.texture,
+		frame = menu_frame_06.texture,
 		hotspot = {},
 		screen_hotspot = {}
 	}
-	local var_49_4 = {
+	local tbl_4 = {
 		rect = {
 			offset = {
 				0,
@@ -3592,8 +3801,8 @@ local function var_0_23()
 			}
 		},
 		frame = {
-			texture_size = var_49_0.texture_size,
-			texture_sizes = var_49_0.texture_sizes,
+			texture_size = menu_frame_06.texture_size,
+			texture_sizes = menu_frame_06.texture_sizes,
 			color = {
 				255,
 				255,
@@ -3642,24 +3851,25 @@ local function var_0_23()
 		}
 	}
 
-	var_49_1.element.passes = var_49_2
-	var_49_1.content = var_49_3
-	var_49_1.style = var_49_4
-	var_49_1.offset = {
+	tbl.element.passes = tbl_2
+	tbl.content = tbl_3
+	tbl.style = tbl_4
+	tbl.offset = {
 		0,
 		0,
 		0
 	}
-	var_49_1.scenegraph_id = "emoji_frame"
+	tbl.scenegraph_id = "emoji_frame"
 
-	return var_49_1
+	return tbl
 end
 
-local function var_0_24()
-	local var_52_0 = {
+local function fn_8()
+	-- function 52
+	local tbl = {
 		element = {}
 	}
-	local var_52_1 = {
+	local tbl_2 = {
 		{
 			pass_type = "hotspot",
 			content_id = "hotspot"
@@ -3669,35 +3879,64 @@ local function var_0_24()
 			style_id = "scrollbar"
 		}
 	}
-	local var_52_2 = {
+	local tbl_3 = {
 		hotspot = {}
 	}
-	local var_52_3 = {
+	local tbl_4 = {
 		scrollbar = {
 			color = Colors.get_color_table_with_alpha("font_button_normal", 128)
 		}
 	}
 
-	var_52_0.element.passes = var_52_1
-	var_52_0.content = var_52_2
-	var_52_0.style = var_52_3
-	var_52_0.offset = {
+	tbl.element.passes = tbl_2
+	tbl.content = tbl_3
+	tbl.style = tbl_4
+	tbl.offset = {
 		0,
 		0,
 		0
 	}
-	var_52_0.scenegraph_id = "emoji_scrollbar"
+	tbl.scenegraph_id = "emoji_scrollbar"
 
-	return var_52_0
+	return tbl
 end
 
-local function var_0_25(arg_53_0, arg_53_1, arg_53_2)
-	local var_53_0 = arg_53_1 and UIFrameSettings[arg_53_1] or UIFrameSettings.menu_frame_06
-	local var_53_1 = arg_53_2 and UIFrameSettings[arg_53_2] or UIFrameSettings.frame_outer_glow_01
-	local var_53_2 = {
+local function fn_9(arg_53_0, arg_53_1, arg_53_2)
+	-- function 53
+	local var_53_0
+
+	if not arg_53_1 then
+		var_53_0 = UIFrameSettings[arg_53_1]
+
+		if not var_53_0 then
+			-- Nothing
+		end
+	end
+
+	var_53_0 = UIFrameSettings.menu_frame_06
+
+	do
+		local var_53_1
+	end
+
+	::label_53_0::
+
+	if not arg_53_2 then
+		var_53_1 = UIFrameSettings[arg_53_2]
+
+		if not var_53_1 then
+			-- Nothing
+		end
+	end
+
+	var_53_1 = UIFrameSettings.frame_outer_glow_01
+
+	::label_53_1::
+
+	local tbl = {
 		element = {}
 	}
-	local var_53_3 = {
+	local tbl_2 = {
 		{
 			pass_type = "hotspot",
 			content_id = "hotspot"
@@ -3725,8 +3964,23 @@ local function var_0_25(arg_53_0, arg_53_1, arg_53_2)
 		{
 			style_id = "background",
 			pass_type = "rect",
-			content_check_function = function(arg_54_0, arg_54_1)
-				arg_54_1.color = arg_54_0.hotspot.is_hover and arg_54_1.hover_color or arg_54_1.base_color
+			content_check_function = function (self, arg_54_1)
+				-- function 54
+				local hover_color
+
+				if not self.hotspot.is_hover then
+					hover_color = arg_54_1.hover_color
+
+					if not hover_color then
+						-- Nothing
+					end
+				end
+
+				hover_color = arg_54_1.base_color
+
+				::label_54_0::
+
+				arg_54_1.color = hover_color
 
 				return true
 			end
@@ -3735,12 +3989,13 @@ local function var_0_25(arg_53_0, arg_53_1, arg_53_2)
 			pass_type = "texture_frame",
 			style_id = "selected_frame",
 			texture_id = "selected_frame_id",
-			content_check_function = function(arg_55_0)
-				return arg_55_0.channel_name == arg_55_0.selected_channel
+			content_check_function = function (self)
+				-- function 55
+				return self.channel_name == self.selected_channel
 			end
 		}
 	}
-	local var_53_4 = {
+	local tbl_3 = {
 		num_members_id = "0",
 		icon_id = "icons_placeholder",
 		channel_name_id = "",
@@ -3748,7 +4003,7 @@ local function var_0_25(arg_53_0, arg_53_1, arg_53_2)
 		selected_frame_id = var_53_1.texture,
 		hotspot = {}
 	}
-	local var_53_5 = {
+	local tbl_4 = {
 		background = {
 			color = {
 				0,
@@ -3852,29 +4107,30 @@ local function var_0_25(arg_53_0, arg_53_1, arg_53_2)
 		}
 	}
 
-	var_53_2.element.passes = var_53_3
-	var_53_2.content = var_53_4
-	var_53_2.style = var_53_5
-	var_53_2.offset = {
+	tbl.element.passes = tbl_2
+	tbl.content = tbl_3
+	tbl.style = tbl_4
+	tbl.offset = {
 		0,
 		0,
 		0
 	}
-	var_53_2.scenegraph_id = arg_53_0
+	tbl.scenegraph_id = arg_53_0
 
-	return var_53_2
+	return tbl
 end
 
-local function var_0_26(arg_56_0, arg_56_1)
-	local var_56_0 = "menu_frame_bg_03"
-	local var_56_1 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_56_0)
-	local var_56_2 = UIFrameSettings.menu_frame_02
-	local var_56_3 = UIFrameSettings.menu_frame_06
-	local var_56_4 = UIFrameSettings.menu_frame_06
-	local var_56_5 = {
+local function fn_10(arg_56_0, arg_56_1)
+	-- function 56
+	local str = "menu_frame_bg_03"
+	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(str)
+	local menu_frame_02 = UIFrameSettings.menu_frame_02
+	local menu_frame_06 = UIFrameSettings.menu_frame_06
+	local menu_frame_06_2 = UIFrameSettings.menu_frame_06
+	local tbl = {
 		element = {}
 	}
-	local var_56_6 = {
+	local tbl_2 = {
 		{
 			scenegraph_id = "channels_window_text_box",
 			pass_type = "hotspot",
@@ -3904,15 +4160,16 @@ local function var_0_26(arg_56_0, arg_56_1)
 			pass_type = "rotated_texture",
 			style_id = "connecting_icon",
 			texture_id = "connecting_icon",
-			content_check_function = function(arg_57_0, arg_57_1)
-				if not arg_57_0.fetching_channels then
+			content_check_function = function (self, arg_57_1)
+				-- function 57
+				if not self.fetching_channels then
 					return false
 				end
 
-				local var_57_0 = Managers.time:mean_dt() * 400 % 360
-				local var_57_1 = math.degrees_to_radians(var_57_0)
+				local num = Managers.time:mean_dt() * 400 % 360
+				local degrees_to_radians = math.degrees_to_radians(num)
 
-				arg_57_1.angle = arg_57_1.angle + var_57_1
+				arg_57_1.angle = arg_57_1.angle + degrees_to_radians
 
 				return true
 			end
@@ -3951,12 +4208,13 @@ local function var_0_26(arg_56_0, arg_56_1)
 			pass_type = "texture",
 			style_id = "search_icon",
 			texture_id = "search_icon_id",
-			content_check_function = function(arg_58_0, arg_58_1)
-				if arg_58_0.text_field_active then
+			content_check_function = function (self, arg_58_1)
+				-- function 58
+				if not self.text_field_active then
 					return
 				end
 
-				if arg_58_0.input_hotspot.is_hover then
+				if not self.input_hotspot.is_hover then
 					arg_58_1.color[1] = 128
 				else
 					arg_58_1.color[1] = 60
@@ -4008,14 +4266,18 @@ local function var_0_26(arg_56_0, arg_56_1)
 			style_id = "chat_text",
 			pass_type = "text",
 			text_id = "chat_text_id",
-			content_check_function = function(arg_59_0, arg_59_1)
-				if not arg_59_0.text_field_active then
+			content_check_function = function (self, arg_59_1)
+				-- function 59
+				if not self.text_field_active then
 					return
 				end
 
-				local var_59_0 = math.floor(Managers.time:time("main") * 2) % 2
+				local num = math.floor(Managers.time:time("main") * 2) % 2
+				local caret_color = arg_59_1.caret_color
+				local flag
 
-				arg_59_1.caret_color[1] = var_59_0 == 0 and 255 or 0
+				flag = num ~= 0 or not 255 or 0
+				caret_color[1] = flag
 
 				return true
 			end
@@ -4024,8 +4286,9 @@ local function var_0_26(arg_56_0, arg_56_1)
 			style_id = "close_text",
 			pass_type = "text",
 			text_id = "close_text_id",
-			content_check_function = function(arg_60_0, arg_60_1)
-				if arg_60_0.close_hotspot.is_hover then
+			content_check_function = function (self, arg_60_1)
+				-- function 60
+				if not self.close_hotspot.is_hover then
 					arg_60_1.text_color[1] = 255
 				else
 					arg_60_1.text_color[1] = 128
@@ -4035,7 +4298,7 @@ local function var_0_26(arg_56_0, arg_56_1)
 			end
 		}
 	}
-	local var_56_7 = {
+	local tbl_3 = {
 		chat_text_id = "",
 		text_start_offset = 0,
 		header_id = "CHANNELS",
@@ -4054,8 +4317,8 @@ local function var_0_26(arg_56_0, arg_56_1)
 		widget_hotspot = {},
 		channels_list_hotspot = {},
 		close_hotspot = {},
-		frame = var_56_2.texture,
-		inner_frame = var_56_3.texture,
+		frame = menu_frame_02.texture,
+		inner_frame = menu_frame_06.texture,
 		background = {
 			uvs = {
 				{
@@ -4063,15 +4326,15 @@ local function var_0_26(arg_56_0, arg_56_1)
 					0
 				},
 				{
-					math.min(arg_56_1[1] / var_56_1.size[1], 1),
-					math.min(arg_56_1[2] / var_56_1.size[2], 1)
+					math.min(arg_56_1[1] / get_atlas_settings_by_texture_name.size[1], 1),
+					math.min(arg_56_1[2] / get_atlas_settings_by_texture_name.size[2], 1)
 				}
 			},
-			texture_id = var_56_0
+			texture_id = str
 		},
-		background_id = var_56_0
+		background_id = str
 	}
-	local var_56_8 = {
+	local tbl_4 = {
 		connecting_icon = {
 			vertical_alignment = "center",
 			scenegraph_id = "channels_window_list_box",
@@ -4109,7 +4372,7 @@ local function var_0_26(arg_56_0, arg_56_1)
 				0,
 				1
 			},
-			texture_tiling_size = var_56_1.size
+			texture_tiling_size = get_atlas_settings_by_texture_name.size
 		},
 		mask = {
 			offset = {
@@ -4125,8 +4388,8 @@ local function var_0_26(arg_56_0, arg_56_1)
 			}
 		},
 		frame = {
-			texture_size = var_56_2.texture_size,
-			texture_sizes = var_56_2.texture_sizes,
+			texture_size = menu_frame_02.texture_size,
+			texture_sizes = menu_frame_02.texture_sizes,
 			color = {
 				255,
 				255,
@@ -4155,8 +4418,8 @@ local function var_0_26(arg_56_0, arg_56_1)
 		},
 		inner_frame = {
 			scenegraph_id = "channels_window_text_box",
-			texture_size = var_56_3.texture_size,
-			texture_sizes = var_56_3.texture_sizes,
+			texture_size = menu_frame_06.texture_size,
+			texture_sizes = menu_frame_06.texture_sizes,
 			color = {
 				255,
 				255,
@@ -4296,8 +4559,8 @@ local function var_0_26(arg_56_0, arg_56_1)
 		},
 		header_frame = {
 			scenegraph_id = "channels_window_list_header",
-			texture_size = var_56_4.texture_size,
-			texture_sizes = var_56_4.texture_sizes,
+			texture_size = menu_frame_06_2.texture_size,
+			texture_sizes = menu_frame_06_2.texture_sizes,
 			color = {
 				255,
 				255,
@@ -4323,7 +4586,7 @@ local function var_0_26(arg_56_0, arg_56_1)
 				0,
 				1
 			},
-			texture_tiling_size = var_56_1.size
+			texture_tiling_size = get_atlas_settings_by_texture_name.size
 		},
 		close_text = {
 			word_wrap = false,
@@ -4357,8 +4620,8 @@ local function var_0_26(arg_56_0, arg_56_1)
 		},
 		list_frame = {
 			scenegraph_id = "channels_window_list_box",
-			texture_size = var_56_3.texture_size,
-			texture_sizes = var_56_3.texture_sizes,
+			texture_size = menu_frame_06.texture_size,
+			texture_sizes = menu_frame_06.texture_sizes,
 			color = {
 				255,
 				255,
@@ -4373,29 +4636,30 @@ local function var_0_26(arg_56_0, arg_56_1)
 		}
 	}
 
-	var_56_5.element.passes = var_56_6
-	var_56_5.content = var_56_7
-	var_56_5.style = var_56_8
-	var_56_5.offset = {
+	tbl.element.passes = tbl_2
+	tbl.content = tbl_3
+	tbl.style = tbl_4
+	tbl.offset = {
 		0,
 		0,
 		0
 	}
-	var_56_5.scenegraph_id = arg_56_0
+	tbl.scenegraph_id = arg_56_0
 
-	return var_56_5
+	return tbl
 end
 
-local function var_0_27(arg_61_0, arg_61_1)
-	local var_61_0 = "menu_frame_bg_03"
-	local var_61_1 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_61_0)
-	local var_61_2 = UIFrameSettings.menu_frame_02
-	local var_61_3 = UIFrameSettings.menu_frame_06
-	local var_61_4 = UIFrameSettings.menu_frame_06
-	local var_61_5 = {
+local function fn_11(arg_61_0, arg_61_1)
+	-- function 61
+	local str = "menu_frame_bg_03"
+	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(str)
+	local menu_frame_02 = UIFrameSettings.menu_frame_02
+	local menu_frame_06 = UIFrameSettings.menu_frame_06
+	local menu_frame_06_2 = UIFrameSettings.menu_frame_06
+	local tbl = {
 		element = {}
 	}
-	local var_61_6 = {
+	local tbl_2 = {
 		{
 			scenegraph_id = "create_channel_input",
 			pass_type = "hotspot",
@@ -4464,14 +4728,18 @@ local function var_0_27(arg_61_0, arg_61_1)
 			style_id = "chat_text",
 			pass_type = "text",
 			text_id = "chat_text_id",
-			content_check_function = function(arg_62_0, arg_62_1)
-				if not arg_62_0.text_field_active then
+			content_check_function = function (self, arg_62_1)
+				-- function 62
+				if not self.text_field_active then
 					return
 				end
 
-				local var_62_0 = math.floor(Managers.time:time("main") * 2) % 2
+				local num = math.floor(Managers.time:time("main") * 2) % 2
+				local caret_color = arg_62_1.caret_color
+				local flag
 
-				arg_62_1.caret_color[1] = var_62_0 == 0 and 255 or 0
+				flag = num ~= 0 or not 255 or 0
+				caret_color[1] = flag
 
 				return true
 			end
@@ -4480,8 +4748,9 @@ local function var_0_27(arg_61_0, arg_61_1)
 			style_id = "close_text",
 			pass_type = "text",
 			text_id = "close_text_id",
-			content_check_function = function(arg_63_0, arg_63_1)
-				if arg_63_0.close_hotspot.is_hover then
+			content_check_function = function (self, arg_63_1)
+				-- function 63
+				if not self.close_hotspot.is_hover then
 					arg_63_1.text_color[1] = 255
 				else
 					arg_63_1.text_color[1] = 128
@@ -4491,7 +4760,7 @@ local function var_0_27(arg_61_0, arg_61_1)
 			end
 		}
 	}
-	local var_61_7 = {
+	local tbl_3 = {
 		chat_text_id = "",
 		text_start_offset = 0,
 		channel_name_id = "Channel Name",
@@ -4505,8 +4774,8 @@ local function var_0_27(arg_61_0, arg_61_1)
 		widget_hotspot = {},
 		channels_list_hotspot = {},
 		close_hotspot = {},
-		frame = var_61_2.texture,
-		inner_frame = var_61_3.texture,
+		frame = menu_frame_02.texture,
+		inner_frame = menu_frame_06.texture,
 		background = {
 			uvs = {
 				{
@@ -4514,15 +4783,15 @@ local function var_0_27(arg_61_0, arg_61_1)
 					0
 				},
 				{
-					math.min(arg_61_1[1] / var_61_1.size[1], 1),
-					math.min(arg_61_1[2] / var_61_1.size[2], 1)
+					math.min(arg_61_1[1] / get_atlas_settings_by_texture_name.size[1], 1),
+					math.min(arg_61_1[2] / get_atlas_settings_by_texture_name.size[2], 1)
 				}
 			},
-			texture_id = var_61_0
+			texture_id = str
 		},
-		background_id = var_61_0
+		background_id = str
 	}
-	local var_61_8 = {
+	local tbl_4 = {
 		background = {
 			color = {
 				255,
@@ -4535,11 +4804,11 @@ local function var_0_27(arg_61_0, arg_61_1)
 				0,
 				1
 			},
-			texture_tiling_size = var_61_1.size
+			texture_tiling_size = get_atlas_settings_by_texture_name.size
 		},
 		frame = {
-			texture_size = var_61_2.texture_size,
-			texture_sizes = var_61_2.texture_sizes,
+			texture_size = menu_frame_02.texture_size,
+			texture_sizes = menu_frame_02.texture_sizes,
 			color = {
 				255,
 				255,
@@ -4568,8 +4837,8 @@ local function var_0_27(arg_61_0, arg_61_1)
 		},
 		inner_frame = {
 			scenegraph_id = "create_channel_input",
-			texture_size = var_61_3.texture_size,
-			texture_sizes = var_61_3.texture_sizes,
+			texture_size = menu_frame_06.texture_size,
+			texture_sizes = menu_frame_06.texture_sizes,
 			color = {
 				255,
 				255,
@@ -4677,8 +4946,8 @@ local function var_0_27(arg_61_0, arg_61_1)
 		},
 		header_frame = {
 			scenegraph_id = "create_channel_window_list_header",
-			texture_size = var_61_4.texture_size,
-			texture_sizes = var_61_4.texture_sizes,
+			texture_size = menu_frame_06_2.texture_size,
+			texture_sizes = menu_frame_06_2.texture_sizes,
 			color = {
 				255,
 				255,
@@ -4723,29 +4992,30 @@ local function var_0_27(arg_61_0, arg_61_1)
 		}
 	}
 
-	var_61_5.element.passes = var_61_6
-	var_61_5.content = var_61_7
-	var_61_5.style = var_61_8
-	var_61_5.offset = {
+	tbl.element.passes = tbl_2
+	tbl.content = tbl_3
+	tbl.style = tbl_4
+	tbl.offset = {
 		0,
 		0,
 		0
 	}
-	var_61_5.scenegraph_id = arg_61_0
+	tbl.scenegraph_id = arg_61_0
 
-	return var_61_5
+	return tbl
 end
 
-local function var_0_28(arg_64_0, arg_64_1)
-	local var_64_0 = "menu_frame_bg_03"
-	local var_64_1 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_64_0)
-	local var_64_2 = UIFrameSettings.menu_frame_02
-	local var_64_3 = UIFrameSettings.menu_frame_06
-	local var_64_4 = UIFrameSettings.menu_frame_06
-	local var_64_5 = {
+local function fn_12(arg_64_0, arg_64_1)
+	-- function 64
+	local str = "menu_frame_bg_03"
+	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(str)
+	local menu_frame_02 = UIFrameSettings.menu_frame_02
+	local menu_frame_06 = UIFrameSettings.menu_frame_06
+	local menu_frame_06_2 = UIFrameSettings.menu_frame_06
+	local tbl = {
 		element = {}
 	}
-	local var_64_6 = {
+	local tbl_2 = {
 		{
 			scenegraph_id = "create_channel_input",
 			pass_type = "hotspot",
@@ -4814,14 +5084,18 @@ local function var_0_28(arg_64_0, arg_64_1)
 			style_id = "chat_text",
 			pass_type = "text",
 			text_id = "chat_text_id",
-			content_check_function = function(arg_65_0, arg_65_1)
-				if not arg_65_0.text_field_active then
+			content_check_function = function (self, arg_65_1)
+				-- function 65
+				if not self.text_field_active then
 					return
 				end
 
-				local var_65_0 = math.floor(Managers.time:time("main") * 2) % 2
+				local num = math.floor(Managers.time:time("main") * 2) % 2
+				local caret_color = arg_65_1.caret_color
+				local flag
 
-				arg_65_1.caret_color[1] = var_65_0 == 0 and 255 or 0
+				flag = num ~= 0 or not 255 or 0
+				caret_color[1] = flag
 
 				return true
 			end
@@ -4830,8 +5104,9 @@ local function var_0_28(arg_64_0, arg_64_1)
 			style_id = "close_text",
 			pass_type = "text",
 			text_id = "close_text_id",
-			content_check_function = function(arg_66_0, arg_66_1)
-				if arg_66_0.close_hotspot.is_hover then
+			content_check_function = function (self, arg_66_1)
+				-- function 66
+				if not self.close_hotspot.is_hover then
 					arg_66_1.text_color[1] = 255
 				else
 					arg_66_1.text_color[1] = 128
@@ -4841,7 +5116,7 @@ local function var_0_28(arg_64_0, arg_64_1)
 			end
 		}
 	}
-	local var_64_7 = {
+	local tbl_3 = {
 		chat_text_id = "",
 		text_start_offset = 0,
 		channel_name_id = "Description",
@@ -4855,8 +5130,8 @@ local function var_0_28(arg_64_0, arg_64_1)
 		widget_hotspot = {},
 		channels_list_hotspot = {},
 		close_hotspot = {},
-		frame = var_64_2.texture,
-		inner_frame = var_64_3.texture,
+		frame = menu_frame_02.texture,
+		inner_frame = menu_frame_06.texture,
 		background = {
 			uvs = {
 				{
@@ -4864,15 +5139,15 @@ local function var_0_28(arg_64_0, arg_64_1)
 					0
 				},
 				{
-					math.min(arg_64_1[1] / var_64_1.size[1], 1),
-					math.min(arg_64_1[2] / var_64_1.size[2], 1)
+					math.min(arg_64_1[1] / get_atlas_settings_by_texture_name.size[1], 1),
+					math.min(arg_64_1[2] / get_atlas_settings_by_texture_name.size[2], 1)
 				}
 			},
-			texture_id = var_64_0
+			texture_id = str
 		},
-		background_id = var_64_0
+		background_id = str
 	}
-	local var_64_8 = {
+	local tbl_4 = {
 		background = {
 			color = {
 				255,
@@ -4885,11 +5160,11 @@ local function var_0_28(arg_64_0, arg_64_1)
 				0,
 				1
 			},
-			texture_tiling_size = var_64_1.size
+			texture_tiling_size = get_atlas_settings_by_texture_name.size
 		},
 		frame = {
-			texture_size = var_64_2.texture_size,
-			texture_sizes = var_64_2.texture_sizes,
+			texture_size = menu_frame_02.texture_size,
+			texture_sizes = menu_frame_02.texture_sizes,
 			color = {
 				255,
 				255,
@@ -4918,8 +5193,8 @@ local function var_0_28(arg_64_0, arg_64_1)
 		},
 		inner_frame = {
 			scenegraph_id = "create_channel_input",
-			texture_size = var_64_3.texture_size,
-			texture_sizes = var_64_3.texture_sizes,
+			texture_size = menu_frame_06.texture_size,
+			texture_sizes = menu_frame_06.texture_sizes,
 			color = {
 				255,
 				255,
@@ -5027,8 +5302,8 @@ local function var_0_28(arg_64_0, arg_64_1)
 		},
 		header_frame = {
 			scenegraph_id = "create_channel_window_list_header",
-			texture_size = var_64_4.texture_size,
-			texture_sizes = var_64_4.texture_sizes,
+			texture_size = menu_frame_06_2.texture_size,
+			texture_sizes = menu_frame_06_2.texture_sizes,
 			color = {
 				255,
 				255,
@@ -5054,7 +5329,7 @@ local function var_0_28(arg_64_0, arg_64_1)
 				0,
 				1
 			},
-			texture_tiling_size = var_64_1.size
+			texture_tiling_size = get_atlas_settings_by_texture_name.size
 		},
 		close_text = {
 			word_wrap = false,
@@ -5074,29 +5349,30 @@ local function var_0_28(arg_64_0, arg_64_1)
 		}
 	}
 
-	var_64_5.element.passes = var_64_6
-	var_64_5.content = var_64_7
-	var_64_5.style = var_64_8
-	var_64_5.offset = {
+	tbl.element.passes = tbl_2
+	tbl.content = tbl_3
+	tbl.style = tbl_4
+	tbl.offset = {
 		0,
 		0,
 		0
 	}
-	var_64_5.scenegraph_id = arg_64_0
+	tbl.scenegraph_id = arg_64_0
 
-	return var_64_5
+	return tbl
 end
 
-local function var_0_29(arg_67_0, arg_67_1)
-	local var_67_0 = "menu_frame_bg_03"
-	local var_67_1 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_67_0)
-	local var_67_2 = UIFrameSettings.menu_frame_02
-	local var_67_3 = UIFrameSettings.menu_frame_06
-	local var_67_4 = UIFrameSettings.menu_frame_06
-	local var_67_5 = {
+local function fn_13(arg_67_0, arg_67_1)
+	-- function 67
+	local str = "menu_frame_bg_03"
+	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(str)
+	local menu_frame_02 = UIFrameSettings.menu_frame_02
+	local menu_frame_06 = UIFrameSettings.menu_frame_06
+	local menu_frame_06_2 = UIFrameSettings.menu_frame_06
+	local tbl = {
 		element = {}
 	}
-	local var_67_6 = {
+	local tbl_2 = {
 		{
 			scenegraph_id = "recent_channels_window_list_box",
 			pass_type = "hotspot",
@@ -5121,15 +5397,16 @@ local function var_0_29(arg_67_0, arg_67_1)
 			pass_type = "rotated_texture",
 			style_id = "connecting_icon",
 			texture_id = "connecting_icon",
-			content_check_function = function(arg_68_0, arg_68_1)
-				if not arg_68_0.fetching_channels then
+			content_check_function = function (self, arg_68_1)
+				-- function 68
+				if not self.fetching_channels then
 					return false
 				end
 
-				local var_68_0 = Managers.time:mean_dt() * 400 % 360
-				local var_68_1 = math.degrees_to_radians(var_68_0)
+				local num = Managers.time:mean_dt() * 400 % 360
+				local degrees_to_radians = math.degrees_to_radians(num)
 
-				arg_68_1.angle = arg_68_1.angle + var_68_1
+				arg_68_1.angle = arg_68_1.angle + degrees_to_radians
 
 				return true
 			end
@@ -5177,8 +5454,9 @@ local function var_0_29(arg_67_0, arg_67_1)
 			style_id = "close_text",
 			pass_type = "text",
 			text_id = "close_text_id",
-			content_check_function = function(arg_69_0, arg_69_1)
-				if arg_69_0.close_hotspot.is_hover then
+			content_check_function = function (self, arg_69_1)
+				-- function 69
+				if not self.close_hotspot.is_hover then
 					arg_69_1.text_color[1] = 255
 				else
 					arg_69_1.text_color[1] = 128
@@ -5188,7 +5466,7 @@ local function var_0_29(arg_67_0, arg_67_1)
 			end
 		}
 	}
-	local var_67_7 = {
+	local tbl_3 = {
 		chat_text_id = "",
 		text_start_offset = 0,
 		header_id = "RECENT CHANNELS",
@@ -5203,8 +5481,8 @@ local function var_0_29(arg_67_0, arg_67_1)
 		widget_hotspot = {},
 		channels_list_hotspot = {},
 		close_hotspot = {},
-		frame = var_67_2.texture,
-		inner_frame = var_67_3.texture,
+		frame = menu_frame_02.texture,
+		inner_frame = menu_frame_06.texture,
 		background = {
 			uvs = {
 				{
@@ -5212,15 +5490,15 @@ local function var_0_29(arg_67_0, arg_67_1)
 					0
 				},
 				{
-					math.min(arg_67_1[1] / var_67_1.size[1], 1),
-					math.min(arg_67_1[2] / var_67_1.size[2], 1)
+					math.min(arg_67_1[1] / get_atlas_settings_by_texture_name.size[1], 1),
+					math.min(arg_67_1[2] / get_atlas_settings_by_texture_name.size[2], 1)
 				}
 			},
-			texture_id = var_67_0
+			texture_id = str
 		},
-		background_id = var_67_0
+		background_id = str
 	}
-	local var_67_8 = {
+	local tbl_4 = {
 		connecting_icon = {
 			vertical_alignment = "center",
 			scenegraph_id = "recent_channels_window_list_box",
@@ -5258,11 +5536,11 @@ local function var_0_29(arg_67_0, arg_67_1)
 				0,
 				1
 			},
-			texture_tiling_size = var_67_1.size
+			texture_tiling_size = get_atlas_settings_by_texture_name.size
 		},
 		frame = {
-			texture_size = var_67_2.texture_size,
-			texture_sizes = var_67_2.texture_sizes,
+			texture_size = menu_frame_02.texture_size,
+			texture_sizes = menu_frame_02.texture_sizes,
 			color = {
 				255,
 				255,
@@ -5291,8 +5569,8 @@ local function var_0_29(arg_67_0, arg_67_1)
 		},
 		inner_frame = {
 			scenegraph_id = "recent_channels_window_list_box",
-			texture_size = var_67_3.texture_size,
-			texture_sizes = var_67_3.texture_sizes,
+			texture_size = menu_frame_06.texture_size,
+			texture_sizes = menu_frame_06.texture_sizes,
 			color = {
 				255,
 				255,
@@ -5337,8 +5615,8 @@ local function var_0_29(arg_67_0, arg_67_1)
 		},
 		header_frame = {
 			scenegraph_id = "recent_channel_window_list_header",
-			texture_size = var_67_4.texture_size,
-			texture_sizes = var_67_4.texture_sizes,
+			texture_size = menu_frame_06_2.texture_size,
+			texture_sizes = menu_frame_06_2.texture_sizes,
 			color = {
 				255,
 				255,
@@ -5364,7 +5642,7 @@ local function var_0_29(arg_67_0, arg_67_1)
 				0,
 				1
 			},
-			texture_tiling_size = var_67_1.size
+			texture_tiling_size = get_atlas_settings_by_texture_name.size
 		},
 		close_text = {
 			word_wrap = false,
@@ -5384,24 +5662,38 @@ local function var_0_29(arg_67_0, arg_67_1)
 		}
 	}
 
-	var_67_5.element.passes = var_67_6
-	var_67_5.content = var_67_7
-	var_67_5.style = var_67_8
-	var_67_5.offset = {
+	tbl.element.passes = tbl_2
+	tbl.content = tbl_3
+	tbl.style = tbl_4
+	tbl.offset = {
 		0,
 		0,
 		0
 	}
-	var_67_5.scenegraph_id = arg_67_0
+	tbl.scenegraph_id = arg_67_0
 
-	return var_67_5
+	return tbl
 end
 
 function create_default_button(arg_70_0, arg_70_1, arg_70_2, arg_70_3, arg_70_4, arg_70_5, arg_70_6)
+	-- function 70
 	arg_70_3 = arg_70_3 or "button_bg_01"
 
-	local var_70_0 = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_70_3)
-	local var_70_1 = arg_70_2 and UIFrameSettings[arg_70_2] or UIFrameSettings.button_frame_01
+	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_70_3)
+	local var_70_1
+
+	if not arg_70_2 then
+		var_70_1 = UIFrameSettings[arg_70_2]
+
+		if not var_70_1 then
+			-- Nothing
+		end
+	end
+
+	var_70_1 = UIFrameSettings.button_frame_01
+
+	::label_70_0::
+
 	local var_70_2 = var_70_1.texture_sizes.corner[1]
 
 	return {
@@ -5416,8 +5708,9 @@ function create_default_button(arg_70_0, arg_70_1, arg_70_2, arg_70_3, arg_70_4,
 					texture_id = "frame",
 					style_id = "frame",
 					pass_type = "texture_frame",
-					content_check_function = function(arg_71_0)
-						return arg_71_0.draw_frame
+					content_check_function = function (self)
+						-- function 71
+						return self.draw_frame
 					end
 				},
 				{
@@ -5442,24 +5735,27 @@ function create_default_button(arg_70_0, arg_70_1, arg_70_2, arg_70_3, arg_70_4,
 				{
 					style_id = "disabled_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_72_0)
-						return arg_72_0.button_hotspot.disable_button
+					content_check_function = function (self)
+						-- function 72
+						return self.button_hotspot.disable_button
 					end
 				},
 				{
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_73_0)
-						return not arg_73_0.button_hotspot.disable_button
+					content_check_function = function (self)
+						-- function 73
+						return not self.button_hotspot.disable_button
 					end
 				},
 				{
 					style_id = "title_text_disabled",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_74_0)
-						return arg_74_0.button_hotspot.disable_button
+					content_check_function = function (self)
+						-- function 74
+						return self.button_hotspot.disable_button
 					end
 				},
 				{
@@ -5491,10 +5787,10 @@ function create_default_button(arg_70_0, arg_70_1, arg_70_2, arg_70_3, arg_70_4,
 				uvs = {
 					{
 						0,
-						1 - arg_70_1[2] / var_70_0.size[2]
+						1 - arg_70_1[2] / get_atlas_settings_by_texture_name.size[2]
 					},
 					{
-						arg_70_1[1] / var_70_0.size[1],
+						arg_70_1[1] / get_atlas_settings_by_texture_name.size[1],
 						1
 					}
 				},
@@ -5694,58 +5990,58 @@ function create_default_button(arg_70_0, arg_70_1, arg_70_2, arg_70_3, arg_70_4,
 	}
 end
 
-local var_0_30 = {
+local tbl_10 = {
 	widgets = {
-		frame_widget = var_0_11("popup_root", var_0_10.popup_root.size),
-		chat_output_widget = var_0_12("feed_area_edge", 0),
-		name_list_widget = UIWidgets.create_rect_with_frame("list_area", var_0_10.list_area.size, {
+		frame_widget = fn("popup_root", tbl_3.popup_root.size),
+		chat_output_widget = fn_2("feed_area_edge", 0),
+		name_list_widget = UIWidgets.create_rect_with_frame("list_area", tbl_3.list_area.size, {
 			160,
 			0,
 			0,
 			0
-		}, var_0_1),
+		}, str),
 		list_area_hotspot_widget = UIWidgets.create_simple_hotspot("list_area"),
-		private_messages_widget = create_private_button("private_messages_button", var_0_10.private_messages_button.size, nil, nil, "Private", 20),
-		send_invite_widget = create_default_button("channels_button", var_0_10.channels_button.size, nil, nil, "Invite", 20),
-		channels_widget = create_default_button("popular_channels_button", var_0_10.popular_channels_button.size, nil, nil, "Channels", 20),
-		commands_widget = create_default_button("commands_button", var_0_10.commands_button.size, nil, nil, "?", 20, true),
-		emoji_widget = create_default_button("emoji_button", var_0_10.emoji_button.size, nil, nil, ":)", 20, true)
+		private_messages_widget = create_private_button("private_messages_button", tbl_3.private_messages_button.size, nil, nil, "Private", 20),
+		send_invite_widget = create_default_button("channels_button", tbl_3.channels_button.size, nil, nil, "Invite", 20),
+		channels_widget = create_default_button("popular_channels_button", tbl_3.popular_channels_button.size, nil, nil, "Channels", 20),
+		commands_widget = create_default_button("commands_button", tbl_3.commands_button.size, nil, nil, "?", 20, true),
+		emoji_widget = create_default_button("emoji_button", tbl_3.emoji_button.size, nil, nil, ":)", 20, true)
 	},
 	create_channel_entry_func = create_channel_entry,
-	channel_list_frame = var_0_15,
-	create_channel_tab = var_0_16,
+	channel_list_frame = tbl_4,
+	create_channel_tab = fn_5,
 	create_private_user_entry_func = create_private_user_entry,
-	private_user_list_frame = var_0_17,
+	private_user_list_frame = tbl_5,
 	create_recent_channel_entry_func = create_recent_channel_entry,
-	recent_channels_list_frame = var_0_18,
+	recent_channels_list_frame = tbl_6,
 	create_popular_channels_entry_func = create_popular_channels_entry,
-	popular_channels_list_frame = var_0_19,
+	popular_channels_list_frame = tbl_7,
 	create_command_entry_func = create_command_entry,
-	commands_list_frame = var_0_20,
-	create_emoji_func = var_0_22,
-	create_emoji_frame_func = var_0_23,
-	create_emoji_scroller_func = var_0_24,
-	channels_window = var_0_26("channels_window_root", var_0_10.channels_window_root.size),
-	channel_entry = var_0_25("channels_window_list_box_entry"),
-	join_channel_button = create_default_button("join_channel_button", var_0_10.join_channel_button.size, nil, nil, "Join", 20),
-	create_channel_button = create_default_button("create_channel_button", var_0_10.create_channel_button.size, nil, nil, "Create", 20),
-	recent_channels_button = create_default_button("recent_channels_button", var_0_10.recent_channels_button.size, nil, nil, "Recent", 20),
-	create_channel_window = var_0_27("create_channels_window_root", var_0_10.create_channels_window_root.size),
-	inner_create_channel_button = create_default_button("inner_create_channel_button", var_0_10.inner_create_channel_button.size, nil, nil, "Create", 20),
-	recent_channels_window = var_0_29("recent_channels_window_root", var_0_10.recent_channels_window_root.size),
-	recent_join_channel_button = create_default_button("recent_join_channel_button", var_0_10.join_channel_button.size, nil, nil, "Join", 20),
-	create_channel_list_entry_func = var_0_25,
-	send_invite_window = var_0_28("create_channels_window_root", var_0_10.create_channels_window_root.size),
-	send_invite_button = create_default_button("send_invite_button", var_0_10.send_invite_button.size, nil, nil, "Send Invite", 20),
+	commands_list_frame = tbl_8,
+	create_emoji_func = fn_6,
+	create_emoji_frame_func = fn_7,
+	create_emoji_scroller_func = fn_8,
+	channels_window = fn_10("channels_window_root", tbl_3.channels_window_root.size),
+	channel_entry = fn_9("channels_window_list_box_entry"),
+	join_channel_button = create_default_button("join_channel_button", tbl_3.join_channel_button.size, nil, nil, "Join", 20),
+	create_channel_button = create_default_button("create_channel_button", tbl_3.create_channel_button.size, nil, nil, "Create", 20),
+	recent_channels_button = create_default_button("recent_channels_button", tbl_3.recent_channels_button.size, nil, nil, "Recent", 20),
+	create_channel_window = fn_11("create_channels_window_root", tbl_3.create_channels_window_root.size),
+	inner_create_channel_button = create_default_button("inner_create_channel_button", tbl_3.inner_create_channel_button.size, nil, nil, "Create", 20),
+	recent_channels_window = fn_13("recent_channels_window_root", tbl_3.recent_channels_window_root.size),
+	recent_join_channel_button = create_default_button("recent_join_channel_button", tbl_3.join_channel_button.size, nil, nil, "Join", 20),
+	create_channel_list_entry_func = fn_9,
+	send_invite_window = fn_12("create_channels_window_root", tbl_3.create_channels_window_root.size),
+	send_invite_button = create_default_button("send_invite_button", tbl_3.send_invite_button.size, nil, nil, "Send Invite", 20),
 	create_filtered_user_name_entry_func = create_filtered_user_name_entry,
-	filtered_user_names_list_frame = var_0_21
+	filtered_user_names_list_frame = tbl_9
 }
 
 return {
-	num_users_in_list = var_0_3,
-	create_entry_func = var_0_14,
-	scenegraph_definition = var_0_10,
-	widget_definitions = var_0_30,
-	emoji_list_settings = var_0_8,
-	channels_list_settings = var_0_9
+	num_users_in_list = num_2,
+	create_entry_func = fn_4,
+	scenegraph_definition = tbl_3,
+	widget_definitions = tbl_10,
+	emoji_list_settings = tbl,
+	channels_list_settings = tbl_2
 }

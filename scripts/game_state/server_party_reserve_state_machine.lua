@@ -4,112 +4,134 @@ local var_0_0 = class(FindServerState)
 
 var_0_0.NAME = "FindServerState"
 
-function var_0_0.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
-	arg_1_0._state_machine = arg_1_1
-	arg_1_0._num_players = #arg_1_4
-	arg_1_0._network_options = arg_1_2
-	arg_1_0._network_hash = arg_1_3
-	arg_1_0._optional_order_func = arg_1_7
-	arg_1_0._black_listed_servers = arg_1_5
-	arg_1_0._filters = arg_1_6
-	arg_1_0._search_types = {
+var_0_0.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	-- function 1
+	self._state_machine = arg_1_1
+	self._num_players = #arg_1_4
+	self._network_options = arg_1_2
+	self._network_hash = arg_1_3
+	self._optional_order_func = arg_1_7
+	self._black_listed_servers = arg_1_5
+	self._filters = arg_1_6
+	self._search_types = {
 		"favorites",
 		"internet",
 		"lan"
 	}
-	arg_1_1._search_index = arg_1_1._search_index or 1
-	arg_1_1._servers_by_type = arg_1_1._servers_by_type or {}
-	arg_1_0._finder = nil
-	arg_1_0._delay = 0
-	arg_1_0._search_time = 0
-	arg_1_0._soft_filters = arg_1_8.soft_filters or {}
+
+	local _search_index = arg_1_1._search_index
+
+	_search_index = _search_index or 1
+	arg_1_1._search_index = _search_index
+
+	local _servers_by_type = arg_1_1._servers_by_type
+
+	_servers_by_type = _servers_by_type or {}
+	arg_1_1._servers_by_type = _servers_by_type
+	self._finder = nil
+	self._delay = 0
+	self._search_time = 0
+
+	local soft_filters = arg_1_8.soft_filters
+
+	soft_filters = soft_filters or {}
+	self._soft_filters = soft_filters
 end
 
-function var_0_0.enter(arg_2_0)
+var_0_0.enter = function (arg_2_0)
+	-- function 2
 	return
 end
 
-function var_0_0.destroy(arg_3_0)
-	if arg_3_0._finder ~= nil then
-		arg_3_0._finder:destroy()
+var_0_0.destroy = function (self)
+	-- function 3
+	if self._finder ~= nil then
+		self._finder:destroy()
 	end
 
-	arg_3_0._finder = nil
+	self._finder = nil
 end
 
-function var_0_0.update(arg_4_0, arg_4_1, arg_4_2)
-	arg_4_0._search_time = arg_4_0._search_time + arg_4_1
+var_0_0.update = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	self._search_time = self._search_time + arg_4_1
 
-	if arg_4_2 < arg_4_0._delay then
+	if arg_4_2 < self._delay then
 		return
 	end
 
-	local var_4_0 = arg_4_0._state_machine
-	local var_4_1 = arg_4_0._search_types[var_4_0._search_index]
-	local var_4_2 = var_4_0._servers_by_type[var_4_1] or {}
+	local _state_machine = self._state_machine
+	local var_4_1 = self._search_types[_state_machine._search_index]
+	local var_4_2 = _state_machine._servers_by_type[var_4_1]
 
-	if table.is_empty(var_4_2) then
-		if arg_4_0._finder == nil then
-			arg_4_0._finder = arg_4_0:_trigger_search(var_4_1)
+	var_4_2 = var_4_2 or {}
+
+	if not table.is_empty(var_4_2) then
+		if self._finder == nil then
+			self._finder = self:_trigger_search(var_4_1)
 		end
 
-		arg_4_0._finder:update(arg_4_1)
+		self._finder:update(arg_4_1)
 
-		if arg_4_0._finder:is_refreshing() then
+		if not self._finder:is_refreshing() then
 			return
 		end
 
-		local var_4_3 = arg_4_0._finder:servers()
+		local servers = self._finder:servers()
 
-		ServerSearchUtils.filter_game_server_search(var_4_3, arg_4_0._network_options, arg_4_0._soft_filters, arg_4_0._network_hash, arg_4_0._black_listed_servers, arg_4_0._search_time)
+		ServerSearchUtils.filter_game_server_search(servers, self._network_options, self._soft_filters, self._network_hash, self._black_listed_servers, self._search_time)
 
-		if arg_4_0._optional_order_func ~= nil then
-			table.sort(var_4_3, arg_4_0._optional_order_func)
+		if self._optional_order_func ~= nil then
+			table.sort(servers, self._optional_order_func)
 		end
 
-		var_4_0._servers_by_type[var_4_1] = var_4_3
+		_state_machine._servers_by_type[var_4_1] = servers
 
-		arg_4_0._finder:destroy()
+		self._finder:destroy()
 
-		arg_4_0._finder = nil
-		var_4_2 = var_4_3
+		self._finder = nil
+		var_4_2 = servers
 	end
 
-	local var_4_4 = arg_4_0:_pick_server(var_4_1, var_4_2)
+	local _pick_server = self:_pick_server(var_4_1, var_4_2)
 
-	if var_4_4 == nil then
-		if var_4_0._search_index >= #arg_4_0._search_types then
-			arg_4_0._delay = arg_4_2 + 3
+	if _pick_server == nil then
+		if _state_machine._search_index >= #self._search_types then
+			self._delay = arg_4_2 + 3
 		end
 
-		var_4_0._search_index = math.index_wrapper(var_4_0._search_index + 1, #arg_4_0._search_types)
+		_state_machine._search_index = math.index_wrapper(_state_machine._search_index + 1, #self._search_types)
 
 		return
 	else
-		return "server_found", var_4_4
+		return "server_found", _pick_server
 	end
 end
 
-function var_0_0._pick_server(arg_5_0, arg_5_1)
+var_0_0._pick_server = function (self, arg_5_1)
+	-- function 5
 	print("######### PICKING SERVER #########")
 
-	local var_5_0 = arg_5_0._state_machine
-	local var_5_1 = var_5_0._servers_by_type[arg_5_1]
+	local _state_machine = self._state_machine
+	local var_5_1 = _state_machine._servers_by_type[arg_5_1]
 
 	if #var_5_1 == 0 then
 		return nil
 	end
 
 	local var_5_2
-	local var_5_3 = arg_5_0._optional_order_func ~= nil and 1 or Math.random(#var_5_1)
-	local var_5_4 = var_5_1[var_5_3]
+	local flag
 
-	table.remove(var_5_1, var_5_3)
+	flag = self._optional_order_func == nil or not 1 or Math.random(#var_5_1)
 
-	if table.is_empty(var_5_1) then
-		var_5_0._reserve_attempts[arg_5_1] = var_5_0._reserve_attempts[arg_5_1] - 1
+	local var_5_4 = var_5_1[flag]
 
-		if var_5_0._reserve_attempts[arg_5_1] <= 0 then
+	table.remove(var_5_1, flag)
+
+	if not table.is_empty(var_5_1) then
+		_state_machine._reserve_attempts[arg_5_1] = _state_machine._reserve_attempts[arg_5_1] - 1
+
+		if _state_machine._reserve_attempts[arg_5_1] <= 0 then
 			table.clear(var_5_1)
 		end
 	end
@@ -117,23 +139,27 @@ function var_0_0._pick_server(arg_5_0, arg_5_1)
 	return var_5_4
 end
 
-function var_0_0._trigger_search(arg_6_0, arg_6_1)
+var_0_0._trigger_search = function (self, arg_6_1)
+	-- function 6
 	print("Attempting " .. arg_6_1 .. " search for game server")
 
-	local var_6_0 = Development.parameter("use_lan_backend") or rawget(_G, "Steam") == nil
-	local var_6_1 = IS_WINDOWS
+	local parameter = Development.parameter("use_lan_backend")
+
+	parameter = parameter or rawget(_G, "Steam") == nil
+
+	local IS_WINDOWS = IS_WINDOWS
 	local var_6_2
 
-	if var_6_0 or not var_6_1 then
-		var_6_2 = GameServerFinderLan:new(arg_6_0._network_options)
+	if not (parameter or IS_WINDOWS) then
+		var_6_2 = GameServerFinderLan:new(self._network_options)
 	else
-		var_6_2 = GameServerFinder:new(arg_6_0._network_options)
+		var_6_2 = GameServerFinder:new(self._network_options)
 	end
 
 	var_6_2:set_search_type(arg_6_1)
 
-	local var_6_3 = {
-		free_slots = arg_6_0._num_players,
+	local tbl = {
+		free_slots = self._num_players,
 		server_browser_filters = {
 			dedicated = "valuenotused",
 			notfull = "valuenotused",
@@ -142,11 +168,11 @@ function var_0_0._trigger_search(arg_6_0, arg_6_1)
 		matchmaking_filters = {}
 	}
 
-	table.merge_recursive(var_6_3, arg_6_0._filters)
+	table.merge_recursive(tbl, self._filters)
 
-	local var_6_4 = true
+	local flag = true
 
-	var_6_2:add_filter_requirements(var_6_3, var_6_4)
+	var_6_2:add_filter_requirements(tbl, flag)
 	var_6_2:refresh()
 
 	return var_6_2
@@ -156,34 +182,37 @@ local var_0_1 = class(ServerReserveState)
 
 var_0_1.NAME = "ServerReserveState"
 
-function var_0_1.init(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7)
-	arg_7_0._network_options = arg_7_2
-	arg_7_0._peers_to_reserve = arg_7_4
-	arg_7_0._state_machine = arg_7_1
+var_0_1.init = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7)
+	-- function 7
+	self._network_options = arg_7_2
+	self._peers_to_reserve = arg_7_4
+	self._state_machine = arg_7_1
 end
 
-function var_0_1.enter(arg_8_0, arg_8_1)
+var_0_1.enter = function (self, arg_8_1)
+	-- function 8
 	print("Attempt reserving slots on " .. arg_8_1.server_info.ip_port)
 
 	local var_8_0
 
-	arg_8_0._lobby_data = arg_8_1
-	arg_8_0._lobby = GameServerLobbyClient:new(arg_8_0._network_options, arg_8_1, var_8_0, arg_8_0._peers_to_reserve)
-	arg_8_0._state_machine._lobby = arg_8_0._lobby
+	self._lobby_data = arg_8_1
+	self._lobby = GameServerLobbyClient:new(self._network_options, arg_8_1, var_8_0, self._peers_to_reserve)
+	self._state_machine._lobby = self._lobby
 end
 
-function var_0_1.update(arg_9_0, arg_9_1)
-	local var_9_0 = arg_9_0._lobby
+var_0_1.update = function (self, arg_9_1)
+	-- function 9
+	local _lobby = self._lobby
 
-	var_9_0:update(arg_9_1)
+	_lobby:update(arg_9_1)
 
-	local var_9_1 = var_9_0:state()
+	local state = _lobby:state()
 
-	if var_9_1 == "reserved" then
-		return "reserve_success", var_9_0, arg_9_0._lobby_data
+	if state == "reserved" then
+		return "reserve_success", _lobby, self._lobby_data
 	end
 
-	if var_9_1 == "failed" then
+	if state == "failed" then
 		return "reserve_failed"
 	end
 end
@@ -192,11 +221,13 @@ local var_0_2 = class(SuccessState)
 
 var_0_2.NAME = "SuccessState"
 
-function var_0_2.init(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6, arg_10_7)
-	arg_10_0._state_machine = arg_10_1
+var_0_2.init = function (self, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6, arg_10_7)
+	-- function 10
+	self._state_machine = arg_10_1
 end
 
-function var_0_2.enter(arg_11_0, arg_11_1, arg_11_2)
+var_0_2.enter = function (arg_11_0, arg_11_1, arg_11_2)
+	-- function 11
 	arg_11_0._state_machine._result = "reserved"
 	arg_11_0._state_machine._lobby_data = arg_11_2
 end
@@ -205,57 +236,61 @@ local var_0_3 = class(FailState)
 
 var_0_3.NAME = "FailState"
 
-function var_0_3.init(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6, arg_12_7)
+var_0_3.init = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6, arg_12_7)
+	-- function 12
 	arg_12_1._result = "failed"
 end
 
 ServerPartyReserveStateMachine = class(ServerPartyReserveStateMachine, VisualStateMachine)
 
-function ServerPartyReserveStateMachine.init(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6)
+ServerPartyReserveStateMachine.init = function (self, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6)
+	-- function 13
 	local var_13_0
-	local var_13_1 = arg_13_1.config_file_name
-	local var_13_2 = arg_13_1.project_hash
-	local var_13_3 = LobbyAux.create_network_hash(var_13_1, var_13_2)
+	local config_file_name = arg_13_1.config_file_name
+	local project_hash = arg_13_1.project_hash
+	local create_network_hash = LobbyAux.create_network_hash(config_file_name, project_hash)
 
-	arg_13_0.super.init(arg_13_0, "ServerPartyReserveStateMachine", var_13_0, arg_13_1, var_13_3, arg_13_2, arg_13_4 or {}, arg_13_5 or {}, arg_13_3, arg_13_6 or {})
+	self.super.init(self, "ServerPartyReserveStateMachine", var_13_0, arg_13_1, create_network_hash, arg_13_2, arg_13_4 or {}, arg_13_5 or {}, arg_13_3, arg_13_6 or {})
 
-	arg_13_0._has_result = false
-	arg_13_0._user_data = arg_13_6
-	arg_13_0._result = nil
-	arg_13_0._lobby = nil
-	arg_13_0._lobby_data = nil
-	arg_13_0._reserve_attempts = {
+	self._has_result = false
+	self._user_data = arg_13_6
+	self._result = nil
+	self._lobby = nil
+	self._lobby_data = nil
+	self._reserve_attempts = {
 		internet = 5,
 		favorites = 5,
 		lan = 5
 	}
-	arg_13_0._servers = {}
+	self._servers = {}
 
-	arg_13_0:add_transition("FindServerState", "server_found", var_0_1)
-	arg_13_0:add_transition("FindServerState", "server_not_found", var_0_3)
-	arg_13_0:add_transition("ServerReserveState", "reserve_success", var_0_2)
-	arg_13_0:add_transition("ServerReserveState", "reserve_failed", var_0_0)
-	arg_13_0:set_initial_state(var_0_0)
+	self:add_transition("FindServerState", "server_found", var_0_1)
+	self:add_transition("FindServerState", "server_not_found", var_0_3)
+	self:add_transition("ServerReserveState", "reserve_success", var_0_2)
+	self:add_transition("ServerReserveState", "reserve_failed", var_0_0)
+	self:set_initial_state(var_0_0)
 end
 
-function ServerPartyReserveStateMachine.destroy(arg_14_0)
-	if arg_14_0._lobby then
-		arg_14_0._lobby:destroy()
+ServerPartyReserveStateMachine.destroy = function (self)
+	-- function 14
+	if not self._lobby then
+		self._lobby:destroy()
 
-		arg_14_0._lobby = nil
+		self._lobby = nil
 	end
 
-	arg_14_0.super.destroy(arg_14_0)
+	self.super.destroy(self)
 end
 
-function ServerPartyReserveStateMachine.result(arg_15_0)
-	if arg_15_0._result == nil then
+ServerPartyReserveStateMachine.result = function (self)
+	-- function 15
+	if self._result == nil then
 		return
 	end
 
-	local var_15_0 = arg_15_0._lobby
+	local _lobby = self._lobby
 
-	arg_15_0._lobby = nil
+	self._lobby = nil
 
-	return arg_15_0._result, var_15_0, arg_15_0._lobby_data, arg_15_0._user_data
+	return self._result, _lobby, self._lobby_data, self._user_data
 end

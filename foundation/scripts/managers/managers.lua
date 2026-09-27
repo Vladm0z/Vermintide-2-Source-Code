@@ -1,195 +1,261 @@
 -- chunkname: @foundation/scripts/managers/managers.lua
 
-local function var_0_0(arg_1_0, ...)
-	if script_data.network_debug then
+local function fn(arg_1_0, ...)
+	-- function 1
+	if not script_data.network_debug then
 		printf("[Managers] " .. arg_1_0, ...)
 	end
 end
 
-local var_0_1 = BUILD == "dev" or BUILD == "debug"
-local var_0_2 = {
+local flag = BUILD == "dev" or BUILD == "debug"
+local tbl = {
 	"global",
 	"venture",
 	"state"
 }
+local Managers = Managers
 
 Managers = Managers or {
 	state = {},
 	venture = {}
 }
+Managers = Managers
+
+local ManagersCreationOrder = ManagersCreationOrder
+
 ManagersCreationOrder = ManagersCreationOrder or {
 	global = {},
 	state = {},
 	venture = {}
 }
+ManagersCreationOrder = ManagersCreationOrder
 
-local function var_0_3(arg_2_0)
-	var_0_0("Destroying manager group: %s", arg_2_0)
+local function fn_2(arg_2_0)
+	-- function 2
+	fn("Destroying manager group: %s", arg_2_0)
 
-	local var_2_0 = arg_2_0 == "global" and Managers or Managers[arg_2_0]
+	local Managers
+
+	if arg_2_0 == "global" then
+		Managers = Managers
+
+		if not Managers then
+			-- Nothing
+		end
+	end
+
+	Managers = Managers[arg_2_0]
+
+	::label_2_0::
+
 	local var_2_1 = ManagersCreationOrder[arg_2_0]
 
 	table.reverse(var_2_1)
 
-	for iter_2_0, iter_2_1 in ipairs(var_2_1) do
-		local var_2_2 = var_2_0[iter_2_1]
+	for i, v in ipairs(var_2_1) do
+		local var_2_2 = Managers[v]
 
-		if var_2_2 and type(var_2_2.destroy) == "function" then
+		if not (not var_2_2 and type(var_2_2.destroy) ~= "function") then
 			var_2_2:destroy()
 		end
 
-		var_2_0[iter_2_1] = nil
-		var_2_1[iter_2_0] = nil
+		Managers[v] = nil
+		var_2_1[i] = nil
 	end
 end
 
-local function var_0_4(arg_3_0)
+local function fn_3(arg_3_0)
+	-- function 3
 	return 1, #arg_3_0, 1
 end
 
-local function var_0_5(arg_4_0)
+local function fn_4(arg_4_0)
+	-- function 4
 	return #arg_4_0, 1, -1
 end
 
-local function var_0_6(arg_5_0, arg_5_1, ...)
-	var_0_0("Calling function on all managers:", arg_5_0, "inverse_order:", arg_5_1)
+local function fn_5(arg_5_0, arg_5_1, ...)
+	-- function 5
+	fn("Calling function on all managers:", arg_5_0, "inverse_order:", arg_5_1)
 
-	local var_5_0 = arg_5_1 and var_0_5 or var_0_4
-	local var_5_1, var_5_2, var_5_3 = var_5_0(var_0_2)
+	local var_5_0
 
-	for iter_5_0 = var_5_1, var_5_2, var_5_3 do
-		local var_5_4 = var_0_2[iter_5_0]
-		local var_5_5 = var_5_4 == "global" and Managers or Managers[var_5_4]
+	if not arg_5_1 then
+		var_5_0 = fn_4
+
+		if not var_5_0 then
+			-- Nothing
+		end
+	end
+
+	var_5_0 = fn_3
+
+	::label_5_0::
+
+	local var_5_1, var_5_2, var_5_3 = var_5_0(tbl)
+
+	for i = var_5_1, var_5_2, var_5_3 do
+		local var_5_4 = tbl[i]
+		local Managers
+
+		if var_5_4 == "global" then
+			Managers = Managers
+
+			if not Managers then
+				-- Nothing
+			end
+		end
+
+		Managers = Managers[var_5_4]
+
+		::label_5_1::
+
 		local var_5_6 = ManagersCreationOrder[var_5_4]
 		local var_5_7, var_5_8, var_5_9 = var_5_0(var_5_6)
 
-		for iter_5_1 = var_5_7, var_5_8, var_5_9 do
-			local var_5_10 = var_5_5[var_5_6[iter_5_1]]
+		for j = var_5_7, var_5_8, var_5_9 do
+			local var_5_10 = Managers[var_5_6[j]]
 
-			if var_5_10 and var_5_10[arg_5_0] then
+			if not var_5_10 and not var_5_10[arg_5_0] then
 				var_5_10[arg_5_0](var_5_10, ...)
 			end
 		end
 	end
 end
 
-function Managers.destroy(arg_6_0)
-	for iter_6_0 = #var_0_2, 1, -1 do
-		var_0_3(var_0_2[iter_6_0])
+Managers.destroy = function (arg_6_0)
+	-- function 6
+	for i = #tbl, 1, -1 do
+		fn_2(tbl[i])
 	end
 end
 
-function Managers.state.destroy(arg_7_0)
-	var_0_3("state")
+Managers.state.destroy = function (arg_7_0)
+	-- function 7
+	fn_2("state")
 end
 
-function Managers.venture.destroy(arg_8_0)
-	var_0_3("venture")
+Managers.venture.destroy = function (arg_8_0)
+	-- function 8
+	fn_2("venture")
 end
 
-function Managers.on_round_start(arg_9_0, ...)
-	var_0_6("on_round_start", false, ...)
+Managers.on_round_start = function (arg_9_0, ...)
+	-- function 9
+	fn_5("on_round_start", false, ...)
 end
 
-function Managers.on_round_end(arg_10_0, ...)
-	var_0_6("on_round_end", true, ...)
+Managers.on_round_end = function (arg_10_0, ...)
+	-- function 10
+	fn_5("on_round_end", true, ...)
 end
 
-function Managers.on_venture_start(arg_11_0, ...)
-	var_0_6("on_venture_start", false, ...)
+Managers.on_venture_start = function (arg_11_0, ...)
+	-- function 11
+	fn_5("on_venture_start", false, ...)
 end
 
-function Managers.on_venture_end(arg_12_0, ...)
-	var_0_6("on_venture_end", true, ...)
+Managers.on_venture_end = function (arg_12_0, ...)
+	-- function 12
+	fn_5("on_venture_end", true, ...)
 end
 
-local var_0_7 = {
-	__newindex = function(arg_13_0, arg_13_1, arg_13_2)
+local tbl_2 = {
+	__newindex = function (arg_13_0, arg_13_1, arg_13_2)
+		-- function 13
 		rawset(ManagersCreationOrder.global, #ManagersCreationOrder.global + 1, arg_13_1)
 		rawset(arg_13_0, arg_13_1, arg_13_2)
 
-		if arg_13_2 and var_0_1 then
-			local var_13_0 = arg_13_1 .. "_update"
+		if not arg_13_2 and not flag then
+			local str = arg_13_1 .. "_update"
 			local var_13_1 = getmetatable(arg_13_2)
 
-			if var_13_1 then
-				function arg_13_2.update(...)
-					local var_14_0, var_14_1, var_14_2 = var_13_1.update(...)
+			if not var_13_1 then
+				arg_13_2.update = function (...)
+					-- function 14
+					local update, var_14_1, var_14_2 = var_13_1.update(...)
 
-					return var_14_0, var_14_1, var_14_2
+					return update, var_14_1, var_14_2
 				end
 			end
 		end
 	end,
-	__tostring = function(arg_15_0)
-		local var_15_0 = "\n"
+	__tostring = function (arg_15_0)
+		-- function 15
+		local str = "\n"
 
-		for iter_15_0, iter_15_1 in pairs(arg_15_0) do
-			if type(iter_15_1) == "table" and iter_15_0 ~= "state" and iter_15_0 ~= "venture" then
-				var_15_0 = var_15_0 .. "\t" .. iter_15_0 .. "\n"
+		for k, v in pairs(arg_15_0) do
+			if not (type(v) ~= "table" or k == "state" or k == "venture") then
+				str = str .. "\t" .. k .. "\n"
 			end
 		end
 
-		return var_15_0
+		return str
 	end
 }
-local var_0_8 = {
-	__newindex = function(arg_16_0, arg_16_1, arg_16_2)
+local tbl_3 = {
+	__newindex = function (arg_16_0, arg_16_1, arg_16_2)
+		-- function 16
 		rawset(ManagersCreationOrder.venture, #ManagersCreationOrder.venture + 1, arg_16_1)
 		rawset(arg_16_0, arg_16_1, arg_16_2)
 
-		if arg_16_2 and var_0_1 then
-			local var_16_0 = arg_16_1 .. "_update"
+		if not arg_16_2 and not flag then
+			local str = arg_16_1 .. "_update"
 			local var_16_1 = getmetatable(arg_16_2)
 
-			function arg_16_2.update(...)
-				local var_17_0, var_17_1, var_17_2 = var_16_1.update(...)
+			arg_16_2.update = function (...)
+				-- function 17
+				local update, var_17_1, var_17_2 = var_16_1.update(...)
 
-				return var_17_0, var_17_1, var_17_2
+				return update, var_17_1, var_17_2
 			end
 		end
 	end,
-	__tostring = function(arg_18_0)
-		local var_18_0 = "\n"
+	__tostring = function (arg_18_0)
+		-- function 18
+		local str = "\n"
 
-		for iter_18_0, iter_18_1 in pairs(arg_18_0) do
-			if type(iter_18_1) == "table" then
-				var_18_0 = var_18_0 .. "\t" .. iter_18_0 .. "\n"
+		for k, v in pairs(arg_18_0) do
+			if type(v) == "table" then
+				str = str .. "\t" .. k .. "\n"
 			end
 		end
 
-		return var_18_0
+		return str
 	end
 }
-local var_0_9 = {
-	__newindex = function(arg_19_0, arg_19_1, arg_19_2)
+local tbl_4 = {
+	__newindex = function (arg_19_0, arg_19_1, arg_19_2)
+		-- function 19
 		rawset(ManagersCreationOrder.state, #ManagersCreationOrder.state + 1, arg_19_1)
 		rawset(arg_19_0, arg_19_1, arg_19_2)
 
-		if arg_19_2 and var_0_1 then
-			local var_19_0 = arg_19_1 .. "_update"
+		if not arg_19_2 and not flag then
+			local str = arg_19_1 .. "_update"
 			local var_19_1 = getmetatable(arg_19_2)
 
-			function arg_19_2.update(...)
-				local var_20_0, var_20_1, var_20_2 = var_19_1.update(...)
+			arg_19_2.update = function (...)
+				-- function 20
+				local update, var_20_1, var_20_2 = var_19_1.update(...)
 
-				return var_20_0, var_20_1, var_20_2
+				return update, var_20_1, var_20_2
 			end
 		end
 	end,
-	__tostring = function(arg_21_0)
-		local var_21_0 = "\n"
+	__tostring = function (arg_21_0)
+		-- function 21
+		local str = "\n"
 
-		for iter_21_0, iter_21_1 in pairs(arg_21_0) do
-			if type(iter_21_1) == "table" then
-				var_21_0 = var_21_0 .. "\t" .. iter_21_0 .. "\n"
+		for k, v in pairs(arg_21_0) do
+			if type(v) == "table" then
+				str = str .. "\t" .. k .. "\n"
 			end
 		end
 
-		return var_21_0
+		return str
 	end
 }
 
-setmetatable(Managers, var_0_7)
-setmetatable(Managers.venture, var_0_8)
-setmetatable(Managers.state, var_0_9)
+setmetatable(Managers, tbl_2)
+setmetatable(Managers.venture, tbl_3)
+setmetatable(Managers.state, tbl_4)

@@ -10,12 +10,12 @@ require("scripts/ui/views/hero_view/craft_pages/craft_page_convert_dust")
 
 local var_0_0 = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_crafting_definitions")
 local var_0_1, var_0_2, var_0_3 = dofile("scripts/settings/crafting/crafting_recipes")
-local var_0_4 = var_0_0.widgets
-local var_0_5 = var_0_0.category_settings
-local var_0_6 = var_0_0.scenegraph_definition
-local var_0_7 = var_0_0.animation_definitions
-local var_0_8 = false
-local var_0_9 = {
+local widgets = var_0_0.widgets
+local category_settings = var_0_0.category_settings
+local scenegraph_definition = var_0_0.scenegraph_definition
+local animation_definitions = var_0_0.animation_definitions
+local flag = false
+local tbl = {
 	{
 		sound_event_enter = "play_gui_equipment_button",
 		name = "salvage",
@@ -63,476 +63,524 @@ local var_0_9 = {
 HeroWindowCrafting = class(HeroWindowCrafting)
 HeroWindowCrafting.NAME = "HeroWindowCrafting"
 
-function HeroWindowCrafting.on_enter(arg_1_0, arg_1_1, arg_1_2)
+HeroWindowCrafting.on_enter = function (self, arg_1_1, arg_1_2)
+	-- function 1
 	print("[HeroViewWindow] Enter Substate HeroWindowCrafting")
 
-	arg_1_0.parent = arg_1_1.parent
+	self.parent = arg_1_1.parent
 
-	local var_1_0 = arg_1_1.ingame_ui_context
+	local ingame_ui_context = arg_1_1.ingame_ui_context
 
-	arg_1_0.ui_renderer = var_1_0.ui_renderer
-	arg_1_0.ui_top_renderer = var_1_0.ui_top_renderer
-	arg_1_0.input_manager = var_1_0.input_manager
-	arg_1_0.statistics_db = var_1_0.statistics_db
-	arg_1_0.render_settings = {
+	self.ui_renderer = ingame_ui_context.ui_renderer
+	self.ui_top_renderer = ingame_ui_context.ui_top_renderer
+	self.input_manager = ingame_ui_context.input_manager
+	self.statistics_db = ingame_ui_context.statistics_db
+	self.render_settings = {
 		snap_pixel_positions = true
 	}
-	arg_1_0.crafting_manager = Managers.state.crafting
-	arg_1_0.wwise_world = arg_1_1.wwise_world
+	self.crafting_manager = Managers.state.crafting
+	self.wwise_world = arg_1_1.wwise_world
 
-	local var_1_1 = Managers.player
+	local player = Managers.player
 
-	arg_1_0._stats_id = var_1_1:local_player():stats_id()
-	arg_1_0.player_manager = var_1_1
-	arg_1_0.peer_id = var_1_0.peer_id
-	arg_1_0._animations = {}
+	self._stats_id = player:local_player():stats_id()
+	self.player_manager = player
+	self.peer_id = ingame_ui_context.peer_id
+	self._animations = {}
 
-	arg_1_0:create_ui_elements(arg_1_1, arg_1_2)
-	arg_1_0:_set_crafting_fg_progress(0)
+	self:create_ui_elements(arg_1_1, arg_1_2)
+	self:_set_crafting_fg_progress(0)
 
-	arg_1_0.hero_name = arg_1_1.hero_name
-	arg_1_0.career_index = arg_1_1.career_index
-	arg_1_0.profile_index = arg_1_1.profile_index
-	arg_1_0._page_params = {
-		wwise_world = arg_1_0.wwise_world,
-		ingame_ui_context = var_1_0,
-		parent = arg_1_0,
-		hero_name = arg_1_0.hero_name,
-		career_index = arg_1_0.career_index,
-		profile_index = arg_1_0.profile_index
+	self.hero_name = arg_1_1.hero_name
+	self.career_index = arg_1_1.career_index
+	self.profile_index = arg_1_1.profile_index
+	self._page_params = {
+		wwise_world = self.wwise_world,
+		ingame_ui_context = ingame_ui_context,
+		parent = self,
+		hero_name = self.hero_name,
+		career_index = self.career_index,
+		profile_index = self.profile_index
 	}
-	arg_1_0.unblocked_services = {}
-	arg_1_0.unblocked_services_n = 0
+	self.unblocked_services = {}
+	self.unblocked_services_n = 0
 
-	arg_1_0:_change_recipe_page(1)
+	self:_change_recipe_page(1)
 end
 
-function HeroWindowCrafting.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
-	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_6)
+HeroWindowCrafting.create_ui_elements = function (self, arg_2_1, arg_2_2)
+	-- function 2
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	local var_2_0 = {}
-	local var_2_1 = {}
+	local tbl = {}
+	local tbl_2 = {}
 
-	for iter_2_0, iter_2_1 in pairs(var_0_4) do
-		local var_2_2 = UIWidget.init(iter_2_1)
+	for k, v in pairs(widgets) do
+		local var_2_2 = UIWidget.init(v)
 
-		var_2_0[#var_2_0 + 1] = var_2_2
-		var_2_1[iter_2_0] = var_2_2
+		tbl[#tbl + 1] = var_2_2
+		tbl_2[k] = var_2_2
 	end
 
-	arg_2_0._widgets = var_2_0
-	arg_2_0._widgets_by_name = var_2_1
+	self._widgets = tbl
+	self._widgets_by_name = tbl_2
 
-	UIRenderer.clear_scenegraph_queue(arg_2_0.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
-	arg_2_0.ui_animator = UIAnimator:new(arg_2_0.ui_scenegraph, var_0_7)
+	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
 
-	if arg_2_2 then
-		local var_2_3 = arg_2_0.ui_scenegraph.window.local_position
+	if not arg_2_2 then
+		local local_position = self.ui_scenegraph.window.local_position
 
-		var_2_3[1] = var_2_3[1] + arg_2_2[1]
-		var_2_3[2] = var_2_3[2] + arg_2_2[2]
-		var_2_3[3] = var_2_3[3] + arg_2_2[3]
+		local_position[1] = local_position[1] + arg_2_2[1]
+		local_position[2] = local_position[2] + arg_2_2[2]
+		local_position[3] = local_position[3] + arg_2_2[3]
 	end
 
-	arg_2_0._widgets_by_name.crafting_fg_glow.style.texture_id.color[1] = 0
+	self._widgets_by_name.crafting_fg_glow.style.texture_id.color[1] = 0
 end
 
-function HeroWindowCrafting.on_exit(arg_3_0, arg_3_1)
+HeroWindowCrafting.on_exit = function (self, arg_3_1)
+	-- function 3
 	print("[HeroViewWindow] Exit Substate HeroWindowCrafting")
 
-	arg_3_0.ui_animator = nil
+	self.ui_animator = nil
 
-	if arg_3_0._active_page then
-		local var_3_0 = arg_3_0._page_params
+	if not self._active_page then
+		local _page_params = self._page_params
 
-		arg_3_0._active_page:on_exit(var_3_0)
+		self._active_page:on_exit(_page_params)
 	end
 
-	if arg_3_0:is_crafting_anim_playing() then
-		arg_3_0:cancel_crafting_animation()
+	if not self:is_crafting_anim_playing() then
+		self:cancel_crafting_animation()
 	end
 end
 
-function HeroWindowCrafting.update(arg_4_0, arg_4_1, arg_4_2)
-	if var_0_8 then
-		var_0_8 = false
+HeroWindowCrafting.update = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	if not flag then
+		flag = false
 
-		arg_4_0:create_ui_elements()
+		self:create_ui_elements()
 	end
 
-	local var_4_0 = arg_4_0._current_craft_id
+	local _current_craft_id = self._current_craft_id
 
-	if var_4_0 then
-		local var_4_1 = Managers.backend:get_interface("crafting")
+	if not _current_craft_id then
+		local get_interface = Managers.backend:get_interface("crafting")
 
-		if var_4_1:is_craft_complete(var_4_0) then
-			local var_4_2 = var_4_1:get_craft_result(var_4_0)
+		if not get_interface:is_craft_complete(_current_craft_id) then
+			local get_craft_result = get_interface:get_craft_result(_current_craft_id)
 
-			arg_4_0:craft_complete(var_4_2)
+			self:craft_complete(get_craft_result)
 
-			arg_4_0._current_craft_id = nil
+			self._current_craft_id = nil
 		end
 	end
 
-	if arg_4_0._active_page then
-		arg_4_0._active_page:update(arg_4_1, arg_4_2)
+	if not self._active_page then
+		self._active_page:update(arg_4_1, arg_4_2)
 	end
 
-	arg_4_0:_update_craft_start_time(arg_4_1, arg_4_2)
-	arg_4_0:_update_craft_end_time(arg_4_1, arg_4_2)
-	arg_4_0:_update_craft_glow_wait_time(arg_4_1, arg_4_2)
-	arg_4_0:_update_craft_glow_in_time(arg_4_1, arg_4_2)
-	arg_4_0:_update_craft_glow_out_time(arg_4_1, arg_4_2)
-	arg_4_0:_update_animations(arg_4_1)
-	arg_4_0:_handle_input(arg_4_1, arg_4_2)
-	arg_4_0:draw(arg_4_1)
+	self:_update_craft_start_time(arg_4_1, arg_4_2)
+	self:_update_craft_end_time(arg_4_1, arg_4_2)
+	self:_update_craft_glow_wait_time(arg_4_1, arg_4_2)
+	self:_update_craft_glow_in_time(arg_4_1, arg_4_2)
+	self:_update_craft_glow_out_time(arg_4_1, arg_4_2)
+	self:_update_animations(arg_4_1)
+	self:_handle_input(arg_4_1, arg_4_2)
+	self:draw(arg_4_1)
 end
 
-function HeroWindowCrafting.post_update(arg_5_0, arg_5_1, arg_5_2)
-	if arg_5_0._active_page and arg_5_0._active_page.post_update then
-		arg_5_0._active_page:post_update(arg_5_1, arg_5_2)
+HeroWindowCrafting.post_update = function (self, arg_5_1, arg_5_2)
+	-- function 5
+	if not self._active_page and not self._active_page.post_update then
+		self._active_page:post_update(arg_5_1, arg_5_2)
 	end
 end
 
-function HeroWindowCrafting._update_animations(arg_6_0, arg_6_1)
-	arg_6_0.ui_animator:update(arg_6_1)
+HeroWindowCrafting._update_animations = function (self, arg_6_1)
+	-- function 6
+	self.ui_animator:update(arg_6_1)
 
-	local var_6_0 = arg_6_0._animations
-	local var_6_1 = arg_6_0.ui_animator
+	local _animations = self._animations
+	local ui_animator = self.ui_animator
 
-	for iter_6_0, iter_6_1 in pairs(var_6_0) do
-		if var_6_1:is_animation_completed(iter_6_1) then
-			var_6_1:stop_animation(iter_6_1)
+	for k, v in pairs(_animations) do
+		if not ui_animator:is_animation_completed(v) then
+			ui_animator:stop_animation(v)
 
-			var_6_0[iter_6_0] = nil
+			_animations[k] = nil
 		end
 	end
 
-	local var_6_2 = arg_6_0._widgets_by_name
+	local _widgets_by_name = self._widgets_by_name
 end
 
-function HeroWindowCrafting._is_button_pressed(arg_7_0, arg_7_1)
-	local var_7_0 = arg_7_1.content.button_hotspot
+HeroWindowCrafting._is_button_pressed = function (arg_7_0, arg_7_1)
+	-- function 7
+	local button_hotspot = arg_7_1.content.button_hotspot
 
-	if var_7_0.on_release then
-		var_7_0.on_release = false
+	if not button_hotspot.on_release then
+		button_hotspot.on_release = false
 
 		return true
 	end
 end
 
-function HeroWindowCrafting._is_button_hovered(arg_8_0, arg_8_1)
-	if arg_8_1.content.button_hotspot.on_hover_enter then
+HeroWindowCrafting._is_button_hovered = function (arg_8_0, arg_8_1)
+	-- function 8
+	if not arg_8_1.content.button_hotspot.on_hover_enter then
 		return true
 	end
 end
 
-function HeroWindowCrafting._is_button_held(arg_9_0, arg_9_1)
-	local var_9_0 = arg_9_1.content.button_hotspot
+HeroWindowCrafting._is_button_held = function (arg_9_0, arg_9_1)
+	-- function 9
+	local button_hotspot = arg_9_1.content.button_hotspot
 
-	if var_9_0.is_clicked then
-		return var_9_0.is_clicked
+	if not button_hotspot.is_clicked then
+		return button_hotspot.is_clicked
 	end
 end
 
-function HeroWindowCrafting._handle_input(arg_10_0, arg_10_1, arg_10_2)
-	if arg_10_0:is_crafting_anim_playing() then
+HeroWindowCrafting._handle_input = function (self, arg_10_1, arg_10_2)
+	-- function 10
+	if not self:is_crafting_anim_playing() then
 		return
 	end
 
-	local var_10_0 = arg_10_0._widgets_by_name
-	local var_10_1 = var_10_0.page_button_next
-	local var_10_2 = var_10_0.page_button_previous
+	local _widgets_by_name = self._widgets_by_name
+	local page_button_next = _widgets_by_name.page_button_next
+	local page_button_previous = _widgets_by_name.page_button_previous
 
-	UIWidgetUtils.animate_default_button(var_10_1, arg_10_1)
-	UIWidgetUtils.animate_default_button(var_10_2, arg_10_1)
+	UIWidgetUtils.animate_default_button(page_button_next, arg_10_1)
+	UIWidgetUtils.animate_default_button(page_button_previous, arg_10_1)
 
-	if arg_10_0:_is_button_hovered(var_10_1) or arg_10_0:_is_button_hovered(var_10_2) then
-		arg_10_0:_play_sound("play_gui_inventory_next_hover")
+	if self:_is_button_hovered(page_button_next) or not self:_is_button_hovered(page_button_previous) then
+		self:_play_sound("play_gui_inventory_next_hover")
 	end
 
-	local var_10_3 = arg_10_0._total_pages
-	local var_10_4 = arg_10_0._current_page
+	local _total_pages = self._total_pages
+	local _current_page = self._current_page
 
-	if arg_10_0:_is_button_pressed(var_10_1) then
-		local var_10_5 = var_10_4 % var_10_3 + 1
+	if not self:_is_button_pressed(page_button_next) then
+		local num = _current_page % _total_pages + 1
 
-		arg_10_0:_change_recipe_page(var_10_5)
-		arg_10_0:_play_sound("play_gui_craft_recipe_next")
-	elseif arg_10_0:_is_button_pressed(var_10_2) then
-		local var_10_6 = var_10_4 > 1 and var_10_4 - 1 or var_10_3
+		self:_change_recipe_page(num)
+		self:_play_sound("play_gui_craft_recipe_next")
+	elseif not self:_is_button_pressed(page_button_previous) then
+		local num_2
 
-		arg_10_0:_change_recipe_page(var_10_6)
-		arg_10_0:_play_sound("play_gui_craft_recipe_next")
-	elseif Managers.input:is_device_active("gamepad") then
-		local var_10_7 = Managers.input:get_service("hero_view")
-		local var_10_8 = #var_0_9
+		if _current_page > 1 then
+			num_2 = _current_page - 1
 
-		if var_10_7:get("cycle_next") then
-			local var_10_9 = var_10_4 % var_10_8 + 1
-
-			if var_10_9 <= var_10_8 then
-				arg_10_0:_change_recipe_page(var_10_9)
-				arg_10_0:_play_sound("play_gui_craft_recipe_next")
+			if not num_2 then
+				-- Nothing
 			end
-		elseif var_10_7:get("cycle_previous") then
-			local var_10_10 = var_10_4 > 1 and var_10_4 - 1 or var_10_8
+		end
 
-			if var_10_10 > 0 then
-				arg_10_0:_change_recipe_page(var_10_10)
-				arg_10_0:_play_sound("play_gui_craft_recipe_next")
+		num_2 = _total_pages
+
+		::label_10_0::
+
+		self:_change_recipe_page(num_2)
+		self:_play_sound("play_gui_craft_recipe_next")
+	elseif not Managers.input:is_device_active("gamepad") then
+		local get_service = Managers.input:get_service("hero_view")
+		local count = #tbl
+
+		if not get_service:get("cycle_next") then
+			local num_3 = _current_page % count + 1
+
+			if num_3 <= count then
+				self:_change_recipe_page(num_3)
+				self:_play_sound("play_gui_craft_recipe_next")
+			end
+		elseif not get_service:get("cycle_previous") then
+			local num_4
+
+			if _current_page > 1 then
+				num_4 = _current_page - 1
+
+				if not num_4 then
+					-- Nothing
+				end
+			end
+
+			num_4 = count
+
+			::label_10_1::
+
+			if num_4 > 0 then
+				self:_change_recipe_page(num_4)
+				self:_play_sound("play_gui_craft_recipe_next")
 			end
 		end
 	end
 end
 
-function HeroWindowCrafting._exit(arg_11_0, arg_11_1)
-	arg_11_0.exit = true
-	arg_11_0.exit_level_id = arg_11_1
+HeroWindowCrafting._exit = function (self, arg_11_1)
+	-- function 11
+	self.exit = true
+	self.exit_level_id = arg_11_1
 end
 
-function HeroWindowCrafting.draw(arg_12_0, arg_12_1)
-	local var_12_0 = arg_12_0.ui_renderer
-	local var_12_1 = arg_12_0.ui_top_renderer
-	local var_12_2 = arg_12_0.ui_scenegraph
-	local var_12_3 = arg_12_0.parent:window_input_service()
-	local var_12_4 = Managers.input:is_device_active("gamepad")
+HeroWindowCrafting.draw = function (self, arg_12_1)
+	-- function 12
+	local ui_renderer = self.ui_renderer
+	local ui_top_renderer = self.ui_top_renderer
+	local ui_scenegraph = self.ui_scenegraph
+	local window_input_service = self.parent:window_input_service()
+	local is_device_active = Managers.input:is_device_active("gamepad")
 
-	UIRenderer.begin_pass(var_12_1, var_12_2, var_12_3, arg_12_1, nil, arg_12_0.render_settings)
+	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, window_input_service, arg_12_1, nil, self.render_settings)
 
-	for iter_12_0, iter_12_1 in ipairs(arg_12_0._widgets) do
-		UIRenderer.draw_widget(var_12_1, iter_12_1)
+	for i, v in ipairs(self._widgets) do
+		UIRenderer.draw_widget(ui_top_renderer, v)
 	end
 
-	local var_12_5 = arg_12_0._active_node_widgets
+	local _active_node_widgets = self._active_node_widgets
 
-	if var_12_5 then
-		for iter_12_2, iter_12_3 in ipairs(var_12_5) do
-			UIRenderer.draw_widget(var_12_1, iter_12_3)
+	if not _active_node_widgets then
+		for i_2, v_2 in ipairs(_active_node_widgets) do
+			UIRenderer.draw_widget(ui_top_renderer, v_2)
 		end
 	end
 
-	UIRenderer.end_pass(var_12_1)
+	UIRenderer.end_pass(ui_top_renderer)
 end
 
-function HeroWindowCrafting._play_sound(arg_13_0, arg_13_1)
-	arg_13_0.parent:play_sound(arg_13_1)
+HeroWindowCrafting._play_sound = function (self, arg_13_1)
+	-- function 13
+	self.parent:play_sound(arg_13_1)
 end
 
-function HeroWindowCrafting._change_recipe_page(arg_14_0, arg_14_1)
-	local var_14_0 = #var_0_9
-	local var_14_1 = var_0_9[arg_14_1].name
-	local var_14_2 = var_0_2[var_14_1]
+HeroWindowCrafting._change_recipe_page = function (self, arg_14_1)
+	-- function 14
+	local count = #tbl
+	local name = tbl[arg_14_1].name
+	local var_14_2 = var_0_2[name]
 
-	arg_14_0._active_recipe = var_14_2
+	self._active_recipe = var_14_2
 
-	local var_14_3 = var_14_2.ingredients
-	local var_14_4 = arg_14_0._widgets_by_name
+	local ingredients = var_14_2.ingredients
+	local _widgets_by_name = self._widgets_by_name
 
-	var_14_4.title_text.content.text = Localize(var_14_2.display_name)
-	var_14_4.description_text.content.text = Localize(var_14_2.description_text)
+	_widgets_by_name.title_text.content.text = Localize(var_14_2.display_name)
+	_widgets_by_name.description_text.content.text = Localize(var_14_2.description_text)
 
-	if arg_14_1 ~= arg_14_0._current_page or var_14_0 ~= arg_14_0._total_pages then
-		arg_14_0._total_pages = var_14_0
-		arg_14_0._current_page = arg_14_1
+	if not (arg_14_1 ~= self._current_page or count == self._total_pages) then
+		self._total_pages = count
+		self._current_page = arg_14_1
 		arg_14_1 = arg_14_1 or 1
-		var_14_0 = var_14_0 or 1
+		count = count or 1
 
-		local var_14_5 = arg_14_0._widgets_by_name
+		local _widgets_by_name_2 = self._widgets_by_name
 
-		var_14_5.page_text_left.content.text = tostring(arg_14_1)
-		var_14_5.page_text_right.content.text = tostring(var_14_0)
+		_widgets_by_name_2.page_text_left.content.text = tostring(arg_14_1)
+		_widgets_by_name_2.page_text_right.content.text = tostring(count)
 
-		arg_14_0:_set_page_index(arg_14_1)
+		self:_set_page_index(arg_14_1)
 	end
 
-	arg_14_0._selected_page_index = arg_14_1
+	self._selected_page_index = arg_14_1
 end
 
-function HeroWindowCrafting.window_input_service(arg_15_0)
+HeroWindowCrafting.window_input_service = function (arg_15_0)
+	-- function 15
 	return
 end
 
-function HeroWindowCrafting._set_page_index(arg_16_0, arg_16_1)
-	local var_16_0 = arg_16_0._active_page
-	local var_16_1 = arg_16_0._page_params
-	local var_16_2 = var_0_9[arg_16_1]
-	local var_16_3 = var_16_2.name
-	local var_16_4 = var_16_2.class_name
+HeroWindowCrafting._set_page_index = function (self, arg_16_1)
+	-- function 16
+	local _active_page = self._active_page
+	local _page_params = self._page_params
+	local var_16_2 = tbl[arg_16_1]
+	local name = var_16_2.name
+	local class_name = var_16_2.class_name
 
-	if var_16_0 then
-		if var_16_0.NAME == var_16_4 then
+	if not _active_page then
+		if _active_page.NAME == class_name then
 			return
 		end
 
-		if var_16_0.on_exit then
-			var_16_0:on_exit(var_16_1)
+		if not _active_page.on_exit then
+			_active_page:on_exit(_page_params)
 		end
 	end
 
-	if arg_16_0:is_crafting_anim_playing() then
-		arg_16_0:cancel_crafting_animation()
+	if not self:is_crafting_anim_playing() then
+		self:cancel_crafting_animation()
 	end
 
-	local var_16_5 = rawget(_G, var_16_4):new()
+	local var_16_5 = rawget(_G, class_name):new()
 
-	arg_16_0.parent:set_selected_craft_page(var_16_3)
+	self.parent:set_selected_craft_page(name)
 
-	if var_16_5.on_enter then
-		var_16_5:on_enter(var_16_1, var_16_2)
+	if not var_16_5.on_enter then
+		var_16_5:on_enter(_page_params, var_16_2)
 	end
 
-	arg_16_0._active_page = var_16_5
+	self._active_page = var_16_5
 end
 
-function HeroWindowCrafting._update_craft_start_time(arg_17_0, arg_17_1, arg_17_2)
-	local var_17_0 = arg_17_0._craft_start_duration
+HeroWindowCrafting._update_craft_start_time = function (self, arg_17_1, arg_17_2)
+	-- function 17
+	local _craft_start_duration = self._craft_start_duration
 
-	if not var_17_0 then
+	if not _craft_start_duration then
 		return
 	end
 
-	local var_17_1 = var_17_0 + arg_17_1
-	local var_17_2 = UISettings.crafting_animation_in_time
-	local var_17_3 = math.min(var_17_1 / var_17_2, 1)
-	local var_17_4 = math.easeInCubic(var_17_3)
+	local num = _craft_start_duration + arg_17_1
+	local crafting_animation_in_time = UISettings.crafting_animation_in_time
+	local min = math.min(num / crafting_animation_in_time, 1)
+	local easeInCubic = math.easeInCubic(min)
 
-	arg_17_0:_set_crafting_fg_progress(var_17_4)
+	self:_set_crafting_fg_progress(easeInCubic)
 
-	if var_17_3 == 1 then
-		arg_17_0._craft_start_duration = nil
-		arg_17_0._craft_glow_in_duration = 0
+	if min == 1 then
+		self._craft_start_duration = nil
+		self._craft_glow_in_duration = 0
 
-		arg_17_0:_play_sound("play_gui_craft_forge_fire_begin")
+		self:_play_sound("play_gui_craft_forge_fire_begin")
 	else
-		arg_17_0._craft_start_duration = var_17_1
+		self._craft_start_duration = num
 	end
 end
 
-function HeroWindowCrafting._update_craft_glow_in_time(arg_18_0, arg_18_1, arg_18_2)
-	local var_18_0 = arg_18_0._craft_glow_in_duration
+HeroWindowCrafting._update_craft_glow_in_time = function (self, arg_18_1, arg_18_2)
+	-- function 18
+	local _craft_glow_in_duration = self._craft_glow_in_duration
 
-	if not var_18_0 then
+	if not _craft_glow_in_duration then
 		return
 	end
 
-	local var_18_1 = var_18_0 + arg_18_1
-	local var_18_2 = UISettings.crafting_animation_in_time
-	local var_18_3 = math.min(var_18_1 / var_18_2, 1)
-	local var_18_4 = math.easeInCubic(var_18_3)
+	local num = _craft_glow_in_duration + arg_18_1
+	local crafting_animation_in_time = UISettings.crafting_animation_in_time
+	local min = math.min(num / crafting_animation_in_time, 1)
+	local easeInCubic = math.easeInCubic(min)
 
-	arg_18_0._widgets_by_name.crafting_fg_glow.style.texture_id.color[1] = var_18_4 * 255
+	self._widgets_by_name.crafting_fg_glow.style.texture_id.color[1] = easeInCubic * 255
 
-	if var_18_3 == 1 then
-		arg_18_0._craft_glow_in_duration = nil
-		arg_18_0._craft_glow_wait_duration = 0
+	if min == 1 then
+		self._craft_glow_in_duration = nil
+		self._craft_glow_wait_duration = 0
 	else
-		arg_18_0._craft_glow_in_duration = var_18_1
+		self._craft_glow_in_duration = num
 	end
 end
 
-function HeroWindowCrafting._update_craft_glow_wait_time(arg_19_0, arg_19_1, arg_19_2)
-	local var_19_0 = arg_19_0._craft_glow_wait_duration
+HeroWindowCrafting._update_craft_glow_wait_time = function (self, arg_19_1, arg_19_2)
+	-- function 19
+	local _craft_glow_wait_duration = self._craft_glow_wait_duration
 
-	if not var_19_0 then
+	if not _craft_glow_wait_duration then
 		return
 	end
 
-	local var_19_1 = var_19_0 + arg_19_1
-	local var_19_2 = UISettings.crafting_animation_wait_time
-	local var_19_3 = math.min(var_19_1 / var_19_2, 1)
-	local var_19_4 = math.ease_pulse(1 - var_19_3)
+	local num = _craft_glow_wait_duration + arg_19_1
+	local crafting_animation_wait_time = UISettings.crafting_animation_wait_time
+	local min = math.min(num / crafting_animation_wait_time, 1)
+	local ease_pulse = math.ease_pulse(1 - min)
 
-	if var_19_3 == 1 then
-		arg_19_0._craft_glow_wait_duration = nil
+	if min == 1 then
+		self._craft_glow_wait_duration = nil
 	else
-		arg_19_0._craft_glow_wait_duration = var_19_1
+		self._craft_glow_wait_duration = num
 	end
 end
 
-function HeroWindowCrafting._update_craft_glow_out_time(arg_20_0, arg_20_1, arg_20_2)
-	local var_20_0 = arg_20_0._craft_glow_out_duration
+HeroWindowCrafting._update_craft_glow_out_time = function (self, arg_20_1, arg_20_2)
+	-- function 20
+	local _craft_glow_out_duration = self._craft_glow_out_duration
 
-	if not var_20_0 or arg_20_0._craft_glow_in_duration or arg_20_0._craft_start_duration or arg_20_0._craft_glow_wait_duration then
+	if not _craft_glow_out_duration and self._craft_glow_in_duration or self._craft_start_duration or not self._craft_glow_wait_duration then
 		return
 	end
 
-	local var_20_1 = var_20_0 + arg_20_1
-	local var_20_2 = UISettings.crafting_animation_out_time
-	local var_20_3 = math.min(var_20_1 / var_20_2, 1)
-	local var_20_4 = math.easeOutCubic(1 - var_20_3)
+	local num = _craft_glow_out_duration + arg_20_1
+	local crafting_animation_out_time = UISettings.crafting_animation_out_time
+	local min = math.min(num / crafting_animation_out_time, 1)
+	local easeOutCubic = math.easeOutCubic(1 - min)
 
-	arg_20_0._widgets_by_name.crafting_fg_glow.style.texture_id.color[1] = var_20_4 * 255
+	self._widgets_by_name.crafting_fg_glow.style.texture_id.color[1] = easeOutCubic * 255
 
-	if var_20_3 == 1 then
-		arg_20_0._craft_end_duration = 0
-		arg_20_0._craft_glow_out_duration = nil
+	if min == 1 then
+		self._craft_end_duration = 0
+		self._craft_glow_out_duration = nil
 
-		arg_20_0:_play_sound("play_gui_craft_forge_end")
+		self:_play_sound("play_gui_craft_forge_end")
 	else
-		if arg_20_0._craft_glow_out_duration == 0 and arg_20_0._active_page then
-			arg_20_0._active_page:on_craft_completed()
+		if self._craft_glow_out_duration ~= 0 or not self._active_page then
+			self._active_page:on_craft_completed()
 		end
 
-		arg_20_0._craft_glow_out_duration = var_20_1
+		self._craft_glow_out_duration = num
 	end
 end
 
-function HeroWindowCrafting._set_crafting_fg_progress(arg_21_0, arg_21_1)
-	local var_21_0 = arg_21_0._widgets_by_name.crafting_fg
-	local var_21_1 = var_21_0.content.texture_id.uvs
-	local var_21_2 = var_21_0.scenegraph_id
+HeroWindowCrafting._set_crafting_fg_progress = function (self, arg_21_1)
+	-- function 21
+	local crafting_fg = self._widgets_by_name.crafting_fg
+	local uvs = crafting_fg.content.texture_id.uvs
+	local scenegraph_id = crafting_fg.scenegraph_id
 
-	arg_21_0.ui_scenegraph[var_21_2].size[2] = var_0_6[var_21_2].size[2] * arg_21_1
-	var_21_1[1][2] = 1 - arg_21_1
-	var_21_1[2][2] = 1
+	self.ui_scenegraph[scenegraph_id].size[2] = scenegraph_definition[scenegraph_id].size[2] * arg_21_1
+	uvs[1][2] = 1 - arg_21_1
+	uvs[2][2] = 1
 end
 
-function HeroWindowCrafting._update_craft_end_time(arg_22_0, arg_22_1, arg_22_2)
-	local var_22_0 = arg_22_0._craft_end_duration
+HeroWindowCrafting._update_craft_end_time = function (self, arg_22_1, arg_22_2)
+	-- function 22
+	local _craft_end_duration = self._craft_end_duration
 
-	if not var_22_0 then
+	if not _craft_end_duration then
 		return
 	end
 
-	local var_22_1 = var_22_0 + arg_22_1
-	local var_22_2 = math.min(var_22_1 / 0.8, 1)
-	local var_22_3 = math.easeCubic(1 - var_22_2)
+	local num = _craft_end_duration + arg_22_1
+	local min = math.min(num / 0.8, 1)
+	local easeCubic = math.easeCubic(1 - min)
 
-	arg_22_0:_set_crafting_fg_progress(var_22_3)
+	self:_set_crafting_fg_progress(easeCubic)
 
-	if var_22_2 == 1 then
-		arg_22_0._craft_end_duration = nil
+	if min == 1 then
+		self._craft_end_duration = nil
 
-		if arg_22_0._active_page then
-			arg_22_0._active_page:reset()
+		if not self._active_page then
+			self._active_page:reset()
 		end
 
-		arg_22_0:unlock_input()
+		self:unlock_input()
 	else
-		arg_22_0._craft_end_duration = var_22_1
+		self._craft_end_duration = num
 	end
 end
 
-function HeroWindowCrafting.get_active_recipe(arg_23_0)
-	return arg_23_0._active_recipe
+HeroWindowCrafting.get_active_recipe = function (self)
+	-- function 23
+	return self._active_recipe
 end
 
-function HeroWindowCrafting.craft(arg_24_0, arg_24_1, arg_24_2)
-	local var_24_0 = arg_24_0.crafting_manager:craft(arg_24_1, arg_24_2)
+HeroWindowCrafting.craft = function (self, arg_24_1, arg_24_2)
+	-- function 24
+	local craft = self.crafting_manager:craft(arg_24_1, arg_24_2)
 
-	if var_24_0 then
-		arg_24_0._waiting_for_craft = true
-		arg_24_0._craft_start_duration = 0
-		arg_24_0._craft_glow_in_duration = nil
-		arg_24_0._craft_glow_wait_duration = nil
-		arg_24_0._craft_glow_out_duration = nil
-		arg_24_0._craft_end_duration = nil
+	if not craft then
+		self._waiting_for_craft = true
+		self._craft_start_duration = 0
+		self._craft_glow_in_duration = nil
+		self._craft_glow_wait_duration = nil
+		self._craft_glow_out_duration = nil
+		self._craft_end_duration = nil
 
-		arg_24_0:lock_input()
+		self:lock_input()
 
-		arg_24_0._current_craft_id = var_24_0
+		self._current_craft_id = craft
 
 		return true
 	end
@@ -540,55 +588,61 @@ function HeroWindowCrafting.craft(arg_24_0, arg_24_1, arg_24_2)
 	return false
 end
 
-function HeroWindowCrafting.craft_complete(arg_25_0, arg_25_1)
-	arg_25_0._waiting_for_craft = false
-	arg_25_0._craft_glow_out_duration = 0
+HeroWindowCrafting.craft_complete = function (self, arg_25_1)
+	-- function 25
+	self._waiting_for_craft = false
+	self._craft_glow_out_duration = 0
 
-	if arg_25_0._active_page then
-		arg_25_0._active_page:craft_result(arg_25_1)
+	if not self._active_page then
+		self._active_page:craft_result(arg_25_1)
 	end
 end
 
-function HeroWindowCrafting.waiting_for_craft(arg_26_0)
-	return arg_26_0._waiting_for_craft
+HeroWindowCrafting.waiting_for_craft = function (self)
+	-- function 26
+	return self._waiting_for_craft
 end
 
-function HeroWindowCrafting.is_crafting_anim_playing(arg_27_0)
-	return arg_27_0._craft_start_duration ~= nil or arg_27_0._craft_glow_in_duration ~= nil or arg_27_0._craft_glow_wait_duration ~= nil or arg_27_0._craft_glow_out_duration ~= nil or arg_27_0._craft_end_duration ~= nil or arg_27_0:waiting_for_craft()
+HeroWindowCrafting.is_crafting_anim_playing = function (self)
+	-- function 27
+	return self._craft_start_duration ~= nil or self._craft_glow_in_duration ~= nil or self._craft_glow_wait_duration ~= nil or self._craft_glow_out_duration ~= nil or self._craft_end_duration ~= nil or self:waiting_for_craft()
 end
 
-function HeroWindowCrafting.cancel_crafting_animation(arg_28_0)
-	arg_28_0._waiting_for_craft = nil
-	arg_28_0._craft_start_duration = nil
-	arg_28_0._craft_glow_in_duration = nil
-	arg_28_0._craft_glow_wait_duration = nil
-	arg_28_0._craft_glow_out_duration = nil
-	arg_28_0._craft_end_duration = nil
+HeroWindowCrafting.cancel_crafting_animation = function (self)
+	-- function 28
+	self._waiting_for_craft = nil
+	self._craft_start_duration = nil
+	self._craft_glow_in_duration = nil
+	self._craft_glow_wait_duration = nil
+	self._craft_glow_out_duration = nil
+	self._craft_end_duration = nil
 
-	arg_28_0:_play_sound("play_gui_craft_forge_end")
+	self:_play_sound("play_gui_craft_forge_end")
 
-	arg_28_0._current_craft_id = nil
+	self._current_craft_id = nil
 end
 
-function HeroWindowCrafting.lock_input(arg_29_0)
-	local var_29_0 = arg_29_0.input_manager
+HeroWindowCrafting.lock_input = function (self)
+	-- function 29
+	local input_manager = self.input_manager
 
-	arg_29_0:unlock_input(true)
+	self:unlock_input(true)
 
-	arg_29_0.unblocked_services_n = var_29_0:get_unblocked_services(nil, nil, arg_29_0.unblocked_services)
+	self.unblocked_services_n = input_manager:get_unblocked_services(nil, nil, self.unblocked_services)
 
-	var_29_0:device_block_services("keyboard", 1, arg_29_0.unblocked_services, arg_29_0.unblocked_services_n, "crafting")
-	var_29_0:device_block_services("gamepad", 1, arg_29_0.unblocked_services, arg_29_0.unblocked_services_n, "crafting")
-	var_29_0:device_block_services("mouse", 1, arg_29_0.unblocked_services, arg_29_0.unblocked_services_n, "crafting")
+	input_manager:device_block_services("keyboard", 1, self.unblocked_services, self.unblocked_services_n, "crafting")
+	input_manager:device_block_services("gamepad", 1, self.unblocked_services, self.unblocked_services_n, "crafting")
+	input_manager:device_block_services("mouse", 1, self.unblocked_services, self.unblocked_services_n, "crafting")
 end
 
-function HeroWindowCrafting.unlock_input(arg_30_0)
-	local var_30_0 = arg_30_0.input_manager
+HeroWindowCrafting.unlock_input = function (self)
+	-- function 30
+	local input_manager = self.input_manager
 
-	var_30_0:device_unblock_services("keyboard", 1, arg_30_0.unblocked_services, arg_30_0.unblocked_services_n)
-	var_30_0:device_unblock_services("gamepad", 1, arg_30_0.unblocked_services, arg_30_0.unblocked_services_n)
-	var_30_0:device_unblock_services("mouse", 1, arg_30_0.unblocked_services, arg_30_0.unblocked_services_n)
-	table.clear(arg_30_0.unblocked_services)
+	input_manager:device_unblock_services("keyboard", 1, self.unblocked_services, self.unblocked_services_n)
+	input_manager:device_unblock_services("gamepad", 1, self.unblocked_services, self.unblocked_services_n)
+	input_manager:device_unblock_services("mouse", 1, self.unblocked_services, self.unblocked_services_n)
+	table.clear(self.unblocked_services)
 
-	arg_30_0.unblocked_services_n = 0
+	self.unblocked_services_n = 0
 end

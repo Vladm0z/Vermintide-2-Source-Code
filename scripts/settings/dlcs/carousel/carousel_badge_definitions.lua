@@ -1,12 +1,17 @@
 -- chunkname: @scripts/settings/dlcs/carousel/carousel_badge_definitions.lua
 
-BadgeDefinitions = BadgeDefinitions or {}
+local BadgeDefinitions = BadgeDefinitions
 
-local function var_0_0()
+BadgeDefinitions = BadgeDefinitions or {}
+BadgeDefinitions = BadgeDefinitions
+
+local function fn()
+	-- function 1
 	return string.format("badge_generic_%02d", math.random(7))
 end
 
-local function var_0_1()
+local function fn_2()
+	-- function 2
 	return {
 		255,
 		math.random(255),

@@ -1,41 +1,53 @@
 -- chunkname: @scripts/settings/player_movement_settings.lua
 
+local PlayerUnitMovementSettings = PlayerUnitMovementSettings
+
 PlayerUnitMovementSettings = PlayerUnitMovementSettings or {}
+PlayerUnitMovementSettings = PlayerUnitMovementSettings
 
-local var_0_0 = {}
+local tbl = {}
 
-function PlayerUnitMovementSettings.get_movement_settings_table(arg_1_0)
-	if not var_0_0[arg_1_0] then
+PlayerUnitMovementSettings.get_movement_settings_table = function (arg_1_0)
+	-- function 1
+	if not tbl[arg_1_0] then
 		PlayerUnitMovementSettings.register_unit(arg_1_0)
 	end
 
-	return var_0_0[arg_1_0]
+	return tbl[arg_1_0]
 end
 
-function PlayerUnitMovementSettings.register_unit(arg_2_0)
-	var_0_0[arg_2_0] = table.clone(PlayerUnitMovementSettings)
+PlayerUnitMovementSettings.register_unit = function (arg_2_0)
+	-- function 2
+	tbl[arg_2_0] = table.clone(PlayerUnitMovementSettings)
 end
 
-function PlayerUnitMovementSettings.unregister_unit(arg_3_0)
-	var_0_0[arg_3_0] = nil
+PlayerUnitMovementSettings.unregister_unit = function (arg_3_0)
+	-- function 3
+	tbl[arg_3_0] = nil
 end
 
-function PlayerUnitMovementSettings.get_active_units_in_movement_settings()
-	local var_4_0 = {}
-	local var_4_1 = 1
+PlayerUnitMovementSettings.get_active_units_in_movement_settings = function ()
+	-- function 4
+	local tbl_2 = {}
+	local num = 1
 
-	for iter_4_0, iter_4_1 in pairs(var_0_0) do
-		var_4_0[var_4_1] = iter_4_0
-		var_4_1 = var_4_1 + 1
+	for k, v in pairs(tbl) do
+		tbl_2[num] = k
+		num = num + 1
 	end
 
-	return var_4_0
+	return tbl_2
 end
 
 PlayerUnitMovementSettings.FWD_MOVE_SPEED_SCALE = 1
 PlayerUnitMovementSettings.BWD_MOVE_SPEED_SCALE = 0.65
 PlayerUnitMovementSettings.STRAFE_MOVE_SPEED_SCALE = 1
-PlayerUnitMovementSettings.slope_traversion = PlayerUnitMovementSettings.slope_traversion or {}
+
+local PlayerUnitMovementSettings_2 = PlayerUnitMovementSettings
+local slope_traversion = PlayerUnitMovementSettings.slope_traversion
+
+slope_traversion = slope_traversion or {}
+PlayerUnitMovementSettings_2.slope_traversion = slope_traversion
 PlayerUnitMovementSettings.slope_traversion.max_angle = math.pi * 0.27
 PlayerUnitMovementSettings.slope_traversion.standing_frames = 1
 PlayerUnitMovementSettings.slope_traversion.jump_disallowed_frames = 10
@@ -55,7 +67,12 @@ PlayerUnitMovementSettings.backwards_jump_velocity_scale = 0.35
 PlayerUnitMovementSettings.look_input_limit = -1
 PlayerUnitMovementSettings.look_input_limit_multiplier = 1
 PlayerUnitMovementSettings.look_input_sensitivity = 1
-PlayerUnitMovementSettings.rig_movement = PlayerUnitMovementSettings.rig_movement or {}
+
+local PlayerUnitMovementSettings_3 = PlayerUnitMovementSettings
+local rig_movement = PlayerUnitMovementSettings.rig_movement
+
+rig_movement = rig_movement or {}
+PlayerUnitMovementSettings_3.rig_movement = rig_movement
 PlayerUnitMovementSettings.rig_movement.mass = 8
 PlayerUnitMovementSettings.rig_movement.tension = 600
 PlayerUnitMovementSettings.rig_movement.damping = 40
@@ -64,7 +81,12 @@ PlayerUnitMovementSettings.rig_movement.horizontal_motion_damping = 0.8
 PlayerUnitMovementSettings.rig_movement.vertical_motion_damping = 0.2
 PlayerUnitMovementSettings.rig_movement.vertical_look_multiplier_ranged = 0.25
 PlayerUnitMovementSettings.rig_movement.vertical_look_multiplier_melee = 0.1
-PlayerUnitMovementSettings.ladder = PlayerUnitMovementSettings.ladder or {}
+
+local PlayerUnitMovementSettings_4 = PlayerUnitMovementSettings
+local ladder = PlayerUnitMovementSettings.ladder
+
+ladder = ladder or {}
+PlayerUnitMovementSettings_4.ladder = ladder
 PlayerUnitMovementSettings.ladder.player_ladder_speed_scale = 1
 PlayerUnitMovementSettings.ladder.climb_speed = 3
 PlayerUnitMovementSettings.ladder.climb_move_acceleration_up = 4
@@ -100,8 +122,18 @@ PlayerUnitMovementSettings.soft_collision.grace_time_pushed_entering_standing = 
 PlayerUnitMovementSettings.soft_collision.max_distance = 0.65
 PlayerUnitMovementSettings.soft_collision.max_height_diference = 0.1
 PlayerUnitMovementSettings.soft_collision.idle_speed_threshold = 0.05
-PlayerUnitMovementSettings.catapulted = PlayerUnitMovementSettings.catapulted or {}
-PlayerUnitMovementSettings.catapulted.directions = PlayerUnitMovementSettings.catapulted.directions or {}
+
+local PlayerUnitMovementSettings_5 = PlayerUnitMovementSettings
+local catapulted = PlayerUnitMovementSettings.catapulted
+
+catapulted = catapulted or {}
+PlayerUnitMovementSettings_5.catapulted = catapulted
+
+local catapulted_2 = PlayerUnitMovementSettings.catapulted
+local directions = PlayerUnitMovementSettings.catapulted.directions
+
+directions = directions or {}
+catapulted_2.directions = directions
 PlayerUnitMovementSettings.catapulted.directions.forward = {
 	wall_collide_animation = "airtime_end",
 	start_animation = "airtime_bwd",
@@ -193,13 +225,23 @@ PlayerUnitMovementSettings.slowing_damage_types = {
 	cutting = true,
 	crush = true
 }
-PlayerUnitMovementSettings.charged_settings = PlayerUnitMovementSettings.charged_settings or {}
+
+local PlayerUnitMovementSettings_6 = PlayerUnitMovementSettings
+local charged_settings = PlayerUnitMovementSettings.charged_settings
+
+charged_settings = charged_settings or {}
+PlayerUnitMovementSettings_6.charged_settings = charged_settings
 PlayerUnitMovementSettings.charged_settings.charged = {
 	duration = 1,
 	first_person_anim_name = "interrupt",
 	third_person_anim_name = "idle"
 }
-PlayerUnitMovementSettings.stun_settings = PlayerUnitMovementSettings.stun_settings or {}
+
+local PlayerUnitMovementSettings_7 = PlayerUnitMovementSettings
+local stun_settings = PlayerUnitMovementSettings.stun_settings
+
+stun_settings = stun_settings or {}
+PlayerUnitMovementSettings_7.stun_settings = stun_settings
 PlayerUnitMovementSettings.stun_settings.parry_broken = {
 	duration = 1,
 	first_person_anim_name = "parry_break",
@@ -215,16 +257,19 @@ PlayerUnitMovementSettings.hit_react_settings = {
 		start_look_sense_override = 0.9,
 		end_look_sense_override = 1,
 		movement_speed_modifier = 1,
-		look_override_function = function()
-			local var_5_0 = 0.5 * (0.5 - math.random())
-			local var_5_1 = -0.1 + math.random() * 0.05
+		look_override_function = function ()
+			-- function 5
+			local num = 0.5 * (0.5 - math.random())
+			local num_2 = -0.1 + math.random() * 0.05
 
-			return var_5_0, var_5_1
+			return num, num_2
 		end,
-		duration_function = function()
+		duration_function = function ()
+			-- function 6
 			return 0.1
 		end,
-		onscreen_particle_function = function(arg_7_0)
+		onscreen_particle_function = function (arg_7_0)
+			-- function 7
 			return "fx/screenspace_head_blow_light_push"
 		end
 	},
@@ -232,16 +277,19 @@ PlayerUnitMovementSettings.hit_react_settings = {
 		start_look_sense_override = 0.6,
 		end_look_sense_override = 1,
 		movement_speed_modifier = 0.8,
-		look_override_function = function()
-			local var_8_0 = 0.5 * (0.5 - math.random())
-			local var_8_1 = -0.2 + math.random() * 0.1
+		look_override_function = function ()
+			-- function 8
+			local num = 0.5 * (0.5 - math.random())
+			local num_2 = -0.2 + math.random() * 0.1
 
-			return var_8_0, var_8_1
+			return num, num_2
 		end,
-		duration_function = function()
+		duration_function = function ()
+			-- function 9
 			return 0.35
 		end,
-		onscreen_particle_function = function(arg_10_0)
+		onscreen_particle_function = function (arg_10_0)
+			-- function 10
 			if arg_10_0 < 0.35 then
 				return
 			end
@@ -253,16 +301,19 @@ PlayerUnitMovementSettings.hit_react_settings = {
 		start_look_sense_override = 0.6,
 		end_look_sense_override = 1,
 		movement_speed_modifier = 0.8,
-		look_override_function = function()
-			local var_11_0 = 0.5 * (0.5 - math.random())
-			local var_11_1 = -0.15 + math.random() * 0.1
+		look_override_function = function ()
+			-- function 11
+			local num = 0.5 * (0.5 - math.random())
+			local num_2 = -0.15 + math.random() * 0.1
 
-			return var_11_0, var_11_1
+			return num, num_2
 		end,
-		duration_function = function()
+		duration_function = function ()
+			-- function 12
 			return 0.35
 		end,
-		onscreen_particle_function = function(arg_13_0)
+		onscreen_particle_function = function (arg_13_0)
+			-- function 13
 			return "fx/screenspace_head_blow_medium_push"
 		end
 	},
@@ -270,16 +321,19 @@ PlayerUnitMovementSettings.hit_react_settings = {
 		start_look_sense_override = 0.4,
 		end_look_sense_override = 0.8,
 		movement_speed_modifier = 0.65,
-		look_override_function = function()
-			local var_14_0 = 0.5 * (0.5 - math.random())
-			local var_14_1 = -0.3 + math.random() * 0.2
+		look_override_function = function ()
+			-- function 14
+			local num = 0.5 * (0.5 - math.random())
+			local num_2 = -0.3 + math.random() * 0.2
 
-			return var_14_0, var_14_1
+			return num, num_2
 		end,
-		duration_function = function()
+		duration_function = function ()
+			-- function 15
 			return 0.6
 		end,
-		onscreen_particle_function = function(arg_16_0)
+		onscreen_particle_function = function (arg_16_0)
+			-- function 16
 			if arg_16_0 < 0.6 then
 				return "fx/screenspace_head_blow_light"
 			end
@@ -291,16 +345,19 @@ PlayerUnitMovementSettings.hit_react_settings = {
 		start_look_sense_override = 0.4,
 		end_look_sense_override = 0.8,
 		movement_speed_modifier = 0.65,
-		look_override_function = function()
-			local var_17_0 = 0.5 * (0.5 - math.random())
-			local var_17_1 = -0.25 + math.random() * 0.1
+		look_override_function = function ()
+			-- function 17
+			local num = 0.5 * (0.5 - math.random())
+			local num_2 = -0.25 + math.random() * 0.1
 
-			return var_17_0, var_17_1
+			return num, num_2
 		end,
-		duration_function = function()
+		duration_function = function ()
+			-- function 18
 			return 0.6
 		end,
-		onscreen_particle_function = function(arg_19_0)
+		onscreen_particle_function = function (arg_19_0)
+			-- function 19
 			return "fx/screenspace_head_blow_heavy_push"
 		end
 	},
@@ -308,16 +365,19 @@ PlayerUnitMovementSettings.hit_react_settings = {
 		start_look_sense_override = 0.35,
 		end_look_sense_override = 0.7,
 		movement_speed_modifier = 0.5,
-		look_override_function = function()
-			local var_20_0 = 0.5 * (0.5 - math.random())
-			local var_20_1 = -0.5 + math.random() * 0.2
+		look_override_function = function ()
+			-- function 20
+			local num = 0.5 * (0.5 - math.random())
+			local num_2 = -0.5 + math.random() * 0.2
 
-			return var_20_0, var_20_1
+			return num, num_2
 		end,
-		duration_function = function()
+		duration_function = function ()
+			-- function 21
 			return 1
 		end,
-		onscreen_particle_function = function(arg_22_0)
+		onscreen_particle_function = function (arg_22_0)
+			-- function 22
 			if arg_22_0 < 1 then
 				return "fx/screenspace_head_blow_medium"
 			end
@@ -329,16 +389,19 @@ PlayerUnitMovementSettings.hit_react_settings = {
 		start_look_sense_override = 0.35,
 		end_look_sense_override = 0.7,
 		movement_speed_modifier = 0.1,
-		look_override_function = function()
-			local var_23_0 = 0.5 * (0.5 - math.random())
-			local var_23_1 = -0.5 + math.random() * 0.2
+		look_override_function = function ()
+			-- function 23
+			local num = 0.5 * (0.5 - math.random())
+			local num_2 = -0.5 + math.random() * 0.2
 
-			return var_23_0, var_23_1
+			return num, num_2
 		end,
-		duration_function = function()
+		duration_function = function ()
+			-- function 24
 			return 7
 		end,
-		onscreen_particle_function = function(arg_25_0)
+		onscreen_particle_function = function (arg_25_0)
+			-- function 25
 			if arg_25_0 < 7 then
 				return "fx/screenspace_head_blow_light"
 			end
@@ -350,47 +413,90 @@ PlayerUnitMovementSettings.hit_react_settings = {
 		start_look_sense_override = 0.4,
 		end_look_sense_override = 0.8,
 		movement_speed_modifier = 0.65,
-		look_override_function = function()
-			local var_26_0 = 0
-			local var_26_1 = 0.45
+		look_override_function = function ()
+			-- function 26
+			local num = 0
+			local num_2 = 0.45
 
-			return var_26_0, var_26_1
+			return num, num_2
 		end,
-		duration_function = function()
+		duration_function = function ()
+			-- function 27
 			return 1
 		end,
-		onscreen_particle_function = function(arg_28_0)
+		onscreen_particle_function = function (arg_28_0)
+			-- function 28
 			return "fx/screenspace_head_blow_medium_push"
 		end
 	}
 }
-PlayerUnitMovementSettings.overpowered_templates = PlayerUnitMovementSettings.overpowered_templates or {}
+
+local PlayerUnitMovementSettings_8 = PlayerUnitMovementSettings
+local overpowered_templates = PlayerUnitMovementSettings.overpowered_templates
+
+overpowered_templates = overpowered_templates or {}
+PlayerUnitMovementSettings_8.overpowered_templates = overpowered_templates
 PlayerUnitMovementSettings.overpowered_templates.slow_bomb = {}
 PlayerUnitMovementSettings.overpowered_templates.fly_bomb = {
 	end_sound_event = "Stop_sorcerer_boss_flies_curse_loop",
 	start_sound_event = "Play_sorcerer_boss_flies_curse_loop"
 }
 PlayerUnitMovementSettings.gravity_acceleration = 11
-PlayerUnitMovementSettings.jump = PlayerUnitMovementSettings.jump or {}
+
+local PlayerUnitMovementSettings_9 = PlayerUnitMovementSettings
+local jump = PlayerUnitMovementSettings.jump
+
+jump = jump or {}
+PlayerUnitMovementSettings_9.jump = jump
 PlayerUnitMovementSettings.jump.stamina_cost = 0
 PlayerUnitMovementSettings.jump.initial_vertical_speed = 4.25
-PlayerUnitMovementSettings.leap = PlayerUnitMovementSettings.leap or {}
+
+local PlayerUnitMovementSettings_10 = PlayerUnitMovementSettings
+local leap = PlayerUnitMovementSettings.leap
+
+leap = leap or {}
+PlayerUnitMovementSettings_10.leap = leap
 PlayerUnitMovementSettings.leap.jump_speed = 6.5
 PlayerUnitMovementSettings.leap.move_speed = 13.5
 PlayerUnitMovementSettings.leap.slam_speed = 18
-PlayerUnitMovementSettings.teleleap = PlayerUnitMovementSettings.teleleap or {}
+
+local PlayerUnitMovementSettings_11 = PlayerUnitMovementSettings
+local teleleap = PlayerUnitMovementSettings.teleleap
+
+teleleap = teleleap or {}
+PlayerUnitMovementSettings_11.teleleap = teleleap
 PlayerUnitMovementSettings.teleleap.jump_speed = 12
 PlayerUnitMovementSettings.teleleap.move_speed = 60
-PlayerUnitMovementSettings.fall = PlayerUnitMovementSettings.fall or {}
-PlayerUnitMovementSettings.fall.heights = PlayerUnitMovementSettings.fall.heights or {}
+
+local PlayerUnitMovementSettings_12 = PlayerUnitMovementSettings
+local fall = PlayerUnitMovementSettings.fall
+
+fall = fall or {}
+PlayerUnitMovementSettings_12.fall = fall
+
+local fall_2 = PlayerUnitMovementSettings.fall
+local heights = PlayerUnitMovementSettings.fall.heights
+
+heights = heights or {}
+fall_2.heights = heights
 PlayerUnitMovementSettings.fall.heights.FALL_DAMAGE_MULTIPLIER = 14
 PlayerUnitMovementSettings.fall.heights.MIN_FALL_DAMAGE_HEIGHT = 7
 PlayerUnitMovementSettings.fall.heights.MIN_FALL_DAMAGE_PERCENTAGE = 0
 PlayerUnitMovementSettings.fall.heights.MAX_FALL_DAMAGE_PERCENTAGE = 1
 PlayerUnitMovementSettings.fall.heights.HARD_LANDING_FALL_HEIGHT = 7
-PlayerUnitMovementSettings.landing = PlayerUnitMovementSettings.landing or {}
+
+local PlayerUnitMovementSettings_13 = PlayerUnitMovementSettings
+local landing = PlayerUnitMovementSettings.landing
+
+landing = landing or {}
+PlayerUnitMovementSettings_13.landing = landing
 PlayerUnitMovementSettings.landing.anim_forced_upper_body_block = 0.3
-PlayerUnitMovementSettings.swing = PlayerUnitMovementSettings.swing or {}
+
+local PlayerUnitMovementSettings_14 = PlayerUnitMovementSettings
+local swing = PlayerUnitMovementSettings.swing
+
+swing = swing or {}
+PlayerUnitMovementSettings_14.swing = swing
 PlayerUnitMovementSettings.swing.REQUIRED_MOVEMENT_TO_POSE = 0.003
 PlayerUnitMovementSettings.swing.REQUIRED_MOVEMENT_TO_POSE_SCALE_Y_UP = 2.5
 PlayerUnitMovementSettings.swing.REQUIRED_MOVEMENT_TO_POSE_SCALE_Y_DOWN = 0
@@ -400,24 +506,49 @@ PlayerUnitMovementSettings.swing.invert_pose_control_y = false
 PlayerUnitMovementSettings.swing.keyboard_controlled = false
 PlayerUnitMovementSettings.swing.mounted_lean_swing_top = 0
 PlayerUnitMovementSettings.swing.mounted_lean_swing_range = 30
-PlayerUnitMovementSettings.swing.stamina_settings = PlayerUnitMovementSettings.swing.stamina_settings or {}
+
+local swing_2 = PlayerUnitMovementSettings.swing
+local stamina_settings = PlayerUnitMovementSettings.swing.stamina_settings
+
+stamina_settings = stamina_settings or {}
+swing_2.stamina_settings = stamina_settings
 PlayerUnitMovementSettings.swing.stamina_settings.minimum_activation_cost = 0.1
 PlayerUnitMovementSettings.swing.stamina_settings.activation_cost = 0.2
-PlayerUnitMovementSettings.parry = PlayerUnitMovementSettings.parry or {}
+
+local PlayerUnitMovementSettings_15 = PlayerUnitMovementSettings
+local parry = PlayerUnitMovementSettings.parry
+
+parry = parry or {}
+PlayerUnitMovementSettings_15.parry = parry
 PlayerUnitMovementSettings.parry.stamina_per_damage = 0.001375
 PlayerUnitMovementSettings.parry.override_recharge_rate = 0.025
-PlayerUnitMovementSettings.block = PlayerUnitMovementSettings.block or {}
+
+local PlayerUnitMovementSettings_16 = PlayerUnitMovementSettings
+local block = PlayerUnitMovementSettings.block
+
+block = block or {}
+PlayerUnitMovementSettings_16.block = block
 PlayerUnitMovementSettings.block.stamina_per_damage = 0.001375
 PlayerUnitMovementSettings.block.consecutive_block_impact_time = 3
 PlayerUnitMovementSettings.block.consecutive_block_impact_multiplier = 1
 PlayerUnitMovementSettings.block.override_recharge_rate = 0.025
-PlayerUnitMovementSettings.parry = PlayerUnitMovementSettings.parry or {}
+
+local PlayerUnitMovementSettings_17 = PlayerUnitMovementSettings
+local parry_2 = PlayerUnitMovementSettings.parry
+
+parry_2 = parry_2 or {}
+PlayerUnitMovementSettings_17.parry = parry_2
 PlayerUnitMovementSettings.parry.REQUIRED_MOVEMENT_TO_POSE = 0.003
 PlayerUnitMovementSettings.parry.invert_parry_control_x = false
 PlayerUnitMovementSettings.parry.invert_parry_control_y = false
 PlayerUnitMovementSettings.parry.keyboard_controlled = false
 PlayerUnitMovementSettings.parry.raise_delay = 0.18
-PlayerUnitMovementSettings.block = PlayerUnitMovementSettings.block or {}
+
+local PlayerUnitMovementSettings_18 = PlayerUnitMovementSettings
+local block_2 = PlayerUnitMovementSettings.block
+
+block_2 = block_2 or {}
+PlayerUnitMovementSettings_18.block = block_2
 PlayerUnitMovementSettings.block.raise_delay = 0.18
 
 DLCUtils.require("player_movement_settings")

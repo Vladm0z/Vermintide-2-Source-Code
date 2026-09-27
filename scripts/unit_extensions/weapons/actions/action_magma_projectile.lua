@@ -2,51 +2,53 @@
 
 ActionMagmaProjectile = class(ActionMagmaProjectile, ActionShotgun)
 
-function ActionMagmaProjectile.client_owner_start_action(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
-	ActionMagmaProjectile.super.client_owner_start_action(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+ActionMagmaProjectile.client_owner_start_action = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	-- function 1
+	ActionMagmaProjectile.super.client_owner_start_action(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 
-	local var_1_0 = arg_1_1.is_spell
-	local var_1_1 = arg_1_0.owner_buff_extension
+	local is_spell = arg_1_1.is_spell
+	local owner_buff_extension = self.owner_buff_extension
 
-	if arg_1_0.charge_level and arg_1_0.charge_level >= 1 and var_1_0 then
-		var_1_1:trigger_procs("on_full_charge_action", arg_1_1, arg_1_2, arg_1_3)
+	if not self.charge_level and not (self.charge_level >= 1) or not is_spell then
+		owner_buff_extension:trigger_procs("on_full_charge_action", arg_1_1, arg_1_2, arg_1_3)
 	end
 end
 
-function ActionMagmaProjectile._start_shooting(arg_2_0)
-	local var_2_0 = arg_2_0.owner_unit
-	local var_2_1 = arg_2_0.current_action
-	local var_2_2 = ScriptUnit.extension(var_2_0, "first_person_system")
-	local var_2_3, var_2_4 = var_2_2:get_projectile_start_position_rotation()
+ActionMagmaProjectile._start_shooting = function (self)
+	-- function 2
+	local owner_unit = self.owner_unit
+	local current_action = self.current_action
+	local extension = ScriptUnit.extension(owner_unit, "first_person_system")
+	local get_projectile_start_position_rotation, var_2_4 = extension:get_projectile_start_position_rotation()
 
-	if var_2_1.fire_at_gaze_setting and ScriptUnit.has_extension(var_2_0, "eyetracking_system") and ScriptUnit.extension(var_2_0, "eyetracking_system"):get_is_feature_enabled("tobii_fire_at_gaze") then
-		var_2_4 = arg_2_0.start_gaze_rotation:unbox()
+	if not current_action.fire_at_gaze_setting and not ScriptUnit.has_extension(owner_unit, "eyetracking_system") and not ScriptUnit.extension(owner_unit, "eyetracking_system"):get_is_feature_enabled("tobii_fire_at_gaze") then
+		var_2_4 = self.start_gaze_rotation:unbox()
 	end
 
-	arg_2_0._fire_position:store(var_2_3)
-	arg_2_0._fire_rotation:store(var_2_4)
+	self._fire_position:store(get_projectile_start_position_rotation)
+	self._fire_rotation:store(var_2_4)
 
-	if not Managers.player:owner(arg_2_0.owner_unit).bot_player then
+	if not Managers.player:owner(self.owner_unit).bot_player then
 		Managers.state.controller_features:add_effect("rumble", {
 			rumble_effect = "handgun_fire"
 		})
 	end
 
-	arg_2_0:_use_ammo()
-	arg_2_0:_add_overcharge()
-	arg_2_0:_proc_spell_used(arg_2_0.owner_buff_extension)
+	self:_use_ammo()
+	self:_add_overcharge()
+	self:_proc_spell_used(self.owner_buff_extension)
 
-	if var_2_1.alert_sound_range_fire then
-		Managers.state.entity:system("ai_system"):alert_enemies_within_range(var_2_0, POSITION_LOOKUP[var_2_0], var_2_1.alert_sound_range_fire)
+	if not current_action.alert_sound_range_fire then
+		Managers.state.entity:system("ai_system"):alert_enemies_within_range(owner_unit, POSITION_LOOKUP[owner_unit], current_action.alert_sound_range_fire)
 	end
 
-	local var_2_5 = arg_2_0.current_action.fire_sound_event
+	local fire_sound_event = self.current_action.fire_sound_event
 
-	if var_2_5 then
-		local var_2_6 = arg_2_0.current_action.fire_sound_on_husk
+	if not fire_sound_event then
+		local fire_sound_on_husk = self.current_action.fire_sound_on_husk
 
-		var_2_2:play_hud_sound_event(var_2_5, nil, var_2_6)
+		extension:play_hud_sound_event(fire_sound_event, nil, fire_sound_on_husk)
 	end
 
-	arg_2_0.state = "shooting"
+	self.state = "shooting"
 end

@@ -1,162 +1,172 @@
 -- chunkname: @scripts/managers/backend_playfab/backend_interface_loot_playfab.lua
 
-local var_0_0 = require("PlayFab.PlayFabClientApi")
+local PlayFabClientApi = require("PlayFab.PlayFabClientApi")
 
 BackendInterfaceLootPlayfab = class(BackendInterfaceLootPlayfab)
 
-function BackendInterfaceLootPlayfab.init(arg_1_0, arg_1_1)
-	arg_1_0._backend_mirror = arg_1_1
-	arg_1_0._last_id = 0
-	arg_1_0._loot_requests = {}
-	arg_1_0._reward_poll_id = false
+BackendInterfaceLootPlayfab.init = function (self, arg_1_1)
+	-- function 1
+	self._backend_mirror = arg_1_1
+	self._last_id = 0
+	self._loot_requests = {}
+	self._reward_poll_id = false
 end
 
-function BackendInterfaceLootPlayfab.ready(arg_2_0)
+BackendInterfaceLootPlayfab.ready = function (arg_2_0)
+	-- function 2
 	return true
 end
 
-function BackendInterfaceLootPlayfab.update(arg_3_0, arg_3_1)
+BackendInterfaceLootPlayfab.update = function (arg_3_0, arg_3_1)
+	-- function 3
 	return
 end
 
-function BackendInterfaceLootPlayfab._new_id(arg_4_0)
-	arg_4_0._last_id = arg_4_0._last_id + 1
+BackendInterfaceLootPlayfab._new_id = function (self)
+	-- function 4
+	self._last_id = self._last_id + 1
 
-	return arg_4_0._last_id
+	return self._last_id
 end
 
-function BackendInterfaceLootPlayfab.open_loot_chest(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
-	local var_5_0 = arg_5_0:_new_id()
-	local var_5_1 = {
+BackendInterfaceLootPlayfab.open_loot_chest = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	-- function 5
+	local _new_id = self:_new_id()
+	local tbl = {
 		hero_name = arg_5_1,
 		playfab_id = arg_5_2,
-		id = var_5_0,
+		id = _new_id,
 		amount = arg_5_4 or 1,
 		game_mode_key = arg_5_3
 	}
-	local var_5_2 = {
+	local tbl_2 = {
 		FunctionName = "generateLootChestRewards",
-		FunctionParameter = var_5_1
+		FunctionParameter = tbl
 	}
-	local var_5_3 = callback(arg_5_0, "loot_chest_rewards_request_cb", var_5_1)
+	local var_5_3 = callback(self, "loot_chest_rewards_request_cb", tbl)
 
-	arg_5_0._backend_mirror:request_queue():enqueue(var_5_2, var_5_3, true)
+	self._backend_mirror:request_queue():enqueue(tbl_2, var_5_3, true)
 
-	return var_5_0
+	return _new_id
 end
 
-function BackendInterfaceLootPlayfab.loot_chest_rewards_request_cb(arg_6_0, arg_6_1, arg_6_2)
-	local var_6_0 = arg_6_2.FunctionResult
-	local var_6_1 = var_6_0.items
-	local var_6_2 = var_6_0.unlocked_weapon_skins
-	local var_6_3 = var_6_0.new_weapon_skin_rewards
-	local var_6_4 = var_6_0.new_cosmetics
-	local var_6_5 = var_6_0.new_unlocked_weapon_poses
-	local var_6_6 = var_6_0.updated_statistics
-	local var_6_7 = var_6_0.consumed_chest
-	local var_6_8 = var_6_7 and var_6_7.ItemInstanceId
-	local var_6_9 = var_6_7 and var_6_7.RemainingUses
-	local var_6_10 = #var_6_1
-	local var_6_11 = {}
-	local var_6_12 = arg_6_0._backend_mirror
+BackendInterfaceLootPlayfab.loot_chest_rewards_request_cb = function (self, arg_6_1, arg_6_2)
+	-- function 6
+	local FunctionResult = arg_6_2.FunctionResult
+	local items = FunctionResult.items
+	local unlocked_weapon_skins = FunctionResult.unlocked_weapon_skins
+	local new_weapon_skin_rewards = FunctionResult.new_weapon_skin_rewards
+	local new_cosmetics = FunctionResult.new_cosmetics
+	local new_unlocked_weapon_poses = FunctionResult.new_unlocked_weapon_poses
+	local updated_statistics = FunctionResult.updated_statistics
+	local consumed_chest = FunctionResult.consumed_chest
+	local flag = not consumed_chest and consumed_chest.ItemInstanceId
+	local flag_2 = not consumed_chest and consumed_chest.RemainingUses
+	local count = #items
+	local tbl = {}
+	local _backend_mirror = self._backend_mirror
 
-	for iter_6_0 = 1, var_6_10 do
-		local var_6_13 = var_6_1[iter_6_0]
-		local var_6_14 = var_6_13.ItemInstanceId
-		local var_6_15 = var_6_12:add_item(var_6_14, var_6_13)
+	for i = 1, count do
+		local var_6_13 = items[i]
+		local ItemInstanceId = var_6_13.ItemInstanceId
+		local add_item = _backend_mirror:add_item(ItemInstanceId, var_6_13)
 
-		var_6_11[#var_6_11 + 1] = var_6_15 or var_6_14
+		tbl[#tbl + 1] = add_item or ItemInstanceId
 	end
 
-	if var_6_8 then
-		if var_6_9 > 0 then
-			var_6_12:update_item_field(var_6_8, "RemainingUses", var_6_9)
+	if not flag then
+		if flag_2 > 0 then
+			_backend_mirror:update_item_field(flag, "RemainingUses", flag_2)
 		else
-			var_6_12:remove_item(var_6_8)
+			_backend_mirror:remove_item(flag)
 		end
 	end
 
-	if var_6_2 then
-		for iter_6_1 = 1, #var_6_2 do
-			var_6_12:add_unlocked_weapon_skin(var_6_2[iter_6_1])
+	if not unlocked_weapon_skins then
+		for j = 1, #unlocked_weapon_skins do
+			_backend_mirror:add_unlocked_weapon_skin(unlocked_weapon_skins[j])
 		end
 	end
 
-	if var_6_3 then
-		local var_6_16 = var_6_12:get_unlocked_weapon_skins()
+	if not new_weapon_skin_rewards then
+		local get_unlocked_weapon_skins = _backend_mirror:get_unlocked_weapon_skins()
 
-		for iter_6_2 = 1, #var_6_3 do
-			local var_6_17 = var_6_16[var_6_3[iter_6_2]]
+		for k = 1, #new_weapon_skin_rewards do
+			local var_6_17 = get_unlocked_weapon_skins[new_weapon_skin_rewards[k]]
 
-			if var_6_17 then
-				var_6_11[#var_6_11 + 1] = var_6_17
+			if not var_6_17 then
+				tbl[#tbl + 1] = var_6_17
 			end
 		end
 	end
 
-	if var_6_4 then
-		for iter_6_3 = 1, #var_6_4 do
-			local var_6_18 = var_6_12:add_item(nil, {
-				ItemId = var_6_4[iter_6_3]
+	if not new_cosmetics then
+		for l = 1, #new_cosmetics do
+			local add_item_2 = _backend_mirror:add_item(nil, {
+				ItemId = new_cosmetics[l]
 			})
 
-			if var_6_18 then
-				var_6_11[#var_6_11 + 1] = var_6_18
+			if not add_item_2 then
+				tbl[#tbl + 1] = add_item_2
 			end
 		end
 	end
 
-	if var_6_5 then
-		for iter_6_4 = 1, #var_6_5 do
-			local var_6_19 = var_6_12:add_item(nil, {
-				ItemId = var_6_5[iter_6_4]
+	if not new_unlocked_weapon_poses then
+		for i4 = 1, #new_unlocked_weapon_poses do
+			local add_item_3 = _backend_mirror:add_item(nil, {
+				ItemId = new_unlocked_weapon_poses[i4]
 			})
 
-			if var_6_19 then
-				var_6_11[#var_6_11 + 1] = var_6_19
+			if not add_item_3 then
+				tbl[#tbl + 1] = add_item_3
 			end
 		end
 	end
 
-	if var_6_6 then
-		local var_6_20 = Managers.player and Managers.player:local_player_safe()
-		local var_6_21 = Managers.player:statistics_db()
+	if not updated_statistics then
+		local player = Managers.player
 
-		if not var_6_20 or not var_6_21 then
+		player = not player and Managers.player:local_player_safe()
+
+		local statistics_db = Managers.player:statistics_db()
+
+		if not (not player and statistics_db) then
 			print("[BackendInterfaceLootPlayfab] Could not get statistics_db, skipping updating statistics...")
 		else
-			local var_6_22 = var_6_20:stats_id()
+			local stats_id = player:stats_id()
 
-			for iter_6_5, iter_6_6 in pairs(var_6_6) do
-				if not var_6_21.statistics[var_6_22][iter_6_5] then
-					Application.warning("[BackendInterfaceLootPlayfab] updated_statistics " .. iter_6_5 .. " doesn't exist.")
+			for k_2, v in pairs(updated_statistics) do
+				if not statistics_db.statistics[stats_id][k_2] then
+					Application.warning("[BackendInterfaceLootPlayfab] updated_statistics " .. k_2 .. " doesn't exist.")
 				else
-					var_6_21:set_stat(var_6_22, iter_6_5, iter_6_6)
+					statistics_db:set_stat(stats_id, k_2, v)
 				end
 			end
 		end
 	end
 
-	local var_6_23 = var_6_0.chest_inventory
+	local chest_inventory = FunctionResult.chest_inventory
 
-	if var_6_23 then
-		var_6_12:set_read_only_data("chest_inventory", var_6_23, true)
+	if not chest_inventory then
+		_backend_mirror:set_read_only_data("chest_inventory", chest_inventory, true)
 	end
 
-	local var_6_24 = arg_6_1.id
+	local id = arg_6_1.id
 
-	arg_6_0._loot_requests[var_6_24] = var_6_11
+	self._loot_requests[id] = tbl
 end
 
-function BackendInterfaceLootPlayfab.generate_end_of_level_loot(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7, arg_7_8, arg_7_9, arg_7_10, arg_7_11, arg_7_12, arg_7_13, arg_7_14, arg_7_15)
-	local var_7_0 = arg_7_0:_new_id()
-	local var_7_1 = arg_7_0:_get_remote_player_network_ids_and_characters()
+BackendInterfaceLootPlayfab.generate_end_of_level_loot = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7, arg_7_8, arg_7_9, arg_7_10, arg_7_11, arg_7_12, arg_7_13, arg_7_14, arg_7_15)
+	-- function 7
+	local _new_id = self:_new_id()
+	local _get_remote_player_network_ids_and_characters = self:_get_remote_player_network_ids_and_characters()
 
-	if arg_7_15.deus_soft_currency then
-		arg_7_0._backend_mirror:predict_deus_rolled_over_soft_currency(arg_7_15.deus_soft_currency)
+	if not arg_7_15.deus_soft_currency then
+		self._backend_mirror:predict_deus_rolled_over_soft_currency(arg_7_15.deus_soft_currency)
 	end
 
-	local var_7_2 = {
+	local tbl = {
 		won = arg_7_1,
 		quick_play_bonus = arg_7_2,
 		difficulty = arg_7_3,
@@ -169,693 +179,727 @@ function BackendInterfaceLootPlayfab.generate_end_of_level_loot(arg_7_0, arg_7_1
 		hero_name = arg_7_5,
 		deed_item_name = arg_7_11,
 		deed_backend_id = arg_7_12,
-		id = var_7_0,
-		remote_player_ids_and_characters = var_7_1,
+		id = _new_id,
+		remote_player_ids_and_characters = _get_remote_player_network_ids_and_characters,
 		game_mode_key = arg_7_13,
 		game_time = arg_7_14,
 		end_of_level_rewards_arguments = arg_7_15
 	}
-	local var_7_3 = {
+	local tbl_2 = {
 		FunctionName = "generateEndOfLevelLoot",
-		FunctionParameter = var_7_2
+		FunctionParameter = tbl
 	}
-	local var_7_4 = callback(arg_7_0, "end_of_level_loot_request_cb", var_7_2)
+	local var_7_4 = callback(self, "end_of_level_loot_request_cb", tbl)
 
-	arg_7_0._backend_mirror:request_queue():enqueue(var_7_3, var_7_4, true)
+	self._backend_mirror:request_queue():enqueue(tbl_2, var_7_4, true)
 
-	return var_7_0
+	return _new_id
 end
 
-function BackendInterfaceLootPlayfab.end_of_level_loot_request_cb(arg_8_0, arg_8_1, arg_8_2)
+BackendInterfaceLootPlayfab.end_of_level_loot_request_cb = function (self, arg_8_1, arg_8_2)
+	-- function 8
 	Managers.telemetry_events:end_of_game_rewards(arg_8_2.FunctionResult)
 
-	local var_8_0 = arg_8_2.FunctionResult
-	local var_8_1 = arg_8_1.id
-	local var_8_2 = var_8_0.Experience
-	local var_8_3 = var_8_0.ExperiencePool
-	local var_8_4 = var_8_0.RecentQuickplayGames
-	local var_8_5 = var_8_0.total_essence
-	local var_8_6 = var_8_0.vs_profile_data
-	local var_8_7 = var_8_0.ScoreBreakdown
-	local var_8_8 = var_8_0.ItemsGranted or var_8_0.Result
-	local var_8_9 = var_8_0.ItemRewards or var_8_0.Rewards
-	local var_8_10 = var_8_0.CurrencyGranted
-	local var_8_11 = var_8_0.currencyRewards
-	local var_8_12 = var_8_0.EssenceRewards
-	local var_8_13 = var_8_0.cosmetic_rewards
-	local var_8_14 = var_8_0.weapon_skin_rewards
-	local var_8_15 = var_8_0.keep_decoration_rewards
-	local var_8_16 = var_8_0.experience_rewards
-	local var_8_17 = var_8_0.weekly_event_rewards
-	local var_8_18 = var_8_0.ItemsRevoked
-	local var_8_19 = var_8_0.ConsumedDeedResult
-	local var_8_20 = #var_8_8
-	local var_8_21 = var_8_0.win_tracks_progress
-	local var_8_22 = {}
-	local var_8_23 = arg_8_0._backend_mirror
+	local FunctionResult = arg_8_2.FunctionResult
+	local id = arg_8_1.id
+	local Experience = FunctionResult.Experience
+	local ExperiencePool = FunctionResult.ExperiencePool
+	local RecentQuickplayGames = FunctionResult.RecentQuickplayGames
+	local total_essence = FunctionResult.total_essence
+	local vs_profile_data = FunctionResult.vs_profile_data
+	local ScoreBreakdown = FunctionResult.ScoreBreakdown
+	local ItemsGranted = FunctionResult.ItemsGranted
 
-	for iter_8_0, iter_8_1 in pairs(var_8_9) do
+	ItemsGranted = ItemsGranted or FunctionResult.Result
+
+	local ItemRewards = FunctionResult.ItemRewards
+
+	ItemRewards = ItemRewards or FunctionResult.Rewards
+
+	local CurrencyGranted = FunctionResult.CurrencyGranted
+	local currencyRewards = FunctionResult.currencyRewards
+	local EssenceRewards = FunctionResult.EssenceRewards
+	local cosmetic_rewards = FunctionResult.cosmetic_rewards
+	local weapon_skin_rewards = FunctionResult.weapon_skin_rewards
+	local keep_decoration_rewards = FunctionResult.keep_decoration_rewards
+	local experience_rewards = FunctionResult.experience_rewards
+	local weekly_event_rewards = FunctionResult.weekly_event_rewards
+	local ItemsRevoked = FunctionResult.ItemsRevoked
+	local ConsumedDeedResult = FunctionResult.ConsumedDeedResult
+	local count = #ItemsGranted
+	local win_tracks_progress = FunctionResult.win_tracks_progress
+	local tbl = {}
+	local _backend_mirror = self._backend_mirror
+
+	for k, v in pairs(ItemRewards) do
 		local var_8_24
 		local var_8_25
 
-		for iter_8_2 = 1, var_8_20 do
-			var_8_25 = var_8_8[iter_8_2]
+		for k_2 = 1, count do
+			var_8_25 = ItemsGranted[k_2]
 
-			if iter_8_1.ItemId == var_8_25.ItemId then
+			if v.ItemId == var_8_25.ItemId then
 				var_8_24 = var_8_25.ItemInstanceId
 
 				break
 			end
 		end
 
-		var_8_22[iter_8_0] = {
+		tbl[k] = {
 			backend_id = var_8_24
 		}
 
-		if iter_8_0 == "chest" then
-			var_8_22[iter_8_0].score_breakdown = var_8_7
+		if k == "chest" then
+			tbl[k].score_breakdown = ScoreBreakdown
 		end
 
-		var_8_23:add_item(var_8_24, var_8_25)
+		_backend_mirror:add_item(var_8_24, var_8_25)
 	end
 
-	if var_8_13 then
-		for iter_8_3, iter_8_4 in pairs(var_8_13) do
-			local var_8_26 = var_8_23:add_item(nil, {
-				ItemId = iter_8_4
+	if not cosmetic_rewards then
+		for k_3, v_2 in pairs(cosmetic_rewards) do
+			local add_item = _backend_mirror:add_item(nil, {
+				ItemId = v_2
 			})
 
-			if var_8_26 then
-				var_8_22[iter_8_3] = {
-					backend_id = var_8_26
+			if not add_item then
+				tbl[k_3] = {
+					backend_id = add_item
 				}
 			end
 		end
 	end
 
-	if var_8_14 then
-		for iter_8_5, iter_8_6 in pairs(var_8_14) do
-			local var_8_27 = var_8_23:add_item(nil, {
-				ItemId = iter_8_6
+	if not weapon_skin_rewards then
+		for k_4, v_3 in pairs(weapon_skin_rewards) do
+			local add_item_2 = _backend_mirror:add_item(nil, {
+				ItemId = v_3
 			})
 
-			if var_8_27 then
-				var_8_22[iter_8_5] = {
-					backend_id = var_8_27
+			if not add_item_2 then
+				tbl[k_4] = {
+					backend_id = add_item_2
 				}
 			end
 		end
 	end
 
-	if var_8_15 then
-		for iter_8_7, iter_8_8 in pairs(var_8_15) do
-			var_8_23:add_keep_decoration(iter_8_8)
+	if not keep_decoration_rewards then
+		for k_5, v_4 in pairs(keep_decoration_rewards) do
+			_backend_mirror:add_keep_decoration(v_4)
 
-			var_8_22[iter_8_7] = {
+			tbl[k_5] = {
 				type = "keep_decoration_painting",
-				keep_decoration_name = iter_8_8
+				keep_decoration_name = v_4
 			}
 		end
 	end
 
-	if var_8_16 then
-		for iter_8_9, iter_8_10 in pairs(var_8_16) do
-			var_8_22[iter_8_9] = {
-				amount = iter_8_10
+	if not experience_rewards then
+		for k_6, v_5 in pairs(experience_rewards) do
+			tbl[k_6] = {
+				amount = v_5
 			}
 		end
 	end
 
-	local var_8_28 = arg_8_2.FunctionResult.chest_inventory
+	local chest_inventory = arg_8_2.FunctionResult.chest_inventory
 
-	if var_8_28 then
-		var_8_23:set_read_only_data("chest_inventory", var_8_28, true)
+	if not chest_inventory then
+		_backend_mirror:set_read_only_data("chest_inventory", chest_inventory, true)
 	end
 
-	if var_8_18 then
-		for iter_8_11 = 1, #var_8_18 do
-			local var_8_29 = var_8_18[iter_8_11].ItemInstanceId
+	if not ItemsRevoked then
+		for i11 = 1, #ItemsRevoked do
+			local ItemInstanceId = ItemsRevoked[i11].ItemInstanceId
 
-			var_8_23:remove_item(var_8_29)
+			_backend_mirror:remove_item(ItemInstanceId)
 		end
-	elseif var_8_19 then
-		local var_8_30 = var_8_19.ItemInstanceId
+	elseif not ConsumedDeedResult then
+		local ItemInstanceId_2 = ConsumedDeedResult.ItemInstanceId
 
-		var_8_23:remove_item(var_8_30)
+		_backend_mirror:remove_item(ItemInstanceId_2)
 	end
 
-	local var_8_31 = arg_8_1.hero_name
-	local var_8_32 = var_8_31 .. "_experience"
+	local hero_name = arg_8_1.hero_name
+	local str = hero_name .. "_experience"
 
-	var_8_23:set_read_only_data(var_8_32, var_8_2, true)
+	_backend_mirror:set_read_only_data(str, Experience, true)
 
-	local var_8_33 = "win_tracks_progress"
+	local str_2 = "win_tracks_progress"
 
-	arg_8_0._backend_mirror:set_read_only_data(var_8_33, cjson.encode(var_8_21), true)
+	self._backend_mirror:set_read_only_data(str_2, cjson.encode(win_tracks_progress), true)
 
-	if var_8_17 then
-		var_8_23:set_read_only_data("weekly_event_rewards", cjson.encode(var_8_17), true)
+	if not weekly_event_rewards then
+		_backend_mirror:set_read_only_data("weekly_event_rewards", cjson.encode(weekly_event_rewards), true)
 	end
 
-	if var_8_3 then
-		local var_8_34 = var_8_31 .. "_experience_pool"
+	if not ExperiencePool then
+		local str_3 = hero_name .. "_experience_pool"
 
-		var_8_23:set_read_only_data(var_8_34, var_8_3, true)
+		_backend_mirror:set_read_only_data(str_3, ExperiencePool, true)
 	end
 
-	if var_8_4 then
-		var_8_23:set_read_only_data("recent_quickplay_games", var_8_4, true)
+	if not RecentQuickplayGames then
+		_backend_mirror:set_read_only_data("recent_quickplay_games", RecentQuickplayGames, true)
 	end
 
-	if var_8_6 then
-		var_8_23:set_read_only_data("vs_profile_data", var_8_6, true)
+	if not vs_profile_data then
+		_backend_mirror:set_read_only_data("vs_profile_data", vs_profile_data, true)
 	end
 
-	if var_8_10 then
-		for iter_8_12, iter_8_13 in pairs(var_8_10) do
-			if iter_8_12 == "ES" then
-				var_8_22.essence = iter_8_13
+	if not CurrencyGranted then
+		for k_7, v_6 in pairs(CurrencyGranted) do
+			if k_7 == "ES" then
+				tbl.essence = v_6
 
-				var_8_23:set_essence(iter_8_13.new_total)
-			elseif iter_8_12 == "SM" then
-				var_8_22.shillings = iter_8_13
+				_backend_mirror:set_essence(v_6.new_total)
+			elseif k_7 == "SM" then
+				tbl.shillings = v_6
 
-				Managers.backend:get_interface("peddler"):set_chips(iter_8_12, iter_8_13.new_total)
-			elseif iter_8_12 == "VS" then
-				var_8_22.versus_currency = iter_8_13
+				Managers.backend:get_interface("peddler"):set_chips(k_7, v_6.new_total)
+			elseif k_7 == "VS" then
+				tbl.versus_currency = v_6
 
-				Managers.backend:get_interface("peddler"):set_chips(iter_8_12, iter_8_13.new_total)
+				Managers.backend:get_interface("peddler"):set_chips(k_7, v_6.new_total)
 			else
-				fassert(false, string.format("currency '%s' not supported", iter_8_12))
+				fassert(false, string.format("currency '%s' not supported", k_7))
 			end
 		end
-	elseif var_8_12 and #var_8_12 > 0 then
-		var_8_22.essence = var_8_12
+	elseif not (not EssenceRewards and not (#EssenceRewards > 0)) then
+		tbl.essence = EssenceRewards
 
-		local var_8_35 = var_8_12[#var_8_12].new_total
+		local new_total = EssenceRewards[#EssenceRewards].new_total
 
-		var_8_23:set_essence(var_8_35)
+		_backend_mirror:set_essence(new_total)
 	end
 
-	if var_8_11 then
-		for iter_8_14, iter_8_15 in pairs(var_8_11) do
-			var_8_22[iter_8_14] = iter_8_15
+	if not currencyRewards then
+		for k_8, v_7 in pairs(currencyRewards) do
+			tbl[k_8] = v_7
 		end
 	end
 
-	var_8_23:set_total_essence(var_8_5)
-	var_8_23:handle_deus_result(arg_8_2)
+	_backend_mirror:set_total_essence(total_essence)
+	_backend_mirror:handle_deus_result(arg_8_2)
 	Managers.backend:dirtify_interfaces()
 
-	arg_8_0._loot_requests[var_8_1] = var_8_22
+	self._loot_requests[id] = tbl
 end
 
-function BackendInterfaceLootPlayfab._get_remote_player_network_ids_and_characters(arg_9_0)
-	local var_9_0 = {}
+BackendInterfaceLootPlayfab._get_remote_player_network_ids_and_characters = function (arg_9_0)
+	-- function 9
+	local tbl = {}
 
-	if IS_WINDOWS or IS_LINUX then
-		if rawget(_G, "Steam") then
-			local var_9_1 = Managers.player:human_players()
+	if IS_WINDOWS or not IS_LINUX then
+		if not rawget(_G, "Steam") then
+			local human_players = Managers.player:human_players()
 
-			for iter_9_0, iter_9_1 in pairs(var_9_1) do
-				if iter_9_1.remote then
-					local var_9_2 = iter_9_1:network_id()
-					local var_9_3 = iter_9_1:profile_index()
-					local var_9_4 = iter_9_1:career_index()
-					local var_9_5 = SPProfiles[var_9_3].careers[var_9_4].playfab_name
+			for k, v in pairs(human_players) do
+				if not v.remote then
+					local network_id = v:network_id()
+					local profile_index = v:profile_index()
+					local career_index = v:career_index()
+					local playfab_name = SPProfiles[profile_index].careers[career_index].playfab_name
 
-					var_9_0[Steam.id_hex_to_dec(var_9_2)] = var_9_5
+					tbl[Steam.id_hex_to_dec(network_id)] = playfab_name
 				end
 			end
 		end
-	elseif IS_XB1 then
-		local var_9_6 = Managers.player:human_players()
+	elseif not IS_XB1 then
+		local human_players_2 = Managers.player:human_players()
 
-		for iter_9_2, iter_9_3 in pairs(var_9_6) do
-			if iter_9_3.remote then
-				local var_9_7 = iter_9_3:network_id()
-				local var_9_8 = iter_9_3:profile_index()
-				local var_9_9 = iter_9_3:career_index()
-				local var_9_10 = SPProfiles[var_9_8].careers[var_9_9].playfab_name
+		for k_2, v_2 in pairs(human_players_2) do
+			if not v_2.remote then
+				local network_id_2 = v_2:network_id()
+				local profile_index_2 = v_2:profile_index()
+				local career_index_2 = v_2:career_index()
+				local playfab_name_2 = SPProfiles[profile_index_2].careers[career_index_2].playfab_name
 
-				var_9_0[iter_9_3:platform_id()] = var_9_10
+				tbl[v_2:platform_id()] = playfab_name_2
 			end
 		end
-	elseif IS_PS4 then
-		local var_9_11 = Managers.player:human_players()
+	elseif not IS_PS4 then
+		local human_players_3 = Managers.player:human_players()
 
-		for iter_9_4, iter_9_5 in pairs(var_9_11) do
-			if iter_9_5.remote then
-				local var_9_12 = iter_9_5:network_id()
-				local var_9_13 = iter_9_5:profile_index()
-				local var_9_14 = iter_9_5:career_index()
-				local var_9_15 = SPProfiles[var_9_13].careers[var_9_14].playfab_name
-				local var_9_16 = iter_9_5:platform_id()
+		for k_3, v_3 in pairs(human_players_3) do
+			if not v_3.remote then
+				local network_id_3 = v_3:network_id()
+				local profile_index_3 = v_3:profile_index()
+				local career_index_3 = v_3:career_index()
+				local playfab_name_3 = SPProfiles[profile_index_3].careers[career_index_3].playfab_name
+				local platform_id = v_3:platform_id()
 
-				var_9_0[Application.hex64_to_dec(var_9_12)] = var_9_15
+				tbl[Application.hex64_to_dec(network_id_3)] = playfab_name_3
 			end
 		end
 	end
 
-	return var_9_0
+	return tbl
 end
 
-function BackendInterfaceLootPlayfab.get_achievement_rewards(arg_10_0, arg_10_1)
-	local var_10_0 = arg_10_0._backend_mirror:get_achievement_rewards()
+BackendInterfaceLootPlayfab.get_achievement_rewards = function (self, arg_10_1)
+	-- function 10
+	local get_achievement_rewards = self._backend_mirror:get_achievement_rewards()
+	local var_10_1 = get_achievement_rewards[arg_10_1]
 
-	return var_10_0[arg_10_1] and var_10_0[arg_10_1][1]
+	var_10_1 = not var_10_1 and get_achievement_rewards[arg_10_1][1]
+
+	return var_10_1
 end
 
-function BackendInterfaceLootPlayfab.achievement_rewards_claimed(arg_11_0, arg_11_1)
-	return arg_11_0._backend_mirror:get_claimed_achievements()[arg_11_1]
+BackendInterfaceLootPlayfab.achievement_rewards_claimed = function (self, arg_11_1)
+	-- function 11
+	return self._backend_mirror:get_claimed_achievements()[arg_11_1]
 end
 
-function BackendInterfaceLootPlayfab.can_claim_achievement_rewards(arg_12_0, arg_12_1)
-	if not arg_12_0._backend_mirror:get_claimed_achievements()[arg_12_1] then
+BackendInterfaceLootPlayfab.can_claim_achievement_rewards = function (self, arg_12_1)
+	-- function 12
+	if not self._backend_mirror:get_claimed_achievements()[arg_12_1] then
 		return true
 	end
 
 	return false
 end
 
-function BackendInterfaceLootPlayfab.claim_achievement_rewards(arg_13_0, arg_13_1, arg_13_2)
-	arg_13_0._reward_poll_id = true
+BackendInterfaceLootPlayfab.claim_achievement_rewards = function (self, arg_13_1, arg_13_2)
+	-- function 13
+	self._reward_poll_id = true
 
-	local var_13_0 = {
+	local tbl = {
 		achievement_id = arg_13_1,
 		id = arg_13_2
 	}
-	local var_13_1 = {
+	local tbl_2 = {
 		FunctionName = "generateAchievementRewards",
-		FunctionParameter = var_13_0
+		FunctionParameter = tbl
 	}
-	local var_13_2 = callback(arg_13_0, "achievement_rewards_request_cb", var_13_0)
+	local var_13_2 = callback(self, "achievement_rewards_request_cb", tbl)
 
-	arg_13_0._backend_mirror:request_queue():enqueue(var_13_1, var_13_2, true)
+	self._backend_mirror:request_queue():enqueue(tbl_2, var_13_2, true)
 end
 
-function BackendInterfaceLootPlayfab.achievement_rewards_request_cb(arg_14_0, arg_14_1, arg_14_2)
-	local var_14_0 = arg_14_2.FunctionResult
-	local var_14_1 = arg_14_1.id
+BackendInterfaceLootPlayfab.achievement_rewards_request_cb = function (self, arg_14_1, arg_14_2)
+	-- function 14
+	local FunctionResult = arg_14_2.FunctionResult
+	local id = arg_14_1.id
 
-	if not var_14_0 then
+	if not FunctionResult then
 		Managers.backend:playfab_api_error(arg_14_2)
 
 		return
-	elseif var_14_0.error_message then
+	elseif not FunctionResult.error_message then
 		Managers.backend:playfab_error(BACKEND_PLAYFAB_ERRORS.ERR_PLAYFAB_ACHIEVEMENT_REWARD_CLAIMED)
 
-		arg_14_0._loot_requests[var_14_1] = {}
+		self._loot_requests[id] = {}
 
 		return
 	end
 
-	local var_14_2 = var_14_0.items
-	local var_14_3 = var_14_0.achievement_id
-	local var_14_4 = var_14_0.currency_added
-	local var_14_5 = var_14_0.chips
-	local var_14_6 = arg_14_0._backend_mirror
-	local var_14_7 = {}
+	local items = FunctionResult.items
+	local achievement_id = FunctionResult.achievement_id
+	local currency_added = FunctionResult.currency_added
+	local chips = FunctionResult.chips
+	local _backend_mirror = self._backend_mirror
+	local tbl = {}
 
-	if var_14_2 then
-		for iter_14_0 = 1, #var_14_2 do
-			local var_14_8 = var_14_2[iter_14_0]
-			local var_14_9 = var_14_8.ItemInstanceId
-			local var_14_10 = var_14_8.UsesIncrementedBy or 1
+	if not items then
+		for i = 1, #items do
+			local var_14_8 = items[i]
+			local ItemInstanceId = var_14_8.ItemInstanceId
+			local UsesIncrementedBy = var_14_8.UsesIncrementedBy
 
-			var_14_6:add_item(var_14_9, var_14_8)
+			UsesIncrementedBy = UsesIncrementedBy or 1
 
-			var_14_7[#var_14_7 + 1] = {
+			_backend_mirror:add_item(ItemInstanceId, var_14_8)
+
+			tbl[#tbl + 1] = {
 				type = "item",
-				backend_id = var_14_9,
-				amount = var_14_10
+				backend_id = ItemInstanceId,
+				amount = UsesIncrementedBy
 			}
 		end
 	end
 
-	local var_14_11 = var_14_0.new_keep_decorations
+	local new_keep_decorations = FunctionResult.new_keep_decorations
 
-	if var_14_11 then
-		for iter_14_1 = 1, #var_14_11 do
-			local var_14_12 = var_14_11[iter_14_1]
+	if not new_keep_decorations then
+		for j = 1, #new_keep_decorations do
+			local var_14_12 = new_keep_decorations[j]
 
-			var_14_6:add_keep_decoration(var_14_12)
+			_backend_mirror:add_keep_decoration(var_14_12)
 
-			var_14_7[#var_14_7 + 1] = {
+			tbl[#tbl + 1] = {
 				type = "keep_decoration_painting",
 				keep_decoration_name = var_14_12
 			}
 		end
 	end
 
-	local var_14_13 = var_14_0.new_weapon_skins
+	local new_weapon_skins = FunctionResult.new_weapon_skins
 
-	if var_14_13 then
-		for iter_14_2 = 1, #var_14_13 do
-			local var_14_14 = var_14_13[iter_14_2]
+	if not new_weapon_skins then
+		for k = 1, #new_weapon_skins do
+			local var_14_14 = new_weapon_skins[k]
 
-			var_14_6:add_unlocked_weapon_skin(var_14_14)
+			_backend_mirror:add_unlocked_weapon_skin(var_14_14)
 
-			var_14_7[#var_14_7 + 1] = {
+			tbl[#tbl + 1] = {
 				type = "weapon_skin",
 				weapon_skin_name = var_14_14
 			}
 		end
 	end
 
-	local var_14_15 = var_14_0.new_cosmetics
+	local new_cosmetics = FunctionResult.new_cosmetics
 
-	if var_14_15 then
-		local var_14_16 = ItemMasterList
+	if not new_cosmetics then
+		local ItemMasterList = ItemMasterList
 
-		for iter_14_3 = 1, #var_14_15 do
-			local var_14_17 = var_14_15[iter_14_3]
-			local var_14_18 = rawget(var_14_16, var_14_17)
-			local var_14_19 = var_14_6:add_item(nil, {
+		for l = 1, #new_cosmetics do
+			local var_14_17 = new_cosmetics[l]
+			local var_14_18 = rawget(ItemMasterList, var_14_17)
+			local add_item = _backend_mirror:add_item(nil, {
 				ItemId = var_14_17
 			})
 
-			if var_14_19 then
-				var_14_7[#var_14_7 + 1] = {
+			if not add_item then
+				tbl[#tbl + 1] = {
 					type = var_14_18.slot_type,
-					backend_id = var_14_19
+					backend_id = add_item
 				}
 			end
 		end
 	end
 
-	local var_14_20 = {}
+	local tbl_2 = {}
 
-	if var_14_4 then
-		for iter_14_4, iter_14_5 in pairs(var_14_4) do
-			var_14_7[#var_14_7 + 1] = {
+	if not currency_added then
+		for k_2, v in pairs(currency_added) do
+			tbl[#tbl + 1] = {
 				type = "currency",
-				currency_code = iter_14_4,
-				amount = iter_14_5
+				currency_code = k_2,
+				amount = v
 			}
 		end
 	end
 
-	if var_14_5 then
-		local var_14_21 = Managers.backend:get_interface("peddler")
+	if not chips then
+		local get_interface = Managers.backend:get_interface("peddler")
 
-		if var_14_21 then
-			for iter_14_6, iter_14_7 in pairs(var_14_5) do
-				var_14_21:set_chips(iter_14_6, iter_14_7)
+		if not get_interface then
+			for k_3, v_2 in pairs(chips) do
+				get_interface:set_chips(k_3, v_2)
 			end
 		end
 	end
 
-	local var_14_22 = var_14_0.chest_inventory
+	local chest_inventory = FunctionResult.chest_inventory
 
-	if var_14_22 then
-		var_14_6:set_read_only_data("chest_inventory", var_14_22, true)
+	if not chest_inventory then
+		_backend_mirror:set_read_only_data("chest_inventory", chest_inventory, true)
 	end
 
-	local var_14_23 = var_14_0.achievement_reward_levels
+	local achievement_reward_levels = FunctionResult.achievement_reward_levels
 
-	if var_14_23 then
-		var_14_6:set_read_only_data("achievement_reward_levels", var_14_23, true)
+	if not achievement_reward_levels then
+		_backend_mirror:set_read_only_data("achievement_reward_levels", achievement_reward_levels, true)
 	end
 
-	var_14_6:set_achievement_claimed(var_14_3)
+	_backend_mirror:set_achievement_claimed(achievement_id)
 
-	arg_14_0._loot_requests[var_14_1] = var_14_7
-	arg_14_0._reward_poll_id = nil
+	self._loot_requests[id] = tbl
+	self._reward_poll_id = nil
 
 	Managers.backend:dirtify_interfaces()
 end
 
-function BackendInterfaceLootPlayfab.can_claim_all_achievement_rewards(arg_15_0, arg_15_1)
-	local var_15_0 = {}
-	local var_15_1 = {}
-	local var_15_2 = arg_15_0._backend_mirror:get_claimed_achievements()
+BackendInterfaceLootPlayfab.can_claim_all_achievement_rewards = function (self, arg_15_1)
+	-- function 15
+	local tbl = {}
+	local tbl_2 = {}
+	local get_claimed_achievements = self._backend_mirror:get_claimed_achievements()
 
-	for iter_15_0 = 0, #arg_15_1 do
-		local var_15_3 = arg_15_1[iter_15_0]
+	for i = 0, #arg_15_1 do
+		local var_15_3 = arg_15_1[i]
 
-		if not var_15_2[var_15_3] then
-			table.insert(var_15_0, var_15_3)
+		if not get_claimed_achievements[var_15_3] then
+			table.insert(tbl, var_15_3)
 		else
-			table.insert(var_15_1, var_15_3)
+			table.insert(tbl_2, var_15_3)
 		end
 	end
 
-	if table.is_empty(var_15_0) then
-		return false, nil, var_15_1
+	if not table.is_empty(tbl) then
+		return false, nil, tbl_2
 	else
-		return true, var_15_0, var_15_1
+		return true, tbl, tbl_2
 	end
 end
 
-local var_0_1 = 150
+local num = 150
 
-function BackendInterfaceLootPlayfab.claim_multiple_achievement_rewards(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
-	arg_16_0._reward_poll_id = true
+BackendInterfaceLootPlayfab.claim_multiple_achievement_rewards = function (self, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+	-- function 16
+	self._reward_poll_id = true
 	arg_16_3 = arg_16_3 or 1
-	arg_16_4 = arg_16_4 or var_0_1
+	arg_16_4 = arg_16_4 or num
 
-	local var_16_0 = {}
-	local var_16_1 = #arg_16_1
+	local tbl = {}
+	local count = #arg_16_1
 	local var_16_2 = arg_16_2
 	local var_16_3
-	local var_16_4 = var_0_1
+	local var_16_4 = num
 
 	if arg_16_3 > 1 then
-		var_16_3 = table.slice(arg_16_1, arg_16_3, var_16_1)
+		var_16_3 = table.slice(arg_16_1, arg_16_3, count)
 	else
 		var_16_3 = arg_16_1
 	end
 
-	if #var_16_3 <= var_0_1 then
+	if #var_16_3 <= num then
 		var_16_4 = #var_16_3
 	end
 
-	for iter_16_0 = 1, var_16_4 do
-		local var_16_5 = var_16_3[iter_16_0]
-		local var_16_6 = {
+	for i = 1, var_16_4 do
+		local var_16_5 = var_16_3[i]
+		local tbl_2 = {
 			achievement_id = var_16_5
 		}
 
-		var_16_0[#var_16_0 + 1] = var_16_6
+		tbl[#tbl + 1] = tbl_2
 	end
 
-	local var_16_7 = {
+	local tbl_3 = {
 		FunctionName = "generateAchievementRewards",
 		FunctionParameter = {
-			achievement_ids = var_16_0,
+			achievement_ids = tbl,
 			id = var_16_2
 		}
 	}
-	local var_16_8 = callback(arg_16_0, "claim_multiple_achievement_rewards_request_cb", var_16_0, var_16_2, arg_16_3, arg_16_4, arg_16_1)
+	local var_16_8 = callback(self, "claim_multiple_achievement_rewards_request_cb", tbl, var_16_2, arg_16_3, arg_16_4, arg_16_1)
 
-	arg_16_0._backend_mirror:request_queue():enqueue(var_16_7, var_16_8, true)
+	self._backend_mirror:request_queue():enqueue(tbl_3, var_16_8, true)
 end
 
-function BackendInterfaceLootPlayfab.claim_multiple_achievement_rewards_request_cb(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6)
+BackendInterfaceLootPlayfab.claim_multiple_achievement_rewards_request_cb = function (self, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6)
+	-- function 17
 	print("[BackendInterfaceLootPlayfab]:claim_all_achievement_rewards_request_cb: Firing!")
 
-	local var_17_0 = arg_17_6.FunctionResult
+	local FunctionResult = arg_17_6.FunctionResult
 	local var_17_1 = arg_17_2
 	local var_17_2 = arg_17_5
 
-	if not var_17_0 then
+	if not FunctionResult then
 		Managers.backend:playfab_api_error(arg_17_6)
 
 		return
-	elseif var_17_0 == "reward_claimed" then
+	elseif FunctionResult == "reward_claimed" then
 		Managers.backend:playfab_error(BACKEND_PLAYFAB_ERRORS.ERR_PLAYFAB_ACHIEVEMENT_REWARD_CLAIMED)
 
-		arg_17_0._loot_requests[var_17_1] = {}
+		self._loot_requests[var_17_1] = {}
 
 		return
 	end
 
-	if arg_17_0._loot_requests[var_17_1] == nil then
-		arg_17_0._loot_requests[var_17_1] = {}
+	if self._loot_requests[var_17_1] == nil then
+		self._loot_requests[var_17_1] = {}
 	end
 
-	local var_17_3 = var_17_0.items
-	local var_17_4 = var_17_0.achievement_id
-	local var_17_5 = var_17_0.currency_added
-	local var_17_6 = var_17_0.chips
-	local var_17_7 = arg_17_0._backend_mirror
-	local var_17_8 = {}
+	local items = FunctionResult.items
+	local achievement_id = FunctionResult.achievement_id
+	local currency_added = FunctionResult.currency_added
+	local chips = FunctionResult.chips
+	local _backend_mirror = self._backend_mirror
+	local tbl = {}
 
-	if var_17_3 then
-		for iter_17_0 = 1, #var_17_3 do
-			local var_17_9 = var_17_3[iter_17_0]
-			local var_17_10 = var_17_9.ItemInstanceId
-			local var_17_11 = var_17_9.UsesIncrementedBy or 1
+	if not items then
+		for i = 1, #items do
+			local var_17_9 = items[i]
+			local ItemInstanceId = var_17_9.ItemInstanceId
+			local UsesIncrementedBy = var_17_9.UsesIncrementedBy
 
-			var_17_7:add_item(var_17_10, var_17_9)
+			UsesIncrementedBy = UsesIncrementedBy or 1
 
-			var_17_8[#var_17_8 + 1] = {
+			_backend_mirror:add_item(ItemInstanceId, var_17_9)
+
+			tbl[#tbl + 1] = {
 				type = "item",
-				backend_id = var_17_10,
-				amount = var_17_11
+				backend_id = ItemInstanceId,
+				amount = UsesIncrementedBy
 			}
 		end
 	end
 
-	local var_17_12 = var_17_0.new_keep_decorations
+	local new_keep_decorations = FunctionResult.new_keep_decorations
 
-	if var_17_12 then
-		for iter_17_1 = 1, #var_17_12 do
-			local var_17_13 = var_17_12[iter_17_1]
+	if not new_keep_decorations then
+		for j = 1, #new_keep_decorations do
+			local var_17_13 = new_keep_decorations[j]
 
-			var_17_7:add_keep_decoration(var_17_13)
+			_backend_mirror:add_keep_decoration(var_17_13)
 
-			var_17_8[#var_17_8 + 1] = {
+			tbl[#tbl + 1] = {
 				type = "keep_decoration_painting",
 				keep_decoration_name = var_17_13
 			}
 		end
 	end
 
-	local var_17_14 = var_17_0.new_weapon_skins
+	local new_weapon_skins = FunctionResult.new_weapon_skins
 
-	if var_17_14 then
-		for iter_17_2 = 1, #var_17_14 do
-			local var_17_15 = var_17_14[iter_17_2]
+	if not new_weapon_skins then
+		for k = 1, #new_weapon_skins do
+			local var_17_15 = new_weapon_skins[k]
 
-			var_17_7:add_unlocked_weapon_skin(var_17_15)
+			_backend_mirror:add_unlocked_weapon_skin(var_17_15)
 
-			var_17_8[#var_17_8 + 1] = {
+			tbl[#tbl + 1] = {
 				type = "weapon_skin",
 				weapon_skin_name = var_17_15
 			}
 		end
 	end
 
-	local var_17_16 = var_17_0.new_cosmetics
+	local new_cosmetics = FunctionResult.new_cosmetics
 
-	if var_17_16 then
-		local var_17_17 = ItemMasterList
+	if not new_cosmetics then
+		local ItemMasterList = ItemMasterList
 
-		for iter_17_3 = 1, #var_17_16 do
-			local var_17_18 = var_17_16[iter_17_3]
-			local var_17_19 = rawget(var_17_17, var_17_18)
-			local var_17_20 = var_17_7:add_item(nil, {
+		for l = 1, #new_cosmetics do
+			local var_17_18 = new_cosmetics[l]
+			local var_17_19 = rawget(ItemMasterList, var_17_18)
+			local add_item = _backend_mirror:add_item(nil, {
 				ItemId = var_17_18
 			})
 
-			if var_17_20 then
-				var_17_8[#var_17_8 + 1] = {
+			if not add_item then
+				tbl[#tbl + 1] = {
 					type = var_17_19.slot_type,
-					backend_id = var_17_20
+					backend_id = add_item
 				}
 			end
 		end
 	end
 
-	local var_17_21 = {}
+	local tbl_2 = {}
 
-	if var_17_5 then
-		for iter_17_4, iter_17_5 in pairs(var_17_5) do
-			var_17_8[#var_17_8 + 1] = {
+	if not currency_added then
+		for k_2, v in pairs(currency_added) do
+			tbl[#tbl + 1] = {
 				type = "currency",
-				currency_code = iter_17_4,
-				amount = iter_17_5
+				currency_code = k_2,
+				amount = v
 			}
 		end
 	end
 
-	if var_17_6 then
-		local var_17_22 = Managers.backend:get_interface("peddler")
+	if not chips then
+		local get_interface = Managers.backend:get_interface("peddler")
 
-		if var_17_22 then
-			for iter_17_6, iter_17_7 in pairs(var_17_6) do
-				var_17_22:set_chips(iter_17_6, iter_17_7)
+		if not get_interface then
+			for k_3, v_2 in pairs(chips) do
+				get_interface:set_chips(k_3, v_2)
 			end
 		end
 	end
 
-	local var_17_23 = var_17_0.chest_inventory
+	local chest_inventory = FunctionResult.chest_inventory
 
-	if var_17_23 then
-		var_17_7:set_read_only_data("chest_inventory", var_17_23, true)
+	if not chest_inventory then
+		_backend_mirror:set_read_only_data("chest_inventory", chest_inventory, true)
 	end
 
-	local var_17_24 = var_17_0.achievement_reward_levels
+	local achievement_reward_levels = FunctionResult.achievement_reward_levels
 
-	if var_17_24 then
-		var_17_7:set_read_only_data("achievement_reward_levels", var_17_24, true)
+	if not achievement_reward_levels then
+		_backend_mirror:set_read_only_data("achievement_reward_levels", achievement_reward_levels, true)
 	end
 
-	if var_17_4 then
-		for iter_17_8 = 1, #var_17_4 do
-			local var_17_25 = var_17_4[iter_17_8].achievement_id
+	if not achievement_id then
+		for i8 = 1, #achievement_id do
+			local achievement_id_2 = achievement_id[i8].achievement_id
 
-			var_17_7:set_achievement_claimed(var_17_25)
+			_backend_mirror:set_achievement_claimed(achievement_id_2)
 		end
 
-		for iter_17_9 = 1, #var_17_8 do
-			table.insert(arg_17_0._loot_requests[var_17_1], var_17_8[iter_17_9])
+		for i9 = 1, #tbl do
+			table.insert(self._loot_requests[var_17_1], tbl[i9])
 		end
 	else
-		local var_17_26 = var_17_0.requested_achievement_ids or {}
+		local requested_achievement_ids = FunctionResult.requested_achievement_ids
 
-		table.dump(var_17_26)
+		requested_achievement_ids = requested_achievement_ids or {}
+
+		table.dump(requested_achievement_ids)
 		Crashify.print_exception("Failed to claim multiple challenges")
 	end
 
 	if arg_17_4 < #var_17_2 then
-		local var_17_27 = arg_17_3 + var_0_1
-		local var_17_28 = arg_17_4 + var_0_1
+		local num_2 = arg_17_3 + num
+		local num_3 = arg_17_4 + num
 
-		arg_17_0:claim_multiple_achievement_rewards(var_17_2, var_17_1, var_17_27, var_17_28)
+		self:claim_multiple_achievement_rewards(var_17_2, var_17_1, num_2, num_3)
 	else
-		arg_17_0._reward_poll_id = nil
+		self._reward_poll_id = nil
 
 		Managers.backend:dirtify_interfaces()
 	end
 end
 
-function BackendInterfaceLootPlayfab.polling_reward(arg_18_0)
-	return arg_18_0._reward_poll_id
+BackendInterfaceLootPlayfab.polling_reward = function (self)
+	-- function 18
+	return self._reward_poll_id
 end
 
-function BackendInterfaceLootPlayfab.is_loot_generated(arg_19_0, arg_19_1)
-	if arg_19_0._loot_requests[arg_19_1] then
+BackendInterfaceLootPlayfab.is_loot_generated = function (self, arg_19_1)
+	-- function 19
+	if not self._loot_requests[arg_19_1] then
 		return true
 	end
 
 	return false
 end
 
-function BackendInterfaceLootPlayfab.get_loot(arg_20_0, arg_20_1)
-	return arg_20_0._loot_requests[arg_20_1]
+BackendInterfaceLootPlayfab.get_loot = function (self, arg_20_1)
+	-- function 20
+	return self._loot_requests[arg_20_1]
 end
 
-function BackendInterfaceLootPlayfab.generate_reward_loot_id(arg_21_0)
-	return arg_21_0:_new_id()
+BackendInterfaceLootPlayfab.generate_reward_loot_id = function (self)
+	-- function 21
+	return self:_new_id()
 end
 
-function BackendInterfaceLootPlayfab.get_power_level_settings(arg_22_0)
-	return arg_22_0._backend_mirror:get_power_level_settings()
+BackendInterfaceLootPlayfab.get_power_level_settings = function (self)
+	-- function 22
+	return self._backend_mirror:get_power_level_settings()
 end
 
-function BackendInterfaceLootPlayfab.debug_override_power_level_settings(arg_23_0, arg_23_1)
-	arg_23_0._backend_mirror:debug_override_power_level_settings(arg_23_1)
+BackendInterfaceLootPlayfab.debug_override_power_level_settings = function (self, arg_23_1)
+	-- function 23
+	self._backend_mirror:debug_override_power_level_settings(arg_23_1)
 end
 
-function BackendInterfaceLootPlayfab.get_rarity_tables(arg_24_0)
-	return arg_24_0._backend_mirror:get_rarity_tables()
+BackendInterfaceLootPlayfab.get_rarity_tables = function (self)
+	-- function 24
+	return self._backend_mirror:get_rarity_tables()
 end
 
-function BackendInterfaceLootPlayfab.get_formatted_rarity_tables(arg_25_0)
-	return arg_25_0._backend_mirror:get_formatted_rarity_tables()
+BackendInterfaceLootPlayfab.get_formatted_rarity_tables = function (self)
+	-- function 25
+	return self._backend_mirror:get_formatted_rarity_tables()
 end
 
-function BackendInterfaceLootPlayfab.get_highest_chest_level(arg_26_0, arg_26_1)
+BackendInterfaceLootPlayfab.get_highest_chest_level = function (self, arg_26_1)
+	-- function 26
 	local var_26_0
-	local var_26_1 = cjson.decode(arg_26_0._backend_mirror:get_read_only_data("chest_inventory"))[arg_26_1]
+	local var_26_1 = cjson.decode(self._backend_mirror:get_read_only_data("chest_inventory"))[arg_26_1]
 
-	if var_26_1 then
-		for iter_26_0, iter_26_1 in pairs(var_26_1) do
-			if iter_26_1 > 0 then
-				local var_26_2 = string.split(iter_26_0, "_")[2]
+	if not var_26_1 then
+		for k, v in pairs(var_26_1) do
+			if v > 0 then
+				local var_26_2 = string.split(k, "_")[2]
 
 				var_26_0 = math.max(var_26_0 or 0, var_26_2)
 			end

@@ -2,12 +2,12 @@
 
 local var_0_0 = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_crafting_list_console_definitions")
 local var_0_1, var_0_2, var_0_3 = dofile("scripts/settings/crafting/crafting_recipes")
-local var_0_4 = var_0_0.widgets
-local var_0_5 = var_0_0.title_button_definitions
-local var_0_6 = var_0_0.scenegraph_definition
-local var_0_7 = var_0_0.animation_definitions
-local var_0_8 = var_0_0.generic_input_actions
-local var_0_9 = {
+local widgets = var_0_0.widgets
+local title_button_definitions = var_0_0.title_button_definitions
+local scenegraph_definition = var_0_0.scenegraph_definition
+local animation_definitions = var_0_0.animation_definitions
+local generic_input_actions = var_0_0.generic_input_actions
+local tbl = {
 	{
 		sound_event_enter = "play_gui_equipment_button",
 		name = "salvage",
@@ -51,469 +51,538 @@ local var_0_9 = {
 		sound_event_exit = "play_gui_equipment_close"
 	}
 }
-local var_0_10 = "move_down_hold_continuous"
-local var_0_11 = "move_up_hold_continuous"
-local var_0_12 = false
+local str = "move_down_hold_continuous"
+local str_2 = "move_up_hold_continuous"
+local flag = false
 
 HeroWindowCraftingListConsole = class(HeroWindowCraftingListConsole)
 HeroWindowCraftingListConsole.NAME = "HeroWindowCraftingListConsole"
 
-function HeroWindowCraftingListConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
+HeroWindowCraftingListConsole.on_enter = function (self, arg_1_1, arg_1_2)
+	-- function 1
 	print("[HeroViewWindow] Enter Substate HeroWindowCraftingListConsole")
 
-	arg_1_0._params = arg_1_1
-	arg_1_0.parent = arg_1_1.parent
+	self._params = arg_1_1
+	self.parent = arg_1_1.parent
 
-	local var_1_0 = arg_1_1.ingame_ui_context
+	local ingame_ui_context = arg_1_1.ingame_ui_context
 
-	arg_1_0.ui_renderer = var_1_0.ui_renderer
-	arg_1_0.ui_top_renderer = var_1_0.ui_top_renderer
-	arg_1_0.input_manager = var_1_0.input_manager
-	arg_1_0.statistics_db = var_1_0.statistics_db
-	arg_1_0.render_settings = {
+	self.ui_renderer = ingame_ui_context.ui_renderer
+	self.ui_top_renderer = ingame_ui_context.ui_top_renderer
+	self.input_manager = ingame_ui_context.input_manager
+	self.statistics_db = ingame_ui_context.statistics_db
+	self.render_settings = {
 		snap_pixel_positions = true
 	}
-	arg_1_0._animation_settings = {
+	self._animation_settings = {
 		entry_alignment_progress = 0
 	}
 
-	local var_1_1 = Managers.player
+	local player = Managers.player
 
-	arg_1_0._stats_id = var_1_1:local_player():stats_id()
-	arg_1_0.player_manager = var_1_1
-	arg_1_0.peer_id = var_1_0.peer_id
-	arg_1_0.hero_name = arg_1_1.hero_name
-	arg_1_0.career_index = arg_1_1.career_index
-	arg_1_0.profile_index = arg_1_1.profile_index
+	self._stats_id = player:local_player():stats_id()
+	self.player_manager = player
+	self.peer_id = ingame_ui_context.peer_id
+	self.hero_name = arg_1_1.hero_name
+	self.career_index = arg_1_1.career_index
+	self.profile_index = arg_1_1.profile_index
 
-	local var_1_2 = arg_1_0.hero_name
-	local var_1_3 = arg_1_0.career_index
-	local var_1_4 = FindProfileIndex(var_1_2)
-	local var_1_5 = SPProfiles[var_1_4].careers[var_1_3].name
+	local hero_name = self.hero_name
+	local career_index = self.career_index
+	local var_1_4 = FindProfileIndex(hero_name)
+	local name = SPProfiles[var_1_4].careers[career_index].name
 
-	arg_1_0._animations = {}
-	arg_1_0._ui_animations = {}
+	self._animations = {}
+	self._ui_animations = {}
 
-	arg_1_0:create_ui_elements(arg_1_1, arg_1_2)
+	self:create_ui_elements(arg_1_1, arg_1_2)
 
-	arg_1_0.conditions_params = {
-		hero_name = arg_1_0.hero_name,
-		career_name = var_1_5,
+	self.conditions_params = {
+		hero_name = self.hero_name,
+		career_name = name,
 		rarities_to_ignore = table.enum_safe("magic")
 	}
 
-	arg_1_0:_populate_buttons(var_0_9)
+	self:_populate_buttons(tbl)
 
-	local var_1_6 = arg_1_1.recipe_index or 1
-	local var_1_7 = true
+	local recipe_index = arg_1_1.recipe_index
 
-	arg_1_0:_on_button_selected(var_1_6, var_1_7)
-	arg_1_0:_start_transition_animation("on_enter")
+	recipe_index = recipe_index or 1
+
+	local flag = true
+
+	self:_on_button_selected(recipe_index, flag)
+	self:_start_transition_animation("on_enter")
 end
 
-function HeroWindowCraftingListConsole._start_transition_animation(arg_2_0, arg_2_1)
-	local var_2_0 = {
-		wwise_world = arg_2_0.wwise_world,
-		render_settings = arg_2_0.render_settings,
-		animation_settings = arg_2_0._animation_settings
+HeroWindowCraftingListConsole._start_transition_animation = function (self, arg_2_1)
+	-- function 2
+	local tbl = {
+		wwise_world = self.wwise_world,
+		render_settings = self.render_settings,
+		animation_settings = self._animation_settings
 	}
-	local var_2_1 = {}
-	local var_2_2 = arg_2_0.ui_animator:start_animation(arg_2_1, var_2_1, var_0_6, var_2_0)
+	local tbl_2 = {}
+	local start_animation = self.ui_animator:start_animation(arg_2_1, tbl_2, scenegraph_definition, tbl)
 
-	arg_2_0._animations[arg_2_1] = var_2_2
+	self._animations[arg_2_1] = start_animation
 end
 
-function HeroWindowCraftingListConsole.create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
-	arg_3_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_6)
+HeroWindowCraftingListConsole.create_ui_elements = function (self, arg_3_1, arg_3_2)
+	-- function 3
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	local var_3_0 = {}
-	local var_3_1 = {}
+	local tbl = {}
+	local tbl_2 = {}
 
-	for iter_3_0, iter_3_1 in pairs(var_0_4) do
-		local var_3_2 = UIWidget.init(iter_3_1)
+	for k, v in pairs(widgets) do
+		local var_3_2 = UIWidget.init(v)
 
-		var_3_0[#var_3_0 + 1] = var_3_2
-		var_3_1[iter_3_0] = var_3_2
+		tbl[#tbl + 1] = var_3_2
+		tbl_2[k] = var_3_2
 	end
 
-	arg_3_0._widgets = var_3_0
-	arg_3_0._widgets_by_name = var_3_1
+	self._widgets = tbl
+	self._widgets_by_name = tbl_2
 
-	local var_3_3 = {}
+	local tbl_3 = {}
 
-	for iter_3_2, iter_3_3 in pairs(var_0_5) do
-		local var_3_4 = UIWidget.init(iter_3_3)
+	for k_2, v_2 in pairs(title_button_definitions) do
+		local var_3_4 = UIWidget.init(v_2)
 
-		var_3_3[#var_3_3 + 1] = var_3_4
+		tbl_3[#tbl_3 + 1] = var_3_4
 	end
 
-	arg_3_0._title_button_widgets = var_3_3
+	self._title_button_widgets = tbl_3
 
-	UIRenderer.clear_scenegraph_queue(arg_3_0.ui_top_renderer)
+	UIRenderer.clear_scenegraph_queue(self.ui_top_renderer)
 
-	arg_3_0.ui_animator = UIAnimator:new(arg_3_0.ui_scenegraph, var_0_7)
+	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
 
-	if arg_3_2 then
-		local var_3_5 = arg_3_0.ui_scenegraph.window.local_position
+	if not arg_3_2 then
+		local local_position = self.ui_scenegraph.window.local_position
 
-		var_3_5[1] = var_3_5[1] + arg_3_2[1]
-		var_3_5[2] = var_3_5[2] + arg_3_2[2]
-		var_3_5[3] = var_3_5[3] + arg_3_2[3]
+		local_position[1] = local_position[1] + arg_3_2[1]
+		local_position[2] = local_position[2] + arg_3_2[2]
+		local_position[3] = local_position[3] + arg_3_2[3]
 	end
 
-	local var_3_6 = Managers.input:get_service("hero_view")
-	local var_3_7 = UILayer.default + 300
+	local get_service = Managers.input:get_service("hero_view")
+	local num = UILayer.default + 300
 
-	arg_3_0._menu_input_description = MenuInputDescriptionUI:new(nil, arg_3_0.ui_top_renderer, var_3_6, 4, var_3_7, var_0_8.default, true)
+	self._menu_input_description = MenuInputDescriptionUI:new(nil, self.ui_top_renderer, get_service, 4, num, generic_input_actions.default, true)
 
-	arg_3_0._menu_input_description:set_input_description(nil)
+	self._menu_input_description:set_input_description(nil)
 end
 
-function HeroWindowCraftingListConsole.on_exit(arg_4_0, arg_4_1)
+HeroWindowCraftingListConsole.on_exit = function (self, arg_4_1)
+	-- function 4
 	print("[HeroViewWindow] Exit Substate HeroWindowCraftingListConsole")
 
-	arg_4_0.ui_animator = nil
+	self.ui_animator = nil
 
-	arg_4_0._menu_input_description:destroy()
+	self._menu_input_description:destroy()
 
-	arg_4_0._menu_input_description = nil
+	self._menu_input_description = nil
 end
 
-function HeroWindowCraftingListConsole._input_service(arg_5_0)
-	local var_5_0 = arg_5_0.parent
+HeroWindowCraftingListConsole._input_service = function (self)
+	-- function 5
+	local parent = self.parent
 
-	if var_5_0:is_friends_list_active() then
+	if not parent:is_friends_list_active() then
 		return FAKE_INPUT_SERVICE
 	end
 
-	return var_5_0:window_input_service()
+	return parent:window_input_service()
 end
 
-function HeroWindowCraftingListConsole.update(arg_6_0, arg_6_1, arg_6_2)
-	if var_0_12 then
-		var_0_12 = false
+HeroWindowCraftingListConsole.update = function (self, arg_6_1, arg_6_2)
+	-- function 6
+	if not flag then
+		flag = false
 
-		arg_6_0:create_ui_elements()
+		self:create_ui_elements()
 	end
 
-	arg_6_0:_update_animations(arg_6_1)
-	arg_6_0:draw(arg_6_1)
+	self:_update_animations(arg_6_1)
+	self:draw(arg_6_1)
 end
 
-function HeroWindowCraftingListConsole.post_update(arg_7_0, arg_7_1, arg_7_2)
-	arg_7_0:_handle_input(arg_7_1, arg_7_2)
+HeroWindowCraftingListConsole.post_update = function (self, arg_7_1, arg_7_2)
+	-- function 7
+	self:_handle_input(arg_7_1, arg_7_2)
 end
 
-function HeroWindowCraftingListConsole._update_animations(arg_8_0, arg_8_1)
-	local var_8_0 = arg_8_0._ui_animations
-	local var_8_1 = arg_8_0._animations
-	local var_8_2 = arg_8_0.ui_animator
+HeroWindowCraftingListConsole._update_animations = function (self, arg_8_1)
+	-- function 8
+	local _ui_animations = self._ui_animations
+	local _animations = self._animations
+	local ui_animator = self.ui_animator
 
-	for iter_8_0, iter_8_1 in pairs(arg_8_0._ui_animations) do
-		UIAnimation.update(iter_8_1, arg_8_1)
+	for k, v in pairs(self._ui_animations) do
+		UIAnimation.update(v, arg_8_1)
 
-		if UIAnimation.completed(iter_8_1) then
-			arg_8_0._ui_animations[iter_8_0] = nil
+		if not UIAnimation.completed(v) then
+			self._ui_animations[k] = nil
 		end
 	end
 
-	var_8_2:update(arg_8_1)
+	ui_animator:update(arg_8_1)
 
-	for iter_8_2, iter_8_3 in pairs(var_8_1) do
-		if var_8_2:is_animation_completed(iter_8_3) then
-			var_8_2:stop_animation(iter_8_3)
+	for k_2, v_2 in pairs(_animations) do
+		if not ui_animator:is_animation_completed(v_2) then
+			ui_animator:stop_animation(v_2)
 
-			var_8_1[iter_8_2] = nil
+			_animations[k_2] = nil
 		end
 	end
 
-	local var_8_3 = arg_8_0._animation_settings.entry_alignment_progress
+	local entry_alignment_progress = self._animation_settings.entry_alignment_progress
 
-	arg_8_0:_set_alignment_progress(var_8_3)
+	self:_set_alignment_progress(entry_alignment_progress)
 
-	local var_8_4 = arg_8_0._title_button_widgets
+	local _title_button_widgets = self._title_button_widgets
 
-	for iter_8_4, iter_8_5 in ipairs(var_8_4) do
-		arg_8_0:_animate_entry(iter_8_5, arg_8_1)
+	for i, v_3 in ipairs(_title_button_widgets) do
+		self:_animate_entry(v_3, arg_8_1)
 	end
 end
 
-function HeroWindowCraftingListConsole._is_button_pressed(arg_9_0, arg_9_1)
-	local var_9_0 = arg_9_1.content
-	local var_9_1 = var_9_0.button_hotspot or var_9_0.button_text
+HeroWindowCraftingListConsole._is_button_pressed = function (arg_9_0, arg_9_1)
+	-- function 9
+	local content = arg_9_1.content
+	local button_hotspot = content.button_hotspot
 
-	if var_9_1.on_release then
-		var_9_1.on_release = false
+	button_hotspot = button_hotspot or content.button_text
+
+	if not button_hotspot.on_release then
+		button_hotspot.on_release = false
 
 		return true
 	end
 end
 
-function HeroWindowCraftingListConsole._is_stepper_button_pressed(arg_10_0, arg_10_1)
-	local var_10_0 = arg_10_1.content
-	local var_10_1 = var_10_0.button_hotspot_left
-	local var_10_2 = var_10_0.button_hotspot_right
+HeroWindowCraftingListConsole._is_stepper_button_pressed = function (arg_10_0, arg_10_1)
+	-- function 10
+	local content = arg_10_1.content
+	local button_hotspot_left = content.button_hotspot_left
+	local button_hotspot_right = content.button_hotspot_right
 
-	if var_10_1.on_release then
-		var_10_1.on_release = false
+	if not button_hotspot_left.on_release then
+		button_hotspot_left.on_release = false
 
 		return true, -1
-	elseif var_10_2.on_release then
-		var_10_2.on_release = false
+	elseif not button_hotspot_right.on_release then
+		button_hotspot_right.on_release = false
 
 		return true, 1
 	end
 end
 
-function HeroWindowCraftingListConsole._is_button_hover_enter(arg_11_0, arg_11_1)
-	local var_11_0 = arg_11_1.content.button_hotspot
+HeroWindowCraftingListConsole._is_button_hover_enter = function (arg_11_0, arg_11_1)
+	-- function 11
+	local button_hotspot = arg_11_1.content.button_hotspot
+	local on_hover_enter = button_hotspot.on_hover_enter
 
-	return var_11_0.on_hover_enter and not var_11_0.is_selected
+	on_hover_enter = not on_hover_enter and not button_hotspot.is_selected
+
+	return on_hover_enter
 end
 
-function HeroWindowCraftingListConsole._is_button_hover_exit(arg_12_0, arg_12_1)
-	local var_12_0 = arg_12_1.content.button_hotspot
+HeroWindowCraftingListConsole._is_button_hover_exit = function (arg_12_0, arg_12_1)
+	-- function 12
+	local button_hotspot = arg_12_1.content.button_hotspot
+	local on_hover_exit = button_hotspot.on_hover_exit
 
-	return var_12_0.on_hover_exit and not var_12_0.is_selected
+	on_hover_exit = not on_hover_exit and not button_hotspot.is_selected
+
+	return on_hover_exit
 end
 
-function HeroWindowCraftingListConsole._is_button_selected(arg_13_0, arg_13_1)
+HeroWindowCraftingListConsole._is_button_selected = function (arg_13_0, arg_13_1)
+	-- function 13
 	return arg_13_1.content.button_hotspot.is_selected
 end
 
-function HeroWindowCraftingListConsole._handle_input(arg_14_0, arg_14_1, arg_14_2)
-	local var_14_0 = arg_14_0.parent
-	local var_14_1 = arg_14_0._widgets_by_name
-	local var_14_2 = arg_14_0:_input_service()
-	local var_14_3 = arg_14_0:_selected_button_index()
-	local var_14_4 = false
-	local var_14_5 = arg_14_0._title_button_widgets
+HeroWindowCraftingListConsole._handle_input = function (self, arg_14_1, arg_14_2)
+	-- function 14
+	local parent = self.parent
+	local _widgets_by_name = self._widgets_by_name
+	local _input_service = self:_input_service()
+	local _selected_button_index = self:_selected_button_index()
+	local flag = false
+	local _title_button_widgets = self._title_button_widgets
 
-	for iter_14_0, iter_14_1 in ipairs(var_14_5) do
-		if iter_14_0 ~= var_14_3 and arg_14_0:_is_button_hover_enter(iter_14_1) then
-			arg_14_0:_on_button_selected(iter_14_0)
+	for i, v in ipairs(_title_button_widgets) do
+		if i == _selected_button_index or not self:_is_button_hover_enter(v) then
+			self:_on_button_selected(i)
 
-			var_14_4 = true
+			flag = true
 		end
 
-		if arg_14_0:_is_button_pressed(iter_14_1) then
-			var_14_4 = true
+		if not self:_is_button_pressed(v) then
+			flag = true
 
-			arg_14_0:_open_recipe_page(iter_14_0)
+			self:_open_recipe_page(i)
 		end
 	end
 
-	if var_14_2:get("confirm") then
-		arg_14_0:_open_recipe_page(var_14_3)
+	if not _input_service:get("confirm") then
+		self:_open_recipe_page(_selected_button_index)
 
-		var_14_4 = true
+		flag = true
 	end
 
-	if not var_14_4 then
-		if var_14_2:get(var_0_11) and var_14_3 > 1 then
-			arg_14_0:_on_button_selected(var_14_3 - 1)
-		elseif var_14_2:get(var_0_10) and var_14_3 < #var_0_9 then
-			arg_14_0:_on_button_selected(var_14_3 + 1)
-		end
-	end
-end
-
-function HeroWindowCraftingListConsole._open_recipe_page(arg_15_0, arg_15_1)
-	arg_15_0._params.recipe_index = arg_15_1
-
-	arg_15_0.parent:set_layout_by_name("crafting_recipe")
-end
-
-function HeroWindowCraftingListConsole._selected_button_index(arg_16_0)
-	local var_16_0 = arg_16_0._title_button_widgets
-
-	for iter_16_0, iter_16_1 in ipairs(var_16_0) do
-		if iter_16_1.content.button_hotspot.is_selected then
-			return iter_16_0
+	if not flag then
+		if not (not _input_service:get(str_2) and not (_selected_button_index > 1)) then
+			self:_on_button_selected(_selected_button_index - 1)
+		elseif not (not _input_service:get(str) and not (_selected_button_index < #tbl)) then
+			self:_on_button_selected(_selected_button_index + 1)
 		end
 	end
 end
 
-function HeroWindowCraftingListConsole._on_button_selected(arg_17_0, arg_17_1, arg_17_2)
-	local var_17_0 = arg_17_0._title_button_widgets
+HeroWindowCraftingListConsole._open_recipe_page = function (self, arg_15_1)
+	-- function 15
+	self._params.recipe_index = arg_15_1
 
-	for iter_17_0, iter_17_1 in ipairs(var_17_0) do
-		iter_17_1.content.button_hotspot.is_selected = iter_17_0 == arg_17_1
+	self.parent:set_layout_by_name("crafting_recipe")
+end
+
+HeroWindowCraftingListConsole._selected_button_index = function (self)
+	-- function 16
+	local _title_button_widgets = self._title_button_widgets
+
+	for i, v in ipairs(_title_button_widgets) do
+		if not v.content.button_hotspot.is_selected then
+			return i
+		end
+	end
+end
+
+HeroWindowCraftingListConsole._on_button_selected = function (self, arg_17_1, arg_17_2)
+	-- function 17
+	local _title_button_widgets = self._title_button_widgets
+
+	for i, v in ipairs(_title_button_widgets) do
+		v.content.button_hotspot.is_selected = i == arg_17_1
 	end
 
-	local var_17_1 = var_0_9[arg_17_1].name
-	local var_17_2 = var_0_2[var_17_1]
-	local var_17_3 = var_17_2.description_text
-	local var_17_4 = var_17_2.display_name
-	local var_17_5 = arg_17_0._widgets_by_name
-	local var_17_6 = var_17_5.description_text
-	local var_17_7 = var_17_5.tite_text
+	local name = tbl[arg_17_1].name
+	local var_17_2 = var_0_2[name]
+	local description_text = var_17_2.description_text
+	local display_name = var_17_2.display_name
+	local _widgets_by_name = self._widgets_by_name
+	local description_text_2 = _widgets_by_name.description_text
+	local tite_text = _widgets_by_name.tite_text
 
-	var_17_6.content.text = Localize(var_17_3)
-	var_17_7.content.text = Localize(var_17_4)
+	description_text_2.content.text = Localize(description_text)
+	tite_text.content.text = Localize(display_name)
 
 	if not arg_17_2 then
-		arg_17_0:_play_sound("play_gui_craft_hover_items")
+		self:_play_sound("play_gui_craft_hover_items")
 	end
 end
 
-function HeroWindowCraftingListConsole.draw(arg_18_0, arg_18_1)
-	local var_18_0 = arg_18_0.ui_renderer
-	local var_18_1 = arg_18_0.ui_top_renderer
-	local var_18_2 = arg_18_0.ui_scenegraph
-	local var_18_3 = arg_18_0:_input_service()
-	local var_18_4 = Managers.input:is_device_active("gamepad")
+HeroWindowCraftingListConsole.draw = function (self, arg_18_1)
+	-- function 18
+	local ui_renderer = self.ui_renderer
+	local ui_top_renderer = self.ui_top_renderer
+	local ui_scenegraph = self.ui_scenegraph
+	local _input_service = self:_input_service()
+	local is_device_active = Managers.input:is_device_active("gamepad")
 
-	UIRenderer.begin_pass(var_18_1, var_18_2, var_18_3, arg_18_1, nil, arg_18_0.render_settings)
+	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, _input_service, arg_18_1, nil, self.render_settings)
 
-	for iter_18_0, iter_18_1 in ipairs(arg_18_0._widgets) do
-		UIRenderer.draw_widget(var_18_1, iter_18_1)
+	for i, v in ipairs(self._widgets) do
+		UIRenderer.draw_widget(ui_top_renderer, v)
 	end
 
-	for iter_18_2, iter_18_3 in ipairs(arg_18_0._title_button_widgets) do
-		UIRenderer.draw_widget(var_18_1, iter_18_3)
+	for i_2, v_2 in ipairs(self._title_button_widgets) do
+		UIRenderer.draw_widget(ui_top_renderer, v_2)
 	end
 
-	UIRenderer.end_pass(var_18_1)
+	UIRenderer.end_pass(ui_top_renderer)
 
-	if var_18_4 and arg_18_0._menu_input_description then
-		arg_18_0._menu_input_description:draw(var_18_1, arg_18_1)
+	if not is_device_active and not self._menu_input_description then
+		self._menu_input_description:draw(ui_top_renderer, arg_18_1)
 	end
 end
 
-function HeroWindowCraftingListConsole._play_sound(arg_19_0, arg_19_1)
-	arg_19_0.parent:play_sound(arg_19_1)
+HeroWindowCraftingListConsole._play_sound = function (self, arg_19_1)
+	-- function 19
+	self.parent:play_sound(arg_19_1)
 end
 
-function HeroWindowCraftingListConsole._populate_buttons(arg_20_0, arg_20_1)
-	local var_20_0 = arg_20_0._title_button_widgets
+HeroWindowCraftingListConsole._populate_buttons = function (self, arg_20_1)
+	-- function 20
+	local _title_button_widgets = self._title_button_widgets
 
-	for iter_20_0, iter_20_1 in ipairs(var_20_0) do
-		local var_20_1 = arg_20_1[iter_20_0]
-		local var_20_2 = iter_20_1.content
-		local var_20_3 = iter_20_1.style
+	for i, v in ipairs(_title_button_widgets) do
+		local var_20_1 = arg_20_1[i]
+		local content = v.content
+		local style = v.style
 
-		var_20_2.visible = var_20_1 ~= nil
+		content.visible = var_20_1 ~= nil
 
-		if var_20_1 then
-			local var_20_4 = var_20_1.name
+		if not var_20_1 then
+			local name = var_20_1.name
 
-			var_20_2.icon = var_0_2[var_20_4].display_icon_console
+			content.icon = var_0_2[name].display_icon_console
 		end
 	end
 end
 
-function HeroWindowCraftingListConsole._set_alignment_progress(arg_21_0, arg_21_1)
-	local var_21_0 = arg_21_0._title_button_widgets
-	local var_21_1 = #var_0_9
-	local var_21_2 = 100
-	local var_21_3 = var_21_1 * var_21_2 / 2 - var_21_2 / 2
-	local var_21_4 = 1
-	local var_21_5 = 6
+HeroWindowCraftingListConsole._set_alignment_progress = function (self, arg_21_1)
+	-- function 21
+	local _title_button_widgets = self._title_button_widgets
+	local count = #tbl
+	local num = 100
+	local num_2 = count * num / 2 - num / 2
+	local num_3 = 1
+	local num_4 = 6
 
-	for iter_21_0, iter_21_1 in ipairs(var_21_0) do
-		local var_21_6 = var_0_9[iter_21_0]
-		local var_21_7 = iter_21_1.content
-		local var_21_8 = iter_21_1.style
-		local var_21_9 = iter_21_1.offset
+	for i, v in ipairs(_title_button_widgets) do
+		local var_21_6 = tbl[i]
+		local content = v.content
+		local style = v.style
+		local offset = v.offset
 
-		var_21_9[2] = var_21_3 * arg_21_1
-		var_21_9[1] = -0.00055 * var_21_9[2]^2
+		offset[2] = num_2 * arg_21_1
+		offset[1] = -0.00055 * offset[2]^2
 
-		local var_21_10 = 0.001 * var_21_9[2]
+		local num_5 = 0.001 * offset[2]
 
-		var_21_8.holder.angle = -(var_21_10 * arg_21_1)
-		var_21_3 = var_21_3 - var_21_2
-		var_21_4 = iter_21_0 > math.ceil(var_21_1 / 2) and var_21_4 - 1 or var_21_4 + 1
+		style.holder.angle = -(num_5 * arg_21_1)
+		num_2 = num_2 - num
+		num_3 = not (i > math.ceil(count / 2)) or not (num_3 - 1) or num_3 + 1
 
-		if var_21_7.button_hotspot.is_selected then
-			var_21_9[3] = (var_21_1 + 1) * var_21_5
+		if not content.button_hotspot.is_selected then
+			offset[3] = (count + 1) * num_4
 		else
-			var_21_9[3] = iter_21_0 * var_21_5
+			offset[3] = i * num_4
 		end
 	end
 end
 
-function HeroWindowCraftingListConsole._setup_text_button_size(arg_22_0, arg_22_1)
-	local var_22_0 = arg_22_1.scenegraph_id
-	local var_22_1 = arg_22_1.content
-	local var_22_2 = arg_22_1.style.text
-	local var_22_3 = var_22_1.text_field or var_22_1.text
+HeroWindowCraftingListConsole._setup_text_button_size = function (self, arg_22_1)
+	-- function 22
+	local scenegraph_id = arg_22_1.scenegraph_id
+	local content = arg_22_1.content
+	local text = arg_22_1.style.text
+	local text_field = content.text_field
 
-	if var_22_2.localize then
-		var_22_3 = Localize(var_22_3)
+	text_field = text_field or content.text
+
+	if not text.localize then
+		text_field = Localize(text_field)
 	end
 
-	if var_22_2.upper_case then
-		var_22_3 = TextToUpper(var_22_3)
+	if not text.upper_case then
+		text_field = TextToUpper(text_field)
 	end
 
-	local var_22_4 = arg_22_0.ui_scenegraph
-	local var_22_5 = arg_22_0.ui_top_renderer
-	local var_22_6, var_22_7 = UIFontByResolution(var_22_2)
-	local var_22_8, var_22_9, var_22_10 = UIRenderer.text_size(var_22_5, var_22_3, var_22_6[1], var_22_7)
+	local ui_scenegraph = self.ui_scenegraph
+	local ui_top_renderer = self.ui_top_renderer
+	local var_22_6, var_22_7 = UIFontByResolution(text)
+	local text_size, var_22_9, var_22_10 = UIRenderer.text_size(ui_top_renderer, text_field, var_22_6[1], var_22_7)
 
-	var_22_4[var_22_0].size[1] = var_22_8
+	ui_scenegraph[scenegraph_id].size[1] = text_size
 
-	return var_22_8
+	return text_size
 end
 
-function HeroWindowCraftingListConsole._set_text_button_horizontal_position(arg_23_0, arg_23_1, arg_23_2)
+HeroWindowCraftingListConsole._set_text_button_horizontal_position = function (arg_23_0, arg_23_1, arg_23_2)
+	-- function 23
 	arg_23_0.ui_scenegraph[arg_23_1.scenegraph_id].local_position[1] = arg_23_2
 end
 
-function HeroWindowCraftingListConsole._animate_entry(arg_24_0, arg_24_1, arg_24_2)
-	local var_24_0 = arg_24_1.content
-	local var_24_1 = arg_24_1.style
-	local var_24_2 = var_24_0.button_hotspot
-	local var_24_3 = var_24_2.is_hover
-	local var_24_4 = var_24_2.is_selected
-	local var_24_5 = not var_24_4 and var_24_2.is_clicked and var_24_2.is_clicked == 0
-	local var_24_6 = var_24_2.input_progress or 0
-	local var_24_7 = var_24_2.hover_progress or 0
-	local var_24_8 = var_24_2.selection_progress or 0
-	local var_24_9 = 8
-	local var_24_10 = 20
+HeroWindowCraftingListConsole._animate_entry = function (arg_24_0, arg_24_1, arg_24_2)
+	-- function 24
+	local content = arg_24_1.content
+	local style = arg_24_1.style
+	local button_hotspot = content.button_hotspot
+	local is_hover = button_hotspot.is_hover
+	local is_selected = button_hotspot.is_selected
+	local is_clicked
 
-	if var_24_5 then
-		var_24_6 = math.min(var_24_6 + arg_24_2 * var_24_10, 1)
-	else
-		var_24_6 = math.max(var_24_6 - arg_24_2 * var_24_10, 0)
+	if not is_selected then
+		is_clicked = button_hotspot.is_clicked
+
+		if not is_clicked then
+			-- Nothing
+		end
+
+		if button_hotspot.is_clicked ~= 0 then
+			-- Nothing
+		end
 	end
 
-	local var_24_11 = math.easeOutCubic(var_24_6)
-	local var_24_12 = math.easeInCubic(var_24_6)
+	is_clicked = false
 
-	if var_24_3 then
-		var_24_7 = math.min(var_24_7 + arg_24_2 * var_24_9, 1)
+	goto label_24_1
+
+	::label_24_0::
+
+	is_clicked = true
+
+	::label_24_1::
+
+	local input_progress = button_hotspot.input_progress
+
+	input_progress = input_progress or 0
+
+	local hover_progress = button_hotspot.hover_progress
+
+	hover_progress = hover_progress or 0
+
+	local selection_progress = button_hotspot.selection_progress
+
+	selection_progress = selection_progress or 0
+
+	local num = 8
+	local num_2 = 20
+
+	if not is_clicked then
+		input_progress = math.min(input_progress + arg_24_2 * num_2, 1)
 	else
-		var_24_7 = math.max(var_24_7 - arg_24_2 * var_24_9, 0)
+		input_progress = math.max(input_progress - arg_24_2 * num_2, 0)
 	end
 
-	local var_24_13 = math.easeOutCubic(var_24_7)
-	local var_24_14 = math.easeInCubic(var_24_7)
+	local easeOutCubic = math.easeOutCubic(input_progress)
+	local easeInCubic = math.easeInCubic(input_progress)
 
-	if var_24_4 then
-		var_24_8 = math.min(var_24_8 + arg_24_2 * var_24_9, 1)
+	if not is_hover then
+		hover_progress = math.min(hover_progress + arg_24_2 * num, 1)
 	else
-		var_24_8 = math.max(var_24_8 - arg_24_2 * var_24_9, 0)
+		hover_progress = math.max(hover_progress - arg_24_2 * num, 0)
 	end
 
-	local var_24_15 = math.easeOutCubic(var_24_8)
-	local var_24_16 = math.easeInCubic(var_24_8)
-	local var_24_17 = math.max(var_24_7, var_24_8)
-	local var_24_18 = math.max(var_24_15, var_24_13)
-	local var_24_19 = math.max(var_24_14, var_24_16)
-	local var_24_20 = 255 * var_24_17
+	local easeOutCubic_2 = math.easeOutCubic(hover_progress)
+	local easeInCubic_2 = math.easeInCubic(hover_progress)
 
-	var_24_1.selection.color[1] = var_24_20
+	if not is_selected then
+		selection_progress = math.min(selection_progress + arg_24_2 * num, 1)
+	else
+		selection_progress = math.max(selection_progress - arg_24_2 * num, 0)
+	end
 
-	local var_24_21 = 100 + 155 * var_24_17
+	local easeOutCubic_3 = math.easeOutCubic(selection_progress)
+	local easeInCubic_3 = math.easeInCubic(selection_progress)
+	local max = math.max(hover_progress, selection_progress)
+	local max_2 = math.max(easeOutCubic_3, easeOutCubic_2)
+	local max_3 = math.max(easeInCubic_2, easeInCubic_3)
+	local num_3 = 255 * max
 
-	var_24_1.icon.color[2] = var_24_21
-	var_24_1.icon.color[3] = var_24_21
-	var_24_1.icon.color[4] = var_24_21
-	var_24_2.hover_progress = var_24_7
-	var_24_2.input_progress = var_24_6
-	var_24_2.selection_progress = var_24_8
+	style.selection.color[1] = num_3
+
+	local num_4 = 100 + 155 * max
+
+	style.icon.color[2] = num_4
+	style.icon.color[3] = num_4
+	style.icon.color[4] = num_4
+	button_hotspot.hover_progress = hover_progress
+	button_hotspot.input_progress = input_progress
+	button_hotspot.selection_progress = selection_progress
 end

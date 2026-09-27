@@ -3,56 +3,90 @@
 VersusSocketObjectiveExtension = class(VersusSocketObjectiveExtension, BaseObjectiveExtension)
 VersusSocketObjectiveExtension.NAME = "VersusSocketObjectiveExtension"
 
-function VersusSocketObjectiveExtension.init(arg_1_0, ...)
-	VersusSocketObjectiveExtension.super.init(arg_1_0, ...)
+VersusSocketObjectiveExtension.init = function (self, ...)
+	-- function 1
+	VersusSocketObjectiveExtension.super.init(self, ...)
 
-	arg_1_0._num_closed_sockets = 0
+	self._num_closed_sockets = 0
 end
 
-function VersusSocketObjectiveExtension.extensions_ready(arg_2_0)
-	local var_2_0 = ScriptUnit.has_extension(arg_2_0._unit, "objective_socket_system")
+VersusSocketObjectiveExtension.extensions_ready = function (self)
+	-- function 2
+	local has_extension = ScriptUnit.has_extension(self._unit, "objective_socket_system")
 
-	if var_2_0 then
-		arg_2_0._socket_extension = var_2_0
-		arg_2_0._num_sections = var_2_0.num_sockets
+	if not has_extension then
+		self._socket_extension = has_extension
+		self._num_sections = has_extension.num_sockets
 	end
 end
 
-function VersusSocketObjectiveExtension._set_objective_data(arg_3_0, arg_3_1)
-	local var_3_0 = GameModeSettings.versus.objectives.socket
+VersusSocketObjectiveExtension._set_objective_data = function (self, arg_3_1)
+	-- function 3
+	local socket = GameModeSettings.versus.objectives.socket
+	local score_per_socket = arg_3_1.score_per_socket
 
-	arg_3_0._score_per_section = arg_3_1.score_per_socket or var_3_0.score_per_socket
-	arg_3_0._time_per_section = arg_3_1.time_per_socket or var_3_0.time_per_socket
-	arg_3_0._score_for_completion = arg_3_1.score_for_completion or var_3_0.score_for_completion
-	arg_3_0._time_for_completion = arg_3_1.time_for_completion or var_3_0.time_for_completion
-	arg_3_0._on_last_leaf_complete_sound_event = arg_3_1.on_last_leaf_complete_sound_event or var_3_0.on_last_leaf_complete_sound_event
-	arg_3_0._on_leaf_complete_sound_event = arg_3_1.on_leaf_complete_sound_event or var_3_0.on_leaf_complete_sound_event
-	arg_3_0._on_section_progress_sound_event = arg_3_1.on_section_progress_sound_event or var_3_0.on_section_progress_sound_event
+	score_per_socket = score_per_socket or socket.score_per_socket
+	self._score_per_section = score_per_socket
+
+	local time_per_socket = arg_3_1.time_per_socket
+
+	time_per_socket = time_per_socket or socket.time_per_socket
+	self._time_per_section = time_per_socket
+
+	local score_for_completion = arg_3_1.score_for_completion
+
+	score_for_completion = score_for_completion or socket.score_for_completion
+	self._score_for_completion = score_for_completion
+
+	local time_for_completion = arg_3_1.time_for_completion
+
+	time_for_completion = time_for_completion or socket.time_for_completion
+	self._time_for_completion = time_for_completion
+
+	local on_last_leaf_complete_sound_event = arg_3_1.on_last_leaf_complete_sound_event
+
+	on_last_leaf_complete_sound_event = on_last_leaf_complete_sound_event or socket.on_last_leaf_complete_sound_event
+	self._on_last_leaf_complete_sound_event = on_last_leaf_complete_sound_event
+
+	local on_leaf_complete_sound_event = arg_3_1.on_leaf_complete_sound_event
+
+	on_leaf_complete_sound_event = on_leaf_complete_sound_event or socket.on_leaf_complete_sound_event
+	self._on_leaf_complete_sound_event = on_leaf_complete_sound_event
+
+	local on_section_progress_sound_event = arg_3_1.on_section_progress_sound_event
+
+	on_section_progress_sound_event = on_section_progress_sound_event or socket.on_section_progress_sound_event
+	self._on_section_progress_sound_event = on_section_progress_sound_event
 end
 
-function VersusSocketObjectiveExtension._activate(arg_4_0)
+VersusSocketObjectiveExtension._activate = function (arg_4_0)
+	-- function 4
 	return
 end
 
-function VersusSocketObjectiveExtension._deactivate(arg_5_0)
+VersusSocketObjectiveExtension._deactivate = function (arg_5_0)
+	-- function 5
 	return
 end
 
-function VersusSocketObjectiveExtension._server_update(arg_6_0, arg_6_1, arg_6_2)
-	local var_6_0 = arg_6_0._socket_extension.num_closed_sockets
-	local var_6_1 = var_6_0 - arg_6_0._num_closed_sockets
+VersusSocketObjectiveExtension._server_update = function (self, arg_6_1, arg_6_2)
+	-- function 6
+	local num_closed_sockets = self._socket_extension.num_closed_sockets
+	local num = num_closed_sockets - self._num_closed_sockets
 
-	for iter_6_0 = 1, var_6_1 do
-		arg_6_0:on_section_completed()
+	for i = 1, num do
+		self:on_section_completed()
 	end
 
-	arg_6_0._num_closed_sockets = var_6_0
+	self._num_closed_sockets = num_closed_sockets
 end
 
-function VersusSocketObjectiveExtension._client_update(arg_7_0, arg_7_1, arg_7_2)
+VersusSocketObjectiveExtension._client_update = function (arg_7_0, arg_7_1, arg_7_2)
+	-- function 7
 	return
 end
 
-function VersusSocketObjectiveExtension.get_percentage_done(arg_8_0)
-	return arg_8_0._socket_extension.num_closed_sockets / arg_8_0._num_sections + math.epsilon
+VersusSocketObjectiveExtension.get_percentage_done = function (self)
+	-- function 8
+	return self._socket_extension.num_closed_sockets / self._num_sections + math.epsilon
 end

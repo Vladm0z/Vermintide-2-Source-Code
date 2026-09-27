@@ -1,36 +1,45 @@
 -- chunkname: @scripts/helpers/lorebook_helper.lua
 
+local LoreBookHelper = LoreBookHelper
+
 LoreBookHelper = LoreBookHelper or {}
+LoreBookHelper = LoreBookHelper
 
-local var_0_0 = {}
+local tbl = {}
 
-function LoreBookHelper.save_new_pages()
-	local var_1_0 = SaveData
-	local var_1_1 = var_1_0.new_lorebook_ids or {}
+LoreBookHelper.save_new_pages = function ()
+	-- function 1
+	local SaveData = SaveData
+	local new_lorebook_ids = SaveData.new_lorebook_ids
 
-	for iter_1_0, iter_1_1 in pairs(var_0_0) do
-		var_1_1[iter_1_0] = true
+	new_lorebook_ids = new_lorebook_ids or {}
+
+	for k, v in pairs(tbl) do
+		new_lorebook_ids[k] = true
 	end
 
-	var_1_0.new_lorebook_ids = var_1_1
+	SaveData.new_lorebook_ids = new_lorebook_ids
 
 	Managers.save:auto_save(SaveFileName, SaveData, nil)
 end
 
-function LoreBookHelper.mark_page_id_as_new(arg_2_0)
-	var_0_0[arg_2_0] = true
+LoreBookHelper.mark_page_id_as_new = function (arg_2_0)
+	-- function 2
+	tbl[arg_2_0] = true
 end
 
-function LoreBookHelper.unmark_page_id_as_new(arg_3_0)
-	local var_3_0 = SaveData.new_lorebook_ids
+LoreBookHelper.unmark_page_id_as_new = function (arg_3_0)
+	-- function 3
+	local new_lorebook_ids = SaveData.new_lorebook_ids
 
-	assert(var_3_0, "Requested to unmark lorebook page id %d without any save data.", arg_3_0)
+	assert(new_lorebook_ids, "Requested to unmark lorebook page id %d without any save data.", arg_3_0)
 
-	var_3_0[arg_3_0] = nil
+	new_lorebook_ids[arg_3_0] = nil
 
 	Managers.save:auto_save(SaveFileName, SaveData, nil)
 end
 
-function LoreBookHelper.get_new_page_ids()
+LoreBookHelper.get_new_page_ids = function ()
+	-- function 4
 	return SaveData.new_lorebook_ids
 end

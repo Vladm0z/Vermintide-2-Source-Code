@@ -2,33 +2,33 @@
 
 require("scripts/ui/views/deus_menu/ui_widgets_deus")
 
-local var_0_0 = false
-local var_0_1 = true
-local var_0_2 = {
+local flag = false
+local flag_2 = true
+local tbl = {
 	UISettings.INSIGNIA_OFFSET + 20,
 	-55,
 	1
 }
-local var_0_3 = {
+local tbl_2 = {
 	-35,
 	0,
 	1
 }
-local var_0_4 = {
+local tbl_3 = {
 	0,
 	0,
 	2
 }
-local var_0_5 = {
+local tbl_4 = {
 	50 + UISettings.INSIGNIA_OFFSET + 20 + 10,
 	20,
 	0
 }
-local var_0_6 = {
+local tbl_5 = {
 	1920,
 	1080
 }
-local var_0_7 = {
+local tbl_6 = {
 	root = {
 		is_root = true,
 		size = {
@@ -158,7 +158,7 @@ local var_0_7 = {
 		vertical_alignment = "center",
 		parent = "player_1",
 		horizontal_alignment = "center",
-		position = var_0_2,
+		position = tbl,
 		size = {
 			0,
 			0
@@ -168,7 +168,7 @@ local var_0_7 = {
 		vertical_alignment = "top",
 		parent = "player_1",
 		horizontal_alignment = "left",
-		position = var_0_3,
+		position = tbl_2,
 		size = {
 			0,
 			0
@@ -178,7 +178,7 @@ local var_0_7 = {
 		vertical_alignment = "center",
 		parent = "player_1",
 		horizontal_alignment = "center",
-		position = var_0_5,
+		position = tbl_4,
 		size = {
 			0,
 			0
@@ -188,7 +188,7 @@ local var_0_7 = {
 		vertical_alignment = "center",
 		parent = "player_1",
 		horizontal_alignment = "center",
-		position = var_0_4,
+		position = tbl_3,
 		size = {
 			0,
 			0
@@ -212,7 +212,7 @@ local var_0_7 = {
 		vertical_alignment = "center",
 		parent = "player_2",
 		horizontal_alignment = "center",
-		position = var_0_2,
+		position = tbl,
 		size = {
 			0,
 			0
@@ -222,7 +222,7 @@ local var_0_7 = {
 		vertical_alignment = "top",
 		parent = "player_2",
 		horizontal_alignment = "left",
-		position = var_0_3,
+		position = tbl_2,
 		size = {
 			0,
 			0
@@ -232,7 +232,7 @@ local var_0_7 = {
 		vertical_alignment = "center",
 		parent = "player_2",
 		horizontal_alignment = "center",
-		position = var_0_5,
+		position = tbl_4,
 		size = {
 			0,
 			0
@@ -270,7 +270,7 @@ local var_0_7 = {
 		vertical_alignment = "center",
 		parent = "player_3",
 		horizontal_alignment = "center",
-		position = var_0_2,
+		position = tbl,
 		size = {
 			0,
 			0
@@ -280,7 +280,7 @@ local var_0_7 = {
 		vertical_alignment = "top",
 		parent = "player_3",
 		horizontal_alignment = "left",
-		position = var_0_3,
+		position = tbl_2,
 		size = {
 			0,
 			0
@@ -290,7 +290,7 @@ local var_0_7 = {
 		vertical_alignment = "center",
 		parent = "player_3",
 		horizontal_alignment = "center",
-		position = var_0_5,
+		position = tbl_4,
 		size = {
 			0,
 			0
@@ -300,7 +300,7 @@ local var_0_7 = {
 		vertical_alignment = "center",
 		parent = "player_3",
 		horizontal_alignment = "center",
-		position = var_0_4,
+		position = tbl_3,
 		size = {
 			0,
 			0
@@ -324,7 +324,7 @@ local var_0_7 = {
 		vertical_alignment = "center",
 		parent = "player_4",
 		horizontal_alignment = "center",
-		position = var_0_2,
+		position = tbl,
 		size = {
 			0,
 			0
@@ -334,7 +334,7 @@ local var_0_7 = {
 		vertical_alignment = "top",
 		parent = "player_4",
 		horizontal_alignment = "left",
-		position = var_0_3,
+		position = tbl_2,
 		size = {
 			0,
 			0
@@ -344,7 +344,7 @@ local var_0_7 = {
 		vertical_alignment = "center",
 		parent = "player_4",
 		horizontal_alignment = "center",
-		position = var_0_5,
+		position = tbl_4,
 		size = {
 			0,
 			0
@@ -354,7 +354,7 @@ local var_0_7 = {
 		vertical_alignment = "center",
 		parent = "player_4",
 		horizontal_alignment = "center",
-		position = var_0_4,
+		position = tbl_3,
 		size = {
 			0,
 			0
@@ -374,7 +374,7 @@ local var_0_7 = {
 		horizontal_alignment = "left",
 		size = {
 			585,
-			var_0_6[2]
+			tbl_5[2]
 		},
 		position = {
 			-225,
@@ -388,7 +388,7 @@ local var_0_7 = {
 		horizontal_alignment = "left",
 		size = {
 			350,
-			var_0_6[2]
+			tbl_5[2]
 		},
 		position = {
 			0,
@@ -402,7 +402,7 @@ local var_0_7 = {
 		horizontal_alignment = "left",
 		size = {
 			0,
-			var_0_6[2]
+			tbl_5[2]
 		},
 		position = {
 			-225,
@@ -416,7 +416,7 @@ local var_0_7 = {
 		horizontal_alignment = "left",
 		size = {
 			126,
-			var_0_6[2]
+			tbl_5[2]
 		},
 		position = {
 			443,
@@ -509,7 +509,7 @@ local var_0_7 = {
 		horizontal_alignment = "center"
 	}
 }
-local var_0_8 = {
+local tbl_7 = {
 	use_shadow = true,
 	upper_case = true,
 	localize = true,
@@ -529,7 +529,7 @@ local var_0_8 = {
 		135
 	}
 }
-local var_0_9 = {
+local tbl_8 = {
 	font_size = 35,
 	upper_case = true,
 	localize = true,
@@ -545,9 +545,10 @@ local var_0_9 = {
 	}
 }
 
-local function var_0_10(arg_1_0)
+local function fn(arg_1_0)
+	-- function 1
 	local var_1_0 = UIFrameSettings.frame_outer_fade_02.texture_sizes.horizontal[2]
-	local var_1_1 = var_0_7[arg_1_0].size
+	local size = tbl_6[arg_1_0].size
 
 	return {
 		element = {
@@ -583,13 +584,14 @@ local function var_0_10(arg_1_0)
 	}
 end
 
-local function var_0_11(arg_2_0)
-	local var_2_0 = UIFrameSettings.frame_outer_fade_02
-	local var_2_1 = var_2_0.texture_sizes.horizontal[2]
-	local var_2_2 = var_0_7[arg_2_0].size
-	local var_2_3 = {
-		var_2_2[1] + var_2_1 * 2,
-		var_2_2[2] + var_2_1 * 2
+local function fn_2(arg_2_0)
+	-- function 2
+	local frame_outer_fade_02 = UIFrameSettings.frame_outer_fade_02
+	local var_2_1 = frame_outer_fade_02.texture_sizes.horizontal[2]
+	local size = tbl_6[arg_2_0].size
+	local tbl = {
+		size[1] + var_2_1 * 2,
+		size[2] + var_2_1 * 2
 	}
 
 	return {
@@ -619,15 +621,15 @@ local function var_0_11(arg_2_0)
 		content = {
 			title = "deus_map_title",
 			journey_name_label = "journey_cave_name",
-			frame = var_2_0.texture
+			frame = frame_outer_fade_02.texture
 		},
 		style = {
 			frame = {
 				only_corners = false,
 				color = UISettings.console_menu_rect_color,
-				size = var_2_3,
-				texture_size = var_2_0.texture_size,
-				texture_sizes = var_2_0.texture_sizes,
+				size = tbl,
+				texture_size = frame_outer_fade_02.texture_size,
+				texture_sizes = frame_outer_fade_02.texture_sizes,
 				offset = {
 					-var_2_1,
 					-var_2_1,
@@ -673,7 +675,7 @@ local function var_0_11(arg_2_0)
 	}
 end
 
-local var_0_12 = {
+local tbl_9 = {
 	offset = {
 		10,
 		-30,
@@ -685,8 +687,9 @@ local var_0_12 = {
 	}
 }
 
-local function var_0_13(arg_3_0)
-	local var_3_0 = {
+local function fn_3(arg_3_0)
+	-- function 3
+	local tbl = {
 		vertical_alignment = "center",
 		horizontal_alignment = "left",
 		dynamic_font_size = true,
@@ -703,16 +706,16 @@ local function var_0_13(arg_3_0)
 			24
 		}
 	}
-	local var_3_1 = table.clone(var_3_0)
+	local clone = table.clone(tbl)
 
-	var_3_1.text_color = Colors.get_color_table_with_alpha("black", 255)
-	var_3_1.offset = {
-		var_3_0.offset[1] + 2,
-		var_3_0.offset[2] - 2,
-		var_3_0.offset[3] - 1
+	clone.text_color = Colors.get_color_table_with_alpha("black", 255)
+	clone.offset = {
+		tbl.offset[1] + 2,
+		tbl.offset[2] - 2,
+		tbl.offset[3] - 1
 	}
 
-	local var_3_2 = {
+	local tbl_2 = {
 		vertical_alignment = "center",
 		horizontal_alignment = "left",
 		dynamic_font_size = true,
@@ -720,22 +723,22 @@ local function var_0_13(arg_3_0)
 		font_type = "hell_shark",
 		text_color = Colors.get_color_table_with_alpha("font_default", 255),
 		offset = {
-			var_0_12.offset[1] + var_0_12.texture_size[1] + 5,
-			var_0_12.offset[2] - 1,
-			var_0_12.offset[3]
+			tbl_9.offset[1] + tbl_9.texture_size[1] + 5,
+			tbl_9.offset[2] - 1,
+			tbl_9.offset[3]
 		},
 		size = {
 			100,
 			20
 		}
 	}
-	local var_3_3 = table.clone(var_3_2)
+	local clone_2 = table.clone(tbl_2)
 
-	var_3_3.text_color = Colors.get_color_table_with_alpha("black", 255)
-	var_3_3.offset = {
-		var_3_2.offset[1] + 2,
-		var_3_2.offset[2] - 2,
-		var_3_2.offset[3] - 1
+	clone_2.text_color = Colors.get_color_table_with_alpha("black", 255)
+	clone_2.offset = {
+		tbl_2.offset[1] + 2,
+		tbl_2.offset[2] - 2,
+		tbl_2.offset[3] - 1
 	}
 
 	return {
@@ -745,40 +748,45 @@ local function var_0_13(arg_3_0)
 					style_id = "name_text",
 					pass_type = "text",
 					text_id = "name_text",
-					content_check_function = function(arg_4_0)
-						return arg_4_0.visible
+					content_check_function = function (self)
+						-- function 4
+						return self.visible
 					end
 				},
 				{
 					style_id = "name_text_shadow",
 					pass_type = "text",
 					text_id = "name_text",
-					content_check_function = function(arg_5_0)
-						return arg_5_0.visible
+					content_check_function = function (self)
+						-- function 5
+						return self.visible
 					end
 				},
 				{
 					style_id = "coins_text",
 					pass_type = "text",
 					text_id = "coins_text",
-					content_check_function = function(arg_6_0)
-						return arg_6_0.visible
+					content_check_function = function (self)
+						-- function 6
+						return self.visible
 					end
 				},
 				{
 					style_id = "coins_text_shadow",
 					pass_type = "text",
 					text_id = "coins_text",
-					content_check_function = function(arg_7_0)
-						return arg_7_0.visible
+					content_check_function = function (self)
+						-- function 7
+						return self.visible
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "coins_icon",
 					texture_id = "coins_icon",
-					content_check_function = function(arg_8_0)
-						return arg_8_0.visible
+					content_check_function = function (self)
+						-- function 8
+						return self.visible
 					end
 				}
 			}
@@ -790,17 +798,18 @@ local function var_0_13(arg_3_0)
 			coins_icon = "deus_icons_coin"
 		},
 		style = {
-			name_text = var_3_0,
-			name_text_shadow = var_3_1,
-			coins_text = var_3_2,
-			coins_text_shadow = var_3_3,
-			coins_icon = var_0_12
+			name_text = tbl,
+			name_text_shadow = clone,
+			coins_text = tbl_2,
+			coins_text_shadow = clone_2,
+			coins_icon = tbl_9
 		},
 		scenegraph_id = arg_3_0
 	}
 end
 
-local function var_0_14(arg_9_0)
+local function fn_4(arg_9_0)
+	-- function 9
 	return {
 		element = {
 			passes = {
@@ -824,8 +833,9 @@ local function var_0_14(arg_9_0)
 									style_id = "click_to_vote",
 									pass_type = "text",
 									text_id = "click_to_vote",
-									content_check_function = function(arg_10_0)
-										return arg_10_0.click_to_vote ~= ""
+									content_check_function = function (self)
+										-- function 10
+										return self.click_to_vote ~= ""
 									end
 								},
 								{
@@ -848,8 +858,9 @@ local function var_0_14(arg_9_0)
 						{
 							style_id = "curse_section",
 							pass_type = "auto_layout",
-							content_check_function = function(arg_11_0)
-								return arg_11_0.curse_text ~= ""
+							content_check_function = function (self)
+								-- function 11
+								return self.curse_text ~= ""
 							end,
 							sub_passes = {
 								{
@@ -867,8 +878,9 @@ local function var_0_14(arg_9_0)
 						{
 							style_id = "breed_section",
 							pass_type = "auto_layout",
-							content_check_function = function(arg_12_0)
-								return arg_12_0.breed_text ~= ""
+							content_check_function = function (self)
+								-- function 12
+								return self.breed_text ~= ""
 							end,
 							sub_passes = {
 								{
@@ -887,8 +899,9 @@ local function var_0_14(arg_9_0)
 							style_id = "minor_modifier_section",
 							pass_type = "auto_layout",
 							content_id = "minor_modifier_1_section",
-							content_check_function = function(arg_13_0)
-								return arg_13_0.text ~= ""
+							content_check_function = function (self)
+								-- function 13
+								return self.text ~= ""
 							end,
 							sub_passes = {
 								{
@@ -907,8 +920,9 @@ local function var_0_14(arg_9_0)
 							style_id = "minor_modifier_section",
 							pass_type = "auto_layout",
 							content_id = "minor_modifier_2_section",
-							content_check_function = function(arg_14_0)
-								return arg_14_0.text ~= ""
+							content_check_function = function (self)
+								-- function 14
+								return self.text ~= ""
 							end,
 							sub_passes = {
 								{
@@ -927,8 +941,9 @@ local function var_0_14(arg_9_0)
 							style_id = "minor_modifier_section",
 							pass_type = "auto_layout",
 							content_id = "minor_modifier_3_section",
-							content_check_function = function(arg_15_0)
-								return arg_15_0.text ~= ""
+							content_check_function = function (self)
+								-- function 15
+								return self.text ~= ""
 							end,
 							sub_passes = {
 								{
@@ -946,8 +961,9 @@ local function var_0_14(arg_9_0)
 						{
 							style_id = "terror_event_power_up_section",
 							pass_type = "auto_layout",
-							content_check_function = function(arg_16_0)
-								return arg_16_0.terror_event_power_up_text ~= ""
+							content_check_function = function (self)
+								-- function 16
+								return self.terror_event_power_up_text ~= ""
 							end,
 							sub_passes = {
 								{
@@ -968,10 +984,11 @@ local function var_0_14(arg_9_0)
 							style_id = "frame",
 							pass_type = "texture_frame",
 							texture_id = "frame",
-							content_change_function = function(arg_17_0, arg_17_1)
-								arg_17_0.frame = UIFrameSettings[arg_17_0.frame_settings_name].texture
-								arg_17_1.texture_size = UIFrameSettings[arg_17_0.frame_settings_name].texture_size
-								arg_17_1.texture_sizes = UIFrameSettings[arg_17_0.frame_settings_name].texture_sizes
+							content_change_function = function (self, arg_17_1)
+								-- function 17
+								self.frame = UIFrameSettings[self.frame_settings_name].texture
+								arg_17_1.texture_size = UIFrameSettings[self.frame_settings_name].texture_size
+								arg_17_1.texture_sizes = UIFrameSettings[self.frame_settings_name].texture_sizes
 							end
 						},
 						{
@@ -1383,21 +1400,24 @@ local function var_0_14(arg_9_0)
 	}
 end
 
-local var_0_15 = {
+local tbl_10 = {
 	switch_to_portraits = {
 		{
 			name = "animate_out",
 			start_progress = 0,
 			end_progress = 0.2,
-			init = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			init = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+				-- function 18
 				return
 			end,
-			update = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
-				local var_19_0 = math.easeOutCubic(arg_19_3)
+			update = function (self, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+				-- function 19
+				local easeOutCubic = math.easeOutCubic(arg_19_3)
 
-				arg_19_0.boon_root.local_position[1] = math.lerp(arg_19_0.boon_root.local_position[1], arg_19_1.boon_root.position[1], var_19_0)
+				self.boon_root.local_position[1] = math.lerp(self.boon_root.local_position[1], arg_19_1.boon_root.position[1], easeOutCubic)
 			end,
-			on_complete = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+			on_complete = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+				-- function 20
 				return
 			end
 		},
@@ -1405,20 +1425,23 @@ local var_0_15 = {
 			name = "animate_in",
 			start_progress = 0.1,
 			end_progress = 0.3,
-			init = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			init = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+				-- function 21
 				return
 			end,
-			update = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
-				local var_22_0 = math.easeOutCubic(arg_22_3)
+			update = function (self, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+				-- function 22
+				local easeOutCubic = math.easeOutCubic(arg_22_3)
 
-				for iter_22_0 = 2, 4 do
-					local var_22_1 = "player_" .. iter_22_0
+				for i = 2, 4 do
+					local str = "player_" .. i
 
-					arg_22_0[var_22_1].local_position[1] = math.lerp(arg_22_0[var_22_1].local_position[1], arg_22_1[var_22_1].position[1], var_22_0)
+					self[str].local_position[1] = math.lerp(self[str].local_position[1], arg_22_1[str].position[1], easeOutCubic)
 				end
 			end,
-			on_complete = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
-				local var_23_0 = 0
+			on_complete = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+				-- function 23
+				local num = 0
 			end
 		}
 	},
@@ -1427,53 +1450,59 @@ local var_0_15 = {
 			name = "animate_out",
 			start_progress = 0,
 			end_progress = 0.2,
-			init = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+			init = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+				-- function 24
 				return
 			end,
-			update = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
-				local var_25_0 = math.easeOutCubic(arg_25_3)
+			update = function (self, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
+				-- function 25
+				local easeOutCubic = math.easeOutCubic(arg_25_3)
 
-				for iter_25_0 = 2, 4 do
-					local var_25_1 = "player_" .. iter_25_0
+				for i = 2, 4 do
+					local str = "player_" .. i
 
-					arg_25_0[var_25_1].local_position[1] = math.lerp(arg_25_0[var_25_1].local_position[1], arg_25_1[var_25_1].position[1] - 400, var_25_0)
+					self[str].local_position[1] = math.lerp(self[str].local_position[1], arg_25_1[str].position[1] - 400, easeOutCubic)
 				end
 			end,
-			on_complete = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
-				local var_26_0 = 0
+			on_complete = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+				-- function 26
+				local num = 0
 			end
 		},
 		{
 			name = "animate_in",
 			start_progress = 0.1,
 			end_progress = 0.3,
-			init = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+			init = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+				-- function 27
 				return
 			end,
-			update = function(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
-				local var_28_0 = math.easeOutCubic(arg_28_3)
+			update = function (self, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+				-- function 28
+				local easeOutCubic = math.easeOutCubic(arg_28_3)
 
-				arg_28_0.boon_root.local_position[1] = math.lerp(arg_28_0.boon_root.local_position[1], arg_28_1.boon_root.position[1] + 400, var_28_0)
+				self.boon_root.local_position[1] = math.lerp(self.boon_root.local_position[1], arg_28_1.boon_root.position[1] + 400, easeOutCubic)
 			end,
-			on_complete = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+			on_complete = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+				-- function 29
 				return
 			end
 		}
 	}
 }
-local var_0_16 = {
+local tbl_11 = {
 	console_cursor = UIWidgets.create_console_cursor("console_cursor"),
-	top_info = var_0_11("top_info"),
-	general_info = var_0_10("general_info"),
-	node_info = var_0_14("node_info"),
+	top_info = fn_2("top_info"),
+	general_info = fn("general_info"),
+	node_info = fn_4("node_info"),
 	player_1_portrait = UIWidgets.create_deus_player_status_portrait("player_1_portrait", "default", "-"),
-	player_1_texts = var_0_13("player_1_texts"),
+	player_1_texts = fn_3("player_1_texts"),
 	player_2_portrait = UIWidgets.create_deus_player_status_portrait("player_2_portrait", "default", "-"),
-	player_2_texts = var_0_13("player_2_texts"),
+	player_2_texts = fn_3("player_2_texts"),
 	player_3_portrait = UIWidgets.create_deus_player_status_portrait("player_3_portrait", "default", "-"),
-	player_3_texts = var_0_13("player_3_texts"),
+	player_3_texts = fn_3("player_3_texts"),
 	player_4_portrait = UIWidgets.create_deus_player_status_portrait("player_4_portrait", "default", "-"),
-	player_4_texts = var_0_13("player_4_texts"),
+	player_4_texts = fn_3("player_4_texts"),
 	top_options_background_left = UIWidgets.create_simple_uv_texture("athanor_decoration_headline", {
 		{
 			0.609375,
@@ -1483,7 +1512,7 @@ local var_0_16 = {
 			0,
 			1
 		}
-	}, "top_options_background_left", nil, nil, nil, nil, nil, var_0_7.top_options_background_left.size),
+	}, "top_options_background_left", nil, nil, nil, nil, nil, tbl_6.top_options_background_left.size),
 	options_background_edge_left = UIWidgets.create_simple_uv_texture("shrine_sidebar_background", {
 		{
 			1,
@@ -1514,22 +1543,22 @@ local var_0_16 = {
 		}
 	}, "options_background_mask_left"),
 	power_up_mask = UIWidgets.create_simple_texture("mask_rect", "own_power_up_window"),
-	boons_text = UIWidgets.create_simple_text("menu_weave_forge_options_sub_title_properties_utility", "boons_text", nil, nil, var_0_8),
-	power_up_description = UIWidgets.create_power_up("power_up_description_root", var_0_7.power_up_description_root.size, true, var_0_1),
-	portrait_input_helper_text = UIWidgets.create_simple_text("menu_description_show_team", "input_helper_text", nil, nil, var_0_9),
-	boon_input_helper_text = UIWidgets.create_simple_text("menu_description_show_boons", "input_helper_text", nil, nil, var_0_9)
+	boons_text = UIWidgets.create_simple_text("menu_weave_forge_options_sub_title_properties_utility", "boons_text", nil, nil, tbl_7),
+	power_up_description = UIWidgets.create_power_up("power_up_description_root", tbl_6.power_up_description_root.size, true, flag_2),
+	portrait_input_helper_text = UIWidgets.create_simple_text("menu_description_show_team", "input_helper_text", nil, nil, tbl_8),
+	boon_input_helper_text = UIWidgets.create_simple_text("menu_description_show_boons", "input_helper_text", nil, nil, tbl_8)
 }
-local var_0_17 = {
+local tbl_12 = {
 	64,
 	64
 }
-local var_0_18 = {
+local tbl_13 = {
 	20,
 	10
 }
-local var_0_19 = {
+local tbl_14 = {
 	background_icon = "button_frame_01",
-	width = var_0_17[1],
+	width = tbl_12[1],
 	icon_size = {
 		35,
 		35
@@ -1549,9 +1578,9 @@ local var_0_19 = {
 		-1
 	}
 }
-local var_0_20 = {
+local tbl_15 = {
 	background_icon = "button_frame_01",
-	width = var_0_17[1],
+	width = tbl_12[1],
 	icon_size = {
 		58,
 		58
@@ -1573,12 +1602,12 @@ local var_0_20 = {
 }
 
 return {
-	widget_definitions = var_0_16,
-	scenegraph_definition = var_0_7,
-	animations_definitions = var_0_15,
-	round_power_up_widget_data = var_0_19,
-	rectangular_power_up_widget_data = var_0_20,
-	power_up_widget_size = var_0_17,
-	power_up_widget_spacing = var_0_18,
-	allow_boon_removal = var_0_1
+	widget_definitions = tbl_11,
+	scenegraph_definition = tbl_6,
+	animations_definitions = tbl_10,
+	round_power_up_widget_data = tbl_14,
+	rectangular_power_up_widget_data = tbl_15,
+	power_up_widget_size = tbl_12,
+	power_up_widget_spacing = tbl_13,
+	allow_boon_removal = flag_2
 }

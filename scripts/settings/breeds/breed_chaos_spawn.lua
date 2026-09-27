@@ -1,17 +1,17 @@
 -- chunkname: @scripts/settings/breeds/breed_chaos_spawn.lua
 
-local var_0_0 = require("scripts/utils/stagger_types")
-local var_0_1 = {
+local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
+local tbl = {
 	ahead_dist = 1.5,
 	push_width = 2.5,
 	push_forward_offset = 1,
 	push_stagger_distance = 1,
 	player_pushed_speed = 8,
 	push_stagger_impact = {
-		var_0_0.medium,
-		var_0_0.medium,
-		var_0_0.none,
-		var_0_0.none
+		scripts_utils_stagger_types.medium,
+		scripts_utils_stagger_types.medium,
+		scripts_utils_stagger_types.none,
+		scripts_utils_stagger_types.none
 	},
 	push_stagger_duration = {
 		1.5,
@@ -20,8 +20,11 @@ local var_0_1 = {
 		0
 	}
 }
-local var_0_2 = BotConstants and BotConstants.default.DEFAULT_BOT_THREAT_DIFFICULTY_DATA
-local var_0_3 = {
+local BotConstants = BotConstants
+
+BotConstants = not BotConstants and BotConstants.default.DEFAULT_BOT_THREAT_DIFFICULTY_DATA
+
+local tbl_2 = {
 	detection_radius = 9999999,
 	boss_damage_reduction = true,
 	walk_speed = 3.5,
@@ -340,7 +343,8 @@ local var_0_3 = {
 		stormfiend_warpfire = 1,
 		vortex_danger_zone = 1
 	},
-	custom_death_enter_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	custom_death_enter_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+		-- function 1
 		local var_1_0 = BLACKBOARDS[arg_1_0]
 
 		if not Unit.alive(arg_1_1) then
@@ -352,9 +356,9 @@ local var_0_3 = {
 	end
 }
 
-Breeds.chaos_spawn = table.create_copy(Breeds.chaos_spawn, var_0_3)
+Breeds.chaos_spawn = table.create_copy(Breeds.chaos_spawn, tbl_2)
 
-local var_0_4 = {
+local tbl_3 = {
 	combat_music_state = "champion_chaos_exalted_norsca",
 	allowed_layers = {
 		end_zone = 0,
@@ -374,22 +378,22 @@ local var_0_4 = {
 	}
 }
 
-for iter_0_0, iter_0_1 in pairs(var_0_3) do
-	local var_0_5 = var_0_4[iter_0_0]
+for k, v in pairs(tbl_2) do
+	local var_0_5 = tbl_3[k]
 
 	if var_0_5 == "SET_TO_NIL" then
-		var_0_4[iter_0_0] = nil
+		tbl_3[k] = nil
 	elseif var_0_5 ~= nil then
-		var_0_4[iter_0_0] = var_0_5
+		tbl_3[k] = var_0_5
 	else
-		var_0_4[iter_0_0] = iter_0_1
+		tbl_3[k] = v
 	end
 end
 
-Breeds.chaos_spawn_exalted_champion_norsca = table.create_copy(Breeds.chaos_spawn_exalted_champion_norsca, var_0_4)
+Breeds.chaos_spawn_exalted_champion_norsca = table.create_copy(Breeds.chaos_spawn_exalted_champion_norsca, tbl_3)
 Breeds.chaos_spawn_exalted_champion_norsca.is_always_spawnable = nil
 
-local var_0_6 = {
+local tbl_4 = {
 	melee_slam = {
 		easy = {
 			running = 2,
@@ -496,7 +500,7 @@ local var_0_6 = {
 		}
 	}
 }
-local var_0_7 = {
+local tbl_5 = {
 	climb = {
 		catapult_players = {
 			speed = 7,
@@ -513,7 +517,7 @@ local var_0_7 = {
 		allow_friendly_fire = true,
 		attack_intensity_type = "combo",
 		action_weight = 1,
-		difficulty_attack_intensity = var_0_6,
+		difficulty_attack_intensity = tbl_4,
 		considerations = UtilityConsiderations.chaos_spawn_combo,
 		attacks = {
 			{
@@ -536,7 +540,7 @@ local var_0_7 = {
 				attack_anim = {
 					"attack_melee_combo"
 				},
-				push_units_in_the_way = var_0_1,
+				push_units_in_the_way = tbl,
 				bot_threats = {
 					{
 						range = 3.5,
@@ -580,7 +584,7 @@ local var_0_7 = {
 				attack_anim = {
 					"attack_melee_combo_2"
 				},
-				push_units_in_the_way = var_0_1,
+				push_units_in_the_way = tbl,
 				bot_threats = {
 					{
 						range = 3.5,
@@ -619,7 +623,7 @@ local var_0_7 = {
 		unblockable = false,
 		attack_time = 1.1666666666666667,
 		dodge_mitigation_radius_squared = 2.25,
-		difficulty_attack_intensity = var_0_6,
+		difficulty_attack_intensity = tbl_4,
 		considerations = UtilityConsiderations.chaos_spawn_melee_slam,
 		attack_anim = {
 			"attack_melee_claw"
@@ -627,10 +631,10 @@ local var_0_7 = {
 		blocked_difficulty_damage = BreedTweaks.difficulty_damage.boss_slam_attack_blocked,
 		difficulty_damage = BreedTweaks.difficulty_damage.boss_slam_attack,
 		stagger_impact = {
-			var_0_0.weak,
-			var_0_0.medium,
-			var_0_0.none,
-			var_0_0.none
+			scripts_utils_stagger_types.weak,
+			scripts_utils_stagger_types.medium,
+			scripts_utils_stagger_types.none,
+			scripts_utils_stagger_types.none
 		},
 		bot_threats = {
 			{
@@ -647,7 +651,7 @@ local var_0_7 = {
 		action_weight = 1,
 		ignore_ai_damage = true,
 		damage_type = "cutting",
-		difficulty_attack_intensity = var_0_6,
+		difficulty_attack_intensity = tbl_4,
 		considerations = UtilityConsiderations.spawn_melee_shove,
 		attacks = {
 			{
@@ -683,11 +687,11 @@ local var_0_7 = {
 				push_ai = {
 					stagger_distance = 3,
 					stagger_impact = {
-						var_0_0.explosion,
-						var_0_0.heavy,
-						var_0_0.none,
-						var_0_0.none,
-						var_0_0.explosion
+						scripts_utils_stagger_types.explosion,
+						scripts_utils_stagger_types.heavy,
+						scripts_utils_stagger_types.none,
+						scripts_utils_stagger_types.none,
+						scripts_utils_stagger_types.explosion
 					},
 					stagger_duration = {
 						4.5,
@@ -697,7 +701,7 @@ local var_0_7 = {
 						4
 					}
 				},
-				bot_threat_difficulty_data = var_0_2,
+				bot_threat_difficulty_data = BotConstants,
 				bot_threats = {
 					{
 						collision_type = "cylinder",
@@ -755,11 +759,11 @@ local var_0_7 = {
 				push_ai = {
 					stagger_distance = 3,
 					stagger_impact = {
-						var_0_0.explosion,
-						var_0_0.heavy,
-						var_0_0.none,
-						var_0_0.none,
-						var_0_0.explosion
+						scripts_utils_stagger_types.explosion,
+						scripts_utils_stagger_types.heavy,
+						scripts_utils_stagger_types.none,
+						scripts_utils_stagger_types.none,
+						scripts_utils_stagger_types.explosion
 					},
 					stagger_duration = {
 						4.5,
@@ -857,10 +861,11 @@ local var_0_7 = {
 				attack_anim = {
 					"attack_grab"
 				},
-				hit_player_func = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
-					local var_2_0 = ScriptUnit.has_extension(arg_2_2, "status_system")
+				hit_player_func = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+					-- function 2
+					local has_extension = ScriptUnit.has_extension(arg_2_2, "status_system")
 
-					if not var_2_0:is_disabled() and not var_2_0:is_invisible() then
+					if not (has_extension:is_disabled() or has_extension:is_invisible()) then
 						arg_2_1.victim_grabbed = arg_2_2
 						arg_2_1.has_grabbed = true
 
@@ -878,7 +883,7 @@ local var_0_7 = {
 						start_time = 0.6666666666666666
 					}
 				},
-				bot_threat_difficulty_data = var_0_2,
+				bot_threat_difficulty_data = BotConstants,
 				bot_threats = {
 					{
 						collision_type = "cylinder",
@@ -1207,4 +1212,4 @@ local var_0_7 = {
 	}
 }
 
-BreedActions.chaos_spawn = table.create_copy(BreedActions.chaos_spawn, var_0_7)
+BreedActions.chaos_spawn = table.create_copy(BreedActions.chaos_spawn, tbl_5)

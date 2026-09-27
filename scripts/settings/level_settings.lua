@@ -16,12 +16,19 @@ COLD_CAMERA_BACKLIGHT = {
 	start_falloff = 0,
 	color = Vector3Box(0.9, 0.7, 0.6)
 }
+
+local LevelSettings = LevelSettings
+
 LevelSettings = LevelSettings or {}
+LevelSettings = LevelSettings
 
 require("scripts/settings/dlc_settings")
 DLCUtils.dofile("level_settings")
 
-LevelSettingsDefaultStartLevel = Development.parameter("gdc") and "magnus" or "inn_level"
+local flag
+
+flag = not Development.parameter("gdc") and "magnus" and "inn_level"
+LevelSettingsDefaultStartLevel = flag
 DummyAnyLevel = {
 	level_image = "level_image_any",
 	small_level_image = "any_small_image",
@@ -1880,36 +1887,49 @@ LevelSettings.warcamp = {
 	}
 }
 
-for iter_0_0, iter_0_1 in pairs(LevelSettings) do
-	if iter_0_1.display_name then
-		iter_0_1.level_id = iter_0_0
-		iter_0_1.mechanism = iter_0_1.mechanism or "adventure"
-		iter_0_1.act_unlock_order = iter_0_1.act_unlock_order or 0
+for k, v in pairs(LevelSettings) do
+	if not v.display_name then
+		v.level_id = k
 
-		if iter_0_1.mechanism == "adventure" then
-			iter_0_1.loot_objectives = iter_0_1.loot_objectives or {
+		local str = "mechanism"
+		local mechanism = v.mechanism
+
+		mechanism = mechanism or "adventure"
+		v[str] = mechanism
+
+		local str_2 = "act_unlock_order"
+		local act_unlock_order = v.act_unlock_order
+
+		act_unlock_order = act_unlock_order or 0
+		v[str_2] = act_unlock_order
+
+		if v.mechanism == "adventure" then
+			local loot_objectives = v.loot_objectives
+
+			loot_objectives = loot_objectives or {
 				loot_die = 0,
 				tome = 3,
 				grimoire = 2,
 				painting_scrap = 0
 			}
+			v.loot_objectives = loot_objectives
 		end
 	end
 end
 
-local var_0_0 = LevelSettings
+local LevelSettings_2 = LevelSettings
 
-for iter_0_2, iter_0_3 in pairs(DLCSettings) do
-	local var_0_1 = iter_0_3.extra_level_packages
+for k_2, v_2 in pairs(DLCSettings) do
+	local extra_level_packages = v_2.extra_level_packages
 
-	if var_0_1 then
-		for iter_0_4, iter_0_5 in pairs(var_0_1) do
-			local var_0_2 = var_0_0[iter_0_4]
+	if not extra_level_packages then
+		for k_3, v_3 in pairs(extra_level_packages) do
+			local var_0_9 = LevelSettings_2[k_3]
 
-			if var_0_2 then
-				local var_0_3 = var_0_2.packages
+			if not var_0_9 then
+				local packages = var_0_9.packages
 
-				table.append(var_0_3, iter_0_5)
+				table.append(packages, v_3)
 			end
 		end
 	end

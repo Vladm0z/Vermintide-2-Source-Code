@@ -2,90 +2,114 @@
 
 ThirdPersonIdleFullbodyAnimationControl = class(ThirdPersonIdleFullbodyAnimationControl)
 
-local var_0_0 = 0.12
-local var_0_1 = 0.25
-local var_0_2 = 0.25
-local var_0_3 = 1
-local var_0_4 = 0
+local num = 0.12
+local num_2 = 0.25
+local num_3 = 0.25
+local num_4 = 1
+local num_5 = 0
 
-function ThirdPersonIdleFullbodyAnimationControl.init(arg_1_0, arg_1_1)
-	arg_1_0._unit = arg_1_1
-	arg_1_0._idle_fullbody_variable = Unit.animation_find_variable(arg_1_1, "idle_fullbody")
-	arg_1_0._progress = 1
-	arg_1_0._is_moving = false
-	arg_1_0._is_crouching = false
-	arg_1_0._is_moving_transition_start_t = 0
-	arg_1_0._crouch_t = 0
+ThirdPersonIdleFullbodyAnimationControl.init = function (self, arg_1_1)
+	-- function 1
+	self._unit = arg_1_1
+	self._idle_fullbody_variable = Unit.animation_find_variable(arg_1_1, "idle_fullbody")
+	self._progress = 1
+	self._is_moving = false
+	self._is_crouching = false
+	self._is_moving_transition_start_t = 0
+	self._crouch_t = 0
 end
 
-function ThirdPersonIdleFullbodyAnimationControl.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
-	arg_2_0._locomotion_extension = ScriptUnit.extension(arg_2_2, "locomotion_system")
-	arg_2_0._status_extension = ScriptUnit.extension(arg_2_2, "status_system")
+ThirdPersonIdleFullbodyAnimationControl.extensions_ready = function (self, arg_2_1, arg_2_2)
+	-- function 2
+	self._locomotion_extension = ScriptUnit.extension(arg_2_2, "locomotion_system")
+	self._status_extension = ScriptUnit.extension(arg_2_2, "status_system")
 end
 
-function ThirdPersonIdleFullbodyAnimationControl._total_time(arg_3_0, arg_3_1)
-	return arg_3_1 and var_0_0 or var_0_1
-end
+ThirdPersonIdleFullbodyAnimationControl._total_time = function (arg_3_0, arg_3_1)
+	-- function 3
+	local var_3_0
 
-function ThirdPersonIdleFullbodyAnimationControl._calculate_start_time(arg_4_0, arg_4_1, arg_4_2)
-	return arg_4_2 - arg_4_0:_total_time(arg_4_1) * (1 - arg_4_0._progress)
-end
+	if not arg_3_1 then
+		var_3_0 = num
 
-function ThirdPersonIdleFullbodyAnimationControl._wanted_fullbody_value(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
-	local var_5_0 = arg_5_0:_total_time(arg_5_2)
-	local var_5_1 = math.clamp01(arg_5_1 / var_5_0)
-	local var_5_2 = var_5_1
-
-	if not arg_5_2 then
-		var_5_1 = 1 - var_5_1
+		if not var_3_0 then
+			-- Nothing
+		end
 	end
 
-	local var_5_3 = math.lerp(var_0_3, var_0_4, var_5_1)
-	local var_5_4 = arg_5_3 and 1 or 0
-	local var_5_5 = 1 - var_5_4
+	var_3_0 = num_2
 
-	return var_5_3 * math.clamp01(math.inv_lerp(var_5_4, var_5_5, arg_5_4 / var_0_2)), var_5_2
+	::label_3_0::
+
+	return var_3_0
 end
 
-function ThirdPersonIdleFullbodyAnimationControl._percentage_done(arg_6_0, arg_6_1)
+ThirdPersonIdleFullbodyAnimationControl._calculate_start_time = function (self, arg_4_1, arg_4_2)
+	-- function 4
+	return arg_4_2 - self:_total_time(arg_4_1) * (1 - self._progress)
+end
+
+ThirdPersonIdleFullbodyAnimationControl._wanted_fullbody_value = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	-- function 5
+	local _total_time = self:_total_time(arg_5_2)
+	local clamp01 = math.clamp01(arg_5_1 / _total_time)
+	local var_5_2 = clamp01
+
+	if not arg_5_2 then
+		clamp01 = 1 - clamp01
+	end
+
+	local lerp = math.lerp(num_4, num_5, clamp01)
+	local flag
+
+	flag = not arg_5_3 and 1 and 0
+
+	local num = 1 - flag
+
+	return lerp * math.clamp01(math.inv_lerp(flag, num, arg_5_4 / num_3)), var_5_2
+end
+
+ThirdPersonIdleFullbodyAnimationControl._percentage_done = function (arg_6_0, arg_6_1)
+	-- function 6
 	return 0
 end
 
-function ThirdPersonIdleFullbodyAnimationControl.update(arg_7_0, arg_7_1)
-	if not arg_7_0._idle_fullbody_variable then
+ThirdPersonIdleFullbodyAnimationControl.update = function (self, arg_7_1)
+	-- function 7
+	if not self._idle_fullbody_variable then
 		return
 	end
 
-	local var_7_0 = arg_7_0._unit
-	local var_7_1 = arg_7_0._status_extension:is_crouching()
-	local var_7_2 = Vector3.length_squared(arg_7_0._locomotion_extension:current_velocity())
+	local _unit = self._unit
+	local is_crouching = self._status_extension:is_crouching()
+	local length_squared = Vector3.length_squared(self._locomotion_extension:current_velocity())
 
-	if var_7_2 < NetworkConstants.VELOCITY_EPSILON * NetworkConstants.VELOCITY_EPSILON then
-		var_7_2 = 0
+	if length_squared < NetworkConstants.VELOCITY_EPSILON * NetworkConstants.VELOCITY_EPSILON then
+		length_squared = 0
 	end
 
-	local var_7_3 = arg_7_0._is_moving
+	local _is_moving = self._is_moving
 
-	if not var_7_3 and var_7_2 > 0 then
-		arg_7_0._is_moving = true
-		arg_7_0._is_moving_transition_start_t = arg_7_0:_calculate_start_time(arg_7_0._is_moving, arg_7_1)
-	elseif var_7_3 and var_7_2 == 0 then
-		arg_7_0._is_moving = false
-		arg_7_0._is_moving_transition_start_t = arg_7_0:_calculate_start_time(arg_7_0._is_moving, arg_7_1)
+	if not (_is_moving or not (length_squared > 0)) then
+		self._is_moving = true
+		self._is_moving_transition_start_t = self:_calculate_start_time(self._is_moving, arg_7_1)
+	elseif not (not _is_moving and length_squared ~= 0) then
+		self._is_moving = false
+		self._is_moving_transition_start_t = self:_calculate_start_time(self._is_moving, arg_7_1)
 	end
 
-	local var_7_4 = arg_7_0._is_moving
+	local _is_moving_2 = self._is_moving
 
-	if var_7_1 ~= arg_7_0._is_crouching then
-		arg_7_0._crouch_t = arg_7_1
-		arg_7_0._is_crouching = var_7_1
+	if is_crouching ~= self._is_crouching then
+		self._crouch_t = arg_7_1
+		self._is_crouching = is_crouching
 	end
 
-	local var_7_5 = arg_7_1 - arg_7_0._is_moving_transition_start_t
-	local var_7_6, var_7_7 = arg_7_0:_wanted_fullbody_value(var_7_5, var_7_4, var_7_1, arg_7_1 - arg_7_0._crouch_t)
+	local num = arg_7_1 - self._is_moving_transition_start_t
+	local _wanted_fullbody_value, var_7_7 = self:_wanted_fullbody_value(num, _is_moving_2, is_crouching, arg_7_1 - self._crouch_t)
 
-	Unit.animation_set_variable(var_7_0, arg_7_0._idle_fullbody_variable, var_7_6)
+	Unit.animation_set_variable(_unit, self._idle_fullbody_variable, _wanted_fullbody_value)
 
-	arg_7_0._idle_fullbody_value = var_7_6
-	arg_7_0._progress = var_7_7
+	self._idle_fullbody_value = _wanted_fullbody_value
+	self._progress = var_7_7
 end

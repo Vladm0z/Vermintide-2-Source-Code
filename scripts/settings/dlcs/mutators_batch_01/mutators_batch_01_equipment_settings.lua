@@ -1,14 +1,14 @@
 -- chunkname: @scripts/settings/dlcs/mutators_batch_01/mutators_batch_01_equipment_settings.lua
 
-local var_0_0 = DLCSettings.mutators_batch_01
+local mutators_batch_01 = DLCSettings.mutators_batch_01
 
-var_0_0.damage_profile_template_files_names = {
+mutators_batch_01.damage_profile_template_files_names = {
 	"scripts/settings/equipment/damage_profile_templates_dlc_mutators_batch_01"
 }
-var_0_0.attack_template_files_names = {
+mutators_batch_01.attack_template_files_names = {
 	"scripts/settings/equipment/attack_templates_dlc_mutators_batch_01"
 }
-var_0_0.explosion_templates = {
+mutators_batch_01.explosion_templates = {
 	ticking_bomb_explosion = {
 		explosion = {
 			radius = 6,

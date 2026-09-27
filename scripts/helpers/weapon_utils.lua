@@ -1,27 +1,32 @@
 -- chunkname: @scripts/helpers/weapon_utils.lua
 
+local WeaponUtils = WeaponUtils
+
 WeaponUtils = WeaponUtils or {}
+WeaponUtils = WeaponUtils
 
-function WeaponUtils.add_bot_meta_data_chain_actions(arg_1_0, arg_1_1)
-	for iter_1_0, iter_1_1 in pairs(arg_1_1) do
-		for iter_1_2, iter_1_3 in pairs(iter_1_1) do
-			local var_1_0 = iter_1_3.wanted_action_name
-			local var_1_1 = iter_1_3.wanted_sub_action_name
-			local var_1_2 = arg_1_0[iter_1_0][iter_1_2].allowed_chain_actions
+WeaponUtils.add_bot_meta_data_chain_actions = function (self, arg_1_1)
+	-- function 1
+	for k, v in pairs(arg_1_1) do
+		for k_2, v_2 in pairs(v) do
+			local wanted_action_name = v_2.wanted_action_name
+			local wanted_sub_action_name = v_2.wanted_sub_action_name
+			local allowed_chain_actions = self[k][k_2].allowed_chain_actions
 
-			iter_1_3.chain_action = WeaponUtils.find_allowed_chain_action(var_1_2, iter_1_0, iter_1_2, var_1_0, var_1_1)
+			v_2.chain_action = WeaponUtils.find_allowed_chain_action(allowed_chain_actions, k, k_2, wanted_action_name, wanted_sub_action_name)
 		end
 	end
 end
 
-function WeaponUtils.find_allowed_chain_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+WeaponUtils.find_allowed_chain_action = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	-- function 2
 	local var_2_0
-	local var_2_1 = #arg_2_0
+	local count = #self
 
-	for iter_2_0 = 1, var_2_1 do
-		local var_2_2 = arg_2_0[iter_2_0]
+	for i = 1, count do
+		local var_2_2 = self[i]
 
-		if var_2_2.action == arg_2_3 and var_2_2.sub_action == arg_2_4 then
+		if not (var_2_2.action ~= arg_2_3 or var_2_2.sub_action ~= arg_2_4) then
 			var_2_0 = var_2_2
 
 			break
@@ -33,176 +38,221 @@ function WeaponUtils.find_allowed_chain_action(arg_2_0, arg_2_1, arg_2_2, arg_2_
 	return var_2_0
 end
 
-function WeaponUtils.get_item_state_machine(arg_3_0, arg_3_1)
-	return arg_3_0.state_machine_career and arg_3_0.state_machine_career[arg_3_1] or arg_3_0.state_machine
+WeaponUtils.get_item_state_machine = function (self, arg_3_1)
+	-- function 3
+	local var_3_0
+
+	if not self.state_machine_career then
+		var_3_0 = self.state_machine_career[arg_3_1]
+
+		if not var_3_0 then
+			-- Nothing
+		end
+	end
+
+	var_3_0 = self.state_machine
+
+	::label_3_0::
+
+	return var_3_0
 end
 
-function WeaponUtils.get_weapon_packages(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
-	local var_4_0 = {}
-	local var_4_1 = arg_4_1.left_hand_unit
+WeaponUtils.get_weapon_packages = function (self, arg_4_1, arg_4_2, arg_4_3)
+	-- function 4
+	local tbl = {}
+	local left_hand_unit = arg_4_1.left_hand_unit
 
-	if var_4_1 then
-		if arg_4_2 then
-			var_4_0[#var_4_0 + 1] = var_4_1
+	if not left_hand_unit then
+		if not arg_4_2 then
+			tbl[#tbl + 1] = left_hand_unit
 		end
 
-		var_4_0[#var_4_0 + 1] = var_4_1 .. "_3p"
+		tbl[#tbl + 1] = left_hand_unit .. "_3p"
 
-		local var_4_2 = arg_4_0.wwise_dep_left_hand
+		local wwise_dep_left_hand = self.wwise_dep_left_hand
 
-		if var_4_2 then
-			for iter_4_0 = 1, #var_4_2 do
-				local var_4_3 = var_4_2[iter_4_0]
+		if not wwise_dep_left_hand then
+			for i = 1, #wwise_dep_left_hand do
+				local var_4_3 = wwise_dep_left_hand[i]
 
-				var_4_0[#var_4_0 + 1] = var_4_3
+				tbl[#tbl + 1] = var_4_3
 			end
 		end
 	end
 
-	local var_4_4 = arg_4_1.right_hand_unit
+	local right_hand_unit = arg_4_1.right_hand_unit
 
-	if var_4_4 then
-		if arg_4_2 then
-			var_4_0[#var_4_0 + 1] = var_4_4
+	if not right_hand_unit then
+		if not arg_4_2 then
+			tbl[#tbl + 1] = right_hand_unit
 		end
 
-		var_4_0[#var_4_0 + 1] = var_4_4 .. "_3p"
+		tbl[#tbl + 1] = right_hand_unit .. "_3p"
 
-		local var_4_5 = arg_4_0.wwise_dep_right_hand
+		local wwise_dep_right_hand = self.wwise_dep_right_hand
 
-		if var_4_5 then
-			for iter_4_1 = 1, #var_4_5 do
-				local var_4_6 = var_4_5[iter_4_1]
+		if not wwise_dep_right_hand then
+			for j = 1, #wwise_dep_right_hand do
+				local var_4_6 = wwise_dep_right_hand[j]
 
-				var_4_0[#var_4_0 + 1] = var_4_6
+				tbl[#tbl + 1] = var_4_6
 			end
 		end
 	end
 
-	local var_4_7 = arg_4_1.ammo_unit
+	local ammo_unit = arg_4_1.ammo_unit
 
-	if var_4_7 then
-		if arg_4_2 then
-			var_4_0[#var_4_0 + 1] = var_4_7
+	if not ammo_unit then
+		if not arg_4_2 then
+			tbl[#tbl + 1] = ammo_unit
 		end
 
-		var_4_0[#var_4_0 + 1] = arg_4_1.ammo_unit_3p or var_4_7 .. "_3p"
+		local num = #tbl + 1
+		local ammo_unit_3p = arg_4_1.ammo_unit_3p
 
-		local var_4_8 = arg_4_0.wwise_dep_ammo
+		ammo_unit_3p = ammo_unit_3p or ammo_unit .. "_3p"
+		tbl[num] = ammo_unit_3p
 
-		if var_4_8 then
-			for iter_4_2 = 1, #var_4_8 do
-				local var_4_9 = var_4_8[iter_4_2]
+		local wwise_dep_ammo = self.wwise_dep_ammo
 
-				var_4_0[#var_4_0 + 1] = var_4_9
+		if not wwise_dep_ammo then
+			for k = 1, #wwise_dep_ammo do
+				local var_4_11 = wwise_dep_ammo[k]
+
+				tbl[#tbl + 1] = var_4_11
 			end
 		end
 	end
 
-	if arg_4_2 and arg_4_0.load_state_machine ~= false then
-		local var_4_10 = WeaponUtils.get_item_state_machine(arg_4_0, arg_4_3)
+	if not (not arg_4_2 and self.load_state_machine == false) then
+		local get_item_state_machine = WeaponUtils.get_item_state_machine(self, arg_4_3)
 
-		if var_4_10 then
-			var_4_0[#var_4_0 + 1] = var_4_10
+		if not get_item_state_machine then
+			tbl[#tbl + 1] = get_item_state_machine
 		end
 	end
 
-	local var_4_11 = arg_4_0.required_projectile_unit_templates
+	local required_projectile_unit_templates = self.required_projectile_unit_templates
 
-	if var_4_11 then
-		for iter_4_3, iter_4_4 in pairs(var_4_11) do
-			local var_4_12 = iter_4_4 and ProjectileUnits[arg_4_1.projectile_units_template] or ProjectileUnits[iter_4_3]
+	if not required_projectile_unit_templates then
+		for k_2, v in pairs(required_projectile_unit_templates) do
+			local var_4_14
 
-			if var_4_12.projectile_unit_name then
-				var_4_0[#var_4_0 + 1] = var_4_12.projectile_unit_name
+			if not v then
+				var_4_14 = ProjectileUnits[arg_4_1.projectile_units_template]
+
+				if not var_4_14 then
+					-- Nothing
+				end
 			end
 
-			if var_4_12.dummy_linker_unit_name then
-				var_4_0[#var_4_0 + 1] = var_4_12.dummy_linker_unit_name
+			var_4_14 = ProjectileUnits[k_2]
+
+			::label_4_0::
+
+			if not var_4_14.projectile_unit_name then
+				tbl[#tbl + 1] = var_4_14.projectile_unit_name
 			end
 
-			local var_4_13 = var_4_12.dummy_linker_broken_units
+			if not var_4_14.dummy_linker_unit_name then
+				tbl[#tbl + 1] = var_4_14.dummy_linker_unit_name
+			end
 
-			if var_4_13 then
-				for iter_4_5 = 1, #var_4_13 do
-					var_4_0[#var_4_0 + 1] = var_4_13[iter_4_5]
+			local dummy_linker_broken_units = var_4_14.dummy_linker_broken_units
+
+			if not dummy_linker_broken_units then
+				for i5 = 1, #dummy_linker_broken_units do
+					tbl[#tbl + 1] = dummy_linker_broken_units[i5]
 				end
 			end
 		end
 	end
 
-	return var_4_0
+	return tbl
 end
 
-function WeaponUtils.get_used_actions(arg_5_0)
-	local var_5_0 = {}
-	local var_5_1 = {}
-	local var_5_2 = {}
+WeaponUtils.get_used_actions = function (self)
+	-- function 5
+	local tbl = {}
+	local tbl_2 = {}
+	local tbl_3 = {}
 
-	for iter_5_0, iter_5_1 in pairs(arg_5_0.actions) do
-		if iter_5_1.default then
-			var_5_2[iter_5_0] = {}
-			var_5_1[iter_5_0] = {}
-			var_5_2[iter_5_0].default = true
+	for k, v in pairs(self.actions) do
+		if not v.default then
+			tbl_3[k] = {}
+			tbl_2[k] = {}
+			tbl_3[k].default = true
 		end
 	end
 
-	local var_5_3, var_5_4 = next(var_5_2)
+	local var_5_3, var_5_4 = next(tbl_3)
 
 	while var_5_3 ~= nil do
 		local var_5_5 = next(var_5_4)
 
 		while var_5_5 ~= nil do
-			local var_5_6 = ActionUtils.resolve_action_selector(arg_5_0.actions[var_5_3][var_5_5]).allowed_chain_actions
+			local allowed_chain_actions = ActionUtils.resolve_action_selector(self.actions[var_5_3][var_5_5]).allowed_chain_actions
 
-			for iter_5_2 = 1, #var_5_6 do
-				local var_5_7 = var_5_6[iter_5_2].action
-				local var_5_8 = var_5_6[iter_5_2].sub_action
+			for k_2 = 1, #allowed_chain_actions do
+				local action = allowed_chain_actions[k_2].action
+				local sub_action = allowed_chain_actions[k_2].sub_action
 
-				if var_5_7 and var_5_8 then
-					local var_5_9 = arg_5_0.actions[var_5_7]
+				if not action and not sub_action then
+					local var_5_9 = self.actions[action]
 
-					if var_5_9 and var_5_9[var_5_8] then
-						if (not var_5_1[var_5_7] or not var_5_1[var_5_7][var_5_8]) and (not var_5_2[var_5_7] or not var_5_2[var_5_7][var_5_8]) then
-							if not var_5_2[var_5_7] then
-								var_5_2[var_5_7] = {}
+					if not (not var_5_9 and var_5_9[sub_action]) then
+						if not (not tbl_2[action] and tbl_2[action][sub_action] and not tbl_3[action] or tbl_3[action][sub_action]) then
+							if not tbl_3[action] then
+								tbl_3[action] = {}
 							end
 
-							var_5_2[var_5_7][var_5_8] = true
+							tbl_3[action][sub_action] = true
 						end
 					else
-						if not var_5_0[var_5_7] then
-							var_5_0[var_5_7] = {}
+						if not tbl[action] then
+							tbl[action] = {}
 						end
 
-						var_5_0[var_5_7][var_5_8] = true
+						tbl[action][sub_action] = true
 					end
 				end
 			end
 
-			var_5_2[var_5_3][var_5_5] = nil
+			tbl_3[var_5_3][var_5_5] = nil
 
-			if not var_5_1[var_5_3] then
-				var_5_1[var_5_3] = {}
+			if not tbl_2[var_5_3] then
+				tbl_2[var_5_3] = {}
 			end
 
-			var_5_1[var_5_3][var_5_5] = true
+			tbl_2[var_5_3][var_5_5] = true
 			var_5_5 = next(var_5_4)
 		end
 
-		var_5_2[var_5_3] = nil
-		var_5_3, var_5_4 = next(var_5_2)
+		tbl_3[var_5_3] = nil
+		var_5_3, var_5_4 = next(tbl_3)
 	end
 
-	return var_5_1, var_5_0
+	return tbl_2, tbl
 end
 
-function WeaponUtils.is_valid_weapon_override(arg_6_0, arg_6_1)
-	local var_6_0 = arg_6_0 and (arg_6_0.item_template_name or arg_6_0.item_template.name)
+WeaponUtils.is_valid_weapon_override = function (self, arg_6_1)
+	-- function 6
+	if not self then
+		-- Nothing
+	end
 
-	return not arg_6_1.valid_templates_to_replace or arg_6_1.valid_templates_to_replace[var_6_0]
+	::label_6_0::
+
+	local item_template_name = self.item_template_name
+
+	item_template_name = item_template_name or self.item_template.name
+
+	::label_6_1::
+
+	return not arg_6_1.valid_templates_to_replace and arg_6_1.valid_templates_to_replace[item_template_name]
 end
 
-function WeaponUtils.get_weapon_template(arg_7_0)
+WeaponUtils.get_weapon_template = function (arg_7_0)
+	-- function 7
 	return MechanismOverrides.get(rawget(Weapons, arg_7_0))
 end

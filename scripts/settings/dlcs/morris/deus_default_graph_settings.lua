@@ -1,5 +1,7 @@
 -- chunkname: @scripts/settings/dlcs/morris/deus_default_graph_settings.lua
 
+local DeusDefaultGraphs = DeusDefaultGraphs
+
 DeusDefaultGraphs = DeusDefaultGraphs or {
 	DEFAULT_GRAPH_1 = {
 		start = {
@@ -1412,6 +1414,10 @@ DeusDefaultGraphs = DeusDefaultGraphs or {
 		}
 	}
 }
+DeusDefaultGraphs = DeusDefaultGraphs
+
+local DeusDebugShrineNodeGraph = DeusDebugShrineNodeGraph
+
 DeusDebugShrineNodeGraph = DeusDebugShrineNodeGraph or {
 	start = {
 		path = 0,
@@ -1531,6 +1537,10 @@ DeusDebugShrineNodeGraph = DeusDebugShrineNodeGraph or {
 		next = {}
 	}
 }
+DeusDebugShrineNodeGraph = DeusDebugShrineNodeGraph
+
+local DeusDebugSpecificNodeGraph = DeusDebugSpecificNodeGraph
+
 DeusDebugSpecificNodeGraph = DeusDebugSpecificNodeGraph or {
 	start = {
 		terror_event_power_up_rarity = "rare",
@@ -1558,9 +1568,10 @@ DeusDebugSpecificNodeGraph = DeusDebugSpecificNodeGraph or {
 		next = {}
 	}
 }
+DeusDebugSpecificNodeGraph = DeusDebugSpecificNodeGraph
 
-for iter_0_0, iter_0_1 in pairs(DeusDefaultGraphs) do
-	for iter_0_2, iter_0_3 in pairs(iter_0_1) do
-		iter_0_3.key = iter_0_2
+for k, v in pairs(DeusDefaultGraphs) do
+	for k_2, v_2 in pairs(v) do
+		v_2.key = k_2
 	end
 end

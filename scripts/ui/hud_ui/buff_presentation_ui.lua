@@ -1,225 +1,239 @@
 -- chunkname: @scripts/ui/hud_ui/buff_presentation_ui.lua
 
 local var_0_0 = local_require("scripts/ui/hud_ui/buff_presentation_ui_definitions")
-local var_0_1 = var_0_0.animation_definitions
-local var_0_2 = var_0_0.scenegraph_definition
+local animation_definitions = var_0_0.animation_definitions
+local scenegraph_definition = var_0_0.scenegraph_definition
 
 BuffPresentationUI = class(BuffPresentationUI)
 
-function BuffPresentationUI.init(arg_1_0, arg_1_1, arg_1_2)
-	arg_1_0._parent = arg_1_1
-	arg_1_0.ui_renderer = arg_1_2.ui_renderer
-	arg_1_0.ingame_ui = arg_1_2.ingame_ui
-	arg_1_0.input_manager = arg_1_2.input_manager
+BuffPresentationUI.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	self._parent = arg_1_1
+	self.ui_renderer = arg_1_2.ui_renderer
+	self.ingame_ui = arg_1_2.ingame_ui
+	self.input_manager = arg_1_2.input_manager
 
-	local var_1_0 = arg_1_2.world_manager:world("level_world")
+	local world = arg_1_2.world_manager:world("level_world")
 
-	arg_1_0.wwise_world = Managers.world:wwise_world(var_1_0)
+	self.wwise_world = Managers.world:wwise_world(world)
 
-	arg_1_0:create_ui_elements()
+	self:create_ui_elements()
 end
 
-function BuffPresentationUI.create_ui_elements(arg_2_0)
-	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
-	arg_2_0.presentation_widget = UIWidget.init(var_0_0.widget_definitions.presentation_widget)
-	arg_2_0.ui_animator = UIAnimator:new(arg_2_0.ui_scenegraph, var_0_1)
-	arg_2_0._animations = {}
-	arg_2_0._buffs_to_add = {}
-	arg_2_0._added_buff_presentations = {}
-	arg_2_0._buffs_presented = {}
+BuffPresentationUI.create_ui_elements = function (self)
+	-- function 2
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+	self.presentation_widget = UIWidget.init(var_0_0.widget_definitions.presentation_widget)
+	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
+	self._animations = {}
+	self._buffs_to_add = {}
+	self._added_buff_presentations = {}
+	self._buffs_presented = {}
 
-	UIRenderer.clear_scenegraph_queue(arg_2_0.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 end
 
-function BuffPresentationUI.destroy(arg_3_0)
-	arg_3_0.ui_animator = nil
+BuffPresentationUI.destroy = function (self)
+	-- function 3
+	self.ui_animator = nil
 end
 
-local var_0_3 = {
+local tbl = {
 	root_scenegraph_id = "presentation_widget",
 	label = "Buff",
 	registry_key = "buff_present",
 	drag_scenegraph_id = "presentation_widget_dragger"
 }
 
-function BuffPresentationUI.update(arg_4_0, arg_4_1)
-	if HudCustomizer.run(arg_4_0.ui_renderer, arg_4_0.ui_scenegraph, var_0_3) then
-		UISceneGraph.update_scenegraph(arg_4_0.ui_scenegraph)
+BuffPresentationUI.update = function (self, arg_4_1)
+	-- function 4
+	if not HudCustomizer.run(self.ui_renderer, self.ui_scenegraph, tbl) then
+		UISceneGraph.update_scenegraph(self.ui_scenegraph)
 	end
 
-	arg_4_0:_sync_buffs()
-	arg_4_0:_next_buff(arg_4_1)
+	self:_sync_buffs()
+	self:_next_buff(arg_4_1)
 
-	if arg_4_0._active_buff_name then
-		arg_4_0:update_animations(arg_4_1)
-		arg_4_0:draw(arg_4_1)
+	if not self._active_buff_name then
+		self:update_animations(arg_4_1)
+		self:draw(arg_4_1)
 	end
 end
 
-function BuffPresentationUI.update_animations(arg_5_0, arg_5_1)
-	local var_5_0 = arg_5_0._animations
-	local var_5_1 = arg_5_0.ui_animator
+BuffPresentationUI.update_animations = function (self, arg_5_1)
+	-- function 5
+	local _animations = self._animations
+	local ui_animator = self.ui_animator
 
-	var_5_1:update(arg_5_1)
+	ui_animator:update(arg_5_1)
 
-	for iter_5_0, iter_5_1 in pairs(var_5_0) do
-		if var_5_1:is_animation_completed(iter_5_1) then
-			var_5_1:stop_animation(iter_5_1)
+	for k, v in pairs(_animations) do
+		if not ui_animator:is_animation_completed(v) then
+			ui_animator:stop_animation(v)
 
-			var_5_0[iter_5_0] = nil
+			_animations[k] = nil
 		end
 	end
 end
 
-function BuffPresentationUI.draw(arg_6_0, arg_6_1)
-	local var_6_0 = arg_6_0.ui_renderer
-	local var_6_1 = arg_6_0.ui_scenegraph
-	local var_6_2 = arg_6_0.input_manager:get_service("ingame_menu")
+BuffPresentationUI.draw = function (self, arg_6_1)
+	-- function 6
+	local ui_renderer = self.ui_renderer
+	local ui_scenegraph = self.ui_scenegraph
+	local get_service = self.input_manager:get_service("ingame_menu")
 
-	UIRenderer.begin_pass(var_6_0, var_6_1, var_6_2, arg_6_1)
-	UIRenderer.draw_widget(var_6_0, arg_6_0.presentation_widget)
-	UIRenderer.end_pass(var_6_0)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, get_service, arg_6_1)
+	UIRenderer.draw_widget(ui_renderer, self.presentation_widget)
+	UIRenderer.end_pass(ui_renderer)
 end
 
-function BuffPresentationUI._clear_animations(arg_7_0)
-	for iter_7_0, iter_7_1 in pairs(arg_7_0._animations) do
-		arg_7_0.ui_animator:stop_animation(iter_7_1)
+BuffPresentationUI._clear_animations = function (self)
+	-- function 7
+	for k, v in pairs(self._animations) do
+		self.ui_animator:stop_animation(v)
 	end
 
-	table.clear(arg_7_0._animations)
+	table.clear(self._animations)
 end
 
-function BuffPresentationUI._start_animation(arg_8_0, arg_8_1, arg_8_2)
-	local var_8_0 = {
-		wwise_world = arg_8_0.wwise_world
+BuffPresentationUI._start_animation = function (self, arg_8_1, arg_8_2)
+	-- function 8
+	local tbl = {
+		wwise_world = self.wwise_world
 	}
-	local var_8_1 = arg_8_0.ui_animator:start_animation(arg_8_2, arg_8_0.presentation_widget, var_0_2, var_8_0)
+	local start_animation = self.ui_animator:start_animation(arg_8_2, self.presentation_widget, scenegraph_definition, tbl)
 
-	arg_8_0._animations[arg_8_1] = var_8_1
+	self._animations[arg_8_1] = start_animation
 end
 
-function BuffPresentationUI._sync_buffs(arg_9_0)
-	local var_9_0 = Development.parameter("debug_player_buffs")
-	local var_9_1 = Managers.time:time("game")
-	local var_9_2 = Managers.player:local_player(1).player_unit
+BuffPresentationUI._sync_buffs = function (self)
+	-- function 9
+	local parameter = Development.parameter("debug_player_buffs")
+	local time = Managers.time:time("game")
+	local player_unit = Managers.player:local_player(1).player_unit
 
-	if var_9_2 then
-		local var_9_3 = arg_9_0._buffs_to_add
-		local var_9_4 = arg_9_0._buffs_presented
+	if not player_unit then
+		local _buffs_to_add = self._buffs_to_add
+		local _buffs_presented = self._buffs_presented
 
-		table.clear(var_9_3)
+		table.clear(_buffs_to_add)
 
-		local var_9_5 = ScriptUnit.extension(var_9_2, "buff_system")
-		local var_9_6 = var_9_5:active_buffs()
-		local var_9_7 = var_9_5._num_buffs
+		local extension = ScriptUnit.extension(player_unit, "buff_system")
+		local active_buffs = extension:active_buffs()
+		local _num_buffs = extension._num_buffs
 
-		for iter_9_0 = 1, var_9_7 do
-			local var_9_8 = var_9_6[iter_9_0]
+		for i = 1, _num_buffs do
+			local var_9_8 = active_buffs[i]
 
 			if not var_9_8.removed then
-				local var_9_9 = var_9_8.template
-				local var_9_10 = var_9_9.name
+				local template = var_9_8.template
+				local name = template.name
 
-				if var_9_0 or var_9_9.icon ~= nil and var_9_9.priority_buff and not var_9_3[var_9_10] and not var_9_4[var_9_10] then
-					arg_9_0:_add_buff(var_9_8)
+				if not (not not _buffs_to_add[name] or not _buffs_presented[name] or parameter or template.icon == nil or not template.priority_buff) then
+					self:_add_buff(var_9_8)
 
-					var_9_3[var_9_10] = var_9_8
+					_buffs_to_add[name] = var_9_8
 				end
 			end
 		end
 
-		for iter_9_1, iter_9_2 in ipairs(arg_9_0._added_buff_presentations) do
-			local var_9_11 = iter_9_2.name
-			local var_9_12 = true
+		for i_2, v in ipairs(self._added_buff_presentations) do
+			local name_2 = v.name
+			local flag = true
 
-			for iter_9_3, iter_9_4 in pairs(var_9_3) do
-				if iter_9_3 == var_9_11 then
-					var_9_12 = false
+			for k, v_2 in pairs(_buffs_to_add) do
+				if k == name_2 then
+					flag = false
 
 					break
 				end
 			end
 
-			if var_9_12 then
-				arg_9_0:_remove_buff(var_9_11)
+			if not flag then
+				self:_remove_buff(name_2)
 			end
 		end
 
-		for iter_9_5, iter_9_6 in pairs(var_9_4) do
-			local var_9_13 = true
+		for k_2, v_3 in pairs(_buffs_presented) do
+			local flag_2 = true
 
-			for iter_9_7 = 1, var_9_7 do
-				local var_9_14 = var_9_6[iter_9_7]
+			for i7 = 1, _num_buffs do
+				local var_9_14 = active_buffs[i7]
 
-				if not var_9_14.removed and iter_9_5 == var_9_14.template.name then
-					var_9_13 = false
+				if not (var_9_14.removed or k_2 ~= var_9_14.template.name) then
+					flag_2 = false
 
 					break
 				end
 			end
 
-			if var_9_13 then
-				var_9_4[iter_9_5] = nil
+			if not flag_2 then
+				_buffs_presented[k_2] = nil
 			end
 		end
 	end
 end
 
-function BuffPresentationUI._add_buff(arg_10_0, arg_10_1)
-	local var_10_0 = arg_10_0._added_buff_presentations
-	local var_10_1 = arg_10_1.template
-	local var_10_2 = var_10_1.name
+BuffPresentationUI._add_buff = function (self, arg_10_1)
+	-- function 10
+	local _added_buff_presentations = self._added_buff_presentations
+	local template = arg_10_1.template
+	local name = template.name
 
-	for iter_10_0, iter_10_1 in ipairs(var_10_0) do
-		if iter_10_1.name == var_10_2 then
+	for i, v in ipairs(_added_buff_presentations) do
+		if v.name == name then
 			return
 		end
 	end
 
-	arg_10_0._added_buff_presentations[#arg_10_0._added_buff_presentations + 1] = var_10_1
+	self._added_buff_presentations[#self._added_buff_presentations + 1] = template
 end
 
-function BuffPresentationUI._remove_buff(arg_11_0, arg_11_1)
+BuffPresentationUI._remove_buff = function (self, arg_11_1)
+	-- function 11
 	local var_11_0
 
-	for iter_11_0, iter_11_1 in ipairs(arg_11_0._added_buff_presentations) do
-		if iter_11_1.name == arg_11_1 then
-			var_11_0 = iter_11_0
+	for i, v in ipairs(self._added_buff_presentations) do
+		if v.name == arg_11_1 then
+			var_11_0 = i
 
 			break
 		end
 	end
 
-	if var_11_0 and arg_11_0._added_buff_presentations[var_11_0] then
-		table.remove(arg_11_0._added_buff_presentations, var_11_0)
+	if not var_11_0 and not self._added_buff_presentations[var_11_0] then
+		table.remove(self._added_buff_presentations, var_11_0)
 	end
 end
 
-function BuffPresentationUI._next_buff(arg_12_0, arg_12_1)
-	local var_12_0 = arg_12_0._added_buff_presentations
+BuffPresentationUI._next_buff = function (self, arg_12_1)
+	-- function 12
+	local _added_buff_presentations = self._added_buff_presentations
 
-	if not arg_12_0._active_buff_name or arg_12_0._active_buff_name and not arg_12_0._animations.presentation then
-		if arg_12_0._active_buff_name then
-			arg_12_0._buffs_presented[arg_12_0._active_buff_name] = true
-			arg_12_0._active_buff_name = nil
+	if not (not self._active_buff_name and not self._active_buff_name and self._animations.presentation) then
+		if not self._active_buff_name then
+			self._buffs_presented[self._active_buff_name] = true
+			self._active_buff_name = nil
 
-			table.remove(var_12_0, 1)
+			table.remove(_added_buff_presentations, 1)
 		end
 
-		if #var_12_0 > 0 then
-			local var_12_1 = var_12_0[1]
+		if #_added_buff_presentations > 0 then
+			local var_12_1 = _added_buff_presentations[1]
 
-			arg_12_0._active_buff_name = var_12_1.name
+			self._active_buff_name = var_12_1.name
 
-			arg_12_0:_set_buff_to_present(var_12_1)
-			arg_12_0:_start_animation("presentation", "presentation")
+			self:_set_buff_to_present(var_12_1)
+			self:_start_animation("presentation", "presentation")
 		end
 	end
 end
 
-function BuffPresentationUI._set_buff_to_present(arg_13_0, arg_13_1)
-	local var_13_0 = arg_13_0.presentation_widget
-	local var_13_1 = arg_13_1.icon or "icons_placeholder"
+BuffPresentationUI._set_buff_to_present = function (self, arg_13_1)
+	-- function 13
+	local presentation_widget = self.presentation_widget
+	local icon = arg_13_1.icon
 
-	var_13_0.content.texture_icon = var_13_1
+	icon = icon or "icons_placeholder"
+	presentation_widget.content.texture_icon = icon
 end

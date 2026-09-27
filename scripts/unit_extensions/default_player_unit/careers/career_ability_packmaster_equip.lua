@@ -2,41 +2,44 @@
 
 CareerAbilityPackmasterEquip = class(CareerAbilityPackmasterEquip, CareerAbilityDarkPactBase)
 
-function CareerAbilityPackmasterEquip.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
-	arg_1_0.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+CareerAbilityPackmasterEquip.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	-- function 1
+	self.super.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 
-	arg_1_0._ability_default_startup_delay_time = arg_1_0._ability_data.startup_delay_time
+	self._ability_default_startup_delay_time = self._ability_data.startup_delay_time
 
-	arg_1_0:freeze()
+	self:freeze()
 end
 
-function CareerAbilityPackmasterEquip.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
-	if arg_2_0._freezed then
+CareerAbilityPackmasterEquip.update = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	-- function 2
+	if not self._freezed then
 		return
 	end
 
-	if not arg_2_0._equip_ready then
-		if not arg_2_0._equip_startup_delay_time then
-			if arg_2_0:_ability_available() then
-				arg_2_0._equip_startup_delay_time = arg_2_5 + arg_2_0._ability_default_startup_delay_time
+	if not self._equip_ready then
+		if not self._equip_startup_delay_time then
+			if not self:_ability_available() then
+				self._equip_startup_delay_time = arg_2_5 + self._ability_default_startup_delay_time
 			end
-		elseif not arg_2_0._equip_ready and arg_2_5 >= arg_2_0._equip_startup_delay_time then
-			arg_2_0._equip_ready = true
+		elseif not (self._equip_ready or not (arg_2_5 >= self._equip_startup_delay_time)) then
+			self._equip_ready = true
 		end
 	end
 
-	local var_2_0 = arg_2_0._equip_startup_delay_time
+	local _equip_startup_delay_time = self._equip_startup_delay_time
 
-	if var_2_0 then
-		local var_2_1 = arg_2_0._ability_default_startup_delay_time
+	if not _equip_startup_delay_time then
+		local _ability_default_startup_delay_time = self._ability_default_startup_delay_time
 
-		arg_2_0._startup_delay_fraction = math.clamp((var_2_0 - arg_2_5) / var_2_1, 0, 1)
+		self._startup_delay_fraction = math.clamp((_equip_startup_delay_time - arg_2_5) / _ability_default_startup_delay_time, 0, 1)
 	end
 end
 
-function CareerAbilityPackmasterEquip.was_triggered(arg_3_0)
-	if arg_3_0:_ability_available() and arg_3_0._equip_ready then
-		arg_3_0:_start()
+CareerAbilityPackmasterEquip.was_triggered = function (self)
+	-- function 3
+	if not self:_ability_available() and not self._equip_ready then
+		self:_start()
 
 		return true
 	end
@@ -44,27 +47,32 @@ function CareerAbilityPackmasterEquip.was_triggered(arg_3_0)
 	return false
 end
 
-function CareerAbilityPackmasterEquip.startup_delay_fraction(arg_4_0)
-	return arg_4_0._startup_delay_fraction
+CareerAbilityPackmasterEquip.startup_delay_fraction = function (self)
+	-- function 4
+	return self._startup_delay_fraction
 end
 
-function CareerAbilityPackmasterEquip.startup_delay_time(arg_5_0)
-	return arg_5_0._equip_startup_delay_time
+CareerAbilityPackmasterEquip.startup_delay_time = function (self)
+	-- function 5
+	return self._equip_startup_delay_time
 end
 
-function CareerAbilityPackmasterEquip._start(arg_6_0)
-	arg_6_0.super._start(arg_6_0)
-	arg_6_0:freeze()
+CareerAbilityPackmasterEquip._start = function (self)
+	-- function 6
+	self.super._start(self)
+	self:freeze()
 
-	arg_6_0._equip_ready = nil
-	arg_6_0._startup_delay_fraction = nil
-	arg_6_0._equip_startup_delay_time = nil
+	self._equip_ready = nil
+	self._startup_delay_fraction = nil
+	self._equip_startup_delay_time = nil
 end
 
-function CareerAbilityPackmasterEquip.unfreeze(arg_7_0)
-	arg_7_0._freezed = false
+CareerAbilityPackmasterEquip.unfreeze = function (self)
+	-- function 7
+	self._freezed = false
 end
 
-function CareerAbilityPackmasterEquip.freeze(arg_8_0)
-	arg_8_0._freezed = true
+CareerAbilityPackmasterEquip.freeze = function (self)
+	-- function 8
+	self._freezed = true
 end

@@ -1,9 +1,9 @@
 -- chunkname: @scripts/settings/dlcs/lake/buff_settings_lake.lua
 
-local var_0_0 = DLCSettings.lake
-local var_0_1 = {}
+local lake = DLCSettings.lake
+local tbl = {}
 
-var_0_0.buff_templates = {
+lake.buff_templates = {
 	markus_questing_knight_passive_cooldown_reduction = {
 		buffs = {
 			{
@@ -200,70 +200,73 @@ var_0_0.buff_templates = {
 		}
 	}
 }
-var_0_0.proc_functions = {
-	markus_questing_knight_spread_temp_health = function(arg_1_0, arg_1_1, arg_1_2)
+lake.proc_functions = {
+	markus_questing_knight_spread_temp_health = function (arg_1_0, arg_1_1, arg_1_2)
+		-- function 1
 		local var_1_0 = arg_1_2[1]
 		local var_1_1 = arg_1_2[3]
-		local var_1_2 = var_1_0 == arg_1_0
-		local var_1_3 = var_1_1 == "heal_from_proc"
+		local flag = var_1_0 == arg_1_0
+		local flag_2 = var_1_1 == "heal_from_proc"
 
-		if ALIVE[arg_1_0] and Managers.player.is_server and var_1_2 and var_1_3 then
-			local var_1_4 = arg_1_1.template
-			local var_1_5 = var_1_4.range
-			local var_1_6 = var_1_5 * var_1_5
+		if not ALIVE[arg_1_0] and not Managers.player.is_server and not flag and not flag_2 then
+			local template = arg_1_1.template
+			local range = template.range
+			local num = range * range
 			local var_1_7 = POSITION_LOOKUP[var_1_0]
-			local var_1_8 = Managers.state.side.side_by_unit[arg_1_0].PLAYER_AND_BOT_UNITS
+			local PLAYER_AND_BOT_UNITS = Managers.state.side.side_by_unit[arg_1_0].PLAYER_AND_BOT_UNITS
 			local var_1_9
-			local var_1_10 = 500
+			local num_2 = 500
 
-			for iter_1_0 = 1, #var_1_8 do
-				local var_1_11 = var_1_8[iter_1_0]
+			for i = 1, #PLAYER_AND_BOT_UNITS do
+				local var_1_11 = PLAYER_AND_BOT_UNITS[i]
 
-				if var_1_11 ~= var_1_0 and Unit.alive(var_1_11) then
+				if var_1_11 == var_1_0 or not Unit.alive(var_1_11) then
 					local var_1_12 = POSITION_LOOKUP[var_1_11]
-					local var_1_13 = Vector3.distance_squared(var_1_7, var_1_12)
+					local distance_squared = Vector3.distance_squared(var_1_7, var_1_12)
 
-					if var_1_13 < var_1_6 and var_1_13 < var_1_10 then
+					if not (not (distance_squared < num) or not (distance_squared < num_2)) then
 						var_1_9 = var_1_11
-						var_1_10 = var_1_13
+						num_2 = distance_squared
 					end
 				end
 			end
 
-			if var_1_9 then
+			if not var_1_9 then
 				local var_1_14 = var_1_9
-				local var_1_15 = arg_1_2[2] * var_1_4.multiplier
-				local var_1_16 = "heal_from_proc"
+				local num_3 = arg_1_2[2] * template.multiplier
+				local str = "heal_from_proc"
 
-				DamageUtils.heal_network(var_1_14, arg_1_0, var_1_15, var_1_16)
+				DamageUtils.heal_network(var_1_14, arg_1_0, num_3, str)
 			end
 		end
 	end,
-	add_heal_percent_of_damage_taken_over_time_buff = function(arg_2_0, arg_2_1, arg_2_2)
-		if Unit.alive(arg_2_0) then
+	add_heal_percent_of_damage_taken_over_time_buff = function (arg_2_0, arg_2_1, arg_2_2)
+		-- function 2
+		if not Unit.alive(arg_2_0) then
 			local var_2_0 = arg_2_2[1]
 			local var_2_1 = arg_2_2[2]
-			local var_2_2 = AiUtils.unit_breed(var_2_0)
+			local unit_breed = AiUtils.unit_breed(var_2_0)
 
-			if var_2_2 and not var_2_2.is_hero then
-				local var_2_3 = ScriptUnit.has_extension(arg_2_0, "health_system")
+			if not (not unit_breed and unit_breed.is_hero) then
+				local has_extension = ScriptUnit.has_extension(arg_2_0, "health_system")
 
-				if var_2_3 and var_2_1 < var_2_3:current_health() then
-					local var_2_4 = ScriptUnit.has_extension(arg_2_0, "buff_system")
-					local var_2_5 = arg_2_1.template
-					local var_2_6 = var_2_5.heal_amount_fraction * var_2_1
-					local var_2_7 = var_2_5.buff_to_add
+				if not (not has_extension and not (var_2_1 < has_extension:current_health())) then
+					local has_extension_2 = ScriptUnit.has_extension(arg_2_0, "buff_system")
+					local template = arg_2_1.template
+					local num = template.heal_amount_fraction * var_2_1
+					local buff_to_add = template.buff_to_add
 
-					table.clear(var_0_1)
+					table.clear(tbl)
 
-					var_0_1.external_optional_bonus = var_2_6
+					tbl.external_optional_bonus = num
 
-					var_2_4:add_buff(var_2_7, var_0_1)
+					has_extension_2:add_buff(buff_to_add, tbl)
 				end
 			end
 		end
 	end,
-	check_for_instantly_killing_crit = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	check_for_instantly_killing_crit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+		-- function 3
 		if not Managers.player.is_server then
 			return
 		end
@@ -273,177 +276,241 @@ var_0_0.proc_functions = {
 		local var_3_2 = arg_3_2[arg_3_4.is_critical_strike]
 		local var_3_3 = arg_3_2[arg_3_4.PROC_MODIFIABLE]
 
-		if var_3_2 and ALIVE[arg_3_0] and ALIVE[var_3_0] then
-			local var_3_4 = ScriptUnit.extension(var_3_0, "health_system")
-			local var_3_5 = arg_3_1.template
-			local var_3_6 = Unit.get_data(var_3_0, "breed")
-			local var_3_7 = var_3_6 and var_3_6.boss
-			local var_3_8 = var_3_5.damage_multiplier
+		if not var_3_2 and not ALIVE[arg_3_0] and not ALIVE[var_3_0] then
+			local extension = ScriptUnit.extension(var_3_0, "health_system")
+			local template = arg_3_1.template
+			local get_data = Unit.get_data(var_3_0, "breed")
+			local flag = not get_data and get_data.boss
+			local damage_multiplier = template.damage_multiplier
 
-			if var_3_7 then
-				var_3_8 = var_3_5.boss_damage_multiplier
+			if not flag then
+				damage_multiplier = template.boss_damage_multiplier
 			end
 
-			local var_3_9 = var_3_1 * var_3_8
-			local var_3_10 = var_3_5.proc_chance
-			local var_3_11 = var_3_4:current_health()
+			local num = var_3_1 * damage_multiplier
+			local proc_chance = template.proc_chance
+			local current_health = extension:current_health()
 
-			if var_3_11 <= var_3_9 and var_3_10 > math.random() then
-				var_3_3.damage_amount = var_3_11
+			if not (current_health <= num) or not (proc_chance > math.random()) then
+				var_3_3.damage_amount = current_health
 			end
 		end
 	end,
-	markus_questing_knight_boss_kill_func = function(arg_4_0, arg_4_1, arg_4_2)
+	markus_questing_knight_boss_kill_func = function (arg_4_0, arg_4_1, arg_4_2)
+		-- function 4
 		if not Managers.state.network.is_server then
 			return
 		end
 
-		if ALIVE[arg_4_0] then
-			local var_4_0 = ScriptUnit.extension(arg_4_0, "talent_system"):has_talent("markus_questing_knight_passive_longer_duration", "empire_soldier", true)
+		if not ALIVE[arg_4_0] then
+			local has_talent = ScriptUnit.extension(arg_4_0, "talent_system"):has_talent("markus_questing_knight_passive_longer_duration", "empire_soldier", true)
 			local var_4_1
-			local var_4_2 = var_4_0 and "markus_questing_knight_passive_boss_kill_buff_increased_duration" or "markus_questing_knight_passive_boss_kill_buff"
-			local var_4_3 = ScriptUnit.extension(arg_4_0, "buff_system")
+			local flag
 
-			var_4_3:add_buff(var_4_2)
+			flag = not has_talent and "markus_questing_knight_passive_boss_kill_buff_increased_duration" and "markus_questing_knight_passive_boss_kill_buff"
 
-			local var_4_4 = var_4_3:get_non_stacking_buff("markus_questing_knight_passive_boss_kill")
+			local extension = ScriptUnit.extension(arg_4_0, "buff_system")
 
-			if var_4_4 then
-				var_4_3:remove_buff(var_4_4.id)
+			extension:add_buff(flag)
+
+			local get_non_stacking_buff = extension:get_non_stacking_buff("markus_questing_knight_passive_boss_kill")
+
+			if not get_non_stacking_buff then
+				extension:remove_buff(get_non_stacking_buff.id)
 			end
 		end
 	end,
-	markus_questing_knight_ability_kill_buff_func = function(arg_5_0, arg_5_1, arg_5_2)
-		if ALIVE[arg_5_0] then
+	markus_questing_knight_ability_kill_buff_func = function (arg_5_0, arg_5_1, arg_5_2)
+		-- function 5
+		if not ALIVE[arg_5_0] then
 			local var_5_0 = arg_5_2[1]
 			local var_5_1 = var_5_0[DamageDataIndex.DAMAGE_SOURCE_NAME]
 
-			if var_5_0 and var_5_1 == "markus_questingknight_career_skill_weapon" then
-				local var_5_2 = ScriptUnit.extension(arg_5_0, "buff_system")
-				local var_5_3 = arg_5_1.template.buff_to_add
+			if not (not var_5_0 and var_5_1 ~= "markus_questingknight_career_skill_weapon") then
+				local extension = ScriptUnit.extension(arg_5_0, "buff_system")
+				local buff_to_add = arg_5_1.template.buff_to_add
 
-				if var_5_2 then
-					var_5_2:add_buff(var_5_3)
+				if not extension then
+					extension:add_buff(buff_to_add)
 				end
 			end
 		end
 	end
 }
-var_0_0.buff_function_templates = {
-	update_markus_questing_knight_passive_aura = function(arg_6_0, arg_6_1, arg_6_2)
+lake.buff_function_templates = {
+	update_markus_questing_knight_passive_aura = function (arg_6_0, arg_6_1, arg_6_2)
+		-- function 6
 		if not Managers.state.network.is_server then
 			return
 		end
 
-		local var_6_0 = arg_6_1.range
-		local var_6_1 = var_6_0 * var_6_0
+		local range = arg_6_1.range
+		local num = range * range
 		local var_6_2 = POSITION_LOOKUP[arg_6_0]
-		local var_6_3 = Managers.state.entity:system("buff_system")
-		local var_6_4 = Managers.state.side.side_by_unit[arg_6_0].PLAYER_AND_BOT_UNITS
-		local var_6_5 = #var_6_4
-		local var_6_6 = ScriptUnit.extension(arg_6_0, "talent_system")
-		local var_6_7 = var_6_6:has_talent("markus_questing_knight_passive_longer_duration", "empire_soldier", true)
-		local var_6_8 = var_6_6:has_talent("markus_questing_knight_passive_tanking_improved", "empire_soldier", true)
-		local var_6_9 = ScriptUnit.extension(arg_6_0, "buff_system")
-		local var_6_10 = {
+		local system = Managers.state.entity:system("buff_system")
+		local PLAYER_AND_BOT_UNITS = Managers.state.side.side_by_unit[arg_6_0].PLAYER_AND_BOT_UNITS
+		local count = #PLAYER_AND_BOT_UNITS
+		local extension = ScriptUnit.extension(arg_6_0, "talent_system")
+		local has_talent = extension:has_talent("markus_questing_knight_passive_longer_duration", "empire_soldier", true)
+		local has_talent_2 = extension:has_talent("markus_questing_knight_passive_tanking_improved", "empire_soldier", true)
+		local extension_2 = ScriptUnit.extension(arg_6_0, "buff_system")
+		local tbl = {
 			{
 				buff_to_add = "markus_questing_knight_boss_aura_party",
 				apply_to_party = true,
 				apply_to_self = false,
-				apply = var_6_9:has_buff_perk("boss_aura")
+				apply = extension_2:has_buff_perk("boss_aura")
 			},
 			{
 				buff_to_add = "markus_questing_knight_specials_aura_party",
 				apply_to_party = true,
 				apply_to_self = false,
-				apply = var_6_9:has_buff_perk("specials_aura")
+				apply = extension_2:has_buff_perk("specials_aura")
 			},
 			{
 				buff_to_add = "markus_questing_knight_elites_aura_party",
 				apply_to_party = true,
 				apply_to_self = false,
-				apply = var_6_9:has_buff_perk("elites_aura")
-			},
-			{
-				buff_to_add = "markus_questing_knight_super_aura_party",
-				apply_to_party = true,
-				apply_to_self = true,
-				apply = var_6_7 and var_6_9:has_buff_perk("boss_aura") and var_6_9:has_buff_perk("specials_aura") and var_6_9:has_buff_perk("elites_aura")
-			},
-			{
-				buff_to_add = "markus_questing_knight_passive_tank_buff",
-				apply_to_party = false,
-				apply_to_self = true,
-				apply = var_6_8 and (var_6_9:has_buff_perk("boss_aura") or var_6_9:has_buff_perk("specials_aura") or var_6_9:has_buff_perk("elites_aura"))
+				apply = extension_2:has_buff_perk("elites_aura")
 			}
 		}
-		local var_6_11 = #var_6_10
+		local tbl_2 = {
+			buff_to_add = "markus_questing_knight_super_aura_party",
+			apply_to_party = true,
+			apply_to_self = true
+		}
 
-		for iter_6_0 = 1, var_6_5 do
-			local var_6_12 = var_6_4[iter_6_0]
+		if not has_talent then
+			-- Nothing
+		end
 
-			if Unit.alive(var_6_12) then
-				for iter_6_1 = 1, var_6_11 do
-					local var_6_13 = var_6_10[iter_6_1]
-					local var_6_14 = var_6_13.apply and (var_6_12 == arg_6_0 and var_6_13.apply_to_self or var_6_12 ~= arg_6_0 and var_6_13.apply_to_party)
-					local var_6_15 = var_6_13.buff_to_add
-					local var_6_16 = POSITION_LOOKUP[var_6_12]
-					local var_6_17 = Vector3.distance_squared(var_6_2, var_6_16)
-					local var_6_18 = ScriptUnit.extension(var_6_12, "buff_system")
+		::label_6_0::
 
-					if var_6_1 < var_6_17 or not var_6_14 then
-						local var_6_19 = var_6_18:get_non_stacking_buff(var_6_15)
+		local has_buff_perk = extension_2:has_buff_perk("boss_aura")
 
-						if var_6_19 then
-							local var_6_20 = var_6_19.server_id
+		if not has_buff_perk then
+			has_buff_perk = extension_2:has_buff_perk("specials_aura")
+			has_buff_perk = not has_buff_perk and extension_2:has_buff_perk("elites_aura")
+		end
 
-							if var_6_20 then
-								var_6_3:remove_server_controlled_buff(var_6_12, var_6_20)
+		::label_6_1::
+
+		tbl_2.apply = has_buff_perk
+		tbl[4] = tbl_2
+
+		local tbl_3 = {
+			buff_to_add = "markus_questing_knight_passive_tank_buff",
+			apply_to_party = false,
+			apply_to_self = true
+		}
+
+		if not has_talent_2 then
+			-- Nothing
+		end
+
+		::label_6_2::
+
+		local has_buff_perk_2 = extension_2:has_buff_perk("boss_aura")
+
+		if not has_buff_perk_2 then
+			has_buff_perk_2 = extension_2:has_buff_perk("specials_aura")
+			has_buff_perk_2 = has_buff_perk_2 or extension_2:has_buff_perk("elites_aura")
+		end
+
+		::label_6_3::
+
+		tbl_3.apply = has_buff_perk_2
+		tbl[5] = tbl_3
+
+		local count_2 = #tbl
+
+		for i = 1, count do
+			local var_6_16 = PLAYER_AND_BOT_UNITS[i]
+
+			if not Unit.alive(var_6_16) then
+				for j = 1, count_2 do
+					local var_6_17 = tbl[j]
+					local apply = var_6_17.apply
+
+					if not apply then
+						if var_6_16 == arg_6_0 then
+							apply = var_6_17.apply_to_self
+
+							if not apply then
+								-- Nothing
+							end
+						end
+
+						apply = var_6_16 == arg_6_0 or var_6_17.apply_to_party
+					end
+
+					::label_6_4::
+
+					local buff_to_add = var_6_17.buff_to_add
+					local var_6_20 = POSITION_LOOKUP[var_6_16]
+					local distance_squared = Vector3.distance_squared(var_6_2, var_6_20)
+					local extension_3 = ScriptUnit.extension(var_6_16, "buff_system")
+
+					if not (num < distance_squared or apply) then
+						local get_non_stacking_buff = extension_3:get_non_stacking_buff(buff_to_add)
+
+						if not get_non_stacking_buff then
+							local server_id = get_non_stacking_buff.server_id
+
+							if not server_id then
+								system:remove_server_controlled_buff(var_6_16, server_id)
 							end
 						end
 					end
 
-					if var_6_17 < var_6_1 and var_6_14 and not var_6_18:has_buff_type(var_6_15) then
-						local var_6_21 = var_6_3:add_buff(var_6_12, var_6_15, arg_6_0, true)
-						local var_6_22 = var_6_18:get_non_stacking_buff(var_6_15)
+					if not ((not (distance_squared < num) or not apply) and extension_3:has_buff_type(buff_to_add)) then
+						local add_buff = system:add_buff(var_6_16, buff_to_add, arg_6_0, true)
+						local get_non_stacking_buff_2 = extension_3:get_non_stacking_buff(buff_to_add)
 
-						if var_6_22 then
-							var_6_22.server_id = var_6_21
+						if not get_non_stacking_buff_2 then
+							get_non_stacking_buff_2.server_id = add_buff
 						end
 					end
 				end
 			end
 		end
 
-		if Unit.alive(arg_6_0) then
-			if not var_6_6:has_talent("markus_questing_knight_passive_convert_to_avatar_buff", "empire_soldier", true) then
+		if not Unit.alive(arg_6_0) then
+			if not extension:has_talent("markus_questing_knight_passive_convert_to_avatar_buff", "empire_soldier", true) then
 				return
 			end
 
-			local var_6_23 = ScriptUnit.extension(arg_6_0, "buff_system")
+			local extension_4 = ScriptUnit.extension(arg_6_0, "buff_system")
+			local has_buff_perk_3 = extension_4:has_buff_perk("boss_aura")
 
-			if var_6_23:has_buff_perk("boss_aura") and var_6_23:has_buff_perk("specials_aura") and var_6_23:has_buff_perk("elites_aura") then
-				local var_6_24 = var_6_23:get_non_stacking_buff("markus_questing_knight_passive_boss_kill_buff")
-				local var_6_25 = var_6_23:get_non_stacking_buff("markus_questing_knight_passive_special_kill_buff")
-				local var_6_26 = var_6_23:get_non_stacking_buff("markus_questing_knight_passive_elite_kill_buff")
+			if not has_buff_perk_3 then
+				has_buff_perk_3 = extension_4:has_buff_perk("specials_aura")
+				has_buff_perk_3 = not has_buff_perk_3 and extension_4:has_buff_perk("elites_aura")
+			end
 
-				var_6_23:remove_buff(var_6_24.id)
-				var_6_23:remove_buff(var_6_25.id)
-				var_6_23:remove_buff(var_6_26.id)
-				var_6_23:add_buff("markus_questing_knight_passive_avatar_buff_crit")
-				var_6_23:add_buff("markus_questing_knight_passive_avatar_buff_attack_speed")
+			if not has_buff_perk_3 then
+				local get_non_stacking_buff_3 = extension_4:get_non_stacking_buff("markus_questing_knight_passive_boss_kill_buff")
+				local get_non_stacking_buff_4 = extension_4:get_non_stacking_buff("markus_questing_knight_passive_special_kill_buff")
+				local get_non_stacking_buff_5 = extension_4:get_non_stacking_buff("markus_questing_knight_passive_elite_kill_buff")
+
+				extension_4:remove_buff(get_non_stacking_buff_3.id)
+				extension_4:remove_buff(get_non_stacking_buff_4.id)
+				extension_4:remove_buff(get_non_stacking_buff_5.id)
+				extension_4:add_buff("markus_questing_knight_passive_avatar_buff_crit")
+				extension_4:add_buff("markus_questing_knight_passive_avatar_buff_attack_speed")
 			end
 		end
 	end,
-	refund_damage_taken = function(arg_7_0, arg_7_1, arg_7_2)
+	refund_damage_taken = function (arg_7_0, arg_7_1, arg_7_2)
+		-- function 7
 		if not Managers.state.network.is_server then
 			return
 		end
 
-		if ALIVE[arg_7_0] then
-			local var_7_0 = arg_7_1.bonus
+		if not ALIVE[arg_7_0] then
+			local bonus = arg_7_1.bonus
 
-			DamageUtils.heal_network(arg_7_0, arg_7_0, var_7_0, "heal_from_proc")
+			DamageUtils.heal_network(arg_7_0, arg_7_0, bonus, "heal_from_proc")
 		end
 	end
 }

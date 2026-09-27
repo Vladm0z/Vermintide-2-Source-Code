@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/carousel/farmlands_pvp/world_spawn_zones.lua
 
-local var_0_0 = {
+local tbl = {
 	{
 		roaming_set = "random",
 		main_path_index = 1,
@@ -466,7 +466,7 @@ local var_0_0 = {
 		}
 	}
 }
-local var_0_1 = {
+local tbl_2 = {
 	{
 		path_length = 292.7594289779663,
 		travel_dist = {
@@ -1948,8 +1948,8 @@ local var_0_1 = {
 		}
 	}
 }
-local var_0_2 = {}
-local var_0_3 = {
+local tbl_3 = {}
+local tbl_4 = {
 	{
 		unique_zone_id = 1,
 		roaming_set = "random",
@@ -52016,7 +52016,7 @@ local var_0_3 = {
 		}
 	}
 }
-local var_0_4 = {
+local tbl_5 = {
 	-119.18756866455078,
 	-15.606268882751465,
 	-2.388911247253418,
@@ -56493,7 +56493,7 @@ local var_0_4 = {
 	0.5734641551971436,
 	0.8192306756973267
 }
-local var_0_5 = {
+local tbl_6 = {
 	{
 		285.7012023925781,
 		-292.06231689453125,
@@ -286895,20 +286895,20 @@ local var_0_5 = {
 		-0.8353416919708252
 	}
 }
-local var_0_6 = 46080
-local var_0_7 = 139
-local var_0_8 = 1429.9205274582
-local var_0_9 = "1"
+local num = 46080
+local num_2 = 139
+local num_3 = 1429.9205274582
+local str = "1"
 
 return {
-	version = var_0_9,
-	number_of_spawns = var_0_6,
-	path_markers = var_0_0,
-	zones = var_0_3,
-	cover_points = var_0_4,
-	num_main_zones = var_0_7,
-	position_lookup = var_0_5,
-	main_paths = var_0_1,
-	crossroads = var_0_2,
-	total_main_path_length = var_0_8
+	version = str,
+	number_of_spawns = num,
+	path_markers = tbl,
+	zones = tbl_4,
+	cover_points = tbl_5,
+	num_main_zones = num_2,
+	position_lookup = tbl_6,
+	main_paths = tbl_2,
+	crossroads = tbl_3,
+	total_main_path_length = num_3
 }

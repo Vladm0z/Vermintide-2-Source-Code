@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/javelin.lua
 
-local var_0_0 = 4
-local var_0_1 = 2
-local var_0_2 = {
+local num = 4
+local num_2 = 2
+local tbl = {
 	actions = {
 		action_one = {
 			default = {
@@ -10,8 +10,9 @@ local var_0_2 = {
 				kind = "melee_start",
 				attack_hold_input = "action_one_hold",
 				anim_event = "attack_swing_charge",
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
-					return arg_1_1 ~= "new_interupting_action" and arg_1_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
+					-- function 1
+					return arg_1_1 == "new_interupting_action" or arg_1_1 ~= "action_complete"
 				end,
 				total_time = math.huge,
 				buff_data = {
@@ -69,8 +70,9 @@ local var_0_2 = {
 						input = "action_one_hold"
 					}
 				},
-				condition_func = function(arg_2_0, arg_2_1, arg_2_2)
-					if arg_2_2 and (arg_2_2:total_remaining_ammo() <= 0 or arg_2_2:is_reloading()) then
+				condition_func = function (arg_2_0, arg_2_1, arg_2_2)
+					-- function 2
+					if not arg_2_2 and arg_2_2:total_remaining_ammo() <= 0 and not arg_2_2:is_reloading() then
 						return false
 					end
 
@@ -82,8 +84,9 @@ local var_0_2 = {
 				anim_end_event = "attack_finished",
 				anim_event = "attack_swing_charge",
 				attack_hold_input = "action_one_hold",
-				anim_end_event_condition_func = function(arg_3_0, arg_3_1)
-					return arg_3_1 ~= "new_interupting_action" and arg_3_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_3_0, arg_3_1)
+					-- function 3
+					return arg_3_1 == "new_interupting_action" or arg_3_1 ~= "action_complete"
 				end,
 				total_time = math.huge,
 				buff_data = {
@@ -147,11 +150,13 @@ local var_0_2 = {
 				anim_end_event = "attack_finished",
 				anim_event = "attack_chain_01",
 				attack_hold_input = "action_one_hold",
-				anim_end_event_condition_func = function(arg_4_0, arg_4_1)
-					return arg_4_1 ~= "new_interupting_action" and arg_4_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_4_0, arg_4_1)
+					-- function 4
+					return arg_4_1 == "new_interupting_action" or arg_4_1 ~= "action_complete"
 				end,
 				total_time = math.huge,
-				enter_function = function(arg_5_0, arg_5_1)
+				enter_function = function (arg_5_0, arg_5_1)
+					-- function 5
 					arg_5_1:reset_release_input()
 					arg_5_1:clear_input_buffer()
 				end,
@@ -196,11 +201,13 @@ local var_0_2 = {
 				anim_end_event = "attack_finished",
 				anim_event = "attack_chain_02",
 				attack_hold_input = "action_one_hold",
-				anim_end_event_condition_func = function(arg_6_0, arg_6_1)
-					return arg_6_1 ~= "new_interupting_action" and arg_6_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_6_0, arg_6_1)
+					-- function 6
+					return arg_6_1 == "new_interupting_action" or arg_6_1 ~= "action_complete"
 				end,
 				total_time = math.huge,
-				enter_function = function(arg_7_0, arg_7_1)
+				enter_function = function (arg_7_0, arg_7_1)
+					-- function 7
 					arg_7_1:reset_release_input()
 					arg_7_1:clear_input_buffer()
 				end,
@@ -245,11 +252,13 @@ local var_0_2 = {
 				anim_end_event = "attack_finished",
 				anim_event = "attack_chain_03",
 				attack_hold_input = "action_one_hold",
-				anim_end_event_condition_func = function(arg_8_0, arg_8_1)
-					return arg_8_1 ~= "new_interupting_action" and arg_8_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_8_0, arg_8_1)
+					-- function 8
+					return arg_8_1 == "new_interupting_action" or arg_8_1 ~= "action_complete"
 				end,
 				total_time = math.huge,
-				enter_function = function(arg_9_0, arg_9_1)
+				enter_function = function (arg_9_0, arg_9_1)
+					-- function 9
 					arg_9_1:reset_release_input()
 					arg_9_1:clear_input_buffer()
 				end,
@@ -313,8 +322,9 @@ local var_0_2 = {
 				anim_event = "attack_swing_stab",
 				height_mod = 4,
 				total_time = 0.9,
-				anim_end_event_condition_func = function(arg_10_0, arg_10_1)
-					return arg_10_1 ~= "new_interupting_action" and arg_10_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_10_0, arg_10_1)
+					-- function 10
+					return arg_10_1 == "new_interupting_action" or arg_10_1 ~= "action_complete"
 				end,
 				buff_data = {
 					{
@@ -330,7 +340,8 @@ local var_0_2 = {
 						buff_name = "planted_fast_decrease_movement"
 					}
 				},
-				enter_function = function(arg_11_0, arg_11_1)
+				enter_function = function (arg_11_0, arg_11_1)
+					-- function 11
 					arg_11_1:clear_input_buffer()
 
 					return arg_11_1:reset_release_input()
@@ -461,8 +472,9 @@ local var_0_2 = {
 				anim_event = "attack_swing_stab_02",
 				height_mod = 4,
 				total_time = 0.9,
-				anim_end_event_condition_func = function(arg_12_0, arg_12_1)
-					return arg_12_1 ~= "new_interupting_action" and arg_12_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_12_0, arg_12_1)
+					-- function 12
+					return arg_12_1 == "new_interupting_action" or arg_12_1 ~= "action_complete"
 				end,
 				buff_data = {
 					{
@@ -478,7 +490,8 @@ local var_0_2 = {
 						buff_name = "planted_fast_decrease_movement"
 					}
 				},
-				enter_function = function(arg_13_0, arg_13_1)
+				enter_function = function (arg_13_0, arg_13_1)
+					-- function 13
 					arg_13_1:clear_input_buffer()
 
 					return arg_13_1:reset_release_input()
@@ -608,8 +621,9 @@ local var_0_2 = {
 				anim_event = "attack_swing_stab_charge",
 				height_mod = 4,
 				total_time = 1,
-				anim_end_event_condition_func = function(arg_14_0, arg_14_1)
-					return arg_14_1 ~= "new_interupting_action" and arg_14_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_14_0, arg_14_1)
+					-- function 14
+					return arg_14_1 == "new_interupting_action" or arg_14_1 ~= "action_complete"
 				end,
 				buff_data = {
 					{
@@ -625,7 +639,8 @@ local var_0_2 = {
 						buff_name = "planted_fast_decrease_movement"
 					}
 				},
-				enter_function = function(arg_15_0, arg_15_1)
+				enter_function = function (arg_15_0, arg_15_1)
+					-- function 15
 					arg_15_1:clear_input_buffer()
 
 					return arg_15_1:reset_release_input()
@@ -762,10 +777,12 @@ local var_0_2 = {
 				anim_event = "attack_swing_left",
 				height_mod = 4,
 				total_time = 0.4,
-				anim_end_event_condition_func = function(arg_16_0, arg_16_1)
-					return arg_16_1 ~= "new_interupting_action" and arg_16_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_16_0, arg_16_1)
+					-- function 16
+					return arg_16_1 == "new_interupting_action" or arg_16_1 ~= "action_complete"
 				end,
-				enter_function = function(arg_17_0, arg_17_1)
+				enter_function = function (arg_17_0, arg_17_1)
+					-- function 17
 					arg_17_1:clear_input_buffer()
 
 					return arg_17_1:reset_release_input()
@@ -895,10 +912,12 @@ local var_0_2 = {
 				anim_event = "attack_swing_right",
 				height_mod = 4,
 				total_time = 0.6,
-				anim_end_event_condition_func = function(arg_18_0, arg_18_1)
-					return arg_18_1 ~= "new_interupting_action" and arg_18_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_18_0, arg_18_1)
+					-- function 18
+					return arg_18_1 == "new_interupting_action" or arg_18_1 ~= "action_complete"
 				end,
-				enter_function = function(arg_19_0, arg_19_1)
+				enter_function = function (arg_19_0, arg_19_1)
+					-- function 19
 					arg_19_1:clear_input_buffer()
 
 					return arg_19_1:reset_release_input()
@@ -1028,10 +1047,12 @@ local var_0_2 = {
 				anim_event = "attack_swing_up",
 				height_mod = 4,
 				total_time = 0.85,
-				anim_end_event_condition_func = function(arg_20_0, arg_20_1)
-					return arg_20_1 ~= "new_interupting_action" and arg_20_1 ~= "action_complete"
+				anim_end_event_condition_func = function (arg_20_0, arg_20_1)
+					-- function 20
+					return arg_20_1 == "new_interupting_action" or arg_20_1 ~= "action_complete"
 				end,
-				enter_function = function(arg_21_0, arg_21_1)
+				enter_function = function (arg_21_0, arg_21_1)
+					-- function 21
 					arg_21_1:clear_input_buffer()
 
 					return arg_21_1:reset_release_input()
@@ -1157,7 +1178,8 @@ local var_0_2 = {
 				anim_event = "attack_throw",
 				no_out_of_ammo_vo = true,
 				total_time = 0.55,
-				anim_end_event_condition_func = function(arg_22_0, arg_22_1)
+				anim_end_event_condition_func = function (arg_22_0, arg_22_1)
+					-- function 22
 					return arg_22_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {
@@ -1188,7 +1210,8 @@ local var_0_2 = {
 						end_time = math.huge
 					}
 				},
-				enter_function = function(arg_23_0, arg_23_1)
+				enter_function = function (arg_23_0, arg_23_1)
+					-- function 23
 					arg_23_1:clear_input_buffer()
 
 					return arg_23_1:reset_release_input()
@@ -1206,8 +1229,8 @@ local var_0_2 = {
 					no_stop_on_friendly_fire = true,
 					depth_damage_modifier_max = 1.2
 				},
-				alert_sound_range_fire = var_0_0,
-				alert_sound_range_hit = var_0_1,
+				alert_sound_range_fire = num,
+				alert_sound_range_hit = num_2,
 				recoil_settings = {
 					horizontal_climb = 0,
 					restore_duration = 0.2,
@@ -1231,7 +1254,8 @@ local var_0_2 = {
 				hold_input = "action_two_hold",
 				anim_event = "throw_charge",
 				allow_hold_toggle = true,
-				anim_end_event_condition_func = function(arg_24_0, arg_24_1)
+				anim_end_event_condition_func = function (arg_24_0, arg_24_1)
+					-- function 24
 					return arg_24_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -1276,21 +1300,25 @@ local var_0_2 = {
 					"zoom_in_trueflight",
 					"zoom_in"
 				},
-				zoom_condition_function = function(arg_25_0)
+				zoom_condition_function = function (arg_25_0)
+					-- function 25
 					return true
 				end,
-				unzoom_condition_function = function(arg_26_0, arg_26_1)
+				unzoom_condition_function = function (arg_26_0, arg_26_1)
+					-- function 26
 					return arg_26_1 == nil or arg_26_1.new_action ~= "action_one"
 				end,
-				condition_func = function(arg_27_0, arg_27_1, arg_27_2)
-					if arg_27_2 and (arg_27_2:total_remaining_ammo() <= 0 or arg_27_2:is_reloading()) then
+				condition_func = function (arg_27_0, arg_27_1, arg_27_2)
+					-- function 27
+					if not arg_27_2 and arg_27_2:total_remaining_ammo() <= 0 and not arg_27_2:is_reloading() then
 						return false
 					end
 
 					return true
 				end,
-				chain_condition_func = function(arg_28_0, arg_28_1, arg_28_2)
-					if arg_28_2 and (arg_28_2:total_remaining_ammo() <= 0 or arg_28_2:is_reloading()) then
+				chain_condition_func = function (arg_28_0, arg_28_1, arg_28_2)
+					-- function 28
+					if not arg_28_2 and arg_28_2:total_remaining_ammo() <= 0 and not arg_28_2:is_reloading() then
 						return false
 					end
 
@@ -1306,7 +1334,8 @@ local var_0_2 = {
 				hold_input = "action_two_hold",
 				anim_event = "throw_charge",
 				minimum_hold_time = 0.2,
-				anim_end_event_condition_func = function(arg_29_0, arg_29_1)
+				anim_end_event_condition_func = function (arg_29_0, arg_29_1)
+					-- function 29
 					return arg_29_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -1347,15 +1376,17 @@ local var_0_2 = {
 						end_time = math.huge
 					}
 				},
-				condition_func = function(arg_30_0, arg_30_1, arg_30_2)
-					if arg_30_2 and (arg_30_2:total_remaining_ammo() <= 0 or arg_30_2:is_reloading()) then
+				condition_func = function (arg_30_0, arg_30_1, arg_30_2)
+					-- function 30
+					if not arg_30_2 and arg_30_2:total_remaining_ammo() <= 0 and not arg_30_2:is_reloading() then
 						return false
 					end
 
 					return true
 				end,
-				chain_condition_func = function(arg_31_0, arg_31_1, arg_31_2)
-					if arg_31_2 and (arg_31_2:total_remaining_ammo() <= 0 or arg_31_2:is_reloading()) then
+				chain_condition_func = function (arg_31_0, arg_31_1, arg_31_2)
+					-- function 31
+					if not arg_31_2 and arg_31_2:total_remaining_ammo() <= 0 and not arg_31_2:is_reloading() then
 						return false
 					end
 
@@ -1374,7 +1405,8 @@ local var_0_2 = {
 				hold_input = "weapon_reload_hold",
 				anim_event = "reload",
 				total_time = 1.25,
-				anim_end_event_condition_func = function(arg_32_0, arg_32_1)
+				anim_end_event_condition_func = function (arg_32_0, arg_32_1)
+					-- function 32
 					return arg_32_1 ~= "new_interupting_action"
 				end,
 				buff_data = {
@@ -1385,7 +1417,8 @@ local var_0_2 = {
 						end_time = math.huge
 					}
 				},
-				enter_function = function(arg_33_0, arg_33_1)
+				enter_function = function (arg_33_0, arg_33_1)
+					-- function 33
 					arg_33_1:reset_release_input()
 					arg_33_1:clear_input_buffer()
 				end,
@@ -1403,15 +1436,17 @@ local var_0_2 = {
 						auto_chain = true
 					}
 				},
-				condition_func = function(arg_34_0, arg_34_1, arg_34_2)
-					if arg_34_2 and arg_34_2:total_remaining_ammo() < arg_34_2:max_ammo() then
+				condition_func = function (arg_34_0, arg_34_1, arg_34_2)
+					-- function 34
+					if not (not arg_34_2 and not (arg_34_2:total_remaining_ammo() < arg_34_2:max_ammo())) then
 						return true
 					end
 
 					return false
 				end,
-				chain_condition_func = function(arg_35_0, arg_35_1, arg_35_2)
-					if arg_35_2 and arg_35_2:total_remaining_ammo() < arg_35_2:max_ammo() then
+				chain_condition_func = function (arg_35_0, arg_35_1, arg_35_2)
+					-- function 35
+					if not (not arg_35_2 and not (arg_35_2:total_remaining_ammo() < arg_35_2:max_ammo())) then
 						return true
 					end
 
@@ -1453,33 +1488,33 @@ local var_0_2 = {
 		effective_against_charged = bit.bor(BreedCategory.Berserker, BreedCategory.Special, BreedCategory.Armored)
 	}
 }
-local var_0_3 = var_0_2.actions.action_one.throw_charged
+local throw_charged = tbl.actions.action_one.throw_charged
 
-var_0_2.default_loaded_projectile_settings = {
+tbl.default_loaded_projectile_settings = {
 	drop_multiplier = 0.03,
-	speed = var_0_3.speed,
-	gravity = ProjectileGravitySettings[var_0_3.projectile_info.gravity_settings]
+	speed = throw_charged.speed,
+	gravity = ProjectileGravitySettings[throw_charged.projectile_info.gravity_settings]
 }
-var_0_2.default_spread_template = "throwing_axe"
-var_0_2.right_hand_unit = "units/weapons/player/wpn_we_javelin_01/wpn_we_javelin_01"
-var_0_2.right_hand_attachment_node_linking = AttachmentNodeLinking.polearm
-var_0_2.left_hand_unit = "units/weapons/player/wpn_we_javelin_01/wpn_we_javelin_01"
-var_0_2.left_hand_attachment_node_linking = AttachmentNodeLinking.javelin
-var_0_2.start_hidden_left_3p = true
-var_0_2.display_unit = "units/weapons/weapon_display/display_2h_spears_wood_elf"
-var_0_2.crosshair_style = "projectile"
-var_0_2.no_ammo_reload_event = "to_ammo"
-var_0_2.reload_event = "to_ammo"
-var_0_2.buff_type = "RANGED"
-var_0_2.wield_anim = "to_javelin"
-var_0_2.wield_anim_no_ammo = "to_javelin_noammo"
-var_0_2.wield_anim_no_ammo_on_husk = true
-var_0_2.state_machine = "units/beings/player/first_person_base/state_machines/ranged/javelin"
-var_0_2.weapon_type = "POLEARM"
-var_0_2.default_projectile_action = var_0_2.actions.action_one.default
-var_0_2.dodge_count = 6
-var_0_2.destroy_indexed_projectiles = true
-var_0_2.buffs = {
+tbl.default_spread_template = "throwing_axe"
+tbl.right_hand_unit = "units/weapons/player/wpn_we_javelin_01/wpn_we_javelin_01"
+tbl.right_hand_attachment_node_linking = AttachmentNodeLinking.polearm
+tbl.left_hand_unit = "units/weapons/player/wpn_we_javelin_01/wpn_we_javelin_01"
+tbl.left_hand_attachment_node_linking = AttachmentNodeLinking.javelin
+tbl.start_hidden_left_3p = true
+tbl.display_unit = "units/weapons/weapon_display/display_2h_spears_wood_elf"
+tbl.crosshair_style = "projectile"
+tbl.no_ammo_reload_event = "to_ammo"
+tbl.reload_event = "to_ammo"
+tbl.buff_type = "RANGED"
+tbl.wield_anim = "to_javelin"
+tbl.wield_anim_no_ammo = "to_javelin_noammo"
+tbl.wield_anim_no_ammo_on_husk = true
+tbl.state_machine = "units/beings/player/first_person_base/state_machines/ranged/javelin"
+tbl.weapon_type = "POLEARM"
+tbl.default_projectile_action = tbl.actions.action_one.default
+tbl.dodge_count = 6
+tbl.destroy_indexed_projectiles = true
+tbl.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1.2
 	},
@@ -1487,16 +1522,16 @@ var_0_2.buffs = {
 		external_optional_multiplier = 1.2
 	}
 }
-var_0_2.wwise_dep_ammo = {
+tbl.wwise_dep_ammo = {
 	"wwise/javelin"
 }
-var_0_2.wwise_dep_right_hand = {
+tbl.wwise_dep_right_hand = {
 	"wwise/javelin"
 }
-var_0_2.wwise_dep_left_hand = {
+tbl.wwise_dep_left_hand = {
 	"wwise/javelin"
 }
-var_0_2.aim_assist_settings = {
+tbl.aim_assist_settings = {
 	max_range = 50,
 	no_aim_input_multiplier = 0,
 	always_auto_aim = true,
@@ -1509,7 +1544,7 @@ var_0_2.aim_assist_settings = {
 		skaven_slave = 1
 	}
 }
-var_0_2.weapon_diagram = {
+tbl.weapon_diagram = {
 	light_attack = {
 		[DamageTypes.ARMOR_PIERCING] = 2,
 		[DamageTypes.CLEAVE] = 1,
@@ -1525,12 +1560,12 @@ var_0_2.weapon_diagram = {
 		[DamageTypes.DAMAGE] = 7
 	}
 }
-var_0_2.tooltip_keywords = {
+tbl.tooltip_keywords = {
 	"weapon_keyword_armour_piercing",
 	"weapon_keyword_sniper",
 	"weapon_keyword_versatile"
 }
-var_0_2.tooltip_compare = {
+tbl.tooltip_compare = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -1540,7 +1575,7 @@ var_0_2.tooltip_compare = {
 		sub_action_name = "throw_charged"
 	}
 }
-var_0_2.tooltip_detail = {
+tbl.tooltip_detail = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -1560,12 +1595,12 @@ var_0_2.tooltip_detail = {
 	}
 }
 
-local var_0_4 = table.clone(var_0_2)
+local clone = table.clone(tbl)
 
-var_0_4.actions.action_one.throw_charged.impact_data.damage_profile = "thrown_javelin_vs"
-var_0_4.ammo_data.max_ammo = 3
+clone.actions.action_one.throw_charged.impact_data.damage_profile = "thrown_javelin_vs"
+clone.ammo_data.max_ammo = 3
 
 return {
-	javelin_template = table.clone(var_0_2),
-	javelin_template_vs = table.clone(var_0_4)
+	javelin_template = table.clone(tbl),
+	javelin_template_vs = table.clone(clone)
 }

@@ -1,23 +1,41 @@
 -- chunkname: @scripts/utils/input_helper.lua
 
+local InputUtils = InputUtils
+
 InputUtils = InputUtils or {}
+InputUtils = InputUtils
 
-function InputUtils.keymaps_key_approved(arg_1_0)
-	local var_1_0 = PLATFORM
+InputUtils.keymaps_key_approved = function (arg_1_0)
+	-- function 1
+	local PLATFORM = PLATFORM
 
-	if IS_WINDOWS then
-		return (arg_1_0 == var_1_0 or arg_1_0 == "xb1" or arg_1_0 == "ps_pad") and true or nil
-	elseif IS_XB1 then
-		return (arg_1_0 == var_1_0 or arg_1_0 == "win32") and true or nil
+	if not IS_WINDOWS then
+		local flag
+
+		flag = arg_1_0 == PLATFORM or arg_1_0 == "xb1" or arg_1_0 == "ps_pad" or true or nil
+
+		return flag
+	elseif not IS_XB1 then
+		local flag_2
+
+		flag_2 = arg_1_0 == PLATFORM or arg_1_0 == "win32" or true or nil
+
+		return flag_2
 	else
-		return arg_1_0 == var_1_0 and true or nil
+		local flag_3
+
+		flag_3 = arg_1_0 ~= PLATFORM or not true or nil
+
+		return flag_3
 	end
 end
 
-function InputUtils.get_platform_keymaps(arg_2_0, arg_2_1)
-	return arg_2_0[arg_2_1 or PLATFORM]
+InputUtils.get_platform_keymaps = function (self, arg_2_1)
+	-- function 2
+	return self[arg_2_1 or PLATFORM]
 end
 
-function InputUtils.get_platform_filters(arg_3_0, arg_3_1)
-	return arg_3_0[arg_3_1 or PLATFORM]
+InputUtils.get_platform_filters = function (self, arg_3_1)
+	-- function 3
+	return self[arg_3_1 or PLATFORM]
 end

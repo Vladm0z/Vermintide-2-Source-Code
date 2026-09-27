@@ -10,14 +10,14 @@ require("scripts/ui/views/hero_view/craft_pages/craft_page_convert_dust_console"
 
 local var_0_0 = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_crafting_console_definitions")
 local var_0_1, var_0_2, var_0_3 = dofile("scripts/settings/crafting/crafting_recipes")
-local var_0_4 = var_0_0.widgets
-local var_0_5 = var_0_0.category_settings
-local var_0_6 = var_0_0.scenegraph_definition
-local var_0_7 = var_0_0.animation_definitions
-local var_0_8 = var_0_0.generic_input_actions
-local var_0_9 = var_0_0.input_actions
-local var_0_10 = false
-local var_0_11 = {
+local widgets = var_0_0.widgets
+local category_settings = var_0_0.category_settings
+local scenegraph_definition = var_0_0.scenegraph_definition
+local animation_definitions = var_0_0.animation_definitions
+local generic_input_actions = var_0_0.generic_input_actions
+local input_actions = var_0_0.input_actions
+local flag = false
+local tbl = {
 	{
 		sound_event_enter = "play_gui_equipment_button",
 		name = "salvage",
@@ -65,368 +65,393 @@ local var_0_11 = {
 HeroWindowCraftingConsole = class(HeroWindowCraftingConsole)
 HeroWindowCraftingConsole.NAME = "HeroWindowCraftingConsole"
 
-function HeroWindowCraftingConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
+HeroWindowCraftingConsole.on_enter = function (self, arg_1_1, arg_1_2)
+	-- function 1
 	print("[HeroViewWindow] Enter Substate HeroWindowCraftingConsole")
 
-	arg_1_0.parent = arg_1_1.parent
+	self.parent = arg_1_1.parent
 
-	local var_1_0 = arg_1_1.ingame_ui_context
+	local ingame_ui_context = arg_1_1.ingame_ui_context
 
-	arg_1_0.ui_renderer = var_1_0.ui_renderer
-	arg_1_0.ui_top_renderer = var_1_0.ui_top_renderer
-	arg_1_0.input_manager = var_1_0.input_manager
-	arg_1_0.statistics_db = var_1_0.statistics_db
-	arg_1_0.render_settings = {
+	self.ui_renderer = ingame_ui_context.ui_renderer
+	self.ui_top_renderer = ingame_ui_context.ui_top_renderer
+	self.input_manager = ingame_ui_context.input_manager
+	self.statistics_db = ingame_ui_context.statistics_db
+	self.render_settings = {
 		snap_pixel_positions = true
 	}
-	arg_1_0.crafting_manager = Managers.state.crafting
-	arg_1_0.wwise_world = arg_1_1.wwise_world
+	self.crafting_manager = Managers.state.crafting
+	self.wwise_world = arg_1_1.wwise_world
 
-	local var_1_1 = Managers.player
+	local player = Managers.player
 
-	arg_1_0._stats_id = var_1_1:local_player():stats_id()
-	arg_1_0.player_manager = var_1_1
-	arg_1_0.peer_id = var_1_0.peer_id
-	arg_1_0._animations = {}
+	self._stats_id = player:local_player():stats_id()
+	self.player_manager = player
+	self.peer_id = ingame_ui_context.peer_id
+	self._animations = {}
 
-	arg_1_0:create_ui_elements(arg_1_1, arg_1_2)
-	arg_1_0:_set_crafting_glow_progress(0)
+	self:create_ui_elements(arg_1_1, arg_1_2)
+	self:_set_crafting_glow_progress(0)
 
-	arg_1_0.hero_name = arg_1_1.hero_name
-	arg_1_0.career_index = arg_1_1.career_index
-	arg_1_0.profile_index = arg_1_1.profile_index
-	arg_1_0._page_params = {
-		wwise_world = arg_1_0.wwise_world,
-		ingame_ui_context = var_1_0,
-		parent = arg_1_0,
-		hero_name = arg_1_0.hero_name,
-		career_index = arg_1_0.career_index,
-		profile_index = arg_1_0.profile_index
+	self.hero_name = arg_1_1.hero_name
+	self.career_index = arg_1_1.career_index
+	self.profile_index = arg_1_1.profile_index
+	self._page_params = {
+		wwise_world = self.wwise_world,
+		ingame_ui_context = ingame_ui_context,
+		parent = self,
+		hero_name = self.hero_name,
+		career_index = self.career_index,
+		profile_index = self.profile_index
 	}
-	arg_1_0.unblocked_services = {}
-	arg_1_0.unblocked_services_n = 0
+	self.unblocked_services = {}
+	self.unblocked_services_n = 0
 
-	local var_1_2 = arg_1_1.recipe_index or 1
+	local recipe_index = arg_1_1.recipe_index
 
-	arg_1_0:_change_recipe_page(var_1_2)
-	arg_1_0:_start_transition_animation("on_enter")
-	arg_1_0:_start_transition_animation("reset_crafting")
+	recipe_index = recipe_index or 1
+
+	self:_change_recipe_page(recipe_index)
+	self:_start_transition_animation("on_enter")
+	self:_start_transition_animation("reset_crafting")
 end
 
-function HeroWindowCraftingConsole._start_transition_animation(arg_2_0, arg_2_1)
-	local var_2_0 = {
-		wwise_world = arg_2_0.wwise_world,
-		render_settings = arg_2_0.render_settings
+HeroWindowCraftingConsole._start_transition_animation = function (self, arg_2_1)
+	-- function 2
+	local tbl = {
+		wwise_world = self.wwise_world,
+		render_settings = self.render_settings
 	}
-	local var_2_1 = arg_2_0._widgets_by_name
-	local var_2_2 = arg_2_0.ui_animator:start_animation(arg_2_1, var_2_1, var_0_6, var_2_0)
+	local _widgets_by_name = self._widgets_by_name
+	local start_animation = self.ui_animator:start_animation(arg_2_1, _widgets_by_name, scenegraph_definition, tbl)
 
-	arg_2_0._animations[arg_2_1] = var_2_2
+	self._animations[arg_2_1] = start_animation
 end
 
-function HeroWindowCraftingConsole.create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
-	arg_3_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_6)
+HeroWindowCraftingConsole.create_ui_elements = function (self, arg_3_1, arg_3_2)
+	-- function 3
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	local var_3_0 = {}
-	local var_3_1 = {}
+	local tbl = {}
+	local tbl_2 = {}
 
-	for iter_3_0, iter_3_1 in pairs(var_0_4) do
-		local var_3_2 = UIWidget.init(iter_3_1)
+	for k, v in pairs(widgets) do
+		local var_3_2 = UIWidget.init(v)
 
-		var_3_0[#var_3_0 + 1] = var_3_2
-		var_3_1[iter_3_0] = var_3_2
+		tbl[#tbl + 1] = var_3_2
+		tbl_2[k] = var_3_2
 	end
 
-	arg_3_0._widgets = var_3_0
-	arg_3_0._widgets_by_name = var_3_1
+	self._widgets = tbl
+	self._widgets_by_name = tbl_2
 
-	local var_3_3 = Managers.input:get_service("hero_view")
-	local var_3_4 = UILayer.default + 300
+	local get_service = Managers.input:get_service("hero_view")
+	local num = UILayer.default + 300
 
-	arg_3_0._menu_input_description = MenuInputDescriptionUI:new(nil, arg_3_0.ui_top_renderer, var_3_3, 7, var_3_4, var_0_8.default, true)
+	self._menu_input_description = MenuInputDescriptionUI:new(nil, self.ui_top_renderer, get_service, 7, num, generic_input_actions.default, true)
 
-	arg_3_0._menu_input_description:set_input_description(nil)
-	UIRenderer.clear_scenegraph_queue(arg_3_0.ui_renderer)
+	self._menu_input_description:set_input_description(nil)
+	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
-	arg_3_0.ui_animator = UIAnimator:new(arg_3_0.ui_scenegraph, var_0_7)
+	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
 
-	if arg_3_2 then
-		local var_3_5 = arg_3_0.ui_scenegraph.window.local_position
+	if not arg_3_2 then
+		local local_position = self.ui_scenegraph.window.local_position
 
-		var_3_5[1] = var_3_5[1] + arg_3_2[1]
-		var_3_5[2] = var_3_5[2] + arg_3_2[2]
-		var_3_5[3] = var_3_5[3] + arg_3_2[3]
+		local_position[1] = local_position[1] + arg_3_2[1]
+		local_position[2] = local_position[2] + arg_3_2[2]
+		local_position[3] = local_position[3] + arg_3_2[3]
 	end
 end
 
-function HeroWindowCraftingConsole.on_exit(arg_4_0, arg_4_1)
+HeroWindowCraftingConsole.on_exit = function (self, arg_4_1)
+	-- function 4
 	print("[HeroViewWindow] Exit Substate HeroWindowCraftingConsole")
 
-	arg_4_0.ui_animator = nil
+	self.ui_animator = nil
 
-	if arg_4_0._active_page then
-		local var_4_0 = arg_4_0._page_params
+	if not self._active_page then
+		local _page_params = self._page_params
 
-		arg_4_0._active_page:on_exit(var_4_0)
+		self._active_page:on_exit(_page_params)
 	end
 end
 
-function HeroWindowCraftingConsole.set_input_description(arg_5_0, arg_5_1)
-	if not arg_5_1 or var_0_9[arg_5_1] then
-		arg_5_0._current_input_desc_name = arg_5_1
+HeroWindowCraftingConsole.set_input_description = function (self, arg_5_1)
+	-- function 5
+	if not arg_5_1 and not input_actions[arg_5_1] then
+		self._current_input_desc_name = arg_5_1
 
-		if not arg_5_0.parent:filter_selected() then
-			arg_5_0._menu_input_description:set_input_description(arg_5_1 and var_0_9[arg_5_1])
+		if not self.parent:filter_selected() then
+			self._menu_input_description:set_input_description(not arg_5_1 and input_actions[arg_5_1])
 		end
 	else
 		Application.warning("[HeroWindowCraftingConsole:set_input_description] Could not set input desc: " .. tostring(arg_5_1))
 	end
 end
 
-function HeroWindowCraftingConsole.update(arg_6_0, arg_6_1, arg_6_2)
-	if var_0_10 then
-		var_0_10 = false
+HeroWindowCraftingConsole.update = function (self, arg_6_1, arg_6_2)
+	-- function 6
+	if not flag then
+		flag = false
 
-		arg_6_0:create_ui_elements()
+		self:create_ui_elements()
 	end
 
-	local var_6_0 = arg_6_0._current_craft_id
-	local var_6_1 = arg_6_0._animations
+	local _current_craft_id = self._current_craft_id
+	local _animations = self._animations
 
-	if var_6_0 then
-		local var_6_2 = Managers.backend:get_interface("crafting")
+	if not _current_craft_id then
+		local get_interface = Managers.backend:get_interface("crafting")
 
-		if var_6_2:is_craft_complete(var_6_0) then
-			local var_6_3 = var_6_2:get_craft_result(var_6_0)
+		if not get_interface:is_craft_complete(_current_craft_id) then
+			local get_craft_result = get_interface:get_craft_result(_current_craft_id)
 
-			arg_6_0:craft_complete(var_6_3)
+			self:craft_complete(get_craft_result)
 
-			arg_6_0._current_craft_id = nil
+			self._current_craft_id = nil
 		end
 	end
 
-	if arg_6_0._can_start_craft_exit_animation and not var_6_1.craft_enter then
-		arg_6_0:_start_transition_animation("craft_exit")
+	if not (not self._can_start_craft_exit_animation and _animations.craft_enter) then
+		self:_start_transition_animation("craft_exit")
 
-		arg_6_0._can_start_craft_exit_animation = nil
+		self._can_start_craft_exit_animation = nil
 
-		if arg_6_0._active_page then
-			arg_6_0._active_page:on_craft_completed()
+		if not self._active_page then
+			self._active_page:on_craft_completed()
 		end
 	end
 
-	if arg_6_0._active_page then
-		arg_6_0._active_page:update(arg_6_1, arg_6_2)
+	if not self._active_page then
+		self._active_page:update(arg_6_1, arg_6_2)
 	end
 
-	arg_6_0:_update_animations(arg_6_1)
-	arg_6_0:_handle_input(arg_6_1, arg_6_2)
-	arg_6_0:_update_input_desc()
-	arg_6_0:draw(arg_6_1)
+	self:_update_animations(arg_6_1)
+	self:_handle_input(arg_6_1, arg_6_2)
+	self:_update_input_desc()
+	self:draw(arg_6_1)
 end
 
-function HeroWindowCraftingConsole._update_input_desc(arg_7_0)
-	local var_7_0 = arg_7_0.parent:filter_selected()
-	local var_7_1 = arg_7_0.parent:filter_active()
+HeroWindowCraftingConsole._update_input_desc = function (self)
+	-- function 7
+	local filter_selected = self.parent:filter_selected()
+	local filter_active = self.parent:filter_active()
 
-	if var_7_0 == arg_7_0._filter_selected and var_7_1 == arg_7_0._filter_active then
+	if not (filter_selected ~= self._filter_selected or filter_active ~= self._filter_active) then
 		return
 	end
 
-	arg_7_0._menu_input_description:set_input_description(nil)
+	self._menu_input_description:set_input_description(nil)
 
-	if var_7_0 then
-		arg_7_0._menu_input_description:change_generic_actions(var_0_8.filter_selected)
-	elseif var_7_1 then
-		arg_7_0._menu_input_description:change_generic_actions(var_0_8.filter_active)
+	if not filter_selected then
+		self._menu_input_description:change_generic_actions(generic_input_actions.filter_selected)
+	elseif not filter_active then
+		self._menu_input_description:change_generic_actions(generic_input_actions.filter_active)
 	else
-		local var_7_2 = arg_7_0._current_input_desc_name
+		local _current_input_desc_name = self._current_input_desc_name
 
-		arg_7_0._menu_input_description:change_generic_actions(var_0_8.default)
-		arg_7_0._menu_input_description:set_input_description(var_7_2 and var_0_9[var_7_2])
+		self._menu_input_description:change_generic_actions(generic_input_actions.default)
+		self._menu_input_description:set_input_description(not _current_input_desc_name and input_actions[_current_input_desc_name])
 	end
 
-	arg_7_0._filter_selected = var_7_0
+	self._filter_selected = filter_selected
 end
 
-function HeroWindowCraftingConsole.post_update(arg_8_0, arg_8_1, arg_8_2)
-	if arg_8_0._active_page and arg_8_0._active_page.post_update then
-		arg_8_0._active_page:post_update(arg_8_1, arg_8_2)
+HeroWindowCraftingConsole.post_update = function (self, arg_8_1, arg_8_2)
+	-- function 8
+	if not self._active_page and not self._active_page.post_update then
+		self._active_page:post_update(arg_8_1, arg_8_2)
 	end
 end
 
-function HeroWindowCraftingConsole._update_animations(arg_9_0, arg_9_1)
-	arg_9_0.ui_animator:update(arg_9_1)
+HeroWindowCraftingConsole._update_animations = function (self, arg_9_1)
+	-- function 9
+	self.ui_animator:update(arg_9_1)
 
-	local var_9_0 = arg_9_0._animations
-	local var_9_1 = arg_9_0.ui_animator
+	local _animations = self._animations
+	local ui_animator = self.ui_animator
 
-	for iter_9_0, iter_9_1 in pairs(var_9_0) do
-		if var_9_1:is_animation_completed(iter_9_1) then
-			var_9_1:stop_animation(iter_9_1)
+	for k, v in pairs(_animations) do
+		if not ui_animator:is_animation_completed(v) then
+			ui_animator:stop_animation(v)
 
-			var_9_0[iter_9_0] = nil
+			_animations[k] = nil
 
-			if iter_9_0 == "craft_exit" then
-				arg_9_0:on_craft_ended()
+			if k == "craft_exit" then
+				self:on_craft_ended()
 			end
 		end
 	end
 end
 
-function HeroWindowCraftingConsole._is_button_pressed(arg_10_0, arg_10_1)
-	local var_10_0 = arg_10_1.content.button_hotspot
+HeroWindowCraftingConsole._is_button_pressed = function (arg_10_0, arg_10_1)
+	-- function 10
+	local button_hotspot = arg_10_1.content.button_hotspot
 
-	if var_10_0.on_release then
-		var_10_0.on_release = false
+	if not button_hotspot.on_release then
+		button_hotspot.on_release = false
 
 		return true
 	end
 end
 
-function HeroWindowCraftingConsole._is_button_hovered(arg_11_0, arg_11_1)
-	if arg_11_1.content.button_hotspot.on_hover_enter then
+HeroWindowCraftingConsole._is_button_hovered = function (arg_11_0, arg_11_1)
+	-- function 11
+	if not arg_11_1.content.button_hotspot.on_hover_enter then
 		return true
 	end
 end
 
-function HeroWindowCraftingConsole._is_button_held(arg_12_0, arg_12_1)
-	local var_12_0 = arg_12_1.content.button_hotspot
+HeroWindowCraftingConsole._is_button_held = function (arg_12_0, arg_12_1)
+	-- function 12
+	local button_hotspot = arg_12_1.content.button_hotspot
 
-	if var_12_0.is_clicked then
-		return var_12_0.is_clicked
+	if not button_hotspot.is_clicked then
+		return button_hotspot.is_clicked
 	end
 end
 
-function HeroWindowCraftingConsole.set_focus(arg_13_0, arg_13_1)
-	arg_13_0._focused = arg_13_1
+HeroWindowCraftingConsole.set_focus = function (self, arg_13_1)
+	-- function 13
+	self._focused = arg_13_1
 end
 
-function HeroWindowCraftingConsole._handle_input(arg_14_0, arg_14_1, arg_14_2)
-	local var_14_0 = arg_14_0.parent:window_input_service()
-	local var_14_1 = arg_14_0.parent:filter_active()
+HeroWindowCraftingConsole._handle_input = function (self, arg_14_1, arg_14_2)
+	-- function 14
+	local window_input_service = self.parent:window_input_service()
+	local filter_active = self.parent:filter_active()
 
-	if var_14_0:get("back") and not var_14_1 then
-		arg_14_0.parent:set_layout_by_name("forge")
+	if not (not window_input_service:get("back") and filter_active) then
+		self.parent:set_layout_by_name("forge")
 	end
 
-	arg_14_0:_handle_tooltip_skip_input(var_14_0)
+	self:_handle_tooltip_skip_input(window_input_service)
 end
 
-function HeroWindowCraftingConsole._exit(arg_15_0, arg_15_1)
-	arg_15_0.exit = true
-	arg_15_0.exit_level_id = arg_15_1
+HeroWindowCraftingConsole._exit = function (self, arg_15_1)
+	-- function 15
+	self.exit = true
+	self.exit_level_id = arg_15_1
 end
 
-function HeroWindowCraftingConsole.draw(arg_16_0, arg_16_1)
-	local var_16_0 = arg_16_0.ui_renderer
-	local var_16_1 = arg_16_0.ui_top_renderer
-	local var_16_2 = arg_16_0.ui_scenegraph
-	local var_16_3 = arg_16_0.parent:window_input_service()
-	local var_16_4 = Managers.input:is_device_active("gamepad")
+HeroWindowCraftingConsole.draw = function (self, arg_16_1)
+	-- function 16
+	local ui_renderer = self.ui_renderer
+	local ui_top_renderer = self.ui_top_renderer
+	local ui_scenegraph = self.ui_scenegraph
+	local window_input_service = self.parent:window_input_service()
+	local is_device_active = Managers.input:is_device_active("gamepad")
 
-	UIRenderer.begin_pass(var_16_1, var_16_2, var_16_3, arg_16_1, nil, arg_16_0.render_settings)
+	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, window_input_service, arg_16_1, nil, self.render_settings)
 
-	for iter_16_0, iter_16_1 in ipairs(arg_16_0._widgets) do
-		UIRenderer.draw_widget(var_16_1, iter_16_1)
+	for i, v in ipairs(self._widgets) do
+		UIRenderer.draw_widget(ui_top_renderer, v)
 	end
 
-	local var_16_5 = arg_16_0._active_node_widgets
+	local _active_node_widgets = self._active_node_widgets
 
-	if var_16_5 then
-		for iter_16_2, iter_16_3 in ipairs(var_16_5) do
-			UIRenderer.draw_widget(var_16_1, iter_16_3)
+	if not _active_node_widgets then
+		for i_2, v_2 in ipairs(_active_node_widgets) do
+			UIRenderer.draw_widget(ui_top_renderer, v_2)
 		end
 	end
 
-	UIRenderer.end_pass(var_16_1)
+	UIRenderer.end_pass(ui_top_renderer)
 
-	if var_16_4 then
-		arg_16_0._menu_input_description:draw(var_16_1, arg_16_1)
+	if not is_device_active then
+		self._menu_input_description:draw(ui_top_renderer, arg_16_1)
 	end
 end
 
-function HeroWindowCraftingConsole._play_sound(arg_17_0, arg_17_1)
-	arg_17_0.parent:play_sound(arg_17_1)
+HeroWindowCraftingConsole._play_sound = function (self, arg_17_1)
+	-- function 17
+	self.parent:play_sound(arg_17_1)
 end
 
-function HeroWindowCraftingConsole._change_recipe_page(arg_18_0, arg_18_1)
-	local var_18_0 = #var_0_11
-	local var_18_1 = var_0_11[arg_18_1].name
-	local var_18_2 = var_0_2[var_18_1]
-	local var_18_3 = var_18_2.ingredients
-	local var_18_4 = arg_18_0._widgets_by_name
+HeroWindowCraftingConsole._change_recipe_page = function (self, arg_18_1)
+	-- function 18
+	local count = #tbl
+	local name = tbl[arg_18_1].name
+	local var_18_2 = var_0_2[name]
+	local ingredients = var_18_2.ingredients
+	local _widgets_by_name = self._widgets_by_name
 
-	var_18_4.title_text.content.text = Localize(var_18_2.display_name)
-	var_18_4.description_text.content.text = Localize(var_18_2.description_text)
+	_widgets_by_name.title_text.content.text = Localize(var_18_2.display_name)
+	_widgets_by_name.description_text.content.text = Localize(var_18_2.description_text)
 
-	if arg_18_1 ~= arg_18_0._current_page or var_18_0 ~= arg_18_0._total_pages then
-		arg_18_0._total_pages = var_18_0
-		arg_18_0._current_page = arg_18_1
+	if not (arg_18_1 ~= self._current_page or count == self._total_pages) then
+		self._total_pages = count
+		self._current_page = arg_18_1
 		arg_18_1 = arg_18_1 or 1
 
-		arg_18_0:_set_page_index(arg_18_1)
+		self:_set_page_index(arg_18_1)
 	end
 
-	arg_18_0._selected_page_index = arg_18_1
+	self._selected_page_index = arg_18_1
 end
 
-function HeroWindowCraftingConsole.window_input_service(arg_19_0)
+HeroWindowCraftingConsole.window_input_service = function (arg_19_0)
+	-- function 19
 	return
 end
 
-function HeroWindowCraftingConsole._set_page_index(arg_20_0, arg_20_1)
-	local var_20_0 = arg_20_0._active_page
-	local var_20_1 = arg_20_0._page_params
-	local var_20_2 = var_0_11[arg_20_1]
-	local var_20_3 = var_20_2.name
-	local var_20_4 = var_20_2.class_name
+HeroWindowCraftingConsole._set_page_index = function (self, arg_20_1)
+	-- function 20
+	local _active_page = self._active_page
+	local _page_params = self._page_params
+	local var_20_2 = tbl[arg_20_1]
+	local name = var_20_2.name
+	local class_name = var_20_2.class_name
 
-	if var_20_0 then
-		if var_20_0.NAME == var_20_4 then
+	if not _active_page then
+		if _active_page.NAME == class_name then
 			return
 		end
 
-		if var_20_0.on_exit then
-			var_20_0:on_exit(var_20_1)
+		if not _active_page.on_exit then
+			_active_page:on_exit(_page_params)
 		end
 	end
 
-	local var_20_5 = rawget(_G, var_20_4):new()
+	local var_20_5 = rawget(_G, class_name):new()
 
-	arg_20_0.parent:set_selected_craft_page(var_20_3)
+	self.parent:set_selected_craft_page(name)
 
-	if var_20_5.on_enter then
-		var_20_5:on_enter(var_20_1, var_20_2)
+	if not var_20_5.on_enter then
+		var_20_5:on_enter(_page_params, var_20_2)
 	end
 
-	arg_20_0._active_page = var_20_5
+	self._active_page = var_20_5
 end
 
-function HeroWindowCraftingConsole._set_crafting_glow_progress(arg_21_0, arg_21_1)
+HeroWindowCraftingConsole._set_crafting_glow_progress = function (arg_21_0, arg_21_1)
+	-- function 21
 	arg_21_0._widgets_by_name.crafting_glow.style.texture_id.color[1] = 255 * arg_21_1
 end
 
-function HeroWindowCraftingConsole.on_craft_ended(arg_22_0)
-	local var_22_0 = arg_22_0._active_page
+HeroWindowCraftingConsole.on_craft_ended = function (self)
+	-- function 22
+	local _active_page = self._active_page
 
-	if var_22_0 and var_22_0.present_results then
-		var_22_0:present_results()
+	if not _active_page and not _active_page.present_results then
+		_active_page:present_results()
 	end
 
-	arg_22_0:unlock_input()
+	self:unlock_input()
 end
 
-function HeroWindowCraftingConsole.craft(arg_23_0, arg_23_1, arg_23_2)
-	local var_23_0 = arg_23_0.crafting_manager:craft(arg_23_1, arg_23_2)
+HeroWindowCraftingConsole.craft = function (self, arg_23_1, arg_23_2)
+	-- function 23
+	local craft = self.crafting_manager:craft(arg_23_1, arg_23_2)
 
-	if var_23_0 then
-		arg_23_0._waiting_for_craft = true
+	if not craft then
+		self._waiting_for_craft = true
 
-		arg_23_0:_start_transition_animation("craft_enter")
-		arg_23_0:lock_input()
+		self:_start_transition_animation("craft_enter")
+		self:lock_input()
 
-		arg_23_0._current_craft_id = var_23_0
+		self._current_craft_id = craft
 
 		return true
 	end
@@ -434,68 +459,75 @@ function HeroWindowCraftingConsole.craft(arg_23_0, arg_23_1, arg_23_2)
 	return false
 end
 
-function HeroWindowCraftingConsole.craft_complete(arg_24_0, arg_24_1)
-	arg_24_0._waiting_for_craft = false
-	arg_24_0._can_start_craft_exit_animation = true
+HeroWindowCraftingConsole.craft_complete = function (self, arg_24_1)
+	-- function 24
+	self._waiting_for_craft = false
+	self._can_start_craft_exit_animation = true
 
-	if arg_24_0._active_page then
-		arg_24_0._active_page:craft_result(arg_24_1)
+	if not self._active_page then
+		self._active_page:craft_result(arg_24_1)
 	end
 end
 
-function HeroWindowCraftingConsole.waiting_for_craft(arg_25_0)
-	return arg_25_0._waiting_for_craft
+HeroWindowCraftingConsole.waiting_for_craft = function (self)
+	-- function 25
+	return self._waiting_for_craft
 end
 
-function HeroWindowCraftingConsole.lock_input(arg_26_0)
-	local var_26_0 = arg_26_0.input_manager
+HeroWindowCraftingConsole.lock_input = function (self)
+	-- function 26
+	local input_manager = self.input_manager
 
-	arg_26_0:unlock_input(true)
+	self:unlock_input(true)
 
-	arg_26_0.unblocked_services_n = var_26_0:get_unblocked_services(nil, nil, arg_26_0.unblocked_services)
+	self.unblocked_services_n = input_manager:get_unblocked_services(nil, nil, self.unblocked_services)
 
-	var_26_0:device_block_services("keyboard", 1, arg_26_0.unblocked_services, arg_26_0.unblocked_services_n, "crafting")
-	var_26_0:device_block_services("gamepad", 1, arg_26_0.unblocked_services, arg_26_0.unblocked_services_n, "crafting")
-	var_26_0:device_block_services("mouse", 1, arg_26_0.unblocked_services, arg_26_0.unblocked_services_n, "crafting")
+	input_manager:device_block_services("keyboard", 1, self.unblocked_services, self.unblocked_services_n, "crafting")
+	input_manager:device_block_services("gamepad", 1, self.unblocked_services, self.unblocked_services_n, "crafting")
+	input_manager:device_block_services("mouse", 1, self.unblocked_services, self.unblocked_services_n, "crafting")
 end
 
-function HeroWindowCraftingConsole.unlock_input(arg_27_0)
-	local var_27_0 = arg_27_0.input_manager
+HeroWindowCraftingConsole.unlock_input = function (self)
+	-- function 27
+	local input_manager = self.input_manager
 
-	var_27_0:device_unblock_services("keyboard", 1, arg_27_0.unblocked_services, arg_27_0.unblocked_services_n)
-	var_27_0:device_unblock_services("gamepad", 1, arg_27_0.unblocked_services, arg_27_0.unblocked_services_n)
-	var_27_0:device_unblock_services("mouse", 1, arg_27_0.unblocked_services, arg_27_0.unblocked_services_n)
-	table.clear(arg_27_0.unblocked_services)
+	input_manager:device_unblock_services("keyboard", 1, self.unblocked_services, self.unblocked_services_n)
+	input_manager:device_unblock_services("gamepad", 1, self.unblocked_services, self.unblocked_services_n)
+	input_manager:device_unblock_services("mouse", 1, self.unblocked_services, self.unblocked_services_n)
+	table.clear(self.unblocked_services)
 
-	arg_27_0.unblocked_services_n = 0
+	self.unblocked_services_n = 0
 end
 
-function HeroWindowCraftingConsole._set_input_progress(arg_28_0, arg_28_1)
-	local var_28_0 = 43
-	local var_28_1 = 360 - var_28_0 * 2
-	local var_28_2 = 255 * math.min(arg_28_1 * 2, 1)
-	local var_28_3 = (var_28_0 + var_28_1 * arg_28_1) / 360
-	local var_28_4 = -math.degrees_to_radians(var_28_0 + var_28_1 * arg_28_1)
-	local var_28_5 = arg_28_0._widgets_by_name.craft_bar
+HeroWindowCraftingConsole._set_input_progress = function (self, arg_28_1)
+	-- function 28
+	local num = 43
+	local num_2 = 360 - num * 2
+	local num_3 = 255 * math.min(arg_28_1 * 2, 1)
+	local num_4 = (num + num_2 * arg_28_1) / 360
+	local num_5 = -math.degrees_to_radians(num + num_2 * arg_28_1)
+	local craft_bar = self._widgets_by_name.craft_bar
 
-	var_28_5.style.texture_id.gradient_threshold = var_28_3
-	var_28_5.style.texture_id.color[1] = 255
+	craft_bar.style.texture_id.gradient_threshold = num_4
+	craft_bar.style.texture_id.color[1] = 255
 
 	if arg_28_1 == 1 then
 		return true
 	end
 end
 
-function HeroWindowCraftingConsole.set_reward_tooltip_item(arg_29_0, arg_29_1)
-	arg_29_0._widgets_by_name.item_tooltip.content.item = arg_29_1
-	arg_29_0._tooltip_item_id = arg_29_1
+HeroWindowCraftingConsole.set_reward_tooltip_item = function (self, arg_29_1)
+	-- function 29
+	self._widgets_by_name.item_tooltip.content.item = arg_29_1
+	self._tooltip_item_id = arg_29_1
 end
 
-function HeroWindowCraftingConsole.has_active_reward_tooltip(arg_30_0)
-	return arg_30_0._tooltip_item_id
+HeroWindowCraftingConsole.has_active_reward_tooltip = function (self)
+	-- function 30
+	return self._tooltip_item_id
 end
 
-local var_0_12 = {
+local tbl_2 = {
 	"confirm_press",
 	"refresh_press",
 	"special_1_press",
@@ -506,20 +538,21 @@ local var_0_12 = {
 	"move_right"
 }
 
-function HeroWindowCraftingConsole._handle_tooltip_skip_input(arg_31_0, arg_31_1)
-	if arg_31_0:has_active_reward_tooltip() then
-		local var_31_0 = false
+HeroWindowCraftingConsole._handle_tooltip_skip_input = function (self, arg_31_1)
+	-- function 31
+	if not self:has_active_reward_tooltip() then
+		local flag = false
 
-		for iter_31_0, iter_31_1 in ipairs(var_0_12) do
-			if arg_31_1:get(iter_31_1) then
-				var_31_0 = true
+		for i, v in ipairs(tbl_2) do
+			if not arg_31_1:get(v) then
+				flag = true
 
 				break
 			end
 		end
 
-		if var_31_0 then
-			arg_31_0:set_reward_tooltip_item(nil)
+		if not flag then
+			self:set_reward_tooltip_item(nil)
 		end
 	end
 end

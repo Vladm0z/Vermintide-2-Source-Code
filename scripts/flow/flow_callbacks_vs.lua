@@ -1,23 +1,24 @@
 -- chunkname: @scripts/flow/flow_callbacks_vs.lua
 
-local var_0_0 = Boot.flow_return_table
-local var_0_1 = Unit.alive
+local flow_return_table = Boot.flow_return_table
+local alive = Unit.alive
 
-function flow_query_ghost_mode_active(arg_1_0)
-	local var_1_0 = arg_1_0.unit
+function flow_query_ghost_mode_active(self)
+	-- function 1
+	local unit = self.unit
 
-	if not var_0_1(var_1_0) then
-		var_0_0.active = false
-		var_0_0.not_active = false
+	if not alive(unit) then
+		flow_return_table.active = false
+		flow_return_table.not_active = false
 
 		return
 	end
 
-	local var_1_1 = ScriptUnit.has_extension(var_1_0, "ghost_mode_system")
-	local var_1_2 = var_1_1 and var_1_1:is_in_ghost_mode()
+	local has_extension = ScriptUnit.has_extension(unit, "ghost_mode_system")
+	local flag = not has_extension and has_extension:is_in_ghost_mode()
 
-	var_0_0.active = not not var_1_2
-	var_0_0.not_active = not var_1_2
+	flow_return_table.active = not not flag
+	flow_return_table.not_active = not flag
 
-	return var_0_0
+	return flow_return_table
 end

@@ -32,426 +32,477 @@ require("scripts/ui/views/hero_view/windows/hero_window_character_summary")
 DLCUtils.require_list("hero_view_windows")
 
 local var_0_0 = local_require("scripts/ui/views/hero_view/states/definitions/hero_view_state_overview_definitions")
-local var_0_1 = var_0_0.widgets
-local var_0_2 = var_0_0.scenegraph_definition
-local var_0_3 = var_0_0.animation_definitions
-local var_0_4 = false
-local var_0_5 = {
+local widgets = var_0_0.widgets
+local scenegraph_definition = var_0_0.scenegraph_definition
+local animation_definitions = var_0_0.animation_definitions
+local flag = false
+local tbl = {
 	common = 2,
 	plentiful = 1,
 	exotic = 4,
 	rare = 3,
 	unique = 5
 }
-local var_0_6 = script_data.testify and require("scripts/ui/views/hero_view/states/hero_view_state_overview_testify")
+local testify = script_data.testify
 
+testify = not testify and require("scripts/ui/views/hero_view/states/hero_view_state_overview_testify")
 HeroViewStateOverview = class(HeroViewStateOverview)
 HeroViewStateOverview.NAME = "HeroViewStateOverview"
 
-function HeroViewStateOverview.on_enter(arg_1_0, arg_1_1)
+HeroViewStateOverview.on_enter = function (self, arg_1_1)
+	-- function 1
 	print("[HeroViewState] Enter Substate HeroViewStateOverview")
 
-	arg_1_0.parent = arg_1_1.parent
-	arg_1_0._gamepad_style_active = arg_1_0:_setup_menu_layout(arg_1_1)
+	self.parent = arg_1_1.parent
+	self._gamepad_style_active = self:_setup_menu_layout(arg_1_1)
 
-	local var_1_0 = arg_1_1.ingame_ui_context
+	local ingame_ui_context = arg_1_1.ingame_ui_context
 
-	arg_1_0.ingame_ui_context = var_1_0
-	arg_1_0.ui_renderer = var_1_0.ui_renderer
-	arg_1_0.ui_top_renderer = var_1_0.ui_top_renderer
-	arg_1_0.input_manager = var_1_0.input_manager
-	arg_1_0.voting_manager = var_1_0.voting_manager
-	arg_1_0.profile_synchronizer = var_1_0.profile_synchronizer
-	arg_1_0.statistics_db = var_1_0.statistics_db
-	arg_1_0.render_settings = {
+	self.ingame_ui_context = ingame_ui_context
+	self.ui_renderer = ingame_ui_context.ui_renderer
+	self.ui_top_renderer = ingame_ui_context.ui_top_renderer
+	self.input_manager = ingame_ui_context.input_manager
+	self.voting_manager = ingame_ui_context.voting_manager
+	self.profile_synchronizer = ingame_ui_context.profile_synchronizer
+	self.statistics_db = ingame_ui_context.statistics_db
+	self.render_settings = {
 		snap_pixel_positions = true
 	}
-	arg_1_0.wwise_world = arg_1_1.wwise_world
-	arg_1_0.ingame_ui = var_1_0.ingame_ui
-	arg_1_0.is_in_inn = var_1_0.is_in_inn
-	arg_1_0.force_ingame_menu = arg_1_1.state_params.force_ingame_menu
-	arg_1_0.world_previewer = arg_1_1.world_previewer
-	arg_1_0.platform = PLATFORM
+	self.wwise_world = arg_1_1.wwise_world
+	self.ingame_ui = ingame_ui_context.ingame_ui
+	self.is_in_inn = ingame_ui_context.is_in_inn
+	self.force_ingame_menu = arg_1_1.state_params.force_ingame_menu
+	self.world_previewer = arg_1_1.world_previewer
+	self.platform = PLATFORM
 
-	local var_1_1 = Managers.player
-	local var_1_2 = var_1_1:local_player()
+	local player = Managers.player
+	local local_player = player:local_player()
 
-	arg_1_0._stats_id = var_1_2:stats_id()
-	arg_1_0.player_manager = var_1_1
-	arg_1_0.peer_id = var_1_0.peer_id
-	arg_1_0.local_player_id = var_1_0.local_player_id
-	arg_1_0.player = var_1_2
-	arg_1_0.is_server = arg_1_0.parent.is_server
+	self._stats_id = local_player:stats_id()
+	self.player_manager = player
+	self.peer_id = ingame_ui_context.peer_id
+	self.local_player_id = ingame_ui_context.local_player_id
+	self.player = local_player
+	self.is_server = self.parent.is_server
 
-	local var_1_3, var_1_4 = arg_1_0.profile_synchronizer:profile_by_peer(arg_1_0.peer_id, arg_1_0.local_player_id)
+	local profile_by_peer, var_1_4 = self.profile_synchronizer:profile_by_peer(self.peer_id, self.local_player_id)
 
-	arg_1_0.profile_index = var_1_3 or 1
-	arg_1_0.career_index = var_1_4 or 1
-	arg_1_0.hero_name = SPProfiles[arg_1_0.profile_index].display_name
-	arg_1_0._animations = {}
-	arg_1_0._ui_animations = {}
-	arg_1_0.loadout_sync_id = 0
-	arg_1_0.inventory_sync_id = 0
-	arg_1_0.talent_sync_id = 0
-	arg_1_0.skin_sync_id = 0
-	arg_1_0.disabled_backend_ids_sync_id = 0
-	arg_1_0._disabled_backend_ids = {}
-	arg_1_0.character_pose_animation_sync_id = 0
-	arg_1_0._current_pose_animation_event = nil
-	arg_1_0.temporary_loadout_sync_id = 0
-	arg_1_0._temporary_loadout = {}
+	self.profile_index = profile_by_peer or 1
+	self.career_index = var_1_4 or 1
+	self.hero_name = SPProfiles[self.profile_index].display_name
+	self._animations = {}
+	self._ui_animations = {}
+	self.loadout_sync_id = 0
+	self.inventory_sync_id = 0
+	self.talent_sync_id = 0
+	self.skin_sync_id = 0
+	self.disabled_backend_ids_sync_id = 0
+	self._disabled_backend_ids = {}
+	self.character_pose_animation_sync_id = 0
+	self._current_pose_animation_event = nil
+	self.temporary_loadout_sync_id = 0
+	self._temporary_loadout = {}
 
-	if IS_WINDOWS then
-		arg_1_0._friends_component_ui = FriendsUIComponent:new(var_1_0)
+	if not IS_WINDOWS then
+		self._friends_component_ui = FriendsUIComponent:new(ingame_ui_context)
 	end
 
-	arg_1_0:create_ui_elements(arg_1_1)
+	self:create_ui_elements(arg_1_1)
 
-	if arg_1_1.initial_state then
+	if not arg_1_1.initial_state then
 		arg_1_1.initial_state = nil
 
-		arg_1_0:_start_transition_animation("on_enter", "on_enter")
+		self:_start_transition_animation("on_enter", "on_enter")
 	end
 
-	local var_1_5 = {
-		wwise_world = arg_1_0.wwise_world,
-		ingame_ui_context = var_1_0,
-		parent = arg_1_0,
-		windows_settings = arg_1_0._windows_settings,
+	local tbl = {
+		wwise_world = self.wwise_world,
+		ingame_ui_context = ingame_ui_context,
+		parent = self,
+		windows_settings = self._windows_settings,
 		input_service = FAKE_INPUT_SERVICE,
-		hero_name = arg_1_0.hero_name,
-		career_index = arg_1_0.career_index,
-		profile_index = arg_1_0.profile_index,
+		hero_name = self.hero_name,
+		career_index = self.career_index,
+		profile_index = self.profile_index,
 		start_state = arg_1_1.start_state,
-		force_ingame_menu = arg_1_0.force_ingame_menu
+		force_ingame_menu = self.force_ingame_menu
 	}
 
-	arg_1_0:_initial_windows_setups(var_1_5)
+	self:_initial_windows_setups(tbl)
 
-	if arg_1_0._gamepad_style_active then
+	if not self._gamepad_style_active then
 		UISettings.hero_fullscreen_menu_on_enter()
 
-		if arg_1_0.is_in_inn and not arg_1_0.force_ingame_menu then
-			arg_1_0:play_sound("play_gui_amb_hero_screen_loop_begin")
-			arg_1_0:disable_player_world()
+		if not (not self.is_in_inn and self.force_ingame_menu) then
+			self:play_sound("play_gui_amb_hero_screen_loop_begin")
+			self:disable_player_world()
 		else
-			arg_1_0:enable_ingame_overlay()
+			self:enable_ingame_overlay()
 		end
 	end
 end
 
-function HeroViewStateOverview._setup_menu_layout(arg_2_0, arg_2_1)
-	local var_2_0 = IS_CONSOLE or Managers.input:is_device_active("gamepad") or not UISettings.use_pc_menu_layout or arg_2_1.state_params.force_ingame_menu
+HeroViewStateOverview._setup_menu_layout = function (self, arg_2_1)
+	-- function 2
+	local IS_CONSOLE = IS_CONSOLE
 
-	if var_2_0 then
-		arg_2_0._layout_settings = local_require("scripts/ui/views/hero_view/states/hero_window_layout_console")
-	else
-		arg_2_0._layout_settings = local_require("scripts/ui/views/hero_view/states/hero_window_layout")
+	if not IS_CONSOLE then
+		IS_CONSOLE = Managers.input:is_device_active("gamepad")
+		IS_CONSOLE = (IS_CONSOLE or not UISettings.use_pc_menu_layout) and arg_2_1.state_params.force_ingame_menu
 	end
 
-	arg_2_0._windows_settings = arg_2_0._layout_settings.windows
-	arg_2_0._window_layouts = arg_2_0._layout_settings.window_layouts
-	arg_2_0._max_active_windows = arg_2_0._layout_settings.max_active_windows
+	if not IS_CONSOLE then
+		self._layout_settings = local_require("scripts/ui/views/hero_view/states/hero_window_layout_console")
+	else
+		self._layout_settings = local_require("scripts/ui/views/hero_view/states/hero_window_layout")
+	end
 
-	return var_2_0
+	self._windows_settings = self._layout_settings.windows
+	self._window_layouts = self._layout_settings.window_layouts
+	self._max_active_windows = self._layout_settings.max_active_windows
+
+	return IS_CONSOLE
 end
 
-function HeroViewStateOverview.can_add(arg_3_0, arg_3_1)
-	if Managers.ui:is_ui_layout_disabled(arg_3_1) then
+HeroViewStateOverview.can_add = function (self, arg_3_1)
+	-- function 3
+	if not Managers.ui:is_ui_layout_disabled(arg_3_1) then
 		return false
 	end
 
-	local var_3_0, var_3_1 = table.find_by_key(arg_3_0._window_layouts, "name", arg_3_1)
+	local find_by_key, var_3_1 = table.find_by_key(self._window_layouts, "name", arg_3_1)
 
-	if var_3_1 and var_3_1.can_add_function then
-		local var_3_2 = Managers.mechanism:current_mechanism_name()
+	if not var_3_1 and not var_3_1.can_add_function then
+		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
 
-		return var_3_1.can_add_function(var_3_2)
+		return var_3_1.can_add_function(current_mechanism_name)
 	end
 
 	return true
 end
 
-function HeroViewStateOverview.create_ui_elements(arg_4_0, arg_4_1)
-	arg_4_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
+HeroViewStateOverview.create_ui_elements = function (self, arg_4_1)
+	-- function 4
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	local var_4_0 = {}
-	local var_4_1 = {}
+	local tbl = {}
+	local tbl_2 = {}
 
-	for iter_4_0, iter_4_1 in pairs(var_0_1) do
-		if iter_4_1 then
-			local var_4_2 = UIWidget.init(iter_4_1)
+	for k, v in pairs(widgets) do
+		if not v then
+			local var_4_2 = UIWidget.init(v)
 
-			var_4_0[#var_4_0 + 1] = var_4_2
-			var_4_1[iter_4_0] = var_4_2
+			tbl[#tbl + 1] = var_4_2
+			tbl_2[k] = var_4_2
 		end
 	end
 
-	arg_4_0._widgets = var_4_0
-	arg_4_0._widgets_by_name = var_4_1
+	self._widgets = tbl
+	self._widgets_by_name = tbl_2
 
-	UIRenderer.clear_scenegraph_queue(arg_4_0.ui_renderer)
+	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
-	arg_4_0.ui_animator = UIAnimator:new(arg_4_0.ui_scenegraph, var_0_3)
+	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
 end
 
-function HeroViewStateOverview.disable_player_world(arg_5_0)
-	if not arg_5_0._player_world_disabled then
-		arg_5_0._player_world_disabled = true
+HeroViewStateOverview.disable_player_world = function (self)
+	-- function 5
+	if not self._player_world_disabled then
+		self._player_world_disabled = true
 
-		local var_5_0 = "player_1"
-		local var_5_1 = Managers.world:world("level_world")
-		local var_5_2 = ScriptWorld.viewport(var_5_1, var_5_0)
+		local str = "player_1"
+		local world = Managers.world:world("level_world")
+		local viewport = ScriptWorld.viewport(world, str)
 
-		ScriptWorld.deactivate_viewport(var_5_1, var_5_2)
+		ScriptWorld.deactivate_viewport(world, viewport)
 	end
 end
 
-function HeroViewStateOverview.enable_player_world(arg_6_0)
-	if arg_6_0._player_world_disabled then
-		arg_6_0._player_world_disabled = false
+HeroViewStateOverview.enable_player_world = function (self)
+	-- function 6
+	if not self._player_world_disabled then
+		self._player_world_disabled = false
 
-		local var_6_0 = "player_1"
-		local var_6_1 = Managers.world:world("level_world")
-		local var_6_2 = ScriptWorld.viewport(var_6_1, var_6_0)
+		local str = "player_1"
+		local world = Managers.world:world("level_world")
+		local viewport = ScriptWorld.viewport(world, str)
 
-		ScriptWorld.activate_viewport(var_6_1, var_6_2)
+		ScriptWorld.activate_viewport(world, viewport)
 	end
 end
 
-function HeroViewStateOverview.enable_ingame_overlay(arg_7_0)
-	if not arg_7_0._ingame_overlay_enabled then
-		arg_7_0._ingame_overlay_enabled = true
+HeroViewStateOverview.enable_ingame_overlay = function (self)
+	-- function 7
+	if not self._ingame_overlay_enabled then
+		self._ingame_overlay_enabled = true
 
-		local var_7_0 = Managers.world:world("level_world")
+		local world = Managers.world:world("level_world")
 
-		World.set_data(var_7_0, "fullscreen_blur", 0.5)
-		World.set_data(var_7_0, "greyscale", 1)
+		World.set_data(world, "fullscreen_blur", 0.5)
+		World.set_data(world, "greyscale", 1)
 		Managers.state.event:trigger("ingame_menu_opened", "interacting")
 	end
 end
 
-function HeroViewStateOverview.disable_ingame_overlay(arg_8_0)
-	if arg_8_0._ingame_overlay_enabled then
-		arg_8_0._ingame_overlay_enabled = false
+HeroViewStateOverview.disable_ingame_overlay = function (self)
+	-- function 8
+	if not self._ingame_overlay_enabled then
+		self._ingame_overlay_enabled = false
 
-		local var_8_0 = Managers.world:world("level_world")
+		local world = Managers.world:world("level_world")
 
-		World.set_data(var_8_0, "fullscreen_blur", nil)
-		World.set_data(var_8_0, "greyscale", nil)
+		World.set_data(world, "fullscreen_blur", nil)
+		World.set_data(world, "greyscale", nil)
 		Managers.state.event:trigger("ingame_menu_closed")
 	end
 end
 
-function HeroViewStateOverview._initial_windows_setups(arg_9_0, arg_9_1)
-	arg_9_0._active_windows = {}
-	arg_9_0._window_params = arg_9_1
+HeroViewStateOverview._initial_windows_setups = function (self, arg_9_1)
+	-- function 9
+	self._active_windows = {}
+	self._window_params = arg_9_1
 
-	local var_9_0 = arg_9_1.start_state
+	local start_state = arg_9_1.start_state
 
-	if var_9_0 then
-		arg_9_0:set_layout_by_name(var_9_0)
+	if not start_state then
+		self:set_layout_by_name(start_state)
 	else
-		arg_9_0:set_layout(1)
+		self:set_layout(1)
 	end
 end
 
-function HeroViewStateOverview.window_input_service(arg_10_0)
-	return arg_10_0._input_blocked and FAKE_INPUT_SERVICE or arg_10_0:input_service()
-end
+HeroViewStateOverview.window_input_service = function (self)
+	-- function 10
+	local FAKE_INPUT_SERVICE
 
-function HeroViewStateOverview.change_profile(arg_11_0, arg_11_1, arg_11_2)
-	arg_11_0.profile_index = arg_11_1
-	arg_11_0.hero_name = SPProfiles[arg_11_1].display_name
-	arg_11_0.career_index = arg_11_2
-	arg_11_0._window_params.hero_name = arg_11_0.hero_name
-	arg_11_0._window_params.profile_index = arg_11_0.profile_index
-	arg_11_0._window_params.career_index = arg_11_0.career_index
-end
+	if not self._input_blocked then
+		FAKE_INPUT_SERVICE = FAKE_INPUT_SERVICE
 
-function HeroViewStateOverview.currently_selected_profile(arg_12_0)
-	return arg_12_0.profile_index, arg_12_0.career_index, arg_12_0.hero_name
-end
-
-function HeroViewStateOverview._close_window_at_index(arg_13_0, arg_13_1)
-	local var_13_0 = arg_13_0._active_windows
-	local var_13_1 = arg_13_0._window_params
-	local var_13_2 = var_13_0[arg_13_1]
-
-	if var_13_2 and var_13_2.on_exit then
-		var_13_2:on_exit(var_13_1)
+		if not FAKE_INPUT_SERVICE then
+			-- Nothing
+		end
 	end
 
-	var_13_0[arg_13_1] = nil
+	FAKE_INPUT_SERVICE = self:input_service()
+
+	::label_10_0::
+
+	return FAKE_INPUT_SERVICE
 end
 
-function HeroViewStateOverview._change_window(arg_14_0, arg_14_1, arg_14_2)
-	local var_14_0 = arg_14_0._active_windows
-	local var_14_1 = arg_14_0._windows_settings[arg_14_2]
-	local var_14_2 = var_14_1.class_name
-	local var_14_3 = var_14_0[arg_14_1]
+HeroViewStateOverview.change_profile = function (self, arg_11_1, arg_11_2)
+	-- function 11
+	self.profile_index = arg_11_1
+	self.hero_name = SPProfiles[arg_11_1].display_name
+	self.career_index = arg_11_2
+	self._window_params.hero_name = self.hero_name
+	self._window_params.profile_index = self.profile_index
+	self._window_params.career_index = self.career_index
+end
 
-	if var_14_3 then
-		if var_14_3.NAME == var_14_2 then
+HeroViewStateOverview.currently_selected_profile = function (self)
+	-- function 12
+	return self.profile_index, self.career_index, self.hero_name
+end
+
+HeroViewStateOverview._close_window_at_index = function (self, arg_13_1)
+	-- function 13
+	local _active_windows = self._active_windows
+	local _window_params = self._window_params
+	local var_13_2 = _active_windows[arg_13_1]
+
+	if not var_13_2 and not var_13_2.on_exit then
+		var_13_2:on_exit(_window_params)
+	end
+
+	_active_windows[arg_13_1] = nil
+end
+
+HeroViewStateOverview._change_window = function (self, arg_14_1, arg_14_2)
+	-- function 14
+	local _active_windows = self._active_windows
+	local var_14_1 = self._windows_settings[arg_14_2]
+	local class_name = var_14_1.class_name
+	local var_14_3 = _active_windows[arg_14_1]
+
+	if not var_14_3 then
+		if var_14_3.NAME == class_name then
 			return
 		end
 
-		arg_14_0:_close_window_at_index(arg_14_1)
+		self:_close_window_at_index(arg_14_1)
 	end
 
-	local var_14_4 = rawget(_G, var_14_2):new()
-	local var_14_5 = var_14_1.ignore_alignment
+	local var_14_4 = rawget(_G, class_name):new()
+	local ignore_alignment = var_14_1.ignore_alignment
 	local var_14_6
 
-	if not var_14_5 then
-		local var_14_7 = var_14_1.alignment_index or arg_14_1
-		local var_14_8 = UISettings.game_start_windows
-		local var_14_9 = var_14_8.size
-		local var_14_10 = var_14_8.spacing or 10
-		local var_14_11 = var_14_9[1]
-		local var_14_12 = var_14_10 * 2
-		local var_14_13 = -(3 * var_14_11 / 2 + var_14_11 / 2) - (var_14_12 / 2 + var_14_10) + var_14_7 * var_14_11 + var_14_7 * var_14_10
+	if not ignore_alignment then
+		local alignment_index = var_14_1.alignment_index
+
+		alignment_index = alignment_index or arg_14_1
+
+		local game_start_windows = UISettings.game_start_windows
+		local size = game_start_windows.size
+		local spacing = game_start_windows.spacing
+
+		spacing = spacing or 10
+
+		local var_14_11 = size[1]
+		local num = spacing * 2
+		local num_2 = -(3 * var_14_11 / 2 + var_14_11 / 2) - (num / 2 + spacing) + alignment_index * var_14_11 + alignment_index * spacing
 
 		var_14_6 = {
-			var_14_13,
+			num_2,
 			0,
 			3
 		}
 	end
 
-	if var_14_4.on_enter then
-		local var_14_14 = arg_14_0._window_params
+	if not var_14_4.on_enter then
+		local _window_params = self._window_params
 
-		var_14_4:on_enter(var_14_14, var_14_6)
+		var_14_4:on_enter(_window_params, var_14_6)
 	end
 
-	var_14_0[arg_14_1] = var_14_4
+	_active_windows[arg_14_1] = var_14_4
 end
 
-function HeroViewStateOverview.get_selected_layout_name(arg_15_0)
-	return arg_15_0:get_layout_name()
+HeroViewStateOverview.get_selected_layout_name = function (self)
+	-- function 15
+	return self:get_layout_name()
 end
 
-function HeroViewStateOverview.get_layout_name(arg_16_0)
-	local var_16_0 = arg_16_0._selected_game_mode_index
+HeroViewStateOverview.get_layout_name = function (self)
+	-- function 16
+	local _selected_game_mode_index = self._selected_game_mode_index
 
-	for iter_16_0, iter_16_1 in ipairs(arg_16_0._window_layouts) do
-		if iter_16_0 == var_16_0 then
-			return iter_16_1.name
+	for i, v in ipairs(self._window_layouts) do
+		if i == _selected_game_mode_index then
+			return v.name
 		end
 	end
 end
 
-function HeroViewStateOverview.set_layout_by_name(arg_17_0, arg_17_1)
-	local var_17_0 = table.find_by_key(arg_17_0._window_layouts, "name", arg_17_1)
+HeroViewStateOverview.set_layout_by_name = function (self, arg_17_1)
+	-- function 17
+	local find_by_key = table.find_by_key(self._window_layouts, "name", arg_17_1)
 
-	if var_17_0 then
-		arg_17_0:set_layout(var_17_0)
+	if not find_by_key then
+		self:set_layout(find_by_key)
 	end
 end
 
-function HeroViewStateOverview.close_on_exit(arg_18_0)
-	return arg_18_0._close_on_exit
+HeroViewStateOverview.close_on_exit = function (self)
+	-- function 18
+	return self._close_on_exit
 end
 
-function HeroViewStateOverview.set_layout(arg_19_0, arg_19_1)
-	arg_19_0._wanted_layout_index = arg_19_1
+HeroViewStateOverview.set_layout = function (self, arg_19_1)
+	-- function 19
+	self._wanted_layout_index = arg_19_1
 end
 
-function HeroViewStateOverview._update_set_layout(arg_20_0)
-	local var_20_0 = arg_20_0._wanted_layout_index
+HeroViewStateOverview._update_set_layout = function (self)
+	-- function 20
+	local _wanted_layout_index = self._wanted_layout_index
 
-	if not var_20_0 then
+	if not _wanted_layout_index then
 		return
 	end
 
-	arg_20_0._wanted_layout_index = nil
+	self._wanted_layout_index = nil
 
-	local var_20_1 = arg_20_0:_get_layout_setting(var_20_0)
-	local var_20_2 = var_20_1.windows
-	local var_20_3 = var_20_1.sound_event_enter
-	local var_20_4 = var_20_1.close_on_exit
-	local var_20_5 = var_20_1.input_focus_window
+	local _get_layout_setting = self:_get_layout_setting(_wanted_layout_index)
+	local windows = _get_layout_setting.windows
+	local sound_event_enter = _get_layout_setting.sound_event_enter
+	local close_on_exit = _get_layout_setting.close_on_exit
+	local input_focus_window = _get_layout_setting.input_focus_window
 
-	if var_20_3 then
-		arg_20_0:play_sound(var_20_3)
+	if not sound_event_enter then
+		self:play_sound(sound_event_enter)
 	end
 
-	arg_20_0._widgets_by_name.exit_button.content.visible = var_20_4
-	arg_20_0._widgets_by_name.back_button.content.visible = not var_20_4
-	arg_20_0._close_on_exit = var_20_4
+	self._widgets_by_name.exit_button.content.visible = close_on_exit
+	self._widgets_by_name.back_button.content.visible = not close_on_exit
+	self._close_on_exit = close_on_exit
 
-	for iter_20_0 = 1, arg_20_0._max_active_windows do
-		local var_20_6 = false
+	for i = 1, self._max_active_windows do
+		local flag = false
 
-		for iter_20_1, iter_20_2 in pairs(var_20_2) do
-			if iter_20_2 == iter_20_0 then
-				arg_20_0:_change_window(iter_20_2, iter_20_1)
+		for k, v in pairs(windows) do
+			if v == i then
+				self:_change_window(v, k)
 
-				var_20_6 = true
+				flag = true
 			end
 		end
 
-		if not var_20_6 then
-			arg_20_0:_close_window_at_index(iter_20_0)
+		if not flag then
+			self:_close_window_at_index(i)
 		end
 	end
 
-	local var_20_7 = arg_20_0:_get_layout_setting(arg_20_0._selected_game_mode_index)
+	local _get_layout_setting_2 = self:_get_layout_setting(self._selected_game_mode_index)
 
-	if arg_20_0._selected_game_mode_index and var_20_7.close_on_exit then
-		arg_20_0._previous_selected_game_mode_index = arg_20_0._selected_game_mode_index
+	if not self._selected_game_mode_index and not _get_layout_setting_2.close_on_exit then
+		self._previous_selected_game_mode_index = self._selected_game_mode_index
 	end
 
-	arg_20_0._selected_game_mode_index = var_20_0
+	self._selected_game_mode_index = _wanted_layout_index
 
-	arg_20_0:set_window_input_focus(var_20_5)
+	self:set_window_input_focus(input_focus_window)
 end
 
-function HeroViewStateOverview.set_window_input_focus(arg_21_0, arg_21_1)
-	local var_21_0 = arg_21_0._selected_game_mode_index
-	local var_21_1 = arg_21_0:_get_layout_setting(var_21_0)
-	local var_21_2 = arg_21_0._windows_settings[arg_21_1]
-	local var_21_3 = var_21_2 and var_21_2.class_name
-	local var_21_4 = false
-	local var_21_5 = arg_21_0._active_windows
+HeroViewStateOverview.set_window_input_focus = function (self, arg_21_1)
+	-- function 21
+	local _selected_game_mode_index = self._selected_game_mode_index
+	local _get_layout_setting = self:_get_layout_setting(_selected_game_mode_index)
+	local var_21_2 = self._windows_settings[arg_21_1]
+	local flag = not var_21_2 and var_21_2.class_name
+	local flag_2 = false
+	local _active_windows = self._active_windows
 
-	for iter_21_0, iter_21_1 in pairs(var_21_5) do
-		local var_21_6 = iter_21_1.NAME == var_21_3
+	for k, v in pairs(_active_windows) do
+		local flag_3 = v.NAME == flag
 
-		if iter_21_1.set_focus then
-			iter_21_1:set_focus(var_21_6)
+		if not v.set_focus then
+			v:set_focus(flag_3)
 		end
 
-		if var_21_6 then
-			var_21_4 = true
+		if not flag_3 then
+			flag_2 = true
 		end
 	end
 
-	if arg_21_1 and not var_21_4 then
+	if not (not arg_21_1 and flag_2) then
 		ferror("[HeroViewStateOverview] - (set_window_input_focus) Could not find a window by name: %s", arg_21_1)
 	end
 
-	arg_21_0._window_focused = arg_21_1
+	self._window_focused = arg_21_1
 end
 
-function HeroViewStateOverview.get_selected_game_mode_index(arg_22_0)
-	return arg_22_0._selected_game_mode_index
+HeroViewStateOverview.get_selected_game_mode_index = function (self)
+	-- function 22
+	return self._selected_game_mode_index
 end
 
-function HeroViewStateOverview.get_previous_selected_game_mode_index(arg_23_0)
-	return arg_23_0._previous_selected_game_mode_index
+HeroViewStateOverview.get_previous_selected_game_mode_index = function (self)
+	-- function 23
+	return self._previous_selected_game_mode_index
 end
 
-function HeroViewStateOverview._get_layout_setting(arg_24_0, arg_24_1)
-	return arg_24_0._window_layouts[arg_24_1]
+HeroViewStateOverview._get_layout_setting = function (self, arg_24_1)
+	-- function 24
+	return self._window_layouts[arg_24_1]
 end
 
-function HeroViewStateOverview.get_layout_setting_by_name(arg_25_0, arg_25_1)
-	local var_25_0 = arg_25_0._window_layouts
+HeroViewStateOverview.get_layout_setting_by_name = function (self, arg_25_1)
+	-- function 25
+	local _window_layouts = self._window_layouts
 
-	for iter_25_0 = 1, #var_25_0 do
-		local var_25_1 = var_25_0[iter_25_0]
+	for i = 1, #_window_layouts do
+		local var_25_1 = _window_layouts[i]
 
 		if arg_25_1 == var_25_1.name then
 			return var_25_1
@@ -459,11 +510,12 @@ function HeroViewStateOverview.get_layout_setting_by_name(arg_25_0, arg_25_1)
 	end
 end
 
-function HeroViewStateOverview.get_layout_setting_by_name(arg_26_0, arg_26_1)
-	local var_26_0 = arg_26_0._window_layouts
+HeroViewStateOverview.get_layout_setting_by_name = function (self, arg_26_1)
+	-- function 26
+	local _window_layouts = self._window_layouts
 
-	for iter_26_0 = 1, #var_26_0 do
-		local var_26_1 = var_26_0[iter_26_0]
+	for i = 1, #_window_layouts do
+		local var_26_1 = _window_layouts[i]
 
 		if arg_26_1 == var_26_1.name then
 			return var_26_1
@@ -471,589 +523,687 @@ function HeroViewStateOverview.get_layout_setting_by_name(arg_26_0, arg_26_1)
 	end
 end
 
-function HeroViewStateOverview._windows_update(arg_27_0, arg_27_1, arg_27_2)
-	local var_27_0 = arg_27_0._active_windows
+HeroViewStateOverview._windows_update = function (self, arg_27_1, arg_27_2)
+	-- function 27
+	local _active_windows = self._active_windows
 
-	for iter_27_0, iter_27_1 in pairs(var_27_0) do
-		iter_27_1:update(arg_27_1, arg_27_2)
+	for k, v in pairs(_active_windows) do
+		v:update(arg_27_1, arg_27_2)
 	end
 end
 
-function HeroViewStateOverview._windows_post_update(arg_28_0, arg_28_1, arg_28_2)
-	local var_28_0 = arg_28_0._active_windows
+HeroViewStateOverview._windows_post_update = function (self, arg_28_1, arg_28_2)
+	-- function 28
+	local _active_windows = self._active_windows
 
-	for iter_28_0, iter_28_1 in pairs(var_28_0) do
-		if iter_28_1.post_update then
-			iter_28_1:post_update(arg_28_1, arg_28_2)
+	for k, v in pairs(_active_windows) do
+		if not v.post_update then
+			v:post_update(arg_28_1, arg_28_2)
 		end
 	end
 end
 
-function HeroViewStateOverview.enable_widget(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
-	local var_29_0 = arg_29_0._active_windows[arg_29_1]._widgets_by_name[arg_29_2]
+HeroViewStateOverview.enable_widget = function (self, arg_29_1, arg_29_2, arg_29_3)
+	-- function 29
+	local var_29_0 = self._active_windows[arg_29_1]._widgets_by_name[arg_29_2]
 
-	if var_29_0 then
-		local var_29_1 = var_29_0.content.button_hotspot
+	if not var_29_0 then
+		local button_hotspot = var_29_0.content.button_hotspot
 
-		if var_29_1 then
-			var_29_1.disable_button = not arg_29_3
+		if not button_hotspot then
+			button_hotspot.disable_button = not arg_29_3
 		end
 	end
 end
 
-function HeroViewStateOverview.transitioning(arg_30_0)
-	if arg_30_0.exiting then
+HeroViewStateOverview.transitioning = function (self)
+	-- function 30
+	if not self.exiting then
 		return true
 	else
 		return false
 	end
 end
 
-function HeroViewStateOverview._wanted_state(arg_31_0)
-	return (arg_31_0.parent:wanted_state())
+HeroViewStateOverview._wanted_state = function (self)
+	-- function 31
+	return (self.parent:wanted_state())
 end
 
-function HeroViewStateOverview.wanted_menu_state(arg_32_0)
-	return arg_32_0._wanted_menu_state
+HeroViewStateOverview.wanted_menu_state = function (self)
+	-- function 32
+	return self._wanted_menu_state
 end
 
-function HeroViewStateOverview.clear_wanted_menu_state(arg_33_0)
-	arg_33_0._wanted_menu_state = nil
+HeroViewStateOverview.clear_wanted_menu_state = function (self)
+	-- function 33
+	self._wanted_menu_state = nil
 end
 
-function HeroViewStateOverview.requested_screen_change_by_name(arg_34_0, arg_34_1)
-	arg_34_0._on_close_next_state = arg_34_1
+HeroViewStateOverview.requested_screen_change_by_name = function (self, arg_34_1)
+	-- function 34
+	self._on_close_next_state = arg_34_1
 
-	arg_34_0:close_menu()
+	self:close_menu()
 end
 
-function HeroViewStateOverview.on_exit(arg_35_0, arg_35_1)
+HeroViewStateOverview.on_exit = function (self, arg_35_1)
+	-- function 35
 	print("[HeroViewState] Exit Substate HeroViewStateOverview")
 
-	arg_35_0.ui_animator = nil
+	self.ui_animator = nil
 
-	local var_35_0 = arg_35_0._friends_component_ui
+	local _friends_component_ui = self._friends_component_ui
 
-	if var_35_0 and arg_35_0:is_friends_list_active() then
-		var_35_0:deactivate_friends_ui()
+	if not _friends_component_ui and not self:is_friends_list_active() then
+		_friends_component_ui:deactivate_friends_ui()
 	end
 
-	if arg_35_0._fullscreen_effect_enabled then
-		arg_35_0:set_fullscreen_effect_enable_state(false)
+	if not self._fullscreen_effect_enabled then
+		self:set_fullscreen_effect_enable_state(false)
 	end
 
-	arg_35_0:_close_active_windows()
+	self:_close_active_windows()
 
-	if arg_35_0._gamepad_style_active then
+	if not self._gamepad_style_active then
 		UISettings.hero_fullscreen_menu_on_exit()
 
-		if arg_35_0.is_in_inn and not arg_35_0.force_ingame_menu then
-			arg_35_0:play_sound("play_gui_amb_hero_screen_loop_end")
-			arg_35_0:enable_player_world()
+		if not (not self.is_in_inn and self.force_ingame_menu) then
+			self:play_sound("play_gui_amb_hero_screen_loop_end")
+			self:enable_player_world()
 		else
-			arg_35_0:disable_ingame_overlay()
+			self:disable_ingame_overlay()
 		end
 	end
 
-	local var_35_1 = Managers.player:local_player()
+	local local_player = Managers.player:local_player()
 
-	if var_35_1 and var_35_1:career_name() == "bw_necromancer" then
+	if not (not local_player and local_player:career_name() ~= "bw_necromancer") then
 		GlobalShaderFlags.set_global_shader_flag("NECROMANCER_CAREER_REMAP", true)
 	else
 		GlobalShaderFlags.set_global_shader_flag("NECROMANCER_CAREER_REMAP", false)
 	end
 end
 
-function HeroViewStateOverview._close_active_windows(arg_36_0)
-	local var_36_0 = arg_36_0._active_windows
-	local var_36_1 = arg_36_0._window_params
+HeroViewStateOverview._close_active_windows = function (self)
+	-- function 36
+	local _active_windows = self._active_windows
+	local _window_params = self._window_params
 
-	for iter_36_0, iter_36_1 in pairs(var_36_0) do
-		if iter_36_1.on_exit then
-			iter_36_1:on_exit(var_36_1)
+	for k, v in pairs(_active_windows) do
+		if not v.on_exit then
+			v:on_exit(_window_params)
 		end
 	end
 
-	table.clear(var_36_0)
+	table.clear(_active_windows)
 end
 
-function HeroViewStateOverview._update_transition_timer(arg_37_0, arg_37_1)
-	if not arg_37_0._transition_timer then
+HeroViewStateOverview._update_transition_timer = function (self, arg_37_1)
+	-- function 37
+	if not self._transition_timer then
 		return
 	end
 
-	if arg_37_0._transition_timer == 0 then
-		arg_37_0._transition_timer = nil
+	if self._transition_timer == 0 then
+		self._transition_timer = nil
 	else
-		arg_37_0._transition_timer = math.max(arg_37_0._transition_timer - arg_37_1, 0)
+		self._transition_timer = math.max(self._transition_timer - arg_37_1, 0)
 	end
 end
 
-function HeroViewStateOverview.input_service(arg_38_0)
-	return arg_38_0.parent:input_service()
+HeroViewStateOverview.input_service = function (self)
+	-- function 38
+	return self.parent:input_service()
 end
 
-function HeroViewStateOverview.update(arg_39_0, arg_39_1, arg_39_2)
-	if var_0_4 then
-		var_0_4 = false
+HeroViewStateOverview.update = function (self, arg_39_1, arg_39_2)
+	-- function 39
+	if not flag then
+		flag = false
 
-		arg_39_0:create_ui_elements()
+		self:create_ui_elements()
 	end
 
-	arg_39_0:_update_set_layout()
+	self:_update_set_layout()
 
-	local var_39_0 = arg_39_0.input_manager
-	local var_39_1 = arg_39_0:window_input_service()
-	local var_39_2 = arg_39_0._friends_component_ui
-	local var_39_3 = var_39_0:is_device_active("gamepad")
+	local input_manager = self.input_manager
+	local window_input_service = self:window_input_service()
+	local _friends_component_ui = self._friends_component_ui
+	local is_device_active = input_manager:is_device_active("gamepad")
 
-	if var_39_2 and not var_39_3 and Managers.account:is_online() then
-		var_39_2:update(arg_39_1, var_39_1)
+	if not _friends_component_ui and is_device_active or not Managers.account:is_online() then
+		_friends_component_ui:update(arg_39_1, window_input_service)
 	end
 
-	if not arg_39_0._gamepad_style_active then
-		arg_39_0:draw(var_39_1, arg_39_1)
+	if not self._gamepad_style_active then
+		self:draw(window_input_service, arg_39_1)
 	end
 
-	arg_39_0:_update_transition_timer(arg_39_1)
-	arg_39_0:_windows_update(arg_39_1, arg_39_2)
+	self:_update_transition_timer(arg_39_1)
+	self:_windows_update(arg_39_1, arg_39_2)
 
-	if script_data.testify then
-		Testify:poll_requests_through_handler(var_0_6, arg_39_0)
+	if not script_data.testify then
+		Testify:poll_requests_through_handler(testify, self)
 	end
 
-	local var_39_4 = arg_39_0.parent:transitioning()
-	local var_39_5 = arg_39_0:_wanted_state()
+	local transitioning = self.parent:transitioning()
+	local _wanted_state = self:_wanted_state()
 
-	if not arg_39_0._transition_timer then
-		if not var_39_4 then
-			if arg_39_0:_has_active_level_vote() then
-				local var_39_6 = true
+	if not self._transition_timer then
+		if not transitioning then
+			if not self:_has_active_level_vote() then
+				local flag_2 = true
 
-				arg_39_0:close_menu(var_39_6)
+				self:close_menu(flag_2)
 			else
-				arg_39_0:_handle_input(arg_39_1, arg_39_2)
+				self:_handle_input(arg_39_1, arg_39_2)
 			end
 		end
 
-		if var_39_5 then
-			arg_39_0.parent:clear_wanted_state()
+		if not _wanted_state then
+			self.parent:clear_wanted_state()
 
-			arg_39_0._new_state = var_39_5
+			self._new_state = _wanted_state
 		else
-			return arg_39_0._new_state
+			return self._new_state
 		end
 	end
 end
 
-function HeroViewStateOverview.is_friends_list_active(arg_40_0)
-	local var_40_0 = arg_40_0._friends_component_ui
+HeroViewStateOverview.is_friends_list_active = function (self)
+	-- function 40
+	local _friends_component_ui = self._friends_component_ui
 
-	if var_40_0 then
-		return var_40_0:is_active()
+	if not _friends_component_ui then
+		return _friends_component_ui:is_active()
 	end
 
 	return false
 end
 
-function HeroViewStateOverview._handle_friend_joining(arg_41_0)
-	local var_41_0 = arg_41_0._friends_component_ui
+HeroViewStateOverview._handle_friend_joining = function (self)
+	-- function 41
+	local _friends_component_ui = self._friends_component_ui
 
-	if var_41_0 then
-		local var_41_1 = var_41_0:join_lobby_data()
+	if not _friends_component_ui then
+		local join_lobby_data = _friends_component_ui:join_lobby_data()
 
-		if var_41_1 and Managers.matchmaking:allowed_to_initiate_join_lobby() then
-			Managers.matchmaking:request_join_lobby(var_41_1, {
+		if not join_lobby_data and not Managers.matchmaking:allowed_to_initiate_join_lobby() then
+			Managers.matchmaking:request_join_lobby(join_lobby_data, {
 				friend_join = true
 			})
-			arg_41_0:close_menu(true)
+			self:close_menu(true)
 
 			return true
 		end
 	end
 end
 
-function HeroViewStateOverview._has_active_level_vote(arg_42_0)
-	local var_42_0 = arg_42_0.voting_manager
+HeroViewStateOverview._has_active_level_vote = function (self)
+	-- function 42
+	local voting_manager = self.voting_manager
+	local vote_in_progress = voting_manager:vote_in_progress()
 
-	return var_42_0:vote_in_progress() and var_42_0:is_mission_vote() and not var_42_0:has_voted(Network.peer_id())
+	vote_in_progress = not vote_in_progress and voting_manager:is_mission_vote()
+
+	return not vote_in_progress and not voting_manager:has_voted(Network.peer_id())
 end
 
-function HeroViewStateOverview.post_update(arg_43_0, arg_43_1, arg_43_2)
-	arg_43_0.ui_animator:update(arg_43_1)
-	arg_43_0:_update_animations(arg_43_1)
-	arg_43_0:_windows_post_update(arg_43_1, arg_43_2)
+HeroViewStateOverview.post_update = function (self, arg_43_1, arg_43_2)
+	-- function 43
+	self.ui_animator:update(arg_43_1)
+	self:_update_animations(arg_43_1)
+	self:_windows_post_update(arg_43_1, arg_43_2)
 
-	if arg_43_0._new_state then
-		arg_43_0:_close_active_windows()
+	if not self._new_state then
+		self:_close_active_windows()
 	end
 
-	local var_43_0 = arg_43_0._equip_request
+	local _equip_request = self._equip_request
 
-	if var_43_0 then
-		arg_43_0._equip_request = nil
+	if not _equip_request then
+		self._equip_request = nil
 
-		local var_43_1 = var_43_0.slot_type
-		local var_43_2 = var_43_0.slot_name
-		local var_43_3 = var_43_0.backend_id
-		local var_43_4 = var_43_0.unit
+		local slot_type = _equip_request.slot_type
+		local slot_name = _equip_request.slot_name
+		local backend_id = _equip_request.backend_id
+		local unit = _equip_request.unit
 
-		if var_43_1 == "melee" or var_43_1 == "ranged" then
-			ScriptUnit.extension(var_43_4, "inventory_system"):create_equipment_in_slot(var_43_2, var_43_3)
-		elseif var_43_1 == "hat" or var_43_1 == "trinket" or var_43_1 == "ring" or var_43_1 == "necklace" then
-			ScriptUnit.extension(var_43_4, "attachment_system"):create_attachment_in_slot(var_43_2, var_43_3)
+		if not (slot_type == "melee" or slot_type ~= "ranged") then
+			ScriptUnit.extension(unit, "inventory_system"):create_equipment_in_slot(slot_name, backend_id)
+		elseif not (slot_type == "hat" or slot_type == "trinket" or slot_type == "ring" or slot_type ~= "necklace") then
+			ScriptUnit.extension(unit, "attachment_system"):create_attachment_in_slot(slot_name, backend_id)
 		end
 	end
 end
 
-function HeroViewStateOverview._update_animations(arg_44_0, arg_44_1)
-	for iter_44_0, iter_44_1 in pairs(arg_44_0._ui_animations) do
-		UIAnimation.update(iter_44_1, arg_44_1)
+HeroViewStateOverview._update_animations = function (self, arg_44_1)
+	-- function 44
+	for k, v in pairs(self._ui_animations) do
+		UIAnimation.update(v, arg_44_1)
 
-		if UIAnimation.completed(iter_44_1) then
-			arg_44_0._ui_animations[iter_44_0] = nil
+		if not UIAnimation.completed(v) then
+			self._ui_animations[k] = nil
 		end
 	end
 
-	local var_44_0 = arg_44_0._animations
-	local var_44_1 = arg_44_0.ui_animator
+	local _animations = self._animations
+	local ui_animator = self.ui_animator
 
-	for iter_44_2, iter_44_3 in pairs(var_44_0) do
-		if var_44_1:is_animation_completed(iter_44_3) then
-			var_44_1:stop_animation(iter_44_3)
+	for k_2, v_2 in pairs(_animations) do
+		if not ui_animator:is_animation_completed(v_2) then
+			ui_animator:stop_animation(v_2)
 
-			var_44_0[iter_44_2] = nil
+			_animations[k_2] = nil
 		end
 	end
 end
 
-function HeroViewStateOverview._is_button_hover_enter(arg_45_0, arg_45_1)
+HeroViewStateOverview._is_button_hover_enter = function (arg_45_0, arg_45_1)
+	-- function 45
 	return arg_45_1.content.button_hotspot.on_hover_enter
 end
 
-function HeroViewStateOverview._handle_input(arg_46_0, arg_46_1, arg_46_2)
-	local var_46_0 = arg_46_0._input_blocked
-	local var_46_1 = Managers.input:is_device_active("gamepad")
-	local var_46_2 = arg_46_0._input_paused and var_46_1
+HeroViewStateOverview._handle_input = function (self, arg_46_1, arg_46_2)
+	-- function 46
+	local _input_blocked = self._input_blocked
+	local is_device_active = Managers.input:is_device_active("gamepad")
+	local _input_paused = self._input_paused
 
-	if var_46_0 or var_46_2 then
+	_input_paused = not _input_paused and is_device_active
+
+	if _input_blocked or not _input_paused then
 		return
 	end
 
-	if arg_46_0:_handle_friend_joining() then
+	if not self:_handle_friend_joining() then
 		return
 	end
 
-	local var_46_3 = arg_46_0._widgets_by_name
-	local var_46_4 = arg_46_0.parent:input_service()
-	local var_46_5 = var_46_4:get("toggle_menu", true)
-	local var_46_6 = var_46_1 and var_46_4:get("back_menu", true)
-	local var_46_7 = arg_46_0._close_on_exit
-	local var_46_8 = var_46_3.exit_button
-	local var_46_9 = var_46_3.back_button
+	local _widgets_by_name = self._widgets_by_name
+	local input_service = self.parent:input_service()
+	local get = input_service:get("toggle_menu", true)
+	local flag = not is_device_active and input_service:get("back_menu", true)
+	local _close_on_exit = self._close_on_exit
+	local exit_button = _widgets_by_name.exit_button
+	local back_button = _widgets_by_name.back_button
 
-	UIWidgetUtils.animate_default_button(var_46_8, arg_46_1)
-	UIWidgetUtils.animate_default_button(var_46_9, arg_46_1)
+	UIWidgetUtils.animate_default_button(exit_button, arg_46_1)
+	UIWidgetUtils.animate_default_button(back_button, arg_46_1)
 
-	if arg_46_0:_is_button_hover_enter(var_46_9) or arg_46_0:_is_button_hover_enter(var_46_8) then
-		arg_46_0:play_sound("play_gui_equipment_button_hover")
+	if self:_is_button_hover_enter(back_button) or not self:_is_button_hover_enter(exit_button) then
+		self:play_sound("play_gui_equipment_button_hover")
 	end
 
-	if var_46_7 and (var_46_6 or var_46_5 or arg_46_0:_is_button_pressed(var_46_8)) then
-		arg_46_0:play_sound("Play_hud_hover")
-		arg_46_0:close_menu()
+	if not _close_on_exit and flag and get and not self:_is_button_pressed(exit_button) then
+		self:play_sound("Play_hud_hover")
+		self:close_menu()
 
 		return
-	elseif var_46_5 or var_46_6 or arg_46_0:_is_button_pressed(var_46_9) then
-		arg_46_0:play_sound("Play_hud_hover")
+	elseif get or flag or not self:_is_button_pressed(back_button) then
+		self:play_sound("Play_hud_hover")
 
-		local var_46_10 = arg_46_0:get_previous_selected_game_mode_index()
+		local get_previous_selected_game_mode_index = self:get_previous_selected_game_mode_index()
 
-		if var_46_10 then
-			arg_46_0:set_layout(var_46_10)
+		if not get_previous_selected_game_mode_index then
+			self:set_layout(get_previous_selected_game_mode_index)
 		end
 	end
 end
 
-function HeroViewStateOverview.close_menu(arg_47_0, arg_47_1)
-	if arg_47_0._on_close_next_state then
-		arg_47_0.parent:requested_screen_change_by_name(arg_47_0._on_close_next_state)
+HeroViewStateOverview.close_menu = function (self, arg_47_1)
+	-- function 47
+	if not self._on_close_next_state then
+		self.parent:requested_screen_change_by_name(self._on_close_next_state)
 	else
-		arg_47_0.parent:close_menu(nil, arg_47_1)
+		self.parent:close_menu(nil, arg_47_1)
 	end
 end
 
-function HeroViewStateOverview.draw(arg_48_0, arg_48_1, arg_48_2)
-	local var_48_0 = arg_48_0.ui_renderer
-	local var_48_1 = arg_48_0.ui_top_renderer
-	local var_48_2 = arg_48_0.ui_scenegraph
-	local var_48_3 = arg_48_0.input_manager
-	local var_48_4 = arg_48_0.render_settings
-	local var_48_5 = var_48_3:is_device_active("gamepad")
+HeroViewStateOverview.draw = function (self, arg_48_1, arg_48_2)
+	-- function 48
+	local ui_renderer = self.ui_renderer
+	local ui_top_renderer = self.ui_top_renderer
+	local ui_scenegraph = self.ui_scenegraph
+	local input_manager = self.input_manager
+	local render_settings = self.render_settings
+	local is_device_active = input_manager:is_device_active("gamepad")
 
-	UIRenderer.begin_pass(var_48_0, var_48_2, arg_48_1, arg_48_2, nil, var_48_4)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, arg_48_1, arg_48_2, nil, render_settings)
 
-	local var_48_6 = var_48_4.snap_pixel_positions
+	local snap_pixel_positions = render_settings.snap_pixel_positions
 
-	for iter_48_0, iter_48_1 in ipairs(arg_48_0._widgets) do
-		if iter_48_1.snap_pixel_positions ~= nil then
-			var_48_4.snap_pixel_positions = iter_48_1.snap_pixel_positions
+	for i, v in ipairs(self._widgets) do
+		if v.snap_pixel_positions ~= nil then
+			render_settings.snap_pixel_positions = v.snap_pixel_positions
 		end
 
-		UIRenderer.draw_widget(var_48_0, iter_48_1)
+		UIRenderer.draw_widget(ui_renderer, v)
 
-		var_48_4.snap_pixel_positions = var_48_6
+		render_settings.snap_pixel_positions = snap_pixel_positions
 	end
 
-	UIRenderer.end_pass(var_48_0)
+	UIRenderer.end_pass(ui_renderer)
 end
 
-function HeroViewStateOverview._is_button_pressed(arg_49_0, arg_49_1)
-	local var_49_0 = arg_49_1.content
-	local var_49_1 = var_49_0.button_hotspot or var_49_0.hotspot
+HeroViewStateOverview._is_button_pressed = function (arg_49_0, arg_49_1)
+	-- function 49
+	local content = arg_49_1.content
+	local button_hotspot = content.button_hotspot
 
-	if var_49_1.on_release then
-		var_49_1.on_release = false
+	button_hotspot = button_hotspot or content.hotspot
+
+	if not button_hotspot.on_release then
+		button_hotspot.on_release = false
 
 		return true
 	end
 end
 
-function HeroViewStateOverview.play_sound(arg_50_0, arg_50_1)
-	arg_50_0.parent:play_sound(arg_50_1)
+HeroViewStateOverview.play_sound = function (self, arg_50_1)
+	-- function 50
+	self.parent:play_sound(arg_50_1)
 end
 
-function HeroViewStateOverview._start_transition_animation(arg_51_0, arg_51_1, arg_51_2)
-	local var_51_0 = {
-		wwise_world = arg_51_0.wwise_world,
-		render_settings = arg_51_0.render_settings
+HeroViewStateOverview._start_transition_animation = function (self, arg_51_1, arg_51_2)
+	-- function 51
+	local tbl = {
+		wwise_world = self.wwise_world,
+		render_settings = self.render_settings
 	}
-	local var_51_1 = {}
-	local var_51_2 = arg_51_0.ui_animator:start_animation(arg_51_2, var_51_1, var_0_2, var_51_0)
+	local tbl_2 = {}
+	local start_animation = self.ui_animator:start_animation(arg_51_2, tbl_2, scenegraph_definition, tbl)
 
-	arg_51_0._animations[arg_51_1] = var_51_2
+	self._animations[arg_51_1] = start_animation
 end
 
-function HeroViewStateOverview.set_auto_fill_rarity(arg_52_0, arg_52_1)
-	arg_52_0._auto_fill_rarity = arg_52_1
+HeroViewStateOverview.set_auto_fill_rarity = function (self, arg_52_1)
+	-- function 52
+	self._auto_fill_rarity = arg_52_1
 end
 
-function HeroViewStateOverview.get_auto_fill_rarity(arg_53_0)
-	local var_53_0 = arg_53_0._auto_fill_rarity
+HeroViewStateOverview.get_auto_fill_rarity = function (self)
+	-- function 53
+	local _auto_fill_rarity = self._auto_fill_rarity
 
-	arg_53_0._auto_fill_rarity = nil
+	self._auto_fill_rarity = nil
 
-	return var_53_0
+	return _auto_fill_rarity
 end
 
-function HeroViewStateOverview.set_filter_selected(arg_54_0, arg_54_1)
-	arg_54_0._filter_selected = arg_54_1
+HeroViewStateOverview.set_filter_selected = function (self, arg_54_1)
+	-- function 54
+	self._filter_selected = arg_54_1
 end
 
-function HeroViewStateOverview.filter_selected(arg_55_0)
-	return arg_55_0._filter_selected
+HeroViewStateOverview.filter_selected = function (self)
+	-- function 55
+	return self._filter_selected
 end
 
-function HeroViewStateOverview.set_filter_active(arg_56_0, arg_56_1)
-	arg_56_0._filter_active = arg_56_1
+HeroViewStateOverview.set_filter_active = function (self, arg_56_1)
+	-- function 56
+	self._filter_active = arg_56_1
 end
 
-function HeroViewStateOverview.filter_active(arg_57_0)
-	return arg_57_0._filter_active
+HeroViewStateOverview.filter_active = function (self)
+	-- function 57
+	return self._filter_active
 end
 
-function HeroViewStateOverview.reset_filter(arg_58_0)
-	arg_58_0._filter_reset = true
+HeroViewStateOverview.reset_filter = function (self)
+	-- function 58
+	self._filter_reset = true
 end
 
-function HeroViewStateOverview.filter_reset(arg_59_0)
-	local var_59_0 = arg_59_0._filter_reset
+HeroViewStateOverview.filter_reset = function (self)
+	-- function 59
+	local _filter_reset = self._filter_reset
 
-	arg_59_0._filter_reset = nil
+	self._filter_reset = nil
 
-	return var_59_0
+	return _filter_reset
 end
 
-function HeroViewStateOverview.disable_filter(arg_60_0, arg_60_1)
-	arg_60_0._filter_disabled = arg_60_1
+HeroViewStateOverview.disable_filter = function (self, arg_60_1)
+	-- function 60
+	self._filter_disabled = arg_60_1
 end
 
-function HeroViewStateOverview.disable_search(arg_61_0, arg_61_1)
-	arg_61_0._search_disabled = arg_61_1
+HeroViewStateOverview.disable_search = function (self, arg_61_1)
+	-- function 61
+	self._search_disabled = arg_61_1
 end
 
-function HeroViewStateOverview.filter_search_disabled(arg_62_0)
-	return arg_62_0._filter_disabled, arg_62_0._search_disabled
+HeroViewStateOverview.filter_search_disabled = function (self)
+	-- function 62
+	return self._filter_disabled, self._search_disabled
 end
 
-function HeroViewStateOverview.set_selected_items_backend_ids(arg_63_0, arg_63_1)
-	arg_63_0._selected_items_backend_ids = arg_63_1
+HeroViewStateOverview.set_selected_items_backend_ids = function (self, arg_63_1)
+	-- function 63
+	self._selected_items_backend_ids = arg_63_1
 end
 
-function HeroViewStateOverview.get_selected_items_backend_ids(arg_64_0)
-	return arg_64_0._selected_items_backend_ids
+HeroViewStateOverview.get_selected_items_backend_ids = function (self)
+	-- function 64
+	return self._selected_items_backend_ids
 end
 
-function HeroViewStateOverview.set_pressed_item_backend_id(arg_65_0, arg_65_1, arg_65_2)
-	arg_65_0._pressed_item_backend_id = arg_65_1
-	arg_65_0._pressed_item_by_drag = arg_65_1 and arg_65_2 or nil
+HeroViewStateOverview.set_pressed_item_backend_id = function (self, arg_65_1, arg_65_2)
+	-- function 65
+	self._pressed_item_backend_id = arg_65_1
+	self._pressed_item_by_drag = not arg_65_1 and arg_65_2 and nil
 end
 
-function HeroViewStateOverview.get_disabled_backend_ids(arg_66_0)
-	return arg_66_0._disabled_backend_ids
+HeroViewStateOverview.get_disabled_backend_ids = function (self)
+	-- function 66
+	return self._disabled_backend_ids
 end
 
-function HeroViewStateOverview.clear_disabled_backend_ids(arg_67_0)
-	arg_67_0._disabled_backend_ids = {}
-	arg_67_0.disabled_backend_ids_sync_id = arg_67_0.disabled_backend_ids_sync_id + 1
+HeroViewStateOverview.clear_disabled_backend_ids = function (self)
+	-- function 67
+	self._disabled_backend_ids = {}
+	self.disabled_backend_ids_sync_id = self.disabled_backend_ids_sync_id + 1
 end
 
-function HeroViewStateOverview.disabled_item_icon(arg_68_0)
-	return arg_68_0._disabled_item_icon
+HeroViewStateOverview.disabled_item_icon = function (self)
+	-- function 68
+	return self._disabled_item_icon
 end
 
-function HeroViewStateOverview.set_disabled_item_icon(arg_69_0, arg_69_1)
-	arg_69_0._disabled_item_icon = arg_69_1
+HeroViewStateOverview.set_disabled_item_icon = function (self, arg_69_1)
+	-- function 69
+	self._disabled_item_icon = arg_69_1
 end
 
-function HeroViewStateOverview.set_disabled_backend_id(arg_70_0, arg_70_1, arg_70_2)
-	if arg_70_2 then
-		arg_70_0._disabled_backend_ids[arg_70_1] = true
+HeroViewStateOverview.set_disabled_backend_id = function (self, arg_70_1, arg_70_2)
+	-- function 70
+	if not arg_70_2 then
+		self._disabled_backend_ids[arg_70_1] = true
 	else
-		arg_70_0._disabled_backend_ids[arg_70_1] = nil
+		self._disabled_backend_ids[arg_70_1] = nil
 	end
 
-	arg_70_0.disabled_backend_ids_sync_id = arg_70_0.disabled_backend_ids_sync_id + 1
+	self.disabled_backend_ids_sync_id = self.disabled_backend_ids_sync_id + 1
 end
 
-function HeroViewStateOverview.get_pressed_item_backend_id(arg_71_0)
-	return arg_71_0._pressed_item_backend_id, arg_71_0._pressed_item_by_drag
+HeroViewStateOverview.get_pressed_item_backend_id = function (self)
+	-- function 71
+	return self._pressed_item_backend_id, self._pressed_item_by_drag
 end
 
-function HeroViewStateOverview.get_inventory_grid(arg_72_0)
-	return arg_72_0._current_inventory_grid
+HeroViewStateOverview.get_inventory_grid = function (self)
+	-- function 72
+	return self._current_inventory_grid
 end
 
-function HeroViewStateOverview.set_inventory_grid(arg_73_0, arg_73_1)
-	arg_73_0._current_inventory_grid = arg_73_1
+HeroViewStateOverview.set_inventory_grid = function (self, arg_73_1)
+	-- function 73
+	self._current_inventory_grid = arg_73_1
 end
 
-function HeroViewStateOverview.set_fullscreen_effect_enable_state(arg_74_0, arg_74_1)
-	local var_74_0 = arg_74_0.ui_renderer.world
-	local var_74_1 = World.get_data(var_74_0, "shading_environment")
+HeroViewStateOverview.set_fullscreen_effect_enable_state = function (self, arg_74_1)
+	-- function 74
+	local world = self.ui_renderer.world
+	local get_data = World.get_data(world, "shading_environment")
 
-	if var_74_1 then
-		ShadingEnvironment.set_scalar(var_74_1, "fullscreen_blur_enabled", arg_74_1 and 1 or 0)
-		ShadingEnvironment.set_scalar(var_74_1, "fullscreen_blur_amount", arg_74_1 and 0.75 or 0)
-		ShadingEnvironment.apply(var_74_1)
+	if not get_data then
+		local set_scalar = ShadingEnvironment.set_scalar
+		local var_74_3 = get_data
+		local str = "fullscreen_blur_enabled"
+		local flag
+
+		flag = not arg_74_1 and 1 and 0
+
+		set_scalar(var_74_3, str, flag)
+
+		local set_scalar_2 = ShadingEnvironment.set_scalar
+		local var_74_7 = get_data
+		local str_2 = "fullscreen_blur_amount"
+		local flag_2
+
+		flag_2 = not arg_74_1 and 0.75 and 0
+
+		set_scalar_2(var_74_7, str_2, flag_2)
+		ShadingEnvironment.apply(get_data)
 	end
 
-	arg_74_0._fullscreen_effect_enabled = arg_74_1
+	self._fullscreen_effect_enabled = arg_74_1
 end
 
-function HeroViewStateOverview.block_input(arg_75_0)
-	arg_75_0._input_blocked = true
+HeroViewStateOverview.block_input = function (self)
+	-- function 75
+	self._input_blocked = true
 end
 
-function HeroViewStateOverview.unblock_input(arg_76_0)
-	arg_76_0._input_blocked = false
+HeroViewStateOverview.unblock_input = function (self)
+	-- function 76
+	self._input_blocked = false
 end
 
-function HeroViewStateOverview.input_blocked(arg_77_0)
-	return arg_77_0._input_blocked
+HeroViewStateOverview.input_blocked = function (self)
+	-- function 77
+	return self._input_blocked
 end
 
-function HeroViewStateOverview.set_selected_craft_page(arg_78_0, arg_78_1)
-	arg_78_0._selected_craft_page_name = arg_78_1
+HeroViewStateOverview.set_selected_craft_page = function (self, arg_78_1)
+	-- function 78
+	self._selected_craft_page_name = arg_78_1
 end
 
-function HeroViewStateOverview.get_selected_craft_page(arg_79_0)
-	return arg_79_0._selected_craft_page_name
+HeroViewStateOverview.get_selected_craft_page = function (self)
+	-- function 79
+	return self._selected_craft_page_name
 end
 
-function HeroViewStateOverview.set_craft_optional_item_filter(arg_80_0, arg_80_1)
-	arg_80_0._craft_optional_item_filter = arg_80_1
+HeroViewStateOverview.set_craft_optional_item_filter = function (self, arg_80_1)
+	-- function 80
+	self._craft_optional_item_filter = arg_80_1
 end
 
-function HeroViewStateOverview.get_craft_optional_item_filter(arg_81_0)
-	return arg_81_0._craft_optional_item_filter
+HeroViewStateOverview.get_craft_optional_item_filter = function (self)
+	-- function 81
+	return self._craft_optional_item_filter
 end
 
-function HeroViewStateOverview.set_selected_loadout_slot_index(arg_82_0, arg_82_1)
-	arg_82_0._selected_loadout_slot_index = arg_82_1
+HeroViewStateOverview.set_selected_loadout_slot_index = function (self, arg_82_1)
+	-- function 82
+	self._selected_loadout_slot_index = arg_82_1
 end
 
-function HeroViewStateOverview.get_selected_loadout_slot_index(arg_83_0)
-	return arg_83_0._selected_loadout_slot_index or 1
+HeroViewStateOverview.get_selected_loadout_slot_index = function (self)
+	-- function 83
+	local _selected_loadout_slot_index = self._selected_loadout_slot_index
+
+	_selected_loadout_slot_index = _selected_loadout_slot_index or 1
+
+	return _selected_loadout_slot_index
 end
 
-function HeroViewStateOverview.set_selected_cosmetic_slot_index(arg_84_0, arg_84_1)
-	arg_84_0._selected_cosmetic_slot_index = arg_84_1
+HeroViewStateOverview.set_selected_cosmetic_slot_index = function (self, arg_84_1)
+	-- function 84
+	self._selected_cosmetic_slot_index = arg_84_1
 end
 
-function HeroViewStateOverview.get_selected_cosmetic_slot_index(arg_85_0)
-	return arg_85_0._selected_cosmetic_slot_index or 1
+HeroViewStateOverview.get_selected_cosmetic_slot_index = function (self)
+	-- function 85
+	local _selected_cosmetic_slot_index = self._selected_cosmetic_slot_index
+
+	_selected_cosmetic_slot_index = _selected_cosmetic_slot_index or 1
+
+	return _selected_cosmetic_slot_index
 end
 
-function HeroViewStateOverview.set_temporary_loadout_item(arg_86_0, arg_86_1, arg_86_2)
-	local var_86_0 = arg_86_1.data.slot_type
+HeroViewStateOverview.set_temporary_loadout_item = function (self, arg_86_1, arg_86_2)
+	-- function 86
+	local slot_type = arg_86_1.data.slot_type
 
-	arg_86_0._temporary_loadout[var_86_0] = arg_86_1
-	arg_86_0._skip_wield_anim = arg_86_2
-	arg_86_0.temporary_loadout_sync_id = arg_86_0.temporary_loadout_sync_id + 1
-	arg_86_0.character_pose_animation_sync_id = arg_86_0.character_pose_animation_sync_id + 1
+	self._temporary_loadout[slot_type] = arg_86_1
+	self._skip_wield_anim = arg_86_2
+	self.temporary_loadout_sync_id = self.temporary_loadout_sync_id + 1
+	self.character_pose_animation_sync_id = self.character_pose_animation_sync_id + 1
 end
 
-function HeroViewStateOverview.clear_temporary_loadout(arg_87_0)
-	table.clear(arg_87_0._temporary_loadout)
+HeroViewStateOverview.clear_temporary_loadout = function (self)
+	-- function 87
+	table.clear(self._temporary_loadout)
 
-	arg_87_0._skip_wield_anim = nil
-	arg_87_0.loadout_sync_id = arg_87_0.loadout_sync_id + 1
+	self._skip_wield_anim = nil
+	self.loadout_sync_id = self.loadout_sync_id + 1
 end
 
-function HeroViewStateOverview.get_temporary_loadout_item(arg_88_0, arg_88_1)
-	return arg_88_0._temporary_loadout[arg_88_1], arg_88_0._skip_wield_anim
+HeroViewStateOverview.get_temporary_loadout_item = function (self, arg_88_1)
+	-- function 88
+	return self._temporary_loadout[arg_88_1], self._skip_wield_anim
 end
 
-function HeroViewStateOverview.set_character_pose_animation(arg_89_0, arg_89_1)
-	arg_89_0._current_pose_animation_event = arg_89_1
-	arg_89_0.character_pose_animation_sync_id = arg_89_0.character_pose_animation_sync_id + 1
+HeroViewStateOverview.set_character_pose_animation = function (self, arg_89_1)
+	-- function 89
+	self._current_pose_animation_event = arg_89_1
+	self.character_pose_animation_sync_id = self.character_pose_animation_sync_id + 1
 end
 
-local var_0_7 = {}
+local tbl_2 = {}
 
-function HeroViewStateOverview.clear_character_animation(arg_90_0, arg_90_1)
-	arg_90_0._current_pose_animation_event = nil
+HeroViewStateOverview.clear_character_animation = function (self, arg_90_1)
+	-- function 90
+	self._current_pose_animation_event = nil
 
-	local var_90_0 = Managers.backend:get_interface("items")
-	local var_90_1 = arg_90_0.hero_name
-	local var_90_2 = arg_90_0.career_index
-	local var_90_3 = FindProfileIndex(var_90_1)
-	local var_90_4 = SPProfiles[var_90_3].careers[var_90_2].name
-	local var_90_5 = var_90_0:get_loadout_item_id(var_90_4, "slot_pose")
-	local var_90_6 = var_90_0:get_unlocked_weapon_poses()[arg_90_1] or var_0_7
+	local get_interface = Managers.backend:get_interface("items")
+	local hero_name = self.hero_name
+	local career_index = self.career_index
+	local var_90_3 = FindProfileIndex(hero_name)
+	local name = SPProfiles[var_90_3].careers[career_index].name
+	local get_loadout_item_id = get_interface:get_loadout_item_id(name, "slot_pose")
+	local var_90_6 = get_interface:get_unlocked_weapon_poses()[arg_90_1]
 
-	if table.find(var_90_6, var_90_5) then
-		arg_90_0._current_pose_animation_event = var_90_0:get_item_from_id(var_90_5).data.data.anim_event
+	var_90_6 = var_90_6 or tbl_2
+
+	if not table.find(var_90_6, get_loadout_item_id) then
+		self._current_pose_animation_event = get_interface:get_item_from_id(get_loadout_item_id).data.data.anim_event
 	else
-		arg_90_0._current_pose_animation_event = nil
+		self._current_pose_animation_event = nil
 	end
 
-	arg_90_0.character_pose_animation_sync_id = arg_90_0.character_pose_animation_sync_id + 1
+	self.character_pose_animation_sync_id = self.character_pose_animation_sync_id + 1
 end
 
-function HeroViewStateOverview.get_character_animation_event(arg_91_0)
-	return arg_91_0._current_pose_animation_event
+HeroViewStateOverview.get_character_animation_event = function (self)
+	-- function 91
+	return self._current_pose_animation_event
 end
 
-function HeroViewStateOverview._set_loadout_item(arg_92_0, arg_92_1, arg_92_2)
-	local var_92_0 = arg_92_0.hero_name
-	local var_92_1 = arg_92_0.career_index
-	local var_92_2 = arg_92_0.player_manager
-	local var_92_3 = arg_92_0.peer_id
-	local var_92_4 = var_92_2:player_from_peer_id(var_92_3).player_unit
+HeroViewStateOverview._set_loadout_item = function (self, arg_92_1, arg_92_2)
+	-- function 92
+	local hero_name = self.hero_name
+	local career_index = self.career_index
+	local player_manager = self.player_manager
+	local peer_id = self.peer_id
+	local player_unit = player_manager:player_from_peer_id(peer_id).player_unit
 
-	if not var_92_4 or not Unit.alive(var_92_4) then
+	if not (not player_unit and Unit.alive(player_unit)) then
 		return
 	end
 
@@ -1061,154 +1211,167 @@ function HeroViewStateOverview._set_loadout_item(arg_92_0, arg_92_1, arg_92_2)
 		return
 	end
 
-	if LoadoutUtils.is_item_disabled(arg_92_1.ItemId) then
+	if not LoadoutUtils.is_item_disabled(arg_92_1.ItemId) then
 		return
 	end
 
-	local var_92_5 = arg_92_1.backend_id
-	local var_92_6 = arg_92_1.data
+	local backend_id = arg_92_1.backend_id
+	local data = arg_92_1.data
 	local var_92_7
 	local var_92_8
 
-	if arg_92_2 then
+	if not arg_92_2 then
 		var_92_7 = InventorySettings.slots_by_name[arg_92_2]
 		var_92_8 = var_92_7.type
 	else
-		var_92_8 = var_92_6.slot_type
-		var_92_7 = arg_92_0:_get_slot_by_type(var_92_8)
+		var_92_8 = data.slot_type
+		var_92_7 = self:_get_slot_by_type(var_92_8)
 	end
 
-	local var_92_9 = var_92_7.name
-	local var_92_10 = FindProfileIndex(var_92_0)
-	local var_92_11 = SPProfiles[var_92_10].careers[var_92_1].name
+	local name = var_92_7.name
+	local var_92_10 = FindProfileIndex(hero_name)
+	local name_2 = SPProfiles[var_92_10].careers[career_index].name
 
-	BackendUtils.set_loadout_item(var_92_5, var_92_11, var_92_9)
+	BackendUtils.set_loadout_item(backend_id, name_2, name)
 
-	if not arg_92_0:is_bot_career() then
-		if not arg_92_0.parent:is_loadout_dirty() then
+	if not self:is_bot_career() then
+		if not self.parent:is_loadout_dirty() then
 			if var_92_8 == "frame" then
-				Managers.state.entity:system("cosmetic_system"):set_equipped_frame(var_92_4, var_92_6.key)
-			elseif var_92_8 ~= "skin" and var_92_8 ~= "weapon_pose" then
-				arg_92_0._equip_request = {
+				Managers.state.entity:system("cosmetic_system"):set_equipped_frame(player_unit, data.key)
+			elseif not (var_92_8 == "skin" or var_92_8 == "weapon_pose") then
+				self._equip_request = {
 					slot_type = var_92_8,
-					slot_name = var_92_9,
-					backend_id = var_92_5,
-					unit = var_92_4
+					slot_name = name,
+					backend_id = backend_id,
+					unit = player_unit
 				}
 			end
 		end
 	elseif var_92_8 == "hat" then
-		arg_92_0.skin_sync_id = arg_92_0.skin_sync_id + 1
+		self.skin_sync_id = self.skin_sync_id + 1
 	end
 
-	arg_92_0.loadout_sync_id = arg_92_0.loadout_sync_id + 1
-	arg_92_0.inventory_sync_id = arg_92_0.inventory_sync_id + 1
+	self.loadout_sync_id = self.loadout_sync_id + 1
+	self.inventory_sync_id = self.inventory_sync_id + 1
 
-	local var_92_12 = arg_92_0.statistics_db:get_persistent_stat(arg_92_0._stats_id, "highest_equipped_rarity", var_92_8)
-	local var_92_13 = var_0_5[arg_92_1.rarity]
+	local get_persistent_stat = self.statistics_db:get_persistent_stat(self._stats_id, "highest_equipped_rarity", var_92_8)
+	local var_92_13 = tbl[arg_92_1.rarity]
 
-	if var_92_13 and var_92_12 < var_92_13 then
-		arg_92_0.statistics_db:set_stat(arg_92_0._stats_id, "highest_equipped_rarity", var_92_8, var_92_13)
+	if not (not var_92_13 and not (get_persistent_stat < var_92_13)) then
+		self.statistics_db:set_stat(self._stats_id, "highest_equipped_rarity", var_92_8, var_92_13)
 	end
 
 	Managers.state.event:trigger("event_set_loadout_items")
 end
 
-function HeroViewStateOverview.is_bot_career(arg_93_0)
-	local var_93_0 = Managers.player:local_player()
-	local var_93_1 = var_93_0:profile_index()
-	local var_93_2 = var_93_0:career_index()
+HeroViewStateOverview.is_bot_career = function (self)
+	-- function 93
+	local local_player = Managers.player:local_player()
+	local profile_index = local_player:profile_index()
+	local career_index = local_player:career_index()
 
-	return var_93_1 ~= arg_93_0.profile_index or var_93_2 ~= arg_93_0.career_index, arg_93_0.profile_index, arg_93_0.career_index
+	return profile_index ~= self.profile_index or career_index ~= self.career_index, self.profile_index, self.career_index
 end
 
-function HeroViewStateOverview.get_career_data(arg_94_0)
-	return arg_94_0.profile_index, arg_94_0.career_index
+HeroViewStateOverview.get_career_data = function (self)
+	-- function 94
+	return self.profile_index, self.career_index
 end
 
-function HeroViewStateOverview.update_talent_sync(arg_95_0)
-	arg_95_0.talent_sync_id = arg_95_0.talent_sync_id + 1
+HeroViewStateOverview.update_talent_sync = function (self)
+	-- function 95
+	self.talent_sync_id = self.talent_sync_id + 1
 end
 
-function HeroViewStateOverview.update_skin_sync(arg_96_0)
-	arg_96_0.skin_sync_id = arg_96_0.skin_sync_id + 1
+HeroViewStateOverview.update_skin_sync = function (self)
+	-- function 96
+	self.skin_sync_id = self.skin_sync_id + 1
 
-	arg_96_0.ingame_ui:respawn()
+	self.ingame_ui:respawn()
 end
 
-function HeroViewStateOverview.unequip_item_in_slot(arg_97_0, arg_97_1)
-	local var_97_0 = arg_97_0.hero_name
-	local var_97_1 = arg_97_0.career_index
-	local var_97_2 = arg_97_0:_get_slot_by_type(arg_97_1)
+HeroViewStateOverview.unequip_item_in_slot = function (self, arg_97_1)
+	-- function 97
+	local hero_name = self.hero_name
+	local career_index = self.career_index
+	local _get_slot_by_type = self:_get_slot_by_type(arg_97_1)
 
-	if not var_97_2.unequippable then
+	if not _get_slot_by_type.unequippable then
 		return false
 	end
 
-	local var_97_3 = var_97_2.name
-	local var_97_4 = var_97_2.slot_index
-	local var_97_5 = FindProfileIndex(var_97_0)
-	local var_97_6 = SPProfiles[var_97_5].careers[var_97_1].name
+	local name = _get_slot_by_type.name
+	local slot_index = _get_slot_by_type.slot_index
+	local var_97_5 = FindProfileIndex(hero_name)
+	local name_2 = SPProfiles[var_97_5].careers[career_index].name
 
-	if not BackendUtils.get_loadout_item(var_97_6, var_97_3) then
+	if not BackendUtils.get_loadout_item(name_2, name) then
 		return false
 	end
 
-	BackendUtils.set_loadout_item(nil, var_97_6, var_97_3)
+	BackendUtils.set_loadout_item(nil, name_2, name)
 
-	arg_97_0.loadout_sync_id = arg_97_0.loadout_sync_id + 1
-	arg_97_0.inventory_sync_id = arg_97_0.inventory_sync_id + 1
+	self.loadout_sync_id = self.loadout_sync_id + 1
+	self.inventory_sync_id = self.inventory_sync_id + 1
 
 	return true
 end
 
-function HeroViewStateOverview.update_full_loadout(arg_98_0)
-	arg_98_0.loadout_sync_id = arg_98_0.loadout_sync_id + 1
-	arg_98_0.inventory_sync_id = arg_98_0.inventory_sync_id + 1
-	arg_98_0.talent_sync_id = arg_98_0.talent_sync_id + 1
-	arg_98_0.skin_sync_id = arg_98_0.skin_sync_id + 1
+HeroViewStateOverview.update_full_loadout = function (self)
+	-- function 98
+	self.loadout_sync_id = self.loadout_sync_id + 1
+	self.inventory_sync_id = self.inventory_sync_id + 1
+	self.talent_sync_id = self.talent_sync_id + 1
+	self.skin_sync_id = self.skin_sync_id + 1
 end
 
-function HeroViewStateOverview.update_inventory_items(arg_99_0)
-	arg_99_0.inventory_sync_id = arg_99_0.inventory_sync_id + 1
+HeroViewStateOverview.update_inventory_items = function (self)
+	-- function 99
+	self.inventory_sync_id = self.inventory_sync_id + 1
 end
 
-function HeroViewStateOverview._get_slot_by_type(arg_100_0, arg_100_1)
-	local var_100_0 = InventorySettings.slots_by_slot_index
+HeroViewStateOverview._get_slot_by_type = function (arg_100_0, arg_100_1)
+	-- function 100
+	local slots_by_slot_index = InventorySettings.slots_by_slot_index
 
-	for iter_100_0, iter_100_1 in pairs(var_100_0) do
-		if arg_100_1 == iter_100_1.type then
-			return iter_100_1
+	for k, v in pairs(slots_by_slot_index) do
+		if arg_100_1 == v.type then
+			return v
 		end
 	end
 end
 
-function HeroViewStateOverview.window_layout_on_exit(arg_101_0, arg_101_1)
-	local var_101_0 = arg_101_0:get_layout_setting_by_name(arg_101_1)
+HeroViewStateOverview.window_layout_on_exit = function (self, arg_101_1)
+	-- function 101
+	local get_layout_setting_by_name = self:get_layout_setting_by_name(arg_101_1)
 
-	if var_101_0 and var_101_0.on_exit then
-		var_101_0.on_exit(arg_101_0)
+	if not get_layout_setting_by_name and not get_layout_setting_by_name.on_exit then
+		get_layout_setting_by_name.on_exit(self)
 	end
 end
 
-function HeroViewStateOverview.pause_input(arg_102_0, arg_102_1)
-	arg_102_0._input_paused = arg_102_1
+HeroViewStateOverview.pause_input = function (self, arg_102_1)
+	-- function 102
+	self._input_paused = arg_102_1
 end
 
-function HeroViewStateOverview.input_paused(arg_103_0)
-	return arg_103_0._input_paused
+HeroViewStateOverview.input_paused = function (self)
+	-- function 103
+	return self._input_paused
 end
 
-function HeroViewStateOverview.set_background_mood(arg_104_0, arg_104_1)
-	local var_104_0 = "character_preview"
-	local var_104_1 = Managers.world:world(var_104_0)
+HeroViewStateOverview.set_background_mood = function (arg_104_0, arg_104_1)
+	-- function 104
+	local str = "character_preview"
+	local world = Managers.world:world(str)
 
-	World.set_data(var_104_1, "shading_settings", {
+	World.set_data(world, "shading_settings", {
 		arg_104_1,
 		1
 	})
 end
 
-function HeroViewStateOverview.set_loadout_dirty(arg_105_0)
-	arg_105_0.parent:set_loadout_dirty()
+HeroViewStateOverview.set_loadout_dirty = function (self)
+	-- function 105
+	self.parent:set_loadout_dirty()
 end

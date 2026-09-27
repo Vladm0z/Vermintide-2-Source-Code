@@ -1,31 +1,35 @@
 -- chunkname: @scripts/ui/hud_ui/world_marker_templates/world_marker_template_versus_objective.lua
 
+local WorldMarkerTemplates = WorldMarkerTemplates
+
 WorldMarkerTemplates = WorldMarkerTemplates or {}
+WorldMarkerTemplates = WorldMarkerTemplates
 
-local var_0_0 = WorldMarkerTemplates.versus_objective
+local versus_objective = WorldMarkerTemplates.versus_objective
 
-if not var_0_0 then
-	var_0_0 = {}
-	WorldMarkerTemplates.versus_objective = var_0_0
+if not versus_objective then
+	versus_objective = {}
+	WorldMarkerTemplates.versus_objective = versus_objective
 end
 
-var_0_0.position_offset = {
+versus_objective.position_offset = {
 	0,
 	0,
 	2
 }
-var_0_0.max_distance = nil
-var_0_0.screen_clamp = true
-var_0_0.screen_margins = {
+versus_objective.max_distance = nil
+versus_objective.screen_clamp = true
+versus_objective.screen_margins = {
 	down = 150,
 	up = 200,
 	left = 150,
 	right = 150
 }
 
-function var_0_0.create_widget_definition(arg_1_0)
-	local var_1_0 = 0.5
-	local var_1_1 = 60 * var_1_0
+versus_objective.create_widget_definition = function (arg_1_0)
+	-- function 1
+	local num = 0.5
+	local num_2 = 60 * num
 
 	return {
 		element = {
@@ -49,24 +53,35 @@ function var_0_0.create_widget_definition(arg_1_0)
 					pass_type = "rotated_texture",
 					style_id = "arrow",
 					texture_id = "arrow",
-					content_check_function = function(arg_2_0)
-						return arg_2_0.is_clamped
+					content_check_function = function (self)
+						-- function 2
+						return self.is_clamped
 					end
 				},
 				{
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_3_0)
-						return arg_3_0.is_clamped or arg_3_0.distance > 5
+					content_check_function = function (self)
+						-- function 3
+						local is_clamped = self.is_clamped
+
+						is_clamped = is_clamped or self.distance > 5
+
+						return is_clamped
 					end
 				},
 				{
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_4_0)
-						return arg_4_0.is_clamped or arg_4_0.distance > 5
+					content_check_function = function (self)
+						-- function 4
+						local is_clamped = self.is_clamped
+
+						is_clamped = is_clamped or self.distance > 5
+
+						return is_clamped
 					end
 				}
 			}
@@ -83,12 +98,12 @@ function var_0_0.create_widget_definition(arg_1_0)
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
 				texture_size = {
-					80 * var_1_0,
-					80 * var_1_0
+					80 * num,
+					80 * num
 				},
 				default_size = {
-					80 * var_1_0,
-					80 * var_1_0
+					80 * num,
+					80 * num
 				},
 				color = {
 					255,
@@ -106,12 +121,12 @@ function var_0_0.create_widget_definition(arg_1_0)
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
 				texture_size = {
-					100 * var_1_0,
-					100 * var_1_0
+					100 * num,
+					100 * num
 				},
 				default_size = {
-					100 * var_1_0,
-					100 * var_1_0
+					100 * num,
+					100 * num
 				},
 				color = {
 					255,
@@ -129,12 +144,12 @@ function var_0_0.create_widget_definition(arg_1_0)
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
 				texture_size = {
-					100 * var_1_0,
-					100 * var_1_0
+					100 * num,
+					100 * num
 				},
 				default_size = {
-					100 * var_1_0,
-					100 * var_1_0
+					100 * num,
+					100 * num
 				},
 				color = {
 					200,
@@ -152,12 +167,12 @@ function var_0_0.create_widget_definition(arg_1_0)
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
 				texture_size = {
-					100 * var_1_0,
-					100 * var_1_0
+					100 * num,
+					100 * num
 				},
 				default_size = {
-					100 * var_1_0,
-					100 * var_1_0
+					100 * num,
+					100 * num
 				},
 				color = {
 					200,
@@ -177,7 +192,7 @@ function var_0_0.create_widget_definition(arg_1_0)
 				angle = 0,
 				pivot = {
 					22,
-					11.5 - var_1_1
+					11.5 - num_2
 				},
 				texture_size = {
 					44,
@@ -195,7 +210,7 @@ function var_0_0.create_widget_definition(arg_1_0)
 				},
 				offset = {
 					0,
-					var_1_1,
+					num_2,
 					0
 				}
 			},
@@ -255,54 +270,69 @@ function var_0_0.create_widget_definition(arg_1_0)
 	}
 end
 
-function var_0_0.on_enter(arg_5_0)
-	local var_5_0 = arg_5_0.content
-	local var_5_1 = Managers.state.entity:system("objective_system")
+versus_objective.on_enter = function (self)
+	-- function 5
+	local content = self.content
+	local system = Managers.state.entity:system("objective_system")
 
-	arg_5_0.content.icon = var_5_1:current_objective_icon()
-	var_5_0.just_entered = true
-	var_5_0.t = 0
+	self.content.icon = system:current_objective_icon()
+	content.just_entered = true
+	content.t = 0
 end
 
-function var_0_0.update_function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
-	local var_6_0 = arg_6_1.content
-	local var_6_1 = arg_6_1.style
+versus_objective.update_function = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+	-- function 6
+	local content = arg_6_1.content
+	local style = arg_6_1.style
 
-	if var_6_0.just_entered then
-		var_6_0.just_entered = false
-		var_6_0.enter_timer = arg_6_5
+	if not content.just_entered then
+		content.just_entered = false
+		content.enter_timer = arg_6_5
 	end
 
-	local var_6_2 = math.clamp(0.5 + (1 - var_6_0.forward_dot_dir) * 499.99999999999955, 0, 1)
-	local var_6_3 = arg_6_5 - var_6_0.enter_timer
-	local var_6_4 = 255 * math.easeOutCubic(math.min(var_6_3, 1)) * var_6_2
-	local var_6_5 = var_6_4 * 0.7
+	local clamp = math.clamp(0.5 + (1 - content.forward_dot_dir) * 499.99999999999955, 0, 1)
+	local num = arg_6_5 - content.enter_timer
+	local num_2 = 255 * math.easeOutCubic(math.min(num, 1)) * clamp
+	local num_3 = num_2 * 0.7
 
-	var_6_1.icon.color[1] = var_6_5
-	var_6_1.background.color[1] = var_6_5
-	var_6_1.arrow.color[1] = var_6_5
-	var_6_1.text.text_color[1] = var_6_4
-	var_6_1.text_shadow.text_color[1] = var_6_4
-	var_6_1.arrow.angle = var_6_0.angle
+	style.icon.color[1] = num_3
+	style.background.color[1] = num_3
+	style.arrow.color[1] = num_3
+	style.text.text_color[1] = num_2
+	style.text_shadow.text_color[1] = num_2
+	style.arrow.angle = content.angle
 
-	local var_6_6 = var_6_0.distance
+	local distance = content.distance
+	local str
 
-	var_6_0.text = var_6_6 > 1 and UIUtils.comma_value(math.floor(var_6_6)) .. "m" or ""
+	if distance > 1 then
+		str = UIUtils.comma_value(math.floor(distance)) .. "m"
 
-	local var_6_7 = math.min(1, 15 / var_6_6)
-	local var_6_8 = var_6_0.t + arg_6_4 * var_6_7
+		if not str then
+			-- Nothing
+		end
+	end
 
-	var_6_0.t = var_6_8
+	str = ""
 
-	for iter_6_0 = 1, 2 do
-		local var_6_9 = 1 - (1 - (var_6_8 + 0.5 * iter_6_0) % 1)^2
-		local var_6_10 = var_6_1["background_pulse_" .. iter_6_0]
-		local var_6_11 = var_6_10.texture_size
-		local var_6_12 = var_6_10.default_size
+	::label_6_0::
 
-		var_6_11[1] = var_6_12[1] * (1 + var_6_9)
-		var_6_11[2] = var_6_12[2] * (1 + var_6_9)
-		var_6_10.color[1] = 255 * (1 - var_6_9) * var_6_7 * var_6_2
+	content.text = str
+
+	local min = math.min(1, 15 / distance)
+	local num_4 = content.t + arg_6_4 * min
+
+	content.t = num_4
+
+	for i = 1, 2 do
+		local num_5 = 1 - (1 - (num_4 + 0.5 * i) % 1)^2
+		local var_6_11 = style["background_pulse_" .. i]
+		local texture_size = var_6_11.texture_size
+		local default_size = var_6_11.default_size
+
+		texture_size[1] = default_size[1] * (1 + num_5)
+		texture_size[2] = default_size[2] * (1 + num_5)
+		var_6_11.color[1] = 255 * (1 - num_5) * min * clamp
 	end
 
 	return true

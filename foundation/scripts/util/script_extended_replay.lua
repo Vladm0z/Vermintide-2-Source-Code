@@ -2,32 +2,38 @@
 
 ScriptExtendedReplay = class(ScriptExtendedReplay)
 
-function ScriptExtendedReplay.reload()
+ScriptExtendedReplay.reload = function ()
+	-- function 1
 	Managers.replay:reload()
 end
 
-function ScriptExtendedReplay.play(arg_2_0)
+ScriptExtendedReplay.play = function (arg_2_0)
+	-- function 2
 	Managers.replay:play(arg_2_0)
 end
 
-function ScriptExtendedReplay.set_frame(arg_3_0)
+ScriptExtendedReplay.set_frame = function (arg_3_0)
+	-- function 3
 	Managers.replay:set_frame(arg_3_0)
 end
 
-function ScriptExtendedReplay.set_level(arg_4_0)
+ScriptExtendedReplay.set_level = function (arg_4_0)
+	-- function 4
 	Managers.replay:set_level(arg_4_0)
 end
 
-function ScriptExtendedReplay.set_stories(arg_5_0)
+ScriptExtendedReplay.set_stories = function (arg_5_0)
+	-- function 5
 	Managers.replay:set_stories(arg_5_0)
 end
 
-function ScriptExtendedReplay.request_moving_units()
-	local var_6_0 = {
+ScriptExtendedReplay.request_moving_units = function ()
+	-- function 6
+	local tbl = {
 		message = "moving_units",
 		type = "replay",
 		units = ExtendedReplay.moving_units()
 	}
 
-	Application.console_send(var_6_0)
+	Application.console_send(tbl)
 end

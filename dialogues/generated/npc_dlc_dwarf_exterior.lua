@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/npc_dlc_dwarf_exterior.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		response = "nde_dwarf_beacons_bridge_stuck_a",
 		name = "nde_dwarf_beacons_bridge_stuck_a",

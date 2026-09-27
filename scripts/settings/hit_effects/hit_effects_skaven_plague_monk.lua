@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/hit_effects/hit_effects_skaven_plague_monk.lua
 
-local var_0_0 = {
+local tbl = {
 	"light_stab_fencer",
 	"light_stab_smiter",
 	"stab_fencer",
@@ -17,7 +17,7 @@ local var_0_0 = {
 	"slashing_linesman",
 	"heavy_slashing_linesman"
 }
-local var_0_1 = {
+local tbl_2 = {
 	"heavy_stab_smiter",
 	"light_slashing_smiter",
 	"slashing_smiter",
@@ -2435,7 +2435,7 @@ HitEffectsSkavenPlagueMonk = {
 		armour_type = "cloth",
 		extra_conditions = {
 			death = false,
-			damage_type = var_0_0
+			damage_type = tbl
 		}
 	},
 	wound_tail = {
@@ -2445,7 +2445,7 @@ HitEffectsSkavenPlagueMonk = {
 		extra_conditions = {
 			death = false,
 			is_critical_strike = true,
-			damage_type = var_0_1,
+			damage_type = tbl_2,
 			hit_zone = {
 				"tail"
 			}

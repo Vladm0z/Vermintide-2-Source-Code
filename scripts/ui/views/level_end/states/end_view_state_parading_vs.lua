@@ -5,34 +5,40 @@ require("scripts/ui/views/world_hero_previewer")
 EndViewStateParadingVS = class(EndViewStateParadingVS)
 EndViewStateParadingVS.NAME = "EndViewStateParadingVS"
 
-function EndViewStateParadingVS.on_enter(arg_1_0, arg_1_1)
-	arg_1_0._parent = arg_1_1.parent
+EndViewStateParadingVS.on_enter = function (self, arg_1_1)
+	-- function 1
+	self._parent = arg_1_1.parent
 
-	local var_1_0 = arg_1_1.context
+	local context = arg_1_1.context
 
-	arg_1_0._statistics_db = var_1_0.statistics_db
-	arg_1_0._profile_synchronizer = var_1_0.profile_synchronizer
+	self._statistics_db = context.statistics_db
+	self._profile_synchronizer = context.profile_synchronizer
 
 	ShowCursorStack.show("EndViewStateParadingVS")
-	arg_1_0._parent:show_team()
+	self._parent:show_team()
 end
 
-function EndViewStateParadingVS.on_exit(arg_2_0)
+EndViewStateParadingVS.on_exit = function (arg_2_0)
+	-- function 2
 	ShowCursorStack.hide("EndViewStateParadingVS")
 end
 
-function EndViewStateParadingVS.update(arg_3_0, arg_3_1, arg_3_2)
-	arg_3_0._done = arg_3_0._parent:parading_done(arg_3_1, arg_3_2)
+EndViewStateParadingVS.update = function (self, arg_3_1, arg_3_2)
+	-- function 3
+	self._done = self._parent:parading_done(arg_3_1, arg_3_2)
 end
 
-function EndViewStateParadingVS.done(arg_4_0)
-	return arg_4_0._done
+EndViewStateParadingVS.done = function (self)
+	-- function 4
+	return self._done
 end
 
-function EndViewStateParadingVS.exit(arg_5_0)
+EndViewStateParadingVS.exit = function (arg_5_0)
+	-- function 5
 	return
 end
 
-function EndViewStateParadingVS.exit_done(arg_6_0)
+EndViewStateParadingVS.exit_done = function (arg_6_0)
+	-- function 6
 	return true
 end

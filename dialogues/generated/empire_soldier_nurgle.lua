@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/empire_soldier_nurgle.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		probability = 1,
 		name = "pes_level_nurgle_bury_objective",

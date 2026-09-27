@@ -1,17 +1,17 @@
 -- chunkname: @scripts/settings/dlcs/bless/bless_equipment_settings.lua
 
-local var_0_0 = DLCSettings.bless
+local bless = DLCSettings.bless
 
-var_0_0.item_master_list_file_names = {
+bless.item_master_list_file_names = {
 	"scripts/settings/dlcs/bless/item_master_list_bless"
 }
-var_0_0.weapon_skins_file_names = {
+bless.weapon_skins_file_names = {
 	"scripts/settings/dlcs/bless/weapon_skins_bless"
 }
-var_0_0.cosmetics_files = {
+bless.cosmetics_files = {
 	"scripts/settings/dlcs/bless/cosmetics_bless"
 }
-var_0_0.weapon_template_file_names = {
+bless.weapon_template_file_names = {
 	"scripts/settings/equipment/weapon_templates/wh_priest_career_skill",
 	"scripts/settings/equipment/weapon_templates/1h_hammers_priest",
 	"scripts/settings/equipment/weapon_templates/1h_hammers_book_priest",
@@ -20,7 +20,7 @@ var_0_0.weapon_template_file_names = {
 	"scripts/settings/equipment/weapon_templates/dual_wield_hammers_priest",
 	"scripts/settings/equipment/weapon_templates/1h_flails_shield"
 }
-var_0_0.default_items = {
+bless.default_items = {
 	wh_1h_hammer = {
 		inventory_icon = "icon_wpn_wh_1h_hammer_01",
 		description = "description_default_wh_1h_hammer",
@@ -52,11 +52,11 @@ var_0_0.default_items = {
 		display_name = "wh_flail_shield_blacksmith_name"
 	}
 }
-var_0_0.damage_profile_template_files_names = {
+bless.damage_profile_template_files_names = {
 	"scripts/settings/equipment/damage_profile_templates_dlc_bless"
 }
-var_0_0.attack_template_files_names = {}
-var_0_0.action_template_file_names = {
+bless.attack_template_files_names = {}
+bless.action_template_file_names = {
 	"scripts/settings/dlcs/bless/action_career_wh_priest",
 	"scripts/settings/dlcs/bless/action_career_wh_priest_target",
 	"scripts/settings/dlcs/bless/action_wheel_selector",
@@ -64,7 +64,7 @@ var_0_0.action_template_file_names = {
 	"scripts/settings/dlcs/bless/action_book_charge",
 	"scripts/settings/dlcs/bless/action_dynamic_sweep"
 }
-var_0_0.explosion_templates = {
+bless.explosion_templates = {
 	hammer_book_charged_impact_explosion = {
 		explosion = {
 			use_attacker_power_level = true,
@@ -142,7 +142,7 @@ var_0_0.explosion_templates = {
 		}
 	}
 }
-var_0_0.action_classes_lookup = {
+bless.action_classes_lookup = {
 	career_wh_priest = "ActionCareerWHPriest",
 	dynamic_sweep = "ActionDynamicSweep",
 	lunge = "ActionLunge",
@@ -150,7 +150,7 @@ var_0_0.action_classes_lookup = {
 	career_wh_priest_target = "ActionCareerWHPriestTarget",
 	book_charge = "ActionBookCharge"
 }
-var_0_0.inventory_package_list = {
+bless.inventory_package_list = {
 	"resource_packages/careers/wh_priest",
 	"units/beings/player/third_person_base/witch_hunter_warrior_priest/chr_third_person_base",
 	"units/beings/player/third_person_base/witch_hunter_warrior_priest/chr_third_person_husk_base",
@@ -199,6 +199,6 @@ var_0_0.inventory_package_list = {
 	"units/beings/player/witch_hunter_warrior_priest/headpiece/wh_wp_hat_03",
 	"units/beings/player/witch_hunter_warrior_priest/headpiece/wh_wp_hat_04"
 }
-var_0_0.husk_lookup = {
+bless.husk_lookup = {
 	"units/beings/player/third_person_base/witch_hunter_warrior_priest/chr_third_person_husk_base"
 }

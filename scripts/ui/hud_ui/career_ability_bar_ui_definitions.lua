@@ -1,10 +1,10 @@
 -- chunkname: @scripts/ui/hud_ui/career_ability_bar_ui_definitions.lua
 
-local var_0_0 = {
+local tbl = {
 	250,
 	16
 }
-local var_0_1 = {
+local tbl_2 = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -45,7 +45,7 @@ local var_0_1 = {
 		vertical_alignment = "center",
 		parent = "screen_bottom_pivot",
 		horizontal_alignment = "center",
-		size = var_0_0,
+		size = tbl,
 		position = {
 			0,
 			-200,
@@ -53,9 +53,9 @@ local var_0_1 = {
 		}
 	}
 }
-local var_0_2 = UIFrameSettings.frame_outer_glow_01
-local var_0_3 = var_0_2.texture_sizes.corner[1]
-local var_0_4 = {
+local frame_outer_glow_01 = UIFrameSettings.frame_outer_glow_01
+local var_0_3 = frame_outer_glow_01.texture_sizes.corner[1]
+local tbl_3 = {
 	ability_bar = {
 		scenegraph_id = "ability_bar",
 		element = {
@@ -69,10 +69,11 @@ local var_0_4 = {
 					pass_type = "texture",
 					style_id = "icon",
 					texture_id = "icon",
-					content_check_function = function(arg_1_0, arg_1_1)
-						arg_1_0.gamepad_active = Managers.input:is_device_active("gamepad")
+					content_check_function = function (self, arg_1_1)
+						-- function 1
+						self.gamepad_active = Managers.input:is_device_active("gamepad")
 
-						return arg_1_0.gamepad_active
+						return self.gamepad_active
 					end
 				},
 				{
@@ -103,30 +104,44 @@ local var_0_4 = {
 					style_id = "input_text",
 					pass_type = "text",
 					text_id = "input_text",
-					content_check_function = function(arg_2_0)
-						return not arg_2_0.gamepad_active
+					content_check_function = function (self)
+						-- function 2
+						return not self.gamepad_active
 					end,
-					content_change_function = function(arg_3_0, arg_3_1)
-						local var_3_0 = Managers.input:get_service("Player"):get_keymapping("weapon_reload", "win32")
+					content_change_function = function (self, arg_3_1)
+						-- function 3
+						local get_keymapping = Managers.input:get_service("Player"):get_keymapping("weapon_reload", "win32")
 
-						if not var_3_0 then
-							arg_3_0.input_text = ""
+						if not get_keymapping then
+							self.input_text = ""
 
 							return
 						end
 
-						local var_3_1 = var_3_0[1]
-						local var_3_2 = var_3_0[2]
-						local var_3_3 = ""
+						local var_3_1 = get_keymapping[1]
+						local var_3_2 = get_keymapping[2]
+						local str = ""
 
 						if var_3_2 ~= UNASSIGNED_KEY then
-							local var_3_4 = var_3_1 == "mouse" and Mouse or Keyboard
+							local Mouse
 
-							var_3_3 = var_3_4.button_locale_name(var_3_2) or var_3_4.button_name(var_3_2) or Localize("lb_unknown")
-							var_3_3 = Utf8.upper(var_3_3)
+							if var_3_1 == "mouse" then
+								Mouse = Mouse
+
+								if not Mouse then
+									-- Nothing
+								end
+							end
+
+							Mouse = Keyboard
+
+							::label_3_0::
+
+							str = Mouse.button_locale_name(var_3_2) or Mouse.button_name(var_3_2) or Localize("lb_unknown")
+							str = Utf8.upper(str)
 						end
 
-						arg_3_0.input_text = var_3_3
+						self.input_text = str
 					end
 				},
 				{
@@ -134,8 +149,9 @@ local var_0_4 = {
 					pass_type = "text",
 					text_id = "input_text",
 					retained_mode = RETAINED_MODE_ENABLED,
-					content_check_function = function(arg_4_0)
-						return not arg_4_0.gamepad_active
+					content_check_function = function (self)
+						-- function 4
+						return not self.gamepad_active
 					end
 				}
 			}
@@ -159,10 +175,10 @@ local var_0_4 = {
 				}
 			},
 			size = {
-				var_0_0[1] - 6,
-				var_0_0[2]
+				tbl[1] - 6,
+				tbl[2]
 			},
-			frame = var_0_2.texture
+			frame = frame_outer_glow_01.texture
 		},
 		style = {
 			input_text = {
@@ -206,8 +222,8 @@ local var_0_4 = {
 					-(var_0_3 - 1),
 					-(var_0_3 - 1)
 				},
-				texture_size = var_0_2.texture_size,
-				texture_sizes = var_0_2.texture_sizes,
+				texture_size = frame_outer_glow_01.texture_size,
+				texture_sizes = frame_outer_glow_01.texture_sizes,
 				color = {
 					255,
 					255,
@@ -219,7 +235,7 @@ local var_0_4 = {
 					0,
 					0
 				},
-				size = var_0_0
+				size = tbl
 			},
 			bar_1 = {
 				gradient_threshold = 0,
@@ -235,8 +251,8 @@ local var_0_4 = {
 					3
 				},
 				size = {
-					var_0_0[1] - 6,
-					var_0_0[2] - 6
+					tbl[1] - 6,
+					tbl[2] - 6
 				}
 			},
 			icon = {
@@ -245,8 +261,8 @@ local var_0_4 = {
 					34
 				},
 				offset = {
-					var_0_0[1] + 5,
-					var_0_0[2] / 2 - 17,
+					tbl[1] + 5,
+					tbl[2] / 2 - 17,
 					5
 				},
 				color = {
@@ -262,8 +278,8 @@ local var_0_4 = {
 					34
 				},
 				offset = {
-					var_0_0[1] + 2,
-					var_0_0[2] / 2 - 17 - 2,
+					tbl[1] + 2,
+					tbl[2] / 2 - 17 - 2,
 					5
 				},
 				color = {
@@ -288,8 +304,8 @@ local var_0_4 = {
 			},
 			bar_bg = {
 				size = {
-					var_0_0[1] - 6,
-					var_0_0[2] - 6
+					tbl[1] - 6,
+					tbl[2] - 6
 				},
 				offset = {
 					3,
@@ -332,6 +348,6 @@ local var_0_4 = {
 }
 
 return {
-	scenegraph_definition = var_0_1,
-	widget_definitions = var_0_4
+	scenegraph_definition = tbl_2,
+	widget_definitions = tbl_3
 }

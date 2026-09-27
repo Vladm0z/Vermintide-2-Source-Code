@@ -1,6 +1,7 @@
 -- chunkname: @dialogues/generated/npc_dlc_termite_2.lua
 
-return function()
+return function ()
+	-- function 1
 	define_rule({
 		response = "nik_power_escape_final_word_a",
 		name = "nik_power_escape_final_word_a",

@@ -37,43 +37,43 @@ HordeSettingsBasics = {
 	}
 }
 
-local var_0_0 = {}
+local tbl = {}
 local var_0_1
-local var_0_2 = 0
+local num = 0
 
-for iter_0_0, iter_0_1 in pairs(HordeCompositions) do
-	var_0_2 = var_0_2 + 1
+for k, v in pairs(HordeCompositions) do
+	num = num + 1
 
-	for iter_0_2 = 1, #iter_0_1 do
-		table.clear_array(var_0_0, #var_0_0)
+	for k_2 = 1, #v do
+		table.clear_array(tbl, #tbl)
 
-		local var_0_3 = iter_0_1[iter_0_2]
+		local var_0_3 = v[k_2]
 
-		for iter_0_3, iter_0_4 in ipairs(var_0_3) do
-			var_0_0[iter_0_3] = iter_0_4.weight
+		for i, v_2 in ipairs(var_0_3) do
+			tbl[i] = v_2.weight
 
-			local var_0_4 = iter_0_4.breeds
+			local breeds = v_2.breeds
 
-			for iter_0_5 = 1, #var_0_4, 2 do
-				local var_0_5 = var_0_4[iter_0_5]
+			for i5 = 1, #breeds, 2 do
+				local var_0_5 = breeds[i5]
 				local var_0_6 = Breeds[var_0_5]
 
 				if not var_0_6 then
-					print(string.format("Bad or non-existing breed in HordeCompositions table %s : '%s' defined in HordeCompositions.", iter_0_0, tostring(var_0_5)))
+					print(string.format("Bad or non-existing breed in HordeCompositions table %s : '%s' defined in HordeCompositions.", k, tostring(var_0_5)))
 
 					var_0_1 = true
 				elseif not var_0_6.can_use_horde_spawners then
-					iter_0_4.must_use_hidden_spawners = true
+					v_2.must_use_hidden_spawners = true
 				end
 			end
 		end
 
 		var_0_3.loaded_probs = {
-			LoadedDice.create(var_0_0)
+			LoadedDice.create(tbl)
 		}
 
-		fassert(not var_0_1, "Found errors in HordeComposition table %s - see above. ", iter_0_0)
-		fassert(var_0_3.loaded_probs, "Could not create horde compositison sprobablitity table, make sure the table '%s' in HordeCompositions is correctly structured and has an entry for each difficulty.", iter_0_0)
+		fassert(not var_0_1, "Found errors in HordeComposition table %s - see above. ", k)
+		fassert(var_0_3.loaded_probs, "Could not create horde compositison sprobablitity table, make sure the table '%s' in HordeCompositions is correctly structured and has an entry for each difficulty.", k)
 	end
 end
 
@@ -601,41 +601,41 @@ HordeSettings = {
 HordeSettings.disabled = table.clone(HordeSettings.default)
 HordeSettings.disabled.disabled = true
 
-local var_0_7 = {}
+local tbl_2 = {}
 local var_0_8
 
-for iter_0_6, iter_0_7 in pairs(HordeSettings) do
-	iter_0_7.name = iter_0_6
+for k_3, v_3 in pairs(HordeSettings) do
+	v_3.name = k_3
 
-	if iter_0_7.compositions_pacing then
-		for iter_0_8, iter_0_9 in pairs(iter_0_7.compositions_pacing) do
-			table.clear_array(var_0_7, #var_0_7)
+	if not v_3.compositions_pacing then
+		for k_4, v_4 in pairs(v_3.compositions_pacing) do
+			table.clear_array(tbl_2, #tbl_2)
 
-			for iter_0_10, iter_0_11 in ipairs(iter_0_9) do
-				var_0_7[iter_0_10] = iter_0_11.weight
+			for i_2, v_5 in ipairs(v_4) do
+				tbl_2[i_2] = v_5.weight
 
-				local var_0_9 = iter_0_11.breeds
+				local breeds_2 = v_5.breeds
 
-				for iter_0_12 = 1, #var_0_9, 2 do
-					local var_0_10 = var_0_9[iter_0_12]
+				for i12 = 1, #breeds_2, 2 do
+					local var_0_10 = breeds_2[i12]
 					local var_0_11 = Breeds[var_0_10]
 
 					if not var_0_11 then
-						print(string.format("Bad or non-existing breed in HordeCompositionsPacing table %s : '%s' defined in HordeCompositionsPacing.", iter_0_8, tostring(var_0_10)))
+						print(string.format("Bad or non-existing breed in HordeCompositionsPacing table %s : '%s' defined in HordeCompositionsPacing.", k_4, tostring(var_0_10)))
 
 						var_0_8 = true
 					elseif not var_0_11.can_use_horde_spawners then
-						iter_0_11.must_use_hidden_spawners = true
+						v_5.must_use_hidden_spawners = true
 					end
 				end
 			end
 
-			iter_0_9.loaded_probs = {
-				LoadedDice.create(var_0_7)
+			v_4.loaded_probs = {
+				LoadedDice.create(tbl_2)
 			}
 
-			fassert(not var_0_8, "Found errors in HordeCompositionsPacing table %s - see above. ", iter_0_8)
-			fassert(iter_0_9.loaded_probs, "Could not create horde composition probablitity table, make sure the table '%s' in HordeCompositionsPacing is correctly structured.", iter_0_8)
+			fassert(not var_0_8, "Found errors in HordeCompositionsPacing table %s - see above. ", k_4)
+			fassert(v_4.loaded_probs, "Could not create horde composition probablitity table, make sure the table '%s' in HordeCompositionsPacing is correctly structured.", k_4)
 		end
 	end
 end
@@ -671,7 +671,7 @@ RoamingSettings = {
 	}
 }
 
-local var_0_12 = {
+local tbl_3 = {
 	hard = {
 		max_specials = 3,
 		breeds = {
@@ -866,7 +866,7 @@ local var_0_12 = {
 		}
 	}
 }
-local var_0_13 = {
+local tbl_4 = {
 	hard = {
 		max_specials = 3,
 		breeds = {
@@ -1047,7 +1047,7 @@ local var_0_13 = {
 		}
 	}
 }
-local var_0_14 = {
+local tbl_5 = {
 	hard = {
 		max_specials = 2,
 		breeds = {
@@ -1241,7 +1241,7 @@ local var_0_14 = {
 		}
 	}
 }
-local var_0_15 = {
+local tbl_6 = {
 	hard = {
 		max_specials = 2,
 		breeds = {
@@ -1422,7 +1422,7 @@ local var_0_15 = {
 		}
 	}
 }
-local var_0_16 = {
+local tbl_7 = {
 	hard = {
 		max_specials = 2,
 		breeds = {
@@ -1610,7 +1610,7 @@ local var_0_16 = {
 		}
 	}
 }
-local var_0_17 = {
+local tbl_8 = {
 	hard = {
 		max_specials = 2,
 		breeds = {
@@ -1921,7 +1921,7 @@ SpecialsSettings = {
 				320
 			}
 		},
-		difficulty_overrides = var_0_12
+		difficulty_overrides = tbl_3
 	},
 	default_light = {
 		spawn_method = "specials_by_slots",
@@ -1964,7 +1964,7 @@ SpecialsSettings = {
 				"skaven_ratling_gunner"
 			}
 		},
-		difficulty_overrides = var_0_12
+		difficulty_overrides = tbl_3
 	},
 	skaven = {
 		spawn_method = "specials_by_slots",
@@ -2005,7 +2005,7 @@ SpecialsSettings = {
 				"skaven_ratling_gunner"
 			}
 		},
-		difficulty_overrides = var_0_13
+		difficulty_overrides = tbl_4
 	},
 	skaven_light = {
 		spawn_method = "specials_by_slots",
@@ -2046,7 +2046,7 @@ SpecialsSettings = {
 				"skaven_ratling_gunner"
 			}
 		},
-		difficulty_overrides = var_0_13
+		difficulty_overrides = tbl_4
 	},
 	default_demo = {
 		spawn_method = "specials_by_slots",
@@ -2237,7 +2237,7 @@ SpecialsSettings = {
 				"chaos_corruptor_sorcerer"
 			}
 		},
-		difficulty_overrides = var_0_14
+		difficulty_overrides = tbl_5
 	},
 	chaos_light = {
 		spawn_method = "specials_by_slots",
@@ -2288,7 +2288,7 @@ SpecialsSettings = {
 				"chaos_corruptor_sorcerer"
 			}
 		},
-		difficulty_overrides = var_0_14
+		difficulty_overrides = tbl_5
 	},
 	beastmen = {
 		spawn_method = "specials_by_slots",
@@ -2347,7 +2347,7 @@ SpecialsSettings = {
 				"chaos_corruptor_sorcerer"
 			}
 		},
-		difficulty_overrides = var_0_15
+		difficulty_overrides = tbl_6
 	},
 	skaven_beastmen = {
 		spawn_method = "specials_by_slots",
@@ -2409,7 +2409,7 @@ SpecialsSettings = {
 				"chaos_corruptor_sorcerer"
 			}
 		},
-		difficulty_overrides = var_0_16
+		difficulty_overrides = tbl_7
 	},
 	chaos_beastmen = {
 		spawn_method = "specials_by_slots",
@@ -2461,7 +2461,7 @@ SpecialsSettings = {
 				"chaos_corruptor_sorcerer"
 			}
 		},
-		difficulty_overrides = var_0_14
+		difficulty_overrides = tbl_5
 	},
 	disabled = {
 		disabled = true,
@@ -5069,18 +5069,19 @@ DefaultConflictFactionSetWeights = {
 	beastmen = 8
 }
 ConflictDirectorLockedFunctions = {
-	beastmen = function(arg_1_0)
-		if DEDICATED_SERVER then
+	beastmen = function (arg_1_0)
+		-- function 1
+		if not DEDICATED_SERVER then
 			return false
 		end
 
-		if script_data.unlock_all_levels then
+		if not script_data.unlock_all_levels then
 			return false
 		end
 
 		local var_1_0 = LevelSettings[arg_1_0]
 
-		if var_1_0.allowed_locked_director_functions and var_1_0.allowed_locked_director_functions.beastmen then
+		if not var_1_0.allowed_locked_director_functions and not var_1_0.allowed_locked_director_functions.beastmen then
 			return false
 		end
 
@@ -5088,11 +5089,11 @@ ConflictDirectorLockedFunctions = {
 			return true
 		end
 
-		local var_1_1 = "completed_levels_crater"
-		local var_1_2 = Managers.backend:get_stats()
-		local var_1_3 = tonumber(var_1_2[var_1_1])
+		local str = "completed_levels_crater"
+		local get_stats = Managers.backend:get_stats()
+		local var_1_3 = tonumber(get_stats[str])
 
-		if var_1_3 and var_1_3 > 0 then
+		if not (not var_1_3 and not (var_1_3 > 0)) then
 			return false
 		end
 
@@ -5494,29 +5495,29 @@ ConflictDirectors = {
 	}
 }
 
-local var_0_18 = true
+local flag = true
 
-DLCUtils.require_list("conflict_settings_files", var_0_18)
+DLCUtils.require_list("conflict_settings_files", flag)
 
-local var_0_19 = Difficulties
-local var_0_20 = os.clock()
-local var_0_21 = ConflictUtils.find_conflict_director_breeds
+local Difficulties = Difficulties
+local clock = os.clock()
+local find_conflict_director_breeds = ConflictUtils.find_conflict_director_breeds
 
-for iter_0_13, iter_0_14 in pairs(ConflictDirectors) do
-	iter_0_14.name = iter_0_13
-	iter_0_14.contained_breeds = {}
+for k_5, v_6 in pairs(ConflictDirectors) do
+	v_6.name = k_5
+	v_6.contained_breeds = {}
 
-	for iter_0_15 = 1, #var_0_19 do
-		local var_0_22 = var_0_19[iter_0_15]
-		local var_0_23 = {}
+	for i15 = 1, #Difficulties do
+		local var_0_22 = Difficulties[i15]
+		local tbl_9 = {}
 
-		var_0_21(iter_0_14, var_0_22, var_0_23)
+		find_conflict_director_breeds(v_6, var_0_22, tbl_9)
 
-		iter_0_14.contained_breeds[var_0_22] = var_0_23
+		v_6.contained_breeds[var_0_22] = tbl_9
 	end
 end
 
-print("[ConflictSettings] Contained breeds generated in:", os.clock() - var_0_20)
+print("[ConflictSettings] Contained breeds generated in:", os.clock() - clock)
 
 RecycleSettings = {
 	destroy_stuck_distance_squared = 625,
@@ -5528,75 +5529,107 @@ RecycleSettings = {
 	destroy_no_path_found_time = 10,
 	max_grunts = 90
 }
+
+local CurrentConflictSettings = CurrentConflictSettings
+
 CurrentConflictSettings = CurrentConflictSettings or false
+CurrentConflictSettings = CurrentConflictSettings
+
+local CurrentIntensitySettings = CurrentIntensitySettings
+
 CurrentIntensitySettings = CurrentIntensitySettings or false
+CurrentIntensitySettings = CurrentIntensitySettings
+
+local CurrentPacing = CurrentPacing
+
 CurrentPacing = CurrentPacing or false
+CurrentPacing = CurrentPacing
+
+local CurrentBossSettings = CurrentBossSettings
+
 CurrentBossSettings = CurrentBossSettings or false
+CurrentBossSettings = CurrentBossSettings
+
+local CurrentSpecialsSettings = CurrentSpecialsSettings
+
 CurrentSpecialsSettings = CurrentSpecialsSettings or false
+CurrentSpecialsSettings = CurrentSpecialsSettings
+
+local CurrentHordeSettings = CurrentHordeSettings
+
 CurrentHordeSettings = CurrentHordeSettings or false
+CurrentHordeSettings = CurrentHordeSettings
+
+local CurrentRoamingSettings = CurrentRoamingSettings
+
 CurrentRoamingSettings = CurrentRoamingSettings or false
+CurrentRoamingSettings = CurrentRoamingSettings
+
+local CurrentPackSpawningSettings = CurrentPackSpawningSettings
+
 CurrentPackSpawningSettings = CurrentPackSpawningSettings or false
+CurrentPackSpawningSettings = CurrentPackSpawningSettings
 
-local var_0_24 = false
+local flag_2 = false
 
-for iter_0_16, iter_0_17 in pairs(HordeSettings) do
-	local var_0_25 = iter_0_17.compositions
+for k_6, v_7 in pairs(HordeSettings) do
+	local compositions = v_7.compositions
 
-	iter_0_17.name = iter_0_16
+	v_7.name = k_6
 
-	for iter_0_18, iter_0_19 in pairs(TerrorEventBlueprints) do
-		for iter_0_20 = 1, #iter_0_19 do
-			local var_0_26 = iter_0_19[iter_0_20]
+	for k_7, v_8 in pairs(TerrorEventBlueprints) do
+		for i20 = 1, #v_8 do
+			local var_0_34 = v_8[i20]
 
-			if var_0_26[1] == "event_horde" and not var_0_25[var_0_26.composition_type] then
-				print(string.format("Bad or misspelled composition_type '%s' in event '%s', element number %d in horde setting %s", tostring(var_0_26.composition_type), iter_0_18, iter_0_20, iter_0_16))
+			if not (var_0_34[1] ~= "event_horde" or compositions[var_0_34.composition_type]) then
+				print(string.format("Bad or misspelled composition_type '%s' in event '%s', element number %d in horde setting %s", tostring(var_0_34.composition_type), k_7, i20, k_6))
 
-				var_0_24 = true
+				flag_2 = true
 			end
 		end
 	end
 end
 
-if var_0_24 then
+if not flag_2 then
 	error("Found errors in TerrorEventBlueprints, as shown here --^")
 end
 
-for iter_0_21, iter_0_22 in pairs(PackSpawningSettings) do
-	iter_0_22.name = iter_0_21
+for k_8, v_9 in pairs(PackSpawningSettings) do
+	v_9.name = k_8
 
-	if not iter_0_22.disabled then
-		roaming_set = iter_0_22.roaming_set
-		roaming_set.name = iter_0_21
+	if not v_9.disabled then
+		roaming_set = v_9.roaming_set
+		roaming_set.name = k_8
 
-		local var_0_27 = {}
-		local var_0_28 = roaming_set.breed_packs_override
+		local tbl_10 = {}
+		local breed_packs_override = roaming_set.breed_packs_override
 
-		if var_0_28 then
-			for iter_0_23 = 1, #var_0_28 do
-				var_0_27[iter_0_23] = var_0_28[iter_0_23][2]
+		if not breed_packs_override then
+			for i23 = 1, #breed_packs_override do
+				tbl_10[i23] = breed_packs_override[i23][2]
 			end
 
 			roaming_set.breed_packs_override_loaded_dice = {
-				LoadedDice.create(var_0_27)
+				LoadedDice.create(tbl_10)
 			}
 		end
 	end
 end
 
-for iter_0_24, iter_0_25 in pairs(BossSettings) do
-	iter_0_25.name = iter_0_24
+for k_9, v_10 in pairs(BossSettings) do
+	v_10.name = k_9
 end
 
-for iter_0_26, iter_0_27 in pairs(IntensitySettings) do
-	iter_0_27.name = iter_0_26
+for k_10, v_11 in pairs(IntensitySettings) do
+	v_11.name = k_10
 end
 
-for iter_0_28, iter_0_29 in pairs(SpecialsSettings) do
-	iter_0_29.name = iter_0_28
+for k_11, v_12 in pairs(SpecialsSettings) do
+	v_12.name = k_11
 end
 
-for iter_0_30, iter_0_31 in pairs(PacingSettings) do
-	iter_0_31.name = iter_0_30
+for k_12, v_13 in pairs(PacingSettings) do
+	v_13.name = k_12
 end
 
 DebugBreedSpawns = {}

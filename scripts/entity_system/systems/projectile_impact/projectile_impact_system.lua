@@ -8,8 +8,8 @@ require("scripts/unit_extensions/weapons/projectiles/projectile_impact/player_pr
 
 ProjectileImpactSystem = class(ProjectileImpactSystem, ExtensionSystemBase)
 
-local var_0_0 = {}
-local var_0_1 = {
+local tbl = {}
+local tbl_2 = {
 	"ProjectileBaseImpactUnitExtension",
 	"ProjectileRaycastImpactUnitExtension",
 	"PlayerProjectileImpactUnitExtension",
@@ -17,21 +17,23 @@ local var_0_1 = {
 	"ProjectileLinearSphereSweepImpactUnitExtension"
 }
 
-function ProjectileImpactSystem.init(arg_1_0, arg_1_1, arg_1_2)
-	ProjectileImpactSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
+ProjectileImpactSystem.init = function (self, arg_1_1, arg_1_2)
+	-- function 1
+	ProjectileImpactSystem.super.init(self, arg_1_1, arg_1_2, tbl_2)
 
-	local var_1_0 = arg_1_1.network_event_delegate
+	local network_event_delegate = arg_1_1.network_event_delegate
 
-	arg_1_0.network_event_delegate = var_1_0
+	self.network_event_delegate = network_event_delegate
 
-	var_1_0:register(arg_1_0, unpack(var_0_0))
+	network_event_delegate:register(self, unpack(tbl))
 
-	arg_1_0.network_transmit = Managers.state.network.network_transmit
+	self.network_transmit = Managers.state.network.network_transmit
 end
 
-function ProjectileImpactSystem.destroy(arg_2_0)
-	arg_2_0.network_event_delegate:unregister(arg_2_0)
+ProjectileImpactSystem.destroy = function (self)
+	-- function 2
+	self.network_event_delegate:unregister(self)
 
-	arg_2_0.network_event_delegate = nil
-	arg_2_0.network_transmit = nil
+	self.network_event_delegate = nil
+	self.network_transmit = nil
 end

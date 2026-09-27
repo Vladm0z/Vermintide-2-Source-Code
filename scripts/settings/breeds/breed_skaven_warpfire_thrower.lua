@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/breeds/breed_skaven_warpfire_thrower.lua
 
-local var_0_0 = require("scripts/utils/stagger_types")
-local var_0_1 = {
+local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
+local tbl = {
 	threat_value = 8,
 	walk_speed = 2,
 	race = "skaven",
@@ -84,154 +84,159 @@ local var_0_1 = {
 		200,
 		200,
 		0
-	},
-	disabled = Development.setting("disable_warpfire_thrower") or false,
-	hitzone_multiplier_types = {
-		head = "headshot"
-	},
-	hit_zones = {
-		head = {
-			prio = 1,
-			actors = {
-				"c_head"
-			},
-			push_actors = {
-				"j_head",
-				"j_spine1"
-			}
+	}
+}
+local setting = Development.setting("disable_warpfire_thrower")
+
+setting = setting or false
+tbl.disabled = setting
+tbl.hitzone_multiplier_types = {
+	head = "headshot"
+}
+tbl.hit_zones = {
+	head = {
+		prio = 1,
+		actors = {
+			"c_head"
 		},
-		neck = {
-			prio = 1,
-			actors = {
-				"c_neck",
-				"c_neck1"
-			},
-			push_actors = {
-				"j_head",
-				"j_spine1"
-			}
-		},
-		torso = {
-			prio = 2,
-			actors = {
-				"c_hips",
-				"c_spine",
-				"c_spine2",
-				"c_leftshoulder",
-				"c_rightshoulder"
-			},
-			push_actors = {
-				"j_spine1"
-			}
-		},
-		left_arm = {
-			prio = 3,
-			actors = {
-				"c_leftarm",
-				"c_leftforearm",
-				"c_lefthand"
-			},
-			push_actors = {
-				"j_spine1"
-			}
-		},
-		right_arm = {
-			prio = 3,
-			actors = {
-				"c_rightarm",
-				"c_rightforearm",
-				"c_righthand"
-			},
-			push_actors = {
-				"j_spine1"
-			}
-		},
-		left_leg = {
-			prio = 3,
-			actors = {
-				"c_leftleg",
-				"c_leftupleg",
-				"c_leftfoot",
-				"c_lefttoebase"
-			},
-			push_actors = {
-				"j_leftfoot",
-				"j_rightfoot",
-				"j_hips"
-			}
-		},
-		right_leg = {
-			prio = 3,
-			actors = {
-				"c_rightleg",
-				"c_rightupleg",
-				"c_rightfoot",
-				"c_righttoebase"
-			},
-			push_actors = {
-				"j_leftfoot",
-				"j_rightfoot",
-				"j_hips"
-			}
-		},
-		tail = {
-			prio = 3,
-			actors = {
-				"c_tail1",
-				"c_tail2",
-				"c_tail3",
-				"c_tail4",
-				"c_tail5",
-				"c_tail6"
-			},
-			push_actors = {
-				"j_hips"
-			}
-		},
-		aux = {
-			prio = 4,
-			actors = {
-				"c_backpack"
-			},
-			push_actors = {
-				"j_backpack"
-			}
-		},
-		full = {
-			prio = 5,
-			actors = {}
-		},
-		afro = {
-			prio = 6,
-			actors = {
-				"c_afro"
-			}
+		push_actors = {
+			"j_head",
+			"j_spine1"
 		}
 	},
-	nav_cost_map_allowed_layers = {
-		plague_wave = 20,
-		troll_bile = 20,
-		lamp_oil_fire = 10,
-		warpfire_thrower_warpfire = 1,
-		vortex_near = 1,
-		stormfiend_warpfire = 1,
-		vortex_danger_zone = 1
+	neck = {
+		prio = 1,
+		actors = {
+			"c_neck",
+			"c_neck1"
+		},
+		push_actors = {
+			"j_head",
+			"j_spine1"
+		}
 	},
-	custom_death_enter_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-		local var_1_0 = BLACKBOARDS[arg_1_0]
-
-		if not Unit.alive(arg_1_1) then
-			return
-		end
-
-		QuestSettings.check_warpfire_kill_before_shooting(var_1_0, arg_1_1)
-		QuestSettings.check_warpfire_kill_on_power_cell(arg_1_3, arg_1_1)
-	end
+	torso = {
+		prio = 2,
+		actors = {
+			"c_hips",
+			"c_spine",
+			"c_spine2",
+			"c_leftshoulder",
+			"c_rightshoulder"
+		},
+		push_actors = {
+			"j_spine1"
+		}
+	},
+	left_arm = {
+		prio = 3,
+		actors = {
+			"c_leftarm",
+			"c_leftforearm",
+			"c_lefthand"
+		},
+		push_actors = {
+			"j_spine1"
+		}
+	},
+	right_arm = {
+		prio = 3,
+		actors = {
+			"c_rightarm",
+			"c_rightforearm",
+			"c_righthand"
+		},
+		push_actors = {
+			"j_spine1"
+		}
+	},
+	left_leg = {
+		prio = 3,
+		actors = {
+			"c_leftleg",
+			"c_leftupleg",
+			"c_leftfoot",
+			"c_lefttoebase"
+		},
+		push_actors = {
+			"j_leftfoot",
+			"j_rightfoot",
+			"j_hips"
+		}
+	},
+	right_leg = {
+		prio = 3,
+		actors = {
+			"c_rightleg",
+			"c_rightupleg",
+			"c_rightfoot",
+			"c_righttoebase"
+		},
+		push_actors = {
+			"j_leftfoot",
+			"j_rightfoot",
+			"j_hips"
+		}
+	},
+	tail = {
+		prio = 3,
+		actors = {
+			"c_tail1",
+			"c_tail2",
+			"c_tail3",
+			"c_tail4",
+			"c_tail5",
+			"c_tail6"
+		},
+		push_actors = {
+			"j_hips"
+		}
+	},
+	aux = {
+		prio = 4,
+		actors = {
+			"c_backpack"
+		},
+		push_actors = {
+			"j_backpack"
+		}
+	},
+	full = {
+		prio = 5,
+		actors = {}
+	},
+	afro = {
+		prio = 6,
+		actors = {
+			"c_afro"
+		}
+	}
+}
+tbl.nav_cost_map_allowed_layers = {
+	plague_wave = 20,
+	troll_bile = 20,
+	lamp_oil_fire = 10,
+	warpfire_thrower_warpfire = 1,
+	vortex_near = 1,
+	stormfiend_warpfire = 1,
+	vortex_danger_zone = 1
 }
 
-Breeds.skaven_warpfire_thrower = table.create_copy(Breeds.skaven_warpfire_thrower, var_0_1)
+tbl.custom_death_enter_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	local var_1_0 = BLACKBOARDS[arg_1_0]
 
-local var_0_2 = {
+	if not Unit.alive(arg_1_1) then
+		return
+	end
+
+	QuestSettings.check_warpfire_kill_before_shooting(var_1_0, arg_1_1)
+	QuestSettings.check_warpfire_kill_on_power_cell(arg_1_3, arg_1_1)
+end
+
+Breeds.skaven_warpfire_thrower = table.create_copy(Breeds.skaven_warpfire_thrower, tbl)
+
+local tbl_2 = {
 	skulk = {
 		dogpile_aggro_needed = 2,
 		skulk_time = 1,
@@ -284,11 +289,11 @@ local var_0_2 = {
 		ai_push_data = {
 			stagger_distance = 1,
 			stagger_impact = {
-				var_0_0.medium,
-				var_0_0.medium,
-				var_0_0.medium,
-				var_0_0.weak,
-				var_0_0.weak
+				scripts_utils_stagger_types.medium,
+				scripts_utils_stagger_types.medium,
+				scripts_utils_stagger_types.medium,
+				scripts_utils_stagger_types.weak,
+				scripts_utils_stagger_types.weak
 			},
 			stagger_duration = {
 				2,
@@ -439,4 +444,4 @@ local var_0_2 = {
 	}
 }
 
-BreedActions.skaven_warpfire_thrower = table.create_copy(BreedActions.skaven_warpfire_thrower, var_0_2)
+BreedActions.skaven_warpfire_thrower = table.create_copy(BreedActions.skaven_warpfire_thrower, tbl_2)

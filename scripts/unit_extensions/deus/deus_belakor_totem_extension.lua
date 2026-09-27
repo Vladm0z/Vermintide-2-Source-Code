@@ -2,7 +2,7 @@
 
 require("scripts/settings/dlcs/belakor/belakor_balancing")
 
-local var_0_0 = {
+local tbl = {
 	INITIAL = 0,
 	COOLDOWN_FROM_SPAWN = 2,
 	WAITING_TO_SPAWN_ENEMIES = 1,
@@ -10,18 +10,19 @@ local var_0_0 = {
 	DESPAWNED = 5,
 	DECAL_SPAWNED = 3
 }
-local var_0_1 = "units/decals/deus_decal_aoe_cursedchest_01"
-local var_0_2 = 2
-local var_0_3 = 5
-local var_0_4 = 8
+local str = "units/decals/deus_decal_aoe_cursedchest_01"
+local num = 2
+local num_2 = 5
+local num_3 = 8
 
-local function var_0_5(arg_1_0, arg_1_1, arg_1_2)
-	local var_1_0 = arg_1_2 * arg_1_2
+local function fn(arg_1_0, arg_1_1, arg_1_2)
+	-- function 1
+	local num = arg_1_2 * arg_1_2
 
-	for iter_1_0 = 1, #arg_1_1 do
-		local var_1_1 = arg_1_1[iter_1_0]
+	for i = 1, #arg_1_1 do
+		local var_1_1 = arg_1_1[i]
 
-		if var_1_1 and var_1_0 > Vector3.distance_squared(arg_1_0, var_1_1) then
+		if not (not var_1_1 and not (num > Vector3.distance_squared(arg_1_0, var_1_1))) then
 			return true
 		end
 	end
@@ -29,38 +30,42 @@ local function var_0_5(arg_1_0, arg_1_1, arg_1_2)
 	return false
 end
 
-local function var_0_6(arg_2_0, arg_2_1)
-	return var_0_5(arg_2_0, arg_2_1, BelakorBalancing.totem_spawns_distance)
+local function fn_2(arg_2_0, arg_2_1)
+	-- function 2
+	return fn(arg_2_0, arg_2_1, BelakorBalancing.totem_spawns_distance)
 end
 
-local function var_0_7(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
-	local var_3_0 = arg_3_3 + Vector3(0, 0, 1.5)
-	local var_3_1 = Vector3.normalize(var_3_0 - arg_3_2)
+local function fn_3(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	-- function 3
+	local num = arg_3_3 + Vector3(0, 0, 1.5)
+	local normalize = Vector3.normalize(num - arg_3_2)
 
-	return Vector3.dot(arg_3_1, var_3_1) > 0 and (not World.umbra_available(arg_3_0) or World.umbra_has_line_of_sight(arg_3_0, var_3_0, arg_3_2))
+	return (not (Vector3.dot(arg_3_1, normalize) > 0) or not World.umbra_available(arg_3_0)) and World.umbra_has_line_of_sight(arg_3_0, num, arg_3_2)
 end
 
-local function var_0_8(arg_4_0)
-	local var_4_0, var_4_1 = var_0_2, Matrix4x4.from_quaternion_position(Quaternion.identity(), arg_4_0)
+local function fn_4(arg_4_0)
+	-- function 4
+	local var_4_0, from_quaternion_position = num, Matrix4x4.from_quaternion_position(Quaternion.identity(), arg_4_0)
 
-	Matrix4x4.set_scale(var_4_1, Vector3(var_4_0, var_4_0, var_4_0))
+	Matrix4x4.set_scale(from_quaternion_position, Vector3(var_4_0, var_4_0, var_4_0))
 
-	local var_4_2, var_4_3 = Managers.state.unit_spawner:spawn_network_unit(var_0_1, "network_synched_dummy_unit", nil, var_4_1)
+	local spawn_network_unit, var_4_3 = Managers.state.unit_spawner:spawn_network_unit(str, "network_synched_dummy_unit", nil, from_quaternion_position)
 
-	return var_4_2, var_4_3
+	return spawn_network_unit, var_4_3
 end
 
-local function var_0_9(arg_5_0, arg_5_1, arg_5_2)
+local function fn_5(arg_5_0, arg_5_1, arg_5_2)
+	-- function 5
 	if not World.umbra_available(arg_5_0) then
 		return true
 	end
 
 	local var_5_0 = Vector3(0, 0, 1.5)
 
-	for iter_5_0 = 1, #arg_5_2 do
-		local var_5_1 = arg_5_2[iter_5_0]
+	for i = 1, #arg_5_2 do
+		local var_5_1 = arg_5_2[i]
 
-		if World.umbra_has_line_of_sight(arg_5_0, var_5_1 + var_5_0, arg_5_1 + var_5_0) then
+		if not World.umbra_has_line_of_sight(arg_5_0, var_5_1 + var_5_0, arg_5_1 + var_5_0) then
 			return true
 		end
 	end
@@ -68,31 +73,33 @@ local function var_0_9(arg_5_0, arg_5_1, arg_5_2)
 	return false
 end
 
-local function var_0_10(arg_6_0, arg_6_1, arg_6_2)
+local function fn_6(arg_6_0, arg_6_1, arg_6_2)
+	-- function 6
 	local var_6_0
-	local var_6_1 = Managers.state.conflict:start_terror_event(arg_6_2, arg_6_1, arg_6_0)
+	local start_terror_event = Managers.state.conflict:start_terror_event(arg_6_2, arg_6_1, arg_6_0)
 
 	arg_6_1 = Math.next_random(arg_6_1)
 
-	return arg_6_1, var_6_1
+	return arg_6_1, start_terror_event
 end
 
-function push_players_away(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
-	local var_7_0 = math.pi / 6
-	local var_7_1 = arg_7_3 * math.cos(var_7_0)
-	local var_7_2 = arg_7_3 * math.sin(var_7_0)
-	local var_7_3 = arg_7_2 * arg_7_2
+function push_players_away(self, arg_7_1, arg_7_2, arg_7_3)
+	-- function 7
+	local num = math.pi / 6
+	local num_2 = arg_7_3 * math.cos(num)
+	local num_3 = arg_7_3 * math.sin(num)
+	local num_4 = arg_7_2 * arg_7_2
 
-	for iter_7_0 = 1, #arg_7_0 do
-		local var_7_4 = arg_7_0[iter_7_0]
-		local var_7_5 = POSITION_LOOKUP[var_7_4] - arg_7_1
+	for i = 1, #self do
+		local var_7_4 = self[i]
+		local num_5 = POSITION_LOOKUP[var_7_4] - arg_7_1
 
-		if var_7_3 >= Vector3.length_squared(var_7_5) then
-			local var_7_6 = Vector3.normalize(Vector3.flat(var_7_5)) * var_7_1
+		if num_4 >= Vector3.length_squared(num_5) then
+			local num_6 = Vector3.normalize(Vector3.flat(num_5)) * num_2
 
-			var_7_6.z = var_7_2
+			num_6.z = num_3
 
-			StatusUtils.set_catapulted_network(var_7_4, true, var_7_6)
+			StatusUtils.set_catapulted_network(var_7_4, true, num_6)
 		end
 	end
 
@@ -103,174 +110,180 @@ end
 
 DeusBelakorTotemExtension = class(DeusBelakorTotemExtension)
 
-function DeusBelakorTotemExtension.init(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
-	arg_8_0._unit = arg_8_2
-	arg_8_0.spawn_count = 0
-	arg_8_0._is_server = Managers.player.is_server
-	arg_8_0._world = arg_8_1.world
-	arg_8_0._hero_side = Managers.state.side:get_side_from_name("heroes")
-	arg_8_0._network_transmit = arg_8_1.network_transmit
+DeusBelakorTotemExtension.init = function (self, arg_8_1, arg_8_2, arg_8_3)
+	-- function 8
+	self._unit = arg_8_2
+	self.spawn_count = 0
+	self._is_server = Managers.player.is_server
+	self._world = arg_8_1.world
+	self._hero_side = Managers.state.side:get_side_from_name("heroes")
+	self._network_transmit = arg_8_1.network_transmit
 
-	if arg_8_0._is_server then
-		arg_8_0._current_state = var_0_0.INITIAL
-		arg_8_0._last_in_range_t = 0
+	if not self._is_server then
+		self._current_state = tbl.INITIAL
+		self._last_in_range_t = 0
 	end
 
-	arg_8_0._dead = false
+	self._dead = false
 end
 
-function DeusBelakorTotemExtension.game_object_initialized(arg_9_0, arg_9_1, arg_9_2)
-	arg_9_0._current_state = var_0_0.COOLDOWN_FROM_SPAWN
+DeusBelakorTotemExtension.game_object_initialized = function (self, arg_9_1, arg_9_2)
+	-- function 9
+	self._current_state = tbl.COOLDOWN_FROM_SPAWN
 
-	local var_9_0 = Managers.mechanism:get_level_seed()
+	local get_level_seed = Managers.mechanism:get_level_seed()
 
-	arg_9_0._seed = HashUtils.fnv32_hash(arg_9_2 .. "_" .. var_9_0)
+	self._seed = HashUtils.fnv32_hash(arg_9_2 .. "_" .. get_level_seed)
 end
 
-function DeusBelakorTotemExtension.extensions_ready(arg_10_0, arg_10_1, arg_10_2)
-	arg_10_0._health_ext = ScriptUnit.extension(arg_10_2, "health_system")
+DeusBelakorTotemExtension.extensions_ready = function (self, arg_10_1, arg_10_2)
+	-- function 10
+	self._health_ext = ScriptUnit.extension(arg_10_2, "health_system")
 end
 
-function DeusBelakorTotemExtension.destroy(arg_11_0)
-	if ALIVE[arg_11_0._decal_unit] then
-		Unit.flow_event(arg_11_0._decal_unit, "despawned")
-		arg_11_0._network_transmit:send_rpc_clients("rpc_flow_event", arg_11_0._decal_unit_go_id, NetworkLookup.flow_events.despawned)
+DeusBelakorTotemExtension.destroy = function (self)
+	-- function 11
+	if not ALIVE[self._decal_unit] then
+		Unit.flow_event(self._decal_unit, "despawned")
+		self._network_transmit:send_rpc_clients("rpc_flow_event", self._decal_unit_go_id, NetworkLookup.flow_events.despawned)
 
-		arg_11_0._decal_unit = nil
-		arg_11_0._decal_unit_go_id = nil
+		self._decal_unit = nil
+		self._decal_unit_go_id = nil
 	end
 end
 
-function DeusBelakorTotemExtension.is_despawned(arg_12_0)
-	return arg_12_0._current_state == var_0_0.DESPAWNED
+DeusBelakorTotemExtension.is_despawned = function (self)
+	-- function 12
+	return self._current_state == tbl.DESPAWNED
 end
 
-function DeusBelakorTotemExtension.update(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+DeusBelakorTotemExtension.update = function (self, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+	-- function 13
 	if not HEALTH_ALIVE[arg_13_1] then
-		if not arg_13_0._dead then
-			Managers.state.achievement:trigger_event("register_totem_state_change", arg_13_0._unit, false)
+		if not self._dead then
+			Managers.state.achievement:trigger_event("register_totem_state_change", self._unit, false)
 
-			if arg_13_0._is_server and arg_13_0._decal_unit then
-				Unit.flow_event(arg_13_0._decal_unit, "despawned")
-				arg_13_0._network_transmit:send_rpc_clients("rpc_flow_event", arg_13_0._decal_unit_go_id, NetworkLookup.flow_events.despawned)
+			if not self._is_server and not self._decal_unit then
+				Unit.flow_event(self._decal_unit, "despawned")
+				self._network_transmit:send_rpc_clients("rpc_flow_event", self._decal_unit_go_id, NetworkLookup.flow_events.despawned)
 
-				arg_13_0._decal_unit = nil
-				arg_13_0._decal_unit_go_id = nil
+				self._decal_unit = nil
+				self._decal_unit_go_id = nil
 			end
 
-			Managers.state.event:trigger("tutorial_event_show_health_bar", arg_13_0._unit, false)
+			Managers.state.event:trigger("tutorial_event_show_health_bar", self._unit, false)
 			Unit.flow_event(arg_13_1, "lua_on_death")
 
-			arg_13_0._dead = true
+			self._dead = true
 		end
 
 		return
 	end
 
-	if not arg_13_0._totem_position then
-		arg_13_0._totem_position = Vector3Box(Unit.world_position(arg_13_0._unit, 0))
+	if not self._totem_position then
+		self._totem_position = Vector3Box(Unit.world_position(self._unit, 0))
 	end
 
-	local var_13_0 = arg_13_0._totem_position:unbox()
-	local var_13_1 = false
-	local var_13_2 = Managers.player:local_player().player_unit
+	local unbox = self._totem_position:unbox()
+	local flag = false
+	local player_unit = Managers.player:local_player().player_unit
 
-	if var_13_2 and ScriptUnit.has_extension(var_13_2, "first_person_system") then
-		local var_13_3 = ScriptUnit.extension(var_13_2, "first_person_system")
-		local var_13_4 = var_13_3:current_position()
-		local var_13_5 = var_13_3:current_rotation()
-		local var_13_6 = Quaternion.forward(var_13_5)
+	if not player_unit and not ScriptUnit.has_extension(player_unit, "first_person_system") then
+		local extension = ScriptUnit.extension(player_unit, "first_person_system")
+		local current_position = extension:current_position()
+		local current_rotation = extension:current_rotation()
+		local forward = Quaternion.forward(current_rotation)
 
-		var_13_1 = var_0_7(arg_13_0._world, var_13_6, var_13_4, var_13_0)
+		flag = fn_3(self._world, forward, current_position, unbox)
 	end
 
-	if arg_13_0._player_seeing_totem == nil or var_13_1 ~= arg_13_0._player_seeing_totem then
-		local var_13_7 = Managers.state.event
+	if not (self._player_seeing_totem == nil or flag == self._player_seeing_totem) then
+		local event = Managers.state.event
 
-		if var_13_1 then
-			var_13_7:trigger("tutorial_event_show_health_bar", arg_13_0._unit, true)
+		if not flag then
+			event:trigger("tutorial_event_show_health_bar", self._unit, true)
 		else
-			var_13_7:trigger("tutorial_event_show_health_bar", arg_13_0._unit, false)
+			event:trigger("tutorial_event_show_health_bar", self._unit, false)
 		end
 	end
 
-	arg_13_0._player_seeing_totem = var_13_1
+	self._player_seeing_totem = flag
 
-	if arg_13_0._is_server then
-		local var_13_8 = arg_13_0._hero_side.PLAYER_AND_BOT_POSITIONS
+	if not self._is_server then
+		local PLAYER_AND_BOT_POSITIONS = self._hero_side.PLAYER_AND_BOT_POSITIONS
 
-		if not arg_13_0._totem_activated then
-			if var_0_9(arg_13_0._world, var_13_0, var_13_8) then
-				arg_13_0._totem_activated = true
+		if not self._totem_activated then
+			if not fn_5(self._world, unbox, PLAYER_AND_BOT_POSITIONS) then
+				self._totem_activated = true
 
-				Managers.state.achievement:trigger_event("register_totem_state_change", arg_13_0._unit, true)
+				Managers.state.achievement:trigger_event("register_totem_state_change", self._unit, true)
 			end
 		else
-			if not arg_13_0._panic_spawn_triggered and arg_13_0._health_ext:current_health_percent() <= 0.5 then
-				arg_13_0._panic_spawn_triggered = true
-				arg_13_0._seed = var_0_10(arg_13_0._unit, arg_13_0._seed, "belakor_totem_panic_spawns")
+			if not (self._panic_spawn_triggered or not (self._health_ext:current_health_percent() <= 0.5)) then
+				self._panic_spawn_triggered = true
+				self._seed = fn_6(self._unit, self._seed, "belakor_totem_panic_spawns")
 			end
 
-			local var_13_9 = arg_13_0._current_state
+			local _current_state = self._current_state
 
-			if var_13_9 == var_0_0.COOLDOWN_FROM_SPAWN then
-				if not TerrorEventMixer.is_event_id_active_or_pending(arg_13_0._totem_terror_event_id) then
-					arg_13_0._current_state = var_0_0.DECAL_SPAWNED
+			if _current_state == tbl.COOLDOWN_FROM_SPAWN then
+				if not TerrorEventMixer.is_event_id_active_or_pending(self._totem_terror_event_id) then
+					self._current_state = tbl.DECAL_SPAWNED
 				end
-			elseif var_13_9 == var_0_0.DECAL_SPAWNED then
-				if not arg_13_0._spawn_decal_end_t then
-					arg_13_0._spawn_decal_end_t = arg_13_5 + BelakorBalancing.totem_decal_duration
-				end
-
-				if not arg_13_0._decal_unit then
-					arg_13_0._decal_unit, arg_13_0._decal_unit_go_id = var_0_8(var_13_0)
+			elseif _current_state == tbl.DECAL_SPAWNED then
+				if not self._spawn_decal_end_t then
+					self._spawn_decal_end_t = arg_13_5 + BelakorBalancing.totem_decal_duration
 				end
 
-				if arg_13_5 > arg_13_0._spawn_decal_end_t then
-					Unit.flow_event(arg_13_0._decal_unit, "despawned")
-					arg_13_0._network_transmit:send_rpc_clients("rpc_flow_event", arg_13_0._decal_unit_go_id, NetworkLookup.flow_events.despawned)
+				if not self._decal_unit then
+					self._decal_unit, self._decal_unit_go_id = fn_4(unbox)
+				end
 
-					arg_13_0._decal_unit = nil
-					arg_13_0._decal_unit_go_id = nil
-					arg_13_0._spawn_decal_end_t = nil
+				if arg_13_5 > self._spawn_decal_end_t then
+					Unit.flow_event(self._decal_unit, "despawned")
+					self._network_transmit:send_rpc_clients("rpc_flow_event", self._decal_unit_go_id, NetworkLookup.flow_events.despawned)
 
-					if var_0_6(var_13_0, var_13_8) then
-						arg_13_0._current_state = var_0_0.SPAWNING_ENEMIES
+					self._decal_unit = nil
+					self._decal_unit_go_id = nil
+					self._spawn_decal_end_t = nil
+
+					if not fn_2(unbox, PLAYER_AND_BOT_POSITIONS) then
+						self._current_state = tbl.SPAWNING_ENEMIES
 					else
-						arg_13_0._current_state = var_0_0.WAITING_TO_SPAWN_ENEMIES
+						self._current_state = tbl.WAITING_TO_SPAWN_ENEMIES
 					end
 				end
-			elseif var_13_9 == var_0_0.WAITING_TO_SPAWN_ENEMIES then
-				if var_0_6(var_13_0, var_13_8) then
-					arg_13_0._current_state = var_0_0.DECAL_SPAWNED
+			elseif _current_state == tbl.WAITING_TO_SPAWN_ENEMIES then
+				if not fn_2(unbox, PLAYER_AND_BOT_POSITIONS) then
+					self._current_state = tbl.DECAL_SPAWNED
 				end
-			elseif var_13_9 == var_0_0.SPAWNING_ENEMIES then
-				if arg_13_0.spawn_count >= BelakorBalancing.harder_spawn_interval then
-					arg_13_0.spawn_count = 0
-					arg_13_0._seed, arg_13_0._totem_terror_event_id = var_0_10(arg_13_0._unit, arg_13_0._seed, "belakor_hard_totem_spawns")
+			elseif _current_state == tbl.SPAWNING_ENEMIES then
+				if self.spawn_count >= BelakorBalancing.harder_spawn_interval then
+					self.spawn_count = 0
+					self._seed, self._totem_terror_event_id = fn_6(self._unit, self._seed, "belakor_hard_totem_spawns")
 				else
-					arg_13_0.spawn_count = arg_13_0.spawn_count + 1
-					arg_13_0._seed, arg_13_0._totem_terror_event_id = var_0_10(arg_13_0._unit, arg_13_0._seed, "belakor_easy_totem_spawns")
+					self.spawn_count = self.spawn_count + 1
+					self._seed, self._totem_terror_event_id = fn_6(self._unit, self._seed, "belakor_easy_totem_spawns")
 				end
 
-				arg_13_0._current_state = var_0_0.COOLDOWN_FROM_SPAWN
+				self._current_state = tbl.COOLDOWN_FROM_SPAWN
 			end
 		end
 
-		if var_0_5(var_13_0, var_13_8, BelakorBalancing.totem_despawn_distance) then
-			arg_13_0._last_in_range_t = arg_13_5
-		elseif arg_13_5 >= arg_13_0._last_in_range_t + BelakorBalancing.totem_distance_despawn_time then
-			Managers.state.achievement:trigger_event("register_totem_state_change", arg_13_0._unit, false)
+		if not fn(unbox, PLAYER_AND_BOT_POSITIONS, BelakorBalancing.totem_despawn_distance) then
+			self._last_in_range_t = arg_13_5
+		elseif arg_13_5 >= self._last_in_range_t + BelakorBalancing.totem_distance_despawn_time then
+			Managers.state.achievement:trigger_event("register_totem_state_change", self._unit, false)
 
-			arg_13_0._current_state = var_0_0.DESPAWNED
+			self._current_state = tbl.DESPAWNED
 		end
-	elseif not arg_13_0._totem_activated then
-		local var_13_10 = arg_13_0._hero_side.PLAYER_AND_BOT_POSITIONS
+	elseif not self._totem_activated then
+		local PLAYER_AND_BOT_POSITIONS_2 = self._hero_side.PLAYER_AND_BOT_POSITIONS
 
-		if var_0_9(arg_13_0._world, var_13_0, var_13_10) then
-			arg_13_0._totem_activated = true
+		if not fn_5(self._world, unbox, PLAYER_AND_BOT_POSITIONS_2) then
+			self._totem_activated = true
 
-			Managers.state.achievement:trigger_event("register_totem_state_change", arg_13_0._unit, true)
+			Managers.state.achievement:trigger_event("register_totem_state_change", self._unit, true)
 		end
 	end
 end

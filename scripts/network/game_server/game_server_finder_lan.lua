@@ -2,42 +2,52 @@
 
 GameServerFinderLan = class(GameServerFinderLan)
 
-function GameServerFinderLan.init(arg_1_0)
+GameServerFinderLan.init = function (arg_1_0)
+	-- function 1
 	return
 end
 
-function GameServerFinderLan.destroy(arg_2_0)
+GameServerFinderLan.destroy = function (arg_2_0)
+	-- function 2
 	return
 end
 
-function GameServerFinderLan.refresh(arg_3_0)
+GameServerFinderLan.refresh = function (arg_3_0)
+	-- function 3
 	return
 end
 
-function GameServerFinderLan.set_search_type(arg_4_0, arg_4_1)
+GameServerFinderLan.set_search_type = function (arg_4_0, arg_4_1)
+	-- function 4
 	return
 end
 
-function GameServerFinderLan.add_to_favorites(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+GameServerFinderLan.add_to_favorites = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	-- function 5
 	return
 end
 
-function GameServerFinderLan.remove_from_favorites(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+GameServerFinderLan.remove_from_favorites = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	-- function 6
 	return
 end
 
-function GameServerFinderLan.add_filter_requirements(arg_7_0, arg_7_1, arg_7_2)
+GameServerFinderLan.add_filter_requirements = function (arg_7_0, arg_7_1, arg_7_2)
+	-- function 7
 	return
 end
 
-function GameServerFinderLan.servers(arg_8_0)
+GameServerFinderLan.servers = function (arg_8_0)
+	-- function 8
 	return {}
 end
 
-function GameServerFinderLan.is_refreshing(arg_9_0)
+GameServerFinderLan.is_refreshing = function (arg_9_0)
+	-- function 9
 	return false
 end
 
-function GameServerFinderLan.update(arg_10_0, arg_10_1)
+GameServerFinderLan.update = function (arg_10_0, arg_10_1)
+	-- function 10
 	return
 end

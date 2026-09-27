@@ -18,7 +18,7 @@ require("scripts/unit_extensions/default_player_unit/careers/career_ability_sorc
 require("scripts/unit_extensions/default_player_unit/careers/career_ability_vortex_sorcerer")
 require("scripts/unit_extensions/default_player_unit/careers/career_ability_warpfire_thrower")
 
-local var_0_0 = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
+local scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
 
 ActivatedAbilitySettings.vs_gutter_runner = {
 	{
@@ -202,7 +202,7 @@ ActivatedAbilitySettings.vs_chaos_troll = {
 	}
 }
 
-local var_0_1 = {
+local tbl = {
 	min_jump_dist = 5,
 	min_pitch = 60,
 	hit_indicator_raidus = 3,
@@ -246,7 +246,7 @@ ActivatedAbilitySettings.vs_rat_ogre = {
 		description = "career_active_desc_dr_2_2",
 		icon = "bardin_slayer_activated_ability",
 		ability_class = CareerAbilityRatOgreJump,
-		jump_ability_data = var_0_1
+		jump_ability_data = tbl
 	},
 	{
 		description = "career_active_desc_dr_2_2",
@@ -327,8 +327,8 @@ PassiveAbilitySettings.vs_rat_ogre = {
 	}
 }
 
-for iter_0_0, iter_0_1 in pairs(ActivatedAbilitySettings) do
-	for iter_0_2 = 1, #iter_0_1 do
-		iter_0_1[iter_0_2].ability_id = iter_0_2
+for k, v in pairs(ActivatedAbilitySettings) do
+	for k_2 = 1, #v do
+		v[k_2].ability_id = k_2
 	end
 end

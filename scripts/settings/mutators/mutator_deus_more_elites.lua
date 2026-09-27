@@ -2,7 +2,7 @@
 
 require("scripts/settings/dlcs/morris/deus_terror_event_tags")
 
-local var_0_0 = {
+local tbl = {
 	shield_rats_no_elites = "shield_rats",
 	beastmen = "beastmen_elites",
 	marauders_and_warriors = "marauders_elites",
@@ -15,10 +15,12 @@ return {
 	display_name = "mutator_deus_more_elites_name",
 	hide_from_player_ui = true,
 	icon = "mutator_icon_deus_more_elites",
-	tweak_pack_spawning_settings = function(arg_1_0, arg_1_1)
-		MutatorUtils.tweak_pack_spawning_settings_convert_breeds(arg_1_1, var_0_0)
+	tweak_pack_spawning_settings = function (arg_1_0, arg_1_1)
+		-- function 1
+		MutatorUtils.tweak_pack_spawning_settings_convert_breeds(arg_1_1, tbl)
 	end,
-	get_terror_event_tags = function(arg_2_0, arg_2_1, arg_2_2)
+	get_terror_event_tags = function (arg_2_0, arg_2_1, arg_2_2)
+		-- function 2
 		arg_2_2[#arg_2_2 + 1] = DeusTerrorEventTags.MORE_ELITES
 	end
 }

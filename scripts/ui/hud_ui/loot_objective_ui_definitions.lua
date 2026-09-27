@@ -1,16 +1,16 @@
 -- chunkname: @scripts/ui/hud_ui/loot_objective_ui_definitions.lua
 
-local var_0_0 = 1920
-local var_0_1 = 1080
-local var_0_2 = {
+local num = 1920
+local num_2 = 1080
+local tbl = {
 	64,
 	64
 }
-local var_0_3 = {
+local tbl_2 = {
 	819,
 	60
 }
-local var_0_4 = {
+local tbl_3 = {
 	root = {
 		is_root = true,
 		position = {
@@ -19,8 +19,8 @@ local var_0_4 = {
 			UILayer.hud
 		},
 		size = {
-			var_0_0,
-			var_0_1
+			num,
+			num_2
 		}
 	},
 	background_parent = {
@@ -69,32 +69,33 @@ local var_0_4 = {
 
 table.clone(Colors.color_definitions.white)[1] = 0
 
-local function var_0_5(arg_1_0, arg_1_1)
-	local var_1_0 = {
+local function fn(arg_1_0, arg_1_1)
+	-- function 1
+	local tbl = {
 		20,
 		20
 	}
-	local var_1_1 = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_1_0).size
-	local var_1_2 = var_1_1[1] * arg_1_1
-	local var_1_3 = var_1_0[1] * (arg_1_1 - 1)
-	local var_1_4 = {
-		var_1_2 + var_1_3,
-		var_1_1[2] + var_1_0[2]
+	local size = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_1_0).size
+	local num = size[1] * arg_1_1
+	local num_2 = tbl[1] * (arg_1_1 - 1)
+	local tbl_2 = {
+		num + num_2,
+		size[2] + tbl[2]
 	}
-	local var_1_5 = UIFrameSettings.item_hover_01
-	local var_1_6 = var_1_5.texture_sizes.corner
-	local var_1_7 = {}
-	local var_1_8 = {}
-	local var_1_9 = {}
-	local var_1_10 = {}
-	local var_1_11 = {}
+	local item_hover_01 = UIFrameSettings.item_hover_01
+	local corner = item_hover_01.texture_sizes.corner
+	local tbl_3 = {}
+	local tbl_4 = {}
+	local tbl_5 = {}
+	local tbl_6 = {}
+	local tbl_7 = {}
 
-	for iter_1_0 = 1, arg_1_1 do
-		var_1_7[iter_1_0] = arg_1_0
-		var_1_8[iter_1_0] = arg_1_0 .. "_glow"
-		var_1_9[iter_1_0] = arg_1_0 .. "_bg"
-		var_1_10[iter_1_0] = var_1_1
-		var_1_11[iter_1_0] = {
+	for i = 1, arg_1_1 do
+		tbl_3[i] = arg_1_0
+		tbl_4[i] = arg_1_0 .. "_glow"
+		tbl_5[i] = arg_1_0 .. "_bg"
+		tbl_6[i] = size
+		tbl_7[i] = {
 			0,
 			255,
 			255,
@@ -132,15 +133,15 @@ local function var_0_5(arg_1_0, arg_1_1)
 			draw_count = 0,
 			background = "loot_objective_bg",
 			amount = arg_1_1,
-			frame = var_1_5.texture,
-			icon_textures = var_1_7,
-			glow_icon_textures = var_1_8,
-			background_icon_textures = var_1_9
+			frame = item_hover_01.texture,
+			icon_textures = tbl_3,
+			glow_icon_textures = tbl_4,
+			background_icon_textures = tbl_5
 		},
 		style = {
 			frame = {
-				texture_size = var_1_5.texture_size,
-				texture_sizes = var_1_5.texture_sizes,
+				texture_size = item_hover_01.texture_size,
+				texture_sizes = item_hover_01.texture_sizes,
 				color = {
 					150,
 					255,
@@ -154,12 +155,12 @@ local function var_0_5(arg_1_0, arg_1_1)
 					255
 				},
 				size = {
-					var_1_4[1] + var_1_6[1] * 2,
-					var_1_4[2] + var_1_6[2] * 2
+					tbl_2[1] + corner[1] * 2,
+					tbl_2[2] + corner[2] * 2
 				},
 				offset = {
-					-var_1_6[1],
-					-var_1_6[2],
+					-corner[1],
+					-corner[2],
 					2
 				}
 			},
@@ -187,11 +188,11 @@ local function var_0_5(arg_1_0, arg_1_1)
 				axis = 1,
 				direction = 1,
 				spacing = {
-					var_1_0[1],
+					tbl[1],
 					0
 				},
-				texture_sizes = var_1_10,
-				texture_colors = var_1_11,
+				texture_sizes = tbl_6,
+				texture_colors = tbl_7,
 				color = {
 					0,
 					255,
@@ -205,8 +206,8 @@ local function var_0_5(arg_1_0, arg_1_1)
 					255
 				},
 				offset = {
-					-var_1_4[1] / 2,
-					-var_1_1[2] / 2,
+					-tbl_2[1] / 2,
+					-size[2] / 2,
 					2
 				},
 				draw_count = arg_1_1
@@ -216,10 +217,10 @@ local function var_0_5(arg_1_0, arg_1_1)
 				axis = 1,
 				direction = 1,
 				spacing = {
-					var_1_0[1],
+					tbl[1],
 					0
 				},
-				texture_sizes = var_1_10,
+				texture_sizes = tbl_6,
 				color = {
 					255,
 					255,
@@ -233,8 +234,8 @@ local function var_0_5(arg_1_0, arg_1_1)
 					255
 				},
 				offset = {
-					-var_1_4[1] / 2,
-					-var_1_1[2] / 2,
+					-tbl_2[1] / 2,
+					-size[2] / 2,
 					1
 				},
 				draw_count = arg_1_1
@@ -244,10 +245,10 @@ local function var_0_5(arg_1_0, arg_1_1)
 				axis = 1,
 				direction = 1,
 				spacing = {
-					var_1_0[1],
+					tbl[1],
 					0
 				},
-				texture_sizes = var_1_10,
+				texture_sizes = tbl_6,
 				color = {
 					255,
 					255,
@@ -261,8 +262,8 @@ local function var_0_5(arg_1_0, arg_1_1)
 					255
 				},
 				offset = {
-					-var_1_4[1] / 2,
-					-var_1_1[2] / 2,
+					-tbl_2[1] / 2,
+					-size[2] / 2,
 					3
 				},
 				draw_count = arg_1_1
@@ -276,10 +277,10 @@ local function var_0_5(arg_1_0, arg_1_1)
 	}
 end
 
-local var_0_6 = {}
+local tbl_4 = {}
 
 return {
-	scenegraph_definition = var_0_4,
-	widget_definitions = var_0_6,
-	create_loot_widget = var_0_5
+	scenegraph_definition = tbl_3,
+	widget_definitions = tbl_4,
+	create_loot_widget = fn
 }

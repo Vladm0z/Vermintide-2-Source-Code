@@ -1,12 +1,12 @@
 -- chunkname: @scripts/settings/dlcs/carousel/carousel_ui_settings.lua
 
-local var_0_0 = DLCSettings.carousel
+local carousel = DLCSettings.carousel
 
 if not UNASSIGNED_KEY then
-	local var_0_1 = "unassigned_keymap"
+	local str = "unassigned_keymap"
 end
 
-var_0_0.ui_views = {
+carousel.ui_views = {
 	{
 		file = "scripts/ui/views/versus_menu/base_view"
 	},
@@ -20,12 +20,14 @@ var_0_0.ui_views = {
 			versus = true
 		},
 		transitions = {
-			versus_party_char_selection_view = function(arg_1_0)
-				arg_1_0.current_view = "versus_party_char_selection_view"
+			versus_party_char_selection_view = function (self)
+				-- function 1
+				self.current_view = "versus_party_char_selection_view"
 			end,
-			versus_party_char_view_from_character_selection = function(arg_2_0)
-				arg_2_0.current_view = "versus_party_char_selection_view"
-				arg_2_0.views[arg_2_0.current_view].new_character = true
+			versus_party_char_view_from_character_selection = function (self)
+				-- function 2
+				self.current_view = "versus_party_char_selection_view"
+				self.views[self.current_view].new_character = true
 			end
 		}
 	},
@@ -39,13 +41,14 @@ var_0_0.ui_views = {
 			versus = true
 		},
 		transitions = {
-			versus_team_parading_view = function(arg_3_0)
-				arg_3_0.current_view = "versus_team_parading_view"
+			versus_team_parading_view = function (self)
+				-- function 3
+				self.current_view = "versus_team_parading_view"
 			end
 		}
 	}
 }
-var_0_0.ui_world_marker_templates = {
+carousel.ui_world_marker_templates = {
 	"scripts/ui/hud_ui/world_marker_templates/world_marker_template_versus_hero_status",
 	"scripts/ui/hud_ui/world_marker_templates/world_marker_template_versus_objective",
 	"scripts/ui/hud_ui/world_marker_templates/world_marker_template_versus_climbing",
@@ -53,7 +56,7 @@ var_0_0.ui_world_marker_templates = {
 	"scripts/ui/hud_ui/world_marker_templates/world_marker_template_versus_crawl_spawning",
 	"scripts/ui/hud_ui/world_marker_templates/world_marker_template_versus_pactsworn_ghostmode"
 }
-var_0_0.ui_end_screens = {
+carousel.ui_end_screens = {
 	carousel_round_end = {
 		file_name = "scripts/ui/views/end_screens/versus_round_end_screen_ui",
 		class_name = "VersusRoundEndScreenUI"
@@ -63,10 +66,10 @@ var_0_0.ui_end_screens = {
 		class_name = "VersusDrawEndScreenUI"
 	}
 }
-var_0_0.ui_materials = {
+carousel.ui_materials = {
 	"materials/ui/ui_1080p_carousel_atlas"
 }
-var_0_0.ui_texture_settings = {
+carousel.ui_texture_settings = {
 	filenames = {
 		"scripts/ui/atlas_settings/gui_carousel_atlas"
 	},
@@ -136,7 +139,7 @@ var_0_0.ui_texture_settings = {
 		"vs_info_ghost_catchup"
 	}
 }
-var_0_0.start_game_windows = {
+carousel.start_game_windows = {
 	"scripts/ui/dlc_versus/views/start_game_view/windows/start_game_window_versus_panel",
 	"scripts/ui/dlc_versus/views/start_game_view/windows/start_game_window_versus_background",
 	"scripts/ui/dlc_versus/views/start_game_view/windows/start_game_window_versus_quickplay",
@@ -148,7 +151,7 @@ var_0_0.start_game_windows = {
 	"scripts/ui/dlc_versus/views/start_game_view/windows/start_game_window_versus_custom_game_settings",
 	"scripts/ui/dlc_versus/views/start_game_view/windows/start_game_window_versus_lobby_browser"
 }
-var_0_0.start_game_layout_console_generic_inputs = {
+carousel.start_game_layout_console_generic_inputs = {
 	versus_default = {
 		ignore_generic_actions = true,
 		actions = {
@@ -424,20 +427,20 @@ var_0_0.start_game_layout_console_generic_inputs = {
 		}
 	}
 }
-var_0_0.start_game_save_data_table_map = {
+carousel.start_game_save_data_table_map = {
 	versus = {
 		custom = "versus_custom",
 		quickplay = "versus_quickplay"
 	}
 }
 
-local var_0_2 = var_0_0.start_game_save_data_table_map.versus
+local versus = carousel.start_game_save_data_table_map.versus
 
-var_0_0.start_game_save_data_table_map_console = table.clone(var_0_0.start_game_save_data_table_map)
+carousel.start_game_save_data_table_map_console = table.clone(carousel.start_game_save_data_table_map)
 
-local var_0_3 = var_0_0.start_game_save_data_table_map_console.versus
+local versus_2 = carousel.start_game_save_data_table_map_console.versus
 
-var_0_0.start_game_window_layout_console = {
+carousel.start_game_window_layout_console = {
 	windows = {
 		versus_panel = {
 			ignore_alignment = true,
@@ -509,10 +512,11 @@ var_0_0.start_game_window_layout_console = {
 				versus_quickplay = 3,
 				versus_background = 2
 			},
-			can_add_function = function(arg_4_0)
-				return arg_4_0:is_in_mechanism("versus")
+			can_add_function = function (self)
+				-- function 4
+				return self:is_in_mechanism("versus")
 			end,
-			save_data_table = var_0_3.quickplay
+			save_data_table = versus_2.quickplay
 		},
 		{
 			sound_event_enter = "Play_vs_hud_play_menu_category",
@@ -531,10 +535,11 @@ var_0_0.start_game_window_layout_console = {
 				versus_background = 2,
 				versus_custom_game = 3
 			},
-			can_add_function = function(arg_5_0)
-				return arg_5_0:is_in_mechanism("versus")
+			can_add_function = function (self)
+				-- function 5
+				return self:is_in_mechanism("versus")
 			end,
-			save_data_table = var_0_3.custom
+			save_data_table = versus_2.custom
 		},
 		{
 			sound_event_enter = "Play_vs_hud_play_menu_category",
@@ -549,10 +554,11 @@ var_0_0.start_game_window_layout_console = {
 				versus_background = 2,
 				versus_custom_game_settings = 4
 			},
-			can_add_function = function(arg_6_0)
-				return arg_6_0:is_in_mechanism("versus")
+			can_add_function = function (self)
+				-- function 6
+				return self:is_in_mechanism("versus")
 			end,
-			save_data_table = var_0_3.custom
+			save_data_table = versus_2.custom
 		},
 		{
 			sound_event_enter = "play_gui_lobby_button_00_custom",
@@ -564,7 +570,7 @@ var_0_0.start_game_window_layout_console = {
 				background = 2,
 				versus_mission_selection = 3
 			},
-			save_data_table = var_0_3.custom
+			save_data_table = versus_2.custom
 		},
 		{
 			sound_event_enter = "Play_vs_hud_play_menu_category",
@@ -579,10 +585,15 @@ var_0_0.start_game_window_layout_console = {
 				versus_background = 2,
 				versus_lobby_browser = 3
 			},
-			can_add_function = function(arg_7_0)
-				return arg_7_0:is_in_mechanism("versus") and not IS_XB1
+			can_add_function = function (self)
+				-- function 7
+				local is_in_mechanism = self:is_in_mechanism("versus")
+
+				is_in_mechanism = not is_in_mechanism and not IS_XB1
+
+				return is_in_mechanism
 			end,
-			save_data_table = var_0_3.lobby_browser
+			save_data_table = versus_2.lobby_browser
 		}
 	},
 	mechanism_quickplay_settings = {
@@ -599,7 +610,7 @@ var_0_0.start_game_window_layout_console = {
 		mechanism_name = "versus"
 	}
 }
-var_0_0.controller_settings = {
+carousel.controller_settings = {
 	PlayerControllerKeymaps = {
 		win32 = {
 			ping_only_movement = {
@@ -610,8 +621,8 @@ var_0_0.controller_settings = {
 		}
 	}
 }
-var_0_0.hud_component_list_path = "scripts/ui/hud_ui/component_list_definitions/hud_component_list_versus"
-var_0_0.teams_ui_assets = {
+carousel.hud_component_list_path = "scripts/ui/hud_ui/component_list_definitions/hud_component_list_versus"
+carousel.teams_ui_assets = {
 	undecided = {
 		display_name = "versus_team_name_undecided",
 		team_icon = "icons_placeholder",
@@ -642,19 +653,19 @@ var_0_0.teams_ui_assets = {
 		background_texture = "team_icon_background"
 	}
 }
-var_0_0.ui_settings = {
-	teams_ui_assets = var_0_0.teams_ui_assets
+carousel.ui_settings = {
+	teams_ui_assets = carousel.teams_ui_assets
 }
-var_0_0.sides_localization_lookup = {
+carousel.sides_localization_lookup = {
 	heroes = "vs_lobby_hero_team_name",
 	spectator = "not_assigned",
 	dark_pact = "vs_lobby_dark_pact_team_name"
 }
-var_0_0.hero_window_mood_settings = {
+carousel.hero_window_mood_settings = {
 	default = "default",
 	pactsworn = "menu_versus"
 }
-var_0_0.hero_window_pactsworn_stats_by_name = {
+carousel.hero_window_pactsworn_stats_by_name = {
 	vs_rat_ogre = {
 		{
 			"eliminations_as_breed",
@@ -734,29 +745,29 @@ var_0_0.hero_window_pactsworn_stats_by_name = {
 		}
 	}
 }
-var_0_0.stats_string_lookup = {
+carousel.stats_string_lookup = {
 	damage_dealt_as_breed = "inventory_screen_compare_damage_tooltip",
 	vs_game_won = "not_assigned",
 	vs_hero_monster_kill = "not_assigned",
 	eliminations_as_breed = "vs_scoreboard_eliminations"
 }
-var_0_0.item_type_store_icons = {
+carousel.item_type_store_icons = {
 	weapon_pose = "store_tag_icon_pose"
 }
-var_0_0.stats_icons_lookup = {
+carousel.stats_icons_lookup = {
 	damage_dealt_as_breed = "icon_damage",
 	vs_game_won = "icons_placeholder",
 	vs_hero_monster_kill = "icons_placeholder",
 	eliminations_as_breed = "killfeed_icon_12"
 }
-var_0_0.custom_game_settigns_values_suffix = {
+carousel.custom_game_settigns_values_suffix = {
 	percentage = "%",
 	multiplier = "x",
 	distance = " m",
 	time_seconds = " sec",
 	time_minutes = " min"
 }
-var_0_0.custom_game_ui_settings = {
+carousel.custom_game_ui_settings = {
 	early_win_enabled = {
 		widget_type = "stepper",
 		localization_options = {

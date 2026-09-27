@@ -1,11 +1,11 @@
 -- chunkname: @scripts/settings/dlcs/anniversary_2025/anniversary_2025_common_settings.lua
 
-local var_0_0 = DLCSettings.anniversary_2025
+local anniversary_2025 = DLCSettings.anniversary_2025
 
-var_0_0.item_master_list_file_names = {
+anniversary_2025.item_master_list_file_names = {
 	"scripts/settings/dlcs/anniversary_2025/item_master_list_anniversary_2025"
 }
-var_0_0.ui_portrait_frame_settings = {
+anniversary_2025.ui_portrait_frame_settings = {
 	frame_celebration_07 = {
 		{
 			texture = "portrait_frame_celebration_07",

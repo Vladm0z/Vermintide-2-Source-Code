@@ -1,22 +1,22 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/definitions/hero_window_ingame_view_definitions.lua
 
-local var_0_0 = UISettings.game_start_windows
-local var_0_1 = var_0_0.background
-local var_0_2 = var_0_0.frame
-local var_0_3 = var_0_0.size
-local var_0_4 = UIFrameSettings[var_0_2].texture_sizes.vertical[1]
-local var_0_5 = UIFrameSettings[var_0_2].texture_sizes.horizontal[2]
-local var_0_6 = {
-	var_0_3[1] - var_0_4 * 2,
-	(var_0_3[2] - var_0_5 * 2) / 3.5
+local game_start_windows = UISettings.game_start_windows
+local background = game_start_windows.background
+local frame = game_start_windows.frame
+local size = game_start_windows.size
+local var_0_4 = UIFrameSettings[frame].texture_sizes.vertical[1]
+local var_0_5 = UIFrameSettings[frame].texture_sizes.horizontal[2]
+local tbl = {
+	size[1] - var_0_4 * 2,
+	(size[2] - var_0_5 * 2) / 3.5
 }
-local var_0_7 = UISettings.console_menu_scenegraphs
-local var_0_8 = {
-	screen = var_0_7.screen,
-	area = var_0_7.area,
-	area_left = var_0_7.area_left,
-	area_right = var_0_7.area_right,
-	area_divider = var_0_7.area_divider,
+local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
+local tbl_2 = {
+	screen = console_menu_scenegraphs.screen,
+	area = console_menu_scenegraphs.area,
+	area_left = console_menu_scenegraphs.area_left,
+	area_right = console_menu_scenegraphs.area_right,
+	area_divider = console_menu_scenegraphs.area_divider,
 	top_banner = {
 		vertical_alignment = "bottom",
 		parent = "divider",
@@ -116,7 +116,7 @@ local var_0_8 = {
 		}
 	}
 }
-local var_0_9 = {
+local tbl_3 = {
 	default = {
 		{
 			input_action = "d_vertical",
@@ -137,17 +137,18 @@ local var_0_9 = {
 	}
 }
 
-local function var_0_10(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
-	local var_1_0 = {
+local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	-- function 1
+	local tbl = {
 		2,
 		-2,
 		3
 	}
 
-	if arg_1_3 then
-		var_1_0[1] = var_1_0[1] + arg_1_3[1]
-		var_1_0[2] = var_1_0[2] + arg_1_3[2]
-		var_1_0[3] = arg_1_3[3] - 1
+	if not arg_1_3 then
+		tbl[1] = tbl[1] + arg_1_3[1]
+		tbl[2] = tbl[2] + arg_1_3[2]
+		tbl[3] = arg_1_3[3] - 1
 	end
 
 	return {
@@ -166,24 +167,43 @@ local function var_0_10(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 					style_id = "text_hover",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function(arg_2_0)
-						return not arg_2_0.button_hotspot.disable_button and (arg_2_0.button_hotspot.is_hover or arg_2_0.button_hotspot.is_selected)
+					content_check_function = function (self)
+						-- function 2
+						local is_hover
+
+						if not self.button_hotspot.disable_button then
+							is_hover = self.button_hotspot.is_hover
+
+							if not is_hover then
+								is_hover = self.button_hotspot.is_selected
+							end
+						else
+							is_hover = false
+						end
+
+						if false then
+							is_hover = true
+						end
+
+						return is_hover
 					end
 				},
 				{
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function(arg_3_0)
-						return not arg_3_0.button_hotspot.disable_button and not arg_3_0.button_hotspot.is_hover and not arg_3_0.button_hotspot.is_selected
+					content_check_function = function (self)
+						-- function 3
+						return not not self.button_hotspot.disable_button or not not self.button_hotspot.is_hover or not self.button_hotspot.is_selected
 					end
 				},
 				{
 					style_id = "text_disabled",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function(arg_4_0)
-						return arg_4_0.button_hotspot.disable_button
+					content_check_function = function (self)
+						-- function 4
+						return self.button_hotspot.disable_button
 					end
 				}
 			}
@@ -220,7 +240,7 @@ local function var_0_10(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 				font_size = arg_1_2,
 				horizontal_alignment = arg_1_4 or "left",
 				text_color = Colors.get_color_table_with_alpha("black", 255),
-				offset = var_1_0
+				offset = tbl
 			},
 			text_hover = {
 				word_wrap = false,
@@ -264,18 +284,18 @@ local function var_0_10(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	}
 end
 
-local var_0_11 = {}
-local var_0_12 = 11
+local tbl_4 = {}
+local num = 11
 
-for iter_0_0 = 1, var_0_12 do
-	var_0_11[iter_0_0] = var_0_10("title_entry", "n/a", 52, {
+for i = 1, num do
+	tbl_4[i] = fn("title_entry", "n/a", 52, {
 		0,
 		-6,
 		4
 	}, "center")
 end
 
-local var_0_13 = {
+local tbl_5 = {
 	divider = UIWidgets.create_simple_texture("divider_01_top", "divider"),
 	divider_bottom = UIWidgets.create_simple_texture("divider_01_top", "divider_bottom"),
 	background = UIWidgets.create_simple_texture("ingame_view_background_console", "background", nil, nil, {
@@ -286,22 +306,25 @@ local var_0_13 = {
 	}),
 	logo = UIWidgets.create_simple_texture("hero_view_home_logo", "logo")
 }
-local var_0_14 = {
+local tbl_6 = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+				-- function 5
 				arg_5_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
-				local var_6_0 = math.easeOutCubic(arg_6_3)
+			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+				-- function 6
+				local easeOutCubic = math.easeOutCubic(arg_6_3)
 
-				arg_6_4.render_settings.alpha_multiplier = var_6_0
-				arg_6_0.area_left.local_position[1] = arg_6_1.area_left.position[1] + -100 * (1 - var_6_0)
+				arg_6_4.render_settings.alpha_multiplier = easeOutCubic
+				arg_6_0.area_left.local_position[1] = arg_6_1.area_left.position[1] + -100 * (1 - easeOutCubic)
 			end,
-			on_complete = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			on_complete = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+				-- function 7
 				return
 			end
 		}
@@ -311,15 +334,18 @@ local var_0_14 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			init = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+				-- function 8
 				arg_8_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
-				local var_9_0 = math.easeOutCubic(arg_9_3)
+			update = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+				-- function 9
+				local easeOutCubic = math.easeOutCubic(arg_9_3)
 
-				arg_9_4.render_settings.alpha_multiplier = 1 - var_9_0
+				arg_9_4.render_settings.alpha_multiplier = 1 - easeOutCubic
 			end,
-			on_complete = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			on_complete = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+				-- function 10
 				return
 			end
 		}
@@ -327,9 +353,9 @@ local var_0_14 = {
 }
 
 return {
-	widgets = var_0_13,
-	generic_input_actions = var_0_9,
-	title_button_definitions = var_0_11,
-	scenegraph_definition = var_0_8,
-	animation_definitions = var_0_14
+	widgets = tbl_5,
+	generic_input_actions = tbl_3,
+	title_button_definitions = tbl_4,
+	scenegraph_definition = tbl_2,
+	animation_definitions = tbl_6
 }

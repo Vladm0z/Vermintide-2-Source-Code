@@ -1,10 +1,10 @@
 -- chunkname: @PlayFab/json.lua
 
-local var_0_0 = {
+local tbl = {
 	_version = "0.1.0"
 }
 local var_0_1
-local var_0_2 = {
+local tbl_2 = {
 	["\f"] = "\\f",
 	["\b"] = "\\b",
 	["\n"] = "\\n",
@@ -13,302 +13,323 @@ local var_0_2 = {
 	["\r"] = "\\r",
 	["\""] = "\\\""
 }
-local var_0_3 = {
+local tbl_3 = {
 	["\\/"] = "/"
 }
 
-for iter_0_0, iter_0_1 in pairs(var_0_2) do
-	var_0_3[iter_0_1] = iter_0_0
+for k, v in pairs(tbl_2) do
+	tbl_3[v] = k
 end
 
-local function var_0_4(arg_1_0)
-	return var_0_2[arg_1_0] or string.format("\\u%04x", arg_1_0:byte())
+local function fn(self)
+	-- function 1
+	local var_1_0 = tbl_2[self]
+
+	var_1_0 = var_1_0 or string.format("\\u%04x", self:byte())
+
+	return var_1_0
 end
 
-local function var_0_5(arg_2_0)
+local function fn_2(arg_2_0)
+	-- function 2
 	return "null"
 end
 
-local function var_0_6(arg_3_0, arg_3_1)
-	local var_3_0 = {}
+local function fn_3(self, arg_3_1)
+	-- function 3
+	local tbl = {}
 
 	arg_3_1 = arg_3_1 or {}
 
-	if arg_3_1[arg_3_0] then
+	if not arg_3_1[self] then
 		error("circular reference")
 	end
 
-	arg_3_1[arg_3_0] = true
+	arg_3_1[self] = true
 
-	if arg_3_0[1] ~= nil or next(arg_3_0) == nil then
-		local var_3_1 = 0
+	if not (self[1] ~= nil or next(self) ~= nil) then
+		local num = 0
 
-		for iter_3_0 in pairs(arg_3_0) do
-			if type(iter_3_0) ~= "number" then
+		for k in pairs(self) do
+			if type(k) ~= "number" then
 				error("invalid table: mixed or invalid key types")
 			end
 
-			var_3_1 = var_3_1 + 1
+			num = num + 1
 		end
 
-		if var_3_1 ~= #arg_3_0 then
+		if num ~= #self then
 			error("invalid table: sparse array")
 		end
 
-		for iter_3_1, iter_3_2 in ipairs(arg_3_0) do
-			table.insert(var_3_0, var_0_1(iter_3_2, arg_3_1))
+		for i, v in ipairs(self) do
+			table.insert(tbl, var_0_1(v, arg_3_1))
 		end
 
-		arg_3_1[arg_3_0] = nil
+		arg_3_1[self] = nil
 
-		return "[" .. table.concat(var_3_0, ",") .. "]"
+		return "[" .. table.concat(tbl, ",") .. "]"
 	else
-		for iter_3_3, iter_3_4 in pairs(arg_3_0) do
-			if type(iter_3_3) ~= "string" then
+		for k_2, v_2 in pairs(self) do
+			if type(k_2) ~= "string" then
 				error("invalid table: mixed or invalid key types")
 			end
 
-			table.insert(var_3_0, var_0_1(iter_3_3, arg_3_1) .. ":" .. var_0_1(iter_3_4, arg_3_1))
+			table.insert(tbl, var_0_1(k_2, arg_3_1) .. ":" .. var_0_1(v_2, arg_3_1))
 		end
 
-		arg_3_1[arg_3_0] = nil
+		arg_3_1[self] = nil
 
-		return "{" .. table.concat(var_3_0, ",") .. "}"
+		return "{" .. table.concat(tbl, ",") .. "}"
 	end
 end
 
-local function var_0_7(arg_4_0)
-	return "\"" .. arg_4_0:gsub("[%z\x01-\x1F\\\"]", var_0_4) .. "\""
+local function fn_4(self)
+	-- function 4
+	return "\"" .. self:gsub("[%z\x01-\x1F\\\"]", fn) .. "\""
 end
 
-local function var_0_8(arg_5_0)
-	if arg_5_0 ~= arg_5_0 or arg_5_0 <= -math.huge or arg_5_0 >= math.huge then
+local function fn_5(arg_5_0)
+	-- function 5
+	if not (arg_5_0 ~= arg_5_0 or arg_5_0 <= -math.huge or not (arg_5_0 >= math.huge)) then
 		error("unexpected number value '" .. tostring(arg_5_0) .. "'")
 	end
 
 	return string.format("%.14g", arg_5_0)
 end
 
-local var_0_9 = {
-	["nil"] = var_0_5,
-	table = var_0_6,
-	string = var_0_7,
-	number = var_0_8,
+local tbl_4 = {
+	["nil"] = fn_2,
+	table = fn_3,
+	string = fn_4,
+	number = fn_5,
 	boolean = tostring
 }
 
 function var_0_1(arg_6_0, arg_6_1)
+	-- function 6
 	local var_6_0 = type(arg_6_0)
-	local var_6_1 = var_0_9[var_6_0]
+	local var_6_1 = tbl_4[var_6_0]
 
-	if var_6_1 then
+	if not var_6_1 then
 		return var_6_1(arg_6_0, arg_6_1)
 	end
 
 	error("unexpected type '" .. var_6_0 .. "'")
 end
 
-function var_0_0.encode(arg_7_0)
+tbl.encode = function (arg_7_0)
+	-- function 7
 	return (var_0_1(arg_7_0))
 end
 
 local var_0_10
 
-local function var_0_11(...)
-	local var_8_0 = {}
+local function fn_6(...)
+	-- function 8
+	local tbl = {}
 
-	for iter_8_0 = 1, select("#", ...) do
-		var_8_0[select(iter_8_0, ...)] = true
+	for i = 1, select("#", ...) do
+		tbl[select(i, ...)] = true
 	end
 
-	return var_8_0
+	return tbl
 end
 
-local var_0_12 = var_0_11(" ", "\t", "\r", "\n")
-local var_0_13 = var_0_11(" ", "\t", "\r", "\n", "]", "}", ",")
-local var_0_14 = var_0_11("\\", "/", "\"", "b", "f", "n", "r", "t", "u")
-local var_0_15 = var_0_11("true", "false", "null")
-local var_0_16 = {
+local var_0_12 = fn_6(" ", "\t", "\r", "\n")
+local var_0_13 = fn_6(" ", "\t", "\r", "\n", "]", "}", ",")
+local var_0_14 = fn_6("\\", "/", "\"", "b", "f", "n", "r", "t", "u")
+local var_0_15 = fn_6("true", "false", "null")
+local tbl_5 = {
 	["false"] = false,
 	["true"] = true
 }
 
-local function var_0_17(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
-	for iter_9_0 = arg_9_1, #arg_9_0 do
-		if arg_9_2[arg_9_0:sub(iter_9_0, iter_9_0)] ~= arg_9_3 then
-			return iter_9_0
+local function fn_7(self, arg_9_1, arg_9_2, arg_9_3)
+	-- function 9
+	for i = arg_9_1, #self do
+		if arg_9_2[self:sub(i, i)] ~= arg_9_3 then
+			return i
 		end
 	end
 
-	return #arg_9_0 + 1
+	return #self + 1
 end
 
-local function var_0_18(arg_10_0, arg_10_1, arg_10_2)
-	local var_10_0 = 1
-	local var_10_1 = 1
+local function fn_8(self, arg_10_1, arg_10_2)
+	-- function 10
+	local num = 1
+	local num_2 = 1
 
-	for iter_10_0 = 1, arg_10_1 - 1 do
-		var_10_1 = var_10_1 + 1
+	for i = 1, arg_10_1 - 1 do
+		num_2 = num_2 + 1
 
-		if arg_10_0:sub(iter_10_0, iter_10_0) == "\n" then
-			var_10_0 = var_10_0 + 1
-			var_10_1 = 1
+		if self:sub(i, i) == "\n" then
+			num = num + 1
+			num_2 = 1
 		end
 	end
 
-	error(string.format("%s at line %d col %d", arg_10_2, var_10_0, var_10_1))
+	error(string.format("%s at line %d col %d", arg_10_2, num, num_2))
 end
 
-local function var_0_19(arg_11_0)
-	local var_11_0 = math.floor
+local function fn_9(arg_11_0)
+	-- function 11
+	local floor = math.floor
 
 	if arg_11_0 <= 127 then
 		return string.char(arg_11_0)
 	elseif arg_11_0 <= 2047 then
-		return string.char(var_11_0(arg_11_0 / 64) + 192, arg_11_0 % 64 + 128)
+		return string.char(floor(arg_11_0 / 64) + 192, arg_11_0 % 64 + 128)
 	elseif arg_11_0 <= 65535 then
-		return string.char(var_11_0(arg_11_0 / 4096) + 224, var_11_0(arg_11_0 % 4096 / 64) + 128, arg_11_0 % 64 + 128)
+		return string.char(floor(arg_11_0 / 4096) + 224, floor(arg_11_0 % 4096 / 64) + 128, arg_11_0 % 64 + 128)
 	elseif arg_11_0 <= 1114111 then
-		return string.char(var_11_0(arg_11_0 / 262144) + 240, var_11_0(arg_11_0 % 262144 / 4096) + 128, var_11_0(arg_11_0 % 4096 / 64) + 128, arg_11_0 % 64 + 128)
+		return string.char(floor(arg_11_0 / 262144) + 240, floor(arg_11_0 % 262144 / 4096) + 128, floor(arg_11_0 % 4096 / 64) + 128, arg_11_0 % 64 + 128)
 	end
 
 	error(string.format("invalid unicode codepoint '%x'", arg_11_0))
 end
 
-local function var_0_20(arg_12_0)
-	local var_12_0 = tonumber(arg_12_0:sub(3, 6), 16)
-	local var_12_1 = tonumber(arg_12_0:sub(9, 12), 16)
+local function fn_10(self)
+	-- function 12
+	local var_12_0 = tonumber(self:sub(3, 6), 16)
+	local var_12_1 = tonumber(self:sub(9, 12), 16)
 
-	if var_12_1 then
-		return var_0_19((var_12_0 - 55296) * 1024 + (var_12_1 - 56320) + 65536)
+	if not var_12_1 then
+		return fn_9((var_12_0 - 55296) * 1024 + (var_12_1 - 56320) + 65536)
 	else
-		return var_0_19(var_12_0)
+		return fn_9(var_12_0)
 	end
 end
 
-local function var_0_21(arg_13_0, arg_13_1)
-	local var_13_0 = false
-	local var_13_1 = false
-	local var_13_2 = false
+local function fn_11(self, arg_13_1)
+	-- function 13
+	local flag = false
+	local flag_2 = false
+	local flag_3 = false
 	local var_13_3
 
-	for iter_13_0 = arg_13_1 + 1, #arg_13_0 do
-		local var_13_4 = arg_13_0:byte(iter_13_0)
+	for i = arg_13_1 + 1, #self do
+		local byte = self:byte(i)
 
-		if var_13_4 < 32 then
-			var_0_18(arg_13_0, iter_13_0, "control character in string")
+		if byte < 32 then
+			fn_8(self, i, "control character in string")
 		end
 
 		if var_13_3 == 92 then
-			if var_13_4 == 117 then
-				local var_13_5 = arg_13_0:sub(iter_13_0 + 1, iter_13_0 + 5)
+			if byte == 117 then
+				local sub = self:sub(i + 1, i + 5)
 
-				if not var_13_5:find("%x%x%x%x") then
-					var_0_18(arg_13_0, iter_13_0, "invalid unicode escape in string")
+				if not sub:find("%x%x%x%x") then
+					fn_8(self, i, "invalid unicode escape in string")
 				end
 
-				if var_13_5:find("^[dD][89aAbB]") then
-					var_13_1 = true
+				if not sub:find("^[dD][89aAbB]") then
+					flag_2 = true
 				else
-					var_13_0 = true
+					flag = true
 				end
 			else
-				local var_13_6 = string.char(var_13_4)
+				local char = string.char(byte)
 
-				if not var_0_14[var_13_6] then
-					var_0_18(arg_13_0, iter_13_0, "invalid escape char '" .. var_13_6 .. "' in string")
+				if not var_0_14[char] then
+					fn_8(self, i, "invalid escape char '" .. char .. "' in string")
 				end
 
-				var_13_2 = true
+				flag_3 = true
 			end
 
 			var_13_3 = nil
-		elseif var_13_4 == 34 then
-			local var_13_7 = arg_13_0:sub(arg_13_1 + 1, iter_13_0 - 1)
+		elseif byte == 34 then
+			local sub_2 = self:sub(arg_13_1 + 1, i - 1)
 
-			if var_13_1 then
-				var_13_7 = var_13_7:gsub("\\u[dD][89aAbB]..\\u....", var_0_20)
+			if not flag_2 then
+				sub_2 = sub_2:gsub("\\u[dD][89aAbB]..\\u....", fn_10)
 			end
 
-			if var_13_0 then
-				var_13_7 = var_13_7:gsub("\\u....", var_0_20)
+			if not flag then
+				sub_2 = sub_2:gsub("\\u....", fn_10)
 			end
 
-			if var_13_2 then
-				var_13_7 = var_13_7:gsub("\\.", var_0_3)
+			if not flag_3 then
+				sub_2 = sub_2:gsub("\\.", tbl_3)
 			end
 
-			return var_13_7, iter_13_0 + 1
+			return sub_2, i + 1
 		else
-			var_13_3 = var_13_4
+			var_13_3 = byte
 		end
 	end
 
-	var_0_18(arg_13_0, arg_13_1, "expected closing quote for string")
+	fn_8(self, arg_13_1, "expected closing quote for string")
 end
 
-local function var_0_22(arg_14_0, arg_14_1)
-	local var_14_0 = var_0_17(arg_14_0, arg_14_1, var_0_13)
-	local var_14_1 = arg_14_0:sub(arg_14_1, var_14_0 - 1)
-	local var_14_2 = tonumber(var_14_1)
+local function fn_12(self, arg_14_1)
+	-- function 14
+	local var_14_0 = fn_7(self, arg_14_1, var_0_13)
+	local sub = self:sub(arg_14_1, var_14_0 - 1)
+	local var_14_2 = tonumber(sub)
 
 	if not var_14_2 then
-		var_0_18(arg_14_0, arg_14_1, "invalid number '" .. var_14_1 .. "'")
+		fn_8(self, arg_14_1, "invalid number '" .. sub .. "'")
 	end
 
 	return var_14_2, var_14_0
 end
 
-local function var_0_23(arg_15_0, arg_15_1)
-	local var_15_0 = var_0_17(arg_15_0, arg_15_1, var_0_13)
-	local var_15_1 = arg_15_0:sub(arg_15_1, var_15_0 - 1)
+local function fn_13(self, arg_15_1)
+	-- function 15
+	local var_15_0 = fn_7(self, arg_15_1, var_0_13)
+	local sub = self:sub(arg_15_1, var_15_0 - 1)
 
-	if not var_0_15[var_15_1] then
-		var_0_18(arg_15_0, arg_15_1, "invalid literal '" .. var_15_1 .. "'")
+	if not var_0_15[sub] then
+		fn_8(self, arg_15_1, "invalid literal '" .. sub .. "'")
 	end
 
-	return var_0_16[var_15_1], var_15_0
+	return tbl_5[sub], var_15_0
 end
 
-local function var_0_24(arg_16_0, arg_16_1)
-	local var_16_0 = {}
-	local var_16_1 = 1
+local function fn_14(self, arg_16_1)
+	-- function 16
+	local tbl = {}
+	local num = 1
 
 	arg_16_1 = arg_16_1 + 1
 
 	while true do
 		local var_16_2
 
-		arg_16_1 = var_0_17(arg_16_0, arg_16_1, var_0_12, true)
+		arg_16_1 = fn_7(self, arg_16_1, var_0_12, true)
 
-		if arg_16_0:sub(arg_16_1, arg_16_1) == "]" then
+		if self:sub(arg_16_1, arg_16_1) == "]" then
 			arg_16_1 = arg_16_1 + 1
 
 			break
 		end
 
-		var_16_0[var_16_1], arg_16_1 = var_0_10(arg_16_0, arg_16_1)
-		var_16_1 = var_16_1 + 1
-		arg_16_1 = var_0_17(arg_16_0, arg_16_1, var_0_12, true)
+		tbl[num], arg_16_1 = var_0_10(self, arg_16_1)
+		num = num + 1
+		arg_16_1 = fn_7(self, arg_16_1, var_0_12, true)
 
-		local var_16_3 = arg_16_0:sub(arg_16_1, arg_16_1)
+		local sub = self:sub(arg_16_1, arg_16_1)
 
 		arg_16_1 = arg_16_1 + 1
 
-		if var_16_3 == "]" then
+		if sub == "]" then
 			break
 		end
 
-		if var_16_3 ~= "," then
-			var_0_18(arg_16_0, arg_16_1, "expected ']' or ','")
+		if sub ~= "," then
+			fn_8(self, arg_16_1, "expected ']' or ','")
 		end
 	end
 
-	return var_16_0, arg_16_1
+	return tbl, arg_16_1
 end
 
-local function var_0_25(arg_17_0, arg_17_1)
-	local var_17_0 = {}
+local function fn_15(self, arg_17_1)
+	-- function 17
+	local tbl = {}
 
 	arg_17_1 = arg_17_1 + 1
 
@@ -316,84 +337,86 @@ local function var_0_25(arg_17_0, arg_17_1)
 		local var_17_1
 		local var_17_2
 
-		arg_17_1 = var_0_17(arg_17_0, arg_17_1, var_0_12, true)
+		arg_17_1 = fn_7(self, arg_17_1, var_0_12, true)
 
-		if arg_17_0:sub(arg_17_1, arg_17_1) == "}" then
+		if self:sub(arg_17_1, arg_17_1) == "}" then
 			arg_17_1 = arg_17_1 + 1
 
 			break
 		end
 
-		if arg_17_0:sub(arg_17_1, arg_17_1) ~= "\"" then
-			var_0_18(arg_17_0, arg_17_1, "expected string for key")
+		if self:sub(arg_17_1, arg_17_1) ~= "\"" then
+			fn_8(self, arg_17_1, "expected string for key")
 		end
 
 		local var_17_3
 
-		var_17_3, arg_17_1 = var_0_10(arg_17_0, arg_17_1)
-		arg_17_1 = var_0_17(arg_17_0, arg_17_1, var_0_12, true)
+		var_17_3, arg_17_1 = var_0_10(self, arg_17_1)
+		arg_17_1 = fn_7(self, arg_17_1, var_0_12, true)
 
-		if arg_17_0:sub(arg_17_1, arg_17_1) ~= ":" then
-			var_0_18(arg_17_0, arg_17_1, "expected ':' after key")
+		if self:sub(arg_17_1, arg_17_1) ~= ":" then
+			fn_8(self, arg_17_1, "expected ':' after key")
 		end
 
-		arg_17_1 = var_0_17(arg_17_0, arg_17_1 + 1, var_0_12, true)
-		var_17_0[var_17_3], arg_17_1 = var_0_10(arg_17_0, arg_17_1)
-		arg_17_1 = var_0_17(arg_17_0, arg_17_1, var_0_12, true)
+		arg_17_1 = fn_7(self, arg_17_1 + 1, var_0_12, true)
+		tbl[var_17_3], arg_17_1 = var_0_10(self, arg_17_1)
+		arg_17_1 = fn_7(self, arg_17_1, var_0_12, true)
 
-		local var_17_4 = arg_17_0:sub(arg_17_1, arg_17_1)
+		local sub = self:sub(arg_17_1, arg_17_1)
 
 		arg_17_1 = arg_17_1 + 1
 
-		if var_17_4 == "}" then
+		if sub == "}" then
 			break
 		end
 
-		if var_17_4 ~= "," then
-			var_0_18(arg_17_0, arg_17_1, "expected '}' or ','")
+		if sub ~= "," then
+			fn_8(self, arg_17_1, "expected '}' or ','")
 		end
 	end
 
-	return var_17_0, arg_17_1
+	return tbl, arg_17_1
 end
 
-local var_0_26 = {
-	["\""] = var_0_21,
-	["0"] = var_0_22,
-	["1"] = var_0_22,
-	["2"] = var_0_22,
-	["3"] = var_0_22,
-	["4"] = var_0_22,
-	["5"] = var_0_22,
-	["6"] = var_0_22,
-	["7"] = var_0_22,
-	["8"] = var_0_22,
-	["9"] = var_0_22,
-	["-"] = var_0_22,
-	t = var_0_23,
-	f = var_0_23,
-	n = var_0_23,
-	["["] = var_0_24,
-	["{"] = var_0_25
+local tbl_6 = {
+	["\""] = fn_11,
+	["0"] = fn_12,
+	["1"] = fn_12,
+	["2"] = fn_12,
+	["3"] = fn_12,
+	["4"] = fn_12,
+	["5"] = fn_12,
+	["6"] = fn_12,
+	["7"] = fn_12,
+	["8"] = fn_12,
+	["9"] = fn_12,
+	["-"] = fn_12,
+	t = fn_13,
+	f = fn_13,
+	n = fn_13,
+	["["] = fn_14,
+	["{"] = fn_15
 }
 
-function var_0_10(arg_18_0, arg_18_1)
-	local var_18_0 = arg_18_0:sub(arg_18_1, arg_18_1)
-	local var_18_1 = var_0_26[var_18_0]
+function var_0_10(self, arg_18_1)
+	-- function 18
+	local sub = self:sub(arg_18_1, arg_18_1)
+	local var_18_1 = tbl_6[sub]
 
-	if var_18_1 then
-		return var_18_1(arg_18_0, arg_18_1)
+	if not var_18_1 then
+		return var_18_1(self, arg_18_1)
 	end
 
-	var_0_18(arg_18_0, arg_18_1, "unexpected character '" .. var_18_0 .. "'")
+	fn_8(self, arg_18_1, "unexpected character '" .. sub .. "'")
 end
 
-function var_0_0.decode(arg_19_0)
+tbl.decode = function (arg_19_0)
+	-- function 19
 	if type(arg_19_0) ~= "string" then
 		error("expected argument of type string, got " .. type(arg_19_0))
 	end
 
-	return (var_0_10(arg_19_0, var_0_17(arg_19_0, 1, var_0_12, true)))
+	return (var_0_10(arg_19_0, fn_7(arg_19_0, 1, var_0_12, true)))
 end
 
-return var_0_0
+return tbl

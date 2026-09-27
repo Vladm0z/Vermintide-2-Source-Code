@@ -4,16 +4,17 @@ require("scripts/helpers/cosmetic_utils")
 
 PlayerUnitCosmeticExtension = class(PlayerUnitCosmeticExtension)
 
-function PlayerUnitCosmeticExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
-	arg_1_0._world = arg_1_1.world
-	arg_1_0._unit = arg_1_2
-	arg_1_0._profile = arg_1_3.profile
-	arg_1_0._is_server = arg_1_3.is_server
-	arg_1_0._player = arg_1_3.player
-	arg_1_0._cosmetics = {}
-	arg_1_0._skin_material_changes = {}
-	arg_1_0._tp_mesh_visible = true
-	arg_1_0._player_afk_data = {
+PlayerUnitCosmeticExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+	-- function 1
+	self._world = arg_1_1.world
+	self._unit = arg_1_2
+	self._profile = arg_1_3.profile
+	self._is_server = arg_1_3.is_server
+	self._player = arg_1_3.player
+	self._cosmetics = {}
+	self._skin_material_changes = {}
+	self._tp_mesh_visible = true
+	self._player_afk_data = {
 		tickrate = 1,
 		triggered = false,
 		last_tick = 0,
@@ -22,284 +23,326 @@ function PlayerUnitCosmeticExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 		last_player_pos = Vector3Box()
 	}
 
-	local var_1_0 = arg_1_3.skin_name
-	local var_1_1 = arg_1_3.frame_name
-	local var_1_2 = arg_1_3.profile
+	local skin_name = arg_1_3.skin_name
+	local frame_name = arg_1_3.frame_name
+	local profile = arg_1_3.profile
 
-	fassert(var_1_0, "No skin name passed to CosmeticExtension, somthing went wrong!")
+	fassert(skin_name, "No skin name passed to CosmeticExtension, somthing went wrong!")
 
-	local var_1_3 = Cosmetics[var_1_0]
+	local var_1_3 = Cosmetics[skin_name]
 
-	arg_1_0._cosmetics.skin = var_1_3
+	self._cosmetics.skin = var_1_3
 
-	CosmeticUtils.update_cosmetic_slot(arg_1_0._player, "slot_skin", var_1_0)
+	CosmeticUtils.update_cosmetic_slot(self._player, "slot_skin", skin_name)
 
-	local var_1_4 = arg_1_3.pose_name
+	local pose_name = arg_1_3.pose_name
 
-	if var_1_4 then
-		local var_1_5 = ItemMasterList[var_1_4]
+	if not pose_name then
+		local var_1_5 = ItemMasterList[pose_name]
 
-		arg_1_0._cosmetics.weapon_pose = var_1_5
+		self._cosmetics.weapon_pose = var_1_5
 
-		CosmeticUtils.update_cosmetic_slot(arg_1_0._player, "slot_pose", var_1_4)
+		CosmeticUtils.update_cosmetic_slot(self._player, "slot_pose", pose_name)
 	end
 
-	if var_1_1 then
-		arg_1_0:set_equipped_frame(var_1_1)
+	if not frame_name then
+		self:set_equipped_frame(frame_name)
 	end
 
-	local var_1_6 = arg_1_0._player and arg_1_0._player:career_index() or 1
-	local var_1_7 = var_1_2.careers[var_1_6]
+	local career_index
 
-	arg_1_0:_init_mesh_attachment(arg_1_0._world, arg_1_2, var_1_0, var_1_2, var_1_7)
+	if not self._player then
+		career_index = self._player:career_index()
+
+		if not career_index then
+			-- Nothing
+		end
+	end
+
+	career_index = 1
+
+	::label_1_0::
+
+	local var_1_7 = profile.careers[career_index]
+
+	self:_init_mesh_attachment(self._world, arg_1_2, skin_name, profile, var_1_7)
 end
 
-function PlayerUnitCosmeticExtension.destroy(arg_2_0)
-	if arg_2_0._tp_unit_mesh then
-		AttachmentUtils.unlink(arg_2_0._world, arg_2_0._tp_unit_mesh)
-		Managers.state.unit_spawner:mark_for_deletion(arg_2_0._tp_unit_mesh)
+PlayerUnitCosmeticExtension.destroy = function (self)
+	-- function 2
+	if not self._tp_unit_mesh then
+		AttachmentUtils.unlink(self._world, self._tp_unit_mesh)
+		Managers.state.unit_spawner:mark_for_deletion(self._tp_unit_mesh)
 
-		arg_2_0._tp_unit_mesh = nil
-	end
-end
-
-function PlayerUnitCosmeticExtension.extensions_ready(arg_3_0, arg_3_1, arg_3_2)
-	arg_3_0._status_extension = ScriptUnit.extension(arg_3_2, "status_system")
-	arg_3_0._attachment_extension = ScriptUnit.extension(arg_3_2, "attachment_system")
-
-	local var_3_0 = arg_3_0._profile.display_name
-	local var_3_1 = arg_3_0._cosmetics.skin
-	local var_3_2 = var_3_1.material_changes
-
-	if var_3_2 then
-		arg_3_0:change_skin_materials(var_3_2)
-	end
-
-	local var_3_3 = var_3_1.material_settings_name
-
-	if var_3_3 then
-		arg_3_0:change_skin_material_settings(var_3_3)
-	end
-
-	local var_3_4 = var_3_1.color_tint
-
-	if var_3_4 then
-		local var_3_5 = var_3_4.gradient_variation
-		local var_3_6 = var_3_4.gradient_value
-
-		CosmeticUtils.color_tint_unit(arg_3_2, var_3_0, var_3_5, var_3_6)
+		self._tp_unit_mesh = nil
 	end
 end
 
-function PlayerUnitCosmeticExtension.get_equipped_skin(arg_4_0)
-	return arg_4_0._cosmetics.skin
-end
+PlayerUnitCosmeticExtension.extensions_ready = function (self, arg_3_1, arg_3_2)
+	-- function 3
+	self._status_extension = ScriptUnit.extension(arg_3_2, "status_system")
+	self._attachment_extension = ScriptUnit.extension(arg_3_2, "attachment_system")
 
-function PlayerUnitCosmeticExtension.get_equipped_frame(arg_5_0)
-	return arg_5_0._cosmetics.frame
-end
+	local display_name = self._profile.display_name
+	local skin = self._cosmetics.skin
+	local material_changes = skin.material_changes
 
-function PlayerUnitCosmeticExtension.set_equipped_frame(arg_6_0, arg_6_1)
-	arg_6_0._cosmetics.frame = Cosmetics[arg_6_1]
-	arg_6_0._frame_name = arg_6_1
-
-	CosmeticUtils.update_cosmetic_slot(arg_6_0._player, "slot_frame", arg_6_1)
-end
-
-function PlayerUnitCosmeticExtension.get_equipped_frame_name(arg_7_0)
-	return arg_7_0._frame_name
-end
-
-function PlayerUnitCosmeticExtension.change_skin_materials(arg_8_0, arg_8_1)
-	local var_8_0 = arg_8_0._unit
-	local var_8_1 = arg_8_0._tp_unit_mesh
-	local var_8_2 = arg_8_1.third_person
-
-	for iter_8_0, iter_8_1 in pairs(var_8_2) do
-		Unit.set_material(var_8_1, iter_8_0, iter_8_1)
+	if not material_changes then
+		self:change_skin_materials(material_changes)
 	end
 
-	local var_8_3 = ScriptUnit.has_extension(var_8_0, "first_person_system")
+	local material_settings_name = skin.material_settings_name
 
-	if var_8_3 then
-		local var_8_4 = arg_8_1.first_person
+	if not material_settings_name then
+		self:change_skin_material_settings(material_settings_name)
+	end
 
-		if var_8_4 then
-			local var_8_5 = var_8_3:get_first_person_mesh_unit()
+	local color_tint = skin.color_tint
 
-			for iter_8_2, iter_8_3 in pairs(var_8_4) do
-				Unit.set_material(var_8_5, iter_8_2, iter_8_3)
+	if not color_tint then
+		local gradient_variation = color_tint.gradient_variation
+		local gradient_value = color_tint.gradient_value
+
+		CosmeticUtils.color_tint_unit(arg_3_2, display_name, gradient_variation, gradient_value)
+	end
+end
+
+PlayerUnitCosmeticExtension.get_equipped_skin = function (self)
+	-- function 4
+	return self._cosmetics.skin
+end
+
+PlayerUnitCosmeticExtension.get_equipped_frame = function (self)
+	-- function 5
+	return self._cosmetics.frame
+end
+
+PlayerUnitCosmeticExtension.set_equipped_frame = function (self, arg_6_1)
+	-- function 6
+	self._cosmetics.frame = Cosmetics[arg_6_1]
+	self._frame_name = arg_6_1
+
+	CosmeticUtils.update_cosmetic_slot(self._player, "slot_frame", arg_6_1)
+end
+
+PlayerUnitCosmeticExtension.get_equipped_frame_name = function (self)
+	-- function 7
+	return self._frame_name
+end
+
+PlayerUnitCosmeticExtension.change_skin_materials = function (self, arg_8_1)
+	-- function 8
+	local _unit = self._unit
+	local _tp_unit_mesh = self._tp_unit_mesh
+	local third_person = arg_8_1.third_person
+
+	for k, v in pairs(third_person) do
+		Unit.set_material(_tp_unit_mesh, k, v)
+	end
+
+	local has_extension = ScriptUnit.has_extension(_unit, "first_person_system")
+
+	if not has_extension then
+		local first_person = arg_8_1.first_person
+
+		if not first_person then
+			local get_first_person_mesh_unit = has_extension:get_first_person_mesh_unit()
+
+			for k_2, v_2 in pairs(first_person) do
+				Unit.set_material(get_first_person_mesh_unit, k_2, v_2)
 			end
 		end
 	end
 end
 
-function PlayerUnitCosmeticExtension.change_skin_material_settings(arg_9_0, arg_9_1)
-	local var_9_0 = arg_9_0._unit
-	local var_9_1 = arg_9_0._tp_unit_mesh
+PlayerUnitCosmeticExtension.change_skin_material_settings = function (self, arg_9_1)
+	-- function 9
+	local _unit = self._unit
+	local _tp_unit_mesh = self._tp_unit_mesh
 
-	CosmeticUtils.apply_material_settings(var_9_1, arg_9_1)
+	CosmeticUtils.apply_material_settings(_tp_unit_mesh, arg_9_1)
 
-	local var_9_2 = ScriptUnit.has_extension(var_9_0, "first_person_system")
+	local has_extension = ScriptUnit.has_extension(_unit, "first_person_system")
 
-	if var_9_2 then
-		local var_9_3 = var_9_2:get_first_person_mesh_unit()
+	if not has_extension then
+		local get_first_person_mesh_unit = has_extension:get_first_person_mesh_unit()
 
-		CosmeticUtils.apply_material_settings(var_9_3, arg_9_1)
+		CosmeticUtils.apply_material_settings(get_first_person_mesh_unit, arg_9_1)
 	end
 end
 
-function PlayerUnitCosmeticExtension.always_hide_attachment_slot(arg_10_0, arg_10_1)
-	local var_10_0 = arg_10_0._cosmetics.skin
+PlayerUnitCosmeticExtension.always_hide_attachment_slot = function (self, arg_10_1)
+	-- function 10
+	local skin = self._cosmetics.skin
 
-	if not var_10_0 then
+	if not skin then
 		return false
 	end
 
-	local var_10_1 = var_10_0.always_hide_attachment_slots
+	local always_hide_attachment_slots = skin.always_hide_attachment_slots
 
-	if not var_10_1 then
+	if not always_hide_attachment_slots then
 		return false
 	end
 
-	if not table.contains(var_10_1, arg_10_1) then
+	if not table.contains(always_hide_attachment_slots, arg_10_1) then
 		return false
 	end
 
 	return true
 end
 
-function PlayerUnitCosmeticExtension.trigger_equip_events(arg_11_0, arg_11_1, arg_11_2)
+PlayerUnitCosmeticExtension.trigger_equip_events = function (self, arg_11_1, arg_11_2)
+	-- function 11
 	if arg_11_1 == "slot_hat" then
-		local var_11_0 = arg_11_0._cosmetics.skin.equip_hat_event or "using_skin_default"
+		local equip_hat_event = self._cosmetics.skin.equip_hat_event
 
-		if var_11_0 then
-			Unit.flow_event(arg_11_2, var_11_0)
+		equip_hat_event = equip_hat_event or "using_skin_default"
+
+		if not equip_hat_event then
+			Unit.flow_event(arg_11_2, equip_hat_event)
 		end
 	end
 end
 
-function PlayerUnitCosmeticExtension.hot_join_sync(arg_12_0, arg_12_1)
+PlayerUnitCosmeticExtension.hot_join_sync = function (arg_12_0, arg_12_1)
+	-- function 12
 	return
 end
 
-function PlayerUnitCosmeticExtension._init_mesh_attachment(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
-	local var_13_0 = Cosmetics[arg_13_3].third_person_attachment or arg_13_4.third_person_attachment
-	local var_13_1 = var_13_0.unit
-	local var_13_2 = var_13_0.attachment_node_linking
-	local var_13_3 = Managers.state.unit_spawner:spawn_local_unit(var_13_1)
+PlayerUnitCosmeticExtension._init_mesh_attachment = function (self, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+	-- function 13
+	local third_person_attachment = Cosmetics[arg_13_3].third_person_attachment
 
-	arg_13_0._tp_unit_mesh = var_13_3
+	third_person_attachment = third_person_attachment or arg_13_4.third_person_attachment
 
-	Unit.set_flow_variable(arg_13_2, "lua_third_person_mesh_unit", var_13_3)
-	AttachmentUtils.link(arg_13_1, arg_13_2, var_13_3, var_13_2)
+	local unit = third_person_attachment.unit
+	local attachment_node_linking = third_person_attachment.attachment_node_linking
+	local spawn_local_unit = Managers.state.unit_spawner:spawn_local_unit(unit)
+
+	self._tp_unit_mesh = spawn_local_unit
+
+	Unit.set_flow_variable(arg_13_2, "lua_third_person_mesh_unit", spawn_local_unit)
+	AttachmentUtils.link(arg_13_1, arg_13_2, spawn_local_unit, attachment_node_linking)
 	Unit.set_flow_variable(arg_13_2, "character_vo", arg_13_4.character_vo)
 	Unit.set_flow_variable(arg_13_2, "sound_character", arg_13_5.sound_character)
 	Unit.flow_event(arg_13_2, "character_vo_set")
 
-	local var_13_4 = LevelHelper:current_level_settings().climate_type or "default"
+	local climate_type = LevelHelper:current_level_settings().climate_type
 
-	Unit.set_flow_variable(var_13_3, "climate_type", var_13_4)
-	Unit.flow_event(var_13_3, "climate_type_set")
+	climate_type = climate_type or "default"
 
-	local var_13_5 = Cosmetics[arg_13_3].equip_skin_event or "using_skin_default"
+	Unit.set_flow_variable(spawn_local_unit, "climate_type", climate_type)
+	Unit.flow_event(spawn_local_unit, "climate_type_set")
 
-	Unit.flow_event(arg_13_2, var_13_5)
+	local equip_skin_event = Cosmetics[arg_13_3].equip_skin_event
 
-	if not arg_13_0._tp_mesh_visible then
-		arg_13_0._tp_mesh_visible = true
+	equip_skin_event = equip_skin_event or "using_skin_default"
 
-		Unit.set_unit_visibility(arg_13_0._tp_unit_mesh, false)
+	Unit.flow_event(arg_13_2, equip_skin_event)
+
+	if not self._tp_mesh_visible then
+		self._tp_mesh_visible = true
+
+		Unit.set_unit_visibility(self._tp_unit_mesh, false)
 	end
 
-	if Unit.has_animation_state_machine(arg_13_0._tp_unit_mesh) and Unit.has_animation_event(arg_13_0._tp_unit_mesh, "enable") then
-		Unit.animation_event(arg_13_0._tp_unit_mesh, "enable")
-	end
-end
-
-function PlayerUnitCosmeticExtension.update(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
-	arg_14_0._queue_3p_event_name = nil
-
-	if ALIVE[arg_14_1] then
-		arg_14_0:_update_player_standing_still_events(arg_14_5)
+	if not Unit.has_animation_state_machine(self._tp_unit_mesh) and not Unit.has_animation_event(self._tp_unit_mesh, "enable") then
+		Unit.animation_event(self._tp_unit_mesh, "enable")
 	end
 end
 
-function PlayerUnitCosmeticExtension.get_third_person_mesh_unit(arg_15_0)
-	return arg_15_0._tp_unit_mesh
+PlayerUnitCosmeticExtension.update = function (self, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+	-- function 14
+	self._queue_3p_event_name = nil
+
+	if not ALIVE[arg_14_1] then
+		self:_update_player_standing_still_events(arg_14_5)
+	end
 end
 
-function PlayerUnitCosmeticExtension.show_third_person_mesh(arg_16_0, arg_16_1)
-	if arg_16_0._tp_mesh_visible ~= arg_16_1 then
-		arg_16_0._tp_mesh_visible = arg_16_1
+PlayerUnitCosmeticExtension.get_third_person_mesh_unit = function (self)
+	-- function 15
+	return self._tp_unit_mesh
+end
 
-		if arg_16_0._tp_unit_mesh then
-			Unit.set_unit_visibility(arg_16_0._tp_unit_mesh, arg_16_1)
+PlayerUnitCosmeticExtension.show_third_person_mesh = function (self, arg_16_1)
+	-- function 16
+	if self._tp_mesh_visible ~= arg_16_1 then
+		self._tp_mesh_visible = arg_16_1
 
-			if arg_16_1 then
-				Unit.flow_event(arg_16_0._unit, "lua_enter_third_person_camera")
-				Unit.flow_event(arg_16_0._tp_unit_mesh, "lua_enter_third_person_camera")
+		if not self._tp_unit_mesh then
+			Unit.set_unit_visibility(self._tp_unit_mesh, arg_16_1)
+
+			if not arg_16_1 then
+				Unit.flow_event(self._unit, "lua_enter_third_person_camera")
+				Unit.flow_event(self._tp_unit_mesh, "lua_enter_third_person_camera")
 			else
-				Unit.flow_event(arg_16_0._unit, "lua_exit_third_person_camera")
-				Unit.flow_event(arg_16_0._tp_unit_mesh, "lua_exit_third_person_camera")
+				Unit.flow_event(self._unit, "lua_exit_third_person_camera")
+				Unit.flow_event(self._tp_unit_mesh, "lua_exit_third_person_camera")
 			end
 		end
 	end
 end
 
-function PlayerUnitCosmeticExtension.queue_3p_emote(arg_17_0, arg_17_1, arg_17_2)
-	arg_17_0._queue_3p_event_name = arg_17_1
-	arg_17_0._queue_3p_hide_weapons = arg_17_2
+PlayerUnitCosmeticExtension.queue_3p_emote = function (self, arg_17_1, arg_17_2)
+	-- function 17
+	self._queue_3p_event_name = arg_17_1
+	self._queue_3p_hide_weapons = arg_17_2
 end
 
-function PlayerUnitCosmeticExtension.get_queued_3p_emote(arg_18_0)
-	return arg_18_0._queue_3p_event_name, arg_18_0._queue_3p_hide_weapons
+PlayerUnitCosmeticExtension.get_queued_3p_emote = function (self)
+	-- function 18
+	return self._queue_3p_event_name, self._queue_3p_hide_weapons
 end
 
-function PlayerUnitCosmeticExtension.consume_queued_3p_emote(arg_19_0)
-	arg_19_0._queue_3p_event_name = nil
+PlayerUnitCosmeticExtension.consume_queued_3p_emote = function (self)
+	-- function 19
+	self._queue_3p_event_name = nil
 end
 
-function PlayerUnitCosmeticExtension.trigger_ability_activated_events(arg_20_0)
-	local var_20_0 = arg_20_0._attachment_extension:get_slot_data("slot_hat")
+PlayerUnitCosmeticExtension.trigger_ability_activated_events = function (self)
+	-- function 20
+	local get_slot_data = self._attachment_extension:get_slot_data("slot_hat")
 
-	if var_20_0 then
-		Unit.flow_event(var_20_0.unit, "ability_activated")
+	if not get_slot_data then
+		Unit.flow_event(get_slot_data.unit, "ability_activated")
 	end
 end
 
-function PlayerUnitCosmeticExtension._update_player_standing_still_events(arg_21_0, arg_21_1)
-	local var_21_0 = arg_21_0._unit
-	local var_21_1 = arg_21_0._player_afk_data
+PlayerUnitCosmeticExtension._update_player_standing_still_events = function (self, arg_21_1)
+	-- function 21
+	local _unit = self._unit
+	local _player_afk_data = self._player_afk_data
 
-	if arg_21_1 > var_21_1.last_tick + var_21_1.tickrate then
-		local var_21_2 = var_21_1.last_player_pos:unbox()
-		local var_21_3 = Unit.local_position(var_21_0, 0)
+	if arg_21_1 > _player_afk_data.last_tick + _player_afk_data.tickrate then
+		local unbox = _player_afk_data.last_player_pos:unbox()
+		local local_position = Unit.local_position(_unit, 0)
 
-		if Vector3.distance_squared(var_21_2, var_21_3) > 0.1 then
-			var_21_1.last_player_move_t = arg_21_1
+		if Vector3.distance_squared(unbox, local_position) > 0.1 then
+			_player_afk_data.last_player_move_t = arg_21_1
 
-			var_21_1.last_player_pos:store(var_21_3)
+			_player_afk_data.last_player_pos:store(local_position)
 
-			if var_21_1.triggered then
-				local var_21_4 = arg_21_0._attachment_extension:get_slot_data("slot_hat")
+			if not _player_afk_data.triggered then
+				local get_slot_data = self._attachment_extension:get_slot_data("slot_hat")
 
-				if var_21_4 then
-					Unit.flow_event(var_21_4.unit, "player_break_prolonged_standing_still")
+				if not get_slot_data then
+					Unit.flow_event(get_slot_data.unit, "player_break_prolonged_standing_still")
 				end
 			end
 
-			var_21_1.triggered = false
-		elseif not var_21_1.triggered and arg_21_1 > var_21_1.last_player_move_t + var_21_1.trigger_event_dt and not arg_21_0._status_extension:is_disabled() then
-			local var_21_5 = arg_21_0._attachment_extension:get_slot_data("slot_hat")
+			_player_afk_data.triggered = false
+		elseif not (_player_afk_data.triggered or not (arg_21_1 > _player_afk_data.last_player_move_t + _player_afk_data.trigger_event_dt) or self._status_extension:is_disabled()) then
+			local get_slot_data_2 = self._attachment_extension:get_slot_data("slot_hat")
 
-			if var_21_5 then
-				Unit.flow_event(var_21_5.unit, "player_prolonged_standing_still")
+			if not get_slot_data_2 then
+				Unit.flow_event(get_slot_data_2.unit, "player_prolonged_standing_still")
 			end
 
-			var_21_1.triggered = true
+			_player_afk_data.triggered = true
 		end
 
-		var_21_1.last_tick = arg_21_1
+		_player_afk_data.last_tick = arg_21_1
 	end
 end

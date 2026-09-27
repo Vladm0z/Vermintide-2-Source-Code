@@ -1,233 +1,251 @@
 -- chunkname: @scripts/managers/backend_playfab/backend_interface_dlcs_playfab.lua
 
-local var_0_0 = require("PlayFab.PlayFabClientApi")
+local PlayFabClientApi = require("PlayFab.PlayFabClientApi")
 
 BackendInterfaceDLCsPlayfab = class(BackendInterfaceDLCsPlayfab)
 
-function BackendInterfaceDLCsPlayfab.init(arg_1_0, arg_1_1)
-	arg_1_0.is_local = false
-	arg_1_0._backend_mirror = arg_1_1
-	arg_1_0._last_id = 0
-	arg_1_0._updating_dlc_ownership = false
-	arg_1_0._owned_dlcs = arg_1_1:get_owned_dlcs()
-	arg_1_0._platform_dlcs = arg_1_1:get_platform_dlcs()
+BackendInterfaceDLCsPlayfab.init = function (self, arg_1_1)
+	-- function 1
+	self.is_local = false
+	self._backend_mirror = arg_1_1
+	self._last_id = 0
+	self._updating_dlc_ownership = false
+	self._owned_dlcs = arg_1_1:get_owned_dlcs()
+	self._platform_dlcs = arg_1_1:get_platform_dlcs()
 end
 
-function BackendInterfaceDLCsPlayfab.ready(arg_2_0)
+BackendInterfaceDLCsPlayfab.ready = function (arg_2_0)
+	-- function 2
 	return true
 end
 
-function BackendInterfaceDLCsPlayfab.update(arg_3_0, arg_3_1)
+BackendInterfaceDLCsPlayfab.update = function (arg_3_0, arg_3_1)
+	-- function 3
 	return
 end
 
-function BackendInterfaceDLCsPlayfab._new_id(arg_4_0)
-	arg_4_0._last_id = arg_4_0._last_id + 1
+BackendInterfaceDLCsPlayfab._new_id = function (self)
+	-- function 4
+	self._last_id = self._last_id + 1
 
-	return arg_4_0._last_id
+	return self._last_id
 end
 
-function BackendInterfaceDLCsPlayfab.update_dlc_ownership(arg_5_0)
-	local var_5_0 = Managers.unlock:get_installed_dlcs()
-	local var_5_1 = cjson.encode(var_5_0)
-	local var_5_2 = {
+BackendInterfaceDLCsPlayfab.update_dlc_ownership = function (self)
+	-- function 5
+	local get_installed_dlcs = Managers.unlock:get_installed_dlcs()
+	local encode = cjson.encode(get_installed_dlcs)
+	local tbl = {
 		FunctionName = "updateDLCOwnership",
 		FunctionParameter = {
-			installed_dlcs = var_5_1
+			installed_dlcs = encode
 		}
 	}
-	local var_5_3 = callback(arg_5_0, "_update_owned_dlcs_cb")
+	local var_5_3 = callback(self, "_update_owned_dlcs_cb")
 
-	arg_5_0._backend_mirror:request_queue():enqueue(var_5_2, var_5_3, false)
+	self._backend_mirror:request_queue():enqueue(tbl, var_5_3, false)
 
-	arg_5_0._updating_dlc_ownership = true
+	self._updating_dlc_ownership = true
 end
 
-function BackendInterfaceDLCsPlayfab._update_owned_dlcs_cb(arg_6_0, arg_6_1)
-	local var_6_0 = arg_6_1.FunctionResult
-	local var_6_1 = var_6_0.new_dlcs
-	local var_6_2 = var_6_0.revoked_dlcs
-	local var_6_3 = not GameSettingsDevelopment.read_only_backend and (not var_6_1 or not var_6_2 or #var_6_1 > 0 or #var_6_2 > 0)
+BackendInterfaceDLCsPlayfab._update_owned_dlcs_cb = function (self, arg_6_1)
+	-- function 6
+	local FunctionResult = arg_6_1.FunctionResult
+	local new_dlcs = FunctionResult.new_dlcs
+	local revoked_dlcs = FunctionResult.revoked_dlcs
+	local flag = (not not GameSettingsDevelopment.read_only_backend or not new_dlcs) and not revoked_dlcs and #new_dlcs > 0 or #revoked_dlcs > 0
 
-	arg_6_0._owner_dlcs_cb_data = table.shallow_copy(var_6_0)
-	arg_6_0._owner_dlcs_cb_data.dlcs_dirty = HAS_STEAM and var_6_3
+	self._owner_dlcs_cb_data = table.shallow_copy(FunctionResult)
 
-	if var_6_3 then
-		arg_6_0:_execute_dlc_specific_logic()
+	local _owner_dlcs_cb_data = self._owner_dlcs_cb_data
+	local HAS_STEAM = HAS_STEAM
+
+	HAS_STEAM = not HAS_STEAM and flag
+	_owner_dlcs_cb_data.dlcs_dirty = HAS_STEAM
+
+	if not flag then
+		self:_execute_dlc_specific_logic()
 	else
-		arg_6_0:_handle_owned_dlcs_data()
+		self:_handle_owned_dlcs_data()
 
-		arg_6_0._updating_dlc_ownership = false
+		self._updating_dlc_ownership = false
 	end
 end
 
-function BackendInterfaceDLCsPlayfab._handle_owned_dlcs_data(arg_7_0)
-	local var_7_0 = arg_7_0._owner_dlcs_cb_data
-	local var_7_1 = var_7_0.owned_dlcs
-	local var_7_2 = var_7_0.platform_dlcs
-	local var_7_3 = var_7_0.excluded_dlcs
-	local var_7_4 = var_7_0.new_dlcs
-	local var_7_5 = var_7_0.revoked_dlcs
+BackendInterfaceDLCsPlayfab._handle_owned_dlcs_data = function (self)
+	-- function 7
+	local _owner_dlcs_cb_data = self._owner_dlcs_cb_data
+	local owned_dlcs = _owner_dlcs_cb_data.owned_dlcs
+	local platform_dlcs = _owner_dlcs_cb_data.platform_dlcs
+	local excluded_dlcs = _owner_dlcs_cb_data.excluded_dlcs
+	local new_dlcs = _owner_dlcs_cb_data.new_dlcs
+	local revoked_dlcs = _owner_dlcs_cb_data.revoked_dlcs
 
-	arg_7_0._owned_dlcs = var_7_1 or {}
-	arg_7_0._platform_dlcs = var_7_2
+	self._owned_dlcs = owned_dlcs or {}
+	self._platform_dlcs = platform_dlcs
 
-	Managers.unlock:set_excluded_dlcs(var_7_3)
-	arg_7_0._backend_mirror:set_owned_dlcs(var_7_1)
-	arg_7_0._backend_mirror:set_platform_dlcs(var_7_2)
+	Managers.unlock:set_excluded_dlcs(excluded_dlcs)
+	self._backend_mirror:set_owned_dlcs(owned_dlcs)
+	self._backend_mirror:set_platform_dlcs(platform_dlcs)
 	print("Finished Updating Owned DLCS")
-	table.dump(arg_7_0._owned_dlcs, nil, 2)
-	arg_7_0._backend_mirror:update_owned_dlcs(true)
+	table.dump(self._owned_dlcs, nil, 2)
+	self._backend_mirror:update_owned_dlcs(true)
 
-	if var_7_5 and #var_7_5 > 0 then
-		local var_7_6 = var_7_0.unlocked_keep_decorations
+	if not (not revoked_dlcs and not (#revoked_dlcs > 0)) then
+		local unlocked_keep_decorations = _owner_dlcs_cb_data.unlocked_keep_decorations
 
-		if var_7_6 then
-			arg_7_0._backend_mirror:set_read_only_data("unlocked_keep_decorations", var_7_6, true)
+		if not unlocked_keep_decorations then
+			self._backend_mirror:set_read_only_data("unlocked_keep_decorations", unlocked_keep_decorations, true)
 		end
 
-		local var_7_7 = var_7_0.unlocked_cosmetics
+		local unlocked_cosmetics = _owner_dlcs_cb_data.unlocked_cosmetics
 
-		if var_7_7 then
-			arg_7_0._backend_mirror:set_read_only_data("unlocked_cosmetics", var_7_7, true)
+		if not unlocked_cosmetics then
+			self._backend_mirror:set_read_only_data("unlocked_cosmetics", unlocked_cosmetics, true)
 		end
 
-		local var_7_8 = var_7_0.unlocked_weapon_skins
+		local unlocked_weapon_skins = _owner_dlcs_cb_data.unlocked_weapon_skins
 
-		if var_7_8 then
-			arg_7_0._backend_mirror:set_read_only_data("unlocked_weapon_skins", var_7_8, true)
+		if not unlocked_weapon_skins then
+			self._backend_mirror:set_read_only_data("unlocked_weapon_skins", unlocked_weapon_skins, true)
 		end
 	end
 
-	arg_7_0._backend_mirror:update_filtered_dlc_data()
+	self._backend_mirror:update_filtered_dlc_data()
 
-	if var_7_0.dlcs_dirty then
-		arg_7_0._backend_mirror:handle_new_dlcs(var_7_4)
+	if not _owner_dlcs_cb_data.dlcs_dirty then
+		self._backend_mirror:handle_new_dlcs(new_dlcs)
 	end
 end
 
-function BackendInterfaceDLCsPlayfab._execute_dlc_specific_logic(arg_8_0)
-	local var_8_0 = {
+BackendInterfaceDLCsPlayfab._execute_dlc_specific_logic = function (self)
+	-- function 8
+	local tbl = {
 		FunctionName = "executeDLCLogic",
 		FunctionParameter = {}
 	}
-	local var_8_1 = callback(arg_8_0, "_execute_dlc_logic_cb")
+	local var_8_1 = callback(self, "_execute_dlc_logic_cb")
 
-	arg_8_0._backend_mirror:request_queue():enqueue(var_8_0, var_8_1, true)
+	self._backend_mirror:request_queue():enqueue(tbl, var_8_1, true)
 end
 
-function BackendInterfaceDLCsPlayfab._execute_dlc_logic_cb(arg_9_0, arg_9_1)
-	local var_9_0 = arg_9_1.FunctionResult.item_grant_results
+BackendInterfaceDLCsPlayfab._execute_dlc_logic_cb = function (self, arg_9_1)
+	-- function 9
+	local item_grant_results = arg_9_1.FunctionResult.item_grant_results
 
-	arg_9_0:_handle_owned_dlcs_data()
+	self:_handle_owned_dlcs_data()
 
-	local var_9_1 = arg_9_0._backend_mirror:get_user_data("unseen_rewards")
-	local var_9_2
+	local get_user_data = self._backend_mirror:get_user_data("unseen_rewards")
+	local flag
 
-	var_9_2 = var_9_1 and cjson.decode(var_9_1) or {}
+	flag = not get_user_data and cjson.decode(get_user_data) and {}
 
-	for iter_9_0 = 1, #var_9_0 do
-		local var_9_3 = var_9_0[iter_9_0]
-		local var_9_4 = var_9_3.ItemId
-		local var_9_5 = var_9_3.ItemType
+	for i = 1, #item_grant_results do
+		local var_9_3 = item_grant_results[i]
+		local ItemId = var_9_3.ItemId
+		local ItemType = var_9_3.ItemType
 
-		if var_9_5 == "keep_decoration_painting" then
-			local var_9_6 = {
+		if ItemType == "keep_decoration_painting" then
+			local tbl = {
 				reward_type = "keep_decoration_painting",
 				rewarded_from = var_9_3.Data.rewarded_from,
-				keep_decoration_name = var_9_4
+				keep_decoration_name = ItemId
 			}
 
-			var_9_2[#var_9_2 + 1] = var_9_6
+			flag[#flag + 1] = tbl
 
-			arg_9_0._backend_mirror:add_keep_decoration(var_9_4)
-		elseif CosmeticUtils.is_cosmetic_item(var_9_5) then
-			local var_9_7 = arg_9_0._backend_mirror:add_item(nil, {
-				ItemId = var_9_4
+			self._backend_mirror:add_keep_decoration(ItemId)
+		elseif not CosmeticUtils.is_cosmetic_item(ItemType) then
+			local add_item = self._backend_mirror:add_item(nil, {
+				ItemId = ItemId
 			})
 
-			if var_9_7 then
-				local var_9_8 = {
-					reward_type = var_9_5,
-					backend_id = var_9_7,
+			if not add_item then
+				local tbl_2 = {
+					reward_type = ItemType,
+					backend_id = add_item,
 					rewarded_from = var_9_3.Data.rewarded_from,
-					item_type = var_9_5,
-					item_id = var_9_4
+					item_type = ItemType,
+					item_id = ItemId
 				}
 
-				var_9_2[#var_9_2 + 1] = var_9_8
+				flag[#flag + 1] = tbl_2
 			end
 		else
-			local var_9_9 = ItemMasterList[var_9_4]
-			local var_9_10 = var_9_3.CustomData.rewarded_from
+			local var_9_9 = ItemMasterList[ItemId]
+			local rewarded_from = var_9_3.CustomData.rewarded_from
 
-			if var_9_9.bundle then
-				local var_9_11 = var_9_9.bundle.BundledVirtualCurrencies
+			if not var_9_9.bundle then
+				local BundledVirtualCurrencies = var_9_9.bundle.BundledVirtualCurrencies
 
-				for iter_9_1, iter_9_2 in pairs(var_9_11) do
-					if var_9_10 then
-						local var_9_12 = {
+				for k, v in pairs(BundledVirtualCurrencies) do
+					if not rewarded_from then
+						local tbl_3 = {
 							reward_type = "currency",
-							currency_type = iter_9_1,
-							currency_amount = iter_9_2,
-							rewarded_from = var_9_10
+							currency_type = k,
+							currency_amount = v,
+							rewarded_from = rewarded_from
 						}
 
-						var_9_2[#var_9_2 + 1] = var_9_12
+						flag[#flag + 1] = tbl_3
 					end
 
-					if iter_9_1 == "SM" then
-						local var_9_13 = Managers.backend:get_interface("peddler")
-						local var_9_14 = var_9_13:get_chips("SM")
+					if k == "SM" then
+						local get_interface = Managers.backend:get_interface("peddler")
+						local get_chips = get_interface:get_chips("SM")
 
-						var_9_13:set_chips(iter_9_1, var_9_14 + iter_9_2)
+						get_interface:set_chips(k, get_chips + v)
 					end
 				end
 			else
-				local var_9_15 = var_9_3.ItemInstanceId
+				local ItemInstanceId = var_9_3.ItemInstanceId
 
-				if var_9_10 then
-					local var_9_16 = ItemMasterList[var_9_3.ItemId].item_type
-					local var_9_17 = {
+				if not rewarded_from then
+					local item_type = ItemMasterList[var_9_3.ItemId].item_type
+					local tbl_4 = {
 						reward_type = "item",
-						backend_id = var_9_15,
-						rewarded_from = var_9_10,
-						item_type = var_9_16,
-						item_id = var_9_4
+						backend_id = ItemInstanceId,
+						rewarded_from = rewarded_from,
+						item_type = item_type,
+						item_id = ItemId
 					}
 
-					var_9_2[#var_9_2 + 1] = var_9_17
+					flag[#flag + 1] = tbl_4
 				end
 
-				arg_9_0._backend_mirror:add_item(var_9_15, var_9_3)
+				self._backend_mirror:add_item(ItemInstanceId, var_9_3)
 			end
 		end
 	end
 
-	arg_9_0._backend_mirror:set_user_data("unseen_rewards", cjson.encode(var_9_2))
+	self._backend_mirror:set_user_data("unseen_rewards", cjson.encode(flag))
 	print("Finished Getting New DLC Rewards")
 	print("New Rewards:")
-	table.dump(var_9_2, "unseen_rewards", 5)
+	table.dump(flag, "unseen_rewards", 5)
 
-	arg_9_0._updating_dlc_ownership = false
+	self._updating_dlc_ownership = false
 end
 
-function BackendInterfaceDLCsPlayfab.get_owned_dlcs(arg_10_0)
-	return arg_10_0._owned_dlcs
+BackendInterfaceDLCsPlayfab.get_owned_dlcs = function (self)
+	-- function 10
+	return self._owned_dlcs
 end
 
-function BackendInterfaceDLCsPlayfab.get_platform_dlcs(arg_11_0)
-	return arg_11_0._platform_dlcs
+BackendInterfaceDLCsPlayfab.get_platform_dlcs = function (self)
+	-- function 11
+	return self._platform_dlcs
 end
 
-function BackendInterfaceDLCsPlayfab.updating_dlc_ownership(arg_12_0)
-	return arg_12_0._updating_dlc_ownership
+BackendInterfaceDLCsPlayfab.updating_dlc_ownership = function (self)
+	-- function 12
+	return self._updating_dlc_ownership
 end
 
-function BackendInterfaceDLCsPlayfab.is_unreleased_career(arg_13_0, arg_13_1)
-	local var_13_0 = arg_13_0._backend_mirror:get_title_data().unreleased_careers
+BackendInterfaceDLCsPlayfab.is_unreleased_career = function (self, arg_13_1)
+	-- function 13
+	local unreleased_careers = self._backend_mirror:get_title_data().unreleased_careers
 
-	if var_13_0 and string.find(var_13_0, arg_13_1) then
+	if not unreleased_careers and not string.find(unreleased_careers, arg_13_1) then
 		return true
 	end
 

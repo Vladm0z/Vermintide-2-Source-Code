@@ -4,7 +4,10 @@ require("scripts/settings/difficulty_settings")
 require("scripts/settings/objective_unit_templates")
 require("foundation/scripts/util/error")
 
+local GameModeSettings = GameModeSettings
+
 GameModeSettings = GameModeSettings or {}
+GameModeSettings = GameModeSettings
 GameModeSettings.base = {
 	class_name = "GameModeBase",
 	use_level_progress = true,
@@ -163,9 +166,9 @@ GameModeSettings.weave.hud_ui_settings = {
 
 DLCUtils.require("game_mode")
 
-for iter_0_0, iter_0_1 in pairs(GameModeSettings) do
-	if iter_0_0 ~= "base" then
-		fassert(iter_0_1.key, "[GameModeSettings] game mode %q is missing parameter \"key\".", iter_0_0)
-		fassert(iter_0_1.display_name, "[GameModeSettings] game mode %q is missing parameter \"display_name\".", iter_0_0)
+for k, v in pairs(GameModeSettings) do
+	if k ~= "base" then
+		fassert(v.key, "[GameModeSettings] game mode %q is missing parameter \"key\".", k)
+		fassert(v.display_name, "[GameModeSettings] game mode %q is missing parameter \"display_name\".", k)
 	end
 end
